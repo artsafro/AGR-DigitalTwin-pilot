@@ -1,0 +1,560 @@
+{
+  "partslist_sha256": "fca5b23b4e4939ad44f01abde68d8b510b0daad18c5e7bf3072a22e05fcd0d2a",
+  "part": "v1_baseline_external_structure_frame_contour_rebuild",
+  "decision": "Artem 2026-10-22 10:37",
+  "status": "excluded_by_user",
+  "objects": [
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7522",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 600 x 600 мм [2907169]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7523",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 600 x 600 мм [2907309]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7843",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3040103]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7844",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3040141]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7845",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3040155]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7846",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3040171]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7847",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3040195]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7848",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3040199]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7849",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3040203]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7850",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3040207]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7851",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3040211]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7852",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3040215]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7853",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3040219]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7854",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3040274]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7855",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3040296]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7856",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3040327]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7857",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3040341]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7858",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3040355]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7859",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3040369]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7860",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3040387]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7861",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3041140]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7862",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3041154]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7863",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3041172]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7864",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3041247]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7865",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3041263]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7866",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3041277]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7867",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3041291]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7868",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3041305]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7869",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3041321]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7870",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3041335]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7871",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3041349]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7872",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3041363]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7873",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3041379]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7874",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3041393]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7875",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3041430]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7876",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3041463]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/7877",
+      "name": "210_Прямоугольного сечения (НесКол_2ур) 400 x 400 мм [3041503]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/8245",
+      "name": "305_Лестница марш Марш лестничный 300х150(1500) [3727538]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/9713",
+      "name": "240_Двутавр типа К (НесКол_2ур) 20К1 [4882026]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/9714",
+      "name": "240_Двутавр типа К (НесКол_2ур) 20К1 [4882041]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/9717",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [4882675]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/9718",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [4883375]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/9719",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [4883821]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/9720",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [4883841]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/9721",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [4883923]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/9722",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [4884087]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/9723",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [4884101]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/9724",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [4884117]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/9725",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [4884133]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/9726",
+      "name": "243_Профиль гнутый сварной квадратный (НесКол_2ур) 80х4 [4884678]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/9727",
+      "name": "243_Профиль гнутый сварной квадратный (НесКол_2ур) 80х4 [4885053]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/9728",
+      "name": "243_Профиль гнутый сварной квадратный (НесКол_2ур) 80х4 [4885071]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/9730",
+      "name": "243_Профиль гнутый сварной квадратный (НесКол_2ур) 80х4 [4885337]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/9731",
+      "name": "243_Профиль гнутый сварной квадратный (НесКол_2ур) 80х4 [4885339]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/9732",
+      "name": "243_Профиль гнутый сварной квадратный (НесКол_2ур) 80х4 [4885341]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/9734",
+      "name": "243_Профиль гнутый сварной квадратный (НесКол_2ур) 80х4 [4888248]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/9735",
+      "name": "243_Профиль гнутый сварной квадратный (НесКол_2ур) 80х4 [4888382]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/9736",
+      "name": "243_Профиль гнутый сварной квадратный (НесКол_2ур) 80х4 [4888396]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/9737",
+      "name": "243_Профиль гнутый сварной квадратный (НесКол_2ур) 80х4 [4888412]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/9738",
+      "name": "243_Профиль гнутый сварной квадратный (НесКол_2ур) 80х4 [4888428]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/9739",
+      "name": "243_Профиль гнутый сварной квадратный (НесКол_2ур) 80х4 [4888442]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/9740",
+      "name": "253_Профиль гнутый сварной квадратный (НесКаркас_Балка) 80х4 [4888818]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/9741",
+      "name": "253_Профиль гнутый сварной квадратный (НесКаркас_Балка) 80х4 [4889015]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10038",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5044612]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10039",
+      "name": "253_Профиль гнутый сварной квадратный (НесКаркас_Балка) 80х4 [5048727]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10369",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5898733]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10370",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5898886]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10371",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5898978]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10372",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5899590]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10373",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5899787]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10375",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5900505]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10376",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5900585]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10377",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5900745]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10378",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5900920]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10379",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5901088]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10381",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5901649]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10382",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5901826]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10383",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5901961]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10384",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5902083]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10386",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5902426]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10387",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5902479]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10388",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5902593]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10389",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5902769]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10390",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5902999]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10392",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5903511]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10393",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5903618]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10394",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5903838]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10395",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5904031]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10396",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5904251]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10398",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5905599]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10399",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5906904]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    },
+    {
+      "reference": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10400",
+      "name": "250_Двутавр типа Ш (НесКаркас_Балка) 20Ш1 С255 [5907049]",
+      "reason": "Artem 2026-10-22 10:37: exclude external structure outside this building; not an invariant waiver",
+      "source_buffer_available": true
+    }
+  ]
+}

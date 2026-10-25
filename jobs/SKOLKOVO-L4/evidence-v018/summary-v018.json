@@ -1,0 +1,497 @@
+{
+  "passed": false,
+  "assembled": false,
+  "exported": false,
+  "partslist_sha256": "fca5b23b4e4939ad44f01abde68d8b510b0daad18c5e7bf3072a22e05fcd0d2a",
+  "original_objects": 6955,
+  "excluded_objects": 92,
+  "in_scope_objects": 6863,
+  "raw_kernel_candidate_coverage": 6840,
+  "not_built": 23,
+  "coverage_warning": "Four-invariant historical/local candidates only. Mixed receiver contexts. Not whole-building or all-six-invariant acceptance.",
+  "staged_from_face_tris": 38023,
+  "from_face_budget": 15692,
+  "staged_total_tris": 163241,
+  "master_budget": 150000,
+  "budget_warning": "Arithmetic inventory of staged pieces, not an assembled/exported measurement; inherited closed fallbacks still violate variant B.",
+  "runs": {
+    "band-01": {
+      "measured": 815,
+      "applied": 651,
+      "tris": 5208
+    },
+    "band-02": {
+      "measured": 164,
+      "applied": 125,
+      "tris": 1250
+    },
+    "small-repair-01": {
+      "measured": 70,
+      "applied": 33,
+      "tris": 1112
+    },
+    "aerator-run-02": {
+      "measured": 16,
+      "applied": 16,
+      "tris": 3008
+    }
+  },
+  "parts": [
+    {
+      "id": "facade_additional_entrance_details_other_detail_per_profile",
+      "budget": 168,
+      "candidate_tris": 168,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_additional_exterior_doors_door_from_face",
+      "budget": 36,
+      "candidate_tris": 36,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_additional_exterior_railings_railing_contour_rebuild",
+      "budget": 288,
+      "candidate_tris": 1174,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_additional_exterior_slabs_access_slab_contour_rebuild",
+      "budget": 896,
+      "candidate_tris": 792,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_additional_opaque_panels_wall_from_face",
+      "budget": 2,
+      "candidate_tris": 12,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_canopy_slab_from_face",
+      "budget": 32,
+      "candidate_tris": 16,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_cassette_perimeter_profiles_frame_contour_rebuild",
+      "budget": 21056,
+      "candidate_tris": 31584,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_decorative_lamellae_decor_contour_rebuild",
+      "budget": 264,
+      "candidate_tris": 280,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_entrance_glazing_door_from_face",
+      "budget": 56,
+      "candidate_tris": 84,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_exterior_substrate_reveals_wall_from_face",
+      "budget": 2344,
+      "candidate_tris": 11822,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_external_metal_doors_door_primitive",
+      "budget": 36,
+      "candidate_tris": 36,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_external_railings_railing_detail_per_profile",
+      "budget": 7848,
+      "candidate_tris": 5776,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_external_reveals_band_from_face",
+      "budget": 80,
+      "candidate_tris": 280,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_facade_cassettes_wall_from_face",
+      "budget": 36,
+      "candidate_tris": 36,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_lamella_top_caps_band_contour_rebuild",
+      "budget": 36,
+      "candidate_tris": 36,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_mullions_frame_contour_rebuild",
+      "budget": 3256,
+      "candidate_tris": 4812,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_opaque_glazing_glazing_from_face",
+      "budget": 258,
+      "candidate_tris": 1472,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_parapet_flashings_parapet_contour_rebuild",
+      "budget": 1024,
+      "candidate_tris": 236,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_perforated_cassettes_wall_from_face",
+      "budget": 954,
+      "candidate_tris": 3935,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_plinth_flashings_band_contour_rebuild",
+      "budget": 2560,
+      "candidate_tris": 248,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_plinth_wall_from_face",
+      "budget": 324,
+      "candidate_tris": 508,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_roof_and_entrance_details_other_contour_rebuild",
+      "budget": 4864,
+      "candidate_tris": 3256,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_roof_screen_ac_screen_from_face",
+      "budget": 48,
+      "candidate_tris": 64,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_roof_substrate_skins_wall_from_face",
+      "budget": 6112,
+      "candidate_tris": 8090,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_roofs_slab_contour_rebuild",
+      "budget": 6816,
+      "candidate_tris": 2392,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_soffits_slab_from_face",
+      "budget": 2432,
+      "candidate_tris": 4880,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_solid_cassettes_wall_from_face",
+      "budget": 1466,
+      "candidate_tris": 3012,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_stemalite_glazing_from_face",
+      "budget": 24,
+      "candidate_tris": 46,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_vent_grilles_grille_detail_per_profile",
+      "budget": 112,
+      "candidate_tris": 84,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "facade_window_flashings_band_contour_rebuild",
+      "budget": 448,
+      "candidate_tris": 196,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "rods_additional_kns_components_rod_ladder_contour_rebuild",
+      "budget": 10000,
+      "candidate_tris": 8696,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "rods_primary_mast_meshes_rod_ladder_contour_rebuild",
+      "budget": 55230,
+      "candidate_tris": 54934,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "v1_additional_exterior_doors_door_from_face",
+      "budget": 12,
+      "candidate_tris": 12,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "v1_additional_exterior_slabs_access_slab_contour_rebuild",
+      "budget": 790,
+      "candidate_tris": 790,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "v1_baseline_entrance_slabs_slab_contour_rebuild",
+      "budget": 40,
+      "candidate_tris": 24,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "v1_baseline_external_structure_frame_contour_rebuild",
+      "budget": 3560,
+      "candidate_tris": 0,
+      "scope": "excluded_by_user"
+    },
+    {
+      "id": "v1_baseline_roof_access_railing_contour_rebuild",
+      "budget": 7680,
+      "candidate_tris": 7420,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "v1_baseline_roof_access_rod_ladder_contour_rebuild",
+      "budget": 1536,
+      "candidate_tris": 0,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "v1_baseline_rooftop_concrete_wall_from_face",
+      "budget": 902,
+      "candidate_tris": 2224,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "v1_baseline_rooftop_decks_slab_contour_rebuild",
+      "budget": 912,
+      "candidate_tris": 1556,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "v1_exterior_substrate_reveals_wall_from_face",
+      "budget": 152,
+      "candidate_tris": 528,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "v1_external_railings_railing_detail_per_profile",
+      "budget": 528,
+      "candidate_tris": 264,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "v1_mullions_frame_contour_rebuild",
+      "budget": 144,
+      "candidate_tris": 216,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "v1_opaque_glazing_glazing_from_face",
+      "budget": 14,
+      "candidate_tris": 58,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "v1_plinth_flashings_band_contour_rebuild",
+      "budget": 256,
+      "candidate_tris": 0,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "v1_roof_and_entrance_details_other_contour_rebuild",
+      "budget": 256,
+      "candidate_tris": 0,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "v1_roof_substrate_skins_wall_from_face",
+      "budget": 408,
+      "candidate_tris": 908,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "v1_roofs_slab_contour_rebuild",
+      "budget": 672,
+      "candidate_tris": 224,
+      "scope": "mixed_unassembled_candidates"
+    },
+    {
+      "id": "v1_vent_grilles_grille_detail_per_profile",
+      "budget": 32,
+      "candidate_tris": 24,
+      "scope": "mixed_unassembled_candidates"
+    }
+  ],
+  "not_built_objects": [
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/10059",
+      "part": "facade_plinth_flashings_band_contour_rebuild",
+      "name": "Railing АР_Цокольный отлив_360 [5927508]",
+      "reason": "not built after the measured kernel attempts; NOT an authorized drop"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/10060",
+      "part": "facade_plinth_flashings_band_contour_rebuild",
+      "name": "Railing АР_Цокольный отлив_360 [5927667]",
+      "reason": "not built after the measured kernel attempts; NOT an authorized drop"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/3906",
+      "part": "facade_roof_and_entrance_details_other_contour_rebuild",
+      "name": "Ladder-Precision_Ladders-Tubular_Ladder_With_Parapet_Platform_and_Roof-Side Fixed Ladder With Cage, Platform & Roofside Return [2277003]",
+      "reason": "not built after the measured kernel attempts; NOT an authorized drop"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/7968",
+      "part": "facade_additional_exterior_railings_railing_contour_rebuild",
+      "name": "Railing ADSK_МГН_h 1200 [4667836]",
+      "reason": "not built after the measured kernel attempts; NOT an authorized drop"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/8022",
+      "part": "facade_additional_exterior_railings_railing_contour_rebuild",
+      "name": "Railing ADSK_МГН_h 1200 [4668108]",
+      "reason": "not built after the measured kernel attempts; NOT an authorized drop"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/8046",
+      "part": "facade_additional_exterior_railings_railing_contour_rebuild",
+      "name": "Railing ADSK_МГН_h 1200 [4672094]",
+      "reason": "not built after the measured kernel attempts; NOT an authorized drop"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9464",
+      "part": "facade_mullions_frame_contour_rebuild",
+      "name": "Прямоугольный импост 50х100 мм [5749335]",
+      "reason": "not built after the measured kernel attempts; NOT an authorized drop"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9469",
+      "part": "facade_mullions_frame_contour_rebuild",
+      "name": "Прямоугольный импост 50х100 мм [5749340]",
+      "reason": "not built after the measured kernel attempts; NOT an authorized drop"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9475",
+      "part": "facade_mullions_frame_contour_rebuild",
+      "name": "Прямоугольный импост 50х100 мм [5749347]",
+      "reason": "not built after the measured kernel attempts; NOT an authorized drop"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9496",
+      "part": "facade_mullions_frame_contour_rebuild",
+      "name": "Прямоугольный импост 50х100 мм [5749745]",
+      "reason": "not built after the measured kernel attempts; NOT an authorized drop"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9501",
+      "part": "facade_mullions_frame_contour_rebuild",
+      "name": "Прямоугольный импост 50х100 мм [5749750]",
+      "reason": "not built after the measured kernel attempts; NOT an authorized drop"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9507",
+      "part": "facade_mullions_frame_contour_rebuild",
+      "name": "Прямоугольный импост 50х100 мм [5749757]",
+      "reason": "not built after the measured kernel attempts; NOT an authorized drop"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9521",
+      "part": "facade_roofs_slab_contour_rebuild",
+      "name": "Basic Roof ТН_КРОВЛЯ Солид [5783763]",
+      "reason": "not built after the measured kernel attempts; NOT an authorized drop"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9528",
+      "part": "facade_plinth_flashings_band_contour_rebuild",
+      "name": "Railing АР_Цокольный отлив_360 [5802837]",
+      "reason": "not built after the measured kernel attempts; NOT an authorized drop"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9532",
+      "part": "facade_plinth_flashings_band_contour_rebuild",
+      "name": "Railing АР_Цокольный отлив_360 [5819454]",
+      "reason": "not built after the measured kernel attempts; NOT an authorized drop"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9534",
+      "part": "facade_plinth_flashings_band_contour_rebuild",
+      "name": "Railing АР_Цокольный отлив_360 [5819517]",
+      "reason": "not built after the measured kernel attempts; NOT an authorized drop"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9535",
+      "part": "facade_plinth_flashings_band_contour_rebuild",
+      "name": "Railing АР_Цокольный отлив_360 [5819573]",
+      "reason": "not built after the measured kernel attempts; NOT an authorized drop"
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/9536",
+      "part": "facade_plinth_flashings_band_contour_rebuild",
+      "name": "Railing АР_Цокольный отлив_360 [5819596]",
+      "reason": "not built after the measured kernel attempts; NOT an authorized drop"
+    },
+    {
+      "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10401",
+      "part": "v1_baseline_roof_access_rod_ladder_contour_rebuild",
+      "name": "Лестничный марш ТA Лестничный марш ТA [5922442]",
+      "reason": "not built after the measured kernel attempts; NOT an authorized drop"
+    },
+    {
+      "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/10439",
+      "part": "v1_baseline_roof_access_rod_ladder_contour_rebuild",
+      "name": "Лестничный марш ТA Лестничный марш ТA [5923699]",
+      "reason": "not built after the measured kernel attempts; NOT an authorized drop"
+    },
+    {
+      "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/11171",
+      "part": "v1_baseline_roof_access_rod_ladder_contour_rebuild",
+      "name": "Лестничный марш ТA Лестничный марш ТA [6743475]",
+      "reason": "not built after the measured kernel attempts; NOT an authorized drop"
+    },
+    {
+      "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/2960",
+      "part": "v1_plinth_flashings_band_contour_rebuild",
+      "name": "Railing АР_Цокольный отлив_360 [5819534]",
+      "reason": "not built after the measured kernel attempts; NOT an authorized drop"
+    },
+    {
+      "ref": "facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/9240",
+      "part": "v1_roof_and_entrance_details_other_contour_rebuild",
+      "name": "Ladder-Precision_Ladders-Tubular_Ladder_With_Parapet_Platform_and_Roof-Side Fixed Ladder With Cage, Platform & Roofside Return [4219121]",
+      "reason": "not built after the measured kernel attempts; NOT an authorized drop"
+    }
+  ],
+  "band01_d129": {
+    "kernel_applied": 651,
+    "body_j_and_quad_passed": 651,
+    "texel_passed": 619,
+    "texel_failed": 32
+  },
+  "code_tests": {
+    "face_passed": 114,
+    "ops_passed": 549,
+    "full_suite": "deferred: no complete first-review head; no PR"
+  },
+  "remaining_gates": [
+    "texel/aspect policy decision",
+    "23 unresolved source objects",
+    "replace inherited closed from_face fallbacks within budget",
+    "all actual joints and whole-scene invariants",
+    "UV/materials/UCX and derivation",
+    "fresh export/readback/comparison",
+    "board-tool user visual decision",
+    "complete final SINTEZ",
+    "full suite through suite_slot and PR receipts"
+  ]
+}

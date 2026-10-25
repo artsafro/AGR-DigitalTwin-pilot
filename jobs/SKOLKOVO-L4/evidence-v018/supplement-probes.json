@@ -1,0 +1,30 @@
+{
+  "old_missing": 29,
+  "new_verified": 29,
+  "negative_rejects": 4,
+  "controls": [
+    {
+      "case": "sha256",
+      "refused": true,
+      "error": "Supplement hash mismatch: facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/308"
+    },
+    {
+      "case": "vertices",
+      "refused": true,
+      "error": "Supplement shape mismatch: facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/308"
+    },
+    {
+      "case": "name",
+      "refused": true,
+      "error": "Native identity/bbox mismatch: facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/308"
+    },
+    {
+      "case": "truncated_buffer",
+      "refused": true,
+      "error": "Supplement hash mismatch: facts-sha256:dedcd2a2fd6a49106b1731ae078a1499201a266a9edc0c9c47f027f18534dbec#objects/308"
+    }
+  ],
+  "reset_control": true,
+  "source_sha256": "caa89dc0b1ca4effa269dbd7b26f5cd10acbcc00fe5c2c0942d251b1dbb57203",
+  "supplement_manifest_sha256": "1f93b649079b54d540130ef16db3c3c2887ae3d6ab4e2c83045210ff5e84d763"
+}

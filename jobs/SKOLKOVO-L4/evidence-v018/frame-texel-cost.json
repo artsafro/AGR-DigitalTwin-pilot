@@ -1,0 +1,123 @@
+{
+  "passed": false,
+  "scope": "Construction cost diagnostic only; not a mathematical minimum or a delivered geometry check",
+  "part": "facade_cassette_perimeter_profiles_frame_contour_rebuild",
+  "part_budget": 21056,
+  "part_objects": 2632,
+  "measured_primitive_boxes": 2632,
+  "other_objects_not_measured": 0,
+  "current_box_tris": 31584,
+  "boxes_over_aspect8": 2428,
+  "tile_only_grid_tris": 31584,
+  "aspect_grid_tris": 179040,
+  "samples": [
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/11502",
+      "name": "Прямоугольный импост 20х20 мм перф [2168216]",
+      "source_extent_m": [
+        0.020000457763671875,
+        0.01999664306640625,
+        2.4100003242492676
+      ],
+      "current_tris": 12,
+      "raw_max_aspect": 120.52024513544448,
+      "tile_only_grid_tris": 12,
+      "aspect_grid_counts": [
+        1,
+        1,
+        16
+      ],
+      "aspect_grid_tris": 132
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/3433",
+      "name": "Прямоугольный импост 20х20 мм перф [2138504]",
+      "source_extent_m": [
+        0.020000457763671875,
+        0.020000219345092773,
+        2.4099998474121094
+      ],
+      "current_tris": 12,
+      "raw_max_aspect": 120.49867083099885,
+      "tile_only_grid_tris": 12,
+      "aspect_grid_counts": [
+        1,
+        1,
+        16
+      ],
+      "aspect_grid_tris": 132
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/334",
+      "name": "Прямоугольный импост 20х20 мм [1890395]",
+      "source_extent_m": [
+        0.01999664306640625,
+        0.01999664306640625,
+        2.40000057220459
+      ],
+      "current_tris": 12,
+      "raw_max_aspect": 120.0201735978634,
+      "tile_only_grid_tris": 12,
+      "aspect_grid_counts": [
+        1,
+        1,
+        16
+      ],
+      "aspect_grid_tris": 132
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/335",
+      "name": "Прямоугольный импост 20х20 мм [1890398]",
+      "source_extent_m": [
+        0.01999664306640625,
+        0.020000457763671875,
+        2.40000057220459
+      ],
+      "current_tris": 12,
+      "raw_max_aspect": 120.0201735978634,
+      "tile_only_grid_tris": 12,
+      "aspect_grid_counts": [
+        1,
+        1,
+        16
+      ],
+      "aspect_grid_tris": 132
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/336",
+      "name": "Прямоугольный импост 20х20 мм [1890399]",
+      "source_extent_m": [
+        0.01999664306640625,
+        0.020000457763671875,
+        2.40000057220459
+      ],
+      "current_tris": 12,
+      "raw_max_aspect": 120.0201735978634,
+      "tile_only_grid_tris": 12,
+      "aspect_grid_counts": [
+        1,
+        1,
+        16
+      ],
+      "aspect_grid_tris": 132
+    },
+    {
+      "ref": "facts-sha256:0de28302600bc53703484dba6b3108c0b41a4259467e1414f95d4f4fcdd5ff01#objects/338",
+      "name": "Прямоугольный импост 20х20 мм [1890402]",
+      "source_extent_m": [
+        0.01999664306640625,
+        0.020000457763671875,
+        2.40000057220459
+      ],
+      "current_tris": 12,
+      "raw_max_aspect": 120.0201735978634,
+      "tile_only_grid_tris": 12,
+      "aspect_grid_counts": [
+        1,
+        1,
+        16
+      ],
+      "aspect_grid_tris": 132
+    }
+  ]
+}

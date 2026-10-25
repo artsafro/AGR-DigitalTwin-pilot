@@ -1,0 +1,21 @@
+{
+  "passed": false,
+  "scope": "Partial execution evidence only; not a delivery, accepted assembly or standalone source closure",
+  "drive_directory": "G:\\Мой диск\\AGR-evidence\\353-skolkovo-l4\\evidence-v018-20261025",
+  "archive": "kernel-context-evidence-v018-20261025.zip",
+  "archive_sha256": "aee4676298878edcd90c25da81267ec8175de49fa68e1daa8e29c59ad6647f65",
+  "archive_bytes": 1451597,
+  "verified_members": 1572,
+  "manifest_member": "MANIFEST-SHA256.json",
+  "uncompressed_member_bytes": 9514963,
+  "sha256sums_sha256": "cf545dabd2e47f3cb12e0a40919906c7adb9970e759e46039b49b315f1c3ac63",
+  "crc_ok": true,
+  "implementation_commit": "45598d3a4bfc249d2e1ffff83fb188f1d00e0429",
+  "restore": [
+    "Restore tmp/skolkovo-l4-v018 only into this same task worktree. Keep snapshots separate; never extract them over tracked files.",
+    "Restore upstream source caches/confirmed plan per RESUME-v009.md, RESUME-v010.md and REPORT-v017.md, using existing Drive evidence-v008..v017. Original copied FBX inputs remain C:/x/l4-skolkovo, read-only.",
+    "The 29 supplemental raw buffers remain in v008 baseline-supplement-v002; their native identity/hash controls are mandatory. v017 receiver NPZs/manifests remain upstream evidence.",
+    "Only procedure-walk-v018c.json is current. v018.json is a stale v011 snapshot after a refused write; v018b.json is the preserved bad input-evidence configuration.",
+    "band-01 is historical prototype geometry, not a current-head whole-scene pass. band-audit-01 adds BODY-J/D129 evidence; 32 candidates still fail texel."
+  ]
+}

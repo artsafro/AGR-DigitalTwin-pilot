@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "job_id": "SKOLKOVO-L4",
-  "run_id": "issue-353-profile-execution-v011",
+  "run_id": "issue-353-context-face-v018",
   "synthetic": false,
   "path": "deviation",
   "inputs": [
@@ -39,12 +39,19 @@
       "what_was_tried": "Original source buffers only, source weld/retessellation, explicit planar source-domain union, guarded cap-only union, two-way whole-surface convex-cell certificates plus area p95, actual row3628 rollback and KNS edge-collapse/true-plane contours. All failures retained. Documented Revit wrapper ping exit2/10061; independent TCP10061, no Revit.exe/no offline IFC. Need user-opened live reference document under card's ask-before-Revit policy; no app/config/source mutation.",
       "new_tool_written": "Job-only tmp/l4_*_v011.py adapters/probes in Drive archive; no new library/shared module or modified kernel/checker.",
       "result": "Approval settled; production remains failed/incomplete. Read-only live Revit topology/family reference requested, not a new tolerance or replacement authority. No final export/readback, board-user visual or SINTEZ."
+    },
+    {
+      "gate": "operations",
+      "what_failed": "v017/inherited v018 from_face uses closed fallback boxes and exceeds 15692; 29 source buffers were ignored by the driver. Independent v018 D129 audit rejects 32 of 651 kernel-applied bands. The aspect <=8 limit is an orchestrator default, not a user decision.",
+      "what_was_tried": "v018 seated caps and contacted source bands in kernel commit45598d3; reuse hash/bbox-pinned v008 supplement29/29; contour and covering-revolve repairs; preserve every failed result and all current budgets. No DCC/Revit/source mutation.",
+      "new_tool_written": "src/dt_ai/ops/face.py at45598d3 plus tests/ops/test_face.py; job-only v018 drivers and candidates on Drive (see REPORT-v018.md/index). No new dependency.",
+      "result": "549 focused ops tests pass. Staged local candidates cover6840/6863 retained-in-scope objects;23 remain unbuilt. Mixed arithmetic163241 triangles and from_face38023 still fail budgets.619/651 audited bands pass texel.16 aerators pass kernel/BODY-J/quad/texel. No accepted whole model or fresh export. Need user aspect/representation decision, not budget increase."
     }
   ],
   "gates": {
     "inputs": {
       "status": "pass",
-      "note": "Full pinned inventory snapshot of104 external copied inputs. Rehashed104/104 in input-integrity-v008.json; raw sources stay external/read-only. This is inventory identity, not geometry approval.",
+      "note": "Full pinned inventory remains unchanged; v018 independently rehashed104/104 copied source/reference files. Inventory identity only, not geometry approval.",
       "evidence": [
         {
           "path": "jobs/SKOLKOVO-L4/inventory.json",
@@ -53,8 +60,8 @@
       ]
     },
     "parts": {
-      "status": "pass",
-      "note": "Artem2026-10-21 16:58 explicitly confirmed canonical SHA fca5b23b4e4939ad44f01abde68d8b510b0daad18c5e7bf3072a22e05fcd0d2a. Separate execution copy changes only status/gate1/question0 answer, verified5/5 +9 negatives. All49parts/291joints/budgets/embedded recipe unchanged. Not geometry approval.",
+      "status": "review",
+      "note": "Historical exact-hash Gate1 remains recorded and canonical bytes unchanged. Artem2026-10-22 10:37 explicitly excludes92 external-frame refs and chooses from_face variant B without raising15692. These answered changes need consolidated execution-plan bookkeeping; no new question about them. Slender-strip aspect/representation policy remains for the user; no new budget/recipe approval is fabricated.",
       "evidence": [
         {
           "path": "tmp/skolkovo-l4-v011/parts-confirmed-v011.json",
@@ -67,13 +74,21 @@
         {
           "path": "jobs/SKOLKOVO-L4/evidence-v010/primary-source-profile-recipe-v010.json",
           "sha256": "ccfbe7a217b562f226a493981d3514e536967b10bf0046672488faf7ae5ddfba"
+        },
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v018/excluded-external-frame.json",
+          "sha256": "e437313fa317891476ce2b501f2bfeb708f90450de9f875ee67652298e0e3e4d"
         }
       ]
     },
     "operations": {
       "status": "fail",
-      "note": "v011 source-profile proximity passes but topology and actual isolated kernel fail; applied=false/rollback original. Three repairs refused. No whole49part operation receipt; read-only live Revit reference access pending, not Gate1.",
+      "note": "v018 remains incomplete: local/historical candidates only,23 source refs unresolved; D129 failures and whole-scene joints/checks pending. Revit audit is cancelled by the later FBX-only decision, not a current access blocker.",
       "evidence": [
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v018/summary-v018.json",
+          "sha256": "eeef8bb416f1caaf01256f3e9f4f243d10de881f44e1ae382fd1f55d757d0ac8"
+        },
         {
           "path": "jobs/SKOLKOVO-L4/evidence-v011/component-kernel-rollback-v011.json",
           "sha256": "ed7b88065b39b8d7c41ebc6f9cf2f664d79eb94dd71b70d68709f69f9a9b184d"
@@ -86,8 +101,12 @@
     },
     "budgets": {
       "status": "fail",
-      "note": "No accepted master. Five weld candidates55183 fit55230 but fail quality. Best v011 KNS shortlist62/108 gives candidate-or-unchanged65524 vs10000. Whole master147000 allocation is NOT measured geometry.",
+      "note": "v018 mixed staged arithmetic163241/150000 and from_face38023/15692; not an assembled/exported measurement. Primary/KNS successes remain historical v015/v016. No budget is raised and no closed fallback is treated as accepted variant B.",
       "evidence": [
+        {
+          "path": "jobs/SKOLKOVO-L4/evidence-v018/summary-v018.json",
+          "sha256": "eeef8bb416f1caaf01256f3e9f4f243d10de881f44e1ae382fd1f55d757d0ac8"
+        },
         {
           "path": "jobs/SKOLKOVO-L4/evidence-v011/kns-profile-summary-v011.json",
           "sha256": "27fdbbfbc76d6dc24a8c20b008586ca1d56c4ca00e83a95d4696ab38a8403ad3"
@@ -100,13 +119,17 @@
     },
     "export_readback": {
       "status": "missing",
-      "note": "No generated model or export.",
+      "note": "Historical v017 diagnostic export/readback is not a current final delivery receipt. No new v018 export.",
       "evidence": []
     },
     "report": {
       "status": "review",
-      "note": "Measured failed/intermediate v011 report, timings, whole-surface bounds/p95 and rollback. No final delivery or model review.",
+      "note": "v018 measured continuation, failed budgets, named unresolved refs, tests and explicit user aspect/representation question. Not final delivery or user approval.",
       "evidence": [
+        {
+          "path": "jobs/SKOLKOVO-L4/REPORT-v018.md",
+          "sha256": "53e051269995b0ac0fe8c7c3609bf17f4bab91a295d169c4e1a5920820e9da3d"
+        },
         {
           "path": "jobs/SKOLKOVO-L4/REPORT-v011.md",
           "sha256": "b601157ea927980e429be6da27757bcc9eb8491822374397fc9dfc6ebe11b54a"

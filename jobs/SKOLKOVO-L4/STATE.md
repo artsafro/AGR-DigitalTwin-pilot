@@ -349,3 +349,32 @@ missing. Full suite/PR/review wait for complete production acceptance. This is a
 failed component-stage report, not a final delivered FBX or user geometry approval.
 
 Transcript: Hermes session local-132f5ae91dd294db4d9458c18885baef27e67b65176af5c7739935625c367fbc (task t_b205c8e1).
+
+## Latest continuation — v018, context-face execution; aspect policy pending
+
+The v009/v011 questions above are history, not current blockers. See `REPORT-v018.md`,
+`evidence-v018/summary-v018.json` and current `job.yaml` (`issue-353-context-face-v018`).
+Mast/KNS work remains v015/v016. Revit audit is cancelled by Artem's FBX-only decision.
+The 2026-10-22 decisions remain: from_face variant B, unchanged15,692 allocation;
+exclude all92 external-frame sources (exact reference/name list in evidence-v018).
+
+Kernel commit45598d3 adds seated caps/source bands with refusals and rollback;549 focused
+ops tests pass, including114 from_face tests. A fresh-process pre-fix regression fails
+10!=2. All104 copied input hashes remain unchanged. The29 supposedly missing v1 buffers
+were already present in the pinned v008 supplement and are now hash/bbox-verified.
+
+Staged historical/local candidates cover6840/6863 in-scope references;23 remain unbuilt.
+This is not a joined/exported/all-six-invariant acceptance. Arithmetic inventory:
+from_face38023/15692 and master163241/150000, both failed; closed fallbacks remain.
+Band-01:651 kernel-applied, but only619 pass the independent BODY-J/quad/texel audit.
+Band-02:125/164 kernel-applied, later D129 still pending. Roof aerators16/16 pass kernel,
+BODY-J/quad/texel with3008 tris. No new final FBX, visual approval, SINTEZ, PR or full suite.
+
+New user decision: aspect<=8 is explicitly an orchestrator default with no decision id
+(`ops/inv_texel.py`), not the D021 tile-fit rule.2428/2632 current cassette-profile boxes
+exceed it despite geometric 4K tile fit. A straightforward conforming aspect-grid costs
+179040 tris for that part alone (NOT a lower-bound proof), vs21056 planned. Keep aspect8
+mandatory with a revised representation/Gate1, or make it diagnostic for source-bound
+rectangular strips after real tile/density/padding proof? No threshold/budget waiver has
+been applied. The4m/tile rule and all other gates remain mandatory. Full question, failed
+attempts, exact unresolved list and resume order are in REPORT-v018.md.

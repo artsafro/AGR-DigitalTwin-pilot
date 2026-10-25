@@ -1,0 +1,138 @@
+{
+  "passed": false,
+  "manifest_sha256": "0f4ddf6a9a7acfa28d64b342f5c7cdcf37d1d56b07ae28823d17e5475e12d999",
+  "partslist_sha256": "fca5b23b4e4939ad44f01abde68d8b510b0daad18c5e7bf3072a22e05fcd0d2a",
+  "inherited_run01_part_tris": 40229,
+  "from_face_budget": 15692,
+  "kinds": {
+    "cluster": 57,
+    "closed_fallback": 834,
+    "face": 6,
+    "wall": 1162
+  },
+  "parts": [
+    {
+      "id": "facade_additional_exterior_doors_door_from_face",
+      "tris": 36,
+      "budget": 36,
+      "over_budget": false
+    },
+    {
+      "id": "facade_additional_opaque_panels_wall_from_face",
+      "tris": 12,
+      "budget": 2,
+      "over_budget": true
+    },
+    {
+      "id": "facade_canopy_slab_from_face",
+      "tris": 16,
+      "budget": 32,
+      "over_budget": false
+    },
+    {
+      "id": "facade_entrance_glazing_door_from_face",
+      "tris": 84,
+      "budget": 56,
+      "over_budget": true
+    },
+    {
+      "id": "facade_exterior_substrate_reveals_wall_from_face",
+      "tris": 11402,
+      "budget": 2344,
+      "over_budget": true
+    },
+    {
+      "id": "facade_external_reveals_band_from_face",
+      "tris": 280,
+      "budget": 80,
+      "over_budget": true
+    },
+    {
+      "id": "facade_facade_cassettes_wall_from_face",
+      "tris": 36,
+      "budget": 36,
+      "over_budget": false
+    },
+    {
+      "id": "facade_opaque_glazing_glazing_from_face",
+      "tris": 1472,
+      "budget": 258,
+      "over_budget": true
+    },
+    {
+      "id": "facade_perforated_cassettes_wall_from_face",
+      "tris": 3935,
+      "budget": 954,
+      "over_budget": true
+    },
+    {
+      "id": "facade_plinth_wall_from_face",
+      "tris": 508,
+      "budget": 324,
+      "over_budget": true
+    },
+    {
+      "id": "facade_roof_screen_ac_screen_from_face",
+      "tris": 64,
+      "budget": 48,
+      "over_budget": true
+    },
+    {
+      "id": "facade_roof_substrate_skins_wall_from_face",
+      "tris": 10776,
+      "budget": 6112,
+      "over_budget": true
+    },
+    {
+      "id": "facade_soffits_slab_from_face",
+      "tris": 4880,
+      "budget": 2432,
+      "over_budget": true
+    },
+    {
+      "id": "facade_solid_cassettes_wall_from_face",
+      "tris": 3012,
+      "budget": 1466,
+      "over_budget": true
+    },
+    {
+      "id": "facade_stemalite_glazing_from_face",
+      "tris": 46,
+      "budget": 24,
+      "over_budget": true
+    },
+    {
+      "id": "v1_additional_exterior_doors_door_from_face",
+      "tris": 12,
+      "budget": 12,
+      "over_budget": false
+    },
+    {
+      "id": "v1_baseline_rooftop_concrete_wall_from_face",
+      "tris": 2224,
+      "budget": 902,
+      "over_budget": true
+    },
+    {
+      "id": "v1_exterior_substrate_reveals_wall_from_face",
+      "tris": 348,
+      "budget": 152,
+      "over_budget": true
+    },
+    {
+      "id": "v1_opaque_glazing_glazing_from_face",
+      "tris": 10,
+      "budget": 14,
+      "over_budget": false
+    },
+    {
+      "id": "v1_roof_substrate_skins_wall_from_face",
+      "tris": 1076,
+      "budget": 408,
+      "over_budget": true
+    }
+  ],
+  "missing": 12,
+  "excluded_objects": 92,
+  "warning": "Inherited face run uses closed fallback boxes; NOT acceptance of user variant B. No new FBX exported."
+}

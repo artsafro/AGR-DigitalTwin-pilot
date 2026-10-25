@@ -1,0 +1,62 @@
+{
+  "passed": false,
+  "scope": "Verified execution/provenance receipts, not a model or full-suite pass",
+  "logs": {
+    "face-green-v002.log": {
+      "passed": 114,
+      "seconds": 11.59,
+      "sha256": "4650c6b1079a5cb95ffff9484e40a933728c298cd7d1e0305dc4cf12bcfd1b7d"
+    },
+    "ops-focused.log": {
+      "passed": 549,
+      "seconds": 102.96,
+      "sha256": "6ef5a2abd5e91c6bde49a595a768ce09bbadd431c28e9687db0dae59f0a60109"
+    },
+    "procedure-tests-v018.log": {
+      "passed": 136,
+      "seconds": 62.81,
+      "sha256": "95f7dc60ef0062fd6d832b1f7736cc85dcc241334c6629ca614f437720faef69"
+    }
+  },
+  "regression": {
+    "pre_fix_commit": "c2edc3b4db4fc03f2d7d595ce7dfca87210163da",
+    "expected_red": 1,
+    "expected_message": "assert 10 == 2",
+    "frozen_source_matches_git_after_normalizing_CRLF_and_final_LF": true
+  },
+  "current_walk": {
+    "path": "tmp/skolkovo-l4-v018/procedure-walk-v018c.json",
+    "sha256": "ee142ae69217e50d62a76aea432fe62ff8983b1cffa10791762501a6725a4f3f",
+    "run_id": "issue-353-context-face-v018",
+    "passed": false,
+    "validation_errors": 0,
+    "gates": {
+      "inputs": "pass",
+      "parts": "review",
+      "operations": "fail",
+      "budgets": "fail",
+      "export_readback": "missing",
+      "report": "review",
+      "visual": "missing",
+      "checker": "missing"
+    }
+  },
+  "rejected_walks": {
+    "stale_run": "procedure-walk-v018.json",
+    "wrong_input_gate_inventory": "procedure-walk-v018b.json"
+  },
+  "operational_repairs": [
+    "write_file falsely retained a pagination guard after reads; it refused both writes without mutation. Used patch successfully; preserved the initial stale v011 walk instead of treating it as current.",
+    "Adding the integrity supplement to a pass inputs gate broke exact full-inventory equality. The failing v018b walk is retained; the corrected v018c gate records only the declared inventory and has zero validation errors."
+  ],
+  "github": {
+    "source_issue_state": "CLOSED",
+    "state_reason": "COMPLETED",
+    "closed_at": "2026-10-21T08:18:27Z",
+    "closing_commit": null,
+    "note": "Later 2026-10-22 owner instructions explicitly continue this same run. No issue reopen/closure or PR publication performed."
+  },
+  "implementation_commit": "45598d3a4bfc249d2e1ffff83fb188f1d00e0429",
+  "full_suite": "not run: incomplete model, no first review head",
+  "pr": null
+}

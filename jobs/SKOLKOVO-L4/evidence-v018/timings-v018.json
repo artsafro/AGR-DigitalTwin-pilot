@@ -1,0 +1,71 @@
+{
+  "method": "Approximate wall intervals from newly created Windows log birth to last write; not CPU time. Stages overlap; DO NOT SUM as session throughput.",
+  "stages": [
+    {
+      "stage": "band-01.log",
+      "log_birth_unix": 1792953720.7980883,
+      "log_last_write_unix": 1792956044.282857,
+      "artifact_clock_seconds": 2323.484768629074,
+      "artifact_clock_hours": 0.6454124357302984,
+      "log_sha256": "a25745b55bbac1c79d1f643fc52e5f9564a79ad2e2f553aa8b0808580a9f33e9"
+    },
+    {
+      "stage": "band-02.log",
+      "log_birth_unix": 1792956566.9581442,
+      "log_last_write_unix": 1792956965.0628448,
+      "artifact_clock_seconds": 398.10470056533813,
+      "artifact_clock_hours": 0.11058463904592726,
+      "log_sha256": "e0e6432f6ae2d0aecd57a7a62b206fcdff6c067fd7650fea631787f457ffd0bd"
+    },
+    {
+      "stage": "small-repair-01.log",
+      "log_birth_unix": 1792954929.5809286,
+      "log_last_write_unix": 1792956188.3315272,
+      "artifact_clock_seconds": 1258.7505986690521,
+      "artifact_clock_hours": 0.3496529440747367,
+      "log_sha256": "8675999dddb190a93bf5c7f41b541d8289d9db99b9fe6d4200cc1c90551154c9"
+    },
+    {
+      "stage": "aerator-probe-01.log",
+      "log_birth_unix": 1792955328.0687833,
+      "log_last_write_unix": 1792955422.1046014,
+      "artifact_clock_seconds": 94.03581809997559,
+      "artifact_clock_hours": 0.026121060583326552,
+      "log_sha256": "db927da57f1ade353cbf5b7dcca7485e89b4e569c349ff983bc48300de826cc7"
+    },
+    {
+      "stage": "aerator-probe-02.log",
+      "log_birth_unix": 1792955557.4760692,
+      "log_last_write_unix": 1792955643.6530523,
+      "artifact_clock_seconds": 86.17698311805725,
+      "artifact_clock_hours": 0.023938050866127013,
+      "log_sha256": "d1be8054c41b371768207837c702ee5edca5ad24fe55fac1a16498cd6050e95f"
+    },
+    {
+      "stage": "aerator-run-02.log",
+      "log_birth_unix": 1792955780.3687017,
+      "log_last_write_unix": 1792956055.2474387,
+      "artifact_clock_seconds": 274.87873697280884,
+      "artifact_clock_hours": 0.07635520471466913,
+      "log_sha256": "060c2d58e8d6d9435a2be07b979dbb0bf7788bc93b9bf45a56865ce7a230c5fb"
+    },
+    {
+      "stage": "ops-focused.log",
+      "log_birth_unix": 1792956372.0009744,
+      "log_last_write_unix": 1792956475.500038,
+      "artifact_clock_seconds": 103.49906349182129,
+      "artifact_clock_hours": 0.028749739858839246,
+      "log_sha256": "6ef5a2abd5e91c6bde49a595a768ce09bbadd431c28e9687db0dae59f0a60109"
+    },
+    {
+      "stage": "band-audit-01.log",
+      "log_birth_unix": 1792956504.5873537,
+      "log_last_write_unix": 1792956508.131909,
+      "artifact_clock_seconds": 3.544555187225342,
+      "artifact_clock_hours": 0.0009845986631181504,
+      "log_sha256": "a295d8e5a3d4f780109b3e7b50be2db58acbb67c852342cb86fe487a13af7a97"
+    }
+  ],
+  "pytest_face_seconds": 11.59,
+  "pytest_ops_seconds": 102.96
+}
