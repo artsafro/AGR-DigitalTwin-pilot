@@ -1,0 +1,3 @@
+name "AGR Tools"
+version 0.1
+run "install.ms"
