@@ -4,6 +4,20 @@ These tests pin what V011 does today. They are NOT desired validation policy.
 A schema pass on a non-string, a Unicode digit string, or a malformed Ground
 FNO_code is a known unchecked boundary, never an endorsement and never delivery
 acceptance. Synthetic fixtures only; no real object.
+
+Acceptance (input -> exact helper findings; test):
+- OKS "123"/"123456"/"123456789"/"123 456" -> imageBase64, Glasses, schema all pass;
+  V011 pass (test_legacy_oks_fno_code_findings).
+- OKS "1234"/"abc" -> FNO_code format fail, no schema pass (same test).
+- OKS null/"" -> FNO_code empty fail (same test).
+- OKS int 123/1234, true, [], {}, Arabic-Indic, fullwidth, superscript-two -> schema pass
+  (legacy unchecked boundary; same test).
+- Ground (selected by *_Ground.geojson) null/""/"1234"/"abc" -> schema pass
+  (test_legacy_ground_fno_code_currently_passes).
+- CLI validate_package.py --profile vpm --json, parity with helper, report retained:
+  OKS "123", int 123, superscript-two, Ground "" and "1234" -> V011 pass, every other stage
+  not_run, passed=false, exit 2; OKS "1234" -> V011 fail, passed=false, exit 1
+  (test_legacy_cli_v011_matches_helper).
 """
 import base64
 import hashlib
@@ -161,6 +175,9 @@ def test_legacy_cli_v011_matches_helper(tmp_path, role, fno, expected, exit_code
     report_pairs = tuple((item["name"], item["status"]) for item in v011[0]["findings"])
     assert _pairs(path) == report_pairs == expected
     assert v011[0]["status"] == ("fail" if any(status == "fail" for _, status in expected) else "pass")
+    others = {stage["id"]: stage["status"] for stage in report["stages"] if stage["id"] != "V011"}
+    if v011[0]["status"] == "pass":
+        assert others and set(others.values()) == {"not_run"}, others
     assert report["passed"] is False
     assert "delivery_passed" not in report
     assert proc.returncode == exit_code
