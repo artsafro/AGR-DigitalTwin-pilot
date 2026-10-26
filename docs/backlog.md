@@ -212,7 +212,9 @@ effort <S/M/L>`. The user or the owner turns one into a task or drops it.
   vertices: `dt qa xview` (#527); winding edges and outward orientation still open.
 - **R17** proposal 2026-10-21, job/vyatskaya-tow02-midpoly - CLI command: run 3ds Max xView checks on an FBX in a
   separate Max instance via a startup script (`jobs/vyatskaya-tow02/scripts/xview_check.ms`; xView does not compute
-  through the MCP bridge) with the "Disable xView" dialog answered, one JSONL line per checker; seen 3 times; effort S
+  through the MCP bridge) with the "Disable xView" dialog answered, one JSONL line per checker; seen 3 times; effort S.
+  Shared runner is `tools/qa/xview_dump.ms` (#528): `.max` and `.fbx`, weld / weldpoly, full flagged face lists.
+  The job twins point at it. The all-checker JSONL sweep in `xview_check.ms` is still the historical script.
 
 ## Harness and organization (default owner Codex)
 

@@ -478,6 +478,34 @@ Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 20
   in place. Postcondition of every build / fix step: `docs/procedure/TASK_TO_MODEL.md`.
 - Limits: pairs only within one object (a joined mesh is one object, as in xView); FBX / .blend need Blender.
 
+### 3ds Max xView runner — `tools/qa/xview_dump.ms` (#528)
+- Status: contract-tested, native Max run not measured (2026-10-23; a Max startup script, not the MCP bridge and not `3dsmaxbatch`).
+  `3dsmax.exe -U MAXScript tools/qa/xview_dump.ms` with `XVIEW_OUT` (alias `TOW02_XV_OUT`) a directory that
+  already contains `jobs.txt`. The receipt line is `#nonce:<id>`; each model is exactly six fields
+  `label|path|node|mode|material|slot`. Path is `.fbx` (import into a reset scene) or `.max`
+  (`loadMaxFile` quiet, `useFileUnits`, never saved). Empty node = the largest mesh by polygon count; a name
+  that is not in the scene is an error naming it. Modes: `plain`, `weld` (Editable Mesh, weld all vertices at
+  `units.decodeValue "2mm"`, checks stay on the mesh), `weldpoly` (same weld, then Editable Poly). Face tolerance
+  `units.decodeValue "5mm"`. A non-ASCII path is copied to `XVIEW_TEMP` under an ASCII name; the copy's SHA-256
+  must equal the source. The opened file is hashed before and after; a change is an error.
+  `xv_preflight` runs before any `createFile`, `deleteFile` or stage copy. It rejects duplicate labels,
+  `|` and control characters, a wrong field count, a non-canonical slot token, and same-file identity
+  (normalized path and `GetFileInformationByHandle`) across inputs, `<label>.json`, `jobs.txt`, `report.jsonl`,
+  `done.txt`, `failed.txt` and the ASCII staging copy. A preflight failure exits before any write.
+  `prepare_run` writes a fresh nonce into `jobs.txt` and is mirrored by `preflight_jobs_txt` for a hand-written
+  file; it does not have to be running for the script to refuse an alias. It removes this run's `done.txt` and
+  `<label>.json` only after that check, including when preparation itself fails, and never when the path is an input.
+  Field 6 is the slot (`count >= 6`). An unknown slot or material is an error naming it.
+  The script copies the nonce into `done.txt` and each result, and writes `done.txt` only when every job succeeds.
+  `quitMax` does not set a process exit code (`System.Environment.Exit 1` is attempted on failure). `check_run`
+  requires the jobs.txt nonce in `done.txt` and in every result, a complete dump (the keys the script writes),
+  no `error` key and no `failed.txt`. `{}`, null, a mismatched label, a partial schema or a done receipt from
+  another nonce exits 2.
+  JSON: nonce, scene inventory, dropped nodes, counts, every flagged face (Max face id, material id, area, centre)
+  and every flagged vertex (id, position). Job twin `jobs/vyatskaya-tow02/scripts/xview_review.ms` points here.
+  One Max owner; lock `%LOCALAPPDATA%\Temp\agr-3dsmax-session.lock`.
+  Vyatskaya evidence is `jobs/vyatskaya-tow02/evidence/xview-528/not-measured.json` (not measured; 3ds Max was already running).
+
 ### Face overlap check — `tools/qa/check_clearance.py`
 - Status: WORKING (2026-10-06; AGR boundary cases + FBX planes 3 mm apart)
 - Near-parallel faces closer than 5 mm (profile), on faces JSON or FBX via
