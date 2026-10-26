@@ -48,6 +48,8 @@ def test_version_macros_and_roadmap_text():
     assert 'UV integer-tile nudge' in readme and 'UDIM -> NPM atlas' in readme
     assert 'collision generator' in readme.lower()
     assert 'texel' in readme.lower() and 'checked export' in readme.lower()
+    assert 'unsupported map coordinate:' in readme
+    assert 'map channel 1' in readme
 
 
 def test_runtime_parser_accepts_nudge_plan_and_rejects_threshold_pass():
@@ -407,6 +409,77 @@ def test_bitmap_rows_read_each_scanline():
             runtime.bitmap_rows(width, height, lambda x, y, count: read_span(x, y, count)[:0])
         matched += 1
     assert matched == 32
+
+
+def test_map_coordinate_contract_probe():
+    """Neutral bitmap coordinates pass. Every other setting value, including NaN, is named."""
+    import math
+    runtime = _load(RUNTIME, 'agr_runtime_map_coordinates')
+    neutral = {name: expected for name, expected, _kind in runtime.NEUTRAL_MAP_COORDINATES}
+    accepted = 0
+    rejected = 0
+
+    def accept(slot, values):
+        nonlocal accepted
+        runtime.assert_neutral_map_coordinates('Witness', slot, values)
+        accepted += 1
+
+    def reject(slot, values, setting):
+        nonlocal rejected
+        with pytest.raises(ValueError, match='unsupported map coordinate: Witness ' + slot + ' ' + setting + '='):
+            runtime.assert_neutral_map_coordinates('Witness', slot, values)
+        rejected += 1
+
+    accept('diffuse', dict(neutral))
+    for name, expected, kind in runtime.NEUTRAL_MAP_COORDINATES:
+        if kind != 'float':
+            continue
+        inside = expected
+        delta = 1e-9
+        for _ in range(8):
+            candidate = expected + delta
+            if abs(candidate - expected) <= 1e-9:
+                inside = candidate
+                break
+            delta *= 0.5
+        trial = dict(neutral)
+        trial[name] = inside
+        accept('diffuse', trial)
+        trial = dict(neutral)
+        trial[name] = expected - abs(inside - expected)
+        accept('opacity', trial)
+    # The combined witness: U tiling 2 is the named error, not a neutral atlas.
+    witness = dict(neutral)
+    witness['U_Tiling'] = 2
+    with pytest.raises(ValueError, match=r'^unsupported map coordinate: Witness diffuse U_Tiling=2$'):
+        runtime.assert_neutral_map_coordinates('Witness', 'diffuse', witness)
+    rejected += 1
+    for name, expected, kind in runtime.NEUTRAL_MAP_COORDINATES:
+        if kind == 'float':
+            outside = expected + 1e-6
+            delta = 1e-9
+            for _ in range(8):
+                candidate = expected + delta
+                if abs(float(candidate) - float(expected)) > 1e-9:
+                    outside = candidate
+                    break
+                delta *= 2.0
+            values = (expected + 2.0, expected - 3.0, outside, math.nan, math.inf, -math.inf)
+        elif kind == 'bool':
+            values = (not expected,)
+        else:
+            values = tuple(v for v in (0, 2, -5, 1001) if v != expected)
+        for value in values:
+            trial = dict(neutral)
+            trial[name] = value
+            reject('diffuse', trial, name)
+        missing = dict(neutral)
+        del missing[name]
+        reject('opacity', missing, name)
+    with pytest.raises(ValueError, match=r'^unsupported map coordinate: Witness diffuse coords=unreadable$'):
+        runtime.assert_neutral_map_coordinates('Witness', 'diffuse', None)
+    rejected += 1
+    assert accepted == 15 and rejected == 64, (accepted, rejected)
 
 
 def test_shipped_archive_contains_atlas_core_text(tmp_path):

@@ -1,9 +1,9 @@
 {
-  "command": "uv run python tools/max/build_agr_tools.py tmp/AGR-Tools-0.2.0-g.mzp",
-  "repeat_command": "uv run python tools/max/build_agr_tools.py tmp/AGR-Tools-0.2.0-h.mzp",
-  "sha256": "acf2cdab7ae6d5b08bb87c528617be0a39abf1acb6cd0763f6d67edc466569eb",
-  "repeat_sha256": "acf2cdab7ae6d5b08bb87c528617be0a39abf1acb6cd0763f6d67edc466569eb",
+  "command": "uv run python tools/max/build_agr_tools.py tmp/AGR-Tools-0.2.0-i.mzp",
+  "repeat_command": "uv run python tools/max/build_agr_tools.py tmp/AGR-Tools-0.2.0-j.mzp",
+  "sha256": "8421a4f2fddae9ed1315c1ba5f0553db9dc9c71a43df61350e699573e5a54208",
+  "repeat_sha256": "8421a4f2fddae9ed1315c1ba5f0553db9dc9c71a43df61350e699573e5a54208",
   "binary_storage": "G:/Мой диск/AGR-evidence/722-agr-tools-uv/",
   "version": "0.2.0",
-  "rework": "atlas bitmap bind, diffuse alpha, opacity rejection"
+  "rework": "reject non-neutral bitmap coordinates before atlas copies"
 }

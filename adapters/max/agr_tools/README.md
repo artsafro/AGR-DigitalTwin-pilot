@@ -71,7 +71,14 @@ never a clean result. Objects are identified by unique Max handles as well as na
   packer emits one). Flat Kd colours stay flat colours. Diffuse alpha, material
   opacity and a grey opacity map follow the Python tool. `map_d` without
   `map_Kd` raises `map_d without map_Kd is not supported` before any copy is
-  created. Required node properties: `AGR_ATLAS_MODE` (`ground` or `oks`) and
+  created. Bitmap coordinates are supported only when they are neutral:
+  U/V tiling 1, U/V offset 0, U/V/W angle 0, U/V mirror off, U/V tile on
+  (the default), map channel 1. Any other value, a non-finite number
+  (NaN or infinity), or a coordinate that cannot be read raises
+  `unsupported map coordinate: <material name> <map slot> <setting>=<value>`
+  in the dry-run, before any export copy, atlas file or replacement material
+  is created. The slot is `diffuse` or `opacity`. Floats match within 1e-9.
+  A non-neutral transform is never baked into a clean atlas. Required node properties: `AGR_ATLAS_MODE` (`ground` or `oks`) and
   `AGR_ATLAS_SIZE` (`1024` or `2048`). Inputs the Python tool refuses (tile
   crossing, unmapped material, empty mesh, non-finite coordinates, padding
   below 8 px, both diffuse alpha and `map_d`) raise a named error. UV readback

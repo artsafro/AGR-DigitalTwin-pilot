@@ -42,5 +42,27 @@
     "error": "map_d without map_Kd is not supported",
     "copies_created_2024": 0,
     "copies_created_2026": 0
+  },
+  "atlas_map_coordinates": {
+    "supported": "neutral only: U/V tiling 1, U/V offset 0, U/V/W angle 0, U/V mirror off, U/V tile on, map channel 1",
+    "rejected": "any other value, NaN/inf, unreadable coords",
+    "error": "unsupported map coordinate: <material> <diffuse|opacity> <setting>=<value>",
+    "witness_2024": "unsupported map coordinate: Witness diffuse U_Tiling=2",
+    "copies_2024": 0,
+    "files_2024": 0,
+    "source_u_tiling_2024": 2,
+    "source_opacity_2024": 40,
+    "witness_2026": "unsupported map coordinate: Witness diffuse U_Tiling=2",
+    "copies_2026": 0,
+    "files_2026": 0,
+    "source_u_tiling_2026": 2,
+    "source_opacity_2026": 40,
+    "rejections_2024": {
+      "U_Offset": "unsupported map coordinate: Coordu_offset diffuse U_Offset=0.25",
+      "V_Tiling": "unsupported map coordinate: Coordv_tiling diffuse V_Tiling=3",
+      "U_Angle": "unsupported map coordinate: Coordu_angle diffuse U_Angle=0.5",
+      "U_Mirror": "unsupported map coordinate: Coordu_mirror opacity U_Mirror=true",
+      "mapChannel": "unsupported map coordinate: Coordmap_channel diffuse mapChannel=2"
+    }
   }
 }

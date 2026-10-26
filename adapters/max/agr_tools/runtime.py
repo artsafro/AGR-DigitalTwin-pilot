@@ -667,6 +667,131 @@ def bitmap_rows(width, height, read_span):
     return rgb, alpha
 
 
+# Bitmaptexture coordinates the atlas can consume. Anything else is rejected by name
+# before a copy, an atlas file or a replacement material exists.
+MAP_COORD_TOL = 1e-9
+NEUTRAL_MAP_COORDINATES = (
+    ('U_Tiling', 1.0, 'float'),
+    ('V_Tiling', 1.0, 'float'),
+    ('U_Offset', 0.0, 'float'),
+    ('V_Offset', 0.0, 'float'),
+    ('U_Angle', 0.0, 'float'),
+    ('V_Angle', 0.0, 'float'),
+    ('W_Angle', 0.0, 'float'),
+    ('U_Mirror', False, 'bool'),
+    ('V_Mirror', False, 'bool'),
+    ('U_Tile', True, 'bool'),
+    ('V_Tile', True, 'bool'),
+    ('mapChannel', 1, 'int'),
+)
+
+
+def format_map_coordinate_value(value):
+    """Stable `<setting>=<value>` text. Non-finite floats stay visible as nan/inf."""
+    import math
+    if isinstance(value, bool):
+        return 'true' if value else 'false'
+    if isinstance(value, int):
+        return str(value)
+    if isinstance(value, float):
+        if math.isnan(value):
+            return 'nan'
+        if math.isinf(value):
+            return 'inf' if value > 0 else '-inf'
+        nearest = round(value)
+        if abs(value - nearest) <= MAP_COORD_TOL:
+            return str(int(nearest))
+        return format(value, '.12g')
+    return 'unreadable'
+
+
+def unsupported_map_coordinate(material, slot, setting, value):
+    shown = 'unreadable' if value == 'unreadable' else format_map_coordinate_value(value)
+    return f'unsupported map coordinate: {material} {slot} {setting}={shown}'
+
+
+def assert_neutral_map_coordinates(material, slot, values):
+    """Accept only the neutral coordinate contract. Missing and non-finite values are errors."""
+    import math
+    if not isinstance(values, dict):
+        raise ValueError(unsupported_map_coordinate(material, slot, 'coords', 'unreadable'))
+    for setting, expected, kind in NEUTRAL_MAP_COORDINATES:
+        if setting not in values:
+            raise ValueError(unsupported_map_coordinate(material, slot, setting, 'unreadable'))
+        value = values[setting]
+        if kind == 'float':
+            if isinstance(value, bool) or not isinstance(value, (int, float)):
+                raise ValueError(unsupported_map_coordinate(material, slot, setting, 'unreadable'))
+            number = float(value)
+            if not math.isfinite(number) or abs(number - float(expected)) > MAP_COORD_TOL:
+                raise ValueError(unsupported_map_coordinate(material, slot, setting, number))
+        elif kind == 'bool':
+            if not isinstance(value, bool) or value != expected:
+                shown = value if isinstance(value, bool) else 'unreadable'
+                raise ValueError(unsupported_map_coordinate(material, slot, setting, shown))
+        elif kind == 'int':
+            if isinstance(value, bool) or not isinstance(value, int) or int(value) != expected:
+                shown = value if isinstance(value, int) and not isinstance(value, bool) else 'unreadable'
+                raise ValueError(unsupported_map_coordinate(material, slot, setting, shown))
+        else:
+            raise ValueError(unsupported_map_coordinate(material, slot, setting, 'unreadable'))
+
+
+def _coerce_map_coordinate(raw, kind):
+    import math
+    if kind == 'float':
+        if isinstance(raw, bool):
+            raise TypeError('coordinate is not a float')
+        return float(raw)
+    if kind == 'bool':
+        if isinstance(raw, bool):
+            return bool(raw)
+        raise TypeError('coordinate is not a bool')
+    if kind == 'int':
+        if isinstance(raw, bool) or not isinstance(raw, int):
+            raise TypeError('coordinate is not an int')
+        return int(raw)
+    raise TypeError('unknown coordinate kind')
+
+
+def _read_map_coordinates(tex):
+    """Read supported StandardUVGen fields. A failure is unreadable, never neutral."""
+    rt = _rt()
+    try:
+        coords = tex.coords
+        coords_class = str(rt.classOf(coords))
+    except Exception:
+        raise ValueError('unreadable:coords')
+    if coords is None or coords_class in ('undefined', 'UndefinedClass', 'None', ''):
+        raise ValueError('unreadable:coords')
+    values = {}
+    for setting, _expected, kind in NEUTRAL_MAP_COORDINATES:
+        try:
+            raw = getattr(coords, setting)
+        except Exception:
+            raise ValueError('unreadable:' + setting)
+        try:
+            values[setting] = _coerce_map_coordinate(raw, kind)
+        except (TypeError, ValueError):
+            raise ValueError('unreadable:' + setting)
+    return values
+
+
+def _require_neutral_bitmap_coordinates(material, slot, tex):
+    try:
+        values = _read_map_coordinates(tex)
+    except ValueError as exc:
+        text = str(exc)
+        if text.startswith('unreadable:'):
+            raise ValueError(unsupported_map_coordinate(material, slot, text.split(':', 1)[1], 'unreadable')) from exc
+        raise
+    assert_neutral_map_coordinates(material, slot, values)
+
+
+def _bitmap_texture(tex):
+    return _map_assigned(tex) and _rt().classOf(tex) == _rt().Bitmaptexture
+
+
 def _live_bitmap(tex):
     rt = _rt()
     try:
@@ -684,10 +809,13 @@ def _live_bitmap(tex):
     return live, False
 
 
-def _bitmap_rgb(tex):
+def _bitmap_rgb(tex, material=None, slot=None):
     rt = _rt()
     if rt.classOf(tex) != rt.Bitmaptexture:
         raise ValueError('unmapped material map class: ' + str(rt.classOf(tex)))
+    # Coordinate rejection happens before any pixel read, copy or atlas file.
+    if material is not None and slot is not None:
+        _require_neutral_bitmap_coordinates(material, slot, tex)
     bm, opened = _live_bitmap(tex)
     filename = str(getattr(tex, 'filename', '') or '')
     if filename not in ('', 'undefined', 'None'):
@@ -736,16 +864,20 @@ def _atlas_materials(n):
         # Reject before any bitmap read or export copy. Unsupported opacity is not opaque Kd.
         if has_opacity and not has_diffuse:
             raise ValueError(f"material {name!r}: map_d without map_Kd is not supported")
+        if has_diffuse and _bitmap_texture(diffuse_map):
+            _require_neutral_bitmap_coordinates(name, 'diffuse', diffuse_map)
+        if has_opacity and _bitmap_texture(opacity_map):
+            _require_neutral_bitmap_coordinates(name, 'opacity', opacity_map)
         dis = float(mat.opacity) / 100.0
         if not math.isfinite(dis):
             raise ValueError(f"material {name!r}: dissolve {dis} outside 0..1")
         if has_diffuse:
-            rgb, alpha = _bitmap_rgb(diffuse_map)
+            rgb, alpha = _bitmap_rgb(diffuse_map, name, 'diffuse')
             spec = {'rgb': rgb, 'dissolve': dis}
             if any(a < 255 for row in alpha for a in row):
                 spec['alpha'] = alpha
             if has_opacity:
-                orgb, oalpha = _bitmap_rgb(opacity_map)
+                orgb, oalpha = _bitmap_rgb(opacity_map, name, 'opacity')
                 if any(a < 255 for row in oalpha for a in row):
                     spec['opacity_alpha'] = True
                 spec['opacity'] = [[px[0] for px in row] for row in orgb]
@@ -884,6 +1016,16 @@ def _bind_atlas(node, image):
     if not any('rgb' in spec for spec in specs.values()):
         return
     rt = _rt()
+    # Re-check the copy before any atlas PNG or Bitmaptexture is created.
+    for name, mat in _submaterials(node).items():
+        if name not in specs or 'rgb' not in specs[name]:
+            continue
+        diffuse_map = mat.diffuseMap if hasattr(mat, 'diffuseMap') else None
+        opacity_map = mat.opacityMap if hasattr(mat, 'opacityMap') else None
+        if _bitmap_texture(diffuse_map):
+            _require_neutral_bitmap_coordinates(name, 'diffuse', diffuse_map)
+        if _bitmap_texture(opacity_map):
+            _require_neutral_bitmap_coordinates(name, 'opacity', opacity_map)
     size = image['size']
     rgb, alpha = image['rgb'], image['alpha']
     dirty = set()

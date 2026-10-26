@@ -3,6 +3,13 @@ AGR_TOOLS_REGISTERED version=0.2.0 category=AGR Tools macros=XView,Cleanup,MatID
 AGR_INSTALL_REGISTERED xView Cleanup MatID Open Nudge NudgeApply Atlas AtlasApply
 AGR_NATIVE_COMPLETE clean=3 planted=3 dry_run_unchanged=true originals_unchanged=true
 native_exit=0
-seconds=39.6
+seconds=39.4
 product=3ds Max 2024.2.5 Security Fix (26.2.5.192)
-python=3.10.14
+python=3.10
+wrapper_status=ok
+coordinate_witness=unsupported map coordinate: Witness diffuse U_Tiling=2
+coordinate_copies=0
+coordinate_files=0
+source_u_tiling=2
+source_opacity=40
+package_sha256=8421a4f2fddae9ed1315c1ba5f0553db9dc9c71a43df61350e699573e5a54208

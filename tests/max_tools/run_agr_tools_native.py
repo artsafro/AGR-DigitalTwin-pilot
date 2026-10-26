@@ -425,6 +425,78 @@ assert opacity_only.material.diffuseMap is None or str(rt.classOf(opacity_only.m
     'undefined', 'UndefinedClass')
 results['atlas_opacity_only'] = {'objects': opacity_count, 'created': 0}
 
+
+def output_files():
+    return sorted(path.relative_to(OUT).as_posix() for path in OUT.rglob('*') if path.is_file())
+
+
+def reject_map_coordinate(node, setting, slot):
+    """Preview and apply must name the coordinate and create nothing."""
+    before_files = output_files()
+    before_count = len(list(rt.objects))
+    preview_error = raises(lambda: agr.atlas_preview([node]), 'unsupported map coordinate')
+    apply_error = raises(
+        lambda: agr.atlas_apply([node], {'report': {}, 'plans': []}), 'unsupported map coordinate')
+    assert len(list(rt.objects)) == before_count, 'coordinate rejection created a node'
+    assert output_files() == before_files, 'coordinate rejection created a file'
+    needle = f'{node.material.name} {slot} {setting}='
+    assert needle in preview_error, preview_error
+    assert needle in apply_error, apply_error
+    return preview_error
+
+
+def put_coord(tex, setting, value):
+    setattr(tex.coords, setting, value)
+    return getattr(tex.coords, setting)
+
+
+# Combined witness: tiled diffuse coordinates must not become a clean untransformed atlas.
+witness_pixels = [(255, 255, 255, a) for a in (0, 0, 0, 0, 255, 255, 255, 255)]
+witness_tex = make_bitmap(8, 1, witness_pixels, 'witness-tiling')
+witness = atlas_quad('synthetic_atlas_coord_witness', witness_tex)
+witness.material.name = 'Witness'
+witness.material.opacity = 40
+put_coord(witness_tex, 'U_Tiling', 2)
+witness_files = output_files()
+witness_count = len(list(rt.objects))
+witness_error = reject_map_coordinate(witness, 'U_Tiling', 'diffuse')
+assert witness_error == 'unsupported map coordinate: Witness diffuse U_Tiling=2', witness_error
+assert abs(float(witness.material.diffuseMap.coords.U_Tiling) - 2) <= 1e-9
+assert abs(float(witness.material.opacity) - 40) <= 1e-9
+assert output_files() == witness_files and len(list(rt.objects)) == witness_count
+results['atlas_coord_witness'] = {
+    'error': witness_error,
+    'copies': 0,
+    'files': 0,
+    'u_tiling': float(witness.material.diffuseMap.coords.U_Tiling),
+    'opacity': float(witness.material.opacity),
+    'uv': map_uvs(witness),
+}
+
+coord_rejections = {}
+for case, setting, value, slot in (
+    ('u_offset', 'U_Offset', 0.25, 'diffuse'),
+    ('v_tiling', 'V_Tiling', 3, 'diffuse'),
+    ('u_angle', 'U_Angle', 0.5, 'diffuse'),
+    ('u_mirror', 'U_Mirror', True, 'opacity'),
+    ('map_channel', 'mapChannel', 2, 'diffuse'),
+):
+    diffuse = make_bitmap(8, 1, [(255, 0, 0, 255)] * 8, 'coord-' + case)
+    node = atlas_quad('synthetic_atlas_coord_' + case, diffuse)
+    node.material.name = 'Coord' + case
+    if slot == 'opacity':
+        opacity = make_bitmap(8, 1, [(128, 128, 128, 255)] * 8, 'coord-' + case + '-opacity')
+        node.material.opacityMap = opacity
+        target = opacity
+    else:
+        target = diffuse
+    put_coord(target, setting, value)
+    message = reject_map_coordinate(node, setting, slot)
+    shown = agr.format_map_coordinate_value(getattr(target.coords, setting))
+    assert message == f'unsupported map coordinate: {node.material.name} {slot} {setting}={shown}', message
+    coord_rejections[case] = message
+results['atlas_coord_rejections'] = coord_rejections
+
 for macro in ('AGRToolsNudge', 'AGRToolsAtlas'):
     rt.select(clean_nudge if macro.endswith('Nudge') else atlas_copies[0])
     if macro.endswith('Nudge'):
