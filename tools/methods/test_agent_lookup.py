@@ -57,6 +57,12 @@ def test_invalid_matrix(mod, mutation):
     with pytest.raises(ValueError): mod.validate_matrix(rows)
 
 
+def test_extract_json(mod):
+    assert mod.extract_json('Evidence.\n```json\n{"answer": 0.002}\n```') == {'answer': 0.002}
+    with pytest.raises(ValueError): mod.extract_json('No answer')
+    with pytest.raises(ValueError): mod.extract_json('{"answer": 1} {"answer": 2}')
+
+
 def test_tokens(mod):
     assert mod.total_tokens(matrix()[0]) == 65
     with pytest.raises(ValueError): mod.total_tokens({'input_tokens':1})

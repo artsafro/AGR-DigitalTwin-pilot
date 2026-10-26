@@ -74,10 +74,11 @@ def write_new(path, text, inputs=()):
 
 
 def extract_json(text):
-    text = text.strip()
-    if text.startswith('```'):
-        text = text.split('\n',1)[1].rsplit('```',1)[0]
-    return json.loads(text)
+    # Keep the one complete object verbatim; reject absent or multiple objects.
+    start, end = text.find('{'), text.rfind('}')
+    if start < 0 or end < start:
+        raise ValueError('no JSON object in model response')
+    return json.loads(text[start:end+1])
 
 
 def session(prompt, cwd, config, log, model=MODEL, tools='Read,Grep,Glob'):
@@ -88,19 +89,24 @@ def session(prompt, cwd, config, log, model=MODEL, tools='Read,Grep,Glob'):
            '--allowedTools','Read,Grep,Glob,mcp__graphify__query,mcp__graphify__path,mcp__graphify__explain,mcp__context7__resolve-library-id,mcp__context7__query-docs',
            '--permission-mode','dontAsk','--system-prompt',SYSTEM,
            '--output-format','stream-json','--verbose']
-    start = time.perf_counter()
-    env = os.environ.copy(); env.pop('CLAUDE_CODE_SIMPLE',None)
-    p = subprocess.run(cmd,cwd=cwd,env=env,capture_output=True,text=True,encoding='utf-8',timeout=600)
-    wall = time.perf_counter()-start
-    write_new(log,p.stdout)
-    write_new(str(log)+'.stderr',p.stderr)
-    events = [json.loads(line) for line in p.stdout.splitlines() if line.strip()]
+    if Path(log).exists():
+        # Recover the original completed session after a reporting/parser failure;
+        # do not rerun a question or select a different answer.
+        raw = Path(log).read_text(encoding='utf-8')
+        code, stderr = 0, ''
+    else:
+        env = os.environ.copy(); env.pop('CLAUDE_CODE_SIMPLE',None)
+        p = subprocess.run(cmd,cwd=cwd,env=env,capture_output=True,text=True,encoding='utf-8',timeout=600)
+        raw, code, stderr = p.stdout, p.returncode, p.stderr
+        write_new(log,raw)
+        write_new(str(log)+'.stderr',stderr)
+    events = [json.loads(line) for line in raw.splitlines() if line.strip()]
     end = next((x for x in reversed(events) if x.get('type') == 'result'),{})
-    if p.returncode or end.get('is_error') or end.get('terminal_reason') != 'completed':
-        raise RuntimeError(f'Claude failed; evidence {log}; {end.get("result",p.stderr)[-500:]}')
+    if code or end.get('is_error') or end.get('terminal_reason') != 'completed':
+        raise RuntimeError(f'Claude failed; evidence {log}; {end.get("result",stderr)[-500:]}')
     if end.get('permission_denials'):
         raise RuntimeError(f'tool permission denied; evidence {log}')
-    return end,events,wall,cmd
+    return end,events,end['duration_ms']/1000,cmd
 
 
 def audit(events):
@@ -118,10 +124,20 @@ def run(work):
     subprocess.run(['git','diff','--exit-code','HEAD','--',str(DOCS/'questions.json')],cwd=ROOT,check=True)
     if subprocess.check_output(['git','rev-parse','HEAD:docs/methods/sources/agent-lookup/questions.json'],cwd=ROOT).strip() == b'':
         raise ValueError('questions must be committed')
-    write_new(work/'run-start.json',json.dumps({'model':MODEL,'source':SOURCE,'started_unix':time.time(),
-        'questions_commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()}))
+    import hashlib
+    identity = {'model':MODEL,'source':SOURCE,
+        'questions_sha256':hashlib.sha256((DOCS/'questions.json').read_bytes()).hexdigest(),
+        'system_sha256':hashlib.sha256(SYSTEM.encode()).hexdigest()}
+    marker = work/'measurement-manifest.json'
+    if marker.exists():
+        if json.loads(marker.read_text()) != identity:
+            raise ValueError('stale receipts: questions, source, model or prompt changed')
+    else:
+        write_new(marker,json.dumps(identity,indent=2))
     for i,q in enumerate(questions):
         for v in ('ABC'[i%3:]+'ABC'[:i%3]):
+            if (work/'rows'/f'{q["id"]}-{v}.json').exists():
+                continue
             repo = work / {'A':'baseline','B':'repo','C':'context7-repo'}[v]
             if subprocess.check_output(['git','rev-parse','HEAD'],cwd=repo,text=True).strip() != SOURCE:
                 raise ValueError('source snapshot changed')
