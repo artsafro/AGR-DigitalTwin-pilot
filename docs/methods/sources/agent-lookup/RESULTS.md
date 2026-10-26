@@ -79,7 +79,7 @@ not separately timed and is not hidden in the query medians. The graph contains 
 - Job questions are all KPP1 facts because the frozen main lacks AC07 and D186. This is a bounded pilot lookup set, not representative of every job.
 - B measures strictly local AST graphify, **not** semantic indexing of documentation/PDFs. Most rule answers require fallback search.
 - C can retrieve current upstream API docs; these are not guaranteed to be version-pinned Blender 5.0 docs. Actual resolved IDs/queries are in the rows.
-- Context7 was used only for API questions; no repo/job text, drawings or private PDFs were submitted to it.
+- Context7 was used only for API questions: **8 calls across Q15-Q18 (4/6 API questions)**; Q19-Q20 used local lookup despite tool availability. Q16 resolved a library but fell back without querying docs. This measures the offered-tool treatment, not a forced context7-only solver. No repo/job text, drawings or private PDFs were submitted to it.
 - The initial complete 60-session attempt was excluded wholesale after automatic global Claude runtime-cache writes were detected. Its raw evidence is retained separately, not mixed into these medians. See PROTOCOL.md for the repair and reproducible isolation hashes.
 - Final sessions plus their independent judge left the three monitored global config paths unchanged (byte hashes and absent-path state match in isolation.json). No global tool/skill installation or persistent MCP change was made.
 - No candidate is adopted or registered for workers. User acceptance of tooling is a separate later decision.
