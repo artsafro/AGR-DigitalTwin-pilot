@@ -1,0 +1,2682 @@
+[
+  {
+    "case": "identity",
+    "units": "meters",
+    "gap_mm": 1,
+    "measured_mm": 1.0000000474974513,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 5395,
+          "name": "synthetic_transform_identity",
+          "findings": [
+            {
+              "code": "overlap_vertices",
+              "ids": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "detail": ""
+            },
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "identity",
+    "units": "meters",
+    "gap_mm": 2,
+    "measured_mm": 2.0000000949949026,
+    "error": "vertex exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "identity",
+    "units": "meters",
+    "gap_mm": 4.99,
+    "measured_mm": 4.989999812096357,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 5835,
+          "name": "synthetic_transform_identity",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "identity",
+    "units": "meters",
+    "gap_mm": 5,
+    "measured_mm": 4.999999888241291,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 6055,
+          "name": "synthetic_transform_identity",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "identity",
+    "units": "meters",
+    "gap_mm": 5.01,
+    "measured_mm": 5.009999964386225,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 6275,
+          "name": "synthetic_transform_identity",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "identity",
+    "units": "meters",
+    "gap_mm": 10,
+    "measured_mm": 9.999999776482582,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 6495,
+          "name": "synthetic_transform_identity",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "uniform_small",
+    "units": "meters",
+    "gap_mm": 1,
+    "measured_mm": 1.0000000474974513,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 6715,
+          "name": "synthetic_transform_uniform_small",
+          "findings": [
+            {
+              "code": "overlap_vertices",
+              "ids": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "detail": ""
+            },
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "uniform_small",
+    "units": "meters",
+    "gap_mm": 2,
+    "measured_mm": 2.0000000949949026,
+    "error": "vertex exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "uniform_small",
+    "units": "meters",
+    "gap_mm": 4.99,
+    "measured_mm": 4.989999812096357,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 7155,
+          "name": "synthetic_transform_uniform_small",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "uniform_small",
+    "units": "meters",
+    "gap_mm": 5,
+    "measured_mm": 5.000000353902578,
+    "error": "MAXScript exception raised.\n-- Runtime error: face exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "uniform_small",
+    "units": "meters",
+    "gap_mm": 5.01,
+    "measured_mm": 5.009999964386225,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 7595,
+          "name": "synthetic_transform_uniform_small",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "uniform_small",
+    "units": "meters",
+    "gap_mm": 10,
+    "measured_mm": 10.000000707805157,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 7815,
+          "name": "synthetic_transform_uniform_small",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "uniform_large",
+    "units": "meters",
+    "gap_mm": 1,
+    "measured_mm": 0.9999999310821295,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 8035,
+          "name": "synthetic_transform_uniform_large",
+          "findings": [
+            {
+              "code": "overlap_vertices",
+              "ids": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "detail": ""
+            },
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "uniform_large",
+    "units": "meters",
+    "gap_mm": 2,
+    "measured_mm": 1.999999862164259,
+    "error": "vertex exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "uniform_large",
+    "units": "meters",
+    "gap_mm": 4.99,
+    "measured_mm": 4.990000277757645,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 8475,
+          "name": "synthetic_transform_uniform_large",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "uniform_large",
+    "units": "meters",
+    "gap_mm": 5,
+    "measured_mm": 5.000000353902578,
+    "error": "MAXScript exception raised.\n-- Runtime error: face exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "uniform_large",
+    "units": "meters",
+    "gap_mm": 5.01,
+    "measured_mm": 5.009999498724937,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 8915,
+          "name": "synthetic_transform_uniform_large",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "uniform_large",
+    "units": "meters",
+    "gap_mm": 10,
+    "measured_mm": 10.000000707805157,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 9135,
+          "name": "synthetic_transform_uniform_large",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "nonuniform_small",
+    "units": "meters",
+    "gap_mm": 1,
+    "measured_mm": 1.0000000474974513,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 9355,
+          "name": "synthetic_transform_nonuniform_small",
+          "findings": [
+            {
+              "code": "overlap_vertices",
+              "ids": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "detail": ""
+            },
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "nonuniform_small",
+    "units": "meters",
+    "gap_mm": 2,
+    "measured_mm": 2.0000000949949026,
+    "error": "vertex exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "nonuniform_small",
+    "units": "meters",
+    "gap_mm": 4.99,
+    "measured_mm": 4.989999812096357,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 9795,
+          "name": "synthetic_transform_nonuniform_small",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "nonuniform_small",
+    "units": "meters",
+    "gap_mm": 5,
+    "measured_mm": 5.000000353902578,
+    "error": "MAXScript exception raised.\n-- Runtime error: face exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "nonuniform_small",
+    "units": "meters",
+    "gap_mm": 5.01,
+    "measured_mm": 5.009999964386225,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 10235,
+          "name": "synthetic_transform_nonuniform_small",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "nonuniform_small",
+    "units": "meters",
+    "gap_mm": 10,
+    "measured_mm": 10.000000707805157,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 10455,
+          "name": "synthetic_transform_nonuniform_small",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "nonuniform_large",
+    "units": "meters",
+    "gap_mm": 1,
+    "measured_mm": 0.9999999310821295,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 10675,
+          "name": "synthetic_transform_nonuniform_large",
+          "findings": [
+            {
+              "code": "overlap_vertices",
+              "ids": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "detail": ""
+            },
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "nonuniform_large",
+    "units": "meters",
+    "gap_mm": 2,
+    "measured_mm": 1.999999862164259,
+    "error": "vertex exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "nonuniform_large",
+    "units": "meters",
+    "gap_mm": 4.99,
+    "measured_mm": 4.990000277757645,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 11115,
+          "name": "synthetic_transform_nonuniform_large",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "nonuniform_large",
+    "units": "meters",
+    "gap_mm": 5,
+    "measured_mm": 5.000000353902578,
+    "error": "MAXScript exception raised.\n-- Runtime error: face exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "nonuniform_large",
+    "units": "meters",
+    "gap_mm": 5.01,
+    "measured_mm": 5.009999498724937,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 11555,
+          "name": "synthetic_transform_nonuniform_large",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "nonuniform_large",
+    "units": "meters",
+    "gap_mm": 10,
+    "measured_mm": 10.000000707805157,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 11775,
+          "name": "synthetic_transform_nonuniform_large",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "mirrored",
+    "units": "meters",
+    "gap_mm": 1,
+    "measured_mm": 1.0000000474974513,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 11995,
+          "name": "synthetic_transform_mirrored",
+          "findings": [
+            {
+              "code": "overlap_vertices",
+              "ids": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "detail": ""
+            },
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "mirrored",
+    "units": "meters",
+    "gap_mm": 2,
+    "measured_mm": 2.0000000949949026,
+    "error": "vertex exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "mirrored",
+    "units": "meters",
+    "gap_mm": 4.99,
+    "measured_mm": 4.989999812096357,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 12435,
+          "name": "synthetic_transform_mirrored",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "mirrored",
+    "units": "meters",
+    "gap_mm": 5,
+    "measured_mm": 5.000000353902578,
+    "error": "MAXScript exception raised.\n-- Runtime error: face exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "mirrored",
+    "units": "meters",
+    "gap_mm": 5.01,
+    "measured_mm": 5.009999964386225,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 12875,
+          "name": "synthetic_transform_mirrored",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "mirrored",
+    "units": "meters",
+    "gap_mm": 10,
+    "measured_mm": 10.000000707805157,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 13095,
+          "name": "synthetic_transform_mirrored",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "parent_small",
+    "units": "meters",
+    "gap_mm": 1,
+    "measured_mm": 1.0000000474974513,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 13315,
+          "name": "synthetic_transform_parent_small",
+          "findings": [
+            {
+              "code": "overlap_vertices",
+              "ids": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "detail": ""
+            },
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "parent_small",
+    "units": "meters",
+    "gap_mm": 2,
+    "measured_mm": 2.0000000949949026,
+    "error": "vertex exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "parent_small",
+    "units": "meters",
+    "gap_mm": 4.99,
+    "measured_mm": 4.989999812096357,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 13843,
+          "name": "synthetic_transform_parent_small",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "parent_small",
+    "units": "meters",
+    "gap_mm": 5,
+    "measured_mm": 5.000000353902578,
+    "error": "MAXScript exception raised.\n-- Runtime error: face exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "parent_small",
+    "units": "meters",
+    "gap_mm": 5.01,
+    "measured_mm": 5.009999964386225,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 14371,
+          "name": "synthetic_transform_parent_small",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "parent_small",
+    "units": "meters",
+    "gap_mm": 10,
+    "measured_mm": 10.000000707805157,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 14635,
+          "name": "synthetic_transform_parent_small",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "parent_large",
+    "units": "meters",
+    "gap_mm": 1,
+    "measured_mm": 0.9999999310821295,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 14899,
+          "name": "synthetic_transform_parent_large",
+          "findings": [
+            {
+              "code": "overlap_vertices",
+              "ids": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "detail": ""
+            },
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "parent_large",
+    "units": "meters",
+    "gap_mm": 2,
+    "measured_mm": 1.999999862164259,
+    "error": "vertex exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "parent_large",
+    "units": "meters",
+    "gap_mm": 4.99,
+    "measured_mm": 4.990000277757645,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 15427,
+          "name": "synthetic_transform_parent_large",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "parent_large",
+    "units": "meters",
+    "gap_mm": 5,
+    "measured_mm": 5.000000353902578,
+    "error": "MAXScript exception raised.\n-- Runtime error: face exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "parent_large",
+    "units": "meters",
+    "gap_mm": 5.01,
+    "measured_mm": 5.009999498724937,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 15955,
+          "name": "synthetic_transform_parent_large",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "parent_large",
+    "units": "meters",
+    "gap_mm": 10,
+    "measured_mm": 10.000000707805157,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 16219,
+          "name": "synthetic_transform_parent_large",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "parent_shear",
+    "units": "meters",
+    "gap_mm": 1,
+    "measured_mm": 1.0000000474974513,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 16483,
+          "name": "synthetic_transform_parent_shear",
+          "findings": [
+            {
+              "code": "overlap_vertices",
+              "ids": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "detail": ""
+            },
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "parent_shear",
+    "units": "meters",
+    "gap_mm": 2,
+    "measured_mm": 2.0000000949949026,
+    "error": "vertex exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "parent_shear",
+    "units": "meters",
+    "gap_mm": 4.99,
+    "measured_mm": 4.989999812096357,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 17011,
+          "name": "synthetic_transform_parent_shear",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "parent_shear",
+    "units": "meters",
+    "gap_mm": 5,
+    "measured_mm": 5.000000353902578,
+    "error": "MAXScript exception raised.\n-- Runtime error: face exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "parent_shear",
+    "units": "meters",
+    "gap_mm": 5.01,
+    "measured_mm": 5.009999964386225,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 17539,
+          "name": "synthetic_transform_parent_shear",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "parent_shear",
+    "units": "meters",
+    "gap_mm": 10,
+    "measured_mm": 10.000000707805157,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 17803,
+          "name": "synthetic_transform_parent_shear",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "mirrored_z",
+    "units": "meters",
+    "gap_mm": 1,
+    "measured_mm": 1.0000000474974513,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 18067,
+          "name": "synthetic_transform_mirrored_z",
+          "findings": [
+            {
+              "code": "overlap_vertices",
+              "ids": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "detail": ""
+            },
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "mirrored_z",
+    "units": "meters",
+    "gap_mm": 2,
+    "measured_mm": 2.0000000949949026,
+    "error": "vertex exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "mirrored_z",
+    "units": "meters",
+    "gap_mm": 4.99,
+    "measured_mm": 4.989999812096357,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 18507,
+          "name": "synthetic_transform_mirrored_z",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "mirrored_z",
+    "units": "meters",
+    "gap_mm": 5,
+    "measured_mm": 4.999999888241291,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 18727,
+          "name": "synthetic_transform_mirrored_z",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "mirrored_z",
+    "units": "meters",
+    "gap_mm": 5.01,
+    "measured_mm": 5.009999964386225,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 18947,
+          "name": "synthetic_transform_mirrored_z",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "mirrored_z",
+    "units": "meters",
+    "gap_mm": 10,
+    "measured_mm": 9.999999776482582,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 19167,
+          "name": "synthetic_transform_mirrored_z",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "identity",
+    "units": "millimeters",
+    "gap_mm": 1,
+    "measured_mm": 1.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 19429,
+          "name": "synthetic_transform_identity",
+          "findings": [
+            {
+              "code": "overlap_vertices",
+              "ids": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "detail": ""
+            },
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "identity",
+    "units": "millimeters",
+    "gap_mm": 2,
+    "measured_mm": 2.0,
+    "error": "vertex exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "identity",
+    "units": "millimeters",
+    "gap_mm": 4.99,
+    "measured_mm": 4.989999771118164,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 19869,
+          "name": "synthetic_transform_identity",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "identity",
+    "units": "millimeters",
+    "gap_mm": 5,
+    "measured_mm": 5.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 20089,
+          "name": "synthetic_transform_identity",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "identity",
+    "units": "millimeters",
+    "gap_mm": 5.01,
+    "measured_mm": 5.010000228881836,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 20309,
+          "name": "synthetic_transform_identity",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "identity",
+    "units": "millimeters",
+    "gap_mm": 10,
+    "measured_mm": 10.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 20529,
+          "name": "synthetic_transform_identity",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "uniform_small",
+    "units": "millimeters",
+    "gap_mm": 1,
+    "measured_mm": 1.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 20749,
+          "name": "synthetic_transform_uniform_small",
+          "findings": [
+            {
+              "code": "overlap_vertices",
+              "ids": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "detail": ""
+            },
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "uniform_small",
+    "units": "millimeters",
+    "gap_mm": 2,
+    "measured_mm": 2.0,
+    "error": "vertex exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "uniform_small",
+    "units": "millimeters",
+    "gap_mm": 4.99,
+    "measured_mm": 4.990000247955322,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 21189,
+          "name": "synthetic_transform_uniform_small",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "uniform_small",
+    "units": "millimeters",
+    "gap_mm": 5,
+    "measured_mm": 5.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 21409,
+          "name": "synthetic_transform_uniform_small",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "uniform_small",
+    "units": "millimeters",
+    "gap_mm": 5.01,
+    "measured_mm": 5.009999752044678,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 21629,
+          "name": "synthetic_transform_uniform_small",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "uniform_small",
+    "units": "millimeters",
+    "gap_mm": 10,
+    "measured_mm": 10.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 21849,
+          "name": "synthetic_transform_uniform_small",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "uniform_large",
+    "units": "millimeters",
+    "gap_mm": 1,
+    "measured_mm": 1.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 22069,
+          "name": "synthetic_transform_uniform_large",
+          "findings": [
+            {
+              "code": "overlap_vertices",
+              "ids": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "detail": ""
+            },
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "uniform_large",
+    "units": "millimeters",
+    "gap_mm": 2,
+    "measured_mm": 2.0,
+    "error": "vertex exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "uniform_large",
+    "units": "millimeters",
+    "gap_mm": 4.99,
+    "measured_mm": 4.990000247955322,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 22509,
+          "name": "synthetic_transform_uniform_large",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "uniform_large",
+    "units": "millimeters",
+    "gap_mm": 5,
+    "measured_mm": 5.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 22729,
+          "name": "synthetic_transform_uniform_large",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "uniform_large",
+    "units": "millimeters",
+    "gap_mm": 5.01,
+    "measured_mm": 5.009999752044678,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 22949,
+          "name": "synthetic_transform_uniform_large",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "uniform_large",
+    "units": "millimeters",
+    "gap_mm": 10,
+    "measured_mm": 10.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 23169,
+          "name": "synthetic_transform_uniform_large",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "nonuniform_small",
+    "units": "millimeters",
+    "gap_mm": 1,
+    "measured_mm": 1.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 23389,
+          "name": "synthetic_transform_nonuniform_small",
+          "findings": [
+            {
+              "code": "overlap_vertices",
+              "ids": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "detail": ""
+            },
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "nonuniform_small",
+    "units": "millimeters",
+    "gap_mm": 2,
+    "measured_mm": 2.0,
+    "error": "vertex exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "nonuniform_small",
+    "units": "millimeters",
+    "gap_mm": 4.99,
+    "measured_mm": 4.990000247955322,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 23829,
+          "name": "synthetic_transform_nonuniform_small",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "nonuniform_small",
+    "units": "millimeters",
+    "gap_mm": 5,
+    "measured_mm": 5.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 24049,
+          "name": "synthetic_transform_nonuniform_small",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "nonuniform_small",
+    "units": "millimeters",
+    "gap_mm": 5.01,
+    "measured_mm": 5.009999752044678,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 24269,
+          "name": "synthetic_transform_nonuniform_small",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "nonuniform_small",
+    "units": "millimeters",
+    "gap_mm": 10,
+    "measured_mm": 10.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 24489,
+          "name": "synthetic_transform_nonuniform_small",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "nonuniform_large",
+    "units": "millimeters",
+    "gap_mm": 1,
+    "measured_mm": 1.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 24709,
+          "name": "synthetic_transform_nonuniform_large",
+          "findings": [
+            {
+              "code": "overlap_vertices",
+              "ids": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "detail": ""
+            },
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "nonuniform_large",
+    "units": "millimeters",
+    "gap_mm": 2,
+    "measured_mm": 2.0,
+    "error": "vertex exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "nonuniform_large",
+    "units": "millimeters",
+    "gap_mm": 4.99,
+    "measured_mm": 4.990000247955322,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 25149,
+          "name": "synthetic_transform_nonuniform_large",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "nonuniform_large",
+    "units": "millimeters",
+    "gap_mm": 5,
+    "measured_mm": 5.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 25369,
+          "name": "synthetic_transform_nonuniform_large",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "nonuniform_large",
+    "units": "millimeters",
+    "gap_mm": 5.01,
+    "measured_mm": 5.009999752044678,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 25589,
+          "name": "synthetic_transform_nonuniform_large",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "nonuniform_large",
+    "units": "millimeters",
+    "gap_mm": 10,
+    "measured_mm": 10.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 25809,
+          "name": "synthetic_transform_nonuniform_large",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "mirrored",
+    "units": "millimeters",
+    "gap_mm": 1,
+    "measured_mm": 1.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 26029,
+          "name": "synthetic_transform_mirrored",
+          "findings": [
+            {
+              "code": "overlap_vertices",
+              "ids": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "detail": ""
+            },
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "mirrored",
+    "units": "millimeters",
+    "gap_mm": 2,
+    "measured_mm": 2.0,
+    "error": "vertex exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "mirrored",
+    "units": "millimeters",
+    "gap_mm": 4.99,
+    "measured_mm": 4.990000247955322,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 26469,
+          "name": "synthetic_transform_mirrored",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "mirrored",
+    "units": "millimeters",
+    "gap_mm": 5,
+    "measured_mm": 5.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 26689,
+          "name": "synthetic_transform_mirrored",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "mirrored",
+    "units": "millimeters",
+    "gap_mm": 5.01,
+    "measured_mm": 5.009999752044678,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 26909,
+          "name": "synthetic_transform_mirrored",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "mirrored",
+    "units": "millimeters",
+    "gap_mm": 10,
+    "measured_mm": 10.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 27129,
+          "name": "synthetic_transform_mirrored",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "parent_small",
+    "units": "millimeters",
+    "gap_mm": 1,
+    "measured_mm": 1.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 27349,
+          "name": "synthetic_transform_parent_small",
+          "findings": [
+            {
+              "code": "overlap_vertices",
+              "ids": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "detail": ""
+            },
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "parent_small",
+    "units": "millimeters",
+    "gap_mm": 2,
+    "measured_mm": 2.0,
+    "error": "vertex exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "parent_small",
+    "units": "millimeters",
+    "gap_mm": 4.99,
+    "measured_mm": 4.990000247955322,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 27877,
+          "name": "synthetic_transform_parent_small",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "parent_small",
+    "units": "millimeters",
+    "gap_mm": 5,
+    "measured_mm": 5.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 28141,
+          "name": "synthetic_transform_parent_small",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "parent_small",
+    "units": "millimeters",
+    "gap_mm": 5.01,
+    "measured_mm": 5.009999752044678,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 28405,
+          "name": "synthetic_transform_parent_small",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "parent_small",
+    "units": "millimeters",
+    "gap_mm": 10,
+    "measured_mm": 10.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 28669,
+          "name": "synthetic_transform_parent_small",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "parent_large",
+    "units": "millimeters",
+    "gap_mm": 1,
+    "measured_mm": 1.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 28933,
+          "name": "synthetic_transform_parent_large",
+          "findings": [
+            {
+              "code": "overlap_vertices",
+              "ids": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "detail": ""
+            },
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "parent_large",
+    "units": "millimeters",
+    "gap_mm": 2,
+    "measured_mm": 2.0,
+    "error": "vertex exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "parent_large",
+    "units": "millimeters",
+    "gap_mm": 4.99,
+    "measured_mm": 4.990000247955322,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 29461,
+          "name": "synthetic_transform_parent_large",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "parent_large",
+    "units": "millimeters",
+    "gap_mm": 5,
+    "measured_mm": 5.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 29725,
+          "name": "synthetic_transform_parent_large",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "parent_large",
+    "units": "millimeters",
+    "gap_mm": 5.01,
+    "measured_mm": 5.009999752044678,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 29989,
+          "name": "synthetic_transform_parent_large",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "parent_large",
+    "units": "millimeters",
+    "gap_mm": 10,
+    "measured_mm": 10.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 30253,
+          "name": "synthetic_transform_parent_large",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "parent_shear",
+    "units": "millimeters",
+    "gap_mm": 1,
+    "measured_mm": 1.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 30517,
+          "name": "synthetic_transform_parent_shear",
+          "findings": [
+            {
+              "code": "overlap_vertices",
+              "ids": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "detail": ""
+            },
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "parent_shear",
+    "units": "millimeters",
+    "gap_mm": 2,
+    "measured_mm": 2.0,
+    "error": "vertex exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "parent_shear",
+    "units": "millimeters",
+    "gap_mm": 4.99,
+    "measured_mm": 4.990000247955322,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 31045,
+          "name": "synthetic_transform_parent_shear",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "parent_shear",
+    "units": "millimeters",
+    "gap_mm": 5,
+    "measured_mm": 5.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 31309,
+          "name": "synthetic_transform_parent_shear",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "parent_shear",
+    "units": "millimeters",
+    "gap_mm": 5.01,
+    "measured_mm": 5.009999752044678,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 31573,
+          "name": "synthetic_transform_parent_shear",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "parent_shear",
+    "units": "millimeters",
+    "gap_mm": 10,
+    "measured_mm": 10.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 31837,
+          "name": "synthetic_transform_parent_shear",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "mirrored_z",
+    "units": "millimeters",
+    "gap_mm": 1,
+    "measured_mm": 1.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 32101,
+          "name": "synthetic_transform_mirrored_z",
+          "findings": [
+            {
+              "code": "overlap_vertices",
+              "ids": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "detail": ""
+            },
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "mirrored_z",
+    "units": "millimeters",
+    "gap_mm": 2,
+    "measured_mm": 2.0,
+    "error": "vertex exactly at threshold (float32 ambiguity); no clean verdict",
+    "passed": true
+  },
+  {
+    "case": "mirrored_z",
+    "units": "millimeters",
+    "gap_mm": 4.99,
+    "measured_mm": 4.989999771118164,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 32541,
+          "name": "synthetic_transform_mirrored_z",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "mirrored_z",
+    "units": "millimeters",
+    "gap_mm": 5,
+    "measured_mm": 5.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 32761,
+          "name": "synthetic_transform_mirrored_z",
+          "findings": [
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "mirrored_z",
+    "units": "millimeters",
+    "gap_mm": 5.01,
+    "measured_mm": 5.010000228881836,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 32981,
+          "name": "synthetic_transform_mirrored_z",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  },
+  {
+    "case": "mirrored_z",
+    "units": "millimeters",
+    "gap_mm": 10,
+    "measured_mm": 10.0,
+    "report": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 33201,
+          "name": "synthetic_transform_mirrored_z",
+          "findings": []
+        }
+      ]
+    },
+    "passed": true
+  }
+]
