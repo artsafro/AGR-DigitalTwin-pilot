@@ -14,8 +14,9 @@ Upstream lines: 129-134
 ## trimesh convex hull
 Source: https://raw.githubusercontent.com/mikedh/trimesh/main/trimesh/base.py
 SHA256 (full response): 0090309bfd53eba33136076799c86525506b1d1aeff706d7a06af2f020469854
-Upstream lines: 2508-2519
+Upstream lines: 2507-2519 (cache_decorator exposes this as a cached property)
 ```
+    @cache_decorator
     def convex_hull(self) -> "Trimesh":
         """
         Returns a Trimesh object representing the convex hull of
