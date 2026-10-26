@@ -255,3 +255,20 @@ def test_committed_results_regenerate_byte_identical():
         pytest.skip("no committed windows-glazing rows yet")
     md = path.with_name("RESULTS.md").read_text(encoding="utf-8")
     assert rmd.render(rmd.read_rows(path), "windows-glazing") == md
+
+
+def test_when_rules_cite_existing_rows_and_numbers():
+    import re
+
+    base = TOOLS.parents[1] / "docs" / "methods" / "windows-glazing"
+    if not (base / "results.jsonl").is_file():
+        pytest.skip("no committed windows-glazing rows yet")
+    n = len(rmd.read_rows(base / "results.jsonl"))
+    text = (base / "WHEN.md").read_text(encoding="utf-8")
+    assert len(text.splitlines()) <= 15
+    rules = [ln for ln in text.splitlines() if ln.startswith("- ")]
+    assert rules
+    for rule in rules:
+        cited = [int(x) for x in re.findall(r"\bR(\d+)\b", rule)]
+        assert cited and all(1 <= c <= n for c in cited), rule
+        assert re.search(r"\d", re.sub(r"\bR\d+\b", "", rule)), f"rule without a number: {rule}"

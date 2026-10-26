@@ -21,7 +21,7 @@ Our own code only: team scripts and plugins are described by their logic in `doc
 | Class | Status | What a variant produces |
 |---|---|---|
 | [building-body](building-body/VARIANTS.md) | stub | OKS body mesh (walls, slabs, roof, decor) from the sources |
-| [windows-glazing](windows-glazing/VARIANTS.md) | stub | windows, frames and glass (geometry or atlas planes) |
+| [windows-glazing](windows-glazing/VARIANTS.md) | **measured** (3 variants x 3 objects + source reference) | windows, frames and glass (geometry or atlas planes) |
 | [ground-terrain](ground-terrain/VARIANTS.md) | stub | Ground surface: relief, paving, kerbs, layers |
 | [ucx-collisions](ucx-collisions/VARIANTS.md) | **measured** (5 variants x 3 objects) | VPM UCX collision pieces |
 | [texturing-by-drawings](texturing-by-drawings/VARIANTS.md) | stub | UV + textures from the drawings (unique unwrap / trim sheet / procedural joints, then UDIM -> atlas) |
@@ -59,6 +59,7 @@ is refused, and the batch checks every planned output against every benchmark in
 | `file_size_bytes` | size of the measured output (FBX or ZIP) | - |
 | `matid` | material-slot integrity: every used material index has a non-empty slot, no unused slot, no slot on UCX; `material_ids` = indices used | no extra readback |
 | `render_score` | SSIM, luma, 7x7 window, on aligned renders of the benchmark's reference views (same size, no resampling); mean over the views | the benchmark has no reference picture, or no render was given; a partial or mismatched set is an error, never a score |
+| `class_metrics.windows` | windows-glazing: `*_MainGlass` object count, glass triangles and share of model triangles; frame = polygons on a slot named `*Frame*`, per connected component the extent along its smallest principal axis (min / median / max m) | share: no model triangle; frame: no extra readback, no per-polygon material index, no frame slot used |
 | `class_metrics.ucx_fit` | one-sided model -> UCX deviation [D134] (max, p95, share over 0.1 / 0.3 / 1 m) on surface samples; voxel UCX volume, model envelope (closing 1 m), UCX outside the envelope, envelope left uncovered | no UCX piece |
 
 The shares over 0.1 / 0.3 / 1 m are measurements only: no Ground / pedestrian / other-OKS zoning is done, so
