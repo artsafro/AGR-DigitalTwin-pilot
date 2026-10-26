@@ -1,7 +1,8 @@
 # Exact commands and versions
 
 Run from the issue worktree. Shell is Git Bash; native executable arguments use `C:/...` paths.
-No `graphify install`, `uv tool install`, `claude mcp add`, global npm install, or worker-profile edits were used.
+No `graphify install`, `uv tool install`, `claude mcp add`, global npm install, or graphify/context7
+worker-profile setup was used.
 The discarded first attempt's automatic Claude runtime-cache writes and their repair are disclosed in
 [PROTOCOL.md](PROTOCOL.md#reportingisolation-repairs-and-excluded-attempt).
 
