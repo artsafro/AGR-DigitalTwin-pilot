@@ -1,4 +1,7 @@
-"""windows-glazing class metrics and variant geometry on tiny synthetic inputs (#721)."""
+"""windows-glazing class metrics and variant geometry on tiny synthetic inputs (#721).
+
+Pattern: new-case: tests of the windows-glazing methods class (metric null paths, opening extraction, refusals).
+"""
 from __future__ import annotations
 
 import json
