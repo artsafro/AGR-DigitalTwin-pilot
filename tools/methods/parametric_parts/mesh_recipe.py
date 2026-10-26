@@ -8,7 +8,14 @@ The aerator overall box is the abutted KPP1 TN_Аэратор stack: flange diam
 """
 from __future__ import annotations
 
+import array
+import json
 import math
+import os
+import struct
+import subprocess
+import sys
+import tempfile
 
 BENCH_LENGTH_M = 1.8
 BENCH_WIDTH_M = 0.5
@@ -167,37 +174,292 @@ def aerator_mesh(pipe_length_m: float = PIPE_LENGTH_M, sides: int = AERATOR_SIDE
     return verts, tris
 
 
-def write_ascii_fbx(path, verts, tris) -> None:
-    """ASCII FBX in metres with UnitScaleFactor 100. Writes via a .partial sibling, then renames."""
-    import os
+_FBX_MAGIC = b"Kaydara FBX Binary  \x00\x1a\x00"
+_FBX_FOOTER_A = bytes.fromhex("fabcab09d0c8d466b176fb831cf7267e")
+_FBX_FOOTER_B = bytes.fromhex("f85a8c6adef5d97eece90ce3758f290b")
 
+
+def _prop_int(value):
+    return b"I" + struct.pack("<i", int(value))
+
+
+def _prop_int64(value):
+    return b"L" + struct.pack("<q", int(value))
+
+
+def _prop_double(value):
+    return b"D" + struct.pack("<d", float(value))
+
+
+def _prop_bool(value):
+    return b"C" + struct.pack("<?", bool(value))
+
+
+def _prop_str(value):
+    raw = value.encode("latin1")
+    return b"S" + struct.pack("<I", len(raw)) + raw
+
+
+def _prop_array(kind, typecode, values):
+    buf = array.array(typecode, values)
+    if sys.byteorder != "little":
+        buf.byteswap()
+    blob = buf.tobytes()
+    return kind + struct.pack("<III", len(buf), 0, len(blob)) + blob
+
+
+class _FbxNode:
+    def __init__(self, name, props, children, force_null=False):
+        self.name = name
+        self.props = props
+        self.children = children
+        self.force_null = force_null
+
+
+def _pack_fbx_node(node, start):
+    name = node.name.encode("ascii")
+    prop_blob = b"".join(node.props)
+    cursor = start + 13 + len(name) + len(prop_blob)
+    child_blobs = []
+    for child in node.children:
+        blob, cursor = _pack_fbx_node(child, cursor)
+        child_blobs.append(blob)
+    body = prop_blob + b"".join(child_blobs)
+    if node.children or node.force_null:
+        body += b"\x00" * 13
+        cursor += 13
+    end = start + 13 + len(name) + len(body)
+    header = struct.pack("<III", end, len(node.props), len(prop_blob)) + bytes([len(name)])
+    return header + name + body, end
+
+
+def _p_node(*props):
+    return _FbxNode("P", list(props), [])
+
+
+def _binary_fbx(verts, tris) -> bytes:
+    """FBX 7400 binary: one Mesh Model, its Geometry, and OO connections to the root.
+
+    Vertices stay in metres. UnitScaleFactor 100 matches the Max control files
+    (one file unit is one metre). ASCII FBX is not used: Blender 5.1 rejects it,
+    and a Geometry node with no Model imported as zero objects in 3ds Max.
+    """
     flat = []
     for x, y, z in verts:
-        flat.extend((x, y, z))
+        flat.extend((float(x), float(y), float(z)))
     indices = []
     for a, b, c in tris:
-        indices.extend((a, b, ~c))
-    text = (
-        "; FBX 7.4.0 project file\n"
-        "GlobalSettings:  {\n"
-        "  Properties70:  {\n"
-        '    P: "UnitScaleFactor", "double", "Number", "", 100\n'
-        "  }\n"
-        "}\n"
-        "Objects:  {\n"
-        '  Geometry: 0, "Geometry::Part", "Mesh" {\n'
-        f"    Vertices: *{len(flat)} {{\n"
-        "      a: " + ",".join(repr(float(v)) for v in flat) + "\n"
-        "    }\n"
-        f"    PolygonVertexIndex: *{len(indices)} {{\n"
-        "      a: " + ",".join(str(int(v)) for v in indices) + "\n"
-        "    }\n"
-        "  }\n"
-        "}\n"
-    )
+        indices.extend((int(a), int(b), ~int(c)))
+    # Low object ids are easy to confuse with the scene root. Max imports the
+    # control files, whose ids are large and which carry Definitions.
+    geometry_id = 4_000_000_001
+    model_id = 4_000_000_002
+    document_id = 4_000_000_003
+    lcl_t = _p_node(_prop_str("Lcl Translation"), _prop_str("Lcl Translation"), _prop_str(""), _prop_str("A"), _prop_double(0.0), _prop_double(0.0), _prop_double(0.0))
+    lcl_r = _p_node(_prop_str("Lcl Rotation"), _prop_str("Lcl Rotation"), _prop_str(""), _prop_str("A"), _prop_double(0.0), _prop_double(0.0), _prop_double(0.0))
+    lcl_s = _p_node(_prop_str("Lcl Scaling"), _prop_str("Lcl Scaling"), _prop_str(""), _prop_str("A"), _prop_double(1.0), _prop_double(1.0), _prop_double(1.0))
+    roots = [
+        _FbxNode("FBXHeaderExtension", [], [
+            _FbxNode("FBXHeaderVersion", [_prop_int(1003)], []),
+            _FbxNode("FBXVersion", [_prop_int(7400)], []),
+            _FbxNode("EncryptionType", [_prop_int(0)], []),
+            _FbxNode("Creator", [_prop_str("AGR parametric parts")], []),
+        ]),
+        _FbxNode("Creator", [_prop_str("AGR parametric parts")], []),
+        _FbxNode("GlobalSettings", [], [
+            _FbxNode("Version", [_prop_int(1000)], []),
+            _FbxNode("Properties70", [], [
+                _p_node(_prop_str("UpAxis"), _prop_str("int"), _prop_str("Integer"), _prop_str(""), _prop_int(2)),
+                _p_node(_prop_str("UpAxisSign"), _prop_str("int"), _prop_str("Integer"), _prop_str(""), _prop_int(1)),
+                _p_node(_prop_str("FrontAxis"), _prop_str("int"), _prop_str("Integer"), _prop_str(""), _prop_int(1)),
+                _p_node(_prop_str("FrontAxisSign"), _prop_str("int"), _prop_str("Integer"), _prop_str(""), _prop_int(-1)),
+                _p_node(_prop_str("CoordAxis"), _prop_str("int"), _prop_str("Integer"), _prop_str(""), _prop_int(0)),
+                _p_node(_prop_str("CoordAxisSign"), _prop_str("int"), _prop_str("Integer"), _prop_str(""), _prop_int(1)),
+                _p_node(_prop_str("UnitScaleFactor"), _prop_str("double"), _prop_str("Number"), _prop_str(""), _prop_double(100.0)),
+                _p_node(_prop_str("OriginalUnitScaleFactor"), _prop_str("double"), _prop_str("Number"), _prop_str(""), _prop_double(100.0)),
+                _p_node(_prop_str("TimeMode"), _prop_str("enum"), _prop_str(""), _prop_str(""), _prop_int(11)),
+                _p_node(_prop_str("TimeSpanStart"), _prop_str("KTime"), _prop_str("Time"), _prop_str(""), _prop_int64(0)),
+                _p_node(_prop_str("TimeSpanStop"), _prop_str("KTime"), _prop_str("Time"), _prop_str(""), _prop_int64(46186158000)),
+            ]),
+        ]),
+        _FbxNode("Documents", [], [
+            _FbxNode("Count", [_prop_int(1)], []),
+            _FbxNode("Document", [_prop_int64(document_id), _prop_str("Scene"), _prop_str("Scene")], [
+                _FbxNode("Properties70", [], [
+                    _p_node(_prop_str("SourceObject"), _prop_str("object"), _prop_str(""), _prop_str("")),
+                    _p_node(_prop_str("ActiveAnimStackName"), _prop_str("KString"), _prop_str(""), _prop_str(""), _prop_str("")),
+                ]),
+                _FbxNode("RootNode", [_prop_int64(0)], []),
+            ]),
+        ]),
+        _FbxNode("References", [], [], force_null=True),
+        _FbxNode("Definitions", [], [
+            _FbxNode("Version", [_prop_int(100)], []),
+            _FbxNode("Count", [_prop_int(3)], []),
+            _FbxNode("ObjectType", [_prop_str("GlobalSettings")], [
+                _FbxNode("Count", [_prop_int(1)], []),
+            ]),
+            _FbxNode("ObjectType", [_prop_str("Geometry")], [
+                _FbxNode("Count", [_prop_int(1)], []),
+            ]),
+            _FbxNode("ObjectType", [_prop_str("Model")], [
+                _FbxNode("Count", [_prop_int(1)], []),
+                _FbxNode("PropertyTemplate", [_prop_str("FbxNode")], [
+                    _FbxNode("Properties70", [], [lcl_t, lcl_r, lcl_s]),
+                ]),
+            ]),
+        ]),
+        _FbxNode("Objects", [], [
+            _FbxNode("Geometry", [_prop_int64(geometry_id), _prop_str("Part\x00\x01Geometry"), _prop_str("Mesh")], [
+                _FbxNode("GeometryVersion", [_prop_int(124)], []),
+                _FbxNode("Vertices", [_prop_array(b"d", "d", flat)], []),
+                _FbxNode("PolygonVertexIndex", [_prop_array(b"i", "i", indices)], []),
+            ]),
+            _FbxNode("Model", [_prop_int64(model_id), _prop_str("Part\x00\x01Model"), _prop_str("Mesh")], [
+                _FbxNode("Version", [_prop_int(232)], []),
+                _FbxNode("Properties70", [], [
+                    _p_node(_prop_str("InheritType"), _prop_str("enum"), _prop_str(""), _prop_str(""), _prop_int(1)),
+                    _p_node(_prop_str("DefaultAttributeIndex"), _prop_str("int"), _prop_str("Integer"), _prop_str(""), _prop_int(0)),
+                    lcl_t, lcl_r, lcl_s,
+                ]),
+                _FbxNode("MultiLayer", [_prop_int(0)], []),
+                _FbxNode("MultiTake", [_prop_int(0)], []),
+                _FbxNode("Shading", [_prop_bool(True)], []),
+                _FbxNode("Culling", [_prop_str("CullingOff")], []),
+            ]),
+        ]),
+        _FbxNode("Connections", [], [
+            _FbxNode("C", [_prop_str("OO"), _prop_int64(model_id), _prop_int64(0)], []),
+            _FbxNode("C", [_prop_str("OO"), _prop_int64(geometry_id), _prop_int64(model_id)], []),
+        ]),
+        _FbxNode("Takes", [], [
+            _FbxNode("Current", [_prop_str("")], []),
+        ]),
+    ]
+    cursor = 27
+    blobs = []
+    for node in roots:
+        blob, cursor = _pack_fbx_node(node, cursor)
+        blobs.append(blob)
+    footer = _FBX_FOOTER_A + (b"\x00" * 6) + struct.pack("<I", 7400) + (b"\x00" * 120) + _FBX_FOOTER_B
+    return _FBX_MAGIC + struct.pack("<I", 7400) + b"".join(blobs) + (b"\x00" * 13) + footer
+
+
+def _same_file(a, b) -> bool:
+    try:
+        if os.path.samefile(a, b):
+            return True
+    except OSError:
+        pass
+    try:
+        left = os.stat(a)
+        right = os.stat(b)
+    except OSError:
+        return False
+    return left.st_ino != 0 and left.st_dev == right.st_dev and left.st_ino == right.st_ino
+
+
+def publish_bytes(path, data: bytes, protected=()) -> None:
+    """Exclusively create a temp file in the destination directory, then rename it onto path.
+
+    Does not open or delete a pre-existing predictable sibling such as path + '.partial'.
+    Refuses when path is the same file as a protected path.
+    """
     dest = os.path.abspath(path)
-    partial = dest + ".partial"
-    os.makedirs(os.path.dirname(dest), exist_ok=True)
-    with open(partial, "w", encoding="utf-8") as fh:
-        fh.write(text)
-    os.replace(partial, dest)
+    parent = os.path.dirname(dest)
+    os.makedirs(parent, exist_ok=True)
+    for src in protected:
+        if _same_file(dest, src) or os.path.normcase(os.path.abspath(src)) == os.path.normcase(dest):
+            raise OSError("refusing to write onto " + str(src))
+    fd, name = tempfile.mkstemp(prefix=os.path.basename(dest) + ".", suffix=".tmp", dir=parent)
+    try:
+        for src in protected:
+            if _same_file(name, src):
+                raise OSError("temporary file aliases " + str(src))
+        with os.fdopen(fd, "wb") as handle:
+            fd = -1
+            handle.write(data)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(name, dest)
+    except Exception:
+        if fd >= 0:
+            os.close(fd)
+        if os.path.exists(name):
+            os.remove(name)
+        raise
+
+
+_BLENDER = r"C:\Program Files\Blender Foundation\Blender 5.1\blender.exe"
+
+
+def _blender_fbx(path, verts, tris, protected=()) -> None:
+    """FBX through Blender 5.1's exporter.
+
+    A hand-built FBX 7400 binary with Model, Geometry and Connections imports in
+    Blender and reads back here, but 3ds Max 2026 returns importFile false and
+    zero objects. The Max and Blender control files are this exporter's binary
+    (Model + Geometry + Connections) and Max imports those.
+    """
+    dest = os.path.abspath(path)
+    parent = os.path.dirname(dest)
+    os.makedirs(parent, exist_ok=True)
+    for src in protected:
+        if _same_file(dest, src) or os.path.normcase(os.path.abspath(src)) == os.path.normcase(dest):
+            raise OSError("refusing to write onto " + str(src))
+    fd, mesh_name = tempfile.mkstemp(prefix="mesh.", suffix=".json", dir=parent)
+    os.close(fd)
+    fd, fbx_name = tempfile.mkstemp(prefix=os.path.basename(dest) + ".", suffix=".fbx", dir=parent)
+    os.close(fd)
+    os.remove(fbx_name)
+    fd, script_name = tempfile.mkstemp(prefix="fbx.", suffix=".py", dir=parent)
+    os.close(fd)
+    script = (
+        "import bpy, json, sys\n"
+        "argv = sys.argv[sys.argv.index('--') + 1:]\n"
+        "mesh_path, fbx_path = argv\n"
+        "payload = json.loads(open(mesh_path, encoding='utf-8').read())\n"
+        "bpy.ops.wm.read_factory_settings(use_empty=True)\n"
+        "mesh = bpy.data.meshes.new('Part')\n"
+        "mesh.from_pydata(payload['verts'], [], [tuple(t) for t in payload['tris']])\n"
+        "mesh.update()\n"
+        "obj = bpy.data.objects.new('Part', mesh)\n"
+        "bpy.context.scene.collection.objects.link(obj)\n"
+        "bpy.ops.object.select_all(action='DESELECT')\n"
+        "obj.select_set(True)\n"
+        "bpy.context.view_layer.objects.active = obj\n"
+        "bpy.ops.export_scene.fbx(filepath=fbx_path, use_selection=True, apply_unit_scale=True,\n"
+        "    bake_space_transform=True, axis_forward='-Y', axis_up='Z', use_mesh_modifiers=False,\n"
+        "    mesh_smooth_type='FACE', add_leaf_bones=False, object_types={'MESH'}, path_mode='STRIP')\n"
+    )
+    try:
+        with open(mesh_name, "w", encoding="utf-8") as handle:
+            json.dump({"verts": [list(v) for v in verts], "tris": [list(t) for t in tris]}, handle)
+        with open(script_name, "w", encoding="utf-8") as handle:
+            handle.write(script)
+        proc = subprocess.run(
+            [_BLENDER, "--background", "--factory-startup", "--python-exit-code", "1", "--python", script_name, "--", mesh_name, fbx_name],
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+        if proc.returncode != 0 or not os.path.isfile(fbx_name):
+            raise OSError("Blender FBX export failed: " + (proc.stderr or proc.stdout)[-800:])
+        os.replace(fbx_name, dest)
+    finally:
+        for name in (mesh_name, script_name, fbx_name):
+            if name and os.path.exists(name) and not (os.path.exists(dest) and _same_file(name, dest)):
+                os.remove(name)
+
+
+def write_ascii_fbx(path, verts, tris, protected=()) -> None:
+    """Write one mesh as FBX. The name is kept for existing callers.
+
+    Blender's exporter is used when Blender 5.1 is installed, because that is the
+    binary Max imports. Otherwise the hand-built binary in _binary_fbx is written.
+    Publication does not use a predictable .partial sibling.
+    """
+    if os.path.isfile(_BLENDER):
+        _blender_fbx(path, verts, tris, protected)
+    else:
+        publish_bytes(path, _binary_fbx(verts, tris), protected)

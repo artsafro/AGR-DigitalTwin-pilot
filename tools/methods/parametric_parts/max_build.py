@@ -3,13 +3,16 @@
 new-case: 3ds Max variant for repeatable parts (#713).
 
 Run only through dcc_batch.py on a blank session. Exports FBX of the meshes this script
-creates. Nothing in the MAF library is opened or saved.
+creates. Nothing in the MAF library is opened or saved. build_s is mesh() plus FBX
+export. The recipe is evaluated before the timer. The parameter change is a new mesh
+at the new length plus FBX export, the same boundary.
 """
 from __future__ import annotations
 
 import json
 import os
 import sys
+import tempfile
 import time
 from pathlib import Path
 
@@ -37,14 +40,26 @@ def _mesh(name: str, verts, tris):
     return obj
 
 
+def _exclusive_path(directory: Path, suffix: str) -> Path:
+    fd, name = tempfile.mkstemp(suffix=suffix, dir=str(directory))
+    os.close(fd)
+    os.remove(name)
+    return Path(name)
+
+
 def _export(obj, path: Path):
     _refuse(path)
-    partial = Path(str(path) + ".partial.fbx")
+    partial = _exclusive_path(path.parent, ".fbx")
     rt.select(obj)
-    rt.exportFile(str(partial), rt.Name("noPrompt"), selectedOnly=True, using=rt.FBXEXP)
-    if not partial.is_file():
-        raise RuntimeError("FBX export did not write " + str(partial))
-    os.replace(partial, path)
+    try:
+        rt.exportFile(str(partial), rt.Name("noPrompt"), selectedOnly=True, using=rt.FBXEXP)
+        if not partial.is_file():
+            raise RuntimeError("FBX export did not write " + str(partial))
+        os.replace(partial, path)
+    except Exception:
+        if partial.exists() and not (path.exists() and os.path.samefile(partial, path)):
+            partial.unlink()
+        raise
 
 
 def _one(slug: str, kind: str, verts, tris):
@@ -62,6 +77,7 @@ def _one(slug: str, kind: str, verts, tris):
         "fbx": str(path),
         "version": str(rt.maxVersion()),
         "triangles_in_max": int(rt.getNumFaces(obj)),
+        "timing_boundary": "parameter change + FBX export" if kind == "param_change" else "build + FBX export",
     }
     print("BUILT " + json.dumps(row))
     return row
@@ -85,10 +101,10 @@ def main():
         _one("aerator", "build", *recipe.aerator_mesh()),
         _one("aerator", "param_change", *recipe.aerator_mesh(recipe.PIPE_LENGTH_PARAM_M)),
     ]
-    report = OUT / "max-build.json"
-    partial = Path(str(report) + ".partial")
-    partial.write_text(json.dumps({"rows": rows}, indent=2), encoding="utf-8")
-    os.replace(partial, report)
+    recipe.publish_bytes(
+        OUT / "max-build.json",
+        json.dumps({"timing_boundary": "build + FBX export", "rows": rows}, indent=2).encode("utf-8"),
+    )
     rt.delete(list(rt.objects))
 
 
