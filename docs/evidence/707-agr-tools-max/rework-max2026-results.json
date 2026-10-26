@@ -1,0 +1,197 @@
+{
+  "clean": {
+    "xview": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 2585,
+          "name": "synthetic_clean",
+          "findings": []
+        }
+      ]
+    },
+    "matid": {
+      "schema": 1,
+      "tool": "matid",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 2585,
+          "name": "synthetic_clean",
+          "findings": []
+        }
+      ]
+    },
+    "cleanup": {
+      "schema": 1,
+      "tool": "cleanup",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 2585,
+          "name": "synthetic_clean",
+          "findings": []
+        }
+      ]
+    }
+  },
+  "defective": {
+    "xview": {
+      "schema": 1,
+      "tool": "xview",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 3074,
+          "name": "synthetic_planted",
+          "findings": [
+            {
+              "code": "overlap_vertices",
+              "ids": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "detail": ""
+            },
+            {
+              "code": "overlap_faces",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "matid": {
+      "schema": 1,
+      "tool": "matid",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 3074,
+          "name": "synthetic_planted",
+          "findings": [
+            {
+              "code": "udim_id",
+              "ids": [
+                1
+              ],
+              "detail": ""
+            },
+            {
+              "code": "empty_slot",
+              "ids": [
+                1,
+                2
+              ],
+              "detail": ""
+            }
+          ]
+        }
+      ]
+    },
+    "cleanup": {
+      "schema": 1,
+      "tool": "cleanup",
+      "status": "fail",
+      "objects": [
+        {
+          "handle": 3074,
+          "name": "synthetic_planted",
+          "findings": [
+            {
+              "code": "remove_custom_attributes",
+              "ids": [],
+              "detail": "{\"action\": \"remove_custom_attributes\", \"names\": [\"<AttributeDef:AGRSyntheticCA>\"], \"owner\": \"base\"}"
+            },
+            {
+              "code": "remove_custom_attributes",
+              "ids": [],
+              "detail": "{\"action\": \"remove_custom_attributes\", \"names\": [\"<AttributeDef:AGRSyntheticCA>\"], \"owner\": \"node\"}"
+            },
+            {
+              "code": "remove_custom_attributes",
+              "ids": [],
+              "detail": "{\"action\": \"remove_custom_attributes\", \"names\": [\"<AttributeDef:AGRSyntheticCA>\"], \"owner\": \"modifiers\"}"
+            },
+            {
+              "code": "remove_custom_attributes",
+              "ids": [],
+              "detail": "{\"action\": \"remove_custom_attributes\", \"names\": [\"<AttributeDef:AGRSyntheticCA>\"], \"owner\": \"materials\"}"
+            },
+            {
+              "code": "clear_user_defined_lines",
+              "ids": [],
+              "detail": "{\"action\": \"clear_user_defined_lines\", \"lines\": [\"note=planted\"]}"
+            },
+            {
+              "code": "delete_map_channels",
+              "ids": [],
+              "detail": "{\"action\": \"delete_map_channels\", \"channels\": [2], \"names\": {\"2\": \"extra\"}}"
+            },
+            {
+              "code": "rename_map_channel_1",
+              "ids": [],
+              "detail": "{\"action\": \"rename_map_channel_1\", \"from\": \"wrong\", \"to\": \"UV\"}"
+            }
+          ]
+        }
+      ]
+    },
+    "cleanup_after": {
+      "schema": 1,
+      "tool": "cleanup",
+      "status": "pass",
+      "objects": [
+        {
+          "handle": 3707,
+          "name": "synthetic_planted_AGR_export_001",
+          "findings": []
+        }
+      ]
+    }
+  },
+  "guards": {
+    "stale_preview": "stale or altered cleanup preview; run dry-run again",
+    "xview_empty": "empty target set",
+    "xview_duplicate": "duplicate target handle",
+    "matid_empty": "empty target set",
+    "matid_duplicate": "duplicate target handle",
+    "cleanup_preview_empty": "empty target set",
+    "cleanup_preview_duplicate": "duplicate target handle",
+    "registered_buttons": 3,
+    "vertex_at_2mm": "vertex exactly at threshold (float32 ambiguity); no clean verdict",
+    "millimeter_units": true,
+    "material_boundary": 4,
+    "xview_unsupported": "unsupported geometry: $Point_Helper:Point001 @ [0.000000,0.000000,0.000000]",
+    "xview_empty_mesh": "empty mesh: Object001",
+    "matid_unsupported": "unsupported geometry: $Point_Helper:Point001 @ [0.000000,0.000000,0.000000]",
+    "matid_empty_mesh": "empty mesh: Object001",
+    "cleanup_preview_unsupported": "unsupported geometry: $Point_Helper:Point001 @ [0.000000,0.000000,0.000000]",
+    "cleanup_preview_empty_mesh": "empty mesh: Object001",
+    "missing_uv": "synthetic_clean: map channel 1 missing: no UV to rename",
+    "repeat_install": "MAXScript exception raised.\n-- Runtime error: AGR Tools destination already exists; choose a new versioned path",
+    "physical_distance_transforms": 120
+  },
+  "version": [
+    28000,
+    68,
+    0,
+    28,
+    3,
+    0,
+    30732,
+    2026,
+    ".3"
+  ],
+  "source_sha256": "0a724ae1986495d61decc0b17d54ade38187a46f547af0bb82d0d32d9847ebe9"
+}

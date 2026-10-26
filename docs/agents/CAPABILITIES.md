@@ -451,6 +451,16 @@ Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 20
 - Facade-oriented 8-vertex boxes (Main) or quadtree hexahedra (Ground), 4 mm gap, [D012] budget; check
   the output with `tools/blender/ucx_audit.py` and the validator scene checks.
 
+### Methods catalog runner — `tools/methods/run_variant.py`, `tools/methods/ucx/run_benchmarks.py` (#706)
+- Status: WORKING (dt-worker, 2026-10-25): 18 measured ucx-collisions rows on KPP1 / AC08 / TOW02
+  (`docs/methods/ucx-collisions/results.jsonl`); tests `tests/methods/test_methods_catalog.py` (+1 `-m blender`).
+- `uv run python tools/methods/run_variant.py <out.fbx|.zip> --bench <id> --class <class> --variant <name>
+  [--variant-report <out>.variant.json] [--render view=png ...]`: one JSON row (wall time, triangles, objects,
+  xView 2 mm / 5 mm, UCX V010 + V012, texel min / median, file size, MatID slots, SSIM or null, class metrics);
+  exit 0 appended / 2 measurement error / 4 refused. RESULTS.md: `tools/methods/results_md.py`.
+- Benchmark set: `benchmark/methods/benchmarks.json` (private sources by sha256 under `C:/x/methods/src`).
+  Catalog: `docs/methods/README.md`.
+
 ### Overlap gate (xView parity) — `dt qa xview`, `src/dt_ai/ops/inv_xview.py`, `src/dt_ai/ops/xview_gate.py` (#527)
 - Status: WORKING (dt-worker, 2026-10-21; #370 / #380 kernel, #527 CLI). `inv_xview` reproduces 3ds Max xView
   Overlapping Vertices (2 mm) / Overlapping Faces (5 mm, contact rule) without Max; the `area` rule adds pairs xView misses.

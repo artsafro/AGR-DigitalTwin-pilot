@@ -1,0 +1,19 @@
+{
+  "python": "3.14.7 (main, Sep  1 2026, 14:17:30) [MSC v.1944 64 bit (AMD64)]",
+  "command": "python tools/max/build_agr_tools.py tmp/AGR-Tools-0.1.0.mzp",
+  "repeat_command": "python tools/max/build_agr_tools.py tmp/AGR-Tools-0.1.0-repeat.mzp",
+  "sha256": "6cdd47073c7c532a346a52c2dc6c654519d825d6e0d93aeb401e2e7feba51406",
+  "repeat_sha256": "6cdd47073c7c532a346a52c2dc6c654519d825d6e0d93aeb401e2e7feba51406",
+  "bytes": 27994,
+  "binary_storage": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\707-agr-tools-max\\t_17f45574-v001",
+  "files": [
+    "agr_tools/README.md",
+    "agr_tools/agr_tools.mcr",
+    "agr_tools/bootstrap.py",
+    "agr_tools/hygiene_core.py",
+    "agr_tools/runtime.py",
+    "agr_tools/startup.ms",
+    "install.ms",
+    "mzp.run"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "approval": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/712#issuecomment-6423221608",
+  "variant": "D",
+  "tool": "xerj",
+  "version": "1.0.0-rc.99",
+  "release_zip_sha256": "6e3e4b89275310dcc418504494e278826331341a9105635c7543824b689dd47e",
+  "frozen_abc_results_sha256": "388f5f2f985ca7d61b4e77131d15113b20ba3e31f3421166c3ace3ef8fb7f952",
+  "source_commit": "4c863c1a4616f1812595536d0507f53034e9acfe",
+  "question_model_prompts_unchanged": true,
+  "ordering": "D added after all A-C sessions; blocked order, not four-way interleaving",
+  "index": {
+    "files_total": 1940,
+    "unique_content_files": 1911,
+    "files_indexed": 1909,
+    "duplicate_files": 29,
+    "files_junk": 2,
+    "records_total": 48415,
+    "datasets": 99,
+    "code_files": 1048,
+    "code_files_indexed": 1048,
+    "code_files_junked": 0,
+    "junk": [
+      {
+        "path": "adapters/cad/__init__.py",
+        "reason": "binary content (empty)"
+      },
+      {
+        "path": "tools/assembly_inventory/NuGet.Config",
+        "reason": "no records extracted (xml candidate family, 0 junk lines)"
+      }
+    ]
+  },
+  "security": "loopback only; lexical offline embedder; rerank=false; feedback disabled; seven read-only native MCP tools allowed; mutation/memory/feedback/hub tools hidden",
+  "setup_notes": "First foreground index command timed out at 240s; same frozen journal resumed in tracked background job. Exit 3 completed-with-junk is explicitly documented success, with both dropped files named."
+}
