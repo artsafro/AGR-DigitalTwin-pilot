@@ -22,7 +22,7 @@ def matrix():
     return [dict(question_id=f'Q{i:02}', variant=v, model='same', session_id=f'{v}{i}',
                  status='completed', correct='correct', input_tokens=10, cache_read_tokens=20,
                  cache_creation_tokens=30, output_tokens=5, wall_s=1.0, files_read=[])
-            for i in range(1, 21) for v in 'ABC']
+            for i in range(1, 21) for v in 'ABCD']
 
 
 def test_questions(mod):
@@ -47,7 +47,7 @@ def test_invalid_matrix(mod, mutation):
     if mutation == 'empty': rows = []
     elif mutation == 'partial': rows.pop()
     elif mutation == 'duplicate': rows[-1] = copy.deepcopy(rows[0])
-    elif mutation == 'unknown': rows[0]['variant'] = 'D'
+    elif mutation == 'unknown': rows[0]['variant'] = 'E'
     elif mutation == 'error': rows[0]['status'] = 'api_error'
     elif mutation == 'session': rows[0]['session_id'] = rows[1]['session_id']
     elif mutation == 'model': rows[0]['model'] = 'other'
@@ -115,7 +115,7 @@ def test_judge_join(mod,tmp_path,monkeypatch,bad):
         row.update(category='api' if int(str(row['question_id'])[1:])>=15 else 'repo',answer='synthetic')
         if row['category']=='api': row['correct']='pending_judge'
         (rowsdir/f'{row["question_id"]}-{row["variant"]}.json').write_text(json.dumps(row))
-    grades=[dict(id=f'R{i:02}',grade='correct',reason='synthetic test') for i in range(18)]
+    grades=[dict(id=f'R{i:02}',grade='correct',reason='synthetic test') for i in range(24)]
     if bad=='duplicate': grades[-1]['id']='R00'
     if bad=='invalid': grades[-1]['grade']='not_run'
     end=dict(result=json.dumps({'grades':grades}),session_id='judge',usage={})
@@ -127,6 +127,30 @@ def test_judge_join(mod,tmp_path,monkeypatch,bad):
     else:
         mod.grade(tmp_path)
         mod.validate_matrix([json.loads(line) for line in (docs/'results.jsonl').read_text().splitlines()])
+
+
+def test_extension_preserves_abc(mod,tmp_path,monkeypatch):
+    docs=tmp_path/'docs'; docs.mkdir(); (tmp_path/'rows').mkdir()
+    (docs/'questions.json').write_text(json.dumps({'questions':[{'id':f'Q{i:02}','question':'synthetic','answer':'truth'} for i in range(1,21)]}))
+    prior=[]
+    for row in matrix():
+        row.update(category='api' if int(str(row['question_id'])[1:])>=15 else 'repo',answer='synthetic')
+        if row['variant']=='D':
+            if row['category']=='api': row['correct']='pending_judge'
+            (tmp_path/'rows'/f'{row["question_id"]}-D.json').write_text(json.dumps(row))
+        else: prior.append(row)
+    original=''.join(json.dumps(r)+'\n' for r in prior)
+    (docs/'results.jsonl').write_text(original)
+    grades=[dict(id=f'R{i:02}',grade='correct',reason='synthetic') for i in range(6)]
+    end=dict(result=json.dumps({'grades':grades}),session_id='judge-D',usage={})
+    monkeypatch.setattr(mod,'DOCS',docs)
+    monkeypatch.setattr(mod,'session',lambda *a,**kw:(end,[],1,[]))
+    mod.grade(tmp_path,extension=True)
+    combined=[json.loads(x) for x in (tmp_path/'results-80.jsonl').read_text().splitlines()]
+    assert combined[:60]==prior
+    assert (docs/'results.jsonl').read_text()==original
+    mod.validate_matrix(combined)
+    with pytest.raises(ValueError): mod.validate_matrix(prior)
 
 
 def test_allowed_read(mod,tmp_path):
