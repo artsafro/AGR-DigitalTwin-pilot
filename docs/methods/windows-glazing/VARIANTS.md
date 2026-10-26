@@ -17,9 +17,16 @@ Common steps of every variant:
    a reason, never lost: horizontal glass (|n_z| > 0.7), a side under 0.2 m, fill under 0.6, zero area. The
    report lists the dropped polygon count (tow02: 303 of 1517, all "under 0.2 m" slivers).
 3. The glass source is removed (the object, or the Main polygons) and replaced by the variant's windows;
-   body, UCX and the source materials are kept. New UVs go to a new UDIM tile (tiled package: highest
-   diffuse tile + 1 with a generated 1024 px diffuse; untiled tow02: tile 1002, measured against its single
-   diffuse map). Export: triangulated FBX, same settings as the ucx class.
+   every other source mesh (body, UCX, accessories) and the source materials are kept; a non-mesh object is
+   reported in `dropped_objects`. New UVs go to a new UDIM tile (tiled package: highest diffuse tile + 1;
+   untiled tow02: tile 1002). The variant's new material gets our generated diffuse (`texture_pixels`),
+   written next to the FBX and bound to its Base Color: tiled `<diffuse stem>.<tile>.png` 1024 px, untiled
+   `T_<FBX stem>_<Frame|WindowAtlas|FrameTrim>.png` at the side of the single diffuse map (2048 px on tow02),
+   packed into the ZIP. Export: triangulated FBX, same settings as the ucx class, to `<stem>.partial.fbx`.
+4. Read-back gate before publishing: the partial FBX is imported into a clean scene; every unchanged mesh
+   must keep its triangles, slot names and world bounding box (0.1 mm), no mesh may be missing or extra, and
+   the new material must sample exactly the written PNG (same file, same sha256) on >= 1 polygon inside the
+   new tile. Only then is it renamed to the output; otherwise exit 2 and nothing is published.
 
 Measurement convention: glass = a model mesh named `*_MainGlass` (WIN-13); frame = polygons on a material
 slot whose name holds `Frame` (`M_<Addr>_Main_Frame` / `_FrameTrim`; a delivery renumbers them per V012).
