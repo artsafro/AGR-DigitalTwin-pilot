@@ -2,10 +2,12 @@
 
 new-case: fail-closed FBX readback for repeatable-part variants.
 """
+import array
 import importlib.util
 import json
 import math
 import os
+import struct
 import subprocess
 import sys
 from pathlib import Path
@@ -25,6 +27,9 @@ def _ascii_fbx(
     scaling=(1.0, 1.0, 1.0),
     translation=(0.0, 0.0, 0.0),
     rotation=(0.0, 0.0, 0.0),
+    geometric_translation=None,
+    geometric_rotation=None,
+    geometric_scaling=None,
     trailing="",
 ) -> str:
     flat = []
@@ -49,12 +54,23 @@ def _ascii_fbx(
         sx, sy, sz = scaling
         tx, ty, tz = translation
         rx, ry, rz = rotation
+        geometric = ""
+        for name, vec in (
+            ("GeometricTranslation", geometric_translation),
+            ("GeometricRotation", geometric_rotation),
+            ("GeometricScaling", geometric_scaling),
+        ):
+            if vec is None:
+                continue
+            gx, gy, gz = vec
+            geometric += f'      P: "{name}", "{name}", "", "A",{gx},{gy},{gz}\n'
         scene_text = (
             '  Model: 2, "Model::Part", "Mesh" {\n'
             "    Properties70:  {\n"
             f'      P: "Lcl Translation", "Lcl Translation", "", "A",{tx},{ty},{tz}\n'
             f'      P: "Lcl Rotation", "Lcl Rotation", "", "A",{rx},{ry},{rz}\n'
             f'      P: "Lcl Scaling", "Lcl Scaling", "", "A",{sx},{sy},{sz}\n'
+            f"{geometric}"
             "    }\n"
             "  }\n"
         )
@@ -136,6 +152,175 @@ def _run(tmp_path: Path, text: str, out_name="row.json", extra=None, fbx_name="p
         argv.extend(extra)
     proc = subprocess.run(argv, capture_output=True, text=True, cwd=str(ROOT))
     return proc, fbx, out
+
+
+_FBX_MAGIC = b"Kaydara FBX Binary  \x00\x1a\x00"
+_FBX_NULL = b"\x00" * 13
+
+
+def _prop_int64(value) -> bytes:
+    return b"L" + struct.pack("<q", int(value))
+
+
+def _prop_double(value) -> bytes:
+    return b"D" + struct.pack("<d", float(value))
+
+
+def _prop_str(value) -> bytes:
+    raw = str(value).encode("latin1")
+    return b"S" + struct.pack("<I", len(raw)) + raw
+
+
+def _prop_array(kind: bytes, typecode: str, values) -> bytes:
+    buf = array.array(typecode, values)
+    if sys.byteorder != "little":
+        buf.byteswap()
+    blob = buf.tobytes()
+    return kind + struct.pack("<III", len(buf), 0, len(blob)) + blob
+
+
+def _pack_fbx_node(name, props, children, start):
+    name_b = name.encode("ascii")
+    prop_blob = b"".join(props)
+    cursor = start + 13 + len(name_b) + len(prop_blob)
+    child_blobs = []
+    for child in children:
+        blob, cursor = _pack_fbx_node(child[0], child[1], child[2], cursor)
+        child_blobs.append(blob)
+    body = prop_blob + b"".join(child_blobs)
+    if children:
+        body += _FBX_NULL
+        cursor += 13
+    end = start + 13 + len(name_b) + len(body)
+    header = struct.pack("<III", end, len(props), len(prop_blob)) + bytes([len(name_b)])
+    return header + name_b + body, end
+
+
+def _p_node(name, values):
+    props = [
+        _prop_str(name),
+        _prop_str(name),
+        _prop_str(""),
+        _prop_str("A"),
+        _prop_double(values[0]),
+        _prop_double(values[1]),
+        _prop_double(values[2]),
+    ]
+    return ("P", props, [])
+
+
+def _binary_fbx(
+    vertices,
+    polygons,
+    unit_scale=100.0,
+    *,
+    scaling=(1.0, 1.0, 1.0),
+    translation=(0.0, 0.0, 0.0),
+    rotation=(0.0, 0.0, 0.0),
+    geometric_translation=None,
+    geometric_rotation=None,
+    geometric_scaling=None,
+) -> bytes:
+    flat = []
+    for x, y, z in vertices:
+        flat.extend((float(x), float(y), float(z)))
+    indices = []
+    for poly in polygons:
+        for i, vid in enumerate(poly):
+            indices.append(~vid if i == len(poly) - 1 else vid)
+    props = [
+        _p_node("Lcl Translation", translation),
+        _p_node("Lcl Rotation", rotation),
+        _p_node("Lcl Scaling", scaling),
+    ]
+    if geometric_translation is not None:
+        props.append(_p_node("GeometricTranslation", geometric_translation))
+    if geometric_rotation is not None:
+        props.append(_p_node("GeometricRotation", geometric_rotation))
+    if geometric_scaling is not None:
+        props.append(_p_node("GeometricScaling", geometric_scaling))
+    nodes = [
+        ("GlobalSettings", [], [
+            ("Properties70", [], [
+                ("P", [
+                    _prop_str("UnitScaleFactor"),
+                    _prop_str("double"),
+                    _prop_str("Number"),
+                    _prop_str(""),
+                    _prop_double(unit_scale),
+                ], []),
+            ]),
+        ]),
+        ("Objects", [], [
+            ("Geometry", [_prop_int64(1), _prop_str("Geometry::Part"), _prop_str("Mesh")], [
+                ("Vertices", [_prop_array(b"d", "d", flat)], []),
+                ("PolygonVertexIndex", [_prop_array(b"i", "i", indices)], []),
+            ]),
+            ("Model", [_prop_int64(2), _prop_str("Model::Part"), _prop_str("Mesh")], [
+                ("Properties70", [], props),
+            ]),
+        ]),
+        ("Connections", [], [
+            ("C", [_prop_str("OO"), _prop_int64(2), _prop_int64(0)], []),
+            ("C", [_prop_str("OO"), _prop_int64(1), _prop_int64(2)], []),
+        ]),
+    ]
+    cursor = 27
+    blobs = []
+    for node in nodes:
+        blob, cursor = _pack_fbx_node(node[0], node[1], node[2], cursor)
+        blobs.append(blob)
+    return _FBX_MAGIC + struct.pack("<I", 7400) + b"".join(blobs) + _FBX_NULL
+
+
+def _measure_cube(tmp_path: Path, encoding: str, **kwargs):
+    if encoding == "ascii":
+        payload = _ascii_fbx(_cube_vertices(), _cube_quads(), unit_scale=100, **kwargs)
+        return _run(tmp_path, payload)
+    if encoding == "binary":
+        payload = _binary_fbx(_cube_vertices(), _cube_quads(), unit_scale=100, **kwargs)
+        fbx = tmp_path / "part.fbx"
+        fbx.write_bytes(payload)
+        out = tmp_path / "row.json"
+        proc = subprocess.run(
+            [
+                sys.executable,
+                str(SCRIPT),
+                "--fbx",
+                str(fbx),
+                "--out",
+                str(out),
+                "--spec-mm",
+                "1000",
+                "1000",
+                "1000",
+                "--part",
+                "cube",
+                "--tool",
+                "fixture",
+                "--kind",
+                "build",
+                "--build-s",
+                "0.25",
+            ],
+            capture_output=True,
+            text=True,
+            cwd=str(ROOT),
+        )
+        return proc, fbx, out
+    raise AssertionError(encoding)
+
+
+def _assert_rejected(proc, fbx, out, *needles):
+    assert proc.returncode != 0, proc.stdout
+    row = _row_from_stdout(proc)
+    assert row["fbx_readback_ok"] is False
+    for needle in needles:
+        assert needle in row["status"], row["status"]
+    assert row["status"] != "measured"
+    assert not out.exists()
+    assert not Path(str(out) + ".partial").exists()
+    assert fbx.is_file() and fbx.stat().st_size > 0
 
 
 def test_clean_cube_writes_measured_row(tmp_path):
@@ -306,6 +491,129 @@ def test_lcl_rotation_rejected(tmp_path):
     assert "unsupported Lcl Rotation" in row["status"]
     assert not out.exists()
     assert fbx.is_file()
+
+
+@pytest.mark.parametrize("encoding", ["ascii", "binary"])
+def test_nan_lcl_rotation_invalid_and_nothing_written(tmp_path, encoding):
+    proc, fbx, out = _measure_cube(tmp_path, encoding, rotation=(float("nan"), 0.0, 0.0))
+    _assert_rejected(proc, fbx, out, "invalid transform", "Lcl Rotation")
+
+
+@pytest.mark.parametrize("encoding", ["ascii", "binary"])
+def test_inf_lcl_rotation_invalid_and_nothing_written(tmp_path, encoding):
+    proc, fbx, out = _measure_cube(tmp_path, encoding, rotation=(float("inf"), 0.0, 0.0))
+    _assert_rejected(proc, fbx, out, "invalid transform", "Lcl Rotation")
+
+
+@pytest.mark.parametrize("encoding", ["ascii", "binary"])
+def test_geometric_scaling_rejected_and_nothing_written(tmp_path, encoding):
+    proc, fbx, out = _measure_cube(tmp_path, encoding, geometric_scaling=(2.0, 1.0, 1.0))
+    _assert_rejected(proc, fbx, out, "GeometricScaling")
+
+
+@pytest.mark.parametrize("encoding", ["ascii", "binary"])
+def test_nan_geometric_scaling_invalid_and_nothing_written(tmp_path, encoding):
+    proc, fbx, out = _measure_cube(
+        tmp_path, encoding, geometric_scaling=(float("nan"), 1.0, 1.0)
+    )
+    _assert_rejected(proc, fbx, out, "invalid transform", "GeometricScaling")
+
+
+@pytest.mark.parametrize("encoding", ["ascii", "binary"])
+def test_identity_geometric_transform_writes_measured_row(tmp_path, encoding):
+    proc, fbx, out = _measure_cube(
+        tmp_path,
+        encoding,
+        geometric_translation=(0.0, 0.0, 0.0),
+        geometric_rotation=(0.0, 0.0, 0.0),
+        geometric_scaling=(1.0, 1.0, 1.0),
+    )
+    assert proc.returncode == 0, proc.stderr + proc.stdout
+    row = json.loads(out.read_text(encoding="utf-8"))
+    assert row["status"] == "measured"
+    assert row["triangles"] == 12
+    assert row["measured_extents_mm"] == [1000.0, 1000.0, 1000.0]
+    assert row["dimension_error_mm"] == 0
+    assert row["fbx_readback_ok"] is True
+    assert fbx.is_file() and fbx.stat().st_size > 0
+
+
+def test_nonfinite_transform_components_rejected(tmp_path):
+    """Every component of every local and geometric vector, nan/inf/-inf, both readers."""
+    properties = {
+        "Lcl Translation": ("translation", (0.0, 0.0, 0.0)),
+        "Lcl Rotation": ("rotation", (0.0, 0.0, 0.0)),
+        "Lcl Scaling": ("scaling", (1.0, 1.0, 1.0)),
+        "GeometricTranslation": ("geometric_translation", (0.0, 0.0, 0.0)),
+        "GeometricRotation": ("geometric_rotation", (0.0, 0.0, 0.0)),
+        "GeometricScaling": ("geometric_scaling", (1.0, 1.0, 1.0)),
+    }
+    bad = {
+        "nan": float("nan"),
+        "inf": float("inf"),
+        "-inf": float("-inf"),
+    }
+    missed = []
+    total = 0
+    for encoding in ("ascii", "binary"):
+        for label, (kw, identity) in properties.items():
+            for axis in range(3):
+                for token, value in bad.items():
+                    total += 1
+                    vec = list(identity)
+                    vec[axis] = value
+                    case = tmp_path / f"{encoding}_{kw}_{axis}_{token.replace('-', 'm')}"
+                    case.mkdir()
+                    proc, fbx, out = _measure_cube(case, encoding, **{kw: tuple(vec)})
+                    status = ""
+                    if proc.stdout.strip():
+                        try:
+                            status = _row_from_stdout(proc)["status"]
+                        except (AssertionError, json.JSONDecodeError):
+                            status = proc.stdout
+                    if not (
+                        proc.returncode != 0
+                        and not out.exists()
+                        and "invalid transform" in status
+                        and label in status
+                        and fbx.is_file()
+                    ):
+                        missed.append(f"{encoding} {label}[{axis}]={token} rc={proc.returncode} {status}")
+    assert not missed, f"{total - len(missed)}/{total} rejected; first: {missed[:5]}"
+
+
+def test_nonidentity_geometric_transforms_rejected(tmp_path):
+    """Each geometric component off identity, both readers, names the property."""
+    cases = {
+        "GeometricTranslation": ("geometric_translation", (0.0, 0.0, 0.0), 5.0),
+        "GeometricRotation": ("geometric_rotation", (0.0, 0.0, 0.0), 90.0),
+        "GeometricScaling": ("geometric_scaling", (1.0, 1.0, 1.0), 2.0),
+    }
+    missed = []
+    total = 0
+    for encoding in ("ascii", "binary"):
+        for label, (kw, identity, value) in cases.items():
+            for axis in range(3):
+                total += 1
+                vec = list(identity)
+                vec[axis] = value
+                case = tmp_path / f"{encoding}_{kw}_{axis}"
+                case.mkdir()
+                proc, fbx, out = _measure_cube(case, encoding, **{kw: tuple(vec)})
+                status = ""
+                if proc.stdout.strip():
+                    try:
+                        status = _row_from_stdout(proc)["status"]
+                    except (AssertionError, json.JSONDecodeError):
+                        status = proc.stdout
+                if not (
+                    proc.returncode != 0
+                    and not out.exists()
+                    and label in status
+                    and fbx.is_file()
+                ):
+                    missed.append(f"{encoding} {label}[{axis}] rc={proc.returncode} {status}")
+    assert not missed, f"{total - len(missed)}/{total} rejected; first: {missed[:5]}"
 
 
 def test_preexisting_partial_sentinel_is_not_overwritten(tmp_path):

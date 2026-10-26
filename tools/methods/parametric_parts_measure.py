@@ -8,8 +8,13 @@ xView is dt_ai.ops.inv_xview at 2 mm vertices and 5 mm faces (<= at the threshol
 Dimension error is the max absolute difference of the three bbox extents, in millimetres, after
 FBX units are brought to metres (UnitScaleFactor is centimetres, so metres = file_units * factor/100;
 no factor means the file is already in metres). Model Lcl Scaling and Lcl Translation are applied
-before the unit scale. Non-zero Lcl Rotation, a parent other than the scene root, and a
-Geometry used by more than one Model are rejected. A row is written only when readback is
+before the unit scale. A non-finite component of Lcl Translation, Lcl Rotation,
+Lcl Scaling, GeometricTranslation, GeometricRotation or GeometricScaling is an
+invalid transform. Non-zero Lcl Rotation is unsupported. Non-identity
+GeometricTranslation, GeometricRotation and GeometricScaling are unsupported and
+the error names that property; an exactly identity geometric transform is kept.
+A parent other than the scene root, and a Geometry used by more than one Model,
+are rejected. A row is written only when readback is
 ok. Catalog rows pass --dcc-objects and --dcc-triangles from a fresh DCC import; then
 fbx_readback_ok also requires at least one imported object and the same triangle count.
 """
@@ -28,6 +33,7 @@ from pathlib import Path
 
 _MAGIC = b"Kaydara FBX Binary  \x00\x1a\x00"
 _AREA_EPS_M2 = 1e-12
+_TRANSFORM_EPS = 1e-8
 
 
 class ReadError(Exception):
@@ -151,17 +157,48 @@ def _ascii_scene(text: str):
                 _lcl_from_lines(span, "Lcl Translation", (0.0, 0.0, 0.0)),
                 _lcl_from_lines(span, "Lcl Rotation", (0.0, 0.0, 0.0)),
                 _lcl_from_lines(span, "Lcl Scaling", (1.0, 1.0, 1.0)),
+                _lcl_from_lines(span, "GeometricTranslation", (0.0, 0.0, 0.0)),
+                _lcl_from_lines(span, "GeometricRotation", (0.0, 0.0, 0.0)),
+                _lcl_from_lines(span, "GeometricScaling", (1.0, 1.0, 1.0)),
             )
     links = [(int(m.group(1)), int(m.group(2))) for m in re.finditer(r'C:\s*"OO"\s*,\s*(-?\d+)\s*,\s*(-?\d+)', text)]
     return geoms, models, links
 
 
-def _transform_vertices(flat, unit_scale, translation, rotation, scaling):
-    if any(abs(float(v)) > 1e-8 for v in rotation):
+def _finite_vec(values, label):
+    nums = []
+    for value in values:
+        try:
+            nums.append(float(value))
+        except (TypeError, ValueError) as exc:
+            raise ReadError("invalid transform: non-finite " + label) from exc
+    if len(nums) != 3 or not all(math.isfinite(v) for v in nums):
+        raise ReadError("invalid transform: non-finite " + label)
+    return nums
+
+
+def _near(values, target) -> bool:
+    return all(abs(v - target) <= _TRANSFORM_EPS for v in values)
+
+
+def _transform_vertices(flat, unit_scale, translation, rotation, scaling, gtrans, grot, gscale):
+    translation = _finite_vec(translation, "Lcl Translation")
+    rotation = _finite_vec(rotation, "Lcl Rotation")
+    scaling = _finite_vec(scaling, "Lcl Scaling")
+    gtrans = _finite_vec(gtrans, "GeometricTranslation")
+    grot = _finite_vec(grot, "GeometricRotation")
+    gscale = _finite_vec(gscale, "GeometricScaling")
+    if not _near(rotation, 0.0):
         raise ReadError("unsupported Lcl Rotation")
-    tx, ty, tz = (float(v) for v in translation)
-    sx, sy, sz = (float(v) for v in scaling)
-    if not all(math.isfinite(v) for v in (tx, ty, tz, sx, sy, sz, unit_scale)):
+    if not _near(gtrans, 0.0):
+        raise ReadError("unsupported GeometricTranslation")
+    if not _near(grot, 0.0):
+        raise ReadError("unsupported GeometricRotation")
+    if not _near(gscale, 1.0):
+        raise ReadError("unsupported GeometricScaling")
+    tx, ty, tz = translation
+    sx, sy, sz = scaling
+    if not math.isfinite(float(unit_scale)):
         raise ReadError("non-finite transform")
     if len(flat) % 3 != 0:
         raise ReadError("unreadable FBX: vertex count is not a multiple of 3")
@@ -198,8 +235,10 @@ def _assemble(geoms, models, links, unit_scale):
             raise ReadError("unsupported instance")
         if parents and int(parents[0]) != 0:
             raise ReadError("unsupported parent transform")
-        translation, rotation, scaling = models[mid]
-        local = _transform_vertices(flat, unit_scale, translation, rotation, scaling)
+        translation, rotation, scaling, gtrans, grot, gscale = models[mid]
+        local = _transform_vertices(
+            flat, unit_scale, translation, rotation, scaling, gtrans, grot, gscale
+        )
         base = len(verts)
         verts.extend(local)
         for a, b, c in _triangles_from_indices(indices):
@@ -351,6 +390,9 @@ def _binary_scene(nodes):
                     translation = [0.0, 0.0, 0.0]
                     rotation = [0.0, 0.0, 0.0]
                     scaling = [1.0, 1.0, 1.0]
+                    gtrans = [0.0, 0.0, 0.0]
+                    grot = [0.0, 0.0, 0.0]
+                    gscale = [1.0, 1.0, 1.0]
                     for cname, _cprops, kids in ochildren:
                         if cname != "Properties70":
                             continue
@@ -363,7 +405,13 @@ def _binary_scene(nodes):
                                 rotation = _vec_from_props(pprops, rotation)
                             elif pprops[0] == "Lcl Scaling":
                                 scaling = _vec_from_props(pprops, scaling)
-                    models[int(oprops[0])] = (translation, rotation, scaling)
+                            elif pprops[0] == "GeometricTranslation":
+                                gtrans = _vec_from_props(pprops, gtrans)
+                            elif pprops[0] == "GeometricRotation":
+                                grot = _vec_from_props(pprops, grot)
+                            elif pprops[0] == "GeometricScaling":
+                                gscale = _vec_from_props(pprops, gscale)
+                    models[int(oprops[0])] = (translation, rotation, scaling, gtrans, grot, gscale)
         elif name == "Connections":
             for cname, cprops, _ in children:
                 if cname == "C" and len(cprops) >= 3 and cprops[0] == "OO":
