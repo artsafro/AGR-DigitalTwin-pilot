@@ -4,15 +4,21 @@ Pattern: new-case: Blender driver for the windows-glazing variants (bmesh frames
 
     blender --background --factory-startup --python-exit-code 1 \\
         --python tools/methods/windows/build_variant_blender.py -- <model.fbx> <out.fbx> <variant> \\
-        tile=<UDIM> [glass_map=<metallic.png>]
+        tile=<UDIM> [glass_map=<metallic.png>] [texture=<file name.png>] [texture_side=<px>]
 
 Glass source, first that applies: the `*_MainGlass` object; else the Main polygons whose UV centre is white
 (> 0.5) on `glass_map` (the metallic map, glass white per reg p.9 §5.10, WIN-08); else none (0 openings,
-the model is exported unchanged). The glass source is removed and replaced by the variant's windows; the
-body and the UCX pieces are kept as they are. New UVs go to UDIM `tile`. `<out>.variant.json` records the
-build wall time (after import, up to the end of the export), openings, drops with reasons and any error.
-Exit 0 built; 2 build failed (report written); 4 refused before any write (bad arguments, output aliasing
-an input).
+the model is exported unchanged). The glass source is removed and replaced by the variant's windows; every
+other mesh (body, UCX pieces, accessories) is exported as it is; a non-mesh object is reported in
+`dropped_objects` with its reason. New UVs go to UDIM `tile`. The variant's new material
+(`M_<address>_Main_<Frame|WindowAtlas|FrameTrim>`) gets our generated diffuse `texture` (default
+`T_<address>_<kind>.png`, `texture_side` px, default 1024), written next to `<out>` and bound to its Base Color.
+The FBX is exported to `<out stem>.partial.fbx`, read back in a clean scene and published as `<out>` only when
+the read-back mesh inventory reconciles with the source one (unchanged meshes keep triangles, slots and world
+bounding box) and the new material samples exactly the written PNG; else the partial FBX and the PNG are
+removed. `<out>.variant.json` records the build wall time (after import, up to the end of the export),
+openings, drops with reasons, the inventories and any error. Exit 0 built; 2 build failed (report written,
+no FBX published); 4 refused before any write (bad arguments, a destination aliasing an input).
 """
 import importlib.util
 import json
@@ -37,7 +43,8 @@ ua = _load("ucx_audit", "src/twinqa/geometry/ucx_audit.py")
 
 def _parse(argv):
     if len(argv) < 4:
-        return None, "usage -- <model.fbx> <out.fbx> <variant> tile=<UDIM> [glass_map=<png>]"
+        return None, ("usage -- <model.fbx> <out.fbx> <variant> tile=<UDIM> [glass_map=<png>] "
+                      "[texture=<name.png>] [texture_side=<px>]")
     if argv[2] not in wv.VARIANTS:
         return None, f"unknown variant {argv[2]!r}; expected one of {wv.VARIANTS}"
     if not argv[1].lower().endswith(".fbx"):
@@ -45,8 +52,9 @@ def _parse(argv):
     opts = {}
     for a in argv[3:]:
         k, sep, val = a.partition("=")
-        if not sep or k not in ("tile", "glass_map") or k in opts:
-            return None, f"bad option {a!r} (tile=<UDIM> once, glass_map=<png> at most once)"
+        if not sep or k not in ("tile", "glass_map", "texture", "texture_side") or k in opts:
+            return None, (f"bad option {a!r} (tile=<UDIM> once; glass_map=<png>, texture=<name.png>, "
+                          "texture_side=<px> at most once)")
         opts[k] = val
     if "tile" not in opts:
         return None, "tile=<UDIM> is required"
@@ -57,6 +65,16 @@ def _parse(argv):
         return None, f"bad tile: {exc}"
     if "glass_map" in opts and not Path(opts["glass_map"]).is_file():
         return None, f"glass_map {opts['glass_map']} does not exist"
+    if "texture" in opts:
+        t = opts["texture"]
+        if Path(t).name != t or not t.lower().endswith(".png") or len(t) <= 4:
+            return None, f"texture {t!r} must be a bare file name ending .png (it is written next to the output)"
+    try:
+        opts["texture_side"] = int(opts.get("texture_side", 1024))
+        if not 16 <= opts["texture_side"] <= 16384:
+            raise ValueError(f"{opts['texture_side']} outside 16..16384")
+    except ValueError as exc:
+        return None, f"bad texture_side: {exc}"
     return opts, None
 
 
@@ -98,10 +116,124 @@ def _material(name, existing=None):
     return existing or bpy.data.materials.get(name) or bpy.data.materials.new(name)
 
 
+def _new_material(name):
+    """A fresh material; a source material of the same name is an error naming it, never reused."""
+    import bpy
+
+    if bpy.data.materials.get(name) is not None:
+        raise ValueError(f"source already has a material {name!r}; the variant material would collide")
+    return bpy.data.materials.new(name)
+
+
+def _textured(mat, png: Path, variant: str, side: int, grid: int):
+    """Write our generated diffuse to `png` and bind it to the Base Color of `mat` (Principled BSDF)."""
+    import bpy
+
+    img = bpy.data.images.new(png.stem, side, side, alpha=True)
+    img.pixels.foreach_set(wv.texture_pixels(variant, side, grid).ravel())
+    img.filepath_raw = str(png)
+    img.file_format = "PNG"
+    img.save()
+    if mat.node_tree is None:
+        mat.use_nodes = True
+    nt = mat.node_tree
+    bsdf = next((n for n in nt.nodes if n.type == "BSDF_PRINCIPLED"), None)
+    if bsdf is None:
+        bsdf = nt.nodes.new("ShaderNodeBsdfPrincipled")
+        out = next((n for n in nt.nodes if n.type == "OUTPUT_MATERIAL"), None) or nt.nodes.new("ShaderNodeOutputMaterial")
+        nt.links.new(bsdf.outputs["BSDF"], out.inputs["Surface"])
+    tex = nt.nodes.new("ShaderNodeTexImage")
+    tex.image = img
+    nt.links.new(tex.outputs["Color"], bsdf.inputs["Base Color"])
+    return mat
+
+
+def _sha256(path) -> str:
+    import hashlib
+
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def mesh_inventory(objects) -> dict:
+    """{mesh name: {"tris", "slots", "bbox"}} in world metres (the reconciliation entries)."""
+    import numpy as np
+
+    inv = {}
+    for o in objects:
+        me = o.data
+        mw = np.array(o.matrix_world)
+        co = np.array([v.co[:] for v in me.vertices], float).reshape(-1, 3) @ mw[:3, :3].T + mw[:3, 3]
+        bbox = [co.min(axis=0).tolist(), co.max(axis=0).tolist()] if len(co) else None
+        inv[o.name] = {"tris": int(sum(len(p.vertices) - 2 for p in me.polygons)),
+                       "slots": [s.material.name if s.material else None for s in o.material_slots], "bbox": bbox}
+    return inv
+
+
+def _image_file(img, tile):
+    """The file a read-back image node samples for UDIM `tile` (tiled images resolved per tile)."""
+    import bpy
+
+    path = bpy.path.abspath(img.filepath, library=img.library)
+    if img.source == "TILED":
+        path = path.replace("<UDIM>", str(tile))
+    return Path(path)
+
+
+def readback_check(fbx: Path, expected: dict, gen_mat: str | None, png: Path | None, png_sha: str | None,
+                   tile: int) -> dict:
+    """Import `fbx` into a clean scene and reconcile it: mesh inventory vs `expected` and, for the new
+    material, a linked Base Color image node whose file is `png` with `png_sha`, used by >= 1 polygon whose
+    UV centre is inside `tile`. Returns the facts; `problems` empty = reconciled."""
+    import bpy
+    import numpy as np
+
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+    bpy.ops.import_scene.fbx(filepath=str(fbx))
+    meshes = [o for o in bpy.context.scene.objects if o.type == "MESH"]
+    actual = mesh_inventory(meshes)
+    problems = wv.inventory_diff(expected, actual)
+    facts = {"meshes": sorted(actual)}
+    if gen_mat is not None:
+        mat = bpy.data.materials.get(gen_mat)
+        files = []
+        if mat is None or mat.node_tree is None:
+            problems.append(f"{gen_mat}: not in the read-back scene")
+        else:
+            bsdf_inputs = [lk for lk in mat.node_tree.links if lk.to_socket.name == "Base Color"
+                           and lk.from_node.type == "TEX_IMAGE" and lk.from_node.image is not None]
+            files = [_image_file(lk.from_node.image, tile) for lk in bsdf_inputs]
+            if len(files) != 1:
+                problems.append(f"{gen_mat}: {len(files)} image nodes linked to Base Color (expected 1)")
+            elif not files[0].is_file() or not png.is_file() or not files[0].samefile(png):
+                problems.append(f"{gen_mat}: Base Color samples {files[0]}, not the written {png}")
+            elif _sha256(files[0]) != png_sha:
+                problems.append(f"{gen_mat}: bound image bytes differ from the written PNG")
+        du, dv = wv.tile_offset(tile)
+        used, outside = 0, 0
+        for o in meshes:
+            slots = [s.material.name if s.material else None for s in o.material_slots]
+            if gen_mat not in slots or not o.data.uv_layers:
+                continue
+            k = slots.index(gen_mat)
+            uv = o.data.uv_layers.active.data
+            for p in o.data.polygons:
+                if p.material_index != k:
+                    continue
+                c = np.mean([uv[li].uv[:] for li in p.loop_indices], axis=0)
+                used += 1
+                outside += not (du <= c[0] <= du + 1 and dv <= c[1] <= dv + 1)
+        if used == 0:
+            problems.append(f"{gen_mat}: no read-back polygon uses it")
+        if outside:
+            problems.append(f"{gen_mat}: {outside} of {used} polygons have their UV centre outside tile {tile}")
+        facts.update({"material": gen_mat, "image_files": [str(f) for f in files], "polygons": used})
+    facts["problems"] = problems
+    return facts
+
+
 def _new_object(name, verts, faces, uvs, material, uv_name, matrix=None):
     import bpy
     import numpy as np
-    from mathutils import Matrix
 
     pts = np.asarray(verts, float).reshape(-1, 3)
     if matrix is not None:  # world -> the target object's local space (shared pivot, WIN-14)
@@ -218,13 +350,26 @@ def main():
         return 4
     src, out, variant = Path(args[0]), Path(args[1]), args[2]
     rep_path = out.with_name(out.name + ".variant.json")
+    partial = out.with_name(out.stem + ".partial.fbx")
+    tex_name = opts.get("texture")  # default needs the address: resolved after import, checked again then
     inputs = [src] + ([Path(opts["glass_map"])] if "glass_map" in opts else [])
-    for dst in (out, rep_path):
-        for inp in inputs:
-            alias = ua.output_alias_reason(inp, dst)
-            if alias:
-                print(f"WINDOWS_VARIANT refused: {alias}; nothing written", file=sys.stderr)
-                return 4
+    dests = [out, rep_path, partial] + ([out.with_name(tex_name)] if tex_name else [])
+
+    def refused(dsts):
+        for i, dst in enumerate(dsts):
+            for inp in inputs:
+                alias = ua.output_alias_reason(inp, dst)
+                if alias:
+                    return alias
+            for other in dsts[i + 1:]:
+                if dst.resolve() == other.resolve() or (dst.exists() and other.exists() and dst.samefile(other)):
+                    return f"two destinations are the same file: {dst} and {other}"
+        return None
+
+    why = refused(dests)
+    if why:
+        print(f"WINDOWS_VARIANT refused: {why}; nothing written", file=sys.stderr)
+        return 4
     if not src.is_file():
         print(f"WINDOWS_VARIANT refused: no input file {src}", file=sys.stderr)
         return 4
@@ -234,12 +379,18 @@ def main():
 
     report = {"source": src.name, "variant": variant, "options": {k: str(v) for k, v in opts.items()},
               "blender": bpy.app.version_string, "ok": False}
-    code = 2
+    code, written = 2, []
     try:
+        out.unlink(missing_ok=True)  # a stale output never survives a failed build (destinations checked above)
         bpy.ops.wm.read_factory_settings(use_empty=True)
         bpy.ops.import_scene.fbx(filepath=str(src))
         t0 = time.perf_counter()
-        meshes = [o for o in bpy.context.scene.objects if o.type == "MESH"]
+        objects = list(bpy.context.scene.objects)
+        meshes = [o for o in objects if o.type == "MESH"]
+        source_inv = mesh_inventory(meshes)
+        report["source_inventory"] = sorted(source_inv)
+        dropped_objects = [{"name": o.name, "reason": f"non-mesh object ({o.type}); the export is MESH-only"}
+                           for o in objects if o.type != "MESH"]
         mains = [o for o in meshes if o.name.endswith("_Main")]
         if len(mains) != 1:
             raise ValueError(f"expected one *_Main mesh, found {[o.name for o in mains]}")
@@ -248,6 +399,11 @@ def main():
         glass_objs = [o for o in meshes if o.name.endswith("_MainGlass")]
         if len(glass_objs) > 1:
             raise ValueError(f"more than one *_MainGlass mesh: {[o.name for o in glass_objs]}")
+        kind = wv.GEN_MATERIAL[variant]
+        png = out.with_name(tex_name or f"T_{address}_{kind}.png")
+        why = refused(dests + ([] if tex_name else [png]))
+        if why:
+            raise ValueError(f"{why} (default texture name)")
         bb = np.array([main.matrix_world @ __import__("mathutils").Vector(c) for c in main.bound_box])
         centre_xy = (bb[:, :2].min(axis=0) + bb[:, :2].max(axis=0)) / 2
         glass_mat = None
@@ -265,8 +421,11 @@ def main():
         kept = sum(len(o["polygons"]) for o in openings) + sum(len(d["polygons"]) for d in dropped)
         if kept != len(polys):
             raise ValueError(f"opening extraction accounts for {kept} of {len(polys)} glass polygons")
-        # remove the glass source (the variant replaces it)
-        if glass_objs:
+        # expected output inventory: every source mesh unchanged, except Main (rebuilt windows) and the glass
+        expected = {n: e for n, e in source_inv.items() if n != main.name and not (glass_objs and n == glass_objs[0].name)}
+        expected[main.name] = None
+        if glass_objs:  # remove the glass source (the variant replaces it)
+            report["replaced_objects"] = [{"name": glass_objs[0].name, "reason": "glass source, rebuilt by the variant"}]
             bpy.data.objects.remove(glass_objs[0], do_unlink=True)
         elif polys:
             bm = bmesh.new()
@@ -277,45 +436,60 @@ def main():
             bm.free()
         built = build(variant, openings, opts["tile"])
         uv_name = main.data.uv_layers.active.name if main.data.uv_layers else "UVMap"
-        joins = []
-        if built["frame"] is not None:
-            joins.append(_new_object(f"{address}_Frame_tmp", *built["frame"],
-                                     _material(f"M_{address}_Main_Frame" if variant == "modelled-frames"
-                                               else f"M_{address}_Main_FrameTrim"), uv_name))
-        if built["atlas"] is not None:
-            joins.append(_new_object(f"{address}_Atlas_tmp", *built["atlas"],
-                                     _material(f"M_{address}_Main_WindowAtlas"), uv_name))
+        joins, gen_mat = [], None
+        if built["frame"] is not None or built["atlas"] is not None:
+            gen_mat = f"M_{address}_Main_{kind}"
+            mat = _new_material(gen_mat)
+            written.append(png)
+            _textured(mat, png, variant, opts["texture_side"], int(built["info"].get("atlas_grid") or 1))
+            part = built["frame"] if built["frame"] is not None else built["atlas"]
+            joins.append(_new_object(f"{address}_{kind}_tmp", *part, mat, uv_name))
         if joins:
             bpy.ops.object.select_all(action="DESELECT")
             for o in joins + [main]:
                 o.select_set(True)
             bpy.context.view_layer.objects.active = main
             bpy.ops.object.join()
-        export = [main] + [o for o in bpy.context.scene.objects if o.type == "MESH" and o.name.upper().startswith("UCX")]
         if built["glass"] is not None:
             g = _new_object(f"{address}_MainGlass", *built["glass"],
                             _material(f"M_{address}_MainGlass_1", glass_mat), uv_name, matrix=main.matrix_world.copy())
             g.name = f"{address}_MainGlass"
-            export.append(g)
+            if g.name in expected:
+                raise ValueError(f"rebuilt glass name {g.name} collides with a kept source mesh")
+            expected[g.name] = None
+        export = [o for o in bpy.context.scene.objects if o.type == "MESH"]
+        if sorted(o.name for o in export) != sorted(expected):
+            raise ValueError(f"export set {sorted(o.name for o in export)} != expected {sorted(expected)}")
         bpy.ops.object.select_all(action="DESELECT")
         for o in export:
             o.select_set(True)
         out.parent.mkdir(parents=True, exist_ok=True)
-        bpy.ops.export_scene.fbx(filepath=str(out), use_selection=True, object_types={"MESH"},
+        written.append(partial)
+        bpy.ops.export_scene.fbx(filepath=str(partial), use_selection=True, object_types={"MESH"},
                                  axis_forward="Y", axis_up="Z", apply_unit_scale=True,
                                  apply_scale_options="FBX_SCALE_UNITS", global_scale=1.0,
                                  bake_space_transform=False, use_mesh_modifiers=False, mesh_smooth_type="FACE",
                                  use_triangles=True, use_custom_props=False, add_leaf_bones=False,
                                  bake_anim=False, path_mode="STRIP", embed_textures=False)
         report["wall_time_s"] = round(time.perf_counter() - t0, 3)
+        png_sha = _sha256(png) if gen_mat else None
+        check = readback_check(partial, expected, gen_mat, png if gen_mat else None, png_sha, opts["tile"])
+        report["readback"] = check
+        if check["problems"]:
+            raise ValueError(f"read-back does not reconcile: {check['problems'][:5]}")
+        partial.replace(out)
+        written.remove(partial)
         report.update({"ok": True, "glass_source": source, "glass_polygons_in": len(polys),
                        "glass_polygons_removed": removed, "openings": len(openings),
                        "dropped_polygons": sum(len(d["polygons"]) for d in dropped),
-                       "dropped_by_reason": _by_reason(dropped),
-                       "exported": sorted(o.name for o in export), **built["info"]})
+                       "dropped_by_reason": _by_reason(dropped), "dropped_objects": dropped_objects,
+                       "exported": sorted(expected), "texture": png.name if gen_mat else None,
+                       "texture_sha256": png_sha, **built["info"]})
         code = 0
-    except Exception as exc:  # report, never hide
+    except Exception as exc:  # report, never hide; publish nothing
         report["error"] = f"{type(exc).__name__}: {exc}"
+        for w in written:
+            Path(w).unlink(missing_ok=True)
     rep_path.write_text(json.dumps(report, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     print("WINDOWS_VARIANT", code, report.get("openings"), report.get("error", ""))
     return code

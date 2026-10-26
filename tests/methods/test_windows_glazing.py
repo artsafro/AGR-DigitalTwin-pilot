@@ -7,6 +7,8 @@ from __future__ import annotations
 import json
 import math
 
+from pathlib import Path
+
 import numpy as np
 import pytest
 
@@ -275,3 +277,206 @@ def test_when_rules_cite_existing_rows_and_numbers():
         cited = [int(x) for x in re.findall(r"\bR(\d+)\b", rule)]
         assert cited and all(1 <= c <= n for c in cited), rule
         assert re.search(r"\d", re.sub(r"\bR\d+\b", "", rule)), f"rule without a number: {rule}"
+
+
+
+# ---- review round 1: generated textures bound, every source mesh kept (pure parts) ------------------------------
+wvm = _load("methods_windows_variants_t", TOOLS / "windows" / "windows_variants.py")
+
+
+@pytest.mark.parametrize("variant", wvm.VARIANTS)
+def test_texture_pixels_shape_and_not_uniform(variant):
+    px = wvm.texture_pixels(variant, 64, 2)
+    assert px.shape == (64, 64, 4) and px.dtype == np.float32 and np.isfinite(px).all()
+    assert len(np.unique(px[:, :, :3].reshape(-1, 3), axis=0)) >= 2 and (px[:, :, 3] == 1).all()
+
+
+@pytest.mark.parametrize("args", [("no-such", 64, 1), ("atlas-planes", 8, 1), ("atlas-planes", 64, 0),
+                                  ("atlas-planes", 64.0, 1), ("atlas-planes", 64, True)])
+def test_texture_pixels_refuses_bad_input(args):
+    with pytest.raises(ValueError):
+        wvm.texture_pixels(*args)
+
+
+def _entry(tris=12, slots=("M_A",), lo=(0, 0, 0), hi=(1, 1, 1)):
+    return {"tris": tris, "slots": list(slots), "bbox": [list(lo), list(hi)]}
+
+
+@pytest.mark.parametrize("actual,needle", [
+    ({"SM_T_Main": _entry()}, "missing in output: SM_T_RoofDetail"),
+    ({"SM_T_Main": _entry(), "SM_T_RoofDetail": _entry(), "X": _entry()}, "not expected in output: X"),
+    ({"SM_T_Main": _entry(), "SM_T_RoofDetail": _entry(tris=10)}, "triangles 12 -> 10"),
+    ({"SM_T_Main": _entry(), "SM_T_RoofDetail": _entry(slots=("M_B",))}, "material slots"),
+    ({"SM_T_Main": _entry(), "SM_T_RoofDetail": _entry(hi=(1, 1, 1.0002))}, "bounding box moved"),
+    ({"SM_T_Main": _entry(), "SM_T_RoofDetail": _entry(hi=(1, 1, float("nan")))}, "not finite"),
+    ({"SM_T_Main": _entry(), "SM_T_RoofDetail": None}, "no read-back entry"),
+])
+def test_inventory_diff_names_every_problem(actual, needle):
+    expected = {"SM_T_Main": None, "SM_T_RoofDetail": _entry()}
+    assert any(needle in p for p in wvm.inventory_diff(expected, actual))
+
+
+def test_inventory_diff_reconciled_and_exactly_at_tolerance():
+    expected = {"SM_T_Main": None, "SM_T_RoofDetail": _entry()}
+    assert wvm.inventory_diff(expected, {"SM_T_Main": _entry(tris=99), "SM_T_RoofDetail": _entry()}) == []
+    at = {"SM_T_Main": None, "SM_T_RoofDetail": _entry(hi=(1, 1, 1 + wvm.INVENTORY_TOL_M / 2))}
+    assert wvm.inventory_diff(expected, at) == []  # inside tol passes; 2x tol (above) fails
+
+
+@pytest.mark.parametrize("argv,msg", [
+    (["a.fbx", "b.fbx", "atlas-planes", "tile=1002", "texture=sub/T.png"], "bare file name"),
+    (["a.fbx", "b.fbx", "atlas-planes", "tile=1002", "texture=T.tga"], "bare file name"),
+    (["a.fbx", "b.fbx", "atlas-planes", "tile=1002", "texture_side=8"], "bad texture_side"),
+    (["a.fbx", "b.fbx", "atlas-planes", "tile=1002", "texture_side=big"], "bad texture_side"),
+])
+def test_driver_refuses_bad_texture_options(argv, msg):
+    opts, err = bvb._parse(argv)
+    assert opts is None and err and __import__("re").search(msg, err)
+
+
+def test_driver_texture_aliasing_an_input_exits_4_and_writes_nothing(tmp_path, monkeypatch):
+    src = tmp_path / "SM_Test.fbx"
+    src.write_bytes(b"fbx")
+    gm = tmp_path / "T_m_1.png"
+    gm.write_bytes(b"png")
+    before = {p.name: p.read_bytes() for p in tmp_path.iterdir()}
+    monkeypatch.setattr("sys.argv", ["blender", "--", str(src), str(tmp_path / "SM_Out.fbx"), "atlas-planes",
+                                     "tile=1002", f"glass_map={gm}", "texture=T_m_1.png"])
+    assert bvb.main() == 4
+    assert {p.name: p.read_bytes() for p in tmp_path.iterdir()} == before
+
+
+# ---- review round 1: real Blender witnesses (opt-in: -m blender) ---------------------------------------------------
+MAKE_SCENE = """
+import bpy, sys
+bpy.ops.wm.read_factory_settings(use_empty=True)
+glass, ucx, out = sys.argv[-3] == "1", sys.argv[-2] == "1", sys.argv[-1]
+def obj(name, verts, faces, mat, loc=(0, 0, 0), rot=0.0):
+    me = bpy.data.meshes.new(name); me.from_pydata(verts, [], faces); me.uv_layers.new(name="UVMap")
+    me.materials.append(bpy.data.materials.get(mat) or bpy.data.materials.new(mat)); me.update()
+    ob = bpy.data.objects.new(name, me); ob.location = loc; ob.rotation_euler[2] = rot
+    bpy.context.scene.collection.objects.link(ob); return ob
+def box(x0, y0, z0, x1, y1, z1):
+    v = [(x, y, z) for x in (x0, x1) for y in (y0, y1) for z in (z0, z1)]
+    f = [(0, 1, 3, 2), (4, 6, 7, 5), (0, 4, 5, 1), (2, 3, 7, 6), (0, 2, 6, 4), (1, 5, 7, 3)]
+    return v, f
+obj("SM_Test_Main", *box(0, 0, 0, 4, 0.3, 3), "M_Test_Main_1")
+obj("SM_Test_RoofDetail", *box(-0.4, -0.4, 0, 0.4, 0.4, 0.6), "M_Test_RoofDetail_1", loc=(2, 0.15, 3), rot=0.5)
+if ucx:
+    obj("UCX_SM_Test_Main_00", *box(0, 0, 0, 4, 0.3, 3), "M_Test_Main_1")
+if glass:
+    q = lambda x0, x1: [(x0, -0.01, 0.8), (x1, -0.01, 0.8), (x1, -0.01, 2.0), (x0, -0.01, 2.0)]
+    obj("SM_Test_MainGlass", q(0.5, 1.5) + q(2.5, 3.5), [(0, 1, 2, 3), (4, 5, 6, 7)], "M_Test_MainGlass_1")
+bpy.ops.export_scene.fbx(filepath=out, object_types={"MESH"}, bake_anim=False)
+"""
+
+PROBE = """
+import bpy, sys, json, hashlib
+bpy.ops.wm.read_factory_settings(use_empty=True)
+bpy.ops.import_scene.fbx(filepath=sys.argv[-2])
+res = {"meshes": {}, "materials": {}}
+for o in bpy.context.scene.objects:
+    if o.type != "MESH":
+        continue
+    co = [o.matrix_world @ v.co for v in o.data.vertices]
+    res["meshes"][o.name] = {"tris": sum(len(p.vertices) - 2 for p in o.data.polygons),
+        "slots": [s.material.name for s in o.material_slots],
+        "bbox": [[min(c[i] for c in co) for i in range(3)], [max(c[i] for c in co) for i in range(3)]]}
+for m in bpy.data.materials:
+    links = [lk for lk in (m.node_tree.links if m.node_tree else []) if lk.to_socket.name == "Base Color"
+             and lk.from_node.type == "TEX_IMAGE" and lk.from_node.image]
+    files = [bpy.path.abspath(lk.from_node.image.filepath) for lk in links]
+    res["materials"][m.name] = [{"file": f, "sha256": hashlib.sha256(open(f, "rb").read()).hexdigest()}
+                                for f in files]
+open(sys.argv[-1], "w").write(json.dumps(res))
+"""
+
+
+def _blender_run(exe, script, *args, check=True):
+    import subprocess
+
+    return subprocess.run([exe, "--background", "--factory-startup", "--python-exit-code", "1", "--python",
+                           str(script), "--", *map(str, args)], capture_output=True, text=True, timeout=600,
+                          check=check)
+
+
+def _probe(exe, tmp_path, fbx, tag):
+    (tmp_path / "probe.py").write_text(PROBE, encoding="utf-8")
+    res = tmp_path / f"{tag}.probe.json"
+    _blender_run(exe, tmp_path / "probe.py", fbx, res)
+    return json.loads(res.read_text())
+
+
+def _make_source(exe, tmp_path, glass, script=MAKE_SCENE):
+    (tmp_path / "make.py").write_text(script, encoding="utf-8")
+    src = tmp_path / "src" / "SM_Test.fbx"
+    src.parent.mkdir()
+    _blender_run(exe, tmp_path / "make.py", int(glass), 1, src)
+    return src
+
+
+@pytest.mark.blender
+@pytest.mark.parametrize("glass", [True, False], ids=["glass", "no-glass"])
+@pytest.mark.parametrize("variant", ["modelled-frames", "atlas-planes", "inset-glass-trim"])
+def test_driver_keeps_accessory_ucx_and_binds_the_generated_texture(tmp_path, variant, glass):
+    """Main + RoofDetail accessory (rotated, own material) + UCX, with or without MainGlass: every source mesh
+    except the glass survives unchanged; the new material samples the packaged PNG through a clean import."""
+    import hashlib
+    import shutil
+
+    from dt_ai.core.blender_runner import blender_executable
+
+    exe = blender_executable()
+    src = _make_source(exe, tmp_path, glass)
+    out = tmp_path / "v" / "SM_Test.fbx"
+    r = _blender_run(exe, TOOLS / "windows" / "build_variant_blender.py", src, out, variant, "tile=1002",
+                     "texture_side=64", check=False)
+    rep = out.with_name(out.name + ".variant.json")
+    report = json.loads(rep.read_text(encoding="utf-8")) if rep.is_file() else {}
+    assert r.returncode == 0 and report.get("ok"), report.get("error") or r.stderr[-500:]
+    assert not out.with_name("SM_Test.partial.fbx").exists()
+    before = _probe(exe, tmp_path, src, "before")
+    pkg = tmp_path / "pkg"  # clean import from a package-like folder: only the FBX and the PNG(s) next to it
+    pkg.mkdir()
+    shutil.copyfile(out, pkg / out.name)
+    for png in out.parent.glob("*.png"):
+        shutil.copyfile(png, pkg / png.name)
+    after = _probe(exe, tmp_path, pkg / out.name, "after")
+    keep = {"SM_Test_RoofDetail", "UCX_SM_Test_Main_00"}
+    want = {"SM_Test_Main"} | keep | ({"SM_Test_MainGlass"} if glass and variant != "atlas-planes" else set())
+    assert set(after["meshes"]) == want
+    for n in keep:
+        a, b = after["meshes"][n], before["meshes"][n]
+        assert a["tris"] == b["tris"] and a["slots"] == b["slots"]
+        assert np.abs(np.array(a["bbox"]) - np.array(b["bbox"])).max() < 1e-4
+    assert report["source_inventory"] == sorted(before["meshes"])
+    mat = f"M_SM_Test_Main_{wvm.GEN_MATERIAL[variant]}"
+    if not glass:
+        assert report["openings"] == 0 and report["texture"] is None and mat not in after["materials"]
+        assert not list(out.parent.glob("*.png"))
+        return
+    assert report["openings"] == 2
+    png = pkg / report["texture"]
+    assert report["texture"] == f"T_SM_Test_{wvm.GEN_MATERIAL[variant]}.png"
+    bound = after["materials"][mat]
+    assert len(bound) == 1 and Path(bound[0]["file"]).samefile(png)
+    assert bound[0]["sha256"] == hashlib.sha256(png.read_bytes()).hexdigest() == report["texture_sha256"]
+    assert mat in after["meshes"]["SM_Test_Main"]["slots"]
+
+
+@pytest.mark.blender
+def test_driver_name_collision_publishes_nothing(tmp_path):
+    """A source that already has the variant's material name: exit 2, no FBX (stale one removed), no PNG."""
+    from dt_ai.core.blender_runner import blender_executable
+
+    exe = blender_executable()
+    src = _make_source(exe, tmp_path, True,
+                       MAKE_SCENE.replace('"M_Test_RoofDetail_1"', '"M_SM_Test_Main_WindowAtlas"'))
+    out = tmp_path / "v" / "SM_Test.fbx"
+    out.parent.mkdir()
+    out.write_bytes(b"stale")
+    r = _blender_run(exe, TOOLS / "windows" / "build_variant_blender.py", src, out, "atlas-planes", "tile=1002",
+                     check=False)
+    report = json.loads(out.with_name(out.name + ".variant.json").read_text(encoding="utf-8"))
+    assert r.returncode == 2 and not report["ok"] and "collide" in report["error"]
+    assert sorted(q.name for q in out.parent.iterdir()) == ["SM_Test.fbx.variant.json"]

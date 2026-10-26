@@ -193,3 +193,61 @@ def frame_plan(o: dict) -> dict:
     """Inputs of the bmesh frame build of one opening: outer rectangle, pane count, widths, depth."""
     return {"outer": rect(o), "panes": panes(o), "frame_w": FRAME_W_M, "mullion_w": FRAME_W_M,
             "depth": FRAME_D_M}
+
+
+GEN_MATERIAL = {"modelled-frames": "Frame", "atlas-planes": "WindowAtlas", "inset-glass-trim": "FrameTrim"}
+INVENTORY_TOL_M = 1e-4  # an unchanged mesh keeps its world bounding box within 0.1 mm through FBX
+
+
+def texture_pixels(variant: str, side: int, grid: int = 1) -> np.ndarray:
+    """Our generated diffuse of a variant's new material, (side, side, 4) float32 RGBA, rows bottom-up
+    (Blender `Image.pixels` order). atlas = grid x grid window drawings (frame light, glass dark, one
+    mullion); frame / trim = light strip with a darker border. Never uniform, so a sampled UV is checkable."""
+    if variant not in VARIANTS:
+        raise ValueError(f"unknown variant {variant!r}")
+    if not isinstance(side, int) or side < 16 or isinstance(grid, bool) or not isinstance(grid, int) or grid < 1:
+        raise ValueError(f"texture side {side!r} (>= 16 px) and grid {grid!r} (>= 1) must be integers")
+    light, dark, edge = (236 / 255, 236 / 255, 232 / 255), (52 / 255, 70 / 255, 92 / 255), (150 / 255,) * 3
+    px = np.ones((side, side, 4), np.float32)
+    px[:, :, :3] = light
+    if variant == "atlas-planes":
+        cell = side // grid
+        f = max(2, cell // 16)
+        for cx in range(grid):
+            for cy in range(grid):
+                x0, y0 = cx * cell, cy * cell
+                px[y0 + f:y0 + cell - f, x0 + f:x0 + cell - f, :3] = dark
+                px[y0:y0 + cell, x0 + cell // 2 - f // 2:x0 + cell // 2 + f // 2 + 1, :3] = light
+    else:
+        b = max(2, side // 256)
+        for sl in ((slice(0, b), slice(None)), (slice(-b, None), slice(None)),
+                   (slice(None), slice(0, b)), (slice(None), slice(-b, None))):
+            px[sl[0], sl[1], :3] = edge
+    return px
+
+
+def inventory_diff(expected: dict, actual: dict, tol: float = INVENTORY_TOL_M) -> list[str]:
+    """Problems between the expected and the read-back mesh inventory ({name: entry}); [] = reconciled.
+
+    An entry None = only presence is checked (a mesh the variant rebuilt). Else {"tris", "slots", "bbox"}
+    (bbox = [[min xyz], [max xyz]] world metres): an unchanged mesh must keep its triangle count, its material
+    slot names and its bbox within `tol`. Missing and extra names are both problems; non-finite numbers too."""
+    problems = [f"missing in output: {n}" for n in sorted(set(expected) - set(actual))]
+    problems += [f"not expected in output: {n}" for n in sorted(set(actual) - set(expected))]
+    for name in sorted(set(expected) & set(actual)):
+        e, a = expected[name], actual[name]
+        if e is None:
+            continue
+        if a is None:
+            problems.append(f"{name}: no read-back entry")
+            continue
+        if e["tris"] != a["tris"]:
+            problems.append(f"{name}: triangles {e['tris']} -> {a['tris']}")
+        if list(e["slots"]) != list(a["slots"]):
+            problems.append(f"{name}: material slots {list(e['slots'])} -> {list(a['slots'])}")
+        eb, ab = np.asarray(e["bbox"], float), np.asarray(a["bbox"], float)
+        if eb.shape != (2, 3) or ab.shape != (2, 3) or not (np.isfinite(eb).all() and np.isfinite(ab).all()):
+            problems.append(f"{name}: bounding box missing or not finite")
+        elif float(np.abs(eb - ab).max()) > tol:
+            problems.append(f"{name}: bounding box moved {float(np.abs(eb - ab).max()):.6f} m (> {tol} m)")
+    return problems

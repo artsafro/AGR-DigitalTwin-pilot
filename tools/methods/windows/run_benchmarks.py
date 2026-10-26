@@ -7,8 +7,9 @@ Pattern: new-case: methods-catalog batch for the windows-glazing class (#721).
 
 Per (benchmark, variant): checks the source sha256 against benchmark/methods/benchmarks.json, builds the
 variant in a fresh factory Blender (build_variant_blender.py) into <out>/<bench>/<variant>/<FBX name>
-(the source is never written), packs a ZIP with the source package's textures plus, for a UDIM-tiled
-package, one generated diffuse PNG for the new UDIM tile of the window UVs, then measures the ZIP with
+(the source is never written), packs a ZIP with the source package's textures plus the variant's generated
+diffuse PNG the driver wrote and bound to the new material (tiled package: `<diffuse stem>.<new tile>.png`,
+1024 px; untiled: `T_<FBX stem>_<kind>.png` at the side of the package's single diffuse), then measures it with
 tools/methods/run_variant.py in a fresh process. Variant `source-as-is` measures a copy of the source
 package itself (no build) as the reference row. Rows are written only by run_variant.py: a failed build
 appends nothing and makes the batch exit 1. Then RESULTS.md is regenerated.
@@ -78,35 +79,43 @@ def glass_map(bench: dict) -> Path | None:
     return maps[0] if maps else None
 
 
-def texture_png(variant: str, report: dict, side: int = 1024):
-    """Our generated diffuse for the new tile: atlas = grid of window drawings; frames / trim = frame strip."""
-    from PIL import Image, ImageDraw
+def texture_plan(bench: dict, out: Path, variant: str, tile: int) -> tuple[str, int]:
+    """(file name, side px) of the variant's generated diffuse, written by the driver next to `out`."""
+    from PIL import Image
 
-    im = Image.new("RGB", (side, side), (236, 236, 232))
-    d = ImageDraw.Draw(im)
-    if variant == "atlas-planes":
-        g = int(report.get("atlas_grid") or 1)
-        cell = side // g
-        for cx in range(g):
-            for cy in range(g):
-                x0, y0 = cx * cell, side - (cy + 1) * cell
-                f = max(2, cell // 16)
-                d.rectangle([x0 + f, y0 + f, x0 + cell - f, y0 + cell - f], fill=(52, 70, 92))
-                d.rectangle([x0 + cell // 2 - f // 2, y0, x0 + cell // 2 + f // 2, y0 + cell], fill=(236, 236, 232))
-    else:
-        d.rectangle([0, 0, side - 1, side - 1], outline=(150, 150, 146), width=4)
-    return im
-
-
-def package(bench: dict, fbx: Path, variant: str, report: dict, tile: int, generated: bool = True) -> Path:
-    out = ucx_batch.package(bench, fbx)
     stem, _ = diffuse_tiles(bench)
-    if generated and out.suffix.lower() == ".zip" and stem:
-        png = out.with_name(f"{stem}.{tile}.png")
-        texture_png(variant, report).save(png)
+    if stem:
+        return f"{stem}.{tile}.png", 1024
+    diffuse = [Path(t["local_path"]) for t in bench["source"].get("textures") or []
+               if re.search(r"(?i)(diffuse|_d_\d)", Path(t["local_path"]).stem)]
+    if len(diffuse) != 1:
+        raise run_variant.Refused(f"{bench['id']}: untiled package needs exactly one diffuse map, found {diffuse}")
+    with Image.open(diffuse[0]) as im:
+        side = im.size[0]
+    return f"T_{out.stem}_{wv.GEN_MATERIAL[variant]}.png", side
+
+
+def package(bench: dict, fbx: Path, report: dict) -> Path:
+    """ucx_batch.package + the driver's generated PNG (report `texture`), refused on a name already packed."""
+    out = ucx_batch.package(bench, fbx)
+    name = report.get("texture")
+    if name:
+        png = fbx.with_name(name)
+        if not png.is_file() or wv_sha(png) != report.get("texture_sha256"):
+            raise run_variant.Refused(f"{bench['id']}: generated texture {png} missing or not the bound one")
+        if out.suffix.lower() != ".zip":
+            raise run_variant.Refused(f"{bench['id']}: a generated texture needs a ZIP package")
         with zipfile.ZipFile(out, "a", zipfile.ZIP_DEFLATED) as z:
-            z.write(png, png.name)
+            if name in z.namelist():
+                raise run_variant.Refused(f"{bench['id']}: {name} is already in the source package")
+            z.write(png, name)
     return out
+
+
+def wv_sha(path: Path) -> str:
+    import hashlib
+
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def plan(a, benches: list[dict]) -> list[tuple]:
@@ -117,14 +126,15 @@ def plan(a, benches: list[dict]) -> list[tuple]:
         bench = run_variant.load_benchmark(a.benchmarks, bid, CLASS)
         src = ucx_batch.source_fbx(bench)
         tile, gmap = new_tile(bench), glass_map(bench)
-        stem, _ = diffuse_tiles(bench)
         for variant in a.variant or (BASELINE,) + wv.VARIANTS:
             if variant not in (BASELINE,) + wv.VARIANTS:
                 raise run_variant.Refused(f"unknown variant {variant!r}; known: {[BASELINE, *wv.VARIANTS]}")
             out = a.out / bid / variant / bench["source"].get("output_name", src.name)
             rep = out.with_name(out.name + ".variant.json")
-            runs.append((bench, src, variant, out, rep, tile, gmap))
-            dests += [out, rep, out.with_suffix(".zip")] + ([out.with_name(f"{stem}.{tile}.png")] if stem else [])
+            tex = texture_plan(bench, out, variant, tile) if variant != BASELINE else None
+            runs.append((bench, src, variant, out, rep, tile, gmap, tex))
+            dests += [out, rep, out.with_suffix(".zip"), out.with_name(out.stem + ".partial.fbx")] + \
+                ([out.with_name(tex[0])] if tex else [])
     refuse_aliases(dests, ucx_batch.protected_inputs(a.benchmarks, benches))
     for i, d in enumerate(dests):
         for e in dests[i + 1:]:
@@ -153,15 +163,14 @@ def main(argv=None) -> int:
 
     blender = blender_executable()
     codes = []
-    for bench, src, variant, out, rep, tile, gmap in runs:
+    for bench, src, variant, out, rep, tile, gmap, tex in runs:
         bid = bench["id"]
         out.parent.mkdir(parents=True, exist_ok=True)
-        stem, _ = diffuse_tiles(bench)
-        for stale in [out, rep, out.with_suffix(".zip")] + ([out.with_name(f"{stem}.{tile}.png")] if stem else []):
+        for stale in [out, rep, out.with_suffix(".zip")] + ([out.with_name(tex[0])] if tex else []):
             stale.unlink(missing_ok=True)  # planned destinations only; preflight proved none is an input
         if variant == BASELINE:  # copy, never write next to the source; no build, so no wall time
             shutil.copyfile(src, out)
-            target = package(bench, out, variant, {}, tile, generated=False)
+            target = package(bench, out, {})
             r = subprocess.run([sys.executable, str(HERE.parent / "run_variant.py"), str(target), "--bench", bid,
                                 "--class", CLASS, "--variant", variant, "--results", str(a.results),
                                 "--benchmarks", str(a.benchmarks)], capture_output=True, text=True, timeout=3600)
@@ -169,7 +178,8 @@ def main(argv=None) -> int:
             codes.append(r.returncode)
             continue
         cmd = [blender, "--background", "--factory-startup", "--python-exit-code", "1", "--python",
-               str(HERE / "build_variant_blender.py"), "--", str(src), str(out), variant, f"tile={tile}"]
+               str(HERE / "build_variant_blender.py"), "--", str(src), str(out), variant, f"tile={tile}",
+               f"texture={tex[0]}", f"texture_side={tex[1]}"]
         if gmap:
             cmd.append(f"glass_map={gmap}")
         proc = subprocess.run(cmd, capture_output=True, text=True, timeout=3600)
@@ -178,7 +188,12 @@ def main(argv=None) -> int:
             print(f"{bid} {variant}: build failed, no row: {report.get('error') or proc.stderr[-300:]}")
             codes.append(2)
             continue
-        target = package(bench, out, variant, report, tile)
+        try:
+            target = package(bench, out, report)
+        except run_variant.Refused as exc:
+            print(f"{bid} {variant}: package refused, no row: {exc}")
+            codes.append(2)
+            continue
         r = subprocess.run([sys.executable, str(HERE.parent / "run_variant.py"), str(target), "--bench", bid,
                             "--class", CLASS, "--variant", variant, "--variant-report", str(rep),
                             "--results", str(a.results), "--benchmarks", str(a.benchmarks)],
