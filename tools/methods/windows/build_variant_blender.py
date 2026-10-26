@@ -125,45 +125,44 @@ def _new_object(name, verts, faces, uvs, material, uv_name, matrix=None):
 
 
 def _bmesh_frame(o):
-    """modelled-frames, one opening: inset ring, mullions by grid subdivide + inset, panes out, solidify."""
+    """modelled-frames, one opening: inset ring, mullions by grid subdivide + inset, panes out, solidify.
+
+    Built in the opening's own frame (x = u, y = v, z = n, origin at its centre): bmesh coordinates are
+    float32, so building at world coordinates hundreds of metres from the origin loses the 1e-4 m tests."""
     import bmesh
     import numpy as np
 
     plan = wv.frame_plan(o)
+    hw, hh, fw, tol = o["width"] / 2, o["height"] / 2, plan["frame_w"], 1e-4
     bm = bmesh.new()
-    face = bm.faces.new([bm.verts.new(tuple(p)) for p in plan["outer"]])
+    face = bm.faces.new([bm.verts.new(p) for p in ((-hw, -hh, 0.0), (hw, -hh, 0.0), (hw, hh, 0.0), (-hw, hh, 0.0))])
     bm.normal_update()  # inset ops move along the face normal: without it the ring is degenerate
-    bmesh.ops.inset_individual(bm, faces=[face], thickness=plan["frame_w"], depth=0.0, use_even_offset=True)
+    bmesh.ops.inset_individual(bm, faces=[face], thickness=fw, depth=0.0, use_even_offset=True)
     inner = [face]
     if plan["panes"] > 1:
-        horiz = [e for e in face.edges if abs((e.verts[1].co - e.verts[0].co).normalized().dot(tuple(o["u"]))) > 0.9]
+        horiz = [e for e in face.edges if abs(e.verts[1].co.x - e.verts[0].co.x) > tol]
         bmesh.ops.subdivide_edges(bm, edges=horiz, cuts=plan["panes"] - 1, use_grid_fill=True)
-        lim = o["width"] / 2 - plan["frame_w"] + 1e-6
-        limv = o["height"] / 2 - plan["frame_w"] + 1e-6
-        inner = []
-        for f in bm.faces:  # panes = faces with every corner inside the inner rectangle
-            inside = all(abs((np.array(v.co) - o["centre"]) @ o["u"]) <= lim and
-                         abs((np.array(v.co) - o["centre"]) @ o["v"]) <= limv for v in f.verts)
-            if inside:
-                inner.append(f)
+        inner = [f for f in bm.faces  # panes = faces with every corner inside the inner rectangle
+                 if all(abs(v.co.x) <= hw - fw + tol and abs(v.co.y) <= hh - fw + tol for v in f.verts)]
         bm.normal_update()
         bmesh.ops.inset_individual(bm, faces=inner, thickness=plan["mullion_w"] / 2, use_even_offset=True)
-    glass = [np.array([v.co[:] for v in f.verts]) for f in inner]
+    local_glass = [np.array([v.co[:] for v in f.verts], float) for f in inner]
     bmesh.ops.delete(bm, geom=inner, context="FACES_ONLY")
     bmesh.ops.solidify(bm, geom=list(bm.faces), thickness=plan["depth"])
-    co = np.array([v.co[:] for v in bm.verts])
-    along = (co - o["centre"]) @ o["n"]
-    shift = -(along.max() + along.min()) / 2  # centre the frame depth on the glass plane
     bm.verts.index_update()
-    verts = co + shift * o["n"]
+    co = np.array([v.co[:] for v in bm.verts], float)
     faces = [[v.index for v in f.verts] for f in bm.faces]
     bm.free()
+    co[:, 2] -= (co[:, 2].max() + co[:, 2].min()) / 2  # centre the frame depth on the glass plane
+    basis = np.stack([o["u"], o["v"], o["n"]])
+    verts = o["centre"] + co @ basis
+    glass = [o["centre"] + g @ basis for g in local_glass]
     pane_area = sum(float(np.linalg.norm(wv._newell(g))) for g in glass)
-    if pane_area >= 0.99 * o["width"] * o["height"]:
-        raise ValueError(f"bmesh inset did not move: panes cover {pane_area:.3f} m2 of {o['width'] * o['height']:.3f}")
     if not faces or not glass:  # fail closed: an opening never silently loses its frame or its glass
         raise ValueError(f"bmesh frame of opening at {np.round(o['centre'], 3).tolist()} gave {len(faces)} "
                          f"frame faces and {len(glass)} panes")
+    if pane_area >= 0.99 * o["width"] * o["height"]:
+        raise ValueError(f"bmesh inset did not move: panes cover {pane_area:.3f} m2 of {o['width'] * o['height']:.3f}")
     return verts, faces, glass
 
 
