@@ -1,0 +1,24 @@
+{
+  "final_run_global_files_unchanged": true,
+  "before": {
+    "C:\\Users\\artsafro\\.claude.json": "4312cb4d79da9f7f742b092436dc7c1d9f704dfbca00b72498a0753cb737f0b5",
+    "C:\\Users\\artsafro\\.claude\\settings.json": "c9512766db15be5e7efe02c2126a8166b3720eeea4dee3250ffa22a7ebb32571",
+    "C:\\Users\\artsafro\\.claude\\settings.local.json": null
+  },
+  "after": {
+    "C:\\Users\\artsafro\\.claude.json": "4312cb4d79da9f7f742b092436dc7c1d9f704dfbca00b72498a0753cb737f0b5",
+    "C:\\Users\\artsafro\\.claude\\settings.json": "c9512766db15be5e7efe02c2126a8166b3720eeea4dee3250ffa22a7ebb32571",
+    "C:\\Users\\artsafro\\.claude\\settings.local.json": null
+  },
+  "measured_rows": 60,
+  "fresh_sessions": 60,
+  "actual_models": [
+    "claude-sonnet-4-6"
+  ],
+  "identical_prompts_per_question": 20,
+  "clean_source_clones": 3,
+  "answer_key_absent_from_clones": 3,
+  "baseline_and_context7_graph_absent": 2,
+  "raw_answer_usage_wall_agreement": 60,
+  "note": "Initial non-isolated attempt excluded in full; see PROTOCOL.md."
+}

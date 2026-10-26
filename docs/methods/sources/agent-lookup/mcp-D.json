@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "xerj": {
+      "type": "stdio",
+      "command": "C:/x/methods/lookup/t_99d4aef2/xerj/xerj.exe",
+      "args": [
+        "mcp",
+        "--url",
+        "http://127.0.0.1:19270",
+        "--disable-feedback"
+      ],
+      "env": {
+        "XERJ_DISABLE_FEEDBACK": "true",
+        "HOME": "C:/x/methods/lookup/t_99d4aef2/xerj-home",
+        "USERPROFILE": "C:/x/methods/lookup/t_99d4aef2/xerj-home",
+        "XERJ_CONFIG": "C:/x/methods/lookup/t_99d4aef2/xerj.toml"
+      }
+    }
+  }
+}

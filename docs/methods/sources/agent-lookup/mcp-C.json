@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "context7": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "C:/x/methods/lookup/t_99d4aef2/context7/node_modules/@upstash/context7-mcp/dist/index.js"
+      ]
+    }
+  }
+}

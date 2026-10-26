@@ -1,0 +1,172 @@
+{
+  "schema_version": 1,
+  "source_commit": "4c863c1a4616f1812595536d0507f53034e9acfe",
+  "frozen_before_runs": true,
+  "notes": [
+    "D186 and AC07 are absent from this pilot-main snapshot; examples are replaced with existing proven facts.",
+    "Answer fixtures and public upstream excerpts are not copied into measured clones.",
+    "No ambiguous undecided conflict is used. Numeric questions require one JSON number; API questions receive independent model grading."
+  ],
+  "questions": [
+    {
+      "id": "Q01",
+      "category": "repo",
+      "question": "What is the D152 xView Overlapping Vertices tolerance, in metres?",
+      "answer": 0.002,
+      "proof": "docs/decisions.md:176",
+      "scoring": "number"
+    },
+    {
+      "id": "Q02",
+      "category": "repo",
+      "question": "What is the D152 xView Overlapping Faces tolerance, in metres?",
+      "answer": 0.005,
+      "proof": "docs/decisions.md:176",
+      "scoring": "number"
+    },
+    {
+      "id": "Q03",
+      "category": "repo",
+      "question": "What is the D010 project master triangle target per OKS FBX?",
+      "answer": 150000,
+      "proof": "docs/domain/conflicts.md:8",
+      "scoring": "number"
+    },
+    {
+      "id": "Q04",
+      "category": "repo",
+      "question": "What is the NPM shared Ground + GroundEl + Flora triangle ceiling?",
+      "answer": 180000,
+      "proof": "docs/domain/areas/ground-surface.md:28",
+      "scoring": "number"
+    },
+    {
+      "id": "Q05",
+      "category": "repo",
+      "question": "What is the VPM Ground non-collision triangle limit when site area minus OKS footprint is 0.20 hectares?",
+      "answer": 1125000,
+      "proof": "docs/domain/areas/ground-surface.md:30",
+      "scoring": "number"
+    },
+    {
+      "id": "Q06",
+      "category": "repo",
+      "question": "What minimum VPM diffuse texel density in px/m did D160 decide (not the older D097 value)?",
+      "answer": 512,
+      "proof": "docs/domain/conflicts.md:48",
+      "scoring": "number"
+    },
+    {
+      "id": "Q07",
+      "category": "repo",
+      "question": "What is the square NPM Metallic/Roughness placeholder side length in pixels decided by D013?",
+      "answer": 128,
+      "proof": "docs/domain/conflicts.md:12",
+      "scoring": "number"
+    },
+    {
+      "id": "Q08",
+      "category": "repo",
+      "question": "What is the default opening depth in metres in D048?",
+      "answer": 0.4,
+      "proof": "docs/domain/conflicts.md:35",
+      "scoring": "number"
+    },
+    {
+      "id": "Q09",
+      "category": "job",
+      "question": "In KPP1 object.json what is contour_at_m.L0 in metres?",
+      "answer": 0.5,
+      "proof": "jobs/KPP1/object.json:20",
+      "scoring": "number"
+    },
+    {
+      "id": "Q10",
+      "category": "job",
+      "question": "In KPP1 object.json what is the roof level elevation in metres?",
+      "answer": 7.909,
+      "proof": "jobs/KPP1/object.json:17",
+      "scoring": "number"
+    },
+    {
+      "id": "Q11",
+      "category": "job",
+      "question": "In KPP1 materials.json what is the Cassette_RAL5015 material id?",
+      "answer": 3,
+      "proof": "jobs/KPP1/materials.json:31",
+      "scoring": "number"
+    },
+    {
+      "id": "Q12",
+      "category": "job",
+      "question": "In KPP1 materials.json what is the Cassette_RAL5015 UDIM?",
+      "answer": 1007,
+      "proof": "jobs/KPP1/materials.json:32",
+      "scoring": "number"
+    },
+    {
+      "id": "Q13",
+      "category": "job",
+      "question": "In KPP1 materials.json what is the SM_Kpp_1_MainGlass material id?",
+      "answer": 12,
+      "proof": "jobs/KPP1/materials.json:84",
+      "scoring": "number"
+    },
+    {
+      "id": "Q14",
+      "category": "job",
+      "question": "In KPP1 STATE.md Results v002 how many PNG files are in package-vpm-v002/SM_Kpp_1.zip?",
+      "answer": 54,
+      "proof": "jobs/KPP1/STATE.md:59",
+      "scoring": "number"
+    },
+    {
+      "id": "Q15",
+      "category": "api",
+      "question": "For Blender 5.0 bpy.ops.import_scene.fbx, which keyword disables animation import and what is its default?",
+      "answer": "use_anim=False disables animation import; the default is True.",
+      "proof": "docs/methods/sources/agent-lookup/api-evidence.md:6",
+      "scoring": "model"
+    },
+    {
+      "id": "Q16",
+      "category": "api",
+      "question": "How does the pilot create a Blender mesh UV layer named UVMap with bpy (give the mesh collection and method)?",
+      "answer": "mesh.uv_layers.new(name=\"UVMap\")",
+      "proof": "tools/blender/sintez_parity_fixture.py:61",
+      "scoring": "model"
+    },
+    {
+      "id": "Q17",
+      "category": "api",
+      "question": "In IfcOpenShell geometry settings, how do you enable world coordinates before create_shape?",
+      "answer": "settings = ifcopenshell.geom.settings(); settings.set(\"use-world-coords\", True)",
+      "proof": "experiments/revit-ifc-offline-intake/pilot.py:397",
+      "scoring": "model"
+    },
+    {
+      "id": "Q18",
+      "category": "api",
+      "question": "In trimesh, is mesh.convex_hull a property or a method call, and what type of result does it return?",
+      "answer": "mesh.convex_hull is a property (no parentheses) returning a trimesh.Trimesh mesh.",
+      "proof": "docs/methods/sources/agent-lookup/api-evidence.md:22",
+      "scoring": "model"
+    },
+    {
+      "id": "Q19",
+      "category": "api",
+      "question": "How does the pilot export selected objects to FBX with pymxs without a prompt? Give the exportFile call.",
+      "answer": "rt.exportFile(path, rt.Name(\"noPrompt\"), selectedOnly=True, using=rt.FBXEXP)",
+      "proof": "tools/export/benchmark_export_max.py:198",
+      "scoring": "model"
+    },
+    {
+      "id": "Q20",
+      "category": "api",
+      "question": "Which MAXScript xViewChecker calls run the check at currentTime and obtain the output count in the pilot?",
+      "answer": "xViewChecker.runCheck currentTime; xViewChecker.getCurrentOutputCount()",
+      "proof": "jobs/vyatskaya-tow02/scripts/xview_check.ms:36",
+      "scoring": "model"
+    }
+  ]
+}
