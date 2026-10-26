@@ -221,11 +221,75 @@ def grade(work):
     print(json.dumps(summarize(rows),indent=2))
 
 
+def initialization(events):
+    initial = [e for e in events if e.get('type')=='system' and e.get('subtype')=='init']
+    if len(initial)!=1:
+        raise ValueError('missing or duplicate session initialization')
+    return initial[0]
+
+
+def allowed_read(file, repo, work, session_id):
+    target=Path(file)
+    if not target.is_absolute(): target=Path(repo)/target
+    target=target.resolve()
+    return target.is_relative_to(Path(repo).resolve()) or (
+        target.is_relative_to((Path(work)/'claude-state/projects').resolve()) and
+        target.parent.name=='tool-results' and target.parent.parent.name==session_id)
+
+
+def audit_run(work):
+    import hashlib
+    work = Path(work)
+    rows = [json.loads(x) for x in (DOCS/'results.jsonl').read_text(encoding='utf-8').splitlines()]
+    validate_matrix(rows)
+    prompts, models, sessions = {}, set(), set()
+    for r in rows:
+        v, q = r['variant'], r['question_id']
+        repo = work / {'A':'baseline','B':'repo','C':'context7-repo'}[v]
+        events = [json.loads(x) for x in (work/'raw'/f'{q}-{v}.jsonl').read_text(encoding='utf-8').splitlines()]
+        end = events[-1]
+        assert end['terminal_reason']=='completed' and not end['is_error'] and not end['permission_denials']
+        assert r['answer']==extract_json(end['result'])['answer']
+        assert r['session_id']==end['session_id'] and r['wall_s']==end['duration_ms']/1000
+        assert total_tokens(r)==sum(end['usage'][k] for k in ('input_tokens','cache_read_input_tokens','cache_creation_input_tokens','output_tokens'))
+        models.update(end['modelUsage']); sessions.add(end['session_id'])
+        prompts.setdefault(q,set()).add(r['command'][r['command'].index('-p')+1])
+        assert r['command'][r['command'].index('--system-prompt')+1]==SYSTEM
+        assert r['tool_calls']==audit(events)
+        for file in r['files_read']:
+            assert allowed_read(file,repo,work,r['session_id']), f'out-of-scope Read: {file}'
+        if v in 'BC':
+            server={'B':'graphify','C':'context7'}[v]
+            assert any(s['name']==server and s['status']=='connected' for s in initialization(events)['mcp_servers'])
+        if v=='A': assert all(c['name'] in ('Read','Grep','Glob') for c in r['tool_calls'])
+        if v=='B': assert r['tool_calls'][0]['name']=='mcp__graphify__query'
+        if v=='C' and r['category']!='api': assert all(not c['name'].startswith('mcp__context7__') for c in r['tool_calls'])
+    assert models=={MODEL} and len(sessions)==60 and all(len(p)==1 for p in prompts.values())
+    for folder in ('baseline','repo','context7-repo'):
+        repo=work/folder
+        assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=repo,text=True).strip()==SOURCE
+        subprocess.run(['git','diff','--exit-code','HEAD'],cwd=repo,check=True,capture_output=True)
+        assert not (repo/'docs/methods/sources/agent-lookup/questions.json').exists()
+    for folder in ('baseline','context7-repo'):
+        assert not (work/folder/'graphify-out').exists()
+    before=json.loads((work/'global-config-before.json').read_text())
+    after={p:hashlib.sha256(Path(p).read_bytes()).hexdigest() if Path(p).exists() else None for p in before}
+    receipt={'final_run_global_files_unchanged':before==after,'before':before,'after':after,
+        'measured_rows':60,'fresh_sessions':60,'actual_models':sorted(models),
+        'identical_prompts_per_question':20,'clean_source_clones':3,'answer_key_absent_from_clones':3,
+        'baseline_and_context7_graph_absent':2,'raw_answer_usage_wall_agreement':60,
+        'note':'Initial non-isolated attempt excluded in full; see PROTOCOL.md.'}
+    if before!=after: raise ValueError('global file hashes changed; do not claim isolation')
+    write_new(DOCS/'isolation.json',json.dumps(receipt,indent=2)+'\n')
+    print(json.dumps(receipt,indent=2))
+
+
 if __name__ == '__main__':
-    parser=argparse.ArgumentParser(); parser.add_argument('action',choices=['run','judge','validate','summarize']); parser.add_argument('path')
+    parser=argparse.ArgumentParser(); parser.add_argument('action',choices=['run','judge','audit','validate','summarize']); parser.add_argument('path')
     args=parser.parse_args()
     if args.action=='run': run(args.path)
     elif args.action=='judge': grade(args.path)
+    elif args.action=='audit': audit_run(args.path)
     else:
         rows=[json.loads(line) for line in Path(args.path).read_text(encoding='utf-8').splitlines() if line.strip()]
         validate_matrix(rows)

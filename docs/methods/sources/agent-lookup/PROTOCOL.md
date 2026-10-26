@@ -38,12 +38,45 @@ D186 and AC07 are not present in this snapshot; existing KPP1 and decided rules 
   Equality at the requested threshold qualifies. Eligibility is not authorization to adopt.
 - Graph build/setup cost is separate from per-question wall times; no amortization hidden in medians.
 - Failed transport, quota or malformed results are not measured answers. Preserve evidence; do not fill fabricated rows.
-- No worker/global config edits or global installs. `--setting-sources ''`, `--strict-mcp-config`,
-  `--no-session-persistence`, `--disable-slash-commands`, session settings disabling hooks/auto-memory.
+- No worker/global installs or persistent MCP configuration edits. Final measurement sessions use
+  `CLAUDE_CONFIG_DIR=C:/x/methods/lookup/t_99d4aef2/claude-state`, existing OAuth read into a
+  command-local `CLAUDE_CODE_OAUTH_TOKEN` (never logged), plus `--setting-sources ''`,
+  `--strict-mcp-config`, `--no-session-persistence`, `--disable-slash-commands`, session settings
+  disabling hooks/auto-memory. The existing credentials file is only read, not copied or changed.
+- Wall time is the real Claude CLI `duration_ms / 1000`, including session/MCP startup as measured
+  by the CLI, excluding parent Python process startup. All variants use this same metric.
 
 ## Preflight repair
 
 `CLAUDE_CODE_SIMPLE=1` suppressed existing OAuth and returned `Not logged in` with zero tokens.
 Removed that command-local environment variable; normal OAuth plus explicit isolated settings returned
 `READY` (499 input / 5 output tokens). Neither preflight is part of the 60 measurements.
-No credentials or global settings were changed.
+No credentials or tool settings were changed.
+
+## Reporting/isolation repairs and excluded attempt
+
+1. The first answer included a prose preface before a fenced JSON object. Added a parser regression
+   (1 failed before / 27 passed after); recovered that exact original session, not a replacement answer.
+2. A completed initial 60-session attempt used normal CLI OAuth with isolated setting sources, but
+   hash auditing showed `.claude.json` still received automatic runtime-cache updates. A controlled
+   judge session changed only `cachedGrowthBookFeaturesAt`, `clientDataCacheSlots`, and
+   `additionalModelOptionsAnsweredAt`; its MCP-server configuration was unchanged. `settings.json`
+   and `settings.local.json` hashes also remained unchanged. This did **not** satisfy strict runtime
+   isolation, so the **entire attempt was excluded**, not selectively cherry-picked.
+3. Added command-local config-directory isolation and OAuth environment reuse (1 failed regression
+   before / 33 passed after). A fresh READY preflight preserved the original global runtime file
+   byte-for-byte. Reran all 60 sessions under this corrected environment, keeping questions,
+   answers, source snapshot, graph, prompts, model, order and adoption thresholds unchanged.
+4. In that final run, Q05-B included a YAML example before its JSON answer. The combined parser
+   regression failed before the fix and passed after; the original raw session was recovered without
+   a new answer. Final audit also learned to locate the unique `system/init` after a `ui_invalidate`
+   event and to permit only the same session's tool-result overflow files (one Q06-B Read), never
+   credentials or another session. Both audit controls were tested RED then GREEN; final controls:
+   **35 passed**. These audit repairs did not change any answer, usage, prompt, time or grade.
+
+Excluded raw logs, answers and independent grades remain at
+`C:/x/methods/lookup/t_99d4aef2/attempt-1/`. No excluded result enters the final metrics.
+The original shared runtime store was **not restored or edited**: overwriting shared state would be
+unsafe. The final run's before/after hash receipt is recorded in `isolation.json`. This distinction
+is explicit: no global tool configuration was installed/edited; the discarded first attempt did
+cause automatic CLI runtime-cache writes before self-repair.

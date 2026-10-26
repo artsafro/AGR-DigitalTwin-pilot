@@ -129,6 +129,22 @@ def test_judge_join(mod,tmp_path,monkeypatch,bad):
         mod.validate_matrix([json.loads(line) for line in (docs/'results.jsonl').read_text().splitlines()])
 
 
+def test_allowed_read(mod,tmp_path):
+    repo=tmp_path/'repo'; state=tmp_path/'claude-state/projects/project'
+    assert mod.allowed_read(repo/'docs/a.md',repo,tmp_path,'own')
+    assert mod.allowed_read(state/'own/tool-results/result.txt',repo,tmp_path,'own')
+    assert not mod.allowed_read(state/'other/tool-results/result.txt',repo,tmp_path,'own')
+    assert not mod.allowed_read(state/'own/credentials.json',repo,tmp_path,'own')
+    assert not mod.allowed_read(tmp_path/'input.json',repo,tmp_path,'own')
+
+
+def test_initialization(mod):
+    init={'type':'system','subtype':'init','mcp_servers':[{'name':'graphify','status':'connected'}]}
+    assert mod.initialization([{'type':'system','subtype':'ui_invalidate'},init])==init
+    with pytest.raises(ValueError): mod.initialization([])
+    with pytest.raises(ValueError): mod.initialization([init,init])
+
+
 def test_stale_manifest(mod,tmp_path):
     (tmp_path/'measurement-manifest.json').write_text('{"model":"stale"}')
     with pytest.raises(ValueError,match='stale receipts'):

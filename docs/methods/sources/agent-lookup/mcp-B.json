@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "graphify": {
+      "type": "stdio",
+      "command": "C:/x/methods/lookup/t_99d4aef2/venv/Scripts/python.exe",
+      "args": [
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_99d4aef2\\tools\\methods\\graphify_mcp.py",
+        "C:/x/methods/lookup/t_99d4aef2/venv/Scripts/graphify.exe",
+        "C:/x/methods/lookup/t_99d4aef2/repo/graphify-out/graph.json"
+      ]
+    }
+  }
+}
