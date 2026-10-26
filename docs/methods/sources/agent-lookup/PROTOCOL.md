@@ -9,7 +9,7 @@ D186 and AC07 are not present in this snapshot; existing KPP1 and decided rules 
 | Acceptance | Input | Expected | Test |
 |---|---|---|---|
 | 20 precommitted questions | frozen JSON | 8 repo / 6 job / 6 API, existing file:line | test_questions |
-| One result per question and variant | 20 x A/B/C rows | exactly 60 unique pairs, same model, unique sessions | test_matrix |
+| One result per question and variant (approved D extension) | 20 x A/B/C/D rows | exactly 80 unique pairs, same model, unique sessions; reject partial 60 | test_matrix, test_extension_preserves_abc |
 | Fail closed | empty / partial / duplicate / unknown variant / error terminal | error, no adoption summary | test_invalid_matrix |
 | Real accounting | uncached + cache read + cache creation + output | all four counted, finite nonnegative | test_tokens |
 | Numeric correctness | finite number equal / unequal / string / bool / NaN | correct / wrong; invalid references rejected | test_numeric |
@@ -53,6 +53,39 @@ Removed that command-local environment variable; normal OAuth plus explicit isol
 `READY` (499 input / 5 output tokens). Neither preflight is part of the 60 measurements.
 No credentials or tool settings were changed.
 
+## Approved fourth-arm extension (before D measurements)
+
+Artem's operator extension:
+https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/712#issuecomment-6423221608.
+D = **xerj 1.0.0-rc.99**, same frozen 20 questions, source SHA, answer model, question prompt,
+system prompt, grading rubric and adoption threshold. `extension-D.json` and `mcp-D.json` were
+committed before D's first measured question. The prior 60 A-C rows are frozen by SHA256 and
+must remain byte-identical; only 20 new D rows are appended, for **80 total**. Only six new API
+answers require independent grading; the original 18 grades are reused unchanged.
+
+D was requested after A-C had finished, so D runs as a later block, not a four-way randomized
+comparison. The existing full suite had already completed **15,170 passed / 21 skipped /
+179 deselected** through the two-slot wrapper. Only the affected method controls are rerun for
+this additive extension; shared production/config/test fixtures are unchanged.
+
+Local native xerj MCP exposes seven read-only search/definition/map tools. Memory mutations,
+index removal, feedback and Corpus Hub tools are hidden. No `xerj init`, agent skill installation,
+feedback submission, hub download or external reranker is used. The node binds only loopback,
+uses the offline lexical embedder, explicit card-local config/data/journal/home paths, and
+`[rerank] enabled=false`; feedback is disabled in server/client environments.
+
+The index records **1,940 paths / 1,911 unique contents / 1,909 indexed contents / 29 duplicates /
+48,415 records / 99 datasets**; **1,048/1,048 code files indexed**. Two named junk files are
+retained in `extension-D.json`. A foreground setup timeout at 240 seconds was resumed from its
+journal in a tracked background job; documented exit 3 `completed-with-junk` is an indexed
+success, not a waived failure. No measured question ran on an incomplete index.
+
+| Added acceptance | Input | Expected | Witness |
+|---|---|---|---|
+| Complete fourth arm | 20 x A/B/C/D; old 60-row matrix alone | 80 rows accepted; partial 60 rejected | `test_matrix`, `test_extension_preserves_abc` |
+| Preserve previous evidence | frozen 60 rows + 20 new D rows | original 60 unchanged, only six new API grades | `test_extension_preserves_abc`; SHA256 in `extension-D.json` |
+| Session-only local xerj | D MCP config + native tools | no global config setup, no write/feedback/hub tools exposed | raw initialization audit, `isolation-80.json` |
+
 ## Reporting/isolation repairs and excluded attempt
 
 1. The first answer included a prose preface before a fenced JSON object. Added a parser regression
@@ -77,6 +110,6 @@ No credentials or tool settings were changed.
 Excluded raw logs, answers and independent grades remain at
 `C:/x/methods/lookup/t_99d4aef2/attempt-1/`. No excluded result enters the final metrics.
 The original shared runtime store was **not restored or edited**: overwriting shared state would be
-unsafe. The final run's before/after hash receipt is recorded in `isolation.json`. This distinction
+unsafe. `isolation.json` preserves the original A-C receipt; `isolation-80.json` extends it across all four arms. This distinction
 is explicit: no global tool configuration was installed/edited; the discarded first attempt did
 cause automatic CLI runtime-cache writes before self-repair.

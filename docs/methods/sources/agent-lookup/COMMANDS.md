@@ -98,3 +98,71 @@ string is not silently coerced. All 18 API answers are graded by the independent
 variant names; `judge.json` preserves its prompt, usage, session ID, grades and reasons. Judge/setup tokens
 are separate from answer-model per-question totals. Full tokens count cache-read and cache-creation input
 as well as uncached input and output. API fees are list-price telemetry, not subscription billing.
+
+## Approved D = xerj extension
+
+Approval: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/712#issuecomment-6423221608.
+Latest GitHub release at extension start: **v1.0.0-rc.99** (`xerj --version` agrees).
+Downloaded with Python urllib from:
+`https://github.com/xerj-org/xerj/releases/download/v1.0.0-rc.99/xerj-1.0.0-rc.99-x86_64-pc-windows-msvc.zip`.
+The adjacent `.sha256` was fetched and compared before extracting only `xerj.exe` into
+`C:/x/methods/lookup/t_99d4aef2/xerj/`. ZIP size **31,730,016 bytes**, published SHA256
+`6e3e4b89275310dcc418504494e278826331341a9105635c7543824b689dd47e`.
+No installer script, PATH mutation, `xerj init`, agent setup or feedback command was run.
+The node's GET / version `8.13.0` is its Elasticsearch wire-compatibility identity, **not** the
+native xerj release version; do not confuse them.
+
+A fourth clone `xerj-repo` was created with the same clone/checkout template and frozen pilot SHA.
+Explicit `C:/x/methods/lookup/t_99d4aef2/xerj.toml` contains:
+
+```toml
+[rerank]
+enabled = false
+```
+
+Node command (started with `terminal(background=true)`, not installed as a service):
+
+```bash
+HOME=C:/x/methods/lookup/t_99d4aef2/xerj-home USERPROFILE=C:/x/methods/lookup/t_99d4aef2/xerj-home XERJ_DISABLE_FEEDBACK=true C:/x/methods/lookup/t_99d4aef2/xerj/xerj.exe --config C:/x/methods/lookup/t_99d4aef2/xerj.toml --data-dir C:/x/methods/lookup/t_99d4aef2/xerj-data --bind 127.0.0.1 --port 19270 --insecure --embed-mode lexical --disable-feedback
+```
+
+Index command, with stdout/stderr saved in the card-local directory:
+
+```bash
+HOME=C:/x/methods/lookup/t_99d4aef2/xerj-home USERPROFILE=C:/x/methods/lookup/t_99d4aef2/xerj-home XERJ_DISABLE_FEEDBACK=true C:/x/methods/lookup/t_99d4aef2/xerj/xerj.exe autoindex C:/x/methods/lookup/t_99d4aef2/xerj-repo --url http://127.0.0.1:19270 --state-dir C:/x/methods/lookup/t_99d4aef2/xerj-journal --workers 2 --pdf-workers 1 --prefix lookup712 --json --progress plain --yes --disable-feedback
+```
+
+The initial foreground call used `--progress none` and hit its 240 s tool timeout. A tracked
+background invocation with progress enabled resumed the **same journal/source/index parameters**.
+It completed with documented exit **3 completed-with-junk**; the two junk paths/reasons, counts
+and immutable A-C result hash are preserved in `extension-D.json`. Latest invocation summary:
+**68.7 s**; terminal whole-invocation wall **75.6 s**. No complete first-build duration is invented.
+Index/data/journal/home directories are outside the indexed clone; no self-indexing or global state.
+Default lexical embeddings are offline; no proxy/neural download/reranker is configured.
+
+D uses `mcp-D.json` / original `.../D.json`, cwd `.../xerj-repo`. Same Claude model, prompts and
+common flags as A-C. Its argv grants exactly seven native read-only tools:
+`xerj_def`, `xerj_batch_search`, `xerj_search`, `xerj_semantic_search`, `xerj_vector_search`,
+`xerj_hybrid_search`, `xerj_map`, each prefixed `mcp__xerj__` in `--allowedTools`.
+It adds `--disallowedTools` for the other 15 native tools: memory, brain writes/recall/overview,
+index budget/removal, code/plan, feedback and Corpus Hub. Exact lists are in every D argv.
+Actual Claude initialization exposed exactly these seven MCP tools in **20/20** D sessions;
+actual calls used only allowed local search tools. No vendor feedback request was followed.
+
+Actual extension flow:
+
+```bash
+python tools/methods/agent_lookup.py run C:/x/methods/lookup/t_99d4aef2
+python tools/methods/agent_lookup.py judge-d C:/x/methods/lookup/t_99d4aef2
+python tools/methods/agent_lookup.py audit C:/x/methods/lookup/t_99d4aef2
+python tools/methods/agent_lookup.py validate docs/methods/sources/agent-lookup/results.jsonl
+python tools/methods/agent_lookup.py summarize docs/methods/sources/agent-lookup/results.jsonl
+```
+
+`run` skips already completed A-C rows. `judge-d` reuses the frozen 60 scored rows and grades only
+six pending D API answers, producing a new `.../results-80.jsonl`; the original 60-row prefix was
+byte/SHA256 checked before the 20 new rows were appended to the committed `results.jsonl`.
+`isolation.json` preserves the original 60-row receipt; `isolation-80.json` covers all four arms.
+D was added after A-C, not retconned into the earlier interleaving. No threshold or question changed.
+The native node was stopped after measurements and grading; process/port readback confirmed
+**no owned xerj processes**, loopback port 19270 refused connections. No daemon is left installed.
