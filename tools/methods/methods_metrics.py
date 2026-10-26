@@ -422,3 +422,96 @@ def render_score(references: dict, renders: dict) -> dict:
         raise MetricError(f"reference view(s) {missing} have no render")
     per = {view: round(ssim(_luma(references[view]), _luma(renders[view])), 5) for view in sorted(references)}
     return {**base, "value": round(sum(per.values()) / len(per), 5), "per_view": per, "reason": None}
+
+
+# ---- windows / glazing (class windows-glazing, #721) ---------------------------------------------------------------
+
+GLASS_SUFFIX = "_MAINGLASS"  # VPM glazing object SM_{Address}_MainGlass (reg p.33 §10.4.2, WIN-13)
+FRAME_TOKEN = "FRAME"  # a model-mesh material slot whose name holds this token carries frame geometry
+
+
+def is_glass(name: str) -> bool:
+    return name.upper().endswith(GLASS_SUFFIX)
+
+
+def _components(polys: list[list[int]]) -> list[list[int]]:
+    """Connected components (shared vertex index) of the given polygons; returns polygon-index lists."""
+    parent = list(range(len(polys)))
+
+    def find(i):
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+
+    owner = {}
+    for i, p in enumerate(polys):
+        for v in p:
+            if v in owner:
+                parent[find(i)] = find(owner[v])
+            else:
+                owner[v] = i
+    groups = {}
+    for i in range(len(polys)):
+        groups.setdefault(find(i), []).append(i)
+    return sorted(groups.values(), key=min)
+
+
+def windows_glazing(rb: dict, extra: dict | None) -> dict:
+    """Glass object count, glass triangle share and frame depth readout; null with a reason when unmeasurable.
+
+    - glass_objects: model meshes named *_MainGlass; glass_triangles / glass_triangle_share over all
+      model (non-UCX) triangles (null when there is no model triangle).
+    - frame depth: polygons of model meshes whose slot material name holds FRAME_TOKEN, split into connected
+      components; depth of one component = extent of its vertices along its smallest principal axis (the
+      opening normal for a frame ring). Reported as min / median / max over the components. Null when there
+      is no extra readback, the extra readback has no per-polygon material index, or no frame slot is used.
+    """
+    model = model_meshes(rb)
+    tris_all = sum(int(m["triangles"]) for m in model)
+    glass = [m for m in model if is_glass(m["name"])]
+    tris_glass = sum(int(m["triangles"]) for m in glass)
+    out = {"glass_objects": len(glass), "glass_object_names": sorted(m["name"] for m in glass),
+           "glass_triangles": tris_glass,
+           "glass_triangle_share": round(tris_glass / tris_all, 5) if tris_all else None,
+           "glass_share_reason": None if tris_all else "no model triangle",
+           "frame_token": FRAME_TOKEN, "frame_components": None, "frame_polygons": None,
+           "frame_depth_m": None, "frame_reason": None}
+    if not extra or not extra.get("ok"):
+        out["frame_reason"] = "no extra readback"
+        return out
+    comps, polys_total = [], 0
+    for m in model:
+        info = extra["meshes"].get(m["name"])
+        if info is None:
+            raise MetricError(f"mesh {m['name']!r} missing from the extra readback")
+        frame_slots = {i for i, s in enumerate(info["slots"]) if s and FRAME_TOKEN in s.upper()}
+        if not frame_slots:
+            continue
+        per_poly = info.get("polygon_material_index")
+        if per_poly is None:
+            out["frame_reason"] = "extra readback has no per-polygon material index"
+            return out
+        fg = m["face_geometry"]
+        if len(per_poly) != len(fg["polygons"]):
+            raise MetricError(f"{m['name']}: {len(per_poly)} material indices for {len(fg['polygons'])} polygons")
+        sel = [p for p, k in zip(fg["polygons"], per_poly) if int(k) in frame_slots]
+        polys_total += len(sel)
+        verts = np.asarray(fg["vertices"], float).reshape(-1, 3)
+        for comp in _components(sel):
+            idx = sorted({v for i in comp for v in sel[i]})
+            pts = verts[idx]
+            if len(pts) < 3 or not np.isfinite(pts).all():
+                raise MetricError(f"{m['name']}: frame component with {len(pts)} points or a non-finite one")
+            centred = pts - pts.mean(axis=0)
+            axis = np.linalg.svd(centred, full_matrices=False)[2][-1]
+            along = centred @ axis
+            comps.append(float(along.max() - along.min()))
+    if not comps:
+        out["frame_reason"] = f"no polygon on a material slot named *{FRAME_TOKEN.title()}*"
+        out.update({"frame_components": 0, "frame_polygons": 0})
+        return out
+    out.update({"frame_components": len(comps), "frame_polygons": polys_total,
+                "frame_depth_m": {"min": round(min(comps), 4), "median": round(statistics.median(comps), 4),
+                                  "max": round(max(comps), 4)}})
+    return out

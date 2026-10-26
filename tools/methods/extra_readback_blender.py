@@ -6,7 +6,7 @@ Pattern: new-case: per-polygon material index and triangle readback for tools/me
         --python tools/methods/extra_readback_blender.py -- <model.fbx> <extra.json>
 
 Facts only; never writes the source. Per mesh: slot material names (None = empty slot), polygon count per
-material_index, and the loop triangles (vertex indices in the same order as fbx_readback.py's
+material_index, the material_index of every polygon (readback polygon order), and the loop triangles (vertex indices in the same order as fbx_readback.py's
 face_geometry.vertices).
 """
 import json
@@ -36,6 +36,7 @@ try:
         report["meshes"][obj.name] = {
             "slots": [s.material.name if s.material else None for s in obj.material_slots],
             "polygons_by_material_index": used,
+            "polygon_material_index": [int(p.material_index) for p in me.polygons],
             "tris": [[int(i) for i in tri.vertices] for tri in me.loop_triangles],
         }
     report["ok"] = bool(report["meshes"])
