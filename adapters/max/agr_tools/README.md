@@ -65,13 +65,20 @@ never a clean result. Objects are identified by unique Max handles as well as na
   shifted channel-1 coordinates on a new export copy and reads them back.
   Originals stay untouched. A zero step is not a finding.
 - **UDIM -> NPM atlas**: dry-run reports the UDIM tiles and the atlas cell
-  layout from the bundled stdlib port of `npm_atlas_udim.py`, then Apply remaps
-  channel 1 on a new export copy. Required node properties: `AGR_ATLAS_MODE`
-  (`ground` or `oks`) and `AGR_ATLAS_SIZE` (`1024` or `2048`). Flat diffuse
-  colours are Kd plugs; a diffuse bitmap is that material's map. Inputs the
-  Python tool refuses (tile crossing, unmapped material, empty mesh, non-finite
-  coordinates, padding below 8 px) raise a named error. UV readback must match
-  the Python tool within 1e-6; a difference of exactly 1e-6 is an error.
+  layout from the bundled stdlib port of `npm_atlas_udim.py`. Apply remaps
+  channel 1 on a new export copy and, when the material has a diffuse bitmap,
+  binds the generated atlas (diffuse, plus a separate opacity bitmap when the
+  packer emits one). Flat Kd colours stay flat colours. Diffuse alpha, material
+  opacity and a grey opacity map follow the Python tool. `map_d` without
+  `map_Kd` raises `map_d without map_Kd is not supported` before any copy is
+  created. Required node properties: `AGR_ATLAS_MODE` (`ground` or `oks`) and
+  `AGR_ATLAS_SIZE` (`1024` or `2048`). Inputs the Python tool refuses (tile
+  crossing, unmapped material, empty mesh, non-finite coordinates, padding
+  below 8 px, both diffuse alpha and `map_d`) raise a named error. UV readback
+  must match the Python tool within 1e-6; a difference of exactly 1e-6 is an
+  error. Bitmap pixels are read one scanline at a time. Atlas PNGs are saved
+  at gamma 1 with `outputColorConversion:#noConversion`, so an OCIO scene
+  keeps the stored 8-bit pixels and alpha.
 
 ## Headless evidence
 

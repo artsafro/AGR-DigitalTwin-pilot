@@ -16,5 +16,31 @@
     "button_cells": {"Grass": [0, 0, 87, 68]},
     "max_abs_uv_2024": 1.2417634351336027e-9,
     "tolerance": 1e-6
+  },
+  "atlas_textured": {
+    "fixture": "two-triangle quad, UV (0.1,0.2)..(0.8,0.7), oks/2048, 8x1 red-left/blue-right",
+    "python_cells": {"Wall": [0, 0, 24, 19]},
+    "button_cells_2024": {"Wall": [0, 0, 24, 19]},
+    "python_u": [0.00439453125, 0.00712890625],
+    "button_u_2024": [0.00439453125, 0.007128906436264515],
+    "source_still": [[255, 0, 0], [0, 0, 255]],
+    "atlas_sample_2024": {"red": [255, 0, 0], "blue": [8, 0, 247], "size": [2048, 2048]},
+    "atlas_sample_2026": {"red": [255, 0, 0], "blue": [8, 0, 247], "size": [2048, 2048]},
+    "button_u_2026": [0.00439453125, 0.007128906436264515],
+    "tolerance": 1e-6
+  },
+  "atlas_alpha": {
+    "fixture": "8x1 white RGB, alpha [0,0,0,0,255,255,255,255], oks/2048",
+    "python_cells": {"Wall": [0, 0, 24, 19]},
+    "button_cells_2024": {"Wall": [0, 0, 24, 19]},
+    "kind": "texture",
+    "opacity_sample_2024": {"clear": 0, "opaque": 247},
+    "dropped_alpha_cell": [0, 0, 40, 20],
+    "dropped_alpha_max_u_delta": 0.007845052083333332
+  },
+  "atlas_opacity_without_diffuse": {
+    "error": "map_d without map_Kd is not supported",
+    "copies_created_2024": 0,
+    "copies_created_2026": 0
   }
 }

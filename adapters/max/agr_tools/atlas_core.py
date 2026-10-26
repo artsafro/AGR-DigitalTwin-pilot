@@ -1,10 +1,12 @@
 """new-case: stdlib NPM atlas UV layout for the AGR Tools button.
 
-Mirrors the UV coordinates of tools/materials/npm_atlas_udim.py pack() for flat
-Kd materials and in-memory map_Kd images, without numpy or PIL. Padding stays
-the normative minimum of 8 px. An unmapped material, a tile crossing, a
-non-finite coordinate and an empty mesh are errors. Every face is remapped or
-named in ``dropped``; this layout drops none (it raises instead).
+Mirrors tools/materials/npm_atlas_udim.py pack() for flat Kd materials and
+in-memory map_Kd images, including diffuse alpha, dissolve and a separate
+opacity plane, without numpy or PIL. The returned image is the same atlas the
+remapped UVs address. Padding stays the normative minimum of 8 px. An unmapped
+material, a tile crossing, a non-finite coordinate, an opacity map without
+map_Kd and an empty mesh are errors. Every face is remapped or named in
+``dropped``; this layout drops none (it raises instead).
 """
 from __future__ import annotations
 
@@ -16,6 +18,7 @@ from pathlib import Path
 ATLAS_SIZES = (1024, 2048)
 PADDING_MIN_PX = 8
 GROUND_MIN, GROUND_MAX = 10.0, 40.0
+BACKGROUND = (90, 90, 90)
 EPS = 1e-6
 
 
@@ -182,6 +185,257 @@ def _shelf(recs, size):
     return True
 
 
+def _byte(value, name):
+    if isinstance(value, bool) or not isinstance(value, int) or not 0 <= value <= 255:
+        raise AtlasError(f"material {name!r}: pixel {value!r} outside 0..255")
+    return value
+
+
+def _rgb_plane(name, rgb):
+    if not isinstance(rgb, list) or not rgb or not isinstance(rgb[0], list) or not rgb[0]:
+        raise AtlasError(f"material {name!r}: partial bitmap")
+    width = len(rgb[0])
+    out = []
+    for row in rgb:
+        if not isinstance(row, list) or len(row) != width:
+            raise AtlasError(f"material {name!r}: partial bitmap")
+        parsed = []
+        for px in row:
+            if not isinstance(px, (tuple, list)) or len(px) != 3:
+                raise AtlasError(f"material {name!r}: partial bitmap")
+            parsed.append(tuple(_byte(c, name) for c in px))
+        out.append(tuple(parsed))
+    return out
+
+
+def _scalar_plane(name, plane, width, height, what):
+    if not isinstance(plane, list) or len(plane) != height:
+        raise AtlasError(f"material {name!r}: {what}")
+    out = []
+    for row in plane:
+        if not isinstance(row, list) or len(row) != width:
+            raise AtlasError(f"material {name!r}: {what}")
+        out.append(tuple(_byte(v, name) for v in row))
+    return out
+
+
+def _flat_rgb(rgb):
+    sample = rgb[0][0]
+    return all(px == sample for row in rgb for px in row)
+
+
+def _flat_alpha(alpha):
+    sample = alpha[0][0]
+    return all(v == sample for row in alpha for v in row)
+
+
+def _scale_alpha(alpha, width, height, dissolve):
+    out = []
+    for y in range(height):
+        row = []
+        for x in range(width):
+            base = 255.0 if alpha is None else float(alpha[y][x])
+            row.append(int(max(0, min(255, round(base * dissolve)))))
+        out.append(tuple(row))
+    return out
+
+
+def _classify_material(name, spec, dissolve):
+    """Same plug / alpha rules as npm_atlas_udim.analyze. Opacity without map_Kd is an error."""
+    if not isinstance(spec, dict):
+        raise AtlasError(f"material {name!r}: dissolve has no entry")
+    rgb = spec.get('rgb')
+    opacity = spec.get('opacity')
+    if rgb is not None:
+        rgb = _rgb_plane(name, rgb)
+        height, width = len(rgb), len(rgb[0])
+        alpha = spec.get('alpha')
+        if alpha is not None:
+            alpha = _scalar_plane(name, alpha, width, height, 'diffuse alpha size does not match map_Kd')
+            if _flat_alpha(alpha) and alpha[0][0] == 255:
+                alpha = None
+        if opacity is not None:
+            if alpha is not None:
+                raise AtlasError(f"material {name!r}: both diffuse alpha and map_d opacity")
+            if spec.get('opacity_alpha'):
+                raise AtlasError(f"material {name!r}: opacity map must be grey, same size as diffuse")
+            alpha = _scalar_plane(name, opacity, width, height,
+                                  'opacity map must be grey, same size as diffuse')
+        if dissolve < 1.0:
+            alpha = _scale_alpha(alpha, width, height, dissolve)
+        flat_a = alpha is None or _flat_alpha(alpha)
+        if _flat_rgb(rgb) and flat_a:
+            return {'plug': True, 'color': rgb[0][0], 'W': width, 'H': height,
+                    'plug_alpha': 255 if alpha is None else alpha[0][0], 'rgb': None, 'alpha': None}
+        return {'plug': False, 'color': rgb[0][0], 'W': width, 'H': height, 'plug_alpha': 255,
+                'rgb': rgb, 'alpha': alpha}
+    if opacity is not None or spec.get('alpha') is not None:
+        raise AtlasError(f"material {name!r}: map_d without map_Kd is not supported")
+    if spec.get('color') is not None:
+        color = spec['color']
+        if not isinstance(color, (tuple, list)) or len(color) != 3:
+            raise AtlasError(f"material {name!r}: neither map_Kd nor Kd")
+        return {'plug': True, 'color': tuple(_byte(c, name) for c in color), 'W': 1, 'H': 1,
+                'plug_alpha': int(round(255 * dissolve)), 'rgb': None, 'alpha': None}
+    raise AtlasError(f"material {name!r}: neither map_Kd nor Kd")
+
+
+# Pillow 12 ImagingResample: 8-bit result, two guard bits, half-up fixed coefficients.
+_PRECISION_BITS = 22
+_PRECISION = 1 << _PRECISION_BITS
+_COEFF_BIAS = 1 << (_PRECISION_BITS - 1)
+
+
+def _sinc(x):
+    if x == 0.0:
+        return 1.0
+    x *= math.pi
+    return math.sin(x) / x
+
+
+def _lanczos3(x):
+    if -3.0 <= x < 3.0:
+        return _sinc(x) * _sinc(x / 3.0)
+    return 0.0
+
+
+def _clip8(value):
+    shifted = value >> _PRECISION_BITS
+    if shifted < 0:
+        return 0
+    if shifted > 255:
+        return 255
+    return shifted
+
+
+def _pillow_coeffs(in_size, out_size, box0, box1):
+    """Coefficient window from Pillow's precompute_coeffs + normalize_coeffs_8bpc."""
+    scale = (box1 - box0) / out_size
+    filterscale = scale if scale > 1.0 else 1.0
+    support = 3.0 * filterscale
+    inv = 1.0 / filterscale
+    columns = []
+    for xx in range(out_size):
+        center = box0 + (xx + 0.5) * scale
+        xmin = int(center - support + 0.5)
+        if xmin < 0:
+            xmin = 0
+        xmax = int(center + support + 0.5)
+        if xmax > in_size:
+            xmax = in_size
+        count = xmax - xmin
+        weights, total = [], 0.0
+        for x in range(count):
+            weight = _lanczos3((x + xmin - center + 0.5) * inv)
+            weights.append(weight)
+            total += weight
+        if total != 0.0:
+            weights = [weight / total for weight in weights]
+        fixed = []
+        for weight in weights:
+            if weight < 0:
+                fixed.append(int(-0.5 + weight * _PRECISION))
+            else:
+                fixed.append(int(0.5 + weight * _PRECISION))
+        columns.append((xmin, fixed))
+    return columns
+
+
+def _resize_lanczos(plane, box, out_w, out_h, channels):
+    """Separable Lanczos-3. Horizontal 8-bit clip, then vertical, matching PIL."""
+    height, width = len(plane), len(plane[0])
+    xw = _pillow_coeffs(width, out_w, box[0], box[2])
+    yw = _pillow_coeffs(height, out_h, box[1], box[3])
+    horizontal = []
+    for y in range(height):
+        row = []
+        for xmin, coeffs in xw:
+            if channels == 1:
+                acc = _COEFF_BIAS
+                for i, coeff in enumerate(coeffs):
+                    acc += plane[y][xmin + i] * coeff
+                row.append(_clip8(acc))
+            else:
+                acc = [_COEFF_BIAS, _COEFF_BIAS, _COEFF_BIAS]
+                for i, coeff in enumerate(coeffs):
+                    pixel = plane[y][xmin + i]
+                    acc[0] += pixel[0] * coeff
+                    acc[1] += pixel[1] * coeff
+                    acc[2] += pixel[2] * coeff
+                row.append(tuple(_clip8(v) for v in acc))
+        horizontal.append(row)
+    out = []
+    for xmin, coeffs in yw:
+        row = []
+        for x in range(out_w):
+            if channels == 1:
+                acc = _COEFF_BIAS
+                for i, coeff in enumerate(coeffs):
+                    acc += horizontal[xmin + i][x] * coeff
+                row.append(_clip8(acc))
+            else:
+                acc = [_COEFF_BIAS, _COEFF_BIAS, _COEFF_BIAS]
+                for i, coeff in enumerate(coeffs):
+                    sample = horizontal[xmin + i][x]
+                    acc[0] += sample[0] * coeff
+                    acc[1] += sample[1] * coeff
+                    acc[2] += sample[2] * coeff
+                row.append(tuple(_clip8(v) for v in acc))
+        out.append(row)
+    return out
+
+
+def _crop_resize(plane, channels, rec):
+    bw, bh = rec['dw'] / rec['k'], rec['dh'] / rec['k']
+    ix0, iy0 = math.floor(rec['bx0']) - 2, math.floor(rec['by0']) - 2
+    ix1 = math.ceil(rec['bx0'] + bw) + 2
+    iy1 = math.ceil(rec['by0'] + bh) + 2
+    height, width = len(plane), len(plane[0])
+    sub = []
+    for y in range(iy0, iy1):
+        yy = y % height
+        sub.append(tuple(plane[yy][x % width] for x in range(ix0, ix1)))
+    box = (rec['bx0'] - ix0, rec['by0'] - iy0, rec['bx0'] - ix0 + bw, rec['by0'] - iy0 + bh)
+    return _resize_lanczos(sub, box, rec['dw'], rec['dh'], channels)
+
+
+def _paste(buf, size, channels, x0, y0, patch):
+    for y, row in enumerate(patch):
+        base = ((y0 + y) * size + x0) * channels
+        if channels == 1:
+            buf[base:base + len(row)] = bytes(row)
+        else:
+            span = bytearray(len(row) * 3)
+            for i, px in enumerate(row):
+                span[i * 3:i * 3 + 3] = bytes(px)
+            buf[base:base + len(span)] = span
+
+
+def _raster(recs, size):
+    """Diffuse RGB plus a separate opacity plane. UVs address this image, not the source bitmap."""
+    rgb = bytearray((BACKGROUND[0], BACKGROUND[1], BACKGROUND[2])) * (size * size)
+    alpha = bytearray((255,)) * (size * size)
+    any_alpha = False
+    for rec in recs:
+        x0, y0, dw, dh = rec['cx'], rec['cy'], rec['dw'], rec['dh']
+        if rec['plug']:
+            patch = [rec['color']] * dw
+            for y in range(dh):
+                _paste(rgb, size, 3, x0, y0 + y, [patch])
+            if rec['plug_alpha'] != 255:
+                any_alpha = True
+                span = bytes((rec['plug_alpha'],)) * dw
+                for y in range(dh):
+                    base = ((y0 + y) * size + x0)
+                    alpha[base:base + dw] = span
+        else:
+            _paste(rgb, size, 3, x0, y0, _crop_resize(rec['rgb'], 3, rec))
+            if rec['alpha'] is not None:
+                any_alpha = True
+                _paste(alpha, size, 1, x0, y0, _crop_resize(rec['alpha'], 1, rec))
+    return {'rgb': bytes(rgb), 'alpha': bytes(alpha) if any_alpha else None, 'size': size}
+
+
 def _bounds(rec):
     vals = list(rec['dens'].values())
     mean = sorted(math.sqrt(a * b) for a, b in vals)
@@ -257,21 +511,8 @@ def pack(vertices, uvs, faces, face_uvs, face_materials, materials, *, mode='gro
         if umn < rec['tu'] - EPS or umx > rec['tu'] + 1 + EPS or vmn < rec['tv'] - EPS or vmx > rec['tv'] + 1 + EPS:
             raise AtlasError(f"material {name!r}: UV island crosses a UDIM tile border")
         rec['tile'] = 1001 + rec['tu'] + 10 * rec['tv']
-        rgb = spec.get('rgb')
-        if rgb is not None:
-            rec['H'], rec['W'] = len(rgb), len(rgb[0])
-            flat = all(tuple(px) == tuple(rgb[0][0]) for row in rgb for px in row)
-            if flat:
-                rec['plug'] = True
-                rec['color'] = tuple(int(c) for c in rgb[0][0])
-            else:
-                rec['plug'] = False
-        elif spec.get('color') is not None:
-            rec['plug'] = True
-            rec['color'] = tuple(int(c) for c in spec['color'])
-            rec['W'] = rec['H'] = 1
-        else:
-            raise AtlasError(f"material {name!r}: neither map_Kd nor Kd")
+        classified = _classify_material(name, spec, dis)
+        rec.update(classified)
         rec['x0'], rec['x1'] = (umn - rec['tu']) * rec['W'], (umx - rec['tu']) * rec['W']
         rec['y0'], rec['y1'] = (1 - (vmx - rec['tv'])) * rec['H'], (1 - (vmn - rec['tv'])) * rec['H']
         for f in rec['faces']:
@@ -353,14 +594,19 @@ def pack(vertices, uvs, faces, face_uvs, face_materials, materials, *, mode='gro
             ids.append(shared[t])
         new_fuv.append(tuple(ids))
     covered = list(range(len(face_lists)))
+    image = _raster(built, size)
     return {
         'uvs': new_uv,
         'face_uvs': new_fuv,
         'tiles': sorted({rec['tile'] for rec in built}),
         'cells': {rec['name']: [rec['cx'], rec['cy'], rec['dw'], rec['dh']] for rec in built},
+        'kinds': {rec['name']: 'plug' if rec['plug'] else 'texture' for rec in built},
         'dropped': [],
         'faces': covered,
         'used': used,
+        'rgb': image['rgb'],
+        'alpha': image['alpha'],
+        'size': size,
     }
 
 

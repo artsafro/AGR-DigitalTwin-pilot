@@ -639,50 +639,122 @@ def nudge_apply(nodes, preview):
     return copies, after
 
 
+def _channels(color):
+    if isinstance(color, (tuple, list)):
+        if len(color) < 4:
+            raise ValueError('partial material bitmap')
+        return tuple(int(round(float(c))) for c in color[:4])
+    return (int(round(float(color.r))), int(round(float(color.g))), int(round(float(color.b))),
+            int(round(float(color.a))))
+
+
+def bitmap_rows(width, height, read_span):
+    """Read one scanline per row. A single ``width * height`` span stops at the first row."""
+    if width <= 0 or height <= 0:
+        raise ValueError('material bitmap has no pixels')
+    rgb, alpha = [], []
+    for y in range(height):
+        pixels = list(read_span(0, y, width))
+        if len(pixels) != width:
+            raise ValueError('partial material bitmap')
+        row, arow = [], []
+        for color in pixels:
+            r, g, b, a = _channels(color)
+            row.append((r, g, b))
+            arow.append(a)
+        rgb.append(row)
+        alpha.append(arow)
+    return rgb, alpha
+
+
+def _live_bitmap(tex):
+    rt = _rt()
+    try:
+        live = tex.bitmap
+    except Exception:
+        live = None
+    if live is None:
+        return None, False
+    try:
+        width = int(live.width)
+    except Exception:
+        return None, False
+    if width <= 0:
+        return None, False
+    return live, False
+
+
 def _bitmap_rgb(tex):
     rt = _rt()
     if rt.classOf(tex) != rt.Bitmaptexture:
         raise ValueError('unmapped material map class: ' + str(rt.classOf(tex)))
-    filename = str(tex.filename)
-    bm = rt.openBitMap(filename)
+    bm, opened = _live_bitmap(tex)
+    filename = str(getattr(tex, 'filename', '') or '')
+    if filename not in ('', 'undefined', 'None'):
+        from pathlib import Path
+        if Path(filename).is_file():
+            bm = rt.openBitMap(filename)
+            opened = True
+            if bm is None:
+                raise ValueError('material bitmap cannot be opened: ' + filename)
     if bm is None:
         raise ValueError('material bitmap cannot be opened: ' + filename)
     try:
         w, h = int(bm.width), int(bm.height)
         if w <= 0 or h <= 0:
             raise ValueError('material bitmap has no pixels: ' + filename)
-        pixels = list(rt.getPixels(bm, rt.point2(0, 0), w * h))
-        if len(pixels) != w * h:
-            raise ValueError('partial material bitmap: ' + filename)
-        rgb, alpha, row = [], [], []
-        for i, color in enumerate(pixels):
-            row.append((int(round(float(color.r))), int(round(float(color.g))), int(round(float(color.b)))))
-            alpha.append(int(round(float(color.a))))
-            if len(row) == w:
-                rgb.append(row)
-                row = []
-        return rgb, alpha
+
+        def read_span(x, y, count, bm=bm):
+            return rt.getPixels(bm, rt.point2(x, y), count)
+
+        try:
+            return bitmap_rows(w, h, read_span)
+        except ValueError as exc:
+            if str(exc) == 'partial material bitmap':
+                raise ValueError('partial material bitmap: ' + filename) from exc
+            raise
     finally:
-        rt.close(bm)
+        if opened:
+            rt.close(bm)
+
+
+def _map_assigned(tex):
+    if tex is None:
+        return False
+    kind = str(_rt().classOf(tex))
+    return kind not in ('undefined', 'UndefinedClass', 'None')
 
 
 def _atlas_materials(n):
     import math
     specs = {}
     for name, mat in _submaterials(n).items():
-        rt = _rt()
         diffuse_map = mat.diffuseMap if hasattr(mat, 'diffuseMap') else None
-        if diffuse_map is not None and str(rt.classOf(diffuse_map)) not in ('undefined', 'UndefinedClass'):
-            rgb, _alpha = _bitmap_rgb(diffuse_map)
-            specs[name] = {'rgb': rgb, 'dissolve': 1.0}
+        opacity_map = mat.opacityMap if hasattr(mat, 'opacityMap') else None
+        has_diffuse = _map_assigned(diffuse_map)
+        has_opacity = _map_assigned(opacity_map)
+        # Reject before any bitmap read or export copy. Unsupported opacity is not opaque Kd.
+        if has_opacity and not has_diffuse:
+            raise ValueError(f"material {name!r}: map_d without map_Kd is not supported")
+        dis = float(mat.opacity) / 100.0
+        if not math.isfinite(dis):
+            raise ValueError(f"material {name!r}: dissolve {dis} outside 0..1")
+        if has_diffuse:
+            rgb, alpha = _bitmap_rgb(diffuse_map)
+            spec = {'rgb': rgb, 'dissolve': dis}
+            if any(a < 255 for row in alpha for a in row):
+                spec['alpha'] = alpha
+            if has_opacity:
+                orgb, oalpha = _bitmap_rgb(opacity_map)
+                if any(a < 255 for row in oalpha for a in row):
+                    spec['opacity_alpha'] = True
+                spec['opacity'] = [[px[0] for px in row] for row in orgb]
+            specs[name] = spec
         else:
             color = mat.diffuse
             specs[name] = {'color': (int(round(float(color.r))), int(round(float(color.g))),
                                      int(round(float(color.b)))),
-                           'dissolve': float(mat.opacity) / 100.0}
-        dis = specs[name]['dissolve']
-        if not math.isfinite(dis):
-            raise ValueError(f"material {name!r}: dissolve {dis} outside 0..1")
+                           'dissolve': dis}
     return specs
 
 
@@ -708,15 +780,16 @@ def atlas_preview(nodes=None):
     """Dry-run the bundled atlas layout. Reports tiles and cells; the scene is unchanged."""
     core = _load_core('atlas_core.py', 'agr_tools_atlas')
     nodes = _targets(nodes)
-    state, plans, entries = [], [], []
+    state, plans, entries, images = [], [], [], []
     tiles, cells = [], {}
     for n in nodes:
         mesh = _read_channel(n)
         names = _material_names(n, mesh['ids'])
         mode, size = _atlas_settings(n)
+        specs = _atlas_materials(n)
         try:
             laid = core.pack(mesh['vertices'], mesh['uvs'], mesh['faces'], mesh['face_uvs'], names,
-                             _atlas_materials(n), mode=mode, size=size, pad=8, unit_m=_unit_m())
+                             specs, mode=mode, size=size, pad=8, unit_m=_unit_m())
         except core.AtlasError as exc:
             raise ValueError(str(exc)) from exc
         if laid['dropped']:
@@ -742,6 +815,8 @@ def atlas_preview(nodes=None):
         state.append(mesh)
         plans.append({'uvs': laid['uvs'], 'face_uvs': laid['face_uvs'], 'tiles': laid['tiles'],
                       'cells': laid['cells']})
+        images.append({'rgb': laid['rgb'], 'alpha': laid['alpha'], 'size': laid['size'],
+                       'cells': laid['cells'], 'kinds': laid['kinds'], 'materials': specs})
         tiles.extend(laid['tiles'])
         for name, box in laid['cells'].items():
             if name in cells and cells[name] != box:
@@ -750,17 +825,147 @@ def atlas_preview(nodes=None):
         entries.append(_entry(n, findings))
     report = _report('atlas', entries, nodes, select=False, extra={
         'plan': {'tiles': sorted(set(tiles)), 'cells': cells, 'dropped': []}})
-    return {'state': state, 'plans': plans, 'report': report}
+    return {'state': state, 'plans': plans, 'report': report, 'images': images}
+
+
+def _write_bitmap(size, fill, rows):
+    """rows(y) -> sequence of colors for one full scanline. The bitmap stays in memory."""
+    rt = _rt()
+    bm = rt.bitmap(size, size, color=fill)
+    for y, colors in rows:
+        rt.setPixels(bm, rt.point2(0, y), colors)
+    return bm
+
+
+def save_bitmap(bm):
+    """Write the stored 8-bit pixels. PNG alpha is kept, and OCIO does not re-encode them."""
+    rt = _rt()
+    previous_alpha = rt.execute('pngio.getAlpha()')
+    rt.execute('pngio.setAlpha true')
+    try:
+        try:
+            # Max 2026 OCIO converts on save unless this override is set. Gamma 1 is the
+            # 2024 path and the fallback where the keyword is absent.
+            rt.save(bm, gamma=1.0, outputColorConversion=rt.name('noConversion'))
+        except Exception:
+            rt.save(bm, gamma=1.0)
+    finally:
+        rt.execute('pngio.setAlpha ' + ('true' if previous_alpha else 'false'))
+
+
+def _publish_bitmap(bm, label):
+    """Save a new PNG, then bind it. Max refuses an unsaved bitmap on Bitmaptexture."""
+    import os
+    import uuid
+    from pathlib import Path
+    rt = _rt()
+    root = os.environ.get('AGR_TEST_OUTPUT')
+    if root:
+        folder = Path(root) / 'atlases'
+    else:
+        folder = Path(str(rt.getDir(rt.name('temp')))) / 'agr-tools-atlases'
+    folder.mkdir(parents=True, exist_ok=True)
+    dest = folder / f'{label}-{uuid.uuid4().hex}.png'
+    if dest.exists():
+        raise RuntimeError('atlas bitmap already exists: ' + str(dest))
+    bm.filename = str(dest)
+    save_bitmap(bm)
+    if not dest.is_file():
+        raise RuntimeError('atlas bitmap was not saved: ' + str(dest))
+    tex = rt.Bitmaptexture()
+    tex.name = label
+    tex.filename = str(dest)
+    return tex
+
+
+def _bind_atlas(node, image):
+    """Point bitmap materials at the generated atlas. Flat Kd plugs keep their colour."""
+    specs = image['materials']
+    if not any('rgb' in spec for spec in specs.values()):
+        return
+    rt = _rt()
+    size = image['size']
+    rgb, alpha = image['rgb'], image['alpha']
+    dirty = set()
+    for box in image['cells'].values():
+        y, h = box[1], box[3]
+        dirty.update(range(y, y + h))
+
+    def diffuse_rows():
+        for y in sorted(dirty):
+            base = y * size * 3
+            colors = []
+            for x in range(size):
+                o = base + x * 3
+                colors.append(rt.color(int(rgb[o]), int(rgb[o + 1]), int(rgb[o + 2])))
+            yield y, colors
+
+    diffuse = _publish_bitmap(_write_bitmap(size, rt.color(90, 90, 90), diffuse_rows()), 'AGR_atlas_diffuse')
+    opacity = None
+    if alpha is not None:
+        def opacity_rows():
+            for y in sorted(dirty):
+                base = y * size
+                colors = []
+                for x in range(size):
+                    v = int(alpha[base + x])
+                    colors.append(rt.color(v, v, v))
+                yield y, colors
+
+        opacity = _publish_bitmap(_write_bitmap(size, rt.color(255, 255, 255), opacity_rows()), 'AGR_atlas_opacity')
+    for name, mat in _submaterials(node).items():
+        if name not in specs or 'rgb' not in specs[name]:
+            continue
+        mat.diffuse = rt.color(255, 255, 255)
+        mat.opacity = 100.0
+        mat.diffuseMap = diffuse
+        if opacity is not None:
+            mat.opacityMap = opacity
+
+
+def _applied_atlas_report(copies, current):
+    """Read back the written UVs. Flat Kd copies are previewed again; a bound atlas is not repacked."""
+    entries = []
+    tiles, cells = [], {}
+    for copy, plan, image in zip(copies, current['plans'], current['images']):
+        written = _read_channel(copy)
+        for got, exp in zip(written['uvs'], plan['uvs']):
+            assert_uv_close(got, exp)
+        if written['face_uvs'] != [list(face) for face in plan['face_uvs']]:
+            raise RuntimeError('atlas face UVs do not match the preview')
+        bound = any('rgb' in spec for spec in image['materials'].values())
+        if bound:
+            entries.append(_entry(copy, []))
+        else:
+            again = atlas_preview([copy])
+            if again['report']['objects'][0]['findings']:
+                raise RuntimeError('flat atlas copy is not a fixed point')
+            entries.append(again['report']['objects'][0])
+        tiles.extend(plan['tiles'])
+        for name, box in plan['cells'].items():
+            if name in cells and cells[name] != box:
+                raise ValueError('duplicate material name: ' + name)
+            cells[name] = box
+    return _report('atlas', entries, copies, select=False, extra={
+        'plan': {'tiles': sorted(set(tiles)), 'cells': cells, 'dropped': []}})
 
 
 def atlas_apply(nodes, preview):
-    """Remap UVs on new export copies. Source objects are read back unchanged."""
+    """Remap UVs on new export copies and bind the matching atlas. Sources stay unchanged."""
+    rt = _rt()
     nodes = _targets(nodes)
     current = atlas_preview(nodes)
     if preview['report'] != current['report'] or preview['plans'] != current['plans']:
         raise ValueError('stale or altered atlas preview; run dry-run again')
     copies = _apply_uv(nodes, preview, current, '_AGR_atlas_')
-    after = atlas_preview(copies)['report']
+    try:
+        for copy, image in zip(copies, current['images']):
+            _bind_atlas(copy, image)
+        after = _applied_atlas_report(copies, current)
+    except Exception:
+        if copies:
+            rt.delete(copies)
+        raise
     return copies, after
 
 

@@ -248,6 +248,167 @@ def test_publish_refuses_input_alias_and_deletes_nothing(tmp_path):
     assert rc != 0 and src.read_bytes() == before and not code_path.exists()
 
 
+def _tri_quad():
+    verts = [(0.0, 0.0, 0.0), (1.0, 0.0, 0.0), (1.0, 1.0, 0.0), (0.0, 1.0, 0.0)]
+    uvs = [(0.1, 0.2), (0.8, 0.2), (0.8, 0.7), (0.1, 0.7)]
+    faces = [(0, 1, 2), (0, 2, 3)]
+    fuv = [(0, 1, 2), (0, 2, 3)]
+    return verts, uvs, faces, fuv
+
+
+def _pack_pair(core, na, spec, path, mode='oks', size=2048, opacity=None):
+    import numpy as np
+    verts, uvs, faces, fuv = _tri_quad()
+    got = core.pack(verts, uvs, faces, fuv, ('Wall', 'Wall'), {'Wall': spec}, mode=mode, size=size, pad=8)
+    mesh = na.UdimMesh(np.array(verts, float), np.array(uvs, float), faces, fuv, ('Wall', 'Wall'))
+    pymat = na.MaterialSource(name='Wall', diffuse=path, color=spec.get('color'), opacity=opacity,
+                              dissolve=spec['dissolve'])
+    exp = na.pack(mesh, {'Wall': pymat}, mode=mode, size=size, pad=8)
+    return got, exp
+
+
+def _assert_atlas_match(got, exp, pixel_tol=0):
+    assert got['cells'] == exp['cells']
+    assert got['kinds']['Wall'] == exp['report']['materials']['Wall']['kind']
+    assert len(got['uvs']) == len(exp['uvs'])
+    for a, b in zip(got['uvs'], exp['uvs'].tolist()):
+        assert a == pytest.approx(b, abs=1e-6)
+    diff = max(abs(a - b) for a, b in zip(got['rgb'], exp['rgb'].tobytes()))
+    if exp['alpha'] is None:
+        assert got['alpha'] is None
+    else:
+        diff = max(diff, max(abs(a - b) for a, b in zip(got['alpha'], exp['alpha'].tobytes())))
+    assert diff <= pixel_tol
+
+
+def test_textured_quad_atlas_pixels_match_python_and_keep_alpha(tmp_path):
+    from PIL import Image
+    core = _load(ATLAS_CORE, 'agr_atlas_core_pixels')
+    na = _load(ROOT / 'tools/materials/npm_atlas_udim.py', 'npm_atlas_pixels')
+    red, blue = (255, 0, 0), (0, 0, 255)
+    image = Image.new('RGB', (8, 1))
+    image.putdata([red] * 4 + [blue] * 4)
+    path = tmp_path / 'red-blue.png'
+    image.save(path)
+    rgb = [[red, red, red, red, blue, blue, blue, blue]]
+    got, exp = _pack_pair(core, na, {'rgb': rgb, 'dissolve': 1.0}, path)
+    _assert_atlas_match(got, exp)
+    assert got['cells'] == {'Wall': [0, 0, 24, 19]}
+    assert got['kinds']['Wall'] == 'texture'
+    us = [p[0] for p in got['uvs']]
+    assert min(us) == pytest.approx(0.00439453125, abs=1e-12)
+    assert max(us) == pytest.approx(0.00712890625, abs=1e-12)
+    # The blue source corner must address a blue atlas pixel, not the red end of the 8x1 map.
+    size = got['size']
+    blue_uv = max(got['uvs'], key=lambda p: p[0])
+    x = int(blue_uv[0] * size)
+    y = int((1.0 - blue_uv[1]) * size)
+    pixel = got['rgb'][(y * size + x) * 3:(y * size + x) * 3 + 3]
+    assert pixel[2] > pixel[0]
+    red_uv = min(got['uvs'], key=lambda p: p[0])
+    x = int(red_uv[0] * size)
+    y = int((1.0 - red_uv[1]) * size)
+    pixel = got['rgb'][(y * size + x) * 3:(y * size + x) * 3 + 3]
+    assert pixel == b'\xff\x00\x00'
+    alpha = [0, 0, 0, 0, 255, 255, 255, 255]
+    white = Image.new('RGBA', (8, 1))
+    white.putdata([(255, 255, 255, a) for a in alpha])
+    white_path = tmp_path / 'white-alpha.png'
+    white.save(white_path)
+    spec = {'rgb': [[(255, 255, 255)] * 8], 'alpha': [alpha], 'dissolve': 1.0}
+    got_a, exp_a = _pack_pair(core, na, spec, white_path)
+    _assert_atlas_match(got_a, exp_a)
+    assert got_a['kinds']['Wall'] == 'texture'
+    assert got_a['alpha'] is not None
+    # Dropping alpha classifies the same white bitmap as a flat plug and moves U by more than 1e-6.
+    verts, uvs, faces, fuv = _tri_quad()
+    dropped = core.pack(verts, uvs, faces, fuv, ('Wall', 'Wall'),
+                        {'Wall': {'rgb': [[(255, 255, 255)] * 8], 'dissolve': 1.0}},
+                        mode='oks', size=2048, pad=8)
+    assert dropped['kinds']['Wall'] == 'plug'
+    assert dropped['cells']['Wall'] == [0, 0, 40, 20]
+    assert max(p[0] for p in dropped['uvs']) - max(p[0] for p in got_a['uvs']) == pytest.approx(0.007845052083333332, abs=1e-12)
+
+
+def test_opacity_without_diffuse_is_rejected_and_random_bitmaps_match(tmp_path):
+    from PIL import Image
+    core = _load(ATLAS_CORE, 'agr_atlas_core_opacity')
+    na = _load(ROOT / 'tools/materials/npm_atlas_udim.py', 'npm_atlas_opacity')
+    verts, uvs, faces, fuv = _tri_quad()
+    with pytest.raises(core.AtlasError, match='map_d without map_Kd is not supported'):
+        core.pack(verts, uvs, faces, fuv, ('Wall', 'Wall'),
+                  {'Wall': {'color': (20, 140, 40), 'opacity': [[255] * 8], 'dissolve': 1.0}},
+                  mode='oks', size=2048, pad=8)
+    with pytest.raises(core.AtlasError, match='both diffuse alpha and map_d opacity'):
+        core.pack(verts, uvs, faces, fuv, ('Wall', 'Wall'),
+                  {'Wall': {'rgb': [[(255, 0, 0)] * 4 + [(0, 0, 255)] * 4],
+                            'alpha': [[0, 0, 0, 0, 255, 255, 255, 255]],
+                            'opacity': [[255] * 8], 'dissolve': 1.0}},
+                  mode='oks', size=2048, pad=8)
+    rng = random.Random(722)
+    matched = 0
+    for i in range(12):
+        w, h = rng.randint(1, 12), rng.randint(1, 9)
+        rgb = [[(rng.randint(0, 255), rng.randint(0, 255), rng.randint(0, 255)) for _ in range(w)] for _ in range(h)]
+        alpha = [[rng.choice([0, 255, rng.randint(0, 255)]) for _ in range(w)] for _ in range(h)]
+        mode = Image.new('RGBA', (w, h))
+        mode.putdata([(px[0], px[1], px[2], a) for row, arow in zip(rgb, alpha) for px, a in zip(row, arow)])
+        path = tmp_path / f'rand-{i}.png'
+        mode.save(path)
+        spec = {'rgb': rgb, 'dissolve': 1.0}
+        if any(a < 255 for row in alpha for a in row):
+            spec['alpha'] = alpha
+        got, exp = _pack_pair(core, na, spec, path)
+        # Layout is exact. Lanczos fixed-point in PIL can differ by one level; appearance stays.
+        _assert_atlas_match(got, exp, pixel_tol=1)
+        matched += 1
+    for i in range(8):
+        w, h = rng.randint(2, 10), rng.randint(1, 6)
+        rgb = [[(rng.randint(0, 255), rng.randint(0, 255), rng.randint(0, 255)) for _ in range(w)] for _ in range(h)]
+        opacity = [[rng.randint(0, 255) for _ in range(w)] for _ in range(h)]
+        diffuse = Image.new('RGB', (w, h))
+        diffuse.putdata([px for row in rgb for px in row])
+        grey = Image.new('L', (w, h))
+        grey.putdata([v for row in opacity for v in row])
+        diffuse_path = tmp_path / f'd-{i}.png'
+        opacity_path = tmp_path / f'o-{i}.png'
+        diffuse.save(diffuse_path)
+        grey.save(opacity_path)
+        spec = {'rgb': rgb, 'opacity': opacity, 'dissolve': 1.0}
+        got = core.pack(verts, uvs, faces, fuv, ('Wall', 'Wall'), {'Wall': spec}, mode='oks', size=2048, pad=8)
+        import numpy as np
+        mesh = na.UdimMesh(np.array(verts, float), np.array(uvs, float), faces, fuv, ('Wall', 'Wall'))
+        exp = na.pack(mesh, {'Wall': na.MaterialSource(name='Wall', diffuse=diffuse_path, opacity=opacity_path)},
+                      mode='oks', size=2048, pad=8)
+        _assert_atlas_match(got, exp, pixel_tol=1)
+        matched += 1
+    assert matched == 20
+
+
+def test_bitmap_rows_read_each_scanline():
+    runtime = _load(RUNTIME, 'agr_runtime_bitmap_rows')
+    rng = random.Random(722)
+    matched = 0
+    for _ in range(32):
+        width, height = rng.randint(1, 24), rng.randint(1, 16)
+        buf = [[(rng.randint(0, 255), rng.randint(0, 255), rng.randint(0, 255), rng.randint(0, 255))
+                for _ in range(width)] for _ in range(height)]
+
+        def read_span(x, y, count, buf=buf, width=width):
+            # A request longer than the row stops at the scanline, the same limit as Max getPixels.
+            return buf[y][x:x + min(count, width - x)]
+
+        if height > 1:
+            assert len(read_span(0, 0, width * height)) == width
+        rgb, alpha = runtime.bitmap_rows(width, height, read_span)
+        assert rgb == [[px[:3] for px in row] for row in buf]
+        assert alpha == [[px[3] for px in row] for row in buf]
+        with pytest.raises(ValueError, match='partial material bitmap'):
+            runtime.bitmap_rows(width, height, lambda x, y, count: read_span(x, y, count)[:0])
+        matched += 1
+    assert matched == 32
+
+
 def test_shipped_archive_contains_atlas_core_text(tmp_path):
     assert ATLAS_CORE.is_file(), 'atlas core missing'
     builder = _load(BUILDER, 'agr_builder_atlas_ship')
