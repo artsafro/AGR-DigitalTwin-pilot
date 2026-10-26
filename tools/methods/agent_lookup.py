@@ -74,7 +74,14 @@ def write_new(path, text, inputs=()):
 
 
 def extract_json(text):
-    # Keep the one complete object verbatim; reject absent or multiple objects.
+    import re
+    # A YAML/code example can precede the single JSON answer. Never select
+    # among multiple JSON answers or mutate any answer content.
+    fenced = re.findall(r'```json\s*\n(.*?)\n```',text,re.S|re.I)
+    if len(fenced)>1:
+        raise ValueError('multiple JSON answers')
+    if fenced:
+        return json.loads(fenced[0])
     start, end = text.find('{'), text.rfind('}')
     if start < 0 or end < start:
         raise ValueError('no JSON object in model response')

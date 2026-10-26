@@ -73,6 +73,8 @@ def test_session_environment(mod,tmp_path,monkeypatch):
 
 def test_extract_json(mod):
     assert mod.extract_json('Evidence.\n```json\n{"answer": 0.002}\n```') == {'answer': 0.002}
+    assert mod.extract_json('Evidence.\n```yaml\n- {area_max: 0.25}\n```\n```json\n{"answer": 1125000}\n```') == {'answer':1125000}
+    with pytest.raises(ValueError): mod.extract_json('```json\n{"a":1}\n```\n```json\n{"a":2}\n```')
     with pytest.raises(ValueError): mod.extract_json('No answer')
     with pytest.raises(ValueError): mod.extract_json('{"answer": 1} {"answer": 2}')
 
