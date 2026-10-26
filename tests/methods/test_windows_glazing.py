@@ -434,7 +434,7 @@ def test_driver_keeps_accessory_ucx_and_binds_the_generated_texture(tmp_path, va
     rep = out.with_name(out.name + ".variant.json")
     report = json.loads(rep.read_text(encoding="utf-8")) if rep.is_file() else {}
     assert r.returncode == 0 and report.get("ok"), report.get("error") or r.stderr[-500:]
-    assert not out.with_name("SM_Test.partial.fbx").exists()
+    assert not [q for q in out.parent.iterdir() if "partial" in q.name or q.name.endswith(".tmp")]
     before = _probe(exe, tmp_path, src, "before")
     pkg = tmp_path / "pkg"  # clean import from a package-like folder: only the FBX and the PNG(s) next to it
     pkg.mkdir()
@@ -480,6 +480,61 @@ def test_driver_name_collision_publishes_nothing(tmp_path):
     report = json.loads(out.with_name(out.name + ".variant.json").read_text(encoding="utf-8"))
     assert r.returncode == 2 and not report["ok"] and "collide" in report["error"]
     assert sorted(q.name for q in out.parent.iterdir()) == ["SM_Test.fbx.variant.json"]
+
+
+SENTINEL = b"unrelated file owned by someone else"
+
+
+@pytest.mark.blender
+@pytest.mark.parametrize("fault", ["", "readback"], ids=["success", "forced-readback-failure"])
+def test_driver_staging_never_touches_unrelated_partial_files(tmp_path, monkeypatch, fault):
+    """Review round 2: Main + RoofDetail + UCX + glass, atlas-planes tile=1002. Pre-existing unrelated files with
+    the old predictable staging names keep their bytes on success AND on a forced read-back failure; the driver
+    stages in an exclusively created unique temp and removes only that temp."""
+    from dt_ai.core.blender_runner import blender_executable
+
+    exe = blender_executable()
+    src = _make_source(exe, tmp_path, True)
+    src_bytes = src.read_bytes()
+    out = tmp_path / "v" / "SM_Test.fbx"
+    out.parent.mkdir()
+    sentinels = [out.with_name("SM_Test.partial.fbx"), out.with_name("SM_Test.fbx.partial"),
+                 out.with_name(".SM_Test.partial.fbx")]
+    for s in sentinels:
+        s.write_bytes(SENTINEL)
+    if fault:
+        monkeypatch.setenv("WINDOWS_VARIANT_FAULT", fault)
+    r = _blender_run(exe, TOOLS / "windows" / "build_variant_blender.py", src, out, "atlas-planes", "tile=1002",
+                     "texture_side=64", check=False)
+    report = json.loads(out.with_name(out.name + ".variant.json").read_text(encoding="utf-8"))
+    assert all(s.read_bytes() == SENTINEL for s in sentinels)
+    assert src.read_bytes() == src_bytes
+    names = sorted(q.name for q in out.parent.iterdir())
+    if fault:
+        assert r.returncode == 2 and not report["ok"] and "forced" in report["error"]
+        assert names == sorted([s.name for s in sentinels] + ["SM_Test.fbx.variant.json"])
+    else:
+        assert r.returncode == 0 and report["ok"], report.get("error")
+        assert names == sorted([s.name for s in sentinels] + ["SM_Test.fbx", "SM_Test.fbx.variant.json",
+                                                              "T_SM_Test_WindowAtlas.png"])
+        assert set(report["exported"]) == {"SM_Test_Main", "SM_Test_RoofDetail", "UCX_SM_Test_Main_00"}
+
+
+@pytest.mark.parametrize("bad", ["readback ", "other", "1"])
+def test_driver_unknown_fault_value_is_refused(tmp_path, monkeypatch, capsys, bad):
+    """Fault injection is a test seam: an unknown value is an error naming it, never ignored."""
+    monkeypatch.setenv("WINDOWS_VARIANT_FAULT", bad)
+    src = tmp_path / "SM_Test.fbx"
+    src.write_bytes(b"x")
+    out = tmp_path / "o" / "SM_Test.fbx"
+    monkeypatch.setattr("sys.argv", ["blender", "--", str(src), str(out), "atlas-planes", "tile=1002"])
+    assert bvb.main() == 4
+    assert "WINDOWS_VARIANT_FAULT" in capsys.readouterr().err and not out.parent.exists()
+
+
+def test_batch_plan_never_lists_the_old_partial_name():
+    """run_benchmarks must not plan (and so never unlink) <stem>.partial.fbx: the driver owns a unique temp."""
+    assert ".partial" not in (TOOLS / "windows" / "run_benchmarks.py").read_text(encoding="utf-8")
 
 
 def test_texel_package_tiles_win_over_one_bound_readback_image():

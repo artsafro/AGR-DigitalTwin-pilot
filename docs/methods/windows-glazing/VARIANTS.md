@@ -22,8 +22,9 @@ Common steps of every variant:
    untiled tow02: tile 1002). The variant's new material gets our generated diffuse (`texture_pixels`),
    written next to the FBX and bound to its Base Color: tiled `<diffuse stem>.<tile>.png` 1024 px, untiled
    `T_<FBX stem>_<Frame|WindowAtlas|FrameTrim>.png` at the side of the single diffuse map (2048 px on tow02),
-   packed into the ZIP. Export: triangulated FBX, same settings as the ucx class, to `<stem>.partial.fbx`.
-4. Read-back gate before publishing: the partial FBX is imported into a clean scene; every unchanged mesh
+   packed into the ZIP. Export: triangulated FBX, same settings as the ucx class, to a staging
+   FBX the driver creates exclusively (`~<stem>.<random>.staging.fbx`; an unrelated file is never touched).
+4. Read-back gate before publishing: the staging FBX is imported into a clean scene; every unchanged mesh
    must keep its triangles, slot names and world bounding box (0.1 mm), no mesh may be missing or extra, and
    the new material must sample exactly the written PNG (same file, same sha256) on >= 1 polygon inside the
    new tile. Only then is it renamed to the output; otherwise exit 2 and nothing is published.

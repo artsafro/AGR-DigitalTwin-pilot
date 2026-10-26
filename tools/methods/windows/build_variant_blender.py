@@ -13,10 +13,12 @@ other mesh (body, UCX pieces, accessories) is exported as it is; a non-mesh obje
 `dropped_objects` with its reason. New UVs go to UDIM `tile`. The variant's new material
 (`M_<address>_Main_<Frame|WindowAtlas|FrameTrim>`) gets our generated diffuse `texture` (default
 `T_<address>_<kind>.png`, `texture_side` px, default 1024), written next to `<out>` and bound to its Base Color.
-The FBX is exported to `<out stem>.partial.fbx`, read back in a clean scene and published as `<out>` only when
-the read-back mesh inventory reconciles with the source one (unchanged meshes keep triangles, slots and world
-bounding box) and the new material samples exactly the written PNG; else the partial FBX and the PNG are
-removed. `<out>.variant.json` records the build wall time (after import, up to the end of the export),
+The FBX is exported to a staging file this invocation creates exclusively (`~<out stem>.<random>.staging.fbx`,
+mkstemp, never a predictable name, so an unrelated file next to `<out>` is never overwritten or removed), read
+back in a clean scene and published as `<out>` only when the read-back mesh inventory reconciles with the source
+one (unchanged meshes keep triangles, slots and world bounding box) and the new material samples exactly the
+written PNG; else only that staging FBX and the PNG are removed. `WINDOWS_VARIANT_FAULT=readback` (test seam)
+forces the read-back gate to fail; any other non-empty value is refused (exit 4). `<out>.variant.json` records the build wall time (after import, up to the end of the export),
 openings, drops with reasons, the inventories and any error. Exit 0 built; 2 build failed (report written,
 no FBX published); 4 refused before any write (bad arguments, a destination aliasing an input).
 """
@@ -39,6 +41,26 @@ def _load(name, rel):
 
 wv = _load("methods_windows_variants", "tools/methods/windows/windows_variants.py")
 ua = _load("ucx_audit", "src/twinqa/geometry/ucx_audit.py")
+
+
+FAULTS = ("readback",)  # test seam: WINDOWS_VARIANT_FAULT=readback forces the read-back gate to fail
+
+
+def _fault_error(value):
+    """None for an unset/empty or known WINDOWS_VARIANT_FAULT; else an error naming the value."""
+    if value in ("",) + FAULTS:
+        return None
+    return f"unknown WINDOWS_VARIANT_FAULT={value!r}; known: {list(FAULTS)}"
+
+
+def _staging(out):
+    """Exclusively create a unique, invocation-owned staging FBX next to <out> (O_EXCL via mkstemp)."""
+    import os
+    import tempfile
+
+    fd, name = tempfile.mkstemp(prefix=f"~{out.stem}.", suffix=".staging.fbx", dir=out.parent)
+    os.close(fd)
+    return Path(name)
 
 
 def _parse(argv):
@@ -350,10 +372,15 @@ def main():
         return 4
     src, out, variant = Path(args[0]), Path(args[1]), args[2]
     rep_path = out.with_name(out.name + ".variant.json")
-    partial = out.with_name(out.stem + ".partial.fbx")
+    import os
+
+    fault = os.environ.get("WINDOWS_VARIANT_FAULT", "")
+    if _fault_error(fault):
+        print(f"WINDOWS_VARIANT refused: {_fault_error(fault)}; nothing written", file=sys.stderr)
+        return 4
     tex_name = opts.get("texture")  # default needs the address: resolved after import, checked again then
     inputs = [src] + ([Path(opts["glass_map"])] if "glass_map" in opts else [])
-    dests = [out, rep_path, partial] + ([out.with_name(tex_name)] if tex_name else [])
+    dests = [out, rep_path] + ([out.with_name(tex_name)] if tex_name else [])
 
     def refused(dsts):
         for i, dst in enumerate(dsts):
@@ -464,6 +491,7 @@ def main():
         for o in export:
             o.select_set(True)
         out.parent.mkdir(parents=True, exist_ok=True)
+        partial = _staging(out)  # never a predictable name: an unrelated file is never overwritten or removed
         written.append(partial)
         bpy.ops.export_scene.fbx(filepath=str(partial), use_selection=True, object_types={"MESH"},
                                  axis_forward="Y", axis_up="Z", apply_unit_scale=True,
@@ -475,6 +503,8 @@ def main():
         png_sha = _sha256(png) if gen_mat else None
         check = readback_check(partial, expected, gen_mat, png if gen_mat else None, png_sha, opts["tile"])
         report["readback"] = check
+        if fault == "readback":
+            check["problems"].append("forced read-back failure (WINDOWS_VARIANT_FAULT=readback)")
         if check["problems"]:
             raise ValueError(f"read-back does not reconcile: {check['problems'][:5]}")
         partial.replace(out)

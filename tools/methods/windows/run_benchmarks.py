@@ -133,7 +133,7 @@ def plan(a, benches: list[dict]) -> list[tuple]:
             rep = out.with_name(out.name + ".variant.json")
             tex = texture_plan(bench, out, variant, tile) if variant != BASELINE else None
             runs.append((bench, src, variant, out, rep, tile, gmap, tex))
-            dests += [out, rep, out.with_suffix(".zip"), out.with_name(out.stem + ".partial.fbx")] + \
+            dests += [out, rep, out.with_suffix(".zip")] + \
                 ([out.with_name(tex[0])] if tex else [])
     refuse_aliases(dests, ucx_batch.protected_inputs(a.benchmarks, benches))
     for i, d in enumerate(dests):
