@@ -180,6 +180,42 @@ def test_bad_tile_refused():
         wv.tile_offset(1000)
 
 
+bvb = _load("methods_windows_build", TOOLS / "windows" / "build_variant_blender.py")
+
+
+@pytest.mark.parametrize("argv,msg", [
+    (["a.fbx", "b.fbx", "modelled-frames"], "usage"),
+    (["a.fbx", "b.fbx", "no-such", "tile=1001"], "unknown variant"),
+    (["a.fbx", "b.obj", "atlas-planes", "tile=1001"], "must be an .fbx"),
+    (["a.fbx", "b.fbx", "atlas-planes", "glass_map=x.png"], "tile=<UDIM> is required"),
+    (["a.fbx", "b.fbx", "atlas-planes", "tile=1001", "glass_map=C:/no/such/map.png"], "does not exist"),
+    (["a.fbx", "b.fbx", "atlas-planes", "tile=999"], "bad tile"),
+    (["a.fbx", "b.fbx", "atlas-planes", "tile=1001", "tile=1002"], "bad option"),
+    (["a.fbx", "b.fbx", "atlas-planes", "tile=1001", "colour=red"], "bad option"),
+])
+def test_driver_refuses_bad_arguments(argv, msg):
+    opts, err = bvb._parse(argv)
+    assert opts is None and err and __import__("re").search(msg, err)
+
+
+@pytest.mark.parametrize("alias", ["source", "glass_map"])
+def test_driver_output_aliasing_an_input_exits_4_and_writes_nothing(tmp_path, monkeypatch, alias):
+    src = tmp_path / "SM_Test.fbx"
+    src.write_bytes(b"fbx")
+    gm = tmp_path / "T_m_1.png"
+    gm.write_bytes(b"png")
+    out = src if alias == "source" else tmp_path / "T_m_1.png.fbx"
+    if alias == "glass_map":  # the report path <out>.variant.json is fine; make the FBX itself the map
+        out = gm.with_suffix(".fbx")
+        gm.rename(out)
+        gm = out
+    before = {p.name: p.read_bytes() for p in tmp_path.iterdir()}
+    monkeypatch.setattr("sys.argv", ["blender", "--", str(src), str(out), "atlas-planes", "tile=1002",
+                                     f"glass_map={gm}"])
+    assert bvb.main() == 4
+    assert {p.name: p.read_bytes() for p in tmp_path.iterdir()} == before
+
+
 # ---- runner + RESULTS.md -------------------------------------------------------------------------------------------
 
 def test_run_variant_writes_windows_class_metrics_and_results_columns(tmp_path):

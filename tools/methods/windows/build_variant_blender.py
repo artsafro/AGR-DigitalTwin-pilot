@@ -132,7 +132,8 @@ def _bmesh_frame(o):
     plan = wv.frame_plan(o)
     bm = bmesh.new()
     face = bm.faces.new([bm.verts.new(tuple(p)) for p in plan["outer"]])
-    bmesh.ops.inset_region(bm, faces=[face], thickness=plan["frame_w"], depth=0.0, use_even_offset=True)
+    bm.normal_update()  # inset ops move along the face normal: without it the ring is degenerate
+    bmesh.ops.inset_individual(bm, faces=[face], thickness=plan["frame_w"], depth=0.0, use_even_offset=True)
     inner = [face]
     if plan["panes"] > 1:
         horiz = [e for e in face.edges if abs((e.verts[1].co - e.verts[0].co).normalized().dot(tuple(o["u"]))) > 0.9]
@@ -145,6 +146,7 @@ def _bmesh_frame(o):
                          abs((np.array(v.co) - o["centre"]) @ o["v"]) <= limv for v in f.verts)
             if inside:
                 inner.append(f)
+        bm.normal_update()
         bmesh.ops.inset_individual(bm, faces=inner, thickness=plan["mullion_w"] / 2, use_even_offset=True)
     glass = [np.array([v.co[:] for v in f.verts]) for f in inner]
     bmesh.ops.delete(bm, geom=inner, context="FACES_ONLY")
@@ -156,6 +158,12 @@ def _bmesh_frame(o):
     verts = co + shift * o["n"]
     faces = [[v.index for v in f.verts] for f in bm.faces]
     bm.free()
+    pane_area = sum(float(np.linalg.norm(wv._newell(g))) for g in glass)
+    if pane_area >= 0.99 * o["width"] * o["height"]:
+        raise ValueError(f"bmesh inset did not move: panes cover {pane_area:.3f} m2 of {o['width'] * o['height']:.3f}")
+    if not faces or not glass:  # fail closed: an opening never silently loses its frame or its glass
+        raise ValueError(f"bmesh frame of opening at {np.round(o['centre'], 3).tolist()} gave {len(faces)} "
+                         f"frame faces and {len(glass)} panes")
     return verts, faces, glass
 
 

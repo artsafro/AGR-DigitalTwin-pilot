@@ -9,7 +9,8 @@ Per (benchmark, variant): checks the source sha256 against benchmark/methods/ben
 variant in a fresh factory Blender (build_variant_blender.py) into <out>/<bench>/<variant>/<FBX name>
 (the source is never written), packs a ZIP with the source package's textures plus, for a UDIM-tiled
 package, one generated diffuse PNG for the new UDIM tile of the window UVs, then measures the ZIP with
-tools/methods/run_variant.py in a fresh process. Rows are written only by run_variant.py: a failed build
+tools/methods/run_variant.py in a fresh process. Variant `source-as-is` measures a copy of the source
+package itself (no build) as the reference row. Rows are written only by run_variant.py: a failed build
 appends nothing and makes the batch exit 1. Then RESULTS.md is regenerated.
 
 New UDIM tile: tiled package = highest diffuse tile + 1; untiled package (one diffuse map) = 1002, measured
@@ -22,6 +23,7 @@ import argparse
 import importlib.util
 import json
 import re
+import shutil
 import subprocess
 import sys
 import zipfile
@@ -44,6 +46,7 @@ wv = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(wv)
 
 CLASS = "windows-glazing"
+BASELINE = "source-as-is"  # the benchmark source itself, measured the same way: the reference every variant is read against
 DEFAULT_BENCH = ("kpp1", "ac08", "tow02")
 TILE_RE = re.compile(r"(?i)^(.*diffuse.*)\.(1\d{3})\.png$")
 
@@ -95,10 +98,10 @@ def texture_png(variant: str, report: dict, side: int = 1024):
     return im
 
 
-def package(bench: dict, fbx: Path, variant: str, report: dict, tile: int) -> Path:
+def package(bench: dict, fbx: Path, variant: str, report: dict, tile: int, generated: bool = True) -> Path:
     out = ucx_batch.package(bench, fbx)
     stem, _ = diffuse_tiles(bench)
-    if out.suffix.lower() == ".zip" and stem:
+    if generated and out.suffix.lower() == ".zip" and stem:
         png = out.with_name(f"{stem}.{tile}.png")
         texture_png(variant, report).save(png)
         with zipfile.ZipFile(out, "a", zipfile.ZIP_DEFLATED) as z:
@@ -115,9 +118,9 @@ def plan(a, benches: list[dict]) -> list[tuple]:
         src = ucx_batch.source_fbx(bench)
         tile, gmap = new_tile(bench), glass_map(bench)
         stem, _ = diffuse_tiles(bench)
-        for variant in a.variant or wv.VARIANTS:
-            if variant not in wv.VARIANTS:
-                raise run_variant.Refused(f"unknown variant {variant!r}; known: {list(wv.VARIANTS)}")
+        for variant in a.variant or (BASELINE,) + wv.VARIANTS:
+            if variant not in (BASELINE,) + wv.VARIANTS:
+                raise run_variant.Refused(f"unknown variant {variant!r}; known: {[BASELINE, *wv.VARIANTS]}")
             out = a.out / bid / variant / bench["source"].get("output_name", src.name)
             rep = out.with_name(out.name + ".variant.json")
             runs.append((bench, src, variant, out, rep, tile, gmap))
@@ -156,6 +159,15 @@ def main(argv=None) -> int:
         stem, _ = diffuse_tiles(bench)
         for stale in [out, rep, out.with_suffix(".zip")] + ([out.with_name(f"{stem}.{tile}.png")] if stem else []):
             stale.unlink(missing_ok=True)  # planned destinations only; preflight proved none is an input
+        if variant == BASELINE:  # copy, never write next to the source; no build, so no wall time
+            shutil.copyfile(src, out)
+            target = package(bench, out, variant, {}, tile, generated=False)
+            r = subprocess.run([sys.executable, str(HERE.parent / "run_variant.py"), str(target), "--bench", bid,
+                                "--class", CLASS, "--variant", variant, "--results", str(a.results),
+                                "--benchmarks", str(a.benchmarks)], capture_output=True, text=True, timeout=3600)
+            print(f"{bid} {variant}: {(r.stdout + r.stderr).strip()[-300:]}")
+            codes.append(r.returncode)
+            continue
         cmd = [blender, "--background", "--factory-startup", "--python-exit-code", "1", "--python",
                str(HERE / "build_variant_blender.py"), "--", str(src), str(out), variant, f"tile={tile}"]
         if gmap:

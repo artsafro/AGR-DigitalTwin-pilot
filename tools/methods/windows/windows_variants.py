@@ -176,12 +176,11 @@ def inset_glass_trim(openings: list[dict], tile: int) -> dict:
     frame_v, frame_f, frame_uv, glass_v, glass_f, glass_uv = [], [], [], [], [], []
     for o in openings:
         outer, inner = rect(o), rect(o, TRIM_W_M)
+        base = len(frame_v)
+        frame_v += list(outer) + list(inner)  # one welded ring: 8 vertices, 4 mitred bars
         for a, b in ((0, 1), (1, 2), (2, 3), (3, 0)):
-            quad = np.array([outer[a], outer[b], inner[b], inner[a]])
-            base = len(frame_v)
-            frame_v += list(quad)
-            frame_f.append([base, base + 1, base + 2, base + 3])
-            frame_uv.append(metric_uv(quad, o, s, tile).tolist())
+            frame_f.append([base + a, base + b, base + 4 + b, base + 4 + a])
+            frame_uv.append(metric_uv(np.array([outer[a], outer[b], inner[b], inner[a]]), o, s, tile).tolist())
         base = len(glass_v)
         glass_v += list(inner)
         glass_f.append([base, base + 1, base + 2, base + 3])
