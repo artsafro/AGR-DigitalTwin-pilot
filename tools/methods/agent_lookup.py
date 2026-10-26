@@ -81,7 +81,24 @@ def extract_json(text):
     if len(fenced)>1:
         raise ValueError('multiple JSON answers')
     if fenced:
-        return json.loads(fenced[0])
+        answer = json.loads(fenced[0])
+        # Inspect the entire response, not just the preferred fence. Decode
+        # whole objects so nested evidence/answer objects count only once;
+        # skip non-JSON examples such as YAML flow mappings.
+        decoder = json.JSONDecoder()
+        objects = []
+        offset = 0
+        while (start := text.find('{', offset)) >= 0:
+            try:
+                obj, end = decoder.raw_decode(text, start)
+            except json.JSONDecodeError:
+                offset = start + 1
+                continue
+            objects.append(obj)
+            offset = end
+        if len(objects) != 1:
+            raise ValueError('multiple JSON answers')
+        return answer
     start, end = text.find('{'), text.rfind('}')
     if start < 0 or end < start:
         raise ValueError('no JSON object in model response')
