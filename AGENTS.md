@@ -67,3 +67,4 @@ gets a line in `docs/decisions.md` and its `[D<n>]` where it applies.
   (`python tools/state/project_state.py`; ≤ 80 lines, fixed sections; `docs/agents/WORKFLOW.md`);
   in task branches report state changes in the final summary.
 - A new tool counts as shared only after it is listed in `docs/agents/CAPABILITIES.md` on `main`.
+- Four working principles (assumptions first, simplest fit, surgical changes, verified done): `docs/agents/working-principles.md`.
