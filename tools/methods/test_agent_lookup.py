@@ -79,6 +79,61 @@ def test_extract_json(mod):
     with pytest.raises(ValueError): mod.extract_json('{"answer": 1} {"answer": 2}')
 
 
+@pytest.fixture
+def replay_lookup(mod, tmp_path, monkeypatch):
+    """Synthetic completed CLI logs; only Git snapshot checks are stubbed."""
+    docs = tmp_path/'docs'; docs.mkdir()
+    (docs/'questions.json').write_text(json.dumps({'questions':[
+        dict(id='Q01', category='repo', question='synthetic', answer=1, scoring='number')]}))
+    monkeypatch.setattr(mod, 'DOCS', docs)
+    monkeypatch.setattr(mod.subprocess, 'check_output', lambda *a, **kw: mod.SOURCE if kw.get('text') else b'committed')
+    monkeypatch.setattr(mod.subprocess, 'run', lambda *a, **kw: subprocess.CompletedProcess(a, 0))
+
+    def prepare(text):
+        raw = tmp_path/'raw'; raw.mkdir()
+        for v in 'ABCD':
+            end = dict(type='result', terminal_reason='completed', is_error=False,
+                result=text, modelUsage={mod.MODEL:{}}, session_id=f'synthetic-{v}',
+                duration_ms=1000, total_cost_usd=0,
+                usage=dict(input_tokens=10, cache_read_input_tokens=20,
+                           cache_creation_input_tokens=30, output_tokens=5))
+            (raw/f'Q01-{v}.jsonl').write_text(json.dumps(end)+'\n')
+        return {p:p.read_bytes() for p in raw.iterdir()}
+    return tmp_path, docs, prepare
+
+
+@pytest.mark.parametrize('order', ['bare-first', 'fenced-first'])
+def test_mixed_answers_not_published(mod, replay_lookup, order):
+    work, docs, prepare = replay_lookup
+    bare = '{"answer":1}'
+    fenced = '```json\n{"answer":2}\n```'
+    parts = [bare, fenced] if order == 'bare-first' else [fenced, bare]
+    # Combine the new ambiguity with earlier prose/YAML parser regressions.
+    text = 'Evidence.\n```yaml\n- {area_max: 0.25}\n```\n'+'\n'.join(parts)
+    before = prepare(text)
+    with pytest.raises(ValueError, match='multiple JSON answers'):
+        mod.run(work)
+    assert not (work/'rows').exists()
+    assert not (docs/'results.jsonl').exists()
+    assert {p:p.read_bytes() for p in (work/'raw').iterdir()} == before
+
+
+@pytest.mark.parametrize('text', [
+    '{"answer":1}',
+    'Evidence.\n```json\n{"answer":1}\n```',
+    'Evidence.\n```yaml\n- {area_max: 0.25}\n```\n```json\n{"answer":1}\n```',
+])
+def test_single_answer_published(mod, replay_lookup, text):
+    work, docs, prepare = replay_lookup
+    before = prepare(text)
+    mod.run(work)
+    for v in 'ABCD':
+        row = json.loads((work/'rows'/f'Q01-{v}.json').read_text())
+        assert (row['answer'], row['correct'], row['session_id']) == (1, 'correct', f'synthetic-{v}')
+        assert mod.total_tokens(row) == 65
+    assert {p:p.read_bytes() for p in (work/'raw').iterdir()} == before
+
+
 def test_tokens(mod):
     assert mod.total_tokens(matrix()[0]) == 65
     with pytest.raises(ValueError): mod.total_tokens({'input_tokens':1})
