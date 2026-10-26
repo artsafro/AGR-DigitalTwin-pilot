@@ -117,12 +117,13 @@ def _udim(uv) -> int | None:
 def texel(rb: dict, tile_sides: dict | None = None) -> dict:
     """px/m over every polygon edge of every non-UCX mesh (twinqa.uv.edge_densities); null when not readable.
 
-    Texture side: the readback's single square diffuse size (twinqa.scene rule); else, for a package,
-    `tile_sides` = {UDIM tile or None (untiled): side px} read from its diffuse PNGs, applied per polygon by
-    the UDIM tile of its UV centre. A polygon on a tile without a diffuse PNG gives null naming the tile."""
-    side = _texture_side_px(rb)
+    Texture side: for a package, `tile_sides` = {UDIM tile or None (untiled): side px} read from its diffuse
+    PNGs, applied per polygon by the UDIM tile of its UV centre (the package's files win over the readback:
+    one bound image must not stand for every tile); else the readback's single square diffuse size
+    (twinqa.scene rule). A polygon on a tile without a diffuse PNG gives null naming the tile."""
+    side = None if tile_sides else _texture_side_px(rb)
     source = "readback"
-    if side is None and tile_sides:
+    if tile_sides:
         source = "package diffuse PNG"
     elif side is None:
         return {"min_px_m": None, "median_px_m": None, "texture_px": None,

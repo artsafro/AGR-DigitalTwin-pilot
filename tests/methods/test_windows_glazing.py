@@ -480,3 +480,16 @@ def test_driver_name_collision_publishes_nothing(tmp_path):
     report = json.loads(out.with_name(out.name + ".variant.json").read_text(encoding="utf-8"))
     assert r.returncode == 2 and not report["ok"] and "collide" in report["error"]
     assert sorted(q.name for q in out.parent.iterdir()) == ["SM_Test.fbx.variant.json"]
+
+
+def test_texel_package_tiles_win_over_one_bound_readback_image():
+    """Review round 1: binding one generated 1024 px image must not make every tile read as 1024 px."""
+    from tests.methods.test_methods_catalog import scene
+
+    rb, _ = scene()
+    rb["images"] = [{"name": "T_Test_Diffuse.1002.png", "size": [1024, 1024]}]
+    rb["materials"] = []
+    assert mm.texel(rb)["texture_px"] == 1024  # readback-only rule unchanged
+    t = mm.texel(rb, {1001: 2048})
+    assert t["texture_px_source"] == "package diffuse PNG" and t["texture_px"] == [2048]
+    assert t["min_px_m"] == pytest.approx(1024, rel=1e-3)
