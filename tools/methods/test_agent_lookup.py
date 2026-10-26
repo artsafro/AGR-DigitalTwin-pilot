@@ -12,6 +12,7 @@ PATH = Path(__file__).with_name('agent_lookup.py')
 @pytest.fixture
 def mod():
     spec = importlib.util.spec_from_file_location('agent_lookup', PATH)
+    assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -57,6 +58,19 @@ def test_invalid_matrix(mod, mutation):
     with pytest.raises(ValueError): mod.validate_matrix(rows)
 
 
+def test_session_environment(mod,tmp_path,monkeypatch):
+    cred=tmp_path/'credentials.json'
+    cred.write_text(json.dumps({'claudeAiOauth':{'accessToken':'synthetic-token'}}))
+    monkeypatch.setenv('CLAUDE_CONFIG_DIR','forbidden-global')
+    monkeypatch.setenv('ANTHROPIC_API_KEY','synthetic-other-provider')
+    env=mod.session_environment(tmp_path/'A.json',cred)
+    assert env['CLAUDE_CONFIG_DIR']==str(tmp_path/'claude-state')
+    assert env['CLAUDE_CODE_OAUTH_TOKEN']=='synthetic-token'
+    assert 'ANTHROPIC_API_KEY' not in env
+    cred.write_text('{}')
+    with pytest.raises(ValueError): mod.session_environment(tmp_path/'A.json',cred)
+
+
 def test_extract_json(mod):
     assert mod.extract_json('Evidence.\n```json\n{"answer": 0.002}\n```') == {'answer': 0.002}
     with pytest.raises(ValueError): mod.extract_json('No answer')
@@ -88,6 +102,53 @@ def test_output(mod,tmp_path):
     assert out.read_text() == 'new'
     alias = tmp_path/'sub'/'..'/'input.json'
     with pytest.raises(ValueError): mod.write_new(alias,'bad',[inp])
+
+
+@pytest.mark.parametrize('bad', [None,'duplicate','invalid'])
+def test_judge_join(mod,tmp_path,monkeypatch,bad):
+    docs = tmp_path/'docs'; docs.mkdir()
+    (docs/'questions.json').write_text(json.dumps({'questions':[{'id':f'Q{i:02}','question':'synthetic','answer':'truth'} for i in range(1,21)]}))
+    rowsdir=tmp_path/'rows'; rowsdir.mkdir()
+    for row in matrix():
+        row.update(category='api' if int(str(row['question_id'])[1:])>=15 else 'repo',answer='synthetic')
+        if row['category']=='api': row['correct']='pending_judge'
+        (rowsdir/f'{row["question_id"]}-{row["variant"]}.json').write_text(json.dumps(row))
+    grades=[dict(id=f'R{i:02}',grade='correct',reason='synthetic test') for i in range(18)]
+    if bad=='duplicate': grades[-1]['id']='R00'
+    if bad=='invalid': grades[-1]['grade']='not_run'
+    end=dict(result=json.dumps({'grades':grades}),session_id='judge',usage={})
+    monkeypatch.setattr(mod,'DOCS',docs)
+    monkeypatch.setattr(mod,'session',lambda *a,**kw:(end,[],1,[]))
+    if bad:
+        with pytest.raises(ValueError): mod.grade(tmp_path)
+        assert not (docs/'results.jsonl').exists()
+    else:
+        mod.grade(tmp_path)
+        mod.validate_matrix([json.loads(line) for line in (docs/'results.jsonl').read_text().splitlines()])
+
+
+def test_stale_manifest(mod,tmp_path):
+    (tmp_path/'measurement-manifest.json').write_text('{"model":"stale"}')
+    with pytest.raises(ValueError,match='stale receipts'):
+        mod.run(tmp_path)
+
+
+def test_graph_adapter(tmp_path):
+    script = PATH.with_name('graphify_mcp.py')
+    requests = [dict(jsonrpc='2.0',id=1,method='initialize'),
+                dict(jsonrpc='2.0',id=2,method='tools/list'),
+                dict(jsonrpc='2.0',id=3,method='tools/call',params={'name':'query','arguments':{'question':'--delete'}}),
+                dict(jsonrpc='2.0',id=4,method='ping'),
+                dict(jsonrpc='2.0',id=5,method='unknown')]
+    p = subprocess.run([sys.executable,str(script),'must-not-run.exe','absent.json'],
+        input='\n'.join(json.dumps(r) for r in requests)+'\n',text=True,capture_output=True)
+    assert p.returncode == 0
+    responses = [json.loads(line) for line in p.stdout.splitlines()]
+    assert responses[0]['result']['serverInfo']['name'] == 'local-graphify'
+    assert {t['name'] for t in responses[1]['result']['tools']} == {'query','path','explain'}
+    assert responses[2]['result']['isError'] is True
+    assert responses[3]['result'] == {}
+    assert responses[4]['error']['code'] == -32601
 
 
 def test_cli(mod,tmp_path):
