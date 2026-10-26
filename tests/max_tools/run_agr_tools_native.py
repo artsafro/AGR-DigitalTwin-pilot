@@ -24,9 +24,9 @@ rt.execute('global AGRToolsInstallRoot; global AGRToolsStartupRoot')
 rt.AGRToolsInstallRoot = str(OUT / 'installed') + '/'
 rt.AGRToolsStartupRoot = str(OUT / 'startup') + '/'
 rt.makeDir(rt.AGRToolsStartupRoot, all=True)
-rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.1.0.mzp'))))
+rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.2.0.mzp'))))
 assert rt.execute('global AGRToolsRegistered; AGRToolsRegistered == true'), 'MZP macros not registered'
-print('AGR_INSTALL_REGISTERED xView Cleanup MatID Open')
+print('AGR_INSTALL_REGISTERED xView Cleanup MatID Open Nudge NudgeApply Atlas AtlasApply')
 sys.path.insert(0, str(OUT / 'installed'))
 import runtime as agr
 
@@ -153,12 +153,111 @@ rt.polyop.setMapSupport(clean, 1, False)
 results['guards']['missing_uv'] = raises(lambda: agr.cleanup_preview([clean]), 'missing')
 rt.polyop.setMapSupport(clean, 1, True)
 rt.polyop.defaultMapFaces(clean, 1)
+
+
+def map_array(indices):
+    return rt.execute('#(' + ','.join(str(int(i)) for i in indices) + ')')
+
+
+def make_uv_quad(name, uvs, periods, material='brick'):
+    node = rt.mesh(name=name, vertices=[rt.point3(0, 0, 0), rt.point3(1, 0, 0), rt.point3(1, 1, 0), rt.point3(0, 1, 0)],
+                   faces=[rt.point3(1, 2, 3), rt.point3(1, 3, 4)])
+    rt.convertToPoly(node)
+    rt.polyop.setMapSupport(node, 1, True)
+    rt.polyop.setNumMapVerts(node, 1, 4)
+    for index, uv in enumerate(uvs, 1):
+        rt.polyop.setMapVert(node, 1, index, rt.point3(float(uv[0]), float(uv[1]), 0))
+    face_count = int(rt.polyop.getNumFaces(node))
+    if face_count == 1:
+        rt.polyop.setMapFace(node, 1, 1, map_array((1, 2, 3, 4)))
+    elif face_count == 2:
+        rt.polyop.setMapFace(node, 1, 1, map_array((1, 2, 3)))
+        rt.polyop.setMapFace(node, 1, 2, map_array((1, 3, 4)))
+    else:
+        raise AssertionError('unexpected synthetic face count: ' + str(face_count))
+    node.material = rt.standardMaterial(name=material)
+    rt.setUserProp(node, 'AGR_UV_PERIODS', periods)
+    return node
+
+
+planted_uv = [(3.2, -1.8), (3.7, -1.8), (3.7, -1.3), (3.2, -1.3)]
+nudged = make_uv_quad('synthetic_nudge_planted', planted_uv, 'brick=1,1')
+before_nudge = agr.snapshot([nudged])
+nudge_preview = agr.nudge_preview([nudged])
+assert agr.snapshot([nudged]) == before_nudge, 'nudge dry-run mutated its input'
+assert findings(nudge_preview['report']) == {
+    'tile_move': list(range(1, int(rt.polyop.getNumFaces(nudged)) + 1))}, nudge_preview['report']
+assert nudge_preview['report']['plan']['islands'][0]['steps'] == [-3, 2]
+assert nudge_preview['report']['plan']['dropped'] == []
+nudge_copies, nudge_after = agr.nudge_apply([nudged], nudge_preview)
+assert agr.snapshot([nudged]) == before_nudge, 'nudge apply changed the source'
+assert nudge_copies[0] != nudged
+readback = [(round(p[0], 6), round(p[1], 6)) for p in agr.nudge_preview([nudge_copies[0]])['state'][0]['uvs']]
+assert readback == [(0.2, 0.2), (0.7, 0.2), (0.7, 0.7), (0.2, 0.7)], readback
+clean_nudge = make_uv_quad('synthetic_nudge_clean', planted_uv, 'brick=none')
+clean_before = [tuple(p) for p in agr.nudge_preview([clean_nudge])['state'][0]['uvs']]
+assert findings(agr.nudge_preview([clean_nudge])['report']) == {}
+assert [tuple(p) for p in agr.nudge_preview([clean_nudge])['state'][0]['uvs']] == clean_before
+results['nudge'] = {'planted_steps': [-3, 2], 'readback': readback, 'clean_findings': {}}
+results['guards']['nudge_unmapped'] = raises(lambda: agr.nudge_preview([
+    make_uv_quad('synthetic_nudge_unmapped', planted_uv, 'other=1,1')]), 'brick')
+results['guards']['nudge_empty'] = raises(lambda: agr.nudge_preview([]), 'empty')
+rt.setUserProp(nudged, 'AGR_UV_PERIODS', 'brick=0.5,0.5')
+count = len(list(rt.objects))
+results['guards']['nudge_stale'] = raises(lambda: agr.nudge_apply([nudged], nudge_preview), 'stale')
+assert len(list(rt.objects)) == count
+rt.setUserProp(nudged, 'AGR_UV_PERIODS', 'brick=1,1')
+# UDIM -> NPM atlas on one triangulated quad. Parity with the Python tool is checked
+# from the saved input/output coordinates after this process (no numpy in Max).
+atlas_node = make_uv_quad('synthetic_atlas_planted', [(0.1, 0.2), (0.8, 0.2), (0.8, 0.7), (0.1, 0.7)], 'unused=none', 'Grass')
+atlas_node.material.diffuse = rt.color(20, 140, 40)
+rt.setUserProp(atlas_node, 'AGR_ATLAS_MODE', 'ground')
+rt.setUserProp(atlas_node, 'AGR_ATLAS_SIZE', '2048')
+# The quad above is 1 m, not the 4 x 3 m parity quad. Rebuild vertex positions.
+for index, point in enumerate(((0, 0, 0), (4, 0, 0), (4, 3, 0), (0, 3, 0)), 1):
+    rt.polyop.setVert(atlas_node, index, rt.point3(*point))
+atlas_before = agr.snapshot([atlas_node])
+atlas_preview = agr.atlas_preview([atlas_node])
+assert agr.snapshot([atlas_node]) == atlas_before, 'atlas dry-run mutated its input'
+assert atlas_preview['report']['plan']['tiles'] == [1001], atlas_preview['report']
+assert findings(atlas_preview['report']) == {
+    'atlas_cell': list(range(1, len(atlas_preview['state'][0]['faces']) + 1))}, atlas_preview['report']
+assert atlas_preview['report']['plan']['dropped'] == []
+atlas_copies, atlas_after = agr.atlas_apply([atlas_node], atlas_preview)
+assert agr.snapshot([atlas_node]) == atlas_before, 'atlas apply changed the source'
+clean_atlas = agr.atlas_preview(atlas_copies)
+assert findings(clean_atlas['report']) == {}, clean_atlas['report']
+cross = make_uv_quad('synthetic_atlas_cross', [(0.2, 0.2), (1.2, 0.2), (1.2, 0.8), (0.2, 0.8)], 'unused=none', 'Grass')
+rt.setUserProp(cross, 'AGR_ATLAS_MODE', 'ground')
+rt.setUserProp(cross, 'AGR_ATLAS_SIZE', '2048')
+results['guards']['atlas_cross'] = raises(lambda: agr.atlas_preview([cross]), 'crosses a UDIM')
+results['guards']['atlas_unmapped_mode'] = raises(lambda: agr.atlas_preview([clean_nudge]), 'mode')
+bare = make_uv_quad('synthetic_atlas_bare', [(0.1, 0.2), (0.8, 0.2), (0.8, 0.7), (0.1, 0.7)], 'unused=none', 'Missing')
+bare.material = None
+rt.setUserProp(bare, 'AGR_ATLAS_MODE', 'ground')
+rt.setUserProp(bare, 'AGR_ATLAS_SIZE', '2048')
+results['guards']['atlas_missing_material'] = raises(lambda: agr.atlas_preview([bare]), 'missing material')
+state = atlas_preview['state'][0]
+copy_state = agr.atlas_preview(atlas_copies)['state'][0]
+results['atlas'] = {
+    'tiles': atlas_preview['report']['plan']['tiles'],
+    'cells': atlas_preview['report']['plan']['cells'],
+    'vertices': state['vertices'], 'uvs': state['uvs'], 'faces': state['faces'],
+    'face_uvs': state['face_uvs'], 'materials': ['Grass'] * len(state['faces']),
+    'color': [20, 140, 40], 'copy_uvs': copy_state['uvs'], 'copy_face_uvs': copy_state['face_uvs'],
+    'clean_findings': findings(clean_atlas['report'])}
+for macro in ('AGRToolsNudge', 'AGRToolsAtlas'):
+    rt.select(clean_nudge if macro.endswith('Nudge') else atlas_copies[0])
+    if macro.endswith('Nudge'):
+        rt.setUserProp(clean_nudge, 'AGR_UV_PERIODS', 'brick=none')
+    assert rt.macros.run('AGR Tools', macro), macro
+results['guards']['registered_uv_buttons'] = 2
 # Startup re-registration and repeated install must not overwrite installed files.
 rt.AGRToolsRegistered = False
-rt.fileIn(str(OUT / 'startup/AGRTools-0.1.0.ms'))
+rt.fileIn(str(OUT / 'startup/AGRTools-0.2.0.ms'))
 assert rt.AGRToolsRegistered
 install_hash = hashlib.sha256((OUT / 'installed/runtime.py').read_bytes()).hexdigest()
-results['guards']['repeat_install'] = raises(lambda: rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.1.0.mzp')))), 'already exists')
+results['guards']['repeat_install'] = raises(lambda: rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.2.0.mzp')))), 'already exists')
 assert hashlib.sha256((OUT / 'installed/runtime.py').read_bytes()).hexdigest() == install_hash
 assert hashlib.sha256((OUT / 'fixture-source.max').read_bytes()).hexdigest() == source_hash
 results['version'] = list(rt.maxVersion())

@@ -1,0 +1,20 @@
+{
+  "nudge": {
+    "fixture": "quad UV (3.2,-1.8) period (1,1) target 1001",
+    "python_steps": [-3, 2],
+    "button_steps": [-3, 2],
+    "python_uv": [[0.2, 0.2], [0.7, 0.2], [0.7, 0.7], [0.2, 0.7]],
+    "button_readback_2024": [[0.2, 0.2], [0.7, 0.2], [0.7, 0.7], [0.2, 0.7]],
+    "button_readback_2026": [[0.2, 0.2], [0.7, 0.2], [0.7, 0.7], [0.2, 0.7]],
+    "max_abs": 0.0
+  },
+  "atlas": {
+    "fixture": "synthetic Grass quad, flat Kd (20,140,40), ground, 2048, pad 8",
+    "python_tiles": [1001],
+    "button_tiles": [1001],
+    "python_cells": {"Grass": [0, 0, 87, 68]},
+    "button_cells": {"Grass": [0, 0, 87, 68]},
+    "max_abs_uv_2024": 1.2417634351336027e-9,
+    "tolerance": 1e-6
+  }
+}

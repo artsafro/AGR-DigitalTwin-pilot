@@ -1,0 +1,10 @@
+AGR_NATIVE_START version=28000 file= units=meters
+AGR_TOOLS_REGISTERED version=0.2.0 category=AGR Tools macros=XView,Cleanup,MatID,Open,Nudge,NudgeApply,Atlas,AtlasApply
+AGR_INSTALL_REGISTERED xView Cleanup MatID Open Nudge NudgeApply Atlas AtlasApply
+AGR_NATIVE_COMPLETE clean=3 planted=3 dry_run_unchanged=true originals_unchanged=true
+wrapper_status=ok
+native_exit=4294967166
+seconds=43.0
+product=3ds Max 2026.3 (28.3.0.30732)
+python=3.11.12
+warning=polyunwrapper_autoload.mse CLR startup error (pre-existing, not a fixture failure)

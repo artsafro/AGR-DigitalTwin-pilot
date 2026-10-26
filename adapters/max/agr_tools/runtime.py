@@ -4,11 +4,14 @@ Native xView uses 0.002 m vertices and 0.005 m faces.
 """
 import json
 
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 CODES = {'xview': {'overlap_vertices', 'overlap_faces'},
          'matid': {'udim_id', 'empty_id', 'empty_slot', 'missing_material'},
          'cleanup': {'remove_custom_attributes', 'clear_user_defined_lines',
-                     'delete_map_channels', 'rename_map_channel_1'}}
+                     'delete_map_channels', 'rename_map_channel_1'},
+         'nudge': {'tile_move'},
+         'atlas': {'atlas_cell'}}
+UV_TOL = 1e-6
 
 
 def _unique(pairs):
@@ -24,13 +27,69 @@ def _reject(value):
     raise ValueError('non-finite JSON: ' + value)
 
 
+def assert_uv_close(a, b, tol=UV_TOL):
+    """Fail closed. A difference of exactly ``tol`` is an error, never a pass."""
+    import math
+    if not a or not b:
+        raise ValueError('empty UV readback')
+    if isinstance(a[0], (int, float)):
+        pairs = [(a, b)]
+    else:
+        if len(a) != len(b):
+            raise ValueError('UV count mismatch')
+        pairs = list(zip(a, b))
+    for left, right in pairs:
+        if len(left) < 2 or len(right) < 2:
+            raise ValueError('partial UV readback')
+        for c in (left[0], left[1], right[0], right[1]):
+            if isinstance(c, bool) or not isinstance(c, (int, float)) or not math.isfinite(float(c)):
+                raise ValueError('non-finite UV readback')
+        dist = math.dist((float(left[0]), float(left[1])), (float(right[0]), float(right[1])))
+        if math.isclose(dist, tol, rel_tol=0.0, abs_tol=0.0) or abs(dist - tol) <= tol * 2e-7:
+            raise ValueError('UV difference exactly at threshold; no clean verdict')
+        if dist > tol:
+            raise ValueError(f'UV readback differs by {dist}')
+
+
+def _validate_plan(tool, plan):
+    if not isinstance(plan, dict):
+        raise ValueError('incomplete plan')
+    if tool == 'nudge':
+        if set(plan) != {'islands', 'dropped'}:
+            raise ValueError('incomplete plan')
+        if not isinstance(plan['islands'], list) or not isinstance(plan['dropped'], list):
+            raise ValueError('incomplete plan')
+        for island in plan['islands']:
+            if not isinstance(island, dict) or set(island) != {'faces', 'steps', 'shift', 'materials', 'reason'}:
+                raise ValueError('incomplete island')
+            if island['reason'] not in ('repeating', 'non-repeating'):
+                raise ValueError('unmapped island reason: ' + str(island['reason']))
+    elif tool == 'atlas':
+        if set(plan) != {'tiles', 'cells', 'dropped'}:
+            raise ValueError('incomplete plan')
+        if not isinstance(plan['tiles'], list) or not isinstance(plan['cells'], dict) or not isinstance(plan['dropped'], list):
+            raise ValueError('incomplete plan')
+    for item in plan['dropped']:
+        if not isinstance(item, dict) or 'face' not in item or 'reason' not in item:
+            raise ValueError('incomplete drop')
+        if not isinstance(item['reason'], str) or not item['reason']:
+            raise ValueError('drop without a reason')
+
+
 def parse_report(text):
     """Strict complete report; derive status rather than trusting a claimed pass."""
     r = json.loads(text, object_pairs_hook=_unique, parse_constant=_reject)
-    if not isinstance(r, dict) or set(r) != {'schema', 'tool', 'status', 'objects'}:
-        raise ValueError('incomplete report')
-    if type(r['schema']) is not int or r['schema'] != 1 or not isinstance(r['tool'], str) or r['tool'] not in CODES:
+    if not isinstance(r, dict) or 'tool' not in r or not isinstance(r.get('tool'), str) or r['tool'] not in CODES:
         raise ValueError('unsupported schema/tool')
+    expected_keys = {'schema', 'tool', 'status', 'objects'}
+    if r['tool'] in ('nudge', 'atlas'):
+        expected_keys = expected_keys | {'plan'}
+    if set(r) != expected_keys:
+        raise ValueError('incomplete report')
+    if type(r['schema']) is not int or r['schema'] != 1:
+        raise ValueError('unsupported schema/tool')
+    if r['tool'] in ('nudge', 'atlas'):
+        _validate_plan(r['tool'], r['plan'])
     if not isinstance(r['objects'], list) or not r['objects']:
         raise ValueError('empty objects')
     seen = set()
@@ -87,9 +146,11 @@ def _finding(code, ids=(), detail=''):
     return {'code': code, 'ids': sorted(set(int(i) for i in ids)), 'detail': detail}
 
 
-def _report(tool, entries, nodes, select=True):
+def _report(tool, entries, nodes, select=True, extra=None):
     report = {'schema': 1, 'tool': tool,
               'status': 'fail' if any(o['findings'] for o in entries) else 'pass', 'objects': entries}
+    if extra:
+        report.update(extra)
     parse_report(json.dumps(report, allow_nan=False))
     if select:
         _rt().select([n for n, o in zip(nodes, entries) if o['findings']])
@@ -337,13 +398,383 @@ def cleanup_apply(nodes, preview):
         raise
 
 
+def _load_core(filename, module_name):
+    import importlib.util
+    import sys
+    from pathlib import Path
+    path = Path(__file__).with_name(filename)
+    if not path.is_file():
+        raise ValueError('missing bundled core: ' + filename)
+    spec = importlib.util.spec_from_file_location(module_name, path)
+    core = importlib.util.module_from_spec(spec)
+    # dataclasses resolve the class module through sys.modules during class creation.
+    sys.modules[module_name] = core
+    spec.loader.exec_module(core)
+    return core
+
+
+def _max_array(values):
+    return _rt().execute('#(' + ','.join(str(int(v)) for v in values) + ')')
+
+
+def _as_indices(face):
+    if hasattr(face, 'count'):
+        return [int(face[i]) for i in range(int(face.count))]
+    return [int(face.x), int(face.y), int(face.z)]
+
+
+def _edit_target(n):
+    rt = _rt()
+    kind = rt.classOf(n.baseObject)
+    if kind == rt.Editable_Poly:
+        return rt.polyop, n
+    if kind == rt.Editable_Mesh:
+        return rt.meshop, n.baseObject
+    raise ValueError('unsupported geometry: ' + str(n.name))
+
+
+def _read_channel(n):
+    """Base-object channel 1. Missing, empty and non-finite data are errors."""
+    import math
+    rt = _rt()
+    api, target = _edit_target(n)
+    if not api.getMapSupport(target, 1):
+        raise ValueError('missing UV channel 1: ' + str(n.name))
+    nv = int(api.getNumVerts(target))
+    nf = int(api.getNumFaces(target))
+    nu = int(api.getNumMapVerts(target, 1))
+    if not nv or not nf or not nu:
+        raise ValueError('empty mesh: ' + str(n.name))
+    vertices, uvs, faces, fuv, ids = [], [], [], [], []
+    for i in range(1, nv + 1):
+        p = api.getVert(target, i)
+        point = (float(p.x), float(p.y), float(p.z))
+        if not all(math.isfinite(c) for c in point):
+            raise ValueError('non-finite vertex: ' + str(n.name))
+        vertices.append(point)
+    for i in range(1, nu + 1):
+        p = api.getMapVert(target, 1, i)
+        point = (float(p.x), float(p.y))
+        if not all(math.isfinite(c) for c in point):
+            raise ValueError('non-finite UV: ' + str(n.name))
+        uvs.append(point)
+    for i in range(1, nf + 1):
+        faces.append([int(v) - 1 for v in _as_indices(api.getFaceVerts(target, i))])
+        fuv.append([int(v) - 1 for v in _as_indices(api.getMapFace(target, 1, i))])
+        ids.append(int(api.getFaceMatID(target, i)))
+    return {'vertices': vertices, 'uvs': uvs, 'faces': faces, 'face_uvs': fuv, 'ids': ids}
+
+
+def _write_channel(n, uvs, face_uvs):
+    rt = _rt()
+    api, target = _edit_target(n)
+    api.setMapSupport(target, 1, True)
+    api.setNumMapVerts(target, 1, len(uvs))
+    for i, (u, v) in enumerate(uvs, 1):
+        api.setMapVert(target, 1, i, rt.point3(float(u), float(v), 0.0))
+    for face, indices in enumerate(face_uvs, 1):
+        api.setMapFace(target, 1, face, _max_array([i + 1 for i in indices]))
+
+
+def _prop(n, key):
+    raw = _rt().getUserProp(n, key)
+    if raw is None:
+        return None
+    text = str(raw).strip()
+    if text in ('', 'undefined', 'None'):
+        return None
+    return text
+
+
+def _material_names(n, face_ids):
+    rt = _rt()
+    mat = n.material
+    if mat is None:
+        raise ValueError('missing material: ' + str(n.name))
+    if rt.classOf(mat) == rt.MultiMaterial:
+        names = []
+        for mid in face_ids:
+            resolved = [(i, mat.materialList[i]) for i in range(len(mat.materialIDList))
+                        if int(mat.materialIDList[i]) == int(mid)]
+            if len(resolved) != 1 or resolved[0][1] is None:
+                raise ValueError(f'material slot {mid} has no definition')
+            names.append(str(resolved[0][1].name))
+        return names
+    return [str(mat.name)] * len(face_ids)
+
+
+def _submaterials(n):
+    rt = _rt()
+    mat = n.material
+    if mat is None:
+        raise ValueError('missing material: ' + str(n.name))
+    if rt.classOf(mat) == rt.MultiMaterial:
+        found = {}
+        for i in range(len(mat.materialIDList)):
+            sub = mat.materialList[i]
+            if sub is None:
+                raise ValueError(f"material slot {int(mat.materialIDList[i])} has no definition")
+            name = str(sub.name)
+            if name in found and found[name] is not sub:
+                raise ValueError('duplicate material name: ' + name)
+            found[name] = sub
+        return found
+    return {str(mat.name): mat}
+
+
+def _period_map(n, names):
+    text = _prop(n, 'AGR_UV_PERIODS')
+    if text is None:
+        raise ValueError(f"material {next(iter(dict.fromkeys(names)))!r} has no period entry (repeating or None)")
+    mapping = {}
+    for part in text.split(';'):
+        part = part.strip()
+        if not part:
+            continue
+        if '=' not in part:
+            raise ValueError('partial UV period entry: ' + part)
+        name, val = (piece.strip() for piece in part.split('=', 1))
+        if name in mapping:
+            raise ValueError('duplicate key: ' + name)
+        if val.lower() == 'none':
+            mapping[name] = None
+            continue
+        bits = [b.strip() for b in val.split(',')]
+        if len(bits) != 2:
+            raise ValueError(f"material {name!r}: period must be (pu, pv) or None, got {val!r}")
+        try:
+            mapping[name] = (float(bits[0]), float(bits[1]))
+        except ValueError:
+            raise ValueError(f"material {name!r}: period must be (pu, pv) or None, got {val!r}") from None
+    return mapping
+
+
+def _target_tile(n):
+    text = _prop(n, 'AGR_UV_TARGET')
+    if text is None:
+        return 1001
+    try:
+        value = float(text)
+    except ValueError:
+        raise ValueError('unmapped target tile: ' + text) from None
+    if not value.is_integer():
+        raise ValueError('unmapped target tile: ' + text)
+    return int(value)
+
+
+def _nudge_plan(result):
+    islands, findings = [], []
+    for island in result.islands:
+        entry = {'faces': [f + 1 for f in island['faces']],
+                 'steps': [int(island['steps'][0]), int(island['steps'][1])],
+                 'shift': [float(island['shift'][0]), float(island['shift'][1])],
+                 'materials': [str(m) for m in island['materials']],
+                 'reason': island['reason']}
+        islands.append(entry)
+        if entry['steps'] != [0, 0]:
+            findings.append(_finding('tile_move', entry['faces'], json.dumps(
+                {'materials': entry['materials'], 'reason': entry['reason'],
+                 'shift': entry['shift'], 'steps': entry['steps']}, sort_keys=True)))
+    return islands, findings
+
+
+def nudge_preview(nodes=None):
+    """Dry-run. Channel-1 islands move by the bundled uv_nudge slice; the scene is unchanged."""
+    core = _load_core('uv_nudge_core.py', 'agr_tools_uv_nudge')
+    nodes = _targets(nodes)
+    state, plans, entries = [], [], []
+    for n in nodes:
+        mesh = _read_channel(n)
+        names = _material_names(n, mesh['ids'])
+        result = core.nudge_repeating_islands(
+            mesh['uvs'], mesh['face_uvs'], names, _period_map(n, names), target_tile=_target_tile(n))
+        islands, findings = _nudge_plan(result)
+        covered = sorted(f for island in islands for f in island['faces'])
+        if covered != list(range(1, len(mesh['faces']) + 1)):
+            raise ValueError('nudge dropped a face without a reason')
+        state.append(mesh)
+        plans.append({'uvs': result.uv, 'face_uvs': mesh['face_uvs'], 'islands': islands})
+        entries.append(_entry(n, findings))
+    report = _report('nudge', entries, nodes, select=False, extra={
+        'plan': {'islands': [i for plan in plans for i in plan['islands']], 'dropped': []}})
+    return {'state': state, 'plans': plans, 'report': report}
+
+
+def _apply_uv(nodes, preview, current, label):
+    rt = _rt()
+    copies = []
+    try:
+        for n, plan in zip(nodes, current['plans']):
+            c = rt.copy(n)
+            copies.append(c)
+            c.name = rt.uniqueName(str(n.name) + label)
+            # Node user properties carry the explicit period and atlas settings.
+            rt.setUserPropBuffer(c, rt.getUserPropBuffer(n))
+            if n.material is not None:
+                c.material = rt.copy(n.material)
+            _write_channel(c, plan['uvs'], plan['face_uvs'])
+            written = _read_channel(c)
+            for got, exp in zip(written['uvs'], plan['uvs']):
+                assert_uv_close(got, exp)
+            if written['vertices'] != current['state'][len(copies) - 1]['vertices']:
+                raise RuntimeError('export copy geometry changed')
+        if [ _read_channel(n)['uvs'] for n in nodes ] != [item['uvs'] for item in preview['state']]:
+            raise RuntimeError('originals changed during apply')
+        rt.select(copies)
+        return copies
+    except Exception:
+        if copies:
+            rt.delete(copies)
+        raise
+
+
+def nudge_apply(nodes, preview):
+    """Apply a current nudge preview to new export copies only."""
+    nodes = _targets(nodes)
+    current = nudge_preview(nodes)
+    if preview['report'] != current['report'] or preview['plans'] != current['plans']:
+        raise ValueError('stale or altered nudge preview; run dry-run again')
+    copies = _apply_uv(nodes, preview, current, '_AGR_nudge_')
+    after = nudge_preview(copies)['report']
+    return copies, after
+
+
+def _bitmap_rgb(tex):
+    rt = _rt()
+    if rt.classOf(tex) != rt.Bitmaptexture:
+        raise ValueError('unmapped material map class: ' + str(rt.classOf(tex)))
+    filename = str(tex.filename)
+    bm = rt.openBitMap(filename)
+    if bm is None:
+        raise ValueError('material bitmap cannot be opened: ' + filename)
+    try:
+        w, h = int(bm.width), int(bm.height)
+        if w <= 0 or h <= 0:
+            raise ValueError('material bitmap has no pixels: ' + filename)
+        pixels = list(rt.getPixels(bm, rt.point2(0, 0), w * h))
+        if len(pixels) != w * h:
+            raise ValueError('partial material bitmap: ' + filename)
+        rgb, alpha, row = [], [], []
+        for i, color in enumerate(pixels):
+            row.append((int(round(float(color.r))), int(round(float(color.g))), int(round(float(color.b)))))
+            alpha.append(int(round(float(color.a))))
+            if len(row) == w:
+                rgb.append(row)
+                row = []
+        return rgb, alpha
+    finally:
+        rt.close(bm)
+
+
+def _atlas_materials(n):
+    import math
+    specs = {}
+    for name, mat in _submaterials(n).items():
+        rt = _rt()
+        diffuse_map = mat.diffuseMap if hasattr(mat, 'diffuseMap') else None
+        if diffuse_map is not None and str(rt.classOf(diffuse_map)) not in ('undefined', 'UndefinedClass'):
+            rgb, _alpha = _bitmap_rgb(diffuse_map)
+            specs[name] = {'rgb': rgb, 'dissolve': 1.0}
+        else:
+            color = mat.diffuse
+            specs[name] = {'color': (int(round(float(color.r))), int(round(float(color.g))),
+                                     int(round(float(color.b)))),
+                           'dissolve': float(mat.opacity) / 100.0}
+        dis = specs[name]['dissolve']
+        if not math.isfinite(dis):
+            raise ValueError(f"material {name!r}: dissolve {dis} outside 0..1")
+    return specs
+
+
+def _atlas_settings(n):
+    mode = _prop(n, 'AGR_ATLAS_MODE')
+    if mode not in ('ground', 'oks'):
+        raise ValueError('unmapped atlas mode: ' + str(mode))
+    size_text = _prop(n, 'AGR_ATLAS_SIZE')
+    if size_text not in ('1024', '2048'):
+        raise ValueError('unmapped atlas size: ' + str(size_text))
+    return mode, int(size_text)
+
+
+def _unit_m():
+    import math
+    scale = float(_rt().units.decodeValue('1m'))
+    if not math.isfinite(scale) or scale <= 0:
+        raise ValueError('invalid system units')
+    return 1.0 / scale
+
+
+def atlas_preview(nodes=None):
+    """Dry-run the bundled atlas layout. Reports tiles and cells; the scene is unchanged."""
+    core = _load_core('atlas_core.py', 'agr_tools_atlas')
+    nodes = _targets(nodes)
+    state, plans, entries = [], [], []
+    tiles, cells = [], {}
+    for n in nodes:
+        mesh = _read_channel(n)
+        names = _material_names(n, mesh['ids'])
+        mode, size = _atlas_settings(n)
+        try:
+            laid = core.pack(mesh['vertices'], mesh['uvs'], mesh['faces'], mesh['face_uvs'], names,
+                             _atlas_materials(n), mode=mode, size=size, pad=8, unit_m=_unit_m())
+        except core.AtlasError as exc:
+            raise ValueError(str(exc)) from exc
+        if laid['dropped']:
+            raise ValueError('atlas dropped a face: ' + json.dumps(laid['dropped']))
+        if len(laid['face_uvs']) != len(mesh['faces']):
+            raise ValueError('atlas face count differs from the input')
+        changed = []
+        for face, (old, new) in enumerate(zip(mesh['face_uvs'], laid['face_uvs']), 1):
+            old_pts = [mesh['uvs'][i] for i in old]
+            new_pts = [laid['uvs'][i] for i in new]
+            moved = len(old_pts) != len(new_pts)
+            if not moved:
+                for a, b in zip(old_pts, new_pts):
+                    try:
+                        assert_uv_close(a, b)
+                    except ValueError:
+                        moved = True
+                        break
+            if moved:
+                changed.append(face)
+        findings = [_finding('atlas_cell', changed, json.dumps(
+            {'tiles': laid['tiles'], 'cells': laid['cells']}, sort_keys=True))] if changed else []
+        state.append(mesh)
+        plans.append({'uvs': laid['uvs'], 'face_uvs': laid['face_uvs'], 'tiles': laid['tiles'],
+                      'cells': laid['cells']})
+        tiles.extend(laid['tiles'])
+        for name, box in laid['cells'].items():
+            if name in cells and cells[name] != box:
+                raise ValueError('duplicate material name: ' + name)
+            cells[name] = box
+        entries.append(_entry(n, findings))
+    report = _report('atlas', entries, nodes, select=False, extra={
+        'plan': {'tiles': sorted(set(tiles)), 'cells': cells, 'dropped': []}})
+    return {'state': state, 'plans': plans, 'report': report}
+
+
+def atlas_apply(nodes, preview):
+    """Remap UVs on new export copies. Source objects are read back unchanged."""
+    nodes = _targets(nodes)
+    current = atlas_preview(nodes)
+    if preview['report'] != current['report'] or preview['plans'] != current['plans']:
+        raise ValueError('stale or altered atlas preview; run dry-run again')
+    copies = _apply_uv(nodes, preview, current, '_AGR_atlas_')
+    after = atlas_preview(copies)['report']
+    return copies, after
+
+
 _preview = None
 _preview_nodes = None
+_nudge = None
+_nudge_nodes = None
+_atlas = None
+_atlas_nodes = None
 
 
 def ui(tool):
     """Macro seam: errors propagate and never print a successful report."""
-    global _preview, _preview_nodes
+    global _preview, _preview_nodes, _nudge, _nudge_nodes, _atlas, _atlas_nodes
     if tool == 'cleanup':
         _preview_nodes = _targets(None)
         _preview = cleanup_preview(_preview_nodes)
@@ -354,6 +785,26 @@ def ui(tool):
         _, report = cleanup_apply(_preview_nodes, _preview)
         _preview = None
         _preview_nodes = None
+    elif tool == 'nudge':
+        _nudge_nodes = _targets(None)
+        _nudge = nudge_preview(_nudge_nodes)
+        report = _nudge['report']
+    elif tool == 'nudge_apply':
+        if _nudge is None:
+            raise ValueError('dry-run required before apply')
+        _, report = nudge_apply(_nudge_nodes, _nudge)
+        _nudge = None
+        _nudge_nodes = None
+    elif tool == 'atlas':
+        _atlas_nodes = _targets(None)
+        _atlas = atlas_preview(_atlas_nodes)
+        report = _atlas['report']
+    elif tool == 'atlas_apply':
+        if _atlas is None:
+            raise ValueError('dry-run required before apply')
+        _, report = atlas_apply(_atlas_nodes, _atlas)
+        _atlas = None
+        _atlas_nodes = None
     elif tool in ('xview', 'matid'):
         report = {'xview': xview, 'matid': matid}[tool]()
     else:

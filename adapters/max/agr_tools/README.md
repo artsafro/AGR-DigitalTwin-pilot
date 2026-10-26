@@ -1,11 +1,11 @@
-# AGR Tools 0.1.0 — 3ds Max 2024 / 2026
+# AGR Tools 0.2.0 — 3ds Max 2024 / 2026
 
 Own implementations only; no team scripts or encrypted plugins are distributed.
 This is a diagnostic/export-copy tool, not a delivery validator or production job.
 
 ## Build and install
 
-`python tools/max/build_agr_tools.py <new-path>/AGR-Tools-0.1.0.mzp`
+`python tools/max/build_agr_tools.py <new-path>/AGR-Tools-0.2.0.mzp`
 
 The builder prints SHA256; sorted ZIP_STORED entries, fixed timestamps/permissions,
 LF normalization and exclusively created output make repeated inputs reproducible.
@@ -23,6 +23,10 @@ AGR Tools
 [Pre-export clean-up (dry-run)]
 [Apply preview to new export copies]
 [MatID check]
+[UV integer-tile nudge (dry-run)]
+[Apply UV nudge to new export copies]
+[UDIM -> NPM atlas (dry-run)]
+[Apply NPM atlas to new export copies]
 <JSON report in Listener; offending object names and component IDs>
 ```
 
@@ -53,6 +57,21 @@ never a clean result. Objects are identified by unique Max handles as well as na
   unresolved or empty Multi/Sub slots; lists face IDs and selects offending nodes.
   Pilot #548 / D030. This is not the complete semantic 1–35 reading-scheme gate;
   no arbitrary ID remapping, empty-slot fallback or UDIM renumbering is done.
+- **UV integer-tile nudge**: dry-run reports channel-1 islands and integer period
+  steps from the bundled `uv_nudge.py` slice. Each material needs an explicit
+  node user property `AGR_UV_PERIODS` (`name=pu,pv` or `name=none`, `;` between
+  entries). A missing name is an error naming that material. Optional
+  `AGR_UV_TARGET` (default tile 1001, the library default). Apply writes the
+  shifted channel-1 coordinates on a new export copy and reads them back.
+  Originals stay untouched. A zero step is not a finding.
+- **UDIM -> NPM atlas**: dry-run reports the UDIM tiles and the atlas cell
+  layout from the bundled stdlib port of `npm_atlas_udim.py`, then Apply remaps
+  channel 1 on a new export copy. Required node properties: `AGR_ATLAS_MODE`
+  (`ground` or `oks`) and `AGR_ATLAS_SIZE` (`1024` or `2048`). Flat diffuse
+  colours are Kd plugs; a diffuse bitmap is that material's map. Inputs the
+  Python tool refuses (tile crossing, unmapped material, empty mesh, non-finite
+  coordinates, padding below 8 px) raise a named error. UV readback must match
+  the Python tool within 1e-6; a difference of exactly 1e-6 is an error.
 
 ## Headless evidence
 
@@ -64,7 +83,6 @@ results, writes the report exclusively and emits a completion marker at the end.
 
 ## Roadmap (not implemented)
 
-UV integer-tile nudge; UDIM -> NPM atlas; collision generator; texel-density
-readout; checked export. Those require their own fixtures, profile gates and
-measured comparisons before adding buttons. No licensing, obfuscation or GeoAGR
-source/decryption is included.
+Collision generator; texel-density readout; checked export. Those require their
+own fixtures, profile gates and measured comparisons before adding buttons.
+No licensing, obfuscation or GeoAGR source/decryption is included.
