@@ -115,6 +115,7 @@ def test_version_macros_and_ucx_texel_readme():
     assert '0.3.0' in startup and 'Ucx' in startup and 'Texel' in startup
     assert 'AGRTools-0.3.0' in install
     assert 'UCX collision' in readme and 'Texel readout' in readme
+    assert 'UCX_name_control_AGR_ucx__01' in readme
     assert 'checked export' in readme.lower()
     assert UCX_CORE.is_file() and TEXEL_CORE.is_file()
 
@@ -145,7 +146,7 @@ def test_ucx_parity_with_python_tool_on_fixed_and_random_meshes():
             assert got['triangles'] == expected_tris[name] == exp['triangles']
         assert got['pieces_count'] == exp['pieces'] == len(exp_pieces)
         assert got['triangles'] == exp['triangles']
-        assert got['names'] == [f'UCX_Wall_{i:02d}' for i in range(1, got['pieces_count'] + 1)]
+        assert got['names'] == [f'UCX_Wall_AGR_ucx__{i:02d}' for i in range(1, got['pieces_count'] + 1)]
         assert got['triangles'] < got['limit']
         assert got['status'] == 'pass'
         assert got['audit']['collision'] == []
@@ -351,6 +352,110 @@ def test_hull_brute_force_probe_and_fail_closed_volume():
     assert built['triangles'] == 16 and built['status'] == 'pass'
     assert built['kind'] == 'near-convex-box'
     assert len(built['pieces'][0][0]) == 10
+    assert core._volume(*built['pieces'][0]) == pytest.approx(0.9986666666666665, abs=1e-12)
+    intact = core.build(*_scene(((0, 0, 0), (1, 1, 1))), mesh='Intact', kind='near-convex-box')
+    assert intact['pieces_count'] == 1 and intact['triangles'] == 12
+    assert core._volume(*intact['pieces'][0]) == pytest.approx(1.0, abs=1e-12)
+
+
+# Seed 730, case 2: unit cube, x=1 triangle split around an interior coplanar point.
+WITNESS_POINTS = (
+    (0, 0, 1), (0, 1, 1), (1, 0, 0), (1, 1, 0), (1, 1, 1), (0, 0, 0), (1, 0, 1),
+    (1.0, 0.7393781378034694, 0.3406598426925462), (0, 1, 0),
+)
+WITNESS_FACES = (
+    (5, 3, 2), (5, 8, 3), (0, 6, 4), (0, 4, 1), (5, 2, 6), (5, 6, 0), (2, 4, 6),
+    (3, 8, 1), (3, 1, 4), (8, 5, 0), (8, 0, 1), (2, 3, 7), (3, 4, 7), (4, 2, 7),
+)
+
+
+def _hull_closed_convex(core, verts, tris, volume):
+    edges = {}
+    for a, b, c in tris:
+        for edge in ((a, b), (b, c), (c, a)):
+            key = tuple(sorted(edge))
+            edges[key] = edges.get(key, 0) + 1
+    assert set(edges.values()) == {2}
+    span = max(max(p[axis] for p in verts) - min(p[axis] for p in verts) for axis in range(3))
+    limit = max(span, 1.0) * 1e-6
+    for index, point in enumerate(verts):
+        for face in tris:
+            assert _orient(verts[face[0]], verts[face[1]], verts[face[2]], point) <= limit
+    assert len(tris) == 12 and len(verts) == 8
+    assert core._volume(verts, tris) == pytest.approx(volume, abs=1e-9)
+
+
+def _subdivide_triangle(points, faces, face, rng):
+    points = list(points)
+    faces = [tuple(face) for face in faces]
+    weights = [rng.random() + 0.05 for _ in range(3)]
+    total = sum(weights)
+    extra = tuple(sum(points[index][axis] * weight / total for index, weight in zip(face, weights))
+                  for axis in range(3))
+    new = len(points)
+    points.append(extra)
+    a, b, c = face
+    faces.remove(face)
+    faces.extend(((a, b, new), (b, c, new), (c, a, new)))
+    return points, faces
+
+
+def test_coplanar_face_point_keeps_the_cube_hull():
+    """An interior point of a cube face is the same convex solid: 1 piece, 12 triangles, volume 1."""
+    core = _load(UCX_CORE, 'agr_ucx_core_coplanar')
+    hull_v, hull_t = core._convex_hull(WITNESS_POINTS)
+    _hull_closed_convex(core, hull_v, hull_t, 1.0)
+    built = core.build(WITNESS_POINTS, WITNESS_FACES, mesh='subdiv', kind='near-convex-box')
+    assert built['pieces_count'] == 1 and built['triangles'] == 12 and built['status'] == 'pass'
+    assert built['audit']['closed'] is True and built['audit']['collision'] == [] and built['audit']['unmeasurable'] == []
+    assert built['names'] == ['UCX_subdiv_AGR_ucx__01']
+    assert core._volume(*built['pieces'][0]) == pytest.approx(1.0, abs=1e-9)
+
+    agreed = 0
+    for seed in range(120):
+        order = list(range(len(WITNESS_POINTS)))
+        random.Random(seed).shuffle(order)
+        points = [WITNESS_POINTS[index] for index in order]
+        hull_v, hull_t = core._convex_hull(points)
+        _hull_closed_convex(core, hull_v, hull_t, 1.0)
+        agreed += 1
+    assert agreed == 120
+
+    base, faces = _box((0, 0, 0), (1, 1, 1)), list(BOX_T)
+    variants = 0
+    rng = random.Random(730)
+    for face in BOX_T:
+        for sample in range(8):
+            points, tris = _subdivide_triangle(base, faces, face, rng)
+            order = list(range(len(points)))
+            random.Random(9000 + variants).shuffle(order)
+            remap = {old: new for new, old in enumerate(order)}
+            shuffled = [points[index] for index in order]
+            hull_v, hull_t = core._convex_hull(shuffled)
+            _hull_closed_convex(core, hull_v, hull_t, 1.0)
+            built = core.build(shuffled, [tuple(remap[index] for index in tri) for tri in tris],
+                               mesh='face', kind='near-convex-box')
+            assert built['pieces_count'] == 1 and built['triangles'] == 12 and built['status'] == 'pass'
+            variants += 1
+    assert variants == 12 * 8
+
+    clipped_v, clipped_t = core._convex_hull(_clipped_cube()[0])
+    assert len(clipped_t) == 16 and len(clipped_v) == 10
+    assert core._volume(clipped_v, clipped_t) == pytest.approx(0.9986666666666665, abs=1e-12)
+    cube_v, cube_t = core._convex_hull(_scene(((0, 0, 0), (1, 1, 1)))[0])
+    assert len(cube_t) == 12 and core._volume(cube_v, cube_t) == pytest.approx(1.0, abs=1e-12)
+
+
+def test_failed_piece_audit_is_not_publishable():
+    core = _load(UCX_CORE, 'agr_ucx_core_audit_gate')
+    clean = {'collision': [], 'unmeasurable': [], 'mask_bad_count': 1, 'closed': True}
+    assert core.assert_emitted_audit(clean) is None
+    with pytest.raises(ValueError, match='ucx audit failed'):
+        core.assert_emitted_audit({'collision': [], 'unmeasurable': ['non-convex'], 'mask_bad_count': 1, 'closed': False})
+    with pytest.raises(ValueError, match='intersect'):
+        core.assert_emitted_audit({'collision': ['intersect'], 'unmeasurable': [], 'mask_bad_count': 0, 'closed': True})
+    with pytest.raises(ValueError, match='partial ucx audit'):
+        core.assert_emitted_audit({'closed': True})
 
 
 def test_world_metres_brute_force_and_bounds_threshold():
@@ -408,7 +513,7 @@ def test_name_reservation_is_before_side_effects_and_bound_to_the_mesh():
     core = _load(UCX_CORE, 'agr_ucx_core_names')
     export, pieces = core.ucx_export_names('name_control', 1)
     assert export == 'name_control_AGR_ucx_'
-    assert pieces == ['UCX_name_control_01']
+    assert pieces == ['UCX_name_control_AGR_ucx__01']
     assert core.assert_ucx_names_bound('name_control', pieces) == (export, pieces)
     with pytest.raises(ValueError, match='UCX_other_01'):
         core.assert_ucx_names_bound('name_control', ['UCX_other_01'])
@@ -419,8 +524,8 @@ def test_name_reservation_is_before_side_effects_and_bound_to_the_mesh():
 
     existing = ['name_control', 'keep_me']
     snapshot = list(existing)
-    with pytest.raises(ValueError, match='occupied name UCX_name_control_01'):
-        core.reserve_ucx_names(existing + ['UCX_name_control_01'], [(export, pieces)])
+    with pytest.raises(ValueError, match='occupied name UCX_name_control_AGR_ucx__01'):
+        core.reserve_ucx_names(existing + ['UCX_name_control_AGR_ucx__01'], [(export, pieces)])
     assert existing == snapshot
     with pytest.raises(ValueError, match='occupied name twin_AGR_ucx_'):
         core.reserve_ucx_names([], [( 'twin_AGR_ucx_', ['UCX_twin_01']), ('twin_AGR_ucx_', ['UCX_twin_01'])])
@@ -766,7 +871,7 @@ def test_runtime_stale_preview_and_occupied_names_create_no_nodes():
     node = _add_box(rt, 'name_control', 'poly')
     preview = agr.ucx_preview([node])
     first, report = agr.ucx_apply([node], preview)
-    assert [item.name for item in first] == ['name_control_AGR_ucx_', 'UCX_name_control_01']
+    assert [item.name for item in first] == ['name_control_AGR_ucx_', 'UCX_name_control_AGR_ucx__01']
     assert report['status'] == 'pass'
     again = agr.ucx_preview([node])
     before = len(rt.objects)
@@ -774,17 +879,41 @@ def test_runtime_stale_preview_and_occupied_names_create_no_nodes():
         agr.ucx_apply([node], again)
     assert len(rt.objects) == before
     assert sorted(item.name for item in rt.objects if str(item.name).startswith('UCX_name_control')) == [
-        'UCX_name_control_01']
+        'UCX_name_control_AGR_ucx__01']
 
     agr, rt = _bind_runtime()
     node = _add_box(rt, 'name_control', 'poly')
-    planted = _add_box(rt, 'UCX_name_control_01', 'mesh')
+    planted = _add_box(rt, 'UCX_name_control_AGR_ucx__01', 'mesh')
     preview = agr.ucx_preview([node])
     before = len(rt.objects)
-    with pytest.raises(ValueError, match='occupied name UCX_name_control_01'):
+    with pytest.raises(ValueError, match='occupied name UCX_name_control_AGR_ucx__01'):
         agr.ucx_apply([node], preview)
     assert len(rt.objects) == before
     assert planted in rt.objects
+
+    agr, rt = _bind_runtime()
+    node = _add_box(rt, 'audit_fail', 'poly')
+    real_preview = agr.ucx_preview
+
+    def failed(nodes=None):
+        got = real_preview(nodes)
+        for plan in got['plans']:
+            plan['audit']['closed'] = False
+            plan['audit']['unmeasurable'] = ['non-convex']
+            plan['status'] = 'fail'
+        got['report']['plan']['audit']['closed'] = False
+        got['report']['plan']['audit']['unmeasurable'] = ['non-convex']
+        got['report']['status'] = 'fail'
+        got['report']['objects'][0]['findings'].append(
+            {'code': 'ucx_unmeasurable', 'ids': [1], 'detail': 'non-convex'})
+        return got
+
+    agr.ucx_preview = failed
+    preview = failed([node])
+    before = list(rt.objects)
+    with pytest.raises(ValueError, match='ucx audit failed'):
+        agr.ucx_apply([node], preview)
+    assert rt.objects == before
 
     agr, rt = _bind_runtime()
     left = _add_box(rt, 'twin', 'poly')

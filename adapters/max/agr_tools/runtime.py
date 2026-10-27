@@ -1315,7 +1315,8 @@ def ucx_apply(nodes, preview):
     """Build UCX on new export copies. Source nodes are not edited.
 
     The preview is bound to evaluated geometry, transform, identity and properties.
-    Occupied export or UCX names are rejected before any node is created.
+    The export name and every UCX name are reserved, and each piece audit must
+    pass, before any node is created. A failed audit creates nothing.
     """
     rt = _rt()
     nodes = _targets(nodes)
@@ -1332,8 +1333,11 @@ def ucx_apply(nodes, preview):
     families = []
     for n, result in zip(nodes, current['plans']):
         families.append(core.assert_ucx_names_bound(str(n.name), result['names']))
-    # Reserve the whole name family before copy() or mesh() can touch the scene.
+    # Reserve the whole corrected family, then refuse a failed piece audit,
+    # before copy() or mesh() can touch the scene.
     core.reserve_ucx_names([str(node.name) for node in list(rt.objects)], families)
+    for result in current['plans']:
+        core.assert_emitted_audit(result['audit'])
     created = []
     try:
         for n, result, (export, pieces) in zip(nodes, current['plans'], families):

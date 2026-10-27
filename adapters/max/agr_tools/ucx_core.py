@@ -212,19 +212,93 @@ def _orient(pts, ia, ib, ic, ip):
     return _dot(_cross(_sub(pts[ib], pts[ia]), _sub(pts[ic], pts[ia])), _sub(pts[ip], pts[ia]))
 
 
-def _point_outside_triangle(pts, face, ip, eps):
+def _signed_distance(pts, face, ip):
     a, b, c = (pts[i] for i in face)
-    point = pts[ip]
     normal = _cross(_sub(b, a), _sub(c, a))
-    area = _dot(normal, normal)
-    if area <= eps:
-        return False
+    length = _norm(normal)
+    if length == 0.0:
+        return 0.0
+    return _dot(normal, _sub(pts[ip], a)) / length
 
-    def bary(u, v):
-        return _dot(normal, _cross(_sub(v, u), _sub(point, u)))
 
-    limit = -eps
-    return bary(b, c) < limit or bary(c, a) < limit or bary(a, b) < limit
+def _merge_coplanar_facets(pts, faces, span):
+    """Retriangulate each supporting plane from its convex silhouette.
+
+    A point that landed inside a facet (coplanar with that face, not a corner)
+    is dropped. The solid is unchanged. Near-collinear edge points within the
+    scale tolerance are dropped with them.
+    """
+    tol = max(span, 1.0) * 1e-8
+
+    def plane_of(face):
+        a, b, c = (pts[i] for i in face)
+        normal = _cross(_sub(b, a), _sub(c, a))
+        length = _norm(normal)
+        if length <= tol:
+            return None
+        normal = (normal[0] / length, normal[1] / length, normal[2] / length)
+        return normal, _dot(normal, a)
+
+    groups = []
+    for face in faces:
+        plane = plane_of(face)
+        if plane is None:
+            continue
+        placed = False
+        for group in groups:
+            normal, offset = group['plane']
+            if _dot(normal, plane[0]) > 1 - 1e-8 and abs(offset - plane[1]) <= tol:
+                group['faces'].append(face)
+                placed = True
+                break
+        if not placed:
+            groups.append({'plane': plane, 'faces': [face]})
+
+    def basis(normal):
+        axis = min(range(3), key=lambda i: abs(normal[i]))
+        tmp = [0.0, 0.0, 0.0]
+        tmp[axis] = 1.0
+        u = _cross(normal, tuple(tmp))
+        u = tuple(component / _norm(u) for component in u)
+        v = _cross(normal, u)
+        v = tuple(component / _norm(v) for component in v)
+        return u, v
+
+    def silhouette(flat):
+        ordered = sorted(set(flat))
+        if len(ordered) <= 2:
+            return [point[2] for point in ordered]
+
+        def turn(o, a, b):
+            return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+
+        limit = tol * max(span, 1.0)
+        lower, upper = [], []
+        for point in ordered:
+            while len(lower) >= 2 and turn(lower[-2], lower[-1], point) <= limit:
+                lower.pop()
+            lower.append(point)
+        for point in reversed(ordered):
+            while len(upper) >= 2 and turn(upper[-2], upper[-1], point) <= limit:
+                upper.pop()
+            upper.append(point)
+        return [point[2] for point in lower[:-1] + upper[:-1]]
+
+    merged = []
+    for group in groups:
+        ids = sorted({index for face in group['faces'] for index in face})
+        origin = pts[ids[0]]
+        u, v = basis(group['plane'][0])
+        flat = []
+        for index in ids:
+            delta = _sub(pts[index], origin)
+            flat.append((_dot(delta, u), _dot(delta, v), index))
+        ring = silhouette(flat)
+        for index in range(1, len(ring) - 1):
+            tri = (ring[0], ring[index], ring[index + 1])
+            if len(set(tri)) == 3:
+                merged.append(tri)
+    return merged
 
 
 def _convex_hull(raw):
@@ -251,6 +325,7 @@ def _convex_hull(raw):
         raise ValueError('flat hull')
     span = max(max(point[axis] for point in pts) - min(point[axis] for point in pts) for axis in range(3))
     eps = max(span, 1.0) ** 3 * 1e-12
+    dist_tol = max(span, 1.0) * 1e-8
     i0 = min(range(count), key=lambda i: pts[i])
     i1 = max(range(count), key=lambda i: _norm(_sub(pts[i], pts[i0])))
     if _norm(_sub(pts[i1], pts[i0])) <= eps:
@@ -277,12 +352,12 @@ def _convex_hull(raw):
     for ip in range(count):
         if ip in used:
             continue
-        visible = [face for face in faces if _orient(pts, *face, ip) > eps]
+        # A point inside every supporting half-space, including one that lies
+        # in a face, is not a new corner. Adding it from a single coplanar
+        # triangle overlaps that facet and makes the mesh non-convex.
+        visible = [face for face in faces if _signed_distance(pts, face, ip) > dist_tol]
         if not visible:
-            coplanar = [face for face in faces if abs(_orient(pts, *face, ip)) <= eps]
-            visible = [face for face in coplanar if _point_outside_triangle(pts, face, ip, eps)]
-            if not visible:
-                continue
+            continue
         edge_count = {}
         for a, b, c in visible:
             for edge in ((a, b), (b, c), (c, a)):
@@ -294,6 +369,7 @@ def _convex_hull(raw):
         for a, b in horizon:
             faces.append((a, b, ip))
         used.add(ip)
+    faces = _merge_coplanar_facets(pts, faces, span)
     used_idx = sorted({index for face in faces for index in face})
     remap = {old: new for new, old in enumerate(used_idx)}
     verts = [pts[index] for index in used_idx]
@@ -382,7 +458,11 @@ def assert_world_bounds(got, expected, tol=BOUNDS_TOL_M):
 
 
 def ucx_export_names(mesh_name, count):
-    """Export-copy name and UCX piece names bound to that mesh identity."""
+    """Export-copy name and UCX piece names bound to that export mesh.
+
+    The piece name is ``UCX_<export>_<index>``, so a source ``name_control``
+    becomes export ``name_control_AGR_ucx_`` and piece ``UCX_name_control_AGR_ucx__01``.
+    """
     if not isinstance(mesh_name, str) or not mesh_name.strip():
         raise ValueError('unmapped mesh name')
     if isinstance(count, bool) or not isinstance(count, int) or count < 1:
@@ -390,7 +470,7 @@ def ucx_export_names(mesh_name, count):
     if count > MAX_PIECES:
         raise ValueError(f'{count} pieces > {MAX_PIECES}')
     export = mesh_name + '_AGR_ucx_'
-    pieces = [f'UCX_{mesh_name}_{index:02d}' for index in range(1, count + 1)]
+    pieces = [f'UCX_{export}_{index:02d}' for index in range(1, count + 1)]
     return export, pieces
 
 
@@ -399,7 +479,7 @@ def assert_ucx_names_bound(mesh_name, planned_names):
         raise ValueError('empty UCX name family')
     export, pieces = ucx_export_names(mesh_name, len(planned_names))
     if list(planned_names) != pieces:
-        raise ValueError(f'UCX names {planned_names[0]!r} are not bound to export mesh {mesh_name!r}')
+        raise ValueError(f'UCX names {planned_names[0]!r} are not bound to export mesh {export!r}')
     return export, pieces
 
 
@@ -875,12 +955,23 @@ def _audit(names, pieces, mesh):
     }
 
 
+def assert_emitted_audit(audit):
+    """A piece with a failed audit must not be published. Returns None when it may."""
+    if not isinstance(audit, dict):
+        raise ValueError('partial ucx audit')
+    collision = audit.get('collision')
+    unmeasurable = audit.get('unmeasurable')
+    closed = audit.get('closed')
+    if not isinstance(collision, list) or not isinstance(unmeasurable, list) or not isinstance(closed, bool):
+        raise ValueError('partial ucx audit')
+    if collision or unmeasurable or not closed:
+        detail = ','.join(str(item) for item in collision) or ','.join(str(item) for item in unmeasurable) or 'open or non-convex'
+        raise ValueError('ucx audit failed: ' + detail)
+
+
 def _names(mesh, count):
-    if not isinstance(mesh, str) or not mesh.strip():
-        raise ValueError('unmapped mesh name')
-    if count > MAX_PIECES:
-        raise ValueError(f'{count} pieces > {MAX_PIECES}')
-    return [f'UCX_{mesh}_{index:02d}' for index in range(1, count + 1)]
+    _export, pieces = ucx_export_names(mesh, count)
+    return pieces
 
 
 def build(verts, tris, *, mesh, kind=None, model_triangles=None):

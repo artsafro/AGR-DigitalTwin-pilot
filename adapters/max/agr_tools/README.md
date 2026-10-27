@@ -105,16 +105,20 @@ never a clean result. Objects are identified by unique Max handles as well as na
   Optional node property `AGR_UCX_KIND` (`near-convex-box`, `passage`,
   `non-convex`, `tight-budget`, `few-levels`) overrides the measurement.
   `part-boxes` and `part-hulls` are not offered: an unmapped kind is an error
-  that names it. Apply writes `UCX_<mesh>_NN` on a new export copy
-  (`<mesh>_AGR_ucx_`) and reads the emitted node's world bounds back.
-  Those names are bound to the export mesh. If the export name or any piece
-  name is already in the scene, or two selected meshes would claim the same
-  name, apply raises `occupied name <name>` before creating a node.
+  that names it. Apply writes the collision onto a new export copy
+  (`<mesh>_AGR_ucx_`). Each piece is named `UCX_<export>_NN`, bound to that
+  export mesh: source `name_control` produces `name_control_AGR_ucx_` and
+  `UCX_name_control_AGR_ucx__01`. The export name and every piece name are
+  reserved, and the piece audit must pass, before any node is created. A
+  failed audit raises `ucx audit failed` and creates nothing. If the export
+  name or any piece name is already in the scene, or two selected meshes
+  would claim the same name, apply raises `occupied name <name>` before
+  creating a node. The emitted node's world bounds are read back.
   Originals stay untouched. A preview is kept only while the evaluated
   geometry, transform, handle, name and properties still match; a 10 m move
   is a stale preview and creates nothing. A triangle count exactly
   equal to the budget is a failure, never a pass. The audit name mask is
-  shown in the verdict; these button names are `UCX_<mesh>_NN`.
+  shown in the verdict; these button names are `UCX_<export>_NN`.
 - **Texel readout**: read-only min and median px/m per mesh and per material.
   The node needs `AGR_TEXEL_PROFILE` (`NPM` or `VPM`) and `AGR_TEXEL_MAP`
   (`name=pixels`, `;` between entries). A missing material name is an error

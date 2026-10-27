@@ -603,11 +603,13 @@ assert ucx_dry['report']['plan']['kind'] == 'near-convex-box'
 assert ucx_dry['report']['plan']['variant'] == 'single-hull'
 assert ucx_dry['report']['plan']['pieces'] == 1 and ucx_dry['report']['plan']['triangles'] == 12
 assert findings(ucx_dry['report']) == {}
-assert ucx_dry['report']['plan']['names'] == ['UCX_synthetic_ucx_box_01']
+assert ucx_dry['report']['plan']['names'] == ['UCX_synthetic_ucx_box_AGR_ucx__01']
 ucx_created, ucx_after = agr.ucx_apply([ucx_box], ucx_dry)
 assert agr.snapshot([ucx_box]) == ucx_before, 'ucx apply changed the source'
 assert len(ucx_created) == 2
-assert rt.getNodeByName('UCX_synthetic_ucx_box_01') is not None
+assert rt.getNodeByName('UCX_synthetic_ucx_box_AGR_ucx__01') is not None
+box_emitted = rt.snapshotAsMesh(rt.getNodeByName('UCX_synthetic_ucx_box_AGR_ucx__01'))
+assert int(box_emitted.numfaces) == 12, int(box_emitted.numfaces)
 assert findings(ucx_after) == {}
 bad_kind = rt.box(name='synthetic_ucx_kind', length=1, width=1, height=1)
 rt.convertToPoly(bad_kind)
@@ -768,6 +770,39 @@ _near(_wb(cemitted[0]), ([20.0, 30.0, 40.0], [22.0, 32.0, 42.0]))
 review['clipped'] = {'triangles': 16, 'emitted': _wb(cemitted[0]),
                      'faces': int(emitted_mesh.numfaces)}
 
+# Same unit cube with one x=1 triangle split around an interior coplanar point.
+# The convex solid is unchanged: emitted surface is 12 triangles, volume 1.
+sub_pts = [(0, 0, 1), (0, 1, 1), (1, 0, 0), (1, 1, 0), (1, 1, 1), (0, 0, 0), (1, 0, 1),
+           (1.0, 0.7393781378034694, 0.3406598426925462), (0, 1, 0)]
+sub_faces = [(5, 3, 2), (5, 8, 3), (0, 6, 4), (0, 4, 1), (5, 2, 6), (5, 6, 0), (2, 4, 6),
+             (3, 8, 1), (3, 1, 4), (8, 5, 0), (8, 0, 1), (2, 3, 7), (3, 4, 7), (4, 2, 7)]
+sub = rt.mesh(name='review_subdiv', vertices=[rt.point3(*p) for p in sub_pts],
+              faces=[rt.point3(a + 1, b + 1, c + 1) for a, b, c in sub_faces])
+rt.convertToPoly(sub)
+spreview = agr.ucx_preview([sub])
+assert spreview['report']['plan']['triangles'] == 12, spreview['report']['plan']
+assert spreview['report']['plan']['names'] == ['UCX_review_subdiv_AGR_ucx__01']
+assert spreview['report']['status'] == 'pass'
+screated, sreport = agr.ucx_apply([sub], spreview)
+semitted = [item for item in screated if str(item.name).startswith('UCX_')]
+assert [str(item.name) for item in screated] == ['review_subdiv_AGR_ucx_', 'UCX_review_subdiv_AGR_ucx__01']
+assert len(semitted) == 1 and sreport['status'] == 'pass'
+smesh = rt.snapshotAsMesh(semitted[0])
+assert int(smesh.numfaces) == 12, int(smesh.numfaces)
+sverts, stris = agr._read_world(semitted[0])
+assert len(stris) == 12 and len(sverts) == 8
+origin = sverts[0]
+total = 0.0
+for i0, i1, i2 in stris:
+    ax, ay, az = (sverts[i0][k] - origin[k] for k in range(3))
+    bx, by, bz = (sverts[i1][k] - origin[k] for k in range(3))
+    cx, cy, cz = (sverts[i2][k] - origin[k] for k in range(3))
+    total += ax * (by * cz - bz * cy) - ay * (bx * cz - bz * cx) + az * (bx * cy - by * cx)
+svolume = abs(total) / 6.0
+assert abs(svolume - 1.0) < 1e-6, svolume
+review['subdiv'] = {'triangles': 12, 'faces': int(smesh.numfaces), 'vertices': len(sverts),
+                    'volume': svolume, 'emitted': _wb(semitted[0])}
+
 stale = rt.box(name='review_stale', length=1, width=1, height=1)
 rt.convertToPoly(stale)
 stale_preview = agr.ucx_preview([stale])
@@ -780,7 +815,7 @@ review['stale_nodes'] = 0
 named = rt.box(name='name_control', length=1, width=1, height=1)
 rt.convertToPoly(named)
 first, first_report = agr.ucx_apply([named], agr.ucx_preview([named]))
-assert [str(item.name) for item in first] == ['name_control_AGR_ucx_', 'UCX_name_control_01']
+assert [str(item.name) for item in first] == ['name_control_AGR_ucx_', 'UCX_name_control_AGR_ucx__01']
 assert first_report['status'] == 'pass'
 name_count = len(list(rt.objects))
 results['guards']['ucx_occupied_name'] = raises(lambda: agr.ucx_apply([named], agr.ucx_preview([named])), 'occupied name')
@@ -789,9 +824,10 @@ assert 'name_control' in results['guards']['ucx_occupied_name']
 
 planted_src = rt.box(name='occupied_src', length=1, width=1, height=1)
 rt.convertToPoly(planted_src)
-rt.box(name='UCX_occupied_src_01', length=0.2, width=0.2, height=0.2)
+rt.box(name='UCX_occupied_src_AGR_ucx__01', length=0.2, width=0.2, height=0.2)
 planted_count = len(list(rt.objects))
-results['guards']['ucx_existing_name'] = raises(lambda: agr.ucx_apply([planted_src], agr.ucx_preview([planted_src])), 'UCX_occupied_src_01')
+results['guards']['ucx_existing_name'] = raises(
+    lambda: agr.ucx_apply([planted_src], agr.ucx_preview([planted_src])), 'UCX_occupied_src_AGR_ucx__01')
 assert len(list(rt.objects)) == planted_count
 
 left = rt.box(name='same_name', length=1, width=1, height=1)
@@ -805,6 +841,7 @@ assert len(list(rt.objects)) == same_count
 review['names'] = {'second_apply_nodes': 0, 'existing_name_nodes': 0, 'same_name_nodes': 0}
 results['review'] = review
 print('AGR_REVIEW_R1 mesh=1 poly=1 plain=1 modifier=1 clipped_tris=16 stale=1 names=1')
+print('AGR_REVIEW_R2 subdiv_tris=12 subdiv_verts=8 names=UCX_<export>_NN')
 with (OUT / 'results.json').open('x', encoding='utf-8') as f:
     json.dump(results, f, indent=2, default=str, allow_nan=False)
     print('AGR_NATIVE_UCX_TEXEL clean=2 planted=2 dry_run_unchanged=true originals_unchanged=true texel_read_only=true')
