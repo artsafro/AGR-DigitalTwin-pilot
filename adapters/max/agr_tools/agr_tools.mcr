@@ -5,21 +5,37 @@ macroScript AGRToolsCleanup category:"AGR Tools" tooltip:"Pre-export clean-up (d
 (on execute do python.Execute "agr_tools_runtime.ui('cleanup')")
 macroScript AGRToolsMatID category:"AGR Tools" tooltip:"MatID check" buttonText:"MatID check"
 (on execute do python.Execute "agr_tools_runtime.ui('matid')")
+macroScript AGRToolsNudge category:"AGR Tools" tooltip:"UV integer-tile nudge (dry-run)" buttonText:"UV nudge"
+(on execute do python.Execute "agr_tools_runtime.ui('nudge')")
+macroScript AGRToolsNudgeApply category:"AGR Tools" tooltip:"Apply UV nudge to new export copies" buttonText:"Apply UV nudge"
+(on execute do python.Execute "agr_tools_runtime.ui('nudge_apply')")
+macroScript AGRToolsAtlas category:"AGR Tools" tooltip:"UDIM -> NPM atlas (dry-run)" buttonText:"UDIM to NPM atlas"
+(on execute do python.Execute "agr_tools_runtime.ui('atlas')")
+macroScript AGRToolsAtlasApply category:"AGR Tools" tooltip:"Apply NPM atlas to new export copies" buttonText:"Apply NPM atlas"
+(on execute do python.Execute "agr_tools_runtime.ui('atlas_apply')")
 macroScript AGRToolsOpen category:"AGR Tools" tooltip:"AGR Tools" buttonText:"AGR Tools"
 (
     on execute do (
         global AGRToolsDialog
         try (destroyDialog AGRToolsDialog) catch ()
-        rollout AGRToolsDialog "AGR Tools" width:310 (
-            button xv "xView check" width:290
-            button dry "Pre-export clean-up (dry-run)" width:290
-            button applyCopy "Apply preview to new export copies" width:290
-            button mid "MatID check" width:290
+        rollout AGRToolsDialog "AGR Tools" width:360 (
+            button xv "xView check" width:340
+            button dry "Pre-export clean-up (dry-run)" width:340
+            button applyCopy "Apply preview to new export copies" width:340
+            button mid "MatID check" width:340
+            button nudge "UV integer-tile nudge (dry-run)" width:340
+            button nudgeApply "Apply UV nudge to new export copies" width:340
+            button atlas "UDIM -> NPM atlas (dry-run)" width:340
+            button atlasApply "Apply NPM atlas to new export copies" width:340
             label info "JSON report in Listener; checks select offenders."
             on xv pressed do python.Execute "agr_tools_runtime.ui('xview')"
             on dry pressed do python.Execute "agr_tools_runtime.ui('cleanup')"
             on applyCopy pressed do python.Execute "agr_tools_runtime.ui('apply')"
             on mid pressed do python.Execute "agr_tools_runtime.ui('matid')"
+            on nudge pressed do python.Execute "agr_tools_runtime.ui('nudge')"
+            on nudgeApply pressed do python.Execute "agr_tools_runtime.ui('nudge_apply')"
+            on atlas pressed do python.Execute "agr_tools_runtime.ui('atlas')"
+            on atlasApply pressed do python.Execute "agr_tools_runtime.ui('atlas_apply')"
         )
         createDialog AGRToolsDialog
     )

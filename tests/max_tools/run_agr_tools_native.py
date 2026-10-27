@@ -24,9 +24,9 @@ rt.execute('global AGRToolsInstallRoot; global AGRToolsStartupRoot')
 rt.AGRToolsInstallRoot = str(OUT / 'installed') + '/'
 rt.AGRToolsStartupRoot = str(OUT / 'startup') + '/'
 rt.makeDir(rt.AGRToolsStartupRoot, all=True)
-rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.1.0.mzp'))))
+rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.2.0.mzp'))))
 assert rt.execute('global AGRToolsRegistered; AGRToolsRegistered == true'), 'MZP macros not registered'
-print('AGR_INSTALL_REGISTERED xView Cleanup MatID Open')
+print('AGR_INSTALL_REGISTERED xView Cleanup MatID Open Nudge NudgeApply Atlas AtlasApply')
 sys.path.insert(0, str(OUT / 'installed'))
 import runtime as agr
 
@@ -153,12 +153,362 @@ rt.polyop.setMapSupport(clean, 1, False)
 results['guards']['missing_uv'] = raises(lambda: agr.cleanup_preview([clean]), 'missing')
 rt.polyop.setMapSupport(clean, 1, True)
 rt.polyop.defaultMapFaces(clean, 1)
+
+
+def map_array(indices):
+    return rt.execute('#(' + ','.join(str(int(i)) for i in indices) + ')')
+
+
+def make_uv_quad(name, uvs, periods, material='brick'):
+    node = rt.mesh(name=name, vertices=[rt.point3(0, 0, 0), rt.point3(1, 0, 0), rt.point3(1, 1, 0), rt.point3(0, 1, 0)],
+                   faces=[rt.point3(1, 2, 3), rt.point3(1, 3, 4)])
+    rt.convertToPoly(node)
+    rt.polyop.setMapSupport(node, 1, True)
+    rt.polyop.setNumMapVerts(node, 1, 4)
+    for index, uv in enumerate(uvs, 1):
+        rt.polyop.setMapVert(node, 1, index, rt.point3(float(uv[0]), float(uv[1]), 0))
+    face_count = int(rt.polyop.getNumFaces(node))
+    if face_count == 1:
+        rt.polyop.setMapFace(node, 1, 1, map_array((1, 2, 3, 4)))
+    elif face_count == 2:
+        rt.polyop.setMapFace(node, 1, 1, map_array((1, 2, 3)))
+        rt.polyop.setMapFace(node, 1, 2, map_array((1, 3, 4)))
+    else:
+        raise AssertionError('unexpected synthetic face count: ' + str(face_count))
+    node.material = rt.standardMaterial(name=material)
+    rt.setUserProp(node, 'AGR_UV_PERIODS', periods)
+    return node
+
+
+planted_uv = [(3.2, -1.8), (3.7, -1.8), (3.7, -1.3), (3.2, -1.3)]
+nudged = make_uv_quad('synthetic_nudge_planted', planted_uv, 'brick=1,1')
+before_nudge = agr.snapshot([nudged])
+nudge_preview = agr.nudge_preview([nudged])
+assert agr.snapshot([nudged]) == before_nudge, 'nudge dry-run mutated its input'
+assert findings(nudge_preview['report']) == {
+    'tile_move': list(range(1, int(rt.polyop.getNumFaces(nudged)) + 1))}, nudge_preview['report']
+assert nudge_preview['report']['plan']['islands'][0]['steps'] == [-3, 2]
+assert nudge_preview['report']['plan']['dropped'] == []
+nudge_copies, nudge_after = agr.nudge_apply([nudged], nudge_preview)
+assert agr.snapshot([nudged]) == before_nudge, 'nudge apply changed the source'
+assert nudge_copies[0] != nudged
+readback = [(round(p[0], 6), round(p[1], 6)) for p in agr.nudge_preview([nudge_copies[0]])['state'][0]['uvs']]
+assert readback == [(0.2, 0.2), (0.7, 0.2), (0.7, 0.7), (0.2, 0.7)], readback
+clean_nudge = make_uv_quad('synthetic_nudge_clean', planted_uv, 'brick=none')
+clean_before = [tuple(p) for p in agr.nudge_preview([clean_nudge])['state'][0]['uvs']]
+assert findings(agr.nudge_preview([clean_nudge])['report']) == {}
+assert [tuple(p) for p in agr.nudge_preview([clean_nudge])['state'][0]['uvs']] == clean_before
+results['nudge'] = {'planted_steps': [-3, 2], 'readback': readback, 'clean_findings': {}}
+results['guards']['nudge_unmapped'] = raises(lambda: agr.nudge_preview([
+    make_uv_quad('synthetic_nudge_unmapped', planted_uv, 'other=1,1')]), 'brick')
+results['guards']['nudge_empty'] = raises(lambda: agr.nudge_preview([]), 'empty')
+rt.setUserProp(nudged, 'AGR_UV_PERIODS', 'brick=0.5,0.5')
+count = len(list(rt.objects))
+results['guards']['nudge_stale'] = raises(lambda: agr.nudge_apply([nudged], nudge_preview), 'stale')
+assert len(list(rt.objects)) == count
+rt.setUserProp(nudged, 'AGR_UV_PERIODS', 'brick=1,1')
+# UDIM -> NPM atlas on one triangulated quad. Parity with the Python tool is checked
+# from the saved input/output coordinates after this process (no numpy in Max).
+atlas_node = make_uv_quad('synthetic_atlas_planted', [(0.1, 0.2), (0.8, 0.2), (0.8, 0.7), (0.1, 0.7)], 'unused=none', 'Grass')
+atlas_node.material.diffuse = rt.color(20, 140, 40)
+rt.setUserProp(atlas_node, 'AGR_ATLAS_MODE', 'ground')
+rt.setUserProp(atlas_node, 'AGR_ATLAS_SIZE', '2048')
+# The quad above is 1 m, not the 4 x 3 m parity quad. Rebuild vertex positions.
+for index, point in enumerate(((0, 0, 0), (4, 0, 0), (4, 3, 0), (0, 3, 0)), 1):
+    rt.polyop.setVert(atlas_node, index, rt.point3(*point))
+atlas_before = agr.snapshot([atlas_node])
+atlas_preview = agr.atlas_preview([atlas_node])
+assert agr.snapshot([atlas_node]) == atlas_before, 'atlas dry-run mutated its input'
+assert atlas_preview['report']['plan']['tiles'] == [1001], atlas_preview['report']
+assert findings(atlas_preview['report']) == {
+    'atlas_cell': list(range(1, len(atlas_preview['state'][0]['faces']) + 1))}, atlas_preview['report']
+assert atlas_preview['report']['plan']['dropped'] == []
+atlas_copies, atlas_after = agr.atlas_apply([atlas_node], atlas_preview)
+assert agr.snapshot([atlas_node]) == atlas_before, 'atlas apply changed the source'
+clean_atlas = agr.atlas_preview(atlas_copies)
+assert findings(clean_atlas['report']) == {}, clean_atlas['report']
+cross = make_uv_quad('synthetic_atlas_cross', [(0.2, 0.2), (1.2, 0.2), (1.2, 0.8), (0.2, 0.8)], 'unused=none', 'Grass')
+rt.setUserProp(cross, 'AGR_ATLAS_MODE', 'ground')
+rt.setUserProp(cross, 'AGR_ATLAS_SIZE', '2048')
+results['guards']['atlas_cross'] = raises(lambda: agr.atlas_preview([cross]), 'crosses a UDIM')
+results['guards']['atlas_unmapped_mode'] = raises(lambda: agr.atlas_preview([clean_nudge]), 'mode')
+bare = make_uv_quad('synthetic_atlas_bare', [(0.1, 0.2), (0.8, 0.2), (0.8, 0.7), (0.1, 0.7)], 'unused=none', 'Missing')
+bare.material = None
+rt.setUserProp(bare, 'AGR_ATLAS_MODE', 'ground')
+rt.setUserProp(bare, 'AGR_ATLAS_SIZE', '2048')
+results['guards']['atlas_missing_material'] = raises(lambda: agr.atlas_preview([bare]), 'missing material')
+state = atlas_preview['state'][0]
+copy_state = agr.atlas_preview(atlas_copies)['state'][0]
+results['atlas'] = {
+    'tiles': atlas_preview['report']['plan']['tiles'],
+    'cells': atlas_preview['report']['plan']['cells'],
+    'vertices': state['vertices'], 'uvs': state['uvs'], 'faces': state['faces'],
+    'face_uvs': state['face_uvs'], 'materials': ['Grass'] * len(state['faces']),
+    'color': [20, 140, 40], 'copy_uvs': copy_state['uvs'], 'copy_face_uvs': copy_state['face_uvs'],
+    'clean_findings': findings(clean_atlas['report'])}
+
+
+def make_bitmap(width, height, pixels, name):
+    bm = rt.bitmap(width, height, color=rt.color(0, 0, 0, 255))
+    for y in range(height):
+        row = []
+        for x in range(width):
+            r, g, b, a = pixels[y * width + x]
+            color = rt.color(int(r), int(g), int(b))
+            color.a = int(a)
+            row.append(color)
+        rt.setPixels(bm, rt.point2(0, y), row)
+    path = OUT / (name + '.png')
+    if path.exists():
+        raise AssertionError('bitmap already exists: ' + str(path))
+    bm.filename = str(path)
+    agr.save_bitmap(bm)
+    tex = rt.Bitmaptexture()
+    tex.name = name
+    tex.filename = str(path)
+    return tex
+
+
+def texture_bitmap(tex):
+    bm = None
+    try:
+        bm = tex.bitmap
+    except Exception:
+        bm = None
+    width = 0
+    if bm is not None:
+        try:
+            width = int(bm.width)
+        except Exception:
+            width = 0
+    if width <= 0:
+        bm = rt.openBitMap(str(tex.filename))
+    if bm is None:
+        raise AssertionError('bitmap did not open: ' + str(tex.filename))
+    return bm
+
+
+def bitmap_pixel(tex, x, y):
+    bm = texture_bitmap(tex)
+    px = list(rt.getPixels(bm, rt.point2(int(x), int(y)), 1))[0]
+    return (int(round(float(px.r))), int(round(float(px.g))), int(round(float(px.b))),
+            int(round(float(px.a))), int(bm.width), int(bm.height))
+
+
+def map_uvs(node):
+    count = int(rt.polyop.getNumMapVerts(node, 1))
+    out = []
+    for index in range(1, count + 1):
+        point = rt.polyop.getMapVert(node, 1, index)
+        out.append((float(point.x), float(point.y)))
+    return out
+
+
+def sample_uv(tex, u, v):
+    bm = texture_bitmap(tex)
+    width, height = int(bm.width), int(bm.height)
+    x = min(width - 1, max(0, int(u * width + 1e-9)))
+    y = min(height - 1, max(0, int((1.0 - v) * height + 1e-9)))
+    return bitmap_pixel(tex, x, y)
+
+
+# getPixels(w*h) stops at one scanline. Row reads still return the whole 8x8 image.
+grid = [((x * 20) % 256, (y * 30) % 256, 40, 255 if (x + y) % 2 == 0 else 0) for y in range(8) for x in range(8)]
+grid_tex = make_bitmap(8, 8, grid, 'grid8')
+grid_bm = texture_bitmap(grid_tex)
+span = list(rt.getPixels(grid_bm, rt.point2(0, 0), 64))
+one_row = list(rt.getPixels(grid_bm, rt.point2(0, 0), 8))
+# Max 2024 returns no pixels when the count crosses the row (measured 0), not the full 8x8 image.
+assert len(span) < 64 and len(one_row) == 8, (len(span), len(one_row))
+grid_rgb, grid_alpha = agr._bitmap_rgb(grid_tex)
+assert len(grid_rgb) == 8 and len(grid_rgb[7]) == 8
+assert grid_rgb[7][7] == grid[63][:3] and grid_alpha[7][7] == grid[63][3], (grid_rgb[7][7], grid_alpha[7][7], grid[63])
+assert grid_rgb[0][1] == grid[1][:3] and grid_alpha[0][1] == grid[1][3]
+results['bitmap_rows'] = {'wide_span': len(span), 'row': len(one_row), 'height': len(grid_rgb),
+                           'corner': list(grid_rgb[7][7])}
+
+RED_BLUE_UV = (
+    (0.00439453125, 0.995361328125),
+    (0.00712890625, 0.995361328125),
+    (0.00712890625, 0.99560546875),
+    (0.00439453125, 0.99560546875),
+)
+
+
+def atlas_quad(name, tex):
+    node = make_uv_quad(name, [(0.1, 0.2), (0.8, 0.2), (0.8, 0.7), (0.1, 0.7)], 'unused=none', 'Wall')
+    node.material.diffuseMap = tex
+    node.material.diffuse = rt.color(255, 255, 255)
+    node.material.opacity = 100
+    rt.setUserProp(node, 'AGR_ATLAS_MODE', 'oks')
+    rt.setUserProp(node, 'AGR_ATLAS_SIZE', '2048')
+    return node
+
+
+red_blue = [(255, 0, 0, 255)] * 4 + [(0, 0, 255, 255)] * 4
+red_tex = make_bitmap(8, 1, red_blue, 'redblue')
+red_node = atlas_quad('synthetic_atlas_redblue', red_tex)
+red_before = (bitmap_pixel(red_node.material.diffuseMap, 0, 0), bitmap_pixel(red_node.material.diffuseMap, 7, 0))
+red_uv_before = map_uvs(red_node)
+red_count = len(list(rt.objects))
+red_preview = agr.atlas_preview([red_node])
+assert red_preview['report']['plan']['cells'] == {'Wall': [0, 0, 24, 19]}, red_preview['report']['plan']['cells']
+assert map_uvs(red_node) == red_uv_before
+red_copies, _red_after = agr.atlas_apply([red_node], red_preview)
+assert map_uvs(red_node) == red_uv_before
+assert bitmap_pixel(red_node.material.diffuseMap, 0, 0) == red_before[0]
+assert bitmap_pixel(red_node.material.diffuseMap, 7, 0) == red_before[1]
+assert int(texture_bitmap(red_node.material.diffuseMap).width) == 8
+assert red_copies[0] != red_node
+copy_uv = map_uvs(red_copies[0])
+for got, exp in zip(copy_uv, RED_BLUE_UV):
+    agr.assert_uv_close(got, exp)
+copy_tex = red_copies[0].material.diffuseMap
+assert int(texture_bitmap(copy_tex).width) == 2048 and int(texture_bitmap(copy_tex).height) == 2048
+assert copy_tex != red_node.material.diffuseMap
+red_sample = sample_uv(copy_tex, copy_uv[0][0], copy_uv[0][1])
+blue_sample = sample_uv(copy_tex, copy_uv[1][0], copy_uv[1][1])
+assert red_sample[:3] == (255, 0, 0), red_sample
+assert blue_sample[2] > blue_sample[0] and blue_sample[2] > 200, blue_sample
+results['atlas_redblue'] = {
+    'cells': red_preview['report']['plan']['cells'],
+    'copy_uv': copy_uv,
+    'source_pixels': [list(p) for p in red_before],
+    'atlas_red': list(red_sample),
+    'atlas_blue': list(blue_sample),
+    'objects_before': red_count,
+}
+
+alpha_pixels = [(255, 255, 255, a) for a in (0, 0, 0, 0, 255, 255, 255, 255)]
+alpha_tex = make_bitmap(8, 1, alpha_pixels, 'white-alpha')
+alpha_node = atlas_quad('synthetic_atlas_alpha', alpha_tex)
+alpha_before = bitmap_pixel(alpha_node.material.diffuseMap, 0, 0), bitmap_pixel(alpha_node.material.diffuseMap, 7, 0)
+alpha_uv_before = map_uvs(alpha_node)
+alpha_preview = agr.atlas_preview([alpha_node])
+assert alpha_preview['report']['plan']['cells'] == {'Wall': [0, 0, 24, 19]}, alpha_preview['report']['plan']
+assert alpha_preview['images'][0]['kinds']['Wall'] == 'texture'
+alpha_copies, _alpha_after = agr.atlas_apply([alpha_node], alpha_preview)
+assert map_uvs(alpha_node) == alpha_uv_before
+assert bitmap_pixel(alpha_node.material.diffuseMap, 0, 0) == alpha_before[0]
+assert bitmap_pixel(alpha_node.material.diffuseMap, 7, 0) == alpha_before[1]
+alpha_uv = map_uvs(alpha_copies[0])
+for got, exp in zip(alpha_uv, RED_BLUE_UV):
+    agr.assert_uv_close(got, exp)
+assert alpha_copies[0].material.opacityMap is not None
+opaque = sample_uv(alpha_copies[0].material.opacityMap, alpha_uv[1][0], alpha_uv[1][1])
+clear = sample_uv(alpha_copies[0].material.opacityMap, alpha_uv[0][0], alpha_uv[0][1])
+assert clear[0] == 0, clear
+assert opaque[0] > 200, opaque
+white = sample_uv(alpha_copies[0].material.diffuseMap, alpha_uv[0][0], alpha_uv[0][1])
+assert white[:3] == (255, 255, 255), white
+results['atlas_alpha'] = {
+    'cells': alpha_preview['report']['plan']['cells'],
+    'clear': list(clear),
+    'opaque': list(opaque),
+    'source_alpha': [alpha_before[0][3], alpha_before[1][3]],
+}
+
+opacity_only = make_uv_quad('synthetic_atlas_opacity_only', [(0.1, 0.2), (0.8, 0.2), (0.8, 0.7), (0.1, 0.7)],
+                            'unused=none', 'Wall')
+opacity_only.material.diffuse = rt.color(20, 140, 40)
+opacity_only.material.opacityMap = make_bitmap(8, 1, [(255, 255, 255, 255)] * 8, 'opacity-only')
+rt.setUserProp(opacity_only, 'AGR_ATLAS_MODE', 'oks')
+rt.setUserProp(opacity_only, 'AGR_ATLAS_SIZE', '2048')
+opacity_count = len(list(rt.objects))
+results['guards']['atlas_map_d_without_kd'] = raises(
+    lambda: agr.atlas_preview([opacity_only]), 'map_d without map_Kd')
+assert len(list(rt.objects)) == opacity_count
+results['guards']['atlas_map_d_apply_creates_nothing'] = raises(
+    lambda: agr.atlas_apply([opacity_only], {'report': {}, 'plans': []}), 'map_d without map_Kd')
+assert len(list(rt.objects)) == opacity_count
+assert opacity_only.material.diffuseMap is None or str(rt.classOf(opacity_only.material.diffuseMap)) in (
+    'undefined', 'UndefinedClass')
+results['atlas_opacity_only'] = {'objects': opacity_count, 'created': 0}
+
+
+def output_files():
+    return sorted(path.relative_to(OUT).as_posix() for path in OUT.rglob('*') if path.is_file())
+
+
+def reject_map_coordinate(node, setting, slot):
+    """Preview and apply must name the coordinate and create nothing."""
+    before_files = output_files()
+    before_count = len(list(rt.objects))
+    preview_error = raises(lambda: agr.atlas_preview([node]), 'unsupported map coordinate')
+    apply_error = raises(
+        lambda: agr.atlas_apply([node], {'report': {}, 'plans': []}), 'unsupported map coordinate')
+    assert len(list(rt.objects)) == before_count, 'coordinate rejection created a node'
+    assert output_files() == before_files, 'coordinate rejection created a file'
+    needle = f'{node.material.name} {slot} {setting}='
+    assert needle in preview_error, preview_error
+    assert needle in apply_error, apply_error
+    return preview_error
+
+
+def put_coord(tex, setting, value):
+    setattr(tex.coords, setting, value)
+    return getattr(tex.coords, setting)
+
+
+# Combined witness: tiled diffuse coordinates must not become a clean untransformed atlas.
+witness_pixels = [(255, 255, 255, a) for a in (0, 0, 0, 0, 255, 255, 255, 255)]
+witness_tex = make_bitmap(8, 1, witness_pixels, 'witness-tiling')
+witness = atlas_quad('synthetic_atlas_coord_witness', witness_tex)
+witness.material.name = 'Witness'
+witness.material.opacity = 40
+put_coord(witness_tex, 'U_Tiling', 2)
+witness_files = output_files()
+witness_count = len(list(rt.objects))
+witness_error = reject_map_coordinate(witness, 'U_Tiling', 'diffuse')
+assert witness_error == 'unsupported map coordinate: Witness diffuse U_Tiling=2', witness_error
+assert abs(float(witness.material.diffuseMap.coords.U_Tiling) - 2) <= 1e-9
+assert abs(float(witness.material.opacity) - 40) <= 1e-9
+assert output_files() == witness_files and len(list(rt.objects)) == witness_count
+results['atlas_coord_witness'] = {
+    'error': witness_error,
+    'copies': 0,
+    'files': 0,
+    'u_tiling': float(witness.material.diffuseMap.coords.U_Tiling),
+    'opacity': float(witness.material.opacity),
+    'uv': map_uvs(witness),
+}
+
+coord_rejections = {}
+for case, setting, value, slot in (
+    ('u_offset', 'U_Offset', 0.25, 'diffuse'),
+    ('v_tiling', 'V_Tiling', 3, 'diffuse'),
+    ('u_angle', 'U_Angle', 0.5, 'diffuse'),
+    ('u_mirror', 'U_Mirror', True, 'opacity'),
+    ('map_channel', 'mapChannel', 2, 'diffuse'),
+):
+    diffuse = make_bitmap(8, 1, [(255, 0, 0, 255)] * 8, 'coord-' + case)
+    node = atlas_quad('synthetic_atlas_coord_' + case, diffuse)
+    node.material.name = 'Coord' + case
+    if slot == 'opacity':
+        opacity = make_bitmap(8, 1, [(128, 128, 128, 255)] * 8, 'coord-' + case + '-opacity')
+        node.material.opacityMap = opacity
+        target = opacity
+    else:
+        target = diffuse
+    put_coord(target, setting, value)
+    message = reject_map_coordinate(node, setting, slot)
+    shown = agr.format_map_coordinate_value(getattr(target.coords, setting))
+    assert message == f'unsupported map coordinate: {node.material.name} {slot} {setting}={shown}', message
+    coord_rejections[case] = message
+results['atlas_coord_rejections'] = coord_rejections
+
+for macro in ('AGRToolsNudge', 'AGRToolsAtlas'):
+    rt.select(clean_nudge if macro.endswith('Nudge') else atlas_copies[0])
+    if macro.endswith('Nudge'):
+        rt.setUserProp(clean_nudge, 'AGR_UV_PERIODS', 'brick=none')
+    assert rt.macros.run('AGR Tools', macro), macro
+results['guards']['registered_uv_buttons'] = 2
 # Startup re-registration and repeated install must not overwrite installed files.
 rt.AGRToolsRegistered = False
-rt.fileIn(str(OUT / 'startup/AGRTools-0.1.0.ms'))
+rt.fileIn(str(OUT / 'startup/AGRTools-0.2.0.ms'))
 assert rt.AGRToolsRegistered
 install_hash = hashlib.sha256((OUT / 'installed/runtime.py').read_bytes()).hexdigest()
-results['guards']['repeat_install'] = raises(lambda: rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.1.0.mzp')))), 'already exists')
+results['guards']['repeat_install'] = raises(lambda: rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.2.0.mzp')))), 'already exists')
 assert hashlib.sha256((OUT / 'installed/runtime.py').read_bytes()).hexdigest() == install_hash
 assert hashlib.sha256((OUT / 'fixture-source.max').read_bytes()).hexdigest() == source_hash
 results['version'] = list(rt.maxVersion())
