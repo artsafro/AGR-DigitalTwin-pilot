@@ -17,7 +17,7 @@ from dt_ai.geometry.ucx_build import _flood_exterior, sample_surface
 from dt_ai.ops.inv_xview import tolerance_for
 from dt_ai.ops.inv_xview import mesh_report as xview_mesh_report
 from twinqa.geometry.ucx_audit import weld
-from twinqa.scene import _texture_side_px, _ucx_piece, scene_findings, ucx_triangle_limit
+from twinqa.scene import PROJECT_TRIANGLE_TARGET, _texture_side_px, _ucx_piece, scene_findings, ucx_triangle_limit
 from twinqa.uv import edge_densities
 
 SCHEMA = "methods-row/1"
@@ -515,4 +515,152 @@ def windows_glazing(rb: dict, extra: dict | None) -> dict:
     out.update({"frame_components": len(comps), "frame_polygons": polys_total,
                 "frame_depth_m": {"min": round(min(comps), 4), "median": round(statistics.median(comps), 4),
                                   "max": round(max(comps), 4)}})
+    return out
+
+
+# ---- building body (class building-body, #727) ----------------------------------------------------------------------
+
+BODY_TRIANGLE_BUDGET = PROJECT_TRIANGLE_TARGET  # [D010] one mid-poly master <= 150 000 triangles per OKS FBX
+BODY_MAX_POINTS = 20_000  # source surface samples for the deviation (deterministic stride above this)
+SHELL_WELD_M = 1e-4  # vertices closer than 0.1 mm are one vertex for the closed-shell edge count
+BODY_DEVIATION_METHOD = ("source model surface samples (all non-UCX meshes of the benchmark source) -> exact "
+                         "point-triangle distance to the nearest variant model triangle; one-sided (source -> variant)")
+
+
+def _fan(m: dict) -> tuple[np.ndarray, np.ndarray]:
+    fg = m["face_geometry"]
+    v = np.asarray(fg["vertices"], float).reshape(-1, 3)
+    t = np.array([(p[0], p[i], p[i + 1]) for p in fg["polygons"] for i in range(1, len(p) - 1)],
+                 np.int64).reshape(-1, 3)
+    if len(v) and not np.isfinite(v).all():
+        raise MetricError(f"{m['name']}: non-finite vertex")
+    return v, t
+
+
+def _mesh_soup(rb: dict) -> tuple[np.ndarray, np.ndarray]:
+    vs, ts, off = [np.zeros((0, 3))], [np.zeros((0, 3), np.int64)], 0
+    for m in model_meshes(rb):
+        v, t = _fan(m)
+        vs.append(v)
+        ts.append(t + off)
+        off += len(v)
+    return np.concatenate(vs), np.concatenate(ts)
+
+
+def nearest_triangle_distance(points: np.ndarray, tri: np.ndarray, r0: float = 0.25) -> np.ndarray:
+    """Exact distance of every point to the nearest triangle of `tri` (n, 3, 3).
+
+    Uniform grid of cell r: a triangle is registered in every cell its bbox grown by r touches, so every
+    triangle within r of a point is a candidate of the point's cell; a point whose best candidate is
+    farther than r is retried with 4r. Above the scene diagonal all triangles are candidates (brute force)."""
+    points = np.asarray(points, float).reshape(-1, 3)
+    tri = np.asarray(tri, float).reshape(-1, 3, 3)
+    if not len(tri):
+        raise MetricError("no triangle to measure against")
+    out = np.full(len(points), np.inf)
+    todo = np.arange(len(points))
+    lo = np.minimum(points.min(0) if len(points) else tri.min((0, 1)), tri.min((0, 1)))
+    hi = np.maximum(points.max(0) if len(points) else tri.max((0, 1)), tri.max((0, 1)))
+    diag = float(np.linalg.norm(hi - lo)) + 1e-9
+    tlo, thi = tri.min(1), tri.max(1)
+    r = r0
+    while len(todo):
+        if r >= diag:
+            for s in range(0, len(todo), max(1, 400_000 // len(tri))):
+                idx = todo[s:s + max(1, 400_000 // len(tri))]
+                out[idx] = point_triangle_distance(points[idx][:, None, :], tri[None, :, 0], tri[None, :, 1],
+                                                   tri[None, :, 2]).min(axis=1)
+            break
+        cell = max(r, float((hi - lo).max()) / 256)
+        ilo = np.floor((tlo - r - lo) / cell).astype(np.int64)
+        ihi = np.floor((thi + r - lo) / cell).astype(np.int64)
+        buckets: dict = {}
+        for k in range(len(tri)):
+            for i in range(ilo[k, 0], ihi[k, 0] + 1):
+                for j in range(ilo[k, 1], ihi[k, 1] + 1):
+                    for z in range(ilo[k, 2], ihi[k, 2] + 1):
+                        buckets.setdefault((i, j, z), []).append(k)
+        pc = np.floor((points[todo] - lo) / cell).astype(np.int64)
+        order = np.lexsort(pc.T[::-1])
+        pc, ids = pc[order], todo[order]
+        cuts = np.nonzero(np.any(np.diff(pc, axis=0) != 0, axis=1))[0] + 1
+        retry = []
+        for grp_pc, grp in zip(np.split(pc, cuts), np.split(ids, cuts)):
+            cand = buckets.get(tuple(int(x) for x in grp_pc[0]))
+            if not cand:
+                retry.append(grp)
+                continue
+            c = tri[cand]
+            d = point_triangle_distance(points[grp][:, None, :], c[None, :, 0], c[None, :, 1],
+                                        c[None, :, 2]).min(axis=1)
+            ok = d <= r
+            out[grp[ok]] = d[ok]
+            retry.append(grp[~ok])
+        todo = np.concatenate(retry) if retry else np.zeros(0, np.int64)
+        r *= 4
+    return out
+
+
+def closed_shells(rb: dict, weld_m: float = SHELL_WELD_M) -> dict:
+    """Connected components of every non-UCX mesh (vertices welded within weld_m); a component is a closed
+    shell when every edge is used by exactly two of its triangles. Share = triangles in closed shells / all."""
+    total, closed, comps, closed_comps = 0, 0, 0, 0
+    for m in model_meshes(rb):
+        v, t = _fan(m)
+        if not len(t):
+            continue
+        key = np.round(v / weld_m).astype(np.int64)
+        _, remap = np.unique(key, axis=0, return_inverse=True)
+        t = remap.reshape(-1)[t]
+        t = t[(t[:, 0] != t[:, 1]) & (t[:, 1] != t[:, 2]) & (t[:, 0] != t[:, 2])]
+        groups = _components([list(map(int, x)) for x in t])
+        e = np.sort(np.concatenate([t[:, [0, 1]], t[:, [1, 2]], t[:, [2, 0]]]), axis=1)
+        uniq, inv, cnt = np.unique(e, axis=0, return_inverse=True, return_counts=True)
+        edge_ok = (cnt == 2)[inv.reshape(-1)].reshape(3, -1).all(axis=0)  # per triangle: its 3 edges shared twice
+        for g in groups:
+            comps += 1
+            total += len(g)
+            if edge_ok[g].all():
+                closed_comps += 1
+                closed += len(g)
+    if not total:
+        return {"closed_shell_share": None, "components": comps, "closed_components": closed_comps,
+                "reason": "no model triangle"}
+    return {"closed_shell_share": round(closed / total, 5), "components": comps, "closed_components": closed_comps,
+            "weld_m": weld_m, "reason": None}
+
+
+def building_body(rb: dict, source_rb: dict | None, max_points: int = BODY_MAX_POINTS) -> dict:
+    """Class metrics of building-body: deviation from the source body, closed-shell share, triangles vs [D010].
+
+    Null with a reason, never guessed: no source readback / no source model triangle / no variant model
+    triangle -> deviation null; no model triangle -> closed-shell share null."""
+    tris, _ = counts(rb)
+    out = {"triangles": tris["model"], "triangle_budget": BODY_TRIANGLE_BUDGET,
+           "budget_share": round(tris["model"] / BODY_TRIANGLE_BUDGET, 5),
+           "within_budget": tris["model"] <= BODY_TRIANGLE_BUDGET,
+           "deviation_method": BODY_DEVIATION_METHOD, "deviation_max_m": None, "deviation_p95_m": None,
+           "deviation_samples": None, "deviation_reason": None}
+    out.update({k if k != "reason" else "shell_reason": v for k, v in closed_shells(rb).items()})
+    if source_rb is None:
+        out["deviation_reason"] = "no source readback"
+        return out
+    if not source_rb.get("readback_ok"):
+        raise MetricError(f"source readback failed: {source_rb.get('error')}")
+    sv, st = _mesh_soup(source_rb)
+    vv, vt = _mesh_soup(rb)
+    if not len(st):
+        out["deviation_reason"] = "source has no model triangle"
+        return out
+    if not len(vt):
+        out["deviation_reason"] = "variant has no model triangle"
+        return out
+    pts, spacing, stride = _samples(sv, st, max_points)
+    if not len(pts):
+        out["deviation_reason"] = "source surface gave no sample"
+        return out
+    d = nearest_triangle_distance(pts, vv[vt])
+    out.update({"deviation_max_m": round(float(d.max()), 4), "deviation_p95_m": round(float(np.percentile(d, 95)), 4),
+                "deviation_samples": int(len(pts)), "deviation_sample_spacing_m": round(spacing, 4),
+                "deviation_sample_stride": stride})
     return out
