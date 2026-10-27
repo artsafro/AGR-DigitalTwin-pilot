@@ -8,13 +8,36 @@ weld vertices within 1 mm (system units from units.decodeValue), delete isolated
 collapse; UCX pieces are left as imported. FBX export of the whole scene. The report carries ok, wall_time_s
 (after import up to the end of the export), the Max version and per-object vertex / face counts before and after.
 Our own logic: no team-script text (docs/research/team-scripts-audit.md describes theirs).
+Before Max is touched: src, out and report must be three different files (resolved path, hard link, symlink);
+otherwise RuntimeError, nothing is written (not even the report), the driver sees a failed job.
 """
 import json
+import os
 import time
 
 from pymxs import runtime as rt
 
 cfg = CONFIG  # noqa: F821 - set by the job file
+
+
+def _same(a, b):
+    if os.path.normcase(os.path.realpath(a)) == os.path.normcase(os.path.realpath(b)):
+        return True
+    try:
+        return os.path.exists(a) and os.path.exists(b) and os.path.samefile(a, b)
+    except OSError:
+        return False
+
+
+_paths = [("src", cfg["src"]), ("out", cfg["out"]), ("report", cfg["report"])]
+for _i, (_ka, _a) in enumerate(_paths):
+    for _kb, _b in _paths[_i + 1:]:
+        if _same(_a, _b):
+            print("BODY_MAX refused: %s and %s are the same file (%s); nothing written" % (_ka, _kb, _a))
+            raise RuntimeError("BODY_MAX refused: %s aliases %s" % (_ka, _kb))
+for _k, _p in _paths[1:]:
+    if os.path.islink(_p) or (os.path.exists(_p) and os.stat(_p).st_nlink > 1):
+        raise RuntimeError("BODY_MAX refused: %s %s is a symlink or hard link" % (_k, _p))
 report = {"ok": False, "max": str(rt.maxVersion()), "objects": {}}
 try:
     rt.resetMaxFile(rt.name("noPrompt"))

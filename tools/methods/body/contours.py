@@ -177,6 +177,24 @@ def polygons(band: dict) -> list[Polygon]:
     return out
 
 
+def main(argv=None) -> int:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from safe_write import Refused, guard_cli, publish_text
+
+    argv = sys.argv[1:] if argv is None else argv
+    if len(argv) != 2:
+        print("usage: contours.py <source readback .json> <contours .json>", file=sys.stderr)
+        return 2
+    src, out = Path(argv[0]), Path(argv[1])
+    try:
+        guard_cli([src], [out])
+    except Refused as exc:
+        print(f"CONTOURS refused: {exc}", file=sys.stderr)
+        return 4
+    rb = json.loads(src.read_text(encoding="utf-8"))
+    publish_text(out, json.dumps(contours(rb)))
+    return 0
+
+
 if __name__ == "__main__":
-    rb = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
-    Path(sys.argv[2]).write_text(json.dumps(contours(rb)), encoding="utf-8")
+    sys.exit(main())

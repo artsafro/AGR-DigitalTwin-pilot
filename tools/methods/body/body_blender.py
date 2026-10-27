@@ -10,9 +10,14 @@ export-mesh: <input> = {"vertices": [[x,y,z]...], "triangles": [[a,b,c]...]} (ou
 gn-union:    <input> = contours.json (tools/methods/body/contours.py); every band polygon becomes a cap face
              at z0 (mathutils polyfill, holes kept), a Geometry Nodes tree extrudes each cap by its band
              height (Extrude Mesh, offset = named face attribute), joins the flipped caps as bottoms, and unions all prisms (Mesh Boolean, Exact,
-             self intersection), the modifier is applied, the result triangulated.
-Writes <out>.variant.json {ok, wall_time_s (build + export, after the inputs are read), triangles, blender}.
-Never writes next to an input: the caller passes a new path.
+             self intersection), the modifier is applied; then every opening of the input's opening schedule
+             (openings.py: axis-aligned cutter boxes) is cut with a Boolean modifier (Difference, Exact), one
+             cutter at a time, and an opening that removes no volume (misses the body) is an error naming it;
+             the result is triangulated.
+Writes <out>.variant.json {ok, wall_time_s (build + export, after the inputs are read), triangles, blender,
+openings: [{id, removed_m3}] (gn-union)}.
+Refuses (exit 4, nothing written, not even the report) when <out> or its report is or aliases <input> or each
+other (safe_write.guard_cli).
 """
 import json
 import sys
@@ -24,6 +29,15 @@ import bpy
 import bmesh
 from mathutils import Vector
 from mathutils.geometry import tessellate_polygon
+
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE.parent))
+sys.path.insert(0, str(HERE))
+
+import openings as body_openings  # noqa: E402
+from safe_write import Refused, guard_cli  # noqa: E402
+
+CUT_MIN_M3 = 1e-9
 
 
 def _clear():
@@ -92,7 +106,44 @@ def _gn_tree():
     return ng
 
 
-def gn_union(contours: dict, out: Path, name: str) -> int:
+def _volume(obj) -> float:
+    bm = bmesh.new()
+    bm.from_mesh(obj.data)
+    vol = abs(bm.calc_volume(signed=True))
+    bm.free()
+    return vol
+
+
+def cut_openings(obj, schedule: list[dict]) -> list[dict]:
+    """Subtract every cutter box from obj (Boolean Difference, Exact), one at a time; error on a miss."""
+    done = []
+    for o in schedule:
+        before = _volume(obj)
+        cbm = bmesh.new()
+        bmesh.ops.create_cube(cbm, size=1.0)
+        lo, hi = Vector(o["min"]), Vector(o["max"])
+        for v in cbm.verts:  # unit cube -0.5..0.5 -> the opening box
+            v.co = Vector(lo[i] + (v.co[i] + 0.5) * (hi[i] - lo[i]) for i in range(3))
+        cme = bpy.data.meshes.new(f"cut_{o['id']}")
+        cbm.to_mesh(cme)
+        cbm.free()
+        cutter = bpy.data.objects.new(f"cut_{o['id']}", cme)
+        bpy.context.scene.collection.objects.link(cutter)
+        mod = obj.modifiers.new(f"open_{o['id']}", "BOOLEAN")
+        mod.operation, mod.solver, mod.object = "DIFFERENCE", "EXACT", cutter
+        bpy.context.view_layer.objects.active = obj
+        bpy.ops.object.modifier_apply(modifier=mod.name)
+        bpy.data.objects.remove(cutter)
+        bpy.data.meshes.remove(cme)
+        removed = before - _volume(obj)
+        if removed <= CUT_MIN_M3:
+            raise RuntimeError(f"opening {o['id']!r} removes no volume (misses the body)")
+        done.append({"id": o["id"], "removed_m3": round(removed, 6)})
+    return done
+
+
+def gn_union(contours: dict, out: Path, name: str) -> tuple[int, list[dict]]:
+    schedule = body_openings.schedule(contours)  # validated before any geometry is built
     bm = bmesh.new()
     heights = []
     for band in contours["bands"]:
@@ -125,6 +176,7 @@ def gn_union(contours: dict, out: Path, name: str) -> int:
     for key in list(obj.data.attributes.keys()):
         if key == "band_h":
             obj.data.attributes.remove(obj.data.attributes[key])
+    cut = cut_openings(obj, schedule)
     bm = bmesh.new()
     bm.from_mesh(obj.data)
     bmesh.ops.dissolve_limit(bm, angle_limit=0.0017, verts=bm.verts, edges=bm.edges)  # coplanar boolean seams
@@ -134,7 +186,7 @@ def gn_union(contours: dict, out: Path, name: str) -> int:
     obj.data.materials.clear()
     _material(obj, f"M_{name}_1")
     _export(obj, out)
-    return len(obj.data.polygons)
+    return len(obj.data.polygons), cut
 
 
 def main():
@@ -143,10 +195,21 @@ def main():
     report = {"ok": False, "mode": mode, "blender": bpy.app.version_string}
     rep = out.with_name(out.name + ".variant.json")
     try:
+        guard_cli([src], [out, rep])
+    except Refused as exc:
+        print(f"BODY_BLENDER refused: {exc}", file=sys.stderr)
+        sys.exit(4)
+    try:
         data = json.loads(src.read_text(encoding="utf-8"))
         _clear()
         t0 = time.perf_counter()
-        tris = export_mesh(data, out, name) if mode == "export-mesh" else gn_union(data, out, name)
+        if mode == "export-mesh":
+            tris = export_mesh(data, out, name)
+        elif mode == "gn-union":
+            tris, cut = gn_union(data, out, name)
+            report["openings"] = cut
+        else:
+            raise ValueError(f"unknown mode {mode!r}; known: export-mesh, gn-union")
         report.update(ok=out.is_file(), wall_time_s=round(time.perf_counter() - t0, 3), triangles=tris)
         if mode == "export-mesh" and "kernel_s" in data:
             report["wall_time_s"] = round(report["wall_time_s"] + float(data["kernel_s"]), 3)

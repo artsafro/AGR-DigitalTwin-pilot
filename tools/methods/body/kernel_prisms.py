@@ -45,8 +45,23 @@ def prisms(data: dict) -> dict:
             "kernel_s": round(time.perf_counter() - t0, 3)}
 
 
+def main(argv=None) -> int:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from safe_write import Refused, guard_cli, publish_text
+
+    argv = sys.argv[1:] if argv is None else argv
+    if len(argv) != 2:
+        print("usage: kernel_prisms.py <contours .json> <mesh .json>", file=sys.stderr)
+        return 2
+    src, out = Path(argv[0]), Path(argv[1])
+    try:
+        guard_cli([src], [out])
+    except Refused as exc:
+        print(f"KERNEL_PRISMS refused: {exc}", file=sys.stderr)
+        return 4
+    publish_text(out, json.dumps(prisms(json.loads(src.read_text(encoding="utf-8")))))
+    return 0
+
+
 if __name__ == "__main__":
-    src, out = Path(sys.argv[1]), Path(sys.argv[2])
-    if src.resolve() == out.resolve():
-        raise SystemExit("output resolves to the input")
-    out.write_text(json.dumps(prisms(json.loads(src.read_text(encoding="utf-8")))), encoding="utf-8")
+    sys.exit(main())

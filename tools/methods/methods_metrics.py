@@ -602,32 +602,67 @@ def nearest_triangle_distance(points: np.ndarray, tri: np.ndarray, r0: float = 0
 
 
 def closed_shells(rb: dict, weld_m: float = SHELL_WELD_M) -> dict:
-    """Connected components of every non-UCX mesh (vertices welded within weld_m); a component is a closed
-    shell when every edge is used by exactly two of its triangles. Share = triangles in closed shells / all."""
+    """Connected components of every non-UCX mesh (vertices welded within weld_m). A component is a closed
+    shell only when ALL of: every edge is used by exactly two of its triangles, the two uses run in opposite
+    directions (consistent winding), no triangle repeats another's vertex set (doubled sheet), no triangle has
+    zero area, and the enclosed |signed volume| exceeds weld_m**3 (a doubled flat sheet passes the edge count
+    but encloses nothing). Share = triangles in closed shells / ALL model triangles: a triangle collapsed by
+    the weld stays in the denominator (counted open), it is never dropped to inflate the share.
+    Every rejected component is counted per reason in `open_reasons` (first failing test)."""
     total, closed, comps, closed_comps = 0, 0, 0, 0
+    reasons: dict[str, int] = {}
     for m in model_meshes(rb):
         v, t = _fan(m)
         if not len(t):
             continue
+        total += len(t)
         key = np.round(v / weld_m).astype(np.int64)
         _, remap = np.unique(key, axis=0, return_inverse=True)
         t = remap.reshape(-1)[t]
-        t = t[(t[:, 0] != t[:, 1]) & (t[:, 1] != t[:, 2]) & (t[:, 0] != t[:, 2])]
+        keep = (t[:, 0] != t[:, 1]) & (t[:, 1] != t[:, 2]) & (t[:, 0] != t[:, 2])
+        if (~keep).any():
+            reasons["triangles collapsed by weld"] = reasons.get("triangles collapsed by weld", 0) + int((~keep).sum())
+        t = t[keep]
+        if not len(t):
+            continue
+        p = v[np.unique(remap.reshape(-1), return_index=True)[1]]  # one position per welded vertex
+        a, b, c = p[t[:, 0]], p[t[:, 1]], p[t[:, 2]]
+        area2 = np.linalg.norm(np.cross(b - a, c - a), axis=1)
+        vol6 = np.einsum("ij,ij->i", a, np.cross(b, c))
         groups = _components([list(map(int, x)) for x in t])
-        e = np.sort(np.concatenate([t[:, [0, 1]], t[:, [1, 2]], t[:, [2, 0]]]), axis=1)
-        uniq, inv, cnt = np.unique(e, axis=0, return_inverse=True, return_counts=True)
-        edge_ok = (cnt == 2)[inv.reshape(-1)].reshape(3, -1).all(axis=0)  # per triangle: its 3 edges shared twice
+        d = np.concatenate([t[:, [0, 1]], t[:, [1, 2]], t[:, [2, 0]]])
+        e = np.sort(d, axis=1)
+        _, inv, cnt = np.unique(e, axis=0, return_inverse=True, return_counts=True)
+        inv = inv.reshape(-1)
+        fwd = np.zeros(len(cnt), int)
+        np.add.at(fwd, inv, (d[:, 0] < d[:, 1]).astype(int))  # uses running low -> high index
+        per_tri = lambda x: x[inv].reshape(3, -1).all(axis=0)  # noqa: E731 - all 3 edges of a triangle
+        edge_two, edge_opp = per_tri(cnt == 2), per_tri(fwd == 1)
+        _, tinv, tcnt = np.unique(np.sort(t, axis=1), axis=0, return_inverse=True, return_counts=True)
+        dup = tcnt[tinv.reshape(-1)] > 1
         for g in groups:
             comps += 1
-            total += len(g)
-            if edge_ok[g].all():
+            g = np.asarray(g)
+            if not edge_two[g].all():
+                why = "edge not shared by exactly two triangles"
+            elif dup[g].any():
+                why = "duplicated triangle (doubled sheet)"
+            elif not edge_opp[g].all():
+                why = "inconsistent winding"
+            elif (area2[g] <= weld_m ** 2).any():
+                why = "zero-area triangle"
+            elif abs(vol6[g].sum()) / 6.0 <= weld_m ** 3:
+                why = "zero enclosed volume"
+            else:
                 closed_comps += 1
                 closed += len(g)
+                continue
+            reasons[why] = reasons.get(why, 0) + 1
     if not total:
         return {"closed_shell_share": None, "components": comps, "closed_components": closed_comps,
-                "reason": "no model triangle"}
+                "open_reasons": reasons, "reason": "no model triangle"}
     return {"closed_shell_share": round(closed / total, 5), "components": comps, "closed_components": closed_comps,
-            "weld_m": weld_m, "reason": None}
+            "open_reasons": dict(sorted(reasons.items())), "weld_m": weld_m, "reason": None}
 
 
 def building_body(rb: dict, source_rb: dict | None, max_points: int = BODY_MAX_POINTS) -> dict:
