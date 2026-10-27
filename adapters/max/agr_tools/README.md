@@ -92,7 +92,13 @@ never a clean result. Objects are identified by unique Max handles as well as na
 - **UCX collision generator**: dry-run reports the variant
   `docs/methods/ucx-collisions/WHEN.md` recommends for the object kind, the
   piece count, and the triangles against the [D012] limit, then the bundled
-  UCX audit verdict. A near-convex box uses single-hull. A passage or other
+  UCX audit verdict. Geometry is the evaluated world-state mesh in metres
+  (`snapshotAsMesh`, including the node transform and the modifier stack).
+  With no modifiers that mesh must match object-space vertices times
+  `objectTransform`; a mismatch is an error. A near-convex box uses
+  single-hull: the convex hull of the vertices, not their axis-aligned box.
+  A flat hull (volume below 1e-6 m³) is still thickened to the facade box;
+  a volume of exactly 1e-6 m³ is `at_threshold`. A passage or other
   non-convex body (facade-frame volume more than 5% outside the mesh) uses
   kernel-boxes. A near-convex body with 2 to 6 level bands uses slice-prisms.
   The outside fraction exactly at 5% is `at_threshold` and is an error.
@@ -100,7 +106,13 @@ never a clean result. Objects are identified by unique Max handles as well as na
   `non-convex`, `tight-budget`, `few-levels`) overrides the measurement.
   `part-boxes` and `part-hulls` are not offered: an unmapped kind is an error
   that names it. Apply writes `UCX_<mesh>_NN` on a new export copy
-  (`<mesh>_AGR_ucx_`). Originals stay untouched. A triangle count exactly
+  (`<mesh>_AGR_ucx_`) and reads the emitted node's world bounds back.
+  Those names are bound to the export mesh. If the export name or any piece
+  name is already in the scene, or two selected meshes would claim the same
+  name, apply raises `occupied name <name>` before creating a node.
+  Originals stay untouched. A preview is kept only while the evaluated
+  geometry, transform, handle, name and properties still match; a 10 m move
+  is a stale preview and creates nothing. A triangle count exactly
   equal to the budget is a failure, never a pass. The audit name mask is
   shown in the verdict; these button names are `UCX_<mesh>_NN`.
 - **Texel readout**: read-only min and median px/m per mesh and per material.

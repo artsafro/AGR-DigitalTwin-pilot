@@ -1,6 +1,6 @@
 {
   "package": "AGR-Tools-0.3.0",
-  "builds": ["AGR-Tools-0.3.0-c.mzp", "AGR-Tools-0.3.0-d.mzp"],
-  "sha256": "450bd61bcae1e4fd122cbfe76512aa5c72682954d10ac321aaa430f388d0b24a",
+  "builds": ["AGR-Tools-0.3.0-g.mzp", "AGR-Tools-0.3.0-h.mzp"],
+  "sha256": "1b1b7b42eb27a28f92595e35e2e33216caae9766cd07a5e5a925775fd9d5aceb",
   "identical": true
 }

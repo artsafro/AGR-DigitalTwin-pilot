@@ -2,9 +2,9 @@
 
 ## Build sha256 (twice)
 
-`AGR-Tools-0.3.0-c.mzp` and `AGR-Tools-0.3.0-d.mzp`:
+`AGR-Tools-0.3.0-g.mzp` and `AGR-Tools-0.3.0-h.mzp`:
 
-`450bd61bcae1e4fd122cbfe76512aa5c72682954d10ac321aaa430f388d0b24a`
+`1b1b7b42eb27a28f92595e35e2e33216caae9766cd07a5e5a925775fd9d5aceb`
 
 The two files are byte-identical.
 
@@ -13,9 +13,10 @@ The two files are byte-identical.
 | Check | Python tool | Button | Delta |
 |---|---|---|---|
 | 1 m box, near-convex | `single-hull`: 1 piece, 12 triangles | same | 0 |
+| clipped cube x+y+z<=2.8 | real hull: 10 verts, 16 triangles, volume 0.9986666666666665 | same, not a 12-triangle AABB | 0 |
 | L passage | `kernel-boxes`: 2 pieces, 24 triangles | same | 0 |
 | Two equal storeys | `slice-prisms`: 2 pieces, 24 triangles | same | 0 |
-| 12 random assemblies | `ucx_variants.build` on the chosen variant | same piece count and triangle count | 15/15 exact |
+| 12 random assemblies | `ucx_variants.build` with the real source hull | same piece count and triangle count | 12/12 exact |
 | Texel, unit quad 1024 px | `texel_density_readout`: 1024 px/m | min = median = 1024 | 0 |
 | Texel, UV 0.1, 1024 px | 102.4 px/m, below the VPM band | 102.4 px/m, status fail | 0 |
 | 16 random quads | `readout` face px/m | min and median | 16/16, relative < 1e-6 |
@@ -38,4 +39,9 @@ The two files are byte-identical.
 | alias output | `publish(source, source)` | error naming `input`; source bytes unchanged; no `.partial` |
 | input mutation | the three fixed meshes passed through `build` | vertex and triangle lists unchanged |
 | audit `not_run` | an unmeasurable hull | finding `ucx_unmeasurable`; report status fail, never pass or not_run |
-| Cyrillic install path | `G:/Мой диск/...` written into the startup script | Max `fileIn` stored `???`; the run used `C:/x/728` |
+| Cyrillic install path | `G:/Мой диск/...` written into the startup script | Max `fileIn` stored `???`; the run used an ASCII package path |
+
+## Native Max 2024 (this sha)
+
+Exit 0. `AGR_REVIEW_R1 mesh=1 poly=1 plain=1 modifier=1 clipped_tris=16 stale=1 names=1`.
+Physical-distance matrix 120/120. Full marker log: `max2024-native.log`.

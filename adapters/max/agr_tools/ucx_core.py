@@ -8,6 +8,7 @@ are not modified. An output path that resolves to an input writes nothing.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 import os
@@ -24,6 +25,11 @@ LEVEL_AREA_M2 = 1.0
 LEVEL_MIN_M = 0.5
 SIMPLIFY_M = 0.01
 MAX_PIECES = 999
+HULL_VOLUME_MIN = 1e-6  # at or below this a single hull is flat, never a volumetric pass
+BOUNDS_TOL_M = 1e-4  # emitted world-bounds readback; exactly this far is not a pass
+DIGEST_TOL_M = 1e-4  # preview geometry quantum; a move of exactly this is stale
+DIGEST_KEYS = ('handle', 'name', 'base_class', 'transform', 'object_transform',
+               'parent', 'properties', 'material', 'vertices', 'faces')
 BOX_TRIS = (
     (0, 2, 1), (0, 3, 2), (4, 5, 6), (4, 6, 7), (0, 1, 5), (0, 5, 4),
     (1, 2, 6), (1, 6, 5), (2, 3, 7), (2, 7, 6), (3, 0, 4), (3, 4, 7),
@@ -184,13 +190,373 @@ def _box_piece(lo, hi):
     return verts, BOX_TRIS
 
 
+def _exactly(delta, tol):
+    return math.isclose(delta, tol, rel_tol=0.0, abs_tol=0.0) or abs(delta - tol) <= tol * 2e-7
+
+
+def accept_hull_volume(volume):
+    """'hull' or 'flat'. The flat limit itself is an error, never either verdict."""
+    if isinstance(volume, bool) or not isinstance(volume, (int, float)) or not math.isfinite(float(volume)):
+        raise ValueError(f'non-finite hull volume {volume!r}')
+    volume = float(volume)
+    if volume < 0:
+        raise ValueError('negative hull volume')
+    if _exactly(volume, HULL_VOLUME_MIN):
+        raise ValueError('at_threshold: hull volume is exactly the flat limit')
+    if volume < HULL_VOLUME_MIN:
+        return 'flat'
+    return 'hull'
+
+
+def _orient(pts, ia, ib, ic, ip):
+    return _dot(_cross(_sub(pts[ib], pts[ia]), _sub(pts[ic], pts[ia])), _sub(pts[ip], pts[ia]))
+
+
+def _point_outside_triangle(pts, face, ip, eps):
+    a, b, c = (pts[i] for i in face)
+    point = pts[ip]
+    normal = _cross(_sub(b, a), _sub(c, a))
+    area = _dot(normal, normal)
+    if area <= eps:
+        return False
+
+    def bary(u, v):
+        return _dot(normal, _cross(_sub(v, u), _sub(point, u)))
+
+    limit = -eps
+    return bary(b, c) < limit or bary(c, a) < limit or bary(a, b) < limit
+
+
+def _convex_hull(raw):
+    """Convex hull as outward triangles. Flat and non-finite input raise; points are not mutated."""
+    if not raw:
+        raise ValueError('empty mesh')
+    uniq = []
+    seen = set()
+    for point in raw:
+        if not isinstance(point, (list, tuple)) or len(point) != 3:
+            raise ValueError('partial vertex')
+        nums = []
+        for coord in point:
+            if isinstance(coord, bool) or not isinstance(coord, (int, float)) or not math.isfinite(float(coord)):
+                raise ValueError('non-finite vertex')
+            nums.append(float(coord))
+        key = tuple(round(num, 9) for num in nums)
+        if key not in seen:
+            seen.add(key)
+            uniq.append(key)
+    pts = uniq
+    count = len(pts)
+    if count < 4:
+        raise ValueError('flat hull')
+    span = max(max(point[axis] for point in pts) - min(point[axis] for point in pts) for axis in range(3))
+    eps = max(span, 1.0) ** 3 * 1e-12
+    i0 = min(range(count), key=lambda i: pts[i])
+    i1 = max(range(count), key=lambda i: _norm(_sub(pts[i], pts[i0])))
+    if _norm(_sub(pts[i1], pts[i0])) <= eps:
+        raise ValueError('flat hull')
+    i2 = max(range(count), key=lambda i: _norm(_cross(_sub(pts[i1], pts[i0]), _sub(pts[i], pts[i0]))))
+    if _norm(_cross(_sub(pts[i1], pts[i0]), _sub(pts[i2], pts[i0]))) <= eps:
+        raise ValueError('flat hull')
+    i3 = max(range(count), key=lambda i: abs(_orient(pts, i0, i1, i2, i)))
+    if abs(_orient(pts, i0, i1, i2, i3)) <= eps:
+        raise ValueError('flat hull')
+
+    def outward(ia, ib, ic, interior):
+        if _orient(pts, ia, ib, ic, interior) > 0:
+            return (ia, ic, ib)
+        return (ia, ib, ic)
+
+    faces = [
+        outward(i0, i1, i2, i3),
+        outward(i0, i1, i3, i2),
+        outward(i0, i2, i3, i1),
+        outward(i1, i2, i3, i0),
+    ]
+    used = {i0, i1, i2, i3}
+    for ip in range(count):
+        if ip in used:
+            continue
+        visible = [face for face in faces if _orient(pts, *face, ip) > eps]
+        if not visible:
+            coplanar = [face for face in faces if abs(_orient(pts, *face, ip)) <= eps]
+            visible = [face for face in coplanar if _point_outside_triangle(pts, face, ip, eps)]
+            if not visible:
+                continue
+        edge_count = {}
+        for a, b, c in visible:
+            for edge in ((a, b), (b, c), (c, a)):
+                edge_count[edge] = edge_count.get(edge, 0) + 1
+        horizon = [edge for edge, hits in edge_count.items()
+                   if hits == 1 and (edge[1], edge[0]) not in edge_count]
+        visible_set = set(visible)
+        faces = [face for face in faces if face not in visible_set]
+        for a, b in horizon:
+            faces.append((a, b, ip))
+        used.add(ip)
+    used_idx = sorted({index for face in faces for index in face})
+    remap = {old: new for new, old in enumerate(used_idx)}
+    verts = [pts[index] for index in used_idx]
+    tris = [tuple(remap[index] for index in face) for face in faces]
+    tris = [face for face in tris if len(set(face)) == 3]
+    if len(verts) < 4 or not tris:
+        raise ValueError('flat hull')
+    return verts, tuple(tris)
+
+
+def world_metres(points, rows, to_m):
+    """Object-space system units to world metres. Max row-vector: x*row1 + y*row2 + z*row3 + row4."""
+    if isinstance(to_m, bool) or not isinstance(to_m, (int, float)) or not math.isfinite(float(to_m)):
+        raise ValueError(f'non-finite system units {to_m!r}')
+    scale = float(to_m)
+    if scale == 0.0 or _exactly(scale, 0.0):
+        raise ValueError('at_threshold: system unit scale is exactly zero')
+    if scale < 0:
+        raise ValueError('invalid system units')
+    if not points:
+        raise ValueError('empty mesh')
+    if not isinstance(rows, (list, tuple)) or len(rows) != 4:
+        raise ValueError('partial transform')
+    matrix = []
+    for row in rows:
+        if not isinstance(row, (list, tuple)) or len(row) != 3:
+            raise ValueError('partial transform')
+        nums = []
+        for coord in row:
+            if isinstance(coord, bool) or not isinstance(coord, (int, float)) or not math.isfinite(float(coord)):
+                raise ValueError('non-finite transform')
+            nums.append(float(coord))
+        matrix.append(nums)
+    out = []
+    for point in points:
+        if not isinstance(point, (list, tuple)) or len(point) != 3:
+            raise ValueError('partial vertex')
+        coords = []
+        for coord in point:
+            if isinstance(coord, bool) or not isinstance(coord, (int, float)) or not math.isfinite(float(coord)):
+                raise ValueError('non-finite vertex')
+            coords.append(float(coord))
+        x, y, z = coords
+        r1, r2, r3, r4 = matrix
+        out.append((
+            (x * r1[0] + y * r2[0] + z * r3[0] + r4[0]) * scale,
+            (x * r1[1] + y * r2[1] + z * r3[1] + r4[1]) * scale,
+            (x * r1[2] + y * r2[2] + z * r3[2] + r4[2]) * scale,
+        ))
+    return out
+
+
+def _bounds_of(points):
+    if not points:
+        raise ValueError('empty bounds')
+    return (
+        tuple(min(point[axis] for point in points) for axis in range(3)),
+        tuple(max(point[axis] for point in points) for axis in range(3)),
+    )
+
+
+def assert_world_bounds(got, expected, tol=BOUNDS_TOL_M):
+    """Readback of emitted world bounds. A difference of exactly ``tol`` is an error."""
+    if not got or not expected:
+        raise ValueError('empty bounds')
+    boxes = []
+    for box in (got, expected):
+        if not isinstance(box, (list, tuple)) or len(box) != 2:
+            raise ValueError('partial bounds')
+        nums = []
+        for corner in box:
+            if not isinstance(corner, (list, tuple)) or len(corner) != 3:
+                raise ValueError('partial bounds')
+            triple = []
+            for coord in corner:
+                if isinstance(coord, bool) or not isinstance(coord, (int, float)) or not math.isfinite(float(coord)):
+                    raise ValueError('non-finite bounds')
+                triple.append(float(coord))
+            nums.append(triple)
+        boxes.append(nums)
+    worst = max(abs(boxes[0][corner][axis] - boxes[1][corner][axis]) for corner in range(2) for axis in range(3))
+    if _exactly(worst, tol):
+        raise ValueError('at_threshold: emitted world bounds differ by exactly the tolerance')
+    if worst > tol:
+        raise ValueError(f'emitted world bounds differ by {worst}')
+
+
+def ucx_export_names(mesh_name, count):
+    """Export-copy name and UCX piece names bound to that mesh identity."""
+    if not isinstance(mesh_name, str) or not mesh_name.strip():
+        raise ValueError('unmapped mesh name')
+    if isinstance(count, bool) or not isinstance(count, int) or count < 1:
+        raise ValueError('empty UCX name family')
+    if count > MAX_PIECES:
+        raise ValueError(f'{count} pieces > {MAX_PIECES}')
+    export = mesh_name + '_AGR_ucx_'
+    pieces = [f'UCX_{mesh_name}_{index:02d}' for index in range(1, count + 1)]
+    return export, pieces
+
+
+def assert_ucx_names_bound(mesh_name, planned_names):
+    if not isinstance(planned_names, (list, tuple)) or not planned_names:
+        raise ValueError('empty UCX name family')
+    export, pieces = ucx_export_names(mesh_name, len(planned_names))
+    if list(planned_names) != pieces:
+        raise ValueError(f'UCX names {planned_names[0]!r} are not bound to export mesh {mesh_name!r}')
+    return export, pieces
+
+
+def reserve_ucx_names(existing, families):
+    """Reject an occupied export/UCX name before the caller creates anything.
+
+    ``existing`` is not modified. The error names the occupied name.
+    """
+    if not isinstance(families, (list, tuple)) or not families:
+        raise ValueError('empty target set')
+    if not isinstance(existing, (list, tuple)):
+        raise ValueError('partial name set')
+    occupied = []
+    for name in existing:
+        if not isinstance(name, str) or not name.strip():
+            raise ValueError('unmapped mesh name')
+        occupied.append(name)
+    taken = set(occupied)
+    claimed = []
+    for family in families:
+        if not isinstance(family, (list, tuple)) or len(family) != 2:
+            raise ValueError('partial UCX name family')
+        export, pieces = family
+        if not isinstance(export, str) or not export.strip():
+            raise ValueError('unmapped mesh name')
+        if not isinstance(pieces, (list, tuple)) or not pieces:
+            raise ValueError('empty UCX name family')
+        for name in (export, *pieces):
+            if not isinstance(name, str) or not name.strip():
+                raise ValueError('unmapped mesh name')
+            if name in taken or name in claimed:
+                raise ValueError('occupied name ' + name)
+            claimed.append(name)
+    return claimed
+
+
+def _text_finite(value, label):
+    if not isinstance(value, str):
+        raise ValueError('partial ' + label)
+    token = value.strip().lower()
+    if token in {'nan', '+nan', '-nan', 'inf', '+inf', '-inf'}:
+        raise ValueError('non-finite ' + label)
+    return value
+
+
+def _canonical_record(rec):
+    if not isinstance(rec, dict):
+        raise ValueError('partial geometry digest')
+    if set(rec) != set(DIGEST_KEYS):
+        missing = [key for key in DIGEST_KEYS if key not in rec]
+        extra = sorted(set(rec) - set(DIGEST_KEYS))
+        if missing:
+            raise ValueError('unmapped key ' + missing[0])
+        raise ValueError('unmapped key ' + extra[0])
+    handle = rec['handle']
+    if isinstance(handle, bool) or not isinstance(handle, int):
+        raise ValueError('partial geometry digest')
+    name = _text_finite(rec['name'], 'mesh name')
+    if not name.strip():
+        raise ValueError('unmapped mesh name')
+    parent = rec['parent']
+    if parent is not None and (isinstance(parent, bool) or not isinstance(parent, int)):
+        raise ValueError('partial geometry digest')
+    material = rec['material']
+    if material is not None:
+        material = _text_finite(material, 'material')
+    vertices = []
+    if not isinstance(rec['vertices'], (list, tuple)) or not rec['vertices']:
+        raise ValueError('partial vertex')
+    for point in rec['vertices']:
+        if not isinstance(point, (list, tuple)) or len(point) != 3:
+            raise ValueError('partial vertex')
+        quantized = []
+        for coord in point:
+            if isinstance(coord, bool) or not isinstance(coord, (int, float)) or not math.isfinite(float(coord)):
+                raise ValueError('non-finite vertex')
+            quantized.append(int(round(float(coord) / DIGEST_TOL_M)))
+        vertices.append(quantized)
+    faces = []
+    if not isinstance(rec['faces'], (list, tuple)) or not rec['faces']:
+        raise ValueError('partial face')
+    for face in rec['faces']:
+        if not isinstance(face, (list, tuple)) or len(face) != 3:
+            raise ValueError('partial face')
+        indexes = []
+        for index in face:
+            if isinstance(index, bool) or not isinstance(index, int):
+                raise ValueError('partial face')
+            indexes.append(index)
+        faces.append(indexes)
+    return {
+        'handle': handle,
+        'name': name,
+        'base_class': _text_finite(rec['base_class'], 'base class'),
+        'transform': _text_finite(rec['transform'], 'transform'),
+        'object_transform': _text_finite(rec['object_transform'], 'object transform'),
+        'parent': parent,
+        'properties': _text_finite(rec['properties'], 'properties'),
+        'material': material,
+        'vertices': vertices,
+        'faces': faces,
+    }
+
+
+def geometry_digest(records):
+    """Identity, transform, properties and quantized evaluated geometry."""
+    if not isinstance(records, (list, tuple)) or not records:
+        raise ValueError('empty geometry digest')
+    payload = [_canonical_record(rec) for rec in records]
+    blob = json.dumps(payload, sort_keys=True, separators=(',', ':'), allow_nan=False)
+    return hashlib.sha256(blob.encode('utf-8')).hexdigest()
+
+
+def _vertex_delta(stored, current):
+    if len(stored) != len(current):
+        return None
+    worst = 0.0
+    for left, right in zip(stored, current):
+        lv, rv = left.get('vertices'), right.get('vertices')
+        if not isinstance(lv, (list, tuple)) or not isinstance(rv, (list, tuple)) or len(lv) != len(rv):
+            return None
+        for a, b in zip(lv, rv):
+            if len(a) != 3 or len(b) != 3:
+                return None
+            for x, y in zip(a, b):
+                if isinstance(x, bool) or isinstance(y, bool) or not isinstance(x, (int, float)) or not isinstance(y, (int, float)):
+                    return None
+                if not math.isfinite(float(x)) or not math.isfinite(float(y)):
+                    raise ValueError('non-finite vertex')
+                worst = max(worst, abs(float(x) - float(y)))
+    return worst
+
+
+def assert_preview_current(stored, current):
+    """The stored preview must still describe this geometry. Exactly one tolerance step is an error."""
+    if not stored or not current:
+        raise ValueError('empty ucx preview')
+    delta = _vertex_delta(stored, current)
+    if delta is not None and _exactly(delta, DIGEST_TOL_M):
+        raise ValueError('at_threshold: ucx preview geometry moved by exactly the tolerance')
+    if geometry_digest(stored) != geometry_digest(current):
+        raise ValueError('stale or altered ucx preview; run dry-run again')
+
+
 def _single_hull(verts, tris):
     used = sorted({index for face in tris for index in face})
     pts = [verts[index] for index in used]
-    lo = [min(point[axis] for point in pts) for axis in range(3)]
-    hi = [max(point[axis] for point in pts) for axis in range(3)]
-    if abs((hi[0] - lo[0]) * (hi[1] - lo[1]) * (hi[2] - lo[2])) > 1e-6:
-        return [_box_piece(lo, hi)]
+    hull = None
+    try:
+        hull = _convex_hull(pts)
+    except ValueError as exc:
+        text = str(exc)
+        if any(word in text for word in ('at_threshold', 'non-finite', 'partial', 'empty')):
+            raise
+        hull = None
+    if hull is not None and accept_hull_volume(_volume(hull[0], hull[1])) == 'hull':
+        return [hull]
     angle = facade_angle(verts, tris)
     framed = [_rotate(point, -angle) for point in pts]
     flo = [min(point[axis] for point in framed) for axis in range(3)]

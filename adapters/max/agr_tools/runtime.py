@@ -1143,37 +1143,107 @@ def atlas_apply(nodes, preview):
     return copies, after
 
 
+def _matrix_rows(tm):
+    """Max Matrix3 exposes row1..row4. A test double may expose ``rows`` instead."""
+    if all(hasattr(tm, name) for name in ('row1', 'row2', 'row3', 'row4')):
+        rows = []
+        for attr in ('row1', 'row2', 'row3', 'row4'):
+            row = getattr(tm, attr)
+            rows.append((float(row.x), float(row.y), float(row.z)))
+        return tuple(rows)
+    if hasattr(tm, 'rows'):
+        rows = []
+        for row in tm.rows:
+            if len(row) != 3:
+                raise ValueError('partial transform')
+            rows.append(tuple(float(c) for c in row))
+        if len(rows) != 4:
+            raise ValueError('partial transform')
+        return tuple(rows)
+    raise ValueError('partial transform')
+
+
+def _bounds_of(points):
+    if not points:
+        raise ValueError('empty bounds')
+    return (
+        tuple(min(point[axis] for point in points) for axis in range(3)),
+        tuple(max(point[axis] for point in points) for axis in range(3)),
+    )
+
+
 def _read_world(n):
-    """World-space triangle mesh in metres. Empty and non-finite geometry are errors."""
+    """Evaluated world-space triangles in metres. Empty and non-finite geometry are errors.
+
+    ``snapshotAsMesh`` is the world-state mesh (modifiers and the node transform).
+    With no modifiers, that result must match object-space vertices times ``objectTransform``.
+    """
     import math
-    api, target = _edit_target(n)
-    nv = int(api.getNumVerts(target))
-    nf = int(api.getNumFaces(target))
+    rt = _rt()
+    mesh = rt.snapshotAsMesh(n)
+    nv = int(mesh.numverts)
+    nf = int(mesh.numfaces)
     if not nv or not nf:
         raise ValueError('empty mesh: ' + str(n.name))
     to_m = _unit_m()
     verts = []
     for i in range(1, nv + 1):
-        p = api.getVert(target, i)
+        p = rt.getVert(mesh, i)
         point = (float(p.x) * to_m, float(p.y) * to_m, float(p.z) * to_m)
         if not all(math.isfinite(c) for c in point):
             raise ValueError('non-finite vertex: ' + str(n.name))
         verts.append(point)
     tris = []
     for i in range(1, nf + 1):
-        try:
-            raw = api.getFaceVerts(target, i)
-        except AttributeError:
-            try:
-                raw = api.getFace(target, i)
-            except AttributeError as exc:
-                raise ValueError('unsupported geometry: ' + str(n.name)) from exc
+        raw = rt.getFace(mesh, i)
         face = [int(v) - 1 for v in _as_indices(raw)]
-        if len(face) < 3:
+        if len(face) != 3 or any(index < 0 or index >= nv for index in face):
             raise ValueError('partial face: ' + str(n.name))
-        for k in range(1, len(face) - 1):
-            tris.append((face[0], face[k], face[k + 1]))
+        tris.append(tuple(face))
+    if not list(n.modifiers):
+        # Editable Poly's polyop.getVert(node) is already world space on Max 2024.
+        # Editable Mesh's meshop.getVert(base) is object space and needs objectTransform.
+        core = _load_core('ucx_core.py', 'agr_tools_ucx')
+        kind = rt.classOf(n.baseObject)
+        predicted = []
+        if kind == rt.Editable_Mesh:
+            tm = n.objectTransform
+            local = []
+            count = int(rt.meshop.getNumVerts(n.baseObject))
+            for i in range(1, count + 1):
+                p = rt.meshop.getVert(n.baseObject, i)
+                local.append((float(p.x), float(p.y), float(p.z)))
+                world = p * tm
+                predicted.append((float(world.x) * to_m, float(world.y) * to_m, float(world.z) * to_m))
+            via_rows = core.world_metres(local, _matrix_rows(tm), to_m)
+            core.assert_world_bounds(_bounds_of(verts), _bounds_of(via_rows))
+        elif kind == rt.Editable_Poly:
+            count = int(rt.polyop.getNumVerts(n))
+            for i in range(1, count + 1):
+                p = rt.polyop.getVert(n, i)
+                predicted.append((float(p.x) * to_m, float(p.y) * to_m, float(p.z) * to_m))
+        else:
+            raise ValueError('unsupported geometry: ' + str(n.name))
+        core.assert_world_bounds(_bounds_of(verts), _bounds_of(predicted))
     return verts, tris
+
+
+def _ucx_record(n, verts, tris):
+    rt = _rt()
+    parent = n.parent
+    material = n.material
+    return {
+        'handle': int(rt.getHandleByAnim(n)),
+        'name': str(n.name),
+        'base_class': str(rt.classOf(n.baseObject)),
+        'transform': str(n.transform),
+        'object_transform': str(n.objectTransform),
+        'parent': None if parent is None else int(rt.getHandleByAnim(parent)),
+        'properties': str(rt.getUserPropBuffer(n)),
+        'material': None if material is None else str(material.name),
+        'vertices': [tuple(point) for point in verts],
+        'faces': [tuple(face) for face in tris],
+    }
 
 
 def _ucx_kind(n):
@@ -1216,14 +1286,15 @@ def ucx_preview(nodes=None):
     """Dry-run UCX pieces, triangle budget and the audit verdict. The scene is unchanged."""
     core = _load_core('ucx_core.py', 'agr_tools_ucx')
     nodes = _targets(nodes)
-    results, entries = [], []
+    results, entries, records = [], [], []
     for n in nodes:
         verts, tris = _read_world(n)
         result = core.build(verts, tris, mesh=str(n.name), kind=_ucx_kind(n))
         results.append(result)
+        records.append(_ucx_record(n, verts, tris))
         entries.append(_entry(n, [_finding(item['code'], item['ids'], item['detail']) for item in result['findings']]))
     report = _report('ucx', entries, nodes, extra={'plan': _ucx_plan(results)})
-    return {'report': report, 'plans': results}
+    return {'report': report, 'plans': results, 'geometry': records, 'digest': core.geometry_digest(records)}
 
 
 def _make_ucx_mesh(name, verts_m, tris):
@@ -1241,21 +1312,43 @@ def _make_ucx_mesh(name, verts_m, tris):
 
 
 def ucx_apply(nodes, preview):
-    """Build UCX on new export copies. Source nodes are not edited."""
+    """Build UCX on new export copies. Source nodes are not edited.
+
+    The preview is bound to evaluated geometry, transform, identity and properties.
+    Occupied export or UCX names are rejected before any node is created.
+    """
     rt = _rt()
     nodes = _targets(nodes)
+    if not isinstance(preview, dict):
+        raise ValueError('partial ucx preview')
+    for key in ('geometry', 'digest', 'report'):
+        if key not in preview:
+            raise ValueError('unmapped key ' + key)
+    core = _load_core('ucx_core.py', 'agr_tools_ucx')
     current = ucx_preview(nodes)
-    if preview['report'] != current['report']:
+    core.assert_preview_current(preview['geometry'], current['geometry'])
+    if preview['digest'] != current['digest'] or preview['report'] != current['report']:
         raise ValueError('stale or altered ucx preview; run dry-run again')
+    families = []
+    for n, result in zip(nodes, current['plans']):
+        families.append(core.assert_ucx_names_bound(str(n.name), result['names']))
+    # Reserve the whole name family before copy() or mesh() can touch the scene.
+    core.reserve_ucx_names([str(node.name) for node in list(rt.objects)], families)
     created = []
     try:
-        for n, result in zip(nodes, current['plans']):
+        for n, result, (export, pieces) in zip(nodes, current['plans'], families):
             copy = rt.copy(n)
-            copy.name = str(n.name) + '_AGR_ucx_'
-            rt.convertToPoly(copy)
             created.append(copy)
-            for (verts, tris), name in zip(result['pieces'], result['names']):
-                created.append(_make_ucx_mesh(name, verts, tris))
+            copy.name = export
+            if str(copy.name) != export:
+                raise ValueError('occupied name ' + export)
+            rt.convertToPoly(copy)
+            for (verts, tris), name in zip(result['pieces'], pieces):
+                node = _make_ucx_mesh(name, verts, tris)
+                created.append(node)
+                if str(node.name) != name:
+                    raise ValueError('occupied name ' + name)
+                core.assert_world_bounds(_bounds_of(_read_world(node)[0]), _bounds_of(verts))
         return created, current['report']
     except Exception:
         if created:

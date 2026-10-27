@@ -1,0 +1,19 @@
+Max 2024.2.5 (26.2.5.192) Python 3.10
+wrapper status=ok exit_code=0 seconds=42.5
+sha256=1b1b7b42eb27a28f92595e35e2e33216caae9766cd07a5e5a925775fd9d5aceb
+
+AGR_REVIEW_R1 mesh=1 poly=1 plain=1 modifier=1 clipped_tris=16 stale=1 names=1
+AGR_NATIVE_UCX_TEXEL clean=2 planted=2 dry_run_unchanged=true originals_unchanged=true texel_read_only=true
+AGR_NATIVE_COMPLETE clean=3 planted=3 dry_run_unchanged=true originals_unchanged=true
+
+physical_distance_transforms=120/120
+ucx_stale_preview=stale or altered ucx preview; run dry-run again
+ucx_occupied_name=occupied name name_control_AGR_ucx_
+ucx_existing_name=occupied name UCX_occupied_src_01
+ucx_same_name_selection=occupied name same_name_AGR_ucx_
+
+mesh/poly emitted bounds (19,29,40)-(21,31,42) triangles=12
+plain emitted bounds (4.5,5.5,7)-(5.5,6.5,8)
+modifier read bounds (9.5,-0.5,0)-(10.5,0.5,1) triangles=12
+clipped emitted bounds (20,30,40)-(22,32,42) faces=16
+stale_nodes=0 second_apply_nodes=0 existing_name_nodes=0 same_name_nodes=0

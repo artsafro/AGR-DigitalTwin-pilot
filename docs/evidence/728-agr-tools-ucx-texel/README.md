@@ -4,24 +4,44 @@ Synthetic fixtures only. The package bundles a stdlib slice of
 `tools/methods/ucx/ucx_variants.py` (single-hull, kernel-boxes, slice-prisms),
 the stdlib UCX audit, and the texel formula from
 `src/dt_ai/ops/texel_density_readout.py`. No team-script line is in the MZP.
-Final binaries: `G:/Мой диск/AGR-evidence/728-agr-tools-ucx-texel/`
-(`AGR-Tools-0.3.0-c.mzp`, `AGR-Tools-0.3.0-d.mzp`). Headless Max cannot
-`fileIn` a startup script whose path contains `Мой диск` (the written path
-becomes `???`), so the native run used the ASCII fallback `C:/x/728/`.
+Final binaries for this review round: `tmp/728-mzp/AGR-Tools-0.3.0-g.mzp`
+and `AGR-Tools-0.3.0-h.mzp`. Headless Max cannot `fileIn` a startup script
+whose path contains `Мой диск` (the written path becomes `???`); the native
+run pointed `AGR_TEST_PACKAGE` at the ASCII worktree copy.
 
 ## Build
 
-Two fresh builds, SHA256
-`450bd61bcae1e4fd122cbfe76512aa5c72682954d10ac321aaa430f388d0b24a`.
+Two fresh builds after review round 1, SHA256
+`1b1b7b42eb27a28f92595e35e2e33216caae9766cd07a5e5a925775fd9d5aceb`
+(`AGR-Tools-0.3.0-g.mzp` and `AGR-Tools-0.3.0-h.mzp`, identical).
 
 ## Headless install
 
-Max 2024.2.5 (26.2.5.192), Python 3.10: wrapper status `ok`, native exit **0**,
-43.2 s.
+Max 2024.2.5 (26.2.5.192), Python 3.10, review round 1: wrapper status `ok`,
+native exit **0**, 42.5 s. Markers:
 
-Max 2026.3 (28.3.0.30732), Python 3.11: wrapper status `ok`, the same
-completion markers, 42.3 s. Native exit **4294967166** is the pre-existing
-`polyunwrapper_autoload.mse` CLR startup error, not a fixture failure.
+```
+AGR_REVIEW_R1 mesh=1 poly=1 plain=1 modifier=1 clipped_tris=16 stale=1 names=1
+AGR_NATIVE_UCX_TEXEL clean=2 planted=2 dry_run_unchanged=true originals_unchanged=true texel_read_only=true
+AGR_NATIVE_COMPLETE clean=3 planted=3 dry_run_unchanged=true originals_unchanged=true
+```
+
+xView physical-distance matrix on this run: **120/120**. Emitted-node readback:
+
+| Case | Read / emitted world bounds (m) | Result |
+|---|---|---|
+| Editable Mesh, pos (20,30,40), scale (2,2,2) | (19,29,40)–(21,31,42), 12 triangles | pass, source snapshot unchanged |
+| Editable Poly, same transform | same bounds, 12 triangles | pass |
+| Plain Poly translate (5,6,7) | (4.5,5.5,7)–(5.5,6.5,8) | pass |
+| XForm modifier +10 m | (9.5,-0.5,0)–(10.5,0.5,1) | pass |
+| Clipped cube, same pos/scale | 16 triangles, bounds (20,30,40)–(22,32,42) | pass |
+| Stale preview after +10 m | error `stale or altered ucx preview`, 0 nodes | pass |
+| Second apply / existing `UCX_occupied_src_01` / two nodes named `same_name` | `occupied name …`, 0 new nodes | pass |
+
+Max 2026 was not re-run on this sha. The earlier 0.3.0 package on Max 2026.3
+(28.3.0.30732) finished the fixture with wrapper status `ok` and native exit
+**4294967166** from the pre-existing `polyunwrapper_autoload.mse` CLR startup
+error.
 
 Listener line, both versions:
 
