@@ -6,17 +6,17 @@ Row ids are cited by WHEN.md. Field meanings: docs/methods/README.md#row-fields.
 | Row | Object | Variant | Build s | Model tris | UCX pcs / tris / limit | UCX check | Failed / open checks | Closed convex | Model->UCX max / p95 m | UCX outside model | Envelope uncovered | xView V / F | Texel min / median px/m | MatID | File KB | Render SSIM | Deviation src->variant max / p95 m | Closed shells (share) | Tris / budget |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | R1 | kpp1 | source-as-is | - | 24988 | 33 / 396 / 15000 | open | UCX shape and coverage: not_run | 33/33 | - / - | - | - | 0 / 0 | - / - | pass | 569 | - | 0.0001 / 0.0 | 32/155 (3.3%) | 24988 / 150000 (16.7%) |
-| R2 | kpp1 | kernel-prisms | 0.08 | 3896 | 0 / - / - | fail | UCX present: fail | -/0 | - / - | - | - | 198 / 4921 | - / - | pass | 69 | - | 0.75 / 0.275 | 1/2 (3.0%) | 3896 / 150000 (2.6%) |
-| R3 | kpp1 | blender-gn-union | 4.30 | 7539 | 0 / - / - | fail | UCX present: fail | -/0 | - / - | - | - | 57 / 1946 | - / - | pass | 168 | - | 0.75 / 0.275 | 1/2 (1.5%) | 7539 / 150000 (5.0%) |
-| R4 | kpp1 | max-pymxs-cleanup | 0.15 | 26821 | 33 / 396 / 15000 | open | UCX shape and coverage: not_run | 33/33 | - / - | - | - | 0 / 1329 | - / - | pass | 681 | - | 0.0001 / 0.0 | 133/155 (98.5%) | 26821 / 150000 (17.9%) |
+| R2 | kpp1 | kernel-prisms | 0.07 | 3896 | 0 / - / - | fail | UCX present: fail | -/0 | - / - | - | - | 198 / 4921 | - / - | pass | 69 | - | 0.75 / 0.275 | 1/2 (3.0%) | 3896 / 150000 (2.6%) |
+| R3 | kpp1 | blender-gn-union | 4.22 | 7539 | 0 / - / - | fail | UCX present: fail | -/0 | - / - | - | - | 57 / 1946 | - / - | pass | 168 | - | 0.75 / 0.275 | 0/2 (0.0%) | 7539 / 150000 (5.0%) |
+| R4 | kpp1 | max-pymxs-cleanup | 0.18 | 26821 | 33 / 396 / 15000 | open | UCX shape and coverage: not_run | 33/33 | - / - | - | - | 0 / 1329 | - / - | pass | 681 | - | 0.0001 / 0.0 | 113/155 (98.2%) | 26821 / 150000 (17.9%) |
 | R5 | ac08 | source-as-is | - | 386 | 1 / 12 / 15000 | open | UCX shape and coverage: not_run | 1/1 | - / - | - | - | 0 / 0 | - / - | pass | 26 | - | 0.0001 / 0.0 | 0/3 (0.0%) | 386 / 150000 (0.3%) |
 | R6 | ac08 | kernel-prisms | 0.02 | 40 | 0 / - / - | fail | UCX present: fail | -/0 | - / - | - | - | 0 / 19 | - / - | pass | 15 | - | 0.1028 / 0.0915 | 2/2 (100.0%) | 40 / 150000 (0.0%) |
-| R7 | ac08 | blender-gn-union | 0.06 | 44 | 0 / - / - | fail | UCX present: fail | -/0 | - / - | - | - | 0 / 0 | - / - | pass | 15 | - | 0.1028 / 0.0915 | 1/1 (100.0%) | 44 / 150000 (0.0%) |
+| R7 | ac08 | blender-gn-union | 0.07 | 44 | 0 / - / - | fail | UCX present: fail | -/0 | - / - | - | - | 0 / 0 | - / - | pass | 15 | - | 0.1028 / 0.0915 | 1/1 (100.0%) | 44 / 150000 (0.0%) |
 | R8 | ac08 | max-pymxs-cleanup | 0.05 | 414 | 1 / 12 / 15000 | open | UCX shape and coverage: not_run | 1/1 | - / - | - | - | 0 / 19 | - / - | pass | 33 | - | 0.0001 / 0.0 | 3/3 (100.0%) | 414 / 150000 (0.3%) |
 | R9 | tow02 | source-as-is | - | 70678 | 0 / - / - | fail | UCX present: fail | -/0 | - / - | - | - | 0 / 147 | - / - | pass | 1359 | - | 0.0001 / 0.0001 | 28/1375 (24.6%) | 70678 / 150000 (47.1%) |
-| R10 | tow02 | kernel-prisms | 0.20 | 13552 | 0 / - / - | fail | UCX present: fail | -/0 | - / - | - | - | 56 / 10751 | - / - | pass | 252 | - | 6.3392 / 0.9371 | 28/29 (9.2%) | 13552 / 150000 (9.0%) |
-| R11 | tow02 | blender-gn-union | 23.57 | 39446 | 0 / - / - | fail | UCX present: fail | -/0 | - / - | - | - | 379 / 3533 | - / - | pass | 887 | - | 6.3392 / 0.9371 | 0/1 (0.0%) | 39446 / 150000 (26.3%) |
-| R12 | tow02 | max-pymxs-cleanup | 0.32 | 82117 | 0 / - / - | fail | UCX present: fail | -/0 | - / - | - | - | 0 / 3613 | 0.0 / 16.49 | pass | 1922 | - | 0.0001 / 0.0001 | 1276/1375 (97.3%) | 82117 / 150000 (54.7%) |
+| R10 | tow02 | kernel-prisms | 0.19 | 13552 | 0 / - / - | fail | UCX present: fail | -/0 | - / - | - | - | 56 / 10751 | - / - | pass | 252 | - | 6.3392 / 0.9371 | 28/29 (9.2%) | 13552 / 150000 (9.0%) |
+| R11 | tow02 | blender-gn-union | 23.06 | 39446 | 0 / - / - | fail | UCX present: fail | -/0 | - / - | - | - | 379 / 3533 | - / - | pass | 887 | - | 6.3392 / 0.9371 | 0/1 (0.0%) | 39446 / 150000 (26.3%) |
+| R12 | tow02 | max-pymxs-cleanup | 0.33 | 82117 | 0 / - / - | fail | UCX present: fail | -/0 | - / - | - | - | 0 / 3613 | 0.0 / 16.49 | pass | 1922 | - | 0.0001 / 0.0001 | 874/1375 (41.8%) | 82117 / 150000 (54.7%) |
 
 Null metrics and why:
 

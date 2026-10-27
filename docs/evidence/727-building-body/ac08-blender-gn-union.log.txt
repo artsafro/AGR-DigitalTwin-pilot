@@ -1,4 +1,4 @@
-ac08 blender-gn-union driver_seconds=0.92 exit=0
+ac08 blender-gn-union driver_seconds=1.07 exit=0
 Blender 5.1.2 (hash ec6e62d40fa9 built 2026-05-19 01:37:34)
-BODY_BLENDER {"ok": true, "mode": "gn-union", "blender": "5.1.2", "wall_time_s": 0.064, "triangles": 44}
-report: {"ok": true, "mode": "gn-union", "blender": "5.1.2", "wall_time_s": 0.064, "triangles": 44}
+BODY_BLENDER {"ok": true, "mode": "gn-union", "blender": "5.1.2", "openings": [], "wall_time_s": 0.066, "triangles": 44}
+report: {"ok": true, "mode": "gn-union", "blender": "5.1.2", "openings": [], "wall_time_s": 0.066, "triangles": 44}

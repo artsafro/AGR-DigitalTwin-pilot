@@ -6,6 +6,10 @@ Batch: `tools/methods/body/run_benchmarks.py` (source sha256 check -> source rea
 `tools/methods/run_variant.py`); outputs under `C:/x/methods/building-body/<bench>/<variant>/`, DCC logs as text
 in `docs/evidence/727-building-body/`. Budget [D010]: one mid-poly master <= 150 000 triangles per OKS FBX.
 
+Every standalone writer (`contours.py`, `kernel_prisms.py`, `body_blender.py`, `max_cleanup_pymxs.py`) refuses,
+before any side effect, an output or report that is or aliases (same path, hard link, symlink) its input or each
+other (exit 4 / RuntimeError, nothing written).
+
 Shared "drawing" input of the two from-contour variants (`tools/methods/body/contours.py`, written to
 `C:/x/methods/building-body/<bench>/contours.json`, marked `"synthetic_drawing": true`): the benchmark set has
 no DWG plan per object, so plan contours and level heights are **measured from the source mesh**, the same
@@ -41,9 +45,17 @@ under 0.5 m2 are dropped and listed. kpp1: 9 bands, ac08: 2, tow02: 13; no empty
 - Steps: band polygons -> cap faces at z0 (`mathutils.geometry.tessellate_polygon`, holes kept), face attribute
   `band_h`; node tree Extrude Mesh (faces, offset = (0, 0, band_h)) + Flip Faces of the caps as bottoms -> Join
   -> Merge by Distance 0.01 mm -> Mesh Boolean Union (Exact, self intersection) -> Merge by Distance 1 mm; modifier
-  applied, coplanar boolean seams dissolved (0.1 deg), triangulated, FBX.
-- Limits: "boolean openings" of the issue are not cut: the benchmarks carry no opening schedule (no DWG), so the
-  cutter set would be invented; same flat-band and courtyard limits as variant 1. On TOW02 the driver reports
+  applied; then openings (below); coplanar boolean seams dissolved (0.1 deg), triangulated, FBX.
+- Boolean openings: `contours.json` may carry an opening schedule `"openings": [{"id", "min": [x,y,z],
+  "max": [x,y,z]}]` (one axis-aligned cutter box per opening, validated fail-closed by
+  `tools/methods/body/openings.py`: unknown key, duplicate id, non-finite or empty box -> error naming the opening).
+  Each box is subtracted with a Boolean modifier (Difference, Exact), one at a time; an opening that removes no
+  volume is an error naming it; the report lists `openings: [{id, removed_m3}]`. Capability tested on a SYNTHETIC
+  schedule only (`test_blender_gn_cuts_a_synthetic_opening_and_the_readback_shows_it`: 4 x 4 x 3 m body, 1 x 0.5 x
+  1 m notch -> removed 0.5 m3, read-back volume 47.5 m3, still one closed shell).
+- Limits: the benchmark rows (R3, R7, R11) cut no opening: the benchmark set carries no opening schedule and no
+  plan drawing, and a cutter set derived from the model would be invented architecture; same flat-band and
+  courtyard limits as variant 1. On TOW02 the driver reports
   54 388 triangles after triangulation but the FBX reads back with 39 446 (R11); the gap is not explained yet.
 
 ## 3. max-pymxs-cleanup - 3ds Max pymxs edit-poly clean-up of the supplied FBX
