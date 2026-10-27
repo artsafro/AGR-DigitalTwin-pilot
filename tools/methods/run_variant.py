@@ -8,7 +8,8 @@ Pattern: new-case: methods catalog metric runner (one comparable row per variant
 
 Row fields: wall time, triangles, objects, xView overlaps (shared 2 mm / 5 mm / 0.81 deg), UCX check (V010 +
 V012 names), texel (min / median px/m), file size, MatID (slot integrity), render-vs-reference SSIM (null
-without a reference picture or render), and the class metrics (ucx-collisions: model -> UCX fit).
+without a reference picture or render), and the class metrics (ucx-collisions: model -> UCX fit; windows-glazing: glass objects, glass triangle
+share, frame depth).
 A metric that cannot be measured is null with a reason, never a made-up number.
 Exit 0 row appended; 2 measurement error (nothing appended); 4 refused (bad arguments, unknown benchmark or
 class, results path aliasing an input).
@@ -163,6 +164,8 @@ def build_row(*, rb: dict, extra: dict | None, output: Path, bench: dict, cls: s
     }
     if cls == "ucx-collisions":
         row["class_metrics"]["ucx_fit"] = metrics.ucx_fit(rb, extra)
+    if cls == "windows-glazing":
+        row["class_metrics"]["windows"] = metrics.windows_glazing(rb, extra)
     row["measure_time_s"] = measure_s
     return row
 
