@@ -1,0 +1,5 @@
+ac08 max-pymxs-cleanup driver_seconds=39.33 exit=0
+dcc_batch status=ok exit_code=4294967166 seconds=39.2
+product: 3ds Max 2026.3 (28.3.0.30732)
+BODY_MAX {"ok": true, "max": "#(28000, 68, 0, 28, 3, 0, 30732, 2026, \".3\")", "objects": {"SM_Nku_1_Main": {"before_v_f": [213, 386], "after_v_f": [213, 389]}}, "wall_time_s": 0.052, "weld_system_units": 0.0010000000474974513, "system_unit": "meters"}
+report: {"ok": true, "max": "#(28000, 68, 0, 28, 3, 0, 30732, 2026, \".3\")", "wall_time_s": 0.052, "weld_system_units": 0.0010000000474974513, "system_unit": "meters"}

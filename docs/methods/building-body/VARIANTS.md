@@ -43,7 +43,8 @@ under 0.5 m2 are dropped and listed. kpp1: 9 bands, ac08: 2, tow02: 13; no empty
   -> Merge by Distance 0.01 mm -> Mesh Boolean Union (Exact, self intersection) -> Merge by Distance 1 mm; modifier
   applied, coplanar boolean seams dissolved (0.1 deg), triangulated, FBX.
 - Limits: "boolean openings" of the issue are not cut: the benchmarks carry no opening schedule (no DWG), so the
-  cutter set would be invented; same flat-band and courtyard limits as variant 1.
+  cutter set would be invented; same flat-band and courtyard limits as variant 1. On TOW02 the driver reports
+  54 388 triangles after triangulation but the FBX reads back with 39 446 (R11); the gap is not explained yet.
 
 ## 3. max-pymxs-cleanup - 3ds Max pymxs edit-poly clean-up of the supplied FBX
 
