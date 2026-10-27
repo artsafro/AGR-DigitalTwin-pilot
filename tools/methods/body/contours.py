@@ -11,8 +11,8 @@ heights). It is marked `"synthetic_drawing": true` in the JSON: it is not a draw
   LEVEL_MERGE_M merge into the lower one. A band is the span between two consecutive levels.
 - Band contour: plan (XY) polygons from (a) the horizontal sections of every triangle at SECTION_FRACTIONS of
   the band height, grown by GAP_CLOSE_M (round, 2 segments per quarter), outer outlines filled, shrunk back by GAP_CLOSE_M - wall gaps
-  (openings) up to 1.5 m close, inner rooms and courtyards are filled (limit) - and (b) the horizontal faces lying at the band's bottom or
-  top level; pieces below MIN_PIECE_M2 dropped (listed), the union simplified by SIMPLIFY_M. A band with no
+  (openings) up to 1.5 m close, inner rooms and courtyards are filled (limit) - and (b) the band's own caps (horizontal faces looking down at its bottom level or up
+  at its top level); pieces below MIN_PIECE_M2 dropped (listed), the union simplified by SIMPLIFY_M. A band with no
   polygon is listed in `empty_bands` (no guess, no copy from the band below).
 """
 from __future__ import annotations
@@ -111,21 +111,37 @@ def band_contour(v, t, z0: float, z1: float) -> tuple[list[Polygon], list[float]
     n = np.cross(p[:, 1] - p[:, 0], p[:, 2] - p[:, 0])
     ln = np.linalg.norm(n, axis=1)
     with np.errstate(invalid="ignore", divide="ignore"):
-        nz = np.abs(n[:, 2]) / np.maximum(ln, 1e-12)
+        nz = n[:, 2] / np.maximum(ln, 1e-12)
     zc = p[:, :, 2].mean(1)
-    flat = (nz >= HORIZONTAL_NZ) & (ln > 0) & ((np.abs(zc - z0) < LEVEL_ROUND_M) | (np.abs(zc - z1) < LEVEL_ROUND_M))
+    # the band's own caps: faces looking down at its bottom level, faces looking up at its top level
+    flat = (ln > 0) & (((nz <= -HORIZONTAL_NZ) & (np.abs(zc - z0) < LEVEL_ROUND_M)) |
+                       ((nz >= HORIZONTAL_NZ) & (np.abs(zc - z1) < LEVEL_ROUND_M)))
     polys += [Polygon(tri[:, :2]) for tri in p[flat]]
     polys = [q for q in polys if q.area > 0]
     if not polys:
         return [], []
     merged = shapely.union_all(shapely.set_precision(np.array(polys, dtype=object), PRECISION_M)).simplify(SIMPLIFY_M)
+    merged = shapely.make_valid(merged)
     keep, dropped = [], []
     for q in shapely.get_parts(merged):
         if q.geom_type != "Polygon":
             continue
-        q = Polygon(q.exterior, [r for r in q.interiors if Polygon(r).area >= MIN_PIECE_M2])
+        q = simple_rings(q)
         (keep if q.area >= MIN_PIECE_M2 else dropped).append(q)
     return [orient(q, 1.0) for q in keep], [round(q.area, 4) for q in dropped]
+
+
+def simple_rings(q: Polygon) -> Polygon:
+    """No vertex shared between rings (a prism side would be non-manifold there): a hole under MIN_PIECE_M2 or
+    touching the outline or another hole at a vertex is filled (a plan contour has no such touching ring)."""
+    seen = {tuple(c) for c in q.exterior.coords[:-1]}
+    holes = []
+    for r in sorted(q.interiors, key=lambda r: -Polygon(r).area):
+        pts = {tuple(c) for c in r.coords[:-1]}
+        if Polygon(r).area >= MIN_PIECE_M2 and not (pts & seen) and len(pts) == len(r.coords) - 1:
+            holes.append(r)
+            seen |= pts
+    return Polygon(q.exterior, holes)
 
 
 def contours(rb: dict) -> dict:

@@ -112,3 +112,49 @@ def test_cli_missing_source_fbx_is_an_error_and_appends_nothing(tmp_path):
     args[args.index("ucx-collisions")] = "building-body"
     assert rv.main(args) == 2
     assert not (tmp_path / "results.jsonl").exists()
+
+
+# ---- shared contour input + our kernel's prisms ---------------------------------------------------------------------
+
+from tests.methods.test_methods_catalog import _load, TOOLS  # noqa: E402
+
+bc = _load("body_contours", TOOLS / "body" / "contours.py")
+kp = _load("body_kernel_prisms", TOOLS / "body" / "kernel_prisms.py")
+
+
+def test_two_storey_box_gives_two_bands_and_closed_prisms_matching_it():
+    # 10 x 6 m storey 0..3 m under a 6 x 6 m storey 3..6 m (synthetic, closed boxes)
+    rb = rb_of(cube("SM_Test_Main", (0, 0, 0), (10, 6, 3)), cube("SM_Test_Main_2", (0, 0, 3), (6, 6, 6)))
+    c = bc.contours(rb)
+    assert c["synthetic_drawing"] is True and c["levels_m"] == [0.0, 3.0, 6.0] and not c["empty_bands"]
+    areas = [round(sum(q.area for q in bc.polygons(b)), 2) for b in c["bands"]]
+    assert areas == [60.0, 36.0]
+    m = kp.prisms(c)
+    out = rb_of(mesh("SM_Test_Main", m["vertices"], m["triangles"], uv=False))
+    b = mm.building_body(out, rb)
+    assert b["deviation_max_m"] == pytest.approx(0.0, abs=1e-6)
+    # each prism is closed, but stacked prisms share the edge (0,0,3)-(0,6,3) four times: one non-manifold shell
+    assert b["components"] == 1 and b["closed_shell_share"] == 0.0
+    single = mm.building_body(rb_of(mesh("SM_Test_Main", *[kp.prisms({"bands": c["bands"][:1]})[k]
+                                                           for k in ("vertices", "triangles")], uv=False)), None)
+    assert single["closed_shell_share"] == 1.0
+
+
+def test_hole_touching_the_outline_is_filled_never_a_repeated_vertex():
+    from shapely.geometry import Polygon
+
+    q = bc.simple_rings(Polygon([(0, 0), (10, 0), (10, 10), (0, 10)], [[(0, 0), (3, 1), (1, 3)], [(5, 5), (7, 5), (7, 7), (5, 7)]]))
+    assert len(q.interiors) == 1 and Polygon(q.interiors[0]).area == 4.0  # touching triangle hole filled
+    kp.prisms({"bands": [{"z0": 0, "z1": 3, "polygons": [{"exterior": list(q.exterior.coords)[:-1],
+                                                           "holes": [list(r.coords)[:-1] for r in q.interiors]}]}]})
+
+
+def test_contours_fail_closed_on_empty_or_nonfinite_source():
+    with pytest.raises(ValueError, match="no model triangle"):
+        bc.contours(rb_of())
+    bad = cube()
+    bad["face_geometry"]["vertices"][0] = [float("inf"), 0, 0]
+    with pytest.raises(ValueError, match="non-finite"):
+        bc.contours(rb_of(bad))
+    with pytest.raises(ValueError, match="no band polygon"):
+        kp.prisms({"bands": []})
