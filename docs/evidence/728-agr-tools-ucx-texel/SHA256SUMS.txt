@@ -1,0 +1,2 @@
+450bd61bcae1e4fd122cbfe76512aa5c72682954d10ac321aaa430f388d0b24a  AGR-Tools-0.3.0-c.mzp
+450bd61bcae1e4fd122cbfe76512aa5c72682954d10ac321aaa430f388d0b24a  AGR-Tools-0.3.0-d.mzp

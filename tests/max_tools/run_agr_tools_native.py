@@ -24,9 +24,9 @@ rt.execute('global AGRToolsInstallRoot; global AGRToolsStartupRoot')
 rt.AGRToolsInstallRoot = str(OUT / 'installed') + '/'
 rt.AGRToolsStartupRoot = str(OUT / 'startup') + '/'
 rt.makeDir(rt.AGRToolsStartupRoot, all=True)
-rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.2.0.mzp'))))
+rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.3.0.mzp'))))
 assert rt.execute('global AGRToolsRegistered; AGRToolsRegistered == true'), 'MZP macros not registered'
-print('AGR_INSTALL_REGISTERED xView Cleanup MatID Open Nudge NudgeApply Atlas AtlasApply')
+print('AGR_INSTALL_REGISTERED xView Cleanup MatID Open Nudge NudgeApply Atlas AtlasApply Ucx UcxApply Texel')
 sys.path.insert(0, str(OUT / 'installed'))
 import runtime as agr
 
@@ -505,10 +505,10 @@ for macro in ('AGRToolsNudge', 'AGRToolsAtlas'):
 results['guards']['registered_uv_buttons'] = 2
 # Startup re-registration and repeated install must not overwrite installed files.
 rt.AGRToolsRegistered = False
-rt.fileIn(str(OUT / 'startup/AGRTools-0.2.0.ms'))
+rt.fileIn(str(OUT / 'startup/AGRTools-0.3.0.ms'))
 assert rt.AGRToolsRegistered
 install_hash = hashlib.sha256((OUT / 'installed/runtime.py').read_bytes()).hexdigest()
-results['guards']['repeat_install'] = raises(lambda: rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.2.0.mzp')))), 'already exists')
+results['guards']['repeat_install'] = raises(lambda: rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.3.0.mzp')))), 'already exists')
 assert hashlib.sha256((OUT / 'installed/runtime.py').read_bytes()).hexdigest() == install_hash
 assert hashlib.sha256((OUT / 'fixture-source.max').read_bytes()).hexdigest() == source_hash
 results['version'] = list(rt.maxVersion())
@@ -589,6 +589,101 @@ with (OUT / 'transform-results.json').open('x', encoding='utf-8') as f:
     json.dump(transform_results, f, indent=2)
 assert all(row['passed'] for row in transform_results), 'physical-distance transform regressions: ' + str([r for r in transform_results if not r['passed']])
 results['guards']['physical_distance_transforms'] = len(transform_results)
+
+# UCX collision and texel readout. Synthetic boxes only; sources are read back unchanged.
+rt.units.SystemType = rt.name('meters')
+ucx_box = rt.box(name='synthetic_ucx_box', length=1, width=1, height=1)
+rt.convertToPoly(ucx_box)
+ucx_before = agr.snapshot([ucx_box])
+ucx_count = len(list(rt.objects))
+ucx_dry = agr.ucx_preview([ucx_box])
+assert agr.snapshot([ucx_box]) == ucx_before, 'ucx dry-run mutated its input'
+assert len(list(rt.objects)) == ucx_count, 'ucx dry-run created nodes'
+assert ucx_dry['report']['plan']['kind'] == 'near-convex-box'
+assert ucx_dry['report']['plan']['variant'] == 'single-hull'
+assert ucx_dry['report']['plan']['pieces'] == 1 and ucx_dry['report']['plan']['triangles'] == 12
+assert findings(ucx_dry['report']) == {}
+assert ucx_dry['report']['plan']['names'] == ['UCX_synthetic_ucx_box_01']
+ucx_created, ucx_after = agr.ucx_apply([ucx_box], ucx_dry)
+assert agr.snapshot([ucx_box]) == ucx_before, 'ucx apply changed the source'
+assert len(ucx_created) == 2
+assert rt.getNodeByName('UCX_synthetic_ucx_box_01') is not None
+assert findings(ucx_after) == {}
+bad_kind = rt.box(name='synthetic_ucx_kind', length=1, width=1, height=1)
+rt.convertToPoly(bad_kind)
+rt.setUserProp(bad_kind, 'AGR_UCX_KIND', 'part-boxes')
+kind_count = len(list(rt.objects))
+results['guards']['ucx_unmapped_kind'] = raises(lambda: agr.ucx_preview([bad_kind]), 'part-boxes')
+assert len(list(rt.objects)) == kind_count
+
+def _corner(lo, hi):
+    x0, y0, z0 = lo
+    x1, y1, z1 = hi
+    return [rt.point3(x0, y0, z0), rt.point3(x1, y0, z0), rt.point3(x1, y1, z0), rt.point3(x0, y1, z0),
+            rt.point3(x0, y0, z1), rt.point3(x1, y0, z1), rt.point3(x1, y1, z1), rt.point3(x0, y1, z1)]
+
+def _passage():
+    verts, faces = [], []
+    tris = [(0, 2, 1), (0, 3, 2), (4, 5, 6), (4, 6, 7), (0, 1, 5), (0, 5, 4),
+            (1, 2, 6), (1, 6, 5), (2, 3, 7), (2, 7, 6), (3, 0, 4), (3, 4, 7)]
+    for lo, hi in (((0, 0, 0), (4, 1, 3)), ((0, 1, 0), (1, 4, 3))):
+        base = len(verts)
+        verts.extend(_corner(lo, hi))
+        faces.extend(rt.point3(a + base + 1, b + base + 1, c + base + 1) for a, b, c in tris)
+    node = rt.mesh(name='synthetic_ucx_passage', vertices=verts, faces=faces)
+    rt.convertToPoly(node)
+    return node
+
+passage = _passage()
+passage_before = agr.snapshot([passage])
+passage_count = len(list(rt.objects))
+passage_dry = agr.ucx_preview([passage])
+assert agr.snapshot([passage]) == passage_before and len(list(rt.objects)) == passage_count
+assert passage_dry['report']['plan']['kind'] == 'passage'
+assert passage_dry['report']['plan']['variant'] == 'kernel-boxes'
+assert passage_dry['report']['plan']['pieces'] == 2 and passage_dry['report']['plan']['triangles'] == 24, passage_dry['report']['plan']
+results['ucx'] = {
+    'clean_pieces': 1, 'clean_triangles': 12,
+    'planted_pieces': passage_dry['report']['plan']['pieces'],
+    'planted_triangles': passage_dry['report']['plan']['triangles'],
+    'planted_kind': passage_dry['report']['plan']['kind'],
+}
+
+def _rel(a, b):
+    return abs(a - b) / max(abs(a), abs(b))
+
+texel_clean = make_uv_quad('synthetic_texel_clean', [(0, 0), (1, 0), (1, 1), (0, 1)], 'unused=none', 'brick')
+rt.setUserProp(texel_clean, 'AGR_TEXEL_PROFILE', 'VPM')
+rt.setUserProp(texel_clean, 'AGR_TEXEL_MAP', 'brick=1024')
+texel_before = agr.snapshot([texel_clean])
+texel_count = len(list(rt.objects))
+texel_ok = agr.texel_preview([texel_clean])
+assert agr.snapshot([texel_clean]) == texel_before and len(list(rt.objects)) == texel_count
+assert findings(texel_ok['report']) == {}, texel_ok['report']
+clean_min = texel_ok['report']['plan']['meshes'][0]['min_px_per_m']
+clean_med = texel_ok['report']['plan']['meshes'][0]['median_px_per_m']
+assert _rel(clean_min, 1024.0) < 1e-6 and _rel(clean_med, 1024.0) < 1e-6, (clean_min, clean_med)
+texel_bad = make_uv_quad('synthetic_texel_planted', [(0, 0), (0.1, 0), (0.1, 0.1), (0, 0.1)], 'unused=none', 'brick')
+rt.setUserProp(texel_bad, 'AGR_TEXEL_PROFILE', 'VPM')
+rt.setUserProp(texel_bad, 'AGR_TEXEL_MAP', 'brick=1024')
+texel_planted = agr.texel_preview([texel_bad])
+assert findings(texel_planted['report']) == {
+    'texel_outside': list(range(1, int(rt.polyop.getNumFaces(texel_bad)) + 1))}, texel_planted['report']
+planted_min = texel_planted['report']['plan']['meshes'][0]['min_px_per_m']
+assert _rel(planted_min, 102.4) < 1e-6, planted_min
+assert agr.snapshot([texel_bad]) == agr.snapshot([texel_bad])
+missing = make_uv_quad('synthetic_texel_unmapped', [(0, 0), (1, 0), (1, 1), (0, 1)], 'unused=none', 'brick')
+rt.setUserProp(missing, 'AGR_TEXEL_PROFILE', 'VPM')
+rt.setUserProp(missing, 'AGR_TEXEL_MAP', 'stone=1024')
+results['guards']['texel_unmapped'] = raises(lambda: agr.texel_preview([missing]), 'brick')
+results['guards']['texel_empty'] = raises(lambda: agr.texel_preview([]), 'empty')
+results['guards']['ucx_empty'] = raises(lambda: agr.ucx_preview([]), 'empty')
+for macro, node in (('AGRToolsUcx', ucx_box), ('AGRToolsTexel', texel_clean)):
+    rt.select(node)
+    assert rt.macros.run('AGR Tools', macro), macro
+results['texel'] = {'clean_min': clean_min, 'clean_median': clean_med, 'planted_min': planted_min}
+results['guards']['registered_ucx_texel_buttons'] = 2
 with (OUT / 'results.json').open('x', encoding='utf-8') as f:
     json.dump(results, f, indent=2, default=str, allow_nan=False)
+    print('AGR_NATIVE_UCX_TEXEL clean=2 planted=2 dry_run_unchanged=true originals_unchanged=true texel_read_only=true')
     print('AGR_NATIVE_COMPLETE clean=3 planted=3 dry_run_unchanged=true originals_unchanged=true')

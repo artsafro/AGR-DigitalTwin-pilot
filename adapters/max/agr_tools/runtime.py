@@ -4,13 +4,15 @@ Native xView uses 0.002 m vertices and 0.005 m faces.
 """
 import json
 
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 CODES = {'xview': {'overlap_vertices', 'overlap_faces'},
          'matid': {'udim_id', 'empty_id', 'empty_slot', 'missing_material'},
          'cleanup': {'remove_custom_attributes', 'clear_user_defined_lines',
                      'delete_map_channels', 'rename_map_channel_1'},
          'nudge': {'tile_move'},
-         'atlas': {'atlas_cell'}}
+         'atlas': {'atlas_cell'},
+         'ucx': {'ucx_audit', 'ucx_unmeasurable', 'at_threshold'},
+         'texel': {'texel_outside', 'texel_dropped'}}
 UV_TOL = 1e-6
 
 
@@ -69,6 +71,36 @@ def _validate_plan(tool, plan):
             raise ValueError('incomplete plan')
         if not isinstance(plan['tiles'], list) or not isinstance(plan['cells'], dict) or not isinstance(plan['dropped'], list):
             raise ValueError('incomplete plan')
+    elif tool == 'ucx':
+        if set(plan) != {'variant', 'kind', 'pieces', 'triangles', 'limit', 'names', 'audit', 'dropped'}:
+            raise ValueError('incomplete plan')
+        if not isinstance(plan['variant'], str) or not plan['variant'] or not isinstance(plan['kind'], str) or not plan['kind']:
+            raise ValueError('incomplete plan')
+        for key in ('pieces', 'triangles', 'limit'):
+            if type(plan[key]) is not int or plan[key] < 1:
+                raise ValueError('incomplete plan')
+        if not isinstance(plan['names'], list) or not plan['names'] or any(not isinstance(n, str) or not n for n in plan['names']):
+            raise ValueError('incomplete plan')
+        audit = plan['audit']
+        if not isinstance(audit, dict) or set(audit) != {'collision', 'unmeasurable', 'mask_bad_count', 'closed'}:
+            raise ValueError('incomplete plan')
+        if not isinstance(audit['collision'], list) or not isinstance(audit['unmeasurable'], list):
+            raise ValueError('incomplete plan')
+        if type(audit['mask_bad_count']) is not int or not isinstance(audit['closed'], bool):
+            raise ValueError('incomplete plan')
+    elif tool == 'texel':
+        if set(plan) != {'meshes', 'materials', 'dropped'}:
+            raise ValueError('incomplete plan')
+        for key in ('meshes', 'materials'):
+            if not isinstance(plan[key], list):
+                raise ValueError('incomplete plan')
+            for row in plan[key]:
+                if not isinstance(row, dict) or set(row) != {'name', 'min_px_per_m', 'median_px_per_m'}:
+                    raise ValueError('incomplete plan')
+                if not isinstance(row['name'], str) or not row['name']:
+                    raise ValueError('unmapped mesh or material')
+    else:
+        raise ValueError('incomplete plan')
     for item in plan['dropped']:
         if not isinstance(item, dict) or 'face' not in item or 'reason' not in item:
             raise ValueError('incomplete drop')
@@ -82,13 +114,13 @@ def parse_report(text):
     if not isinstance(r, dict) or 'tool' not in r or not isinstance(r.get('tool'), str) or r['tool'] not in CODES:
         raise ValueError('unsupported schema/tool')
     expected_keys = {'schema', 'tool', 'status', 'objects'}
-    if r['tool'] in ('nudge', 'atlas'):
+    if r['tool'] in ('nudge', 'atlas', 'ucx', 'texel'):
         expected_keys = expected_keys | {'plan'}
     if set(r) != expected_keys:
         raise ValueError('incomplete report')
     if type(r['schema']) is not int or r['schema'] != 1:
         raise ValueError('unsupported schema/tool')
-    if r['tool'] in ('nudge', 'atlas'):
+    if r['tool'] in ('nudge', 'atlas', 'ucx', 'texel'):
         _validate_plan(r['tool'], r['plan'])
     if not isinstance(r['objects'], list) or not r['objects']:
         raise ValueError('empty objects')
@@ -1111,17 +1143,213 @@ def atlas_apply(nodes, preview):
     return copies, after
 
 
+def _read_world(n):
+    """World-space triangle mesh in metres. Empty and non-finite geometry are errors."""
+    import math
+    api, target = _edit_target(n)
+    nv = int(api.getNumVerts(target))
+    nf = int(api.getNumFaces(target))
+    if not nv or not nf:
+        raise ValueError('empty mesh: ' + str(n.name))
+    to_m = _unit_m()
+    verts = []
+    for i in range(1, nv + 1):
+        p = api.getVert(target, i)
+        point = (float(p.x) * to_m, float(p.y) * to_m, float(p.z) * to_m)
+        if not all(math.isfinite(c) for c in point):
+            raise ValueError('non-finite vertex: ' + str(n.name))
+        verts.append(point)
+    tris = []
+    for i in range(1, nf + 1):
+        try:
+            raw = api.getFaceVerts(target, i)
+        except AttributeError:
+            try:
+                raw = api.getFace(target, i)
+            except AttributeError as exc:
+                raise ValueError('unsupported geometry: ' + str(n.name)) from exc
+        face = [int(v) - 1 for v in _as_indices(raw)]
+        if len(face) < 3:
+            raise ValueError('partial face: ' + str(n.name))
+        for k in range(1, len(face) - 1):
+            tris.append((face[0], face[k], face[k + 1]))
+    return verts, tris
+
+
+def _ucx_kind(n):
+    kind = _prop(n, 'AGR_UCX_KIND')
+    if kind is None:
+        return None
+    return kind
+
+
+def _ucx_plan(results):
+    kinds = []
+    variants = []
+    names = []
+    collision = []
+    unmeasurable = []
+    mask = 0
+    closed = True
+    for result in results:
+        kinds.append(result['kind'])
+        variants.append(result['variant'])
+        names.extend(result['names'])
+        collision.extend(result['audit']['collision'])
+        unmeasurable.extend(result['audit']['unmeasurable'])
+        mask += result['audit']['mask_bad_count']
+        closed = closed and result['audit']['closed']
+    return {
+        'variant': variants[0] if len(set(variants)) == 1 else ';'.join(variants),
+        'kind': kinds[0] if len(set(kinds)) == 1 else ';'.join(kinds),
+        'pieces': sum(result['pieces_count'] for result in results),
+        'triangles': sum(result['triangles'] for result in results),
+        'limit': min(result['limit'] for result in results),
+        'names': names,
+        'audit': {'collision': collision, 'unmeasurable': unmeasurable,
+                  'mask_bad_count': mask, 'closed': closed},
+        'dropped': [],
+    }
+
+
+def ucx_preview(nodes=None):
+    """Dry-run UCX pieces, triangle budget and the audit verdict. The scene is unchanged."""
+    core = _load_core('ucx_core.py', 'agr_tools_ucx')
+    nodes = _targets(nodes)
+    results, entries = [], []
+    for n in nodes:
+        verts, tris = _read_world(n)
+        result = core.build(verts, tris, mesh=str(n.name), kind=_ucx_kind(n))
+        results.append(result)
+        entries.append(_entry(n, [_finding(item['code'], item['ids'], item['detail']) for item in result['findings']]))
+    report = _report('ucx', entries, nodes, extra={'plan': _ucx_plan(results)})
+    return {'report': report, 'plans': results}
+
+
+def _make_ucx_mesh(name, verts_m, tris):
+    rt = _rt()
+    scale = 1.0 / _unit_m()
+    vertices = [rt.point3(*(coord * scale for coord in point)) for point in verts_m]
+    faces = [rt.point3(a + 1, b + 1, c + 1) for a, b, c in tris]
+    node = rt.mesh(name=name, vertices=vertices, faces=faces)
+    rt.convertToPoly(node)
+    try:
+        node.material = None
+    except Exception:
+        pass
+    return node
+
+
+def ucx_apply(nodes, preview):
+    """Build UCX on new export copies. Source nodes are not edited."""
+    rt = _rt()
+    nodes = _targets(nodes)
+    current = ucx_preview(nodes)
+    if preview['report'] != current['report']:
+        raise ValueError('stale or altered ucx preview; run dry-run again')
+    created = []
+    try:
+        for n, result in zip(nodes, current['plans']):
+            copy = rt.copy(n)
+            copy.name = str(n.name) + '_AGR_ucx_'
+            rt.convertToPoly(copy)
+            created.append(copy)
+            for (verts, tris), name in zip(result['pieces'], result['names']):
+                created.append(_make_ucx_mesh(name, verts, tris))
+        return created, current['report']
+    except Exception:
+        if created:
+            rt.delete(created)
+        raise
+
+
+def _texel_map(n, names):
+    text = _prop(n, 'AGR_TEXEL_MAP')
+    if text is None:
+        raise ValueError(f"unmapped material {names[0]!r}: no assigned map size")
+    mapping = {}
+    for part in text.split(';'):
+        part = part.strip()
+        if not part:
+            continue
+        if '=' not in part:
+            raise ValueError('partial texel map entry: ' + part)
+        name, val = (piece.strip() for piece in part.split('=', 1))
+        if not name:
+            raise ValueError('partial texel map entry: ' + part)
+        if name in mapping:
+            raise ValueError('duplicate key: ' + name)
+        try:
+            px = float(val)
+        except ValueError:
+            raise ValueError(f"unmapped material {name!r}: unsupported map size {val!r}") from None
+        mapping[name] = px
+    for name in dict.fromkeys(names):
+        if name not in mapping:
+            raise ValueError(f"unmapped material {name!r}: no assigned map size")
+    return mapping
+
+
+def _texel_payload(n):
+    mesh = _read_channel(n)
+    names = _material_names(n, mesh['ids'])
+    profile = _prop(n, 'AGR_TEXEL_PROFILE')
+    if profile not in ('NPM', 'VPM'):
+        raise ValueError('unmapped texel profile: ' + str(profile))
+    mapping = _texel_map(n, names)
+    to_m = _unit_m()
+    faces = []
+    for index, (face, fuv, material) in enumerate(zip(mesh['faces'], mesh['face_uvs'], names)):
+        xyz = [tuple(coord * to_m for coord in mesh['vertices'][i]) for i in face]
+        uv = [mesh['uvs'][i] for i in fuv]
+        faces.append({'id': str(index + 1), 'mesh': str(n.name), 'material': material, 'xyz': xyz, 'uv': uv})
+    materials = [{'name': name, 'map_px': mapping[name]} for name in dict.fromkeys(names)]
+    return {'profile': profile, 'materials': materials, 'faces': faces}
+
+
+def _texel_plan(summaries):
+    meshes, materials = [], []
+    dropped = []
+    for summary in summaries:
+        meshes.extend(summary['meshes'])
+        materials.extend(summary['materials'])
+        dropped.extend(summary['dropped'])
+    return {'meshes': meshes, 'materials': materials, 'dropped': dropped}
+
+
+def texel_preview(nodes=None):
+    """Read-only texel min/median. Nothing in the scene is created or edited."""
+    core = _load_core('texel_core.py', 'agr_tools_texel')
+    nodes = _targets(nodes)
+    summaries, entries = [], []
+    for n in nodes:
+        summary = core.summarize(_texel_payload(n))
+        summaries.append(summary)
+        findings = []
+        outside = [item['face'] + 1 for item in summary['faces'] if item['status'] != 'pass']
+        if outside:
+            findings.append(_finding('texel_outside', outside, summary['profile']))
+        dropped_ids = [item['face'] + 1 for item in summary['dropped']]
+        if dropped_ids:
+            findings.append(_finding('texel_dropped', dropped_ids, ';'.join(item['reason'] for item in summary['dropped'])))
+        entries.append(_entry(n, findings))
+    report = _report('texel', entries, nodes, extra={'plan': _texel_plan(summaries)})
+    return {'report': report, 'summaries': summaries}
+
+
 _preview = None
 _preview_nodes = None
 _nudge = None
 _nudge_nodes = None
 _atlas = None
 _atlas_nodes = None
+_ucx = None
+_ucx_nodes = None
 
 
 def ui(tool):
     """Macro seam: errors propagate and never print a successful report."""
-    global _preview, _preview_nodes, _nudge, _nudge_nodes, _atlas, _atlas_nodes
+    global _preview, _preview_nodes, _nudge, _nudge_nodes, _atlas, _atlas_nodes, _ucx, _ucx_nodes
     if tool == 'cleanup':
         _preview_nodes = _targets(None)
         _preview = cleanup_preview(_preview_nodes)
@@ -1152,6 +1380,18 @@ def ui(tool):
         _, report = atlas_apply(_atlas_nodes, _atlas)
         _atlas = None
         _atlas_nodes = None
+    elif tool == 'ucx':
+        _ucx_nodes = _targets(None)
+        _ucx = ucx_preview(_ucx_nodes)
+        report = _ucx['report']
+    elif tool == 'ucx_apply':
+        if _ucx is None:
+            raise ValueError('dry-run required before apply')
+        _, report = ucx_apply(_ucx_nodes, _ucx)
+        _ucx = None
+        _ucx_nodes = None
+    elif tool == 'texel':
+        report = texel_preview()['report']
     elif tool in ('xview', 'matid'):
         report = {'xview': xview, 'matid': matid}[tool]()
     else:
