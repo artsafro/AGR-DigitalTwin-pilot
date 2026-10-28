@@ -1,2 +1,2 @@
-536753134c7031ae33228d0d8a6d5b4fdf6674a7a09877d158c6b70bd17cea71  C:\x\731-evidence\AGR-Tools-0.4.0-e.mzp
-536753134c7031ae33228d0d8a6d5b4fdf6674a7a09877d158c6b70bd17cea71  C:\x\731-evidence\AGR-Tools-0.4.0-f.mzp
+dd5fb30be9ebf9495a3b86b2c7553796026612778639029f0153deb4a03529ec  G:\Мой диск\AGR-evidence\731-agr-tools-checked-export\AGR-Tools-0.4.0-g.mzp
+dd5fb30be9ebf9495a3b86b2c7553796026612778639029f0153deb4a03529ec  G:\Мой диск\AGR-evidence\731-agr-tools-checked-export\AGR-Tools-0.4.0-h.mzp

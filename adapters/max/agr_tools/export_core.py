@@ -1,10 +1,13 @@
 """new-case: checked FBX export for AGR Tools 0.4.0.
 
 Pattern: new-case. Gates run in a fixed order on the export copy description:
-hygiene, MatID, xView, UCX audit when pieces exist, then a texel readout that
-is reported and does not by itself refuse the file. A failing gate writes
-nothing. The written FBX is read back with twinqa.fbx_header; object,
-triangle, material and unit-scale counts must equal the dry-run.
+hygiene (every render mesh and every UCX piece), MatID, xView, UCX audit when
+pieces exist, then a texel readout that is reported and does not by itself
+refuse the file. A failing gate writes nothing. This module has no geometry
+writer: commit without an injected writer raises "unsupported writer" and
+creates no file. The native exporter is injected by the Max button. Readback
+uses twinqa.fbx_header; object, triangle, material, unit-scale and model-name
+counts must equal the dry-run.
 """
 from __future__ import annotations
 
@@ -24,7 +27,7 @@ AXIS_NAME = {0: 'X-up', 1: 'Y-up', 2: 'Z-up'}
 SCENE_KEYS = {'objects', 'ucx', 'units', 'axis'}
 OBJECT_KEYS = {'name', 'handle', 'material', 'material_ids', 'vertices', 'faces',
                'hygiene', 'slot_gaps', 'texel'}
-PIECE_KEYS = {'name', 'verts', 'tris'}
+PIECE_KEYS = {'name', 'handle', 'verts', 'tris', 'hygiene'}
 PLAN_KEYS = {'target', 'report', 'units', 'axis', 'unit_scale_factor', 'object_count',
              'triangle_count', 'material_count', 'object_names', 'triangles_by_name',
              'gates', 'dropped', 'texel', 'readback', 'stopped', 'digest'}
@@ -164,13 +167,23 @@ def _validate_scene(scene):
             raise ValueError('partial ucx name')
         if name in piece_names or name in names:
             raise ValueError(f'duplicate name {name}')
+        handle = piece['handle']
+        if isinstance(handle, bool) or type(handle) is not int or handle <= 0:
+            raise ValueError(f'invalid handle {handle!r}')
+        if handle in handles:
+            raise ValueError(f'duplicate handle {handle}')
+        handles.append(handle)
         piece_names.append(name)
+        if not isinstance(piece['hygiene'], dict):
+            raise ValueError(f'partial hygiene {name}')
         verts = piece['verts']
         if isinstance(verts, (str, bytes)) or not isinstance(verts, (list, tuple)) or not verts:
             raise ValueError(f'empty mesh: {name}')
         points = [_finite_point(point, name, index) for index, point in enumerate(verts)]
         tris = _triangles(piece['tris'], len(points), name)
-        validated_pieces.append({'name': name, 'verts': points, 'tris': tris})
+        validated_pieces.append({
+            'name': name, 'handle': handle, 'verts': points, 'tris': tris, 'hygiene': piece['hygiene'],
+        })
     return validated, validated_pieces
 
 
@@ -231,36 +244,41 @@ def _drop_all(objects, pieces, reason):
     return rows
 
 
-def _gate_cleanup(objects):
+def _cleanup_channels(actions):
+    """Map-channel ids actually named by the repair plan. Non-channel actions add none."""
+    ids = []
+    for action in actions:
+        for channel in action.get('channels') or []:
+            if type(channel) is int and channel > 0 and channel not in ids:
+                ids.append(channel)
+    return ids
+
+
+def _gate_cleanup(subjects):
     from twinqa.export_hygiene import hygiene_findings, repair_plan
-    dumps = [obj['hygiene'] for obj in objects]
+    dumps = [obj['hygiene'] for obj in subjects]
     plan = repair_plan(dumps)
     findings = hygiene_findings(dumps, 'export-copy')
-    by_name = {}
-    for item in plan['objects']:
-        ids = []
-        for action in item['actions']:
-            channels = action.get('channels') or []
-            if channels:
-                ids.extend(int(ch) for ch in channels if type(ch) is int and ch > 0)
-            else:
-                ids.append(1)
-        if item['unrepairable'] and not ids:
-            ids = [1]
-        by_name[item['name']] = ids
-    failed = any(item['actions'] or item['unrepairable'] for item in plan['objects'])
-    failed = failed or any(item.status != 'pass' for item in findings)
+    by_name = {item['name']: item for item in plan['objects']}
+    named = set()
+    for item in findings:
+        if item.status != 'pass':
+            named.update((item.data or {}).get('objects') or {})
+    failed = bool(named) or any(item['actions'] or item['unrepairable'] for item in plan['objects'])
     counts = {
         'actions': plan['objects'][0]['actions'] if len(plan['objects']) == 1 else [item['actions'] for item in plan['objects']],
         'unrepairable': [item['unrepairable'] for item in plan['objects']],
         'finding_status': {item.name: item.status for item in findings},
     }
     per_object = []
-    for obj in objects:
-        if failed:
-            per_object.append([_finding('cleanup', by_name.get(obj['name'], [1]), obj['name'])])
-        else:
+    for obj in subjects:
+        item = by_name[obj['name']]
+        offender = bool(item['actions'] or item['unrepairable'] or obj['name'] in named)
+        if not offender:
             per_object.append([])
+            continue
+        ids = _cleanup_channels(item['actions']) or [1]
+        per_object.append([_finding('cleanup', ids, obj['name'])])
     return ('fail' if failed else 'pass'), _plain(counts), per_object
 
 
@@ -407,14 +425,17 @@ def dry_run(scene, target, source=None, report_path=None):
     gates = []
     stopped = None
     per = {obj['name']: [] for obj in objects}
+    for piece in pieces:
+        per[piece['name']] = []
     dropped = []
     texel = None
+    subjects = [*objects, *pieces]
 
-    status, counts, findings = _gate_cleanup(objects)
+    status, counts, findings = _gate_cleanup(subjects)
     gates.append({'name': 'cleanup', 'status': status, 'counts': counts})
     if status == 'fail':
         stopped = 'cleanup'
-        for obj, found in zip(objects, findings):
+        for obj, found in zip(subjects, findings):
             per[obj['name']].extend(found)
     if stopped is None:
         status, counts, findings = _gate_matid(objects)
@@ -450,90 +471,27 @@ def dry_run(scene, target, source=None, report_path=None):
     if stopped is not None:
         dropped = _drop_all(objects, pieces, 'stopped: ' + stopped)
     rows = [_entry(obj, per[obj['name']]) for obj in objects]
+    rows.extend(_entry(piece, per[piece['name']]) for piece in pieces)
     return _blank(objects, pieces, target, report, digest, gates, stopped, rows, dropped, texel)
 
 
-def _prop_s(text):
-    raw = str(text).encode('latin-1')
-    return b'S' + struct.pack('<I', len(raw)) + raw
+def mesh_model_name(props):
+    """Planned mesh name from an FBX Model property list.
 
-
-def _prop_d(value):
-    return b'D' + struct.pack('<d', float(value))
-
-
-def _prop_i(value):
-    return b'I' + struct.pack('<i', int(value))
-
-
-def _prop_ints(values):
-    raw = struct.pack('<' + 'i' * len(values), *[int(v) for v in values])
-    return b'i' + struct.pack('<III', len(values), 0, len(raw)) + raw
-
-
-def _emit(name, props, children, start):
-    name_b = name.encode('ascii')
-    prop_blob = b''.join(props)
-    header_len = 13 + len(name_b)
-    cursor = start + header_len + len(prop_blob)
-    chunks = []
-    for child_name, child_props, child_children in children:
-        blob, cursor = _emit(child_name, child_props, child_children, cursor)
-        chunks.append(blob)
-    end = cursor + 13
-    header = struct.pack('<III', end, len(props), len(prop_blob)) + bytes([len(name_b)]) + name_b
-    return header + prop_blob + b''.join(chunks) + (b'\x00' * 13), end
-
-
-def _p(name, type_name, label, value):
-    return ('P', [_prop_s(name), _prop_s(type_name), _prop_s(label), _prop_s(''), value], [])
-
-
-def _polygon(faces):
-    values = []
-    for a, b, c in faces:
-        values.extend((a, b, ~c))
-    return values
-
-
-def encode_fbx(objects, pieces):
-    """Binary FBX 7.4, metres, Z-up. One Mesh model per render object and per UCX piece."""
-    from twinqa.fbx_header import MAGIC, REQUIRED_VERSION
-    props70 = [
-        _p('UnitScaleFactor', 'double', 'Number', _prop_d(UNIT_SCALE)),
-        _p('OriginalUnitScaleFactor', 'double', 'Number', _prop_d(UNIT_SCALE)),
-        _p('UpAxis', 'int', 'Integer', _prop_i(UP_AXIS)),
-        _p('UpAxisSign', 'int', 'Integer', _prop_i(1)),
-        _p('FrontAxis', 'int', 'Integer', _prop_i(1)),
-        _p('CoordAxis', 'int', 'Integer', _prop_i(0)),
-    ]
-    children = []
-    materials = []
-    for obj in objects:
-        if obj['material'] and obj['material'] not in materials:
-            materials.append(obj['material'])
-    for name in materials:
-        children.append(('Material', [_prop_s('Material::' + name), _prop_s('')], []))
-    for obj in objects:
-        children.append(('Geometry', [_prop_s('Geometry::' + obj['name']), _prop_s('Mesh')], [
-            ('PolygonVertexIndex', [_prop_ints(_polygon(obj['faces']))], []),
-        ]))
-        children.append(('Model', [_prop_s('Model::' + obj['name']), _prop_s('Mesh')], []))
-    for piece in pieces:
-        children.append(('Geometry', [_prop_s('Geometry::' + piece['name']), _prop_s('Mesh')], [
-            ('PolygonVertexIndex', [_prop_ints(_polygon(piece['tris']))], []),
-        ]))
-        children.append(('Model', [_prop_s('Model::' + piece['name']), _prop_s('Mesh')], []))
-    top = [
-        ('GlobalSettings', [], [('Properties70', [], props70)]),
-        ('Objects', [], children),
-    ]
-    cursor = 27
-    blobs = []
-    for name, props, kids in top:
-        blob, cursor = _emit(name, props, kids, cursor)
-        blobs.append(blob)
-    return MAGIC + struct.pack('<I', REQUIRED_VERSION) + b''.join(blobs) + (b'\x00' * 13)
+    3ds Max writes ``Name\\x00\\x01Model``. A ``Model::Name`` string is accepted too.
+    """
+    if isinstance(props, (str, bytes)) or not isinstance(props, (list, tuple)):
+        return None
+    for item in props:
+        if not isinstance(item, str) or item == 'Mesh':
+            continue
+        text = item.split('\x00', 1)[0]
+        if text.startswith('Model::'):
+            text = text[len('Model::'):]
+        text = text.strip()
+        if text and text != 'Mesh':
+            return text
+    return None
 
 
 def _read_props(data, start, end, count):
@@ -620,7 +578,8 @@ def readback(data):
     units = fbx_units(bytes(data))
     result = {
         'object_count': None, 'triangle_count': None, 'material_count': None,
-        'unit_scale_factor': units.get('unit_scale_factor'), 'axis': None, 'error': None,
+        'unit_scale_factor': units.get('unit_scale_factor'), 'axis': None,
+        'object_names': None, 'error': None,
     }
     if not ok:
         result['error'] = reason
@@ -638,10 +597,15 @@ def readback(data):
         objects = materials = 0
         triangles = 0
         axis = None
+        model_names = []
         for node in nodes:
             props = _read_props(data, node['props_at'], node['props_end'], node['num_props'])
             if node['name'] == 'Model' and 'Mesh' in props:
                 objects += 1
+                label = mesh_model_name(props)
+                if not label:
+                    raise ValueError('partial model name')
+                model_names.append(label)
             elif node['name'] == 'Material':
                 materials += 1
             elif node['name'] == 'PolygonVertexIndex':
@@ -659,7 +623,7 @@ def readback(data):
         if axis is None:
             raise ValueError('unmapped axis UpAxis')
         result.update({'object_count': objects, 'triangle_count': triangles,
-                       'material_count': materials, 'axis': axis})
+                       'material_count': materials, 'axis': axis, 'object_names': model_names})
     except (ValueError, struct.error, zlib.error) as exc:
         result['error'] = str(exc)
     return result
@@ -667,6 +631,9 @@ def readback(data):
 
 def _matches(plan, got):
     if not isinstance(got, dict) or got.get('error'):
+        return False
+    names = got.get('object_names')
+    if names is not None and sorted(names) != sorted(plan['object_names']):
         return False
     return (got.get('object_count') == plan['object_count']
             and got.get('triangle_count') == plan['triangle_count']
@@ -708,15 +675,12 @@ def commit(scene, target, source, preview, readback_fn=None, report_path=None, w
     if current['status'] != 'pass':
         raise ValueError('gate failed: ' + str(current['plan']['stopped']))
     target_path, report_file, _partial = _paths(target, source, report_path)
-    objects, pieces = _validate_scene(scene)
+    _validate_scene(scene)
     if writer is None:
-        data = encode_fbx(objects, pieces)
-        with target_path.open('xb') as handle:
-            handle.write(data)
-    else:
-        writer(target_path, current)
-        if not target_path.is_file():
-            raise ValueError('writer wrote nothing')
+        raise ValueError('unsupported writer')
+    writer(target_path, current)
+    if not target_path.is_file():
+        raise ValueError('writer wrote nothing')
     return finish(current, target_path, report_file, readback_fn)
 
 

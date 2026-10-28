@@ -905,6 +905,7 @@ assert readback['object_count'] == clean_preview['plan']['object_count']
 assert readback['triangle_count'] == clean_preview['plan']['triangle_count']
 assert readback['material_count'] == clean_preview['plan']['material_count']
 assert readback['unit_scale_factor'] == clean_preview['plan']['unit_scale_factor']
+assert readback['object_names'] == ['synthetic_export_clean'], readback['object_names']
 assert agr.snapshot([clean_export]) == clean_before
 results['export'] = {
     'clean_objects': readback['object_count'],
@@ -936,10 +937,18 @@ rt.setUserProp(overlap, 'AGR_TEXEL_PROFILE', 'VPM')
 rt.setUserProp(overlap, 'AGR_TEXEL_MAP', 'brick=1024')
 results['export']['xview'] = export_refused(overlap, 'xview')
 body = export_quad('synthetic_export_body')
+def mark_uv(node):
+    rt.polyop.setMapSupport(node, 1, True)
+    rt.setUserPropBuffer(node, 'MapChannel:1 = UV\r\n')
+    return node
+
+
 hull_a = rt.box(name='UCX_SM_Addr_Main_001', length=1, width=1, height=1)
 hull_b = rt.box(name='UCX_SM_Addr_Main_002', length=1, width=1, height=1)
 rt.convertToPoly(hull_a)
 rt.convertToPoly(hull_b)
+mark_uv(hull_a)
+mark_uv(hull_b)
 hull_b.position = rt.point3(0.2, 0, 0)
 ucx_target = export_dir / 'ucx.fbx'
 rt.setUserProp(body, 'AGR_EXPORT_PATH', str(ucx_target))
@@ -947,9 +956,114 @@ ucx_preview = agr.export_preview([body, hull_a, hull_b], str(ucx_target))
 assert ucx_preview['status'] == 'fail' and ucx_preview['plan']['stopped'] == 'ucx', ucx_preview
 results['export']['ucx'] = agr_raises(lambda: agr.export_commit([body, hull_a, hull_b], ucx_preview, str(ucx_target)))
 assert not ucx_target.exists()
+def commit_exact(names, label):
+    nodes = []
+    for index, name in enumerate(names):
+        if str(name).startswith('UCX_'):
+            node = rt.box(name=name, length=1, width=1, height=1)
+            rt.convertToPoly(node)
+            node.position = rt.point3(12.0 + index * 3.0, 4.0, 0.0)
+            mark_uv(node)
+        else:
+            node = export_quad(name)
+        nodes.append(node)
+    target = export_dir / (label + '.fbx')
+    rt.setUserProp(nodes[0], 'AGR_EXPORT_PATH', str(target))
+    before = agr.snapshot(nodes)
+    preview = agr.export_preview(nodes, str(target))
+    assert preview['status'] == 'pass', preview
+    report = agr.export_commit(nodes, preview, str(target))
+    assert report['status'] == 'pass', report
+    got = list(report['plan']['readback']['object_names'])
+    assert sorted(got) == sorted(names), got
+    assert agr.snapshot(nodes) == before, label
+    assert [str(node.name) for node in nodes] == list(names)
+    return got
+
+
+exact_names = []
+for index in range(4):
+    exact_names.append(commit_exact([f'SM_probe_{index}'], f'probe-{index}'))
+exact_names.append(commit_exact(['SM_control'], 'names-control'))
+exact_names.append(commit_exact(['SM_body', 'UCX_SM_body_01'], 'names-ucx'))
+assert exact_names[4] == ['SM_control']
+assert sorted(exact_names[5]) == ['SM_body', 'UCX_SM_body_01']
+
+hygiene_body = export_quad('SM_hygiene_body')
+hygiene_hull = rt.box(name='UCX_SM_hygiene_body_01', length=1, width=1, height=1)
+rt.convertToPoly(hygiene_hull)
+hygiene_hull.position = rt.point3(20, 0, 0)
+mark_uv(hygiene_hull)
+rt.polyop.setMapSupport(hygiene_hull, 2, True)
+rt.setUserPropBuffer(hygiene_hull, 'planted=dirty\r\nMapChannel:1 = UV\r\nMapChannel:2 = extra\r\n')
+ucx_dirty_target = export_dir / 'ucx-dirty.fbx'
+rt.setUserProp(hygiene_body, 'AGR_EXPORT_PATH', str(ucx_dirty_target))
+ucx_dirty = agr.export_preview([hygiene_body, hygiene_hull], str(ucx_dirty_target))
+assert ucx_dirty['status'] == 'fail' and ucx_dirty['plan']['stopped'] == 'cleanup', ucx_dirty
+ucx_named = [row['name'] for row in ucx_dirty['objects'] if row['findings']]
+assert ucx_named == ['UCX_SM_hygiene_body_01'], ucx_named
+assert ucx_dirty['objects'][next(i for i, row in enumerate(ucx_dirty['objects']) if row['name'] == 'UCX_SM_hygiene_body_01')]['findings'][0]['ids'] == [2]
+results['export']['ucx_dirty'] = agr_raises(
+    lambda: agr.export_commit([hygiene_body, hygiene_hull], ucx_dirty, str(ucx_dirty_target)))
+assert 'cleanup' in results['export']['ucx_dirty']
+assert not ucx_dirty_target.exists()
+assert not (export_dir / 'ucx-dirty.report.json').exists()
+
+pair_clean = export_quad('SM_pair_clean')
+pair_dirty = export_quad('SM_pair_dirty')
+rt.polyop.setMapSupport(pair_dirty, 2, True)
+rt.setUserPropBuffer(pair_dirty, 'planted=dirty\r\nMapChannel:1 = UV\r\nMapChannel:2 = extra\r\n')
+pair_target = export_dir / 'offenders.fbx'
+rt.setUserProp(pair_clean, 'AGR_EXPORT_PATH', str(pair_target))
+pair = agr.export_preview([pair_clean, pair_dirty], str(pair_target))
+assert pair['plan']['stopped'] == 'cleanup', pair
+pair_named = [row['name'] for row in pair['objects'] if row['findings']]
+assert pair_named == ['SM_pair_dirty'], pair_named
+assert not pair_target.exists()
+
+first_body = export_quad('SM_cleanup_first')
+rt.select(first_body)
+rt.execute('$.material = undefined')
+rt.polyop.setMapSupport(first_body, 2, True)
+rt.setUserPropBuffer(first_body, 'planted=dirty\r\nMapChannel:1 = UV\r\nMapChannel:2 = extra\r\n')
+first_target = export_dir / 'cleanup-first.fbx'
+rt.setUserProp(first_body, 'AGR_EXPORT_PATH', str(first_target))
+first = agr.export_preview([first_body], str(first_target))
+assert first['plan']['stopped'] == 'cleanup', first
+assert [item['code'] for item in first['objects'][0]['findings']] == ['cleanup']
+assert not first_target.exists()
+
+combo_body = export_quad('SM_combo_body')
+rt.select(combo_body)
+rt.execute('$.material = undefined')
+combo_hull = rt.box(name='UCX_SM_combo_body_01', length=1, width=1, height=1)
+rt.convertToPoly(combo_hull)
+combo_hull.position = rt.point3(24, 0, 0)
+mark_uv(combo_hull)
+rt.polyop.setMapSupport(combo_hull, 2, True)
+rt.setUserPropBuffer(combo_hull, 'planted=dirty\r\nMapChannel:1 = UV\r\nMapChannel:2 = extra\r\n')
+combo_target = export_dir / 'combo.fbx'
+rt.setUserProp(combo_body, 'AGR_EXPORT_PATH', str(combo_target))
+combo = agr.export_preview([combo_body, combo_hull], str(combo_target))
+assert combo['plan']['stopped'] == 'cleanup', combo
+assert [row['name'] for row in combo['objects'] if row['findings']] == ['UCX_SM_combo_body_01']
+assert not combo_target.exists()
+
+moved = export_quad('SM_moved_stale')
+moved_target = export_dir / 'moved-stale.fbx'
+rt.setUserProp(moved, 'AGR_EXPORT_PATH', str(moved_target))
+moved_preview = agr.export_preview([moved], str(moved_target))
+assert moved_preview['status'] == 'pass', moved_preview
+moved.position = rt.point3(6, 0, 0)
+results['export']['moved_stale'] = agr_raises(lambda: agr.export_commit([moved], moved_preview, str(moved_target)))
+assert 'stale' in results['export']['moved_stale'].lower()
+assert not moved_target.exists()
+
 rt.select(clean_export)
 assert rt.macros.run('AGR Tools', 'AGRToolsExport'), 'AGRToolsExport'
 results['guards']['registered_export_button'] = 1
+results['export']['exact_names'] = exact_names
+print('AGR_REVIEW_731 names=exact ucx_dirty=1 offenders=1 cleanup_first=1 stale_move=1 probes=4')
 print('AGR_NATIVE_EXPORT clean=1 gates=cleanup,matid,xview,ucx')
 print('AGR_REVIEW_R1 mesh=1 poly=1 plain=1 modifier=1 clipped_tris=16 stale=1 names=1')
 print('AGR_REVIEW_R2 subdiv_tris=12 subdiv_verts=8 names=UCX_<export>_NN')

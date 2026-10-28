@@ -1546,8 +1546,28 @@ def _slot_gaps(n, ids):
     return gaps
 
 
+def _repair_blocks(dumps):
+    """True when the bundled hygiene slice would refuse the export copy.
+
+    Texel and material extraction stay behind this check: a missing material
+    must not hide a cleanup finding. The slice matches twinqa.export_hygiene.repair_plan.
+    """
+    import importlib.util
+    from pathlib import Path
+    spec = importlib.util.spec_from_file_location(
+        'agr_tools_hygiene_export', Path(__file__).with_name('hygiene_core.py'))
+    core = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(core)
+    plan = core.repair_plan(dumps)
+    return any(item['actions'] or item['unrepairable'] for item in plan['objects'])
+
+
 def _export_scene(nodes):
-    """Read-only scene description. UCX_* nodes are collision pieces, not render meshes."""
+    """Read-only scene description. UCX_* nodes are collision pieces, not render meshes.
+
+    Cleanup evidence is collected for every emitted node before material or texel
+    extraction. Those later reads run only when hygiene does not already refuse.
+    """
     rt = _rt()
     render = [n for n in nodes if not str(n.name).startswith('UCX_')]
     pieces = [n for n in nodes if str(n.name).startswith('UCX_')]
@@ -1556,22 +1576,33 @@ def _export_scene(nodes):
     objects = []
     for n in render:
         verts, faces, ids = _tri_mesh(n)
-        material = n.material
         objects.append({
             'name': str(n.name),
             'handle': int(rt.getHandleByAnim(n)),
-            'material': None if material is None else str(material.name),
+            'material': None,
             'material_ids': ids,
             'vertices': verts,
             'faces': faces,
             'hygiene': _hygiene_dump(n),
-            'slot_gaps': _slot_gaps(n, ids),
-            'texel': _texel_payload(n),
+            'slot_gaps': [],
+            'texel': {'profile': 'VPM', 'materials': [], 'faces': []},
         })
     ucx = []
     for n in pieces:
         verts, faces, _ids = _tri_mesh(n)
-        ucx.append({'name': str(n.name), 'verts': verts, 'tris': faces})
+        ucx.append({
+            'name': str(n.name),
+            'handle': int(rt.getHandleByAnim(n)),
+            'verts': verts,
+            'tris': faces,
+            'hygiene': _hygiene_dump(n),
+        })
+    if not _repair_blocks([obj['hygiene'] for obj in objects] + [piece['hygiene'] for piece in ucx]):
+        for obj, n in zip(objects, render):
+            material = n.material
+            obj['material'] = None if material is None else str(material.name)
+            obj['slot_gaps'] = _slot_gaps(n, obj['material_ids'])
+            obj['texel'] = _texel_payload(n)
     return {'objects': objects, 'ucx': ucx, 'units': 'm', 'axis': 'Z-up'}
 
 
@@ -1676,9 +1707,19 @@ def _write_max_fbx(nodes, path):
             raise ValueError(f'unmapped export setting {key}={got!r}')
     before = snapshot(nodes)
     copies = []
+    parked = []
     try:
         for n in nodes:
+            planned = str(n.name)
+            token = '__agr_src_' + str(int(rt.getHandleByAnim(n)))
+            n.name = token
+            if str(n.name) != token:
+                raise ValueError(f'export copy name {n.name!r} != planned {token!r}')
+            parked.append((n, planned))
             copy = rt.copy(n)
+            copy.name = planned
+            if str(copy.name) != planned:
+                raise ValueError(f'export copy name {copy.name!r} != planned {planned!r}')
             rt.setUserPropBuffer(copy, _delivery_props(rt.getUserPropBuffer(n)))
             copies.append(copy)
         rt.select(copies)
@@ -1689,6 +1730,10 @@ def _write_max_fbx(nodes, path):
     finally:
         if copies:
             rt.delete(copies)
+        for n, planned in reversed(parked):
+            n.name = planned
+            if str(n.name) != planned:
+                raise RuntimeError(f'original name not restored: {n.name!r} != {planned!r}')
     if snapshot(nodes) != before:
         raise RuntimeError('originals changed during export')
 

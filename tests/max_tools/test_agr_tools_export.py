@@ -9,6 +9,7 @@ import json
 import math
 import os
 import random
+import subprocess
 import sys
 from pathlib import Path
 
@@ -72,8 +73,21 @@ BOX_T = [[0, 2, 1], [0, 3, 2], [4, 5, 6], [4, 6, 7], [0, 1, 5], [0, 5, 4],
          [1, 2, 6], [1, 6, 5], [2, 3, 7], [2, 7, 6], [3, 0, 4], [3, 4, 7]]
 
 
-def _ucx(name, lo, hi):
-    return {'name': name, 'verts': _box(lo, hi), 'tris': [list(t) for t in BOX_T]}
+_UCX_HANDLE = 7000
+
+
+def _ucx(name, lo, hi, handle=None):
+    global _UCX_HANDLE
+    if handle is None:
+        _UCX_HANDLE += 1
+        handle = _UCX_HANDLE
+    return {
+        'name': name,
+        'handle': handle,
+        'verts': _box(lo, hi),
+        'tris': [list(t) for t in BOX_T],
+        'hygiene': _hygiene(name),
+    }
 
 
 def _scene(*objects, ucx=None, units='m', axis='Z-up'):
@@ -131,9 +145,10 @@ def test_clean_fixture_readback_matches_dry_run_and_python_gates(tmp_path):
     assert list(tmp_path.iterdir()) == [source]
 
     obj = scene['objects'][0]
+    dumps = [obj['hygiene'], piece['hygiene']]
     assert preview['plan']['gates'][0]['counts']['finding_status'] == {
-        f.name: f.status for f in hygiene_findings([obj['hygiene']], 'export-copy')}
-    assert preview['plan']['gates'][0]['counts']['actions'] == repair_plan([obj['hygiene']])['objects'][0]['actions']
+        f.name: f.status for f in hygiene_findings(dumps, 'export-copy')}
+    assert preview['plan']['gates'][0]['counts']['actions'] == [item['actions'] for item in repair_plan(dumps)['objects']]
     soup = Soup(np.asarray(obj['vertices'], float), np.asarray(obj['faces'], np.int64),
                 np.asarray(obj['material_ids'], np.int64), None, {})
     tool_matid = check_material_ids(soup, {'unassigned_ids_max': 0}, load_ranges())
@@ -149,12 +164,33 @@ def test_clean_fixture_readback_matches_dry_run_and_python_gates(tmp_path):
     assert all(g['status'] == 'pass' for g in preview['plan']['gates'] if g['name'] != 'texel')
     assert preview['plan']['gates'][4]['status'] == 'report'
 
-    report = core.commit(scene, target, source, preview)
+    with pytest.raises(ValueError, match='unsupported writer'):
+        core.commit(scene, target, source, preview)
+    assert not target.exists()
+    assert not target.with_suffix('.report.json').exists()
+    assert source.read_bytes() == before
+
+    def writer(path, _plan):
+        path.write_bytes(b'injected')
+
+    def reader(_data):
+        return {
+            'object_count': preview['plan']['object_count'],
+            'triangle_count': preview['plan']['triangle_count'],
+            'material_count': preview['plan']['material_count'],
+            'unit_scale_factor': preview['plan']['unit_scale_factor'],
+            'axis': preview['plan']['axis'],
+            'error': None,
+            'object_names': list(preview['plan']['object_names']),
+        }
+
+    report = core.commit(scene, target, source, preview, writer=writer, readback_fn=reader)
     assert report['status'] == 'pass', report
     assert report['plan']['readback']['object_count'] == preview['plan']['object_count']
     assert report['plan']['readback']['triangle_count'] == preview['plan']['triangle_count']
     assert report['plan']['readback']['material_count'] == preview['plan']['material_count']
     assert report['plan']['readback']['unit_scale_factor'] == preview['plan']['unit_scale_factor']
+    assert sorted(report['plan']['readback']['object_names']) == sorted(preview['plan']['object_names'])
     assert source.read_bytes() == before
     written = target.with_suffix('.report.json')
     assert written.is_file() and target.is_file()
@@ -351,26 +387,212 @@ def test_fail_closed_paths_threshold_and_random_clean(tmp_path):
         src.write_text('{}\n', encoding='utf-8')
         preview = core.dry_run(scene, dest, src)
         assert preview['status'] == 'pass', preview
-        report = core.commit(scene, dest, src, preview)
-        assert report['status'] == 'pass'
-        assert report['plan']['readback']['triangle_count'] == 1
-        assert report['plan']['readback']['object_count'] == 1
-        assert report['plan']['readback']['material_count'] == 1
-        assert report['plan']['readback']['unit_scale_factor'] == 100.0
+        with pytest.raises(ValueError, match='unsupported writer'):
+            core.commit(scene, dest, src, preview)
+        assert not dest.exists()
+        assert not dest.with_suffix('.report.json').exists()
         agreed += 1
     assert agreed == 8
 
-    def bad_reader(data):
-        got = core.readback(data)
-        got['triangle_count'] = got['triangle_count'] + 1
-        return got
+    def writer(path, _plan):
+        path.write_bytes(b'injected')
+
+    def bad_reader(_data):
+        return {
+            'object_count': 1, 'triangle_count': 2, 'material_count': 1,
+            'unit_scale_factor': 100.0, 'axis': 'Z-up', 'error': None,
+            'object_names': ['wall'],
+        }
 
     dest = tmp_path / 'mismatch.fbx'
     preview = core.dry_run(good, dest, source)
-    report = core.commit(good, dest, source, preview, readback_fn=bad_reader)
+    report = core.commit(good, dest, source, preview, writer=writer, readback_fn=bad_reader)
     assert report['status'] == 'fail'
     assert report['plan']['readback']['triangle_count'] != preview['plan']['triangle_count']
     assert any(f['code'] == 'readback_mismatch' for o in report['objects'] for f in o['findings'])
     runtime = _load(RUNTIME, 'agr_runtime_export_bad')
     assert runtime.parse_report(json.dumps(report))['status'] == 'fail'
     assert source.read_bytes() == before
+
+
+def _dirty_hygiene(name, channels):
+    extra = [ch for ch in channels if ch >= 2]
+    props = 'planted=dirty\r\nMapChannel:1 = UV\r\n' + ''.join(
+        f'MapChannel:{ch} = extra\r\n' for ch in extra)
+    return _hygiene(name, channels=tuple(channels), props=props)
+
+
+def test_p1_2_cli_refuses_unsupported_writer_in_a_fresh_process(tmp_path):
+    """Counterexample 2: the default CLI must not certify a geometry-less FBX."""
+    scene_path = tmp_path / 'scene.json'
+    scene_path.write_text(json.dumps(_scene(_triangle())), encoding='utf-8')
+    target = tmp_path / 'out.fbx'
+    proc = subprocess.run(
+        [sys.executable, str(EXPORT_CORE), '--scene', str(scene_path), '--target', str(target),
+         '--source', str(scene_path)],
+        capture_output=True, text=True, cwd=str(ROOT),
+    )
+    assert proc.returncode != 0, proc.stdout
+    assert 'unsupported writer' in proc.stderr
+    assert not target.exists()
+    assert not target.with_suffix('.report.json').exists()
+    assert not Path(str(target) + '.partial').exists()
+    assert scene_path.read_text(encoding='utf-8').startswith('{')
+
+
+def test_p1_2_default_writer_refuses_random_clean_scenes(tmp_path):
+    """Brute-force probe: every clean scene the gates would pass still writes nothing."""
+    core = _core()
+    rng = random.Random(17)
+    refused = 0
+    for index in range(8):
+        obj = _triangle(name=f'w{index}', handle=index + 1, z=float(index) * 3.0)
+        obj['vertices'][1][0] = 1.0 + rng.random()
+        obj['texel']['faces'][0]['xyz'] = [tuple(point) for point in obj['vertices']]
+        scene = _scene(obj)
+        dest = tmp_path / f'w-{index}.fbx'
+        src = tmp_path / f'w-{index}.json'
+        src.write_text('{}\n', encoding='utf-8')
+        preview = core.dry_run(scene, dest, src)
+        assert preview['status'] == 'pass', preview
+        with pytest.raises(ValueError, match='unsupported writer'):
+            core.commit(scene, dest, src, preview)
+        assert not dest.exists()
+        assert not dest.with_suffix('.report.json').exists()
+        assert not Path(str(dest) + '.partial').exists()
+        assert src.read_text(encoding='utf-8') == '{}\n'
+        refused += 1
+    assert refused == 8
+
+
+def test_p1_3_fbx_model_name_is_the_planned_name():
+    """Counterexample 3 readback: Max stores `Name\\x00\\x01Model`, not a uniquified suffix."""
+    core = _core()
+    rng = random.Random(3)
+    samples = ['SM_body', 'SM_control', 'UCX_SM_body_01']
+    samples += [f'SM_{rng.randrange(10000)}' for _ in range(12)]
+    for name in samples:
+        assert core.mesh_model_name([None, name + '\x00\x01Model', 'Mesh']) == name
+        assert core.mesh_model_name(['Model::' + name, 'Mesh']) == name
+    assert core.mesh_model_name(['Mesh']) is None
+    assert core.mesh_model_name('SM_body') is None
+
+
+def test_p1_4_ucx_hull_hygiene_refuses_and_names_that_hull(tmp_path):
+    """Counterexample 4: UDP and map channel 2 on a UCX hull stop the export."""
+    core = _core()
+    body = _triangle('SM_body', handle=1)
+    hull = _ucx('UCX_SM_body_01', (3.0, 0.0, 0.0), (4.0, 1.0, 1.0))
+    hull['handle'] = 2
+    hull['hygiene'] = _dirty_hygiene('UCX_SM_body_01', (1, 2))
+    scene = _scene(body, ucx=[hull])
+    target = tmp_path / 'ucx-dirty.fbx'
+    source = tmp_path / 'ucx-dirty.json'
+    source.write_text('{}\n', encoding='utf-8')
+    preview = core.dry_run(scene, target, source)
+    assert preview['status'] == 'fail', preview
+    assert preview['plan']['stopped'] == 'cleanup'
+    named = [row['name'] for row in preview['objects'] if row['findings']]
+    assert named == ['UCX_SM_body_01']
+    finding = next(row for row in preview['objects'] if row['name'] == 'UCX_SM_body_01')['findings'][0]
+    assert finding == {'code': 'cleanup', 'ids': [2], 'detail': 'UCX_SM_body_01'}
+    assert next(row for row in preview['objects'] if row['name'] == 'SM_body')['findings'] == []
+    with pytest.raises(ValueError, match='cleanup'):
+        core.commit(scene, target, source, preview)
+    assert not target.exists()
+    assert not target.with_suffix('.report.json').exists()
+    assert not Path(str(target) + '.partial').exists()
+
+
+def test_p1_5_cleanup_names_only_the_dirty_object(tmp_path):
+    """Counterexample 5a: a planted node attribute is not also blamed on the clean object."""
+    core = _core()
+    clean = _triangle('SM_clean', handle=1)
+    dirty = _triangle('SM_dirty', handle=2, z=3.0)
+    dirty['hygiene'] = _hygiene('SM_dirty', node_ca=('PlantedCA',))
+    preview = core.dry_run(_scene(clean, dirty), tmp_path / 'pair.fbx', tmp_path / 'pair.json')
+    assert preview['status'] == 'fail'
+    assert preview['plan']['stopped'] == 'cleanup'
+    by_name = {row['name']: row['findings'] for row in preview['objects']}
+    assert by_name['SM_clean'] == []
+    assert by_name['SM_dirty'][0]['code'] == 'cleanup'
+    assert by_name['SM_dirty'][0]['detail'] == 'SM_dirty'
+    assert not (tmp_path / 'pair.fbx').exists()
+
+
+def test_p1_5_cleanup_ids_are_the_extra_channels(tmp_path):
+    """True components: extra map channels, not a fabricated face id beside them."""
+    core = _core()
+    dirty = _triangle('SM_dirty', handle=1)
+    dirty['hygiene'] = _dirty_hygiene('SM_dirty', (1, 2, 5))
+    preview = core.dry_run(_scene(dirty), tmp_path / 'ch.fbx', tmp_path / 'ch.json')
+    assert preview['plan']['stopped'] == 'cleanup'
+    assert preview['objects'][0]['findings'][0]['ids'] == [2, 5]
+    assert preview['objects'][0]['findings'][0]['detail'] == 'SM_dirty'
+
+
+def test_p1_5_cleanup_precedes_missing_material(tmp_path):
+    """Counterexample 5b: cleanup is the first finding when the material is also missing."""
+    core = _core()
+    obj = _triangle('SM_body', handle=1)
+    obj['material'] = None
+    obj['hygiene'] = _hygiene('SM_body', node_ca=('PlantedCA',))
+    preview = core.dry_run(_scene(obj), tmp_path / 'both.fbx', tmp_path / 'both.json')
+    assert preview['status'] == 'fail'
+    assert preview['plan']['stopped'] == 'cleanup'
+    assert [item['code'] for item in preview['objects'][0]['findings']] == ['cleanup']
+    assert preview['plan']['gates'][0]['name'] == 'cleanup'
+    assert not (tmp_path / 'both.fbx').exists()
+
+
+def test_p1_5_dirty_ucx_and_missing_material_stops_at_cleanup(tmp_path):
+    """Combination of 4 and 5: the hull is the only offender, and nothing is written."""
+    core = _core()
+    body = _triangle('SM_body', handle=1)
+    body['material'] = None
+    hull = _ucx('UCX_SM_body_01', (5.0, 0.0, 0.0), (6.0, 1.0, 1.0))
+    hull['handle'] = 3
+    hull['hygiene'] = _dirty_hygiene('UCX_SM_body_01', (1, 2))
+    scene = _scene(body, ucx=[hull])
+    target = tmp_path / 'combo.fbx'
+    source = tmp_path / 'combo.json'
+    source.write_text('{}\n', encoding='utf-8')
+    preview = core.dry_run(scene, target, source)
+    assert preview['plan']['stopped'] == 'cleanup', preview
+    named = [row['name'] for row in preview['objects'] if row['findings']]
+    assert named == ['UCX_SM_body_01']
+    assert all(item['code'] == 'cleanup' for row in preview['objects'] for item in row['findings'])
+    with pytest.raises(ValueError, match='cleanup'):
+        core.commit(scene, target, source, preview)
+    assert not target.exists() and not target.with_suffix('.report.json').exists()
+
+
+def test_p1_5_random_mix_names_only_offenders(tmp_path):
+    """Brute-force probe: a random clean/dirty mix reports exactly the dirty names and channels."""
+    core = _core()
+    rng = random.Random(731)
+    seen = 0
+    for trial in range(16):
+        count = rng.randint(2, 5)
+        objects = []
+        for index in range(count):
+            name = f't{trial}_o{index}'
+            objects.append(_triangle(name, handle=index + 1, z=float(index) * 4.0 + float(trial) * 40.0))
+        chosen = set(rng.sample(range(count), rng.randint(1, count - 1)))
+        expected = {}
+        for index in chosen:
+            extra = sorted(rng.sample(range(2, 12), rng.randint(1, 3)))
+            name = objects[index]['name']
+            objects[index]['hygiene'] = _dirty_hygiene(name, [1, *extra])
+            expected[name] = extra
+        dest = tmp_path / f'mix-{trial}.fbx'
+        preview = core.dry_run(_scene(*objects), dest, tmp_path / f'mix-{trial}.json')
+        assert preview['plan']['stopped'] == 'cleanup', trial
+        got = {row['name']: row['findings'][0]['ids'] for row in preview['objects'] if row['findings']}
+        assert got == expected, (trial, got, expected)
+        for row in preview['objects']:
+            if row['findings']:
+                assert row['findings'][0]['detail'] == row['name']
+        assert not dest.exists()
+        seen += 1
+    assert seen == 16

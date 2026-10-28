@@ -141,10 +141,16 @@ results, writes the report exclusively and emits a completion marker at the end.
   nothing. The second press, on the same selection, writes one FBX when every
   gate passed. The node needs `AGR_EXPORT_PATH`, a new file path. An existing
   file, or a path that is the same file as the scene, the report or the
-  `.partial` temp path, is refused and nothing is written. Gates run on the
-  export copy in this order: pre-export clean-up preview, MatID check, xView
-  gate, UCX audit when `UCX_` pieces are in the selection, then texel readout
-  (report only; an out-of-band density does not stop the export). A failing
+  `.partial` temp path, is refused and nothing is written. Gates run on every
+  emitted copy, render meshes and `UCX_` hulls, in this order: pre-export
+  clean-up preview, MatID check, xView gate, UCX audit when `UCX_` pieces are
+  in the selection, then texel readout (report only; an out-of-band density
+  does not stop the export). Cleanup is decided before material and texel
+  extraction, and a finding names only the node that failed. The Python CLI
+  has no geometry writer: it exits nonzero with `unsupported writer` and
+  creates no file. Only the Max exporter writes the FBX, and each exported
+  copy keeps the planned node name (`SM_body`, `UCX_SM_body_01`), not an
+  auto-renamed suffix. A failing
   gate stops the export and lists the gate, object names and component IDs.
   The FBX is binary 7.4, metres (`UnitScaleFactor` 100), Z-up. A JSON report
   is written beside it. Readback of object count, triangle count, material
