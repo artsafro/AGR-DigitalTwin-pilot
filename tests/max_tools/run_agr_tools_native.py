@@ -12,8 +12,14 @@ import sys
 from pymxs import runtime as rt
 
 ROOT = Path(__file__).resolve().parents[2]
+os.environ['AGR_TOOLS_REPO'] = str(ROOT)
+_venv_python = ROOT / '.venv' / 'Scripts' / 'python.exe'
+if _venv_python.is_file():
+    os.environ['AGR_PYTHON'] = str(_venv_python)
 OUT = Path(os.environ['AGR_TEST_OUTPUT'])
 OUT.mkdir(parents=True, exist_ok=False)
+_package = Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.4.0.mzp'))
+print('AGR_PACKAGE_SHA256', hashlib.sha256(_package.read_bytes()).hexdigest())
 print('AGR_NATIVE_START version={} file={} units={}'.format(rt.maxVersion()[0], rt.maxFileName, rt.units.SystemType))
 assert rt.maxVersion()[0] in (26000, 28000)
 assert not rt.maxFileName, 'only an empty batch document is allowed'
@@ -24,9 +30,9 @@ rt.execute('global AGRToolsInstallRoot; global AGRToolsStartupRoot')
 rt.AGRToolsInstallRoot = str(OUT / 'installed') + '/'
 rt.AGRToolsStartupRoot = str(OUT / 'startup') + '/'
 rt.makeDir(rt.AGRToolsStartupRoot, all=True)
-rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.3.0.mzp'))))
+rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.4.0.mzp'))))
 assert rt.execute('global AGRToolsRegistered; AGRToolsRegistered == true'), 'MZP macros not registered'
-print('AGR_INSTALL_REGISTERED xView Cleanup MatID Open Nudge NudgeApply Atlas AtlasApply Ucx UcxApply Texel')
+print('AGR_INSTALL_REGISTERED xView Cleanup MatID Open Nudge NudgeApply Atlas AtlasApply Ucx UcxApply Texel Export')
 sys.path.insert(0, str(OUT / 'installed'))
 import runtime as agr
 
@@ -505,10 +511,10 @@ for macro in ('AGRToolsNudge', 'AGRToolsAtlas'):
 results['guards']['registered_uv_buttons'] = 2
 # Startup re-registration and repeated install must not overwrite installed files.
 rt.AGRToolsRegistered = False
-rt.fileIn(str(OUT / 'startup/AGRTools-0.3.0.ms'))
+rt.fileIn(str(OUT / 'startup/AGRTools-0.4.0.ms'))
 assert rt.AGRToolsRegistered
 install_hash = hashlib.sha256((OUT / 'installed/runtime.py').read_bytes()).hexdigest()
-results['guards']['repeat_install'] = raises(lambda: rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.3.0.mzp')))), 'already exists')
+results['guards']['repeat_install'] = raises(lambda: rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.4.0.mzp')))), 'already exists')
 assert hashlib.sha256((OUT / 'installed/runtime.py').read_bytes()).hexdigest() == install_hash
 assert hashlib.sha256((OUT / 'fixture-source.max').read_bytes()).hexdigest() == source_hash
 results['version'] = list(rt.maxVersion())
@@ -840,6 +846,111 @@ results['guards']['ucx_same_name_selection'] = raises(
 assert len(list(rt.objects)) == same_count
 review['names'] = {'second_apply_nodes': 0, 'existing_name_nodes': 0, 'same_name_nodes': 0}
 results['review'] = review
+
+# Checked export. Synthetic copies only. A failing gate must not create the FBX.
+export_dir = OUT / 'checked-export'
+export_dir.mkdir()
+square = [(0, 0), (1, 0), (1, 1), (0, 1)]
+
+
+def export_quad(name, face_id=1):
+    node = make_uv_quad(name, square, 'brick=none', 'brick')
+    rt.setUserPropBuffer(node, 'MapChannel:1 = UV\r\n')
+    rt.setUserProp(node, 'AGR_TEXEL_PROFILE', 'VPM')
+    rt.setUserProp(node, 'AGR_TEXEL_MAP', 'brick=1024')
+    if face_id != 1:
+        rt.polyop.setFaceMatID(node, 1, face_id)
+        if int(rt.polyop.getNumFaces(node)) > 1:
+            rt.polyop.setFaceMatID(node, 2, face_id)
+    return node
+
+
+def export_refused(node, label):
+    target = export_dir / (label + '.fbx')
+    rt.setUserProp(node, 'AGR_EXPORT_PATH', str(target))
+    before = agr.snapshot([node])
+    count = len(list(rt.objects))
+    preview = agr.export_preview([node], str(target))
+    assert preview['status'] == 'fail', preview
+    assert preview['plan']['stopped'] == label, preview['plan']['stopped']
+    assert agr.snapshot([node]) == before and len(list(rt.objects)) == count
+    results['guards']['export_' + label] = agr_raises(lambda: agr.export_commit([node], preview, str(target)))
+    assert not target.exists()
+    assert not (export_dir / (label + '.report.json')).exists()
+    return preview['plan']['stopped']
+
+
+def agr_raises(fn):
+    try:
+        fn()
+    except (ValueError, RuntimeError) as exc:
+        return str(exc)
+    raise AssertionError('expected export refusal')
+
+
+clean_export = export_quad('synthetic_export_clean')
+clean_target = export_dir / 'clean.fbx'
+rt.setUserProp(clean_export, 'AGR_EXPORT_PATH', str(clean_target))
+clean_before = agr.snapshot([clean_export])
+clean_count = len(list(rt.objects))
+clean_preview = agr.export_preview([clean_export], str(clean_target))
+assert clean_preview['status'] == 'pass', clean_preview
+assert agr.snapshot([clean_export]) == clean_before and len(list(rt.objects)) == clean_count
+assert not clean_target.exists()
+clean_report = agr.export_commit([clean_export], clean_preview, str(clean_target))
+assert clean_report['status'] == 'pass', clean_report
+assert clean_target.is_file()
+readback = clean_report['plan']['readback']
+assert readback['object_count'] == clean_preview['plan']['object_count']
+assert readback['triangle_count'] == clean_preview['plan']['triangle_count']
+assert readback['material_count'] == clean_preview['plan']['material_count']
+assert readback['unit_scale_factor'] == clean_preview['plan']['unit_scale_factor']
+assert agr.snapshot([clean_export]) == clean_before
+results['export'] = {
+    'clean_objects': readback['object_count'],
+    'clean_triangles': readback['triangle_count'],
+    'clean_materials': readback['material_count'],
+    'clean_unit_scale': readback['unit_scale_factor'],
+}
+dirty = export_quad('synthetic_export_dirty')
+rt.polyop.setMapSupport(dirty, 2, True)
+rt.setUserPropBuffer(dirty, 'note=planted\r\nMapChannel:1 = UV\r\nMapChannel:2 = extra\r\n')
+rt.setUserProp(dirty, 'AGR_TEXEL_PROFILE', 'VPM')
+rt.setUserProp(dirty, 'AGR_TEXEL_MAP', 'brick=1024')
+results['export']['cleanup'] = export_refused(dirty, 'cleanup')
+results['export']['matid'] = export_refused(export_quad('synthetic_export_matid', 1001), 'matid')
+overlap = rt.mesh(name='synthetic_export_xview',
+                  vertices=[rt.point3(0, 0, 0), rt.point3(1, 0, 0), rt.point3(0, 1, 0),
+                            rt.point3(0, 0, 0.001), rt.point3(1, 0, 0.001), rt.point3(0, 1, 0.001)],
+                  faces=[rt.point3(1, 2, 3), rt.point3(4, 5, 6)])
+rt.convertToPoly(overlap)
+rt.polyop.setMapSupport(overlap, 1, True)
+rt.polyop.setNumMapVerts(overlap, 1, 6)
+for index, uv in enumerate([(0, 0), (1, 0), (0, 1), (0, 0), (1, 0), (0, 1)], 1):
+    rt.polyop.setMapVert(overlap, 1, index, rt.point3(float(uv[0]), float(uv[1]), 0))
+rt.polyop.setMapFace(overlap, 1, 1, agr._max_array((1, 2, 3)))
+rt.polyop.setMapFace(overlap, 1, 2, agr._max_array((4, 5, 6)))
+overlap.material = rt.standardMaterial(name='brick')
+rt.setUserPropBuffer(overlap, 'MapChannel:1 = UV\r\n')
+rt.setUserProp(overlap, 'AGR_TEXEL_PROFILE', 'VPM')
+rt.setUserProp(overlap, 'AGR_TEXEL_MAP', 'brick=1024')
+results['export']['xview'] = export_refused(overlap, 'xview')
+body = export_quad('synthetic_export_body')
+hull_a = rt.box(name='UCX_SM_Addr_Main_001', length=1, width=1, height=1)
+hull_b = rt.box(name='UCX_SM_Addr_Main_002', length=1, width=1, height=1)
+rt.convertToPoly(hull_a)
+rt.convertToPoly(hull_b)
+hull_b.position = rt.point3(0.2, 0, 0)
+ucx_target = export_dir / 'ucx.fbx'
+rt.setUserProp(body, 'AGR_EXPORT_PATH', str(ucx_target))
+ucx_preview = agr.export_preview([body, hull_a, hull_b], str(ucx_target))
+assert ucx_preview['status'] == 'fail' and ucx_preview['plan']['stopped'] == 'ucx', ucx_preview
+results['export']['ucx'] = agr_raises(lambda: agr.export_commit([body, hull_a, hull_b], ucx_preview, str(ucx_target)))
+assert not ucx_target.exists()
+rt.select(clean_export)
+assert rt.macros.run('AGR Tools', 'AGRToolsExport'), 'AGRToolsExport'
+results['guards']['registered_export_button'] = 1
+print('AGR_NATIVE_EXPORT clean=1 gates=cleanup,matid,xview,ucx')
 print('AGR_REVIEW_R1 mesh=1 poly=1 plain=1 modifier=1 clipped_tris=16 stale=1 names=1')
 print('AGR_REVIEW_R2 subdiv_tris=12 subdiv_verts=8 names=UCX_<export>_NN')
 with (OUT / 'results.json').open('x', encoding='utf-8') as f:

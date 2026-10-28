@@ -1,11 +1,11 @@
-# AGR Tools 0.3.0 — 3ds Max 2024 / 2026
+# AGR Tools 0.4.0 — 3ds Max 2024 / 2026
 
 Own implementations only; no team scripts or encrypted plugins are distributed.
 This is a diagnostic/export-copy tool, not a delivery validator or production job.
 
 ## Build and install
 
-`python tools/max/build_agr_tools.py <new-path>/AGR-Tools-0.3.0.mzp`
+`python tools/max/build_agr_tools.py <new-path>/AGR-Tools-0.4.0.mzp`
 
 The builder prints SHA256; sorted ZIP_STORED entries, fixed timestamps/permissions,
 LF normalization and exclusively created output make repeated inputs reproducible.
@@ -30,6 +30,7 @@ AGR Tools
 [UCX collision (dry-run)]
 [Apply UCX to new export copies]
 [Texel readout]
+[Checked export]
 <JSON report in Listener; offending object names and component IDs>
 ```
 
@@ -136,9 +137,23 @@ text evidence. Only new synthetic fixture copies are opened; no production asset
 An exit-zero wrapper alone does not prove a fixture pass: the runner asserts exact
 results, writes the report exclusively and emits a completion marker at the end.
 
-## Roadmap (not implemented)
+- **Checked export**: one button. The first press is a dry-run and writes
+  nothing. The second press, on the same selection, writes one FBX when every
+  gate passed. The node needs `AGR_EXPORT_PATH`, a new file path. An existing
+  file, or a path that is the same file as the scene, the report or the
+  `.partial` temp path, is refused and nothing is written. Gates run on the
+  export copy in this order: pre-export clean-up preview, MatID check, xView
+  gate, UCX audit when `UCX_` pieces are in the selection, then texel readout
+  (report only; an out-of-band density does not stop the export). A failing
+  gate stops the export and lists the gate, object names and component IDs.
+  The FBX is binary 7.4, metres (`UnitScaleFactor` 100), Z-up. A JSON report
+  is written beside it. Readback of object count, triangle count, material
+  count and unit scale must equal the dry-run; a mismatch is an error in the
+  report. Originals are not edited. The collision generator and the texel
+  readout remain the 0.3.0 buttons above.
 
-Checked export. It needs its own fixtures, profile gates and measured
-comparisons before adding a button. The collision generator and the texel
-readout are the 0.3.0 buttons above. No licensing, obfuscation or GeoAGR
-source/decryption is included.
+## Roadmap
+
+First rollout complete: xView, pre-export clean-up, MatID, UV integer-tile
+nudge, UDIM to NPM atlas, UCX collision, texel readout and checked export.
+No licensing, obfuscation or GeoAGR source/decryption is included.
