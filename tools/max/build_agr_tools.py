@@ -15,6 +15,7 @@ PACKAGE = ROOT / 'adapters/max/agr_tools'
 HYGIENE = ROOT / 'src/twinqa/export_hygiene.py'
 NUDGE = ROOT / 'src/dt_ai/geometry/uv_nudge.py'
 TILES = ROOT / 'src/dt_ai/geometry/uv.py'
+UCX_AUDIT = ROOT / 'src/twinqa/geometry/ucx_audit.py'
 HYGIENE_NAMES = {'ORIGIN', 'UV_NAME', 'CA_OWNERS', 'OBJECT_KEYS', 'MAX_MAP_CHANNEL',
                  '_MAP_LINE', 'InputError', 'parse_udp', '_validate',
                  '_channel1_problem', '_extra_channels', 'repair_plan'}
@@ -72,21 +73,43 @@ def nudge_slice(nudge_source=None, tile_source=None):
     return (header + ast.unparse(module) + '\n').encode('utf-8')
 
 
+def audit_slice(source=None):
+    """Stdlib copy of our ucx_audit.py. The opening docstring is replaced; the logic is not."""
+    if source is None:
+        source = UCX_AUDIT.read_text(encoding='utf-8')
+    source = source.replace('\r\n', '\n')
+    if not source.startswith('"""'):
+        raise ValueError('ucx audit source changed: missing docstring')
+    end = source.find('\n"""', 3)
+    if end < 0:
+        raise ValueError('ucx audit source changed: missing docstring')
+    body = source[end + 4:].lstrip('\n')
+    if not body.startswith('from __future__ import annotations'):
+        raise ValueError('ucx audit source changed: future import moved')
+    if 'def collision_findings' not in body or 'def name_report' not in body:
+        raise ValueError('ucx audit source changed: collision_findings missing')
+    header = ('"""Generated from twinqa.geometry.ucx_audit; new-case: stdlib UCX audit slice.\n'
+              f'Source sha256: {hashlib.sha256(source.encode()).hexdigest()}\n"""\n')
+    return (header + body).encode('utf-8')
+
+
 def build(output):
     output = Path(output)
     entries, inputs = {}, {}
     for name in ('mzp.run', 'install.ms', 'startup.ms', 'agr_tools.mcr', 'runtime.py', 'bootstrap.py',
-                 'README.md', 'atlas_core.py'):
+                 'README.md', 'atlas_core.py', 'ucx_core.py', 'texel_core.py'):
         p = PACKAGE / name
         inputs[p] = p.read_bytes()
         entries[name if name in ('mzp.run', 'install.ms') else 'agr_tools/' + name] = inputs[p].replace(b'\r\n', b'\n')
     inputs[HYGIENE] = HYGIENE.read_bytes()
     inputs[NUDGE] = NUDGE.read_bytes()
     inputs[TILES] = TILES.read_bytes()
+    inputs[UCX_AUDIT] = UCX_AUDIT.read_bytes()
     entries['agr_tools/hygiene_core.py'] = hygiene_slice(inputs[HYGIENE].decode('utf-8').replace('\r\n', '\n'))
     entries['agr_tools/uv_nudge_core.py'] = nudge_slice(
         inputs[NUDGE].decode('utf-8').replace('\r\n', '\n'),
         inputs[TILES].decode('utf-8').replace('\r\n', '\n'))
+    entries['agr_tools/ucx_audit_core.py'] = audit_slice(inputs[UCX_AUDIT].decode('utf-8').replace('\r\n', '\n'))
     stream = io.BytesIO()
     with zipfile.ZipFile(stream, 'w', compression=zipfile.ZIP_STORED) as archive:
         for name, content in sorted(entries.items()):

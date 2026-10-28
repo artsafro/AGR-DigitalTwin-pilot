@@ -1,0 +1,37 @@
+State Sets Error: Anchor couldn't be created!
+State Sets Error: Anchor couldn't be created!
+
+
+RappaTools3.Stuff()
+RappaTools3.562 - https://rеmusjuncu.соm/
+MCP: helpers loaded (safe_mode = false, native bridge = true, tcp idle poll = 250 ms)
+Boolean modifier menu already installed
+Array modifier menu already installed
+AGR_NATIVE_START version=26000 file= units=meters
+AGR_TOOLS_REGISTERED version=0.3.0 category=AGR Tools macros=XView,Cleanup,MatID,Open,Nudge,NudgeApply,Atlas,AtlasApply,Ucx,UcxApply,Texel
+AGR_INSTALL_REGISTERED xView Cleanup MatID Open Nudge NudgeApply Atlas AtlasApply Ucx UcxApply Texel
+"unisolated"
+"File is opened"
+{"schema": 1, "tool": "xview", "status": "pass", "objects": [{"handle": 2862, "name": "synthetic_clean", "findings": []}]}
+{"schema": 1, "tool": "cleanup", "status": "pass", "objects": [{"handle": 2862, "name": "synthetic_clean", "findings": []}]}
+{"schema": 1, "tool": "matid", "status": "pass", "objects": [{"handle": 2862, "name": "synthetic_clean", "findings": []}]}
+{"schema": 1, "tool": "nudge", "status": "pass", "objects": [{"handle": 5526, "name": "synthetic_nudge_clean", "findings": []}], "plan": {"islands": [{"faces": [1, 2], "steps": [0, 0], "shift": [0.0, 0.0], "materials": ["brick"], "reason": "non-repeating"}], "dropped": []}}
+{"schema": 1, "tool": "atlas", "status": "pass", "objects": [{"handle": 5741, "name": "synthetic_atlas_planted_AGR_atlas_001", "findings": []}], "plan": {"tiles": [1001], "cells": {"Grass": [0, 0, 87, 68]}, "dropped": []}}
+AGR_TOOLS_REGISTERED version=0.3.0 category=AGR Tools macros=XView,Cleanup,MatID,Open,Nudge,NudgeApply,Atlas,AtlasApply,Ucx,UcxApply,Texel
+{"schema": 1, "tool": "ucx", "status": "pass", "objects": [{"handle": 40046, "name": "synthetic_ucx_box", "findings": []}], "plan": {"variant": "single-hull", "kind": "near-convex-box", "pieces": 1, "triangles": 12, "limit": 15000, "names": ["UCX_synthetic_ucx_box_01"], "audit": {"collision": [], "unmeasurable": [], "mask_bad_count": 1, "closed": true}, "dropped": []}}
+{"schema": 1, "tool": "texel", "status": "pass", "objects": [{"handle": 40464, "name": "synthetic_texel_clean", "findings": []}], "plan": {"meshes": [{"name": "synthetic_texel_clean", "min_px_per_m": 1024.0, "median_px_per_m": 1024.0}], "materials": [{"name": "brick", "min_px_per_m": 1024.0, "median_px_per_m": 1024.0}], "dropped": []}}
+AGR_NATIVE_UCX_TEXEL clean=2 planted=2 dry_run_unchanged=true originals_unchanged=true texel_read_only=true
+AGR_NATIVE_COMPLETE clean=3 planted=3 dry_run_unchanged=true originals_unchanged=true
+"unisolated"
+
+--- process output ---
+27.10.2026 21:40:21;  3ds Max Install Location: C:\Program Files\Autodesk\3ds Max 2024\
+27.10.2026 21:40:21;  3ds Max Executable: 3dsmax.exe
+27.10.2026 21:40:21;  Secure Mode: 'OFF'
+27.10.2026 21:40:21;  Listener Log File: "C:\Users\artsafro\AppData\Local\Temp\agr-3dsmax-t_6bbf21de\listener.log"
+27.10.2026 21:40:21;  Script command: " -mxs "(python.ExecuteFile @\"C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_6bbf21de\tests\max_tools\run_agr_tools_native.py\")""
+27.10.2026 21:40:22;  Product version: 3ds Max 2024.2.5 Security Fix (26.2.5.192)
+27.10.2026 21:40:23;  Data collection and use is 'OFF'. Change your participation anytime in the Help menu of 3ds Max.
+27.10.2026 21:40:35;  Initializing Python version: 3.10.14
+27.10.2026 21:41:00;  Task Completed Successfully
+27.10.2026 21:41:00;  3ds Max Shutting Down

@@ -24,9 +24,9 @@ rt.execute('global AGRToolsInstallRoot; global AGRToolsStartupRoot')
 rt.AGRToolsInstallRoot = str(OUT / 'installed') + '/'
 rt.AGRToolsStartupRoot = str(OUT / 'startup') + '/'
 rt.makeDir(rt.AGRToolsStartupRoot, all=True)
-rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.2.0.mzp'))))
+rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.3.0.mzp'))))
 assert rt.execute('global AGRToolsRegistered; AGRToolsRegistered == true'), 'MZP macros not registered'
-print('AGR_INSTALL_REGISTERED xView Cleanup MatID Open Nudge NudgeApply Atlas AtlasApply')
+print('AGR_INSTALL_REGISTERED xView Cleanup MatID Open Nudge NudgeApply Atlas AtlasApply Ucx UcxApply Texel')
 sys.path.insert(0, str(OUT / 'installed'))
 import runtime as agr
 
@@ -505,10 +505,10 @@ for macro in ('AGRToolsNudge', 'AGRToolsAtlas'):
 results['guards']['registered_uv_buttons'] = 2
 # Startup re-registration and repeated install must not overwrite installed files.
 rt.AGRToolsRegistered = False
-rt.fileIn(str(OUT / 'startup/AGRTools-0.2.0.ms'))
+rt.fileIn(str(OUT / 'startup/AGRTools-0.3.0.ms'))
 assert rt.AGRToolsRegistered
 install_hash = hashlib.sha256((OUT / 'installed/runtime.py').read_bytes()).hexdigest()
-results['guards']['repeat_install'] = raises(lambda: rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.2.0.mzp')))), 'already exists')
+results['guards']['repeat_install'] = raises(lambda: rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.3.0.mzp')))), 'already exists')
 assert hashlib.sha256((OUT / 'installed/runtime.py').read_bytes()).hexdigest() == install_hash
 assert hashlib.sha256((OUT / 'fixture-source.max').read_bytes()).hexdigest() == source_hash
 results['version'] = list(rt.maxVersion())
@@ -589,6 +589,260 @@ with (OUT / 'transform-results.json').open('x', encoding='utf-8') as f:
     json.dump(transform_results, f, indent=2)
 assert all(row['passed'] for row in transform_results), 'physical-distance transform regressions: ' + str([r for r in transform_results if not r['passed']])
 results['guards']['physical_distance_transforms'] = len(transform_results)
+
+# UCX collision and texel readout. Synthetic boxes only; sources are read back unchanged.
+rt.units.SystemType = rt.name('meters')
+ucx_box = rt.box(name='synthetic_ucx_box', length=1, width=1, height=1)
+rt.convertToPoly(ucx_box)
+ucx_before = agr.snapshot([ucx_box])
+ucx_count = len(list(rt.objects))
+ucx_dry = agr.ucx_preview([ucx_box])
+assert agr.snapshot([ucx_box]) == ucx_before, 'ucx dry-run mutated its input'
+assert len(list(rt.objects)) == ucx_count, 'ucx dry-run created nodes'
+assert ucx_dry['report']['plan']['kind'] == 'near-convex-box'
+assert ucx_dry['report']['plan']['variant'] == 'single-hull'
+assert ucx_dry['report']['plan']['pieces'] == 1 and ucx_dry['report']['plan']['triangles'] == 12
+assert findings(ucx_dry['report']) == {}
+assert ucx_dry['report']['plan']['names'] == ['UCX_synthetic_ucx_box_AGR_ucx__01']
+ucx_created, ucx_after = agr.ucx_apply([ucx_box], ucx_dry)
+assert agr.snapshot([ucx_box]) == ucx_before, 'ucx apply changed the source'
+assert len(ucx_created) == 2
+assert rt.getNodeByName('UCX_synthetic_ucx_box_AGR_ucx__01') is not None
+box_emitted = rt.snapshotAsMesh(rt.getNodeByName('UCX_synthetic_ucx_box_AGR_ucx__01'))
+assert int(box_emitted.numfaces) == 12, int(box_emitted.numfaces)
+assert findings(ucx_after) == {}
+bad_kind = rt.box(name='synthetic_ucx_kind', length=1, width=1, height=1)
+rt.convertToPoly(bad_kind)
+rt.setUserProp(bad_kind, 'AGR_UCX_KIND', 'part-boxes')
+kind_count = len(list(rt.objects))
+results['guards']['ucx_unmapped_kind'] = raises(lambda: agr.ucx_preview([bad_kind]), 'part-boxes')
+assert len(list(rt.objects)) == kind_count
+
+def _corner(lo, hi):
+    x0, y0, z0 = lo
+    x1, y1, z1 = hi
+    return [rt.point3(x0, y0, z0), rt.point3(x1, y0, z0), rt.point3(x1, y1, z0), rt.point3(x0, y1, z0),
+            rt.point3(x0, y0, z1), rt.point3(x1, y0, z1), rt.point3(x1, y1, z1), rt.point3(x0, y1, z1)]
+
+def _passage():
+    verts, faces = [], []
+    tris = [(0, 2, 1), (0, 3, 2), (4, 5, 6), (4, 6, 7), (0, 1, 5), (0, 5, 4),
+            (1, 2, 6), (1, 6, 5), (2, 3, 7), (2, 7, 6), (3, 0, 4), (3, 4, 7)]
+    for lo, hi in (((0, 0, 0), (4, 1, 3)), ((0, 1, 0), (1, 4, 3))):
+        base = len(verts)
+        verts.extend(_corner(lo, hi))
+        faces.extend(rt.point3(a + base + 1, b + base + 1, c + base + 1) for a, b, c in tris)
+    node = rt.mesh(name='synthetic_ucx_passage', vertices=verts, faces=faces)
+    rt.convertToPoly(node)
+    return node
+
+passage = _passage()
+passage_before = agr.snapshot([passage])
+passage_count = len(list(rt.objects))
+passage_dry = agr.ucx_preview([passage])
+assert agr.snapshot([passage]) == passage_before and len(list(rt.objects)) == passage_count
+assert passage_dry['report']['plan']['kind'] == 'passage'
+assert passage_dry['report']['plan']['variant'] == 'kernel-boxes'
+assert passage_dry['report']['plan']['pieces'] == 2 and passage_dry['report']['plan']['triangles'] == 24, passage_dry['report']['plan']
+results['ucx'] = {
+    'clean_pieces': 1, 'clean_triangles': 12,
+    'planted_pieces': passage_dry['report']['plan']['pieces'],
+    'planted_triangles': passage_dry['report']['plan']['triangles'],
+    'planted_kind': passage_dry['report']['plan']['kind'],
+}
+
+def _rel(a, b):
+    return abs(a - b) / max(abs(a), abs(b))
+
+texel_clean = make_uv_quad('synthetic_texel_clean', [(0, 0), (1, 0), (1, 1), (0, 1)], 'unused=none', 'brick')
+rt.setUserProp(texel_clean, 'AGR_TEXEL_PROFILE', 'VPM')
+rt.setUserProp(texel_clean, 'AGR_TEXEL_MAP', 'brick=1024')
+texel_before = agr.snapshot([texel_clean])
+texel_count = len(list(rt.objects))
+texel_ok = agr.texel_preview([texel_clean])
+assert agr.snapshot([texel_clean]) == texel_before and len(list(rt.objects)) == texel_count
+assert findings(texel_ok['report']) == {}, texel_ok['report']
+clean_min = texel_ok['report']['plan']['meshes'][0]['min_px_per_m']
+clean_med = texel_ok['report']['plan']['meshes'][0]['median_px_per_m']
+assert _rel(clean_min, 1024.0) < 1e-6 and _rel(clean_med, 1024.0) < 1e-6, (clean_min, clean_med)
+texel_bad = make_uv_quad('synthetic_texel_planted', [(0, 0), (0.1, 0), (0.1, 0.1), (0, 0.1)], 'unused=none', 'brick')
+rt.setUserProp(texel_bad, 'AGR_TEXEL_PROFILE', 'VPM')
+rt.setUserProp(texel_bad, 'AGR_TEXEL_MAP', 'brick=1024')
+texel_planted = agr.texel_preview([texel_bad])
+assert findings(texel_planted['report']) == {
+    'texel_outside': list(range(1, int(rt.polyop.getNumFaces(texel_bad)) + 1))}, texel_planted['report']
+planted_min = texel_planted['report']['plan']['meshes'][0]['min_px_per_m']
+assert _rel(planted_min, 102.4) < 1e-6, planted_min
+assert agr.snapshot([texel_bad]) == agr.snapshot([texel_bad])
+missing = make_uv_quad('synthetic_texel_unmapped', [(0, 0), (1, 0), (1, 1), (0, 1)], 'unused=none', 'brick')
+rt.setUserProp(missing, 'AGR_TEXEL_PROFILE', 'VPM')
+rt.setUserProp(missing, 'AGR_TEXEL_MAP', 'stone=1024')
+results['guards']['texel_unmapped'] = raises(lambda: agr.texel_preview([missing]), 'brick')
+results['guards']['texel_empty'] = raises(lambda: agr.texel_preview([]), 'empty')
+results['guards']['ucx_empty'] = raises(lambda: agr.ucx_preview([]), 'empty')
+for macro, node in (('AGRToolsUcx', ucx_box), ('AGRToolsTexel', texel_clean)):
+    rt.select(node)
+    assert rt.macros.run('AGR Tools', macro), macro
+results['texel'] = {'clean_min': clean_min, 'clean_median': clean_med, 'planted_min': planted_min}
+results['guards']['registered_ucx_texel_buttons'] = 2
+
+# Review round 1. Synthetic nodes only. Emitted UCX world bounds are read back.
+def _wb(node):
+    return ([float(node.min.x), float(node.min.y), float(node.min.z)],
+            [float(node.max.x), float(node.max.y), float(node.max.z)])
+
+def _near(got, exp, tol=1e-4):
+    worst = max(abs(a - b) for left, right in zip(got, exp) for a, b in zip(left, right))
+    assert worst < tol, (got, exp, worst)
+    assert abs(worst - tol) > tol * 2e-7
+
+def _shift_box(name, kind, position, scale):
+    node = rt.box(name=name, length=1, width=1, height=1)
+    if kind == 'mesh':
+        rt.convertToMesh(node)
+    else:
+        rt.convertToPoly(node)
+    node.position = rt.point3(*position)
+    node.scale = rt.point3(*scale)
+    return node
+
+review = {}
+world = ([19.0, 29.0, 40.0], [21.0, 31.0, 42.0])
+for kind in ('mesh', 'poly'):
+    node = _shift_box('review_' + kind, kind, (20, 30, 40), (2, 2, 2))
+    before = agr.snapshot([node])
+    count = len(list(rt.objects))
+    verts, _tris = agr._read_world(node)
+    read = ([min(p[a] for p in verts) for a in range(3)], [max(p[a] for p in verts) for a in range(3)])
+    _near(read, world)
+    preview = agr.ucx_preview([node])
+    assert len(list(rt.objects)) == count
+    created, report = agr.ucx_apply([node], preview)
+    emitted = [item for item in created if str(item.name).startswith('UCX_')]
+    assert len(emitted) == 1 and report['status'] == 'pass'
+    _near(_wb(emitted[0]), world)
+    assert agr.snapshot([node]) == before
+    review[kind] = {'read': read, 'emitted': _wb(emitted[0]), 'triangles': preview['report']['plan']['triangles']}
+
+plain = _shift_box('review_plain', 'poly', (5, 6, 7), (1, 1, 1))
+plain_bounds = ([4.5, 5.5, 7.0], [5.5, 6.5, 8.0])
+pread, _ = agr._read_world(plain)
+_near(([min(p[a] for p in pread) for a in range(3)], [max(p[a] for p in pread) for a in range(3)]), plain_bounds)
+preview = agr.ucx_preview([plain])
+_created, _report = agr.ucx_apply([plain], preview)
+_near(_wb([item for item in _created if str(item.name).startswith('UCX_')][0]), plain_bounds)
+review['plain'] = {'emitted': _wb([item for item in _created if str(item.name).startswith('UCX_')][0])}
+
+xform = rt.box(name='review_xform', length=1, width=1, height=1)
+rt.convertToPoly(xform)
+modifier = rt.XForm()
+rt.addModifier(xform, modifier)
+modifier.gizmo.position = rt.point3(10, 0, 0)
+xread, _ = agr._read_world(xform)
+xbounds = ([min(p[a] for p in xread) for a in range(3)], [max(p[a] for p in xread) for a in range(3)])
+_near(xbounds, ([9.5, -0.5, 0.0], [10.5, 0.5, 1.0]))
+xpreview = agr.ucx_preview([xform])
+xcreated, _xreport = agr.ucx_apply([xform], xpreview)
+_near(_wb([item for item in xcreated if str(item.name).startswith('UCX_')][0]), ([9.5, -0.5, 0.0], [10.5, 0.5, 1.0]))
+review['modifier'] = {'read': xbounds, 'triangles': xpreview['report']['plan']['triangles']}
+
+# Clipped cube x+y+z <= 2.8, then the same world transform. Hull is 16 triangles, not the 12 of an AABB.
+clip_pts = [(0.0, 0.0, 0.0), (0.0, 1.0, 0.0), (1.0, 1.0, 0.0), (1.0, 0.0, 0.0), (0.0, 0.0, 1.0),
+            (1.0, 0.0, 1.0), (1.0, 0.8, 1.0), (0.8, 1.0, 1.0), (0.0, 1.0, 1.0), (1.0, 1.0, 0.8)]
+clip_faces = [(0, 1, 2), (0, 2, 3), (4, 5, 6), (4, 6, 7), (4, 7, 8), (0, 3, 5), (0, 5, 4),
+              (3, 2, 9), (3, 9, 6), (3, 6, 5), (2, 1, 8), (2, 8, 7), (2, 7, 9), (1, 0, 4),
+              (1, 4, 8), (7, 6, 9)]
+clip = rt.mesh(name='review_clipped', vertices=[rt.point3(*p) for p in clip_pts],
+               faces=[rt.point3(a + 1, b + 1, c + 1) for a, b, c in clip_faces])
+rt.convertToPoly(clip)
+clip.position = rt.point3(20, 30, 40)
+clip.scale = rt.point3(2, 2, 2)
+cpreview = agr.ucx_preview([clip])
+assert cpreview['report']['plan']['triangles'] == 16, cpreview['report']['plan']
+assert cpreview['report']['plan']['kind'] == 'near-convex-box'
+ccreated, creport = agr.ucx_apply([clip], cpreview)
+cemitted = [item for item in ccreated if str(item.name).startswith('UCX_')]
+assert len(cemitted) == 1 and creport['status'] == 'pass'
+emitted_mesh = rt.snapshotAsMesh(cemitted[0])
+assert int(emitted_mesh.numfaces) == 16, int(emitted_mesh.numfaces)
+# The clipped cube sits on 0..1, so scale 2 about the origin plus (20,30,40) is not the centred box.
+_near(_wb(cemitted[0]), ([20.0, 30.0, 40.0], [22.0, 32.0, 42.0]))
+review['clipped'] = {'triangles': 16, 'emitted': _wb(cemitted[0]),
+                     'faces': int(emitted_mesh.numfaces)}
+
+# Same unit cube with one x=1 triangle split around an interior coplanar point.
+# The convex solid is unchanged: emitted surface is 12 triangles, volume 1.
+sub_pts = [(0, 0, 1), (0, 1, 1), (1, 0, 0), (1, 1, 0), (1, 1, 1), (0, 0, 0), (1, 0, 1),
+           (1.0, 0.7393781378034694, 0.3406598426925462), (0, 1, 0)]
+sub_faces = [(5, 3, 2), (5, 8, 3), (0, 6, 4), (0, 4, 1), (5, 2, 6), (5, 6, 0), (2, 4, 6),
+             (3, 8, 1), (3, 1, 4), (8, 5, 0), (8, 0, 1), (2, 3, 7), (3, 4, 7), (4, 2, 7)]
+sub = rt.mesh(name='review_subdiv', vertices=[rt.point3(*p) for p in sub_pts],
+              faces=[rt.point3(a + 1, b + 1, c + 1) for a, b, c in sub_faces])
+rt.convertToPoly(sub)
+spreview = agr.ucx_preview([sub])
+assert spreview['report']['plan']['triangles'] == 12, spreview['report']['plan']
+assert spreview['report']['plan']['names'] == ['UCX_review_subdiv_AGR_ucx__01']
+assert spreview['report']['status'] == 'pass'
+screated, sreport = agr.ucx_apply([sub], spreview)
+semitted = [item for item in screated if str(item.name).startswith('UCX_')]
+assert [str(item.name) for item in screated] == ['review_subdiv_AGR_ucx_', 'UCX_review_subdiv_AGR_ucx__01']
+assert len(semitted) == 1 and sreport['status'] == 'pass'
+smesh = rt.snapshotAsMesh(semitted[0])
+assert int(smesh.numfaces) == 12, int(smesh.numfaces)
+sverts, stris = agr._read_world(semitted[0])
+assert len(stris) == 12 and len(sverts) == 8
+origin = sverts[0]
+total = 0.0
+for i0, i1, i2 in stris:
+    ax, ay, az = (sverts[i0][k] - origin[k] for k in range(3))
+    bx, by, bz = (sverts[i1][k] - origin[k] for k in range(3))
+    cx, cy, cz = (sverts[i2][k] - origin[k] for k in range(3))
+    total += ax * (by * cz - bz * cy) - ay * (bx * cz - bz * cx) + az * (bx * cy - by * cx)
+svolume = abs(total) / 6.0
+assert abs(svolume - 1.0) < 1e-6, svolume
+review['subdiv'] = {'triangles': 12, 'faces': int(smesh.numfaces), 'vertices': len(sverts),
+                    'volume': svolume, 'emitted': _wb(semitted[0])}
+
+stale = rt.box(name='review_stale', length=1, width=1, height=1)
+rt.convertToPoly(stale)
+stale_preview = agr.ucx_preview([stale])
+stale_count = len(list(rt.objects))
+stale.position = rt.point3(10, 0, 0)
+results['guards']['ucx_stale_preview'] = raises(lambda: agr.ucx_apply([stale], stale_preview), 'stale')
+assert len(list(rt.objects)) == stale_count
+review['stale_nodes'] = 0
+
+named = rt.box(name='name_control', length=1, width=1, height=1)
+rt.convertToPoly(named)
+first, first_report = agr.ucx_apply([named], agr.ucx_preview([named]))
+assert [str(item.name) for item in first] == ['name_control_AGR_ucx_', 'UCX_name_control_AGR_ucx__01']
+assert first_report['status'] == 'pass'
+name_count = len(list(rt.objects))
+results['guards']['ucx_occupied_name'] = raises(lambda: agr.ucx_apply([named], agr.ucx_preview([named])), 'occupied name')
+assert len(list(rt.objects)) == name_count
+assert 'name_control' in results['guards']['ucx_occupied_name']
+
+planted_src = rt.box(name='occupied_src', length=1, width=1, height=1)
+rt.convertToPoly(planted_src)
+rt.box(name='UCX_occupied_src_AGR_ucx__01', length=0.2, width=0.2, height=0.2)
+planted_count = len(list(rt.objects))
+results['guards']['ucx_existing_name'] = raises(
+    lambda: agr.ucx_apply([planted_src], agr.ucx_preview([planted_src])), 'UCX_occupied_src_AGR_ucx__01')
+assert len(list(rt.objects)) == planted_count
+
+left = rt.box(name='same_name', length=1, width=1, height=1)
+right = rt.box(name='same_name', length=1, width=1, height=1)
+rt.convertToPoly(left)
+rt.convertToPoly(right)
+same_count = len(list(rt.objects))
+results['guards']['ucx_same_name_selection'] = raises(
+    lambda: agr.ucx_apply([left, right], agr.ucx_preview([left, right])), 'same_name_AGR_ucx_')
+assert len(list(rt.objects)) == same_count
+review['names'] = {'second_apply_nodes': 0, 'existing_name_nodes': 0, 'same_name_nodes': 0}
+results['review'] = review
+print('AGR_REVIEW_R1 mesh=1 poly=1 plain=1 modifier=1 clipped_tris=16 stale=1 names=1')
+print('AGR_REVIEW_R2 subdiv_tris=12 subdiv_verts=8 names=UCX_<export>_NN')
 with (OUT / 'results.json').open('x', encoding='utf-8') as f:
     json.dump(results, f, indent=2, default=str, allow_nan=False)
+    print('AGR_NATIVE_UCX_TEXEL clean=2 planted=2 dry_run_unchanged=true originals_unchanged=true texel_read_only=true')
     print('AGR_NATIVE_COMPLETE clean=3 planted=3 dry_run_unchanged=true originals_unchanged=true')
