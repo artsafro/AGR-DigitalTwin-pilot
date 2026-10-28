@@ -32,6 +32,7 @@ PLAN_KEYS = {'target', 'report', 'units', 'axis', 'unit_scale_factor', 'object_c
              'triangle_count', 'material_count', 'object_names', 'triangles_by_name',
              'gates', 'dropped', 'texel', 'readback', 'stopped', 'digest'}
 GATE_ORDER = ('cleanup', 'matid', 'xview', 'ucx', 'texel')
+EARLY_GATES = ('cleanup', 'matid', 'xview', 'ucx')
 
 
 def _plain(value):
@@ -417,8 +418,23 @@ def _blank(objects, pieces, target, report, digest, gates, stopped, findings, dr
     }
 
 
-def dry_run(scene, target, source=None, report_path=None):
-    """Evaluate the gates. Does not create or modify any file."""
+def _install_texel(objects, produced):
+    """Replace render-mesh texel payloads. A partial map is an error, never a pass."""
+    if not isinstance(produced, dict):
+        raise ValueError('partial texel')
+    for obj in objects:
+        payload = produced.get(obj['name'])
+        if not isinstance(payload, dict):
+            raise ValueError('partial texel ' + obj['name'])
+        obj['texel'] = payload
+
+
+def dry_run(scene, target, source=None, report_path=None, texel_fn=None, defer_texel=False):
+    """Evaluate the gates. Does not create or modify any file.
+
+    ``texel_fn`` is called only after cleanup, MatID, xView and UCX passed.
+    ``defer_texel`` stops before that call so a host can read texel itself.
+    """
     objects, pieces = _validate_scene(scene)
     target, report, partial = _paths(target, source, report_path)
     digest = _digest(scene)
@@ -460,7 +476,9 @@ def dry_run(scene, target, source=None, report_path=None):
                 'ucx_unmeasurable' if bad_ids and not counts['collision'] else 'ucx_audit',
                 bad_ids or list(range(1, len(pieces) + 1)),
                 ','.join(piece['name'] for piece in pieces)))
-    if stopped is None:
+    if stopped is None and not defer_texel:
+        if texel_fn is not None:
+            _install_texel(objects, texel_fn(objects))
         texel = _gate_texel(objects)[1]
         gates.append({'name': 'texel', 'status': 'report', 'counts': texel})
     occupied = _occupied((target, report, partial))
@@ -667,9 +685,9 @@ def finish(preview, target, report_path=None, readback_fn=None):
     return report
 
 
-def commit(scene, target, source, preview, readback_fn=None, report_path=None, writer=None):
+def commit(scene, target, source, preview, readback_fn=None, report_path=None, writer=None, texel_fn=None):
     """Write the FBX and the JSON report, or raise before creating either file."""
-    current = dry_run(scene, target, source, report_path)
+    current = dry_run(scene, target, source, report_path, texel_fn=texel_fn)
     if preview != current:
         raise ValueError('stale preview')
     if current['status'] != 'pass':

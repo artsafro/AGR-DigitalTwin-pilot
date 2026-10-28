@@ -5,6 +5,7 @@ order and a failure writes nothing, a clean fixture's FBX readback matches the
 dry-run, paths never alias, and an existing file is never overwritten.
 """
 import importlib.util
+import itertools
 import json
 import math
 import os
@@ -596,3 +597,138 @@ def test_p1_5_random_mix_names_only_offenders(tmp_path):
         assert not dest.exists()
         seen += 1
     assert seen == 16
+
+
+def _poison(obj):
+    obj['texel'] = {'profile': 'nope'}
+    return obj
+
+
+def _good_texel(obj, map_px=2048):
+    faces = []
+    xyz = [tuple(point) for point in obj['vertices']]
+    uv = [(0.0, 0.0), (1.0, 0.0), (0.0, 1.0)]
+    for index, face in enumerate(obj['faces'], 1):
+        faces.append({
+            'id': str(index), 'mesh': obj['name'], 'material': 'brick',
+            'xyz': [xyz[corner] for corner in face], 'uv': uv,
+        })
+    return {'profile': 'VPM', 'materials': [{'name': 'brick', 'map_px': map_px}], 'faces': faces}
+
+
+def _gate_scene(flags):
+    """One render mesh plus a UCX piece. flags is (cleanup, matid, xview, ucx)."""
+    cleanup, matid, xview, ucx_fail = flags
+    name = 'SM_gate_probe'
+    obj = _triangle(name, handle=11, material_id=1001 if matid and not xview else 1)
+    if xview:
+        obj['vertices'] = [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0],
+                           [0.0, 0.0, 0.002], [1.0, 0.0, 0.002], [0.0, 1.0, 0.002]]
+        obj['faces'] = [[0, 1, 2], [3, 4, 5]]
+        obj['material_ids'] = [1001, 1001] if matid else [1, 1]
+    if cleanup:
+        obj['hygiene'] = _dirty_hygiene(name, (1, 2))
+    _poison(obj)
+    if ucx_fail:
+        pieces = [
+            _ucx('UCX_SM_Addr_Main_001', (0.0, 0.0, 0.0), (1.0, 1.0, 1.0), handle=21),
+            _ucx('UCX_SM_Addr_Main_002', (0.2, 0.0, 0.0), (1.2, 1.0, 1.0), handle=22),
+        ]
+    else:
+        pieces = [_ucx('UCX_SM_Addr_Main_001', (3.0, 0.0, 0.0), (4.0, 1.0, 1.0), handle=21)]
+    return _scene(obj, ucx=pieces)
+
+
+def test_texel_callable_waits_until_earlier_gates_pass(tmp_path):
+    """Brute force: every combination of earlier gate failures must not call texel.
+
+    A clean scene calls it once and uses the returned payload. An occupied path
+    is not an earlier gate, so texel still runs and then the path is refused.
+    """
+    core = _core()
+    order = ('cleanup', 'matid', 'xview', 'ucx')
+    calls = []
+
+    def spy(objects):
+        calls.append(tuple(obj['name'] for obj in objects))
+        return {obj['name']: _good_texel(obj) for obj in objects}
+
+    seen = 0
+    for index, flags in enumerate(itertools.product((False, True), repeat=4)):
+        scene = _gate_scene(flags)
+        target = tmp_path / f'order-{index}.fbx'
+        source = tmp_path / f'order-{index}.json'
+        source.write_text('{}\n', encoding='utf-8')
+        before = source.read_bytes()
+        calls.clear()
+        failed = [name for name, flag in zip(order, flags) if flag]
+        if failed:
+            preview = core.dry_run(scene, target, source, texel_fn=spy)
+            assert preview['status'] == 'fail', flags
+            assert preview['plan']['stopped'] == failed[0], flags
+            assert all(gate['name'] != 'texel' for gate in preview['plan']['gates'])
+            assert calls == [], flags
+            with pytest.raises(ValueError, match=failed[0]):
+                core.commit(scene, target, source, preview, texel_fn=spy)
+            assert calls == [], flags
+            assert not target.exists()
+            assert not target.with_suffix('.report.json').exists()
+            assert not Path(str(target) + '.partial').exists()
+        else:
+            preview = core.dry_run(scene, target, source, texel_fn=spy)
+            assert preview['status'] == 'pass', preview
+            assert [gate['name'] for gate in preview['plan']['gates']] == ['cleanup', 'matid', 'xview', 'ucx', 'texel']
+            assert calls == [('SM_gate_probe',)]
+            assert preview['plan']['texel']['meshes'][0]['min_px_per_m'] == 2048.0
+            assert not target.exists()
+        assert source.read_bytes() == before
+        seen += 1
+    assert seen == 16
+
+    missing = _poison(_triangle('SM_missing_material', handle=31))
+    missing['material'] = None
+    held = []
+
+    def blocked(_objects):
+        held.append(1)
+        raise AssertionError('texel ran before matid')
+
+    target = tmp_path / 'missing.fbx'
+    source = tmp_path / 'missing.json'
+    source.write_text('{}\n', encoding='utf-8')
+    before = source.read_bytes()
+    preview = core.dry_run(_scene(missing), target, source, texel_fn=blocked)
+    assert held == []
+    assert preview['status'] == 'fail' and preview['plan']['stopped'] == 'matid'
+    assert preview['objects'][0]['findings'] == [
+        {'code': 'missing_material', 'ids': [1], 'detail': 'SM_missing_material'}]
+    assert [gate['name'] for gate in preview['plan']['gates']] == ['cleanup', 'matid']
+    with pytest.raises(ValueError, match='matid'):
+        core.commit(_scene(missing), target, source, preview, texel_fn=blocked)
+    assert held == []
+    assert not target.exists() and source.read_bytes() == before
+
+    udim = _poison(_triangle('SM_bad_matid_missing_texel', handle=32, material_id=1001))
+    preview = core.dry_run(_scene(udim), tmp_path / 'udim.fbx', tmp_path / 'udim.json', texel_fn=blocked)
+    assert held == []
+    assert preview['plan']['stopped'] == 'matid'
+    assert {'code': 'udim_id', 'ids': [1], 'detail': 'SM_bad_matid_missing_texel'} in preview['objects'][0]['findings']
+    assert all(gate['name'] != 'texel' for gate in preview['plan']['gates'])
+    assert not (tmp_path / 'udim.fbx').exists()
+
+    calls.clear()
+    occupied = tmp_path / 'occupied.fbx'
+    occupied.write_bytes(b'keep')
+    clean = _gate_scene((False, False, False, False))
+    refused = core.dry_run(clean, occupied, tmp_path / 'occupied.json', texel_fn=spy)
+    assert len(calls) == 1
+    assert refused['status'] == 'fail' and refused['plan']['stopped'] == 'path'
+    assert any(gate['name'] == 'texel' for gate in refused['plan']['gates'])
+    assert occupied.read_bytes() == b'keep'
+
+    calls.clear()
+    deferred = core.dry_run(clean, tmp_path / 'defer.fbx', tmp_path / 'defer.json', texel_fn=spy, defer_texel=True)
+    assert calls == []
+    assert [gate['name'] for gate in deferred['plan']['gates']] == ['cleanup', 'matid', 'xview', 'ucx']
+    assert deferred['plan']['texel'] is None
+    assert not (tmp_path / 'defer.fbx').exists()

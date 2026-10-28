@@ -1549,8 +1549,10 @@ def _slot_gaps(n, ids):
 def _repair_blocks(dumps):
     """True when the bundled hygiene slice would refuse the export copy.
 
-    Texel and material extraction stay behind this check: a missing material
-    must not hide a cleanup finding. The slice matches twinqa.export_hygiene.repair_plan.
+    Material evidence stays behind this check: a missing material must not hide
+    a cleanup finding. Texel extraction stays behind the later gates and runs
+    only after cleanup, MatID, xView and UCX have all passed. The slice matches
+    twinqa.export_hygiene.repair_plan.
     """
     import importlib.util
     from pathlib import Path
@@ -1565,8 +1567,9 @@ def _repair_blocks(dumps):
 def _export_scene(nodes):
     """Read-only scene description. UCX_* nodes are collision pieces, not render meshes.
 
-    Cleanup evidence is collected for every emitted node before material or texel
-    extraction. Those later reads run only when hygiene does not already refuse.
+    Cleanup evidence is collected for every emitted node. Material name and slot
+    gaps are read only when hygiene does not already refuse. Texel stays a
+    placeholder; the export caller fills it after MatID, xView and UCX pass.
     """
     rt = _rt()
     render = [n for n in nodes if not str(n.name).startswith('UCX_')]
@@ -1602,7 +1605,6 @@ def _export_scene(nodes):
             material = n.material
             obj['material'] = None if material is None else str(material.name)
             obj['slot_gaps'] = _slot_gaps(n, obj['material_ids'])
-            obj['texel'] = _texel_payload(n)
     return {'objects': objects, 'ucx': ucx, 'units': 'm', 'axis': 'Z-up'}
 
 
@@ -1654,7 +1656,7 @@ def _subprocess_export(payload):
         'req = json.loads(sys.stdin.read())\n'
         'method = req["method"]\n'
         'if method == "dry_run":\n'
-        '    out = mod.dry_run(req["scene"], req["target"], req.get("source"))\n'
+        '    out = mod.dry_run(req["scene"], req["target"], req.get("source"), defer_texel=bool(req.get("defer_texel")))\n'
         'elif method == "readback":\n'
         '    out = mod.readback(Path(req["target"]).read_bytes())\n'
         'elif method == "finish":\n'
@@ -1671,19 +1673,43 @@ def _subprocess_export(payload):
     return json.loads(proc.stdout.decode('utf-8'))
 
 
-def _dry_run_scene(scene, target, source):
+def _export_texel_fn(nodes):
+    """Texel payloads for render meshes. Called only after the earlier gates pass."""
+    render = [n for n in nodes if not str(n.name).startswith('UCX_')]
+
+    def texel_fn(_objects):
+        return {str(n.name): _texel_payload(n) for n in render}
+
+    return texel_fn
+
+
+def _dry_run_scene(scene, target, source, texel_fn=None):
     core = _load_core('export_core.py', 'agr_tools_export')
     try:
-        return core.dry_run(scene, target, source)
+        return core.dry_run(scene, target, source, texel_fn=texel_fn)
     except (ModuleNotFoundError, ImportError):
-        return _subprocess_export({'method': 'dry_run', 'scene': scene, 'target': str(target), 'source': source})
+        payload = {'method': 'dry_run', 'scene': scene, 'target': str(target), 'source': source}
+        if texel_fn is None:
+            return _subprocess_export(payload)
+        pre = _subprocess_export(dict(payload, defer_texel=True))
+        if pre['plan']['stopped'] in core.EARLY_GATES:
+            return pre
+        produced = texel_fn(scene['objects'])
+        if not isinstance(produced, dict):
+            raise ValueError('partial texel')
+        for obj in scene['objects']:
+            item = produced.get(obj['name'])
+            if not isinstance(item, dict):
+                raise ValueError('partial texel ' + str(obj['name']))
+            obj['texel'] = item
+        return _subprocess_export(payload)
 
 
 def export_preview(nodes=None, target=None):
     """Dry-run the checked export. The scene and the filesystem are unchanged."""
     nodes = _targets(nodes)
     target = _export_target(nodes, target)
-    report = _dry_run_scene(_export_scene(nodes), target, _max_source())
+    report = _dry_run_scene(_export_scene(nodes), target, _max_source(), texel_fn=_export_texel_fn(nodes))
     parse_report(json.dumps(report, allow_nan=False))
     return report
 
@@ -1744,15 +1770,16 @@ def export_commit(nodes, preview, target=None):
     target = _export_target(nodes, target)
     scene = _export_scene(nodes)
     source = _max_source()
+    texel_fn = _export_texel_fn(nodes)
     core = _load_core('export_core.py', 'agr_tools_export')
 
     def writer(path, _plan):
         _write_max_fbx(nodes, path)
 
     try:
-        report = core.commit(scene, target, source, preview, writer=writer)
+        report = core.commit(scene, target, source, preview, writer=writer, texel_fn=texel_fn)
     except (ModuleNotFoundError, ImportError):
-        current = _subprocess_export({'method': 'dry_run', 'scene': scene, 'target': str(target), 'source': source})
+        current = _dry_run_scene(scene, target, source, texel_fn=texel_fn)
         if current != preview:
             raise ValueError('stale preview')
         if current['status'] != 'pass':

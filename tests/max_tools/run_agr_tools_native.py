@@ -1049,6 +1049,87 @@ assert combo['plan']['stopped'] == 'cleanup', combo
 assert [row['name'] for row in combo['objects'] if row['findings']] == ['UCX_SM_combo_body_01']
 assert not combo_target.exists()
 
+def structured_export(nodes, stopped, label):
+    target = export_dir / (label + '.fbx')
+    rt.setUserProp(nodes[0], 'AGR_EXPORT_PATH', str(target))
+    before = agr.snapshot(nodes)
+    count = len(list(rt.objects))
+    preview = agr.export_preview(nodes, str(target))
+    assert preview['status'] == 'fail', preview
+    assert preview['plan']['stopped'] == stopped, preview['plan']['stopped']
+    assert all(gate['name'] != 'texel' for gate in preview['plan']['gates']), preview['plan']['gates']
+    assert agr.snapshot(nodes) == before and len(list(rt.objects)) == count
+    message = agr_raises(lambda: agr.export_commit(nodes, preview, str(target)))
+    assert stopped in message, message
+    assert not target.exists()
+    assert not (export_dir / (label + '.report.json')).exists()
+    assert not (export_dir / (label + '.fbx.partial')).exists()
+    return preview
+
+
+missing_mat = export_quad('SM_missing_material')
+rt.select(missing_mat)
+rt.execute('$.material = undefined')
+assert missing_mat.material is None, missing_mat.material
+_mv, _mf, missing_ids = agr._tri_mesh(missing_mat)
+assert missing_ids and all(1 <= int(mid) <= 1000 for mid in missing_ids), missing_ids
+missing_preview = structured_export([missing_mat], 'matid', 'missing-material')
+assert missing_preview['objects'][0]['name'] == 'SM_missing_material'
+assert missing_preview['objects'][0]['findings'] == [{
+    'code': 'missing_material',
+    'ids': list(range(1, len(missing_ids) + 1)),
+    'detail': 'SM_missing_material',
+}], missing_preview
+results['export']['missing_material'] = missing_preview['plan']['stopped']
+
+bad_mat = make_uv_quad('SM_bad_matid_missing_texel', square, 'brick=none', 'brick')
+rt.setUserPropBuffer(bad_mat, 'MapChannel:1 = UV\r\n')
+assert agr._prop(bad_mat, 'AGR_TEXEL_PROFILE') is None
+assert agr._prop(bad_mat, 'AGR_TEXEL_MAP') is None
+for face_index in range(1, int(rt.polyop.getNumFaces(bad_mat)) + 1):
+    rt.polyop.setFaceMatID(bad_mat, face_index, 1001)
+_bv, _bf, bad_ids = agr._tri_mesh(bad_mat)
+bad_expect = [index for index, mid in enumerate(bad_ids, 1) if int(mid) >= 1001]
+assert bad_expect, bad_ids
+bad_preview = structured_export([bad_mat], 'matid', 'bad-matid-no-texel')
+assert [item for item in bad_preview['objects'][0]['findings'] if item['code'] == 'udim_id'] == [{
+    'code': 'udim_id', 'ids': bad_expect, 'detail': 'SM_bad_matid_missing_texel'}], bad_preview
+results['export']['bad_matid_missing_texel'] = bad_preview['plan']['stopped']
+
+xview_bare = rt.mesh(name='SM_xview_no_texel',
+                     vertices=[rt.point3(0, 0, 0), rt.point3(1, 0, 0), rt.point3(0, 1, 0),
+                               rt.point3(0, 0, 0.001), rt.point3(1, 0, 0.001), rt.point3(0, 1, 0.001)],
+                     faces=[rt.point3(1, 2, 3), rt.point3(4, 5, 6)])
+rt.convertToPoly(xview_bare)
+rt.polyop.setMapSupport(xview_bare, 1, True)
+rt.polyop.setNumMapVerts(xview_bare, 1, 6)
+for index, uv in enumerate([(0, 0), (1, 0), (0, 1), (0, 0), (1, 0), (0, 1)], 1):
+    rt.polyop.setMapVert(xview_bare, 1, index, rt.point3(float(uv[0]), float(uv[1]), 0))
+rt.polyop.setMapFace(xview_bare, 1, 1, agr._max_array((1, 2, 3)))
+rt.polyop.setMapFace(xview_bare, 1, 2, agr._max_array((4, 5, 6)))
+rt.polyop.setFaceMatID(xview_bare, 1, 1)
+rt.polyop.setFaceMatID(xview_bare, 2, 1)
+xview_bare.material = rt.standardMaterial(name='brick')
+rt.setUserPropBuffer(xview_bare, 'MapChannel:1 = UV\r\n')
+assert agr._prop(xview_bare, 'AGR_TEXEL_PROFILE') is None
+xview_no = structured_export([xview_bare], 'xview', 'xview-no-texel')
+results['export']['xview_no_texel'] = xview_no['plan']['stopped']
+
+ucx_body = make_uv_quad('SM_ucx_no_texel', square, 'brick=none', 'brick')
+rt.setUserPropBuffer(ucx_body, 'MapChannel:1 = UV\r\n')
+rt.setUserProp(ucx_body, 'AGR_TEXEL_PROFILE', 'nope')
+assert agr._prop(ucx_body, 'AGR_TEXEL_PROFILE') == 'nope'
+hull_bad_a = rt.box(name='UCX_SM_ucx_no_texel_01', length=1, width=1, height=1)
+hull_bad_b = rt.box(name='UCX_SM_ucx_no_texel_02', length=1, width=1, height=1)
+rt.convertToPoly(hull_bad_a)
+rt.convertToPoly(hull_bad_b)
+mark_uv(hull_bad_a)
+mark_uv(hull_bad_b)
+hull_bad_a.position = rt.point3(30, 0, 0)
+hull_bad_b.position = rt.point3(30.2, 0, 0)
+ucx_no = structured_export([ucx_body, hull_bad_a, hull_bad_b], 'ucx', 'ucx-no-texel')
+results['export']['ucx_no_texel'] = ucx_no['plan']['stopped']
+
 moved = export_quad('SM_moved_stale')
 moved_target = export_dir / 'moved-stale.fbx'
 rt.setUserProp(moved, 'AGR_EXPORT_PATH', str(moved_target))
@@ -1064,6 +1145,7 @@ assert rt.macros.run('AGR Tools', 'AGRToolsExport'), 'AGRToolsExport'
 results['guards']['registered_export_button'] = 1
 results['export']['exact_names'] = exact_names
 print('AGR_REVIEW_731 names=exact ucx_dirty=1 offenders=1 cleanup_first=1 stale_move=1 probes=4')
+print('AGR_REVIEW_R3 missing_material=1 udim_no_texel=1 xview_no_texel=1 ucx_no_texel=1')
 print('AGR_NATIVE_EXPORT clean=1 gates=cleanup,matid,xview,ucx')
 print('AGR_REVIEW_R1 mesh=1 poly=1 plain=1 modifier=1 clipped_tris=16 stale=1 names=1')
 print('AGR_REVIEW_R2 subdiv_tris=12 subdiv_verts=8 names=UCX_<export>_NN')

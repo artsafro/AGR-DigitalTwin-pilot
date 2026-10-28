@@ -145,8 +145,11 @@ results, writes the report exclusively and emits a completion marker at the end.
   emitted copy, render meshes and `UCX_` hulls, in this order: pre-export
   clean-up preview, MatID check, xView gate, UCX audit when `UCX_` pieces are
   in the selection, then texel readout (report only; an out-of-band density
-  does not stop the export). Cleanup is decided before material and texel
-  extraction, and a finding names only the node that failed. The Python CLI
+  does not stop the export). Extraction follows that order: cleanup is decided
+  before any material read; MatID evidence (material name and empty slots) is
+  read only after cleanup passes; texel is read only after cleanup, MatID,
+  xView and UCX have all passed. A finding names only the node that failed.
+  The Python CLI
   has no geometry writer: it exits nonzero with `unsupported writer` and
   creates no file. Only the Max exporter writes the FBX, and each exported
   copy keeps the planned node name (`SM_body`, `UCX_SM_body_01`), not an
