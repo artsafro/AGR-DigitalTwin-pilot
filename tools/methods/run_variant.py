@@ -9,7 +9,9 @@ Pattern: new-case: methods catalog metric runner (one comparable row per variant
 Row fields: wall time, triangles, objects, xView overlaps (shared 2 mm / 5 mm / 0.81 deg), UCX check (V010 +
 V012 names), texel (min / median px/m), file size, MatID (slot integrity), render-vs-reference SSIM (null
 without a reference picture or render), and the class metrics (ucx-collisions: model -> UCX fit; windows-glazing: glass objects, glass triangle
-share, frame depth).
+share, frame depth; ground-terrain: vertical deviation from the benchmark's reference surface, holes, boundary, UV).
+ground-terrain reads the benchmark source FBX as the reference (sha256 checked) and both `<fbx>.placement.json`
+sidecars for the world frame; a missing reference or sidecar gives null figures with the reason.
 A metric that cannot be measured is null with a reason, never a made-up number.
 Exit 0 row appended; 2 measurement error (nothing appended); 4 refused (bad arguments, unknown benchmark or
 class, results path aliasing an input).
@@ -74,6 +76,43 @@ def wall_time(report: Path | None, seconds: float | None) -> tuple[float | None,
     if isinstance(seconds, bool) or not isinstance(seconds, (int, float)) or not math.isfinite(seconds) or seconds < 0:
         raise Refused(f"wall time must be a finite number >= 0, got {seconds!r}")
     return float(seconds), None
+
+
+def variant_input(report: Path | None) -> dict | None:
+    """The variant report's `input` block (what the variant was built from), copied into the row as-is."""
+    if report is None:
+        return None
+    inp = json.loads(report.read_text(encoding="utf-8")).get("input")
+    if inp is not None and not isinstance(inp, dict):
+        raise Refused(f"variant report {report.name}: input must be an object, got {inp!r}")
+    return inp
+
+
+def ground_reference(bench: dict, readback: Path | None, extra: Path | None, tmp: Path) -> dict:
+    """Reference surface of a ground-terrain benchmark: its source FBX read back (sha256 must match), plus its
+    placement origin. A missing FBX or sidecar is a reason (null figures); a sha mismatch is an error."""
+    src = Path(bench["source"]["local_path"])
+    if not src.is_file():
+        return {"rb": None, "extra": None, "offset": None, "reason": f"reference FBX missing at {src}"}
+    if sha256(src) != bench["source"]["sha256"]:
+        raise metrics.MetricError(f"reference {src.name} sha256 differs from benchmarks.json")
+    if readback:
+        rb = json.loads(readback.read_text(encoding="utf-8"))
+    else:
+        from twinqa.scene import readback as scene_readback
+
+        rb = scene_readback(src)
+    if not rb.get("readback_ok"):
+        raise metrics.MetricError(f"reference readback failed: {rb.get('error')}")
+    if extra:
+        ex = json.loads(extra.read_text(encoding="utf-8"))
+    elif readback:
+        ex = None
+    else:
+        (tmp / "ref").mkdir()
+        ex = run_extra(src, tmp / "ref")
+    offset, reason = metrics.placement_offset(src)
+    return {"rb": rb, "extra": ex, "offset": offset, "reason": reason}
 
 
 def fbx_from(path: Path, tmp: Path) -> Path:
@@ -141,7 +180,7 @@ def git_head() -> str | None:
 
 def build_row(*, rb: dict, extra: dict | None, output: Path, bench: dict, cls: str, variant: str,
               wall: tuple, renders: dict, refs: dict, measure_s: float | None = None,
-              tile_sides: dict | None = None) -> dict:
+              tile_sides: dict | None = None, ground_ref: dict | None = None) -> dict:
     from twinqa.profiles import load_profiles
 
     if not rb.get("readback_ok"):
@@ -166,6 +205,13 @@ def build_row(*, rb: dict, extra: dict | None, output: Path, bench: dict, cls: s
         row["class_metrics"]["ucx_fit"] = metrics.ucx_fit(rb, extra)
     if cls == "windows-glazing":
         row["class_metrics"]["windows"] = metrics.windows_glazing(rb, extra)
+    if cls == "ground-terrain":
+        if ground_ref is None:
+            raise metrics.MetricError("ground-terrain needs the benchmark reference (ground_ref)")
+        offset, off_reason = metrics.placement_offset(output)
+        row["class_metrics"]["ground"] = metrics.ground_terrain(
+            rb, extra, ground_ref["rb"], ground_ref["extra"], offset, ground_ref["offset"],
+            offset_reason=off_reason, ref_reason=ground_ref["reason"])
     row["measure_time_s"] = measure_s
     return row
 
@@ -196,6 +242,8 @@ def main(argv=None) -> int:
     ap.add_argument("--benchmarks", type=Path, default=BENCHMARKS)
     ap.add_argument("--readback", type=Path, help="reuse a fbx_readback.py JSON of this output (tests)")
     ap.add_argument("--extra", type=Path, help="reuse an extra_readback_blender.py JSON of this output (tests)")
+    ap.add_argument("--reference-readback", type=Path, help="ground-terrain: reuse a readback JSON of the reference")
+    ap.add_argument("--reference-extra", type=Path, help="ground-terrain: reuse an extra readback JSON of the reference")
     a = ap.parse_args(argv)
     try:
         if not a.output.is_file():
@@ -206,9 +254,16 @@ def main(argv=None) -> int:
         renders = parse_renders(a.render)
         inputs += list(renders.values())
         inputs += [Path(r["local_path"]) for r in (bench.get("reference_pictures") or {}).values()]
+        if a.cls == "ground-terrain":
+            ref = Path(bench["source"]["local_path"])
+            inputs += [ref, Path(str(ref) + ".placement.json"), Path(str(a.output) + ".placement.json")]
+            inputs += [p for p in (a.reference_readback, a.reference_extra) if p]
+        elif a.reference_readback or a.reference_extra:
+            raise Refused("--reference-readback / --reference-extra apply to ground-terrain only")
         refuse_aliases([results], inputs)
         check_target(results)
         wall = wall_time(a.variant_report, a.wall_time_s)
+        built_from = variant_input(a.variant_report)
     except (Refused, OSError, KeyError, json.JSONDecodeError) as exc:
         print(f"RUN_VARIANT refused: {exc}", file=sys.stderr)
         return 4
@@ -226,8 +281,12 @@ def main(argv=None) -> int:
             extra = json.loads(a.extra.read_text(encoding="utf-8")) if a.extra else (
                 None if a.readback else run_extra(fbx, Path(tmp)))
             sides = metrics.package_tile_sides(tmp) if a.output.suffix.lower() == ".zip" else None
+            gref = ground_reference(bench, a.reference_readback, a.reference_extra, Path(tmp)) \
+                if a.cls == "ground-terrain" else None
             row = build_row(rb=rb, extra=extra, output=a.output, bench=bench, cls=a.cls, variant=a.variant,
-                            wall=wall, renders=renders, refs=refs, tile_sides=sides)
+                            wall=wall, renders=renders, refs=refs, tile_sides=sides, ground_ref=gref)
+        if built_from is not None:
+            row["input"] = built_from
         row["measure_time_s"] = round(time.perf_counter() - t0, 3)
         row["measured_at"] = dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
         row["git_commit"] = git_head()

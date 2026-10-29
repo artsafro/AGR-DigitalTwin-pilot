@@ -516,3 +516,247 @@ def windows_glazing(rb: dict, extra: dict | None) -> dict:
                 "frame_depth_m": {"min": round(min(comps), 4), "median": round(statistics.median(comps), 4),
                                   "max": round(max(comps), 4)}})
     return out
+
+
+# ---- ground / terrain (class ground-terrain, #733) -----------------------------------------------------------------
+
+GROUND_SAMPLE_M = 1.0  # fixed XY sample grid step for the vertical deviation (cell centres, anchored on the reference)
+GROUND_HOLE_MIN_M2 = 1000.0  # footprint hole = plan hole of at least this area (Ground gate 1 rule, build_ground.py)
+GROUND_CLOSE_M = 0.01  # footprint closing radius: seals float gaps between triangles, never a 1000 m2 hole
+GROUND_MAX_PAIRS = 4_000_000  # sample x triangle candidate pairs per chunk
+GROUND_METHOD = ("top surface = highest triangle straight above/below each XY sample (vertical faces skipped); "
+                 "samples = centres of a fixed GROUND_SAMPLE_M grid anchored on floor(reference bbox min / step); "
+                 "dz = output - reference on samples both surfaces cover; footprint = union of XY triangle "
+                 "projections closed by GROUND_CLOSE_M; holes = interior rings >= GROUND_HOLE_MIN_M2; boundary = "
+                 "summed exterior ring length; world XYZ = FBX XYZ + placement sidecar origin")
+
+
+def placement_offset(path) -> tuple[np.ndarray | None, str | None]:
+    """World origin of an FBX from its `<fbx>.placement.json` sidecar (tools/blender/ground_json_to_fbx.py,
+    [D126]): (origin, None), or (None, reason) when there is no sidecar. A malformed sidecar is an error."""
+    import json
+    from pathlib import Path
+
+    p = Path(str(path) + ".placement.json")
+    if not p.is_file():
+        return None, f"no placement sidecar {p.name}"
+    try:
+        data = json.loads(p.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise MetricError(f"{p.name}: not JSON ({exc})") from exc
+    origin = data.get("origin_msk77_xyz") if isinstance(data, dict) else None
+    if (not isinstance(origin, list) or len(origin) != 3
+            or any(isinstance(c, bool) or not isinstance(c, (int, float)) or not math.isfinite(c) for c in origin)):
+        raise MetricError(f"{p.name}: origin_msk77_xyz must be 3 finite numbers, got {origin!r}")
+    if data.get("mesh_xyz = msk77_xyz - origin_msk77_xyz") is not True:
+        raise MetricError(f"{p.name}: does not state mesh_xyz = msk77_xyz - origin_msk77_xyz")
+    return np.asarray(origin, float), None
+
+
+def _strict_index(i, n: int, where: str) -> int:
+    """A vertex index exactly as stored: a non-boolean int in [0, n). Floats (even integral), bools, strings and
+    NaN are malformed input, never coerced (int(0.25) or False would silently build a valid-looking mesh)."""
+    if isinstance(i, bool) or not isinstance(i, int):
+        raise MetricError(f"{where}: triangle index {i!r} is not an integer")
+    if not 0 <= i < n:
+        raise MetricError(f"{where}: triangle index {i} outside the vertex list (0..{n - 1})")
+    return i
+
+
+def _strict_ground_triangles(rb: dict, extra: dict | None) -> tuple[np.ndarray, np.ndarray]:
+    """World-free vertices and triangles of every model mesh with each index validated before any coercion and a
+    complete inventory: with an ok extra readback every model mesh needs its `tris`, and their count must equal
+    the readback's `triangles`; without it the readback polygons (>= 3 valid indices each) are fan-triangulated."""
+    use_extra = bool(extra and extra.get("ok"))
+    vs, ts, off = [], [], 0
+    for m in model_meshes(rb):
+        name = m.get("name")
+        raw_v = (m.get("face_geometry") or {}).get("vertices")
+        if not isinstance(raw_v, list):
+            raise MetricError(f"mesh {name!r}: readback has no face_geometry vertices")
+        v = np.asarray(raw_v, float).reshape(-1, 3)
+        n, tris = len(v), []
+        if use_extra:
+            meshes = (extra or {}).get("meshes")
+            if not isinstance(meshes, dict) or name not in meshes:
+                raise MetricError(f"mesh {name!r}: missing from the extra readback")
+            raw = meshes[name].get("tris") if isinstance(meshes[name], dict) else None
+            if not isinstance(raw, list):
+                raise MetricError(f"mesh {name!r}: extra readback triangle list missing or not a list")
+            if raw and all(isinstance(x, list) for x in raw):
+                groups = raw
+            elif any(isinstance(x, list) for x in raw):
+                raise MetricError(f"mesh {name!r}: triangle list mixes nested and flat entries")
+            elif len(raw) % 3:
+                raise MetricError(f"mesh {name!r}: flat triangle list length {len(raw)} is not a multiple of 3")
+            else:
+                groups = [raw[k:k + 3] for k in range(0, len(raw), 3)]
+            for k, g in enumerate(groups):
+                if len(g) != 3:
+                    raise MetricError(f"mesh {name!r}: triangle {k} has {len(g)} indices, expected 3")
+                tris.append([_strict_index(i, n, f"mesh {name!r} triangle {k}") for i in g])
+            declared = m.get("triangles")
+            if isinstance(declared, bool) or not isinstance(declared, int) or declared != len(tris):
+                raise MetricError(f"mesh {name!r}: extra readback has {len(tris)} triangles, readback "
+                                  f"declares {declared!r}")
+        else:
+            polys = (m.get("face_geometry") or {}).get("polygons")
+            if not isinstance(polys, list):
+                raise MetricError(f"mesh {name!r}: readback has no face_geometry polygons")
+            for k, p in enumerate(polys):
+                if not isinstance(p, list) or len(p) < 3:
+                    raise MetricError(f"mesh {name!r}: polygon {k} needs >= 3 indices, got {p!r}")
+                idx = [_strict_index(i, n, f"mesh {name!r} polygon {k}") for i in p]
+                tris += [[idx[0], idx[j], idx[j + 1]] for j in range(1, len(idx) - 1)]
+        vs.append(v)
+        ts.append(np.asarray(tris, np.int64).reshape(-1, 3) + off)
+        off += n
+    if not vs:
+        raise MetricError("no model mesh")
+    return np.concatenate(vs), np.concatenate(ts)
+
+
+def _ground_tris(rb: dict, extra: dict | None, offset: np.ndarray) -> np.ndarray:
+    v, t = _strict_ground_triangles(rb, extra)
+    if not np.isfinite(v).all():
+        raise MetricError("non-finite vertex in the model meshes")
+    return (v + offset)[t]  # (n, 3, 3) world
+
+
+def _xy_area2(tri: np.ndarray) -> np.ndarray:
+    a, b, c = tri[:, 0, :2], tri[:, 1, :2], tri[:, 2, :2]
+    return (b[:, 0] - a[:, 0]) * (c[:, 1] - a[:, 1]) - (b[:, 1] - a[:, 1]) * (c[:, 0] - a[:, 0])
+
+
+def sample_grid(ref_tri: np.ndarray, step: float = GROUND_SAMPLE_M) -> dict:
+    """The fixed sample grid of a benchmark: cell centres over the reference XY bbox."""
+    if isinstance(step, bool) or not isinstance(step, (int, float)) or not math.isfinite(step) or step <= 0:
+        raise MetricError(f"sample step must be finite > 0, got {step!r}")
+    if not len(ref_tri):
+        raise MetricError("reference has no triangle")
+    xy = ref_tri[:, :, :2].reshape(-1, 2)
+    lo, hi = xy.min(0), xy.max(0)
+    x0, y0 = math.floor(lo[0] / step) * step, math.floor(lo[1] / step) * step
+    nx, ny = int(math.ceil((hi[0] - x0) / step)), int(math.ceil((hi[1] - y0) / step))
+    return {"x0": x0, "y0": y0, "step": float(step), "nx": max(nx, 1), "ny": max(ny, 1)}
+
+
+def top_z(tri: np.ndarray, grid: dict, eps: float = 1e-9) -> np.ndarray:
+    """Highest Z of the triangles over every grid sample, shape (ny, nx); NaN where no triangle covers it."""
+    x0, y0, s, nx, ny = grid["x0"], grid["y0"], grid["step"], grid["nx"], grid["ny"]
+    out = np.full(nx * ny, -np.inf)
+    tri = tri[np.abs(_xy_area2(tri)) > 1e-12]  # vertical faces have no XY area: skirts never decide the top
+    if len(tri):
+        xy = tri[:, :, :2]
+        i0 = np.clip(np.ceil((xy[:, :, 0].min(1) - x0) / s - 0.5 - eps), 0, nx).astype(np.int64)
+        i1 = np.clip(np.floor((xy[:, :, 0].max(1) - x0) / s - 0.5 + eps), -1, nx - 1).astype(np.int64)
+        j0 = np.clip(np.ceil((xy[:, :, 1].min(1) - y0) / s - 0.5 - eps), 0, ny).astype(np.int64)
+        j1 = np.clip(np.floor((xy[:, :, 1].max(1) - y0) / s - 0.5 + eps), -1, ny - 1).astype(np.int64)
+        ni, nj = np.maximum(i1 - i0 + 1, 0), np.maximum(j1 - j0 + 1, 0)
+        cnt = ni * nj
+        start = 0
+        while start < len(tri):
+            csum = np.cumsum(cnt[start:])
+            stop = start + max(1, int(np.searchsorted(csum, GROUND_MAX_PAIRS, side="right")))
+            sel = np.arange(start, min(stop, len(tri)))
+            start = int(sel[-1]) + 1
+            c = cnt[sel]
+            if not c.sum():
+                continue
+            ti = np.repeat(sel, c)
+            k = np.arange(c.sum()) - np.repeat(np.cumsum(c) - c, c)
+            gi = i0[ti] + k % ni[ti]
+            gj = j0[ti] + k // ni[ti]
+            px, py = x0 + (gi + 0.5) * s, y0 + (gj + 0.5) * s
+            a, b, cc = tri[ti, 0], tri[ti, 1], tri[ti, 2]
+            d = (b[:, 0] - a[:, 0]) * (cc[:, 1] - a[:, 1]) - (b[:, 1] - a[:, 1]) * (cc[:, 0] - a[:, 0])
+            w1 = ((px - a[:, 0]) * (cc[:, 1] - a[:, 1]) - (py - a[:, 1]) * (cc[:, 0] - a[:, 0])) / d
+            w2 = ((b[:, 0] - a[:, 0]) * (py - a[:, 1]) - (b[:, 1] - a[:, 1]) * (px - a[:, 0])) / d
+            w0 = 1.0 - w1 - w2
+            inside = (w0 >= -eps) & (w1 >= -eps) & (w2 >= -eps)
+            z = w0 * a[:, 2] + w1 * b[:, 2] + w2 * cc[:, 2]
+            np.maximum.at(out, (gj * nx + gi)[inside], z[inside])
+    out[np.isneginf(out)] = np.nan
+    return out.reshape(ny, nx)
+
+
+def footprint(tri: np.ndarray, close_m: float = GROUND_CLOSE_M):
+    """XY footprint: union of the projected triangles (vertical ones skipped), closed by close_m."""
+    import shapely
+
+    tri = tri[np.abs(_xy_area2(tri)) > 1e-12]
+    if not len(tri):
+        return shapely.Polygon()
+    rings = np.concatenate([tri[:, :, :2], tri[:, :1, :2]], axis=1)
+    union = shapely.union_all(shapely.polygons(rings), grid_size=1e-6)
+    return union.buffer(close_m, join_style="mitre").buffer(-close_m, join_style="mitre")
+
+
+def _parts(geom):
+    return [g for g in getattr(geom, "geoms", [geom]) if g.geom_type == "Polygon" and not g.is_empty]
+
+
+def footprint_holes(geom, hole_min_m2: float = GROUND_HOLE_MIN_M2):
+    from shapely.geometry import Polygon
+
+    return [Polygon(r) for p in _parts(geom) for r in p.interiors if Polygon(r).area >= hole_min_m2]
+
+
+def ground_terrain(rb: dict, extra: dict | None, ref_rb: dict | None, ref_extra: dict | None,
+                   offset: np.ndarray | None, ref_offset: np.ndarray | None, *, offset_reason: str | None = None,
+                   ref_reason: str | None = None, sample_m: float = GROUND_SAMPLE_M,
+                   hole_min_m2: float = GROUND_HOLE_MIN_M2) -> dict:
+    """ground-terrain class metrics against the benchmark's reference surface. Each figure is measured or null
+    with its reason: no reference readback, no placement sidecar (frames not comparable), no common sample."""
+    model = model_meshes(rb)
+    out = {"method": GROUND_METHOD, "sample_m": sample_m, "hole_min_m2": hole_min_m2,
+           "triangles": int(sum(m["triangles"] for m in model)), "reference_triangles": None,
+           "dz_max_m": None, "dz_p95_m": None, "dz_mean_m": None, "samples_reference": None, "samples_both": None,
+           "samples_missing": None, "samples_extra": None, "dz_reason": None,
+           "holes": None, "reference_holes": None, "holes_matched": None, "hole_count_diff": None,
+           "boundary_m": None, "reference_boundary_m": None, "boundary_diff_m": None, "footprint_reason": None,
+           "uv_present": None, "uv_reason": None}
+    if ref_rb is not None:
+        out["reference_triangles"] = int(sum(m["triangles"] for m in model_meshes(ref_rb)))
+    if not model:
+        out["uv_reason"] = out["dz_reason"] = out["footprint_reason"] = "no model mesh"
+        return out
+    if any("uv_channels" not in m for m in model):
+        out["uv_reason"] = "readback has no uv_channels for a model mesh"
+    else:
+        out["uv_present"] = all(int(m["uv_channels"]) >= 1 for m in model)
+    reason = None
+    if ref_rb is None:
+        reason = f"no reference surface: {ref_reason or 'no reference readback'}"
+    elif not model_meshes(ref_rb):
+        reason = "reference has no model mesh"
+    elif offset is None or ref_offset is None:
+        reason = "frames not comparable: " + (offset_reason or "no output placement") if offset is None else \
+            "frames not comparable: " + (ref_reason or "no reference placement")
+    if reason:
+        out["dz_reason"] = out["footprint_reason"] = reason
+        return out
+    tri, ref = _ground_tris(rb, extra, offset), _ground_tris(ref_rb, ref_extra, ref_offset)
+    grid = sample_grid(ref, sample_m)
+    zo, zr = top_z(tri, grid), top_z(ref, grid)
+    both = np.isfinite(zo) & np.isfinite(zr)
+    out.update(samples_reference=int(np.isfinite(zr).sum()), samples_both=int(both.sum()),
+               samples_missing=int((np.isfinite(zr) & ~np.isfinite(zo)).sum()),
+               samples_extra=int((np.isfinite(zo) & ~np.isfinite(zr)).sum()))
+    if both.any():
+        dz = (zo - zr)[both]
+        out.update(dz_max_m=round(float(np.abs(dz).max()), 4),
+                   dz_p95_m=round(float(np.percentile(np.abs(dz), 95)), 4), dz_mean_m=round(float(dz.mean()), 4))
+    else:
+        out["dz_reason"] = "no sample covered by both surfaces"
+    fo, fr = footprint(tri), footprint(ref)
+    if fo.is_empty or fr.is_empty:
+        out["footprint_reason"] = "empty XY footprint (only vertical faces)"
+        return out
+    ho, hr = footprint_holes(fo, hole_min_m2), footprint_holes(fr, hole_min_m2)
+    matched = sum(1 for h in ho if any(r.contains(h.representative_point()) for r in hr))
+    bo = sum(p.exterior.length for p in _parts(fo))
+    br = sum(p.exterior.length for p in _parts(fr))
+    out.update(holes=len(ho), reference_holes=len(hr), holes_matched=matched, hole_count_diff=len(ho) - len(hr),
+               boundary_m=round(bo, 3), reference_boundary_m=round(br, 3), boundary_diff_m=round(bo - br, 3))
+    return out
