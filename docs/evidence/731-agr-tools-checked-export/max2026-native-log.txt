@@ -1,0 +1,56 @@
+-- ALC Security Tool 1.3 enabled.
+-- ALC2 Security Tool 1.3 enabled.
+-- PhysXPluginMfx Security Tool 1.3 enabled.
+-- PhysXPluginMfx2 Security Tool 1.1 enabled.
+-- CRP Security Tool 1.1 enabled.
+-- ADSL Security Tool 1.1 enabled.
+-- MSCPROP Security Tool 1.0 enabled.
+
+-- MAXScript Auto-load Script Error Exception:
+-- Runtime error: .NET runtime exception: Common Language Runtime detected an invalid program.
+-- MAXScript callstack:
+--	thread data: threadID:1079752
+--	------------------------------------------------------
+--	[stack level: 0]
+--	In anonymous codeblock; filename: C:\Users\artsafro\AppData\Local\Autodesk\3dsMax\2026 - 64bit\ENU\scripts\startup\polyunwrapper_autoload.mse; position: 841; line: 29
+--		Defined in encrypted script
+--	------------------------------------------------------
+--	[stack level: 1]
+--	called from top-level
+MCP: helpers loaded (safe_mode = false, native bridge = true, tcp idle poll = 250 ms)
+AGR_PACKAGE_SHA256 536753134c7031ae33228d0d8a6d5b4fdf6674a7a09877d158c6b70bd17cea71
+AGR_NATIVE_START version=28000 file= units=meters
+AGR_TOOLS_REGISTERED version=0.4.0 category=AGR Tools macros=XView,Cleanup,MatID,Open,Nudge,NudgeApply,Atlas,AtlasApply,Ucx,UcxApply,Texel,Export
+AGR_INSTALL_REGISTERED xView Cleanup MatID Open Nudge NudgeApply Atlas AtlasApply Ucx UcxApply Texel Export
+{"schema": 1, "tool": "xview", "status": "pass", "objects": [{"handle": 2585, "name": "synthetic_clean", "findings": []}]}
+{"schema": 1, "tool": "cleanup", "status": "pass", "objects": [{"handle": 2585, "name": "synthetic_clean", "findings": []}]}
+{"schema": 1, "tool": "matid", "status": "pass", "objects": [{"handle": 2585, "name": "synthetic_clean", "findings": []}]}
+{"schema": 1, "tool": "nudge", "status": "pass", "objects": [{"handle": 5332, "name": "synthetic_nudge_clean", "findings": []}], "plan": {"islands": [{"faces": [1, 2], "steps": [0, 0], "shift": [0.0, 0.0], "materials": ["brick"], "reason": "non-repeating"}], "dropped": []}}
+{"schema": 1, "tool": "atlas", "status": "pass", "objects": [{"handle": 5547, "name": "synthetic_atlas_planted_AGR_atlas_001", "findings": []}], "plan": {"tiles": [1001], "cells": {"Grass": [0, 0, 87, 68]}, "dropped": []}}
+AGR_TOOLS_REGISTERED version=0.4.0 category=AGR Tools macros=XView,Cleanup,MatID,Open,Nudge,NudgeApply,Atlas,AtlasApply,Ucx,UcxApply,Texel,Export
+{"schema": 1, "tool": "ucx", "status": "pass", "objects": [{"handle": 40692, "name": "synthetic_ucx_box", "findings": []}], "plan": {"variant": "single-hull", "kind": "near-convex-box", "pieces": 1, "triangles": 12, "limit": 15000, "names": ["UCX_synthetic_ucx_box_AGR_ucx__01"], "audit": {"collision": [], "unmeasurable": [], "mask_bad_count": 1, "closed": true}, "dropped": []}}
+{"schema": 1, "tool": "texel", "status": "pass", "objects": [{"handle": 41144, "name": "synthetic_texel_clean", "findings": []}], "plan": {"meshes": [{"name": "synthetic_texel_clean", "min_px_per_m": 1024.0, "median_px_per_m": 1024.0}], "materials": [{"name": "brick", "min_px_per_m": 1024.0, "median_px_per_m": 1024.0}], "dropped": []}}
+{"schema": 1, "tool": "export", "status": "fail", "objects": [{"handle": 43874, "name": "synthetic_export_clean", "findings": [{"code": "existing_target", "ids": [1], "detail": "C:\\x\\731-evidence\\max2026\\checked-export\\clean.fbx,C:\\x\\731-evidence\\max2026\\checked-export\\clean.report.json"}]}], "plan": {"target": "C:\\x\\731-evidence\\max2026\\checked-export\\clean.fbx", "report": "C:\\x\\731-evidence\\max2026\\checked-export\\clean.report.json", "units": "m", "axis": "Z-up", "unit_scale_factor": 100.0, "object_count": 0, "triangle_count": 0, "material_count": 0, "object_names": [], "triangles_by_name": {}, "gates": [{"name": "cleanup", "status": "pass", "counts": {"actions": [], "unrepairable": [[]], "finding_status": {"no custom attributes": "pass", "no user-defined properties": "pass", "map channel 1 named UV": "pass", "no map channels 2+": "pass"}}}, {"name": "matid", "status": "pass", "counts": {"id": "material_ids", "status": "pass", "value": {"out_of_range": [], "unassigned_triangles": 0}, "limit": 0, "details": {"groups": {"facade": [1]}, "udim_as_material_id": []}}}, {"name": "xview", "status": "pass", "counts": {"passed": true, "totals": {"overlapping_vertices": 0, "overlapping_faces": 0, "vertex_pairs": 0, "face_pairs": 0, "face_pairs_by_kind": {"contact": 0, "area": 0, "area+contact": 0}, "bowtie_vertices": 0, "bowtie_pairs": 0, "parts_without_faces": 0}}}, {"name": "ucx", "status": "absent", "counts": {"collision": [], "classify": []}}, {"name": "texel", "status": "report", "counts": {"status": "pass", "profile": "VPM", "meshes": [{"name": "synthetic_export_clean", "min_px_per_m": 1024.0, "median_px_per_m": 1024.0}], "materials": [{"name": "brick", "min_px_per_m": 1024.0, "median_px_per_m": 1024.0}], "faces": [{"face": 0, "mesh": "synthetic_export_clean", "material": "brick", "px_per_m": 1024.0, "status": "pass"}, {"face": 1, "mesh": "synthetic_export_clean", "material": "brick", "px_per_m": 1024.0, "status": "pass"}], "dropped": []}}], "dropped": [{"name": "synthetic_export_clean", "reason": "stopped: path"}], "texel": {"status": "pass", "profile": "VPM", "meshes": [{"name": "synthetic_export_clean", "min_px_per_m": 1024.0, "median_px_per_m": 1024.0}], "materials": [{"name": "brick", "min_px_per_m": 1024.0, "median_px_per_m": 1024.0}], "faces": [{"face": 0, "mesh": "synthetic_export_clean", "material": "brick", "px_per_m": 1024.0, "status": "pass"}, {"face": 1, "mesh": "synthetic_export_clean", "material": "brick", "px_per_m": 1024.0, "status": "pass"}], "dropped": []}, "readback": null, "stopped": "path", "digest": "96ed4eb5a4cf064b130355df1d64221e4e9a10731119618079be6ee9e679096e"}}
+AGR_NATIVE_EXPORT clean=1 gates=cleanup,matid,xview,ucx
+AGR_REVIEW_R1 mesh=1 poly=1 plain=1 modifier=1 clipped_tris=16 stale=1 names=1
+AGR_REVIEW_R2 subdiv_tris=12 subdiv_verts=8 names=UCX_<export>_NN
+AGR_NATIVE_UCX_TEXEL clean=2 planted=2 dry_run_unchanged=true originals_unchanged=true texel_read_only=true
+AGR_NATIVE_COMPLETE clean=3 planted=3 dry_run_unchanged=true originals_unchanged=true
+-- ALC Security Tool 1.3 disabled.
+-- ALC2 Security Tool 1.3 disabled.
+-- PhysXPluginMfx Security Tool 1.3 disabled.
+-- CRP Security Tool 1.1 disabled.
+-- ADSL Security Tool 1.1 disabled.
+
+--- process output ---
+28.10.2026 22:08:59;  3ds Max Install Location: C:\Program Files\Autodesk\3ds Max 2026\
+28.10.2026 22:08:59;  3ds Max Executable: 3dsmax.exe
+28.10.2026 22:08:59;  Secure Mode: 'OFF'
+28.10.2026 22:08:59;  Listener Log File: "C:\Users\artsafro\AppData\Local\Temp\agr-3dsmax-t_fdda0089\listener.log"
+28.10.2026 22:08:59;  Script command: " -mxs "(python.ExecuteFile @\"C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_fdda0089\tests\max_tools\run_agr_tools_native.py\")""
+28.10.2026 22:09:02;  Product version: 3ds Max 2026.3 (28.3.0.30732)
+28.10.2026 22:09:02;  Data collection and use is 'OFF'. Change your participation anytime in the Help menu of 3ds Max.
+28.10.2026 22:09:07;  Initializing Python version: 3.11.12
+28.10.2026 22:09:18;  MAXScript Auto-load Script Error Exception: -- Runtime error: .NET runtime exception: Common Language Runtime detected an invalid program.; Error occurred in anonymous codeblock; filename: C:\Users\artsafro\AppData\Local\Autodesk\3dsMax\2026 - 64bit\ENU\scripts\startup\polyunwrapper_autoload.mse; position: 840; line: 29 
+28.10.2026 22:09:33;  Task Completed with Error(s) - see above
+28.10.2026 22:09:33;  3ds Max Shutting Down

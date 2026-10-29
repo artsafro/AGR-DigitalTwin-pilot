@@ -12,8 +12,14 @@ import sys
 from pymxs import runtime as rt
 
 ROOT = Path(__file__).resolve().parents[2]
+os.environ['AGR_TOOLS_REPO'] = str(ROOT)
+_venv_python = ROOT / '.venv' / 'Scripts' / 'python.exe'
+if _venv_python.is_file():
+    os.environ['AGR_PYTHON'] = str(_venv_python)
 OUT = Path(os.environ['AGR_TEST_OUTPUT'])
 OUT.mkdir(parents=True, exist_ok=False)
+_package = Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.4.0.mzp'))
+print('AGR_PACKAGE_SHA256', hashlib.sha256(_package.read_bytes()).hexdigest())
 print('AGR_NATIVE_START version={} file={} units={}'.format(rt.maxVersion()[0], rt.maxFileName, rt.units.SystemType))
 assert rt.maxVersion()[0] in (26000, 28000)
 assert not rt.maxFileName, 'only an empty batch document is allowed'
@@ -24,9 +30,9 @@ rt.execute('global AGRToolsInstallRoot; global AGRToolsStartupRoot')
 rt.AGRToolsInstallRoot = str(OUT / 'installed') + '/'
 rt.AGRToolsStartupRoot = str(OUT / 'startup') + '/'
 rt.makeDir(rt.AGRToolsStartupRoot, all=True)
-rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.3.0.mzp'))))
+rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.4.0.mzp'))))
 assert rt.execute('global AGRToolsRegistered; AGRToolsRegistered == true'), 'MZP macros not registered'
-print('AGR_INSTALL_REGISTERED xView Cleanup MatID Open Nudge NudgeApply Atlas AtlasApply Ucx UcxApply Texel')
+print('AGR_INSTALL_REGISTERED xView Cleanup MatID Open Nudge NudgeApply Atlas AtlasApply Ucx UcxApply Texel Export')
 sys.path.insert(0, str(OUT / 'installed'))
 import runtime as agr
 
@@ -505,10 +511,10 @@ for macro in ('AGRToolsNudge', 'AGRToolsAtlas'):
 results['guards']['registered_uv_buttons'] = 2
 # Startup re-registration and repeated install must not overwrite installed files.
 rt.AGRToolsRegistered = False
-rt.fileIn(str(OUT / 'startup/AGRTools-0.3.0.ms'))
+rt.fileIn(str(OUT / 'startup/AGRTools-0.4.0.ms'))
 assert rt.AGRToolsRegistered
 install_hash = hashlib.sha256((OUT / 'installed/runtime.py').read_bytes()).hexdigest()
-results['guards']['repeat_install'] = raises(lambda: rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.3.0.mzp')))), 'already exists')
+results['guards']['repeat_install'] = raises(lambda: rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.4.0.mzp')))), 'already exists')
 assert hashlib.sha256((OUT / 'installed/runtime.py').read_bytes()).hexdigest() == install_hash
 assert hashlib.sha256((OUT / 'fixture-source.max').read_bytes()).hexdigest() == source_hash
 results['version'] = list(rt.maxVersion())
@@ -840,6 +846,307 @@ results['guards']['ucx_same_name_selection'] = raises(
 assert len(list(rt.objects)) == same_count
 review['names'] = {'second_apply_nodes': 0, 'existing_name_nodes': 0, 'same_name_nodes': 0}
 results['review'] = review
+
+# Checked export. Synthetic copies only. A failing gate must not create the FBX.
+export_dir = OUT / 'checked-export'
+export_dir.mkdir()
+square = [(0, 0), (1, 0), (1, 1), (0, 1)]
+
+
+def export_quad(name, face_id=1):
+    node = make_uv_quad(name, square, 'brick=none', 'brick')
+    rt.setUserPropBuffer(node, 'MapChannel:1 = UV\r\n')
+    rt.setUserProp(node, 'AGR_TEXEL_PROFILE', 'VPM')
+    rt.setUserProp(node, 'AGR_TEXEL_MAP', 'brick=1024')
+    if face_id != 1:
+        rt.polyop.setFaceMatID(node, 1, face_id)
+        if int(rt.polyop.getNumFaces(node)) > 1:
+            rt.polyop.setFaceMatID(node, 2, face_id)
+    return node
+
+
+def export_refused(node, label):
+    target = export_dir / (label + '.fbx')
+    rt.setUserProp(node, 'AGR_EXPORT_PATH', str(target))
+    before = agr.snapshot([node])
+    count = len(list(rt.objects))
+    preview = agr.export_preview([node], str(target))
+    assert preview['status'] == 'fail', preview
+    assert preview['plan']['stopped'] == label, preview['plan']['stopped']
+    assert agr.snapshot([node]) == before and len(list(rt.objects)) == count
+    results['guards']['export_' + label] = agr_raises(lambda: agr.export_commit([node], preview, str(target)))
+    assert not target.exists()
+    assert not (export_dir / (label + '.report.json')).exists()
+    return preview['plan']['stopped']
+
+
+def agr_raises(fn):
+    try:
+        fn()
+    except (ValueError, RuntimeError) as exc:
+        return str(exc)
+    raise AssertionError('expected export refusal')
+
+
+clean_export = export_quad('synthetic_export_clean')
+clean_target = export_dir / 'clean.fbx'
+rt.setUserProp(clean_export, 'AGR_EXPORT_PATH', str(clean_target))
+clean_before = agr.snapshot([clean_export])
+clean_count = len(list(rt.objects))
+clean_preview = agr.export_preview([clean_export], str(clean_target))
+assert clean_preview['status'] == 'pass', clean_preview
+assert agr.snapshot([clean_export]) == clean_before and len(list(rt.objects)) == clean_count
+assert not clean_target.exists()
+clean_report = agr.export_commit([clean_export], clean_preview, str(clean_target))
+assert clean_report['status'] == 'pass', clean_report
+assert clean_target.is_file()
+readback = clean_report['plan']['readback']
+assert readback['object_count'] == clean_preview['plan']['object_count']
+assert readback['triangle_count'] == clean_preview['plan']['triangle_count']
+assert readback['material_count'] == clean_preview['plan']['material_count']
+assert readback['unit_scale_factor'] == clean_preview['plan']['unit_scale_factor']
+assert readback['object_names'] == ['synthetic_export_clean'], readback['object_names']
+assert agr.snapshot([clean_export]) == clean_before
+results['export'] = {
+    'clean_objects': readback['object_count'],
+    'clean_triangles': readback['triangle_count'],
+    'clean_materials': readback['material_count'],
+    'clean_unit_scale': readback['unit_scale_factor'],
+}
+dirty = export_quad('synthetic_export_dirty')
+rt.polyop.setMapSupport(dirty, 2, True)
+rt.setUserPropBuffer(dirty, 'note=planted\r\nMapChannel:1 = UV\r\nMapChannel:2 = extra\r\n')
+rt.setUserProp(dirty, 'AGR_TEXEL_PROFILE', 'VPM')
+rt.setUserProp(dirty, 'AGR_TEXEL_MAP', 'brick=1024')
+results['export']['cleanup'] = export_refused(dirty, 'cleanup')
+results['export']['matid'] = export_refused(export_quad('synthetic_export_matid', 1001), 'matid')
+overlap = rt.mesh(name='synthetic_export_xview',
+                  vertices=[rt.point3(0, 0, 0), rt.point3(1, 0, 0), rt.point3(0, 1, 0),
+                            rt.point3(0, 0, 0.001), rt.point3(1, 0, 0.001), rt.point3(0, 1, 0.001)],
+                  faces=[rt.point3(1, 2, 3), rt.point3(4, 5, 6)])
+rt.convertToPoly(overlap)
+rt.polyop.setMapSupport(overlap, 1, True)
+rt.polyop.setNumMapVerts(overlap, 1, 6)
+for index, uv in enumerate([(0, 0), (1, 0), (0, 1), (0, 0), (1, 0), (0, 1)], 1):
+    rt.polyop.setMapVert(overlap, 1, index, rt.point3(float(uv[0]), float(uv[1]), 0))
+rt.polyop.setMapFace(overlap, 1, 1, agr._max_array((1, 2, 3)))
+rt.polyop.setMapFace(overlap, 1, 2, agr._max_array((4, 5, 6)))
+overlap.material = rt.standardMaterial(name='brick')
+rt.setUserPropBuffer(overlap, 'MapChannel:1 = UV\r\n')
+rt.setUserProp(overlap, 'AGR_TEXEL_PROFILE', 'VPM')
+rt.setUserProp(overlap, 'AGR_TEXEL_MAP', 'brick=1024')
+results['export']['xview'] = export_refused(overlap, 'xview')
+body = export_quad('synthetic_export_body')
+def mark_uv(node):
+    rt.polyop.setMapSupport(node, 1, True)
+    rt.setUserPropBuffer(node, 'MapChannel:1 = UV\r\n')
+    return node
+
+
+hull_a = rt.box(name='UCX_SM_Addr_Main_001', length=1, width=1, height=1)
+hull_b = rt.box(name='UCX_SM_Addr_Main_002', length=1, width=1, height=1)
+rt.convertToPoly(hull_a)
+rt.convertToPoly(hull_b)
+mark_uv(hull_a)
+mark_uv(hull_b)
+hull_b.position = rt.point3(0.2, 0, 0)
+ucx_target = export_dir / 'ucx.fbx'
+rt.setUserProp(body, 'AGR_EXPORT_PATH', str(ucx_target))
+ucx_preview = agr.export_preview([body, hull_a, hull_b], str(ucx_target))
+assert ucx_preview['status'] == 'fail' and ucx_preview['plan']['stopped'] == 'ucx', ucx_preview
+results['export']['ucx'] = agr_raises(lambda: agr.export_commit([body, hull_a, hull_b], ucx_preview, str(ucx_target)))
+assert not ucx_target.exists()
+def commit_exact(names, label):
+    nodes = []
+    for index, name in enumerate(names):
+        if str(name).startswith('UCX_'):
+            node = rt.box(name=name, length=1, width=1, height=1)
+            rt.convertToPoly(node)
+            node.position = rt.point3(12.0 + index * 3.0, 4.0, 0.0)
+            mark_uv(node)
+        else:
+            node = export_quad(name)
+        nodes.append(node)
+    target = export_dir / (label + '.fbx')
+    rt.setUserProp(nodes[0], 'AGR_EXPORT_PATH', str(target))
+    before = agr.snapshot(nodes)
+    preview = agr.export_preview(nodes, str(target))
+    assert preview['status'] == 'pass', preview
+    report = agr.export_commit(nodes, preview, str(target))
+    assert report['status'] == 'pass', report
+    got = list(report['plan']['readback']['object_names'])
+    assert sorted(got) == sorted(names), got
+    assert agr.snapshot(nodes) == before, label
+    assert [str(node.name) for node in nodes] == list(names)
+    return got
+
+
+exact_names = []
+for index in range(4):
+    exact_names.append(commit_exact([f'SM_probe_{index}'], f'probe-{index}'))
+exact_names.append(commit_exact(['SM_control'], 'names-control'))
+exact_names.append(commit_exact(['SM_body', 'UCX_SM_body_01'], 'names-ucx'))
+assert exact_names[4] == ['SM_control']
+assert sorted(exact_names[5]) == ['SM_body', 'UCX_SM_body_01']
+
+hygiene_body = export_quad('SM_hygiene_body')
+hygiene_hull = rt.box(name='UCX_SM_hygiene_body_01', length=1, width=1, height=1)
+rt.convertToPoly(hygiene_hull)
+hygiene_hull.position = rt.point3(20, 0, 0)
+mark_uv(hygiene_hull)
+rt.polyop.setMapSupport(hygiene_hull, 2, True)
+rt.setUserPropBuffer(hygiene_hull, 'planted=dirty\r\nMapChannel:1 = UV\r\nMapChannel:2 = extra\r\n')
+ucx_dirty_target = export_dir / 'ucx-dirty.fbx'
+rt.setUserProp(hygiene_body, 'AGR_EXPORT_PATH', str(ucx_dirty_target))
+ucx_dirty = agr.export_preview([hygiene_body, hygiene_hull], str(ucx_dirty_target))
+assert ucx_dirty['status'] == 'fail' and ucx_dirty['plan']['stopped'] == 'cleanup', ucx_dirty
+ucx_named = [row['name'] for row in ucx_dirty['objects'] if row['findings']]
+assert ucx_named == ['UCX_SM_hygiene_body_01'], ucx_named
+assert ucx_dirty['objects'][next(i for i, row in enumerate(ucx_dirty['objects']) if row['name'] == 'UCX_SM_hygiene_body_01')]['findings'][0]['ids'] == [2]
+results['export']['ucx_dirty'] = agr_raises(
+    lambda: agr.export_commit([hygiene_body, hygiene_hull], ucx_dirty, str(ucx_dirty_target)))
+assert 'cleanup' in results['export']['ucx_dirty']
+assert not ucx_dirty_target.exists()
+assert not (export_dir / 'ucx-dirty.report.json').exists()
+
+pair_clean = export_quad('SM_pair_clean')
+pair_dirty = export_quad('SM_pair_dirty')
+rt.polyop.setMapSupport(pair_dirty, 2, True)
+rt.setUserPropBuffer(pair_dirty, 'planted=dirty\r\nMapChannel:1 = UV\r\nMapChannel:2 = extra\r\n')
+pair_target = export_dir / 'offenders.fbx'
+rt.setUserProp(pair_clean, 'AGR_EXPORT_PATH', str(pair_target))
+pair = agr.export_preview([pair_clean, pair_dirty], str(pair_target))
+assert pair['plan']['stopped'] == 'cleanup', pair
+pair_named = [row['name'] for row in pair['objects'] if row['findings']]
+assert pair_named == ['SM_pair_dirty'], pair_named
+assert not pair_target.exists()
+
+first_body = export_quad('SM_cleanup_first')
+rt.select(first_body)
+rt.execute('$.material = undefined')
+rt.polyop.setMapSupport(first_body, 2, True)
+rt.setUserPropBuffer(first_body, 'planted=dirty\r\nMapChannel:1 = UV\r\nMapChannel:2 = extra\r\n')
+first_target = export_dir / 'cleanup-first.fbx'
+rt.setUserProp(first_body, 'AGR_EXPORT_PATH', str(first_target))
+first = agr.export_preview([first_body], str(first_target))
+assert first['plan']['stopped'] == 'cleanup', first
+assert [item['code'] for item in first['objects'][0]['findings']] == ['cleanup']
+assert not first_target.exists()
+
+combo_body = export_quad('SM_combo_body')
+rt.select(combo_body)
+rt.execute('$.material = undefined')
+combo_hull = rt.box(name='UCX_SM_combo_body_01', length=1, width=1, height=1)
+rt.convertToPoly(combo_hull)
+combo_hull.position = rt.point3(24, 0, 0)
+mark_uv(combo_hull)
+rt.polyop.setMapSupport(combo_hull, 2, True)
+rt.setUserPropBuffer(combo_hull, 'planted=dirty\r\nMapChannel:1 = UV\r\nMapChannel:2 = extra\r\n')
+combo_target = export_dir / 'combo.fbx'
+rt.setUserProp(combo_body, 'AGR_EXPORT_PATH', str(combo_target))
+combo = agr.export_preview([combo_body, combo_hull], str(combo_target))
+assert combo['plan']['stopped'] == 'cleanup', combo
+assert [row['name'] for row in combo['objects'] if row['findings']] == ['UCX_SM_combo_body_01']
+assert not combo_target.exists()
+
+def structured_export(nodes, stopped, label):
+    target = export_dir / (label + '.fbx')
+    rt.setUserProp(nodes[0], 'AGR_EXPORT_PATH', str(target))
+    before = agr.snapshot(nodes)
+    count = len(list(rt.objects))
+    preview = agr.export_preview(nodes, str(target))
+    assert preview['status'] == 'fail', preview
+    assert preview['plan']['stopped'] == stopped, preview['plan']['stopped']
+    assert all(gate['name'] != 'texel' for gate in preview['plan']['gates']), preview['plan']['gates']
+    assert agr.snapshot(nodes) == before and len(list(rt.objects)) == count
+    message = agr_raises(lambda: agr.export_commit(nodes, preview, str(target)))
+    assert stopped in message, message
+    assert not target.exists()
+    assert not (export_dir / (label + '.report.json')).exists()
+    assert not (export_dir / (label + '.fbx.partial')).exists()
+    return preview
+
+
+missing_mat = export_quad('SM_missing_material')
+rt.select(missing_mat)
+rt.execute('$.material = undefined')
+assert missing_mat.material is None, missing_mat.material
+_mv, _mf, missing_ids = agr._tri_mesh(missing_mat)
+assert missing_ids and all(1 <= int(mid) <= 1000 for mid in missing_ids), missing_ids
+missing_preview = structured_export([missing_mat], 'matid', 'missing-material')
+assert missing_preview['objects'][0]['name'] == 'SM_missing_material'
+assert missing_preview['objects'][0]['findings'] == [{
+    'code': 'missing_material',
+    'ids': list(range(1, len(missing_ids) + 1)),
+    'detail': 'SM_missing_material',
+}], missing_preview
+results['export']['missing_material'] = missing_preview['plan']['stopped']
+
+bad_mat = make_uv_quad('SM_bad_matid_missing_texel', square, 'brick=none', 'brick')
+rt.setUserPropBuffer(bad_mat, 'MapChannel:1 = UV\r\n')
+assert agr._prop(bad_mat, 'AGR_TEXEL_PROFILE') is None
+assert agr._prop(bad_mat, 'AGR_TEXEL_MAP') is None
+for face_index in range(1, int(rt.polyop.getNumFaces(bad_mat)) + 1):
+    rt.polyop.setFaceMatID(bad_mat, face_index, 1001)
+_bv, _bf, bad_ids = agr._tri_mesh(bad_mat)
+bad_expect = [index for index, mid in enumerate(bad_ids, 1) if int(mid) >= 1001]
+assert bad_expect, bad_ids
+bad_preview = structured_export([bad_mat], 'matid', 'bad-matid-no-texel')
+assert [item for item in bad_preview['objects'][0]['findings'] if item['code'] == 'udim_id'] == [{
+    'code': 'udim_id', 'ids': bad_expect, 'detail': 'SM_bad_matid_missing_texel'}], bad_preview
+results['export']['bad_matid_missing_texel'] = bad_preview['plan']['stopped']
+
+xview_bare = rt.mesh(name='SM_xview_no_texel',
+                     vertices=[rt.point3(0, 0, 0), rt.point3(1, 0, 0), rt.point3(0, 1, 0),
+                               rt.point3(0, 0, 0.001), rt.point3(1, 0, 0.001), rt.point3(0, 1, 0.001)],
+                     faces=[rt.point3(1, 2, 3), rt.point3(4, 5, 6)])
+rt.convertToPoly(xview_bare)
+rt.polyop.setMapSupport(xview_bare, 1, True)
+rt.polyop.setNumMapVerts(xview_bare, 1, 6)
+for index, uv in enumerate([(0, 0), (1, 0), (0, 1), (0, 0), (1, 0), (0, 1)], 1):
+    rt.polyop.setMapVert(xview_bare, 1, index, rt.point3(float(uv[0]), float(uv[1]), 0))
+rt.polyop.setMapFace(xview_bare, 1, 1, agr._max_array((1, 2, 3)))
+rt.polyop.setMapFace(xview_bare, 1, 2, agr._max_array((4, 5, 6)))
+rt.polyop.setFaceMatID(xview_bare, 1, 1)
+rt.polyop.setFaceMatID(xview_bare, 2, 1)
+xview_bare.material = rt.standardMaterial(name='brick')
+rt.setUserPropBuffer(xview_bare, 'MapChannel:1 = UV\r\n')
+assert agr._prop(xview_bare, 'AGR_TEXEL_PROFILE') is None
+xview_no = structured_export([xview_bare], 'xview', 'xview-no-texel')
+results['export']['xview_no_texel'] = xview_no['plan']['stopped']
+
+ucx_body = make_uv_quad('SM_ucx_no_texel', square, 'brick=none', 'brick')
+rt.setUserPropBuffer(ucx_body, 'MapChannel:1 = UV\r\n')
+rt.setUserProp(ucx_body, 'AGR_TEXEL_PROFILE', 'nope')
+assert agr._prop(ucx_body, 'AGR_TEXEL_PROFILE') == 'nope'
+hull_bad_a = rt.box(name='UCX_SM_ucx_no_texel_01', length=1, width=1, height=1)
+hull_bad_b = rt.box(name='UCX_SM_ucx_no_texel_02', length=1, width=1, height=1)
+rt.convertToPoly(hull_bad_a)
+rt.convertToPoly(hull_bad_b)
+mark_uv(hull_bad_a)
+mark_uv(hull_bad_b)
+hull_bad_a.position = rt.point3(30, 0, 0)
+hull_bad_b.position = rt.point3(30.2, 0, 0)
+ucx_no = structured_export([ucx_body, hull_bad_a, hull_bad_b], 'ucx', 'ucx-no-texel')
+results['export']['ucx_no_texel'] = ucx_no['plan']['stopped']
+
+moved = export_quad('SM_moved_stale')
+moved_target = export_dir / 'moved-stale.fbx'
+rt.setUserProp(moved, 'AGR_EXPORT_PATH', str(moved_target))
+moved_preview = agr.export_preview([moved], str(moved_target))
+assert moved_preview['status'] == 'pass', moved_preview
+moved.position = rt.point3(6, 0, 0)
+results['export']['moved_stale'] = agr_raises(lambda: agr.export_commit([moved], moved_preview, str(moved_target)))
+assert 'stale' in results['export']['moved_stale'].lower()
+assert not moved_target.exists()
+
+rt.select(clean_export)
+assert rt.macros.run('AGR Tools', 'AGRToolsExport'), 'AGRToolsExport'
+results['guards']['registered_export_button'] = 1
+results['export']['exact_names'] = exact_names
+print('AGR_REVIEW_731 names=exact ucx_dirty=1 offenders=1 cleanup_first=1 stale_move=1 probes=4')
+print('AGR_REVIEW_R3 missing_material=1 udim_no_texel=1 xview_no_texel=1 ucx_no_texel=1')
+print('AGR_NATIVE_EXPORT clean=1 gates=cleanup,matid,xview,ucx')
 print('AGR_REVIEW_R1 mesh=1 poly=1 plain=1 modifier=1 clipped_tris=16 stale=1 names=1')
 print('AGR_REVIEW_R2 subdiv_tris=12 subdiv_verts=8 names=UCX_<export>_NN')
 with (OUT / 'results.json').open('x', encoding='utf-8') as f:

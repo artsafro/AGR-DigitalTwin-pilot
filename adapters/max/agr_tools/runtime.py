@@ -4,7 +4,7 @@ Native xView uses 0.002 m vertices and 0.005 m faces.
 """
 import json
 
-VERSION = "0.3.0"
+VERSION = "0.4.0"
 CODES = {'xview': {'overlap_vertices', 'overlap_faces'},
          'matid': {'udim_id', 'empty_id', 'empty_slot', 'missing_material'},
          'cleanup': {'remove_custom_attributes', 'clear_user_defined_lines',
@@ -12,7 +12,13 @@ CODES = {'xview': {'overlap_vertices', 'overlap_faces'},
          'nudge': {'tile_move'},
          'atlas': {'atlas_cell'},
          'ucx': {'ucx_audit', 'ucx_unmeasurable', 'at_threshold'},
-         'texel': {'texel_outside', 'texel_dropped'}}
+         'texel': {'texel_outside', 'texel_dropped'},
+         'export': {'cleanup', 'udim_id', 'empty_id', 'empty_slot', 'missing_material',
+                    'out_of_range', 'overlap_vertices', 'overlap_faces', 'ucx_audit',
+                    'ucx_unmeasurable', 'existing_target', 'readback_mismatch'}}
+EXPORT_PLAN = {'target', 'report', 'units', 'axis', 'unit_scale_factor', 'object_count',
+               'triangle_count', 'material_count', 'object_names', 'triangles_by_name',
+               'gates', 'dropped', 'texel', 'readback', 'stopped', 'digest'}
 UV_TOL = 1e-6
 
 
@@ -88,6 +94,46 @@ def _validate_plan(tool, plan):
             raise ValueError('incomplete plan')
         if type(audit['mask_bad_count']) is not int or not isinstance(audit['closed'], bool):
             raise ValueError('incomplete plan')
+    elif tool == 'export':
+        if set(plan) != EXPORT_PLAN:
+            raise ValueError('incomplete plan')
+        if plan['units'] != 'm':
+            raise ValueError('unmapped units ' + str(plan['units']))
+        if plan['axis'] != 'Z-up':
+            raise ValueError('unmapped axis ' + str(plan['axis']))
+        if plan['unit_scale_factor'] != 100.0 and plan['unit_scale_factor'] != 100:
+            raise ValueError('unmapped unit scale')
+        for key in ('object_count', 'triangle_count', 'material_count'):
+            if type(plan[key]) is not int or plan[key] < 0:
+                raise ValueError('incomplete plan')
+        if not isinstance(plan['object_names'], list) or not isinstance(plan['triangles_by_name'], dict):
+            raise ValueError('incomplete plan')
+        if not isinstance(plan['target'], str) or not plan['target'] or not isinstance(plan['report'], str) or not plan['report']:
+            raise ValueError('incomplete plan')
+        if not isinstance(plan['digest'], str) or len(plan['digest']) != 64:
+            raise ValueError('incomplete plan')
+        if plan['stopped'] is not None and (not isinstance(plan['stopped'], str) or not plan['stopped']):
+            raise ValueError('incomplete plan')
+        if plan['readback'] is not None and not isinstance(plan['readback'], dict):
+            raise ValueError('incomplete plan')
+        if plan['texel'] is not None and not isinstance(plan['texel'], (dict, list)):
+            raise ValueError('incomplete plan')
+        if not isinstance(plan['gates'], list) or not plan['gates']:
+            raise ValueError('incomplete plan')
+        for gate in plan['gates']:
+            if not isinstance(gate, dict) or set(gate) != {'name', 'status', 'counts'}:
+                raise ValueError('incomplete plan')
+            if gate['name'] not in ('cleanup', 'matid', 'xview', 'ucx', 'texel'):
+                raise ValueError('unmapped gate ' + str(gate['name']))
+            if gate['status'] not in ('pass', 'fail', 'report', 'absent'):
+                raise ValueError('unmapped gate status ' + str(gate['status']))
+        if not isinstance(plan['dropped'], list):
+            raise ValueError('incomplete plan')
+        for item in plan['dropped']:
+            if not isinstance(item, dict) or set(item) != {'name', 'reason'}:
+                raise ValueError('incomplete drop')
+            if not isinstance(item['name'], str) or not item['name'] or not isinstance(item['reason'], str) or not item['reason']:
+                raise ValueError('drop without a reason')
     elif tool == 'texel':
         if set(plan) != {'meshes', 'materials', 'dropped'}:
             raise ValueError('incomplete plan')
@@ -101,6 +147,8 @@ def _validate_plan(tool, plan):
                     raise ValueError('unmapped mesh or material')
     else:
         raise ValueError('incomplete plan')
+    if tool == 'export':
+        return
     for item in plan['dropped']:
         if not isinstance(item, dict) or 'face' not in item or 'reason' not in item:
             raise ValueError('incomplete drop')
@@ -114,13 +162,13 @@ def parse_report(text):
     if not isinstance(r, dict) or 'tool' not in r or not isinstance(r.get('tool'), str) or r['tool'] not in CODES:
         raise ValueError('unsupported schema/tool')
     expected_keys = {'schema', 'tool', 'status', 'objects'}
-    if r['tool'] in ('nudge', 'atlas', 'ucx', 'texel'):
+    if r['tool'] in ('nudge', 'atlas', 'ucx', 'texel', 'export'):
         expected_keys = expected_keys | {'plan'}
     if set(r) != expected_keys:
         raise ValueError('incomplete report')
     if type(r['schema']) is not int or r['schema'] != 1:
         raise ValueError('unsupported schema/tool')
-    if r['tool'] in ('nudge', 'atlas', 'ucx', 'texel'):
+    if r['tool'] in ('nudge', 'atlas', 'ucx', 'texel', 'export'):
         _validate_plan(r['tool'], r['plan'])
     if not isinstance(r['objects'], list) or not r['objects']:
         raise ValueError('empty objects')
@@ -1434,6 +1482,315 @@ def texel_preview(nodes=None):
     return {'report': report, 'summaries': summaries}
 
 
+def _tri_mesh(n):
+    """Evaluated triangle mesh in metres. The node itself is not edited."""
+    rt = _rt()
+    mesh = rt.snapshotAsMesh(n)
+    to_m = _unit_m()
+    count_v, count_f = int(mesh.numverts), int(mesh.numfaces)
+    if not count_v or not count_f:
+        raise ValueError('empty mesh: ' + str(n.name))
+    verts = []
+    for index in range(1, count_v + 1):
+        point = rt.getVert(mesh, index)
+        verts.append([float(point.x) * to_m, float(point.y) * to_m, float(point.z) * to_m])
+    faces, ids = [], []
+    for index in range(1, count_f + 1):
+        face = rt.getFace(mesh, index)
+        faces.append([int(face.x) - 1, int(face.y) - 1, int(face.z) - 1])
+        ids.append(int(rt.getFaceMatID(mesh, index)))
+    json.dumps(verts, allow_nan=False)
+    return verts, faces, ids
+
+
+# Tool instructions, not delivery user-defined properties. They stay on the
+# working node and are held off the export copy the hygiene gate reads.
+_HELD_OFF = {'AGR_EXPORT_PATH', 'AGR_TEXEL_PROFILE', 'AGR_TEXEL_MAP', 'AGR_UV_PERIODS',
+             'AGR_UV_TARGET', 'AGR_ATLAS_MODE', 'AGR_ATLAS_SIZE', 'AGR_UCX_KIND'}
+
+
+def _delivery_props(buffer):
+    kept = []
+    for line in str(buffer).splitlines():
+        if not line.strip():
+            continue
+        key = line.split('=', 1)[0].strip()
+        if key in _HELD_OFF:
+            continue
+        kept.append(line)
+    return ''.join(line + '\r\n' for line in kept)
+
+
+def _hygiene_dump(n):
+    rt = _rt()
+    owners = _owners(n)
+    attributes = {key: [str(rt.classOf(attr)) for owner in values for attr in _attributes(owner)]
+                  for key, values in owners.items()}
+    mesh = rt.snapshotAsMesh(n)
+    channels = [ch for ch in range(1, 100) if rt.meshop.getMapSupport(mesh, ch)]
+    return {'name': str(n.name), 'custom_attributes': attributes,
+            'user_props': _delivery_props(rt.getUserPropBuffer(n)), 'map_channels': channels}
+
+
+def _slot_gaps(n, ids):
+    rt = _rt()
+    material = n.material
+    if material is None or rt.classOf(material) != rt.MultiMaterial:
+        return []
+    gaps = []
+    for index, mid in enumerate(ids, 1):
+        resolved = [material.materialList[i] for i in range(len(material.materialIDList))
+                    if int(material.materialIDList[i]) == int(mid)]
+        if len(resolved) != 1 or resolved[0] is None:
+            gaps.append(index)
+    return gaps
+
+
+def _repair_blocks(dumps):
+    """True when the bundled hygiene slice would refuse the export copy.
+
+    Material evidence stays behind this check: a missing material must not hide
+    a cleanup finding. Texel extraction stays behind the later gates and runs
+    only after cleanup, MatID, xView and UCX have all passed. The slice matches
+    twinqa.export_hygiene.repair_plan.
+    """
+    import importlib.util
+    from pathlib import Path
+    spec = importlib.util.spec_from_file_location(
+        'agr_tools_hygiene_export', Path(__file__).with_name('hygiene_core.py'))
+    core = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(core)
+    plan = core.repair_plan(dumps)
+    return any(item['actions'] or item['unrepairable'] for item in plan['objects'])
+
+
+def _export_scene(nodes):
+    """Read-only scene description. UCX_* nodes are collision pieces, not render meshes.
+
+    Cleanup evidence is collected for every emitted node. Material name and slot
+    gaps are read only when hygiene does not already refuse. Texel stays a
+    placeholder; the export caller fills it after MatID, xView and UCX pass.
+    """
+    rt = _rt()
+    render = [n for n in nodes if not str(n.name).startswith('UCX_')]
+    pieces = [n for n in nodes if str(n.name).startswith('UCX_')]
+    if not render:
+        raise ValueError('empty render set')
+    objects = []
+    for n in render:
+        verts, faces, ids = _tri_mesh(n)
+        objects.append({
+            'name': str(n.name),
+            'handle': int(rt.getHandleByAnim(n)),
+            'material': None,
+            'material_ids': ids,
+            'vertices': verts,
+            'faces': faces,
+            'hygiene': _hygiene_dump(n),
+            'slot_gaps': [],
+            'texel': {'profile': 'VPM', 'materials': [], 'faces': []},
+        })
+    ucx = []
+    for n in pieces:
+        verts, faces, _ids = _tri_mesh(n)
+        ucx.append({
+            'name': str(n.name),
+            'handle': int(rt.getHandleByAnim(n)),
+            'verts': verts,
+            'tris': faces,
+            'hygiene': _hygiene_dump(n),
+        })
+    if not _repair_blocks([obj['hygiene'] for obj in objects] + [piece['hygiene'] for piece in ucx]):
+        for obj, n in zip(objects, render):
+            material = n.material
+            obj['material'] = None if material is None else str(material.name)
+            obj['slot_gaps'] = _slot_gaps(n, obj['material_ids'])
+    return {'objects': objects, 'ucx': ucx, 'units': 'm', 'axis': 'Z-up'}
+
+
+def _max_source():
+    rt = _rt()
+    name = str(rt.maxFileName)
+    if not name:
+        return None
+    return str(rt.maxFilePath) + name
+
+
+def _export_target(nodes, target):
+    if target is None:
+        target = _prop(nodes[0], 'AGR_EXPORT_PATH')
+    if not target:
+        raise ValueError('unmapped key AGR_EXPORT_PATH')
+    return target
+
+
+def _repo_root():
+    import os
+    from pathlib import Path
+    env = os.environ.get('AGR_TOOLS_REPO')
+    if env:
+        return Path(env)
+    candidate = Path(__file__).resolve().parents[3]
+    if (candidate / 'src' / 'twinqa' / 'fbx_header.py').is_file():
+        return candidate
+    raise ValueError('unmapped key AGR_TOOLS_REPO')
+
+
+def _subprocess_export(payload):
+    """Run the gate or the readback in the project interpreter when Max lacks numpy."""
+    import os
+    import subprocess
+    root = _repo_root()
+    python = os.environ.get('AGR_PYTHON') or str(root / '.venv' / 'Scripts' / 'python.exe')
+    if not os.path.isfile(python):
+        raise ValueError('unmapped python ' + python)
+    code = (
+        'import importlib.util, json, sys\n'
+        'from pathlib import Path\n'
+        'root = Path(sys.argv[1])\n'
+        'sys.path[:0] = [str(root / "src"), str(root)]\n'
+        'path = root / "adapters" / "max" / "agr_tools" / "export_core.py"\n'
+        'spec = importlib.util.spec_from_file_location("agr_tools_export_sub", path)\n'
+        'mod = importlib.util.module_from_spec(spec)\n'
+        'spec.loader.exec_module(mod)\n'
+        'req = json.loads(sys.stdin.read())\n'
+        'method = req["method"]\n'
+        'if method == "dry_run":\n'
+        '    out = mod.dry_run(req["scene"], req["target"], req.get("source"), defer_texel=bool(req.get("defer_texel")))\n'
+        'elif method == "readback":\n'
+        '    out = mod.readback(Path(req["target"]).read_bytes())\n'
+        'elif method == "finish":\n'
+        '    out = mod.finish(req["preview"], req["target"], req.get("report"))\n'
+        'else:\n'
+        '    raise SystemExit("unmapped method " + str(method))\n'
+        'sys.stdout.write(json.dumps(out, allow_nan=False))\n'
+    )
+    proc = subprocess.run([python, '-c', code, str(root)], input=json.dumps(payload, allow_nan=False).encode('utf-8'),
+                          capture_output=True)
+    if proc.returncode != 0:
+        detail = proc.stderr.decode('utf-8', errors='replace')[-2000:]
+        raise RuntimeError(detail or 'export subprocess failed')
+    return json.loads(proc.stdout.decode('utf-8'))
+
+
+def _export_texel_fn(nodes):
+    """Texel payloads for render meshes. Called only after the earlier gates pass."""
+    render = [n for n in nodes if not str(n.name).startswith('UCX_')]
+
+    def texel_fn(_objects):
+        return {str(n.name): _texel_payload(n) for n in render}
+
+    return texel_fn
+
+
+def _dry_run_scene(scene, target, source, texel_fn=None):
+    core = _load_core('export_core.py', 'agr_tools_export')
+    try:
+        return core.dry_run(scene, target, source, texel_fn=texel_fn)
+    except (ModuleNotFoundError, ImportError):
+        payload = {'method': 'dry_run', 'scene': scene, 'target': str(target), 'source': source}
+        if texel_fn is None:
+            return _subprocess_export(payload)
+        pre = _subprocess_export(dict(payload, defer_texel=True))
+        if pre['plan']['stopped'] in core.EARLY_GATES:
+            return pre
+        produced = texel_fn(scene['objects'])
+        if not isinstance(produced, dict):
+            raise ValueError('partial texel')
+        for obj in scene['objects']:
+            item = produced.get(obj['name'])
+            if not isinstance(item, dict):
+                raise ValueError('partial texel ' + str(obj['name']))
+            obj['texel'] = item
+        return _subprocess_export(payload)
+
+
+def export_preview(nodes=None, target=None):
+    """Dry-run the checked export. The scene and the filesystem are unchanged."""
+    nodes = _targets(nodes)
+    target = _export_target(nodes, target)
+    report = _dry_run_scene(_export_scene(nodes), target, _max_source(), texel_fn=_export_texel_fn(nodes))
+    parse_report(json.dumps(report, allow_nan=False))
+    return report
+
+
+def _write_max_fbx(nodes, path):
+    """Export detached copies. Original nodes are read back and must be unchanged."""
+    from pathlib import Path
+    rt = _rt()
+    path = Path(path)
+    if path.exists():
+        raise FileExistsError(str(path))
+    rt.pluginManager.loadClass(rt.FbxExporter)
+    params = {'Animation': False, 'EmbedTextures': False, 'ASCII': False,
+              'FileVersion': 'FBX201400', 'UpAxis': 'Z', 'Cameras': False,
+              'Lights': False, 'Triangulate': True, 'ConvertUnit': 'm'}
+    for key, value in params.items():
+        rt.FBXExporterSetParam(key, value)
+        got = rt.FBXExporterGetParam(key)
+        expected = 'false' if value is False else 'true' if value is True else str(value)
+        if str(got).lower() != expected.lower():
+            raise ValueError(f'unmapped export setting {key}={got!r}')
+    before = snapshot(nodes)
+    copies = []
+    parked = []
+    try:
+        for n in nodes:
+            planned = str(n.name)
+            token = '__agr_src_' + str(int(rt.getHandleByAnim(n)))
+            n.name = token
+            if str(n.name) != token:
+                raise ValueError(f'export copy name {n.name!r} != planned {token!r}')
+            parked.append((n, planned))
+            copy = rt.copy(n)
+            copy.name = planned
+            if str(copy.name) != planned:
+                raise ValueError(f'export copy name {copy.name!r} != planned {planned!r}')
+            rt.setUserPropBuffer(copy, _delivery_props(rt.getUserPropBuffer(n)))
+            copies.append(copy)
+        rt.select(copies)
+        if not rt.exportFile(str(path), rt.Name('noPrompt'), selectedOnly=True, using=rt.FBXEXP):
+            if path.exists():
+                path.unlink()
+            raise RuntimeError('FBX export failed')
+    finally:
+        if copies:
+            rt.delete(copies)
+        for n, planned in reversed(parked):
+            n.name = planned
+            if str(n.name) != planned:
+                raise RuntimeError(f'original name not restored: {n.name!r} != {planned!r}')
+    if snapshot(nodes) != before:
+        raise RuntimeError('originals changed during export')
+
+
+def export_commit(nodes, preview, target=None):
+    """Write one FBX and the JSON report beside it. A stale preview writes nothing."""
+    nodes = _targets(nodes)
+    target = _export_target(nodes, target)
+    scene = _export_scene(nodes)
+    source = _max_source()
+    texel_fn = _export_texel_fn(nodes)
+    core = _load_core('export_core.py', 'agr_tools_export')
+
+    def writer(path, _plan):
+        _write_max_fbx(nodes, path)
+
+    try:
+        report = core.commit(scene, target, source, preview, writer=writer, texel_fn=texel_fn)
+    except (ModuleNotFoundError, ImportError):
+        current = _dry_run_scene(scene, target, source, texel_fn=texel_fn)
+        if current != preview:
+            raise ValueError('stale preview')
+        if current['status'] != 'pass':
+            raise ValueError('gate failed: ' + str(current['plan']['stopped']))
+        writer(target, current)
+        report = _subprocess_export({'method': 'finish', 'preview': current, 'target': str(target),
+                                    'report': current['plan']['report']})
+    parse_report(json.dumps(report, allow_nan=False))
+    return report
+
+
 _preview = None
 _preview_nodes = None
 _nudge = None
@@ -1442,11 +1799,14 @@ _atlas = None
 _atlas_nodes = None
 _ucx = None
 _ucx_nodes = None
+_export = None
+_export_key = None
 
 
 def ui(tool):
     """Macro seam: errors propagate and never print a successful report."""
     global _preview, _preview_nodes, _nudge, _nudge_nodes, _atlas, _atlas_nodes, _ucx, _ucx_nodes
+    global _export, _export_key
     if tool == 'cleanup':
         _preview_nodes = _targets(None)
         _preview = cleanup_preview(_preview_nodes)
@@ -1489,6 +1849,20 @@ def ui(tool):
         _ucx_nodes = None
     elif tool == 'texel':
         report = texel_preview()['report']
+    elif tool == 'export':
+        nodes = _targets(None)
+        key = tuple(int(_rt().getHandleByAnim(n)) for n in nodes)
+        target = _export_target(nodes, None)
+        if _export is None or _export_key != key:
+            _export = export_preview(nodes, target)
+            _export_key = key
+            report = _export
+        else:
+            try:
+                report = export_commit(nodes, _export, target)
+            finally:
+                _export = None
+                _export_key = None
     elif tool in ('xview', 'matid'):
         report = {'xview': xview, 'matid': matid}[tool]()
     else:

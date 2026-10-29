@@ -19,6 +19,8 @@ macroScript AGRToolsUcxApply category:"AGR Tools" tooltip:"Apply UCX to new expo
 (on execute do python.Execute "agr_tools_runtime.ui('ucx_apply')")
 macroScript AGRToolsTexel category:"AGR Tools" tooltip:"Texel readout" buttonText:"Texel readout"
 (on execute do python.Execute "agr_tools_runtime.ui('texel')")
+macroScript AGRToolsExport category:"AGR Tools" tooltip:"Checked export" buttonText:"Checked export"
+(on execute do python.Execute "agr_tools_runtime.ui('export')")
 macroScript AGRToolsOpen category:"AGR Tools" tooltip:"AGR Tools" buttonText:"AGR Tools"
 (
     on execute do (
@@ -36,6 +38,7 @@ macroScript AGRToolsOpen category:"AGR Tools" tooltip:"AGR Tools" buttonText:"AG
             button ucx "UCX collision (dry-run)" width:340
             button ucxApply "Apply UCX to new export copies" width:340
             button texel "Texel readout" width:340
+            button exportChecked "Checked export" width:340
             label info "JSON report in Listener; checks select offenders."
             on xv pressed do python.Execute "agr_tools_runtime.ui('xview')"
             on dry pressed do python.Execute "agr_tools_runtime.ui('cleanup')"
@@ -48,6 +51,7 @@ macroScript AGRToolsOpen category:"AGR Tools" tooltip:"AGR Tools" buttonText:"AG
             on ucx pressed do python.Execute "agr_tools_runtime.ui('ucx')"
             on ucxApply pressed do python.Execute "agr_tools_runtime.ui('ucx_apply')"
             on texel pressed do python.Execute "agr_tools_runtime.ui('texel')"
+            on exportChecked pressed do python.Execute "agr_tools_runtime.ui('export')"
         )
         createDialog AGRToolsDialog
     )

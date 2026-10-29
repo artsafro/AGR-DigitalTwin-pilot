@@ -39,12 +39,12 @@ def test_version_macros_and_roadmap_text():
     readme = (PACKAGE / 'README.md').read_text(encoding='utf-8')
     startup = (PACKAGE / 'startup.ms').read_text(encoding='utf-8')
     install = (PACKAGE / 'install.ms').read_text(encoding='utf-8')
-    assert 'VERSION = "0.3.0"' in runtime
+    assert 'VERSION = "0.4.0"' in runtime
     assert '0.002' in runtime and '0.005' in runtime
     for name in ('AGRToolsNudge', 'AGRToolsNudgeApply', 'AGRToolsAtlas', 'AGRToolsAtlasApply'):
         assert name in mcr
-    assert '0.3.0' in startup and 'Nudge' in startup and 'Atlas' in startup
-    assert 'AGRTools-0.3.0' in install
+    assert '0.4.0' in startup and 'Nudge' in startup and 'Atlas' in startup
+    assert 'AGRTools-0.4.0' in install
     assert 'UV integer-tile nudge' in readme and 'UDIM -> NPM atlas' in readme
     assert 'collision generator' in readme.lower()
     assert 'texel' in readme.lower() and 'checked export' in readme.lower()
