@@ -337,6 +337,50 @@ def test_variant_driver_refuses_output_aliasing_the_input(tmp_path):
     assert src.read_text(encoding="utf-8") == "{}" and not (tmp_path / "o").exists()
 
 
+# ---- generated probes (invariants listed in the PR) ---------------------------------------------------------------
+
+@pytest.mark.parametrize("seed", range(20))
+def test_probe_top_z_equals_brute_force_on_random_triangle_soups(seed):
+    rng = np.random.default_rng(seed)
+    tri = rng.uniform(0, 20, size=(int(rng.integers(1, 40)), 3, 3))
+    grid = {"x0": 0.0, "y0": 0.0, "step": 1.0, "nx": 20, "ny": 20}
+    got = mm.top_z(tri, grid).ravel()
+    want = np.full(400, np.nan)
+    for k in range(400):
+        px, py = (k % 20) + 0.5, (k // 20) + 0.5
+        for a, b, c in tri:
+            d = (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+            if abs(d) <= 1e-12:
+                continue
+            w1 = ((px - a[0]) * (c[1] - a[1]) - (py - a[1]) * (c[0] - a[0])) / d
+            w2 = ((b[0] - a[0]) * (py - a[1]) - (b[1] - a[1]) * (px - a[0])) / d
+            if min(w1, w2, 1 - w1 - w2) >= -1e-9:
+                z = (1 - w1 - w2) * a[2] + w1 * b[2] + w2 * c[2]
+                want[k] = z if np.isnan(want[k]) else max(want[k], z)
+    assert np.array_equal(np.isnan(got), np.isnan(want))
+    assert np.allclose(got[~np.isnan(got)], want[~np.isnan(want)])
+
+
+@pytest.mark.parametrize("seed", range(10))
+def test_probe_any_uniform_shift_is_reported_exactly(seed):
+    shift = float(np.random.default_rng(seed).uniform(-2, 2))
+    g = measure(ground_rb(*plane(dz=shift)))
+    assert g["dz_max_m"] == pytest.approx(abs(shift), abs=1e-4) and g["dz_mean_m"] == pytest.approx(shift, abs=1e-4)
+
+
+def test_batch_refuses_wrong_adapter_and_existing_out(tmp_path):
+    rb_ = _load("methods_ground_batch", TOOLS / "ground" / "run_benchmarks.py")
+    bad = tmp_path / "adapter.json"
+    bad.write_text("{}", encoding="utf-8")
+    res = tmp_path / "results.jsonl"
+    assert rb_.main(["--adapter", str(bad), "--out", str(tmp_path / "o"), "--results", str(res)]) == 4
+    assert not (tmp_path / "o").exists() and not res.exists()
+    if rb_.ADAPTER.is_file():
+        (tmp_path / "o" / "cdt-4m").mkdir(parents=True)
+        assert rb_.main(["--variant", "cdt", "--cell", "4", "--out", str(tmp_path / "o"), "--results", str(res)]) == 4
+        assert not res.exists()
+
+
 # ---- committed docs -----------------------------------------------------------------------------------------------
 
 BASE = TOOLS.parents[1] / "docs" / "methods" / "ground-terrain"
