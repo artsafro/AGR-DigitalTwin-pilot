@@ -30,6 +30,9 @@ Common to all variants:
   `density_vpm` (8 m also `vpm_uv_tile_contained`); cell 6 m fails only `normal_gap_max_20mm`. A failed build writes
   no mesh, so it has no row (logs: `C:/x/methods/ground-terrain/builder-{2,8}m/work/builder.log`,
   `C:/x/methods/ground-terrain/logs/probe_c6.log`). Slowest: its gates run inside the build.
+  Review round 1 probe, same v014 arguments, one parameter changed: cell 3, 3.5, 4.5, 5 m and chord 0.01 / 0.04 m at
+  cell 4 all fail `normal_gap_max_20mm` (3.5 and 5 m also `density_vpm`); logs `C:/x/methods/ground-terrain/probes2/`.
+  Every CLI parameter feeds the pinned surface or a gate tolerance, so a second builder row needs a user decision.
 
 ## 2. cdt - constrained Delaunay on the plan, then height projection
 
