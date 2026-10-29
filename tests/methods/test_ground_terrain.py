@@ -85,7 +85,7 @@ def test_placement_offsets_align_frames_and_a_wrong_offset_is_caught():
     g = measure(ground_rb(*plane(dz=-1.0)), offset=np.array([0.0, 0.0, 1.0]))
     assert g["dz_max_m"] == 0
     wrong = measure(shifted)  # same mesh, offset forgotten: holes no longer line up
-    assert wrong["holes_matched"] == 0 and wrong["samples_missing"] > 0
+    assert wrong["samples_missing"] > 0 and wrong["samples_extra"] > 0
 
 
 def test_filled_hole_is_counted_against_the_reference():
@@ -278,7 +278,8 @@ def test_cdt_mesh_covers_the_plan_exactly_and_keeps_the_hole(cell):
 
     poly = square_with_hole().difference(Polygon([(0, 0), (13.3, 0), (0, 9.1)]))  # a slanted cut
     v, t = gv.cdt_mesh(poly, cell)
-    area = 0.5 * np.abs(np.cross(v[t[:, 1]] - v[t[:, 0]], v[t[:, 2]] - v[t[:, 0]]))
+    e1, e2 = v[t[:, 1]] - v[t[:, 0]], v[t[:, 2]] - v[t[:, 0]]
+    area = 0.5 * np.abs(e1[:, 0] * e2[:, 1] - e1[:, 1] * e2[:, 0])
     assert area.sum() == pytest.approx(poly.area, rel=1e-9) and (area > 0).all()
     cent = v[t].mean(axis=1)
     assert not gv.inside_even_odd(cent, [[(40, 40), (80, 40), (80, 80), (40, 80)]]).any()
