@@ -165,6 +165,76 @@ def test_fail_closed_on_nan_and_bad_step():
             measure(ground_rb(*plane()), sample_m=bad)
 
 
+def _bad_index(kind):
+    """Output readback whose triangle indices are malformed in one way (review round 1, P1-2)."""
+    verts, tris = plane()
+    rb, extra = ground_rb(verts, tris)
+    t = extra["meshes"]["SM_Test_Ground"]["tris"]
+    if kind == "frac":  # every index +0.25: int() would truncate it back to a valid mesh
+        extra["meshes"]["SM_Test_Ground"]["tris"] = [[i + 0.25 for i in tri] for tri in t]
+    elif kind == "false":  # False == 0 in Python
+        t[0][0] = False
+    elif kind == "true":
+        t[0][1] = True
+    elif kind == "intfloat":
+        t[0][0] = float(t[0][0])
+    elif kind == "str":
+        t[0][0] = str(t[0][0])
+    elif kind == "nan":
+        t[0][0] = float("nan")
+    elif kind == "neg":
+        t[0][0] = -1
+    elif kind == "oob":
+        t[0][0] = len(verts)
+    elif kind == "arity":
+        t[0] = t[0][:2]
+    elif kind == "flat_short":
+        extra["meshes"]["SM_Test_Ground"]["tris"] = [i for tri in t for i in tri][:-1]
+    elif kind == "not_list":
+        extra["meshes"]["SM_Test_Ground"]["tris"] = "0 1 2"
+    elif kind == "count":  # fewer triangles than the readback says the mesh has
+        extra["meshes"]["SM_Test_Ground"]["tris"] = t[:-1]
+    elif kind == "missing_mesh":
+        extra["meshes"] = {"SM_Other": extra["meshes"]["SM_Test_Ground"]}
+    elif kind == "poly_frac":  # no extra: the readback polygons are triangulated, same rules
+        extra = None
+        rb["meshes"][0]["face_geometry"]["polygons"][0][0] += 0.25
+    elif kind == "poly_false":
+        extra = None
+        rb["meshes"][0]["face_geometry"]["polygons"][0][0] = False
+    elif kind == "poly_short":
+        extra = None
+        rb["meshes"][0]["face_geometry"]["polygons"][0] = [0, 1]
+    else:
+        raise AssertionError(kind)
+    return rb, extra
+
+
+BAD_INDEX = ("frac", "false", "true", "intfloat", "str", "nan", "neg", "oob", "arity", "flat_short", "not_list",
+             "count", "missing_mesh", "poly_frac", "poly_false", "poly_short")
+
+
+@pytest.mark.parametrize("kind", BAD_INDEX)
+def test_malformed_triangle_indices_are_an_error_on_output_and_reference(kind):
+    with pytest.raises(mm.MetricError, match="triangle|polygon|mesh"):
+        measure(_bad_index(kind))
+    with pytest.raises(mm.MetricError, match="triangle|polygon|mesh"):
+        measure(ground_rb(*plane()), ref=_bad_index(kind))
+
+
+def test_valid_integer_indices_and_polygon_fallback_still_measure():
+    verts, tris = plane()
+    rb, _ = ground_rb(verts, tris)
+    assert measure((rb, None))["dz_max_m"] == 0  # polygon fallback, valid ints
+    assert measure(ground_rb(*plane(dz=0.05)))["dz_max_m"] == pytest.approx(0.05)  # shifted control
+
+
+@pytest.mark.parametrize("kind", ("frac", "false", "poly_frac"))
+def test_run_variant_malformed_indices_exit_nonzero_and_append_nothing(tmp_path, kind):
+    assert rv.main(ground_cli(tmp_path, _bad_index(kind))) == 2
+    assert not (tmp_path / "results.jsonl").exists()
+
+
 def test_placement_sidecar_read_missing_and_malformed(tmp_path):
     fbx = tmp_path / "SM_X.fbx"
     off, reason = mm.placement_offset(fbx)
@@ -335,6 +405,34 @@ def test_variant_driver_refuses_output_aliasing_the_input(tmp_path):
     assert drv.main(["cdt", str(src), "--cell", "0", "--out", str(tmp_path / "o")]) == 4
     assert drv.main(["nope", str(src), "--cell", "4", "--out", str(tmp_path / "o")]) == 4
     assert src.read_text(encoding="utf-8") == "{}" and not (tmp_path / "o").exists()
+
+
+@pytest.mark.parametrize("address", ["x/../../victim", "../victim", "..", ".", "", "a b", "a\\b", "C:victim",
+                                     "C:/x/victim", "/victim", "a/b", "victim\x00", "Vatutino.fbx", "-x", "_x"])
+def test_variant_driver_refuses_unsafe_address_before_any_write(tmp_path, address):
+    """Review round 1, P1-1: SM_<address>_Ground.fbx must stay a plain name inside --out; a traversal address
+    made the export overwrite the input (named victim_Ground.fbx) and the failure path rename it .failed."""
+    victim = tmp_path / "victim_Ground.fbx"
+    victim.write_text("{}", encoding="utf-8")
+    drv = _load("methods_ground_build", TOOLS / "ground" / "build_variant.py")
+    out = tmp_path / "o" / "p"
+    assert drv.main(["cdt", str(victim), "--cell", "4", "--out", str(out), "--address", address]) == 4
+    assert victim.read_text(encoding="utf-8") == "{}" and not (tmp_path / "o").exists()
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["victim_Ground.fbx"]
+
+
+def test_variant_driver_derived_paths_stay_inside_out_and_never_alias_the_input(tmp_path):
+    drv = _load("methods_ground_build", TOOLS / "ground" / "build_variant.py")
+    src = tmp_path / "in.json"
+    src.write_text("{}", encoding="utf-8")
+    out = tmp_path / "o"
+    paths = drv.derived_paths(out, "Vatutino", src)
+    assert set(paths) == {"fbx", "placement", "report", "failed", "work"}
+    for p in paths.values():
+        assert p.resolve().parent in (out.resolve(), ) or p.resolve() == (out / "work").resolve()
+        assert p.resolve() != src.resolve()
+    with pytest.raises(drv.Refused, match="address"):
+        drv.derived_paths(out, "x/../../in", src)
 
 
 # ---- generated probes (invariants listed in the PR) ---------------------------------------------------------------
