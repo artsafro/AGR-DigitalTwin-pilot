@@ -15,7 +15,8 @@ Every variant is exported by the shared tools/blender/ground_json_to_fbx.py buil
 `.placement.json` sidecar), so the comparison differs only in the mesher. Writes <out>/SM_<Address>_Ground.fbx,
 its sidecar and <out>/SM_<Address>_Ground.fbx.variant.json ({ok, wall_time_s, input, ...}); work files in
 <out>/work/. Exit 0 built; 1 the variant failed (report ok=false with the error, no FBX); 4 refused before any
-write (unknown variant, bad cell, --out not new/empty or aliasing the input, input sha256 differs).
+write (unknown variant, bad cell, --out not new/empty or aliasing the input, input sha256 differs, --address
+not a plain name or any derived FBX/sidecar/report/work path escaping --out or resolving to the input).
 """
 from __future__ import annotations
 
@@ -23,6 +24,7 @@ import argparse
 import hashlib
 import json
 import math
+import re
 import subprocess
 import sys
 import time
@@ -43,6 +45,31 @@ GRID_SCRIPT = HERE / "build_grid_blender.py"
 
 class Refused(ValueError):
     pass
+
+
+ADDRESS_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9_-]{0,63}")
+
+
+def derived_paths(out: Path, address: str, adapter: Path) -> dict[str, Path]:
+    """Every path the driver writes, renames or creates, checked before any write: --address is a plain name
+    (letters, digits, `_`, `-`; no separator, dot, drive or traversal), each path sits directly in --out (work/ is
+    the one subfolder) and none resolves to the adapter."""
+    if not isinstance(address, str) or not ADDRESS_RE.fullmatch(address):
+        raise Refused(f"--address {address!r} must match {ADDRESS_RE.pattern} (a plain name, no path)")
+    fbx = out / f"SM_{address}_Ground.fbx"
+    paths = {"fbx": fbx, "placement": Path(str(fbx) + ".placement.json"),
+             "report": Path(str(fbx) + ".variant.json"), "failed": fbx.with_name(fbx.name + ".failed"),
+             "work": out / "work"}
+    ro, ra = out.resolve(), adapter.resolve()
+    for key, p in paths.items():
+        rp = p.resolve()
+        if rp.parent != ro:
+            raise Refused(f"derived {key} path {p} escapes --out {out}")
+        if rp == ra or ra.is_relative_to(rp):
+            raise Refused(f"derived {key} path {p} is or holds the input {ra}")
+        if p.exists():
+            raise Refused(f"derived {key} path {p} already exists")
+    return paths
 
 
 def _blender(script: Path, *rest: str, timeout: int = 1800) -> subprocess.CompletedProcess:
@@ -129,13 +156,12 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     try:
         data = check_args(a.variant, a.adapter, a.cell, a.out, a.expect_sha256)
+        paths = derived_paths(a.out, a.address, a.adapter)
     except (Refused, OSError) as exc:
         print(f"GROUND_VARIANT refused: {exc}", file=sys.stderr)
         return 4
-    work = a.out / "work"
+    work, fbx, report_path = paths["work"], paths["fbx"], paths["report"]
     work.mkdir(parents=True)
-    fbx = a.out / f"SM_{a.address}_Ground.fbx"
-    report_path = Path(str(fbx) + ".variant.json")
     report = {"ok": False, "variant": a.variant, "cell_m": a.cell,
               "input": {"kind": "adapter-v4", "path": str(a.adapter), "sha256": hashlib.sha256(data).hexdigest()}}
     t0 = time.perf_counter()
@@ -151,7 +177,7 @@ def main(argv=None) -> int:
         report["error"] = f"{type(exc).__name__}: {exc}"
         report["wall_time_s"] = round(time.perf_counter() - t0, 3)
         if fbx.exists():
-            fbx.rename(fbx.with_name(fbx.name + ".failed"))
+            fbx.rename(paths["failed"])
     report_path.write_text(json.dumps(report, indent=1), encoding="utf-8")
     print(f"GROUND_VARIANT {a.variant} cell {a.cell}: ok={report['ok']} {report.get('error', '')}".rstrip())
     return 0 if report["ok"] else 1

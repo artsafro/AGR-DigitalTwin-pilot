@@ -553,12 +553,73 @@ def placement_offset(path) -> tuple[np.ndarray | None, str | None]:
     return np.asarray(origin, float), None
 
 
+def _strict_index(i, n: int, where: str) -> int:
+    """A vertex index exactly as stored: a non-boolean int in [0, n). Floats (even integral), bools, strings and
+    NaN are malformed input, never coerced (int(0.25) or False would silently build a valid-looking mesh)."""
+    if isinstance(i, bool) or not isinstance(i, int):
+        raise MetricError(f"{where}: triangle index {i!r} is not an integer")
+    if not 0 <= i < n:
+        raise MetricError(f"{where}: triangle index {i} outside the vertex list (0..{n - 1})")
+    return i
+
+
+def _strict_ground_triangles(rb: dict, extra: dict | None) -> tuple[np.ndarray, np.ndarray]:
+    """World-free vertices and triangles of every model mesh with each index validated before any coercion and a
+    complete inventory: with an ok extra readback every model mesh needs its `tris`, and their count must equal
+    the readback's `triangles`; without it the readback polygons (>= 3 valid indices each) are fan-triangulated."""
+    use_extra = bool(extra and extra.get("ok"))
+    vs, ts, off = [], [], 0
+    for m in model_meshes(rb):
+        name = m.get("name")
+        raw_v = (m.get("face_geometry") or {}).get("vertices")
+        if not isinstance(raw_v, list):
+            raise MetricError(f"mesh {name!r}: readback has no face_geometry vertices")
+        v = np.asarray(raw_v, float).reshape(-1, 3)
+        n, tris = len(v), []
+        if use_extra:
+            meshes = (extra or {}).get("meshes")
+            if not isinstance(meshes, dict) or name not in meshes:
+                raise MetricError(f"mesh {name!r}: missing from the extra readback")
+            raw = meshes[name].get("tris") if isinstance(meshes[name], dict) else None
+            if not isinstance(raw, list):
+                raise MetricError(f"mesh {name!r}: extra readback triangle list missing or not a list")
+            if raw and all(isinstance(x, list) for x in raw):
+                groups = raw
+            elif any(isinstance(x, list) for x in raw):
+                raise MetricError(f"mesh {name!r}: triangle list mixes nested and flat entries")
+            elif len(raw) % 3:
+                raise MetricError(f"mesh {name!r}: flat triangle list length {len(raw)} is not a multiple of 3")
+            else:
+                groups = [raw[k:k + 3] for k in range(0, len(raw), 3)]
+            for k, g in enumerate(groups):
+                if len(g) != 3:
+                    raise MetricError(f"mesh {name!r}: triangle {k} has {len(g)} indices, expected 3")
+                tris.append([_strict_index(i, n, f"mesh {name!r} triangle {k}") for i in g])
+            declared = m.get("triangles")
+            if isinstance(declared, bool) or not isinstance(declared, int) or declared != len(tris):
+                raise MetricError(f"mesh {name!r}: extra readback has {len(tris)} triangles, readback "
+                                  f"declares {declared!r}")
+        else:
+            polys = (m.get("face_geometry") or {}).get("polygons")
+            if not isinstance(polys, list):
+                raise MetricError(f"mesh {name!r}: readback has no face_geometry polygons")
+            for k, p in enumerate(polys):
+                if not isinstance(p, list) or len(p) < 3:
+                    raise MetricError(f"mesh {name!r}: polygon {k} needs >= 3 indices, got {p!r}")
+                idx = [_strict_index(i, n, f"mesh {name!r} polygon {k}") for i in p]
+                tris += [[idx[0], idx[j], idx[j + 1]] for j in range(1, len(idx) - 1)]
+        vs.append(v)
+        ts.append(np.asarray(tris, np.int64).reshape(-1, 3) + off)
+        off += n
+    if not vs:
+        raise MetricError("no model mesh")
+    return np.concatenate(vs), np.concatenate(ts)
+
+
 def _ground_tris(rb: dict, extra: dict | None, offset: np.ndarray) -> np.ndarray:
-    v, t = _model_triangles(rb, extra)
+    v, t = _strict_ground_triangles(rb, extra)
     if not np.isfinite(v).all():
         raise MetricError("non-finite vertex in the model meshes")
-    if len(t) and (t.min() < 0 or t.max() >= len(v)):
-        raise MetricError("triangle index outside the vertex list")
     return (v + offset)[t]  # (n, 3, 3) world
 
 

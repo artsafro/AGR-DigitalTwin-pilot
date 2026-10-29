@@ -416,7 +416,7 @@ def test_variant_driver_refuses_unsafe_address_before_any_write(tmp_path, addres
     victim.write_text("{}", encoding="utf-8")
     drv = _load("methods_ground_build", TOOLS / "ground" / "build_variant.py")
     out = tmp_path / "o" / "p"
-    assert drv.main(["cdt", str(victim), "--cell", "4", "--out", str(out), "--address", address]) == 4
+    assert drv.main(["cdt", str(victim), "--cell", "4", "--out", str(out), f"--address={address}"]) == 4
     assert victim.read_text(encoding="utf-8") == "{}" and not (tmp_path / "o").exists()
     assert sorted(p.name for p in tmp_path.iterdir()) == ["victim_Ground.fbx"]
 
