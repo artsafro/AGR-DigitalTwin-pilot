@@ -90,6 +90,8 @@ Keys: `reg p.N` = `Rasporyajenies19012026trebovaniya(2).pdf` page N (see npm-vpm
 - Step strips narrower than 1 cm are not an approved removal [D179]. The same quote is not sure (trim the side walls) and leaves the second point for later. Exact 10 mm is not covered by "narrower than". This is not the Ground relief tolerance [D153] and it is not a rule to skip every defect below 1 cm.
 - Closest weld quotes (a shared edge so corner points stitch; a welded trim in some places and a move in others; bring overlapped points together) are [D175]. Limiting weld to coincident seam points is not confirmed.
 - NPM AC baskets: one-sided planes without top, perforation via opacity only, no Solidify/modeled holes. local: docs/agr/case_studies/GLB_AB_REFERENCE_AND_PLANES.md (project decision).
+- Facade elements of a building that reach the ground (TOW02: fins) are extended about 1 m below ground level (z 0) so the building sits on the relief [D182]. local: jobs/vyatskaya-tow02/REVIEW-514.md (project decision).
+- Walls that the source draws at 90 deg are squared to (almost) 90 deg when measurement leaves small angle deviations [D183]; truly non-orthogonal walls are still kept and not flattened (contour orthogonalization lesson below). local: jobs/vyatskaya-tow02/REVIEW-514.md (project decision).
 
 ## Job-level rules and lessons (jobs/*; mostly one project each)
 - Raw Revit import (5% quads, 440 duplicate faces) is not a model; Join/Dissolve is not retopology. Revit FBX: no Material nodes, matrices carry 0.3048 (feet) factor, Blender truncates names - restore full names/Revit IDs first. local: jobs/OBR22-K02/STATE.md (lesson).
