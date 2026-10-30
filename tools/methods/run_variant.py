@@ -9,7 +9,7 @@ Pattern: new-case: methods catalog metric runner (one comparable row per variant
 Row fields: wall time, triangles, objects, xView overlaps (shared 2 mm / 5 mm / 0.81 deg), UCX check (V010 +
 V012 names), texel (min / median px/m), file size, MatID (slot integrity), render-vs-reference SSIM (null
 without a reference picture or render), and the class metrics (ucx-collisions: model -> UCX fit; windows-glazing: glass objects, glass triangle
-share, frame depth).
+share, frame depth; building-body: source -> variant deviation, closed-shell share, triangles vs [D010]).
 A metric that cannot be measured is null with a reason, never a made-up number.
 Exit 0 row appended; 2 measurement error (nothing appended); 4 refused (bad arguments, unknown benchmark or
 class, results path aliasing an input).
@@ -131,6 +131,20 @@ def references(bench: dict) -> dict:
     return refs
 
 
+def source_readback(bench: dict) -> dict:
+    """Readback of the benchmark source FBX (building-body deviation), sha256-checked against benchmarks.json."""
+    src = bench["source"]
+    path, want = (Path(src["fbx_local_path"]), src["fbx_sha256"]) if src.get("fbx_local_path") else (
+        Path(src["local_path"]), src["sha256"])
+    if not path.is_file():
+        raise metrics.MetricError(f"benchmark source FBX missing at {path}")
+    if sha256(path) != want:
+        raise metrics.MetricError(f"benchmark source {path.name} sha256 differs from benchmarks.json")
+    from twinqa.scene import readback
+
+    return readback(path)
+
+
 def git_head() -> str | None:
     try:
         return subprocess.run(["git", "-C", str(ROOT), "rev-parse", "HEAD"], capture_output=True, text=True,
@@ -141,7 +155,7 @@ def git_head() -> str | None:
 
 def build_row(*, rb: dict, extra: dict | None, output: Path, bench: dict, cls: str, variant: str,
               wall: tuple, renders: dict, refs: dict, measure_s: float | None = None,
-              tile_sides: dict | None = None) -> dict:
+              tile_sides: dict | None = None, source_rb: dict | None = None) -> dict:
     from twinqa.profiles import load_profiles
 
     if not rb.get("readback_ok"):
@@ -166,6 +180,8 @@ def build_row(*, rb: dict, extra: dict | None, output: Path, bench: dict, cls: s
         row["class_metrics"]["ucx_fit"] = metrics.ucx_fit(rb, extra)
     if cls == "windows-glazing":
         row["class_metrics"]["windows"] = metrics.windows_glazing(rb, extra)
+    if cls == "building-body":
+        row["class_metrics"]["body"] = metrics.building_body(rb, source_rb)
     row["measure_time_s"] = measure_s
     return row
 
@@ -196,13 +212,16 @@ def main(argv=None) -> int:
     ap.add_argument("--benchmarks", type=Path, default=BENCHMARKS)
     ap.add_argument("--readback", type=Path, help="reuse a fbx_readback.py JSON of this output (tests)")
     ap.add_argument("--extra", type=Path, help="reuse an extra_readback_blender.py JSON of this output (tests)")
+    ap.add_argument("--source-readback", type=Path,
+                    help="reuse a fbx_readback.py JSON of the benchmark source (building-body deviation; tests)")
     a = ap.parse_args(argv)
     try:
         if not a.output.is_file():
             raise Refused(f"no output file {a.output}")
         bench = load_benchmark(a.benchmarks, a.bench, a.cls)
         results = a.results or ROOT / "docs" / "methods" / a.cls / "results.jsonl"
-        inputs = [a.output, a.benchmarks] + [p for p in (a.variant_report, a.readback, a.extra) if p]
+        inputs = [a.output, a.benchmarks] + [p for p in (a.variant_report, a.readback, a.extra, a.source_readback) if p]
+        inputs += [Path(bench["source"][k]) for k in ("local_path", "fbx_local_path") if bench["source"].get(k)]
         renders = parse_renders(a.render)
         inputs += list(renders.values())
         inputs += [Path(r["local_path"]) for r in (bench.get("reference_pictures") or {}).values()]
@@ -226,8 +245,12 @@ def main(argv=None) -> int:
             extra = json.loads(a.extra.read_text(encoding="utf-8")) if a.extra else (
                 None if a.readback else run_extra(fbx, Path(tmp)))
             sides = metrics.package_tile_sides(tmp) if a.output.suffix.lower() == ".zip" else None
+            src_rb = None
+            if a.cls == "building-body":
+                src_rb = (json.loads(a.source_readback.read_text(encoding="utf-8")) if a.source_readback
+                          else source_readback(bench))
             row = build_row(rb=rb, extra=extra, output=a.output, bench=bench, cls=a.cls, variant=a.variant,
-                            wall=wall, renders=renders, refs=refs, tile_sides=sides)
+                            wall=wall, renders=renders, refs=refs, tile_sides=sides, source_rb=src_rb)
         row["measure_time_s"] = round(time.perf_counter() - t0, 3)
         row["measured_at"] = dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
         row["git_commit"] = git_head()
