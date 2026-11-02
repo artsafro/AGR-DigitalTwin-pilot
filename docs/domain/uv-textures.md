@@ -43,6 +43,7 @@ Keys: `reg p.N` = `Rasporyajenies19012026trebovaniya(2).pdf` page N. `local:` re
 - Main and Ground: UDIM only, single UV set on one channel. reg p.31 §2.1.1.
 - Geometry larger than one tile (at required density) must be split; repeating/similar islands placed by overlap. reg p.31 §2.1.2.
 - Tiles filled from 1001 strictly sequential, no gaps, 10x10 grid (1001-1100), numbered left->right, bottom->top. reg p.23, p.31 §2.1.3, p.39. UDIM = 1001 + U + 10*V. local: docs/agr/decisions/ADR-0002-source-discrepancies.md#5.
+- Those tile numbers are export UDIMs, not working-mesh material IDs. A face material ID >= 1001 on the working mesh is an error [D030]: the team script `UDIM-MultiSub_Universal(max22-26).ms` stores `1001+floor(U)+10*floor(V)` in the face ID (`getUDIMFromUV` returns `1001 + udimU + (udimV * 10)`, lines 1 and 5; the script is not in this repo). The reading scheme is 1-35 (`standards/material_id_ranges.yaml`). Export may still emit tiles 1001-1100. Checked on the working mesh by `check_material_ids`. local: docs/domain/materials.md; local: docs/adr/0001-material-ids-are-a-reading-scheme.md (project decision).
 - Mirrored islands forbidden; rotating islands not recommended. reg p.31 §2.1.4.
 - Keep margin from tile borders. reg p.31 §2.1.5.
 - Avoid visible seams/shifts/pattern mismatch between maps. reg p.31 §2.1.6.
@@ -81,3 +82,4 @@ Keys: `reg p.N` = `Rasporyajenies19012026trebovaniya(2).pdf` page N. `local:` re
 - Map policy (one project): patterned finishes 4096, flat-color IDs as 256 placeholders; Diffuse = base color sRGB, no baked light; do not invent ERM/Normal without sources; legend colors are not exact RAL/NCS. local: jobs/REVIT-OPENINGS/outputs/diffuse-v001/README.md (project decision).
 - Periodic textures: build with native procedural generator; AI image generators changed line counts/periodicity and output size (1254 instead of 2048 - keep true size, never upscale); check opposite edges pixel-equal and a 2x2 repeat; lines must continue across cassette joints. local: jobs/UV-CONTINUOUS/STATE.md; local: jobs/WINDOW-ATLAS/STATE.md; local: jobs/REVIT-OPENINGS/STATE.md (lesson).
 - Having a UV channel does not prove the unwrap is finished. local: jobs/MASHI-LP/AUDIT_AND_PLAN.md (lesson).
+- Team-script defaults are not delivery rules [D180]: A101 bitmap ladder 128-2048 with the 8-bit warning, Flora Atlas padding 2 px and size 8192 do not override 24-bit PNG, padding >= 8 px and VPM 2048/4096.

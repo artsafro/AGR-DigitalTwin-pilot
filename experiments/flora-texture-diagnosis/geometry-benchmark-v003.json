@@ -1,0 +1,2722 @@
+{
+  "baseline": {
+    "times_seconds": [
+      1.0863025999860838,
+      0.9749275000067428,
+      1.229104699974414
+    ],
+    "median_seconds": 1.0863025999860838,
+    "charts": 27947,
+    "unknown": 16323,
+    "rows": [
+      {
+        "tag": "original",
+        "object": "Tilia_cordata_NPM",
+        "triangles": 357,
+        "charts": 149,
+        "roles": {
+          "trunk": 3,
+          "unknown": 14,
+          "foliage": 132
+        },
+        "kinds": {
+          "legacy": 139
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Tilia_cordata_VPM",
+        "triangles": 830,
+        "charts": 664,
+        "roles": {
+          "foliage": 165,
+          "unknown": 419,
+          "trunk": 80
+        },
+        "kinds": {
+          "legacy": 193
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Betula_pendula_NPM",
+        "triangles": 446,
+        "charts": 361,
+        "roles": {
+          "unknown": 245,
+          "trunk": 116
+        },
+        "kinds": {
+          "legacy": 44
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Crataegus_mollis_NPM",
+        "triangles": 488,
+        "charts": 436,
+        "roles": {
+          "trunk": 198,
+          "unknown": 238
+        },
+        "kinds": {
+          "legacy": 38
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Crataegus_mollis_VPM",
+        "triangles": 574,
+        "charts": 264,
+        "roles": {
+          "foliage": 239,
+          "unknown": 25
+        },
+        "kinds": {
+          "legacy": 243
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Padus_maackii_NPM",
+        "triangles": 346,
+        "charts": 147,
+        "roles": {
+          "trunk": 47,
+          "unknown": 100
+        },
+        "kinds": {
+          "legacy": 27
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Padus_maackii_VPM",
+        "triangles": 394,
+        "charts": 45,
+        "roles": {
+          "trunk": 16,
+          "unknown": 29
+        },
+        "kinds": {
+          "legacy": 31
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Amelanchier_lamarckii_VPM",
+        "triangles": 4894,
+        "charts": 4672,
+        "roles": {
+          "unknown": 61,
+          "trunk": 89,
+          "foliage": 4522
+        },
+        "kinds": {
+          "legacy": 2272
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Acer_tataricum_subsp_ginnala_NPM",
+        "triangles": 8,
+        "charts": 4,
+        "roles": {
+          "star_plane": 4
+        },
+        "kinds": {
+          "legacy": 4
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Acer_tataricum_subsp_ginnala_VPM",
+        "triangles": 830,
+        "charts": 664,
+        "roles": {
+          "foliage": 165,
+          "unknown": 419,
+          "trunk": 80
+        },
+        "kinds": {
+          "legacy": 193
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Acer_platanoides_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "star_plane": 5
+        },
+        "kinds": {
+          "legacy": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Acer_platanoides_VPM",
+        "triangles": 1070,
+        "charts": 1070,
+        "roles": {
+          "trunk": 222,
+          "unknown": 848
+        },
+        "kinds": {
+          "legacy": 109
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Sorbus_aucuparia_VPM",
+        "triangles": 264,
+        "charts": 35,
+        "roles": {
+          "trunk": 12,
+          "unknown": 23
+        },
+        "kinds": {
+          "legacy": 19
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Acer_tataricum_VPM",
+        "triangles": 2901,
+        "charts": 1702,
+        "roles": {
+          "foliage": 1140,
+          "unknown": 256,
+          "trunk": 306
+        },
+        "kinds": {
+          "legacy": 1164
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Sorbus_commixta_Dodong_NPM",
+        "triangles": 339,
+        "charts": 130,
+        "roles": {
+          "foliage": 123,
+          "trunk": 1,
+          "unknown": 6
+        },
+        "kinds": {
+          "legacy": 130
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Syringa_vulgaris_Krasavitsa_Moskvy_NPM",
+        "triangles": 1266,
+        "charts": 511,
+        "roles": {
+          "foliage": 507,
+          "trunk": 4
+        },
+        "kinds": {
+          "legacy": 511
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Syringa_vulgaris_Andenken_an_Ludwig_Spath_NPM",
+        "triangles": 1266,
+        "charts": 511,
+        "roles": {
+          "foliage": 507,
+          "trunk": 4
+        },
+        "kinds": {
+          "legacy": 511
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Syringa_josikaea_VPM",
+        "triangles": 1266,
+        "charts": 511,
+        "roles": {
+          "foliage": 507,
+          "trunk": 4
+        },
+        "kinds": {
+          "legacy": 511
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Pinus_nigra_NPM",
+        "triangles": 8,
+        "charts": 8,
+        "roles": {
+          "star_plane": 8
+        },
+        "kinds": {
+          "legacy": 4
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Pinus_nigra_VPM",
+        "triangles": 6267,
+        "charts": 5996,
+        "roles": {
+          "unknown": 5834,
+          "trunk": 162
+        },
+        "kinds": {
+          "legacy": 221
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Malus_niedzwetzkyana_VPM",
+        "triangles": 394,
+        "charts": 45,
+        "roles": {
+          "trunk": 16,
+          "unknown": 29
+        },
+        "kinds": {
+          "legacy": 31
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Syringa_vulgaris_VPM",
+        "triangles": 614,
+        "charts": 363,
+        "roles": {
+          "foliage": 176,
+          "unknown": 85,
+          "trunk": 102
+        },
+        "kinds": {
+          "legacy": 199
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Picea_pungens_NPM",
+        "triangles": 3065,
+        "charts": 371,
+        "roles": {
+          "unknown": 325,
+          "trunk": 46
+        },
+        "kinds": {
+          "legacy": 116
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Picea_pungens_VPM",
+        "triangles": 6267,
+        "charts": 5991,
+        "roles": {
+          "unknown": 5834,
+          "trunk": 157
+        },
+        "kinds": {
+          "legacy": 221
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Malus_Evereste_NPM",
+        "triangles": 394,
+        "charts": 224,
+        "roles": {
+          "trunk": 35,
+          "unknown": 189
+        },
+        "kinds": {
+          "legacy": 31
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Thuja_occidentalis_NPM",
+        "triangles": 8,
+        "charts": 8,
+        "roles": {
+          "star_plane": 8
+        },
+        "kinds": {
+          "legacy": 4
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Berberis_ottawensis_NPM",
+        "triangles": 64,
+        "charts": 8,
+        "roles": {
+          "unknown": 8
+        },
+        "kinds": {
+          "legacy": 8
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Crataegus_monogyna_NPM",
+        "triangles": 72,
+        "charts": 9,
+        "roles": {
+          "unknown": 9
+        },
+        "kinds": {
+          "legacy": 9
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Cornus_alba_NPM",
+        "triangles": 64,
+        "charts": 8,
+        "roles": {
+          "unknown": 8
+        },
+        "kinds": {
+          "legacy": 8
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Cornus_alba_VPM",
+        "triangles": 128,
+        "charts": 16,
+        "roles": {
+          "unknown": 16
+        },
+        "kinds": {
+          "legacy": 16
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Cornus_sericea_NPM",
+        "triangles": 80,
+        "charts": 65,
+        "roles": {
+          "unknown": 65
+        },
+        "kinds": {
+          "legacy": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Physocarpus_opulifolius_Diabolo_NPM",
+        "triangles": 18,
+        "charts": 9,
+        "roles": {
+          "star_plane": 9
+        },
+        "kinds": {
+          "legacy": 9
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Physocarpus_opulifolius_Diabolo_VPM",
+        "triangles": 144,
+        "charts": 18,
+        "roles": {
+          "unknown": 18
+        },
+        "kinds": {
+          "legacy": 18
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Hydrangea_paniculata_NPM",
+        "triangles": 36,
+        "charts": 9,
+        "roles": {
+          "unknown": 9
+        },
+        "kinds": {
+          "legacy": 9
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Hydrangea_arborescens_VPM",
+        "triangles": 80,
+        "charts": 10,
+        "roles": {
+          "unknown": 10
+        },
+        "kinds": {
+          "legacy": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Salix_purpurea_Mayak_NPM",
+        "triangles": 72,
+        "charts": 9,
+        "roles": {
+          "unknown": 9
+        },
+        "kinds": {
+          "legacy": 9
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Cotoneaster_lucidus_VPM",
+        "triangles": 112,
+        "charts": 16,
+        "roles": {
+          "unknown": 16
+        },
+        "kinds": {
+          "legacy": 16
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Juniperus_sabina_NPM",
+        "triangles": 32,
+        "charts": 8,
+        "roles": {
+          "unknown": 8
+        },
+        "kinds": {
+          "legacy": 8
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Physocarpus_opulifolius_NPM",
+        "triangles": 20,
+        "charts": 10,
+        "roles": {
+          "star_plane": 10
+        },
+        "kinds": {
+          "legacy": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Physocarpus_opulifolius_VPM",
+        "triangles": 160,
+        "charts": 20,
+        "roles": {
+          "unknown": 20
+        },
+        "kinds": {
+          "legacy": 20
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Sorbaria_sorbifolia_VPM",
+        "triangles": 84,
+        "charts": 74,
+        "roles": {
+          "unknown": 74
+        },
+        "kinds": {
+          "legacy": 11
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Dasiphora_fruticosa_Goldfinger_NPM",
+        "triangles": 112,
+        "charts": 16,
+        "roles": {
+          "unknown": 16
+        },
+        "kinds": {
+          "legacy": 16
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Euonymus_alatus_NPM",
+        "triangles": 1073,
+        "charts": 436,
+        "roles": {
+          "trunk": 6,
+          "unknown": 428,
+          "foliage": 2
+        },
+        "kinds": {
+          "legacy": 436
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Philadelphus_coronarius_NPM",
+        "triangles": 84,
+        "charts": 11,
+        "roles": {
+          "unknown": 11
+        },
+        "kinds": {
+          "legacy": 11
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Hydrangea_arborescens_Bounty_NPM",
+        "triangles": 88,
+        "charts": 15,
+        "roles": {
+          "unknown": 15
+        },
+        "kinds": {
+          "legacy": 15
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Hydrangea_paniculata_Limelight_NPM",
+        "triangles": 84,
+        "charts": 14,
+        "roles": {
+          "unknown": 14
+        },
+        "kinds": {
+          "legacy": 14
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Viburnum_opulus_Roseum_VPM",
+        "triangles": 1254,
+        "charts": 505,
+        "roles": {
+          "foliage": 501,
+          "trunk": 4
+        },
+        "kinds": {
+          "legacy": 505
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Sorbaria_sorbifolia_Sem_NPM",
+        "triangles": 112,
+        "charts": 16,
+        "roles": {
+          "unknown": 16
+        },
+        "kinds": {
+          "legacy": 16
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Spiraea_betulifolia_Tor_VPM",
+        "triangles": 120,
+        "charts": 15,
+        "roles": {
+          "unknown": 15
+        },
+        "kinds": {
+          "legacy": 15
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Spiraea_cinerea_Grefsheim_VPM",
+        "triangles": 84,
+        "charts": 11,
+        "roles": {
+          "unknown": 11
+        },
+        "kinds": {
+          "legacy": 11
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Spiraea_japonica_Little_Princess_NPM",
+        "triangles": 80,
+        "charts": 10,
+        "roles": {
+          "unknown": 10
+        },
+        "kinds": {
+          "legacy": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Stephanandra_incisa_Crispa_VPM",
+        "triangles": 90,
+        "charts": 90,
+        "roles": {
+          "unknown": 80,
+          "foliage": 10
+        },
+        "kinds": {
+          "legacy": 18
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Pinus_mugo_VPM",
+        "triangles": 64,
+        "charts": 8,
+        "roles": {
+          "unknown": 8
+        },
+        "kinds": {
+          "legacy": 8
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Spiraea_japonica_NPM",
+        "triangles": 20,
+        "charts": 10,
+        "roles": {
+          "star_plane": 10
+        },
+        "kinds": {
+          "legacy": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Spiraea_japonica_VPM",
+        "triangles": 160,
+        "charts": 20,
+        "roles": {
+          "unknown": 20
+        },
+        "kinds": {
+          "legacy": 20
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Symphyotrichum_novae_angliae_NPM",
+        "triangles": 36,
+        "charts": 9,
+        "roles": {
+          "unknown": 9
+        },
+        "kinds": {
+          "legacy": 9
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Symphyotrichum_novae_angliae_VPM",
+        "triangles": 144,
+        "charts": 18,
+        "roles": {
+          "unknown": 18
+        },
+        "kinds": {
+          "legacy": 18
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Echinacea_purpurea_NPM",
+        "triangles": 32,
+        "charts": 8,
+        "roles": {
+          "unknown": 8
+        },
+        "kinds": {
+          "legacy": 8
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Echinacea_purpurea_VPM",
+        "triangles": 128,
+        "charts": 16,
+        "roles": {
+          "unknown": 16
+        },
+        "kinds": {
+          "legacy": 16
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Heuchera_NPM",
+        "triangles": 80,
+        "charts": 10,
+        "roles": {
+          "unknown": 10
+        },
+        "kinds": {
+          "legacy": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Actaea_simplex_Atropurpurea_NPM",
+        "triangles": 80,
+        "charts": 10,
+        "roles": {
+          "unknown": 10
+        },
+        "kinds": {
+          "legacy": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Filipendula_ulmaria_NPM",
+        "triangles": 64,
+        "charts": 8,
+        "roles": {
+          "unknown": 8
+        },
+        "kinds": {
+          "legacy": 8
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Miscanthus_sinensis_NPM",
+        "triangles": 72,
+        "charts": 9,
+        "roles": {
+          "unknown": 8,
+          "trunk": 1
+        },
+        "kinds": {
+          "legacy": 9
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Eutrochium_maculatum_NPM",
+        "triangles": 64,
+        "charts": 8,
+        "roles": {
+          "unknown": 8
+        },
+        "kinds": {
+          "legacy": 8
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Eutrochium_maculatum_VPM",
+        "triangles": 128,
+        "charts": 16,
+        "roles": {
+          "unknown": 16
+        },
+        "kinds": {
+          "legacy": 16
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Calamagrostis_brachytricha_NPM",
+        "triangles": 40,
+        "charts": 10,
+        "roles": {
+          "unknown": 10
+        },
+        "kinds": {
+          "legacy": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Calamagrostis_brachytricha_VPM",
+        "triangles": 160,
+        "charts": 20,
+        "roles": {
+          "unknown": 20
+        },
+        "kinds": {
+          "legacy": 20
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Calamagrostis_acutiflora_Karl_Foerster_NPM",
+        "triangles": 72,
+        "charts": 9,
+        "roles": {
+          "unknown": 8,
+          "trunk": 1
+        },
+        "kinds": {
+          "legacy": 9
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Amelanchier_lamarckii_NPM",
+        "triangles": 979,
+        "charts": 701,
+        "roles": {
+          "trunk": 290,
+          "unknown": 197,
+          "foliage": 214
+        },
+        "kinds": {
+          "legacy": 238
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Sorbus_aucuparia_NPM",
+        "triangles": 125,
+        "charts": 110,
+        "roles": {
+          "trunk": 95,
+          "foliage": 10,
+          "unknown": 5
+        },
+        "kinds": {
+          "legacy": 18
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Acer_tataricum_NPM",
+        "triangles": 125,
+        "charts": 110,
+        "roles": {
+          "trunk": 95,
+          "foliage": 10,
+          "unknown": 5
+        },
+        "kinds": {
+          "legacy": 18
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Syringa_josikaea_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "star_plane": 5
+        },
+        "kinds": {
+          "legacy": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Malus_niedzwetzkyana_NPM",
+        "triangles": 125,
+        "charts": 110,
+        "roles": {
+          "trunk": 95,
+          "foliage": 10,
+          "unknown": 5
+        },
+        "kinds": {
+          "legacy": 18
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Syringa_vulgaris_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "star_plane": 5
+        },
+        "kinds": {
+          "legacy": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Prunus_padus_NPM",
+        "triangles": 166,
+        "charts": 103,
+        "roles": {
+          "trunk": 94,
+          "unknown": 9
+        },
+        "kinds": {
+          "legacy": 11
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Prunus_padus_VPM",
+        "triangles": 494,
+        "charts": 144,
+        "roles": {
+          "trunk": 94,
+          "unknown": 50
+        },
+        "kinds": {
+          "legacy": 52
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Hydrangea_arborescens_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "star_plane": 1,
+          "unknown": 4
+        },
+        "kinds": {
+          "legacy": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Cotoneaster_lucidus_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "star_plane": 5
+        },
+        "kinds": {
+          "legacy": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Sorbaria_sorbifolia_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "star_plane": 5
+        },
+        "kinds": {
+          "legacy": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Viburnum_opulus_Roseum_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "star_plane": 5
+        },
+        "kinds": {
+          "legacy": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Spiraea_betulifolia_Tor_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "star_plane": 5
+        },
+        "kinds": {
+          "legacy": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Spiraea_cinerea_Grefsheim_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "star_plane": 5
+        },
+        "kinds": {
+          "legacy": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Spiraea_japonica_Little_Princess_VPM",
+        "triangles": 20,
+        "charts": 10,
+        "roles": {
+          "foliage": 10
+        },
+        "kinds": {
+          "legacy": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Stephanandra_incisa_Crispa_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "star_plane": 5
+        },
+        "kinds": {
+          "legacy": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Pinus_mugo_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "star_plane": 5
+        },
+        "kinds": {
+          "legacy": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Berberis_thunbergii_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "star_plane": 5
+        },
+        "kinds": {
+          "legacy": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Berberis_thunbergii_VPM",
+        "triangles": 20,
+        "charts": 10,
+        "roles": {
+          "foliage": 10
+        },
+        "kinds": {
+          "legacy": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Cornus_alba_Sibirica_Variegata_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "star_plane": 5
+        },
+        "kinds": {
+          "legacy": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Cornus_alba_Sibirica_Variegata_VPM",
+        "triangles": 20,
+        "charts": 10,
+        "roles": {
+          "foliage": 10
+        },
+        "kinds": {
+          "legacy": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Dasiphora_fruticosa_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "star_plane": 5
+        },
+        "kinds": {
+          "legacy": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Dasiphora_fruticosa_VPM",
+        "triangles": 20,
+        "charts": 10,
+        "roles": {
+          "foliage": 10
+        },
+        "kinds": {
+          "legacy": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Physocarpus_opulifolius_Luteus_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "star_plane": 5
+        },
+        "kinds": {
+          "legacy": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Physocarpus_opulifolius_Luteus_VPM",
+        "triangles": 20,
+        "charts": 10,
+        "roles": {
+          "foliage": 10
+        },
+        "kinds": {
+          "legacy": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Spiraea_japonica_Firelight_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "unknown": 2,
+          "star_plane": 3
+        },
+        "kinds": {
+          "legacy": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Spiraea_japonica_Firelight_VPM",
+        "triangles": 20,
+        "charts": 10,
+        "roles": {
+          "unknown": 4,
+          "foliage": 6
+        },
+        "kinds": {
+          "legacy": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Spiraea_bumalda_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "star_plane": 5
+        },
+        "kinds": {
+          "legacy": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Spiraea_bumalda_VPM",
+        "triangles": 20,
+        "charts": 10,
+        "roles": {
+          "foliage": 10
+        },
+        "kinds": {
+          "legacy": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Parthenocissus_quinquefolia_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "star_plane": 5
+        },
+        "kinds": {
+          "legacy": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Parthenocissus_quinquefolia_VPM",
+        "triangles": 20,
+        "charts": 10,
+        "roles": {
+          "foliage": 10
+        },
+        "kinds": {
+          "legacy": 10
+        },
+        "face_accounting": true
+      }
+    ]
+  },
+  "prototype": {
+    "times_seconds": [
+      2.454621099983342,
+      2.352815099991858,
+      2.3727411000290886
+    ],
+    "median_seconds": 2.3727411000290886,
+    "charts": 17332,
+    "unknown": 0,
+    "rows": [
+      {
+        "tag": "original",
+        "object": "Tilia_cordata_NPM",
+        "triangles": 357,
+        "charts": 141,
+        "roles": {
+          "trunk": 9,
+          "foliage": 132
+        },
+        "kinds": {
+          "tube": 7,
+          "flat_card": 132
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Tilia_cordata_VPM",
+        "triangles": 830,
+        "charts": 664,
+        "roles": {
+          "foliage": 166,
+          "trunk": 498
+        },
+        "kinds": {
+          "flat_card": 165,
+          "bent_card": 1,
+          "tube": 27
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Betula_pendula_NPM",
+        "triangles": 446,
+        "charts": 57,
+        "roles": {
+          "foliage": 42,
+          "trunk": 15
+        },
+        "kinds": {
+          "bent_card": 42,
+          "tube": 2
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Crataegus_mollis_NPM",
+        "triangles": 488,
+        "charts": 38,
+        "roles": {
+          "trunk": 4,
+          "foliage": 34
+        },
+        "kinds": {
+          "tube": 4,
+          "bent_card": 34
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Crataegus_mollis_VPM",
+        "triangles": 574,
+        "charts": 264,
+        "roles": {
+          "foliage": 239,
+          "trunk": 25
+        },
+        "kinds": {
+          "flat_card": 239,
+          "tube": 4
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Padus_maackii_NPM",
+        "triangles": 346,
+        "charts": 72,
+        "roles": {
+          "trunk": 47,
+          "foliage": 25
+        },
+        "kinds": {
+          "tube": 2,
+          "bent_card": 25
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Padus_maackii_VPM",
+        "triangles": 394,
+        "charts": 45,
+        "roles": {
+          "trunk": 16,
+          "foliage": 29
+        },
+        "kinds": {
+          "tube": 2,
+          "bent_card": 29
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Amelanchier_lamarckii_VPM",
+        "triangles": 4894,
+        "charts": 2964,
+        "roles": {
+          "trunk": 148,
+          "foliage": 2816
+        },
+        "kinds": {
+          "tube": 10,
+          "flat_card": 2262
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Acer_tataricum_subsp_ginnala_NPM",
+        "triangles": 8,
+        "charts": 4,
+        "roles": {
+          "foliage": 4
+        },
+        "kinds": {
+          "flat_card": 4
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Acer_tataricum_subsp_ginnala_VPM",
+        "triangles": 830,
+        "charts": 664,
+        "roles": {
+          "foliage": 166,
+          "trunk": 498
+        },
+        "kinds": {
+          "flat_card": 165,
+          "bent_card": 1,
+          "tube": 27
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Acer_platanoides_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "foliage": 5
+        },
+        "kinds": {
+          "flat_card": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Acer_platanoides_VPM",
+        "triangles": 1070,
+        "charts": 330,
+        "roles": {
+          "trunk": 222,
+          "foliage": 108
+        },
+        "kinds": {
+          "tube": 3,
+          "bent_card": 106
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Sorbus_aucuparia_VPM",
+        "triangles": 264,
+        "charts": 28,
+        "roles": {
+          "trunk": 5,
+          "foliage": 23
+        },
+        "kinds": {
+          "tube": 1,
+          "bent_card": 18
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Acer_tataricum_VPM",
+        "triangles": 2901,
+        "charts": 1488,
+        "roles": {
+          "foliage": 1140,
+          "trunk": 348
+        },
+        "kinds": {
+          "flat_card": 1140,
+          "tube": 24
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Sorbus_commixta_Dodong_NPM",
+        "triangles": 339,
+        "charts": 130,
+        "roles": {
+          "foliage": 123,
+          "trunk": 7
+        },
+        "kinds": {
+          "flat_card": 123,
+          "tube": 7
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Syringa_vulgaris_Krasavitsa_Moskvy_NPM",
+        "triangles": 1266,
+        "charts": 511,
+        "roles": {
+          "foliage": 507,
+          "trunk": 4
+        },
+        "kinds": {
+          "flat_card": 507,
+          "tube": 4
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Syringa_vulgaris_Andenken_an_Ludwig_Spath_NPM",
+        "triangles": 1266,
+        "charts": 511,
+        "roles": {
+          "foliage": 507,
+          "trunk": 4
+        },
+        "kinds": {
+          "flat_card": 507,
+          "tube": 4
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Syringa_josikaea_VPM",
+        "triangles": 1266,
+        "charts": 511,
+        "roles": {
+          "foliage": 507,
+          "trunk": 4
+        },
+        "kinds": {
+          "flat_card": 507,
+          "tube": 4
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Pinus_nigra_NPM",
+        "triangles": 8,
+        "charts": 4,
+        "roles": {
+          "foliage": 4
+        },
+        "kinds": {
+          "flat_card": 4
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Pinus_nigra_VPM",
+        "triangles": 6267,
+        "charts": 2586,
+        "roles": {
+          "foliage": 2052,
+          "trunk": 534
+        },
+        "kinds": {
+          "folded_card": 202,
+          "tube": 19
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Malus_niedzwetzkyana_VPM",
+        "triangles": 394,
+        "charts": 45,
+        "roles": {
+          "trunk": 16,
+          "foliage": 29
+        },
+        "kinds": {
+          "tube": 2,
+          "bent_card": 29
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Syringa_vulgaris_VPM",
+        "triangles": 614,
+        "charts": 247,
+        "roles": {
+          "foliage": 191,
+          "trunk": 56
+        },
+        "kinds": {
+          "flat_card": 176,
+          "bent_card": 15,
+          "tube": 8
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Picea_pungens_NPM",
+        "triangles": 3065,
+        "charts": 486,
+        "roles": {
+          "foliage": 274,
+          "trunk": 212
+        },
+        "kinds": {
+          "folded_card": 101,
+          "tube": 15
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Picea_pungens_VPM",
+        "triangles": 6267,
+        "charts": 2586,
+        "roles": {
+          "foliage": 2052,
+          "trunk": 534
+        },
+        "kinds": {
+          "folded_card": 202,
+          "tube": 19
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Malus_Evereste_NPM",
+        "triangles": 394,
+        "charts": 73,
+        "roles": {
+          "trunk": 20,
+          "foliage": 53
+        },
+        "kinds": {
+          "tube": 2,
+          "bent_card": 29
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Thuja_occidentalis_NPM",
+        "triangles": 8,
+        "charts": 4,
+        "roles": {
+          "foliage": 4
+        },
+        "kinds": {
+          "flat_card": 4
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Berberis_ottawensis_NPM",
+        "triangles": 64,
+        "charts": 8,
+        "roles": {
+          "foliage": 8
+        },
+        "kinds": {
+          "bent_card": 8
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Crataegus_monogyna_NPM",
+        "triangles": 72,
+        "charts": 9,
+        "roles": {
+          "foliage": 9
+        },
+        "kinds": {
+          "bent_card": 9
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Cornus_alba_NPM",
+        "triangles": 64,
+        "charts": 8,
+        "roles": {
+          "foliage": 8
+        },
+        "kinds": {
+          "bent_card": 8
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Cornus_alba_VPM",
+        "triangles": 128,
+        "charts": 16,
+        "roles": {
+          "foliage": 16
+        },
+        "kinds": {
+          "bent_card": 16
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Cornus_sericea_NPM",
+        "triangles": 80,
+        "charts": 11,
+        "roles": {
+          "foliage": 11
+        },
+        "kinds": {
+          "bent_card": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Physocarpus_opulifolius_Diabolo_NPM",
+        "triangles": 18,
+        "charts": 9,
+        "roles": {
+          "foliage": 9
+        },
+        "kinds": {
+          "flat_card": 9
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Physocarpus_opulifolius_Diabolo_VPM",
+        "triangles": 144,
+        "charts": 18,
+        "roles": {
+          "foliage": 18
+        },
+        "kinds": {
+          "bent_card": 18
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Hydrangea_paniculata_NPM",
+        "triangles": 36,
+        "charts": 9,
+        "roles": {
+          "foliage": 9
+        },
+        "kinds": {
+          "bent_card": 9
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Hydrangea_arborescens_VPM",
+        "triangles": 80,
+        "charts": 10,
+        "roles": {
+          "foliage": 10
+        },
+        "kinds": {
+          "bent_card": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Salix_purpurea_Mayak_NPM",
+        "triangles": 72,
+        "charts": 9,
+        "roles": {
+          "foliage": 9
+        },
+        "kinds": {
+          "bent_card": 9
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Cotoneaster_lucidus_VPM",
+        "triangles": 112,
+        "charts": 16,
+        "roles": {
+          "foliage": 16
+        },
+        "kinds": {
+          "bent_card": 16
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Juniperus_sabina_NPM",
+        "triangles": 32,
+        "charts": 8,
+        "roles": {
+          "foliage": 8
+        },
+        "kinds": {
+          "bent_card": 8
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Physocarpus_opulifolius_NPM",
+        "triangles": 20,
+        "charts": 10,
+        "roles": {
+          "foliage": 10
+        },
+        "kinds": {
+          "flat_card": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Physocarpus_opulifolius_VPM",
+        "triangles": 160,
+        "charts": 20,
+        "roles": {
+          "foliage": 20
+        },
+        "kinds": {
+          "bent_card": 20
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Sorbaria_sorbifolia_VPM",
+        "triangles": 84,
+        "charts": 14,
+        "roles": {
+          "foliage": 14
+        },
+        "kinds": {
+          "bent_card": 11
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Dasiphora_fruticosa_Goldfinger_NPM",
+        "triangles": 112,
+        "charts": 16,
+        "roles": {
+          "foliage": 16
+        },
+        "kinds": {
+          "bent_card": 16
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Euonymus_alatus_NPM",
+        "triangles": 1073,
+        "charts": 436,
+        "roles": {
+          "trunk": 6,
+          "foliage": 430
+        },
+        "kinds": {
+          "tube": 6,
+          "bent_card": 428,
+          "flat_card": 2
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Philadelphus_coronarius_NPM",
+        "triangles": 84,
+        "charts": 11,
+        "roles": {
+          "foliage": 11
+        },
+        "kinds": {
+          "bent_card": 11
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Hydrangea_arborescens_Bounty_NPM",
+        "triangles": 88,
+        "charts": 15,
+        "roles": {
+          "foliage": 15
+        },
+        "kinds": {
+          "bent_card": 15
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Hydrangea_paniculata_Limelight_NPM",
+        "triangles": 84,
+        "charts": 14,
+        "roles": {
+          "foliage": 14
+        },
+        "kinds": {
+          "bent_card": 14
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Viburnum_opulus_Roseum_VPM",
+        "triangles": 1254,
+        "charts": 505,
+        "roles": {
+          "foliage": 501,
+          "trunk": 4
+        },
+        "kinds": {
+          "flat_card": 501,
+          "tube": 4
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Sorbaria_sorbifolia_Sem_NPM",
+        "triangles": 112,
+        "charts": 16,
+        "roles": {
+          "foliage": 16
+        },
+        "kinds": {
+          "bent_card": 16
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Spiraea_betulifolia_Tor_VPM",
+        "triangles": 120,
+        "charts": 15,
+        "roles": {
+          "foliage": 15
+        },
+        "kinds": {
+          "bent_card": 15
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Spiraea_cinerea_Grefsheim_VPM",
+        "triangles": 84,
+        "charts": 11,
+        "roles": {
+          "foliage": 11
+        },
+        "kinds": {
+          "bent_card": 11
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Spiraea_japonica_Little_Princess_NPM",
+        "triangles": 80,
+        "charts": 10,
+        "roles": {
+          "foliage": 10
+        },
+        "kinds": {
+          "bent_card": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Stephanandra_incisa_Crispa_VPM",
+        "triangles": 90,
+        "charts": 18,
+        "roles": {
+          "foliage": 18
+        },
+        "kinds": {
+          "bent_card": 13,
+          "flat_card": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Pinus_mugo_VPM",
+        "triangles": 64,
+        "charts": 8,
+        "roles": {
+          "foliage": 8
+        },
+        "kinds": {
+          "bent_card": 8
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Spiraea_japonica_NPM",
+        "triangles": 20,
+        "charts": 10,
+        "roles": {
+          "foliage": 10
+        },
+        "kinds": {
+          "flat_card": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Spiraea_japonica_VPM",
+        "triangles": 160,
+        "charts": 20,
+        "roles": {
+          "foliage": 20
+        },
+        "kinds": {
+          "bent_card": 20
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Symphyotrichum_novae_angliae_NPM",
+        "triangles": 36,
+        "charts": 9,
+        "roles": {
+          "foliage": 9
+        },
+        "kinds": {
+          "bent_card": 9
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Symphyotrichum_novae_angliae_VPM",
+        "triangles": 144,
+        "charts": 18,
+        "roles": {
+          "foliage": 18
+        },
+        "kinds": {
+          "bent_card": 18
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Echinacea_purpurea_NPM",
+        "triangles": 32,
+        "charts": 8,
+        "roles": {
+          "foliage": 8
+        },
+        "kinds": {
+          "bent_card": 8
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Echinacea_purpurea_VPM",
+        "triangles": 128,
+        "charts": 16,
+        "roles": {
+          "foliage": 16
+        },
+        "kinds": {
+          "bent_card": 16
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Heuchera_NPM",
+        "triangles": 80,
+        "charts": 10,
+        "roles": {
+          "foliage": 10
+        },
+        "kinds": {
+          "bent_card": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Actaea_simplex_Atropurpurea_NPM",
+        "triangles": 80,
+        "charts": 10,
+        "roles": {
+          "foliage": 10
+        },
+        "kinds": {
+          "bent_card": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Filipendula_ulmaria_NPM",
+        "triangles": 64,
+        "charts": 8,
+        "roles": {
+          "foliage": 8
+        },
+        "kinds": {
+          "bent_card": 8
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Miscanthus_sinensis_NPM",
+        "triangles": 72,
+        "charts": 9,
+        "roles": {
+          "foliage": 9
+        },
+        "kinds": {
+          "bent_card": 9
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Eutrochium_maculatum_NPM",
+        "triangles": 64,
+        "charts": 8,
+        "roles": {
+          "foliage": 8
+        },
+        "kinds": {
+          "bent_card": 8
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Eutrochium_maculatum_VPM",
+        "triangles": 128,
+        "charts": 16,
+        "roles": {
+          "foliage": 16
+        },
+        "kinds": {
+          "bent_card": 16
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Calamagrostis_brachytricha_NPM",
+        "triangles": 40,
+        "charts": 10,
+        "roles": {
+          "foliage": 10
+        },
+        "kinds": {
+          "bent_card": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Calamagrostis_brachytricha_VPM",
+        "triangles": 160,
+        "charts": 20,
+        "roles": {
+          "foliage": 20
+        },
+        "kinds": {
+          "bent_card": 20
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "original",
+        "object": "Calamagrostis_acutiflora_Karl_Foerster_NPM",
+        "triangles": 72,
+        "charts": 9,
+        "roles": {
+          "foliage": 9
+        },
+        "kinds": {
+          "bent_card": 9
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Amelanchier_lamarckii_NPM",
+        "triangles": 979,
+        "charts": 701,
+        "roles": {
+          "trunk": 487,
+          "foliage": 214
+        },
+        "kinds": {
+          "tube": 24,
+          "flat_card": 214
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Sorbus_aucuparia_NPM",
+        "triangles": 125,
+        "charts": 110,
+        "roles": {
+          "trunk": 95,
+          "foliage": 15
+        },
+        "kinds": {
+          "tube": 3,
+          "flat_card": 10,
+          "bent_card": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Acer_tataricum_NPM",
+        "triangles": 125,
+        "charts": 110,
+        "roles": {
+          "trunk": 95,
+          "foliage": 15
+        },
+        "kinds": {
+          "tube": 3,
+          "flat_card": 10,
+          "bent_card": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Syringa_josikaea_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "foliage": 5
+        },
+        "kinds": {
+          "flat_card": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Malus_niedzwetzkyana_NPM",
+        "triangles": 125,
+        "charts": 110,
+        "roles": {
+          "trunk": 95,
+          "foliage": 15
+        },
+        "kinds": {
+          "tube": 3,
+          "flat_card": 10,
+          "bent_card": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Syringa_vulgaris_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "foliage": 5
+        },
+        "kinds": {
+          "flat_card": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Prunus_padus_NPM",
+        "triangles": 166,
+        "charts": 103,
+        "roles": {
+          "trunk": 94,
+          "foliage": 9
+        },
+        "kinds": {
+          "tube": 2,
+          "bent_card": 9
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Prunus_padus_VPM",
+        "triangles": 494,
+        "charts": 144,
+        "roles": {
+          "trunk": 94,
+          "foliage": 50
+        },
+        "kinds": {
+          "tube": 2,
+          "bent_card": 50
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Hydrangea_arborescens_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "foliage": 5
+        },
+        "kinds": {
+          "flat_card": 1,
+          "bent_card": 4
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Cotoneaster_lucidus_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "foliage": 5
+        },
+        "kinds": {
+          "flat_card": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Sorbaria_sorbifolia_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "foliage": 5
+        },
+        "kinds": {
+          "flat_card": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Viburnum_opulus_Roseum_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "foliage": 5
+        },
+        "kinds": {
+          "flat_card": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Spiraea_betulifolia_Tor_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "foliage": 5
+        },
+        "kinds": {
+          "flat_card": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Spiraea_cinerea_Grefsheim_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "foliage": 5
+        },
+        "kinds": {
+          "flat_card": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Spiraea_japonica_Little_Princess_VPM",
+        "triangles": 20,
+        "charts": 10,
+        "roles": {
+          "foliage": 10
+        },
+        "kinds": {
+          "flat_card": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Stephanandra_incisa_Crispa_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "foliage": 5
+        },
+        "kinds": {
+          "flat_card": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Pinus_mugo_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "foliage": 5
+        },
+        "kinds": {
+          "flat_card": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Berberis_thunbergii_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "foliage": 5
+        },
+        "kinds": {
+          "flat_card": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Berberis_thunbergii_VPM",
+        "triangles": 20,
+        "charts": 10,
+        "roles": {
+          "foliage": 10
+        },
+        "kinds": {
+          "flat_card": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Cornus_alba_Sibirica_Variegata_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "foliage": 5
+        },
+        "kinds": {
+          "flat_card": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Cornus_alba_Sibirica_Variegata_VPM",
+        "triangles": 20,
+        "charts": 10,
+        "roles": {
+          "foliage": 10
+        },
+        "kinds": {
+          "flat_card": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Dasiphora_fruticosa_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "foliage": 5
+        },
+        "kinds": {
+          "flat_card": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Dasiphora_fruticosa_VPM",
+        "triangles": 20,
+        "charts": 10,
+        "roles": {
+          "foliage": 10
+        },
+        "kinds": {
+          "flat_card": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Physocarpus_opulifolius_Luteus_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "foliage": 5
+        },
+        "kinds": {
+          "flat_card": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Physocarpus_opulifolius_Luteus_VPM",
+        "triangles": 20,
+        "charts": 10,
+        "roles": {
+          "foliage": 10
+        },
+        "kinds": {
+          "flat_card": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Spiraea_japonica_Firelight_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "foliage": 5
+        },
+        "kinds": {
+          "bent_card": 2,
+          "flat_card": 3
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Spiraea_japonica_Firelight_VPM",
+        "triangles": 20,
+        "charts": 10,
+        "roles": {
+          "foliage": 10
+        },
+        "kinds": {
+          "bent_card": 4,
+          "flat_card": 6
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Spiraea_bumalda_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "foliage": 5
+        },
+        "kinds": {
+          "flat_card": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Spiraea_bumalda_VPM",
+        "triangles": 20,
+        "charts": 10,
+        "roles": {
+          "foliage": 10
+        },
+        "kinds": {
+          "flat_card": 10
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Parthenocissus_quinquefolia_NPM",
+        "triangles": 10,
+        "charts": 5,
+        "roles": {
+          "foliage": 5
+        },
+        "kinds": {
+          "flat_card": 5
+        },
+        "face_accounting": true
+      },
+      {
+        "tag": "florio",
+        "object": "Parthenocissus_quinquefolia_VPM",
+        "triangles": 20,
+        "charts": 10,
+        "roles": {
+          "foliage": 10
+        },
+        "kinds": {
+          "flat_card": 10
+        },
+        "face_accounting": true
+      }
+    ]
+  },
+  "accepted": false,
+  "inventory_sha256": "843a464ce16c432815a48a0a5c84f9bf8aa4bbb09b3a0fae343527863a653112",
+  "scope": "geometry/chart diagnostic only; no semantic calibration or threshold change"
+}

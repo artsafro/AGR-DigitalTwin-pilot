@@ -94,9 +94,9 @@ Total **180 244** triangles. 013 bbox X 4979.84-5016.57, Y 15293.08-15325.31, Z 
 | [D152] (3) one material per texture set | pass | one slot per mesh |
 | [D135] rotation 0 after reset | **fail** | see V004 transforms (014, 015) |
 | [D156] OKS 013, module atlas, palette | names fail (above); atlas pass | `T_…_014_Main_d_1` pixel-identical to our build-v030 atlas |
-| [D169] fins ~1 m below ground | 013 pass; **014 review** | 013 fin bottoms local z −0.808 (abs 164.634), the value D169 records; 014 −0.471 m. Relief not available, so "sits on the relief" is not checked |
-| [D170] wall angles squared to ~90° | **not checked**: no angle measurement in this run | REVIEW-514 §1 says the 51.8-57.8 wall link is not measured |
-| [D171] copings, roof, band dark | pass | coping 283 m², roof 27 m², band → `#303031` (`diff/diff_report.json` finish transitions) |
+| [D182] fins ~1 m below ground | 013 pass; **014 review** | 013 fin bottoms local z −0.808 (abs 164.634), the value D182 records; 014 −0.471 m. Relief not available, so "sits on the relief" is not checked |
+| [D183] wall angles squared to ~90° | **not checked**: no angle measurement in this run | REVIEW-514 §1 says the 51.8-57.8 wall link is not measured |
+| [D184] copings, roof, band dark | pass | coping 283 m², roof 27 m², band → `#303031` (`diff/diff_report.json` finish transitions) |
 
 ### Priority checks (skill)
 
@@ -115,12 +115,12 @@ Total **180 244** triangles. 013 bbox X 4979.84-5016.57, Y 15293.08-15325.31, Z 
 3. Self-intersections at 0.002 m: the joined OKS with ≥ 10 mm embeds gives ~56 600 (reg ≤ 100). Accept embeds as the
    project reading (as in every accepted OKS: 012 has 3 792), or classify / change the joins? New conflict for
    `docs/domain/conflicts.md`.
-4. 014 fins only 0.471 m below its zero — intended for its relief, or should it match 013 (0.808, ~1 m per [D169])?
+4. 014 fins only 0.471 m below its zero — intended for its relief, or should it match 013 (0.808, ~1 m per [D182])?
 5. Pivot of 013/014 written as an object offset (LP 4.1.5 recommendation only): keep, or make it offset-free like 012?
 6. Package (outside this FBX, not validated): OKS numbers run 001-041 with 029 missing, while reg p.11-12 §3.3 /
    LP 2.10.3.3 give 001-020 without gaps.
 
-## User response (2026-10-22) [D172]
+## User response (2026-10-22) [D185]
 
 The job is closed at this stage and the FBX stays as delivered (no further 3ds Max fixes). The zero-area UV finding
 (LP 4.1.3) is agreed; the texture findings (the 013 set named 014, the glass own-colour margin) are not accepted until

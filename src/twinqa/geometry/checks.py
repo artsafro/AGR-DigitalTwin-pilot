@@ -485,15 +485,62 @@ def check_budget(model: Soup, tol: dict) -> dict:
     return result("triangle_budget", n <= tol["triangles_max"], n, tol["triangles_max"])
 
 
+# Working-mesh face IDs at or above this value are UDIM tile numbers. The team script
+# UDIM-MultiSub_Universal(max22-26).ms writes 1001+floor(U)+10*floor(V) into the face
+# material ID. The reading scheme stays 1-35; export still renumbers tiles 1001-1100 [D030].
+UDIM_AS_MATERIAL_ID = 1001
+
+
+def _working_material_ids(model: Soup):
+    """Integral per-triangle IDs, or (None, reason) when the input cannot be judged.
+
+    Empty, partial, non-integral and non-finite input fails closed. A float never counts
+    as an ID, including a whole number, so truncation cannot turn 5.5 into facade 5."""
+    raw = getattr(model, "material_ids", None)
+    tris = getattr(model, "triangles", None)
+    if raw is None or tris is None:
+        return None, "unsupported"
+    try:
+        ids = np.asarray(raw)
+        n = len(np.asarray(tris))
+    except (TypeError, ValueError):
+        return None, "unsupported"
+    if getattr(ids, "ndim", None) != 1:
+        return None, "unsupported"
+    if n == 0 or ids.size == 0:
+        return None, "empty"
+    if ids.shape[0] != n:
+        return None, "partial"
+    if ids.dtype == np.bool_ or ids.dtype.kind not in "iuf":
+        return None, "unsupported"
+    if ids.dtype.kind == "f":
+        return None, "non-finite" if not np.isfinite(ids).all() else "unsupported"
+    if ids.dtype.kind == "u" and int(ids.max()) > np.iinfo(np.int64).max:
+        return None, "unsupported"
+    return ids.astype(np.int64, copy=False), None
+
+
 def check_material_ids(model: Soup, tol: dict, ranges: dict) -> dict:
+    """Reading-scheme IDs on the working mesh (standards/material_id_ranges.yaml) [D030].
+
+    A face whose material ID is >= 1001 fails: that number is a UDIM tile, not a group ID.
+    Empty, partial, unsupported and non-finite IDs fail; they are never a pass or not_measured.
+    """
+    limit = tol["unassigned_ids_max"]
+    ids, problem = _working_material_ids(model)
+    if problem is not None:
+        return result("material_ids", False, {"out_of_range": [], "unassigned_triangles": 0}, limit,
+                      {"groups": {}, "udim_as_material_id": [], "reason": problem})
     used = {}
-    for mid in np.unique(model.material_ids):
+    for mid in np.unique(ids):
         used.setdefault(_group_of(int(mid), ranges) or "out_of_range", []).append(int(mid))
-    unassigned = int((model.material_ids == ranges["unassigned"]).sum())
+    unassigned = int((ids == ranges["unassigned"]).sum())
     out = used.get("out_of_range", [])
-    ok = not out and unassigned <= tol["unassigned_ids_max"]
+    # >= 1001 fails even if a group range were later extended over the UDIM numbers.
+    udim = [int(mid) for mid in np.unique(ids) if int(mid) >= UDIM_AS_MATERIAL_ID]
+    ok = not out and not udim and unassigned <= limit
     return result("material_ids", ok, {"out_of_range": out, "unassigned_triangles": unassigned},
-                  tol["unassigned_ids_max"], {"groups": used})
+                  limit, {"groups": used, "udim_as_material_id": udim})
 
 
 def _wall(contour, i):

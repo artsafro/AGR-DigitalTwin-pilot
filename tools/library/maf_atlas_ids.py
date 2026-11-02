@@ -13,7 +13,7 @@ Inputs (all read-only):
                                                   colour/texture source - Artem 2026-10-21)
   --prev-seed   <seed.json>                      (previous version: every old id must be kept or merged)
   --schedule    jobs/VATUTINO-SITE/maf/site-schedule.json (MAF specification rows, material column)
-  --seed        library/maf/material_ids_v004_seed.json   (the proposed ID list: id, key, kind, target)
+  --seed        library/maf/material_ids_v005_seed.json   (the ID list: id, key, kind, target, status)
   --ral         tools/materials/ral_classic.json
 Outputs: --out-json, --out-md (small text, committed) and --evidence-dir (PNG contact sheet + atlas
 overlays, never committed; rule 57). No output may resolve to an input; on any input error nothing
@@ -21,7 +21,9 @@ is written and the exit code is 2.
 
 Every input element ends in the output or in a reported list with its reason: texture refs ->
 found / missing / empty-bitmap; library material names -> id / excluded / unmapped; atlas cells
--> id / unmapped; specification rows -> ids / gap. Status stays ``proposed``.
+-> id / unmapped; specification rows -> ids / gap. The list status is the seed status
+(``proposed``, or ``approved-v1`` once accepted [D181]). Every entry status uses that same prefix.
+An id with ``swatch: "target"`` keeps its gap and uses the flat target colour; no patch is picked.
 """
 from __future__ import annotations
 
@@ -406,6 +408,18 @@ def pick_patch(atlases: list[dict], e: dict, block: int = 32, k: int = 4) -> dic
     return best
 
 
+def list_status(seed: dict) -> str:
+    """``proposed`` until Artem accepts the list; ``approved-v1`` is the first working version [D181]."""
+    status = seed.get('status') or 'proposed'
+    if status not in ('proposed', 'approved-v1'):
+        raise InputError(f'seed status must be proposed or approved-v1, got {status!r}')
+    if status == 'approved-v1':
+        approval = seed.get('approval') or {}
+        if not isinstance(approval, dict) or not str(approval.get('date') or '') or not str(approval.get('quote') or ''):
+            raise InputError('approved-v1 seed needs approval.date and approval.quote')
+    return status
+
+
 def spec_requirements(schedule: dict, ids: list[dict]) -> list[dict]:
     out = []
     for r in schedule['rows']:
@@ -556,6 +570,7 @@ def build(args) -> dict:
         for x in m['maps']:
             max_files['empty' if not x['file'] else 'file'] += 1
 
+    prefix = list_status(seed)
     rows = []
     for e in ids:
         cells = []
@@ -569,25 +584,32 @@ def build(args) -> dict:
                                                                   t) for t in e['own_targets']), 1),
                                   'uv_mafs': (u or {}).get('mafs', []), 'uv_faces': (u or {}).get('faces', 0)})
         spec_rows = [f"{q['table']}#{q['row']}" for q in reqs if e['id'] in q['ids']]
-        status = 'proposed'
+        status = prefix
         patch_ = None
-        if not cells and e['atlas'] and 'patterned' in e['cell_kinds']:
+        # swatch "target": the gap stays, and the contact sheet is the flat target colour (no picked crop).
+        if not cells and e['atlas'] and 'patterned' in e['cell_kinds'] and e.get('swatch') != 'target':
             patch_ = pick_patch(atlases, e)
         if not e['atlas']:
-            status = 'proposed, not in the atlas: ' + str((seed.get('kinds') or {}).get(e['kind'], e['kind']))
+            status = prefix + ', not in the atlas: ' + str((seed.get('kinds') or {}).get(e['kind'], e['kind']))
         elif e.get('match') is False:
-            status = 'proposed, spec-only: colour/appearance not given by any atlas or spec - needs Artem'
+            status = prefix + ', spec-only: colour/appearance not given by any atlas or spec - needs Artem'
         elif not cells:
-            status = 'proposed, gap: no atlas cell' + (' (spec asks for it)' if spec_rows else '')
+            status = prefix + ', gap: no atlas cell' + (' (spec asks for it)' if spec_rows else '')
         elif not any(c['dist_own'] <= MATCH_TOL[c['kind']] for c in cells):
-            status = 'proposed, gap: atlas cells only of merged shades, none of the own tones'
+            status = prefix + ', gap: atlas cells only of merged shades, none of the own tones'
         rows.append({'id': e['id'], 'key': e['key'], 'name_ru': e['name_ru'], 'kind': e['kind'],
                      'ral': e.get('ral'), 'target': e['target'], 'cells': cells,
                      'library_materials': lib_hits.get(e['id'], []), 'spec_rows': spec_rows,
                      'size': e['size'], 'atlas': e['atlas'], 'review': e['review'],
                      'prev_id': e.get('v004_id'), 'picked_patch': patch_, 'status': status})
-    return {
-        'schema': 'library-maf-material-ids', 'version': version, 'status': 'proposed',
+    result = {
+        'schema': 'library-maf-material-ids', 'version': version, 'status': prefix,
+    }
+    if prefix == 'approved-v1':
+        approval = seed['approval']
+        result['approval'] = {'date': approval['date'], 'quote': approval['quote'],
+                              'by': approval.get('by') or 'Artem'}
+    result.update({
         'scope': seed.get('scope') or ("ID list of #524 for Artem's review; nothing reassigned in the library"),
         'match_method': 'atlas cell -> id by colour distance to the id targets (mean |dRGB| <= %s); the agent '
                         'did not inspect the images visually - Artem verifies on the contact sheet' % MATCH_TOL,
@@ -607,7 +629,8 @@ def build(args) -> dict:
         'spec_requirements': reqs,
         'merges': merges,
         'decals': seed.get('decals'),
-    }
+    })
+    return result
 
 
 def _font(size: int):
@@ -728,10 +751,26 @@ def render_png(result: dict, out_dir: str) -> dict:
     return out
 
 
+def _uv_cell(uv: dict | None, index: int) -> dict:
+    """Cell UV record. JSON object keys are strings; a fresh build keeps int keys."""
+    if not uv:
+        return {}
+    cells = uv.get('cells') or {}
+    found = cells.get(index)
+    if found is None:
+        found = cells.get(str(index))
+    return found or {}
+
+
 def render_md(r: dict) -> str:
     v = r['version']
-    L = [f'# MAF material IDs {v} - proposal (#524)', '',
-         f"Status: **{r['status']}**. {r['scope']}. Generated by `{r['generated_by']}`; machine-readable twin "
+    title = 'approved-v1' if r['status'] == 'approved-v1' else 'proposal'
+    approved = ''
+    if r.get('approval'):
+        approved = f" Approved {r['approval']['date']} [D181]: «{r['approval']['quote']}»."
+    scope = str(r['scope']).rstrip().rstrip('.')
+    L = [f'# MAF material IDs {v} - {title} (#524)', '',
+         f"Status: **{r['status']}**.{approved} {scope}. Generated by `{r['generated_by']}`; machine-readable twin "
          f'`material_ids_{v}.json`. ID number on every tile/cell: small, bottom-right corner (Artem 2026-10-21); '
          'swatch tiles carry no number inside the texture.', '',
          '## ID list', '',
@@ -799,7 +838,7 @@ def render_md(r: dict) -> str:
         L.append('| cell | x,y | w x h px | kind | colour | id | MAFs on it (UV) | faces | min margin px | faces in ID corner |')
         L.append('|---|---|---|---|---|---|---|---|---|---|')
         for ci, c in enumerate(cells):
-            u = (uv or {}).get('cells', {}).get(ci, {}) if uv else {}
+            u = _uv_cell(uv, ci)
             L.append(f"| {ci} | {c['x']},{c['y']} | {c['w']}x{c['h']} | {c['kind']} | {c['color']} | "
                      f"{c.get('id') or '- (' + (c.get('reason') or '') + ')'} | {len(u.get('mafs', []))} | "
                      f"{u.get('faces', 0)} | {'-' if u.get('min_margin_px') is None else u['min_margin_px']} | {u.get('corner_faces', 0)} |")

@@ -409,3 +409,131 @@ def test_drawing_review_decision_is_logged_and_anchored():
     source = (ROOT / "src/dt_ai/spec/mesh.py").read_text(encoding="utf-8")
     rule = source.split("def _panel_contour(", 1)[1].split('"""')[1]
     assert "[D132]" in rule and "the extractor does not decide it" in rule
+
+
+def _decision(decision_id):
+    rows = [row for row in log_rows() if row[0] == decision_id]
+    assert len(rows) == 1, decision_id
+    return rows[0]
+
+
+# Exact 10 mm is not "narrower than 1 cm". None of these widths is an approved removal.
+_STRIP_WITNESS_MM = (5, 10, 15)
+_D179_FILES = (
+    "docs/decisions.md",
+    "docs/domain/geometry.md",
+    "docs/domain/patterns/floor-step.md",
+    "docs/domain/patterns/INDEX.md",
+    "docs/domain/conflicts.md",
+    "jobs/vyatskaya-tow02/STATE.md",
+)
+_D176_FILES = (
+    "docs/decisions.md",
+    "docs/domain/conflicts.md",
+    "docs/domain/patterns/INDEX.md",
+    "jobs/vyatskaya-tow02/STATE.md",
+)
+_F8_PROPOSAL = (
+    "Вариант A: верхнюю стену притянуть к нижней и разрезать обе стены так, "
+    "чтобы у них были общие точки (рекомендую). Вариант B: уступ 6,5 мм."
+)
+_F8_ACCEPTANCE = "да, F8 вариант A, корзины оставить"
+_D176_BANNED = ("option text not recoverable", "what was option A?")
+_BALCONY_VERBATIM = (
+    "Можно не обрезать, можно просто подвинуть, взять балкончики и чуть-чуть их подвигать, "
+    "если они заходят, то есть вверх-вниз, вместе со стеклом, с ограждениями, на них просто, "
+    "то есть не резать ничего, а просто подвинуть сами меши."
+)
+
+
+def narrower_than_1cm(width_mm):
+    """Strips narrower than 1 cm. Exact 10 mm is outside the phrase."""
+    return width_mm < 10
+
+
+def approved_strip_removal(width_mm, decision_text):
+    """True only under the rejected reading that strips about 1 cm wide are removed.
+
+    D179 does not approve removal at any of the witness widths. The misreading
+    'already one centimetre wide' / 'already 1 cm' / 'are removed' would mark
+    5 mm, 10 mm and 15 mm together.
+    """
+    misread = (
+        "already one centimetre wide" in decision_text
+        or "already 1 cm" in decision_text
+        or "are removed" in decision_text
+    )
+    if misread:
+        return True
+    return False
+
+
+def assert_f8_option_a_linked(text):
+    """Acceptance counts only when the offered option A text is in the same record."""
+    assert _F8_ACCEPTANCE in text
+    assert _F8_PROPOSAL in text, "proposal quote missing"
+
+
+def test_d179_narrower_strips_are_not_an_approved_removal():
+    text = _decision("D179")[2]
+    assert "Не уверен" in text
+    assert "по второму пункту еще посмотрим" in text
+    assert "narrower than 1 cm" in text
+    assert "already one centimetre wide" not in text
+    assert "already 1 cm" not in text
+    assert "07124eda L1977" in _decision("D179")[4]
+    flags = [approved_strip_removal(width, text) for width in _STRIP_WITNESS_MM]
+    assert flags != [True, True, True]
+    assert not all(flags)
+    assert [narrower_than_1cm(width) for width in _STRIP_WITNESS_MM] == [True, False, False]
+    for path in _D179_FILES:
+        for line in (ROOT / path).read_text(encoding="utf-8").splitlines():
+            if "D179" not in line:
+                continue
+            assert "already one centimetre wide" not in line
+            assert "already 1 cm" not in line
+            assert "are removed" not in line
+            assert "narrower than 1 cm" in line
+
+
+def test_d176_acceptance_is_the_offered_option_a():
+    row = _decision("D176")
+    assert_f8_option_a_linked(row[2])
+    assert "align the upper wall to the lower wall" in row[2]
+    assert "split both walls so they share points" in row[2]
+    assert "dda7a500 L71" in row[4] and "dda7a500 L80" in row[4]
+    for path in _D176_FILES:
+        body = (ROOT / path).read_text(encoding="utf-8")
+        for phrase in _D176_BANNED:
+            assert phrase not in body, f"{path}: {phrase}"
+
+
+def test_d176_control_fails_when_the_proposal_quote_is_missing():
+    acceptance_only = f'Quote: "{_F8_ACCEPTANCE}"'
+    with pytest.raises(AssertionError, match="proposal quote missing"):
+        assert_f8_option_a_linked(acceptance_only)
+
+
+def test_d174_balcony_quote_is_verbatim_and_locator_is_the_user_line():
+    row = _decision("D174")
+    assert _BALCONY_VERBATIM in row[2]
+    assert "подвигать ..." not in row[2]
+    assert "07124eda L1977" in row[4]
+
+
+def test_tow02_2026_10_21_locators_point_at_the_user_or_offer_line():
+    """Queue dequeue / bridge lines sit one above the quoted record."""
+    expected = {
+        "D172": ("07124eda L1027",),
+        "D173": ("07124eda L1614", "07124eda L1899", "07124eda L1977", "07124eda L1358"),
+        "D174": ("07124eda L1977",),
+        "D175": ("07124eda L1027", "07124eda L1977"),
+        "D176": ("dda7a500 L71", "dda7a500 L80"),
+        "D177": ("1a55b0bc L691", "1a55b0bc L739"),
+        "D178": ("1a55b0bc L849", "07124eda L1899"),
+        "D179": ("07124eda L1977",),
+    }
+    for decision_id, locators in expected.items():
+        source = _decision(decision_id)[4]
+        for locator in locators:
+            assert locator in source, f"{decision_id} missing {locator}"
