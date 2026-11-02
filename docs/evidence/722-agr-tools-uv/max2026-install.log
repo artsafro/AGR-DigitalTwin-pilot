@@ -1,0 +1,16 @@
+AGR_NATIVE_START version=28000 file= units=meters
+AGR_TOOLS_REGISTERED version=0.2.0 category=AGR Tools macros=XView,Cleanup,MatID,Open,Nudge,NudgeApply,Atlas,AtlasApply
+AGR_INSTALL_REGISTERED xView Cleanup MatID Open Nudge NudgeApply Atlas AtlasApply
+AGR_NATIVE_COMPLETE clean=3 planted=3 dry_run_unchanged=true originals_unchanged=true
+wrapper_status=ok
+native_exit=4294967166
+seconds=41.4
+product=3ds Max 2026.3 (28.3.0.30732)
+python=3.11
+warning=polyunwrapper_autoload.mse CLR startup error (pre-existing, not a fixture failure)
+coordinate_witness=unsupported map coordinate: Witness diffuse U_Tiling=2
+coordinate_copies=0
+coordinate_files=0
+source_u_tiling=2
+source_opacity=40
+package_sha256=8421a4f2fddae9ed1315c1ba5f0553db9dc9c71a43df61350e699573e5a54208

@@ -1,0 +1,27 @@
+{
+ "address": "Sakv_1",
+ "fbx": "C:/x/tec26-oks/AC09/build-v001/package-vpm/SM_Sakv_1\\SM_Sakv_1.fbx",
+ "pivot_revit_internal_m": [
+  40.5516,
+  0.1134,
+  0.0
+ ],
+ "bbox_after_pivot": [
+  [
+   -1.225,
+   -1.5,
+   -2.038
+  ],
+  [
+   1.225,
+   1.5,
+   2.567
+  ]
+ ],
+ "h_otn_model_max_z_m": 2.57,
+ "main_tris": 682,
+ "glass_tris": 8,
+ "ucx": 1,
+ "ucx_tris": 12,
+ "thumbnail": "C:\\x\\tec26-oks\\AC09\\build-v001\\package-vpm\\thumbnail_256.jpg"
+}

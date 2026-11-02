@@ -1,0 +1,95 @@
+{
+  "storage_path": "G:/Мой диск/AGR-evidence/tec26-oks/AC04/gate1-v005",
+  "files": [
+    {
+      "filename": "blender-context.json",
+      "sha256": "a8fdb6eb8f66b3ba9ba3711810e51d4c1c381913962af2bf4d1258a1b5f347ae",
+      "bytes": 253
+    },
+    {
+      "filename": "blender-v005.log",
+      "sha256": "5d6285b3de41a29be31e9093bef1d6fdb8c14b948393f99ac2e40f8ffa8775bb",
+      "bytes": 1607
+    },
+    {
+      "filename": "contact-sheet.png",
+      "sha256": "a9d3a5e1a29f9d205edfe613754b15a57ed4f9a5ae2c8163257546616ec0d4ab",
+      "bytes": 1246864
+    },
+    {
+      "filename": "dwg-ac04-recovered.png",
+      "sha256": "dfb80d6ee3d87c64923aaaf3db9b315225695a774da50d0d1cdc480a7b0f1fd4",
+      "bytes": 67704
+    },
+    {
+      "filename": "iso.png",
+      "sha256": "d3623f9e512905a0014689d073a4a15c1101a9f76aca930f9d65dc0887cee821",
+      "bytes": 1470333
+    },
+    {
+      "filename": "native-run-v002.json",
+      "sha256": "ae23050ec094693daf22ef47de75bb498e3912248bd5227cc295c3670df8f634",
+      "bytes": 2431
+    },
+    {
+      "filename": "native-text-v002.txt",
+      "sha256": "6afdf365fdd2f126cbe0c11fbc4435c34e9057b0f9dce8b22ff4ddb9c32f66f2",
+      "bytes": 45498
+    },
+    {
+      "filename": "only-1.png",
+      "sha256": "f627e67adb92614b6cd938e5354f967d3b0fd6f05536530a241a29b23512212e",
+      "bytes": 1054449
+    },
+    {
+      "filename": "only-2.png",
+      "sha256": "e2ace5692f97457f080cf98849408580c4d54f0315af803a5ec75dddcee5a7bc",
+      "bytes": 830569
+    },
+    {
+      "filename": "only-3.png",
+      "sha256": "1b9593fb75ce4bab10970bab3cea5cb690324acfce16fccad43c5dbfd79a3dd2",
+      "bytes": 537073
+    },
+    {
+      "filename": "only-4.png",
+      "sha256": "ac7f661dbc584fca6f604db820fe8f431c7cc27b830e5b17ce5a73e4085c702b",
+      "bytes": 552107
+    },
+    {
+      "filename": "only-5.png",
+      "sha256": "e767af962b92fc2b30283dc5d01bb44baa5413399f49ffd78ea80537bd4c3e2c",
+      "bytes": 701439
+    },
+    {
+      "filename": "pdf-sheet2.png",
+      "sha256": "a44d6d2f5457de23018b17b25b826007a0efb4b34e908246cd75f35bd9674b3d",
+      "bytes": 468039
+    },
+    {
+      "filename": "render-blender-diagnostics.py",
+      "sha256": "4b01c7143da8540a8d1f3e27480ca33d0576dded0d5ce43f8af66de1f056c2b3",
+      "bytes": 4106
+    },
+    {
+      "filename": "reverse.png",
+      "sha256": "afb05c4d787b3dde1d91ee211cd5da430e9782eec685e8942008cbe5659b8bd6",
+      "bytes": 1262027
+    },
+    {
+      "filename": "roof.png",
+      "sha256": "6cc1f39329e76280c75a05167813d6fd08bbeccf34da06c06a80c54923047a96",
+      "bytes": 898201
+    },
+    {
+      "filename": "verify-evidence.py",
+      "sha256": "c66df22fa2bf0c512f4c36ee8975eafe0d1bb178cacd793fc7c307a4478801d9",
+      "bytes": 2209
+    },
+    {
+      "filename": "verify-perimeter-drop.py",
+      "sha256": "178359077ad13e0eed7b7037fa0f814a10a2aa3c74cb39adf782f065f756b57b",
+      "bytes": 1596
+    }
+  ]
+}

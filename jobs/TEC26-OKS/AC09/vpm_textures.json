@@ -1,0 +1,409 @@
+{
+ "_doc": "AC09 production override: slide53 authority, latest orchestrator legend. Separate map-free KPP glass; KPP Interior. Source geometry unchanged. AC08-v010 joint look, independent counts per facade.",
+ "address": "Sakv_1",
+ "size_full": 4096,
+ "size_placeholder": 256,
+ "pad_m": 0.04,
+ "zero_m": 0.0,
+ "source_ids": {
+  "1": {
+   "split": "below_zero",
+   "above": "Frame_RAL5015",
+   "below": "Plinth_RAL7004"
+  },
+  "2": {
+   "split": "facade"
+  },
+  "3": {
+   "finish": "Frame_RAL9016"
+  },
+  "4": {
+   "finish": "Door_RAL7004"
+  },
+  "5": {
+   "finish": "Frame_RAL9016"
+  },
+  "7": {
+   "finish": "Interior"
+  }
+ },
+ "empty_ids": [
+  8,
+  9,
+  10
+ ],
+ "kpp_palette": {
+  "Frame_RAL5015": {
+   "kpp_finish": "Metal_RAL5015",
+   "kpp_udim": 1013
+  },
+  "Plinth_RAL7004": {
+   "kpp_finish": "Door_RAL7004",
+   "kpp_udim": 1010
+  },
+  "Door_RAL7004": {
+   "kpp_finish": "Door_RAL7004",
+   "kpp_udim": 1010
+  },
+  "Frame_RAL9016": {
+   "kpp_finish": "Frame_RAL9016",
+   "kpp_udim": 1009
+  },
+  "Panel1001_RAL5015": {
+   "kpp_finish": "Metal_RAL5015",
+   "kpp_udim": 1013,
+   "density_twin": {
+    "kpp_finish": "Cassette_RAL5015",
+    "kpp_udim": 1007
+   }
+  },
+  "Panel1002_RAL5015": {
+   "kpp_finish": "Metal_RAL5015",
+   "kpp_udim": 1013,
+   "density_twin": {
+    "kpp_finish": "Cassette_RAL5015",
+    "kpp_udim": 1007
+   }
+  },
+  "Panel1008_RAL5015": {
+   "kpp_finish": "Metal_RAL5015",
+   "kpp_udim": 1013,
+   "density_twin": {
+    "kpp_finish": "Cassette_RAL5015",
+    "kpp_udim": 1007
+   }
+  },
+  "Panel1009_RAL5015": {
+   "kpp_finish": "Metal_RAL5015",
+   "kpp_udim": 1013,
+   "density_twin": {
+    "kpp_finish": "Cassette_RAL5015",
+    "kpp_udim": 1007
+   }
+  }
+ },
+ "finishes": {
+  "Frame_RAL5015": {
+   "udim": 1004,
+   "kind": "placeholder",
+   "rgb": [
+    34,
+    113,
+    179
+   ],
+   "rough": 0.45,
+   "metal": 0.0,
+   "why": "outer wall / frame band (posts, top and bottom rails) and the rest of ID1 above ±0.000: BLUE RAL 5015 like the panels (Artem 2026-10-22 on v008: «почему внешняя стенка серая, когда как в презе должна быть синяя»; supersedes Gate-1 «каркас 7004») [D170]"
+  },
+  "Plinth_RAL7004": {
+   "udim": 1003,
+   "kind": "placeholder",
+   "rgb": [
+    150,
+    153,
+    146
+   ],
+   "rough": 0.45,
+   "metal": 0.0,
+   "why": "plinth strip below ±0.000: grey on the sheet (ac_vid hatch 155,155,155) = RAL 7004 per Artem 2026-10-22 («RAL 7004 stays only for doors, porches/steps, the plinth strip and other parts the sheet shows grey»); plain, no joints"
+  },
+  "Door_RAL7004": {
+   "udim": 1005,
+   "kind": "placeholder",
+   "rgb": [
+    150,
+    153,
+    146
+   ],
+   "rough": 0.45,
+   "metal": 0.0
+  },
+  "Frame_RAL9016": {
+   "udim": 1006,
+   "kind": "placeholder",
+   "rgb": [
+    246,
+    246,
+    246
+   ],
+   "rough": 0.4,
+   "metal": 0.0
+  },
+  "Interior": {
+   "udim": 1007,
+   "kind": "placeholder",
+   "rgb": [
+    25,
+    25,
+    28
+   ],
+   "rough": 1.0,
+   "metal": 0.0
+  },
+  "Panel1001_RAL5015": {
+   "udim": 1001,
+   "kind": "full",
+   "S": 4.096,
+   "P": [
+    0.18740145365397134,
+    0.18740145365397134
+   ],
+   "shift": [
+    true,
+    false
+   ],
+   "rgb": [
+    34,
+    113,
+    179
+   ],
+   "rough": 0.5,
+   "metal": 0.0,
+   "pattern": "user_vjoints",
+   "h_joints": false,
+   "joint_half_mm": 4,
+   "source_texture": {
+    "path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+    "sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
+    "period_px": 600,
+    "first_joint_px": [
+     266,
+     274
+    ],
+    "from": "Artem 2026-10-22 (sent via the orchestrator; Drive AGR-evidence/tec26-oks/user-textures/). Look of ONE joint + colour/noise only; its own 600 px joint spacing is NOT the repeat (Artem 2026-10-22, PR #574 issuecomment-6342141336)"
+   },
+   "why": "slide53 facade А-Б, 11 strokes above openings",
+   "outline_z_m": [
+    0.23686358332633972,
+    2.447662115097046
+   ],
+   "outline_why": "thin dark outline of the panel field as on the colour sheet (inner edge of the frame band): the field's left/right edges carry the half joint at k = 0 / ribs, its bottom/top edges (world z of the ID2 field, max-dump-008) a joint_half_mm line inside the field in the joint colour; not a horizontal joint (Artem 2026-10-22, operator note on v008)"
+  },
+  "Panel1002_RAL5015": {
+   "udim": 1002,
+   "kind": "full",
+   "S": 4.096,
+   "P": [
+    0.20443829623135654,
+    0.20443829623135654
+   ],
+   "shift": [
+    true,
+    false
+   ],
+   "rgb": [
+    34,
+    113,
+    179
+   ],
+   "rough": 0.5,
+   "metal": 0.0,
+   "pattern": "user_vjoints",
+   "h_joints": false,
+   "joint_half_mm": 4,
+   "source_texture": {
+    "path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+    "sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
+    "period_px": 600,
+    "first_joint_px": [
+     266,
+     274
+    ],
+    "from": "Artem 2026-10-22 (sent via the orchestrator; Drive AGR-evidence/tec26-oks/user-textures/). Look of ONE joint + colour/noise only; its own 600 px joint spacing is NOT the repeat (Artem 2026-10-22, PR #574 issuecomment-6342141336)"
+   },
+   "why": "slide53 facade Б-А, 10 strokes above openings",
+   "outline_z_m": [
+    0.2368667721748352,
+    2.4476654529571533
+   ],
+   "outline_why": "thin dark outline of the panel field as on the colour sheet (inner edge of the frame band): the field's left/right edges carry the half joint at k = 0 / ribs, its bottom/top edges (world z of the ID2 field, max-dump-008) a joint_half_mm line inside the field in the joint colour; not a horizontal joint (Artem 2026-10-22, operator note on v008)"
+  },
+  "Panel1008_RAL5015": {
+   "udim": 1008,
+   "kind": "full",
+   "S": 4.096,
+   "P": [
+    0.1998669249670846,
+    0.1998669249670846
+   ],
+   "shift": [
+    true,
+    false
+   ],
+   "rgb": [
+    34,
+    113,
+    179
+   ],
+   "rough": 0.5,
+   "metal": 0.0,
+   "pattern": "user_vjoints",
+   "h_joints": false,
+   "joint_half_mm": 4,
+   "source_texture": {
+    "path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+    "sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
+    "period_px": 600,
+    "first_joint_px": [
+     266,
+     274
+    ],
+    "from": "Artem 2026-10-22 (sent via the orchestrator; Drive AGR-evidence/tec26-oks/user-textures/). Look of ONE joint + colour/noise only; its own 600 px joint spacing is NOT the repeat (Artem 2026-10-22, PR #574 issuecomment-6342141336)"
+   },
+   "why": "slide53 facade 1-2, 13 strokes above openings",
+   "outline_z_m": [
+    0.23686368763446808,
+    2.4476654529571533
+   ],
+   "outline_why": "thin dark outline of the panel field as on the colour sheet (inner edge of the frame band): the field's left/right edges carry the half joint at k = 0 / ribs, its bottom/top edges (world z of the ID2 field, max-dump-008) a joint_half_mm line inside the field in the joint colour; not a horizontal joint (Artem 2026-10-22, operator note on v008)"
+  },
+  "Panel1009_RAL5015": {
+   "udim": 1009,
+   "kind": "full",
+   "S": 4.096,
+   "P": [
+    0.1998669249670846,
+    0.1998669249670846
+   ],
+   "shift": [
+    true,
+    false
+   ],
+   "rgb": [
+    34,
+    113,
+    179
+   ],
+   "rough": 0.5,
+   "metal": 0.0,
+   "pattern": "user_vjoints",
+   "h_joints": false,
+   "joint_half_mm": 4,
+   "source_texture": {
+    "path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+    "sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
+    "period_px": 600,
+    "first_joint_px": [
+     266,
+     274
+    ],
+    "from": "Artem 2026-10-22 (sent via the orchestrator; Drive AGR-evidence/tec26-oks/user-textures/). Look of ONE joint + colour/noise only; its own 600 px joint spacing is NOT the repeat (Artem 2026-10-22, PR #574 issuecomment-6342141336)"
+   },
+   "why": "slide53 facade 2-1, 13 strokes above openings",
+   "outline_z_m": [
+    0.23686352372169495,
+    2.447664737701416
+   ],
+   "outline_why": "thin dark outline of the panel field as on the colour sheet (inner edge of the frame band): the field's left/right edges carry the half joint at k = 0 / ribs, its bottom/top edges (world z of the ID2 field, max-dump-008) a joint_half_mm line inside the field in the joint colour; not a horizontal joint (Artem 2026-10-22, operator note on v008)"
+  }
+ },
+ "facade_uv": {
+  "Panel1001_RAL5015": "source metres from field edge; vertical joints only",
+  "Panel1002_RAL5015": "source metres from field edge; vertical joints only",
+  "Panel1008_RAL5015": "source metres from field edge; vertical joints only",
+  "Panel1009_RAL5015": "source metres from field edge; vertical joints only"
+ },
+ "ring_cuts": {},
+ "facades": {
+  "А-Б": {
+   "normal": "-y",
+   "finish": "Panel1001_RAL5015",
+   "ribs": 12,
+   "field_m": 2.2488174438476562,
+   "sheet_joints": 11
+  },
+  "Б-А": {
+   "normal": "+y",
+   "finish": "Panel1002_RAL5015",
+   "ribs": 11,
+   "field_m": 2.248821258544922,
+   "sheet_joints": 10
+  },
+  "1-2": {
+   "normal": "-x",
+   "finish": "Panel1008_RAL5015",
+   "ribs": 14,
+   "field_m": 2.7981369495391846,
+   "sheet_joints": 13
+  },
+  "2-1": {
+   "normal": "+x",
+   "finish": "Panel1009_RAL5015",
+   "ribs": 14,
+   "field_m": 2.7981369495391846,
+   "sheet_joints": 13
+  }
+ },
+ "facades_doc": "Slide53 pixel strokes: A-Б=11, Б-А=10, 1-2=13, 2-1=13. A-Б last stroke is close to right field outline; nearest literal reading retained.",
+ "sheet": {},
+ "presentation": {
+  "authority": "Artem 2026-10-22 (top precedence, all TEC26): the presentation facade slides «Схема фасадов ... Цветовое решение» decide colours, colour bands, rib direction and rib count/step and which surfaces are blue / light grey / dark grey; the DWG/PDF only where the slide is silent [D171]",
+  "deck": "C:/x/tec26-oks/pptx/deck.pptx",
+  "deck_sha256": "74e50277df5e2dfde3ba7ab945eb6bab45a8fa8c0207d7aca3a136d9656b78ac",
+  "slide": 53,
+  "slide_title": "Контейнер САКВ. Цветовое решение",
+  "image": "C:/x/tec26-oks/pptx/facades/slide53.png",
+  "image_member": "extracted slide53 facade image",
+  "image_sha256": "718b225fb167a2f580972de5bd5ba8b939a6a4d768a7fe9e836ea00996e773da",
+  "quadrants": [
+   "А-Б",
+   "1-2",
+   "Б-А",
+   "2-1"
+  ],
+  "quadrants_doc": "reading order of the four facades on the slide: top-left, top-right, bottom-left, bottom-right (titles «Фасад А-Б / 1-2 / Б-А / 2-1. Цветовое решение»)"
+ },
+ "legend": [
+  {
+   "hatch": "blue vertical sandwich",
+   "source": "slide53 + DWG D4B",
+   "material": "sandwich panel",
+   "ral": "5015",
+   "texture": "ribbed",
+   "finishes": [
+    "Panel1001_RAL5015",
+    "Panel1002_RAL5015",
+    "Panel1008_RAL5015",
+    "Panel1009_RAL5015"
+   ]
+  },
+  {
+   "hatch": "blue wall edging",
+   "source": "slide53",
+   "material": "wall edging",
+   "ral": "5015",
+   "texture": "plain",
+   "finishes": [
+    "Frame_RAL5015"
+   ]
+  },
+  {
+   "hatch": "grey door and plinth",
+   "source": "slide53 + D4D + latest legend rule",
+   "material": "door/plinth",
+   "ral": "7004",
+   "texture": "plain",
+   "finishes": [
+    "Door_RAL7004",
+    "Plinth_RAL7004"
+   ]
+  },
+  {
+   "hatch": "white window frame",
+   "source": "slide53 + 1C5A",
+   "material": "window frame",
+   "ral": "9016",
+   "texture": "plain",
+   "finishes": [
+    "Frame_RAL9016"
+   ]
+  }
+ ],
+ "legend_doc": "Interior is not facade legend: exact approved KPP Interior; map-free glass is separate. Latest slide supersedes historical Gate1 grey wall edging and blue plinth.",
+ "glass": {
+  "source_handle": 369,
+  "source_id": 6,
+  "vpm_material": "M_Sakv_1_MainGlass_1",
+  "npm_material": "M_Glass_01"
+ }
+}

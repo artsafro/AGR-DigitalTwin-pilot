@@ -1,0 +1,324 @@
+{
+ "dxf": "C:\\x\\tec26-oks\\acad-readback-v001\\ac08.dxf",
+ "units": "mm",
+ "insunits": 4,
+ "facades": {
+  "А-Б": {
+   "title_handle": "2429",
+   "layout": "Layout1",
+   "hatch_handle": "1411",
+   "panel_rgb": [
+    0,
+    124,
+    176
+   ],
+   "origin_mm": [
+    61321.1,
+    6312.7
+   ],
+   "size_mm": [
+    2438.0,
+    2591.0
+   ],
+   "frame_bands_mm": {
+    "left": 100.0,
+    "right": 100.0,
+    "bottom": 150.0,
+    "top": 150.0
+   },
+   "field_mm": [
+    100.0,
+    150.0,
+    2338.0,
+    2441.0
+   ],
+   "field_width_mm": 2238.0,
+   "joint_lines_mm": [
+    300.0,
+    500.0,
+    700.0,
+    900.0,
+    1100.0,
+    1300.0,
+    1500.0,
+    1700.0,
+    1900.0,
+    2100.0,
+    2300.0
+   ],
+   "joints": 11,
+   "ribs": 12,
+   "full_height_joints": 11,
+   "drawn_steps_mm": [
+    200.0
+   ],
+   "first_joint_from_field_mm": 200.0,
+   "last_joint_to_field_mm": 38.0,
+   "door_mm": null,
+   "plinth": [
+    {
+     "handle": "142E",
+     "rgb": [
+      155,
+      155,
+      155
+     ],
+     "bbox_mm": [
+      -181.0,
+      -120.7,
+      3738.0,
+      70.0
+     ]
+    }
+   ]
+  },
+  "1-2": {
+   "title_handle": "242A",
+   "layout": "Layout1",
+   "hatch_handle": "13D3",
+   "panel_rgb": [
+    0,
+    124,
+    176
+   ],
+   "origin_mm": [
+    69657.8,
+    6312.7
+   ],
+   "size_mm": [
+    6058.0,
+    2591.0
+   ],
+   "frame_bands_mm": {
+    "left": 100.0,
+    "right": 100.0,
+    "bottom": 150.0,
+    "top": 150.0
+   },
+   "field_mm": [
+    100.0,
+    150.0,
+    5958.0,
+    2441.0
+   ],
+   "field_width_mm": 5858.0,
+   "joint_lines_mm": [
+    300.0,
+    500.0,
+    700.0,
+    900.0,
+    1100.0,
+    1300.0,
+    1500.0,
+    1700.0,
+    1900.0,
+    2100.0,
+    2300.0,
+    2500.0,
+    2700.0,
+    2900.0,
+    3100.0,
+    3300.0,
+    3500.0,
+    3700.0,
+    3900.0,
+    4100.0,
+    4300.0,
+    4500.0,
+    4700.0,
+    4900.0,
+    5100.0,
+    5300.0,
+    5500.0,
+    5700.0,
+    5900.0
+   ],
+   "joints": 29,
+   "ribs": 30,
+   "full_height_joints": 29,
+   "drawn_steps_mm": [
+    200.0
+   ],
+   "first_joint_from_field_mm": 200.0,
+   "last_joint_to_field_mm": 58.0,
+   "door_mm": null,
+   "plinth": [
+    {
+     "handle": "142C",
+     "rgb": [
+      155,
+      155,
+      155
+     ],
+     "bbox_mm": [
+      -221.0,
+      -177.0,
+      6279.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  "Б-А": {
+   "title_handle": "242B",
+   "layout": "Layout1",
+   "hatch_handle": "141F",
+   "panel_rgb": [
+    0,
+    124,
+    176
+   ],
+   "origin_mm": [
+    61321.1,
+    -995.6
+   ],
+   "size_mm": [
+    2438.0,
+    2591.0
+   ],
+   "frame_bands_mm": {
+    "left": 100.0,
+    "right": 100.0,
+    "bottom": 150.0,
+    "top": 150.0
+   },
+   "field_mm": [
+    100.0,
+    150.0,
+    2338.0,
+    2441.0
+   ],
+   "field_width_mm": 2238.0,
+   "joint_lines_mm": [
+    300.0,
+    500.0,
+    700.0,
+    900.0,
+    1100.0,
+    1300.0,
+    1500.0,
+    1700.0,
+    1900.0,
+    2100.0,
+    2300.0
+   ],
+   "joints": 11,
+   "ribs": 12,
+   "full_height_joints": 11,
+   "drawn_steps_mm": [
+    200.0
+   ],
+   "first_joint_from_field_mm": 200.0,
+   "last_joint_to_field_mm": 38.0,
+   "door_mm": null,
+   "plinth": [
+    {
+     "handle": "142F",
+     "rgb": [
+      155,
+      155,
+      155
+     ],
+     "bbox_mm": [
+      -1300.0,
+      -177.0,
+      2619.0,
+      70.0
+     ]
+    }
+   ]
+  },
+  "2-1": {
+   "title_handle": "242C",
+   "layout": "Layout1",
+   "hatch_handle": "13F2",
+   "panel_rgb": [
+    0,
+    124,
+    176
+   ],
+   "origin_mm": [
+    69657.8,
+    -995.6
+   ],
+   "size_mm": [
+    6058.0,
+    2591.0
+   ],
+   "frame_bands_mm": {
+    "left": 100.0,
+    "right": 100.0,
+    "bottom": 150.0,
+    "top": 150.0
+   },
+   "field_mm": [
+    100.0,
+    150.0,
+    5958.0,
+    2441.0
+   ],
+   "field_width_mm": 5858.0,
+   "joint_lines_mm": [
+    300.0,
+    500.0,
+    700.0,
+    900.0,
+    1100.0,
+    1300.0,
+    1500.0,
+    1700.0,
+    1900.0,
+    2100.0,
+    2300.0,
+    2500.0,
+    2700.0,
+    2900.0,
+    3100.0,
+    3300.0,
+    3500.0,
+    3700.0,
+    3900.0,
+    4100.0,
+    4300.0,
+    4500.0,
+    4700.0,
+    4900.0,
+    5100.0,
+    5300.0,
+    5500.0,
+    5700.0,
+    5900.0
+   ],
+   "joints": 29,
+   "ribs": 30,
+   "full_height_joints": 25,
+   "drawn_steps_mm": [
+    200.0
+   ],
+   "first_joint_from_field_mm": 200.0,
+   "last_joint_to_field_mm": 58.0,
+   "door_mm": [
+    4958.0,
+    150.0,
+    5758.7,
+    2250.2
+   ],
+   "plinth": [
+    {
+     "handle": "142D",
+     "rgb": [
+      155,
+      155,
+      155
+     ],
+     "bbox_mm": [
+      -221.0,
+      -177.0,
+      6279.0,
+      2250.0
+     ]
+    }
+   ]
+  }
+ }
+}

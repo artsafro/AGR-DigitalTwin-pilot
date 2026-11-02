@@ -1,7 +1,13 @@
 {
  "schema": "library-maf-material-ids-seed",
  "version": "v005",
- "status": "proposed",
+ "status": "approved-v1",
+ "approval": {
+  "date": "2026-10-22",
+  "by": "Artem",
+  "quote": "Ну более-менее норм, по ID как первый вариант норм, потом будем тестить на проектах и корректировать"
+ },
+ "scope": "First working version approved 2026-10-22; corrections only from project use, each change a new version with a changelog line. Nothing reassigned in the library.",
  "note": "v005 = v004 after Artem's review 2026-10-21: close shades merged (each merge listed in `merges`), example_id_layout.png is a layout example only (never a colour/texture source), per-MAF decals (signs, chalkboard, labyrinth, chessboard) stay outside the ID list, HDPE/HPL picked by the agent from the spec and marked 'на проверку'. IDs renumbered 1..N; `v004_id` keeps the old number. `size` = layout class (L dominant wood, M patterned, S flat). Agent-designed MAF material ID list (#524), for Artem's one-time approval [D168]. Each id is checked by tools/library/maf_atlas_ids.py against (a) the atlas cells (library-bound atlases + Artem's atlas_01..04), (b) the MAF specification rows (Vatutino site-schedule material column), (c) library material names. 'target' is the colour the cell match is measured against: a RAL screen approximation (tools/materials/ral_classic.json or the hex given here, display only) or a tone for textured ids. Nothing is reassigned in the library. 'also' lists further atlas-observed colours of the same material; match=false marks an id the specification needs but whose colour/appearance is unknown or not texture-based (it is never auto-matched to a cell).",
  "kinds": {
   "paint": "flat powder-coat / paint colour, small solid cell (64-128 px in a 512 set)",
@@ -394,6 +400,7 @@
    "name_ru": "терраццо / гранит крапчатый",
    "kind": "mineral",
    "hex": "#C7C7C7",
+   "swatch": "target",
    "spec": "терраццо|гранит",
    "library": null,
    "v004_id": 36,

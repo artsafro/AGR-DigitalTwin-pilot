@@ -1,8 +1,13 @@
 {
  "schema": "library-maf-material-ids",
  "version": "v005",
- "status": "proposed",
- "scope": "ID list of #524 for Artem's review; nothing reassigned in the library",
+ "status": "approved-v1",
+ "approval": {
+  "date": "2026-10-22",
+  "quote": "Ну более-менее норм, по ID как первый вариант норм, потом будем тестить на проектах и корректировать",
+  "by": "Artem"
+ },
+ "scope": "First working version approved 2026-10-22; corrections only from project use, each change a new version with a changelog line. Nothing reassigned in the library.",
  "match_method": "atlas cell -> id by colour distance to the id targets (mean |dRGB| <= {'solid': 18.0, 'patterned': 12.0}); the agent did not inspect the images visually - Artem verifies on the contact sheet",
  "generated_by": "tools/library/maf_atlas_ids.py",
  "inputs": {
@@ -24,7 +29,7 @@
   },
   "seed": {
    "path": "library/maf/material_ids_v005_seed.json",
-   "sha256": "3f504396053f1286970998c162512e67249a4bbfa075553a049d9072eb8c6294"
+   "sha256": "2d2e0431f3aaaa86670869fb2fa2fff63763f9dd5ab2b5f9e305f09fc10a88e1"
   },
   "ral": {
    "path": "tools/materials/ral_classic.json",
@@ -210,7 +215,7 @@
    "review": [],
    "prev_id": 2,
    "picked_patch": null,
-   "status": "proposed"
+   "status": "approved-v1"
   },
   {
    "id": 2,
@@ -275,7 +280,7 @@
    "review": [],
    "prev_id": 3,
    "picked_patch": null,
-   "status": "proposed"
+   "status": "approved-v1"
   },
   {
    "id": 3,
@@ -381,7 +386,7 @@
    "review": [],
    "prev_id": 5,
    "picked_patch": null,
-   "status": "proposed"
+   "status": "approved-v1"
   },
   {
    "id": 4,
@@ -557,7 +562,7 @@
    "review": [],
    "prev_id": 1,
    "picked_patch": null,
-   "status": "proposed"
+   "status": "approved-v1"
   },
   {
    "id": 5,
@@ -591,7 +596,7 @@
    "review": [],
    "prev_id": 6,
    "picked_patch": null,
-   "status": "proposed, gap: atlas cells only of merged shades, none of the own tones"
+   "status": "approved-v1, gap: atlas cells only of merged shades, none of the own tones"
   },
   {
    "id": 6,
@@ -653,7 +658,7 @@
    "review": [],
    "prev_id": 9,
    "picked_patch": null,
-   "status": "proposed"
+   "status": "approved-v1"
   },
   {
    "id": 7,
@@ -757,7 +762,7 @@
    "review": [],
    "prev_id": 10,
    "picked_patch": null,
-   "status": "proposed"
+   "status": "approved-v1"
   },
   {
    "id": 8,
@@ -831,7 +836,7 @@
    "review": [],
    "prev_id": 12,
    "picked_patch": null,
-   "status": "proposed"
+   "status": "approved-v1"
   },
   {
    "id": 9,
@@ -921,7 +926,7 @@
    "review": [],
    "prev_id": 14,
    "picked_patch": null,
-   "status": "proposed"
+   "status": "approved-v1"
   },
   {
    "id": 10,
@@ -976,7 +981,7 @@
    ],
    "prev_id": 16,
    "picked_patch": null,
-   "status": "proposed"
+   "status": "approved-v1"
   },
   {
    "id": 11,
@@ -1050,7 +1055,7 @@
    "review": [],
    "prev_id": 17,
    "picked_patch": null,
-   "status": "proposed"
+   "status": "approved-v1"
   },
   {
    "id": 12,
@@ -1114,7 +1119,7 @@
    "review": [],
    "prev_id": 19,
    "picked_patch": null,
-   "status": "proposed"
+   "status": "approved-v1"
   },
   {
    "id": 13,
@@ -1174,7 +1179,7 @@
    "review": [],
    "prev_id": 20,
    "picked_patch": null,
-   "status": "proposed"
+   "status": "approved-v1"
   },
   {
    "id": 14,
@@ -1339,7 +1344,7 @@
    ],
    "prev_id": 21,
    "picked_patch": null,
-   "status": "proposed"
+   "status": "approved-v1"
   },
   {
    "id": 15,
@@ -1427,7 +1432,7 @@
    "review": [],
    "prev_id": 23,
    "picked_patch": null,
-   "status": "proposed"
+   "status": "approved-v1"
   },
   {
    "id": 16,
@@ -1498,7 +1503,7 @@
    "review": [],
    "prev_id": 24,
    "picked_patch": null,
-   "status": "proposed"
+   "status": "approved-v1"
   },
   {
    "id": 17,
@@ -1544,7 +1549,7 @@
    "review": [],
    "prev_id": 26,
    "picked_patch": null,
-   "status": "proposed"
+   "status": "approved-v1"
   },
   {
    "id": 18,
@@ -1571,7 +1576,7 @@
    "review": [],
    "prev_id": 27,
    "picked_patch": null,
-   "status": "proposed, gap: no atlas cell (spec asks for it)"
+   "status": "approved-v1, gap: no atlas cell (spec asks for it)"
   },
   {
    "id": 19,
@@ -1622,7 +1627,7 @@
    "review": [],
    "prev_id": 28,
    "picked_patch": null,
-   "status": "proposed"
+   "status": "approved-v1"
   },
   {
    "id": 20,
@@ -1834,7 +1839,7 @@
    "review": [],
    "prev_id": 29,
    "picked_patch": null,
-   "status": "proposed"
+   "status": "approved-v1"
   },
   {
    "id": 21,
@@ -1856,7 +1861,7 @@
    "review": [],
    "prev_id": 30,
    "picked_patch": null,
-   "status": "proposed, gap: no atlas cell"
+   "status": "approved-v1, gap: no atlas cell"
   },
   {
    "id": 22,
@@ -1983,7 +1988,7 @@
    "review": [],
    "prev_id": 31,
    "picked_patch": null,
-   "status": "proposed"
+   "status": "approved-v1"
   },
   {
    "id": 23,
@@ -2000,7 +2005,7 @@
    "review": [],
    "prev_id": 34,
    "picked_patch": null,
-   "status": "proposed, gap: no atlas cell"
+   "status": "approved-v1, gap: no atlas cell"
   },
   {
    "id": 24,
@@ -2028,7 +2033,7 @@
    "review": [],
    "prev_id": 35,
    "picked_patch": null,
-   "status": "proposed, gap: no atlas cell (spec asks for it)"
+   "status": "approved-v1, gap: no atlas cell (spec asks for it)"
   },
   {
    "id": 25,
@@ -2044,17 +2049,8 @@
    "atlas": true,
    "review": [],
    "prev_id": 36,
-   "picked_patch": {
-    "atlas": "atlas_02.png",
-    "x": 2208,
-    "y": 544,
-    "w": 128,
-    "h": 128,
-    "mean": "#D2D0C6",
-    "dist": 7.0,
-    "note": "picked clean patch by colour search inside an unassigned patterned cell - на проверку"
-   },
-   "status": "proposed, gap: no atlas cell"
+   "picked_patch": null,
+   "status": "approved-v1, gap: no atlas cell"
   },
   {
    "id": 26,
@@ -2071,7 +2067,7 @@
    "review": [],
    "prev_id": 37,
    "picked_patch": null,
-   "status": "proposed, gap: no atlas cell"
+   "status": "approved-v1, gap: no atlas cell"
   },
   {
    "id": 27,
@@ -2152,7 +2148,7 @@
    "review": [],
    "prev_id": 38,
    "picked_patch": null,
-   "status": "proposed"
+   "status": "approved-v1"
   },
   {
    "id": 28,
@@ -2169,7 +2165,7 @@
    "review": [],
    "prev_id": 39,
    "picked_patch": null,
-   "status": "proposed, spec-only: colour/appearance not given by any atlas or spec - needs Artem"
+   "status": "approved-v1, spec-only: colour/appearance not given by any atlas or spec - needs Artem"
   },
   {
    "id": 29,
@@ -2188,7 +2184,7 @@
    "review": [],
    "prev_id": 40,
    "picked_patch": null,
-   "status": "proposed, spec-only: colour/appearance not given by any atlas or spec - needs Artem"
+   "status": "approved-v1, spec-only: colour/appearance not given by any atlas or spec - needs Artem"
   },
   {
    "id": 30,
@@ -2237,7 +2233,7 @@
    "review": [],
    "prev_id": 41,
    "picked_patch": null,
-   "status": "proposed"
+   "status": "approved-v1"
   },
   {
    "id": 31,
@@ -2256,7 +2252,7 @@
    "review": [],
    "prev_id": 42,
    "picked_patch": null,
-   "status": "proposed, not in the atlas: polycarbonate / glass - GroundElGlass, no texture set (MAF-06)"
+   "status": "approved-v1, not in the atlas: polycarbonate / glass - GroundElGlass, no texture set (MAF-06)"
   }
  ],
  "inventory": {
@@ -7558,8 +7554,8 @@
  },
  "evidence": {
   "contact_sheet": {
-   "path": "C:/x/ev_t_e12b5c0c/v005/material_ids_v005_contact_sheet.png",
-   "sha256": "da4dacc4b30be35f4add92865c1f3275faa43ec4d8b42895065899aa5a5c4c82"
+   "path": "G:/Мой диск/AGR-evidence/524-maf-material-ids-v005/material_ids_v005_contact_sheet_v1.png",
+   "sha256": "bf392e5a3d33eb7c07836a40b861ab86214bc8c23bb2839243473745183b6a94"
   },
   "overlay 1_Diffuse_1.1001_e5pokwfjvgc7.png": {
    "path": "C:/x/ev_t_e12b5c0c/v005/overlay_1_Diffuse_1.1001_e5pokwfjvgc7.png",
@@ -7782,8 +7778,8 @@
     "id": 25,
     "key": "terrazzo",
     "file": "tiles/ID_25_terrazzo.png",
-    "sha256": "c3b1a81d9b8653d2ae107f4a7cd0088304bdfa4432767574da1b9622c9717d53",
-    "source": "GAP: patch atlas_02.png (на проверку)"
+    "sha256": "0dc0bc90ae9673bd0266fe91d065ea33ae1904eee1209995632fce6ec73b3ef3",
+    "source": "GAP: target colour #C7C7C7"
    },
    {
     "id": 26,

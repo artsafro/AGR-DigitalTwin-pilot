@@ -1,0 +1,27 @@
+{
+  "object": "19_Lipa_HP",
+  "catalogue_object": "Tilia_cordata_VPM",
+  "bitmap": "T_77_07_0004008_95_K_6_Ground_Diffuse_1.1035.png",
+  "samples": [
+    {
+      "resolution": 1024,
+      "component": 0,
+      "component_faces": [0, 30],
+      "uv_area_pixels": 24492,
+      "opaque_pixels": 3325,
+      "matching_class_upper_bound": 0.13575861505797812,
+      "semantic_roles_classified": false,
+      "acceptance_metric_approved": false
+    },
+    {
+      "resolution": 2048,
+      "component": 0,
+      "component_faces": [0, 30],
+      "uv_area_pixels": 97969,
+      "opaque_pixels": 13282,
+      "matching_class_upper_bound": 0.13557349773908073,
+      "semantic_roles_classified": false,
+      "acceptance_metric_approved": false
+    }
+  ]
+}

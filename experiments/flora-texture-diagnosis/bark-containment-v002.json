@@ -1,0 +1,42 @@
+{
+  "object": "Tilia_cordata_VPM",
+  "island": 166,
+  "face": 332,
+  "annotation": "visually reviewed continuous right-hand bark strip [3304,0,4096,4096]",
+  "times": {
+    "baseline": {
+      "seconds": [
+        0.036574299971107394,
+        0.01143499999307096,
+        0.009821000043302774
+      ],
+      "median": 0.01143499999307096
+    },
+    "prototype": {
+      "seconds": [
+        0.017951500019989908,
+        0.013395899964962155,
+        0.012908099975902587
+      ],
+      "median": 0.013395899964962155
+    }
+  },
+  "results": {
+    "baseline": {
+      "score": 0.0024447222451933408,
+      "pass": false,
+      "island_area_px": 7930.757194519043,
+      "sprite_bbox_area_px": 3244032.0,
+      "clipped_opaque_px_tolerance_1": 3228272,
+      "neighbour_opaque_px": 0,
+      "opaque_density": 0.995347214144469
+    },
+    "prototype": {
+      "score": 0.995347214144469,
+      "pass": true,
+      "metric": "bark_containment",
+      "island_area_px": 8597,
+      "bark_overlap_px": 8557
+    }
+  }
+}

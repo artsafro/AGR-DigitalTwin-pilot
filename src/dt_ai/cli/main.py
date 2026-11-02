@@ -62,6 +62,9 @@ def parser():
     intake.add_argument("--dir", type=Path, required=True, help="jobs/<JOB>/intake")
     evals = sub.add_parser("evals", help="Run agent-behaviour eval tasks (evals/<task>/task.json); report in a new run folder")
     evals.add_argument("--check-receipt", help="verify a regression receipt against --output/report.json (read-only)")
+    evals.add_argument("--check-handoff", type=Path, metavar="BODY",
+                       help="verify the PR body's handoff evidence before review_requested (read-only, #584)")
+    evals.add_argument("--sha", help="with --check-handoff: full head sha (default: git rev-parse HEAD)")
     evals.add_argument("--suite", choices=["regression", "capability"])
     evals.add_argument("--task", help="one task id (its folder under evals/)")
     evals.add_argument("--references", action="store_true",
@@ -152,6 +155,23 @@ def main(argv=None):
             write_json(args.output / "modules-scene.json", scene)
             print(f"from-source: {args.output}; {report['triangles']} triangles; spec {len(spec_doc['floors'])} floors")
         elif args.command == "evals":
+            if args.check_handoff is not None:
+                from twinqa.evals.handoff import check_handoff_file, head_sha
+                if (args.suite or args.task or args.references or args.evidence or args.branch
+                        or args.main or args.evals_dir or args.check_receipt is not None):
+                    print("ERROR: --check-handoff accepts only --sha and --output, not run options", file=sys.stderr)
+                    return 1
+                sha = head_sha(Path.cwd()) if args.sha is None else args.sha
+                problems = check_handoff_file(args.check_handoff, sha, args.output, Path.cwd())
+                for problem in problems:
+                    print("ERROR: " + " ".join(str(problem).splitlines()), file=sys.stderr)
+                if problems:
+                    return 1
+                print(f"OK: handoff evidence complete for {sha}")
+                return 0
+            if args.sha is not None:
+                print("ERROR: --sha needs --check-handoff", file=sys.stderr)
+                return 1
             if args.check_receipt is not None:
                 from twinqa.evals.receipt import check_receipt
                 try:
