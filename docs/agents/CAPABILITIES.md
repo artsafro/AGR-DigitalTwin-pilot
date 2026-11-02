@@ -479,7 +479,7 @@ Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 20
 - Limits: pairs only within one object (a joined mesh is one object, as in xView); FBX / .blend need Blender.
 
 ### 3ds Max xView runner — `tools/qa/xview_dump.ms` (#528)
-- Status: contract-tested, native Max run not measured (2026-10-23; a Max startup script, not the MCP bridge and not `3dsmaxbatch`).
+- Status: contract-tested and native-measured on Max 2024 (2026-10-24) via both `3dsmax.exe -U MAXScript tools/qa/xview_dump.ms` and the supported route `dcc_batch.py max --version 2024 --file tools/qa/xview_dump.ms` (3dsmaxbatch, shared lock, run on copies).
   `3dsmax.exe -U MAXScript tools/qa/xview_dump.ms` with `XVIEW_OUT` (alias `TOW02_XV_OUT`) a directory that
   already contains `jobs.txt`. The receipt line is `#nonce:<id>`; each model is exactly six fields
   `label|path|node|mode|material|slot`. Path is `.fbx` (import into a reset scene) or `.max`
@@ -504,7 +504,15 @@ Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 20
   JSON: nonce, scene inventory, dropped nodes, counts, every flagged face (Max face id, material id, area, centre)
   and every flagged vertex (id, position). Job twin `jobs/vyatskaya-tow02/scripts/xview_review.ms` points here.
   One Max owner; lock `%LOCALAPPDATA%\Temp\agr-3dsmax-session.lock`.
-  Vyatskaya evidence is `jobs/vyatskaya-tow02/evidence/xview-528/not-measured.json` (not measured; 3ds Max was already running).
+  Vyatskaya evidence (measured 2026-10-24): [SUMMARY.md](../../jobs/vyatskaya-tow02/evidence/xview-528/SUMMARY.md),
+  [ACCEPTANCE.md](../../jobs/vyatskaya-tow02/evidence/xview-528/ACCEPTANCE.md),
+  [v005_plain.json](../../jobs/vyatskaya-tow02/evidence/xview-528/v005_plain.json) (185 faces / 0 vertices),
+  [013_plain.json](../../jobs/vyatskaya-tow02/evidence/xview-528/013_plain.json) (0 faces / 10 vertices),
+  [013_weld.json](../../jobs/vyatskaya-tow02/evidence/xview-528/013_weld.json) (0 faces / 0 vertices),
+  [013_weldpoly.json](../../jobs/vyatskaya-tow02/evidence/xview-528/013_weldpoly.json) (0 faces / 10 vertices),
+  [hashes_before.txt](../../jobs/vyatskaya-tow02/evidence/xview-528/hashes_before.txt),
+  [hashes_after_src.txt](../../jobs/vyatskaya-tow02/evidence/xview-528/hashes_after_src.txt),
+  [hashes_after_copies.txt](../../jobs/vyatskaya-tow02/evidence/xview-528/hashes_after_copies.txt).
 
 ### Face overlap check — `tools/qa/check_clearance.py`
 - Status: WORKING (2026-10-06; AGR boundary cases + FBX planes 3 mm apart)
