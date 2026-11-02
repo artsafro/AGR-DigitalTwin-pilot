@@ -1,3 +1,4 @@
+-- Superseded for overlap checks by tools/qa/xview_dump.ms (#528). This file remains the historical all-checker sweep.
 -- TOW02: import the joined quad FBX into an empty scene and run every xView checker on it (3ds Max 2024).
 -- Engine gap: EG6. User request 2026-10-21: attach all Lego pieces, run xView, list the errors before NPM.
 -- Usage: 3dsmax.exe -U MAXScript xview_check.ms   (reads TOW02_XVIEW_FBX and TOW02_XVIEW_OUT from the environment)

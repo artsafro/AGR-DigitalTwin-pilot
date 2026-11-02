@@ -4,7 +4,7 @@ Rules below cite the rows in `RESULTS.md`. They do not change the MAF catalogue 
 
 1. Time every tool on one boundary: build + FBX export. SolidCraft does not export FBX, so its boundary also includes OBJ export and the OBJ→FBX conversion. The parameter-change rows use that same boundary (the edit, then export, and the conversion when the tool needs it). Quote the Max session separately. The session that wrote the four Max meshes was 35.6 s. That is startup plus the four `build_s` values, not a bench build.
 
-2. Accept a row only when FBX readback is ok: a Model connected to Geometry, finite vertices, a closed polygon list, zero xView pairs at 2 mm and zero xView contact faces at 5 mm, a finite dimension error, and a fresh DCC import with at least one object and the same triangle count. The twelve rows meet that. A file Max imports as zero objects is not a row, even when a parser can see a vertex array.
+2. Accept a row only when FBX readback is ok: a Model connected to Geometry, finite vertices, a closed polygon list, zero xView pairs at 2 mm and zero xView contact faces at 5 mm, a finite dimension error, and a fresh DCC import with at least one object and the same triangle count. The twelve rows met the parser checks; the DCC import part is historical (receipts unavailable, not re-verified, see RESULTS.md). A file Max imports as zero objects is not a row, even when a parser can see a vertex array.
 
 3. Treat dimension error under 0.00005 mm on these rows as FBX numeric residue, not a modelling miss. Every build and parameter row is inside that band. No tool is ahead on dimension error.
 
