@@ -8,6 +8,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -233,6 +234,85 @@ def test_valid_integer_indices_and_polygon_fallback_still_measure():
 def test_run_variant_malformed_indices_exit_nonzero_and_append_nothing(tmp_path, kind):
     assert rv.main(ground_cli(tmp_path, _bad_index(kind))) == 2
     assert not (tmp_path / "results.jsonl").exists()
+
+
+def _quads(verts, tris):
+    """The plane's triangle pairs merged back into quads (fan order 0,1,2 + 0,2,3)."""
+    return [[a[0], a[1], a[2], b[2]] for a, b in zip(tris[0::2], tris[1::2])]
+
+
+def _fallback_case(mode):
+    """Readback without an extra readback (polygon fallback) with the declared inventory broken or intact."""
+    verts, tris = plane()
+    rb, _ = ground_rb(verts, tris)
+    m = rb["meshes"][0]
+    polys = m["face_geometry"]["polygons"]
+    if mode == "truncated":  # declared 256 triangles / 256 polygons, 255 polygons present
+        polys.pop()
+    elif mode == "empty":
+        polys.clear()
+    elif mode == "truncated_tris_adjusted":  # triangles count edited to match, polygon count not
+        polys.pop()
+        m["triangles"] = 255
+    elif mode == "extra_polygon":  # one polygon more than declared
+        polys.append(list(polys[0]))
+    elif mode == "declared_bool":
+        m["triangles"] = True
+    elif mode == "declared_missing":
+        del m["polygons"]
+    elif mode == "quads":  # valid control: 128 quads, 256 fan triangles, as Blender loop_triangles counts them
+        m["face_geometry"]["polygons"] = _quads(verts, tris)
+        m["polygons"] = len(m["face_geometry"]["polygons"])
+    elif mode != "intact":
+        raise AssertionError(mode)
+    return rb, None
+
+
+FALLBACK_BAD = ("truncated", "empty", "truncated_tris_adjusted", "extra_polygon", "declared_bool", "declared_missing")
+
+
+@pytest.mark.parametrize("mode", FALLBACK_BAD)
+def test_polygon_fallback_inventory_must_match_declared_counts_on_both_sides(mode):
+    with pytest.raises(mm.MetricError, match="declares"):
+        measure(_fallback_case(mode))
+    with pytest.raises(mm.MetricError, match="declares"):
+        measure(ground_rb(*plane()), ref=_fallback_case(mode))
+
+
+def test_polygon_fallback_quads_intact_and_shifted_controls_still_measure():
+    assert measure(_fallback_case("quads"))["dz_max_m"] == 0
+    assert measure(_fallback_case("intact"), ref=_fallback_case("quads"))["dz_max_m"] == 0
+    verts, tris = plane(dz=0.05)
+    rb, _ = ground_rb(verts, tris)
+    assert measure((rb, None), ref=_fallback_case("quads"))["dz_max_m"] == pytest.approx(0.05)
+
+
+def _fresh_cli(args):
+    import subprocess
+    import sys
+    repo = Path(__file__).resolve().parents[2]
+    return subprocess.run([sys.executable, str(repo / "tools/methods/run_variant.py"), *args], capture_output=True,
+                          text=True, cwd=repo)
+
+
+@pytest.mark.parametrize("target", ("output", "reference"))
+@pytest.mark.parametrize("mode", ("intact", "quads", "truncated", "empty", "truncated_tris_adjusted"))
+def test_fresh_cli_polygon_fallback_inventory(tmp_path, target, mode):
+    """Fresh process, no --extra / --reference-extra: a broken inventory exits nonzero and appends no row."""
+    args = ground_cli(tmp_path, ground_rb(*plane()))
+    opt = "--extra" if target == "output" else "--reference-extra"
+    k = args.index(opt)
+    del args[k:k + 2]
+    rb, _ = _fallback_case(mode)
+    (tmp_path / ("rb.json" if target == "output" else "ref_rb.json")).write_text(json.dumps(rb), encoding="utf-8")
+    r = _fresh_cli(args)
+    if mode in ("intact", "quads"):
+        assert r.returncode == 0, r.stderr
+        row = json.loads((tmp_path / "results.jsonl").read_text(encoding="utf-8").splitlines()[-1])
+        assert row["class_metrics"]["ground"]["dz_max_m"] == 0
+    else:
+        assert r.returncode != 0 and "declares" in r.stderr
+        assert not (tmp_path / "results.jsonl").exists()
 
 
 def test_placement_sidecar_read_missing_and_malformed(tmp_path):
