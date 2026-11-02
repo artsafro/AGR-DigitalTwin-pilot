@@ -3,7 +3,7 @@
 Date: 2026-11-02. Branch `improve/issue-752-kernel-real-ac08-before-after-invariants`.
 Generated tables: `jobs/TEC26-OKS/AC08/kernel-ops-v001/evidence/kernel_ops.md`, full numbers
 `.../evidence/kernel_ops.json`. Binaries (16 FBX, 16 readback JSON, states.json): Google Drive
-`G:/Мой диск/AGR-evidence/752-ac08-kernel-ops/`, hashes in `.../evidence/SHA256SUMS.txt`.
+`G:/Мой диск/AGR-evidence/752-ac08-kernel-ops/`, hashes in `.../evidence/DRIVE-SHA256SUMS.txt`.
 Not a delivery verdict: technical QA only, `passed` is not claimed for any delivery.
 
 ## Input
@@ -44,12 +44,12 @@ Applied by the kernel: **0 of 19**. Each op is either refused before any geometr
 |---|---|---|---|---|---|
 | 1-3 | keep | body / knob / plate | rolled back (source already fails visibility) | unchanged | 3107 -> 3107, 20 -> 20 |
 | 4 | primitive_box | knob | rolled back | 12 tri, open 0, UV 0/12 | 3107 -> 3107, 20 -> 20 |
-| 5 | primitive_box | plate | rolled back | 12 tri, open 0, texel 4, UV 0/12 | 3107 -> 3107, 20 -> 16 |
+| 5 | primitive_box | plate | rolled back | 12 tri, open 0, texel 4, UV 0/12, **17 cross-part xView face pairs** (box vs body/knob) | 3107 -> 3107, 20 -> 16 |
 | 6-7 | embed_into_neighbour | knob / plate | refused: nothing lies inside the body after 15 mm | - | - |
 | 8 | to_opacity_plane | plate | rolled back | 2 tri, open 4, UV 0/2 | 3107 -> 3108, 20 -> 20 |
 | 9 | to_opacity_plane | knob | rolled back | 2 tri, open 4, UV 0/2 | 3107 -> 3108, 20 -> 24 |
 | 10 | rebuild_by_contour | knob | refused: 4 degenerate triangles collapse under the 0.1 mm weld | - | - |
-| 11 | rebuild_by_contour | plate | rolled back | 12 tri, open 0, UV 0/12 | 3107 -> 3107, 20 -> 16 |
+| 11 | rebuild_by_contour | plate | rolled back | 12 tri, open 0, UV 0/12, **17 cross-part xView face pairs** | 3107 -> 3107, 20 -> 16 |
 | 12 | join_parts | body+plate | rolled back | 156 quads, open 20, weld 0 m, UV 156/156 | 3107 -> 3107, 20 -> 20 |
 | 13 | join_parts | knob+plate | rolled back | 37 f, open 16, UV 37/37 | 3107 -> 3107, 20 -> 20 |
 | 14 | join_parts | body+knob | rolled back | 167 f, open 28, UV 167/167 | 3107 -> 3107, 20 -> 32 |
@@ -59,8 +59,9 @@ Applied by the kernel: **0 of 19**. Each op is either refused before any geometr
 | 18 | move_rigid (11 mm out) | knob | rolled back | faces unchanged, 0 xView, 0 clearance pairs | 3107 -> 3108, 20 -> 28 |
 | 19 | move_rigid (11 mm out) | plate | rolled back | faces unchanged | 3107 -> 3107, 20 -> 20 |
 
-Zero-area faces, non-manifold edges and xView pairs (vertex and face, per part and across parts) stay 0 in every
-state. Seam ops weld nothing here (max weld 0 m): the three components do not share boundaries.
+Zero-area faces, non-manifold edges and per-part xView pairs (vertex and face) stay 0 in every state. Cross-part
+xView face pairs are 0 in the source and in every candidate except S05 and S11 (plate replaced by a box / prism):
+17 each. Seam ops weld nothing here (max weld 0 m): the three components do not share boundaries.
 
 ## FBX readback parity
 
@@ -78,6 +79,7 @@ texel offenders, UV coverage / mirroring, polygon index lists, material slots. S
 2. `simplify_part` on the body merges polygons across material ids (1 polygon), loses UV on 17 of 138 polygons and
    raises open edges 32 -> 65; state S15 is NOT exported (no material id may be defaulted).
 3. `embed_into_neighbour` (knob, plate) and `rebuild_by_contour` (knob) refuse on this geometry.
-4. Ops that rebuild geometry (primitive_box, to_opacity_plane, rebuild_by_contour) carry no UV (0 of N faces).
-5. Native 3ds Max xView parity (`tools/qa/xview_parity.py`): **not run** — this card launches no 3ds Max
+4. `primitive_box` and `rebuild_by_contour` on the plate create 17 cross-part xView face pairs (both rolled back).
+5. Ops that rebuild geometry (primitive_box, to_opacity_plane, rebuild_by_contour) carry no UV (0 of N faces).
+6. Native 3ds Max xView parity (`tools/qa/xview_parity.py`): **not run** — this card launches no 3ds Max
    (Max-lock / max_exec rules). Repeat on the AC08 L4 building is a separate issue.
