@@ -23,6 +23,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import re
 import sys
 from collections import Counter, defaultdict
@@ -377,6 +378,28 @@ def export_payload(state):
 MATERIAL_SLOT = re.compile(r"ID_(\d{2})")
 
 
+def _strict_number(x, what):
+    """A finite JSON number; bool, str, None, containers and NaN/inf are errors naming the element."""
+    if isinstance(x, bool) or not isinstance(x, (int, float)) or not math.isfinite(x):
+        raise InputError(f"{what}: {x!r} is not a finite number")
+    return float(x)
+
+
+def _strict_index(x, what):
+    """A JSON integer; bool (an int subclass), integral floats, str and None are errors, never int()-coerced."""
+    if isinstance(x, bool) or not isinstance(x, int):
+        raise InputError(f"{what}: {x!r} is not an integer index")
+    return x
+
+
+def _strict_list(x, what, min_len=0, exact=None):
+    if not isinstance(x, list):
+        raise InputError(f"{what}: {type(x).__name__} is not a list")
+    if (exact is not None and len(x) != exact) or len(x) < min_len:
+        raise InputError(f"{what}: {len(x)} entries, need {exact if exact is not None else f'>= {min_len}'}")
+    return x
+
+
 def state_from_readback(report):
     """Readback report -> state with per-polygon material ids; any missing, partial or unmapped field is an error."""
     if report.get("readback_ok") is not True:
@@ -390,16 +413,23 @@ def state_from_readback(report):
         raise InputError(f"readback mesh names duplicated: {dup}")
     out = {}
     for m in meshes:
-        g = m["face_geometry"]
-        v = np.asarray(g["vertices"], float).reshape(-1, 3)
-        if not np.isfinite(v).all():
-            raise InputError(f"{m['name']}: non-finite readback vertex")
-        polys = tuple(tuple(int(i) for i in p) for p in g["polygons"])
-        if any(i < 0 or i >= len(v) for p in polys for i in p):
-            raise InputError(f"{m['name']}: polygon vertex index out of range")
+        n = m["name"]
+        g = m.get("face_geometry")
+        if not isinstance(g, dict):
+            raise InputError(f"{n}: no face_geometry")
+        verts = _strict_list(g.get("vertices"), f"{n}: vertices", min_len=1)
+        v = np.array([[_strict_number(x, f"{n}: vertex {k} axis {a}") for a, x in
+                       enumerate(_strict_list(p, f"{n}: vertex {k}", exact=3))] for k, p in enumerate(verts)], float)
+        polys = tuple(tuple(_strict_index(i, f"{n}: polygon {k} corner {c}") for c, i in
+                            enumerate(_strict_list(p, f"{n}: polygon {k}", min_len=3)))
+                      for k, p in enumerate(_strict_list(g.get("polygons"), f"{n}: polygons", min_len=1)))
+        for k, p in enumerate(polys):
+            for c, i in enumerate(p):
+                if i < 0 or i >= len(v):
+                    raise InputError(f"{n}: polygon {k} corner {c}: vertex index {i} out of range 0..{len(v) - 1}")
         pm = g.get("polygon_material")
-        if pm is None or len(pm) != len(polys):
-            raise InputError(f"{m['name']}: per-polygon materials {None if pm is None else len(pm)} "
+        if not isinstance(pm, list) or len(pm) != len(polys):
+            raise InputError(f"{n}: per-polygon materials {len(pm) if isinstance(pm, list) else pm!r} "
                              f"for {len(polys)} polygons")
         mats = []
         for i, name in enumerate(pm):
@@ -408,11 +438,15 @@ def state_from_readback(report):
                 raise InputError(f"{m['name']}: polygon {i} material {name!r} is not an ID_nn slot")
             mats.append(int(hit.group(1)))
         puv = g.get("polygon_uv")
-        if puv is not None and len(puv) != len(polys):
-            raise InputError(f"{m['name']}: polygon_uv {len(puv)} for {len(polys)} polygons")
+        if puv is not None:
+            _strict_list(puv, f"{n}: polygon_uv", exact=len(polys))
+            puv = [[tuple(_strict_number(x, f"{n}: polygon {k} uv corner {c} axis {a}") for a, x in
+                          enumerate(_strict_list(uv, f"{n}: polygon {k} uv corner {c}", exact=2)))
+                    for c, uv in enumerate(_strict_list(cs, f"{n}: polygon {k} uv", exact=len(polys[k])))]
+                   for k, cs in enumerate(puv)]
         out[m["name"].replace("_J_", "+")] = {
             "v": v, "faces": polys,
-            "uv": [None] * len(polys) if puv is None else [list(map(tuple, c)) for c in puv],
+            "uv": [None] * len(polys) if puv is None else puv,
             "mat": mats, "material_slots": len(m["materials"])}
     return out
 

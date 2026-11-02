@@ -79,6 +79,12 @@ polygons; the FBX writer has no missing-UV representation, so the UV of these ob
 readback fidelity is 20/20 within tol: the loss is candidate -> export, not the FBX round trip.
 Payload -> readback fidelity: 16/16 states within tol.
 
+The readback parser is strictly typed (review round 2): polygon corners must be JSON integers (not bool, not an
+integral float, not a string) inside the vertex range; vertex and UV coordinates must be finite JSON numbers; every
+polygon has >= 3 corners, every vertex 3 axes, every UV corner list matches its polygon. Any violation is an
+`InputError` naming mesh, polygon and corner, never an `int()`/`float()` coercion. Replaying the 16 native v002
+readbacks through the strict parser reproduces the committed parity rows exactly (16/16), so the evidence is unchanged.
+
 ## Failures (listed as failures)
 
 1. The source AC08 fails the kernel visibility invariants (3107 back-face pixels, 20 unhidden open borders), so no op
