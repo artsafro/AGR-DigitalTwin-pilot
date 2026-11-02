@@ -159,6 +159,20 @@ def test_batch_marks_every_variant_synthetic_with_a_reason():
         batch.synthetic_reason("no-such-variant")
 
 
+@pytest.mark.parametrize("variant,make", [("source-as-is", ()), ("kernel-prisms", ("out",)),
+                                          ("max-pymxs-cleanup", ("rep",))])
+def test_measure_only_with_a_missing_output_or_report_writes_no_row(tmp_path, variant, make):
+    import types
+
+    batch = _load_batch()
+    out, rep = tmp_path / "SM_X.fbx", tmp_path / "SM_X.fbx.variant.json"
+    for name in make:
+        {"out": out, "rep": rep}[name].write_text("x", encoding="utf-8")
+    a = types.SimpleNamespace(results=tmp_path / "results.jsonl", benchmarks=tmp_path / "b.json")
+    assert batch._measure_existing(a, "synth", variant, out, rep) == 2
+    assert not a.results.exists()
+
+
 def _load_batch():
     import importlib.util
 

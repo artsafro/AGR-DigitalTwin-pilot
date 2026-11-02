@@ -16,7 +16,8 @@ Per variant the output goes to <out>/<bench>/<variant>/<FBX name> (never the sou
   copy of the source.
 Every DCC run leaves a text log (status, product version, seconds, report) in <logs>/<bench>-<variant>.log.txt.
 Rows are written only by run_variant.py in a fresh process; a failed build appends nothing and the batch exits 1.
-Then RESULTS.md is regenerated.
+Then RESULTS.md is regenerated. Every row is marked `--synthetic` with its reason (synthetic_reason, [D186]).
+--measure-only re-measures the outputs already under --out (no build, no DCC run, logs untouched).
 """
 from __future__ import annotations
 
@@ -130,6 +131,24 @@ def _max(src: Path, out: Path, rep: Path) -> tuple[int, str, float]:
     return (0 if res.get("status") == "ok" else 1), text, round(time.perf_counter() - t0, 2)
 
 
+def _variant_args(a, bid: str, variant: str, out: Path) -> list[str]:
+    return [sys.executable, str(HERE.parent / "run_variant.py"), str(out), "--bench", bid, "--class", CLASS,
+            "--variant", variant, "--results", str(a.results), "--benchmarks", str(a.benchmarks),
+            "--synthetic", synthetic_reason(variant)]
+
+
+def _measure_existing(a, bid: str, variant: str, out: Path, rep: Path) -> int:
+    need = [out] + ([] if variant == BASELINE else [rep])
+    missing = [str(p) for p in need if not p.is_file()]
+    if missing:
+        print(f"{bid} {variant}: measure-only, missing {missing}, no row")
+        return 2
+    args = _variant_args(a, bid, variant, out) + ([] if variant == BASELINE else ["--variant-report", str(rep)])
+    r = subprocess.run(args, capture_output=True, text=True, timeout=3600)
+    print(f"{bid} {variant}: {(r.stdout + r.stderr).strip()[-300:]}")
+    return r.returncode
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--bench", action="append")
@@ -138,6 +157,9 @@ def main(argv=None) -> int:
     ap.add_argument("--results", type=Path, default=ROOT / "docs" / "methods" / CLASS / "results.jsonl")
     ap.add_argument("--logs", type=Path, default=ROOT / "docs" / "evidence" / "727-building-body")
     ap.add_argument("--benchmarks", type=Path, default=run_variant.BENCHMARKS)
+    ap.add_argument("--measure-only", action="store_true",
+                    help="re-measure the outputs already under --out (no build, no DCC, logs untouched); a missing "
+                         "output or variant report is a failed run with no row")
     a = ap.parse_args(argv)
     try:
         benches = json.loads(a.benchmarks.read_text(encoding="utf-8"))["objects"]
@@ -154,6 +176,9 @@ def main(argv=None) -> int:
     for bench, src, variant, out, rep in runs:
         bid = bench["id"]
         work = a.out / bid
+        if a.measure_only:
+            codes.append(_measure_existing(a, bid, variant, out, rep))
+            continue
         if bid not in prepared:
             work.mkdir(parents=True, exist_ok=True)
             rb = readback(src)
@@ -163,9 +188,7 @@ def main(argv=None) -> int:
         out.parent.mkdir(parents=True, exist_ok=True)
         for stale in (out, rep, out.with_name("kernel_mesh.json"), out.with_name("source_copy.fbx")):
             stale.unlink(missing_ok=True)  # planned destinations only; preflight proved none is an input
-        args = [sys.executable, str(HERE.parent / "run_variant.py"), str(out), "--bench", bid, "--class", CLASS,
-                "--variant", variant, "--results", str(a.results), "--benchmarks", str(a.benchmarks),
-                "--synthetic", synthetic_reason(variant)]
+        args = _variant_args(a, bid, variant, out)
         if variant == BASELINE:
             shutil.copyfile(src, out)
             r = subprocess.run(args, capture_output=True, text=True, timeout=3600)
