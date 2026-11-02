@@ -1,7 +1,7 @@
 # ground-terrain - variants
 
 Ground surface: relief, plan holes, boundary (the layered paving cake only in the builder). Status: **measured**
-(3 variants; cells 4 / 2 / 8 m; benchmark vatutino-ground). Rows: [RESULTS.md](RESULTS.md); guide: [WHEN.md](WHEN.md).
+(3 variants; cells 4 / 2 / 8 m; builder at 2 m as a methods-only build; benchmark vatutino-ground). Rows: [RESULTS.md](RESULTS.md); guide: [WHEN.md](WHEN.md).
 
 Common to all variants:
 - Input: the typed adapter v4 `C:/x/methods/src/vatutino-ground/paving_ground_inputs_v4.json`
@@ -33,6 +33,13 @@ Common to all variants:
   Review round 1 probe, same v014 arguments, one parameter changed: cell 3, 3.5, 4.5, 5 m and chord 0.01 / 0.04 m at
   cell 4 all fail `normal_gap_max_20mm` (3.5 and 5 m also `density_vpm`); logs `C:/x/methods/ground-terrain/probes2/`.
   Every CLI parameter feeds the pinned surface or a gate tolerance, so a second builder row needs a user decision.
+- Second setting, methods-only (user decision Artem 2026-11-02, option (b), #733 card thread): cell 2 m through
+  `tools/methods/ground/builder_methods_only.py`, which runs `build_ground.py` unchanged in-process with its
+  `acceptance_gates` recorded but not enforced, so the mesh it would withhold is written; `ground_report.json` keeps
+  the real gate verdicts plus `methods_only = {delivery: false, gates_skipped: true, failed_gates}`. The row (R9,
+  variant `builder-methods-only-2m`) carries that block and RESULTS.md marks it `[METHODS-ONLY, not a delivery]`;
+  failed gates: `density_vpm`, `normal_gap_max_20mm`. Never a delivery; no new [D150] exception; the v014 gates and
+  `jobs/VATUTINO-SITE/` are unchanged. Script: `tools/methods/ground/build_variant.py builder-methods-only`.
 
 ## 2. cdt - constrained Delaunay on the plan, then height projection
 
