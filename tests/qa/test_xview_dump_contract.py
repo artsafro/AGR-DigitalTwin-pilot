@@ -1219,6 +1219,50 @@ def test_rejected_prepare_after_success_is_durable_and_preserves_inputs(tmp_path
     assert src.read_bytes() == original
 
 
+@pytest.mark.parametrize("bad_temp", [None, 0, [], {}])
+@pytest.mark.parametrize("empty_jobs", [False, True])
+@pytest.mark.parametrize("alias_done", [False, True])
+def test_invalid_temp_after_success_is_durable_and_preserves_inputs(
+        tmp_path, bad_temp, empty_jobs, alias_done):
+    """Auxiliary path errors cannot bypass durable rejection of the new invocation."""
+    import subprocess
+    import sys
+
+    src = _job_file(tmp_path, "source.max", b"SCENE")
+    out, temp = tmp_path / "out", tmp_path / "temp"
+    _publish_success(xp, src, out, temp)
+    if alias_done:
+        src.write_bytes((out / "done.txt").read_bytes())
+        (out / "done.txt").unlink()
+        os.link(src, out / "done.txt")
+    assert xp.check_run(out, ["a"])["a"]["label"] == "a"
+    protected = [src, out / "done.txt", out / "jobs.txt", out / "a.json"]
+    before = _snapshot(protected)
+    jobs = [] if empty_jobs else [{"label": "a", "path": src}]
+    for _ in range(2):
+        with pytest.raises((xp.DumpError, TypeError)):
+            xp.prepare_run(jobs, out, bad_temp)
+        assert _snapshot(protected) == before
+        if alias_done:
+            assert os.path.samefile(src, out / "done.txt")
+        with pytest.raises(xp.DumpError):
+            xp.check_run(out, ["a"])
+        proc = subprocess.run(
+            [sys.executable, str(Path(str(xp.__file__))), "--check-run", str(out), "--labels", "a"],
+            capture_output=True, text=True,
+        )
+        assert proc.returncode == 2, proc.stdout + proc.stderr
+    if alias_done:
+        (out / "done.txt").unlink()  # Test-owned alias only.
+    _publish_success(xp, src, out, temp, nonce="def67890")
+    assert src.read_bytes() == before[str(src)]
+    proc = subprocess.run(
+        [sys.executable, str(Path(str(xp.__file__))), "--check-run", str(out), "--labels", "a"],
+        capture_output=True, text=True,
+    )
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+
+
 @pytest.mark.parametrize("kind", ["hardlink", "nonempty"])
 def test_rejection_marker_collision_never_changes_inputs(tmp_path, kind):
     src = _job_file(tmp_path, "source.max", b"SCENE")
