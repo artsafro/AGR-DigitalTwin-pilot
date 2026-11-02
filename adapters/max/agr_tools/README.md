@@ -1,17 +1,17 @@
-# AGR Tools 0.2.0 — 3ds Max 2024 / 2026
+# AGR Tools 0.4.0 — 3ds Max 2024 / 2026
 
 Own implementations only; no team scripts or encrypted plugins are distributed.
 This is a diagnostic/export-copy tool, not a delivery validator or production job.
 
 ## Build and install
 
-`python tools/max/build_agr_tools.py <new-path>/AGR-Tools-0.2.0.mzp`
+`python tools/max/build_agr_tools.py <new-path>/AGR-Tools-0.4.0.mzp`
 
 The builder prints SHA256; sorted ZIP_STORED entries, fixed timestamps/permissions,
 LF normalization and exclusively created output make repeated inputs reproducible.
 Existing files (including input aliases) are never overwritten. No Git LFS.
 Drag the MZP into Max or run `fileIn "...mzp"`. Restart for startup registration.
-Category **AGR Tools** exposes the three actions and **AGR Tools** dialog launcher;
+Category **AGR Tools** exposes the actions and **AGR Tools** dialog launcher;
 add them to a toolbar with Customize User Interface. Headless installation registers
 macros without opening a dialog. No Python dependencies need to be installed in Max.
 
@@ -27,6 +27,10 @@ AGR Tools
 [Apply UV nudge to new export copies]
 [UDIM -> NPM atlas (dry-run)]
 [Apply NPM atlas to new export copies]
+[UCX collision (dry-run)]
+[Apply UCX to new export copies]
+[Texel readout]
+[Checked export]
 <JSON report in Listener; offending object names and component IDs>
 ```
 
@@ -86,6 +90,44 @@ never a clean result. Objects are identified by unique Max handles as well as na
   error. Bitmap pixels are read one scanline at a time. Atlas PNGs are saved
   at gamma 1 with `outputColorConversion:#noConversion`, so an OCIO scene
   keeps the stored 8-bit pixels and alpha.
+- **UCX collision generator**: dry-run reports the variant
+  `docs/methods/ucx-collisions/WHEN.md` recommends for the object kind, the
+  piece count, and the triangles against the [D012] limit, then the bundled
+  UCX audit verdict. Geometry is the evaluated world-state mesh in metres
+  (`snapshotAsMesh`, including the node transform and the modifier stack).
+  With no modifiers that mesh must match object-space vertices times
+  `objectTransform`; a mismatch is an error. A near-convex box uses
+  single-hull: the convex hull of the vertices, not their axis-aligned box.
+  A flat hull (volume below 1e-6 m³) is still thickened to the facade box;
+  a volume of exactly 1e-6 m³ is `at_threshold`. A passage or other
+  non-convex body (facade-frame volume more than 5% outside the mesh) uses
+  kernel-boxes. A near-convex body with 2 to 6 level bands uses slice-prisms.
+  The outside fraction exactly at 5% is `at_threshold` and is an error.
+  Optional node property `AGR_UCX_KIND` (`near-convex-box`, `passage`,
+  `non-convex`, `tight-budget`, `few-levels`) overrides the measurement.
+  `part-boxes` and `part-hulls` are not offered: an unmapped kind is an error
+  that names it. Apply writes the collision onto a new export copy
+  (`<mesh>_AGR_ucx_`). Each piece is named `UCX_<export>_NN`, bound to that
+  export mesh: source `name_control` produces `name_control_AGR_ucx_` and
+  `UCX_name_control_AGR_ucx__01`. The export name and every piece name are
+  reserved, and the piece audit must pass, before any node is created. A
+  failed audit raises `ucx audit failed` and creates nothing. If the export
+  name or any piece name is already in the scene, or two selected meshes
+  would claim the same name, apply raises `occupied name <name>` before
+  creating a node. The emitted node's world bounds are read back.
+  Originals stay untouched. A preview is kept only while the evaluated
+  geometry, transform, handle, name and properties still match; a 10 m move
+  is a stale preview and creates nothing. A triangle count exactly
+  equal to the budget is a failure, never a pass. The audit name mask is
+  shown in the verdict; these button names are `UCX_<export>_NN`.
+- **Texel readout**: read-only min and median px/m per mesh and per material.
+  The node needs `AGR_TEXEL_PROFILE` (`NPM` or `VPM`) and `AGR_TEXEL_MAP`
+  (`name=pixels`, `;` between entries). A missing material name is an error
+  that names it. Nothing in the scene changes. Values match
+  `texel_density_readout.py` within a relative 1e-6; a difference of exactly
+  1e-6 is an error. Bands are the locked intervals, inclusive at the edges:
+  VPM 512–1706 px/m and NPM 10–40 px/m. A zero area or a zero map size is
+  `at_threshold` and is an error.
 
 ## Headless evidence
 
@@ -95,8 +137,32 @@ text evidence. Only new synthetic fixture copies are opened; no production asset
 An exit-zero wrapper alone does not prove a fixture pass: the runner asserts exact
 results, writes the report exclusively and emits a completion marker at the end.
 
-## Roadmap (not implemented)
+- **Checked export**: one button. The first press is a dry-run and writes
+  nothing. The second press, on the same selection, writes one FBX when every
+  gate passed. The node needs `AGR_EXPORT_PATH`, a new file path. An existing
+  file, or a path that is the same file as the scene, the report or the
+  `.partial` temp path, is refused and nothing is written. Gates run on every
+  emitted copy, render meshes and `UCX_` hulls, in this order: pre-export
+  clean-up preview, MatID check, xView gate, UCX audit when `UCX_` pieces are
+  in the selection, then texel readout (report only; an out-of-band density
+  does not stop the export). Extraction follows that order: cleanup is decided
+  before any material read; MatID evidence (material name and empty slots) is
+  read only after cleanup passes; texel is read only after cleanup, MatID,
+  xView and UCX have all passed. A finding names only the node that failed.
+  The Python CLI
+  has no geometry writer: it exits nonzero with `unsupported writer` and
+  creates no file. Only the Max exporter writes the FBX, and each exported
+  copy keeps the planned node name (`SM_body`, `UCX_SM_body_01`), not an
+  auto-renamed suffix. A failing
+  gate stops the export and lists the gate, object names and component IDs.
+  The FBX is binary 7.4, metres (`UnitScaleFactor` 100), Z-up. A JSON report
+  is written beside it. Readback of object count, triangle count, material
+  count and unit scale must equal the dry-run; a mismatch is an error in the
+  report. Originals are not edited. The collision generator and the texel
+  readout remain the 0.3.0 buttons above.
 
-Collision generator; texel-density readout; checked export. Those require their
-own fixtures, profile gates and measured comparisons before adding buttons.
+## Roadmap
+
+First rollout complete: xView, pre-export clean-up, MatID, UV integer-tile
+nudge, UDIM to NPM atlas, UCX collision, texel readout and checked export.
 No licensing, obfuscation or GeoAGR source/decryption is included.

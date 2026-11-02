@@ -13,6 +13,14 @@ macroScript AGRToolsAtlas category:"AGR Tools" tooltip:"UDIM -> NPM atlas (dry-r
 (on execute do python.Execute "agr_tools_runtime.ui('atlas')")
 macroScript AGRToolsAtlasApply category:"AGR Tools" tooltip:"Apply NPM atlas to new export copies" buttonText:"Apply NPM atlas"
 (on execute do python.Execute "agr_tools_runtime.ui('atlas_apply')")
+macroScript AGRToolsUcx category:"AGR Tools" tooltip:"UCX collision (dry-run)" buttonText:"UCX collision"
+(on execute do python.Execute "agr_tools_runtime.ui('ucx')")
+macroScript AGRToolsUcxApply category:"AGR Tools" tooltip:"Apply UCX to new export copies" buttonText:"Apply UCX"
+(on execute do python.Execute "agr_tools_runtime.ui('ucx_apply')")
+macroScript AGRToolsTexel category:"AGR Tools" tooltip:"Texel readout" buttonText:"Texel readout"
+(on execute do python.Execute "agr_tools_runtime.ui('texel')")
+macroScript AGRToolsExport category:"AGR Tools" tooltip:"Checked export" buttonText:"Checked export"
+(on execute do python.Execute "agr_tools_runtime.ui('export')")
 macroScript AGRToolsOpen category:"AGR Tools" tooltip:"AGR Tools" buttonText:"AGR Tools"
 (
     on execute do (
@@ -27,6 +35,10 @@ macroScript AGRToolsOpen category:"AGR Tools" tooltip:"AGR Tools" buttonText:"AG
             button nudgeApply "Apply UV nudge to new export copies" width:340
             button atlas "UDIM -> NPM atlas (dry-run)" width:340
             button atlasApply "Apply NPM atlas to new export copies" width:340
+            button ucx "UCX collision (dry-run)" width:340
+            button ucxApply "Apply UCX to new export copies" width:340
+            button texel "Texel readout" width:340
+            button exportChecked "Checked export" width:340
             label info "JSON report in Listener; checks select offenders."
             on xv pressed do python.Execute "agr_tools_runtime.ui('xview')"
             on dry pressed do python.Execute "agr_tools_runtime.ui('cleanup')"
@@ -36,6 +48,10 @@ macroScript AGRToolsOpen category:"AGR Tools" tooltip:"AGR Tools" buttonText:"AG
             on nudgeApply pressed do python.Execute "agr_tools_runtime.ui('nudge_apply')"
             on atlas pressed do python.Execute "agr_tools_runtime.ui('atlas')"
             on atlasApply pressed do python.Execute "agr_tools_runtime.ui('atlas_apply')"
+            on ucx pressed do python.Execute "agr_tools_runtime.ui('ucx')"
+            on ucxApply pressed do python.Execute "agr_tools_runtime.ui('ucx_apply')"
+            on texel pressed do python.Execute "agr_tools_runtime.ui('texel')"
+            on exportChecked pressed do python.Execute "agr_tools_runtime.ui('export')"
         )
         createDialog AGRToolsDialog
     )
