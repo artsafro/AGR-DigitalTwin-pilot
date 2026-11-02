@@ -1,4 +1,4 @@
-"""Research #769: rectified slide overlay (jobs/TEC26-OKS/scripts/slide_overlay.py) - synthetic probes run everywhere,
+"""new-case: research #769: rectified slide overlay (jobs/TEC26-OKS/scripts/slide_overlay.py) - synthetic probes run everywhere,
 the real AC08 slide 49 / pilot-v010 renders only where they are on this PC. Nothing here is a gate."""
 import json
 import subprocess
