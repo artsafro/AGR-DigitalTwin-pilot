@@ -303,6 +303,11 @@ Removal candidates by the rule (no evidence, no eval): `permissions.allow`, `per
   `{source: hook, decision: reject}` (or a `PreToolUse:<tool> hook error:` tool_result); synthetic references.
   Run on this branch's real handover transcript: 1 denial found (a Write into another worktree).
 - Tests: `tests/test_evals.py`.
+- Handoff evidence check (#584): `uv run dt evals --check-handoff <pr-body.md> [--sha <full head>] --output
+  <evals dir>` (read-only, `src/twinqa/evals/handoff.py`). It exits 0 only when the body has the Full suite
+  (`suite_slot.py`, exact head), Regression evals (`check_receipt`), RED, GREEN and Sample output lines and
+  does not hand the full suite to the reviewer. Rules: `docs/agents/WORKFLOW.md#handoff-evidence-check-584`.
+  Tests: `tests/test_evals_handoff.py`.
 
 ### Skills sync — `tools/sync_skills.py`
 - Status: WORKING (2026-10-06): `.agents/skills/` is canonical; the script regenerates
@@ -446,6 +451,16 @@ Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 20
 - Facade-oriented 8-vertex boxes (Main) or quadtree hexahedra (Ground), 4 mm gap, [D012] budget; check
   the output with `tools/blender/ucx_audit.py` and the validator scene checks.
 
+### Methods catalog runner — `tools/methods/run_variant.py`, `tools/methods/ucx/run_benchmarks.py` (#706)
+- Status: WORKING (dt-worker, 2026-10-25): 18 measured ucx-collisions rows on KPP1 / AC08 / TOW02
+  (`docs/methods/ucx-collisions/results.jsonl`); tests `tests/methods/test_methods_catalog.py` (+1 `-m blender`).
+- `uv run python tools/methods/run_variant.py <out.fbx|.zip> --bench <id> --class <class> --variant <name>
+  [--variant-report <out>.variant.json] [--render view=png ...]`: one JSON row (wall time, triangles, objects,
+  xView 2 mm / 5 mm, UCX V010 + V012, texel min / median, file size, MatID slots, SSIM or null, class metrics);
+  exit 0 appended / 2 measurement error / 4 refused. RESULTS.md: `tools/methods/results_md.py`.
+- Benchmark set: `benchmark/methods/benchmarks.json` (private sources by sha256 under `C:/x/methods/src`).
+  Catalog: `docs/methods/README.md`.
+
 ### Overlap gate (xView parity) — `dt qa xview`, `src/dt_ai/ops/inv_xview.py`, `src/dt_ai/ops/xview_gate.py` (#527)
 - Status: WORKING (dt-worker, 2026-10-21; #370 / #380 kernel, #527 CLI). `inv_xview` reproduces 3ds Max xView
   Overlapping Vertices (2 mm) / Overlapping Faces (5 mm, contact rule) without Max; the `area` rule adds pairs xView misses.
@@ -462,6 +477,34 @@ Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 20
   0 vertices, ~35 s; user FBX `_05` object 013: 0 faces, 10 vertices = 5 coincident pairs, all `bowtie`, local and
   in place. Postcondition of every build / fix step: `docs/procedure/TASK_TO_MODEL.md`.
 - Limits: pairs only within one object (a joined mesh is one object, as in xView); FBX / .blend need Blender.
+
+### 3ds Max xView runner — `tools/qa/xview_dump.ms` (#528)
+- Status: contract-tested, native Max run not measured (2026-10-23; a Max startup script, not the MCP bridge and not `3dsmaxbatch`).
+  `3dsmax.exe -U MAXScript tools/qa/xview_dump.ms` with `XVIEW_OUT` (alias `TOW02_XV_OUT`) a directory that
+  already contains `jobs.txt`. The receipt line is `#nonce:<id>`; each model is exactly six fields
+  `label|path|node|mode|material|slot`. Path is `.fbx` (import into a reset scene) or `.max`
+  (`loadMaxFile` quiet, `useFileUnits`, never saved). Empty node = the largest mesh by polygon count; a name
+  that is not in the scene is an error naming it. Modes: `plain`, `weld` (Editable Mesh, weld all vertices at
+  `units.decodeValue "2mm"`, checks stay on the mesh), `weldpoly` (same weld, then Editable Poly). Face tolerance
+  `units.decodeValue "5mm"`. A non-ASCII path is copied to `XVIEW_TEMP` under an ASCII name; the copy's SHA-256
+  must equal the source. The opened file is hashed before and after; a change is an error.
+  `xv_preflight` runs before any `createFile`, `deleteFile` or stage copy. It rejects duplicate labels,
+  `|` and control characters, a wrong field count, a non-canonical slot token, and same-file identity
+  (normalized path and `GetFileInformationByHandle`) across inputs, `<label>.json`, `jobs.txt`, `report.jsonl`,
+  `done.txt`, `failed.txt` and the ASCII staging copy. A preflight failure exits before any write.
+  `prepare_run` writes a fresh nonce into `jobs.txt` and is mirrored by `preflight_jobs_txt` for a hand-written
+  file; it does not have to be running for the script to refuse an alias. It removes this run's `done.txt` and
+  `<label>.json` only after that check, including when preparation itself fails, and never when the path is an input.
+  Field 6 is the slot (`count >= 6`). An unknown slot or material is an error naming it.
+  The script copies the nonce into `done.txt` and each result, and writes `done.txt` only when every job succeeds.
+  `quitMax` does not set a process exit code (`System.Environment.Exit 1` is attempted on failure). `check_run`
+  requires the jobs.txt nonce in `done.txt` and in every result, a complete dump (the keys the script writes),
+  no `error` key and no `failed.txt`. `{}`, null, a mismatched label, a partial schema or a done receipt from
+  another nonce exits 2.
+  JSON: nonce, scene inventory, dropped nodes, counts, every flagged face (Max face id, material id, area, centre)
+  and every flagged vertex (id, position). Job twin `jobs/vyatskaya-tow02/scripts/xview_review.ms` points here.
+  One Max owner; lock `%LOCALAPPDATA%\Temp\agr-3dsmax-session.lock`.
+  Vyatskaya evidence is `jobs/vyatskaya-tow02/evidence/xview-528/not-measured.json` (not measured; 3ds Max was already running).
 
 ### Face overlap check — `tools/qa/check_clearance.py`
 - Status: WORKING (2026-10-06; AGR boundary cases + FBX planes 3 mm apart)
