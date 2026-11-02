@@ -1,0 +1,14 @@
+{
+ "address": "Sakv_1",
+ "prefix": "0000",
+ "pivot_revit_internal_m": [
+  40.5516,
+  0.1134,
+  0.0
+ ],
+ "alpha_back_copies_removed": 0,
+ "faces_without_region": 0,
+ "fbx": "C:/x/tec26-oks/AC09/build-v001/package-npm/0000_Sakv_1\\0000_Sakv_1_01.fbx",
+ "main_tris": 682,
+ "glass_tris": 8
+}

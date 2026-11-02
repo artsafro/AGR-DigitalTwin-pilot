@@ -1,0 +1,5 @@
+6cdd47073c7c532a346a52c2dc6c654519d825d6e0d93aeb401e2e7feba51406  AGR-Tools-0.1.0.mzp
+2e2e4764a2d717fa573c2dcf540e11fe6bb469a4786f3e90b7709b27ee497a79  max2024-fixture-source.max
+2e2e4764a2d717fa573c2dcf540e11fe6bb469a4786f3e90b7709b27ee497a79  max2024-fixture-copy.max
+6f03dbd05bc9b9d44aaafe9cdcd030f2c19c1b9cea2d8c25c480e4cbe5fb4931  max2026-fixture-source.max
+6f03dbd05bc9b9d44aaafe9cdcd030f2c19c1b9cea2d8c25c480e4cbe5fb4931  max2026-fixture-copy.max

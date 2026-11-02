@@ -118,3 +118,12 @@ Handoff to #535 / an Adopt card: `xview_lists(vertices, faces, tol)` returns `xv
 `vertex_pairs` and `face_pairs` (contact rule only; the kernel's extra `area` rule stays in `inv_xview`).
 Adopting it into `part_report` means running the area rule only on the near-parallel pairs, or keeping the area
 rule as a separate slower pass.
+
+Adopted (#556): `inv_xview._pairs_found` (behind `part_report`, `mesh_report`, the `dt qa xview` gate incl. the
+Blender dump path, `xview_state` and `xview_state_incremental`) takes its contact triangle pairs from
+`inv_xview_fast.contact_tri_pairs`, the only contact implementation left; the per-triangle-pair `_contact` is deleted
+(kept only as the test oracle `tests/ops/xview_oracle.py`). The area rule stays (gate verdicts unchanged) and skips
+shapely for pairs whose separating-axis overlap proves area <= `AREA_MIN_M2` / 2. Same PC, median of 3, origin/main
+891df7b -> #556: TOW02 export-v005 full 4.98 -> 2.63 s CPU, incremental (1 of 8 parts) 1.63 -> 1.27 s; Ground v014
+full 6.41 -> 1.97 s. Reports, states and incremental states equal to origin/main on all 11 bench fixtures. The rest is the
+area rule's triangle-pair broad phase (`_grid_pairs`, ~1.6 s on TOW02), which xView does not have.

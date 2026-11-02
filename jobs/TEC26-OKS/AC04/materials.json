@@ -1,0 +1,1311 @@
+{
+  "object": "tec26-oks-AC04",
+  "building_title": "Локальные очистные сооружения поверхностных сточных вод",
+  "base_sha": "442f0b695a91f9abc180783c26978fbe85fefcf9",
+  "gate_1_status": "approved-gate1",
+  "delivery_passed": false,
+  "approval": {
+    "date": "2026-10-22",
+    "source": "orchestrator relay of Artem",
+    "quote": "1. Sandwich panels: solid colour without joints (module not confirmed by the drawings).\n2. Roof: RAL 7004 grey (as KPP 7004), not 5015.\n3. Mixed ID: allowed to paint parts differently (roof 7004, frame/carcass 7004, plinth/drop = wall colour) WITHOUT changing geometry - via UV/atlas regions or splitting face groups inside the same ID.\n4. Panels RAL 5015 = KPP blue, doors/frames/porches RAL 7004 = KPP grey, glass as KPP; the drop below +-0.000 = wall colour.\nAC04: small frames of ID4 = RAL 7004.",
+    "geometry_untouched": "Only paint. Geometry, topology, UCX and multisub IDs stay exactly as in the source scene. VPM/NPM (UDIM/atlas) of this building are built by a separate build card, not here.",
+    "point_1_superseded_by": "joint_spec on ID1 region wall panels and ID2; Gate-1 point 1 is not the live panel rule"
+  },
+  "scope": "Gate 1 paint approval only. Geometry, topology, UCX and multisub IDs stay exactly as in the source scene. VPM/NPM (UDIM/atlas) of this building are built by a separate build card, not here.",
+  "governing_revision": "DWG R1 finishes; PDF only supplemental; orchestrator comment 2026-10-22",
+  "sources": [
+    {
+      "path": "C:/x/tec26-oks/AC04/sources-v003/22E56-АР2-1002-AC.04_R1.dwg",
+      "sha256": "d34638d96ea51046e25b0376f4cd589c0725aeb15f2bccc4800ab3716b1a409b",
+      "bytes": 9162192
+    },
+    {
+      "path": "C:/x/tec26-oks/AC04/sources-v003/22Е56-АР2-1002-АС.pdf",
+      "sha256": "97e324176ffc6c078f27849e98a08b530cbd1d07ddb3fe71b5fe66754dc1ccfe",
+      "bytes": 170118
+    }
+  ],
+  "scene": {
+    "source_copy": "C:\\x\\tec26-oks\\sources-v001\\Vlad_OKS\\04-09 Geometry Final.max",
+    "source_sha256": "eb0cffedefa80678cf4ada13db71f2e80795a92212f9fbf60b7c30c54a7852bd",
+    "census_path": "C:/x/tec26-oks/census/oks.json",
+    "census_sha256": "a99de19f1d30633eaab9c52ac44f253ed6ea97e03358755ff2a77458f0f54f2f",
+    "application_version": [
+      28000,
+      68,
+      0,
+      28,
+      3,
+      0,
+      30732,
+      2026,
+      ".3"
+    ],
+    "system_unit_type": "meters",
+    "units_per_meter": 1.0,
+    "mesh_handle": 174,
+    "layer": "004",
+    "multisub": "Material #35",
+    "triangles": 5006,
+    "poly_faces": 2552,
+    "empty_slots": [
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "collision_handles": [
+      346,
+      347,
+      348,
+      349,
+      350,
+      351,
+      352,
+      353,
+      354,
+      355,
+      356,
+      357,
+      358,
+      359,
+      360,
+      361,
+      362
+    ],
+    "geometry_path": "C:/x/tec26-oks/max-readback-v001/geometry-174.json",
+    "geometry_sha256": "393cb5bcab9d1a73dc705af60a7c4aac0483b8fe310a9bed5399e189572f4c03"
+  },
+  "materials": [
+    {
+      "id": 1,
+      "source_slot": 1,
+      "source_material": "1",
+      "component": "External shell, structural strips, roof and below-grade base",
+      "finish": "Mixed paint inside the same ID, geometry untouched: roof and frame/carcass RAL7004; wall panels RAL5015 with vertical joints only (joint_spec); below-grade drop RAL5015 plain, no joints. Face groups are not separated in geometry-174.json.",
+      "ral": null,
+      "map_type": "mixed",
+      "rgb_srgb": null,
+      "status": "approved-gate1",
+      "regions": [
+        {
+          "part": "roof",
+          "ral": "RAL7004",
+          "rgb_srgb": [
+            150,
+            153,
+            146
+          ],
+          "map_type": "solid",
+          "faces": "unresolved",
+          "need": "geometry-174.json has vertices, triangles and material_ids only. All 780 ID1 triangles share material id 1. Upward-facing ID1 triangles occur at several heights (z max about 0.238, 2.397, 3.227, 3.240, 3.387 and 3.419 m) and are not labeled roof. Need an existing face-index or UV-island list that isolates the roof. This card does not invent that split.",
+          "kpp_reference": {
+            "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1010.png",
+            "sha256": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+            "sampling": "exact uniform RGB; all pixels checked",
+            "tile": 1010
+          }
+        },
+        {
+          "part": "frame/carcass",
+          "ral": "RAL7004",
+          "rgb_srgb": [
+            150,
+            153,
+            146
+          ],
+          "map_type": "solid",
+          "faces": "unresolved",
+          "need": "geometry-174.json does not separate frame or carcass faces inside material id 1. ID2 is a different material (recessed infill), not this region. Need an existing face-index list for the carcass inside ID1. This card does not invent that split.",
+          "kpp_reference": {
+            "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1010.png",
+            "sha256": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+            "sampling": "exact uniform RGB; all pixels checked",
+            "tile": 1010
+          }
+        },
+        {
+          "part": "wall panels",
+          "ral": "RAL5015",
+          "rgb_srgb": [
+            34,
+            113,
+            179
+          ],
+          "map_type": "vertical_joints",
+          "faces": "unresolved",
+          "need": "geometry-174.json has no wall-panel face group inside material id 1. Recessed panel infill is already ID2. Need an existing face-index list if any ID1 faces are wall panels rather than carcass. This card does not invent that split.",
+          "kpp_reference": {
+            "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1013.png",
+            "sha256": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2",
+            "sampling": "exact uniform RGB; all pixels checked",
+            "tile": 1013,
+            "role": "colour reference only; panel joints come from source_texture"
+          },
+          "joint_spec": {
+            "orientation": "vertical_only",
+            "joint_width_mm": 8,
+            "texel_px_per_m": 1000,
+            "phase_origin": "symmetric in the panel field",
+            "below_grade": "plain_no_joints",
+            "npm_min_joint_px": 1.5,
+            "source_texture": {
+              "path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+              "drive_copy": "G:/Мой диск/AGR-evidence/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+              "sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
+              "role": "colour_noise_one_joint_profile",
+              "tiling_source": false
+            },
+            "colour_reference_role": "kpp_colour_only",
+            "colour_delta_vs_kpp": [
+              -0.2966822385787964,
+              -0.9897093176841736,
+              -1.57234525680542
+            ],
+            "colour_tolerance_max_abs": 2.0,
+            "layout": "Layout is per facade, from joint_spec.per_facade, phase symmetric in the panel field. The 4096 source is not a tiling source: it supplies colour, noise and the profile of one joint only. At 1000 px/m a 0.20 m step would be about 200 px. The texture period is not a fallback step. Where a facade is unresolved, the build does not invent a rib count.",
+            "udim_fit": "No new cuts are needed for a 0.20 m step when the UV of a face lies in one 4K tile (4096 px at 1000 px/m covers 4.096 m). A ring cut or an edge loop is allowed only where a face still does not fit one 4K tile, and that cut is reported in the build card. This card does not cut geometry. Quads stay. Silhouette, normals, UCX and multisub IDs stay.",
+            "supersedes": {
+              "gate1_point": 1,
+              "replaced": "Sandwich panels: solid colour without joints (module not confirmed by the drawings).", "not_a_fallback": "The texture period is not the layout step.",
+              "quote": "Панели неверные, должны быть вертикальные швы только; текстуру пришлю; если не влезает, можно аккуратно порезать через loop или ring",
+              "below_grade_quote": "ниже ±0.000 без швов (под землёй не видно)"
+            },
+            "measured": {
+              "width_px": 4096,
+              "height_px": 4096,
+              "mode": "RGB",
+              "bytes": 1010080,
+              "mean_rgb": [
+                33.703317761421204,
+                112.01029068231583,
+                177.42765474319458
+              ],
+              "mean_rgb_rounded": [
+                34,
+                112,
+                177
+              ],
+              "field_mean_rgb_excluding_joints": [
+                34.0041558294013,
+                113.00845312741724,
+                179.013780650526
+              ],
+              "joint_rgb": [
+                12,
+                40,
+                63
+              ],
+              "joint_count": 7,
+              "joint_width_px": 8,
+              "joint_period_px": 600,
+              "joint_x0_px": [
+                266,
+                866,
+                1466,
+                2066,
+                2666,
+                3266,
+                3866
+              ],
+              "horizontal_joint_count": 0
+            },
+            "per_facade": [
+              {
+                "facade": "Фасад А-В. Цветовое решение",
+                "status": "unresolved",
+                "question": "Фасад А-В. Цветовое решение (TEXT 1523A2; insert 184E3E): blue panel field hatch 17BA5A is 14.238923 m wide (model XY mm 2467.96,48891.24 to 16706.89,52347.86). Full-height vertical lines on layer PDF_Аннотации.АР are not one even step across that field. A repeated step of 1.00203 m is drawn in two separate runs (handles 17BA52, 17BA53, 17BA55, 17BA56, 17BA54 and 17A794, 17A792, 17A793, 17A795, 17A78B, 17A78C, 17A796). Both ends and the middle (handles 17A797, 17A798, 17BA3B, 17BA3A, 17A791, 17BA59, 17A6D6, 17A6D5) are irregular, about 0.276 m to 0.782 m. How many vertical ribs does this whole panel field have, and what single step in metres should be used?",
+                "evidence": {
+                  "dxf": "C:/x/tec26-oks/acad-readback-v001/ac04.dxf",
+                  "recover": "ezdxf.recover.readfile; source DXF has no ENDSEC; auditor errors 0, fixes 1",
+                  "units": "mm (INSUNITS=4); step values below are those millimetres / 1000",
+                  "panel_field": {
+                    "hatch": "17BA5A",
+                    "true_color": 31920,
+                    "rgb": [
+                      0,
+                      124,
+                      176
+                    ],
+                    "xy_mm": [
+                      2467.96,
+                      48891.24,
+                      16706.89,
+                      52347.86
+                    ],
+                    "width_m": 14.238923,
+                    "height_m": 3.456626
+                  },
+                  "full_height_vertical_handles": [
+                    "17A797",
+                    "17A798",
+                    "17BA52",
+                    "17BA53",
+                    "17BA55",
+                    "17BA56",
+                    "17BA54",
+                    "17BA3B",
+                    "17BA3A",
+                    "17A791",
+                    "17BA59",
+                    "17A794",
+                    "17A792",
+                    "17A793",
+                    "17A795",
+                    "17A78B",
+                    "17A78C",
+                    "17A796",
+                    "17A6D6",
+                    "17A6D5"
+                  ],
+                  "observed_repeated_step_m": 1.00203,
+                  "observed_step_note": "1.00203 m repeats inside two runs only. One interval in the first run measures 1.00298 m. The runs are not one grid across the field.",
+                  "horizontal_joint_lines_in_field": 0
+                },
+                "frame_band": {
+                  "outlines": "panel field",
+                  "edges": [
+                    "top",
+                    "bottom",
+                    "corners"
+                  ],
+                  "bottom": {
+                    "handle": "17BA5D",
+                    "height_mm": 24.77,
+                    "true_color": 10197915,
+                    "rgb": [
+                      155,
+                      155,
+                      155
+                    ],
+                    "legend": "RAL7004",
+                    "legend_handle": "170B10"
+                  },
+                  "top": "top edge of blue hatch 17BA5A",
+                  "corners": "vertical lines about 0.288 m in from both outer edges (handles 17A798 and 17A6D6)"
+                },
+                "door": {
+                  "ral": "RAL7004",
+                  "basis": "legend 170B10; this long elevation does not draw the door leaf",
+                  "legend_handle": "170B10"
+                },
+                "plinth": {
+                  "colour": "grey",
+                  "ral": "RAL7004",
+                  "rgb": [
+                    155,
+                    155,
+                    155
+                  ],
+                  "true_color": 10197915,
+                  "handle": "17BA5D",
+                  "height_mm": 24.77,
+                  "note": "Thin grey strip directly under the blue panel field. No taller plinth course is drawn. Legend grey is RAL7004 (170B10)."
+                },
+                "title_handle": "1523A2",
+                "title_xy_mm": [
+                  5256.94,
+                  55935.8
+                ],
+                "insert_handle": "184E3E",
+                "insert_xy_mm": [
+                  10506.46,
+                  50499.79
+                ]
+              },
+              {
+                "facade": "Фасад 1-2. Цветовое решение",
+                "status": "unresolved",
+                "question": "Фасад 1-2. Цветовое решение (TEXT 1523A0; insert 184E70): blue panel field hatch 1854A2 is 2.96608 m wide (model XY mm 29011.58,48892.45 to 31977.66,52157.62). Full-height verticals are only the two outer edges and two returns about 0.288 m in (handles 185588, 185589, 18558B, 18558A). No repeating interior rib step is drawn. How many vertical ribs does this panel field have, and what is the step in metres?",
+                "evidence": {
+                  "dxf": "C:/x/tec26-oks/acad-readback-v001/ac04.dxf",
+                  "recover": "ezdxf.recover.readfile; source DXF has no ENDSEC; auditor errors 0, fixes 1",
+                  "units": "mm (INSUNITS=4)",
+                  "panel_field": {
+                    "hatch": "1854A2",
+                    "true_color": 31920,
+                    "rgb": [
+                      0,
+                      124,
+                      176
+                    ],
+                    "xy_mm": [
+                      29011.58,
+                      48892.45,
+                      31977.66,
+                      52157.62
+                    ],
+                    "width_m": 2.96608,
+                    "height_m": 3.26517
+                  },
+                  "full_height_vertical_handles": [
+                    "185588",
+                    "185589",
+                    "18558B",
+                    "18558A"
+                  ],
+                  "observed_repeated_step_m": null,
+                  "observed_step_note": "No repeating interior step. The gap between the inner returns is 2.382 m (handles 185589 to 18558B).",
+                  "horizontal_joint_lines_in_field": 0
+                },
+                "frame_band": {
+                  "outlines": "panel field",
+                  "edges": [
+                    "top",
+                    "bottom",
+                    "corners"
+                  ],
+                  "bottom": "grey door fill hatch 1854A3 starts 24.8 mm below the blue field and is the bottom outline",
+                  "top": "top edge of blue hatch 1854A2",
+                  "corners": "vertical lines about 0.288 m in from both outer edges (handles 185589 and 18558B)"
+                },
+                "door": {
+                  "ral": "RAL7004",
+                  "basis": "legend 170B10 and the grey fill drawn on this facade",
+                  "legend_handle": "170B10",
+                  "hatch": "1854A3",
+                  "true_color": 10197915,
+                  "rgb": [
+                    155,
+                    155,
+                    155
+                  ],
+                  "width_mm": 2969.9,
+                  "height_mm": 2328.86,
+                  "xy_mm": [
+                    48867.7,
+                    51196.5
+                  ]
+                },
+                "plinth": {
+                  "colour": "grey",
+                  "ral": "RAL7004",
+                  "rgb": [
+                    155,
+                    155,
+                    155
+                  ],
+                  "true_color": 10197915,
+                  "handle": "1854A3",
+                  "note": "The grey hatch is 2.329 m tall and includes the door. A separate thin plinth strip is not drawn on this facade."
+                },
+                "title_handle": "1523A0",
+                "title_xy_mm": [
+                  26073.0,
+                  55935.8
+                ],
+                "insert_handle": "184E70",
+                "insert_xy_mm": [
+                  30478.38,
+                  50294.09
+                ]
+              },
+              {
+                "facade": "Фасад В-А. Цветовое решение",
+                "status": "unresolved",
+                "question": "Фасад В-А. Цветовое решение (TEXT 1523A3; insert 185AD0): blue panel field hatch 17D200 is 14.238923 m wide (model XY mm 2468.79,35300.83 to 16707.72,38757.45). It is the mirror of facade А-В. Full-height vertical lines on layer PDF_Аннотации.АР are not one even step across that field. A repeated step of 1.00203 m is drawn in two separate runs (handles 17D321, 17D320, 17D32A, 17D328, 17D327, 17D329 and 17E599, 17E598, 17E596, 17E595). Both ends and the middle (handles 17D26A, 17D26B, 17D32B, 17E59C, 17D326, 17E57D, 17E57E, 17E597, 17D32D, 17D32C) are irregular, about 0.276 m to 0.782 m. How many vertical ribs does this whole panel field have, and what single step in metres should be used?",
+                "evidence": {
+                  "dxf": "C:/x/tec26-oks/acad-readback-v001/ac04.dxf",
+                  "recover": "ezdxf.recover.readfile; source DXF has no ENDSEC; auditor errors 0, fixes 1",
+                  "units": "mm (INSUNITS=4); step values below are those millimetres / 1000",
+                  "panel_field": {
+                    "hatch": "17D200",
+                    "true_color": 31920,
+                    "rgb": [
+                      0,
+                      124,
+                      176
+                    ],
+                    "xy_mm": [
+                      2468.79,
+                      35300.83,
+                      16707.72,
+                      38757.45
+                    ],
+                    "width_m": 14.238923,
+                    "height_m": 3.456626
+                  },
+                  "full_height_vertical_handles": [
+                    "17D26A",
+                    "17D26B",
+                    "17D32B",
+                    "17D321",
+                    "17D320",
+                    "17D32A",
+                    "17D328",
+                    "17D327",
+                    "17D329",
+                    "17E59C",
+                    "17D326",
+                    "17E57D",
+                    "17E57E",
+                    "17E597",
+                    "17E599",
+                    "17E598",
+                    "17E596",
+                    "17E595",
+                    "17D32D",
+                    "17D32C"
+                  ],
+                  "observed_repeated_step_m": 1.00203,
+                  "observed_step_note": "1.00203 m repeats inside two runs only. One interval measures 1.00298 m. The runs are not one grid across the field.",
+                  "horizontal_joint_lines_in_field": 0
+                },
+                "frame_band": {
+                  "outlines": "panel field",
+                  "edges": [
+                    "top",
+                    "bottom",
+                    "corners"
+                  ],
+                  "bottom": {
+                    "handle": "17D1FF",
+                    "height_mm": 24.77,
+                    "true_color": 10197915,
+                    "rgb": [
+                      155,
+                      155,
+                      155
+                    ],
+                    "legend": "RAL7004",
+                    "legend_handle": "170B10"
+                  },
+                  "top": "top edge of blue hatch 17D200",
+                  "corners": "vertical lines about 0.288 m in from both outer edges (handles 17D26B and 17D32C)"
+                },
+                "door": {
+                  "ral": "RAL7004",
+                  "basis": "legend 170B10; this long elevation does not draw the door leaf",
+                  "legend_handle": "170B10"
+                },
+                "plinth": {
+                  "colour": "grey",
+                  "ral": "RAL7004",
+                  "rgb": [
+                    155,
+                    155,
+                    155
+                  ],
+                  "true_color": 10197915,
+                  "handle": "17D1FF",
+                  "height_mm": 24.77,
+                  "note": "Thin grey strip directly under the blue panel field. No taller plinth course is drawn. Legend grey is RAL7004 (170B10)."
+                },
+                "title_handle": "1523A3",
+                "title_xy_mm": [
+                  5234.55,
+                  42344.2
+                ],
+                "insert_handle": "185AD0",
+                "insert_xy_mm": [
+                  12518.81,
+                  36822.22
+                ]
+              },
+              {
+                "facade": "Фасад 2-1. Цветовое решение",
+                "status": "unresolved",
+                "question": "Фасад 2-1. Цветовое решение (TEXT 1523A1; insert 185AD6): blue panel field hatch 185FC2 is 2.96608 m wide (model XY mm 29011.58,35300.83 to 31977.66,38566.00). Full-height verticals are the two outer edges, two returns about 0.288 m and 0.290 m in, and one extra line (handles 186017, 186018, 185FDA, 18601A, 186019). No repeating interior rib step is drawn. The centre is covered by the yellow stair hatch 13CAC5. How many vertical ribs does this panel field have, and what is the step in metres?",
+                "evidence": {
+                  "dxf": "C:/x/tec26-oks/acad-readback-v001/ac04.dxf",
+                  "recover": "ezdxf.recover.readfile; source DXF has no ENDSEC; auditor errors 0, fixes 1",
+                  "units": "mm (INSUNITS=4)",
+                  "panel_field": {
+                    "hatch": "185FC2",
+                    "true_color": 31920,
+                    "rgb": [
+                      0,
+                      124,
+                      176
+                    ],
+                    "xy_mm": [
+                      29011.58,
+                      35300.83,
+                      31977.66,
+                      38566.0
+                    ],
+                    "width_m": 2.96608,
+                    "height_m": 3.26517
+                  },
+                  "full_height_vertical_handles": [
+                    "186017",
+                    "186018",
+                    "185FDA",
+                    "18601A",
+                    "186019"
+                  ],
+                  "observed_repeated_step_m": null,
+                  "observed_step_note": "No repeating interior step. Yellow stair hatch 13CAC5 (true color 15649024, RGB 238,210,0, RAL1021) covers the centre.",
+                  "horizontal_joint_lines_in_field": 0
+                },
+                "frame_band": {
+                  "outlines": "panel field",
+                  "edges": [
+                    "top",
+                    "bottom",
+                    "corners"
+                  ],
+                  "bottom": {
+                    "handle": "185FC1",
+                    "height_mm": 24.77,
+                    "true_color": 10197915,
+                    "rgb": [
+                      155,
+                      155,
+                      155
+                    ],
+                    "legend": "RAL7004",
+                    "legend_handle": "170B10"
+                  },
+                  "top": "top edge of blue hatch 185FC2",
+                  "corners": "vertical lines about 0.288 m and 0.291 m in from the outer edges (handles 186018 and 18601A)"
+                },
+                "door": {
+                  "ral": "RAL7004",
+                  "basis": "legend 170B10. This elevation does not draw a separate grey door fill; the centre is the yellow stair hatch 13CAC5.",
+                  "legend_handle": "170B10"
+                },
+                "plinth": {
+                  "colour": "grey",
+                  "ral": "RAL7004",
+                  "rgb": [
+                    155,
+                    155,
+                    155
+                  ],
+                  "true_color": 10197915,
+                  "handle": "185FC1",
+                  "height_mm": 24.77,
+                  "note": "Thin grey strip directly under the blue panel field. No taller plinth course is drawn. Legend grey is RAL7004 (170B10)."
+                },
+                "title_handle": "1523A1",
+                "title_xy_mm": [
+                  26050.6,
+                  42344.2
+                ],
+                "insert_handle": "185AD6",
+                "insert_xy_mm": [
+                  31418.41,
+                  37732.01
+                ]
+              }
+            ],
+            "unresolved_facades": [
+              "Фасад А-В. Цветовое решение",
+              "Фасад 1-2. Цветовое решение",
+              "Фасад В-А. Цветовое решение",
+              "Фасад 2-1. Цветовое решение"
+            ]
+          }
+        },
+        {
+          "part": "below-grade drop/plinth",
+          "ral": "RAL5015",
+          "rgb_srgb": [
+            34,
+            113,
+            179
+          ],
+          "map_type": "solid",
+          "finish_note": "wall colour, plain, no joints below +-0.000",
+          "faces": "unresolved",
+          "need": "perimeter-drop.json verifies four wall-bottom intervals, but geometry-174.json has no drop face group. 48 ID1 triangles cross z=0 (min z < 0 and max z > 0), so the part below +-0.000 is not its own face set. Need a UV/atlas region or a pre-existing face group. Do not split those triangles on this card.",
+          "kpp_reference": {
+            "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1013.png",
+            "sha256": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2",
+            "sampling": "exact uniform RGB; all pixels checked",
+            "tile": 1013
+          }
+        }
+      ],
+      "triangles": 780,
+      "poly_faces": 439,
+      "area_m2": 179.66802845578127,
+      "evidence": [
+        "DWG:170B10"
+      ],
+      "geometry_evidence": "only-1.png",
+      "question_ids": [
+        "Q1",
+        "Q4"
+      ]
+    },
+    {
+      "id": 2,
+      "source_slot": 2,
+      "source_material": "Material #36",
+      "component": "Recessed wall panel infill",
+      "finish": "Sandwich panels RAL5015, vertical joints only (joint_spec). KPP tile 1013 is a colour reference, not the joint map.",
+      "ral": "RAL5015",
+      "map_type": "vertical_joints",
+      "rgb_srgb": [
+        34,
+        113,
+        179
+      ],
+      "status": "approved-gate1",
+      "triangles": 38,
+      "poly_faces": 19,
+      "area_m2": 82.70240776665933,
+      "evidence": [
+        "DWG:170B10"
+      ],
+      "geometry_evidence": "only-2.png",
+      "question_ids": [
+        "Q1",
+        "Q4"
+      ],
+      "kpp_reference": {
+        "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1013.png",
+        "sha256": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2",
+        "sampling": "exact uniform RGB; all pixels checked",
+        "tile": 1013,
+        "role": "colour reference only; panel joints come from source_texture"
+      },
+      "joint_spec": {
+        "orientation": "vertical_only",
+        "joint_width_mm": 8,
+        "texel_px_per_m": 1000,
+        "phase_origin": "symmetric in the panel field",
+        "below_grade": "plain_no_joints",
+        "npm_min_joint_px": 1.5,
+        "source_texture": {
+          "path": "C:/x/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+          "drive_copy": "G:/Мой диск/AGR-evidence/tec26-oks/user-textures/panel_RAL5015_vertical_joints_4096.png",
+          "sha256": "2c255edc5f7a56fc8aca3038d0e0235327128ac6ae3c8c63e0be31a1f6386ece",
+          "role": "colour_noise_one_joint_profile",
+          "tiling_source": false
+        },
+        "colour_reference_role": "kpp_colour_only",
+        "colour_delta_vs_kpp": [
+          -0.2966822385787964,
+          -0.9897093176841736,
+          -1.57234525680542
+        ],
+        "colour_tolerance_max_abs": 2.0,
+        "layout": "Layout is per facade, from joint_spec.per_facade, phase symmetric in the panel field. The 4096 source is not a tiling source: it supplies colour, noise and the profile of one joint only. At 1000 px/m a 0.20 m step would be about 200 px. The texture period is not a fallback step. Where a facade is unresolved, the build does not invent a rib count.",
+        "udim_fit": "No new cuts are needed for a 0.20 m step when the UV of a face lies in one 4K tile (4096 px at 1000 px/m covers 4.096 m). A ring cut or an edge loop is allowed only where a face still does not fit one 4K tile, and that cut is reported in the build card. This card does not cut geometry. Quads stay. Silhouette, normals, UCX and multisub IDs stay.",
+        "supersedes": {
+          "gate1_point": 1,
+          "replaced": "Sandwich panels: solid colour without joints (module not confirmed by the drawings).", "not_a_fallback": "The texture period is not the layout step.",
+          "quote": "Панели неверные, должны быть вертикальные швы только; текстуру пришлю; если не влезает, можно аккуратно порезать через loop или ring",
+          "below_grade_quote": "ниже ±0.000 без швов (под землёй не видно)"
+        },
+        "measured": {
+          "width_px": 4096,
+          "height_px": 4096,
+          "mode": "RGB",
+          "bytes": 1010080,
+          "mean_rgb": [
+            33.703317761421204,
+            112.01029068231583,
+            177.42765474319458
+          ],
+          "mean_rgb_rounded": [
+            34,
+            112,
+            177
+          ],
+          "field_mean_rgb_excluding_joints": [
+            34.0041558294013,
+            113.00845312741724,
+            179.013780650526
+          ],
+          "joint_rgb": [
+            12,
+            40,
+            63
+          ],
+          "joint_count": 7,
+          "joint_width_px": 8,
+          "joint_period_px": 600,
+          "joint_x0_px": [
+            266,
+            866,
+            1466,
+            2066,
+            2666,
+            3266,
+            3866
+          ],
+          "horizontal_joint_count": 0
+        },
+        "per_facade": [
+          {
+            "facade": "Фасад А-В. Цветовое решение",
+            "status": "unresolved",
+            "question": "Фасад А-В. Цветовое решение (TEXT 1523A2; insert 184E3E): blue panel field hatch 17BA5A is 14.238923 m wide (model XY mm 2467.96,48891.24 to 16706.89,52347.86). Full-height vertical lines on layer PDF_Аннотации.АР are not one even step across that field. A repeated step of 1.00203 m is drawn in two separate runs (handles 17BA52, 17BA53, 17BA55, 17BA56, 17BA54 and 17A794, 17A792, 17A793, 17A795, 17A78B, 17A78C, 17A796). Both ends and the middle (handles 17A797, 17A798, 17BA3B, 17BA3A, 17A791, 17BA59, 17A6D6, 17A6D5) are irregular, about 0.276 m to 0.782 m. How many vertical ribs does this whole panel field have, and what single step in metres should be used?",
+            "evidence": {
+              "dxf": "C:/x/tec26-oks/acad-readback-v001/ac04.dxf",
+              "recover": "ezdxf.recover.readfile; source DXF has no ENDSEC; auditor errors 0, fixes 1",
+              "units": "mm (INSUNITS=4); step values below are those millimetres / 1000",
+              "panel_field": {
+                "hatch": "17BA5A",
+                "true_color": 31920,
+                "rgb": [
+                  0,
+                  124,
+                  176
+                ],
+                "xy_mm": [
+                  2467.96,
+                  48891.24,
+                  16706.89,
+                  52347.86
+                ],
+                "width_m": 14.238923,
+                "height_m": 3.456626
+              },
+              "full_height_vertical_handles": [
+                "17A797",
+                "17A798",
+                "17BA52",
+                "17BA53",
+                "17BA55",
+                "17BA56",
+                "17BA54",
+                "17BA3B",
+                "17BA3A",
+                "17A791",
+                "17BA59",
+                "17A794",
+                "17A792",
+                "17A793",
+                "17A795",
+                "17A78B",
+                "17A78C",
+                "17A796",
+                "17A6D6",
+                "17A6D5"
+              ],
+              "observed_repeated_step_m": 1.00203,
+              "observed_step_note": "1.00203 m repeats inside two runs only. One interval in the first run measures 1.00298 m. The runs are not one grid across the field.",
+              "horizontal_joint_lines_in_field": 0
+            },
+            "frame_band": {
+              "outlines": "panel field",
+              "edges": [
+                "top",
+                "bottom",
+                "corners"
+              ],
+              "bottom": {
+                "handle": "17BA5D",
+                "height_mm": 24.77,
+                "true_color": 10197915,
+                "rgb": [
+                  155,
+                  155,
+                  155
+                ],
+                "legend": "RAL7004",
+                "legend_handle": "170B10"
+              },
+              "top": "top edge of blue hatch 17BA5A",
+              "corners": "vertical lines about 0.288 m in from both outer edges (handles 17A798 and 17A6D6)"
+            },
+            "door": {
+              "ral": "RAL7004",
+              "basis": "legend 170B10; this long elevation does not draw the door leaf",
+              "legend_handle": "170B10"
+            },
+            "plinth": {
+              "colour": "grey",
+              "ral": "RAL7004",
+              "rgb": [
+                155,
+                155,
+                155
+              ],
+              "true_color": 10197915,
+              "handle": "17BA5D",
+              "height_mm": 24.77,
+              "note": "Thin grey strip directly under the blue panel field. No taller plinth course is drawn. Legend grey is RAL7004 (170B10)."
+            },
+            "title_handle": "1523A2",
+            "title_xy_mm": [
+              5256.94,
+              55935.8
+            ],
+            "insert_handle": "184E3E",
+            "insert_xy_mm": [
+              10506.46,
+              50499.79
+            ]
+          },
+          {
+            "facade": "Фасад 1-2. Цветовое решение",
+            "status": "unresolved",
+            "question": "Фасад 1-2. Цветовое решение (TEXT 1523A0; insert 184E70): blue panel field hatch 1854A2 is 2.96608 m wide (model XY mm 29011.58,48892.45 to 31977.66,52157.62). Full-height verticals are only the two outer edges and two returns about 0.288 m in (handles 185588, 185589, 18558B, 18558A). No repeating interior rib step is drawn. How many vertical ribs does this panel field have, and what is the step in metres?",
+            "evidence": {
+              "dxf": "C:/x/tec26-oks/acad-readback-v001/ac04.dxf",
+              "recover": "ezdxf.recover.readfile; source DXF has no ENDSEC; auditor errors 0, fixes 1",
+              "units": "mm (INSUNITS=4)",
+              "panel_field": {
+                "hatch": "1854A2",
+                "true_color": 31920,
+                "rgb": [
+                  0,
+                  124,
+                  176
+                ],
+                "xy_mm": [
+                  29011.58,
+                  48892.45,
+                  31977.66,
+                  52157.62
+                ],
+                "width_m": 2.96608,
+                "height_m": 3.26517
+              },
+              "full_height_vertical_handles": [
+                "185588",
+                "185589",
+                "18558B",
+                "18558A"
+              ],
+              "observed_repeated_step_m": null,
+              "observed_step_note": "No repeating interior step. The gap between the inner returns is 2.382 m (handles 185589 to 18558B).",
+              "horizontal_joint_lines_in_field": 0
+            },
+            "frame_band": {
+              "outlines": "panel field",
+              "edges": [
+                "top",
+                "bottom",
+                "corners"
+              ],
+              "bottom": "grey door fill hatch 1854A3 starts 24.8 mm below the blue field and is the bottom outline",
+              "top": "top edge of blue hatch 1854A2",
+              "corners": "vertical lines about 0.288 m in from both outer edges (handles 185589 and 18558B)"
+            },
+            "door": {
+              "ral": "RAL7004",
+              "basis": "legend 170B10 and the grey fill drawn on this facade",
+              "legend_handle": "170B10",
+              "hatch": "1854A3",
+              "true_color": 10197915,
+              "rgb": [
+                155,
+                155,
+                155
+              ],
+              "width_mm": 2969.9,
+              "height_mm": 2328.86,
+              "xy_mm": [
+                48867.7,
+                51196.5
+              ]
+            },
+            "plinth": {
+              "colour": "grey",
+              "ral": "RAL7004",
+              "rgb": [
+                155,
+                155,
+                155
+              ],
+              "true_color": 10197915,
+              "handle": "1854A3",
+              "note": "The grey hatch is 2.329 m tall and includes the door. A separate thin plinth strip is not drawn on this facade."
+            },
+            "title_handle": "1523A0",
+            "title_xy_mm": [
+              26073.0,
+              55935.8
+            ],
+            "insert_handle": "184E70",
+            "insert_xy_mm": [
+              30478.38,
+              50294.09
+            ]
+          },
+          {
+            "facade": "Фасад В-А. Цветовое решение",
+            "status": "unresolved",
+            "question": "Фасад В-А. Цветовое решение (TEXT 1523A3; insert 185AD0): blue panel field hatch 17D200 is 14.238923 m wide (model XY mm 2468.79,35300.83 to 16707.72,38757.45). It is the mirror of facade А-В. Full-height vertical lines on layer PDF_Аннотации.АР are not one even step across that field. A repeated step of 1.00203 m is drawn in two separate runs (handles 17D321, 17D320, 17D32A, 17D328, 17D327, 17D329 and 17E599, 17E598, 17E596, 17E595). Both ends and the middle (handles 17D26A, 17D26B, 17D32B, 17E59C, 17D326, 17E57D, 17E57E, 17E597, 17D32D, 17D32C) are irregular, about 0.276 m to 0.782 m. How many vertical ribs does this whole panel field have, and what single step in metres should be used?",
+            "evidence": {
+              "dxf": "C:/x/tec26-oks/acad-readback-v001/ac04.dxf",
+              "recover": "ezdxf.recover.readfile; source DXF has no ENDSEC; auditor errors 0, fixes 1",
+              "units": "mm (INSUNITS=4); step values below are those millimetres / 1000",
+              "panel_field": {
+                "hatch": "17D200",
+                "true_color": 31920,
+                "rgb": [
+                  0,
+                  124,
+                  176
+                ],
+                "xy_mm": [
+                  2468.79,
+                  35300.83,
+                  16707.72,
+                  38757.45
+                ],
+                "width_m": 14.238923,
+                "height_m": 3.456626
+              },
+              "full_height_vertical_handles": [
+                "17D26A",
+                "17D26B",
+                "17D32B",
+                "17D321",
+                "17D320",
+                "17D32A",
+                "17D328",
+                "17D327",
+                "17D329",
+                "17E59C",
+                "17D326",
+                "17E57D",
+                "17E57E",
+                "17E597",
+                "17E599",
+                "17E598",
+                "17E596",
+                "17E595",
+                "17D32D",
+                "17D32C"
+              ],
+              "observed_repeated_step_m": 1.00203,
+              "observed_step_note": "1.00203 m repeats inside two runs only. One interval measures 1.00298 m. The runs are not one grid across the field.",
+              "horizontal_joint_lines_in_field": 0
+            },
+            "frame_band": {
+              "outlines": "panel field",
+              "edges": [
+                "top",
+                "bottom",
+                "corners"
+              ],
+              "bottom": {
+                "handle": "17D1FF",
+                "height_mm": 24.77,
+                "true_color": 10197915,
+                "rgb": [
+                  155,
+                  155,
+                  155
+                ],
+                "legend": "RAL7004",
+                "legend_handle": "170B10"
+              },
+              "top": "top edge of blue hatch 17D200",
+              "corners": "vertical lines about 0.288 m in from both outer edges (handles 17D26B and 17D32C)"
+            },
+            "door": {
+              "ral": "RAL7004",
+              "basis": "legend 170B10; this long elevation does not draw the door leaf",
+              "legend_handle": "170B10"
+            },
+            "plinth": {
+              "colour": "grey",
+              "ral": "RAL7004",
+              "rgb": [
+                155,
+                155,
+                155
+              ],
+              "true_color": 10197915,
+              "handle": "17D1FF",
+              "height_mm": 24.77,
+              "note": "Thin grey strip directly under the blue panel field. No taller plinth course is drawn. Legend grey is RAL7004 (170B10)."
+            },
+            "title_handle": "1523A3",
+            "title_xy_mm": [
+              5234.55,
+              42344.2
+            ],
+            "insert_handle": "185AD0",
+            "insert_xy_mm": [
+              12518.81,
+              36822.22
+            ]
+          },
+          {
+            "facade": "Фасад 2-1. Цветовое решение",
+            "status": "unresolved",
+            "question": "Фасад 2-1. Цветовое решение (TEXT 1523A1; insert 185AD6): blue panel field hatch 185FC2 is 2.96608 m wide (model XY mm 29011.58,35300.83 to 31977.66,38566.00). Full-height verticals are the two outer edges, two returns about 0.288 m and 0.290 m in, and one extra line (handles 186017, 186018, 185FDA, 18601A, 186019). No repeating interior rib step is drawn. The centre is covered by the yellow stair hatch 13CAC5. How many vertical ribs does this panel field have, and what is the step in metres?",
+            "evidence": {
+              "dxf": "C:/x/tec26-oks/acad-readback-v001/ac04.dxf",
+              "recover": "ezdxf.recover.readfile; source DXF has no ENDSEC; auditor errors 0, fixes 1",
+              "units": "mm (INSUNITS=4)",
+              "panel_field": {
+                "hatch": "185FC2",
+                "true_color": 31920,
+                "rgb": [
+                  0,
+                  124,
+                  176
+                ],
+                "xy_mm": [
+                  29011.58,
+                  35300.83,
+                  31977.66,
+                  38566.0
+                ],
+                "width_m": 2.96608,
+                "height_m": 3.26517
+              },
+              "full_height_vertical_handles": [
+                "186017",
+                "186018",
+                "185FDA",
+                "18601A",
+                "186019"
+              ],
+              "observed_repeated_step_m": null,
+              "observed_step_note": "No repeating interior step. Yellow stair hatch 13CAC5 (true color 15649024, RGB 238,210,0, RAL1021) covers the centre.",
+              "horizontal_joint_lines_in_field": 0
+            },
+            "frame_band": {
+              "outlines": "panel field",
+              "edges": [
+                "top",
+                "bottom",
+                "corners"
+              ],
+              "bottom": {
+                "handle": "185FC1",
+                "height_mm": 24.77,
+                "true_color": 10197915,
+                "rgb": [
+                  155,
+                  155,
+                  155
+                ],
+                "legend": "RAL7004",
+                "legend_handle": "170B10"
+              },
+              "top": "top edge of blue hatch 185FC2",
+              "corners": "vertical lines about 0.288 m and 0.291 m in from the outer edges (handles 186018 and 18601A)"
+            },
+            "door": {
+              "ral": "RAL7004",
+              "basis": "legend 170B10. This elevation does not draw a separate grey door fill; the centre is the yellow stair hatch 13CAC5.",
+              "legend_handle": "170B10"
+            },
+            "plinth": {
+              "colour": "grey",
+              "ral": "RAL7004",
+              "rgb": [
+                155,
+                155,
+                155
+              ],
+              "true_color": 10197915,
+              "handle": "185FC1",
+              "height_mm": 24.77,
+              "note": "Thin grey strip directly under the blue panel field. No taller plinth course is drawn. Legend grey is RAL7004 (170B10)."
+            },
+            "title_handle": "1523A1",
+            "title_xy_mm": [
+              26050.6,
+              42344.2
+            ],
+            "insert_handle": "185AD6",
+            "insert_xy_mm": [
+              31418.41,
+              37732.01
+            ]
+          }
+        ],
+        "unresolved_facades": [
+          "Фасад А-В. Цветовое решение",
+          "Фасад 1-2. Цветовое решение",
+          "Фасад В-А. Цветовое решение",
+          "Фасад 2-1. Цветовое решение"
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "source_slot": 3,
+      "source_material": "Material #37",
+      "component": "Two small glazed panes",
+      "finish": "M_Glass_01",
+      "ral": null,
+      "map_type": "glass",
+      "rgb_srgb": null,
+      "status": "approved-gate1",
+      "triangles": 4,
+      "poly_faces": 2,
+      "area_m2": 0.23839848492252003,
+      "evidence": [
+        "KPP-glass-policy:orchestrator-comment-2026-10-22"
+      ],
+      "geometry_evidence": "only-3.png",
+      "question_ids": [
+        "Q1"
+      ],
+      "glass": {
+        "name": "M_Glass_01",
+        "npm_opacity": 0.5,
+        "vpm": "Separate glass object / no maps at future build; parameters require KPP readback, not set in this Gate-1 report"
+      }
+    },
+    {
+      "id": 4,
+      "source_slot": 4,
+      "source_material": "Material #38",
+      "component": "Door leaf and small opening frames",
+      "finish": "Doors, frames and porches RAL7004; small frames of ID4 are RAL7004",
+      "ral": "RAL7004",
+      "map_type": "metal",
+      "rgb_srgb": [
+        150,
+        153,
+        146
+      ],
+      "status": "approved-gate1",
+      "triangles": 332,
+      "poly_faces": 166,
+      "area_m2": 2.9348832911761047,
+      "evidence": [
+        "DWG:170B10"
+      ],
+      "geometry_evidence": "only-4.png",
+      "question_ids": [
+        "Q1",
+        "Q3"
+      ],
+      "kpp_reference": {
+        "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1010.png",
+        "sha256": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+        "sampling": "exact uniform RGB; all pixels checked",
+        "tile": 1010
+      }
+    },
+    {
+      "id": 5,
+      "source_slot": 5,
+      "source_material": "Material #39",
+      "component": "Roof railing, ladder and cage",
+      "finish": "Metal ladder / safety rail RAL1021",
+      "ral": "RAL1021",
+      "map_type": "metal",
+      "rgb_srgb": [
+        238,
+        201,
+        0
+      ],
+      "status": "approved-gate1",
+      "triangles": 3852,
+      "poly_faces": 1926,
+      "area_m2": 24.24855738402235,
+      "evidence": [
+        "DWG:170B10"
+      ],
+      "geometry_evidence": "only-5.png",
+      "question_ids": [
+        "Q1"
+      ],
+      "kpp_reference": {
+        "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1004.png",
+        "sha256": "953557e3202eabaa2085cb78446b923ee9ea181266565a98e7c124add2da4616",
+        "sampling": "exact uniform RGB; all pixels checked",
+        "tile": 1004
+      }
+    }
+  ],
+  "questions": [
+    {
+      "id": "Q1",
+      "status": "closed",
+      "question": "Approve the proposed ID 1/2 blue, ID 3 glass, ID 4 grey, ID 5 yellow mapping on the contact sheet? Diagnostic colours identify IDs, not finish colours.",
+      "answer": "Approved 2026-10-22. Panels RAL 5015 = KPP blue, doors/frames/porches RAL 7004 = KPP grey, glass as KPP; roof RAL 7004 grey (as KPP 7004), not 5015; the drop below +-0.000 = wall colour. A mixed ID may be painted by region without changing geometry."
+    },
+    {
+      "id": "Q3",
+      "status": "closed",
+      "question": "ID 4 combines a door and small opening frames. Proposal: RAL7004 for both, with M_Glass_01 in ID 3. The legend explicitly specifies doors but not small frames: approve frame grey?",
+      "answer": "Approved 2026-10-22. AC04 small frames of ID4 = RAL 7004."
+    },
+    {
+      "id": "Q4",
+      "status": "closed",
+      "question": "No verified dimensioned panel joint module was identified. Proposal: solid RAL5015 without fabricated cassette/joint pattern. Approve solid for Gate 1, or provide the panel module drawing?",
+      "answer": "Answered by joint_spec on the RAL5015 panel regions (ID1 wall panels and ID2): orientation vertical_only, per_facade rib count and step from the colour sheet, joint_width_mm 8, texel_px_per_m 1000, phase symmetric in the panel field, below_grade plain_no_joints. Facades whose ribs are not one even step stay unresolved and are listed in joint_report. Supersedes Gate-1 point 1."
+    }
+  ],
+  "drawing_evidence": {
+    "DWG:170B10": {
+      "sheet": "1 of 2",
+      "space": "Model",
+      "xy_mm": [
+        52042.21105447865,
+        11555.88227939619
+      ],
+      "text": "Сэндвич-панели, козырёк - RAL 5015; Крыльца, двери - RAL 7004; Ограждения металлической лестницы - RAL 1021"
+    },
+    "native_title": {
+      "layout": "1",
+      "handles": [
+        "E42B7",
+        "E42B8",
+        "E42B5",
+        "E42BD",
+        "E4341"
+      ],
+      "xy_mm": [
+        508.101,
+        28.4873
+      ]
+    },
+    "native_readback": {
+      "path": "C:/x/tec26-oks/AC04/native-text-v002.txt",
+      "sha256": "6afdf365fdd2f126cbe0c11fbc4435c34e9057b0f9dce8b22ff4ddb9c32f66f2",
+      "records": 104,
+      "acad_version": "25.0",
+      "insunits": 4
+    }
+  },
+  "conflicts": [
+    {
+      "fact": "sandwich thickness",
+      "dwg_mm": 150,
+      "pdf_mm": 120,
+      "disposition": "Documented only; scene geometry final, no geometry edits per orchestrator."
+    }
+  ],
+  "contact_sheet": "G:/Мой диск/AGR-evidence/tec26-oks/AC04/gate1-v005/contact-sheet.png",
+  "source_copy_mutation": {
+    "path": "C:/x/tec26-oks/AC04/sources-v001/22E56-АР2-1002-AC.04_R1.dwg",
+    "sha256_after_native_session": "253bdb2a9e2e2ddc64d79550b9e56f41035d3d025e1457947cb9e5ac5c4d2b75",
+    "original_sha256_unchanged": "d34638d96ea51046e25b0376f4cd589c0725aeb15f2bccc4800ab3716b1a409b",
+    "disposition": "Working copy retained; frozen v003 package independently matches Desktop originals. Cause unknown."
+  },
+  "rendering": {
+    "application": "Blender 5.1.2",
+    "renderer": "BLENDER_WORKBENCH",
+    "depth_correct": true,
+    "ucx_visible": false,
+    "datum_z_m": 0,
+    "plain_shaded_companion": true,
+    "saved_scene": false,
+    "views": 8
+  },
+  "perimeter_drop": {
+    "policy": "Keep full drop, same finish as the adjacent wall (RAL5015); no cut at ground and no new ID. Geometry untouched. Orchestrator relay of Artem decision 2026-10-22. Below +-0.000 the finish is plain colour, with no joints.",
+    "material_id": 1,
+    "ral": "RAL5015",
+    "measured_report": "perimeter-drop.json",
+    "walls_verified": 4,
+    "below_grade_joints": "plain_no_joints"
+  },
+  "joint_report": {
+    "unresolved_facades": [
+      "Фасад А-В. Цветовое решение",
+      "Фасад 1-2. Цветовое решение",
+      "Фасад В-А. Цветовое решение",
+      "Фасад 2-1. Цветовое решение"
+    ],
+    "note": "Unresolved facades do not revoke gate_1_status approved-gate1. The build does not invent a count and does not fall back to 0.60 m."
+  },
+  "acceptance_picture": {
+    "required": true,
+    "made_by": "build card",
+    "rule": "Each facade render must be placed next to the same facade of the colour sheet, at the same scale, with the rib count written under both. A render whose rib count differs from the sheet count is not sent to Artem."
+  }
+}

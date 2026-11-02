@@ -1,0 +1,504 @@
+{
+  "status": "approved-gate1",
+  "passed": false,
+  "passed_note": "VPM/NPM not built; technical QA and publication are separate statuses.",
+  "gate1_approval": {
+    "quote": "«Принимаю» (Artem, 2026-10-22, Gate 1 answer)",
+    "answer": "Принимаю",
+    "by": "Artem",
+    "date": "2026-10-22",
+    "scope": "Orchestrator recommendations. Finish mapping only; geometry unchanged."
+  },
+  "base_main": "442f0b695a91f9abc180783c26978fbe85fefcf9",
+  "building_name": "Контейнер системы автоматического контроля вредных выбросов (САКВ)",
+  "title_evidence": [
+    "layout 2; handle 3437 at (499.713,27.7392,0)",
+    "layout 2; handle 3438 at (504.356,23.9892,0)"
+  ],
+  "scene": {
+    "handles": [
+      173,
+      342,
+      369
+    ],
+    "actual_layer": "009",
+    "requested_layer": "0.0.0.9 or 0.0.9",
+    "units": "meters",
+    "application": "3ds Max 2026.3 census #558",
+    "collision_note": "Colizii_043 handle 342: 12 triangles, not renamed UCX"
+  },
+  "drawing_finishes": [
+    {
+      "handle": "D4B",
+      "space": "Model",
+      "coordinate": [
+        27521.4,
+        -943.967,
+        0.0
+      ],
+      "text": "- Сэндвич-панели - RAL 5015 ",
+      "ral": "5015",
+      "finish": "Sandwich panels",
+      "map_type": "joints (KPP panel tile, same texel density/joint scale)",
+      "sheet": "AC09 Model-space facade group; no printed facade sheet title; native ac09-facades.pdf p1"
+    },
+    {
+      "handle": "D4D",
+      "space": "Model",
+      "coordinate": [
+        27521.4,
+        -2647.4,
+        0.0
+      ],
+      "text": "-  Крыльца, двери - RAL 7004",
+      "ral": "7004",
+      "finish": "Porches and doors",
+      "map_type": "metal",
+      "sheet": "AC09 Model-space facade group; no printed facade sheet title; native ac09-facades.pdf p1"
+    },
+    {
+      "handle": "1C5A",
+      "space": "Model",
+      "coordinate": [
+        27521.4,
+        -4105.6,
+        0.0
+      ],
+      "text": "- Оконные рамы -  RAL 9016",
+      "ral": "9016",
+      "finish": "Window frames",
+      "map_type": "solid",
+      "sheet": "AC09 Model-space facade group; no printed facade sheet title; native ac09-facades.pdf p1"
+    }
+  ],
+  "materials": [
+    {
+      "id": 1,
+      "slot": 1,
+      "source_material": "Material #4",
+      "triangles_main": 376,
+      "poly_faces_main": 188,
+      "triangles_glass": 0,
+      "area_main_m2": 38.713608267577335,
+      "area_glass_m2": 0,
+      "finish": "Split inside ID1: roof RAL7004, frame RAL7004, plinth and below-grade drop RAL5015",
+      "map_type": "split",
+      "approved": true,
+      "question": null,
+      "evidence": "Gate 1 «Принимаю» (Artem, 2026-10-22): UV regions / face groups inside the same ID; geometry unchanged",
+      "ral": null,
+      "geometry_role": "Mixed exterior roof, corner frame, plinth and below-zero extrusion",
+      "geometry_evidence": "isolated-ids.png ID1; geometry-173/369.json; unchanged source ID",
+      "geometry_change": false,
+      "status": "approved-gate1",
+      "sub_regions": [
+        {
+          "name": "roof",
+          "finish": "RAL7004 roof",
+          "ral": "7004",
+          "map_type": "solid",
+          "geometry_change": false,
+          "assignment": "UV regions / face groups inside the same ID",
+          "colour_reference_sha256": "6e088cbdeea1f88e8ff25b78d47b71cc0cea889183027829695b4104a6acca66",
+          "note": "KPP grey, not RAL 5015"
+        },
+        {
+          "name": "frame",
+          "finish": "RAL7004 frame",
+          "ral": "7004",
+          "map_type": "solid",
+          "geometry_change": false,
+          "assignment": "UV regions / face groups inside the same ID",
+          "colour_reference_sha256": "6e088cbdeea1f88e8ff25b78d47b71cc0cea889183027829695b4104a6acca66"
+        },
+        {
+          "name": "plinth",
+          "finish": "RAL5015 plinth, colour of the adjacent wall",
+          "ral": "5015",
+          "map_type": "solid",
+          "geometry_change": false,
+          "assignment": "UV regions / face groups inside the same ID",
+          "colour_reference_sha256": "323ca26ba0685dc32f8afb12b9218a76e51570c39301b5d6606171f7f9660ee0",
+          "note": "plain wall colour without joints; colour of the adjacent wall"
+        },
+        {
+          "name": "below_grade_drop",
+          "finish": "RAL5015 below-grade drop, colour of the adjacent wall",
+          "ral": "5015",
+          "map_type": "solid",
+          "geometry_change": false,
+          "assignment": "UV regions / face groups inside the same ID",
+          "colour_reference_sha256": "323ca26ba0685dc32f8afb12b9218a76e51570c39301b5d6606171f7f9660ee0",
+          "note": "plain wall colour without joints; perimeter drop below +-0.000 keeps the wall colour; no separate ID"
+        }
+      ],
+      "perimeter_drop_below_zero": {
+        "ral": "5015",
+        "separate_id": false,
+        "note": "plain wall colour without joints; perimeter drop below +-0.000 keeps the wall colour (no separate ID)"
+      }
+    },
+    {
+      "id": 2,
+      "slot": 2,
+      "source_material": "Material #2",
+      "triangles_main": 100,
+      "poly_faces_main": 50,
+      "triangles_glass": 0,
+      "area_main_m2": 18.757031060906957,
+      "area_glass_m2": 0,
+      "finish": "RAL5015 sandwich panels",
+      "map_type": "joints (KPP panel tile, same texel density/joint scale)",
+      "panel_joints": "KPP VPM panel texture with joints",
+      "panel_module": "KPP VPM cassette tile, same texel density and joint scale",
+      "quote": "New rule from Artem (2026-10-22, supersedes \"solid colour without joints\" for panels): ID2 blue sandwich panels (RAL 5015) use the KPP VPM panel texture WITH its joints (blue cassette tile(s) of maps_kpp T_Kpp_1_Diffuse/Normal_1.10xx, see C:/x/tec26-oks/census/kpp-recipe.md if present) at the SAME texel density and joint scale as KPP VPM, in VPM (diffuse+normal) and NPM (atlas, joints >= 1.5 px like make_npm_atlas.py). Joint phase starts at +-0.000; the perimeter drop below +-0.000 stays plain panel colour WITHOUT joints (underground). Geometry unchanged.",
+      "joint_phase_z": 0.0,
+      "kpp_tile_source": {
+        "finish": "Cassette_RAL5015",
+        "udim": 1007,
+        "diffuse": "maps_kpp/T_Kpp_1_Diffuse_1.1007",
+        "normal": "maps_kpp/T_Kpp_1_Normal_1.1007",
+        "note": "kpp-recipe.md was not present; blue cassette tile is Cassette_RAL5015 UDIM 1007"
+      },
+      "vpm": "diffuse+normal",
+      "npm": "atlas, joints >= 1.5 px like make_npm_atlas.py",
+      "texel_density": "same as KPP VPM",
+      "joint_scale": "same as KPP VPM",
+      "below_grade": {
+        "ral": "5015",
+        "rule": "Perimeter drop below +-0.000 stays plain panel colour RAL 5015 without joints"
+      },
+      "approved": true,
+      "question": null,
+      "evidence": "DWG Model D4B (27521.4,-943.967,0); native facades PDF p1; ID2 wall geometry",
+      "ral": "5015",
+      "geometry_role": "Exterior wall panel faces around openings",
+      "geometry_evidence": "isolated-ids.png ID2; geometry-173/369.json; unchanged source ID",
+      "status": "approved-gate1",
+      "colour_reference_sha256": "323ca26ba0685dc32f8afb12b9218a76e51570c39301b5d6606171f7f9660ee0",
+      "colour_reference_path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1007.png"
+    },
+    {
+      "id": 3,
+      "slot": 3,
+      "source_material": "Material #3",
+      "triangles_main": 80,
+      "poly_faces_main": 40,
+      "triangles_glass": 0,
+      "area_main_m2": 1.901034464914308,
+      "area_glass_m2": 0,
+      "finish": "RAL9016 window frames",
+      "map_type": "solid",
+      "approved": true,
+      "question": null,
+      "evidence": "DWG Model 1C5A (27521.4,-4105.6,0); native facades PDF p1; ID3 outlines",
+      "ral": "9016",
+      "geometry_role": "Two window frame outlines",
+      "geometry_evidence": "isolated-ids.png ID3; geometry-173/369.json; unchanged source ID",
+      "status": "approved-gate1",
+      "colour_reference_sha256": "5a24af09b5c0da12873e6f7cdc170acc6b7b339815ce470dfee5336a81925eda",
+      "colour_reference_path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1009.png"
+    },
+    {
+      "id": 4,
+      "slot": 4,
+      "source_material": "Material #5",
+      "triangles_main": 66,
+      "poly_faces_main": 39,
+      "triangles_glass": 0,
+      "area_main_m2": 1.77165064257911,
+      "area_glass_m2": 0,
+      "finish": "RAL7004 door/porch",
+      "map_type": "metal",
+      "approved": true,
+      "question": null,
+      "evidence": "DWG Model D4D (27521.4,-2647.4,0); native facades PDF p1; ID4 door geometry",
+      "ral": "7004",
+      "geometry_role": "Door leaf including handle",
+      "geometry_evidence": "isolated-ids.png ID4; geometry-173/369.json; unchanged source ID",
+      "status": "approved-gate1",
+      "colour_reference_sha256": "6e088cbdeea1f88e8ff25b78d47b71cc0cea889183027829695b4104a6acca66",
+      "colour_reference_path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1001.png"
+    },
+    {
+      "id": 5,
+      "slot": 5,
+      "source_material": "Material #13",
+      "triangles_main": 24,
+      "poly_faces_main": 12,
+      "triangles_glass": 0,
+      "area_main_m2": 0.9405206678686933,
+      "area_glass_m2": 0,
+      "finish": "RAL9016 window reveals",
+      "map_type": "solid",
+      "approved": true,
+      "question": null,
+      "evidence": "Geometry shows window thickness behind ID3; extend window-frame legend 1C5A as explicit proposal, not separate drawing specification",
+      "ral": "9016",
+      "geometry_role": "Two window reveal/thickness strips",
+      "geometry_evidence": "isolated-ids.png ID5; geometry-173/369.json; unchanged source ID",
+      "status": "approved-gate1",
+      "colour_reference_sha256": "5a24af09b5c0da12873e6f7cdc170acc6b7b339815ce470dfee5336a81925eda",
+      "colour_reference_path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1009.png"
+    },
+    {
+      "id": 6,
+      "slot": 6,
+      "source_material": "Material #47",
+      "triangles_main": 0,
+      "poly_faces_main": 0,
+      "triangles_glass": 8,
+      "area_main_m2": 0,
+      "area_glass_m2": 3.216858372327969,
+      "finish": "M_Glass_01 (KPP)",
+      "map_type": "glass",
+      "approved": true,
+      "question": null,
+      "evidence": "Orchestrator rule 6 on this card; census handle 369 ID6; KPP glass convention; KPP NPM shader lines 152-157; swatch is opaque base-colour chip, not transparency simulation",
+      "ral": null,
+      "geometry_role": "Separate glazing planes, handle 369",
+      "geometry_evidence": "id-colours.png front/side glazing; geometry-369.json all 8 triangles use ID6",
+      "status": "approved-gate1",
+      "npm_material": "M_Glass_01",
+      "npm_alpha": 0.5,
+      "vpm_policy": "Separate glass; no maps; properties per docs/domain/materials.md and GeoJSON Glasses standard, not source ID6 = UDIM6",
+      "glass_reference": "jobs/KPP1/scripts/export_npm.py:152-157",
+      "npm_base_colour_linear": [
+        0.75,
+        0.82,
+        0.82
+      ],
+      "npm_roughness": 0.05,
+      "glass_reference_sha256": "265a0e0e0d89f1f82b24a19e8eaaf95cb2cf917a588e334039f4f5e84a8df90f"
+    },
+    {
+      "id": 7,
+      "slot": 7,
+      "source_material": "Material #48",
+      "triangles_main": 36,
+      "poly_faces_main": 18,
+      "triangles_glass": 0,
+      "area_main_m2": 27.345943736013954,
+      "area_glass_m2": 0,
+      "finish": "KPP Interior",
+      "map_type": "solid",
+      "approved": true,
+      "question": null,
+      "evidence": "Gate 1 «Принимаю» (Artem, 2026-10-22): interior walls, floor and ceiling use KPP Interior. No RAL hex is stored on this record.",
+      "ral": null,
+      "kpp_finish": "Interior",
+      "kpp_reference": "jobs/KPP1/materials.json",
+      "kpp_udim": 1011,
+      "geometry_role": "Interior walls, floor and ceiling shell",
+      "geometry_evidence": "isolated-ids.png ID7; geometry-173/369.json; unchanged source ID",
+      "status": "approved-gate1"
+    },
+    {
+      "id": 8,
+      "slot": 8,
+      "source_material": null,
+      "triangles_main": 0,
+      "poly_faces_main": 0,
+      "triangles_glass": 0,
+      "area_main_m2": 0,
+      "area_glass_m2": 0,
+      "finish": "empty",
+      "map_type": null,
+      "approved": false,
+      "question": null,
+      "evidence": "Census Material #7 subslot empty, zero faces; orchestrator rule 4: keep empty",
+      "ral": null,
+      "geometry_role": "Unused empty slot",
+      "geometry_evidence": "scene-census.json: empty subslot 8, zero main/glass faces",
+      "status": "empty"
+    },
+    {
+      "id": 9,
+      "slot": 9,
+      "source_material": null,
+      "triangles_main": 0,
+      "poly_faces_main": 0,
+      "triangles_glass": 0,
+      "area_main_m2": 0,
+      "area_glass_m2": 0,
+      "finish": "empty",
+      "map_type": null,
+      "approved": false,
+      "question": null,
+      "evidence": "Census Material #7 subslot empty, zero faces; orchestrator rule 4: keep empty",
+      "ral": null,
+      "geometry_role": "Unused empty slot",
+      "geometry_evidence": "scene-census.json: empty subslot 9, zero main/glass faces",
+      "status": "empty"
+    },
+    {
+      "id": 10,
+      "slot": 10,
+      "source_material": null,
+      "triangles_main": 0,
+      "poly_faces_main": 0,
+      "triangles_glass": 0,
+      "area_main_m2": 0,
+      "area_glass_m2": 0,
+      "finish": "empty",
+      "map_type": null,
+      "approved": false,
+      "question": null,
+      "evidence": "Census Material #7 subslot empty, zero faces; orchestrator rule 4: keep empty",
+      "ral": null,
+      "geometry_role": "Unused empty slot",
+      "geometry_evidence": "scene-census.json: empty subslot 10, zero main/glass faces",
+      "status": "empty"
+    }
+  ],
+  "kpp_colour_references": [
+    {
+      "ral": "5015",
+      "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1007.png",
+      "sha256": "323ca26ba0685dc32f8afb12b9218a76e51570c39301b5d6606171f7f9660ee0",
+      "modal_rgb": [
+        34,
+        113,
+        179
+      ],
+      "modal_pixel_count": 2430149,
+      "note": "Exact KPP source tile; swatch uses an existing modal pixel, no RAL conversion"
+    },
+    {
+      "ral": "7004",
+      "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1001.png",
+      "sha256": "6e088cbdeea1f88e8ff25b78d47b71cc0cea889183027829695b4104a6acca66",
+      "modal_rgb": [
+        150,
+        153,
+        146
+      ],
+      "modal_pixel_count": 1700867,
+      "note": "Exact KPP source tile; swatch uses an existing modal pixel, no RAL conversion"
+    },
+    {
+      "ral": "9016",
+      "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/maps_kpp/T_Kpp_1_Diffuse_1.1009.png",
+      "sha256": "5a24af09b5c0da12873e6f7cdc170acc6b7b339815ce470dfee5336a81925eda",
+      "modal_rgb": [
+        246,
+        246,
+        246
+      ],
+      "modal_pixel_count": 65536,
+      "note": "Exact KPP source tile; swatch uses an existing modal pixel, no RAL conversion"
+    }
+  ],
+  "files": [
+    {
+      "path": "C:/x/tec26-oks/census/oks.json",
+      "sha256": "a99de19f1d30633eaab9c52ac44f253ed6ea97e03358755ff2a77458f0f54f2f"
+    },
+    {
+      "path": "C:/x/tec26-oks/AC09/drawings-v001/entities.lsp",
+      "sha256": "b9259ffcc82e4cadc5f311a4a88e52ad4d2f0c0c048c319d37ce6f7e2cb4e2d6"
+    },
+    {
+      "path": "C:/x/tec26-oks/AC09/drawings-v001/ac09.dwg",
+      "sha256": "e4adf48e7ac6fed2cc7efd8d512e34048c281e259f160d51dacb9aefe608ddf0"
+    },
+    {
+      "path": "C:/x/tec26-oks/max-readback-v002/geometry-173.json",
+      "sha256": "ce6fd49309266e1b7f3ff22ab529d89fcdbdd42bb941c0bfa333ae87af387c75"
+    },
+    {
+      "path": "C:/x/tec26-oks/max-readback-v002/geometry-342.json",
+      "sha256": "b5aacdf72ad711bbf6f38c79bdf723ff94fc7b87715ba1fba778aa2cd2143ffd"
+    },
+    {
+      "path": "C:/x/tec26-oks/max-readback-v002/geometry-369.json",
+      "sha256": "c2c54938c8f97573bcc307d5a1499939307784c6db06b1dd46bfae1814565abd"
+    }
+  ],
+  "contact_sheet": "G:/Мой диск/AGR-evidence/tec26-oks/AC09/gate1-v002/contact-sheet.png",
+  "evidence_manifest_sha256": "63b4a2fe2aeaf5001e17e3dc5619a39332d358d3deb23ffa088033faabb23c48",
+  "open_items": [],
+  "empty_slot_list": [
+    {
+      "id": 8,
+      "reason": "Census Material #7 subslot empty, zero faces; orchestrator rule 4: keep empty"
+    },
+    {
+      "id": 9,
+      "reason": "Census Material #7 subslot empty, zero faces; orchestrator rule 4: keep empty"
+    },
+    {
+      "id": 10,
+      "reason": "Census Material #7 subslot empty, zero faces; orchestrator rule 4: keep empty"
+    }
+  ],
+  "resolved_items": [
+    {
+      "status": "resolved",
+      "item": "ID2 RAL5015, ID3 RAL9016, ID4 RAL7004, ID5 RAL9016 reveals, ID6 KPP glass",
+      "decision": "«Принимаю» (Artem, 2026-10-22, Gate 1 answer). ID2 = RAL 5015 KPP blue cassette tile with joints (same texel density and joint scale as KPP VPM). ID3 = RAL 9016 frames. ID4 = RAL 7004 door/porch, KPP grey. ID5 = RAL 9016 window reveals. ID6 = M_Glass_01, NPM alpha 0.5. Amended 2026-10-22: joints on the panels; phase z=0.000."
+    },
+    {
+      "status": "resolved",
+      "item": "ID1 mixed roof, frame, plinth and below-zero faces",
+      "decision": "«Принимаю» (Artem, 2026-10-22, Gate 1 answer). Split by UV regions / face groups inside ID1, no geometry change. Roof = RAL 7004 (not 5015). Frame = RAL 7004. Plinth and below-grade drop = plain wall colour RAL 5015 without joints. Perimeter drop below +-0.000 keeps that plain wall colour and has no separate ID."
+    },
+    {
+      "status": "resolved",
+      "item": "ID7 interior walls, floor and ceiling",
+      "decision": "«Принимаю» (Artem, 2026-10-22, Gate 1 answer). ID7 = KPP Interior (jobs/KPP1/materials.json). No hex invented on this record."
+    },
+    {
+      "status": "resolved",
+      "item": "Panel module and joints",
+      "decision": "New rule from Artem (2026-10-22, supersedes \"solid colour without joints\" for panels): ID2 uses the KPP VPM panel texture with its joints at the same texel density and joint scale. Joint phase z=0.000. Below +-0.000 the perimeter drop is plain RAL 5015 without joints. Geometry unchanged."
+    }
+  ],
+  "non_blocking": [
+    {
+      "status": "non-blocking",
+      "item": "roof elevation +2.330 vs corrected",
+      "note": "Drawing note 36B1 mentions former +2.330; 36B0 says corrected. Informational conflict only; scene geometry stays unchanged."
+    },
+    {
+      "status": "non-blocking",
+      "item": "sandwich 120 vs 150 mm",
+      "note": "Thickness conflict is recorded and does not assign a finish or change geometry. Recovered sheet note FFD still says a 100 mm three-layer sandwich; 120 mm vs 150 mm is not resolved here."
+    }
+  ],
+  "orchestrator_rules_applied": {
+    "revision": "R1 when present; AC09 has only base DWG, no R1/PDF in its directory",
+    "layer": "009 accepted per census handles 173/342/369",
+    "dimensions": "Final scene geometry unchanged; roof correction note is informational",
+    "empty_slots": [
+      8,
+      9,
+      10
+    ],
+    "glass": "KPP M_Glass_01, NPM alpha=0.5; VPM per standard",
+    "panel_module": "KPP VPM cassette tile, same texel density and joint scale; phase z=0.000; below-grade plain RAL 5015"
+  },
+  "native_drawing_evidence": {
+    "facades": {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC09/gate1-v002/ac09-facades.pdf",
+      "pages": 1,
+      "sha256": "bbd9bb58fdf9654080a45f9894deb3cc213da187737cff4217efb8ce1b6c4fc4",
+      "limitation": "AutoCAD font substitution warnings; native geometry and recovered text cross-checked"
+    },
+    "sheet2": {
+      "path": "G:/Мой диск/AGR-evidence/tec26-oks/AC09/gate1-v002/ac09-sheet2.pdf",
+      "pages": 1,
+      "sha256": "d9ee6b0c3385d2dd9af0973679c3ce1df48e33e36176497604a5f4f5a48ed8b7",
+      "limitation": "AutoCAD font substitution warnings; native geometry and recovered text cross-checked"
+    }
+  },
+  "id_colour_render": "G:/Мой диск/AGR-evidence/tec26-oks/AC09/gate1-v002/id-colours.png",
+  "isolated_id_render": "G:/Мой диск/AGR-evidence/tec26-oks/AC09/gate1-v002/isolated-ids.png",
+  "source_dwg_sha256": "feb22366bd7270f6912de797d9ffc0cc075d451cb154e3aaa1deaea96c88a5b5",
+  "working_copy_note": "Earlier DXFOUT updated the disposable copy (hash listed in files); original hash is distinct and never edited.",
+  "pristine_copy": {
+    "path": "C:/x/tec26-oks/AC09/drawings-v002/ac09.dwg",
+    "sha256": "feb22366bd7270f6912de797d9ffc0cc075d451cb154e3aaa1deaea96c88a5b5",
+    "manifest": "C:/x/tec26-oks/AC09/drawings-v002/SHA256SUMS.txt"
+  }
+}

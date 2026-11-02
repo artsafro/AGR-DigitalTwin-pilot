@@ -1,0 +1,121 @@
+{
+ "dump": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_e9cc2568\\jobs\\TEC26-OKS\\AC08\\max-dump-008.json",
+ "spec": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_e9cc2568\\jobs\\TEC26-OKS\\AC08\\vpm_textures.json",
+ "blend": "C:\\x\\tec26-oks\\AC08\\pilot-v007\\build\\Nku_1_VPM_master.blend",
+ "source": {
+  "name": "АС.08",
+  "vertices": 193,
+  "polygons": 180
+ },
+ "master_faces": 199,
+ "non_quads": 12,
+ "ring_cuts": [
+  {
+   "axis": 0,
+   "X": 33.423448944091795,
+   "ring_faces": 19,
+   "source_faces": [
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    71,
+    72,
+    84,
+    91,
+    101,
+    108,
+    117,
+    120,
+    166,
+    176
+   ],
+   "new_vertices": 20,
+   "planned_for": 34,
+   "finish": "PanelVJ_RAL5015",
+   "u_joint_m": -2.4
+  }
+ ],
+ "cut_vertices_added": 20,
+ "master_tris": 386,
+ "max_edge_m": 2.4588,
+ "faces_per_finish": {
+  "PanelVJ_RAL5015": 19,
+  "Panel_RAL5015": 18,
+  "Frame_RAL7004": 124,
+  "Door_RAL7004": 38
+ },
+ "uv_qa": {
+  "Frame_RAL7004": {
+   "udim": 1003,
+   "faces": 124,
+   "overflow": 0,
+   "min_margin_px": 12.8
+  },
+  "PanelVJ_RAL5015": {
+   "udim": 1001,
+   "faces": 19,
+   "overflow": 0,
+   "min_margin_px": 113.1
+  },
+  "Door_RAL7004": {
+   "udim": 1004,
+   "faces": 38,
+   "overflow": 0,
+   "min_margin_px": 12.8
+  },
+  "Panel_RAL5015": {
+   "udim": 1002,
+   "faces": 18,
+   "overflow": 0,
+   "min_margin_px": 12.8
+  }
+ },
+ "density_px_per_m": {
+  "PanelVJ_RAL5015": [
+   1000,
+   1000
+  ]
+ },
+ "ucx": [
+  {
+   "source": "Colizii_044",
+   "name": "UCX_SM_Nku_1_Main_001",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  }
+ ],
+ "perimeter_drop": {
+  "x-": {
+   "length_m": 2.438,
+   "covered_m": 2.438,
+   "ok": true
+  },
+  "x+": {
+   "length_m": 2.438,
+   "covered_m": 2.438,
+   "ok": true
+  },
+  "y-": {
+   "length_m": 6.0588,
+   "covered_m": 6.0588,
+   "ok": true
+  },
+  "y+": {
+   "length_m": 6.0588,
+   "covered_m": 6.0588,
+   "ok": true
+  }
+ }
+}

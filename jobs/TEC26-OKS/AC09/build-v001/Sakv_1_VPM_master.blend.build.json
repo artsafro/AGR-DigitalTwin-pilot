@@ -1,0 +1,245 @@
+{
+ "dump": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_791b4d73\\jobs\\TEC26-OKS\\AC09\\max-dump-009.json",
+ "spec": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_791b4d73\\jobs\\TEC26-OKS\\AC09\\vpm_textures.json",
+ "blend": "C:\\x\\tec26-oks\\AC09\\build-v001\\build\\Sakv_1_VPM_master.blend",
+ "source": {
+  "name": "АС.09",
+  "vertices": 369,
+  "polygons": 347
+ },
+ "master_faces": 347,
+ "non_quads": 12,
+ "ring_cuts": [],
+ "cut_vertices_added": 0,
+ "master_tris": 682,
+ "max_edge_m": 2.5191,
+ "faces_per_finish": {
+  "Panel1001_RAL5015": 12,
+  "Panel1002_RAL5015": 16,
+  "Plinth_RAL7004": 22,
+  "Frame_RAL5015": 166,
+  "Door_RAL7004": 39,
+  "Frame_RAL9016": 52,
+  "Interior": 18,
+  "Panel1008_RAL5015": 12,
+  "Panel1009_RAL5015": 10
+ },
+ "uv_qa": {
+  "Frame_RAL5015": {
+   "udim": 1004,
+   "faces": 166,
+   "overflow": 0,
+   "min_margin_px": 12.8
+  },
+  "Door_RAL7004": {
+   "udim": 1005,
+   "faces": 39,
+   "overflow": 0,
+   "min_margin_px": 12.8
+  },
+  "Panel1002_RAL5015": {
+   "udim": 1002,
+   "faces": 16,
+   "overflow": 0,
+   "min_margin_px": 60.5
+  },
+  "Panel1001_RAL5015": {
+   "udim": 1001,
+   "faces": 12,
+   "overflow": 0,
+   "min_margin_px": 58.7
+  },
+  "Panel1008_RAL5015": {
+   "udim": 1008,
+   "faces": 12,
+   "overflow": 0,
+   "min_margin_px": 176.3
+  },
+  "Panel1009_RAL5015": {
+   "udim": 1009,
+   "faces": 10,
+   "overflow": 0,
+   "min_margin_px": 176.3
+  },
+  "Frame_RAL9016": {
+   "udim": 1006,
+   "faces": 52,
+   "overflow": 0,
+   "min_margin_px": 12.8
+  },
+  "Plinth_RAL7004": {
+   "udim": 1003,
+   "faces": 22,
+   "overflow": 0,
+   "min_margin_px": 12.8
+  },
+  "Interior": {
+   "udim": 1007,
+   "faces": 18,
+   "overflow": 0,
+   "min_margin_px": 12.8
+  }
+ },
+ "density_px_per_m": {
+  "Panel1002_RAL5015": [
+   1000,
+   1000
+  ],
+  "Panel1001_RAL5015": [
+   1000,
+   1000
+  ],
+  "Panel1008_RAL5015": [
+   1000,
+   1000
+  ],
+  "Panel1009_RAL5015": [
+   1000,
+   1000
+  ]
+ },
+ "ucx": [
+  {
+   "source": "Colizii_043",
+   "name": "UCX_SM_Sakv_1_Main_001",
+   "verts": 8,
+   "faces": 6,
+   "tris": 12,
+   "closed": true,
+   "convex": true,
+   "normals_outward": true,
+   "uv_layers": 0,
+   "materials": 0
+  }
+ ],
+ "perimeter_drop": {
+  "x-": {
+   "length_m": 3.0004,
+   "covered_m": 3.0003,
+   "ok": true
+  },
+  "x+": {
+   "length_m": 3.0004,
+   "covered_m": 3.0003,
+   "ok": true
+  },
+  "y-": {
+   "length_m": 2.45,
+   "covered_m": 2.45,
+   "ok": true
+  },
+  "y+": {
+   "length_m": 2.45,
+   "covered_m": 2.45,
+   "ok": true
+  }
+ },
+ "facade_fields": {
+  "2-1": {
+   "normal": "+x",
+   "finish": "Panel1009_RAL5015",
+   "faces": 10,
+   "axis": "y",
+   "field_lo": -1.291516,
+   "field_hi": 1.506621,
+   "field_m": 2.798137,
+   "ribs": 14,
+   "pitch_m": 0.199867,
+   "joints_world": [
+    -1.091649,
+    -0.891782,
+    -0.691916,
+    -0.492049,
+    -0.292182,
+    -0.092315,
+    0.107552,
+    0.307419,
+    0.507286,
+    0.707153,
+    0.90702,
+    1.106887,
+    1.306754
+   ]
+  },
+  "Б-А": {
+   "normal": "+y",
+   "finish": "Panel1002_RAL5015",
+   "faces": 16,
+   "axis": "x",
+   "field_lo": 39.427368,
+   "field_hi": 41.676189,
+   "field_m": 2.248821,
+   "ribs": 11,
+   "pitch_m": 0.204438,
+   "joints_world": [
+    39.631806,
+    39.836245,
+    40.040683,
+    40.245121,
+    40.44956,
+    40.653998,
+    40.858436,
+    41.062875,
+    41.267313,
+    41.471751
+   ]
+  },
+  "1-2": {
+   "normal": "-x",
+   "finish": "Panel1008_RAL5015",
+   "faces": 12,
+   "axis": "y",
+   "field_lo": -1.291516,
+   "field_hi": 1.506621,
+   "field_m": 2.798137,
+   "ribs": 14,
+   "pitch_m": 0.199867,
+   "joints_world": [
+    -1.091649,
+    -0.891782,
+    -0.691915,
+    -0.492048,
+    -0.292181,
+    -0.092315,
+    0.107552,
+    0.307419,
+    0.507286,
+    0.707153,
+    0.90702,
+    1.106887,
+    1.306754
+   ]
+  },
+  "А-Б": {
+   "normal": "-y",
+   "finish": "Panel1001_RAL5015",
+   "faces": 12,
+   "axis": "x",
+   "field_lo": 39.427368,
+   "field_hi": 41.676186,
+   "field_m": 2.248817,
+   "ribs": 12,
+   "pitch_m": 0.187401,
+   "joints_world": [
+    39.61477,
+    39.802171,
+    39.989573,
+    40.176974,
+    40.364375,
+    40.551777,
+    40.739178,
+    40.92658,
+    41.113981,
+    41.301383,
+    41.488784
+   ]
+  }
+ },
+ "glass": {
+  "source_handle": 369,
+  "source_id": 6,
+  "vertices": 16,
+  "polygons": 4,
+  "triangles": 8
+ }
+}

@@ -1,0 +1,67 @@
+{
+ "vpm_173": {
+  "geometry": {
+   "ok": true,
+   "missing_source_vertices": 0,
+   "new_vertices": 0,
+   "cuts_allowed": false,
+   "new_off_source_edges": 0,
+   "off_examples": []
+  },
+  "source_triangles": 682,
+  "delivered_triangles": 682,
+  "triangulated": true
+ },
+ "vpm_342": {
+  "geometry": {
+   "ok": true,
+   "missing_source_vertices": 0,
+   "new_vertices": 0,
+   "cuts_allowed": false,
+   "new_off_source_edges": 0,
+   "off_examples": []
+  },
+  "source_triangles": 12,
+  "delivered_triangles": 12,
+  "triangulated": true
+ },
+ "vpm_369": {
+  "geometry": {
+   "ok": true,
+   "missing_source_vertices": 0,
+   "new_vertices": 0,
+   "cuts_allowed": false,
+   "new_off_source_edges": 0,
+   "off_examples": []
+  },
+  "source_triangles": 8,
+  "delivered_triangles": 8,
+  "triangulated": true
+ },
+ "npm_173": {
+  "geometry": {
+   "ok": true,
+   "missing_source_vertices": 0,
+   "new_vertices": 0,
+   "cuts_allowed": false,
+   "new_off_source_edges": 0,
+   "off_examples": []
+  },
+  "source_triangles": 682,
+  "delivered_triangles": 682,
+  "triangulated": true
+ },
+ "npm_369": {
+  "geometry": {
+   "ok": true,
+   "missing_source_vertices": 0,
+   "new_vertices": 0,
+   "cuts_allowed": false,
+   "new_off_source_edges": 0,
+   "off_examples": []
+  },
+  "source_triangles": 8,
+  "delivered_triangles": 8,
+  "triangulated": true
+ }
+}

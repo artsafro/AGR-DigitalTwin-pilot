@@ -1,0 +1,79 @@
+{
+  "schema": "methods-benchmarks/1",
+  "note": "Fixed objects every methods-catalog variant runs on (docs/methods/README.md, #706). Model files are private and NOT committed: each source lists its local copy under C:/x/methods/src, its sha256 and how to fetch it. tools/methods/run_variant.py reads this file; a class not listed for an object is refused.",
+  "objects": [
+    {
+      "id": "kpp1",
+      "title": "TEC26 KPP-1 (bench-k01-kpp1), VPM package v005",
+      "job": "jobs/KPP1",
+      "classes": ["building-body", "windows-glazing", "ucx-collisions", "texturing-by-drawings", "sources"],
+      "source": {
+        "kind": "zip",
+        "local_path": "C:/x/methods/src/kpp1/SM_Kpp_1.zip",
+        "sha256": "d6e99e1db7442e0555e52e234f19263271a5f4a0a8888b25a76c8ca856c4f38e",
+        "fbx": "SM_Kpp_1.fbx",
+        "fbx_local_path": "C:/x/methods/src/kpp1/x/SM_Kpp_1.fbx",
+        "fbx_sha256": "20f64ed4d5dc5d34ac2a146a8c3bf860747b29b347b567539bbab5cb4f308398",
+        "fetch": "copy jobs/KPP1/outputs/package-vpm-v005/SM_Kpp_1.zip from the upstream worktree C:/Users/artsafro/AGR-DigitalTwin/.claude/worktrees/vpm-npm-revit-model-fc8a24 (gitignored outputs; fbx sha256 = jobs/KPP1/STATE.md v005)"
+      },
+      "facts": {"model_meshes": ["SM_Kpp_1_Main", "SM_Kpp_1_MainGlass"], "model_triangles": 24988, "delivered_ucx_pieces": 33, "source_origin": "Revit -> FBX (job scripts)"},
+      "reference_pictures": {}
+    },
+    {
+      "id": "ac08",
+      "title": "TEC26 AC.08 NKU-1, pilot v010 VPM",
+      "job": "jobs/TEC26-OKS/AC08",
+      "classes": ["building-body", "windows-glazing", "ucx-collisions", "texturing-by-drawings", "sources"],
+      "source": {
+        "kind": "zip",
+        "local_path": "C:/x/methods/src/ac08/SM_Nku_1.zip",
+        "sha256": "2fe983791566477e297aeefa09f04a1b7d176312c3fce1a8c9f1cf26138013bb",
+        "fbx": "SM_Nku_1.fbx",
+        "fbx_local_path": "C:/x/methods/src/ac08/x/SM_Nku_1.fbx",
+        "fbx_sha256": "ca4715a446db660d2c82766d4be8547fac954c4fab1363ef171bde4b99a4277b",
+        "fetch": "copy G:/Мой диск/AGR-evidence/559-tec26-oks-ac08-pilot-v010/SM_Nku_1.zip (SHA256SUMS.txt in the same folder)"
+      },
+      "facts": {"model_meshes": ["SM_Nku_1_Main"], "model_triangles": 386, "delivered_ucx_pieces": 1, "source_origin": "DWG drawings -> model (job scripts)"},
+      "reference_pictures": {
+        "east": {"local_path": "C:/x/methods/src/ac08/renders/vpm_east.png", "sha256": "4e723cfc0d57ca48942b7513baaf5afd38358ff2c51b4dad92cb8b2ee0dad549", "fetch": "559-tec26-oks-ac08-pilot-v010/renders/vpm_east.png", "camera": "renders.json in the same folder (sha256 b9929d3e69b59ece98cfdc97fb747df6dd48cb4cd9689ddc11a3790017687d6b)"},
+        "north": {"local_path": "C:/x/methods/src/ac08/renders/vpm_north.png", "sha256": "c89060df91018d20460b26fc23afe1eb1ecb81708bea2265c76c82426d09893f", "fetch": "559-tec26-oks-ac08-pilot-v010/renders/vpm_north.png", "camera": "renders.json"},
+        "south": {"local_path": "C:/x/methods/src/ac08/renders/vpm_south.png", "sha256": "e3517c1bfaefddde4245201a41fa42f1b1c483b85a9483729c16a1eadca5ae38", "fetch": "559-tec26-oks-ac08-pilot-v010/renders/vpm_south.png", "camera": "renders.json"},
+        "west": {"local_path": "C:/x/methods/src/ac08/renders/vpm_west.png", "sha256": "3bcc30409b358227a181d8fad77f1d8b579cf604a7f41dd63cec59a9d19b93ba", "fetch": "559-tec26-oks-ac08-pilot-v010/renders/vpm_west.png", "camera": "renders.json"}
+      }
+    },
+    {
+      "id": "tow02",
+      "title": "Vyatskaya 47-49 TOW02, export-v005 Main",
+      "job": "jobs/vyatskaya-tow02",
+      "classes": ["building-body", "windows-glazing", "ucx-collisions", "texturing-by-drawings", "sources"],
+      "source": {
+        "kind": "fbx",
+        "local_path": "C:/x/methods/src/tow02/SM_Vyatskaya_Vl_47_49_013_Main.fbx",
+        "sha256": "ff8994dc4b7c05560eedd2b5af0827c03a919ba513b71ef8f60d2788fe28080a",
+        "output_name": "SM_Vyatskaya_Vl_47_49_013.fbx",
+        "fetch": "copy C:/Users/artsafro/.AGR-DigitalTwin_pilot/jobs/vyatskaya-tow02/outputs/export-v005/SM_Vyatskaya_Vl_47_49_013_Main.fbx (jobs/vyatskaya-tow02/STATE.md export-v005); textures from the .fbm folder next to it",
+        "textures": [
+          {"local_path": "C:/x/methods/src/tow02/textures/T_Vyatskaya_Vl_47_49_013_Main_d_1.png", "sha256": "ccc0a0c219c0de9ca0a64650b25a8dc62cdb52c51c0a605abf10a2baa3fba326"},
+          {"local_path": "C:/x/methods/src/tow02/textures/T_Vyatskaya_Vl_47_49_013_Main_m_1.png", "sha256": "3d7c8d12ec023509682b78056632892c73e333b0e6f1a73dbaf3a54948134e5b"},
+          {"local_path": "C:/x/methods/src/tow02/textures/T_Vyatskaya_Vl_47_49_013_Main_r_1.png", "sha256": "487377f7791c6b42c87b42257c4c94ddcd3b52d2fe2400e34772e3ed5f566305"}
+        ]
+      },
+      "facts": {"model_meshes": ["SM_Vyatskaya_Vl_47_49_013_Main"], "model_triangles": 70678, "delivered_ucx_pieces": 0, "source_origin": "supplied FBX + drawings, rebuilt (job scripts)"},
+      "reference_pictures": {}
+    },
+    {
+      "id": "vatutino-ground",
+      "title": "Vatutino site Ground v014 (VPM, the whole Ground FBX is the slice)",
+      "job": "jobs/VATUTINO-SITE",
+      "classes": ["ground-terrain", "ucx-collisions", "texturing-by-drawings"],
+      "source": {
+        "kind": "fbx",
+        "local_path": "C:/x/methods/src/vatutino-ground/SM_Vatutino_Ground.fbx",
+        "sha256": "a41266757fe39958cae7a40a765b628aa7cbfeb74de48d3c82efc297b9cf75f1",
+        "fetch": "copy C:/x/t_d94665f2/ground_v014/vpm/SM_Vatutino_Ground.fbx (jobs/VATUTINO-SITE/ground-build-v014.md lists this sha256)"
+      },
+      "facts": {"source_origin": "site plan -> Ground builder (jobs/VATUTINO-SITE/build_ground.py)", "ucx_target": "Ground (not run in the first ucx-collisions round: its variants are Main-only)"},
+      "reference_pictures": {}
+    }
+  ]
+}

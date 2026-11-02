@@ -17,9 +17,9 @@ Frames: the user's 013 = ours + translation (4951.864, 14903.346, 165.443) m; 92
 | Balcony glass railings rebuilt | 37 units, z 11-66.6 | shell 20 mm -> 8 mm off the coping, 1 333 -> 3 956 tris | yes |
 | Roof / terrace glass railings moved | z 69.4-77.6 | ~77 m2, 30-110 mm along the normal | yes (railings) |
 | Colours | coping 283 m2, roof 27 m2, band199 | textures pixel-identical; UV moved to a dark atlas area outside every layout rect (163 -> 48), 3.34 px/m | yes (UV, colours) |
-| Fins sunk | all 26, bottoms z 0 -> -0.808 | 26 m2 bottom caps gone, 124 m2 new | no - for the relief, ~1 m from now on [D169] |
+| Fins sunk | all 26, bottoms z 0 -> -0.808 | 26 m2 bottom caps gone, 124 m2 new | no - for the relief, ~1 m from now on [D182] |
 | Louvre bottom row raised | z 6.900 -> 6.932 | 138 tris; removes the 16 louvre/soffit contacts | no (overlap fix) |
-| Body wall quads removed | z 51.8-57.8 | 9 quads, user surface 153 mm behind | no - the user squared small angle deviations to ~90 deg [D170]; that this is the same wall is the user's reading, not measured |
+| Body wall quads removed | z 51.8-57.8 | 9 quads, user surface 153 mm behind | no - the user squared small angle deviations to ~90 deg [D183]; that this is the same wall is the user's reading, not measured |
 | Windows, body, soffit | - | body_glass max 0.03 mm, UV shift 0 | yes (kept) |
 
 ## 2. xView (3ds Max 2024, separate instance, `scripts/xview_review.ms`, Faces 5 mm / Vertices 2 mm)
@@ -59,9 +59,9 @@ a hit is real, a 0 is not a pass. `inv_xview` must be run on local coordinates (
 | Fix loop stopped twice (v019-v025, v026-v030) | Blender 121 -> 0 | **early stop** | stop criterion was a metric never calibrated against xView |
 | 304 T-vertices + 12 bow-tie point contacts left "by design" | allowed | **wrong conclusion** | contacts of separate parts in one joined mesh are xView overlaps; weld at export does not remove them. The 141 band/glass pairs all appear at build-v017 (`clean_glass`, §7 D); the 12 bow-tie corners (user decision 2026-10-21: not welded) moved 3 mm (`skip_point_contacts`, sized against the 2 mm vertex tolerance, not the 5 mm face one) only add hits to 11 of those pairs |
 | Balcony railing shell 20 mm off, 4 mm from baskets | 0 | wrong tool | same as row 1 (4-12 mm gaps, contact rule) |
-| Coping / roof colour light instead of dark | - | **wrong context** | the atlas mapping did not check the previous iteration of the object or the source colour; copings are dark there [D171] |
-| Fins ending at z 0 | - | wrong context | ground-reaching elements go ~1 m below ground for the relief [D169]; not known to the builder |
-| Small wall angle deviations | - | wrong conclusion | measured angles kept as measured instead of squared to ~90 deg [D170] |
+| Coping / roof colour light instead of dark | - | **wrong context** | the atlas mapping did not check the previous iteration of the object or the source colour; copings are dark there [D184] |
+| Fins ending at z 0 | - | wrong context | ground-reaching elements go ~1 m below ground for the relief [D182]; not known to the builder |
+| Small wall angle deviations | - | wrong conclusion | measured angles kept as measured instead of squared to ~90 deg [D183] |
 
 ## 5. Time (`time/TIME.md`, estimates)
 
@@ -107,10 +107,10 @@ at build-v013 (A, B) and at F13 (B ends).
 
 ## 9. Answers of the user (2026-10-21)
 
-1. Fins sunk: "Опуск был под рельеф, лучше на метр опускать" -> [D169], ~1 m below ground for elements that reach it.
+1. Fins sunk: "Опуск был под рельеф, лучше на метр опускать" -> [D182], ~1 m below ground for elements that reach it.
 2. Removed body quads: "наверху ты сделал небольшие отклонения я их фиксил чтобы были почти под 90 градусов, если я
-   тебя про ту стену понял" -> [D170]. Whether the 51.8-57.8 quads are that wall is not measured.
-3. Dark coping / roof: "это цвет по прошлой модели ... в исходнике кажется тоже там были отливы темные" -> [D171].
+   тебя про ту стену понял" -> [D183]. Whether the 51.8-57.8 quads are that wall is not measured.
+3. Dark coping / roof: "это цвет по прошлой модели ... в исходнике кажется тоже там были отливы темные" -> [D184].
 
 ## 10. Follow-up issues (created 2026-10-21, `ready-for-agent`)
 

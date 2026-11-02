@@ -1,0 +1,46 @@
+{
+  "tests_first_commit": "3d393ce",
+  "previous_implementation": "4723827",
+  "red": {
+    "cases": 48,
+    "passed": 34,
+    "failed": 14,
+    "native_exit": 4294967166
+  },
+  "green": {
+    "2024": {
+      "cases": 120,
+      "passed": 120,
+      "native_exit": 0,
+      "seconds": 37.1,
+      "warnings": []
+    },
+    "2026": {
+      "cases": 120,
+      "passed": 120,
+      "native_exit": 4294967166,
+      "seconds": 37.8,
+      "warnings": [
+        "25.10.2026 23:55:43;  MAXScript Auto-load Script Error Exception: -- Runtime error: .NET runtime exception: Common Language Runtime detected an invalid program.; Error occurred in anonymous codeblock; filename: C:\\Users\\artsafro\\AppData\\Local\\Autodesk\\3dsMax\\2026 - 64bit\\ENU\\scripts\\startup\\polyunwr"
+      ]
+    }
+  },
+  "mzp_sha256": "84122ef47e61e7d5ce380218e389bedc6517c3bb454ac0e9e94145e5538253b8",
+  "storage": "G:\\Мой диск\\AGR-evidence\\707-agr-tools-max\\t_17f45574-v002",
+  "repairs": [
+    {
+      "attempt": 1,
+      "result": "48/48 original scale matrix; source copies detached, Reset XForm and collapse only temporary nodes"
+    },
+    {
+      "attempt": 2,
+      "error": "expanded nominal 5 mm transforms may round to 5.00000035 mm and falsely declare clean",
+      "result": "120/120 each version; native 5 mm findings unchanged, separate ambiguity-only probe rejects additional faces; never supplies findings"
+    }
+  ],
+  "environment": [
+    "initial AGR_TEST_OUTPUT MSYS /c path rejected by Max installation; native C:/ path fixed it"
+  ],
+  "python_tests": "31 passed in 0.26s; affected tests only per rule 49",
+  "full_suite": "not repeated; first-review receipt remains at 4723827 (15201 passed)"
+}

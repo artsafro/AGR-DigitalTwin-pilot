@@ -144,10 +144,10 @@ Plan: `docs/HARNESS_PLAN.md` §15 (user decision 2026-10-11 [D049]). One PR each
   alpha-plane offset 0.003-0.01 m; Light FBX rules (point/spot, `_Omni`/`_Spot`, numbering).
 - **Q7** Convert accepted GLB RGBA NPM atlases to RGB + `_o_` opacity (conflict #21); fix the 3ds Max
   placeholder tool to write 128x128 for NPM (conflict #5). Owner: Claude (DCC), Codex (tool).
-- **Q8** NPM texture rules for validation need refinement [D172]: the texture findings on the TOW02 hand finish
+- **Q8** NPM texture rules for validation need refinement [D185]: the texture findings on the TOW02 hand finish
   (a shared set of mirrored twin OKS named after the twin, 014 vs 013 [D156]; own-colour padding under 8 px) were
   not accepted; settle the rule with Artem before the validator fails on it
-  (`docs/deliveries/vyatskaya-tow02-npm-user-v05-2026-10-21.md`) [D172]. Owner: Claude (rules), Codex (validator).
+  (`docs/deliveries/vyatskaya-tow02-npm-user-v05-2026-10-21.md`) [D185]. Owner: Claude (rules), Codex (validator).
 
 ## Unreal and IFC
 
