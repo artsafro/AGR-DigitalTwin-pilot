@@ -37,6 +37,20 @@ def refuse_aliases(destinations, inputs) -> None:
                 raise Refused(f"destination {dst} aliases input {src}; nothing written")
 
 
+def guard_cli(inputs, outputs) -> None:
+    """Standalone writers (#727 review 1): refuse, before any side effect, an output or report that is (or
+    aliases: same resolved path, hard link, symlink) an input or another output, and an output that is a
+    symlink / hard link / not a regular file. Raises Refused; nothing is written."""
+    inputs, outputs = [Path(p) for p in inputs], [Path(p) for p in outputs]
+    refuse_aliases(outputs, inputs)
+    for i, d in enumerate(outputs):
+        for e in outputs[i + 1:]:
+            if same_file(d, e):
+                raise Refused(f"two outputs are the same file: {d} and {e}; nothing written")
+    for d in outputs:
+        check_target(d)
+
+
 def check_target(dst: Path) -> None:
     dst = Path(dst)
     if dst.is_symlink():

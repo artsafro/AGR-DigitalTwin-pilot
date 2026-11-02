@@ -9,7 +9,8 @@ Pattern: new-case: methods catalog metric runner (one comparable row per variant
 Row fields: wall time, triangles, objects, xView overlaps (shared 2 mm / 5 mm / 0.81 deg), UCX check (V010 +
 V012 names), texel (min / median px/m), file size, MatID (slot integrity), render-vs-reference SSIM (null
 without a reference picture or render), and the class metrics (ucx-collisions: model -> UCX fit; windows-glazing: glass objects, glass triangle
-share, frame depth; ground-terrain: vertical deviation from the benchmark's reference surface, holes, boundary, UV).
+share, frame depth; ground-terrain: vertical deviation from the benchmark's reference surface, holes, boundary, UV;
+building-body: source -> variant deviation, closed-shell share, triangles vs [D010]).
 ground-terrain reads the benchmark source FBX as the reference (sha256 checked) and both `<fbx>.placement.json`
 sidecars for the world frame; a missing reference or sidecar gives null figures with the reason.
 A metric that cannot be measured is null with a reason, never a made-up number.
@@ -191,6 +192,20 @@ def references(bench: dict) -> dict:
     return refs
 
 
+def source_readback(bench: dict) -> dict:
+    """Readback of the benchmark source FBX (building-body deviation), sha256-checked against benchmarks.json."""
+    src = bench["source"]
+    path, want = (Path(src["fbx_local_path"]), src["fbx_sha256"]) if src.get("fbx_local_path") else (
+        Path(src["local_path"]), src["sha256"])
+    if not path.is_file():
+        raise metrics.MetricError(f"benchmark source FBX missing at {path}")
+    if sha256(path) != want:
+        raise metrics.MetricError(f"benchmark source {path.name} sha256 differs from benchmarks.json")
+    from twinqa.scene import readback
+
+    return readback(path)
+
+
 def git_head() -> str | None:
     try:
         return subprocess.run(["git", "-C", str(ROOT), "rev-parse", "HEAD"], capture_output=True, text=True,
@@ -201,7 +216,8 @@ def git_head() -> str | None:
 
 def build_row(*, rb: dict, extra: dict | None, output: Path, bench: dict, cls: str, variant: str,
               wall: tuple, renders: dict, refs: dict, measure_s: float | None = None,
-              tile_sides: dict | None = None, ground_ref: dict | None = None) -> dict:
+              tile_sides: dict | None = None, ground_ref: dict | None = None,
+              source_rb: dict | None = None) -> dict:
     from twinqa.profiles import load_profiles
 
     if not rb.get("readback_ok"):
@@ -233,6 +249,8 @@ def build_row(*, rb: dict, extra: dict | None, output: Path, bench: dict, cls: s
         row["class_metrics"]["ground"] = metrics.ground_terrain(
             rb, extra, ground_ref["rb"], ground_ref["extra"], offset, ground_ref["offset"],
             offset_reason=off_reason, ref_reason=ground_ref["reason"])
+    if cls == "building-body":
+        row["class_metrics"]["body"] = metrics.building_body(rb, source_rb)
     row["measure_time_s"] = measure_s
     return row
 
@@ -265,13 +283,19 @@ def main(argv=None) -> int:
     ap.add_argument("--extra", type=Path, help="reuse an extra_readback_blender.py JSON of this output (tests)")
     ap.add_argument("--reference-readback", type=Path, help="ground-terrain: reuse a readback JSON of the reference")
     ap.add_argument("--reference-extra", type=Path, help="ground-terrain: reuse an extra readback JSON of the reference")
+    ap.add_argument("--source-readback", type=Path,
+                    help="reuse a fbx_readback.py JSON of the benchmark source (building-body deviation; tests)")
+    ap.add_argument("--synthetic", metavar="REASON",
+                    help="mark the row synthetic with this reason (required for building-body: no drawing-backed "
+                         "input exists yet, user decision 2026-11-02 [D187])")
     a = ap.parse_args(argv)
     try:
         if not a.output.is_file():
             raise Refused(f"no output file {a.output}")
         bench = load_benchmark(a.benchmarks, a.bench, a.cls)
         results = a.results or ROOT / "docs" / "methods" / a.cls / "results.jsonl"
-        inputs = [a.output, a.benchmarks] + [p for p in (a.variant_report, a.readback, a.extra) if p]
+        inputs = [a.output, a.benchmarks] + [p for p in (a.variant_report, a.readback, a.extra, a.source_readback) if p]
+        inputs += [Path(bench["source"][k]) for k in ("local_path", "fbx_local_path") if bench["source"].get(k)]
         renders = parse_renders(a.render)
         inputs += list(renders.values())
         inputs += [Path(r["local_path"]) for r in (bench.get("reference_pictures") or {}).values()]
@@ -286,6 +310,12 @@ def main(argv=None) -> int:
         wall = wall_time(a.variant_report, a.wall_time_s)
         built_from = variant_input(a.variant_report)
         methods_only = methods_only_block(a.variant_report, a.variant)
+        synthetic = None if a.synthetic is None else a.synthetic.strip()
+        if a.synthetic is not None and not synthetic:
+            raise Refused("--synthetic needs a non-blank reason")
+        if a.cls == "building-body" and not synthetic:
+            raise Refused("building-body rows must be marked --synthetic REASON: the body inputs are measured from "
+                          "the source mesh, no drawing-backed input exists yet [D187]")
     except (Refused, OSError, KeyError, json.JSONDecodeError) as exc:
         print(f"RUN_VARIANT refused: {exc}", file=sys.stderr)
         return 4
@@ -305,8 +335,13 @@ def main(argv=None) -> int:
             sides = metrics.package_tile_sides(tmp) if a.output.suffix.lower() == ".zip" else None
             gref = ground_reference(bench, a.reference_readback, a.reference_extra, Path(tmp)) \
                 if a.cls == "ground-terrain" else None
+            src_rb = None
+            if a.cls == "building-body":
+                src_rb = (json.loads(a.source_readback.read_text(encoding="utf-8")) if a.source_readback
+                          else source_readback(bench))
             row = build_row(rb=rb, extra=extra, output=a.output, bench=bench, cls=a.cls, variant=a.variant,
-                            wall=wall, renders=renders, refs=refs, tile_sides=sides, ground_ref=gref)
+                            wall=wall, renders=renders, refs=refs, tile_sides=sides, ground_ref=gref,
+                            source_rb=src_rb)
         if built_from is not None:
             row["input"] = built_from
         if methods_only is not None:
@@ -314,6 +349,8 @@ def main(argv=None) -> int:
         row["measure_time_s"] = round(time.perf_counter() - t0, 3)
         row["measured_at"] = dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
         row["git_commit"] = git_head()
+        if synthetic:
+            row["synthetic"], row["synthetic_reason"] = True, synthetic
         n = append_row(results, row)
     except (metrics.MetricError, OSError, RuntimeError, ValueError, KeyError, zipfile.BadZipFile) as exc:
         print(f"RUN_VARIANT error: {type(exc).__name__}: {exc}", file=sys.stderr)

@@ -1,0 +1,4 @@
+ac08 kernel-prisms driver_seconds=0.9 exit=0
+Blender 5.1.2 (hash ec6e62d40fa9 built 2026-05-19 01:37:34)
+BODY_BLENDER {"ok": true, "mode": "export-mesh", "blender": "5.1.2", "wall_time_s": 0.021, "triangles": 40, "kernel_s": 0.002}
+report: {"ok": true, "mode": "export-mesh", "blender": "5.1.2", "wall_time_s": 0.021, "triangles": 40, "kernel_s": 0.002}

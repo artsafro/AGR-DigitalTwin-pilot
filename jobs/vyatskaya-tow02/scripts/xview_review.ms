@@ -1,6 +1,7 @@
 -- TOW02 review (#514): xView Overlapping Faces 5 mm / Overlapping Vertices 2 mm on several models, full face lists.
--- Engine gap: EG6. Job-local twin of the shared `tools/qa/xview_dump.ms` (#380, not on this job's branch base): adds
--- .max loading, face centres per hit and the user's Mesh + Weld 2 mm mode; fold those into xview_dump.ms (R17).
+-- Historical job-local runner. Use tools/qa/xview_dump.ms (#528) for new runs: .max/.fbx,
+-- multiple models, full face/vertex details and plain/weld/weldpoly modes. This legacy body
+-- is retained for the #525 native regression harness; its four-field jobs format is not the shared format.
 -- Usage: 3dsmax.exe -U MAXScript xview_review.ms   (reads TOW02_XV_OUT; <out>/jobs.txt has lines label|path|node[|weld])
 -- path is .fbx (imported into a reset scene) or .max (loaded, never saved). node empty = largest mesh in the scene.
 -- weld: convert to Editable Mesh, weld at 2 mm, check the mesh (the user's pre-export step); weldpoly: same, then
