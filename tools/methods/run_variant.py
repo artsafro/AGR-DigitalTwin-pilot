@@ -214,6 +214,9 @@ def main(argv=None) -> int:
     ap.add_argument("--extra", type=Path, help="reuse an extra_readback_blender.py JSON of this output (tests)")
     ap.add_argument("--source-readback", type=Path,
                     help="reuse a fbx_readback.py JSON of the benchmark source (building-body deviation; tests)")
+    ap.add_argument("--synthetic", metavar="REASON",
+                    help="mark the row synthetic with this reason (required for building-body: no drawing-backed "
+                         "input exists yet, user decision 2026-11-02 [D186])")
     a = ap.parse_args(argv)
     try:
         if not a.output.is_file():
@@ -228,6 +231,12 @@ def main(argv=None) -> int:
         refuse_aliases([results], inputs)
         check_target(results)
         wall = wall_time(a.variant_report, a.wall_time_s)
+        synthetic = None if a.synthetic is None else a.synthetic.strip()
+        if a.synthetic is not None and not synthetic:
+            raise Refused("--synthetic needs a non-blank reason")
+        if a.cls == "building-body" and not synthetic:
+            raise Refused("building-body rows must be marked --synthetic REASON: the body inputs are measured from "
+                          "the source mesh, no drawing-backed input exists yet [D186]")
     except (Refused, OSError, KeyError, json.JSONDecodeError) as exc:
         print(f"RUN_VARIANT refused: {exc}", file=sys.stderr)
         return 4
@@ -254,6 +263,8 @@ def main(argv=None) -> int:
         row["measure_time_s"] = round(time.perf_counter() - t0, 3)
         row["measured_at"] = dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
         row["git_commit"] = git_head()
+        if synthetic:
+            row["synthetic"], row["synthetic_reason"] = True, synthetic
         n = append_row(results, row)
     except (metrics.MetricError, OSError, RuntimeError, ValueError, KeyError, zipfile.BadZipFile) as exc:
         print(f"RUN_VARIANT error: {type(exc).__name__}: {exc}", file=sys.stderr)

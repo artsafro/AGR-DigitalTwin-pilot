@@ -49,6 +49,21 @@ CLASS = "building-body"
 BASELINE = "source-as-is"
 VARIANTS = ("kernel-prisms", "blender-gn-union", "max-pymxs-cleanup")
 DEFAULT_BENCH = ("kpp1", "ac08", "tow02")
+_MESH_CONTOURS = ("plan contours and level heights measured from the source mesh, not from a drawing "
+                  "(no DWG plan in the benchmark set; user decision 2026-11-02 [D186])")
+_SYNTHETIC = {
+    BASELINE: "reference row of a table whose from-contour variants use " + _MESH_CONTOURS,
+    "kernel-prisms": _MESH_CONTOURS,
+    "blender-gn-union": _MESH_CONTOURS + "; no opening schedule, so no opening cut",
+    "max-pymxs-cleanup": "clean-up of the supplied FBX in a table whose from-contour variants use " + _MESH_CONTOURS,
+}
+
+
+def synthetic_reason(variant: str) -> str:
+    """The --synthetic reason every building-body row carries [D186]; an unknown variant is a KeyError."""
+    return _SYNTHETIC[variant]
+
+
 DCC_BATCH = Path.home() / "hermes_kanban" / "scripts" / "dcc_batch.py"
 
 
@@ -149,7 +164,8 @@ def main(argv=None) -> int:
         for stale in (out, rep, out.with_name("kernel_mesh.json"), out.with_name("source_copy.fbx")):
             stale.unlink(missing_ok=True)  # planned destinations only; preflight proved none is an input
         args = [sys.executable, str(HERE.parent / "run_variant.py"), str(out), "--bench", bid, "--class", CLASS,
-                "--variant", variant, "--results", str(a.results), "--benchmarks", str(a.benchmarks)]
+                "--variant", variant, "--results", str(a.results), "--benchmarks", str(a.benchmarks),
+                "--synthetic", synthetic_reason(variant)]
         if variant == BASELINE:
             shutil.copyfile(src, out)
             r = subprocess.run(args, capture_output=True, text=True, timeout=3600)

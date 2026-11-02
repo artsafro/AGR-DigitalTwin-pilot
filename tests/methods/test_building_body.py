@@ -99,7 +99,7 @@ def test_cli_writes_body_metrics_and_results_md_column(tmp_path):
     bench = bench_file(tmp_path, classes=("building-body",))
     args = cli_args(tmp_path, rb, {"ok": False}, benchmarks=bench, results=tmp_path / "results.jsonl")
     args[args.index("ucx-collisions")] = "building-body"
-    assert rv.main(args + ["--source-readback", str(tmp_path / "src.json")]) == 0
+    assert rv.main(args + ["--source-readback", str(tmp_path / "src.json"), "--synthetic", SYN]) == 0
     body = last_row(tmp_path / "results.jsonl")["class_metrics"]["body"]
     assert body["deviation_max_m"] == pytest.approx(0.2, abs=1e-6) and body["closed_shell_share"] == 1.0
     md = rmd.write(tmp_path / "results.jsonl").read_text(encoding="utf-8")
@@ -110,8 +110,62 @@ def test_cli_missing_source_fbx_is_an_error_and_appends_nothing(tmp_path):
     bench = bench_file(tmp_path, classes=("building-body",))  # source C:/synthetic/SM_Test.fbx does not exist
     args = cli_args(tmp_path, rb_of(cube()), {"ok": False}, benchmarks=bench, results=tmp_path / "results.jsonl")
     args[args.index("ucx-collisions")] = "building-body"
-    assert rv.main(args) == 2
+    assert rv.main(args + ["--synthetic", SYN]) == 2
     assert not (tmp_path / "results.jsonl").exists()
+
+
+SYN = "plan contours measured from the source mesh (synthetic drawing)"
+
+
+def _body_args(tmp_path):
+    (tmp_path / "src.json").write_text(json.dumps(rb_of(cube())), encoding="utf-8")
+    bench = bench_file(tmp_path, classes=("building-body",))
+    args = cli_args(tmp_path, rb_of(cube()), {"ok": False}, benchmarks=bench, results=tmp_path / "results.jsonl")
+    args[args.index("ucx-collisions")] = "building-body"
+    return args + ["--source-readback", str(tmp_path / "src.json")]
+
+
+@pytest.mark.parametrize("extra", [[], ["--synthetic", ""], ["--synthetic", "   "], ["--synthetic", "\t\n"]])
+def test_body_row_without_a_synthetic_marker_is_refused_and_appends_nothing(tmp_path, extra):
+    # user decision 2026-11-02 (option a): no drawing-backed body input exists yet, so every building-body row
+    # must say it is synthetic and why; a missing or blank reason is refused before anything is written
+    assert rv.main(_body_args(tmp_path) + extra) == 4
+    assert not (tmp_path / "results.jsonl").exists()
+
+
+def test_body_row_carries_the_synthetic_marker_and_results_md_lists_it(tmp_path):
+    assert rv.main(_body_args(tmp_path) + ["--synthetic", f"  {SYN} "]) == 0
+    row = last_row(tmp_path / "results.jsonl")
+    assert row["synthetic"] is True and row["synthetic_reason"] == SYN
+    md = rmd.write(tmp_path / "results.jsonl").read_text(encoding="utf-8")
+    assert f"- {SYN} (R1)" in md and "Synthetic inputs and why:" in md
+
+
+def test_other_classes_keep_their_row_shape_without_the_marker(tmp_path):
+    from tests.methods.test_methods_catalog import scene
+
+    rb, extra = scene()
+    assert rv.main(cli_args(tmp_path, rb, extra)) == 0
+    row = last_row(tmp_path / "results.jsonl")
+    assert "synthetic" not in row and "synthetic_reason" not in row
+    assert "Synthetic inputs" not in rmd.write(tmp_path / "results.jsonl").read_text(encoding="utf-8")
+
+
+def test_batch_marks_every_variant_synthetic_with_a_reason():
+    batch = _load_batch()
+    for v in (batch.BASELINE,) + batch.VARIANTS:
+        assert batch.synthetic_reason(v).strip(), v
+    with pytest.raises(KeyError):
+        batch.synthetic_reason("no-such-variant")
+
+
+def _load_batch():
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("body_batch_t", TOOLS / "body" / "run_benchmarks.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
 
 
 # ---- shared contour input + our kernel's prisms ---------------------------------------------------------------------
