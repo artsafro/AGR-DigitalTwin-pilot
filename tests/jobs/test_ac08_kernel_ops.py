@@ -234,3 +234,104 @@ def test_real_missing_part_is_not_accepted():
     c = K.compare_state(source, rep)
     knob = [r for r in c["candidate_parity"] if r["part"] == "AC08_knob"]
     assert not c["accepted"] and knob and not any(r["equal_within_tol"] for r in knob)
+
+
+# ---- review round 2 (PR #754): readback numbers are typed strictly, never coerced ----
+
+BAD_INDEX = [0.25, False, True, 1.0, "0", None, [0], float("nan")]
+BAD_NUMBER = [True, False, "1.5", None, [1.0], float("nan"), float("inf")]
+
+
+def _real_report():
+    source, _ = K.load_source()
+    payload, _ = K.export_payload(source)
+    return source, _report(payload)
+
+
+@pytest.mark.parametrize("bad", BAD_INDEX, ids=repr)
+def test_real_polygon_index_must_be_strict_int(bad):
+    """Witness: real AC08 body polygon 0 corner 0 -> 0.25 / False was coerced by int() and accepted 58/58."""
+    source, rep = _real_report()
+    body = next(m for m in rep["meshes"] if m["name"] == "AC08_body")
+    assert body["face_geometry"]["polygons"][0][0] == 0
+    body["face_geometry"]["polygons"][0][0] = bad
+    with pytest.raises(K.InputError, match=r"AC08_body.*polygon 0.*corner 0"):
+        K.compare_state(source, rep)
+
+
+def test_real_untouched_control_with_strict_types_is_accepted():
+    source, rep = _real_report()
+    assert K.compare_state(source, rep)["accepted"]
+
+
+@pytest.mark.parametrize("bad", BAD_NUMBER, ids=repr)
+@pytest.mark.parametrize("where", ["vertex", "uv"])
+def test_readback_numbers_must_be_strict_finite(where, bad):
+    source, rep = _real_report()
+    geo = next(m for m in rep["meshes"] if m["name"] == "AC08_body")["face_geometry"]
+    if where == "vertex":
+        geo["vertices"][0][1] = bad
+    else:
+        geo["polygon_uv"][0][0][1] = bad
+    with pytest.raises(K.InputError, match=r"AC08_body"):
+        K.compare_state(source, rep)
+
+
+@pytest.mark.parametrize("case", ["short_polygon", "polygon_not_list", "uv_corner_count", "vertex_arity",
+                                  "polygons_missing", "vertices_missing"])
+def test_readback_shape_fail_closed(case):
+    source, rep = _real_report()
+    geo = next(m for m in rep["meshes"] if m["name"] == "AC08_body")["face_geometry"]
+    if case == "short_polygon":
+        geo["polygons"][0] = geo["polygons"][0][:2]
+    elif case == "polygon_not_list":
+        geo["polygons"][0] = "0 1 2"
+    elif case == "uv_corner_count":
+        geo["polygon_uv"][0] = geo["polygon_uv"][0][:-1]
+    elif case == "vertex_arity":
+        geo["vertices"][0] = geo["vertices"][0][:2]
+    elif case == "polygons_missing":
+        del geo["polygons"]
+    else:
+        del geo["vertices"]
+    with pytest.raises(K.InputError, match="AC08_body"):
+        K.compare_state(source, rep)
+
+
+def test_combined_regressions_material_index_uv_missing_repeat(real_states):
+    """Round-1 and round-2 witnesses together: each alone is rejected, the control is accepted on repeat."""
+    source, rep = _real_report()
+    for _ in range(2):                                  # repeat: no state leaks between comparisons
+        assert K.compare_state(source, json.loads(json.dumps(rep)))["accepted"]
+    mixed = json.loads(json.dumps(rep))
+    body = next(m for m in mixed["meshes"] if m["name"] == "AC08_body")
+    body["face_geometry"]["polygon_material"][0] = "ID_02"
+    assert not K.compare_state(source, mixed)["accepted"]           # material mutation alone
+    body["face_geometry"]["polygons"][0][0] = False
+    with pytest.raises(K.InputError, match="corner 0"):            # + malformed index -> error wins
+        K.compare_state(source, mixed)
+    partial = json.loads(json.dumps(rep))
+    partial["meshes"] = [m for m in partial["meshes"] if m["name"] != "AC08_knob"]
+    assert not K.compare_state(source, partial)["accepted"]         # missing part
+    _, states = real_states
+    st = states[15]
+    payload, _ = K.export_payload(st)
+    assert not K.compare_state(st, _report(payload))["accepted"]    # S16 UV loss still fails
+
+
+NATIVE_S00 = Path("C:/x/ev_t_1483e1fa/v002/readback/S00_source.json")
+
+
+@pytest.mark.skipif(not NATIVE_S00.is_file(), reason="native v002 readback receipt is local evidence (Drive)")
+@pytest.mark.parametrize("bad", [None, 0.25, False])
+def test_native_s00_receipt_corner_mutation(bad):
+    """Reviewer's exact witness on the real Blender receipt; None = untouched control."""
+    source, _ = K.load_source()
+    rep = json.loads(NATIVE_S00.read_text(encoding="utf-8"))
+    if bad is None:
+        assert K.compare_state(source, rep)["accepted"]
+        return
+    body = next(m for m in rep["meshes"] if m["name"] == "AC08_body")
+    body["face_geometry"]["polygons"][0][0] = bad
+    with pytest.raises(K.InputError, match="corner 0"):
+        K.compare_state(source, rep)
