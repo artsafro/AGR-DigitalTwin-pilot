@@ -1174,6 +1174,45 @@ def test_every_rejected_prepare_invalidates_prior_success(tmp_path, bad):
         xp.check_run(out, ["a"])
 
 
+@pytest.mark.parametrize("bad_jobs", [[], None, {}, ()])
+@pytest.mark.parametrize("alias_done", [False, True])
+def test_empty_prepare_after_success_is_durable_and_preserves_inputs(tmp_path, bad_jobs, alias_done):
+    """A rejected invocation invalidates old success without unlinking input aliases."""
+    import subprocess
+    import sys
+
+    src = _job_file(tmp_path, "source.max", b"SCENE")
+    out, temp = tmp_path / "out", tmp_path / "temp"
+    _publish_success(xp, src, out, temp)
+    if alias_done:
+        # Keep a valid success even when its completion receipt becomes an input alias.
+        # Synthetic scene bytes deliberately equal the valid receipt; no real Max data.
+        src.write_bytes((out / "done.txt").read_bytes())
+        (out / "done.txt").unlink()
+        os.link(src, out / "done.txt")
+        assert xp.check_run(out, ["a"])["a"]["label"] == "a"
+    original = src.read_bytes()
+    receipt = (out / "done.txt").read_bytes()
+    for _ in range(2):
+        with pytest.raises(xp.DumpError, match="no inputs"):
+            xp.prepare_run(bad_jobs, out, temp)
+        assert src.read_bytes() == original
+        if alias_done:
+            assert (out / "done.txt").read_bytes() == receipt
+            assert os.path.samefile(src, out / "done.txt")
+        with pytest.raises(xp.DumpError):
+            xp.check_run(out, ["a"])
+        proc = subprocess.run(
+            [sys.executable, str(Path(xp.__file__)), "--check-run", str(out), "--labels", "a"],
+            capture_output=True, text=True,
+        )
+        assert proc.returncode == 2, proc.stdout + proc.stderr
+    if alias_done:
+        (out / "done.txt").unlink()  # Test-owned alias, not runner cleanup.
+    _publish_success(xp, src, out, temp, nonce="def67890")
+    assert src.read_bytes() == original
+
+
 def test_unknown_key_after_success_keeps_hardlinked_done_input(tmp_path):
     """Control: done.txt hardlinked to the input -> refuse, input bytes survive, nothing deleted."""
     src = _job_file(tmp_path, "source.max", b"SCENE")
