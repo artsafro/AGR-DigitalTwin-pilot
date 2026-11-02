@@ -128,6 +128,8 @@ def _png_pairs(tmp_path):
                 r, g, bl = ref[i][j]
                 if name == "east":
                     ren[i][j] = [r, 255 - g, bl] if (i + j) % 3 == 0 else [r, g, bl]
+                    if i == j == 0:  # rounding witness: rounded-mean .74500 vs raw-mean .74499
+                        ren[i][j][0] -= 1
                 else:
                     ren[i][j] = [255 - r, g, (bl + 90) % 256] if (i * j) % 4 == 1 else [r, g, bl]
         for d, px, store in ((refs, ref, ref_px), (rens, ren, ren_px)):
@@ -165,3 +167,9 @@ def test_render_score_per_view_rounding_and_mean_match_independent_luma(tmp_path
                               for v in ("east", "west")) / 2, 5)
         assert abs(alt - value) > 1e-4
     assert abs(want["east"] - value) > 1e-4 and abs(want["west"] - value) > 1e-4
+
+    # aggregation order: mean of rounded per-view scores differs from rounded raw mean
+    raw = [oracle_ssim(_luma_list(ref_px[v]), _luma_list(ren_px[v])) for v in ("east", "west")]
+    raw_mean = round(math.fsum(raw) / 2, 5)
+    assert raw_mean != value
+    assert got["value"] == value and got["value"] != raw_mean
