@@ -175,3 +175,85 @@ def test_config_ground_truth_fixed():
     o = cfg["objects"]
     assert sorted(o["AC08-v007"]["known_defects"]) == sorted(KNOWN)
     assert o["AC08-v010"]["known_defects"] == [] and o["AC09-build-v001"]["known_defects"] is None
+
+
+# --- review round 1 (P1-2): pairwise answer lists are validated before any dict is built ---
+
+def _pa(items, better="first"):
+    return [{"id": i["id"], "better": better} for i in items]
+
+
+@pytest.mark.parametrize("mutate, msg", [
+    (lambda a: a + [{"id": a[0]["id"], "better": "first"}, {"id": a[0]["id"], "better": "equal"}], "duplicate"),
+    (lambda a: a + [dict(a[0])], "duplicate"),
+    (lambda a: a[:-1], "missing"),
+    (lambda a: [], "missing"),
+    (lambda a: None, "not a list"),
+    (lambda a: a + [{"id": "Z99", "better": "first"}], "unknown"),
+    (lambda a: a[:-1] + [{"id": a[-1]["id"], "better": "both"}], "first/second/equal"),
+    (lambda a: a[:-1] + [{"id": a[-1]["id"], "better": None}], "first/second/equal"),
+    (lambda a: a[:-1] + [{"id": a[-1]["id"]}], "first/second/equal"),
+    (lambda a: a[:-1] + ["A12"], "unknown"),
+])
+def test_parse_pairwise_answers_fails_closed(mutate, msg):
+    items = _items()
+    with pytest.raises(vc.ChecklistError, match=msg):
+        vc.parse_pairwise_answers(items, mutate(_pa(items)))
+
+
+def test_parse_pairwise_answers_valid_control():
+    items = _items()
+    assert vc.parse_pairwise_answers(items, _pa(items, "equal")) == {i["id"]: "equal" for i in items}
+
+
+def _fake_driver(tmp_path, monkeypatch, dup_pair):
+    """Mocked VLM (no paid call): checklist all-clean; pairwise optionally with conflicting duplicates."""
+    import re
+    rd = tmp_path / "r"
+    rd.mkdir()
+    for v in vc.VIEWS:
+        (rd / f"{v}.png").write_bytes(b"x")
+    slide = tmp_path / "s.png"
+    slide.write_bytes(b"x")
+    leg = tmp_path / "legend.json"
+    leg.write_text(json.dumps({"legend": [{"material": "m", "ral": "5005", "texture": "t"}]}), encoding="utf-8")
+    obj = {"renders": str(rd), "slide": str(slide), "facades": FAC, "legend": str(leg)}
+    cfg = tmp_path / "c.json"
+    cfg.write_text(json.dumps({"objects": {"x": {**obj, "known_defects": KNOWN}, "y": {**obj, "known_defects": []}},
+                               "pairs": [["x", "y"]]}), encoding="utf-8")
+
+    def fake(prompt, workdir, model):
+        ids = re.findall(r"^([AB]\d\d): ", prompt, re.M)
+        if "yes/no validation questions" in prompt:
+            return {"parsed": {"questions": _q(8)}, "cost_usd": 0.0, "duration_s": 0.0}
+        if "Two versions" in prompt:
+            ans = [{"id": i, "better": "equal"} for i in ids]
+            if dup_pair:
+                ans += [{"id": ids[0], "better": "first"}, {"id": ids[0], "better": "equal"}]
+            return {"parsed": {"answers": ans}, "cost_usd": 0.0, "duration_s": 0.0}
+        return {"parsed": {"answers": [{"id": i, "defect": False} for i in ids]}, "cost_usd": 0.0, "duration_s": 0.0}
+
+    monkeypatch.setattr(vc, "call_vlm", fake)
+    return cfg
+
+
+def test_runner_rejects_conflicting_duplicate_pairwise_answers(tmp_path, monkeypatch):
+    """Reviewer input: complete list + first id again as 'first' then 'equal' -> named error, exit 1, no score."""
+    cfg = _fake_driver(tmp_path, monkeypatch, dup_pair=True)
+    out = tmp_path / "o"
+    assert vc.main(["--config", str(cfg), "--out", str(out), "--workers", "1"]) == 1
+    res = json.loads((out / "results.json").read_text(encoding="utf-8"))
+    for var in ("A", "B"):
+        p = res["pairs"][f"x~y/{var}"]
+        assert "duplicate" in p["error"] and "consistent_share" not in p
+        assert "duplicate" in res["errors"][f"x~y/{var}"]
+    assert res["objects"]["x/A"]["recall"] == 0 and res["objects"]["y/A"]["false_positives"] == 0
+
+
+def test_runner_valid_pairwise_control_exit_0(tmp_path, monkeypatch):
+    cfg = _fake_driver(tmp_path, monkeypatch, dup_pair=False)
+    out = tmp_path / "o"
+    assert vc.main(["--config", str(cfg), "--out", str(out), "--workers", "1"]) == 0
+    res = json.loads((out / "results.json").read_text(encoding="utf-8"))
+    assert res["errors"] == {}
+    assert res["pairs"]["x~y/A"]["consistent_share"] == 1.0 and res["pairs"]["x~y/A"]["dropped"] == []
