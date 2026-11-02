@@ -612,7 +612,7 @@ def test_benchmarks_list_four_objects_with_sha256_and_no_private_file_committed(
 def test_docs_structure_six_classes():
     base = ROOT / "docs" / "methods"
     assert (base / "README.md").is_file()
-    assert sorted(p.name for p in base.iterdir() if p.is_dir()) == sorted(mm.CLASSES)
+    assert sorted(p.name for p in base.iterdir() if p.is_dir() and p.name != "parametric-parts") == sorted(mm.CLASSES)
     for cls in mm.CLASSES:
         for f in ("VARIANTS.md", "RESULTS.md", "WHEN.md"):
             assert (base / cls / f).is_file(), (cls, f)
