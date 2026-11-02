@@ -123,3 +123,106 @@ def test_committed_evidence_is_current_and_failures_are_listed():
     for o in r["ops"]:      # a refused or rolled-back op carries its reason; nothing failing is marked applied
         assert o["applied"] == (o["check_operation"] is not None and o["check_operation"]["passed"])
         assert o["applied"] or o["refusal_or_rollback"]
+
+
+# ---- review round 1 (PR #754): compare against the actual candidate, per-polygon materials, fail-closed readback ----
+
+def _report(payload):
+    """An fbx_readback.py-shaped report of exactly this export payload (what a faithful FBX round trip returns)."""
+    meshes = []
+    for o in payload:
+        geo = {"vertices": [[round(float(x), 6) for x in p] for p in o["vertices"]],
+               "polygons": [list(p) for p in o["polygons"]],
+               "polygon_material": [f"ID_{m:02d}" for m in o["material_ids"]]}
+        if all(c is not None for c in o["uv"]):
+            geo["polygon_uv"] = [[[round(float(u), 6), round(float(w), 6)] for u, w in c] for c in o["uv"]]
+        meshes.append({"name": o["name"], "materials": [f"ID_{n:02d}" for n in range(1, max(o["material_ids"]) + 1)],
+                       "face_geometry": geo})
+    return {"readback_ok": True, "blender": "synthetic", "meshes": meshes}
+
+
+@pytest.fixture(scope="module")
+def real_states():
+    source, _ = K.load_source()
+    rows = K.run_ops(K.copy_state(source))
+    return source, [r["after_state"] for r in rows]
+
+
+def test_real_source_control_is_accepted():
+    source, _ = K.load_source()
+    payload, _ = K.export_payload(source)
+    c = K.compare_state(source, _report(payload))
+    assert c["accepted"] and c["export_uv_loss"] == {}
+    assert all(r["equal_within_tol"] for r in c["candidate_parity"])
+    mats = [r for r in c["candidate_parity"] if r["metric"] == "polygon_material_ids"]
+    assert len(mats) == 3 and all(r["equal"] for r in mats)
+
+
+@pytest.mark.parametrize("op_no,with_uv,faces", [(16, 168, 169), (17, 170, 174)])
+def test_real_partial_uv_states_fail_candidate_parity(real_states, op_no, with_uv, faces):
+    _, states = real_states
+    st = states[op_no - 1]
+    assert sum(c is not None for c in st["simplified"]["uv"]) == with_uv and len(st["simplified"]["uv"]) == faces
+    payload, _ = K.export_payload(st)
+    c = K.compare_state(st, _report(payload))
+    assert not c["accepted"]
+    assert c["export_uv_loss"] == {"simplified": with_uv}
+    bad = {(r["part"], r["metric"]) for r in c["candidate_parity"] if not r["equal_within_tol"]}
+    assert ("simplified", "uv") in bad
+    assert all(r["equal_within_tol"] for r in c["payload_parity"])     # the FBX round trip itself is faithful
+
+
+def test_real_material_mutation_fails_parity():
+    source, _ = K.load_source()
+    assert source["AC08_body"]["mat"][0] == 1
+    payload, _ = K.export_payload(source)
+    rep = _report(payload)
+    body = next(m for m in rep["meshes"] if m["name"] == "AC08_body")
+    slots = len(body["materials"])
+    assert slots >= 2
+    body["face_geometry"]["polygon_material"][0] = "ID_02"
+    c = K.compare_state(source, rep)
+    assert not c["accepted"] and len(body["materials"]) == slots
+    bad = {(r["part"], r["metric"]) for r in c["candidate_parity"] if not r["equal_within_tol"]}
+    assert ("AC08_body", "polygon_material_ids") in bad and ("AC08_body", "materials") in bad
+    assert {p for p, _ in bad} == {"AC08_body"}
+
+
+@pytest.mark.parametrize("name", ["Foo", None])
+def test_readback_unmapped_material_is_error(name):
+    payload, _ = K.export_payload({"b": _box()})
+    rep = _report(payload)
+    rep["meshes"][0]["face_geometry"]["polygon_material"][3] = name
+    with pytest.raises(K.InputError, match=f"{name}.*polygon 3|polygon 3.*{name}"):
+        K.state_from_readback(rep)
+
+
+@pytest.mark.parametrize("case", ["empty", "short_material", "no_material", "nan", "inf", "not_ok", "duplicate"])
+def test_readback_fail_closed(case):
+    payload, _ = K.export_payload({"b": _box(), "c": _box(5.0)})
+    rep = _report(payload)
+    geo = rep["meshes"][0]["face_geometry"]
+    if case == "empty":
+        rep["meshes"] = []
+    elif case == "short_material":
+        geo["polygon_material"].pop()
+    elif case == "no_material":
+        del geo["polygon_material"]
+    elif case in ("nan", "inf"):
+        geo["vertices"][0][0] = float(case)
+    elif case == "not_ok":
+        rep["readback_ok"] = False
+    else:
+        rep["meshes"][1]["name"] = rep["meshes"][0]["name"]
+    with pytest.raises(K.InputError):
+        K.compare_state({"b": _box(), "c": _box(5.0)}, rep)
+
+
+def test_real_missing_part_is_not_accepted():
+    source, _ = K.load_source()
+    payload, _ = K.export_payload(source)
+    rep = _report(payload)
+    rep["meshes"] = [m for m in rep["meshes"] if m["name"] != "AC08_knob"]
+    c = K.compare_state(source, rep)
+    knob = [r for r in c["candidate_parity"] if r["part"] == "AC08_knob"]
+    assert not c["accepted"] and knob and not any(r["equal_within_tol"] for r in knob)
