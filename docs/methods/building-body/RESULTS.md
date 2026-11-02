@@ -24,3 +24,10 @@ Null metrics and why:
 - render_score: no variant render given (R5, R6, R7, R8)
 - texel: no single square diffuse texture size in the readback (R1, R2, R3, R4, R5, R6, R7, R8, R9, R10, R11)
 - wall time: no variant wall time given (R1, R5, R9)
+
+Synthetic inputs and why:
+
+- clean-up of the supplied FBX in a table whose from-contour variants use plan contours and level heights measured from the source mesh, not from a drawing (no DWG plan in the benchmark set; user decision 2026-11-02 [D186]) (R4, R8, R12)
+- plan contours and level heights measured from the source mesh, not from a drawing (no DWG plan in the benchmark set; user decision 2026-11-02 [D186]) (R2, R6, R10)
+- plan contours and level heights measured from the source mesh, not from a drawing (no DWG plan in the benchmark set; user decision 2026-11-02 [D186]); no opening schedule, so no opening cut (R3, R7, R11)
+- reference row of a table whose from-contour variants use plan contours and level heights measured from the source mesh, not from a drawing (no DWG plan in the benchmark set; user decision 2026-11-02 [D186]) (R1, R5, R9)
