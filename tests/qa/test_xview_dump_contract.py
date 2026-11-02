@@ -1209,7 +1209,7 @@ def test_rejected_prepare_after_success_is_durable_and_preserves_inputs(tmp_path
         with pytest.raises(xp.DumpError):
             xp.check_run(out, ["a"])
         proc = subprocess.run(
-            [sys.executable, str(Path(xp.__file__)), "--check-run", str(out), "--labels", "a"],
+            [sys.executable, str(Path(str(xp.__file__))), "--check-run", str(out), "--labels", "a"],
             capture_output=True, text=True,
         )
         assert proc.returncode == 2, proc.stdout + proc.stderr

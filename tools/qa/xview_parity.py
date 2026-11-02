@@ -407,7 +407,7 @@ def _inventory(records, out_dir, temp_dir, jobs_file=None) -> None:
                 raise DumpError(f"{name_a} aliases {name_b}")
 
 
-def _invalidate(out_dir, labels, inputs) -> None:
+def _invalidate(out_dir, labels, inputs, *, remove=True) -> None:
     """Drop this run's done receipt and result jsons. Never unlinks a path that is an input."""
     out_dir = Path(out_dir)
     if not out_dir.exists():
@@ -426,8 +426,9 @@ def _invalidate(out_dir, labels, inputs) -> None:
             if same_file(target, src):
                 raise DumpError(f"{target.name} aliases input {Path(src).name}")
         live.append(target)
-    for target in live:
-        target.unlink()
+    if remove:
+        for target in live:
+            target.unlink()
 
 
 def _try_record(job, out_dir, temp_dir, scene):
@@ -522,29 +523,27 @@ def preflight_jobs_txt(jobs_file, out_dir, temp_dir) -> dict:
 def prepare_run(jobs, out_dir, temp_dir, scene=None) -> dict:
     """Stage inputs and write an ASCII jobs.txt whose first line is ``#nonce:<id>``.
 
-    The whole inventory is checked before any directory is created or any byte is written.
+    The whole inventory is checked before staging or receipt/result writes. The only
+    pre-validation mutation is an empty rejection directory in an existing output root.
     A duplicate label, a ``|`` / control character, or an unknown slot token is an error
     naming it. When the paths are not inputs, a failed preparation still removes this
     run's ``done.txt`` and ``<label>.json`` so an older success cannot be read back.
     An alias of a supplied input is raised with nothing removed and nothing written.
-    Empty/non-list preparations persist an empty ``prepare-rejected`` directory instead:
-    there is no supplied inventory proving old receipts safe to unlink. Collection refuses
-    this marker, including in a fresh process; only a successful preparation removes it.
+    Every attempt in an existing output root first persists an empty ``prepare-rejected``
+    directory. Without usable records old receipts are not safe to unlink. Collection
+    refuses this marker, including in a fresh process; only successful preparation removes it.
     """
     out_dir, temp_dir = Path(out_dir), Path(temp_dir)
     rejected = out_dir / "prepare-rejected"
-    if not isinstance(jobs, list) or not jobs:
-        # No supplied inventory exists to prove that old receipts are not input aliases.
-        # Persist rejection without overwriting/unlinking any file (including done.txt).
-        if out_dir.is_dir():
-            try:
-                rejected.mkdir(exist_ok=True)
-            except OSError as exc:
-                raise DumpError(f"no inputs; rejection marker collision: {rejected}") from exc
-        raise DumpError("no inputs")
     if rejected.is_symlink() or (rejected.exists() and
             (not rejected.is_dir() or any(rejected.iterdir()))):
         raise DumpError(f"rejection marker collision: {rejected}")
+    # Mark the attempt before interpreting jobs: even malformed Python path values
+    # can raise before a usable inventory exists. Never touch old receipt files here.
+    if out_dir.is_dir():
+        rejected.mkdir(exist_ok=True)
+    if not isinstance(jobs, list) or not jobs:
+        raise DumpError("no inputs")
     records = []
     errors = []
     for job in jobs:
@@ -574,7 +573,9 @@ def prepare_run(jobs, out_dir, temp_dir, scene=None) -> dict:
                 labels.append(raw)
             if isinstance(job.get("path"), (str, os.PathLike)) and str(job.get("path")):
                 inputs.append(Path(job["path"]))
-        _invalidate(out_dir, labels, inputs)
+        # Without usable records, preserve all old files: their input aliases are
+        # unknown. Still check supplied aliases, and rely on the durable rejection.
+        _invalidate(out_dir, labels, inputs, remove=bool(records))
         raise errors[0]
     before = [(record["src"], sha256_file(record["src"])) for record in records]
     _invalidate(out_dir, [record["label"] for record in records], [record["src"] for record in records])
