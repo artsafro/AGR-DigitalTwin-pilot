@@ -3,6 +3,7 @@
 Max is not launched. SYNTHETIC files only. The .ms text must name the measured behaviour
 (load .max, never save, decode 5 mm / 2 mm, weld on Editable Mesh). Python probes cover
 SHA-256 copies, the inclusive 2 mm weld, and fail-closed path / key / material rules.
+new-case: shared native xView runner preparation/collection contract (#528).
 """
 import ctypes
 import hashlib
@@ -1211,6 +1212,28 @@ def test_empty_prepare_after_success_is_durable_and_preserves_inputs(tmp_path, b
         (out / "done.txt").unlink()  # Test-owned alias, not runner cleanup.
     _publish_success(xp, src, out, temp, nonce="def67890")
     assert src.read_bytes() == original
+
+
+@pytest.mark.parametrize("kind", ["hardlink", "nonempty"])
+def test_rejection_marker_collision_never_changes_inputs(tmp_path, kind):
+    src = _job_file(tmp_path, "source.max", b"SCENE")
+    out, temp = tmp_path / "out", tmp_path / "temp"
+    out.mkdir()
+    marker = out / "prepare-rejected"
+    if kind == "hardlink":
+        os.link(src, marker)
+    else:
+        marker.mkdir()
+        os.link(src, marker / "source.max")
+    before = {p.relative_to(tmp_path): p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
+    for jobs in ([], [{"label": "a", "path": src, "mode": "plain"}]):
+        with pytest.raises(xp.DumpError):
+            xp.prepare_run(jobs, out, temp)
+        with pytest.raises(xp.DumpError):
+            xp.check_run(out, ["a"])
+        after = {p.relative_to(tmp_path): p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
+        assert after == before
+    assert not temp.exists()
 
 
 def test_unknown_key_after_success_keeps_hardlinked_done_input(tmp_path):

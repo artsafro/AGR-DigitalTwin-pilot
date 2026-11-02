@@ -526,11 +526,25 @@ def prepare_run(jobs, out_dir, temp_dir, scene=None) -> dict:
     A duplicate label, a ``|`` / control character, or an unknown slot token is an error
     naming it. When the paths are not inputs, a failed preparation still removes this
     run's ``done.txt`` and ``<label>.json`` so an older success cannot be read back.
-    An alias of an input is raised with nothing removed and nothing written.
+    An alias of a supplied input is raised with nothing removed and nothing written.
+    Empty/non-list preparations persist an empty ``prepare-rejected`` directory instead:
+    there is no supplied inventory proving old receipts safe to unlink. Collection refuses
+    this marker, including in a fresh process; only a successful preparation removes it.
     """
-    if not isinstance(jobs, list) or not jobs:
-        raise DumpError("no inputs")
     out_dir, temp_dir = Path(out_dir), Path(temp_dir)
+    rejected = out_dir / "prepare-rejected"
+    if not isinstance(jobs, list) or not jobs:
+        # No supplied inventory exists to prove that old receipts are not input aliases.
+        # Persist rejection without overwriting/unlinking any file (including done.txt).
+        if out_dir.is_dir():
+            try:
+                rejected.mkdir(exist_ok=True)
+            except OSError as exc:
+                raise DumpError(f"no inputs; rejection marker collision: {rejected}") from exc
+        raise DumpError("no inputs")
+    if rejected.is_symlink() or (rejected.exists() and
+            (not rejected.is_dir() or any(rejected.iterdir()))):
+        raise DumpError(f"rejection marker collision: {rejected}")
     records = []
     errors = []
     for job in jobs:
@@ -594,6 +608,8 @@ def prepare_run(jobs, out_dir, temp_dir, scene=None) -> dict:
     for src, digest in before:
         if sha256_file(src) != digest:
             raise DumpError("input bytes changed (the .max/.fbx must never be saved)")
+    if rejected.exists():
+        rejected.rmdir()  # Only an empty directory; never unlinks a file or follows a symlink.
     return {"jobs_file": jobs_file, "staged": staged, "outputs": outputs, "report": report, "nonce": nonce}
 
 
@@ -676,6 +692,8 @@ def check_run(out_dir, expected_labels) -> dict:
     out_dir = Path(out_dir)
     if not isinstance(expected_labels, (list, tuple)) or not list(expected_labels):
         raise DumpError("no inputs")
+    if (out_dir / "prepare-rejected").exists() or (out_dir / "prepare-rejected").is_symlink():
+        raise DumpError("preparation rejected; previous invocation is not current")
     nonce, job_labels = _read_receipt(out_dir / "jobs.txt")
     problems = []
     if list(expected_labels) != job_labels:
