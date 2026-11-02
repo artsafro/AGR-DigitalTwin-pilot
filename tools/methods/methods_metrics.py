@@ -608,6 +608,11 @@ def _strict_ground_triangles(rb: dict, extra: dict | None) -> tuple[np.ndarray, 
                     raise MetricError(f"mesh {name!r}: polygon {k} needs >= 3 indices, got {p!r}")
                 idx = [_strict_index(i, n, f"mesh {name!r} polygon {k}") for i in p]
                 tris += [[idx[0], idx[j], idx[j + 1]] for j in range(1, len(idx) - 1)]
+            # complete inventory: the readback's own counts (Blender polygons / loop_triangles) must match the list
+            for key, have in (("polygons", len(polys)), ("triangles", len(tris))):
+                declared = m.get(key)
+                if isinstance(declared, bool) or not isinstance(declared, int) or declared != have:
+                    raise MetricError(f"mesh {name!r}: face_geometry has {have} {key}, readback declares {declared!r}")
         vs.append(v)
         ts.append(np.asarray(tris, np.int64).reshape(-1, 3) + off)
         off += n
