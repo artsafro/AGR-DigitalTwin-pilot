@@ -42,8 +42,9 @@ NPM_ARCHIVE = re.compile(r"^(?P<code>[0-9]{4})_(?P<address>[A-Za-z0-9_]+)$")
 SCENE_NOTE = "needs the FBX scene: run tools/blender readback"
 
 
-def finding(status, name, observed, expected, pages, evidence="", conflicts=()):
-    return Finding(name, status, observed, expected, list(pages), evidence, list(conflicts))
+def finding(status, name, observed, expected, pages, evidence="", conflicts=(), data=None):
+    return Finding(name, status, observed, expected, list(pages), evidence, list(conflicts),
+                   data={} if data is None else data)
 
 
 def build_stages(profiles, kind: str) -> dict[str, Stage]:
@@ -119,7 +120,8 @@ def validate_vpm_zip(stem: str, files: dict[str, bytes], profile: dict, st: dict
                                "one UV channel, no mirrored islands, glass only in 1001", v8.source_pdf_pages, SCENE_NOTE))
 
     if f"{stem}.geojson" in geo:
-        st["V011"].findings.extend(geojson_findings(geo[f"{stem}.geojson"], profile, ground))
+        st["V011"].findings.extend(geojson_findings(
+            geo[f"{stem}.geojson"], profile, ground, source_name=f"{stem}.geojson"))
 
 
 def validate_npm_zip(stem: str, files: dict[str, bytes], profile: dict, st: dict[str, Stage]):
@@ -201,7 +203,21 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
         except BundleError as exc:
             kind = kind or "vpm"
             st = build_stages(profiles, kind)
-            st["V001"].findings.append(finding("fail", "ZIP", str(exc), "readable ZIP, safe paths", st["V001"].source_pdf_pages))
+            cause = exc.__cause__
+            observed = str(exc)
+            extra = None
+            if isinstance(cause, UnicodeDecodeError):
+                member = exc.member if isinstance(getattr(exc, "member", None), str) else ""
+                observed = f"V001 {target.name}: {exc}"
+                extra = {
+                    "rule_id": "V001",
+                    "file": target.name,
+                    "member": member,
+                    "exception_class": type(cause).__name__,
+                    "message": str(cause),
+                }
+            st["V001"].findings.append(finding(
+                "fail", "ZIP", observed, "readable ZIP, safe paths", st["V001"].source_pdf_pages, data=extra))
             return report(target, data, kind, profiles, st, notes)
         if kind is None:
             kind = "vpm" if any(n.lower().endswith((".geojson", ".png")) for n in files) else "npm"
@@ -226,7 +242,8 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
         else:
             notes.append("single FBX: header only; add --scene for the Blender readback")
     elif suffix == ".geojson":
-        st["V011"].findings.extend(geojson_findings(data, profile, target.stem.endswith("_Ground")))
+        st["V011"].findings.extend(geojson_findings(
+            data, profile, target.stem.endswith("_Ground"), source_name=target.name))
         notes.append("single GeoJSON: only V011 applies")
     elif suffix == ".png" and kind == "npm":
         st["V006"].findings.extend(npm_texture_findings({target.name: data}, profile))

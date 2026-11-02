@@ -61,6 +61,23 @@ bundle pass is an accepted delivery; all mandatory checks and manual gates below
 | V016 | VPM · manual_review | None (strictly manual gate; constructed from standards spec via [`tools/qa/validate_package.py:build_stages`](../../tools/qa/validate_package.py#L38); [`src/twinqa/report.py:Stage`](../../src/twinqa/report.py#L28) only carries the gate attribute). | Manual only; automated clearance verification of archways, passages, courtyards, and height-zone collision offsets is not implemented; no signed-review ingestion claimed. | Mandatory manual review of walkthrough clearances and collision boundary offsets. |
 | V017 | Both · manual_review | None (strictly manual gate; constructed from standards spec via [`tools/qa/validate_package.py:build_stages`](../../tools/qa/validate_package.py#L38); [`src/twinqa/report.py:Stage`](../../src/twinqa/report.py#L28) only carries the gate attribute). | Manual only; automated alignment verification against approved DWG/SPOZU within 0.5 m tolerance is not implemented; no signed-review ingestion claimed. | Mandatory manual review against approved surveyor DWG/SPOZU drawings. |
 
+### Broken input stays in the report (#751)
+
+A ZIP member name that is not valid UTF-8 (`UnicodeDecodeError`) is a V001 `ZIP` fail.
+A GeoJSON `imageBase64` value that raises `OSError` while Pillow opens it is a V011
+`imageBase64` fail. The finding carries the rule id, the file or member, the exception
+class and the message. The CLI prints that report and exits 1.
+
+These other report-loss paths stay as pinned. They are outside #751:
+
+| Path | Pinned by | This change |
+|---|---|---|
+| ZIP DEFLATE reserved block (`zlib.error`) | #690, `tests/qa/test_zip_deflate_end_state_controls.py` | Out of scope. Different exception; the read handler still does not catch `zlib.error`. |
+| GeoJSON lone surrogate in a Glasses key (`UnicodeEncodeError` on stdout) | #695, `tests/qa/test_geojson_surrogate_legacy_controls.py` | Out of scope. The report object is built, then strict UTF-8 encoding of the finding drops stdout. |
+| GeoJSON nesting | #694–#700, `tests/qa/test_geojson_nesting_legacy_controls.py` | Out of scope. Depths 32 and 2048 already return a V011 report; that corpus does not raise. |
+| GeoJSON integer coordinate (`OverflowError` in `_decimals`) | #699, `tests/qa/test_geojson_integer_legacy_controls.py` | Out of scope. A 309-zero integer still escapes before a report. |
+| GeoJSON `1e400` / `1e309` float overflow | #694–#700, `tests/qa/test_geojson_overflow_legacy_controls.py` | Out of scope. A report is written; the legacy schema pass is a separate finiteness decision. |
+
 ## SINTEZ 1.6.1 check-group mapping
 
 [2026 requirements](requirements-2026.md) contains all LP 80 / HP 154 rows and the
