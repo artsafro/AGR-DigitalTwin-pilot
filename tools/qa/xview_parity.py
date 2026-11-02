@@ -533,15 +533,16 @@ def prepare_run(jobs, out_dir, temp_dir, scene=None) -> dict:
     directory. Without usable records old receipts are not safe to unlink. Collection
     refuses this marker, including in a fresh process; only successful preparation removes it.
     """
-    out_dir, temp_dir = Path(out_dir), Path(temp_dir)
+    out_dir = Path(out_dir)
     rejected = out_dir / "prepare-rejected"
     if rejected.is_symlink() or (rejected.exists() and
             (not rejected.is_dir() or any(rejected.iterdir()))):
         raise DumpError(f"rejection marker collision: {rejected}")
-    # Mark the attempt before interpreting jobs: even malformed Python path values
-    # can raise before a usable inventory exists. Never touch old receipt files here.
+    # Mark the attempt before interpreting jobs or auxiliary paths: malformed Python
+    # values can raise before a usable inventory exists. Never touch old receipts here.
     if out_dir.is_dir():
         rejected.mkdir(exist_ok=True)
+    temp_dir = Path(temp_dir)
     if not isinstance(jobs, list) or not jobs:
         raise DumpError("no inputs")
     records = []
