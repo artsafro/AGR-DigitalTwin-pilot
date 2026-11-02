@@ -1,0 +1,14 @@
+{
+  "ucx": [
+    {"fixture": "1 m box", "kind": "near-convex-box", "variant": "single-hull", "python_pieces": 1, "python_triangles": 12, "button_pieces": 1, "button_triangles": 12},
+    {"fixture": "L passage", "kind": "passage", "variant": "kernel-boxes", "python_pieces": 2, "python_triangles": 24, "button_pieces": 2, "button_triangles": 24},
+    {"fixture": "two equal storeys", "kind": "few-levels", "variant": "slice-prisms", "python_pieces": 2, "python_triangles": 24, "button_pieces": 2, "button_triangles": 24},
+    {"fixture": "12 random box assemblies", "python_match": "15/15 including the three fixed meshes", "piece_delta": 0, "triangle_delta": 0}
+  ],
+  "texel": [
+    {"fixture": "1 m quad, UV 0-1, 1024 px, VPM", "python_px_per_m": 1024.0, "button_px_per_m": 1024.0, "relative": 0.0},
+    {"fixture": "1 m quad, UV 0-0.1, 1024 px, VPM", "python_px_per_m": 102.4, "button_px_per_m": 102.4, "relative": 0.0},
+    {"fixture": "16 random quads", "agreement": "16/16", "tolerance": "relative < 1e-6; exactly 1e-6 is an error"},
+    {"fixture": "Max 2024/2026 float32 readback of the planted quad", "button_px_per_m": 102.4000015258789, "relative_to_102.4": 1.49e-8}
+  ]
+}

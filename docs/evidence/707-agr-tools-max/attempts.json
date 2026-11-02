@@ -1,0 +1,132 @@
+[
+  {
+    "run": "native-red-2024-log.json",
+    "status": "error",
+    "exit_code": 4294967166,
+    "diagnostics": [
+      "State Sets Error: Anchor couldn't be created!",
+      "State Sets Error: Anchor couldn't be created!",
+      "-- MAXScript ExecuteMAXScriptScript Exception:",
+      "AssertionError: MZP macros not registered",
+      "25.10.2026 22:48:12;  MAXScript ExecuteMAXScriptScript Exception: -- Runtime error:  Traceback (most recent call last):   File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17f45574\\tests\\max_tools\\run_agr_tools_native.py\", line 28 AssertionError: MZP macros not registered",
+      "25.10.2026 22:48:12;  MAXScript -mxs Switch Exception:  Traceback (most recent call last):   File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17f45574\\tests\\max_tools\\run_agr_tools_native.py\", line 28 AssertionError: MZP macros not registered"
+    ]
+  },
+  {
+    "run": "native-install-2024-v002-log.json",
+    "status": "error",
+    "exit_code": 4294967166,
+    "diagnostics": [
+      "State Sets Error: Anchor couldn't be created!",
+      "State Sets Error: Anchor couldn't be created!",
+      "-- MAXScript ExecuteMAXScriptScript Exception:",
+      "AttributeError: module 'runtime' has no attribute 'xview'",
+      "25.10.2026 22:49:47;  MAXScript ExecuteMAXScriptScript Exception: -- Runtime error:  Traceback (most recent call last):   File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17f45574\\tests\\max_tools\\run_agr_tools_native.py\", line 59 AttributeError: module 'runtime' has no attribute 'xview'",
+      "25.10.2026 22:49:47;  MAXScript -mxs Switch Exception:  Traceback (most recent call last):   File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17f45574\\tests\\max_tools\\run_agr_tools_native.py\", line 59 AttributeError: module 'runtime' has no attribute 'xview'"
+    ]
+  },
+  {
+    "run": "native-xview-2024-v003-log.json",
+    "status": "error",
+    "exit_code": 4294967166,
+    "diagnostics": [
+      "State Sets Error: Anchor couldn't be created!",
+      "State Sets Error: Anchor couldn't be created!",
+      "-- MAXScript ExecuteMAXScriptScript Exception:",
+      "AttributeError: module 'runtime' has no attribute 'matid'",
+      "25.10.2026 22:51:10;  MAXScript ExecuteMAXScriptScript Exception: -- Runtime error:  Traceback (most recent call last):   File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17f45574\\tests\\max_tools\\run_agr_tools_native.py\", line 59 AttributeError: module 'runtime' has no attribute 'matid'",
+      "25.10.2026 22:51:10;  MAXScript -mxs Switch Exception:  Traceback (most recent call last):   File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17f45574\\tests\\max_tools\\run_agr_tools_native.py\", line 59 AttributeError: module 'runtime' has no attribute 'matid'"
+    ]
+  },
+  {
+    "run": "native-matid-2024-v004-log.json",
+    "status": "error",
+    "exit_code": 4294967166,
+    "diagnostics": [
+      "State Sets Error: Anchor couldn't be created!",
+      "State Sets Error: Anchor couldn't be created!",
+      "-- MAXScript ExecuteMAXScriptScript Exception:",
+      "AttributeError: module 'runtime' has no attribute 'cleanup_preview'",
+      "25.10.2026 22:52:12;  MAXScript ExecuteMAXScriptScript Exception: -- Runtime error:  Traceback (most recent call last):   File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17f45574\\tests\\max_tools\\run_agr_tools_native.py\", line 62 AttributeError: module 'runtime' has no attribute 'cleanup_preview'",
+      "25.10.2026 22:52:12;  MAXScript -mxs Switch Exception:  Traceback (most recent call last):   File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17f45574\\tests\\max_tools\\run_agr_tools_native.py\", line 62 AttributeError: module 'runtime' has no attribute 'cleanup_preview'"
+    ]
+  },
+  {
+    "run": "native-all-2024-v005-log.json",
+    "status": "error",
+    "exit_code": 4294967166,
+    "diagnostics": [
+      "State Sets Error: Anchor couldn't be created!",
+      "State Sets Error: Anchor couldn't be created!",
+      "-- MAXScript ExecuteMAXScriptScript Exception:",
+      "AttributeError: 'pymxs.runtime' object has no attribute 'AGRSyntheticCA'",
+      "25.10.2026 22:54:46;  MAXScript ExecuteMAXScriptScript Exception: -- Runtime error:  Traceback (most recent call last):   File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17f45574\\tests\\max_tools\\run_agr_tools_native.py\", line 79 AttributeError: 'pymxs.runtime' object has no attribute 'AGRSyntheticCA'",
+      "25.10.2026 22:54:46;  MAXScript -mxs Switch Exception:  Traceback (most recent call last):   File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17f45574\\tests\\max_tools\\run_agr_tools_native.py\", line 79 AttributeError: 'pymxs.runtime' object has no attribute 'AGRSyntheticCA'"
+    ]
+  },
+  {
+    "run": "native-probes-red-2024-v007-log.json",
+    "status": "error",
+    "exit_code": 4294967166,
+    "diagnostics": [
+      "State Sets Error: Anchor couldn't be created!",
+      "State Sets Error: Anchor couldn't be created!",
+      "-- MAXScript ExecuteMAXScriptScript Exception:",
+      "AssertionError: expected rejection: threshold",
+      "25.10.2026 22:57:57;  MAXScript ExecuteMAXScriptScript Exception: -- Runtime error:  Traceback (most recent call last):   File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17f45574\\tests\\max_tools\\run_agr_tools_native.py\", line 119   File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17f45574\\tests\\max_tools\\run_agr_tools_native.py\", line 45, in 'raises' function AssertionError: expected rejection: threshold",
+      "25.10.2026 22:57:57;  MAXScript -mxs Switch Exception:  Traceback (most recent call last):   File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17f45574\\tests\\max_tools\\run_agr_tools_native.py\", line 119   File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17f45574\\tests\\max_tools\\run_agr_tools_native.py\", line 45, in 'raises' function AssertionError: expected rejection: threshold"
+    ]
+  },
+  {
+    "run": "native-quotes-red-2024-v008-log.json",
+    "status": "error",
+    "exit_code": 4294967166,
+    "diagnostics": [
+      "State Sets Error: Anchor couldn't be created!",
+      "State Sets Error: Anchor couldn't be created!",
+      "-- MAXScript ExecuteMAXScriptScript Exception:",
+      "SyntaxError: unterminated string literal (detected at line 1) (<input>, line 1)",
+      "RuntimeError: MAXScript exception raised.",
+      "SyntaxError: unterminated string literal (detected at line 1) (<input>, line 1)",
+      "25.10.2026 22:59:21;  MAXScript ExecuteMAXScriptScript Exception: -- Runtime error: Parsing Error SyntaxError: unterminated string literal (detected at line 1) (<input>, line 1)  Traceback (most recent call last):   File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17f45574\\tests\\max_tools\\run_agr_tools_native.py\", line 27 RuntimeError: MAXScript exception raised. -- Runtime error: Parsing Error SyntaxError: unterminated string literal (detected at line 1) (<input>, line 1) ",
+      "25.10.2026 22:59:21;  MAXScript -mxs Switch Exception: Parsing Error SyntaxError: unterminated string literal (detected at line 1) (<input>, line 1)  Traceback (most recent call last):   File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17f45574\\tests\\max_tools\\run_agr_tools_native.py\", line 27 RuntimeError: MAXScript exception raised. -- Runtime error: Parsing Error SyntaxError: unterminated string literal (detected at line 1) (<input>, line 1) "
+    ]
+  },
+  {
+    "run": "native-all-2024-v009-log.json",
+    "status": "error",
+    "exit_code": 4294967166,
+    "diagnostics": [
+      "State Sets Error: Anchor couldn't be created!",
+      "State Sets Error: Anchor couldn't be created!",
+      "-- MAXScript ExecuteMAXScriptScript Exception:",
+      "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\Users\\\\artsafro\\\\agr-pilot\\\\AGR-DigitalTwin\\\\.worktrees\\\\t_17f45574\\\\tests\\\\max_tools\\\\runtime.py'",
+      "RuntimeError: MAXScript exception raised.",
+      "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\Users\\\\artsafro\\\\agr-pilot\\\\AGR-DigitalTwin\\\\.worktrees\\\\t_17f45574\\\\tests\\\\max_tools\\\\runtime.py'",
+      "25.10.2026 23:00:35;  MAXScript ExecuteMAXScriptScript Exception: -- Runtime error:  Traceback (most recent call last):   File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17f45574\\tmp\\native-quote's-2024-v009\\installed\\bootstrap.py\", line 7   File \"<frozen importlib._bootstrap_external>\", line 879, in 'exec_module' function   File \"<frozen importlib._bootstrap_external>\", line 1016, in 'get_code' function   File \"<frozen importlib._bootstrap_external>\", line 1073, in 'get_data' function FileNotFoundError: [Errno 2Following output was truncated to 512 characters!",
+      "25.10.2026 23:00:35;  MAXScript -mxs Switch Exception:  Traceback (most recent call last):   File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17f45574\\tmp\\native-quote's-2024-v009\\installed\\bootstrap.py\", line 7   File \"<frozen importlib._bootstrap_external>\", line 879, in 'exec_module' function   File \"<frozen importlib._bootstrap_external>\", line 1016, in 'get_code' function   File \"<frozen importlib._bootstrap_external>\", line 1073, in 'get_data' function FileNotFoundError: [Errno 2] No such file or directory: 25.10.2026 23:00:37;  Task Completed with Error(s) - see above"
+    ]
+  },
+  {
+    "run": "native-all-2024-v011-log.json",
+    "status": "error",
+    "exit_code": 4294967295,
+    "diagnostics": [
+      "State Sets Error: Anchor couldn't be created!",
+      "State Sets Error: Anchor couldn't be created!"
+    ]
+  },
+  {
+    "run": "native-all-2024-v012-log.json",
+    "status": "error",
+    "exit_code": 4294967166,
+    "diagnostics": [
+      "State Sets Error: Anchor couldn't be created!",
+      "State Sets Error: Anchor couldn't be created!",
+      "-- MAXScript ExecuteMAXScriptScript Exception:",
+      "AssertionError: expected rejection: empty",
+      "25.10.2026 23:04:52;  MAXScript ExecuteMAXScriptScript Exception: -- Runtime error:  Traceback (most recent call last):   File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17f45574\\tests\\max_tools\\run_agr_tools_native.py\", line 142   File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17f45574\\tests\\max_tools\\run_agr_tools_native.py\", line 45, in 'raises' function AssertionError: expected rejection: empty",
+      "25.10.2026 23:04:52;  MAXScript -mxs Switch Exception:  Traceback (most recent call last):   File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17f45574\\tests\\max_tools\\run_agr_tools_native.py\", line 142   File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17f45574\\tests\\max_tools\\run_agr_tools_native.py\", line 45, in 'raises' function AssertionError: expected rejection: empty"
+    ]
+  }
+]

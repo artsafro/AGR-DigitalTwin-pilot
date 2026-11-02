@@ -1,0 +1,49 @@
+{
+  "accepted": false,
+  "calibration_gate": "failed",
+  "gate_reason": "original calibration not clean: Tilia_cordata_NPM island 9",
+  "stats": {
+    "original": {
+      "objects": 68,
+      "charts": 15889,
+      "unknown_roles": 0,
+      "passing": 7631
+    },
+    "florio": {
+      "objects": 31,
+      "charts": 1443,
+      "unknown_roles": 0,
+      "passing": 1090
+    },
+    "ours": {
+      "objects": 99,
+      "charts": 17332,
+      "unknown_roles": 0,
+      "passing": 0
+    },
+    "light": {
+      "objects": 3,
+      "charts": 271,
+      "unknown_roles": 0,
+      "passing": 0
+    }
+  },
+  "source_objects_with_all_raw_rows_passing": 25,
+  "provisional_routes": {
+    "source_validation_required": 74,
+    "rebind_original_atlas": 24,
+    "keep_or_rebuild_star": 1
+  },
+  "definitive_routes": 0,
+  "face_accounting": {
+    "passed": 201,
+    "total": 201
+  },
+  "source_integrity": {
+    "protected_files": 236,
+    "unchanged": 236,
+    "changed": [],
+    "seconds": 0.952977099979762
+  },
+  "review_directory": "C:\\x\\review\\2026-10-20\\flora-texture-diagnosis\\geometry-diagnostics-v005"
+}

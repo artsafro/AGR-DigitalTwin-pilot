@@ -1,0 +1,9 @@
+{
+  "command": "uv run python tools/max/build_agr_tools.py tmp/AGR-Tools-0.2.0-i.mzp",
+  "repeat_command": "uv run python tools/max/build_agr_tools.py tmp/AGR-Tools-0.2.0-j.mzp",
+  "sha256": "8421a4f2fddae9ed1315c1ba5f0553db9dc9c71a43df61350e699573e5a54208",
+  "repeat_sha256": "8421a4f2fddae9ed1315c1ba5f0553db9dc9c71a43df61350e699573e5a54208",
+  "binary_storage": "G:/Мой диск/AGR-evidence/722-agr-tools-uv/",
+  "version": "0.2.0",
+  "rework": "reject non-neutral bitmap coordinates before atlas copies"
+}

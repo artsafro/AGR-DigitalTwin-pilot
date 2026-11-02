@@ -1,0 +1,2 @@
+1b1b7b42eb27a28f92595e35e2e33216caae9766cd07a5e5a925775fd9d5aceb  AGR-Tools-0.3.0-g.mzp
+1b1b7b42eb27a28f92595e35e2e33216caae9766cd07a5e5a925775fd9d5aceb  AGR-Tools-0.3.0-h.mzp

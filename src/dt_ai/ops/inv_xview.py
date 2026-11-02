@@ -28,6 +28,8 @@ Fail-closed: no part to check or a part without faces never passes; NaN / inf, b
 fractional) or bad thresholds raise `ValueError`. Report-only first [#370]: `check_operation_xview` appends a non-gating result until a person accepts the
 v014 parity; `gating=True` makes it a gate.
 
+One engine (#556): the contact rule is computed only by `inv_xview_fast.contact_tri_pairs` (per vertex, exact
+baseline arithmetic); this module adds the broad phase and the area rule on top of it for every entry point.
 numpy + shapely (projected overlap area, as `twinqa.clearance`); not pure numpy; no Blender.
 Pattern: none | new-case: xView overlapping vertices / faces kernel invariant with measured Max parity (#370).
 """
@@ -372,34 +374,37 @@ def _owns(poly_key, key):
     return poly_key[i] == key
 
 
-def _contact(v, tris, nrm, s, t, poly_key, owner, nv, face_m):
-    """Bool per pair: a vertex of triangle t, not a vertex of the polygon of s, projects into s within face_m."""
-    hit = np.zeros(len(s), dtype=bool)
-    a, b, c = (v[tris[s, k]] for k in range(3))
-    e0, e1 = b - a, c - a
-    d00, d01, d11 = _dot(e0, e0), _dot(e0, e1), _dot(e1, e1)
-    den = d00 * d11 - d01 * d01
-    for k in range(3):
-        p_id = tris[t, k]
-        own = _owns(poly_key, owner[s] * nv + p_id)
-        w = v[p_id] - a
-        dist = _dot(w, nrm[s])
-        q = w - dist[:, None] * nrm[s]
-        d20, d21 = _dot(q, e0), _dot(q, e1)
-        bv = (d11 * d20 - d01 * d21) / den
-        bw = (d00 * d21 - d01 * d20) / den
-        inside = (bv >= -1e-12) & (bw >= -1e-12) & (bv + bw <= 1 + 1e-12)
-        hit |= inside & (np.abs(dist) <= face_m) & ~own
-    return hit
-
-
 _SKIP_M = 1e-6               # area prefilter margin: far above float rounding at site coordinates
+_SAT_ERR_M = 1e-12           # float error allowed on a separating-axis overlap (coordinates relative to s)
+
+
+def _sat_zero(a2, b2):
+    """Bool per pair of 2D triangles (n, 3, 2): their intersection area is certainly <= AREA_MIN_M2 / 2.
+
+    Separating-axis bound: along the normal of any of the 6 edges, the intersection lies in a slab as wide as the two
+    projections overlap (delta), and inside s, so its area <= delta x diam(s). Adjacent triangles of one surface (a
+    shared edge, delta = 0) and far apart ones (delta < 0) are skipped without shapely; an unclear pair is not.
+    """
+    o = a2[:, :1]
+    a2, b2 = a2 - o, b2 - o
+    best = np.full(len(a2), np.inf)
+    for tri in (a2, b2):
+        for k in range(3):
+            e = tri[:, (k + 1) % 3] - tri[:, k]
+            ln = np.hypot(e[:, 0], e[:, 1])
+            n = np.stack([-e[:, 1], e[:, 0]], 1) / np.where(ln > 0, ln, 1.0)[:, None]
+            pa = np.einsum("nkj,nj->nk", a2, n)
+            pb = np.einsum("nkj,nj->nk", b2, n)
+            delta = np.minimum(pa.max(1), pb.max(1)) - np.maximum(pa.min(1), pb.min(1))
+            best = np.where(ln > 0, np.minimum(best, delta), best)
+    diam = np.sqrt(np.max([((a2[:, i] - a2[:, j]) ** 2).sum(1) for i, j in ((0, 1), (1, 2), (0, 2))], axis=0))
+    return (best + _SAT_ERR_M) * diam <= AREA_MIN_M2 / 2
 
 
 def _area(v, tris, nrm, s, t, face_m, prefilter=True):
     """(bool, separation_m) per pair: projected overlap area > AREA_MIN_M2 with separation <= face_m on it.
 
-    Shapely runs only on pairs that can pass: the separation is measured from points of s (its overlap with t lies
+    Shapely runs only on pairs that can pass (and not on pairs `_sat_zero` proves have no overlap area, #556): the separation is measured from points of s (its overlap with t lies
     inside s) to the plane of t, so it lies between the min and max over s's corners; when that whole range is
     beyond face_m + `_SKIP_M` on one side, or the projected boxes are apart by more than `_SKIP_M`, the pair fails
     and keeps separation inf. A skipped pair is never a hit, and the reported separation of a polygon pair is the
@@ -415,6 +420,9 @@ def _area(v, tris, nrm, s, t, face_m, prefilter=True):
     lim = face_m + _SKIP_M
     maybe = np.ones(n, bool) if not prefilter else (dk.min(axis=1) <= lim) & (dk.max(axis=1) >= -lim) & \
         np.all((a2.min(axis=1) <= b2.max(axis=1) + _SKIP_M) & (b2.min(axis=1) <= a2.max(axis=1) + _SKIP_M), axis=1)
+    if prefilter and maybe.any():                                 # zero-area neighbours never reach shapely (#556)
+        mi = np.flatnonzero(maybe)
+        maybe[mi[_sat_zero(a2[mi], b2[mi])]] = False
     area = np.zeros(n)
     sep = np.full(n, np.inf)
     mi = np.flatnonzero(maybe)
@@ -451,11 +459,17 @@ def _prepare(mesh: PolyMesh):
 
 
 def _pairs_found(v, tris, owner, poly_key, tol: XviewTolerance, active=None) -> dict:
-    """{(i, j): (contact, area, separation)} 0-based polygons i < j; with `active` only pairs touching it."""
+    """{(i, j): (contact, area, separation)} 0-based polygons i < j; with `active` only pairs touching it.
+
+    The contact rule is the fast core's (`inv_xview_fast.contact_tri_pairs`, the one implementation, #556); the
+    triangle pairs it returns are looked up per broad-phase candidate, so a polygon pair's separation stays the minimum
+    over its contact-or-area triangle pairs exactly as before.
+    """
+    from dt_ai.ops.inv_xview_fast import contact_tri_pairs   # lazy: inv_xview_fast imports this module
     found: dict = {}
     if not len(tris):
         return found
-    nv = len(v)
+    nt = len(tris)
     p = v[tris]
     origin = p[:, 0]
     cr = np.cross(p[:, 1] - origin, p[:, 2] - origin)
@@ -464,10 +478,12 @@ def _pairs_found(v, tris, owner, poly_key, tol: XviewTolerance, active=None) -> 
         raise ValueError("derived triangle geometry is not finite")
     live = ln / 2 > AREA_EPS_M2
     nrm = np.divide(cr, ln[:, None], out=np.zeros_like(cr), where=live[:, None])
+    cs, ct = contact_tri_pairs(v, tris, owner, tol, poly_key)
+    con_key = np.unique(np.minimum(cs, ct) * nt + np.maximum(cs, ct))
     pad = tol.face_m / max(tol.parallel_cos_min, 1e-9) + 1e-9
     lo, hi = p.min(1), p.max(1)
-    rank = np.empty(len(tris), np.int64)
-    rank[np.argsort(lo[:, 0], kind="stable")] = np.arange(len(tris))   # pair orientation of the #370 x sweep
+    rank = np.empty(nt, np.int64)
+    rank[np.argsort(lo[:, 0], kind="stable")] = np.arange(nt)   # pair orientation of the #370 x sweep
     for s, t in _grid_pairs(lo, hi, pad, active):
         ok = (owner[s] != owner[t]) & live[s] & live[t]
         s, t = s[ok], t[ok]
@@ -477,8 +493,7 @@ def _pairs_found(v, tris, owner, poly_key, tol: XviewTolerance, active=None) -> 
             continue
         sw = rank[s] > rank[t]
         s, t = np.where(sw, t, s), np.where(sw, s, t)
-        con = _contact(v, tris, nrm, s, t, poly_key, owner, nv, tol.face_m) | \
-            _contact(v, tris, nrm, t, s, poly_key, owner, nv, tol.face_m)
+        con = _owns(con_key, np.minimum(s, t) * nt + np.maximum(s, t))
         hit_a, sep, _ = _area(v, tris, nrm, s, t, tol.face_m)
         for k in np.flatnonzero(con | hit_a):
             i, j = sorted((int(owner[s[k]]), int(owner[t[k]])))

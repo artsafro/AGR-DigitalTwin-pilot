@@ -105,3 +105,22 @@ H2 is confirmed **rejected** with ground-truth part labels: 28.41 % < 80 %.
 3. **Per-face part id side-car in `join_export_blender.py`** (research task 3, supported by M2). Scope: write
    `{face_index: tow02_src_part}` JSON next to the FBX. Acceptance: `part_truth.py` with the side-car instead of the
    .blend gives 100 % labels. Size S.
+
+## Optional corner audit of "unchanged" faces (hypothesis #603, adopted)
+
+`experiments/tow02-hand-finish-face-diff/audit_correspondence.py` replays pass 1 of `face_diff.py` (same grid,
+limits, face order and quad diagonals) and checks every face it calls unchanged with an independent corner test:
+for each selected triangle pair, `min over 6 vertex permutations of max_k dist(a[k], b[perm[k]])` in raw local
+metres must be `<= 0.001` (exactly 1 mm passes); a face passes only if all its triangles pass. It is a research
+helper, **not a production or delivery gate** (`delivery_passed` is always false; node transforms are ignored).
+
+    python experiments/tow02-hand-finish-face-diff/audit_correspondence.py SOURCE.fbx TARGET.fbx OUT.json
+
+Exit 0 = pass fraction >= `--fraction` (default 0.99), 1 = below, 2 = bad input (missing/non-FBX file, target not
+fully triangulated, n-gon source, NaN/inf, output path that resolves to an input, input changed during the run).
+Tests: `tests/test_tow02_face_correspondence_audit.py`.
+
+Measured on copies of export-v005 (`ff8994dc...`) vs the user's 013_Main (`2fd80081...`): 33,251 of 33,256
+unchanged faces pass (99.985 %). **Known residual: 5 faces (0.015 %)** have corner offsets of 1.0-2.0 mm while
+their centroids match within 1 mm: v005 face / user triangle 35321/29005 (1.986 mm), 35336/29029 (1.50 mm),
+35380/29038 (1.50 mm), 33613/63297 (1.01 mm), 33614/63300 (1.01 mm). The user013 self-check gives 73,594/73,594.

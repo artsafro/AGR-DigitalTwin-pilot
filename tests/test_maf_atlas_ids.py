@@ -314,11 +314,51 @@ def test_cell_to_id_tolerance_is_inclusive_at_the_threshold_and_exclusive_above(
     assert one('#777777') is None  # 19 > tolerance -> unmapped with a reason, never the nearest anyway
 
 
+def test_approved_v1_prefix_and_target_swatch_skips_the_picked_patch(tmp_path):
+    """A mineral gap whose colour sits in an unassigned texture uses a flat target when swatch is target."""
+    seed = _seed(
+        status='approved-v1',
+        approval={'date': '2026-10-22', 'quote': 'q', 'by': 'Artem'},
+        ids=[{'id': 1, 'key': 'terrazzo', 'name_ru': 'терраццо', 'kind': 'mineral', 'hex': '#C7C7C7',
+              'spec': None, 'library': None, 'swatch': 'target'}])
+    args = _setup(tmp_path, seed=seed)
+    maps = Path(args[args.index('--maps-dir') + 1])
+    rng = np.random.default_rng(5)
+    # Four flat cells make this an atlas. The rest is a dark patterned cell (unassigned: mineral
+    # takes patterned cells only, and the mean is far from #C7C7C7) with a grey window pick_patch
+    # would crop. swatch "target" must refuse that crop.
+    image = np.clip(30 + rng.normal(0, 10, (512, 512, 3)), 0, 255).astype(np.uint8)
+    image[:128, 0:128] = (200, 30, 30)
+    image[:128, 128:256] = (40, 160, 210)
+    image[:128, 256:384] = (5, 5, 5)
+    image[:128, 384:512] = (208, 208, 208)
+    image[300:460, 300:460] = np.clip(199 + rng.normal(0, 8, (160, 160, 3)), 0, 255).astype(np.uint8)
+    Image.fromarray(image).save(maps / 'T_Atlas.png')
+    assert ids_mod.main(args + _outs(tmp_path) + ['--evidence-dir', str(tmp_path / 'ev')]) == 0
+    approved = json.loads((tmp_path / 'out.json').read_text(encoding='utf-8'))
+    entry = approved['ids'][0]
+    assert approved['status'] == 'approved-v1' and approved['approval']['quote'] == 'q'
+    assert entry['status'] == 'approved-v1, gap: no atlas cell' and entry['picked_patch'] is None
+    assert approved['evidence']['tiles'][0]['source'].startswith('GAP: target colour #C7C7C7')
+
+    plain = _seed(ids=[{'id': 1, 'key': 'terrazzo', 'name_ru': 'терраццо', 'kind': 'mineral',
+                        'hex': '#C7C7C7', 'spec': None, 'library': None}])
+    plain_dir = tmp_path / 'plain'
+    plain_dir.mkdir()
+    args2 = _setup(plain_dir, seed=plain)
+    maps2 = Path(args2[args2.index('--maps-dir') + 1])
+    Image.fromarray(image).save(maps2 / 'T_Atlas.png')
+    assert ids_mod.main(args2 + _outs(tmp_path / 'plain') + ['--evidence-dir', str(tmp_path / 'plain' / 'ev')]) == 0
+    control = json.loads((tmp_path / 'plain' / 'out.json').read_text(encoding='utf-8'))
+    assert control['ids'][0]['picked_patch'] is not None
+    assert 'patch' in control['evidence']['tiles'][0]['source']
+
+
 def test_real_v005_artifact_keeps_or_merges_every_v004_id_and_never_uses_the_example():
     lib = ROOT / 'library' / 'maf'
     r = json.loads((lib / 'material_ids_v005.json').read_text(encoding='utf-8'))
     v4 = json.loads((lib / 'material_ids_v004_seed.json').read_text(encoding='utf-8'))
-    assert r['status'] == 'proposed' and [e['id'] for e in r['ids']] == list(range(1, len(r['ids']) + 1))
+    assert r['status'] == 'approved-v1' and [e['id'] for e in r['ids']] == list(range(1, len(r['ids']) + 1))
     kept = {e['key'] for e in r['ids']}
     merged = {m['from_key']: m['into'] for m in r['merges']}
     assert {e['key'] for e in v4['ids']} == kept | set(merged) and not kept & set(merged)
