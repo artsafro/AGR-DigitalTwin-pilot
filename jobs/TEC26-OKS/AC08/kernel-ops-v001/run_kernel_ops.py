@@ -8,8 +8,10 @@ docs/experiments/hyp-663.md; Max 2026.3 scene "04-09 Geometry Final.max", layer 
 its connected components (body / knob / plate, ordered by face count); the UCX node "Colizii_044" is reported in
 the drop list (collision hull, not a render part). Every op runs on a fresh copy of the source scene.
 
-Per state the same metric set is computed in memory and, after Blender 5.1 FBX export + tools/blender/fbx_readback.py,
-on the readback: faces/vertices/degrees, open edges, non-manifold edges, zero-area faces, twinqa topology defects,
+Per state the same metric set is computed on the ACTUAL candidate in memory and, after Blender 5.1 FBX export +
+tools/blender/fbx_readback.py, on the readback (per-polygon material ids included); a state is accepted only if every
+row is within tol and no UV was lost on export. Payload -> readback fidelity is reported separately. Metrics:
+faces/vertices/degrees, open edges, non-manifold edges, zero-area faces, twinqa topology defects,
 quad dominance (inv_quads, VPM-OKS), xView (inv_xview, 2/5 mm), texel_ready (VPM-OKS), UV coverage/mirroring.
 The kernel visibility invariants (invariants.check_operation) are recorded per op from the op itself.
 Native 3ds Max xView (tools/qa/xview_parity.py) is NOT run: this card launches no 3ds Max (Max-lock rule).
@@ -21,6 +23,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import sys
 from collections import Counter, defaultdict
 from dataclasses import replace
@@ -371,15 +374,46 @@ def export_payload(state):
     return objs, notes
 
 
+MATERIAL_SLOT = re.compile(r"ID_(\d{2})")
+
+
 def state_from_readback(report):
+    """Readback report -> state with per-polygon material ids; any missing, partial or unmapped field is an error."""
+    if report.get("readback_ok") is not True:
+        raise InputError(f"readback not ok: {report.get('error') or report.get('readback_ok')!r}")
+    meshes = report.get("meshes") or []
+    if not meshes:
+        raise InputError("readback has no meshes")
+    names = [m["name"] for m in meshes]
+    dup = sorted(n for n, c in Counter(names).items() if c > 1)
+    if dup:
+        raise InputError(f"readback mesh names duplicated: {dup}")
     out = {}
-    for m in report["meshes"]:
+    for m in meshes:
         g = m["face_geometry"]
+        v = np.asarray(g["vertices"], float).reshape(-1, 3)
+        if not np.isfinite(v).all():
+            raise InputError(f"{m['name']}: non-finite readback vertex")
+        polys = tuple(tuple(int(i) for i in p) for p in g["polygons"])
+        if any(i < 0 or i >= len(v) for p in polys for i in p):
+            raise InputError(f"{m['name']}: polygon vertex index out of range")
+        pm = g.get("polygon_material")
+        if pm is None or len(pm) != len(polys):
+            raise InputError(f"{m['name']}: per-polygon materials {None if pm is None else len(pm)} "
+                             f"for {len(polys)} polygons")
+        mats = []
+        for i, name in enumerate(pm):
+            hit = MATERIAL_SLOT.fullmatch(name) if isinstance(name, str) else None
+            if hit is None or int(hit.group(1)) < 1:
+                raise InputError(f"{m['name']}: polygon {i} material {name!r} is not an ID_nn slot")
+            mats.append(int(hit.group(1)))
         puv = g.get("polygon_uv")
+        if puv is not None and len(puv) != len(polys):
+            raise InputError(f"{m['name']}: polygon_uv {len(puv)} for {len(polys)} polygons")
         out[m["name"].replace("_J_", "+")] = {
-            "v": np.asarray(g["vertices"], float), "faces": tuple(tuple(p) for p in g["polygons"]),
-            "uv": [None] * len(g["polygons"]) if puv is None else [list(map(tuple, c)) for c in puv],
-            "mat": None, "material_slots": len(m["materials"])}
+            "v": v, "faces": polys,
+            "uv": [None] * len(polys) if puv is None else [list(map(tuple, c)) for c in puv],
+            "mat": mats, "material_slots": len(m["materials"])}
     return out
 
 
@@ -391,7 +425,7 @@ def rounded(state):
 
 
 COMPARE_KEYS = ("faces", "vertices", "degrees", "open_edges", "nonmanifold_edges", "zero_area_faces", "area_m2",
-                "bounds_m", "topology", "quads", "xview", "texel_offenders", "uv")
+                "bounds_m", "topology", "quads", "xview", "texel_offenders", "uv", "materials")
 
 
 VERTEX_TOL_M = 1e-5    # declared: Blender stores float32 coordinates (spacing 3.8e-6 m at 37 m) + 1e-6 rounding
@@ -420,12 +454,14 @@ def parity(mem: dict, back: dict, mem_state=None, rb_state=None):
                 uvd = max((abs(x - y) for c, d in zip(ms["uv"], rs["uv"]) for p, q in zip(c, d)
                            for x, y in zip(p, q)), default=0.0)
             slots = max(ms["mat"]) if ms["mat"] else 0
+            mat_diff = sum(x != y for x, y in zip(ms["mat"], rs["mat"])) if same else None
             mem_uv = any(c is not None for c in ms["uv"])
             uv_ref = 0.0 if mem_uv else None
             for key, va, vb, ok in (("same_polygon_index_lists", True, same, same),
                                     ("vertex_max_abs_dev_m", 0.0, dev, dev is not None and dev <= VERTEX_TOL_M),
                                     ("uv_max_abs_dev", uv_ref, uvd, (uvd is None and not mem_uv)
                                      or (uvd is not None and uvd <= 1e-6)),
+                                    ("polygon_material_ids", 0, mat_diff, mat_diff == 0),
                                     ("material_slots", slots, rs["material_slots"], slots == rs["material_slots"])):
                 rows.append({"part": part, "metric": key, "in_memory": va, "readback": vb, "equal": va == vb,
                              "equal_within_tol": bool(ok)})
@@ -437,12 +473,31 @@ def parity(mem: dict, back: dict, mem_state=None, rb_state=None):
 
 
 def readback_metrics(rb_state):
-    for p in rb_state.values():
-        p["mat"] = [0] * len(p["faces"])     # readback carries slots, not per-polygon ids; not compared
     m = scene_metrics(rb_state)
     for k, p in rb_state.items():
         m["parts"][k]["material_slots"] = p["material_slots"]
     return m
+
+
+def export_state(state):
+    """The candidate as the FBX writer receives it (UV of a partially mapped object dropped, see export_payload)."""
+    return {k: {**p, "uv": p["uv"] if all(c is not None for c in p["uv"]) else [None] * len(p["uv"])}
+            for k, p in state.items()}
+
+
+def compare_state(candidate, report):
+    """Readback vs the ACTUAL candidate (accepted only if every row is within tol and no UV was lost on export),
+    plus payload -> readback fidelity (what the writer got vs what came back) kept separate."""
+    cand = rounded(candidate)
+    exp = rounded(export_state(candidate))
+    rb = state_from_readback(report)
+    back = readback_metrics(rb)
+    cp = parity(scene_metrics(cand), back, cand, rb)
+    pp = parity(scene_metrics(exp), back, exp, rb)
+    loss = {k: sum(c is not None for c in p["uv"]) for k, p in candidate.items()
+            if any(c is not None for c in p["uv"]) and not all(c is not None for c in p["uv"])}
+    return {"candidate_parity": cp, "payload_parity": pp, "export_uv_loss": loss, "back": back,
+            "accepted": not loss and all(r["equal_within_tol"] for r in cp)}
 
 
 # ---- main ------------------------------------------------------------------------------------------------------
@@ -475,7 +530,7 @@ def run(work: Path, evidence: Path, blender: bool = True):
             r["after"] = scene_metrics(state)
             r["after_visibility"] = visibility(state, ctx)
             states[r["label"]] = state       # candidate states are exported too (applied or rolled back)
-    payload, payload_notes, mem, mem_state = {}, {}, {}, {}
+    payload, payload_notes = {}, {}
     not_exported = {}
     for label, st in list(states.items()):
         merged = {k: p["mat"].count(0) for k, p in st.items() if 0 in p["mat"]}
@@ -484,10 +539,6 @@ def run(work: Path, evidence: Path, blender: bool = True):
                                    "no material id may be defaulted")
             continue
         payload[label], payload_notes[label] = export_payload(st)
-        exp_state = {k: {**p, "uv": p["uv"] if all(c is not None for c in p["uv"]) else [None] * len(p["uv"])}
-                     for k, p in st.items()}
-        mem_state[label] = rounded(exp_state)
-        mem[label] = scene_metrics(mem_state[label])
     result = {"issue": 752, "source": {"path": SOURCE.relative_to(ROOT).as_posix(), "sha256": src_before},
               "profile": PROFILE, "parts": {k: {"faces": len(p["faces"]), "vertices": len(p["v"]),
                                                 "source_faces": p["source_faces"]} for k, p in source.items()},
@@ -509,15 +560,17 @@ def run(work: Path, evidence: Path, blender: bool = True):
             rep.parent.mkdir(exist_ok=True)
             report = run_blender(READBACK, [fbx, rep], output_json=rep, log_path=work / f"readback_{label}.log",
                                  timeout=600)
-            rb_state = state_from_readback(report)
-            back = readback_metrics(rb_state)
-            rows_p = parity(mem[label], back, mem_state[label], rb_state)
+            c = compare_state(states[label], report)
+            rows_p, back = c["candidate_parity"], c["back"]
             result["readback"][label] = {
                 "fbx": fbx.as_posix(), "fbx_sha256": sha256(fbx), "export_notes": payload_notes[label],
                 "readback_ok": report["readback_ok"], "blender": report["blender"],
                 "material_slots": {k: v.get("material_slots") for k, v in back["parts"].items()},
+                "accepted": c["accepted"], "export_uv_loss": c["export_uv_loss"],
                 "parity": rows_p, "all_equal": all(r["equal"] for r in rows_p),
-                "all_equal_within_tol": all(r["equal_within_tol"] for r in rows_p)}
+                "all_equal_within_tol": all(r["equal_within_tol"] for r in rows_p),
+                "payload_parity": c["payload_parity"],
+                "payload_all_equal_within_tol": all(r["equal_within_tol"] for r in c["payload_parity"])}
     if sha256(SOURCE) != src_before:
         raise InputError("the source changed during the run")
     result["source"]["sha256_after"] = sha256(SOURCE)
@@ -573,17 +626,25 @@ def markdown(r):
         lines += ["", "## FBX readback parity (in-memory at 1e-6 m vs readback)", "",
                   f"Strict equality; `tol` = within the declared float32 storage tolerance: vertices <= "
                   f"{VERTEX_TOL_M} m, area <= sum(edge lengths) x {VERTEX_TOL_M} m, UV <= 1e-6; every other "
-                  "metric strictly.", "",
-                  "| state | metrics compared | strictly equal | equal within tol | strictly unequal metrics |",
-                  "|---|---|---|---|---|"]
+                  "metric strictly; per-polygon material ids compared polygon by polygon. Candidate = the op's "
+                  "actual after-state; payload = what the FBX writer received (UV of a partially mapped object "
+                  "is dropped: the writer has no missing-UV representation, so that state is NOT accepted).", "",
+                  "| state | accepted | candidate rows | strictly equal | within tol | failing (not within tol) "
+                  "| strictly unequal only | export UV loss (faces) | payload->readback within tol |",
+                  "|---|---|---|---|---|---|---|---|---|"]
         for label, rb in r["readback"].items():
             if rb.get("status") == "not_exported":
-                lines.append(f"| {label} | 0 | 0 | 0 | FAIL {rb['reason']} |")
+                lines.append(f"| {label} | FAIL | 0 | 0 | 0 | {rb['reason']} | - | - | - |")
                 continue
-            bad = [f"{x['part']}.{x['metric']}" for x in rb["parity"] if not x["equal"]]
+            neq = [f"{x['part']}.{x['metric']}" for x in rb["parity"] if not x["equal"] and x["equal_within_tol"]]
+            bad = [f"{x['part']}.{x['metric']}" for x in rb["parity"] if not x["equal_within_tol"]]
+            eq = sum(x["equal"] for x in rb["parity"])
             tol = sum(x["equal_within_tol"] for x in rb["parity"])
-            lines.append(f"| {label} | {len(rb['parity'])} | {len(rb['parity']) - len(bad)} | {tol} | "
-                         f"{', '.join(bad) or '-'} |")
+            pp = rb["payload_parity"]
+            lines.append(f"| {label} | {'yes' if rb['accepted'] else 'FAIL'} | {len(rb['parity'])} | {eq} | {tol} | "
+                         f"{', '.join(bad) or '-'} | {', '.join(neq) or '-'} | "
+                         f"{', '.join(f'{k}: {n}' for k, n in rb['export_uv_loss'].items()) or '0'} | "
+                         f"{sum(x['equal_within_tol'] for x in pp)}/{len(pp)} |")
     lines += ["", f"Native Max xView parity: {r['native_max_xview_parity']['status']} - "
               f"{r['native_max_xview_parity']['reason']}.", ""]
     return "\n".join(lines)
@@ -603,6 +664,7 @@ def main(argv=None):
     rb = r.get("readback", {})
     print(json.dumps({"ops": len(r["ops"]), "applied": sum(o["applied"] for o in r["ops"]),
                       "readback_states": len(rb), "not_exported": sum("status" in v for v in rb.values()),
+                      "readback_accepted": sum(bool(v.get("accepted")) for v in rb.values()),
                       "readback_all_equal": sum(bool(v.get("all_equal")) for v in rb.values()),
                       "readback_all_equal_within_tol": sum(bool(v.get("all_equal_within_tol")) for v in rb.values())}))
     return 0

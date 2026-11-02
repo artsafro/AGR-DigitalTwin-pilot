@@ -119,7 +119,15 @@ def test_committed_evidence_is_current_and_failures_are_listed():
     assert r["native_max_xview_parity"]["status"] == "not_run"
     exported = {k: v for k, v in r["readback"].items() if v.get("status") != "not_exported"}
     assert set(r["not_exported"]) == {k for k in r["readback"]} - set(exported) == {"S15_simplify_part_AC08_body"}
-    assert len(exported) == 16 and all(v["readback_ok"] and v["all_equal_within_tol"] for v in exported.values())
+    assert len(exported) == 16 and all(v["readback_ok"] for v in exported.values())
+    failed = {k for k, v in exported.items() if not v["accepted"]}
+    assert failed == {"S16_simplify_part_AC08_knob", "S17_simplify_part_AC08_plate"}     # UV lost on export
+    assert exported["S16_simplify_part_AC08_knob"]["export_uv_loss"] == {"simplified": 168}
+    assert exported["S17_simplify_part_AC08_plate"]["export_uv_loss"] == {"simplified": 170}
+    for k, v in exported.items():
+        assert v["accepted"] == (v["all_equal_within_tol"] and not v["export_uv_loss"])
+        assert v["payload_all_equal_within_tol"]
+        assert any(x["metric"] == "polygon_material_ids" for x in v["parity"])
     for o in r["ops"]:      # a refused or rolled-back op carries its reason; nothing failing is marked applied
         assert o["applied"] == (o["check_operation"] is not None and o["check_operation"]["passed"])
         assert o["applied"] or o["refusal_or_rollback"]

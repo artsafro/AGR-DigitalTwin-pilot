@@ -66,26 +66,26 @@ Kernel check (invariants.py) on the whole scene; ground_z unset (no ground surfa
 
 ## FBX readback parity (in-memory at 1e-6 m vs readback)
 
-Strict equality; `tol` = within the declared float32 storage tolerance: vertices <= 1e-05 m, area <= sum(edge lengths) x 1e-05 m, UV <= 1e-6; every other metric strictly.
+Strict equality; `tol` = within the declared float32 storage tolerance: vertices <= 1e-05 m, area <= sum(edge lengths) x 1e-05 m, UV <= 1e-6; every other metric strictly; per-polygon material ids compared polygon by polygon. Candidate = the op's actual after-state; payload = what the FBX writer received (UV of a partially mapped object is dropped: the writer has no missing-UV representation, so that state is NOT accepted).
 
-| state | metrics compared | strictly equal | equal within tol | strictly unequal metrics |
-|---|---|---|---|---|
-| S15_simplify_part_AC08_body | 0 | 0 | 0 | FAIL not exported: polygons merge different material ids {'simplified': 1}; no material id may be defaulted |
-| S00_source | 52 | 46 | 52 | AC08_body.area_m2, AC08_body.vertex_max_abs_dev_m, AC08_knob.area_m2, AC08_knob.vertex_max_abs_dev_m, AC08_plate.area_m2, AC08_plate.vertex_max_abs_dev_m |
-| S01_keep_AC08_body | 52 | 46 | 52 | AC08_body.area_m2, AC08_body.vertex_max_abs_dev_m, AC08_knob.area_m2, AC08_knob.vertex_max_abs_dev_m, AC08_plate.area_m2, AC08_plate.vertex_max_abs_dev_m |
-| S02_keep_AC08_knob | 52 | 46 | 52 | AC08_body.area_m2, AC08_body.vertex_max_abs_dev_m, AC08_knob.area_m2, AC08_knob.vertex_max_abs_dev_m, AC08_plate.area_m2, AC08_plate.vertex_max_abs_dev_m |
-| S03_keep_AC08_plate | 52 | 46 | 52 | AC08_body.area_m2, AC08_body.vertex_max_abs_dev_m, AC08_knob.area_m2, AC08_knob.vertex_max_abs_dev_m, AC08_plate.area_m2, AC08_plate.vertex_max_abs_dev_m |
-| S04_primitive_box_AC08_knob | 52 | 48 | 52 | AC08_body.area_m2, AC08_body.vertex_max_abs_dev_m, AC08_plate.area_m2, AC08_plate.vertex_max_abs_dev_m |
-| S05_primitive_box_AC08_plate | 52 | 46 | 52 | AC08_body.area_m2, AC08_body.vertex_max_abs_dev_m, AC08_knob.area_m2, AC08_knob.vertex_max_abs_dev_m, AC08_plate.area_m2, AC08_plate.vertex_max_abs_dev_m |
-| S08_to_opacity_plane_AC08_plate | 52 | 46 | 52 | AC08_body.area_m2, AC08_body.vertex_max_abs_dev_m, AC08_knob.area_m2, AC08_knob.vertex_max_abs_dev_m, AC08_plate.area_m2, AC08_plate.vertex_max_abs_dev_m |
-| S09_to_opacity_plane_AC08_knob | 52 | 46 | 52 | AC08_body.area_m2, AC08_body.vertex_max_abs_dev_m, AC08_knob.area_m2, AC08_knob.vertex_max_abs_dev_m, AC08_plate.area_m2, AC08_plate.vertex_max_abs_dev_m |
-| S11_rebuild_by_contour_AC08_plate | 52 | 46 | 52 | AC08_body.area_m2, AC08_body.vertex_max_abs_dev_m, AC08_knob.area_m2, AC08_knob.vertex_max_abs_dev_m, AC08_plate.area_m2, AC08_plate.vertex_max_abs_dev_m |
-| S12_join_parts_AC08_body_AC08_plate | 35 | 31 | 35 | AC08_body+AC08_plate.area_m2, AC08_body+AC08_plate.vertex_max_abs_dev_m, AC08_knob.area_m2, AC08_knob.vertex_max_abs_dev_m |
-| S13_join_parts_AC08_knob_AC08_plate | 35 | 31 | 35 | AC08_body.area_m2, AC08_body.vertex_max_abs_dev_m, AC08_knob+AC08_plate.area_m2, AC08_knob+AC08_plate.vertex_max_abs_dev_m |
-| S14_join_parts_AC08_body_AC08_knob | 35 | 31 | 35 | AC08_body+AC08_knob.area_m2, AC08_body+AC08_knob.vertex_max_abs_dev_m, AC08_plate.area_m2, AC08_plate.vertex_max_abs_dev_m |
-| S16_simplify_part_AC08_knob | 18 | 16 | 18 | simplified.area_m2, simplified.vertex_max_abs_dev_m |
-| S17_simplify_part_AC08_plate | 18 | 16 | 18 | simplified.area_m2, simplified.vertex_max_abs_dev_m |
-| S18_move_rigid_AC08_knob | 52 | 46 | 52 | AC08_body.area_m2, AC08_body.vertex_max_abs_dev_m, AC08_knob.area_m2, AC08_knob.vertex_max_abs_dev_m, AC08_plate.area_m2, AC08_plate.vertex_max_abs_dev_m |
-| S19_move_rigid_AC08_plate | 52 | 46 | 52 | AC08_body.area_m2, AC08_body.vertex_max_abs_dev_m, AC08_knob.area_m2, AC08_knob.vertex_max_abs_dev_m, AC08_plate.area_m2, AC08_plate.vertex_max_abs_dev_m |
+| state | accepted | candidate rows | strictly equal | within tol | failing (not within tol) | strictly unequal only | export UV loss (faces) | payload->readback within tol |
+|---|---|---|---|---|---|---|---|---|
+| S15_simplify_part_AC08_body | FAIL | 0 | 0 | 0 | not exported: polygons merge different material ids {'simplified': 1}; no material id may be defaulted | - | - | - |
+| S00_source | yes | 58 | 52 | 58 | - | AC08_body.area_m2, AC08_body.vertex_max_abs_dev_m, AC08_knob.area_m2, AC08_knob.vertex_max_abs_dev_m, AC08_plate.area_m2, AC08_plate.vertex_max_abs_dev_m | 0 | 58/58 |
+| S01_keep_AC08_body | yes | 58 | 52 | 58 | - | AC08_body.area_m2, AC08_body.vertex_max_abs_dev_m, AC08_knob.area_m2, AC08_knob.vertex_max_abs_dev_m, AC08_plate.area_m2, AC08_plate.vertex_max_abs_dev_m | 0 | 58/58 |
+| S02_keep_AC08_knob | yes | 58 | 52 | 58 | - | AC08_body.area_m2, AC08_body.vertex_max_abs_dev_m, AC08_knob.area_m2, AC08_knob.vertex_max_abs_dev_m, AC08_plate.area_m2, AC08_plate.vertex_max_abs_dev_m | 0 | 58/58 |
+| S03_keep_AC08_plate | yes | 58 | 52 | 58 | - | AC08_body.area_m2, AC08_body.vertex_max_abs_dev_m, AC08_knob.area_m2, AC08_knob.vertex_max_abs_dev_m, AC08_plate.area_m2, AC08_plate.vertex_max_abs_dev_m | 0 | 58/58 |
+| S04_primitive_box_AC08_knob | yes | 58 | 54 | 58 | - | AC08_body.area_m2, AC08_body.vertex_max_abs_dev_m, AC08_plate.area_m2, AC08_plate.vertex_max_abs_dev_m | 0 | 58/58 |
+| S05_primitive_box_AC08_plate | yes | 58 | 52 | 58 | - | AC08_body.area_m2, AC08_body.vertex_max_abs_dev_m, AC08_knob.area_m2, AC08_knob.vertex_max_abs_dev_m, AC08_plate.area_m2, AC08_plate.vertex_max_abs_dev_m | 0 | 58/58 |
+| S08_to_opacity_plane_AC08_plate | yes | 58 | 52 | 58 | - | AC08_body.area_m2, AC08_body.vertex_max_abs_dev_m, AC08_knob.area_m2, AC08_knob.vertex_max_abs_dev_m, AC08_plate.area_m2, AC08_plate.vertex_max_abs_dev_m | 0 | 58/58 |
+| S09_to_opacity_plane_AC08_knob | yes | 58 | 52 | 58 | - | AC08_body.area_m2, AC08_body.vertex_max_abs_dev_m, AC08_knob.area_m2, AC08_knob.vertex_max_abs_dev_m, AC08_plate.area_m2, AC08_plate.vertex_max_abs_dev_m | 0 | 58/58 |
+| S11_rebuild_by_contour_AC08_plate | yes | 58 | 52 | 58 | - | AC08_body.area_m2, AC08_body.vertex_max_abs_dev_m, AC08_knob.area_m2, AC08_knob.vertex_max_abs_dev_m, AC08_plate.area_m2, AC08_plate.vertex_max_abs_dev_m | 0 | 58/58 |
+| S12_join_parts_AC08_body_AC08_plate | yes | 39 | 35 | 39 | - | AC08_body+AC08_plate.area_m2, AC08_body+AC08_plate.vertex_max_abs_dev_m, AC08_knob.area_m2, AC08_knob.vertex_max_abs_dev_m | 0 | 39/39 |
+| S13_join_parts_AC08_knob_AC08_plate | yes | 39 | 35 | 39 | - | AC08_body.area_m2, AC08_body.vertex_max_abs_dev_m, AC08_knob+AC08_plate.area_m2, AC08_knob+AC08_plate.vertex_max_abs_dev_m | 0 | 39/39 |
+| S14_join_parts_AC08_body_AC08_knob | yes | 39 | 35 | 39 | - | AC08_body+AC08_knob.area_m2, AC08_body+AC08_knob.vertex_max_abs_dev_m, AC08_plate.area_m2, AC08_plate.vertex_max_abs_dev_m | 0 | 39/39 |
+| S16_simplify_part_AC08_knob | FAIL | 20 | 16 | 18 | simplified.uv, simplified.uv_max_abs_dev | simplified.area_m2, simplified.vertex_max_abs_dev_m | simplified: 168 | 20/20 |
+| S17_simplify_part_AC08_plate | FAIL | 20 | 16 | 18 | simplified.uv, simplified.uv_max_abs_dev | simplified.area_m2, simplified.vertex_max_abs_dev_m | simplified: 170 | 20/20 |
+| S18_move_rigid_AC08_knob | yes | 58 | 52 | 58 | - | AC08_body.area_m2, AC08_body.vertex_max_abs_dev_m, AC08_knob.area_m2, AC08_knob.vertex_max_abs_dev_m, AC08_plate.area_m2, AC08_plate.vertex_max_abs_dev_m | 0 | 58/58 |
+| S19_move_rigid_AC08_plate | yes | 58 | 52 | 58 | - | AC08_body.area_m2, AC08_body.vertex_max_abs_dev_m, AC08_knob.area_m2, AC08_knob.vertex_max_abs_dev_m, AC08_plate.area_m2, AC08_plate.vertex_max_abs_dev_m | 0 | 58/58 |
 
 Native Max xView parity: not_run - tools/qa/xview_parity.py needs a 3ds Max session; this card launches no 3ds Max (Max-lock / max_exec rules).

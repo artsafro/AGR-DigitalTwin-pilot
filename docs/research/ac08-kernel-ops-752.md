@@ -3,7 +3,8 @@
 Date: 2026-11-02. Branch `improve/issue-752-kernel-real-ac08-before-after-invariants`.
 Generated tables: `jobs/TEC26-OKS/AC08/kernel-ops-v001/evidence/kernel_ops.md`, full numbers
 `.../evidence/kernel_ops.json`. Binaries (16 FBX, 16 readback JSON, states.json): Google Drive
-`G:/Мой диск/AGR-evidence/752-ac08-kernel-ops/`, hashes in `.../evidence/DRIVE-SHA256SUMS.txt`.
+`G:/Мой диск/AGR-evidence/752-ac08-kernel-ops/`, hashes in `.../evidence/DRIVE-SHA256SUMS-v002.txt` (folder `v002/`;
+`DRIVE-SHA256SUMS.txt` = the superseded round-1 set at the folder root).
 Not a delivery verdict: technical QA only, `passed` is not claimed for any delivery.
 
 ## Input
@@ -18,7 +19,7 @@ of the source. Profile VPM-OKS; xView 2 mm / 5 mm; Context() default (no `ground
 ## Command
 
 ```
-uv run python jobs/TEC26-OKS/AC08/kernel-ops-v001/run_kernel_ops.py --work C:/x/ev_t_1483e1fa/v001
+uv run python jobs/TEC26-OKS/AC08/kernel-ops-v001/run_kernel_ops.py --work C:/x/ev_t_1483e1fa/v002
 ```
 About 80 s: 19 ops, 17 states, Blender 5.1.2 export (`export_states_blender.py`, polygons + per-corner UV + material
 slots) and `tools/blender/fbx_readback.py` once per FBX.
@@ -65,11 +66,18 @@ xView face pairs are 0 in the source and in every candidate except S05 and S11 (
 
 ## FBX readback parity
 
-16 of 17 states exported and read back; 16/16 equal within the declared float32 tolerance (vertices <= 1e-5 m,
-area <= edge length x 1e-5 m, UV <= 1e-6, every count strictly). Strictly equal on every count metric: faces,
-vertices, degrees, open / non-manifold edges, zero-area faces, twinqa topology defects, quad report, xView pairs,
-texel offenders, UV coverage / mirroring, polygon index lists, material slots. Strictly unequal: `area_m2` and
-`vertex_max_abs_dev_m` only (max vertex deviation 2.0e-6 m, max UV deviation 0).
+The readback is compared with the **actual candidate** (the op's after-state), not with what the writer received;
+per-polygon material ids are read back (`fbx_readback.py` `face_geometry.polygon_material`, slot `ID_nn`) and
+compared polygon by polygon. Payload -> readback fidelity (writer input vs readback) is reported separately.
+
+16 of 17 states exported and read back (run v002). **14/16 accepted**: every candidate row equal within the declared
+float32 tolerance (vertices <= 1e-5 m, area <= edge length x 1e-5 m, UV <= 1e-6, every count and every polygon's
+material id strictly). Strictly unequal on accepted states: `area_m2` and `vertex_max_abs_dev_m` only.
+**2/16 FAIL**: S16 (`simplify_part` knob) and S17 (`simplify_part` plate) have UV on 168 of 169 and 170 of 174
+polygons; the FBX writer has no missing-UV representation, so the UV of these objects is dropped on export and
+168 / 170 valid UV faces are lost (failing rows `simplified.uv`, `simplified.uv_max_abs_dev`). Their payload ->
+readback fidelity is 20/20 within tol: the loss is candidate -> export, not the FBX round trip.
+Payload -> readback fidelity: 16/16 states within tol.
 
 ## Failures (listed as failures)
 
@@ -80,6 +88,7 @@ texel offenders, UV coverage / mirroring, polygon index lists, material slots. S
    raises open edges 32 -> 65; state S15 is NOT exported (no material id may be defaulted).
 3. `embed_into_neighbour` (knob, plate) and `rebuild_by_contour` (knob) refuse on this geometry.
 4. `primitive_box` and `rebuild_by_contour` on the plate create 17 cross-part xView face pairs (both rolled back).
-5. Ops that rebuild geometry (primitive_box, to_opacity_plane, rebuild_by_contour) carry no UV (0 of N faces).
-6. Native 3ds Max xView parity (`tools/qa/xview_parity.py`): **not run** — this card launches no 3ds Max
+5. FBX export loses 168 (S16) and 170 (S17) valid UV faces of partially mapped candidates (see above).
+6. Ops that rebuild geometry (primitive_box, to_opacity_plane, rebuild_by_contour) carry no UV (0 of N faces).
+7. Native 3ds Max xView parity (`tools/qa/xview_parity.py`): **not run** — this card launches no 3ds Max
    (Max-lock / max_exec rules). Repeat on the AC08 L4 building is a separate issue.
