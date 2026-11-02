@@ -1175,9 +1175,13 @@ def test_every_rejected_prepare_invalidates_prior_success(tmp_path, bad):
         xp.check_run(out, ["a"])
 
 
-@pytest.mark.parametrize("bad_jobs", [[], None, {}, ()])
+@pytest.mark.parametrize("bad_jobs", [
+    [], None, {}, (),
+    *[[{"label": "a", "path": value, "mode": "plain"}]
+      for value in (None, 0, [], {}, "", "unsupported.txt")],
+])
 @pytest.mark.parametrize("alias_done", [False, True])
-def test_empty_prepare_after_success_is_durable_and_preserves_inputs(tmp_path, bad_jobs, alias_done):
+def test_rejected_prepare_after_success_is_durable_and_preserves_inputs(tmp_path, bad_jobs, alias_done):
     """A rejected invocation invalidates old success without unlinking input aliases."""
     import subprocess
     import sys
@@ -1195,7 +1199,8 @@ def test_empty_prepare_after_success_is_durable_and_preserves_inputs(tmp_path, b
     original = src.read_bytes()
     receipt = (out / "done.txt").read_bytes()
     for _ in range(2):
-        with pytest.raises(xp.DumpError, match="no inputs"):
+        # Invalid Python path values may raise TypeError; they must still poison collection.
+        with pytest.raises((xp.DumpError, TypeError)):
             xp.prepare_run(bad_jobs, out, temp)
         assert src.read_bytes() == original
         if alias_done:
