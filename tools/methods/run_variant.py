@@ -88,6 +88,27 @@ def variant_input(report: Path | None) -> dict | None:
     return inp
 
 
+def methods_only_block(report: Path | None, variant: str) -> dict | None:
+    """The variant report's `methods_only` block (#733: a build that skipped a quality gate, never a delivery), copied
+    into the row. Fail closed: delivery must be exactly false, gates_skipped exactly true, failed_gates a list of
+    unique non-empty names; the variant name must say `methods-only` iff the block is present, so the table never
+    hides a gate bypass."""
+    block = None if report is None else json.loads(report.read_text(encoding="utf-8")).get("methods_only")
+    named = "methods-only" in variant
+    if block is None:
+        if named:
+            raise Refused(f"variant {variant!r} is named methods-only but its report has no methods_only block")
+        return None
+    if not named:
+        raise Refused(f"variant {variant!r} carries a methods_only block; its name must contain 'methods-only'")
+    if not isinstance(block, dict) or block.get("delivery") is not False or block.get("gates_skipped") is not True:
+        raise Refused(f"methods_only block must have delivery=false and gates_skipped=true, got {block!r}")
+    failed = block.get("failed_gates")
+    if not isinstance(failed, list) or not all(isinstance(g, str) and g for g in failed) or len(set(failed)) != len(failed):
+        raise Refused(f"methods_only.failed_gates must be a list of unique non-empty names, got {failed!r}")
+    return block
+
+
 def ground_reference(bench: dict, readback: Path | None, extra: Path | None, tmp: Path) -> dict:
     """Reference surface of a ground-terrain benchmark: its source FBX read back (sha256 must match), plus its
     placement origin. A missing FBX or sidecar is a reason (null figures); a sha mismatch is an error."""
@@ -264,6 +285,7 @@ def main(argv=None) -> int:
         check_target(results)
         wall = wall_time(a.variant_report, a.wall_time_s)
         built_from = variant_input(a.variant_report)
+        methods_only = methods_only_block(a.variant_report, a.variant)
     except (Refused, OSError, KeyError, json.JSONDecodeError) as exc:
         print(f"RUN_VARIANT refused: {exc}", file=sys.stderr)
         return 4
@@ -287,6 +309,8 @@ def main(argv=None) -> int:
                             wall=wall, renders=renders, refs=refs, tile_sides=sides, ground_ref=gref)
         if built_from is not None:
             row["input"] = built_from
+        if methods_only is not None:
+            row["methods_only"] = methods_only
         row["measure_time_s"] = round(time.perf_counter() - t0, 3)
         row["measured_at"] = dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
         row["git_commit"] = git_head()

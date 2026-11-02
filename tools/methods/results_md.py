@@ -71,8 +71,13 @@ def _row(r: dict) -> str:
     pcs = f"{_v(ucx.get('pieces'))} / {_v(ucx.get('triangles'))} / {_v(ucx.get('limit_triangles'))}"
     size = None if r.get("file_size_bytes") is None else round(r["file_size_bytes"] / 1024)
     out_share = fit.get("ucx_outside_share")
+    variant = r["variant"]
+    if r.get("methods_only") is not None:
+        if (r["methods_only"] or {}).get("delivery") is not False:
+            raise ValueError(f"{r['row']}: a methods_only row must say delivery=false, got {r['methods_only']!r}")
+        variant += " [METHODS-ONLY, not a delivery]"
     return "| " + " | ".join([
-        r["row"], r["benchmark"], r["variant"], _v(r.get("wall_time_s"), "{:.2f}"), _v(tris.get("model")), pcs,
+        r["row"], r["benchmark"], variant, _v(r.get("wall_time_s"), "{:.2f}"), _v(tris.get("model")), pcs,
         str(ucx.get("status", "-")), "; ".join(bad) or "-",
         f"{_v(ucx.get('closed_convex'))}/{_v(ucx.get('pieces'))}",
         f"{_v(fit.get('model_to_ucx_max_m'))} / {_v(fit.get('model_to_ucx_p95_m'))}",
@@ -111,6 +116,11 @@ def render(rows: list[dict], cls: str) -> str:
                 reasons.setdefault(f"{key}: {reason}", []).append(r["row"])
         if r.get("wall_time_reason"):
             reasons.setdefault(f"wall time: {r['wall_time_reason']}", []).append(r["row"])
+    methods_only = [r for r in rows if r.get("methods_only") is not None]
+    if methods_only:
+        lines += ["", "Methods-only rows (quality gate skipped by user decision, never a delivery):", ""]
+        lines += [f"- {r['row']}: Ground gate skipped, failed gates: {', '.join(r['methods_only']['failed_gates']) or 'none'}"
+                  for r in methods_only]
     if reasons:
         lines += ["", "Null metrics and why:", ""]
         lines += [f"- {k} ({', '.join(v)})" for k, v in sorted(reasons.items())]

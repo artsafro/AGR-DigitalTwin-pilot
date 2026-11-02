@@ -2,10 +2,12 @@
 
 Pattern: new-case: methods-catalog driver for the ground-terrain class (builder / CDT / Blender grid).
 
-    uv run python tools/methods/ground/build_variant.py <builder|cdt|bgrid> <adapter.json> --cell <m> --out <new dir> \\
+    uv run python tools/methods/ground/build_variant.py <builder|builder-methods-only|cdt|bgrid> <adapter.json> --cell <m> --out <new dir> \\
         [--expect-sha256 <hex>] [--address Vatutino]
 
 Variants (docs/methods/ground-terrain/VARIANTS.md):
+- builder-methods-only: the same build through builder_methods_only.py: Ground gate recorded, not enforced, failed
+  gates listed in the report's `methods_only` block; never a delivery (Artem 2026-11-02, option (b)).
 - builder: jobs/VATUTINO-SITE/build_ground.py run unchanged in a fresh process with the v014 arguments
   (--snap 0.003 --gap-exceptions jobs/VATUTINO-SITE/ground-gap-exceptions.json) and the given --cell; its VPM master.
 - cdt: plan polygon from the same method-C planner, constrained Delaunay per grid cell (shapely / GEOS), Z from the
@@ -37,7 +39,8 @@ sys.path.insert(0, str(HERE))
 
 import ground_variants as gv  # noqa: E402
 
-VARIANTS = ("builder", "cdt", "bgrid")
+VARIANTS = ("builder", "builder-methods-only", "cdt", "bgrid")
+METHODS_ONLY = HERE / "builder_methods_only.py"
 BUILDER_ARGS = ["--snap", "0.003", "--gap-exceptions", str(ROOT / "jobs" / "VATUTINO-SITE" / "ground-gap-exceptions.json")]
 FBX_WRITER = ROOT / "tools" / "blender" / "ground_json_to_fbx.py"
 GRID_SCRIPT = HERE / "build_grid_blender.py"
@@ -100,8 +103,9 @@ def check_args(variant: str, adapter: Path, cell: float, out: Path, expect: str 
 
 def build_mesh(variant: str, adapter: Path, data: bytes, cell: float, work: Path) -> tuple[Path, dict]:
     """Mesh JSON for ground_json_to_fbx.py plus the variant's own facts; raises RuntimeError on a failed build."""
-    if variant == "builder":
-        proc = subprocess.run([sys.executable, str(ROOT / "jobs" / "VATUTINO-SITE" / "build_ground.py"), str(adapter),
+    if variant in ("builder", "builder-methods-only"):
+        script = ROOT / "jobs" / "VATUTINO-SITE" / "build_ground.py" if variant == "builder" else METHODS_ONLY
+        proc = subprocess.run([sys.executable, str(script), str(adapter),
                                "--cell", repr(cell), *BUILDER_ARGS, "--out", str(work / "builder")],
                               capture_output=True, text=True, timeout=7000)
         (work / "builder.log").write_text(proc.stdout[-20000:] + "\n--- stderr\n" + proc.stderr[-20000:],
@@ -110,8 +114,15 @@ def build_mesh(variant: str, adapter: Path, data: bytes, cell: float, work: Path
         if proc.returncode != 0 or not master.is_file():
             raise RuntimeError(f"build_ground.py exit {proc.returncode}: {proc.stderr.strip()[-300:]}")
         rep = json.loads((work / "builder" / "ground_report.json").read_text(encoding="utf-8"))
-        return master, {"builder_seconds": rep.get("seconds"), "surface_sha256": rep.get("surface_sha256"),
-                        "budget": rep.get("budget"), "failed_gates": [k for k, v in rep["gates"].items() if not v["pass"]]}
+        facts = {"builder_seconds": rep.get("seconds"), "surface_sha256": rep.get("surface_sha256"),
+                 "budget": rep.get("budget"), "failed_gates": [k for k, v in rep["gates"].items() if not v["pass"]]}
+        if variant == "builder-methods-only":
+            mo = rep.get("methods_only")
+            if not isinstance(mo, dict) or mo.get("delivery") is not False or \
+                    sorted(mo.get("failed_gates") or []) != sorted(facts["failed_gates"]):
+                raise RuntimeError(f"methods-only builder report has no consistent methods_only block: {mo!r}")
+            facts["methods_only"] = mo
+        return master, facts
     adapter_data = json.loads(data)
     poly = gv.plan_polygon(adapter_data)
     relief = gv.relief_points(adapter_data)
@@ -173,6 +184,8 @@ def main(argv=None) -> int:
         if a.adapter.read_bytes() != data:
             raise RuntimeError("adapter changed during the build")
         report.update(ok=True, wall_time_s=round(time.perf_counter() - t0, 3), facts=facts)
+        if "methods_only" in facts:  # run_variant.py copies it into the row; never a delivery
+            report["methods_only"] = facts["methods_only"]
     except (RuntimeError, ValueError, OSError, KeyError, subprocess.TimeoutExpired) as exc:
         report["error"] = f"{type(exc).__name__}: {exc}"
         report["wall_time_s"] = round(time.perf_counter() - t0, 3)
