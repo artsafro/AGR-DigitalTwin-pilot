@@ -10,7 +10,7 @@ Every standalone writer (`contours.py`, `kernel_prisms.py`, `body_blender.py`, `
 before any side effect, an output or report that is or aliases (same path, hard link, symlink) its input or each
 other (exit 4 / RuntimeError, nothing written).
 
-Scope [D186] (user decision 2026-11-02): no drawing-backed input exists in the benchmark set, so every row of this
+Scope [D187] (user decision 2026-11-02): no drawing-backed input exists in the benchmark set, so every row of this
 class is written with `run_variant.py --synthetic <reason>` (`"synthetic": true`, `"synthetic_reason"`; RESULTS.md
 lists them under "Synthetic inputs and why"); `run_variant.py` refuses a building-body row without a non-blank
 reason. Opening subtraction is a tested capability (variant 2), not measured on the benchmarks. Real DWG plans for

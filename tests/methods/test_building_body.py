@@ -5,6 +5,8 @@ Pattern: new-case: tests of the building-body methods class (deviation, closed s
 from __future__ import annotations
 
 import json
+import re
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -127,7 +129,7 @@ def _body_args(tmp_path):
 
 @pytest.mark.parametrize("extra", [[], ["--synthetic", ""], ["--synthetic", "   "], ["--synthetic", "\t\n"]])
 def test_body_row_without_a_synthetic_marker_is_refused_and_appends_nothing(tmp_path, extra):
-    # user decision 2026-11-02 [D186] (option a): no drawing-backed body input exists yet, so every building-body row
+    # user decision 2026-11-02 [D187] (option a): no drawing-backed body input exists yet, so every building-body row
     # must say it is synthetic and why; a missing or blank reason is refused before anything is written
     assert rv.main(_body_args(tmp_path) + extra) == 4
     assert not (tmp_path / "results.jsonl").exists()
@@ -157,6 +159,49 @@ def test_batch_marks_every_variant_synthetic_with_a_reason():
         assert batch.synthetic_reason(v).strip(), v
     with pytest.raises(KeyError):
         batch.synthetic_reason("no-such-variant")
+
+
+# Rule 42: a decision id must be free on main AND in every open PR. Recorded inventory of the open-PR claim that this
+# scope decision collided with in review round 2 (PR #576 adds D186 = task intake, 2026-10-22).
+OPEN_PR_DECISIONS = {"D186": "PR #576 (task intake, 2026-10-22)"}
+DECISIONS_MD = Path(__file__).resolve().parents[2] / "docs" / "decisions.md"
+
+
+def _decision_rows() -> dict[str, list[str]]:
+    rows: dict[str, list[str]] = {}
+    for line in DECISIONS_MD.read_text(encoding="utf-8").splitlines():
+        m = re.match(r"\| (D\d+) \|", line)
+        if m:
+            rows.setdefault(m.group(1), []).append(line)
+    return rows
+
+
+def id_collisions(decision_id: str, own_marker: str, main_rows: dict[str, list[str]],
+                  open_prs: dict[str, str]) -> list[str]:
+    """Every other owner of decision_id: a main row not about own_marker, or an open PR claim."""
+    hits = [f"main: {r[:60]}" for r in main_rows.get(decision_id, []) if own_marker not in r]
+    if decision_id in open_prs:
+        hits.append(open_prs[decision_id])
+    return hits
+
+
+@pytest.mark.parametrize("decision_id,taken", [("D186", True), ("D185", True), ("D187", False)])
+def test_scope_decision_id_collision_witness(decision_id, taken):
+    # occupied: D186 (open PR #576), D185 (a main row about another job); free control: D187 (only our #727 row)
+    hits = id_collisions(decision_id, "#727", _decision_rows(), OPEN_PR_DECISIONS)
+    assert bool(hits) is taken, hits
+
+
+def test_scope_decision_is_free_logged_once_and_cited_by_every_reason():
+    batch = _load_batch()
+    sid, rows = batch.SCOPE_DECISION, _decision_rows()
+    assert id_collisions(sid, "#727", rows, OPEN_PR_DECISIONS) == []
+    assert len(rows.get(sid, [])) == 1 and "#727" in rows[sid][0] and "2026-11-02" in rows[sid][0]
+    for v in (batch.BASELINE,) + batch.VARIANTS:
+        assert f"[{sid}]" in batch.synthetic_reason(v) and "D186" not in batch.synthetic_reason(v), v
+    results = DECISIONS_MD.parent / "methods" / "building-body" / "results.jsonl"
+    reasons = [json.loads(x)["synthetic_reason"] for x in results.read_text(encoding="utf-8").splitlines() if x]
+    assert len(reasons) == 12 and all(f"[{sid}]" in r and "D186" not in r for r in reasons)
 
 
 @pytest.mark.parametrize("variant,make", [("source-as-is", ()), ("kernel-prisms", ("out",)),

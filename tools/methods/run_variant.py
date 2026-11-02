@@ -216,7 +216,7 @@ def main(argv=None) -> int:
                     help="reuse a fbx_readback.py JSON of the benchmark source (building-body deviation; tests)")
     ap.add_argument("--synthetic", metavar="REASON",
                     help="mark the row synthetic with this reason (required for building-body: no drawing-backed "
-                         "input exists yet, user decision 2026-11-02 [D186])")
+                         "input exists yet, user decision 2026-11-02 [D187])")
     a = ap.parse_args(argv)
     try:
         if not a.output.is_file():
@@ -236,7 +236,7 @@ def main(argv=None) -> int:
             raise Refused("--synthetic needs a non-blank reason")
         if a.cls == "building-body" and not synthetic:
             raise Refused("building-body rows must be marked --synthetic REASON: the body inputs are measured from "
-                          "the source mesh, no drawing-backed input exists yet [D186]")
+                          "the source mesh, no drawing-backed input exists yet [D187]")
     except (Refused, OSError, KeyError, json.JSONDecodeError) as exc:
         print(f"RUN_VARIANT refused: {exc}", file=sys.stderr)
         return 4

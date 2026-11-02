@@ -16,7 +16,7 @@ Per variant the output goes to <out>/<bench>/<variant>/<FBX name> (never the sou
   copy of the source.
 Every DCC run leaves a text log (status, product version, seconds, report) in <logs>/<bench>-<variant>.log.txt.
 Rows are written only by run_variant.py in a fresh process; a failed build appends nothing and the batch exits 1.
-Then RESULTS.md is regenerated. Every row is marked `--synthetic` with its reason (synthetic_reason, [D186]).
+Then RESULTS.md is regenerated. Every row is marked `--synthetic` with its reason (synthetic_reason, [D187]).
 --measure-only re-measures the outputs already under --out (no build, no DCC run, logs untouched).
 """
 from __future__ import annotations
@@ -50,8 +50,10 @@ CLASS = "building-body"
 BASELINE = "source-as-is"
 VARIANTS = ("kernel-prisms", "blender-gn-union", "max-pymxs-cleanup")
 DEFAULT_BENCH = ("kpp1", "ac08", "tow02")
+# the user decision behind the synthetic marker; D186 is held by open PR #576 (rule 42), so this one is D187
+SCOPE_DECISION = "D187"
 _MESH_CONTOURS = ("plan contours and level heights measured from the source mesh, not from a drawing "
-                  "(no DWG plan in the benchmark set; user decision 2026-11-02 [D186])")
+                  "(no DWG plan in the benchmark set; user decision 2026-11-02 [" + SCOPE_DECISION + "])")
 _SYNTHETIC = {
     BASELINE: "reference row of a table whose from-contour variants use " + _MESH_CONTOURS,
     "kernel-prisms": _MESH_CONTOURS,
@@ -61,7 +63,7 @@ _SYNTHETIC = {
 
 
 def synthetic_reason(variant: str) -> str:
-    """The --synthetic reason every building-body row carries [D186]; an unknown variant is a KeyError."""
+    """The --synthetic reason every building-body row carries [D187]; an unknown variant is a KeyError."""
     return _SYNTHETIC[variant]
 
 
