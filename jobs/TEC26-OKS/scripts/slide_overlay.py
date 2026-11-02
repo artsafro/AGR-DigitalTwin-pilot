@@ -21,6 +21,7 @@ Usage: uv run python slide_overlay.py <spec.json> <sheet-facades.json> <renders_
 Exit 0 = overlay pass, 1 = overlay fail (offset > tol), 2 = refused input (message on stderr, nothing written).
 """
 import hashlib
+import io
 import json
 import os
 import sys
@@ -375,11 +376,16 @@ def main(argv):
                 raise ValueError(f"output {out} aliases input {p}")
         if os.path.lexists(out):
             raise ValueError(f"refusing to overwrite {out}")
-        if sha(spec["presentation"]["image"]) != spec["presentation"]["image_sha256"]:
+        if os.path.lexists(out + ".partial"):
+            raise ValueError(f"refusing: a leftover {out}.partial exists (earlier run crashed?); it is left untouched")
+        with open(spec["presentation"]["image"], "rb") as fh:          # read once: the hashed bytes are the decoded ones
+            raw = fh.read()
+        if hashlib.sha256(raw).hexdigest() != spec["presentation"]["image_sha256"]:
             raise ValueError("slide image sha256 differs from the spec")
+        slide = np.asarray(Image.open(io.BytesIO(raw)).convert("RGB"))
         sheet = json.load(open(sheet_p, encoding="utf-8"))
         vrb = json.load(open(vrb_p, encoding="utf-8"))
-        rep, s_rect, v_rect = run(spec, sheet, rdir, vrb, facade, pxm, tol, register, pu, pb)
+        rep, s_rect, v_rect = run(spec, sheet, rdir, vrb, facade, pxm, tol, register, pu, pb, slide=slide)
     except (ValueError, KeyError, OSError, StopIteration) as e:
         print(f"slide_overlay: refused: {type(e).__name__}: {e}", file=sys.stderr)
         return 2
