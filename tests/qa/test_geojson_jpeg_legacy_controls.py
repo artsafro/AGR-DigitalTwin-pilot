@@ -1,15 +1,11 @@
-"""Legacy characterization of the GeoJSON imageBase64 JPEG boundary (new-case, Pattern: new-case).
+"""GeoJSON imageBase64 JPEG boundary.
 
-Pins CURRENT behaviour from docs/research/geojson-jpeg-decode-boundary.md (F2/F3/F4):
-
-* header acceptance is not pixel acceptance: a JPEG without its final FF D9 passes ``_image``
-  while an independent Pillow ``open+load`` raises OSError;
-* a JPEG cut inside its header makes ``Image.open`` raise OSError, which escapes ``_image``,
-  ``geojson_findings`` and ``validate()`` (no finding, no report);
-* malformed base64 and a 256x256 PNG are ordinary ``imageBase64`` fail findings.
-
-This is characterization, not approval: pixel-decode acceptance and OSError normalization stay user
-decisions. Controls only (no prefix sweep). Two mutation probes show the pins bite.
+* A JPEG without its final FF D9 still passes ``_image`` on header acceptance, while an
+  independent Pillow ``open+load`` raises OSError.
+* A JPEG cut inside its header makes ``Image.open`` raise OSError. That is a V011
+  ``imageBase64`` fail finding (rule id, file, member, exception class, message), not a
+  lost report. The CLI prints the report and exits 1.
+* Malformed base64 and a 256x256 PNG stay ordinary ``imageBase64`` fail findings.
 """
 import base64
 import copy
@@ -114,12 +110,17 @@ def _assert_legacy_pass_no_eoi():
     assert f.status == "pass"
 
 
-def _assert_header_oserror_escapes():
-    """The assertion mutation probe 2 must break."""
-    with pytest.raises(OSError):
-        _image(VALUES["head100"])
-    with pytest.raises(OSError):
-        _image_finding(VALUES["head100"])
+def _assert_header_oserror_is_failed_finding():
+    """OSError from a truncated JPEG is a fail finding, never an escaped exception."""
+    finding = geo._image(VALUES["head100"])
+    assert finding.status == "fail"
+    assert finding.data["rule_id"] == "V011"
+    assert finding.data["member"] == "imageBase64"
+    assert finding.data["exception_class"] == "OSError"
+    assert finding.data["message"]
+    assert "OSError" in finding.observed and finding.data["message"] in finding.observed
+    (row,) = _image_finding(VALUES["head100"])
+    assert row.status == "fail" and row.data["exception_class"] == "OSError"
 
 
 @pytest.fixture(autouse=True)
@@ -152,16 +153,25 @@ def test_eoi_removed_header_pass_but_independent_load_fails():
         _load(CONTROLS["no_eoi"])
 
 
-def test_header_truncated_oserror_escapes_every_layer(tmp_path):
-    _assert_header_oserror_escapes()
+def test_header_truncated_oserror_is_a_finding(tmp_path):
+    _assert_header_oserror_is_failed_finding()
     with pytest.raises(OSError):
         _load(CONTROLS["head100"])
     path = _write(tmp_path, "SM_head", VALUES["head100"])
     before = path.read_bytes()
-    with pytest.raises(OSError):
-        validate_package.validate(path, None, PROFILES)
+    report = validate_package.validate(path, None, PROFILES)
     assert path.read_bytes() == before
     assert sorted(p.name for p in tmp_path.iterdir()) == ["SM_head.geojson"]
+    assert report.passed is False and report.exit_code == 1
+    v011 = next(s for s in report.stages if s.id == "V011")
+    (row,) = [f for f in v011.findings if f.name == "imageBase64"]
+    assert row.status == "fail"
+    assert row.data["rule_id"] == "V011"
+    assert row.data["file"] == path.name
+    assert row.data["member"] == "imageBase64"
+    assert row.data["exception_class"] == "OSError"
+    assert row.data["message"]
+    assert path.name in row.observed
 
 
 @pytest.mark.parametrize("name", ["bad_b64", "png"])
@@ -190,19 +200,59 @@ def test_cli_report_parses_with_v011_pass(tmp_path, name):
     assert p.read_bytes() == before
 
 
-def test_cli_header_truncated_has_no_report(tmp_path):
+def test_cli_header_truncated_report_is_stdout(tmp_path):
     p = _write(tmp_path, "SM_head", VALUES["head100"])
+    before = p.read_bytes()
+    names = sorted(item.name for item in tmp_path.iterdir())
     r = _cli(p)
-    assert r.returncode == 1
-    assert r.stdout == ""
-    assert "Traceback" in r.stderr and "OSError" in r.stderr
+    assert r.returncode == 1 and r.stderr == ""
+    assert "Traceback" not in r.stdout
+    rep = json.loads(r.stdout)
+    assert rep["passed"] is False and rep["exit_code"] == 1
+    v011 = next(s for s in rep["stages"] if s["id"] == "V011")
+    (row,) = [f for f in v011["findings"] if f["name"] == "imageBase64"]
+    assert row["status"] == "fail"
+    assert row["data"]["rule_id"] == "V011"
+    assert row["data"]["file"] == p.name
+    assert row["data"]["member"] == "imageBase64"
+    assert row["data"]["exception_class"] == "OSError"
+    assert row["data"]["message"]
+    assert p.read_bytes() == before
+    assert sorted(item.name for item in tmp_path.iterdir()) == names
+
+
+def test_every_open_oserror_prefix_is_a_fail_finding():
+    """A prefix that makes Image.open raise is a fail finding, never pass or not_run."""
+    raised = 0
+    for length in range(1, len(CLEAN)):
+        blob = CLEAN[:length]
+        try:
+            with Image.open(BytesIO(blob)) as img:
+                img.format
+            opened = True
+            err = None
+        except OSError as exc:
+            opened = False
+            err = exc
+        finding = geo._image(base64.b64encode(blob).decode("ascii"))
+        if opened:
+            assert finding.status in ("pass", "fail")
+            continue
+        raised += 1
+        assert finding.status == "fail"
+        assert finding.data["rule_id"] == "V011"
+        assert finding.data["member"] == "imageBase64"
+        assert finding.data["exception_class"] == type(err).__name__
+        assert finding.data["message"] and finding.data["exception_class"] in finding.observed
+    assert geo._image("").status == "fail"
+    assert raised > 0
 
 
 def test_mutation_pixel_load_breaks_legacy_pass(monkeypatch):
     original = geo._image
 
-    def loading(value):
-        finding = original(value)
+    def loading(value, source_name=None):
+        finding = original(value, source_name)
         if finding.status == "pass":
             with Image.open(BytesIO(base64.b64decode(value, validate=True))) as img:
                 img.load()
@@ -215,18 +265,13 @@ def test_mutation_pixel_load_breaks_legacy_pass(monkeypatch):
     _assert_legacy_pass_no_eoi()
 
 
-def test_mutation_oserror_to_finding_breaks_report_loss(monkeypatch):
-    original = geo._image
+def test_mutation_leaking_oserror_breaks_the_finding_contract(monkeypatch):
+    def leaking(value):
+        Image.open(BytesIO(base64.b64decode(value, validate=True)))
+        raise AssertionError("a header-truncated JPEG must not open")
 
-    def normalizing(value):
-        try:
-            return original(value)
-        except OSError as exc:
-            return geo._f("fail", "imageBase64", f"not a decodable image ({exc.__class__.__name__})",
-                          "base64 of a 256x256 JPG", [54])
-
-    monkeypatch.setattr(geo, "_image", normalizing)
-    with pytest.raises(pytest.fail.Exception):
-        _assert_header_oserror_escapes()
+    monkeypatch.setattr(geo, "_image", leaking)
+    with pytest.raises(OSError):
+        _assert_header_oserror_is_failed_finding()
     monkeypatch.undo()
-    _assert_header_oserror_escapes()
+    _assert_header_oserror_is_failed_finding()

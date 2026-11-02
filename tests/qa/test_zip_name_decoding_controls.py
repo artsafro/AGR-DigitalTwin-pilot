@@ -1,12 +1,9 @@
-"""Measured legacy characterization (NOT approved handling, NOT delivery certification) of ZIP member
-names that are invalid UTF-8 while general-purpose flag bit 11 is set (pilot PR #685, next task 1).
+"""ZIP member names that are invalid UTF-8 while general-purpose flag bit 11 is set.
 
-Pattern: new-case: persist central-open vs local-read UnicodeDecodeError escape controls.
-
-Fixtures are stored ZIPs built with struct (no zipfile writer); local and central name bytes and flag
-words are set independently and the raw headers are re-parsed independently before any reader runs.
-Observed today: the exception escapes read_bundle/validate() (no V001 ZIP finding, no report); the
-CLI prints a traceback, stdout is empty, exit 1. A future fix may legitimately change these rows.
+The delivery reader and the QA CLI turn that UnicodeDecodeError into a V001 ZIP fail
+finding (rule id, file, member, exception class, message). stdout is the report and the
+process exits 1. zipfile and the development reader still raise; that split is unchanged.
+Fixtures are stored ZIPs built with struct; headers are re-parsed before any reader runs.
 """
 import hashlib
 import struct
@@ -21,7 +18,7 @@ import pytest
 
 import validate_package as vp
 from dt_ai.publish.bundle import read_bundle as dev_read_bundle
-from twinqa.bundle import read_bundle as qa_read_bundle
+from twinqa.bundle import BundleError, read_bundle as qa_read_bundle
 from twinqa.profiles import load_profiles
 
 PROFILES = load_profiles()
@@ -123,13 +120,39 @@ def test_readable_controls_give_ordinary_composition_failures_not_zip_finding(zi
     assert report.passed is False
 
 
+def _zip_decode_finding(report, path: Path):
+    v1 = next(s for s in report.stages if s.id == "V001")
+    (finding,) = [f for f in v1.findings if f.name == "ZIP"]
+    assert finding.status == "fail"
+    assert finding.data["rule_id"] == "V001"
+    assert finding.data["file"] == path.name
+    assert finding.data["exception_class"] == "UnicodeDecodeError"
+    assert finding.data["message"]
+    assert finding.data["member"]
+    assert path.name in finding.observed and "UnicodeDecodeError" in finding.observed
+    assert finding.data["member"] in finding.observed
+    assert report.passed is False and report.exit_code == 1
+    assert v1.status == "fail"
+    return finding
+
+
 @pytest.mark.parametrize("key", CENTRAL_BAD)
-def test_central_invalid_fails_at_open_in_every_reader(zips, key):
+def test_central_invalid_fails_at_open_in_zipfile_and_dev_reader(zips, key):
     path, _ = zips[key]
     assert "_RealGetContents" in raises_unicode(zipfile.ZipFile, path)
-    for fn, args in ((qa_read_bundle, (path, 10**6)), (dev_read_bundle, (path,)),
-                     (vp.validate, (path, "npm", PROFILES))):
-        assert "_RealGetContents" in raises_unicode(fn, *args)
+    assert "_RealGetContents" in raises_unicode(dev_read_bundle, path)
+
+
+@pytest.mark.parametrize("key", CENTRAL_BAD)
+def test_central_invalid_is_v001_zip_finding(zips, key):
+    path, _ = zips[key]
+    with pytest.raises(BundleError) as info:
+        qa_read_bundle(path, 10**6)
+    assert isinstance(info.value.__cause__, UnicodeDecodeError)
+    assert info.value.member == BAD.decode("utf-8", errors="backslashreplace")
+    assert "UnicodeDecodeError" in str(info.value)
+    finding = _zip_decode_finding(vp.validate(path, "npm", PROFILES), path)
+    assert finding.data["member"] == BAD.decode("utf-8", errors="backslashreplace")
 
 
 @pytest.mark.parametrize("key", LOCAL_BAD)
@@ -140,10 +163,19 @@ def test_local_only_invalid_opens_lists_then_fails_at_read(zips, key):
         with pytest.raises(UnicodeDecodeError) as info:
             z.read("a.bin")
     assert "open" in frames(info.value) and "_RealGetContents" not in frames(info.value)
-    for fn, args in ((qa_read_bundle, (path, 10**6)), (dev_read_bundle, (path,)),
-                     (vp.validate, (path, "npm", PROFILES))):
-        fr = raises_unicode(fn, *args)
-        assert "open" in fr and "_RealGetContents" not in fr
+    assert "open" in raises_unicode(dev_read_bundle, path)
+
+
+@pytest.mark.parametrize("key", LOCAL_BAD)
+def test_local_only_invalid_is_v001_zip_finding(zips, key):
+    path, _ = zips[key]
+    with pytest.raises(BundleError) as info:
+        qa_read_bundle(path, 10**6)
+    assert isinstance(info.value.__cause__, UnicodeDecodeError)
+    assert info.value.member == "a.bin"
+    assert "local" in str(info.value)
+    finding = _zip_decode_finding(vp.validate(path, "npm", PROFILES), path)
+    assert finding.data["member"] == "a.bin"
 
 
 def cli(path):
@@ -152,10 +184,23 @@ def cli(path):
 
 
 @pytest.mark.parametrize("key", ["bad_central", "bad_local"])
-def test_cli_malformed_loses_report(zips, key):
-    run = cli(zips[key][0])
-    assert run.returncode == 1 and run.stdout == ""
-    assert "Traceback" in run.stderr and "UnicodeDecodeError" in run.stderr
+def test_cli_malformed_name_is_a_zip_finding(zips, key):
+    import json
+    path, _ = zips[key]
+    folder = sorted(p.name for p in path.parent.iterdir())
+    run = cli(path)
+    assert run.returncode == 1 and run.stderr == ""
+    assert "Traceback" not in run.stdout
+    data = json.loads(run.stdout)
+    assert data["passed"] is False and data["exit_code"] == 1
+    v1 = next(s for s in data["stages"] if s["id"] == "V001")
+    (finding,) = [f for f in v1["findings"] if f["name"] == "ZIP"]
+    assert finding["status"] == "fail"
+    assert finding["data"]["rule_id"] == "V001"
+    assert finding["data"]["file"] == path.name
+    assert finding["data"]["exception_class"] == "UnicodeDecodeError"
+    assert finding["data"]["message"] and finding["data"]["member"]
+    assert sorted(p.name for p in path.parent.iterdir()) == folder
 
 
 @pytest.mark.parametrize("key", ["ascii_on", "cp437_off"])
@@ -167,3 +212,38 @@ def test_cli_readable_controls_emit_json(zips, key):
     v1 = next(s for s in data["stages"] if s["id"] == "V001")
     names = {f["name"] for f in v1["findings"]}
     assert "ZIP" not in names and {"foreign files", "FBX count"} <= names
+
+
+def test_every_one_byte_name_is_a_report_never_a_crash(tmp_path):
+    """Every lead byte is either read or a V001 ZIP fail. None escapes, none passes."""
+    invalid = 0
+    for lead in range(256):
+        raw = bytes((lead,)) + b".bin"
+        blob = build(raw, raw, UTF, UTF)
+        path = tmp_path / f"n{lead}.zip"
+        path.write_bytes(blob)
+        try:
+            text = raw.decode("utf-8")
+        except UnicodeDecodeError:
+            text = None
+        if text is None:
+            invalid += 1
+            with pytest.raises(BundleError) as info:
+                qa_read_bundle(path, 10**6)
+            assert isinstance(info.value.__cause__, UnicodeDecodeError)
+            finding = _zip_decode_finding(vp.validate(path, "npm", PROFILES), path)
+            assert finding.data["member"] == raw.decode("utf-8", errors="backslashreplace")
+            assert finding.status != "pass"
+        else:
+            try:
+                got = qa_read_bundle(path, 10**6)
+            except BundleError as exc:
+                assert not isinstance(exc.__cause__, UnicodeDecodeError)
+            else:
+                assert set(got.values()) == {PAYLOAD}
+                if "\x00" not in text:
+                    assert list(got) == [text]
+            report = vp.validate(path, "npm", PROFILES)
+            assert report.passed is False and report.exit_code == 1
+        assert path.read_bytes() == blob
+    assert invalid == 128

@@ -11,7 +11,7 @@ import binascii
 import numbers
 from io import BytesIO
 
-from PIL import Image, UnidentifiedImageError
+from PIL import Image
 
 from twinqa.io import read_json
 from twinqa.report import Finding
@@ -21,8 +21,9 @@ GLASS_RANGES = {"transparency": (0, 1), "refraction": (1, 3), "roughness": (0, 1
 OKS_MAY_BE_EMPTY = {"other", "act_AGR"}  # conflict #2, decided 2026-10-07 [D011] (as the checker)
 
 
-def _f(status, name, observed, expected, pages=PAGES, conflicts=()):
-    return Finding(name, status, observed, expected, list(pages), "GeoJSON", list(conflicts))
+def _f(status, name, observed, expected, pages=PAGES, conflicts=(), data=None):
+    return Finding(name, status, observed, expected, list(pages), "GeoJSON", list(conflicts),
+                   data={} if data is None else data)
 
 
 def _number(value) -> bool:
@@ -70,20 +71,32 @@ def _glasses(value, glass_names) -> list[Finding]:
     return out or [_f("pass", "Glasses", f"{len(value)} glass material(s)", "colour, transparency, refraction, roughness, metallicity", [55])]
 
 
-def _image(value) -> Finding:
+def _image(value, source_name: str | None = None) -> Finding:
     if not isinstance(value, str) or not value:
         return _f("fail", "imageBase64", "empty", "base64 of a 256x256 JPG", [54])
     try:
         img = Image.open(BytesIO(base64.b64decode(value, validate=True)))
         size, fmt = img.size, img.format
-    except (binascii.Error, UnidentifiedImageError, ValueError) as exc:
-        return _f("fail", "imageBase64", f"not a decodable image ({exc.__class__.__name__})", "base64 of a 256x256 JPG", [54])
+    except (binascii.Error, OSError, ValueError) as exc:
+        # OSError covers UnidentifiedImageError and a truncated JPEG (Pillow "Truncated File Read").
+        observed = f"V011 imageBase64: {type(exc).__name__}: {exc}"
+        data = {
+            "rule_id": "V011",
+            "member": "imageBase64",
+            "exception_class": type(exc).__name__,
+            "message": str(exc),
+        }
+        if source_name:
+            data["file"] = source_name
+            observed = f"{source_name}: {observed}"
+        return _f("fail", "imageBase64", observed, "base64 of a 256x256 JPG", [54], data=data)
     if fmt != "JPEG" or size != (256, 256):
         return _f("fail", "imageBase64", f"{fmt} {size[0]}x{size[1]}", "JPG 256x256", [54])
     return _f("pass", "imageBase64", "JPG 256x256", "JPG 256x256", [54])
 
 
-def geojson_findings(data: bytes, profile: dict, ground: bool, glass_names: set[str] | None = None) -> list[Finding]:
+def geojson_findings(data: bytes, profile: dict, ground: bool, glass_names: set[str] | None = None,
+                      source_name: str | None = None) -> list[Finding]:
     spec = profile["geojson"]
     try:
         doc = read_json(data)
@@ -133,7 +146,7 @@ def geojson_findings(data: bytes, profile: dict, ground: bool, glass_names: set[
             if not (digits.isdigit() and len(digits) in (3, 6, 9)):
                 out.append(_f("fail", "FNO_code format", repr(value), "XXX, XXX XXX or XXX XXX XXX (FNO classifier)", [53]))
     if "imageBase64" in props:
-        out.append(_image(props["imageBase64"]))
+        out.append(_image(props["imageBase64"], source_name))
 
     if "Glasses" not in feat:
         out.append(_f("fail", "Glasses", "missing", "[] or object keyed by glass material", [51]))
