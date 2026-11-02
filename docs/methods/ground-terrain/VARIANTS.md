@@ -33,7 +33,7 @@ Common to all variants:
   Review round 1 probe, same v014 arguments, one parameter changed: cell 3, 3.5, 4.5, 5 m and chord 0.01 / 0.04 m at
   cell 4 all fail `normal_gap_max_20mm` (3.5 and 5 m also `density_vpm`); logs `C:/x/methods/ground-terrain/probes2/`.
   Every CLI parameter feeds the pinned surface or a gate tolerance, so a second builder row needs a user decision.
-- Second setting, methods-only (user decision Artem 2026-11-02, option (b), #733 card thread): cell 2 m through
+- Second setting, methods-only (user decision Artem 2026-11-02, option (b), #733 card thread, [D188]): cell 2 m through
   `tools/methods/ground/builder_methods_only.py`, which runs `build_ground.py` unchanged in-process with its
   `acceptance_gates` recorded but not enforced, so the mesh it would withhold is written; `ground_report.json` keeps
   the real gate verdicts plus `methods_only = {delivery: false, gates_skipped: true, failed_gates}`. The row (R9,
