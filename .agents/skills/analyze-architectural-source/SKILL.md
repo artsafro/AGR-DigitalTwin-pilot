@@ -37,18 +37,38 @@ against both NPM and VPM.
    terms. Done when every top-level group has a class and a count; anything
    unclassifiable is a user question.
 
-4. **Geometry health.** Triangle count per future FBX against the profile budget,
+4. **Source class.** On the welded mesh, measure three facts with `classify_source`
+   (`src/dt_ai/spec/source_class.py`; `PANELISED` and `PANEL_HINT_SHARE` live in
+   `src/dt_ai/spec/mesh.py`): the number of connected parts, the share of the largest
+   part by surface area, and whether any part is a closed shell. A closed shell is
+   topological and ignores winding: every edge of that part is used by exactly two
+   triangles, with no signed-volume test. Inconsistent winding on a closed mesh is
+   still a shell, so the class stays monolithic and is never certified shell-free or
+   panelised. Rule 1 [D066]:
+   `panelised` only when there are at least two connected parts, the largest share is
+   strictly below `PANEL_HINT_SHARE` (0.5), and no shell is present. Route `panelised`
+   to `measurement+direct-build` (measurement and a direct build). Do not run
+   `dt spec extract` on a `panelised` source. A closed shell, a single part, or a
+   largest share strictly above `PANEL_HINT_SHARE` is `monolithic` and keeps the
+   existing `dt spec extract` route. A largest share equal to `PANEL_HINT_SHARE` with
+   no shell and more than one part is an error, not a guessed class. Record the three
+   numbers, the class and the route in `docs/sources/<source-name>.md` and on the
+   source row in `docs/sources/README.md`. Done when that record is written, or the
+   line is `not checked: <reason>`.
+
+5. **Geometry health.** Triangle count per future FBX against the profile budget,
    non-manifold edges, duplicated or overlapping faces, flipped normals, unapplied
    transforms, pivots. Separate deliberate embeds from defects before reporting a
    finding (`docs/domain/validation.md`, QA procedure). Done when each check has a
    number or `not checked: <reason>`.
 
-5. **Materials and UVs.** Every material slot is classified (opaque, glass,
+6. **Materials and UVs.** Every material slot is classified (opaque, glass,
    emissive, vegetation/opacity, unknown); texture references found/missing; UV
    channels per object (`docs/domain/materials.md`, `docs/domain/uv-textures.md`).
    Done when no slot is unclassified without being listed as a question.
 
-6. **Report.** Write `docs/sources/<source-name>.md`: findings above, production
+7. **Report.** Write `docs/sources/<source-name>.md`: findings above, including the
+   source class and its route, production
    risks, user questions, and every entry of `docs/domain/conflicts.md` that this
    source touches (by number). Update its row in `docs/sources/README.md`.
 
