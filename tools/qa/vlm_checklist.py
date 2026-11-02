@@ -144,6 +144,31 @@ def score(items: list[dict], kept: dict[str, bool], known_defects, facade_labels
     return res
 
 
+def parse_pairwise_answers(items: list[dict], answers) -> dict[str, str]:
+    """{id: better} from the raw list. Every item exactly once, better in first/second/equal, no unknown ids.
+
+    Validated on the original list so duplicates (even conflicting ones) are never collapsed by a dict.
+    """
+    if not isinstance(answers, list):
+        raise ChecklistError("pairwise answers is not a list")
+    ids = [i["id"] for i in items]
+    out: dict[str, str] = {}
+    for a in answers:
+        aid = a.get("id") if isinstance(a, dict) else None
+        if aid not in ids:
+            raise ChecklistError(f"unknown pairwise answer id {aid!r}")
+        if aid in out:
+            raise ChecklistError(f"duplicate pairwise answer id {aid!r}")
+        v = a.get("better")
+        if v not in ("first", "second", "equal"):
+            raise ChecklistError(f"pairwise answer must be first/second/equal, got {v!r} for {aid}")
+        out[aid] = v
+    missing = [i for i in ids if i not in out]
+    if missing:
+        raise ChecklistError(f"missing pairwise answers: {missing}")
+    return out
+
+
 def pairwise(items: list[dict], ab: dict[str, str], ba: dict[str, str], a: str, b: str) -> dict:
     """ab: answers with a shown first; ba: b first. Values 'first'|'second'|'equal'. Kept if same winner."""
     def winner(v, first, second):
@@ -325,8 +350,8 @@ def run(cfg_path: Path, out: Path, model: str, workers: int) -> dict:
             c1, c2 = calls[("pair", a, b, var)], calls[("pair", b, a, var)]
             key = f"{a}~{b}/{var}"
             try:
-                ab = {x["id"]: x["better"] for x in c1["parsed"]["answers"]}
-                ba = {x["id"]: x["better"] for x in c2["parsed"]["answers"]}
+                ab = parse_pairwise_answers(its, c1["parsed"]["answers"])
+                ba = parse_pairwise_answers(its, c2["parsed"]["answers"])
                 p = pairwise(its, ab, ba, a, b)
             except (ChecklistError, KeyError, TypeError) as e:
                 results["errors"][key] = f"{e}; ab={c1.get('error')}; ba={c2.get('error')}"

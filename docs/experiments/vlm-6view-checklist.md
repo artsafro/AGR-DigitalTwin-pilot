@@ -103,6 +103,15 @@ outline merged into "narrow edging", in run 2 no 2-1 rib question at all). Varia
 The sheet stays mandatory [D125], so the VLM time and cost are **added**, not saved; they are small (< $0.25 and
 < 1 min per building for A).
 
+**Open acceptance point:** the "time and cost per building vs the human sheet" comparison is **not complete**. The
+repository has no timed record of a human acceptance-sheet session, and no agent can produce one: it needs Artem to
+time one sheet for AC08 v010 (start/end), or to amend the acceptance. Until then this report gives only the VLM side.
+
+Pairwise answer validation (review round 1): every raw pairwise list is checked before scoring (each item exactly
+once, value `first|second|equal`, no unknown id); duplicates fail with a named error and exit 1. Re-checked on the
+retained raw bundles: 8/8 pairwise calls (run 1: 4/4, run 2: 4/4) pass the strict parser, so the measured numbers
+above are unchanged.
+
 ## Verdict: **advisory** (variant A), not adopt; variant B: **no**
 
 - Variant A met both thresholds in 2/2 runs on this one building pair, and pairwise never preferred the failing
