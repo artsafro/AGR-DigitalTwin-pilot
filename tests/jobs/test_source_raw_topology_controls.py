@@ -237,3 +237,48 @@ def test_report_input_mutation_fails_immutability(monkeypatch):
     monkeypatch.setattr(qa_packages, "source_finish_report", wrapped)
     with pytest.raises(AssertionError):
         _finish([[0, 1, 2, 3]], TRIS)
+
+
+def test_mutation_before_exception_fails_immutability(monkeypatch):
+    """A helper that mutates its input and then raises must surface the immutability failure."""
+    def wrapped(vertices, faces, mat_ids, spec):
+        spec["reviewer_unexpected_mutation"] = True
+        raise ValueError("boom")
+
+    monkeypatch.setattr(finish_map, "assign_finishes", wrapped)
+    saved = copy.deepcopy(SPEC)
+    try:
+        with pytest.raises(AssertionError):
+            _assign([[0, 1, 2, 3]])
+    finally:
+        SPEC.clear()
+        SPEC.update(saved)
+
+
+def test_clean_exception_propagates_unchanged(monkeypatch):
+    def wrapped(vertices, faces, mat_ids, spec):
+        raise ValueError("boom")
+
+    monkeypatch.setattr(finish_map, "assign_finishes", wrapped)
+    with pytest.raises(ValueError, match="boom"):
+        _assign([[0, 1, 2, 3]])
+
+
+def test_repeat_and_reset_after_mutation(monkeypatch):
+    """After a rejected mutation is reset, unmodified helpers pass again, repeatedly."""
+    first = _assign([[0, 1, 2, 3]])
+    original = finish_map.assign_finishes
+
+    def wrapped(vertices, faces, mat_ids, spec):
+        spec["x"] = 1
+        return original(vertices, faces, mat_ids, spec)
+
+    saved = copy.deepcopy(SPEC)
+    with monkeypatch.context() as m:
+        m.setattr(finish_map, "assign_finishes", wrapped)
+        with pytest.raises(AssertionError):
+            _assign([[0, 1, 2, 3]])
+    SPEC.clear()
+    SPEC.update(saved)
+    assert _assign([[0, 1, 2, 3]]) == first
+    assert _assign([[0, 1, 2, 3]]) == first
