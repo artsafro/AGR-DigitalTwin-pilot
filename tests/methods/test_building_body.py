@@ -509,3 +509,30 @@ def test_blender_body_refuses_output_aliasing_its_input(tmp_path):
                         str(tmp_path / "v" / "x.fbx"), "SM_Test_Main"], capture_output=True, text=True, timeout=600)
     assert p.returncode == 4 and not (tmp_path / "v" / "x.fbx").exists()
     assert json.loads(rep_alias.read_text(encoding="utf-8")) == data
+
+
+# ---- review round 2: combined regression of every guard fixed so far -------------------------------------------------
+
+def test_combined_round1_and_round2_guards_on_one_input(tmp_path):
+    """One input through every fixed guard: doubled sheet + box, blank vs [D187] marker, results alias, contours alias."""
+    batch = _load_batch()
+    sheet = mesh("SM_Test_Main_2", [(5, 0, 0), (6, 0, 0), (5, 1, 0)], [(0, 1, 2), (0, 2, 1)])
+    (tmp_path / "src.json").write_text(json.dumps(rb_of(cube())), encoding="utf-8")
+    bench = bench_file(tmp_path, classes=("building-body",))
+    results = tmp_path / "results.jsonl"
+    args = cli_args(tmp_path, rb_of(cube(), sheet), {"ok": False}, benchmarks=bench, results=results)
+    args[args.index("ucx-collisions")] = "building-body"
+    args += ["--source-readback", str(tmp_path / "src.json")]
+    assert rv.main(args + ["--synthetic", "  "]) == 4 and not results.exists()  # blank marker: nothing written
+    src = tmp_path / "src.json"
+    before = src.read_bytes()
+    alias = [a for a in args]
+    alias[alias.index("--results") + 1] = str(src)  # results file aliasing an input: refused, input unchanged
+    assert rv.main(alias + ["--synthetic", batch.synthetic_reason("kernel-prisms")]) == 4 and src.read_bytes() == before
+    assert rv.main(args + ["--synthetic", batch.synthetic_reason("kernel-prisms")]) == 0  # control
+    row = last_row(results)
+    assert batch.SCOPE_DECISION == "D187" and row["synthetic"] is True
+    assert "[D187]" in row["synthetic_reason"] and "D186" not in row["synthetic_reason"]
+    assert row["class_metrics"]["body"]["closed_shell_share"] == pytest.approx(12 / 14, abs=1e-5)
+    r = _run("contours.py", src, src)  # round-1 data-loss witness, fresh process
+    assert r.returncode == 4 and src.read_bytes() == before
