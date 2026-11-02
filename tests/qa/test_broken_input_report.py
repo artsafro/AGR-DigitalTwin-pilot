@@ -139,3 +139,30 @@ def test_cli_undecodable_name_stdout_is_the_report(tmp_path):
     assert finding["data"]["file"] == archive.name
     assert archive.read_bytes() == blob
     assert not list(tmp_path.glob("*.partial"))
+
+
+def test_truncated_jpeg_inside_zip_and_repeat_runs_are_stable(tmp_path):
+    """Post-hoc acceptance rows: JPEG in a VPM ZIP, and the same input run twice."""
+    import zipfile
+    import test_geojson_jpeg_legacy_controls as leg
+
+    name = "SM_head.geojson"
+    archive = tmp_path / "SM_head.zip"
+    with zipfile.ZipFile(archive, "w", zipfile.ZIP_STORED) as zf:
+        zf.writestr(name, leg._bytes(leg.VALUES["head100"]))
+    before = archive.read_bytes()
+    results = []
+    for _ in range(2):
+        report = vp.validate(archive, "vpm", PROFILES)
+        assert report.passed is False and report.exit_code == 1
+        rows = [f for s in report.stages for f in s.findings
+                if f.name == "imageBase64" and f.status == "fail"]
+        assert rows, "truncated JPEG inside the ZIP must be a failed finding"
+        assert rows[0].data["rule_id"] == "V011"
+        assert rows[0].data["exception_class"] == "OSError"
+        assert name in rows[0].data["file"]
+        results.append(json.dumps(report.to_dict() if hasattr(report, "to_dict") else rows[0].data,
+                                  sort_keys=True, default=str))
+    assert results[0] == results[1]
+    assert archive.read_bytes() == before
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["SM_head.zip"]
