@@ -53,7 +53,7 @@ DEFAULT_BENCH = ("kpp1", "ac08", "tow02")
 # the user decision behind the synthetic marker; D186 is held by open PR #576 (rule 42), so this one is D187
 SCOPE_DECISION = "D187"
 _MESH_CONTOURS = ("plan contours and level heights measured from the source mesh, not from a drawing "
-                  "(no DWG plan in the benchmark set; user decision 2026-11-02 [" + SCOPE_DECISION + "])")
+                  "(no DWG plan in the benchmark set; user decision 2026-11-02 [D187])")
 _SYNTHETIC = {
     BASELINE: "reference row of a table whose from-contour variants use " + _MESH_CONTOURS,
     "kernel-prisms": _MESH_CONTOURS,
