@@ -127,7 +127,7 @@ def _body_args(tmp_path):
 
 @pytest.mark.parametrize("extra", [[], ["--synthetic", ""], ["--synthetic", "   "], ["--synthetic", "\t\n"]])
 def test_body_row_without_a_synthetic_marker_is_refused_and_appends_nothing(tmp_path, extra):
-    # user decision 2026-11-02 (option a): no drawing-backed body input exists yet, so every building-body row
+    # user decision 2026-11-02 [D186] (option a): no drawing-backed body input exists yet, so every building-body row
     # must say it is synthetic and why; a missing or blank reason is refused before anything is written
     assert rv.main(_body_args(tmp_path) + extra) == 4
     assert not (tmp_path / "results.jsonl").exists()
