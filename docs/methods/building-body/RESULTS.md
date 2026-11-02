@@ -27,7 +27,7 @@ Null metrics and why:
 
 Synthetic inputs and why:
 
-- clean-up of the supplied FBX in a table whose from-contour variants use plan contours and level heights measured from the source mesh, not from a drawing (no DWG plan in the benchmark set; user decision 2026-11-02 [D186]) (R4, R8, R12)
-- plan contours and level heights measured from the source mesh, not from a drawing (no DWG plan in the benchmark set; user decision 2026-11-02 [D186]) (R2, R6, R10)
-- plan contours and level heights measured from the source mesh, not from a drawing (no DWG plan in the benchmark set; user decision 2026-11-02 [D186]); no opening schedule, so no opening cut (R3, R7, R11)
-- reference row of a table whose from-contour variants use plan contours and level heights measured from the source mesh, not from a drawing (no DWG plan in the benchmark set; user decision 2026-11-02 [D186]) (R1, R5, R9)
+- clean-up of the supplied FBX in a table whose from-contour variants use plan contours and level heights measured from the source mesh, not from a drawing (no DWG plan in the benchmark set; user decision 2026-11-02 [D187]) (R4, R8, R12)
+- plan contours and level heights measured from the source mesh, not from a drawing (no DWG plan in the benchmark set; user decision 2026-11-02 [D187]) (R2, R6, R10)
+- plan contours and level heights measured from the source mesh, not from a drawing (no DWG plan in the benchmark set; user decision 2026-11-02 [D187]); no opening schedule, so no opening cut (R3, R7, R11)
+- reference row of a table whose from-contour variants use plan contours and level heights measured from the source mesh, not from a drawing (no DWG plan in the benchmark set; user decision 2026-11-02 [D187]) (R1, R5, R9)
