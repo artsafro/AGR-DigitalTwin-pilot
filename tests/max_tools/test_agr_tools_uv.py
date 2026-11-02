@@ -519,11 +519,25 @@ class _GeoKind:
     def __init__(self, name):
         self.name = name
 
+    def __str__(self):
+        return self.name
+
 
 class _GeoBase:
     def __init__(self, kind, verts, faces, ids, uvs, face_uvs):
         self.kind, self.verts, self.faces, self.ids = kind, verts, faces, ids
         self.maps = {1: {'verts': list(uvs), 'faces': [list(f) for f in face_uvs]}}
+
+    @property
+    def mesh(self):
+        return _TriView(self)
+
+
+class _TriView:
+    """Editable_Mesh.mesh: the TriMesh value the global face functions accept."""
+
+    def __init__(self, base):
+        self.base = base
 
 
 class _GeoNode:
@@ -588,13 +602,18 @@ def _geo_runtime():
                      getMapFace=lambda t, ch, i: _P3(*[v + 1 for v in base(t).maps[ch]['faces'][i - 1]]),
                      setMapFace=mesh_set_map_face, **common)
 
+    def tri(t):
+        # Max 2024: 'No "getface" function for Editable Mesh' -- only a TriMesh is accepted.
+        if not isinstance(t, _TriView):
+            raise RuntimeError('No "getface" function for ' + str(getattr(t, 'kind', t)))
+        assert t.base.kind is mesh_kind
+        return t.base
+
     def get_face(t, i):
-        assert base(t).kind is mesh_kind, 'global getFace is the Editable_Mesh API'
-        return _P3(*[v + 1 for v in base(t).faces[i - 1]])
+        return _P3(*[v + 1 for v in tri(t).faces[i - 1]])
 
     def get_face_mat_id(t, i):
-        assert base(t).kind is mesh_kind, 'global getFaceMatID is the Editable_Mesh API'
-        return base(t).ids[i - 1]
+        return tri(t).ids[i - 1]
 
     def update(n):
         n.updates += 1
