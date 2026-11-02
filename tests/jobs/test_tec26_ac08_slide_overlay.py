@@ -230,3 +230,16 @@ def test_real_cli_headless_under_60_s(tmp_path):
     assert rep["inputs_sha256"]["slide"] == SPEC["presentation"]["image_sha256"]
     assert sorted(p.name for p in out.iterdir()) == ["overlay.json", "overlay.png", "slide_rect.png", "vpm_rect.png"]
     assert not Path(str(out) + ".partial").exists()
+
+
+@needs_real
+def test_cli_refuses_a_leftover_partial_and_keeps_it(tmp_path):
+    """Hostile self-review: a stale `<out>.partial` from an earlier crash is a refusal (exit 2), never exit 1 (which
+    reads as a measured overlay fail); the stale folder and its content are left untouched, `<out>` is not created."""
+    out = tmp_path / "ov"
+    part = Path(str(out) + ".partial")
+    part.mkdir()
+    (part / "stale.txt").write_text("x")
+    r = _cli(out)
+    assert r.returncode == 2 and "partial" in r.stderr, (r.returncode, r.stderr[-300:])
+    assert not out.exists() and [p.name for p in part.iterdir()] == ["stale.txt"]
