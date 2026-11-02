@@ -64,8 +64,18 @@ under 0.5 m2 are dropped and listed. kpp1: 9 bands, ac08: 2, tow02: 13; no empty
   1 m notch -> removed 0.5 m3, read-back volume 47.5 m3, still one closed shell).
 - Limits: the benchmark rows (R3, R7, R11) cut no opening: the benchmark set carries no opening schedule and no
   plan drawing, and a cutter set derived from the model would be invented architecture; same flat-band and
-  courtyard limits as variant 1. On TOW02 the driver reports
-  54 388 triangles after triangulation but the FBX reads back with 39 446 (R11); the gap is not explained yet.
+  courtyard limits as variant 1. On TOW02 (R11) the numbers are two layers of one file, not a stale total
+  (source: [#743 report](https://github.com/artsafro/AGR-DigitalTwin-pilot/blob/8e28e3f1e99e654f0dd1aea8c6e425b746e12ee1/docs/research/body-gn-triangle-count-boundary.md),
+  commit `8e28e3f1e99e654f0dd1aea8c6e425b746e12ee1`):
+  - receipt and on-disk FBX `PolygonVertexIndex`: 54,388 triangles;
+  - Blender 5.1.2 import `Mesh.validate` removes 14,942 duplicate undirected vertex-key copies (it keeps one polygon per key);
+  - public loop-triangle readback and historical R11 `triangles.model`: 39,446.
+
+  The report measured that 14,938 of the 14,942 extras are the opposite winding and 4 repeat the same directed cycle
+  (report measurements, not rules of this method). The R11 xView counts were computed after importer deduplication.
+  Equal counts do not establish shell or normal equivalence, and neither count is delivery acceptance. Whether the
+  receipt format should change and which winding a rebuilt shell keeps are both still unresolved; `triangles`
+  keeps its current meaning.
 
 ## 3. max-pymxs-cleanup - 3ds Max pymxs edit-poly clean-up of the supplied FBX
 
