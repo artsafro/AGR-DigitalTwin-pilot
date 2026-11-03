@@ -180,3 +180,123 @@ def test_box_bench_on_low_feet_stays_clean(path, dims):
     feet = [v for v in mesh["verts"] if v[2] == 0.0]
     assert feet and all(abs(v[2]) < 1e-12 for v in feet)
     assert gen.signed_volume(mesh) > 0
+
+
+# --- clad box with modelled seams (Artem 2026-11-03: «Верона» = closed timber box, seams are geometry) ---------------
+# SYNTHETIC runs; the parameter values mirror the passport reading (H 0.45, 4 courses, ~0.01 seams) but nothing here
+# is site data.
+CLAD = dict(depth=0.6, height=0.45, foot_height=0.02, courses=4, seam_width=0.01, seam_depth=0.02, frame_width=0.045,
+            top_boards=9, foot_length=0.1, foot_inset=0.03, end_overhang=0.15, max_foot_span=2.67, materials=MATS,
+            synthetic=True)
+
+
+def clad(path, **kw):
+    base = dict(CLAD, path=path)
+    base.update(kw)
+    return base
+
+
+def _face_z(mesh, f):
+    zs = {round(mesh["verts"][i][2], 9) for i in f}
+    return zs.pop() if len(zs) == 1 else None
+
+
+@pytest.mark.parametrize("path,dims", [(STRAIGHT, (6.0, 0.6)), (L_RUN, (3.9, 2.5)), (U_RUN, (5.8, 2.9))])
+def test_clad_box_dimensions(path, dims):
+    facts = gen.mesh_facts(gen.build_clad_box(clad(path)))
+    assert facts["dims_m"] == pytest.approx([dims[0], dims[1], 0.45], abs=1e-6)
+    assert facts["min_z"] == pytest.approx(0.0, abs=1e-12)
+    assert facts["centre_xy"] == pytest.approx([0.0, 0.0], abs=1e-9)
+
+
+@pytest.mark.parametrize("path", [STRAIGHT, L_RUN, U_RUN, SKEW_L])
+def test_clad_box_quads_manifold_xview_clean(path):
+    mesh = gen.build_clad_box(clad(path))
+    assert mesh["faces"] and all(len(f) == 4 for f in mesh["faces"])
+    assert set(edge_use(mesh).values()) == {2}, "seams are inserts into one welded body: no T-junction, no open edge"
+    facts = gen.mesh_facts(mesh)
+    assert facts["components"] == 1 and facts["loose_verts"] == 0
+    res = xview_lists(mesh["verts"], mesh["faces"])
+    assert res["xview_faces"] == () and res["vertices"] == ()
+    assert len({tuple(round(c, 9) for c in v) for v in mesh["verts"]}) == len(mesh["verts"])
+
+
+@pytest.mark.parametrize("path", [STRAIGHT, L_RUN, U_RUN, SKEW_L])
+def test_clad_box_outward_and_volume(path):
+    mesh = gen.build_clad_box(clad(path))
+    run = sum(math.dist(a, b) for a, b in zip(path, path[1:]))
+    vol = gen.signed_volume(mesh)
+    assert 0.9 * 0.6 * 0.43 * run < vol < 0.6 * 0.45 * (run + 0.6)
+
+
+def test_clad_box_top_seams_are_geometry_and_stop_at_the_end_frame():
+    mesh = gen.build_clad_box(clad(STRAIGHT))
+    V = mesh["verts"]
+    floors = [f for f in mesh["faces"] if _face_z(mesh, f) == round(0.45 - 0.02, 9)]
+    # 9 top boards -> 10 seams (one against each side frame), one straight segment -> 10 seam floors
+    assert len(floors) == 10
+    for f in floors:
+        ys = sorted({round(V[i][1], 9) for i in f})
+        assert ys[1] - ys[0] == pytest.approx(0.01, abs=1e-9)          # seam width
+        assert max(abs(V[i][0]) for i in f) == pytest.approx(3.0 - 0.045, abs=1e-9)  # stops at the end frame
+    # the slat zone between the side frames: 9 boards of equal width
+    slats = sorted({round(V[i][1], 9) for f in floors for i in f})
+    assert slats[0] == pytest.approx(-0.3 + 0.045) and slats[-1] == pytest.approx(0.3 - 0.045)
+
+
+def test_clad_box_side_courses_wrap_with_ring_seams():
+    mesh = gen.build_clad_box(clad(STRAIGHT))
+    V = mesh["verts"]
+    # 4 courses of (0.43 - 3 * 0.01) / 4 = 0.1; ring seams at 0.12..0.13, 0.23..0.24, 0.34..0.35, 0.02 deep
+    for z in (0.12, 0.13, 0.23, 0.24, 0.34, 0.35):
+        ring = [v for v in V if abs(v[2] - z) < 1e-9]
+        xs, ys = [v[0] for v in ring], [v[1] for v in ring]
+        assert min(xs) == pytest.approx(-3.0) and max(ys) == pytest.approx(0.3)
+        assert any(abs(abs(x) - 2.98) < 1e-9 for x in xs) and any(abs(abs(y) - 0.28) < 1e-9 for y in ys)
+
+
+def test_clad_box_feet_are_steel_plates_let_into_the_bottom():
+    mesh = gen.build_clad_box(clad(STRAIGHT))
+    V = mesh["verts"]
+    ground = [f for f in mesh["faces"] if _face_z(mesh, f) == 0.0]
+    # straight 6 m: centres 0.15 .. 5.85, span <= 2.67 -> 4 plates 0.1 x 0.54
+    assert len(ground) == 4
+    for f in ground:
+        xs, ys = [V[i][0] for i in f], [V[i][1] for i in f]
+        assert max(xs) - min(xs) == pytest.approx(0.1) and max(ys) - min(ys) == pytest.approx(0.54)
+    steel = {i for f, m in zip(mesh["faces"], mesh["face_mat"]) if m == 3 for i in f}
+    assert steel and all(V[i][2] <= 0.02 + 1e-12 for i in steel)
+    assert set(mesh["face_mat"]) == {7, 3}
+
+
+def test_clad_box_random_runs_stay_clean():
+    rnd = random.Random(7901)
+    built = 0
+    for _ in range(25):
+        pts, ang = [[0.0, 0.0]], 0.0
+        for _k in range(rnd.randint(1, 3)):
+            ang += math.radians(rnd.choice([-90, 90, -60, 45]))
+            L = rnd.uniform(1.6, 5.0)
+            pts.append([pts[-1][0] + L * math.cos(ang), pts[-1][1] + L * math.sin(ang)])
+        try:
+            mesh = gen.build_clad_box(clad(pts))
+        except ValueError:
+            continue
+        built += 1
+        assert set(edge_use(mesh).values()) == {2}
+        assert xview_lists(mesh["verts"], mesh["faces"])["xview_faces"] == ()
+        assert gen.signed_volume(mesh) > 0
+    assert built >= 10
+
+
+@pytest.mark.parametrize("bad", [
+    dict(courses=0), dict(courses=2.0), dict(top_boards=True), dict(top_boards=0), dict(seam_width=0),
+    dict(seam_depth=0.05),                    # deeper than the 0.045 frame
+    dict(top_boards=40),                      # boards would have no width
+    dict(foot_inset=0.3), dict(foot_length=3.0), dict(end_overhang=0.05), dict(height=0.03),
+    dict(depth=float("nan")), dict(materials={"seat": 7}), dict(post=0.04),
+    dict(path=[[0, 0], [0.5, 0]]),
+])
+def test_clad_box_fail_closed(bad):
+    with pytest.raises(ValueError):
+        gen.build_clad_box(clad(bad.pop("path", STRAIGHT), **bad))
