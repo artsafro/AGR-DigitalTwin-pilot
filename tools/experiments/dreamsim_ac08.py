@@ -525,6 +525,16 @@ def _crop_destinations(work: Path) -> list[Path]:
     return out
 
 
+def _same_file(a: Path, b: Path) -> bool:
+    """True if a and b resolve to the same path or are the same inode (hardlink)."""
+    try:
+        if Path(a).resolve() == Path(b).resolve():
+            return True
+        return Path(a).exists() and Path(b).exists() and os.path.samefile(a, b)
+    except OSError:
+        return True
+
+
 def run(results: Path, csv_path: Path, work: Path, cache: Path) -> int:
     inputs = [SPEC, SHEET]
     for cfg in PILOTS.values():
@@ -535,7 +545,13 @@ def run(results: Path, csv_path: Path, work: Path, cache: Path) -> int:
     except (OSError, ValueError, KeyError, TypeError) as exc:
         print(f"cannot inventory inputs: {exc}", file=sys.stderr)
         raise SystemExit(2)
-    inputs.extend(_crop_destinations(work))
+    crops = _crop_destinations(work)
+    for crop in crops:
+        for src in inputs:
+            if _same_file(crop, src):
+                print(f"crop destination {crop} aliases input {src}", file=sys.stderr)
+                raise SystemExit(2)
+    inputs.extend(crops)
     if output_collides(results, inputs + [csv_path]) or output_collides(csv_path, inputs + [results]):
         raise SystemExit(2)
     _, _, mm = _scripts()

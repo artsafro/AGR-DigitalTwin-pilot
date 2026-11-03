@@ -239,3 +239,40 @@ def test_distinct_outputs_pass_the_guard(monkeypatch, tmp_path):
     monkeypatch.setattr(ds, "measure_pilot", stop)
     with pytest.raises(RuntimeError, match="guard passed"):
         ds.run(tmp_path / "o.json", tmp_path / "o.csv", tmp_path / "w", tmp_path / "c")
+
+
+@pytest.mark.parametrize("which", ["slide", "render", "hardlink"])
+def test_crop_destination_aliasing_a_source_exits_nonzero_before_any_write(monkeypatch, tmp_path, which):
+    import json
+    import os
+
+    slide, render = _fake_world(monkeypatch, tmp_path)
+    work = tmp_path / "w"
+    crop_dir = work / "crops" / "v010"
+    crop_dir.mkdir(parents=True)
+    if which == "slide":
+        crop = crop_dir / "north_F1_slide.png"
+        slide.replace(crop)
+        spec = json.loads(ds.SPEC.read_text())
+        spec["presentation"]["image"] = str(crop)
+        ds.SPEC.write_text(json.dumps(spec))
+        target = crop
+    elif which == "render":
+        crop = crop_dir / "north_F1_vpm.png"
+        render.replace(crop)
+        (render.parent / "renders.json").write_text(json.dumps(
+            {t: {"views": {"north": {"png": os.path.relpath(crop, render.parent)}}} for t in ("vpm", "npm")}))
+        target = crop
+    else:
+        crop = crop_dir / "north_F1_npm.png"
+        os.link(slide, crop)
+        target = slide
+    before = target.read_bytes()
+    marker = []
+    monkeypatch.setattr(ds, "measure_pilot", lambda *a, **k: marker.append(1) or [])
+    with pytest.raises(SystemExit) as exc:
+        ds.run(tmp_path / "o.json", tmp_path / "o.csv", work, tmp_path / "c")
+    assert exc.value.code != 0
+    assert not marker
+    assert target.read_bytes() == before
+    assert not (tmp_path / "o.json").exists() and not (tmp_path / "o.csv").exists()
