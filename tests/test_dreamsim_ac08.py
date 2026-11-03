@@ -124,3 +124,66 @@ def test_partial_and_unsupported_files_exit_nonzero(tmp_path: Path):
     assert exc.value.code not in (0, None)
     assert not out.exists()
     assert text.read_text(encoding="utf-8") == "nope"
+
+
+def _png(path: Path) -> None:
+    Image.fromarray(np.full((8, 8, 3), 120, np.uint8), "RGB").save(path, format="PNG")
+
+
+def test_write_array_input_named_like_old_temp_is_kept(tmp_path: Path):
+    src = tmp_path / "result.json.tmp"
+    _png(src)
+    before = src.read_bytes()
+    assert ds.main(["write-array", "--input", str(src), "--output", str(tmp_path / "result.json")]) == 0
+    assert src.read_bytes() == before
+    assert (tmp_path / "result.json").exists()
+    assert not list(tmp_path.glob("*.partial"))
+
+
+def test_write_array_keeps_unrelated_temp_sentinel(tmp_path: Path):
+    src = tmp_path / "in.png"
+    _png(src)
+    sentinel = tmp_path / "result.json.tmp"
+    sentinel.write_text("keep")
+    assert ds.main(["write-array", "--input", str(src), "--output", str(tmp_path / "result.json")]) == 0
+    assert sentinel.read_text() == "keep"
+
+
+def test_results_equal_csv_exits_nonzero_and_writes_nothing(tmp_path: Path):
+    same = tmp_path / "x.json"
+    with pytest.raises(SystemExit) as exc:
+        ds.run(same, same, tmp_path / "w", tmp_path / "c")
+    assert exc.value.code != 0
+    assert not same.exists()
+
+
+def _stub_run(monkeypatch, tmp_path, fail_after):
+    img = np.full((8, 8, 3), 0.5)
+    rows = [{"pilot": "v010", "tag": "vpm", "view": "north", "slide_crop": "s", "render_crop": "r"} for _ in range(2)]
+    monkeypatch.setattr(ds, "_scripts", lambda: (None, None, None))
+    monkeypatch.setattr(ds, "measure_pilot", lambda pilot, work: [dict(r) for r in rows])
+    monkeypatch.setattr(ds, "control_rows", lambda r, mm: [{"name": "shift_1", "ssim": 1.0, "dreamsim": None, "defect_crop_joints": 1, "base_crop_joints": 1}, {"name": "band", "ssim": 0.5, "dreamsim": None, "defect_crop_joints": 2, "base_crop_joints": 1}])
+    monkeypatch.setattr(ds, "_controls", lambda base: [("shift_1", base), ("band", base)])
+    monkeypatch.setattr(ds, "load_rgb", lambda p: img)
+    monkeypatch.setattr(ds, "load_dreamsim", lambda cache: (object(), object(), 0.1, "x"))
+    calls = {"n": 0}
+
+    def dist(model, pre, a, b):
+        calls["n"] += 1
+        if fail_after is not None and calls["n"] > fail_after:
+            raise ds.InputError("boom")
+        return 0.1, 0.01
+
+    monkeypatch.setattr(ds, "_dreamsim_distance", dist)
+    monkeypatch.setattr(ds, "_weight_files", lambda cache: [])
+    monkeypatch.setattr(ds, "_write_csv", lambda *a: None)
+    return ds.run(tmp_path / "r.json", tmp_path / "r.csv", tmp_path / "w", tmp_path / "c")
+
+
+@pytest.mark.parametrize("fail_after", [0, 1, 2, 3])
+def test_run_nonzero_when_inference_fails_even_after_partial_progress(monkeypatch, tmp_path, fail_after):
+    assert _stub_run(monkeypatch, tmp_path, fail_after) == 1
+
+
+def test_run_zero_when_all_pairs_measured(monkeypatch, tmp_path):
+    assert _stub_run(monkeypatch, tmp_path, None) == 0

@@ -12,6 +12,7 @@ import csv
 import hashlib
 import json
 import os
+import tempfile
 import sys
 import time
 from pathlib import Path
@@ -241,9 +242,15 @@ def output_collides(output: Path, inputs: list[Path]) -> bool:
 
 def _atomic_write(path: Path, text: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_suffix(path.suffix + ".tmp")
-    tmp.write_text(text, encoding="utf-8")
-    os.replace(tmp, path)
+    fd, name = tempfile.mkstemp(prefix=path.name + ".", suffix=".partial", dir=path.parent)
+    tmp = Path(name)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as fh:
+            fh.write(text)
+        os.replace(tmp, path)
+    except BaseException:
+        tmp.unlink(missing_ok=True)
+        raise
 
 
 def _scripts():
@@ -498,7 +505,7 @@ def run(results: Path, csv_path: Path, work: Path, cache: Path) -> int:
     for cfg in PILOTS.values():
         inputs.append(cfg["readback"])
         inputs.append(cfg["renders"] / "renders.json")
-    if output_collides(results, inputs) or output_collides(csv_path, inputs):
+    if output_collides(results, inputs + [csv_path]) or output_collides(csv_path, inputs + [results]):
         raise SystemExit(2)
     _, _, mm = _scripts()
     rows = []
@@ -539,13 +546,15 @@ def run(results: Path, csv_path: Path, work: Path, cache: Path) -> int:
     }
     _atomic_write(results, json.dumps(payload, indent=1))
     _write_csv(csv_path, rows, controls)
-    return 0 if dream["loaded"] else 1
+    complete = all(r.get("dreamsim") is not None for r in rows + controls)
+    return 0 if dream["loaded"] and dream["error"] is None and complete else 1
 
 
 def _write_csv(path: Path, rows: list[dict], controls: list[dict]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_suffix(path.suffix + ".tmp")
-    with tmp.open("w", encoding="utf-8", newline="") as fh:
+    fd, name = tempfile.mkstemp(prefix=path.name + ".", suffix=".partial", dir=path.parent)
+    tmp = Path(name)
+    with os.fdopen(fd, "w", encoding="utf-8", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=[
             "kind", "pilot", "view", "facade", "tag", "name", "ssim", "dreamsim", "dreamsim_s",
             "slide_joints", "render_joints", "base_crop_joints", "defect_crop_joints"])
