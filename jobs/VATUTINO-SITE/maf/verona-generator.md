@@ -1,8 +1,8 @@
 # Vatutino «Верона» benches — MAF generator gen-v001 (#790, model-maf step 3)
 
-Status: **stage 2 of 3, `passed=false`** — plan shapes of all ten rows, the module passport, the Blender writer and
-row 1 (two variants, draft) are done; the variant choice, the module reference and the first piece wait for Artem's
-«да». Rows 2–10 are not built.
+Status: **stage 3 of 3, `passed=false`** (technical QA green; user acceptance per model and the library entry are
+open). Row 1 accepted by Artem (A4, seams by texture); rows 1-10 built with the same script and the proposed v006
+material IDs, each row checked separately; showcase scene for Artem's per-model «да». Library entries: none yet.
 
 Artem's answers 2026-11-03 (card t_96a3cc8a): web search for the «Верона» 18694 photo allowed; rows 6 = «пл.
 дети1-3лет», 7 = «лестн 2», 8 = «лестн 2.1», 9 and 10 = «лестн 1»; «600» is the seat depth; seat height 0.466 from
@@ -184,3 +184,77 @@ Picture for Artem (photo | end close-up, NPM | VPM, caption): `C:/x/vatutino-maf
 NPM MAF share [D097]: v005 set 57 628 + row 1 160 = 57 788; + all ten rows 1 520 = **59 148, under 60 000 by 852**.
 NPM = VPM, no light version needed [D164]. Open for Artem: row 1 «да»; the board cell as a new material ID or a
 pattern of `larch_light_oak` (v005 list unchanged until he decides); RAL 7016 steel ID (plates still `steel_ral7047`).
+
+## Rows 1-10 with the proposed v006 IDs (`C:/x/vatutino-maf/gen-v001/rows-v006p-2`), current
+
+Artem 2026-11-03 (card t_96a3cc8a): «Row 1 (render row1_a4_vs_photo_v004, simple box 160 tris, seams in texture)
+ACCEPTED - build rows 2-10 with the same script. Board texture = NEW material ID `larch_light_oak_boards` (D152: one
+material ID per texture), added to the atlas copy and the ID list as a proposed v006 entry. Supports = NEW ID
+`steel_ral7016` per the passport, replacing the temporary steel_ral7047.»
+
+- Config `verona-gen.config.json` = `gen-v001-A4.1`: materials seat `larch_light_oak_boards`, frame `steel_ral7016`;
+  geometry parameters unchanged from the accepted A4.
+- ID list: `verona-material-ids-v006-proposal.json` (proposed; site-set atlas v005 and `library/maf/material_ids_v005.json`
+  unchanged, sha `5099d135…82b8` / `21a605c7…1ff9` before and after). Atlas copy `gen-v001/atlas-v006/`
+  (`tools/materials/atlas_maf.py`): boards 256 px at slot (0, 0), `steel_ral7016` #383E42 64 px. Note for Artem: the
+  library list v005 already has id 2 `paint_ral7016` (#383E42).
+- Bug found on row 2 and fixed test-first: the first build (`gen-v001/rows-v006p`, stopped at row 2, exit 1) refused
+  the top UV, s = 1.0000336, because a corner a hair wider than 90° puts the mitre past `length + depth/2`. Regression
+  `test_texture_box_uv_stays_inside_unit_square_at_any_corner`: RED 2 failed (`509fdb86`) -> GREEN
+  101 passed (`0028f7e3`): s is now normalised over the top quad's own extent. `gen-v001/v006-rows` (row 1 only, from
+  the interrupted previous run) is superseded and not used.
+
+Commands (all exit 0; Blender 5.1.2, factory startup):
+```
+blender --background --factory-startup --python-exit-code 1 --python tools/blender/maf_gen_bench_build.py -- jobs/VATUTINO-SITE/maf/verona-gen.config.json jobs/VATUTINO-SITE/maf/verona-plan-shapes.json C:/x/vatutino-maf/gen-v001/atlas-v006/vatutino_maf_atlas_512_v006p.json C:/x/vatutino-maf/gen-v001/atlas-v006/vatutino_maf_atlas_512_v006p.png C:/x/vatutino-maf/gen-v001/rows-v006p-2
+blender ... --python tools/blender/fbx_readback.py -- <rows-v006p-2>/<npm|vpm>/VAT_MAF_T3508_<NN>.fbx <rows-v006p-2>/readback/<npm|vpm>_VAT_MAF_T3508_<NN>.json   (20 runs)
+uv run python tools/library/maf_gen_bench_checks.py <rows-v006p-2>/build-report.json <rows-v006p-2>/readback <rows-v006p-2>/checks.json
+uv run dt qa xview <rows-v006p-2>/<npm|vpm>/VAT_MAF_T3508_<NN>.fbx --out <rows-v006p-2>/readback/xview_<npm|vpm>_VAT_MAF_T3508_<NN>.json --profile <NPM|VPM>   (20 runs)
+```
+
+One verify line per generated MAF (hard edges by angle 40°; materials in the readback: only
+`larch_light_oak_boards` 2 080 faces and `steel_ral7016` 960 faces over all 20 FBX):
+
+| Row | Set id | Tris NPM / VPM | Readback m | Reference m | Deviation m [D094] | `maf_findings` NPM | xView faces / verts | UV outside slot NPM / VPM | FBX sha256 NPM / VPM |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | `VAT_MAF_T3508_01` | 160 / 160 | 3.919 × 2.501 × 0.450 | 3.9 × 2.5 (schedule) | 0.019 / 0.001 pass | 3 pass, 0 fail, 0 not_run / VPM same=True | 0 / 0 | 0 / 0 | `9399331f…` / `485fd6aa…` |
+| 2 | `VAT_MAF_T3508_02` | 184 / 184 | 6.699 × 2.500 × 0.450 | 6.7 × 2.5 (schedule) | 0.001 / 0.000 pass | 3 pass, 0 fail, 0 not_run / VPM same=True | 0 / 0 | 0 / 0 | `b1a9e281…` / `25a69836…` |
+| 3 | `VAT_MAF_T3508_03` | 124 / 124 | 6.250 × 0.600 × 0.450 | 6.25 × 0.6 (schedule) | 0.000 / 0.000 pass | 3 pass, 0 fail, 0 not_run / VPM same=True | 0 / 0 | 0 / 0 | `d859e106…` / `7a992eca…` |
+| 4 | `VAT_MAF_T3508_04` | 220 / 220 | 5.800 × 2.896 × 0.450 | 5.8 × 2.9 (schedule) | 0.000 / 0.004 pass | 3 pass, 0 fail, 0 not_run / VPM same=True | 0 / 0 | 0 / 0 | `f526a93a…` / `665f5ef5…` |
+| 5 | `VAT_MAF_T3508_05` | 124 / 124 | 6.085 × 0.600 × 0.450 | 6.08 × 0.6 (schedule) | 0.005 / 0.000 pass | 3 pass, 0 fail, 0 not_run / VPM same=True | 0 / 0 | 0 / 0 | `6df0c5e6…` / `bd761aef…` |
+| 6 | `VAT_MAF_T3508_06` | 372 / 372 | 4.957 × 5.526 × 0.450 | 4.96 × 5.53 (schedule) | 0.003 / 0.004 pass | 3 pass, 0 fail, 0 not_run / VPM same=True | 0 / 0 | 0 / 0 | `db0b3aa7…` / `458c1e44…` |
+| 7 | `VAT_MAF_T3508_07` | 100 / 100 | 4.921 × 0.600 × 0.450 | 4.921 × 0.6 (DWG outline (Artem's mapping)) | 0.000 / 0.000 pass | 3 pass, 0 fail, 0 not_run / VPM same=True | 0 / 0 | 0 / 0 | `e010fb2e…` / `8ee7c255…` |
+| 8 | `VAT_MAF_T3508_08` | 100 / 100 | 4.249 × 0.600 × 0.450 | 4.249 × 0.6 (DWG outline (Artem's mapping)) | 0.000 / 0.000 pass | 3 pass, 0 fail, 0 not_run / VPM same=True | 0 / 0 | 0 / 0 | `bd96d825…` / `1d6d458f…` |
+| 9 | `VAT_MAF_T3508_09` | 68 / 68 | 2.000 × 0.600 × 0.450 | 2.0 × 0.6 (DWG outline (Artem's mapping)) | 0.000 / 0.000 pass | 3 pass, 0 fail, 0 not_run / VPM same=True | 0 / 0 | 0 / 0 | `2fa07725…` / `e27aa92c…` |
+| 10 | `VAT_MAF_T3508_10` | 68 / 68 | 2.000 × 0.600 × 0.450 | 2.0 × 0.6 (DWG outline (Artem's mapping)) | 0.000 / 0.000 pass | 3 pass, 0 fail, 0 not_run / VPM same=True | 0 / 0 | 0 / 0 | `1e2bc70d…` / `31f34ed0…` |
+
+Height 0.45 m (passport) for every row; the schedule's third value «600» is the depth (Artem). Full hashes in
+`C:/x/vatutino-maf/gen-v001/SHA256SUMS.txt`.
+
+### Budget [D097]
+
+| | Raw | NPM tris | VPM tris | Count |
+|---|---|---|---|---|
+| Rows 1-10 «Верона» | = NPM (no heavier source) | 1520 | 1520 | 10 |
+| v005 set (13 positions, unchanged) | — | 57 628 | — | 13 |
+| **NPM MAF total** | | **59 148** of the MAF share 60 000 (NPM 180 000) | | 23 |
+
+Under the share by 852. NPM = VPM, no light version [D164].
+
+### Showcase (review-showcase practice)
+
+Scene `C:/x/vatutino-maf/gen-v001/showcase-3/showcase_rows_v006p.blend` (`79f19478…`): ten NPM | VPM pairs, a text
+object right of each pair with the schedule row (`*T3508/<n>`, size, tris, set id). Renders
+`showcase_rows_v006p_top.png` (`6cd9b7ef…`), `showcase_rows_v006p_oblique.png`, close-ups of rows 2, 4, 6
+(`closeup_VAT_MAF_T3508_0{2,4,6}_NPM.png`). Scripts `gen-v001/probe/showcase_{rows,closeups}_v006p.py`.
+
+### Library
+
+No library entry yet. The card allows one per model only after Artem's «да» on that model; row 1's «да» was given on
+the A4 render with the temporary `steel_ral7047`, and both IDs it now uses are proposed v006, not in the library list
+v005. `catalogue.json` is generated from the library `.max` scene (counts, clusters), so a generated entry also needs a
+decision on how it is recorded («generated, gen-v001»). Open for Artem: per-model «да» on the showcase (rows 1-10),
+and whether the library entry uses the proposed names or library id 2 `paint_ral7016`.
+
+Originals unchanged before/after: `main.dwg` copy `64e22677…46e4`, MAF_0326 FBX `f3f9653c…2edc`, site atlas v005
+`5099d135…` / `5aaf8b55…`, `material_ids_v005.json` `21a605c7…`.
