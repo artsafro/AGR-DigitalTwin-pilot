@@ -103,9 +103,9 @@ outline merged into "narrow edging", in run 2 no 2-1 rib question at all). Varia
 The sheet stays mandatory [D125], so the VLM time and cost are **added**, not saved; they are small (< $0.25 and
 < 1 min per building for A).
 
-**Open acceptance point:** the "time and cost per building vs the human sheet" comparison is **not complete**. The
-repository has no timed record of a human acceptance-sheet session, and no agent can produce one: it needs Artem to
-time one sheet for AC08 v010 (start/end), or to amend the acceptance. Until then this report gives only the VLM side.
+**Acceptance amended (Artem 2026-11-03, option b):** the point "time and cost per building vs the human sheet" is
+reduced to "VLM time/cost only, human side not measured". The repository has no timed record of a human
+acceptance-sheet session, so the human column above stays **not measured**; no human-side number is claimed.
 
 Pairwise answer validation (review round 1): every raw pairwise list is checked before scoring (each item exactly
 once, value `first|second|equal`, no unknown id); duplicates fail with a named error and exit 1. Re-checked on the
