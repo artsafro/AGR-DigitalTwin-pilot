@@ -96,8 +96,12 @@ def fully_dead_pid(pid_file, *, before_release=None, child_code=HOLD_CHILD_CODE,
     script = (
         "import subprocess, sys\n"
         "from pathlib import Path\n"
-        f"c = subprocess.Popen([sys.executable, '-c', {child_code!r}], stdin=subprocess.PIPE)\n"
-        f"Path({str(pid_file)!r}).write_text(str(c.pid))\n"
+        f"c = subprocess.Popen([sys.executable, '-c', {child_code!r}], stdin=subprocess.PIPE, stdout=subprocess.DEVNULL)\n"
+        "print('pid', c.pid, flush=True)\n"
+        "try:\n"
+        f"    Path({str(pid_file)!r}).write_text(str(c.pid))\n"
+        "except BaseException:\n"
+        "    c.kill(); c.wait(); sys.exit(4)\n"
         "print('ready', flush=True)\n"
         "sys.stdin.readline()\n"
         "c.stdin.close()\n"
@@ -112,10 +116,13 @@ def fully_dead_pid(pid_file, *, before_release=None, child_code=HOLD_CHILD_CODE,
     )
     watchdog = threading.Timer(timeout + 5, helper.kill)
     watchdog.start()
+    pid = None
     try:
-        if helper.stdout.readline().strip() != "ready":
+        first = helper.stdout.readline().split()
+        if len(first) == 2 and first[0] == "pid":
+            pid = int(first[1])
+        if pid is None or helper.stdout.readline().strip() != "ready":
             raise RuntimeError("dead-pid setup failed: helper never became ready")
-        pid = int(pid_file.read_text())
         if before_release is not None:
             before_release(pid)
         try:
@@ -135,11 +142,12 @@ def fully_dead_pid(pid_file, *, before_release=None, child_code=HOLD_CHILD_CODE,
         # reaped its child: kill the child by pid so nothing is orphaned.
         # A helper that exited on its own (0 or 3) already reaped it.
         helper_code = helper.poll()
-        if helper_code is None or helper_code < 0 or helper_code not in (0, 3):
+        if helper_code is None or helper_code not in (0, 3, 4):
             if helper_code is None:
                 helper.kill()
                 helper.wait()
-            _kill_orphan_child(pid_file)
+            if pid is not None:
+                _kill_orphan_child(pid)
         for stream in filter(None, (helper.stdin, helper.stdout)):
             try:
                 stream.close()
@@ -147,14 +155,10 @@ def fully_dead_pid(pid_file, *, before_release=None, child_code=HOLD_CHILD_CODE,
                 pass
 
 
-def _kill_orphan_child(pid_file):
+def _kill_orphan_child(child_pid):
     import os
     import signal
 
-    try:
-        child_pid = int(pid_file.read_text())
-    except (OSError, ValueError):
-        return
     if not run_record_module._pid_alive(child_pid):
         return
     try:
@@ -164,6 +168,23 @@ def _kill_orphan_child(pid_file):
     deadline = time.monotonic() + 10
     while run_record_module._pid_alive(child_pid) and time.monotonic() < deadline:
         time.sleep(0.05)
+
+
+def test_dead_pid_setup_failure_when_pid_file_unwritable_kills_child(tmp_path):
+    marker = tmp_path / "marker"
+    code = (
+        "import os,time; from pathlib import Path; "
+        f"Path({str(marker)!r}).write_text(str(os.getpid())); time.sleep(60)"
+    )
+    start = time.monotonic()
+    with pytest.raises(RuntimeError, match="dead-pid setup failed"):
+        fully_dead_pid(tmp_path / "missing" / "g.pid", child_code=code, timeout=1)
+    assert time.monotonic() - start < 20
+    deadline = time.monotonic() + 5
+    while not marker.exists() and time.monotonic() < deadline:
+        time.sleep(0.05)
+    if marker.exists():
+        assert not run_record_module._pid_alive(int(marker.read_text()))
 
 
 def writer(output, counter):
