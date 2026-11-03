@@ -73,22 +73,31 @@ row 1 is built in both forms and Artem chooses.
 
 ## Generator
 
-`tools/library/maf_gen_bench.py` (pure, no bpy): plan run + sections + material IDs -> one welded quad mesh
-(posts let into the seat bottom as inserts, closed manifold, xView-clean, pivot bbox centre / Z 0, longest
-segment on +X, plan rotation recorded). `centreline_from_outline` turns a DWG strip outline into the run. The
-passport box is the same generator with other parameters (body = «seat» 0.43 thick on 0.02 feet), no new code.
-Writer `tools/blender/maf_gen_bench_build.py` (atlas v005 materials, box UV inside the 512 slots, triangulated
-FBX per MAF-18, hard edges by angle 40°, NPM + VPM, refuses overwrite); checks `tools/library/maf_gen_bench_checks.py`
-(readback -> `maf_findings`, dimensions within 0.10 m [D094], atlas-slot count); overlap gate `dt qa xview`.
-Tests: `tests/test_maf_gen_bench.py` (synthetic straight / L / U / skewed runs, box-bench parameters), 47 passed.
+`tools/library/maf_gen_bench.py` (pure, no bpy), two forms selected by the config key `form`:
+- `slab_on_posts` (`build_bench`): plan run + sections -> slab with square posts let in (variant B, MAF_0326).
+- `clad_box` (`build_clad_box`, Artem 2026-11-03: «Верона» = variant A, seams are geometry): closed timber box,
+  `courses` side boards with ring seams wrapping the whole outline, a top frame around `top_boards` lengthwise slats
+  with seams that stop at the end frames and turn mitred through the corners, steel foot plates let into the bottom.
+  One welded quad mesh: no T-junction (bands whose edges carry different vertex counts get a 3-to-1 quad reduction
+  with interior points only), convex quads, closed manifold, pivot bbox centre / Z 0, longest segment on +X.
+`centreline_from_outline` turns a DWG strip outline into the run. Writer `tools/blender/maf_gen_bench_build.py`
+(atlas v005 materials, box UV inside the 512 slots, triangulated FBX per MAF-18, hard edges by angle 40°, NPM + VPM,
+refuses overwrite); checks `tools/library/maf_gen_bench_checks.py` (readback -> `maf_findings`, dimensions within
+0.10 m [D094], atlas-slot count); overlap gate `dt qa xview`. Tests: `tests/test_maf_gen_bench.py` (synthetic straight /
+L / U / skewed / random runs for both forms), 81 passed.
 
 | Config | Form | Parameters (source) |
 |---|---|---|
-| `verona-gen.config.json` (A, recommended) | passport box | depth 0.6 (DWG = passport B), top 0.45 (passport H), body 0.43, feet 0.06 square × 0.02, inset 0.03, end 0.1, span 2.67 (passport: 3 sections in 8.0) — feet sizes not dimensioned, review |
-| `verona-gen-b.config.json` (B) | MAF_0326 slab on posts | the section table above, height 0.466 |
+| `verona-gen.config.json` (A3, current) | `clad_box` | every value with its source in `param_sources`; summary below |
+| `verona-gen-b.config.json` (B, not chosen) | `slab_on_posts` | the MAF_0326 section table above, height 0.466 |
 
-Materials (both): body/seat `larch_light_oak`, feet/frame `steel_ral7047` (approved list v005; the passport's
-RAL 9005 / 7016 is not in v005 — a new ID needs Artem, so review).
+A3 parameters (passport `verona.pdf` p.1 at 0.0041 m/px in the end view, Artem's photo
+`C:/x/vatutino-maf/ref/verona_hobbyka_photo_artem.jpg`): H 0.45, depth 0.6, 4 courses of 0.100 + 3 ring seams
+**0.010 wide** (end view: course 24 px, gap 2-3 px) × 0.020 deep (not dimensioned, review); top frame 0.045 +
+**9 slats** 0.0456 + 10 seams 0.010 × 0.020 — Artem's «~11» read as 11 equal boards across the top = 2 frame boards +
+9 slats (the passport render shows 5-6 seams near the end at low resolution, review); steel plates 0.10 × 0.54 ×
+0.02 (end view: plate inset 0.03 per side) at 0.15 from the free ends and <= 2.67 m apart (3 sections in 8.0 m).
+Materials: body `larch_light_oak`, plates `steel_ral7047` (placeholder: the passport's RAL 7016 is not in v005).
 
 ## Row 1, first piece (draft, `C:/x/vatutino-maf/gen-v001/{a,b}`)
 
@@ -111,7 +120,25 @@ Full hashes: `C:/x/vatutino-maf/gen-v001/SHA256SUMS.txt`. Picture for Artem:
 `C:/x/vatutino-maf/gen-v001/renders/row1_variants_v002.png` (A top, B bottom, NPM left, VPM right, text labels).
 Originals unchanged: `main.dwg` copy `64e22677…46e4`, MAF_0326 FBX `f3f9653c…2edc` (same as before).
 
-## Budget [D097], [D167]
+## Row 1, A3 with modelled seams (`C:/x/vatutino-maf/gen-v001/a3-seams`)
+
+Same four commands as above with `<a|b>` = `a3-seams` (all exit 0). Readback NPM = VPM: 648 tris,
+3.919 × 2.501 × 0.450 m (deviation from the generator < 1e-6 m; schedule 3.9 × 2.5: 0.019 / 0.001, pass);
+`maf_findings` 3 pass, 0 fail, 0 not_run (smoothing 40°, outward normals, dimensions); `dt qa xview` NPM and VPM:
+0 overlapping faces, 0 overlapping vertices; UV faces outside their 512 slot 0 / 648 (wood 598, steel 50).
+FBX sha256 NPM `4d2112a4…2562`, VPM `709568b3…53f2`. Picture for Artem (photo | close-up, NPM | VPM, caption):
+`C:/x/vatutino-maf/gen-v001/renders/row1_a3_vs_photo_v003.png` (`5458abd8…8ad8`); render/compose scripts in
+`gen-v001/probe/`, all hashes in `gen-v001/SHA256SUMS.txt`.
+
+| Row | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | Sum |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| A3 tris (pure generator; row 1 = FBX) | 648 | 672 | 484 | 836 | 484 | 1244 | 460 | 460 | 428 | 428 | 6 144 |
+
+NPM MAF share [D097]: v005 set 57 628 + row 1 648 = 58 276 (under 60 000); + all ten rows 6 144 = **63 772, over the
+share by 3 772**. A lighter NPM (seams as texture only) would be 10 × ~200 tris but [D164] forbids a substitute
+unless Artem chooses it; decision pending with the colour ID (RAL 7016).
+
+## Budget [D097], [D167] (variants A/B before the seams, superseded by A3 above)
 
 | Variant | Ten rows NPM tris (pure generator, same as FBX for row 1) | NPM MAF total with v005 set 57 628 | vs share 60 000 |
 |---|---|---|---|
