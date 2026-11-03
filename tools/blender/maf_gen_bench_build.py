@@ -6,7 +6,8 @@
 
 Pattern: new-case: generated MAF export - tools/library/maf_gen_bench.py builds one welded quad mesh per row
 (plan centreline from verona-plan-shapes.json + section parameters from the config); this script only writes it:
-`form` picks the builder (slab_on_posts | clad_box); atlas materials (approved list, 512 slots), box UV inside each slot, triangulation (MAF-18), hard edges by
+`form` picks the builder (slab_on_posts | clad_box); atlas materials (approved list, 512 slots), box UV inside each slot
+(or the generator's board-pattern `face_uv` when `params.seams` = texture), triangulation (MAF-18), hard edges by
 angle, NPM + VPM FBX (same mesh: no light version unless the budget needs it [D164]) and a build report.
 Refuses to overwrite an FBX (exit 2) and refuses a material outside the atlas (exit 3).
 """
@@ -83,10 +84,15 @@ def write(set_id, mesh_data, fbx_out):
     co = [v.co for v in me.vertices]
     lo = [min(c[i] for c in co) for i in range(3)]
     span = [max(max(c[i] for c in co) - lo[i], 1e-9) for i in range(3)]
-    for p in me.polygons:
+    face_uv = mesh_data.get("face_uv") or [None] * len(me.polygons)
+    for p, fuv in zip(me.polygons, face_uv):
+        rect = rects[order[p.material_index]]
+        if fuv is not None:  # board-pattern UV from the generator: no inset, so the seam lines stay on the joints
+            for li, st in zip(p.loop_indices, fuv):
+                uv.data[li].uv = mss.remap_into_rect(tuple(st), rect, inset=0.0)
+            continue
         axis = max(range(3), key=lambda i: abs(p.normal[i]))
         a, b = [i for i in range(3) if i != axis]
-        rect = rects[order[p.material_index]]
         for li in p.loop_indices:
             c = co[me.loops[li].vertex_index]
             st = (min(1.0, max(0.0, (c[a] - lo[a]) / span[a])), min(1.0, max(0.0, (c[b] - lo[b]) / span[b])))

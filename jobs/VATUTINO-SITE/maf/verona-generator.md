@@ -120,7 +120,7 @@ Full hashes: `C:/x/vatutino-maf/gen-v001/SHA256SUMS.txt`. Picture for Artem:
 `C:/x/vatutino-maf/gen-v001/renders/row1_variants_v002.png` (A top, B bottom, NPM left, VPM right, text labels).
 Originals unchanged: `main.dwg` copy `64e22677…46e4`, MAF_0326 FBX `f3f9653c…2edc` (same as before).
 
-## Row 1, A3 with modelled seams (`C:/x/vatutino-maf/gen-v001/a3-seams`)
+## Row 1, A3 with modelled seams (`C:/x/vatutino-maf/gen-v001/a3-seams`) - superseded by A4
 
 Same four commands as above with `<a|b>` = `a3-seams` (all exit 0). Readback NPM = VPM: 648 tris,
 3.919 × 2.501 × 0.450 m (deviation from the generator < 1e-6 m; schedule 3.9 × 2.5: 0.019 / 0.001, pass);
@@ -149,3 +149,38 @@ Per row A / B: 388/516, 452/708, 300/428, 540/796, 300/428, 908/1100, 236/364, 2
 Both exceed the share; NPM = VPM (no light version: a box of 388 tris has nothing to remove [D164]). Options for
 Artem [D167]: (1) accept the overrun inside the shared 180 000 NPM Ground budget; (2) light NPM for other v005
 positions; (3) take the 1 332 from another MAF share. Not decided here.
+
+## Row 1, A4: seams by texture (`C:/x/vatutino-maf/gen-v001/a4-texture`), current
+
+Artem 2026-11-03 correction (replaces «seams as geometry»): «wood seams like these are shown BY TEXTURE, not geometry.
+Keep the box as simple geometry (no board gaps modelled)». Config `verona-gen.config.json` = `gen-v001-A4`,
+`params.seams` = `texture`: `build_clad_box` makes one top quad per segment and one side ring from `foot_height` to
+`height` (steel plates let into the bottom as before) and returns `face_uv` on a pattern of 11 equal boards
+(`top_boards` 9 + 2 frame boards): top t = lateral / depth (mitred, the boards turn the corner), sides and ends
+t over 4 / 11 (4 courses), so every texture seam falls on a board joint. Writer: `face_uv` mapped into the slot
+without inset (an inset would shift the seams off the joints).
+
+Atlas `C:/x/vatutino-maf/gen-v001/atlas-a4/` (copy; v005 atlas unchanged, sha `41e8f983…`, `5099d135…`, `5aaf8b55…`
+before and after): `tools/materials/atlas_maf.py material-list.json` = the four v005 entries + patterned
+`larch_light_oak_boards` (256 px cell, content 248 px), texture `verona_boards_11.png` from `make_boards.py`
+(SYNTHETIC: base v005 larch `#C49A6C` ±5 % per board, grain lines, seam `#5A4026` 6 px of 512 = 0.0071 m on a top
+board 0.0545 m, 0.014 m on a side course 0.1075 m). The packer moved the four solid cells to x 256..384 in this copy.
+
+Commands (all exit 0): the build / readback / checks / xview lines above with `<a|b>` = `a4-texture` and the atlas
+`gen-v001/atlas-a4/vatutino_maf_atlas_512_a4.{json,png}`.
+
+| Role | Tris | Readback m | vs 3.9 × 2.5 | `maf_findings` | xView faces / verts | UV outside slot | FBX sha256 |
+|---|---|---|---|---|---|---|---|
+| NPM | 160 | 3.919 × 2.501 × 0.450 | 0.019 / 0.001 pass | 3 pass, 0 fail, 0 not_run | 0 / 0 | 0 / 160 | `a877ec89…0e76` |
+| VPM | 160 | 3.919 × 2.501 × 0.450 | 0.019 / 0.001 pass | 3 pass, 0 fail, 0 not_run | 0 / 0 | 0 / 160 | `8f3b4d58…1033` |
+
+Picture for Artem (photo | end close-up, NPM | VPM, caption): `C:/x/vatutino-maf/gen-v001/renders/row1_a4_vs_photo_v004.png`
+(`0bdf3324…900a`); scripts `gen-v001/probe/{render_row1,compose}_a4.py`; all hashes in `gen-v001/SHA256SUMS.txt`.
+
+| Row | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | Sum |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| A4 tris (pure generator; row 1 = FBX) | 160 | 184 | 124 | 220 | 124 | 372 | 100 | 100 | 68 | 68 | 1 520 |
+
+NPM MAF share [D097]: v005 set 57 628 + row 1 160 = 57 788; + all ten rows 1 520 = **59 148, under 60 000 by 852**.
+NPM = VPM, no light version needed [D164]. Open for Artem: row 1 «да»; the board cell as a new material ID or a
+pattern of `larch_light_oak` (v005 list unchanged until he decides); RAL 7016 steel ID (plates still `steel_ral7047`).

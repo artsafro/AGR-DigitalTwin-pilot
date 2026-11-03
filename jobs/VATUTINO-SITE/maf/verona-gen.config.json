@@ -1,5 +1,5 @@
 {
- "version": "gen-v001-A3 (passport box, modelled seams)",
+ "version": "gen-v001-A4 (passport box, seams by texture)",
  "issue": 790,
  "form": "clad_box",
  "smoothing_deg": 40,
@@ -15,28 +15,30 @@
   "foot_length": 0.1,
   "foot_inset": 0.03,
   "end_overhang": 0.15,
-  "max_foot_span": 2.67
+  "max_foot_span": 2.67,
+  "seams": "texture"
  },
  "param_sources": {
   "depth": "DWG outlines 0.600 (all ten) = passport B 0.6",
   "height": "passport H 0.45 (Hobbyka «Верона» art. 18694, verona.pdf p.1); Artem 2026-11-03: variant A",
   "foot_height": "passport end view: plate 4-5 px at 0.0041 m/px -> 0.02",
   "courses": "passport elevation + end view + Artem's photo: 4 horizontal boards on every side",
-  "seam_width": "passport end view: course 24 px (0.098 m), gap 2-3 px -> 0.010 m (0.0041 m/px, H 0.45 = 110 px)",
-  "seam_depth": "not dimensioned; 0.02 so the seam reads dark in VPM; review",
+  "seam_width": "passport end view: course 24 px (0.098 m), gap 2-3 px -> 0.010 m (0.0041 m/px, H 0.45 = 110 px); seams=texture: no geometry, texture seam line 6 px of 512 (= 0.0071 m on a 0.0545 m top board, 0.014 m on a 0.1075 m side course)",
+  "seam_depth": "seams=texture: unused by the geometry (validated only)",
   "frame_width": "top frame = side board thickness; set equal to the slat width (0.045) so the top reads as 11 equal boards; review",
   "top_boards": "Artem «~11» across the top = 2 frame boards + 9 slats; passport render shows 5-6 seams near the end (low resolution); review",
   "foot_length": "passport elevation: plates ~6 px wide (broken-length drawing, ~0.1 m); review",
   "foot_inset": "passport end view: plate line 656..788 px vs body 649..795 -> 0.03 per side",
   "end_overhang": "passport elevation: end plates ~0.15 m from the ends (plate centre); review",
-  "max_foot_span": "passport: 3 sections in L 8.0 -> plates at section joints, 2.67 m"
+  "max_foot_span": "passport: 3 sections in L 8.0 -> plates at section joints, 2.67 m",
+  "seams": "Artem 2026-11-03 correction: wood seams are texture, not geometry; box stays simple, board layout in the UV (11 top boards = top_boards 9 + 2 frame boards, 4 courses on every side)"
  },
  "materials": {
-  "seat": "larch_light_oak",
+  "seat": "larch_light_oak_boards",
   "frame": "steel_ral7047"
  },
  "material_sources": {
-  "seat": "v005 larch_light_oak: passport «брус хвойных пород, лессирующая пропитка» -> nearest approved wood; review",
+  "seat": "patterned cell of the gen-v001 atlas-a4 (SYNTHETIC board texture make_boards.py, base colour = v005 larch_light_oak #C49A6C, 11 boards, seam #5A4026); new name pending Artem: new ID or a pattern of larch_light_oak",
   "frame": "v005 steel_ral7047 placeholder: passport RAL 7016 (dark) is not in v005; new ID needs Artem's decision"
  },
  "rows": [
