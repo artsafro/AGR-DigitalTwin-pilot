@@ -78,21 +78,60 @@ def exited_child():
     return child
 
 
-def fully_dead_pid(pid_file):
-    """Pid with no open process handle, as after a crashed parent.
+HOLD_CHILD_CODE = "import sys; sys.stdin.read()"
 
-    A helper starts ``python -c pass``, writes that pid, and exits. Its exit
-    closes the only handle. The sleep lets the OS reap the grandchild.
+
+def fully_dead_pid(pid_file, *, before_release=None, child_code=HOLD_CHILD_CODE, timeout=30.0):
+    """Pid with no open process handle, as after a crashed parent (#782).
+
+    A helper starts a child that blocks on stdin and writes its pid. The test
+    releases it (``before_release(pid)`` runs while the child is provably
+    running), the helper closes the child's stdin, ``wait()``s (reaps) it and
+    exits, closing the last handle. The pid is returned only after the helper
+    exited 0 and the native probe says dead; otherwise RuntimeError after
+    cleanup. ``timeout`` is a safety ceiling, not evidence of death.
     """
+    import threading
+
     script = (
         "import subprocess, sys\n"
         "from pathlib import Path\n"
-        f"Path({str(pid_file)!r}).write_text(str("
-        "subprocess.Popen([sys.executable, '-c', 'pass']).pid))\n"
+        f"c = subprocess.Popen([sys.executable, '-c', {child_code!r}], stdin=subprocess.PIPE)\n"
+        f"Path({str(pid_file)!r}).write_text(str(c.pid))\n"
+        "print('ready', flush=True)\n"
+        "sys.stdin.readline()\n"
+        "c.stdin.close()\n"
+        "try:\n"
+        f"    c.wait(timeout={timeout!r})\n"
+        "except subprocess.TimeoutExpired:\n"
+        "    c.kill(); c.wait(); sys.exit(3)\n"
     )
-    subprocess.run([sys.executable, "-c", script], check=True)
-    time.sleep(0.5)
-    return int(pid_file.read_text())
+    helper = subprocess.Popen(
+        [sys.executable, "-c", script],
+        stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True,
+    )
+    watchdog = threading.Timer(timeout + 5, helper.kill)
+    watchdog.start()
+    try:
+        if helper.stdout.readline().strip() != "ready":
+            raise RuntimeError("dead-pid setup failed: helper never became ready")
+        pid = int(pid_file.read_text())
+        if before_release is not None:
+            before_release(pid)
+        helper.stdin.write("\n")
+        helper.stdin.close()
+        code = helper.wait(timeout=timeout + 10)
+        if code != 0:
+            raise RuntimeError(f"dead-pid setup failed: helper exit {code}, child not reaped")
+        if run_record_module._pid_alive(pid):
+            raise RuntimeError(f"dead-pid setup failed: pid {pid} still alive")
+        return pid
+    finally:
+        watchdog.cancel()
+        if helper.poll() is None:
+            helper.kill()
+            helper.wait()
+        helper.stdout.close()
 
 
 def writer(output, counter):
@@ -502,3 +541,23 @@ def test_older_produced_plus_newer_running_live_pid_blocks_before_cache(tmp_path
     finally:
         child.kill()
         child.wait(timeout=5)
+
+
+def test_fully_dead_pid_does_not_return_before_child_completion(tmp_path):
+    seen = {}
+
+    def while_held(pid):
+        seen["alive"] = run_record_module._pid_alive(pid)
+
+    pid = fully_dead_pid(tmp_path / "g.pid", before_release=while_held)
+    assert seen["alive"] is True
+    assert run_record_module._pid_alive(pid) is False
+
+
+def test_fully_dead_pid_completion_timeout_is_setup_failure(tmp_path):
+    pid_file = tmp_path / "g.pid"
+    with pytest.raises(RuntimeError, match="dead-pid setup failed"):
+        fully_dead_pid(
+            pid_file, child_code="import time; time.sleep(60)", timeout=1.0
+        )
+    assert run_record_module._pid_alive(int(pid_file.read_text())) is False
