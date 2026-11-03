@@ -13,7 +13,7 @@ Input -> expected output table (sample_m=1, anchored on the reference bounding b
   A' negated plane -> max .5938, p95 .5641, mean -.2969
   B  ref = [0,8]x[0,2] U [10,20]x[0,2] (36 cells), z=0
        out [2,20]x[0,2] (36 cells): both 32, missing 4 (x cells 0,1), extra 4 (x cells 8,9), dz all 0
-  B' out [2,19]x[0,2] (30 cells): both 30, missing 6, extra 4, dz all 0
+  B' out [2,19]x[0,2] (34 cells, 30 in ref): both 30, missing 6, extra 4, dz all 0
 """
 from __future__ import annotations
 
@@ -28,18 +28,10 @@ ZERO = np.zeros(3)
 
 
 def rect(x0, x1, y0, y1, zf=lambda x: 0.0, *, flip=False, diag=0, local=(0.0, 0.0, 0.0)):
-    """Rectangle with integer-step vertices split into unit quads, each quad in two triangles."""
-    xs, ys = list(range(x0, x1 + 1)), list(range(y0, y1 + 1))
-    verts, idx = [], {}
-    for y in ys:
-        for x in xs:
-            idx[(x, y)] = len(verts)
-            verts.append([x - local[0], y - local[1], zf(x) - local[2]])
-    tris = []
-    for y in ys[:-1]:
-        for x in xs[:-1]:
-            a, b, c, d = idx[(x, y)], idx[(x + 1, y)], idx[(x + 1, y + 1)], idx[(x, y + 1)]
-            tris += [[a, b, c], [a, c, d]] if diag == 0 else [[a, b, d], [b, c, d]]
+    """Literal rectangle: 4 corner vertices, 2 triangles (diag 0: a-c, diag 1: b-d)."""
+    corners = [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
+    verts = [[x - local[0], y - local[1], zf(x) - local[2]] for x, y in corners]
+    tris = [[0, 1, 2], [0, 2, 3]] if diag == 0 else [[0, 1, 3], [1, 2, 3]]
     if flip:
         tris = [[t[0], t[2], t[1]] for t in reversed(tris)]
     return verts, tris
@@ -71,6 +63,21 @@ def expected_dz():
     return max(d), p95, sum(d) / len(d)
 
 
+REF_B = [(0, 8, 0, 2), (10, 20, 0, 2)]
+
+
+def cells(parts):
+    return {(x, y) for x0, x1, y0, y1 in parts for x in range(x0, x1) for y in range(y0, y1)}
+
+
+def test_fixtures_are_literal_four_corner_two_triangle_rectangles():
+    v, t = rect(0, 20, 0, 1, slope)
+    assert (len(v), len(t)) == (4, 2)
+    v, t = union(REF_B)
+    assert (len(v), len(t)) == (8, 4)
+    assert len(cells([(2, 19, 0, 2)])) == 34
+
+
 def test_expected_values_are_the_literal_table():
     mx, p95, mean = expected_dz()
     assert (round(mx, 4), round(p95, 4), round(mean, 4)) == (0.5938, 0.5641, 0.2969)
@@ -87,13 +94,6 @@ def test_sloped_plane_p95_is_distinct_from_max_and_mean(sign):
     assert g["dz_p95_m"] not in (g["dz_max_m"], abs(g["dz_mean_m"]))
     assert (g["samples_reference"], g["samples_both"], g["samples_missing"], g["samples_extra"]) == (20, 20, 0, 0)
     assert g["dz_reason"] is None
-
-
-REF_B = [(0, 8, 0, 2), (10, 20, 0, 2)]
-
-
-def cells(parts):
-    return {(x, y) for x0, x1, y0, y1 in parts for x in range(x0, x1) for y in range(y0, y1)}
 
 
 @pytest.mark.parametrize("out_parts, both, missing, extra", [
