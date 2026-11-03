@@ -3,8 +3,9 @@
 Native xView uses 0.002 m vertices and 0.005 m faces.
 """
 import json
+import sys
 
-VERSION = "0.4.0"
+VERSION = "0.5.0"
 CODES = {'xview': {'overlap_vertices', 'overlap_faces'},
          'matid': {'udim_id', 'empty_id', 'empty_slot', 'missing_material'},
          'cleanup': {'remove_custom_attributes', 'clear_user_defined_lines',
@@ -16,6 +17,7 @@ CODES = {'xview': {'overlap_vertices', 'overlap_faces'},
          'export': {'cleanup', 'udim_id', 'empty_id', 'empty_slot', 'missing_material',
                     'out_of_range', 'overlap_vertices', 'overlap_faces', 'ucx_audit',
                     'ucx_unmeasurable', 'existing_target', 'readback_mismatch'}}
+CHECKS_050 = ('names', 'tris', 'textures', 'pivot', 'geojson')  # 0.5.0 diagnostics, checks_core.py
 EXPORT_PLAN = {'target', 'report', 'units', 'axis', 'unit_scale_factor', 'object_count',
                'triangle_count', 'material_count', 'object_names', 'triangles_by_name',
                'gates', 'dropped', 'texel', 'readback', 'stopped', 'digest'}
@@ -159,16 +161,22 @@ def _validate_plan(tool, plan):
 def parse_report(text):
     """Strict complete report; derive status rather than trusting a claimed pass."""
     r = json.loads(text, object_pairs_hook=_unique, parse_constant=_reject)
-    if not isinstance(r, dict) or 'tool' not in r or not isinstance(r.get('tool'), str) or r['tool'] not in CODES:
+    checks = _checks_core() if isinstance(r, dict) and r.get('tool') in CHECKS_050 else None
+    codes = checks.CODES if checks else CODES
+    if not isinstance(r, dict) or 'tool' not in r or not isinstance(r.get('tool'), str) or r['tool'] not in codes:
         raise ValueError('unsupported schema/tool')
     expected_keys = {'schema', 'tool', 'status', 'objects'}
-    if r['tool'] in ('nudge', 'atlas', 'ucx', 'texel', 'export'):
+    if r['tool'] in ('nudge', 'atlas', 'ucx', 'texel', 'export') or checks:
         expected_keys = expected_keys | {'plan'}
     if set(r) != expected_keys:
         raise ValueError('incomplete report')
     if type(r['schema']) is not int or r['schema'] != 1:
         raise ValueError('unsupported schema/tool')
-    if r['tool'] in ('nudge', 'atlas', 'ucx', 'texel', 'export'):
+    if r['tool'] == 'geojson':
+        return checks.validate_report(r)
+    if checks:
+        checks.validate_plan(r['tool'], r['plan'])
+    elif r['tool'] in ('nudge', 'atlas', 'ucx', 'texel', 'export'):
         _validate_plan(r['tool'], r['plan'])
     if not isinstance(r['objects'], list) or not r['objects']:
         raise ValueError('empty objects')
@@ -185,7 +193,7 @@ def parse_report(text):
         for f in obj['findings']:
             if not isinstance(f, dict) or set(f) != {'code', 'ids', 'detail'}:
                 raise ValueError('incomplete finding')
-            if not isinstance(f['code'], str) or f['code'] not in CODES[r['tool']] or not isinstance(f['detail'], str):
+            if not isinstance(f['code'], str) or f['code'] not in codes[r['tool']] or not isinstance(f['detail'], str):
                 raise ValueError('unmapped finding')
             ids = f['ids']
             if not isinstance(ids, list) or any(type(i) is not int or i <= 0 for i in ids) or len(set(ids)) != len(ids):
@@ -199,6 +207,16 @@ def parse_report(text):
 def _rt():
     from pymxs import runtime
     return runtime
+
+
+def _checks_core():
+    return _load_core('checks_core.py', 'agr_tools_checks_core')
+
+
+def checks_050(tool, nodes=None, path=None):
+    """0.5.0 read-only diagnostics: names, tris, textures, pivot, geojson (checks_max.py)."""
+    glue = _load_core('checks_max.py', 'agr_tools_checks_max')
+    return glue.run(sys.modules[__name__], _checks_core(), tool, nodes, path)
 
 
 def _targets(nodes):
@@ -1863,6 +1881,8 @@ def ui(tool):
             finally:
                 _export = None
                 _export_key = None
+    elif tool in CHECKS_050:
+        report = checks_050(tool)
     elif tool in ('xview', 'matid'):
         report = {'xview': xview, 'matid': matid}[tool]()
     else:

@@ -1,0 +1,734 @@
+"""new-case: AGR Tools 0.5.0 read-only diagnostics (names, triangle limits per FBX, textures, pivot, GeoJSON).
+
+Stdlib only, no pymxs: the Max glue (checks_max.py) reads the scene and passes plain rows here.
+Base: GeoAGR 13.64 (author Artem), recovered GeoAGR.ms (GeoAGR-private@31c723e); every adapted
+function names its source line and its changes. Only the logic used is adapted, not GeoAGR.ms.
+Thresholds are the locked standards (standards/NPM_STANDARD.yaml, VPM_STANDARD.yaml); a test pins
+them to the YAML so they cannot drift.
+"""
+import json
+import math
+import re
+import struct
+
+# --- thresholds (pinned to standards/*.yaml by tests/max_tools/test_agr_tools_checks.py) -------------
+NAME_MAX = 254                                   # NPM/VPM naming.max_characters
+NPM_OKS_TRI_MAX = 150000                         # NPM geometry.oks_triangles_per_fbx_max
+NPM_GROUND_TRI_MAX = 180000                      # NPM geometry.ground_triangles_total_max
+VPM_OKS_TRI_MAX = 1000000                        # VPM geometry.oks_triangles_per_fbx_max_excluding_collision
+VPM_GROUND_TRI_BY_AREA = ((0.05, 300000), (0.1, 705000), (0.25, 1125000), (0.5, 1650000),
+                          (0.75, 1950000), (1.0, 2625000), (1.5, 3150000), (None, 4500000))
+NPM_TEX_SIZES = (256, 512, 1024, 2048)           # NPM textures.allowed_square_sizes_px
+NPM_TEX_PLACEHOLDER = 128                        # conflict #5 decided: 128x128 m/r placeholders
+NPM_GROUND_EL_MAX = 512                          # NPM textures.ground_elements_set_size_px_max
+NPM_FLORA_MAX = 2048                             # NPM textures.vegetation_set_size_px_max
+NPM_TEX_BYTES_MAX = 3145728                      # NPM textures.max_file_bytes
+NPM_PADDING_PX = 8                               # NPM textures.island_padding_px_min
+VPM_TEX_SIZES = (2048, 4096)                     # VPM textures.allowed_square_sizes_px
+VPM_TEX_PLACEHOLDER = 256                        # VPM textures.flat_placeholder.size_px
+VPM_PADDING_PX = {2048: 16, 4096: 32}            # VPM textures.padding_px_min
+VPM_BITS = 8                                     # VPM textures.bits_per_channel
+PIVOT_TOL_M = 0.001                              # conflict #19 decided: meshes share the origin within 1 mm
+PADDING_PAIR_BUDGET = 2000000                    # edge pairs per object before `tex_unmeasurable`
+
+NPM_TYPES = ('Main', 'MainGlass', 'Ground', 'GroundGlass', 'GroundEl', 'GroundElGlass', 'Flora')
+VPM_TYPES = ('Main', 'MainGlass', 'Ground', 'GroundGlass')
+FBX_TYPES = {('npm', 'oks'): ('Main', 'MainGlass'),
+             ('npm', 'ground'): ('Ground', 'GroundGlass', 'GroundEl', 'GroundElGlass', 'Flora'),
+             ('vpm', 'oks'): ('Main', 'MainGlass'), ('vpm', 'ground'): ('Ground', 'GroundGlass')}
+NPM_MAPS = ('d', 'n', 'o', 'm', 'r')
+VPM_MAPS = ('Diffuse', 'ERM', 'Normal')
+SLOTS = ('1', '2', '3', '4', '5', '6', '7')
+OKS_NUMBER = re.compile(r'(?:00[1-9]|01[0-9]|020)')
+UCX_INDEX = re.compile(r'(?:00[1-9]|0[1-9][0-9]|[1-9][0-9]{2})')
+NAME_CHARS = re.compile(r'[A-Za-z0-9_]+')
+
+CODES = {
+    'names': {'name_empty', 'name_length', 'name_symbols', 'name_separator', 'name_prefix', 'name_suffix',
+              'name_type', 'name_case', 'name_digits', 'name_conflict', 'fbx_unmapped'},
+    'tris': {'tri_limit', 'tri_at_limit', 'tri_unmeasurable', 'ucx_tri_limit', 'fbx_unmapped'},
+    'textures': {'tex_missing', 'tex_unreadable', 'tex_format', 'tex_size', 'tex_alpha', 'tex_bit_depth',
+                 'tex_file_size', 'tex_udim', 'tex_set', 'tex_padding', 'tex_unmeasurable', 'at_threshold',
+                 'fbx_unmapped'},
+    'pivot': {'pivot_z', 'pivot_mismatch', 'pivot_unmeasurable', 'at_threshold', 'fbx_unmapped'},
+    'geojson': set(),
+}
+FBX_ROW = {'fbx', 'model', 'role', 'objects', 'render_triangles', 'ucx_triangles', 'limit', 'ucx_limit'}
+
+
+# --- FBX model kind ---------------------------------------------------------------------------------
+def fbx_kind(path):
+    """(model, role) from the FBX file stem, as twinqa.naming.address_from_fbx; None when unmapped.
+    NPM: NNNN_{Address}_NN | NNNN_{Address}_Ground; VPM: SM_{Address} | SM_{Address}_Ground."""
+    if not isinstance(path, str) or not path.strip():
+        return None
+    stem = re.split(r'[\\/]', path.strip())[-1]
+    if not stem.lower().endswith('.fbx'):
+        return None
+    stem = stem[:-4]
+    if re.fullmatch(r'SM_[A-Za-z0-9_]+?_Ground', stem):
+        return ('vpm', 'ground')
+    if re.fullmatch(r'SM_[A-Za-z0-9_]+', stem):
+        return ('vpm', 'oks')
+    if re.fullmatch(r'[0-9]{4}_[A-Za-z0-9_]+?_Ground', stem):
+        return ('npm', 'ground')
+    if re.fullmatch(r'[0-9]{4}_[A-Za-z0-9_]+?_(?:0[1-9]|1[0-9]|20)', stem):
+        return ('npm', 'oks')
+    return None
+
+
+def is_ucx(name):
+    return isinstance(name, str) and name.upper().startswith('UCX_')
+
+
+def mesh_kind(name):
+    """Geometry suffix of a mesh by EXACT last token.
+
+    adapted from GeoAGR 13.64 (author Artem), GeoAGR.ms:65326 (btn_check_npm `case of findstring`) and
+    GeoAGR.ms:65740 (btn_check_vpm), changes: exact token instead of a substring `case`, so MainGlass is
+    never taken for Main and UCX_*_Ground never for Ground (defect D2); UCX is tested first.
+    """
+    if not isinstance(name, str) or not name:
+        return None
+    if is_ucx(name):
+        return 'UCX'
+    last = name.split('_')[-1]
+    return last if last in NPM_TYPES else None
+
+
+# --- names ------------------------------------------------------------------------------------------
+def _symbols(text, allow_udim_dot=False):
+    """adapted from GeoAGR 13.64 (author Artem), GeoAGR.ms:4089 (parse_error_symbols) and :7056-7057
+    (translit, space), changes: one regex; the dot of `{SlotNumber}.{UDIM}` is legal only in VPM textures."""
+    body = text
+    if allow_udim_dot and body.count('.') == 1:
+        body = body.replace('.', '_')
+    if NAME_CHARS.fullmatch(body):
+        return None
+    bad = sorted(set(c for c in body if not re.fullmatch(r'[A-Za-z0-9_]', c)))
+    if '.' in bad:
+        return 'dot "." is not allowed'
+    if ' ' in bad:
+        return 'space is not allowed'
+    if any(ord(c) > 127 for c in bad):
+        return 'non-Latin characters (transliterate): ' + ''.join(bad)
+    return 'characters other than A-Z a-z 0-9 _: ' + ''.join(bad)
+
+
+def _address_tokens(tokens):
+    """adapted from GeoAGR 13.64 (author Artem), GeoAGR.ms:7217-7251 (capital letter, digits apart),
+    changes: structural tokens are removed by exact match before the checks; the abbreviation/street
+    dictionaries (abbr3/abbr4/ul4/ul5.csv) are not shipped and are not checked."""
+    out = []
+    for tok in tokens:
+        if not tok:
+            continue
+        if tok[0].isalpha() and not tok[0].isupper():
+            out.append(('name_case', 'each word starts with a capital letter: ' + tok))
+        letters = re.sub(r'[0-9]', '', tok)
+        if letters and letters != tok:
+            out.append(('name_digits', 'digits are separated from letters by "_": ' + tok))
+    return out
+
+
+def name_findings(name, role, model, fbx_role=None):
+    """Findings [(code, detail)] for one object (SM), material (M) or texture file (T) name.
+
+    adapted from GeoAGR 13.64 (author Artem), GeoAGR.ms:6907 (check_names_all, NPM) and GeoAGR.ms:7331
+    (check_names_all_vpm, VPM), changes: SlotNumber 1..7 instead of exactly "1" (defect D4); exact
+    tokens for Main/MainGlass/Ground/GroundEl/UCX instead of substrings (D2); NPM OKS number 001..020
+    (NPM_STANDARD oks_001_to_020, as twinqa.naming) instead of 001..100; the geometry suffix of an
+    object is bound to its FBX role (oks: Main/MainGlass, ground: Ground...; as twinqa.naming);
+    VPM textures follow T_{Address}[_Ground]_{Diffuse|ERM|Normal}_{SlotNumber}.{UDIM}; NPM
+    M_Glass_01..07 is reported as conflict #17 instead of silently exempted; "Ul"/"Ulitsa" substring
+    tests dropped (they flag Ulyanovskaya); address dictionaries not checked.
+    """
+    if role not in ('SM', 'M', 'T') or model not in ('npm', 'vpm') or fbx_role not in (None, 'oks', 'ground'):
+        raise ValueError(f'unsupported name role/model: {role}/{model}/{fbx_role}')
+    if not isinstance(name, str) or not name.strip():
+        return [('name_empty', f'no {dict(SM="object", M="material", T="texture")[role]} name')]
+    out = []
+    if len(name) > NAME_MAX:
+        out.append(('name_length', f'{len(name)} characters > {NAME_MAX}'))
+    stem = name
+    if role == 'T':
+        stem = re.split(r'[\\/]', stem)[-1]
+        if stem.lower().endswith('.png'):
+            stem = stem[:-4]
+    vpm_tex = role == 'T' and model == 'vpm'
+    bad = _symbols(stem, allow_udim_dot=vpm_tex)
+    if bad:
+        out.append(('name_symbols', bad))
+    if '_' not in stem:
+        out.append(('name_separator', 'no "_" separator'))
+        return out
+    tt = stem.split('_')
+    if any(t == '' for t in tt):
+        out.append(('name_separator', 'empty element between "_"'))
+        return out
+    ucx = role == 'SM' and tt[0] == 'UCX'
+    prefix = {'SM': 'SM', 'M': 'M', 'T': 'T'}[role]
+    if ucx:
+        if model == 'npm':
+            out.append(('name_prefix', 'UCX is not specified for NPM'))
+            return out
+        if len(tt) < 4 or tt[1] != 'SM':
+            out.append(('name_prefix', 'collision must be UCX_SM_...'))
+            return out
+        if tt[-2] not in ('Main', 'Ground') or not UCX_INDEX.fullmatch(tt[-1]):
+            out.append(('name_type', 'UCX_SM_{Address}_Main|Ground_001..999'))
+        elif fbx_role and tt[-2] != ('Ground' if fbx_role == 'ground' else 'Main'):
+            out.append(('name_type', f'UCX in a {fbx_role} FBX must be UCX_SM_..._{"Ground" if fbx_role == "ground" else "Main"}_NNN'))
+        return out + _address_tokens(tt[2:-2])
+    if tt[0] != prefix:
+        out.append(('name_prefix', f'first element must be "{prefix}"'))
+        return out
+    types = NPM_TYPES if model == 'npm' else VPM_TYPES
+    if role == 'SM' and fbx_role:
+        types = FBX_TYPES[(model, fbx_role)]
+    if role == 'SM':
+        if tt[-1] == '1':
+            out.append(('name_suffix', 'an object name cannot end with "_1"'))
+        if len(tt) > 2 and tt[-2] in NPM_MAPS:
+            out.append(('name_suffix', 'map suffix _d_/_n_/_o_/_m_/_r_ is for textures, not objects'))
+        type_at, tail = len(tt) - 1, 1
+    elif role == 'M':
+        if model == 'npm' and len(tt) == 3 and tt[1] == 'Glass':
+            ok = re.fullmatch(r'0[1-7]', tt[2]) is not None
+            return out + [('name_conflict', 'M_Glass_01..07 is not in the regulation (conflict #17, review)'
+                           + ('' if ok else '; and not 01..07'))]
+        if tt[-1] not in SLOTS:
+            out.append(('name_suffix', 'last element must be SlotNumber 1..7: ' + tt[-1]))
+        if len(tt) > 2 and tt[-2] in NPM_MAPS:
+            out.append(('name_suffix', 'map suffix _d_/_n_/_o_/_m_/_r_ is for textures, not materials'))
+        type_at, tail = len(tt) - 2, 2
+    elif model == 'npm':
+        if tt[-1] not in SLOTS:
+            out.append(('name_suffix', 'last element must be SlotNumber 1..7: ' + tt[-1]))
+        if len(tt) < 3 or tt[-2] not in NPM_MAPS:
+            out.append(('name_suffix', 'map element must be d, n, o, m or r'))
+        type_at, tail = len(tt) - 3, 3
+    else:
+        last = tt[-1].split('.')
+        if len(last) != 2 or last[0] not in SLOTS:
+            out.append(('name_suffix', 'last element must be {SlotNumber 1..7}.{UDIM}: ' + tt[-1]))
+        elif not re.fullmatch(r'1(?:0[0-9][1-9]|0[1-9]0|100)', last[1]):
+            out.append(('name_suffix', 'UDIM must be 1001..1100: ' + last[1]))
+        if len(tt) < 3 or tt[-2] not in VPM_MAPS:
+            out.append(('name_suffix', 'map element must be Diffuse, ERM or Normal'))
+        address = tt[1:-2]
+        if address and address[-1] == 'Ground':
+            address = address[:-1]
+        if not address:
+            out.append(('name_type', 'no Address element'))
+        return out + _address_tokens(address)
+    if type_at < 1 or tt[type_at] not in types:
+        out.append(('name_type', 'geometry element must be one of ' + ', '.join(types)))
+        return out + _address_tokens(tt[1:max(type_at, 1)])
+    address_end = type_at
+    if model == 'npm' and tt[type_at] in ('Main', 'MainGlass'):
+        if type_at < 2 or not OKS_NUMBER.fullmatch(tt[type_at - 1]):
+            out.append(('name_type', 'OKS number 001..020 must precede ' + tt[type_at]))
+        else:
+            address_end = type_at - 1
+    if address_end <= 1:
+        out.append(('name_type', 'no Address element'))
+    del tail
+    return out + _address_tokens(tt[1:address_end])
+
+
+def names_scene(rows):
+    """rows: [{'key', 'name', 'fbx', 'materials': [names], 'maps': [file paths]}] -> findings by key.
+    Every object, its (sub-)materials and every map file name are checked (GeoAGR passed the three
+    lists separately, GeoAGR.ms:65278 btn_check_npm -> check_names_all "SM"/"M"/"T")."""
+    found = {}
+    for r in rows:
+        f = found.setdefault(r['key'], [])
+        kind = fbx_kind(r.get('fbx'))
+        if kind is None:
+            f.append(('fbx_unmapped', f'AGR_EXPORT_PATH {r.get("fbx")!r} is not an NPM/VPM FBX name'))
+            continue
+        model, fbx_role = kind
+        f.extend((c, f'object {r["name"]}: {d}') for c, d in name_findings(r['name'], 'SM', model, fbx_role))
+        if is_ucx(r['name']):
+            continue
+        for m in r.get('materials', []):
+            f.extend((c, f'material {m}: {d}') for c, d in name_findings(m, 'M', model))
+        for path in r.get('maps', []):
+            stem = re.split(r'[\\/]', path)[-1]
+            f.extend((c, f'texture {stem}: {d}') for c, d in name_findings(stem, 'T', model))
+    return found
+
+
+# --- triangle limits per FBX -------------------------------------------------------------------------
+def vpm_ground_limit(area_ha):
+    """VPM Ground triangle limit from the site-area table (territory minus footprint, ha)."""
+    if isinstance(area_ha, bool) or not isinstance(area_ha, (int, float)) or not math.isfinite(area_ha) or area_ha <= 0:
+        return None
+    for top, limit in VPM_GROUND_TRI_BY_AREA:
+        if top is None or area_ha <= top:
+            return limit
+    return None
+
+
+def vpm_ucx_limit(render):
+    """VPM collision.triangle_limit (conflict #3 decided, SINTEZ AGR Checker formula)."""
+    return 15000 if render < 50000 else min(math.ceil(render * 0.05), 100000)
+
+
+def triangle_limits(rows):
+    """Per-FBX triangle budgets. rows: [{'key', 'name', 'fbx', 'triangles', 'site_area_ha'}].
+
+    adapted from GeoAGR 13.64 (author Artem), GeoAGR.ms:65601-65625 (btn_check_npm) and :65970-65992
+    (btn_check_vpm), changes: summed per exported FBX (AGR_EXPORT_PATH) and per model kind instead of
+    over the whole selection (defect D8); NPM OKS FBX <= 150 000, NPM Ground FBX <= 180 000 (Ground,
+    GroundEl and Flora, separately from Main); VPM OKS <= 1 000 000 without UCX instead of the stale
+    2 000 000; VPM Ground by the site-area table; UCX budget by the decided formula; triangles are
+    counted on a read-only TriMesh snapshot (no copy/convert/ConnectVertices); a count equal to the
+    limit is `tri_at_limit` (no silent pass at the boundary).
+    Returns (findings by key, fbx rows).
+    """
+    found = {r['key']: [] for r in rows}
+    groups = {}
+    for r in rows:
+        tri = r.get('triangles')
+        if isinstance(tri, bool) or not isinstance(tri, int) or tri < 0:
+            found[r['key']].append(('tri_unmeasurable', f'triangle count {tri!r}'))
+            continue
+        kind = fbx_kind(r.get('fbx'))
+        if kind is None:
+            found[r['key']].append(('fbx_unmapped', f'AGR_EXPORT_PATH {r.get("fbx")!r} is not an NPM/VPM FBX name'))
+            continue
+        groups.setdefault(r['fbx'], []).append(r)
+    table = []
+    for fbx, members in sorted(groups.items()):
+        model, role = fbx_kind(fbx)
+        render = sum(r['triangles'] for r in members if not is_ucx(r['name']))
+        ucx = sum(r['triangles'] for r in members if is_ucx(r['name']))
+        limit = ucx_limit = None
+        detail = None
+        if model == 'npm':
+            limit = NPM_OKS_TRI_MAX if role == 'oks' else NPM_GROUND_TRI_MAX
+        elif role == 'oks':
+            limit = VPM_OKS_TRI_MAX
+        else:
+            areas = {r.get('site_area_ha') for r in members}
+            area = areas.pop() if len(areas) == 1 else None
+            limit = vpm_ground_limit(area)
+            if limit is None:
+                detail = f'unmapped key AGR_SITE_AREA_HA (one positive value per Ground FBX), got {sorted(map(repr, areas | {area}))}'
+        if model == 'vpm':
+            ucx_limit = vpm_ucx_limit(render)
+        table.append({'fbx': fbx, 'model': model, 'role': role, 'objects': len(members),
+                      'render_triangles': render, 'ucx_triangles': ucx, 'limit': limit, 'ucx_limit': ucx_limit})
+        for r in members:
+            f = found[r['key']]
+            if is_ucx(r['name']):
+                if ucx_limit is not None and ucx > ucx_limit:
+                    f.append(('ucx_tri_limit', f'{fbx}: UCX {ucx} > {ucx_limit}'))
+                elif ucx_limit is not None and ucx == ucx_limit:
+                    f.append(('tri_at_limit', f'{fbx}: UCX {ucx} == {ucx_limit}'))
+                continue
+            if detail:
+                f.append(('tri_unmeasurable', f'{fbx}: {detail}'))
+            elif render > limit:
+                f.append(('tri_limit', f'{fbx}: {render} > {limit} ({model} {role}, per FBX)'))
+            elif render == limit:
+                f.append(('tri_at_limit', f'{fbx}: {render} == {limit} ({model} {role}); at the limit'))
+    return found, table
+
+
+# --- textures -----------------------------------------------------------------------------------------
+def png_info(data):
+    """(width, height, bit_depth, color_type, has_alpha) from PNG bytes; ValueError when not a PNG.
+    Replaces GeoAGR's openBitmap/.hasAlpha and ImageMagick `identify` (GeoAGR.ms:65857-65885)."""
+    if not isinstance(data, (bytes, bytearray)) or data[:8] != b'\x89PNG\r\n\x1a\n':
+        raise ValueError('not a PNG file')
+    pos, ihdr, trns = 8, None, False
+    while pos + 8 <= len(data):
+        length, kind = struct.unpack('>I4s', data[pos:pos + 8])
+        chunk = data[pos + 8:pos + 8 + length]
+        if len(chunk) != length:
+            raise ValueError('truncated PNG chunk')
+        if kind == b'IHDR':
+            if length != 13:
+                raise ValueError('bad IHDR')
+            ihdr = struct.unpack('>IIBB', chunk[:10])
+        elif kind == b'tRNS':
+            trns = True
+        elif kind in (b'IDAT', b'IEND'):
+            break
+        pos += 12 + length
+    if ihdr is None:
+        raise ValueError('PNG without IHDR')
+    w, h, depth, ctype = ihdr
+    if w == 0 or h == 0 or ctype not in (0, 2, 3, 4, 6):
+        raise ValueError('invalid PNG header')
+    return w, h, depth, ctype, ctype in (4, 6) or trns
+
+
+def _map_of(stem, model):
+    tt = stem.split('_')
+    if len(tt) < 2:
+        return None
+    m = tt[-2]
+    return m if m in (NPM_MAPS if model == 'npm' else VPM_MAPS) else None
+
+
+def texture_file_findings(path, data, model, kind):
+    """Findings for one texture file. data: bytes or None when the file is missing.
+
+    adapted from GeoAGR 13.64 (author Artem), GeoAGR.ms:65400-65470 (btn_check_npm) and :65850-65888
+    (btn_check_vpm), changes: runs for EVERY map of EVERY object (defect D1, GeoAGR kept only the last
+    object's paths); sizes from the locked standards: NPM 256..2048 square (128 only for m/r
+    placeholders, conflict #5), GroundEl <= 512, Flora <= 2048, <= 3 MiB; VPM 2048/4096 square or the
+    256 placeholder; alpha: NPM never, VPM only in Diffuse (never in ERM/Normal/placeholders);
+    VPM 8 bits per channel read from the PNG header instead of ImageMagick `identify`.
+    Returns (findings, info) where info is (w, h, map) or None.
+    """
+    stem = re.split(r'[\\/]', path)[-1]
+    if not stem.lower().endswith('.png'):
+        return [('tex_format', f'{stem}: textures are PNG')], None
+    stem = stem[:-4]
+    if data is None:
+        return [('tex_missing', f'{stem}: file not found')], None
+    try:
+        w, h, depth, ctype, alpha = png_info(data)
+    except ValueError as exc:
+        return [('tex_unreadable', f'{stem}: {exc}')], None
+    out = []
+    mp = _map_of(stem.split('.')[0], model)
+    if w != h:
+        out.append(('tex_size', f'{stem}: {w}x{h} is not square'))
+    if model == 'npm':
+        allowed = set(NPM_TEX_SIZES) | ({NPM_TEX_PLACEHOLDER} if mp in ('m', 'r') else set())
+        cap = NPM_GROUND_EL_MAX if kind == 'GroundEl' else NPM_FLORA_MAX if kind == 'Flora' else max(NPM_TEX_SIZES)
+        if w not in allowed or h not in allowed or max(w, h) > cap:
+            out.append(('tex_size', f'{stem}: {w}x{h} not in {sorted(a for a in allowed if a <= cap)}'))
+        if alpha:
+            out.append(('tex_alpha', f'{stem}: alpha channel is forbidden in NPM'))
+        if len(data) > NPM_TEX_BYTES_MAX:
+            out.append(('tex_file_size', f'{stem}: {len(data)} bytes > {NPM_TEX_BYTES_MAX}'))
+        elif len(data) == NPM_TEX_BYTES_MAX:
+            out.append(('at_threshold', f'{stem}: {len(data)} bytes == {NPM_TEX_BYTES_MAX}'))
+    else:
+        placeholder = w == h == VPM_TEX_PLACEHOLDER
+        if not placeholder and (w not in VPM_TEX_SIZES or h not in VPM_TEX_SIZES):
+            out.append(('tex_size', f'{stem}: {w}x{h} not in {list(VPM_TEX_SIZES)} or {VPM_TEX_PLACEHOLDER} placeholder'))
+        if alpha and (placeholder or mp != 'Diffuse'):
+            out.append(('tex_alpha', f'{stem}: alpha only in Diffuse, never in {mp or "unnamed map"}{" placeholder" if placeholder else ""}'))
+        channel_bits = 8 if ctype == 3 else depth
+        if channel_bits != VPM_BITS:
+            out.append(('tex_bit_depth', f'{stem}: {channel_bits} bits per channel, expected {VPM_BITS}'))
+    return out, (w, h, mp)
+
+
+def udim_set_findings(stems):
+    """VPM UDIM tiles of one object: from 1001, without gaps, Diffuse+ERM+Normal per tile.
+    adapted from GeoAGR 13.64 (author Artem), GeoAGR.ms:65825-65830 (btn_check_vpm), changes: tiles and
+    maps parsed from {map}_{SlotNumber}.{UDIM} names per object, not from the last object's paths."""
+    tiles = {}
+    out = []
+    for stem in stems:
+        tt = stem.split('_')
+        last = tt[-1].split('.')
+        if len(tt) < 3 or len(last) != 2 or not last[1].isdigit():
+            out.append(('tex_udim', f'{stem}: no {{SlotNumber}}.{{UDIM}}'))
+            continue
+        tiles.setdefault((last[0], int(last[1])), set()).add(tt[-2])
+    for slot in sorted({s for s, _ in tiles}):
+        nums = sorted(u for s, u in tiles if s == slot)
+        if nums and (nums[0] != 1001 or nums != list(range(1001, 1001 + len(nums)))):
+            out.append(('tex_udim', f'slot {slot}: UDIM {nums} must run 1001.. without gaps'))
+        for u in nums:
+            missing = sorted(set(VPM_MAPS) - tiles[(slot, u)])
+            if missing:
+                out.append(('tex_set', f'slot {slot} UDIM {u}: missing {missing}'))
+    return out
+
+
+def _seg_dist(p, q, r, s):
+    def d_ps(a, b, c):
+        bx, by = c[0] - b[0], c[1] - b[1]
+        L = bx * bx + by * by
+        t = 0.0 if L == 0 else max(0.0, min(1.0, ((a[0] - b[0]) * bx + (a[1] - b[1]) * by) / L))
+        return math.hypot(a[0] - b[0] - t * bx, a[1] - b[1] - t * by)
+
+    def orient(a, b, c):
+        return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+
+    o1, o2, o3, o4 = orient(p, q, r), orient(p, q, s), orient(r, s, p), orient(r, s, q)
+    if o1 * o2 < 0 and o3 * o4 < 0:
+        return 0.0
+    return min(d_ps(p, r, s), d_ps(q, r, s), d_ps(r, p, q), d_ps(s, p, q))
+
+
+def _inside(pt, tri):
+    a, b, c = tri
+    d1 = (pt[0] - b[0]) * (a[1] - b[1]) - (a[0] - b[0]) * (pt[1] - b[1])
+    d2 = (pt[0] - c[0]) * (b[1] - c[1]) - (b[0] - c[0]) * (pt[1] - c[1])
+    d3 = (pt[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (pt[1] - a[1])
+    neg, pos = d1 < 0 or d2 < 0 or d3 < 0, d1 > 0 or d2 > 0 or d3 > 0
+    return not (neg and pos)
+
+
+def padding_findings(uvs, faces, size_px, required_px):
+    """Minimum gap between UV islands of one tile, in pixels of a size_px texture.
+
+    uvs: [(u, v)]; faces: [(face_id, [uv vertex indices])] (polygons are fanned).
+    adapted from GeoAGR 13.64 (author Artem), GeoAGR.ms:17010-17277 (UDIMs.btn_Udim_check: renderUV mask
+    dilated by the padding), changes: exact segment distances between island boundaries instead of a
+    raster dilation; the regulation's 16/32 px for VPM 2048/4096 (the commented-out branch, matrix
+    gap 3) instead of the live 8 px; NPM keeps 8 px; a gap equal to the minimum is `at_threshold`;
+    overlapping islands report gap 0 (repeating islands may be intentional in VPM, reviewed by eye);
+    work above PADDING_PAIR_BUDGET edge pairs is `tex_unmeasurable`, never a pass.
+    """
+    if not faces:
+        return [('tex_unmeasurable', 'no UV faces')]
+    for u, v in uvs:
+        if not (math.isfinite(u) and math.isfinite(v)):
+            return [('tex_unmeasurable', 'non-finite UV')]
+    parent = list(range(len(uvs)))
+
+    def find(i):
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+
+    for _, idx in faces:
+        for j in idx[1:]:
+            a, b = find(idx[0]), find(j)
+            if a != b:
+                parent[a] = b
+    islands = {}
+    for fid, idx in faces:
+        islands.setdefault(find(idx[0]), []).append((fid, idx))
+    data = []
+    for root, fs in islands.items():
+        edges, tris, ids = {}, [], []
+        for fid, idx in fs:
+            ids.append(fid)
+            for k in range(len(idx)):
+                e = tuple(sorted((idx[k], idx[(k + 1) % len(idx)])))
+                edges[e] = edges.get(e, 0) + 1
+            for k in range(1, len(idx) - 1):
+                tris.append((uvs[idx[0]], uvs[idx[k]], uvs[idx[k + 1]]))
+        boundary = [(uvs[a], uvs[b]) for (a, b), c in edges.items() if c == 1]
+        pts = [uvs[i] for _, idx in fs for i in idx]
+        cu = sum(p[0] for p in pts) / len(pts)
+        cv = sum(p[1] for p in pts) / len(pts)
+        box = (min(p[0] for p in pts), min(p[1] for p in pts), max(p[0] for p in pts), max(p[1] for p in pts))
+        data.append({'tile': (math.floor(cu), math.floor(cv)), 'boundary': boundary, 'tris': tris,
+                     'pts': pts, 'box': box, 'ids': ids})
+    need = required_px / float(size_px)
+    worst = None
+    work = 0
+    for i in range(len(data)):
+        for j in range(i + 1, len(data)):
+            A, B = data[i], data[j]
+            if A['tile'] != B['tile']:
+                continue
+            gx = max(A['box'][0] - B['box'][2], B['box'][0] - A['box'][2], 0.0)
+            gy = max(A['box'][1] - B['box'][3], B['box'][1] - A['box'][3], 0.0)
+            if math.hypot(gx, gy) > need:
+                continue
+            work += len(A['boundary']) * len(B['boundary'])
+            if work > PADDING_PAIR_BUDGET:
+                return [('tex_unmeasurable', f'UV padding needs more than {PADDING_PAIR_BUDGET} edge pairs')]
+            d = min((_seg_dist(p, q, r, s) for p, q in A['boundary'] for r, s in B['boundary']), default=math.inf)
+            if d > 0 and (any(_inside(A['pts'][0], t) for t in B['tris']) or any(_inside(B['pts'][0], t) for t in A['tris'])):
+                d = 0.0
+            if worst is None or d < worst[0]:
+                worst = (d, A['ids'] + B['ids'])
+    if worst is None:
+        return []
+    px = worst[0] * size_px
+    if math.isclose(px, required_px, rel_tol=0.0, abs_tol=1e-9):
+        return [('at_threshold', f'UV island gap {px:.3f} px == {required_px} px', worst[1])]
+    if px < required_px:
+        detail = 'islands touch or overlap' if worst[0] == 0 else f'UV island gap {px:.3f} px'
+        return [('tex_padding', f'{detail} < {required_px} px at {size_px} px', worst[1])]
+    return []
+
+
+def required_padding(model, size):
+    if model == 'npm':
+        return NPM_PADDING_PX
+    return VPM_PADDING_PX.get(size)
+
+
+def textures_scene(rows):
+    """rows: [{'key', 'name', 'fbx', 'maps': [(path, bytes|None)], 'uv': callable -> (uvs, faces)}].
+    EVERY object's maps are read (defect D1: GeoAGR kept `texes_paths = texs` of the last object only,
+    GeoAGR.ms:65313/65709). A map list is a list: empty means "no maps" (defect D3: GeoAGR.ms:65715
+    tested the usedMaps array against undefined). Returns (findings by key, dropped)."""
+    found, dropped = {}, []
+    for r in rows:
+        f = found.setdefault(r['key'], [])
+        kind = fbx_kind(r.get('fbx'))
+        if kind is None:
+            f.append(('fbx_unmapped', f'AGR_EXPORT_PATH {r.get("fbx")!r} is not an NPM/VPM FBX name'))
+            continue
+        model = kind[0]
+        mk = mesh_kind(r['name'])
+        if mk == 'UCX':
+            dropped.append({'name': r['name'], 'reason': 'UCX carries no textures'})
+            continue
+        maps = r['maps']
+        if not isinstance(maps, list):
+            raise ValueError('map list required for ' + r['name'])
+        glass = mk in ('MainGlass', 'GroundGlass', 'GroundElGlass')
+        if not maps:
+            if glass:
+                dropped.append({'name': r['name'], 'reason': 'glass without maps: nothing to measure'})
+            else:
+                f.append(('tex_missing', 'material has no texture maps'))
+            continue
+        if glass:
+            f.append(('tex_format', 'glass materials carry no texture maps'))
+        sizes, stems = [], []
+        for path, data in maps:
+            fs, info = texture_file_findings(path, data, model, mk)
+            f.extend(fs)
+            stem = re.split(r'[\\/]', path)[-1]
+            stems.append(stem[:-4] if stem.lower().endswith('.png') else stem)
+            if info and info[0] == info[1] and (model == 'npm' or info[2] == 'Diffuse'):
+                sizes.append(info[0])
+        if model == 'vpm':
+            f.extend(udim_set_findings(stems))
+        size = max(sizes) if sizes else None
+        need = required_padding(model, size) if size else None
+        if need is None:
+            dropped.append({'name': r['name'], 'reason': f'UV padding not measured: no {model} map size with a padding rule'})
+            continue
+        uvs, faces = r['uv']()
+        f.extend(padding_findings(uvs, faces, size, need))
+    return found, dropped
+
+
+# --- pivot --------------------------------------------------------------------------------------------
+def pivot_findings(rows):
+    """VPM-2.9-4.b (pivot Z at the project zero) and VPM-2.9-5 (all pivots of one FBX coincide).
+    rows: [{'key', 'name', 'fbx', 'pivot': (x, y, z) metres}]. UCX pivots are free (VPM-2.9-4.c).
+    adapted from GeoAGR 13.64 (author Artem), GeoAGR.ms:65915-65926 (btn_check_vpm pivot/bbox test),
+    changes: no bbox-centre rule for glass (it contradicts VPM-2.9-5, matrix note); Z must be 0 within
+    1 mm (conflict #19 decided); pivots compared per FBX within 1 mm; exactly 1 mm is `at_threshold`.
+    Returns (findings by key, dropped [{'name', 'reason'}])."""
+    found = {r['key']: [] for r in rows}
+    dropped = []
+    groups = {}
+    for r in rows:
+        kind = fbx_kind(r.get('fbx'))
+        if kind is None:
+            found[r['key']].append(('fbx_unmapped', f'AGR_EXPORT_PATH {r.get("fbx")!r} is not an NPM/VPM FBX name'))
+            continue
+        if kind[0] != 'vpm':
+            dropped.append({'name': r['name'], 'reason': 'NPM FBX: VPM-2.9 pivot rules do not apply'})
+            continue
+        if is_ucx(r['name']):
+            dropped.append({'name': r['name'], 'reason': 'UCX pivot is unconstrained (VPM-2.9-4.c)'})
+            continue
+        p = r.get('pivot')
+        if not isinstance(p, (list, tuple)) or len(p) != 3 or not all(
+                isinstance(c, (int, float)) and not isinstance(c, bool) and math.isfinite(c) for c in p):
+            found[r['key']].append(('pivot_unmeasurable', f'pivot {p!r}'))
+            continue
+        z = abs(float(p[2]))
+        if math.isclose(z, PIVOT_TOL_M, rel_tol=1e-9, abs_tol=0.0):
+            found[r['key']].append(('at_threshold', f'pivot Z {p[2]:.6f} m: |Z| == {PIVOT_TOL_M} m'))
+        elif z > PIVOT_TOL_M:
+            found[r['key']].append(('pivot_z', f'pivot Z {p[2]:.6f} m, project zero is 0 (VPM-2.9-4.b)'))
+        groups.setdefault(r['fbx'], []).append(r)
+    for fbx, members in groups.items():
+        ref = members[0]
+        for r in members[1:]:
+            d = math.dist(ref['pivot'], r['pivot'])
+            if math.isclose(d, PIVOT_TOL_M, rel_tol=1e-9, abs_tol=0.0):
+                found[r['key']].append(('at_threshold', f'pivot {d:.6f} m from {ref["name"]}: == {PIVOT_TOL_M} m'))
+            elif d > PIVOT_TOL_M:
+                found[r['key']].append(('pivot_mismatch', f'pivot {d:.6f} m from {ref["name"]} in {fbx} (VPM-2.9-5)'))
+    return found, dropped
+
+
+# --- GeoJSON ------------------------------------------------------------------------------------------
+GEOJSON_CODE = (
+    'import json, sys\n'
+    'from pathlib import Path\n'
+    'root = Path(sys.argv[1])\n'
+    'sys.path[:0] = [str(root / "src")]\n'
+    'from twinqa.geojson import geojson_findings\n'
+    'from twinqa.profiles import load_profiles\n'
+    'path = Path(sys.argv[2])\n'
+    'out = geojson_findings(path.read_bytes(), load_profiles(root / "standards").vpm,\n'
+    '                       path.stem.endswith("_Ground"), source_name=path.name)\n'
+    'sys.stdout.write(json.dumps([{"name": f.name, "status": f.status, "observed": str(f.observed),\n'
+    '                              "expected": str(f.expected)} for f in out], allow_nan=False))\n'
+)
+
+
+def geojson_report(path, runner):
+    """Run the pilot twinqa GeoJSON checker through ``runner(path) -> list[dict]``.
+    Every failure (missing file, wrong extension, crashing checker, bad output) is a finding, never a raise."""
+    findings = []
+    if not isinstance(path, str) or not path.strip():
+        findings = [{'name': 'file', 'status': 'fail', 'observed': repr(path), 'expected': 'a .geojson file'}]
+    elif not path.lower().endswith('.geojson'):
+        findings = [{'name': 'file', 'status': 'fail', 'observed': path, 'expected': '*.geojson'}]
+    else:
+        try:
+            got = runner(path)
+            if not isinstance(got, list) or not got or any(
+                    not isinstance(f, dict) or set(f) != {'name', 'status', 'observed', 'expected'} for f in got):
+                raise ValueError('checker returned no findings')
+            findings = got
+        except Exception as exc:  # noqa: BLE001 - every failure must surface as a finding
+            findings = [{'name': 'checker', 'status': 'fail', 'observed': str(exc)[-400:] or type(exc).__name__,
+                         'expected': 'twinqa GeoJSON checker ran'}]
+    status = 'pass' if all(f['status'] == 'pass' for f in findings) else 'fail'
+    report = {'schema': 1, 'tool': 'geojson', 'status': status, 'objects': [],
+              'plan': {'path': path if isinstance(path, str) else '', 'findings': findings}}
+    validate_report(report)
+    return report
+
+
+# --- report contract ----------------------------------------------------------------------------------
+def validate_plan(tool, plan):
+    """Plan schema of the 0.5.0 tools (the 0.4.0 contract adds `plan` per tool)."""
+    if tool == 'geojson':
+        if not isinstance(plan, dict) or set(plan) != {'path', 'findings'} or not isinstance(plan['path'], str):
+            raise ValueError('incomplete plan')
+        if not isinstance(plan['findings'], list) or not plan['findings']:
+            raise ValueError('incomplete plan')
+        for f in plan['findings']:
+            if not isinstance(f, dict) or set(f) != {'name', 'status', 'observed', 'expected'}:
+                raise ValueError('incomplete finding')
+            if f['status'] not in ('pass', 'fail', 'review', 'not_run'):
+                raise ValueError('unmapped GeoJSON status ' + str(f['status']))
+        return
+    if not isinstance(plan, dict) or set(plan) != {'fbx', 'dropped'}:
+        raise ValueError('incomplete plan')
+    if not isinstance(plan['fbx'], list) or not isinstance(plan['dropped'], list):
+        raise ValueError('incomplete plan')
+    for row in plan['fbx']:
+        if not isinstance(row, dict) or set(row) != FBX_ROW:
+            raise ValueError('incomplete FBX row')
+        if row['model'] not in ('npm', 'vpm') or row['role'] not in ('oks', 'ground'):
+            raise ValueError('unmapped FBX kind')
+    for item in plan['dropped']:
+        if not isinstance(item, dict) or set(item) != {'name', 'reason'} or not item['reason']:
+            raise ValueError('drop without a reason')
+
+
+def validate_report(report):
+    """GeoJSON report: no scene objects; status derived from the checker findings."""
+    if report.get('tool') != 'geojson' or set(report) != {'schema', 'tool', 'status', 'objects', 'plan'}:
+        raise ValueError('incomplete report')
+    if report['schema'] != 1 or report['objects'] != []:
+        raise ValueError('incomplete report')
+    validate_plan('geojson', report['plan'])
+    expected = 'pass' if all(f['status'] == 'pass' for f in report['plan']['findings']) else 'fail'
+    if report['status'] != expected:
+        raise ValueError('inconsistent status')
+    json.dumps(report, allow_nan=False)
+    return report
