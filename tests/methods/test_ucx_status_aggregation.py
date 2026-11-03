@@ -21,6 +21,7 @@ Acceptance (input -> status):
 | ordinary pass + ``UCX piece gap (advisory)`` review | pass | advisory review kept |
 | ordinary pass + ``UCX piece gap (advisory)`` synthetic fail | pass | advisory fail kept |
 | V012 ``UCX names`` fail | fail | that fail |
+| profile key injected before scene_findings (in-memory witness) | rejected (AssertionError) | n/a |
 | V010 pass + V012 name without ``UCX`` fail + V003 fail | pass | only the V010 pass |
 
 Ordered-pair oracle over ordinary statuses ``pass``, ``review``, ``not_run``,
@@ -41,6 +42,7 @@ isolated fixture reports zero UCX pieces and zero UCX triangles.
 """
 from __future__ import annotations
 
+import copy
 import itertools
 
 import pytest
@@ -89,30 +91,53 @@ def _snapshot(stages):
     return {stage: [(item.name, item.status) for item in items] for stage, items in stages.items()}
 
 
-def _reduce(monkeypatch, stages):
-    """Call ucx_check twice. Return the result after checking the isolation contract."""
+def _reduce(monkeypatch, stages, adapter=None):
+    """Call ucx_check twice. Return the result after checking the isolation contract.
+
+    readback, profile and findings are snapshotted independently (deepcopy) and
+    compared at the scene_findings call boundary and after each call.
+    """
+    adapter = adapter or mm.ucx_check
     rb = _readback()
     profile = {"profile": "reducer-isolation"}
+    rb_before = copy.deepcopy(rb)
+    profile_before = copy.deepcopy(profile)
+    before = _snapshot(stages)
     calls = []
 
     def fake(readback, kind, role, prof):
+        assert readback is rb and readback == rb_before, "readback changed before scene_findings"
+        assert prof is profile and prof == profile_before, "profile changed before scene_findings"
+        assert _snapshot(stages) == before, "findings changed before scene_findings"
         calls.append((readback, kind, role, prof))
         return stages
 
     monkeypatch.setattr(mm, "scene_findings", fake)
-    before_rb = {"meshes": list(rb["meshes"]), "other_objects": list(rb["other_objects"])}
-    before = _snapshot(stages)
-    first = mm.ucx_check(rb, profile)
-    second = mm.ucx_check(rb, profile)
+    results = []
+    for _ in range(2):
+        results.append(adapter(rb, profile))
+        assert rb == rb_before, "readback changed by call"
+        assert profile == profile_before, "profile changed by call"
+        assert _snapshot(stages) == before, "findings changed by call"
+    first, second = results
     assert first == second
-    assert rb == before_rb
-    assert _snapshot(stages) == before
-    assert calls == [(rb, "vpm", "oks", profile), (rb, "vpm", "oks", profile)]
+    assert [(c[1], c[2]) for c in calls] == [("vpm", "oks")] * 2
     assert first["pieces"] == 0
     assert first["triangles"] == 0
     assert first["closed_convex"] == 0
     assert first["piece_reasons"] == {}
     return first
+
+
+def test_profile_mutation_before_scene_findings_is_detected(monkeypatch):
+    """Witness: an in-memory adapter that injects a profile key is rejected."""
+
+    def mutating(readback, profile):
+        profile["reviewer_injected_mutation"] = True
+        return mm.ucx_check(readback, profile)
+
+    with pytest.raises(AssertionError, match="profile changed"):
+        _reduce(monkeypatch, {}, adapter=mutating)
 
 
 def _v010(*pairs):
