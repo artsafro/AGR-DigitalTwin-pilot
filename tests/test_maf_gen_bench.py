@@ -404,3 +404,18 @@ def test_texture_box_top_boards_turn_the_corner(path):
 def test_texture_box_fail_closed(bad):
     with pytest.raises(ValueError):
         gen.build_clad_box(clad(STRAIGHT, **bad))
+
+
+# Regression (rows 2 and 4 of Vatutino): a corner a hair wider than 90 deg pushed the mitred top vertex past the
+# segment's nominal length + depth/2, so s left 0..1 (1.0000336) and the writer refused the UV. SYNTHETIC runs.
+OBTUSE_L = [[0, 2.2], [0, 0], [3.6, 0.0002]]                       # 90.003 deg turn
+OBTUSE_U = [[-0.01, 2.6], [0, 0], [5.2, 0], [5.21, 2.6]]           # both corners ~90.2 deg
+WIDE_L = [[0, 0], [3.0, 0], [3.0 + 2.0 * math.cos(2.2), 2.0 * math.sin(2.2)]]  # 126 deg turn
+
+
+@pytest.mark.parametrize("path", [OBTUSE_L, OBTUSE_U, WIDE_L, L_RUN, U_RUN, SKEW_L])
+def test_texture_box_uv_stays_inside_unit_square_at_any_corner(path):
+    mesh = gen.build_clad_box(tex(path))
+    for _f, uv, _m in _uv_faces(mesh):
+        for s, t in uv:
+            assert 0.0 <= s <= 1.0 and 0.0 <= t <= 1.0
