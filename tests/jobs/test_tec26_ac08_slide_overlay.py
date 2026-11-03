@@ -233,6 +233,51 @@ def test_real_cli_headless_under_60_s(tmp_path):
 
 
 @needs_real
+@pytest.mark.parametrize("offset,expected", [
+    (2.0, True), (-2.0, True),
+    (2.0 - 1e-9, True), (-2.0 + 1e-9, True),
+    (2.0 + 1e-9, False), (-2.0 - 1e-9, False),
+])
+def test_run_report_threshold_uses_unrounded_offsets(tmp_path, monkeypatch, offset, expected):
+    """Deterministic measurement injection through real run(), JSON publication and main's exit status.
+
+    Only the top-edge measurement is injected (SYNTHETIC); all other measurements, rib counts,
+    rectification, input hashes and output publication use the real assets. Zero is the injected
+    VPM datum to avoid subtractive cancellation at the exact inclusive boundary.
+    """
+    measure = so.measure
+
+    def measured_top(rect, fr, body, dark):
+        result = measure(rect, fr, body, dark)
+        result["field_top"] = offset / 200.0 if dark == so.SLIDE_DARK else 0.0
+        return result
+
+    monkeypatch.setattr(so, "measure", measured_top)
+    out = tmp_path / "threshold"
+    code = so.main(CLI[2:] + [str(out)])
+    rep = json.loads((out / "overlay.json").read_text(encoding="utf-8"))
+    assert rep["pass"] is expected, rep["band_edge_offset_px"]
+    assert code == (0 if expected else 1)
+    assert rep["band_edge_offset_px"]["field_top"] == pytest.approx(offset, abs=1e-13)
+    assert rep["max_band_edge_offset_px"] == pytest.approx(abs(offset), abs=1e-13)
+    assert rep["ribs_agree"] and rep["rib_counts"]["vpm"]["joints_found"] == 29
+    assert not Path(str(out) + ".partial").exists()
+
+
+@needs_real
+def test_real_cli_just_over_threshold_fails(tmp_path):
+    """R1 real false-clean witness: 2.0001409617482757 px must not round into a pass."""
+    out = tmp_path / "just-over"
+    r = _cli(out, "--plant-u", "0.00929457717743987")
+    rep = json.loads((out / "overlay.json").read_text(encoding="utf-8"))
+    assert r.returncode == 1, (r.stdout, r.stderr)
+    assert not rep["pass"]
+    assert 2.0 < rep["band_edge_offset_px"]["field_left"] < 2.0005
+    assert rep["max_band_edge_offset_px"] > 2.0
+    assert not Path(str(out) + ".partial").exists()
+
+
+@needs_real
 def test_cli_refuses_a_leftover_partial_and_keeps_it(tmp_path):
     """Hostile self-review: a stale `<out>.partial` from an earlier crash is a refusal (exit 2), never exit 1 (which
     reads as a measured overlay fail); the stale folder and its content are left untouched, `<out>` is not created."""
