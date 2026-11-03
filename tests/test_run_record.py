@@ -81,17 +81,19 @@ def exited_child():
 def fully_dead_pid(pid_file, grandchild_code="pass"):
     """Pid with no open process handle, as after a crashed parent.
 
-    A helper starts ``python -c <grandchild_code>``, writes that pid, and exits. Its exit
-    closes the only handle. The sleep lets the OS reap the grandchild.
+    A helper starts ``python -c <grandchild_code>``, waits for it to exit,
+    writes that pid, and exits. The helper's exit closes the only handle, so
+    the returned pid has already exited. No wall-clock sleep: under full-suite
+    load a fixed sleep let the grandchild outlive it (#782).
     """
     script = (
         "import subprocess, sys\n"
         "from pathlib import Path\n"
-        f"Path({str(pid_file)!r}).write_text(str("
-        f"subprocess.Popen([sys.executable, '-c', {grandchild_code!r}]).pid))\n"
+        f"child = subprocess.Popen([sys.executable, '-c', {grandchild_code!r}])\n"
+        "child.wait()\n"
+        f"Path({str(pid_file)!r}).write_text(str(child.pid))\n"
     )
     subprocess.run([sys.executable, "-c", script], check=True)
-    time.sleep(0.5)
     return int(pid_file.read_text())
 
 
