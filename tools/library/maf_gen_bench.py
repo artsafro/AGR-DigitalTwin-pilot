@@ -473,13 +473,15 @@ def build_clad_box(spec):
     hf = h - f
     kl = nseg - 1
     if tex:
-        span_k = [lens[k] + 2 * h for k in range(nseg)]
-
         def top_uv(k):
+            # s over the quad's own along-extent: a mitre at a corner wider than 90 deg reaches past lens + h
+            ext = [along(k, c) for c in (start(k, h, 0), end(k, h, 0), end(k, -h, 0), start(k, -h, 0))]
+            a0, a1 = min(ext), max(ext)
+
             def uvf(v):
                 xy = (v[0], v[1])
                 lat = (xy[0] - pts[k][0]) * norms[k][0] + (xy[1] - pts[k][1]) * norms[k][1]
-                return ((along(k, xy) + h) / span_k[k], min(1.0, max(0.0, (lat + h) / depth)))
+                return (min(1.0, max(0.0, (along(k, xy) - a0) / (a1 - a0))), min(1.0, max(0.0, (lat + h) / depth)))
             return uvf
 
         for k in range(nseg):

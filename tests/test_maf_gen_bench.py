@@ -410,7 +410,7 @@ def test_texture_box_fail_closed(bad):
 # segment's nominal length + depth/2, so s left 0..1 (1.0000336) and the writer refused the UV. SYNTHETIC runs.
 OBTUSE_L = [[0, 2.2], [0, 0], [3.6, 0.0002]]                       # 90.003 deg turn
 OBTUSE_U = [[-0.01, 2.6], [0, 0], [5.2, 0], [5.21, 2.6]]           # both corners ~90.2 deg
-WIDE_L = [[0, 0], [3.0, 0], [3.0 + 2.0 * math.cos(2.2), 2.0 * math.sin(2.2)]]  # 126 deg turn
+WIDE_L = [[0, 0], [5.0, 0], [5.0 + 4.0 * math.cos(1.75), 4.0 * math.sin(1.75)]]  # 100 deg turn
 
 
 @pytest.mark.parametrize("path", [OBTUSE_L, OBTUSE_U, WIDE_L, L_RUN, U_RUN, SKEW_L])
