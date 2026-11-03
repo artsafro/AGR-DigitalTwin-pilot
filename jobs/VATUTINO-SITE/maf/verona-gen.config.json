@@ -1,0 +1,73 @@
+{
+ "version": "gen-v001-A (passport box)",
+ "issue": 790,
+ "smoothing_deg": 40,
+ "params": {
+  "depth": 0.6,
+  "seat_top": 0.45,
+  "seat_thickness": 0.43,
+  "post": 0.06,
+  "post_inset": 0.03,
+  "end_overhang": 0.1,
+  "max_leg_span": 2.67
+ },
+ "param_sources": {
+  "depth": "DWG outlines 0.600 (all ten) = passport B 0.6",
+  "seat_top": "passport H 0.45 (Hobbyka «Верона» art. 18694, verona.pdf p.1)",
+  "seat_thickness": "passport: the clad timber body runs from the feet (0.02) to H 0.45 -> 0.43",
+  "post": "passport elevation: low steel feet, not dimensioned -> 0.06 square, review",
+  "post_inset": "review, not dimensioned",
+  "end_overhang": "passport elevation: feet near the ends, 0.1 review",
+  "max_leg_span": "passport: 3 sections in L 8.0 -> 2.67 m, feet at section joints"
+ },
+ "materials": {
+  "seat": "larch_light_oak",
+  "frame": "steel_ral7047"
+ },
+ "material_sources": {
+  "seat": "v005 larch_light_oak: passport «брус хвойных пород, лессирующая пропитка» -> nearest approved wood; review",
+  "frame": "v005 steel_ral7047: passport standard RAL 9005 / 7016 not in v005 (new ID needs Artem); review"
+ },
+ "rows": [
+  {
+   "row": 1,
+   "set_id": "VAT_MAF_T3508_01"
+  },
+  {
+   "row": 2,
+   "set_id": "VAT_MAF_T3508_02"
+  },
+  {
+   "row": 3,
+   "set_id": "VAT_MAF_T3508_03"
+  },
+  {
+   "row": 4,
+   "set_id": "VAT_MAF_T3508_04"
+  },
+  {
+   "row": 5,
+   "set_id": "VAT_MAF_T3508_05"
+  },
+  {
+   "row": 6,
+   "set_id": "VAT_MAF_T3508_06"
+  },
+  {
+   "row": 7,
+   "set_id": "VAT_MAF_T3508_07"
+  },
+  {
+   "row": 8,
+   "set_id": "VAT_MAF_T3508_08"
+  },
+  {
+   "row": 9,
+   "set_id": "VAT_MAF_T3508_09"
+  },
+  {
+   "row": 10,
+   "set_id": "VAT_MAF_T3508_10"
+  }
+ ]
+}

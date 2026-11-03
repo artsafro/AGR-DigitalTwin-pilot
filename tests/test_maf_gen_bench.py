@@ -164,3 +164,19 @@ def test_alignment_puts_longest_segment_on_x_and_reports_rotation():
     mesh = gen.build_bench(spec([[0, 0], [0, 5.0], [1.6, 5.0]]))
     assert mesh["plan_rotation_deg"] == pytest.approx(-90.0)
     assert gen.mesh_facts(mesh)["dims_m"][:2] == pytest.approx([5.3, 1.9], abs=1e-6)
+
+
+BOX = dict(seat_top=0.45, seat_thickness=0.43, post=0.06, post_inset=0.03, end_overhang=0.1, max_leg_span=2.67)
+
+
+@pytest.mark.parametrize("path,dims", [(STRAIGHT, (6.0, 0.6)), (L_RUN, (3.9, 2.5)), (U_RUN, (5.8, 2.9))])
+def test_box_bench_on_low_feet_stays_clean(path, dims):
+    """Box-bench parameters (timber body on 2 cm feet, the «Верона» passport form); runs are SYNTHETIC."""
+    mesh = gen.build_bench(spec(path, **BOX))
+    facts = gen.mesh_facts(mesh)
+    assert facts["dims_m"] == pytest.approx([dims[0], dims[1], 0.45], abs=1e-6)
+    assert facts["quad_only"] and facts["manifold"] and facts["components"] == 1
+    assert xview_lists(mesh["verts"], mesh["faces"])["xview_faces"] == ()
+    feet = [v for v in mesh["verts"] if v[2] == 0.0]
+    assert feet and all(abs(v[2]) < 1e-12 for v in feet)
+    assert gen.signed_volume(mesh) > 0

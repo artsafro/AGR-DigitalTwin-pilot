@@ -1,7 +1,13 @@
 # Vatutino «Верона» benches — MAF generator gen-v001 (#790, model-maf step 3)
 
-Status: **stage 1 of 3** — plan shapes, section table and the pure generator are done; module reference,
-rows 6–10 mapping and heights wait for Artem (questions below). No FBX is produced yet.
+Status: **stage 2 of 3, `passed=false`** — plan shapes of all ten rows, the module passport, the Blender writer and
+row 1 (two variants, draft) are done; the variant choice, the module reference and the first piece wait for Artem's
+«да». Rows 2–10 are not built.
+
+Artem's answers 2026-11-03 (card t_96a3cc8a): web search for the «Верона» 18694 photo allowed; rows 6 = «пл.
+дети1-3лет», 7 = «лестн 2», 8 = «лестн 2.1», 9 and 10 = «лестн 1»; «600» is the seat depth; seat height 0.466 from
+MAF_0326, review; solid seat, no backrest «until a photo shows otherwise»; MAF_0326 sections accepted; the NPM MAF
+budget overrun goes to a [D167] variants table, not silently.
 
 ## Plan shapes (`verona-plan-shapes.json`)
 
@@ -17,12 +23,19 @@ HATCH. Inside plot `568BF` there are exactly 10 bench inserts for the 10 rows.
 | 3 | 6250×600×— | Скамья верона (`132D24`) | `132D23` | 6.250 × 0.600 (straight) | 0.000 / 0.000 | found |
 | 4 | 5800×2900×600 | скамья индивид под андромедой (`195E1A`) | `195E19` | 5.800 × 2.896 (U) | 0.000 / 0.004 | found |
 | 5 | 6080×600×— | Скамья верона 2 (`132D32`) | `132D31` | 6.085 × 0.600 (straight) | 0.005 / 0.000 | found |
-| 6–10 | 4960×5530×600 (all five) | candidates: пл. дети1-3лет (`18AA61`, 4.957 × 5.526, 5 turns of ~45°), лестн 1 ×2 (`19865D`, `19865E`, 2.0 × 0.6), лестн 2 (`198ADB`, 4.921 × 0.6), лестн 2.1 (`198BAC`, 4.249 × 0.6) | — | — | — | question |
+| 6 | 4960×5530×600 | Скамья индивид пл. дети1-3лет (`18AA61`) | `18AA60` | 4.957 × 5.526 (5 segments, ~45° turns) | 0.004 / 0.003 | found |
+| 7 | 4960×5530×600 | Скамья Индивид лестн 2 (`198ADB`) | `198ADA` | 4.921 × 0.600 (straight) | size from the DWG (Artem's mapping) | found |
+| 8 | 4960×5530×600 | Скамья Индивид лестн 2.1 (`198BAC`) | `198C88` | 4.249 × 0.600 (straight) | size from the DWG (Artem's mapping) | found |
+| 9 | 4960×5530×600 | Скамья индивид лестн 1 (`19865D`) | `19865C` | 2.000 × 0.600 (straight) | size from the DWG (Artem's mapping) | found |
+| 10 | 4960×5530×600 | Скамья индивид лестн 1 (`19865E`) | `19865C` | 2.000 × 0.600 (straight) | size from the DWG (Artem's mapping) | found |
+
+Rows 7–10: the schedule repeats 4960×5530 for all five
+rows; that size fits only row 6, so rows 7–10 are checked against their DWG outline.
 
 Each block has a second insert outside `568BF` (the drawing repeats the site); those are listed, not used.
 Method: centreline = the outer (longer) side of the drawn strip offset inward by 0.3 m (drawn inner sides and end
 caps are skewed by up to 0.45 m; the outer legs carry the schedule sizes). The third schedule value «600» equals
-the drawn seat depth of every outline, so it is read as depth, not height: **every row's height is `review`**.
+the drawn seat depth of every outline, so it is read as depth, not height (Artem confirmed).
 
 ## Section table (library analogue `MAF_0326`)
 
@@ -43,14 +56,69 @@ disputes are changed only by him.
 | board width, slat pitch | MAF_0326 | not measurable: solid seat, no slats | question |
 | backrest | MAF_0326 | back panel 1.408 × 0.049 × 0.445, top 0.80 | question (depends on «Верона») |
 
+## Module reference (model-maf step 2, web search allowed by Artem)
+
+Manufacturer: **Hobbyka (Хоббика)**, «Скамейка стальная «Верона»», article **18694** (the schedule names the
+maker «Города»; the article number matches Hobbyka, the maker name does not — question to Artem).
+- Product page: https://hobbyka.ru/product/skamya_verona/ («артикул 18694»)
+- Passport PDF: https://hobbyka.ru/upload/iblock/6c5/hbet36336ro66b2qcaivn19drci2hcay.pdf — L 8.0, **B 0.6, H 0.45**,
+  3 sections, steel powder-coated (standard RAL 9005 / 7016), timber beams with stain + lacquer.
+- Copies (outside git): `C:/x/vatutino-maf/gen-v001/web/` (`verona.pdf`, `img1..4.jpg`, hashes in `SHA256SUMS.txt`).
+
+What the passport shows, against the accepted MAF_0326 sections: a **closed box** 0.6 × 0.45, all four sides clad
+with four horizontal timber courses, a slatted top, no backrest, low steel feet under the section joints — not a
+0.065 slab on 0.04 tube legs. B 0.6 equals the DWG depth (independent confirmation). H 0.45 replaces the 0.466
+(card fallback: a missing height comes from the module reference). Because this contradicts an accepted answer,
+row 1 is built in both forms and Artem chooses.
+
 ## Generator
 
 `tools/library/maf_gen_bench.py` (pure, no bpy): plan run + sections + material IDs -> one welded quad mesh
 (posts let into the seat bottom as inserts, closed manifold, xView-clean, pivot bbox centre / Z 0, longest
-segment on +X, plan rotation recorded). `centreline_from_outline` turns a DWG strip outline into the run.
-Tests: `tests/test_maf_gen_bench.py` (synthetic straight / L / U / skewed runs). Next stage: the Blender writer
-next to `tools/blender/maf_site_set_build.py` (smoothing by angle, v005 material IDs, 512 slots, NPM/VPM FBX,
-readback, `maf_findings`, `inv_xview`) for row 1 only, after the answers.
+segment on +X, plan rotation recorded). `centreline_from_outline` turns a DWG strip outline into the run. The
+passport box is the same generator with other parameters (body = «seat» 0.43 thick on 0.02 feet), no new code.
+Writer `tools/blender/maf_gen_bench_build.py` (atlas v005 materials, box UV inside the 512 slots, triangulated
+FBX per MAF-18, hard edges by angle 40°, NPM + VPM, refuses overwrite); checks `tools/library/maf_gen_bench_checks.py`
+(readback -> `maf_findings`, dimensions within 0.10 m [D094], atlas-slot count); overlap gate `dt qa xview`.
+Tests: `tests/test_maf_gen_bench.py` (synthetic straight / L / U / skewed runs, box-bench parameters), 47 passed.
 
-Budget note: `site-maf-set.md` already counts NPM MAF 57 628 of the 60 000 share [D097]; the ten Verona rows add
-5 176 triangles with the proposed sections (10 inserts; row 1: 516), so the budget table will need Artem's split [D167].
+| Config | Form | Parameters (source) |
+|---|---|---|
+| `verona-gen.config.json` (A, recommended) | passport box | depth 0.6 (DWG = passport B), top 0.45 (passport H), body 0.43, feet 0.06 square × 0.02, inset 0.03, end 0.1, span 2.67 (passport: 3 sections in 8.0) — feet sizes not dimensioned, review |
+| `verona-gen-b.config.json` (B) | MAF_0326 slab on posts | the section table above, height 0.466 |
+
+Materials (both): body/seat `larch_light_oak`, feet/frame `steel_ral7047` (approved list v005; the passport's
+RAL 9005 / 7016 is not in v005 — a new ID needs Artem, so review).
+
+## Row 1, first piece (draft, `C:/x/vatutino-maf/gen-v001/{a,b}`)
+
+Commands (all exit 0):
+```
+blender --background --factory-startup --python-exit-code 1 --python tools/blender/maf_gen_bench_build.py -- jobs/VATUTINO-SITE/maf/verona-gen[-b].config.json jobs/VATUTINO-SITE/maf/verona-plan-shapes.json C:/x/vatutino-maf/v005-set/atlas/vatutino_maf_atlas_512.json C:/x/vatutino-maf/v005-set/atlas/vatutino_maf_atlas_512.png C:/x/vatutino-maf/gen-v001/<a|b> 1
+blender ... --python tools/blender/fbx_readback.py -- C:/x/vatutino-maf/gen-v001/<a|b>/<npm|vpm>/VAT_MAF_T3508_01.fbx C:/x/vatutino-maf/gen-v001/<a|b>/readback/<npm|vpm>_VAT_MAF_T3508_01.json
+uv run python tools/library/maf_gen_bench_checks.py C:/x/vatutino-maf/gen-v001/<a|b>/build-report.json C:/x/vatutino-maf/gen-v001/<a|b>/readback C:/x/vatutino-maf/gen-v001/<a|b>/checks.json
+uv run dt qa xview C:/x/vatutino-maf/gen-v001/<a|b>/<npm|vpm>/VAT_MAF_T3508_01.fbx --out .../readback/xview_<npm|vpm>_VAT_MAF_T3508_01.json --profile <NPM|VPM>
+```
+
+| Variant | Role | Tris | Readback size m | vs schedule 3.9 × 2.5 | `maf_findings` | xView faces | UV faces outside slot | FBX sha256 |
+|---|---|---|---|---|---|---|---|---|
+| A | NPM | 388 | 3.919 × 2.501 × 0.450 | 0.019 / 0.001 pass | 3 pass, 0 fail, 0 not_run | 0 | 0 / 388 | `829179a0…d3da` |
+| A | VPM | 388 | 3.919 × 2.501 × 0.450 | 0.019 / 0.001 pass | 3 pass | 0 | 0 / 388 | `4894c759…` |
+| B | NPM | 516 | 3.919 × 2.501 × 0.466 | 0.019 / 0.001 pass | 3 pass | 0 | 0 / 516 | `1bc34618…29ab` |
+| B | VPM | 516 | 3.919 × 2.501 × 0.466 | 0.019 / 0.001 pass | 3 pass | 0 | 0 / 516 | `f07f7b2d…` |
+
+Full hashes: `C:/x/vatutino-maf/gen-v001/SHA256SUMS.txt`. Picture for Artem:
+`C:/x/vatutino-maf/gen-v001/renders/row1_variants_v002.png` (A top, B bottom, NPM left, VPM right, text labels).
+Originals unchanged: `main.dwg` copy `64e22677…46e4`, MAF_0326 FBX `f3f9653c…2edc` (same as before).
+
+## Budget [D097], [D167]
+
+| Variant | Ten rows NPM tris (pure generator, same as FBX for row 1) | NPM MAF total with v005 set 57 628 | vs share 60 000 |
+|---|---|---|---|
+| A passport box | 3 704 | 61 332 | over by 1 332 |
+| B MAF_0326 slab | 5 176 | 62 804 | over by 2 804 |
+
+Per row A / B: 388/516, 452/708, 300/428, 540/796, 300/428, 908/1100, 236/364, 236/364, 172/236, 172/236.
+Both exceed the share; NPM = VPM (no light version: a box of 388 tris has nothing to remove [D164]). Options for
+Artem [D167]: (1) accept the overrun inside the shared 180 000 NPM Ground budget; (2) light NPM for other v005
+positions; (3) take the 1 332 from another MAF share. Not decided here.
