@@ -29,7 +29,7 @@ def spec(path, **kw):
 
 STRAIGHT = [[0, 0], [6.0, 0]]
 L_RUN = [[0, 2.2], [0, 0], [3.6, 0]]             # outer legs 2.5 x 3.9 at depth 0.6
-U_RUN = [[0, 2.6], [0, 0], [5.5, 0], [5.5, 2.6]]  # outer 5.8 x 2.9
+U_RUN = [[0, 2.6], [0, 0], [5.2, 0], [5.2, 2.6]]  # outer 5.8 x 2.9
 SKEW_L = [[0, 0], [3.0, 0], [3.0 + 2.0 * math.cos(1.2), 2.0 * math.sin(1.2)]]
 
 
@@ -129,9 +129,25 @@ def test_centreline_from_dwg_style_outline():
     # synthetic L outline drawn like the DWG blocks: end cap, outer edge, end cap, inner edge, closing duplicate
     outline = [[0, 2.5], [0, 0], [3.9, 0], [3.9, 0.6], [0.6, 0.6], [0.6, 2.5], [0, 2.5]]
     c = gen.centreline_from_outline(outline, 0.6)
-    assert c == pytest.approx([[0.3, 2.5], [0.3, 0.3], [3.9, 0.3]], abs=1e-9)
+    exp = [[0.3, 2.5], [0.3, 0.3], [3.9, 0.3]]
+    got = [[round(x, 9), round(y, 9)] for x, y in c]
+    assert got in (exp, exp[::-1])
     mesh = gen.build_bench(spec(c))
     assert gen.mesh_facts(mesh)["dims_m"][:2] == pytest.approx([3.9, 2.5], abs=1e-6)
+
+
+def test_centreline_follows_outer_side_when_inner_side_is_skewed():
+    # synthetic: like the drawn L blocks, the far cap is skewed (inner side 0.1 m short); outer legs 2.5 x 3.9 rule
+    outline = [[0, 2.5], [0, 0], [3.9, 0], [3.8, 0.6], [0.6, 0.6], [0.6, 2.5]]
+    c = gen.centreline_from_outline(outline, 0.6)
+    dims = gen.mesh_facts(gen.build_bench(spec(c)))["dims_m"]
+    assert dims[:2] == pytest.approx([3.9, 2.5], abs=1e-6)
+
+
+def test_centreline_accepts_open_polyline_with_near_closing_point():
+    outline = [[0, 0], [6.25, 0], [6.25, 0.6], [0, 0.6], [0.005, 0.004]]  # drawn open, end 6.4 mm off start (DWG row 5: 6.5 mm)
+    dims = gen.mesh_facts(gen.build_bench(spec(gen.centreline_from_outline(outline, 0.6))))["dims_m"]
+    assert dims[:2] == pytest.approx([6.25, 0.6], abs=1e-6)
 
 
 @pytest.mark.parametrize("outline", [
