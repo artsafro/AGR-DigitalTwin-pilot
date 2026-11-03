@@ -161,6 +161,8 @@ def _stub_run(monkeypatch, tmp_path, fail_after):
     img = np.full((8, 8, 3), 0.5)
     rows = [{"pilot": "v010", "tag": "vpm", "view": "north", "slide_crop": "s", "render_crop": "r"} for _ in range(2)]
     monkeypatch.setattr(ds, "_scripts", lambda: (None, None, None))
+    monkeypatch.setattr(ds, "_referenced_paths", lambda: [])
+    monkeypatch.setattr(ds, "_crop_destinations", lambda work: [])
     monkeypatch.setattr(ds, "measure_pilot", lambda pilot, work: [dict(r) for r in rows])
     monkeypatch.setattr(ds, "control_rows", lambda r, mm: [{"name": "shift_1", "ssim": 1.0, "dreamsim": None, "defect_crop_joints": 1, "base_crop_joints": 1}, {"name": "band", "ssim": 0.5, "dreamsim": None, "defect_crop_joints": 2, "base_crop_joints": 1}])
     monkeypatch.setattr(ds, "_controls", lambda base: [("shift_1", base), ("band", base)])
@@ -187,3 +189,53 @@ def test_run_nonzero_when_inference_fails_even_after_partial_progress(monkeypatc
 
 def test_run_zero_when_all_pairs_measured(monkeypatch, tmp_path):
     assert _stub_run(monkeypatch, tmp_path, None) == 0
+
+
+def _fake_world(monkeypatch, tmp_path):
+    """Spec, slide and render PNGs in scratch; the real inventory functions run on them."""
+    import json
+
+    slide = tmp_path / "slide.png"
+    render = tmp_path / "rend" / "n.png"
+    render.parent.mkdir()
+    Image.fromarray(np.zeros((4, 4, 3), np.uint8)).save(slide)
+    Image.fromarray(np.zeros((4, 4, 3), np.uint8)).save(render)
+    spec = tmp_path / "spec.json"
+    spec.write_text(json.dumps({"presentation": {"image": str(slide)},
+                                "facades": {"F1": {"normal": "+y"}}}))
+    (tmp_path / "rend" / "renders.json").write_text(json.dumps(
+        {t: {"views": {"north": {"png": "n.png"}}} for t in ("vpm", "npm")}))
+    monkeypatch.setattr(ds, "SPEC", spec)
+    monkeypatch.setattr(ds, "SHEET", spec)
+    monkeypatch.setattr(ds, "PILOTS", {"v010": {"renders": tmp_path / "rend", "readback": spec, "panel_udim": None}})
+    return slide, render
+
+
+@pytest.mark.parametrize("which", ["slide", "render", "crop"])
+def test_results_or_csv_equal_to_source_or_crop_exits_nonzero_before_writes(monkeypatch, tmp_path, which):
+    slide, render = _fake_world(monkeypatch, tmp_path)
+    work = tmp_path / "w"
+    crop = work / "crops" / "v010" / "north_F1_vpm.png"
+    crop.parent.mkdir(parents=True)
+    crop.write_bytes(b"crop")
+    target = {"slide": slide, "render": render, "crop": crop}[which]
+    before = target.read_bytes()
+    for as_csv in (False, True):
+        res, csv_ = (tmp_path / "o.json", target) if as_csv else (target, tmp_path / "o.csv")
+        with pytest.raises(SystemExit) as exc:
+            ds.run(res, csv_, work, tmp_path / "c")
+        assert exc.value.code != 0
+        assert target.read_bytes() == before
+        assert not (tmp_path / "o.json").exists() and not (tmp_path / "o.csv").exists()
+
+
+def test_distinct_outputs_pass_the_guard(monkeypatch, tmp_path):
+    _fake_world(monkeypatch, tmp_path)
+    monkeypatch.setattr(ds, "_scripts", lambda: (None, None, None))
+
+    def stop(*a, **k):
+        raise RuntimeError("guard passed")
+
+    monkeypatch.setattr(ds, "measure_pilot", stop)
+    with pytest.raises(RuntimeError, match="guard passed"):
+        ds.run(tmp_path / "o.json", tmp_path / "o.csv", tmp_path / "w", tmp_path / "c")

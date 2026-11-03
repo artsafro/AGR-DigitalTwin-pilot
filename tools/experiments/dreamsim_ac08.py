@@ -500,11 +500,42 @@ def _weight_files(cache: Path) -> list[dict]:
     return found
 
 
+def _referenced_paths() -> list[Path]:
+    """Slide image and every render PNG the run reads, taken from the specs themselves."""
+    spec = json.loads(SPEC.read_text(encoding="utf-8"))
+    paths = [Path(spec["presentation"]["image"])]
+    for cfg in PILOTS.values():
+        meta = json.loads((cfg["renders"] / "renders.json").read_text(encoding="utf-8"))
+        for tag in ("vpm", "npm"):
+            for view in meta[tag]["views"].values():
+                paths.append(cfg["renders"] / view["png"])
+    return paths
+
+
+def _crop_destinations(work: Path) -> list[Path]:
+    """Every crop file measure_pilot writes; a result file must not be one of them."""
+    spec = json.loads(SPEC.read_text(encoding="utf-8"))
+    out = []
+    for pilot in PILOTS:
+        for name, fc in spec["facades"].items():
+            view = VIEW[fc["normal"]]
+            out.append(work / "crops" / pilot / f"{view}_{name}_slide.png")
+            for tag in ("vpm", "npm"):
+                out.append(work / "crops" / pilot / f"{view}_{name}_{tag}.png")
+    return out
+
+
 def run(results: Path, csv_path: Path, work: Path, cache: Path) -> int:
     inputs = [SPEC, SHEET]
     for cfg in PILOTS.values():
         inputs.append(cfg["readback"])
         inputs.append(cfg["renders"] / "renders.json")
+    try:
+        inputs.extend(_referenced_paths())
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        print(f"cannot inventory inputs: {exc}", file=sys.stderr)
+        raise SystemExit(2)
+    inputs.extend(_crop_destinations(work))
     if output_collides(results, inputs + [csv_path]) or output_collides(csv_path, inputs + [results]):
         raise SystemExit(2)
     _, _, mm = _scripts()
