@@ -268,12 +268,13 @@ def build_bench(spec):
 
 CLAD_REQUIRED = ("path", "depth", "height", "foot_height", "courses", "seam_width", "seam_depth", "frame_width",
                  "top_boards", "foot_length", "foot_inset", "end_overhang", "max_foot_span", "materials")
+SEAM_MODES = ("geometry", "texture")
 
 
 def _validate_clad(spec):
     if not isinstance(spec, dict):
         raise ValueError("spec must be a dict")
-    unknown = sorted(set(spec) - set(CLAD_REQUIRED) - set(OPTIONAL))
+    unknown = sorted(set(spec) - set(CLAD_REQUIRED) - set(OPTIONAL) - {"seams"})
     if unknown:
         raise ValueError(f"unknown spec keys: {unknown}")
     missing = [k for k in CLAD_REQUIRED if k not in spec]
@@ -316,6 +317,9 @@ def _validate_clad(spec):
             raise ValueError(f"path has a zero-length segment at {a}")
     p["path"] = pts
     p["align"] = bool(spec.get("align", True))
+    p["seams"] = spec.get("seams", "geometry")
+    if p["seams"] not in SEAM_MODES:
+        raise ValueError(f"seams must be one of {SEAM_MODES}, got {p['seams']!r}")
     return p
 
 
@@ -345,6 +349,13 @@ def build_clad_box(spec):
     `foot_height` high) are let into the bottom at the free ends (`end_overhang` to the plate centre), at
     <= `max_foot_span` spacing and `depth/2 + foot_length` from every corner. Planar bands whose two edges carry a
     different vertex count are filled by a 3-to-1 quad reduction with interior points only, so no T-junction.
+
+    `seams="texture"` (Artem 2026-11-03 correction): no board gaps in the geometry; the top is one quad per segment
+    and the sides one ring from `foot_height` to `height`. The board layout lives in the UV instead: `face_uv`
+    (per face, per vertex (s, t) in 0..1 of a board pattern of `top_boards + 2` equal boards along t, or None for
+    faces that show no boards) puts the top across the whole pattern (t = lateral / depth, mitred so the boards turn
+    the corners) and the sides over `courses` boards of the same pattern, so every seam line of the texture falls on
+    a board joint. `uv_pattern` names the pattern the texture cell must carry.
     """
     p = _validate_clad(spec)
     pts, rot = _align(p["path"], p["align"])
@@ -378,7 +389,9 @@ def build_clad_box(spec):
     def along(k, xy):
         return (xy[0] - pts[k][0]) * dirs[k][0] + (xy[1] - pts[k][1]) * dirs[k][1]
 
-    verts, index, faces, fmat = [], {}, [], []
+    tex = p["seams"] == "texture"
+    nb = p["top_boards"] + 2
+    verts, index, faces, fmat, fuv = [], {}, [], [], []
 
     def vid(xy, z):
         key = (round(xy[0], 9), round(xy[1], 9), round(z, 9))
@@ -387,7 +400,7 @@ def build_clad_box(spec):
             verts.append([xy[0], xy[1], z])
         return index[key]
 
-    def add(corners, ref, mat):
+    def add(corners, ref, mat, uvf=None):
         ids = [vid(xy, z) for xy, z in corners]
         q = [verts[i] for i in ids]
         n = [0.0, 0.0, 0.0]
@@ -399,6 +412,7 @@ def build_clad_box(spec):
             ids.reverse()
         faces.append(ids)
         fmat.append(mat)
+        fuv.append([uvf(verts[i]) for i in ids] if uvf else None)
 
     def band(inner, o0, o1, z, ref, mat):
         """Fill the planar band between the collinear chain `inner` (any odd segment count) and the edge o0-o1."""
@@ -457,12 +471,30 @@ def build_clad_box(spec):
     wood, steel = p["materials"]["seat"], p["materials"]["frame"]
     zt, zf, g, sd, f = p["height"], p["foot_height"], p["seam_width"], p["seam_depth"], p["frame_width"]
     hf = h - f
+    kl = nseg - 1
+    if tex:
+        span_k = [lens[k] + 2 * h for k in range(nseg)]
+
+        def top_uv(k):
+            def uvf(v):
+                xy = (v[0], v[1])
+                lat = (xy[0] - pts[k][0]) * norms[k][0] + (xy[1] - pts[k][1]) * norms[k][1]
+                return ((along(k, xy) + h) / span_k[k], min(1.0, max(0.0, (lat + h) / depth)))
+            return uvf
+
+        for k in range(nseg):
+            add([(start(k, h, 0), zt), (end(k, h, 0), zt), (end(k, -h, 0), zt), (start(k, -h, 0), zt)], (0, 0, 1),
+                wood, top_uv(k))
+        prof = [(zf, 0.0), (zt, 0.0)]
+    else:
+        prof = None
     # --- top: frame bands, boards, seam pockets ---------------------------------------------------------------
     us = [hf]
-    for _ in range(p["top_boards"]):
+    for _ in range(p["top_boards"] if not tex else 0):
         us += [us[-1] - g, us[-1] - g - p["board_w"]]
-    us += [-hf]
-    for k in range(nseg):
+    if not tex:
+        us += [-hf]
+    for k in range(nseg if not tex else 0):
         for j in range(len(us) - 1):
             u0, u1 = us[j], us[j + 1]
             cell = [start(k, u0, f), end(k, u0, f), end(k, u1, f), start(k, u1, f)]
@@ -483,20 +515,23 @@ def build_clad_box(spec):
         for side in (1, -1):
             add([(start(k, side * h, 0), zt), (end(k, side * h, 0), zt), (end(k, side * hf, f), zt),
                  (start(k, side * hf, f), zt)], (0, 0, 1), wood)
-    band([Q(0, f, u) for u in us], Q(0, 0, h), Q(0, 0, -h), zt, (0, 0, 1), wood)
-    kl = nseg - 1
-    band([Q(kl, lens[kl] - f, u) for u in us], Q(kl, lens[kl], h), Q(kl, lens[kl], -h), zt, (0, 0, 1), wood)
+    if not tex:
+        band([Q(0, f, u) for u in us], Q(0, 0, h), Q(0, 0, -h), zt, (0, 0, 1), wood)
+        band([Q(kl, lens[kl] - f, u) for u in us], Q(kl, lens[kl], h), Q(kl, lens[kl], -h), zt, (0, 0, 1), wood)
     # --- sides: courses and ring seams around the whole outline -----------------------------------------------
     def loop(w):
         left = [start(k, h - w, w) for k in range(nseg)] + [end(kl, h - w, w)]
         right = [start(k, w - h, w) for k in range(nseg)] + [end(kl, w - h, w)]
         return left + right[::-1]
 
-    prof, ch = [(zf, 0.0)], p["course_h"]
-    for c in range(p["courses"] - 1):
+    ch = p["course_h"]
+    if prof is None:
+        prof = [(zf, 0.0)]
+    for c in range(p["courses"] - 1 if not tex else 0):
         top = zf + (c + 1) * ch + c * g
         prof += [(top, 0.0), (top, sd), (top + g, sd), (top + g, 0.0)]
-    prof.append((zt, 0.0))
+    if not tex:
+        prof.append((zt, 0.0))
     loops = {w: loop(w) for w in (0.0, sd)}
     nl = len(loops[0.0])
     for (z0, w0), (z1, w1) in zip(prof, prof[1:]):
@@ -506,7 +541,13 @@ def build_clad_box(spec):
             d = _sub(loops[0.0][j], loops[0.0][i])
             out = _unit((-d[1], d[0]))
             ref = (out[0] * (z1 - z0), out[1] * (z1 - z0), w1 - w0)
-            add([(l0[i], z0), (l0[j], z0), (l1[j], z1), (l1[i], z1)], ref, wood)
+            uvf = None
+            if tex:
+                a, el = loops[0.0][i], math.dist(loops[0.0][i], loops[0.0][j])
+
+                def uvf(v, a=a, el=el):
+                    return (math.dist(a, (v[0], v[1])) / el, (v[2] - zf) / (zt - zf) * p["courses"] / nb)
+            add([(l0[i], z0), (l0[j], z0), (l1[j], z1), (l1[i], z1)], ref, wood, uvf)
     # --- bottom: steel plates let in, bands filled without touching the outline -------------------------------
     fl, fi = p["foot_length"], p["foot_inset"]
     ui = h - fi
@@ -547,7 +588,11 @@ def build_clad_box(spec):
     for v in verts:
         v[0] -= cx
         v[1] -= cy
-    return {"verts": verts, "faces": faces, "face_mat": fmat, "plan_rotation_deg": rot}
+    out = {"verts": verts, "faces": faces, "face_mat": fmat, "plan_rotation_deg": rot}
+    if tex:
+        out["face_uv"] = fuv
+        out["uv_pattern"] = {"boards": nb, "axis": "t"}
+    return out
 
 
 def signed_volume(mesh):
