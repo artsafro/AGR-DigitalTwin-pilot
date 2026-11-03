@@ -365,6 +365,12 @@ def _one(item, node):
         rows = _compare(payload)
     except parity_module().DumpError as exc:
         raise HarnessError(str(exc), mesh=name) from exc
+    except ValueError as exc:
+        # The kernel refuses polygons it cannot triangulate (self-intersecting); that geometry stays
+        # non-accepted and is reported by name, never certified (#797).
+        if "self-intersecting polygon" not in str(exc):
+            raise
+        raise HarnessError(f"unsupported geometry: {exc}", mesh=name) from exc
     if len(rows) != 1 or not rows[0].get("equal"):
         raise HarnessError("symmetric difference", mesh=name)
     return _row_ids(node, rows[0])
