@@ -135,8 +135,8 @@ FBX sha256 NPM `4d2112a4…2562`, VPM `709568b3…53f2`. Picture for Artem (phot
 | A3 tris (pure generator; row 1 = FBX) | 648 | 672 | 484 | 836 | 484 | 1244 | 460 | 460 | 428 | 428 | 6 144 |
 
 NPM MAF share [D097]: v005 set 57 628 + row 1 648 = 58 276 (under 60 000); + all ten rows 6 144 = **63 772, over the
-share by 3 772**. A lighter NPM (seams as texture only) would be 10 × ~200 tris but [D164] forbids a substitute
-unless Artem chooses it; decision pending with the colour ID (RAL 7016).
+share by 3 772**. A light NPM without modelled seams would be the earlier box A (row 1 388, ten rows 3 704 -> 61 332); [D164]
+allows it only as a separate light version, never a substitute, and only if Artem chooses it; decision pending with the colour ID (RAL 7016).
 
 ## Budget [D097], [D167] (variants A/B before the seams, superseded by A3 above)
 
