@@ -145,3 +145,21 @@ def test_generated_bad_file_and_success_keep_inputs(tmp_path):
     assert ok.returncode == 0, ok.stderr
     assert json.loads(output.read_text(encoding="utf-8"))["diff"] == 0
     assert left.exists() and right.exists()
+
+
+def test_partial_named_inputs_and_sentinel_preserved(tmp_path):
+    left = tmp_path / "report.json.partial"
+    right = tmp_path / "right.json"
+    left.write_text(json.dumps(snap()), encoding="utf-8")
+    right.write_text(json.dumps(snap()), encoding="utf-8")
+    sentinel = tmp_path / "other.json.partial"
+    sentinel.write_text("keep", encoding="utf-8")
+    lb, rb = left.read_bytes(), right.read_bytes()
+    done = run_diff(left, right, tmp_path / "report.json")
+    assert done.returncode == 0, done.stderr
+    assert left.read_bytes() == lb and right.read_bytes() == rb
+    assert (tmp_path / "report.json").exists()
+    out2 = tmp_path / "other.json"
+    assert run_diff(left, right, out2).returncode == 0
+    assert sentinel.read_text(encoding="utf-8") == "keep"
+    assert sorted(p.name for p in tmp_path.glob("*.tmp")) == []

@@ -170,9 +170,16 @@ def _load_json(path):
 def _write_json(path, payload):
     target = Path(path)
     target.parent.mkdir(parents=True, exist_ok=True)
-    temporary = target.with_suffix(target.suffix + ".partial")
-    temporary.write_text(json.dumps(payload, allow_nan=False), encoding="utf-8")
-    os.replace(temporary, target)
+    text = json.dumps(payload, allow_nan=False)
+    handle, name = tempfile.mkstemp(prefix=target.name + ".", suffix=".tmp", dir=str(target.parent))
+    temporary = Path(name)
+    try:
+        with os.fdopen(handle, "w", encoding="utf-8") as stream:
+            stream.write(text)
+        os.replace(temporary, target)
+    except BaseException:
+        temporary.unlink(missing_ok=True)
+        raise
 
 
 def diff_cli(left, right, output):
@@ -388,6 +395,8 @@ def plant_cli(fbx, kind, output):
 
 
 def _cold_extract(fbx, importer, output, scratch, timeout):
+    if _same_path(output, [fbx]):
+        raise SnapshotError("output aliases input")
     if Path(output).exists():
         Path(output).unlink()
     code, seconds, tail = _blender(
@@ -470,6 +479,8 @@ def measure_cli(args):
         for kind, expect in (("control", None), ("material", "material_ids"), ("uv", "uv_layer_count"), ("rename", "name")):
             planted = scratch / "planted" / f"{kind}.fbx"
             planted.parent.mkdir(parents=True, exist_ok=True)
+            if _same_path(planted, [plant_source["path"]]):
+                raise SnapshotError("planted output aliases input")
             if planted.exists():
                 planted.unlink()
             code, seconds, tail = _blender(
