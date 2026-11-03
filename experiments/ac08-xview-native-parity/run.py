@@ -168,6 +168,106 @@ def native_skip_reason(markexpr, env, ping=None):
     return "native marker missing: set AC08_XVIEW_NATIVE_DUMP or select pytest -m native_max"
 
 
+_FROZEN_CONTEXT = (
+    ("m_per_unit", 1, "metre units"),
+    ("tol_v_units", 0.002, "2 mm vertex tolerance"),
+    ("tol_f_units", 0.005, "5 mm face tolerance"),
+)
+_POLY_CLASS = "Editable_Poly"
+
+
+def _failure_text(failures):
+    if not isinstance(failures, list):
+        return f"failures: {failures!r}"
+    return "failures: " + "; ".join(map(str, failures))
+
+
+def _reject_nonfinite(value, what, mesh=None):
+    if value is None or isinstance(value, (str, bool)):
+        return
+    if isinstance(value, (int, float)):
+        if not math.isfinite(value):
+            raise HarnessError(f"non-finite {what}: {value!r}", mesh=mesh)
+        return
+    if isinstance(value, dict):
+        child = value.get("name") if isinstance(value.get("name"), str) else mesh
+        for key, item in value.items():
+            _reject_nonfinite(item, key if not what else f"{what}.{key}", child)
+        return
+    if isinstance(value, (list, tuple)):
+        for index, item in enumerate(value):
+            _reject_nonfinite(item, f"{what}[{index}]", mesh)
+
+
+def _frozen_context(item):
+    for key, want, label in _FROZEN_CONTEXT:
+        value = item.get(key)
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            kind = "unsupported units" if key == "m_per_unit" else "non-finite"
+            raise HarnessError(f"{key}: {value!r} {kind} ({label})")
+        if not math.isfinite(value):
+            raise HarnessError(f"{key}: {value!r} is non-finite ({label})")
+        if float(value) != float(want):
+            raise HarnessError(f"{key}: {value!r} is not frozen {label} ({want})")
+
+
+def _import_context(item):
+    """Reject a failed or unpinned import before grouping can drop it."""
+    state, rep = item["state"], item["rep"]
+    if "import_ok" not in item:
+        raise HarnessError(f"import_ok missing for {state}/{rep}")
+    if item["import_ok"] is not True:
+        raise HarnessError(f"import_ok {item['import_ok']!r} for {state}/{rep}")
+    _frozen_context(item)
+    if item.get("failures"):
+        raise HarnessError(_failure_text(item["failures"]))
+    nodes = item.get("nodes")
+    if not isinstance(nodes, list):
+        return
+    for node in nodes:
+        if not isinstance(node, dict):
+            raise HarnessError("incomplete dump")
+        name = node.get("name")
+        if node.get("class") != _POLY_CLASS:
+            raise HarnessError(f"class {node.get('class')!r} is not {_POLY_CLASS}", mesh=name)
+        if "geometry_unchanged" not in node:
+            raise HarnessError("geometry_unchanged missing", mesh=name)
+        if node.get("geometry_unchanged") is not True:
+            raise HarnessError(f"geometry_unchanged {node.get('geometry_unchanged')!r}", mesh=name)
+        if node.get("error"):
+            raise HarnessError(str(node["error"]), mesh=name)
+        _reject_nonfinite(node, "", name)
+
+
+def _require_campaign(grouped, synthetic):
+    missing = [state for state in STATES if state not in grouped]
+    unknown = [state for state in grouped if state not in STATES]
+    pinned = [state for state in grouped if state in STATES]
+    if synthetic:
+        if unknown and pinned:
+            raise HarnessError("unknown state " + ", ".join(unknown))
+        return
+    if missing and unknown:
+        raise HarnessError("unknown state " + ", ".join(unknown))
+    if missing:
+        raise HarnessError("missing state " + ", ".join(missing))
+    if unknown:
+        raise HarnessError("extra state " + ", ".join(unknown))
+
+
+def _require_reps(state, reps):
+    missing = [rep for rep in (1, 2) if rep not in reps]
+    unknown = [rep for rep in reps if rep not in (1, 2)]
+    if not missing and not unknown:
+        return
+    bits = []
+    if unknown:
+        bits.append("unknown rep " + ", ".join(str(rep) for rep in unknown))
+    if missing:
+        bits.append("missing rep " + ", ".join(str(rep) for rep in missing))
+    raise HarnessError("; ".join(bits) + f" for state {state}")
+
+
 def _signature(node):
     return tuple(node.get(key) for key in _REPEAT_KEYS)
 
@@ -183,16 +283,24 @@ def _check_repeat(first, second):
 def _inventory(state, nodes):
     if not isinstance(nodes, list) or not nodes:
         raise HarnessError("incomplete dump")
-    if state not in STATES:
-        return
     present = []
     for node in nodes:
         if not isinstance(node, dict) or not node.get("name"):
             raise HarnessError("incomplete dump")
         present.append(node["name"])
-    for name in STATES[state]:
-        if name not in present:
-            raise HarnessError("missing mesh", mesh=name)
+    if len(present) != len(set(present)):
+        duplicate = next(name for name in present if present.count(name) > 1)
+        raise HarnessError(f"duplicate node {duplicate}", mesh=duplicate)
+    if state not in STATES:
+        return
+    missing = [name for name in STATES[state] if name not in present]
+    unknown = [name for name in present if name not in STATES[state]]
+    if unknown and missing:
+        raise HarnessError(f"unknown node {unknown[0]}", mesh=unknown[0])
+    if missing:
+        raise HarnessError(f"missing node {missing[0]}", mesh=missing[0])
+    if unknown:
+        raise HarnessError(f"extra node {unknown[0]}", mesh=unknown[0])
     by_name = {node["name"]: node for node in nodes}
     for name, count in STATES[state].items():
         faces = by_name[name].get("faces")
@@ -266,26 +374,36 @@ def evaluate(dump):
     if not isinstance(dump, dict) or not isinstance(dump.get("imports"), list) or not dump["imports"]:
         raise HarnessError("empty input")
     synthetic = dump.get("synthetic") is True
-    grouped = {}
+    failures = dump.get("failures")
+    if failures:
+        raise HarnessError(_failure_text(failures))
+    seen = set()
+    parsed = []
     for item in dump["imports"]:
         if not isinstance(item, dict) or "state" not in item or "rep" not in item:
             raise HarnessError("incomplete dump")
+        rep = item["rep"]
+        if isinstance(rep, bool) or not isinstance(rep, int):
+            raise HarnessError(f"unknown rep {rep!r} for state {item['state']}")
+        ident = (item["state"], rep)
+        if ident in seen:
+            raise HarnessError(f"duplicate state/rep {item['state']}/{rep}")
+        seen.add(ident)
+        parsed.append(item)
+    for item in parsed:
+        _import_context(item)
+    grouped = {}
+    for item in parsed:
         grouped.setdefault(item["state"], {})[item["rep"]] = item
-    if not synthetic:
-        missing = [state for state in STATES if state not in grouped]
-        if missing:
-            raise HarnessError("incomplete dump: " + ", ".join(missing))
+    _require_campaign(grouped, synthetic)
     rows = []
     for state, reps in grouped.items():
-        if set(reps) != {1, 2}:
-            raise HarnessError("incomplete dump: two imports required")
+        _require_reps(state, reps)
         _check_repeat(reps[1], reps[2])
         for rep in (1, 2):
             item = reps[rep]
             nodes = item.get("nodes")
             _inventory(state, nodes)
-            if item.get("failures"):
-                raise HarnessError("incomplete dump: " + "; ".join(map(str, item["failures"])))
             for node in nodes:
                 rows.append(_one(item, node))
     return {

@@ -1,15 +1,17 @@
-"""Opt-in AC08 native xView parity harness (#766).
+"""new-case: opt-in AC08 native xView parity harness (#766).
 
 Always-run cases use SYNTHETIC native-dump dicts. Real FBX bytes stay outside
 the repo: the fixture test skips unless AC08_XVIEW_FIXTURE_ROOT is set, and the
-native test also skips unless AC08_XVIEW_NATIVE_DUMP is set or pytest is
-selected with -m native_max and a live ping succeeds.
+native test also skips unless AC08_XVIEW_NATIVE_DUMP is set. Selecting
+``-m native_max`` may ping the bridge, but a live marker with no dump skips:
+nothing was measured, and 3ds Max is not launched.
 """
 import copy
 import importlib.util
 import json
 import os
 import random
+import warnings
 from pathlib import Path
 
 import pytest
@@ -49,6 +51,7 @@ def _node(name, vertices, faces, overlap_vertices=None, overlap_faces=None, **ov
         "num_faces": len(faces),
         "overlap_vertices": [] if overlap_vertices is None else list(overlap_vertices),
         "overlap_faces": [] if overlap_faces is None else list(overlap_faces),
+        "geometry_unchanged": True,
     }
     node.update(overrides)
     if "verts_count" not in overrides:
@@ -74,9 +77,11 @@ def _dump(nodes, state="synthetic-quad", reps=(1, 2), synthetic=True):
         imports.append({
             "state": state,
             "rep": rep,
+            "import_ok": True,
             "m_per_unit": 1,
             "tol_v_units": 0.002,
             "tol_f_units": 0.005,
+            "failures": [],
             "nodes": copy.deepcopy(nodes),
         })
     return {"synthetic": synthetic, "imports": imports}
@@ -423,9 +428,9 @@ def test_real_native_parity(lib, request):
         pytest.skip(native)
     path = os.environ.get("AC08_XVIEW_NATIVE_DUMP")
     if not path:
-        err = _raises(lib, {})
-        assert err.status == "fail"
-        return
+        pytest.skip(
+            "AC08_XVIEW_NATIVE_DUMP unset: live Max is not launched and no native dump was measured"
+        )
     dump = json.loads(Path(path).read_text(encoding="utf-8"))
     if dump.get("synthetic") is True:
         pytest.fail("synthetic dump cannot confirm native parity")
@@ -435,3 +440,406 @@ def test_real_native_parity(lib, request):
     assert report["synthetic"] is False
     assert report["mesh_import_rows"] == 14
     assert all(row["equal"] for row in report["rows"])
+
+
+def _separated_node(name, count):
+    """SYNTHETIC. ``count`` quads, 10 m apart, so neither 2 mm nor 5 mm fires."""
+    vertices = []
+    faces = []
+    for index in range(count):
+        x = index * 10.0
+        base = len(vertices)
+        vertices.extend([
+            [x, 0.0, 0.0], [x + 1.0, 0.0, 0.0], [x + 1.0, 1.0, 0.0], [x, 1.0, 0.0],
+        ])
+        faces.append([base + 1, base + 2, base + 3, base + 4])
+    node = _node(name, vertices, faces)
+    node["geometry_unchanged"] = True
+    return node
+
+
+def _pinned_dump(lib, synthetic=True):
+    """Fourteen-row stand-in: pinned state/rep/node inventory, empty xView sets."""
+    imports = []
+    for state, parts in lib.STATES.items():
+        nodes = [_separated_node(name, count) for name, count in parts.items()]
+        for rep in (1, 2):
+            imports.append({
+                "state": state,
+                "rep": rep,
+                "import_ok": True,
+                "m_per_unit": 1,
+                "tol_v_units": 0.002,
+                "tol_f_units": 0.005,
+                "failures": [],
+                "nodes": copy.deepcopy(nodes),
+            })
+    return {"synthetic": synthetic, "failures": [], "imports": imports}
+
+
+def _control_dump(lib):
+    """Retained real dump when configured; otherwise the synthetic 14-row stand-in."""
+    raw = os.environ.get(lib.NATIVE_DUMP_ENV)
+    if raw and Path(raw).is_file():
+        dump = json.loads(Path(raw).read_text(encoding="utf-8"))
+        if dump.get("synthetic") is True:
+            pytest.fail("synthetic dump cannot confirm native parity")
+        return dump
+    return _pinned_dump(lib, synthetic=True)
+
+
+def _certify(lib, dump):
+    if dump.get("synthetic") is True:
+        return lib.evaluate(dump)
+    return lib.confirm_native(dump)
+
+
+def _reject(lib, dump):
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", RuntimeWarning)
+        with pytest.raises(lib.HarnessError) as caught:
+            _certify(lib, dump)
+    assert caught.value.status == "fail"
+    assert caught.value.status not in ("pass", "not_run")
+    return str(caught.value)
+
+
+_INVENTORY_MUTATIONS = {
+    "missing_state", "extra_state", "unknown_state",
+    "missing_rep", "unknown_rep",
+    "missing_node", "extra_node", "unknown_node",
+}
+
+
+def _both_reps(dump, state, mutate_item):
+    for item in dump["imports"]:
+        if item["state"] == state:
+            mutate_item(item)
+
+
+def _mutate_top_failures(dump):
+    dump["failures"] = ["RuntimeError after final mutation"]
+
+
+def _mutate_import_ok_false(dump):
+    dump["imports"][0]["import_ok"] = False
+
+
+def _mutate_import_ok_missing(dump):
+    del dump["imports"][0]["import_ok"]
+
+
+def _mutate_geometry_false(dump):
+    dump["imports"][0]["nodes"][0]["geometry_unchanged"] = False
+
+
+def _mutate_geometry_missing(dump):
+    del dump["imports"][0]["nodes"][0]["geometry_unchanged"]
+
+
+def _mutate_duplicate(dump):
+    bad = copy.deepcopy(dump["imports"][0])
+    bad["nodes"][0]["error"] = "checker failure"
+    bad["failures"] = ["checker failure"]
+    dump["imports"].insert(0, bad)
+
+
+def _mutate_class_mesh(dump):
+    for item in dump["imports"]:
+        for node in item["nodes"]:
+            node["class"] = "Editable_Mesh"
+
+
+def _mutate_tol_1e9(dump):
+    for item in dump["imports"]:
+        item["tol_v_units"] = 1e-9
+        item["tol_f_units"] = 1e-9
+
+
+def _mutate_missing_state(dump):
+    dump["imports"] = [item for item in dump["imports"] if item["state"] != "S00_source"]
+
+
+def _mutate_extra_state(dump):
+    extra = [copy.deepcopy(item) for item in dump["imports"] if item["state"] == "S00_source"]
+    for item in extra:
+        item["state"] = "S99_extra"
+    dump["imports"].extend(extra)
+
+
+def _mutate_unknown_state(dump):
+    for item in dump["imports"]:
+        if item["state"] == "S00_source":
+            item["state"] = "S99_unknown"
+
+
+def _mutate_missing_rep(dump):
+    dump["imports"] = [
+        item for item in dump["imports"]
+        if not (item["state"] == "S00_source" and item["rep"] == 2)
+    ]
+
+
+def _mutate_unknown_rep(dump):
+    for item in dump["imports"]:
+        if item["state"] == "S00_source" and item["rep"] == 2:
+            item["rep"] = 9
+
+
+def _mutate_missing_node(dump):
+    def drop(item):
+        item["nodes"] = [node for node in item["nodes"] if node["name"] != "AC08_knob"]
+
+    _both_reps(dump, "S00_source", drop)
+
+
+def _mutate_extra_node(dump):
+    extra = _separated_node("AC08_not_in_inventory", 1)
+
+    def add(item):
+        item["nodes"].append(copy.deepcopy(extra))
+
+    _both_reps(dump, "S00_source", add)
+
+
+def _mutate_unknown_node(dump):
+    def rename(item):
+        for node in item["nodes"]:
+            if node["name"] == "AC08_knob":
+                node["name"] = "AC08_ghost"
+
+    _both_reps(dump, "S00_source", rename)
+
+
+def _mutate_tol_nan(dump):
+    dump["imports"][0]["tol_v_units"] = float("nan")
+
+
+def _mutate_tol_inf(dump):
+    dump["imports"][0]["tol_f_units"] = float("inf")
+
+
+def _mutate_coord_nan(dump):
+    def poison(item):
+        for node in item["nodes"]:
+            if node["name"] == "AC08_body":
+                node["vertices"][0][2] = float("nan")
+
+    _both_reps(dump, "S00_source", poison)
+
+
+def _mutate_tol_v_zero(dump):
+    dump["imports"][0]["tol_v_units"] = 0.0
+
+
+def _mutate_tol_v_at_face_threshold(dump):
+    dump["imports"][0]["tol_v_units"] = 0.005
+
+
+def _mutate_tol_f_at_vertex_threshold(dump):
+    dump["imports"][0]["tol_f_units"] = 0.002
+
+
+def _mutate_units_mm(dump):
+    dump["imports"][0]["m_per_unit"] = 0.001
+
+
+def _mutate_units_name(dump):
+    dump["imports"][0]["m_per_unit"] = "inches"
+
+
+def _mutate_vertex_exactly_2mm(dump):
+    def shift(item):
+        for node in item["nodes"]:
+            if node["name"] == "AC08_body":
+                origin = node["vertices"][0]
+                node["vertices"][1] = [origin[0] + 0.002, origin[1], origin[2]]
+
+    _both_reps(dump, "S00_source", shift)
+
+
+_MUTATIONS = {
+    "top_failures": (_mutate_top_failures, "RuntimeError after final mutation"),
+    "import_ok_false": (_mutate_import_ok_false, "import_ok"),
+    "import_ok_missing": (_mutate_import_ok_missing, "import_ok"),
+    "geometry_unchanged_false": (_mutate_geometry_false, "geometry_unchanged"),
+    "geometry_unchanged_missing": (_mutate_geometry_missing, "geometry_unchanged"),
+    "duplicate_state_rep": (_mutate_duplicate, "duplicate state/rep"),
+    "class_editable_mesh": (_mutate_class_mesh, "Editable_Mesh"),
+    "tolerances_1e-9": (_mutate_tol_1e9, "1e-09"),
+    "missing_state": (_mutate_missing_state, "missing state S00_source"),
+    "extra_state": (_mutate_extra_state, "extra state S99_extra"),
+    "unknown_state": (_mutate_unknown_state, "unknown state S99_unknown"),
+    "missing_rep": (_mutate_missing_rep, "missing rep 2"),
+    "unknown_rep": (_mutate_unknown_rep, "unknown rep 9"),
+    "missing_node": (_mutate_missing_node, "missing node AC08_knob"),
+    "extra_node": (_mutate_extra_node, "extra node AC08_not_in_inventory"),
+    "unknown_node": (_mutate_unknown_node, "unknown node AC08_ghost"),
+    "tol_nan": (_mutate_tol_nan, "non-finite"),
+    "tol_inf": (_mutate_tol_inf, "non-finite"),
+    "coord_nan": (_mutate_coord_nan, "non-finite"),
+    "tol_v_exactly_0": (_mutate_tol_v_zero, "tol_v_units"),
+    "tol_v_exactly_5mm": (_mutate_tol_v_at_face_threshold, "tol_v_units"),
+    "tol_f_exactly_2mm": (_mutate_tol_f_at_vertex_threshold, "tol_f_units"),
+    "units_millimetre": (_mutate_units_mm, "metre"),
+    "units_unsupported": (_mutate_units_name, "unsupported"),
+    "vertex_exactly_2mm": (_mutate_vertex_exactly_2mm, "AC08_body"),
+}
+
+
+@pytest.mark.parametrize("mutation_id", list(_MUTATIONS), ids=list(_MUTATIONS))
+def test_native_mutation_is_not_certified(lib, mutation_id):
+    """Each false-confirmation mutation is named and rejected, never a pass."""
+    mutate, cause = _MUTATIONS[mutation_id]
+    dump = copy.deepcopy(_control_dump(lib))
+    mutate(dump)
+    if mutation_id in _INVENTORY_MUTATIONS and dump.get("synthetic") is True:
+        dump["synthetic"] = False
+    text = _reject(lib, dump)
+    assert cause in text
+    assert "pass" not in text
+
+
+def test_unmutated_control_yields_fourteen_rows(lib):
+    dump = _control_dump(lib)
+    report = _certify(lib, dump)
+    assert report["status"] == "pass"
+    assert report["delivery_passed"] is False
+    assert report["mesh_import_rows"] == 14
+    assert all(row["equal"] for row in report["rows"])
+    if dump.get("synthetic") is True:
+        certified = copy.deepcopy(dump)
+        certified["synthetic"] = False
+        native = lib.confirm_native(certified)
+        assert native["status"] == "pass"
+        assert native["mesh_import_rows"] == 14
+        assert native["delivery_passed"] is False
+
+
+def test_live_marker_without_measured_dump_never_passes(lib, monkeypatch):
+    """Fixtures configured, native_max selected, ping accepted, dump absent."""
+    monkeypatch.delenv("AC08_XVIEW_NATIVE_DUMP", raising=False)
+    monkeypatch.setattr(lib, "fixture_skip_reason", lambda env=None: None)
+    monkeypatch.setattr(lib, "native_skip_reason", lambda *args, **kwargs: None)
+
+    class _Request:
+        class config:
+            @staticmethod
+            def getoption(name):
+                return "native_max"
+
+    with pytest.raises((pytest.skip.Exception, pytest.fail.Exception)) as caught:
+        test_real_native_parity(lib, _Request())
+    assert "AC08_XVIEW_NATIVE_DUMP" in str(caught.value)
+
+
+def _probe_reject_all(lib, mutations):
+    base = _pinned_dump(lib, synthetic=True)
+    clean = _certify(lib, copy.deepcopy(base))
+    assert clean["status"] == "pass"
+    assert clean["mesh_import_rows"] == 14
+    rejected = 0
+    for change in mutations:
+        dump = copy.deepcopy(base)
+        change(dump)
+        _reject(lib, dump)
+        rejected += 1
+    assert rejected == len(mutations)
+    return rejected
+
+
+def test_probe_never_certify_failed(lib):
+    """Single-field execution failures, including a checker failure, never pass."""
+    mutations = [
+        _mutate_top_failures,
+        _mutate_import_ok_false,
+        _mutate_import_ok_missing,
+        lambda dump: dump["imports"][0].__setitem__("import_ok", 0),
+        lambda dump: dump["imports"][0].__setitem__("import_ok", None),
+        _mutate_geometry_false,
+        _mutate_geometry_missing,
+        lambda dump: dump["imports"][0]["nodes"][0].__setitem__("geometry_unchanged", None),
+        lambda dump: dump["imports"][0]["nodes"][0].__setitem__("error", "checker failure"),
+        lambda dump: dump["imports"][0].__setitem__("failures", ["RuntimeError after final mutation"]),
+    ]
+    assert _probe_reject_all(lib, mutations) == 10
+
+
+def test_probe_never_certify_duplicate(lib):
+    """Duplicate (state, rep) identities are rejected before a dict overwrite."""
+    def with_failure(item):
+        item["nodes"][0]["error"] = "checker failure"
+        item["failures"] = ["checker failure"]
+
+    def insert_front(dump, poison=False):
+        bad = copy.deepcopy(dump["imports"][0])
+        if poison:
+            with_failure(bad)
+        dump["imports"].insert(0, bad)
+
+    def append(dump, poison=False):
+        bad = copy.deepcopy(dump["imports"][0])
+        if poison:
+            with_failure(bad)
+        dump["imports"].append(bad)
+
+    mutations = [
+        lambda dump: insert_front(dump, poison=True),
+        lambda dump: append(dump, poison=True),
+        lambda dump: insert_front(dump, poison=False),
+        lambda dump: append(dump, poison=False),
+        lambda dump: insert_front(dump, poison=True) or dump["imports"][0].__setitem__("import_ok", False),
+    ]
+    assert _probe_reject_all(lib, mutations) == 5
+
+
+def test_probe_never_certify_non_poly(lib):
+    """Only Editable_Poly is accepted; every other class is a named rejection."""
+    classes = ["Editable_Mesh", "Editable_mesh", "PolyMesh", "", None, "Editable_Poly ", "Editable Poly"]
+
+    def set_class(value):
+        def change(dump):
+            dump["imports"][0]["nodes"][0]["class"] = value
+        return change
+
+    mutations = [set_class(value) for value in classes]
+    mutations.append(lambda dump: dump["imports"][0]["nodes"][0].__delitem__("class"))
+    assert _probe_reject_all(lib, mutations) == 8
+
+
+def test_probe_never_certify_wrong_tolerance(lib):
+    """Frozen metres / 2 mm / 5 mm only. Other units, NaN/inf and exact boundaries fail."""
+    def set_field(key, value, every=False):
+        def change(dump):
+            items = dump["imports"] if every else dump["imports"][:1]
+            for item in items:
+                item[key] = value
+        return change
+
+    mutations = [
+        set_field("tol_v_units", 1e-9),
+        set_field("tol_f_units", 1e-9),
+        set_field("tol_v_units", 1e-9, every=True),
+        set_field("tol_f_units", 1e-9, every=True),
+        set_field("m_per_unit", 0.001),
+        set_field("m_per_unit", 0.0254),
+        set_field("m_per_unit", "inches"),
+        set_field("m_per_unit", 0),
+        set_field("m_per_unit", 0.0),
+        set_field("m_per_unit", float("nan")),
+        set_field("m_per_unit", float("inf")),
+        set_field("m_per_unit", True),
+        set_field("tol_v_units", 0),
+        set_field("tol_v_units", 0.0),
+        set_field("tol_v_units", float("nan")),
+        set_field("tol_v_units", float("inf")),
+        set_field("tol_v_units", True),
+        set_field("tol_v_units", 0.005),
+        set_field("tol_f_units", 0),
+        set_field("tol_f_units", 0.0),
+        set_field("tol_f_units", float("nan")),
+        set_field("tol_f_units", float("inf")),
+        set_field("tol_f_units", 0.002),
+        _mutate_vertex_exactly_2mm,
+    ]
+    assert _probe_reject_all(lib, mutations) == 24

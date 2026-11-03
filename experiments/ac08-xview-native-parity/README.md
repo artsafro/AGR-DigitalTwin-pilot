@@ -18,5 +18,10 @@ uv run python experiments/ac08-xview-native-parity/run.py compare --work W --bas
 ```
 
 `prepare` writes `native.ms` (`holdMaxFile` / `fetchMaxFile`). A native result
-is opt-in: `AC08_XVIEW_NATIVE_DUMP` points at the Max `native.json`, or pytest
-`-m native_max` pings the live Max bridge. Do not commit the dump.
+is opt-in: `AC08_XVIEW_NATIVE_DUMP` points at the Max `native.json`. pytest
+`-m native_max` may ping the bridge, and without that dump the test skips.
+It does not launch 3ds Max and it does not pass on an empty compare.
+Do not commit the dump. Certification rejects a nonempty `failures` list,
+`import_ok` other than true, `geometry_unchanged` other than true, a duplicate
+`(state, rep)`, any class other than `Editable_Poly`, and any units or
+tolerances other than metres, 2 mm vertices and 5 mm faces.
