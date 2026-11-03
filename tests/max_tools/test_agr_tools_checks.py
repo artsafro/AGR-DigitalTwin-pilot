@@ -479,3 +479,64 @@ def test_mzp_ships_the_new_cores(tmp_path):
 
 def test_math_is_finite_guard():
     assert math.isfinite(core.vpm_ucx_limit(10 ** 9))
+
+
+def test_tri_limits_probe_per_fbx_invariant():
+    """Probe: for random scenes over 4 FBX, every render object's finding is exactly the comparison of
+    ITS FBX sum with ITS FBX limit; no object is missing from the output; UCX never adds to render."""
+    import random
+    rnd = random.Random(804)
+    fbxs = {'C:/o/0001_A_01.fbx': 150000, 'C:/o/0001_A_02.fbx': 150000, 'C:/o/0001_A_Ground.fbx': 180000,
+            'C:/o/SM_A.fbx': 1000000}
+    checked = 0
+    for _ in range(300):
+        rows = []
+        for k in range(rnd.randint(1, 8)):
+            fbx = rnd.choice(sorted(fbxs))
+            ucx = fbx.endswith('SM_A.fbx') and rnd.random() < 0.3
+            name = 'UCX_SM_A_Main_%03d' % (k + 1) if ucx else 'SM_A_%d_Main' % k
+            rows.append(row(k + 1, name, fbx, rnd.choice((0, 1, 74999, 75000, 75001, 150000, 600000))))
+        found, table = core.triangle_limits(rows)
+        assert set(found) == {r['key'] for r in rows}
+        for r in rows:
+            if r['name'].startswith('UCX_'):
+                continue
+            total = sum(x['triangles'] for x in rows if x['fbx'] == r['fbx'] and not x['name'].startswith('UCX_'))
+            lim = fbxs[r['fbx']]
+            want = ['tri_limit'] if total > lim else ['tri_at_limit'] if total == lim else []
+            assert codes(found[r['key']]) == want, (rows, r)
+            checked += 1
+        assert sum(t['objects'] for t in table) == len(rows)
+    assert checked > 500
+
+
+def test_slot_number_probe():
+    """Probe: every M/T SlotNumber 1..7 is legal and every other last token is `name_suffix`."""
+    for tok in [str(i) for i in range(0, 12)] + ['01', '07', 'a', '1a', '']:
+        for name, role in ((f'M_Addr_001_Main_{tok}', 'M'), (f'T_Addr_001_Main_d_{tok}', 'T')):
+            got = codes(core.name_findings(name, role, 'npm'))
+            if tok in core.SLOTS:
+                assert 'name_suffix' not in got, name
+            else:
+                assert got and ('name_suffix' in got or 'name_separator' in got), (name, got)
+
+
+def test_checks_050_works_when_loaded_like_bootstrap():
+    """Native Max 2024 r1: the macro path raised KeyError 'agr_tools_runtime' because bootstrap.py
+    loads runtime.py with module_from_spec and never registers it in sys.modules."""
+    import sys
+    spec = importlib.util.spec_from_file_location('agr_tools_runtime_unregistered', PKG / 'runtime.py')
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    assert 'agr_tools_runtime_unregistered' not in sys.modules
+    seen = {}
+
+    class Glue:
+        @staticmethod
+        def run(agr, checks, tool, nodes, path):
+            seen['agr'] = agr
+            return {'tool': tool}
+
+    mod._load_core = lambda name, module: Glue if name == 'checks_max.py' else core
+    assert mod.checks_050('pivot', ['n'], None) == {'tool': 'pivot'}
+    assert seen['agr']._prop is mod._prop and seen['agr']._report is mod._report

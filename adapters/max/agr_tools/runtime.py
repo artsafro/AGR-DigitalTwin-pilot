@@ -214,9 +214,12 @@ def _checks_core():
 
 
 def checks_050(tool, nodes=None, path=None):
-    """0.5.0 read-only diagnostics: names, tris, textures, pivot, geojson (checks_max.py)."""
+    """0.5.0 read-only diagnostics: names, tris, textures, pivot, geojson (checks_max.py).
+    bootstrap.py loads this file with module_from_spec and does not register it in sys.modules,
+    so the glue gets a namespace over this module's globals, not sys.modules[__name__]."""
+    import types
     glue = _load_core('checks_max.py', 'agr_tools_checks_max')
-    return glue.run(sys.modules[__name__], _checks_core(), tool, nodes, path)
+    return glue.run(types.SimpleNamespace(**globals()), _checks_core(), tool, nodes, path)
 
 
 def _targets(nodes):
