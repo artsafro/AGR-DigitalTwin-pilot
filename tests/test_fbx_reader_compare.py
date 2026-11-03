@@ -163,3 +163,57 @@ def test_partial_named_inputs_and_sentinel_preserved(tmp_path):
     assert run_diff(left, right, out2).returncode == 0
     assert sentinel.read_text(encoding="utf-8") == "keep"
     assert sorted(p.name for p in tmp_path.glob("*.tmp")) == []
+
+
+def run_measure(scratch, output, ac08, b01, k02):
+    return subprocess.run(
+        [sys.executable, str(SCRIPT), "measure", "--scratch", str(scratch), "--output", str(output),
+         "--ac08", str(ac08), "--ac08-sha", "", "--b01", str(b01), "--b01-sha", "", "--k02", str(k02),
+         "--wait", "0", "--timeout", "5"],
+        capture_output=True, text=True)
+
+
+@pytest.mark.parametrize("which", ["ac08_in_cfg", "b01_as_json", "k02_in_planted", "output_in_cfg", "output_as_json"])
+def test_measure_generated_paths_never_touch_inputs(tmp_path, which):
+    scratch = tmp_path / "scratch"
+    other = tmp_path / "other"
+    other.mkdir()
+    paths = {"ac08": other / "a.fbx", "b01": other / "b.fbx", "k02": other / "k.fbx"}
+    out = tmp_path / "report.json"
+    if which == "ac08_in_cfg":
+        paths["ac08"] = scratch / "cfg-AC08-legacy-0" / "blender-config" / "source.fbx"
+    elif which == "b01_as_json":
+        paths["b01"] = scratch / "AC08_legacy_0.json"
+    elif which == "k02_in_planted":
+        paths["k02"] = scratch / "planted" / "control.fbx"
+    elif which == "output_in_cfg":
+        out = scratch / "pm-wm-uv" / "report.json"
+    else:
+        out = scratch / "B01_wm_2.json"
+    for name, path in paths.items():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(name.encode())
+    before = {n: p.read_bytes() for n, p in paths.items()}
+    done = run_measure(scratch, out, paths["ac08"], paths["b01"], paths["k02"])
+    assert done.returncode != 0
+    assert {n: p.read_bytes() for n, p in paths.items()} == before
+    assert not out.exists()
+
+
+def test_measure_hardlinked_input_to_generated_path_rejected(tmp_path):
+    scratch = tmp_path / "scratch"
+    scratch.mkdir()
+    src = tmp_path / "a.fbx"
+    src.write_bytes(b"a")
+    link = scratch / "AC08_legacy_0.json"
+    try:
+        import os
+        os.link(src, link)
+    except OSError:
+        pytest.skip("no hardlinks")
+    b, k = tmp_path / "b.fbx", tmp_path / "k.fbx"
+    b.write_bytes(b"b")
+    k.write_bytes(b"k")
+    done = run_measure(scratch, tmp_path / "r.json", src, b, k)
+    assert done.returncode != 0
+    assert src.read_bytes() == b"a" and link.read_bytes() == b"a"

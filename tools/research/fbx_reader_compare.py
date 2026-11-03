@@ -423,6 +423,37 @@ def _caught(control, mutant, kind):
     return kind in {item["kind"] for item in result["differences"]}
 
 
+def _preflight_inventory(scratch, objects, output):
+    """Reject before any side effect when a generated path can touch an input or the output."""
+    scratch = Path(scratch)
+    ids = [item["id"] for item in objects]
+    files, dirs = [], [scratch / "planted"]
+    for ident in ids:
+        for importer in ("legacy", "wm"):
+            for index in range(3):
+                files.append(scratch / f"{ident}_{importer}_{index}.json")
+                dirs.append(scratch / f"cfg-{ident}-{importer}-{index}")
+    for kind in ("control", "material", "uv", "rename"):
+        files.append(scratch / "planted" / f"{kind}.fbx")
+        dirs.append(scratch / f"plant-{kind}")
+    for importer in ("legacy", "wm"):
+        files.append(scratch / f"plant_control_{importer}.json")
+        dirs.append(scratch / f"pc-{importer}")
+        for kind in ("material", "uv", "rename"):
+            files.append(scratch / f"plant_{kind}_{importer}.json")
+            dirs.append(scratch / f"pm-{importer}-{kind}")
+    protected = [Path(item["path"]) for item in objects] + [Path(output)]
+    for target in protected:
+        resolved = target.resolve()
+        for generated in files:
+            if _same_path(generated, [target]):
+                raise SnapshotError(f"generated path aliases input/output: {generated.name}")
+        for directory in dirs:
+            root = directory.resolve()
+            if resolved == root or root in resolved.parents:
+                raise SnapshotError(f"input/output inside generated directory: {directory.name}")
+
+
 def measure_cli(args):
     scratch = Path(args.scratch)
     scratch.mkdir(parents=True, exist_ok=True)
@@ -443,6 +474,7 @@ def measure_cli(args):
         if item["expect_sha256"] and item["sha256"] != item["expect_sha256"]:
             raise SnapshotError(f"sha256 mismatch {item['id']}")
     before = {item["id"]: item["sha256"] for item in objects}
+    _preflight_inventory(scratch, objects, output)
     lock = None
     try:
         lock = _acquire(args.card, args.wait, args.timeout)
