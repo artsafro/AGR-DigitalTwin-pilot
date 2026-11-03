@@ -266,6 +266,290 @@ def build_bench(spec):
     return {"verts": verts, "faces": faces, "face_mat": fmat, "plan_rotation_deg": rot}
 
 
+CLAD_REQUIRED = ("path", "depth", "height", "foot_height", "courses", "seam_width", "seam_depth", "frame_width",
+                 "top_boards", "foot_length", "foot_inset", "end_overhang", "max_foot_span", "materials")
+
+
+def _validate_clad(spec):
+    if not isinstance(spec, dict):
+        raise ValueError("spec must be a dict")
+    unknown = sorted(set(spec) - set(CLAD_REQUIRED) - set(OPTIONAL))
+    if unknown:
+        raise ValueError(f"unknown spec keys: {unknown}")
+    missing = [k for k in CLAD_REQUIRED if k not in spec]
+    if missing:
+        raise ValueError(f"missing spec keys: {missing}")
+    p: dict = {k: _finite_pos(spec, k) for k in CLAD_REQUIRED if k not in ("path", "courses", "top_boards",
+                                                                          "materials")}
+    for k in ("courses", "top_boards"):
+        v = spec[k]
+        if isinstance(v, bool) or not isinstance(v, int) or v < 1:
+            raise ValueError(f"{k} must be an int >= 1, got {v!r}")
+        p[k] = v
+    h, g, sd, f = p["depth"] / 2, p["seam_width"], p["seam_depth"], p["frame_width"]
+    p["course_h"] = (p["height"] - p["foot_height"] - (p["courses"] - 1) * g) / p["courses"]
+    p["board_w"] = (p["depth"] - 2 * f - (p["top_boards"] + 1) * g) / p["top_boards"]
+    if p["course_h"] <= sd:
+        raise ValueError(f"course height {p['course_h']:.4f} m must exceed seam_depth {sd}")
+    if p["board_w"] <= g:
+        raise ValueError(f"{p['top_boards']} top boards do not fit in depth {p['depth']} (board width {p['board_w']:.4f})")
+    if sd >= f:
+        raise ValueError("seam_depth must stay below frame_width (the side frame carries the ring seam)")
+    if p["foot_inset"] >= h:
+        raise ValueError("foot_inset must stay inside half the depth")
+    if p["foot_length"] >= p["max_foot_span"]:
+        raise ValueError("foot_length must be below max_foot_span")
+    if p["end_overhang"] - p["foot_length"] / 2 <= p["foot_inset"]:
+        raise ValueError("end_overhang must keep the end foot clear of the bottom end band (foot_inset)")
+    mats = spec["materials"]
+    if not isinstance(mats, dict) or set(mats) != set(MATERIAL_ROLES):
+        raise ValueError(f"materials must map exactly {list(MATERIAL_ROLES)}, got {mats!r}")
+    for role, mid in mats.items():
+        if isinstance(mid, bool) or not isinstance(mid, int) or mid < 1:
+            raise ValueError(f"material id for {role!r} must be a positive int, got {mid!r}")
+    p["materials"] = dict(mats)
+    pts = _points(spec["path"])
+    if len(pts) < 2:
+        raise ValueError("path needs at least two points")
+    for a, b in zip(pts, pts[1:]):
+        if math.dist(a, b) < 1e-3:
+            raise ValueError(f"path has a zero-length segment at {a}")
+    p["path"] = pts
+    p["align"] = bool(spec.get("align", True))
+    return p
+
+
+def _align(pts, align):
+    if not align:
+        return pts, 0.0
+    lens = [math.dist(a, b) for a, b in zip(pts, pts[1:])]
+    i = lens.index(max(lens))
+    rot = -math.degrees(math.atan2(pts[i + 1][1] - pts[i][1], pts[i + 1][0] - pts[i][0]))
+    return _rotate(pts, rot), rot
+
+
+def _check_strips_apart(pts, depth):
+    for i in range(len(pts) - 1):
+        for j in range(i + 2, len(pts) - 1):
+            if _seg_dist(pts[i], pts[i + 1], pts[j], pts[j + 1]) < depth:
+                raise ValueError(f"segments {i} and {j} come closer than the seat depth: strips overlap")
+
+
+def build_clad_box(spec):
+    """Closed timber box bench («Верона» form) along a plan run -> one welded quad mesh with modelled seams.
+
+    Body from `foot_height` to `height`: `courses` horizontal boards on every side, separated by ring seams
+    (`seam_width` high, `seam_depth` deep) that wrap the whole outline; the top is a frame `frame_width` wide around
+    `top_boards` lengthwise boards with seams between them (and against the frame) that stop at the end frames and
+    turn mitred through the corners. Steel foot plates (`foot_length` along the run, depth − 2·`foot_inset` across,
+    `foot_height` high) are let into the bottom at the free ends (`end_overhang` to the plate centre), at
+    <= `max_foot_span` spacing and `depth/2 + foot_length` from every corner. Planar bands whose two edges carry a
+    different vertex count are filled by a 3-to-1 quad reduction with interior points only, so no T-junction.
+    """
+    p = _validate_clad(spec)
+    pts, rot = _align(p["path"], p["align"])
+    depth, h = p["depth"], p["depth"] / 2
+    _check_strips_apart(pts, depth)
+    _offsets(pts, h)  # raises on a fold or a too-sharp turn
+    nseg = len(pts) - 1
+    dirs = [_unit(_sub(b, a)) for a, b in zip(pts, pts[1:])]
+    norms = [(-d[1], d[0]) for d in dirs]
+    lens = [math.dist(a, b) for a, b in zip(pts, pts[1:])]
+    mit = []  # per vertex: mitred unit normal scaled so that u is the lateral distance on both legs
+    for i in range(len(pts)):
+        if i == 0 or i == nseg:
+            n = norms[0] if i == 0 else norms[-1]
+            mit.append(n)
+        else:
+            n = _unit((norms[i - 1][0] + norms[i][0], norms[i - 1][1] + norms[i][1]))
+            k = 1.0 / (n[0] * norms[i][0] + n[1] * norms[i][1])
+            mit.append((n[0] * k, n[1] * k))
+
+    def Q(k, d, u):
+        return (pts[k][0] + dirs[k][0] * d + norms[k][0] * u, pts[k][1] + dirs[k][1] * d + norms[k][1] * u)
+
+    def start(k, u, inset):
+        return Q(0, inset, u) if k == 0 else (pts[k][0] + mit[k][0] * u, pts[k][1] + mit[k][1] * u)
+
+    def end(k, u, inset):
+        return Q(k, lens[k] - inset, u) if k == nseg - 1 else (pts[k + 1][0] + mit[k + 1][0] * u,
+                                                              pts[k + 1][1] + mit[k + 1][1] * u)
+
+    def along(k, xy):
+        return (xy[0] - pts[k][0]) * dirs[k][0] + (xy[1] - pts[k][1]) * dirs[k][1]
+
+    verts, index, faces, fmat = [], {}, [], []
+
+    def vid(xy, z):
+        key = (round(xy[0], 9), round(xy[1], 9), round(z, 9))
+        if key not in index:
+            index[key] = len(verts)
+            verts.append([xy[0], xy[1], z])
+        return index[key]
+
+    def add(corners, ref, mat):
+        ids = [vid(xy, z) for xy, z in corners]
+        q = [verts[i] for i in ids]
+        n = [0.0, 0.0, 0.0]
+        for a, b in zip(q, q[1:] + q[:1]):
+            n[0] += (a[1] - b[1]) * (a[2] + b[2])
+            n[1] += (a[2] - b[2]) * (a[0] + b[0])
+            n[2] += (a[0] - b[0]) * (a[1] + b[1])
+        if n[0] * ref[0] + n[1] * ref[1] + n[2] * ref[2] < 0:
+            ids.reverse()
+        faces.append(ids)
+        fmat.append(mat)
+
+    def band(inner, o0, o1, z, ref, mat):
+        """Fill the planar band between the collinear chain `inner` (any odd segment count) and the edge o0-o1."""
+        m = len(inner) - 1
+        if m % 2 == 0:
+            raise ValueError("internal: band chain needs an odd segment count")
+        a, b = inner[0], inner[-1]
+        tot = math.dist(a, b)
+
+        def pos(sr):
+            s, r = sr
+            lo = (a[0] + (b[0] - a[0]) * s, a[1] + (b[1] - a[1]) * s)
+            hi = (o0[0] + (o1[0] - o0[0]) * s, o0[1] + (o1[1] - o0[1]) * s)
+            return (lo[0] + (hi[0] - lo[0]) * r, lo[1] + (hi[1] - lo[1]) * r)
+
+        exact = {(0.0, 1.0): o0, (1.0, 1.0): o1}
+        chain = [(0.0, 1.0)] + [(math.dist(a, q) / tot, 0.0) for q in inner] + [(1.0, 1.0)]
+        chain[1], chain[-2] = (0.0, 0.0), (1.0, 0.0)
+        for (s, _r), q in zip(chain[1:-1], inner):
+            exact[(s, 0.0)] = q
+
+        def P(sr):
+            return (exact.get(sr) or pos(sr), z)
+
+        def quad(*sr):
+            add([P(x) for x in sr], ref, mat)
+
+        rho = 0.0
+        while len(chain) - 1 > 3:
+            M = len(chain) - 1
+            r_new, r_mid = (rho + 1) / 2, (3 * rho + 1) / 4
+            new = [chain[0], (chain[2][0], r_new)]
+            quad(chain[0], chain[1], chain[2], new[1])
+            j, triples = 2, (M - 4) // 3
+            while j < M - 2:
+                if triples and j + 3 <= M - 2:
+                    x0, x1, x2, x3 = chain[j:j + 4]
+                    A, B, y1 = (x1[0], r_mid), (x2[0], r_mid), (x3[0], r_new)
+                    quad(x0, x1, A, new[-1])
+                    quad(x1, x2, B, A)
+                    quad(x2, x3, y1, B)
+                    quad(A, B, y1, new[-1])
+                    new.append(y1)
+                    triples -= 1
+                    j += 3
+                else:
+                    y1 = (chain[j + 1][0], r_new)
+                    quad(chain[j], chain[j + 1], y1, new[-1])
+                    new.append(y1)
+                    j += 1
+            quad(chain[M - 2], chain[M - 1], chain[M], new[-1])
+            new.append(chain[M])
+            chain, rho = new, r_new
+        quad(*chain)
+
+    wood, steel = p["materials"]["seat"], p["materials"]["frame"]
+    zt, zf, g, sd, f = p["height"], p["foot_height"], p["seam_width"], p["seam_depth"], p["frame_width"]
+    hf = h - f
+    # --- top: frame bands, boards, seam pockets ---------------------------------------------------------------
+    us = [hf]
+    for _ in range(p["top_boards"]):
+        us += [us[-1] - g, us[-1] - g - p["board_w"]]
+    us += [-hf]
+    for k in range(nseg):
+        for j in range(len(us) - 1):
+            u0, u1 = us[j], us[j + 1]
+            cell = [start(k, u0, f), end(k, u0, f), end(k, u1, f), start(k, u1, f)]
+            if j % 2:
+                add([(c, zt) for c in cell], (0, 0, 1), wood)
+                continue
+            zs = zt - sd
+            add([(c, zs) for c in cell], (0, 0, 1), wood)
+            for u, sgn in ((u0, -1), (u1, 1)):
+                a, b = start(k, u, f), end(k, u, f)
+                add([(a, zs), (b, zs), (b, zt), (a, zt)], (norms[k][0] * sgn, norms[k][1] * sgn, 0), wood)
+            if k == 0:
+                a, b = start(0, u0, f), start(0, u1, f)
+                add([(a, zs), (b, zs), (b, zt), (a, zt)], (dirs[0][0], dirs[0][1], 0), wood)
+            if k == nseg - 1:
+                a, b = end(k, u0, f), end(k, u1, f)
+                add([(a, zs), (b, zs), (b, zt), (a, zt)], (-dirs[k][0], -dirs[k][1], 0), wood)
+        for side in (1, -1):
+            add([(start(k, side * h, 0), zt), (end(k, side * h, 0), zt), (end(k, side * hf, f), zt),
+                 (start(k, side * hf, f), zt)], (0, 0, 1), wood)
+    band([Q(0, f, u) for u in us], Q(0, 0, h), Q(0, 0, -h), zt, (0, 0, 1), wood)
+    kl = nseg - 1
+    band([Q(kl, lens[kl] - f, u) for u in us], Q(kl, lens[kl], h), Q(kl, lens[kl], -h), zt, (0, 0, 1), wood)
+    # --- sides: courses and ring seams around the whole outline -----------------------------------------------
+    def loop(w):
+        left = [start(k, h - w, w) for k in range(nseg)] + [end(kl, h - w, w)]
+        right = [start(k, w - h, w) for k in range(nseg)] + [end(kl, w - h, w)]
+        return left + right[::-1]
+
+    prof, ch = [(zf, 0.0)], p["course_h"]
+    for c in range(p["courses"] - 1):
+        top = zf + (c + 1) * ch + c * g
+        prof += [(top, 0.0), (top, sd), (top + g, sd), (top + g, 0.0)]
+    prof.append((zt, 0.0))
+    loops = {w: loop(w) for w in (0.0, sd)}
+    nl = len(loops[0.0])
+    for (z0, w0), (z1, w1) in zip(prof, prof[1:]):
+        l0, l1 = loops[w0], loops[w1]
+        for i in range(nl):
+            j = (i + 1) % nl
+            d = _sub(loops[0.0][j], loops[0.0][i])
+            out = _unit((-d[1], d[0]))
+            ref = (out[0] * (z1 - z0), out[1] * (z1 - z0), w1 - w0)
+            add([(l0[i], z0), (l0[j], z0), (l1[j], z1), (l1[i], z1)], ref, wood)
+    # --- bottom: steel plates let in, bands filled without touching the outline -------------------------------
+    fl, fi = p["foot_length"], p["foot_inset"]
+    ui = h - fi
+    for k in range(nseg):
+        e0 = p["end_overhang"] if k == 0 else h + fl
+        e1 = p["end_overhang"] if k == nseg - 1 else h + fl
+        span = lens[k] - e0 - e1
+        if span < fl:
+            raise ValueError(f"segment {k} ({lens[k]:.3f} m) is too short for two foot plates")
+        n = math.ceil(span / p["max_foot_span"]) + 1
+        cuts = []
+        for r in range(n):
+            c = e0 + span * r / (n - 1)
+            cuts += [c - fl / 2, c + fl / 2]
+        chains = {}
+        for u in (ui, -ui):
+            a, b = start(k, u, fi), end(k, u, fi)
+            if not along(k, a) + 1e-6 < cuts[0] or not cuts[-1] < along(k, b) - 1e-6:
+                raise ValueError(f"segment {k}: foot plates reach into the corner mitre")
+            chains[u] = [a] + [Q(k, d, u) for d in cuts] + [b]
+        L_, R_ = chains[ui], chains[-ui]
+        for j in range(len(L_) - 1):
+            cell = [L_[j], L_[j + 1], R_[j + 1], R_[j]]
+            if j % 2 == 0:
+                add([(c, zf) for c in cell], (0, 0, -1), wood)
+                continue
+            cx, cy = sum(c[0] for c in cell) / 4, sum(c[1] for c in cell) / 4
+            for a, b in zip(cell, cell[1:] + cell[:1]):
+                add([(a, zf), (b, zf), (b, 0.0), (a, 0.0)], ((a[0] + b[0]) / 2 - cx, (a[1] + b[1]) / 2 - cy, 0), steel)
+            add([(c, 0.0) for c in cell], (0, 0, -1), steel)
+        band(L_, start(k, h, 0), end(k, h, 0), zf, (0, 0, -1), wood)
+        band(R_, start(k, -h, 0), end(k, -h, 0), zf, (0, 0, -1), wood)
+    band([start(0, ui, fi), start(0, -ui, fi)], Q(0, 0, h), Q(0, 0, -h), zf, (0, 0, -1), wood)
+    band([end(kl, ui, fi), end(kl, -ui, fi)], Q(kl, lens[kl], h), Q(kl, lens[kl], -h), zf, (0, 0, -1), wood)
+
+    xs, ys = [v[0] for v in verts], [v[1] for v in verts]
+    cx, cy = (min(xs) + max(xs)) / 2, (min(ys) + max(ys)) / 2
+    for v in verts:
+        v[0] -= cx
+        v[1] -= cy
+    return {"verts": verts, "faces": faces, "face_mat": fmat, "plan_rotation_deg": rot}
+
+
 def signed_volume(mesh):
     vol = 0.0
     V = mesh["verts"]

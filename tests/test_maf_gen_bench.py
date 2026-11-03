@@ -221,6 +221,22 @@ def test_clad_box_quads_manifold_xview_clean(path):
     assert len({tuple(round(c, 9) for c in v) for v in mesh["verts"]}) == len(mesh["verts"])
 
 
+def _tri_area(a, b, c):
+    u, v = [b[i] - a[i] for i in range(3)], [c[i] - a[i] for i in range(3)]
+    return math.hypot(u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]) / 2
+
+
+@pytest.mark.parametrize("path", [STRAIGHT, L_RUN, U_RUN, SKEW_L])
+def test_clad_box_quads_are_convex_and_planar(path):
+    """The 3-to-1 band fill must not leave a 180-degree corner or a bow-tie: both diagonals give the same area."""
+    mesh = gen.build_clad_box(clad(path))
+    for f in mesh["faces"]:
+        a, b, c, d = (mesh["verts"][i] for i in f)
+        s1, s2 = _tri_area(a, b, c) + _tri_area(a, c, d), _tri_area(a, b, d) + _tri_area(b, c, d)
+        assert s1 == pytest.approx(s2, rel=1e-9, abs=1e-12)
+        assert min(_tri_area(a, b, c), _tri_area(a, c, d), _tri_area(a, b, d), _tri_area(b, c, d)) > 1e-6
+
+
 @pytest.mark.parametrize("path", [STRAIGHT, L_RUN, U_RUN, SKEW_L])
 def test_clad_box_outward_and_volume(path):
     mesh = gen.build_clad_box(clad(path))
@@ -292,10 +308,10 @@ def test_clad_box_random_runs_stay_clean():
 @pytest.mark.parametrize("bad", [
     dict(courses=0), dict(courses=2.0), dict(top_boards=True), dict(top_boards=0), dict(seam_width=0),
     dict(seam_depth=0.05),                    # deeper than the 0.045 frame
-    dict(top_boards=40),                      # boards would have no width
+    dict(top_boards=40),                      # boards narrower than the seams
     dict(foot_inset=0.3), dict(foot_length=3.0), dict(end_overhang=0.05), dict(height=0.03),
     dict(depth=float("nan")), dict(materials={"seat": 7}), dict(post=0.04),
-    dict(path=[[0, 0], [0.5, 0]]),
+    dict(path=[[0, 0], [0.35, 0]]),           # too short for two foot plates
 ])
 def test_clad_box_fail_closed(bad):
     with pytest.raises(ValueError):

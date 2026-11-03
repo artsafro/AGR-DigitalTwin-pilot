@@ -6,7 +6,7 @@
 
 Pattern: new-case: generated MAF export - tools/library/maf_gen_bench.py builds one welded quad mesh per row
 (plan centreline from verona-plan-shapes.json + section parameters from the config); this script only writes it:
-atlas materials (approved list, 512 slots), box UV inside each slot, triangulation (MAF-18), hard edges by
+`form` picks the builder (slab_on_posts | clad_box); atlas materials (approved list, 512 slots), box UV inside each slot, triangulation (MAF-18), hard edges by
 angle, NPM + VPM FBX (same mesh: no light version unless the budget needs it [D164]) and a build report.
 Refuses to overwrite an FBX (exit 2) and refuses a material outside the atlas (exit 3).
 """
@@ -117,12 +117,13 @@ for row in rows:
         if f.exists():
             print("refusing to overwrite", f, file=sys.stderr)
             sys.exit(2)
-report = {"blender": bpy.app.version_string, "config": cfg.get("version"), "smoothing_deg": cfg["smoothing_deg"],
+report = {"blender": bpy.app.version_string, "config": cfg.get("version"), "form": cfg.get("form", "slab_on_posts"), "smoothing_deg": cfg["smoothing_deg"],
           "atlas_png_sha256": sha256(atlas_png),
           "atlas_uv_json": str(Path(args[2])).replace("\\", "/"), "rows": []}
 for row in rows:
     spec, shape = row_spec(row)
-    mesh_data = gen.build_bench(spec)
+    builder = {"slab_on_posts": gen.build_bench, "clad_box": gen.build_clad_box}[cfg.get("form", "slab_on_posts")]
+    mesh_data = builder(spec)
     facts = gen.mesh_facts(mesh_data)
     entry = {"row": row["row"], "set_id": row["set_id"], "block": shape["block"], "plan_rotation_deg":
              mesh_data["plan_rotation_deg"], "generator_facts": facts}

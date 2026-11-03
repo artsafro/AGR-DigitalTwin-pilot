@@ -1,24 +1,35 @@
 {
- "version": "gen-v001-A (passport box)",
+ "version": "gen-v001-A3 (passport box, modelled seams)",
  "issue": 790,
+ "form": "clad_box",
  "smoothing_deg": 40,
  "params": {
   "depth": 0.6,
-  "seat_top": 0.45,
-  "seat_thickness": 0.43,
-  "post": 0.06,
-  "post_inset": 0.03,
-  "end_overhang": 0.1,
-  "max_leg_span": 2.67
+  "height": 0.45,
+  "foot_height": 0.02,
+  "courses": 4,
+  "seam_width": 0.01,
+  "seam_depth": 0.02,
+  "frame_width": 0.045,
+  "top_boards": 9,
+  "foot_length": 0.1,
+  "foot_inset": 0.03,
+  "end_overhang": 0.15,
+  "max_foot_span": 2.67
  },
  "param_sources": {
   "depth": "DWG outlines 0.600 (all ten) = passport B 0.6",
-  "seat_top": "passport H 0.45 (Hobbyka «Верона» art. 18694, verona.pdf p.1)",
-  "seat_thickness": "passport: the clad timber body runs from the feet (0.02) to H 0.45 -> 0.43",
-  "post": "passport elevation: low steel feet, not dimensioned -> 0.06 square, review",
-  "post_inset": "review, not dimensioned",
-  "end_overhang": "passport elevation: feet near the ends, 0.1 review",
-  "max_leg_span": "passport: 3 sections in L 8.0 -> 2.67 m, feet at section joints"
+  "height": "passport H 0.45 (Hobbyka «Верона» art. 18694, verona.pdf p.1); Artem 2026-11-03: variant A",
+  "foot_height": "passport end view: plate 4-5 px at 0.0041 m/px -> 0.02",
+  "courses": "passport elevation + end view + Artem's photo: 4 horizontal boards on every side",
+  "seam_width": "passport end view: course 24 px (0.098 m), gap 2-3 px -> 0.010 m (0.0041 m/px, H 0.45 = 110 px)",
+  "seam_depth": "not dimensioned; 0.02 so the seam reads dark in VPM; review",
+  "frame_width": "top frame = side board thickness; set equal to the slat width (0.045) so the top reads as 11 equal boards; review",
+  "top_boards": "Artem «~11» across the top = 2 frame boards + 9 slats; passport render shows 5-6 seams near the end (low resolution); review",
+  "foot_length": "passport elevation: plates ~6 px wide (broken-length drawing, ~0.1 m); review",
+  "foot_inset": "passport end view: plate line 656..788 px vs body 649..795 -> 0.03 per side",
+  "end_overhang": "passport elevation: end plates ~0.15 m from the ends (plate centre); review",
+  "max_foot_span": "passport: 3 sections in L 8.0 -> plates at section joints, 2.67 m"
  },
  "materials": {
   "seat": "larch_light_oak",
@@ -26,7 +37,7 @@
  },
  "material_sources": {
   "seat": "v005 larch_light_oak: passport «брус хвойных пород, лессирующая пропитка» -> nearest approved wood; review",
-  "frame": "v005 steel_ral7047: passport standard RAL 9005 / 7016 not in v005 (new ID needs Artem); review"
+  "frame": "v005 steel_ral7047 placeholder: passport RAL 7016 (dark) is not in v005; new ID needs Artem's decision"
  },
  "rows": [
   {
