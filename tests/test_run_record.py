@@ -118,8 +118,11 @@ def fully_dead_pid(pid_file, *, before_release=None, child_code=HOLD_CHILD_CODE,
         pid = int(pid_file.read_text())
         if before_release is not None:
             before_release(pid)
-        helper.stdin.write("\n")
-        helper.stdin.close()
+        try:
+            helper.stdin.write("\n")
+            helper.stdin.close()
+        except OSError as exc:
+            raise RuntimeError(f"dead-pid setup failed: helper gone before release ({exc})") from exc
         code = helper.wait(timeout=timeout + 10)
         if code != 0:
             raise RuntimeError(f"dead-pid setup failed: helper exit {code}, child not reaped")
@@ -128,10 +131,39 @@ def fully_dead_pid(pid_file, *, before_release=None, child_code=HOLD_CHILD_CODE,
         return pid
     finally:
         watchdog.cancel()
-        if helper.poll() is None:
-            helper.kill()
-            helper.wait()
-        helper.stdout.close()
+        # A helper that is still running, or was killed by the watchdog, never
+        # reaped its child: kill the child by pid so nothing is orphaned.
+        # A helper that exited on its own (0 or 3) already reaped it.
+        helper_code = helper.poll()
+        if helper_code is None or helper_code < 0 or helper_code not in (0, 3):
+            if helper_code is None:
+                helper.kill()
+                helper.wait()
+            _kill_orphan_child(pid_file)
+        for stream in filter(None, (helper.stdin, helper.stdout)):
+            try:
+                stream.close()
+            except OSError:
+                pass
+
+
+def _kill_orphan_child(pid_file):
+    import os
+    import signal
+
+    try:
+        child_pid = int(pid_file.read_text())
+    except (OSError, ValueError):
+        return
+    if not run_record_module._pid_alive(child_pid):
+        return
+    try:
+        os.kill(child_pid, signal.SIGTERM)
+    except OSError:
+        pass
+    deadline = time.monotonic() + 10
+    while run_record_module._pid_alive(child_pid) and time.monotonic() < deadline:
+        time.sleep(0.05)
 
 
 def writer(output, counter):
@@ -559,5 +591,17 @@ def test_fully_dead_pid_completion_timeout_is_setup_failure(tmp_path):
     with pytest.raises(RuntimeError, match="dead-pid setup failed"):
         fully_dead_pid(
             pid_file, child_code="import time; time.sleep(60)", timeout=1.0
+        )
+    assert run_record_module._pid_alive(int(pid_file.read_text())) is False
+
+
+def test_fully_dead_pid_watchdog_failure_leaves_no_orphan_child(tmp_path):
+    pid_file = tmp_path / "g.pid"
+    with pytest.raises(RuntimeError, match="dead-pid setup failed"):
+        fully_dead_pid(
+            pid_file,
+            before_release=lambda pid: time.sleep(7),
+            child_code="import time; time.sleep(60)",
+            timeout=1.0,
         )
     assert run_record_module._pid_alive(int(pid_file.read_text())) is False
