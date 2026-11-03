@@ -316,3 +316,91 @@ def test_clad_box_random_runs_stay_clean():
 def test_clad_box_fail_closed(bad):
     with pytest.raises(ValueError):
         gen.build_clad_box(clad(bad.pop("path", STRAIGHT), **bad))
+
+
+# --- seams by texture (Artem 2026-11-03 correction: board seams are texture, the box stays simple geometry) ---------
+# SYNTHETIC runs, same synthetic CLAD parameters.
+def tex(path, **kw):
+    return clad(path, seams="texture", **kw)
+
+
+@pytest.mark.parametrize("path,dims", [(STRAIGHT, (6.0, 0.6)), (L_RUN, (3.9, 2.5)), (U_RUN, (5.8, 2.9))])
+def test_texture_box_dimensions(path, dims):
+    facts = gen.mesh_facts(gen.build_clad_box(tex(path)))
+    assert facts["dims_m"] == pytest.approx([dims[0], dims[1], 0.45], abs=1e-6)
+    assert facts["min_z"] == pytest.approx(0.0, abs=1e-12)
+
+
+@pytest.mark.parametrize("path", [STRAIGHT, L_RUN, U_RUN, SKEW_L])
+def test_texture_box_quads_manifold_convex_xview_clean(path):
+    mesh = gen.build_clad_box(tex(path))
+    assert mesh["faces"] and all(len(f) == 4 for f in mesh["faces"])
+    assert set(edge_use(mesh).values()) == {2}
+    facts = gen.mesh_facts(mesh)
+    assert facts["components"] == 1 and facts["loose_verts"] == 0
+    res = xview_lists(mesh["verts"], mesh["faces"])
+    assert res["xview_faces"] == () and res["vertices"] == ()
+    for f in mesh["faces"]:
+        a, b, c, d = (mesh["verts"][i] for i in f)
+        assert _tri_area(a, b, c) + _tri_area(a, c, d) == pytest.approx(_tri_area(a, b, d) + _tri_area(b, c, d),
+                                                                         rel=1e-9, abs=1e-12)
+    run = sum(math.dist(a, b) for a, b in zip(path, path[1:]))
+    assert 0.6 * 0.43 * run * 0.9 < gen.signed_volume(mesh) < 0.6 * 0.45 * (run + 0.6)
+
+
+def test_texture_box_has_no_seam_geometry():
+    mesh = gen.build_clad_box(tex(STRAIGHT))
+    assert {round(v[2], 9) for v in mesh["verts"]} == {0.0, 0.02, 0.45}
+    top = [f for f in mesh["faces"] if _face_z(mesh, f) == 0.45]
+    assert len(top) == 1                                   # one top quad per straight segment
+    geo = gen.build_clad_box(clad(STRAIGHT))
+    assert len(mesh["faces"]) < len(geo["faces"]) / 3
+
+
+def _uv_faces(mesh):
+    return [(f, uv, m) for f, uv, m in zip(mesh["faces"], mesh["face_uv"], mesh["face_mat"]) if uv is not None]
+
+
+def test_texture_box_uv_puts_board_seams_on_the_board_grid():
+    """Top: 11 boards across the depth (2 frame + 9 slats) -> t = lateral / depth over the whole pattern;
+    sides: 4 courses -> t over 4/11 of the same pattern, so every seam line falls on a board joint."""
+    mesh = gen.build_clad_box(tex(STRAIGHT))
+    assert mesh["uv_pattern"] == {"boards": 11, "axis": "t"}
+    assert len(mesh["face_uv"]) == len(mesh["faces"])
+    V = mesh["verts"]
+    tops = sides = 0
+    for f, uv, m in _uv_faces(mesh):
+        assert m == 7 and len(uv) == len(f)
+        for i, (s, t) in zip(f, uv):
+            assert -1e-9 <= s <= 1 + 1e-9
+            if _face_z(mesh, f) == 0.45:
+                assert t == pytest.approx((V[i][1] + 0.3) / 0.6, abs=1e-9)
+            else:
+                assert t == pytest.approx((V[i][2] - 0.02) / 0.43 * 4 / 11, abs=1e-9)
+        if _face_z(mesh, f) == 0.45:
+            tops += 1
+        else:
+            sides += 1
+    assert tops == 1 and sides == 4                      # 1 top quad + the 4-face side ring
+    rest = [(f, m) for f, uv, m in zip(mesh["faces"], mesh["face_uv"], mesh["face_mat"]) if uv is None]
+    assert rest and all(_face_z(mesh, f) in (0.0, 0.02) or m == 3 for f, m in rest)
+
+
+@pytest.mark.parametrize("path", [L_RUN, U_RUN, SKEW_L])
+def test_texture_box_top_boards_turn_the_corner(path):
+    mesh = gen.build_clad_box(tex(path))
+    tops = [(f, uv) for f, uv, _m in _uv_faces(mesh) if _face_z(mesh, f) == 0.45]
+    assert len(tops) == len(path) - 1
+    for f, uv in tops:
+        assert sorted(round(t, 9) for _s, t in uv) == [0.0, 0.0, 1.0, 1.0]
+    # a mitre vertex shared by two segments has the same t on both: the boards run on round the corner
+    seen = {}
+    for f, uv in tops:
+        for i, (_s, t) in zip(f, uv):
+            assert seen.setdefault(i, round(t, 9)) == round(t, 9)
+
+
+@pytest.mark.parametrize("bad", [dict(seams="paint"), dict(seams=None)])
+def test_texture_box_fail_closed(bad):
+    with pytest.raises(ValueError):
+        gen.build_clad_box(clad(STRAIGHT, **bad))
