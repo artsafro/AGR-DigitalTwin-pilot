@@ -160,6 +160,48 @@ Registration of the base run:
    factor (slide 0.75, render 0.85), and the centroid taken over the run ±1 px. Synthetic lines are now measured
    within 0.05 px; before that the bias was 0.22 px.
 
+## Review R1: retain measurement precision (2026-11-03)
+
+The reviewer found a false pass: `--plant-u 0.00929457717743987` measures
+2.0001409617482757 px, but `run()` rounded it to 2.000 before the verdict. The
+inclusive tolerance remains **2 px**; offsets and their maximum are now retained
+at full floating-point precision in the JSON report and verdict. Rounded numbers
+in this Markdown report are display only. No production gate or geometry changed.
+
+| Input | Max raw offset px | Verdict / CLI exit | Script time s |
+|---|---|---|---|
+| Real baseline, fresh subprocess | 1.4335232233410267 | pass / 0 | 6.812 |
+| Real reviewer witness (`--plant-u 0.00929457717743987`) | 2.0001409617482757 | FAIL / 1 | 5.809 |
+| SYNTHETIC top-edge measurements ±2 px in the real run/report pipeline | 2.0 | pass / 0 (2/2) | not separately measured |
+| SYNTHETIC top-edge measurements ±(2−1e-9) px | 1.999999999 | pass / 0 (2/2) | not separately measured |
+| SYNTHETIC top-edge measurements ±(2+1e-9) px | 2.000000001 | FAIL / 1 (2/2) | not separately measured |
+
+The deterministic boundary probes inject only the top-edge measurement into the
+real `run()` → `main()` → JSON publication pipeline. Other edges, rectification,
+rib counts, input hashes and partial-directory cleanup remain real. All six
+cases check the raw serialized offset, its maximum, the verdict and exit status.
+The real witness additionally runs in a fresh subprocess without injection.
+Existing baseline, planted ±0.1 m / top-band 0.1 m and stale-partial controls remain.
+
+RED commit `6689ed4b`: 5 failed, 2 passed, 25 deselected in 56.58 s
+(`-k 'run_report_threshold or just_over'`); the failures expose both raw precision
+loss and false passes. After the fix, the complete affected test file returned
+32 passed, 0 failed in 90.97 s. Commands use `uv run pytest -q -p no:cacheprovider
+ tests/jobs/test_tec26_ac08_slide_overlay.py` with dedicated basetemps. No second
+full suite is run in rework (coordination rule 49); the first-review full-suite
+receipt remains recorded in PR #774, including its known baseline failure.
+
+Reproduce the real witness with the variables from the earlier commands:
+
+```bash
+uv run python $S $A out/r1-just-over --plant-u 0.00929457717743987
+uv run pytest -q -p no:cacheprovider tests/jobs/test_tec26_ac08_slide_overlay.py --basetemp=C:/x/t_6f974065-r1-green
+```
+
+Fresh real JSON/PNG evidence is stored separately under the earlier evidence root
+in `r1-precision/{baseline,just-over}/`, with `r1-precision/SHA256SUMS.txt` covering
+all eight files. Historical measurements and evidence above were not overwritten.
+
 ## Verdict
 
 **Advisory.** As a reviewer's overlay it is useful: it measures band positions, which the count cannot, and it

@@ -321,7 +321,9 @@ def run(spec, sheet, rdir, vrb, facade="1-2", pxm=200.0, tol_px=2.0, register="m
     v_rect = rectify_render(rgb, view, fr)
     ms, mv = measure(s_rect, fr, target, SLIDE_DARK), measure(v_rect, fr, body, RENDER_DARK)   # each image inside its own body outline
     sign = {"field_left": 1, "field_right": 1, "field_top": 1, "field_bottom": 1}
-    off = {e: round(sign[e] * (ms[e] - mv[e]) * pxm, 3) for e in EDGES}
+    # Keep full precision in the report and verdict: display rounding must not turn
+    # an offset just outside the inclusive tolerance into a pass.
+    off = {e: float(sign[e] * (ms[e] - mv[e]) * pxm) for e in EDGES}
     rib = {}
     for tag, m in (("slide", ms), ("vpm", mv)):
         r = joint_count.count_joints(m["profile_u"], m["profile_lum"], m["field_left"], m["field_right"], fc["ribs"],
