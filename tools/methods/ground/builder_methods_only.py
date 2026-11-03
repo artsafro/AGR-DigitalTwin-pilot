@@ -4,7 +4,7 @@ Pattern: new-case: methods-catalog gate bypass for one measured row, never a del
 
     uv run python tools/methods/ground/builder_methods_only.py <adapter.json> --out <new dir> [build_ground.py args]
 
-User decision (Artem 2026-11-02, option (b), #733 / PR #734 only): the second builder setting is a METHODS-ONLY
+User decision (Artem 2026-11-02, option (b), #733 / PR #734 only, [D188]): the second builder setting is a METHODS-ONLY
 build; it skips the Ground quality gate, lists every failed gate, and is never a delivery. No new [D150] exception;
 jobs/VATUTINO-SITE/ and its gates stay unchanged.
 
