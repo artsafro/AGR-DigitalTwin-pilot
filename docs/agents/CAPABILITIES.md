@@ -82,7 +82,9 @@ substitute ad-hoc scripting.
   path — Save As to a new versioned path via MAXScript; a newly started Max registers itself and
   becomes the default target — pin the exact PID; the agent viewport does not redraw while Max is
   hidden; the Max 2026 startup shows the `polyunwrapper_autoload.mse` .NET error dialog (see
-  Toolchain smoke above).
+  Toolchain smoke above). Source review (PR #793): `query_scene(action="class", scope="refs")`
+  passes `class_name`/`superclass` to MAXScript `execute`, and the TCP fallback of `property`
+  inserts `property_name` as code — safe_mode does not block that; hence the narrow read-only row.
 - Owner: Claude (main) · scope: user (all projects)
 - Server: cl0nazepamm/3dsmax-mcp v1.7.5 (commit `bcd4e4c6`, licence MIT), `C:\Users\artsafro\tools\3dsmax-mcp`; plugin in
   `C:\ProgramData\Autodesk\ApplicationPlugins\3dsmax-mcp`; `safe_mode = true`
@@ -176,8 +178,8 @@ that those tools have been tested. No generic MCP sandbox is implemented by guar
 
 | Route | Tool / operation (all unmatched operations use the route's fallback) | Risk |
 |---|---|---|
-| 3dsmax-mcp | `get_selected_max_instance`, `query_scene`, `get_object_properties`, `geometry_qa` (used read-only in the 2026-11-03 live cycle) | read-only |
-| 3dsmax-mcp | All other tools, including `manage_scene`, viewport tools and script execution; inspect schema before use | destructive |
+| 3dsmax-mcp | `get_selected_max_instance`; `query_scene` with `action` `overview` or `selection` only; `get_object_properties` by `name`/`handle`; `geometry_qa` (scene untouched; the server writes and deletes its own temp snapshot file) — source-inspected at `bcd4e4c6`, used in the 2026-11-03 live cycle | read-only |
+| 3dsmax-mcp | All other tools and operations, including `query_scene` `class`/`property`/`filter`/`delta` (caller strings reach MAXScript `execute` or unquoted code on the TCP path; `delta` resets a baseline), `select_max_instance` (rebinds the session), `manage_scene`, viewport tools and script execution; inspect schema before use | destructive |
 | revit-bridge | `revit_status` | read-only |
 | revit-bridge | `export_fbx*`, `agr_export_fbx` to new versioned destinations | versioned-write |
 | revit-bridge | All other tools, including `open_document`, link load/unload/reload/repath | destructive |

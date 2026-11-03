@@ -15,6 +15,8 @@ description: 'Inspect the configured 3ds Max MCP route and safely authorize vers
    advertised tool schemas; do not invent tool names or substitute another route.
    Pin the exact Max process (PID) before any scene call: a newly started Max
    registers itself and becomes the default target, so never rely on the default.
+   Pinning (`select_max_instance`) rebinds the session and is in the destructive
+   class: name the PID and get it authorized like any other mutation.
 3. If the route cannot inspect without mutation, stop with the exact missing
    capability. Do not test a connection by changing the user's production scene.
 
@@ -22,8 +24,9 @@ description: 'Inspect the configured 3ds Max MCP route and safely authorize vers
 
 Before any write, name the exact tool/operation and its risk class from
 [`CAPABILITIES.md#dcc-tool-risk-classes`](../../../docs/agents/CAPABILITIES.md#dcc-tool-risk-classes).
-Only the read-only subset listed there is registered; every other tool defaults to
-`destructive`; inspect the schema and script before use. Arbitrary MaxScript/Python
+Only the read-only subset listed there is registered, and it is restricted by
+arguments (e.g. `query_scene` only with `overview`/`selection`); every other tool or
+operation defaults to `destructive`; inspect the schema and script before use. Arbitrary MaxScript/Python
 is destructive even if the script plans to save a new output. Require explicit
 user authorization for the exact mutation; safe_mode is not an authorization ledger.
 For a registered `versioned-write`, require task authorization and a new versioned
