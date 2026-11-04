@@ -42,7 +42,7 @@ lists; they do not define a production step.
    test / contract), fix the cause, rerun the affected checks. A failed mandatory check is
    never turned into a pass by rewording. After two failures with the same cause, stop that
    path, save the state and propose the next step. The limit is recorded in
-   `jobs/<JOB>/pipeline/state.json` and enforced by the pipeline gate, see `docs/HARNESS_PLAN.md` §8.
+   `jobs/<JOB>/pipeline/state.json` and enforced by the pipeline gate (`tools/git-hooks/pipeline_gate.py`). Historical record: `docs/HARNESS_PLAN.md` §8.
 7. **Hand off.** Compare the result with the Requirement (the user's wording, profile and
    acceptance in the contract), item by item: met, not met, or changed by a later user decision
    (with its date or `D<n>`); report what is done, what was checked (commands, evidence paths)
