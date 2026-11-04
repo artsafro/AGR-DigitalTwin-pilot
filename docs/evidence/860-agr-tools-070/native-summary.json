@@ -1,0 +1,315 @@
+{
+ "final-2026-dark": {
+  "max_version": [
+   28000,
+   68,
+   0
+  ],
+  "runtime_version": "0.7.0",
+  "theme": "dark",
+  "errors": {},
+  "scene_saved": false,
+  "checks": {
+   "census": {
+    "status": "pass",
+    "objects": 6,
+    "codes": []
+   },
+   "units": {
+    "status": "pass",
+    "objects": 0,
+    "codes": []
+   },
+   "perimeter_drop": {
+    "status": "fail",
+    "objects": 6,
+    "codes": [
+     "drop_short"
+    ]
+   },
+   "material_type": {
+    "status": "fail",
+    "objects": 6,
+    "codes": [
+     "mat_class"
+    ]
+   },
+   "ucx_audit": {
+    "status": "pass",
+    "objects": 6,
+    "codes": []
+   },
+   "sets_count": {
+    "status": "pass",
+    "objects": 6,
+    "codes": []
+   },
+   "fbx_split": {
+    "status": "pass",
+    "objects": 6,
+    "codes": []
+   },
+   "glass": {
+    "status": "pass",
+    "objects": 6,
+    "codes": []
+   },
+   "preflight": {
+    "status": "fail",
+    "objects": 6,
+    "codes": [
+     "drop_short",
+     "hyg_non_mesh",
+     "mat_class",
+     "xform_scale"
+    ]
+   },
+   "scene_hygiene": {
+    "status": "fail",
+    "objects": 6,
+    "codes": [
+     "hyg_non_mesh"
+    ]
+   },
+   "xform": {
+    "status": "fail",
+    "objects": 6,
+    "codes": [
+     "xform_scale"
+    ]
+   },
+   "zero_area": {
+    "status": "pass",
+    "objects": 6,
+    "codes": []
+   }
+  },
+  "path_status": {
+   "scene": "ok",
+   "model": "errors",
+   "tex": "errors",
+   "ucx": "ok",
+   "udim": "not_run",
+   "atlas": "ok",
+   "place": "planned",
+   "qa": "errors",
+   "export": "no_checks",
+   "light": "planned"
+  },
+  "next_step": "1 Моделирование: исправить ошибки",
+  "drive": {
+   "version": "2026",
+   "light": false,
+   "dcc_exit": 0
+  }
+ },
+ "final-2026-light": {
+  "max_version": [
+   28000,
+   68,
+   0
+  ],
+  "runtime_version": "0.7.0",
+  "theme": "light",
+  "errors": {},
+  "scene_saved": false,
+  "checks": {
+   "census": {
+    "status": "pass",
+    "objects": 6,
+    "codes": []
+   },
+   "units": {
+    "status": "pass",
+    "objects": 0,
+    "codes": []
+   },
+   "perimeter_drop": {
+    "status": "fail",
+    "objects": 6,
+    "codes": [
+     "drop_short"
+    ]
+   },
+   "material_type": {
+    "status": "fail",
+    "objects": 6,
+    "codes": [
+     "mat_class"
+    ]
+   },
+   "ucx_audit": {
+    "status": "pass",
+    "objects": 6,
+    "codes": []
+   },
+   "sets_count": {
+    "status": "pass",
+    "objects": 6,
+    "codes": []
+   },
+   "fbx_split": {
+    "status": "pass",
+    "objects": 6,
+    "codes": []
+   },
+   "glass": {
+    "status": "pass",
+    "objects": 6,
+    "codes": []
+   },
+   "preflight": {
+    "status": "fail",
+    "objects": 6,
+    "codes": [
+     "drop_short",
+     "hyg_non_mesh",
+     "mat_class",
+     "xform_scale"
+    ]
+   },
+   "scene_hygiene": {
+    "status": "fail",
+    "objects": 6,
+    "codes": [
+     "hyg_non_mesh"
+    ]
+   },
+   "xform": {
+    "status": "fail",
+    "objects": 6,
+    "codes": [
+     "xform_scale"
+    ]
+   },
+   "zero_area": {
+    "status": "pass",
+    "objects": 6,
+    "codes": []
+   }
+  },
+  "path_status": {
+   "scene": "ok",
+   "model": "errors",
+   "tex": "errors",
+   "ucx": "ok",
+   "udim": "not_run",
+   "atlas": "ok",
+   "place": "planned",
+   "qa": "errors",
+   "export": "no_checks",
+   "light": "planned"
+  },
+  "next_step": "1 Моделирование: исправить ошибки",
+  "drive": {
+   "version": "2026",
+   "light": true,
+   "dcc_exit": 0,
+   "clrx_restored": true
+  }
+ },
+ "final-2024-dark": {
+  "max_version": [
+   26000,
+   64,
+   0
+  ],
+  "runtime_version": "0.7.0",
+  "theme": "dark",
+  "errors": {},
+  "scene_saved": false,
+  "checks": {
+   "census": {
+    "status": "pass",
+    "objects": 6,
+    "codes": []
+   },
+   "units": {
+    "status": "pass",
+    "objects": 0,
+    "codes": []
+   },
+   "perimeter_drop": {
+    "status": "fail",
+    "objects": 6,
+    "codes": [
+     "drop_short"
+    ]
+   },
+   "material_type": {
+    "status": "fail",
+    "objects": 6,
+    "codes": [
+     "mat_class"
+    ]
+   },
+   "ucx_audit": {
+    "status": "pass",
+    "objects": 6,
+    "codes": []
+   },
+   "sets_count": {
+    "status": "pass",
+    "objects": 6,
+    "codes": []
+   },
+   "fbx_split": {
+    "status": "pass",
+    "objects": 6,
+    "codes": []
+   },
+   "glass": {
+    "status": "pass",
+    "objects": 6,
+    "codes": []
+   },
+   "preflight": {
+    "status": "fail",
+    "objects": 6,
+    "codes": [
+     "drop_short",
+     "hyg_non_mesh",
+     "mat_class",
+     "xform_scale"
+    ]
+   },
+   "scene_hygiene": {
+    "status": "fail",
+    "objects": 6,
+    "codes": [
+     "hyg_non_mesh"
+    ]
+   },
+   "xform": {
+    "status": "fail",
+    "objects": 6,
+    "codes": [
+     "xform_scale"
+    ]
+   },
+   "zero_area": {
+    "status": "pass",
+    "objects": 6,
+    "codes": []
+   }
+  },
+  "path_status": {
+   "scene": "ok",
+   "model": "errors",
+   "tex": "errors",
+   "ucx": "ok",
+   "udim": "not_run",
+   "atlas": "ok",
+   "place": "planned",
+   "qa": "errors",
+   "export": "no_checks",
+   "light": "planned"
+  },
+  "next_step": "1 Моделирование: исправить ошибки",
+  "drive": {
+   "version": "2024",
+   "light": false,
+   "dcc_exit": 0
+  }
+ }
+}

@@ -789,17 +789,17 @@ def test_buttons_registered_in_rollout_and_package():
                         ('Текстуры (все)', 'textures'), ('Пивот', 'pivot'),
                         ('Проверка GeoJSON', 'geojson')):
         assert f'"{label}"' in mcr and f"ui('{tool}')" in mcr
-    assert 'VERSION = "0.6.0"' in (PKG / 'runtime.py').read_text(encoding='utf-8')
-    assert 'version=0.6.0' in (PKG / 'startup.ms').read_text(encoding='utf-8')
+    assert 'VERSION = "0.7.0"' in (PKG / 'runtime.py').read_text(encoding='utf-8')
+    assert 'version=0.7.0' in (PKG / 'startup.ms').read_text(encoding='utf-8')
     install = (PKG / 'install.ms').read_text(encoding='utf-8')
-    assert 'AGRTools-0.6.0' in install and '"checks_core.py", "checks_max.py"' in install
+    assert 'AGRTools-0.7.0' in install and '"checks_core.py", "checks_max.py"' in install
     assert (PKG / 'mzp.run').read_text(encoding='utf-8').splitlines()[1] == 'version 0.6'
 
 
 def test_mzp_ships_the_new_cores(tmp_path):
     import zipfile
     builder = _load('../../../tools/max/build_agr_tools.py', 'agr_builder_checks')
-    out = tmp_path / 'AGR-Tools-0.6.0.mzp'
+    out = tmp_path / 'AGR-Tools-0.7.0.mzp'
     builder.build(out)
     with zipfile.ZipFile(out) as z:
         names = set(z.namelist())
