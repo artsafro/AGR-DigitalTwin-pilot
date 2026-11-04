@@ -12,6 +12,7 @@ import json
 import math
 import os
 import random
+import re
 from ctypes import wintypes
 from pathlib import Path
 
@@ -56,6 +57,49 @@ def test_capabilities_lists_the_runner():
     text = CAPS.read_text(encoding="utf-8")
     assert "tools/qa/xview_dump.ms" in text
     assert "2mm" in text and ".max" in text
+
+
+_XVIEW_EVIDENCE = "jobs/vyatskaya-tow02/evidence/xview-528/"
+
+
+def _xview_runner_section(text):
+    start = text.index("### 3ds Max xView runner")
+    nxt = text.find("\n### ", start + 1)
+    return text[start:] if nxt < 0 else text[start:nxt]
+
+
+def _hash_name_pairs(path):
+    pairs = set()
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        digest, name = line.split(maxsplit=1)
+        if name.startswith("*"):
+            name = name[1:]
+        pairs.add((digest.lower(), name))
+    return pairs
+
+
+def test_capabilities_xview_runner_evidence_links():
+    """Relative evidence links resolve, and source hash lists are the same (hash, name) set."""
+    section = _xview_runner_section(CAPS.read_text(encoding="utf-8"))
+    assert "not measured" not in section
+    assert "not-measured.json" not in section
+    links = re.findall(re.escape(_XVIEW_EVIDENCE) + r"[A-Za-z0-9_./-]+", section)
+    assert links
+    for rel in links:
+        assert (ROOT / rel).is_file(), rel
+    evidence = ROOT / _XVIEW_EVIDENCE
+    before_path = evidence / "hashes_before.txt"
+    after_path = evidence / "hashes_after_src.txt"
+    copies_path = evidence / "hashes_after_copies.txt"
+    assert before_path.is_file() and after_path.is_file() and copies_path.is_file()
+    before = _hash_name_pairs(before_path)
+    after = _hash_name_pairs(after_path)
+    source_names = {name for _, name in after}
+    before_sources = {pair for pair in before if pair[1] in source_names}
+    assert before_sources == after
 
 
 def test_stage_keeps_sha256_and_does_not_delete_source(tmp_path):

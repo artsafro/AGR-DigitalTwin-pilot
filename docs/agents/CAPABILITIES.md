@@ -349,6 +349,20 @@ checker). Note: the desktop app did not load project subagents from this worktre
   guaranteed part is the write/status/commit gate.
 - Limit (user 2026-10-12 [D064], #79): a compromised environment is not covered, for example a fake `py` on PATH.
 
+### Lab CI — `lab-ci.toml` (lab laptop DESKTOP-IHMQLNS, `artsafro/agr-lab`)
+- Status: IN BRANCH `harness/lab-ci-dcc-tests` (2026-11-04, Claude Code). Not yet run on this repo on the laptop.
+- The lab laptop runs this repo's tests on every new commit of `main`, `harness/*`, `fix/*`, `feature/*` and once a
+  night: a checkout of the commit (shared clone, own `.git`, LFS files are pointers) → `uv sync --frozen --python 3.13`
+  → build `AGR-Tools.mzp` → jobs in agr-lab runner slots:
+  - `blender`: `pytest -m "blender or dcc"` (180 tests), `DT_BLENDER` = the slot's Blender 5.1.2;
+  - `unit`: default suite with `-n 8` (16 917 tests; cloud dry run 4 workers 10.4 min) — nightly/first/manual only;
+  - `agr-tools-max2024`, `agr-tools-checks-max2024`: `tests/max_tools/run_agr_tools_native.py` and
+    `run_agr_tools_checks_native.py` in batch 3ds Max 2024 (isolated slot profile, synthetic scenes).
+- Per-test results (JUnit) are compared with the previous run of the branch (a new branch with `main`); verdict
+  GREEN / CHANGED / RED goes to Telegram, the report to `C:\agr\lab-data\ci\reports\ci-pilot-<sha8>-*.md`.
+- Limits: `pytest -m max` tests are not run (they need 3ds Max 2026 and `dcc_batch.py`); a branch without
+  `lab-ci.toml` is skipped. Change the pipeline here, not in agr-lab.
+
 ## Pipeline core (src/dt_ai, technical_library, tools)
 
 Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 2026-10-06
@@ -479,7 +493,7 @@ Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 20
 - Limits: pairs only within one object (a joined mesh is one object, as in xView); FBX / .blend need Blender.
 
 ### 3ds Max xView runner — `tools/qa/xview_dump.ms` (#528)
-- Status: contract-tested, native Max run not measured (2026-10-23; a Max startup script, not the MCP bridge and not `3dsmaxbatch`).
+- Status: contract-tested and native-measured on Max 2024 (2026-10-24) via both `3dsmax.exe -U MAXScript tools/qa/xview_dump.ms` and the supported route `dcc_batch.py max --version 2024 --file tools/qa/xview_dump.ms` (3dsmaxbatch, shared lock, run on copies).
   `3dsmax.exe -U MAXScript tools/qa/xview_dump.ms` with `XVIEW_OUT` (alias `TOW02_XV_OUT`) a directory that
   already contains `jobs.txt`. The receipt line is `#nonce:<id>`; each model is exactly six fields
   `label|path|node|mode|material|slot`. Path is `.fbx` (import into a reset scene) or `.max`
@@ -504,7 +518,15 @@ Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 20
   JSON: nonce, scene inventory, dropped nodes, counts, every flagged face (Max face id, material id, area, centre)
   and every flagged vertex (id, position). Job twin `jobs/vyatskaya-tow02/scripts/xview_review.ms` points here.
   One Max owner; lock `%LOCALAPPDATA%\Temp\agr-3dsmax-session.lock`.
-  Vyatskaya evidence is `jobs/vyatskaya-tow02/evidence/xview-528/not-measured.json` (not measured; 3ds Max was already running).
+  Vyatskaya evidence (measured 2026-10-24): [SUMMARY.md](../../jobs/vyatskaya-tow02/evidence/xview-528/SUMMARY.md),
+  [ACCEPTANCE.md](../../jobs/vyatskaya-tow02/evidence/xview-528/ACCEPTANCE.md),
+  [v005_plain.json](../../jobs/vyatskaya-tow02/evidence/xview-528/v005_plain.json) (185 faces / 0 vertices),
+  [013_plain.json](../../jobs/vyatskaya-tow02/evidence/xview-528/013_plain.json) (0 faces / 10 vertices),
+  [013_weld.json](../../jobs/vyatskaya-tow02/evidence/xview-528/013_weld.json) (0 faces / 0 vertices),
+  [013_weldpoly.json](../../jobs/vyatskaya-tow02/evidence/xview-528/013_weldpoly.json) (0 faces / 10 vertices),
+  [hashes_before.txt](../../jobs/vyatskaya-tow02/evidence/xview-528/hashes_before.txt),
+  [hashes_after_src.txt](../../jobs/vyatskaya-tow02/evidence/xview-528/hashes_after_src.txt),
+  [hashes_after_copies.txt](../../jobs/vyatskaya-tow02/evidence/xview-528/hashes_after_copies.txt).
 
 ### Face overlap check — `tools/qa/check_clearance.py`
 - Status: WORKING (2026-10-06; AGR boundary cases + FBX planes 3 mm apart)
