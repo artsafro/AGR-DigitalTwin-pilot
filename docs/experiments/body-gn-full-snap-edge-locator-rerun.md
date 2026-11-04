@@ -40,7 +40,7 @@ python C:/x/t_c2691740/drive.py C:/x/t_c2691740/run8.py   run8   1 (+ run8b 2)  
 --python-exit-code 1 --python <script> -- <out.json>` and times the wall clock. Inputs are read-only:
 `C:/x/t_ad9bc345/{snap.py,probe.py,snapped_contours.json,in/contours.json}`. The frozen
 `C:/x/t_03a8a042/run4.py` matches `FROZEN_SHA256SUMS.txt` (`ee19ad06…afafd`) and was not touched. Hashes of every
-script and result are in `experiments/body-gn-full-snap-edge-locator-rerun/SHA256SUMS.txt`. The scripts are copied
+script and result are in `experiments/body-gn-full-snap-edge-locator-rerun/SHA256SUMS.txt` (hashes of the scratch files; git stores the copies with LF line endings). The scripts are copied
 there. JSON and logs stay in `C:/x/t_c2691740/`.
 
 ## Results
