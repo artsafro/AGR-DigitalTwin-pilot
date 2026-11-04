@@ -50,7 +50,8 @@ CODES = {
     'textures': {'tex_missing', 'tex_unreadable', 'tex_format', 'tex_size', 'tex_alpha', 'tex_bit_depth',
                  'tex_file_size', 'tex_udim', 'tex_set', 'tex_padding', 'tex_unmeasurable', 'at_threshold',
                  'fbx_unmapped'},
-    'pivot': {'pivot_z', 'pivot_mismatch', 'pivot_unmeasurable', 'at_threshold', 'fbx_unmapped'},
+    'pivot': {'pivot_z', 'pivot_mismatch', 'pivot_reference_ambiguous', 'pivot_unmeasurable', 'at_threshold',
+              'fbx_unmapped'},
     'geojson': set(),
 }
 FBX_ROW = {'fbx', 'model', 'role', 'objects', 'render_triangles', 'ucx_triangles', 'limit', 'ucx_limit'}
@@ -707,6 +708,9 @@ def pivot_findings(rows):
     adapted from GeoAGR 13.64 (author Artem), GeoAGR.ms:65915-65926 (btn_check_vpm pivot/bbox test),
     changes: no bbox-centre rule for glass (it contradicts VPM-2.9-5, matrix note); Z must be 0 within
     1 mm (conflict #19 decided); pivots compared per FBX within 1 mm; exactly 1 mm is `at_threshold`.
+    Main/Ground names are the references (#832): a reference is not mismatched against another mesh;
+    when references disagree, one `pivot_reference_ambiguous` is attached to the alphabetically first
+    and that FBX gets no `pivot_mismatch`.
     Returns (findings by key, dropped [{'name', 'reason'}])."""
     found = {r['key']: [] for r in rows}
     dropped = []
@@ -733,35 +737,85 @@ def pivot_findings(rows):
         elif z > PIVOT_TOL_M:
             found[r['key']].append(('pivot_z', f'pivot Z {p[2]:.6f} m, project zero is 0 (VPM-2.9-4.b)'))
         groups.setdefault(r['fbx'], []).append(r)
+
+    def edge(a, b, distance):
+        found[a['key']].append(('at_threshold', f'pivot {distance:.6f} m from {b["name"]}: == {PIVOT_TOL_M} m'))
+
+    def mismatch(member, fbx, others):
+        others = sorted((name, dist if math.isfinite(dist) else float('inf')) for name, dist in others)
+        if others:
+            txt = ', '.join(f'{name} ({dist:.6f} m)' for name, dist in others)
+            found[member['key']].append(('pivot_mismatch', f'pivot differs from {txt} in {fbx} (VPM-2.9-5)'))
+
     for fbx, members in groups.items():
-        # Order independent (#821): the reference is the Main/Ground object of the FBX; without one every
-        # pair more than 1 mm apart is reported (never "the first member").
+        # Order independent (#821, #832): Main/Ground objects are the references. A reference is never
+        # mismatched against a non-reference. Disagreeing references are one finding on the alphabetically
+        # first name, and that FBX then has no pivot_mismatch. Without a reference, every pair more than
+        # 1 mm apart is reported (never "the first member").
         refs = [m for m in members if m['name'].split('_')[-1] in ('Main', 'Ground')]
-        pairs = []
-        for i, a in enumerate(members):
-            for b in members[i + 1:]:
-                if not refs or a in refs or b in refs:
-                    pairs.append((a, b))
-        bad = {id(m): [] for m in members}
-        for a, b in pairs:
-            d = math.dist(a['pivot'], b['pivot'])
-            if math.isclose(d, PIVOT_TOL_M, rel_tol=1e-9, abs_tol=0.0):
-                for x, y in ((a, b), (b, a)):
-                    if not refs or y in refs:
-                        found[x['key']].append(('at_threshold', f'pivot {d:.6f} m from {y["name"]}: == {PIVOT_TOL_M} m'))
-            elif d > PIVOT_TOL_M:
-                bad[id(a)].append((b['name'], d))
-                bad[id(b)].append((a['name'], d))
-        for m in members:
-            if refs and m in refs and len(refs) == 1:
+        if refs:
+            ambiguous = False
+            ordered = sorted(refs, key=lambda m: m['name'])
+            for i, left in enumerate(ordered):
+                for right in ordered[i + 1:]:
+                    kind, distance = _pivot_sep(left['pivot'], right['pivot'])
+                    if kind == 'edge':
+                        edge(left, right, distance)
+                        edge(right, left, distance)
+                    elif kind == 'bad':
+                        ambiguous = True
+            if ambiguous:
+                shown = ', '.join(f'{m["name"]} {_pivot_xyz(m["pivot"])}' for m in ordered)
+                found[ordered[0]['key']].append((
+                    'pivot_reference_ambiguous',
+                    f'Main/Ground references disagree in {fbx}: {shown} (VPM-2.9-5)'))
                 continue
-            others = sorted(bad[id(m)])
-            if refs and m not in refs:
-                others = [o for o in others if o[0] in {r['name'] for r in refs}]
-            if others:
-                txt = ', '.join(f'{n} ({d:.6f} m)' for n, d in others)
-                found[m['key']].append(('pivot_mismatch', f'pivot differs from {txt} in {fbx} (VPM-2.9-5)'))
+            ref_ids = {id(m) for m in refs}
+            for member in members:
+                if id(member) in ref_ids:
+                    continue
+                others = []
+                for ref in refs:
+                    kind, distance = _pivot_sep(member['pivot'], ref['pivot'])
+                    if kind == 'edge':
+                        edge(member, ref, distance)
+                    elif kind == 'bad':
+                        others.append((ref['name'], distance))
+                mismatch(member, fbx, others)
+            continue
+        bad = {id(m): [] for m in members}
+        for i, left in enumerate(members):
+            for right in members[i + 1:]:
+                kind, distance = _pivot_sep(left['pivot'], right['pivot'])
+                if kind == 'edge':
+                    edge(left, right, distance)
+                    edge(right, left, distance)
+                elif kind == 'bad':
+                    bad[id(left)].append((right['name'], distance))
+                    bad[id(right)].append((left['name'], distance))
+        for member in members:
+            mismatch(member, fbx, bad[id(member)])
     return found, dropped
+
+
+def _pivot_xyz(pivot):
+    parts = []
+    for value in pivot:
+        number = float(value)
+        parts.append(str(int(number)) if number.is_integer() else format(number, 'g'))
+    return '(' + ','.join(parts) + ')'
+
+
+def _pivot_sep(left, right):
+    """'edge' at exactly 1 mm, 'bad' when farther or not a finite distance, else 'ok'."""
+    distance = math.dist(left, right)
+    if not math.isfinite(distance):
+        return 'bad', distance
+    if math.isclose(distance, PIVOT_TOL_M, rel_tol=1e-9, abs_tol=0.0):
+        return 'edge', distance
+    if distance > PIVOT_TOL_M:
+        return 'bad', distance
+    return 'ok', distance
 
 
 # --- GeoJSON ------------------------------------------------------------------------------------------
