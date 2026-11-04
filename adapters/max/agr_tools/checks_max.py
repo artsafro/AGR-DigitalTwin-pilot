@@ -71,8 +71,28 @@ def _free(mesh):
         pass
 
 
+def _slots(n):
+    """{matID: [map paths]} of a Multimaterial (materialIDList -> materialList[i] -> usedMaps), or None
+    for a single material (every face uses all maps). An empty sub-material slot maps to []."""
+    rt = _rt()
+    m = n.material
+    if m is None or m == rt.undefined or rt.classOf(m) != rt.Multimaterial:
+        return None
+    out = {}
+    ids, subs = m.materialIDList, m.materialList
+    for i in range(int(ids.count)):
+        sub = subs[i]
+        paths = []
+        if sub is not None and sub != rt.undefined:
+            maps = rt.usedMaps(sub)
+            paths = [str(maps[j]) for j in range(int(maps.count))] if maps is not None else []
+        out[int(ids[i])] = paths
+    return out
+
+
 def _uv_faces(n):
-    """(uvs, faces) of map channel 1 from an in-memory snapshot; face ids are snapshot triangles."""
+    """(uvs, faces) of map channel 1 from an in-memory snapshot; faces are (snapshot triangle id,
+    [uv indices], face matID) so the core can send each face to its sub-material's atlas."""
     rt = _rt()
     m = _snapshot(n)
     try:
@@ -85,7 +105,7 @@ def _uv_faces(n):
         faces = []
         for f in range(int(rt.meshop.getNumMapFaces(m, 1))):
             p = rt.meshop.getMapFace(m, 1, f + 1)
-            faces.append((f + 1, [int(p.x) - 1, int(p.y) - 1, int(p.z) - 1]))
+            faces.append((f + 1, [int(p.x) - 1, int(p.y) - 1, int(p.z) - 1], int(rt.getFaceMatID(m, f + 1))))
         return uvs, faces
     finally:
         _free(m)
@@ -153,7 +173,11 @@ def triangles(agr, core, nodes):
 def textures(agr, core, nodes):
     rows = _rows(agr, nodes)
     for r in rows:
-        r['maps'] = [(path, _read(path)) for path in _used_maps(r['node'])]
+        paths = _used_maps(r['node'])
+        r['slots'] = _slots(r['node'])
+        for sub in (r['slots'] or {}).values():
+            paths += [p for p in sub if p not in paths]
+        r['maps'] = [(path, _read(path)) for path in paths]
         r['uv'] = (lambda node: lambda: _uv_faces(node))(r['node'])
     found, dropped = core.textures_scene(rows)
     return _finish(agr, core, 'textures', rows, found, dropped)

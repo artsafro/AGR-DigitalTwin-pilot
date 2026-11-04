@@ -350,6 +350,101 @@ def test_padding_bruteforce_probe():
         assert codes(got) == ([] if gap_px > 16 else ['tex_padding']), gap_px
 
 
+# --- padding per atlas (review r1 P1): face matID -> slot maps; atlases shared across objects of one FBX --
+def full_square_islands(mat_ids, x0=0.0, s=1.0):
+    """One island per entry, each covering the same UV square, with the given face matID."""
+    uvs, faces = [], []
+    for k, mid in enumerate(mat_ids):
+        b = len(uvs)
+        uvs += [(x0, 0.0), (x0 + s, 0.0), (x0 + s, s), (x0, s)]
+        faces += [(2 * k + 1, [b, b + 1, b + 2], mid), (2 * k + 2, [b, b + 2, b + 3], mid)]
+    return uvs, faces
+
+
+def slot_row(key, name, slots, fbx, uv):
+    maps, seen = [], set()
+    for paths in slots.values():
+        for p, d in paths:
+            if p not in seen:
+                seen.add(p)
+                maps.append((p, d))
+    return {'key': key, 'name': name, 'fbx': fbx, 'maps': maps,
+            'slots': {mid: [p for p, _ in paths] for mid, paths in slots.items()}, 'uv': lambda: uv}
+
+
+def geoagr_pooled_padding(uvs, faces, size, need):
+    """r1 variant: every UV face of the object in one pool, whatever its matID (the fixed defect)."""
+    return core.padding_findings(uvs, [(f, idx) for f, idx, *_ in faces], size, need)
+
+
+def test_two_slot_npm_islands_of_different_atlases_are_not_compared():
+    d1 = ('T_Tverskaya_12_001_Main_d_1.png', png(1024, 1024))
+    d2 = ('T_Tverskaya_12_001_Main_d_2.png', png(1024, 1024))
+    uv = full_square_islands([1, 2])
+    found, dropped = core.textures_scene([slot_row(1, 'SM_Tverskaya_12_001_Main', {1: [d1], 2: [d2]}, NPM_FBX, uv)])
+    assert found[1] == [] and dropped == []
+    assert codes(geoagr_pooled_padding(*uv, 1024, 8)) == ['tex_padding']  # RED: r1 pooled both slots
+
+
+def test_two_slot_vpm_on_udim_1001_is_clean():
+    s1 = [(f'T_Tverskaya_12_{m}_1.1001.png', png(2048, 2048)) for m in ('Diffuse', 'ERM', 'Normal')]
+    s2 = [(f'T_Tverskaya_12_{m}_2.1001.png', png(2048, 2048)) for m in ('Diffuse', 'ERM', 'Normal')]
+    uv = full_square_islands([1, 2])
+    found, dropped = core.textures_scene([slot_row(1, 'SM_Tverskaya_12_Main', {1: s1, 2: s2}, VPM_FBX, uv)])
+    assert found[1] == [] and dropped == []
+    assert codes(geoagr_pooled_padding(*uv, 2048, 16)) == ['tex_padding']  # RED: r1 pooled both slots
+
+
+def shared_atlas_rows(fbx_b=NPM_FBX, gap=0.0):
+    d = ('T_Tverskaya_12_Main_d_1.png', png(1024, 1024))
+    a = full_square_islands([1], 0.1, 0.3)
+    b = full_square_islands([1], 0.4 + gap, 0.3)
+    return [slot_row(1, 'SM_Tverskaya_12_001_Main', {1: [d]}, NPM_FBX, a),
+            slot_row(2, 'SM_Tverskaya_12_002_Main', {1: [d]}, fbx_b, b)]
+
+
+def test_shared_atlas_touching_islands_of_two_objects_fail():
+    found, dropped = core.textures_scene(shared_atlas_rows())
+    assert codes(found[1]) == ['tex_padding'] and codes(found[2]) == ['tex_padding'] and dropped == []
+    assert found[1][0][2] == [1, 2] and found[2][0][2] == [1, 2]  # each object gets ITS face ids
+    # RED: r1 measured each object alone -> both [] with no dropped entry (silent skip)
+    assert all(geoagr_pooled_padding(*r['uv'](), 1024, 8) == [] for r in shared_atlas_rows())
+
+
+def test_shared_atlas_in_other_fbx_is_not_compared_and_wide_gap_passes():
+    found, _ = core.textures_scene(shared_atlas_rows(fbx_b='C:/o/0001_Tverskaya_12_02.fbx'))
+    assert found == {1: [], 2: []}
+    found, _ = core.textures_scene(shared_atlas_rows(gap=20 / 1024))
+    assert found == {1: [], 2: []}
+
+
+def test_shared_atlas_padding_combined_with_d1_and_single_material_rows():
+    """Regression combined with the earlier fixes: a bad map on the FIRST object (D1) and a row
+    without slots (single material) sharing the atlas still pools its faces."""
+    rows = shared_atlas_rows()
+    rows[0]['maps'].append(('T_Tverskaya_12_001_Main_n_1.png', png(1000, 1000)))
+    rows[0]['slots'][1].append('T_Tverskaya_12_001_Main_n_1.png')
+    del rows[1]['slots']
+    rows[1]['uv'] = (lambda uv: lambda: (uv[0], [(f, idx) for f, idx, _ in uv[1]]))(rows[1]['uv']())
+    found, _ = core.textures_scene(rows)
+    assert codes(found[1]) == ['tex_padding', 'tex_size'] and codes(found[2]) == ['tex_padding']
+
+
+def test_unmapped_face_matid_is_an_error_naming_it():
+    d1 = ('T_Tverskaya_12_001_Main_d_1.png', png(1024, 1024))
+    uv = full_square_islands([1, 7])
+    found, _ = core.textures_scene([slot_row(1, 'SM_Tverskaya_12_001_Main', {1: [d1]}, NPM_FBX, uv)])
+    assert codes(found[1]) == ['tex_unmeasurable'] and 'matID 7' in found[1][0][1]
+
+
+def test_slot_without_maps_is_missing_and_dropped_by_name():
+    d1 = ('T_Tverskaya_12_001_Main_d_1.png', png(1024, 1024))
+    uv = full_square_islands([1, 2])
+    found, dropped = core.textures_scene([slot_row(1, 'SM_Tverskaya_12_001_Main', {1: [d1], 2: []}, NPM_FBX, uv)])
+    assert codes(found[1]) == ['tex_missing'] and 'matID 2' in found[1][0][1]  # a sub-material without maps
+    assert [d['name'] for d in dropped] == ['SM_Tverskaya_12_001_Main'] and 'matID 2' in dropped[0]['reason']
+
+
 # --- pivot ----------------------------------------------------------------------------------------------
 def piv(key, name, p, fbx=VPM_FBX):
     return {'key': key, 'name': name, 'fbx': fbx, 'pivot': p}

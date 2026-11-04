@@ -197,6 +197,52 @@ print('AGR_CHECKS_TEXTURES', json.dumps(got, sort_keys=True))
 for n in tex_nodes:
     rt.delete(n)
 
+# --- padding per atlas (review r1 P1): two-slot Multimaterial, atlas shared by two objects -------------
+def island_mesh(name, fbx, islands):
+    """One UV square per (x0, size, matID) island; geometry quads side by side."""
+    verts, faces, uv, mids = [], [], [], []
+    for k, (x0, s, mid) in enumerate(islands):
+        b = 4 * k
+        verts += [rt.Point3(2 * k + x, y, 0) for x, y in ((0, 0), (1, 0), (1, 1), (0, 1))]
+        faces += [rt.Point3(b + 1, b + 2, b + 3), rt.Point3(b + 1, b + 3, b + 4)]
+        uv += [(x0, 0.1), (x0 + s, 0.1), (x0 + s, 0.1 + s), (x0, 0.1 + s)]
+        mids += [mid, mid]
+    m = rt.mesh(vertices=verts, faces=faces)
+    m.name = name
+    rt.setNumTVerts(m, len(uv))
+    for i, (u, v) in enumerate(uv):
+        rt.setTVert(m, i + 1, rt.Point3(u, v, 0))
+    rt.buildTVFaces(m)
+    for i, f in enumerate(faces):
+        rt.setTVFace(m, i + 1, f)
+        rt.setFaceMatID(m, i + 1, mids[i])
+    rt.update(m)
+    rt.setUserProp(m, 'AGR_EXPORT_PATH', fbx)
+    return m
+
+
+TWO = 'C:/o/0002_TwoSlot_01.fbx'
+s1 = island_mesh('SM_TwoSlot_001_Main', TWO, [(0.1, 0.8, 1), (0.1, 0.8, 2)])  # same UV square, 2 atlases
+mm = rt.multimaterial(numsubs=2)
+mm.name = 'M_TwoSlot_001_Main'
+mm.materialList[0] = material('M_TwoSlot_001_Main_1', [tex('T_TwoSlot_001_Main_d_1.png', 1024, 1024)])
+mm.materialList[1] = material('M_TwoSlot_001_Main_2', [tex('T_TwoSlot_001_Main_d_2.png', 1024, 1024)])
+s1.material = mm
+SH = 'C:/o/0003_Shared_01.fbx'
+shared = material('M_Shared_Main_1', [tex('T_Shared_Main_d_1.png', 1024, 1024)])
+s2 = island_mesh('SM_Shared_001_Main', SH, [(0.1, 0.3, 1)])
+s3 = island_mesh('SM_Shared_002_Main', SH, [(0.4, 0.3, 1)])  # touches s2's island in the shared atlas
+s2.material = s3.material = shared
+atlas_nodes = [s1, s2, s3]
+rep = run('textures_atlas', 'textures', atlas_nodes)
+got = codes(rep)
+assert got['SM_TwoSlot_001_Main'] == [], got           # r1 pooled both slots -> false tex_padding
+assert got['SM_Shared_001_Main'] == ['tex_padding'] and got['SM_Shared_002_Main'] == ['tex_padding'], got
+assert rep['plan']['dropped'] == [], rep['plan']['dropped']
+print('AGR_CHECKS_TEXTURES_ATLAS', json.dumps(got, sort_keys=True))
+for n in atlas_nodes:
+    rt.delete(n)
+
 # --- pivot (VPM-2.9-4.b, VPM-2.9-5), metres and centimetres ------------------------------------------
 PIV = 'C:/o/SM_Pivot_1.fbx'
 p1 = plane('SM_Pivot_1_Main', PIV)
@@ -251,4 +297,4 @@ print('AGR_CHECKS_GEOJSON', json.dumps(geo, sort_keys=True))
 
 with (OUT / 'results.json').open('x', encoding='utf-8') as f:
     json.dump(results, f, indent=2, default=str, allow_nan=False)
-print('AGR_CHECKS_COMPLETE names=5 tris=6 textures=7 pivot=3+cm macros=4 geojson=5 read_only=true')
+print('AGR_CHECKS_COMPLETE names=5 tris=6 textures=7+atlas3 pivot=3+cm macros=4 geojson=5 read_only=true')

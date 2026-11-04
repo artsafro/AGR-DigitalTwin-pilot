@@ -558,12 +558,38 @@ def required_padding(model, size):
     return VPM_PADDING_PX.get(size)
 
 
+def atlas_id(paths, model):
+    """Identity of the texture atlas a slot maps to: its base-colour maps (NPM `d`, VPM `Diffuse`; the
+    VPM `.UDIM` suffix stripped so all tiles of one set are one atlas), else every map of the slot.
+    Objects of one FBX whose slots share this id share the atlas; their islands are measured together."""
+    base, every = set(), set()
+    for path in paths:
+        name = re.split(r'[\\/]', str(path))[-1]
+        stem = name[:-4] if name.lower().endswith('.png') else name
+        folder = re.sub(r'[\\/]+', '/', str(path)[:len(str(path)) - len(name)]).lower()
+        if model == 'vpm':
+            stem = re.sub(r'\.\d{4}$', '', stem)
+        n = folder + stem.lower()
+        every.add(n)
+        if _map_of(stem.split('.')[0], model) in ('d', 'Diffuse'):
+            base.add(n)
+    return tuple(sorted(base or every))
+
+
 def textures_scene(rows):
-    """rows: [{'key', 'name', 'fbx', 'maps': [(path, bytes|None)], 'uv': callable -> (uvs, faces)}].
+    """rows: [{'key', 'name', 'fbx', 'maps': [(path, bytes|None)], 'slots': {matID: [path]} (optional: a
+    Multimaterial; absent = one material for every face), 'uv': callable -> (uvs, faces)}], faces are
+    (face_id, [uv indices]) or (face_id, [uv indices], matID).
     EVERY object's maps are read (defect D1: GeoAGR kept `texes_paths = texs` of the last object only,
     GeoAGR.ms:65313/65709). A map list is a list: empty means "no maps" (defect D3: GeoAGR.ms:65715
-    tested the usedMaps array against undefined). Returns (findings by key, dropped)."""
+    tested the usedMaps array against undefined). UV padding is measured per ATLAS (review r1): every
+    face goes to its matID's slot maps; the faces of all objects of one FBX whose slots share an atlas
+    (`atlas_id`) are pooled, measured at that atlas size (per UDIM tile inside padding_findings) and the
+    finding is split back per object with its own face ids. An unmapped matID is `tex_unmeasurable`
+    naming it; a slot without maps is `tex_missing` + a dropped entry. Returns (findings by key, dropped)."""
     found, dropped = {}, []
+    infos = {}
+    atlases = {}  # (fbx, atlas id) -> {'size', 'need', 'uvs', 'faces', 'keys'}
     for r in rows:
         f = found.setdefault(r['key'], [])
         kind = fbx_kind(r.get('fbx'))
@@ -587,23 +613,82 @@ def textures_scene(rows):
             continue
         if glass:
             f.append(('tex_format', 'glass materials carry no texture maps'))
-        sizes, stems = [], []
+        stems = []
         for path, data in maps:
             fs, info = texture_file_findings(path, data, model, mk)
             f.extend(fs)
+            infos[path] = info
             stem = re.split(r'[\\/]', path)[-1]
             stems.append(stem[:-4] if stem.lower().endswith('.png') else stem)
-            if info and info[0] == info[1] and (model == 'npm' or info[2] == 'Diffuse'):
-                sizes.append(info[0])
         if model == 'vpm':
             f.extend(udim_set_findings(stems))
-        size = max(sizes) if sizes else None
-        need = required_padding(model, size) if size else None
-        if need is None:
-            dropped.append({'name': r['name'], 'reason': f'UV padding not measured: no {model} map size with a padding rule'})
+        slots = r.get('slots')
+        if slots is None:
+            slots = {None: [p for p, _ in maps]}
+        elif not isinstance(slots, dict):
+            raise ValueError('slot map required for ' + r['name'])
+        known = {p for p, _ in maps}
+        slot_atlas = {}
+        for mid, paths in slots.items():
+            missing = [p for p in paths if p not in known]
+            if missing:
+                raise ValueError(f'{r["name"]} matID {mid}: slot maps {missing} are not in the map list')
+            where = '' if mid is None else f' on matID {mid}'
+            if not paths:
+                if not glass:
+                    f.append(('tex_missing', f'matID {mid}: sub-material has no texture maps'))
+                dropped.append({'name': r['name'], 'reason': f'UV padding not measured{where}: no maps'})
+                continue
+            sizes = [i[0] for i in (infos.get(p) for p in paths)
+                     if i and i[0] == i[1] and (model == 'npm' or i[2] == 'Diffuse')]
+            size = max(sizes) if sizes else None
+            need = required_padding(model, size) if size else None
+            if need is None:
+                dropped.append({'name': r['name'],
+                                'reason': f'UV padding not measured{where}: no {model} map size with a padding rule'})
+                continue
+            a = atlases.setdefault((r['fbx'], atlas_id(paths, model)),
+                                   {'size': size, 'need': need, 'uvs': [], 'faces': [], 'keys': []})
+            if size > a['size']:
+                a['size'], a['need'] = size, need
+            slot_atlas[mid] = a
+        if not slot_atlas:
             continue
         uvs, faces = r['uv']()
-        f.extend(padding_findings(uvs, faces, size, need))
+        if not faces:
+            f.append(('tex_unmeasurable', 'no UV faces'))
+            continue
+        offsets, unmapped = {}, set()
+        for face in faces:
+            fid, idx = face[0], face[1]
+            mid = None if None in slots else (face[2] if len(face) > 2 else None)
+            if mid not in slots:
+                unmapped.add(mid)
+                continue
+            a = slot_atlas.get(mid)
+            if a is None:  # slot already reported (no maps / no padding rule)
+                continue
+            if id(a) not in offsets:
+                offsets[id(a)] = len(a['uvs'])
+                a['uvs'].extend(uvs)
+                if r['key'] not in a['keys']:
+                    a['keys'].append(r['key'])
+            off = offsets[id(a)]
+            a['faces'].append(((r['key'], fid), [i + off for i in idx]))
+        for mid in sorted(unmapped, key=repr):
+            f.append(('tex_unmeasurable', f'face matID {mid} has no sub-material in the Multimaterial'))
+    for a in atlases.values():
+        if not a['faces']:
+            continue
+        for item in padding_findings(a['uvs'], a['faces'], a['size'], a['need']):
+            ids = item[2] if len(item) > 2 else None
+            for k in a['keys']:
+                if ids is None:
+                    found[k].append(item)
+                    continue
+                own = [fid for kk, fid in ids if kk == k]
+                if own:
+                    found[k].append((item[0], item[1], own))
     return found, dropped
 
 
