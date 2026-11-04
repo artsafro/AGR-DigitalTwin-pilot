@@ -116,6 +116,39 @@ def test_perimeter_drop_short_exact_missing_zero():
     assert codes(f, 6) == ['fbx_unmapped']
 
 
+GLASS = dict(STD, name='M_Glass_1', maps=[], opacity=0.5)
+
+
+def _kinds_scene():
+    """Main + MainGlass + Ground + GroundEl + Flora; only Main/Ground are dropped below ±0.000."""
+    def up(z0, z1):
+        return {'verts': [(x, y, z0 + z * (z1 - z0)) for x, y, z in CUBE_V], 'tris': list(CUBE_T)}
+    return [obj(1),
+            obj(2, 'SM_Addr_001_MainGlass', materials=[dict(GLASS)], mesh=up(3, 6), bbox=((0, 0, 3), (1, 1, 6))),
+            obj(3, 'SM_Addr_Ground', NPM_GROUND),
+            obj(4, 'SM_Addr_001_GroundEl', NPM_GROUND, mesh=up(0, 1), bbox=((0, 0, 0), (1, 1, 1))),
+            obj(5, 'SM_Addr_001_Flora', NPM_GROUND, mesh=up(0, 5), bbox=((0, 0, 0), (1, 1, 5)))]
+
+
+def test_perimeter_drop_only_main_and_ground():
+    """Review P1 (PR #881): MainGlass/GroundEl/Flora above ±0.000 are not perimeter meshes, no drop_short."""
+    f, _, s = core.perimeter_drop(_kinds_scene())
+    assert {k: codes(f, k) for k in range(1, 6)} == {1: [], 2: [], 3: [], 4: [], 5: []}
+    assert [n['kind'] for n in s['not_applicable']] == ['MainGlass', 'GroundEl', 'Flora']
+    # a short Main/Ground is still caught next to them, and missing ±0.000 on a glass mesh is not a finding
+    rows = _kinds_scene()
+    rows[0]['zero_m'] = -1.5
+    rows[2]['zero_m'] = -1.0
+    rows[1]['zero_m'] = None
+    f, _, _ = core.perimeter_drop(rows)
+    assert {k: codes(f, k) for k in range(1, 6)} == {1: ['drop_short'], 2: [], 3: ['at_threshold'], 4: [], 5: []}
+
+
+def test_preflight_passes_valid_scene_with_every_kind():
+    rep = report_of('preflight', _kinds_scene())
+    assert rep['status'] == 'pass', [(o['name'], o['findings']) for o in rep['objects'] if o['findings']]
+
+
 def test_material_type_names_corona_and_subs():
     corona = {'name': 'M_bad', 'cls': 'CoronaPhysicalMtl', 'maps': [], 'missing': [], 'opacity': None}
     multi = {'name': 'Multi', 'cls': 'Multimaterial', 'maps': [], 'missing': [], 'opacity': None}

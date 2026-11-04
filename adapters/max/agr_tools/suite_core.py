@@ -202,11 +202,17 @@ def perimeter_drop(rows):
 
     New (GeoAGR gap #10: no live check). The ±0.000 has no default: a mesh without AGR_ZERO_M is
     `drop_unmeasurable`, never measured against 0. Exactly 1 m is `at_threshold` (review), as 0.5.0.
+    Only the perimeter meshes (exact suffix Main / Ground, checks.mesh_kind) are measured: MainGlass,
+    GroundEl, Flora etc. stand above ±0.000 by design and are listed in summary `not_applicable`.
     """
     rows = Rows(rows)
-    found, dropped = {}, []
+    found, dropped, skipped = {}, [], []
     for r in rows:
         if checks.is_ucx(r['name']) or not _geo(r):
+            continue
+        mk = checks.mesh_kind(r['name'])
+        if mk not in ('Main', 'Ground'):
+            skipped.append({'name': r['name'], 'kind': mk or 'unknown suffix'})
             continue
         if _kind(r) is None:
             _add(found, r['key'], 'fbx_unmapped', 'AGR_EXPORT_PATH не задан или не по маске: ' + repr(r.get('fbx')))
@@ -222,7 +228,7 @@ def perimeter_drop(rows):
             _add(found, r['key'], 'at_threshold', 'опуск ровно {:.3f} м'.format(drop))
         elif drop < PERIMETER_DROP_M:
             _add(found, r['key'], 'drop_short', 'опуск {:.3f} м < {:.1f} м'.format(drop, PERIMETER_DROP_M))
-    return found, dropped, {}
+    return found, dropped, {'not_applicable': skipped}
 
 
 # --- tex.material_type --------------------------------------------------------------------------------
