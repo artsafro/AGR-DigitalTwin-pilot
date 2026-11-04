@@ -10,42 +10,55 @@
 
 ## 1. Инвентарь
 
-Что агенты делают с DCC сегодня: чужой MCP, `max_exec.py`, `dcc_batch.py`, плюс headless Blender и живой `blender_exec.py`. Счётчик — число совпадений `rg`, не число живых вызовов. `.agents/skills` и `.claude/skills` дублируют одни и те же тексты (Ground / MAF / Flora).
+Что агенты делают с DCC сегодня: чужой MCP, `max_exec.py`, `dcc_batch.py`, плюс headless Blender и живой `blender_exec.py`. Счётчик — число строк `rg -n | wc -l`, не число живых вызовов. `.agents/skills` и `.claude/skills` дублируют одни и те же тексты (Ground / MAF / Flora).
 
-Корень: worktree. Фильтр один на все команды:
+Корень: worktree. Фильтр один на все команды этого каталога. `docs/plans/**` исключён, чтобы сам план не попадал в счётчик. Первая команда — колонка matches, вторая — files:
 
 ```
-rg -n -F -g "jobs/**" -g "tools/**" -g "scripts/**" -g ".agents/skills/**" -g ".claude/skills/**" -g "docs/**" -- "<pattern>"
+rg -n -F -g "jobs/**" -g "tools/**" -g "scripts/**" -g ".agents/skills/**" -g ".claude/skills/**" -g "docs/**" -g "!docs/plans/**" -- "<pattern>" | wc -l
+rg -l -F -g "jobs/**" -g "tools/**" -g "scripts/**" -g ".agents/skills/**" -g ".claude/skills/**" -g "docs/**" -g "!docs/plans/**" -- "<pattern>" | wc -l
 ```
 
-Шаблоны, которые начинаются с `-`, стоят после `--`, иначе `rg` съедает их как флаги. Дата прогона: 2026-11-04.
+Шаблоны, которые начинаются с `-`, стоят после `--`, иначе `rg` съедает их как флаги. Прогон: 2026-11-04, HEAD `b049d99f`. Таблица ниже — строки и файлы этого прогона.
 
 | pattern | matches | files |
 |---|---:|---:|
 | `max_exec.py` | 3 | 2 |
-| `dcc_batch.py` | 115 | — |
+| `dcc_batch.py` | 115 | 56 |
 | `dcc_batch.py max` | 43 | 29 |
 | `dcc_batch.py acad` | 22 | 15 |
 | `blender_exec` | 54 | 17 |
 | `execute_maxscript` | 1 | 1 |
-| `execute_python` | 3 | — |
-| `execute_blender_code` | — | 3 |
-| `3dsmaxbatch` | 39 | — |
-| `get_objects_summary` | 2 | — |
-| `get_blendfile_summary` | 7 | — |
-| `get_object_detail_summary` | 4 | — |
+| `execute_python` | 3 | 1 |
+| `execute_blender_code` | 14 | 3 |
+| `3dsmaxbatch` | 39 | 22 |
+| `get_objects_summary` | 2 | 2 |
+| `get_blendfile_summary` | 7 | 3 |
+| `get_object_detail_summary` | 4 | 2 |
 | `--factory-startup` | 200 | 118 |
-| `--background` | 206 | — |
-| `holdMaxFile` | 5 | — |
+| `--background` | 206 | 130 |
+| `holdMaxFile` | 5 | 3 |
 | `saveMaxFile` | 31 | 16 |
 | `exportFile` | 33 | 19 |
-| `importFile` | 18 | — |
+| `importFile` | 18 | 18 |
 | `xview_dump.ms` | 14 | 10 |
-| `build_agr_tools` | 4 | — |
+| `build_agr_tools` | 4 | 2 |
 | `MaxClient` | 0 | 0 |
 | `send_command` | 0 | 0 |
 
-`--background` (206) включает почти все `--factory-startup` (200): это один класс запуска, не вторая сотня действий. `dcc_batch.py` (115) включает строки `max` (43) и `acad` (22); остальные 50 — общее имя обёртки. Отдельного каталога card logs в worktree нет. В фильтр попал evidence `jobs/vyatskaya-tow02/evidence/xview-528/SUMMARY.md`. Тела карточек в `hermes_kanban` не сканировались.
+Отдельный прогон, только чтение, вне фильтра worktree. Команда:
+
+```
+rg -n -F -- "max_exec.py" C:/Users/artsafro/hermes_kanban/scripts
+```
+
+| pattern | matches | files |
+|---|---:|---:|
+| `max_exec.py` в `C:/Users/artsafro/hermes_kanban/scripts` | 4 | 2 |
+
+Четыре строки: шапка самого `max_exec.py` (строки 4–6) и упоминание команды в `agr_refill.py:55`. Другого скрипта в этой папке, который вызывает `max_exec.py`, нет.
+
+`--background` (206) включает почти все `--factory-startup` (200): это один класс запуска, не вторая сотня действий. `dcc_batch.py` (115) включает строки `max` (43) и `acad` (22); остальные 50 — общее имя обёртки. Отдельного каталога card logs в worktree нет. В фильтр попал evidence `jobs/vyatskaya-tow02/evidence/xview-528/SUMMARY.md`. Тела карточек в `hermes_kanban` не сканировались; каталог `scripts` там посчитан отдельной строкой выше.
 
 | Действие | Где (пример) | Маршрут | Совпадения | Что даёт чужой сервер и чего нам не хватает | Риск |
 |---|---|---|---|---:|---|
@@ -55,11 +68,11 @@ rg -n -F -g "jobs/**" -g "tools/**" -g "scripts/**" -g ".agents/skills/**" -g ".
 | Живой Python в открытом Blender | `docs/experiments/blender-exec-session.md:3` | `blender_exec.py` → аддон на порту (в эксперименте ahujasid, 9876) | 54 / 17 файлов | Выполнение `bpy`. Нам нужен readback и сборка, не произвольный код | Произвольный Python. Lock `agr-blender-session.lock` (прочитан заголовок `blender_exec.py`). JSONL нет |
 | Headless Blender `--background --factory-startup` | `tools/blender/fbx_readback.py:9`, `tools/blender/ground_json_to_fbx.py:5` | Прямой `blender.exe`. Не Blender Lab MCP и не `dcc_batch` (у `dcc_batch.py` есть только `max` и `acad`) | 200 / 118 файлов | Ничего из чужого MCP: процесс сам исполняет `--python` | Произвольный скрипт в аргументе. Отдельного lock в этих docstring нет |
 | Осмотр сцены Blender Lab | `docs/agents/CAPABILITIES.md:175`; `.agents/skills/blender-mcp/SKILL.md:28` | MCP `blender`, пакет `blender-mcp` 1.0.3, порт 9877 | `get_objects_summary` 2, `get_blendfile_summary` 7, `get_object_detail_summary` 4 | Семь read-only инструментов из CAPABILITIES. Схемы в репозитории не зафиксированы | Эти семь — read-only по регистру риска. Всё остальное на маршруте, включая Python, — destructive |
-| Произвольный код чужого MCP | `docs/research/mcp-dcc-bridges.md:38` (`execute_maxscript`), `:61` и `:208` (`execute_blender_code`) | `3dsmax-mcp` / Blender Lab | `execute_maxscript` 1, `execute_python` 3, `execute_blender_code` в 3 файлах | Именно это v1 не повторяет как обычный инструмент | CAPABILITIES: все инструменты `3dsmax-mcp` — destructive. `safe_mode` не песочница (см. §7) |
+| Произвольный код чужого MCP | `docs/research/mcp-dcc-bridges.md:38` (`execute_maxscript`), `:61` и `:208` (`execute_blender_code`) | `3dsmax-mcp` / Blender Lab | `execute_maxscript` 1, `execute_python` 3 (1 файл), `execute_blender_code` 14 (3 файла) | Именно это v1 не повторяет как обычный инструмент | CAPABILITIES: все инструменты `3dsmax-mcp` — destructive. `safe_mode` не песочница (см. §7) |
 | Нативный xView пакетом | `jobs/vyatskaya-tow02/evidence/xview-528/SUMMARY.md:3` | `dcc_batch.py max` + `tools/qa/xview_dump.ms` | 14 / 10 файлов | Дамп для сверки с `tools/qa/xview_parity.py` | Скрипт на копии. Тот же lock, что у headless Max |
 | Правка/сохранение/импорт/экспорт внутри job | `tools/export/benchmark_export_max.py:235` (`holdMaxFile`); `saveMaxFile` / `exportFile` / `importFile` | Текст скриптов, которые крутит batch или живой мост | 5 / 31 / 33 / 18 | Чужой `execute_maxscript` это просто проносит | Прямая мутация сцены или диска. Аудита вызова нет |
 
-Итого по маршрутам (совпадения, с оговоркой про вложенность выше): живой Max 3, headless Max 43, headless AutoCAD 22, живой Blender 54, headless Blender 200. Плюс имена чужих tool в документах: 1 + 3 + файлы `execute_blender_code`. Единственный call site `max_exec.py` внутри репозитория — `tools/review/max_adapter.py:52`.
+Итого по маршрутам (совпадения, с оговоркой про вложенность выше): живой Max 3, headless Max 43, headless AutoCAD 22, живой Blender 54, headless Blender 200. Плюс имена чужих tool в документах: `execute_maxscript` 1, `execute_python` 3, `execute_blender_code` 14 в 3 файлах. Единственный call site `max_exec.py` внутри репозитория — `tools/review/max_adapter.py:52`. В `hermes_kanban/scripts` строка `max_exec.py` встречается 4 раза (2 файла), внешних вызовов там нет.
 
 Свой код, который сервер должен вызывать, уже в пилоте: `adapters/max/agr_tools/runtime.py` (версия в файле `0.4.0`), чекеры `src/twinqa/`, `tools/qa/xview_parity.py`, `tools/blender/fbx_readback.py`. Сборщики Ground / MAF / Flora в v1 остаются библиотеками, не MCP-инструментами: им не нужен живой DCC (`src/dt_ai/geometry/ground_cake.py` `build_flat`, `src/twinqa/maf_checks.py` `maf_findings`, `src/twinqa/flora.py` `flora_findings`).
 
@@ -71,8 +84,8 @@ rg -n -F -g "jobs/**" -g "tools/**" -g "scripts/**" -g ".agents/skills/**" -g ".
 
 Общие поля входа Max-инструментов: `scene` (путь копии или `live`), `handles` (массив целых, пустой = текущие цели `runtime._targets`). Мутации — только на копиях экспорта или на одноразовой сцене, как AGR Tools.
 
-1. `agr_xview_check` — Max — геометрия read-only. `runtime.xview` (`runtime.py:274`) ещё делает `select` по объектам с findings (`_report`, `select=True`). Вход: общие поля. Выход: `_report` плюс пороги 2 мм / 5 мм в `extra`, если функция их кладёт.
-2. `agr_matid_check` — Max — то же про selection. `runtime.matid` (`runtime.py:330`). Вход: общие поля. Выход: `_report` (id ≥ 1001, id 0, пустые слоты).
+1. `agr_xview_check` — Max — selection-modifying. `runtime.xview` (`runtime.py:274`) возвращает `_report('xview', entries, nodes)` (`runtime.py:327`) без аргумента `select`. У `_report` значение по умолчанию `select=True` (`runtime.py:229`), и тогда вызывается `_rt().select` по узлам с findings (`runtime.py:235`). Геометрия исходных узлов не переписывается (проверка идёт по временной копии). Обёртка MCP `select=False` не подставляет: `xview` этот аргумент не принимает. Вход: общие поля. Выход: `_report` плюс пороги 2 мм / 5 мм в `extra`, если функция их кладёт.
+2. `agr_matid_check` — Max — selection-modifying, тот же механизм. `runtime.matid` (`runtime.py:330`) возвращает `_report('matid', entries, nodes)` (`runtime.py:360`) без `select`, значит снова `select=True`. Обёртка MCP `select=False` не подставляет. Вход: общие поля. Выход: `_report` (id ≥ 1001, id 0, пустые слоты).
 3. `agr_cleanup_preview` — Max — read-only (`cleanup_preview` пишет «No mutation», `runtime.py:421`). Вход: общие поля. Выход: план правок, сцена не меняется.
 4. `agr_cleanup_apply` — Max — новые узлы-копии. `runtime.cleanup_apply` (`runtime.py:441`). Вход: общие поля + `preview` (объект прошлого preview). Выход: `_report` по копиям. Оригиналы функция не чистит.
 5. `agr_uv_nudge_preview` — Max — read-only. `runtime.nudge_preview` (`runtime.py:661`). Вход: общие поля. Выход: острова и шаги тайла. `nudge_apply` (`runtime.py:711`) в v1 отдельным именем не выводится: тот же контракт, что у `cleanup_apply`, фаза 1.
@@ -165,19 +178,48 @@ uv run agr-mcp install
 
 Она делает три вещи: ставит консольный скрипт `agr-mcp` в venv репозитория (`uv sync`), копирует плагин Max тем же приёмом, что `python tools/max/build_agr_tools.py` (новый MZP, без перезаписи), кладёт Blender-скрипты readback рядом с пакетом. Аддон в живой Blender на фазе 0 не регистрируется: хватает `blender.exe` из переменной `AGR_BLENDER` (сегодня версия закреплена в `src/dt_ai/core/blender_runner.py`, имя константы `BLENDER_VERSION`, значение в CAPABILITIES — 5.1.2).
 
-Регистрация — stdio, в том же виде, что `.agents/mcp_config.json` и элементы `docs/agr/inventory/mcp-registrations.json` (`server`, `command`, аргументы с путём).
+Регистрация — один и тот же stdio: `uv run --directory <clone> agr-mcp`. Ниже четыре формата. `<clone>` — путь клона `artsafro/agr-mcp`.
 
-Codex / Antigravity (фрагмент в стиле `.agents/mcp_config.json`):
+Hermes, профиль, `config.yaml`. Ключи stdio — `command`, `args`, `env` (`C:\Users\artsafro\.hermes\hermes-agent\website\docs\reference\mcp-config-reference.md:18-22`; таблица тех же ключей на строках 48–50). Блок `mcp_servers` читается из config активного профиля (`C:\Users\artsafro\.hermes\hermes-agent\tools\mcp_tool_config.py:710`, `load_config().get("mcp_servers")`). Файл профиля — `config.yaml` в каталоге под `~/.hermes/profiles/` (`C:\Users\artsafro\.hermes\hermes-agent\website\docs\user-guide\profiles.md:11`). Пример формы — `C:\Users\artsafro\.hermes\hermes-agent\website\docs\user-guide\features\mcp.md:317-324`.
+
+```yaml
+# ~/.hermes/profiles/<name>/config.yaml
+mcp_servers:
+  agr-mcp:
+    command: "uv"
+    args: ["run", "--directory", "<clone>", "agr-mcp"]
+    env:
+      AGR_BLENDER: "C:/Program Files/Blender Foundation/Blender 5.1/blender.exe"
+```
+
+Codex, `~/.codex/config.toml`, таблица `[mcp_servers.<name>]`. Живой образец той же команды `uv run --directory`: `[mcp_servers.3dsmax-mcp]` с `command` и `args` (`C:\Users\artsafro\.codex\config.toml:136-138`). Окружение — отдельная таблица `[mcp_servers.<name>.env]` (`config.toml:111`). Инвентарь пилота указывает этот файл и поля `command` / `local_path_args` (`docs/agr/inventory/mcp-registrations.json:56` и `:58-62`); в toml `local_path_args` записывается как `args`.
+
+```toml
+[mcp_servers.agr-mcp]
+command = "uv"
+args = ["run", "--directory", "<clone>", "agr-mcp"]
+
+[mcp_servers.agr-mcp.env]
+AGR_BLENDER = "C:/Program Files/Blender Foundation/Blender 5.1/blender.exe"
+```
+
+Antigravity, JSON в форме `.agents/mcp_config.json` (там `3dsmax-mcp` уже `uv` / `args` / `env`, строки 3–10):
 
 ```json
 "agr-mcp": {
   "command": "uv",
-  "args": ["run", "--directory", "C:\\Users\\artsafro\\src\\agr-mcp", "agr-mcp"],
+  "args": ["run", "--directory", "<clone>", "agr-mcp"],
   "env": {"AGR_BLENDER": "C:/Program Files/Blender Foundation/Blender 5.1/blender.exe"}
 }
 ```
 
-Cursor (как записи `mcp-registrations.json`: `config` = `%USERPROFILE%\.cursor\mcp.json`, `command` = python из venv пакета):
+Claude Code, user scope, не файл проекта. CAPABILITIES: Claude берёт свои user-scope записи (`docs/agents/CAPABILITIES.md:137`). Команда `claude mcp add <name> -- <cmd>` — `C:\Users\artsafro\.hermes\hermes-agent\website\docs\user-guide\skills\bundled\autonomous-ai-agents\autonomous-ai-agents-claude-code.md:158`. Флаг `--scope user` (глобальная запись пользователя) — `C:\Users\artsafro\.claude\plugins\marketplaces\claude-plugins-official\plugins\mcp-server-dev\skills\build-mcp-server\references\remote-http-scaffold.md:186` (в той строке флаг показан на HTTP-примере; для stdio тот же scope). Файл user-scope на диске не открывался.
+
+```
+claude mcp add --scope user agr-mcp -- uv run --directory <clone> agr-mcp
+```
+
+Cursor (как уже было; записи `mcp-registrations.json`: `config` = `%USERPROFILE%\.cursor\mcp.json`, первая запись `docs/agr/inventory/mcp-registrations.json:2-6`, `command` = исполняемый файл из venv пакета):
 
 ```json
 "agr-mcp": {
@@ -186,15 +228,11 @@ Cursor (как записи `mcp-registrations.json`: `config` = `%USERPROFILE%\
 }
 ```
 
-Claude Code: пользовательская регистрация, не файл проекта. CAPABILITIES прямо говорит, что Claude берёт свои user-scope записи. Готового блока `agr-mcp` в просмотренных файлах нет. Форма та же: `uv run --directory <clone> agr-mcp`. Путь файла Claude на диске в этом плане не утверждается — он не открывался.
-
-Hermes: в `mcp-registrations.json` есть только `.cursor\mcp.json` и `.codex\config.toml`. Отдельного Hermes-блока в этих двух файлах нет. Когда путь конфига будет известен, в него копируется тот же stdio `uv run`. До этого Hermes ходит в DCC через `max_exec.py` / `dcc_batch.py` / `blender_exec.py`, как сейчас.
-
 Версии: semver пакета (`agr-mcp` `0.x.y`) и целое `tool_schema_version` в каждом ответе и в журнале. Ломающее поле входа поднимает `tool_schema_version`. Пилот закрепляет git-tag `agr-mcp-vX.Y.Z` в строке CAPABILITIES (это правка уже фазы 2, не этого плана) и в lockfile dependency, когда пакет появится на индексе или как path/git pin. Пока репозитория нет, пилот ничего не закрепляет.
 
 ## 5. Переход
 
-Фаза 0 — в этом пилоте, ветка работы по #807 (сейчас `improve/issue-807-...`). Сервер только читает: инструменты 1–3, 5–7, 9–10, 12–16. Запись в сцену не вызывается.
+Фаза 0 — в этом пилоте, ветка работы по #807 (сейчас `improve/issue-807-...`). Сервер вызывает инструменты 1–3, 5–7, 9–10, 12–16. `agr_xview_check` и `agr_matid_check` в этой фазе — selection-modifying: живой вызов меняет выделение Max, потому что `_report` по умолчанию делает `select=True`. Геометрию и файлы они не пишут. Инструменты 3, 5–7, 9–10 и 12–16 на фазе 0 выделение, геометрию и файлы не меняют. Запись геометрии и файлов на фазе 0 не вызывается.
 
 Импорт фазы 0 ограничен уже существующими модулями: `adapters/max/agr_tools/runtime.py` (после `build_agr_tools.py`, чтобы рядом лежали сгенерированные срезы), `src/twinqa/scene.py`, `src/twinqa/naming.py`, `src/twinqa/geojson.py`, `src/twinqa/profiles.py`, `tools/qa/validate_package.py`, `tools/qa/xview_parity.py`, `tools/blender/fbx_readback.py`. Новый геометрический код в фазе 0 не пишется. Обёртка MCP только резолвит handles, берёт lock, пишет JSONL и возвращает словарь функции.
 
@@ -211,7 +249,7 @@ Hermes: в `mcp-registrations.json` есть только `.cursor\mcp.json` и 
 | `agr_geojson_check` | `geojson_findings` |
 | `agr_xview_parity` | `xview_parity.compare` |
 
-Плюс две проверки замка и журнала: параллельный вызов в тот же `host` получает отказ, пока lock держится; в JSONL число строк равно числу вызовов теста. Max-read идёт в уже открытую копию либо в `3dsmaxbatch` на копии. Сцена — синтетика, которую уже гоняют `tests/max_tools/` (каталог на этой ветке есть). Расхождение хотя бы одного кода finding — фаза 0 не сдана. После зелёного теста репозиторий `artsafro/agr-mcp` заводится отдельно, пилот зависит от тега. До зелёного теста отдельный репозиторий не создаём.
+Плюс две проверки замка и журнала: параллельный вызов в тот же `host` получает отказ, пока lock держится; в JSONL число строк равно числу вызовов теста. Вызовы Max фазы 0 идут в уже открытую копию либо в `3dsmaxbatch` на копии. `agr_xview_check` и `agr_matid_check` при findings меняют выделение этой копии; остальные инструменты фазы 0 выделение не трогают. Сцена — синтетика, которую уже гоняют `tests/max_tools/` (каталог на этой ветке есть). Расхождение хотя бы одного кода finding — фаза 0 не сдана. После зелёного теста репозиторий `artsafro/agr-mcp` заводится отдельно, пилот зависит от тега. До зелёного теста отдельный репозиторий не создаём.
 
 Фаза 1 — мутации на копиях: `agr_cleanup_apply`, `agr_ucx_apply`, `agr_export_commit`, затем `nudge_apply` и `atlas_apply` теми же именами. Выходной тест: исходный `.max` по хешу не изменился, новый FBX читается `agr_fbx_readback`, повторный commit в тот же путь — отказ. Сборщики `build_flat` / `maf_findings` / `flora_findings` остаются в пилоте; в MCP их поднимаем только если агенту иначе приходится тащить их через произвольный `bpy`.
 
@@ -235,5 +273,8 @@ Hermes: в `mcp-registrations.json` есть только `.cursor\mcp.json` и 
 - ahujasid/blender-mcp (`https://github.com/ahujasid/blender-mcp`): в экспериментах (`docs/experiments/mcp-dcc-bridges.md:30`, порт 9876) это другой аддон, не пакет 1.0.3. Локальный LICENSE этого репозитория не читался. Лицензия **не проверена**.
 - Обёртки вне worktree, только чтение: `C:\Users\artsafro\hermes_kanban\scripts\max_exec.py`, `dcc_batch.py`, заголовок `blender_exec.py`.
 - Регистрации в репозитории: `.agents/mcp_config.json`, `docs/agr/inventory/mcp-registrations.json`.
+- Hermes `mcp_servers`: `C:\Users\artsafro\.hermes\hermes-agent\website\docs\reference\mcp-config-reference.md:18-22`, `C:\Users\artsafro\.hermes\hermes-agent\website\docs\user-guide\profiles.md:11`, `C:\Users\artsafro\.hermes\hermes-agent\tools\mcp_tool_config.py:710`.
+- Codex toml: `C:\Users\artsafro\.codex\config.toml:136-138` и `:111`.
+- Claude Code CLI: `autonomous-ai-agents-claude-code.md:158`, `remote-http-scaffold.md:186`.
 
-Не проверено и в план как факт не входит: схема всех 160 инструментов README `3dsmax-mcp` (README пишет 160 и релиз 1.7.2); актуальность GitHub-ревизии относительно локальной копии 1.7.5; путь конфига Hermes; user-scope файл Claude; совпадение SDK `mcp` 1.30.0 со спекой 2026-07-28; что #804 уже влит в это дерево (здесь AGR Tools 0.4.0).
+Не проверено и в план как факт не входит: схема всех 160 инструментов README `3dsmax-mcp` (README пишет 160 и релиз 1.7.2); актуальность GitHub-ревизии относительно локальной копии 1.7.5; файл user-scope Claude на диске (команда регистрации выше цитирует справку CLI, сам файл не открывался); совпадение SDK `mcp` 1.30.0 со спекой 2026-07-28; что #804 уже влит в это дерево (здесь AGR Tools 0.4.0).
