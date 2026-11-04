@@ -9,11 +9,16 @@ Pattern: new-case: Blender writer + Geometry Nodes extrude/union for the buildin
 export-mesh: <input> = {"vertices": [[x,y,z]...], "triangles": [[a,b,c]...]} (our kernel's prisms).
 gn-union:    <input> = contours.json (tools/methods/body/contours.py); every band polygon becomes a cap face
              at z0 (mathutils polyfill, holes kept), a Geometry Nodes tree extrudes each cap by its band
-             height (Extrude Mesh, offset = named face attribute), joins the flipped caps as bottoms, and unions all prisms (Mesh Boolean, Exact,
+             height, joins the flipped caps as bottoms, and unions all prisms (Mesh Boolean, Exact,
              self intersection), the modifier is applied; then every opening of the input's opening schedule
              (openings.py: axis-aligned cutter boxes) is cut with a Boolean modifier (Difference, Exact), one
              cutter at a time, and an opening that removes no volume (misses the body) is an error naming it;
              the result is triangulated.
+height_domain (gn_union / _gn_tree, default "face"): "face" extrudes by the FACE attribute band_h
+             (the previous tree; default until a TOW02 export/readback passes). "point" writes band_h
+             also as the POINT attribute band_h_pt, extrudes with offset 0, then Set Position on Top by
+             (0, 0, band_h_pt). Unknown height_domain raises ValueError naming it. z0 snap is not applied
+             here: contours.contours(..., z0_snap="on") / snap_band_z0 does that before this writer.
 Writes <out>.variant.json {ok, wall_time_s (build + export, after the inputs are read), triangles, blender,
 openings: [{id, removed_m3}] (gn-union)}.
 Refuses (exit 4, nothing written, not even the report) when <out> or its report is or aliases <input> or each
@@ -69,7 +74,32 @@ def export_mesh(data: dict, out: Path, name: str) -> int:
     return len(me.polygons)
 
 
-def _gn_tree():
+_HEIGHT_DOMAINS = ("face", "point")
+_TAPS = ("extrude", "weld", "boolean", "merge")
+
+
+def _check_height_domain(height_domain: str) -> str:
+    """``height_domain`` is ``"face"`` (default, previous tree) or ``"point"`` (band_h_pt + Set Position)."""
+    if height_domain not in _HEIGHT_DOMAINS:
+        raise ValueError(f"unknown height_domain {height_domain!r}; known: face, point")
+    return height_domain
+
+
+def _gn_tree(height_domain: str = "face", tap: str = "merge"):
+    """Extrude each cap by its band height and exact-union the prisms.
+
+    height_domain ``"face"`` (default) feeds Extrude Mesh the FACE attribute ``band_h``.
+    That is the previous tree and stays the default until a TOW02 export/readback passes.
+    ``"point"`` extrudes with offset (0, 0, 0) and Offset Scale 0, then
+    Set Position(Selection=Top, Offset=(0, 0, band_h_pt)).
+
+    tap ``"merge"`` (default) is the production output. ``"extrude"``, ``"weld"`` and
+    ``"boolean"`` stop earlier; ``"extrude"`` is the moved caps (Set Position when
+    height_domain is ``"point"``). Unknown height_domain or tap raises ValueError naming it.
+    """
+    height_domain = _check_height_domain(height_domain)
+    if tap not in _TAPS:
+        raise ValueError(f"unknown tap {tap!r}; known: extrude, weld, boolean, merge")
     ng = bpy.data.node_groups.new("BodyExtrudeUnion", "GeometryNodeTree")
     ng.interface.new_socket("Geometry", in_out="INPUT", socket_type="NodeSocketGeometry")
     ng.interface.new_socket("Geometry", in_out="OUTPUT", socket_type="NodeSocketGeometry")
@@ -77,7 +107,7 @@ def _gn_tree():
     gin, gout = n.new("NodeGroupInput"), n.new("NodeGroupOutput")
     attr = n.new("GeometryNodeInputNamedAttribute")
     attr.data_type = "FLOAT"
-    attr.inputs["Name"].default_value = "band_h"
+    attr.inputs["Name"].default_value = "band_h_pt" if height_domain == "point" else "band_h"
     comb = n.new("ShaderNodeCombineXYZ")
     ext = n.new("GeometryNodeExtrudeMesh")
     ext.mode = "FACES"
@@ -95,15 +125,47 @@ def _gn_tree():
     links = ng.links
     links.new(attr.outputs[0], comb.inputs["Z"])
     links.new(gin.outputs[0], ext.inputs["Mesh"])
-    links.new(comb.outputs[0], ext.inputs["Offset"])
+    if height_domain == "face":
+        links.new(comb.outputs[0], ext.inputs["Offset"])
+        moved = ext.outputs["Mesh"]
+    else:
+        ext.inputs["Offset"].default_value = (0.0, 0.0, 0.0)
+        ext.inputs["Offset Scale"].default_value = 0.0
+        sp = n.new("GeometryNodeSetPosition")
+        links.new(comb.outputs[0], sp.inputs["Offset"])
+        links.new(ext.outputs["Top"], sp.inputs["Selection"])
+        links.new(ext.outputs["Mesh"], sp.inputs["Geometry"])
+        moved = sp.outputs["Geometry"]
     links.new(gin.outputs[0], flip.inputs["Mesh"])  # the bottom cap: Extrude Mesh moves the caps up, open below
     links.new(flip.outputs[0], join.inputs[0])
-    links.new(ext.outputs["Mesh"], join.inputs[0])
+    links.new(moved, join.inputs[0])
     links.new(join.outputs[0], weld.inputs[0])
     links.new(weld.outputs[0], boo.inputs["Mesh 2"] if "Mesh 2" in boo.inputs else boo.inputs[0])
     links.new(boo.outputs[0], merge.inputs[0])
-    links.new(merge.outputs[0], gout.inputs[0])
+    source = {"extrude": moved, "weld": weld.outputs[0], "boolean": boo.outputs[0], "merge": merge.outputs[0]}[tap]
+    links.new(source, gout.inputs[0])
     return ng
+
+
+def _copy_band_h_to_points(me) -> None:
+    """Copy the FACE attribute ``band_h`` onto POINT ``band_h_pt`` (one height per cap vertex)."""
+    import array
+
+    fh = array.array("f", [0.0]) * len(me.polygons)
+    me.attributes["band_h"].data.foreach_get("value", fh)
+    ph = array.array("f", [float("nan")]) * len(me.vertices)
+    seen = [False] * len(me.vertices)
+    conflict = False
+    for poly in me.polygons:
+        height = fh[poly.index]
+        for vi in poly.vertices:
+            if seen[vi] and ph[vi] != height:
+                conflict = True
+            seen[vi] = True
+            ph[vi] = height
+    if conflict or not all(seen):
+        raise ValueError("band_h_pt: a cap vertex belongs to two bands or to none")
+    me.attributes.new("band_h_pt", "FLOAT", "POINT").data.foreach_set("value", ph)
 
 
 def _volume(obj) -> float:
@@ -142,19 +204,25 @@ def cut_openings(obj, schedule: list[dict]) -> list[dict]:
     return done
 
 
-def gn_union(contours: dict, out: Path, name: str) -> tuple[int, list[dict]]:
-    schedule = body_openings.schedule(contours)  # validated before any geometry is built
+def _build_cap(contours: dict, name: str, height_domain: str = "face"):
+    """Cap faces at each band z0. Returns ``(mesh, band id per face)``.
+
+    ``height_domain="point"`` also writes POINT ``band_h_pt`` copied from FACE ``band_h``.
+    ``"face"`` (default) writes only the face attribute, as before.
+    """
+    height_domain = _check_height_domain(height_domain)
     bm = bmesh.new()
-    heights = []
-    for band in contours["bands"]:
+    heights, ids = [], []
+    for bi, band in enumerate(contours["bands"]):
         z0, h = float(band["z0"]), float(band["z1"]) - float(band["z0"])
         for poly in band["polygons"]:
             rings = [[Vector((x, y, z0)) for x, y in ring] for ring in [poly["exterior"], *poly["holes"]]]
             flat = [v for ring in rings for v in ring]
             verts = [bm.verts.new(v) for v in flat]
             for tri in tessellate_polygon(rings):
-                face = bm.faces.new([verts[i] for i in tri])
+                bm.faces.new([verts[i] for i in tri])
                 heights.append(h)
+                ids.append(bi)
     bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-5)  # caps of one polygon share their ring vertices
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
     for f in bm.faces:  # cap normal up: Extrude Mesh moves the caps to the top (+Z offset), the flipped copy is the bottom
@@ -167,14 +235,24 @@ def gn_union(contours: dict, out: Path, name: str) -> tuple[int, list[dict]]:
         raise RuntimeError(f"{len(me.polygons)} cap faces for {len(heights)} heights")
     a = me.attributes.new("band_h", "FLOAT", "FACE")
     a.data.foreach_set("value", heights)
+    if height_domain == "point":
+        _copy_band_h_to_points(me)
+    return me, ids
+
+
+def gn_union(contours: dict, out: Path, name: str, *, height_domain: str = "face") -> tuple[int, list[dict]]:
+    """Build the GN union. ``height_domain`` defaults to ``"face"`` (previous tree)."""
+    height_domain = _check_height_domain(height_domain)
+    schedule = body_openings.schedule(contours)  # validated before any geometry is built
+    me, _ids = _build_cap(contours, name, height_domain=height_domain)
     obj = bpy.data.objects.new(name, me)
     bpy.context.scene.collection.objects.link(obj)
     bpy.context.view_layer.objects.active = obj
     mod = obj.modifiers.new("BodyExtrudeUnion", "NODES")
-    mod.node_group = _gn_tree()
+    mod.node_group = _gn_tree(height_domain=height_domain)
     bpy.ops.object.modifier_apply(modifier=mod.name)
     for key in list(obj.data.attributes.keys()):
-        if key == "band_h":
+        if key in {"band_h", "band_h_pt"}:
             obj.data.attributes.remove(obj.data.attributes[key])
     cut = cut_openings(obj, schedule)
     bm = bmesh.new()
@@ -222,4 +300,5 @@ def main():
     sys.exit(0 if report["ok"] else 1)
 
 
-main()
+if __name__ == "__main__":
+    main()
