@@ -163,11 +163,24 @@ def test_registry_matches_the_13_plan_rows_of_version_08():
     assert rt.VERSION == m.VERSION == '0.7.0'  # 0.8 stays unshipped until the release branch R
 
 
+def _glue_functions(stem):
+    tree = ast.parse((PKG / '{}_max.py'.format(stem)).read_text(encoding='utf-8'))
+    return {n.name for n in tree.body if isinstance(n, ast.FunctionDef)}
+
+
+def _implemented(tool):
+    """A branch A–D has filled the glue function of this tool (then its own tests own the behaviour)."""
+    return tool.replace('.', '_') in _glue_functions(OWNER[tool])
+
+
 def test_stub_modules_are_empty_and_load_without_pymxs():
     for stem in STUBS:
         for part in ('core', 'max'):
             tree = ast.parse((PKG / '{}_{}.py'.format(stem, part)).read_text(encoding='utf-8'))
-            assert len(tree.body) == 1 and isinstance(tree.body[0], ast.Expr), (stem, part)  # docstring only
+            if not any(_implemented(t) for t, s in OWNER.items() if s == stem):  # still a stub of branch 0
+                assert len(tree.body) == 1 and isinstance(tree.body[0], ast.Expr), (stem, part)  # docstring only
+            top = [n for n in tree.body if isinstance(n, (ast.Import, ast.ImportFrom))]
+            assert not any('pymxs' in ast.dump(n) for n in top), (stem, part)  # loads under plain pytest
     for name in ('edit_core.py', 'edit_max.py'):
         tree = ast.parse((PKG / name).read_text(encoding='utf-8'))
         top = [n for n in tree.body if isinstance(n, (ast.Import, ast.ImportFrom))]
@@ -176,6 +189,8 @@ def test_stub_modules_are_empty_and_load_without_pymxs():
 
 @pytest.mark.parametrize('tool', sorted(ROWS_080))
 def test_every_tool_answers_not_implemented_while_its_stub_is_empty(tool):
+    if _implemented(tool):
+        pytest.skip(tool + ' is implemented; covered by its branch tests')
     rt = runtime()
     r = rt.edits_080(tool, 'preview')
     assert r == rt._edit_core().not_implemented(tool, 'preview')
