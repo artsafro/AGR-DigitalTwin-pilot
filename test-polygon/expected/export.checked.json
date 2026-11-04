@@ -1,0 +1,25 @@
+{
+ "schema": 1,
+ "button": "export.checked",
+ "tool": "export",
+ "version": "0.4",
+ "shipped": true,
+ "select": "named",
+ "reason": "Объекта PASS нет: экспорт с проверкой останавливается на воротах очистки, потому что AGR_TEST не входит в список свойств, которые экспорт прячет. Код находки — cleanup. Второе нажатие пишет FBX только в новый путь; раннер его не делает.",
+ "apply_status": null,
+ "objects": [
+  {
+   "name": "SM_Polygon_001_Main",
+   "scene": "polygon_all",
+   "expect": "fail",
+   "codes": [
+    "cleanup"
+   ]
+  }
+ ],
+ "base": "0.4",
+ "station": "0.4.1",
+ "stations": [
+  "0.4.1"
+ ]
+}

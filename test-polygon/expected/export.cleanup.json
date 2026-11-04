@@ -1,0 +1,34 @@
+{
+ "schema": 1,
+ "button": "export.cleanup",
+ "tool": "cleanup",
+ "version": "0.1",
+ "shipped": true,
+ "select": "named",
+ "reason": "Объекта PASS нет: у каждого объекта полигона есть AGR_TEST (и часто AGR_ZERO_M). Очистка считает такие строки пользовательскими свойствами и даёт clear_user_defined_lines. Пустой буфер свойств не может одновременно нести AGR_TEST. Прогон «Очистка → копии» ждёт status pass уже на копиях, где эти строки сняты.",
+ "apply_status": "pass",
+ "objects": [
+  {
+   "name": "SM_Polygon_001_Main",
+   "scene": "polygon_all",
+   "expect": "fail",
+   "codes": [
+    "clear_user_defined_lines"
+   ]
+  },
+  {
+   "name": "SM_Polygon_Chan_Main",
+   "scene": "polygon_all",
+   "expect": "fail",
+   "codes": [
+    "clear_user_defined_lines",
+    "delete_map_channels"
+   ]
+  }
+ ],
+ "base": "0.1",
+ "station": "0.1.3",
+ "stations": [
+  "0.1.3"
+ ]
+}

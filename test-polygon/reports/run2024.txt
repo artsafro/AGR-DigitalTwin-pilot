@@ -1,0 +1,673 @@
+база	станция	кнопка	сцена	объект	ожидалось	итог
+База 0.1					Каркас пакета + xView, очистка, MatID
+	0.1.1	qa.matid	polygon_all	SM_Polygon_001_Main	pass	OK
+	0.1.1	qa.matid	polygon_all	SM_Polygon_010_Main	fail udim_id	OK
+	0.1.2	qa.xview	polygon_all	SM_Polygon_001_Main	pass	OK
+	0.1.2	qa.xview	polygon_all	SM_Polygon_009_Main	fail overlap_faces,overlap_vertices	OK
+	0.1.3	export.cleanup	polygon_all	SM_Polygon_001_Main	fail clear_user_defined_lines	OK
+	0.1.3	export.cleanup	polygon_all	SM_Polygon_Chan_Main	fail clear_user_defined_lines,delete_map_channels	OK
+База 0.2					UV-сдвиг на целый тайл + UDIM → атлас НПМ
+	0.2.1	udim.nudge	polygon_all	SM_Polygon_NudgeOk_Main	pass	OK
+	0.2.1	udim.nudge	polygon_all	SM_Polygon_NudgeBad_Main	fail tile_move	OK
+	0.2.2	atlas.npm	polygon_all	SM_Polygon_AtlasOk_Main	fail atlas_cell	OK
+	0.2.2	atlas.npm	polygon_all	SM_Polygon_AtlasBad_Main	fail atlas_cell	OK
+База 0.3					UCX-генератор + тексель
+	0.3.1	ucx.build	polygon_all	SM_Polygon_001_Main	pass	OK
+	0.3.2	udim.texel	polygon_all	SM_Polygon_TexelOk_Main	pass	OK
+	0.3.2	udim.texel	polygon_all	SM_Polygon_TexelBad_Main	fail texel_outside	OK
+База 0.4					Экспорт с проверкой (ворота → FBX → readback)
+	0.4.1	export.checked	polygon_all	SM_Polygon_001_Main	fail cleanup	OK
+База 0.5					Имена, треугольники по FBX, текстуры всех объектов, пивот, GeoJSON
+	0.5.1	tex.check	polygon_all	SM_Polygon_001_Main	pass	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_001_MainGlass	pass	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_002_MainGlass	pass	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_Ground	fail tex_missing	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_Patch_Ground	fail tex_missing	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_001_GroundEl	fail tex_missing	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_001_Flora	fail tex_missing	OK
+	0.5.1	tex.check	polygon_all	UCX_SM_Polygon_001_Main_001	pass	OK
+	0.5.1	tex.check	polygon_all	UCX_SM_Polygon_001_Main_002	pass	OK
+	0.5.1	tex.check	polygon_all	UCX_SM_Polygon_001_Main_003	pass	OK
+	0.5.1	tex.check	polygon_all	UCX bad	fail tex_missing	OK
+	0.5.1	tex.check	polygon_all	UCX_SM_Polygon_001_Main_004	pass	OK
+	0.5.1	tex.check	polygon_all	UCX_SM_Polygon_001_Main_005	pass	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_004_Main	fail tex_missing	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_005_Main	fail tex_missing	OK
+	0.5.1	tex.check	polygon_all	Bad Name	fail tex_missing	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_008_Main	fail tex_missing	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_009_Main	fail tex_missing	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_010_Main	fail tex_missing	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_011_Main	fail tex_missing	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_012_Main	fail tex_missing	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_007_Main	fail tex_missing	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_018_Main	fail tex_size	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_019_Main	fail tex_alpha	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_020_Main	fail tex_missing	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_013_Main	fail tex_missing	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_014_Main	fail tex_missing	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_015_Main	fail tex_missing	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_016_Main	fail tex_missing	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_017_Main	fail tex_missing	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_NudgeOk_Main	fail tex_missing	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_NudgeBad_Main	fail tex_missing	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_AtlasOk_Main	fail tex_missing	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_AtlasBad_Main	fail tex_missing	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_TexelOk_Main	fail tex_missing	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_TexelBad_Main	fail tex_missing	OK
+	0.5.1	tex.check	polygon_all	SM_Polygon_Chan_Main	fail tex_missing	OK
+	0.5.1	tex.check	vpm	SM_Verona_Main	fail tex_missing	OK
+	0.5.1	tex.check	vpm	SM_Verona_Ground	fail tex_missing	OK
+	0.5.1	tex.check	vpm	SM_VeronaBit_Main	fail tex_bit_depth,tex_set	OK
+	0.5.2	qa.geojson	polygon_all	valid_oks.geojson	pass	OK
+	0.5.2	qa.geojson	polygon_all	broken_syntax.geojson	fail JSON	OK
+	0.5.2	qa.geojson	polygon_all	broken_schema.geojson	fail type	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_001_Main	pass	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_001_MainGlass	pass	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_002_MainGlass	pass	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_Ground	pass	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_Patch_Ground	pass	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_001_GroundEl	pass	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_001_Flora	pass	OK
+	0.5.3	qa.names	polygon_all	UCX_SM_Polygon_001_Main_001	fail name_prefix	OK
+	0.5.3	qa.names	polygon_all	UCX_SM_Polygon_001_Main_002	fail name_prefix	OK
+	0.5.3	qa.names	polygon_all	UCX_SM_Polygon_001_Main_003	fail name_prefix	OK
+	0.5.3	qa.names	polygon_all	UCX bad	fail name_separator,name_symbols	OK
+	0.5.3	qa.names	polygon_all	UCX_SM_Polygon_001_Main_004	fail name_prefix	OK
+	0.5.3	qa.names	polygon_all	UCX_SM_Polygon_001_Main_005	fail name_prefix	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_004_Main	pass	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_005_Main	pass	OK
+	0.5.3	qa.names	polygon_all	Bad Name	fail name_separator,name_symbols	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_008_Main	pass	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_009_Main	pass	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_010_Main	pass	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_011_Main	pass	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_012_Main	pass	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_007_Main	pass	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_018_Main	pass	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_019_Main	pass	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_020_Main	pass	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_013_Main	pass	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_014_Main	pass	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_015_Main	pass	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_016_Main	pass	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_017_Main	pass	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_NudgeOk_Main	fail name_type	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_NudgeBad_Main	fail name_type	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_AtlasOk_Main	fail name_type	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_AtlasBad_Main	fail name_type	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_TexelOk_Main	fail name_type	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_TexelBad_Main	fail name_type	OK
+	0.5.3	qa.names	polygon_all	SM_Polygon_Chan_Main	fail name_type	OK
+	0.5.3	qa.names	vpm	SM_Verona_Main	pass	OK
+	0.5.3	qa.names	vpm	SM_Verona_Ground	pass	OK
+	0.5.3	qa.names	vpm	SM_VeronaBit_Main	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_001_Main	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_001_MainGlass	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_002_MainGlass	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_Ground	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_Patch_Ground	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_001_GroundEl	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_001_Flora	pass	OK
+	0.5.4	qa.pivot	polygon_all	UCX_SM_Polygon_001_Main_001	pass	OK
+	0.5.4	qa.pivot	polygon_all	UCX_SM_Polygon_001_Main_002	pass	OK
+	0.5.4	qa.pivot	polygon_all	UCX_SM_Polygon_001_Main_003	pass	OK
+	0.5.4	qa.pivot	polygon_all	UCX bad	pass	OK
+	0.5.4	qa.pivot	polygon_all	UCX_SM_Polygon_001_Main_004	pass	OK
+	0.5.4	qa.pivot	polygon_all	UCX_SM_Polygon_001_Main_005	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_004_Main	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_005_Main	pass	OK
+	0.5.4	qa.pivot	polygon_all	Bad Name	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_008_Main	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_009_Main	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_010_Main	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_011_Main	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_012_Main	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_007_Main	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_018_Main	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_019_Main	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_020_Main	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_013_Main	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_014_Main	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_015_Main	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_016_Main	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_017_Main	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_NudgeOk_Main	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_NudgeBad_Main	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_AtlasOk_Main	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_AtlasBad_Main	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_TexelOk_Main	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_TexelBad_Main	pass	OK
+	0.5.4	qa.pivot	polygon_all	SM_Polygon_Chan_Main	pass	OK
+	0.5.4	qa.pivot	vpm	SM_Verona_Main	pass	OK
+	0.5.4	qa.pivot	vpm	SM_Verona_Ground	fail pivot_z	OK
+	0.5.4	qa.pivot	vpm	SM_VeronaBit_Main	fail pivot_reference_ambiguous	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_001_Main	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_001_MainGlass	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_002_MainGlass	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_Ground	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_Patch_Ground	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_001_GroundEl	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_001_Flora	pass	OK
+	0.5.5	qa.tris	polygon_all	UCX_SM_Polygon_001_Main_001	pass	OK
+	0.5.5	qa.tris	polygon_all	UCX_SM_Polygon_001_Main_002	pass	OK
+	0.5.5	qa.tris	polygon_all	UCX_SM_Polygon_001_Main_003	pass	OK
+	0.5.5	qa.tris	polygon_all	UCX bad	pass	OK
+	0.5.5	qa.tris	polygon_all	UCX_SM_Polygon_001_Main_004	pass	OK
+	0.5.5	qa.tris	polygon_all	UCX_SM_Polygon_001_Main_005	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_004_Main	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_005_Main	pass	OK
+	0.5.5	qa.tris	polygon_all	Bad Name	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_008_Main	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_009_Main	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_010_Main	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_011_Main	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_012_Main	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_007_Main	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_018_Main	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_019_Main	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_020_Main	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_013_Main	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_014_Main	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_015_Main	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_016_Main	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_017_Main	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_NudgeOk_Main	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_NudgeBad_Main	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_AtlasOk_Main	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_AtlasBad_Main	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_TexelOk_Main	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_TexelBad_Main	pass	OK
+	0.5.5	qa.tris	polygon_all	SM_Polygon_Chan_Main	pass	OK
+	0.5.5	qa.tris	vpm	SM_Verona_Main	pass	OK
+	0.5.5	qa.tris	vpm	SM_Verona_Ground	fail tri_unmeasurable	OK
+	0.5.5	qa.tris	vpm	SM_VeronaBit_Main	pass	OK
+База 0.6					Qt-панель: док, иконки Dark/Light, прогресс/отмена, меню, пакет
+	—	кнопок нет			
+База 0.7					Предсдача: недостающие проверки (только чтение) + блоковые цвета UI + перепись сцены
+	0.7.1	scene.census	polygon_all	SM_Polygon_001_Main	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_001_MainGlass	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_002_MainGlass	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_Ground	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_Patch_Ground	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_001_GroundEl	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_001_Flora	pass	OK
+	0.7.1	scene.census	polygon_all	UCX_SM_Polygon_001_Main_001	pass	OK
+	0.7.1	scene.census	polygon_all	UCX_SM_Polygon_001_Main_002	pass	OK
+	0.7.1	scene.census	polygon_all	UCX_SM_Polygon_001_Main_003	pass	OK
+	0.7.1	scene.census	polygon_all	UCX bad	pass	OK
+	0.7.1	scene.census	polygon_all	UCX_SM_Polygon_001_Main_004	pass	OK
+	0.7.1	scene.census	polygon_all	UCX_SM_Polygon_001_Main_005	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_004_Main	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_005_Main	pass	OK
+	0.7.1	scene.census	polygon_all	Bad Name	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_008_Main	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_009_Main	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_010_Main	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_011_Main	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_012_Main	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_007_Main	fail missing_map	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_018_Main	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_019_Main	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_020_Main	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_013_Main	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_014_Main	pass	OK
+	0.7.1	scene.census	polygon_all	Helper_Polygon	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_015_Main	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_016_Main	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_017_Main	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_NudgeOk_Main	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_NudgeBad_Main	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_AtlasOk_Main	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_AtlasBad_Main	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_TexelOk_Main	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_TexelBad_Main	pass	OK
+	0.7.1	scene.census	polygon_all	SM_Polygon_Chan_Main	pass	OK
+	0.7.1	scene.census	polygon_all	Camera_Polygon	pass	OK
+	0.7.1	scene.census	polygon_all	Light_Polygon	pass	OK
+	0.7.1	scene.census	polygon_all	Spline_Polygon	pass	OK
+	0.7.1	scene.census	vpm	SM_Verona_Main	pass	OK
+	0.7.1	scene.census	vpm	SM_Verona_Ground	pass	OK
+	0.7.1	scene.census	vpm	SM_VeronaBit_Main	pass	OK
+	0.7.1	scene.census	empty	__scene__	error empty target set	OK
+	0.7.2	scene.units	polygon_all	__scene__	pass	OK
+	0.7.2	scene.units	cm_units	__scene__	fail system_unit	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_001_Main	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_001_MainGlass	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_002_MainGlass	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_Ground	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_Patch_Ground	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_001_GroundEl	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_001_Flora	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	UCX_SM_Polygon_001_Main_001	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	UCX_SM_Polygon_001_Main_002	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	UCX_SM_Polygon_001_Main_003	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	UCX bad	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	UCX_SM_Polygon_001_Main_004	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	UCX_SM_Polygon_001_Main_005	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_004_Main	fail drop_short	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_005_Main	fail at_threshold	OK
+	0.7.3	model.perimeter_drop	polygon_all	Bad Name	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_008_Main	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_009_Main	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_010_Main	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_011_Main	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_012_Main	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_007_Main	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_018_Main	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_019_Main	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_020_Main	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_013_Main	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_014_Main	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	Helper_Polygon	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_015_Main	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_016_Main	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_017_Main	fail drop_unmeasurable	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_NudgeOk_Main	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_NudgeBad_Main	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_AtlasOk_Main	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_AtlasBad_Main	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_TexelOk_Main	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_TexelBad_Main	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	SM_Polygon_Chan_Main	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	Camera_Polygon	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	Light_Polygon	pass	OK
+	0.7.3	model.perimeter_drop	polygon_all	Spline_Polygon	pass	OK
+	0.7.3	model.perimeter_drop	vpm	SM_Verona_Main	pass	OK
+	0.7.3	model.perimeter_drop	vpm	SM_Verona_Ground	fail drop_short	OK
+	0.7.3	model.perimeter_drop	vpm	SM_VeronaBit_Main	fail drop_short	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_001_Main	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_001_MainGlass	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_002_MainGlass	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_Ground	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_Patch_Ground	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_001_GroundEl	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_001_Flora	pass	OK
+	0.7.4	tex.material_type	polygon_all	UCX_SM_Polygon_001_Main_001	pass	OK
+	0.7.4	tex.material_type	polygon_all	UCX_SM_Polygon_001_Main_002	pass	OK
+	0.7.4	tex.material_type	polygon_all	UCX_SM_Polygon_001_Main_003	pass	OK
+	0.7.4	tex.material_type	polygon_all	UCX bad	fail mat_none	OK
+	0.7.4	tex.material_type	polygon_all	UCX_SM_Polygon_001_Main_004	pass	OK
+	0.7.4	tex.material_type	polygon_all	UCX_SM_Polygon_001_Main_005	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_004_Main	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_005_Main	pass	OK
+	0.7.4	tex.material_type	polygon_all	Bad Name	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_008_Main	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_009_Main	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_010_Main	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_011_Main	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_012_Main	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_007_Main	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_018_Main	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_019_Main	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_020_Main	fail mat_class	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_013_Main	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_014_Main	pass	OK
+	0.7.4	tex.material_type	polygon_all	Helper_Polygon	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_015_Main	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_016_Main	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_017_Main	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_NudgeOk_Main	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_NudgeBad_Main	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_AtlasOk_Main	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_AtlasBad_Main	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_TexelOk_Main	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_TexelBad_Main	pass	OK
+	0.7.4	tex.material_type	polygon_all	SM_Polygon_Chan_Main	pass	OK
+	0.7.4	tex.material_type	polygon_all	Camera_Polygon	pass	OK
+	0.7.4	tex.material_type	polygon_all	Light_Polygon	pass	OK
+	0.7.4	tex.material_type	polygon_all	Spline_Polygon	pass	OK
+	0.7.4	tex.material_type	vpm	SM_Verona_Main	pass	OK
+	0.7.4	tex.material_type	vpm	SM_Verona_Ground	pass	OK
+	0.7.4	tex.material_type	vpm	SM_VeronaBit_Main	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_001_Main	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_001_MainGlass	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_002_MainGlass	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_Ground	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_Patch_Ground	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_001_GroundEl	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_001_Flora	pass	OK
+	0.7.5	ucx.audit	polygon_all	UCX_SM_Polygon_001_Main_001	pass	OK
+	0.7.5	ucx.audit	polygon_all	UCX_SM_Polygon_001_Main_002	fail ucx_open	OK
+	0.7.5	ucx.audit	polygon_all	UCX_SM_Polygon_001_Main_003	fail ucx_material	OK
+	0.7.5	ucx.audit	polygon_all	UCX bad	pass	OK
+	0.7.5	ucx.audit	polygon_all	UCX_SM_Polygon_001_Main_004	fail ucx_intersect	OK
+	0.7.5	ucx.audit	polygon_all	UCX_SM_Polygon_001_Main_005	fail ucx_intersect	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_004_Main	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_005_Main	pass	OK
+	0.7.5	ucx.audit	polygon_all	Bad Name	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_008_Main	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_009_Main	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_010_Main	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_011_Main	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_012_Main	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_007_Main	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_018_Main	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_019_Main	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_020_Main	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_013_Main	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_014_Main	pass	OK
+	0.7.5	ucx.audit	polygon_all	Helper_Polygon	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_015_Main	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_016_Main	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_017_Main	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_NudgeOk_Main	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_NudgeBad_Main	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_AtlasOk_Main	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_AtlasBad_Main	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_TexelOk_Main	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_TexelBad_Main	pass	OK
+	0.7.5	ucx.audit	polygon_all	SM_Polygon_Chan_Main	pass	OK
+	0.7.5	ucx.audit	polygon_all	Camera_Polygon	pass	OK
+	0.7.5	ucx.audit	polygon_all	Light_Polygon	pass	OK
+	0.7.5	ucx.audit	polygon_all	Spline_Polygon	pass	OK
+	0.7.5	ucx.audit	vpm	SM_Verona_Main	pass	OK
+	0.7.5	ucx.audit	vpm	SM_Verona_Ground	pass	OK
+	0.7.5	ucx.audit	vpm	SM_VeronaBit_Main	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_001_Main	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_001_MainGlass	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_002_MainGlass	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_Ground	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_Patch_Ground	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_001_GroundEl	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_001_Flora	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	UCX_SM_Polygon_001_Main_001	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	UCX_SM_Polygon_001_Main_002	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	UCX_SM_Polygon_001_Main_003	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	UCX bad	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	UCX_SM_Polygon_001_Main_004	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	UCX_SM_Polygon_001_Main_005	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_004_Main	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_005_Main	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	Bad Name	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_008_Main	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_009_Main	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_010_Main	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_011_Main	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_012_Main	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_007_Main	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_018_Main	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_019_Main	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_020_Main	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_013_Main	fail sets_limit	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_014_Main	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	Helper_Polygon	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_015_Main	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_016_Main	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_017_Main	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_NudgeOk_Main	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_NudgeBad_Main	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_AtlasOk_Main	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_AtlasBad_Main	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_TexelOk_Main	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_TexelBad_Main	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	SM_Polygon_Chan_Main	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	Camera_Polygon	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	Light_Polygon	pass	OK
+	0.7.6	atlas.sets_count	polygon_all	Spline_Polygon	pass	OK
+	0.7.6	atlas.sets_count	vpm	SM_Verona_Main	pass	OK
+	0.7.6	atlas.sets_count	vpm	SM_Verona_Ground	pass	OK
+	0.7.6	atlas.sets_count	vpm	SM_VeronaBit_Main	pass	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_001_Main	fail fbx_objects	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_001_MainGlass	fail fbx_objects	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_002_MainGlass	fail fbx_objects	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_Ground	pass	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_Patch_Ground	pass	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_001_GroundEl	pass	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_001_Flora	pass	OK
+	0.7.7	qa.fbx_split	polygon_all	UCX_SM_Polygon_001_Main_001	pass	OK
+	0.7.7	qa.fbx_split	polygon_all	UCX_SM_Polygon_001_Main_002	pass	OK
+	0.7.7	qa.fbx_split	polygon_all	UCX_SM_Polygon_001_Main_003	pass	OK
+	0.7.7	qa.fbx_split	polygon_all	UCX bad	fail fbx_objects	OK
+	0.7.7	qa.fbx_split	polygon_all	UCX_SM_Polygon_001_Main_004	pass	OK
+	0.7.7	qa.fbx_split	polygon_all	UCX_SM_Polygon_001_Main_005	pass	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_004_Main	fail fbx_objects	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_005_Main	fail fbx_objects	OK
+	0.7.7	qa.fbx_split	polygon_all	Bad Name	fail fbx_objects	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_008_Main	fail fbx_objects	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_009_Main	fail fbx_objects	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_010_Main	fail fbx_objects	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_011_Main	fail fbx_objects	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_012_Main	fail fbx_objects	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_007_Main	fail fbx_objects	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_018_Main	fail fbx_objects	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_019_Main	fail fbx_objects	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_020_Main	fail fbx_objects	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_013_Main	pass	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_014_Main	fail fbx_objects	OK
+	0.7.7	qa.fbx_split	polygon_all	Helper_Polygon	fail fbx_unmapped	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_015_Main	fail fbx_objects	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_016_Main	fail fbx_objects	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_017_Main	fail fbx_objects	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_NudgeOk_Main	fail fbx_objects	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_NudgeBad_Main	fail fbx_objects	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_AtlasOk_Main	fail fbx_objects	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_AtlasBad_Main	fail fbx_objects	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_TexelOk_Main	fail fbx_objects	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_TexelBad_Main	fail fbx_objects	OK
+	0.7.7	qa.fbx_split	polygon_all	SM_Polygon_Chan_Main	fail fbx_objects	OK
+	0.7.7	qa.fbx_split	polygon_all	Camera_Polygon	fail fbx_unmapped	OK
+	0.7.7	qa.fbx_split	polygon_all	Light_Polygon	fail fbx_unmapped	OK
+	0.7.7	qa.fbx_split	polygon_all	Spline_Polygon	fail fbx_unmapped	OK
+	0.7.7	qa.fbx_split	vpm	SM_Verona_Main	pass	OK
+	0.7.7	qa.fbx_split	vpm	SM_Verona_Ground	pass	OK
+	0.7.7	qa.fbx_split	vpm	SM_VeronaBit_Main	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_001_Main	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_001_MainGlass	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_002_MainGlass	fail glass_opacity	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_Ground	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_Patch_Ground	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_001_GroundEl	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_001_Flora	pass	OK
+	0.7.8	qa.glass	polygon_all	UCX_SM_Polygon_001_Main_001	pass	OK
+	0.7.8	qa.glass	polygon_all	UCX_SM_Polygon_001_Main_002	pass	OK
+	0.7.8	qa.glass	polygon_all	UCX_SM_Polygon_001_Main_003	pass	OK
+	0.7.8	qa.glass	polygon_all	UCX bad	pass	OK
+	0.7.8	qa.glass	polygon_all	UCX_SM_Polygon_001_Main_004	pass	OK
+	0.7.8	qa.glass	polygon_all	UCX_SM_Polygon_001_Main_005	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_004_Main	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_005_Main	pass	OK
+	0.7.8	qa.glass	polygon_all	Bad Name	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_008_Main	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_009_Main	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_010_Main	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_011_Main	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_012_Main	fail glass_not_separate	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_007_Main	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_018_Main	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_019_Main	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_020_Main	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_013_Main	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_014_Main	pass	OK
+	0.7.8	qa.glass	polygon_all	Helper_Polygon	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_015_Main	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_016_Main	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_017_Main	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_NudgeOk_Main	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_NudgeBad_Main	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_AtlasOk_Main	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_AtlasBad_Main	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_TexelOk_Main	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_TexelBad_Main	pass	OK
+	0.7.8	qa.glass	polygon_all	SM_Polygon_Chan_Main	pass	OK
+	0.7.8	qa.glass	polygon_all	Camera_Polygon	pass	OK
+	0.7.8	qa.glass	polygon_all	Light_Polygon	pass	OK
+	0.7.8	qa.glass	polygon_all	Spline_Polygon	pass	OK
+	0.7.8	qa.glass	vpm	SM_Verona_Main	pass	OK
+	0.7.8	qa.glass	vpm	SM_Verona_Ground	pass	OK
+	0.7.8	qa.glass	vpm	SM_VeronaBit_Main	pass	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_001_Main	fail fbx_objects	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_001_MainGlass	fail fbx_objects	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_002_MainGlass	fail fbx_objects,glass_opacity	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_Ground	pass	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_Patch_Ground	pass	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_001_GroundEl	pass	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_001_Flora	pass	OK
+	0.7.9	qa.preflight	polygon_all	UCX_SM_Polygon_001_Main_001	pass	OK
+	0.7.9	qa.preflight	polygon_all	UCX_SM_Polygon_001_Main_002	fail ucx_open	OK
+	0.7.9	qa.preflight	polygon_all	UCX_SM_Polygon_001_Main_003	fail ucx_material	OK
+	0.7.9	qa.preflight	polygon_all	UCX bad	fail fbx_objects,mat_none	OK
+	0.7.9	qa.preflight	polygon_all	UCX_SM_Polygon_001_Main_004	fail ucx_intersect	OK
+	0.7.9	qa.preflight	polygon_all	UCX_SM_Polygon_001_Main_005	fail ucx_intersect	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_004_Main	fail drop_short,fbx_objects	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_005_Main	fail at_threshold,fbx_objects	OK
+	0.7.9	qa.preflight	polygon_all	Bad Name	fail fbx_objects	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_008_Main	fail fbx_objects,xform_scale	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_009_Main	fail fbx_objects,zero_area_face,zero_length_edge	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_010_Main	fail fbx_objects	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_011_Main	fail fbx_objects,zero_area_face,zero_length_edge	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_012_Main	fail fbx_objects,glass_not_separate	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_007_Main	fail fbx_objects,missing_map	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_018_Main	fail fbx_objects	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_019_Main	fail fbx_objects	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_020_Main	fail fbx_objects,mat_class	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_013_Main	fail sets_limit	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_014_Main	fail fbx_objects,hyg_hierarchy,xform_parent	OK
+	0.7.9	qa.preflight	polygon_all	Helper_Polygon	fail fbx_unmapped,hyg_hierarchy,hyg_non_mesh	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_015_Main	fail fbx_objects,hyg_modifier	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_016_Main	fail fbx_objects,hyg_animation	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_017_Main	fail drop_unmeasurable,fbx_objects,hyg_empty	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_NudgeOk_Main	fail fbx_objects	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_NudgeBad_Main	fail fbx_objects	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_AtlasOk_Main	fail fbx_objects	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_AtlasBad_Main	fail fbx_objects	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_TexelOk_Main	fail fbx_objects	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_TexelBad_Main	fail fbx_objects	OK
+	0.7.9	qa.preflight	polygon_all	SM_Polygon_Chan_Main	fail fbx_objects	OK
+	0.7.9	qa.preflight	polygon_all	Camera_Polygon	fail fbx_unmapped,hyg_non_mesh	OK
+	0.7.9	qa.preflight	polygon_all	Light_Polygon	fail fbx_unmapped,hyg_non_mesh	OK
+	0.7.9	qa.preflight	polygon_all	Spline_Polygon	fail fbx_unmapped,hyg_non_mesh	OK
+	0.7.9	qa.preflight	vpm	SM_Verona_Main	pass	OK
+	0.7.9	qa.preflight	vpm	SM_Verona_Ground	fail drop_short	OK
+	0.7.9	qa.preflight	vpm	SM_VeronaBit_Main	fail drop_short	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_001_Main	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_001_MainGlass	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_002_MainGlass	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_Ground	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_Patch_Ground	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_001_GroundEl	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_001_Flora	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	UCX_SM_Polygon_001_Main_001	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	UCX_SM_Polygon_001_Main_002	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	UCX_SM_Polygon_001_Main_003	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	UCX bad	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	UCX_SM_Polygon_001_Main_004	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	UCX_SM_Polygon_001_Main_005	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_004_Main	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_005_Main	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	Bad Name	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_008_Main	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_009_Main	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_010_Main	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_011_Main	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_012_Main	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_007_Main	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_018_Main	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_019_Main	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_020_Main	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_013_Main	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_014_Main	fail hyg_hierarchy	OK
+	0.7.10	qa.scene_hygiene	polygon_all	Helper_Polygon	fail hyg_hierarchy,hyg_non_mesh	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_015_Main	fail hyg_modifier	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_016_Main	fail hyg_animation	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_017_Main	fail hyg_empty	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_NudgeOk_Main	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_NudgeBad_Main	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_AtlasOk_Main	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_AtlasBad_Main	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_TexelOk_Main	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_TexelBad_Main	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	SM_Polygon_Chan_Main	pass	OK
+	0.7.10	qa.scene_hygiene	polygon_all	Camera_Polygon	fail hyg_non_mesh	OK
+	0.7.10	qa.scene_hygiene	polygon_all	Light_Polygon	fail hyg_non_mesh	OK
+	0.7.10	qa.scene_hygiene	polygon_all	Spline_Polygon	fail hyg_non_mesh	OK
+	0.7.10	qa.scene_hygiene	vpm	SM_Verona_Main	pass	OK
+	0.7.10	qa.scene_hygiene	vpm	SM_Verona_Ground	pass	OK
+	0.7.10	qa.scene_hygiene	vpm	SM_VeronaBit_Main	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_001_Main	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_001_MainGlass	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_002_MainGlass	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_Ground	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_Patch_Ground	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_001_GroundEl	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_001_Flora	pass	OK
+	0.7.11	qa.xform	polygon_all	UCX_SM_Polygon_001_Main_001	pass	OK
+	0.7.11	qa.xform	polygon_all	UCX_SM_Polygon_001_Main_002	pass	OK
+	0.7.11	qa.xform	polygon_all	UCX_SM_Polygon_001_Main_003	pass	OK
+	0.7.11	qa.xform	polygon_all	UCX bad	pass	OK
+	0.7.11	qa.xform	polygon_all	UCX_SM_Polygon_001_Main_004	pass	OK
+	0.7.11	qa.xform	polygon_all	UCX_SM_Polygon_001_Main_005	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_004_Main	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_005_Main	pass	OK
+	0.7.11	qa.xform	polygon_all	Bad Name	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_008_Main	fail xform_scale	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_009_Main	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_010_Main	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_011_Main	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_012_Main	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_007_Main	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_018_Main	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_019_Main	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_020_Main	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_013_Main	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_014_Main	fail xform_parent	OK
+	0.7.11	qa.xform	polygon_all	Helper_Polygon	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_015_Main	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_016_Main	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_017_Main	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_NudgeOk_Main	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_NudgeBad_Main	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_AtlasOk_Main	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_AtlasBad_Main	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_TexelOk_Main	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_TexelBad_Main	pass	OK
+	0.7.11	qa.xform	polygon_all	SM_Polygon_Chan_Main	pass	OK
+	0.7.11	qa.xform	polygon_all	Camera_Polygon	pass	OK
+	0.7.11	qa.xform	polygon_all	Light_Polygon	pass	OK
+	0.7.11	qa.xform	polygon_all	Spline_Polygon	pass	OK
+	0.7.11	qa.xform	vpm	SM_Verona_Main	pass	OK
+	0.7.11	qa.xform	vpm	SM_Verona_Ground	pass	OK
+	0.7.11	qa.xform	vpm	SM_VeronaBit_Main	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_001_Main	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_001_MainGlass	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_002_MainGlass	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_Ground	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_Patch_Ground	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_001_GroundEl	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_001_Flora	pass	OK
+	0.7.12	qa.zero_area	polygon_all	UCX_SM_Polygon_001_Main_001	pass	OK
+	0.7.12	qa.zero_area	polygon_all	UCX_SM_Polygon_001_Main_002	pass	OK
+	0.7.12	qa.zero_area	polygon_all	UCX_SM_Polygon_001_Main_003	pass	OK
+	0.7.12	qa.zero_area	polygon_all	UCX bad	pass	OK
+	0.7.12	qa.zero_area	polygon_all	UCX_SM_Polygon_001_Main_004	pass	OK
+	0.7.12	qa.zero_area	polygon_all	UCX_SM_Polygon_001_Main_005	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_004_Main	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_005_Main	pass	OK
+	0.7.12	qa.zero_area	polygon_all	Bad Name	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_008_Main	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_009_Main	fail zero_area_face,zero_length_edge	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_010_Main	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_011_Main	fail zero_area_face,zero_length_edge	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_012_Main	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_007_Main	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_018_Main	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_019_Main	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_020_Main	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_013_Main	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_014_Main	pass	OK
+	0.7.12	qa.zero_area	polygon_all	Helper_Polygon	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_015_Main	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_016_Main	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_017_Main	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_NudgeOk_Main	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_NudgeBad_Main	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_AtlasOk_Main	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_AtlasBad_Main	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_TexelOk_Main	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_TexelBad_Main	pass	OK
+	0.7.12	qa.zero_area	polygon_all	SM_Polygon_Chan_Main	pass	OK
+	0.7.12	qa.zero_area	polygon_all	Camera_Polygon	pass	OK
+	0.7.12	qa.zero_area	polygon_all	Light_Polygon	pass	OK
+	0.7.12	qa.zero_area	polygon_all	Spline_Polygon	pass	OK
+	0.7.12	qa.zero_area	vpm	SM_Verona_Main	pass	OK
+	0.7.12	qa.zero_area	vpm	SM_Verona_Ground	pass	OK
+	0.7.12	qa.zero_area	vpm	SM_VeronaBit_Main	pass	OK
