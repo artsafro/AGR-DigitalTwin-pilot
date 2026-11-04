@@ -14,7 +14,11 @@ timeout_s = 1200
 
 [[build]]
 name = "agr-tools-mzp"           # tools/max/build_agr_tools.py: reproducible MZP for the native Max acceptance
-cmd = ["uv", "run", "--frozen", "--no-sync", "python", "tools/max/build_agr_tools.py", "{build}/AGR-Tools.mzp"]
+# AGR Tools 0.6.0 (#859) renders the PNG icons with PySide6 (not a project dependency): same as the repo's own
+# `uv run --with PySide6`, headless.
+cmd = ["uv", "run", "--frozen", "--no-sync", "--with", "PySide6", "python", "tools/max/build_agr_tools.py",
+       "{build}/AGR-Tools.mzp"]
+env = {QT_QPA_PLATFORM = "offscreen"}
 
 [[job]]
 name = "blender"                 # pytest -m "blender or dcc": tests that start Blender 5.1 themselves (DT_BLENDER)
