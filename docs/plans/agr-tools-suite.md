@@ -365,3 +365,59 @@ JSON-отчёт (`schema`, `tool`, `status`, `objects`). Из 90 кнопок «
 
 После ответов карточка ждёт «да» на план и макет. Каждая версия 0.7–1.0 потом становится отдельной issue с этой
 таблицей как спецификацией.
+
+## 11. Тестовый полигон
+
+Синтетическая сцена для кнопок AGR Tools лежит в `test-polygon/` (issue #885). Собранный `.max` и FBX туда не
+коммитятся: их пишет сборщик в `G:/Мой диск/AGR-evidence/test-polygon/` (если диска нет — `C:/x/test-polygon/`).
+
+Сцена — ряд баз по версиям, не зоны по блокам. Одна база = один цветной прямоугольник на земле и подпись
+«База 0.x — что добавила версия, какие кнопки». Внутри — станции: объект (или небольшая группа) и подпись
+«Станция 0.x.N: объект - нажми кнопка -> ожидаешь результат». Обход 0.1 → 0.7 проходит концепцию AGR Tools.
+База 0.6 — панель без кнопок, станций у неё нет. Следующая версия добавляет свою базу в конец ряда.
+
+Прямоугольники: слой `_bases`, имена `_base_*`. Подписи: слой `_labels` (его можно скрыть), имена `_label_*`.
+Оба не экспортируются и не входят в проверки. Сборщик кладёт их только на эти слои с этими префиксами.
+Раннер выбрасывает такие имена из отчёта до сравнения с `expected/`. Офлайн-ядра их не получают.
+
+Порядок один и тот же в `test-polygon/bases.json`, в `expected/<id>.json` (`base`, `station`, `stations`),
+в README и здесь: база → станция → кнопка → файл ожидания. Таблица самопроверки (`report.json` и `table.txt`)
+группирует строки так же и добавляет колонку «получилось» (статус и коды живого отчёта). Код выхода — число
+расхождений. Строка известной ошибки #886 печатается `НЕ OK (известная ошибка #886)` и считается в поле
+`known_bug`, не в коде выхода. В `AGR_TEST` каждого объекта записан id станции (`station=0.3.2`).
+
+`export.cleanup` и `export.checked` держат и PASS, и FAIL. FAIL очистки — объект с `AGR_TEST`. PASS —
+прогон «Очистка → копии» (`apply_status` pass) на копии `*_AGR_export_`. FAIL экспорта — ворота `cleanup`
+на том же грязном оригинале. PASS экспорта — эта копия пишется в новый FBX
+`<результат>/export-pass/<имя копии>.fbx` и читается обратно (`plan.readback`). Без readback это не pass.
+
+| База | Станция | Кнопка | Ожидание |
+|---|---|---|---|
+| 0.1 | 0.1.1 | `qa.matid` | `test-polygon/expected/qa.matid.json` |
+| 0.1 | 0.1.2 | `qa.xview` | `test-polygon/expected/qa.xview.json` |
+| 0.1 | 0.1.3 | `export.cleanup` | `test-polygon/expected/export.cleanup.json` |
+| 0.2 | 0.2.1 | `udim.nudge` | `test-polygon/expected/udim.nudge.json` |
+| 0.2 | 0.2.2 | `atlas.npm` | `test-polygon/expected/atlas.npm.json` |
+| 0.3 | 0.3.1 | `ucx.build` | `test-polygon/expected/ucx.build.json` |
+| 0.3 | 0.3.2 | `udim.texel` | `test-polygon/expected/udim.texel.json` |
+| 0.4 | 0.4.1 | `export.checked` | `test-polygon/expected/export.checked.json` |
+| 0.5 | 0.5.1 | `tex.check` | `test-polygon/expected/tex.check.json` |
+| 0.5 | 0.5.2 | `qa.geojson` | `test-polygon/expected/qa.geojson.json` |
+| 0.5 | 0.5.3 | `qa.names` | `test-polygon/expected/qa.names.json` |
+| 0.5 | 0.5.4 | `qa.pivot` | `test-polygon/expected/qa.pivot.json` |
+| 0.5 | 0.5.5 | `qa.tris` | `test-polygon/expected/qa.tris.json` |
+| 0.6 | — | кнопок нет | площадка панели, без станции |
+| 0.7 | 0.7.1–0.7.12 | 12 кнопок предсдачи | `test-polygon/expected/<id>.json` |
+
+Версия кнопки читается из этого плана (`agr-tools-suite.json`), не из имени станции. Кнопки 0.8 и новее
+пока без станции: в JSON есть `reason`.
+
+Правило: каждая новая кнопка в том же изменении добавляет станцию на базу своей версии, объекты полигона и
+файл `test-polygon/expected/<id>.json`. В записи есть хотя бы один PASS и один FAIL, либо явная причина, почему
+одного из них нет. Id станций уникальны, станция принадлежит существующей базе. Офлайн-тест
+`tests/max_tools/test_polygon_expected.py` сверяет это с каждым id из `docs/plans/agr-tools-suite.json`. Кнопка без
+записи — ошибка, имя кнопки названо.
+
+Раннер полигона не устанавливает и не удаляет `%APPDATA%\Autodesk\ApplicationPlugins\AGR-Tools.bundle`.
+Установка, если она появится, сначала уносит этот каталог в сторону и в `finally` возвращает те же байты
+(`polygon_core.preserve_user_bundle`). Пакет оператора не удаляется.

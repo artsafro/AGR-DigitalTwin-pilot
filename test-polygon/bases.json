@@ -1,0 +1,295 @@
+{
+ "schema": 1,
+ "tour_last": "0.7",
+ "bases": [
+  {
+   "version": "0.1",
+   "title": "Каркас пакета + xView, очистка, MatID",
+   "colour": [
+    214,
+    69,
+    65
+   ],
+   "buttons": [
+    "qa.matid",
+    "qa.xview",
+    "export.cleanup"
+   ],
+   "stations": [
+    {
+     "id": "0.1.1",
+     "button": "qa.matid",
+     "label_ru": "MatID",
+     "expected": "expected/qa.matid.json",
+     "reason": ""
+    },
+    {
+     "id": "0.1.2",
+     "button": "qa.xview",
+     "label_ru": "xView: перекрытия",
+     "expected": "expected/qa.xview.json",
+     "reason": ""
+    },
+    {
+     "id": "0.1.3",
+     "button": "export.cleanup",
+     "label_ru": "Очистка перед экспортом",
+     "expected": "expected/export.cleanup.json",
+     "reason": ""
+    }
+   ]
+  },
+  {
+   "version": "0.2",
+   "title": "UV-сдвиг на целый тайл + UDIM → атлас НПМ",
+   "colour": [
+    230,
+    145,
+    40
+   ],
+   "buttons": [
+    "udim.nudge",
+    "atlas.npm"
+   ],
+   "stations": [
+    {
+     "id": "0.2.1",
+     "button": "udim.nudge",
+     "label_ru": "UV-сдвиг на целый тайл",
+     "expected": "expected/udim.nudge.json",
+     "reason": ""
+    },
+    {
+     "id": "0.2.2",
+     "button": "atlas.npm",
+     "label_ru": "UDIM → атлас НПМ",
+     "expected": "expected/atlas.npm.json",
+     "reason": "Объекта PASS нет. Пробная сборка атласа всегда сдвигает остров в ячейку с отступом 8 px (код atlas_cell), и повторный pack тех же UV снова их двигает. Стабильный остров, который кнопка оставила бы без находки, из этого ядра не получается. Объект FAIL — SM_Polygon_AtlasBad_Main."
+    }
+   ]
+  },
+  {
+   "version": "0.3",
+   "title": "UCX-генератор + тексель",
+   "colour": [
+    214,
+    196,
+    48
+   ],
+   "buttons": [
+    "ucx.build",
+    "udim.texel"
+   ],
+   "stations": [
+    {
+     "id": "0.3.1",
+     "button": "ucx.build",
+     "label_ru": "UCX: построить",
+     "expected": "expected/ucx.build.json",
+     "reason": "Объекта FAIL с кодом находки нет. Пробный UCX на ящике (и даже на открытом меше, который ядро замыкает в выпуклую оболочку) даёт пустые findings. Находка at_threshold появляется только при ровно 15000 треугольниках коллизии — это уже не маленький синтетический кусок. Пустой меш и нечисло — ошибка ValueError, не pass."
+    },
+    {
+     "id": "0.3.2",
+     "button": "udim.texel",
+     "label_ru": "Тексель px/м",
+     "expected": "expected/udim.texel.json",
+     "reason": ""
+    }
+   ]
+  },
+  {
+   "version": "0.4",
+   "title": "Экспорт с проверкой (ворота → FBX → readback)",
+   "colour": [
+    62,
+    168,
+    94
+   ],
+   "buttons": [
+    "export.checked"
+   ],
+   "stations": [
+    {
+     "id": "0.4.1",
+     "button": "export.checked",
+     "label_ru": "Экспорт с проверкой",
+     "expected": "expected/export.checked.json",
+     "reason": ""
+    }
+   ]
+  },
+  {
+   "version": "0.5",
+   "title": "Имена, треугольники по FBX, текстуры всех объектов, пивот, GeoJSON",
+   "colour": [
+    40,
+    168,
+    196
+   ],
+   "buttons": [
+    "tex.check",
+    "qa.geojson",
+    "qa.names",
+    "qa.pivot",
+    "qa.tris"
+   ],
+   "stations": [
+    {
+     "id": "0.5.1",
+     "button": "tex.check",
+     "label_ru": "Текстуры (все объекты)",
+     "expected": "expected/tex.check.json",
+     "reason": ""
+    },
+    {
+     "id": "0.5.2",
+     "button": "qa.geojson",
+     "label_ru": "Проверка GeoJSON",
+     "expected": "expected/qa.geojson.json",
+     "reason": ""
+    },
+    {
+     "id": "0.5.3",
+     "button": "qa.names",
+     "label_ru": "Имена NPM/VPM",
+     "expected": "expected/qa.names.json",
+     "reason": ""
+    },
+    {
+     "id": "0.5.4",
+     "button": "qa.pivot",
+     "label_ru": "Пивот",
+     "expected": "expected/qa.pivot.json",
+     "reason": ""
+    },
+    {
+     "id": "0.5.5",
+     "button": "qa.tris",
+     "label_ru": "Треугольники по FBX",
+     "expected": "expected/qa.tris.json",
+     "reason": ""
+    }
+   ]
+  },
+  {
+   "version": "0.6",
+   "title": "Qt-панель: док, иконки Dark/Light, прогресс/отмена, меню, пакет",
+   "colour": [
+    66,
+    108,
+    214
+   ],
+   "buttons": [],
+   "stations": []
+  },
+  {
+   "version": "0.7",
+   "title": "Предсдача: недостающие проверки (только чтение) + блоковые цвета UI + перепись сцены",
+   "colour": [
+    156,
+    92,
+    204
+   ],
+   "buttons": [
+    "scene.census",
+    "scene.units",
+    "model.perimeter_drop",
+    "tex.material_type",
+    "ucx.audit",
+    "atlas.sets_count",
+    "qa.fbx_split",
+    "qa.glass",
+    "qa.preflight",
+    "qa.scene_hygiene",
+    "qa.xform",
+    "qa.zero_area"
+   ],
+   "stations": [
+    {
+     "id": "0.7.1",
+     "button": "scene.census",
+     "label_ru": "Перепись сцены",
+     "expected": "expected/scene.census.json",
+     "reason": ""
+    },
+    {
+     "id": "0.7.2",
+     "button": "scene.units",
+     "label_ru": "Единицы и гамма",
+     "expected": "expected/scene.units.json",
+     "reason": ""
+    },
+    {
+     "id": "0.7.3",
+     "button": "model.perimeter_drop",
+     "label_ru": "Опуск периметра ≥1 м",
+     "expected": "expected/model.perimeter_drop.json",
+     "reason": ""
+    },
+    {
+     "id": "0.7.4",
+     "button": "tex.material_type",
+     "label_ru": "Тип материала",
+     "expected": "expected/tex.material_type.json",
+     "reason": ""
+    },
+    {
+     "id": "0.7.5",
+     "button": "ucx.audit",
+     "label_ru": "UCX: аудит сцены",
+     "expected": "expected/ucx.audit.json",
+     "reason": ""
+    },
+    {
+     "id": "0.7.6",
+     "button": "atlas.sets_count",
+     "label_ru": "Число текстурных наборов",
+     "expected": "expected/atlas.sets_count.json",
+     "reason": ""
+    },
+    {
+     "id": "0.7.7",
+     "button": "qa.fbx_split",
+     "label_ru": "Разделение FBX",
+     "expected": "expected/qa.fbx_split.json",
+     "reason": ""
+    },
+    {
+     "id": "0.7.8",
+     "button": "qa.glass",
+     "label_ru": "Стекло",
+     "expected": "expected/qa.glass.json",
+     "reason": ""
+    },
+    {
+     "id": "0.7.9",
+     "button": "qa.preflight",
+     "label_ru": "Предсдача: все проверки",
+     "expected": "expected/qa.preflight.json",
+     "reason": ""
+    },
+    {
+     "id": "0.7.10",
+     "button": "qa.scene_hygiene",
+     "label_ru": "Лишнее в сцене",
+     "expected": "expected/qa.scene_hygiene.json",
+     "reason": ""
+    },
+    {
+     "id": "0.7.11",
+     "button": "qa.xform",
+     "label_ru": "Трансформы сброшены",
+     "expected": "expected/qa.xform.json",
+     "reason": ""
+    },
+    {
+     "id": "0.7.12",
+     "button": "qa.zero_area",
+     "label_ru": "Нулевые площади и рёбра",
+     "expected": "expected/qa.zero_area.json",
+     "reason": ""
+    }
+   ]
+  }
+ ]
+}
