@@ -182,8 +182,12 @@ def run_batched(tool, fn, nodes, size, progress, cancelled):
     progress(0, len(nodes))
     for chunk in chunks(nodes, size):
         if cancelled():
-            raise Cancelled('cancelled at {} / {}'.format(done, len(nodes)),
-                            merge(tool, parts) if parts else None, done)
+            partial = None
+            if parts:  # a cancelled run is never a pass, even when every finished chunk was clean
+                partial = merge(tool, parts)
+                partial['status'] = 'fail'
+                partial['cancelled'] = {'done': done, 'total': len(nodes)}
+            raise Cancelled('cancelled at {} / {}'.format(done, len(nodes)), partial, done)
         parts.append(fn(chunk))
         done += len(chunk)
         progress(done, len(nodes))

@@ -127,6 +127,14 @@ def test_cancel_stops_before_next_chunk_and_never_passes():
                       lambda d, t: None, cancelled)
     assert len(calls) == 3 and exc.value.done == 75
     assert len(exc.value.partial['objects']) == 75
+    # fail-closed: every finished chunk is clean, still the cancelled report is never 'pass'
+    with pytest.raises(m.Cancelled) as clean_exc:
+        flags = iter([False, True])
+        m.run_batched('xview', lambda c: _report('xview', [(h, 'N', []) for h in c]), [1, 2, 3], 1,
+                      lambda d, t: None, lambda: next(flags))
+    assert clean_exc.value.partial['status'] == 'fail'
+    assert clean_exc.value.partial['cancelled'] == {'done': 1, 'total': 3}
+    assert m.rows(clean_exc.value.partial)[0].ok is True  # row itself is clean; the report is not a pass
     with pytest.raises(m.Cancelled) as first:
         m.run_batched('xview', fake_xview, [1, 2], 1, lambda d, t: None, lambda: True)
     assert first.value.partial is None and first.value.done == 0

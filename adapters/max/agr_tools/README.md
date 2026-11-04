@@ -1,4 +1,4 @@
-# AGR Tools 0.5.0 — 3ds Max 2024 / 2026
+# AGR Tools 0.6.0 — 3ds Max 2024 / 2026
 
 Own implementations. The 0.5.0 diagnostics adapt GeoAGR 13.64 functions with the permission of
 their author (Artem). Only the logic in use is adapted (`checks_core.py`), not GeoAGR.ms; no team
@@ -7,7 +7,14 @@ This is a diagnostic/export-copy tool, not a delivery validator or production jo
 
 ## Build and install
 
-`python tools/max/build_agr_tools.py <new-path>/AGR-Tools-0.5.0.mzp`
+`python tools/max/build_agr_tools.py <new-path>/AGR-Tools-0.6.0.mzp` (MZP) or
+`python tools/max/build_agr_tools.py --bundle <new-path>/AGR-Tools-0.6.0.bundle.zip` (plugin package:
+unzip into `%APPDATA%\Autodesk\ApplicationPlugins`; uninstall = delete `AGR-Tools.bundle` and the
+`[AGRTools]` section of `3dsMax.ini`). PNG icons are rendered from the SVG sources with PySide6
+(`uv run --with PySide6 ...`), or taken from `AGR_ICON_PNG_DIR`.
+
+Open the panel: menu **AGR Tools** (Max 2025+), macro `AGRToolsOpen`, or
+`python.Execute "agr_tools_runtime.panel()"`.
 
 The builder prints SHA256; sorted ZIP_STORED entries, fixed timestamps/permissions,
 LF normalization and exclusively created output make repeated inputs reproducible.
