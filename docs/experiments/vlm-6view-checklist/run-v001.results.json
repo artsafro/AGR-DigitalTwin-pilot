@@ -1,0 +1,513 @@
+{
+ "model": "sonnet",
+ "objects": {
+  "AC08-v007/A": {
+   "flagged": [
+    "A02",
+    "A03",
+    "A04",
+    "A05",
+    "A06",
+    "A07",
+    "A08",
+    "A11"
+   ],
+   "n_items": 12,
+   "n_kept": 12,
+   "known": 7,
+   "detected": [
+    "field_outline",
+    "frame_color",
+    "plinth_color",
+    "rib_count:1-2",
+    "rib_count:2-1",
+    "rib_count:А-Б",
+    "rib_count:Б-А"
+   ],
+   "missed": [],
+   "recall": 1.0,
+   "false_positive_items": [
+    "A11"
+   ],
+   "false_positives": 1,
+   "forward": {
+    "A01": false,
+    "A02": true,
+    "A03": true,
+    "A04": true,
+    "A05": true,
+    "A06": true,
+    "A07": true,
+    "A08": true,
+    "A09": false,
+    "A10": false,
+    "A11": true,
+    "A12": false
+   },
+   "reverse": {
+    "A01": false,
+    "A02": true,
+    "A03": true,
+    "A04": true,
+    "A05": true,
+    "A06": true,
+    "A07": true,
+    "A08": true,
+    "A09": false,
+    "A10": false,
+    "A11": true,
+    "A12": false
+   },
+   "dropped": [],
+   "order_consistent_share": 1.0,
+   "cost_usd": 0.18143140000000002,
+   "duration_s": 33.2
+  },
+  "AC08-v007/B": {
+   "flagged": [
+    "B02",
+    "B04",
+    "B06",
+    "B07",
+    "B08",
+    "B09"
+   ],
+   "n_items": 12,
+   "n_kept": 12,
+   "known": 7,
+   "detected": [
+    "frame_color",
+    "rib_count:1-2",
+    "rib_count:2-1",
+    "rib_count:А-Б",
+    "rib_count:Б-А"
+   ],
+   "missed": [
+    "field_outline",
+    "plinth_color"
+   ],
+   "recall": 0.7142857142857143,
+   "false_positive_items": [
+    "B04"
+   ],
+   "false_positives": 1,
+   "forward": {
+    "B01": false,
+    "B02": true,
+    "B03": false,
+    "B04": true,
+    "B05": false,
+    "B06": true,
+    "B07": true,
+    "B08": true,
+    "B09": true,
+    "B10": false,
+    "B11": false,
+    "B12": false
+   },
+   "reverse": {
+    "B01": false,
+    "B02": true,
+    "B03": false,
+    "B04": true,
+    "B05": false,
+    "B06": true,
+    "B07": true,
+    "B08": true,
+    "B09": true,
+    "B10": false,
+    "B11": false,
+    "B12": false
+   },
+   "dropped": [],
+   "order_consistent_share": 1.0,
+   "cost_usd": 0.181289,
+   "duration_s": 31.700000000000003
+  },
+  "AC08-v010/A": {
+   "flagged": [],
+   "n_items": 12,
+   "n_kept": 8,
+   "known": 0,
+   "detected": [],
+   "missed": [],
+   "recall": null,
+   "false_positive_items": [],
+   "false_positives": 0,
+   "forward": {
+    "A01": false,
+    "A02": false,
+    "A03": false,
+    "A04": true,
+    "A05": true,
+    "A06": true,
+    "A07": true,
+    "A08": false,
+    "A09": false,
+    "A10": false,
+    "A11": false,
+    "A12": false
+   },
+   "reverse": {
+    "A01": false,
+    "A02": false,
+    "A03": false,
+    "A04": false,
+    "A05": false,
+    "A06": false,
+    "A07": false,
+    "A08": false,
+    "A09": false,
+    "A10": false,
+    "A11": false,
+    "A12": false
+   },
+   "dropped": [
+    "A04",
+    "A05",
+    "A06",
+    "A07"
+   ],
+   "order_consistent_share": 0.6666666666666666,
+   "cost_usd": 0.2322574,
+   "duration_s": 39.8
+  },
+  "AC08-v010/B": {
+   "flagged": [
+    "B04",
+    "B06",
+    "B09"
+   ],
+   "n_items": 12,
+   "n_kept": 12,
+   "known": 0,
+   "detected": [],
+   "missed": [],
+   "recall": null,
+   "false_positive_items": [
+    "B04",
+    "B06",
+    "B09"
+   ],
+   "false_positives": 3,
+   "forward": {
+    "B01": false,
+    "B02": false,
+    "B03": false,
+    "B04": true,
+    "B05": false,
+    "B06": true,
+    "B07": false,
+    "B08": false,
+    "B09": true,
+    "B10": false,
+    "B11": false,
+    "B12": false
+   },
+   "reverse": {
+    "B01": false,
+    "B02": false,
+    "B03": false,
+    "B04": true,
+    "B05": false,
+    "B06": true,
+    "B07": false,
+    "B08": false,
+    "B09": true,
+    "B10": false,
+    "B11": false,
+    "B12": false
+   },
+   "dropped": [],
+   "order_consistent_share": 1.0,
+   "cost_usd": 0.23824499999999998,
+   "duration_s": 40.3
+  },
+  "AC09-build-v001/A": {
+   "flagged": [],
+   "n_items": 12,
+   "n_kept": 12,
+   "forward": {
+    "A01": false,
+    "A02": false,
+    "A03": false,
+    "A04": false,
+    "A05": false,
+    "A06": false,
+    "A07": false,
+    "A08": false,
+    "A09": false,
+    "A10": false,
+    "A11": false,
+    "A12": false
+   },
+   "reverse": {
+    "A01": false,
+    "A02": false,
+    "A03": false,
+    "A04": false,
+    "A05": false,
+    "A06": false,
+    "A07": false,
+    "A08": false,
+    "A09": false,
+    "A10": false,
+    "A11": false,
+    "A12": false
+   },
+   "dropped": [],
+   "order_consistent_share": 1.0,
+   "cost_usd": 0.221273,
+   "duration_s": 38.9
+  },
+  "AC09-build-v001/B": {
+   "flagged": [
+    "B02"
+   ],
+   "n_items": 12,
+   "n_kept": 10,
+   "forward": {
+    "B01": false,
+    "B02": true,
+    "B03": false,
+    "B04": false,
+    "B05": false,
+    "B06": false,
+    "B07": false,
+    "B08": false,
+    "B09": false,
+    "B10": false,
+    "B11": false,
+    "B12": false
+   },
+   "reverse": {
+    "B01": false,
+    "B02": true,
+    "B03": true,
+    "B04": false,
+    "B05": false,
+    "B06": false,
+    "B07": true,
+    "B08": false,
+    "B09": false,
+    "B10": false,
+    "B11": false,
+    "B12": false
+   },
+   "dropped": [
+    "B03",
+    "B07"
+   ],
+   "order_consistent_share": 0.8333333333333334,
+   "cost_usd": 0.2211318,
+   "duration_s": 35.4
+  }
+ },
+ "pairs": {
+  "AC08-v007~AC08-v010/A": {
+   "kept": {
+    "A01": "equal",
+    "A02": "AC08-v010",
+    "A03": "AC08-v010",
+    "A04": "AC08-v010",
+    "A05": "AC08-v010",
+    "A06": "AC08-v010",
+    "A07": "AC08-v010",
+    "A09": "equal",
+    "A10": "equal",
+    "A11": "AC08-v010",
+    "A12": "AC08-v010"
+   },
+   "dropped": [
+    "A08"
+   ],
+   "consistent_share": 0.9166666666666666,
+   "cost_usd": 0.321487,
+   "duration_s": 24.6
+  },
+  "AC08-v007~AC08-v010/B": {
+   "kept": {
+    "B01": "AC08-v010",
+    "B02": "AC08-v010",
+    "B03": "AC08-v010",
+    "B05": "AC08-v010",
+    "B06": "AC08-v010",
+    "B07": "AC08-v010",
+    "B08": "AC08-v010",
+    "B09": "AC08-v010",
+    "B10": "equal",
+    "B11": "AC08-v010"
+   },
+   "dropped": [
+    "B04",
+    "B12"
+   ],
+   "consistent_share": 0.8333333333333334,
+   "cost_usd": 0.3250366,
+   "duration_s": 30.4
+  }
+ },
+ "errors": {},
+ "generated_questions": {
+  "slide49.png": [
+   {
+    "id": "B01",
+    "category": "panel_color",
+    "facade": "all",
+    "question": "Are the sandwich wall panels on all four facades blue (RAL 5015, sky blue)?"
+   },
+   {
+    "id": "B02",
+    "category": "frame_color",
+    "facade": "all",
+    "question": "Is the wall edging (the frame around the panel field) the same blue RAL 5015 as the panels, and smooth, without ribs?"
+   },
+   {
+    "id": "B03",
+    "category": "plinth_color",
+    "facade": "all",
+    "question": "Is the plinth at the base of the building grey (RAL 7004) and smooth on all facades?"
+   },
+   {
+    "id": "B04",
+    "category": "door",
+    "facade": "2-1",
+    "question": "Does facade 2-1 have one grey (RAL 7004) plain door near the right (axis 1) edge, with its top at about +2.200 and a small step or landing at about +0.070 in front of it?"
+   },
+   {
+    "id": "B05",
+    "category": "door",
+    "facade": "1-2",
+    "question": "Is facade 1-2 free of any door, so that the whole wall is a continuous ribbed blue panel?"
+   },
+   {
+    "id": "B06",
+    "category": "rib_count",
+    "facade": "1-2",
+    "question": "Does facade 1-2 show about 26 evenly spaced vertical ribs across the full width of the panel field?"
+   },
+   {
+    "id": "B07",
+    "category": "rib_count",
+    "facade": "А-Б",
+    "question": "Does the narrow facade А-Б show about 10 evenly spaced vertical ribs?"
+   },
+   {
+    "id": "B08",
+    "category": "rib_count",
+    "facade": "Б-А",
+    "question": "Does the narrow facade Б-А show about 10 evenly spaced vertical ribs, the same as facade А-Б?"
+   },
+   {
+    "id": "B09",
+    "category": "rib_count",
+    "facade": "2-1",
+    "question": "Does facade 2-1 show about 22 vertical ribs to the left of the door, with the ribs running vertically and the door set into the panel field?"
+   },
+   {
+    "id": "B10",
+    "category": "windows",
+    "facade": "all",
+    "question": "Are all four facades free of windows and glazing?"
+   },
+   {
+    "id": "B11",
+    "category": "field_outline",
+    "facade": "all",
+    "question": "On each facade, is the panel field a plain rectangle with a narrow edging all round, and is it the full wall height up to about +2.591 with the plinth below it?"
+   },
+   {
+    "id": "B12",
+    "category": "no_extra",
+    "facade": "all",
+    "question": "Is the model free of extra elements not on the slide, such as additional doors, vents, canopies, or colours other than blue and grey?"
+   }
+  ],
+  "slide53.png": [
+   {
+    "id": "B01",
+    "category": "panel_color",
+    "facade": "all",
+    "question": "Are the sandwich panel surfaces on all four facades a saturated blue (RAL 5015, sky blue), with no other main wall colour?"
+   },
+   {
+    "id": "B02",
+    "category": "rib_count",
+    "facade": "1-2",
+    "question": "Does the ribbed panel field on facade 1-2 show about 10 internal vertical ribs, which makes 11 panel strips inside the edging, with no windows or doors?"
+   },
+   {
+    "id": "B03",
+    "category": "rib_count",
+    "facade": "Б-А",
+    "question": "Does the ribbed panel field on facade Б-А show about 9 internal vertical ribs, which makes 10 panel strips inside the edging, with no windows or doors?"
+   },
+   {
+    "id": "B04",
+    "category": "field_outline",
+    "facade": "all",
+    "question": "Is the ribbed panel field on every facade framed by a plain, smooth blue wall edging (RAL 5015, no ribs) running around its perimeter?"
+   },
+   {
+    "id": "B05",
+    "category": "windows",
+    "facade": "А-Б",
+    "question": "Does facade А-Б have exactly one tall rectangular window with a white frame (RAL 9016) in the left part of the wall, and a door to its right?"
+   },
+   {
+    "id": "B06",
+    "category": "door",
+    "facade": "А-Б",
+    "question": "Is the door on facade А-Б a plain, smooth grey (RAL 7004) leaf with no ribs, standing at the right end of the facade and reaching down to the plinth level?"
+   },
+   {
+    "id": "B07",
+    "category": "windows",
+    "facade": "2-1",
+    "question": "Does facade 2-1 have exactly one tall rectangular window with a white frame (RAL 9016) and glazing, placed right of centre, and no door?"
+   },
+   {
+    "id": "B08",
+    "category": "frame_color",
+    "facade": "all",
+    "question": "Are all window frames white or near-white (RAL 9016) and plain, rather than blue or grey?"
+   },
+   {
+    "id": "B09",
+    "category": "plinth_color",
+    "facade": "all",
+    "question": "Is the plinth or base strip under the walls a plain grey (RAL 7004) on all facades, not blue?"
+   },
+   {
+    "id": "B10",
+    "category": "no_extra",
+    "facade": "1-2",
+    "question": "Is facade 1-2 free of extra elements (no door, no window, no vents or signs), with only the ribbed blue panel field?"
+   },
+   {
+    "id": "B11",
+    "category": "npm_vpm_consistency",
+    "facade": "all",
+    "question": "Are the window and door positions and counts consistent across the facades? That means a window and a door on А-Б, a window on 2-1, and blank walls on 1-2 and Б-А, as one building, not mirrored or swapped."
+   },
+   {
+    "id": "B12",
+    "category": "no_extra",
+    "facade": "Б-А",
+    "question": "Is facade Б-А free of extra elements (no door, no window), with only the ribbed blue panel field?"
+   }
+  ]
+ },
+ "generation": {
+  "slide49.png": {
+   "cost_usd": 0.052987,
+   "duration_s": 17.1,
+   "error": null
+  },
+  "slide53.png": {
+   "cost_usd": 0.045786600000000004,
+   "duration_s": 14.3,
+   "error": null
+  }
+ }
+}

@@ -18,7 +18,7 @@ if _venv_python.is_file():
     os.environ['AGR_PYTHON'] = str(_venv_python)
 OUT = Path(os.environ['AGR_TEST_OUTPUT'])
 OUT.mkdir(parents=True, exist_ok=False)
-_package = Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.4.0.mzp'))
+_package = Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.6.0.mzp'))
 print('AGR_PACKAGE_SHA256', hashlib.sha256(_package.read_bytes()).hexdigest())
 print('AGR_NATIVE_START version={} file={} units={}'.format(rt.maxVersion()[0], rt.maxFileName, rt.units.SystemType))
 assert rt.maxVersion()[0] in (26000, 28000)
@@ -30,7 +30,7 @@ rt.execute('global AGRToolsInstallRoot; global AGRToolsStartupRoot')
 rt.AGRToolsInstallRoot = str(OUT / 'installed') + '/'
 rt.AGRToolsStartupRoot = str(OUT / 'startup') + '/'
 rt.makeDir(rt.AGRToolsStartupRoot, all=True)
-rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.4.0.mzp'))))
+rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.6.0.mzp'))))
 assert rt.execute('global AGRToolsRegistered; AGRToolsRegistered == true'), 'MZP macros not registered'
 print('AGR_INSTALL_REGISTERED xView Cleanup MatID Open Nudge NudgeApply Atlas AtlasApply Ucx UcxApply Texel Export')
 sys.path.insert(0, str(OUT / 'installed'))
@@ -585,10 +585,10 @@ for macro in ('AGRToolsNudge', 'AGRToolsAtlas'):
 results['guards']['registered_uv_buttons'] = 2
 # Startup re-registration and repeated install must not overwrite installed files.
 rt.AGRToolsRegistered = False
-rt.fileIn(str(OUT / 'startup/AGRTools-0.4.0.ms'))
+rt.fileIn(str(OUT / 'startup/AGRTools-0.6.0.ms'))
 assert rt.AGRToolsRegistered
 install_hash = hashlib.sha256((OUT / 'installed/runtime.py').read_bytes()).hexdigest()
-results['guards']['repeat_install'] = raises(lambda: rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.4.0.mzp')))), 'already exists')
+results['guards']['repeat_install'] = raises(lambda: rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.6.0.mzp')))), 'already exists')
 assert hashlib.sha256((OUT / 'installed/runtime.py').read_bytes()).hexdigest() == install_hash
 assert hashlib.sha256((OUT / 'fixture-source.max').read_bytes()).hexdigest() == source_hash
 results['version'] = list(rt.maxVersion())
