@@ -46,7 +46,7 @@ Refining the size field (v004) does not remove them (15,777) and breaks the budg
 
 So option (b) does not give a conforming mesh that meets strict texel, 50k/180k and 35 % at the
 same time. Per the decision, **#371 is parked (option c); #298 stays on Ground v014**. Nothing in this
-probe changes v014, D150, D157, D169 or any threshold.
+probe changes v014, D150, D157, D191 or any threshold.
 
 ## What a later restart would need (not started)
 

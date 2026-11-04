@@ -1,6 +1,6 @@
 {
   "source_adapter_sha256": "3b6b433d718c0292f472293849f3363fd2ae90d4892e598efca52be44cd9d502",
-  "reason": "Retain the original footprint remainder outside the exact D169 patch; engineering approximation must be certified within 2.2 mm, not a new contour exception.",
+  "reason": "Retain the original footprint remainder outside the exact D191 patch; engineering approximation must be certified within 2.2 mm, not a new contour exception.",
   "geometry": {
     "type": "Polygon",
     "coordinates": [

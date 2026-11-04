@@ -77,3 +77,25 @@ report) reproduces all 146 / 351 faces on v014. The issue's area rule is added o
 - It becomes a gate (`gating=True`, and a `gates` entry in the Ground build) once a person accepts this parity.
 - v014 is not xView-clean under the delivery rule [D152]: 146 / 351 faces and 0 / 118 vertices. Fixing the Ground is
   a separate task.
+
+## Speed and incremental re-check (#535)
+
+Same PC, same process, result identical pair for pair (ids, kind, separation): TOW02 export-v005 (35 407 quads)
+`part_report` 25.4 s -> 5.0-5.4 s (185 faces = Max keep, 0 vertex pairs); user 013 FBX (73 594 tris) 22.6 -> 5.8-6.0 s
+(0 faces, 5 vertex pairs = 10 vertices); Ground v014 NPM dumps 10.9 -> 5.7-6.6 s (146) and 12.5 -> 5.8-6.4 s (351 / 118).
+How: convex quads (with a float margin) fanned in numpy, everything else through the exact per-polygon path; a
+uniform grid over the boxes padded by `face_m / parallel_cos_min` instead of the x sweep (1.1 M box pairs instead
+of about 70 M sweep candidates); polygon ownership by `searchsorted`; shapely only on pairs whose separation range
+can reach `face_m`. Tolerances and the rule are unchanged.
+`xview_state` / `xview_state_incremental` (faces labelled by part): the incremental run reuses pairs between
+unchanged parts and re-checks the faces of the changed parts in their grid cells; TOW02 v005 split into 15 parts
+(connected components by 5 m z band), one part moved by -4..+20 mm: equal to the full run, 0.4-3.2 s vs 5.8-8.2 s.
+It fails closed (error naming the part) when a part not listed as changed differs, vertex sharing between unchanged
+parts differs, or the unchanged faces are reordered. Parity on the stored Max lists:
+`tools/qa/xview_parity.py --keep <keep> --npz <arrays.npz>` (TOW02 185/185) and `<dump.json>` (Ground 146/146).
+Interactive Blender path (not in the repository until the user says yes, backlog R18): the user's add-on
+`xview_overlapping_faces_improved.py` patched to v1.1.0 (option "Exact xView rule (AGR dt_ai)", default on, runs
+`inv_xview.mesh_report` through `uv run --project <repo>` in a polled subprocess; tolerance default 5 mm, the float32 UI
+value rounded to 1e-9 m; overlay and selection kept). Blender 5.1.2 headless with the add-on registered: TOW02
+export-v005 185 faces = the Max keep ids (9.4 s incl. uv start), the user's 013 FBX 0 faces (10.5 s).
+Evidence: `G:/Мой диск/AGR-evidence/535-fast-xview/` (+ `SHA256SUMS.txt`; patched add-on SHA-256 `6df2c019e1de...`).

@@ -1,0 +1,96 @@
+{
+  "object": "Tilia_cordata_VPM",
+  "original_inventory_sha256": "843a464ce16c432815a48a0a5c84f9bf8aa4bbb09b3a0fae343527863a653112",
+  "native_resolution": [
+    4096,
+    4096
+  ],
+  "islands": [
+    {
+      "island": 0,
+      "faces": [
+        0,
+        30
+      ],
+      "role": "foliage",
+      "role_reason": "planar geometry component; leaf-card candidate, not botanical classification",
+      "material_ids": [
+        1
+      ],
+      "geometry_elements": [
+        0
+      ],
+      "score": 1.0,
+      "pass": true,
+      "island_area_px": 388986.09765625,
+      "sprite_bbox_area_px": 227700.0,
+      "clipped_opaque_px_tolerance_1": 0,
+      "neighbour_opaque_px": 0,
+      "opaque_density": 0.1360871794871795,
+      "bitmap": "C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-3dsmax-t_49156f66\\original\\maps\\T_77_07_0004008_95_K_6_Ground_Diffuse_1.1035.png",
+      "opacity": "C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-3dsmax-t_49156f66\\original\\maps\\T_77_07_0004008_95_K_6_Ground_Diffuse_1.1035.png",
+      "alpha_mode": true,
+      "sprite_bbox": [
+        2190,
+        3166,
+        2586,
+        3741
+      ],
+      "candidate_cells": 3,
+      "integer_tile_offset": [
+        0.0,
+        0.0
+      ],
+      "star_uv_extent": [
+        0.1522674560546875,
+        0.1522674560546875
+      ],
+      "geometric_pass": true,
+      "policy_applicable": true,
+      "plant_region": "independent alpha-cell candidate in original atlas"
+    },
+    {
+      "island": 166,
+      "faces": [
+        332
+      ],
+      "role": "trunk",
+      "role_reason": "non-planar vertically elongated component, >=20% object height",
+      "material_ids": [
+        1
+      ],
+      "geometry_elements": [
+        166
+      ],
+      "score": 0.0024447222451933408,
+      "pass": false,
+      "island_area_px": 7930.757194519043,
+      "sprite_bbox_area_px": 3244032.0,
+      "clipped_opaque_px_tolerance_1": 3228272,
+      "neighbour_opaque_px": 0,
+      "opaque_density": 0.995347214144469,
+      "bitmap": "C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-3dsmax-t_49156f66\\original\\maps\\T_77_07_0004008_95_K_6_Ground_Diffuse_1.1035.png",
+      "opacity": "C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-3dsmax-t_49156f66\\original\\maps\\T_77_07_0004008_95_K_6_Ground_Diffuse_1.1035.png",
+      "alpha_mode": true,
+      "sprite_bbox": [
+        3304,
+        0,
+        4096,
+        4096
+      ],
+      "candidate_cells": 3,
+      "integer_tile_offset": [
+        0.0,
+        0.0
+      ],
+      "star_uv_extent": [
+        0.006541252136230469,
+        0.14453697204589844
+      ],
+      "geometric_pass": false,
+      "policy_applicable": true,
+      "plant_region": "independent alpha-cell candidate in original atlas"
+    }
+  ],
+  "accepted": false
+}

@@ -24,7 +24,7 @@ This exact command exited 0. No cached pair hints were used: all safety proofs w
 
 Both profiles: mixed/alternate-fan xView combinations 0; spacing under-band 0; unaccepted over-band 0; original frozen D150 samples 24/24; mirrored surface variants 0. Raw strict D129 classifications remain in report.json, as required by the separately authorized D157 whole-Ground <=35% residual exception.
 
-Source coverage at 2.2 mm: uncovered beyond tolerance 0.0; outside beyond tolerance 0.0; off-outline edges 0; nonmanifold 0. Existing-endpoint correction: 24.388294 micrometres, 5 iterations. D169 remains the only approved ABC contour exception.
+Source coverage at 2.2 mm: uncovered beyond tolerance 0.0; outside beyond tolerance 0.0; off-outline edges 0; nonmanifold 0. Existing-endpoint correction: 24.388294 micrometres, 5 iterations. D191 remains the only approved ABC contour exception.
 
 CPU fixed-fan v014<->v009 sampled distance: 6.047013 mm maximum in both directions; 0 samples above 10 mm. Source->candidate: 229747 samples; candidate->source: 229782 samples per profile. This is a diagnostic 7-point-per-triangle measurement, NOT a continuous Hausdorff certificate or an exported-file readback. The independent complete TIN-relief oracle remains the separate 9.966668 mm result above.
 

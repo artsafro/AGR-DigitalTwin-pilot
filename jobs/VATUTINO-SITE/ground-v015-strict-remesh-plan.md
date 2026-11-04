@@ -10,7 +10,7 @@ not the acceptance rules. Previous 90k Steiner and 4/5/6 m coarsening routes rem
   prefer <=3.9 m to avoid padded-tile review. No texel exception.
 - Surface <=50,000 polygons; NPM whole Ground <=180,000 triangle-equivalent,
   with remaining MAF/Flora capacity reported, never silently spent.
-- Original semantic contours within 2.2 mm, except the explicitly approved D169 triangle.
+- Original semantic contours within 2.2 mm, except the explicitly approved D191 triangle.
 - TIN relief <=10 mm; v014/source silhouette and surface reach checked separately.
 - Ours and final Max xView 0/0 at 0.002/0.005 m. Check float32 and both diagonals,
   including mixed neighbouring fans, normal layer gaps and UV winding.
@@ -48,5 +48,5 @@ budget probe is not model acceptance, and no failed candidate is sent to review.
 ## ID integration
 
 Origin/main's D156 belongs to TOW02. Our historical Ground-only 90k permission was mechanically
-renumbered to D170 on integration; D157 supersedes D170. Original session narratives keep their
+renumbered to D192 on integration; D157 supersedes D192. Original session narratives keep their
 historical D156 spelling where reporting past events. Main TOW02 content is unchanged.

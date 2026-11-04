@@ -39,6 +39,9 @@ def test_approved_curb_joint_config_reaches_builder(tmp_path):
     ]
     s = settings()
     s['separate_curbs'] = True
+    # synthetic approval record (#512), not a real project decision
+    s['curb_joint_approval'] = dict(approved_by='synthetic-test-approver', approved_at='2026-10-21',
+                                    decision_id='D-test')
     src, config, out = tmp_path/'curbs.json', tmp_path/'site.json', tmp_path/'output'
     src.write_text(json.dumps(d))
     config.write_text(json.dumps(s))
@@ -52,6 +55,29 @@ def test_approved_curb_joint_config_reaches_builder(tmp_path):
     assert rows['garden']['joint_trim_m2'] > 0
     assert rows['drive']['joint_trim_m2'] == 0
     assert rep['codirectional']['pairs_below'] == 0
+    assert rows['garden']['decision_id'] == 'D-test'
+    assert rep['curb_joints'] and all(j['approved_by'] == 'synthetic-test-approver' for j in rep['curb_joints'])
+
+
+@pytest.mark.parametrize('approval', [None, {}, dict(approved_by='', approved_at='2026-10-21', decision_id='D-test'),
+                                      dict(approved_by='x', approved_at=' ', decision_id='D-test')],
+                         ids=['missing', 'empty', 'by-empty', 'at-blank'])
+def test_unapproved_curb_joint_config_fails_before_writing(tmp_path, approval):
+    from shapely.geometry import LineString
+    d = fixture()
+    d['ground_elements'] = [dict(ref='drive', role='curb_drive', geometry=mapping(LineString([(1, 2), (9, 2)])))]
+    s = settings()
+    s['separate_curbs'] = True
+    if approval is not None:
+        s['curb_joint_approval'] = approval
+    src, config, out = tmp_path/'curbs.json', tmp_path/'site.json', tmp_path/'output'
+    src.write_text(json.dumps(d))
+    config.write_text(json.dumps(s))
+    run = subprocess.run([sys.executable, str(spec.origin), str(src), '--site-settings', str(config),
+                          '--out', str(out), '--chord', '0', '--snap', '.003'], capture_output=True, text=True)
+    assert run.returncode != 0
+    assert 'CurbJointApprovalError' in run.stderr
+    assert not out.exists()
 
 
 def test_visible_covering_priority_preserves_tile_and_reports_hidden_drop():

@@ -90,7 +90,12 @@ def mesh_facts(obj):
         "udim_tiles": [],
         "mirrored_uv_triangles": 0,
         "face_geometry": {"vertices": [[round(float(point[i]), 6) for i in range(3)] for point in world],
-                          "polygons": [list(poly.vertices) for poly in mesh.polygons]},
+                          "polygons": [list(poly.vertices) for poly in mesh.polygons],
+                          # material name of each polygon's slot (same order as polygons); None = no material
+                          "polygon_material": [obj.material_slots[poly.material_index].material.name
+                                               if poly.material_index < len(obj.material_slots)
+                                               and obj.material_slots[poly.material_index].material else None
+                                               for poly in mesh.polygons]},
     }
     uv = mesh.uv_layers.active
     if uv:

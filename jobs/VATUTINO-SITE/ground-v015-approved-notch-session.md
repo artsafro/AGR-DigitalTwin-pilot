@@ -6,9 +6,9 @@ integration; known technical export failures are retained below, not waived.
 
 Start `f336062`; merged `origin/main@766d3f6` via `77df6d2`. The only conflict
 was independent D153/D154 versus D156/D157 rows; both were retained. D164–D168
-remain reserved by #489 / PR #492; this branch records only its own D169.
+remain reserved by #489 / PR #492; this branch records only its own D191.
 
-## Approved contour deviation — separate acceptance row [D169]
+## Approved contour deviation — separate acceptance row [D191]
 
 Artem, card #371 comment 2026-10-21 16:58: **«принимаю»**; the orchestrator explicitly
 permits closing footprint hole 0 by XY A=`(-7691.007,-15248.688)`,
@@ -156,7 +156,7 @@ mandatory whichever policy is chosen.
 ## Verification and continuation
 
 - Tests-first `897c0e3`: **10 failed → 10 passed** (closure).
-- Policy regression in `b3e6a04`: **1 failed → pass** after D169/data added.
+- Policy regression in `b3e6a04`: **1 failed → pass** after D191/data added.
 - Final focused suite: **254 passed / 0 failed, 9.65 s**, including all prior
   Ground regressions plus `tests/test_ground_notch_{closure,approval}.py` and
   `tests/test_decisions.py`; exact command/log in the archive.

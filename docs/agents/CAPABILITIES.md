@@ -303,6 +303,11 @@ Removal candidates by the rule (no evidence, no eval): `permissions.allow`, `per
   `{source: hook, decision: reject}` (or a `PreToolUse:<tool> hook error:` tool_result); synthetic references.
   Run on this branch's real handover transcript: 1 denial found (a Write into another worktree).
 - Tests: `tests/test_evals.py`.
+- Handoff evidence check (#584): `uv run dt evals --check-handoff <pr-body.md> [--sha <full head>] --output
+  <evals dir>` (read-only, `src/twinqa/evals/handoff.py`). It exits 0 only when the body has the Full suite
+  (`suite_slot.py`, exact head), Regression evals (`check_receipt`), RED, GREEN and Sample output lines and
+  does not hand the full suite to the reviewer. Rules: `docs/agents/WORKFLOW.md#handoff-evidence-check-584`.
+  Tests: `tests/test_evals_handoff.py`.
 
 ### Skills sync — `tools/sync_skills.py`
 - Status: WORKING (2026-10-06): `.agents/skills/` is canonical; the script regenerates
@@ -343,6 +348,20 @@ checker). Note: the desktop app did not load project subagents from this worktre
   commands; `dt` itself refuses with exit 2). Run interception is partial (known bypasses: #144); the
   guaranteed part is the write/status/commit gate.
 - Limit (user 2026-10-12 [D064], #79): a compromised environment is not covered, for example a fake `py` on PATH.
+
+### Lab CI — `lab-ci.toml` (lab laptop DESKTOP-IHMQLNS, `artsafro/agr-lab`)
+- Status: IN BRANCH `harness/lab-ci-dcc-tests` (2026-11-04, Claude Code). Not yet run on this repo on the laptop.
+- The lab laptop runs this repo's tests on every new commit of `main`, `harness/*`, `fix/*`, `feature/*` and once a
+  night: a checkout of the commit (shared clone, own `.git`, LFS files are pointers) → `uv sync --frozen --python 3.13`
+  → build `AGR-Tools.mzp` → jobs in agr-lab runner slots:
+  - `blender`: `pytest -m "blender or dcc"` (180 tests), `DT_BLENDER` = the slot's Blender 5.1.2;
+  - `unit`: default suite with `-n 8` (16 917 tests; cloud dry run 4 workers 10.4 min) — nightly/first/manual only;
+  - `agr-tools-max2024`, `agr-tools-checks-max2024`: `tests/max_tools/run_agr_tools_native.py` and
+    `run_agr_tools_checks_native.py` in batch 3ds Max 2024 (isolated slot profile, synthetic scenes).
+- Per-test results (JUnit) are compared with the previous run of the branch (a new branch with `main`); verdict
+  GREEN / CHANGED / RED goes to Telegram, the report to `C:\agr\lab-data\ci\reports\ci-pilot-<sha8>-*.md`.
+- Limits: `pytest -m max` tests are not run (they need 3ds Max 2026 and `dcc_batch.py`); a branch without
+  `lab-ci.toml` is skipped. Change the pipeline here, not in agr-lab.
 
 ## Pipeline core (src/dt_ai, technical_library, tools)
 
@@ -445,6 +464,69 @@ Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 20
   `reserved_triangles=` for UCX already in the file.
 - Facade-oriented 8-vertex boxes (Main) or quadtree hexahedra (Ground), 4 mm gap, [D012] budget; check
   the output with `tools/blender/ucx_audit.py` and the validator scene checks.
+
+### Methods catalog runner — `tools/methods/run_variant.py`, `tools/methods/ucx/run_benchmarks.py` (#706)
+- Status: WORKING (dt-worker, 2026-10-25): 18 measured ucx-collisions rows on KPP1 / AC08 / TOW02
+  (`docs/methods/ucx-collisions/results.jsonl`); tests `tests/methods/test_methods_catalog.py` (+1 `-m blender`).
+- `uv run python tools/methods/run_variant.py <out.fbx|.zip> --bench <id> --class <class> --variant <name>
+  [--variant-report <out>.variant.json] [--render view=png ...]`: one JSON row (wall time, triangles, objects,
+  xView 2 mm / 5 mm, UCX V010 + V012, texel min / median, file size, MatID slots, SSIM or null, class metrics);
+  exit 0 appended / 2 measurement error / 4 refused. RESULTS.md: `tools/methods/results_md.py`.
+- Benchmark set: `benchmark/methods/benchmarks.json` (private sources by sha256 under `C:/x/methods/src`).
+  Catalog: `docs/methods/README.md`.
+
+### Overlap gate (xView parity) — `dt qa xview`, `src/dt_ai/ops/inv_xview.py`, `src/dt_ai/ops/xview_gate.py` (#527)
+- Status: WORKING (dt-worker, 2026-10-21; #370 / #380 kernel, #527 CLI). `inv_xview` reproduces 3ds Max xView
+  Overlapping Vertices (2 mm) / Overlapping Faces (5 mm, contact rule) without Max; the `area` rule adds pairs xView misses.
+- `uv run dt qa xview <file.fbx|.blend|.npz> --out <new report.json> [--parts NAME ...] [--profile NPM|VPM]
+  [--coords local|inplace|as-stored] [--blender <exe>]`. FBX / .blend go through headless Blender 5.1.2
+  (`tools/blender/xview_dump.py`, evaluated meshes, float64); default `local` = object location subtracted. Report per
+  object: Overlapping Vertices / Faces counts and ids, vertex pairs (`double` / `bowtie`), face pairs with partner,
+  kind (contact / area / area+contact), separation and centres, bow-tie (non-manifold) vertices, dropped non-mesh
+  objects, input SHA-256, units. Blender units become metres via `scene.unit_settings.scale_length` (a missing,
+  non-positive or non-finite scale, or system NONE with scale != 1, is an error). Report and `<report>.blender.log`
+  are published no-clobber: a file created at either name by another writer is kept and the run exits 2.
+  Exit 0 pass, 1 overlaps, 2 error (no verdict).
+- Measured on vyatskaya-tow02 (review #514): ours export-v005 185 faces (= xView ids 1:1, centres <= 0.50 mm) and
+  0 vertices, ~35 s; user FBX `_05` object 013: 0 faces, 10 vertices = 5 coincident pairs, all `bowtie`, local and
+  in place. Postcondition of every build / fix step: `docs/procedure/TASK_TO_MODEL.md`.
+- Limits: pairs only within one object (a joined mesh is one object, as in xView); FBX / .blend need Blender.
+
+### 3ds Max xView runner — `tools/qa/xview_dump.ms` (#528)
+- Status: contract-tested and native-measured on Max 2024 (2026-10-24) via both `3dsmax.exe -U MAXScript tools/qa/xview_dump.ms` and the supported route `dcc_batch.py max --version 2024 --file tools/qa/xview_dump.ms` (3dsmaxbatch, shared lock, run on copies).
+  `3dsmax.exe -U MAXScript tools/qa/xview_dump.ms` with `XVIEW_OUT` (alias `TOW02_XV_OUT`) a directory that
+  already contains `jobs.txt`. The receipt line is `#nonce:<id>`; each model is exactly six fields
+  `label|path|node|mode|material|slot`. Path is `.fbx` (import into a reset scene) or `.max`
+  (`loadMaxFile` quiet, `useFileUnits`, never saved). Empty node = the largest mesh by polygon count; a name
+  that is not in the scene is an error naming it. Modes: `plain`, `weld` (Editable Mesh, weld all vertices at
+  `units.decodeValue "2mm"`, checks stay on the mesh), `weldpoly` (same weld, then Editable Poly). Face tolerance
+  `units.decodeValue "5mm"`. A non-ASCII path is copied to `XVIEW_TEMP` under an ASCII name; the copy's SHA-256
+  must equal the source. The opened file is hashed before and after; a change is an error.
+  `xv_preflight` runs before any `createFile`, `deleteFile` or stage copy. It rejects duplicate labels,
+  `|` and control characters, a wrong field count, a non-canonical slot token, and same-file identity
+  (normalized path and `GetFileInformationByHandle`) across inputs, `<label>.json`, `jobs.txt`, `report.jsonl`,
+  `done.txt`, `failed.txt` and the ASCII staging copy. A preflight failure exits before any write.
+  `prepare_run` writes a fresh nonce into `jobs.txt` and is mirrored by `preflight_jobs_txt` for a hand-written
+  file; it does not have to be running for the script to refuse an alias. It removes this run's `done.txt` and
+  `<label>.json` only after that check, including when preparation itself fails, and never when the path is an input.
+  Field 6 is the slot (`count >= 6`). An unknown slot or material is an error naming it.
+  The script copies the nonce into `done.txt` and each result, and writes `done.txt` only when every job succeeds.
+  `quitMax` does not set a process exit code (`System.Environment.Exit 1` is attempted on failure). `check_run`
+  requires the jobs.txt nonce in `done.txt` and in every result, a complete dump (the keys the script writes),
+  no `error` key and no `failed.txt`. `{}`, null, a mismatched label, a partial schema or a done receipt from
+  another nonce exits 2.
+  JSON: nonce, scene inventory, dropped nodes, counts, every flagged face (Max face id, material id, area, centre)
+  and every flagged vertex (id, position). Job twin `jobs/vyatskaya-tow02/scripts/xview_review.ms` points here.
+  One Max owner; lock `%LOCALAPPDATA%\Temp\agr-3dsmax-session.lock`.
+  Vyatskaya evidence (measured 2026-10-24): [SUMMARY.md](../../jobs/vyatskaya-tow02/evidence/xview-528/SUMMARY.md),
+  [ACCEPTANCE.md](../../jobs/vyatskaya-tow02/evidence/xview-528/ACCEPTANCE.md),
+  [v005_plain.json](../../jobs/vyatskaya-tow02/evidence/xview-528/v005_plain.json) (185 faces / 0 vertices),
+  [013_plain.json](../../jobs/vyatskaya-tow02/evidence/xview-528/013_plain.json) (0 faces / 10 vertices),
+  [013_weld.json](../../jobs/vyatskaya-tow02/evidence/xview-528/013_weld.json) (0 faces / 0 vertices),
+  [013_weldpoly.json](../../jobs/vyatskaya-tow02/evidence/xview-528/013_weldpoly.json) (0 faces / 10 vertices),
+  [hashes_before.txt](../../jobs/vyatskaya-tow02/evidence/xview-528/hashes_before.txt),
+  [hashes_after_src.txt](../../jobs/vyatskaya-tow02/evidence/xview-528/hashes_after_src.txt),
+  [hashes_after_copies.txt](../../jobs/vyatskaya-tow02/evidence/xview-528/hashes_after_copies.txt).
 
 ### Face overlap check — `tools/qa/check_clearance.py`
 - Status: WORKING (2026-10-06; AGR boundary cases + FBX planes 3 mm apart)

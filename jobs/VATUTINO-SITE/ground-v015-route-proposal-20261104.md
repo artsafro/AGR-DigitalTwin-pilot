@@ -43,7 +43,7 @@ v014 triangles; it does not answer "в квадах".
    curb bottom follows the locally raised cake; Curb/Stairs clearance), not by a waiver. If they
    cannot be cleaned, the session stops with the offender list (as D157 already says).
 
-Note: D157, D169 and D170 are recorded only on this branch (`docs/decisions.md`), not on `main`;
+Note: D157, D191 and D192 are recorded only on this branch (`docs/decisions.md`), not on `main`;
 they land with the v015 PR. `src/dt_ai/ops/inv_xview.py` changed on `main` since the checkpoint
 (+469/-63, fast core), so route A starts by merging `origin/main` and re-measuring v009 with it.
 

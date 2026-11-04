@@ -1,0 +1,88 @@
+{
+ "facades": {
+  "А-Б": {
+   "size_mm": [
+    2450,
+    2450
+   ],
+   "frame_bands_mm": {
+    "left": 100,
+    "right": 100
+   },
+   "joints": 11,
+   "plinth": [
+    {
+     "bbox_mm": [
+      0,
+      -150,
+      2450,
+      0
+     ]
+    }
+   ]
+  },
+  "Б-А": {
+   "size_mm": [
+    2450,
+    2450
+   ],
+   "frame_bands_mm": {
+    "left": 100,
+    "right": 100
+   },
+   "joints": 10,
+   "plinth": [
+    {
+     "bbox_mm": [
+      0,
+      -150,
+      2450,
+      0
+     ]
+    }
+   ]
+  },
+  "1-2": {
+   "size_mm": [
+    3000,
+    2450
+   ],
+   "frame_bands_mm": {
+    "left": 100,
+    "right": 100
+   },
+   "joints": 13,
+   "plinth": [
+    {
+     "bbox_mm": [
+      0,
+      -150,
+      3000,
+      0
+     ]
+    }
+   ]
+  },
+  "2-1": {
+   "size_mm": [
+    3000,
+    2450
+   ],
+   "frame_bands_mm": {
+    "left": 100,
+    "right": 100
+   },
+   "joints": 13,
+   "plinth": [
+    {
+     "bbox_mm": [
+      0,
+      -150,
+      3000,
+      0
+     ]
+    }
+   ]
+  }
+ }
+}

@@ -8,6 +8,17 @@ task: a one-line fix skips most steps; a multi-stage delivery uses all of them.
 Harness work (issues labelled `harness`) runs grilling -> to-spec -> to-tickets -> implement ->
 code-review (user 2026-10-14 [D091]); production work runs the steps below.
 
+Before the first production step of a session, be on a named branch. A detached HEAD
+never does production work: if HEAD is detached, create or switch to a branch first
+(`git switch -c job/<id>`), then merge `origin/main` into that branch
+(`git fetch origin`, then `git merge --no-edit origin/main`; never rebase), or record the
+user's explicit skip. A production step is any DCC build, export, validation or delivery
+run (Blender, 3ds Max, Unreal, and `dt` operations that write job outputs, even when the
+run only writes under `jobs/<id>/outputs/`) and any edit of code or rules. The paths
+`src/`, `tools/`, `standards/`, `docs/domain/`, `docs/decisions.md`, `docs/procedure/`
+and `docs/agents/CAPABILITIES.md` decide which `origin/main` merges the session report
+lists; they do not define a production step.
+
 0. **Card and recitation.** A task with an issue moves on the board (`docs/agents/KANBAN.md`): In progress
    when taken, Needs you when it waits on the user. Then recite the ticket ("Recitation" below)
    before any file is changed.
@@ -90,6 +101,25 @@ Require `## Author receipts` in the PR body with the following lines:
 - `Regression evals: <report path>; <passed> passed, <failed> failed, <not measured> not measured (<reasons>)`
 - `Probe: <invariant -> probe -> N/N with command/seed/bounds/evidence path | n/a: <reason>>`
 - `Local CI: CI-RECEIPT v1 pasted in the PR body; python tools/ci_receipt.py --verify <file> --sha <full HEAD sha> exits 0`
+
+### Handoff evidence check (#584)
+
+The author owns the full suite: a PR body never hands it to the reviewer, and evidence that is
+missing, "not run" or "not measured" is not a pass. Before `review_requested` the PR body has each
+line below exactly once (`.github/pull_request_template.md`, "Evidence"), and this read-only check exits 0:
+```bash
+uv run dt evals --check-handoff <pr-body.md> --sha <full HEAD sha> --output <worktree>/tmp/evals
+```
+- `Full suite:` run through `suite_slot.py` on the head sha, `N passed`, `0 failed` (a failure only
+  with its `known #<issue>` owner). After a rework (rule 49) it may name an ancestor of the head, and then an
+  `Affected tests:` line on the head with `0 failed` is required.
+- `Regression evals:` as above. It is verified with `check_receipt`, and the all-not-measured `no Claude transcript` receipt is valid.
+- `Before (RED):` names a commit before the head and has ≥ 1 failed or error, or `n/a: <reason>`.
+  `After (GREEN):` names the head and has ≥ 1 passed and 0 failed; it has no `n/a`. A GREEN or
+  `Affected tests:` line that says `not run`, `pending`, `n/a` etc. is not a run, even next to counts.
+  Every count is a plain integer: `nan failed`, `-1 failed`, `1.5 passed` are errors, never zero.
+- `Sample output:` gives the output the acceptance asks for (path or inline), or `n/a: <reason>`.
+Exit 1 prints one `ERROR:` line per problem. Fix the evidence or run the missing step. Never edit a line to pass the check.
 
 ## Questions-only
 
@@ -207,7 +237,10 @@ context. It delegates them to the read-only subagents in `.claude/agents/`:
 Rules:
 - Only the main agent writes code, commits and decides. No subagent may write to `src/`, `docs/` or `jobs/`,
   and none is created with write tools. Agent Teams are not enabled.
-- After every engine run the main agent calls `independent-checker` before it reports "done".
+- `independent-checker` is mandatory after every engine run, shown or not, and also after every other
+  job build (direct / Lego) intended to be shown or reported to the user. The checker runs before the
+  build is shown or reported. Each new build version needs its own check; a check of an earlier version
+  does not cover a later one. The checks include the `inv_xview` overlap gate (`dt qa xview`, #527).
 - A subagent's result is data, not a decision. The main agent verifies applicability and follows
   [Questions-only](#questions-only): reuse a quoted decision by [Escalation](#escalation-131), and ask only
   unresolved result-changing questions while preserving mandatory confirmations.
@@ -222,12 +255,17 @@ An event makes a skill or subagent mandatory, not optional:
 |---|---|
 | A new or updated source (FBX, Revit, Max, SketchUp, Blender) | skill `analyze-architectural-source` + subagent `source-inspector` |
 | A first call to a DCC MCP (3ds Max, Blender, Revit) in the session | skill `3dsmax-mcp-dev` / `blender-mcp` / `revit-mcp` |
-| The engine has built a model | subagent `independent-checker` |
+| after every engine run, shown or not, and after every other job build (direct / Lego) intended to be shown or reported to the user | subagent `independent-checker` before the build is shown or reported. Each new build version needs its own check (checks include the `inv_xview` overlap gate, `dt qa xview`, #527) |
 | Before "done", a handover of a deliverable or sending it | skill `validate-delivery` |
 | "Is there a rule for …?" (pattern, case, conflict) | subagent `pattern-librarian` |
 | Benchmarks or the test suite must run | subagent `bench-runner` |
 | A numeric question about an FBX or a dump | subagent `mesh-reader` |
 | The user accepts a result | skill `experience-transfer` |
+
+A background agent that polls a long run has a timeout and reports progress. Default: stop at 6 polls or
+30 minutes, whichever comes first. Every poll writes one progress line: elapsed time, the last output line,
+and how many polls remain. When the timeout is reached the agent reports that the run is still open and stops
+polling. A poll that adds no output leaves the run open.
 
 Hooks (Claude Code): `tools/hooks/skill_gate.py` (PreToolUse) denies a DCC MCP call in the main session until its
 skill is loaded; `tools/hooks/usage_log.py` writes every subagent call, skill load and /command to

@@ -1,6 +1,6 @@
 """Reproduce Vatutino v014 -> v015 construction without source writes.
 
-Pattern: n/a | new-case: source-bound paired Ground profiles with D150/D169 retention (#371).
+Pattern: n/a | new-case: source-bound paired Ground profiles with D150/D191 retention (#371).
 Geometry output only: native export/readback, UCX and review publication remain separate.
 """
 from __future__ import annotations

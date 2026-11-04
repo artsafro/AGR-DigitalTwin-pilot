@@ -1,0 +1,4 @@
+tow02 blender-gn-union driver_seconds=24.05 exit=0
+Blender 5.1.2 (hash ec6e62d40fa9 built 2026-05-19 01:37:34)
+BODY_BLENDER {"ok": true, "mode": "gn-union", "blender": "5.1.2", "openings": [], "wall_time_s": 23.064, "triangles": 54388}
+report: {"ok": true, "mode": "gn-union", "blender": "5.1.2", "openings": [], "wall_time_s": 23.064, "triangles": 54388}

@@ -1,0 +1,380 @@
+{
+  "storage": "G:\\Мой диск\\AGR-evidence\\tec26-oks\\depth-census-v002",
+  "members_verified": 23,
+  "manifest_sha256": "938579457a9711dc8109e73952512e5af8b48071165c1b82470ac0593d5bdd81",
+  "renders": [
+    {
+      "building": "ac04",
+      "mode": "ids",
+      "path": "G:\\Мой диск\\AGR-evidence\\tec26-oks\\depth-census-v002\\ac04-ids.png",
+      "application": "5.1.2",
+      "engine": "BLENDER_WORKBENCH",
+      "surface_handles": [
+        174
+      ],
+      "collision_objects_loaded": 0,
+      "world_bounds_m": [
+        [
+          -11.784400939941406,
+          -7.606678009033203,
+          -2.0031800270080566
+        ],
+        [
+          -8.854398727416992,
+          7.606678009033203,
+          4.481247901916504
+        ]
+      ],
+      "zero_line_world_z_m": 0,
+      "surface_triangles": 5006,
+      "not_verified": "per-wall perimeter continuity; material finish; human acceptance"
+    },
+    {
+      "building": "ac04",
+      "mode": "shaded",
+      "path": "G:\\Мой диск\\AGR-evidence\\tec26-oks\\depth-census-v002\\ac04-shaded.png",
+      "application": "5.1.2",
+      "engine": "BLENDER_WORKBENCH",
+      "surface_handles": [
+        174
+      ],
+      "collision_objects_loaded": 0,
+      "world_bounds_m": [
+        [
+          -11.784400939941406,
+          -7.606678009033203,
+          -2.0031800270080566
+        ],
+        [
+          -8.854398727416992,
+          7.606678009033203,
+          4.481247901916504
+        ]
+      ],
+      "zero_line_world_z_m": 0,
+      "surface_triangles": 5006,
+      "not_verified": "per-wall perimeter continuity; material finish; human acceptance"
+    },
+    {
+      "building": "ac05",
+      "mode": "ids",
+      "path": "G:\\Мой диск\\AGR-evidence\\tec26-oks\\depth-census-v002\\ac05-ids.png",
+      "application": "5.1.2",
+      "engine": "BLENDER_WORKBENCH",
+      "surface_handles": [
+        161
+      ],
+      "collision_objects_loaded": 0,
+      "world_bounds_m": [
+        [
+          -7.289708137512207,
+          -4.605573654174805,
+          -2.0043320655822754
+        ],
+        [
+          -4.851757049560547,
+          4.605574607849121,
+          2.8974244594573975
+        ]
+      ],
+      "zero_line_world_z_m": 0,
+      "surface_triangles": 1290,
+      "not_verified": "per-wall perimeter continuity; material finish; human acceptance"
+    },
+    {
+      "building": "ac05",
+      "mode": "shaded",
+      "path": "G:\\Мой диск\\AGR-evidence\\tec26-oks\\depth-census-v002\\ac05-shaded.png",
+      "application": "5.1.2",
+      "engine": "BLENDER_WORKBENCH",
+      "surface_handles": [
+        161
+      ],
+      "collision_objects_loaded": 0,
+      "world_bounds_m": [
+        [
+          -7.289708137512207,
+          -4.605573654174805,
+          -2.0043320655822754
+        ],
+        [
+          -4.851757049560547,
+          4.605574607849121,
+          2.8974244594573975
+        ]
+      ],
+      "zero_line_world_z_m": 0,
+      "surface_triangles": 1290,
+      "not_verified": "per-wall perimeter continuity; material finish; human acceptance"
+    },
+    {
+      "building": "ac06",
+      "mode": "ids",
+      "path": "G:\\Мой диск\\AGR-evidence\\tec26-oks\\depth-census-v002\\ac06-ids.png",
+      "application": "5.1.2",
+      "engine": "BLENDER_WORKBENCH",
+      "surface_handles": [
+        170,
+        378
+      ],
+      "collision_objects_loaded": 0,
+      "world_bounds_m": [
+        [
+          -1.8147459030151367,
+          -6.405006408691406,
+          -2.025103807449341
+        ],
+        [
+          12.385055541992188,
+          6.554864883422852,
+          3.958081007003784
+        ]
+      ],
+      "zero_line_world_z_m": 0,
+      "surface_triangles": 5608,
+      "not_verified": "per-wall perimeter continuity; material finish; human acceptance"
+    },
+    {
+      "building": "ac06",
+      "mode": "shaded",
+      "path": "G:\\Мой диск\\AGR-evidence\\tec26-oks\\depth-census-v002\\ac06-shaded.png",
+      "application": "5.1.2",
+      "engine": "BLENDER_WORKBENCH",
+      "surface_handles": [
+        170,
+        378
+      ],
+      "collision_objects_loaded": 0,
+      "world_bounds_m": [
+        [
+          -1.8147459030151367,
+          -6.405006408691406,
+          -2.025103807449341
+        ],
+        [
+          12.385055541992188,
+          6.554864883422852,
+          3.958081007003784
+        ]
+      ],
+      "zero_line_world_z_m": 0,
+      "surface_triangles": 5608,
+      "not_verified": "per-wall perimeter continuity; material finish; human acceptance"
+    },
+    {
+      "building": "ac07",
+      "mode": "ids",
+      "path": "G:\\Мой диск\\AGR-evidence\\tec26-oks\\depth-census-v002\\ac07-ids.png",
+      "application": "5.1.2",
+      "engine": "BLENDER_WORKBENCH",
+      "surface_handles": [
+        385,
+        388
+      ],
+      "collision_objects_loaded": 0,
+      "world_bounds_m": [
+        [
+          14.755457878112793,
+          -6.366548538208008,
+          -2.0251073837280273
+        ],
+        [
+          28.955257415771484,
+          6.59332275390625,
+          3.958082675933838
+        ]
+      ],
+      "zero_line_world_z_m": 0,
+      "surface_triangles": 5608,
+      "not_verified": "per-wall perimeter continuity; material finish; human acceptance"
+    },
+    {
+      "building": "ac07",
+      "mode": "shaded",
+      "path": "G:\\Мой диск\\AGR-evidence\\tec26-oks\\depth-census-v002\\ac07-shaded.png",
+      "application": "5.1.2",
+      "engine": "BLENDER_WORKBENCH",
+      "surface_handles": [
+        385,
+        388
+      ],
+      "collision_objects_loaded": 0,
+      "world_bounds_m": [
+        [
+          14.755457878112793,
+          -6.366548538208008,
+          -2.0251073837280273
+        ],
+        [
+          28.955257415771484,
+          6.59332275390625,
+          3.958082675933838
+        ]
+      ],
+      "zero_line_world_z_m": 0,
+      "surface_triangles": 5608,
+      "not_verified": "per-wall perimeter continuity; material finish; human acceptance"
+    },
+    {
+      "building": "ac08",
+      "mode": "ids",
+      "path": "G:\\Мой диск\\AGR-evidence\\tec26-oks\\depth-census-v002\\ac08-ids.png",
+      "application": "5.1.2",
+      "engine": "BLENDER_WORKBENCH",
+      "surface_handles": [
+        172
+      ],
+      "collision_objects_loaded": 0,
+      "world_bounds_m": [
+        [
+          30.924015045166016,
+          -1.1056132316589355,
+          -2.0465455055236816
+        ],
+        [
+          36.98276901245117,
+          1.3323869705200195,
+          2.550208568572998
+        ]
+      ],
+      "zero_line_world_z_m": 0,
+      "surface_triangles": 348,
+      "not_verified": "per-wall perimeter continuity; material finish; human acceptance"
+    },
+    {
+      "building": "ac08",
+      "mode": "shaded",
+      "path": "G:\\Мой диск\\AGR-evidence\\tec26-oks\\depth-census-v002\\ac08-shaded.png",
+      "application": "5.1.2",
+      "engine": "BLENDER_WORKBENCH",
+      "surface_handles": [
+        172
+      ],
+      "collision_objects_loaded": 0,
+      "world_bounds_m": [
+        [
+          30.924015045166016,
+          -1.1056132316589355,
+          -2.0465455055236816
+        ],
+        [
+          36.98276901245117,
+          1.3323869705200195,
+          2.550208568572998
+        ]
+      ],
+      "zero_line_world_z_m": 0,
+      "surface_triangles": 348,
+      "not_verified": "per-wall perimeter continuity; material finish; human acceptance"
+    },
+    {
+      "building": "ac09",
+      "mode": "ids",
+      "path": "G:\\Мой диск\\AGR-evidence\\tec26-oks\\depth-census-v002\\ac09-ids.png",
+      "application": "5.1.2",
+      "engine": "BLENDER_WORKBENCH",
+      "surface_handles": [
+        173,
+        369
+      ],
+      "collision_objects_loaded": 0,
+      "world_bounds_m": [
+        [
+          39.32661056518555,
+          -1.3867887258529663,
+          -2.038278341293335
+        ],
+        [
+          41.77656555175781,
+          1.6135637760162354,
+          2.567479372024536
+        ]
+      ],
+      "zero_line_world_z_m": 0,
+      "surface_triangles": 690,
+      "not_verified": "per-wall perimeter continuity; material finish; human acceptance"
+    },
+    {
+      "building": "ac09",
+      "mode": "shaded",
+      "path": "G:\\Мой диск\\AGR-evidence\\tec26-oks\\depth-census-v002\\ac09-shaded.png",
+      "application": "5.1.2",
+      "engine": "BLENDER_WORKBENCH",
+      "surface_handles": [
+        173,
+        369
+      ],
+      "collision_objects_loaded": 0,
+      "world_bounds_m": [
+        [
+          39.32661056518555,
+          -1.3867887258529663,
+          -2.038278341293335
+        ],
+        [
+          41.77656555175781,
+          1.6135637760162354,
+          2.567479372024536
+        ]
+      ],
+      "zero_line_world_z_m": 0,
+      "surface_triangles": 690,
+      "not_verified": "per-wall perimeter continuity; material finish; human acceptance"
+    },
+    {
+      "building": "truba",
+      "mode": "ids",
+      "path": "G:\\Мой диск\\AGR-evidence\\tec26-oks\\depth-census-v002\\truba-ids.png",
+      "application": "5.1.2",
+      "engine": "BLENDER_WORKBENCH",
+      "surface_handles": [
+        395
+      ],
+      "collision_objects_loaded": 0,
+      "world_bounds_m": [
+        [
+          -51.17400360107422,
+          -27.879104614257812,
+          -1.4455795288085938
+        ],
+        [
+          5.444379806518555,
+          27.879104614257812,
+          69.3843994140625
+        ]
+      ],
+      "zero_line_world_z_m": 0,
+      "surface_triangles": 50256,
+      "not_verified": "per-wall perimeter continuity; material finish; human acceptance"
+    },
+    {
+      "building": "truba",
+      "mode": "shaded",
+      "path": "G:\\Мой диск\\AGR-evidence\\tec26-oks\\depth-census-v002\\truba-shaded.png",
+      "application": "5.1.2",
+      "engine": "BLENDER_WORKBENCH",
+      "surface_handles": [
+        395
+      ],
+      "collision_objects_loaded": 0,
+      "world_bounds_m": [
+        [
+          -51.17400360107422,
+          -27.879104614257812,
+          -1.4455795288085938
+        ],
+        [
+          5.444379806518555,
+          27.879104614257812,
+          69.3843994140625
+        ]
+      ],
+      "zero_line_world_z_m": 0,
+      "surface_triangles": 50256,
+      "not_verified": "per-wall perimeter continuity; material finish; human acceptance"
+    }
+  ],
+  "legacy_painter_views": "scene-census-v002/*-ids.png superseded; never use for Gate evidence",
+  "perimeter_rule": "Keep below-zero perimeter drop in NPM and VPM, at least 1m below datum; inherit adjacent facade/plinth finish; no new ID unless source multisub already has it",
+  "perimeter_wall_continuity_status": "not measured per wall; intake records node bounds only; production cards must identify all perimeter walls and check every wall bottom <= -1.0 m"
+}

@@ -61,6 +61,23 @@ bundle pass is an accepted delivery; all mandatory checks and manual gates below
 | V016 | VPM · manual_review | None (strictly manual gate; constructed from standards spec via [`tools/qa/validate_package.py:build_stages`](../../tools/qa/validate_package.py#L38); [`src/twinqa/report.py:Stage`](../../src/twinqa/report.py#L28) only carries the gate attribute). | Manual only; automated clearance verification of archways, passages, courtyards, and height-zone collision offsets is not implemented; no signed-review ingestion claimed. | Mandatory manual review of walkthrough clearances and collision boundary offsets. |
 | V017 | Both · manual_review | None (strictly manual gate; constructed from standards spec via [`tools/qa/validate_package.py:build_stages`](../../tools/qa/validate_package.py#L38); [`src/twinqa/report.py:Stage`](../../src/twinqa/report.py#L28) only carries the gate attribute). | Manual only; automated alignment verification against approved DWG/SPOZU within 0.5 m tolerance is not implemented; no signed-review ingestion claimed. | Mandatory manual review against approved surveyor DWG/SPOZU drawings. |
 
+### Broken input stays in the report (#751)
+
+A ZIP member name that is not valid UTF-8 (`UnicodeDecodeError`) is a V001 `ZIP` fail.
+A GeoJSON `imageBase64` value that raises `OSError` while Pillow opens it is a V011
+`imageBase64` fail. The finding carries the rule id, the file or member, the exception
+class and the message. The CLI prints that report and exits 1.
+
+These other report-loss paths stay as pinned. They are outside #751:
+
+| Path | Pinned by | This change |
+|---|---|---|
+| ZIP DEFLATE reserved block (`zlib.error`) | #690, `tests/qa/test_zip_deflate_end_state_controls.py` | Out of scope. Different exception; the read handler still does not catch `zlib.error`. |
+| GeoJSON lone surrogate in a Glasses key (`UnicodeEncodeError` on stdout) | #695, `tests/qa/test_geojson_surrogate_legacy_controls.py` | Out of scope. The report object is built, then strict UTF-8 encoding of the finding drops stdout. |
+| GeoJSON nesting | #694–#700, `tests/qa/test_geojson_nesting_legacy_controls.py` | Out of scope. Depths 32 and 2048 already return a V011 report; that corpus does not raise. |
+| GeoJSON integer coordinate (`OverflowError` in `_decimals`) | #699, `tests/qa/test_geojson_integer_legacy_controls.py` | Out of scope. A 309-zero integer still escapes before a report. |
+| GeoJSON `1e400` / `1e309` float overflow | #694–#700, `tests/qa/test_geojson_overflow_legacy_controls.py` | Out of scope. A report is written; the legacy schema pass is a separate finiteness decision. |
+
 ## SINTEZ 1.6.1 check-group mapping
 
 [2026 requirements](requirements-2026.md) contains all LP 80 / HP 154 rows and the
@@ -141,15 +158,18 @@ never a claim of cryptographic validity. No signature checker is added by this d
 - GeoAGR `ucx_check.exe`: exit 0 even with findings; misses fully nested volumes; treats face contact as finding; outputs names only. Check convexity/closure/coverage/gap/nesting separately. local: docs/agr/inventory/GEOAGR_13_63_REVIEW.md#GEN-11 (lesson).
 - Max `Collizii.ms` precise test is bbox-only (returns true without tri test); `isConvex` true for < 4 verts; `UCX_Check.ms` misses nested volumes and doesn't measure gap; `UDIM Viewer` detects ERM/ORM but doesn't wire them, clamps negative UVs; MatID by average face UV. local: docs/agr/research/max-workbench/REVIEW.md; local: docs/agr/inventory/ZAVOD_AND_MAX_PLUGINS_REVIEW.md (lesson).
 - Generic DirectX check of arbitrary normal map is not possible without context; RGB-only tests don't cover alpha/glass branches. local: docs/agr/READINESS_REPORT.md#4; local: docs/agr/decisions/ADR-0002-source-discrepancies.md#7.
-- 3ds Max xView Overlapping Faces (5 mm) flags a face pair only when a vertex of one face (not shared) projects into the other within the tolerance and the normals are within 0.81 deg (|cos| >= 0.9999); it also flags zero-area contact and misses faces that cross edge over edge. Overlapping Vertices (2 mm) counts every index pair, so `convertToPoly` of a non-manifold mesh shows coincident split vertices. Deliverables are xView-clean [D152]; kernel invariant `xview_overlaps` reproduces it. local: docs/research/xview-parity-ground-v014.md (measured, #370).
+- 3ds Max xView Overlapping Faces (5 mm) flags a face pair only when a vertex of one face (not shared) projects into the other within the tolerance and the normals are within 0.81 deg (|cos| >= 0.9999); it also flags zero-area contact and misses faces that cross edge over edge. Overlapping Vertices (2 mm) counts every index pair, so `convertToPoly` of a non-manifold mesh shows coincident split vertices. Deliverables are xView-clean [D152]; kernel invariant `xview_overlaps` reproduces it. local: docs/research/xview-parity-ground-v014.md (measured, #370). The same thresholds (vertices 0.002 m, faces 0.005 m; gap between polygons more than 5 mm) are the 3ds Max xView overlap reading [D173]; [D173] does not change [D152].
 
 ## Pitfalls (lessons)
 - Zero face-clearance audit != no visible gaps (v006 0 pairs but light slits from wrong window depth). local: jobs/GLB-NPM/CLEARANCE_RULES.md.
 - Volumetric embedding fixed horizontal coplanar contact but 523 side coplanar pairs remained. local: docs/agr/case_studies/GLB_AB_REFERENCE_AND_PLANES.md#v004.
 - Simple remove_doubles left inner joint faces; delete both inner mating faces before welding. local: docs/agr/case_studies/GLB_AB_REFERENCE_AND_PLANES.md#v003.
+- A weld at 0.002 m fixes overlapping vertices and does not fix overlapping faces [D178].
 - Renaming UV map after Attach without updating material node broke opacity mapping. local: docs/agr/case_studies/GLB_AB_REFERENCE_AND_PLANES.md#v022.
 - Ground density check wrongly applied to NPM-OKS and reported as pass. local: docs/agr/decisions/OBR22_NPM_SCALE_V012.md.
 - Wrong composition (full Revit interior) fails regardless of clean mesh. local: docs/agr/case_studies/OBR22_ACCEPTED_WORKFLOW.md.
 - Material ID selection by old number after renumbering selects nothing; check actual face counts per ID first. local: docs/agr/case_studies/GLB_A_MAIN_ATLAS.md.
 - Save over a file erased previous readback evidence; snapshot versions, approved files frozen, new iterations to new paths. local: docs/agr/case_studies/GLB_A_MAIN_ATLAS.md; local: jobs/OBR22-K02/STATE.md.
 - User praise/% ratings and renders are not QA metrics; ray coverage vs Revit is a completeness gauge, not tolerance. local: jobs/GLB-NPM/STATE.md; local: jobs/MASHI-LP/AUDIT_AND_PLAN.md.
+
+- Team-script defaults are not delivery rules [D180]: UCX pads 0.04/0.035 (bbox-side fractions), hull merge 500 mm, 12 pieces, light index 001-050, A101 bitmap ladder 128-2048 with the 8-bit warning, Flora Atlas padding 2 px and size 8192, and team overlap angles about 11.5 deg / 8 deg do not override the values in this file.

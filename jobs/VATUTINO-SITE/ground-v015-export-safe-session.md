@@ -8,7 +8,7 @@ Snapshot: 2026-10-21. Code: `da412dc5e673f8db9fcea6b28b0571895e30a792`.
 ## Decisions and preserved contracts
 
 - D157 was extended to Ground v015 **NPM and VPM**, quoting Artem's 2026-10-21 “принимаю рекомендации”: residual triangles <=35% of whole-Ground polygons, with per-slot reasons. Raw D129 classifications remain visible; the waiver is not a claim that every residual triangle is intrinsically needed.
-- D169 approves only the recorded A–B–C notch. The additional contour remainder was technically removed with the source-bound void in `ground-source-void-v015.json`, not added to the exception.
+- D191 approves only the recorded A–B–C notch. The additional contour remainder was technically removed with the source-bound void in `ground-source-void-v015.json`, not added to the exception.
 - xView remains 0.002 m / 0.005 m; relief remains 10 mm; contour remains 2.2 mm. No source assets or exception maxima were overwritten.
 - 59 shared-fan risks were not separated or displaced into duplicate vertices.
 

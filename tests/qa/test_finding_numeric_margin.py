@@ -46,6 +46,7 @@ EXISTING_STAGE_KEYS = {"id", "check", "gate", "source_pdf_pages", "findings", "s
 EXISTING_REPORT_KEYS = {
     "profile", "target", "target_sha256", "source_sha256", "source_pdf_verified",
     "passed", "exit_code", "machine_stage_counts", "manual_reviews_pending", "stages", "notes",
+    "standards_sha256", "code_commit",  # #511 stamps
 }
 BOX_TRIS = [(0, 1, 3), (0, 3, 2), (4, 6, 7), (4, 7, 5), (0, 4, 5), (0, 5, 1),
             (2, 3, 7), (2, 7, 6), (0, 2, 6), (0, 6, 4), (1, 5, 7), (1, 7, 3)]

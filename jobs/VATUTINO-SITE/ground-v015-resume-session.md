@@ -1,7 +1,7 @@
 # Ground v015 resumed construction checkpoint — #371
 
 **Historical checkpoint.** The localized notch question was answered by Artem on
-2026-10-21 16:58 [D169]. See [approved-notch session](ground-v015-approved-notch-session.md)
+2026-10-21 16:58 [D191]. See [approved-notch session](ground-v015-approved-notch-session.md)
 for the applied correction, real native readback and the remaining VPM policy
 question. The measurements below remain historical; this was not a delivery.
 
