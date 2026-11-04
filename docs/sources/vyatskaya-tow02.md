@@ -16,7 +16,7 @@ They are historical and were not recomputed, because the raw inventory
 | Source class | `panelised` |
 | Route | `measurement+direct-build` (measurement and a direct build). `dt spec extract` does not run on this class |
 
-Rule 1 [D066] (`PANEL_HINT_SHARE` = 0.5 in `src/dt_ai/spec/mesh.py`; HARNESS_PLAN §4): a source is
+Rule 1 [D066] (`PANEL_HINT_SHARE` = 0.5 in `src/dt_ai/spec/mesh.py`; historical HARNESS_PLAN §4): a source is
 `panelised` when the part count is at least two, the largest share is strictly below 0.5, and no
 closed shell is present. 5561 parts, a largest share of 11%, and no shell meet that rule, so the
 route is measurement and a direct build. Contours are taken from the panels on the slabs.

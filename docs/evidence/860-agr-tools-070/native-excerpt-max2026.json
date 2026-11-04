@@ -1,0 +1,192 @@
+{
+ "census": {
+  "status": "pass",
+  "objects": 6,
+  "first_findings": [],
+  "plan_keys": [
+   "dropped",
+   "summary"
+  ]
+ },
+ "units": {
+  "status": "pass",
+  "objects": 0,
+  "first_findings": [],
+  "plan_keys": [
+   "findings",
+   "path"
+  ],
+  "plan": {
+   "path": "<untitled>",
+   "findings": [
+    {
+     "name": "system_unit",
+     "status": "pass",
+     "observed": "meters",
+     "expected": "meters"
+    },
+    {
+     "name": "system_scale",
+     "status": "pass",
+     "observed": "1.0",
+     "expected": "1.0"
+    },
+    {
+     "name": "file_in_gamma",
+     "status": "pass",
+     "observed": "1.0",
+     "expected": "1.0"
+    },
+    {
+     "name": "file_out_gamma",
+     "status": "pass",
+     "observed": "1.0",
+     "expected": "1.0"
+    }
+   ]
+  }
+ },
+ "perimeter_drop": {
+  "status": "fail",
+  "objects": 6,
+  "first_findings": [
+   {
+    "name": "SM_Addr_002_Main",
+    "finding": {
+     "code": "drop_short",
+     "ids": [],
+     "detail": "опуск 0.500 м < 1.0 м"
+    }
+   }
+  ],
+  "plan_keys": [
+   "dropped",
+   "summary"
+  ]
+ },
+ "material_type": {
+  "status": "fail",
+  "objects": 6,
+  "first_findings": [
+   {
+    "name": "SM_Addr_002_Main",
+    "finding": {
+     "code": "mat_class",
+     "ids": [],
+     "detail": "M_raytrace: RaytraceMaterial"
+    }
+   }
+  ],
+  "plan_keys": [
+   "dropped",
+   "summary"
+  ]
+ },
+ "ucx_audit": {
+  "status": "pass",
+  "objects": 6,
+  "first_findings": [],
+  "plan_keys": [
+   "dropped",
+   "summary"
+  ]
+ },
+ "sets_count": {
+  "status": "pass",
+  "objects": 6,
+  "first_findings": [],
+  "plan_keys": [
+   "dropped",
+   "summary"
+  ]
+ },
+ "fbx_split": {
+  "status": "pass",
+  "objects": 6,
+  "first_findings": [],
+  "plan_keys": [
+   "dropped",
+   "summary"
+  ]
+ },
+ "glass": {
+  "status": "pass",
+  "objects": 6,
+  "first_findings": [],
+  "plan_keys": [
+   "dropped",
+   "summary"
+  ]
+ },
+ "preflight": {
+  "status": "fail",
+  "objects": 6,
+  "first_findings": [
+   {
+    "name": "SM_Addr_002_Main",
+    "finding": {
+     "code": "mat_class",
+     "ids": [],
+     "detail": "tex.material_type: M_raytrace: RaytraceMaterial"
+    }
+   },
+   {
+    "name": "Camera_Leftover",
+    "finding": {
+     "code": "hyg_non_mesh",
+     "ids": [],
+     "detail": "qa.scene_hygiene: camera (Freecamera)"
+    }
+   }
+  ],
+  "plan_keys": [
+   "dropped",
+   "summary"
+  ]
+ },
+ "scene_hygiene": {
+  "status": "fail",
+  "objects": 6,
+  "first_findings": [
+   {
+    "name": "Camera_Leftover",
+    "finding": {
+     "code": "hyg_non_mesh",
+     "ids": [],
+     "detail": "camera (Freecamera)"
+    }
+   }
+  ],
+  "plan_keys": [
+   "dropped",
+   "summary"
+  ]
+ },
+ "xform": {
+  "status": "fail",
+  "objects": 6,
+  "first_findings": [
+   {
+    "name": "SM_Addr_002_Main",
+    "finding": {
+     "code": "xform_scale",
+     "ids": [],
+     "detail": "масштаб [2.0, 2.0, 2.0]"
+    }
+   }
+  ],
+  "plan_keys": [
+   "dropped",
+   "summary"
+  ]
+ },
+ "zero_area": {
+  "status": "pass",
+  "objects": 6,
+  "first_findings": [],
+  "plan_keys": [
+   "dropped",
+   "summary"
+  ]
+ }
+}

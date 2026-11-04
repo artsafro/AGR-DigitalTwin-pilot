@@ -1,0 +1,698 @@
+{
+ "schema": "dreamsim-ac08/1",
+ "px_per_m": 200.0,
+ "dreamsim_package": "0.2.1",
+ "dreamsim_type": "ensemble",
+ "device": "cpu",
+ "dreamsim": {
+  "loaded": true,
+  "error": null,
+  "load_s": 2.645,
+  "torch": "2.15.0+cpu",
+  "cache": "C:\\x\\issue-770\\dreamsim-weights"
+ },
+ "weights": [
+  {
+   "name": "checkpoints/dino_vitbase16_pretrain.pth",
+   "bytes": 343242485,
+   "sha256": "bf34ad0f424b9029b593e8dc3ed553bf26e88bcba0d32bf3e62a6209cb64c85e"
+  },
+  {
+   "name": "clip_vitb16_pretrain.pth.tar",
+   "bytes": 344825295,
+   "sha256": "21bb58dddc9747d635638eaef19a50404fa71ef62b837c4181c92568a5d78779"
+  },
+  {
+   "name": "dino_vitb16_pretrain.pth",
+   "bytes": 871077689,
+   "sha256": "491ec6200b350dd7d532cea1b040846cbc1b4ae038299331168fdd3e0361e262"
+  },
+  {
+   "name": "ensemble_lora/adapter_model.safetensors",
+   "bytes": 7088032,
+   "sha256": "a33ba2cbfc52a96f1fa220d7d036fd17e00d5fc9b467be2f97a5482e8a2b09c1"
+  },
+  {
+   "name": "facebookresearch_dino_main/LICENSE",
+   "bytes": 11324,
+   "sha256": "50e6751797c50dedd75ef1b8a0d9e42f5f8472e9fbce91f34718e9f97b0c780a"
+  },
+  {
+   "name": "open_clip_vitb16_pretrain.pth.tar",
+   "bytes": 344829345,
+   "sha256": "963c665c8ba6edd6ef7a7549f3f72fe20586494223300030f5b2efbe36f04319"
+  },
+  {
+   "name": "pretrained.zip",
+   "bytes": 1261181618,
+   "sha256": "7455248e4e125ef76c316cd5c24f3d84329475876a0feed4fdc00fcd498747e4"
+  }
+ ],
+ "separation": {
+  "ssim": {
+   "separates": false,
+   "harmless_min": 0.78802,
+   "harmless_max": 0.89055,
+   "defect_min": 0.86876,
+   "defect_max": 0.99621,
+   "rule": "harmless closer than every planted defect"
+  },
+  "dreamsim": {
+   "separates": false,
+   "harmless_min": 0.000388,
+   "harmless_max": 0.00268,
+   "defect_min": 0.000905,
+   "defect_max": 0.343873,
+   "rule": "harmless distance below every planted defect"
+  },
+  "crop_joints": {
+   "shifts_keep_count": true,
+   "defect_changes_count": {
+    "shifted_band_0.1m": true,
+    "wrong_colour_zone": true,
+    "missing_rib": true
+   },
+   "separates": true
+  }
+ },
+ "facades": [
+  {
+   "kind": "facade",
+   "pilot": "v010",
+   "facade": "1-2",
+   "view": "north",
+   "tag": "vpm",
+   "px_per_m": 200.0,
+   "panel_udim": 1001,
+   "ssim": 0.57579,
+   "dreamsim": 0.162669,
+   "dreamsim_s": 1.1492,
+   "slide_joints": 29,
+   "render_joints": 29,
+   "render_joints_expected": 29,
+   "render_joint_ok": true,
+   "align": {
+    "slide_hw": [
+     660,
+     1332
+    ],
+    "render_hw": [
+     660,
+     1332
+    ],
+    "cropped_px": [
+     0,
+     0
+    ]
+   },
+   "slide_sha256": "ff20ffe6eb2a0d7bc6b85e3c33afba2c8ccf1a55f62b584c3c12e25fc3cac491",
+   "render_sha256": "96fc272f317f529eaab5c5821876f7c84539feeb7887c285ed79bcd8f8ca30db",
+   "source_render_sha256": "c89060df91018d20460b26fc23afe1eb1ecb81708bea2265c76c82426d09893f",
+   "source_slide_sha256": "256f32da2a04141fc6b62b46ed9710c1830c5ffd3f48f2bac578719c0208a8fd"
+  },
+  {
+   "kind": "facade",
+   "pilot": "v010",
+   "facade": "1-2",
+   "view": "north",
+   "tag": "npm",
+   "px_per_m": 200.0,
+   "panel_udim": 1001,
+   "ssim": 0.56122,
+   "dreamsim": 0.119768,
+   "dreamsim_s": 1.2931,
+   "slide_joints": 29,
+   "render_joints": 29,
+   "render_joints_expected": 29,
+   "render_joint_ok": true,
+   "align": {
+    "slide_hw": [
+     660,
+     1332
+    ],
+    "render_hw": [
+     660,
+     1332
+    ],
+    "cropped_px": [
+     0,
+     0
+    ]
+   },
+   "slide_sha256": "ff20ffe6eb2a0d7bc6b85e3c33afba2c8ccf1a55f62b584c3c12e25fc3cac491",
+   "render_sha256": "08f423a6eb819d5dd7fabe47da16067a85e3da93b13f41f81baf1388ac39f13e",
+   "source_render_sha256": "95b2238be55f1c4cc00e008ab47a9f20ce48bec7284e2e445b1dd9d4783f86e4",
+   "source_slide_sha256": "256f32da2a04141fc6b62b46ed9710c1830c5ffd3f48f2bac578719c0208a8fd"
+  },
+  {
+   "kind": "facade",
+   "pilot": "v010",
+   "facade": "2-1",
+   "view": "south",
+   "tag": "vpm",
+   "px_per_m": 200.0,
+   "panel_udim": 1001,
+   "ssim": 0.57294,
+   "dreamsim": 0.196664,
+   "dreamsim_s": 1.1905,
+   "slide_joints": 29,
+   "render_joints": 29,
+   "render_joints_expected": 29,
+   "render_joint_ok": true,
+   "align": {
+    "slide_hw": [
+     660,
+     1332
+    ],
+    "render_hw": [
+     660,
+     1332
+    ],
+    "cropped_px": [
+     0,
+     0
+    ]
+   },
+   "slide_sha256": "f7db7f876b530e1749e415d7b1c77e0c60ee955de44008bf57c13a7b64074249",
+   "render_sha256": "ec7a8f2dbf0f2e0ffe98fe1474f52a2deaac334978d61783b62c7b11aa6c6565",
+   "source_render_sha256": "e3517c1bfaefddde4245201a41fa42f1b1c483b85a9483729c16a1eadca5ae38",
+   "source_slide_sha256": "256f32da2a04141fc6b62b46ed9710c1830c5ffd3f48f2bac578719c0208a8fd"
+  },
+  {
+   "kind": "facade",
+   "pilot": "v010",
+   "facade": "2-1",
+   "view": "south",
+   "tag": "npm",
+   "px_per_m": 200.0,
+   "panel_udim": 1001,
+   "ssim": 0.56013,
+   "dreamsim": 0.153655,
+   "dreamsim_s": 0.9906,
+   "slide_joints": 29,
+   "render_joints": 29,
+   "render_joints_expected": 29,
+   "render_joint_ok": true,
+   "align": {
+    "slide_hw": [
+     660,
+     1332
+    ],
+    "render_hw": [
+     660,
+     1332
+    ],
+    "cropped_px": [
+     0,
+     0
+    ]
+   },
+   "slide_sha256": "f7db7f876b530e1749e415d7b1c77e0c60ee955de44008bf57c13a7b64074249",
+   "render_sha256": "1948f2f7bea7b98622dbbdeb2e6cac66cb149aee2b1360ab6cbc3a36883cf740",
+   "source_render_sha256": "8a7f5b422291f2d11c5d74187f4f1f8ae5a025e175739ac738bcdda710b68a08",
+   "source_slide_sha256": "256f32da2a04141fc6b62b46ed9710c1830c5ffd3f48f2bac578719c0208a8fd"
+  },
+  {
+   "kind": "facade",
+   "pilot": "v010",
+   "facade": "\u0410-\u0411",
+   "view": "west",
+   "tag": "vpm",
+   "px_per_m": 200.0,
+   "panel_udim": 1002,
+   "ssim": 0.5748,
+   "dreamsim": 0.145808,
+   "dreamsim_s": 1.0286,
+   "slide_joints": 11,
+   "render_joints": 11,
+   "render_joints_expected": 11,
+   "render_joint_ok": true,
+   "align": {
+    "slide_hw": [
+     660,
+     608
+    ],
+    "render_hw": [
+     660,
+     607
+    ],
+    "cropped_px": [
+     0,
+     1
+    ]
+   },
+   "slide_sha256": "055cc6b4692d4ef50483b4b61cc5b9111f59370e9011b270db72f6b3a8539aac",
+   "render_sha256": "23404c2028e89581ec6e6dd0781501df3eaee32e9cffe59075ef5d2b8da2e449",
+   "source_render_sha256": "3bcc30409b358227a181d8fad77f1d8b579cf604a7f41dd63cec59a9d19b93ba",
+   "source_slide_sha256": "256f32da2a04141fc6b62b46ed9710c1830c5ffd3f48f2bac578719c0208a8fd"
+  },
+  {
+   "kind": "facade",
+   "pilot": "v010",
+   "facade": "\u0410-\u0411",
+   "view": "west",
+   "tag": "npm",
+   "px_per_m": 200.0,
+   "panel_udim": 1002,
+   "ssim": 0.55625,
+   "dreamsim": 0.112683,
+   "dreamsim_s": 1.1343,
+   "slide_joints": 11,
+   "render_joints": 11,
+   "render_joints_expected": 11,
+   "render_joint_ok": true,
+   "align": {
+    "slide_hw": [
+     660,
+     608
+    ],
+    "render_hw": [
+     660,
+     607
+    ],
+    "cropped_px": [
+     0,
+     1
+    ]
+   },
+   "slide_sha256": "055cc6b4692d4ef50483b4b61cc5b9111f59370e9011b270db72f6b3a8539aac",
+   "render_sha256": "36000bb75d5b1db88d0320b8eb9ff89f8fd923b302d4f8ecf22567bb121944cf",
+   "source_render_sha256": "df532c50b7bde19ee4594e686e1040d0e899233e22af291e95335ef6ea6a4000",
+   "source_slide_sha256": "256f32da2a04141fc6b62b46ed9710c1830c5ffd3f48f2bac578719c0208a8fd"
+  },
+  {
+   "kind": "facade",
+   "pilot": "v010",
+   "facade": "\u0411-\u0410",
+   "view": "east",
+   "tag": "vpm",
+   "px_per_m": 200.0,
+   "panel_udim": 1002,
+   "ssim": 0.58537,
+   "dreamsim": 0.140536,
+   "dreamsim_s": 1.1269,
+   "slide_joints": 11,
+   "render_joints": 11,
+   "render_joints_expected": 11,
+   "render_joint_ok": true,
+   "align": {
+    "slide_hw": [
+     660,
+     608
+    ],
+    "render_hw": [
+     660,
+     607
+    ],
+    "cropped_px": [
+     0,
+     1
+    ]
+   },
+   "slide_sha256": "9b396fcc587ef1b820aa2367936775db7f75bd89628bfcc64e4e65b4cae258ba",
+   "render_sha256": "d89cc777e852f4b8d5b49386dfe21bc4b407238481446fa9f45ed2cd313f4235",
+   "source_render_sha256": "4e723cfc0d57ca48942b7513baaf5afd38358ff2c51b4dad92cb8b2ee0dad549",
+   "source_slide_sha256": "256f32da2a04141fc6b62b46ed9710c1830c5ffd3f48f2bac578719c0208a8fd"
+  },
+  {
+   "kind": "facade",
+   "pilot": "v010",
+   "facade": "\u0411-\u0410",
+   "view": "east",
+   "tag": "npm",
+   "px_per_m": 200.0,
+   "panel_udim": 1002,
+   "ssim": 0.56637,
+   "dreamsim": 0.108285,
+   "dreamsim_s": 1.158,
+   "slide_joints": 11,
+   "render_joints": 11,
+   "render_joints_expected": 11,
+   "render_joint_ok": true,
+   "align": {
+    "slide_hw": [
+     660,
+     608
+    ],
+    "render_hw": [
+     660,
+     607
+    ],
+    "cropped_px": [
+     0,
+     1
+    ]
+   },
+   "slide_sha256": "9b396fcc587ef1b820aa2367936775db7f75bd89628bfcc64e4e65b4cae258ba",
+   "render_sha256": "18541b514df789609a70cc9ab73e9baa1fa2987d09f464123c5fe697bd5d4702",
+   "source_render_sha256": "943c8a5a0f1bc1151f433e8eeb4bf6d199c102ba880ddd6386b41987c3ea59dd",
+   "source_slide_sha256": "256f32da2a04141fc6b62b46ed9710c1830c5ffd3f48f2bac578719c0208a8fd"
+  },
+  {
+   "kind": "facade",
+   "pilot": "v007",
+   "facade": "1-2",
+   "view": "north",
+   "tag": "vpm",
+   "px_per_m": 200.0,
+   "panel_udim": 1001,
+   "ssim": 0.6104,
+   "dreamsim": 0.196162,
+   "dreamsim_s": 1.0489,
+   "slide_joints": 29,
+   "render_joints": 11,
+   "render_joints_expected": 29,
+   "render_joint_ok": false,
+   "align": {
+    "slide_hw": [
+     660,
+     1332
+    ],
+    "render_hw": [
+     660,
+     1332
+    ],
+    "cropped_px": [
+     0,
+     0
+    ]
+   },
+   "slide_sha256": "ff20ffe6eb2a0d7bc6b85e3c33afba2c8ccf1a55f62b584c3c12e25fc3cac491",
+   "render_sha256": "96e067ae22ecfe8adb45a53be10439e7b9c3c94736613329cc74907db8b40eb9",
+   "source_render_sha256": "d9528bb7a9a8d337d07c23a9ec0d20b28dde1c28a853fea68dacbd3c93dfa32b",
+   "source_slide_sha256": "256f32da2a04141fc6b62b46ed9710c1830c5ffd3f48f2bac578719c0208a8fd"
+  },
+  {
+   "kind": "facade",
+   "pilot": "v007",
+   "facade": "1-2",
+   "view": "north",
+   "tag": "npm",
+   "px_per_m": 200.0,
+   "panel_udim": 1001,
+   "ssim": 0.60692,
+   "dreamsim": 0.181148,
+   "dreamsim_s": 1.1401,
+   "slide_joints": 29,
+   "render_joints": 11,
+   "render_joints_expected": 29,
+   "render_joint_ok": false,
+   "align": {
+    "slide_hw": [
+     660,
+     1332
+    ],
+    "render_hw": [
+     660,
+     1332
+    ],
+    "cropped_px": [
+     0,
+     0
+    ]
+   },
+   "slide_sha256": "ff20ffe6eb2a0d7bc6b85e3c33afba2c8ccf1a55f62b584c3c12e25fc3cac491",
+   "render_sha256": "b6990639639bd18d906b3c899dbe2b9cc5ff566e3e9d3cc8427c2972602f17e8",
+   "source_render_sha256": "2a243bca405d6a6837fe700e08aa5fa295f7bf910720d1090cd3d198246b78db",
+   "source_slide_sha256": "256f32da2a04141fc6b62b46ed9710c1830c5ffd3f48f2bac578719c0208a8fd"
+  },
+  {
+   "kind": "facade",
+   "pilot": "v007",
+   "facade": "2-1",
+   "view": "south",
+   "tag": "vpm",
+   "px_per_m": 200.0,
+   "panel_udim": 1001,
+   "ssim": 0.62577,
+   "dreamsim": 0.236443,
+   "dreamsim_s": 1.1226,
+   "slide_joints": 29,
+   "render_joints": 11,
+   "render_joints_expected": 29,
+   "render_joint_ok": false,
+   "align": {
+    "slide_hw": [
+     660,
+     1332
+    ],
+    "render_hw": [
+     660,
+     1332
+    ],
+    "cropped_px": [
+     0,
+     0
+    ]
+   },
+   "slide_sha256": "f7db7f876b530e1749e415d7b1c77e0c60ee955de44008bf57c13a7b64074249",
+   "render_sha256": "8f9066de03bde2ee967dad3a746f7f77274424ef0db74df4336d148aa944af0c",
+   "source_render_sha256": "f5131f5cf178d014fc51562453851e7466b60520f9a13bee5bc5441ff04d20e8",
+   "source_slide_sha256": "256f32da2a04141fc6b62b46ed9710c1830c5ffd3f48f2bac578719c0208a8fd"
+  },
+  {
+   "kind": "facade",
+   "pilot": "v007",
+   "facade": "2-1",
+   "view": "south",
+   "tag": "npm",
+   "px_per_m": 200.0,
+   "panel_udim": 1001,
+   "ssim": 0.63449,
+   "dreamsim": 0.217878,
+   "dreamsim_s": 1.0559,
+   "slide_joints": 29,
+   "render_joints": 11,
+   "render_joints_expected": 29,
+   "render_joint_ok": false,
+   "align": {
+    "slide_hw": [
+     660,
+     1332
+    ],
+    "render_hw": [
+     660,
+     1332
+    ],
+    "cropped_px": [
+     0,
+     0
+    ]
+   },
+   "slide_sha256": "f7db7f876b530e1749e415d7b1c77e0c60ee955de44008bf57c13a7b64074249",
+   "render_sha256": "d14b52b114b39a12a3a4af3748cb79453c1d45191fcef130fc545862e959849e",
+   "source_render_sha256": "d0972da459ad4b8195c12b0a2281cb597da3eeca8cc66890557ccb30aee09f3c",
+   "source_slide_sha256": "256f32da2a04141fc6b62b46ed9710c1830c5ffd3f48f2bac578719c0208a8fd"
+  },
+  {
+   "kind": "facade",
+   "pilot": "v007",
+   "facade": "\u0410-\u0411",
+   "view": "west",
+   "tag": "vpm",
+   "px_per_m": 200.0,
+   "panel_udim": 1001,
+   "ssim": 0.61436,
+   "dreamsim": 0.243256,
+   "dreamsim_s": 1.0734,
+   "slide_joints": 11,
+   "render_joints": 3,
+   "render_joints_expected": 11,
+   "render_joint_ok": false,
+   "align": {
+    "slide_hw": [
+     660,
+     608
+    ],
+    "render_hw": [
+     660,
+     607
+    ],
+    "cropped_px": [
+     0,
+     1
+    ]
+   },
+   "slide_sha256": "055cc6b4692d4ef50483b4b61cc5b9111f59370e9011b270db72f6b3a8539aac",
+   "render_sha256": "1ee43d4e46ea0bc603756238a3c93d69a6a853fed33a2c8ea61d688def9605bd",
+   "source_render_sha256": "010d2e22653e813ee35d56731cff88aa97fe4df98f4691b80066a477559b048e",
+   "source_slide_sha256": "256f32da2a04141fc6b62b46ed9710c1830c5ffd3f48f2bac578719c0208a8fd"
+  },
+  {
+   "kind": "facade",
+   "pilot": "v007",
+   "facade": "\u0410-\u0411",
+   "view": "west",
+   "tag": "npm",
+   "px_per_m": 200.0,
+   "panel_udim": 1001,
+   "ssim": 0.61074,
+   "dreamsim": 0.213951,
+   "dreamsim_s": 1.1388,
+   "slide_joints": 11,
+   "render_joints": 3,
+   "render_joints_expected": 11,
+   "render_joint_ok": false,
+   "align": {
+    "slide_hw": [
+     660,
+     608
+    ],
+    "render_hw": [
+     660,
+     607
+    ],
+    "cropped_px": [
+     0,
+     1
+    ]
+   },
+   "slide_sha256": "055cc6b4692d4ef50483b4b61cc5b9111f59370e9011b270db72f6b3a8539aac",
+   "render_sha256": "592b166c918c165df05a492f395e6056dd55ed349ace684fe6771bcbf923f0bd",
+   "source_render_sha256": "56f533ede825a1e483144a4f13e5ef3d91a48efceaa8b78eea26d83b99dd37b7",
+   "source_slide_sha256": "256f32da2a04141fc6b62b46ed9710c1830c5ffd3f48f2bac578719c0208a8fd"
+  },
+  {
+   "kind": "facade",
+   "pilot": "v007",
+   "facade": "\u0411-\u0410",
+   "view": "east",
+   "tag": "vpm",
+   "px_per_m": 200.0,
+   "panel_udim": 1001,
+   "ssim": 0.64151,
+   "dreamsim": 0.230154,
+   "dreamsim_s": 1.0428,
+   "slide_joints": 11,
+   "render_joints": 3,
+   "render_joints_expected": 11,
+   "render_joint_ok": false,
+   "align": {
+    "slide_hw": [
+     660,
+     608
+    ],
+    "render_hw": [
+     660,
+     607
+    ],
+    "cropped_px": [
+     0,
+     1
+    ]
+   },
+   "slide_sha256": "9b396fcc587ef1b820aa2367936775db7f75bd89628bfcc64e4e65b4cae258ba",
+   "render_sha256": "5d9e61a9d2ef588fdc67d7adfafc9481c71d17cf3e90b05df90e5d912257c84a",
+   "source_render_sha256": "5781a29e824ec93ecf7e1f7467ec34d7d6adb91662e8372a6d0385e7ce41bb3f",
+   "source_slide_sha256": "256f32da2a04141fc6b62b46ed9710c1830c5ffd3f48f2bac578719c0208a8fd"
+  },
+  {
+   "kind": "facade",
+   "pilot": "v007",
+   "facade": "\u0411-\u0410",
+   "view": "east",
+   "tag": "npm",
+   "px_per_m": 200.0,
+   "panel_udim": 1001,
+   "ssim": 0.65055,
+   "dreamsim": 0.207416,
+   "dreamsim_s": 1.04,
+   "slide_joints": 11,
+   "render_joints": 3,
+   "render_joints_expected": 11,
+   "render_joint_ok": false,
+   "align": {
+    "slide_hw": [
+     660,
+     608
+    ],
+    "render_hw": [
+     660,
+     607
+    ],
+    "cropped_px": [
+     0,
+     1
+    ]
+   },
+   "slide_sha256": "9b396fcc587ef1b820aa2367936775db7f75bd89628bfcc64e4e65b4cae258ba",
+   "render_sha256": "7573bf5454b3757f44ce212086c9e3bd008041502e0375423a022eda11ff13a7",
+   "source_render_sha256": "3fca0d5d3ebab7363ecb2973e9a53d4f7bc4f94fc02aafaffb491049afd526ad",
+   "source_slide_sha256": "256f32da2a04141fc6b62b46ed9710c1830c5ffd3f48f2bac578719c0208a8fd"
+  }
+ ],
+ "controls": [
+  {
+   "kind": "control",
+   "name": "shift_1px",
+   "pilot": "v010",
+   "view": "north",
+   "tag": "vpm",
+   "ssim": 0.89055,
+   "dreamsim": 0.000388,
+   "dreamsim_s": 1.0794,
+   "base_crop_joints": 29,
+   "defect_crop_joints": 29
+  },
+  {
+   "kind": "control",
+   "name": "shift_2px",
+   "pilot": "v010",
+   "view": "north",
+   "tag": "vpm",
+   "ssim": 0.80113,
+   "dreamsim": 0.001688,
+   "dreamsim_s": 1.1623,
+   "base_crop_joints": 29,
+   "defect_crop_joints": 29
+  },
+  {
+   "kind": "control",
+   "name": "shift_3px",
+   "pilot": "v010",
+   "view": "north",
+   "tag": "vpm",
+   "ssim": 0.78802,
+   "dreamsim": 0.00268,
+   "dreamsim_s": 1.2044,
+   "base_crop_joints": 29,
+   "defect_crop_joints": 29
+  },
+  {
+   "kind": "control",
+   "name": "shifted_band_0.1m",
+   "pilot": "v010",
+   "view": "north",
+   "tag": "vpm",
+   "ssim": 0.86876,
+   "dreamsim": 0.038484,
+   "dreamsim_s": 1.2106,
+   "base_crop_joints": 29,
+   "defect_crop_joints": 28
+  },
+  {
+   "kind": "control",
+   "name": "wrong_colour_zone",
+   "pilot": "v010",
+   "view": "north",
+   "tag": "vpm",
+   "ssim": 0.96186,
+   "dreamsim": 0.343873,
+   "dreamsim_s": 1.0798,
+   "base_crop_joints": 29,
+   "defect_crop_joints": 17
+  },
+  {
+   "kind": "control",
+   "name": "missing_rib",
+   "pilot": "v010",
+   "view": "north",
+   "tag": "vpm",
+   "ssim": 0.99621,
+   "dreamsim": 0.000905,
+   "dreamsim_s": 1.063,
+   "base_crop_joints": 29,
+   "defect_crop_joints": 28
+  }
+ ]
+}

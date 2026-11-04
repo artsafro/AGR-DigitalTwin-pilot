@@ -1,7 +1,7 @@
 # Review checklist
 
 Reviewer: any agent that is not the author (now Codex). The reviewer checks evidence, not
-confidence. Source: `docs/HARNESS_PLAN.md` §8. Post the answer as a PR comment: verdict
+confidence. Current checklist: this file. Historical source: `docs/HARNESS_PLAN.md` §8. Post the answer as a PR comment: verdict
 (clean / changes needed), the three answers with numbers, findings by severity (P1/P2/P3).
 
 1. **Pattern / scope.** Does each NEW module refer to a pattern in `docs/domain/patterns/INDEX.md`,
