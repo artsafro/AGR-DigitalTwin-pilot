@@ -1,4 +1,4 @@
-"""#860 native smoke (headless 3dsmaxbatch): AGR Tools 0.7.0 checks on a DISPOSABLE synthetic scene.
+"""new-case: #860 native smoke (headless 3dsmaxbatch): AGR Tools 0.7.0 checks on a DISPOSABLE synthetic scene.
 
 Loads runtime.py from the extracted MZP (AGR_860_PKG), builds a new scene in memory (never saved), runs the
 12 checks and writes one JSON per check + summary.json to AGR_860_OUT. Synthetic data, not a real object.
