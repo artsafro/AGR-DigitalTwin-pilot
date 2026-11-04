@@ -443,6 +443,193 @@ def test_probe_lock_refuses_every_second_holder_seed_841():
     assert n == 60
 
 
+def _spec_lease(tool_timeout, max_timeout, lock_timeout, slack=60):
+    """#871: the lock covers max(tool timeout, MAX_TIMEOUT + pipe slack, server floor). Margin is +120 in hold()."""
+    span = max(max_timeout + slack, lock_timeout)
+    if tool_timeout is not None:
+        span = max(span, tool_timeout)
+    return span
+
+
+def test_fbx_readback_lock_busy_at_900_plus_121(monkeypatch, tmp_path):
+    """A live agr_fbx_readback {timeout: 1800} is still busy at elapsed = 900 + 121 s."""
+    margin = 120
+    clock = {"t": 1_700_000_000.0}
+    monkeypatch.setattr(locks.time, "time", lambda: clock["t"])
+    monkeypatch.setattr(tools, "MAX_TIMEOUT", 600.0)
+
+    def handler(args):
+        start = clock["t"]
+        try:
+            assert args["timeout"] == 1800
+            info = json.loads((tmp_path / "locks" / "agr-blender-batch.lock").read_text(encoding="utf-8"))
+            lease = _spec_lease(1800, 600, 900)
+            assert info["timeout"] == lease
+            assert info["until"] == start + lease + margin
+            clock["t"] = start + 900 + 121
+            with pytest.raises(locks.LockBusy):
+                with locks.hold("blender-batch", "second", 10):
+                    pass
+        finally:
+            clock["t"] = start
+        return {"source": "synthetic"}
+
+    monkeypatch.setattr(tools, "h_fbx_readback", handler)
+    _, (res,) = run_calls([("agr_fbx_readback", {"fbx_path": "C:/synthetic.fbx", "timeout": 1800})])
+    ok(res)
+    assert not (tmp_path / "locks" / "agr-blender-batch.lock").exists()
+
+
+def test_max_lock_covers_raised_max_timeout(fake_max, monkeypatch, tmp_path):
+    """AGR_MCP_MAX_TIMEOUT above 900 s stays exclusive past the fixed 900 + 121 s lease."""
+    monkeypatch.setattr(tools, "MAX_TIMEOUT", 2000.0)
+    clock = {"t": 1_800_000_000.0}
+    monkeypatch.setattr(locks.time, "time", lambda: clock["t"])
+
+    def transport(code, timeout):
+        start = clock["t"]
+        try:
+            info = json.loads((tmp_path / "locks" / "agr-3dsmax-live.lock").read_text(encoding="utf-8"))
+            lease = _spec_lease(None, 2000, 900)
+            assert info["timeout"] == lease
+            assert info["until"] == start + lease + 120
+            clock["t"] = start + 900 + 121
+            with pytest.raises(locks.LockBusy):
+                with locks.hold("max-live", "second", 10):
+                    pass
+        finally:
+            clock["t"] = start
+        return fake_max.transport(code, timeout)
+
+    _, (res,) = run_calls([("agr_xview_check", {"scene": "live", "handles": [1]})], transport=transport)
+    ok(res)
+
+
+@pytest.mark.parametrize("bad", [float("nan"), float("inf"), float("-inf"), 0, 0.0, -1])
+def test_bad_lock_timeout_errors_and_never_locks(bad, monkeypatch, tmp_path):
+    called = []
+    monkeypatch.setattr(tools, "h_fbx_readback", lambda args: called.append(1) or {"source": "synthetic"})
+
+    async def main():
+        srv = server.build_server(lock_timeout=bad)
+        async with connect(srv) as client:
+            return await client.call_tool("agr_fbx_readback", {"fbx_path": "C:/synthetic.fbx", "timeout": 30})
+
+    res = anyio.run(main)
+    assert res.isError and "timeout" in res.content[0].text
+    assert called == []
+    assert not (tmp_path / "locks" / "agr-blender-batch.lock").exists()
+
+
+def test_bad_max_timeout_errors_and_never_locks(fake_max, monkeypatch, tmp_path):
+    monkeypatch.setattr(tools, "MAX_TIMEOUT", float("nan"))
+    _, (res,) = run_calls([("agr_xview_check", {"scene": "live", "handles": [1]})], transport=fake_max.transport)
+    assert res.isError and "timeout" in res.content[0].text
+    assert fake_max.sent == []
+    assert not (tmp_path / "locks" / "agr-3dsmax-live.lock").exists()
+
+
+def test_probe_elapsed_below_lease_second_hold_busy_seed_871(monkeypatch, tmp_path):
+    """For many tool timeouts and elapsed values < lease + margin, a second hold is busy."""
+    import random
+    rng = random.Random(871)
+    margin = 120
+    lock_timeout = 900
+    max_timeout = 600
+    monkeypatch.setattr(tools, "MAX_TIMEOUT", float(max_timeout))
+    clock = {"t": 1_900_000_000.0}
+    monkeypatch.setattr(locks.time, "time", lambda: clock["t"])
+    cases = [(1800, 500.0), (1800, 1019.0), (1800, 900 + 121.0), (7200, 3000.0)]
+    for _ in range(36):
+        tool_timeout = rng.randint(1, 7200)
+        lease = _spec_lease(tool_timeout, max_timeout, lock_timeout)
+        elapsed = rng.uniform(0, lease + margin - 1e-3)
+        cases.append((tool_timeout, elapsed))
+    seen = {"n": 0}
+
+    def handler(args):
+        start = clock["t"]
+        try:
+            tool_timeout, elapsed = cases[seen["n"]]
+            assert args["timeout"] == tool_timeout
+            info = json.loads((tmp_path / "locks" / "agr-blender-batch.lock").read_text(encoding="utf-8"))
+            lease = _spec_lease(tool_timeout, max_timeout, lock_timeout)
+            assert info["until"] == start + lease + margin
+            clock["t"] = start + elapsed
+            with pytest.raises(locks.LockBusy):
+                with locks.hold("blender-batch", "second", 10):
+                    pass
+            seen["n"] += 1
+        finally:
+            clock["t"] = start
+        return {"source": "synthetic"}
+
+    monkeypatch.setattr(tools, "h_fbx_readback", handler)
+    calls = [("agr_fbx_readback", {"fbx_path": "C:/synthetic.fbx", "timeout": t}) for t, _ in cases]
+    _, results = run_calls(calls)
+    assert all(not r.isError for r in results)
+    assert seen["n"] == len(cases)
+
+
+def test_probe_live_holder_not_stale_seed_871(monkeypatch):
+    """A lock whose holder pid is alive stays busy for elapsed below and above timeout + margin."""
+    import random
+    rng = random.Random(871)
+    clock = {"t": 2_000_000_000.0}
+    monkeypatch.setattr(locks.time, "time", lambda: clock["t"])
+    n = 0
+    for i in range(40):
+        timeout = rng.uniform(0.5, 4000)
+        below = rng.uniform(0, timeout + 120 - 1e-3)
+        above = timeout + 120 + rng.uniform(0.5, 5000)
+        host = "max-live" if i % 2 == 0 else "blender-batch"
+        for elapsed in (below, above):
+            start = clock["t"]
+            with locks.hold(host, "holder", timeout) as held:
+                clock["t"] = start + elapsed
+                with pytest.raises(locks.LockBusy):
+                    with locks.hold(host, "second", 10):
+                        pass
+            assert not held.exists()
+            clock["t"] = start + elapsed + 1
+            n += 1
+    assert n == 80
+
+
+def test_probe_bad_timeouts_never_lock_seed_871(tmp_path):
+    import random
+    rng = random.Random(871)
+    values = [float("nan"), float("inf"), float("-inf"), 0, 0.0, -0.0, -1, -1e-12, True, False]
+    values += [-rng.random() * 10 ** rng.randrange(0, 8) for _ in range(24)]
+    n = 0
+    for value in values:
+        with pytest.raises(ValueError, match="timeout"):
+            with locks.hold("blender-batch", "c", value):
+                pass
+        assert not (tmp_path / "locks" / "agr-blender-batch.lock").exists()
+        n += 1
+    assert n == len(values) == 34
+
+
+def test_probe_unmapped_host_key_names_it_seed_871(tmp_path):
+    import random
+    rng = random.Random(871)
+    keys = ["max-batch", "blender", "MAX-LIVE", "max-live ", "blender-batch.lock", ""]
+    keys += [f"host-{rng.randrange(1_000_000)}" for _ in range(24)]
+    n = 0
+    for key in keys:
+        assert key not in locks.LOCK_NAMES and key != "offline"
+        with pytest.raises(ValueError, match=re.escape(repr(key))) as caught:
+            locks.lock_path(key)
+        assert "unmapped" in str(caught.value)
+        with pytest.raises(ValueError, match=re.escape(repr(key))):
+            with locks.hold(key, "c", 10):
+                pass
+        assert not (tmp_path / "locks").exists() or not any((tmp_path / "locks").iterdir())
+        n += 1
+    assert n == len(keys) == 30
+
+
 def test_probe_audit_lines_equal_calls_seed_841(tmp_path):
     import random
     rnd = random.Random(841)

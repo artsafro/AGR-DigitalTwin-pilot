@@ -81,8 +81,9 @@ def build_server(env=None, max_transport=None, lock_timeout: float = 900) -> Ser
                 raise ValueError(f"invalid input: {getattr(exc, 'message', exc)}") from None
             host = spec.host(arguments)
             record["host"] = host
+            lease = tools.call_lease(arguments, lock_timeout)
             try:
-                with locks.hold(host, record["card"] or "agr-mcp", lock_timeout) as lock:
+                with locks.hold(host, record["card"] or "agr-mcp", lease) as lock:
                     record["lock"] = str(lock) if lock else None
                     result = await anyio.to_thread.run_sync(spec.handler, arguments)
             except locks.LockBusy as exc:

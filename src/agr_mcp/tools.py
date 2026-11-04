@@ -20,6 +20,18 @@ from . import max_pipe
 
 ROOT = Path(__file__).resolve().parents[2]
 MAX_TIMEOUT = float(os.environ.get("AGR_MCP_MAX_TIMEOUT", "600"))
+MAX_PIPE_SLACK = 60  # max_pipe.pipe_transport kills the pipe client at timeout + this
+
+
+def call_lease(arguments: dict, lock_timeout: float) -> float:
+    """How long this call may occupy a host, before the lock margin in locks.hold.
+
+    max(tool timeout, MAX_TIMEOUT + pipe slack, server lock floor). NaN, inf, zero and
+    negative values error here, before a lock file exists.
+    """
+    from . import locks
+    tool_timeout = arguments.get("timeout") if isinstance(arguments, dict) else None
+    return locks.lease_seconds(tool_timeout, lock_timeout, MAX_TIMEOUT, slack=MAX_PIPE_SLACK)
 
 
 def _load(name: str, rel: str):
