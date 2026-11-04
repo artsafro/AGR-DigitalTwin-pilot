@@ -282,6 +282,10 @@ def test_two_press_ui_keeps_the_preview_per_selection(monkeypatch):
     assert rt.edit_ui('model.triangulate')['plan']['mode'] == 'preview'
     assert rt.edit_ui('model.triangulate')['plan']['mode'] == 'apply'
     assert rt.edit_ui('model.triangulate')['plan']['mode'] == 'preview'  # the preview is used once
+    # a read-only row whose glue is still empty (independent of branch B filling tex_max.py)
+    loaded = rt._load_core
+    monkeypatch.setattr(rt, '_load_core', lambda filename, module_name: types.ModuleType('empty_tex_max')
+                        if filename == 'tex_max.py' else loaded(filename, module_name))
     assert rt.edit_ui('scene.missing_maps')['status'] == 'not_implemented'
     assert 'scene.missing_maps' not in rt._edits
     assert "elif tool in EDITS_080:\n        report = edit_ui(tool)" in (PKG / 'runtime.py').read_text(encoding='utf-8')
