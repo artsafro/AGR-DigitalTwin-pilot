@@ -1,0 +1,23 @@
+{
+ "schema": 1,
+ "button": "ucx.build",
+ "tool": "ucx",
+ "version": "0.3",
+ "shipped": true,
+ "select": "named",
+ "reason": "Объекта FAIL с кодом находки нет. Пробный UCX на ящике (и даже на открытом меше, который ядро замыкает в выпуклую оболочку) даёт пустые findings. Находка at_threshold появляется только при ровно 15000 треугольниках коллизии — это уже не маленький синтетический кусок. Пустой меш и нечисло — ошибка ValueError, не pass.",
+ "apply_status": "pass",
+ "objects": [
+  {
+   "name": "SM_Polygon_001_Main",
+   "scene": "polygon_all",
+   "expect": "pass",
+   "codes": []
+  }
+ ],
+ "base": "0.3",
+ "station": "0.3.1",
+ "stations": [
+  "0.3.1"
+ ]
+}

@@ -31,7 +31,10 @@ OLD_TOOLS = {'xview', 'cleanup', 'apply', 'matid', 'nudge', 'nudge_apply', 'atla
              'ucx_apply', 'texel', 'export', 'names', 'tris', 'textures', 'pivot', 'geojson'}
 NEW_070 = {'census', 'units', 'perimeter_drop', 'material_type', 'ucx_audit', 'sets_count', 'fbx_split', 'glass',
            'preflight', 'scene_hygiene', 'xform', 'zero_area'}  # 0.7.0 (#860)
-ALL_TOOLS = OLD_TOOLS | NEW_070
+NEW_080 = {'scene.missing_maps', 'model.triangulate', 'tex.format_fix', 'tex.placeholders', 'ucx.triangulate',
+           'ucx.rename', 'udim.ids_to_udims', 'qa.names_fix', 'qa.package', 'export.geojson_write',
+           'export.ground_fbx', 'export.pivot_place', 'export.zip'}  # 0.8 (#908): tool == plan row id
+ALL_TOOLS = OLD_TOOLS | NEW_070 | NEW_080
 
 
 def ui_branches():
@@ -42,16 +45,18 @@ def ui_branches():
     tools |= set(re.findall(r"'(\w+)'", re.search(r"CHECKS_050 = \(([^)]*)\)", src).group(1)))
     tools |= set(re.findall(r"'(\w+)'", re.search(r"CHECKS_070 = \(([^)]*)\)", src).group(1)))
     tools |= {'xview', 'matid'}
+    tools |= set(re.findall(r"'([\w.]+)': \('", re.search(r"EDITS_080 = \{(.*?)\n\}", src, re.S).group(1)))
     return tools
 
 
 def test_every_existing_action_is_in_the_panel_once():
     assert ui_branches() == ALL_TOOLS
     assert {a.tool for a in m.ACTIONS} == ALL_TOOLS
-    assert len({a.id for a in m.ACTIONS}) == len(m.ACTIONS) == 29
-    assert len({a.macro for a in m.ACTIONS}) == 29
-    assert sum(len(acts) for _, acts in m.sections()) == 29
-    assert [t for t, _ in m.sections()] == ['Проверки', 'UV и атласы', 'Коллизии UCX', 'Экспорт', 'GeoJSON']
+    assert len({a.id for a in m.ACTIONS}) == len(m.ACTIONS) == 42
+    assert len({a.macro for a in m.ACTIONS}) == 42
+    assert sum(len(acts) for _, acts in m.sections()) == 42
+    assert [t for t, _ in m.sections()] == ['Проверки', 'UV и атласы', 'Коллизии UCX', 'Экспорт', 'GeoJSON',
+                                            'Сдача (копии)']
     assert set(a.icon for a in m.ACTIONS) <= set(icons.names())
 
 
@@ -349,10 +354,10 @@ def test_accents_contrast_and_distinct_for_every_palette():
     import colorsys
     for base, text in _palettes():
         status = [m.accent(k, base, text) for k in ('error', 'ok')]
-        secs = [m.section_accent(i, base, text) for i in range(5)]
+        secs = [m.section_accent(i, base, text) for i in range(6)]
         for c in status + secs:
             assert m.contrast(c, base) >= 3.0
-        assert len(set(secs)) == 5 and status[0] != status[1]
+        assert len(set(secs)) == 6 and status[0] != status[1]
         for c in secs:
             h = colorsys.rgb_to_hls(*(v / 255 for v in c))[0] * 360
             assert min(m.hue_gap(h, s) for s in m.STATUS_HUES_DEG) >= 25
@@ -370,7 +375,7 @@ def test_accent_rejects_bad_palette(bad):
     with pytest.raises(KeyError):
         m.accent('blue', (0, 0, 0), (255, 255, 255))
     with pytest.raises(KeyError):
-        m.section_accent(5, (0, 0, 0), (255, 255, 255))
+        m.section_accent(6, (0, 0, 0), (255, 255, 255))
 
 
 def test_theme_name():
@@ -398,7 +403,7 @@ def test_every_action_has_a_macro_with_icon_and_menu_entry():
     assert 'agr_tools_runtime.panel()' in mcr and 'AGRToolsClassic' in mcr
     assert '#cuiRegisterMenus' in menu and 'id:#agrTools' in menu and 'removeScripts id:#agrTools' in menu
     ids = re.findall(r'"([0-9a-f]{8}-[0-9a-f-]{27})"', menu)
-    assert len(set(ids)) == 1 + 1 + 5 * 2 + 29 and ids.count(m.MENU_ID) == 2  # create + presence check
+    assert len(set(ids)) == 1 + 1 + 6 * 2 + 42 and ids.count(m.MENU_ID) == 2  # create + presence check
 
 
 MS_FILES = ('agr_tools.mcr', 'menu.ms', 'startup.ms', 'install.ms')
@@ -432,7 +437,7 @@ def test_maxscript_pitfalls_no_tooltip_reads_and_no_undeclared_assignments():
 # ---- bundle -------------------------------------------------------------------------------------------
 def test_icon_entries_svg_from_generator_and_png_from_dir(synthetic_icon_pngs):
     got = builder.icon_entries()
-    assert set(got) == set(builder.icon_files()) and len(got) == 2 * 36 * 5
+    assert set(got) == set(builder.icon_files()) and len(got) == 2 * 49 * 5
     for rel, data in got.items():
         theme, _, fname = rel.split('/')
         if rel.endswith('.svg'):

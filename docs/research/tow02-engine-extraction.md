@@ -17,7 +17,7 @@ alone cannot convert this panelised source into a measured, opening-sized buildi
 
 Primary evidence: [REVIEW-514 §§3,7,8](../../jobs/vyatskaya-tow02/REVIEW-514.md),
 [STATE build log](../../jobs/vyatskaya-tow02/STATE.md),
-[backlog P13/EG6/R11–R18](../backlog.md), [harness §16](../HARNESS_PLAN.md#16-уроки-кейса-alina-bld-решения-пользователя-2026-10-11-d050).
+[backlog P13/EG6/R11–R18](../backlog.md), [historical harness §16](../HARNESS_PLAN.md#16-уроки-кейса-alina-bld-решения-пользователя-2026-10-11-d050).
 The historical 7,059 tracked / approximately 11,450 untracked lines are the review's inventory,
 not a new LOC measurement and not a list of reusable modules. Untracked helpers are not a
 stable engine API. The extractor saw 5,561 parts and no shell; 889 openings remained unsized,

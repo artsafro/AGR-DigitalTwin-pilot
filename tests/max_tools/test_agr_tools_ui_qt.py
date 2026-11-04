@@ -144,8 +144,11 @@ def test_layout_has_all_sections_and_actions(main):
     p = make(main, FakeBackend())
     assert p.objectName() == 'AgrToolsPanel' and isinstance(p, QtWidgets.QDockWidget)
     assert {s.header.text() for s in p.sections} == set(roadmap.STEP_RU)
-    assert set(p.buttons) == {a.id for a in model.ACTIONS}
-    for a in model.ACTIONS:
+    suite = roadmap.load_file(SUITE)
+    shipped = [a for a in model.ACTIONS
+               if roadmap.shipped(roadmap.row(suite, model.row_of(a.id))['version'], model.VERSION)]
+    assert set(p.buttons) == {a.id for a in shipped}  # 0.8 actions stay greyed until VERSION 0.8.0 (#908)
+    for a in shipped:
         b = p.buttons[a.id]
         assert b.toolTip().startswith(model.tooltip(a)) and 'Когда:' in b.toolTip()
         assert b.text() == a.label and not b.icon().isNull()

@@ -1,0 +1,219 @@
+{
+  "status": "blocked_model_contract_NOT_DELIVERY",
+  "code_commit": "d59afac5e8b6fbbebdf668c8f34e58a4641d21f3",
+  "cpu_candidate": "C:\\x\\t_eb1c51ca\\ground-v015-build-v009",
+  "geometry": {
+    "coverage": {
+      "surface_m2": 16733.70880148624,
+      "base_m2": 16733.575526389977,
+      "uncovered_m2": 0.6337369487525435,
+      "coverage_pct": 99.99621281237609,
+      "tol_m": 0.0022,
+      "uncovered_beyond_tol_m2": 0.0,
+      "outside_surface_beyond_tol_m2": 0.0
+    },
+    "open_edges": {
+      "open_edges": 1790,
+      "open_edges_off_outline": 0,
+      "non_manifold": 0
+    },
+    "source_coverage_repair": {
+      "iterations": 5,
+      "moved_vertices": [
+        711
+      ],
+      "delta_xyz_m": [
+        [
+          -1.1602685844991356e-05,
+          2.145149301213678e-05,
+          0.0
+        ]
+      ],
+      "max_displacement_m": 2.438829373423479e-05
+    },
+    "profiles": {
+      "npm": {
+        "triangle_share": 0.3096086703520512,
+        "last_proof": {
+          "mirrored_surface_variants": 0,
+          "spacing": {
+            "under_band_samples": 0,
+            "unaccepted_over_band_samples": 0,
+            "accepted_D150_samples": 24,
+            "virtual_surface_triangles": 57662
+          },
+          "iteration": 3,
+          "overlap_combinations": 0,
+          "relief_max_mm": 9.966668127589173,
+          "density_min": 11.444772280331021,
+          "density_max": 30.17553915324068,
+          "rejected_pairs": 0
+        }
+      },
+      "vpm": {
+        "triangle_share": 0.3498775162424113,
+        "last_proof": {
+          "mirrored_surface_variants": 0,
+          "spacing": {
+            "under_band_samples": 0,
+            "unaccepted_over_band_samples": 0,
+            "accepted_D150_samples": 24,
+            "virtual_surface_triangles": 56320
+          },
+          "iteration": 3,
+          "overlap_combinations": 0,
+          "relief_max_mm": 9.966668127589173,
+          "density_min": 589.6264035840602,
+          "density_max": 1442.1091343658104,
+          "rejected_pairs": 0
+        }
+      }
+    }
+  },
+  "mandatory_texel_public_status": {
+    "npm": {
+      "name": "texel_ready",
+      "passed": false,
+      "count": 8511,
+      "offenders": [
+        "Ground_v015#6: aspect 93.3 > 8",
+        "Ground_v015#8: aspect 16.2 > 8",
+        "Ground_v015#10: aspect 13.6 > 8",
+        "Ground_v015#16: aspect 22.0 > 8",
+        "Ground_v015#18: aspect 8.8 > 8"
+      ],
+      "gating": true
+    },
+    "vpm": {
+      "name": "texel_ready",
+      "passed": false,
+      "count": 11430,
+      "offenders": [
+        "Ground_v015#6: aspect 93.3 > 8",
+        "Ground_v015#9: aspect 16.2 > 8",
+        "Ground_v015#11: aspect 13.6 > 8",
+        "Ground_v015#12: aspect 12.2 > 8",
+        "Ground_v015#17: aspect 22.0 > 8"
+      ],
+      "gating": true
+    }
+  },
+  "texel_baseline": {
+    "npm": {
+      "v014_offenders": 19350,
+      "v009_offenders": 8511,
+      "v009_review": 0,
+      "generous_pairing_unrepairable_bad_seed": 14716
+    },
+    "vpm": {
+      "v014_offenders": 22556,
+      "v009_offenders": 11430,
+      "v009_review": 374,
+      "generous_pairing_unrepairable_bad_seed": 18641
+    }
+  },
+  "cpu_sampled_shape": {
+    "npm": {
+      "v014_to_v015": {
+        "sample_count": 229747,
+        "max_m": 0.006047012750059366,
+        "p95_m": 1.52587890625e-05,
+        "samples_over_10mm": 0,
+        "worst": {
+          "source_face": 6918,
+          "target_face": 7184,
+          "point_local": [
+            -17.332500457763672,
+            -27.31100082397461,
+            150.14614868164062
+          ],
+          "distance_m": 0.006047012750059366
+        },
+        "scope": "CPU master fixed-fan triangles, 7 point samples; NOT an exported-file readback or continuous certificate"
+      },
+      "v015_to_v014": {
+        "sample_count": 229782,
+        "max_m": 0.006047012750059366,
+        "p95_m": 1.52587890625e-05,
+        "samples_over_10mm": 0,
+        "worst": {
+          "source_face": 7236,
+          "target_face": 6874,
+          "point_local": [
+            -17.332500457763672,
+            -27.31100082397461,
+            150.14614868164062
+          ],
+          "distance_m": 0.006047012750059366
+        },
+        "scope": "CPU master fixed-fan triangles, 7 point samples; NOT an exported-file readback or continuous certificate"
+      }
+    },
+    "vpm": {
+      "v014_to_v015": {
+        "sample_count": 229747,
+        "max_m": 0.006047012750059366,
+        "p95_m": 1.52587890625e-05,
+        "samples_over_10mm": 0,
+        "worst": {
+          "source_face": 6918,
+          "target_face": 7015,
+          "point_local": [
+            -17.332500457763672,
+            -27.31100082397461,
+            150.14614868164062
+          ],
+          "distance_m": 0.006047012750059366
+        },
+        "scope": "CPU master fixed-fan triangles, 7 point samples; NOT an exported-file readback or continuous certificate"
+      },
+      "v015_to_v014": {
+        "sample_count": 229782,
+        "max_m": 0.006047012750059366,
+        "p95_m": 1.52587890625e-05,
+        "samples_over_10mm": 0,
+        "worst": {
+          "source_face": 7066,
+          "target_face": 6874,
+          "point_local": [
+            -17.332500457763672,
+            -27.31100082397461,
+            150.14614868164062
+          ],
+          "distance_m": 0.006047012750059366
+        },
+        "scope": "CPU master fixed-fan triangles, 7 point samples; NOT an exported-file readback or continuous certificate"
+      }
+    }
+  },
+  "source_snapshots_unchanged": 12,
+  "full_suite": {
+    "summary": "12877 passed, 21 skipped, 174 deselected, 91 warnings in 2069.65s (0:34:29)",
+    "exit_code": 0,
+    "log": "tmp/full-suite-v015-v002.log",
+    "code_commit": "d59afac5e8b6fbbebdf668c8f34e58a4641d21f3"
+  },
+  "evidence": [
+    {
+      "archive": "G:\\Мой диск\\AGR-evidence\\371-ground-v015-texel-contract-20261021\\checkpoint-v001.zip",
+      "sha256": "f604c99d9456eff7566e03a6c31626b6f92df4afdfc47ca6f66e85f11f3d2eab",
+      "bytes": 70306692,
+      "members_verified": 89,
+      "crc_verified": true,
+      "status": "NOT_DELIVERY"
+    },
+    {
+      "archive": "G:\\Мой диск\\AGR-evidence\\371-ground-v015-texel-contract-20261021\\verification-supplement-v001.zip",
+      "sha256": "1cb9a44d6ef88952b20bc78222400b5cd536fae86fdd423c78d393ff0d600e77",
+      "bytes": 65238,
+      "members_verified": 15,
+      "crc_verified": true,
+      "full_suite_summary": "12877 passed, 21 skipped, 174 deselected, 91 warnings in 2069.65s (0:34:29)",
+      "code_commit": "d59afac5e8b6fbbebdf668c8f34e58a4641d21f3"
+    }
+  ],
+  "final_native_readback": "NOT_RUN on v009; prior v005 native NPM is diagnostic only",
+  "review_publication": "NOT_RUN",
+  "pr": null,
+  "question": "Keep strict #346 and replace pair-only construction with a specified strict remeshing plan under unchanged caps, or explicitly authorize an enumerated v015 texel exception? D157 has not been extended to texel_ready."
+}

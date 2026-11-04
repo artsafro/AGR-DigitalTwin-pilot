@@ -276,8 +276,11 @@ def test_runtime_versions_are_recorded():
         "python": platform.python_version(),
         "zlib": zlib.ZLIB_VERSION,
         "zlib_runtime": zlib.ZLIB_RUNTIME_VERSION,
-        "zlib_ng": zlib.ZLIBNG_VERSION,
     }
+    # zlib.ZLIBNG_VERSION exists only on CPython >= 3.14 builds linked against zlib-ng; the project
+    # supports >= 3.12 and the lab CI runs 3.13, so record it only where the runtime exposes it.
+    if hasattr(zlib, "ZLIBNG_VERSION"):
+        recorded["zlib_ng"] = zlib.ZLIBNG_VERSION
     assert all(isinstance(value, str) and value for value in recorded.values())
 
 

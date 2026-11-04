@@ -1094,3 +1094,27 @@ def test_partial_degenerate_is_not_a_clean_certificate():
     mesh["material_ids"].append(1)
     result = _hcheck({"meshes": [mesh]})
     assert result["status"] != "pass"
+
+
+def test_float32_readback_noise_on_the_roof_plane_keeps_the_cap_join():
+    """Lab CI 2026-11-04: the Blender FBX readback of the synthetic box etalon put the roof loop and
+    roof sheet at z = 6.6 m with a 1.43e-6 m spread (3 float32 ulps, FBX stores float32). With a fixed
+    1e-6 m planarity the sheet lost its owner and the open shell's bottom read as inward (6 faces)."""
+    from test_geometry_checks import TOL, box_dump
+    dump = box_dump()
+    assert _hcheck(dump, TOL)["status"] == "pass"
+    for mesh in dump["meshes"]:
+        v = np.asarray(mesh["vertices"], float)
+        top = v[:, 2] > 6.0
+        v[top, 2] += (np.arange(len(v)) % 4)[top] * 4.77e-7   # 0..3 float32 ulps at 6.6 m
+        mesh["vertices"] = v.tolist()
+    result = _hcheck(dump, TOL)
+    assert result["status"] == "pass", result["details"]["inward_triangles"]
+    assert result["details"]["volumes"] == [["body", "planes"]]
+
+
+def test_planarity_tolerance_is_float32_noise_not_a_modelled_step():
+    # 16 float32 ulps of |z|: ~1.3e-5 m at 6.6 m, never the 1e-4 m+ steps the fixtures model
+    assert checks._hor_flat_tol(0.0) == checks._HOR_DEPTH
+    assert 1.4e-6 < checks._hor_flat_tol(6.6) < 2e-5
+    assert checks._hor_flat_tol(300.0) < 1e-3 < checks._HOR_CAP_M

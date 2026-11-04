@@ -76,7 +76,7 @@ items out of this file in the same merge. `C<N>` = conflict N in `docs/domain/co
   MAF family: canopy, pergola, workout frame, bar counter …) with the synthetic straight / L / U tests kept as
   regression; keep the ten Vatutino rows as the acceptance set.
 
-## Engine gaps — mixed mode (user decision 2026-10-11 [D050], `docs/HARNESS_PLAN.md` §16)
+## Engine gaps — mixed mode (user decision 2026-10-11 [D050]; historical `docs/HARNESS_PLAN.md` §16)
 
 The engine builds what it can (body, openings, floor steps, terraces, inset slabs). Job scripts do only
 the gaps listed here; a job script names its gap in its header (`Engine gap: EG<n>`, checked by
@@ -110,7 +110,7 @@ the engine covers it.
 
 ## Markup helpers (after the terrace; owner Claude, code parts Codex)
 
-Plan: `docs/HARNESS_PLAN.md` §14 (user decision 2026-10-10 [D044]). One PR each, in this order, each with
+Plan: historical `docs/HARNESS_PLAN.md` §14 (user decision 2026-10-10 [D044]). One PR each, in this order, each with
 the pattern `markup-helpers` (written or extended) and its test.
 
 - **MH1b** (MH1 done: Blender route closed on the Blender B01 etalon, pattern `markup-helpers`) — later:
@@ -121,7 +121,7 @@ the pattern `markup-helpers` (written or extended) and its test.
 
 ## Intake — "study the sources" (after the plan is approved; owner Claude, code parts Codex)
 
-Plan: `docs/HARNESS_PLAN.md` §15 (user decision 2026-10-11 [D049]). One PR each, extending the skill
+Plan: historical `docs/HARNESS_PLAN.md` §15 (user decision 2026-10-11 [D049]). One PR each, extending the skill
 `analyze-architectural-source` (no parallel skill); intake reads only, never changes or exports sources.
 
 - **IN2** Intake on the existing adapters (FBX mesh dump, Revit twin): inventory, picture, contradictions,
@@ -243,6 +243,8 @@ effort <S/M/L>`. The user or the owner turns one into a task or drops it.
   effort M
 
 ## Harness and organization (default owner Codex)
+
+The harness spec upstream#118 tail (freeze `docs/HARNESS_PLAN.md` as history, `docs/prd/agent-ready-harness.md` story 38) is closed by this freeze.
 
 - **H1** Validate the Codex PreToolUse hook (`.codex/hooks.json` → guard.py): payload
   fields, "ask" support. Record the result in `CAPABILITIES.md`.

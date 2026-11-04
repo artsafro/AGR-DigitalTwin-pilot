@@ -14,7 +14,7 @@ issue) после «да» Артёма.
 
 ## 1. Что получилось (кратко)
 
-- 90 кнопок: готово 13, взять 16, взять + исправить 27, слить дубли 18, новое 16; P1 40 / P2 32 / P3 18; в MCP 77; только чтение/выделение 39; шум 42; ссылок на строки GeoAGR.ms проверено 29.
+- 90 кнопок: готово 13, взять 14, взять + исправить 30, слить дубли 17, новое 16; P1 40 / P2 32 / P3 18; в MCP 77; только чтение/выделение 39; шум 42; ссылок на строки GeoAGR.ms проверено 29.
 - 10 блоков: восемь блоков из списка Артёма в его порядке и ещё два, которых требуют доказательства:
   **0 Сцена и источник** и **9 Освещение ВПМ** (причины в таблице блоков).
 - Каждая кнопка — функция одного ядра (`checks_core.py` / `runtime.py`), у которой два фронта: Qt-панель (#808) и
@@ -102,7 +102,7 @@ GeoAGR, ни в командных скриптах, но его требует 
 | 0 Сцена и источник | Пропавшие карты (`scene.missing_maps`) | Список битмапов с несуществующим путём и кандидаты для relink (без переименования файлов) | GeoAGR: Project Map btn_count_map GeoAGR.ms:15548; Collect Asset (third-party, read only part) | взять + исправить: read-only list; GeoAGR Project Map deletes/renames files (README §6) | TEC26: KPP folder had no ERM, railing 4096 not 2048 (jobs/TEC26-OKS/STATE.md) | NPM-2.1-1.b VPM-2.4-2 | чтение | yes | P2 | 0.8 |
 | 0 Сцена и источник | Класс источника (`scene.source_class`) | Связные части, доля крупнейшей → оболочка / панели / сетка; до выбора маршрута | new | новое: read-only pre-check before any builder | TOW02: ~1.5 h dead end, 5 561 parts fed to a shell engine (job-retro-vyatskaya-tow02-pr392.md) | - | чтение | yes | P2 | 1.0 |
 | 1 Моделирование | Опуск периметра ≥1 м (`model.perimeter_drop`) | Проверяет, что полигоны по периметру ОКС/Ground опущены ниже ±0.000 не меньше чем на 1 м | new | новое: GeoAGR gap #10: no live check | TEC26: Artem «полигоны по периметру должны быть утоплены минимум на метр» (jobs/TEC26-OKS/STATE.md) | NPM-2.3-4 VPM-2.3-6 VPM-2.3-7.a | чтение | yes | P1 | 0.7 |
-| 1 Моделирование | Триангуляция (Делоне) (`model.triangulate`) | Триангулирует n-гоны на экспортной копии по Делоне, без длинных клиньев | GeoAGR: Triangulate btn_TriangulateRight GeoAGR.ms:50991 (DelaunayCore.dll) | взять как есть: Max T08-08..10 correct; run only on export copies | TEC26: UCX triangulation fails SINTEZ 2.3.17 in both profiles (job-retro-tec26-oks-pr574.md) | NPM-2.3-11 VPM-2.3-17 | копии | yes | P1 | 0.8 |
+| 1 Моделирование | Триангуляция (Делоне) (`model.triangulate`) | Триангулирует n-гоны на экспортной копии по Делоне, без длинных клиньев | GeoAGR: Triangulate btn_TriangulateRight GeoAGR.ms:50991 (DelaunayCore.dll) | взять + исправить: лаборатория #907: sub-mm faces stay n-gons, redundant pairs; fix both; run only on export copies | TEC26: UCX triangulation fails SINTEZ 2.3.17 in both profiles (job-retro-tec26-oks-pr574.md) | NPM-2.3-11 VPM-2.3-17 | копии | yes | P1 | 0.8 |
 | 1 Моделирование | Стекло плоскостями (`model.glass_planes`) | Сводит стекло окна к одной плоскости без толщины, режет рамы и дубли | pilot: jobs/vyatskaya-tow02 clean_glass_blender.py | новое: port the job script; matched Artem's hand result 787 vs 816 quads | TOW02: Artem rebuilt balcony glass by hand (job-retro-vyatskaya-tow02-pr515.md) | NPM-2.3-10 VPM-2.8-4 | копии | yes | P2 | 1.0 |
 | 1 Моделирование | Граница Ground (`model.ground_border`) | Упрощает границу благоустройства и чинит веерную топологию | Andrew_scripts: Ground_Tools.ms (border simplify, fan fix) | взять как есть: team tool, byte-identical in both copies (team-plugins-audit) | Vatutino: ground-gap-exceptions.json, ground-exceptions.json | NPM-2.3-1.a VPM-2.3-3 | undo | yes | P2 | 1.0 |
 | 1 Моделирование | Нарезка рельефа сеткой (`model.ground_slice`) | Режет Ground сеткой 2.5–7.6 м по мировым осям | GeoAGR: Slicers btn_slice GeoAGR.ms:13928, btn_conv :14191, btn_remove :14196 | взять как есть: Max T03-01: slicepoly in world space correct | Vatutino: Ground v005…v015 builds (jobs/VATUTINO-SITE/ground-build-v0*.md) | NPM-2.6-1 | копии | yes | P2 | 1.0 |
@@ -129,7 +129,7 @@ GeoAGR, ни в командных скриптах, но его требует 
 | 2 Текстуры и материалы | Цвет заглушки (`tex.plug_colour`) | Проверяет, что заглушка одного (среднего) цвета, показывает разброс | GeoAGR: Colors Tex btn_count_colors GeoAGR.ms:39668 | взять + исправить: «most popular» colour is the first colour found | - | VPM-2.5-3.4 | чтение | yes | P3 | 1.x |
 | 3 Коллизии UCX | UCX: аудит сцены (`ucx.audit`) | Готовые UCX: выпуклость, замкнутость, без материалов, имя, пересечения SAT, бюджет | pilot: twinqa ucx_audit; GeoAGR: Check Faces Count :60316, Check Convex :60910, ucx_check.exe :60449; Andrew_scripts: UCX_Check.ms; Telegram: Collizii_2.ms | слить дубли: ucx_check.exe misses containment, cuts names at a space; Collizii uses AABB; UCX_Check tol 0.01 scene units | TEC26: 63 + 60 + 33 collision candidates in census (jobs/TEC26-OKS/STATE.md) | VPM-2.13-1.a VPM-2.13-1.b VPM-2.13-1.c VPM-2.13-1.d VPM-2.13-3 VPM-2.13-4.a VPM-2.13-7.a VPM-2.13-7.b | чтение | yes | P1 | 0.7 |
 | 3 Коллизии UCX | UCX: построить (`ucx.build`) | Вариант по WHEN.md (single-hull, kernel-boxes, slice-prisms), бюджет D012, аудит, копии | AGR Tools 0.3.0 ucx; GeoAGR: UCX Make Concave Form :63505; Telegram: UCX_N_29.09.ms, Narezka_Ucx.ms; Andrew_scripts: UCX_Tools.ms | готово: team splitters merged as variants; pads 0.04/0.035 not adopted (D180) | #728 | VPM-2.13-1.a VPM-2.13-1.b VPM-2.13-7.a VPM-2.13-7.b | копии | yes | P1 | 0.3 |
-| 3 Коллизии UCX | UCX: триангуляция (`ucx.triangulate`) | Триангулирует UCX на копии и проверяет выпуклость после | GeoAGR: UCX Triangulate GeoAGR.ms:62890 | взять как есть: unverified: confirm in Max; run on copies | TEC26: SINTEZ 2.3.17 fails on UCX triangulation (job-retro-tec26-oks-pr574.md, open) | VPM-2.3-17 VPM-2.13-1.a | копии | yes | P1 | 0.8 |
+| 3 Коллизии UCX | UCX: триангуляция (`ucx.triangulate`) | Триангулирует UCX на копии и проверяет выпуклость после | GeoAGR: UCX Triangulate GeoAGR.ms:62890 | взять + исправить: лаборатория #907: convexity can break after triangulation, non-Poly skipped silently; fix both; run on copies | TEC26: SINTEZ 2.3.17 fails on UCX triangulation (job-retro-tec26-oks-pr574.md, open) | VPM-2.3-17 VPM-2.13-1.a | копии | yes | P1 | 0.8 |
 | 3 Коллизии UCX | UCX: зазор 2 мм – 1 см (`ucx.gap`) | Сдвигает куски UCX внутрь по нормалям до зазора в полосе D098 | GeoAGR: UCX Move/MultiPass GeoAGR.ms:61446/62416; Telegram: UCX_Razdv.ms, UCX gap inset | слить дубли: T10-01: MultiPass pushes by AABB (false pushes); Razdv default 5 mm is inside the band | D098 (Artem: gap 2 mm – 1 cm) | VPM-2.13-4.a VPM-2.13-4.b | копии | yes | P2 | 1.0 |
 | 3 Коллизии UCX | UCX рельефа (`ucx.ground`) | UCX Ground по верхним граням рельефа призмами по адаптивной сетке | GeoAGR: UCX Make Ground btn_UCX_makeground GeoAGR.ms:62929; ANALYSIS C1 | взять + исправить: unverified; take C1 greedy prisms | docs/domain/areas/ucx-evidence | VPM-2.13-3 VPM-2.13-7.b | копии | yes | P2 | 1.0 |
 | 3 Коллизии UCX | UCX: имена (`ucx.rename`) | Переименовывает куски в UCX_SM_<Address>_Main/Ground_NNN | GeoAGR: UCX Rename btn_UCX_rename GeoAGR.ms:62907 | взять + исправить: requires the model name inside; UE4 two-digit namer dropped (R21) | #230 (UCX name grammar R08) | VPM-2.13-1.d VPM-2.10-4.2.b | undo | yes | P2 | 0.8 |
@@ -180,7 +180,7 @@ GeoAGR, ни в командных скриптах, но его требует 
 | 8 Экспорт и пакет | Экспорт с проверкой (`export.checked`) | Один FBX на AGR_EXPORT_PATH: ворота → FBX → readback | AGR Tools 0.4.0 export; GeoAGR: Export LowPoly :66532, HighPoly :66904 | готово | #731 | NPM-1.1-1 VPM-1.1-1 NPM-2.1-3.c | новые файлы | yes | P1 | 0.4 |
 | 8 Экспорт и пакет | Очистка перед экспортом (`export.cleanup`) | CA, UDP, лишние каналы, канал 1 «UV» — план, затем копии | AGR Tools 0.1.0 cleanup; Telegram: ClearCustomAttributesAndObjProp_010.ms | готово: team audit R3 | #707; #547 | VPM-2.3-11.e | копии | yes | P1 | 0.1 |
 | 8 Экспорт и пакет | Паспорт GeoJSON (`export.geojson_write`) | Пишет GeoJSON из сцены (пивот, положение, адрес, превью) и сразу проверяет | GeoAGR: GeoJSON Create/Save/Load GeoAGR.ms:64642–64644 (disabled), Base64 to Clipboard :64853 | новое: GeoAGR gap #1: buttons disabled, no validator | GeoJSON for every package (D-matrix 29 GJ rows, 25 manual) | VPM-2.2-1 VPM-2.2-2 VPM-2.2-6.a VPM-2.2-7 GJ-1 GJ-19.a GJ-19.b GJ-21.a VPM-2.10-4.1.e | новые файлы | yes | P1 | 0.8 |
-| 8 Экспорт и пакет | FBX благоустройства (`export.ground_fbx`) | Ground, GroundEl, Flora, GroundGlass в один файл _Ground | GeoAGR: Export LowPoly :66532 (Ground branch); Telegram: A101AGRLP.ms Ground rollout :388 | слить дубли: A101 writes an extra underscore; one export path with modes | Vatutino Ground v014/v015 | NPM-2.1-5.a VPM-2.1-4 | новые файлы | yes | P1 | 0.8 |
+| 8 Экспорт и пакет | FBX благоустройства (`export.ground_fbx`) | Ground, GroundEl, Flora, GroundGlass в один файл _Ground | GeoAGR: Export LowPoly :66532 (Ground branch); Telegram: A101AGRLP.ms Ground rollout :388 | взять + исправить: лаборатория #907: Flora not in _Ground, name from first selected, no triangulation; one export path with modes | Vatutino Ground v014/v015 | NPM-2.1-5.a VPM-2.1-4 | новые файлы | yes | P1 | 0.8 |
 | 8 Экспорт и пакет | Пивот и положение (`export.pivot_place`) | НПМ в МСК с высотами, ВПМ в ноль (чистый пол); пивот на копиях | GeoAGR: Geojson Get/Set Pivot GeoAGR.ms:64763/64778, Reset Transforms :64709, Combine near zero :64730 | взять + исправить: unverified; never move working objects | TEC26 ±0.000 reference open (STATE.md) | NPM-2.8-1 NPM-2.8-2 VPM-2.9-4.b VPM-2.9-5 | копии | yes | P1 | 0.8 |
 | 8 Экспорт и пакет | Архив пакета (`export.zip`) | ZIP НПМ/ВПМ с лимитами 500 МБ / 1 ГБ (двоичные), проверка до и после | GeoAGR: Archivate All btn_archivate GeoAGR.ms:66229; Telegram: AGR Zipper v2.1 | слить дубли: bundled 7z.exe without 7z.dll creates nothing (CLI); _Light missing in VPM archive; Ground limit 500 MB vs 1 GB (66340) | D015 binary units | NPM-2.1-1.a VPM-2.1-1.a VPM-2.1-1.b VPM-2.1-2.b | новые файлы | yes | P1 | 0.8 |
 | 8 Экспорт и пакет | Пакетный экспорт (`export.batch`) | Все FBX сцены по AGR_EXPORT_PATH одним запуском с одним отчётом | AGR Tools 0.4.0 export (one FBX) | новое | TEC26: 9 OKS + truba + KPP (census) | NPM-2.1-2 | новые файлы | yes | P2 | 0.9 |
@@ -365,3 +365,59 @@ JSON-отчёт (`schema`, `tool`, `status`, `objects`). Из 90 кнопок «
 
 После ответов карточка ждёт «да» на план и макет. Каждая версия 0.7–1.0 потом становится отдельной issue с этой
 таблицей как спецификацией.
+
+## 11. Тестовый полигон
+
+Синтетическая сцена для кнопок AGR Tools лежит в `test-polygon/` (issue #885). Собранный `.max` и FBX туда не
+коммитятся: их пишет сборщик в `G:/Мой диск/AGR-evidence/test-polygon/` (если диска нет — `C:/x/test-polygon/`).
+
+Сцена — ряд баз по версиям, не зоны по блокам. Одна база = один цветной прямоугольник на земле и подпись
+«База 0.x — что добавила версия, какие кнопки». Внутри — станции: объект (или небольшая группа) и подпись
+«Станция 0.x.N: объект - нажми кнопка -> ожидаешь результат». Обход 0.1 → 0.7 проходит концепцию AGR Tools.
+База 0.6 — панель без кнопок, станций у неё нет. Следующая версия добавляет свою базу в конец ряда.
+
+Прямоугольники: слой `_bases`, имена `_base_*`. Подписи: слой `_labels` (его можно скрыть), имена `_label_*`.
+Оба не экспортируются и не входят в проверки. Сборщик кладёт их только на эти слои с этими префиксами.
+Раннер выбрасывает такие имена из отчёта до сравнения с `expected/`. Офлайн-ядра их не получают.
+
+Порядок один и тот же в `test-polygon/bases.json`, в `expected/<id>.json` (`base`, `station`, `stations`),
+в README и здесь: база → станция → кнопка → файл ожидания. Таблица самопроверки (`report.json` и `table.txt`)
+группирует строки так же и добавляет колонку «получилось» (статус и коды живого отчёта). Код выхода — число
+расхождений. Строка известной ошибки #886 печатается `НЕ OK (известная ошибка #886)` и считается в поле
+`known_bug`, не в коде выхода. В `AGR_TEST` каждого объекта записан id станции (`station=0.3.2`).
+
+`export.cleanup` и `export.checked` держат и PASS, и FAIL. FAIL очистки — объект с `AGR_TEST`. PASS —
+прогон «Очистка → копии» (`apply_status` pass) на копии `*_AGR_export_`. FAIL экспорта — ворота `cleanup`
+на том же грязном оригинале. PASS экспорта — эта копия пишется в новый FBX
+`<результат>/export-pass/<имя копии>.fbx` и читается обратно (`plan.readback`). Без readback это не pass.
+
+| База | Станция | Кнопка | Ожидание |
+|---|---|---|---|
+| 0.1 | 0.1.1 | `qa.matid` | `test-polygon/expected/qa.matid.json` |
+| 0.1 | 0.1.2 | `qa.xview` | `test-polygon/expected/qa.xview.json` |
+| 0.1 | 0.1.3 | `export.cleanup` | `test-polygon/expected/export.cleanup.json` |
+| 0.2 | 0.2.1 | `udim.nudge` | `test-polygon/expected/udim.nudge.json` |
+| 0.2 | 0.2.2 | `atlas.npm` | `test-polygon/expected/atlas.npm.json` |
+| 0.3 | 0.3.1 | `ucx.build` | `test-polygon/expected/ucx.build.json` |
+| 0.3 | 0.3.2 | `udim.texel` | `test-polygon/expected/udim.texel.json` |
+| 0.4 | 0.4.1 | `export.checked` | `test-polygon/expected/export.checked.json` |
+| 0.5 | 0.5.1 | `tex.check` | `test-polygon/expected/tex.check.json` |
+| 0.5 | 0.5.2 | `qa.geojson` | `test-polygon/expected/qa.geojson.json` |
+| 0.5 | 0.5.3 | `qa.names` | `test-polygon/expected/qa.names.json` |
+| 0.5 | 0.5.4 | `qa.pivot` | `test-polygon/expected/qa.pivot.json` |
+| 0.5 | 0.5.5 | `qa.tris` | `test-polygon/expected/qa.tris.json` |
+| 0.6 | — | кнопок нет | площадка панели, без станции |
+| 0.7 | 0.7.1–0.7.12 | 12 кнопок предсдачи | `test-polygon/expected/<id>.json` |
+
+Версия кнопки читается из этого плана (`agr-tools-suite.json`), не из имени станции. Кнопки 0.8 и новее
+пока без станции: в JSON есть `reason`.
+
+Правило: каждая новая кнопка в том же изменении добавляет станцию на базу своей версии, объекты полигона и
+файл `test-polygon/expected/<id>.json`. В записи есть хотя бы один PASS и один FAIL, либо явная причина, почему
+одного из них нет. Id станций уникальны, станция принадлежит существующей базе. Офлайн-тест
+`tests/max_tools/test_polygon_expected.py` сверяет это с каждым id из `docs/plans/agr-tools-suite.json`. Кнопка без
+записи — ошибка, имя кнопки названо.
+
+Раннер полигона не устанавливает и не удаляет `%APPDATA%\Autodesk\ApplicationPlugins\AGR-Tools.bundle`.
+Установка, если она появится, сначала уносит этот каталог в сторону и в `finally` возвращает те же байты
+(`polygon_core.preserve_user_bundle`). Пакет оператора не удаляется.
