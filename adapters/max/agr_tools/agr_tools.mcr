@@ -2,39 +2,39 @@
 -- Every action is a macroScript (toolbar/menu/hotkey) calling the Python runtime.
 macroScript AGRToolsOpen category:"AGR Tools" buttonText:"AGR Tools" tooltip:"Открыть панель AGR Tools" iconName:"AgrIcons/agr_tools"
 (on execute do (try (python.Execute "agr_tools_runtime.panel()") catch (format "AGR_TOOLS_PANEL_FALLBACK %\n" (getCurrentException()); macros.run "AGR Tools" "AGRToolsClassic")))
-macroScript AGRToolsXView category:"AGR Tools" buttonText:"xView: перекрытия" tooltip:"Ищет совпадающие вершины и перекрытые грани; выделяет объекты с ошибками. Треб.: NPM-2.3-9, VPM-2.3-11" iconName:"AgrIcons/agr_xview"
+macroScript AGRToolsXView category:"AGR Tools" buttonText:"xView: перекрытия" tooltip:"Ищет совпадающие вершины и перекрытые грани; выделяет объекты с ошибками. Треб.: NPM-2.3-7.a, NPM-2.3-9, VPM-2.3-11.a, VPM-2.3-13" iconName:"AgrIcons/agr_xview"
 (on execute do python.Execute "agr_tools_runtime.ui('xview')")
-macroScript AGRToolsMatID category:"AGR Tools" buttonText:"MatID" tooltip:"Проверяет ID материалов граней против слотов Multi/Sub-Object. Треб.: NPM-2.4-5" iconName:"AgrIcons/agr_matid"
+macroScript AGRToolsMatID category:"AGR Tools" buttonText:"MatID" tooltip:"Проверяет ID материалов граней против слотов Multi/Sub-Object. Треб.: NPM-2.4-5, VPM-2.4-5" iconName:"AgrIcons/agr_matid"
 (on execute do python.Execute "agr_tools_runtime.ui('matid')")
-macroScript AGRToolsNames category:"AGR Tools" buttonText:"Имена NPM/VPM" tooltip:"Проверяет имена объектов, материалов и текстур по маскам NPM/VPM (только чтение). Треб.: NPM-2.10-3, VPM-2.10-2, VPM-2.10-4" iconName:"AgrIcons/agr_names"
+macroScript AGRToolsNames category:"AGR Tools" buttonText:"Имена NPM/VPM" tooltip:"Проверяет имена объектов, материалов и текстур по маскам NPM/VPM (только чтение). Треб.: NPM-2.10-1, NPM-2.10-2, NPM-2.10-3.3.a, VPM-2.10-2.a, VPM-2.11-0.a, VPM-2.11-0.c" iconName:"AgrIcons/agr_names"
 (on execute do python.Execute "agr_tools_runtime.ui('names')")
-macroScript AGRToolsTris category:"AGR Tools" buttonText:"Треугольники по FBX" tooltip:"Считает треугольники на каждый FBX и сравнивает с лимитом (только чтение). Треб.: NPM-2.3-6, VPM-2.3-9, VPM-2.3-10" iconName:"AgrIcons/agr_tris"
+macroScript AGRToolsTris category:"AGR Tools" buttonText:"Треугольники по FBX" tooltip:"Считает треугольники на каждый FBX и сравнивает с лимитом (только чтение). Треб.: NPM-2.3-6.a, NPM-2.3-6.b, VPM-2.3-9, VPM-2.3-10" iconName:"AgrIcons/agr_tris"
 (on execute do python.Execute "agr_tools_runtime.ui('tris')")
-macroScript AGRToolsTextures category:"AGR Tools" buttonText:"Текстуры (все)" tooltip:"Проверяет формат, размер, альфу и отступы текстур всех объектов (только чтение). Треб.: NPM-2.5-1, NPM-2.5-4, VPM-2.5-1" iconName:"AgrIcons/agr_textures"
+macroScript AGRToolsTextures category:"AGR Tools" buttonText:"Текстуры (все)" tooltip:"Проверяет формат, размер, альфу и отступы текстур всех объектов (только чтение). Треб.: NPM-2.5-1.a, NPM-2.5-2.a, NPM-2.5-3, NPM-2.5-4, NPM-2.5-5, VPM-2.5-1.2, VPM-2.5-1.5, VPM-2.5-1.6, VPM-2.5-1.9" iconName:"AgrIcons/agr_textures"
 (on execute do python.Execute "agr_tools_runtime.ui('textures')")
-macroScript AGRToolsPivot category:"AGR Tools" buttonText:"Пивот" tooltip:"Проверяет пивот: Z = 0 и один пивот на FBX, допуск 1 мм (только чтение). Треб.: VPM-2.9-4, VPM-2.9-5" iconName:"AgrIcons/agr_pivot"
+macroScript AGRToolsPivot category:"AGR Tools" buttonText:"Пивот" tooltip:"Проверяет пивот: Z = 0 и один пивот на FBX, допуск 1 мм (только чтение). Треб.: VPM-2.9-4.b, VPM-2.9-5" iconName:"AgrIcons/agr_pivot"
 (on execute do python.Execute "agr_tools_runtime.ui('pivot')")
-macroScript AGRToolsNudge category:"AGR Tools" buttonText:"UV-сдвиг (пробно)" tooltip:"Пробный расчёт сдвига UV-островов на целый тайл; сцену не меняет. Треб.: VPM-2.5-2.1.2" iconName:"AgrIcons/agr_nudge"
+macroScript AGRToolsNudge category:"AGR Tools" buttonText:"UV-сдвиг (пробно)" tooltip:"Пробный расчёт сдвига UV-островов на целый тайл; сцену не меняет. Треб.: VPM-2.5-2.1.3.a" iconName:"AgrIcons/agr_nudge"
 (on execute do python.Execute "agr_tools_runtime.ui('nudge')")
-macroScript AGRToolsNudgeApply category:"AGR Tools" buttonText:"UV-сдвиг → копии" tooltip:"Применяет последний пробный UV-сдвиг к новым экспортным копиям; оригиналы не трогает. Треб.: VPM-2.5-2.1.2" iconName:"AgrIcons/agr_nudge_apply"
+macroScript AGRToolsNudgeApply category:"AGR Tools" buttonText:"UV-сдвиг → копии" tooltip:"Применяет последний пробный UV-сдвиг к новым экспортным копиям; оригиналы не трогает. Треб.: VPM-2.5-2.1.3.a" iconName:"AgrIcons/agr_nudge_apply"
 (on execute do python.Execute "agr_tools_runtime.ui('nudge_apply')")
-macroScript AGRToolsAtlas category:"AGR Tools" buttonText:"UDIM → атлас (пробно)" tooltip:"Пробная сборка атласа NPM из UDIM-тайлов; сцену не меняет. Треб.: NPM-2.5-1, NPM-2.5-4" iconName:"AgrIcons/agr_atlas"
+macroScript AGRToolsAtlas category:"AGR Tools" buttonText:"UDIM → атлас (пробно)" tooltip:"Пробная сборка атласа NPM из UDIM-тайлов; сцену не меняет. Треб.: NPM-2.5-4, NPM-2.5-11.a" iconName:"AgrIcons/agr_atlas"
 (on execute do python.Execute "agr_tools_runtime.ui('atlas')")
-macroScript AGRToolsAtlasApply category:"AGR Tools" buttonText:"Атлас → копии" tooltip:"Применяет последний пробный атлас к новым экспортным копиям; оригиналы не трогает. Треб.: NPM-2.5-1, NPM-2.5-4" iconName:"AgrIcons/agr_atlas_apply"
+macroScript AGRToolsAtlasApply category:"AGR Tools" buttonText:"Атлас → копии" tooltip:"Применяет последний пробный атлас к новым экспортным копиям; оригиналы не трогает. Треб.: NPM-2.5-4, NPM-2.5-11.a" iconName:"AgrIcons/agr_atlas_apply"
 (on execute do python.Execute "agr_tools_runtime.ui('atlas_apply')")
-macroScript AGRToolsTexel category:"AGR Tools" buttonText:"Тексель" tooltip:"Показывает минимум и медиану px/m по объектам и материалам (только чтение). Треб.: NPM-2.6-1, VPM-2.5-1.5" iconName:"AgrIcons/agr_texel"
+macroScript AGRToolsTexel category:"AGR Tools" buttonText:"Тексель" tooltip:"Показывает минимум и медиану px/m по объектам и материалам (только чтение). Треб.: VPM-2.6-2, NPM-2.6-1" iconName:"AgrIcons/agr_texel"
 (on execute do python.Execute "agr_tools_runtime.ui('texel')")
-macroScript AGRToolsUcx category:"AGR Tools" buttonText:"UCX (пробно)" tooltip:"Пробный расчёт выпуклых коллизий UCX_; сцену не меняет. Треб.: VPM-2.13-1, VPM-2.13-7" iconName:"AgrIcons/agr_ucx"
+macroScript AGRToolsUcx category:"AGR Tools" buttonText:"UCX (пробно)" tooltip:"Пробный расчёт выпуклых коллизий UCX_; сцену не меняет. Треб.: VPM-2.13-1.a, VPM-2.13-1.b, VPM-2.13-7.a, VPM-2.13-7.b" iconName:"AgrIcons/agr_ucx"
 (on execute do python.Execute "agr_tools_runtime.ui('ucx')")
-macroScript AGRToolsUcxApply category:"AGR Tools" buttonText:"UCX → копии" tooltip:"Создаёт UCX_-коллизии из последнего пробного расчёта на новых копиях. Треб.: VPM-2.13-1, VPM-2.13-7" iconName:"AgrIcons/agr_ucx_apply"
+macroScript AGRToolsUcxApply category:"AGR Tools" buttonText:"UCX → копии" tooltip:"Создаёт UCX_-коллизии из последнего пробного расчёта на новых копиях. Треб.: VPM-2.13-1.a, VPM-2.13-1.b, VPM-2.13-7.a, VPM-2.13-7.b" iconName:"AgrIcons/agr_ucx_apply"
 (on execute do python.Execute "agr_tools_runtime.ui('ucx_apply')")
-macroScript AGRToolsCleanup category:"AGR Tools" buttonText:"Очистка (пробно)" tooltip:"Пробная очистка перед экспортом: каналы UV, свойства, атрибуты; сцену не меняет. Треб.: NPM-2.3-1" iconName:"AgrIcons/agr_cleanup"
+macroScript AGRToolsCleanup category:"AGR Tools" buttonText:"Очистка (пробно)" tooltip:"Пробная очистка перед экспортом: каналы UV, свойства, атрибуты; сцену не меняет. Треб.: VPM-2.3-11.e" iconName:"AgrIcons/agr_cleanup"
 (on execute do python.Execute "agr_tools_runtime.ui('cleanup')")
-macroScript AGRToolsCleanupApply category:"AGR Tools" buttonText:"Очистка → копии" tooltip:"Применяет последнюю пробную очистку к новым экспортным копиям. Треб.: NPM-2.3-1" iconName:"AgrIcons/agr_cleanup_apply"
+macroScript AGRToolsCleanupApply category:"AGR Tools" buttonText:"Очистка → копии" tooltip:"Применяет последнюю пробную очистку к новым экспортным копиям. Треб.: VPM-2.3-11.e" iconName:"AgrIcons/agr_cleanup_apply"
 (on execute do python.Execute "agr_tools_runtime.ui('apply')")
-macroScript AGRToolsExport category:"AGR Tools" buttonText:"Экспорт с проверкой" tooltip:"Первое нажатие: пробный экспорт и все проверки; второе на том же выделении пишет FBX. Треб.: NPM-1.2-1, VPM-1.2-1" iconName:"AgrIcons/agr_export"
+macroScript AGRToolsExport category:"AGR Tools" buttonText:"Экспорт с проверкой" tooltip:"Первое нажатие: пробный экспорт и все проверки; второе на том же выделении пишет FBX. Треб.: NPM-1.1-1, VPM-1.1-1, NPM-2.1-3.c" iconName:"AgrIcons/agr_export"
 (on execute do python.Execute "agr_tools_runtime.ui('export')")
-macroScript AGRToolsGeojson category:"AGR Tools" buttonText:"Проверка GeoJSON" tooltip:"Проверяет паспорт GeoJSON проверяющим модулем twinqa (выбор файла). Треб.: VPM GeoJSON" iconName:"AgrIcons/agr_geojson"
+macroScript AGRToolsGeojson category:"AGR Tools" buttonText:"Проверка GeoJSON" tooltip:"Проверяет паспорт GeoJSON проверяющим модулем twinqa (выбор файла). Треб.: GJ-1, GJ-2, GJ-3, VPM-2.2-1" iconName:"AgrIcons/agr_geojson"
 (on execute do python.Execute "agr_tools_runtime.ui('geojson')")
 macroScript AGRToolsClassic category:"AGR Tools" tooltip:"AGR Tools (classic rollout)" buttonText:"AGR Tools (classic)"
 (
