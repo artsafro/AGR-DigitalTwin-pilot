@@ -1,8 +1,10 @@
 """new-case: build or open the AGR Tools polygon and compare every shipped button with expected/.
 
-Exit code is the number of mismatches. Missing expected entry, an unmapped button, an empty
-result, NaN/Inf and not_run are mismatches. Output, report and temp must not resolve to the
-sources. Nothing here deletes an input.
+Exit code is the number of mismatches (`count`). A known-bug row is not a mismatch and does
+not change the exit code: `report.json` field `known_bug` and the summary line count it
+apart. Missing expected entry, an unmapped button, an empty result, NaN/Inf, not_run and a
+produced pass row that was not run are mismatches. Output, report and temp must not resolve
+to the sources. Nothing here deletes an input.
 
     python test-polygon/run_polygon.py --out <new dir> [--version 2024]
     python test-polygon/run_polygon.py --out <new dir> --actual <actual.json>
@@ -69,6 +71,7 @@ def compare_actual(actual):
         raise ValueError('actual.json has no runs list')
     mismatches = []
     seen = set()
+    seen_produced = set()
     for run in actual['runs']:
         button = run.get('button')
         if button == '*':
@@ -81,13 +84,27 @@ def compare_actual(actual):
             raise KeyError('unmapped button: ' + str(button)) from exc
         scene = run.get('scene')
         seen.add((button, scene, run.get('tool')))
+        produced = run.get('produced')
+        if produced:
+            seen_produced.add((button, scene, produced))
+            expected = [o for o in doc['objects'] if o['scene'] == scene and o.get('produced') == produced]
+            report = core.bind_produced(expected, run.get('report'))
+            for item in core.compare_report(expected, report):
+                item['button'] = button
+                item['scene'] = scene
+                mismatches.append(item)
+            if run.get('apply_expected') and run.get('apply_status') != run['apply_expected']:
+                mismatches.append({'kind': 'apply', 'button': button, 'scene': scene, 'name': '',
+                                   'detail': 'apply expected {} got {}'.format(
+                                       run['apply_expected'], run.get('apply_status'))})
+            continue
         if run.get('apply_expected'):
             got = run.get('apply_status')
             if got != run['apply_expected']:
                 mismatches.append({'kind': 'apply', 'button': button, 'scene': scene, 'name': '',
                                    'detail': 'apply expected {} got {}'.format(run['apply_expected'], got)})
             continue
-        expected = [o for o in doc['objects'] if o['scene'] == scene]
+        expected = [o for o in doc['objects'] if o['scene'] == scene and not o.get('produced')]
         report = run.get('report')
         if run.get('tool') == 'geojson':
             names = run.get('names') or []
@@ -99,14 +116,51 @@ def compare_actual(actual):
             item['scene'] = scene
             mismatches.append(item)
     for button, scene in _jobs():
-        if not any(run.get('button') == button and run.get('scene') == scene for run in actual['runs']):
+        pressed = any(run.get('button') == button and run.get('scene') == scene for run in actual['runs'])
+        if not pressed:
             mismatches.append({'kind': 'missing', 'button': button, 'scene': scene, 'name': '',
                                'detail': 'button was not pressed'})
+            continue
+        doc = core.load_expected(button)
+        kinds = sorted({o['produced'] for o in doc['objects'] if o['scene'] == scene and o.get('produced')})
+        for kind in kinds:
+            if (button, scene, kind) not in seen_produced:
+                detail = 'produced {} was not run'.format(kind)
+                if kind == 'export_readback':
+                    detail = 'produced export_readback was not run (readback)'
+                mismatches.append({'kind': 'missing', 'button': button, 'scene': scene, 'name': '',
+                                   'detail': detail})
     return mismatches
 
 
-def _table(mismatches, jobs):
-    return core.render_table(core.group_runs(jobs, mismatches), mismatches)
+def live_codes(actual):
+    """(button, scene, name) -> codes from actual.json. Produced copies use expected names."""
+    live = {}
+    if not isinstance(actual, dict):
+        return live
+    for run in actual.get('runs') or []:
+        button, scene = run.get('button'), run.get('scene')
+        if not button or button == '*':
+            continue
+        try:
+            doc = core.load_expected(button)
+        except KeyError:
+            continue
+        report = run.get('report')
+        produced = run.get('produced')
+        if produced:
+            expected = [o for o in doc['objects'] if o['scene'] == scene and o.get('produced') == produced]
+            report = core.bind_produced(expected, report)
+        codes = core.actual_codes(report)
+        if not codes:
+            continue
+        for name, got in codes.items():
+            live[(button, scene, name)] = got
+    return live
+
+
+def _table(mismatches, jobs, live=None):
+    return core.render_table(core.group_runs(jobs, mismatches, live), mismatches)
 
 
 def main(argv=None):
@@ -136,22 +190,30 @@ def main(argv=None):
         if proc.returncode != 0 or not actual_path.is_file():
             mismatches = [{'kind': 'empty', 'button': '*', 'scene': '', 'name': '',
                            'detail': 'Max produced no actual.json (exit {})'.format(proc.returncode)}]
-            _write(out, mismatches, _jobs())
-            return len(mismatches)
+            return _finish(out, mismatches, _jobs(), None)
         actual = json.loads(actual_path.read_text(encoding='utf-8'))
     else:
         actual = json.loads(args.actual.read_text(encoding='utf-8'))
     mismatches = compare_actual(actual)
-    _write(out, mismatches, _jobs())
-    print('mismatches {}'.format(len(mismatches)))
-    return len(mismatches)
+    return _finish(out, mismatches, _jobs(), live_codes(actual))
 
 
-def _write(out, mismatches, jobs):
-    grouped = core.group_runs(jobs, mismatches)
-    payload = {'schema': 2, 'mismatches': mismatches, 'count': len(mismatches), 'bases': grouped}
+def _known_count(grouped):
+    return sum(1 for base in grouped for spec in base['stations'] for row in spec['rows'] if row.get('known_bug'))
+
+
+def _finish(out, mismatches, jobs, live):
+    """Write report.json and table.txt. Exit code is the mismatch count, not known_bug."""
+    grouped = core.group_runs(jobs, mismatches, live)
+    known = _known_count(grouped)
+    payload = {
+        'schema': 2, 'mismatches': mismatches, 'count': len(mismatches),
+        'known_bug': known, 'bases': grouped,
+    }
     (out / 'report.json').write_text(json.dumps(payload, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
     (out / 'table.txt').write_text(core.render_table(grouped, mismatches), encoding='utf-8')
+    print('mismatches {} known_bug {}'.format(len(mismatches), known))
+    return len(mismatches)
 
 
 if __name__ == '__main__':

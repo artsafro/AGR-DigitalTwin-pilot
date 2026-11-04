@@ -99,3 +99,40 @@ def test_unmapped_button_is_an_error_naming_it():
     from test_polygon_support import load_expected
     with pytest.raises(KeyError, match='no-such-button'):
         load_expected('no-such-button')
+
+
+def test_known_bug_live_pass_is_not_ok_and_counts_apart():
+    """P1-1: expected fail [missing_map] + known_bug pass [] , live pass [] is not OK.
+
+    The row is a known bug, not a mismatch. Exit code stays the mismatch count.
+    """
+    from test_polygon_support import group_runs, render_table
+    grouped = group_runs([('qa.matid', 'polygon_all')], [])
+    text = render_table(grouped, [])
+    assert 'получилось' in text.splitlines()[0]
+    live = {('scene.census', 'polygon_all', 'SM_Polygon_007_Main'): []}
+    grouped = group_runs([('scene.census', 'polygon_all')], [], live)
+    rows = [row for base in grouped for spec in base['stations'] for row in spec['rows']
+            if row['name'] == 'SM_Polygon_007_Main']
+    assert len(rows) == 1
+    assert rows[0]['result'] != 'OK'
+    assert rows[0]['result'] == 'НЕ OK (известная ошибка #886)'
+    assert rows[0]['got'] == 'pass []'
+    assert rows[0]['known_bug'] is True
+    known = [row for base in grouped for spec in base['stations'] for row in spec['rows']
+             if row.get('known_bug')]
+    assert len(known) == 1
+
+
+def test_claimed_fail_when_status_fail_has_no_codes():
+    """P1-2: status fail with no derived codes is claimed_fail, the mirror of claimed_pass."""
+    from test_polygon_support import compare_report
+    got = compare_report(
+        [{'name': 'A', 'expect': 'pass', 'codes': []}],
+        {'status': 'fail', 'objects': [{'name': 'A', 'findings': []}]})
+    assert any(m['kind'] == 'claimed_fail' for m in got)
+    matched = compare_report(
+        [{'name': 'A', 'expect': 'fail', 'codes': ['cleanup']}],
+        {'status': 'fail', 'objects': [
+            {'name': 'A', 'findings': [{'code': 'cleanup', 'ids': [], 'detail': ''}]}]})
+    assert matched == []

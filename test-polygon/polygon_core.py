@@ -116,17 +116,9 @@ NOT_SHIPPED = (
     'Кнопки ещё нет в AGR Tools 0.7: в панели её нет, объекты полигона и эта запись '
     'появляются в том же изменении, что и сама кнопка.'
 )
-NO_CLEANUP_PASS = (
-    'Объекта PASS нет: у каждого объекта полигона есть AGR_TEST (и часто AGR_ZERO_M). '
-    'Очистка считает такие строки пользовательскими свойствами и даёт clear_user_defined_lines. '
-    'Пустой буфер свойств не может одновременно нести AGR_TEST. Прогон «Очистка → копии» '
-    'ждёт status pass уже на копиях, где эти строки сняты.'
-)
-NO_EXPORT_PASS = (
-    'Объекта PASS нет: экспорт с проверкой останавливается на воротах очистки, потому что '
-    'AGR_TEST не входит в список свойств, которые экспорт прячет. Код находки — cleanup. '
-    'Второе нажатие пишет FBX только в новый путь; раннер его не делает.'
-)
+# The polygon's recorded tool bug is issue #886. A matching live row is not a mismatch
+# and is not OK: the table prints the issue, and report.json counts it as known_bug.
+KNOWN_BUG_ISSUE = 886
 NO_ATLAS_PASS = (
     'Объекта PASS нет. Пробная сборка атласа всегда сдвигает остров в ячейку с отступом 8 px '
     '(код atlas_cell), и повторный pack тех же UV снова их двигает. Стабильный остров, который '
@@ -540,12 +532,24 @@ def _entry(name, scene, codes, expect=None):
     return {'name': name, 'scene': scene, 'expect': expect, 'codes': codes}
 
 
+def _produced(source, kind, readback=False):
+    """A row for the copy cleanup apply creates. It is not a node of the built scene."""
+    row = {
+        'name': source + '_AGR_export_', 'scene': 'polygon_all', 'expect': 'pass', 'codes': [],
+        'produced': kind, 'source': source,
+    }
+    if readback:
+        row['readback'] = True
+    return row
+
+
 def _mark_known(docs, button, scene, name, bug):
     """Record a live tool bug on one expected row. expect/codes stay the contract."""
     hit = next(obj for obj in docs[button]['objects']
                if obj['scene'] == scene and obj['name'] == name)
     hit['known_bug'] = {
         'id': bug['id'],
+        'issue': bug.get('issue') or KNOWN_BUG_ISSUE,
         'got_expect': bug['got_expect'],
         'got_codes': sorted(bug.get('got_codes') or []),
     }
@@ -824,20 +828,23 @@ def predict_all():
     docs['export.cleanup']['objects'] = [
         _entry('SM_Polygon_001_Main', 'polygon_all', ['clear_user_defined_lines']),
         _entry('SM_Polygon_Chan_Main', 'polygon_all', ['clear_user_defined_lines', 'delete_map_channels']),
+        _produced('SM_Polygon_001_Main', 'cleanup_copy'),
+        _produced('SM_Polygon_Chan_Main', 'cleanup_copy'),
     ]
-    docs['export.cleanup']['reason'] = NO_CLEANUP_PASS
+    docs['export.cleanup']['reason'] = ''
     docs['export.checked']['objects'] = [
         _entry('SM_Polygon_001_Main', 'polygon_all', ['cleanup']),
+        _produced('SM_Polygon_001_Main', 'export_readback', readback=True),
     ]
-    docs['export.checked']['reason'] = NO_EXPORT_PASS
+    docs['export.checked']['reason'] = ''
     # Live Max: usedMaps omits a Bitmaptexture whose file does not exist, so census
     # never receives the missing path. The contract stays fail/missing_map.
     _mark_known(docs, 'scene.census', 'polygon_all', 'SM_Polygon_007_Main', {
-        'id': 'census-usedmaps-drops-missing-file',
+        'id': 'census-usedmaps-drops-missing-file', 'issue': KNOWN_BUG_ISSUE,
         'got_expect': 'pass', 'got_codes': [],
     })
     _mark_known(docs, 'qa.preflight', 'polygon_all', 'SM_Polygon_007_Main', {
-        'id': 'census-usedmaps-drops-missing-file',
+        'id': 'census-usedmaps-drops-missing-file', 'issue': KNOWN_BUG_ISSUE,
         'got_expect': 'fail', 'got_codes': ['fbx_objects'],
     })
     if not any(o['expect'] == 'fail' for o in docs['ucx.build']['objects']):
@@ -904,6 +911,9 @@ def _station_caption(spec, doc, label_ru):
             hit = next((obj['name'] for obj in doc['objects'] if obj['expect'] == kind), None)
             if hit and hit not in names:
                 names.append(hit)
+    for obj in doc['objects']:
+        if obj.get('produced') and obj['name'] not in names:
+            names.append(obj['name'])
     shown = ', '.join(names[:3]) if names else spec['button']
     return 'Станция {}: {} - нажми {} -> ожидаешь {}'.format(
         spec['id'], shown, label_ru, _expect_phrase(doc, names))
@@ -1044,6 +1054,32 @@ def _mismatch(kind, name, detail):
     return {'kind': kind, 'name': name, 'detail': detail}
 
 
+def _is_known_got(obj, codes):
+    """True when the live codes are the recorded bug, not the contract."""
+    bug = obj.get('known_bug') or {}
+    if not bug or 'got_expect' not in bug:
+        return False
+    derived = 'fail' if codes else 'pass'
+    if obj['expect'] == derived and list(codes) == sorted(obj['codes']):
+        return False
+    return derived == bug.get('got_expect') and list(codes) == sorted(bug.get('got_codes') or [])
+
+
+def _known_issue(obj):
+    bug = obj.get('known_bug') or {}
+    return bug.get('issue') or KNOWN_BUG_ISSUE
+
+
+def got_phrase(codes):
+    """Status and codes from the live report, e.g. `pass []` or `fail [missing_map]`."""
+    derived = 'fail' if codes else 'pass'
+    return '{} [{}]'.format(derived, ','.join(codes))
+
+
+def known_bug_result(obj):
+    return 'НЕ OK (известная ошибка #{})'.format(_known_issue(obj))
+
+
 def _object_codes(obj):
     findings = obj.get('findings')
     if not isinstance(findings, list):
@@ -1120,6 +1156,9 @@ def compare_report(expected_objects, report):
     claimed = report.get('status') == 'pass' and any(codes for codes in actual.values())
     if claimed:
         out.append(_mismatch('claimed_pass', '', 'status pass with findings'))
+    claimed_fail = report.get('status') == 'fail' and actual and not any(codes for codes in actual.values())
+    if claimed_fail:
+        out.append(_mismatch('claimed_fail', '', 'status fail with no findings'))
     expected_names = {obj['name'] for obj in expected_objects}
     for name, codes in actual.items():
         if name not in expected_names:
@@ -1133,16 +1172,96 @@ def compare_report(expected_objects, report):
                 out.append(_mismatch('missing', obj['name'], 'missing expected object ' + obj['name']))
             continue
         derived = 'fail' if codes else 'pass'
-        bug = obj.get('known_bug') or {}
-        bug_codes = sorted(bug.get('got_codes') or [])
-        if bug.get('id') and derived == bug.get('got_expect') and codes == bug_codes:
+        if _is_known_got(obj, codes):
             continue
         if obj['expect'] != derived or codes != sorted(obj['codes']):
             out.append(_mismatch('code', obj['name'],
                                  'expected {} {} got {} {}'.format(obj['expect'], obj['codes'], derived, codes)))
         if 'at_threshold' in codes and obj['expect'] == 'pass':
             out.append(_mismatch('at_threshold', obj['name'], 'at_threshold is not a pass'))
+        if obj.get('readback') and not _readback_ok(report):
+            out.append(_mismatch('readback', obj['name'], 'FBX readback missing'))
     return out
+
+
+def _readback_ok(report):
+    plan = report.get('plan') if isinstance(report, dict) else None
+    readback = plan.get('readback') if isinstance(plan, dict) else None
+    return isinstance(readback, dict) and 'object_count' in readback
+
+
+def actual_codes(report):
+    """name -> live codes. None when the report is not a comparable object map."""
+    report = _without_fixtures(report)
+    if _nonfinite(report) or not isinstance(report, dict) or not report:
+        return None
+    if report.get('status') == 'error':
+        return None
+    scene_codes = _scene_codes(report)
+    if scene_codes == 'not_run':
+        return None
+    objects = report.get('objects')
+    if isinstance(objects, list) and objects:
+        out = {}
+        for obj in objects:
+            codes = _object_codes(obj)
+            if codes is None:
+                continue
+            out[str(obj.get('name'))] = codes
+        return out
+    if isinstance(scene_codes, list):
+        return {'__scene__': scene_codes}
+    return None
+
+
+def bind_produced(expected, report):
+    """Rename live `Source_AGR_export_*` copies onto the expected produced row names.
+
+    Two copies of one source stay fail-closed: the second keeps its live name and
+    compare_report reports it as unmapped.
+    """
+    if not isinstance(report, dict) or not isinstance(report.get('objects'), list):
+        return report
+    clones = []
+    used = set()
+    for obj in report['objects']:
+        if not isinstance(obj, dict):
+            clones.append(obj)
+            continue
+        live = str(obj.get('name'))
+        hit = None
+        for exp in expected:
+            source = exp.get('source')
+            if not source or exp['name'] in used:
+                continue
+            prefix = source + '_AGR_export_'
+            if live == exp['name'] or live.startswith(prefix):
+                hit = exp
+                break
+        if hit is None:
+            clones.append(dict(obj))
+            continue
+        used.add(hit['name'])
+        renamed = dict(obj)
+        renamed['name'] = hit['name']
+        clones.append(renamed)
+    out = dict(report)
+    out['objects'] = clones
+    return out
+
+
+def checked_export_target(out_dir, copy_name):
+    """New FBX path for the cleaned copy. An existing file or an input path is refused."""
+    text = str(copy_name)
+    if not text or Path(text).name != text or '/' in text or '\\' in text:
+        raise SystemExit('export pass copy name is not a single path segment: ' + text)
+    out = Path(out_dir).resolve()
+    target = out / 'export-pass' / (text + '.fbx')
+    if _inside(target, POLY.resolve()) or _inside(out, POLY.resolve()):
+        raise SystemExit('export pass target resolves to an input: ' + str(target))
+    if target.exists():
+        raise SystemExit('export pass target already exists: ' + str(target))
+    return target
 
 
 def _inside(path, root):
@@ -1238,8 +1357,14 @@ class preserve_user_bundle:
         return False
 
 
-def group_runs(jobs, mismatches):
-    """jobs: [(button, scene), ...]. Rows sit under their base and station."""
+def group_runs(jobs, mismatches, live=None):
+    """jobs: [(button, scene), ...]. Rows sit under their base and station.
+
+    live maps (button, scene, name) to the code list from the live report. A row whose
+    live codes are the recorded known bug is `НЕ OK (известная ошибка #N)`, not OK,
+    and is not a mismatch.
+    """
+    live = live or {}
     bad = {(item.get('button'), item.get('scene'), item.get('name')) for item in mismatches}
     grouped = []
     for base in bases():
@@ -1255,11 +1380,21 @@ def group_runs(jobs, mismatches):
                 for obj in doc['objects']:
                     if obj['scene'] != scene:
                         continue
-                    failed = (button, scene, obj['name']) in bad or (button, scene, '') in bad
+                    key = (button, scene, obj['name'])
+                    codes = live.get(key) if key in live else None
+                    failed = key in bad or (button, scene, '') in bad
+                    known = codes is not None and _is_known_got(obj, codes)
+                    if known:
+                        result = known_bug_result(obj)
+                        ok = False
+                    else:
+                        result = 'НЕ OK' if failed else 'OK'
+                        ok = not failed
                     rows.append({
                         'button': button, 'scene': scene, 'name': obj['name'],
                         'expected': '{} {}'.format(obj['expect'], ','.join(obj['codes'])).strip(),
-                        'result': 'НЕ OK' if failed else 'OK', 'ok': not failed,
+                        'got': got_phrase(codes) if codes is not None else '—',
+                        'result': result, 'ok': ok, 'known_bug': known,
                     })
             block.append({'id': spec['id'], 'button': spec['button'], 'rows': rows})
         grouped.append({'version': base['version'], 'title': base['title'], 'stations': block})
@@ -1267,22 +1402,23 @@ def group_runs(jobs, mismatches):
 
 
 def render_table(grouped, mismatches):
-    lines = ['база\tстанция\tкнопка\tсцена\tобъект\tожидалось\tитог']
+    lines = ['база\tстанция\tкнопка\tсцена\tобъект\tожидалось\tполучилось\tитог']
     for base in grouped:
-        lines.append('База {}\t\t\t\t\t{}'.format(base['version'], base['title']))
+        lines.append('\t'.join(['База {}'.format(base['version']), '', '', '', '', '', '', base['title']]))
         if not base['stations']:
-            lines.append('\t—\tкнопок нет\t\t\t')
+            lines.append('\t—\tкнопок нет\t\t\t\t')
         for spec in base['stations']:
             if not spec['rows']:
-                lines.append('\t{}\t{}\t\t\t'.format(spec['id'], spec['button']))
+                lines.append('\t{}\t{}\t\t\t\t'.format(spec['id'], spec['button']))
                 continue
             for row in spec['rows']:
-                lines.append('\t{}\t{}\t{}\t{}\t{}\t{}'.format(
-                    spec['id'], row['button'], row['scene'], row['name'], row['expected'], row['result']))
+                lines.append('\t{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(
+                    spec['id'], row['button'], row['scene'], row['name'], row['expected'],
+                    row.get('got', '—'), row['result']))
     for item in mismatches:
         if item.get('name') in ('', None) or item.get('kind') in (
-                'unmapped', 'empty', 'non_finite', 'error', 'apply'):
-            lines.append('\t\t{}\t{}\t{}\t{}\tНЕ OK'.format(
+                'unmapped', 'empty', 'non_finite', 'error', 'apply', 'readback'):
+            lines.append('\t\t{}\t{}\t{}\t{}\t—\tНЕ OK'.format(
                 item.get('button'), item.get('scene'), item.get('name') or '—', item.get('detail')))
     return '\n'.join(lines) + '\n'
 

@@ -22,3 +22,5 @@ preserve_user_bundle = _mod.preserve_user_bundle
 stage_tools = _mod.stage_tools
 group_runs = _mod.group_runs
 render_table = _mod.render_table
+checked_export_target = _mod.checked_export_target
+bind_produced = _mod.bind_produced

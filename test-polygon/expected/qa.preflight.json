@@ -186,6 +186,7 @@
    ],
    "known_bug": {
     "id": "census-usedmaps-drops-missing-file",
+    "issue": 886,
     "got_expect": "fail",
     "got_codes": [
      "fbx_objects"

@@ -95,7 +95,9 @@ def main():
             mine = [o for o in doc['objects'] if o['scene'] == scene]
             if not mine:
                 continue
-            names = [o['name'] for o in mine if o['name'] != '__scene__' and not str(o['name']).endswith('.geojson')]
+            names = [o['name'] for o in mine
+                     if not o.get('produced') and o['name'] != '__scene__'
+                     and not str(o['name']).endswith('.geojson')]
             tool = doc['tool']
             if tool == 'geojson':
                 targets = [[o['name']] for o in mine]
@@ -116,11 +118,67 @@ def main():
                 except Exception as exc:  # noqa: BLE001
                     report = {'status': 'error', 'error': '{}: {}'.format(type(exc).__name__, exc)}
                     status = 'error'
-                runs.append({'button': button, 'scene': scene, 'tool': apply_tool, 'names': names,
-                             'report': report, 'apply_expected': doc['apply_status'],
-                             'apply_status': status})
+                entry = {'button': button, 'scene': scene, 'tool': apply_tool, 'names': names,
+                         'report': report, 'apply_expected': doc['apply_status'],
+                         'apply_status': status}
+                if any(o.get('produced') == 'cleanup_copy' for o in mine):
+                    entry['produced'] = 'cleanup_copy'
+                runs.append(entry)
+        _export_cleaned_copies(runtime, scene, docs, runs)
     (OUT / 'actual.json').write_text(json.dumps({'schema': 1, 'runs': runs}, ensure_ascii=False, default=str),
                                     encoding='utf-8')
+
+
+def _find_copies(source_name):
+    from pymxs import runtime as rt
+    prefix = source_name + '_AGR_export_'
+    return [node for node in rt.objects if str(node.name).startswith(prefix)]
+
+
+def _export_cleaned_copies(runtime, scene, docs, runs):
+    """Checked export of the cleanup copy into a new FBX, then read it back.
+
+    The dirty original stays the FAIL row. This run is the PASS row and is recorded
+    even when the copy or the readback is missing, so the miss cannot look like a pass.
+    """
+    checked = docs.get('export.checked')
+    if not checked:
+        return
+    wanted = [o for o in checked['objects'] if o['scene'] == scene and o.get('produced') == 'export_readback']
+    if not wanted:
+        return
+    apply_runs = [run for run in runs if run.get('button') == 'export.cleanup' and run.get('scene') == scene
+                  and run.get('produced') == 'cleanup_copy']
+    apply_ok = bool(apply_runs) and all(run.get('apply_status') == 'pass' for run in apply_runs)
+    for obj in wanted:
+        target = None
+        try:
+            if not apply_ok:
+                raise RuntimeError('cleanup apply did not pass')
+            found = _find_copies(obj['source'])
+            if len(found) != 1:
+                raise RuntimeError('cleanup copy of {}: {}'.format(
+                    obj['source'], [str(node.name) for node in found]))
+            copy = found[0]
+            target = polygon_core.checked_export_target(OUT, str(copy.name))
+            target.parent.mkdir(parents=True, exist_ok=True)
+            nodes = _select([str(copy.name)])
+            preview = runtime.export_preview(nodes, str(target))
+            if preview.get('status') != 'pass':
+                report = preview
+            else:
+                report = runtime.export_commit(nodes, preview, str(target))
+                plan = report.get('plan') if isinstance(report, dict) else None
+                readback = plan.get('readback') if isinstance(plan, dict) else None
+                if not isinstance(readback, dict) or 'object_count' not in readback:
+                    report = {'status': 'error', 'error': 'FBX readback missing', 'plan': plan or {}}
+        except (Exception, SystemExit) as exc:  # noqa: BLE001
+            report = {'status': 'error', 'error': '{}: {}'.format(type(exc).__name__, exc)}
+        runs.append({
+            'button': 'export.checked', 'scene': scene, 'tool': 'export',
+            'names': [obj['name']], 'report': report, 'produced': 'export_readback',
+            'target': None if target is None else str(target),
+        })
     print('AGR_POLYGON_ACTUAL ' + str(OUT / 'actual.json'))
 
 

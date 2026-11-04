@@ -1,8 +1,9 @@
 # Known AGR Tools bugs seen by the test polygon
 
 The polygon is not changed to hide these. `expected/` still states the contract.
-`known_bug` on the row records the live result so a run can match without loosening the codes.
-Do not fix the tool in this folder.
+`known_bug` on the row records the live result. A live match is not a mismatch and is not OK:
+the table prints `НЕ OK (известная ошибка #886)`, and `report.json` counts those rows in `known_bug`.
+The process exit code stays the mismatch count. Do not fix the tool in this folder.
 
 ## census-usedmaps-drops-missing-file
 

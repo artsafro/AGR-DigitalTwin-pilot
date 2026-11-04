@@ -19,8 +19,11 @@
    в проверки: префикс имени `_base_` / `_label_` плюс слой. Сборщик кладёт их только туда. Раннер выбрасывает
    такие имена из отчёта до сравнения. Кнопки выделяют названные объекты станции, не площадку.
 6. Кнопки, которые правят сцену (сдвиг UV, атлас, UCX, очистка), сначала идут пробным прогоном. Второе нажатие
-   пишет копии. Оригиналы не перезаписываются. Экспорт с проверкой вторым нажатием пишет FBX только в новый путь
-   из `AGR_EXPORT_PATH`.
+   пишет копии. Оригиналы не перезаписываются. Очистка на копии (`имя_AGR_export_`) — строка PASS.
+   Экспорт с проверкой на грязном объекте останавливается на воротах `cleanup` (FAIL). Тот же прогон затем
+   берёт копию `SM_Polygon_001_Main_AGR_export_` и пишет FBX только в новый путь
+   `<папка результата>/export-pass/<имя копии>.fbx`, после чего читает файл обратно (`plan.readback`).
+   Это строка PASS. Существующий файл по этому пути раннер не перезаписывает.
 
 Отдельные сцены, их нельзя смешать с общей:
 
@@ -53,8 +56,6 @@
 
 У части кнопок PASS или FAIL нет, и в JSON записана причина:
 
-- `export.cleanup` — у всех объектов есть `AGR_TEST`, очистка считает это пользовательским свойством;
-- `export.checked` — те же ворота очистки, код `cleanup`;
 - `ucx.build` — ящик даёт пустые findings; находка `at_threshold` только на 15 000 треугольниках коллизии;
 - `atlas.npm` — pack всегда сдвигает остров (`atlas_cell`), повторный pack тоже.
 
@@ -100,11 +101,17 @@ python test-polygon/run_polygon.py --out C:/x/test-polygon --version 2024
 и в этом случае ничего не создаёт. Исходники он не удаляет. Max запускается через
 `C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.py` (общий замок сессии), в пустой сцене.
 Дальше скрипт нажимает каждую поставленную кнопку, сравнивает отчёт с `expected/` и пишет `report.json`
-и `table.txt`. Строки сгруппированы базой и станцией: база → станция → кнопка → ожидалось → OK / НЕ OK.
+и `table.txt`. Строки сгруппированы базой и станцией: база → станция → кнопка → ожидалось → получилось → итог.
+Колонка «получилось» — статус и коды живого отчёта (`pass []`, `fail [cleanup]`).
 Имена `_base_` и `_label_` в результат проверки не попадают.
 
-Код выхода — число расхождений. Пустой отчёт, пропущенная кнопка, NaN/Inf, `not_run` и кнопка без записи
-в `expected/` — это расхождение. Неизвестная кнопка — ошибка, в тексте есть её id.
+Код выхода — число расхождений (`count` в `report.json`). Пустой отчёт, пропущенная кнопка, NaN/Inf,
+`not_run`, кнопка без записи в `expected/` и невыполненная строка PASS (копия очистки или readback экспорта)
+— это расхождение. Неизвестная кнопка — ошибка, в тексте есть её id.
+
+Известная ошибка #886 не входит в код выхода. Если живой отчёт совпал с записанным `known_bug`, строка
+печатается как `НЕ OK (известная ошибка #886)`, а не `OK`. Число таких строк лежит отдельно: поле
+`known_bug` в `report.json` и хвост строки `mismatches N known_bug M`. `N` — код выхода, `M` его не меняет.
 
 Только сравнить уже снятый `actual.json`, без Max:
 
@@ -128,12 +135,12 @@ python test-polygon/run_polygon.py --out C:/x/test-polygon-report --actual C:/x/
 |---|---|---|---|
 | 0.1 | 0.1.1 | `qa.matid` | `expected/qa.matid.json` |
 | 0.1 | 0.1.2 | `qa.xview` | `expected/qa.xview.json` |
-| 0.1 | 0.1.3 | `export.cleanup` | `expected/export.cleanup.json` (PASS нет, см. reason) |
+| 0.1 | 0.1.3 | `export.cleanup` | `expected/export.cleanup.json` (FAIL на объекте, PASS на копии `*_AGR_export_`) |
 | 0.2 | 0.2.1 | `udim.nudge` | `expected/udim.nudge.json` |
 | 0.2 | 0.2.2 | `atlas.npm` | `expected/atlas.npm.json` (PASS нет, см. reason) |
 | 0.3 | 0.3.1 | `ucx.build` | `expected/ucx.build.json` (FAIL нет, см. reason) |
 | 0.3 | 0.3.2 | `udim.texel` | `expected/udim.texel.json` |
-| 0.4 | 0.4.1 | `export.checked` | `expected/export.checked.json` (PASS нет, см. reason) |
+| 0.4 | 0.4.1 | `export.checked` | `expected/export.checked.json` (FAIL `cleanup` на оригинале, PASS — новый FBX копии и readback) |
 | 0.5 | 0.5.1 | `tex.check` | `expected/tex.check.json` |
 | 0.5 | 0.5.2 | `qa.geojson` | `expected/qa.geojson.json` |
 | 0.5 | 0.5.3 | `qa.names` | `expected/qa.names.json` |
