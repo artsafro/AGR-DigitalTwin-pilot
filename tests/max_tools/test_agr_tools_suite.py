@@ -348,10 +348,13 @@ def test_preflight_status_includes_units_bruteforce():
     seen = set()
     for case in range(400):
         scene = {k: rnd.choice(v) for k, v in values.items()}
+        if rnd.random() < 0.4:
+            scene = dict(METRE_SCENE)
         scene['path'] = 'C:/s.max'
         if rnd.random() < 0.1:
             scene.pop(rnd.choice(list(values)))
-        rows = [obj(k + 1, scale=(rnd.choice([1.0, 1.0, 2.0]),) * 3) for k in range(rnd.randint(1, 4))]
+        rows = [obj(k + 1, scale=(rnd.choice([1.0, 1.0, 1.0, 2.0]),) * 3) for k in range(rnd.randint(1, 4))]
+        rows.append(obj(len(rows) + 1, 'SM_Addr_Ground', NPM_GROUND))
         f, d, s = core.run('preflight', rows, audit, scene=scene)
         rep = core.report('preflight', rows, f, d, s)
         units_ok = all(x['status'] == 'pass' for x in core.units(scene))
