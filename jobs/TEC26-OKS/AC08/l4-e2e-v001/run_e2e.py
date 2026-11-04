@@ -202,22 +202,47 @@ def state_from_source(report, mat_map):
     return state, drops
 
 
+def _norm(x):
+    if isinstance(x, np.ndarray):
+        return ("nd", x.shape, x.tolist())
+    if isinstance(x, (list, tuple)):
+        return [_norm(i) for i in x]
+    if isinstance(x, dict):
+        return {k: _norm(v) for k, v in sorted(x.items())}
+    return x
+
+
+def _part_equal(a, b):
+    return _norm(a) == _norm(b)
+
+
+def op_footprint(source, after):
+    """Keys an op touched: changed (in both, differ), added (only in after), removed (only in source)."""
+    changed = {k for k in source.keys() & after.keys() if not _part_equal(source[k], after[k])}
+    return changed, set(after) - set(source), set(source) - set(after)
+
+
 def kernel_output(source, rows):
-    """Source + every op the kernel APPLIED (each op ran on a fresh copy; an applied op replaces its parts)."""
+    """Source + every op the kernel APPLIED. Each op ran on a fresh copy of the source, so its footprint
+    (changed, added and removed keys of its after_state vs the source) is applied; overlapping footprints
+    of two applied ops are an error naming both."""
     out = rko.copy_state(source)
     applied = [r for r in rows if r.get("applied")]
     owner = {}
     for r in applied:
+        name = f"{r['op']}:{r['part']}"
         st = r.get("after_state")
-        if st is None:
-            raise InputError(f"applied op {r['op']}:{r['part']} has no after_state")
-        for part in r["part"].split("+"):
-            if part not in st:
-                raise InputError(f"applied op {r['op']}:{r['part']} after_state lacks part {part!r}")
-            if part in owner:
-                raise InputError(f"two applied ops on part {part!r}: {owner[part]} and {r['op']}:{r['part']}")
-            owner[part] = f"{r['op']}:{r['part']}"
-            out[part] = rko.copy_state({part: st[part]})[part]
+        if not isinstance(st, dict):
+            raise InputError(f"applied op {name} has no after_state")
+        changed, added, removed = op_footprint(source, st)
+        for key in sorted(changed | added | removed):
+            if key in owner:
+                raise InputError(f"two applied ops touch part {key!r}: {owner[key]} and {name}")
+            owner[key] = name
+        for key in removed:
+            out.pop(key, None)
+        for key in changed | added:
+            out[key] = rko.copy_state({key: st[key]})[key]
     return out, [f"{r['op']}:{r['part']}" for r in applied]
 
 
