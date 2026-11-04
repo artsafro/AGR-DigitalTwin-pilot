@@ -206,6 +206,18 @@ def kernel_output(source, rows):
     """Source + every op the kernel APPLIED (each op ran on a fresh copy; an applied op replaces its parts)."""
     out = rko.copy_state(source)
     applied = [r for r in rows if r.get("applied")]
+    owner = {}
+    for r in applied:
+        st = r.get("after_state")
+        if st is None:
+            raise InputError(f"applied op {r['op']}:{r['part']} has no after_state")
+        for part in r["part"].split("+"):
+            if part not in st:
+                raise InputError(f"applied op {r['op']}:{r['part']} after_state lacks part {part!r}")
+            if part in owner:
+                raise InputError(f"two applied ops on part {part!r}: {owner[part]} and {r['op']}:{r['part']}")
+            owner[part] = f"{r['op']}:{r['part']}"
+            out[part] = rko.copy_state({part: st[part]})[part]
     return out, [f"{r['op']}:{r['part']}" for r in applied]
 
 
@@ -333,7 +345,7 @@ def run(source_fbx: Path, delivered_fbx: Path, work: Path, evidence: Path, blend
     rows = rko.run_ops(source)
     states = {"S00_source": source}
     for k, r in enumerate(rows, 1):
-        st = r.pop("after_state")
+        st = r.get("after_state")
         r["label"] = f"S{k:02d}_{r['op']}_{r['part'].replace('+', '_')}"
         r["candidate_measured"] = st is not None
         if st is not None:
@@ -341,6 +353,8 @@ def run(source_fbx: Path, delivered_fbx: Path, work: Path, evidence: Path, blend
             r["after_visibility"] = rko.visibility(st, ctx)
             states[r["label"]] = st
     out_state, applied = kernel_output(source, rows)
+    for r in rows:
+        r.pop("after_state", None)
     payload, notes, not_exported = {}, {}, {}
     for label, st in states.items():
         merged = {k: p["mat"].count(0) for k, p in st.items() if 0 in p["mat"]}
@@ -390,7 +404,7 @@ def gates(r):
                                           "numbers": f"{r['source_parity']['polygons']} polygons, max corner dev "
                                                      f"{r['source_parity']['max_corner_dev_m']:.2e} m, UV dev "
                                                      f"{r['source_parity']['max_uv_dev']:.2e}"},
-        "kernel_invariants_on_source": {"passed": all(x["passed"] for x in r["before_visibility"].values()),
+        "kernel_invariants_on_source": {"passed": bool(r["before_visibility"]) and all(x["passed"] for x in r["before_visibility"].values()),
                                         "numbers": ", ".join(f"{k}={x['count']}" for k, x in
                                                              r["before_visibility"].items())},
         "kernel_ops_applied": {"passed": bool(r["kernel_applied_ops"]),

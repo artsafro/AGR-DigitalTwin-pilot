@@ -210,3 +210,43 @@ def test_committed_evidence_is_current():
     assert not g["kernel_invariants_on_source"]["passed"] and not g["kernel_ops_applied"]["passed"]
     assert sum(bool(o["applied"]) for o in r["ops"]) == 0 and len(r["ops"]) == 19
     assert r["before_visibility"]["no_visible_back_faces"]["count"] == 3107
+
+
+def _two_part_state():
+    base = {"v": np.zeros((3, 3)), "uv": [], "mat": [], "faces": [[0, 1, 2]]}
+    return {"A": dict(base), "B": {**base, "v": np.ones((3, 3))}}
+
+
+def _moved(state, part, d):
+    st = e2e.rko.copy_state(state)
+    st[part]["v"] = st[part]["v"] + d
+    return st
+
+
+def test_kernel_output_composes_applied_after_state():
+    src = _two_part_state()
+    rows = [{"op": "move_rigid", "part": "A", "applied": True, "after_state": _moved(src, "A", 5.0)}]
+    out, applied = e2e.kernel_output(src, rows)
+    assert out["A"]["v"].max() == 5.0 and out["B"]["v"].max() == 1.0 and applied == ["move_rigid:A"]
+    assert src["A"]["v"].max() == 0.0
+
+
+def test_kernel_output_zero_applied_equals_source():
+    src = _two_part_state()
+    rows = [{"op": "move_rigid", "part": "A", "applied": False, "after_state": _moved(src, "A", 5.0)}]
+    out, applied = e2e.kernel_output(src, rows)
+    assert applied == [] and all(np.array_equal(out[k]["v"], src[k]["v"]) for k in src)
+
+
+def test_kernel_output_two_ops_on_one_part_raise_naming_both():
+    src = _two_part_state()
+    rows = [{"op": o, "part": "A", "applied": True, "after_state": _moved(src, "A", d)}
+            for o, d in (("move_rigid", 5.0), ("flip", 2.0))]
+    with pytest.raises(InputError, match="move_rigid.*flip"):
+        e2e.kernel_output(src, rows)
+
+
+def test_empty_before_visibility_gate_fails():
+    r = json.loads((EVIDENCE / "e2e.json").read_text(encoding="utf-8"))
+    r["before_visibility"] = {}
+    assert e2e.gates(r)["kernel_invariants_on_source"]["passed"] is False
