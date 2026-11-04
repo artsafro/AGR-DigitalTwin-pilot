@@ -25,6 +25,7 @@ class Node:
         self.verts, self.faces = verts, faces
         self.baseObject = self
         self.alive = True
+        self.modifiers = types.SimpleNamespace(count=0)  # pymxs MAXModifierArray exposes .count
 
 
 class FakePolyop:
@@ -165,6 +166,16 @@ def test_row_on_editable_mesh_selects_node_only(scene):
     scene.backend.select_row(Row(101, 'A', 'xview', False, 'overlap_faces', '', (3, 7)))
     assert scene.rt.selection == [scene.a]
     assert scene.rt.calls == []
+
+
+def test_row_on_node_with_modifiers_selects_node_only(scene):
+    # Finding ids index the collapsed poly copy (runtime._poly_copy / xview collapseStack); with a
+    # TurboSmooth over a 12-face Editable_Poly base they do not address base faces (PR #875 review P1).
+    scene.a.modifiers.count = 1
+    assert scene.backend.select_row(Row(101, 'A', 'xview', False, 'overlap_faces', '', (3, 7))) is True
+    assert scene.rt.selection == [scene.a]
+    assert scene.rt.calls == []
+    assert scene.rt.subObjectLevel == 0
 
 
 @pytest.mark.parametrize('handle', [999, None])
