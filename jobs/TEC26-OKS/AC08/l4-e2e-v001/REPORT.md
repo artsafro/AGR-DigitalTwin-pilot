@@ -66,5 +66,5 @@ uv run python jobs/TEC26-OKS/AC08/l4-e2e-v001/run_e2e.py --source-fbx <AC08_sour
 uv run python jobs/TEC26-OKS/scripts/compare_facades.py jobs/TEC26-OKS/AC08/vpm_textures.json \
     jobs/TEC26-OKS/AC08/sheet-facades.json C:/x/tec26-oks/AC08/pilot-v010/renders \
     C:/x/tec26-oks/AC08/pilot-v010/readback/vpm.readback.json <new dir>
-blender --background --factory-startup --python jobs/TEC26-OKS/scripts/run_agr_checker.py -- <dir with both zips> <out.json>
+blender --background --factory-startup --python-exit-code 1 --python jobs/TEC26-OKS/scripts/run_agr_checker.py -- <dir with both zips> <out.json>
 ```
