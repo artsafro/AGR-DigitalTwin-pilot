@@ -263,18 +263,34 @@ def finish():
     rt.quitMax(rt.name('noPrompt'))
 
 
+STEPS = [('env', lambda: s_env()), ('globals', lambda: s_globals()), ('menu', lambda: s_menu()),
+         ('icons', lambda: s_icons()), ('panel_open', lambda: s_panel_open()),
+         ('dock_memory', lambda: s_dock_memory()), ('boxes', lambda: s_boxes()),
+         ('progress', lambda: s_progress()), ('row_click', lambda: s_row_click()),
+         ('shot', lambda: s_shot(str(rt.colorMan.getColorTheme()))()), ('cancel', lambda: s_cancel())]
+
+
+def selected_steps(spec):
+    """AGR_UI_STEPS: unset -> every step; '' or 'none' -> no step (quit baseline, #868); else a comma list."""
+    if spec is None:
+        return [k for k, _ in STEPS]
+    names = [n.strip() for n in spec.split(',') if n.strip() and n.strip() != 'none']
+    unknown = sorted(set(names) - {k for k, _ in STEPS})
+    if unknown:
+        raise SystemExit('unknown AGR_UI_STEPS: ' + ', '.join(unknown))
+    return names
+
+
 def main_run():
-    step('env', s_env)
-    step('globals', s_globals)
-    step('menu', s_menu)
-    step('icons', s_icons)
-    step('panel_open', s_panel_open)
-    step('dock_memory', s_dock_memory)
-    step('boxes', s_boxes)
-    step('progress', s_progress)
-    step('row_click', s_row_click)
-    step('shot', s_shot(str(rt.colorMan.getColorTheme())))
-    step('cancel', s_cancel)
+    try:
+        chosen = selected_steps(os.environ.get('AGR_UI_STEPS'))
+    except SystemExit as exc:  # still quit Max, the driver must not wait for its timeout
+        log('ERROR', 'steps', str(exc))
+        chosen = []
+    log('INFO', 'steps', ','.join(chosen) or 'none')
+    for key, fn in STEPS:
+        if key in chosen:
+            step(key, fn)
     finish()
 
 
