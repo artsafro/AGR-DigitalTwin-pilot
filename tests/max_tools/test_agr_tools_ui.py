@@ -344,3 +344,19 @@ def test_builder_rejects_missing_extra_or_fake_png_icons(tmp_path, synthetic_ico
     (src / 'Light/AgrIcons/agr_pivot_30.png').write_bytes((src / 'Dark/AgrIcons/agr_xview_24.png').read_bytes())
     with pytest.raises(ValueError, match='extra'):
         builder.icon_entries(src)
+
+
+def test_install_ms_thresholds_match_the_archive(tmp_path):
+    """Native run found `files.count < 21` against 20 shipped files: tie the guard to the archive."""
+    out = tmp_path / 'a.mzp'
+    builder.build(out)
+    with zipfile.ZipFile(out) as z:
+        names = z.namelist()
+    top = [n for n in names if n.startswith('agr_tools/') and n.count('/') == 1]
+    install = (PKG / 'install.ms').read_text(encoding='utf-8')
+    assert 'if files.count < {} do'.format(len(top)) in install
+    required = re.search(r'local required = #\(([^)]*)\)', install).group(1)
+    assert sorted(re.findall(r'"([^"]+)"', required)) == sorted(n.split('/')[1] for n in top)
+    for theme in ('Dark', 'Light'):
+        pngs = [n for n in names if n.startswith('agr_tools/icons/{}/AgrIcons/'.format(theme)) and n.endswith('.png')]
+        assert 'if icons.count < {} do'.format(len(pngs)) in install

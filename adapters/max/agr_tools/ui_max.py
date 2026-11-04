@@ -53,9 +53,10 @@ class MaxBackend:
         return self.agr.ui(tool)
 
     def _node(self, handle):
+        """Report handles are anim handles (getHandleByAnim), not node handles."""
         if handle is None:
             return None
-        n = rt.maxOps.getNodeByHandle(int(handle))
+        n = rt.getAnimByHandle(int(handle))
         return n if n is not None and rt.isValidNode(n) else None
 
     def select_failed(self, report):

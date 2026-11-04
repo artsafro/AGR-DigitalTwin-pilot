@@ -8,7 +8,7 @@
     local boot = AGRToolsStartupRoot + "AGRTools-0.6.0.ms"
     if doesFileExist boot do throw "AGR Tools startup file already exists"
     local files = getFiles (source + "agr_tools/*")
-    if files.count < 21 do throw "AGR Tools archive incomplete"
+    if files.count < 20 do throw "AGR Tools archive incomplete"
     local required = #("runtime.py", "atlas_core.py", "uv_nudge_core.py", "startup.ms", "agr_tools.mcr", "menu.ms", "bootstrap.py", "hygiene_core.py", "README.md", "ucx_core.py", "texel_core.py", "ucx_audit_core.py", "export_core.py", "checks_core.py", "checks_max.py", "CHANGELOG.md", "ui_model.py", "ui_qt.py", "ui_panel.py", "ui_max.py")
     for name in required do (
         local found = false

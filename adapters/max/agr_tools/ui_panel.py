@@ -55,15 +55,14 @@ class Section(QtWidgets.QWidget):
         lay.setSpacing(2)
         self.header = QtWidgets.QToolButton(col)
         self.header.setText(title)
-        self.header.setCheckable(True)
-        self.header.setChecked(True)
+        self.expanded = True  # not checkable: a checked QToolButton gets the highlight fill in Max
         self.header.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
         self.header.setArrowType(QtCore.Qt.DownArrow)
         self.header.setAutoRaise(True)
         font = self.header.font()
         font.setBold(True)
         self.header.setFont(font)
-        self.header.toggled.connect(self._toggle)
+        self.header.clicked.connect(lambda: self._toggle(not self.expanded))
         self.body = QtWidgets.QWidget(col)
         self.grid = QtWidgets.QGridLayout(self.body)
         self.grid.setContentsMargins(4, 0, 0, 4)
@@ -84,6 +83,7 @@ class Section(QtWidgets.QWidget):
         self.header.setPalette(hp)
 
     def _toggle(self, on):
+        self.expanded = on
         self.body.setVisible(on)
         self.header.setArrowType(QtCore.Qt.DownArrow if on else QtCore.Qt.RightArrow)
 
@@ -99,6 +99,8 @@ class AgrPanel(QtWidgets.QDockWidget):
         self.setObjectName(OBJECT_NAME)
         self.setWindowTitle('AGR Tools ' + model.VERSION)
         self.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
+        # Closing deletes the widget; the next open builds a fresh one from the saved dock state.
+        self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         self.accelerators_disabled = disable_accelerators(self)
         self._running = False
         self._cancel = False
@@ -117,7 +119,7 @@ class AgrPanel(QtWidgets.QDockWidget):
         lay.setSpacing(4)
         head = QtWidgets.QHBoxLayout()
         logo = QtWidgets.QLabel(body)
-        logo.setPixmap(self.backend.icon('tools').pixmap(36, 36))
+        self.logo = logo
         title = QtWidgets.QLabel('<b>AGR Tools</b> ' + model.VERSION, body)
         head.addWidget(logo)
         head.addWidget(title)
@@ -221,6 +223,7 @@ class AgrPanel(QtWidgets.QDockWidget):
             sec.set_color(color)
             for a in actions:
                 self.buttons[a.id].setIcon(tint(self._icons[a.id], color))
+        self.logo.setPixmap(tint(self.backend.icon('tools'), QtGui.QColor(*text), (36,)).pixmap(36, 36))
         self._theme_key = (base, text)
 
     def changeEvent(self, event):
