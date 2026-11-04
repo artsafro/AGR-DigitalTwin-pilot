@@ -136,3 +136,25 @@ def test_claimed_fail_when_status_fail_has_no_codes():
         {'status': 'fail', 'objects': [
             {'name': 'A', 'findings': [{'code': 'cleanup', 'ids': [], 'detail': ''}]}]})
     assert matched == []
+
+
+@pytest.mark.parametrize('status', ['not_run', 'skipped', None, '', 'PASS', 'report', 7, '<missing>'])
+def test_bad_status_when_top_level_status_is_not_pass_or_fail(status):
+    """Round-2 P1: a top-level status outside pass/fail/error is a bad_status mismatch naming it."""
+    from test_polygon_support import compare_report
+    report = {'objects': [{'name': 'A', 'findings': []}]}
+    if status != '<missing>':
+        report['status'] = status
+    got = compare_report([{'name': 'A', 'expect': 'pass', 'codes': []}], report)
+    bad = [m for m in got if m['kind'] == 'bad_status']
+    assert len(bad) == 1
+    assert repr(report.get('status')) in bad[0]['detail']
+
+
+def test_bad_status_combined_with_earlier_fixes():
+    """bad_status does not mask claimed_pass/claimed_fail on valid statuses, and pass/fail still match."""
+    from test_polygon_support import compare_report
+    exp = [{'name': 'A', 'expect': 'pass', 'codes': []}]
+    assert compare_report(exp, {'status': 'pass', 'objects': [{'name': 'A', 'findings': []}]}) == []
+    got = compare_report(exp, {'status': 'fail', 'objects': [{'name': 'A', 'findings': []}]})
+    assert [m['kind'] for m in got] == ['claimed_fail']

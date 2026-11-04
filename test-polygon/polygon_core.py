@@ -1215,6 +1215,9 @@ def compare_report(expected_objects, report):
             if obj['expect'] != 'error' or any(code not in err for code in obj['codes']):
                 out.append(_mismatch('error', obj['name'], err or 'error'))
         return out
+    status = report.get('status')
+    if not isinstance(status, str) or status not in ('pass', 'fail'):
+        return [_mismatch('bad_status', '', 'report status {!r} is not pass, fail or error'.format(status))]
     scene_codes = _scene_codes(report)
     if scene_codes == 'not_run':
         return [_mismatch('not_run', '__scene__', 'status not_run')]
