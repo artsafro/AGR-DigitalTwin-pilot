@@ -1,4 +1,4 @@
-"""new-case: the polygon layout is readable for a human (#885 user verdict 2026-11-04).
+"""new-case: the polygon layout is readable for a human (#885 user verdict 2026-11-04 [D194]).
 
 Every specimen sits on its own base rectangle, every base has a top camera, captions are
 multi-line and do not overlap each other. Reads the committed catalog.json (the builder input).
