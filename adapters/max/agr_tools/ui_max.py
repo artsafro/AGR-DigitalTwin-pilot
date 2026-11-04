@@ -14,7 +14,7 @@ from agr_tools_ui_qt import QtGui, QtWidgets, max_icon, max_main_window
 INI_SECTION = 'AGRTools'
 INI_KEY = 'dock'
 # (check, finding code) -> sub-object id type. Only runtime.py xview / matid ids are proven 1-based
-# polyop indices of the node's own Editable_Poly; export and other tools keep node-only selection.
+# polyop indices of the node's own Editable_Poly (no modifiers); export and other tools keep node-only selection.
 SUBOBJECT = {('xview', 'overlap_vertices'): 'vertex', ('xview', 'overlap_faces'): 'face',
              ('matid', 'udim_id'): 'face', ('matid', 'empty_id'): 'face',
              ('matid', 'empty_slot'): 'face', ('matid', 'missing_material'): 'face'}
@@ -83,8 +83,10 @@ class MaxBackend:
         """Select the row's node and, when the code's id type is known, its finding components.
 
         A vanished node leaves the selection unchanged (#861). Ids are 1-based polyop indices of
-        the Editable_Poly copy runtime.py measures, so they map onto an Editable_Poly base only;
-        any other base, an unknown code or an id out of range selects the node alone.
+        the collapsed Editable_Poly copy runtime.py measures, so they map onto an Editable_Poly
+        base with an empty modifier stack only; a node with modifiers (the ids index the collapsed
+        result, and a selection-driven modifier would change), any other base, an unknown code or
+        an id out of range selects the node alone, with no sub-object call.
         """
         n = self._node(row.handle)
         if n is None:
@@ -92,8 +94,10 @@ class MaxBackend:
         rt.select(n)
         kind = SUBOBJECT.get((row.check, row.code))
         ids = sorted(set(int(i) for i in row.ids or ()))
+        if kind is None or not ids or int(n.modifiers.count) != 0:
+            return True
         base = n.baseObject
-        if kind is None or not ids or rt.classOf(base) != rt.Editable_Poly:
+        if rt.classOf(base) != rt.Editable_Poly:
             return True
         level, count, setter = {
             'vertex': (1, rt.polyop.getNumVerts, rt.polyop.setVertSelection),
