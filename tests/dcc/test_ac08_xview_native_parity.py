@@ -649,13 +649,33 @@ def _mutate_units_name(dump):
 
 
 def _mutate_vertex_exactly_2mm(dump):
-    def shift(item):
+    """Geometry-valid threshold witness (#797): two appended vertices exactly tol_v_units apart.
+
+    No face is touched, so every polygon of the synthetic fixture and of the retained real dump
+    stays exactly as recorded (simple). Coordinates 0 and tol_v_units make the kernel's distance
+    equal the vertex threshold bit for bit; the recorded native sets stay empty, so a correct
+    harness sees a symmetric difference on AC08_body.
+    """
+    def add_pair(item):
+        tol = item["tol_v_units"]
         for node in item["nodes"]:
             if node["name"] == "AC08_body":
-                origin = node["vertices"][0]
-                node["vertices"][1] = [origin[0] + 0.002, origin[1], origin[2]]
+                node["vertices"] += [[0.0, 0.0, 0.0], [tol, 0.0, 0.0]]
+                node["num_verts"] = len(node["vertices"])
 
-    _both_reps(dump, "S00_source", shift)
+    _both_reps(dump, "S00_source", add_pair)
+
+
+def _mutate_unsupported_self_intersecting(dump):
+    """Bow-tie: swap the middle corners of AC08_body face 0 (a quad on both dumps)."""
+    def twist(item):
+        for node in item["nodes"]:
+            if node["name"] == "AC08_body":
+                face = node["faces"][0]
+                assert len(face) == 4, face
+                node["faces"][0] = [face[0], face[2], face[1], face[3]]
+
+    _both_reps(dump, "S00_source", twist)
 
 
 _MUTATIONS = {
@@ -683,7 +703,8 @@ _MUTATIONS = {
     "tol_f_exactly_2mm": (_mutate_tol_f_at_vertex_threshold, "tol_f_units"),
     "units_millimetre": (_mutate_units_mm, "metre"),
     "units_unsupported": (_mutate_units_name, "unsupported"),
-    "vertex_exactly_2mm": (_mutate_vertex_exactly_2mm, "AC08_body"),
+    "vertex_exactly_2mm": (_mutate_vertex_exactly_2mm, "AC08_body: symmetric difference"),
+    "unsupported_self_intersecting": (_mutate_unsupported_self_intersecting, "self-intersecting"),
 }
 
 
@@ -698,6 +719,43 @@ def test_native_mutation_is_not_certified(lib, mutation_id):
     text = _reject(lib, dump)
     assert cause in text
     assert "pass" not in text
+
+
+def test_vertex_threshold_witness_is_geometry_valid(lib):
+    """#797: the 2 mm witness keeps every polygon simple and sits exactly on the vertex threshold."""
+    import numpy as np
+
+    from dt_ai.ops import inv_xview
+
+    dump = copy.deepcopy(_control_dump(lib))
+    before = copy.deepcopy(dump)
+    _mutate_vertex_exactly_2mm(dump)
+    touched = 0
+    for item, old in zip(dump["imports"], before["imports"]):
+        for node, prev in zip(item["nodes"], old["nodes"]):
+            assert node["faces"] == prev["faces"]
+            if node["name"] != "AC08_body" or item["state"] != "S00_source":
+                assert node == prev
+                continue
+            touched += 1
+            m = float(item["m_per_unit"])
+            v = np.asarray(node["vertices"], dtype=float) * m
+            n = len(prev["vertices"])
+            a, b, d = inv_xview.vertex_pairs(v, float(item["tol_v_units"]) * m)
+            hit = [(x, y, z) for x, y, z in zip(a.tolist(), b.tolist(), d.tolist()) if (x, y) == (n, n + 1)]
+            assert hit and hit[0][2] == float(item["tol_v_units"]) * m
+            mesh, _, _ = lib.parity_module()._node(node)
+            for k, face in enumerate(mesh.faces):
+                assert inv_xview._polygon_triangles(k, face, mesh.vertices * m)
+    assert touched == 2
+
+
+def test_unsupported_polygon_is_named_harness_error_not_value_error(lib):
+    dump = copy.deepcopy(_control_dump(lib))
+    _mutate_unsupported_self_intersecting(dump)
+    dump["synthetic"] = False
+    with pytest.raises(lib.HarnessError, match="AC08_body: unsupported geometry: .*self-intersecting"):
+        lib.confirm_native(dump)
 
 
 def test_unmutated_control_yields_fourteen_rows(lib):
