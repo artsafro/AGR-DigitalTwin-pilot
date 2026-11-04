@@ -4,11 +4,13 @@ Run from build/build_polygon.ms or from test-polygon/build/run_inside_max.py.
 The .max file is an output (saveAsVersion 2024). Sources stay in test-polygon/.
 
 Ground rectangles are named `_base_*` on layer `_bases`. Captions are named `_label_*`
-on layer `_labels` (hide that layer to hide the text). Both are omitted from checks
-and from export: the runner drops those name prefixes, and buttons select named
-specimens only.
+on layer `_labels` (hide that layer to hide the text). One top orthographic camera per
+base, `_cam_База 0.x`, sits on layer `_cameras` (viewport label -> Cameras). All three are
+omitted from checks and from export: the runner drops those name prefixes, and buttons
+select named specimens only.
 """
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -22,6 +24,15 @@ import polygon_core as core
 def _rt():
     from pymxs import runtime
     return runtime
+
+
+def _base_camera(obj):
+    rt = _rt()
+    target = rt.Targetobject(name=obj['name'] + '.Target')
+    node = rt.Targetcamera(name=obj['name'], target=target)
+    node.orthoProjection = True
+    _layer(obj['layer']).addNode(target)
+    return node
 
 
 def _layer(name):
@@ -142,7 +153,9 @@ def _props(node, obj):
 def _make(obj):
     rt = _rt()
     kind = obj['superclass']
-    if kind == 'camera':
+    if kind == 'camera' and obj.get('camera_span'):
+        node = _base_camera(obj)
+    elif kind == 'camera':
         node = rt.FreeCamera(name=obj['name'])
     elif kind == 'light':
         node = rt.Omnilight(name=obj['name'])
@@ -150,8 +163,9 @@ def _make(obj):
         node = rt.Dummy(name=obj['name'])
     elif kind == 'shape':
         node = rt.Text(name=obj['name'])
-        node.text = obj.get('text') or obj['name']
-        node.size = 0.35 if str(obj['name']).startswith('_label_') else 1.5
+        # Max Text breaks lines on CR LF only; a bare LF is dropped.
+        node.text = (obj.get('text') or obj['name']).replace('\r\n', '\n').replace('\n', '\r\n')
+        node.size = obj.get('text_size') or (0.35 if str(obj['name']).startswith('_label_') else 1.5)
         node.wirecolor = rt.Color(20, 20, 20)
     else:
         verts, tris = core.mesh_of(obj)
@@ -181,6 +195,18 @@ def _make(obj):
             for face in range(1, count + 1):
                 rt.polyop.setFaceMatID(node, face, int(obj['matid']))
     node.pos = rt.Point3(*obj['pos'])
+    if obj.get('anchor') == 'top_left':
+        # A Text shape is centred on its pivot; move it so its top-left corner is at pos.
+        node.pos = rt.Point3(obj['pos'][0] + (node.pos.x - node.min.x),
+                             obj['pos'][1] - (node.max.y - node.pos.y), obj['pos'][2])
+    if kind == 'camera' and obj.get('camera_span'):
+        span_x, span_y = obj['camera_span']
+        # Ortho width = 2 * distance * tan(fov / 2); fit the larger of width and 16:9 height.
+        fit = max(span_x, span_y * 16.0 / 9.0) * 1.08
+        height = fit * 2.0 + 20.0
+        node.pos = rt.Point3(obj['pos'][0], obj['pos'][1] - 0.001, height)
+        node.target.pos = rt.Point3(obj['pos'][0], obj['pos'][1], 0.0)
+        node.fov = math.degrees(2.0 * math.atan((fit / 2.0) / height))
     if obj.get('scale') and obj['scale'] != [1.0, 1.0, 1.0]:
         node.scale = rt.Point3(*obj['scale'])
     mat = _material(obj)
@@ -257,7 +283,21 @@ def build(scene, texture_dir=''):
             parent = made.get(obj['parent'])
             if child is not None and parent is not None:
                 child.parent = parent
+    _start_view(made)
     return made
+
+
+def _start_view(made):
+    """Open the scene looking at База 0.1 through its top camera (UI Max; batch has no viewport)."""
+    rt = _rt()
+    cams = sorted(name for name in made if str(name).startswith('_cam_'))
+    if not cams:
+        return
+    try:
+        rt.viewport.setLayout(rt.Name('layout_1'))
+        rt.viewport.setCamera(made[cams[0]])
+    except Exception:  # noqa: BLE001 - 3dsmaxbatch: no viewports to set
+        pass
 
 
 def save(path):

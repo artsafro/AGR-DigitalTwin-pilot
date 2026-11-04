@@ -129,6 +129,35 @@ def main():
                                     encoding='utf-8')
 
 
+# Export settings the user sets on the cleaned copy before the checked export. Cleanup
+# clears the user buffer; these keys are held off by the export cleanup gate. 128 px on
+# the 6-8 m box gives 16-21 px/m, inside the NPM band 10-40 px/m (texel_core.py).
+EXPORT_PASS_PROFILE = 'NPM'
+EXPORT_PASS_MAP_PX = 128
+
+
+def _material_list(node):
+    from pymxs import runtime as rt
+    mat = node.material
+    if mat is None:
+        raise RuntimeError('cleanup copy has no material: ' + str(node.name))
+    if rt.classOf(mat) == rt.MultiMaterial:
+        names = [str(sub.name) for sub in mat.materialList if sub is not None]
+    else:
+        names = [str(mat.name)]
+    if not names:
+        raise RuntimeError('cleanup copy has no material names: ' + str(node.name))
+    return names
+
+
+def _set_export_props(node, target):
+    from pymxs import runtime as rt
+    rt.setUserProp(node, 'AGR_EXPORT_PATH', str(target).replace('\\', '/'))
+    rt.setUserProp(node, 'AGR_TEXEL_PROFILE', EXPORT_PASS_PROFILE)
+    rt.setUserProp(node, 'AGR_TEXEL_MAP', ';'.join(
+        '{}={}'.format(name, EXPORT_PASS_MAP_PX) for name in _material_list(node)))
+
+
 def _find_copies(source_name):
     from pymxs import runtime as rt
     prefix = source_name + '_AGR_export_'
@@ -162,6 +191,7 @@ def _export_cleaned_copies(runtime, scene, docs, runs):
             copy = found[0]
             target = polygon_core.checked_export_target(OUT, str(copy.name))
             target.parent.mkdir(parents=True, exist_ok=True)
+            _set_export_props(copy, target)
             nodes = _select([str(copy.name)])
             preview = runtime.export_preview(nodes, str(target))
             if preview.get('status') != 'pass':

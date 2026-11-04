@@ -14,4 +14,4 @@ Live Max is not part of these rows.
 | E6 | no false positive on an unknown button | `load_expected('no-such-button')` | `KeyError` naming `no-such-button` | `tests/max_tools/test_polygon_compare.py::test_unmapped_button_is_an_error_naming_it` | pass |
 | E6b | path alias: output inside the input, or report and temp the same file | `check_paths(src, src/out, …)` and `check_paths(src, out, same.json, same.json)` | `SystemExit`; the input file is unchanged; nothing is created | `tests/max_tools/test_polygon_paths.py::test_output_inside_input_and_same_file_aliases_are_refused` | pass |
 
-Totals: 8 rows, 11 tests, 8/8 pass. Full suite: filled after `suite_slot.py`.
+Totals: 8 rows, 11 tests, 8/8 pass. Full suite: 17076 passed, 27 skipped, 4 failed (`tests/test_capability_ticket.py`, synthetic `git commit` exit 128 / missing `reference.json`; not the polygon tests).

@@ -49,6 +49,15 @@ for _action, _row in ACTION_ROW.items():
 TOUR_LAST = '0.7'
 BASE_LAYER = '_bases'
 LABEL_LAYER = '_labels'
+CAMERA_LAYER = '_cameras'
+# Caption sizes in metres: readable in the top view of one base and in the default
+# perspective view. LINE_STEP is the line pitch of a multi-line Max Text shape.
+BASE_TEXT = 2.0
+STATION_TEXT = 1.0
+OBJECT_TEXT = 0.45
+LINE_STEP = 1.35
+STATIONS_PER_COLUMN = 4
+CAPTION_WRAP = 70
 BASE_COLOURS = (
     (214, 69, 65),
     (230, 145, 40),
@@ -230,11 +239,11 @@ def stations():
 
 def excluded_name(name):
     text = str(name)
-    return text.startswith('_base_') or text.startswith('_label_')
+    return text.startswith('_base_') or text.startswith('_label_') or text.startswith('_cam_')
 
 
 def excluded_node(obj):
-    return excluded_name(obj.get('name', '')) or obj.get('layer') in (BASE_LAYER, LABEL_LAYER)
+    return excluded_name(obj.get('name', '')) or obj.get('layer') in (BASE_LAYER, LABEL_LAYER, CAMERA_LAYER)
 
 
 def _version_token(version):
@@ -315,8 +324,12 @@ def _obj(name, role, zone, pos, size=(2, 2, 2), mesh='box', fbx='0101_Polygon_01
     return item
 
 
-def scene_objects():
-    """Every node the builder creates. Synthetic; the bench is a box, not the #790 asset."""
+def scene_objects(captions=None):
+    """Every node the builder creates. Synthetic; the bench is a box, not the #790 asset.
+
+    captions (from `captions(docs)`) sizes the caption blocks of the layout; without it
+    the layout reserves an estimate. Expected codes do not depend on the XY placement.
+    """
     p = 'polygon_all'
     g = '0101_Polygon_Ground.fbx'
     rows = [
@@ -397,7 +410,7 @@ def scene_objects():
                      mat_name='M_VeronaBit_Main_1', pivot=[3, 0, 0], tex='bit16'))
     good = next(o for o in rows if o['name'] == 'SM_Polygon_001_Main' and o['scene'] == p)
     good['tex'] = 'ok256'
-    _apply_layout(rows)
+    _apply_layout(rows, captions)
     return rows
 
 
@@ -419,7 +432,7 @@ def _place_cluster(members, origin_x, origin_y):
     return max(obj['pos'][0] for obj in members) - origin_x + 6.0
 
 
-def _apply_layout(rows):
+def _apply_layout(rows, captions=None):
     """Put polygon_all nodes on version bases. Z is kept. Variant scenes keep their XY."""
     known = {obj['name'] for obj in rows}
     home = {}
@@ -443,55 +456,74 @@ def _apply_layout(rows):
         if obj['scene'] == 'polygon_all':
             by_name.setdefault(obj['name'], []).append(obj)
     x = 0.0
-    gap = 14.0
+    gap = 12.0
+    captions = captions or {'stations': {}, 'bases': {}}
     laid = []
     for base in bases():
         specs = [spec for spec in stations() if spec['version'] == base['version']]
-        cursor = x + 6.0
-        y_top = 8.0
-        label_ys = []
+        # Rows run north to south: base caption, then per station its caption (top-left
+        # anchored) and its objects under it. Nothing shares a row, so nothing overlaps.
+        b_lines = captions['bases'].get(base['version']) or ['База', 'кнопки']
+        y = -2.0
+        base_label = [x + 2.0, y, 0.05]
+        y -= text_height(b_lines, BASE_TEXT) + 2.0
+        top = y
+        width = 4.0 + text_width(b_lines, BASE_TEXT)
+        col_x, col_w, low = x, 0.0, y
         placed_stations = []
-        for spec in specs:
+        for index, spec in enumerate(specs):
+            if index and index % STATIONS_PER_COLUMN == 0:
+                # Next column: a base with many stations stays a block, not a tall strip.
+                col_x += col_w + 4.0
+                col_w = 0.0
+                y = top
             members = []
             for name in spec['homes']:
                 members.extend(obj for obj in by_name.get(name, []) if obj['scene'] == 'polygon_all')
+            s_lines = captions['stations'].get(spec['id']) or ['Станция'] * (2 + len(members))
+            label_pos = [col_x + 2.0, y, 0.05]
+            y -= text_height(s_lines, STATION_TEXT) + 1.5
+            depth = max([obj['size'][1] for obj in members] or [2.0])
+            centre_y = y - depth / 2.0
             if spec['cluster'] and members:
-                width = _place_cluster(members, cursor, 2.0)
+                row = _place_cluster(members, col_x + 4.0, centre_y)
             else:
-                for index, obj in enumerate(members):
-                    obj['pos'] = [cursor, 2.0 + index * 7.0, obj['pos'][2]]
-                width = 8.0
-            if members:
-                south = min(obj['pos'][1] - obj['size'][1] / 2.0 for obj in members)
-                north = max(obj['pos'][1] + obj['size'][1] / 2.0 for obj in members)
-                label_pos = [members[0]['pos'][0], south - 1.4, 0.05]
-                y_top = max(y_top, north)
-            else:
-                label_pos = [cursor, 2.0, 0.05]
-                y_top = max(y_top, 6.0)
-            label_ys.append(label_pos[1])
-            placed_stations.append({'id': spec['id'], 'button': spec['button'], 'label_pos': label_pos})
-            cursor += max(width, 8.0) + 4.0
+                cursor = col_x + 4.0
+                for obj in members:
+                    pitch = max(obj['size'][0], text_width([obj['name']], OBJECT_TEXT))
+                    obj['pos'] = [cursor + obj['size'][0] / 2.0, centre_y, obj['pos'][2]]
+                    cursor += pitch + 3.0
+                row = cursor - col_x - 4.0
+            y -= depth + 3.0
+            low = min(low, y)
+            col_w = max(col_w, 4.0 + row + 2.0, 4.0 + text_width(s_lines, STATION_TEXT))
+            width = max(width, col_x - x + col_w)
+            placed_stations.append({
+                'id': spec['id'], 'button': spec['button'], 'label_pos': label_pos,
+                'members': [(obj['name'], list(obj['pos']), list(obj['size'])) for obj in members],
+            })
+        y = low
         if not specs:
-            cursor = x + 22.0
-            y_top = 10.0
-        minx, maxx = x, cursor + 2.0
-        low = min(label_ys) if label_ys else -2.0
-        miny, maxy = min(-4.0, low - 1.5), y_top + 3.0
+            width = max(width, 22.0)
+            y -= 6.0
+        minx, maxx = x, x + width
+        miny, maxy = y - 1.0, 0.0
         laid.append({
             'version': base['version'], 'title': base['title'], 'colour': list(base['colour']),
             'buttons': list(base['buttons']),
             'rect_pos': [(minx + maxx) / 2.0, (miny + maxy) / 2.0, -0.04],
             'rect_size': [maxx - minx, maxy - miny, 0.04],
-            'label_pos': [minx + 1.0, miny + 0.8, 0.05],
+            'label_pos': base_label,
+            'camera_pos': [(minx + maxx) / 2.0, (miny + maxy) / 2.0, 0.0],
+            'camera_span': [maxx - minx, maxy - miny],
             'stations': placed_stations,
         })
         x = maxx + gap
     return laid
 
 
-def _layout():
-    return _apply_layout(scene_objects())
+def _layout(captions=None):
+    return _apply_layout(scene_objects(captions), captions)
 
 
 def _bbox(verts):
@@ -875,54 +907,68 @@ def _annotate_places(docs):
         doc['stations'] = ids
 
 
-def _expect_phrase(doc, names):
-    bits = []
-    wanted = list(names)
-    if not wanted:
-        for kind in ('pass', 'fail'):
-            hit = next((obj['name'] for obj in doc['objects'] if obj['expect'] == kind), None)
-            if hit:
-                wanted.append(hit)
-    for name in wanted[:3]:
-        hit = next((obj for obj in doc['objects'] if obj['name'] == name), None)
-        if hit is None:
-            continue
-        if hit['expect'] == 'pass':
-            bits.append('pass')
-        elif hit['codes']:
-            bits.append(hit['expect'] + ' ' + ','.join(hit['codes']))
-        else:
-            bits.append(hit['expect'])
-    if doc.get('reason') and not any(obj['expect'] == 'pass' for obj in doc['objects']):
-        bits.append('PASS нет')
-    if doc.get('reason') and not any(obj['expect'] == 'fail' for obj in doc['objects']):
-        bits.append('FAIL нет')
-    out = []
-    for bit in bits:
-        if bit not in out:
-            out.append(bit)
-    return ' / '.join(out) if out else 'см. expected'
+def _expect_short(entry):
+    if entry['expect'] == 'pass':
+        text = 'pass'
+    else:
+        text = 'fail ' + ', '.join(entry['codes']) if entry['codes'] else entry['expect']
+    bug = entry.get('known_bug') or {}
+    if bug:
+        text += ' (ошибка #{})'.format(bug.get('issue') or KNOWN_BUG_ISSUE)
+    return text
 
 
-def _station_caption(spec, doc, label_ru):
-    names = [name for name in spec['homes'] if any(obj['name'] == name for obj in doc['objects'])]
-    if not names:
-        for kind in ('pass', 'fail'):
-            hit = next((obj['name'] for obj in doc['objects'] if obj['expect'] == kind), None)
-            if hit and hit not in names:
-                names.append(hit)
-    for obj in doc['objects']:
-        if obj.get('produced') and obj['name'] not in names:
-            names.append(obj['name'])
-    shown = ', '.join(names[:3]) if names else spec['button']
-    return 'Станция {}: {} - нажми {} -> ожидаешь {}'.format(
-        spec['id'], shown, label_ru, _expect_phrase(doc, names))
+def station_lines(spec, doc, label_ru):
+    """Multi-line station caption: what to press, then one line per object -> expected."""
+    lines = ['Станция {}: нажми «{}»'.format(spec['id'], label_ru)]
+    rows = [obj for obj in doc['objects'] if obj['scene'] == 'polygon_all']
+    homes = [obj for obj in rows if obj['name'] in spec['homes'] and not obj.get('produced')]
+    others = [obj for obj in rows if obj not in homes and not obj.get('produced')]
+    for obj in homes:
+        lines.append('{} -> {}'.format(obj['name'], _expect_short(obj)))
+    for obj in others[:2]:
+        lines.append('{} (на станции {}) -> {}'.format(
+            obj['name'], _home_station(obj['name']) or '?', _expect_short(obj)))
+    for obj in rows:
+        if obj.get('produced') == 'cleanup_copy':
+            lines.append('после «Применить»: копия {}_AGR_export_* -> pass'.format(obj['source']))
+        elif obj.get('produced') == 'export_readback':
+            lines.append('экспорт копии {}_AGR_export_* в новый FBX -> pass + readback'.format(obj['source']))
+    if len(lines) == 1 and doc['objects']:
+        lines.append('{} -> {}'.format(doc['objects'][0]['name'], _expect_short(doc['objects'][0])))
+    if doc.get('reason'):
+        lines.append('нет PASS или FAIL: причина в README')
+    return lines
 
 
-def _base_caption(base, labels):
+def _home_station(name):
+    for spec in stations():
+        if name in spec['homes']:
+            return spec['id']
+    return None
+
+
+def base_lines(base, labels):
     names = [labels[button] for button in base['buttons'] if button in labels]
-    buttons = ', '.join(names) if names else 'нет'
-    return 'База {} — {}, кнопки: {}'.format(base['version'], base['title'], buttons)
+    lines = ['База {} — {}'.format(base['version'], base['title'])]
+    current = 'кнопки:'
+    for name in names or ['нет']:
+        piece = ' ' + name + ','
+        if len(current) + len(piece) > CAPTION_WRAP // 2 + 20 and current != 'кнопки:':
+            lines.append(current)
+            current = '   '
+        current += piece
+    lines.append(current.rstrip(','))
+    return lines
+
+
+def text_width(lines, size):
+    """Upper estimate of a Text shape width in metres (Arial: ~0.5 em per glyph, measured)."""
+    return max(len(line) for line in lines) * size * 0.5 if lines else 0.0
+
+
+def text_height(lines, size):
+    return len(lines) * size * LINE_STEP
 
 
 def _fixture(name, role, layer, pos, size, mesh, cls, text, colour):
@@ -938,26 +984,55 @@ def _fixture(name, role, layer, pos, size, mesh, cls, text, colour):
     }
 
 
-def fixture_objects(docs):
-    """Ground rectangles and Russian captions. Not checked and not exported."""
+def captions(docs):
+    """Caption lines per station id and per base version (they size the layout)."""
     labels = {row['id']: row['label_ru'] for row in suite_rows()}
-    laid = _layout()
+    out = {'stations': {}, 'bases': {}}
+    for base in bases():
+        out['bases'][base['version']] = base_lines(base, labels)
+    for spec in stations():
+        out['stations'][spec['id']] = station_lines(spec, docs[spec['button']], labels[spec['button']])
+    return out
+
+
+def _text_fixture(name, pos, lines, size):
+    row = _fixture(name, 'label', LABEL_LAYER, pos, (1, 1, 0), 'empty', 'Text', '\n'.join(lines), None)
+    row['text_size'] = size
+    row['anchor'] = 'top_left'
+    return row
+
+
+def _camera_fixture(base):
+    """Top orthographic camera over one base: Views -> Cameras -> `_cam_База 0.x`."""
+    row = _fixture('_cam_База ' + base['version'], 'camera', CAMERA_LAYER, base['camera_pos'],
+                   (1, 1, 1), 'empty', 'Targetcamera', None, None)
+    row['superclass'] = 'camera'
+    row['camera_span'] = list(base['camera_span'])
+    return row
+
+
+def fixture_objects(docs):
+    """Ground rectangles, Russian captions and one camera per base. Not checked, not exported."""
+    caps = captions(docs)
+    laid = _layout(caps)
     out = []
     for base in laid:
         token = _version_token(base['version'])
         out.append(_fixture(
             '_base_' + token, 'base', BASE_LAYER, base['rect_pos'], base['rect_size'],
             'box', 'Editable_Poly', None, base['colour']))
-        out.append(_fixture(
-            '_label_base_' + token, 'label', LABEL_LAYER, base['label_pos'], (1, 1, 0),
-            'empty', 'Text', _base_caption(base, labels), None))
+        out.append(_text_fixture('_label_base_' + token, base['label_pos'],
+                                 caps['bases'][base['version']], BASE_TEXT))
+        out.append(_camera_fixture(base))
         for spec in base['stations']:
-            doc = docs[spec['button']]
-            full = next(item for item in stations() if item['id'] == spec['id'])
-            out.append(_fixture(
-                '_label_' + _version_token(spec['id']), 'label', LABEL_LAYER, spec['label_pos'],
-                (1, 1, 0), 'empty', 'Text',
-                _station_caption(full, doc, labels[spec['button']]), None))
+            out.append(_text_fixture('_label_' + _version_token(spec['id']), spec['label_pos'],
+                                     caps['stations'][spec['id']], STATION_TEXT))
+            # The object's own name right under it, so the caption lines map to boxes.
+            for index, (name, pos, size) in enumerate(spec['members']):
+                drop = 0.4 + (0.7 if index % 2 else 0.0)
+                out.append(_text_fixture(
+                    '_label_obj_' + name, [pos[0] - size[0] / 2.0, pos[1] - size[1] / 2.0 - drop, 0.05],
+                    [name], OBJECT_TEXT))
     return out
 
 
@@ -991,7 +1066,7 @@ def _catalog_row(obj, agr_test):
 
 
 def catalog(docs):
-    objects = [_catalog_row(obj, agr_test_of(obj, docs)) for obj in scene_objects()]
+    objects = [_catalog_row(obj, agr_test_of(obj, docs)) for obj in scene_objects(captions(docs))]
     objects.extend(fixture_objects(docs))
     return {'schema': 1, 'synthetic': True, 'address': 'Polygon',
             'note': 'Synthetic polygon. The Verona bench is a box silhouette, not the client #790 model. '
