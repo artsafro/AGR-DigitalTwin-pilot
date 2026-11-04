@@ -124,10 +124,10 @@ rg -n -F -- "max_exec.py" C:/Users/artsafro/hermes_kanban/scripts
 | 3 `agr_cleanup_preview` | selection-preserving | не трогает | выделение до = после, иначе `selection_changed` |
 | 4 `agr_cleanup_apply` | selection-mutating by design | `rt.select(copies)` (`runtime.py:494`) | сохранить выделение до вызова, восстановить после; `selection_changed` проверяется после восстановления |
 | 5 `agr_uv_nudge_preview`; `nudge_apply` (фаза 1) | preview — preserving; apply — mutating | `_apply_uv` делает `rt.select(copies)` (`runtime.py:743`, `nudge_apply` `runtime.py:751`) | preview как у 3; apply как у 4 |
-| 6 `agr_atlas_preview` | selection-preserving | не трогает | как у 3 |
-| 7 `agr_ucx_preview` | selection-preserving | не трогает | как у 3 |
-| 8 `agr_ucx_apply` | проверить в фазе 0 | создаёт копии; `rt.select` в `ucx_apply` (`runtime.py:1402`) grep не находит | как у 3; если фаза 0 найдёт select, правило как у 4 |
-| 9 `agr_texel_readout` | selection-preserving | не трогает | как у 3 |
+| 6 `agr_atlas_preview`; `atlas_apply` (фаза 1) | preview — preserving (`_report(select=False)`, `runtime.py:1078`); apply — mutating | `atlas_apply` вызывает `_apply_uv` (`runtime.py:1222`), тот делает `rt.select(copies)` (`runtime.py:743`) | preview как у 3; apply как у 5 (`nudge_apply`) и 4: сохранить до, восстановить после, проверка после восстановления |
+| 7 `agr_ucx_preview` | selection-mutating by default | `_report('ucx', ...)` без `select` (`runtime.py:1384`), по умолчанию `select=True` (`runtime.py:250`) выполняет `_rt().select` (`runtime.py:257`) | как у 1–2: слой вызывает `_report(select=False)` и выделяет findings только при `select_findings: true`; иначе как у 4 (сохранить до, восстановить после) |
+| 8 `agr_ucx_apply` | selection-mutating через `ucx_preview` | `ucx_apply` (`runtime.py:1402`) вызывает `ucx_preview` (`runtime.py:1417`), а тот выделяет узлы с findings (см. 7) | как у 4 (или как у 7 после перевода `ucx_preview` на `select=False`) |
+| 9 `agr_texel_readout` | selection-mutating by default | `_report('texel', ...)` без `select` (`runtime.py:1521`), по умолчанию `select=True` (`runtime.py:250`, `runtime.py:257`) | как у 7 |
 | 10 `agr_export_preview` | selection-preserving | файл не пишет | как у 3 |
 | 11 `agr_export_commit` | selection-mutating by design | `_write_max_fbx`: `rt.select(copies)` (`runtime.py:1791`) и `exportFile(..., selectedOnly=True)` (`runtime.py:1792`) | как у 4: сохранить до, восстановить после, проверка после восстановления |
 
@@ -139,9 +139,11 @@ rg -n -F -- "max_exec.py" C:/Users/artsafro/hermes_kanban/scripts
 |---|---|
 | `agr_cleanup_apply`, `handles: [12]`, выделение `{5}` | после вызова выделение `{5}`, ошибки `selection_changed` нет |
 | `agr_xview_check`, выделение `{5}` | выделение `{5}` |
+| `agr_texel_readout` (или `agr_ucx_preview`), `handles: [12]`, у узла 12 есть finding, выделение `{5}` | после вызова выделение `{5}`, ошибки `selection_changed` нет (через `_report(select=False)` либо восстановление) |
+| `agr_atlas_apply` (фаза 1), `handles: [12]`, выделение `{5}` | после вызова выделение `{5}`, ошибки нет |
 | инструмент без `select_findings`, оставивший выделение `{12}` при исходном `{5}` | ошибка `selection_changed` |
 
-Тесты выделения (три строки приёмки) от Q1 не зависят: Q1 (#816) касается только теста двух экземпляров Max (`docs/research/max-ultra-mcp-vs-agr-mcp-plan.md:184`).
+Тесты выделения (строки приёмки) от Q1 не зависят: Q1 (#816) касается только теста двух экземпляров Max (`docs/research/max-ultra-mcp-vs-agr-mcp-plan.md:184`).
 
 Общий вход Max (`handles` непустой, либо `scope: "selection"`):
 
