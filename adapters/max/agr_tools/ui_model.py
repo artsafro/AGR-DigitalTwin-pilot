@@ -12,7 +12,7 @@ import math
 import os
 from collections import namedtuple
 
-VERSION = '0.6.0'
+VERSION = '0.7.0'
 
 Action = namedtuple('Action', 'id tool icon section label tip reqs macro batch')
 
@@ -72,6 +72,43 @@ ACTIONS = (
     Action('geojson', 'geojson', 'geojson', 4, 'Проверка GeoJSON',
            'Проверяет паспорт GeoJSON проверяющим модулем twinqa (выбор файла).',
            ('VPM GeoJSON',), 'AGRToolsGeojson', False),
+    # 0.7.0 pre-delivery checks (#860): read-only, plan rows of version 0.7 (docs/plans/agr-tools-suite.json)
+    Action('census', 'census', 'census', 0, 'Перепись сцены',
+           'Перепись: классы объектов, материалы, карты, пропавшие файлы, bbox, инстансы (только чтение).',
+           ('NPM-2.1-1.b', 'VPM-2.1-1.c'), 'AGRToolsCensus', False),
+    Action('units', 'units', 'units', 0, 'Единицы и гамма',
+           'Проверяет System Unit = метры, масштаб 1, гамму файлов 1.0 (только чтение).',
+           ('NPM-1.2-1', 'VPM-1.2-1'), 'AGRToolsUnits', False),
+    Action('perimeter_drop', 'perimeter_drop', 'drop', 0, 'Опуск периметра ≥1 м',
+           'Нижняя точка ОКС/Ground не меньше 1 м ниже ±0.000 (AGR_ZERO_M) (только чтение).',
+           ('NPM-2.3-4', 'VPM-2.3-6', 'VPM-2.3-7.a'), 'AGRToolsPerimeterDrop', False),
+    Action('material_type', 'material_type', 'mattype', 0, 'Тип материала',
+           'Только Standard/Physical; Corona, VRay и другие — ошибка с именем материала (только чтение).',
+           ('NPM-2.4-1.a', 'NPM-2.4-1.b', 'VPM-2.4-1.a', 'VPM-2.4-1.b'), 'AGRToolsMaterialType', False),
+    Action('ucx_audit', 'ucx_audit', 'ucxaudit', 0, 'UCX: аудит сцены',
+           'Готовые UCX_: замкнутость, выпуклость, без материалов, имя, пересечения SAT, бюджет (только чтение).',
+           ('VPM-2.13-1.a', 'VPM-2.13-3', 'VPM-2.13-4.a', 'VPM-2.13-7.a'), 'AGRToolsUcxAudit', False),
+    Action('sets_count', 'sets_count', 'setscount', 0, 'Число текстурных наборов',
+           'Наборы на FBX: ОКС ≤40 (+1 кровля), Ground ≤20, GroundEl 1, Flora 1 (только чтение).',
+           ('NPM-2.1-4.c', 'NPM-2.1-5.b', 'NPM-2.5-11.a', 'NPM-2.5-11.b'), 'AGRToolsSetsCount', False),
+    Action('fbx_split', 'fbx_split', 'split', 0, 'Разделение FBX',
+           'ОКС ≤20 FBX, ≤20 объектов на FBX, Ground обязателен, нумерация сквозная (только чтение).',
+           ('NPM-2.1-2', 'NPM-2.1-4.a', 'NPM-2.2-1', 'VPM-2.1-3.a'), 'AGRToolsFbxSplit', False),
+    Action('glass', 'glass', 'glasscheck', 0, 'Стекло',
+           'Стекло на отдельном *Glass, ≤20 прозрачных, ≤7 материалов, без карт, 50 % (только чтение).',
+           ('NPM-2.7-2', 'NPM-2.4-2', 'VPM-2.8-1', 'VPM-2.8-2'), 'AGRToolsGlass', False),
+    Action('scene_hygiene', 'scene_hygiene', 'hygiene', 0, 'Лишнее в сцене',
+           'Камеры, свет, кости, анимация, группы и иерархия, пустые объекты, модификаторы (только чтение).',
+           ('NPM-2.1-3.a', 'NPM-2.1-3.b', 'VPM-2.3-1', 'VPM-2.3-2'), 'AGRToolsSceneHygiene', False),
+    Action('xform', 'xform', 'xform', 0, 'Трансформы сброшены',
+           'Несброшенный масштаб, поворот, зеркало и родители; сброс только на копиях (только чтение).',
+           ('NPM-2.3-14', 'VPM-2.3-18'), 'AGRToolsXform', False),
+    Action('zero_area', 'zero_area', 'zero', 0, 'Нулевые площади и рёбра',
+           'Грани нулевой площади, рёбра нулевой длины, изолированные вершины (только чтение).',
+           ('NPM-2.3-7.b', 'NPM-2.3-7.c', 'VPM-2.3-11.b', 'VPM-2.3-11.c'), 'AGRToolsZeroArea', False),
+    Action('preflight', 'preflight', 'preflight', 0, 'Предсдача: все проверки',
+           'Все проверки 0.7 одним нажатием, одна таблица; сцена не меняется.',
+           ('NPM-2.1-3.c', 'VPM-2.3-1'), 'AGRToolsPreflight', False),
 )
 BY_ID = {a.id: a for a in ACTIONS}
 BY_TOOL = {a.tool: a for a in ACTIONS}
@@ -334,6 +371,74 @@ def _accent_hue(hue, base_rgb, text_rgb):
 
 def theme_name(window_rgb):
     return 'Dark' if _lum(window_rgb) < 0.2 else 'Light'
+
+
+# ---- 0.7.0 tab rail: blocks of the plan (#853/#860) ---------------------------------------------------
+# Every panel action is one row of docs/plans/agr-tools-suite.json; the *_apply variants share the row of
+# their dry run. A test checks this map against the JSON (no action without a row, no row id twice).
+ROW = {'xview': 'qa.xview', 'matid': 'qa.matid', 'names': 'qa.names', 'tris': 'qa.tris', 'textures': 'tex.check',
+       'pivot': 'qa.pivot', 'nudge': 'udim.nudge', 'nudge_apply': 'udim.nudge', 'atlas': 'atlas.npm',
+       'atlas_apply': 'atlas.npm', 'texel': 'udim.texel', 'ucx': 'ucx.build', 'ucx_apply': 'ucx.build',
+       'cleanup': 'export.cleanup', 'cleanup_apply': 'export.cleanup', 'export': 'export.checked',
+       'geojson': 'qa.geojson', 'census': 'scene.census', 'units': 'scene.units',
+       'perimeter_drop': 'model.perimeter_drop', 'material_type': 'tex.material_type', 'ucx_audit': 'ucx.audit',
+       'sets_count': 'atlas.sets_count', 'fbx_split': 'qa.fbx_split', 'glass': 'qa.glass',
+       'preflight': 'qa.preflight', 'scene_hygiene': 'qa.scene_hygiene', 'xform': 'qa.xform',
+       'zero_area': 'qa.zero_area'}
+NEUTRAL_SAT = 0.06   # block 0 «Сцена» is a service block: almost grey (plan §7)
+BLOCK_SAT = 0.6
+
+
+def row_of(action_id):
+    if action_id not in ROW:
+        raise KeyError('action without a plan row: ' + repr(action_id))
+    return ROW[action_id]
+
+
+def block_accent(hue_deg, window_rgb, base_rgb, text_rgb):
+    """Block colour derived from the Max theme (plan §7): hue of the block, lightness moved away from the
+    background until the contrast is >= 3:1 against BOTH window and base; unreachable -> ValueError."""
+    if hue_deg is not None and (not isinstance(hue_deg, (int, float)) or isinstance(hue_deg, bool)
+                                or not math.isfinite(hue_deg) or not 0 <= hue_deg < 360):
+        raise ValueError('bad block hue: ' + repr(hue_deg))
+    for v in (*window_rgb, *base_rgb, *text_rgb):
+        if not isinstance(v, (int, float)) or isinstance(v, bool) or not math.isfinite(v) or not 0 <= v <= 255:
+            raise ValueError('bad palette colour')
+    hue = (hue_deg or 0.0) / 360.0
+    sat = NEUTRAL_SAT if hue_deg is None else BLOCK_SAT
+    dark = _lum(base_rgb) < _lum(text_rgb)
+    lightness = 0.62 if dark else 0.36
+    for _ in range(60):
+        rgb = tuple(int(round(c * 255)) for c in colorsys.hls_to_rgb(hue, lightness, sat))
+        if contrast(rgb, base_rgb) >= 3.0 and contrast(rgb, window_rgb) >= 3.0:
+            return rgb
+        lightness = min(0.97, lightness + 0.01) if dark else max(0.03, lightness - 0.01)
+    raise ValueError('no block accent with contrast >= 3 for this palette')
+
+
+def rail(suite_blocks, suite_rows, version=None):
+    """[(block, [done actions], [planned rows])] in the plan's block order (Artem's order, 0..9).
+    Done = a panel action exists for the row; planned rows show greyed with «в версии 0.x»."""
+    version = version or VERSION
+    have = {}
+    for a in ACTIONS:
+        have.setdefault(row_of(a.id), []).append(a)
+    by_id = {r['id']: r for r in suite_rows}
+    for rid in have:
+        if rid not in by_id:
+            raise KeyError('plan row missing from agr-tools-suite.json: ' + rid)
+    out = []
+    for b in suite_blocks:
+        done, planned = [], []
+        for r in suite_rows:
+            if r['block'] != b['id']:
+                continue
+            if r['id'] in have:
+                done += have[r['id']]
+            else:
+                planned.append(r)
+        out.append((b, done, planned))
+    return out
 
 
 # ---- MAXScript entry points (generated; tests compare them with the committed files) -------------

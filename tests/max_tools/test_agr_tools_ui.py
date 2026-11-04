@@ -29,6 +29,9 @@ icons = _load(ROOT / 'tools/max/agr_icons.py', 'agr_icons_ui')
 
 OLD_TOOLS = {'xview', 'cleanup', 'apply', 'matid', 'nudge', 'nudge_apply', 'atlas', 'atlas_apply', 'ucx',
              'ucx_apply', 'texel', 'export', 'names', 'tris', 'textures', 'pivot', 'geojson'}
+NEW_070 = {'census', 'units', 'perimeter_drop', 'material_type', 'ucx_audit', 'sets_count', 'fbx_split', 'glass',
+           'preflight', 'scene_hygiene', 'xform', 'zero_area'}  # 0.7.0 (#860)
+ALL_TOOLS = OLD_TOOLS | NEW_070
 
 
 def ui_branches():
@@ -37,16 +40,17 @@ def ui_branches():
     body = src[src.index('def ui(tool):'):src.index('_panel = None')]
     tools = set(re.findall(r"tool == '(\w+)'", body))
     tools |= set(re.findall(r"'(\w+)'", re.search(r"CHECKS_050 = \(([^)]*)\)", src).group(1)))
+    tools |= set(re.findall(r"'(\w+)'", re.search(r"CHECKS_070 = \(([^)]*)\)", src).group(1)))
     tools |= {'xview', 'matid'}
     return tools
 
 
 def test_every_existing_action_is_in_the_panel_once():
-    assert ui_branches() == OLD_TOOLS
-    assert {a.tool for a in m.ACTIONS} == OLD_TOOLS
-    assert len({a.id for a in m.ACTIONS}) == len(m.ACTIONS) == 17
-    assert len({a.macro for a in m.ACTIONS}) == 17
-    assert sum(len(acts) for _, acts in m.sections()) == 17
+    assert ui_branches() == ALL_TOOLS
+    assert {a.tool for a in m.ACTIONS} == ALL_TOOLS
+    assert len({a.id for a in m.ACTIONS}) == len(m.ACTIONS) == 29
+    assert len({a.macro for a in m.ACTIONS}) == 29
+    assert sum(len(acts) for _, acts in m.sections()) == 29
     assert [t for t, _ in m.sections()] == ['Проверки', 'UV и атласы', 'Коллизии UCX', 'Экспорт', 'GeoJSON']
     assert set(a.icon for a in m.ACTIONS) <= set(icons.names())
 
@@ -317,7 +321,7 @@ def test_every_action_has_a_macro_with_icon_and_menu_entry():
     assert 'agr_tools_runtime.panel()' in mcr and 'AGRToolsClassic' in mcr
     assert '#cuiRegisterMenus' in menu and 'id:#agrTools' in menu and 'removeScripts id:#agrTools' in menu
     ids = re.findall(r'"([0-9a-f]{8}-[0-9a-f-]{27})"', menu)
-    assert len(set(ids)) == 1 + 1 + 5 * 2 + 17 and ids.count(m.MENU_ID) == 2  # create + presence check
+    assert len(set(ids)) == 1 + 1 + 5 * 2 + 29 and ids.count(m.MENU_ID) == 2  # create + presence check
 
 
 MS_FILES = ('agr_tools.mcr', 'menu.ms', 'startup.ms', 'install.ms')
@@ -351,7 +355,7 @@ def test_maxscript_pitfalls_no_tooltip_reads_and_no_undeclared_assignments():
 # ---- bundle -------------------------------------------------------------------------------------------
 def test_icon_entries_svg_from_generator_and_png_from_dir(synthetic_icon_pngs):
     got = builder.icon_entries()
-    assert set(got) == set(builder.icon_files()) and len(got) == 2 * 23 * 5
+    assert set(got) == set(builder.icon_files()) and len(got) == 2 * 36 * 5
     for rel, data in got.items():
         theme, _, fname = rel.split('/')
         if rel.endswith('.svg'):
@@ -362,9 +366,9 @@ def test_icon_entries_svg_from_generator_and_png_from_dir(synthetic_icon_pngs):
 
 def test_package_contents_is_valid_and_complete():
     root = ET.fromstring(builder.package_contents())
-    assert root.tag == 'ApplicationPackage' and root.get('AppVersion') == '0.6.0'
+    assert root.tag == 'ApplicationPackage' and root.get('AppVersion') == '0.7.0'
     assert root.get('UpgradeCode') == '{BA2C2E6E-54F9-402E-8875-3D616C9030FD}'
-    assert root.get('ProductCode') == m.product_code('0.6.0') != m.product_code('0.5.0')
+    assert root.get('ProductCode') == m.product_code('0.7.0') != m.product_code('0.6.0')
     descs = {c.get('Description'): c.find('ComponentEntry').get('ModuleName') for c in root.iter('Components')}
     assert descs == {'macroscripts parts': './Contents/agr_tools/agr_tools.mcr',
                      'post-start-up scripts parts': './Contents/agr_tools/startup.ms',

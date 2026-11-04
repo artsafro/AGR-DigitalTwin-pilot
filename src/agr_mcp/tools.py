@@ -157,6 +157,23 @@ def _check_finite(value, where="dump"):
             _check_finite(v, f"{where}[{i}]")
 
 
+# 0.7.0 pre-delivery checks (#860): agr_<block>_<name> per docs/plans/agr-tools-suite.json, all read-only.
+CHECKS_070 = (
+    ("agr_scene_census", "scene census: classes, materials, maps, missing files, bbox, instances"),
+    ("agr_scene_units", "system unit metres, scale 1, file gamma 1.0"),
+    ("agr_model_perimeter_drop", "lowest point of OKS/Ground >= 1 m below AGR_ZERO_M"),
+    ("agr_tex_material_type", "only Standard/Physical materials"),
+    ("agr_ucx_audit", "existing UCX_: closed, convex, no material, name, SAT intersections, budget"),
+    ("agr_atlas_sets_count", "texture sets per FBX: OKS <= 40 (+1 roof), Ground <= 20, GroundEl 1, Flora 1"),
+    ("agr_qa_fbx_split", "FBX split: <= 20 OKS FBX, <= 20 objects per FBX, Ground present, numbering"),
+    ("agr_qa_glass", "glass on *Glass meshes, <= 20 objects, <= 7 materials, no maps, opacity 0.5"),
+    ("agr_qa_preflight", "all 0.7 object checks in one report"),
+    ("agr_qa_scene_hygiene", "non-mesh objects, animation, hierarchy, groups, empty meshes, modifiers"),
+    ("agr_qa_xform", "unreset scale/rotation/mirror and parents"),
+    ("agr_qa_zero_area", "zero-area faces, zero-length edges, isolated vertices"),
+)
+
+
 def catalog(unsafe: bool = False, max_transport=None) -> dict[str, Spec]:
     specs = [
         Spec("agr_xview_check", "AGR Tools runtime.xview in the pinned open 3ds Max (selection-modifying: the "
@@ -197,6 +214,11 @@ def catalog(unsafe: bool = False, max_transport=None) -> dict[str, Spec]:
                                           "required": ["node", "vertices_only_max", "vertices_only_ours"]}},
              h_xview_parity, _const("offline")),
     ]
+    for name, what in CHECKS_070:
+        specs.append(Spec(name, "AGR Tools 0.7.0 runtime.checks_070 '{}' in the pinned open 3ds Max: {} (read-only; "
+                          "selects nodes with findings, geometry and files untouched; needs runtime 0.7.0)."
+                          .format(name.split("_", 2)[2] if name != "agr_ucx_audit" else "ucx_audit", what),
+                          MAX_IN, MAX_OUT, _max_tool(name, max_transport), _const("max-live")))
     if unsafe:
         def h_exec(args: dict):
             raw = (max_transport or max_pipe.pipe_transport)(args["code"], float(args.get("timeout", 120)))
@@ -211,5 +233,5 @@ def catalog(unsafe: bool = False, max_transport=None) -> dict[str, Spec]:
     return {s.name: s for s in specs}
 
 
-PHASE0 = ("agr_xview_check", "agr_matid_check", "agr_texel_readout", "agr_fbx_readback", "agr_package_validate",
+PHASE0 = tuple(n for n, _ in CHECKS_070) + ("agr_xview_check", "agr_matid_check", "agr_texel_readout", "agr_fbx_readback", "agr_package_validate",
           "agr_mesh_names", "agr_geojson_check", "agr_xview_parity")

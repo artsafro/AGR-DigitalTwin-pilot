@@ -5,7 +5,7 @@ Native xView uses 0.002 m vertices and 0.005 m faces.
 import json
 import sys
 
-VERSION = "0.6.0"
+VERSION = "0.7.0"
 CODES = {'xview': {'overlap_vertices', 'overlap_faces'},
          'matid': {'udim_id', 'empty_id', 'empty_slot', 'missing_material'},
          'cleanup': {'remove_custom_attributes', 'clear_user_defined_lines',
@@ -18,6 +18,8 @@ CODES = {'xview': {'overlap_vertices', 'overlap_faces'},
                     'out_of_range', 'overlap_vertices', 'overlap_faces', 'ucx_audit',
                     'ucx_unmeasurable', 'existing_target', 'readback_mismatch'}}
 CHECKS_050 = ('names', 'tris', 'textures', 'pivot', 'geojson')  # 0.5.0 diagnostics, checks_core.py
+CHECKS_070 = ('census', 'units', 'perimeter_drop', 'material_type', 'ucx_audit', 'sets_count', 'fbx_split',
+              'glass', 'preflight', 'scene_hygiene', 'xform', 'zero_area')  # 0.7.0 checks, suite_core.py
 EXPORT_PLAN = {'target', 'report', 'units', 'axis', 'unit_scale_factor', 'object_count',
                'triangle_count', 'material_count', 'object_names', 'triangles_by_name',
                'gates', 'dropped', 'texel', 'readback', 'stopped', 'digest'}
@@ -161,6 +163,8 @@ def _validate_plan(tool, plan):
 def parse_report(text):
     """Strict complete report; derive status rather than trusting a claimed pass."""
     r = json.loads(text, object_pairs_hook=_unique, parse_constant=_reject)
+    if isinstance(r, dict) and r.get('tool') in CHECKS_070:
+        return _suite_core().validate_report(r)
     checks = _checks_core() if isinstance(r, dict) and r.get('tool') in CHECKS_050 else None
     codes = checks.CODES if checks else CODES
     if not isinstance(r, dict) or 'tool' not in r or not isinstance(r.get('tool'), str) or r['tool'] not in codes:
@@ -220,6 +224,73 @@ def checks_050(tool, nodes=None, path=None):
     import types
     glue = _load_core('checks_max.py', 'agr_tools_checks_max')
     return glue.run(types.SimpleNamespace(**globals()), _checks_core(), tool, nodes, path)
+
+
+def _suite_core():
+    _checks_core()  # suite_core imports it as agr_tools_checks_core
+    return _load_core('suite_core.py', 'agr_tools_suite_core')
+
+
+def checks_070(tool, nodes=None, select=True):
+    """0.7.0 read-only pre-delivery checks (suite_max.py reads the scene, suite_core.py judges)."""
+    import types
+    glue = _load_core('checks_max.py', 'agr_tools_checks_max')
+    suite_max = _load_core('suite_max.py', 'agr_tools_suite_max')
+    return suite_max.run(types.SimpleNamespace(**globals()), glue, _suite_core(), tool, nodes, select)
+
+
+def suite_path():
+    """The plan master table shipped in the package (agr-tools-suite.json), else the repo copy."""
+    from pathlib import Path
+    here = Path(__file__).resolve().parent
+    for p in (here / 'agr-tools-suite.json', here.parents[2] / 'docs' / 'plans' / 'agr-tools-suite.json'):
+        if p.is_file():
+            return str(p)
+    raise ValueError('agr-tools-suite.json not found next to runtime.py')
+
+
+def reports_dir(scene=None):
+    """Per-scene folder of the last reports (for the «Путь» live status); outside the scene folder."""
+    import hashlib
+    import os
+    if scene is None:
+        rt = _rt()
+        scene = os.path.join(str(rt.maxFilePath), str(rt.maxFileName)) if str(rt.maxFileName) else '<untitled>'
+    base = os.environ.get('LOCALAPPDATA') or os.path.expanduser('~')
+    key = hashlib.sha1(os.path.normcase(os.path.abspath(scene)).encode('utf-8')).hexdigest()[:16]         if scene != '<untitled>' else 'untitled'
+    return os.path.join(base, 'AGRTools', 'reports', key)
+
+
+def remember(report, folder=None):
+    """Keep the last report of each tool for this scene; the write goes to a .partial then replaces."""
+    import os
+    folder = folder or reports_dir()
+    os.makedirs(folder, exist_ok=True)
+    target = os.path.join(folder, report['tool'] + '.json')
+    tmp = target + '.partial'
+    with open(tmp, 'w', encoding='utf-8') as f:
+        json.dump(report, f, ensure_ascii=False, allow_nan=False)
+    os.replace(tmp, target)
+    return target
+
+
+def last_reports(folder=None):
+    """{tool: report} of this scene; unreadable or invalid files are skipped (they count as not run)."""
+    import os
+    folder = folder or reports_dir()
+    out = {}
+    if not os.path.isdir(folder):
+        return out
+    for name in sorted(os.listdir(folder)):
+        if not name.endswith('.json'):
+            continue
+        try:
+            with open(os.path.join(folder, name), encoding='utf-8') as f:
+                rep_ = parse_report(f.read())
+        except Exception:  # noqa: BLE001 - a broken file is not a pass
+            continue
+        out[rep_['tool']] = rep_
+    return out
 
 
 def _targets(nodes):
@@ -1905,11 +1976,17 @@ def ui(tool):
                 _export_key = None
     elif tool in CHECKS_050:
         report = checks_050(tool)
+    elif tool in CHECKS_070:
+        report = checks_070(tool)
     elif tool in ('xview', 'matid'):
         report = {'xview': xview, 'matid': matid}[tool]()
     else:
         raise ValueError('unsupported tool: ' + str(tool))
     print(json.dumps(report, ensure_ascii=True, allow_nan=False))
+    try:
+        remember(report)
+    except Exception as exc:  # noqa: BLE001 - the report is printed; the live status just misses it
+        print('AGR_TOOLS_REPORT_NOT_KEPT ' + repr(exc))
     return report
 
 
@@ -1930,6 +2007,7 @@ def panel():
             _panel = None
     _load_core('ui_qt.py', 'agr_tools_ui_qt')
     _load_core('ui_model.py', 'agr_tools_ui_model')
+    _load_core('roadmap.py', 'agr_tools_roadmap')
     ui_panel = _load_core('ui_panel.py', 'agr_tools_ui_panel')
     ui_max = _load_core('ui_max.py', 'agr_tools_ui_max')
     icon_root = str(Path(__file__).resolve().parent / 'icons')

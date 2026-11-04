@@ -48,8 +48,8 @@ class MaxBackend:
         return fn(chunk)
 
     def run_tool(self, tool, scope_all):
-        if scope_all:
-            rt.select(rt.geometry)
+        if scope_all:  # 0.7 checks see every object (hygiene must find cameras, lights, helpers)
+            rt.select(rt.objects if tool in self.agr.CHECKS_070 else rt.geometry)
         return self.agr.ui(tool)
 
     def _node(self, handle):
@@ -87,6 +87,15 @@ class MaxBackend:
     # ---- log / files --------------------------------------------------------------------
     def log(self, report):
         print(json.dumps(report, ensure_ascii=True, allow_nan=False))
+        self.agr.remember(report)
+
+    # ---- «Путь» (0.7.0) -----------------------------------------------------------------
+    def suite(self):
+        import agr_tools_roadmap as roadmap
+        return roadmap.load_file(self.agr.suite_path())
+
+    def last_reports(self):
+        return self.agr.last_reports()
 
     def log_error(self, tool, exc):
         print('AGR_TOOLS_ERROR tool={} {}'.format(tool, ''.join(traceback.format_exception_only(type(exc), exc)).strip()))

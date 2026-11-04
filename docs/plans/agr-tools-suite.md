@@ -14,7 +14,7 @@ issue) после «да» Артёма.
 
 ## 1. Что получилось (кратко)
 
-- 90 кнопок: готово 13, взять 16, взять + исправить 27, слить дубли 18, новое 16; P1 40 / P2 32 / P3 18; в MCP 77; только чтение/выделение 38; шум 42; ссылок на строки GeoAGR.ms проверено 29.
+- 90 кнопок: готово 13, взять 16, взять + исправить 27, слить дубли 18, новое 16; P1 40 / P2 32 / P3 18; в MCP 77; только чтение/выделение 39; шум 42; ссылок на строки GeoAGR.ms проверено 29.
 - 10 блоков: восемь блоков из списка Артёма в его порядке и ещё два, которых требуют доказательства:
   **0 Сцена и источник** и **9 Освещение ВПМ** (причины в таблице блоков).
 - Каждая кнопка — функция одного ядра (`checks_core.py` / `runtime.py`), у которой два фронта: Qt-панель (#808) и
@@ -98,7 +98,7 @@ GeoAGR, ни в командных скриптах, но его требует 
 | Блок | Кнопка (id) | Что делает | Источник | Вердикт | Ценность (доказательство) | Требования | Режим | MCP | Приор. | Версия |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 0 Сцена и источник | Перепись сцены (`scene.census`) | JSON: объекты, Multi/Sub, карты, пропавшие файлы, bbox, units, инстансы | pilot: jobs/TEC26-OKS/census scripts; zavod agr_inspect_max.ms (ZAVOD review §4) | новое: generic headless census adapter; the retro names it an engine candidate (M) | TEC26: native census of 3 scenes, 60.4 min intake (docs/research/job-retro-tec26-oks-pr570.md) | NPM-2.1-1.b VPM-2.1-1.c | чтение | yes | P1 | 0.7 |
-| 0 Сцена и источник | Единицы и гамма (`scene.units`) | Проверяет System Unit = метры, 1 unit = 1 m, гамму 2.2/1.0; предлагает исправить | GeoAGR: System Setup btn_set_meters GeoAGR.ms:12547, btn_set_alpha :12554 | взять + исправить: only check by default; Set Meters does not rescale geometry (playbook caveat); fixes D5 at the source | GeoAGR T06-02: texel 2048 px/m shown as 20.48 in a cm scene (D5) | NPM-1.2-1 VPM-1.2-1 | undo | yes | P1 | 0.7 |
+| 0 Сцена и источник | Единицы и гамма (`scene.units`) | Проверяет System Unit = метры, 1 unit = 1 m, гамму 2.2/1.0; предлагает исправить | GeoAGR: System Setup btn_set_meters GeoAGR.ms:12547, btn_set_alpha :12554 | взять + исправить: only check by default; Set Meters does not rescale geometry (playbook caveat); fixes D5 at the source | GeoAGR T06-02: texel 2048 px/m shown as 20.48 in a cm scene (D5) | NPM-1.2-1 VPM-1.2-1 | чтение | yes | P1 | 0.7 |
 | 0 Сцена и источник | Пропавшие карты (`scene.missing_maps`) | Список битмапов с несуществующим путём и кандидаты для relink (без переименования файлов) | GeoAGR: Project Map btn_count_map GeoAGR.ms:15548; Collect Asset (third-party, read only part) | взять + исправить: read-only list; GeoAGR Project Map deletes/renames files (README §6) | TEC26: KPP folder had no ERM, railing 4096 not 2048 (jobs/TEC26-OKS/STATE.md) | NPM-2.1-1.b VPM-2.4-2 | чтение | yes | P2 | 0.8 |
 | 0 Сцена и источник | Класс источника (`scene.source_class`) | Связные части, доля крупнейшей → оболочка / панели / сетка; до выбора маршрута | new | новое: read-only pre-check before any builder | TOW02: ~1.5 h dead end, 5 561 parts fed to a shell engine (job-retro-vyatskaya-tow02-pr392.md) | - | чтение | yes | P2 | 1.0 |
 | 1 Моделирование | Опуск периметра ≥1 м (`model.perimeter_drop`) | Проверяет, что полигоны по периметру ОКС/Ground опущены ниже ±0.000 не меньше чем на 1 м | new | новое: GeoAGR gap #10: no live check | TEC26: Artem «полигоны по периметру должны быть утоплены минимум на метр» (jobs/TEC26-OKS/STATE.md) | NPM-2.3-4 VPM-2.3-6 VPM-2.3-7.a | чтение | yes | P1 | 0.7 |
@@ -244,8 +244,8 @@ GeoAGR, ни в командных скриптах, но его требует 
 | 0.3 | UCX-генератор + тексель | done | 2 | 2/0/0 | - | #728 |
 | 0.4 | Экспорт с проверкой (ворота → FBX → readback) | done | 1 | 1/0/0 | - | #731 |
 | 0.5 | Имена, треугольники по FBX, текстуры всех объектов, пивот, GeoJSON | done | 5 | 5/0/0 | - | #804 |
-| 0.6 | Qt-панель: док, иконки Dark/Light, прогресс/отмена, меню, пакет | in work | 0 | 0/0/0 | - | #808 |
-| 0.7 | Предсдача: недостающие проверки (только чтение) + блоковые цвета UI + перепись сцены | planned | 12 | 12/0/0 | L: ~2 дня агента (11 проверок на готовых twinqa-модулях, без правок сцены) | new |
+| 0.6 | Qt-панель: док, иконки Dark/Light, прогресс/отмена, меню, пакет | done | 0 | 0/0/0 | - | #808 |
+| 0.7 | Предсдача: недостающие проверки (только чтение) + блоковые цвета UI + перепись сцены | in work | 12 | 12/0/0 | L: ~2 дня агента (11 проверок на готовых twinqa-модулях, без правок сцены) | #860 |
 | 0.8 | Сдача: имена, PNG, ID→UDIM, триангуляция, пивот, GeoJSON, ZIP, пакет | planned | 13 | 10/3/0 | L: ~3 дня (правки только на копиях/новых файлах, каждая с preview) | new |
 | 0.9 | Замены и расстановка, Flora/МАФ, покраска по легенде, сравнение с фасадом | planned | 16 | 5/11/0 | L: ~3 дня (перенос job-скриптов Vatutino/TEC26 в ядро) | new |
 | 1.0 | Моделирование, UDIM/UCX-инструменты, свет ВПМ (P2) | planned | 18 | 0/18/0 | XL: ~4–5 дней; можно разрезать на 1.0a модель+рельеф и 1.0b UCX+UDIM+свет | new |
