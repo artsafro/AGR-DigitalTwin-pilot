@@ -30,7 +30,7 @@ sys.path.insert(0, str(_SCRIPTS))
 
 import finish_map  # noqa: E402
 import qa_packages  # noqa: E402
-from dt_ai.ops.inv_xview import mesh_report  # noqa: E402
+from dt_ai.ops import inv_xview  # noqa: E402
 
 SQ = [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [0.0, 1.0, 0.0]]
 SHIFT = [0.0, 0.0, 0.0]
@@ -38,24 +38,44 @@ SPEC = {"source_ids": {"1": {"finish": "A"}}, "zero_m": 0.0}
 TRIS = [[0, 1, 2], [0, 2, 3]]
 
 
+def _checked(fn, *args):
+    """Deep-copy every argument and compare in finally, including when fn raises."""
+    saved = copy.deepcopy(args)
+    try:
+        return fn(*args)
+    finally:
+        assert args == saved
+
+
 def _finish(src_f, out_f):
-    owners = qa_packages.match_source_faces(SQ, src_f, SQ, out_f, SHIFT)
-    t = qa_packages.tri_areas(SQ, out_f)
-    p = qa_packages.poly_areas(SQ, src_f)
-    rep = qa_packages.source_finish_report(["A"], src_f, owners, ["A"] * len(owners), t, p)
+    owners = _checked(qa_packages.match_source_faces, SQ, src_f, SQ, out_f, SHIFT)
+    t = _checked(qa_packages.tri_areas, SQ, out_f)
+    p = _checked(qa_packages.poly_areas, SQ, src_f)
+    expected = ["A"]
+    delivered = ["A"] * len(owners)
+    rep = _checked(qa_packages.source_finish_report, expected, src_f, owners, delivered, t, p)
     return owners, t, p, rep
 
 
 def _assign(src_f):
-    return finish_map.assign_finishes(SQ, src_f, [1], SPEC)
+    return _checked(finish_map.assign_finishes, SQ, src_f, [1], SPEC)
+
+
+def _mesh(vertices, faces):
+    return _checked(inv_xview.mesh_report, vertices, faces, "VPM")
+
+
+def _poly(vertices, faces):
+    return _checked(qa_packages._poly_geo, vertices, faces)
 
 
 def _frozen(fn, src_f, out_f):
     v, s, o = copy.deepcopy(SQ), copy.deepcopy(src_f), copy.deepcopy(out_f)
+    shift, spec = copy.deepcopy(SHIFT), copy.deepcopy(SPEC)
     try:
         return fn(src_f, out_f)
     finally:
-        assert (SQ, src_f, out_f) == (v, s, o)
+        assert (SQ, src_f, out_f, SHIFT, SPEC) == (v, s, o, shift, spec)
 
 
 def test_control():
@@ -64,7 +84,7 @@ def test_control():
     assert t == [0.5, 0.5] and p == [1.0]
     assert rep["ok"] is True and rep["source_polygons_not_covered"] == 0
     assert _assign([[0, 1, 2, 3]]) == ["A"]
-    assert mesh_report(SQ, TRIS, profile="VPM")["passed"] is True
+    assert _mesh(SQ, TRIS)["passed"] is True
 
 
 def test_negative_source_wraps():
@@ -100,10 +120,10 @@ def test_lone_quad():
     out = [[0, 1, 2, 3]]
     owners, t, p, rep = _frozen(_finish, [[0, 1, 2, 3]], out)
     assert t == [0.5] and p == [1.0]
-    assert qa_packages._poly_geo(SQ, out)[0]["area"] == pytest.approx(1.0)
+    assert _poly(SQ, out)[0]["area"] == pytest.approx(1.0)
     assert owners == [(0,)]
     assert rep["ok"] is False and rep["source_polygons_not_covered"] == 1
-    assert mesh_report(SQ, out, profile="VPM")["passed"] is True
+    assert _mesh(SQ, out)["passed"] is True
 
 
 def test_quad_plus_half():
@@ -113,12 +133,12 @@ def test_quad_plus_half():
     assert t == [0.5, 0.5]
     assert owners == [(0,), (0,)]
     assert rep["ok"] is True
-    assert mesh_report(SQ, out, profile="VPM")["passed"] is False
+    assert _mesh(SQ, out)["passed"] is False
 
 
 def test_quad_plus_half_whole_face_areas():
     out = [[0, 1, 2, 3], [0, 2, 3]]
-    areas = [qa_packages._poly_geo(SQ, [f])[0]["area"] for f in out]
+    areas = [_poly(SQ, [f])[0]["area"] for f in out]
     assert areas == pytest.approx([1.0, 0.5])
 
 
@@ -136,7 +156,129 @@ def test_quad_plus_half_whole_face_areas():
     ],
 )
 def test_delivered_bad_faces_raise(faces, msg):
-    before = copy.deepcopy(faces)
     with pytest.raises(ValueError, match=msg):
-        mesh_report(SQ, faces, profile="VPM")
-    assert faces == before
+        _mesh(SQ, faces)
+
+
+def test_spec_mutation_fails_immutability(monkeypatch):
+    """A wrapper that writes spec after assign_finishes must fail the input snapshot."""
+    original = finish_map.assign_finishes
+
+    def wrapped(vertices, faces, mat_ids, spec):
+        result = original(vertices, faces, mat_ids, spec)
+        spec["reviewer_unexpected_mutation"] = True
+        return result
+
+    monkeypatch.setattr(finish_map, "assign_finishes", wrapped)
+    saved = copy.deepcopy(SPEC)
+    try:
+        with pytest.raises(AssertionError):
+            _assign([[0, 1, 2, 3]])
+    finally:
+        SPEC.clear()
+        SPEC.update(saved)
+
+
+def test_material_id_mutation_fails_immutability(monkeypatch):
+    original = finish_map.assign_finishes
+
+    def wrapped(vertices, faces, mat_ids, spec):
+        result = original(vertices, faces, mat_ids, spec)
+        mat_ids.append(9)
+        return result
+
+    monkeypatch.setattr(finish_map, "assign_finishes", wrapped)
+    with pytest.raises(AssertionError):
+        _assign([[0, 1, 2, 3]])
+
+
+def test_vertex_mutation_fails_immutability(monkeypatch):
+    original = inv_xview.mesh_report
+
+    def wrapped(vertices, faces, profile="NPM", tol=None, part="mesh"):
+        result = original(vertices, faces, profile, tol, part)
+        vertices[0][0] = 99.0
+        return result
+
+    monkeypatch.setattr(inv_xview, "mesh_report", wrapped)
+    saved = copy.deepcopy(SQ)
+    try:
+        with pytest.raises(AssertionError):
+            _mesh(SQ, TRIS)
+    finally:
+        SQ[:] = saved
+
+
+def test_shift_mutation_fails_immutability(monkeypatch):
+    original = qa_packages.match_source_faces
+
+    def wrapped(src_v, src_faces, out_v, out_faces, shift, tol=2e-4):
+        result = original(src_v, src_faces, out_v, out_faces, shift, tol)
+        shift[0] = 1.0
+        return result
+
+    monkeypatch.setattr(qa_packages, "match_source_faces", wrapped)
+    saved = copy.deepcopy(SHIFT)
+    try:
+        with pytest.raises(AssertionError):
+            _finish([[0, 1, 2, 3]], TRIS)
+    finally:
+        SHIFT[:] = saved
+
+
+def test_report_input_mutation_fails_immutability(monkeypatch):
+    original = qa_packages.source_finish_report
+
+    def wrapped(expected, src_faces, owners, delivered, t_areas=None, p_areas=None):
+        result = original(expected, src_faces, owners, delivered, t_areas, p_areas)
+        expected.append("mutated")
+        return result
+
+    monkeypatch.setattr(qa_packages, "source_finish_report", wrapped)
+    with pytest.raises(AssertionError):
+        _finish([[0, 1, 2, 3]], TRIS)
+
+
+def test_mutation_before_exception_fails_immutability(monkeypatch):
+    """A helper that mutates its input and then raises must surface the immutability failure."""
+    def wrapped(vertices, faces, mat_ids, spec):
+        spec["reviewer_unexpected_mutation"] = True
+        raise ValueError("boom")
+
+    monkeypatch.setattr(finish_map, "assign_finishes", wrapped)
+    saved = copy.deepcopy(SPEC)
+    try:
+        with pytest.raises(AssertionError):
+            _assign([[0, 1, 2, 3]])
+    finally:
+        SPEC.clear()
+        SPEC.update(saved)
+
+
+def test_clean_exception_propagates_unchanged(monkeypatch):
+    def wrapped(vertices, faces, mat_ids, spec):
+        raise ValueError("boom")
+
+    monkeypatch.setattr(finish_map, "assign_finishes", wrapped)
+    with pytest.raises(ValueError, match="boom"):
+        _assign([[0, 1, 2, 3]])
+
+
+def test_repeat_and_reset_after_mutation(monkeypatch):
+    """After a rejected mutation is reset, unmodified helpers pass again, repeatedly."""
+    first = _assign([[0, 1, 2, 3]])
+    original = finish_map.assign_finishes
+
+    def wrapped(vertices, faces, mat_ids, spec):
+        spec["x"] = 1
+        return original(vertices, faces, mat_ids, spec)
+
+    saved = copy.deepcopy(SPEC)
+    with monkeypatch.context() as m:
+        m.setattr(finish_map, "assign_finishes", wrapped)
+        with pytest.raises(AssertionError):
+            _assign([[0, 1, 2, 3]])
+    SPEC.clear()
+    SPEC.update(saved)
+    assert _assign([[0, 1, 2, 3]]) == first
+    assert _assign([[0, 1, 2, 3]]) == first

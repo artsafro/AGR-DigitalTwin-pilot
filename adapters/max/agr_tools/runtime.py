@@ -525,20 +525,23 @@ def _as_indices(face):
 
 
 def _edit_target(n):
+    """(api, target, is_mesh) for base-object channel-1 edits; other classes are named errors."""
     rt = _rt()
     kind = rt.classOf(n.baseObject)
     if kind == rt.Editable_Poly:
-        return rt.polyop, n
+        return rt.polyop, n, False
     if kind == rt.Editable_Mesh:
-        return rt.meshop, n.baseObject
-    raise ValueError('unsupported geometry: ' + str(n.name))
+        # meshop has no getFaceVerts/getFaceMatID: triangles come from the global
+        # getFace/getFaceMatID, map faces are Point3 triangles.
+        return rt.meshop, n.baseObject, True
+    raise ValueError('unsupported geometry: {} ({})'.format(n.name, kind))
 
 
 def _read_channel(n):
     """Base-object channel 1. Missing, empty and non-finite data are errors."""
     import math
     rt = _rt()
-    api, target = _edit_target(n)
+    api, target, is_mesh = _edit_target(n)
     if not api.getMapSupport(target, 1):
         raise ValueError('missing UV channel 1: ' + str(n.name))
     nv = int(api.getNumVerts(target))
@@ -548,7 +551,8 @@ def _read_channel(n):
         raise ValueError('empty mesh: ' + str(n.name))
     vertices, uvs, faces, fuv, ids = [], [], [], [], []
     for i in range(1, nv + 1):
-        p = api.getVert(target, i)
+        # polyop.getVert(node) is world space; meshop.getVert(base) needs node: for world space.
+        p = api.getVert(target, i, node=n) if is_mesh else api.getVert(target, i)
         point = (float(p.x), float(p.y), float(p.z))
         if not all(math.isfinite(c) for c in point):
             raise ValueError('non-finite vertex: ' + str(n.name))
@@ -560,21 +564,36 @@ def _read_channel(n):
             raise ValueError('non-finite UV: ' + str(n.name))
         uvs.append(point)
     for i in range(1, nf + 1):
-        faces.append([int(v) - 1 for v in _as_indices(api.getFaceVerts(target, i))])
+        if is_mesh:
+            # getFace/getFaceMatID take a TriMesh, not the Editable_Mesh base object.
+            face = _as_indices(rt.getFace(target.mesh, i))
+            mid = rt.getFaceMatID(target.mesh, i)
+        else:
+            face = _as_indices(api.getFaceVerts(target, i))
+            mid = api.getFaceMatID(target, i)
+        faces.append([int(v) - 1 for v in face])
         fuv.append([int(v) - 1 for v in _as_indices(api.getMapFace(target, 1, i))])
-        ids.append(int(api.getFaceMatID(target, i)))
+        ids.append(int(mid))
     return {'vertices': vertices, 'uvs': uvs, 'faces': faces, 'face_uvs': fuv, 'ids': ids}
 
 
 def _write_channel(n, uvs, face_uvs):
     rt = _rt()
-    api, target = _edit_target(n)
+    api, target, is_mesh = _edit_target(n)
+    if is_mesh and any(len(indices) != 3 for indices in face_uvs):
+        raise ValueError('non-triangle UV face: ' + str(n.name))
     api.setMapSupport(target, 1, True)
     api.setNumMapVerts(target, 1, len(uvs))
     for i, (u, v) in enumerate(uvs, 1):
         api.setMapVert(target, 1, i, rt.point3(float(u), float(v), 0.0))
     for face, indices in enumerate(face_uvs, 1):
-        api.setMapFace(target, 1, face, _max_array([i + 1 for i in indices]))
+        if is_mesh:
+            a, b, c = (float(i + 1) for i in indices)
+            api.setMapFace(target, 1, face, rt.point3(a, b, c))
+        else:
+            api.setMapFace(target, 1, face, _max_array([i + 1 for i in indices]))
+    if is_mesh:
+        rt.update(n)
 
 
 def _prop(n, key):
