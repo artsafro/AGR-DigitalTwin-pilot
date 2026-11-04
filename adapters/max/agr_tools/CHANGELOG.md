@@ -22,6 +22,9 @@ its `GeoAGR.ms:<line>` and its changes.
   where GeoAGR tested the array against undefined. The checks are size, square shape, placeholders,
   alpha, 8 bits per channel (from the PNG header), file size, the UDIM set and UV padding. Padding is
   NPM 8 px and VPM 16/32 px for 2048/4096 maps; GeoAGR's 16/32 px branch was commented out.
+  Padding is measured per texture atlas: each face goes to its matID's sub-material maps, and the
+  islands of all objects of one FBX that share an atlas are measured together (per UDIM tile). An
+  unmapped matID is `tex_unmeasurable`; a sub-material without maps is `tex_missing`.
 - **Pivot check** (`pivot`): VPM-2.9-4.b requires pivot Z = 0 within 1 mm. VPM-2.9-5 requires every
   pivot of one FBX to coincide within 1 mm. UCX pivots are free (VPM-2.9-4.c).
 - **GeoJSON check** (`geojson`): runs the pilot `twinqa.geojson` checker on a chosen `.geojson`

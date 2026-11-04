@@ -635,3 +635,32 @@ def test_checks_050_works_when_loaded_like_bootstrap():
     mod._load_core = lambda name, module: Glue if name == 'checks_max.py' else core
     assert mod.checks_050('pivot', ['n'], None) == {'tool': 'pivot'}
     assert seen['agr']._prop is mod._prop and seen['agr']._report is mod._report
+
+
+def test_padding_per_atlas_bruteforce_probe():
+    """Probe (review r1 invariant): an object fails padding iff one of its squares is closer than
+    8 px (NPM, 1024) to another square OF THE SAME ATLAS AND FBX, whatever object or slot holds it."""
+    import random
+    rnd = random.Random(8040)
+    atlas = {a: (f'T_P_Main_d_{a}.png', png(1024, 1024)) for a in (1, 2)}
+    fbxs = (NPM_FBX, 'C:/o/0001_Tverskaya_12_02.fbx')
+    for _ in range(300):
+        rows, squares = [], []  # squares: (key, fbx, atlas, x0)
+        for key in range(1, rnd.randint(2, 4)):
+            fbx = rnd.choice(fbxs)
+            slots = {mid: [atlas[a]] for mid, a in enumerate(rnd.sample((1, 2), rnd.randint(1, 2)), start=1)}
+            uvs, faces = [], []
+            for k in range(rnd.randint(1, 2)):
+                mid = rnd.choice(list(slots))
+                x0 = rnd.choice((0.0, 0.25, 0.5, 0.75)) + rnd.choice((0.0, 4, 9)) / 1024
+                b = len(uvs)
+                uvs += [(x0, 0.0), (x0 + 0.2, 0.0), (x0 + 0.2, 0.2), (x0, 0.2)]
+                faces += [(2 * k + 1, [b, b + 1, b + 2], mid), (2 * k + 2, [b, b + 2, b + 3], mid)]
+                squares.append((key, fbx, int(slots[mid][0][0][-5]), x0))
+            rows.append(slot_row(key, f'SM_P_{key:03d}_Main', slots, fbx, (uvs, faces)))
+        found, _ = core.textures_scene(rows)
+        for key in {r['key'] for r in rows}:
+            mine = [s for s in squares if s[0] == key]
+            bad = any(s is not t and s[1:3] == t[1:3] and max(abs(s[3] - t[3]) - 0.2, 0.0) * 1024 < 8
+                      for s in mine for t in squares)
+            assert codes(found[key]) == (['tex_padding'] if bad else []), (key, squares)

@@ -157,9 +157,9 @@ items are listed in `plan.dropped` with a reason. Defects D1-D8 and the source l
 | VPM-2.3-9, VPM-2.3-10 | Triangle limits | checks per FBX (1 000 000 without UCX; Ground by `AGR_SITE_AREA_HA`) |
 | VPM-2.13-7.a | Triangle limits | checks (UCX budget, conflict #3 formula) |
 | NPM-2.5-1.a, NPM-2.5-2.a, NPM-2.5-3, NPM-2.5-5 | Textures check | checks (PNG, 256..2048 square, ≤ 3 MiB, no alpha) |
-| NPM-2.5-4 | Textures check | checks (≥ 8 px between islands) |
+| NPM-2.5-4 | Textures check | checks (≥ 8 px between islands of one atlas, across the objects of one FBX) |
 | VPM-2.5-1.2, VPM-2.5-1.6, VPM-2.5-1.9, VPM-2.5-1.4.a | Textures check | checks (2048/4096 or 256 placeholder, alpha only in Diffuse, 8 bit, D+ERM+N per tile) |
-| VPM-2.5-1.5 | Textures check | checks (16 px at 2048, 32 px at 4096) |
+| VPM-2.5-1.5 | Textures check | checks (16 px at 2048, 32 px at 4096, per atlas and UDIM tile) |
 | VPM-2.5-2.1.3.a | Textures check | checks (UDIM from 1001 without gaps) |
 | VPM-2.9-4.b, VPM-2.9-5 | Pivot check | checks (Z = 0 and one pivot per FBX, 1 mm) |
 | VPM-2.9-4.c | Pivot check | UCX dropped with reason |

@@ -472,7 +472,7 @@ def _inside(pt, tri):
     return not (neg and pos)
 
 
-def padding_findings(uvs, faces, size_px, required_px):
+def padding_findings(uvs, faces, size_px, required_px, owner=None):
     """Minimum gap between UV islands of one tile, in pixels of a size_px texture.
 
     uvs: [(u, v)]; faces: [(face_id, [uv vertex indices])] (polygons are fanned).
@@ -482,7 +482,11 @@ def padding_findings(uvs, faces, size_px, required_px):
     gap 3) instead of the live 8 px; NPM keeps 8 px; a gap equal to the minimum is `at_threshold`;
     overlapping islands report gap 0 (repeating islands may be intentional in VPM, reviewed by eye);
     work above PADDING_PAIR_BUDGET edge pairs is `tex_unmeasurable`, never a pass.
+    owner: face id -> owner (an object of a pooled atlas); the worst pair is reported PER OWNER and
+    each finding carries its owner as a 4th element. Without owner one worst pair for the whole set.
     """
+    one = owner is None
+    owner = owner or (lambda _fid: None)
     if not faces:
         return [('tex_unmeasurable', 'no UV faces')]
     for u, v in uvs:
@@ -522,7 +526,7 @@ def padding_findings(uvs, faces, size_px, required_px):
         data.append({'tile': (math.floor(cu), math.floor(cv)), 'boundary': boundary, 'tris': tris,
                      'pts': pts, 'box': box, 'ids': ids})
     need = required_px / float(size_px)
-    worst = None
+    worst = {}
     work = 0
     for i in range(len(data)):
         for j in range(i + 1, len(data)):
@@ -539,17 +543,21 @@ def padding_findings(uvs, faces, size_px, required_px):
             d = min((_seg_dist(p, q, r, s) for p, q in A['boundary'] for r, s in B['boundary']), default=math.inf)
             if d > 0 and (any(_inside(A['pts'][0], t) for t in B['tris']) or any(_inside(B['pts'][0], t) for t in A['tris'])):
                 d = 0.0
-            if worst is None or d < worst[0]:
-                worst = (d, A['ids'] + B['ids'])
-    if worst is None:
-        return []
-    px = worst[0] * size_px
-    if math.isclose(px, required_px, rel_tol=0.0, abs_tol=1e-9):
-        return [('at_threshold', f'UV island gap {px:.3f} px == {required_px} px', worst[1])]
-    if px < required_px:
-        detail = 'islands touch or overlap' if worst[0] == 0 else f'UV island gap {px:.3f} px'
-        return [('tex_padding', f'{detail} < {required_px} px at {size_px} px', worst[1])]
-    return []
+            # worst pair PER OWNER (review r1): a pooled atlas must not hide one object's violation
+            # behind another pair's smaller gap
+            for o in {owner(A['ids'][0]), owner(B['ids'][0])}:
+                if o not in worst or d < worst[o][0]:
+                    worst[o] = (d, A['ids'] + B['ids'])
+    out = []
+    for o in sorted(worst, key=repr):
+        d, ids = worst[o]
+        px = d * size_px
+        if math.isclose(px, required_px, rel_tol=0.0, abs_tol=1e-9):
+            out.append(('at_threshold', f'UV island gap {px:.3f} px == {required_px} px', ids, o))
+        elif px < required_px:
+            detail = 'islands touch or overlap' if d == 0 else f'UV island gap {px:.3f} px'
+            out.append(('tex_padding', f'{detail} < {required_px} px at {size_px} px', ids, o))
+    return [i[:3] for i in out] if one else out
 
 
 def required_padding(model, size):
@@ -680,15 +688,15 @@ def textures_scene(rows):
     for a in atlases.values():
         if not a['faces']:
             continue
-        for item in padding_findings(a['uvs'], a['faces'], a['size'], a['need']):
-            ids = item[2] if len(item) > 2 else None
-            for k in a['keys']:
-                if ids is None:
+        for item in padding_findings(a['uvs'], a['faces'], a['size'], a['need'], owner=lambda fid: fid[0]):
+            if len(item) < 4:  # whole-atlas finding (unmeasurable): every object of the atlas
+                for k in a['keys']:
                     found[k].append(item)
-                    continue
-                own = [fid for kk, fid in ids if kk == k]
-                if own:
-                    found[k].append((item[0], item[1], own))
+                continue
+            k = item[3]
+            others = sorted({kk for kk, _ in item[2] if kk != k}, key=repr)
+            detail = item[1] + (f' (shared atlas with object keys {others})' if others else '')
+            found[k].append((item[0], detail, [fid for kk, fid in item[2] if kk == k]))
     return found, dropped
 
 
