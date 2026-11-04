@@ -1,5 +1,89 @@
 # AGR Tools changelog
 
+## 0.8.0 (#908) — в работе
+
+Сдача: правки только на экспортных копиях или в новых файлах, каждая с preview. Пакет пока остаётся 0.7.0:
+кнопки 0.8 есть в меню и MCP, в панели они серые «в версии 0.8» до релизной ветки.
+
+### Основа (ветка 0)
+
+- `edit_core.py`: контракт правки — preview → apply со сверкой хэша, `new_path()` без перезаписи,
+  списки `done` / `skipped` (с причиной) / `ambiguous`, JSON-контракт 0.5.0, статус `not_implemented`.
+- `edit_max.py`: экспортные копии, одна запись Undo на запуск, восстановление выделения, снимок до/после.
+- `runtime.EDITS_080` (13 строк плана) и `runtime.edits_080(tool, mode, preview)`; пустой модуль отвечает
+  `status: not_implemented`. Секция «Сдача (копии)»: 13 macroScript, пункты меню, 13 иконок, 13 MCP-инструментов.
+- План: вердикт `take_fix` по лаборатории #907 для `model.triangulate`, `ucx.triangulate`, `export.ground_fbx`.
+
+### A — геометрия (`improve/issue-908-geom`)
+
+- Заглушка ветки A: `model.triangulate`, `ucx.triangulate`, `export.pivot_place`.
+
+### B — текстуры (`improve/issue-908-tex`)
+
+- `tex.format_fix` (`tex_core.py` / `tex_max.py`): исправленные PNG только в **новую** папку (по умолчанию
+  `AGR_format_fix[_vNNN]` рядом с исходником; явная `out` — новая или пустая, не папка исходника). Формат из IHDR
+  через `checks_core.png_info` (палитра и 16 бит видны), полный stdlib-декодер PNG (все типы, 1–16 бит, Adam7),
+  запись PNG на stdlib zlib: 8 бит, colour type 2. Альфа снимается только где правило запрещает: явный фон
+  `background` или `dilate` (цвет края), иначе отказ с причиной; непрозрачная альфа снимается без потерь;
+  VPM Diffuse сохраняет альфу. JPG и прочие форматы — через .NET в Max, пакет не прерывается. Пропорции
+  сохраняются (`max_side` уменьшает вдвое по обеим осям), неквадратные в отчёте. Лимит `max_bytes` (по
+  умолчанию 3 MiB) — сначала без потерь, затем постеризация с RMSE в отчёте; недостижимый лимит — отказ с
+  причиной. Dilate выключен по умолчанию. Исходник уже в норме копируется байт в байт.
+- `tex.placeholders`: однотонные D/ERM/N, PNG 8 бит RGB без альфы, точный цвет, Normal [128,128,255]; имена
+  VPM-2.10-4.3 `T_{Address}[_Ground]_{Diffuse|ERM|Normal}_{Slot}.{UDIM}.png` одним вызовом для слотов; размеры
+  128…4096, по умолчанию 256; папка через `os.path.join` (без завершающего `\` пишет внутрь), по умолчанию
+  `Maps` рядом с сохранённой сценой (несохранённая — отказ, без относительного `Maps\`); существующий файл —
+  отказ или `_v002` (`on_exists`); Diffuse средним цветом исходника (`diffuse_from`).
+- `scene.missing_maps` (только чтение, без apply): все bitmap-подобные карты всех узлов (скрытые и `UCX_` с
+  флагом), scene materials и AssetManager; `doesFileExist`; `<UDIM>`/`<UVTILE>` по тайлам из UV и диска;
+  кандидаты по базовому имени (то же имя+расширение — ранг 0, другое расширение — ранг 1) с флагом
+  неоднозначности; разрешение существующих (PNG/JPG/TGA); каждый путь один раз с владельцами; JSON + таблица.
+
+### C — имена и UDIM (`improve/issue-908-names`)
+
+- Заглушка ветки C: `qa.names_fix`, `ucx.rename`, `udim.ids_to_udims`.
+
+### D — пакет (`improve/issue-908-package`)
+
+- Заглушка ветки D: `qa.package`, `export.zip`, `export.ground_fbx`, `export.geojson_write`.
+
+## 0.7.0 (#860)
+
+Pre-delivery checks (read-only) + tab rail by block + «Путь», all from `agr-tools-suite.json` (#853 plan).
+
+- 12 checks of plan version 0.7 (`suite_core.py` logic, `suite_max.py` pymxs reads, snapshots only, D6):
+  `scene.census`, `scene.units` (D5), `model.perimeter_drop` (AGR_ZERO_M, ≥ 1 m), `tex.material_type`,
+  `ucx.audit` (twinqa ucx_audit slice), `atlas.sets_count`, `qa.fbx_split`, `qa.glass` (D2, D3),
+  `qa.preflight` (all object checks, one table), `qa.scene_hygiene` (D7), `qa.xform` (D6), `qa.zero_area`.
+  JSON report contract of 0.5.0 (`schema`/`tool`/`status`/`objects`/`plan`), status derived from findings.
+- Panel: tab rail on the left — «Путь» + the 10 blocks in plan order, one accent per block derived from the
+  Max palette (≥ 3:1 against window and base, else an error, never a pale colour). Planned buttons of
+  versions 0.8–1.x are shown greyed with «в версии 0.x».
+- «Путь»: pipeline nodes in block colours with steps and buttons, tooltip (what / when / mode / requirements),
+  «?» card, live status per block from the last reports of this scene (`%LOCALAPPDATA%/AGRTools/reports`),
+  «Следующий шаг». `docs/agr-tools/GUIDE.md` + `flow.svg` are generated from the same JSON.
+- MCP (`agr-mcp` phase 0): 12 read-only tools `agr_<block>_<name>` over `runtime.checks_070`.
+
+## 0.6.0 (#808)
+
+Native Qt UI over all 17 existing actions; no check logic changed.
+
+- Dockable panel `AgrToolsPanel` (PySide6 on Max 2025/2026, PySide2 on 2024 through `ui_qt.py`),
+  parented to the Max main window, Max accelerators disabled on focus, dock position kept in
+  `3dsMax.ini` `[AGRTools] dock=`. Five sections by work step, each with its own accent hue
+  (stripe, header, icon tint) derived from the Max palette; result table (red/green), click selects
+  the object, «Выделить ошибки», «Сохранить отчёт JSON…».
+- Progress bar + «Отмена» and the Max progress bar (progressStart/Update/getProgressCancel/End).
+  xView and MatID run in chunks of 25 objects (exact merge); other actions are one runtime call
+  with a busy bar. Buttons are disabled while running.
+- Every action is a macroScript with `iconName:"AgrIcons/agr_<id>"`, Russian label and tooltip
+  (what it does + requirement ids); `agr_tools_runtime.ui('<tool>')` and `agr_tools_runtime.panel()`
+  stay the Python/MAXScript API. Classic rollout `AGRToolsClassic` is the fallback.
+- Menu «AGR Tools» via `#cuiRegisterMenus` (Max 2025+), survives a menu preset change.
+- Application Plugin Package `AGR-Tools.bundle` (`build_agr_tools.py --bundle`), UpgradeCode
+  `{BA2C2E6E-54F9-402E-8875-3D616C9030FD}`, Dark/Light icon components. Icons: own SVG set,
+  PNG 24/30/36/48 rendered at build time (not committed).
+
 ## 0.5.0 (#804)
 
 Five read-only diagnostics. None of them edits the open scene. Each writes a 0.4.0 JSON report

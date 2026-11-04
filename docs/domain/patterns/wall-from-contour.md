@@ -1,6 +1,6 @@
 # Walls from a level contour (`wall-from-contour`)
 
-Status: draft. Source: `docs/HARNESS_PLAN.md` §3–§4, §7; terms Level contour, Spec in `GLOSSARY.md`.
+Status: draft. Source: historical `docs/HARNESS_PLAN.md` §3–§4, §7; terms Level contour, Spec in `GLOSSARY.md`.
 
 ## Signs in the spec
 

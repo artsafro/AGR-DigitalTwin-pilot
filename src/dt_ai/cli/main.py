@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -16,6 +17,15 @@ from dt_ai.spec import revit_twin
 from dt_ai.spec.mesh import questions_markdown
 from dt_ai.spec.questions_file import merge as merge_questions
 from dt_ai.validate.bundle import validate
+
+
+def _native_path(text, nt=os.name == "nt"):
+    """Map an MSYS '/c/...' (or backslash) drive path to 'C:/...' on Windows only."""
+    if nt:
+        m = re.match(r"^[/\x5c]([A-Za-z])(?:[/\x5c](.*))?$", text, re.S)
+        if m:
+            return Path(f"{m.group(1).upper()}:/{m.group(2) or ''}")
+    return Path(text)
 
 
 def parser():
@@ -62,7 +72,7 @@ def parser():
     intake.add_argument("--dir", type=Path, required=True, help="jobs/<JOB>/intake")
     evals = sub.add_parser("evals", help="Run agent-behaviour eval tasks (evals/<task>/task.json); report in a new run folder")
     evals.add_argument("--check-receipt", help="verify a regression receipt against --output/report.json (read-only)")
-    evals.add_argument("--check-handoff", type=Path, metavar="BODY",
+    evals.add_argument("--check-handoff", type=_native_path, metavar="BODY",
                        help="verify the PR body's handoff evidence before review_requested (read-only, #584)")
     evals.add_argument("--sha", help="with --check-handoff: full head sha (default: git rev-parse HEAD)")
     evals.add_argument("--suite", choices=["regression", "capability"])
@@ -72,9 +82,9 @@ def parser():
     evals.add_argument("--evidence", action="append", default=[], metavar="NAME=PATH",
                        help="with --task: use this file for an evidence rule, e.g. transcript=<path>")
     evals.add_argument("--branch", help="branch whose evidence is graded (default: the current one)")
-    evals.add_argument("--main", type=Path, help="main checkout holding logs/ (default: from git)")
-    evals.add_argument("--evals-dir", type=Path, help="default: <repo>/evals")
-    evals.add_argument("--output", type=Path, help="new run folder (default: <main>/logs/evals/runs/<time>-<selector>)")
+    evals.add_argument("--main", type=_native_path, help="main checkout holding logs/ (default: from git)")
+    evals.add_argument("--evals-dir", type=_native_path, help="default: <repo>/evals")
+    evals.add_argument("--output", type=_native_path, help="new run folder (default: <main>/logs/evals/runs/<time>-<selector>)")
     qa = sub.add_parser("qa", help="Mesh QA gates; xview = inv_xview overlap gate (#527), postcondition of a build step")
     qa.add_argument("check", choices=["xview"])
     qa.add_argument("input", type=Path, help="FBX, .blend (headless Blender) or parts .npz")
