@@ -52,8 +52,12 @@ def codes(found, key):
     return sorted(c for c, _, _ in found.get(key, []))
 
 
-def report_of(tool, rows):
-    f, d, s = core.run(tool, rows, audit)
+METRE_SCENE = {'unit_type': 'meters', 'unit_scale': 1.0, 'file_in_gamma': 1.0, 'file_out_gamma': 1.0,
+               'path': 'C:/s.max'}
+
+
+def report_of(tool, rows, scene=None):
+    f, d, s = core.run(tool, rows, audit, scene=dict(scene or METRE_SCENE))
     return core.report(tool, rows, f, d, s)
 
 
@@ -283,22 +287,111 @@ def test_preflight_one_table_prefixed_and_status_per_check():
     rep = report_of('preflight', rows)
     assert rep['status'] == 'fail' and rep['plan']['summary']['checks']['xform'] == 'fail'
     assert rep['objects'][0]['findings'][0]['detail'].startswith('qa.xform: ')
-    assert sum(1 for v in rep['plan']['summary']['checks'].values() if v == 'pass') == len(core.PREFLIGHT) - 1
+    assert sum(1 for v in rep['plan']['summary']['checks'].values() if v == 'pass') == len(core.PREFLIGHT)  # + units
+
+
+# ---- qa.preflight includes scene.units (#882) -----------------------------------------------------------
+def test_preflight_includes_scene_units_d5():
+    """#882 / D5: a centimetre scene with clean objects fails preflight on a scene-level scene.units row."""
+    rows = [obj(1), obj(2, 'SM_Addr_Ground', NPM_GROUND)]
+    ok = report_of('preflight', rows)
+    assert ok['status'] == 'pass' and ok['plan']['summary']['checks']['units'] == 'pass'
+    assert set(ok['plan']['summary']['checks']) == set(core.PREFLIGHT) | {'units'}
+    assert [f['name'] for f in ok['plan']['findings']] == [
+        'scene.units: ' + n for n in ('system_unit', 'system_scale', 'file_in_gamma', 'file_out_gamma')]
+    cm = report_of('preflight', rows, dict(METRE_SCENE, unit_type='centimeters'))
+    assert cm['status'] == 'fail' and cm['plan']['summary']['checks']['units'] == 'fail'
+    assert all(not o['findings'] for o in cm['objects'])  # objects are clean: only the scene row fails
+    assert cm['plan']['path'] == 'C:/s.max'
+    table = model.rows(runtime.parse_report(json.dumps(cm)))
+    bad = [r for r in table if not r.ok]
+    assert [(r.name, r.code) for r in bad] == [('s.max', 'scene.units: system_unit')]
+    assert 'centimeters' in bad[0].detail and len([r for r in table if r.ok]) == 2
+
+
+def test_preflight_without_scene_raises():
+    """Fail-closed: preflight never runs (or passes) without the scene units."""
+    for scene in (None, 'C:/s.max', [], 0):
+        with pytest.raises(ValueError):
+            core.run('preflight', [obj(1)], audit, scene=scene)
+    with pytest.raises(ValueError):
+        core.run('preflight', [obj(1)], audit)
+
+
+def test_preflight_report_scene_rows_are_validated():
+    cm = report_of('preflight', [obj(1)], dict(METRE_SCENE, unit_scale=0.01))
+    with pytest.raises(ValueError):
+        core.validate_report(dict(cm, status='pass'))  # claimed pass over a failing units row
+    for mutate in (lambda r: r['plan'].pop('findings'), lambda r: r['plan'].pop('path'),
+                   lambda r: r['plan'].__setitem__('findings', []),
+                   lambda r: r['plan']['summary']['checks'].pop('units'),
+                   lambda r: r['plan']['summary']['checks'].__setitem__('units', 'pass'),
+                   lambda r: r['plan']['findings'][1].__setitem__('status', 'not_run'),
+                   lambda r: r['plan']['findings'][1].pop('observed')):
+        bad = json.loads(json.dumps(cm))
+        mutate(bad)
+        with pytest.raises(ValueError):
+            core.validate_report(bad)
+    xf = report_of('xform', [obj(1)])
+    with pytest.raises(ValueError):  # object checks keep the 0.7 plan shape (no scene rows)
+        core.validate_report(dict(xf, plan=dict(xf['plan'], path='x', findings=[])))
+
+
+def test_preflight_status_includes_units_bruteforce():
+    """invariant: preflight fails iff an object finding or a scene.units item fails; units pass iff the
+    standalone scene.units check passes (400 cases, NaN/inf/None/missing/at-threshold values)."""
+    rnd = random.Random(882)
+    values = {'unit_type': ['meters', 'centimeters', 'millimeters', None, ''],
+              'unit_scale': [1.0, 0.01, 100.0, float('nan'), float('inf'), None, 1.0 + 1e-9, 1.0 + 2e-9],
+              'file_in_gamma': [1.0, 2.2, float('nan'), None, 1.0 + 1e-6, 1.0 + 2e-6],
+              'file_out_gamma': [1.0, 2.2, float('-inf'), None]}
+    seen = set()
+    for case in range(400):
+        scene = {k: rnd.choice(v) for k, v in values.items()}
+        scene['path'] = 'C:/s.max'
+        if rnd.random() < 0.1:
+            scene.pop(rnd.choice(list(values)))
+        rows = [obj(k + 1, scale=(rnd.choice([1.0, 1.0, 2.0]),) * 3) for k in range(rnd.randint(1, 4))]
+        f, d, s = core.run('preflight', rows, audit, scene=scene)
+        rep = core.report('preflight', rows, f, d, s)
+        units_ok = all(x['status'] == 'pass' for x in core.units(scene))
+        assert rep['plan']['summary']['checks']['units'] == ('pass' if units_ok else 'fail'), case
+        obj_bad = any(o['findings'] for o in rep['objects'])
+        assert rep['status'] == ('fail' if obj_bad or not units_ok else 'pass'), case
+        assert runtime.parse_report(json.dumps(rep)) == rep
+        seen.add((units_ok, obj_bad))
+    assert seen == {(True, True), (True, False), (False, True), (False, False)}
+
+
+def test_suite_max_passes_scene_units_to_preflight(monkeypatch):
+    """The Max glue reads the scene units for preflight (fake runtime, no pymxs)."""
+    import types
+    sm = _load('suite_max.py', 'agr_tools_suite_max_test882')
+    rt = types.SimpleNamespace(units=types.SimpleNamespace(SystemType='centimeters', SystemScale=1.0),
+                               fileInGamma=1.0, fileOutGamma=1.0, maxFilePath='C:/w/', maxFileName='a.max',
+                               select=lambda nodes: None)
+    monkeypatch.setattr(sm, '_rt', lambda: rt)
+    monkeypatch.setattr(sm, 'targets', lambda agr, nodes: ['n1'])
+    monkeypatch.setattr(sm, '_row', lambda agr, glue, n, scale: obj(1))
+    agr = types.SimpleNamespace(_unit_m=lambda: 1.0, _load_core=lambda *a: audit)
+    rep = sm.run(agr, None, core, 'preflight')
+    assert rep['status'] == 'fail' and rep['plan']['summary']['checks']['units'] == 'fail'
+    assert rep['plan']['path'].endswith('a.max')
 
 
 # ---- fail-closed contract -----------------------------------------------------------------------------
 @pytest.mark.parametrize('tool', [t for t in core.TOOLS if t != 'units'])
 def test_empty_duplicate_partial_rows_raise(tool):
     with pytest.raises(ValueError):
-        core.run(tool, [], audit)
+        core.run(tool, [], audit, scene=dict(METRE_SCENE))
     with pytest.raises(ValueError):
-        core.run(tool, [obj(1), obj(1)], audit)
+        core.run(tool, [obj(1), obj(1)], audit, scene=dict(METRE_SCENE))
     partial = obj(1)
     for field in ('materials', 'mesh', 'superclass', 'faces', 'instances', 'animated', 'modifiers', 'mirror'):
         partial.pop(field)
     if tool != 'fbx_split':  # fbx_split reads only key/name/fbx
         with pytest.raises(ValueError):
-            core.run(tool, [partial], audit)
+            core.run(tool, [partial], audit, scene=dict(METRE_SCENE))
 
 
 def test_unknown_check_and_bad_reports_raise():
