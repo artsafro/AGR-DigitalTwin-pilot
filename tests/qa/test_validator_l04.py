@@ -1,4 +1,4 @@
-﻿"""Lab L04 (qa.package, #908): the 22-case synthetic set of the lab's make_and_validate.py as a pytest fixture,
+"""Lab L04 (qa.package, #908): the 22-case synthetic set of the lab's make_and_validate.py as a pytest fixture,
 plus the two named defects fixed for AGR Tools 0.8:
 
 * the profile comes from the name grammar (`{code4}_{Address}` NPM, `SM_{Address}` VPM), not from the content:

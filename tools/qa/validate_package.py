@@ -2,6 +2,8 @@
 
     py -3 tools/qa/validate_package.py <package.zip | model.fbx | model.geojson> [--profile npm|vpm] [--json] [--scene]
 
+Without --profile the profile comes from the name grammar ({code4}_{Address} NPM, SM_{Address} VPM); only a name
+that matches neither falls back to the content (lab L04, #908).
 Exit code: 0 passed (every blocking machine stage ran and passed), 1 any fail,
 2 only review / not_run remain. Stages that need the FBX scene (units, triangles,
 UV islands, UCX, coordinates) are not_run unless --scene runs the Blender readback
