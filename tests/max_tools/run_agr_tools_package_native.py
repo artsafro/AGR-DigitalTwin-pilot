@@ -203,7 +203,71 @@ def export_ground_fbx():
             'sha256': stamp, 'second_run_done': r3['plan']['done']}
 
 
-for name, fn in (('qa_package', qa_package), ('export_zip', export_zip), ('export_ground_fbx', export_ground_fbx)):
+PROPS = {'address': 'г. Москва, ул. Тестовая, д. 1', 'okrug': 'ЦАО', 'rajon': 'Арбат', 'name': 'Жилой дом',
+         'developer': 'ООО Застройщик', 'designer': 'ООО Проектировщик', 'cadNum': '77:01:0001001:1',
+         'FNO_code': '123 456', 'FNO_name': 'Жилое', 'ZU_area': 1200.5, 'h_relief': 150.0, 'h_otn': 45.0,
+         'h_abs': 195.0, 's_obsh': 9000.0, 's_naz': 8000.0, 's_podz': 1000.0, 'spp_gns': 9500.0, 'act_AGR': '',
+         'other': ''}
+
+
+def export_geojson_write():
+    """The point comes only from runtime.edits_080('export.pivot_place', 'preview'). While branch A is not in main
+    that row answers not_implemented; then (and only then) a stand-in with A's preview shape is used and recorded."""
+    import base64
+    d = OUT / 'geojson'
+    d.mkdir()
+    real = agr.edits_080
+    used = {}
+
+    def edits(tool, mode, preview=None, nodes=None, options=None):
+        r = real(tool, mode, preview, nodes, options)
+        if tool == 'export.pivot_place' and r['status'] == 'not_implemented':
+            lo, hi = rt.Point3(1e30, 1e30, 1e30), rt.Point3(-1e30, -1e30, -1e30)
+            for n in nodes:
+                lo, hi = rt.Point3(min(lo.x, n.min.x), min(lo.y, n.min.y), 0), rt.Point3(max(hi.x, n.max.x), max(hi.y, n.max.y), 0)
+            used['pivot'] = 'stand-in: export.pivot_place not_implemented (branch A not in main)'
+            return {'schema': 1, 'tool': tool, 'status': 'pass', 'objects': [],
+                    'plan': {'mode': 'preview', 'pivot_value': [(lo.x + hi.x) / 2, (lo.y + hi.y) / 2, 150.0],
+                             'floor': {'z': '150.0000', 'source': 'explicit'}}}
+        used.setdefault('pivot', 'branch A export.pivot_place preview')
+        return r
+    agr.edits_080 = edits
+    try:
+        rt.units.SystemType = rt.Name('meters')
+        main = rt.Box(name='SM_X_Main', length=10, width=20, height=30, pos=rt.Point3(12345.678, -6789.012, 150.0))
+        glass = rt.Box(name='SM_X_MainGlass', length=1, width=20, height=30, pos=rt.Point3(12345.678, -6783.0, 150.0))
+        gm = rt.Standardmaterial(name='M_X_MainGlass_1')
+        gm.diffuse, gm.opacity, gm.glossiness = rt.color(200, 220, 255), 50, 90
+        glass.material = gm
+        bm = rt.Bitmap(256, 256, color=rt.color(90, 120, 80))
+        jpg = OUT / 'preview_256.jpg'
+        bm.filename = str(jpg)
+        rt.save(bm)
+        rt.close(bm)
+        opts = {'folder': str(d), 'image': str(jpg), 'properties': PROPS, 'pivot': {'floor_z': '150.000'}}
+        rt.select(main)
+        p = agr.edits_080('export.geojson_write', 'preview', nodes=[main, glass], options=opts)
+        assert p['status'] == 'pass' and p['plan']['done'] == ['SM_X.geojson'], p
+        r = agr.edits_080('export.geojson_write', 'apply', p, nodes=[main, glass])
+        assert r['plan']['done'] == ['SM_X.geojson'] and r['status'] == 'pass', r['objects']
+        doc = json.loads((d / 'SM_X.geojson').read_text(encoding='utf-8'))
+        feat = doc['features'][0]
+        assert base64.b64decode(feat['properties']['imageBase64'], validate=True) == jpg.read_bytes()
+        assert list(feat['Glasses'][0]) == ['M_X_MainGlass_1'], feat['Glasses']
+        assert [str(n.name) for n in rt.selection] == ['SM_X_Main']
+        stamp = sha(d / 'SM_X.geojson')
+        p2 = agr.edits_080('export.geojson_write', 'preview', nodes=[main, glass], options=opts)
+        r2 = agr.edits_080('export.geojson_write', 'apply', p2, nodes=[main, glass])
+        assert r2['plan']['done'] == [] and sha(d / 'SM_X.geojson') == stamp and os.listdir(d) == ['SM_X.geojson']
+        return {'pivot': used['pivot'], 'coordinates': feat['geometry']['coordinates'],
+                'check': {f['name']: f['status'] for f in r['plan']['check']}, 'second_run_done': r2['plan']['done'],
+                'glasses': feat['Glasses']}
+    finally:
+        agr.edits_080 = real
+
+
+for name, fn in (('qa_package', qa_package), ('export_zip', export_zip), ('export_ground_fbx', export_ground_fbx),
+                 ('export_geojson_write', export_geojson_write)):
     check(name, fn)
 summary['scene_saved'] = bool(str(rt.maxFileName))
 (OUT / 'summary.json').write_text(json.dumps(summary, ensure_ascii=False, indent=1), encoding='utf-8')

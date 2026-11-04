@@ -449,3 +449,157 @@ def ground_report(edit, mode, plan, nodes, state=None, done=(), extra_findings=N
     return edit.report('export.ground_fbx', mode, objects=objects, done=list(done), skipped_=skipped,
                        ambiguous=ambiguous, state_hash=None if mode == 'apply' else edit.fingerprint(state),
                        extra=info)
+
+# ---- export.geojson_write: the VPM GeoJSON passport -----------------------------------------------------------
+# GeoAGR Create/Save/Load (GeoAGR.ms:64642-64644) are disabled buttons without any handler: nothing to port.
+PROPERTY_KEYS = ('address', 'okrug', 'rajon', 'name', 'developer', 'designer', 'cadNum', 'FNO_code', 'FNO_name',
+                 'ZU_area', 'h_relief', 'h_otn', 'h_abs', 's_obsh', 's_naz', 's_podz', 'spp_gns', 'act_AGR',
+                 'imageBase64', 'other')  # standards/VPM_STANDARD.yaml geojson.properties_keys
+OKS_MAY_BE_EMPTY = ('other', 'act_AGR')
+GROUND_NULLABLE = ('FNO_name', 'FNO_code', 'h_otn', 'h_abs', 's_obsh', 's_naz', 's_podz', 'spp_gns', 'other')
+VPM_MESH = re.compile(r'^SM_(?P<address>' + ADDRESS + r')_(?P<suffix>Main|MainGlass|GroundElGlass|GroundGlass|'
+                      r'GroundEl|Ground|Flora)$')
+GLASS_SUFFIXES = ('MainGlass', 'GroundGlass', 'GroundElGlass')
+COORD_DECIMALS = 3
+
+
+def jpeg_size(data):
+    """(width, height) of a baseline/progressive JPEG from its SOF marker, stdlib only; ValueError otherwise."""
+    if not isinstance(data, (bytes, bytearray)) or data[:2] != b'\xff\xd8':
+        raise ValueError('not a JPEG (no SOI marker)')
+    i = 2
+    while i + 4 <= len(data):
+        if data[i] != 0xFF:
+            raise ValueError('broken JPEG marker at byte {}'.format(i))
+        marker = data[i + 1]
+        if marker in (0xD8, 0x01) or 0xD0 <= marker <= 0xD7:
+            i += 2
+            continue
+        length = int.from_bytes(data[i + 2:i + 4], 'big')
+        if 0xC0 <= marker <= 0xCF and marker not in (0xC4, 0xC8, 0xCC):
+            if i + 9 > len(data):
+                break
+            return int.from_bytes(data[i + 7:i + 9], 'big'), int.from_bytes(data[i + 5:i + 7], 'big')
+        i += 2 + length
+    raise ValueError('JPEG without a frame header')
+
+
+def preview_image(data):
+    """(base64 text, findings) of the 256x256 JPG preview (reg p.54); the tool never resizes (GeoAGR shelled out to
+    ImageMagick `magick`, GeoAGR.ms:64859)."""
+    import base64
+    try:
+        size = jpeg_size(data)
+    except ValueError as exc:
+        return None, [('image', 'preview: {} (a 256x256 JPG is needed)'.format(exc))]
+    if size != (256, 256):
+        return None, [('image', 'preview is {}x{}; a 256x256 JPG is needed'.format(*size))]
+    return base64.b64encode(bytes(data)).decode('ascii'), []
+
+
+def geojson_stem(names):
+    """(stem, ground, address, glass mesh names) from the VPM mesh names: OKS `SM_{A}_Main*` -> SM_{A},
+    Ground family -> SM_{A}_Ground. One address and one role per GeoJSON; anything else raises."""
+    roles, addresses, glass, other = set(), set(), [], []
+    for n in names:
+        m = VPM_MESH.match(n)
+        if not m:
+            if not n.startswith('UCX_'):
+                other.append(n)
+            continue
+        addresses.add(m.group('address'))
+        roles.add('oks' if m.group('suffix').startswith('Main') else 'ground')
+        if m.group('suffix') in GLASS_SUFFIXES:
+            glass.append(n)
+    if len(addresses) != 1:
+        raise ValueError('one address per GeoJSON, got {}'.format(sorted(addresses) or 'none'))
+    if len(roles) != 1:
+        raise ValueError('OKS and Ground meshes together: one GeoJSON per OKS / per Ground (select one set)')
+    address, ground = addresses.pop(), roles.pop() == 'ground'
+    return ('SM_{}_Ground'.format(address) if ground else 'SM_{}'.format(address)), ground, address, sorted(glass)
+
+
+def pivot_coordinates(pivot_report):
+    """MSK-77 insertion point [x, y] (3 decimals) from the export.pivot_place preview (branch A): its common pivot
+    `plan.pivot_value` = [centre X, centre Y, floor]. A stub/failed preview is an error, never a guessed point."""
+    import math
+    if not isinstance(pivot_report, dict) or pivot_report.get('status') == 'not_implemented':
+        raise ValueError('export.pivot_place is not implemented yet (#908 branch A): the GeoJSON point needs its pivot')
+    plan = pivot_report.get('plan') or {}
+    value = plan.get('pivot_value')
+    if pivot_report.get('status') != 'pass' or not isinstance(value, list) or len(value) != 3:
+        raise ValueError('export.pivot_place preview without a pivot: {}'.format(pivot_report.get('status')))
+    x, y = float(value[0]), float(value[1])
+    if not (math.isfinite(x) and math.isfinite(y)):
+        raise ValueError('non-finite pivot')
+    return [round(x, COORD_DECIMALS), round(y, COORD_DECIMALS)], plan.get('floor')
+
+
+def glasses_entry(materials):
+    """`Glasses`: [] without glass, else ONE object keyed by glass material name (conflict #13). Values come from the
+    glass material (diffuse colour, opacity, IOR, glossiness); identical glass is one material."""
+    if not materials:
+        return []
+    out = {}
+    for m in sorted(materials, key=lambda x: x['name']):
+        rgb = [int(round(max(0.0, min(255.0, float(c))))) for c in m['diffuse']]
+        out[m['name']] = {'color_RGB': {'Red': rgb[0], 'Green': rgb[1], 'Blue': rgb[2]},
+                          'transparency': round(max(0.0, min(100.0, float(m['opacity']))) / 100.0, 3),
+                          'refraction': round(max(1.0, min(3.0, float(m.get('ior') or 1.5))), 3),
+                          'roughness': round(1.0 - max(0.0, min(100.0, float(m.get('glossiness', 0.0)))) / 100.0, 3),
+                          'metallicity': 0.0}
+    return [out]
+
+
+def property_findings(properties, ground):
+    """Missing/empty mandatory values are findings (never invented); unknown keys are an error."""
+    if not isinstance(properties, dict):
+        raise ValueError('options.properties must be an object of the App.3 keys')
+    unknown = sorted(set(properties) - set(PROPERTY_KEYS))
+    if unknown or 'imageBase64' in properties:
+        raise ValueError('unknown or reserved property keys: {}'.format(unknown or ['imageBase64']))
+    may_be_empty = GROUND_NULLABLE if ground else OKS_MAY_BE_EMPTY
+    out = []
+    for key in PROPERTY_KEYS:
+        if key == 'imageBase64':
+            continue
+        value = properties.get(key)
+        if value in (None, '') and key not in may_be_empty:
+            out.append(('property', '{} is empty: a mandatory value (ask the customer, never invent it)'.format(key)))
+        elif isinstance(value, float) and value != value:
+            out.append(('property', key + ' is NaN'))
+    return out
+
+
+def geojson_document(properties, image_b64, coordinates, glasses, ground):
+    """The UTF-8 bytes of the passport: FeatureCollection / ObjectFeature / Point, exact App.3 key order."""
+    may_be_empty = GROUND_NULLABLE if ground else OKS_MAY_BE_EMPTY
+    props = {}
+    for key in PROPERTY_KEYS:
+        if key == 'imageBase64':
+            props[key] = image_b64 or ''
+        else:
+            value = properties.get(key)
+            props[key] = '' if value is None and key in may_be_empty else value
+    doc = {'type': 'FeatureCollection', 'features': [{'type': 'ObjectFeature', 'properties': props,
+           'geometry': {'type': 'Point', 'coordinates': list(coordinates)}, 'Glasses': glasses}]}
+    return json.dumps(doc, ensure_ascii=False, indent=1, allow_nan=False).encode('utf-8')
+
+
+def geojson_plan(names, properties, image_bytes, pivot_report, glass_materials, folder, exists=os.path.exists):
+    stem, ground, address, glass_meshes = geojson_stem(names)
+    findings = property_findings(properties, ground)
+    if image_bytes is None:
+        image_b64, more = None, [('image', 'no preview: options.image must name a 256x256 JPG')]
+    else:
+        image_b64, more = preview_image(image_bytes)
+    findings += more
+    coords, floor = pivot_coordinates(pivot_report)
+    if glass_meshes and not glass_materials:
+        findings.append(('glass', 'glass meshes {} without a material'.format(glass_meshes)))
+    glasses = glasses_entry(glass_materials)
+    target = os.path.join(folder, stem + '.geojson')
+    data = geojson_document(properties, image_b64, coords, glasses, ground)
+    return {'stem': stem, 'ground': ground, 'address': address, 'target': target, 'exists': exists(target),
+            'coordinates': coords, 'floor': floor, 'glass_meshes': glass_meshes,
+            'glass_materials': sorted(m['name'] for m in glass_materials), 'findings': findings, 'data': data}

@@ -428,3 +428,109 @@ def test_ground_plan_guards_and_oks_parts(tmp_path):
     assert r['status'] == 'fail' and r['plan']['done'] == ['0123_X_Ground.fbx', '0123_X_01.fbx']
     assert {'item': '0123_X_02.fbx', 'reason': 'exists; refusing to overwrite'} in r['plan']['skipped']
     ec.check_preview('export.ground_fbx', r)
+
+# ---- export.geojson_write (issue #908 section 10; lab: buttons GeoAGR.ms:64642-64644 have no handler) ----------
+def _jpeg(size=256):
+    b = BytesIO()
+    Image.new('RGB', (size, size), (90, 120, 80)).save(b, 'JPEG')
+    return b.getvalue()
+
+
+PROPS = {'address': 'г. Москва, ул. Тестовая, д. 1', 'okrug': 'ЦАО', 'rajon': 'Арбат', 'name': 'Жилой дом',
+         'developer': 'ООО Застройщик', 'designer': 'ООО Проектировщик', 'cadNum': '77:01:0001001:1',
+         'FNO_code': '123 456', 'FNO_name': 'Жилое', 'ZU_area': 1200.5, 'h_relief': 150.0, 'h_otn': 45.0,
+         'h_abs': 195.0, 's_obsh': 9000.0, 's_naz': 8000.0, 's_podz': 1000.0, 'spp_gns': 9500.0, 'act_AGR': '',
+         'other': ''}
+
+
+def pivot_preview(x=12345.67849, y=-6789.01251, status='pass'):
+    """Shape of branch A's export.pivot_place preview plan (pivot_value = [centre X, centre Y, floor])."""
+    return {'schema': 1, 'tool': 'export.pivot_place', 'status': status, 'objects': [],
+            'plan': {'mode': 'preview', 'pivot_value': [x, y, 150.0], 'floor': {'z': '150.0000', 'source': 'explicit'}}}
+
+
+GLASS = [{'name': 'M_X_MainGlass_1', 'diffuse': [200.0, 220.0, 255.0], 'opacity': 50.0, 'ior': 1.52, 'glossiness': 90.0}]
+
+
+def _checker(data, ground=False, glass=None):
+    from twinqa.geojson import geojson_findings
+    from twinqa.profiles import load_profiles
+    return geojson_findings(data, load_profiles().vpm, ground, glass_names=glass, source_name='x.geojson')
+
+
+def test_geojson_document_passes_the_twinqa_checker(tmp_path):
+    plan = pc.geojson_plan(['SM_X_Main', 'SM_X_MainGlass'], PROPS, _jpeg(), pivot_preview(), GLASS, str(tmp_path))
+    assert plan['findings'] == [] and plan['stem'] == 'SM_X' and plan['target'].endswith('SM_X.geojson')
+    found = _checker(plan['data'], glass={'M_X_MainGlass_1'})
+    assert all(f.status == 'pass' for f in found), [(f.name, f.status, f.observed) for f in found]
+    doc = json.loads(plan['data'].decode('utf-8'))
+    feat = doc['features'][0]
+    assert feat['geometry']['coordinates'] == [12345.678, -6789.013]  # MSK-77, 3 decimals (reg p.55)
+    assert list(feat['properties']) == list(pc.PROPERTY_KEYS)
+    assert feat['properties']['address'] == PROPS['address']  # UTF-8, not escaped away
+
+
+def test_preview_base64_decodes_to_the_same_jpeg():
+    import base64
+    data = _jpeg()
+    b64, problems = pc.preview_image(data)
+    assert problems == [] and base64.b64decode(b64, validate=True) == data
+    assert Image.open(BytesIO(base64.b64decode(b64))).size == (256, 256)
+    assert pc.preview_image(_jpeg(128))[1] and pc.preview_image(b'\x89PNG....')[1]
+    assert pc.jpeg_size(_jpeg(300)) == (300, 300)
+
+
+def test_missing_values_are_findings_never_invented(tmp_path):
+    props = dict(PROPS, FNO_code='', developer=None)
+    del props['cadNum']
+    plan = pc.geojson_plan(['SM_X_Main'], props, None, pivot_preview(), [], str(tmp_path))
+    text = ' '.join(d for _, d in plan['findings'])
+    assert 'FNO_code is empty' in text and 'developer is empty' in text and 'cadNum is empty' in text
+    assert 'no preview' in text
+    doc = json.loads(plan['data'])['features'][0]['properties']
+    assert doc['cadNum'] is None and doc['FNO_code'] == ''  # written as given; the checker fails it, nothing invented
+    with pytest.raises(ValueError, match='unknown or reserved'):
+        pc.geojson_plan(['SM_X_Main'], dict(PROPS, color='red'), None, pivot_preview(), [], str(tmp_path))
+
+
+def test_ground_passport_allows_its_nullable_fields(tmp_path):
+    props = dict({k: v for k, v in PROPS.items() if k not in pc.GROUND_NULLABLE}, act_AGR='01-01-2026')
+    plan = pc.geojson_plan(['SM_X_Ground', 'SM_X_Flora', 'SM_X_GroundEl'], props, _jpeg(), pivot_preview(), [],
+                           str(tmp_path))
+    assert plan['findings'] == [] and plan['stem'] == 'SM_X_Ground' and plan['ground']
+    found = _checker(plan['data'], ground=True, glass=set())
+    assert all(f.status == 'pass' for f in found), [(f.name, f.status, f.observed) for f in found]
+
+
+def test_point_only_from_the_pivot_place_preview(tmp_path):
+    stub = {'schema': 1, 'tool': 'export.pivot_place', 'status': 'not_implemented', 'objects': [], 'plan': {}}
+    with pytest.raises(ValueError, match='branch A'):
+        pc.geojson_plan(['SM_X_Main'], PROPS, _jpeg(), stub, [], str(tmp_path))
+    with pytest.raises(ValueError, match='without a pivot'):
+        pc.geojson_plan(['SM_X_Main'], PROPS, _jpeg(), pivot_preview(status='fail'), [], str(tmp_path))
+    src = (PKG / 'package_core.py').read_text(encoding='utf-8') + (PKG / 'package_max.py').read_text(encoding='utf-8')
+    assert 'geom_core' not in src.replace("'geom_core'", '') and 'import geom' not in src
+    assert "edits_080('export.pivot_place', 'preview'" in src
+
+
+def test_one_set_and_one_address_per_passport(tmp_path):
+    for names, word in ((['SM_X_Main', 'SM_X_Ground'], 'OKS and Ground'), (['SM_X_Main', 'SM_Y_Main'], 'one address'),
+                        (['Box001'], 'one address')):
+        with pytest.raises(ValueError, match=word):
+            pc.geojson_stem(names)
+    assert pc.geojson_stem(['SM_X_Main', 'UCX_SM_X_Main_001', 'SM_X_MainGlass'])[:2] == ('SM_X', False)
+
+
+def test_glasses_empty_or_one_object_keyed_by_material():
+    assert pc.glasses_entry([]) == []
+    (entry,) = pc.glasses_entry(GLASS + [dict(GLASS[0], name='M_X_MainGlass_2', opacity=30.0)])
+    assert sorted(entry) == ['M_X_MainGlass_1', 'M_X_MainGlass_2']
+    assert entry['M_X_MainGlass_1'] == {'color_RGB': {'Red': 200, 'Green': 220, 'Blue': 255}, 'transparency': 0.5,
+                                        'refraction': 1.52, 'roughness': 0.1, 'metallicity': 0.0}
+
+
+def test_geojson_property_keys_match_the_standard():
+    import yaml
+    vpm = yaml.safe_load((ROOT / 'standards/VPM_STANDARD.yaml').read_text(encoding='utf-8'))['geojson']
+    assert list(pc.PROPERTY_KEYS) == vpm['properties_keys']
+    assert list(pc.GROUND_NULLABLE) == vpm['ground_nullable_as_empty_string']

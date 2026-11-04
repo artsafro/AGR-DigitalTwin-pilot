@@ -200,3 +200,71 @@ def export_ground_fbx(ctx, mode, nodes, preview):
     return ctx.core.ground_report(ctx.edit, 'apply', plan, facts, done=done, extra_findings=extra_findings,
                                   extra={'reports': reports, 'exit_code': ctx.core.worst_exit(reports) if reports
                                          else None})
+
+# ---- export.geojson_write ---------------------------------------------------------------------------------------
+def _glass_materials(rt, nodes, glass_meshes):
+    out = {}
+    for n in nodes:
+        if str(n.name) not in glass_meshes or n.material is None or n.material == rt.undefined:
+            continue
+        mats = [n.material]
+        if str(rt.classOf(n.material)).lower() == 'multimaterial':
+            mats = [m for m in n.material.materialList if m is not None and m != rt.undefined]
+        for m in mats:
+            d = getattr(m, 'diffuse', None)
+            out[str(m.name)] = {'name': str(m.name),
+                                'diffuse': [float(d.r), float(d.g), float(d.b)] if d is not None else [255.0] * 3,
+                                'opacity': float(getattr(m, 'opacity', 100.0)), 'ior': float(getattr(m, 'ior', 1.5)),
+                                'glossiness': float(getattr(m, 'glossiness', 0.0))}
+    return [out[k] for k in sorted(out)]
+
+
+def export_geojson_write(ctx, mode, nodes, preview):
+    """New `SM_{Address}[_Ground].geojson` beside the package: App.3 properties from options (never invented),
+    MSK-77 point from the export.pivot_place preview, 256x256 JPG preview as Base64, Glasses from the glass materials;
+    checked right after writing by the 0.5.0 qa.geojson (twinqa checker)."""
+    import hashlib
+    rt = _rt()
+    opts = dict(ctx.options) if mode == 'preview' else dict(preview['plan']['options'])
+    pool = _ground_nodes(ctx, nodes)
+    if not pool:
+        raise ValueError('export.geojson_write: select the OKS or the Ground meshes')
+    names = [str(n.name) for n in pool]
+    pivot = ctx.agr.edits_080('export.pivot_place', 'preview', nodes=pool, options=opts.get('pivot') or None)
+    image = None
+    if opts.get('image'):
+        with open(opts['image'], 'rb') as fh:
+            image = fh.read()
+    folder = os.path.abspath(opts.get('folder') or _default_folder(ctx, pool))
+    stem, _ground, _addr, glass_meshes = ctx.core.geojson_stem(names)
+    plan = ctx.core.geojson_plan(names, opts.get('properties') or {}, image, pivot,
+                                 _glass_materials(rt, pool, set(glass_meshes)), folder)
+    state = {'nodes': ctx.emax.snapshot(pool), 'coordinates': plan['coordinates'], 'target': plan['target'],
+             'exists': plan['exists'], 'data_sha256': hashlib.sha256(plan['data']).hexdigest(), 'options': opts}
+    main = next((n for n in pool if str(n.name) not in glass_meshes), pool[0])
+    edit = ctx.edit
+    findings = [edit.finding(c, (), d) for c, d in plan['findings']]
+    name = os.path.basename(plan['target'])
+    info = {'options': opts, 'target': plan['target'], 'stem': plan['stem'], 'ground': plan['ground'],
+            'coordinates': plan['coordinates'], 'floor': plan['floor'], 'glass_materials': plan['glass_materials'],
+            'data_sha256': state['data_sha256'], 'bytes': len(plan['data'])}
+    skipped = [edit.skipped(name, 'exists; refusing to overwrite')] if plan['exists'] else []
+    if mode == 'preview':
+        objects = [edit.entry(ctx.emax.handle(n), str(n.name), findings if n is main else []) for n in pool]
+        return edit.report('export.geojson_write', 'preview', objects=objects,
+                           done=[] if plan['exists'] else [name], skipped_=skipped,
+                           state_hash=edit.fingerprint(state), extra=info)
+    edit.require_current(preview, state)
+    if preview['status'] != 'pass':
+        raise ValueError('export.geojson_write: the preview has findings; fix them and preview again')
+    done, checked = [], None
+    if not plan['exists']:
+        edit.write_new(edit.new_path(plan['target']), plan['data'])
+        done.append(name)
+        checked = ctx.agr.checks_050('geojson', path=plan['target'])
+        bad = [f for f in checked['plan']['findings'] if f['status'] != 'pass']
+        findings = [edit.finding('V011', (), '{}: {}: {}'.format(f['status'], f['name'], f['observed'])[:900])
+                    for f in bad]
+        info['check'] = checked['plan']['findings']
+    objects = [edit.entry(ctx.emax.handle(n), str(n.name), findings if n is main else []) for n in pool]
+    return edit.report('export.geojson_write', 'apply', objects=objects, done=done, skipped_=skipped, extra=info)
