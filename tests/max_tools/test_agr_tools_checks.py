@@ -519,6 +519,198 @@ def test_pivot_probe_per_fbx_groups():
         assert found[2] == [] and codes(found[3]) == ([] if off < 0.001 else ['pivot_mismatch'])
 
 
+def _flagged(rows):
+    found, _ = core.pivot_findings(rows)
+    return {r['name'] for r in rows if any(c[0] == 'pivot_mismatch' for c in found[r['key']])}
+
+
+def test_pivot_verdict_is_order_independent():
+    """#821: the reference is the Main/Ground object, never the first member; reversal gives the same set."""
+    import itertools
+    cases = [
+        ([('Main', 0), ('A', 0), ('B', 0)], set()),
+        ([('Odd', 0.5), ('Main', 0), ('A', 0)], {'Odd'}),
+        ([('Main', 0), ('A', 0.0005)], set()),
+        ([('SM_T_Ground', 0), ('A', 2)], {'A'}),
+    ]
+    for spec, want in cases:
+        for perm in itertools.permutations(spec):
+            rows = [piv(i, n, (x, 0, 0)) for i, (n, x) in enumerate(perm)]
+            assert _flagged(rows) == want, (perm, want)
+    # no Main/Ground: pairs more than 1 mm apart are reported, C is named, A/B pair is not
+    for perm in itertools.permutations([('A', 0), ('B', 0), ('C', 1)]):
+        rows = [piv(i, n, (x, 0, 0)) for i, (n, x) in enumerate(perm)]
+        found, _ = core.pivot_findings(rows)
+        by = {r['name']: found[r['key']] for r in rows}
+        assert _flagged(rows) == {'A', 'B', 'C'}
+        assert 'C (' in by['A'][0][1] and 'B (' not in by['A'][0][1] and 'A (' not in by['B'][0][1]
+
+
+def test_pivot_reference_agreement_is_permutation_independent():
+    """#832: a Main/Ground reference is never mismatched against a non-reference; disagreeing
+    references produce one pivot_reference_ambiguous on the alphabetically first name; agreeing
+    references judge only the other meshes. Every permutation yields the same (name, code) set,
+    and the verdict is fail exactly when any finding exists."""
+    import itertools
+    import random
+
+    counted = [0]
+
+    def drive(spec):
+        seen = []
+        for perm in itertools.permutations(spec):
+            counted[0] += 1
+            rows = []
+            for i, item in enumerate(perm):
+                fbx = item[2] if len(item) > 2 else VPM_FBX
+                rows.append(piv(i + 1, item[0], item[1], fbx))
+            found, _ = core.pivot_findings(rows)
+            full = tuple(sorted((r['name'], item[0], item[1]) for r in rows for item in found[r['key']]))
+            verdict = 'fail' if any(found[r['key']] for r in rows) else 'pass'
+            assert verdict == ('fail' if full else 'pass')
+            seen.append(full)
+        assert len(set(seen)) == 1, (spec, seen[:2])
+        return seen[0]
+
+    def codes_of(full):
+        return tuple(sorted({(name, code) for name, code, _ in full}))
+
+    assert 'pivot_reference_ambiguous' in core.CODES['pivot']
+    runtime.parse_report(json.dumps(scene_report(
+        'pivot', [{'code': 'pivot_reference_ambiguous', 'ids': [], 'detail': 'refs disagree'}])))
+
+    # 1. Agreeing references: only the odd mesh is a pivot_mismatch.
+    full = drive([('SM_A_Main', (0, 0, 0)), ('SM_B_Main', (0, 0, 0)), ('Odd', (0.5, 0, 0))])
+    assert full == ((
+        'Odd', 'pivot_mismatch',
+        f'pivot differs from SM_A_Main (0.500000 m), SM_B_Main (0.500000 m) in {VPM_FBX} (VPM-2.9-5)'),)
+    # 2. Disagreeing references: one ambiguous finding, nothing else, verdict fail.
+    full = drive([('SM_A_Main', (0, 0, 0)), ('SM_B_Main', (1, 0, 0)), ('A', (0, 0, 0))])
+    assert full == ((
+        'SM_A_Main', 'pivot_reference_ambiguous',
+        f'Main/Ground references disagree in {VPM_FBX}: '
+        'SM_A_Main (0,0,0), SM_B_Main (1,0,0) (VPM-2.9-5)'),)
+    # 3. One reference, everyone on it: no findings.
+    assert drive([('SM_A_Main', (0, 0, 0)), ('A', (0, 0, 0)), ('B', (0, 0, 0))]) == ()
+    # 4. One reference and one offset mesh: the same single mismatch as before.
+    full = drive([('SM_A_Main', (0, 0, 0)), ('A', (0.5, 0, 0))])
+    assert full == ((
+        'A', 'pivot_mismatch',
+        f'pivot differs from SM_A_Main (0.500000 m) in {VPM_FBX} (VPM-2.9-5)'),)
+
+    # Probe: a reference never takes pivot_mismatch from a generated non-reference offset.
+    for dx in (0.0, 0.0004, 0.05, 0.5, 1.0, 2.5):
+        full = drive([('SM_A_Main', (0, 0, 0)), ('SM_B_Main', (0, 0, 0)), ('Odd', (dx, 0, 0))])
+        assert not any(code == 'pivot_mismatch' and name in ('SM_A_Main', 'SM_B_Main')
+                       for name, code, _ in full)
+        far = dx > core.PIVOT_TOL_M and not math.isclose(dx, core.PIVOT_TOL_M, rel_tol=1e-9, abs_tol=0.0)
+        assert codes_of(full) == ((('Odd', 'pivot_mismatch'),) if far else ())
+        if far:
+            detail = full[0][2]
+            assert detail.startswith('pivot differs from SM_A_Main (') and 'SM_B_Main (' in detail
+            assert 'Odd (' not in detail
+
+    # Probe: any reference pair beyond 1 mm -> one ambiguous finding, zero mismatches.
+    for dx, shown in ((0.0011, '(0.0011,0,0)'), (0.01, '(0.01,0,0)'), (0.2, '(0.2,0,0)'),
+                      (1.0, '(1,0,0)'), (4.0, '(4,0,0)')):
+        full = drive([('SM_A_Main', (0, 0, 0)), ('SM_B_Main', (dx, 0, 0)), ('A', (0, 0, 0))])
+        assert codes_of(full) == (('SM_A_Main', 'pivot_reference_ambiguous'),)
+        assert full[0][2] == (
+            f'Main/Ground references disagree in {VPM_FBX}: SM_A_Main (0,0,0), SM_B_Main {shown} (VPM-2.9-5)')
+    full = drive([('SM_A_Main', (0, 0, 0)), ('SM_B_Ground', (0, 0, 0)),
+                  ('SM_C_Main', (2, 0, 0)), ('A', (5, 0, 0))])
+    assert codes_of(full) == (('SM_A_Main', 'pivot_reference_ambiguous'),)
+    assert full[0][2] == (
+        f'Main/Ground references disagree in {VPM_FBX}: '
+        'SM_A_Main (0,0,0), SM_B_Ground (0,0,0), SM_C_Main (2,0,0) (VPM-2.9-5)')
+
+    # Probe: references within 1 mm; each non-reference is judged against every reference.
+    near = (('SM_A_Main', (0, 0, 0)), ('SM_B_Main', (0.0003, 0, 0)))
+    for pos in ((0, 0, 0), (0.0005, 0, 0), (0.02, 0, 0), (0.5, 0.5, 0), (-1, 0.2, 0)):
+        full = drive([*near, ('Odd', pos)])
+        distances = [math.dist(pos, ref[1]) for ref in near]
+        bad = [ref for ref, dist in zip(near, distances)
+               if dist > core.PIVOT_TOL_M and not math.isclose(dist, core.PIVOT_TOL_M, rel_tol=1e-9, abs_tol=0.0)]
+        edge = [ref for ref, dist in zip(near, distances)
+                if math.isclose(dist, core.PIVOT_TOL_M, rel_tol=1e-9, abs_tol=0.0)]
+        expect = []
+        if edge:
+            expect.append(('Odd', 'at_threshold'))
+        if bad:
+            expect.append(('Odd', 'pivot_mismatch'))
+        assert codes_of(full) == tuple(sorted(expect))
+        assert not any(name.startswith('SM_') for name, _, _ in full)
+        if bad:
+            detail = next(text for _, code, text in full if code == 'pivot_mismatch')
+            named = [ref[0] for ref in bad]
+            assert all(ref in detail for ref in named)
+            assert all(ref not in detail for ref, _ in near if ref not in named)
+    full = drive([('SM_A_Main', (0, 0, 0)), ('SM_B_Main', (0.0008, 0, 0)), ('Odd', (0.0015, 0, 0))])
+    assert codes_of(full) == (('Odd', 'pivot_mismatch'),)
+    assert 'SM_A_Main (' in full[0][2] and 'SM_B_Main (' not in full[0][2]
+    full = drive([('SM_A_Main', (0, 0, 0)), ('SM_B_Main', (0, 0, 0)), ('A', (0, 0, 0)), ('B', (0.4, 0, 0))])
+    assert full == ((
+        'B', 'pivot_mismatch',
+        f'pivot differs from SM_A_Main (0.400000 m), SM_B_Main (0.400000 m) in {VPM_FBX} (VPM-2.9-5)'),)
+
+    # Probe: with no Main/Ground reference, every pair is judged (MainGlass is not a reference).
+    rnd = random.Random(832)
+    for _ in range(8):
+        spec = [(name, (rnd.uniform(-2, 2), rnd.uniform(-2, 2), 0.0)) for name in ('A', 'B', 'C')]
+        full = drive(spec)
+        expect = set()
+        pts = dict(spec)
+        for i, left in enumerate(('A', 'B', 'C')):
+            for right in ('A', 'B', 'C')[i + 1:]:
+                dist = math.dist(pts[left], pts[right])
+                if math.isclose(dist, core.PIVOT_TOL_M, rel_tol=1e-9, abs_tol=0.0):
+                    expect.update({(left, 'at_threshold'), (right, 'at_threshold')})
+                elif not math.isfinite(dist) or dist > core.PIVOT_TOL_M:
+                    expect.update({(left, 'pivot_mismatch'), (right, 'pivot_mismatch')})
+        assert codes_of(full) == tuple(sorted(expect))
+    full = drive([('SM_A_MainGlass', (0, 0, 0)), ('SM_B_MainGlass', (1, 0, 0))])
+    assert codes_of(full) == (('SM_A_MainGlass', 'pivot_mismatch'), ('SM_B_MainGlass', 'pivot_mismatch'))
+    assert 'pivot_reference_ambiguous' not in {code for _, code, _ in full}
+
+    # Probe: exactly 1 mm is at_threshold (a fail), never a pass and never an ambiguous reference.
+    full = drive([('SM_A_Main', (0, 0, 0)), ('SM_B_Main', (0.001, 0, 0))])
+    assert full == (
+        ('SM_A_Main', 'at_threshold', 'pivot 0.001000 m from SM_B_Main: == 0.001 m'),
+        ('SM_B_Main', 'at_threshold', 'pivot 0.001000 m from SM_A_Main: == 0.001 m'))
+    full = drive([('SM_A_Main', (0, 0, 0)), ('A', (0.001, 0, 0))])
+    assert full == (('A', 'at_threshold', 'pivot 0.001000 m from SM_A_Main: == 0.001 m'),)
+    full = drive([('SM_A_Main', (0, 0, 0)), ('SM_B_Main', (0.001, 0, 0)), ('SM_C_Main', (1, 0, 0))])
+    assert full == (
+        ('SM_A_Main', 'at_threshold', 'pivot 0.001000 m from SM_B_Main: == 0.001 m'),
+        ('SM_A_Main', 'pivot_reference_ambiguous',
+         f'Main/Ground references disagree in {VPM_FBX}: '
+         'SM_A_Main (0,0,0), SM_B_Main (0.001,0,0), SM_C_Main (1,0,0) (VPM-2.9-5)'),
+        ('SM_B_Main', 'at_threshold', 'pivot 0.001000 m from SM_A_Main: == 0.001 m'))
+
+    # Fail closed: NaN, inf and an empty pivot are errors, never a shared-pivot pass.
+    for bad in (float('nan'), float('inf'), float('-inf')):
+        full = drive([('SM_A_Main', (0, 0, bad)), ('SM_B_Main', (0, 0, 0)), ('A', (0, 0, 0))])
+        assert ('SM_A_Main', 'pivot_unmeasurable') in codes_of(full)
+        assert 'pivot_mismatch' not in {code for _, code, _ in full}
+    for empty in ((), [], None, (0, 0)):
+        full = drive([('SM_A_Main', empty), ('A', (0, 0, 0))])
+        assert full == (('SM_A_Main', 'pivot_unmeasurable', f'pivot {empty!r}'),)
+
+    # One finding per FBX group: a far reference in another file is not this group's reference.
+    one, two = 'C:/o/SM_One.fbx', 'C:/o/SM_Two.fbx'
+    assert drive([('SM_A_Main', (0, 0, 0), one), ('SM_B_Main', (5, 0, 0), two)]) == ()
+    full = drive([('SM_A_Main', (0, 0, 0), one), ('SM_B_Main', (1, 0, 0), one),
+                  ('SM_C_Main', (0, 0, 0), two), ('SM_D_Main', (2, 0, 0), two)])
+    assert full == (
+        ('SM_A_Main', 'pivot_reference_ambiguous',
+         f'Main/Ground references disagree in {one}: SM_A_Main (0,0,0), SM_B_Main (1,0,0) (VPM-2.9-5)'),
+        ('SM_C_Main', 'pivot_reference_ambiguous',
+         f'Main/Ground references disagree in {two}: SM_C_Main (0,0,0), SM_D_Main (2,0,0) (VPM-2.9-5)'))
+
+    assert counted[0] == 282, counted[0]
+    print('PIVOT_PERMUTATIONS', counted[0])
+
+
 # --- GeoJSON --------------------------------------------------------------------------------------------
 def test_geojson_report_never_raises():
     def boom(_):
