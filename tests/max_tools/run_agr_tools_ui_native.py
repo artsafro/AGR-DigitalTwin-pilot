@@ -221,7 +221,7 @@ def s_progress():
     objs = len((report or {}).get('objects') or [])
     check('progress_1000_complete', objs == 1000 and p.bar.value() == 100,
           'objects={} seconds={:.1f} status={}'.format(objs, dt, (report or {}).get('status')))
-    check('ui_responsive_during_run', gap < 1.0 and n > 5, 'max_gap_s={:.3f} ticks={}'.format(gap, n))
+    check('ui_responsive_during_run', gap < 0.5 and n > 5, 'max_gap_s={:.3f} ticks={}'.format(gap, n))
     check('buttons_disabled_while_running', bool(disabled) and all(disabled), 'samples={}'.format(len(disabled)))
     check('buttons_enabled_after', all(b.isEnabled() for b in p.buttons.values()) and not p.cancel_btn.isEnabled())
     state['full_seconds'] = dt
@@ -233,7 +233,7 @@ def s_cancel():
     objs = len((report or {}).get('objects') or [])
     check('cancel_stops_early', 'Отменено' in p.summary.text() and objs < 1000,
           'objects={} seconds={:.1f} summary={}'.format(objs, dt, p.summary.text()))
-    check('ui_responsive_during_cancel_run', gap < 1.0, 'max_gap_s={:.3f}'.format(gap))
+    check('ui_responsive_during_cancel_run', gap < 0.5, 'max_gap_s={:.3f}'.format(gap))
 
 
 def s_row_click():

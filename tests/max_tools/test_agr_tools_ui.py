@@ -239,6 +239,83 @@ def test_percent_bounds():
     assert m.percent(-1, 10) == 0
 
 
+def test_event_pumps_follow_elapsed_cost_not_object_count():
+    """Invariant: a batch pumps the event loop by elapsed per-object cost.
+
+    Every gap stays strictly under the budget, and the budget stays strictly under
+    0.1 s, whether an object costs 0 or a huge finite time. Object count is not the
+    cadence (a chunk of 25 costs is one count-based gap and many timed gaps).
+
+    Probe: generated costs, including 0 and huge. Budget 0, exactly 0.1, huge, NaN
+    and inf is an error. A cost equal to the budget is sliced so the gap stays
+    strictly under the budget; it is not returned as a gap sitting on the budget.
+    """
+    budget = math.nextafter(m.PUMP_GAP_LIMIT_S, 0.0)
+    assert budget < m.PUMP_GAP_LIMIT_S
+    rnd = random.Random(868)
+    sequences = []
+    mixed = [0.0, 0.0, rnd.random() * (budget * 0.5), 50.0, 0.0, budget * 0.99, 1e3]
+    for _ in range(30):
+        sequences.append([rnd.choice((0.0, rnd.random() * budget * 0.5, 80.0)) for _ in range(40)])
+    sequences.append(mixed)
+    sequences.append([0.0] * 20)
+    sequences.append([50.0])
+    sequences.append([0.06] * 25)  # one count-based chunk: 1.5 s if pumped every 25
+    probed = 0
+    for costs in sequences:
+        gaps = m.pump_gaps(costs, budget)
+        assert gaps, costs[:4]
+        assert max(gaps) < budget
+        assert max(gaps) < m.PUMP_GAP_LIMIT_S
+        assert all(g < budget for g in gaps)
+        probed += 1
+    chunk = [0.06] * 25
+    assert sum(chunk) == pytest.approx(1.5)
+    timed = m.pump_gaps(chunk, budget)
+    assert max(timed) < m.PUMP_GAP_LIMIT_S
+    assert max(timed) < sum(chunk)
+    # Exactly-at-threshold: halves that sum to the budget, and one cost equal to
+    # the budget, must not come back as a single gap sitting on the budget.
+    half = budget / 2.0
+    exact = m.pump_gaps([half, half], budget)
+    assert max(exact) < budget and sum(exact) == pytest.approx(budget)
+    on_budget = m.pump_gaps([budget], budget)
+    assert max(on_budget) < budget
+    since = estimate = 0.0
+    open_gap = 0.0
+    online = []
+    for cost in chunk:
+        pump, since, estimate = m.object_pump(since, estimate, cost)
+        open_gap += cost
+        if pump:
+            online.append(open_gap)
+            open_gap = 0.0
+    if open_gap:
+        online.append(open_gap)
+    assert online and max(online) < m.PUMP_GAP_LIMIT_S
+    assert max(online) < sum(chunk)
+    probed += 2
+    bad_budgets = (0, 0.0, m.PUMP_GAP_LIMIT_S, 1e9, float('nan'), float('inf'), float('-inf'),
+                   True, '0.05', None)
+    budget_errors = 0
+    for bad in bad_budgets:
+        with pytest.raises(ValueError):
+            m.pump_gaps([0.01, 0.02], bad)
+        budget_errors += 1
+    assert budget_errors == len(bad_budgets)
+    bad_costs = (float('nan'), float('inf'), float('-inf'), -0.01, True, None, '0', [])
+    cost_errors = 0
+    for bad in bad_costs:
+        with pytest.raises(ValueError):
+            m.pump_gaps([0.01, bad], budget)
+        cost_errors += 1
+    with pytest.raises(ValueError):
+        m.pump_gaps([], budget)
+    cost_errors += 1
+    assert cost_errors == len(bad_costs) + 1
+    assert probed == len(sequences) + 2
+
+
 @pytest.mark.parametrize('text', ['', 'not json', '[]', 'null', '{"area": 3}', '{"area": true}',
                                   '{"floating": "yes"}', '{"geometry": "@@@"}', '{"area": NaN}'])
 def test_dock_state_bad_input_gives_default(text):
