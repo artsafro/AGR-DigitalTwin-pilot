@@ -296,6 +296,7 @@ def _start_view(made):
     try:
         rt.viewport.setLayout(rt.Name('layout_1'))
         rt.viewport.setCamera(made[cams[0]])
+        rt.viewport.SetRenderLevel(rt.Name('smoothhighlights'))
     except Exception:  # noqa: BLE001 - 3dsmaxbatch: no viewports to set
         pass
 

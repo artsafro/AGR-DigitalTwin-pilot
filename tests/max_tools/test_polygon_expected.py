@@ -117,12 +117,14 @@ def test_fixtures_are_excluded_and_no_check_names_them():
     report = {'status': 'pass', 'objects': [
         {'name': '_base_0_1', 'findings': [{'code': 'name_prefix', 'ids': [], 'detail': ''}]},
         {'name': '_label_0_1_1', 'findings': [{'code': 'hyg_non_mesh', 'ids': [], 'detail': ''}]},
+        {'name': '_cam_База 0.1', 'findings': [{'code': 'hyg_non_mesh', 'ids': [], 'detail': ''}]},
+        {'name': '_cam_База 0.1.Target', 'findings': [{'code': 'hyg_non_mesh', 'ids': [], 'detail': ''}]},
         {'name': 'A', 'findings': []},
     ]}
     got = compare_report(
         [{'name': 'A', 'scene': 'polygon_all', 'expect': 'pass', 'codes': []}], report)
     assert got == []
-    assert '_base_' not in json.dumps(got) and '_label_' not in json.dumps(got)
+    assert '_base_' not in json.dumps(got) and '_label_' not in json.dumps(got) and '_cam_' not in json.dumps(got)
 
 
 def test_report_groups_rows_by_base_and_station():
