@@ -13,6 +13,11 @@ from agr_tools_ui_qt import QtGui, QtWidgets, max_icon, max_main_window
 
 INI_SECTION = 'AGRTools'
 INI_KEY = 'dock'
+# (check, finding code) -> sub-object id type. Only runtime.py xview / matid ids are proven 1-based
+# polyop indices of the node's own Editable_Poly; export and other tools keep node-only selection.
+SUBOBJECT = {('xview', 'overlap_vertices'): 'vertex', ('xview', 'overlap_faces'): 'face',
+             ('matid', 'udim_id'): 'face', ('matid', 'empty_id'): 'face',
+             ('matid', 'empty_slot'): 'face', ('matid', 'missing_material'): 'face'}
 
 
 class MaxBackend:
@@ -48,9 +53,20 @@ class MaxBackend:
         return fn(chunk)
 
     def run_tool(self, tool, scope_all):
-        if scope_all:
-            rt.select(rt.geometry)
-        return self.agr.ui(tool)
+        """runtime.ui reads rt.selection, so 'вся сцена' selects the geometry for the call only
+        and restores the user's selection afterwards, also when the tool raises (#861)."""
+        if not scope_all:
+            return self.agr.ui(tool)
+        saved = list(rt.selection)
+        try:
+            rt.select(list(rt.geometry))
+            return self.agr.ui(tool)
+        finally:
+            alive = [n for n in saved if rt.isValidNode(n)]  # a tool may delete nodes
+            if alive:
+                rt.select(alive)
+            else:
+                rt.clearSelection()
 
     def _node(self, handle):
         """Report handles are anim handles (getHandleByAnim), not node handles."""
@@ -64,11 +80,29 @@ class MaxBackend:
         rt.select([n for n in nodes if n is not None])
 
     def select_row(self, row):
+        """Select the row's node and, when the code's id type is known, its finding components.
+
+        A vanished node leaves the selection unchanged (#861). Ids are 1-based polyop indices of
+        the Editable_Poly copy runtime.py measures, so they map onto an Editable_Poly base only;
+        any other base, an unknown code or an id out of range selects the node alone.
+        """
         n = self._node(row.handle)
         if n is None:
-            rt.clearSelection()
             return False
         rt.select(n)
+        kind = SUBOBJECT.get((row.check, row.code))
+        ids = sorted(set(int(i) for i in row.ids or ()))
+        base = n.baseObject
+        if kind is None or not ids or rt.classOf(base) != rt.Editable_Poly:
+            return True
+        level, count, setter = {
+            'vertex': (1, rt.polyop.getNumVerts, rt.polyop.setVertSelection),
+            'face': (4, rt.polyop.getNumFaces, rt.polyop.setFaceSelection)}[kind]
+        if ids[0] < 1 or ids[-1] > int(count(base)):
+            return True
+        setter(base, ids)
+        rt.setCommandPanelTaskMode(rt.Name('modify'))
+        rt.subObjectLevel = level
         return True
 
     # ---- progress -----------------------------------------------------------------------

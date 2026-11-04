@@ -136,10 +136,11 @@ def test_selection_scope_keeps_tool_result_selection(scene):
     assert scene.rt.selection == [scene.a]  # unchanged behaviour: failed nodes selected
 
 
-@pytest.mark.parametrize('code,kind,level', [('overlap_faces', 'face', 4), ('udim_id', 'face', 4),
-                                             ('empty_slot', 'face', 4), ('overlap_vertices', 'vert', 1)])
-def test_row_selects_finding_components(scene, code, kind, level):
-    assert scene.backend.select_row(Row(101, 'A', 'xview', False, code, '', (3, 7))) is True
+@pytest.mark.parametrize('check,code,kind,level', [
+    ('xview', 'overlap_faces', 'face', 4), ('matid', 'udim_id', 'face', 4),
+    ('matid', 'empty_slot', 'face', 4), ('xview', 'overlap_vertices', 'vert', 1)])
+def test_row_selects_finding_components(scene, check, code, kind, level):
+    assert scene.backend.select_row(Row(101, 'A', check, False, code, '', (7, 3, 3))) is True
     assert scene.rt.selection == [scene.a]
     assert (kind, 'A', {3, 7}) in scene.rt.calls
     assert scene.rt.subObjectLevel == level
@@ -147,6 +148,7 @@ def test_row_selects_finding_components(scene, code, kind, level):
 
 @pytest.mark.parametrize('row', [
     Row(101, 'A', 'names', False, 'unknown_code', '', (3, 7)),   # unknown id type
+    Row(101, 'A', 'export', False, 'overlap_faces', '', (1,)),   # export ids: not proven polyop indices
     Row(101, 'A', 'xview', False, 'overlap_faces', '', ()),      # no ids
     Row(101, 'A', 'xview', False, 'overlap_faces', '', (0, 3)),  # 0 is outside the 1-based range
     Row(101, 'A', 'xview', False, 'overlap_faces', '', (3, 13)),  # A has 12 faces
