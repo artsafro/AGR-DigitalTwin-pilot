@@ -158,6 +158,9 @@ def test_cli_fresh_process_exit_codes(tmp_path):
         proc = _cli(src, cac, alias)
         assert proc.returncode == 4, proc.stderr
     assert (src.read_bytes(), cac.read_bytes()) == before
+    # the same file given as source and cached: refused, no report
+    out_same = tmp_path / "report_same.json"
+    assert _cli(src, tmp_path / "." / "src.json", out_same).returncode == 4 and not out_same.exists()
     # invalid input: exit 5, no report
     bad = tmp_path / "bad.json"
     bad.write_text(json.dumps({"bands": []}), encoding="utf-8")

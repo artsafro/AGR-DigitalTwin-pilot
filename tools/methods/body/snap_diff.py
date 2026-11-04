@@ -100,7 +100,7 @@ def diff_snapped(source: dict, cached: dict) -> dict:
 
 def main(argv=None) -> int:
     sys.path.insert(0, str(HERE.parent))
-    from safe_write import Refused, guard_cli, publish_text
+    from safe_write import Refused, guard_cli, publish_text, same_file
 
     argv = sys.argv[1:] if argv is None else argv
     if len(argv) != 3:
@@ -108,6 +108,8 @@ def main(argv=None) -> int:
         return 2
     src, cac, out = (Path(a) for a in argv)
     try:
+        if same_file(src, cac):
+            raise Refused(f"source and cached are the same file: {src} and {cac}; nothing written")
         guard_cli([src, cac], [out])
     except Refused as exc:
         print(f"SNAP_DIFF refused: {exc}", file=sys.stderr)
