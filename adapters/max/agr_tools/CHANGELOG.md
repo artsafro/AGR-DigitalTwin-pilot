@@ -1,5 +1,25 @@
 # AGR Tools changelog
 
+## 0.6.0 (#808)
+
+Native Qt UI over all 17 existing actions; no check logic changed.
+
+- Dockable panel `AgrToolsPanel` (PySide6 on Max 2025/2026, PySide2 on 2024 through `ui_qt.py`),
+  parented to the Max main window, Max accelerators disabled on focus, dock position kept in
+  `3dsMax.ini` `[AGRTools] dock=`. Five sections by work step, each with its own accent hue
+  (stripe, header, icon tint) derived from the Max palette; result table (red/green), click selects
+  the object, «Выделить ошибки», «Сохранить отчёт JSON…».
+- Progress bar + «Отмена» and the Max progress bar (progressStart/Update/getProgressCancel/End).
+  xView and MatID run in chunks of 25 objects (exact merge); other actions are one runtime call
+  with a busy bar. Buttons are disabled while running.
+- Every action is a macroScript with `iconName:"AgrIcons/agr_<id>"`, Russian label and tooltip
+  (what it does + requirement ids); `agr_tools_runtime.ui('<tool>')` and `agr_tools_runtime.panel()`
+  stay the Python/MAXScript API. Classic rollout `AGRToolsClassic` is the fallback.
+- Menu «AGR Tools» via `#cuiRegisterMenus` (Max 2025+), survives a menu preset change.
+- Application Plugin Package `AGR-Tools.bundle` (`build_agr_tools.py --bundle`), UpgradeCode
+  `{BA2C2E6E-54F9-402E-8875-3D616C9030FD}`, Dark/Light icon components. Icons: own SVG set,
+  PNG 24/30/36/48 rendered at build time (not committed).
+
 ## 0.5.0 (#804)
 
 Five read-only diagnostics. None of them edits the open scene. Each writes a 0.4.0 JSON report

@@ -1,0 +1,9 @@
+AGR_NATIVE_COMPLETE clean=3 planted=3 dry_run_unchanged=true originals_unchanged=true
+AGR_CHECKS_START version=28000 file=
+AGR_CHECKS_NAMES {
+AGR_CHECKS_TRIS {
+AGR_CHECKS_TEXTURES {
+AGR_CHECKS_TEXTURES_ATLAS {
+AGR_CHECKS_PIVOT m={
+AGR_CHECKS_GEOJSON {
+AGR_CHECKS_COMPLETE names=5 tris=6 textures=7+atlas3 pivot=3+cm macros=4 geojson=5 read_only=true

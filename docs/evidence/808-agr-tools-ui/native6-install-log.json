@@ -1,0 +1,13 @@
+{
+ "bundle_sha256": "4097e6ca849db19e3257ae10dc6a23dc147fa71cac4dba413620539300e85853",
+ "plugins_dir": "C:\\Users\\artsafro\\AppData\\Roaming\\Autodesk\\ApplicationPlugins",
+ "ini_section_before": false,
+ "installed": 251,
+ "max_exit": 3221226505,
+ "max_seconds": 87.2,
+ "ini_section_after_run": true,
+ "ini_cleaned": [],
+ "leftover_files": [],
+ "changed_files": [],
+ "ini_section_after_uninstall": true
+}

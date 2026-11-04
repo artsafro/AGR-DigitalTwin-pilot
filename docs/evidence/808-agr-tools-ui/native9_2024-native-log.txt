@@ -1,0 +1,36 @@
+INFO scheduled
+INFO max [26000, 64, 0, 26, 2, 5, 192, 2024, '.2.5 Security Fix']
+INFO python 3.10.14 PySide2 5.15.1
+PASS empty_scene objects=0
+PASS bundle_loaded c:\users\artsafro\appdata\roaming\autodesk\applicationplugins\agr-tools.bundle\contents\agr_tools\
+PASS globals_only_documented AGRTools* globals: ['agrtoolsdialog', 'agrtoolsregistered', 'agrtoolsregistermenus', 'agrtoolsroot']
+INFO other_agr_named_globals_not_ours ['agrps', 'fragrolrf']
+PASS globals_reload_zero_new before=7793 after=7793
+SKIP menu Max < 2025 has no CuiMenuManager; macros/toolbar only (menu.ms is a no-op)
+INFO color_theme dark icon folder C:\Program Files\Autodesk\3ds Max 2024\UI_ln\IconsDark
+PASS icon_resolves_dark_tools sizes=[24, 30, 36, 48]
+PASS icon_resolves_dark_xview sizes=[24, 30, 36, 48]
+PASS icon_resolves_dark_ucx_apply sizes=[24, 30, 36, 48]
+PASS icon_resolves_dark_geojson sizes=[24, 30, 36, 48]
+INFO icon_resolved_path
+PASS panel_opened_by_macro
+PASS panel_parent_is_max_main
+PASS panel_docked area=PySide2.QtCore.Qt.DockWidgetArea.RightDockWidgetArea
+PASS accelerators_disabled
+PASS all_17_actions
+PASS panel_icons_from_max_loader {'cancel': 'max', 'select': 'max', 'xview': 'max', 'matid': 'max', 'names': 'max', 'tris': 'max', 'textures': 'max', 'pivot': 'max', 'nudge': 'max', 'nudge_apply': 'max', 'atlas': 'max', 'atlas_apply': 'max', 'texel': 'max', 'ucx': 'max', 'ucx_apply': 'max', 'cleanup': 'max', 'cleanup_apply': 'max', 'export': 'max', 'geojson': 'max', 'tools': 'max'}
+INFO dock_ini_after_close {"area": 1, "floating": false, "geometry": "", "visible": true}
+PASS closed_panel_deleted
+PASS single_panel_after_reopen count=1
+PASS dock_position_restored area=PySide2.QtCore.Qt.DockWidgetArea.LeftDockWidgetArea
+PASS boxes_1000
+PASS progress_1000_complete objects=1000 seconds=13.2 status=pass
+PASS ui_responsive_during_run max_gap_s=0.376 ticks=47
+PASS buttons_disabled_while_running samples=42
+PASS buttons_enabled_after
+PASS row_click_selects_object ['SM_Synthetic_0000_Main']
+INFO screenshot dark
+PASS cancel_stops_early objects=275 seconds=3.5 summary=Ошибок 0 · ОК 275 · Отменено: cancelled at 275 / 1000
+PASS ui_responsive_during_cancel_run max_gap_s=0.305
+INFO summary {"pass": 25, "fail": 0, "error": 0}
+INFO AGR_UI_DONE

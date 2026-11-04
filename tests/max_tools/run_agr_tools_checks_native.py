@@ -1,4 +1,4 @@
-"""new-case: AGR Tools 0.5.0 diagnostics in locked batch Max on a disposable synthetic scene.
+"""new-case: AGR Tools 0.5.0 diagnostics (package 0.6.0) in locked batch Max on a disposable synthetic scene.
 
 Run via dcc_batch.py; AGR_TEST_OUTPUT must name a NEW directory. All data is synthetic.
 Installs the built MZP into OUT, builds a throwaway scene, runs the five read-only checks
@@ -21,7 +21,7 @@ if _venv_python.is_file():
     os.environ['AGR_PYTHON'] = str(_venv_python)
 OUT = Path(os.environ['AGR_TEST_OUTPUT'])
 OUT.mkdir(parents=True, exist_ok=False)
-PACKAGE = Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.5.0.mzp'))
+PACKAGE = Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.6.0.mzp'))
 print('AGR_PACKAGE_SHA256', hashlib.sha256(PACKAGE.read_bytes()).hexdigest())
 print('AGR_CHECKS_START version={} file={}'.format(rt.maxVersion()[0], rt.maxFileName))
 assert rt.maxVersion()[0] in (26000, 28000)
@@ -37,7 +37,7 @@ assert rt.execute('global AGRToolsRegistered; AGRToolsRegistered == true'), 'MZP
 sys.path.insert(0, str(OUT / 'installed'))
 import runtime as agr  # noqa: E402
 
-assert agr.VERSION == '0.5.0'
+assert agr.VERSION == '0.6.0'
 results = {'version': list(rt.maxVersion()), 'checks': {}, 'read_only': {}, 'macros': {}}
 
 
@@ -271,8 +271,8 @@ for macro, tool in (('AGRToolsNames', 'names'), ('AGRToolsTris', 'tris'), ('AGRT
     results['macros'][macro] = {'ran': True, 'digest_unchanged': True,
                                 'selected_offenders': sorted(str(n.name) for n in rt.selection)}
 assert results['macros']['AGRToolsPivot']['selected_offenders'] == ['SM_Pivot_1_MainGlass'], results['macros']
-mcr = (OUT / 'installed' / 'agr_tools.mcr').read_text(encoding='utf-8')
-assert 'macroScript AGRToolsGeojson' in mcr and '"GeoJSON check"' in mcr  # its dialog is not opened in batch
+mcr = (OUT / 'installed' / 'agr_tools.mcr').read_text(encoding='utf-8-sig')  # 0.6.0: Russian labels, BOM
+assert 'macroScript AGRToolsGeojson' in mcr and '"Проверка GeoJSON"' in mcr  # its dialog is not opened in batch
 for n in piv_nodes:
     rt.delete(n)
 
