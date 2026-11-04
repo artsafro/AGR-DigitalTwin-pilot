@@ -1,4 +1,4 @@
-"""Top-view evidence renders of polygon_all.max (run inside 3ds Max, batch or UI).
+"""new-case: Top-view evidence renders of polygon_all.max (run inside 3ds Max, batch or UI).
 
 Usage (shared DCC lock, opens a COPY of the scene, saves nothing):
 

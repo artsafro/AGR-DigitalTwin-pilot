@@ -1,4 +1,4 @@
-"""Visual quick-start screenshots of the polygon in interactive 3ds Max (run inside Max).
+"""new-case: Visual quick-start screenshots of the polygon in interactive 3ds Max (run inside Max).
 
 Started by guide_drive.py as `3dsmax.exe -silent -U PythonHost guide_inside.py`. Env:
 AGR_GUIDE_SCENE (polygon_all.max to open), AGR_GUIDE_OUT (new folder for PNGs + log.txt).

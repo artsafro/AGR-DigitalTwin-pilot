@@ -1,4 +1,4 @@
-"""Contact sheet of the guide screenshots (needs Pillow: `uv run --with pillow python ...`).
+"""new-case: Contact sheet of the guide screenshots (needs Pillow: `uv run --with pillow python ...`).
 
     python test-polygon/build/guide_sheet.py <guide out dir> [--cols 3] [--width 640]
 
