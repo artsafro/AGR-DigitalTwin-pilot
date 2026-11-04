@@ -90,6 +90,31 @@ def test_parity_strict_tolerance_and_missing_part():
     assert gone and not any(r["equal"] or r["equal_within_tol"] for r in gone if r["part"] == "b")
 
 
+def _bounds_row(a, b, raw=True):
+    ma, mb = K.scene_metrics(a, raw_bounds=raw), K.scene_metrics(b, raw_bounds=raw)
+    rows = K.parity(ma, mb)
+    return next(r for r in rows if r["metric"] == "bounds_m")
+
+
+@pytest.mark.parametrize("raw", [True, False])
+@pytest.mark.parametrize("delta,ok", [(0.0, True), (4e-6, True), (2e-5, False)])
+def test_bounds_parity_uses_vertex_tolerance_not_rounding(delta, ok, raw):
+    a = {"b": _box(36.6034249)}   # +4e-6 -> 36.6034289: rounds to 36.60343 vs 36.60342 (crosses 5th decimal)
+    b = {"b": {**a["b"], "v": a["b"]["v"] + delta}}
+    row = _bounds_row(a, b, raw)
+    assert row["equal_within_tol"] is ok
+    assert row["equal"] is (delta == 0.0)   # strict equality would fail on main's rule
+
+
+def test_bounds_parity_vertex_count_difference_still_fails():
+    a = {"b": _box(30.0)}
+    v = np.vstack([a["b"]["v"], [[30.0, 30.0, 30.0]]])       # extra vertex inside the bounds
+    b = {"b": {**a["b"], "v": v}}
+    rows = K.parity(K.scene_metrics(a, raw_bounds=True), K.scene_metrics(b, raw_bounds=True))
+    assert _bounds_row(a, b)["equal_within_tol"]
+    assert {r["metric"] for r in rows if not r["equal_within_tol"]} >= {"vertices"}
+
+
 def test_uv_loss_is_reported_not_defaulted():
     s = _box()
     s["uv"][2] = None

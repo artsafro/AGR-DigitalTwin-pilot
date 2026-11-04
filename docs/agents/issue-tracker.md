@@ -81,5 +81,6 @@ Board rules: `docs/agents/KANBAN.md`. IDs (project `PVT_kwHODNABwc4BnB8W`):
 
 ## Project labels
 
-Besides the triage labels (`docs/agents/triage-labels.md`), issues carry one area label from
-`docs/HARNESS_PLAN.md` §13: `pattern`, `benchmark`, `extractor`, `blocked`, `gray-zone`.
+Besides the triage labels (`docs/agents/triage-labels.md`), issues carry one area label:
+`pattern`, `benchmark`, `extractor`, `blocked`, `gray-zone`. The list is recorded in historical
+`docs/HARNESS_PLAN.md` §13.
