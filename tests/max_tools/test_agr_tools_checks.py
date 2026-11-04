@@ -972,3 +972,54 @@ def test_padding_per_atlas_bruteforce_probe():
             bad = any(s is not t and s[1:3] == t[1:3] and max(abs(s[3] - t[3]) - 0.2, 0.0) * 1024 < 8
                       for s in mine for t in squares)
             assert codes(found[key]) == (['tex_padding'] if bad else []), (key, squares)
+
+
+class _Seq(list):
+    @property
+    def count(self):
+        return len(self)
+
+
+def _fake_mm(ids, maps_per_sub):
+    import types
+    rt = types.SimpleNamespace(undefined=object(), Multimaterial=object())
+    rt.classOf = lambda m: rt.Multimaterial
+    subs = [types.SimpleNamespace(maps=_Seq(p)) for p in maps_per_sub]
+    rt.usedMaps = lambda s: s.maps
+    mm = types.SimpleNamespace(materialIDList=_Seq(ids), materialList=_Seq(subs))
+    return rt, types.SimpleNamespace(material=mm)
+
+
+def _slots_to_findings(ids, maps_per_sub):
+    cm = _load('checks_max.py', 'agr_checks_max_dup_test')
+    rt, node = _fake_mm(ids, maps_per_sub)
+    cm._rt = lambda: rt
+    slots = cm._slots(node)
+    d1 = ('T_Tverskaya_12_001_Main_d_1.png', png(1024, 1024))
+    d2 = ('T_Tverskaya_12_001_Main_d_2.png', png(1024, 1024))
+    row = slot_row(1, 'SM_Tverskaya_12_001_Main', {}, NPM_FBX, full_square_islands([2]))
+    row['slots'], row['maps'] = slots, [d1, d2]
+    return slots, core.textures_scene([row])
+
+
+def test_duplicate_matid_in_list_is_one_named_finding():
+    """RED: last-wins kept only the second sub-material's maps and reported nothing."""
+    slots, (found, _) = _slots_to_findings([1, 1], [['T_Tverskaya_12_001_Main_d_1.png'],
+                                                    ['T_Tverskaya_12_001_Main_d_2.png']])
+    assert slots == {1: None}
+    assert codes(found[1]) == ['tex_unmeasurable'] and 'matID 1' in found[1][0][1]
+
+
+def test_distinct_matids_keep_both_slots_without_ambiguity():
+    slots, (found, _) = _slots_to_findings([1, 2], [['T_Tverskaya_12_001_Main_d_1.png'],
+                                                    ['T_Tverskaya_12_001_Main_d_2.png']])
+    assert slots == {1: ['T_Tverskaya_12_001_Main_d_1.png'], 2: ['T_Tverskaya_12_001_Main_d_2.png']}
+    assert 'tex_unmeasurable' not in codes(found[1])
+
+
+def test_duplicate_matid_does_not_hide_the_other_slot():
+    m = ['T_Tverskaya_12_001_Main_d_1.png']
+    slots, (found, _) = _slots_to_findings([1, 1, 2], [m, m, ['T_Tverskaya_12_001_Main_d_2.png']])
+    assert slots[1] is None and slots[2] == ['T_Tverskaya_12_001_Main_d_2.png']
+    unm = [x for x in found[1] if x[0] == 'tex_unmeasurable']
+    assert len(unm) == 1 and 'matID 1' in unm[0][1]

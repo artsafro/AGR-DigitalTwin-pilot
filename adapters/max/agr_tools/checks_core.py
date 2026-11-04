@@ -667,6 +667,10 @@ def textures_scene(rows):
         known = {p for p, _ in maps}
         slot_atlas = {}
         for mid, paths in slots.items():
+            if paths is None:  # materialIDList repeats this ID: which sub-material is meant is unknown
+                f.append(('tex_unmeasurable', f'matID {mid} is repeated in materialIDList: '
+                          'the sub-material for it is ambiguous, its faces are not measured'))
+                continue
             missing = [p for p in paths if p not in known]
             if missing:
                 raise ValueError(f'{r["name"]} matID {mid}: slot maps {missing} are not in the map list')
