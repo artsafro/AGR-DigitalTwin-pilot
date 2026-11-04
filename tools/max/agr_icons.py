@@ -128,6 +128,26 @@ def svg(name: str, color: str) -> str:
             f'{body}</svg>\n')
 
 
+def png_bytes(svg_text: str, size: int) -> bytes:
+    """Render one PNG in memory (needs PySide6 and a Q(Gui)Application)."""
+    from PySide6 import QtCore, QtGui, QtSvg
+
+    renderer = QtSvg.QSvgRenderer(QtCore.QByteArray(svg_text.encode("utf-8")))
+    if not renderer.isValid():
+        raise ValueError("invalid SVG")
+    image = QtGui.QImage(size, size, QtGui.QImage.Format_ARGB32)
+    image.fill(QtCore.Qt.transparent)
+    painter = QtGui.QPainter(image)
+    painter.setRenderHint(QtGui.QPainter.Antialiasing)
+    renderer.render(painter)
+    painter.end()
+    buf = QtCore.QBuffer()
+    buf.open(QtCore.QIODevice.WriteOnly)
+    if not image.save(buf, "PNG"):
+        raise OSError("cannot encode PNG")
+    return bytes(buf.data())
+
+
 def _render_png(svg_text: str, size: int, path: Path) -> None:
     from PySide6 import QtCore, QtGui, QtSvg
 

@@ -5,7 +5,7 @@ Native xView uses 0.002 m vertices and 0.005 m faces.
 import json
 import sys
 
-VERSION = "0.5.0"
+VERSION = "0.6.0"
 CODES = {'xview': {'overlap_vertices', 'overlap_faces'},
          'matid': {'udim_id', 'empty_id', 'empty_slot', 'missing_material'},
          'cleanup': {'remove_custom_attributes', 'clear_user_defined_lines',
@@ -1911,3 +1911,27 @@ def ui(tool):
         raise ValueError('unsupported tool: ' + str(tool))
     print(json.dumps(report, ensure_ascii=True, allow_nan=False))
     return report
+
+
+_panel = None
+
+
+def panel():
+    """0.6.0 dockable Qt panel (one per session). Every action stays callable through ui(tool)."""
+    global _panel
+    import types
+    from pathlib import Path
+    if _panel is not None:
+        try:
+            _panel.show()
+            _panel.raise_()
+            return _panel
+        except RuntimeError:  # the C++ widget was deleted (Max reset)
+            _panel = None
+    _load_core('ui_qt.py', 'agr_tools_ui_qt')
+    _load_core('ui_model.py', 'agr_tools_ui_model')
+    ui_panel = _load_core('ui_panel.py', 'agr_tools_ui_panel')
+    ui_max = _load_core('ui_max.py', 'agr_tools_ui_max')
+    icon_root = str(Path(__file__).resolve().parent / 'icons')
+    _panel = ui_max.create(types.SimpleNamespace(**globals()), ui_panel, icon_root)
+    return _panel

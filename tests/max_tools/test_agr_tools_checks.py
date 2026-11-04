@@ -742,22 +742,22 @@ def test_d6_glue_never_edits_the_scene():
 
 
 def test_buttons_registered_in_rollout_and_package():
-    mcr = (PKG / 'agr_tools.mcr').read_text(encoding='utf-8')
-    for label, tool in (('Names check NPM/VPM', 'names'), ('Triangle limits per FBX', 'tris'),
-                        ('Textures check (all objects)', 'textures'), ('Pivot check', 'pivot'),
-                        ('GeoJSON check', 'geojson')):
+    mcr = (PKG / 'agr_tools.mcr').read_text(encoding='utf-8-sig')
+    for label, tool in (('Имена NPM/VPM', 'names'), ('Треугольники по FBX', 'tris'),
+                        ('Текстуры (все)', 'textures'), ('Пивот', 'pivot'),
+                        ('Проверка GeoJSON', 'geojson')):
         assert f'"{label}"' in mcr and f"ui('{tool}')" in mcr
-    assert 'VERSION = "0.5.0"' in (PKG / 'runtime.py').read_text(encoding='utf-8')
-    assert 'version=0.5.0' in (PKG / 'startup.ms').read_text(encoding='utf-8')
+    assert 'VERSION = "0.6.0"' in (PKG / 'runtime.py').read_text(encoding='utf-8')
+    assert 'version=0.6.0' in (PKG / 'startup.ms').read_text(encoding='utf-8')
     install = (PKG / 'install.ms').read_text(encoding='utf-8')
-    assert 'AGRTools-0.5.0' in install and '"checks_core.py", "checks_max.py"' in install
-    assert (PKG / 'mzp.run').read_text(encoding='utf-8').splitlines()[1] == 'version 0.5'
+    assert 'AGRTools-0.6.0' in install and '"checks_core.py", "checks_max.py"' in install
+    assert (PKG / 'mzp.run').read_text(encoding='utf-8').splitlines()[1] == 'version 0.6'
 
 
 def test_mzp_ships_the_new_cores(tmp_path):
     import zipfile
     builder = _load('../../../tools/max/build_agr_tools.py', 'agr_builder_checks')
-    out = tmp_path / 'AGR-Tools-0.5.0.mzp'
+    out = tmp_path / 'AGR-Tools-0.6.0.mzp'
     builder.build(out)
     with zipfile.ZipFile(out) as z:
         names = set(z.namelist())

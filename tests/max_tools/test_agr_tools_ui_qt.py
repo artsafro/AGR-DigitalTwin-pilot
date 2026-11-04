@@ -1,0 +1,255 @@
+"""new-case: AGR Tools 0.6.0 Qt panel under pytest-qt with a fake backend (#808).
+
+Runs outside 3ds Max (PySide6 from PyPI). Skipped when PySide6 / pytest-qt are not installed:
+uv run --with PySide6 --with pytest-qt pytest tests/max_tools/test_agr_tools_ui_qt.py
+"""
+import importlib.util
+import json
+import os
+import sys
+from pathlib import Path
+
+import pytest
+
+pytest.importorskip('PySide6')
+pytest.importorskip('pytestqt')
+os.environ.setdefault('QT_QPA_PLATFORM', 'offscreen')
+
+ROOT = Path(__file__).resolve().parents[2]
+PKG = ROOT / 'adapters/max/agr_tools'
+
+
+def _load(name, module):
+    spec = importlib.util.spec_from_file_location(module, PKG / name)
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[module] = mod
+    spec.loader.exec_module(mod)
+    return mod
+
+
+qt = _load('ui_qt.py', 'agr_tools_ui_qt')
+model = _load('ui_model.py', 'agr_tools_ui_model')
+ui = _load('ui_panel.py', 'agr_tools_ui_panel')
+_ispec = importlib.util.spec_from_file_location('agr_icons_qt', ROOT / 'tools/max/agr_icons.py')
+ICONS = importlib.util.module_from_spec(_ispec)
+_ispec.loader.exec_module(ICONS)
+QtCore, QtGui, QtWidgets = qt.QtCore, qt.QtGui, qt.QtWidgets
+
+
+class FakeBackend:
+    def __init__(self, n=1000, cancel_at=None):
+        self.nodes = list(range(1, n + 1))
+        self.cancel_at = cancel_at
+        self.panel = None
+        self.events = []
+        self.selected = None
+        self.settings = ''
+        self.native_pct = []
+        self.enabled_during_run = set()
+
+    def icon(self, name):
+        icon = QtGui.QIcon()
+        for s in (24, 30, 36, 48):
+            pm = QtGui.QPixmap()
+            pm.loadFromData(ICONS.png_bytes(ICONS.svg(name, ICONS.THEMES['Dark']), s), 'PNG')
+            icon.addPixmap(pm)
+        return icon
+
+    def targets(self, scope_all):
+        return list(self.nodes)
+
+    def run_chunk(self, tool, chunk):
+        if self.panel is not None:
+            self.enabled_during_run |= {k for k, b in self.panel.buttons.items() if b.isEnabled()}
+            self.panel.run('matid')  # re-entry through processEvents must be refused
+        return {'schema': 1, 'tool': tool, 'status': 'pass',
+                'objects': [{'handle': h, 'name': 'N%d' % h,
+                             'findings': [] if h % 100 else [{'code': 'overlap_faces', 'ids': [1]}]}
+                            for h in chunk]}
+
+    def run_tool(self, tool, scope_all):
+        self.events.append(('tool', tool, scope_all))
+        if tool == 'export':
+            raise ValueError('dry-run gate failed')
+        return {'schema': 1, 'tool': tool, 'status': 'pass', 'objects': [{'handle': 5, 'name': 'A', 'findings': []}]}
+
+    def select_failed(self, report):
+        self.selected = [o['handle'] for o in report['objects'] if o['findings']]
+
+    def select_row(self, row):
+        self.selected = [row.handle]
+
+    def progress_start(self, label):
+        self.events.append(('start', label))
+
+    def progress_update(self, pct):
+        self.native_pct.append(pct)
+        return not (self.cancel_at is not None and pct >= self.cancel_at)
+
+    def progress_cancelled(self):
+        return False
+
+    def progress_end(self):
+        self.events.append(('end',))
+
+    def log(self, report):
+        pass
+
+    def log_error(self, tool, exc):
+        self.events.append(('error', tool, str(exc)))
+
+    def save_path(self):
+        return None
+
+    def load_settings(self):
+        return self.settings
+
+    def save_settings(self, text):
+        self.settings = text
+
+
+@pytest.fixture
+def main(qtbot):
+    w = QtWidgets.QMainWindow()
+    w.setCentralWidget(QtWidgets.QLabel('viewport'))
+    w.resize(1400, 900)
+    qtbot.addWidget(w)
+    return w
+
+
+def make(main, backend):
+    panel = ui.AgrPanel(backend, main)
+    backend.panel = panel
+    ui.place(panel, main, model.parse_dock(backend.load_settings()))
+    main.show()
+    return panel
+
+
+def test_layout_has_all_sections_and_actions(main):
+    p = make(main, FakeBackend())
+    assert p.objectName() == 'AgrToolsPanel' and isinstance(p, QtWidgets.QDockWidget)
+    assert [s.header.text() for s in p.sections] == list(model.SECTIONS)
+    assert set(p.buttons) == {a.id for a in model.ACTIONS}
+    for a in model.ACTIONS:
+        b = p.buttons[a.id]
+        assert b.toolTip() == model.tooltip(a) and b.text() == a.label and not b.icon().isNull()
+    assert main.dockWidgetArea(p) == QtCore.Qt.RightDockWidgetArea
+    colours = {s.color.name() for s in p.sections}
+    assert len(colours) == 5
+
+
+def test_batched_run_on_1000_objects_progress_and_buttons_disabled(main):
+    be = FakeBackend(1000)
+    p = make(main, be)
+    report = p.run('xview')
+    assert len(report['objects']) == 1000 and report['status'] == 'fail'
+    assert be.enabled_during_run == set()  # every action button disabled while running
+    assert be.native_pct[0] == 0 and be.native_pct[-1] == 100 and len(be.native_pct) == 41
+    assert be.selected == list(range(100, 1001, 100))
+    assert p.table.rowCount() == 1000 and p.summary.text().startswith('Ошибок 10 · ОК 990')
+    assert all(b.isEnabled() for b in p.buttons.values()) and not p.cancel_btn.isEnabled()
+    assert ('start', 'xView: перекрытия') in be.events and be.events[-1] == ('end',)
+
+
+def test_native_cancel_stops_and_reports_partial(main):
+    be = FakeBackend(1000, cancel_at=30)
+    p = make(main, be)
+    p.run('xview')
+    assert 'Отменено' in p.summary.text()
+    assert 0 < p.table.rowCount() < 1000
+    assert all(b.isEnabled() for b in p.buttons.values()) and be.events[-1] == ('end',)
+
+
+def test_panel_cancel_button(main, qtbot):
+    be = FakeBackend(1000)
+    p = make(main, be)
+    orig = be.run_chunk
+
+    def chunk(tool, c):
+        if c[0] == 101:
+            qtbot.mouseClick(p.cancel_btn, QtCore.Qt.LeftButton)
+        return orig(tool, c)
+    be.run_chunk = chunk
+    p.run('matid')
+    assert p.table.rowCount() == 125 and 'Отменено' in p.summary.text()
+
+
+def test_single_call_tools_errors_and_scope(main):
+    be = FakeBackend()
+    p = make(main, be)
+    p.scope.setCurrentIndex(1)
+    p.run('cleanup_apply')
+    assert ('tool', 'apply', True) in be.events
+    p.run('export')
+    assert ('error', 'export', 'dry-run gate failed') in be.events
+    assert 'ValueError: dry-run gate failed' in p.summary.text()
+
+
+def test_row_click_selects_object(main, qtbot):
+    be = FakeBackend(50)
+    p = make(main, be)
+    p.run('xview')
+    p._row_clicked(3, 0)
+    assert be.selected == [p.row_data[3].handle]
+
+
+def test_dock_position_is_remembered(main, qtbot):
+    be = FakeBackend()
+    p = make(main, be)
+    main.removeDockWidget(p)
+    main.addDockWidget(QtCore.Qt.LeftDockWidgetArea, p)
+    p.show()
+    p.save_state()
+    assert json.loads(be.settings)['area'] == 1
+    p.close()
+    p2 = make(main, be)
+    assert main.dockWidgetArea(p2) == QtCore.Qt.LeftDockWidgetArea
+    p2.setFloating(True)
+    p2.save_state()
+    assert json.loads(be.settings)['floating'] is True and json.loads(be.settings)['geometry']
+    p3 = make(main, be)
+    assert p3.isFloating()
+
+
+@pytest.mark.parametrize('theme,window,base,text', [('Dark', '#444444', '#2e2e2e', '#dcdcdc'),
+                                                    ('Light', '#d3d3d3', '#f0f0f0', '#202020')])
+def test_accents_follow_the_palette(main, theme, window, base, text):
+    pal = QtGui.QPalette()
+    pal.setColor(QtGui.QPalette.Window, QtGui.QColor(window))
+    pal.setColor(QtGui.QPalette.Base, QtGui.QColor(base))
+    pal.setColor(QtGui.QPalette.Text, QtGui.QColor(text))
+    pal.setColor(QtGui.QPalette.WindowText, QtGui.QColor(text))
+    pal.setColor(QtGui.QPalette.ButtonText, QtGui.QColor(text))
+    QtWidgets.QApplication.instance().setPalette(pal)
+    try:
+        p = make(main, FakeBackend(30))
+        p.run('xview')
+        acc = p.accents()
+        b = QtGui.QColor(base)
+        for c in list(acc.values()) + [s.color for s in p.sections]:
+            assert model.contrast((c.red(), c.green(), c.blue()), (b.red(), b.green(), b.blue())) >= 3
+        out = os.environ.get('AGR_UI_SHOTS')
+        if out:
+            main.grab().save(str(Path(out) / 'offscreen_{}.png'.format(theme.lower())))
+    finally:
+        QtWidgets.QApplication.instance().setPalette(QtGui.QPalette())
+
+
+def test_theme_switch_after_creation_recolours_sections(main):
+    """Max can switch Dark/Light at runtime (colorMan.setColorTheme): accents must follow."""
+    app = QtWidgets.QApplication.instance()
+    p = make(main, FakeBackend(5))
+    before = [s.color.name() for s in p.sections]
+    pal = QtGui.QPalette()
+    pal.setColor(QtGui.QPalette.Base, QtGui.QColor('#2e2e2e'))
+    pal.setColor(QtGui.QPalette.Text, QtGui.QColor('#dcdcdc'))
+    app.setPalette(pal)
+    try:
+        QtWidgets.QApplication.processEvents()
+        after = [s.color.name() for s in p.sections]
+        assert after != before
+        b = (46, 46, 46)
+        for s in p.sections:
+            assert model.contrast((s.color.red(), s.color.green(), s.color.blue()), b) >= 3
+    finally:
+        app.setPalette(QtGui.QPalette())
