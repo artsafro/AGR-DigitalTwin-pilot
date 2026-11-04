@@ -26,6 +26,8 @@ def isolated(tmp_path, monkeypatch):
     monkeypatch.setenv("AGR_MCP_AUDIT", str(tmp_path / "audit.jsonl"))
     monkeypatch.setenv("AGR_MCP_CARD", "test-841")
     monkeypatch.delenv("AGR_MCP_UNSAFE", raising=False)
+    for k in ("AGR_MCP_MAX_PID", "MCP_MAX_PID", "MCP_MAX_PIPE"):  # unit tests never reach a real Max
+        monkeypatch.delenv(k, raising=False)
 
 
 def audit_lines(tmp_path):
@@ -393,3 +395,64 @@ def test_unsafe_with_flag_is_listed_destructive_and_audited(tmp_path):
     line, = audit_lines(tmp_path)
     assert line["unsafe"] is True and line["code_bytes"] == 3 and line["host"] == "max-live"
     assert "1+1" not in (tmp_path / "audit.jsonl").read_text(encoding="utf-8"), "code body leaked to audit"
+
+
+@pytest.mark.parametrize("raw", ["__MCP_MS_ERR__:-- Runtime error: x", '"__MCP_MS_ERR__:-- Runtime error: x"'])
+def test_maxscript_error_marker_is_an_error_not_a_value(raw, tmp_path):
+    """3dsmax-mcp returns a MAXScript exception as success=true with this marker (seen natively, #841)."""
+    with pytest.raises(max_pipe.MaxError, match="MAXScript error"):
+        max_pipe.decode_value(raw)
+    _, (res,) = run_calls([("agr_matid_check", {"scene": "live"})], transport=lambda c, t: raw)
+    assert res.isError and "MAXScript error" in res.content[0].text
+    assert audit_lines(tmp_path)[0]["status"] == "error"
+
+
+@pytest.mark.parametrize("unsafe", [False, True])
+def test_fresh_stdio_process_lists_tools(unsafe, tmp_path):
+    """Fresh-process witness: the installed console script over real stdio, not the in-memory transport."""
+    sys.path.insert(0, str(Path(__file__).parent))
+    try:
+        from list_tools_stdio import transcript
+    finally:
+        sys.path.pop(0)
+    t = anyio.run(transcript, unsafe, str(tmp_path / "stdio-audit.jsonl"))
+    names = [x["name"] for x in t["tools"]]
+    assert sorted(names) == sorted(tools.PHASE0 + (("agr_exec_unsafe",) if unsafe else ()))
+    assert t["serverInfo"]["name"] == "agr-mcp"
+    assert all(x["readOnlyHint"] for x in t["tools"] if x["name"] != "agr_exec_unsafe")
+
+
+# ---- generated probes (invariant -> probe -> N/N) -------------------------------------------------------
+def test_probe_lock_refuses_every_second_holder_seed_841():
+    import random
+    rnd = random.Random(841)
+    n = 0
+    for _ in range(60):
+        host = rnd.choice(["max-live", "blender-batch"])
+        other = "blender-batch" if host == "max-live" else "max-live"
+        with locks.hold(host, f"c{rnd.randrange(3)}", rnd.uniform(1, 900)) as held:
+            with pytest.raises(locks.LockBusy):
+                with locks.hold(host, rnd.choice(["c0", "c1", "c2"]), 10):
+                    pass
+            with locks.hold(other, "x", 10):  # hosts are independent
+                pass
+            with locks.hold("offline", "x", 10) as none:
+                assert none is None
+        assert not held.exists()
+        n += 1
+    assert n == 60
+
+
+def test_probe_audit_lines_equal_calls_seed_841(tmp_path):
+    import random
+    rnd = random.Random(841)
+    pool = [("agr_mesh_names", MESH_ARGS), ("agr_mesh_names", dict(MESH_ARGS, limit=0)),
+            ("agr_xview_parity", {"dump": parity_dump()}), ("agr_xview_parity", {"dump": {}}),
+            ("agr_geojson_check", {"path": "C:/no.geojson", "ground": True}), ("agr_unknown", {"a": 1}),
+            ("agr_exec_unsafe", {"code": "x"}), ("agr_xview_check", {"scene": "live"})]
+    calls = [rnd.choice(pool) for _ in range(40)]
+    run_calls(calls, env={})
+    lines = audit_lines(tmp_path)
+    assert len(lines) == len(calls)
+    assert [x["tool"] for x in lines] == [c[0] for c in calls]
+    assert all(set(audit.FIELDS) <= set(x) for x in lines)

@@ -28,6 +28,9 @@ except Exception as e:
 """
 
 
+MS_ERROR = "__MCP_MS_ERR__"
+
+
 class MaxError(RuntimeError):
     """Max was unreachable, the script failed, or the bridge reported an error."""
 
@@ -88,6 +91,8 @@ def decode_value(value) -> str:
     text = value.strip()
     if text.startswith('"'):
         text = json.loads(text)
+    if text.startswith(MS_ERROR):  # 3dsmax-mcp reports a MAXScript exception as success + this marker
+        raise MaxError("MAXScript error: " + text[len(MS_ERROR):].lstrip(":").strip()[:1500])
     return text
 
 
