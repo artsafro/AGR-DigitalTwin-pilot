@@ -235,7 +235,8 @@ def catalog(unsafe: bool = False, max_transport=None) -> dict[str, Spec]:
         specs.append(Spec(name, "AGR Tools 0.7.0 runtime.checks_070 '{}' in the pinned open 3ds Max: {} (read-only; "
                           "selects nodes with findings, geometry and files untouched; needs runtime 0.7.0)."
                           .format(name.split("_", 2)[2] if name != "agr_ucx_audit" else "ucx_audit", what),
-                          MAX_IN, MAX_OUT, _max_tool(name, max_transport), _const("max-live")))
+                          MAX_IN, MAX_OUT, _max_tool(name, max_transport), _const("max-live"),
+                          timeout=_max_timeout))
     if unsafe:
         def h_exec(args: dict):
             raw = (max_transport or max_pipe.pipe_transport)(args["code"], float(args.get("timeout", EXEC_TIMEOUT)))

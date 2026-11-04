@@ -386,6 +386,14 @@ def test_every_locked_tool_declares_its_call_timeout(name, args, want):
     assert spec.host(args) != "offline" and spec.timeout is not None and spec.timeout(args) == want
 
 
+def test_no_locked_tool_falls_back_to_the_server_default_timeout():
+    """Every tool that takes a host lock sizes it from its own call timeout (#871), incl. later-added tools."""
+    missing = [s.name for s in tools.catalog(unsafe=True).values()
+               if s.timeout is None and s.host({"scene": "live", "fbx_path": "a.fbx", "target": "a.zip",
+                                                "code": "1", "path": "a", "dump": {}}) != "offline"]
+    assert missing == []
+
+
 def test_expired_lock_of_dead_holder_is_reclaimed(monkeypatch):
     clock = [1_000_000.0]
     monkeypatch.setattr(locks, "time", types.SimpleNamespace(time=lambda: clock[0]))
