@@ -1,0 +1,59 @@
+# Pipeline for the agr-lab CI on the lab laptop (DESKTOP-IHMQLNS; artsafro/agr-lab, `python -m agr_lab ci tick`,
+# Hermes cron every 15 min). Runs on every new commit of main, harness/*, fix/*, feature/* and once a night.
+# Placeholders: {src} = immutable snapshot of the commit (git archive, no LFS objects), {build} = batch build folder,
+# {exe} = executable of the runner slot that holds the job. Jobs hold a runner slot, so the DCC a test starts is
+# serialised with every other lab job (slot lock, timeout, process-tree kill).
+# pytest -m max tests are not run: they need 3ds Max 2026 and dcc_batch.py; the lab has Max 2024 (separate task).
+# AGR Tools native acceptance (tests/max_tools/run_*_native.py, Max 2024/2026, synthetic scenes only) runs as runner
+# Max jobs: the script runs in place inside the snapshot (it finds the repo via __file__) in an isolated slot profile.
+
+[[build]]
+name = "uv-sync"                 # Python 3.13 like the main workstation; uv downloads it once if missing
+cmd = ["uv", "sync", "--frozen", "--python", "3.13"]
+timeout_s = 1200
+
+[[build]]
+name = "agr-tools-mzp"           # tools/max/build_agr_tools.py: reproducible MZP for the native Max acceptance
+cmd = ["uv", "run", "--frozen", "--no-sync", "python", "tools/max/build_agr_tools.py", "{build}/AGR-Tools.mzp"]
+
+[[job]]
+name = "blender"                 # pytest -m "blender or dcc": tests that start Blender 5.1 themselves (DT_BLENDER)
+app = "blender"
+version = "5.1"
+host = ["uv", "run", "--frozen", "--no-sync", "pytest", "-m", "blender or dcc", "-p", "no:cacheprovider", "-q",
+        "--junitxml={out}/junit.xml"]
+cwd = "{src}"
+env = {DT_BLENDER = "{exe}"}
+timeout_s = 3600
+log = "junit.xml"
+report = "junit"
+
+[[job]]
+name = "unit"                    # the default suite (pyproject addopts exclude blender/dcc/max/acad/perf/panel_texture)
+when = "nightly"                 # ~16.9k tests: nightly, first and manual batches only, not every push
+app = "blender"                  # holds a Blender slot only to share the lab's capacity fairly; starts no DCC
+version = "5.1"
+host = ["uv", "run", "--frozen", "--no-sync", "pytest", "-p", "no:cacheprovider", "-q", "-n", "8",
+        "--junitxml={out}/junit.xml"]
+cwd = "{src}"
+timeout_s = 7200
+log = "junit.xml"
+report = "junit"
+
+[[job]]
+name = "agr-tools-max2024"       # installed-MZP acceptance (#707): install, macros, actions on synthetic scenes
+app = "max"
+version = "2024"
+script = "{src}/tests/max_tools/run_agr_tools_native.py"
+script_in_place = true
+env = {AGR_TEST_OUTPUT = "{out}/native", AGR_TEST_PACKAGE = "{build}/AGR-Tools.mzp"}
+timeout_s = 1800
+
+[[job]]
+name = "agr-tools-checks-max2024"  # diagnostics acceptance (#804) on synthetic fixtures
+app = "max"
+version = "2024"
+script = "{src}/tests/max_tools/run_agr_tools_checks_native.py"
+script_in_place = true
+env = {AGR_TEST_OUTPUT = "{out}/checks", AGR_TEST_PACKAGE = "{build}/AGR-Tools.mzp"}
+timeout_s = 1800
