@@ -202,6 +202,8 @@ def parse_report(text):
             ids = f['ids']
             if not isinstance(ids, list) or any(type(i) is not int or i <= 0 for i in ids) or len(set(ids)) != len(ids):
                 raise ValueError('invalid component IDs')
+    # Review-level codes (at_threshold, name_conflict, tex_overlap_review) are non-pass:
+    # any finding makes status 'fail'. A person reviews them. No 'review' status unless the UI needs one.
     expected = 'fail' if any(o['findings'] for o in r['objects']) else 'pass'
     if r['status'] != expected:
         raise ValueError('inconsistent status')
@@ -319,6 +321,7 @@ def _finding(code, ids=(), detail=''):
 
 
 def _report(tool, entries, nodes, select=True, extra=None):
+    # Same rule as parse_report: a review-level code is still a finding, so the status is 'fail'.
     report = {'schema': 1, 'tool': tool,
               'status': 'fail' if any(o['findings'] for o in entries) else 'pass', 'objects': entries}
     if extra:
