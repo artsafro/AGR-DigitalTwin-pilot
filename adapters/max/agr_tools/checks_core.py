@@ -593,6 +593,16 @@ def atlas_id(paths, model):
     return tuple(sorted(base or every))
 
 
+def _no_submaterial_reason(mid, ids, slots):
+    """Why `max_submaterial_index` found no sub-material: a duplicated target is ambiguous, not missing."""
+    if type(mid) is int and mid >= 1 and ids and None not in slots and max(int(i) for i in ids) >= 1:
+        w = (mid - 1) % max(int(i) for i in ids) + 1
+        if sum(1 for v in ids if int(v) == w) > 1:
+            return (f'face matID {mid} wraps to matID {w}, which is duplicated in materialIDList {list(ids)}: '
+                    'the target sub-material is ambiguous')
+    return f'face matID {mid} has no sub-material in the Multimaterial'
+
+
 def max_submaterial_index(mid, ids):
     """Index into a Multimaterial's materialIDList for face matID `mid`, as the 3ds Max 2026 FBX export
     resolves it; None = no sub-material (the export writes an empty placeholder slot).
@@ -613,7 +623,10 @@ def max_submaterial_index(mid, ids):
 def textures_scene(rows):
     """rows: [{'key', 'name', 'fbx', 'maps': [(path, bytes|None)], 'slots': {matID: [path]} (optional: a
     Multimaterial; absent = one material for every face), 'uv': callable -> (uvs, faces)}], faces are
-    (face_id, [uv indices]) or (face_id, [uv indices], matID).
+    (face_id, [uv indices]) or (face_id, [uv indices], matID). 'id_list' (optional): the Multimaterial's
+    materialIDList as given, duplicates kept; a face matID outside `slots` wraps by the highest listed ID
+    (`max_submaterial_index`); a wrap target that is duplicated (ambiguous) or absent from `slots` is
+    `tex_unmeasurable`, never measured.
     EVERY object's maps are read (defect D1: GeoAGR kept `texes_paths = texs` of the last object only,
     GeoAGR.ms:65313/65709). A map list is a list: empty means "no maps" (defect D3: GeoAGR.ms:65715
     tested the usedMaps array against undefined). UV padding is measured per ATLAS (review r1): every
@@ -700,7 +713,7 @@ def textures_scene(rows):
         if not faces:
             f.append(('tex_unmeasurable', 'no UV faces'))
             continue
-        offsets, unmapped, wrapped = {}, set(), {}
+        offsets, unmapped, wrapped = {}, {}, {}
         ids = r.get('id_list')  # the materialIDList as given (duplicates kept), like the FBX export sees it
         ids = [k for k in slots if k is not None] if ids is None else list(ids)
         for face in faces:
@@ -709,7 +722,11 @@ def textures_scene(rows):
             if mid not in slots:
                 i = None if None in slots else max_submaterial_index(mid, ids)
                 if i is None:
-                    unmapped.add(mid)
+                    unmapped.setdefault(mid, _no_submaterial_reason(mid, ids, slots))
+                    continue
+                if ids[i] not in slots:  # in id_list but without a slot: nothing to measure on
+                    unmapped.setdefault(mid, f'face matID {mid} wraps to matID {ids[i]} (sub {i + 1}), which is '
+                                             'in materialIDList but has no slot in the Multimaterial')
                     continue
                 wrapped.setdefault(mid, (i, []))[1].append(fid)
                 mid = ids[i]
@@ -724,7 +741,7 @@ def textures_scene(rows):
             off = offsets[id(a)]
             a['faces'].append(((r['key'], fid), [i + off for i in idx]))
         for mid in sorted(unmapped, key=repr):
-            f.append(('tex_unmeasurable', f'face matID {mid} has no sub-material in the Multimaterial'))
+            f.append(('tex_unmeasurable', unmapped[mid]))
         for mid, (i, fids) in sorted(wrapped.items()):
             f.append(('tex_matid_wrapped', f'face matID {mid} -> sub {i + 1} (matID {ids[i]}): not in '
                       f'materialIDList {ids}; 3ds Max FBX export wraps it by the highest ID {max(ids)}, '
