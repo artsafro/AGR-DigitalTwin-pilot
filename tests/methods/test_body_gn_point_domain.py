@@ -1,4 +1,4 @@
-"""Point-domain band height and opt-in z0 snap for the building-body GN writer.
+"""Point-domain band height and opt-in z0 snap for the body GN writer (new-case: GN height-domain regression).
 
 Recorded on TOW02 (Blender 5.1.2, experiments/body-gn-full-snap-edge-locator-rerun):
 self-intersect unbalanced edges are 7 (face domain, no snap), 3 (face domain, full snap)
