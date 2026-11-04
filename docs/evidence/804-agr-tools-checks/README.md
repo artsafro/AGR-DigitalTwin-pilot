@@ -17,6 +17,12 @@ inside the batch document. No production asset is opened. FBX paths (`C:/o/...`)
 | --- | --- | --- | --- | --- |
 | 2024.2.5 (Python 3.10.14) | ok | 0 | 58.8 | NAMES, TRIS, TEXTURES, PIVOT, GEOJSON, COMPLETE |
 | 2026.3 (28.3.0.30732, Python 3.11.12) | ok | 4294967166 | 49.5 | NAMES, TRIS, TEXTURES, PIVOT, GEOJSON, COMPLETE |
+| 2024.2.5, r4 (review r1 fix) | ok | 0 | 38.1 | + TEXTURES_ATLAS, COMPLETE |
+| 2026.3, r4 (review r1 fix) | ok | 4294967166 | 40.4 | + TEXTURES_ATLAS, COMPLETE |
+
+Run r4 uses the package built at commit `bd282efb`: `tools/max/build_agr_tools.py` gives SHA256
+`7ab03ac037edefd31e070c2443f5576f497677f6a053af669a9757d79613d946` (printed in-Max as
+`AGR_PACKAGE_SHA256`). The r2 SHA256 above belongs to the pre-review package.
 
 The Max 2026 exit code comes from a pre-existing startup CLR error in `polyunwrapper_autoload.mse`,
 not from the fixture. The same error is in #707 and #722. The completion marker is printed after the
@@ -36,6 +42,10 @@ test-first (`test_checks_050_works_when_loaded_like_bootstrap`, RED then GREEN) 
 - Textures: the first object's 1000 px map is reported (D1). An empty `usedMaps` array gives
   `tex_missing`, and glass without maps is dropped with a reason (D3). A missing file gives
   `tex_missing`. A UV gap of 10 px at 2048 gives `tex_padding`; a 20 px gap passes (16 px rule).
+- Textures per atlas (review r1): a two-slot Multimaterial object whose two islands cover the
+  same UV square in two different atlases gives `[]` (r1 pooled them: false `tex_padding`); two
+  objects of one FBX sharing one atlas with touching islands both get `tex_padding` (r1: silent
+  `[]`), with nothing dropped.
 - Pivot: Z 0.05 m gives `pivot_z` + `pivot_mismatch`, and UCX is dropped with a reason. With
   centimetre system units the same 0.05 units are 0.5 mm, which passes, so units are respected.
 - Macros `AGRToolsNames/Tris/Textures/Pivot` run as buttons and select offenders.
@@ -46,5 +56,5 @@ test-first (`test_checks_050_works_when_loaded_like_bootstrap`, RED then GREEN) 
   covers handle, name, class, triangle count, transform, pivot, material, user properties and
   modifier count.
 
-Files: `max<v>-native-log.txt` (marker lines), `max<v>-report-excerpt.json` (JSON report excerpt
+Files: `max<v>-native-log.txt` and `max<v>-native-log-r4.txt` (marker lines), `max<v>-report-excerpt.json` (JSON report excerpt
 per button), `SHA256SUMS.txt`.
