@@ -82,10 +82,10 @@ rg -n -F -- "max_exec.py" C:/Users/artsafro/hermes_kanban/scripts
 
 Срезы `hygiene_core.py`, `uv_nudge_core.py`, `ucx_audit_core.py` в дереве исходников рядом с `runtime.py` отсутствуют: их пишет `tools/max/build_agr_tools.py` из `src/twinqa/export_hygiene.py` (`repair_plan`), `src/dt_ai/geometry/uv_nudge.py` (`nudge_repeating_islands`) и `src/twinqa/geometry/ucx_audit.py`. Установленный MZP их содержит (`install.ms` перечисляет эти имена).
 
-Общие поля входа Max-инструментов: `scene` (путь копии или `live`), `handles` (массив целых, пустой = текущие цели `runtime._targets`). Мутации — только на копиях экспорта или на одноразовой сцене, как AGR Tools.
+Общие поля входа Max-инструментов: `scene` (путь копии или `live`), `handles` (массив целых), `scope` (необязательно, только `"selection"`), `instance` (необязательно, pid интерактивного `3dsmax.exe`; правило в §3 «Целевой экземпляр Max»). Пустой `handles` — ошибка, см. «Контракт выделения» ниже. Мутации — только на копиях экспорта или на одноразовой сцене, как AGR Tools.
 
-1. `agr_xview_check` — Max — selection-modifying. `runtime.xview` (`runtime.py:274`) возвращает `_report('xview', entries, nodes)` (`runtime.py:327`) без аргумента `select`. У `_report` значение по умолчанию `select=True` (`runtime.py:229`), и тогда вызывается `_rt().select` по узлам с findings (`runtime.py:235`). Геометрия исходных узлов не переписывается (проверка идёт по временной копии). Обёртка MCP `select=False` не подставляет: `xview` этот аргумент не принимает. Вход: общие поля. Выход: `_report` плюс пороги 2 мм / 5 мм в `extra`, если функция их кладёт.
-2. `agr_matid_check` — Max — selection-modifying, тот же механизм. `runtime.matid` (`runtime.py:330`) возвращает `_report('matid', entries, nodes)` (`runtime.py:360`) без `select`, значит снова `select=True`. Обёртка MCP `select=False` не подставляет. Вход: общие поля. Выход: `_report` (id ≥ 1001, id 0, пустые слоты).
+1. `agr_xview_check` — Max — selection-modifying. `runtime.xview` (`runtime.py:274`) возвращает `_report('xview', entries, nodes)` (`runtime.py:327`) без аргумента `select`. У `_report` значение по умолчанию `select=True` (`runtime.py:229`), и тогда вызывается `_rt().select` по узлам с findings (`runtime.py:235`). Геометрия исходных узлов не переписывается (проверка идёт по временной копии). По контракту выделения (ниже) вызов обязан дойти до `_report(select=False)`; если `xview` аргумент не принимает, это правка `runtime.py` в фазе 0, не этой карточки. Вход: общие поля + `select_findings` (bool, по умолчанию `false`). Выход: `_report` плюс пороги 2 мм / 5 мм в `extra`, если функция их кладёт.
+2. `agr_matid_check` — Max — selection-modifying, тот же механизм. `runtime.matid` (`runtime.py:330`) возвращает `_report('matid', entries, nodes)` (`runtime.py:360`) без `select`, значит снова `select=True`. Контракт тот же: `_report(select=False)`. Вход: общие поля + `select_findings` (bool, по умолчанию `false`). Выход: `_report` (id ≥ 1001, id 0, пустые слоты).
 3. `agr_cleanup_preview` — Max — read-only (`cleanup_preview` пишет «No mutation», `runtime.py:421`). Вход: общие поля. Выход: план правок, сцена не меняется.
 4. `agr_cleanup_apply` — Max — новые узлы-копии. `runtime.cleanup_apply` (`runtime.py:441`). Вход: общие поля + `preview` (объект прошлого preview). Выход: `_report` по копиям. Оригиналы функция не чистит.
 5. `agr_uv_nudge_preview` — Max — read-only. `runtime.nudge_preview` (`runtime.py:661`). Вход: общие поля. Выход: острова и шаги тайла. `nudge_apply` (`runtime.py:711`) в v1 отдельным именем не выводится: тот же контракт, что у `cleanup_apply`, фаза 1.
@@ -103,10 +103,26 @@ rg -n -F -- "max_exec.py" C:/Users/artsafro/hermes_kanban/scripts
 
 `agr_exec_unsafe` в список v1 не входит. Это отдельный люк (§3), выключенный по умолчанию.
 
-Общий вход Max (`handles` пустой = цели `runtime._targets`):
+### Контракт выделения (закрывает п. 3 из #816)
+
+Вход: слой MCP никогда не передаёт в функции Max `nodes=None` (иначе `runtime._targets` берёт текущее выделение пользователя). Выход: инструменты 1–2 не меняют выделение, пока нет явного `select_findings: true`.
+
+| Вход | Ожидаемый исход |
+|---|---|
+| `handles: [12, 15]`, оба существуют | узлы 12 и 15 резолвятся в Max, функция получает список узлов |
+| `handles: []` или поле нет, `scope` нет | ошибка `handles_required`, Max не вызывается |
+| `handles: []`, `scope: "selection"` | цели = текущее выделение; в JSONL `scope: "selection"` и список handles выделения |
+| `handles: [12]`, `scope: "selection"` | ошибка: два источника целей |
+| `handles` с несуществующим handle | ошибка с этим handle, остальные не обрабатываются |
+| `agr_xview_check` / `agr_matid_check`, `select_findings` нет | `_report(select=False)`; множество handles выделения до = после, иначе ошибка `selection_changed` (ответ не `pass`) |
+| то же, `select_findings: true` | выделение = узлы с findings; инструмент помечен selection-modifying, в JSONL `selection_modified: true` |
+
+Проверка после вызова: слой читает множество handles выделения до и после каждого вызова фазы 0 и сравнивает как множества; это идея `core/layers.ms:438-443` в MAX Ultra MCP (`docs/research/max-ultra-mcp-vs-agr-mcp-plan.md`). Инструменты 3–11 тоже проверяются; расхождение у инструмента без `select_findings` — ошибка. Тест фазы 0 для этих случаев пока не пишем (ждёт вопрос Q1 пользователю, #816).
+
+Общий вход Max (`handles` непустой, либо `scope: "selection"`):
 
 ```json
-{"type":"object","required":["scene"],"properties":{"scene":{"type":"string"},"handles":{"type":"array","items":{"type":"integer"}}}}
+{"type":"object","required":["scene"],"properties":{"scene":{"type":"string"},"handles":{"type":"array","items":{"type":"integer"}},"scope":{"const":"selection"},"instance":{"type":"integer"}}}
 ```
 
 Общий выход Max (`runtime._report`):
@@ -153,6 +169,24 @@ Finding офлайн-чекеров — это `twinqa.report.Finding`, не с�
 
 Blender v1: headless subprocess, как `scene.readback` (`blender --background --factory-startup`). Живой аддон (ahujasid на 9876 в экспериментах, Blender Lab на 9877 в CAPABILITIES) на фазе 0 не вызываем. Произвольный `execute_blender_code` не оборачиваем.
 
+### Целевой экземпляр Max
+
+Каждый вызов живого Max резолвит ровно один pid интерактивного `3dsmax.exe`. Сегодня `max_exec.py` молча берёт новейший не-batch Max; здесь вместо этого правило MAX Ultra MCP (`core/server.js:429-446`, из отчёта `docs/research/max-ultra-mcp-vs-agr-mcp-plan.md`).
+
+Порядок выбора: `instance` во входе, затем `MCP_MAX_PID`, затем выбор сеанса; если ничего нет и интерактивный Max один — он.
+
+| Вход | Ожидаемый исход |
+|---|---|
+| два интерактивных Max (pid 1000, 2000), нет `instance`, `MCP_MAX_PID`, выбора сеанса | отказ до любого вызова в Max, ответ со списком `[1000, 2000]` |
+| тот же случай, `instance: 2000` | вызов идёт в pid 2000 |
+| тот же случай, `MCP_MAX_PID=1000`, `instance` нет | вызов идёт в pid 1000; `instance` приоритетнее переменной |
+| `instance: 3000`, такого интерактивного Max нет | ошибка с pid 3000 и списком живых интерактивных |
+| один интерактивный Max (pid 1000) | вызов идёт в pid 1000 |
+| есть только batch Max (`3dsmaxbatch`) | отказ `no interactive Max`; batch никогда не цель |
+| интерактивный 1000 и batch 4000, `instance: 4000` | отказ: pid 4000 — batch |
+
+В журнал (поля ниже) добавляются `max_pid` и `max_version` резолвленного экземпляра; у отказа `max_pid` — null, в `error` список pid. Офлайн- и Blender-вызовы правило не затрагивает.
+
 Lock, те же файлы, что уже есть:
 
 - живой Max: `%LOCALAPPDATA%\Temp\agr-3dsmax-live.lock` (`max_exec.py`);
@@ -162,7 +196,7 @@ Lock, те же файлы, что уже есть:
 
 Прототип lease `experiments/mcp-dcc-bridges/dcc_lease.py` (PID + fencing) в v1 не подключаем. Его вердикт в `docs/experiments/mcp-dcc-bridges.md` — «adopt», но это отдельная работа. Пока хватает существующего lock на время всего вызова, не на один шаг внутри инструмента.
 
-Журнал: один JSONL на машину, `%LOCALAPPDATA%\agr-mcp\audit.jsonl`, append. Поля: `ts` (UTC), `tool`, `tool_schema_version`, `server_version`, `client` (имя из `_meta`, если клиент его прислал), `card`, `pid`, `lock`, `host` (`max-live` | `max-batch` | `blender-batch` | `offline`), `scene`, `target`, `args_sha256`, `status`, `duration_ms`, `error`. Тела скриптов и байты FBX в журнал не пишем.
+Журнал: один JSONL на машину, `%LOCALAPPDATA%\agr-mcp\audit.jsonl`, append. Поля: `ts` (UTC), `tool`, `tool_schema_version`, `server_version`, `client` (имя из `_meta`, если клиент его прислал), `card`, `pid`, `lock`, `host` (`max-live` | `max-batch` | `blender-batch` | `offline`), `scene`, `target`, `max_pid`, `max_version`, `args_sha256`, `status`, `duration_ms`, `error`. Тела скриптов и байты FBX в журнал не пишем.
 
 Safe mode по умолчанию: в каталоге нет инструмента с полем `code`. Аргументы — пути, handles, числа, прошлый preview. `agr_exec_unsafe` регистрируется только если окружение `AGR_MCP_UNSAFE=1`. Иначе `tools/list` его не показывает и `tools/call` отвечает отказом. Каждый такой вызов пишет в JSONL `unsafe: true`, `code_sha256`, `code_bytes`. Флаг не отменяет lock и не разрешает путь к исходнику сцены: `target` по-прежнему новый файл. Это люк для отладки, не профиль «full» чужого сервера.
 
