@@ -1,4 +1,4 @@
-# Ground v015 route A session (2026-11-04) — technical QA, user review pending
+# Ground v015 route A session (2026-11-04) — technical QA done, visually accepted by Artem
 
 Card t_e35c49dd, issue #371, route A approved by Artem 2026-11-04 («принимаю рекомендации») and
 recorded as [D193]. Branch merged `origin/main` first (ea1dad8); branch decision ids D169/D170 clashed
@@ -113,7 +113,14 @@ readbacks), `ground-v015-native-v001/` (Max .max + receipts), `blender-readback-
 
 ## Next
 
-1. Artem's visual review: `C:/x/review/2026-11-04/371-ground-v015-{npm,vpm}/` (pending.json rows
-   `#371`, verdict open). User acceptance is separate from this technical QA.
+1. Visual review done: accepted 2026-11-04 (see "User acceptance").
 2. If Max ever repeats the TileRed flag, raise that strip by construction (no exception) and rerun.
 3. #298 re-placement on v015 only after acceptance (79 misses equal v014).
+
+## User acceptance (separate status)
+
+Artem, 2026-11-04, after opening `371-ground-v015-npm.max`: «принимаю, сделано более-менее, задача
+тяжёлая, в идеал не вывести, считай что принимаю». Ground v015 NPM and VPM (route A) are accepted
+as is; no further polishing rounds. `pending.json` rows `#371` set to `ok` with this quote
+(`tools/review/verdict.py`). Publication / #298 re-placement on v015 remain separate steps
+(Vatutino order: MAF #889, Flora, then #298).
