@@ -160,9 +160,11 @@ def offline_cases(tmp_path):
 def test_tools_list_is_the_phase0_eight_without_code_argument():
     listed, _ = run_calls([], list_only=True)
     assert sorted(listed) == sorted(tools.PHASE0)
+    editing = {n for n, _row, _what, kind in tools.EDITS_080 if kind != "read"}  # 0.8 preview -> apply (#908)
     for spec in tools.catalog().values():
         assert "code" not in json.dumps(spec.input), spec.name
-        assert spec.read_only and not spec.destructive
+        assert spec.read_only == (spec.name not in editing), spec.name
+        assert spec.destructive == (spec.name == "agr_ucx_rename"), spec.name  # renames in place (one undo)
 
 
 def test_exit_offline_tools_equal_direct_call(tmp_path):
@@ -523,7 +525,9 @@ def test_fresh_stdio_process_lists_tools(unsafe, tmp_path):
     names = [x["name"] for x in t["tools"]]
     assert sorted(names) == sorted(tools.PHASE0 + (("agr_exec_unsafe",) if unsafe else ()))
     assert t["serverInfo"]["name"] == "agr-mcp"
-    assert all(x["readOnlyHint"] for x in t["tools"] if x["name"] != "agr_exec_unsafe")
+    editing = {n for n, _row, _what, kind in tools.EDITS_080 if kind != "read"}
+    assert all(x["readOnlyHint"] for x in t["tools"] if x["name"] != "agr_exec_unsafe" and x["name"] not in editing)
+    assert not any(x["readOnlyHint"] for x in t["tools"] if x["name"] in editing)
 
 
 # ---- generated probes (invariant -> probe -> N/N) -------------------------------------------------------

@@ -44,6 +44,21 @@ fn AGRToolsRegisterMenus = (
     sub.CreateSeparator "9ca78e0e-0af7-53c2-8f0d-36c6bdd66253"
     local s4 = sub.CreateSubMenu "188adc69-1a7f-5fef-bca2-7fdedb7aa4de" "GeoJSON"
     s4.CreateAction "843938ea-c3bc-55c9-b2c8-3dbac9a259fd" 647394 "AGRToolsGeojson`AGR Tools"
+    sub.CreateSeparator "36e596b5-c29b-5e50-8194-a6249c8a16e1"
+    local s5 = sub.CreateSubMenu "93808e59-8ae1-501f-ac4a-f1ad23968ea4" "Сдача (копии)"
+    s5.CreateAction "0fcefd51-aff2-5713-a0c6-c4b43159936d" 647394 "AGRToolsMissingMaps`AGR Tools"
+    s5.CreateAction "96e2de7f-aeb0-5eff-98c2-f27ed07eea87" 647394 "AGRToolsTriangulate`AGR Tools"
+    s5.CreateAction "d8398860-3fa0-54bc-892c-c8b637b7f47e" 647394 "AGRToolsFormatFix`AGR Tools"
+    s5.CreateAction "03a0c3d6-4d50-5d36-9f4a-54a9707d36e5" 647394 "AGRToolsPlaceholders`AGR Tools"
+    s5.CreateAction "2705033a-8289-5ad9-afb4-65cbed6245ad" 647394 "AGRToolsUcxTriangulate`AGR Tools"
+    s5.CreateAction "2073b853-0707-5111-bbf3-ca64eaf83326" 647394 "AGRToolsUcxRename`AGR Tools"
+    s5.CreateAction "65d94eca-9f2a-53f7-b64a-9e78bf31de9f" 647394 "AGRToolsIdsToUdims`AGR Tools"
+    s5.CreateAction "5dd47fa4-2852-54b9-9d66-d2a9206415ee" 647394 "AGRToolsNamesFix`AGR Tools"
+    s5.CreateAction "b52694b9-9f48-556a-a1d6-34a1ba96fe9a" 647394 "AGRToolsPackage`AGR Tools"
+    s5.CreateAction "5a08752f-ed34-5f3f-883d-f69de7d57c2d" 647394 "AGRToolsGeojsonWrite`AGR Tools"
+    s5.CreateAction "2a23f4ea-e7d4-5252-a9cc-56d11fd309fa" 647394 "AGRToolsGroundFbx`AGR Tools"
+    s5.CreateAction "8b610894-b0d9-5b9b-a344-c4697c6bae66" 647394 "AGRToolsPivotPlace`AGR Tools"
+    s5.CreateAction "9b952e85-015a-5bff-828a-898fb65690d2" 647394 "AGRToolsZip`AGR Tools"
     ok
 )
 if (maxVersion())[1] >= 27000 do (
