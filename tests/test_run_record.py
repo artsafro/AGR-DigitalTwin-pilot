@@ -78,21 +78,33 @@ def exited_child():
     return child
 
 
-def fully_dead_pid(pid_file):
+def fully_dead_pid(pid_file, grandchild_code="pass"):
     """Pid with no open process handle, as after a crashed parent.
 
-    A helper starts ``python -c pass``, writes that pid, and exits. Its exit
-    closes the only handle. The sleep lets the OS reap the grandchild.
+    A helper starts ``python -c <grandchild_code>``, waits for it to exit,
+    writes that pid, and exits. The helper's exit closes the only handle, so
+    the returned pid has already exited. No wall-clock sleep: under full-suite
+    load a fixed sleep let the grandchild outlive it (#782).
     """
     script = (
         "import subprocess, sys\n"
         "from pathlib import Path\n"
-        f"Path({str(pid_file)!r}).write_text(str("
-        "subprocess.Popen([sys.executable, '-c', 'pass']).pid))\n"
+        f"child = subprocess.Popen([sys.executable, '-c', {grandchild_code!r}])\n"
+        "child.wait()\n"
+        f"Path({str(pid_file)!r}).write_text(str(child.pid))\n"
     )
     subprocess.run([sys.executable, "-c", script], check=True)
-    time.sleep(0.5)
     return int(pid_file.read_text())
+
+
+def test_fully_dead_pid_is_dead_even_when_grandchild_is_slow(tmp_path):
+    """#782: under full-suite load the grandchild outlived the fixed sleep.
+
+    A grandchild slower than any fixed sleep stands in for that load; the
+    helper must still return only a pid that has already exited.
+    """
+    pid = fully_dead_pid(tmp_path / "grandchild.pid", "import time; time.sleep(1.5)")
+    assert run_record_module._pid_alive(pid) is False
 
 
 def writer(output, counter):

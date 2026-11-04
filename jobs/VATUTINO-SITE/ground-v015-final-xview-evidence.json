@@ -1,0 +1,3014 @@
+{
+  "issue": 371,
+  "status": "parked_not_delivered",
+  "production_commit": "a621607",
+  "main_merged": "c990e93",
+  "source": {
+    "path": "C:\\x\\ev_t_eb1c51ca\\v014_rebuild\\ground_master_vpm.json",
+    "sha256": "82cb1e6876ba98b92966aa7fc4242a2e9f354ee5ecdd42ed12806b57db666ae5"
+  },
+  "d150_sha256": "c33ac55c21b834fff77b194d20ca08d0b7c331497f2bc115bb4298ba3178724d",
+  "programs": [
+    {
+      "path": "tmp/construction-probe.py",
+      "sha256": "c87e8ed0bc61be9c3380608513c9bd891c90be1678d9b4138560c799ff1c8590",
+      "utf8": "\"\"\"Bounded geometry-only construction probe; NOT a deliverable or gate receipt.\n\nOriginal cake is immutable. Rebuild curbs around a 6 mm stair clearance;\nclip skirt curtain against near-coplanar stair faces in its own plane.\nNo source element is silently dropped: skirt fragments carry source-face IDs.\n\"\"\"\nimport json,time,importlib.util\nfrom pathlib import Path\nfrom collections import Counter\nimport numpy as np\nfrom shapely.geometry import Polygon, shape, MultiPolygon\nfrom shapely.ops import unary_union\nfrom dt_ai.geometry import ground_cake as gc, ground_details as gd\nfrom dt_ai.geometry.ground_quads import pair_triangles\nfrom dt_ai.ops.inv_quads import PolyMesh\nfrom dt_ai.ops.inv_xview import part_report,XviewTolerance\n\nroot=Path('C:/x/ev_t_eb1c51ca/v014_rebuild')\nraw=json.loads((root/'ground_master_vpm.json').read_text())\nv=np.array(raw['verts']); f=np.array(raw['faces']); lev=np.array(raw['level']); slots=np.array([raw['slots'][i] for i in raw['mat']])\nsource=Path('C:/x/t_d94665f2/paving_ground_inputs_v4.json')\nd=json.loads(source.read_text(encoding='utf-8'))\nrep0=json.loads((root/'ground_report.json').read_text(encoding='utf-8'))\nfoot=unary_union([shape(r['footprint']) for r in rep0['details'] if r.get('footprint')])\noriginal_curb=gd._curb_solid\nsampler=gc.ReliefSampler(gc.build_tin([(e['x'],e['y'],e['z']) for e in d['elevations']]))\ndef curb(geom,sampler,height,slot):\n    geom=geom.difference(foot.buffer(.006))\n    return original_curb(geom,sampler,height,slot)\ngd._curb_solid=curb\nspec=importlib.util.spec_from_file_location('builder','jobs/VATUTINO-SITE/build_ground.py'); builder=importlib.util.module_from_spec(spec); spec.loader.exec_module(builder)\nplan=gc.plan_layers(shape(d['boundary']),{t:list(getattr(shape(c['geometry']),'geoms',[])) for t,c in d['coverings'].items()},d['base_covering'],builder.SLOTS,footprint_min_area=1000.,step=.006)\nnew_detail,dispositions=gd.build_details(d.get('ground_elements',[]),plan.surface,sampler)\n# Clip each vertical skirt triangle only against stair polygons lying inside\n# a 5.1 mm slab around its plane. Crossing faces reduce to buffered lines.\nstairs=new_detail.verts[new_detail.faces[np.array(new_detail.slot)=='Stairs']]\nV=[]; F=[]; S=[]; L=[]; origin_ids=[]; deleted=[]; index={}\ndef append(points,slot,level,source_id):\n    ids=[]\n    for p in points:\n        key=tuple(np.round(p,9))\n        if key not in index: index[key]=len(V);V.append(p)\n        ids.append(index[key])\n    if len(set(ids))<3: return\n    F.append(ids);S.append(slot);L.append(level);origin_ids.append(source_id)\ndef clip_slab(points,normal,origin):\n    points=list(points)\n    for sign in (1,-1):\n        out=[]\n        for a,b in zip(points,points[1:]+points[:1]):\n            da=sign*np.dot(a-origin,normal)-.0051; db=sign*np.dot(b-origin,normal)-.0051\n            if da<=0: out.append(a)\n            if (da<0 and db>0) or (da>0 and db<0): out.append(a+(b-a)*(da/(da-db)))\n        points=out\n        if not points:break\n    return np.array(points)\nchanged=0\nfor i,(face,slot,level) in enumerate(zip(f,slots,lev)):\n    if level==-2: continue\n    points=v[face]\n    if slot!='Skirt': append(points,slot,int(level),i);continue\n    origin=points[0]; e=points[1]-origin\n    # horizontal coordinate along the curtain; z is second coordinate\n    horizontal=next((p-origin for p in points[1:] if np.linalg.norm((p-origin)[:2])>1e-8),None)\n    if horizontal is None: raise ValueError('invalid skirt')\n    ex=np.array([*horizontal[:2],0.]);ex/=np.linalg.norm(ex);ey=np.array([0.,0.,1.]);normal=np.cross(ex,ey)\n    xy=np.column_stack([(points-origin)@ex,(points-origin)@ey]); poly=Polygon(xy)\n    nearby=[]\n    for tri in stairs:\n        if np.all((tri-origin)@normal>.0051) or np.all((tri-origin)@normal<-.0051): continue\n        clipped=clip_slab(tri,normal,origin)\n        if len(clipped)<2:continue\n        coords=np.column_stack([(clipped-origin)@ex,(clipped-origin)@ey])\n        from shapely.geometry import MultiPoint\n        nearby.append(MultiPoint(coords).convex_hull.buffer(.0051))\n    cut=poly.difference(unary_union(nearby)) if nearby else poly\n    if cut.equals(poly): append(points,slot,int(level),i);continue\n    changed+=1\n    fragments=[]\n    for part in gc._polys(cut):\n        for tri in gc._tri_piece(part):\n            q=np.array(tri); pts=origin+q[:,0,None]*ex+q[:,1,None]*ey\n            if np.dot(np.cross(pts[1]-pts[0],pts[2]-pts[0]),np.cross(points[1]-points[0],points[2]-points[0]))<0:pts=pts[::-1]\n            append(pts,slot,int(level),i);fragments.append(1)\n    if not fragments:deleted.append({'source_face':i,'reason':'curtain replaced at stair wall; must certify perimeter depth before acceptance'})\nfor tri,slot in zip(new_detail.verts[new_detail.faces],new_detail.slot): append(tri,slot,-2,None)\nV=np.array(V);F=np.array(F);L=np.array(L)\nm=gc.Mesh(V,F,S,L,np.zeros((len(F),3,2)),4.)\n# Metric common-axis UV is a pairing probe only, not final UDIM layout.\nfor i,tri in enumerate(V[F]):\n    n=np.cross(tri[1]-tri[0],tri[2]-tri[0]);axis=int(abs(n).argmax()); axes=[a for a in range(3) if a!=axis]\n    m.uv[i]=tri[:,axes]/4\nm=gc.clean_topology(m)\nq=pair_triangles(m)\nprint('candidate',len(q.faces),sum(len(f)==4 for f in q.faces),'skirt changed',changed,flush=True)\nx=part_report('construction_probe',PolyMesh(q.verts,q.faces),XviewTolerance())\nrep={'not_deliverable':True,'skirt_triangles_clipped':changed,'skirt_replaced_source_faces':deleted,'surface_geometry_unchanged_before_clean_topology':True,'quads':sum(len(f)==4 for f in q.faces),'triangles':sum(len(f)==3 for f in q.faces),'triangle_equivalent':sum(len(f)-2 for f in q.faces),'surface_polygons':int((q.level>=0).sum()),'xview':x.to_dict(),'offender_slot_pairs':{str(k):n for k,n in Counter(tuple(sorted(((q.slot[a-1],int(q.level[a-1])),(q.slot[b-1],int(q.level[b-1]))))) for a,b,kind,gap in x.face_pairs).items()},'face_witnesses':[{'a':a,'b':b,'slot_a':q.slot[a-1],'slot_b':q.slot[b-1],'kind':kind,'gap_m':gap,'xyz_a':q.verts[list(q.faces[a-1])].tolist(),'xyz_b':q.verts[list(q.faces[b-1])].tolist()} for a,b,kind,gap in x.face_pairs]}\nPath('tmp/construction-probe.json').write_text(json.dumps(rep,indent=2,default=int))\nnp.savez('tmp/construction-probe.npz',verts=m.verts,faces=m.faces,slot=m.slot,level=m.level,uv=m.uv)\nprint('remaining',len(x.vertex_pairs),len(x.face_pairs),rep['offender_slot_pairs'],flush=True)\n"
+    },
+    {
+      "path": "tmp/bowtie-conversion-risk.py",
+      "sha256": "e2cbbdb43a748e7049ddd4962eb71358ba7610c85481a6b745ed1a2edaff229d",
+      "utf8": "\"\"\"Record polygon-fan conversion risks, without claiming a native Max run.\"\"\"\nimport json\nfrom pathlib import Path\nfrom collections import defaultdict,Counter\nimport numpy as np\nfrom dt_ai.ops.inv_xview import vertex_pairs\n\n\ndef inspect(v,faces):\n    inc=defaultdict(list)\n    for i,f in enumerate(faces):\n        for a in f:inc[int(a)].append(i)\n    out=[]; vv=list(v)\n    for a,ids in inc.items():\n        parents={i:i for i in ids}\n        def find(i):\n            while parents[i]!=i:\n                parents[i]=parents[parents[i]];i=parents[i]\n            return i\n        edges=defaultdict(list)\n        for i in ids:\n            f=faces[i];pos=list(f).index(a)\n            for b in (f[pos-1],f[(pos+1)%len(f)]):edges[int(b)].append(i)\n        for uses in edges.values():\n            for i in uses[1:]: parents[find(i)]=find(uses[0])\n        groups=defaultdict(list)\n        for i in ids:groups[find(i)].append(i)\n        if len(groups)>1:\n            out.append({'vertex':a,'xyz':v[a].tolist(),'fan_faces':list(groups.values())})\n            for _ in range(len(groups)-1):vv.append(v[a].copy())\n    pa,pb,dist=vertex_pairs(np.array(vv),.002)\n    return {'fan_split_risk_vertices':len(out),'fan_split_risks':out,'simulated_after_fan_split_vertex_pairs':len(pa),'simulated_after_fan_split_affected_vertices':len(set(pa)|set(pb)),'not_native_max':True}\n\np=json.loads(Path('tmp/paired-v014.json').read_text())\nn=np.load('tmp/construction-probe.npz')\nresult={'paired':inspect(np.array(p['verts']),p['faces']),'construction':inspect(n['verts'],n['faces'])}\nPath('tmp/bowtie-conversion-risk.json').write_text(json.dumps(result,indent=2))\nfor k,v in result.items(): print(k,{a:b for a,b in v.items() if a!='fan_split_risks'})\n"
+    },
+    {
+      "path": "tmp/xview-final-session-probe.py",
+      "sha256": "6614a799db5c3cc88cc25fc6e6ff86bb8174e350f4b46f8d92cee3dcb2172610",
+      "utf8": "\"\"\"Final authorized geometry diagnostic; rejected candidates are not delivery assets.\"\"\"\nimport json, importlib.util\nfrom pathlib import Path\nimport numpy as np\nfrom shapely.geometry import Polygon\nfrom dt_ai.geometry import ground_cake as gc, ground_details as gd\nfrom dt_ai.geometry.ground_quads import pair_triangles\nfrom dt_ai.ops.inv_quads import PolyMesh\nfrom dt_ai.ops.inv_xview import part_report,XviewTolerance\n\n# Reuse this card's recorded construction command with a larger clearance margin\n# for the 1 mm noding + 2.1 mm connected-cluster weld. No source assets are changed.\nprogram=Path('tmp/construction-probe.py').read_text()\nprogram=program.replace(\"foot.buffer(.006)\",\"foot.buffer(.012)\")\nprogram=program.replace(\"x=part_report('construction_probe',PolyMesh(q.verts,q.faces),XviewTolerance())\", \"x=part_report('final_session_before_bevel',PolyMesh(q.verts,q.faces),XviewTolerance())\")\nprogram=program.replace('tmp/construction-probe','tmp/final-session-before-bevel')\nexec(compile(program,'recorded-construction-probe','exec'))\n\n# Separate edge-connected fans only at a point contact, by moving the contact\n# into one existing incident triangle of each fan. This is a diagnostic, not an\n# accepted contour correction: inversion/relief/gaps still need independent checks.\nspec=importlib.util.spec_from_file_location('fan_probe','tmp/bowtie-conversion-risk.py')\nfan=importlib.util.module_from_spec(spec);spec.loader.exec_module(fan)\nrisks=fan.inspect(m.verts,m.faces.tolist())['fan_split_risks']\nv=m.verts.tolist();faces=m.faces.copy(); moves=[]\nfor risk in risks:\n    a=risk['vertex']; origin=m.verts[a]\n    for group in risk['fan_faces']:\n        # Pick widest angular sector to avoid inverting a sliver.\n        options=[]\n        for fi in group:\n            tri=m.verts[m.faces[fi]]\n            direction=tri.mean(axis=0)-origin\n            if np.linalg.norm(direction)==0:continue\n            delta=direction/np.linalg.norm(direction)*.0035\n            proposed=m.verts[m.faces[group]].copy()\n            proposed[m.faces[group]==a]=origin+delta\n            before=m.verts[m.faces[group]]\n            old=np.cross(before[:,1]-before[:,0],before[:,2]-before[:,0])\n            new=np.cross(proposed[:,1]-proposed[:,0],proposed[:,2]-proposed[:,0])\n            if np.all(np.einsum('ij,ij->i',old,new)>0): options.append((np.min(np.linalg.norm(new,axis=1)),delta))\n        if not options:\n            moves.append({'vertex':a,'group':group,'failed':'no non-inverting 3.5 mm fan displacement'});continue\n        delta=max(options,key=lambda p:p[0])[1]\n        vi=len(v);v.append((origin+delta).tolist())\n        for fi in group:faces[fi][faces[fi]==a]=vi\n        moves.append({'vertex':a,'group':group,'delta':delta.tolist()})\nused=np.unique(faces);remap=np.full(len(v),-1);remap[used]=np.arange(len(used))\nm=gc.Mesh(np.array(v)[used],remap[faces],m.slot,m.level,m.uv,m.cell)\nq=pair_triangles(m)\nprint('after fan-displacement',len(q.faces),flush=True)\nx=part_report('final_session_after_bevel',PolyMesh(q.verts,q.faces),XviewTolerance())\nfrom collections import Counter\nrep={'not_deliverable':True,'fan_moves':moves,'fan_conversion_risk':fan.inspect(q.verts,q.faces),'quads':sum(len(f)==4 for f in q.faces),'triangles':sum(len(f)==3 for f in q.faces),'triangle_equivalent':sum(len(f)-2 for f in q.faces),'surface_polygons':int((q.level>=0).sum()),'xview':x.to_dict(),'offender_slot_pairs':{str(k):n for k,n in Counter(tuple(sorted((q.slot[a-1],q.slot[b-1]))) for a,b,kind,gap in x.face_pairs).items()},'face_witnesses':[{'a':a,'b':b,'slot_a':q.slot[a-1],'slot_b':q.slot[b-1],'kind':kind,'gap_m':gap,'xyz_a':q.verts[list(q.faces[a-1])].tolist(),'xyz_b':q.verts[list(q.faces[b-1])].tolist()} for a,b,kind,gap in x.face_pairs]}\nPath('tmp/final-session-after-bevel.json').write_text(json.dumps(rep,indent=2,default=int))\nnp.savez('tmp/final-session-after-bevel.npz',verts=m.verts,faces=m.faces,slot=m.slot,level=m.level,uv=m.uv)\nprint('FINAL',len(x.vertex_pairs),len(x.face_pairs),rep['offender_slot_pairs'],'remaining fans',rep['fan_conversion_risk']['fan_split_risk_vertices'],flush=True)\n"
+    }
+  ],
+  "before_fan_displacement": {
+    "not_deliverable": true,
+    "skirt_triangles_clipped": 66,
+    "skirt_replaced_source_faces": [],
+    "surface_geometry_unchanged_before_clean_topology": true,
+    "quads": 19242,
+    "triangles": 7996,
+    "triangle_equivalent": 46480,
+    "surface_polygons": 20152,
+    "xview": {
+      "part": "final_session_before_bevel",
+      "vertex_pairs": 0,
+      "face_pairs": 13,
+      "face_pairs_by_kind": {
+        "contact": 3,
+        "area": 0,
+        "area+contact": 10
+      },
+      "vertices": [],
+      "faces": [
+        1769,
+        2783,
+        2785,
+        11501,
+        11505,
+        11511,
+        20611,
+        20614,
+        20751,
+        20752,
+        20755,
+        21778,
+        21780,
+        21781,
+        21782,
+        22102,
+        23773,
+        24248,
+        24632,
+        26068
+      ],
+      "xview_faces": [
+        1769,
+        2783,
+        2785,
+        11501,
+        11505,
+        11511,
+        20611,
+        20614,
+        20751,
+        20752,
+        20755,
+        21778,
+        21780,
+        21781,
+        21782,
+        22102,
+        23773,
+        24248,
+        24632,
+        26068
+      ],
+      "offenders": [
+        "final_session_before_bevel f1769/f24248: area+contact, 3.99 mm",
+        "final_session_before_bevel f2783/f23773: area+contact, 4.00 mm",
+        "final_session_before_bevel f2785/f23773: area+contact, 4.00 mm",
+        "final_session_before_bevel f11501/f24632: area+contact, 4.84 mm",
+        "final_session_before_bevel f11505/f24632: area+contact, 3.06 mm",
+        "final_session_before_bevel f11511/f24632: area+contact, 3.06 mm",
+        "final_session_before_bevel f20611/f20614: area+contact, 2.73 mm",
+        "final_session_before_bevel f20751/f20752: contact",
+        "final_session_before_bevel f20752/f20755: contact",
+        "final_session_before_bevel f21778/f21782: area+contact, 2.85 mm",
+        "final_session_before_bevel f21780/f21781: area+contact, 0.00 mm",
+        "final_session_before_bevel f21780/f21782: contact",
+        "final_session_before_bevel f22102/f26068: area+contact, 0.00 mm"
+      ]
+    },
+    "offender_slot_pairs": {
+      "(('CurbGarden', -2), (np.str_('Mulch'), 1))": 3,
+      "(('CurbGarden', -2), (np.str_('LawnReinforced'), 1))": 3,
+      "((np.str_('Skirt'), -1), (np.str_('Skirt'), -1))": 6,
+      "(('CurbGarden', -2), ('Stairs', -2))": 1
+    },
+    "face_witnesses": [
+      {
+        "a": 1769,
+        "b": 24248,
+        "slot_a": "Mulch",
+        "slot_b": "CurbGarden",
+        "kind": "area+contact",
+        "gap_m": 0.003991652101021481,
+        "xyz_a": [
+          [
+            -7520.652,
+            -15340.398,
+            145.728777
+          ],
+          [
+            -7521.873,
+            -15342.306,
+            147.221144
+          ],
+          [
+            -7521.447,
+            -15342.105,
+            147.322883
+          ],
+          [
+            -7520.001,
+            -15341.19,
+            147.359174
+          ]
+        ],
+        "xyz_b": [
+          [
+            -7521.832,
+            -15342.243,
+            147.1799866760765
+          ],
+          [
+            -7521.177,
+            -15341.933,
+            147.33660774286903
+          ],
+          [
+            -7521.73,
+            -15342.283,
+            147.32294541041017
+          ],
+          [
+            -7521.914,
+            -15342.37,
+            147.27888790589785
+          ]
+        ]
+      },
+      {
+        "a": 2783,
+        "b": 23773,
+        "slot_a": "Mulch",
+        "slot_b": "CurbGarden",
+        "kind": "area+contact",
+        "gap_m": 0.00399624726170468,
+        "xyz_a": [
+          [
+            -7644.0,
+            -15335.295,
+            149.709961
+          ],
+          [
+            -7644.0,
+            -15332.28,
+            149.73675
+          ],
+          [
+            -7647.426,
+            -15334.347,
+            149.719247
+          ],
+          [
+            -7647.207,
+            -15335.292,
+            149.70999
+          ]
+        ],
+        "xyz_b": [
+          [
+            -7647.848,
+            -15332.356,
+            149.72617223582088
+          ],
+          [
+            -7647.177,
+            -15335.251,
+            149.7223921568625
+          ],
+          [
+            -7647.24,
+            -15335.331,
+            149.72160784313698
+          ],
+          [
+            -7647.949,
+            -15332.276,
+            149.72547305164144
+          ]
+        ]
+      },
+      {
+        "a": 2785,
+        "b": 23773,
+        "slot_a": "Mulch",
+        "slot_b": "CurbGarden",
+        "kind": "area+contact",
+        "gap_m": 0.0039962791463452494,
+        "xyz_a": [
+          [
+            -7647.426,
+            -15334.347,
+            149.719247
+          ],
+          [
+            -7644.0,
+            -15332.28,
+            149.73675
+          ],
+          [
+            -7647.906,
+            -15332.277,
+            149.713728
+          ]
+        ],
+        "xyz_b": [
+          [
+            -7647.848,
+            -15332.356,
+            149.72617223582088
+          ],
+          [
+            -7647.177,
+            -15335.251,
+            149.7223921568625
+          ],
+          [
+            -7647.24,
+            -15335.331,
+            149.72160784313698
+          ],
+          [
+            -7647.949,
+            -15332.276,
+            149.72547305164144
+          ]
+        ]
+      },
+      {
+        "a": 11501,
+        "b": 24632,
+        "slot_a": "LawnReinforced",
+        "slot_b": "CurbGarden",
+        "kind": "area+contact",
+        "gap_m": 0.004842162209439555,
+        "xyz_a": [
+          [
+            -7574.757,
+            -15299.1,
+            150.481687
+          ],
+          [
+            -7573.815,
+            -15298.326,
+            150.481681
+          ],
+          [
+            -7573.956,
+            -15297.99,
+            150.486787
+          ],
+          [
+            -7573.959,
+            -15297.984,
+            150.486883
+          ]
+        ],
+        "xyz_b": [
+          [
+            -7575.789,
+            -15300.0,
+            150.47833205620313
+          ],
+          [
+            -7575.915,
+            -15300.0,
+            150.47797791304856
+          ],
+          [
+            -7573.789,
+            -15298.254,
+            150.49425322347565
+          ],
+          [
+            -7573.677,
+            -15298.265,
+            150.49308847705768
+          ]
+        ]
+      },
+      {
+        "a": 11505,
+        "b": 24632,
+        "slot_a": "LawnReinforced",
+        "slot_b": "CurbGarden",
+        "kind": "area+contact",
+        "gap_m": 0.003058565628665572,
+        "xyz_a": [
+          [
+            -7575.999,
+            -15298.143,
+            150.498246
+          ],
+          [
+            -7575.999,
+            -15300.0,
+            150.465742
+          ],
+          [
+            -7575.852,
+            -15300.0,
+            150.466155
+          ],
+          [
+            -7574.949,
+            -15299.259,
+            150.481663
+          ]
+        ],
+        "xyz_b": [
+          [
+            -7575.789,
+            -15300.0,
+            150.47833205620313
+          ],
+          [
+            -7575.915,
+            -15300.0,
+            150.47797791304856
+          ],
+          [
+            -7573.789,
+            -15298.254,
+            150.49425322347565
+          ],
+          [
+            -7573.677,
+            -15298.265,
+            150.49308847705768
+          ]
+        ]
+      },
+      {
+        "a": 11511,
+        "b": 24632,
+        "slot_a": "LawnReinforced",
+        "slot_b": "CurbGarden",
+        "kind": "area+contact",
+        "gap_m": 0.003058565628665572,
+        "xyz_a": [
+          [
+            -7574.757,
+            -15299.1,
+            150.481687
+          ],
+          [
+            -7573.959,
+            -15297.984,
+            150.486883
+          ],
+          [
+            -7575.999,
+            -15298.143,
+            150.498246
+          ],
+          [
+            -7574.949,
+            -15299.259,
+            150.481663
+          ]
+        ],
+        "xyz_b": [
+          [
+            -7575.789,
+            -15300.0,
+            150.47833205620313
+          ],
+          [
+            -7575.915,
+            -15300.0,
+            150.47797791304856
+          ],
+          [
+            -7573.789,
+            -15298.254,
+            150.49425322347565
+          ],
+          [
+            -7573.677,
+            -15298.265,
+            150.49308847705768
+          ]
+        ]
+      },
+      {
+        "a": 20611,
+        "b": 20614,
+        "slot_a": "Skirt",
+        "slot_b": "Skirt",
+        "kind": "area+contact",
+        "gap_m": 0.002731099431684217,
+        "xyz_a": [
+          [
+            -7548.159,
+            -15354.741,
+            146.718607
+          ],
+          [
+            -7548.174,
+            -15354.708,
+            146.71923
+          ],
+          [
+            -7548.174,
+            -15354.708,
+            145.71923
+          ],
+          [
+            -7548.159,
+            -15354.741,
+            145.718607
+          ]
+        ],
+        "xyz_b": [
+          [
+            -7548.171,
+            -15354.708,
+            146.719259
+          ],
+          [
+            -7548.156,
+            -15354.741,
+            146.718641
+          ],
+          [
+            -7548.156,
+            -15354.741,
+            145.718641
+          ],
+          [
+            -7548.171,
+            -15354.708,
+            145.719259
+          ]
+        ]
+      },
+      {
+        "a": 20751,
+        "b": 20752,
+        "slot_a": "Skirt",
+        "slot_b": "Skirt",
+        "kind": "contact",
+        "gap_m": null,
+        "xyz_a": [
+          [
+            -7634.559,
+            -15378.462,
+            145.775234
+          ],
+          [
+            -7634.559,
+            -15378.861,
+            145.767164
+          ],
+          [
+            -7634.559,
+            -15378.861,
+            144.767164
+          ],
+          [
+            -7634.559,
+            -15378.462,
+            144.775234
+          ]
+        ],
+        "xyz_b": [
+          [
+            -7634.556,
+            -15378.861,
+            145.767136
+          ],
+          [
+            -7634.556,
+            -15379.26,
+            145.759066
+          ],
+          [
+            -7634.556,
+            -15379.26,
+            144.759066
+          ],
+          [
+            -7634.556,
+            -15378.861,
+            144.767136
+          ]
+        ]
+      },
+      {
+        "a": 20752,
+        "b": 20755,
+        "slot_a": "Skirt",
+        "slot_b": "Skirt",
+        "kind": "contact",
+        "gap_m": null,
+        "xyz_a": [
+          [
+            -7634.556,
+            -15378.861,
+            145.767136
+          ],
+          [
+            -7634.556,
+            -15379.26,
+            145.759066
+          ],
+          [
+            -7634.556,
+            -15379.26,
+            144.759066
+          ],
+          [
+            -7634.556,
+            -15378.861,
+            144.767136
+          ]
+        ],
+        "xyz_b": [
+          [
+            -7634.559,
+            -15379.26,
+            145.759093
+          ],
+          [
+            -7634.559,
+            -15379.662,
+            145.750963
+          ],
+          [
+            -7634.559,
+            -15379.662,
+            144.750963
+          ],
+          [
+            -7634.559,
+            -15379.26,
+            144.759093
+          ]
+        ]
+      },
+      {
+        "a": 21778,
+        "b": 21782,
+        "slot_a": "Skirt",
+        "slot_b": "Skirt",
+        "kind": "area+contact",
+        "gap_m": 0.0028546555191987233,
+        "xyz_a": [
+          [
+            -7691.007,
+            -15248.688,
+            152.017682
+          ],
+          [
+            -7691.229,
+            -15248.001,
+            151.996884
+          ],
+          [
+            -7691.229,
+            -15248.001,
+            150.996884
+          ],
+          [
+            -7691.007,
+            -15248.688,
+            151.017682
+          ]
+        ],
+        "xyz_b": [
+          [
+            -7691.232,
+            -15248.001,
+            151.996688
+          ],
+          [
+            -7691.016,
+            -15248.688,
+            152.017123
+          ],
+          [
+            -7691.016,
+            -15248.688,
+            151.017123
+          ],
+          [
+            -7691.232,
+            -15248.001,
+            150.996688
+          ]
+        ]
+      },
+      {
+        "a": 21780,
+        "b": 21781,
+        "slot_a": "Skirt",
+        "slot_b": "Skirt",
+        "kind": "area+contact",
+        "gap_m": 0.0,
+        "xyz_a": [
+          [
+            -7691.229,
+            -15248.001,
+            151.996884
+          ],
+          [
+            -7691.427,
+            -15247.386,
+            151.978288
+          ],
+          [
+            -7691.427,
+            -15247.386,
+            150.978288
+          ],
+          [
+            -7691.229,
+            -15248.001,
+            150.996884
+          ]
+        ],
+        "xyz_b": [
+          [
+            -7691.427,
+            -15247.386,
+            151.978288
+          ],
+          [
+            -7691.232,
+            -15248.001,
+            151.996688
+          ],
+          [
+            -7691.232,
+            -15248.001,
+            150.996688
+          ],
+          [
+            -7691.427,
+            -15247.386,
+            150.978288
+          ]
+        ]
+      },
+      {
+        "a": 21780,
+        "b": 21782,
+        "slot_a": "Skirt",
+        "slot_b": "Skirt",
+        "kind": "contact",
+        "gap_m": null,
+        "xyz_a": [
+          [
+            -7691.229,
+            -15248.001,
+            151.996884
+          ],
+          [
+            -7691.427,
+            -15247.386,
+            151.978288
+          ],
+          [
+            -7691.427,
+            -15247.386,
+            150.978288
+          ],
+          [
+            -7691.229,
+            -15248.001,
+            150.996884
+          ]
+        ],
+        "xyz_b": [
+          [
+            -7691.232,
+            -15248.001,
+            151.996688
+          ],
+          [
+            -7691.016,
+            -15248.688,
+            152.017123
+          ],
+          [
+            -7691.016,
+            -15248.688,
+            151.017123
+          ],
+          [
+            -7691.232,
+            -15248.001,
+            150.996688
+          ]
+        ]
+      },
+      {
+        "a": 22102,
+        "b": 26068,
+        "slot_a": "Stairs",
+        "slot_b": "CurbGarden",
+        "kind": "area+contact",
+        "gap_m": 0.0,
+        "xyz_a": [
+          [
+            -7543.568594,
+            -15336.534023,
+            149.133506
+          ],
+          [
+            -7540.675896,
+            -15335.165682,
+            149.133506
+          ],
+          [
+            -7540.675896,
+            -15335.165682,
+            149.039764
+          ],
+          [
+            -7543.568594,
+            -15336.534023,
+            149.039764
+          ]
+        ],
+        "xyz_b": [
+          [
+            -7540.665,
+            -15335.161,
+            149.1366998715178
+          ],
+          [
+            -7542.468,
+            -15336.0,
+            149.2736930031093
+          ],
+          [
+            -7542.468,
+            -15336.0,
+            149.22369300310928
+          ],
+          [
+            -7540.665,
+            -15335.161,
+            149.0866998715178
+          ]
+        ]
+      }
+    ]
+  },
+  "after_fan_displacement": {
+    "not_deliverable": true,
+    "fan_moves": [
+      {
+        "vertex": 3509,
+        "group": [
+          3460
+        ],
+        "delta": [
+          -0.002015353677689398,
+          -0.0027663581141913083,
+          -0.0007318554077628489
+        ]
+      },
+      {
+        "vertex": 3509,
+        "group": [
+          30561,
+          30565
+        ],
+        "delta": [
+          0.001603512690946879,
+          -0.0030093320364538473,
+          -0.0007890929884017712
+        ]
+      },
+      {
+        "vertex": 5865,
+        "group": [
+          6989,
+          6995
+        ],
+        "delta": [
+          -0.002068915970948857,
+          -0.0028222712429784255,
+          -6.611910623837394e-05
+        ]
+      },
+      {
+        "vertex": 5865,
+        "group": [
+          7150,
+          7176,
+          7178
+        ],
+        "delta": [
+          0.003477892751081109,
+          0.000392178736492786,
+          2.139744424921585e-05
+        ]
+      },
+      {
+        "vertex": 5884,
+        "group": [
+          7033,
+          7037
+        ],
+        "delta": [
+          -0.0021231736951301166,
+          -0.002781698156731878,
+          -6.548912231815011e-05
+        ]
+      },
+      {
+        "vertex": 5884,
+        "group": [
+          7136,
+          7140,
+          7146
+        ],
+        "delta": [
+          0.003016347366367117,
+          0.001774635464668238,
+          4.814076185421776e-05
+        ]
+      },
+      {
+        "vertex": 6013,
+        "group": [
+          7307,
+          7314
+        ],
+        "delta": [
+          -0.0034924676341541233,
+          0.0002293365238176442,
+          -8.63615823959624e-06
+        ]
+      },
+      {
+        "vertex": 6013,
+        "group": [
+          7329
+        ],
+        "delta": [
+          0.002125865305106425,
+          -0.0027799777066272935,
+          -4.920015447147002e-05
+        ]
+      },
+      {
+        "vertex": 6047,
+        "group": [
+          7344,
+          7346
+        ],
+        "delta": [
+          0.0024532604731166774,
+          0.0024955580674893806,
+          6.085213909143811e-05
+        ]
+      },
+      {
+        "vertex": 6047,
+        "group": [
+          13080
+        ],
+        "delta": [
+          0.0027711110783155382,
+          -0.002137714260411317,
+          -3.3483316308090395e-05
+        ]
+      },
+      {
+        "vertex": 6348,
+        "group": [
+          7727
+        ],
+        "delta": [
+          -0.0021929193248146745,
+          -0.0027269463106449113,
+          -6.9775738723846e-05
+        ]
+      },
+      {
+        "vertex": 6348,
+        "group": [
+          13716,
+          13736,
+          13746,
+          13752
+        ],
+        "delta": [
+          0.0032596380181187583,
+          0.00127407171265952,
+          3.874612026581113e-05
+        ]
+      },
+      {
+        "vertex": 6892,
+        "group": [
+          8552,
+          8586,
+          8606
+        ],
+        "delta": [
+          0.0003748203278979085,
+          -0.0034793104350436255,
+          -6.25189442572442e-05
+        ]
+      },
+      {
+        "vertex": 6892,
+        "group": [
+          8554
+        ],
+        "delta": [
+          -0.0027627178330236046,
+          0.0021487805368041795,
+          1.1505639699727745e-05
+        ]
+      },
+      {
+        "vertex": 6967,
+        "group": [
+          8653,
+          8655
+        ],
+        "delta": [
+          0.001958729874767061,
+          -0.002900426929957204,
+          -3.0015024138674905e-05
+        ]
+      },
+      {
+        "vertex": 6967,
+        "group": [
+          28470,
+          28474
+        ],
+        "delta": [
+          -0.0017505626402371367,
+          0.0030305439255630734,
+          3.65233875584503e-05
+        ]
+      },
+      {
+        "vertex": 7121,
+        "group": [
+          8888,
+          8890
+        ],
+        "delta": [
+          0.0009483849916040825,
+          -0.003368663490163238,
+          -5.169330460860489e-05
+        ]
+      },
+      {
+        "vertex": 7121,
+        "group": [
+          9788,
+          9790
+        ],
+        "delta": [
+          0.0022330802751625235,
+          0.0026937156682664497,
+          8.513743721712846e-05
+        ]
+      },
+      {
+        "vertex": 7125,
+        "group": [
+          8890
+        ],
+        "delta": [
+          -0.003454487423647347,
+          0.0005611983179010259,
+          -3.96621714909393e-05
+        ]
+      },
+      {
+        "vertex": 7125,
+        "group": [
+          9782,
+          9786
+        ],
+        "delta": [
+          0.0017277816981624942,
+          0.003042634437009746,
+          8.453452677525563e-05
+        ]
+      },
+      {
+        "vertex": 7302,
+        "group": [
+          9133,
+          9137
+        ],
+        "delta": [
+          -0.0015780777444394979,
+          -0.0031231643165146846,
+          -7.426496181987608e-05
+        ]
+      },
+      {
+        "vertex": 7302,
+        "group": [
+          9924
+        ],
+        "delta": [
+          0.0021552157455745264,
+          0.0027564075062130535,
+          8.522176787637546e-05
+        ]
+      },
+      {
+        "vertex": 7305,
+        "group": [
+          9135,
+          9137
+        ],
+        "delta": [
+          -0.0034928624087372665,
+          0.00021995355219207071,
+          -3.914879957536165e-05
+        ]
+      },
+      {
+        "vertex": 7305,
+        "group": [
+          9904,
+          9908
+        ],
+        "delta": [
+          0.003179753961162932,
+          0.0014606643637993918,
+          7.499575184743412e-05
+        ]
+      },
+      {
+        "vertex": 7307,
+        "group": [
+          9139,
+          9143,
+          9147
+        ],
+        "delta": [
+          0.0007666067938272394,
+          -0.0034146394161587977,
+          -5.051416902834015e-05
+        ]
+      },
+      {
+        "vertex": 7307,
+        "group": [
+          9963
+        ],
+        "delta": [
+          0.002160729718285452,
+          0.0027520873254031023,
+          8.521993824024034e-05
+        ]
+      },
+      {
+        "vertex": 7310,
+        "group": [
+          9141,
+          9147
+        ],
+        "delta": [
+          3.1092583223063465e-05,
+          -0.0034993289119853634,
+          -6.107713984666399e-05
+        ]
+      },
+      {
+        "vertex": 7310,
+        "group": [
+          9973
+        ],
+        "delta": [
+          0.003118328508951523,
+          0.0015875126954771057,
+          7.635936065203367e-05
+        ]
+      },
+      {
+        "vertex": 7313,
+        "group": [
+          9143,
+          9145
+        ],
+        "delta": [
+          -0.0034578326938665173,
+          -0.000539152324078252,
+          -5.203683953552472e-05
+        ]
+      },
+      {
+        "vertex": 7313,
+        "group": [
+          9928
+        ],
+        "delta": [
+          0.0021552157456009437,
+          0.0027564075061923786,
+          8.522176787701211e-05
+        ]
+      },
+      {
+        "vertex": 7371,
+        "group": [
+          9219
+        ],
+        "delta": [
+          -0.002058141480624291,
+          0.0028299445357560325,
+          7.394302048349181e-05
+        ]
+      },
+      {
+        "vertex": 7371,
+        "group": [
+          9222,
+          28472
+        ],
+        "delta": [
+          0.0006571350260698548,
+          -0.003437321674858761,
+          -5.471070332517434e-05
+        ]
+      },
+      {
+        "vertex": 8151,
+        "group": [
+          10318,
+          10337,
+          10345
+        ],
+        "delta": [
+          0.0032996309083228935,
+          0.0011644237399447174,
+          8.095197769909232e-05
+        ]
+      },
+      {
+        "vertex": 8151,
+        "group": [
+          10427,
+          10431
+        ],
+        "delta": [
+          -0.0031865953267826755,
+          -0.0014460180474482147,
+          -6.813244293921068e-05
+        ]
+      },
+      {
+        "vertex": 8162,
+        "group": [
+          10337,
+          10339
+        ],
+        "delta": [
+          -0.0008645876129402205,
+          0.0033909003543058456,
+          6.54449900208027e-05
+        ]
+      },
+      {
+        "vertex": 8162,
+        "group": [
+          10429
+        ],
+        "delta": [
+          -0.002421716979460883,
+          -0.002525504849967853,
+          -8.43334108151046e-05
+        ]
+      },
+      {
+        "vertex": 8195,
+        "group": [
+          10406,
+          10412,
+          10414
+        ],
+        "delta": [
+          0.0032165438736357463,
+          0.0013785188030013102,
+          5.9425741460943656e-05
+        ]
+      },
+      {
+        "vertex": 8195,
+        "group": [
+          28502,
+          28516
+        ],
+        "delta": [
+          -0.0010890529128098267,
+          -0.003325500858761579,
+          -7.0765750730379e-05
+        ]
+      },
+      {
+        "vertex": 8242,
+        "group": [
+          10482,
+          10486
+        ],
+        "delta": [
+          0.0019229346518358306,
+          0.002923305279935961,
+          8.129308130183124e-05
+        ]
+      },
+      {
+        "vertex": 8242,
+        "group": [
+          10721,
+          10729
+        ],
+        "delta": [
+          -0.00254495315015211,
+          -0.0024017306785019113,
+          -7.002293533983332e-05
+        ]
+      },
+      {
+        "vertex": 8248,
+        "group": [
+          10493,
+          10495
+        ],
+        "delta": [
+          0.0024089776692464236,
+          0.0025378000044914088,
+          7.998578795930193e-05
+        ]
+      },
+      {
+        "vertex": 8248,
+        "group": [
+          10729,
+          10731,
+          10733
+        ],
+        "delta": [
+          -0.0015176540397961445,
+          -0.0031530139209638647,
+          -7.23147958478682e-05
+        ]
+      },
+      {
+        "vertex": 8319,
+        "group": [
+          10554,
+          10570
+        ],
+        "delta": [
+          0.0028700479154357894,
+          0.0020010166471790547,
+          9.358066474960882e-05
+        ]
+      },
+      {
+        "vertex": 8319,
+        "group": [
+          10620
+        ],
+        "delta": [
+          -0.0028550007227815632,
+          -0.0020227737914620477,
+          -8.577331456231244e-05
+        ]
+      },
+      {
+        "vertex": 8344,
+        "group": [
+          10630,
+          10634
+        ],
+        "delta": [
+          0.001966472778228527,
+          0.0028938434634096662,
+          9.3031294559005e-05
+        ]
+      },
+      {
+        "vertex": 8344,
+        "group": [
+          10899,
+          10903
+        ],
+        "delta": [
+          -0.0018222151486213913,
+          -0.0029873489982975457,
+          -7.264925674341975e-05
+        ]
+      },
+      {
+        "vertex": 8930,
+        "group": [
+          11537
+        ],
+        "delta": [
+          -0.0014619704811423683,
+          0.0031488594980968697,
+          0.0004442141077380138
+        ]
+      },
+      {
+        "vertex": 8930,
+        "group": [
+          11555
+        ],
+        "delta": [
+          0.00147361276600289,
+          -0.0031368593464076687,
+          -0.0004884453467156439
+        ]
+      },
+      {
+        "vertex": 9525,
+        "group": [
+          12385,
+          12389
+        ],
+        "delta": [
+          -0.0018535880414856896,
+          -0.002967947518815925,
+          -7.415455492171452e-05
+        ]
+      },
+      {
+        "vertex": 9525,
+        "group": [
+          13193,
+          13195
+        ],
+        "delta": [
+          0.0033382680331009015,
+          -0.0010515699862012325,
+          -1.2926844061074245e-05
+        ]
+      },
+      {
+        "vertex": 9925,
+        "group": [
+          12914,
+          12916,
+          12920,
+          12922
+        ],
+        "delta": [
+          0.002225280650512492,
+          0.0027010533327314996,
+          4.9365171880219536e-05
+        ]
+      },
+      {
+        "vertex": 9925,
+        "group": [
+          28983,
+          28987
+        ],
+        "delta": [
+          0.0031301356596630343,
+          0.0015650678298340175,
+          5.3041871427190366e-05
+        ]
+      },
+      {
+        "vertex": 9947,
+        "group": [
+          12956,
+          12958
+        ],
+        "delta": [
+          0.003496516472040482,
+          -0.0001557853873682182,
+          1.0172208812111857e-05
+        ]
+      },
+      {
+        "vertex": 9947,
+        "group": [
+          29659
+        ],
+        "delta": [
+          -0.0021735441459328655,
+          -0.002742534760054072,
+          -6.48763098220479e-05
+        ]
+      },
+      {
+        "vertex": 9952,
+        "group": [
+          12964,
+          12966,
+          12970
+        ],
+        "delta": [
+          0.003274481033750861,
+          0.0012354469342727133,
+          3.801094844970199e-05
+        ]
+      },
+      {
+        "vertex": 9952,
+        "group": [
+          29651
+        ],
+        "delta": [
+          0.0019291805782617793,
+          -0.0029198408751890744,
+          -5.283521583797972e-05
+        ]
+      },
+      {
+        "vertex": 9956,
+        "group": [
+          12972,
+          12974
+        ],
+        "delta": [
+          0.003462481146457033,
+          -0.0005110938906338555,
+          2.7102373215090635e-06
+        ]
+      },
+      {
+        "vertex": 9956,
+        "group": [
+          30115
+        ],
+        "delta": [
+          -0.0021735441459265073,
+          -0.002742534760059108,
+          -6.487630982216703e-05
+        ]
+      },
+      {
+        "vertex": 9960,
+        "group": [
+          12974,
+          12978,
+          12980
+        ],
+        "delta": [
+          -0.0002137770266910023,
+          0.0034927393625870935,
+          7.121185220074019e-05
+        ]
+      },
+      {
+        "vertex": 9960,
+        "group": [
+          30119
+        ],
+        "delta": [
+          -0.002173544145939227,
+          -0.00274253476004904,
+          -6.487630982160543e-05
+        ]
+      },
+      {
+        "vertex": 9962,
+        "group": [
+          12976,
+          12980
+        ],
+        "delta": [
+          0.0032916519005969824,
+          -0.0011894895294434831,
+          -1.1934179510751971e-05
+        ]
+      },
+      {
+        "vertex": 9962,
+        "group": [
+          30135
+        ],
+        "delta": [
+          -0.002180513637914048,
+          -0.002736998889269392,
+          -6.478699722132216e-05
+        ]
+      },
+      {
+        "vertex": 10153,
+        "group": [
+          13284,
+          13294
+        ],
+        "delta": [
+          -0.0034683072304751,
+          0.00046993264389629755,
+          -2.8749321348341484e-06
+        ]
+      },
+      {
+        "vertex": 10153,
+        "group": [
+          30426
+        ],
+        "delta": [
+          0.003257391350618599,
+          0.0012796894592232361,
+          4.238486602648306e-05
+        ]
+      },
+      {
+        "vertex": 10163,
+        "group": [
+          13307
+        ],
+        "delta": [
+          0.0034995404460543365,
+          5.452541771680932e-05,
+          1.5609140034773734e-05
+        ]
+      },
+      {
+        "vertex": 10163,
+        "group": [
+          14111
+        ],
+        "delta": [
+          -0.00266593477839123,
+          0.002267467658495664,
+          3.717761477419707e-05
+        ]
+      },
+      {
+        "vertex": 10567,
+        "group": [
+          13905,
+          13913,
+          13933,
+          13945,
+          13947,
+          13953
+        ],
+        "delta": [
+          -0.0013865330743988006,
+          -0.003212698587028988,
+          -7.80629393512328e-05
+        ]
+      },
+      {
+        "vertex": 10567,
+        "group": [
+          30430
+        ],
+        "delta": [
+          0.0012177193545991236,
+          0.0032803868327736527,
+          7.887839247814765e-05
+        ]
+      },
+      {
+        "vertex": 10714,
+        "group": [
+          14163
+        ],
+        "delta": [
+          0.002702355771351781,
+          0.002224246673340917,
+          1.4551146483455856e-07
+        ]
+      },
+      {
+        "vertex": 10714,
+        "group": [
+          14171
+        ],
+        "delta": [
+          -0.002702850171882408,
+          -0.0022236458684490915,
+          -9.193368006339438e-09
+        ]
+      },
+      {
+        "vertex": 10771,
+        "group": [
+          14256,
+          14394
+        ],
+        "delta": [
+          -0.002179986009255778,
+          0.00273795861874962,
+          3.5264733995059814e-05
+        ]
+      },
+      {
+        "vertex": 10771,
+        "group": [
+          14385
+        ],
+        "delta": [
+          0.002183342187368965,
+          -0.002735283277246446,
+          -3.524607880100587e-05
+        ]
+      },
+      {
+        "vertex": 10856,
+        "group": [
+          14376
+        ],
+        "delta": [
+          0.0021841041421824,
+          -0.0027346749842070174,
+          -3.523956376053553e-05
+        ]
+      },
+      {
+        "vertex": 10856,
+        "group": [
+          14385
+        ],
+        "delta": [
+          -0.002192258045285317,
+          0.002728143345239224,
+          3.5193049153770755e-05
+        ]
+      },
+      {
+        "vertex": 10933,
+        "group": [
+          14487,
+          14489,
+          14491,
+          14677
+        ],
+        "delta": [
+          0.003365626332254155,
+          -0.0009600035076216859,
+          -3.08651420133684e-05
+        ]
+      },
+      {
+        "vertex": 10933,
+        "group": [
+          29065,
+          29069,
+          29071
+        ],
+        "delta": [
+          -0.003313788469623563,
+          0.0011263541202296468,
+          1.1505408798628743e-05
+        ]
+      },
+      {
+        "vertex": 11259,
+        "group": [
+          15060,
+          15071,
+          15073
+        ],
+        "delta": [
+          0.003091575408106584,
+          0.0016401015350158584,
+          4.7206470205173234e-05
+        ]
+      },
+      {
+        "vertex": 11259,
+        "group": [
+          15308,
+          29182,
+          29184
+        ],
+        "delta": [
+          0.001177866542907608,
+          0.003294946930473416,
+          7.716950474567568e-05
+        ]
+      },
+      {
+        "vertex": 11865,
+        "group": [
+          16095
+        ],
+        "delta": [
+          -0.00012488329230425356,
+          0.0034967321854277454,
+          8.525366090059788e-05
+        ]
+      },
+      {
+        "vertex": 11865,
+        "group": [
+          16098
+        ],
+        "delta": [
+          4.403430095528875e-05,
+          -0.0034987253669653624,
+          -8.355708762558988e-05
+        ]
+      },
+      {
+        "vertex": 11936,
+        "group": [
+          16246
+        ],
+        "delta": [
+          0.002211159125807176,
+          -0.0027129535399561013,
+          -2.5659508945147066e-05
+        ]
+      },
+      {
+        "vertex": 11936,
+        "group": [
+          29484,
+          29486,
+          29488
+        ],
+        "delta": [
+          -0.0010472989838749083,
+          -0.003338859795543557,
+          -7.19729398970667e-05
+        ]
+      },
+      {
+        "vertex": 11977,
+        "group": [
+          16365
+        ],
+        "delta": [
+          0.0026373830514399956,
+          0.0022998437888948654,
+          7.020816661021184e-05
+        ]
+      },
+      {
+        "vertex": 11977,
+        "group": [
+          16383
+        ],
+        "delta": [
+          -0.0033701857084264897,
+          0.0009442491519685469,
+          -1.5550875361860934e-05
+        ]
+      },
+      {
+        "vertex": 12115,
+        "group": [
+          16633,
+          16652,
+          16662
+        ],
+        "delta": [
+          -0.0030943591812579337,
+          -0.0016354217726095228,
+          -1.8354373850842777e-05
+        ]
+      },
+      {
+        "vertex": 12115,
+        "group": [
+          16758,
+          16762
+        ],
+        "delta": [
+          0.0031992356645892924,
+          0.0014193792033282313,
+          1.5932343808327473e-05
+        ]
+      },
+      {
+        "vertex": 12138,
+        "group": [
+          16642,
+          16658,
+          16672
+        ],
+        "delta": [
+          -0.00342669856348155,
+          -0.0007125117717867401,
+          -7.995629981433382e-06
+        ]
+      },
+      {
+        "vertex": 12138,
+        "group": [
+          16803,
+          16806
+        ],
+        "delta": [
+          0.002587477888881339,
+          0.0023567473764652233,
+          2.6457098753561685e-05
+        ]
+      },
+      {
+        "vertex": 12145,
+        "group": [
+          16644
+        ],
+        "delta": [
+          0.002195569493372102,
+          -0.0027255345434979853,
+          -3.059496646509821e-05
+        ]
+      },
+      {
+        "vertex": 12145,
+        "group": [
+          16803
+        ],
+        "delta": [
+          0.0023745797971853814,
+          0.0025710967459437475,
+          2.8849779834634444e-05
+        ]
+      },
+      {
+        "vertex": 12148,
+        "group": [
+          16646,
+          16660
+        ],
+        "delta": [
+          -0.0034815394424859507,
+          -0.00035898033531426177,
+          -4.028557096329686e-06
+        ]
+      },
+      {
+        "vertex": 12148,
+        "group": [
+          30256
+        ],
+        "delta": [
+          0.0005809016621212913,
+          0.0034512392865908162,
+          3.873816770106169e-05
+        ]
+      },
+      {
+        "vertex": 12201,
+        "group": [
+          16693,
+          16707,
+          16715
+        ],
+        "delta": [
+          -0.002118010013951145,
+          -0.0027862591627507596,
+          -2.8168400559913748e-05
+        ]
+      },
+      {
+        "vertex": 12201,
+        "group": [
+          17288,
+          17301,
+          17317
+        ],
+        "delta": [
+          0.002932345160405049,
+          0.0019107539432418154,
+          1.9267294437570923e-05
+        ]
+      },
+      {
+        "vertex": 12207,
+        "group": [
+          16733,
+          16735,
+          16739,
+          16741
+        ],
+        "delta": [
+          -0.002222489758457124,
+          -0.0027036473350127,
+          -2.8815992641558985e-05
+        ]
+      },
+      {
+        "vertex": 12207,
+        "group": [
+          17336
+        ],
+        "delta": [
+          -0.0018689077306367646,
+          0.0029591039069477793,
+          2.9798695483650676e-05
+        ]
+      },
+      {
+        "vertex": 12208,
+        "group": [
+          16733
+        ],
+        "delta": [
+          -0.0024922132419356773,
+          -0.0024572756731163683,
+          -2.587321068135569e-05
+        ]
+      },
+      {
+        "vertex": 12208,
+        "group": [
+          17288
+        ],
+        "delta": [
+          -0.0021895049228950235,
+          0.0027304414332970125,
+          2.7527657971808527e-05
+        ]
+      },
+      {
+        "vertex": 12277,
+        "group": [
+          16827
+        ],
+        "delta": [
+          -0.003225784999499688,
+          -0.0013571900302874523,
+          -4.843922678102863e-05
+        ]
+      },
+      {
+        "vertex": 12277,
+        "group": [
+          17186,
+          17188
+        ],
+        "delta": [
+          0.002507550429027013,
+          0.0024410371550399267,
+          5.9400787882161504e-05
+        ]
+      },
+      {
+        "vertex": 12633,
+        "group": [
+          17367,
+          17439
+        ],
+        "delta": [
+          -0.0022042916939960053,
+          0.0027186264226373965,
+          1.2980828864696975e-05
+        ]
+      },
+      {
+        "vertex": 12633,
+        "group": [
+          30262,
+          30264
+        ],
+        "delta": [
+          -0.0018746945889874043,
+          -0.0029554008814773637,
+          -3.3553357271206884e-05
+        ]
+      },
+      {
+        "vertex": 12638,
+        "group": [
+          17369,
+          17372,
+          17385,
+          17399
+        ],
+        "delta": [
+          -0.0005505268620478693,
+          0.003456351255645042,
+          2.3583294186063725e-05
+        ]
+      },
+      {
+        "vertex": 12638,
+        "group": [
+          17454,
+          17457
+        ],
+        "delta": [
+          -0.0022077231280595196,
+          -0.0027149027656112735,
+          -7.253663286470962e-05
+        ]
+      },
+      {
+        "vertex": 12639,
+        "group": [
+          17369,
+          17445
+        ],
+        "delta": [
+          -0.002195171344801242,
+          0.002725872109469545,
+          2.905184640534908e-05
+        ]
+      },
+      {
+        "vertex": 12639,
+        "group": [
+          30273
+        ],
+        "delta": [
+          -0.002039314552531797,
+          -0.0028443071390748466,
+          -3.336247053048464e-05
+        ]
+      },
+      {
+        "vertex": 12646,
+        "group": [
+          17379,
+          17397,
+          17401,
+          17415
+        ],
+        "delta": [
+          0.002059822137131468,
+          0.002829532406946099,
+          2.9649981871306774e-05
+        ]
+      },
+      {
+        "vertex": 12646,
+        "group": [
+          17418,
+          17424
+        ],
+        "delta": [
+          -0.003163683978832263,
+          -0.0014967967211610771,
+          -2.6519004534670404e-05
+        ]
+      },
+      {
+        "vertex": 12737,
+        "group": [
+          17512,
+          17516
+        ],
+        "delta": [
+          0.002954141693395391,
+          0.0018767488405189382,
+          2.9336750907915517e-05
+        ]
+      },
+      {
+        "vertex": 12737,
+        "group": [
+          30302,
+          30326,
+          30350
+        ],
+        "delta": [
+          -0.0022458042745955808,
+          0.0026844379219562124,
+          1.249813472596018e-05
+        ]
+      },
+      {
+        "vertex": 12789,
+        "group": [
+          17573
+        ],
+        "delta": [
+          -0.0022028251700699376,
+          0.002719814750824418,
+          1.299966554422688e-05
+        ]
+      },
+      {
+        "vertex": 12789,
+        "group": [
+          17652
+        ],
+        "delta": [
+          -0.0026489451304052237,
+          -0.002287194914349906,
+          -4.276821102614356e-05
+        ]
+      },
+      {
+        "vertex": 12886,
+        "group": [
+          17716,
+          17724,
+          17726
+        ],
+        "delta": [
+          0.003464814310457647,
+          -0.00049497347290768,
+          -7.940728279426154e-06
+        ]
+      },
+      {
+        "vertex": 12886,
+        "group": [
+          30070,
+          30072
+        ],
+        "delta": [
+          -0.002117693809947669,
+          -0.002785843193834241,
+          -6.671301729620006e-05
+        ]
+      },
+      {
+        "vertex": 12941,
+        "group": [
+          17804,
+          17806
+        ],
+        "delta": [
+          -0.0008182078288162218,
+          -0.0034023808881624945,
+          -6.588050341671185e-05
+        ]
+      },
+      {
+        "vertex": 12941,
+        "group": [
+          17814
+        ],
+        "delta": [
+          -0.0034345715526132594,
+          0.0006726035957275807,
+          3.6368296551694464e-05
+        ]
+      },
+      {
+        "vertex": 19847,
+        "group": [
+          29693,
+          29701
+        ],
+        "delta": [
+          -0.003264562303448745,
+          0.0012619316466991187,
+          -1.2707712645376488e-05
+        ]
+      },
+      {
+        "vertex": 19847,
+        "group": [
+          29791,
+          29795
+        ],
+        "delta": [
+          0.0003983637155574629,
+          0.003476628790235836,
+          6.601973213036956e-05
+        ]
+      }
+    ],
+    "fan_conversion_risk": {
+      "fan_split_risk_vertices": 0,
+      "fan_split_risks": [],
+      "simulated_after_fan_split_vertex_pairs": 2,
+      "simulated_after_fan_split_affected_vertices": 4,
+      "not_native_max": true
+    },
+    "quads": 19245,
+    "triangles": 7990,
+    "triangle_equivalent": 46480,
+    "surface_polygons": 20149,
+    "xview": {
+      "part": "final_session_after_bevel",
+      "vertex_pairs": 2,
+      "face_pairs": 13,
+      "face_pairs_by_kind": {
+        "contact": 3,
+        "area": 0,
+        "area+contact": 10
+      },
+      "vertices": [
+        8908,
+        27420,
+        27424,
+        27425
+      ],
+      "faces": [
+        1769,
+        2783,
+        2785,
+        11497,
+        11501,
+        11507,
+        20608,
+        20611,
+        20748,
+        20749,
+        20752,
+        21775,
+        21777,
+        21778,
+        21779,
+        22099,
+        23770,
+        24245,
+        24629,
+        26065
+      ],
+      "xview_faces": [
+        1769,
+        2783,
+        2785,
+        11497,
+        11501,
+        11507,
+        20608,
+        20611,
+        20748,
+        20749,
+        20752,
+        21775,
+        21777,
+        21778,
+        21779,
+        22099,
+        23770,
+        24245,
+        24629,
+        26065
+      ],
+      "offenders": [
+        "final_session_after_bevel v8908/v27420: 1.60 mm",
+        "final_session_after_bevel v27424/v27425: 1.45 mm",
+        "final_session_after_bevel f1769/f24245: area+contact, 3.99 mm",
+        "final_session_after_bevel f2783/f23770: area+contact, 4.00 mm",
+        "final_session_after_bevel f2785/f23770: area+contact, 4.00 mm",
+        "final_session_after_bevel f11497/f24629: area+contact, 4.84 mm",
+        "final_session_after_bevel f11501/f24629: area+contact, 3.06 mm",
+        "final_session_after_bevel f11507/f24629: area+contact, 3.06 mm",
+        "final_session_after_bevel f20608/f20611: area+contact, 2.73 mm",
+        "final_session_after_bevel f20748/f20749: contact",
+        "final_session_after_bevel f20749/f20752: contact",
+        "final_session_after_bevel f21775/f21779: area+contact, 2.85 mm",
+        "final_session_after_bevel f21777/f21778: area+contact, 0.00 mm",
+        "final_session_after_bevel f21777/f21779: contact",
+        "final_session_after_bevel f22099/f26065: area+contact, 0.00 mm"
+      ]
+    },
+    "offender_slot_pairs": {
+      "('CurbGarden', np.str_('Mulch'))": 3,
+      "('CurbGarden', np.str_('LawnReinforced'))": 3,
+      "(np.str_('Skirt'), np.str_('Skirt'))": 6,
+      "('CurbGarden', 'Stairs')": 1
+    },
+    "face_witnesses": [
+      {
+        "a": 1769,
+        "b": 24245,
+        "slot_a": "Mulch",
+        "slot_b": "CurbGarden",
+        "kind": "area+contact",
+        "gap_m": 0.003991652101021481,
+        "xyz_a": [
+          [
+            -7520.652,
+            -15340.398,
+            145.728777
+          ],
+          [
+            -7521.873,
+            -15342.306,
+            147.221144
+          ],
+          [
+            -7521.447,
+            -15342.105,
+            147.322883
+          ],
+          [
+            -7520.001,
+            -15341.19,
+            147.359174
+          ]
+        ],
+        "xyz_b": [
+          [
+            -7521.832,
+            -15342.243,
+            147.1799866760765
+          ],
+          [
+            -7521.177,
+            -15341.933,
+            147.33660774286903
+          ],
+          [
+            -7521.73,
+            -15342.283,
+            147.32294541041017
+          ],
+          [
+            -7521.914,
+            -15342.37,
+            147.27888790589785
+          ]
+        ]
+      },
+      {
+        "a": 2783,
+        "b": 23770,
+        "slot_a": "Mulch",
+        "slot_b": "CurbGarden",
+        "kind": "area+contact",
+        "gap_m": 0.00399624726170468,
+        "xyz_a": [
+          [
+            -7644.0,
+            -15335.295,
+            149.709961
+          ],
+          [
+            -7644.0,
+            -15332.28,
+            149.73675
+          ],
+          [
+            -7647.426,
+            -15334.347,
+            149.719247
+          ],
+          [
+            -7647.207,
+            -15335.292,
+            149.70999
+          ]
+        ],
+        "xyz_b": [
+          [
+            -7647.848,
+            -15332.356,
+            149.72617223582088
+          ],
+          [
+            -7647.177,
+            -15335.251,
+            149.7223921568625
+          ],
+          [
+            -7647.24,
+            -15335.331,
+            149.72160784313698
+          ],
+          [
+            -7647.949,
+            -15332.276,
+            149.72547305164144
+          ]
+        ]
+      },
+      {
+        "a": 2785,
+        "b": 23770,
+        "slot_a": "Mulch",
+        "slot_b": "CurbGarden",
+        "kind": "area+contact",
+        "gap_m": 0.0039962791463452494,
+        "xyz_a": [
+          [
+            -7647.426,
+            -15334.347,
+            149.719247
+          ],
+          [
+            -7644.0,
+            -15332.28,
+            149.73675
+          ],
+          [
+            -7647.906,
+            -15332.277,
+            149.713728
+          ]
+        ],
+        "xyz_b": [
+          [
+            -7647.848,
+            -15332.356,
+            149.72617223582088
+          ],
+          [
+            -7647.177,
+            -15335.251,
+            149.7223921568625
+          ],
+          [
+            -7647.24,
+            -15335.331,
+            149.72160784313698
+          ],
+          [
+            -7647.949,
+            -15332.276,
+            149.72547305164144
+          ]
+        ]
+      },
+      {
+        "a": 11497,
+        "b": 24629,
+        "slot_a": "LawnReinforced",
+        "slot_b": "CurbGarden",
+        "kind": "area+contact",
+        "gap_m": 0.004842162209439555,
+        "xyz_a": [
+          [
+            -7574.757,
+            -15299.1,
+            150.481687
+          ],
+          [
+            -7573.815,
+            -15298.326,
+            150.481681
+          ],
+          [
+            -7573.956,
+            -15297.99,
+            150.486787
+          ],
+          [
+            -7573.959,
+            -15297.984,
+            150.486883
+          ]
+        ],
+        "xyz_b": [
+          [
+            -7575.789,
+            -15300.0,
+            150.47833205620313
+          ],
+          [
+            -7575.915,
+            -15300.0,
+            150.47797791304856
+          ],
+          [
+            -7573.789,
+            -15298.254,
+            150.49425322347565
+          ],
+          [
+            -7573.677,
+            -15298.265,
+            150.49308847705768
+          ]
+        ]
+      },
+      {
+        "a": 11501,
+        "b": 24629,
+        "slot_a": "LawnReinforced",
+        "slot_b": "CurbGarden",
+        "kind": "area+contact",
+        "gap_m": 0.003058565628665572,
+        "xyz_a": [
+          [
+            -7575.999,
+            -15298.143,
+            150.498246
+          ],
+          [
+            -7575.999,
+            -15300.0,
+            150.465742
+          ],
+          [
+            -7575.852,
+            -15300.0,
+            150.466155
+          ],
+          [
+            -7574.949,
+            -15299.259,
+            150.481663
+          ]
+        ],
+        "xyz_b": [
+          [
+            -7575.789,
+            -15300.0,
+            150.47833205620313
+          ],
+          [
+            -7575.915,
+            -15300.0,
+            150.47797791304856
+          ],
+          [
+            -7573.789,
+            -15298.254,
+            150.49425322347565
+          ],
+          [
+            -7573.677,
+            -15298.265,
+            150.49308847705768
+          ]
+        ]
+      },
+      {
+        "a": 11507,
+        "b": 24629,
+        "slot_a": "LawnReinforced",
+        "slot_b": "CurbGarden",
+        "kind": "area+contact",
+        "gap_m": 0.003058565628665572,
+        "xyz_a": [
+          [
+            -7574.757,
+            -15299.1,
+            150.481687
+          ],
+          [
+            -7573.959,
+            -15297.984,
+            150.486883
+          ],
+          [
+            -7575.999,
+            -15298.143,
+            150.498246
+          ],
+          [
+            -7574.949,
+            -15299.259,
+            150.481663
+          ]
+        ],
+        "xyz_b": [
+          [
+            -7575.789,
+            -15300.0,
+            150.47833205620313
+          ],
+          [
+            -7575.915,
+            -15300.0,
+            150.47797791304856
+          ],
+          [
+            -7573.789,
+            -15298.254,
+            150.49425322347565
+          ],
+          [
+            -7573.677,
+            -15298.265,
+            150.49308847705768
+          ]
+        ]
+      },
+      {
+        "a": 20608,
+        "b": 20611,
+        "slot_a": "Skirt",
+        "slot_b": "Skirt",
+        "kind": "area+contact",
+        "gap_m": 0.002731099431684217,
+        "xyz_a": [
+          [
+            -7548.159,
+            -15354.741,
+            146.718607
+          ],
+          [
+            -7548.174,
+            -15354.708,
+            146.71923
+          ],
+          [
+            -7548.174,
+            -15354.708,
+            145.71923
+          ],
+          [
+            -7548.159,
+            -15354.741,
+            145.718607
+          ]
+        ],
+        "xyz_b": [
+          [
+            -7548.171,
+            -15354.708,
+            146.719259
+          ],
+          [
+            -7548.156,
+            -15354.741,
+            146.718641
+          ],
+          [
+            -7548.156,
+            -15354.741,
+            145.718641
+          ],
+          [
+            -7548.171,
+            -15354.708,
+            145.719259
+          ]
+        ]
+      },
+      {
+        "a": 20748,
+        "b": 20749,
+        "slot_a": "Skirt",
+        "slot_b": "Skirt",
+        "kind": "contact",
+        "gap_m": null,
+        "xyz_a": [
+          [
+            -7634.559,
+            -15378.462,
+            145.775234
+          ],
+          [
+            -7634.559,
+            -15378.861,
+            145.767164
+          ],
+          [
+            -7634.559,
+            -15378.861,
+            144.767164
+          ],
+          [
+            -7634.559,
+            -15378.462,
+            144.775234
+          ]
+        ],
+        "xyz_b": [
+          [
+            -7634.556,
+            -15378.861,
+            145.767136
+          ],
+          [
+            -7634.556,
+            -15379.26,
+            145.759066
+          ],
+          [
+            -7634.556,
+            -15379.26,
+            144.759066
+          ],
+          [
+            -7634.556,
+            -15378.861,
+            144.767136
+          ]
+        ]
+      },
+      {
+        "a": 20749,
+        "b": 20752,
+        "slot_a": "Skirt",
+        "slot_b": "Skirt",
+        "kind": "contact",
+        "gap_m": null,
+        "xyz_a": [
+          [
+            -7634.556,
+            -15378.861,
+            145.767136
+          ],
+          [
+            -7634.556,
+            -15379.26,
+            145.759066
+          ],
+          [
+            -7634.556,
+            -15379.26,
+            144.759066
+          ],
+          [
+            -7634.556,
+            -15378.861,
+            144.767136
+          ]
+        ],
+        "xyz_b": [
+          [
+            -7634.559,
+            -15379.26,
+            145.759093
+          ],
+          [
+            -7634.559,
+            -15379.662,
+            145.750963
+          ],
+          [
+            -7634.559,
+            -15379.662,
+            144.750963
+          ],
+          [
+            -7634.559,
+            -15379.26,
+            144.759093
+          ]
+        ]
+      },
+      {
+        "a": 21775,
+        "b": 21779,
+        "slot_a": "Skirt",
+        "slot_b": "Skirt",
+        "kind": "area+contact",
+        "gap_m": 0.0028546555191987233,
+        "xyz_a": [
+          [
+            -7691.007,
+            -15248.688,
+            152.017682
+          ],
+          [
+            -7691.229,
+            -15248.001,
+            151.996884
+          ],
+          [
+            -7691.229,
+            -15248.001,
+            150.996884
+          ],
+          [
+            -7691.007,
+            -15248.688,
+            151.017682
+          ]
+        ],
+        "xyz_b": [
+          [
+            -7691.232,
+            -15248.001,
+            151.996688
+          ],
+          [
+            -7691.016,
+            -15248.688,
+            152.017123
+          ],
+          [
+            -7691.016,
+            -15248.688,
+            151.017123
+          ],
+          [
+            -7691.232,
+            -15248.001,
+            150.996688
+          ]
+        ]
+      },
+      {
+        "a": 21777,
+        "b": 21778,
+        "slot_a": "Skirt",
+        "slot_b": "Skirt",
+        "kind": "area+contact",
+        "gap_m": 0.0,
+        "xyz_a": [
+          [
+            -7691.229,
+            -15248.001,
+            151.996884
+          ],
+          [
+            -7691.427,
+            -15247.386,
+            151.978288
+          ],
+          [
+            -7691.427,
+            -15247.386,
+            150.978288
+          ],
+          [
+            -7691.229,
+            -15248.001,
+            150.996884
+          ]
+        ],
+        "xyz_b": [
+          [
+            -7691.427,
+            -15247.386,
+            151.978288
+          ],
+          [
+            -7691.232,
+            -15248.001,
+            151.996688
+          ],
+          [
+            -7691.232,
+            -15248.001,
+            150.996688
+          ],
+          [
+            -7691.427,
+            -15247.386,
+            150.978288
+          ]
+        ]
+      },
+      {
+        "a": 21777,
+        "b": 21779,
+        "slot_a": "Skirt",
+        "slot_b": "Skirt",
+        "kind": "contact",
+        "gap_m": null,
+        "xyz_a": [
+          [
+            -7691.229,
+            -15248.001,
+            151.996884
+          ],
+          [
+            -7691.427,
+            -15247.386,
+            151.978288
+          ],
+          [
+            -7691.427,
+            -15247.386,
+            150.978288
+          ],
+          [
+            -7691.229,
+            -15248.001,
+            150.996884
+          ]
+        ],
+        "xyz_b": [
+          [
+            -7691.232,
+            -15248.001,
+            151.996688
+          ],
+          [
+            -7691.016,
+            -15248.688,
+            152.017123
+          ],
+          [
+            -7691.016,
+            -15248.688,
+            151.017123
+          ],
+          [
+            -7691.232,
+            -15248.001,
+            150.996688
+          ]
+        ]
+      },
+      {
+        "a": 22099,
+        "b": 26065,
+        "slot_a": "Stairs",
+        "slot_b": "CurbGarden",
+        "kind": "area+contact",
+        "gap_m": 0.0,
+        "xyz_a": [
+          [
+            -7543.568594,
+            -15336.534023,
+            149.133506
+          ],
+          [
+            -7540.675896,
+            -15335.165682,
+            149.133506
+          ],
+          [
+            -7540.675896,
+            -15335.165682,
+            149.039764
+          ],
+          [
+            -7543.568594,
+            -15336.534023,
+            149.039764
+          ]
+        ],
+        "xyz_b": [
+          [
+            -7540.665,
+            -15335.161,
+            149.1366998715178
+          ],
+          [
+            -7542.468,
+            -15336.0,
+            149.2736930031093
+          ],
+          [
+            -7542.468,
+            -15336.0,
+            149.22369300310928
+          ],
+          [
+            -7540.665,
+            -15335.161,
+            149.0866998715178
+          ]
+        ]
+      }
+    ]
+  },
+  "vertex_witnesses": [
+    {
+      "a": 8908,
+      "b": 27420,
+      "distance_m": 0.0015993586483749502,
+      "xyz_a": [
+        -7539.999,
+        -15344.079,
+        147.83734
+      ],
+      "xyz_b": [
+        -7540.0004619704805,
+        -15344.078851140503,
+        147.83797121410774
+      ]
+    },
+    {
+      "a": 27424,
+      "b": 27425,
+      "distance_m": 0.0014523219909997626,
+      "xyz_a": [
+        -7578.5587747193495,
+        -15322.731298946668,
+        150.08450336517188
+      ],
+      "xyz_b": [
+        -7578.55786986434,
+        -15322.73243493217,
+        150.08450704187143
+      ]
+    }
+  ],
+  "process_exit_code": 0,
+  "log": "candidate 27238 19242 skirt changed 66\nremaining 0 13 {\"(('CurbGarden', -2), (np.str_('Mulch'), 1))\": 3, \"(('CurbGarden', -2), (np.str_('LawnReinforced'), 1))\": 3, \"((np.str_('Skirt'), -1), (np.str_('Skirt'), -1))\": 6, \"(('CurbGarden', -2), ('Stairs', -2))\": 1}\npaired {'fan_split_risk_vertices': 59, 'simulated_after_fan_split_vertex_pairs': 59, 'simulated_after_fan_split_affected_vertices': 118, 'not_native_max': True}\nconstruction {'fan_split_risk_vertices': 59, 'simulated_after_fan_split_vertex_pairs': 59, 'simulated_after_fan_split_affected_vertices': 118, 'not_native_max': True}\nafter fan-displacement 27235\nFINAL 2 13 {\"('CurbGarden', np.str_('Mulch'))\": 3, \"('CurbGarden', np.str_('LawnReinforced'))\": 3, \"(np.str_('Skirt'), np.str_('Skirt'))\": 6, \"('CurbGarden', 'Stairs')\": 1} remaining fans 0\n",
+  "focused_tests": {
+    "passed": 174,
+    "failed": 0,
+    "seconds": 10.27
+  },
+  "unmeasured": [
+    "native Max xView",
+    "Max/Blender exports and material-ID readback",
+    "surface deviation after fan displacement",
+    "new gaps/coverage after fan displacement",
+    "D150 re-pin",
+    "UCX/placement readback",
+    "review publication",
+    "first-review full suite"
+  ]
+}

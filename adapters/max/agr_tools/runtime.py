@@ -3,8 +3,9 @@
 Native xView uses 0.002 m vertices and 0.005 m faces.
 """
 import json
+import sys
 
-VERSION = "0.4.0"
+VERSION = "0.7.0"
 CODES = {'xview': {'overlap_vertices', 'overlap_faces'},
          'matid': {'udim_id', 'empty_id', 'empty_slot', 'missing_material'},
          'cleanup': {'remove_custom_attributes', 'clear_user_defined_lines',
@@ -16,6 +17,28 @@ CODES = {'xview': {'overlap_vertices', 'overlap_faces'},
          'export': {'cleanup', 'udim_id', 'empty_id', 'empty_slot', 'missing_material',
                     'out_of_range', 'overlap_vertices', 'overlap_faces', 'ucx_audit',
                     'ucx_unmeasurable', 'existing_target', 'readback_mismatch'}}
+CHECKS_050 = ('names', 'tris', 'textures', 'pivot', 'geojson')  # 0.5.0 diagnostics, checks_core.py
+CHECKS_070 = ('census', 'units', 'perimeter_drop', 'material_type', 'ucx_audit', 'sets_count', 'fbx_split',
+              'glass', 'preflight', 'scene_hygiene', 'xform', 'zero_area')  # 0.7.0 checks, suite_core.py
+# 0.8 delivery edits (#908): plan row id -> (core file, function). The function lives in the matching
+# *_max.py glue (geom_core.py -> geom_max.py); while it is absent the report is `status: not_implemented`.
+# Owners (parallel branches of #908): geom A, tex B, names/udim C, package D.
+EDITS_080 = {
+    'scene.missing_maps': ('tex_core.py', 'scene_missing_maps'),
+    'model.triangulate': ('geom_core.py', 'model_triangulate'),
+    'tex.format_fix': ('tex_core.py', 'tex_format_fix'),
+    'tex.placeholders': ('tex_core.py', 'tex_placeholders'),
+    'ucx.triangulate': ('geom_core.py', 'ucx_triangulate'),
+    'ucx.rename': ('names_core.py', 'ucx_rename'),
+    'udim.ids_to_udims': ('udim_core.py', 'udim_ids_to_udims'),
+    'qa.names_fix': ('names_core.py', 'qa_names_fix'),
+    'qa.package': ('package_core.py', 'qa_package'),
+    'export.geojson_write': ('package_core.py', 'export_geojson_write'),
+    'export.ground_fbx': ('package_core.py', 'export_ground_fbx'),
+    'export.pivot_place': ('geom_core.py', 'export_pivot_place'),
+    'export.zip': ('package_core.py', 'export_zip'),
+}
+READ_080 = ('scene.missing_maps', 'qa.package')  # plan mode `read`: preview only, there is no apply
 EXPORT_PLAN = {'target', 'report', 'units', 'axis', 'unit_scale_factor', 'object_count',
                'triangle_count', 'material_count', 'object_names', 'triangles_by_name',
                'gates', 'dropped', 'texel', 'readback', 'stopped', 'digest'}
@@ -159,16 +182,26 @@ def _validate_plan(tool, plan):
 def parse_report(text):
     """Strict complete report; derive status rather than trusting a claimed pass."""
     r = json.loads(text, object_pairs_hook=_unique, parse_constant=_reject)
-    if not isinstance(r, dict) or 'tool' not in r or not isinstance(r.get('tool'), str) or r['tool'] not in CODES:
+    if isinstance(r, dict) and isinstance(r.get('tool'), str) and r['tool'] in EDITS_080:
+        return _edit_core().validate_report(r, EDITS_080)
+    if isinstance(r, dict) and r.get('tool') in CHECKS_070:
+        return _suite_core().validate_report(r)
+    checks = _checks_core() if isinstance(r, dict) and r.get('tool') in CHECKS_050 else None
+    codes = checks.CODES if checks else CODES
+    if not isinstance(r, dict) or 'tool' not in r or not isinstance(r.get('tool'), str) or r['tool'] not in codes:
         raise ValueError('unsupported schema/tool')
     expected_keys = {'schema', 'tool', 'status', 'objects'}
-    if r['tool'] in ('nudge', 'atlas', 'ucx', 'texel', 'export'):
+    if r['tool'] in ('nudge', 'atlas', 'ucx', 'texel', 'export') or checks:
         expected_keys = expected_keys | {'plan'}
     if set(r) != expected_keys:
         raise ValueError('incomplete report')
     if type(r['schema']) is not int or r['schema'] != 1:
         raise ValueError('unsupported schema/tool')
-    if r['tool'] in ('nudge', 'atlas', 'ucx', 'texel', 'export'):
+    if r['tool'] == 'geojson':
+        return checks.validate_report(r)
+    if checks:
+        checks.validate_plan(r['tool'], r['plan'])
+    elif r['tool'] in ('nudge', 'atlas', 'ucx', 'texel', 'export'):
         _validate_plan(r['tool'], r['plan'])
     if not isinstance(r['objects'], list) or not r['objects']:
         raise ValueError('empty objects')
@@ -185,7 +218,7 @@ def parse_report(text):
         for f in obj['findings']:
             if not isinstance(f, dict) or set(f) != {'code', 'ids', 'detail'}:
                 raise ValueError('incomplete finding')
-            if not isinstance(f['code'], str) or f['code'] not in CODES[r['tool']] or not isinstance(f['detail'], str):
+            if not isinstance(f['code'], str) or f['code'] not in codes[r['tool']] or not isinstance(f['detail'], str):
                 raise ValueError('unmapped finding')
             ids = f['ids']
             if not isinstance(ids, list) or any(type(i) is not int or i <= 0 for i in ids) or len(set(ids)) != len(ids):
@@ -199,6 +232,141 @@ def parse_report(text):
 def _rt():
     from pymxs import runtime
     return runtime
+
+
+def _checks_core():
+    return _load_core('checks_core.py', 'agr_tools_checks_core')
+
+
+def checks_050(tool, nodes=None, path=None):
+    """0.5.0 read-only diagnostics: names, tris, textures, pivot, geojson (checks_max.py).
+    bootstrap.py loads this file with module_from_spec and does not register it in sys.modules,
+    so the glue gets a namespace over this module's globals, not sys.modules[__name__]."""
+    import types
+    glue = _load_core('checks_max.py', 'agr_tools_checks_max')
+    return glue.run(types.SimpleNamespace(**globals()), _checks_core(), tool, nodes, path)
+
+
+def _suite_core():
+    _checks_core()  # suite_core imports it as agr_tools_checks_core
+    return _load_core('suite_core.py', 'agr_tools_suite_core')
+
+
+def checks_070(tool, nodes=None, select=True):
+    """0.7.0 read-only pre-delivery checks (suite_max.py reads the scene, suite_core.py judges)."""
+    import types
+    glue = _load_core('checks_max.py', 'agr_tools_checks_max')
+    suite_max = _load_core('suite_max.py', 'agr_tools_suite_max')
+    return suite_max.run(types.SimpleNamespace(**globals()), glue, _suite_core(), tool, nodes, select)
+
+
+_edit = None
+
+
+def _edit_core():
+    """Loaded once per session: callers catch edit_core.StalePreview, so its class must stay the same."""
+    global _edit
+    if _edit is None:
+        _edit = _load_core('edit_core.py', 'agr_tools_edit_core')
+    return _edit
+
+
+def edits_080(tool, mode, preview=None, nodes=None, options=None):
+    """0.8 delivery edits (#908): preview -> apply through the glue of EDITS_080, contract of edit_core.py.
+
+    apply accepts only the unaltered preview report of the last answer for the same tool (hash checked here;
+    the glue re-checks the scene state with edit_core.require_current). Read-only rows have no apply.
+    `options` (JSON object: paths, profile) belong to the preview; the glue records them in the preview plan,
+    so apply takes none. An empty stub module answers `status: not_implemented`, so the base ships before A–D.
+    Glue call: `<function>(ctx, mode, nodes, preview)`, ctx = agr, core, edit, emax, options."""
+    import types
+    if not isinstance(tool, str) or tool not in EDITS_080:
+        raise ValueError('unsupported edit tool: ' + repr(tool))
+    edit = _edit_core()
+    if mode not in edit.MODES:
+        raise ValueError('unsupported edit mode: ' + repr(mode))
+    if options is not None:
+        if not isinstance(options, dict):
+            raise ValueError('options must be a JSON object')
+        edit.canonical(options)
+    if mode == 'apply':
+        if tool in READ_080:
+            raise ValueError(tool + ' is read-only: there is no apply')
+        if preview is None:
+            raise ValueError('apply needs the preview report of the last answer')
+        if options is not None:
+            raise ValueError('apply takes only the preview; options belong to the preview')
+        edit.check_preview(tool, preview)
+    elif preview is not None:
+        raise ValueError('preview mode takes no preview argument')
+    core_file, fn_name = EDITS_080[tool]
+    stem = core_file[:-len('_core.py')]
+    glue = _load_core(stem + '_max.py', 'agr_tools_{}_max'.format(stem))
+    fn = getattr(glue, fn_name, None)
+    if fn is None:
+        return edit.not_implemented(tool, mode)
+    ctx = types.SimpleNamespace(agr=types.SimpleNamespace(**globals()), edit=edit,
+                                core=_load_core(core_file, 'agr_tools_' + stem + '_core'),
+                                emax=_load_core('edit_max.py', 'agr_tools_edit_max'), options=dict(options or {}))
+    report = fn(ctx, mode, nodes, preview)
+    edit.validate_report(report, EDITS_080)
+    if report['tool'] != tool or (report['status'] != 'not_implemented' and report['plan']['mode'] != mode):
+        raise ValueError('edit glue answered another tool/mode: ' + repr((report['tool'], report['plan']['mode'])))
+    return report
+
+
+def suite_path():
+    """The plan master table shipped in the package (agr-tools-suite.json), else the repo copy."""
+    from pathlib import Path
+    here = Path(__file__).resolve().parent
+    for p in (here / 'agr-tools-suite.json', here.parents[2] / 'docs' / 'plans' / 'agr-tools-suite.json'):
+        if p.is_file():
+            return str(p)
+    raise ValueError('agr-tools-suite.json not found next to runtime.py')
+
+
+def reports_dir(scene=None):
+    """Per-scene folder of the last reports (for the «Путь» live status); outside the scene folder."""
+    import hashlib
+    import os
+    if scene is None:
+        rt = _rt()
+        scene = os.path.join(str(rt.maxFilePath), str(rt.maxFileName)) if str(rt.maxFileName) else '<untitled>'
+    base = os.environ.get('LOCALAPPDATA') or os.path.expanduser('~')
+    key = hashlib.sha1(os.path.normcase(os.path.abspath(scene)).encode('utf-8')).hexdigest()[:16]         if scene != '<untitled>' else 'untitled'
+    return os.path.join(base, 'AGRTools', 'reports', key)
+
+
+def remember(report, folder=None):
+    """Keep the last report of each tool for this scene; the write goes to a .partial then replaces."""
+    import os
+    folder = folder or reports_dir()
+    os.makedirs(folder, exist_ok=True)
+    target = os.path.join(folder, report['tool'] + '.json')
+    tmp = target + '.partial'
+    with open(tmp, 'w', encoding='utf-8') as f:
+        json.dump(report, f, ensure_ascii=False, allow_nan=False)
+    os.replace(tmp, target)
+    return target
+
+
+def last_reports(folder=None):
+    """{tool: report} of this scene; unreadable or invalid files are skipped (they count as not run)."""
+    import os
+    folder = folder or reports_dir()
+    out = {}
+    if not os.path.isdir(folder):
+        return out
+    for name in sorted(os.listdir(folder)):
+        if not name.endswith('.json'):
+            continue
+        try:
+            with open(os.path.join(folder, name), encoding='utf-8') as f:
+                rep_ = parse_report(f.read())
+        except Exception:  # noqa: BLE001 - a broken file is not a pass
+            continue
+        out[rep_['tool']] = rep_
+    return out
 
 
 def _targets(nodes):
@@ -271,7 +439,7 @@ def _reject_vertex_boundary(points, tolerance):
         cells.setdefault(key, []).append(p)
 
 
-def xview(nodes=None):
+def xview(nodes=None, on_item=None):
     """Native checker on evaluated temporary copies; original geometry is untouched."""
     rt = _rt()
     nodes = _targets(nodes)
@@ -322,12 +490,14 @@ def xview(nodes=None):
                 entries.append(_entry(n, findings))
             finally:
                 rt.delete(copy)
+            if on_item is not None:
+                on_item()
     finally:
         rt.OverlappingVertices.tolerance, rt.OverlappingFaces.tolerance = previous
     return _report('xview', entries, nodes)
 
 
-def matid(nodes=None):
+def matid(nodes=None, on_item=None):
     """Native per-face IDs, no material-slot fallback or remapping."""
     rt = _rt()
     nodes = _targets(nodes)
@@ -357,6 +527,8 @@ def matid(nodes=None):
             entries.append(_entry(n, fs))
         finally:
             rt.delete(copy)
+        if on_item is not None:
+            on_item()
     return _report('matid', entries, nodes)
 
 
@@ -504,20 +676,23 @@ def _as_indices(face):
 
 
 def _edit_target(n):
+    """(api, target, is_mesh) for base-object channel-1 edits; other classes are named errors."""
     rt = _rt()
     kind = rt.classOf(n.baseObject)
     if kind == rt.Editable_Poly:
-        return rt.polyop, n
+        return rt.polyop, n, False
     if kind == rt.Editable_Mesh:
-        return rt.meshop, n.baseObject
-    raise ValueError('unsupported geometry: ' + str(n.name))
+        # meshop has no getFaceVerts/getFaceMatID: triangles come from the global
+        # getFace/getFaceMatID, map faces are Point3 triangles.
+        return rt.meshop, n.baseObject, True
+    raise ValueError('unsupported geometry: {} ({})'.format(n.name, kind))
 
 
 def _read_channel(n):
     """Base-object channel 1. Missing, empty and non-finite data are errors."""
     import math
     rt = _rt()
-    api, target = _edit_target(n)
+    api, target, is_mesh = _edit_target(n)
     if not api.getMapSupport(target, 1):
         raise ValueError('missing UV channel 1: ' + str(n.name))
     nv = int(api.getNumVerts(target))
@@ -527,7 +702,8 @@ def _read_channel(n):
         raise ValueError('empty mesh: ' + str(n.name))
     vertices, uvs, faces, fuv, ids = [], [], [], [], []
     for i in range(1, nv + 1):
-        p = api.getVert(target, i)
+        # polyop.getVert(node) is world space; meshop.getVert(base) needs node: for world space.
+        p = api.getVert(target, i, node=n) if is_mesh else api.getVert(target, i)
         point = (float(p.x), float(p.y), float(p.z))
         if not all(math.isfinite(c) for c in point):
             raise ValueError('non-finite vertex: ' + str(n.name))
@@ -539,21 +715,36 @@ def _read_channel(n):
             raise ValueError('non-finite UV: ' + str(n.name))
         uvs.append(point)
     for i in range(1, nf + 1):
-        faces.append([int(v) - 1 for v in _as_indices(api.getFaceVerts(target, i))])
+        if is_mesh:
+            # getFace/getFaceMatID take a TriMesh, not the Editable_Mesh base object.
+            face = _as_indices(rt.getFace(target.mesh, i))
+            mid = rt.getFaceMatID(target.mesh, i)
+        else:
+            face = _as_indices(api.getFaceVerts(target, i))
+            mid = api.getFaceMatID(target, i)
+        faces.append([int(v) - 1 for v in face])
         fuv.append([int(v) - 1 for v in _as_indices(api.getMapFace(target, 1, i))])
-        ids.append(int(api.getFaceMatID(target, i)))
+        ids.append(int(mid))
     return {'vertices': vertices, 'uvs': uvs, 'faces': faces, 'face_uvs': fuv, 'ids': ids}
 
 
 def _write_channel(n, uvs, face_uvs):
     rt = _rt()
-    api, target = _edit_target(n)
+    api, target, is_mesh = _edit_target(n)
+    if is_mesh and any(len(indices) != 3 for indices in face_uvs):
+        raise ValueError('non-triangle UV face: ' + str(n.name))
     api.setMapSupport(target, 1, True)
     api.setNumMapVerts(target, 1, len(uvs))
     for i, (u, v) in enumerate(uvs, 1):
         api.setMapVert(target, 1, i, rt.point3(float(u), float(v), 0.0))
     for face, indices in enumerate(face_uvs, 1):
-        api.setMapFace(target, 1, face, _max_array([i + 1 for i in indices]))
+        if is_mesh:
+            a, b, c = (float(i + 1) for i in indices)
+            api.setMapFace(target, 1, face, rt.point3(a, b, c))
+        else:
+            api.setMapFace(target, 1, face, _max_array([i + 1 for i in indices]))
+    if is_mesh:
+        rt.update(n)
 
 
 def _prop(n, key):
@@ -1801,6 +1992,27 @@ _ucx = None
 _ucx_nodes = None
 _export = None
 _export_key = None
+_edits = {}  # 0.8 tool -> (selection key, preview report) of the last preview press
+
+
+def _selection_key():
+    rt = _rt()
+    return tuple(sorted(int(rt.getHandleByAnim(n)) for n in rt.selection))
+
+
+def edit_ui(tool):
+    """Panel/macro press of a 0.8 edit: first press = preview; the next press on the same selection applies
+    that preview. Read-only rows always preview. The stored preview is dropped after any apply attempt."""
+    if not isinstance(tool, str) or tool not in EDITS_080:
+        raise ValueError('unsupported edit tool: ' + repr(tool))
+    key = _selection_key()
+    held = _edits.pop(tool, None)
+    if tool not in READ_080 and held is not None and held[0] == key:
+        return edits_080(tool, 'apply', held[1])
+    report = edits_080(tool, 'preview')
+    if tool not in READ_080 and report['status'] != 'not_implemented':
+        _edits[tool] = (key, report)
+    return report
 
 
 def ui(tool):
@@ -1863,9 +2075,44 @@ def ui(tool):
             finally:
                 _export = None
                 _export_key = None
+    elif tool in CHECKS_050:
+        report = checks_050(tool)
+    elif tool in CHECKS_070:
+        report = checks_070(tool)
+    elif tool in EDITS_080:
+        report = edit_ui(tool)
     elif tool in ('xview', 'matid'):
         report = {'xview': xview, 'matid': matid}[tool]()
     else:
         raise ValueError('unsupported tool: ' + str(tool))
     print(json.dumps(report, ensure_ascii=True, allow_nan=False))
+    try:
+        remember(report)
+    except Exception as exc:  # noqa: BLE001 - the report is printed; the live status just misses it
+        print('AGR_TOOLS_REPORT_NOT_KEPT ' + repr(exc))
     return report
+
+
+_panel = None
+
+
+def panel():
+    """0.6.0 dockable Qt panel (one per session). Every action stays callable through ui(tool)."""
+    global _panel
+    import types
+    from pathlib import Path
+    if _panel is not None:
+        try:
+            _panel.show()
+            _panel.raise_()
+            return _panel
+        except RuntimeError:  # the C++ widget was deleted (Max reset)
+            _panel = None
+    _load_core('ui_qt.py', 'agr_tools_ui_qt')
+    _load_core('ui_model.py', 'agr_tools_ui_model')
+    _load_core('roadmap.py', 'agr_tools_roadmap')
+    ui_panel = _load_core('ui_panel.py', 'agr_tools_ui_panel')
+    ui_max = _load_core('ui_max.py', 'agr_tools_ui_max')
+    icon_root = str(Path(__file__).resolve().parent / 'icons')
+    _panel = ui_max.create(types.SimpleNamespace(**globals()), ui_panel, icon_root)
+    return _panel

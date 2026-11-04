@@ -1,0 +1,15 @@
+{
+ "bundle_sha256": "4097e6ca849db19e3257ae10dc6a23dc147fa71cac4dba413620539300e85853",
+ "plugins_dir": "C:\\Users\\artsafro\\AppData\\Roaming\\Autodesk\\ApplicationPlugins",
+ "ini_section_before": false,
+ "installed": 251,
+ "max_exit": 3221226505,
+ "max_seconds": 121.9,
+ "ini_section_after_run": true,
+ "ini_cleaned": [
+  "C:\\Users\\artsafro\\AppData\\Local\\Autodesk\\3dsMax\\2024 - 64bit\\ENU\\3dsMax.ini"
+ ],
+ "leftover_files": [],
+ "changed_files": [],
+ "ini_section_after_uninstall": false
+}

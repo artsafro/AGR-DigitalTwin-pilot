@@ -1,11 +1,20 @@
-# AGR Tools 0.4.0 — 3ds Max 2024 / 2026
+# AGR Tools 0.7.0 — 3ds Max 2024 / 2026
 
-Own implementations only; no team scripts or encrypted plugins are distributed.
+Own implementations. The 0.5.0 diagnostics adapt GeoAGR 13.64 functions with the permission of
+their author (Artem). Only the logic in use is adapted (`checks_core.py`), not GeoAGR.ms; no team
+scripts or encrypted plugins are distributed.
 This is a diagnostic/export-copy tool, not a delivery validator or production job.
 
 ## Build and install
 
-`python tools/max/build_agr_tools.py <new-path>/AGR-Tools-0.4.0.mzp`
+`python tools/max/build_agr_tools.py <new-path>/AGR-Tools-0.7.0.mzp` (MZP) or
+`python tools/max/build_agr_tools.py --bundle <new-path>/AGR-Tools-0.7.0.bundle.zip` (plugin package:
+unzip into `%APPDATA%\Autodesk\ApplicationPlugins`; uninstall = delete `AGR-Tools.bundle` and the
+`[AGRTools]` section of `3dsMax.ini`). PNG icons are rendered from the SVG sources with PySide6
+(`uv run --with PySide6 ...`), or taken from `AGR_ICON_PNG_DIR`.
+
+Open the panel: menu **AGR Tools** (Max 2025+), macro `AGRToolsOpen`, or
+`python.Execute "agr_tools_runtime.panel()"`.
 
 The builder prints SHA256; sorted ZIP_STORED entries, fixed timestamps/permissions,
 LF normalization and exclusively created output make repeated inputs reproducible.
@@ -31,6 +40,11 @@ AGR Tools
 [Apply UCX to new export copies]
 [Texel readout]
 [Checked export]
+[Names check NPM/VPM]
+[Triangle limits per FBX]
+[Textures check (all objects)]
+[Pivot check]
+[GeoJSON check]
 <JSON report in Listener; offending object names and component IDs>
 ```
 
@@ -129,6 +143,50 @@ never a clean result. Objects are identified by unique Max handles as well as na
   VPM 512–1706 px/m and NPM 10–40 px/m. A zero area or a zero map size is
   `at_threshold` and is an error.
 
+## 0.7.0 pre-delivery checks, rail and «Путь» (#860)
+
+Twelve read-only checks (plan version 0.7), each a button of its block tab, a `runtime.ui('<tool>')`
+macro and an MCP tool `agr_<block>_<name>`. Full button help (what, when, mode, requirement ids) is the
+«Путь» tab in the panel and `docs/agr-tools/GUIDE.md` in the repo; both are generated from
+`agr-tools-suite.json`, which ships in this package. Inputs: `AGR_EXPORT_PATH` (FBX kind, no default),
+`AGR_ZERO_M` (±0.000 in metres for the perimeter drop, no default), `AGR_ROOF_SET=1` (one extra texture set
+for a usable roof). Thresholds are pinned to `standards/*.yaml` by `tests/max_tools/test_agr_tools_suite.py`.
+
+## 0.5.0 diagnostics (read-only)
+
+The five buttons never edit the scene. They read `snapshotAsMesh` copies, `usedMaps` and PNG headers
+on disk. The model kind (NPM/VPM, OKS/Ground) comes from each node's `AGR_EXPORT_PATH` FBX name.
+A node without a mappable FBX name gets `fbx_unmapped`; it is never given a default kind. A value
+exactly at a limit is `tri_at_limit` / `at_threshold`, which is a finding, never a pass. Skipped
+items are listed in `plan.dropped` with a reason. Defects D1-D8 and the source lines are in
+`CHANGELOG.md`.
+
+| Requirement id | Button | Status in 0.5.0 |
+| --- | --- | --- |
+| NPM-1.3-2.b, VPM-1.3-2.b, NPM-2.10-2, VPM-2.10-2.a | Names check | checks (Latin, digits, `_`; space/dot/Cyrillic named) |
+| NPM-1.3-3.b, NPM-1.3-4, VPM-2.10-2.b, VPM-2.10-3 | Names check | checks (capital letter, digits apart; address dictionaries not shipped) |
+| NPM-2.10-1, VPM-2.10-1 | Names check | checks (≤ 254) |
+| NPM-2.10-3.3.a-c, NPM-2.10-3.4.a-b, NPM-2.10-3.5.a | Names check | checks (SM/T/M masks, OKS 001..020, SlotNumber 1..7) |
+| NPM-2.10-3.5.b | Names check | review (`name_conflict`, conflict #17) |
+| VPM-2.10-4.3, VPM-2.13-1.d | Names check | checks (T_…_{Diffuse,ERM,Normal}_{Slot}.{UDIM}; UCX_SM_…_Main/Ground_NNN) |
+| NPM-2.3-6.a, NPM-2.3-6.b | Triangle limits | checks per FBX (150 000 / 180 000) |
+| VPM-2.3-9, VPM-2.3-10 | Triangle limits | checks per FBX (1 000 000 without UCX; Ground by `AGR_SITE_AREA_HA`) |
+| VPM-2.13-7.a | Triangle limits | checks (UCX budget, conflict #3 formula) |
+| NPM-2.5-1.a, NPM-2.5-2.a, NPM-2.5-3, NPM-2.5-5 | Textures check | checks (PNG, 256..2048 square, ≤ 3 MiB, no alpha) |
+| NPM-2.5-4 | Textures check | checks (≥ 8 px between islands of one atlas, across the objects of one FBX) |
+| VPM-2.5-1.2, VPM-2.5-1.6, VPM-2.5-1.9, VPM-2.5-1.4.a | Textures check | checks (2048/4096 or 256 placeholder, alpha only in Diffuse, 8 bit, D+ERM+N per tile) |
+| VPM-2.5-1.5 | Textures check | checks (16 px at 2048, 32 px at 4096, per atlas and UDIM tile) |
+| VPM-2.5-1.5 (repeating islands), VPM uv.repeating_islands_may_overlap | Textures check | review (`tex_overlap_review`: touching or overlapping VPM islands; padding applies only to islands with unique images) |
+| VPM-2.5-2.1.3.a | Textures check | checks (UDIM from 1001 without gaps) |
+| VPM-2.9-4.b, VPM-2.9-5 | Pivot check | checks (Z = 0 and one pivot per FBX, 1 mm) |
+| VPM-2.9-4.c | Pivot check | UCX dropped with reason |
+| VPM-2.9-4.a | — | not covered (X/Y centre; contradicts VPM-2.9-5 for glass) |
+| VPM GeoJSON passport (`twinqa.geojson`) | GeoJSON check | checks via the pilot checker |
+
+GeoJSON check opens a file dialog and runs `twinqa.geojson` in the project Python. The Python is
+`AGR_PYTHON`, or `<repo>/.venv/Scripts/python.exe` when it is unset. A missing file, a wrong extension,
+a broken JSON file or a crashing checker is reported as a `fail` finding, not raised as an error.
+
 ## Headless evidence
 
 Run the synthetic fixture runner through the shared `dcc_batch.py max --file ...`
@@ -165,4 +223,5 @@ results, writes the report exclusively and emits a completion marker at the end.
 
 First rollout complete: xView, pre-export clean-up, MatID, UV integer-tile
 nudge, UDIM to NPM atlas, UCX collision, texel readout and checked export.
-No licensing, obfuscation or GeoAGR source/decryption is included.
+0.5.0 adds read-only names, triangle, texture, pivot and GeoJSON diagnostics.
+No licensing, obfuscation, GeoAGR.ms copy or decryption is included.

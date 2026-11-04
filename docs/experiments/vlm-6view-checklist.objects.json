@@ -1,0 +1,31 @@
+{
+  "_note": "Inputs of the #768 VLM checklist experiment. Renders and slides are existing local evidence (not committed); hashes are in the report. known_defects is the ground truth fixed BEFORE the VLM runs, taken from jobs/TEC26-OKS/AC08/PILOT_REPORT.md ('What changed after v007' + v007 counter-examples).",
+  "objects": {
+    "AC08-v007": {
+      "renders": "C:/x/tec26-oks/AC08/pilot-v007/renders",
+      "slide": "C:/x/tec26-oks/pptx/facades/slide49.png",
+      "legend": "jobs/TEC26-OKS/AC08/vpm_textures.json",
+      "facades": {"south": "2-1", "north": "1-2", "east": "Б-А", "west": "А-Б"},
+      "role": "known_failing",
+      "known_defects": ["rib_count:1-2", "rib_count:2-1", "rib_count:А-Б", "rib_count:Б-А",
+                        "frame_color", "plinth_color", "field_outline"]
+    },
+    "AC08-v010": {
+      "renders": "C:/x/tec26-oks/AC08/pilot-v010/renders",
+      "slide": "C:/x/tec26-oks/pptx/facades/slide49.png",
+      "legend": "jobs/TEC26-OKS/AC08/vpm_textures.json",
+      "facades": {"south": "2-1", "north": "1-2", "east": "Б-А", "west": "А-Б"},
+      "role": "accepted",
+      "known_defects": []
+    },
+    "AC09-build-v001": {
+      "renders": "C:/x/tec26-oks/AC09/build-v001/renders",
+      "slide": "C:/x/tec26-oks/pptx/facades/slide53.png",
+      "legend": "jobs/TEC26-OKS/AC09/vpm_textures.json",
+      "facades": {"south": "А-Б", "north": "Б-А", "east": "2-1", "west": "1-2"},
+      "role": "unlabelled",
+      "known_defects": null
+    }
+  },
+  "pairs": [["AC08-v007", "AC08-v010"]]
+}

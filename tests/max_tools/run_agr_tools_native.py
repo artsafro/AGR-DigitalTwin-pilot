@@ -18,7 +18,7 @@ if _venv_python.is_file():
     os.environ['AGR_PYTHON'] = str(_venv_python)
 OUT = Path(os.environ['AGR_TEST_OUTPUT'])
 OUT.mkdir(parents=True, exist_ok=False)
-_package = Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.4.0.mzp'))
+_package = Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools.mzp'))
 print('AGR_PACKAGE_SHA256', hashlib.sha256(_package.read_bytes()).hexdigest())
 print('AGR_NATIVE_START version={} file={} units={}'.format(rt.maxVersion()[0], rt.maxFileName, rt.units.SystemType))
 assert rt.maxVersion()[0] in (26000, 28000)
@@ -30,11 +30,17 @@ rt.execute('global AGRToolsInstallRoot; global AGRToolsStartupRoot')
 rt.AGRToolsInstallRoot = str(OUT / 'installed') + '/'
 rt.AGRToolsStartupRoot = str(OUT / 'startup') + '/'
 rt.makeDir(rt.AGRToolsStartupRoot, all=True)
-rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.4.0.mzp'))))
+rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools.mzp'))))
 assert rt.execute('global AGRToolsRegistered; AGRToolsRegistered == true'), 'MZP macros not registered'
 print('AGR_INSTALL_REGISTERED xView Cleanup MatID Open Nudge NudgeApply Atlas AtlasApply Ucx UcxApply Texel Export')
 sys.path.insert(0, str(OUT / 'installed'))
 import runtime as agr
+
+# Startup file name from the INSTALLED build (install.ms writes AGRTools-<VERSION>.ms), never a literal:
+# a pinned 0.6.0 kept CI red after the 0.7.0 build (lab CI ace829fd).
+STARTUP = OUT / 'startup' / 'AGRTools-{}.ms'.format(agr.VERSION)
+assert sorted(p.name for p in (OUT / 'startup').glob('AGRTools-*.ms')) == [STARTUP.name], sorted(
+    p.name for p in (OUT / 'startup').glob('*'))
 
 
 def findings(report):
@@ -252,6 +258,80 @@ results['atlas'] = {
     'face_uvs': state['face_uvs'], 'materials': ['Grass'] * len(state['faces']),
     'color': [20, 140, 40], 'copy_uvs': copy_state['uvs'], 'copy_face_uvs': copy_state['face_uvs'],
     'clean_findings': findings(clean_atlas['report'])}
+
+
+# #726: Editable_Mesh (convertToMesh, like the reviewer witness) and Editable_Poly take the same
+# nudge/atlas preview -> apply -> readback path; originals stay unchanged; other classes are named errors.
+def _sorted_uv(points):
+    return sorted((round(float(p[0]), 6), round(float(p[1]), 6)) for p in points)
+
+
+def _class_node(node, kind):
+    if kind == 'Editable_Mesh':
+        rt.convertToMesh(node)
+    assert rt.classOf(node.baseObject) == getattr(rt, kind), str(rt.classOf(node.baseObject))
+    node.position = rt.point3(10, 20, 30)
+    return node
+
+
+class_results = {}
+for kind in ('Editable_Poly', 'Editable_Mesh'):
+    node = _class_node(make_uv_quad('synthetic_726_nudge_' + kind, planted_uv, 'brick=1,1'), kind)
+    before = agr.snapshot([node])
+    preview = agr.nudge_preview([node])
+    assert agr.snapshot([node]) == before, kind + ' nudge dry-run mutated its input'
+    steps = preview['report']['plan']['islands'][0]['steps']
+    assert steps == [-3, 2], (kind, steps)
+    count = len(list(rt.objects))
+    copies, _after = agr.nudge_apply([node], preview)
+    assert len(list(rt.objects)) == count + 1, kind
+    assert agr.snapshot([node]) == before, kind + ' nudge apply changed the source'
+    assert copies[0] != node and rt.classOf(copies[0].baseObject) == getattr(rt, kind)
+    copy_mesh = agr._read_channel(copies[0])
+    nudge_readback = _sorted_uv(copy_mesh['uvs'])
+    assert nudge_readback == [(0.2, 0.2), (0.2, 0.7), (0.7, 0.2), (0.7, 0.7)], (kind, nudge_readback)
+    assert copy_mesh['vertices'] == agr._read_channel(node)['vertices'], kind
+    assert _sorted_uv(agr._read_channel(node)['uvs']) == _sorted_uv(planted_uv), kind
+    atlas = make_uv_quad('synthetic_726_atlas_' + kind, [(0.1, 0.2), (0.8, 0.2), (0.8, 0.7), (0.1, 0.7)],
+                         'unused=none', 'Grass')
+    atlas.material.diffuse = rt.color(20, 140, 40)
+    rt.setUserProp(atlas, 'AGR_ATLAS_MODE', 'ground')
+    rt.setUserProp(atlas, 'AGR_ATLAS_SIZE', '2048')
+    for index, point in enumerate(((0, 0, 0), (4, 0, 0), (4, 3, 0), (0, 3, 0)), 1):
+        rt.polyop.setVert(atlas, index, rt.point3(*point))
+    atlas = _class_node(atlas, kind)
+    a_before = agr.snapshot([atlas])
+    a_preview = agr.atlas_preview([atlas])
+    assert agr.snapshot([atlas]) == a_before, kind + ' atlas dry-run mutated its input'
+    assert a_preview['report']['plan']['tiles'] == [1001], (kind, a_preview['report'])
+    assert a_preview['report']['plan']['dropped'] == []
+    a_copies, _a_after = agr.atlas_apply([atlas], a_preview)
+    assert agr.snapshot([atlas]) == a_before, kind + ' atlas apply changed the source'
+    assert rt.classOf(a_copies[0].baseObject) == getattr(rt, kind)
+    a_read = agr._read_channel(a_copies[0])
+    assert a_read['face_uvs'] == [list(f) for f in a_preview['plans'][0]['face_uvs']], kind
+    assert findings(agr.atlas_preview(a_copies)['report']) == {}, kind
+    class_results[kind] = {
+        'nudge_steps': steps, 'nudge_readback': nudge_readback,
+        'world_vertices': sorted(tuple(round(c, 6) for c in v) for v in copy_mesh['vertices']),
+        'atlas_cells': a_preview['report']['plan']['cells'],
+        'atlas_copy_uvs': _sorted_uv(a_read['uvs'])}
+poly_r, mesh_r = class_results['Editable_Poly'], class_results['Editable_Mesh']
+assert poly_r['nudge_readback'] == mesh_r['nudge_readback']
+assert poly_r['world_vertices'] == mesh_r['world_vertices'], (poly_r['world_vertices'], mesh_r['world_vertices'])
+assert all(abs(a - b) <= 1e-6 for p, q in zip(poly_r['atlas_copy_uvs'], mesh_r['atlas_copy_uvs'])
+           for a, b in zip(p, q)), (poly_r['atlas_copy_uvs'], mesh_r['atlas_copy_uvs'])
+primitive = rt.box(name='synthetic_726_primitive', length=1, width=1, height=1, mapcoords=True)
+primitive.material = rt.standardMaterial(name='brick')
+rt.setUserProp(primitive, 'AGR_UV_PERIODS', 'brick=1,1')
+count = len(list(rt.objects))
+class_results['primitive_nudge'] = raises(lambda: agr.nudge_preview([primitive]), 'unsupported')
+class_results['primitive_atlas'] = raises(lambda: agr.atlas_preview([primitive]), 'unsupported')
+assert 'synthetic_726_primitive' in class_results['primitive_nudge'], class_results['primitive_nudge']
+assert len(list(rt.objects)) == count
+rt.delete(primitive)
+results['editable_classes'] = class_results
+print('AGR_726_CLASSES ' + json.dumps(class_results, sort_keys=True))
 
 
 def make_bitmap(width, height, pixels, name):
@@ -511,10 +591,10 @@ for macro in ('AGRToolsNudge', 'AGRToolsAtlas'):
 results['guards']['registered_uv_buttons'] = 2
 # Startup re-registration and repeated install must not overwrite installed files.
 rt.AGRToolsRegistered = False
-rt.fileIn(str(OUT / 'startup/AGRTools-0.4.0.ms'))
+rt.fileIn(str(STARTUP))
 assert rt.AGRToolsRegistered
 install_hash = hashlib.sha256((OUT / 'installed/runtime.py').read_bytes()).hexdigest()
-results['guards']['repeat_install'] = raises(lambda: rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.4.0.mzp')))), 'already exists')
+results['guards']['repeat_install'] = raises(lambda: rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools.mzp')))), 'already exists')
 assert hashlib.sha256((OUT / 'installed/runtime.py').read_bytes()).hexdigest() == install_hash
 assert hashlib.sha256((OUT / 'fixture-source.max').read_bytes()).hexdigest() == source_hash
 results['version'] = list(rt.maxVersion())

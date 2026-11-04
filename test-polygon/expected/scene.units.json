@@ -1,0 +1,31 @@
+{
+ "schema": 1,
+ "button": "scene.units",
+ "tool": "units",
+ "version": "0.7",
+ "shipped": true,
+ "select": "named",
+ "reason": "",
+ "apply_status": null,
+ "objects": [
+  {
+   "name": "__scene__",
+   "scene": "polygon_all",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "__scene__",
+   "scene": "cm_units",
+   "expect": "fail",
+   "codes": [
+    "system_unit"
+   ]
+  }
+ ],
+ "base": "0.7",
+ "station": "0.7.2",
+ "stations": [
+  "0.7.2"
+ ]
+}

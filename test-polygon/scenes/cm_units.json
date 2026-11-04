@@ -1,0 +1,7 @@
+{
+ "schema": 1,
+ "scene": "cm_units",
+ "synthetic": true,
+ "units": "centimeters",
+ "note": "Нельзя совместить со сценой в метрах. Ожидание scene.units: fail system_unit."
+}
