@@ -374,6 +374,18 @@ def test_lock_lifetime_covers_the_wrapped_call_timeout(tmp_path, monkeypatch):
     assert seen == {1021: "busy", 1921: "busy"}
 
 
+@pytest.mark.parametrize("name,args,want", [
+    ("agr_fbx_readback", {"fbx_path": "a.fbx", "timeout": 7200}, 7200.0),
+    ("agr_fbx_readback", {"fbx_path": "a.fbx"}, 600.0),
+    ("agr_package_validate", {"target": "a.zip", "scene": True}, 600.0),
+    ("agr_xview_check", {"scene": "live"}, tools.MAX_TIMEOUT),
+    ("agr_exec_unsafe", {"code": "1", "timeout": 3000}, 3000.0),
+])
+def test_every_locked_tool_declares_its_call_timeout(name, args, want):
+    spec = tools.catalog(unsafe=True)[name]
+    assert spec.host(args) != "offline" and spec.timeout is not None and spec.timeout(args) == want
+
+
 def test_expired_lock_of_dead_holder_is_reclaimed(monkeypatch):
     clock = [1_000_000.0]
     monkeypatch.setattr(locks, "time", types.SimpleNamespace(time=lambda: clock[0]))

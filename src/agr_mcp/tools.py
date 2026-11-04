@@ -99,10 +99,23 @@ class Spec:
     host: Callable[[dict], str]
     read_only: bool = True
     destructive: bool = False
+    timeout: Callable[[dict], float] | None = None  # the wrapped call's own timeout; sizes the host lock (#871)
 
 
 def _const(host: str) -> Callable[[dict], str]:
     return lambda _args: host
+
+
+READBACK_TIMEOUT = 600  # twinqa.scene.readback default
+EXEC_TIMEOUT = 120
+
+
+def _arg_timeout(default: float) -> Callable[[dict], float]:
+    return lambda args: float(args.get("timeout", default))
+
+
+def _max_timeout(_args: dict) -> float:
+    return MAX_TIMEOUT
 
 
 # ---- handlers -------------------------------------------------------------------------------------------
@@ -116,7 +129,7 @@ def _max_tool(tool: str, transport=None):
 def h_fbx_readback(args: dict):
     from twinqa.scene import readback
     p = _file(args["fbx_path"], "fbx_path", (".fbx",))
-    return jsonable(readback(p, blender=os.environ.get("AGR_BLENDER") or None, timeout=int(args.get("timeout", 600))))
+    return jsonable(readback(p, blender=os.environ.get("AGR_BLENDER") or None, timeout=int(args.get("timeout", READBACK_TIMEOUT))))
 
 
 def h_package_validate(args: dict):
@@ -161,16 +174,19 @@ def catalog(unsafe: bool = False, max_transport=None) -> dict[str, Spec]:
     specs = [
         Spec("agr_xview_check", "AGR Tools runtime.xview in the pinned open 3ds Max (selection-modifying: the "
              "runtime selects nodes with findings; geometry and files untouched).",
-             MAX_IN, MAX_OUT, _max_tool("agr_xview_check", max_transport), _const("max-live")),
+             MAX_IN, MAX_OUT, _max_tool("agr_xview_check", max_transport), _const("max-live"),
+             timeout=_max_timeout),
         Spec("agr_matid_check", "AGR Tools runtime.matid in the pinned open 3ds Max (selection-modifying, "
              "as agr_xview_check).", MAX_IN, MAX_OUT, _max_tool("agr_matid_check", max_transport),
-             _const("max-live")),
+             _const("max-live"), timeout=_max_timeout),
         Spec("agr_texel_readout", "AGR Tools runtime.texel_preview in the pinned open 3ds Max (read-only).",
-             MAX_IN, TEXEL_OUT, _max_tool("agr_texel_readout", max_transport), _const("max-live")),
+             MAX_IN, TEXEL_OUT, _max_tool("agr_texel_readout", max_transport), _const("max-live"),
+             timeout=_max_timeout),
         Spec("agr_fbx_readback", "twinqa.scene.readback: headless Blender readback of one FBX (read-only).",
              {"type": "object", "required": ["fbx_path"], "additionalProperties": False,
               "properties": {"fbx_path": STR, "timeout": {"type": "integer", "minimum": 1, "maximum": 7200}}},
-             {"type": "object", "required": ["source"]}, h_fbx_readback, _const("blender-batch")),
+             {"type": "object", "required": ["source"]}, h_fbx_readback, _const("blender-batch"),
+             timeout=_arg_timeout(READBACK_TIMEOUT)),
         Spec("agr_package_validate", "tools/qa/validate_package.validate on a delivery file (read-only; "
              "scene=true adds the headless Blender readback).",
              {"type": "object", "required": ["target"], "additionalProperties": False,
@@ -178,7 +194,8 @@ def catalog(unsafe: bool = False, max_transport=None) -> dict[str, Spec]:
                              "ground_area_m2": {"type": ["number", "null"], "exclusiveMinimum": 0},
                              "footprint_holes": {}}},
              {"type": "object", "required": ["stages"]}, h_package_validate,
-             lambda a: "blender-batch" if a.get("scene") else "offline"),
+             lambda a: "blender-batch" if a.get("scene") else "offline",
+             timeout=lambda _a: float(READBACK_TIMEOUT)),
         Spec("agr_mesh_names", "twinqa.naming.mesh_name_findings: V012 mesh/UCX names of one FBX (offline).",
              {"type": "object", "required": ["names", "kind", "role", "fbx_stem", "limit", "src"],
               "additionalProperties": False,
@@ -199,7 +216,7 @@ def catalog(unsafe: bool = False, max_transport=None) -> dict[str, Spec]:
     ]
     if unsafe:
         def h_exec(args: dict):
-            raw = (max_transport or max_pipe.pipe_transport)(args["code"], float(args.get("timeout", 120)))
+            raw = (max_transport or max_pipe.pipe_transport)(args["code"], float(args.get("timeout", EXEC_TIMEOUT)))
             return {"value": max_pipe.decode_value(raw)}
         specs.append(Spec(
             "agr_exec_unsafe", "DESTRUCTIVE debug hatch: arbitrary MAXScript in the pinned open Max. Only with "
@@ -207,7 +224,7 @@ def catalog(unsafe: bool = False, max_transport=None) -> dict[str, Spec]:
             {"type": "object", "required": ["code"], "additionalProperties": False,
              "properties": {"code": STR, "timeout": {"type": "integer", "minimum": 1, "maximum": 7200}}},
             {"type": "object", "required": ["value"]}, h_exec, _const("max-live"),
-            read_only=False, destructive=True))
+            read_only=False, destructive=True, timeout=_arg_timeout(EXEC_TIMEOUT)))
     return {s.name: s for s in specs}
 
 
