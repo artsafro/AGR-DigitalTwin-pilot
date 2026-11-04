@@ -406,12 +406,13 @@ def full_square_islands(mat_ids, x0=0.0, s=1.0):
 def slot_row(key, name, slots, fbx, uv):
     maps, seen = [], set()
     for paths in slots.values():
-        for p, d in paths:
+        for p, d in paths or []:
             if p not in seen:
                 seen.add(p)
                 maps.append((p, d))
     return {'key': key, 'name': name, 'fbx': fbx, 'maps': maps,
-            'slots': {mid: [p for p, _ in paths] for mid, paths in slots.items()}, 'uv': lambda: uv}
+            'slots': {mid: None if paths is None else [p for p, _ in paths]
+                                         for mid, paths in slots.items()}, 'uv': lambda: uv}
 
 
 def geoagr_pooled_padding(uvs, faces, size, need):
@@ -473,10 +474,84 @@ def test_shared_atlas_padding_combined_with_d1_and_single_material_rows():
 
 
 def test_unmapped_face_matid_is_an_error_naming_it():
+    """matID 5 on #(1, 3) wraps to ID 2 (highest ID 3), which has no sub-material: the 3ds Max 2026 FBX
+    export writes an empty placeholder slot there (measured, PR #827 body), so it stays unmeasurable."""
     d1 = ('T_Tverskaya_12_001_Main_d_1.png', png(1024, 1024))
-    uv = full_square_islands([1, 7])
-    found, _ = core.textures_scene([slot_row(1, 'SM_Tverskaya_12_001_Main', {1: [d1]}, NPM_FBX, uv)])
-    assert codes(found[1]) == ['tex_unmeasurable'] and 'matID 7' in found[1][0][1]
+    uv = full_square_islands([1, 5])
+    found, _ = core.textures_scene([slot_row(1, 'SM_Tverskaya_12_001_Main', {1: [d1], 3: [d1]}, NPM_FBX, uv)])
+    assert codes(found[1]) == ['tex_unmeasurable'] and 'matID 5' in found[1][0][1]
+
+
+# Measured in 3ds Max 2026.3 (3dsmaxbatch, FBX export + re-import, card t_8fc3cd5f / #827):
+# face matID -> materialIDList entry the exported polygon gets; None = empty placeholder "Slot #k".
+MAX_FBX_MATID = {
+    (1, 2): {1: 1, 2: 2, 3: 1, 4: 2, 5: 1, 6: 2},
+    (1, 5): {1: 1, 2: None, 3: None, 4: None, 5: 5, 6: 1, 7: None, 10: 5, 11: 1},
+    (2, 3): {1: None, 2: 2, 3: 3, 4: None, 5: 2, 6: 3},
+}
+
+
+@pytest.mark.parametrize('ids', sorted(MAX_FBX_MATID))
+def test_max_submaterial_index_matches_the_max_fbx_measurement(ids):
+    for mid, want in MAX_FBX_MATID[ids].items():
+        got = core.max_submaterial_index(mid, list(ids))
+        assert (None if got is None else ids[got]) == want, (ids, mid)
+
+
+def test_max_submaterial_index_fails_closed():
+    assert core.max_submaterial_index(1, []) is None  # 0 sub-materials
+    assert core.max_submaterial_index(3, [1, 1]) is None  # duplicated ID: ambiguous, never the first
+    assert core.max_submaterial_index(1, [1, 1]) is None
+    assert core.max_submaterial_index(0, [1, 2]) is None and core.max_submaterial_index(-1, [1, 2]) is None
+    assert core.max_submaterial_index(None, [1, 2]) is None and core.max_submaterial_index(2.0, [1, 2]) is None
+
+
+def test_runtime_lookups_share_the_max_resolver():
+    """matid / _material_names / _slot_gaps resolve a Multimaterial slot through one helper.
+    RED: r2 runtime looked IDs up strictly, so matID 3 on #(1, 2) was an empty slot."""
+    import types
+    a, b = types.SimpleNamespace(name='A'), types.SimpleNamespace(name='B')
+    mm = types.SimpleNamespace(materialIDList=[1, 2], materialList=[a, None])
+    assert runtime._max_submaterial(mm, 3) is a and runtime._max_submaterial(mm, 1) is a
+    assert runtime._max_submaterial(mm, 4) is None and runtime._max_submaterial(mm, 2) is None
+    mm = types.SimpleNamespace(materialIDList=[1, 5], materialList=[a, b])
+    assert [runtime._max_submaterial(mm, m) for m in (6, 10, 3)] == [a, b, None]
+    src = (PKG / 'runtime.py').read_text(encoding='utf-8')
+    assert src.count('_max_submaterial(') == 4 and 'materialIDList[i]) ==' not in src
+
+
+def two_slot_rows(mat_ids):
+    d1 = ('T_Tverskaya_12_001_Main_d_1.png', png(1024, 1024))
+    d2 = ('T_Tverskaya_12_001_Main_d_2.png', png(1024, 1024))
+    return [slot_row(1, 'SM_Tverskaya_12_001_Main', {1: [d1], 2: [d2]}, NPM_FBX, full_square_islands(mat_ids))]
+
+
+def test_matid_outside_list_is_measured_on_the_max_slot_with_an_advisory():
+    """(a) matID 3 on #(1, 2): 3ds Max exports it with sub 1 (matID 1). RED: r2 said tex_unmeasurable."""
+    found, dropped = core.textures_scene(two_slot_rows([2, 3]))
+    assert codes(found[1]) == ['tex_matid_wrapped'] and len(found[1]) == 1 and dropped == []
+    assert 'matID 3 -> sub 1 (matID 1)' in found[1][0][1]
+    assert 'tex_matid_wrapped' in core.CODES['textures']
+    # witness: the matID 3 island is pooled with the matID 1 island (same atlas d_1), not with matID 2
+    found, _ = core.textures_scene(two_slot_rows([1, 3]))
+    assert codes(found[1]) == ['tex_matid_wrapped', 'tex_padding']
+    assert [i[2] for i in found[1] if i[0] == 'tex_padding'] == [[1, 2, 3, 4]]
+
+
+def test_listed_matids_only_are_unchanged():
+    """(b) no face outside the list: no advisory, same findings as before."""
+    assert core.textures_scene(two_slot_rows([1, 2])) == ({1: []}, [])
+    found, _ = core.textures_scene(two_slot_rows([1, 1]))
+    assert codes(found[1]) == ['tex_padding']
+
+
+def test_multimaterial_without_submaterials_is_unmeasurable():
+    """(c) 0 sub-materials: no slot to wrap to. RED: r2 returned no finding at all (silent pass)."""
+    d1 = ('T_Tverskaya_12_001_Main_d_1.png', png(1024, 1024))
+    row = slot_row(1, 'SM_Tverskaya_12_001_Main', {}, NPM_FBX, full_square_islands([1]))
+    row['maps'] = [d1]
+    found, _ = core.textures_scene([row])
+    assert codes(found[1]) == ['tex_unmeasurable'] and 'no sub-materials' in found[1][0][1]
 
 
 def test_slot_without_maps_is_missing_and_dropped_by_name():
@@ -898,3 +973,96 @@ def test_padding_per_atlas_bruteforce_probe():
             bad = any(s is not t and s[1:3] == t[1:3] and max(abs(s[3] - t[3]) - 0.2, 0.0) * 1024 < 8
                       for s in mine for t in squares)
             assert codes(found[key]) == (['tex_padding'] if bad else []), (key, squares)
+
+
+class _Seq(list):
+    @property
+    def count(self):
+        return len(self)
+
+
+def _fake_mm(ids, maps_per_sub):
+    import types
+    rt = types.SimpleNamespace(undefined=object(), Multimaterial=object())
+    rt.classOf = lambda m: rt.Multimaterial
+    subs = [types.SimpleNamespace(maps=_Seq(p)) for p in maps_per_sub]
+    rt.usedMaps = lambda s: s.maps
+    mm = types.SimpleNamespace(materialIDList=_Seq(ids), materialList=_Seq(subs))
+    return rt, types.SimpleNamespace(material=mm)
+
+
+def _slots_to_findings(ids, maps_per_sub):
+    cm = _load('checks_max.py', 'agr_checks_max_dup_test')
+    rt, node = _fake_mm(ids, maps_per_sub)
+    cm._rt = lambda: rt
+    slots = cm._slots(node)
+    d1 = ('T_Tverskaya_12_001_Main_d_1.png', png(1024, 1024))
+    d2 = ('T_Tverskaya_12_001_Main_d_2.png', png(1024, 1024))
+    row = slot_row(1, 'SM_Tverskaya_12_001_Main', {}, NPM_FBX, full_square_islands([2]))
+    row['slots'], row['maps'] = slots, [d1, d2]
+    return slots, core.textures_scene([row])
+
+
+def test_duplicate_matid_in_list_is_one_named_finding():
+    """RED: last-wins kept only the second sub-material's maps and reported nothing."""
+    slots, (found, _) = _slots_to_findings([1, 1], [['T_Tverskaya_12_001_Main_d_1.png'],
+                                                    ['T_Tverskaya_12_001_Main_d_2.png']])
+    assert slots == {1: None}
+    assert codes(found[1]) == ['tex_unmeasurable'] and 'matID 1' in found[1][0][1]
+
+
+def test_distinct_matids_keep_both_slots_without_ambiguity():
+    slots, (found, _) = _slots_to_findings([1, 2], [['T_Tverskaya_12_001_Main_d_1.png'],
+                                                    ['T_Tverskaya_12_001_Main_d_2.png']])
+    assert slots == {1: ['T_Tverskaya_12_001_Main_d_1.png'], 2: ['T_Tverskaya_12_001_Main_d_2.png']}
+    assert 'tex_unmeasurable' not in codes(found[1])
+
+
+def test_duplicate_matid_does_not_hide_the_other_slot():
+    m = ['T_Tverskaya_12_001_Main_d_1.png']
+    slots, (found, _) = _slots_to_findings([1, 1, 2], [m, m, ['T_Tverskaya_12_001_Main_d_2.png']])
+    assert slots[1] is None and slots[2] == ['T_Tverskaya_12_001_Main_d_2.png']
+    unm = [x for x in found[1] if x[0] == 'tex_unmeasurable']
+    assert len(unm) == 1 and 'matID 1' in unm[0][1]
+
+
+def _wrap_row(id_list, mat_ids, slots, gapped=False):
+    uv = full_square_islands(mat_ids)
+    if gapped:  # two islands of the same slot 0.001 apart: a padding finding with a value
+        u, f = full_square_islands(mat_ids * 2, s=0.4)
+        u = [(x + (0.401 if i >= 4 else 0.0), y) for i, (x, y) in enumerate(u)]
+        uv = (u, f)
+    row = slot_row(1, 'SM_Tverskaya_12_001_Main', slots, NPM_FBX, uv)
+    row['id_list'] = id_list
+    return row
+
+
+_D1 = ('T_Tverskaya_12_001_Main_d_1.png', png(1024, 1024))
+_D2 = ('T_Tverskaya_12_001_Main_d_2.png', png(1024, 1024))
+
+
+def test_wrap_to_duplicated_matid_is_unmeasurable_not_wrapped():
+    """RED: matID 3 wrapped to the unique key set {1, 2} (-> sub 1) and was measured."""
+    found, _ = core.textures_scene([_wrap_row([1, 1, 2], [3], {1: None, 2: [_D2]})])
+    assert 'tex_matid_wrapped' not in codes(found[1])
+    unm = [x[1] for x in found[1] if x[0] == 'tex_unmeasurable' and 'face matID 3' in x[1]]
+    assert len(unm) == 1
+
+
+def test_wrap_without_duplicate_unchanged():
+    found, _ = core.textures_scene([_wrap_row([1, 2], [3], {1: [_D1], 2: [_D2]})])
+    w = [x[1] for x in found[1] if x[0] == 'tex_matid_wrapped']
+    assert len(w) == 1 and '-> sub 1 (matID 1)' in w[0] and 'materialIDList [1, 2]' in w[0]
+
+
+def test_unique_matid_next_to_duplicate_is_measured():
+    """P3 of #848: slot 2 of [1, 1, 2] is measured (its padding is reported)."""
+    found, _ = core.textures_scene([_wrap_row([1, 1, 2], [2], {1: None, 2: [_D2]}, gapped=True)])
+    pad = [x for x in found[1] if x[0] == 'tex_padding']
+    assert pad and any(ch.isdigit() for ch in pad[0][1])
+
+
+def test_wrapped_message_prints_list_as_given():
+    found, _ = core.textures_scene([_wrap_row([2, 1, 2, 5], [6], {2: None, 1: [_D1], 5: [_D2]})])
+    w = [x[1] for x in found[1] if x[0] == 'tex_matid_wrapped']
+    assert w and 'materialIDList [2, 1, 2, 5]' in w[0] and '[1, 2, 5]' not in w[0]

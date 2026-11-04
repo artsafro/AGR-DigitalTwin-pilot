@@ -160,6 +160,7 @@ items are listed in `plan.dropped` with a reason. Defects D1-D8 and the source l
 | NPM-2.5-4 | Textures check | checks (≥ 8 px between islands of one atlas, across the objects of one FBX) |
 | VPM-2.5-1.2, VPM-2.5-1.6, VPM-2.5-1.9, VPM-2.5-1.4.a | Textures check | checks (2048/4096 or 256 placeholder, alpha only in Diffuse, 8 bit, D+ERM+N per tile) |
 | VPM-2.5-1.5 | Textures check | checks (16 px at 2048, 32 px at 4096, per atlas and UDIM tile) |
+| — (3ds Max 2026.3 FBX export, measured #827) | Textures check, MatID check | resolves a face matID outside `materialIDList` as the export does: wraps by the highest listed ID, `(id - 1) mod n + 1`, then that ID must be listed; advisory `tex_matid_wrapped` (`matID 3 -> sub 1`) |
 | VPM-2.5-1.5 (repeating islands), VPM uv.repeating_islands_may_overlap | Textures check | review (`tex_overlap_review`: touching or overlapping VPM islands; padding applies only to islands with unique images) |
 | VPM-2.5-2.1.3.a | Textures check | checks (UDIM from 1001 without gaps) |
 | VPM-2.9-4.b, VPM-2.9-5 | Pivot check | checks (Z = 0 and one pivot per FBX, 1 mm) |
