@@ -113,7 +113,7 @@ def test_wrong_parameter_passes_self_check_but_fails_reference(tmp_path):
     row = json.loads(out.read_text(encoding="utf-8"))["rows"][0]
     assert row["reference"] == {"basis": "schedule", "source": "T3508 row 1: 2500x3900x600 mm",
                                 "size_m": [3.9, 2.5, 0.45]}
-    assert row["npm"]["dimension"] == "fail" and row["npm"]["maf_findings"]["dimensions"]["status"] == "fail"
+    assert row["npm"]["dimension"] == "fail" and row["npm"]["maf_findings"]["MAF dimensions vs specification"]["status"] == "fail"
 
 
 def test_reference_within_tolerance_records_basis(tmp_path):
