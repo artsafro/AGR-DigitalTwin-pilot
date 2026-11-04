@@ -10,35 +10,36 @@
 
 ## 1. Инвентарь
 
-Что агенты делают с DCC сегодня: чужой MCP, `max_exec.py`, `dcc_batch.py`, плюс headless Blender и живой `blender_exec.py`. Счётчик — число совпадений `rg`, не число живых вызовов. `.agents/skills` и `.claude/skills` дублируют одни и те же тексты (Ground / MAF / Flora).
+Что агенты делают с DCC сегодня: чужой MCP, `max_exec.py`, `dcc_batch.py`, плюс headless Blender и живой `blender_exec.py`. Счётчик — число строк `rg -n | wc -l`, не число живых вызовов. `.agents/skills` и `.claude/skills` дублируют одни и те же тексты (Ground / MAF / Flora).
 
-Корень: worktree. Фильтр один на все команды этого каталога. `docs/plans/**` исключён, чтобы сам план не попадал в счётчик:
+Корень: worktree. Фильтр один на все команды этого каталога. `docs/plans/**` исключён, чтобы сам план не попадал в счётчик. Первая команда — колонка matches, вторая — files:
 
 ```
-rg -n -F -g "jobs/**" -g "tools/**" -g "scripts/**" -g ".agents/skills/**" -g ".claude/skills/**" -g "docs/**" -g "!docs/plans/**" -- "<pattern>"
+rg -n -F -g "jobs/**" -g "tools/**" -g "scripts/**" -g ".agents/skills/**" -g ".claude/skills/**" -g "docs/**" -g "!docs/plans/**" -- "<pattern>" | wc -l
+rg -l -F -g "jobs/**" -g "tools/**" -g "scripts/**" -g ".agents/skills/**" -g ".claude/skills/**" -g "docs/**" -g "!docs/plans/**" -- "<pattern>" | wc -l
 ```
 
-Шаблоны, которые начинаются с `-`, стоят после `--`, иначе `rg` съедает их как флаги. Прогон: 2026-11-04, HEAD `b049d99f`. Таблица ниже — измеренные совпадения и файлы этого прогона.
+Шаблоны, которые начинаются с `-`, стоят после `--`, иначе `rg` съедает их как флаги. Прогон: 2026-11-04, HEAD `b049d99f`. Таблица ниже — строки и файлы этого прогона.
 
 | pattern | matches | files |
 |---|---:|---:|
 | `max_exec.py` | 3 | 2 |
-| `dcc_batch.py` | 119 | 56 |
+| `dcc_batch.py` | 115 | 56 |
 | `dcc_batch.py max` | 43 | 29 |
 | `dcc_batch.py acad` | 22 | 15 |
 | `blender_exec` | 54 | 17 |
 | `execute_maxscript` | 1 | 1 |
-| `execute_python` | 4 | 1 |
+| `execute_python` | 3 | 1 |
 | `execute_blender_code` | 14 | 3 |
 | `3dsmaxbatch` | 39 | 22 |
 | `get_objects_summary` | 2 | 2 |
-| `get_blendfile_summary` | 20 | 3 |
+| `get_blendfile_summary` | 7 | 3 |
 | `get_object_detail_summary` | 4 | 2 |
 | `--factory-startup` | 200 | 118 |
 | `--background` | 206 | 130 |
 | `holdMaxFile` | 5 | 3 |
-| `saveMaxFile` | 32 | 16 |
-| `exportFile` | 58 | 19 |
+| `saveMaxFile` | 31 | 16 |
+| `exportFile` | 33 | 19 |
 | `importFile` | 18 | 18 |
 | `xview_dump.ms` | 14 | 10 |
 | `build_agr_tools` | 4 | 2 |
@@ -57,7 +58,7 @@ rg -n -F -- "max_exec.py" C:/Users/artsafro/hermes_kanban/scripts
 
 Четыре строки: шапка самого `max_exec.py` (строки 4–6) и упоминание команды в `agr_refill.py:55`. Другого скрипта в этой папке, который вызывает `max_exec.py`, нет.
 
-`--background` (206) включает почти все `--factory-startup` (200): это один класс запуска, не вторая сотня действий. `dcc_batch.py` (119) включает строки `max` (43) и `acad` (22); остальные 54 — общее имя обёртки. Отдельного каталога card logs в worktree нет. В фильтр попал evidence `jobs/vyatskaya-tow02/evidence/xview-528/SUMMARY.md`. Тела карточек в `hermes_kanban` не сканировались; каталог `scripts` там посчитан отдельной строкой выше.
+`--background` (206) включает почти все `--factory-startup` (200): это один класс запуска, не вторая сотня действий. `dcc_batch.py` (115) включает строки `max` (43) и `acad` (22); остальные 50 — общее имя обёртки. Отдельного каталога card logs в worktree нет. В фильтр попал evidence `jobs/vyatskaya-tow02/evidence/xview-528/SUMMARY.md`. Тела карточек в `hermes_kanban` не сканировались; каталог `scripts` там посчитан отдельной строкой выше.
 
 | Действие | Где (пример) | Маршрут | Совпадения | Что даёт чужой сервер и чего нам не хватает | Риск |
 |---|---|---|---|---:|---|
@@ -66,12 +67,12 @@ rg -n -F -- "max_exec.py" C:/Users/artsafro/hermes_kanban/scripts
 | Headless AutoCAD `DXFOUT` / `SAVEAS` | `.agents/skills/model-ground/SKILL.md:42` (то же в `.claude/skills/model-ground/SKILL.md:42`) | `dcc_batch.py acad` | 22 / 15 файлов | Это не Max/Blender MCP. В v1 сервер его не забирает | Скрипт `.scr`. Lock `agr-acad-session.lock`. Вне объёма #807 |
 | Живой Python в открытом Blender | `docs/experiments/blender-exec-session.md:3` | `blender_exec.py` → аддон на порту (в эксперименте ahujasid, 9876) | 54 / 17 файлов | Выполнение `bpy`. Нам нужен readback и сборка, не произвольный код | Произвольный Python. Lock `agr-blender-session.lock` (прочитан заголовок `blender_exec.py`). JSONL нет |
 | Headless Blender `--background --factory-startup` | `tools/blender/fbx_readback.py:9`, `tools/blender/ground_json_to_fbx.py:5` | Прямой `blender.exe`. Не Blender Lab MCP и не `dcc_batch` (у `dcc_batch.py` есть только `max` и `acad`) | 200 / 118 файлов | Ничего из чужого MCP: процесс сам исполняет `--python` | Произвольный скрипт в аргументе. Отдельного lock в этих docstring нет |
-| Осмотр сцены Blender Lab | `docs/agents/CAPABILITIES.md:175`; `.agents/skills/blender-mcp/SKILL.md:28` | MCP `blender`, пакет `blender-mcp` 1.0.3, порт 9877 | `get_objects_summary` 2, `get_blendfile_summary` 20, `get_object_detail_summary` 4 | Семь read-only инструментов из CAPABILITIES. Схемы в репозитории не зафиксированы | Эти семь — read-only по регистру риска. Всё остальное на маршруте, включая Python, — destructive |
-| Произвольный код чужого MCP | `docs/research/mcp-dcc-bridges.md:38` (`execute_maxscript`), `:61` и `:208` (`execute_blender_code`) | `3dsmax-mcp` / Blender Lab | `execute_maxscript` 1, `execute_python` 4 (1 файл), `execute_blender_code` 14 (3 файла) | Именно это v1 не повторяет как обычный инструмент | CAPABILITIES: все инструменты `3dsmax-mcp` — destructive. `safe_mode` не песочница (см. §7) |
+| Осмотр сцены Blender Lab | `docs/agents/CAPABILITIES.md:175`; `.agents/skills/blender-mcp/SKILL.md:28` | MCP `blender`, пакет `blender-mcp` 1.0.3, порт 9877 | `get_objects_summary` 2, `get_blendfile_summary` 7, `get_object_detail_summary` 4 | Семь read-only инструментов из CAPABILITIES. Схемы в репозитории не зафиксированы | Эти семь — read-only по регистру риска. Всё остальное на маршруте, включая Python, — destructive |
+| Произвольный код чужого MCP | `docs/research/mcp-dcc-bridges.md:38` (`execute_maxscript`), `:61` и `:208` (`execute_blender_code`) | `3dsmax-mcp` / Blender Lab | `execute_maxscript` 1, `execute_python` 3 (1 файл), `execute_blender_code` 14 (3 файла) | Именно это v1 не повторяет как обычный инструмент | CAPABILITIES: все инструменты `3dsmax-mcp` — destructive. `safe_mode` не песочница (см. §7) |
 | Нативный xView пакетом | `jobs/vyatskaya-tow02/evidence/xview-528/SUMMARY.md:3` | `dcc_batch.py max` + `tools/qa/xview_dump.ms` | 14 / 10 файлов | Дамп для сверки с `tools/qa/xview_parity.py` | Скрипт на копии. Тот же lock, что у headless Max |
-| Правка/сохранение/импорт/экспорт внутри job | `tools/export/benchmark_export_max.py:235` (`holdMaxFile`); `saveMaxFile` / `exportFile` / `importFile` | Текст скриптов, которые крутит batch или живой мост | 5 / 32 / 58 / 18 | Чужой `execute_maxscript` это просто проносит | Прямая мутация сцены или диска. Аудита вызова нет |
+| Правка/сохранение/импорт/экспорт внутри job | `tools/export/benchmark_export_max.py:235` (`holdMaxFile`); `saveMaxFile` / `exportFile` / `importFile` | Текст скриптов, которые крутит batch или живой мост | 5 / 31 / 33 / 18 | Чужой `execute_maxscript` это просто проносит | Прямая мутация сцены или диска. Аудита вызова нет |
 
-Итого по маршрутам (совпадения, с оговоркой про вложенность выше): живой Max 3, headless Max 43, headless AutoCAD 22, живой Blender 54, headless Blender 200. Плюс имена чужих tool в документах: `execute_maxscript` 1, `execute_python` 4, `execute_blender_code` 14 в 3 файлах. Единственный call site `max_exec.py` внутри репозитория — `tools/review/max_adapter.py:52`. В `hermes_kanban/scripts` строка `max_exec.py` встречается 4 раза (2 файла), внешних вызовов там нет.
+Итого по маршрутам (совпадения, с оговоркой про вложенность выше): живой Max 3, headless Max 43, headless AutoCAD 22, живой Blender 54, headless Blender 200. Плюс имена чужих tool в документах: `execute_maxscript` 1, `execute_python` 3, `execute_blender_code` 14 в 3 файлах. Единственный call site `max_exec.py` внутри репозитория — `tools/review/max_adapter.py:52`. В `hermes_kanban/scripts` строка `max_exec.py` встречается 4 раза (2 файла), внешних вызовов там нет.
 
 Свой код, который сервер должен вызывать, уже в пилоте: `adapters/max/agr_tools/runtime.py` (версия в файле `0.4.0`), чекеры `src/twinqa/`, `tools/qa/xview_parity.py`, `tools/blender/fbx_readback.py`. Сборщики Ground / MAF / Flora в v1 остаются библиотеками, не MCP-инструментами: им не нужен живой DCC (`src/dt_ai/geometry/ground_cake.py` `build_flat`, `src/twinqa/maf_checks.py` `maf_findings`, `src/twinqa/flora.py` `flora_findings`).
 
