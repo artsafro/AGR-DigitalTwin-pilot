@@ -22,10 +22,15 @@ env = {QT_QPA_PLATFORM = "offscreen"}
 
 [[job]]
 name = "blender"                 # pytest -m "blender or dcc": tests that start Blender 5.1 themselves (DT_BLENDER)
+# tests/dcc/test_sintez_parity_live.py is left out: it is the SINTEZ 1.6.1 / twinqa characterization (#432) that
+# deliberately stays red on 7 measured disagreements (docs/research/sintez-parity-harness.md: no xfail, no waiver,
+# no checker repair). agr-lab has no "known failures" verdict, so in this gating job it would keep every batch RED
+# and hide new regressions. Run it on demand as that document says; a pinned nightly job needs agr-lab support for
+# "exit 1 with exactly these failures" first.
 app = "blender"
 version = "5.1"
 host = ["uv", "run", "--frozen", "--no-sync", "pytest", "-m", "blender or dcc", "-p", "no:cacheprovider", "-q",
-        "--junitxml={out}/junit.xml"]
+        "--ignore=tests/dcc/test_sintez_parity_live.py", "--junitxml={out}/junit.xml"]
 cwd = "{src}"
 env = {DT_BLENDER = "{exe}"}
 timeout_s = 3600
