@@ -2,7 +2,10 @@
 
 Status: approved in a grilling session on 2026-10-14 [D088, D089, D090, D092] (23 questions, every recommendation accepted by
 the user). Evidence and sources: `docs/research/agent-harness-sources-2026-10-14.md`.
-`docs/HARNESS_PLAN.md` keeps the modelling pipeline decisions; this spec covers the harness around the
+`docs/HARNESS_PLAN.md` is historical, superseded by `docs/pipeline.md`, `docs/decisions.md`,
+`docs/agents/WORKFLOW.md`, `docs/agents/REVIEW_CHECKLIST.md`, `docs/domain/patterns/INDEX.md`,
+`benchmark/README.md`, `docs/domain/`, `docs/backlog.md` and `docs/agents/CAPABILITIES.md`.
+The harness spec upstream#118 tail is closed by this freeze. This spec covers the harness around the
 agent (context, tools, memory, checks, observability, guardrails, process). It amends the plan in three
 places, listed here so nothing is superseded silently: §8 "guard.py stays as is" — amended, the guard
 gains the `gh` rules of this spec; §8 "escalation after three failures of a module" — kept, with the
@@ -190,6 +193,7 @@ Process
     so that the language rule in `AGENTS.md` holds.
 38. As a user, I want the harness plan frozen as history once this spec is implemented, with the
     live decisions in the decision log, so that there is one place for what is current.
+    Closed by this freeze (`docs/HARNESS_PLAN.md` historical; upstream#118 tail).
 
 ## Implementation Decisions
 
@@ -307,8 +311,8 @@ Process
   added, not on a calendar; a component with no evidence and no eval is proposed for removal to the
   user. (The weekly run belongs to the capability suite, not to the inventory.)
 - Language: English for every agent-facing document; Russian only for human cheat sheets. The
-  harness plan is not translated; after this spec lands it is marked as history and its live
-  decisions live in the decision log.
+  harness plan is historical (`docs/HARNESS_PLAN.md`) and was not translated. The harness spec
+  upstream#118 tail (story 38) is closed by this freeze. Live decisions stay in the decision log.
 
 Waves (order of tickets):
 
@@ -318,7 +322,7 @@ Waves (order of tickets):
 3. Guardrails and tools: permission matrix with the guard additions and its test; attempts limit in
    the gate; risk classes; harness inventory.
 4. Process: task template and the ready gate; recitation; job contract sections; escalation rules;
-   the two capability evals; knowledge-base index; freezing the plan.
+   the two capability evals; knowledge-base index; freezing the plan (done; upstream#118 tail closed).
 
 ## Testing Decisions
 
