@@ -17,7 +17,8 @@ STEP_OF_MODE = {'read': 0, 'select': 0, 'copy': 1, 'undo': 1, 'file': 1}
 BLOCK_FIELDS = {'id', 'number', 'title_ru', 'hue', 'added_because', 'short_ru', 'when_ru'}
 ROW_FIELDS = {'id', 'block', 'label_ru', 'does_ru', 'source', 'verdict', 'verdict_note', 'evidence', 'reqs',
               'mode', 'mcp', 'priority', 'version', 'icon'}
-STATUS_RU = {'ok': 'ок', 'errors': 'ошибки', 'not_run': 'не запускалось', 'planned': 'кнопок ещё нет'}
+STATUS_RU = {'ok': 'ок', 'errors': 'ошибки', 'not_run': 'не запускалось', 'planned': 'кнопок ещё нет',
+             'no_checks': 'проверок нет, только действия'}
 
 
 def vkey(version):
@@ -160,9 +161,10 @@ def flow(suite, package_version):
 
 
 def live_status(suite, reports, package_version):
-    """{block id: ok|errors|not_run|planned} from the last reports of this scene.
+    """{block id: ok|errors|not_run|planned|no_checks} from the last reports of this scene.
 
-    reports: {plan row id: report dict}. A block with no shipped read-only check is `planned`. A report
+    reports: {plan row id: report dict}. A block with no shipped button is `planned`; with shipped buttons but
+    no read-only check (only fix actions) `no_checks`. A report
     whose status is not exactly 'pass' counts as errors (fail-closed), never as ok.
     """
     out = {}
@@ -170,7 +172,8 @@ def live_status(suite, reports, package_version):
         checks = [r for r in block_rows(suite, b['id'])
                   if state(r, package_version) == 'done' and STEP_OF_MODE[r['mode']] == 0]
         if not checks:
-            out[b['id']] = 'planned'
+            shipped_any = any(state(r, package_version) == 'done' for r in block_rows(suite, b['id']))
+            out[b['id']] = 'no_checks' if shipped_any else 'planned'
             continue
         got = [reports[r['id']] for r in checks if r['id'] in reports]
         if any(not isinstance(rep, dict) or rep.get('status') != 'pass' for rep in got):

@@ -101,6 +101,11 @@ def _add(found, key, code, detail, ids=()):
     found.setdefault(key, []).append((code, detail, tuple(ids)))
 
 
+def _geo(row):
+    """Mesh rows only: cameras, lights, helpers and shapes are qa.scene_hygiene's findings, not geometry's."""
+    return _need(row, 'superclass') == 'geometry'
+
+
 def _mesh(row):
     m = _need(row, 'mesh')
     if callable(m):
@@ -201,7 +206,7 @@ def perimeter_drop(rows):
     rows = Rows(rows)
     found, dropped = {}, []
     for r in rows:
-        if checks.is_ucx(r['name']):
+        if checks.is_ucx(r['name']) or not _geo(r):
             continue
         if _kind(r) is None:
             _add(found, r['key'], 'fbx_unmapped', 'AGR_EXPORT_PATH не задан или не по маске: ' + repr(r.get('fbx')))
@@ -230,7 +235,7 @@ def material_type(rows):
     rows = Rows(rows)
     found = {}
     for r in rows:
-        if checks.is_ucx(r['name']):
+        if checks.is_ucx(r['name']) or not _geo(r):
             continue
         mats = _materials(r)
         if not mats:
@@ -259,7 +264,7 @@ def ucx_audit(rows, audit):
             mains.setdefault(r.get('fbx'), []).append(r)
     hulls, tri_by_fbx, render_by_fbx = [], {}, {}
     for r in rows:
-        if not checks.is_ucx(r['name']):
+        if not checks.is_ucx(r['name']) and _geo(r):
             render_by_fbx[r.get('fbx')] = render_by_fbx.get(r.get('fbx'), 0) + int(_need(r, 'faces'))
     for r in ucx:
         verts, tris = _mesh(r)
@@ -314,7 +319,7 @@ def sets_count(rows):
     found = {}
     groups = {}
     for r in rows:
-        if checks.is_ucx(r['name']):
+        if checks.is_ucx(r['name']) or not _geo(r):
             continue
         kind = _kind(r)
         if kind is None:
@@ -378,7 +383,7 @@ def fbx_split(rows):
                             parts, len(parts)))
         for p in sorted(mine):
             f = mine[p]
-            meshes = [r for r in f['rows'] if not checks.is_ucx(r['name'])]
+            meshes = [r for r in f['rows'] if not checks.is_ucx(r['name']) and _geo(r)]
             glass = [r for r in meshes if str(checks.mesh_kind(r['name']) or '').endswith('Glass')]
             opaque = len(meshes) - len(glass)
             table.append({'fbx': p, 'model': model, 'role': f['kind'][1], 'opaque': opaque, 'transparent': len(glass)})
@@ -405,7 +410,7 @@ def glass(rows):
     found = {}
     per_fbx = {}
     for r in rows:
-        if checks.is_ucx(r['name']):
+        if checks.is_ucx(r['name']) or not _geo(r):
             continue
         is_glass_mesh = str(checks.mesh_kind(r['name']) or '').endswith('Glass')
         mats = _materials(r)

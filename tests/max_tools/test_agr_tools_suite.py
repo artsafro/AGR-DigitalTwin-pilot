@@ -224,6 +224,18 @@ def test_zero_area_faces_edges_isolated():
     assert codes(f, 1) == ['isolated_vertex']
 
 
+def test_non_mesh_objects_are_hygiene_findings_only():
+    """Native smoke regression (Max 2026): a camera with AGR_EXPORT_PATH gave drop_unmeasurable and mat_none."""
+    cam = obj(9, 'Camera_Leftover', superclass='camera', cls='Freecamera', faces=0, materials=[],
+              mesh={'verts': [], 'tris': []}, zero_m=None)
+    rows = [obj(1), obj(2, 'SM_Addr_Ground', NPM_GROUND), cam]
+    for tool in ('perimeter_drop', 'material_type', 'sets_count', 'glass', 'fbx_split', 'zero_area', 'ucx_audit'):
+        f, _, _ = core.run(tool, rows, audit)
+        assert codes(f, 9) == [], tool
+    f, _, _ = core.scene_hygiene(rows)
+    assert codes(f, 9) == ['hyg_non_mesh']
+
+
 def test_census_summary_and_missing_maps():
     m = dict(STD, maps=['a.png', 'b.png'], missing=['b.png'])
     f, d, s = core.census([obj(1, materials=[m], instances=2), obj(2, superclass='camera', materials=[]),
@@ -337,6 +349,7 @@ def test_live_status_and_next_step_fail_closed():
     suite = roadmap.load_file(SUITE)
     status = roadmap.live_status(suite, {}, model.VERSION)
     assert status['scene'] == 'not_run' and status['light'] == 'planned' and status['place'] == 'planned'
+    assert status['export'] == 'no_checks'  # cleanup/export ship as actions, not read-only checks
     assert roadmap.next_step(suite, status) == ('0 Сцена и источник: запустить проверки', 'scene')
     ok = {'schema': 1, 'status': 'pass'}
     reports = {'scene.census': ok, 'scene.units': ok}

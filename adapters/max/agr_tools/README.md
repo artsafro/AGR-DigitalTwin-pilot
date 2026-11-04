@@ -1,4 +1,4 @@
-# AGR Tools 0.6.0 — 3ds Max 2024 / 2026
+# AGR Tools 0.7.0 — 3ds Max 2024 / 2026
 
 Own implementations. The 0.5.0 diagnostics adapt GeoAGR 13.64 functions with the permission of
 their author (Artem). Only the logic in use is adapted (`checks_core.py`), not GeoAGR.ms; no team
@@ -7,8 +7,8 @@ This is a diagnostic/export-copy tool, not a delivery validator or production jo
 
 ## Build and install
 
-`python tools/max/build_agr_tools.py <new-path>/AGR-Tools-0.6.0.mzp` (MZP) or
-`python tools/max/build_agr_tools.py --bundle <new-path>/AGR-Tools-0.6.0.bundle.zip` (plugin package:
+`python tools/max/build_agr_tools.py <new-path>/AGR-Tools-0.7.0.mzp` (MZP) or
+`python tools/max/build_agr_tools.py --bundle <new-path>/AGR-Tools-0.7.0.bundle.zip` (plugin package:
 unzip into `%APPDATA%\Autodesk\ApplicationPlugins`; uninstall = delete `AGR-Tools.bundle` and the
 `[AGRTools]` section of `3dsMax.ini`). PNG icons are rendered from the SVG sources with PySide6
 (`uv run --with PySide6 ...`), or taken from `AGR_ICON_PNG_DIR`.
@@ -142,6 +142,15 @@ never a clean result. Objects are identified by unique Max handles as well as na
   1e-6 is an error. Bands are the locked intervals, inclusive at the edges:
   VPM 512–1706 px/m and NPM 10–40 px/m. A zero area or a zero map size is
   `at_threshold` and is an error.
+
+## 0.7.0 pre-delivery checks, rail and «Путь» (#860)
+
+Twelve read-only checks (plan version 0.7), each a button of its block tab, a `runtime.ui('<tool>')`
+macro and an MCP tool `agr_<block>_<name>`. Full button help (what, when, mode, requirement ids) is the
+«Путь» tab in the panel and `docs/agr-tools/GUIDE.md` in the repo; both are generated from
+`agr-tools-suite.json`, which ships in this package. Inputs: `AGR_EXPORT_PATH` (FBX kind, no default),
+`AGR_ZERO_M` (±0.000 in metres for the perimeter drop, no default), `AGR_ROOF_SET=1` (one extra texture set
+for a usable roof). Thresholds are pinned to `standards/*.yaml` by `tests/max_tools/test_agr_tools_suite.py`.
 
 ## 0.5.0 diagnostics (read-only)
 
