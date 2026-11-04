@@ -11,8 +11,8 @@ Jobs: `20261104-231102-41318119` (valid); `20261104-230839-a2ae1d9d` (first writ
 ## Sources
 | Source | Status |
 |---|---|
-| GeoAGR Make Diffuse/Normal/ERM (`GeoAGR.ms:42227`, `:42308`, `:42384`) | run live |
-| GeoAGR Set Normal/ERM (`:42333`, `:42409`) | not pressed (file dialog); measured earlier by suite T07-01..03 |
+| GeoAGR Make Diffuse/Normal/ERM (`GeoAGR.ms:42227`, `GeoAGR.ms:42308`, `GeoAGR.ms:42384`) | run live |
+| GeoAGR Set Normal/ERM (`GeoAGR.ms:42333`, `GeoAGR.ms:42409`) | not pressed (file dialog); measured earlier by suite T07-01..03 |
 | Andrew_scripts `Texture_Zaglushki_Ground.ms` | **not available** in any repository |
 
 ## Behaviour of the GeoAGR source (measured)
@@ -25,7 +25,7 @@ Jobs: `20261104-231102-41318119` (valid); `20261104-230839-a2ae1d9d` (first writ
 - File names come from read-only fields generated from the object name; the default folder is `Maps\` beside the scene
   (relative when the scene is unsaved).
 - Set Normal/ERM (replace placeholder by a resized picked file): crash before the overwrite question and on the resize
-  command (string building errors, `GeoAGR.ms:42350`, `:42359`, `:42426`, `:42435`).
+  command (string building errors, `GeoAGR.ms:42350`, `GeoAGR.ms:42359`, `GeoAGR.ms:42426`, `GeoAGR.ms:42435`).
 
 ## Requirements the AGR Tools button must meet
 Row reqs: VPM-2.5-3.1, VPM-2.5-3.3, VPM-2.5-3.4, NPM-2.5-7 (placeholder textures: allowed size 256 for VPM tiles / 128 as

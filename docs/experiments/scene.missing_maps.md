@@ -7,7 +7,7 @@ here, only `GeoAGR.ms:<line>` references (rule #853). Evidence is in GeoAGR-priv
 
 - **Plan row:** `docs/plans/agr-tools-suite.json`, block `scene`, version 0.8, verdict `take_fix`.
 - **GeoAGR source:** Project Map (`GeoAGR.ms:15548-16065`), its row helper `GeoAGR.ms:6314`, and the relink-candidate
-  helper `GeoAGR.ms:1383` / `:855`.
+  helper `GeoAGR.ms:1383` / `GeoAGR.ms:855`.
 - **Third-party "Collect Asset":** not in any repository, so it was **not available**.
 
 ## Measured

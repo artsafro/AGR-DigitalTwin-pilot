@@ -11,7 +11,7 @@ Jobs: `20261104-231049-e38efd13`, `20261104-231415-0e305be1` (valid); `20261104-
 ## Sources
 | Source | Status |
 |---|---|
-| GeoAGR "Format & Alpha Tex…" (`GeoAGR.ms:40195-41094`), `compress_file` (`:7971-8073`), dilate (`:8087`) | run live |
+| GeoAGR "Format & Alpha Tex…" (`GeoAGR.ms:40195-41094`), `compress_file` (`GeoAGR.ms:7971-8073`), dilate (`GeoAGR.ms:8087`) | run live |
 | Telegram `convert_8bit_to_24bit.py` | **not available** in any repository |
 
 ## Behaviour of the GeoAGR source (measured)

@@ -10,10 +10,10 @@ in GeoAGR-private, branch `lab-exp/L02`, under `work/lab-experiments/export.pivo
 | Button | Lines |
 |---|---|
 | Get Pivot | `GeoAGR.ms:64763` |
-| Set Pivot to Down Center | `:64778` |
-| Set Position To | `:64832` |
-| Reset Transforms | `:64709` |
-| Combine two models near zero | `:64730` |
+| Set Pivot to Down Center | `GeoAGR.ms:64778` |
+| Set Position To | `GeoAGR.ms:64832` |
+| Reset Transforms | `GeoAGR.ms:64709` |
+| Combine two models near zero | `GeoAGR.ms:64730` |
 
 ## Synthetic scene
 - A 20×10×9 m block stands on a 22×12×0.6 m slab.
