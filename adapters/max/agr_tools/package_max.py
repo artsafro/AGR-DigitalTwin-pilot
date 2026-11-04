@@ -106,7 +106,7 @@ def _ground_nodes(ctx, nodes):
     rt = _rt()
     if nodes is None:
         nodes = list(rt.selection) or [n for n in rt.geometry]
-    return [n for n in nodes if rt.isValidNode(n)]
+    return sorted((n for n in nodes if rt.isValidNode(n)), key=lambda n: int(rt.getHandleByAnim(n)))
 
 
 def _ground_inputs(ctx, nodes, opts):
