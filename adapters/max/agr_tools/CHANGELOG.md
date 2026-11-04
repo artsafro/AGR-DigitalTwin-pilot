@@ -24,7 +24,10 @@ its `GeoAGR.ms:<line>` and its changes.
   NPM 8 px and VPM 16/32 px for 2048/4096 maps; GeoAGR's 16/32 px branch was commented out.
   Padding is measured per texture atlas: each face goes to its matID's sub-material maps, and the
   islands of all objects of one FBX that share an atlas are measured together (per UDIM tile). An
-  unmapped matID is `tex_unmeasurable`; a sub-material without maps is `tex_missing`.
+  unmapped matID is `tex_unmeasurable`; a sub-material without maps is `tex_missing`. In VPM, touching
+  or overlapping islands (gap 0) are the review-level `tex_overlap_review`, not `tex_padding`:
+  regulation 2.5.1.5 applies padding only to islands with unique images, and repeating islands may
+  overlap. A VPM gap above 0 and below 16/32 px is still `tex_padding`; NPM is unchanged.
 - **Pivot check** (`pivot`): VPM-2.9-4.b requires pivot Z = 0 within 1 mm. VPM-2.9-5 requires every
   pivot of one FBX to coincide within 1 mm. UCX pivots are free (VPM-2.9-4.c).
 - **GeoJSON check** (`geojson`): runs the pilot `twinqa.geojson` checker on a chosen `.geojson`
