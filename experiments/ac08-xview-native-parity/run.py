@@ -349,6 +349,22 @@ def _row_ids(node, row):
     return stored
 
 
+def _symdiff_text(row):
+    """Name the differing set kind, its tolerance in metres and both id sets (#829)."""
+    tols = row.get("thresholds_m") or [None, None]
+    parts = []
+    for kind, label, key, py_key, nat_key in (
+            ("vertex", "tol_v", 0, "vertices_only_ours", "vertices_only_max"),
+            ("face", "tol_f", 1, "faces_only_ours_contact", "faces_only_max")):
+        py, nat = row.get(py_key) or [], row.get(nat_key) or []
+        if py or nat:
+            tol = tols[key] if len(tols) > key else None
+            tol_text = "unknown" if tol is None else f"{tol:g}"
+            parts.append(f"{kind} symmetric difference at {label}={tol_text} m: "
+                         f"python {set(py) or '{}'} vs native {set(nat) or '{}'}")
+    return "; ".join(parts) or "symmetric difference"
+
+
 def _one(item, node):
     name = node.get("name")
     if node.get("error"):
@@ -372,7 +388,7 @@ def _one(item, node):
             raise
         raise HarnessError(f"unsupported geometry: {exc}", mesh=name) from exc
     if len(rows) != 1 or not rows[0].get("equal"):
-        raise HarnessError("symmetric difference", mesh=name)
+        raise HarnessError(_symdiff_text(rows[0] if rows else {}), mesh=name)
     return _row_ids(node, rows[0])
 
 

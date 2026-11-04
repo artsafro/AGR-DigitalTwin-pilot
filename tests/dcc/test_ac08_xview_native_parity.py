@@ -717,7 +717,7 @@ _MUTATIONS = {
     "tol_f_exactly_2mm": (_mutate_tol_f_at_vertex_threshold, "tol_f_units"),
     "units_millimetre": (_mutate_units_mm, "metre"),
     "units_unsupported": (_mutate_units_name, "unsupported"),
-    "vertex_exactly_2mm": (_mutate_vertex_exactly_2mm, "AC08_body: symmetric difference"),
+    "vertex_exactly_2mm": (_mutate_vertex_exactly_2mm, "AC08_body: vertex symmetric difference at tol_v=0.002 m: python {"),
     "unsupported_self_intersecting": (_mutate_unsupported_self_intersecting, "self-intersecting"),
 }
 
@@ -801,7 +801,8 @@ def test_vertex_threshold_witness_is_geometry_valid(lib):
                 for k, face in enumerate(mesh.faces):
                     assert inv_xview._polygon_triangles(k, face, mesh.vertices * m)
         text = _reject(lib, dump)
-        assert "AC08_body: symmetric difference" in text
+        assert "AC08_body: vertex symmetric difference at tol_v=0.002 m: python {" in text
+        assert "vertex" in text and "tol_v=0.002" in text and "native {" in text
 
 
 def test_vertex_just_over_threshold_certifies_fourteen_rows(lib):
@@ -983,3 +984,14 @@ def test_probe_never_certify_wrong_tolerance(lib):
         _mutate_vertex_exactly_2mm,
     ]
     assert _probe_reject_all(lib, mutations) == 24
+
+
+def test_symdiff_text_names_face_kind_and_threshold(lib):
+    """#829: a face-set mismatch names 'face', tol_f in metres and both id sets."""
+    row = {"thresholds_m": [0.002, 0.005], "vertices_only_ours": [], "vertices_only_max": [],
+           "faces_only_ours_contact": [3], "faces_only_max": [7]}
+    text = lib._symdiff_text(row)
+    assert "face symmetric difference at tol_f=0.005 m: python {3} vs native {7}" in text
+    assert "vertex" not in text
+    both = dict(row, vertices_only_ours=[1, 2])
+    assert "vertex symmetric difference at tol_v=0.002 m: python {1, 2} vs native {}" in lib._symdiff_text(both)
