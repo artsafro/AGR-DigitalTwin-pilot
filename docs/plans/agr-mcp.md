@@ -78,23 +78,23 @@ rg -n -F -- "max_exec.py" C:/Users/artsafro/hermes_kanban/scripts
 
 ## 2. Инструменты v1
 
-16 имён. Вход и выход — набросок JSON Schema черновика 2020-12, не регистрация. Функции Max принимают узлы pymxs: слой MCP резолвит `handles` в узлы уже внутри Max и зовёт функцию. Ответ Max-инструментов — словарь `_report` в `runtime.py:229`: `schema`, `tool`, `status` (`pass`/`fail`), `objects[].findings[]` с `code`, `ids`, `detail`.
+16 имён. Вход и выход — набросок JSON Schema черновика 2020-12, не регистрация. Функции Max принимают узлы pymxs: слой MCP резолвит `handles` в узлы уже внутри Max и зовёт функцию. Ответ Max-инструментов — словарь `_report` в `runtime.py:250`: `schema`, `tool`, `status` (`pass`/`fail`), `objects[].findings[]` с `code`, `ids`, `detail`.
 
 Срезы `hygiene_core.py`, `uv_nudge_core.py`, `ucx_audit_core.py` в дереве исходников рядом с `runtime.py` отсутствуют: их пишет `tools/max/build_agr_tools.py` из `src/twinqa/export_hygiene.py` (`repair_plan`), `src/dt_ai/geometry/uv_nudge.py` (`nudge_repeating_islands`) и `src/twinqa/geometry/ucx_audit.py`. Установленный MZP их содержит (`install.ms` перечисляет эти имена).
 
 Общие поля входа Max-инструментов: `scene` (путь копии или `live`), `handles` (массив целых), `scope` (необязательно, только `"selection"`), `instance` (необязательно, pid интерактивного `3dsmax.exe`; правило в §3 «Целевой экземпляр Max»). Пустой `handles` — ошибка, см. «Контракт выделения» ниже. Мутации — только на копиях экспорта или на одноразовой сцене, как AGR Tools.
 
-1. `agr_xview_check` — Max — selection-modifying. `runtime.xview` (`runtime.py:274`) возвращает `_report('xview', entries, nodes)` (`runtime.py:327`) без аргумента `select`. У `_report` значение по умолчанию `select=True` (`runtime.py:229`), и тогда вызывается `_rt().select` по узлам с findings (`runtime.py:235`). Геометрия исходных узлов не переписывается (проверка идёт по временной копии). По контракту выделения (ниже) вызов обязан дойти до `_report(select=False)`; если `xview` аргумент не принимает, это правка `runtime.py` в фазе 0, не этой карточки. Вход: общие поля + `select_findings` (bool, по умолчанию `false`). Выход: `_report` плюс пороги 2 мм / 5 мм в `extra`, если функция их кладёт.
-2. `agr_matid_check` — Max — selection-modifying, тот же механизм. `runtime.matid` (`runtime.py:330`) возвращает `_report('matid', entries, nodes)` (`runtime.py:360`) без `select`, значит снова `select=True`. Контракт тот же: `_report(select=False)`. Вход: общие поля + `select_findings` (bool, по умолчанию `false`). Выход: `_report` (id ≥ 1001, id 0, пустые слоты).
-3. `agr_cleanup_preview` — Max — read-only (`cleanup_preview` пишет «No mutation», `runtime.py:421`). Вход: общие поля. Выход: план правок, сцена не меняется.
-4. `agr_cleanup_apply` — Max — новые узлы-копии. `runtime.cleanup_apply` (`runtime.py:441`). Вход: общие поля + `preview` (объект прошлого preview). Выход: `_report` по копиям. Оригиналы функция не чистит.
-5. `agr_uv_nudge_preview` — Max — read-only. `runtime.nudge_preview` (`runtime.py:661`). Вход: общие поля. Выход: острова и шаги тайла. `nudge_apply` (`runtime.py:711`) в v1 отдельным именем не выводится: тот же контракт, что у `cleanup_apply`, фаза 1.
-6. `agr_atlas_preview` — Max — read-only. `runtime.atlas_preview` (`runtime.py:991`). Вход: общие поля. Выход: раскладка UDIM → NPM. `atlas_apply` (`runtime.py:1175`) — фаза 1, тот же приём preview.
-7. `agr_ucx_preview` — Max — read-only. `runtime.ucx_preview` (`runtime.py:1333`). Вход: общие поля. Выход: вариант, число кусков, вердикт аудита.
-8. `agr_ucx_apply` — Max — копии `*_AGR_ucx_` и `UCX_*`. `runtime.ucx_apply` (`runtime.py:1362`). Вход: общие поля + `preview`. Выход: имена кусков и bounds. Занятое имя — ошибка до создания узла.
-9. `agr_texel_readout` — Max — read-only. `runtime.texel_preview` (`runtime.py:1465`). Вход: общие поля. Выход: min/median px/m. Свойства `AGR_TEXEL_PROFILE`, `AGR_TEXEL_MAP` остаются на узле, как в AGR Tools.
-10. `agr_export_preview` — Max — read-only, файл не пишет. `runtime.export_preview` (`runtime.py:1708`). Вход: общие поля + `target` (новый путь FBX). Выход: ворота и счётчики dry-run.
-11. `agr_export_commit` — Max — один новый FBX, если preview совпал. `runtime.export_commit` (`runtime.py:1767`). Вход: общие поля + `preview` + `target`. Выход: путь FBX и JSON-отчёт рядом. Существующий файл функция отвергает.
+1. `agr_xview_check` — Max — selection-modifying. `runtime.xview` (`runtime.py:295`) возвращает `_report('xview', entries, nodes)` (`runtime.py:348`) без аргумента `select`. У `_report` значение по умолчанию `select=True` (`runtime.py:250`), и тогда вызывается `_rt().select` по узлам с findings (`runtime.py:257`). Геометрия исходных узлов не переписывается (проверка идёт по временной копии). По контракту выделения (ниже) вызов обязан дойти до `_report(select=False)`; если `xview` аргумент не принимает, это правка `runtime.py` в фазе 0, не этой карточки. Вход: общие поля + `select_findings` (bool, по умолчанию `false`). Выход: `_report` плюс пороги 2 мм / 5 мм в `extra`, если функция их кладёт.
+2. `agr_matid_check` — Max — selection-modifying, тот же механизм. `runtime.matid` (`runtime.py:351`) возвращает `_report('matid', entries, nodes)` (`runtime.py:381`) без `select`, значит снова `select=True`. Контракт тот же: `_report(select=False)`. Вход: общие поля + `select_findings` (bool, по умолчанию `false`). Выход: `_report` (id ≥ 1001, id 0, пустые слоты).
+3. `agr_cleanup_preview` — Max — read-only (`cleanup_preview` пишет «No mutation», `runtime.py:443`). Вход: общие поля. Выход: план правок, сцена не меняется.
+4. `agr_cleanup_apply` — Max — новые узлы-копии. `runtime.cleanup_apply` (`runtime.py:462`). Вход: общие поля + `preview` (объект прошлого preview). Выход: `_report` по копиям. Оригиналы функция не чистит.
+5. `agr_uv_nudge_preview` — Max — read-only. `runtime.nudge_preview` (`runtime.py:701`). Вход: общие поля. Выход: острова и шаги тайла. `nudge_apply` (`runtime.py:751`) в v1 отдельным именем не выводится: тот же контракт, что у `cleanup_apply`, фаза 1.
+6. `agr_atlas_preview` — Max — read-only. `runtime.atlas_preview` (`runtime.py:1031`). Вход: общие поля. Выход: раскладка UDIM → NPM. `atlas_apply` (`runtime.py:1215`) — фаза 1, тот же приём preview.
+7. `agr_ucx_preview` — Max — read-only. `runtime.ucx_preview` (`runtime.py:1373`). Вход: общие поля. Выход: вариант, число кусков, вердикт аудита.
+8. `agr_ucx_apply` — Max — копии `*_AGR_ucx_` и `UCX_*`. `runtime.ucx_apply` (`runtime.py:1402`). Вход: общие поля + `preview`. Выход: имена кусков и bounds. Занятое имя — ошибка до создания узла.
+9. `agr_texel_readout` — Max — read-only. `runtime.texel_preview` (`runtime.py:1505`). Вход: общие поля. Выход: min/median px/m. Свойства `AGR_TEXEL_PROFILE`, `AGR_TEXEL_MAP` остаются на узле, как в AGR Tools.
+10. `agr_export_preview` — Max — read-only, файл не пишет. `runtime.export_preview` (`runtime.py:1748`). Вход: общие поля + `target` (новый путь FBX). Выход: ворота и счётчики dry-run.
+11. `agr_export_commit` — Max — один новый FBX, если preview совпал. `runtime.export_commit` (`runtime.py:1807`). Вход: общие поля + `preview` + `target`. Выход: путь FBX и JSON-отчёт рядом. Существующий файл функция отвергает.
 12. `agr_fbx_readback` — Blender headless — read-only по файлу. `src/twinqa/scene.py` `readback` (`scene.py:59`) запускает `tools/blender/fbx_readback.py`; факты сетки собирает `mesh_facts` (`fbx_readback.py:66`). Вход: `{fbx_path, timeout?}`. Выход: словарь readback (счётчики, единицы). `bpy` снаружи Blender эта функция не требует: его поднимает subprocess.
 13. `agr_package_validate` — без живого DCC, при `scene=true` зовёт тот же readback. `tools/qa/validate_package.py` `validate` (`validate_package.py:189`). Внутри уже есть `geojson_findings`, `vpm_texture_findings`, `npm_texture_findings`, `scene_findings` (pivot, лимиты треугольников, зазоры). Вход: `{target, kind, scene, ground_area_m2, footprint_holes}`. `profiles` сервер грузит сам через `twinqa.profiles.load_profiles`. Выход: поля `ValidationReport` (стадии, findings). Это не замена узким инструментам 14–15.
 14. `agr_mesh_names` — офлайн. `src/twinqa/naming.py` `mesh_name_findings` (`naming.py:102`). Вход: `{names, kind, role, fbx_stem, limit, src}`. Выход: список findings (`name`, `status`, `observed`, `expected`). На этой ветке в `adapters/max/agr_tools` строк `0.5.0` нет: `runtime.py` держит `VERSION = "0.4.0"`. Имена/лимиты/текстуры/pivot/GeoJSON из текста #804 здесь живут в `twinqa`, не в MZP.
@@ -110,14 +110,38 @@ rg -n -F -- "max_exec.py" C:/Users/artsafro/hermes_kanban/scripts
 | Вход | Ожидаемый исход |
 |---|---|
 | `handles: [12, 15]`, оба существуют | узлы 12 и 15 резолвятся в Max, функция получает список узлов |
-| `handles: []` или поле нет, `scope` нет | ошибка `handles_required`, Max не вызывается |
+| `handles: []` или поля нет, `scope` нет | ошибка `handles_required`, Max не вызывается |
 | `handles: []`, `scope: "selection"` | цели = текущее выделение; в JSONL `scope: "selection"` и список handles выделения |
 | `handles: [12]`, `scope: "selection"` | ошибка: два источника целей |
 | `handles` с несуществующим handle | ошибка с этим handle, остальные не обрабатываются |
 | `agr_xview_check` / `agr_matid_check`, `select_findings` нет | `_report(select=False)`; множество handles выделения до = после, иначе ошибка `selection_changed` (ответ не `pass`) |
 | то же, `select_findings: true` | выделение = узлы с findings; инструмент помечен selection-modifying, в JSONL `selection_modified: true` |
 
-Проверка после вызова: слой читает множество handles выделения до и после каждого вызова фазы 0 и сравнивает как множества; это идея `core/layers.ms:438-443` в MAX Ultra MCP (`docs/research/max-ultra-mcp-vs-agr-mcp-plan.md`). Инструменты 3–11 тоже проверяются; расхождение у инструмента без `select_findings` — ошибка. Тест фазы 0 для этих случаев пока не пишем (ждёт вопрос Q1 пользователю, #816).
+Проверка после вызова: слой читает множество handles выделения до и после каждого вызова фазы 0 и сравнивает как множества; это идея `core/layers.ms:438-443` в MAX Ultra MCP (`docs/research/max-ultra-mcp-vs-agr-mcp-plan.md`). Инструменты 3–11 тоже проверяются, но делятся на два класса (номера как в списке выше; ссылки на `runtime.py` — по `origin/main`):
+
+| Инструмент | Класс | Что делает с выделением | Правило слоя |
+|---|---|---|---|
+| 3 `agr_cleanup_preview` | selection-preserving | не трогает | выделение до = после, иначе `selection_changed` |
+| 4 `agr_cleanup_apply` | selection-mutating by design | `rt.select(copies)` (`runtime.py:494`) | сохранить выделение до вызова, восстановить после; `selection_changed` проверяется после восстановления |
+| 5 `agr_uv_nudge_preview`; `nudge_apply` (фаза 1) | preview — preserving; apply — mutating | `_apply_uv` делает `rt.select(copies)` (`runtime.py:743`, `nudge_apply` `runtime.py:751`) | preview как у 3; apply как у 4 |
+| 6 `agr_atlas_preview` | selection-preserving | не трогает | как у 3 |
+| 7 `agr_ucx_preview` | selection-preserving | не трогает | как у 3 |
+| 8 `agr_ucx_apply` | проверить в фазе 0 | создаёт копии; `rt.select` в `ucx_apply` (`runtime.py:1402`) grep не находит | как у 3; если фаза 0 найдёт select, правило как у 4 |
+| 9 `agr_texel_readout` | selection-preserving | не трогает | как у 3 |
+| 10 `agr_export_preview` | selection-preserving | файл не пишет | как у 3 |
+| 11 `agr_export_commit` | selection-mutating by design | `_write_max_fbx`: `rt.select(copies)` (`runtime.py:1791`) и `exportFile(..., selectedOnly=True)` (`runtime.py:1792`) | как у 4: сохранить до, восстановить после, проверка после восстановления |
+
+Правило: у selection-mutating инструмента слой сохраняет множество handles выделения до вызова, восстанавливает его после вызова, и только потом сравнивает; расхождение после восстановления — ошибка `selection_changed`. Инструмент без `select_findings`, который оставил другое выделение (и восстановление не помогло), — тоже `selection_changed`.
+
+Приёмка (вход → ожидание):
+
+| Вход | Ожидание |
+|---|---|
+| `agr_cleanup_apply`, `handles: [12]`, выделение `{5}` | после вызова выделение `{5}`, ошибки `selection_changed` нет |
+| `agr_xview_check`, выделение `{5}` | выделение `{5}` |
+| инструмент без `select_findings`, оставивший выделение `{12}` при исходном `{5}` | ошибка `selection_changed` |
+
+Тесты выделения (три строки приёмки) от Q1 не зависят: Q1 (#816) касается только теста двух экземпляров Max (`docs/research/max-ultra-mcp-vs-agr-mcp-plan.md:184`).
 
 Общий вход Max (`handles` непустой, либо `scope: "selection"`):
 
