@@ -378,7 +378,7 @@ def test_block_accents_contrast_against_window_and_base(theme, window, base, tex
     with pytest.raises(ValueError):
         model.block_accent(400, window, base, text)
     with pytest.raises(ValueError):
-        model.block_accent(212, (150, 150, 150), (150, 150, 150), (255, 255, 255))  # unreachable -> error
+        model.block_accent(212, (160, 160, 160), (60, 60, 60), (255, 255, 255))  # unreachable -> error
 
 
 def test_guide_regeneration_gives_no_diff():

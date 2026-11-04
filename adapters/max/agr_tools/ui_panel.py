@@ -404,7 +404,11 @@ class AgrPanel(QtWidgets.QDockWidget):
     def changeEvent(self, event):
         super().changeEvent(event)
         if event.type() == QtCore.QEvent.PaletteChange and getattr(self, '_theme_key', None) is not None                 and self._base_text() != self._theme_key:
-            self.apply_theme()
+            try:
+                self.apply_theme()
+            except ValueError as exc:  # unreachable 3:1 contrast: keep the old colours, say so (never pale)
+                self.status.setText('Цвета блоков: ' + str(exc))
+                return
             if self.report is not None:
                 self.show_report(self.report)
 

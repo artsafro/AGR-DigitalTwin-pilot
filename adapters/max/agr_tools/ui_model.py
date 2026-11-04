@@ -407,12 +407,12 @@ def block_accent(hue_deg, window_rgb, base_rgb, text_rgb):
     hue = (hue_deg or 0.0) / 360.0
     sat = NEUTRAL_SAT if hue_deg is None else BLOCK_SAT
     dark = _lum(base_rgb) < _lum(text_rgb)
-    lightness = 0.62 if dark else 0.36
-    for _ in range(60):
-        rgb = tuple(int(round(c * 255)) for c in colorsys.hls_to_rgb(hue, lightness, sat))
+    start = 62 if dark else 36
+    # nearest lightness to the theme's start that clears 3:1 against both backgrounds (either direction)
+    for step in sorted(range(3, 98), key=lambda v: (abs(v - start), -v if dark else v)):
+        rgb = tuple(int(round(c * 255)) for c in colorsys.hls_to_rgb(hue, step / 100.0, sat))
         if contrast(rgb, base_rgb) >= 3.0 and contrast(rgb, window_rgb) >= 3.0:
             return rgb
-        lightness = min(0.97, lightness + 0.01) if dark else max(0.03, lightness - 0.01)
     raise ValueError('no block accent with contrast >= 3 for this palette')
 
 
