@@ -284,6 +284,60 @@ def test_mkstemp_failure_before_acquisition_removes_nothing(tmp_path):
     _assert_reopenable(target.parent)
 
 
+def test_close_failure_after_real_write_preserves_target_and_removes_owned_temp(tmp_path):
+    target = _stage(tmp_path, present=True)
+    payload = TEXT.encode("utf-8")
+    err = OSError(28, "No space left on device")
+    acquired = []
+    seen = {"closed": 0, "replace": 0, "written": None}
+
+    def recording(*args, **kwargs):
+        fd, tmp = tempfile.mkstemp(*args, **kwargs)
+        acquired.append(Path(tmp))
+        return fd, tmp
+
+    class _CloseFails:
+        """Real handle: the write succeeds and the OS handle is released, then close() raises."""
+
+        def __init__(self, handle):
+            self._h = handle
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc_info):
+            self.close()
+
+        def write(self, data):
+            return self._h.write(data)
+
+        def close(self):
+            self._h.close()  # real close flushes the real bytes and frees the handle
+            seen["closed"] += 1
+            seen["written"] = acquired[-1].read_bytes()
+            raise err
+
+    def wrapping(fd, mode="r", *args, **kwargs):
+        return _CloseFails(os.fdopen(fd, mode, *args, **kwargs))
+
+    def forbid(src, dst):
+        seen["replace"] += 1
+        raise AssertionError("os.replace must not run after close() failed")
+
+    with _bound(sw, "tempfile", _Proxy(tempfile, {"mkstemp": recording})), _bound(
+        sw, "os", _Proxy(os, {"fdopen": wrapping, "replace": forbid})
+    ):
+        with pytest.raises(OSError) as caught:
+            sw.publish_text(target, TEXT)
+    assert caught.value is err
+    assert seen["closed"] == 1 and seen["replace"] == 0
+    assert seen["written"] == payload  # the temp really held the full write when close() failed
+    assert len(acquired) == 1 and _owned(target.parent) == []
+    _expect_inventory(target.parent, OLD)
+    _assert_reusable(acquired[0])
+    _assert_reopenable(target.parent)
+
+
 def test_byte_exact_probe_over_text_inputs(tmp_path):
     assert len(PROBE) == 8
     target = _stage(tmp_path, present=True)
