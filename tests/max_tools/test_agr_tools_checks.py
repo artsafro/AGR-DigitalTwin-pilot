@@ -312,6 +312,48 @@ def test_vpm_padding_16_px_at_2048(gap_px, expected):
     assert codes(core.padding_findings(uvs, faces, 2048, 16)) == expected
 
 
+IDENTICAL = -0.3  # two_islands(-0.3): the second square lies exactly on the first (a repeating island)
+
+
+@pytest.mark.parametrize('gap_px,expected', [(IDENTICAL * 2048, ['tex_overlap_review']), (0, ['tex_overlap_review']),
+                                             (-30, ['tex_overlap_review']), (10, ['tex_padding']),
+                                             (16, ['at_threshold']), (20, [])])
+def test_vpm_overlap_is_review_not_padding(gap_px, expected):
+    """VPM 2.5.1.5: padding applies to islands with unique images; repeating islands may overlap
+    (VPM_STANDARD uv.repeating_islands_may_overlap, glass.overlap_allowed) -> review, not tex_padding."""
+    uvs, faces = two_islands(gap_px / 2048)
+    got = core.padding_findings(uvs, faces, 2048, 16, overlap_review=True)
+    assert codes(got) == expected
+    assert len(got) == len(expected)  # one finding, not one per pair
+
+
+@pytest.mark.parametrize('gap_px', [IDENTICAL * 2048, 0, -30])
+def test_non_vpm_overlap_stays_padding(gap_px):
+    uvs, faces = two_islands(gap_px / 2048)
+    assert codes(core.padding_findings(uvs, faces, 2048, 16)) == ['tex_padding']
+    assert codes(core.padding_findings(uvs, faces, 2048, 8, overlap_review=False)) == ['tex_padding']
+
+
+def test_vpm_overlap_does_not_hide_a_small_gap_of_the_same_owner():
+    """Worst pair per owner: a gap-0 overlap must not mask a 10 px pair of the same object."""
+    uvs, faces = two_islands(IDENTICAL)
+    uvs = uvs + [(0.4 + 10 / 2048, 0.1), (0.7, 0.1), (0.7, 0.4), (0.4 + 10 / 2048, 0.4)]
+    faces = faces + [(5, [8, 9, 10]), (6, [8, 10, 11])]
+    got = core.padding_findings(uvs, faces, 2048, 16, overlap_review=True)
+    assert codes(got) == ['tex_overlap_review', 'tex_padding'] and len(got) == 2
+
+
+def test_textures_scene_vpm_overlap_review_npm_overlap_padding():
+    vpm = core.textures_scene([tex_row(1, 'SM_Tverskaya_12_Main', vpm_set(), VPM_FBX, IDENTICAL)])[0][1]
+    assert codes(vpm) == ['tex_overlap_review']
+    assert codes(core.textures_scene([tex_row(1, 'SM_Tverskaya_12_Main', vpm_set(), VPM_FBX, 10 / 2048)])[0][1]) \
+        == ['tex_padding']
+    npm = core.textures_scene([tex_row(1, 'SM_Tverskaya_12_001_Main', [('T_Tverskaya_12_001_Main_d_1.png',
+                                                                       png(1024, 1024))], gap=IDENTICAL)])[0][1]
+    assert codes(npm) == ['tex_padding']
+    assert 'tex_overlap_review' in core.CODES['textures']
+
+
 def test_padding_geoagr_live_8px_would_pass_a_12px_gap():
     uvs, faces = two_islands(12 / 2048)
     assert codes(core.padding_findings(uvs, faces, 2048, 16)) == ['tex_padding']

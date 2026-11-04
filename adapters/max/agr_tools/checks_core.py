@@ -48,8 +48,8 @@ CODES = {
               'name_type', 'name_case', 'name_digits', 'name_conflict', 'fbx_unmapped'},
     'tris': {'tri_limit', 'tri_at_limit', 'tri_unmeasurable', 'ucx_tri_limit', 'fbx_unmapped'},
     'textures': {'tex_missing', 'tex_unreadable', 'tex_format', 'tex_size', 'tex_alpha', 'tex_bit_depth',
-                 'tex_file_size', 'tex_udim', 'tex_set', 'tex_padding', 'tex_unmeasurable', 'at_threshold',
-                 'fbx_unmapped'},
+                 'tex_file_size', 'tex_udim', 'tex_set', 'tex_padding', 'tex_overlap_review', 'tex_unmeasurable',
+                 'at_threshold', 'fbx_unmapped'},
     'pivot': {'pivot_z', 'pivot_mismatch', 'pivot_unmeasurable', 'at_threshold', 'fbx_unmapped'},
     'geojson': set(),
 }
@@ -472,7 +472,7 @@ def _inside(pt, tri):
     return not (neg and pos)
 
 
-def padding_findings(uvs, faces, size_px, required_px, owner=None):
+def padding_findings(uvs, faces, size_px, required_px, owner=None, overlap_review=False):
     """Minimum gap between UV islands of one tile, in pixels of a size_px texture.
 
     uvs: [(u, v)]; faces: [(face_id, [uv vertex indices])] (polygons are fanned).
@@ -480,7 +480,10 @@ def padding_findings(uvs, faces, size_px, required_px, owner=None):
     dilated by the padding), changes: exact segment distances between island boundaries instead of a
     raster dilation; the regulation's 16/32 px for VPM 2048/4096 (the commented-out branch, matrix
     gap 3) instead of the live 8 px; NPM keeps 8 px; a gap equal to the minimum is `at_threshold`;
-    overlapping islands report gap 0 (repeating islands may be intentional in VPM, reviewed by eye);
+    touching or overlapping islands have gap 0 and are `tex_padding` by default; with overlap_review
+    (VPM: regulation 2.5.1.5 applies padding only to islands with unique images; VPM_STANDARD
+    uv.repeating_islands_may_overlap, glass.overlap_allowed) a gap 0 is the review-level
+    `tex_overlap_review` instead, kept apart from the gaps so it never hides a gap > 0 below the minimum;
     work above PADDING_PAIR_BUDGET edge pairs is `tex_unmeasurable`, never a pass.
     owner: face id -> owner (an object of a pooled atlas); the worst pair is reported PER OWNER and
     each finding carries its owner as a 4th element. Without owner one worst pair for the whole set.
@@ -526,7 +529,7 @@ def padding_findings(uvs, faces, size_px, required_px, owner=None):
         data.append({'tile': (math.floor(cu), math.floor(cv)), 'boundary': boundary, 'tris': tris,
                      'pts': pts, 'box': box, 'ids': ids})
     need = required_px / float(size_px)
-    worst = {}
+    worst, overlaps = {}, {}
     work = 0
     for i in range(len(data)):
         for j in range(i + 1, len(data)):
@@ -546,9 +549,14 @@ def padding_findings(uvs, faces, size_px, required_px, owner=None):
             # worst pair PER OWNER (review r1): a pooled atlas must not hide one object's violation
             # behind another pair's smaller gap
             for o in {owner(A['ids'][0]), owner(B['ids'][0])}:
-                if o not in worst or d < worst[o][0]:
+                if overlap_review and d == 0:
+                    overlaps.setdefault(o, A['ids'] + B['ids'])
+                elif o not in worst or d < worst[o][0]:
                     worst[o] = (d, A['ids'] + B['ids'])
     out = []
+    for o in sorted(overlaps, key=repr):
+        out.append(('tex_overlap_review', f'UV islands touch or overlap at {size_px} px: allowed only for '
+                    'repeating islands (VPM 2.5.1.5), review', overlaps[o], o))
     for o in sorted(worst, key=repr):
         d, ids = worst[o]
         px = d * size_px
@@ -656,7 +664,8 @@ def textures_scene(rows):
                                 'reason': f'UV padding not measured{where}: no {model} map size with a padding rule'})
                 continue
             a = atlases.setdefault((r['fbx'], atlas_id(paths, model)),
-                                   {'size': size, 'need': need, 'uvs': [], 'faces': [], 'keys': []})
+                                   {'size': size, 'need': need, 'uvs': [], 'faces': [], 'keys': [],
+                                    'model': model})
             if size > a['size']:
                 a['size'], a['need'] = size, need
             slot_atlas[mid] = a
@@ -688,7 +697,8 @@ def textures_scene(rows):
     for a in atlases.values():
         if not a['faces']:
             continue
-        for item in padding_findings(a['uvs'], a['faces'], a['size'], a['need'], owner=lambda fid: fid[0]):
+        for item in padding_findings(a['uvs'], a['faces'], a['size'], a['need'], owner=lambda fid: fid[0],
+                                     overlap_review=a['model'] == 'vpm'):
             if len(item) < 4:  # whole-atlas finding (unmeasurable): every object of the atlas
                 for k in a['keys']:
                     found[k].append(item)
