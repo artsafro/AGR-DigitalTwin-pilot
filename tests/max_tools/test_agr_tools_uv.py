@@ -39,12 +39,12 @@ def test_version_macros_and_roadmap_text():
     readme = (PACKAGE / 'README.md').read_text(encoding='utf-8')
     startup = (PACKAGE / 'startup.ms').read_text(encoding='utf-8')
     install = (PACKAGE / 'install.ms').read_text(encoding='utf-8')
-    assert 'VERSION = "0.4.0"' in runtime
+    assert 'VERSION = "0.7.0"' in runtime
     assert '0.002' in runtime and '0.005' in runtime
     for name in ('AGRToolsNudge', 'AGRToolsNudgeApply', 'AGRToolsAtlas', 'AGRToolsAtlasApply'):
         assert name in mcr
-    assert '0.4.0' in startup and 'Nudge' in startup and 'Atlas' in startup
-    assert 'AGRTools-0.4.0' in install
+    assert '0.7.0' in startup and 'Nudge' in startup and 'Atlas' in startup
+    assert 'AGRTools-0.7.0' in install
     assert 'UV integer-tile nudge' in readme and 'UDIM -> NPM atlas' in readme
     assert 'collision generator' in readme.lower()
     assert 'texel' in readme.lower() and 'checked export' in readme.lower()
@@ -497,3 +497,174 @@ def test_shipped_archive_contains_atlas_core_text(tmp_path):
     tree = ast.parse(shipped)
     doc = ast.get_docstring(tree)
     assert doc and 'new-case' in doc
+
+
+# --- #726: Editable_Mesh channel-1 read/write uses only APIs that exist in Max 2024 ---
+
+class _P3:
+    def __init__(self, x, y, z):
+        self.x, self.y, self.z = float(x), float(y), float(z)
+
+
+class _MxsArray:
+    def __init__(self, values):
+        self.values = [int(v) for v in values]
+        self.count = len(self.values)
+
+    def __getitem__(self, i):
+        return self.values[i]
+
+
+class _GeoKind:
+    def __init__(self, name):
+        self.name = name
+
+    def __str__(self):
+        return self.name
+
+
+class _GeoBase:
+    def __init__(self, kind, verts, faces, ids, uvs, face_uvs):
+        self.kind, self.verts, self.faces, self.ids = kind, verts, faces, ids
+        self.maps = {1: {'verts': list(uvs), 'faces': [list(f) for f in face_uvs]}}
+
+    @property
+    def mesh(self):
+        return _TriView(self)
+
+
+class _TriView:
+    """Editable_Mesh.mesh: the TriMesh value the global face functions accept."""
+
+    def __init__(self, base):
+        self.base = base
+
+
+class _GeoNode:
+    def __init__(self, name, base, offset):
+        self.name, self.baseObject, self.offset = name, base, offset
+        self.updates = 0
+
+
+class _Strict:
+    """Only the named functions exist, like the Max 2024 polyop/meshop structs."""
+
+    def __init__(self, **fns):
+        self.__dict__.update(fns)
+
+
+def _geo_runtime():
+    poly_kind, mesh_kind = _GeoKind('Editable_Poly'), _GeoKind('Editable_Mesh')
+
+    def base(t):
+        return t.baseObject if isinstance(t, _GeoNode) else t
+
+    def world(t, i, node=None):
+        p = base(t).verts[i - 1]
+        owner = t if isinstance(t, _GeoNode) else node
+        dx = owner.offset if owner is not None else (0.0, 0.0, 0.0)
+        return _P3(p[0] + dx[0], p[1] + dx[1], p[2] + dx[2])
+
+    def set_map_support(t, ch, on):
+        base(t).maps.setdefault(ch, {'verts': [], 'faces': [[0, 0, 0] for _ in base(t).faces]})
+
+    def set_num_map_verts(t, ch, n, keep=False):
+        base(t).maps[ch]['verts'] = [(0.0, 0.0)] * n
+
+    def set_map_vert(t, ch, i, p):
+        base(t).maps[ch]['verts'][i - 1] = (p.x, p.y)
+
+    def mesh_set_map_face(t, ch, i, p):
+        if not isinstance(p, _P3):
+            raise TypeError('meshop.setMapFace wants a Point3')
+        base(t).maps[ch]['faces'][i - 1] = [int(p.x) - 1, int(p.y) - 1, int(p.z) - 1]
+
+    def poly_set_map_face(t, ch, i, arr):
+        base(t).maps[ch]['faces'][i - 1] = [v - 1 for v in arr.values]
+
+    common = dict(
+        getMapSupport=lambda t, ch: ch in base(t).maps,
+        setMapSupport=set_map_support,
+        getNumVerts=lambda t: len(base(t).verts),
+        getNumFaces=lambda t: len(base(t).faces),
+        getNumMapVerts=lambda t, ch: len(base(t).maps[ch]['verts']),
+        setNumMapVerts=set_num_map_verts,
+        getMapVert=lambda t, ch, i: _P3(*base(t).maps[ch]['verts'][i - 1], 0.0),
+        setMapVert=set_map_vert,
+    )
+    polyop = _Strict(getVert=world,
+                     getFaceVerts=lambda t, i: _MxsArray([v + 1 for v in base(t).faces[i - 1]]),
+                     getFaceMatID=lambda t, i: base(t).ids[i - 1],
+                     getMapFace=lambda t, ch, i: _MxsArray([v + 1 for v in base(t).maps[ch]['faces'][i - 1]]),
+                     setMapFace=poly_set_map_face, **common)
+    # meshop has no getFaceVerts/getFaceMatID; faces are Point3 triangles.
+    meshop = _Strict(getVert=world,
+                     getMapFace=lambda t, ch, i: _P3(*[v + 1 for v in base(t).maps[ch]['faces'][i - 1]]),
+                     setMapFace=mesh_set_map_face, **common)
+
+    def tri(t):
+        # Max 2024: 'No "getface" function for Editable Mesh' -- only a TriMesh is accepted.
+        if not isinstance(t, _TriView):
+            raise RuntimeError('No "getface" function for ' + str(getattr(t, 'kind', t)))
+        assert t.base.kind is mesh_kind
+        return t.base
+
+    def get_face(t, i):
+        return _P3(*[v + 1 for v in tri(t).faces[i - 1]])
+
+    def get_face_mat_id(t, i):
+        return tri(t).ids[i - 1]
+
+    def update(n):
+        n.updates += 1
+
+    rt = _Strict(Editable_Poly=poly_kind, Editable_Mesh=mesh_kind, polyop=polyop, meshop=meshop,
+                 classOf=lambda o: o.kind, point3=_P3, getFace=get_face, getFaceMatID=get_face_mat_id,
+                 update=update,
+                 execute=lambda text: _MxsArray(text.strip('#()').split(',')))
+    return rt, poly_kind, mesh_kind
+
+
+@pytest.mark.parametrize('kind_name', ['Editable_Poly', 'Editable_Mesh'])
+def test_read_write_channel_uses_existing_api_for_mesh_and_poly(kind_name):
+    rt, poly_kind, mesh_kind = _geo_runtime()
+    kind = poly_kind if kind_name == 'Editable_Poly' else mesh_kind
+    runtime = _load(RUNTIME, 'agr_runtime_726_' + kind_name)
+    runtime._rt = lambda: rt
+    verts = [(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)]
+    faces = [(0, 1, 2), (0, 2, 3)]
+    node = _GeoNode('synthetic_' + kind_name, _GeoBase(kind, verts, faces, [1, 2], _quad(3.2, -1.8),
+                                                         faces), (10.0, 20.0, 30.0))
+    got = runtime._read_channel(node)
+    # Both classes report world-space vertices (Poly via the node, Mesh via node:).
+    assert got['vertices'] == [(10.0 + x, 20.0 + y, 30.0 + z) for x, y, z in verts]
+    assert got['faces'] == [[0, 1, 2], [0, 2, 3]]
+    assert got['face_uvs'] == [[0, 1, 2], [0, 2, 3]]
+    assert got['ids'] == [1, 2]
+    assert got['uvs'] == _quad(3.2, -1.8)
+    new_uvs = _quad(0.2, 0.2)
+    runtime._write_channel(node, new_uvs, [[0, 2, 3], [0, 1, 2]])
+    back = runtime._read_channel(node)
+    assert back['uvs'] == new_uvs
+    assert back['face_uvs'] == [[0, 2, 3], [0, 1, 2]]
+    assert back['vertices'] == got['vertices'] and back['faces'] == got['faces']
+    if kind is mesh_kind:
+        assert node.updates >= 1, 'edited Editable_Mesh base object was not updated'
+
+
+def test_mesh_channel_rejects_unsupported_class_and_non_triangle_by_name():
+    rt, _poly, mesh_kind = _geo_runtime()
+    runtime = _load(RUNTIME, 'agr_runtime_726_reject')
+    runtime._rt = lambda: rt
+    other = _GeoNode('synthetic_nurbs', _GeoBase(_GeoKind('NURBSSurf'), [(0, 0, 0)], [(0, 0, 0)], [1],
+                                                  [(0, 0)], [(0, 0, 0)]), (0, 0, 0))
+    with pytest.raises(ValueError, match=r'^unsupported geometry: synthetic_nurbs \(NURBSSurf\)$'):
+        runtime._read_channel(other)
+    with pytest.raises(ValueError, match='unsupported geometry: synthetic_nurbs'):
+        runtime._write_channel(other, [(0, 0)], [[0, 0, 0]])
+    tri = _GeoNode('synthetic_mesh_quadface', _GeoBase(mesh_kind, [(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)],
+                                                      [(0, 1, 2)], [1], _quad(0, 0), [(0, 1, 2)]), (0, 0, 0))
+    before = [list(f) for f in tri.baseObject.maps[1]['faces']]
+    with pytest.raises(ValueError, match='non-triangle UV face: synthetic_mesh_quadface'):
+        runtime._write_channel(tri, _quad(0, 0), [[0, 1, 2, 3]])
+    assert tri.baseObject.maps[1]['faces'] == before, 'rejected write changed the mesh'

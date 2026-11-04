@@ -1,4 +1,4 @@
-"""new-case: AGR Tools 0.4.0 checked-export button seams.
+"""new-case: AGR Tools 0.5.0 checked-export button seams.
 
 Pattern: new-case. Probes the guarantees for the one new button: gates run in
 order and a failure writes nothing, a clean fixture's FBX readback matches the
@@ -102,16 +102,16 @@ def _core():
 
 def test_version_macro_and_completed_rollout():
     runtime = RUNTIME.read_text(encoding='utf-8')
-    mcr = (PACKAGE / 'agr_tools.mcr').read_text(encoding='utf-8')
+    mcr = (PACKAGE / 'agr_tools.mcr').read_text(encoding='utf-8-sig')
     readme = (PACKAGE / 'README.md').read_text(encoding='utf-8')
     startup = (PACKAGE / 'startup.ms').read_text(encoding='utf-8')
     install = (PACKAGE / 'install.ms').read_text(encoding='utf-8')
-    assert 'VERSION = "0.4.0"' in runtime
+    assert 'VERSION = "0.7.0"' in runtime
     assert '0.002' in runtime and '0.005' in runtime
     assert 'AGRToolsExport' in mcr
-    assert 'Checked export' in mcr
-    assert '0.4.0' in startup and 'Export' in startup
-    assert 'AGRTools-0.4.0' in install
+    assert 'Экспорт с проверкой' in mcr
+    assert '0.7.0' in startup and 'Export' in startup
+    assert 'AGRTools-0.7.0' in install
     assert 'export_core.py' in install
     assert 'Checked export' in readme
     assert 'first rollout complete' in readme.lower()

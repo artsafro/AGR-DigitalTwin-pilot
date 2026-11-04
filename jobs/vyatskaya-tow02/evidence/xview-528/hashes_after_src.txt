@@ -1,0 +1,2 @@
+ff8994dc4b7c05560eedd2b5af0827c03a919ba513b71ef8f60d2788fe28080a *C:/Users/artsafro/.AGR-DigitalTwin_pilot/jobs/vyatskaya-tow02/outputs/export-v005/SM_Vyatskaya_Vl_47_49_013_Main.fbx
+d4e209269c988ba135916ae20b84bb1e9907a29d44ab26c8597d146987ff59f5 *C:/Users/artsafro/Desktop/!3D viz/NTR/26_Vyatskoe/001 - Моделирование НПМ с нуля/001 - Моделирование НПМ с нуля/for_placement/sceene.max
