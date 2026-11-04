@@ -33,7 +33,13 @@ OKS_INDEX = re.compile(r'^(?P<address>' + ADDRESS + r')_(?P<index>[0-9]{3})$')
 TRAILING_NUMBER = re.compile(r'^(?P<address>' + ADDRESS + r')_(?P<number>[0-9]+)$')
 GROUND_SUFFIXES = ('GroundElGlass', 'GroundGlass', 'GroundEl', 'Ground', 'Flora')  # longest first
 OKS_MESH = re.compile(r'^SM_(?P<address>' + ADDRESS + r')_(?P<index>00[1-9]|01[0-9]|020)_(?P<suffix>Main|MainGlass)$')
-UCX_MESH = re.compile(r'^UCX_(?P<name>SM_' + ADDRESS + r')_(?P<n>[0-9]{3})$')
+GROUND_MESH = re.compile(r'^SM_(?P<address>' + ADDRESS + r')_(?P<suffix>GroundElGlass|GroundGlass|GroundEl|Ground|Flora)$')
+NEAR_ORIGIN_M = 100.0  # NPM sits in MSK coordinates: a pivot this close to 0,0,0 is a placement error (lab L04)
+# FBX settings of the NPM export (lab L04: GeoAGR's are right except Triangulate, GeoAGR.ms:66578-66605)
+GROUND_FBX_PARAMS = (('Animation', False), ('Cameras', False), ('Lights', False), ('ASCII', False),
+                     ('FileVersion', 'FBX201400'), ('EmbedTextures', True), ('Triangulate', True),
+                     ('SmoothingGroups', True), ('SmoothMeshExport', False), ('ConvertUnit', 'm'),
+                     ('UpAxis', 'Y'), ('ScaleFactor', 1.0), ('Preserveinstances', False), ('GeomAsBone', False))
 TOOLS = ('qa.package', 'export.zip', 'export.ground_fbx', 'export.geojson_write')
 
 
@@ -346,3 +352,100 @@ def zip_apply(edit, preview, validate_fn=None, limits=None):
     extra = {'folder': current['folder'], 'address': current['address'], 'reports': reports,
              'exit_code': worst_exit(reports) if reports else None}
     return edit.report('export.zip', 'apply', objects=objects, done=done, skipped_=skipped, extra=extra)
+
+
+# ---- export.ground_fbx: NPM FBX split by the suffix grammar --------------------------------------------------
+def classify_mesh(name):
+    """('ground', address, suffix) | ('oks', address, NNN) | None. Suffix grammar of docs/domain/geometry.md:39-44;
+    Flora belongs to the Ground file (D097), unlike GeoAGR's lowercase 'ground' substring test (GeoAGR.ms:66611)."""
+    m = GROUND_MESH.match(name)
+    if m:
+        return 'ground', m.group('address'), m.group('suffix')
+    m = OKS_MESH.match(name)
+    if m:
+        return 'oks', m.group('address'), m.group('index')
+    return None
+
+
+def ground_plan(nodes, code, address=None, folder=None, exists=os.path.exists):
+    """FBX files of one NPM delivery from node facts; no file is touched.
+
+    nodes: [{'handle', 'name', 'geometry': bool, 'material': class name or None, 'pivot_m': distance of the pivot
+    to 0,0,0 in metres, 'hidden': bool}]. Returns {'files': [{'name', 'role', 'nodes', 'handles', 'target'}],
+    'findings': {handle: [(code, detail)]}, 'skipped': [(name, reason)], 'address', 'code'}.
+    Mixed addresses raise (never merged); the file name comes from the address field, not from a selected object."""
+    if not isinstance(code, str) or not CODE.match(code):
+        raise ValueError('territory code must be 4 digits (options.code or AGR_CODE): ' + repr(code))
+    findings, skipped, groups, addresses = {}, [], {'ground': [], 'oks': {}}, set()
+    for n in sorted(nodes, key=lambda x: x['name']):
+        h, name = n['handle'], n['name']
+        if name.startswith('UCX_'):
+            skipped.append((name, 'UCX is not exported to NPM'))
+            continue
+        cls = classify_mesh(name)
+        if cls is None:
+            skipped.append((name, 'not SM_{Address}_{Ground|GroundGlass|GroundEl|GroundElGlass|Flora} '
+                                  'or SM_{Address}_{001..020}_{Main|MainGlass}'))
+            continue
+        role, addr, key = cls
+        if address is not None and addr != address:
+            skipped.append((name, 'address {} is not the delivery address {}'.format(addr, address)))
+            continue
+        addresses.add(addr)
+        bad = []
+        if not n.get('geometry'):
+            bad.append(('not_geometry', 'not a geometry object'))
+        if n.get('hidden'):
+            bad.append(('hidden', 'hidden: unhide it yourself (the tool never unhides)'))
+        if n.get('material') not in (None, 'Standardmaterial', 'StandardMaterial', 'Standard'):
+            bad.append(('material', 'material {} is not Standard'.format(n.get('material'))))
+        pivot = n.get('pivot_m')
+        if not isinstance(pivot, (int, float)) or pivot <= NEAR_ORIGIN_M:
+            bad.append(('placement', 'pivot {} m from 0,0,0: NPM needs MSK coordinates (> {} m)'.format(
+                pivot, NEAR_ORIGIN_M)))
+        if bad:
+            findings[h] = bad
+        if role == 'ground':
+            groups['ground'].append(n)
+        else:
+            groups['oks'].setdefault(key, []).append(n)
+    if len(addresses) > 1:
+        raise ValueError('mixed addresses {}: pass options.address'.format(sorted(addresses)))
+    if not addresses:
+        raise ValueError('no Ground or OKS mesh in the NPM grammar among the nodes')
+    addr = addresses.pop()
+    files = []
+    if groups['ground']:
+        files.append(('{}_{}_Ground.fbx'.format(code, addr), 'ground', groups['ground']))
+    oks = sorted(groups['oks'])
+    if len(oks) > 20:
+        raise ValueError('more than 20 OKS ({}): NPM allows parts 01..20'.format(len(oks)))
+    for i, index in enumerate(oks, 1):
+        files.append(('{}_{}_{:02d}.fbx'.format(code, addr, i), 'oks', groups['oks'][index]))
+    out = []
+    for name, role, group in files:
+        target = os.path.join(folder, name) if folder else name
+        out.append({'name': name, 'role': role, 'nodes': sorted(n['name'] for n in group),
+                    'handles': sorted(int(n['handle']) for n in group), 'target': target,
+                    'exists': bool(folder) and exists(target)})
+    return {'files': out, 'findings': findings, 'skipped': skipped, 'address': addr, 'code': code}
+
+
+def ground_report(edit, mode, plan, nodes, state=None, done=(), extra_findings=None, extra=None):
+    """Edit report of the NPM FBX split: one object per node (guards), skipped nodes/files, done files."""
+    objects = []
+    for n in sorted(nodes, key=lambda x: int(x['handle'])):
+        items = [edit.finding(c, (), d) for c, d in plan['findings'].get(n['handle'], [])]
+        items += [edit.finding(c, (), d) for c, d in (extra_findings or {}).get(n['name'], [])]
+        objects.append(edit.entry(n['handle'], n['name'], items))
+    skipped = [edit.skipped(n, r) for n, r in plan['skipped']]
+    skipped += [edit.skipped(f['name'], 'exists; refusing to overwrite') for f in plan['files'] if f['exists']]
+    ambiguous = []
+    if mode == 'preview':
+        done = [f['name'] for f in plan['files'] if not f['exists']]
+    info = {'address': plan['address'], 'code': plan['code'],
+            'files': [{k: f[k] for k in ('name', 'role', 'nodes', 'target')} for f in plan['files']]}
+    info.update(extra or {})
+    return edit.report('export.ground_fbx', mode, objects=objects, done=list(done), skipped_=skipped,
+                       ambiguous=ambiguous, state_hash=None if mode == 'apply' else edit.fingerprint(state),
+                       extra=info)

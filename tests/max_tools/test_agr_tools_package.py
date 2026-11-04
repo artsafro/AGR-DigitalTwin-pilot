@@ -329,3 +329,102 @@ def test_dispatcher_runs_the_package_glue(tmp_path, monkeypatch):
     assert rt.parse_report(json.dumps(r)) == r
     with pytest.raises(ValueError, match='read-only'):
         rt.edits_080('qa.package', 'apply', q)
+
+
+# ---- export.ground_fbx (export.ground_fbx.md) ---------------------------------------------------------------
+ACCEPT = ['SM_X_GroundGlass', 'SM_X_Ground', 'SM_X_GroundEl', 'SM_X_GroundElGlass', 'SM_X_Flora', 'SM_X_001_Main']
+
+
+def _facts(names, **over):
+    return [dict({'handle': i, 'name': n, 'geometry': True, 'material': 'Standardmaterial', 'pivot_m': 2.0e6,
+                  'hidden': False}, **over.get(n, {})) for i, n in enumerate(names, 1)]
+
+
+def geoagr_ground_split(names, code):
+    """Lab L04 measurement of Export LowPoly: lowercase 'ground' substring split (GeoAGR.ms:66611), the Ground file
+    named from the first selected ground object (66617-66622), all OKS into one `_01` file."""
+    ground = [n for n in names if 'ground' in n.lower()]
+    oks = [n for n in names if 'ground' not in n.lower()]
+    out = {}
+    if ground:
+        nam = ground[0].replace('SM_', '').replace('_GroundEl', '').replace('_Ground', '')
+        out['{}_{}_Ground.fbx'.format(code, nam)] = sorted(ground)
+    if oks:
+        out['{}_X_01.fbx'.format(code)] = sorted(oks)
+    return out
+
+
+def core_ground_split(names, code):
+    plan = pc.ground_plan(_facts(names), code)
+    return {f['name']: f['nodes'] for f in plan['files']}
+
+
+EXPECTED_SPLIT = {'0123_X_Ground.fbx': sorted(ACCEPT[:5]), '0123_X_01.fbx': ['SM_X_001_Main']}
+
+
+@pytest.mark.parametrize('impl', [MODEL, 'core'])
+def test_flora_goes_into_the_ground_file(impl):
+    """export.ground_fbx defect 1: Flora landed in the OKS `_01.fbx`."""
+    got = (geoagr_ground_split if impl == 'geoagr' else core_ground_split)(ACCEPT, '0123')
+    assert 'SM_X_Flora' in got.get('0123_X_Ground.fbx', [])
+
+
+@pytest.mark.parametrize('impl', [MODEL, 'core'])
+def test_ground_file_name_from_the_address_not_the_first_selected(impl):
+    """export.ground_fbx defect 2: GroundGlass first -> `0123_XGlass_Ground.fbx`; `SM_X_Ground_001` -> `_001_Ground`."""
+    split = geoagr_ground_split if impl == 'geoagr' else core_ground_split
+    assert split(ACCEPT, '0123') == EXPECTED_SPLIT
+
+
+@pytest.mark.parametrize('impl', [MODEL, 'core'])
+def test_export_triangulates(impl):
+    """export.ground_fbx defect 3: Triangulate off (GeoAGR.ms:66583); NPM requires triangulation on export."""
+    params = dict([('Triangulate', False), ('FileVersion', 'FBX201400')]) if impl == 'geoagr' \
+        else dict(pc.GROUND_FBX_PARAMS)
+    assert params['Triangulate'] is True and params['FileVersion'] == 'FBX201400'
+
+
+def test_ground_split_is_independent_of_selection_order():
+    import random
+    rng = random.Random(7)
+    for _ in range(20):
+        names = ACCEPT[:]
+        rng.shuffle(names)
+        assert core_ground_split(names, '0123') == EXPECTED_SPLIT
+
+
+def test_ground_fbx_keeps_the_right_fbx_settings():
+    """Lab L04 'correct': binary FBX 7400, 1 unit = 1 m, scale 1; textures embedded (NPM reg p.9 §5.1)."""
+    p = dict(pc.GROUND_FBX_PARAMS)
+    assert (p['ASCII'], p['FileVersion'], p['ConvertUnit'], p['ScaleFactor'], p['EmbedTextures']) == \
+        (False, 'FBX201400', 'm', 1.0, True)
+    assert p['Animation'] is False and p['Cameras'] is False and p['Lights'] is False
+
+
+def test_ground_plan_refuses_mixed_addresses_bad_code_and_names_skips():
+    with pytest.raises(ValueError, match='mixed addresses'):
+        pc.ground_plan(_facts(['SM_X_Ground', 'SM_Y_Ground']), '0123')
+    assert [f['name'] for f in pc.ground_plan(_facts(['SM_X_Ground', 'SM_Y_Ground']), '0123', 'Y')['files']] == \
+        ['0123_Y_Ground.fbx']
+    for bad in (None, '123', '01234', 'abcd'):
+        with pytest.raises(ValueError, match='4 digits'):
+            pc.ground_plan(_facts(ACCEPT), bad)
+    plan = pc.ground_plan(_facts(ACCEPT + ['SM_X_Ground_001', 'UCX_SM_X_001_Main_001', 'Box001']), '0123')
+    assert {n for n, _ in plan['skipped']} == {'SM_X_Ground_001', 'UCX_SM_X_001_Main_001', 'Box001'}
+
+
+def test_ground_plan_guards_and_oks_parts(tmp_path):
+    names = ACCEPT + ['SM_X_001_MainGlass', 'SM_X_003_Main']
+    facts = _facts(names, **{'SM_X_Flora': {'pivot_m': 3.0}, 'SM_X_Ground': {'material': 'PhysicalMaterial'},
+                             'SM_X_GroundEl': {'hidden': True}})
+    (tmp_path / '0123_X_02.fbx').write_bytes(b'x')
+    plan = pc.ground_plan(facts, '0123', folder=str(tmp_path))
+    assert [(f['name'], f['nodes'], f['exists']) for f in plan['files']] == [
+        ('0123_X_Ground.fbx', sorted(ACCEPT[:5]), False), ('0123_X_01.fbx', ['SM_X_001_Main', 'SM_X_001_MainGlass'], False),
+        ('0123_X_02.fbx', ['SM_X_003_Main'], True)]
+    codes = {facts[h - 1]['name']: [c for c, _ in v] for h, v in plan['findings'].items()}
+    assert codes == {'SM_X_Flora': ['placement'], 'SM_X_Ground': ['material'], 'SM_X_GroundEl': ['hidden']}
+    r = pc.ground_report(ec, 'preview', plan, facts, state={'s': 1}, extra={'options': {}})
+    assert r['status'] == 'fail' and r['plan']['done'] == ['0123_X_Ground.fbx', '0123_X_01.fbx']
+    assert {'item': '0123_X_02.fbx', 'reason': 'exists; refusing to overwrite'} in r['plan']['skipped']
+    ec.check_preview('export.ground_fbx', r)
