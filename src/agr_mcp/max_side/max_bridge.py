@@ -15,6 +15,13 @@ import sys
 
 FUNCTIONS = {"agr_xview_check": "xview", "agr_matid_check": "matid", "agr_texel_readout": "texel_preview"}
 EXPECTED_RUNTIME = "0.5.0"
+# AGR Tools 0.7.0 pre-delivery checks (#860): runtime.checks_070(<check>, nodes), read-only, need runtime 0.7.0
+CHECKS_070 = {"agr_scene_census": "census", "agr_scene_units": "units", "agr_model_perimeter_drop": "perimeter_drop",
+              "agr_tex_material_type": "material_type", "agr_ucx_audit": "ucx_audit",
+              "agr_atlas_sets_count": "sets_count", "agr_qa_fbx_split": "fbx_split", "agr_qa_glass": "glass",
+              "agr_qa_preflight": "preflight", "agr_qa_scene_hygiene": "scene_hygiene", "agr_qa_xform": "xform",
+              "agr_qa_zero_area": "zero_area"}
+RUNTIME_070 = "0.7.0"
 
 
 def _rt():
@@ -36,7 +43,7 @@ def _dedupe_own_path():
             seen = True
 
 
-def _load_runtime(root):
+def _load_runtime(root, expected=EXPECTED_RUNTIME):
     target = os.path.join(root, "runtime.py")
     if not os.path.isfile(target):
         raise FileNotFoundError("AGR Tools runtime.py not installed at " + target)
@@ -50,9 +57,9 @@ def _load_runtime(root):
         mod = importlib.import_module("runtime")
         if _norm(mod.__file__) != _norm(target):
             raise RuntimeError("imported runtime from " + str(mod.__file__) + ", expected " + target)
-    if getattr(mod, "VERSION", None) != EXPECTED_RUNTIME:
+    if getattr(mod, "VERSION", None) != expected:
         raise RuntimeError("AGR Tools runtime version " + str(getattr(mod, "VERSION", None))
-                           + " != " + EXPECTED_RUNTIME)
+                           + " != " + expected)
     return mod
 
 
@@ -77,17 +84,21 @@ def _nodes(rt, handles):
 
 
 def run(tool, root, args):
-    if tool not in FUNCTIONS:
+    if tool not in FUNCTIONS and tool not in CHECKS_070:
         raise ValueError("unsupported tool " + repr(tool))
+    expected = RUNTIME_070 if tool in CHECKS_070 else EXPECTED_RUNTIME
     rt = _rt()
     scene = args.get("scene")
     if not isinstance(scene, str) or not scene:
         raise ValueError("scene is required")
     _check_scene(rt, scene)
     if not root:
-        root = os.path.join(str(rt.getDir(rt.name("userScripts"))), "AGRTools-" + EXPECTED_RUNTIME)
-    mod = _load_runtime(root)
-    result = getattr(mod, FUNCTIONS[tool])(_nodes(rt, args.get("handles") or []))
+        root = os.path.join(str(rt.getDir(rt.name("userScripts"))), "AGRTools-" + expected)
+    mod = _load_runtime(root, expected)
+    if tool in CHECKS_070:
+        result = mod.checks_070(CHECKS_070[tool], _nodes(rt, args.get("handles") or []))
+    else:
+        result = getattr(mod, FUNCTIONS[tool])(_nodes(rt, args.get("handles") or []))
     return result, {"runtime_version": mod.VERSION, "runtime_file": mod.__file__}
 
 

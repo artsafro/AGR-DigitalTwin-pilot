@@ -11,70 +11,90 @@
    "number": 0,
    "title_ru": "Сцена и источник",
    "hue": null,
-   "added_because": "добавлен: TOW02 потерял ~1.5 ч, потому что класс источника не проверили до выбора маршрута (job-retro-vyatskaya-tow02-pr392); дефект GeoAGR D5 (тексель в 100 раз меньше в сцене в см) — это проблема единиц; TEC26 начался с 60-минутной переписи сцен (job-retro-tec26-oks-pr570). Все остальные блоки предполагают метры и известную сцену."
+   "added_because": "добавлен: TOW02 потерял ~1.5 ч, потому что класс источника не проверили до выбора маршрута (job-retro-vyatskaya-tow02-pr392); дефект GeoAGR D5 (тексель в 100 раз меньше в сцене в см) — это проблема единиц; TEC26 начался с 60-минутной переписи сцен (job-retro-tec26-oks-pr570). Все остальные блоки предполагают метры и известную сцену.",
+   "short_ru": "Сцена",
+   "when_ru": "В начале работы со сценой, до любых правок: что за источник, какие единицы, чего не хватает."
   },
   {
    "id": "model",
    "number": 1,
    "title_ru": "Моделирование",
    "hue": 212,
-   "added_because": ""
+   "added_because": "",
+   "short_ru": "Модель",
+   "when_ru": "Пока строится геометрия ОКС и Ground, до текстур и развёртки."
   },
   {
    "id": "tex",
    "number": 2,
    "title_ru": "Текстуры и материалы",
    "hue": 276,
-   "added_because": ""
+   "added_because": "",
+   "short_ru": "Текстуры",
+   "when_ru": "Когда назначены материалы и текстуры, до развёртки и атласа."
   },
   {
    "id": "ucx",
    "number": 3,
    "title_ru": "Коллизии UCX",
    "hue": 162,
-   "added_because": ""
+   "added_because": "",
+   "short_ru": "UCX",
+   "when_ru": "Для ВПМ, когда геометрия готова: коллизии строятся и проверяются до экспорта."
   },
   {
    "id": "udim",
    "number": 4,
    "title_ru": "UDIM и тексель",
    "hue": 234,
-   "added_because": ""
+   "added_because": "",
+   "short_ru": "UDIM",
+   "when_ru": "Когда развёртка готова: тексель и UDIM-тайлы до сборки атласа."
   },
   {
    "id": "atlas",
    "number": 5,
    "title_ru": "Атласы / не-атласы",
    "hue": 298,
-   "added_because": ""
+   "added_because": "",
+   "short_ru": "Атласы",
+   "when_ru": "Когда UDIM готовы: собрать атлас НПМ и проверить число наборов."
   },
   {
    "id": "place",
    "number": 6,
    "title_ru": "Замены и расстановка",
    "hue": 85,
-   "added_because": ""
+   "added_because": "",
+   "short_ru": "Замены",
+   "when_ru": "Когда нужны МАФ, Flora и замены по ведомости: после модели, до проверок."
   },
   {
    "id": "qa",
    "number": 7,
    "title_ru": "Проверки и сдача",
    "hue": 190,
-   "added_because": ""
+   "added_because": "",
+   "short_ru": "Проверки",
+   "when_ru": "Перед сдачей: прочитать сцену и найти ошибки; сцена не меняется."
   },
   {
    "id": "export",
    "number": 8,
    "title_ru": "Экспорт и пакет",
    "hue": 256,
-   "added_because": ""
+   "added_because": "",
+   "short_ru": "Экспорт",
+   "when_ru": "Когда проверки чистые: FBX с проверкой, пакет и архив."
   },
   {
    "id": "light",
    "number": 9,
    "title_ru": "Освещение ВПМ",
    "hue": 320,
-   "added_because": "добавлен: VPM-2.15-* (≤250 источников, только Omni/Spot, 5 м / 1.5 м, пивот корня) и VPM-2.1-2.b (FBX _Light) — правила сдачи; пробел GeoAGR №7 (Omni теряются в _Light.fbx, 66915) и три командных скрипта (Light.ms, Light_Metr.ms, FreeSpot_Tools.ms) показывают, что эта работа есть; ни один блок списка Артёма её не держит."
+   "added_because": "добавлен: VPM-2.15-* (≤250 источников, только Omni/Spot, 5 м / 1.5 м, пивот корня) и VPM-2.1-2.b (FBX _Light) — правила сдачи; пробел GeoAGR №7 (Omni теряются в _Light.fbx, 66915) и три командных скрипта (Light.ms, Light_Metr.ms, FreeSpot_Tools.ms) показывают, что эта работа есть; ни один блок списка Артёма её не держит.",
+   "short_ru": "Свет",
+   "when_ru": "Только ВПМ, когда нужен файл освещения _Light."
   }
  ],
  "rows": [
@@ -101,10 +121,10 @@
    "does_ru": "Проверяет System Unit = метры, 1 unit = 1 m, гамму 2.2/1.0; предлагает исправить",
    "source": "GeoAGR: System Setup btn_set_meters GeoAGR.ms:12547, btn_set_alpha :12554",
    "verdict": "take_fix",
-   "verdict_note": "only check by default; Set Meters does not rescale geometry (playbook caveat); fixes D5 at the source",
+   "verdict_note": "only check by default; Set Meters does not rescale geometry (playbook caveat); fixes D5 at the source; 0.7 ships the check only (#860), the fix stays a separate confirmed action",
    "evidence": "GeoAGR T06-02: texel 2048 px/m shown as 20.48 in a cm scene (D5)",
    "reqs": "NPM-1.2-1 VPM-1.2-1",
-   "mode": "undo",
+   "mode": "read",
    "mcp": "yes",
    "priority": "P1",
    "version": "0.7",
@@ -1793,7 +1813,7 @@
   {
    "version": "0.6",
    "title_ru": "Qt-панель: док, иконки Dark/Light, прогресс/отмена, меню, пакет",
-   "status": "in work",
+   "status": "done",
    "effort": "-",
    "issue": "#808",
    "rows": []
@@ -1801,9 +1821,9 @@
   {
    "version": "0.7",
    "title_ru": "Предсдача: недостающие проверки (только чтение) + блоковые цвета UI + перепись сцены",
-   "status": "planned",
+   "status": "in work",
    "effort": "L: ~2 дня агента (11 проверок на готовых twinqa-модулях, без правок сцены)",
-   "issue": "new",
+   "issue": "#860",
    "rows": [
     "scene.census",
     "scene.units",
@@ -1949,7 +1969,7 @@
    "1.x": 18
   },
   "mcp_yes": 77,
-  "read_only": 38,
+  "read_only": 39,
   "noise": 42,
   "geoagr_line_citations_verified": 29
  }

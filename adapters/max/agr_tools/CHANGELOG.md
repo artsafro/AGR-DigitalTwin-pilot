@@ -1,5 +1,22 @@
 # AGR Tools changelog
 
+## 0.7.0 (#860)
+
+Pre-delivery checks (read-only) + tab rail by block + «Путь», all from `agr-tools-suite.json` (#853 plan).
+
+- 12 checks of plan version 0.7 (`suite_core.py` logic, `suite_max.py` pymxs reads, snapshots only, D6):
+  `scene.census`, `scene.units` (D5), `model.perimeter_drop` (AGR_ZERO_M, ≥ 1 m), `tex.material_type`,
+  `ucx.audit` (twinqa ucx_audit slice), `atlas.sets_count`, `qa.fbx_split`, `qa.glass` (D2, D3),
+  `qa.preflight` (all object checks, one table), `qa.scene_hygiene` (D7), `qa.xform` (D6), `qa.zero_area`.
+  JSON report contract of 0.5.0 (`schema`/`tool`/`status`/`objects`/`plan`), status derived from findings.
+- Panel: tab rail on the left — «Путь» + the 10 blocks in plan order, one accent per block derived from the
+  Max palette (≥ 3:1 against window and base, else an error, never a pale colour). Planned buttons of
+  versions 0.8–1.x are shown greyed with «в версии 0.x».
+- «Путь»: pipeline nodes in block colours with steps and buttons, tooltip (what / when / mode / requirements),
+  «?» card, live status per block from the last reports of this scene (`%LOCALAPPDATA%/AGRTools/reports`),
+  «Следующий шаг». `docs/agr-tools/GUIDE.md` + `flow.svg` are generated from the same JSON.
+- MCP (`agr-mcp` phase 0): 12 read-only tools `agr_<block>_<name>` over `runtime.checks_070`.
+
 ## 0.6.0 (#808)
 
 Native Qt UI over all 17 existing actions; no check logic changed.
