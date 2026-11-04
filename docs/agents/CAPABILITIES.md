@@ -349,6 +349,20 @@ checker). Note: the desktop app did not load project subagents from this worktre
   guaranteed part is the write/status/commit gate.
 - Limit (user 2026-10-12 [D064], #79): a compromised environment is not covered, for example a fake `py` on PATH.
 
+### Lab CI — `lab-ci.toml` (lab laptop DESKTOP-IHMQLNS, `artsafro/agr-lab`)
+- Status: IN BRANCH `harness/lab-ci-dcc-tests` (2026-11-04, Claude Code). Not yet run on this repo on the laptop.
+- The lab laptop runs this repo's tests on every new commit of `main`, `harness/*`, `fix/*`, `feature/*` and once a
+  night: a checkout of the commit (shared clone, own `.git`, LFS files are pointers) → `uv sync --frozen --python 3.13`
+  → build `AGR-Tools.mzp` → jobs in agr-lab runner slots:
+  - `blender`: `pytest -m "blender or dcc"` (180 tests), `DT_BLENDER` = the slot's Blender 5.1.2;
+  - `unit`: default suite with `-n 8` (16 917 tests; cloud dry run 4 workers 10.4 min) — nightly/first/manual only;
+  - `agr-tools-max2024`, `agr-tools-checks-max2024`: `tests/max_tools/run_agr_tools_native.py` and
+    `run_agr_tools_checks_native.py` in batch 3ds Max 2024 (isolated slot profile, synthetic scenes).
+- Per-test results (JUnit) are compared with the previous run of the branch (a new branch with `main`); verdict
+  GREEN / CHANGED / RED goes to Telegram, the report to `C:\agr\lab-data\ci\reports\ci-pilot-<sha8>-*.md`.
+- Limits: `pytest -m max` tests are not run (they need 3ds Max 2026 and `dcc_batch.py`); a branch without
+  `lab-ci.toml` is skipped. Change the pipeline here, not in agr-lab.
+
 ## Pipeline core (src/dt_ai, technical_library, tools)
 
 Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 2026-10-06
