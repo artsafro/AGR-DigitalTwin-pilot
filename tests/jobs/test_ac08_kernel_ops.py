@@ -99,9 +99,11 @@ def _bounds_row(a, b, raw=True):
 @pytest.mark.parametrize("raw", [True, False])
 @pytest.mark.parametrize("delta,ok", [(0.0, True), (4e-6, True), (2e-5, False)])
 def test_bounds_parity_uses_vertex_tolerance_not_rounding(delta, ok, raw):
-    a = {"b": _box(36.603421)}
+    a = {"b": _box(36.6034249)}   # +4e-6 -> 36.6034289: rounds to 36.60343 vs 36.60342 (crosses 5th decimal)
     b = {"b": {**a["b"], "v": a["b"]["v"] + delta}}
-    assert _bounds_row(a, b, raw)["equal_within_tol"] is ok
+    row = _bounds_row(a, b, raw)
+    assert row["equal_within_tol"] is ok
+    assert row["equal"] is (delta == 0.0)   # strict equality would fail on main's rule
 
 
 def test_bounds_parity_vertex_count_difference_still_fails():
