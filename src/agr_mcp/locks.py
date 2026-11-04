@@ -8,6 +8,12 @@ Acquire is O_CREAT|O_EXCL (dcc_batch.acquire rules). A held, live, unexpired loc
 agr-mcp never waits and never steals a lock from a live holder. A lock whose holder pid is dead, or whose
 `until` (max_exec.py format) has passed, is stale and removed. The file carries both formats so that
 max_exec.py (`card`, `until`) and dcc_batch.py (`pid`, `t`, `timeout`) see it as held.
+
+Lifetime (#871): callers pass the wrapped call's own timeout, so `until` = now + timeout + 120; an agr-mcp
+lock (owner == 'agr-mcp' with a token) whose holder pid is alive is never stale, even past `until`.
+Reclaim (#872): a stale file is atomically renamed to a unique name first; only the caller whose rename
+succeeded and whose renamed file is still stale removes it. A caller that renamed a fresh lock (another
+reclaimer won in between) renames it back and reports busy. Then O_EXCL create decides the single winner.
 """
 from __future__ import annotations
 
@@ -71,8 +77,32 @@ def _stale(path: Path) -> bool:
     pid = info.get("pid")
     if isinstance(pid, int) and not _alive(pid):
         return True
+    if isinstance(pid, int) and info.get("owner") == "agr-mcp" and isinstance(info.get("token"), str):
+        return False  # live agr-mcp holder: its lock lasts as long as its call, whatever `until` says
     until = info.get("until")
     return isinstance(until, (int, float)) and time.time() >= until
+
+
+def _reclaim(path: Path, token: str) -> bool:
+    """Atomically take a stale lock out of the way; False when another caller got there first."""
+    aside = path.with_name(f"{path.name}.reclaim-{os.getpid()}-{token}")
+    try:
+        os.rename(path, aside)  # atomic: at most one caller moves any given file
+    except FileNotFoundError:
+        return True  # another reclaimer moved it; O_EXCL create decides who holds it
+    except OSError:
+        return False
+    if _stale(aside):
+        try:
+            os.remove(aside)
+        except OSError:
+            pass
+        return True
+    try:  # we moved a fresh lock created by the winning reclaimer: put it back
+        os.rename(aside, path)
+    except OSError:
+        pass
+    return False
 
 
 @contextmanager
@@ -91,11 +121,7 @@ def hold(host: str, card: str, timeout: float):
         try:
             fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
         except FileExistsError:
-            if attempt == 0 and _stale(path):
-                try:
-                    os.remove(path)
-                except OSError:
-                    pass
+            if attempt == 0 and _stale(path) and _reclaim(path, token):
                 continue
             raise LockBusy(f"busy: lock held: {path}") from None
         try:

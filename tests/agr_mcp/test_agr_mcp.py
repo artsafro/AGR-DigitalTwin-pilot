@@ -346,6 +346,110 @@ def test_held_lock_format_is_seen_by_max_exec_and_dcc_batch(tmp_path):
     assert not path.exists()
 
 
+def test_lock_lifetime_covers_the_wrapped_call_timeout(tmp_path, monkeypatch):
+    """#871: a 1800 s readback keeps its lock past the old fixed 900 + 120 s window while its pid lives."""
+    clock = [1_000_000.0]
+    monkeypatch.setattr(locks, "time", types.SimpleNamespace(time=lambda: clock[0]))
+    fbx = tmp_path / "a.fbx"
+    fbx.write_bytes(b"synthetic")
+    seen = {}
+
+    def probe(at):
+        clock[0] = 1_000_000.0 + at
+        try:
+            with locks.hold("blender-batch", "other-card", 60):
+                seen[at] = "acquired"
+        except locks.LockBusy:
+            seen[at] = "busy"
+
+    def fake_readback(args):
+        assert args["timeout"] == 1800
+        probe(1021)
+        probe(1800 + 121)  # `until` passed, holder pid alive, owner agr-mcp: still held
+        return {"source": "synthetic"}
+
+    monkeypatch.setattr(tools, "h_fbx_readback", fake_readback)
+    _, (res,) = run_calls([("agr_fbx_readback", {"fbx_path": str(fbx), "timeout": 1800})])
+    ok(res)
+    assert seen == {1021: "busy", 1921: "busy"}
+
+
+@pytest.mark.parametrize("name,args,want", [
+    ("agr_fbx_readback", {"fbx_path": "a.fbx", "timeout": 7200}, 7200.0),
+    ("agr_fbx_readback", {"fbx_path": "a.fbx"}, 600.0),
+    ("agr_package_validate", {"target": "a.zip", "scene": True}, 600.0),
+    ("agr_xview_check", {"scene": "live"}, tools.MAX_TIMEOUT),
+    ("agr_exec_unsafe", {"code": "1", "timeout": 3000}, 3000.0),
+])
+def test_every_locked_tool_declares_its_call_timeout(name, args, want):
+    spec = tools.catalog(unsafe=True)[name]
+    assert spec.host(args) != "offline" and spec.timeout is not None and spec.timeout(args) == want
+
+
+def test_no_locked_tool_falls_back_to_the_server_default_timeout():
+    """Every tool that takes a host lock sizes it from its own call timeout (#871), incl. later-added tools."""
+    missing = [s.name for s in tools.catalog(unsafe=True).values()
+               if s.timeout is None and s.host({"scene": "live", "fbx_path": "a.fbx", "target": "a.zip",
+                                                "code": "1", "path": "a", "dump": {}}) != "offline"]
+    assert missing == []
+
+
+def test_expired_lock_of_dead_holder_is_reclaimed(monkeypatch):
+    clock = [1_000_000.0]
+    monkeypatch.setattr(locks, "time", types.SimpleNamespace(time=lambda: clock[0]))
+    with locks.hold("blender-batch", "card-a", 1800) as path:
+        assert path is not None
+        first = json.loads(path.read_text(encoding="utf-8"))
+        clock[0] += 1800 + 121
+        monkeypatch.setattr(locks, "_alive", lambda pid: False)
+        with locks.hold("blender-batch", "card-b", 60):
+            assert json.loads(path.read_text(encoding="utf-8"))["card"] == "card-b"
+        assert first["until"] == 1_000_000.0 + 1800 + 120
+
+
+def test_two_concurrent_reclaimers_of_one_stale_lock_exactly_one_wins(tmp_path, monkeypatch):
+    """#872: both callers see the stale lock before either reclaims it; only one may acquire."""
+    lock = tmp_path / "locks" / "agr-blender-batch.lock"
+    lock.parent.mkdir()
+    real_stale = locks._stale
+    for _ in range(50):
+        lock.write_text(json.dumps({"card": "dead", "pid": 999999999}), encoding="utf-8")
+        seen_stale = threading.Barrier(2, timeout=10)
+        both_tried = threading.Barrier(2, timeout=10)
+        local = threading.local()
+        results = []
+        won = threading.Event()
+
+        def stale(path):
+            verdict = real_stale(path)
+            if not getattr(local, "waited", False):
+                local.waited = True
+                # both callers judged the old file stale; the second acts only after the first has acquired
+                if seen_stale.wait() == 1:
+                    won.wait(2)
+            return verdict
+
+        def worker():
+            try:
+                with locks.hold("blender-batch", "c", 60):
+                    results.append("acquired")
+                    won.set()
+                    both_tried.wait()  # keep holding until the other caller has tried
+            except locks.LockBusy:
+                results.append("busy")
+                both_tried.wait()
+
+        monkeypatch.setattr(locks, "_stale", stale)
+        threads = [threading.Thread(target=worker) for _ in range(2)]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join(20)
+        assert sorted(results) == ["acquired", "busy"]
+        assert not lock.exists()
+        assert sorted(p.name for p in lock.parent.iterdir()) == [], "reclaim left a temp file"
+
+
 # ---- audit --------------------------------------------------------------------------------------------------
 def test_audit_lines_equal_calls_and_carry_plan_fields(tmp_path):
     calls = [("agr_mesh_names", MESH_ARGS)] * 3 + [("agr_xview_parity", {"dump": {}})] + [("nope", {})]

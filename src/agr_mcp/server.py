@@ -82,7 +82,8 @@ def build_server(env=None, max_transport=None, lock_timeout: float = 900) -> Ser
             host = spec.host(arguments)
             record["host"] = host
             try:
-                with locks.hold(host, record["card"] or "agr-mcp", lock_timeout) as lock:
+                call_timeout = spec.timeout(arguments) if spec.timeout else lock_timeout
+                with locks.hold(host, record["card"] or "agr-mcp", call_timeout) as lock:
                     record["lock"] = str(lock) if lock else None
                     result = await anyio.to_thread.run_sync(spec.handler, arguments)
             except locks.LockBusy as exc:
