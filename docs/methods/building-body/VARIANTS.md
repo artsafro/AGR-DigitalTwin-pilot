@@ -15,7 +15,7 @@ class is written with `run_variant.py --synthetic <reason>` (`"synthetic": true`
 lists them under "Synthetic inputs and why"); `run_variant.py` refuses a building-body row without a non-blank
 reason. Opening subtraction is a tested capability (variant 2), not measured on the benchmarks. Real DWG plans for
 kpp1 / ac08 / tow02 were the follow-up #735; none exists (no DWG plan, no Revit `openings_spec.json`), so all
-rows stay synthetic [D194]. RESULTS.md "Synthetic vs drawing" pairs each synthetic row with the drawing row of
+rows stay synthetic [D195]. RESULTS.md "Synthetic vs drawing" pairs each synthetic row with the drawing row of
 the same object and variant (a row without the marker); a missing drawing row reads "not measured", never a number. Re-measure the kept outputs without rebuilding:
 `uv run python tools/methods/body/run_benchmarks.py --measure-only` (one row:
 `... run_variant.py C:/x/methods/building-body/kpp1/kernel-prisms/SM_Kpp_1.fbx --bench kpp1 --class building-body

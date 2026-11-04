@@ -538,7 +538,7 @@ def test_combined_round1_and_round2_guards_on_one_input(tmp_path):
     assert r.returncode == 4 and src.read_bytes() == before
 
 
-# --- #735: synthetic vs drawing side by side (user decision 2026-11-04 [D194]) ---
+# --- #735: synthetic vs drawing side by side (user decision 2026-11-04 [D195]) ---
 
 def _cmp_row(rid, bench, variant, tris, dev=(0.5, 0.2), shells=(1, 2), synthetic=True):
     r = {"row": rid, "class": "building-body", "benchmark": bench, "variant": variant, "triangles": {"model": tris},
@@ -597,7 +597,7 @@ def test_no_synthetic_row_means_no_comparison_section():
     assert "Synthetic vs drawing" not in md
 
 
-def test_committed_building_body_results_md_is_regenerated_and_all_rows_stay_synthetic_per_d194():
+def test_committed_building_body_results_md_is_regenerated_and_all_rows_stay_synthetic_per_d195():
     results = DECISIONS_MD.parent / "methods" / "building-body" / "results.jsonl"
     rows = rmd.read_rows(results)
     md = rmd.render(rows, "building-body")
@@ -605,8 +605,10 @@ def test_committed_building_body_results_md_is_regenerated_and_all_rows_stay_syn
     lines = _cmp_lines(md)
     assert len(lines) == 12 and all(ln.endswith("| not measured: no drawing row in results.jsonl |") for ln in lines)
     assert {(r["benchmark"], r["synthetic"]) for r in rows} == {("kpp1", True), ("ac08", True), ("tow02", True)}
-    d194 = _decision_rows().get("D194", [])
-    assert len(d194) == 1 and "#735" in d194[0] and "2026-11-04" in d194[0]
-    assert id_collisions("D194", "#735", _decision_rows(), OPEN_PR_DECISIONS) == []
+    d195 = _decision_rows().get("D195", [])
+    assert len(d195) == 1 and "#735" in d195[0] and "2026-11-04" in d195[0]
+    assert id_collisions("D195", "#735", _decision_rows(), OPEN_PR_DECISIONS) == []
+    # witness: D194 was taken on main by #885 (test polygon) while this branch was open
+    assert id_collisions("D194", "#735", _decision_rows(), OPEN_PR_DECISIONS)
     for doc in ("VARIANTS.md", "WHEN.md"):
-        assert "[D194]" in (results.parent / doc).read_text(encoding="utf-8"), doc
+        assert "[D195]" in (results.parent / doc).read_text(encoding="utf-8"), doc
