@@ -310,6 +310,44 @@ def test_F7_compress_never_silent(tmp_path):
     assert rep['plan']['done'] == [] and 'still >' in rep['plan']['skipped'][0]['reason']
 
 
+def _fit_one(tmp_path, data, name='T_a_d_1.png', **opts):
+    tmp_path.mkdir(parents=True, exist_ok=True)
+    p = tmp_path / name
+    p.write_bytes(data)
+    o = tc.format_options(dict({'out': str(tmp_path / 'o')}, **opts))
+    return tc.format_fix([str(p)], o, lambda q: Path(q).read_bytes())[1][0]
+
+
+def test_palette_order_exact_then_quantized_then_posterize(tmp_path):
+    """Decision of Artem 05.11.2026 (team audit T01): over the limit, lossless RGB -> palette -> quantised
+    palette; posterize only when palette is off or does not fit. The choice is reported."""
+    rnd = random.Random(5)
+    cols = [(rnd.randrange(256), rnd.randrange(256), rnd.randrange(256)) for _ in range(16)]
+    grid = [[rnd.choice(cols) for _ in range(256)] for _ in range(256)]
+    few = png(256, 256, 2, 8, lambda x, y: grid[y][x])  # 16 random colours: RGB deflates worse than indices
+    r = _fit_one(tmp_path / 'a', few, max_bytes=40 * 1024)  # source 45.6 kB, RGB 45.2 kB, palette 38.6 kB  # <= 256 colours: exact palette, lossless
+    assert r['encoding'] == 'palette_exact' and r['rmse'] == 0.0 and r['max_channel_error'] == 0
+    img, info = tc.decode_png(r['png'])
+    assert info['color_type'] == 3 and img.px == tc.decode_png(few)[0].px
+    r = _fit_one(tmp_path / 'b', noise_png(128), max_bytes=24 * 1024)
+    assert r['encoding'] == 'palette_quantized' and r['colours'] <= 256 and r['bytes_out'] <= 24 * 1024
+    out = tc.decode_png(r['png'])[0].px
+    assert r['rmse'] == tc.rmse(tc.decode_png(noise_png(128))[0].px, out) > 0
+    assert r['max_channel_error'] == tc.max_channel_error(tc.decode_png(noise_png(128))[0].px, out)
+    r = _fit_one(tmp_path / 'c', noise_png(128), max_bytes=24 * 1024, palette=False)
+    assert r['encoding'] == 'rgb_posterize' and cc.png_info(r['png'])[3] == 2
+
+
+def test_palette_input_is_valid_and_rgba_never_palettized(tmp_path):
+    pal = png(16, 16, 3, 8, lambda x, y: (x % 2,), plte=[(1, 2, 3), (4, 5, 6)])
+    r = _fit_one(tmp_path / 'a', pal)
+    assert r['actions'] == ['copied_unchanged'] and r['png'] == pal
+    rnd = random.Random(6)
+    keep = png(128, 128, 6, 8, lambda x, y: (rnd.randrange(256), rnd.randrange(256), rnd.randrange(256), 128))
+    r = _fit_one(tmp_path / 'b', keep, name='T_a_Diffuse_1.1001.png', profile='vpm', max_bytes=24 * 1024)
+    assert cc.png_info(r['png'])[3] == 6 and r['encoding'] == 'rgb_posterize'
+
+
 def test_alpha_refused_without_background_and_kept_where_allowed(tmp_path):
     p = tmp_path / 'T_a_ERM_1.1001.png'
     p.write_bytes(rgba_half())
@@ -386,14 +424,18 @@ def test_acceptance_format_fix(tmp_path):
     rep = tc.format_report(ec, 'apply', out, rows, None, opts, written)
     assert {p: md5(p) for p in sources} == before
     assert len(written) == 8 and rep['plan']['skipped'] == []
-    for w in written:
-        assert cc.png_info(Path(w).read_bytes())[2:5] == (8, 2, False), w
     by = {Path(r['source']).name: r for r in rows}
+    for w in written:  # 8 bits per channel, no alpha; palette (type 3) allowed: decision of Artem 05.11.2026
+        info = cc.png_info(Path(w).read_bytes())
+        assert info[2] == 8 and info[4] is False and info[3] in (2, 3), w
+    assert cc.png_info(Path(by['palette.png']['out']).read_bytes())[3] == 3
+    assert Path(by['palette.png']['out']).read_bytes() == files['palette.png']  # valid palette: unchanged
     img, _ = pixels(Path(by['rgba_half.png']['out']).read_bytes())
     assert img.px[(10 * 64 + 63) * 3:(10 * 64 + 64) * 3] == b'\x00\x00\x00'
     assert by['wide.png']['size_px'] == [512, 256] and 'not square 512x256' in by['wide.png']['notes'][0]
-    assert by['noise.png']['bytes_out'] <= limit and by['noise.png']['rmse'] > 0
-    assert any(a.startswith('posterize_') for a in by['noise.png']['actions'])
+    noise = by['noise.png']
+    assert noise['bytes_out'] <= limit and noise['rmse'] > 0 and noise['encoding'] == 'palette_quantized'
+    assert noise['colours'] == 256 and noise['max_channel_error'] > 0
     assert Path(by['control.png']['out']).read_bytes() == files['control.png']
     assert by['photo.jpg']['out'].endswith('photo.png')
     ec.validate_report(rep)

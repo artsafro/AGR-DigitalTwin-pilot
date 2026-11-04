@@ -135,7 +135,8 @@ def format_fix():
     fmt = {}
     for w in written:
         info = checks_core.png_info(Path(w).read_bytes())
-        assert info[2:5] == (8, 2, False), (w, info)
+        # 8 bits per channel, no alpha; palette (colour type 3) allowed: decision of Artem 05.11.2026
+        assert info[2] == 8 and info[4] is False and info[3] in (2, 3), (w, info)
         fmt[Path(w).name] = list(info[:2])
     by = {Path(f['source']).name: f for f in rep['plan']['files']}
     img, _ = tex.decode_png(Path(by['01_rgba_half.png']['out']).read_bytes())
@@ -147,6 +148,8 @@ def format_fix():
     assert by['07_wide.png']['size_px'] == [512, 256] and 'not square' in by['07_wide.png']['notes'][0]
     noise = by['08_noise.png']
     assert noise['bytes_out'] <= 3 * 1024 * 1024 and noise['rmse'] > 0, noise
+    assert noise['encoding'] == 'palette_quantized', noise
+    assert Path(by['02_palette.png']['out']).read_bytes() == (src / '02_palette.png').read_bytes()
     assert Path(by['06_control.png']['out']).read_bytes() == (src / '06_control.png').read_bytes()
     with_alpha_refused = agr.edits_080('tex.format_fix', 'preview',
                                        options={'files': [sources[0]], 'out': str(DATA / 'never')})
@@ -157,8 +160,9 @@ def format_fix():
         stale = type(exc).__name__
     else:
         raise AssertionError('second apply accepted')
-    return {'written': len(written), 'sizes': fmt, 'noise': {k: noise[k] for k in ('bytes_in', 'lossless_bytes', 'bytes_out',
-                                                                                      'rmse', 'actions')},
+    return {'written': len(written), 'sizes': fmt, 'noise': {k: noise[k] for k in ('bytes_in', 'lossless_bytes', 'bytes_out', 'rmse',
+                                                                                      'actions', 'encoding', 'colours',
+                                                                                      'max_channel_error')},
             'jpg_mean': [round(m, 1) for m in mean], 'second_apply': stale,
             'preview_hash': prev['plan']['hash'][:16]}
 
