@@ -187,6 +187,43 @@ CHECKS_070 = (
 )
 
 
+# 0.8 delivery edits (#908): agr_<block>_<name> -> runtime.edits_080(<plan row id>). Read rows run once; editing
+# rows are preview -> apply, and apply takes only the unaltered preview report of the previous answer.
+# (name, plan row id, what, kind) with kind: read | additive (export copies / new files) | rename (in place, undo)
+EDITS_080 = (
+    ("agr_scene_missing_maps", "scene.missing_maps", "bitmaps with a missing path and relink candidates", "read"),
+    ("agr_model_triangulate", "model.triangulate", "triangulate n-gons on export copies", "additive"),
+    ("agr_tex_format_fix", "tex.format_fix", "fixed PNGs (no alpha, 24 bit, size limit) into a new folder", "additive"),
+    ("agr_tex_placeholders", "tex.placeholders", "new flat Diffuse/ERM/Normal placeholders", "additive"),
+    ("agr_ucx_triangulate", "ucx.triangulate", "triangulate UCX on copies, convexity checked after", "additive"),
+    ("agr_ucx_rename", "ucx.rename", "rename UCX pieces to UCX_SM_<Address>_Main/Ground_NNN (one undo record)",
+     "rename"),
+    ("agr_udim_ids_to_udims", "udim.ids_to_udims", "material ID n to UDIM tile 1000+n on export copies", "additive"),
+    ("agr_qa_names_fix", "qa.names_fix", "rename objects/materials/map files by mask on export copies", "additive"),
+    ("agr_qa_package", "qa.package", "delivery ZIP: sizes, FBX/PNG/GeoJSON set, names, broken files", "read"),
+    ("agr_export_geojson_write", "export.geojson_write", "write a new GeoJSON passport and check it", "additive"),
+    ("agr_export_ground_fbx", "export.ground_fbx", "write a new _Ground FBX (Ground, GroundEl, Flora, GroundGlass)",
+     "additive"),
+    ("agr_export_pivot_place", "export.pivot_place", "pivot and placement on export copies", "additive"),
+    ("agr_export_zip", "export.zip", "write a new NPM/VPM ZIP with size limits, checked before and after", "additive"),
+)
+_LOCATE = {"scene": MAX_IN["properties"]["scene"], "handles": MAX_IN["properties"]["handles"]}
+_OPTIONS = {"type": "object", "description": "tool options (paths, profile); recorded in the preview"}
+READ_080_IN = {"type": "object", "required": ["scene"], "additionalProperties": False,
+               "properties": dict(_LOCATE, options=_OPTIONS)}
+EDIT_080_IN = {"type": "object", "required": ["scene", "mode"], "additionalProperties": False,
+               "properties": dict(_LOCATE, mode={"enum": ["preview", "apply"]}, options=_OPTIONS,
+                                  preview={"type": "object", "description": "apply: the unaltered preview report"}),
+               "oneOf": [{"properties": {"mode": {"const": "preview"}}, "not": {"required": ["preview"]}},
+                         {"properties": {"mode": {"const": "apply"}}, "required": ["preview"],
+                          "not": {"required": ["options"]}}]}
+EDIT_080_OUT = {"type": "object", "required": ["schema", "tool", "status", "objects", "plan"],
+                "properties": {"schema": {"const": 1}, "tool": {"type": "string"},
+                               "status": {"enum": ["pass", "fail", "not_implemented"]},
+                               "objects": {"type": "array"},
+                               "plan": {"type": "object", "required": ["mode", "done", "skipped", "ambiguous"]}}}
+
+
 def catalog(unsafe: bool = False, max_transport=None) -> dict[str, Spec]:
     specs = [
         Spec("agr_xview_check", "AGR Tools runtime.xview in the pinned open 3ds Max (selection-modifying: the "
@@ -237,6 +274,18 @@ def catalog(unsafe: bool = False, max_transport=None) -> dict[str, Spec]:
                           .format(name.split("_", 2)[2] if name != "agr_ucx_audit" else "ucx_audit", what),
                           MAX_IN, MAX_OUT, _max_tool(name, max_transport), _const("max-live"),
                           timeout=_max_timeout))
+    for name, row, what, kind in EDITS_080:
+        if kind == "read":
+            text = ("AGR Tools 0.8 runtime.edits_080 '{}' in the pinned open 3ds Max: {} (read-only; one call)."
+                    .format(row, what))
+        else:
+            text = ("AGR Tools 0.8 runtime.edits_080 '{}' in the pinned open 3ds Max: {}. mode=preview changes "
+                    "nothing; mode=apply takes only the unaltered preview report of the previous answer (hash and "
+                    "scene state checked), never overwrites; one undo record.".format(row, what))
+        specs.append(Spec(name, text + " An empty stub answers status not_implemented.",
+                          READ_080_IN if kind == "read" else EDIT_080_IN, EDIT_080_OUT,
+                          _max_tool(name, max_transport), _const("max-live"), read_only=kind == "read",
+                          destructive=kind == "rename", timeout=_max_timeout))
     if unsafe:
         def h_exec(args: dict):
             raw = (max_transport or max_pipe.pipe_transport)(args["code"], float(args.get("timeout", EXEC_TIMEOUT)))
@@ -251,5 +300,5 @@ def catalog(unsafe: bool = False, max_transport=None) -> dict[str, Spec]:
     return {s.name: s for s in specs}
 
 
-PHASE0 = tuple(n for n, _ in CHECKS_070) + ("agr_xview_check", "agr_matid_check", "agr_texel_readout", "agr_fbx_readback", "agr_package_validate",
+PHASE0 = tuple(n for n, _ in CHECKS_070) + tuple(n for n, *_ in EDITS_080) + ("agr_xview_check", "agr_matid_check", "agr_texel_readout", "agr_fbx_readback", "agr_package_validate",
           "agr_mesh_names", "agr_geojson_check", "agr_xview_parity")
