@@ -1,0 +1,11 @@
+# Max 2024 run r4 (review r1 fix, commit bd282efb), dcc_batch exit 0, 38.1 s
+AGR_PACKAGE_SHA256 7ab03ac037edefd31e070c2443f5576f497677f6a053af669a9757d79613d946
+AGR_CHECKS_START version=26000 file=
+AGR_TOOLS_REGISTERED version=0.5.0 category=AGR Tools macros=XView,Cleanup,MatID,Open,Nudge,NudgeApply,Atlas,AtlasApply,Ucx,UcxApply,Texel,Export,Names,Tris,Textures,Pivot,Geojson
+AGR_CHECKS_NAMES {"SM_Tverskaya_12_001_MainGlass": [], "SM_Tverskaya_12_Ground": ["fbx_unmapped"], "SM_Tverskaya_12_Main": [], "SM_tverskaya_12_001_Main_1": ["name_case", "name_suffix", "name_type"], "UCX_SM_Tverskaya_12_Ground_001": []}
+AGR_CHECKS_TRIS {"0001_Tverskaya_12_01.fbx": [150000, 150000], "0001_Tverskaya_12_02.fbx": [150012, 150000], "0001_Tverskaya_12_Ground.fbx": [170000, 180000]}
+AGR_CHECKS_TEXTURES {"SM_Pad_10px_Main": ["tex_padding"], "SM_Pad_20px_Main": [], "SM_Tverskaya_12_001_Main": ["tex_size"], "SM_Tverskaya_12_002_Main": [], "SM_Tverskaya_12_003_Main": ["tex_missing"], "SM_Tverskaya_12_Main": ["tex_missing"], "SM_Tverskaya_12_MainGlass": []}
+AGR_CHECKS_TEXTURES_ATLAS {"SM_Shared_001_Main": ["tex_padding"], "SM_Shared_002_Main": ["tex_padding"], "SM_TwoSlot_001_Main": []}
+AGR_CHECKS_PIVOT m={"SM_Pivot_1_Main": [], "SM_Pivot_1_MainGlass": ["pivot_mismatch", "pivot_z"], "UCX_SM_Pivot_1_Main_001": []} cm={"SM_Pivot_1_Main": [], "SM_Pivot_1_MainGlass": [], "UCX_SM_Pivot_1_Main_001": []}
+AGR_CHECKS_GEOJSON {"broken": [["JSON", "fail"]], "empty_object": [["type", "fail"]], "missing": [["checker", "fail"]], "no_path": [["file", "fail"]], "wrong_ext": [["file", "fail"]]}
+AGR_CHECKS_COMPLETE names=5 tris=6 textures=7+atlas3 pivot=3+cm macros=4 geojson=5 read_only=true

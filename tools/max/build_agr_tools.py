@@ -97,7 +97,8 @@ def build(output):
     output = Path(output)
     entries, inputs = {}, {}
     for name in ('mzp.run', 'install.ms', 'startup.ms', 'agr_tools.mcr', 'runtime.py', 'bootstrap.py',
-                 'README.md', 'atlas_core.py', 'ucx_core.py', 'texel_core.py', 'export_core.py'):
+                 'README.md', 'CHANGELOG.md', 'atlas_core.py', 'ucx_core.py', 'texel_core.py', 'export_core.py',
+                 'checks_core.py', 'checks_max.py'):
         p = PACKAGE / name
         inputs[p] = p.read_bytes()
         entries[name if name in ('mzp.run', 'install.ms') else 'agr_tools/' + name] = inputs[p].replace(b'\r\n', b'\n')

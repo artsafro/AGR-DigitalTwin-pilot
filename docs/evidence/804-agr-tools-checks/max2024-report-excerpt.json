@@ -1,0 +1,458 @@
+{
+ "version": [
+  26000,
+  64,
+  0,
+  26,
+  2,
+  5,
+  192,
+  2024,
+  ".2.5 Security Fix"
+ ],
+ "read_only": {
+  "names": {
+   "objects": 5,
+   "digest_unchanged": true
+  },
+  "tris": {
+   "objects": 6,
+   "digest_unchanged": true
+  },
+  "textures": {
+   "objects": 7,
+   "digest_unchanged": true
+  },
+  "pivot_m": {
+   "objects": 3,
+   "digest_unchanged": true
+  },
+  "pivot_cm": {
+   "objects": 3,
+   "digest_unchanged": true
+  }
+ },
+ "macros": {
+  "AGRToolsNames": {
+   "ran": true,
+   "digest_unchanged": true,
+   "selected_offenders": [
+    "SM_Pivot_1_Main",
+    "SM_Pivot_1_MainGlass",
+    "UCX_SM_Pivot_1_Main_001"
+   ]
+  },
+  "AGRToolsTris": {
+   "ran": true,
+   "digest_unchanged": true,
+   "selected_offenders": [
+    "SM_Pivot_1_Main",
+    "SM_Pivot_1_MainGlass",
+    "UCX_SM_Pivot_1_Main_001"
+   ]
+  },
+  "AGRToolsTextures": {
+   "ran": true,
+   "digest_unchanged": true,
+   "selected_offenders": [
+    "SM_Pivot_1_Main"
+   ]
+  },
+  "AGRToolsPivot": {
+   "ran": true,
+   "digest_unchanged": true,
+   "selected_offenders": [
+    "SM_Pivot_1_MainGlass"
+   ]
+  }
+ },
+ "reports": {
+  "names": {
+   "tool": "names",
+   "status": "fail",
+   "objects_total": 5,
+   "objects_excerpt": [
+    {
+     "handle": 2346,
+     "name": "SM_tverskaya_12_001_Main_1",
+     "findings": [
+      {
+       "code": "name_suffix",
+       "ids": [],
+       "detail": "object SM_tverskaya_12_001_Main_1: an object name cannot end with \"_1\""
+      },
+      {
+       "code": "name_type",
+       "ids": [],
+       "detail": "object SM_tverskaya_12_001_Main_1: geometry element must be one of Main, MainGlass"
+      },
+      {
+       "code": "name_case",
+       "ids": [],
+       "detail": "object SM_tverskaya_12_001_Main_1: each word starts with a capital letter: tverskaya"
+      }
+     ]
+    },
+    {
+     "handle": 2420,
+     "name": "SM_Tverskaya_12_Ground",
+     "findings": [
+      {
+       "code": "fbx_unmapped",
+       "ids": [],
+       "detail": "AGR_EXPORT_PATH None is not an NPM/VPM FBX name"
+      }
+     ]
+    }
+   ],
+   "plan": {
+    "fbx": [
+     {
+      "fbx": "C:/o/0001_Tverskaya_12_01.fbx",
+      "model": "npm",
+      "role": "oks",
+      "objects": 2,
+      "render_triangles": null,
+      "ucx_triangles": null,
+      "limit": null,
+      "ucx_limit": null
+     },
+     {
+      "fbx": "C:/o/SM_Tverskaya_12.fbx",
+      "model": "vpm",
+      "role": "oks",
+      "objects": 1,
+      "render_triangles": null,
+      "ucx_triangles": null,
+      "limit": null,
+      "ucx_limit": null
+     },
+     {
+      "fbx": "C:/o/SM_Tverskaya_12_Ground.fbx",
+      "model": "vpm",
+      "role": "ground",
+      "objects": 1,
+      "render_triangles": null,
+      "ucx_triangles": null,
+      "limit": null,
+      "ucx_limit": null
+     }
+    ],
+    "dropped": []
+   }
+  },
+  "tris": {
+   "tool": "tris",
+   "status": "fail",
+   "objects_total": 6,
+   "objects_excerpt": [
+    {
+     "handle": 2507,
+     "name": "SM_Tverskaya_12_001_Main",
+     "findings": [
+      {
+       "code": "tri_at_limit",
+       "ids": [],
+       "detail": "C:/o/0001_Tverskaya_12_01.fbx: 150000 == 150000 (npm oks); at the limit"
+      }
+     ]
+    },
+    {
+     "handle": 2546,
+     "name": "SM_Tverskaya_12_001_MainGlass",
+     "findings": [
+      {
+       "code": "tri_at_limit",
+       "ids": [],
+       "detail": "C:/o/0001_Tverskaya_12_01.fbx: 150000 == 150000 (npm oks); at the limit"
+      }
+     ]
+    }
+   ],
+   "plan": {
+    "fbx": [
+     {
+      "fbx": "C:/o/0001_Tverskaya_12_01.fbx",
+      "model": "npm",
+      "role": "oks",
+      "objects": 2,
+      "render_triangles": 150000,
+      "ucx_triangles": 0,
+      "limit": 150000,
+      "ucx_limit": null
+     },
+     {
+      "fbx": "C:/o/0001_Tverskaya_12_02.fbx",
+      "model": "npm",
+      "role": "oks",
+      "objects": 3,
+      "render_triangles": 150012,
+      "ucx_triangles": 0,
+      "limit": 150000,
+      "ucx_limit": null
+     },
+     {
+      "fbx": "C:/o/0001_Tverskaya_12_Ground.fbx",
+      "model": "npm",
+      "role": "ground",
+      "objects": 1,
+      "render_triangles": 170000,
+      "ucx_triangles": 0,
+      "limit": 180000,
+      "ucx_limit": null
+     }
+    ],
+    "dropped": []
+   }
+  },
+  "textures": {
+   "tool": "textures",
+   "status": "fail",
+   "objects_total": 7,
+   "objects_excerpt": [
+    {
+     "handle": 2794,
+     "name": "SM_Tverskaya_12_001_Main",
+     "findings": [
+      {
+       "code": "tex_size",
+       "ids": [],
+       "detail": "T_Tverskaya_12_001_Main_d_1: 1000x1000 not in [256, 512, 1024, 2048]"
+      }
+     ]
+    },
+    {
+     "handle": 2977,
+     "name": "SM_Tverskaya_12_Main",
+     "findings": [
+      {
+       "code": "tex_missing",
+       "ids": [],
+       "detail": "material has no texture maps"
+      }
+     ]
+    }
+   ],
+   "plan": {
+    "fbx": [
+     {
+      "fbx": "C:/o/0001_Tverskaya_12_01.fbx",
+      "model": "npm",
+      "role": "oks",
+      "objects": 2,
+      "render_triangles": null,
+      "ucx_triangles": null,
+      "limit": null,
+      "ucx_limit": null
+     },
+     {
+      "fbx": "C:/o/0001_Tverskaya_12_02.fbx",
+      "model": "npm",
+      "role": "oks",
+      "objects": 1,
+      "render_triangles": null,
+      "ucx_triangles": null,
+      "limit": null,
+      "ucx_limit": null
+     },
+     {
+      "fbx": "C:/o/SM_Pad_10px.fbx",
+      "model": "vpm",
+      "role": "oks",
+      "objects": 1,
+      "render_triangles": null,
+      "ucx_triangles": null,
+      "limit": null,
+      "ucx_limit": null
+     },
+     {
+      "fbx": "C:/o/SM_Pad_20px.fbx",
+      "model": "vpm",
+      "role": "oks",
+      "objects": 1,
+      "render_triangles": null,
+      "ucx_triangles": null,
+      "limit": null,
+      "ucx_limit": null
+     },
+     {
+      "fbx": "C:/o/SM_Tverskaya_12.fbx",
+      "model": "vpm",
+      "role": "oks",
+      "objects": 2,
+      "render_triangles": null,
+      "ucx_triangles": null,
+      "limit": null,
+      "ucx_limit": null
+     }
+    ],
+    "dropped": [
+     {
+      "name": "SM_Tverskaya_12_MainGlass",
+      "reason": "glass without maps: nothing to measure"
+     }
+    ]
+   }
+  },
+  "pivot_m": {
+   "tool": "pivot",
+   "status": "fail",
+   "objects_total": 3,
+   "objects_excerpt": [
+    {
+     "handle": 3447,
+     "name": "SM_Pivot_1_MainGlass",
+     "findings": [
+      {
+       "code": "pivot_z",
+       "ids": [],
+       "detail": "pivot Z 0.050000 m, project zero is 0 (VPM-2.9-4.b)"
+      },
+      {
+       "code": "pivot_mismatch",
+       "ids": [],
+       "detail": "pivot 0.050000 m from SM_Pivot_1_Main in C:/o/SM_Pivot_1.fbx (VPM-2.9-5)"
+      }
+     ]
+    }
+   ],
+   "plan": {
+    "fbx": [
+     {
+      "fbx": "C:/o/SM_Pivot_1.fbx",
+      "model": "vpm",
+      "role": "oks",
+      "objects": 3,
+      "render_triangles": null,
+      "ucx_triangles": null,
+      "limit": null,
+      "ucx_limit": null
+     }
+    ],
+    "dropped": [
+     {
+      "name": "UCX_SM_Pivot_1_Main_001",
+      "reason": "UCX pivot is unconstrained (VPM-2.9-4.c)"
+     }
+    ]
+   }
+  },
+  "pivot_cm": {
+   "tool": "pivot",
+   "status": "pass",
+   "objects_total": 3,
+   "objects_excerpt": [
+    {
+     "handle": 3408,
+     "name": "SM_Pivot_1_Main",
+     "findings": []
+    }
+   ],
+   "plan": {
+    "fbx": [
+     {
+      "fbx": "C:/o/SM_Pivot_1.fbx",
+      "model": "vpm",
+      "role": "oks",
+      "objects": 3,
+      "render_triangles": null,
+      "ucx_triangles": null,
+      "limit": null,
+      "ucx_limit": null
+     }
+    ],
+    "dropped": [
+     {
+      "name": "UCX_SM_Pivot_1_Main_001",
+      "reason": "UCX pivot is unconstrained (VPM-2.9-4.c)"
+     }
+    ]
+   }
+  },
+  "geojson_broken": {
+   "tool": "geojson",
+   "status": "fail",
+   "objects_total": 0,
+   "objects_excerpt": [],
+   "plan": {
+    "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d01d4740\\tmp\\checks-max2024-r2\\SM_Tverskaya_12.geojson",
+    "findings": [
+     {
+      "name": "JSON",
+      "status": "fail",
+      "observed": "Expecting value: line 1 column 10 (char 9)",
+      "expected": "valid JSON without duplicate keys"
+     }
+    ]
+   }
+  },
+  "geojson_empty_object": {
+   "tool": "geojson",
+   "status": "fail",
+   "objects_total": 0,
+   "objects_excerpt": [],
+   "plan": {
+    "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d01d4740\\tmp\\checks-max2024-r2\\SM_Empty_12.geojson",
+    "findings": [
+     {
+      "name": "type",
+      "status": "fail",
+      "observed": "None",
+      "expected": "FeatureCollection"
+     }
+    ]
+   }
+  },
+  "geojson_missing": {
+   "tool": "geojson",
+   "status": "fail",
+   "objects_total": 0,
+   "objects_excerpt": [],
+   "plan": {
+    "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d01d4740\\tmp\\checks-max2024-r2\\SM_None.geojson",
+    "findings": [
+     {
+      "name": "checker",
+      "status": "fail",
+      "observed": "file not found: C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d01d4740\\tmp\\checks-max2024-r2\\SM_None.geojson",
+      "expected": "twinqa GeoJSON checker ran"
+     }
+    ]
+   }
+  },
+  "geojson_wrong_ext": {
+   "tool": "geojson",
+   "status": "fail",
+   "objects_total": 0,
+   "objects_excerpt": [],
+   "plan": {
+    "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d01d4740\\tmp\\checks-max2024-r2\\x.json",
+    "findings": [
+     {
+      "name": "file",
+      "status": "fail",
+      "observed": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d01d4740\\tmp\\checks-max2024-r2\\x.json",
+      "expected": "*.geojson"
+     }
+    ]
+   }
+  },
+  "geojson_no_path": {
+   "tool": "geojson",
+   "status": "fail",
+   "objects_total": 0,
+   "objects_excerpt": [],
+   "plan": {
+    "path": "",
+    "findings": [
+     {
+      "name": "file",
+      "status": "fail",
+      "observed": "''",
+      "expected": "a .geojson file"
+     }
+    ]
+   }
+  }
+ }
+}

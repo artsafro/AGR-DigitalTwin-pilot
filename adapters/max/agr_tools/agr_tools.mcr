@@ -21,6 +21,16 @@ macroScript AGRToolsTexel category:"AGR Tools" tooltip:"Texel readout" buttonTex
 (on execute do python.Execute "agr_tools_runtime.ui('texel')")
 macroScript AGRToolsExport category:"AGR Tools" tooltip:"Checked export" buttonText:"Checked export"
 (on execute do python.Execute "agr_tools_runtime.ui('export')")
+macroScript AGRToolsNames category:"AGR Tools" tooltip:"Names check NPM/VPM (read-only)" buttonText:"Names check"
+(on execute do python.Execute "agr_tools_runtime.ui('names')")
+macroScript AGRToolsTris category:"AGR Tools" tooltip:"Triangle limits per FBX (read-only)" buttonText:"Triangle limits"
+(on execute do python.Execute "agr_tools_runtime.ui('tris')")
+macroScript AGRToolsTextures category:"AGR Tools" tooltip:"Textures check, all objects (read-only)" buttonText:"Textures check"
+(on execute do python.Execute "agr_tools_runtime.ui('textures')")
+macroScript AGRToolsPivot category:"AGR Tools" tooltip:"Pivot check (read-only)" buttonText:"Pivot check"
+(on execute do python.Execute "agr_tools_runtime.ui('pivot')")
+macroScript AGRToolsGeojson category:"AGR Tools" tooltip:"GeoJSON check (twinqa)" buttonText:"GeoJSON check"
+(on execute do python.Execute "agr_tools_runtime.ui('geojson')")
 macroScript AGRToolsOpen category:"AGR Tools" tooltip:"AGR Tools" buttonText:"AGR Tools"
 (
     on execute do (
@@ -39,6 +49,11 @@ macroScript AGRToolsOpen category:"AGR Tools" tooltip:"AGR Tools" buttonText:"AG
             button ucxApply "Apply UCX to new export copies" width:340
             button texel "Texel readout" width:340
             button exportChecked "Checked export" width:340
+            button names "Names check NPM/VPM" width:340
+            button tris "Triangle limits per FBX" width:340
+            button textures "Textures check (all objects)" width:340
+            button pivotCheck "Pivot check" width:340
+            button geojson "GeoJSON check" width:340
             label info "JSON report in Listener; checks select offenders."
             on xv pressed do python.Execute "agr_tools_runtime.ui('xview')"
             on dry pressed do python.Execute "agr_tools_runtime.ui('cleanup')"
@@ -52,6 +67,11 @@ macroScript AGRToolsOpen category:"AGR Tools" tooltip:"AGR Tools" buttonText:"AG
             on ucxApply pressed do python.Execute "agr_tools_runtime.ui('ucx_apply')"
             on texel pressed do python.Execute "agr_tools_runtime.ui('texel')"
             on exportChecked pressed do python.Execute "agr_tools_runtime.ui('export')"
+            on names pressed do python.Execute "agr_tools_runtime.ui('names')"
+            on tris pressed do python.Execute "agr_tools_runtime.ui('tris')"
+            on textures pressed do python.Execute "agr_tools_runtime.ui('textures')"
+            on pivotCheck pressed do python.Execute "agr_tools_runtime.ui('pivot')"
+            on geojson pressed do python.Execute "agr_tools_runtime.ui('geojson')"
         )
         createDialog AGRToolsDialog
     )
