@@ -1,6 +1,9 @@
 """new-case: driver for the #808 native UI run: lock, install bundle, interactive Max, uninstall, leftovers.
 
 python tests/max_tools/drive_agr_tools_ui_native.py --bundle <AGR-Tools zip> --out <new dir> [--version 2026]
+max_exit is not a check (#868): Max 2024.2.5 and 2026.3 exit 0xC0000409 (3221226505) after quitMax from the
+run script's QTimer callback also with --no-bundle; a bare `quitMax` timer script gives 127, a direct
+startup-script quitMax 0. Evidence: G:/Мой диск/AGR-evidence/868-ui-freeze-quit/.
 Uses the shared live-Max lock (%LOCALAPPDATA%/Temp/agr-3dsmax-live.lock); refuses when 3dsmax.exe runs.
 """
 import argparse
