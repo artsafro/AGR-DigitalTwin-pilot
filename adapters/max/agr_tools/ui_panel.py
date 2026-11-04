@@ -107,9 +107,13 @@ class Section(QtWidgets.QWidget):
 
 
 class AgrPanel(QtWidgets.QDockWidget):
-    def __init__(self, backend, parent=None):
+    def __init__(self, backend, parent=None, clock=None):
         super().__init__(parent)
         self.backend = backend
+        self._clock = clock or time.perf_counter
+        self._mark = 0.0
+        self._since = 0.0
+        self._estimate = 0.0
         self.setObjectName(OBJECT_NAME)
         self.setWindowTitle('AGR Tools ' + model.VERSION)
         self.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
@@ -443,6 +447,22 @@ class AgrPanel(QtWidgets.QDockWidget):
             self._cancel = True
         QtWidgets.QApplication.processEvents()
 
+    def _on_batch_item(self):
+        """After one object: pump the Qt loop on elapsed time, not every N objects.
+
+        Max 2024 blocked for 1.36 s inside a 25-object chunk. Predicting the next
+        object from the one just finished keeps the gap under 0.1 s without calling
+        the tool once per object (that would redo the MaxScript setup on 2026).
+        """
+        now = self._clock()
+        cost = now - self._mark
+        self._mark = now
+        pump, self._since, self._estimate = model.object_pump(
+            self._since, self._estimate, cost, model.PUMP_BUDGET_S)
+        if pump:
+            QtWidgets.QApplication.processEvents()
+            self._mark = self._clock()
+
     def run(self, key):
         """Panel entry for every action. Re-entry while running is refused (processEvents)."""
         if self._running:
@@ -457,8 +477,12 @@ class AgrPanel(QtWidgets.QDockWidget):
             scope_all = self.scope.currentIndex() == 1
             if a.batch:
                 nodes = self.backend.targets(scope_all)
+                self._mark = self._clock()
+                self._since = 0.0
+                self._estimate = 0.0
                 report = model.run_batched(
-                    a.tool, lambda chunk: self.backend.run_chunk(a.tool, chunk), nodes, CHUNK,
+                    a.tool, lambda chunk: self.backend.run_chunk(
+                        a.tool, chunk, on_item=self._on_batch_item), nodes, CHUNK,
                     lambda d, t: self._progress(a.label, d, t), self._cancelled)
                 self.backend.select_failed(report)
                 self.backend.log(report)

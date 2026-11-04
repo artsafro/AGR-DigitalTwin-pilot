@@ -252,6 +252,94 @@ class Cancelled(Exception):
         self.done = done
 
 
+# Event-loop pumps during a batch are timed, not counted. Max 2024 spent 1.36 s
+# inside one 25-object xView chunk before the next processEvents; Max 2026 chunks
+# were already under 0.2 s. The gap must stay strictly under PUMP_GAP_LIMIT_S.
+# A budget of exactly that limit (or anything outside (0, limit)) is an error.
+PUMP_GAP_LIMIT_S = 0.1
+PUMP_BUDGET_S = 0.09
+
+
+def check_pump_budget(budget):
+    if isinstance(budget, bool) or not isinstance(budget, (int, float)):
+        raise ValueError('unsupported pump budget')
+    value = float(budget)
+    if not math.isfinite(value) or value <= 0.0 or value >= PUMP_GAP_LIMIT_S:
+        raise ValueError('pump budget out of range')
+    return value
+
+
+def check_pump_cost(cost):
+    if isinstance(cost, bool) or not isinstance(cost, (int, float)):
+        raise ValueError('unsupported pump cost')
+    value = float(cost)
+    if not math.isfinite(value) or value < 0.0:
+        raise ValueError('pump cost out of range')
+    return value
+
+
+def pump_gaps(costs, budget):
+    """Gaps between event pumps for cooperative per-object costs.
+
+    A gap closes before elapsed cost meets `budget` (exactly-at-threshold does
+    not extend the open gap). A single huge cost is sliced so the bound still
+    holds. Empty, partial, non-finite and negative input is an error.
+    """
+    limit = check_pump_budget(budget)
+    if isinstance(costs, (str, bytes)) or not isinstance(costs, (list, tuple)) or len(costs) == 0:
+        raise ValueError('empty pump costs')
+    gaps = []
+    since = 0.0
+    steps = 0
+    for raw in costs:
+        left = check_pump_cost(raw)
+        if left == 0.0:
+            continue
+        while left > 0.0:
+            steps += 1
+            if steps > 1000000:
+                raise ValueError('pump slice did not finish')
+            room = limit - since
+            if left < room:
+                since += left
+                break
+            if since > 0.0:
+                gaps.append(since)
+                since = 0.0
+                continue
+            step = limit * 0.5
+            if not math.isfinite(step) or step <= 0.0 or step >= limit:
+                raise ValueError('pump slice')
+            gaps.append(step)
+            left -= step
+    if since > 0.0:
+        if since >= limit:
+            raise ValueError('pump gap at threshold')
+        gaps.append(since)
+    if not gaps:
+        gaps.append(0.0)
+    return gaps
+
+
+def object_pump(since, estimate, cost, budget=PUMP_BUDGET_S):
+    """Online pump decision after one atomic object (pymxs cannot be sliced).
+
+    `cost` is that object's wall time. Returns (pump, since, estimate). The next
+    similar object is assumed to cost `estimate`, so the open gap closes before
+    it would meet the budget. A non-finite or negative cost is an error.
+    """
+    limit = check_pump_budget(budget)
+    spent = check_pump_cost(cost)
+    since = check_pump_cost(since)
+    estimate = check_pump_cost(estimate)
+    since += spent
+    if spent > 0.0:
+        estimate = spent
+    if since >= limit or (estimate > 0.0 and since + estimate >= limit):
+        return True, 0.0, estimate
+    return False, since, estimate
+
+
 def run_batched(tool, fn, nodes, size, progress, cancelled):
     """Run fn(chunk) per chunk; progress(done, total) after each; cancelled() before each.
     A cancel raises Cancelled with the partial report attached (never a pass)."""

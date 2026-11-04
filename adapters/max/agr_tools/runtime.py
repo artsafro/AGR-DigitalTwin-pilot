@@ -363,7 +363,7 @@ def _reject_vertex_boundary(points, tolerance):
         cells.setdefault(key, []).append(p)
 
 
-def xview(nodes=None):
+def xview(nodes=None, on_item=None):
     """Native checker on evaluated temporary copies; original geometry is untouched."""
     rt = _rt()
     nodes = _targets(nodes)
@@ -414,12 +414,14 @@ def xview(nodes=None):
                 entries.append(_entry(n, findings))
             finally:
                 rt.delete(copy)
+            if on_item is not None:
+                on_item()
     finally:
         rt.OverlappingVertices.tolerance, rt.OverlappingFaces.tolerance = previous
     return _report('xview', entries, nodes)
 
 
-def matid(nodes=None):
+def matid(nodes=None, on_item=None):
     """Native per-face IDs, no material-slot fallback or remapping."""
     rt = _rt()
     nodes = _targets(nodes)
@@ -449,6 +451,8 @@ def matid(nodes=None):
             entries.append(_entry(n, fs))
         finally:
             rt.delete(copy)
+        if on_item is not None:
+            on_item()
     return _report('matid', entries, nodes)
 
 

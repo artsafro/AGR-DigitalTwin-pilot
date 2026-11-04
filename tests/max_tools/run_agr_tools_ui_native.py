@@ -221,7 +221,7 @@ def s_progress():
     objs = len((report or {}).get('objects') or [])
     check('progress_1000_complete', objs == 1000 and p.bar.value() == 100,
           'objects={} seconds={:.1f} status={}'.format(objs, dt, (report or {}).get('status')))
-    check('ui_responsive_during_run', gap < 1.0 and n > 5, 'max_gap_s={:.3f} ticks={}'.format(gap, n))
+    check('ui_responsive_during_run', gap < 0.5 and n > 5, 'max_gap_s={:.3f} ticks={}'.format(gap, n))
     check('buttons_disabled_while_running', bool(disabled) and all(disabled), 'samples={}'.format(len(disabled)))
     check('buttons_enabled_after', all(b.isEnabled() for b in p.buttons.values()) and not p.cancel_btn.isEnabled())
     state['full_seconds'] = dt
@@ -233,7 +233,7 @@ def s_cancel():
     objs = len((report or {}).get('objects') or [])
     check('cancel_stops_early', 'Отменено' in p.summary.text() and objs < 1000,
           'objects={} seconds={:.1f} summary={}'.format(objs, dt, p.summary.text()))
-    check('ui_responsive_during_cancel_run', gap < 1.0, 'max_gap_s={:.3f}'.format(gap))
+    check('ui_responsive_during_cancel_run', gap < 0.5, 'max_gap_s={:.3f}'.format(gap))
 
 
 def s_row_click():
@@ -263,18 +263,34 @@ def finish():
     rt.quitMax(rt.name('noPrompt'))
 
 
+STEPS = [('env', lambda: s_env()), ('globals', lambda: s_globals()), ('menu', lambda: s_menu()),
+         ('icons', lambda: s_icons()), ('panel_open', lambda: s_panel_open()),
+         ('dock_memory', lambda: s_dock_memory()), ('boxes', lambda: s_boxes()),
+         ('progress', lambda: s_progress()), ('row_click', lambda: s_row_click()),
+         ('shot', lambda: s_shot(str(rt.colorMan.getColorTheme()))()), ('cancel', lambda: s_cancel())]
+
+
+def selected_steps(spec):
+    """AGR_UI_STEPS: unset -> every step; '' or 'none' -> no step (quit baseline, #868); else a comma list."""
+    if spec is None:
+        return [k for k, _ in STEPS]
+    names = [n.strip() for n in spec.split(',') if n.strip() and n.strip() != 'none']
+    unknown = sorted(set(names) - {k for k, _ in STEPS})
+    if unknown:
+        raise SystemExit('unknown AGR_UI_STEPS: ' + ', '.join(unknown))
+    return names
+
+
 def main_run():
-    step('env', s_env)
-    step('globals', s_globals)
-    step('menu', s_menu)
-    step('icons', s_icons)
-    step('panel_open', s_panel_open)
-    step('dock_memory', s_dock_memory)
-    step('boxes', s_boxes)
-    step('progress', s_progress)
-    step('row_click', s_row_click)
-    step('shot', s_shot(str(rt.colorMan.getColorTheme())))
-    step('cancel', s_cancel)
+    try:
+        chosen = selected_steps(os.environ.get('AGR_UI_STEPS'))
+    except SystemExit as exc:  # still quit Max, the driver must not wait for its timeout
+        log('ERROR', 'steps', str(exc))
+        chosen = []
+    log('INFO', 'steps', ','.join(chosen) or 'none')
+    for key, fn in STEPS:
+        if key in chosen:
+            step(key, fn)
     finish()
 
 

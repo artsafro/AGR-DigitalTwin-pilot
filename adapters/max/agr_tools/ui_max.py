@@ -43,9 +43,9 @@ class MaxBackend:
     def targets(self, scope_all):
         return self.agr._targets(list(rt.geometry) if scope_all else None)
 
-    def run_chunk(self, tool, chunk):
+    def run_chunk(self, tool, chunk, on_item=None):
         fn = {'xview': self.agr.xview, 'matid': self.agr.matid}[tool]
-        return fn(chunk)
+        return fn(chunk, on_item=on_item)
 
     def run_tool(self, tool, scope_all):
         if scope_all:  # 0.7 checks see every object (hygiene must find cameras, lights, helpers)
