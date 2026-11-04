@@ -161,7 +161,7 @@ def test_committed_types_carry_the_sash_reading():
     types = json.loads(TYPES.read_text(encoding="utf-8"))
     sash = json.loads(SASH.read_text(encoding="utf-8"))
     src = json.loads(V001.read_text(encoding="utf-8"))
-    assert len(types["types"]) == 46 and types["note"].count(NOTE) == 1
+    assert len(types["types"]) == 63 and types["note"].count(NOTE) == 1      # 46 + 17 elv-tc-vpm census
     for t in types["types"]:
         assert t["sashes"] is None and t["handing"] is None
         assert t["unconfirmed"]["sashes"]["reason"] and t["unconfirmed"]["handing"]["reason"]
