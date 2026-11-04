@@ -477,6 +477,33 @@ def test_pivot_probe_per_fbx_groups():
         assert found[2] == [] and codes(found[3]) == ([] if off < 0.001 else ['pivot_mismatch'])
 
 
+def _flagged(rows):
+    found, _ = core.pivot_findings(rows)
+    return {r['name'] for r in rows if any(c[0] == 'pivot_mismatch' for c in found[r['key']])}
+
+
+def test_pivot_verdict_is_order_independent():
+    """#821: the reference is the Main/Ground object, never the first member; reversal gives the same set."""
+    import itertools
+    cases = [
+        ([('Main', 0), ('A', 0), ('B', 0)], set()),
+        ([('Odd', 0.5), ('Main', 0), ('A', 0)], {'Odd'}),
+        ([('Main', 0), ('A', 0.0005)], set()),
+        ([('SM_T_Ground', 0), ('A', 2)], {'A'}),
+    ]
+    for spec, want in cases:
+        for perm in itertools.permutations(spec):
+            rows = [piv(i, n, (x, 0, 0)) for i, (n, x) in enumerate(perm)]
+            assert _flagged(rows) == want, (perm, want)
+    # no Main/Ground: pairs more than 1 mm apart are reported, C is named, A/B pair is not
+    for perm in itertools.permutations([('A', 0), ('B', 0), ('C', 1)]):
+        rows = [piv(i, n, (x, 0, 0)) for i, (n, x) in enumerate(perm)]
+        found, _ = core.pivot_findings(rows)
+        by = {r['name']: found[r['key']] for r in rows}
+        assert _flagged(rows) == {'A', 'B', 'C'}
+        assert 'C (' in by['A'][0][1] and 'B (' not in by['A'][0][1] and 'A (' not in by['B'][0][1]
+
+
 # --- GeoJSON --------------------------------------------------------------------------------------------
 def test_geojson_report_never_raises():
     def boom(_):

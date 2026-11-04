@@ -734,13 +734,33 @@ def pivot_findings(rows):
             found[r['key']].append(('pivot_z', f'pivot Z {p[2]:.6f} m, project zero is 0 (VPM-2.9-4.b)'))
         groups.setdefault(r['fbx'], []).append(r)
     for fbx, members in groups.items():
-        ref = members[0]
-        for r in members[1:]:
-            d = math.dist(ref['pivot'], r['pivot'])
+        # Order independent (#821): the reference is the Main/Ground object of the FBX; without one every
+        # pair more than 1 mm apart is reported (never "the first member").
+        refs = [m for m in members if m['name'].split('_')[-1] in ('Main', 'Ground')]
+        pairs = []
+        for i, a in enumerate(members):
+            for b in members[i + 1:]:
+                if not refs or a in refs or b in refs:
+                    pairs.append((a, b))
+        bad = {id(m): [] for m in members}
+        for a, b in pairs:
+            d = math.dist(a['pivot'], b['pivot'])
             if math.isclose(d, PIVOT_TOL_M, rel_tol=1e-9, abs_tol=0.0):
-                found[r['key']].append(('at_threshold', f'pivot {d:.6f} m from {ref["name"]}: == {PIVOT_TOL_M} m'))
+                for x, y in ((a, b), (b, a)):
+                    if not refs or y in refs:
+                        found[x['key']].append(('at_threshold', f'pivot {d:.6f} m from {y["name"]}: == {PIVOT_TOL_M} m'))
             elif d > PIVOT_TOL_M:
-                found[r['key']].append(('pivot_mismatch', f'pivot {d:.6f} m from {ref["name"]} in {fbx} (VPM-2.9-5)'))
+                bad[id(a)].append((b['name'], d))
+                bad[id(b)].append((a['name'], d))
+        for m in members:
+            if refs and m in refs and len(refs) == 1:
+                continue
+            others = sorted(bad[id(m)])
+            if refs and m not in refs:
+                others = [o for o in others if o[0] in {r['name'] for r in refs}]
+            if others:
+                txt = ', '.join(f'{n} ({d:.6f} m)' for n, d in others)
+                found[m['key']].append(('pivot_mismatch', f'pivot differs from {txt} in {fbx} (VPM-2.9-5)'))
     return found, dropped
 
 
