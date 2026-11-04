@@ -14,12 +14,18 @@ heights). It is marked `"synthetic_drawing": true` in the JSON: it is not a draw
   (openings) up to 1.5 m close, inner rooms and courtyards are filled (limit) - and (b) the band's own caps (horizontal faces looking down at its bottom level or up
   at its top level); pieces below MIN_PIECE_M2 dropped (listed), the union simplified by SIMPLIFY_M. A band with no
   polygon is listed in `empty_bands` (no guess, no copy from the band below).
+
+z0_snap (contours, default "off"): "off" leaves measured elevations unchanged. "on" runs
+snap_band_z0, which rewrites an upper band's z0 to the point-domain top of its single lower
+band, float32(float32(z0) + float32(z1 - z0)). Unknown z0_snap raises ValueError naming it.
 """
 from __future__ import annotations
 
+import copy
 import json
 import math
 import sys
+from collections import defaultdict
 from pathlib import Path
 
 import numpy as np
@@ -144,7 +150,89 @@ def simple_rings(q: Polygon) -> Polygon:
     return Polygon(q.exterior, holes)
 
 
-def contours(rb: dict) -> dict:
+def _point_domain_top(z0: float, z1: float) -> float:
+    """float64 of float32(float32(z0) + float32(z1 - z0)), the point-domain band top."""
+    z0f = np.float32(z0)
+    height = np.float32(z1 - z0)
+    return float(np.float32(z0f + height))
+
+
+def _finite_elevation(band: dict, index: int, key: str) -> float:
+    if not isinstance(band, dict) or key not in band:
+        raise ValueError(f"band {index} has no {key}")
+    raw = band[key]
+    if isinstance(raw, bool) or not isinstance(raw, (int, float)):
+        raise ValueError(f"band {index} {key} is not a real number: {raw!r}")
+    value = float(raw)
+    if not math.isfinite(value):
+        raise ValueError(f"band {index} {key} is not finite: {value!r}")
+    return value
+
+
+def _snap_parents(bands: list[dict]) -> dict[int, int]:
+    by_z1 = defaultdict(list)
+    for j, band in enumerate(bands):
+        by_z1[float(band["z1"])].append(j)
+    parents = {}
+    for i, band in enumerate(bands):
+        lowers = [j for j in by_z1[float(band["z0"])] if j != i]
+        if len(lowers) == 1:
+            parents[i] = lowers[0]
+    return parents
+
+
+def _snap_order(n: int, parents: dict[int, int]) -> list[int]:
+    children = defaultdict(list)
+    indeg = [0] * n
+    for child, parent in parents.items():
+        children[parent].append(child)
+        indeg[child] += 1
+    queue = [i for i in range(n) if indeg[i] == 0]
+    order = []
+    while queue:
+        i = queue.pop()
+        order.append(i)
+        for child in children[i]:
+            indeg[child] -= 1
+            if indeg[child] == 0:
+                queue.append(child)
+    if len(order) != n:
+        raise ValueError("z0 snap cycle")
+    return order
+
+
+def snap_band_z0(contours: dict) -> dict:
+    """Move each upper band's z0 onto its single lower band's point-domain top.
+
+    One lower band means exactly one other band whose z1 equals this z0. Bands with no
+    lower, or with more than one, keep their z0 and are not dropped. The result is a
+    fixed point: snapping again changes nothing. Empty ``bands`` and a non-finite z0
+    or z1 raise ValueError. Every input band is present in the output.
+    """
+    if not isinstance(contours, dict):
+        raise ValueError("empty bands")
+    bands = contours.get("bands")
+    if not isinstance(bands, list) or not bands:
+        raise ValueError("empty bands")
+    for i, band in enumerate(bands):
+        _finite_elevation(band, i, "z0")
+        _finite_elevation(band, i, "z1")
+    out = copy.deepcopy(contours)
+    parents = _snap_parents(out["bands"])
+    for i in _snap_order(len(out["bands"]), parents):
+        if i not in parents:
+            continue
+        lower = out["bands"][parents[i]]
+        out["bands"][i]["z0"] = _point_domain_top(float(lower["z0"]), float(lower["z1"]))
+    if len(out["bands"]) != len(bands):
+        raise RuntimeError("z0 snap dropped a band")
+    return out
+
+
+def contours(rb: dict, *, z0_snap: str = "off") -> dict:
+    """Measured contours. ``z0_snap="off"`` (default) is the previous output; ``"on"`` snaps z0."""
+    if z0_snap not in ("off", "on"):
+        raise ValueError(f"unknown z0_snap {z0_snap!r}; known: off, on")
     v, t = soup(rb)
     lv = levels(v, t)
     bands, empty = [], []
@@ -159,12 +247,15 @@ def contours(rb: dict) -> dict:
                                    for q in polys]})
     if not bands:
         raise ValueError("no band gave a plan contour")
-    return {"schema": "body-contours/1", "synthetic_drawing": True,
+    result = {"schema": "body-contours/1", "synthetic_drawing": True,
             "method": "levels from horizontal-face area, contours from closed sections (tools/methods/body/contours.py)",
             "levels_m": lv, "bands": bands, "empty_bands": empty,
             "params": {"level_round_m": LEVEL_ROUND_M, "level_min_share": LEVEL_MIN_SHARE,
                        "level_merge_m": LEVEL_MERGE_M, "section_fractions": list(SECTION_FRACTIONS),
                        "min_piece_m2": MIN_PIECE_M2, "simplify_m": SIMPLIFY_M, "gap_close_m": GAP_CLOSE_M}}
+    if z0_snap == "on":
+        result = snap_band_z0(result)
+    return result
 
 
 def polygons(band: dict) -> list[Polygon]:

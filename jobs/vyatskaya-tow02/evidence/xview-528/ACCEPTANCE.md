@@ -1,6 +1,6 @@
 # xView runner acceptance (#528)
 
-Rows 1..N are contract/Python-mirror tests; the NATIVE rows are measured Max 2024 startup runs (see SUMMARY.md). Python-mirror tests do not prove native execution.
+Rows 1..N are contract/Python-mirror tests. The four NATIVE rows are measured on Max 2024 (2026-10-24): faces/vertices 185/0, 0/10, 0/0, 0/10 (see SUMMARY.md). Route: `python dcc_batch.py max --version 2024 --file tools/qa/xview_dump.ms` (3dsmaxbatch, shared lock) on copies. Python-mirror tests do not prove native execution. Earlier "0/4 not measured" wording is historical (superseded 2026-10-24).
 
 | Acceptance point | Concrete input | Expected output | Test |
 | --- | --- | --- | --- |
@@ -33,7 +33,7 @@ Rows 1..N are contract/Python-mirror tests; the NATIVE rows are measured Max 202
 | Empty / malformed preparation after success | Complete success, then top-level [] / None / {} / (), or job path None / 0 / [] / {} / empty / unsupported.txt; repeat rejection, fresh CLI, reset; also with done.txt hardlinked to the prior source | DumpError or Python path TypeError; prior collection and fresh CLI reject; input and hardlinked receipt survive; subsequent valid preparation succeeds | `test_rejected_prepare_after_success_is_durable_and_preserves_inputs` (20 cases) |
 | Invalid auxiliary temp after success (replacement review P1) | Complete success; temp=None/0/[]/{}; empty or valid populated jobs; ordinary or hardlinked done; reject twice, fresh CLI, valid reset | Rejection raises; collection fails and CLI exits 2; source/receipt bytes and hardlink survive; reset succeeds | `test_invalid_temp_after_success_is_durable_and_preserves_inputs` (16 cases) |
 | Rejection-marker collision | Marker is an input hardlink or a nonempty directory containing an input hardlink; empty and valid preparations | Reject without creating temp or modifying/deleting any file | `test_rejection_marker_collision_never_changes_inputs` (2 cases) |
-| NATIVE: TOW02 export-v005 plain (Max 2024 startup, on copy) | `export-v005.fbx` copy under C:/x/xview-528/in | 185 faces / 0 vertices; source SHA-256 before == after | native run, `evidence/xview-528/*.json`, `check_run` exit 0 |
+| NATIVE: TOW02 export-v005 plain (Max 2024, 2026-10-24, on copy) | `export-v005.fbx` copy under C:/x/xview-528/in | 185 faces / 0 vertices; source SHA-256 before == after | native run, `evidence/xview-528/*.json`, `check_run` exit 0 |
 | NATIVE: 013 plain | `sceene.max` copy, node `SM_Vyatskaya_Vl_47_49_013_Main` | 0 faces / 10 vertices | native run |
 | NATIVE: 013 weld 2 mm | same, mode weld | 0 / 0 | native run |
 | NATIVE: 013 weldpoly | same, mode weldpoly | 0 / 10 | native run |

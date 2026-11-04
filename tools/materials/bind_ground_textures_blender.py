@@ -100,15 +100,18 @@ def fingerprint(fbx, out_json):
             payload["uvs"].append([item.uv.x, item.uv.y])
         for poly in mesh.polygons:
             payload["polygons"].append(list(poly.vertices))
-            if len(poly.vertices) != 3:
-                print("non-triangle face", file=sys.stderr)
-                sys.exit(2)
             payload["material_ids"].append(int(poly.material_index))
+        # Measure the importer's actual tessellation, including concave/nonplanar
+        # polygons, without mutating the polygon mesh or its material-ID layer.
+        # One density witness per loop triangle prevents polygon-area averaging
+        # from hiding an out-of-band half of a quad.
+        for triangle in mesh.loop_triangles:
+            poly = mesh.polygons[triangle.polygon_index]
             material = mesh.materials[poly.material_index] if mesh.materials else None
             name = material.name if material else ""
             slot = name.split("_Ground_", 1)[-1] if "_Ground_" in name else name
-            corners = [world @ mesh.vertices[index].co for index in poly.vertices]
-            uvs = [layer[index].uv for index in poly.loop_indices]
+            corners = [world @ mesh.vertices[index].co for index in triangle.vertices]
+            uvs = [layer[index].uv for index in triangle.loops]
             payload["faces"].append({"slot": slot, "world_area_m2": area3(corners), "uv_area": area2(uvs)})
     Path(out_json).write_text(json.dumps(payload), encoding="utf-8")
 

@@ -19,12 +19,14 @@ dependencies = [
 [project.optional-dependencies]
 pdf-review = ["PyMuPDF==1.28.2"]
 cad = ["ezdxf==1.4.3"]
+agr-mcp = ["mcp==1.30.0"]
 
 [dependency-groups]
-dev = ["pytest==9.1.1", "ezdxf==1.4.3", "pytest-xdist==3.8.0"]
+dev = ["pytest==9.1.1", "ezdxf==1.4.3", "pytest-xdist==3.8.0", "mcp==1.30.0"]
 
 [project.scripts]
 dt = "dt_ai.cli.main:main"
+agr-mcp = "agr_mcp.server:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -40,4 +42,5 @@ markers = [
     "perf: opt-in wall-clock / CPU-time performance budget (select with -m perf)",
     "max: opt-in real 3ds Max batch process via dcc_batch.py; select with -m max",
     "panel_texture: opt-in AC04 panel-texture publication evidence; select with -m panel_texture",
+    "native_max: opt-in AC08 native xView parity; select with -m native_max",
 ]

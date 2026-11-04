@@ -1,3 +1,5 @@
+Historical. Frozen 2026-11-03. Superseded by `docs/pipeline.md`, `docs/decisions.md`, `docs/agents/WORKFLOW.md`, `docs/agents/REVIEW_CHECKLIST.md`, `docs/domain/patterns/INDEX.md`, `benchmark/README.md`, `docs/domain/`, `docs/backlog.md`, `docs/agents/CAPABILITIES.md`. The harness spec upstream#118 tail (user story 38 in `docs/prd/agent-ready-harness.md`) is closed by this freeze.
+
 # AGR-DigitalTwin — план перестройки harness для моделирования цифровых двойников
 
 Дата: 2026-10-08, ревизия 3 (ревизия 2 — замечания агента по `AGENTS.md`; ревизия 3 — прожарка §11/§12: §3, §4, §5, §12). Итог прожарки (grill-me). При противоречии с `AGENTS.md` действует `AGENTS.md`; этот план его не отменяет, а уточняет. Документ — ТЗ для агента на реорганизацию репозитория `artsafro/AGR-DigitalTwin`.

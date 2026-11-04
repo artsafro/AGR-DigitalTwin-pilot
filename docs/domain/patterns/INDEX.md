@@ -3,7 +3,7 @@
 A pattern is a portable rule for one building node, not a project story: a building name in a
 pattern is a review error. File format `<slug>.md`, 20-40 lines: signs in the spec; how to build
 it with engine functions; differences per profile (`npm_min` / `mid`); which checker confirms
-it; traps, one line each. Source: `docs/HARNESS_PLAN.md` §7.
+it; traps, one line each. Historical source: `docs/HARNESS_PLAN.md` §7. Current registry: this file.
 
 Status: draft / proven on benchmark / in work. A pattern changes only with the user's approval.
 
