@@ -258,6 +258,25 @@ def _object_rows(check, objects):
     return out
 
 
+# (report tool, finding code) -> component kind of the finding ids (#861). The ids are 1-based polyop indices of
+# the checked node's Editable_Poly copy; any other check or code is selected as the whole object.
+COMPONENT_IDS = {('xview', 'overlap_vertices'): 'vertex', ('xview', 'overlap_faces'): 'face',
+                 ('matid', 'udim_id'): 'face', ('matid', 'empty_id'): 'face', ('matid', 'empty_slot'): 'face',
+                 ('matid', 'missing_material'): 'face'}
+
+
+def component_selection(row, num_verts, num_faces):
+    """Row -> (kind, sorted unique ids) to select on its node, or None = select the object only.
+    Fail-closed: an unknown (check, code), empty ids, a non-int id or an id outside 1..count gives None."""
+    kind = COMPONENT_IDS.get((row.check, row.code))
+    if kind is None or not row.ids:
+        return None
+    count = num_verts if kind == 'vertex' else num_faces
+    if any(type(i) is not int or not 1 <= i <= count for i in row.ids):
+        return None
+    return kind, sorted(set(row.ids))
+
+
 def counts(row_list):
     bad = sum(1 for r in row_list if not r.ok)
     return bad, len(row_list) - bad
