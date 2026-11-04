@@ -325,7 +325,7 @@ class AgrPanel(QtWidgets.QDockWidget):
         bad = error or any(not r.ok for r in self.row_data)
         pal.setColor(QtGui.QPalette.WindowText, acc['error'] if bad else acc['ok'])
         self.summary.setPalette(pal)
-        self.status.setText('Готово' if not error else 'Остановлено')
+        self.status.setText('Остановлено' if error else ('Есть ошибки' if bad else 'Готово'))
         self.bar.setValue(100 if report is not None and not error else self.bar.value())
 
     def _row_clicked(self, row, _col):

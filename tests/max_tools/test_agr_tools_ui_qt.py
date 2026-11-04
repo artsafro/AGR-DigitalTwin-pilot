@@ -171,7 +171,26 @@ def test_panel_cancel_button(main, qtbot):
         return orig(tool, c)
     be.run_chunk = chunk
     p.run('matid')
-    assert p.table.rowCount() == 125 and 'Отменено' in p.summary.text()
+    assert p.table.rowCount() == 126 and 'Отменено' in p.summary.text()  # 125 objects + the cancelled row
+    assert p.row_data[-1].code == 'cancelled' and not p.row_data[-1].ok
+
+
+def test_geojson_fail_shows_error_rows_and_red_summary(main):
+    """#808 review P1: a failed GeoJSON report (objects == [], failures in plan.findings) must not read as success."""
+    checks = _load('checks_core.py', 'agr_tools_checks_core_qt')
+    be = FakeBackend()
+    finding = {'name': 'crs', 'status': 'fail', 'observed': 'x', 'expected': 'y'}
+    be.run_tool = lambda tool, scope_all: checks.geojson_report('C:/x/site.geojson', lambda path: [finding])
+    p = make(main, be)
+    report = p.run('geojson')
+    assert report['status'] == 'fail' and report['objects'] == []
+    assert p.table.rowCount() == 1
+    assert p.table.item(0, 0).text() == 'site.geojson' and p.table.item(0, 2).text().startswith('crs')
+    assert p.summary.text().startswith('Ошибок 1 · ОК 0')
+    acc = p.accents()
+    assert p.summary.palette().color(QtGui.QPalette.WindowText) == acc['error']
+    assert p.table.item(0, 2).foreground().color() == acc['error']
+    assert p.status.text() != 'Готово'
 
 
 def test_single_call_tools_errors_and_scope(main):

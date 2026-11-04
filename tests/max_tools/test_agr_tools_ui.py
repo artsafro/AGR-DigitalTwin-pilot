@@ -96,6 +96,89 @@ def test_summary_report_without_objects():
     assert m.rows({'tool': 'export', 'status': 'pass'})[0].ok is True
 
 
+def _report_shapes():
+    """Every report shape the panel can show: real geojson_report (pass/fail/missing file/crash),
+    real export _blank (clean, stopped by a gate, texel-only stop, object findings), readback-failed export,
+    batch pass/fail and cancelled partials (clean and dirty), summary-only texel/export reports."""
+    checks = _load(PKG / 'checks_core.py', 'agr_checks_core_ui')
+    export = _load(PKG / 'export_core.py', 'agr_export_core_ui')
+    ok = {'name': 'crs', 'status': 'pass', 'observed': 'EPSG:4326', 'expected': 'EPSG:4326'}
+    bad = {'name': 'crs', 'status': 'fail', 'observed': 'x', 'expected': 'y'}
+    rev = {'name': 'height', 'status': 'review', 'observed': '?', 'expected': '>0'}
+    out = {
+        'geojson_pass': checks.geojson_report('C:/x/a.geojson', lambda p: [ok]),
+        'geojson_fail': checks.geojson_report('C:/x/a.geojson', lambda p: [bad]),
+        'geojson_fail_mixed': checks.geojson_report('C:/x/a.geojson', lambda p: [ok, bad, rev]),
+        'geojson_review_only': checks.geojson_report('C:/x/a.geojson', lambda p: [rev]),
+        'geojson_no_file': checks.geojson_report('', lambda p: [ok]),
+        'geojson_wrong_ext': checks.geojson_report('C:/x/a.txt', lambda p: [ok]),
+        'geojson_crash': checks.geojson_report('C:/x/a.geojson', lambda p: 1 / 0),
+    }
+    clean = [{'handle': 1, 'name': 'A', 'findings': []}]
+    dirty = [{'handle': 1, 'name': 'A', 'findings': [{'code': 'out_of_range', 'ids': [1], 'detail': 'x'}]}]
+    for key, stopped, findings in (('export_pass', None, clean), ('export_stopped', 'xview', clean),
+                                   ('export_stopped_no_objects', 'cleanup', []),
+                                   ('export_texel_stop', 'texel', clean), ('export_findings', None, dirty)):
+        out[key] = export._blank([], {}, 'C:/x/o.fbx', 'C:/x/o.json', 'd', [], stopped, findings, [], None)
+    readback = export._blank([], {}, 'C:/x/o.fbx', 'C:/x/o.json', 'd', [], None, clean, [], None)
+    readback['status'] = 'fail'  # export_core: read-back mismatch flips only the status
+    out['export_readback_fail'] = readback
+    out['batch_pass'] = m.merge('xview', [fake_xview([1, 2, 3])])
+    out['batch_fail'] = m.merge('xview', [fake_xview(list(range(1, 15)))])
+    for key, nodes in (('cancelled_clean', [1, 2, 3, 4, 5, 6, 8, 9]), ('cancelled_dirty', list(range(1, 30)))):
+        state = {'n': 0}
+
+        def cancel(state=state):
+            state['n'] += 1
+            return state['n'] > 1
+        with pytest.raises(m.Cancelled) as exc:
+            m.run_batched('xview', fake_xview, nodes, 4 if key == 'cancelled_clean' else 10,
+                          lambda d, t: None, cancel)
+        out[key] = exc.value.partial
+    out['texel_pass'] = {'tool': 'texel', 'status': 'pass'}
+    out['texel_fail'] = {'tool': 'texel', 'status': 'fail'}
+    return out
+
+
+def test_rows_fail_report_always_has_error_row():
+    """Invariant (#808 review P1): status == 'fail' <=> the table shows >= 1 error row, for every report shape."""
+    shapes = _report_shapes()
+    assert {k for k, r in shapes.items() if r['status'] == 'fail'} >= {
+        'geojson_fail', 'geojson_fail_mixed', 'geojson_review_only', 'geojson_no_file', 'geojson_wrong_ext',
+        'geojson_crash', 'export_stopped', 'export_stopped_no_objects', 'export_findings',
+        'export_readback_fail', 'batch_fail', 'cancelled_clean', 'cancelled_dirty', 'texel_fail'}
+    for key, report in shapes.items():
+        rows = m.rows(report)
+        bad, _ = m.counts(rows)
+        assert (report['status'] == 'fail') == (bad > 0), key
+
+
+def test_rows_geojson_fail_rows_name_each_failed_check():
+    r = _report_shapes()['geojson_fail_mixed']
+    bad = [x for x in m.rows(r) if not x.ok]
+    assert [(x.check, x.code) for x in bad] == [('geojson', 'crs'), ('geojson', 'height: review')]
+    assert 'x' in bad[0].detail and 'y' in bad[0].detail
+    assert m.summary(m.rows(r)).startswith('Ошибок 2')
+
+
+def test_rows_cancelled_and_stopped_say_why():
+    s = _report_shapes()
+    assert [x.code for x in m.rows(s['cancelled_clean']) if not x.ok] == ['cancelled']
+    assert [x.code for x in m.rows(s['export_stopped']) if not x.ok] == ['stopped']
+    assert 'xview' in [x.detail for x in m.rows(s['export_stopped']) if not x.ok][0]
+
+
+@pytest.mark.parametrize('bad', [
+    {'tool': 'xview', 'status': 'pass', 'objects': [{'handle': 1, 'name': 'A', 'findings': [{'code': 'c'}]}]},
+    {'tool': 'xview', 'status': 'not_run', 'objects': []},
+    {'tool': 'xview', 'objects': []},
+    {'tool': 'geojson', 'status': 'pass', 'objects': [], 'plan': {'findings': [{'name': 'crs', 'status': 'fail'}]}},
+])
+def test_rows_inconsistent_or_unknown_status_raises(bad):
+    with pytest.raises(ValueError):
+        m.rows(bad)
+
+
 def fake_xview(chunk):
     return _report('xview', [(h, 'N%d' % h, [] if h % 7 else [{'code': 'overlap_faces', 'ids': [h]}])
                              for h in chunk])

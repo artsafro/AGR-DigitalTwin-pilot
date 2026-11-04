@@ -9,6 +9,7 @@ import binascii
 import colorsys
 import json
 import math
+import os
 from collections import namedtuple
 
 VERSION = '0.6.0'
@@ -106,18 +107,60 @@ Row = namedtuple('Row', 'handle name check ok code detail ids')
 
 def rows(report):
     """Report -> table rows. Each object gives one row per finding, or one OK row.
-    A report without an objects list (texel, export) gives one summary row."""
+    A report without an objects list (texel, export) gives one summary row.
+    Report-level failures (GeoJSON plan findings, an export stopped by a gate, a cancelled run) give
+    their own error rows; status == 'fail' <=> at least one error row, else ValueError (#808 review P1)."""
     if not isinstance(report, dict) or 'tool' not in report:
         raise ValueError('not an AGR Tools report')
     check = report['tool']
+    status = report.get('status')
+    if status not in ('pass', 'fail'):
+        raise ValueError('report without pass/fail status: ' + repr(status))
     objects = report.get('objects')
     if objects is None:
-        status = report.get('status')
-        if status not in ('pass', 'fail'):
-            raise ValueError('report without objects and without pass/fail status: ' + repr(status))
         return [Row(None, '—', check, status == 'pass', status, '', ())]
     if not isinstance(objects, list):
         raise ValueError('report objects is not a list')
+    out = _object_rows(check, objects) + _report_rows(check, report)
+    bad = any(not r.ok for r in out)
+    if status == 'pass' and bad:
+        raise ValueError('report status pass with error rows: ' + repr(check))
+    if status == 'fail' and not bad:  # failed without a named cause (e.g. FBX read-back mismatch)
+        out.append(Row(None, '—', check, False, 'fail', 'отчёт: status fail', ()))
+    return out
+
+
+def _report_rows(check, report):
+    """Error rows for failures that live outside report['objects']."""
+    out = []
+    plan = report.get('plan')
+    if isinstance(plan, dict):
+        findings = plan.get('findings')
+        if findings is not None:
+            if not isinstance(findings, list):
+                raise ValueError('plan findings is not a list')
+            name = os.path.basename(str(plan.get('path') or '')) or '—'
+            for f in findings:
+                if not isinstance(f, dict) or 'status' not in f:
+                    raise ValueError('plan finding without status: ' + repr(f))
+                if f['status'] == 'pass':
+                    continue
+                code = str(f.get('name', '?'))
+                if f['status'] != 'fail':
+                    code += ': ' + str(f['status'])
+                out.append(Row(None, name, check, False, code,
+                               'получено {}, ожидалось {}'.format(f.get('observed', ''), f.get('expected', '')), ()))
+        stopped = plan.get('stopped')
+        if stopped not in (None, 'texel'):
+            out.append(Row(None, '—', check, False, 'stopped', 'остановлено проверкой ' + str(stopped), ()))
+    cancelled = report.get('cancelled')
+    if cancelled:
+        out.append(Row(None, '—', check, False, 'cancelled',
+                       'отменено: {} / {}'.format(cancelled.get('done'), cancelled.get('total')), ()))
+    return out
+
+
+def _object_rows(check, objects):
     out = []
     for o in objects:
         findings = o.get('findings')
