@@ -250,3 +250,60 @@ def test_empty_before_visibility_gate_fails():
     r = json.loads((EVIDENCE / "e2e.json").read_text(encoding="utf-8"))
     r["before_visibility"] = {}
     assert e2e.gates(r)["kernel_invariants_on_source"]["passed"] is False
+
+
+# Round 3: an applied op's footprint is derived from its after_state vs the source.
+def test_kernel_output_transitive_move_moves_every_part_in_the_closure():
+    src = _two_part_state()
+    after = _moved(_moved(src, "A", 5.0), "B", 5.0)
+    rows = [{"op": "move_rigid", "part": "A", "applied": True, "after_state": after}]
+    out, _ = e2e.kernel_output(src, rows)
+    assert out["A"]["v"].max() == 5.0 and out["B"]["v"].max() == 6.0
+
+
+def _joined(state):
+    st = e2e.rko.copy_state(state)
+    a, b = st.pop("A"), st.pop("B")
+    st["A+B"] = {**a, "v": np.vstack([a["v"], b["v"]]), "faces": [[0, 1, 2], [3, 4, 5]]}
+    return st
+
+
+def test_kernel_output_join_replaces_both_parts_with_the_joined_key():
+    src = {**_two_part_state(), "C": {"v": np.full((3, 3), 2.0), "uv": [], "mat": [], "faces": [[0, 1, 2]]}}
+    rows = [{"op": "join_parts", "part": "A+B", "applied": True, "after_state": _joined(src)}]
+    out, applied = e2e.kernel_output(src, rows)
+    assert set(out) == {"A+B", "C"} and len(out["A+B"]["v"]) == 6 and applied == ["join_parts:A+B"]
+
+
+def test_kernel_output_simplify_adds_the_simplified_key():
+    src = _two_part_state()
+    after = e2e.rko.copy_state(src)
+    after["simplified"] = after.pop("A")
+    rows = [{"op": "simplify_part", "part": "A", "applied": True, "after_state": after}]
+    out, _ = e2e.kernel_output(src, rows)
+    assert set(out) == {"simplified", "B"} and out["B"]["v"].max() == 1.0
+
+
+def test_kernel_output_cross_part_footprint_conflict_raises_naming_both():
+    src = _two_part_state()
+    rows = [{"op": "move_rigid", "part": "A", "applied": True,
+             "after_state": _moved(_moved(src, "A", 5.0), "B", 5.0)},
+            {"op": "flip", "part": "B", "applied": True, "after_state": _moved(src, "B", 2.0)}]
+    with pytest.raises(InputError, match=r"move_rigid:A.*flip:B"):
+        e2e.kernel_output(src, rows)
+
+
+def test_kernel_output_removed_key_conflicts_with_a_change():
+    src = _two_part_state()
+    rows = [{"op": "join_parts", "part": "A+B", "applied": True, "after_state": _joined(src)},
+            {"op": "move_rigid", "part": "A", "applied": True, "after_state": _moved(src, "A", 1.0)}]
+    with pytest.raises(InputError, match=r"join_parts:A\+B.*move_rigid:A"):
+        e2e.kernel_output(src, rows)
+
+
+def test_kernel_output_disjoint_ops_compose():
+    src = _two_part_state()
+    rows = [{"op": "move_rigid", "part": "A", "applied": True, "after_state": _moved(src, "A", 5.0)},
+            {"op": "flip", "part": "B", "applied": True, "after_state": _moved(src, "B", 2.0)}]
+    out, _ = e2e.kernel_output(src, rows)
+    assert out["A"]["v"].max() == 5.0 and out["B"]["v"].max() == 3.0
