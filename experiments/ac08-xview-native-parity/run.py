@@ -361,8 +361,11 @@ def _symdiff_text(row):
             tol = tols[key] if len(tols) > key else None
             tol_text = "unknown" if tol is None else f"{tol:g}"
             parts.append(f"{kind} symmetric difference at {label}={tol_text} m: "
-                         f"python {set(py) or '{}'} vs native {set(nat) or '{}'}")
-    return "; ".join(parts) or "symmetric difference"
+                         f"python {sorted(py)} vs native {sorted(nat)}")
+    if not parts:
+        return "symmetric difference"
+    # Both sides are 1-based: native ids are the raw 3ds Max ids, python ids are the kernel's i + 1.
+    return "; ".join(parts) + " (ids are 1-based, Max numbering, on both sides)"
 
 
 def _one(item, node):
