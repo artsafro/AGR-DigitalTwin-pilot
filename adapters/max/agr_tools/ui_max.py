@@ -50,6 +50,10 @@ class MaxBackend:
     def run_tool(self, tool, scope_all):
         if scope_all:  # 0.7 checks see every object (hygiene must find cameras, lights, helpers)
             rt.select(rt.objects if tool in self.agr.CHECKS_070 else rt.geometry)
+        if tool in self.agr.EDITS_080:  # 0.8 delivery edits (#908): preview -> apply through runtime.edits_080
+            report = self.agr.edit_ui(tool)
+            self.log(report)
+            return report
         return self.agr.ui(tool)
 
     def _node(self, handle):

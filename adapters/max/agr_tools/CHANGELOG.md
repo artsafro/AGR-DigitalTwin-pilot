@@ -1,5 +1,35 @@
 # AGR Tools changelog
 
+## 0.8.0 (#908) — в работе
+
+Сдача: правки только на экспортных копиях или в новых файлах, каждая с preview. Пакет пока остаётся 0.7.0:
+кнопки 0.8 есть в меню и MCP, в панели они серые «в версии 0.8» до релизной ветки.
+
+### Основа (ветка 0)
+
+- `edit_core.py`: контракт правки — preview → apply со сверкой хэша, `new_path()` без перезаписи,
+  списки `done` / `skipped` (с причиной) / `ambiguous`, JSON-контракт 0.5.0, статус `not_implemented`.
+- `edit_max.py`: экспортные копии, одна запись Undo на запуск, восстановление выделения, снимок до/после.
+- `runtime.EDITS_080` (13 строк плана) и `runtime.edits_080(tool, mode, preview)`; пустой модуль отвечает
+  `status: not_implemented`. Секция «Сдача (копии)»: 13 macroScript, пункты меню, 13 иконок, 13 MCP-инструментов.
+- План: вердикт `take_fix` по лаборатории #907 для `model.triangulate`, `ucx.triangulate`, `export.ground_fbx`.
+
+### A — геометрия (`improve/issue-908-geom`)
+
+- Заглушка ветки A: `model.triangulate`, `ucx.triangulate`, `export.pivot_place`.
+
+### B — текстуры (`improve/issue-908-tex`)
+
+- Заглушка ветки B: `tex.format_fix`, `tex.placeholders`, `scene.missing_maps`.
+
+### C — имена и UDIM (`improve/issue-908-names`)
+
+- Заглушка ветки C: `qa.names_fix`, `ucx.rename`, `udim.ids_to_udims`.
+
+### D — пакет (`improve/issue-908-package`)
+
+- Заглушка ветки D: `qa.package`, `export.zip`, `export.ground_fbx`, `export.geojson_write`.
+
 ## 0.7.0 (#860)
 
 Pre-delivery checks (read-only) + tab rail by block + «Путь», all from `agr-tools-suite.json` (#853 plan).
