@@ -1,4 +1,4 @@
-# Ground v015 route A session (2026-11-04) — NOT_DELIVERY checkpoint
+# Ground v015 route A session (2026-11-04) — technical QA, user review pending
 
 Card t_e35c49dd, issue #371, route A approved by Artem 2026-11-04 («принимаю рекомендации») and
 recorded as [D193]. Branch merged `origin/main` first (ea1dad8); branch decision ids D169/D170 clashed
@@ -42,7 +42,7 @@ v014 is 46,343 triangles, 0 quads (both profiles). D129 odd/pole and other resid
 | v014 masters, ours (`xview_overlaps`, main code) | 0 / 222 pairs | 0 / 222 pairs |
 | v015 masters, ours | 0 / 0 | 0 / 0 |
 | v015 Blender FBX readback, ours | 0 / 0 | 0 / 0 |
-| v015 **real xView, headless Max 2024.2.5, saved .max reopened** | **0 / 0** | **0 / 2 faces** |
+| v015 **real xView, headless Max 2024.2.5, delivered .max opened in a fresh process** | **0 / 0** | **0 / 0** |
 
 v014 offenders by producing step (pairs, both profiles identical; `tmp/classify_xview.py`):
 148 Skirt/Stairs and 18 Skirt/Skirt (`add_skirt` curtains), 29 CurbGarden/Stairs and 12
@@ -51,13 +51,23 @@ CurbGarden/Mulch (`build_details` curb bottom datum vs the `raise_steep_layers` 
 v015 removes them by construction (skirt clipping, stair side walls conformed to risers `a621607`,
 12 mm stair clearance, pairing); ours finds none.
 
-**Open: VPM real-Max OF = 2** (exit 127, receipt written before the throw): faces 13429 and 13438,
-both `TileRed` level-1 strip quads 0.40 × 4.00 m at x ≈ −7677.1…−7677.5, y ≈ −15340…−15344 and
-−15352…−15356 (MSK77). Only these two faces are selected, not a pair. Ours finds no partner with
-either diagonal of the quad and all neighbour diagonals; the nearest non-adjacent face is the
-`TileLight` level-0 face beneath at **5.92–5.93 mm** (> 5 mm). NPM, which has the same strip with a
-different pairing, is 0 / 0 in Max. The construction fix is not yet made: the Max criterion that flags
-them has to be pinned first (diagnostic `tmp/repro/diag-vpm-of-v001.ms`, see below).
+Max receipts (`fresh-reopen.json`, `max-reopen.json`, geometry text identical in all of them):
+
+| Run | NPM OV / OF | VPM OV / OF |
+|---|---:|---:|
+| native-v001: import FBX → fixed IDs → save → reopen in the same process | 0 / 0 | 0 / **2 faces** |
+| native-v001 fresh process, `fresh-reopen.json` | 0 / 0 | 0 / 0 |
+| diagnostic v001 (fresh process; poly, Editable Mesh copy, tol 0.004 / 0.003) | — | 0 / 0 each |
+| diagnostic v002 (fresh process; 3 × OV-then-OF, 3 × OF alone) | — | 0 / 0 each |
+| native-v002: same in-session procedure as v001, new folder | — | 0 / 0 |
+
+**Non-reproducible flag (open risk, reported, not waived):** in one of thirteen VPM checks Max
+selected faces 13429 and 13438 — `TileRed` level-1 strip quads 0.40 × 4.00 m at x ≈
+−7677.1…−7677.5, y ≈ −15340…−15344 and −15352…−15356 (MSK77) — with no partner face. Ours finds
+no partner with either diagonal of the quad or of any neighbour; the nearest non-adjacent face is the
+`TileLight` level-0 face beneath at **5.92–5.93 mm** (> 5 mm). The same geometry gave 0 in the twelve
+other checks, including the identical in-session procedure. The delivered-file receipt is the
+fresh-process one; the flake and its witness stay in the PR.
 
 ## Material IDs (fixed order `ground-material-ids-v015.json`)
 
@@ -93,7 +103,7 @@ NPM 8,511 / cap 8,511, VPM 11,430 / cap 11,430, 0 unlisted, exit 0. Tests:
 - Placement compatibility (#298 consumer `GroundIndex`): 5,189 queries, 5,110 hits, 79 missing —
   the same 79 as v014; no exceptions copied; #298 stays on v014 until acceptance.
 - Oblique textured render of the NPM FBX viewed: no holes or untextured regions seen (visual
-  review only, not acceptance). Review scene/pending.json not published yet (blocked by VPM OF).
+  review only, not acceptance).
 
 ## Artefacts (not committed)
 
@@ -103,5 +113,7 @@ readbacks), `ground-v015-native-v001/` (Max .max + receipts), `blender-readback-
 
 ## Next
 
-1. Pin the Max criterion for the 2 VPM faces and fix by construction (no exception); rerun Max VPM.
-2. Publish the review scene + `pending.json` (#348), full suite, PR.
+1. Artem's visual review: `C:/x/review/2026-11-04/371-ground-v015-{npm,vpm}/` (pending.json rows
+   `#371`, verdict open). User acceptance is separate from this technical QA.
+2. If Max ever repeats the TileRed flag, raise that strip by construction (no exception) and rerun.
+3. #298 re-placement on v015 only after acceptance (79 misses equal v014).
