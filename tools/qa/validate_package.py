@@ -195,8 +195,9 @@ def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, byt
             try:
                 rb = readback(path)
             except (OSError, RuntimeError) as exc:
+                # one unreadable FBX must not hide the others (team audit T04: a _Light import error ended the loop)
                 notes.append(f"scene readback skipped for {name}: {exc}")
-                return
+                continue
             found = scene_findings(rb, kind, fbx_role(name), profile, ground_area_m2=ground_area_m2,
                                    footprint_holes=footprint_holes)
             if kind == "npm":
