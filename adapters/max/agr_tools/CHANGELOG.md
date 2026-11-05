@@ -1,5 +1,44 @@
 # AGR Tools changelog
 
+## 0.8.1 (#908)
+
+Решения владельца от 05.11.2026 по командному аудиту T04 (GeoAGR-private `work/team-scripts-audit/T04/REPORT.md`,
+«Открытые вопросы» 1–3).
+
+### qa.scene_hygiene: всё на слое «0»
+
+- Новый код `hyg_layer`: объект не на слое по умолчанию «0» → fail с текстом «объект на слое «X», а должен быть на
+  слое «0»: все объекты в одном слое по умолчанию, других слоёв нет (reg p.28 §3.2)». Норматив есть: регламент
+  стр. 28 §3.2 (требование 2.3.2 «Коллекция одна», `VPM_STANDARD.yaml geometry.one_default_layer_or_collection`).
+  Идея из командного скрипта `agr_max_check_37.ms` `check_Layers` (sha256 `ead38669…`), код не брали. Имя слоя
+  сравнивается точно; нет поля `layer` — ошибка, а не pass. Входит и в `qa.preflight`.
+- Полигон: объекты станций теперь на слое «0» (как сдаваемая сцена), служебные `_bases/_labels/_cameras` не
+  проверяются; новый объект `SM_Polygon_Layer_Main` на «Лишний слой» (станция 0.7.10) — fail `hyg_layer`.
+- Тесты: `tests/max_tools/test_agr_tools_owner_decisions.py` (RED на 0.8.0 → GREEN); нативно Max 2024
+  `tests/max_tools/run_agr_tools_owner_native.py`, job `20261105-104812-f5ac560d`: бокс на «0» — pass, на
+  `Extra_Layer` — ровно `hyg_layer`, сцена не изменена.
+
+### Реестр ФНО
+
+- `standards/data/fno_codes_utf8.csv` — побайтовая копия реестра из SINTEZ AGR Checker 1.6.1 (566 кодов, sha256
+  `397e75e3…`, совпадает с копией в `AGR_Checker.zip`); происхождение — `standards/data/fno_codes.PROVENANCE.md`.
+- `twinqa.fno` + V011 (`qa.package`, `qa.geojson`, `validate_package.py`): для ОКС `FNO_code not in registry`
+  (код верного формата, но нет в классификаторе) и `FNO_name vs registry` (имя не совпадает, пробелы не
+  учитываются, как в SINTEZ) — fail. Ground не сверяется. Нечитаемый реестр — `not_run`, не pass.
+- Синтетические фикстуры перешли на реальную пару `010 004` / «Общежитие».
+
+### V004 и «центр XY» на FBX из Max
+
+- Из пяти реальных архивов на ноутбуке FBX из 3ds Max только в двух (`1113_…_10_3`, `SM_…_4368_002`), остальные —
+  Blender 4.4/5.2 (заголовок `SceneInfo ApplicationName`, новый `twinqa.fbx_header.fbx_application`).
+- Дефект 0.8.0: правило «identity в любом режиме импорта» давало ложный pass объекту Max, повёрнутому на +90° X
+  (импорт с bake добавляет −90° X). Измерено на эталонных FBX из Max 2024 (job `20261105-104812-f5ac560d`).
+  Теперь FBX из Max судится только по обычному импорту; прочие экспортёры — как в 0.8.0.
+- Реальные архивы: V004 pass на 4, fail на `1113_77_17_0120114_5803_10_3` (два меша повёрнуты на −28° по Z — верный
+  fail); «центр XY» (V013 `pivot at geometric centre`) — pass 0/0 % на обоих ВПМ, ложного fail по Y-up нет.
+  Ожидания: `tests/qa/real_deliveries_081.json` (имя архива, SHA256, вердикты); архивы не коммитятся, тесты
+  без них пропускаются.
+
 ## 0.8.0 (#908)
 
 Сдача: 13 кнопок плана версии 0.8 (секция «Сдача (копии)», 13 macroScript, пункты меню, иконки, MCP
