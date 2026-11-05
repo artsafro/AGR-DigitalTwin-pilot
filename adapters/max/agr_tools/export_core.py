@@ -269,15 +269,104 @@ def cleanup_options(options=None):
 
 
 def _cleanup_channels(actions, options=None):
-    """Map-channel ids actually named by the repair plan. Non-channel actions add none.
+    """Channel ids the cleanup removes on the export copy: map channels named by the repair plan and, only with
+    the opt-in `channels`, the vertex channels 0/-1/-2 of a `delete_vertex_channels` action (#979).
     `options` (cleanup_options): validated here; with both off (the default) the result is the 0.8 one."""
-    cleanup_options(options)
+    opts = cleanup_options(options)
     ids = []
     for action in actions:
+        vertex = action.get('action') == 'delete_vertex_channels'
+        if vertex and not opts['channels']:
+            raise ValueError('delete_vertex_channels without the opt-in option channels')
         for channel in action.get('channels') or []:
-            if type(channel) is int and channel > 0 and channel not in ids:
+            ok = channel in VERTEX_CHANNELS if vertex else (type(channel) is int and channel > 0)
+            if type(channel) is int and ok and channel not in ids:
                 ids.append(channel)
     return ids
+
+
+# ---- export.cleanup rework (#979): CA & UDP Cleaner v010 (ClearCustomAttributesAndObjProp_010.ms
+# sha256 c1c52e21cf5adf67e6c35a5719669754a7511335573f778128f2a0c26904e53c, T06/clear_ca_udp_010, measured Max 2026):
+# by default it erased vertex channels 0/-1/-2 and every animation key, deleted AGR_EXPORT_PATH and worked on the
+# originals. Here: vertex channels and keys only as opt-in actions on the export copy; pipeline UDP stays.
+VERTEX_CHANNELS = (0, -1, -2)  # vertex colour, illumination, alpha
+# Tool instructions of the AGR pipeline (runtime._HELD_OFF holds the same keys off the export hygiene gate).
+PIPELINE_UDP = frozenset({'AGR_EXPORT_PATH', 'AGR_TEXEL_PROFILE', 'AGR_TEXEL_MAP', 'AGR_UV_PERIODS',
+                          'AGR_UV_TARGET', 'AGR_ATLAS_MODE', 'AGR_ATLAS_SIZE', 'AGR_UCX_KIND'})
+CLEANUP_FACT_KEYS = ('vertex_channels', 'keys')
+
+
+def udp_key(line):
+    return str(line).split('=', 1)[0].strip()
+
+
+def cleanup_facts(fact):
+    """Validated scene facts of one node: vertex channels present among 0/-1/-2, animation key count (node + material).
+    A missing or mistyped fact is an error, never `nothing to clean`."""
+    if not isinstance(fact, dict) or set(fact) != set(CLEANUP_FACT_KEYS):
+        raise ValueError('cleanup facts need exactly {}: {!r}'.format(list(CLEANUP_FACT_KEYS), fact))
+    chans = fact['vertex_channels']
+    if not isinstance(chans, list) or any(type(c) is not int or c not in VERTEX_CHANNELS for c in chans) \
+            or len(set(chans)) != len(chans):
+        raise ValueError('vertex_channels must be distinct ids of {}: {!r}'.format(VERTEX_CHANNELS, chans))
+    if type(fact['keys']) is not int or fact['keys'] < 0:
+        raise ValueError('keys must be a count >= 0: {!r}'.format(fact['keys']))
+    return {'vertex_channels': sorted(chans, reverse=True), 'keys': fact['keys']}
+
+
+def cleanup_plan(plan, facts, options=None):
+    """The export.cleanup plan of 0.9: the hygiene repair plan with the pipeline UDP kept, plus the opt-in actions.
+
+    plan: hygiene repair_plan (never modified); facts: one cleanup_facts dict per plan object, same order.
+    - `clear_user_defined_lines` drops the PIPELINE_UDP lines (they stay in `cleaned.user_props`; listed in
+      `kept_udp`); an action left without lines disappears.
+    - options.channels (opt-in) adds `delete_vertex_channels` for the vertex channels the node has.
+    - options.keys (opt-in) adds `delete_animation_keys` with the key count (node, stack and material keys).
+    With both options off nothing about channels 0/-1/-2 or keys is planned: they stay on the copy."""
+    import copy as _copy
+    opts = cleanup_options(options)
+    if not isinstance(plan, dict) or not isinstance(plan.get('objects'), list):
+        raise ValueError('cleanup plan without objects')
+    if not isinstance(facts, list) or len(facts) != len(plan['objects']):
+        raise ValueError('one cleanup fact per object is needed')
+    out = _copy.deepcopy(plan)
+    for item, fact in zip(out['objects'], facts):
+        fact = cleanup_facts(fact)
+        actions, kept = [], []
+        for action in item['actions']:
+            if action.get('action') == 'clear_user_defined_lines':
+                kept += [line for line in action['lines'] if udp_key(line) in PIPELINE_UDP]
+                lines = [line for line in action['lines'] if udp_key(line) not in PIPELINE_UDP]
+                if lines:
+                    actions.append(dict(action, lines=lines))
+                continue
+            actions.append(action)
+        if opts['channels'] and fact['vertex_channels']:
+            actions.append({'action': 'delete_vertex_channels', 'channels': list(fact['vertex_channels'])})
+        if opts['keys'] and fact['keys']:
+            actions.append({'action': 'delete_animation_keys', 'keys': fact['keys']})
+        item['actions'] = actions
+        item['kept_udp'] = kept
+        item['cleaned']['user_props'] = item['cleaned']['user_props'] + ''.join(line + '\r\n' for line in kept)
+    return out
+
+
+def cleanup_scene_ops(item, options=None):
+    """Scene operations of one plan object on its export copy, beyond the 0.8 ones (CA, UDP, map channels 2+):
+    [('vertex_channel', id), ...] and ('keys',) — only from opt-in actions; ValueError for an action without its
+    option (a preview edited by hand)."""
+    opts = cleanup_options(options)
+    ops = []
+    for action in item['actions']:
+        if action.get('action') == 'delete_vertex_channels':
+            if not opts['channels']:
+                raise ValueError('delete_vertex_channels without the opt-in option channels')
+            ops += [('vertex_channel', ch) for ch in _cleanup_channels([action], opts)]
+        elif action.get('action') == 'delete_animation_keys':
+            if not opts['keys']:
+                raise ValueError('delete_animation_keys without the opt-in option keys')
+            ops.append(('keys',))
+    return ops
 
 
 def _gate_cleanup(subjects):
@@ -670,6 +759,133 @@ def readback(data):
     except (ValueError, struct.error, zlib.error) as exc:
         result['error'] = str(exc)
     return result
+
+
+def _array(data, node):
+    """Decoded numeric arrays ('d', 'f', 'i', 'l') of one binary node, in property order."""
+    out, offset, end = [], node['props_at'], node['props_end']
+    for _ in range(node['num_props']):
+        code = chr(data[offset])
+        offset += 1
+        if code in ('d', 'f', 'i', 'l', 'b'):
+            n, encoding, size = struct.unpack_from('<III', data, offset)
+            offset += 12
+            raw = data[offset:offset + size]
+            offset += size
+            raw = zlib.decompress(raw) if encoding == 1 else raw
+            fmt = {'d': 'd', 'f': 'f', 'i': 'i', 'l': 'q', 'b': 'B'}[code]
+            if len(raw) != n * struct.calcsize(fmt):
+                raise ValueError('partial array')
+            out.append(list(struct.unpack('<' + fmt * n, raw)))
+        elif code in ('S', 'R'):
+            offset += 4 + struct.unpack_from('<I', data, offset)[0]
+        else:
+            offset += {'Y': 2, 'C': 1, 'I': 4, 'F': 4, 'D': 8, 'L': 8}[code]
+        if offset > end:
+            raise ValueError('truncated node')
+    return out
+
+
+def _polygons(index):
+    polys, cur = [], []
+    for raw in index:
+        if raw < 0:
+            cur.append(~raw)
+            polys.append(cur)
+            cur = []
+        else:
+            cur.append(raw)
+    if cur:
+        raise ValueError('partial polygon')
+    return polys
+
+
+def _binary_meshes(data):
+    from twinqa import fbx_header as header
+    _kind, version = header.fbx_header(data)
+    top = {n['name']: n for n in header._iter_nodes(data, 27, len(data), version)}
+    geoms, models, links = {}, {}, []
+    for node in header._iter_nodes(data, top['Objects']['props_end'], top['Objects']['end_offset'], version) \
+            if 'Objects' in top else []:
+        props = [v for _c, v in header._parse_props(data, node['props_at'], node['props_end'], node['num_props'])]
+        if node['name'] == 'Geometry' and 'Mesh' in props:
+            verts = index = None
+            for child in header._iter_nodes(data, node['props_end'], node['end_offset'], version):
+                if child['name'] == 'Vertices':
+                    verts = _array(data, child)[0]
+                elif child['name'] == 'PolygonVertexIndex':
+                    index = _array(data, child)[0]
+            if verts is None or index is None:
+                raise ValueError('geometry without Vertices/PolygonVertexIndex')
+            geoms[props[0]] = (verts, index)
+        elif node['name'] == 'Model' and 'Mesh' in props:
+            models[props[0]] = mesh_model_name(props)
+    if 'Connections' in top:
+        for node in header._iter_nodes(data, top['Connections']['props_end'], top['Connections']['end_offset'],
+                                       version):
+            props = [v for _c, v in header._parse_props(data, node['props_at'], node['props_end'],
+                                                         node['num_props'])]
+            if len(props) >= 3 and props[0] == 'OO':
+                links.append((props[1], props[2]))
+    return geoms, models, links
+
+
+def _ascii_meshes(text):
+    import re
+    geoms, models, links = {}, {}, []
+    numbers = r'([-+0-9.eE,\s]*)'
+    for m in re.finditer(r'Geometry:\s*(-?\d+)\s*,\s*"(?:Geometry::)?[^"]*"\s*,\s*"Mesh"\s*\{', text):
+        body = text[m.end():]
+        stop = re.search(r'\n\s*(?:Geometry|Model|Material|Deformer|NodeAttribute):', body)
+        body = body[:stop.start()] if stop else body
+        vm = re.search(r'Vertices:\s*\*\d+\s*\{\s*a:' + numbers + r'\}', body)
+        im = re.search(r'PolygonVertexIndex:\s*\*\d+\s*\{\s*a:' + numbers + r'\}', body)
+        if not vm or not im:
+            raise ValueError('geometry without Vertices/PolygonVertexIndex')
+        verts = [float(x) for x in vm.group(1).replace('\n', ' ').split(',') if x.strip()]
+        index = [int(x) for x in im.group(1).replace('\n', ' ').split(',') if x.strip()]
+        geoms[int(m.group(1))] = (verts, index)
+    for m in re.finditer(r'Model:\s*(-?\d+)\s*,\s*"(?:Model::)?([^"]*)"\s*,\s*"Mesh"', text):
+        models[int(m.group(1))] = m.group(2).split('\x00', 1)[0]
+    for m in re.finditer(r'C:\s*"OO"\s*,\s*(-?\d+)\s*,\s*(-?\d+)', text):
+        links.append((int(m.group(1)), int(m.group(2))))
+    return geoms, models, links
+
+
+def header_error():
+    from twinqa.fbx_header import _FbxError
+    return _FbxError
+
+
+def fbx_meshes(data):
+    """[{'name', 'verts': [(x, y, z)], 'polygons': [[i, ...]]}] of every mesh Model of a binary (7.4/7.5) or ASCII
+    FBX, by object NAME (Geometry -> Model through the OO connections). Stdlib only, no Max, no Blender.
+    fbx_polygon_count.py (sha256 9b4136621c4417d24fa1069adb06edcbe22585612e7ddb52f26889158a41441d, T04, idea only):
+    geometries by index only and ASCII refused. Coordinates stay in file units."""
+    from twinqa.fbx_header import fbx_header
+    if not isinstance(data, (bytes, bytearray)):
+        raise ValueError('FBX bytes expected')
+    kind, _version = fbx_header(bytes(data))
+    try:
+        if kind == 'binary':
+            geoms, models, links = _binary_meshes(bytes(data))
+        elif kind == 'ascii':
+            geoms, models, links = _ascii_meshes(bytes(data).decode('utf-8', errors='replace'))
+        else:
+            raise ValueError('not an FBX')
+    except (KeyError, IndexError, struct.error, zlib.error, header_error()) as exc:
+        raise ValueError('unreadable FBX: {}'.format(exc)) from exc
+    out = []
+    for child, parent in links:
+        if child in geoms and parent in models:
+            verts, index = geoms[child]
+            if len(verts) % 3:
+                raise ValueError('vertex array not a multiple of 3')
+            pts = [tuple(verts[i:i + 3]) for i in range(0, len(verts), 3)]
+            out.append({'name': models[parent], 'verts': pts, 'polygons': _polygons(index)})
+    if not out and geoms:
+        raise ValueError('geometry without a mesh Model connection')
+    return sorted(out, key=lambda m: m['name'])
 
 
 def _matches(plan, got):

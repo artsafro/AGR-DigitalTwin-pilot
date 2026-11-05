@@ -4,6 +4,7 @@ invariant: a code mismatch, a missing expected object, NaN/Inf and an empty repo
 a matching fail (including at_threshold) is not a pass; an unknown button is an error that names it.
 """
 import math
+from pathlib import Path
 
 import pytest
 
@@ -87,12 +88,17 @@ def test_known_bug_keeps_the_contract_and_matches_only_the_recorded_got():
         {'name': 'SM_Polygon_007_Main', 'findings': [{'code': 'tex_missing', 'ids': [], 'detail': ''}]}]}
     got = compare_report(expected, other)
     assert len(got) == 1 and got[0]['kind'] == 'code'
-    census = load_expected('scene.census')
-    row = next(obj for obj in census['objects']
-               if obj['name'] == 'SM_Polygon_007_Main' and obj['scene'] == 'polygon_all')
-    assert row['expect'] == 'fail' and row['codes'] == ['missing_map']
-    assert row['known_bug']['id'] == 'census-usedmaps-drops-missing-file'
-    assert row['known_bug']['got_expect'] == 'pass'
+
+
+def test_census_missing_map_known_bug_is_closed():
+    """#979 E3: scene.census reads the shared bitmap enumerator, so the contract row carries no known bug."""
+    from test_polygon_support import load_expected
+    for button in ('scene.census', 'qa.preflight'):
+        row = next(obj for obj in load_expected(button)['objects']
+                   if obj['name'] == 'SM_Polygon_007_Main' and obj['scene'] == 'polygon_all')
+        assert 'missing_map' in row['codes'] and 'known_bug' not in row, button
+    text = (Path(__file__).resolve().parents[2] / 'test-polygon' / 'KNOWN_BUGS.md').read_text(encoding='utf-8')
+    assert '## census-usedmaps-drops-missing-file' not in text
 
 
 def test_unmapped_button_is_an_error_naming_it():
@@ -106,7 +112,26 @@ def test_known_bug_live_pass_is_not_ok_and_counts_apart():
 
     The row is a known bug, not a mismatch. Exit code stays the mismatch count.
     """
+    import copy
+    import sys
     from test_polygon_support import group_runs, render_table
+    core = sys.modules['agr_polygon_core']
+    real = core.load_expected
+
+    def with_known_bug(button):  # a synthetic known bug on the census row (the real one is closed, #979)
+        doc = copy.deepcopy(real(button))
+        if button == 'scene.census':
+            row = next(o for o in doc['objects'] if o['name'] == 'SM_Polygon_007_Main')
+            row['known_bug'] = {'id': 'example-known-bug', 'issue': 886, 'got_expect': 'pass', 'got_codes': []}
+        return doc
+    core.load_expected = with_known_bug
+    try:
+        _known_bug_rows(group_runs, render_table)
+    finally:
+        core.load_expected = real
+
+
+def _known_bug_rows(group_runs, render_table):
     grouped = group_runs([('qa.matid', 'polygon_all')], [])
     text = render_table(grouped, [])
     assert 'получилось' in text.splitlines()[0]

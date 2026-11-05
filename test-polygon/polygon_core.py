@@ -1045,16 +1045,9 @@ def predict_all():
         _produced('SM_Polygon_001_Main', 'export_readback', readback=True),
     ]
     docs['export.checked']['reason'] = ''
-    # Live Max: usedMaps omits a Bitmaptexture whose file does not exist, so census
-    # never receives the missing path. The contract stays fail/missing_map.
-    _mark_known(docs, 'scene.census', 'polygon_all', 'SM_Polygon_007_Main', {
-        'id': 'census-usedmaps-drops-missing-file', 'issue': KNOWN_BUG_ISSUE,
-        'got_expect': 'pass', 'got_codes': [],
-    })
-    _mark_known(docs, 'qa.preflight', 'polygon_all', 'SM_Polygon_007_Main', {
-        'id': 'census-usedmaps-drops-missing-file', 'issue': KNOWN_BUG_ISSUE,
-        'got_expect': 'fail', 'got_codes': ['fbx_objects'],
-    })
+    # census-usedmaps-drops-missing-file is closed (#979 E3): scene.census also reads the shared bitmap
+    # enumerator (tex_max._scene_maps), so SM_Polygon_007_Main is fail/missing_map live too. _mark_known
+    # stays for the next known bug.
     _fragment_docs(docs)
     if not any(o['expect'] == 'fail' for o in docs['ucx.build']['objects']):
         docs['ucx.build']['reason'] = NO_UCX_FAIL
