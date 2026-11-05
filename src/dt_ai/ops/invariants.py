@@ -1,8 +1,9 @@
 """Visibility invariants of the operation kernel: what must hold before and after every operation [D108, D115].
 
 The invariant is visibility, not closure (grilling log Q18): an open border is normal at a joint as long as nobody
-sees it. After an operation on a part (1) every open border edge lies inside a neighbouring part, embedded at least
-`embed_min_m` (10 mm), or below the Ground, or the part is an opacity / glass plane; (2) no face was deleted that was
+sees it. After an operation on a part (1) every open border edge lies inside another shell — a neighbouring part, or
+another shared-vertex component of the same part — embedded at least `embed_min_m` (10 mm), or below the Ground, or
+the part is an opacity / glass plane; the component that owns the edge never hides it; (2) no face was deleted that was
 not covered: a projection of the scene from many directions loses no pixel; (3) no viewer sees a back face (gnawed
 geometry, flipped normals) except on parts that are two-sided on purpose; (4) no co-directional faces closer than
 `overlap_min_m` (5 mm, reg p.8 §3.9; z-fighting). The checks return counts and the first offenders so a broken
@@ -119,18 +120,59 @@ def _result(name, offenders):
 
 # ---- geometry helpers -------------------------------------------------------------------------------------------
 
-def border_edges(mesh: Mesh) -> np.ndarray:
-    """(k, 2, 3) world points of the edges used by exactly one triangle, after a 0.1 mm weld."""
+def _triangle_shells(mesh: Mesh, ids: np.ndarray) -> np.ndarray:
+    """(t,) shell id of every triangle: triangles sharing a welded (0.1 mm) vertex belong to one shell.
+
+    Connectivity uses the welded ids, so a shell whose vertices are split at UV / normal seams stays one shell.
+    """
+    parent = np.arange(int(ids.max()) + 1, dtype=int)
+
+    def find(x: int) -> int:
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = int(parent[x])
+        return x
+
+    welded = ids[mesh.triangles]
+    for a, b, c in welded:
+        ra = find(int(a))
+        for raw in (int(b), int(c)):
+            rb = find(raw)
+            if ra != rb:
+                parent[rb] = ra
+    return np.array([find(int(a)) for a in welded[:, 0]], dtype=int)
+
+
+def _border_records(mesh: Mesh) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Border edges as world points, the shell of the triangle that owns each edge, and the shell of every triangle.
+
+    Points match `border_edges`: an edge used by exactly one triangle after a 0.1 mm weld.
+    """
     if not len(mesh.triangles):
-        return np.zeros((0, 2, 3))
+        return np.zeros((0, 2, 3)), np.zeros((0,), dtype=int), np.zeros((0,), dtype=int)
     ids = weld(mesh.vertices, WELD_M)
-    t = ids[mesh.triangles]
-    e = np.sort(np.stack([t[:, [0, 1]], t[:, [1, 2]], t[:, [2, 0]]], axis=1).reshape(-1, 2), axis=1)
-    edges, counts = np.unique(e, axis=0, return_counts=True)
-    use = edges[counts == 1]
+    tri_comp = _triangle_shells(mesh, ids)
+    welded = ids[mesh.triangles]
+    pairs = np.sort(np.stack([welded[:, [0, 1]], welded[:, [1, 2]], welded[:, [2, 0]]], axis=1).reshape(-1, 2), axis=1)
+    owner = np.repeat(np.arange(len(mesh.triangles)), 3)
+    order = np.lexsort((pairs[:, 1], pairs[:, 0]))
+    pairs, owner = pairs[order], owner[order]
+    change = np.empty(len(pairs), dtype=bool)
+    change[0] = True
+    if len(pairs) > 1:
+        change[1:] = np.any(pairs[1:] != pairs[:-1], axis=1)
+    starts = np.flatnonzero(change)
+    ends = np.concatenate([starts[1:], [len(pairs)]])
+    single = (ends - starts) == 1
+    use = pairs[starts[single]]
     first = np.zeros(int(ids.max()) + 1, dtype=int)
     first[ids[::-1]] = np.arange(len(ids))[::-1]    # a vertex of each welded id
-    return mesh.vertices[first[use]]
+    return mesh.vertices[first[use]], tri_comp[owner[starts[single]]], tri_comp
+
+
+def border_edges(mesh: Mesh) -> np.ndarray:
+    """(k, 2, 3) world points of the edges used by exactly one triangle, after a 0.1 mm weld."""
+    return _border_records(mesh)[0]
 
 
 def winding_number(points: np.ndarray, mesh: Mesh) -> np.ndarray:
@@ -251,7 +293,10 @@ def _frame(*scenes: Scene):
 # ---- the four invariants ----------------------------------------------------------------------------------------
 
 def open_borders_hidden(scene: Scene, part: str, ctx: Context = Context()) -> InvariantResult:
-    """(1) Every open border edge of `part` lies inside a neighbour (>= embed_min_m deep) or at / below the Ground."""
+    """(1) Every open border edge of `part` is inside another shell (>= embed_min_m deep) or at / below the Ground.
+
+    Another shell is a different part, or a shared-vertex component of `part` that does not contain the edge.
+    """
     return _result("open_borders_hidden", [_edge_name(part, e) for e in _unhidden_edges(scene, part, ctx)])
 
 
@@ -259,25 +304,59 @@ def _edge_name(part, e):
     return f"{part}: edge {np.round(e[0], 4).tolist()} -> {np.round(e[1], 4).tolist()}"
 
 
+def _require_part(scene: Scene, part: str) -> Mesh:
+    """The named mesh, or an error that names `part`: an unknown key never passes silently."""
+    if part not in scene:
+        raise ValueError(f"unknown part {part!r}")
+    return scene[part]
+
+
+def _require_finite(ctx: Context) -> None:
+    if not np.isfinite(ctx.embed_min_m):
+        raise ValueError("embed_min_m must be finite")
+    if ctx.ground_z is not None and not np.isfinite(ctx.ground_z):
+        raise ValueError("ground_z must be finite")
+
+
+def _mark_embedded(samples: np.ndarray, hidden: np.ndarray, mesh: Mesh, embed_min_m: float) -> None:
+    """Mark samples that sit at least embed_min_m inside `mesh` (winding, then depth)."""
+    if hidden.all() or not len(mesh.triangles):
+        return
+    todo = np.flatnonzero(~hidden)
+    inside = np.abs(winding_number(samples[todo], mesh)) > 0.5
+    deep_at = todo[inside]
+    if not len(deep_at):
+        return
+    deep = distance_to_surface(samples[deep_at], mesh) >= embed_min_m - 1e-9
+    hidden[deep_at[deep]] = True
+
+
 def _unhidden_edges(scene: Scene, part: str, ctx: Context) -> np.ndarray:
-    """(k, 2, 3) open border edges of `part` that are neither embedded in a neighbour nor at / below the Ground."""
+    """(k, 2, 3) open border edges of `part` that no other shell embeds and that are not at / below the Ground."""
+    _require_finite(ctx)
+    mesh = _require_part(scene, part)
     if part in ctx.opacity_parts:
         return np.zeros((0, 2, 3))
-    edges = border_edges(scene[part])
+    edges, edge_comp, tri_comp = _border_records(mesh)
     if not len(edges):
         return edges
     samples = np.concatenate([edges[:, 0], edges[:, 1], edges.mean(axis=1)])        # ends and middle of every edge
     hidden = np.zeros(len(samples), dtype=bool)
     if ctx.ground_z is not None:
         hidden |= samples[:, 2] <= ctx.ground_z + 1e-6
-    for other, mesh in scene.items():
-        if other == part or hidden.all() or not len(mesh.triangles):
+    for other, other_mesh in scene.items():
+        if other == part:
             continue
-        todo = np.flatnonzero(~hidden)
-        inside = np.abs(winding_number(samples[todo], mesh)) > 0.5
-        deep = distance_to_surface(samples[todo[inside]], mesh) >= ctx.embed_min_m - 1e-9
-        hidden[todo[inside][deep]] = True
+        _mark_embedded(samples, hidden, other_mesh, ctx.embed_min_m)
     k = len(edges)
+    for cid in np.unique(tri_comp):                 # other shells of the same part; a shell never hides itself
+        own = np.tile(edge_comp == cid, 3)          # samples are [ends 0, ends 1, middles], k each
+        if own.all():
+            continue
+        saved = hidden[own].copy()
+        hidden[own] = True                          # skip the shell's own samples, restore them afterwards
+        _mark_embedded(samples, hidden, Mesh(mesh.vertices, mesh.triangles[tri_comp == cid]), ctx.embed_min_m)
+        hidden[own] = saved
     return edges[~(hidden[:k] & hidden[k:2 * k] & hidden[2 * k:])]
 
 
