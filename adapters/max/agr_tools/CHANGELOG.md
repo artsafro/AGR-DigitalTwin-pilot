@@ -34,7 +34,26 @@
 
 ### D — экспорт, карты, свет (`improve/issue-979-export-scene-light`)
 
-- Заглушка ветки D: `export.batch`, `scene.maps_usage`, `light.check`.
+- `light.check` (выделение, `light_core.py` / `light_max.py`): ≤ 250 источников (`light_count` на тех, что сверх
+  лимита; список не обрезается), только Omni и Free/Target Spot (`light_type`; пары Omni/Spot всё равно проверяются),
+  Omni ↔ любой ≥ 5 м и Spot ↔ Spot ≥ 1,5 м попарно в 3D по позиции источника, строгое «<» (`light_omni_distance`,
+  `light_spot_distance`), один корневой Dummy (`light_no_root`, `light_root_many`), пивот корня = опорная точка
+  (`light_root_pivot`, по умолчанию начало координат или `options.reference`), маски имён без лимита номера 050
+  (`light_name`). Метры через `units.SystemType` × `SystemScale`, `decodeValue` не используется: сцена в см даёт те
+  же нарушения. Цель Target Spot не считается корнем. Скрытые и замороженные нарушители — в `plan.ambiguous`, не в
+  выделении; wirecolor и сцена не меняются; отчёт со всеми парами-нарушениями и d в метрах.
+- `scene.maps_usage` (чтение, `mapsuse_core.py` / `mapsuse_max.py`): общий перечислитель `tex_max._scene_maps` +
+  все экземпляры `BitmapTexture` с узлами-владельцами (Blend, DoubleSided, Shell, сплайны, свет) + окружение;
+  сравнение по нормализованному пути, одноимённые — по SHA256 (копия по другому пути — `copies`, не «лишняя»);
+  пропавшая карта не подменяется одноимённым файлом (он только кандидат); лишние файлы — `plan.ambiguous`
+  (решение за человеком), удаления нет. Папка карт: `options.folders`, иначе `maps`/`textures` рядом со сценой,
+  иначе папки используемых карт.
+- `export.batch` (новые файлы, `batch_core.py` / `batch_max.py`): группы по `AGR_EXPORT_PATH`, каждая — через
+  `runtime.export_preview` / `export_commit` (ворота и readback `export.checked` как есть); существующий FBX (или его
+  `.report.json` / `.partial`) — следующая версия `_vNNN` уже в preview; упавшая группа не останавливает остальные,
+  итог fail; один отчёт. Процедурные объекты из `runtime.edits_090('qa.procedural_objects', 'preview')` блокируют
+  свою группу; пока эта строка отвечает `not_implemented`, не экспортируется ни одна группа (fail closed).
+- Полигон: станции 0.9.17 и 0.9.18 (`stations/D.json`, `stations/D_build.py` — узлы света, сцена в м и в см).
 
 ### E1 — доработка: текстуры и имена (`improve/issue-979-rework-tex-names`)
 
