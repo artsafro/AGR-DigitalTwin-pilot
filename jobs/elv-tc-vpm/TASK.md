@@ -177,6 +177,12 @@ mitred runs (DECO P059-P062 moved out 28 mm, 3 Arktos raised 6 mm), 106 corner p
 as v004 (V004 max 4), Blender xView 0/0, Max 2024 xView 0/0 (954 nodes). Work FBX for acceptance [D198] also in
 `C:\x\elv_view_v005\`. Open: Q1 one lattice per plane vs irregular FBX panel joints, Q2 DECO stand-off, Q3 corner set.
 
+**Accepted by the user 2026-11-05 («Принимаю», on Claude's recommendations):** v005 is the current delivery candidate.
+Q1 one joint lattice per facade plane (continuity over exact irregular FBX joint positions); Q2 DECO over the gates stay
+28 mm off the wall; Q3 corner glazing = the И-А south / north corners (convex R3.15 arcs + inner corners) and the T1
+convex corner. Still open: FNO code/name and УКЭП `.sig` (customer), address (R12), signage TZ, `_Light.fbx` (user),
+SINTEZ rerun on v005 before the hand-off, parts-file `history` key.
+
 ## Не трогать
 
 - Source files in `for_ai\` (work on byte-identical copies only).
