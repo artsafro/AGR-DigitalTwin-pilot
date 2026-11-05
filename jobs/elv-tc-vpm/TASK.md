@@ -88,6 +88,16 @@ Intake per [D186], 2026-11-04. Profile: **VPM-OKS only** (no NPM). One OKS, so n
 - Next: renders of build-v006 (all sides, day and night), 3ds Max xView 5/2 mm after Mesh + Weld 0.002 in an own Max
   instance, then one acceptance pack: Gate 1 for P21–P42, library types ELV-01..20 [D140], visual acceptance.
 
+## Acceptance (user, 2026-11-05)
+
+- **Accepted by the user** («Принимаю всё»): parts P21–P42 (Gate 1), library types ELV-01..20 [D140] and the visual of
+  delivery v002 (`outputs/renders-v002/`), including the wood colour, the NW corner strip on the west elevation and
+  the layer over the roof terrace as rendered.
+- Technical QA: V001–V004 pass (V004 max 4); 3ds Max 2024 xView after Mesh + Weld 0.002: 0 faces (5 mm) / 0 vertices
+  (2 mm) on all 962 meshes (`outputs/xview-max-v001/`); Blender xView 0.
+- Not passed (passed=true forbidden): V011 (MSK-77 point, FNO code/name — waiting for the customer); SINTEZ AGR
+  Checker not run; signage «СРЕDА» waits for the TZ; `_Light.fbx` by the user.
+
 ## Не трогать
 
 - Source files in `for_ai\` (work on byte-identical copies only).
