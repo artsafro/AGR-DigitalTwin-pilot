@@ -5,7 +5,7 @@ IDs are the pilot MAF list (1..31). A face ID >= 1001 is a UDIM tile, not a mate
 ID, and is an error [D030]. An unknown position, zone or material is named in the
 error. Nothing is filled in from the first catalogue entry.
 
-Colour (user decision 2026-11-05): no passport photo. A schedule RAL is that paint.
+Colour source: schedule finishes, no passport photo (issue #889 card comment). A schedule RAL is that paint.
 A named finish with no number (light oak, HPL satin wood, polypropylene rope) keeps
 the existing atlas-slot hex and is marked ``colour assumed``. The vendor images in
 ``C:/x/vatutino-maf/v001/candidates_part*.jpg`` and ``candidates_sheet.jpg`` are
