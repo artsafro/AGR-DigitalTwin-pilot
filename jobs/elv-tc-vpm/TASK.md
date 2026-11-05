@@ -98,6 +98,23 @@ Intake per [D186], 2026-11-04. Profile: **VPM-OKS only** (no NPM). One OKS, so n
 - Not passed (passed=true forbidden): V011 (MSK-77 point, FNO code/name — waiting for the customer); SINTEZ AGR
   Checker not run; signage «СРЕDА» waits for the TZ; `_Light.fbx` by the user.
 
+## Customer TZ 2026-11-05 (rework list on the customer's blank `SM_Elevatornaya_Vl_1_A_001`)
+
+Inputs (read-only copies): `..._sreda\customer_2026-11-05\` — `TC_Sreda-04-11-2026-1.pur` (sha256 1e088d29…849b),
+`SREDA_fasad_v0.6.blend` (acecd0ad…615e), `SM_Elevatornaya_Vl_1_A_001.zip` (3051e465…813f). Analysis:
+`outputs/customer-tz-v001/tz_summary.md`, `outputs/customer-blank-v001/compare.md`.
+
+User answers (2026-11-05):
+- Base: **our** accepted model (delivery v002), not the customer's blank.
+- Name: **the customer's stem** `SM_Elevatornaya_Vl_1_A_001` (replaces `SM_Elevatornaya_1A`).
+- Horizontal joints stay in the texture for now. Which «накладки» the TZ means is unclear — to clarify (customer
+  scene collection `RZshow_SRC_Накладки`, 131 meshes; TZ notes at +4.6 / +10.4) before any geometry.
+- Cutting windows / entrances through the stemalit on the front facade: not decided — look at the model first.
+- Customer's false rooms and door niches: not decided — show which ones first.
+- Colours: cassette RAL 7024 (customer) instead of 7021; wood as smooth cassettes per the site photo, colour from
+  the photo until the act gives the target.
+- Checker: SINTEZ AGR Checker run and clean except FNO code (no data).
+
 ## Не трогать
 
 - Source files in `for_ai\` (work on byte-identical copies only).
