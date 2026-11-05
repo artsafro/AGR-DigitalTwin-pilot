@@ -19,8 +19,8 @@ Status:
 
 ## Machine and repository
 
-- Local: `C:\Users\artsafro\AGR-DigitalTwin` (branch `main`); GitHub `artsafro/AGR-DigitalTwin`
-  (private, `origin`). Task worktrees: the agent's own worktree folder or
+- Local: `C:\Users\artsafro\.AGR-DigitalTwin_pilot` (branch `main`); GitHub `artsafro/AGR-DigitalTwin-pilot`
+  (private, `origin`). The upstream `artsafro/AGR-DigitalTwin` (`C:\Users\artsafro\AGR-DigitalTwin`) is a separate repo. Task worktrees: the agent's own worktree folder or
   `C:\Users\artsafro\HerdrWorktrees\AGR-DigitalTwin\<name>` (Herdr).
 - Applications: Blender 4.4 and 5.1.2, Unreal Engine 5.5 and 5.7, 3ds Max 2024 and 2026, Revit 2025,
   AutoCAD 2025, SketchUp 2026, SpeedTree Modeler 10.0.1, RizomUV 2024.1, Python 3.13 (`py -3`), uv,
@@ -374,7 +374,7 @@ checker). Note: the desktop app did not load project subagents from this worktre
   night: a checkout of the commit (shared clone, own `.git`, LFS files are pointers) → `uv sync --frozen --python 3.13`
   → build `AGR-Tools.mzp` → jobs in agr-lab runner slots:
   - `blender`: `pytest -m "blender or dcc"` (180 tests), `DT_BLENDER` = the slot's Blender 5.1.2;
-  - `unit`: default suite with `-n 8` (16 917 tests; cloud dry run 4 workers 10.4 min) — nightly/first/manual only;
+  - `unit`: default suite with `-n 8` (~18.3k tests on 2026-11-05; `perf` and `job` deselected) — nightly/first/manual only;
   - `agr-tools-max2024`, `agr-tools-checks-max2024`: `tests/max_tools/run_agr_tools_native.py` and
     `run_agr_tools_checks_native.py` in batch 3ds Max 2024 (isolated slot profile, synthetic scenes).
 - Per-test results (JUnit) are compared with the previous run of the branch (a new branch with `main`); verdict

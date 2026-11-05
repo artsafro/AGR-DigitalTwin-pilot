@@ -366,6 +366,7 @@ def test_snap_band_z0_point_top_is_one_z_for_random_valences():
     assert splits > 0
 
 
+@pytest.mark.job
 def test_tow02_point_domain_one_top_and_locator_counts(tmp_path):
     blender = blender_executable()
     if blender is None:

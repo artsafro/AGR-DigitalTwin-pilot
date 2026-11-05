@@ -7,7 +7,7 @@ import subprocess
 import sys
 import pytest
 
-PATH = Path(__file__).with_name('agent_lookup.py')
+PATH = Path(__file__).resolve().parents[2] / 'tools' / 'methods' / 'agent_lookup.py'
 
 @pytest.fixture
 def mod():

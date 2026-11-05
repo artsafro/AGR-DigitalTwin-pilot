@@ -110,7 +110,7 @@ line below exactly once (`.github/pull_request_template.md`, "Evidence"), and th
 ```bash
 uv run dt evals --check-handoff <pr-body.md> --sha <full HEAD sha> --output <worktree>/tmp/evals
 ```
-- `Full suite:` run through `suite_slot.py` on the head sha, `N passed`, `0 failed` (a failure only
+- `Full suite:` run through `suite_slot.py` (`C:\Users\artsafro\hermes_kanban\scripts\`) on the head sha, `N passed`, `0 failed` (a failure only
   with its `known #<issue>` owner). After a rework (rule 49) it may name an ancestor of the head, and then an
   `Affected tests:` line on the head with `0 failed` is required.
 - `Regression evals:` as above. It is verified with `check_receipt`, and the all-not-measured `no Claude transcript` receipt is valid.
@@ -326,7 +326,7 @@ Each kind of fact lives in one place; the others point to it.
 | Fact | File |
 |---|---|
 | A dated user decision | `docs/decisions.md` (one line, `D<n>`), the full text where it applies |
-| A modelling rule | `docs/domain/patterns/<id>.md` (index `patterns/INDEX.md`); regulation rules `docs/domain/*.md`, `standards/` |
+| A modelling rule | `docs/domain/patterns/<id>.md` (index `docs/domain/patterns/INDEX.md`); regulation rules `docs/domain/*.md`, `standards/` |
 | An accepted result or a lesson | `docs/cases.md` |
 | Project state (goal, in production, harness, next step) | `docs/PROJECT_STATE.md` |
 | An open question to the user | `jobs/<ID>/questions.md` (object); `docs/domain/conflicts.md` (source conflict); `docs/backlog.md` "Decisions for the user" |
@@ -362,7 +362,7 @@ The header names that command. Regeneration is idempotent; do not edit the file 
 and a file of exactly 80 lines is refused. Exactly the sections Goal, In production, Harness, Next step, Links
 (`tests/test_project_state.py`). Regenerate it only on `main` after a merge. Per-object gates stay in
 `jobs/<ID>/STATE.md`. In a task branch state changes go into the handoff. An optional hand-written next step
-lives in `docs/PROJECT_STATE.next.md` (plain lines, no headings); the generator refuses to write its output
+lives in `docs/PROJECT_STATE.next.md` when present (plain lines, no headings); the generator refuses to write its output
 onto that file, onto `.git`, or onto any other input.
 
 ## Reports
@@ -469,7 +469,7 @@ manual DCC skill/reviewer gate, not a generic MCP sandbox.
 
 Wall-clock / CPU-time budgets are opt-in: marked `perf` and excluded from the default `addopts`.
 Run the lane through the suite-slot limiter — `uv run pytest -m perf -p no:cacheprovider` (via
-`scripts/suite_slot.py`) — it is not part of a card's full-suite receipt.
+`C:\Users\artsafro\hermes_kanban\scripts\suite_slot.py`, outside the repo) — it is not part of a card's full-suite receipt.
 
 ## Real 3ds Max lane (#518)
 

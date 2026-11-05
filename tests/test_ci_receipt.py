@@ -249,9 +249,8 @@ def test_workflow_trigger_is_manual_dispatch_only():
     assert "branches:" not in head
     assert "runs-on: ubuntu-latest" in tail
     assert "actions/checkout@v4" in text
-    assert "python-version: \"3.10\"" in text
-    assert "flake8" in text
-    assert tail.strip().endswith("pytest")
+    assert "astral-sh/setup-uv@" in text and "uv sync --frozen" in text
+    assert tail.strip().endswith("uv run pytest -q")
 
 
 def test_author_receipts_mentions_ci_receipt_once():

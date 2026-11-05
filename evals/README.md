@@ -62,7 +62,7 @@ Procedural graders over the Claude Code transcripts of the branch (`#123`): the 
 | `source-inspected` | `source_inspected` | `transcript` | a source file (`.max`, `.rvt`, `.fbx`, ...) no `source-inspector` read |
 | `failure-stop` | `failure_stop` | `transcript` | a check run again after two failures with the same cause, or three |
 | `branch-name` | `branch_name` | `transcript` | a commit on an auto-generated worktree branch, or off `<type>/<area>-<what>` |
-| `routine-question` | `routine_question` | `transcript`, `decisions`, `patterns` | a question about the agent's own implementation, or one `docs/decisions.md` / `patterns/INDEX.md` already answers |
+| `routine-question` | `routine_question` | `transcript`, `decisions`, `patterns` | a question about the agent's own implementation, or one `docs/decisions.md` / `docs/domain/patterns/INDEX.md` already answers |
 
 Each task's `task.md` states the exact transcript fields its grader reads and what its two references are.
 

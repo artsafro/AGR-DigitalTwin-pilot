@@ -426,6 +426,7 @@ def _jittered_two_layer_grid(seed):
     return faces
 
 
+@pytest.mark.perf
 def test_jittered_two_layer_grid_scales_to_fifty_thousand_triangles():
     faces = _jittered_two_layer_grid(161)
     assert len(faces) == 50_000

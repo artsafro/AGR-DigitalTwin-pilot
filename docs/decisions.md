@@ -64,7 +64,7 @@ frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Mar
 | D039 | 2026-10-10 | `plate_gap_m` / `plate_overlap_m` are building parameters of the spec, default 5 / 20 mm | pattern `roof-inset-plane` | PR #64 |
 | D040 | 2026-10-10 | A benchmark etalon never comes from the engine; its README names the author | `docs/HARNESS_PLAN.md` §6, `benchmark/` | PR #61 |
 | D041 | 2026-10-10 | Terrace = a floor-step ledge with a parapet; spec v0.4 `terraces: [{level, parapet_h_m}]` | pattern `terrace` | PR #59 |
-| D042 | 2026-10-10 | Pattern `terrace` proven on benchmark `bench-b02t-terrace` | pattern `terrace`, `patterns/INDEX.md` | PR #61 |
+| D042 | 2026-10-10 | Pattern `terrace` proven on benchmark `bench-b02t-terrace` | pattern `terrace`, `docs/domain/patterns/INDEX.md` | PR #61 |
 | D043 | 2026-10-10 | Floor step: engine order step -> oblique wall -> terrace; ledge with the roof ID, soffit with the facade ID | pattern `floor-step` | PR #55 |
 | D044 | 2026-10-10 | Markup helpers plan approved (HARNESS_PLAN §14, MH1-MH3), after the terrace | `docs/HARNESS_PLAN.md` §14, pattern `markup-helpers` | PR #60 |
 | D045 | 2026-10-10 | Revit levels mapped by `object.json` `revit_levels`; `LEVEL_roof` = base + offset + volume / area | pattern `markup-helpers` | PR #69 |
