@@ -771,3 +771,18 @@ def test_glue_procedural_all_objects_and_runtime_contract_for_export_batch(fake,
         rtm.edits_090('qa.procedural_objects', 'apply', r)
     clean = rtm.edits_090('qa.procedural_objects', 'preview', nodes=[nodes[0]])
     assert clean['status'] == 'pass' and clean['plan']['procedural'] == []
+
+
+def test_glue_normals_skips_a_node_without_mesh(fake):
+    """Measured in Max 2024 (job 20261105-142107-a5cb6e35): Populate Crowd passes canConvertTo TriMeshGeometry but
+    snapshotAsMesh raises; qa.normals lists it in skipped with the reason instead of failing the whole run."""
+    rt = fake([_Node(1, 'SM_Box_Main', mesh=box()), _Node(2, 'Proc_Crowd', 'Crowd', 'helper', mesh=box())])
+
+    def snap(n):
+        if n.name == 'Proc_Crowd':
+            raise RuntimeError('MAXScript exception raised.\n-- Runtime error: Cannot get mesh from this object')
+        return _Mesh(*n.mesh, n.sg)
+    object.__setattr__(rt, 'snapshotAsMesh', snap)
+    r = qm.qa_normals(_ctx(qc, {}), 'preview', rt.nodes, None)
+    assert [o['name'] for o in r['objects']] == ['SM_Box_Main']
+    assert r['plan']['skipped'][0]['item'] == 'Proc_Crowd' and 'Cannot get mesh' in r['plan']['skipped'][0]['reason']

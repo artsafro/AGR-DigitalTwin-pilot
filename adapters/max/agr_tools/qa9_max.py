@@ -178,7 +178,12 @@ def qa_normals(ctx, mode, nodes, preview):
         if not rt.canConvertTo(n, rt.TriMeshGeometry):
             skipped.append(edit.skipped(name, 'не геометрия: {}'.format(rt.classOf(n))))
             continue
-        mesh = read_mesh(n, mpu)
+        try:
+            mesh = read_mesh(n, mpu)
+        except RuntimeError as exc:  # e.g. Populate Crowd: convertible by class, no mesh (measured, Max 2024)
+            skipped.append(edit.skipped(name, 'сетка не читается ({}): {}'.format(rt.classOf(n),
+                                                                                  str(exc).splitlines()[-1][:200])))
+            continue
         kind = core.object_kind(name)
         hidden, frozen = _flags(n)
         objects.append(dict(mesh, handle=_handle(n), name=name,

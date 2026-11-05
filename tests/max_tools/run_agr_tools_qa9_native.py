@@ -154,9 +154,16 @@ def view_state():
 
 
 def scene_hash(nodes=None):
+    """Names, classes, transforms and (where Max gives one) the mesh hash of every node."""
     nodes = list(nodes) if nodes is not None else [n for n in rt.objects]
-    snap = EMAX.snapshot([n for n in nodes if rt.canConvertTo(n, rt.TriMeshGeometry)])
-    return hashlib.sha256(json.dumps(snap, sort_keys=True).encode()).hexdigest()
+    rows = []
+    for n in nodes:
+        try:
+            mesh = EMAX.mesh_hash(n) if rt.canConvertTo(n, rt.TriMeshGeometry) else None
+        except RuntimeError:  # Populate Crowd: convertible by class, no mesh
+            mesh = 'no mesh'
+        rows.append([int(rt.getHandleByAnim(n)), str(n.name), str(rt.classOf(n)), EMAX._matrix(n.transform), mesh])
+    return hashlib.sha256(json.dumps(sorted(rows), sort_keys=True).encode()).hexdigest()
 
 
 # ---- qa.address ------------------------------------------------------------------------------------------
@@ -236,7 +243,7 @@ NORMALS_WANT = {
     'SM_Pair_2_20_0_Main': [], 'SM_Pair_2_20_5_Main': [], 'SM_Pair_2_50_0_Main': [], 'SM_Pair_2_50_5_Main': [],
     'SM_ACB_Main': ['double_face'], 'SM_BoxFlip_Main': ['normal_inward'], 'SM_BoxOk_Main': [], 'SM_L_Main': [],
     'SM_TwoBoxes_Main': ['normal_inward'], 'SM_Pane_001_MainGlass': ['missing_double_side'], 'SM_Card_Flora': [],
-    'SM_MeshPair_Main': ['double_face'], 'SM_Primitive_Main': [], 'SM_PolyBox2Flip_Main': ['normal_inward'],
+    'SM_MeshPair_Main': ['double_face'], 'SM_Primitive_Main': [],
 }
 
 
@@ -251,16 +258,25 @@ def normals():
         assert view_state() == before, (before, view_state())
         assert scene_hash() == h0
         got = codes(r)
-        assert got == NORMALS_WANT, {k: (got.get(k), v) for k, v in NORMALS_WANT.items() if got.get(k) != v}
+        pb = made['SM_PolyBox2Flip_Main']
+        # Measured, not assumed: does Editable_Poly keep two flipped faces of a closed box (lab L05: not built)?
+        nz = [round(float(rt.polyop.getFaceNormal(pb, f).z), 3) for f in (1, 2)]
+        flipped = nz[0] > 0 and nz[1] < 0  # box bottom normal -z, top +z when not flipped
+        want = dict(NORMALS_WANT, SM_PolyBox2Flip_Main=['normal_inward'] if flipped else [])
+        assert got == want, {k: (got.get(k), v) for k, v in want.items() if got.get(k) != v}
         flags = r['plan']['flags']
         assert flags['SM_PolyBox2Flip_Main']['ids'] == 'poly', flags['SM_PolyBox2Flip_Main']
         out[units] = {'codes': got, 'ids': ids(r), 'm_per_unit': r['plan']['m_per_unit'],
-                      'poly_flip_ids': ids(r)['SM_PolyBox2Flip_Main']}
+                      'poly_flip': {'face_normal_z_1_2': nz, 'kept_flipped': flipped,
+                                    'ids': ids(r)['SM_PolyBox2Flip_Main'],
+                                    'faces': int(rt.polyop.getNumFaces(pb)), 'verts': int(rt.polyop.getNumVerts(pb))}}
+        if flipped:
+            assert out[units]['poly_flip']['ids'] == [(1, 2)], out[units]['poly_flip']
     assert out['meters']['ids'] == out['centimeters']['ids']
-    assert out['meters']['poly_flip_ids'] == [(1, 2)], out['meters']['poly_flip_ids']
     return {'meters_equals_centimeters': True, 'objects': len(out['meters']['codes']),
             'm_per_unit': [out['meters']['m_per_unit'], out['centimeters']['m_per_unit']],
-            'poly_flip_ids': out['meters']['poly_flip_ids'], 'twoboxes_ids': out['meters']['ids']['SM_TwoBoxes_Main']}
+            'poly_flip': out['meters']['poly_flip'], 'twoboxes_ids': out['meters']['ids']['SM_TwoBoxes_Main'],
+            'flip_ids': out['meters']['ids']['SM_BoxFlip_Main']}
 
 
 # ---- qa.sintez -------------------------------------------------------------------------------------------
@@ -341,6 +357,8 @@ def procedural():
     assert {str(n.name): str(rt.classOf(n)) for n in rt.objects} == classes_before  # nothing collapsed
     assert scene_hash() == h0 and r['plan']['warnings'] and r['plan']['blocking'] == sorted(
         int(rt.getHandleByAnim(n)) for n in made.values())
+    n = agr.edits_090('qa.normals', 'preview', None, list(made.values()) + [box_])
+    normals_skipped = [x['item'] for x in n['plan']['skipped']]
     missing = sorted({str(c) for sc in ('GeometryClass', 'shape', 'helper', 'light', 'modifier', 'material',
                                         'textureMap') for c in getattr(rt, sc).classes if 'missing' in str(c).lower()})
     # export.batch (branch D) through runtime.edits_090: the group with the IdleArea is blocked, the other not
@@ -355,7 +373,7 @@ def procedural():
     assert b['plan']['procedural']['state'] == 'checked'
     return {'made': {n: str(rt.classOf(x)) for n, x in made.items()}, 'absent': absent,
             'products': [(p['product'], p['status']) for p in r['plan']['products']], 'missing_classes': missing,
-            'batch_groups': groups}
+            'batch_groups': groups, 'normals_skipped': normals_skipped}
 
 
 for name, fn in (('address', address), ('normals', normals), ('sintez', sintez), ('facade', facade),
