@@ -260,7 +260,10 @@ Pipeline core:
   `dt spec extract|merge-questions|compare`, `dt intake check` — WORKING on synthetic data; first real run KPP1.
 - Engine `src/dt_ai/geometry/from_spec.py` — WORKING on synthetic specs only.
 - Build by source modules `src/dt_ai/geometry/from_source.py`, `tools/qa/run_from_source.py` — EXPERIMENTAL [D079].
-- Window type list `library/windows/window_types.json` (`tools/library/build_window_types.py`) — WORKING, 46 entries.
+- Window type list `library/windows/window_types.json` (`tools/library/build_window_types.py`) — WORKING, 67 entries.
+- Window library preview `tools/library/window_library_preview.py` (Blender, headless) — WORKING (2026-11-05): every
+  type laid out flat by role (frame, `panes_m` glass, `opaque_m` leaves, label, red = unconfirmed) into a new `.blend`
+  for a visual check; not a production asset.
 - Operation library `technical_library/` — WORKING per package README.
 - Album page reader `src/dt_ai/album/` (#317) — on `main`, synthetic PDFs only.
 - Placement engine `src/dt_ai/placement/engine.py` (#316) — on `main`, synthetic tests only.
