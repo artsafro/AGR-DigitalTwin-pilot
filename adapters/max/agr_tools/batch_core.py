@@ -83,9 +83,19 @@ def procedural_state(report):
     if report.get('status') == 'not_implemented':
         return 'not_implemented', {}, '{} not_implemented ({})'.format(PROCEDURAL, report['plan'].get('issue', '#979'))
     offenders = {}
+    plan = report.get('plan') or {}
+    # the stable list of branch C (qa9_core.procedural_report): plan.procedural / plan.blocking, hidden ones too
+    for p in plan.get('procedural') or []:
+        if isinstance(p, dict) and isinstance(p.get('handle'), int):
+            offenders[p['handle']] = '{} {} ({})'.format(p.get('code', 'proc_object'), p.get('class', '?'),
+                                                         p.get('product') or 'плагин отсутствует')
+    for h in plan.get('blocking') or []:
+        if isinstance(h, int):
+            offenders.setdefault(h, 'qa.procedural_objects: blocking')
     for o in report.get('objects') or []:
         if o.get('findings'):
-            offenders[o['handle']] = '; '.join('{} {}'.format(f['code'], f['detail']).strip() for f in o['findings'])
+            offenders.setdefault(o['handle'], '; '.join(
+                '{} {}'.format(f['code'], f['detail']).strip() for f in o['findings']))
     for a in (report.get('plan') or {}).get('ambiguous') or []:
         if isinstance(a, dict) and isinstance(a.get('handle'), int):
             offenders.setdefault(a['handle'], str(a.get('reason') or a.get('item') or 'ambiguous'))

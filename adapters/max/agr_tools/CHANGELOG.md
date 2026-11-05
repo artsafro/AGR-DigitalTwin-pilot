@@ -116,7 +116,8 @@
   `runtime.export_preview` / `export_commit` (ворота и readback `export.checked` как есть); существующий FBX (или его
   `.report.json` / `.partial`) — следующая версия `_vNNN` уже в preview; упавшая группа не останавливает остальные,
   итог fail; один отчёт. Процедурные объекты из `runtime.edits_090('qa.procedural_objects', 'preview')` блокируют
-  свою группу; пока эта строка отвечает `not_implemented`, не экспортируется ни одна группа (fail closed).
+  свою группу (`plan.procedural` / `plan.blocking` ответа ветки C, #1000); если строка отвечает `not_implemented` или
+  падает, не экспортируется ни одна группа (fail closed).
 - Полигон: станции 0.9.17 и 0.9.18 (`stations/D.json`, `stations/D_build.py` — узлы света, сцена в м и в см).
 
 ### E1 — доработка: текстуры и имена (`improve/issue-979-rework-tex-names`)
