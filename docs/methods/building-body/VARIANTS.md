@@ -19,7 +19,7 @@ rows stay synthetic [D195]. #967 then measured KPP1 from the real drawings (АС
 plan at 0.000, L01 the facades, L02 the colour facades, and there is no section. Storey tops are
 `jobs/KPP1/object.json` (0.000 / 3.900 / 7.909). The plan contour is the exterior wall hatch
 (`A-WALL-____-PATT`, 33.07 m²) closed with the unchanged 0.75 m gap: one footprint of 27.60 × 13.06 m that
-covers 99.2 % of the hatch (`plan_from_dxf.py --contour-source hatch`). The wall lines alone kept 32 % of
+covers 99.2 % of the hatch (`plan_from_dxf.py --contour-source hatch`). The wall lines alone kept 10.54 m² and covered 14.2 % of
 it, and the extract now refuses any contour that covers 90 % of the hatch or less, or whose bbox is 0.1 m or
 more off it. The footprint lies inside the larger synthetic mesh contour (33.28 × 14.75 m). Openings are not cut: the insert was measured on
 the plan and on L01 and is not the opening centre (see `kpp1-drawing/mapping-questions.md`). kernel-prisms and
