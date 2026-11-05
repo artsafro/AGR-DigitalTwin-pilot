@@ -679,6 +679,7 @@ def cleanup_preview(nodes=None, options=None):
 
 
 # Animation keys under an animatable (node, its stack, its material), counted or deleted (#979 export.cleanup keys).
+# Leaf controllers only: Position XYZ repeats the keys of its X/Y/Z (job 20261105-144144-6b9bc700: 32 for 16).
 _KEYS_FN = '''fn agrCleanupKeys a del = (
     local n = 0
     if a != undefined do (
@@ -686,7 +687,7 @@ _KEYS_FN = '''fn agrCleanupKeys a del = (
             local s = a[i]
             if s != undefined do (
                 local c = s.controller
-                if c != undefined and isController c do (
+                if c != undefined and isController c and c.numSubs == 0 do (  -- leaves only: no double count
                     local k = numKeys c
                     if k > 0 do (n += k; if del do deleteKeys c #allKeys)
                 )

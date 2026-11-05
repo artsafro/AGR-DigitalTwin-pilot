@@ -268,7 +268,7 @@ def cleanup_subject():
 def export_cleanup():
     b = cleanup_subject()
     facts0 = agr._cleanup_facts(b)
-    assert 0 in facts0['vertex_channels'] and facts0['keys'] >= 16, facts0
+    assert 0 in facts0['vertex_channels'] and facts0['keys'] == 16, facts0  # 14 node + 2 material
     before = (agr.snapshot([b]), facts0, str(rt.getUserPropBuffer(b)))
     out = {'original_facts': facts0}
     for label, opts in (('default', None), ('opt_in', {'channels': True, 'keys': True})):
