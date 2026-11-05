@@ -1,4 +1,4 @@
-"""Geometry of a model against a benchmark etalon (docs/HARNESS_PLAN.md §5).
+"""Geometry of a model against a benchmark etalon (historical: docs/HARNESS_PLAN.md §5).
 
     uv run python tools/qa/check_geometry.py <model-dump.json> <etalon-dump.json> --spec <spec.json> \
         --tolerances benchmark/<bench-id>/tolerances.json --output <report.json>

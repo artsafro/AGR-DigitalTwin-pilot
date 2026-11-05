@@ -256,6 +256,7 @@ Removal candidates by the rule (no evidence, no eval): `permissions.allow`, `per
   `cases`, `pipeline`, `HANDOFF`, `decisions`). Out of it: `docs/agr`, `jobs`, `technical_library`.
 - Command (Git Bash, from the repository root; divide by four):
   `{ find . -maxdepth 1 -type f \( -name '*.md' -o -name '*.yaml' -o -name '*.json' \); find docs/agents docs/domain docs/adr .agents/skills standards -type f \( -name '*.md' -o -name '*.yaml' -o -name '*.json' \); ls docs/PROJECT_STATE.md docs/HARNESS_PLAN.md docs/backlog.md docs/cases.md docs/pipeline.md docs/HANDOFF.md docs/decisions.md; } | tr '\n' '\0' | xargs -0 cat | wc -c`  # historical docs/HARNESS_PLAN.md stays in this 2026-10-15 measurement
+  The command is the 2026-10-15 measurement and still names `docs/HARNESS_PLAN.md`; that file is historical.
 - Threshold: **200k tokens**. Below it the agent loads the relevant file whole; no semantic index, no vector store,
   no BM25. Retrieval tooling is reconsidered only when a measurement passes 200k.
 
@@ -493,7 +494,7 @@ Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 20
 - Limits: pairs only within one object (a joined mesh is one object, as in xView); FBX / .blend need Blender.
 
 ### 3ds Max xView runner — `tools/qa/xview_dump.ms` (#528)
-- Status: contract-tested and native-measured on Max 2024 (2026-10-24) via both `3dsmax.exe -U MAXScript tools/qa/xview_dump.ms` and the supported route `dcc_batch.py max --version 2024 --file tools/qa/xview_dump.ms` (3dsmaxbatch, shared lock, run on copies).
+- Status: contract-tested and native-measured on Max 2024 (2026-10-24) via the supported batch route `dcc_batch.py max --version 2024 --file tools/qa/xview_dump.ms` (3dsmaxbatch, shared lock, run on copies); this is the only launcher evidenced by the retained `SUMMARY.md` and the four JSON (the JSON carry no launcher identity). The startup invocation `3dsmax.exe -U MAXScript tools/qa/xview_dump.ms` below is documented but has no retained native measurement.
   `3dsmax.exe -U MAXScript tools/qa/xview_dump.ms` with `XVIEW_OUT` (alias `TOW02_XV_OUT`) a directory that
   already contains `jobs.txt`. The receipt line is `#nonce:<id>`; each model is exactly six fields
   `label|path|node|mode|material|slot`. Path is `.fbx` (import into a reset scene) or `.max`

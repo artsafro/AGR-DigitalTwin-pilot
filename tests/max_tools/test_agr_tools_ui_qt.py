@@ -1,9 +1,13 @@
 """new-case: AGR Tools 0.6.0/0.7.0 Qt panel under pytest-qt with a fake backend (#808).
 
-Runs outside 3ds Max (PySide6 from PyPI). Skipped when PySide6 / pytest-qt are not installed:
-uv run --with PySide6 --with pytest-qt pytest tests/max_tools/test_agr_tools_ui_qt.py
+Runs outside 3ds Max (PySide6-Essentials + pytest-qt from the uv dev group, #897):
+uv run pytest tests/max_tools/test_agr_tools_ui_qt.py
+QT_QPA_PLATFORM=offscreen is set by tests/max_tools/conftest.py before any PySide6 import.
+A missing Qt package FAILS this module when the rest of the dev group is installed; it is a skip
+only without the dev group (tests/max_tools/_qt_guard.py).
 """
 import importlib.util
+import inspect
 import json
 import os
 import sys
@@ -11,11 +15,16 @@ from pathlib import Path
 
 import pytest
 
+ROOT = Path(__file__).resolve().parents[2]
+_gspec = importlib.util.spec_from_file_location('agr_qt_guard_mod', Path(__file__).with_name('_qt_guard.py'))
+_guard = importlib.util.module_from_spec(_gspec)
+_gspec.loader.exec_module(_guard)
+_status, _reason = _guard.qt_status(ROOT / 'pyproject.toml')
+if _status == 'fail':
+    pytest.fail('Qt panel tests: ' + _reason, pytrace=False)
 pytest.importorskip('PySide6')
 pytest.importorskip('pytestqt')
-os.environ.setdefault('QT_QPA_PLATFORM', 'offscreen')
 
-ROOT = Path(__file__).resolve().parents[2]
 PKG = ROOT / 'adapters/max/agr_tools'
 
 
@@ -67,10 +76,13 @@ class FakeBackend:
     def targets(self, scope_all):
         return list(self.nodes)
 
-    def run_chunk(self, tool, chunk):
+    def run_chunk(self, tool, chunk, on_item=None):
         if self.panel is not None:
             self.enabled_during_run |= {k for k, b in self.panel.buttons.items() if b.isEnabled()}
             self.panel.run('matid')  # re-entry through processEvents must be refused
+        if on_item is not None:
+            for _h in chunk:
+                on_item()
         return {'schema': 1, 'tool': tool, 'status': 'pass',
                 'objects': [{'handle': h, 'name': 'N%d' % h,
                              'findings': [] if h % 100 else [{'code': 'overlap_faces', 'ids': [1]}]}
@@ -140,8 +152,11 @@ def test_layout_has_all_sections_and_actions(main):
     p = make(main, FakeBackend())
     assert p.objectName() == 'AgrToolsPanel' and isinstance(p, QtWidgets.QDockWidget)
     assert {s.header.text() for s in p.sections} == set(roadmap.STEP_RU)
-    assert set(p.buttons) == {a.id for a in model.ACTIONS}
-    for a in model.ACTIONS:
+    suite = roadmap.load_file(SUITE)
+    shipped = [a for a in model.ACTIONS
+               if roadmap.shipped(roadmap.row(suite, model.row_of(a.id))['version'], model.VERSION)]
+    assert set(p.buttons) == {a.id for a in shipped}  # 0.8 actions stay greyed until VERSION 0.8.0 (#908)
+    for a in shipped:
         b = p.buttons[a.id]
         assert b.toolTip().startswith(model.tooltip(a)) and 'Когда:' in b.toolTip()
         assert b.text() == a.label and not b.icon().isNull()
@@ -177,10 +192,10 @@ def test_panel_cancel_button(main, qtbot):
     p = make(main, be)
     orig = be.run_chunk
 
-    def chunk(tool, c):
+    def chunk(tool, c, on_item=None):
         if c[0] == 101:
             qtbot.mouseClick(p.cancel_btn, QtCore.Qt.LeftButton)
-        return orig(tool, c)
+        return orig(tool, c, on_item=on_item)
     be.run_chunk = chunk
     p.run('matid')
     assert p.table.rowCount() == 126 and 'Отменено' in p.summary.text()  # 125 objects + the cancelled row
@@ -264,6 +279,43 @@ def test_accents_follow_the_palette(main, theme, window, base, text):
             main.grab().save(str(Path(out) / 'offscreen_{}.png'.format(theme.lower())))
     finally:
         QtWidgets.QApplication.instance().setPalette(QtGui.QPalette())
+
+
+def test_batched_progress_pumps_by_elapsed_time(main, monkeypatch):
+    """Invariant: 25-object chunks must not be the event-loop cadence.
+
+    Each object costs 0.06 s, so a count-based chunk of 25 blocks for 1.5 s.
+    Pumps follow the clock and the max gap stays strictly under 0.1 s.
+    """
+    t = {'n': 0.0}
+    marks = []
+
+    def pumped(*_a, **_k):
+        marks.append(t['n'])
+
+    monkeypatch.setattr(QtWidgets.QApplication, 'processEvents', pumped)
+    be = FakeBackend(50)
+    orig = be.run_chunk
+
+    def run_chunk(tool, chunk, on_item=None):
+        for _h in chunk:
+            t['n'] += 0.06
+            if on_item is not None:
+                on_item()
+        return orig(tool, chunk)
+
+    be.run_chunk = run_chunk
+    kwargs = {}
+    if 'clock' in inspect.signature(ui.AgrPanel.__init__).parameters:
+        kwargs['clock'] = lambda: t['n']
+    p = ui.AgrPanel(be, main, **kwargs)
+    be.panel = p
+    ui.place(p, main, model.parse_dock(be.load_settings()))
+    main.show()
+    p.run('xview')
+    gaps = [b - a for a, b in zip(marks, marks[1:])]
+    assert gaps, marks
+    assert max(gaps) < 0.1, 'max_gap_s={:.3f} pumps={}'.format(max(gaps), len(marks))
 
 
 def test_theme_switch_after_creation_recolours_sections(main):

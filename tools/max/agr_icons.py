@@ -117,6 +117,46 @@ BASE: dict[str, tuple[str, str]] = {
     "roadmap": ("Путь: как пользоваться",
                 f'<circle {_S} cx="5" cy="5" r="2.5"/><circle {_S} cx="19" cy="12" r="2.5"/><circle {_S} cx="5" cy="19" r="2.5"/>'
                 f'<path {_S} d="M7.5 5H14a5 5 0 0 1 0 7M16.5 12H10a5 5 0 0 0 0 7H7.5"/>'),
+    # 0.8 delivery edits (#908): names = `icon` of the plan rows of version 0.8 (agr-tools-suite.json)
+    "missing": ("Пропавшие карты",
+                f'<rect {_S} x="3" y="4" width="13" height="13" rx="1"/><path {_S} d="M3 14l4-4 3 3 2-2 4 4"/>'
+                f'<circle {_S} cx="17.5" cy="17.5" r="4"/><path {_S} d="M17.5 15.5v2.3"/>'
+                f'<circle {_F} cx="17.5" cy="19.6" r="0.8"/>'),
+    "triangulate": ("Триангуляция",
+                    f'<path {_S} d="M3 6h18v12H3Z"/><path {_S} d="M3 18L10 6l5 12 6-12"/>'),
+    "pngfix": ("PNG: формат",
+               f'<path {_S} d="M5 3h9l5 5v13H5Z"/><path {_S} d="M14 3v5h5"/>'
+               f'<path {_S} d="M8 16l2.5 2.5L16 13"/>'),
+    "plug": ("Заглушки текстур",
+             f'<rect {_S} x="3" y="3" width="18" height="18" rx="1.5"/><rect {_F} x="7" y="7" width="10" height="10" '
+             f'rx="1" opacity="0.55"/><path {_S} d="M7 7l10 10"/>'),
+    "ucxtri": ("UCX: триангуляция",
+               f'<path {_S} d="M12 2.5l8.5 4.75v9.5L12 21.5l-8.5-4.75v-9.5Z" stroke-dasharray="2.4 1.8"/>'
+               f'<path {_S} d="M7 16l5-9 5 9Z"/><path {_S} d="M12 7v9"/>'),
+    "ucxname": ("UCX: имена",
+                '<g transform="scale(0.68)">'
+                f'<path {_S} d="M12 2.5l8.5 4.75v9.5L12 21.5l-8.5-4.75v-9.5Z" stroke-dasharray="2.4 1.8"/></g>'
+                f'<path {_S} d="M11 14h10l-2.5 3.5L21 21H11Z"/>'),
+    "id2udim": ("ID → UDIM",
+                f'<rect {_S} x="2.5" y="8" width="6" height="8" rx="1"/><path {_S} d="M10 12h3M11.5 10.5L13 12l-1.5 1.5"/>'
+                f'<rect {_S} x="15" y="4" width="7" height="7"/><rect {_S} x="15" y="13" width="7" height="7"/>'),
+    "namefix": ("Исправить имена",
+                f'<path {_S} d="M3 6.5V4h11l7 8-7 8H3v-2.5"/><path {_S} d="M6 12l2.5 2.5L13 9.5"/>'),
+    "package": ("Проверка пакета",
+                f'<path {_S} d="M3 7l9-4 9 4v10l-9 4-9-4Z"/><path {_S} d="M3 7l9 4 9-4M12 11v10"/>'
+                f'<path {_S} d="M7.5 5l9 4"/>'),
+    "geojsonw": ("Паспорт GeoJSON",
+                 f'<path {_S} d="M3 19l5-2 8 3 5-2V6l-5 2-8-3-5 2Z" opacity="0.6"/>'
+                 f'<path {_S} d="M8 15l7-7 2 2-7 7H8Z"/>'),
+    "groundfbx": ("FBX благоустройства",
+                  f'<path {_S} d="M2 17l5-3 5 2 5-3 5 2"/><path {_S} d="M7 14V9M5 10.5L7 7l2 3.5"/>'
+                  f'<path {_S} d="M14 21v-6M11.5 18.5L14 21l2.5-2.5"/>'),
+    "place": ("Пивот и положение",
+              f'<path {_S} d="M3 19h18"/><circle {_S} cx="12" cy="12" r="4"/><path {_S} d="M12 3v5M12 16v3"/>'
+              f'<circle {_F} cx="12" cy="12" r="1.5"/>'),
+    "zip": ("Архив пакета",
+            f'<rect {_S} x="4" y="3" width="16" height="18" rx="1.5"/>'
+            f'<path {_S} d="M11 3v2h2v2h-2v2h2v2h-2"/><rect {_S} x="10" y="13" width="4" height="4" rx="0.8"/>'),
     # status / control icons for the result table and the progress row
     "ok": ("Статус: ок",
            f'<circle {_S} cx="12" cy="12" r="9"/><path {_S} d="M7.5 12.5l3 3 6-6.5"/>'),

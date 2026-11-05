@@ -144,7 +144,9 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "0.8",
-   "icon": "missing"
+   "icon": "missing",
+   "lab_report": "docs/experiments/scene.missing_maps.md",
+   "lab_status": "source cannot list missing maps (usedMaps); take_fix: read-only list, candidates by base name"
   },
   {
    "id": "scene.source_class",
@@ -184,15 +186,17 @@
    "label_ru": "Триангуляция (Делоне)",
    "does_ru": "Триангулирует n-гоны на экспортной копии по Делоне, без длинных клиньев",
    "source": "GeoAGR: Triangulate btn_TriangulateRight GeoAGR.ms:50991 (DelaunayCore.dll)",
-   "verdict": "take",
-   "verdict_note": "Max T08-08..10 correct; run only on export copies",
+   "verdict": "take_fix",
+   "verdict_note": "лаборатория #907: sub-mm faces stay n-gons, redundant pairs; fix both; run only on export copies",
    "evidence": "TEC26: UCX triangulation fails SINTEZ 2.3.17 in both profiles (job-retro-tec26-oks-pr574.md)",
    "reqs": "NPM-2.3-11 VPM-2.3-17",
    "mode": "copy",
    "mcp": "yes",
    "priority": "P1",
    "version": "0.8",
-   "icon": "triangulate"
+   "icon": "triangulate",
+   "lab_report": "docs/experiments/model.triangulate.md",
+   "lab_status": "works with defects (sub-mm faces stay n-gons, redundant pairs); take_fix (лаборатория #907; plan was: take)"
   },
   {
    "id": "model.glass_planes",
@@ -432,7 +436,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.8",
-   "icon": "pngfix"
+   "icon": "pngfix",
+   "lab_report": "docs/experiments/tex.format_fix.md",
+   "lab_status": "overwrites in place, wrong format detection, Compress ignores target; take_fix"
   },
   {
    "id": "tex.material_type",
@@ -512,7 +518,9 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "0.8",
-   "icon": "plug"
+   "icon": "plug",
+   "lab_report": "docs/experiments/tex.placeholders.md",
+   "lab_status": "Make D/N/ERM works (exact colour, 8-bit RGB), Set Normal/ERM crash, no 128, silent overwrite; merge"
   },
   {
    "id": "tex.vpm_sets",
@@ -616,15 +624,17 @@
    "label_ru": "UCX: триангуляция",
    "does_ru": "Триангулирует UCX на копии и проверяет выпуклость после",
    "source": "GeoAGR: UCX Triangulate GeoAGR.ms:62890",
-   "verdict": "take",
-   "verdict_note": "unverified: confirm in Max; run on copies",
+   "verdict": "take_fix",
+   "verdict_note": "лаборатория #907: convexity can break after triangulation, non-Poly skipped silently; fix both; run on copies",
    "evidence": "TEC26: SINTEZ 2.3.17 fails on UCX triangulation (job-retro-tec26-oks-pr574.md, open)",
    "reqs": "VPM-2.3-17 VPM-2.13-1.a",
    "mode": "copy",
    "mcp": "yes",
    "priority": "P1",
    "version": "0.8",
-   "icon": "ucxtri"
+   "icon": "ucxtri",
+   "lab_report": "docs/experiments/ucx.triangulate.md",
+   "lab_status": "works with defects (convexity can break, skips non-Poly silently); take_fix (лаборатория #907; plan was: take)"
   },
   {
    "id": "ucx.gap",
@@ -672,7 +682,9 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "0.8",
-   "icon": "ucxname"
+   "icon": "ucxname",
+   "lab_report": "docs/experiments/ucx.rename.md",
+   "lab_status": "renames anything selected, address damage, no undo; take_fix"
   },
   {
    "id": "ucx.stairs",
@@ -704,7 +716,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.8",
-   "icon": "id2udim"
+   "icon": "id2udim",
+   "lab_report": "docs/experiments/udim.ids_to_udims.md",
+   "lab_status": "ID n -> 1000+n correct for 1..100; first object only, ID>100 skipped, NaN on zero extent; take_fix"
   },
   {
    "id": "udim.nudge",
@@ -1168,7 +1182,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.8",
-   "icon": "namefix"
+   "icon": "namefix",
+   "lab_report": "docs/experiments/qa.names_fix.md",
+   "lab_status": "Material Cloner is not an object renamer; overwrite claim not reproduced; merge (one new renamer)"
   },
   {
    "id": "qa.package",
@@ -1184,7 +1200,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.8",
-   "icon": "package"
+   "icon": "package",
+   "lab_report": "docs/experiments/qa.package.md",
+   "lab_status": "as documented; profile guess and vacuous V006 defects; merge"
   },
   {
    "id": "qa.pivot",
@@ -1424,7 +1442,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.8",
-   "icon": "geojsonw"
+   "icon": "geojsonw",
+   "lab_report": null,
+   "lab_status": "not checked in the lab"
   },
   {
    "id": "export.ground_fbx",
@@ -1432,15 +1452,17 @@
    "label_ru": "FBX благоустройства",
    "does_ru": "Ground, GroundEl, Flora, GroundGlass в один файл _Ground",
    "source": "GeoAGR: Export LowPoly :66532 (Ground branch); Telegram: A101AGRLP.ms Ground rollout :388",
-   "verdict": "merge",
-   "verdict_note": "A101 writes an extra underscore; one export path with modes",
+   "verdict": "take_fix",
+   "verdict_note": "лаборатория #907: Flora not in _Ground, name from first selected, no triangulation; one export path with modes",
    "evidence": "Vatutino Ground v014/v015",
    "reqs": "NPM-2.1-5.a VPM-2.1-4",
    "mode": "file",
    "mcp": "yes",
    "priority": "P1",
    "version": "0.8",
-   "icon": "groundfbx"
+   "icon": "groundfbx",
+   "lab_report": "docs/experiments/export.ground_fbx.md",
+   "lab_status": "differs: Flora not in _Ground, name from first selected, no triangulation; take_fix (лаборатория #907; plan was: merge)"
   },
   {
    "id": "export.pivot_place",
@@ -1456,7 +1478,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.8",
-   "icon": "place"
+   "icon": "place",
+   "lab_report": "docs/experiments/export.pivot_place.md",
+   "lab_status": "partly works (floor-face pivot, 0,0,0); precision loss, bbox fallback, no copy mode; take_fix"
   },
   {
    "id": "export.zip",
@@ -1472,7 +1496,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.8",
-   "icon": "zip"
+   "icon": "zip",
+   "lab_report": "docs/experiments/export.zip.md",
+   "lab_status": "broken: bundled 7z creates nothing, _Light missing; merge (new archiver)"
   },
   {
    "id": "export.batch",
@@ -1842,9 +1868,9 @@
   {
    "version": "0.8",
    "title_ru": "Сдача: имена, PNG, ID→UDIM, триангуляция, пивот, GeoJSON, ZIP, пакет",
-   "status": "planned",
+   "status": "in work",
    "effort": "L: ~3 дня (правки только на копиях/новых файлах, каждая с preview)",
-   "issue": "new",
+   "issue": "#908",
    "rows": [
     "scene.missing_maps",
     "model.triangulate",
@@ -1945,9 +1971,9 @@
   "rows": 90,
   "by_verdict": {
    "done": 13,
-   "take": 16,
-   "take_fix": 27,
-   "merge": 18,
+   "take": 14,
+   "take_fix": 30,
+   "merge": 17,
    "new": 16
   },
   "by_priority": {

@@ -1,0 +1,7 @@
+{
+ "schema": 1,
+ "scene": "vpm",
+ "synthetic": true,
+ "units": "meters",
+ "note": "Вариант ВПМ: пивот и лимит треугольников Ground без AGR_SITE_AREA_HA. Не NPM."
+}
