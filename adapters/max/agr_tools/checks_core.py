@@ -43,6 +43,9 @@ OKS_NUMBER = re.compile(r'(?:00[1-9]|01[0-9]|020)')
 UCX_INDEX = re.compile(r'(?:00[1-9]|0[1-9][0-9]|[1-9][0-9]{2})')
 NAME_CHARS = re.compile(r'[A-Za-z0-9_]+')
 
+# Review-level codes: a finding at a limit or needing a person. Status stays `fail`, never `pass` (#836, #934).
+REVIEW_CODES = frozenset({'at_threshold', 'tri_at_limit', 'name_conflict', 'tex_overlap_review'})
+
 CODES = {
     'names': {'name_empty', 'name_length', 'name_symbols', 'name_separator', 'name_prefix', 'name_suffix',
               'name_type', 'name_case', 'name_digits', 'name_conflict', 'fbx_unmapped'},
