@@ -58,7 +58,8 @@ CODES = {
                   'ucx_budget', 'ucx_orphan'},
     'sets_count': {'sets_limit', 'fbx_unmapped'},
     'fbx_split': {'fbx_count', 'fbx_objects', 'fbx_ground_missing', 'fbx_numbering', 'fbx_unmapped'},
-    'glass': {'glass_not_separate', 'glass_objects', 'glass_materials', 'glass_maps', 'glass_opacity'},
+    'glass': {'glass_not_separate', 'glass_objects', 'glass_materials', 'glass_maps', 'glass_opacity',
+              'glass_opaque_material'},
     'scene_hygiene': {'hyg_non_mesh', 'hyg_animation', 'hyg_hierarchy', 'hyg_group', 'hyg_empty',
                       'hyg_modifier'},
     'xform': {'xform_scale', 'xform_rotation', 'xform_mirror', 'xform_parent', 'xform_unmeasurable'},
@@ -127,10 +128,20 @@ def _materials(row):
     return mats
 
 
+_NAME_TOKEN = re.compile(r'[^0-9A-Za-z]+')
+
+
 def _is_glass_material(m):
+    """Glass by an exact name token ``glass`` or by opacity strictly below 1 - OPACITY_TOL.
+
+    The name is split on non-alphanumeric characters, underscores included. A case-insensitive token
+    equal to ``glass`` counts (``M_Glass``, ``Glass``). A substring does not (``M_Fiberglass_Panel``,
+    ``MainGlass``). Non-finite opacity and opacity exactly at the threshold are not glass.
+    """
     name = str(m.get('name', ''))
+    by_name = any(tok.lower() == 'glass' for tok in _NAME_TOKEN.split(name) if tok)
     op = m.get('opacity')
-    return 'glass' in name.lower() or (_finite(op) and op < 1.0 - OPACITY_TOL)
+    return by_name or (_finite(op) and op < 1.0 - OPACITY_TOL)
 
 
 # --- scene.census -------------------------------------------------------------------------------------
@@ -405,12 +416,15 @@ def fbx_split(rows):
 # --- qa.glass -----------------------------------------------------------------------------------------
 def glass(rows):
     """Glass: on a separate *Glass mesh, <= 20 translucent objects per FBX, <= 7 glass materials per FBX,
-    no texture maps, NPM opacity 0.5.
+    no texture maps, NPM opacity 0.5. An opaque material sharing that mesh is ``glass_opaque_material``.
 
     adapted from GeoAGR 13.64 (author Artem), GeoAGR.ms:65330-65375 Prepare LowPoly MainGlass branch;
     changes: D2 - the branch is reached by the exact suffix token (checks.mesh_kind), not a substring
     `case` that matched Main first; D3 - "no textures" counts the usedMaps ARRAY (an empty list is no
-    maps), the old test against undefined fired on every material.
+    maps), the old test against undefined fired on every material. Glass is an exact name token or
+    opacity < 1 - OPACITY_TOL (see ``_is_glass_material``), not a substring. When the mesh has at least
+    one glass material, every other non-multi material is ``glass_opaque_material`` (named in the
+    message) and is not checked as glass. When it has none, every non-multi material is checked as before.
     """
     rows = Rows(rows)
     found = {}
@@ -420,7 +434,8 @@ def glass(rows):
             continue
         is_glass_mesh = str(checks.mesh_kind(r['name']) or '').endswith('Glass')
         mats = _materials(r)
-        gm = [m for m in mats if str(m.get('cls')) != 'Multimaterial' and _is_glass_material(m)]
+        plain = [m for m in mats if str(m.get('cls')) != 'Multimaterial']
+        gm = [m for m in plain if _is_glass_material(m)]
         if gm and not is_glass_mesh:
             _add(found, r['key'], 'glass_not_separate', 'стекло на непрозрачном объекте: ' +
                  ', '.join(str(m.get('name')) for m in gm))
@@ -428,7 +443,12 @@ def glass(rows):
             continue
         slot = per_fbx.setdefault(r.get('fbx'), {'rows': [], 'materials': set()})
         slot['rows'].append(r)
-        for m in gm or [m for m in mats if str(m.get('cls')) != 'Multimaterial']:
+        if gm:
+            for m in plain:
+                if not _is_glass_material(m):
+                    _add(found, r['key'], 'glass_opaque_material',
+                         'непрозрачный материал на стекле: {}'.format(m.get('name')))
+        for m in gm or plain:
             slot['materials'].add(str(m.get('name')))
             maps = m.get('maps')
             if not isinstance(maps, list):
