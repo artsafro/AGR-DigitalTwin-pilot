@@ -1,0 +1,582 @@
+{
+ "ok": true,
+ "accepted": false,
+ "photo_status": "missing",
+ "geometry_rewrite": false,
+ "reason": "passport photos are not on disk; colours are v005 targets of the existing atlas slots, not photo measurements; meshes were not rewritten",
+ "positions": [
+  {
+   "set_id": "VAT_MAF_T3510_01",
+   "zones": [
+    {
+     "zone": "larch_light_oak",
+     "id_key": "wood_light",
+     "id": 14,
+     "colour": "#BEA581",
+     "ral": null,
+     "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
+     "colour_source": "schedule finish light oak; v005 target, photo not measured"
+    },
+    {
+     "zone": "steel_ral7047",
+     "id_key": "paint_ral7047",
+     "id": 4,
+     "colour": "#D0D0D0",
+     "ral": "7047",
+     "name": "краска RAL 7047 телегрей",
+     "colour_source": "schedule RAL 7047; v005 target, photo not measured"
+    }
+   ],
+   "profiles": {
+    "npm": {
+     "vertices_before": 140,
+     "faces_before": 240,
+     "vertices_after": 140,
+     "faces_after": 240,
+     "zone_faces": {
+      "larch_light_oak": 60,
+      "steel_ral7047": 180
+     }
+    },
+    "vpm": {
+     "vertices_before": 140,
+     "faces_before": 240,
+     "vertices_after": 140,
+     "faces_after": 240,
+     "zone_faces": {
+      "larch_light_oak": 60,
+      "steel_ral7047": 180
+     }
+    }
+   },
+   "name": "Скамейка стальная «Андромеда» / Артикул: 14122",
+   "catalogue_id": "MAF_0326",
+   "schedule": "*T3510/1",
+   "material_reason": "sub-mat 1 = slats z 0.38-0.45 m (larch); 2 = frame/legs (steel)",
+   "split_note": null
+  },
+  {
+   "set_id": "VAT_MAF_T3510_02",
+   "zones": [
+    {
+     "zone": "steel_ral7047",
+     "id_key": "paint_ral7047",
+     "id": 4,
+     "colour": "#D0D0D0",
+     "ral": "7047",
+     "name": "краска RAL 7047 телегрей",
+     "colour_source": "schedule RAL 7047; v005 target, photo not measured"
+    }
+   ],
+   "profiles": {
+    "npm": {
+     "vertices_before": 96,
+     "faces_before": 146,
+     "vertices_after": 96,
+     "faces_after": 146,
+     "zone_faces": {
+      "steel_ral7047": 146
+     }
+    },
+    "vpm": {
+     "vertices_before": 96,
+     "faces_before": 146,
+     "vertices_after": 96,
+     "faces_after": 146,
+     "zone_faces": {
+      "steel_ral7047": 146
+     }
+    }
+   },
+   "name": "Урна стальная «Арго» / Артикул: 19648",
+   "catalogue_id": "MAF_0794",
+   "schedule": "*T3510/2",
+   "material_reason": "single source material; urn body steel RAL 7047",
+   "split_note": "source mesh has one atlas material; passport photo not on disk; no further colour zone invented"
+  },
+  {
+   "set_id": "VAT_MAF_T3510_07",
+   "zones": [
+    {
+     "zone": "larch_light_oak",
+     "id_key": "wood_light",
+     "id": 14,
+     "colour": "#BEA581",
+     "ral": null,
+     "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
+     "colour_source": "schedule finish light oak; v005 target, photo not measured"
+    }
+   ],
+   "profiles": {
+    "npm": {
+     "vertices_before": 240,
+     "faces_before": 364,
+     "vertices_after": 240,
+     "faces_after": 364,
+     "zone_faces": {
+      "larch_light_oak": 364
+     }
+    },
+    "vpm": {
+     "vertices_before": 240,
+     "faces_before": 364,
+     "vertices_after": 240,
+     "faces_after": 364,
+     "zone_faces": {
+      "larch_light_oak": 364
+     }
+    }
+   },
+   "name": "Скамейка «Фестиваль» Модуль 1 / арт. nv 521-01",
+   "catalogue_id": "MAF_0747",
+   "schedule": "*T3510/7",
+   "material_reason": "single source material; deck area 9.5 m2 dominates -> larch",
+   "split_note": "source mesh has one atlas material; passport photo not on disk; no further colour zone invented"
+  },
+  {
+   "set_id": "VAT_MAF_T3510_09",
+   "zones": [
+    {
+     "zone": "larch_light_oak",
+     "id_key": "wood_light",
+     "id": 14,
+     "colour": "#BEA581",
+     "ral": null,
+     "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
+     "colour_source": "schedule finish light oak; v005 target, photo not measured"
+    },
+    {
+     "zone": "steel_ral7047",
+     "id_key": "paint_ral7047",
+     "id": 4,
+     "colour": "#D0D0D0",
+     "ral": "7047",
+     "name": "краска RAL 7047 телегрей",
+     "colour_source": "schedule RAL 7047; v005 target, photo not measured"
+    }
+   ],
+   "profiles": {
+    "npm": {
+     "vertices_before": 421,
+     "faces_before": 730,
+     "vertices_after": 421,
+     "faces_after": 730,
+     "zone_faces": {
+      "larch_light_oak": 300,
+      "steel_ral7047": 430
+     }
+    },
+    "vpm": {
+     "vertices_before": 786,
+     "faces_before": 1460,
+     "vertices_after": 786,
+     "faces_after": 1460,
+     "zone_faces": {
+      "larch_light_oak": 300,
+      "steel_ral7047": 1160
+     }
+    }
+   },
+   "name": "Лежак «Городской» / 11061",
+   "catalogue_id": "MAF_0506",
+   "schedule": "*T3510/9",
+   "material_reason": "2641 = 1160 small faces, area 1.0 m2 (frame, steel); 2648 = 300 faces, area 2.9 m2 (slats, larch)",
+   "split_note": null
+  },
+  {
+   "set_id": "VAT_MAF_T3510_11",
+   "zones": [
+    {
+     "zone": "larch_light_oak",
+     "id_key": "wood_light",
+     "id": 14,
+     "colour": "#BEA581",
+     "ral": null,
+     "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
+     "colour_source": "schedule finish light oak; v005 target, photo not measured"
+    },
+    {
+     "zone": "steel_ral7047",
+     "id_key": "paint_ral7047",
+     "id": 4,
+     "colour": "#D0D0D0",
+     "ral": "7047",
+     "name": "краска RAL 7047 телегрей",
+     "colour_source": "schedule RAL 7047; v005 target, photo not measured"
+    }
+   ],
+   "profiles": {
+    "npm": {
+     "vertices_before": 236,
+     "faces_before": 434,
+     "vertices_after": 236,
+     "faces_after": 434,
+     "zone_faces": {
+      "larch_light_oak": 70,
+      "steel_ral7047": 364
+     }
+    },
+    "vpm": {
+     "vertices_before": 388,
+     "faces_before": 724,
+     "vertices_after": 388,
+     "faces_after": 724,
+     "zone_faces": {
+      "larch_light_oak": 104,
+      "steel_ral7047": 620
+     }
+    }
+   },
+   "name": "Качалка балансир / Артикул: ИО 0410-2",
+   "catalogue_id": "MAF_0322",
+   "schedule": "*T3510/11",
+   "material_reason": "sub-mat 1 = seat body z 0.26-0.47 (larch); 2 = spring/handles (steel)",
+   "split_note": null
+  },
+  {
+   "set_id": "VAT_MAF_T3510_12",
+   "zones": [
+    {
+     "zone": "steel_ral7047",
+     "id_key": "paint_ral7047",
+     "id": 4,
+     "colour": "#D0D0D0",
+     "ral": "7047",
+     "name": "краска RAL 7047 телегрей",
+     "colour_source": "schedule RAL 7047; v005 target, photo not measured"
+    }
+   ],
+   "profiles": {
+    "npm": {
+     "vertices_before": 416,
+     "faces_before": 678,
+     "vertices_after": 416,
+     "faces_after": 678,
+     "zone_faces": {
+      "steel_ral7047": 678
+     }
+    },
+    "vpm": {
+     "vertices_before": 416,
+     "faces_before": 678,
+     "vertices_after": 416,
+     "faces_after": 678,
+     "zone_faces": {
+      "steel_ral7047": 678
+     }
+    }
+   },
+   "name": "Качели / Артикул:Качели / ИО 0118Т-1",
+   "catalogue_id": "MAF_0920",
+   "schedule": "*T3510/12",
+   "material_reason": "single source material; swing frame steel RAL 7047",
+   "split_note": "source mesh has one atlas material; passport photo not on disk; no further colour zone invented"
+  },
+  {
+   "set_id": "VAT_MAF_T3510_16",
+   "zones": [
+    {
+     "zone": "larch_light_oak",
+     "id_key": "wood_light",
+     "id": 14,
+     "colour": "#BEA581",
+     "ral": null,
+     "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
+     "colour_source": "schedule finish light oak; v005 target, photo not measured"
+    }
+   ],
+   "profiles": {
+    "npm": {
+     "vertices_before": 1356,
+     "faces_before": 2281,
+     "vertices_after": 1356,
+     "faces_after": 2281,
+     "zone_faces": {
+      "larch_light_oak": 2281
+     }
+    },
+    "vpm": {
+     "vertices_before": 2580,
+     "faces_before": 4562,
+     "vertices_after": 2580,
+     "faces_after": 4562,
+     "zone_faces": {
+      "larch_light_oak": 4562
+     }
+    }
+   },
+   "name": "Детская площадка / Артикул: ДП 090",
+   "catalogue_id": "MAF_0803",
+   "schedule": "*T3510/16",
+   "material_reason": "single source material; playground ДП 090 timber dominates -> larch",
+   "split_note": "source mesh has one atlas material; passport photo not on disk; no further colour zone invented"
+  },
+  {
+   "set_id": "VAT_MAF_T3510_26",
+   "zones": [
+    {
+     "zone": "hpl_satin_wood",
+     "id_key": "wood_light",
+     "id": 14,
+     "colour": "#BEA581",
+     "ral": null,
+     "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
+     "colour_source": "schedule HPL satin wood merged to wood_light; v005 target, photo not measured"
+    },
+    {
+     "zone": "steel_ral7047",
+     "id_key": "paint_ral7047",
+     "id": 4,
+     "colour": "#D0D0D0",
+     "ral": "7047",
+     "name": "краска RAL 7047 телегрей",
+     "colour_source": "schedule RAL 7047; v005 target, photo not measured"
+    }
+   ],
+   "profiles": {
+    "npm": {
+     "vertices_before": 1300,
+     "faces_before": 3043,
+     "vertices_after": 1300,
+     "faces_after": 3043,
+     "zone_faces": {
+      "hpl_satin_wood": 12,
+      "steel_ral7047": 3031
+     }
+    },
+    "vpm": {
+     "vertices_before": 4184,
+     "faces_before": 8696,
+     "vertices_after": 4184,
+     "faces_after": 8696,
+     "zone_faces": {
+      "hpl_satin_wood": 35,
+      "steel_ral7047": 8661
+     }
+    }
+   },
+   "name": "Теннисный стол Премиум / Артикул: 4-060",
+   "catalogue_id": "MAF_0677",
+   "schedule": "*T3510/26",
+   "material_reason": "2643 = table top at z 0.76 (HPL); 2641 = top edge strip z 0.76 (HPL); 2648 = frame/net (steel)",
+   "split_note": null
+  },
+  {
+   "set_id": "VAT_MAF_T3510_27",
+   "zones": [
+    {
+     "zone": "larch_light_oak",
+     "id_key": "wood_light",
+     "id": 14,
+     "colour": "#BEA581",
+     "ral": null,
+     "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
+     "colour_source": "schedule finish light oak; v005 target, photo not measured"
+    },
+    {
+     "zone": "steel_ral7047",
+     "id_key": "paint_ral7047",
+     "id": 4,
+     "colour": "#D0D0D0",
+     "ral": "7047",
+     "name": "краска RAL 7047 телегрей",
+     "colour_source": "schedule RAL 7047; v005 target, photo not measured"
+    }
+   ],
+   "profiles": {
+    "npm": {
+     "vertices_before": 292,
+     "faces_before": 540,
+     "vertices_after": 292,
+     "faces_after": 540,
+     "zone_faces": {
+      "larch_light_oak": 364,
+      "steel_ral7047": 176
+     }
+    },
+    "vpm": {
+     "vertices_before": 292,
+     "faces_before": 540,
+     "vertices_after": 292,
+     "faces_after": 540,
+     "zone_faces": {
+      "larch_light_oak": 364,
+      "steel_ral7047": 176
+     }
+    }
+   },
+   "name": "Комплект мебели «Ландау» / Артикул: 13994",
+   "catalogue_id": "MAF_0219",
+   "schedule": "*T3510/27",
+   "material_reason": "sub-mat 1 = seats/top z 0.41-0.77, area 7.4 m2 (larch); 3 = frame (steel)",
+   "split_note": null
+  },
+  {
+   "set_id": "VAT_MAF_T3510_28",
+   "zones": [
+    {
+     "zone": "rope_pp",
+     "id_key": "rope_pp",
+     "id": 29,
+     "colour": "#5A5A5A",
+     "ral": null,
+     "name": "канат полипропиленовый армированный",
+     "colour_source": "schedule polypropylene rope, no RAL; v005 target, photo not measured"
+    },
+    {
+     "zone": "steel_ral7047",
+     "id_key": "paint_ral7047",
+     "id": 4,
+     "colour": "#D0D0D0",
+     "ral": "7047",
+     "name": "краска RAL 7047 телегрей",
+     "colour_source": "schedule RAL 7047; v005 target, photo not measured"
+    }
+   ],
+   "profiles": {
+    "npm": {
+     "vertices_before": 1027,
+     "faces_before": 2030,
+     "vertices_after": 1027,
+     "faces_after": 2030,
+     "zone_faces": {
+      "rope_pp": 564,
+      "steel_ral7047": 1466
+     }
+    },
+    "vpm": {
+     "vertices_before": 1027,
+     "faces_before": 2030,
+     "vertices_after": 1027,
+     "faces_after": 2030,
+     "zone_faces": {
+      "rope_pp": 564,
+      "steel_ral7047": 1466
+     }
+    }
+   },
+   "name": "Качели-гнездо круг / 189.001",
+   "catalogue_id": "MAF_0127",
+   "schedule": "*T3510/28",
+   "material_reason": "sub-mat 3 = frame 1.71 x 2.00 m, thin tubes (steel); 4 = nest/ropes area 4.8 m2 (PP rope)",
+   "split_note": null
+  },
+  {
+   "set_id": "VAT_MAF_T3510_29",
+   "zones": [
+    {
+     "zone": "larch_light_oak",
+     "id_key": "wood_light",
+     "id": 14,
+     "colour": "#BEA581",
+     "ral": null,
+     "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
+     "colour_source": "schedule finish light oak; v005 target, photo not measured"
+    }
+   ],
+   "profiles": {
+    "npm": {
+     "vertices_before": 156,
+     "faces_before": 320,
+     "vertices_after": 156,
+     "faces_after": 320,
+     "zone_faces": {
+      "larch_light_oak": 320
+     }
+    },
+    "vpm": {
+     "vertices_before": 156,
+     "faces_before": 320,
+     "vertices_after": 156,
+     "faces_after": 320,
+     "zone_faces": {
+      "larch_light_oak": 320
+     }
+    }
+   },
+   "name": "Кресло «Парк» / Артикул: 12750",
+   "catalogue_id": "MAF_0159",
+   "schedule": "*T3510/29",
+   "material_reason": "single source material; chair seat/back slats dominate -> larch",
+   "split_note": "source mesh has one atlas material; passport photo not on disk; no further colour zone invented"
+  },
+  {
+   "set_id": "VAT_MAF_T3510_31",
+   "zones": [
+    {
+     "zone": "larch_light_oak",
+     "id_key": "wood_light",
+     "id": 14,
+     "colour": "#BEA581",
+     "ral": null,
+     "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
+     "colour_source": "schedule finish light oak; v005 target, photo not measured"
+    }
+   ],
+   "profiles": {
+    "npm": {
+     "vertices_before": 136,
+     "faces_before": 212,
+     "vertices_after": 136,
+     "faces_after": 212,
+     "zone_faces": {
+      "larch_light_oak": 212
+     }
+    },
+    "vpm": {
+     "vertices_before": 136,
+     "faces_before": 212,
+     "vertices_after": 136,
+     "faces_after": 212,
+     "zone_faces": {
+      "larch_light_oak": 212
+     }
+    }
+   },
+   "name": "Стол «Лондон» Тип 3 / Артикул: 13032",
+   "catalogue_id": "MAF_0722",
+   "schedule": "*T3510/31",
+   "material_reason": "single source material; table top area dominates -> larch",
+   "split_note": "source mesh has one atlas material; passport photo not on disk; no further colour zone invented"
+  },
+  {
+   "set_id": "VAT_MAF_T3510_32",
+   "zones": [
+    {
+     "zone": "steel_ral7047",
+     "id_key": "paint_ral7047",
+     "id": 4,
+     "colour": "#D0D0D0",
+     "ral": "7047",
+     "name": "краска RAL 7047 телегрей",
+     "colour_source": "schedule RAL 7047; v005 target, photo not measured"
+    }
+   ],
+   "profiles": {
+    "npm": {
+     "vertices_before": 1953,
+     "faces_before": 3726,
+     "vertices_after": 1953,
+     "faces_after": 3726,
+     "zone_faces": {
+      "steel_ral7047": 3726
+     }
+    },
+    "vpm": {
+     "vertices_before": 1953,
+     "faces_before": 3726,
+     "vertices_after": 1953,
+     "faces_after": 3726,
+     "zone_faces": {
+      "steel_ral7047": 3726
+     }
+    }
+   },
+   "name": "Приствольная решетка",
+   "catalogue_id": "MAF_0687",
+   "schedule": "*T3510/32",
+   "material_reason": "schedule: steel RAL 7047 only",
+   "split_note": "source mesh has one atlas material; passport photo not on disk; no further colour zone invented"
+  }
+ ]
+}

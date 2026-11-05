@@ -1,0 +1,132 @@
+{
+ "VAT_MAF_T3510_01": {
+  "npm": {
+   "vertices": 140,
+   "faces": 240
+  },
+  "vpm": {
+   "vertices": 140,
+   "faces": 240
+  }
+ },
+ "VAT_MAF_T3510_02": {
+  "npm": {
+   "vertices": 96,
+   "faces": 146
+  },
+  "vpm": {
+   "vertices": 96,
+   "faces": 146
+  }
+ },
+ "VAT_MAF_T3510_07": {
+  "npm": {
+   "vertices": 240,
+   "faces": 364
+  },
+  "vpm": {
+   "vertices": 240,
+   "faces": 364
+  }
+ },
+ "VAT_MAF_T3510_09": {
+  "npm": {
+   "vertices": 421,
+   "faces": 730
+  },
+  "vpm": {
+   "vertices": 786,
+   "faces": 1460
+  }
+ },
+ "VAT_MAF_T3510_11": {
+  "npm": {
+   "vertices": 236,
+   "faces": 434
+  },
+  "vpm": {
+   "vertices": 388,
+   "faces": 724
+  }
+ },
+ "VAT_MAF_T3510_12": {
+  "npm": {
+   "vertices": 416,
+   "faces": 678
+  },
+  "vpm": {
+   "vertices": 416,
+   "faces": 678
+  }
+ },
+ "VAT_MAF_T3510_16": {
+  "npm": {
+   "vertices": 1356,
+   "faces": 2281
+  },
+  "vpm": {
+   "vertices": 2580,
+   "faces": 4562
+  }
+ },
+ "VAT_MAF_T3510_26": {
+  "npm": {
+   "vertices": 1300,
+   "faces": 3043
+  },
+  "vpm": {
+   "vertices": 4184,
+   "faces": 8696
+  }
+ },
+ "VAT_MAF_T3510_27": {
+  "npm": {
+   "vertices": 292,
+   "faces": 540
+  },
+  "vpm": {
+   "vertices": 292,
+   "faces": 540
+  }
+ },
+ "VAT_MAF_T3510_28": {
+  "npm": {
+   "vertices": 1027,
+   "faces": 2030
+  },
+  "vpm": {
+   "vertices": 1027,
+   "faces": 2030
+  }
+ },
+ "VAT_MAF_T3510_29": {
+  "npm": {
+   "vertices": 156,
+   "faces": 320
+  },
+  "vpm": {
+   "vertices": 156,
+   "faces": 320
+  }
+ },
+ "VAT_MAF_T3510_31": {
+  "npm": {
+   "vertices": 136,
+   "faces": 212
+  },
+  "vpm": {
+   "vertices": 136,
+   "faces": 212
+  }
+ },
+ "VAT_MAF_T3510_32": {
+  "npm": {
+   "vertices": 1953,
+   "faces": 3726
+  },
+  "vpm": {
+   "vertices": 1953,
+   "faces": 3726
+  }
+ }
+}
