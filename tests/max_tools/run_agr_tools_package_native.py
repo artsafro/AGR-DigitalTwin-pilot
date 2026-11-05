@@ -241,17 +241,17 @@ def qa_package_corpus():
 
 CLEAN_UDP = 'AGR_EXPORT_PATH = C:/x/0101_A_01.fbx\r\nfoo = bar\r\nMapChannel:1 = UV\r\n'
 KEYS_FN = '''fn agrE3Keys b m = (
-    with animate on (
-        for t in #(0, 10, 20, 30, 40, 50, 60) do at time t (b.pos.x = 5000 + t; b.pos.y = 5000 - t)
-        at time 0 m.opacity = 100
-        at time 50 m.opacity = 80
-    )
+    local px = b.pos.controller[1].controller
+    local py = b.pos.controller[2].controller
+    for t in #(0, 10, 20, 30, 40, 50, 60) do (addNewKey px t; addNewKey py t)
+    with animate on (at time 50 m.opacity = 80)
     ok
 )'''
 
 
 def cleanup_subject():
-    """Editable Poly with a base CA, UDP (AGR_EXPORT_PATH, foo), vertex colour and 14 node + 2 material keys."""
+    """Editable Poly with a base CA, UDP (AGR_EXPORT_PATH, foo), vertex colour, 14 node keys (addNewKey on X/Y
+    position) and 2 material keys (opacity animated at 50: keys at 0 and 50)."""
     rt.units.SystemType = rt.Name('meters')
     b = rt.Box(name='SM_A_001_Main', length=2, width=2, height=2, pos=rt.Point3(5000, 5000, 0), mapcoords=True)
     rt.convertToPoly(b)
