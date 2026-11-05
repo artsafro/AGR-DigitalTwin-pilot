@@ -347,7 +347,7 @@ def test_rail_has_path_and_ten_blocks_in_order_with_planned_greyed(main):
     assert items == ['Путь'] + ['{} {}'.format(b['number'], b['short_ru']) for b in suite['blocks']]
     assert p.pages.count() == 11 and p.rail.currentRow() == 0
     planned = [r for r in suite['rows'] if roadmap.vkey(r['version']) > roadmap.vkey(model.VERSION)]
-    assert set(p.planned) == {r['id'] for r in planned} and len(planned) == 65
+    assert set(p.planned) == {r['id'] for r in planned} and len(planned) == 52  # 0.9-1.x after 0.8.0
     for r in planned:
         b = p.planned[r['id']]
         assert not b.isEnabled() and b.text().endswith('в версии ' + r['version'])

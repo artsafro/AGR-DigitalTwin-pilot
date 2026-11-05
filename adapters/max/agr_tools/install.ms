@@ -2,10 +2,10 @@
 (
     global AGRToolsInstallRoot, AGRToolsStartupRoot
     local source = getFilenamePath (getSourceFileName())
-    if AGRToolsInstallRoot == undefined do AGRToolsInstallRoot = (getDir #userScripts) + "/AGRTools-0.7.0/"
+    if AGRToolsInstallRoot == undefined do AGRToolsInstallRoot = (getDir #userScripts) + "/AGRTools-0.8.0/"
     if AGRToolsStartupRoot == undefined do AGRToolsStartupRoot = (getDir #userStartupScripts) + "/"
     if doesDirectoryExist AGRToolsInstallRoot do throw "AGR Tools destination already exists; choose a new versioned path"
-    local boot = AGRToolsStartupRoot + "AGRTools-0.7.0.ms"
+    local boot = AGRToolsStartupRoot + "AGRTools-0.8.0.ms"
     if doesFileExist boot do throw "AGR Tools startup file already exists"
     local files = getFiles (source + "agr_tools/*")
     if files.count < 36 do throw "AGR Tools archive incomplete"

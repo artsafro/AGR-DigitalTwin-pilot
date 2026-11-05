@@ -25,7 +25,7 @@ CHECKS_070 = {"agr_scene_census": "census", "agr_scene_units": "units", "agr_mod
               "agr_qa_zero_area": "zero_area"}
 RUNTIME_070 = "0.7.0"
 # AGR Tools 0.8 delivery edits (#908): runtime.edits_080(<plan row id>, mode, preview, nodes, options).
-# Branches A-D build on package version 0.7.0 with runtime.edits_080; the release branch sets "0.8.0" here.
+# Released in package version 0.8.0 (release branch R, #908).
 EDITS_080 = {"agr_scene_missing_maps": "scene.missing_maps", "agr_model_triangulate": "model.triangulate",
              "agr_tex_format_fix": "tex.format_fix", "agr_tex_placeholders": "tex.placeholders",
              "agr_ucx_triangulate": "ucx.triangulate", "agr_ucx_rename": "ucx.rename",
@@ -33,7 +33,7 @@ EDITS_080 = {"agr_scene_missing_maps": "scene.missing_maps", "agr_model_triangul
              "agr_qa_package": "qa.package", "agr_export_geojson_write": "export.geojson_write",
              "agr_export_ground_fbx": "export.ground_fbx", "agr_export_pivot_place": "export.pivot_place",
              "agr_export_zip": "export.zip"}
-RUNTIME_080 = "0.7.0"
+RUNTIME_080 = "0.8.0"
 
 
 def _rt():

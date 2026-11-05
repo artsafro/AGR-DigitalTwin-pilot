@@ -8,5 +8,5 @@
     fileIn (AGRToolsRoot + "agr_tools.mcr")
     fileIn (AGRToolsRoot + "menu.ms")
     AGRToolsRegistered = true
-    format "AGR_TOOLS_REGISTERED version=0.7.0 category=AGR Tools macros=Open,Classic,XView,MatID,Names,Tris,Textures,Pivot,Nudge,NudgeApply,Atlas,AtlasApply,Texel,Ucx,UcxApply,Cleanup,CleanupApply,Export,Geojson\n"
+    format "AGR_TOOLS_REGISTERED version=0.8.0 category=AGR Tools macros=Open,Classic,XView,MatID,Names,Tris,Textures,Pivot,Nudge,NudgeApply,Atlas,AtlasApply,Texel,Ucx,UcxApply,Cleanup,CleanupApply,Export,Geojson\n"
 )
