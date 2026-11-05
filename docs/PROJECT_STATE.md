@@ -9,6 +9,8 @@ NPM and VPM deliveries for buildings, Ground, MAF, Flora and UCX, plus the Unrea
 ## In production
 
 PR merges do not imply delivery acceptance. Per-object gates stay in `jobs/<ID>/STATE.md`. Merged pull requests, newest first:
+- `933bc9b` Merge pull request #1013 from artsafro/harness/repo-hygiene-code-layout
+- `16be0a8` Merge pull request #1012 from artsafro/docs/state-after-pr1011
 - `52b587c` Merge pull request #1011 from artsafro/harness/repo-hygiene-docs
 - `8866c9a` Merge pull request #1010 from artsafro/harness/repo-hygiene-archive
 - `9576440` Merge pull request #1009 from artsafro/harness/repo-hygiene-cleanup
@@ -19,8 +21,6 @@ PR merges do not imply delivery acceptance. Per-object gates stay in `jobs/<ID>/
 - `aba8f21` Merge pull request #1000: AGR Tools 0.9 branch C (#979)
 - `0c0d88a` Merge pull request #998: AGR Tools 0.9 branch E2: rework ucx/pivot/udim (#979)
 - `a3d850d` Merge pull request #997: AGR Tools 0.9 branch E1: rework tex/names (#979)
-- `3f911c7` Merge pull request #996: polygon stage_tools copies package data/ (#979)
-- `adcfd7a` Merge pull request #995: AGR Tools 0.9 branch A: place.* (#979)
 
 ## Harness
 
