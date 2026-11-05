@@ -1,30 +1,30 @@
 {
  "ok": true,
  "accepted": false,
- "photo_status": "missing",
+ "photo_status": "not_required",
  "geometry_rewrite": false,
- "reason": "passport photos are not on disk; colours are v005 targets of the existing atlas slots, not photo measurements; meshes were not rewritten",
+ "reason": "2026-11-05: passport photos are not required. RAL comes from the schedule; a finish with no number keeps the atlas slot and is marked colour assumed. Vertex and face counts are unchanged.",
  "positions": [
   {
    "set_id": "VAT_MAF_T3510_01",
    "zones": [
     {
-     "zone": "larch_light_oak",
+     "zone": "boards",
      "id_key": "wood_light",
      "id": 14,
-     "colour": "#BEA581",
+     "colour": "#C49A6C",
      "ral": null,
      "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
-     "colour_source": "schedule finish light oak; v005 target, photo not measured"
+     "colour_source": "schedule finish light oak; no RAL; vendor candidates_part*.jpg and candidates_sheet.jpg are library viewport colours, not a finish measurement; colour assumed; atlas slot larch_light_oak #C49A6C"
     },
     {
-     "zone": "steel_ral7047",
+     "zone": "frame",
      "id_key": "paint_ral7047",
      "id": 4,
      "colour": "#D0D0D0",
      "ral": "7047",
      "name": "краска RAL 7047 телегрей",
-     "colour_source": "schedule RAL 7047; v005 target, photo not measured"
+     "colour_source": "schedule RAL 7047"
     }
    ],
    "profiles": {
@@ -34,8 +34,8 @@
      "vertices_after": 140,
      "faces_after": 240,
      "zone_faces": {
-      "larch_light_oak": 60,
-      "steel_ral7047": 180
+      "boards": 60,
+      "frame": 180
      }
     },
     "vpm": {
@@ -44,8 +44,8 @@
      "vertices_after": 140,
      "faces_after": 240,
      "zone_faces": {
-      "larch_light_oak": 60,
-      "steel_ral7047": 180
+      "boards": 60,
+      "frame": 180
      }
     }
    },
@@ -59,13 +59,13 @@
    "set_id": "VAT_MAF_T3510_02",
    "zones": [
     {
-     "zone": "steel_ral7047",
+     "zone": "frame",
      "id_key": "paint_ral7047",
      "id": 4,
      "colour": "#D0D0D0",
      "ral": "7047",
      "name": "краска RAL 7047 телегрей",
-     "colour_source": "schedule RAL 7047; v005 target, photo not measured"
+     "colour_source": "schedule RAL 7047"
     }
    ],
    "profiles": {
@@ -75,7 +75,7 @@
      "vertices_after": 96,
      "faces_after": 146,
      "zone_faces": {
-      "steel_ral7047": 146
+      "frame": 146
      }
     },
     "vpm": {
@@ -84,7 +84,7 @@
      "vertices_after": 96,
      "faces_after": 146,
      "zone_faces": {
-      "steel_ral7047": 146
+      "frame": 146
      }
     }
    },
@@ -92,19 +92,28 @@
    "catalogue_id": "MAF_0794",
    "schedule": "*T3510/2",
    "material_reason": "single source material; urn body steel RAL 7047",
-   "split_note": "source mesh has one atlas material; passport photo not on disk; no further colour zone invented"
+   "split_note": "face groups share one schedule finish; vertex and face counts unchanged"
   },
   {
    "set_id": "VAT_MAF_T3510_07",
    "zones": [
     {
-     "zone": "larch_light_oak",
+     "zone": "boards",
      "id_key": "wood_light",
      "id": 14,
-     "colour": "#BEA581",
+     "colour": "#C49A6C",
      "ral": null,
      "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
-     "colour_source": "schedule finish light oak; v005 target, photo not measured"
+     "colour_source": "schedule finish light oak; no RAL; vendor candidates_part*.jpg and candidates_sheet.jpg are library viewport colours, not a finish measurement; colour assumed; atlas slot larch_light_oak #C49A6C"
+    },
+    {
+     "zone": "frame",
+     "id_key": "paint_ral7047",
+     "id": 4,
+     "colour": "#D0D0D0",
+     "ral": "7047",
+     "name": "краска RAL 7047 телегрей",
+     "colour_source": "schedule RAL 7047"
     }
    ],
    "profiles": {
@@ -114,7 +123,8 @@
      "vertices_after": 240,
      "faces_after": 364,
      "zone_faces": {
-      "larch_light_oak": 364
+      "boards": 262,
+      "frame": 102
      }
     },
     "vpm": {
@@ -123,7 +133,8 @@
      "vertices_after": 240,
      "faces_after": 364,
      "zone_faces": {
-      "larch_light_oak": 364
+      "boards": 262,
+      "frame": 102
      }
     }
    },
@@ -131,28 +142,28 @@
    "catalogue_id": "MAF_0747",
    "schedule": "*T3510/7",
    "material_reason": "single source material; deck area 9.5 m2 dominates -> larch",
-   "split_note": "source mesh has one atlas material; passport photo not on disk; no further colour zone invented"
+   "split_note": null
   },
   {
    "set_id": "VAT_MAF_T3510_09",
    "zones": [
     {
-     "zone": "larch_light_oak",
+     "zone": "boards",
      "id_key": "wood_light",
      "id": 14,
-     "colour": "#BEA581",
+     "colour": "#C49A6C",
      "ral": null,
      "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
-     "colour_source": "schedule finish light oak; v005 target, photo not measured"
+     "colour_source": "schedule finish light oak; no RAL; vendor candidates_part*.jpg and candidates_sheet.jpg are library viewport colours, not a finish measurement; colour assumed; atlas slot larch_light_oak #C49A6C"
     },
     {
-     "zone": "steel_ral7047",
+     "zone": "frame",
      "id_key": "paint_ral7047",
      "id": 4,
      "colour": "#D0D0D0",
      "ral": "7047",
      "name": "краска RAL 7047 телегрей",
-     "colour_source": "schedule RAL 7047; v005 target, photo not measured"
+     "colour_source": "schedule RAL 7047"
     }
    ],
    "profiles": {
@@ -162,8 +173,8 @@
      "vertices_after": 421,
      "faces_after": 730,
      "zone_faces": {
-      "larch_light_oak": 300,
-      "steel_ral7047": 430
+      "boards": 300,
+      "frame": 430
      }
     },
     "vpm": {
@@ -172,8 +183,8 @@
      "vertices_after": 786,
      "faces_after": 1460,
      "zone_faces": {
-      "larch_light_oak": 300,
-      "steel_ral7047": 1160
+      "boards": 300,
+      "frame": 1160
      }
     }
    },
@@ -187,22 +198,22 @@
    "set_id": "VAT_MAF_T3510_11",
    "zones": [
     {
-     "zone": "larch_light_oak",
+     "zone": "boards",
      "id_key": "wood_light",
      "id": 14,
-     "colour": "#BEA581",
+     "colour": "#C49A6C",
      "ral": null,
      "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
-     "colour_source": "schedule finish light oak; v005 target, photo not measured"
+     "colour_source": "schedule finish light oak; no RAL; vendor candidates_part*.jpg and candidates_sheet.jpg are library viewport colours, not a finish measurement; colour assumed; atlas slot larch_light_oak #C49A6C"
     },
     {
-     "zone": "steel_ral7047",
+     "zone": "frame",
      "id_key": "paint_ral7047",
      "id": 4,
      "colour": "#D0D0D0",
      "ral": "7047",
      "name": "краска RAL 7047 телегрей",
-     "colour_source": "schedule RAL 7047; v005 target, photo not measured"
+     "colour_source": "schedule RAL 7047"
     }
    ],
    "profiles": {
@@ -212,8 +223,8 @@
      "vertices_after": 236,
      "faces_after": 434,
      "zone_faces": {
-      "larch_light_oak": 70,
-      "steel_ral7047": 364
+      "boards": 70,
+      "frame": 364
      }
     },
     "vpm": {
@@ -222,8 +233,8 @@
      "vertices_after": 388,
      "faces_after": 724,
      "zone_faces": {
-      "larch_light_oak": 104,
-      "steel_ral7047": 620
+      "boards": 104,
+      "frame": 620
      }
     }
    },
@@ -237,13 +248,31 @@
    "set_id": "VAT_MAF_T3510_12",
    "zones": [
     {
-     "zone": "steel_ral7047",
+     "zone": "boards",
+     "id_key": "wood_light",
+     "id": 14,
+     "colour": "#C49A6C",
+     "ral": null,
+     "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
+     "colour_source": "schedule finish light oak; no RAL; vendor candidates_part*.jpg and candidates_sheet.jpg are library viewport colours, not a finish measurement; colour assumed; atlas slot larch_light_oak #C49A6C"
+    },
+    {
+     "zone": "fasteners",
+     "id_key": "cap_black",
+     "id": 22,
+     "colour": "#303030",
+     "ral": null,
+     "name": "пластик чёрный матовый (заглушки, колпаки, полиамид)",
+     "colour_source": "schedule polyamide caps; no RAL; colour assumed; v005 cap_black #303030"
+    },
+    {
+     "zone": "frame",
      "id_key": "paint_ral7047",
      "id": 4,
      "colour": "#D0D0D0",
      "ral": "7047",
      "name": "краска RAL 7047 телегрей",
-     "colour_source": "schedule RAL 7047; v005 target, photo not measured"
+     "colour_source": "schedule RAL 7047"
     }
    ],
    "profiles": {
@@ -253,7 +282,9 @@
      "vertices_after": 416,
      "faces_after": 678,
      "zone_faces": {
-      "steel_ral7047": 678
+      "boards": 452,
+      "fasteners": 36,
+      "frame": 190
      }
     },
     "vpm": {
@@ -262,7 +293,9 @@
      "vertices_after": 416,
      "faces_after": 678,
      "zone_faces": {
-      "steel_ral7047": 678
+      "boards": 452,
+      "fasteners": 36,
+      "frame": 190
      }
     }
    },
@@ -270,19 +303,19 @@
    "catalogue_id": "MAF_0920",
    "schedule": "*T3510/12",
    "material_reason": "single source material; swing frame steel RAL 7047",
-   "split_note": "source mesh has one atlas material; passport photo not on disk; no further colour zone invented"
+   "split_note": null
   },
   {
    "set_id": "VAT_MAF_T3510_16",
    "zones": [
     {
-     "zone": "larch_light_oak",
+     "zone": "boards",
      "id_key": "wood_light",
      "id": 14,
-     "colour": "#BEA581",
+     "colour": "#C49A6C",
      "ral": null,
      "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
-     "colour_source": "schedule finish light oak; v005 target, photo not measured"
+     "colour_source": "schedule finish light oak; no RAL; vendor candidates_part*.jpg and candidates_sheet.jpg are library viewport colours, not a finish measurement; colour assumed; atlas slot larch_light_oak #C49A6C"
     }
    ],
    "profiles": {
@@ -292,7 +325,7 @@
      "vertices_after": 1356,
      "faces_after": 2281,
      "zone_faces": {
-      "larch_light_oak": 2281
+      "boards": 2281
      }
     },
     "vpm": {
@@ -301,7 +334,7 @@
      "vertices_after": 2580,
      "faces_after": 4562,
      "zone_faces": {
-      "larch_light_oak": 4562
+      "boards": 4562
      }
     }
    },
@@ -309,28 +342,28 @@
    "catalogue_id": "MAF_0803",
    "schedule": "*T3510/16",
    "material_reason": "single source material; playground ДП 090 timber dominates -> larch",
-   "split_note": "source mesh has one atlas material; passport photo not on disk; no further colour zone invented"
+   "split_note": "face groups share one schedule finish; vertex and face counts unchanged"
   },
   {
    "set_id": "VAT_MAF_T3510_26",
    "zones": [
     {
-     "zone": "hpl_satin_wood",
+     "zone": "hpl",
      "id_key": "wood_light",
      "id": 14,
-     "colour": "#BEA581",
+     "colour": "#B4825A",
      "ral": null,
      "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
-     "colour_source": "schedule HPL satin wood merged to wood_light; v005 target, photo not measured"
+     "colour_source": "schedule HPL satin wood; no RAL; vendor images are library viewport colours, not a finish measurement; colour assumed; atlas slot hpl_satin_wood #B4825A"
     },
     {
-     "zone": "steel_ral7047",
+     "zone": "frame",
      "id_key": "paint_ral7047",
      "id": 4,
      "colour": "#D0D0D0",
      "ral": "7047",
      "name": "краска RAL 7047 телегрей",
-     "colour_source": "schedule RAL 7047; v005 target, photo not measured"
+     "colour_source": "schedule RAL 7047"
     }
    ],
    "profiles": {
@@ -340,8 +373,8 @@
      "vertices_after": 1300,
      "faces_after": 3043,
      "zone_faces": {
-      "hpl_satin_wood": 12,
-      "steel_ral7047": 3031
+      "hpl": 12,
+      "frame": 3031
      }
     },
     "vpm": {
@@ -350,8 +383,8 @@
      "vertices_after": 4184,
      "faces_after": 8696,
      "zone_faces": {
-      "hpl_satin_wood": 35,
-      "steel_ral7047": 8661
+      "hpl": 35,
+      "frame": 8661
      }
     }
    },
@@ -365,22 +398,22 @@
    "set_id": "VAT_MAF_T3510_27",
    "zones": [
     {
-     "zone": "larch_light_oak",
+     "zone": "boards",
      "id_key": "wood_light",
      "id": 14,
-     "colour": "#BEA581",
+     "colour": "#C49A6C",
      "ral": null,
      "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
-     "colour_source": "schedule finish light oak; v005 target, photo not measured"
+     "colour_source": "schedule finish light oak; no RAL; vendor candidates_part*.jpg and candidates_sheet.jpg are library viewport colours, not a finish measurement; colour assumed; atlas slot larch_light_oak #C49A6C"
     },
     {
-     "zone": "steel_ral7047",
+     "zone": "frame",
      "id_key": "paint_ral7047",
      "id": 4,
      "colour": "#D0D0D0",
      "ral": "7047",
      "name": "краска RAL 7047 телегрей",
-     "colour_source": "schedule RAL 7047; v005 target, photo not measured"
+     "colour_source": "schedule RAL 7047"
     }
    ],
    "profiles": {
@@ -390,8 +423,8 @@
      "vertices_after": 292,
      "faces_after": 540,
      "zone_faces": {
-      "larch_light_oak": 364,
-      "steel_ral7047": 176
+      "boards": 364,
+      "frame": 176
      }
     },
     "vpm": {
@@ -400,8 +433,8 @@
      "vertices_after": 292,
      "faces_after": 540,
      "zone_faces": {
-      "larch_light_oak": 364,
-      "steel_ral7047": 176
+      "boards": 364,
+      "frame": 176
      }
     }
    },
@@ -415,22 +448,22 @@
    "set_id": "VAT_MAF_T3510_28",
    "zones": [
     {
-     "zone": "rope_pp",
+     "zone": "rope",
      "id_key": "rope_pp",
      "id": 29,
-     "colour": "#5A5A5A",
+     "colour": "#7A7A7A",
      "ral": null,
      "name": "канат полипропиленовый армированный",
-     "colour_source": "schedule polypropylene rope, no RAL; v005 target, photo not measured"
+     "colour_source": "schedule polypropylene rope; no RAL; colour assumed; atlas slot rope_pp #7A7A7A"
     },
     {
-     "zone": "steel_ral7047",
+     "zone": "frame",
      "id_key": "paint_ral7047",
      "id": 4,
      "colour": "#D0D0D0",
      "ral": "7047",
      "name": "краска RAL 7047 телегрей",
-     "colour_source": "schedule RAL 7047; v005 target, photo not measured"
+     "colour_source": "schedule RAL 7047"
     }
    ],
    "profiles": {
@@ -440,8 +473,8 @@
      "vertices_after": 1027,
      "faces_after": 2030,
      "zone_faces": {
-      "rope_pp": 564,
-      "steel_ral7047": 1466
+      "rope": 564,
+      "frame": 1466
      }
     },
     "vpm": {
@@ -450,8 +483,8 @@
      "vertices_after": 1027,
      "faces_after": 2030,
      "zone_faces": {
-      "rope_pp": 564,
-      "steel_ral7047": 1466
+      "rope": 564,
+      "frame": 1466
      }
     }
    },
@@ -465,13 +498,31 @@
    "set_id": "VAT_MAF_T3510_29",
    "zones": [
     {
-     "zone": "larch_light_oak",
+     "zone": "boards",
      "id_key": "wood_light",
      "id": 14,
-     "colour": "#BEA581",
+     "colour": "#C49A6C",
      "ral": null,
      "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
-     "colour_source": "schedule finish light oak; v005 target, photo not measured"
+     "colour_source": "schedule finish light oak; no RAL; vendor candidates_part*.jpg and candidates_sheet.jpg are library viewport colours, not a finish measurement; colour assumed; atlas slot larch_light_oak #C49A6C"
+    },
+    {
+     "zone": "fasteners",
+     "id_key": "cap_black",
+     "id": 22,
+     "colour": "#303030",
+     "ral": null,
+     "name": "пластик чёрный матовый (заглушки, колпаки, полиамид)",
+     "colour_source": "schedule polyamide caps; no RAL; colour assumed; v005 cap_black #303030"
+    },
+    {
+     "zone": "frame",
+     "id_key": "paint_ral7047",
+     "id": 4,
+     "colour": "#D0D0D0",
+     "ral": "7047",
+     "name": "краска RAL 7047 телегрей",
+     "colour_source": "schedule RAL 7047"
     }
    ],
    "profiles": {
@@ -481,7 +532,9 @@
      "vertices_after": 156,
      "faces_after": 320,
      "zone_faces": {
-      "larch_light_oak": 320
+      "boards": 292,
+      "fasteners": 4,
+      "frame": 24
      }
     },
     "vpm": {
@@ -490,7 +543,9 @@
      "vertices_after": 156,
      "faces_after": 320,
      "zone_faces": {
-      "larch_light_oak": 320
+      "boards": 292,
+      "fasteners": 4,
+      "frame": 24
      }
     }
    },
@@ -498,19 +553,28 @@
    "catalogue_id": "MAF_0159",
    "schedule": "*T3510/29",
    "material_reason": "single source material; chair seat/back slats dominate -> larch",
-   "split_note": "source mesh has one atlas material; passport photo not on disk; no further colour zone invented"
+   "split_note": null
   },
   {
    "set_id": "VAT_MAF_T3510_31",
    "zones": [
     {
-     "zone": "larch_light_oak",
+     "zone": "boards",
      "id_key": "wood_light",
      "id": 14,
-     "colour": "#BEA581",
+     "colour": "#C49A6C",
      "ral": null,
      "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
-     "colour_source": "schedule finish light oak; v005 target, photo not measured"
+     "colour_source": "schedule finish light oak; no RAL; vendor candidates_part*.jpg and candidates_sheet.jpg are library viewport colours, not a finish measurement; colour assumed; atlas slot larch_light_oak #C49A6C"
+    },
+    {
+     "zone": "frame",
+     "id_key": "paint_ral7047",
+     "id": 4,
+     "colour": "#D0D0D0",
+     "ral": "7047",
+     "name": "краска RAL 7047 телегрей",
+     "colour_source": "schedule RAL 7047"
     }
    ],
    "profiles": {
@@ -520,7 +584,8 @@
      "vertices_after": 136,
      "faces_after": 212,
      "zone_faces": {
-      "larch_light_oak": 212
+      "boards": 96,
+      "frame": 116
      }
     },
     "vpm": {
@@ -529,7 +594,8 @@
      "vertices_after": 136,
      "faces_after": 212,
      "zone_faces": {
-      "larch_light_oak": 212
+      "boards": 96,
+      "frame": 116
      }
     }
    },
@@ -537,19 +603,19 @@
    "catalogue_id": "MAF_0722",
    "schedule": "*T3510/31",
    "material_reason": "single source material; table top area dominates -> larch",
-   "split_note": "source mesh has one atlas material; passport photo not on disk; no further colour zone invented"
+   "split_note": null
   },
   {
    "set_id": "VAT_MAF_T3510_32",
    "zones": [
     {
-     "zone": "steel_ral7047",
+     "zone": "frame",
      "id_key": "paint_ral7047",
      "id": 4,
      "colour": "#D0D0D0",
      "ral": "7047",
      "name": "краска RAL 7047 телегрей",
-     "colour_source": "schedule RAL 7047; v005 target, photo not measured"
+     "colour_source": "schedule RAL 7047"
     }
    ],
    "profiles": {
@@ -559,7 +625,7 @@
      "vertices_after": 1953,
      "faces_after": 3726,
      "zone_faces": {
-      "steel_ral7047": 3726
+      "frame": 3726
      }
     },
     "vpm": {
@@ -568,7 +634,7 @@
      "vertices_after": 1953,
      "faces_after": 3726,
      "zone_faces": {
-      "steel_ral7047": 3726
+      "frame": 3726
      }
     }
    },
@@ -576,7 +642,7 @@
    "catalogue_id": "MAF_0687",
    "schedule": "*T3510/32",
    "material_reason": "schedule: steel RAL 7047 only",
-   "split_note": "source mesh has one atlas material; passport photo not on disk; no further colour zone invented"
+   "split_note": "face groups share one schedule finish; vertex and face counts unchanged"
   }
  ]
 }

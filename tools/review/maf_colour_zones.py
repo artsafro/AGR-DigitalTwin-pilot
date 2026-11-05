@@ -1,12 +1,31 @@
-"""Map Vatutino showcase MAF faces onto approved v005 material IDs (#889).
+"""new-case: MAF colour-zone table builder. Map Vatutino showcase MAF faces onto approved v005 material IDs (#889).
 
 The geometry is not rebuilt. Assignment only attaches an ID to each existing face.
 IDs are the pilot MAF list (1..31). A face ID >= 1001 is a UDIM tile, not a material
 ID, and is an error [D030]. An unknown position, zone or material is named in the
 error. Nothing is filled in from the first catalogue entry.
 
-Colours recorded by ``rows_from_set`` are the v005 target of the ID the existing
-atlas slot already uses. They are not measurements from a passport photo.
+Colour (user decision 2026-11-05): no passport photo. A schedule RAL is that paint.
+A named finish with no number (light oak, HPL satin wood, polypropylene rope) keeps
+the existing atlas-slot hex and is marked ``colour assumed``. The vendor images in
+``C:/x/vatutino-maf/v001/candidates_part*.jpg`` and ``candidates_sheet.jpg`` are
+library viewport colours, not product photos, so they are not measured.
+
+Face groups (single-material meshes): faces that share an edge stay in one group
+while the dihedral angle is at most 40 degrees (the MAF smoothing angle). A sharper
+edge is a boundary even when the parts are one welded mesh. Each group is classified
+from the sorted extents ``t <= u <= v`` of its vertices, in metres:
+
+- ``fastener`` when ``v < 0.06``
+- ``slab`` when ``t <= 0.045`` and ``u >= 0.08`` and ``u >= 3t`` (a panel)
+- ``tube`` when ``u <= 0.12`` and ``v >= 0.15`` and ``v >= 2.5u`` (a rail or leg)
+- ``shell`` otherwise
+
+``POSITION_POLICY`` maps those kinds to v005 keys per position. A product whose
+schedule finish is only RAL 7047 (the steel urn, the tree grate) maps every kind
+to that paint, so the groups stay one colour. When fastener faces exceed
+``fastener_max_share`` they fold into ``shell`` so a fragmented panel is not
+reported as plastic caps.
 """
 from __future__ import annotations
 
@@ -19,20 +38,57 @@ from pathlib import Path
 
 UDIM_AS_MATERIAL_ID = 1001
 
-# Existing site-atlas slot -> approved v005 key. No other slot is accepted.
-ATLAS_TO_ID = {
-    "steel_ral7047": "paint_ral7047",
-    "larch_light_oak": "wood_light",
-    "hpl_satin_wood": "wood_light",
-    "rope_pp": "rope_pp",
+# Existing site-atlas slot -> approved v005 key, zone name and stated colour.
+# No other slot is accepted. ``colour assumed`` means the schedule names the
+# finish but not a number, and the vendor sheet was not measured.
+FINISH = {
+    "steel_ral7047": {
+        "id_key": "paint_ral7047", "zone": "frame", "colour": "#D0D0D0",
+        "colour_source": "schedule RAL 7047",
+    },
+    "larch_light_oak": {
+        "id_key": "wood_light", "zone": "boards", "colour": "#C49A6C",
+        "colour_source": ("schedule finish light oak; no RAL; vendor candidates_part*.jpg and "
+                          "candidates_sheet.jpg are library viewport colours, not a finish measurement; "
+                          "colour assumed; atlas slot larch_light_oak #C49A6C"),
+    },
+    "hpl_satin_wood": {
+        "id_key": "wood_light", "zone": "hpl", "colour": "#B4825A",
+        "colour_source": ("schedule HPL satin wood; no RAL; vendor images are library viewport colours, "
+                          "not a finish measurement; colour assumed; atlas slot hpl_satin_wood #B4825A"),
+    },
+    "rope_pp": {
+        "id_key": "rope_pp", "zone": "rope", "colour": "#7A7A7A",
+        "colour_source": ("schedule polypropylene rope; no RAL; colour assumed; atlas slot rope_pp #7A7A7A"),
+    },
 }
+ATLAS_TO_ID = {slot: row["id_key"] for slot, row in FINISH.items()}
+COLOUR_SOURCE = {slot: row["colour_source"] for slot, row in FINISH.items()}
 
-COLOUR_SOURCE = {
-    "steel_ral7047": "schedule RAL 7047; v005 target, photo not measured",
-    "larch_light_oak": "schedule finish light oak; v005 target, photo not measured",
-    "hpl_satin_wood": "schedule HPL satin wood merged to wood_light; v005 target, photo not measured",
-    "rope_pp": "schedule polypropylene rope, no RAL; v005 target, photo not measured",
+SPLIT_ANGLE_DEG = 40.0
+# Single-material meshes only. Kinds that the schedule does not split stay on one key.
+POSITION_POLICY = {
+    "VAT_MAF_T3510_02": {"slab": "paint_ral7047", "shell": "paint_ral7047",
+                         "tube": "paint_ral7047", "fastener": "paint_ral7047"},
+    "VAT_MAF_T3510_07": {"slab": "wood_light", "shell": "wood_light",
+                         "tube": "paint_ral7047", "fastener": "paint_ral7047"},
+    "VAT_MAF_T3510_12": {"slab": "wood_light", "shell": "paint_ral7047",
+                         "tube": "paint_ral7047", "fastener": "cap_black"},
+    "VAT_MAF_T3510_16": {"slab": "wood_light", "shell": "wood_light",
+                         "tube": "wood_light", "fastener": "cap_black"},
+    "VAT_MAF_T3510_29": {"slab": "wood_light", "shell": "wood_light",
+                         "tube": "paint_ral7047", "fastener": "cap_black"},
+    "VAT_MAF_T3510_31": {"slab": "wood_light", "shell": "wood_light",
+                         "tube": "paint_ral7047", "fastener": "paint_ral7047"},
+    "VAT_MAF_T3510_32": {"slab": "paint_ral7047", "shell": "paint_ral7047",
+                         "tube": "paint_ral7047", "fastener": "paint_ral7047"},
 }
+ZONE_OF_KEY = {
+    "wood_light": "boards", "paint_ral7047": "frame", "cap_black": "fasteners", "rope_pp": "rope",
+}
+# Split keys use the larch atlas hex for wood. HPL keeps its own slot through finish_colour.
+KEY_SLOT = {"wood_light": "larch_light_oak", "paint_ral7047": "steel_ral7047", "rope_pp": "rope_pp"}
+CAP_SOURCE = "schedule polyamide caps; no RAL; colour assumed; v005 cap_black #303030"
 
 
 class ZoneError(Exception):
@@ -141,13 +197,239 @@ def apply_zone_ids(mesh: dict, zone_keys: dict, catalogue: dict) -> dict:
     return {"vertices": vertices, "faces": faces, "material_ids": ids, "dropped": []}
 
 
-def _zone_record(zone_name: str, id_key: str, colour_source: str, catalogue: dict) -> dict:
+def _xyz(value, what: str):
+    if not isinstance(value, (list, tuple)) or len(value) != 3:
+        raise ZoneError(f"{what}: expected 3 coordinates")
+    out = []
+    for coord in value:
+        if isinstance(coord, bool) or not isinstance(coord, (int, float)) or not math.isfinite(coord):
+            raise ZoneError(f"{what}: not a finite number: {coord!r}")
+        out.append(float(coord))
+    return tuple(out)
+
+
+def _unit(normal):
+    if normal is None:
+        return None
+    length = math.sqrt(normal[0] ** 2 + normal[1] ** 2 + normal[2] ** 2)
+    if length < 1e-12:
+        return None
+    return (normal[0] / length, normal[1] / length, normal[2] / length)
+
+
+def _face_normal(vertices, face):
+    nx = ny = nz = 0.0
+    count = len(face)
+    for i in range(count):
+        x1, y1, z1 = vertices[face[i]]
+        x2, y2, z2 = vertices[face[(i + 1) % count]]
+        nx += (y1 - y2) * (z1 + z2)
+        ny += (z1 - z2) * (x1 + x2)
+        nz += (x1 - x2) * (y1 + y2)
+    return _unit((nx, ny, nz))
+
+
+def _angle(a, b):
+    dot = max(-1.0, min(1.0, a[0] * b[0] + a[1] * b[1] + a[2] * b[2]))
+    return math.degrees(math.acos(dot))
+
+
+def face_groups(vertices, faces, angle_deg=SPLIT_ANGLE_DEG) -> list:
+    """Group id per face. Coplanar neighbours share a group; a sharp edge splits."""
+    coords = [_xyz(v, "vertex") for v in vertices]
+    if not isinstance(faces, (list, tuple)) or not faces:
+        raise ZoneError("empty face list")
+    polys = []
+    for face in faces:
+        if not isinstance(face, (list, tuple)) or len(face) < 3:
+            raise ZoneError(f"face is not a polygon: {face!r}")
+        idxs = []
+        for index in face:
+            if isinstance(index, bool) or not isinstance(index, int) or index < 0 or index >= len(coords):
+                raise ZoneError(f"face index out of range: {index!r}")
+            idxs.append(index)
+        polys.append(tuple(idxs))
+    parent = list(range(len(polys)))
+
+    def find(i):
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+
+    normals = [_face_normal(coords, face) for face in polys]
+    edge_faces = {}
+    for fi, face in enumerate(polys):
+        for i in range(len(face)):
+            a, b = face[i], face[(i + 1) % len(face)]
+            edge_faces.setdefault((a, b) if a < b else (b, a), []).append(fi)
+    for pair in edge_faces.values():
+        if len(pair) != 2:
+            continue
+        i, j = pair
+        if normals[i] is None or normals[j] is None:
+            continue
+        if _angle(normals[i], normals[j]) <= angle_deg:
+            a, b = find(i), find(j)
+            if a != b:
+                parent[a] = b
+    roots = [find(i) for i in range(len(polys))]
+    order = sorted(set(roots))
+    renumber = {root: n for n, root in enumerate(order)}
+    return [renumber[root] for root in roots]
+
+
+def kind_from_dims(dims) -> str:
+    t, u, v = sorted(float(x) for x in dims)
+    if not math.isfinite(t) or not math.isfinite(v):
+        raise ZoneError(f"group extents are not finite: {dims!r}")
+    if v < 0.06:
+        return "fastener"
+    if t <= 0.045 and u >= 0.08 and u >= 3.0 * t:
+        return "slab"
+    if u <= 0.12 and v >= 0.15 and v >= 2.5 * max(u, 1e-9):
+        return "tube"
+    return "shell"
+
+
+def _group_kind(vertices, faces, members) -> str:
+    used = set()
+    for index in members:
+        used.update(faces[index])
+    xs = [vertices[i][0] for i in used]
+    ys = [vertices[i][1] for i in used]
+    zs = [vertices[i][2] for i in used]
+    return kind_from_dims((max(xs) - min(xs), max(ys) - min(ys), max(zs) - min(zs)))
+
+
+def split_mesh(mesh: dict, policy: dict, catalogue: dict, fastener_max_share=None) -> dict:
+    """Attach one v005 ID per existing face. Vertices and faces are copied, never rebuilt."""
+    if not isinstance(mesh, dict) or "vertices" not in mesh or "faces" not in mesh:
+        raise ZoneError("mesh is missing vertices or faces")
+    if not isinstance(policy, dict) or not policy:
+        raise ZoneError("empty zone map")
+    vertices = [_xyz(v, "vertex") for v in mesh["vertices"]]
+    if not vertices:
+        raise ZoneError("empty vertex list")
+    groups = face_groups(vertices, mesh["faces"])
+    faces = list(mesh["faces"])
+    if len(groups) != len(faces):
+        raise ZoneError("dropped faces")
+    members = {}
+    for index, group in enumerate(groups):
+        members.setdefault(group, []).append(index)
+    ids = [None] * len(faces)
+    kinds = [None] * len(faces)
+    counts = {}
+    for group, which in members.items():
+        kind = _group_kind(vertices, faces, which)
+        if kind not in policy:
+            raise ZoneError(f"unmapped zone: {kind}")
+        entry = _require_id(policy[kind], catalogue)
+        counts[kind] = counts.get(kind, 0) + len(which)
+        for index in which:
+            ids[index] = entry["id"]
+            kinds[index] = kind
+    if fastener_max_share is not None:
+        share = _finite_number(fastener_max_share, "fastener_max_share")
+        if share < 0 or share > 1:
+            raise ZoneError(f"fastener_max_share out of range: {share}")
+        fastener_n = counts.get("fastener", 0)
+        if fastener_n and fastener_n / len(faces) > share:
+            if "shell" not in policy:
+                raise ZoneError("unmapped zone: shell")
+            shell_id = _require_id(policy["shell"], catalogue)["id"]
+            for index, kind in enumerate(kinds):
+                if kind == "fastener":
+                    ids[index] = shell_id
+            counts["shell"] = counts.get("shell", 0) + fastener_n
+            del counts["fastener"]
+    if any(i is None for i in ids) or len(ids) != len(faces):
+        raise ZoneError("dropped faces")
+    return {"vertices": vertices, "faces": faces, "material_ids": ids,
+            "zone_faces": counts, "dropped": []}
+
+
+def _finite_number(value, what: str) -> float:
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
+        raise ZoneError(f"{what}: not a finite number: {value!r}")
+    return float(value)
+
+
+def finish_colour(slot, catalogue: dict) -> dict:
+    """Schedule RAL, or the atlas slot marked colour assumed. Unknown slots are named."""
+    if not isinstance(slot, str) or slot not in FINISH:
+        raise ZoneError(f"unmapped material: {slot}")
+    row = FINISH[slot]
+    entry = _require_id(row["id_key"], catalogue)
+    return {"zone": row["zone"], "id_key": row["id_key"], "id": entry["id"],
+            "colour": _hex(row["colour"], slot), "ral": entry["ral"], "name": entry["name"],
+            "colour_source": row["colour_source"]}
+
+
+def zone_rows_for_keys(keys, catalogue: dict) -> list:
+    """Face counts per v005 key, with the schedule colour of that key."""
+    if not isinstance(keys, (list, tuple)) or not keys:
+        raise ZoneError("empty face list")
+    counts = {}
+    for key in keys:
+        if not isinstance(key, str):
+            raise ZoneError(f"unmapped material: {key!r}")
+        counts[key] = counts.get(key, 0) + 1
+    rows = []
+    for key, count in sorted(counts.items(), key=lambda item: ZONE_OF_KEY.get(item[0], item[0])):
+        if key == "cap_black":
+            entry = _require_id(key, catalogue)
+            rows.append({"zone": "fasteners", "id_key": key, "id": entry["id"], "faces": count,
+                         "colour": entry["target"], "colour_source": CAP_SOURCE})
+            continue
+        if key not in KEY_SLOT:
+            raise ZoneError(f"unmapped material: {key}")
+        fin = finish_colour(KEY_SLOT[key], catalogue)
+        rows.append({**fin, "faces": count})
+    names = [row["zone"] for row in rows]
+    if len(names) != len(set(names)):
+        raise ZoneError(f"duplicate zone: {names}")
+    if sum(row["faces"] for row in rows) != len(keys):
+        raise ZoneError("dropped faces")
+    return rows
+
+
+def aggregate_zones(material_ids, catalogue: dict) -> list:
+    """One zone per v005 key, face counts summed. Empty input is an error."""
+    if not isinstance(material_ids, (list, tuple)) or not material_ids:
+        raise ZoneError("empty face list")
+    by_id = {}
+    for entry in catalogue.values():
+        by_id.setdefault(entry["id"], entry)
+    counts = {}
+    for mid in material_ids:
+        if isinstance(mid, bool) or not isinstance(mid, int) or mid not in by_id:
+            raise ZoneError(f"unmapped material: {mid}")
+        if mid >= UDIM_AS_MATERIAL_ID:
+            raise ZoneError(f"material id {mid} is outside 1..{UDIM_AS_MATERIAL_ID - 1}")
+        counts[mid] = counts.get(mid, 0) + 1
+    zones = []
+    for mid, count in sorted(counts.items()):
+        entry = by_id[mid]
+        zone = ZONE_OF_KEY.get(entry["key"])
+        if zone is None:
+            raise ZoneError(f"unmapped material: {entry['key']}")
+        zones.append({"zone": zone, "id_key": entry["key"], "id": mid, "faces": count})
+    names = [z["zone"] for z in zones]
+    if len(names) != len(set(names)):
+        raise ZoneError(f"duplicate zone: {names}")
+    return zones
+
+
+def _zone_record(zone_name: str, id_key: str, colour_source: str, catalogue: dict, colour=None) -> dict:
     if not isinstance(zone_name, str) or not zone_name.strip():
         raise ZoneError(f"blank zone for material {id_key!r}")
     if not isinstance(colour_source, str) or not colour_source.strip():
         raise ZoneError(f"{zone_name}: colour source missing")
     entry = _require_id(id_key, catalogue)
-    return {"zone": zone_name, "id_key": id_key, "id": entry["id"], "colour": entry["target"],
+    stated = entry["target"] if colour is None else _hex(colour, zone_name)
+    return {"zone": zone_name, "id_key": id_key, "id": entry["id"], "colour": stated,
             "ral": entry["ral"], "name": entry["name"], "colour_source": colour_source.strip()}
 
 
@@ -222,7 +504,8 @@ def compile_zones(required_ids, rows, catalogue: dict) -> dict:
         raw_zones = row.get("zones")
         if not isinstance(raw_zones, list) or not raw_zones:
             raise ZoneError(f"{set_id}: empty zone list")
-        zones = [_zone_record(z.get("zone"), z.get("id_key"), z.get("colour_source"), catalogue)
+        zones = [_zone_record(z.get("zone"), z.get("id_key"), z.get("colour_source"), catalogue,
+                              z.get("colour"))
                  for z in raw_zones]
         if any(z["id"] >= UDIM_AS_MATERIAL_ID for z in zones):
             raise ZoneError(f"{set_id}: material id >= {UDIM_AS_MATERIAL_ID}")
@@ -235,9 +518,11 @@ def compile_zones(required_ids, rows, catalogue: dict) -> dict:
     return {
         "ok": True,
         "accepted": False,
-        "photo_status": "missing",
+        "photo_status": "not_required",
         "geometry_rewrite": False,
-        "reason": "passport photos are not on disk; colours are v005 targets of the existing atlas slots, not photo measurements; meshes were not rewritten",
+        "reason": ("2026-11-05: passport photos are not required. RAL comes from the schedule; "
+                   "a finish with no number keeps the atlas slot and is marked colour assumed. "
+                   "Vertex and face counts are unchanged."),
         "positions": positions,
     }
 
@@ -287,16 +572,31 @@ def rows_from_set(set_report: dict, catalogue: dict, counts: dict) -> list:
             used[prof] = faces
             counts[set_id][prof] = {"vertices": vertices, "faces": face_count, "zone_faces": faces}
         names = sorted(set(used["npm"]) | set(used["vpm"]))
-        zones = [{"zone": name, "id_key": ATLAS_TO_ID[name], "colour_source": COLOUR_SOURCE[name]}
-                 for name in names]
+        merged = {}
+        order = []
+        for name in names:
+            fin = finish_colour(name, catalogue)
+            if fin["zone"] not in merged:
+                merged[fin["zone"]] = {"zone": fin["zone"], "id_key": fin["id_key"],
+                                        "colour_source": fin["colour_source"], "colour": fin["colour"]}
+                order.append(fin["zone"])
+            elif merged[fin["zone"]]["id_key"] != fin["id_key"]:
+                raise ZoneError(f"{set_id}: zone {fin['zone']} maps two materials")
+        zones = [merged[name] for name in order]
         note = None
-        if len(names) == 1:
-            note = ("source mesh has one atlas material; passport photo not on disk; "
-                    "no further colour zone invented")
+        if len(zones) == 1 and set_id in POSITION_POLICY:
+            keys = set(POSITION_POLICY[set_id].values())
+            if len(keys) == 1:
+                note = "schedule names one finish; face groups keep that material id"
+            else:
+                note = "single atlas slot; face-group split is applied when a mesh is supplied"
         profiles = {}
         for prof in ("npm", "vpm"):
             block = counts[set_id][prof]
-            zone_faces = {name: block["zone_faces"].get(name, 0) for name in names}
+            zone_faces = {}
+            for name in names:
+                fin = finish_colour(name, catalogue)
+                zone_faces[fin["zone"]] = zone_faces.get(fin["zone"], 0) + block["zone_faces"].get(name, 0)
             profiles[prof] = {
                 "vertices_before": block["vertices"], "faces_before": block["faces"],
                 "vertices_after": block["vertices"], "faces_after": block["faces"],
@@ -315,14 +615,77 @@ def rows_from_set(set_report: dict, catalogue: dict, counts: dict) -> list:
     return rows
 
 
+def rows_from_applied(set_report: dict, applied: dict, catalogue: dict) -> list:
+    """Zone rows from the Max assignment. Counts must match and every face must sit in a zone."""
+    if not isinstance(applied, dict) or applied.get("ok") is not True:
+        raise ZoneError("applied report is not ok")
+    positions = applied.get("positions")
+    if not isinstance(positions, dict) or not positions:
+        raise ZoneError("applied report has no positions")
+    rows = []
+    for pos in set_report.get("positions") or []:
+        set_id = pos.get("set_id")
+        if set_id not in positions:
+            raise ZoneError(f"unmapped position: {set_id}")
+        block = positions[set_id]
+        profiles = {}
+        zone_names = None
+        zone_meta = None
+        for prof in ("npm", "vpm"):
+            side = block.get(prof)
+            if not isinstance(side, dict):
+                raise ZoneError(f"{set_id} {prof}: geometry counts missing")
+            vertices = _finite_int(side.get("vertices"), f"{set_id} {prof} vertices")
+            faces = _finite_int(side.get("faces"), f"{set_id} {prof} faces")
+            if side.get("vertices_after") != vertices or side.get("faces_after") != faces:
+                raise ZoneError(f"{set_id} {prof}: vertices {vertices} != {side.get('vertices_after')}")
+            raw = side.get("zones")
+            if not isinstance(raw, list) or not raw:
+                raise ZoneError(f"{set_id} {prof}: empty zone list")
+            counts = {}
+            meta = {}
+            for zone in raw:
+                name = zone.get("zone")
+                count = _finite_int(zone.get("faces"), f"{set_id} {prof} {name}")
+                if count <= 0:
+                    raise ZoneError(f"{set_id} {prof}: zone {name} has no faces")
+                if name in counts:
+                    raise ZoneError(f"{set_id}: duplicate zone")
+                counts[name] = count
+                meta[name] = zone
+            if sum(counts.values()) != faces:
+                raise ZoneError(f"{set_id} {prof}: zone faces {sum(counts.values())} != faces {faces}")
+            names = list(counts)
+            if zone_names is None:
+                zone_names = names
+                zone_meta = meta
+            elif names != zone_names:
+                raise ZoneError(f"{set_id}: npm/vpm zones differ: {zone_names} vs {names}")
+            profiles[prof] = {"vertices_before": vertices, "faces_before": faces,
+                              "vertices_after": vertices, "faces_after": faces, "zone_faces": counts}
+        zones = []
+        for name in zone_names:
+            src = zone_meta[name]
+            zones.append({"zone": name, "id_key": src.get("id_key"), "colour_source": src.get("colour_source"),
+                          "colour": src.get("colour")})
+        note = None
+        if len(zones) == 1:
+            note = "face groups share one schedule finish; vertex and face counts unchanged"
+        rows.append({"set_id": set_id, "catalogue_id": pos.get("catalogue_id"), "schedule": pos.get("schedule"),
+                     "name": pos.get("name"), "material_reason": pos.get("material_reason"),
+                     "split_note": note, "zones": zones, "profiles": profiles})
+    return rows
+
+
 def render_md(report: dict) -> str:
     lines = [
         "# Vatutino showcase MAF colour zones (#889)",
         "",
-        "Geometry is the accepted v005-set mesh. Vertex and face counts below are one read of that mesh;",
-        "before and after are equal because no mesh was written. Colours are the v005 target of the atlas",
-        "slot the position already uses. Passport photos for these 13 positions were not on disk, so no",
-        "colour was measured from a photo and no extra zone was added to a single-material mesh.",
+        "Geometry is the accepted v005-set mesh: vertex and face counts are equal before and after.",
+        "A schedule RAL is stated as that paint. A named finish with no number keeps the atlas-slot",
+        "hex and is marked colour assumed (the vendor candidate sheet is a library viewport, not a measurement).",
+        "Single-material meshes are split into face groups at a dihedral of 40 degrees; the kind of each",
+        "group (slab, tube, shell, fastener) is mapped by POSITION_POLICY.",
         "",
         f"Photo status: {report.get('photo_status')}. Accepted: {report.get('accepted')}.",
         "",
@@ -339,7 +702,7 @@ def render_md(report: dict) -> str:
             )
         if pos.get("split_note"):
             lines.append(f"| {pos['set_id']} | — | — | — | — | — | — | — | — | {pos['split_note']} |")
-    lines += ["", "Positions with one zone were left as the recorded atlas slot. A passport photo is required before splitting them.", ""]
+    lines += ["", "Method: shared-edge components with dihedral <= 40 deg; slab / tube / shell / fastener extents as in the module docstring.", ""]
     return "\n".join(lines)
 
 
@@ -355,20 +718,27 @@ def main(argv=None) -> int:
     ap.add_argument("--set", required=True)
     ap.add_argument("--ids", required=True)
     ap.add_argument("--counts", required=True)
+    ap.add_argument("--applied", default=None, help="Max assignment report; replaces atlas-only rows")
     ap.add_argument("--out-json", required=True)
     ap.add_argument("--out-md", required=True)
     ap.add_argument("--required", nargs="*", default=None)
     args = ap.parse_args(argv)
     out_json, out_md = Path(args.out_json), Path(args.out_md)
     try:
-        assert_distinct_paths({
+        paths = {
             "set": args.set, "ids": args.ids, "counts": args.counts,
             "out-json": out_json, "out-md": out_md,
-        })
+        }
+        if args.applied:
+            paths["applied"] = args.applied
+        assert_distinct_paths(paths)
         catalogue = load_id_catalogue(_load(args.ids, "id catalogue"))
         report_in = _load(args.set, "set report")
         counts = _load(args.counts, "geometry counts")
-        rows = rows_from_set(report_in, catalogue, counts)
+        if args.applied:
+            rows = rows_from_applied(report_in, _load(args.applied, "applied report"), catalogue)
+        else:
+            rows = rows_from_set(report_in, catalogue, counts)
         required = list(args.required) if args.required else [row["set_id"] for row in rows]
         report = compile_zones(required, rows, catalogue)
         text = json.dumps(report, ensure_ascii=False, indent=1)

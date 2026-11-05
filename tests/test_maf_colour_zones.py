@@ -217,7 +217,8 @@ def test_real_showcase_table_maps_every_position(z, catalogue):
             assert isinstance(zone["id"], int) and 1 <= zone["id"] < 1001
             assert zone["id_key"] in catalogue
             assert zone["colour"].startswith("#")
-            assert "photo not measured" in zone["colour_source"]
+            assert "photo not measured" not in zone["colour_source"]
+            assert ("RAL" in zone["colour_source"]) or ("colour assumed" in zone["colour_source"])
             seen.append((pos["set_id"], zone["zone"], zone["id"]))
         for prof in ("npm", "vpm"):
             geo = pos["profiles"][prof]
@@ -230,3 +231,124 @@ def test_real_showcase_table_maps_every_position(z, catalogue):
     single = [p["set_id"] for p in compiled["positions"] if len(p["zones"]) == 1]
     assert "VAT_MAF_T3510_07" in single
     assert "VAT_MAF_T3510_01" not in single
+
+
+def _board_and_tube():
+    """A flat board and a separate square post. Counts are the input faces."""
+    verts = [
+        (0.0, 0.0, 0.45), (1.0, 0.0, 0.45), (1.0, 0.30, 0.45), (0.0, 0.30, 0.45),
+        (0.0, 0.0, 0.0), (0.04, 0.0, 0.0), (0.04, 0.04, 0.0), (0.0, 0.04, 0.0),
+        (0.0, 0.0, 0.40), (0.04, 0.0, 0.40), (0.04, 0.04, 0.40), (0.0, 0.04, 0.40),
+    ]
+    faces = [
+        (0, 1, 2), (0, 2, 3),
+        (4, 5, 9), (4, 9, 8),
+        (5, 6, 10), (5, 10, 9),
+        (6, 7, 11), (6, 11, 10),
+        (7, 4, 8), (7, 8, 11),
+    ]
+    return {"vertices": verts, "faces": faces}
+
+
+def _policy():
+    return {"slab": "wood_light", "shell": "wood_light", "tube": "paint_ral7047", "fastener": "cap_black"}
+
+
+def test_split_keeps_every_face_and_ids_below_udim(z, catalogue):
+    mesh = _board_and_tube()
+    out = z.split_mesh(mesh, _policy(), catalogue)
+    assert out["vertices"] == mesh["vertices"]
+    assert out["faces"] == mesh["faces"]
+    assert out["dropped"] == []
+    assert len(out["material_ids"]) == len(mesh["faces"])
+    assert set(out["material_ids"]) == {14, 4}
+    assert all(isinstance(i, int) and 1 <= i < 1001 for i in out["material_ids"])
+    assert out["zone_faces"]["slab"] == 2
+    assert out["zone_faces"]["tube"] == 8
+    assert sum(out["zone_faces"].values()) == len(mesh["faces"])
+
+
+def test_split_probe_random_meshes_keep_counts_and_legal_ids(z, catalogue):
+    """Brute force: a split never adds or drops a vertex or a face and never emits ID >= 1001."""
+    rng = random.Random(889)
+    policy = _policy()
+    for n in range(1, 36):
+        verts = [(rng.uniform(-1.0, 2.0), rng.uniform(-1.0, 2.0), rng.uniform(0.0, 1.5))
+                 for _ in range(n + 3)]
+        faces = [tuple(rng.randrange(len(verts)) for _ in range(3)) for _ in range(n)]
+        mesh = {"vertices": verts, "faces": faces}
+        out = z.split_mesh(mesh, policy, catalogue)
+        assert out["vertices"] == verts
+        assert out["faces"] == faces
+        assert len(out["material_ids"]) == n
+        assert out["dropped"] == []
+        assert sum(out["zone_faces"].values()) == n
+        assert all(isinstance(i, int) and 1 <= i < z.UDIM_AS_MATERIAL_ID for i in out["material_ids"])
+
+
+def test_coplanar_faces_share_a_group_and_a_sharp_edge_splits(z):
+    flat = {
+        "vertices": [(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0), (2, 0, 0), (2, 1, 0)],
+        "faces": [(0, 1, 2), (0, 2, 3), (1, 4, 5), (1, 5, 2)],
+    }
+    assert len(set(z.face_groups(flat["vertices"], flat["faces"]))) == 1
+    bent = {
+        "vertices": [(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0), (0, 0, 1), (1, 0, 1)],
+        "faces": [(0, 1, 2), (0, 2, 3), (0, 4, 5), (0, 5, 1)],
+    }
+    assert len(set(z.face_groups(bent["vertices"], bent["faces"]))) == 2
+
+
+def test_unmapped_kind_nan_and_empty_fail(z, catalogue):
+    mesh = _board_and_tube()
+    with pytest.raises(z.ZoneError, match="slab"):
+        z.split_mesh(mesh, {"tube": "paint_ral7047", "shell": "wood_light", "fastener": "cap_black"}, catalogue)
+    bad = copy.deepcopy(mesh)
+    bad["vertices"][0] = (math.nan, 0.0, 0.0)
+    with pytest.raises(z.ZoneError, match="not a finite"):
+        z.split_mesh(bad, _policy(), catalogue)
+    with pytest.raises(z.ZoneError, match="empty"):
+        z.split_mesh({"vertices": [(0, 0, 0)], "faces": []}, _policy(), catalogue)
+
+
+def test_committed_zone_table_splits_without_changing_counts():
+    report = json.loads((ROOT / "jobs" / "VATUTINO-SITE" / "maf" / "site-maf-zones.json").read_text(encoding="utf-8"))
+    assert report["photo_status"] == "not_required"
+    assert report["geometry_rewrite"] is False
+    by = {pos["set_id"]: pos for pos in report["positions"]}
+    assert set(by) == set(SHOW)
+    assert {z["zone"] for z in by["VAT_MAF_T3510_07"]["zones"]} >= {"boards", "frame"}
+    assert {z["zone"] for z in by["VAT_MAF_T3510_31"]["zones"]} >= {"boards", "frame"}
+    assert len(by["VAT_MAF_T3510_02"]["zones"]) == 1
+    assert len(by["VAT_MAF_T3510_32"]["zones"]) == 1
+    for pos in report["positions"]:
+        for zone in pos["zones"]:
+            assert isinstance(zone["id"], int) and 1 <= zone["id"] < 1001
+            assert "photo not measured" not in zone["colour_source"]
+            assert ("RAL" in zone["colour_source"]) or ("colour assumed" in zone["colour_source"])
+        for prof in ("npm", "vpm"):
+            geo = pos["profiles"][prof]
+            assert geo["vertices_before"] == geo["vertices_after"]
+            assert geo["faces_before"] == geo["faces_after"]
+            assert sum(geo["zone_faces"].values()) == geo["faces_before"]
+
+
+def test_finish_colour_uses_schedule_ral_or_marks_assumed(z, catalogue):
+    steel = z.finish_colour("steel_ral7047", catalogue)
+    assert steel["id"] == 4
+    assert steel["colour"] == "#D0D0D0"
+    assert "RAL 7047" in steel["colour_source"]
+    assert "colour assumed" not in steel["colour_source"]
+    assert "photo not measured" not in steel["colour_source"]
+    wood = z.finish_colour("larch_light_oak", catalogue)
+    assert wood["id"] == 14
+    assert wood["colour"] == "#C49A6C"
+    assert "colour assumed" in wood["colour_source"]
+    assert "light oak" in wood["colour_source"]
+    rope = z.finish_colour("rope_pp", catalogue)
+    assert "colour assumed" in rope["colour_source"]
+    hpl = z.finish_colour("hpl_satin_wood", catalogue)
+    assert "colour assumed" in hpl["colour_source"]
+    assert hpl["id"] < 1001
+    with pytest.raises(z.ZoneError, match="missing_slot"):
+        z.finish_colour("missing_slot", catalogue)
