@@ -2,6 +2,7 @@
 import importlib.util
 import json
 import math
+import os
 import random
 import subprocess
 import sys
@@ -698,6 +699,319 @@ def test_report_memory_roundtrip(tmp_path):
 
 
 # ---- MCP -------------------------------------------------------------------------------------------------
+# ---- #886 usedMaps drops a Bitmaptexture whose file is absent ---------------------------------------
+class _Tok:
+    def __init__(self, name):
+        self.name = name
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return self.name
+
+
+class _Arr(list):
+    @property
+    def count(self):
+        return len(self)
+
+
+class _MapNode:
+    def __init__(self, handle, kind, name, filename=None, subtex=(), submtls=(), opacity=100.0):
+        self.handle = handle
+        self.kind = kind
+        self.name = name
+        self.filename = filename
+        self.fileName = filename
+        self.subtex = list(subtex)
+        self.submtls = list(submtls)
+        self.opacity = opacity
+        self.cls = None  # filled once the runtime tokens exist
+
+
+class _Rt:
+    """usedMaps returns only bitmap files that exist. Absent Bitmaptexture.fileName values are omitted."""
+
+    def __init__(self):
+        self.undefined = object()
+        self.Bitmaptexture = _Tok('Bitmaptexture')
+        self.Multimaterial = _Tok('Multimaterial')
+        self.Standardmaterial = _Tok('Standardmaterial')
+        self.PhysicalMaterial = _Tok('PhysicalMaterial')
+        self.Mix = _Tok('Mix')
+        self.mapPaths = self
+
+    def classOf(self, node):
+        if getattr(node, 'bad_class', False):
+            raise RuntimeError('classOf failed')
+        return node.cls
+
+    def getHandleByAnim(self, node):
+        if getattr(node, 'bad_handle', False):
+            raise RuntimeError('no handle')
+        return node.handle
+
+    def isProperty(self, node, prop):
+        if getattr(node, 'bad_file', False):
+            raise RuntimeError('unreadable ' + prop)
+        return prop in ('filename', 'fileName') and node.cls == self.Bitmaptexture
+
+    def getProperty(self, node, prop):
+        if getattr(node, 'bad_file', False):
+            raise RuntimeError('unreadable ' + prop)
+        return getattr(node, prop)
+
+    def getNumSubMtls(self, node):
+        return len(node.submtls)
+
+    def getSubMtl(self, node, index):
+        return node.submtls[index - 1]
+
+    def getNumSubTexmaps(self, node):
+        if getattr(node, 'bad_tex', False):
+            raise RuntimeError('texmaps unreadable')
+        return len(node.subtex)
+
+    def getSubTexmap(self, node, index):
+        child = node.subtex[index - 1]
+        if child == 'odd':
+            raise RuntimeError('odd subtex')
+        return child
+
+    def getFullFilePath(self, path):
+        return ''
+
+    def usedMaps(self, node):
+        if getattr(node, 'bad_used', False):
+            raise RuntimeError('usedMaps failed')
+        if getattr(node, 'odd_used', False):
+            return _Arr([None])
+        found = []
+
+        def walk(n, seen):
+            if n is None or n == self.undefined or n == 'odd':
+                return
+            if n.handle in seen:
+                return
+            seen.add(n.handle)
+            if n.cls == self.Bitmaptexture and n.filename and os.path.isfile(n.filename):
+                if n.filename not in found:
+                    found.append(n.filename)
+            for child in n.subtex:
+                walk(child, seen)
+
+        if not getattr(node, 'drop_present', False):
+            walk(node, set())
+        return _Arr(found)
+
+
+def _bind_runtime():
+    sm = _load('suite_max.py', 'agr_suite_max_886')
+    cm = _load('checks_max.py', 'agr_checks_max_886')
+    rt = _Rt()
+    sm._rt = lambda: rt
+    cm._rt = lambda: rt
+    return sm, cm, rt
+
+
+def _as_kind(rt, node):
+    node.cls = getattr(rt, node.kind)
+    for child in list(node.subtex) + list(node.submtls):
+        if isinstance(child, _MapNode):
+            _as_kind(rt, child)
+    return node
+
+
+def _witness_scene(tmp_path):
+    """One present bitmap (usedMaps keeps it) and the polygon's absent bitmap (usedMaps drops it)."""
+    sm, glue, rt = _bind_runtime()
+    present = tmp_path / 'T_Polygon_007_Main_d_2.png'
+    present.write_bytes(b'png')
+    absent = 'C:/x/test-polygon/missing/T_Polygon_007_Main_d_1.png'
+    assert not os.path.isfile(absent)
+    ok = _MapNode(2, 'Bitmaptexture', 'T_ok', filename=str(present))
+    gone = _MapNode(3, 'Bitmaptexture', 'T_Polygon_007_Main_d_1', filename=absent)
+    mat = _MapNode(1, 'Standardmaterial', 'M_Polygon_007_Main_1', subtex=[ok, gone])
+    _as_kind(rt, mat)
+    node = _MapNode(10, 'Standardmaterial', 'SM_Polygon_007_Main')
+    node.material = mat
+    return sm, glue, node, str(present), absent
+
+
+def test_census_reports_bitmap_file_usedmaps_drops(tmp_path):
+    """#886: usedMaps omits Bitmaptexture fileName when the file is absent; missing_map still fires."""
+    sm, glue, node, present, absent = _witness_scene(tmp_path)
+    mats = sm._materials(node, glue)
+    assert [m['name'] for m in mats] == ['M_Polygon_007_Main_1']
+    assert mats[0]['maps'] == [present, absent]
+    assert mats[0]['missing'] == [absent]
+    row = obj(1, 'SM_Polygon_007_Main', materials=mats)
+    found, _, summary = core.census([row])
+    assert codes(found, 1) == ['missing_map']
+    assert summary['missing_maps'] == [absent]
+    assert [d for _, d, _ in found[1]] == ['нет файла: ' + absent]
+    rep = report_of('preflight', [row])
+    assert rep['status'] == 'fail'
+    assert 'missing_map' in [f['code'] for f in rep['objects'][0]['findings']]
+
+
+def _random_material(rnd, rt, tmp_path, seq, absent, present):
+    """A Standardmaterial, or a Multimaterial of them. Bitmaps sit in slots or under a Mix."""
+
+    def bitmap(want_absent):
+        seq[0] += 1
+        handle = seq[0]
+        if want_absent:
+            path = str(tmp_path / 'missing' / 'T_{}.png'.format(handle))
+            absent.add(path)
+        else:
+            path = str(tmp_path / 'present' / 'T_{}.png'.format(handle))
+            Path(path).parent.mkdir(parents=True, exist_ok=True)
+            Path(path).write_bytes(b'x')
+            present.add(path)
+        return _MapNode(handle, 'Bitmaptexture', 'Map_{}'.format(handle), filename=path)
+
+    def standard():
+        slots = []
+        for _ in range(rnd.randint(0, 5)):
+            roll = rnd.randrange(5)
+            if roll == 0:
+                slots.append(None)  # empty slot
+            elif roll == 1:
+                slots.append(bitmap(True))
+            elif roll == 2:
+                slots.append(bitmap(False))
+            else:
+                kids = [bitmap(rnd.random() < 0.6) for _ in range(rnd.randint(1, 3))]
+                if kids and rnd.random() < 0.3:
+                    kids.append(kids[0])  # same Bitmaptexture twice
+                seq[0] += 1
+                slots.append(_MapNode(seq[0], 'Mix', 'Mix_{}'.format(seq[0]), subtex=kids))
+        slots.append(bitmap(True))  # every material has one absent file: an empty usedMaps result cannot pass
+        seq[0] += 1
+        mat = _MapNode(seq[0], 'Standardmaterial', 'M_{}'.format(seq[0]), subtex=slots, opacity=100.0)
+        if rnd.random() < 0.5:
+            mat.drop_present = True  # usedMaps returns nothing; the file check still decides
+        return mat
+
+    if rnd.random() < 0.5:
+        subs = [standard() for _ in range(rnd.randint(1, 4))]
+        seq[0] += 1
+        top = _MapNode(seq[0], 'Multimaterial', 'Multi_{}'.format(seq[0]), submtls=subs)
+    else:
+        top = standard()
+    return _as_kind(rt, top)
+
+
+def test_absent_bitmaps_land_in_missing_once_probe(tmp_path):
+    """Probe: every absent Bitmaptexture path is in `missing` once; no present path is."""
+    sm, glue, rt = _bind_runtime()
+    rnd = random.Random(886)
+    for case in range(60):
+        absent, present = set(), set()
+        mat = _random_material(rnd, rt, tmp_path / str(case), [0], absent, present)
+        node = _MapNode(0, 'Standardmaterial', 'SM')
+        node.material = mat
+        mats = sm._materials(node, glue)
+        listed = []
+        for m in mats:
+            assert m['missing'] == list(dict.fromkeys(m['missing']))
+            assert set(m['missing']).isdisjoint(present)
+            if m['cls'] == 'Multimaterial':
+                assert m['maps'] == [] and m['missing'] == []
+            listed.extend(m['missing'])
+        found, _, summary = core.census([obj(1, materials=mats)])
+        assert set(listed) == absent, case
+        assert summary['missing_maps'] == sorted(absent)
+        assert len(found.get(1, [])) == len(absent)
+        assert len({d for _, d, _ in found.get(1, [])}) == len(absent)
+        assert absent  # each trial has a missing file, so an empty usedMaps result cannot pass
+
+
+def test_odd_maps_and_unmapped_materials_fail_closed_probe(tmp_path):
+    """Probe: a broken texmap or a material that cannot be read raises, naming it; it does not pass."""
+    sm, glue, rt = _bind_runtime()
+    rnd = random.Random(8861)
+    for case in range(40):
+        absent, present = set(), set()
+        mat = _random_material(rnd, rt, tmp_path / str(case), [0], absent, present)
+        node = _MapNode(0, 'Standardmaterial', 'SM')
+        node.material = mat
+        bitmaps = []
+
+        def collect(n, seen):
+            if not isinstance(n, _MapNode) or n.handle in seen:
+                return
+            seen.add(n.handle)
+            if n.kind == 'Bitmaptexture':
+                bitmaps.append(n)
+            for child in n.subtex + n.submtls:
+                collect(child, seen)
+
+        collect(mat, set())
+        target = rnd.choice(bitmaps)
+        fault = rnd.choice(('bad_file', 'odd', 'bad_tex', 'bad_used', 'odd_used', 'empty_glue'))
+        if fault == 'bad_file':
+            target.bad_file = True
+            name = target.name
+        elif fault == 'odd':
+            owners = [mat]
+            def owners_of(n):
+                for child in n.subtex:
+                    if child is target or (isinstance(child, _MapNode) and target in getattr(child, 'subtex', [])):
+                        owners.append(n)
+                    if isinstance(child, _MapNode):
+                        owners_of(child)
+            owners_of(mat)
+            host = rnd.choice([o for o in owners if isinstance(o, _MapNode)])
+            host.subtex = list(host.subtex) + ['odd']
+            name = host.name
+        elif fault == 'bad_tex':
+            mat.bad_tex = True
+            name = mat.name
+        elif fault == 'bad_used':
+            mat.bad_used = True
+            name = mat.name
+        elif fault == 'odd_used':
+            mat.odd_used = True
+            name = mat.name
+        else:
+            class Empty:
+                def _materials(self, material):
+                    return []
+
+                def _resolve(self, path):
+                    return path
+            glue_i = Empty()
+            with pytest.raises(ValueError, match=mat.name):
+                sm._materials(node, glue_i)
+            continue
+        with pytest.raises(ValueError, match=name):
+            sm._materials(node, glue)
+
+
+def test_census_map_fields_fail_closed_and_report_once_probe():
+    """Probe: odd map entries and a material without map fields raise, naming it; duplicates once."""
+    rnd = random.Random(8862)
+    for case in range(40):
+        paths = ['missing_{}_{}.png'.format(case, i) for i in range(rnd.randint(1, 5))]
+        dup = paths + list(reversed(paths))
+        present = ['ok_{}_{}.png'.format(case, i) for i in range(rnd.randint(0, 3))]
+        row_m = dict(STD, name='M_case_{}'.format(case), maps=present + paths, missing=dup)
+        found, _, summary = core.census([obj(1, materials=[row_m, dict(row_m)]),
+                                         obj(2, materials=[dict(row_m)])])
+        assert summary['missing_maps'] == sorted(paths)
+        assert len(found[1]) == len(paths) and len(found[2]) == len(paths)
+        odd = rnd.choice([None, '', '  ', 3, b'x.png'])
+        broken = dict(STD, name='M_odd_{}'.format(case), maps=[odd], missing=[])
+        with pytest.raises(ValueError, match='M_odd_{}'.format(case)):
+            core.census([obj(1, materials=[broken])])
+        unnamed = {'cls': 'Standardmaterial', 'opacity': 1.0}
+        with pytest.raises(ValueError, match='unmapped material'):
+            core.census([obj(1, materials=[unnamed])])
+
+
 def test_mcp_registers_the_12_checks_read_only():
     from agr_mcp import tools
     from agr_mcp.max_side import max_bridge
