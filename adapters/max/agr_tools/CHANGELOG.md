@@ -25,8 +25,27 @@
 
 ### B — текстуры, UDIM, атласы (`improve/issue-979-tex-udim-atlas`)
 
-- Заглушка ветки B: `tex.erm_normal_check`, `tex.finish_map`, `udim.matid_unwrap`, `udim.slots`, `atlas.flora`,
-  `atlas.groundel`; доработка `atlas.npm`.
+- `tex.erm_normal_check` (чтение, `texqa_core`/`texqa_max`): PNG читается stdlib (заголовок `checks_core.png_info`,
+  пиксели zlib), формат — по сигнатуре (JPG с `.png` → `format_mismatch`). Нормаль: ориентация по ротору поля
+  (OpenGL → `normal_opengl`, нерешаемо → `ambiguous`), отклонение плоских мест от (128,128,255), единичность. ERM:
+  ложное свечение в R без эмиссии материала, серая ERM, альфа, глубина ≠ 8. Без порога 50 %, палитры и ImageMagick
+  (GeoAGR R02, `GeoAGR.ms:1685`, `:2188-2216`).
+- `tex.finish_map` (копии, `finish_core`/`finish_max`): обязательная легенда JSON/CSV со строгой проверкой (12 мутаций →
+  `ValueError`); ID без строки легенды и ID легенды без граней — находки до любой сборки; швы-кольца разрезаются только на
+  копии, проверка ±1 мм, швы по фасадам; невозможный шов — отказ без копии.
+- `udim.matid_unwrap` (копии, `uvtile_*`): развёртка по плоскостям граней, ID n → свой тайл (1000+n), одна плотность px/м
+  на все ID через `SystemScale` (±2 %, м и см одинаково), паддинг ≥ 8 px, острова внутри своего UDIM, переполнение —
+  находка с расчётом; стек исходника не трогается, копия примитива с модификаторами схлопывается и это в отчёте (L06).
+- `udim.slots` (чтение, `uvtile_*`): имена разбирает грамматика `names_core` (E1); `udim_gap`, `slot_gap`,
+  `maps_over_100`, `slot_over_7`, `name_unparsed`.
+- `atlas.flora` (новые файлы, `flora_atlas_max` + `atlas_core`): тайл на уникальную текстуру, инстанс перемапливается
+  один раз, кроп по UV, без апскейла, паддинг ≥ 8 px с bleed, диффуз RGB 24 бит, прозрачность отдельным атласом,
+  PNG пишет stdlib (одинаковые байты в любой версии Max), без C#.
+- `atlas.groundel` (копии): профиль `groundel` в `atlas_core.pack` — один набор ≤ 512, правило карт L06 (квадрат 128–512,
+  альфа по пикселям, нет карты → `map_missing`), непомещение → `atlas_overflow` с расчётом; 24 бит RGB.
+- Доработка `atlas.npm` (VPM_to_NPM, в ядре): профиль `npm` + `shrink` — атлас уменьшается до содержимого при том же
+  текселе (Ground 35 ± 0,1 px/м), 24 бит, паддинг 8, TGA → `skipped` без падения; доступна через
+  `atlas.groundel` с `profile: npm`. Кнопка 0.2 (`runtime.atlas_apply`) пока пишет PNG через Max — см. #979.
 
 ### C — проверки (`improve/issue-979-qa`)
 

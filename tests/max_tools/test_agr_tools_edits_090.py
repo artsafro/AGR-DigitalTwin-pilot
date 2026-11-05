@@ -476,7 +476,13 @@ def test_polygon_has_32_new_stations_each_with_expected_and_reason():
         passes = [o for o in doc['objects'] if o['expect'] == 'pass']
         fails = [o for o in doc['objects'] if o['expect'] == 'fail']
         if not (passes and fails):
-            assert doc['reason'] == 'станция в работе, #979, ветка ' + core.OWNER[s['button']], s['button']
+            # stations/README.md: at least one PASS and one FAIL, else a non-empty reason. A station a branch has
+            # not filled keeps the base text; a filled fragment station may give its own reason (#979).
+            frag = core.load_fragments().get(s['button'])
+            if frag and frag['expected']:
+                assert doc['reason'].strip(), s['button']
+            else:
+                assert doc['reason'] == 'станция в работе, #979, ветка ' + core.OWNER[s['button']], s['button']
     cat = support.load_catalog()
     labels = {o['name'] for o in cat['objects'] if o['name'].startswith('_label_0_8_') or
               o['name'].startswith('_label_0_9_')}
