@@ -4866,6 +4866,88 @@
     }
    },
    "same_as": null
+  },
+  {
+   "id": "ELV-21",
+   "name": "Дверь двупольная со смотровым окном 1800×2050",
+   "status": "unconfirmed",
+   "typed": true,
+   "role": "door",
+   "width_m": 1.8,
+   "height_m": 2.05,
+   "sections": 1,
+   "transoms": 0,
+   "sashes": null,
+   "handing": null,
+   "panes": 1,
+   "panes_m": [
+    [
+     0.2,
+     1.0,
+     0.803,
+     1.84
+    ]
+   ],
+   "variant_of": "ELV-08",
+   "source": {
+    "object": "elv-tc-vpm",
+    "file": "library/windows/sources/elv-tc-vpm-census-v001.json",
+    "census_key": "door-vision-2h-1600x2050",
+    "fbx_type": "(DR)-2H_RD_Swing_Base (DR)Ext-2H(M_1600x2050)L_Z_Antipanic (the FBX leaf has no glass)",
+    "fbx_objects": [],
+    "booklet_sheets": [
+     18,
+     19
+    ],
+    "occurrences": 5
+   },
+   "infill": "opaque_leaf",
+   "frame_finish": "RAL 7021",
+   "opaque_m": [
+    [
+     0.05,
+     0.01,
+     0.85,
+     1.0
+    ],
+    [
+     0.05,
+     1.0,
+     0.2,
+     1.84
+    ],
+    [
+     0.803,
+     1.0,
+     0.85,
+     1.84
+    ],
+    [
+     0.05,
+     1.84,
+     0.85,
+     1.99
+    ],
+    [
+     0.85,
+     0.01,
+     1.75,
+     1.99
+    ]
+   ],
+   "note": "ELV-08 с смотровым окном ELV-09 в левой (снаружи) створке: буклет листы 18/19 рисуют окно в дверях №1, 4, 11 (юг) и 21, 25 (север) по customer-clarify-v001 (по глазу 0.21-0.78 × 0.97-1.78 м, взято окно ELV-09); добавлено 2026-11-05 для elv-tc-vpm build-v007 по решению пользователя «стекло дверей №1, 4, 11, 21, 25 по буклету»",
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 2,
+     "reason": "two leaves (800 + 900 mm) as ELV-08; not confirmed by the user",
+     "source": "library/windows/sources/elv-tc-vpm-census-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "handing is per placement (the FBX has L and R instances)"
+    }
+   },
+   "same_as": null
   }
  ]
 }

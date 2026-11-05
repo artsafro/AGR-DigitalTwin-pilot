@@ -127,6 +127,12 @@ User answers 2 (2026-11-05, after `outputs/customer-clarify-v001/`), all recomme
 - Check west opening №30 (door per booklet and customer, missing in ours?) and the glass vision panels of doors
   №1, 4, 11, 21, 25; fix per booklet.
 
+## Delivery v003 (2026-11-05, technical QA only; user acceptance open)
+
+`outputs/delivery-v003/delivery_report_v003.md`: stem `SM_Elevatornaya_Vl_1_A_001`, MSK-77 [9676.419, −7136.278] for our
+0,0,0, cassette RAL 7024, smooth wood #C4ABAA (photo), 15 cover strips 289 m (P44), 30 interior capsules (P43, ID34),
+ELV-21 doors No 1/4/11/21/25, door No 30 (ELV-08). Open: FNO, УКЭП, wood colour, address, door No 30 type, Gate 1 P43/P44.
+
 ## Не трогать
 
 - Source files in `for_ai\` (work on byte-identical copies only).

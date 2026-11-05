@@ -375,6 +375,23 @@
    "variant_of": "ELV-18",
    "provenance": {"fbx_type": "(DR)-1H_RD_Swing_Base (DR)In-1H(C_1100x2050)L*", "fbx_objects": ["(DR)-1H_RD_Swing_Base (DR)In-1H(C_1100x2050)L* 2 [12546315]"], "booklet_sheets": [19]},
    "note": "тип FBX номинально 1100×2050, но экземпляр выше: рама 2250, створка до 2190 (в FBX); пристройка ТП x -8.82, низ на +0.30"
+  },
+  {
+   "key": "door-vision-2h-1600x2050",
+   "name": "Дверь двупольная со смотровым окном 1800×2050",
+   "role": "door",
+   "width_m": 1.8,
+   "height_m": 2.05,
+   "glass_m": [[0.2, 1.0, 0.803, 1.84]],
+   "opaque_m": [[0.05, 0.01, 0.85, 1.0], [0.05, 1.0, 0.2, 1.84], [0.803, 1.0, 0.85, 1.84], [0.05, 1.84, 0.85, 1.99], [0.85, 0.01, 1.75, 1.99]],
+   "infill": "opaque_leaf",
+   "frame_finish": "RAL 7021",
+   "sashes_candidate": 2,
+   "sashes_reason": "two leaves (800 + 900 mm) as ELV-08; not confirmed by the user",
+   "occurrences": 5,
+   "variant_of": "ELV-08",
+   "provenance": {"fbx_type": "(DR)-2H_RD_Swing_Base (DR)Ext-2H(M_1600x2050)L_Z_Antipanic (the FBX leaf has no glass)", "fbx_objects": [], "booklet_sheets": [18, 19]},
+   "note": "ELV-08 с смотровым окном ELV-09 в левой (снаружи) створке: буклет листы 18/19 рисуют окно в дверях №1, 4, 11 (юг) и 21, 25 (север) по customer-clarify-v001 (по глазу 0.21-0.78 × 0.97-1.78 м, взято окно ELV-09); добавлено 2026-11-05 для elv-tc-vpm build-v007 по решению пользователя «стекло дверей №1, 4, 11, 21, 25 по буклету»"
   }
  ]
 }

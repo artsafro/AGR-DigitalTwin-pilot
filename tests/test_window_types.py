@@ -20,7 +20,7 @@ CONFIRMED = {"W01", "W02", "W03", "W04", "W05", "W06", "W07", "D01", "D02", "D03
 
 def test_every_entry_has_the_agreed_fields():
     ids = [t["id"] for t in DOC["types"]]
-    assert len(ids) == len(set(ids)) == 66      # 46 + 20 from the elv-tc-vpm census
+    assert len(ids) == len(set(ids)) == 67      # 46 + 21 from the elv-tc-vpm census
     for t in DOC["types"]:
         assert KEYS <= set(t), t["id"]
         assert t["status"] in ("confirmed", "unconfirmed") and t["handing"] is None and t["sashes"] is None, t["id"]
@@ -207,7 +207,7 @@ def test_synthetic_layout_probes(n_fields, fan_partitions, fan_opaque, lower_pan
 
 def test_catalog_consistency_recomputes_stored_layout():
     # issue #45: recompute layout for all catalog entries panes_m plus opaque_m against stored sections/transoms
-    assert len(DOC["types"]) == 66
+    assert len(DOC["types"]) == 67
     for t in DOC["types"]:
         panes = (t.get("panes_m") or []) + (t.get("opaque_m") or [])
         opaque = t.get("opaque_m") or []
@@ -229,7 +229,7 @@ CENSUS = ROOT / "library" / "windows" / "sources" / "elv-tc-vpm-census-v001.json
 def test_census_types_are_added_unconfirmed_with_provenance():
     elv = [t for t in DOC["types"] if t["id"].startswith("ELV-")]
     source = json.loads(CENSUS.read_text(encoding="utf-8"))
-    assert [t["id"] for t in elv] == [f"ELV-{n:02d}" for n in range(1, 21)]
+    assert [t["id"] for t in elv] == [f"ELV-{n:02d}" for n in range(1, 22)]
     assert [t["source"]["census_key"] for t in elv] == [t["key"] for t in source["types"]]
     for t in elv:
         assert t["status"] == "unconfirmed" and t["typed"] and t["same_as"] is None, t["id"]
@@ -241,7 +241,7 @@ def test_census_types_are_added_unconfirmed_with_provenance():
         assert set(t["unconfirmed"]) == {"sashes", "handing"} and t["unconfirmed"]["handing"]["candidate"] is None
     assert {t["frame_finish"] for t in elv if t["role"] == "gate"} == {"RAL 7040"}
     assert {t["id"]: t["variant_of"] for t in elv if t["variant_of"]} == {"ELV-03": "ELV-02", "ELV-06": "D02", "ELV-07": "D02",
-                                                                     "ELV-19": "ELV-18", "ELV-20": "ELV-18"}
+                                                                     "ELV-19": "ELV-18", "ELV-20": "ELV-18", "ELV-21": "ELV-08"}
 
 
 def test_panes_lie_inside_their_frame():
