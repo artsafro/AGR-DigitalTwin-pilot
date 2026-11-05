@@ -81,20 +81,24 @@ fn agr979_rows ss m = (
     for r in #(m.row1, m.row2, m.row3, m.row4) do format "% % %\n" (agr908_g r.x) (agr908_g r.y) (agr908_g r.z) to:ss
 )
 fn agr979_frame n = (
-    -- node transform rows, objectOffset rows (scale * rot, pos), object-space vertices of the evaluated object
+    -- node transform rows and objectOffset rows (scale * rot, pos); vertices: agr979_dumpVerts
     local ss = stringStream ""
     agr979_rows ss n.transform
     agr979_rows ss ((scaleMatrix n.objectOffsetScale) * (n.objectOffsetRot as matrix3) * (transMatrix n.objectOffsetPos))
-    local m = n.mesh
-    local nv = m.numverts
-    format "%\n" nv to:ss
-    for i = 1 to nv do (
-        -- 9 significant digits restore a float32 exactly (shorter text than .17g, faster on 5000+ vertices)
-        local p = getVert m i
-        format "% % %\n" (formattedPrint p.x format:".9g") (formattedPrint p.y format:".9g") \
-            (formattedPrint p.z format:".9g") to:ss
-    )
     ss as string
+)
+global agr979_dumpVerts
+fn agr979_dumpVerts n path = (
+    -- object-space vertices of the evaluated object as raw float32 (exact, no text formatting)
+    local m = n.mesh
+    local f = fopen path "wb"
+    WriteLong f m.numverts #unsigned
+    for i = 1 to m.numverts do (
+        local p = getVert m i
+        WriteFloat f p.x; WriteFloat f p.y; WriteFloat f p.z
+    )
+    fclose f
+    m.numverts
 )
 fn agr979_setFrame n r1 r2 r3 p o1 o2 o3 opos osc = (
     -- turn/move the pivot of n; objectOffset computed in double by geom_core.new_offset keeps the mesh in place
@@ -557,11 +561,23 @@ def _node_info(core, n):
 
 def read_frame(n):
     """(node rows, offset rows, object-space vertices) of a node, as doubles of the stored float32 values."""
-    text = str(_mxs().agr979_frame(n))
-    lines = text.splitlines()
+    import struct
+    import tempfile
+    rt = _mxs()
+    lines = str(rt.agr979_frame(n)).splitlines()
     rows = [[float(c) for c in lines[i].split()] for i in range(8)]
-    nv = int(lines[8])
-    pts = [tuple(float(c) for c in lines[9 + i].split()) for i in range(nv)]
+    fd, path = tempfile.mkstemp(prefix='agr979_', suffix='.bin')
+    os.close(fd)
+    try:
+        nv = int(rt.agr979_dumpVerts(n, path))
+        with open(path, 'rb') as f:
+            data = f.read()
+    finally:
+        os.remove(path)
+    if len(data) != 4 + 12 * nv or struct.unpack_from('<I', data, 0)[0] != nv:
+        raise RuntimeError('vertex dump of {} is incomplete'.format(n.name))
+    flat = struct.unpack_from('<{}f'.format(3 * nv), data, 4)
+    pts = [tuple(flat[3 * i:3 * i + 3]) for i in range(nv)]
     return rows[:4], rows[4:], pts
 
 

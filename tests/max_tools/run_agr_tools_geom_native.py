@@ -700,7 +700,11 @@ def pivot_doors_and_limits():
     t_big = time.perf_counter() - t0
     timing = {'read_frame_s': round(t_read, 3), 'axes_s': round(t_axes, 3), 'snapshot_s': round(t_snap, 3),
               'preview_s': round(t_big, 3), 'vertices': nverts}
+    import glob
+    import tempfile
+    timing['temp_left'] = len(glob.glob(os.path.join(tempfile.gettempdir(), 'agr979_*.bin')))
     summary.setdefault('timing_5000', timing)
+    assert timing['temp_left'] == 0, timing
     assert pv_big['status'] == 'pass' and nverts >= 5000 and t_big < 2.0, timing
     t_prev = t_big
     before = emax.snapshot(nodes)
