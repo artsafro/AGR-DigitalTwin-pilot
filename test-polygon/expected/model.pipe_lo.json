@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "button": "model.region_select",
+ "button": "model.pipe_lo",
  "tool": null,
  "version": "1.x",
  "shipped": false,

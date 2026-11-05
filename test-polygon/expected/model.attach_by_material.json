@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "button": "model.poly_actions",
+ "button": "model.attach_by_material",
  "tool": null,
  "version": "1.0",
  "shipped": false,

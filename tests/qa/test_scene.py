@@ -460,6 +460,7 @@ def test_readback_returncode_0_with_valid_report_returns_dictionary(monkeypatch)
 
     result = readback(synthetic_fbx, blender="not-executed")
     units = result.pop("fbx_units")
+    assert result.pop("fbx_application") is None  # not a real FBX
     assert units["unit_scale_factor"] is None and units["original_unit_scale_factor"] is None
     assert units["error"]
     assert result == expected_data

@@ -89,7 +89,7 @@ def payload(case):
     stream = BytesIO(); Image.new("RGB", (256,256), (128,128,128)).save(stream, "JPEG")
     props = {k: "SYNTHETIC" for k in load_profiles().vpm["geojson"]["properties_keys"]}
     props.update(imageBase64=base64.b64encode(stream.getvalue()).decode(), other="",
-                 FNO_code="123 456", cadNum="77:01:0000001:1", h_relief="120.000",
+                 FNO_code="010 004", FNO_name="Общежитие", cadNum="77:01:0000001:1", h_relief="120.000",
                  h_otn="10.000", h_abs="130.000", s_obsh="100.000", s_naz="100.000",
                  s_podz="0.000", spp_gns="100.000")
     if g == "hp_json_properties":

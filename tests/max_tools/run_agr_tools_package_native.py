@@ -205,7 +205,7 @@ def export_ground_fbx():
 
 PROPS = {'address': 'г. Москва, ул. Тестовая, д. 1', 'okrug': 'ЦАО', 'rajon': 'Арбат', 'name': 'Жилой дом',
          'developer': 'ООО Застройщик', 'designer': 'ООО Проектировщик', 'cadNum': '77:01:0001001:1',
-         'FNO_code': '123 456', 'FNO_name': 'Жилое', 'ZU_area': 1200.5, 'h_relief': 150.0, 'h_otn': 45.0,
+         'FNO_code': '010 004', 'FNO_name': 'Общежитие', 'ZU_area': 1200.5, 'h_relief': 150.0, 'h_otn': 45.0,
          'h_abs': 195.0, 's_obsh': 9000.0, 's_naz': 8000.0, 's_podz': 1000.0, 'spp_gns': 9500.0, 'act_AGR': '',
          'other': ''}
 
