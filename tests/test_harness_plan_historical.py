@@ -1,10 +1,21 @@
-"""docs/HARNESS_PLAN.md is frozen history, not current agent guidance."""
+"""docs/HARNESS_PLAN.md and docs/prd/agent-ready-harness.md are archived history, not current agent guidance.
+
+Both files left the tree in repo hygiene phase 3 (2026-11-05); they live in git tag `archive/2026-11` and are
+cited as `archive/2026-11:<path>` (`docs/ARCHIVE.md`). Every live mention uses that form; the user-visible
+strings and docstrings of #920 and the live agent docs of #810 still say "historical".
+"""
+import ast
 import re
+import subprocess
 from pathlib import Path
 
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
+
+PLAN = "docs/HARNESS_PLAN.md"
+PRD = "docs/prd/agent-ready-harness.md"
+ARCHIVE = "archive/2026-11:"
 
 SUPERSEDED_BY = (
     "docs/pipeline.md",
@@ -18,9 +29,8 @@ SUPERSEDED_BY = (
     "docs/agents/CAPABILITIES.md",
 )
 
-# User-visible strings and the docstrings #920 names. AGENTS.md stays from #810.
+# User-visible strings and the docstrings #920 names.
 LIVE = (
-    "AGENTS.md",
     "src/dt_ai/cli/main.py",
     "src/dt_ai/geometry/from_spec.py",
     "src/dt_ai/intake/__init__.py",
@@ -31,6 +41,19 @@ LIVE = (
     "tools/qa/run_benchmark.py",
     "library/windows/window_types.json",
 )
+
+# Historical records and frozen inputs keep the old spelling: research and experiment notes, the Russian
+# originals, job files, the locked standards, the generated state, the decision log text (only its anchor
+# cells are rewritten) and its verbatim detail, the archive index, frozen fixtures and this file.
+NOT_LIVE_PREFIX = (
+    "docs/research/", "docs/experiments/", "docs/agr/", "docs/archive/", "docs/grill/", "jobs/",
+    "technical_library/", "data/", "standards/", "tests/fixtures/",
+)
+NOT_LIVE_FILE = {
+    "docs/PROJECT_STATE.md", "docs/decisions.md", "docs/decisions-detail.md", "docs/ARCHIVE.md",
+    "tests/test_harness_plan_historical.py",
+}
+FROZEN_FIXTURE = re.compile(r"^evals/[^/]+/fixtures/")
 
 _TOKEN = "HARNESS_PLAN"
 # Strict marker only. Bare "historical" is not enough, so "not historical" does not mark.
@@ -58,8 +81,8 @@ _TAIL = re.compile(
     + r")",
     re.IGNORECASE,
 )
-# Or the citation form "historical: docs/HARNESS_PLAN.md" with the marker directly before.
-_HEAD = re.compile(r"(?<!not )historical:\s*(?:`?docs/)?`?$", re.IGNORECASE)
+# Or the citation form "historical: archive/2026-11:docs/HARNESS_PLAN.md" with the marker directly before.
+_HEAD = re.compile(r"(?<!not )historical:\s*`?(?:archive/2026-11:)?(?:docs/)?`?$", re.IGNORECASE)
 
 
 def mention_marks(text: str) -> list[bool]:
@@ -87,21 +110,89 @@ def mention_marks(text: str) -> list[bool]:
     return found
 
 
-def test_harness_plan_starts_with_historical_note():
-    text = load_text(ROOT / "docs" / "HARNESS_PLAN.md")
-    note, _title, _rest = text.partition("\n# ")
-    assert note.lstrip().startswith("Historical"), note[:200]
+def unarchived_mentions(text: str) -> list[int]:
+    """1-based line numbers where HARNESS_PLAN or the PRD is cited without the archive form."""
+    bad = []
+    for number, line in enumerate(text.splitlines(), 1):
+        for match in re.finditer(r"HARNESS_PLAN|agent-ready-harness", line):
+            path = PLAN if match.group() == _TOKEN else PRD
+            # The token must sit inside "archive/2026-11:<path>".
+            start = match.start() - (len(path) - len(path.split("/")[-1]))
+            if line[max(0, start - len(ARCHIVE)):start + len(path)] != ARCHIVE + path:
+                bad.append(number)
+                break
+    return bad
+
+
+def live_tree_files():
+    """Tracked text files that are live guidance or code; an empty set fails closed."""
+    out = subprocess.run(["git", "ls-files"], cwd=ROOT, capture_output=True, text=True, check=True).stdout
+    files = []
+    for rel in out.split():
+        if rel.startswith(NOT_LIVE_PREFIX) or rel in NOT_LIVE_FILE or FROZEN_FIXTURE.match(rel):
+            continue
+        if not (ROOT / rel).is_file():
+            continue
+        files.append(rel)
+    assert files, "live tree is empty (fail closed)"
+    return files
+
+
+def test_archived_plans_left_the_tree_and_are_indexed():
+    for rel in (PLAN, PRD):
+        assert not (ROOT / rel).exists(), f"{rel} is back in the tree; cite {ARCHIVE}{rel} instead"
+    index = load_text(ROOT / "docs" / "ARCHIVE.md")
+    assert "archive/2026-11" in index
+    for rel in (PLAN, PRD):
+        assert f"`{rel}`" in index, rel
     for doc in SUPERSEDED_BY:
-        assert doc in note
-        assert (ROOT / doc).exists()
+        assert (ROOT / doc).exists(), doc
+
+
+def test_every_live_mention_uses_the_archive_form():
+    """Generated probe over every tracked live file: N/N mentions carry archive/2026-11:<path>."""
+    bad = []
+    seen = 0
+    for rel in live_tree_files():
+        try:
+            text = (ROOT / rel).read_bytes().decode("utf-8")
+        except UnicodeDecodeError:
+            continue
+        if "HARNESS_PLAN" not in text and "agent-ready-harness" not in text:
+            continue
+        seen += 1
+        bad += [f"{rel}:{n}" for n in unarchived_mentions(text)]
+    assert seen > 0, "no live file cites the archived plans (the probe found nothing to check)"
+    assert not bad, "mention without archive/2026-11:<path>:\n" + "\n".join(bad)
+
+
+def test_decision_anchor_cells_use_the_archive_form():
+    """Decision rows keep their text; only the anchor cell (Applies to) is rewritten."""
+    rows = [line for line in load_text(ROOT / "docs" / "decisions.md").splitlines() if line.startswith("| D")]
+    hits = 0
+    for row in rows:
+        anchor = [cell.strip() for cell in row.strip().strip("|").split("|")][3]
+        if "HARNESS_PLAN" in anchor or "agent-ready-harness" in anchor:
+            hits += 1
+            assert unarchived_mentions(anchor) == [], row[:80]
+    assert hits > 0
+
+
+def test_unarchived_mentions_detector():
+    assert unarchived_mentions("see `docs/HARNESS_PLAN.md` §4\n") == [1]
+    assert unarchived_mentions("see HARNESS_PLAN §4\n") == [1]
+    assert unarchived_mentions("spec `docs/prd/agent-ready-harness.md`\n") == [1]
+    assert unarchived_mentions("ok `archive/2026-11:docs/HARNESS_PLAN.md` §4\n") == []
+    assert unarchived_mentions("ok archive/2026-11:docs/prd/agent-ready-harness.md\n") == []
+    assert unarchived_mentions("archive/2026-10:docs/HARNESS_PLAN.md\n") == [1]
+    assert unarchived_mentions("a\narchive/2026-11:docs/HARNESS_PLAN.md and HARNESS_PLAN §5\n") == [2]
 
 
 def test_agents_md_does_not_list_harness_plan_as_current():
     agents = load_text(ROOT / "AGENTS.md")
     assert "Harness plan, benchmark etalons, pattern registry: `docs/HARNESS_PLAN.md`" not in agents
-    flags = mention_marks(agents)
-    assert flags, "AGENTS.md has no HARNESS_PLAN mention"
-    assert all(flags)
+    assert "docs/ARCHIVE.md" in agents
+    assert all(mention_marks(agents)), "AGENTS.md cites HARNESS_PLAN without the historical marker"
 
 
 def test_not_historical_is_rejected_and_split_lines_are_seen():
@@ -115,6 +206,8 @@ def test_not_historical_is_rejected_and_split_lines_are_seen():
     assert mention_marks("HARNESS_PLAN §4 and HARNESS_PLAN §5 (historical)\n") == [False, True]
     assert mention_marks("`docs/HARNESS_PLAN.md` (historical)\n") == [True]
     assert mention_marks("(historical: docs/HARNESS_PLAN.md §9)\n") == [True]
+    assert mention_marks("(historical: archive/2026-11:docs/HARNESS_PLAN.md §9)\n") == [True]
+    assert mention_marks("(not historical: archive/2026-11:docs/HARNESS_PLAN.md §9)\n") == [False]
     assert mention_marks("docs/HARNESS_PLAN.md is historical.\n") == [True]
 
 
@@ -165,7 +258,6 @@ def test_load_text_fails_closed_on_missing_and_empty(tmp_path):
 
 
 # Gate messages and live-doc set (#810).
-import ast  # noqa: E402
 LIVE_ROOTS = (
     ROOT / "AGENTS.md",
     ROOT / "docs" / "agents",

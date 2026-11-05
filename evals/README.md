@@ -1,7 +1,7 @@
 # Evals
 
 Tasks that grade the agent's behaviour from evidence files, not the model's output (spec
-`docs/prd/agent-ready-harness.md`, "Checks and evals"; #122). Graders are pure Python in `src/twinqa/evals/`
+`archive/2026-11:docs/prd/agent-ready-harness.md`, "Checks and evals"; #122). Graders are pure Python in `src/twinqa/evals/`
 (no LLM calls); the runner is `uv run dt evals`.
 
 ## Layout
