@@ -2,6 +2,7 @@
 
 Every mesh here is SYNTHETIC. The source of each test already violates an invariant (an open, gnawed box, flipped
 normals or a close overlap); the pre-existing violators are the baseline and only new ones fail the op.
+Pattern: new-case: kernel invariants relative to the source (no new violators) [D197].
 """
 import numpy as np
 import pytest

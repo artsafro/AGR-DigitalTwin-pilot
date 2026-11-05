@@ -1,5 +1,6 @@
 """AC08 L4 rerun with kernel invariants relative to the source [D197] (#968): committed evidence, the UV/material
 preservation verdict and kernel-output composition of alternative ops. Synthetic states are marked; no Blender.
+Pattern: new-case: AC08 L4 rerun evidence under relative invariants (#968).
 """
 from __future__ import annotations
 
