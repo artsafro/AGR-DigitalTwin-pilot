@@ -910,13 +910,16 @@ def test_T01_dithered_palette_and_order_palette_first(tmp_path):
     assert len(idx) == 192 * 192 and max(idx) < len(pal) and len(out) == 192 * 192 * 3
 
 
-def test_T01_acceptance_scaled(tmp_path):
+def test_T01_acceptance_scaled(tmp_path, monkeypatch):
     """#979 acceptance of tex.format_fix on the pure-Python core, scaled by 1/16 in pixels (1024 noise and a
     1.1 MiB limit, where the dithered palette fits with RMSE 0.057, instead of 4096 and 3 MiB): noise, 175-KB-class texture, RGBA half
     transparent, 16-bit gray. Under-limit untouched, RMSE over the floor = fail, temp unchanged."""
     import tempfile
     files = {'T_noise_d_1.png': noise_png(1024), 'T_tex_d_1.png': rgb8(256, 256), 'T_rgba_d_1.png': rgba_half(),
              'T_g16_d_1.png': png(16, 16, 0, 16, lambda x, y: (x * 4000,))}
+    temp = tmp_path / 'TEMP'  # a private %TEMP%: the shared one changes under other processes
+    temp.mkdir()
+    monkeypatch.setattr(tempfile, 'tempdir', str(temp))
     before = sorted(os.listdir(tempfile.gettempdir()))
     rows, rep, o = _format(tmp_path, files, max_bytes=1100 * 1024, background=[0, 0, 0])
     assert rows['T_noise_d_1.png'].get('quality_fail') and 'png' not in rows['T_noise_d_1.png']
