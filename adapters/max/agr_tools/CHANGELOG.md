@@ -16,7 +16,21 @@
 
 ### A — геометрия (`improve/issue-908-geom`)
 
-- Заглушка ветки A: `model.triangulate`, `ucx.triangulate`, `export.pivot_place`.
+- `model.triangulate` (`geom_core.py` / `geom_max.py`): n-гоны экспортной копии триангулируются без DLL и диалога.
+  Пороги относительные (грань нормируется к единичному боксу), поэтому октагоны 0,1 мм и U 0,6 мм в метровой
+  сцене триангулируются так же, как 1 км. Ровно n−3 непересекающиеся диагонали на грань (ear clipping +
+  флипы Делоне только внутри строго выпуклых четырёхугольников, без длинных клиньев). Применение одним
+  циклом `polyop.createEdge`. Проверка «0 n-гонов» на чтении копии; вырожденные контуры в `ambiguous`.
+  Площадь, UV, ID материалов, SG и скрытые грани сохраняются; Box/Mesh/модификаторы конвертируются на копии.
+- `ucx.triangulate`: диагональ выбирается с учётом выпуклости (все вершины за плоскостью каждого треугольника,
+  допуск 1e-4 м), для невыпуклого куска — его выпуклая оболочка. Проверка после (`ucx_core.convexity`):
+  выпуклость, замкнутость, нет нулевых треугольников. Box, Editable Mesh и Poly с модификаторами
+  конвертируются на копии и перечисляются, прочее — в `skipped` с причиной. Скрытые грани остаются скрытыми.
+- `export.pivot_place`: копии НПМ (МСК X/Y/Z без изменений, пивот в [центр X, центр Y, ±0.000]) и ВПМ
+  (пивот пола в [0,0,0]). ±0.000 = min z выделенных граней/рёбер/вершин пола или явное значение (`floor_z`,
+  в интерактивном Max — запрос); без выборки отказ, низ bbox не используется. Ввод проверяется (пустое поле,
+  экспонента, nan — отказ). Координаты в double, текст с фиксированными 4 знаками. Поворот как в UI (знак
+  контроллера). Общий пивот у всех выбранных узлов: взаимное смещение моделей сохраняется.
 
 ### B — текстуры (`improve/issue-908-tex`)
 
@@ -29,6 +43,11 @@
   сохраняются (`max_side` уменьшает вдвое по обеим осям), неквадратные в отчёте. Лимит `max_bytes` (по
   умолчанию 3 MiB) — сначала без потерь, затем постеризация с RMSE в отчёте; недостижимый лимит — отказ с
   причиной. Dilate выключен по умолчанию. Исходник уже в норме копируется байт в байт.
+- `tex.format_fix`, палитра (решение Артёма 05.11.2026: палитровый PNG допускается; командный аудит T01: 2048²
+  при 256 цветах 2,36 МБ палитрой против 5,70 МБ RGB): colour type 3 — валидный формат (палитровый исходник в
+  норме копируется). Сверх лимита порядок такой: RGB без потерь → точная палитра (≤ 256 цветов, без потерь) →
+  квантизация в 256 цветов (median cut) → постеризация RGB. В отчёте `encoding`, число цветов,
+  `max_channel_error` и RMSE. `palette: false` выключает палитру; RGBA в палитру не переводится.
 - `tex.placeholders`: однотонные D/ERM/N, PNG 8 бит RGB без альфы, точный цвет, Normal [128,128,255]; имена
   VPM-2.10-4.3 `T_{Address}[_Ground]_{Diffuse|ERM|Normal}_{Slot}.{UDIM}.png` одним вызовом для слотов; размеры
   128…4096, по умолчанию 256; папка через `os.path.join` (без завершающего `\` пишет внутрь), по умолчанию
@@ -110,7 +129,9 @@ Native Qt UI over all 17 existing actions; no check logic changed.
   (stripe, header, icon tint) derived from the Max palette; result table (red/green), click selects
   the object, «Выделить ошибки», «Сохранить отчёт JSON…».
 - Progress bar + «Отмена» and the Max progress bar (progressStart/Update/getProgressCancel/End).
-  xView and MatID run in chunks of 25 objects (exact merge); other actions are one runtime call
+  xView and MatID run in chunks of 25 objects (exact merge). Cancel is read only between
+  chunks, so a click takes effect on the next chunk (about 0.9 s on Max 2024); the chunk
+  already running is kept. Other actions are one runtime call
   with a busy bar. Buttons are disabled while running.
 - Every action is a macroScript with `iconName:"AgrIcons/agr_<id>"`, Russian label and tooltip
   (what it does + requirement ids); `agr_tools_runtime.ui('<tool>')` and `agr_tools_runtime.panel()`
@@ -143,8 +164,14 @@ its `GeoAGR.ms:<line>` and its changes.
   alpha, 8 bits per channel (from the PNG header), file size, the UDIM set and UV padding. Padding is
   NPM 8 px and VPM 16/32 px for 2048/4096 maps; GeoAGR's 16/32 px branch was commented out.
   Padding is measured per texture atlas: each face goes to its matID's sub-material maps, and the
-  islands of all objects of one FBX that share an atlas are measured together (per UDIM tile). An
-  unmapped matID is `tex_unmeasurable`; a sub-material without maps is `tex_missing`. In VPM, touching
+  islands of all objects of one FBX that share an atlas are measured together (per UDIM tile). A face
+  matID outside `materialIDList` is resolved as the 3ds Max FBX export does (measured in Max 2026.3,
+  #827): it wraps by the highest listed ID n, `(id - 1) mod n + 1` (`#(1,2)`: 3 -> 1, 4 -> 2;
+  `#(1,5)`: 6 -> 1, 10 -> 5), is measured on that sub-material and reported as the advisory
+  `tex_matid_wrapped` naming `matID 3 -> sub 1`. A wrapped ID that is still not listed (`#(1,5)`: 2, 3,
+  4, 7; the export writes an empty placeholder slot) and a Multimaterial with no sub-materials are
+  `tex_unmeasurable`; a sub-material without maps is `tex_missing`. The MatID check (`empty_slot`) and
+  the export material evidence use the same resolver (`checks_core.max_submaterial_index`). In VPM, touching
   or overlapping islands (gap 0) are the review-level `tex_overlap_review`, not `tex_padding`:
   regulation 2.5.1.5 applies padding only to islands with unique images, and repeating islands may
   overlap. A VPM gap above 0 and below 16/32 px is still `tex_padding`; NPM is unchanged.

@@ -73,12 +73,13 @@ def _free(mesh):
 
 def _slots(n):
     """{matID: [map paths]} of a Multimaterial (materialIDList -> materialList[i] -> usedMaps), or None
-    for a single material (every face uses all maps). An empty sub-material slot maps to []."""
+    for a single material (every face uses all maps). An empty sub-material slot maps to [].
+    A matID repeated in materialIDList maps to None (the core reports it as tex_unmeasurable)."""
     rt = _rt()
     m = n.material
     if m is None or m == rt.undefined or rt.classOf(m) != rt.Multimaterial:
         return None
-    out = {}
+    out, dup = {}, set()
     ids, subs = m.materialIDList, m.materialList
     for i in range(int(ids.count)):
         sub = subs[i]
@@ -86,8 +87,19 @@ def _slots(n):
         if sub is not None and sub != rt.undefined:
             maps = rt.usedMaps(sub)
             paths = [str(maps[j]) for j in range(int(maps.count))] if maps is not None else []
-        out[int(ids[i])] = paths
+        mid = int(ids[i])
+        out[mid] = None if mid in out else paths  # a repeated ID is ambiguous: None, never last-wins
+        if out[mid] is None:
+            dup.add(mid)
+    for mid in dup:
+        out[mid] = None
     return out
+
+
+def _id_list(n):
+    """The Multimaterial's materialIDList as given (duplicates kept); the core resolves wrapped matIDs on it."""
+    ids = n.material.materialIDList
+    return [int(ids[i]) for i in range(int(ids.count))]
 
 
 def _uv_faces(n):
@@ -175,8 +187,9 @@ def textures(agr, core, nodes):
     for r in rows:
         paths = _used_maps(r['node'])
         r['slots'] = _slots(r['node'])
+        r['id_list'] = _id_list(r['node']) if r['slots'] else None
         for sub in (r['slots'] or {}).values():
-            paths += [p for p in sub if p not in paths]
+            paths += [p for p in (sub or []) if p not in paths]
         r['maps'] = [(path, _read(path)) for path in paths]
         r['uv'] = (lambda node: lambda: _uv_faces(node))(r['node'])
     found, dropped = core.textures_scene(rows)

@@ -288,6 +288,93 @@ def encode_png(img, filters=(0, 1, 2), level=9, with_filter=False):
     return (png, best_ft) if with_filter else png
 
 
+def encode_palette_png(w, h, palette, indices, level=9):
+    """Indexed PNG: IHDR depth 8, colour type 3, PLTE of <= 256 RGB entries, no tRNS."""
+    if not 1 <= len(palette) <= 256 or len(indices) != w * h:
+        raise ValueError('bad palette image')
+    head = PNG_SIG + _chunk(b'IHDR', struct.pack('>IIBBBBB', w, h, 8, 3, 0, 0, 0))
+    plte = _chunk(b'PLTE', b''.join(bytes(c) for c in palette))
+    best = None
+    for ft in (0, 1, 2):
+        z = zlib.compress(_filtered(bytes(indices), w, h, 1, ft), level)
+        if best is None or len(z) < len(best):
+            best = z
+    return head + plte + _chunk(b'IDAT', best) + _chunk(b'IEND', b'')
+
+
+def exact_palette(img, limit=256):
+    """(palette, indices) when an RGB image has <= limit distinct colours, else None (lossless)."""
+    px = img.px
+    colours = {}
+    idx = bytearray(img.w * img.h)
+    for i in range(img.w * img.h):
+        c = px[3 * i:3 * i + 3]
+        k = colours.get(c)
+        if k is None:
+            if len(colours) >= limit:
+                return None
+            k = colours[c] = len(colours)
+        idx[i] = k
+    return [tuple(c) for c in colours], bytes(idx)
+
+
+def quantize(img, colours=256):
+    """Median cut over a 5-bit-per-channel histogram -> (palette, indices, rgb pixels of the result).
+    Every histogram cell maps to the weighted mean of its box (pngquant-style idea, no dithering)."""
+    px = img.px
+    r5, g5, b5 = (px[c::3].translate(bytes(v >> 3 for v in range(256))) for c in range(3))
+    keys = [(r << 10) | (g << 5) | b for r, g, b in zip(r5, g5, b5)]
+    hist, sums = {}, {}
+    for i, k in enumerate(keys):
+        if k in hist:
+            hist[k] += 1
+            s = sums[k]
+            s[0] += px[3 * i]
+            s[1] += px[3 * i + 1]
+            s[2] += px[3 * i + 2]
+        else:
+            hist[k] = 1
+            sums[k] = [px[3 * i], px[3 * i + 1], px[3 * i + 2]]
+    cells = [(sums[k][0] / hist[k], sums[k][1] / hist[k], sums[k][2] / hist[k], hist[k], k) for k in hist]
+    def measured(box):
+        if len(box) < 2:
+            return (-1, 0, box)
+        spreads = [max(c[a] for c in box) - min(c[a] for c in box) for a in range(3)]
+        a = spreads.index(max(spreads))
+        return (spreads[a], a, box)
+
+    boxes = [measured(cells)]
+    while len(boxes) < colours:
+        bi = max(range(len(boxes)), key=lambda i: boxes[i][0])
+        spread, axis, box = boxes[bi]
+        if spread <= 0:
+            break
+        boxes.pop(bi)
+        box = sorted(box, key=lambda c: c[axis])
+        total, run, cut = sum(c[3] for c in box), 0, 1
+        for j, c in enumerate(box):
+            run += c[3]
+            if run * 2 >= total:
+                cut = min(max(j + 1, 1), len(box) - 1)
+                break
+        boxes += [measured(box[:cut]), measured(box[cut:])]
+    boxes = [b[2] for b in boxes]
+    palette, lut = [], {}
+    for bi, box in enumerate(boxes):  # a cell takes the mean colour of its own median-cut box
+        n = sum(c[3] for c in box)
+        palette.append(tuple(int(round(sum(c[a] * c[3] for c in box) / n)) for a in range(3)))
+        for c in box:
+            lut[c[4]] = bi
+    indices = bytes(lut[k] for k in keys)
+    flat = b''.join(bytes(c) for c in palette)
+    out = b''.join(flat[3 * i:3 * i + 3] for i in indices)
+    return palette, indices, out
+
+
+def max_channel_error(a, b):
+    return max((abs(x - y) for x, y in zip(a, b)), default=0)
+
+
 def solid_png(size, colour):
     """Solid 8-bit RGB square PNG, exact colour."""
     r, g, b = _colour(colour)
@@ -434,14 +521,15 @@ def format_options(options):
     """Validated, complete options of tex.format_fix (recorded in the preview plan)."""
     o = dict(options or {})
     known = {'files', 'folder', 'out', 'profile', 'background', 'dilate', 'max_bytes', 'max_side',
-             'keep_allowed_alpha', 'max_posterize_bits'}
+             'keep_allowed_alpha', 'max_posterize_bits', 'palette'}
     extra = set(o) - known
     if extra:
         raise ValueError('unknown tex.format_fix options: ' + ', '.join(sorted(extra)))
     out = {'profile': o.get('profile', 'npm'), 'background': o.get('background'), 'dilate': bool(o.get('dilate', False)),
            'max_bytes': o.get('max_bytes', DEFAULT_MAX_BYTES), 'max_side': o.get('max_side'),
            'keep_allowed_alpha': bool(o.get('keep_allowed_alpha', True)),
-           'max_posterize_bits': o.get('max_posterize_bits', MAX_POSTERIZE_BITS)}
+           'max_posterize_bits': o.get('max_posterize_bits', MAX_POSTERIZE_BITS),
+           'palette': bool(o.get('palette', True))}
     if out['profile'] not in ('npm', 'vpm'):
         raise ValueError('profile must be npm or vpm')
     if out['background'] is not None:
@@ -491,6 +579,41 @@ def output_folder(sources, out=None, exists=os.path.exists):
     return edit.new_path(os.path.join(os.path.dirname(sources[0]), 'AGR_format_fix'), version=True, exists=exists)
 
 
+def _fit(img, ft, opts, row):
+    """Over the limit after lossless RGB: exact palette (lossless) -> quantised 256-colour palette ->
+    posterize RGB. Records the chosen encoding, colours, max per-channel error and RMSE in `row`;
+    None + row['reason'] when nothing fits. Palette only for RGB (alpha keeps RGBA + posterize)."""
+    limit = opts['max_bytes']
+    tried = ['rgb_lossless {}'.format(row['lossless_bytes'])]
+    if opts['palette'] and img.n == 3:
+        exact = exact_palette(img)
+        if exact is not None:
+            png = encode_palette_png(img.w, img.h, exact[0], exact[1])
+            tried.append('palette_exact {}'.format(len(png)))
+            if len(png) <= limit:
+                row.update(encoding='palette_exact', colours=len(exact[0]), max_channel_error=0, rmse=0.0)
+                row['actions'].append('palette_exact_{}'.format(len(exact[0])))
+                return png
+        else:
+            pal, idx, out = quantize(img)
+            png = encode_palette_png(img.w, img.h, pal, idx)
+            tried.append('palette_quantized {}'.format(len(png)))
+            if len(png) <= limit:
+                row.update(encoding='palette_quantized', colours=len(pal),
+                           max_channel_error=max_channel_error(img.px, out), rmse=rmse(img.px, out))
+                row['actions'].append('palette_quantized_{}'.format(len(pal)))
+                return png
+    best = _least_posterize(img, ft, limit, opts['max_posterize_bits'])
+    if best is None:
+        row['reason'] = '{} still > {} bytes: set options.max_side'.format(', '.join(tried + [
+            'posterize up to {} bits'.format(opts['max_posterize_bits'])]), limit)
+        return None
+    bits, png, px = best
+    row.update(encoding='rgb_posterize', max_channel_error=max_channel_error(img.px, px), rmse=rmse(img.px, px))
+    row['actions'].append('posterize_{}bit'.format(bits))
+    return png
+
+
 def fix_one(path, data, opts, decoded=None):
     """Plan + result for one source file. Returns a row dict; `row['png']` holds the output bytes (not in
     the report) or the row has `reason` (refused). `decoded` = Image from the glue for a non-PNG file."""
@@ -506,8 +629,9 @@ def fix_one(path, data, opts, decoded=None):
             return row
         row['format'] = {'width': w, 'height': h, 'bit_depth': depth, 'color_type': ctype, 'alpha': has_alpha,
                          'interlace': info['interlace']}
-        if depth != 8 or ctype not in (2, 6):
-            row['actions'].append('to_8bit_rgb' if ctype != 3 else 'palette_to_rgb')
+        # palette PNG (colour type 3, 8-bit entries) is a valid delivery format (decision of Artem 05.11.2026)
+        if ctype != 3 and (depth != 8 or ctype not in (2, 6)):
+            row['actions'].append('to_8bit_rgb')
         if info['interlace']:
             row['actions'].append('deinterlace')
     else:
@@ -554,19 +678,15 @@ def fix_one(path, data, opts, decoded=None):
     if untouched:
         row['png'] = bytes(data)
         row['actions'].append('copied_unchanged')
+        row['encoding'] = 'copied'
     else:
         png, ft = encode_png(img, with_filter=True)
+        row['encoding'] = 'rgb_lossless'
         if len(png) > opts['max_bytes']:
             row['lossless_bytes'] = len(png)
-            best = _least_posterize(img, ft, opts['max_bytes'], opts['max_posterize_bits'])
-            if best is None:
-                row['reason'] = ('{} bytes after lossless re-encoding and posterize up to {} bits still > {}: '
-                                 'set options.max_side').format(len(png), opts['max_posterize_bits'],
-                                                                opts['max_bytes'])
+            png = _fit(img, ft, opts, row)
+            if png is None:
                 return row
-            bits, png, px = best
-            row['actions'].append('posterize_{}bit'.format(bits))
-            row['rmse'] = rmse(img.px, px)
         if 'rmse' not in row:
             row['rmse'] = 0.0
             row['actions'].append('reencoded_lossless')

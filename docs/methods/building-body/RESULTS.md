@@ -31,3 +31,20 @@ Synthetic inputs and why:
 - plan contours and level heights measured from the source mesh, not from a drawing (no DWG plan in the benchmark set; user decision 2026-11-02 [D187]) (R2, R6, R10)
 - plan contours and level heights measured from the source mesh, not from a drawing (no DWG plan in the benchmark set; user decision 2026-11-02 [D187]); no opening schedule, so no opening cut (R3, R7, R11)
 - reference row of a table whose from-contour variants use plan contours and level heights measured from the source mesh, not from a drawing (no DWG plan in the benchmark set; user decision 2026-11-02 [D187]) (R1, R5, R9)
+
+Synthetic vs drawing (same object and variant; drawing = row without the synthetic marker):
+
+| Object | Variant | Rows synthetic / drawing | Model tris | Deviation max m | Deviation p95 m | Closed shells | Drawing |
+|---|---|---|---|---|---|---|---|
+| kpp1 | source-as-is | R1 / - | 24988 / - | 0.0001 / - | 0.0 / - | 32/155 / - | not measured: no drawing row in results.jsonl |
+| kpp1 | kernel-prisms | R2 / - | 3896 / - | 0.75 / - | 0.275 / - | 1/2 / - | not measured: no drawing row in results.jsonl |
+| kpp1 | blender-gn-union | R3 / - | 7539 / - | 0.75 / - | 0.275 / - | 0/2 / - | not measured: no drawing row in results.jsonl |
+| kpp1 | max-pymxs-cleanup | R4 / - | 26821 / - | 0.0001 / - | 0.0 / - | 113/155 / - | not measured: no drawing row in results.jsonl |
+| ac08 | source-as-is | R5 / - | 386 / - | 0.0001 / - | 0.0 / - | 0/3 / - | not measured: no drawing row in results.jsonl |
+| ac08 | kernel-prisms | R6 / - | 40 / - | 0.1028 / - | 0.0915 / - | 2/2 / - | not measured: no drawing row in results.jsonl |
+| ac08 | blender-gn-union | R7 / - | 44 / - | 0.1028 / - | 0.0915 / - | 1/1 / - | not measured: no drawing row in results.jsonl |
+| ac08 | max-pymxs-cleanup | R8 / - | 414 / - | 0.0001 / - | 0.0 / - | 3/3 / - | not measured: no drawing row in results.jsonl |
+| tow02 | source-as-is | R9 / - | 70678 / - | 0.0001 / - | 0.0001 / - | 28/1375 / - | not measured: no drawing row in results.jsonl |
+| tow02 | kernel-prisms | R10 / - | 13552 / - | 6.3392 / - | 0.9371 / - | 28/29 / - | not measured: no drawing row in results.jsonl |
+| tow02 | blender-gn-union | R11 / - | 39446 / - | 6.3392 / - | 0.9371 / - | 0/1 / - | not measured: no drawing row in results.jsonl |
+| tow02 | max-pymxs-cleanup | R12 / - | 82117 / - | 0.0001 / - | 0.0001 / - | 874/1375 / - | not measured: no drawing row in results.jsonl |

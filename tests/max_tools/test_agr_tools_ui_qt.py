@@ -1,7 +1,10 @@
 """new-case: AGR Tools 0.6.0/0.7.0 Qt panel under pytest-qt with a fake backend (#808).
 
-Runs outside 3ds Max (PySide6 from PyPI). Skipped when PySide6 / pytest-qt are not installed:
-uv run --with PySide6 --with pytest-qt pytest tests/max_tools/test_agr_tools_ui_qt.py
+Runs outside 3ds Max (PySide6-Essentials + pytest-qt from the uv dev group, #897):
+uv run pytest tests/max_tools/test_agr_tools_ui_qt.py
+QT_QPA_PLATFORM=offscreen is set by tests/max_tools/conftest.py before any PySide6 import.
+A missing Qt package FAILS this module when the rest of the dev group is installed; it is a skip
+only without the dev group (tests/max_tools/_qt_guard.py).
 """
 import importlib.util
 import inspect
@@ -12,11 +15,16 @@ from pathlib import Path
 
 import pytest
 
+ROOT = Path(__file__).resolve().parents[2]
+_gspec = importlib.util.spec_from_file_location('agr_qt_guard_mod', Path(__file__).with_name('_qt_guard.py'))
+_guard = importlib.util.module_from_spec(_gspec)
+_gspec.loader.exec_module(_guard)
+_status, _reason = _guard.qt_status(ROOT / 'pyproject.toml')
+if _status == 'fail':
+    pytest.fail('Qt panel tests: ' + _reason, pytrace=False)
 pytest.importorskip('PySide6')
 pytest.importorskip('pytestqt')
-os.environ.setdefault('QT_QPA_PLATFORM', 'offscreen')
 
-ROOT = Path(__file__).resolve().parents[2]
 PKG = ROOT / 'adapters/max/agr_tools'
 
 

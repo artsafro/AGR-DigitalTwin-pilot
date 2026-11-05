@@ -113,7 +113,7 @@ def render(rows: list[dict], cls: str) -> str:
              "|" + "---|" * (head.count("|") - 1)]
     reasons, synthetic = {}, {}
     for r in rows:
-        if r.get("synthetic"):
+        if _synthetic_flag(r):
             synthetic.setdefault(r.get("synthetic_reason") or "no reason recorded", []).append(r["row"])
         lines.append(_row(r) + (_win_cells(r) if windows else _ground_cells(r) if ground
                                 else _body_cells(r) if body else ""))
@@ -149,7 +149,60 @@ def render(rows: list[dict], cls: str) -> str:
     if synthetic:
         lines += ["", "Synthetic inputs and why:", ""]
         lines += [f"- {k} ({', '.join(v)})" for k, v in sorted(synthetic.items())]
+    if body:
+        lines += _comparison(rows)
     return "\n".join(lines) + "\n"
+
+
+CMP_HEAD = ("| Object | Variant | Rows synthetic / drawing | Model tris | Deviation max m | Deviation p95 m "
+            "| Closed shells | Drawing |")
+
+
+def _synthetic_flag(r: dict) -> bool:
+    """True / False / absent (= drawing-backed); any other value is an error naming the row (#735)."""
+    flag = r.get("synthetic", False)
+    if flag is not True and flag is not False:
+        raise ValueError(f"{r['row']}: synthetic must be true, false or absent, got {flag!r}")
+    return flag
+
+
+def _comparison(rows: list[dict]) -> list[str]:
+    """Synthetic vs drawing, side by side per (object, variant) (#735). Empty when no row is synthetic.
+
+    Every row lands in exactly one line; two synthetic (or two drawing) rows for one object and variant are an
+    error naming them, never a silent pick. A missing counterpart shows "-" and the reason, never a number.
+    """
+    pairs: dict[tuple[str, str], dict[bool, dict]] = {}
+    for r in rows:
+        slot = pairs.setdefault((r["benchmark"], r["variant"]), {})
+        flag = _synthetic_flag(r)
+        if flag in slot:
+            kind = "synthetic" if flag else "drawing"
+            raise ValueError(f"{slot[flag]['row']}, {r['row']}: two {kind} rows for {r['benchmark']} / {r['variant']}")
+        slot[flag] = r
+    if not any(True in slot for slot in pairs.values()):
+        return []
+
+    def body(r, key):
+        return None if r is None else ((r.get("class_metrics") or {}).get("body") or {}).get(key)
+
+    lines = ["", "Synthetic vs drawing (same object and variant; drawing = row without the synthetic marker):", "",
+             CMP_HEAD, "|" + "---|" * (CMP_HEAD.count("|") - 1)]
+    for (bench, variant), slot in pairs.items():
+        syn, drw = slot.get(True), slot.get(False)
+
+        def both(f):
+            return f"{f(syn)} / {f(drw)}"
+
+        status = ("measured" if syn and drw else "not measured: no drawing row in results.jsonl" if syn
+                  else "no synthetic row")
+        lines.append("| " + " | ".join([
+            bench, variant, both(lambda r: "-" if r is None else r["row"]),
+            both(lambda r: _v(None if r is None else (r.get("triangles") or {}).get("model"))),
+            both(lambda r: _v(body(r, "deviation_max_m"))), both(lambda r: _v(body(r, "deviation_p95_m"))),
+            both(lambda r: "-" if r is None else f"{_v(body(r, 'closed_components'))}/{_v(body(r, 'components'))}"),
+            status]) + " |")
+    return lines
 
 
 def read_rows(results: Path) -> list[dict]:

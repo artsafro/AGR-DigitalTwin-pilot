@@ -197,6 +197,62 @@ def test_atlas_core_matches_python_tool_and_refuses_the_same_inputs():
                   ('Grass', 'Curb'), mats)
 
 
+def _ground_quad(origin, width, height):
+    return [(origin, 0.0, 0.0), (origin + width, 0.0, 0.0),
+            (origin + width, height, 0.0), (origin, height, 0.0)]
+
+
+def _tex(width, height, seed=0):
+    return [[((x * 3 + seed) % 256, (y * 5) % 256, (x + y) % 256) for x in range(width)]
+            for y in range(height)]
+
+
+def _fixed_point_mesh(case):
+    # Cases B and C from the atlas fixed-point probe: two plug tiles, and one textured quad.
+    uv = [(.1, .2), (.8, .2), (.8, .7), (.1, .7)]
+    if case == 'B':
+        faces = [(0, 1, 2, 3), (4, 5, 6, 7)]
+        return {
+            'verts': _ground_quad(0, 4, 3) + _ground_quad(6, 2, 2),
+            'uvs': uv + [(1.15, .2), (1.85, .2), (1.85, .7), (1.15, .7)],
+            'faces': faces,
+            'face_uvs': list(faces),
+            'fmats': ['G', 'C'],
+            'mats': {
+                'G': {'color': (20, 140, 40), 'dissolve': 1.0},
+                'C': {'color': (150, 150, 155), 'dissolve': 1.0},
+            },
+        }
+    faces = [(0, 1, 2, 3)]
+    return {
+        'verts': _ground_quad(0, 4, 3),
+        'uvs': uv,
+        'faces': faces,
+        'face_uvs': list(faces),
+        'fmats': ['T'],
+        'mats': {'T': {'rgb': _tex(128, 128), 'dissolve': 1.0}},
+    }
+
+
+@pytest.mark.parametrize('case', ['B', 'C'])
+def test_ground_pack_of_two_tile_and_textured_is_a_fixed_point(case):
+    core = _load(ATLAS_CORE, 'agr_atlas_core_fixed_' + case)
+    mesh = _fixed_point_mesh(case)
+    once = core.pack(mesh['verts'], mesh['uvs'], mesh['faces'], mesh['face_uvs'],
+                     mesh['fmats'], mesh['mats'], mode='ground', size=2048, pad=8)
+    twice = core.pack(mesh['verts'], once['uvs'], mesh['faces'], once['face_uvs'],
+                      mesh['fmats'], mesh['mats'], mode='ground', size=2048, pad=8)
+    changed = []
+    for index, (left, right) in enumerate(zip(once['face_uvs'], twice['face_uvs'])):
+        delta = max(max(abs(once['uvs'][a][0] - twice['uvs'][b][0]),
+                        abs(once['uvs'][a][1] - twice['uvs'][b][1]))
+                    for a, b in zip(left, right))
+        if delta > 1e-9:
+            changed.append(index)
+        assert delta <= 1e-9
+    assert changed == []
+
+
 def test_atlas_random_probe_matches_pack_or_the_same_error():
     assert ATLAS_CORE.is_file(), 'atlas core missing'
     core = _load(ATLAS_CORE, 'agr_atlas_core_probe')
