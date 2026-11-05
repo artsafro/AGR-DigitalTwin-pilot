@@ -73,25 +73,25 @@ row 1 is built in both forms and Artem chooses.
 
 ## Generator
 
-`tools/library/maf_gen_bench.py` (pure, no bpy), two forms selected by the config key `form`:
-- `slab_on_posts` (`build_bench`): plan run + sections -> slab with square posts let in (variant B, MAF_0326).
-- `clad_box` (`build_clad_box`, Artem 2026-11-03: «Верона» = variant A, seams are geometry): closed timber box,
-  `courses` side boards with ring seams wrapping the whole outline, a top frame around `top_boards` lengthwise slats
-  with seams that stop at the end frames and turn mitred through the corners, steel foot plates let into the bottom.
-  One welded quad mesh: no T-junction (bands whose edges carry different vertex counts get a 3-to-1 quad reduction
-  with interior points only), convex quads, closed manifold, pivot bbox centre / Z 0, longest segment on +X.
+`tools/library/maf_gen_bench.py` (pure, no bpy), one form, config key `form` = `clad_box` (`build_clad_box`,
+Artem 2026-11-03: «Верона» = variant A, board seams by texture): closed timber box, one top quad per segment mitred
+through the corners, one side ring, the board layout (`top_boards` + 2 frame boards across the top, `courses` on the
+sides) in the generator's `face_uv`, steel foot plates let into the bottom. One welded quad mesh: no T-junction (bottom
+bands whose edges carry different vertex counts get a 3-to-1 quad reduction with interior points only), convex quads,
+closed manifold, pivot bbox centre / Z 0, longest segment on +X. The rejected forms (slab on posts, variant B
+`build_bench` + `verona-gen-b.config.json`; seams as geometry, `seams: geometry`) were removed in #819; git history
+keeps them, and the A3 / B results below are history. The writer exits 4 on any other `form`.
 `centreline_from_outline` turns a DWG strip outline into the run. Writer `tools/blender/maf_gen_bench_build.py`
 (atlas v005 materials, box UV inside the 512 slots, triangulated FBX per MAF-18, hard edges by angle 40°, NPM + VPM,
 refuses overwrite); checks `tools/library/maf_gen_bench_checks.py` (readback -> `maf_findings`, dimensions within
 0.10 m [D094] of the per-row reference `verona-reference-sizes.json` given with `--reference` (rows 1-6 schedule,
 7-10 DWG outline; without it only the generator's own dims), atlas-slot count; exit 0 only when every row/role
 passes, 1 on any fail, 2 on an input error, #817); overlap gate `dt qa xview`. Tests: `tests/test_maf_gen_bench.py` (synthetic straight /
-L / U / skewed / random runs for both forms), 81 passed.
+L / U / skewed / random runs, clad box with seams by texture).
 
 | Config | Form | Parameters (source) |
 |---|---|---|
-| `verona-gen.config.json` (A3, current) | `clad_box` | every value with its source in `param_sources`; summary below |
-| `verona-gen-b.config.json` (B, not chosen) | `slab_on_posts` | the MAF_0326 section table above, height 0.466 |
+| `verona-gen.config.json` (A4.1, current) | `clad_box` | every value with its source in `param_sources`; summary below |
 
 A3 parameters (passport `verona.pdf` p.1 at 0.0041 m/px in the end view, Artem's photo
 `C:/x/vatutino-maf/ref/verona_hobbyka_photo_artem.jpg`): H 0.45, depth 0.6, 4 courses of 0.100 + 3 ring seams
