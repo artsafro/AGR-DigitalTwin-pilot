@@ -5,7 +5,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 
 def test_ground_notch_approval_records_exact_source_and_contour():
-    p=json.loads((ROOT/'jobs/VATUTINO-SITE/ground-notch-approval-v015.json').read_text())
+    p=json.loads((ROOT/'jobs/VATUTINO-SITE/ground-notch-approval-v015.json').read_text(encoding='utf-8'))
     assert p['decision']=='D191'
     assert p['source_v014_mesh_sha256']=='82cb1e6876ba98b92966aa7fc4242a2e9f354ee5ecdd42ed12806b57db666ae5'
     assert p['source_adapter_sha256']=='3b6b433d718c0292f472293849f3363fd2ae90d4892e598efca52be44cd9d502'
@@ -16,6 +16,6 @@ def test_ground_notch_approval_records_exact_source_and_contour():
     assert p['outline_tolerance_m']==.0022
     assert p['xview_vertex_tolerance_m']==.002 and p['xview_face_tolerance_m']==.005
     assert p['relief_tolerance_m']==.01
-    decisions=(ROOT/'docs/decisions.md').read_text()
+    decisions=(ROOT/'docs/decisions.md').read_text(encoding='utf-8')
     row=next(s for s in decisions.splitlines() if s.startswith('| D191 |'))
     assert '2026-10-21' in row and 'thresholds unchanged' in row
