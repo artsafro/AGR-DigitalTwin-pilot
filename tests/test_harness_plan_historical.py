@@ -30,6 +30,15 @@ LIVE = (
     "tools/qa/check_geometry.py",
     "tools/qa/run_benchmark.py",
     "library/windows/window_types.json",
+    "src/dt_ai/spec/compare.py",
+    "src/dt_ai/spec/floors.py",
+    "src/dt_ai/spec/mesh.py",
+    "src/dt_ai/spec/model.py",
+    "src/dt_ai/spec/__init__.py",
+    "src/twinqa/evals/graders.py",
+    "src/twinqa/geometry/checks.py",
+    "src/twinqa/geometry/__init__.py",
+    "tools/git-hooks/pipeline_gate.py",
 )
 
 _TOKEN = "HARNESS_PLAN"
