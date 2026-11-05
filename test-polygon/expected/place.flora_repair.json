@@ -1,13 +1,28 @@
 {
  "schema": 1,
  "button": "place.flora_repair",
- "tool": null,
+ "tool": "place.flora_repair",
  "version": "0.9",
- "shipped": false,
+ "shipped": true,
  "select": "named",
- "reason": "станция в работе, #979, ветка A",
+ "reason": "",
  "apply_status": null,
- "objects": [],
+ "objects": [
+  {
+   "name": "SM_FragA_FloraOk_Flora",
+   "scene": "frag_a_flora",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_FragA_FloraRot_Flora",
+   "scene": "frag_a_flora",
+   "expect": "fail",
+   "codes": [
+    "rotated"
+   ]
+  }
+ ],
  "base": "0.9",
  "station": "0.9.7",
  "stations": [
