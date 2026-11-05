@@ -1,4 +1,4 @@
-# AGR Tools 0.7.0 — 3ds Max 2024 / 2026
+# AGR Tools 0.8.0 — 3ds Max 2024 / 2026
 
 Own implementations. The 0.5.0 diagnostics adapt GeoAGR 13.64 functions with the permission of
 their author (Artem). Only the logic in use is adapted (`checks_core.py`), not GeoAGR.ms; no team
@@ -7,8 +7,8 @@ This is a diagnostic/export-copy tool, not a delivery validator or production jo
 
 ## Build and install
 
-`python tools/max/build_agr_tools.py <new-path>/AGR-Tools-0.7.0.mzp` (MZP) or
-`python tools/max/build_agr_tools.py --bundle <new-path>/AGR-Tools-0.7.0.bundle.zip` (plugin package:
+`python tools/max/build_agr_tools.py <new-path>/AGR-Tools-0.8.0.mzp` (MZP) or
+`python tools/max/build_agr_tools.py --bundle <new-path>/AGR-Tools-0.8.0.bundle.zip` (plugin package:
 unzip into `%APPDATA%\Autodesk\ApplicationPlugins`; uninstall = delete `AGR-Tools.bundle` and the
 `[AGRTools]` section of `3dsMax.ini`). PNG icons are rendered from the SVG sources with PySide6
 (`uv run --with PySide6 ...`), or taken from `AGR_ICON_PNG_DIR`.
@@ -143,6 +143,22 @@ never a clean result. Objects are identified by unique Max handles as well as na
   VPM 512–1706 px/m and NPM 10–40 px/m. A zero area or a zero map size is
   `at_threshold` and is an error.
 
+## 0.8.0 delivery edits on copies (#908)
+
+Thirteen buttons of plan version 0.8 in the section «Сдача (копии)» and in their block tabs, each a
+`runtime.ui('<tool>')` macro and an MCP tool `agr_<block>_<name>`: `scene.missing_maps` (read-only),
+`model.triangulate`, `ucx.triangulate`, `ucx.rename`, `export.pivot_place`, `tex.format_fix`,
+`tex.placeholders`, `qa.names_fix`, `udim.ids_to_udims`, `qa.package` (read-only, pilot validator),
+`export.ground_fbx`, `export.geojson_write`, `export.zip`.
+
+Every editing button works in two presses: **preview** (nothing changes, the report lists `done`,
+`skipped` with a reason and `ambiguous`) and **apply**, which accepts only the preview of the same tool
+and selection and refuses when its hash or the scene state changed (`edit_core.py`). Edits go to export
+copies (`*_AGR_export_*`, own layers) or to new files; nothing is overwritten (`new_path()` versions or
+refuses). One run = one Undo record, the selection is restored; an error inside the run is re-raised
+after the Undo record closes. Only `ucx.rename` renames UCX nodes in place (one Undo record).
+MCP: editing tools take `mode: preview`, and `mode: apply` only with that preview.
+
 ## 0.7.0 pre-delivery checks, rail and «Путь» (#860)
 
 Twelve read-only checks (plan version 0.7), each a button of its block tab, a `runtime.ui('<tool>')`
@@ -230,4 +246,6 @@ results, writes the report exclusively and emits a completion marker at the end.
 First rollout complete: xView, pre-export clean-up, MatID, UV integer-tile
 nudge, UDIM to NPM atlas, UCX collision, texel readout and checked export.
 0.5.0 adds read-only names, triangle, texture, pivot and GeoJSON diagnostics.
+0.7.0 adds 12 read-only pre-delivery checks, the block tab rail and «Путь».
+0.8.0 adds 13 delivery edits on export copies / new files with preview → apply.
 No licensing, obfuscation, GeoAGR.ms copy or decryption is included.

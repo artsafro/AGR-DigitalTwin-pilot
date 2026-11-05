@@ -146,7 +146,7 @@
    "version": "0.8",
    "icon": "missing",
    "lab_report": "docs/experiments/scene.missing_maps.md",
-   "lab_status": "source cannot list missing maps (usedMaps); take_fix: read-only list, candidates by base name"
+   "lab_status": "done in 0.8.0 (#908 branch B, PR #923/#926); lab: source cannot list missing maps (usedMaps); take_fix: read-only list, candidates by base name"
   },
   {
    "id": "scene.source_class",
@@ -196,7 +196,7 @@
    "version": "0.8",
    "icon": "triangulate",
    "lab_report": "docs/experiments/model.triangulate.md",
-   "lab_status": "works with defects (sub-mm faces stay n-gons, redundant pairs); take_fix (лаборатория #907; plan was: take)"
+   "lab_status": "done in 0.8.0 (#908 branch A, PR #927); lab: works with defects (sub-mm faces stay n-gons, redundant pairs); take_fix (лаборатория #907; plan was: take)"
   },
   {
    "id": "model.glass_planes",
@@ -438,7 +438,7 @@
    "version": "0.8",
    "icon": "pngfix",
    "lab_report": "docs/experiments/tex.format_fix.md",
-   "lab_status": "overwrites in place, wrong format detection, Compress ignores target; take_fix"
+   "lab_status": "done in 0.8.0 (#908 branch B, PR #923/#926); lab: overwrites in place, wrong format detection, Compress ignores target; take_fix"
   },
   {
    "id": "tex.material_type",
@@ -520,7 +520,7 @@
    "version": "0.8",
    "icon": "plug",
    "lab_report": "docs/experiments/tex.placeholders.md",
-   "lab_status": "Make D/N/ERM works (exact colour, 8-bit RGB), Set Normal/ERM crash, no 128, silent overwrite; merge"
+   "lab_status": "done in 0.8.0 (#908 branch B, PR #923/#926); lab: Make D/N/ERM works (exact colour, 8-bit RGB), Set Normal/ERM crash, no 128, silent overwrite; merge"
   },
   {
    "id": "tex.vpm_sets",
@@ -634,7 +634,7 @@
    "version": "0.8",
    "icon": "ucxtri",
    "lab_report": "docs/experiments/ucx.triangulate.md",
-   "lab_status": "works with defects (convexity can break, skips non-Poly silently); take_fix (лаборатория #907; plan was: take)"
+   "lab_status": "done in 0.8.0 (#908 branch A, PR #927); lab: works with defects (convexity can break, skips non-Poly silently); take_fix (лаборатория #907; plan was: take)"
   },
   {
    "id": "ucx.gap",
@@ -684,7 +684,7 @@
    "version": "0.8",
    "icon": "ucxname",
    "lab_report": "docs/experiments/ucx.rename.md",
-   "lab_status": "renames anything selected, address damage, no undo; take_fix"
+   "lab_status": "done in 0.8.0 (#908 branch C, PR #924); lab: renames anything selected, address damage, no undo; take_fix"
   },
   {
    "id": "ucx.stairs",
@@ -718,7 +718,7 @@
    "version": "0.8",
    "icon": "id2udim",
    "lab_report": "docs/experiments/udim.ids_to_udims.md",
-   "lab_status": "ID n -> 1000+n correct for 1..100; first object only, ID>100 skipped, NaN on zero extent; take_fix"
+   "lab_status": "done in 0.8.0 (#908 branch C, PR #924); lab: ID n -> 1000+n correct for 1..100; first object only, ID>100 skipped, NaN on zero extent; take_fix"
   },
   {
    "id": "udim.nudge",
@@ -1184,7 +1184,7 @@
    "version": "0.8",
    "icon": "namefix",
    "lab_report": "docs/experiments/qa.names_fix.md",
-   "lab_status": "Material Cloner is not an object renamer; overwrite claim not reproduced; merge (one new renamer)"
+   "lab_status": "done in 0.8.0 (#908 branch C, PR #924); lab: Material Cloner is not an object renamer; overwrite claim not reproduced; merge (one new renamer)"
   },
   {
    "id": "qa.package",
@@ -1202,7 +1202,7 @@
    "version": "0.8",
    "icon": "package",
    "lab_report": "docs/experiments/qa.package.md",
-   "lab_status": "as documented; profile guess and vacuous V006 defects; merge"
+   "lab_status": "done in 0.8.0 (#908 branch D, PR #925); lab: as documented; profile guess and vacuous V006 defects; merge"
   },
   {
    "id": "qa.pivot",
@@ -1444,7 +1444,7 @@
    "version": "0.8",
    "icon": "geojsonw",
    "lab_report": null,
-   "lab_status": "not checked in the lab"
+   "lab_status": "done in 0.8.0 (#908 branch D, PR #925); lab: not checked in the lab"
   },
   {
    "id": "export.ground_fbx",
@@ -1462,7 +1462,7 @@
    "version": "0.8",
    "icon": "groundfbx",
    "lab_report": "docs/experiments/export.ground_fbx.md",
-   "lab_status": "differs: Flora not in _Ground, name from first selected, no triangulation; take_fix (лаборатория #907; plan was: merge)"
+   "lab_status": "done in 0.8.0 (#908 branch D, PR #925); lab: differs: Flora not in _Ground, name from first selected, no triangulation; take_fix (лаборатория #907; plan was: merge)"
   },
   {
    "id": "export.pivot_place",
@@ -1480,7 +1480,7 @@
    "version": "0.8",
    "icon": "place",
    "lab_report": "docs/experiments/export.pivot_place.md",
-   "lab_status": "partly works (floor-face pivot, 0,0,0); precision loss, bbox fallback, no copy mode; take_fix"
+   "lab_status": "done in 0.8.0 (#908 branch A, PR #927); lab: partly works (floor-face pivot, 0,0,0); precision loss, bbox fallback, no copy mode; take_fix"
   },
   {
    "id": "export.zip",
@@ -1498,7 +1498,7 @@
    "version": "0.8",
    "icon": "zip",
    "lab_report": "docs/experiments/export.zip.md",
-   "lab_status": "broken: bundled 7z creates nothing, _Light missing; merge (new archiver)"
+   "lab_status": "done in 0.8.0 (#908 branch D, PR #925); lab: broken: bundled 7z creates nothing, _Light missing; merge (new archiver)"
   },
   {
    "id": "export.batch",
@@ -1868,7 +1868,7 @@
   {
    "version": "0.8",
    "title_ru": "Сдача: имена, PNG, ID→UDIM, триангуляция, пивот, GeoJSON, ZIP, пакет",
-   "status": "in work",
+   "status": "done",
    "effort": "L: ~3 дня (правки только на копиях/новых файлах, каждая с preview)",
    "issue": "#908",
    "rows": [

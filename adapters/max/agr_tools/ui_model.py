@@ -13,7 +13,7 @@ import math
 import os
 from collections import namedtuple
 
-VERSION = '0.7.0'
+VERSION = '0.8.0'
 
 Action = namedtuple('Action', 'id tool icon section label tip reqs macro batch')
 
