@@ -19,6 +19,22 @@ Three plan rows, glue in tex_max.py:
   flag, hidden and UCX owners flagged (not filtered), resolution of existing files, JSON + table.
 
 GeoAGR is cited only as `GeoAGR.ms:<line>`; team scripts by file name + SHA256 (#853); no code is copied.
+
+0.9 rework (#979, branch E1, audit cards T01/T02/T05/T06; team scripts read for ideas only):
+* format_fix (T01/png_compressor: compress_png.py 75ff969b…ef088, compress_png_gui.py e8cb5687…441a): lossless
+  first; then a <= 256 colour palette with Floyd-Steinberg dithering (Q01) and posterisation compete, the fitting
+  candidate with the least RMSE wins and an RMSE over `max_rmse` (Q02 open: a parameter) is a refusal with the
+  measured value, never «готово»; a file already under the limit is never quantised; no temporary files in the
+  core (the glue's decoder removes its own).
+* placeholders (T01/index_to_rgb 90070bbf…750dc, T05/Texture_Zaglushki_Ground 888eacc9…4867c, T02/atlas_builder
+  v9 maf e6477f51…380e): average over visible pixels (alpha-weighted), rounded; RGB 24 bit; several UDIMs per
+  call, a repeated UDIM is refused (never written twice); ERM metal slots `[0,0,255]` (R emission, G roughness,
+  B metalness: metal with roughness 0), non-metal default as 0.8; an unreadable `diffuse_from` (TGA, EXR, PSD…)
+  skips the Diffuse file with a reason instead of a silent grey; one set per address of the selected objects.
+* missing_maps (T06/alexyo_texfinder_v2 056bc4b4…7e0a): relink candidates also by the project texture mask of the
+  owner object and map role (`T_<Address>[_NNN]_<Type>_<d|n|o|m|r>_1.*`, VPM `T_<Address>_<Map>_1.<UDIM>.*`),
+  any image extension (.png AND .jpg), ranked, ambiguity flagged; search folders default to the map paths (no
+  "123" default), a relative search folder is refused.
 """
 import hashlib
 import importlib.util
@@ -35,8 +51,13 @@ MAX_POSTERIZE_BITS = 6               # lossy fallback: drop at most this many lo
 PLACEHOLDER_SIZES = (128, 256, 512, 1024, 2048, 4096)
 DEFAULT_PLACEHOLDER_SIZE = 256       # VPM textures.flat_placeholder.size_px (NPM 128 on request)
 PLACEHOLDER_COLOURS = {'Diffuse': (200, 200, 200), 'ERM': (0, 255, 0), 'Normal': (128, 128, 255)}
+ERM_METAL = (0, 0, 255)              # R emission 0, G roughness 0 (metal is smooth), B metalness 255
 MAPS = ('Diffuse', 'ERM', 'Normal')
 IMAGE_EXTS = ('.png', '.jpg', '.jpeg', '.tga', '.tif', '.tiff', '.bmp', '.exr', '.hdr', '.psd', '.dds', '.gif')
+# Formats the Max glue decodes through .NET System.Drawing; TGA/EXR/HDR/PSD/DDS are not among them (T05: a TGA
+# became a silent grey 128 there), so they are refused with a reason before any decode.
+DRAWING_EXTS = ('.jpg', '.jpeg', '.bmp', '.gif', '.tif', '.tiff')
+DEFAULT_MAX_RMSE = 0.03              # quality floor of lossy fitting (Q02 open: parameter; T01 8 colours = 0.157)
 _ADDRESS = re.compile(r'^[A-Za-z0-9_]+$')
 _UDIM = re.compile(r'<udim>', re.I)
 _UVTILE = re.compile(r'<uvtile>', re.I)
@@ -61,6 +82,11 @@ def checks():
 
 def edit_core():
     return _sibling('agr_tools_edit_core', 'edit_core.py')
+
+
+def names_core():
+    """The names grammar (texture masks of missing_maps candidates); same module name as runtime._load_core."""
+    return _sibling('agr_tools_names_core', 'names_core.py')
 
 
 def sha256(data):
@@ -371,6 +397,49 @@ def quantize(img, colours=256):
     return palette, indices, out
 
 
+def dither(img, palette):
+    """Floyd-Steinberg error diffusion of an RGB image onto `palette` -> (indices, rgb pixels).
+
+    Nearest palette colour per 5-bit cell (cached), errors carried in integer arrays row by row."""
+    w, h, px = img.w, img.h, img.px
+    pal = [tuple(c) for c in palette]
+    cache = {}
+
+    def nearest(r, g, b):
+        key = ((r >> 3) << 10) | ((g >> 3) << 5) | (b >> 3)
+        k = cache.get(key)
+        if k is None:
+            cr, cg, cb = (r | 4), (g | 4), (b | 4)
+            k = min(range(len(pal)), key=lambda i: (pal[i][0] - cr) ** 2 + (pal[i][1] - cg) ** 2 + (pal[i][2] - cb) ** 2)
+            cache[key] = k
+        return k
+
+    indices = bytearray(w * h)
+    out = bytearray(w * h * 3)
+    err = [0] * ((w + 2) * 3)
+    for y in range(h):
+        nxt = [0] * ((w + 2) * 3)
+        row = y * w
+        for x in range(w):
+            o = 3 * (row + x)
+            e = 3 * (x + 1)
+            r = min(255, max(0, px[o] + (err[e] >> 4)))
+            g = min(255, max(0, px[o + 1] + (err[e + 1] >> 4)))
+            b = min(255, max(0, px[o + 2] + (err[e + 2] >> 4)))
+            k = nearest(r, g, b)
+            c = pal[k]
+            indices[row + x] = k
+            out[o], out[o + 1], out[o + 2] = c
+            for ch, v in ((0, r - c[0]), (1, g - c[1]), (2, b - c[2])):
+                if v:
+                    err[e + 3 + ch] += 7 * v
+                    nxt[e - 3 + ch] += 3 * v
+                    nxt[e + ch] += 5 * v
+                    nxt[e + 3 + ch] += v
+        err = nxt
+    return bytes(indices), bytes(out)
+
+
 def max_channel_error(a, b):
     return max((abs(x - y) for x, y in zip(a, b)), default=0)
 
@@ -521,7 +590,7 @@ def format_options(options):
     """Validated, complete options of tex.format_fix (recorded in the preview plan)."""
     o = dict(options or {})
     known = {'files', 'folder', 'out', 'profile', 'background', 'dilate', 'max_bytes', 'max_side',
-             'keep_allowed_alpha', 'max_posterize_bits', 'palette'}
+             'keep_allowed_alpha', 'max_posterize_bits', 'palette', 'dither', 'max_rmse'}
     extra = set(o) - known
     if extra:
         raise ValueError('unknown tex.format_fix options: ' + ', '.join(sorted(extra)))
@@ -529,9 +598,13 @@ def format_options(options):
            'max_bytes': o.get('max_bytes', DEFAULT_MAX_BYTES), 'max_side': o.get('max_side'),
            'keep_allowed_alpha': bool(o.get('keep_allowed_alpha', True)),
            'max_posterize_bits': o.get('max_posterize_bits', MAX_POSTERIZE_BITS),
-           'palette': bool(o.get('palette', True))}
+           'palette': bool(o.get('palette', True)), 'dither': bool(o.get('dither', True)),
+           'max_rmse': o.get('max_rmse', DEFAULT_MAX_RMSE)}
     if out['profile'] not in ('npm', 'vpm'):
         raise ValueError('profile must be npm or vpm')
+    if type(out['max_rmse']) not in (int, float) or not 0 <= out['max_rmse'] <= 1:
+        raise ValueError('max_rmse must be a number 0..1 (RMSE of 8-bit channels normalised to 1)')
+    out['max_rmse'] = float(out['max_rmse'])
     if out['background'] is not None:
         out['background'] = list(_colour(out['background']))
     if type(out['max_bytes']) is not int or out['max_bytes'] < 1024:
@@ -580,37 +653,60 @@ def output_folder(sources, out=None, exists=os.path.exists):
 
 
 def _fit(img, ft, opts, row):
-    """Over the limit after lossless RGB: exact palette (lossless) -> quantised 256-colour palette ->
-    posterize RGB. Records the chosen encoding, colours, max per-channel error and RMSE in `row`;
-    None + row['reason'] when nothing fits. Palette only for RGB (alpha keeps RGBA + posterize)."""
+    """Over the limit after lossless RGB: an exact palette (lossless) wins when it fits; otherwise the lossy
+    candidates in order (256-colour palette, dithered by default; then least posterisation): the first fitting
+    one within `max_rmse` is taken. RMSE above `max_rmse` is a refusal with the measured value (T01: 8 colours,
+    RMSE 0.157, was «готово»). Records encoding, colours, max per-channel error, RMSE and every try in `row`;
+    None + row['reason'] when nothing fits or passes. Palette only for RGB (alpha keeps RGBA + posterize)."""
     limit = opts['max_bytes']
     tried = ['rgb_lossless {}'.format(row['lossless_bytes'])]
+    lossy = []
     if opts['palette'] and img.n == 3:
         exact = exact_palette(img)
         if exact is not None:
             png = encode_palette_png(img.w, img.h, exact[0], exact[1])
             tried.append('palette_exact {}'.format(len(png)))
             if len(png) <= limit:
-                row.update(encoding='palette_exact', colours=len(exact[0]), max_channel_error=0, rmse=0.0)
+                row.update(encoding='palette_exact', colours=len(exact[0]), max_channel_error=0, rmse=0.0,
+                           tried=tried)
                 row['actions'].append('palette_exact_{}'.format(len(exact[0])))
                 return png
         else:
             pal, idx, out = quantize(img)
+            kind = 'palette_quantized'
+            if opts['dither']:
+                idx, out = dither(img, pal)
+                kind = 'palette_dithered'
             png = encode_palette_png(img.w, img.h, pal, idx)
-            tried.append('palette_quantized {}'.format(len(png)))
+            err = rmse(img.px, out)
+            tried.append('{} {} rmse {}'.format(kind, len(png), err))
             if len(png) <= limit:
-                row.update(encoding='palette_quantized', colours=len(pal),
-                           max_channel_error=max_channel_error(img.px, out), rmse=rmse(img.px, out))
-                row['actions'].append('palette_quantized_{}'.format(len(pal)))
-                return png
+                lossy.append((err, kind, png, out, len(pal), '{}_{}'.format(kind, len(pal))))
     best = _least_posterize(img, ft, limit, opts['max_posterize_bits'])
-    if best is None:
-        row['reason'] = '{} still > {} bytes: set options.max_side'.format(', '.join(tried + [
-            'posterize up to {} bits'.format(opts['max_posterize_bits'])]), limit)
+    if best is not None:
+        bits, png, px = best
+        err = rmse(img.px, px)
+        tried.append('rgb_posterize_{}bit {} rmse {}'.format(bits, len(png), err))
+        lossy.append((err, 'rgb_posterize', png, px, None, 'posterize_{}bit'.format(bits)))
+    else:
+        tried.append('posterize up to {} bits'.format(opts['max_posterize_bits']))
+    row['tried'] = tried
+    if not lossy:
+        row['reason'] = '{} still > {} bytes: set options.max_side'.format(', '.join(tried), limit)
         return None
-    bits, png, px = best
-    row.update(encoding='rgb_posterize', max_channel_error=max_channel_error(img.px, px), rmse=rmse(img.px, px))
-    row['actions'].append('posterize_{}bit'.format(bits))
+    # Order of Artem's decision (T01, 05.11.2026): palette before posterize; the first one within max_rmse wins,
+    # else the refusal names the best measured RMSE.
+    passing = [c for c in lossy if c[0] <= opts['max_rmse']]
+    err, kind, png, px, colours, action = passing[0] if passing else min(lossy, key=lambda c: (c[0], len(c[2])))
+    row.update(encoding=kind, max_channel_error=max_channel_error(img.px, px), rmse=err)
+    if colours is not None:
+        row['colours'] = colours
+    if err > opts['max_rmse']:
+        row['reason'] = ('quality: best fitting {} has RMSE {} > max_rmse {} (not written; raise max_rmse or set '
+                         'options.max_side)').format(kind, err, opts['max_rmse'])
+        row['quality_fail'] = True
+        return None
+    row['actions'].append(action)
     return png
 
 
@@ -740,7 +836,24 @@ def format_state(sources, read, opts, out):
     return {'tool': 'tex.format_fix', 'files': files, 'options': opts, 'out': out, 'out_content': taken}
 
 
-def format_report(edit, mode, out, rows, state_hash, opts, written=()):
+def format_objects(edit, rows, owners):
+    """Report objects when the sources came from selected objects: one entry per owner node, a finding per
+    refused texture (`tex_quality`: lossy RMSE over max_rmse; `tex_refused`: any other refusal)."""
+    found = {}
+    for h, name in sorted({(int(o[0]), str(o[1])) for v in (owners or {}).values() for o in v}):
+        found[h] = {'name': name, 'findings': []}
+    for r in rows:
+        if 'reason' not in r:
+            continue
+        code = 'tex_quality' if r.get('quality_fail') else 'tex_refused'
+        for o in (owners or {}).get(r['source'], ()):
+            f = edit.finding(code, (), '{}: {}'.format(os.path.basename(r['source']), r['reason']))
+            if f not in found[int(o[0])]['findings']:
+                found[int(o[0])]['findings'].append(f)
+    return [edit.entry(h, v['name'], v['findings']) for h, v in sorted(found.items())]
+
+
+def format_report(edit, mode, out, rows, state_hash, opts, written=(), owners=None):
     done, skipped, ambiguous, table = [], [], [], []
     for r in rows:
         public = {k: v for k, v in r.items() if k != 'png'}
@@ -752,9 +865,12 @@ def format_report(edit, mode, out, rows, state_hash, opts, written=()):
         else:
             done.append({'source': r['source'], 'out': r['out'], 'actions': r['actions'], 'rmse': r.get('rmse', 0.0)})
     extra = {'out': out, 'options': opts, 'files': table}
+    if owners:
+        extra['owners'] = {p: [list(o) for o in v] for p, v in owners.items()}
     if mode == 'apply':
         extra['written'] = list(written)
-    return edit.report('tex.format_fix', mode, [], done, skipped, ambiguous,
+    objects = format_objects(edit, rows, owners)
+    return edit.report('tex.format_fix', mode, objects, done, skipped, ambiguous,
                        state_hash=state_hash if mode == 'preview' else None, extra=extra)
 
 
@@ -772,13 +888,18 @@ def write_outputs(edit, out, rows):
 # ---- tex.placeholders ----------------------------------------------------------------------------------
 def placeholder_options(options):
     o = dict(options or {})
-    known = {'folder', 'address', 'ground', 'slots', 'udim', 'sizes', 'colours', 'diffuse_from', 'on_exists'}
+    known = {'folder', 'address', 'ground', 'slots', 'udim', 'udims', 'sizes', 'colours', 'diffuse_from',
+             'on_exists', 'metal_slots'}
     extra = set(o) - known
     if extra:
         raise ValueError('unknown tex.placeholders options: ' + ', '.join(sorted(extra)))
+    if 'udim' in o and 'udims' in o:
+        raise ValueError('give udim or udims, not both')
     out = {'folder': o.get('folder'), 'address': o.get('address'), 'ground': bool(o.get('ground', False)),
-           'slots': o.get('slots', [1]), 'udim': o.get('udim', 1001), 'sizes': o.get('sizes', [DEFAULT_PLACEHOLDER_SIZE]),
-           'on_exists': o.get('on_exists', 'refuse'), 'diffuse_from': o.get('diffuse_from')}
+           'slots': o.get('slots', [1]), 'udims': o.get('udims', [o.get('udim', 1001)]),
+           'sizes': o.get('sizes', [DEFAULT_PLACEHOLDER_SIZE]),
+           'on_exists': o.get('on_exists', 'refuse'), 'diffuse_from': o.get('diffuse_from'),
+           'metal_slots': o.get('metal_slots', [])}
     colours = dict(PLACEHOLDER_COLOURS)
     for k, v in (o.get('colours') or {}).items():
         if k not in MAPS:
@@ -791,8 +912,12 @@ def placeholder_options(options):
         raise ValueError('address must be A-Z a-z 0-9 _ (VPM naming.stem_characters)')
     if not isinstance(out['slots'], list) or not out['slots'] or any(type(s) is not int or s < 1 for s in out['slots']):
         raise ValueError('slots must be a list of positive integers')
-    if type(out['udim']) is not int or not 1001 <= out['udim'] <= 1100:
-        raise ValueError('udim must be 1001..1100')
+    if (not isinstance(out['udims'], list) or not out['udims']
+            or any(type(u) is not int or not 1001 <= u <= 1100 for u in out['udims'])):
+        raise ValueError('udim/udims must be 1001..1100')
+    if (not isinstance(out['metal_slots'], list)
+            or any(type(s) is not int or s not in out['slots'] for s in out['metal_slots'])):
+        raise ValueError('metal_slots must be a list of requested slots')
     if (not isinstance(out['sizes'], list) or not out['sizes']
             or any(s not in PLACEHOLDER_SIZES for s in out['sizes']) or len(set(out['sizes'])) != len(out['sizes'])):
         raise ValueError('sizes must be distinct values of {}'.format(list(PLACEHOLDER_SIZES)))
@@ -808,8 +933,28 @@ def placeholder_name(address, mp, slot, udim, ground=False):
     return 'T_{}{}_{}_{}.{}.png'.format(address, '_Ground' if ground else '', mp, slot, udim)
 
 
+def diffuse_source(path, data, decode=None):
+    """(colour, None) or (None, reason) for `diffuse_from`: PNG in the core, System.Drawing formats through
+    `decode(path)`; TGA/EXR/PSD/DDS/HDR are refused with a reason (T05: a TGA became a silent grey 128)."""
+    ext = os.path.splitext(str(path))[1].lower()
+    if data is None:
+        return None, 'diffuse_from not found: {}'.format(path)
+    try:
+        if data[:8] == PNG_SIG:
+            img = decode_png(data)[0]
+        elif ext in DRAWING_EXTS and decode is not None:
+            img = decode(path)
+        else:
+            return None, ('diffuse_from {} cannot be read ({} is not PNG/JPG/BMP/TIF): Diffuse placeholder skipped, '
+                          'not a guessed grey').format(os.path.basename(str(path)), ext or 'no extension')
+        return average_colour(img), None
+    except Exception as exc:  # noqa: BLE001 - an unreadable source is a reason, never a grey default
+        return None, 'diffuse_from {} unreadable: {}'.format(os.path.basename(str(path)), exc)
+
+
 def average_colour(img):
-    """Single average colour (VPM flat_placeholder.single_average_color); alpha-weighted for RGBA."""
+    """Single average colour (VPM flat_placeholder.single_average_color) over the VISIBLE pixels: alpha-weighted
+    for RGBA (a fully transparent pixel weighs 0, T05/T01 counted it as black), rounded half up (T01 floored)."""
     n, px = img.n, img.px
     tot, acc = 0, [0, 0, 0]
     for i in range(img.w * img.h):
@@ -822,28 +967,64 @@ def average_colour(img):
     return [(a + tot // 2) // tot for a in acc]
 
 
-def placeholder_plan(opts, exists=os.path.exists):
-    """Planned files: [{map, size, colour, path}] or a reason (refused). os.path.join, never string glue."""
+def placeholder_plan(opts, exists=os.path.exists, sets=None):
+    """Planned files: [{map, size, slot, udim, colour, path, owners}] or a reason (refused). os.path.join, never
+    string glue. `sets`: [{address, ground, owners:[[handle, name]]}] (one set per address of the selected
+    objects); default one set from opts address/ground. A path requested twice in one call (same address, slot,
+    UDIM: T02 atlas_builder wrote 6 records into 3 files) is refused the second time, never written twice; ERM
+    of a `metal_slots` slot is ERM_METAL; a Diffuse without a readable source (opts `diffuse_reason`) is refused."""
     edit = edit_core()
-    rows = []
+    rows, planned = [], set()
     many = len(opts['sizes']) > 1
-    for size in opts['sizes']:
-        folder = os.path.join(opts['folder'], str(size)) if many else opts['folder']
-        for slot in opts['slots']:
-            for mp in MAPS:
-                name = placeholder_name(opts['address'], mp, slot, opts['udim'], opts['ground'])
-                target = os.path.join(folder, name)
-                row = {'map': mp, 'size': size, 'slot': slot, 'udim': opts['udim'], 'colour': opts['colours'][mp],
-                       'name': name}
-                try:
-                    row['path'] = edit.new_path(target, version=opts['on_exists'] == 'version', exists=exists)
-                    if row['path'] != target:
-                        row['versioned_from'] = target
-                except FileExistsError:
-                    row['path'] = target
-                    row['reason'] = 'exists, not overwritten (on_exists=refuse): ' + target
-                rows.append(row)
+    if sets is None:
+        sets = [{'address': opts['address'], 'ground': opts['ground'], 'owners': []}]
+    for st in sets:
+        for size in opts['sizes']:
+            folder = os.path.join(opts['folder'], str(size)) if many else opts['folder']
+            for slot in opts['slots']:
+                for udim in opts['udims']:
+                    for mp in MAPS:
+                        name = placeholder_name(st['address'], mp, slot, udim, st['ground'])
+                        target = os.path.join(folder, name)
+                        colour = opts['colours'][mp]
+                        if mp == 'ERM' and slot in opts.get('metal_slots', ()):
+                            colour = list(ERM_METAL)
+                        row = {'map': mp, 'size': size, 'slot': slot, 'udim': udim, 'colour': colour, 'name': name,
+                               'address': st['address'], 'owners': [list(o) for o in st.get('owners', ())]}
+                        key = os.path.normcase(os.path.abspath(target))
+                        if key in planned:
+                            row.update(path=target, code='placeholder_duplicate',
+                                       reason='requested twice in this call (UDIM {} slot {}): second refused, '
+                                              'nothing overwritten'.format(udim, slot))
+                            rows.append(row)
+                            continue
+                        planned.add(key)
+                        if mp == 'Diffuse' and opts.get('diffuse_reason'):
+                            row.update(path=target, code='placeholder_source', reason=opts['diffuse_reason'])
+                            rows.append(row)
+                            continue
+                        try:
+                            row['path'] = edit.new_path(target, version=opts['on_exists'] == 'version', exists=exists)
+                            if row['path'] != target:
+                                row['versioned_from'] = target
+                        except FileExistsError:
+                            row.update(path=target, code='placeholder_exists',
+                                       reason='exists, not overwritten (on_exists=refuse): ' + target)
+                        rows.append(row)
     return rows
+
+
+def placeholder_objects(edit, rows):
+    """One entry per owner node; a finding per refused file of its set."""
+    found = {}
+    for r in rows:
+        for h, name in r.get('owners') or ():
+            found.setdefault(int(h), {'name': name, 'findings': []})
+            if 'reason' in r:
+                f = edit.finding(r.get('code', 'placeholder_refused'), (), '{}: {}'.format(r['name'], r['reason']))
+                if f not in found[int(h)]['findings']:
+                    found[int(h)]['findings'].append(f)
+    return [edit.entry(h, v['name'], v['findings']) for h, v in sorted(found.items())]
 
 
 def placeholder_report(edit, mode, opts, rows, state_hash=None, written=()):
@@ -853,7 +1034,7 @@ def placeholder_report(edit, mode, opts, rows, state_hash=None, written=()):
     extra = {'options': opts, 'files': rows}
     if mode == 'apply':
         extra['written'] = list(written)
-    return edit.report('tex.placeholders', mode, [], done, skipped, [],
+    return edit.report('tex.placeholders', mode, placeholder_objects(edit, rows), done, skipped, [],
                        state_hash=state_hash if mode == 'preview' else None, extra=extra)
 
 
@@ -983,9 +1164,53 @@ def candidate_index(folders, listdir=os.listdir, isdir=os.path.isdir, recursive=
     return index
 
 
-def candidates(path, index):
+_SLOT_ROLES = (  # map slot name (property or sub-texmap slot name, any case) -> names_core role
+    (('normal', 'bump'), 'normal'),
+    (('opacity', 'cutout', 'transparency'), 'opacity'),
+    (('rough', 'gloss'), 'roughness'),
+    (('metal', 'specular level', 'specularlevel', 'specular_level'), 'metalness'),
+    (('emission', 'emissive', 'self-illum', 'selfillum', 'self_illum'), 'emission'),
+    (('diffuse', 'base color', 'base_color', 'basecolor', 'albedo'), 'diffuse'),
+)
+
+
+def role_of_slot(slot):
+    """names_core map role of a material slot name, else None. Reflection is NOT metalness (T06: renamer V13 gave
+    `_m` to specular AND reflection, TexFinder then moved it): an unknown slot has no mask candidate."""
+    s = str(slot or '').lower()
+    if not s or any(k in s for k in ('reflect', 'coat', 'sheen', 'sss', 'scatter', 'thin', 'aniso', 'weight',
+                                     'diff_rough', 'diffuse_rough', 'diffuse rough', 'displace')):
+        return None
+    for keys, role in _SLOT_ROLES:
+        if any(k in s for k in keys):
+            return role
+    return None
+
+
+def mask_stems(node, role, udim=None):
+    """Lower-case file stems of the project texture mask for an owner object and map role (slot 1), NPM and VPM
+    readings (TexFinder idea `T<base><suf>_1.*`, here from the names grammar, not by cutting 2 characters)."""
+    if not node or role is None:
+        return []
+    nc = names_core()
+    out = []
+    for model in ('npm', 'vpm'):
+        obj = nc.parse_object(node, model)
+        if isinstance(obj, str):
+            continue
+        try:
+            stem = nc.texture_stem(obj, model, role, 1, udim if model == 'vpm' else None)
+        except ValueError:
+            stem = None
+        if stem and stem.lower() not in out:
+            out.append(stem.lower())
+    return out
+
+
+def candidates(path, index, masks=()):
     """Ranked relink candidates for a missing path: same name + extension first (rank 0), then the same
-    base name with another extension (rank 1); each path once, sorted within a rank."""
+    base name with another extension (rank 1), then files named by the project mask of an owner (rank 2, any
+    image extension: .png and .jpg both listed); each path once, sorted within a rank."""
     stem, ext = os.path.splitext(os.path.basename(path))
     me = _norm(path)
     out, seen = [], set()
@@ -994,8 +1219,44 @@ def candidates(path, index):
         if key in seen or key == me:
             continue
         seen.add(key)
-        out.append({'path': p, 'rank': 0 if os.path.splitext(p)[1].lower() == ext.lower() else 1})
+        out.append({'path': p, 'rank': 0 if os.path.splitext(p)[1].lower() == ext.lower() else 1, 'by': 'name'})
+    for m in masks:
+        for p in index.get(m, []):
+            key = _norm(p)
+            if key in seen or key == me:
+                continue
+            seen.add(key)
+            out.append({'path': p, 'rank': 2, 'by': 'mask', 'mask': m})
     return sorted(out, key=lambda c: (c['rank'], c['path'].lower()))
+
+
+def search_folders(paths, map_paths=(), scene_dir='', search=(), isdir=os.path.isdir):
+    """(flat, recursive) folders of the candidate index. Default (no `search`) is the map paths themselves: the
+    folder of every map path, or its nearest existing parent when that folder is gone, plus the user map paths and
+    the scene folder (T06: TexFinder's "123" default found nothing). A relative search folder is refused."""
+    flat = set()
+    for p in paths:
+        if not p or not os.path.isabs(p):
+            continue
+        folder = os.path.dirname(p)
+        flat.add(folder)
+        probe = folder
+        while probe and not isdir(probe):
+            parent = os.path.dirname(probe)
+            if parent == probe:
+                break
+            probe = parent
+        if probe and probe != folder and isdir(probe):
+            flat.add(probe)
+    flat |= {f for f in map_paths if f}
+    if scene_dir:
+        flat.add(scene_dir)
+    deep = []
+    for f in search or ():
+        if not isinstance(f, str) or not f.strip() or not os.path.isabs(f):
+            raise ValueError('search folders must be absolute paths (a relative "123" finds nothing): ' + repr(f))
+        deep.append(f)
+    return sorted(flat), deep
 
 
 def missing_maps(maps, exists, read_head, index, listdir=os.listdir):
@@ -1030,7 +1291,15 @@ def missing_maps(maps, exists, read_head, index, listdir=os.listdir):
         if 'exists' not in r:
             r['exists'] = bool(exists(r['path']))
         r['size_px'] = image_size(read_head(r['path'])) if r['exists'] else None
-        r['candidates'] = [] if r['exists'] else candidates(r['path'], index)
+        masks = []
+        if not r['exists']:
+            for o in r['owners']:
+                role = o.get('role') or role_of_slot(o.get('slot'))
+                for m in mask_stems(o.get('node'), role, r.get('tile')):
+                    if m not in masks:
+                        masks.append(m)
+        r['masks'] = masks
+        r['candidates'] = [] if r['exists'] else candidates(r['path'], index, masks)
         r['ambiguous'] = len(r['candidates']) > 1
         r['hidden'] = any(o.get('hidden') for o in r['owners'])
         r['ucx'] = any(o.get('ucx') for o in r['owners'])

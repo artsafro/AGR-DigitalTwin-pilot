@@ -1,13 +1,31 @@
 {
  "schema": 1,
  "button": "place.drop_to_ground",
- "tool": null,
+ "tool": "place.drop_to_ground",
  "version": "0.9",
- "shipped": false,
+ "shipped": true,
  "select": "named",
- "reason": "станция в работе, #979, ветка A",
+ "reason": "",
  "apply_status": null,
- "objects": [],
+ "objects": [
+  {
+   "name": "SM_FragA_DropOk_GroundEl",
+   "scene": "frag_a_drop",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_FragA_DropMiss_GroundEl",
+   "scene": "frag_a_drop",
+   "expect": "fail",
+   "codes": [
+    "ground_miss"
+   ]
+  }
+ ],
+ "options": {
+  "offset_m": 0.1
+ },
  "base": "0.9",
  "station": "0.9.11",
  "stations": [

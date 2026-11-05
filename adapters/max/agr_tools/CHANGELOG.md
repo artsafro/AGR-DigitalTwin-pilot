@@ -21,12 +21,46 @@
 
 ### A — замены и МАФ (`improve/issue-979-place`)
 
-- Заглушка ветки A: `place.replace`, `place.schedule`, `place.drop_to_ground`, `place.maf_checks`, `place.flora_repair`.
+- `place.drop_to_ground` (undo): лучи вниз от каждой вершины на все `*_Ground` (скрытые тоже) или `options.ground`;
+  `offset_m` в метрах, «+» поднимает; `align` — аналитический поворот оси Z к нормали (без 360 копий);
+  объект под рельефом поднимается только с `lift_buried` и не переворачивается; промах → `ground_miss`, не двигается.
+  Исправлены дефекты Glue (L06): знак offset, плоскость под пивотом, пивот вместо низа, обратный луч, один Ground.
+- `place.maf_checks` (чтение): AABB-предфильтр, затем лучи от вершин; `maf_flying` (зазор, м), `maf_sunk` (глубина, м),
+  `maf_intersect` (пара, пересечение треугольников в 3D, касание не считается); допуски `fly_tol_m`/`sink_tol_m` 1 мм,
+  целевой зазор `gap_m`; скрытые/замороженные — в отчёте с флагом, ничего не выделяется.
+- `place.replace` (undo): мастер по точному имени, маска — точное имя или явный glob; инстанс/копия; сохраняются
+  мировой трансформ, слой, родитель, дети, user props; мастер, его инстансы и копии не цели (повтор ничего не меняет);
+  `stub` — Box по oriented bbox (width X, length Y, пивот в основании, трансформ один раз).
+- `place.schedule` (копии): ведомость `rows`/CSV/JSON (м, мир): отчёт по каждой строке — поставлено / `no_library_model` /
+  `outside_ground` / `blocked_by_obstacle` (здания `*_Main`, ранее поставленные) / `already_placed`; инстансы эталона на
+  `placement_instances`, посадка лучами `drop_to_ground` с утоплением 10 см; повтор без дублей.
+- `place.flora_repair` (копии): коды `negative_scale`, `rotated`, `shear`, `ngon`; shear → мировой меш с единичным
+  трансформом, остальное — триангулированный снимок; копии на `AGR_flora_repair` со сверкой с исходником (0,05 мм,
+  UV 2e-5); оригиналы не меняются и не удаляются; без UV / пустой меш → `skipped` с причиной.
 
 ### B — текстуры, UDIM, атласы (`improve/issue-979-tex-udim-atlas`)
 
-- Заглушка ветки B: `tex.erm_normal_check`, `tex.finish_map`, `udim.matid_unwrap`, `udim.slots`, `atlas.flora`,
-  `atlas.groundel`; доработка `atlas.npm`.
+- `tex.erm_normal_check` (чтение, `texqa_core`/`texqa_max`): PNG читается stdlib (заголовок `checks_core.png_info`,
+  пиксели zlib), формат — по сигнатуре (JPG с `.png` → `format_mismatch`). Нормаль: ориентация по ротору поля
+  (OpenGL → `normal_opengl`, нерешаемо → `ambiguous`), отклонение плоских мест от (128,128,255), единичность. ERM:
+  ложное свечение в R без эмиссии материала, серая ERM, альфа, глубина ≠ 8. Без порога 50 %, палитры и ImageMagick
+  (GeoAGR R02, `GeoAGR.ms:1685`, `:2188-2216`).
+- `tex.finish_map` (копии, `finish_core`/`finish_max`): обязательная легенда JSON/CSV со строгой проверкой (12 мутаций →
+  `ValueError`); ID без строки легенды и ID легенды без граней — находки до любой сборки; швы-кольца разрезаются только на
+  копии, проверка ±1 мм, швы по фасадам; невозможный шов — отказ без копии.
+- `udim.matid_unwrap` (копии, `uvtile_*`): развёртка по плоскостям граней, ID n → свой тайл (1000+n), одна плотность px/м
+  на все ID через `SystemScale` (±2 %, м и см одинаково), паддинг ≥ 8 px, острова внутри своего UDIM, переполнение —
+  находка с расчётом; стек исходника не трогается, копия примитива с модификаторами схлопывается и это в отчёте (L06).
+- `udim.slots` (чтение, `uvtile_*`): имена разбирает грамматика `names_core` (E1); `udim_gap`, `slot_gap`,
+  `maps_over_100`, `slot_over_7`, `name_unparsed`.
+- `atlas.flora` (новые файлы, `flora_atlas_max` + `atlas_core`): тайл на уникальную текстуру, инстанс перемапливается
+  один раз, кроп по UV, без апскейла, паддинг ≥ 8 px с bleed, диффуз RGB 24 бит, прозрачность отдельным атласом,
+  PNG пишет stdlib (одинаковые байты в любой версии Max), без C#.
+- `atlas.groundel` (копии): профиль `groundel` в `atlas_core.pack` — один набор ≤ 512, правило карт L06 (квадрат 128–512,
+  альфа по пикселям, нет карты → `map_missing`), непомещение → `atlas_overflow` с расчётом; 24 бит RGB.
+- Доработка `atlas.npm` (VPM_to_NPM, в ядре): профиль `npm` + `shrink` — атлас уменьшается до содержимого при том же
+  текселе (Ground 35 ± 0,1 px/м), 24 бит, паддинг 8, TGA → `skipped` без падения; доступна через
+  `atlas.groundel` с `profile: npm`. Кнопка 0.2 (`runtime.atlas_apply`) пока пишет PNG через Max — см. #979.
 
 ### C — проверки (`improve/issue-979-qa`)
 
@@ -34,11 +68,58 @@
 
 ### D — экспорт, карты, свет (`improve/issue-979-export-scene-light`)
 
-- Заглушка ветки D: `export.batch`, `scene.maps_usage`, `light.check`.
+- `light.check` (выделение, `light_core.py` / `light_max.py`): ≤ 250 источников (`light_count` на тех, что сверх
+  лимита; список не обрезается), только Omni и Free/Target Spot (`light_type`; пары Omni/Spot всё равно проверяются),
+  Omni ↔ любой ≥ 5 м и Spot ↔ Spot ≥ 1,5 м попарно в 3D по позиции источника, строгое «<» (`light_omni_distance`,
+  `light_spot_distance`), один корневой Dummy (`light_no_root`, `light_root_many`), пивот корня = опорная точка
+  (`light_root_pivot`, по умолчанию начало координат или `options.reference`), маски имён без лимита номера 050
+  (`light_name`). Метры через `units.SystemType` × `SystemScale`, `decodeValue` не используется: сцена в см даёт те
+  же нарушения. Цель Target Spot не считается корнем. Скрытые и замороженные нарушители — в `plan.ambiguous`, не в
+  выделении; wirecolor и сцена не меняются; отчёт со всеми парами-нарушениями и d в метрах.
+- `scene.maps_usage` (чтение, `mapsuse_core.py` / `mapsuse_max.py`): общий перечислитель `tex_max._scene_maps` +
+  все экземпляры `BitmapTexture` с узлами-владельцами (Blend, DoubleSided, Shell, сплайны, свет) + окружение;
+  сравнение по нормализованному пути, одноимённые — по SHA256 (копия по другому пути — `copies`, не «лишняя»);
+  пропавшая карта не подменяется одноимённым файлом (он только кандидат); лишние файлы — `plan.ambiguous`
+  (решение за человеком), удаления нет. Папка карт: `options.folders`, иначе `maps`/`textures` рядом со сценой,
+  иначе папки используемых карт.
+- `export.batch` (новые файлы, `batch_core.py` / `batch_max.py`): группы по `AGR_EXPORT_PATH`, каждая — через
+  `runtime.export_preview` / `export_commit` (ворота и readback `export.checked` как есть); существующий FBX (или его
+  `.report.json` / `.partial`) — следующая версия `_vNNN` уже в preview; упавшая группа не останавливает остальные,
+  итог fail; один отчёт. Процедурные объекты из `runtime.edits_090('qa.procedural_objects', 'preview')` блокируют
+  свою группу; пока эта строка отвечает `not_implemented`, не экспортируется ни одна группа (fail closed).
+- Полигон: станции 0.9.17 и 0.9.18 (`stations/D.json`, `stations/D_build.py` — узлы света, сцена в м и в см).
 
 ### E1 — доработка: текстуры и имена (`improve/issue-979-rework-tex-names`)
 
-- Заглушка ветки E1: доработки `tex.format_fix`, `tex.placeholders`, `scene.missing_maps`, `qa.names_fix`.
+Карточки аудита T01/T02/T05/T06; каждый дефект — регресс RED на модели командного скрипта → GREEN
+(`test_agr_tools_tex.py::test_T0*`, `test_agr_tools_names.py::test_V13_*|AMR_*|CN_*|A101_*`).
+
+- `tex.format_fix`: сначала lossless; иначе палитра ≤ 256 с дизерингом Флойда–Стейнберга (Q01), потом
+  постеризация — порядок решения Артёма. Новый порог `max_rmse` (по умолчанию 0,03; Q02 открыт). Лучший
+  вписавшийся вариант выше порога — отказ с измеренным RMSE, а не «готово» (T01: 8 цветов, RMSE 0,157).
+  Файл под лимитом не квантуется; ядро не пишет temp-файлов. Нажатие с выделения даёт объекты отчёта по
+  владельцам текстур (`tex_quality` / `tex_refused`).
+- `tex.placeholders`: средний цвет по видимым пикселям с округлением (T01 floor, T05 прозрачные как чёрные),
+  RGB 24 бит, размеры 128 и 256. `udims`: дубль UDIM в одном вызове — второй отказ, ничего не перезаписано
+  (T02: 6 записей → 3 файла). `metal_slots`: ERM `[0,0,255]`, неметалл как в 0.8 (Q03 открыт). Нормаль
+  `[128,128,255]`. Нечитаемый `diffuse_from` (TGA, EXR, PSD) — Diffuse `skipped` с причиной вместо серого 128
+  (T05). Один набор на адрес каждого выделенного объекта, находки `placeholder_exists|duplicate|source`.
+- `scene.missing_maps`: кандидаты по маске проекта владельца и роли слота (`T_<Адрес>[_NNN]_<Тип>_<d|n|…>_1.*`,
+  VPM `T_<Адрес>_<Карта>_1.<UDIM>.*`) с рангом 2, любые расширения (`.png` и `.jpg`), флаг неоднозначности.
+  Папки поиска по умолчанию — из путей карт (ближайший существующий родитель), относительная папка
+  (`"123"`) — отказ (T06 TexFinder). Перечислитель `tex_max._scene_maps(core, nodes)` не менял сигнатуру;
+  владельцы получили ключи `slot` и `role`.
+- `qa.names_fix`: файл с именем по маске и другим содержимым не перезаписан и не привязан, конфликт —
+  в `failures` (V13 `File.Copy overwrite`, Asset Material Renamer «skip existing»). Таблица слотов
+  `names_core.SLOT_TABLE`: `reflectionMap` без роли, `_m` только из `specularLevelMap`. `folder` — копии карт
+  в отдельную папку. Профиль `library` (`Brand_Name_Article_high|low`): невидимые символы, омоглифы и
+  транслит за один проход, дефис, сегмент с цифры и `.001` — отказ с причиной (CheckAssetNames v8). Имя,
+  занятое другим объектом сцены, — `ambiguous` (0 дублей). `role_names()` — имена 7 ролей по адресу, № ОКС,
+  слоту и FBX без `__` (A101LP :388); опции `address`/`oks`. Транслит: публичные `TRANSLIT`, `transliterate`,
+  `translit_variants` (Й → y, вариант j как в `GeoAGR.ms:194`) — одна таблица с `qa.address`.
+- `ucx.rename`: в preview кусок, который будет переименован, несёт находку `ucx_name` (что сделает apply).
+- Полигон: станции 0.8.1 `scene.missing_maps`, 0.8.3 `tex.format_fix`, 0.8.4 `tex.placeholders`, 0.8.6
+  `ucx.rename`, 0.8.8 `qa.names_fix` (`stations/E1.json`, `stations/E1_build.py`), по PASS и FAIL на кнопку.
 
 ### E2 — доработка: геометрия и UDIM (`improve/issue-979-rework-geom-udim`)
 
