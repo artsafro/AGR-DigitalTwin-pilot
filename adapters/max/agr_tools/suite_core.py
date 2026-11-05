@@ -129,17 +129,18 @@ def _materials(row):
 
 
 _NAME_TOKEN = re.compile(r'[^0-9A-Za-z]+')
+_GLASS_TOKENS = frozenset({'glass', 'mainglass', 'groundglass', 'groundelglass'})
 
 
 def _is_glass_material(m):
     """Glass by an exact name token ``glass`` or by opacity strictly below 1 - OPACITY_TOL.
 
     The name is split on non-alphanumeric characters, underscores included. A case-insensitive token
-    equal to ``glass`` counts (``M_Glass``, ``Glass``). A substring does not (``M_Fiberglass_Panel``,
-    ``MainGlass``). Non-finite opacity and opacity exactly at the threshold are not glass.
+    in glass/mainglass/groundglass/groundelglass counts (``M_Glass``, ``M_A_MainGlass_1``). A substring
+    does not (``M_Fiberglass_Panel``). Non-finite opacity and opacity exactly at the threshold are not glass.
     """
     name = str(m.get('name', ''))
-    by_name = any(tok.lower() == 'glass' for tok in _NAME_TOKEN.split(name) if tok)
+    by_name = any(tok.lower() in _GLASS_TOKENS for tok in _NAME_TOKEN.split(name) if tok)
     op = m.get('opacity')
     return by_name or (_finite(op) and op < 1.0 - OPACITY_TOL)
 

@@ -236,8 +236,9 @@ def test_glass_opaque_material_on_glass_mesh():
 def test_glass_token_opacity_and_sets_count_probe():
     """Glass is an exact name token or opacity < 1 - tol. Fiberglass is an opaque set. NaN, inf and
     opacity exactly at the threshold never count as glass."""
-    glass_names = ['Glass', 'M_Glass', 'M_Glass_01', 'GLASS', 'a.glass.b', 'x-Glass-y', 'glass']
-    opaque_names = ['M_Fiberglass_Panel', 'Fiberglass', 'MainGlass', 'stainedglass', 'glassy',
+    glass_names = ['Glass', 'M_Glass', 'M_Glass_01', 'GLASS', 'a.glass.b', 'x-Glass-y', 'glass',
+                   'M_A_MainGlass_1', 'M_A_GroundGlass_1', 'M_A_GroundElGlass_1', 'mainglass']
+    opaque_names = ['M_Fiberglass_Panel', 'Fiberglass', 'stainedglass', 'glassy',
                     'hourglass', 'M_Brick', 'glass2', '2glass']
     threshold = 1.0 - core.OPACITY_TOL
     below = math.nextafter(threshold, 0.0)
