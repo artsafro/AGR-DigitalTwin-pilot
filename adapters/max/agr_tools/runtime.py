@@ -679,8 +679,9 @@ def cleanup_preview(nodes=None, options=None):
 
 
 # Animation keys under an animatable (node, its stack, its material), counted or deleted (#979 export.cleanup keys).
-# Leaf controllers only: Position XYZ repeats the keys of its X/Y/Z (job 20261105-144144-6b9bc700: 32 for 16).
-_KEYS_FN = '''fn agrCleanupKeys a del = (
+# Leaf controllers only, each once: Position XYZ repeats the keys of X/Y/Z, a material parameter can be reached by
+# two subAnim paths (jobs 20261105-144144-6b9bc700, 20261105-144414-41248262).
+_KEYS_FN = '''fn agrCleanupKeys a del seen = (
     local n = 0
     if a != undefined do (
         for i = 1 to a.numSubs do (
@@ -688,10 +689,14 @@ _KEYS_FN = '''fn agrCleanupKeys a del = (
             if s != undefined do (
                 local c = s.controller
                 if c != undefined and isController c and c.numSubs == 0 do (  -- leaves only: no double count
-                    local k = numKeys c
-                    if k > 0 do (n += k; if del do deleteKeys c #allKeys)
+                    local h = getHandleByAnim c
+                    if findItem seen h == 0 do (
+                        append seen h
+                        local k = numKeys c
+                        if k > 0 do (n += k; if del do deleteKeys c #allKeys)
+                    )
                 )
-                n += agrCleanupKeys s del
+                n += agrCleanupKeys s del seen
             )
         )
     )
@@ -702,9 +707,10 @@ _KEYS_FN = '''fn agrCleanupKeys a del = (
 def _cleanup_keys(n, delete=False):
     rt = _rt()
     fn = rt.execute(_KEYS_FN)
-    count = int(fn(n, delete))
+    seen = rt.Array()  # a controller reached twice (material params) counts once
+    count = int(fn(n, delete, seen))
     if n.material is not None:
-        count += int(fn(n.material, delete))
+        count += int(fn(n.material, delete, seen))
     return count
 
 
