@@ -64,7 +64,37 @@
 
 ### C — проверки (`improve/issue-979-qa`)
 
-- Заглушка ветки C: `qa.address`, `qa.normals`, `qa.sintez`, `qa.facade_compare`, `qa.procedural_objects`.
+Все пять кнопок — только чтение (preview); сцена, материалы, вьюпорт, рендерер и выделение не меняются.
+Ядра `qa9_core.py` / `facade_core.py` на stdlib, обвязка `qa9_max.py` / `facade_max.py`.
+
+- `qa.address`: грамматика Address `Улица_Дом[_K_n][_Str_n]…` и справочник улиц. Коды `addr_chars`, `addr_parts`,
+  `addr_length`, `addr_case`, `addr_abbr`, `addr_translit`, `addr_street_unknown`; у каждого адреса одна основная
+  причина, остальные — в детали. `D`/`Dom` и `Uch` — предупреждения (`plan.warnings`). Исправлены дефекты L05:
+  части дома на позиции 2–3, пустые элементы (лишний `_`), нет проверки длины (лимит 214 = 254 − обёртка имени),
+  сравнение по подстроке (`Parkovaya`, `Valovaya`), числительное 171н (`2jKotelnicheskijPer`), каскад и регистр,
+  пробел как «транслит», молчаливый CP1251 / отсутствие словаря (теперь явная ошибка).
+  Справочник — `data/streets/`: ОМК УМ (data.mos.ru, выгрузка из SINTEZ 1.6.1) и поселения Wikidata (CC0),
+  происхождение и SHA256 в `PROVENANCE.md`. CSV GeoAGR не копируются. Транслит улиц — ГОСТ 7.79-Б из классификатора
+  (Й → J); форма через Y — `addr_translit` с подсказкой. Подсказка для свободного текста — таблица `names_core`.
+- `qa.normals`: `normal_inward` (замкнутый элемент: согласование ориентации по рёбрам + знак объёма, не центр bbox
+  объекта), `double_face` (все пары через пространственный хэш, обе грани в отчёте; сонаправленные ближе 5 мм —
+  VPM-2.3-13; встречные до 2 см, где второй стороны быть не должно), `double_side_offset` (вторая сторона
+  стекла/Flora/opacity вне 3–10 мм, VPM-2.12-3), `missing_double_side`, `sg_none`. Пороги в метрах
+  (`SystemType` × `SystemScale`, без `decodeValue`): сцены в м и см дают одно и то же. Зазор пары меряется в
+  центре области перекрытия по копланарному «пятну» и не зависит от размера граней и триангуляции. Editable_Mesh,
+  примитивы и Editable_Poly — одинаково; узел без сетки (Populate Crowd) — в `skipped` с причиной. Материалы и
+  Nitrous не подменяются (дефект View Normals).
+- `qa.sintez`: таблица правило → наш вердикт / SINTEZ / совпадение. Вход: отчёт SINTEZ (`run_agr_checker.py`) и
+  отчёт `qa.preflight` (файл или прогон на сцене) и/или `qa.package`. `sintez_mismatch` — расхождение, с правилом;
+  `sintez_unmatched` — SINTEZ fail по правилу, которого мы не проверяем. 2.3.17 сверяется по `qa.package` V003.
+- `qa.facade_compare`: картинка «лист | ВПМ | НПМ» в одном масштабе (новый PNG, `_vNNN`), счёт швов по пикселям.
+  Модель не рендерится: снимок сетки растеризуется в Python при фиксированных px/м, рендерер сцены и вьюпорт не
+  трогаются (дефект `apply_atlas_uv`). Лист — PNG/BMP/PGM. Расхождение числа швов → `facade_joints`.
+- `qa.procedural_objects`: классы — данные (`data/procedural_classes.json`, L07: Chaos Scatter, Corona Scatter,
+  Populate, ScatterGeometry измерены; Forest Pack, RailClone, MultiScatter, RayFire, tyFlow — по именам T07),
+  заглушка отсутствующего плагина `Missing_*` → `proc_missing_plugin`. Ничего не сворачивается. Отчёт отдаёт
+  стабильный список `plan.procedural` / `plan.blocking` для `export.batch`, плагины без классов в этой Max —
+  «плагин не установлен», предупреждение: треугольники этих объектов `qa.tris` не посчитал.
 
 ### D — экспорт, карты, свет (`improve/issue-979-export-scene-light`)
 
