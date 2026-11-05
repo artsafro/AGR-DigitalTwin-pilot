@@ -122,6 +122,68 @@ try:
         summary['errors']['qt_panel'] = traceback.format_exc()[-1500:]
 except Exception:  # noqa: BLE001
     summary['errors']['setup'] = traceback.format_exc()[-2000:]
+
+
+def e3_rework():
+    """#979 branch E3: scene.census and qa.zero_area rework on a second disposable scene (never saved)."""
+    import struct
+    import zlib
+    rt.resetMaxFile(rt.name('noPrompt'))
+    rt.units.SystemType = rt.name('meters')
+    rt.units.SystemScale = 1.0
+    agr = load_runtime()
+    maps = os.path.join(OUT, 'maps')
+    os.makedirs(maps, exist_ok=True)
+
+    def chunk(kind, data):
+        return struct.pack('>I', len(data)) + kind + data + struct.pack('>I', zlib.crc32(kind + data) & 0xffffffff)
+    big = os.path.join(maps, 'T_A_Diffuse_1.1001.png')  # header only: census reads sizes, never the pixels
+    with open(big, 'wb') as fh:
+        fh.write(b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR', struct.pack('>IIBBBBB', 6000, 3000, 8, 2, 0, 0, 0))
+                 + chunk(b'IEND', b''))
+    missing = os.path.join(OUT, 'missing', 'T_Polygon_007_Main_d_1.png').replace('\\', '/')
+    m_missing = rt.Standardmaterial(name='M_Polygon_007_Main_1')
+    m_missing.diffuseMap = rt.Bitmaptexture(filename=missing)
+    a = box('SM_Polygon_007_Main', (0, 0, 0), mat=m_missing)
+    m_big = rt.Standardmaterial(name='M_A_001_Main_1')
+    m_big.diffuseMap = rt.Bitmaptexture(filename=big)
+    b = box('SM_A_001_Main', (30, 0, 0), mat=m_big)
+    c = box('SM_Дом_Main', (60, 0, 0))
+    d = rt.instance(c)
+    d.name = 'SM_Дом_002_Main'
+    d.pos = rt.Point3(90, 0, 0)
+    before = [str(n.name) for n in rt.objects]
+    rep = agr.checks_070('census', [a, b, c, d], False)
+    agr.parse_report(json.dumps(rep, allow_nan=False))
+    s = rep['plan']['summary']
+    found = {o['name']: [f['code'] for f in o['findings']] for o in rep['objects']}
+    assert found['SM_Polygon_007_Main'] == ['missing_map'], found
+    assert [m['path'].replace('\\', '/').rsplit('/', 1)[-1] for m in s['large_maps']] == ['T_A_Diffuse_1.1001.png'], s
+    assert s['cyrillic_names'] == ['SM_Дом_002_Main', 'SM_Дом_Main'] and s['instance_groups'] == 1, s
+    assert s['triangles'] == 48 and s['triangles_by_layer'] == {'0': 48}, s
+    sufile = agr._suite_core() if hasattr(agr, '_suite_core') else None
+    raw = (sufile.census_dump(rep) if sufile else json.dumps(rep, ensure_ascii=False).encode('utf-8'))
+    with open(os.path.join(OUT, 'census_e3.json'), 'wb') as fh:
+        fh.write(raw)
+    assert 'SM_Дом_Main'.encode('utf-8') in raw
+    assert [str(n.name) for n in rt.objects] == before, 'census changed the scene'
+    thin = rt.mesh(name='SM_A_002_Main', vertices=rt.Array(rt.Point3(0, 0, 0), rt.Point3(1, 0, 0),
+                                                           rt.Point3(0.5, 0.0001, 0)),
+                   faces=rt.Array(rt.Point3(1, 2, 3)))
+    z = agr.checks_070('zero_area', [thin, b], False)
+    codes = {o['name']: [f['code'] for f in o['findings']] for o in z['objects']}
+    assert codes == {'SM_A_002_Main': ['sliver_face'], 'SM_A_001_Main': []}, codes
+    pf = agr.checks_070('preflight', [thin], False)
+    assert not any(f['code'] == 'sliver_face' for o in pf['objects'] for f in o['findings']), pf['objects']
+    return {'census_findings': found, 'large_maps': s['large_maps'], 'instance_groups': s['instance_groups'],
+            'cyrillic_names': s['cyrillic_names'], 'renderer': s['renderer'], 'zero_area': codes}
+
+
+try:
+    summary['e3'] = e3_rework()
+except Exception:  # noqa: BLE001
+    summary['errors']['e3'] = traceback.format_exc()[-2500:]
+summary['scene_saved'] = bool(str(rt.maxFileName))
 with open(os.path.join(OUT, 'summary.json'), 'w', encoding='utf-8') as f:
     json.dump(summary, f, ensure_ascii=False, indent=1)
 print('AGR_860_SUMMARY ' + json.dumps(summary, ensure_ascii=True)[:3000])

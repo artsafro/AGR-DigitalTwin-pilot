@@ -412,8 +412,10 @@ def test_zero_area_faces_edges_isolated():
     f, _, _ = core.zero_area([obj(1, mesh={'verts': v, 'tris': t}), obj(2),
                               obj(3, mesh={'verts': [(0, 0, float('inf'))], 'tris': []}),
                               obj(4, mesh={'verts': CUBE_V, 'tris': [(0, 1, 99)]})])
-    assert codes(f, 1) == ['zero_area_face', 'zero_length_edge']
+    # face 14 has area (a 1e-7 m edge): zero_length_edge plus the advisory sliver_face since 0.9 (#979)
+    assert codes(f, 1) == ['sliver_face', 'zero_area_face', 'zero_length_edge']
     assert [ids for c, _, ids in f[1] if c == 'zero_area_face'] == [(13,)]
+    assert [ids for c, _, ids in f[1] if c == 'sliver_face'] == [(14,)]
     assert codes(f, 2) == []
     assert codes(f, 3) == ['zero_unmeasurable'] and codes(f, 4) == ['zero_unmeasurable']
     v2 = list(CUBE_V) + [(5, 5, 5)]
@@ -535,7 +537,8 @@ def test_suite_max_passes_scene_units_to_preflight(monkeypatch):
                                select=lambda nodes: None)
     monkeypatch.setattr(sm, '_rt', lambda: rt)
     monkeypatch.setattr(sm, 'targets', lambda agr, nodes: ['n1'])
-    monkeypatch.setattr(sm, '_row', lambda agr, glue, n, scale: obj(1))
+    monkeypatch.setattr(sm, '_row', lambda agr, glue, n, scale, sizer=None: obj(1))
+    monkeypatch.setattr(sm, '_shared_maps', lambda agr, nodes: ({}, []))
     agr = types.SimpleNamespace(_unit_m=lambda: 1.0, _load_core=lambda *a: audit)
     rep = sm.run(agr, None, core, 'preflight')
     assert rep['status'] == 'fail' and rep['plan']['summary']['checks']['units'] == 'fail'

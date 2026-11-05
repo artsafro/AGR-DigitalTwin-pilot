@@ -3,6 +3,9 @@
 Builds the plain row dicts of suite_core's contract. Geometry comes from snapshotAsMesh copies in memory
 (deleted after reading); maps from usedMaps plus Bitmaptexture file names (usedMaps drops a missing file);
 nothing is converted, reset, collapsed or saved (GeoAGR D6).
+0.9 (#979, E3): scene.census / qa.preflight also take missing maps from the shared bitmap enumerator of tex_max
+(`_scene_maps`, owner E1, read only), map sizes from file headers (suite_core.image_size), the base object handle
+(instance groups) and the renderer.
 """
 import os
 
@@ -149,7 +152,7 @@ def _file_missing(glue, path, label):
         raise ValueError('unreadable map entry on {}: {}'.format(label, exc)) from exc
 
 
-def _materials(n, glue):
+def _materials(n, glue, sizer=None):
     """Every material of the node (Multi/Sub and its subs), each with class, maps, missing maps, opacity.
 
     Map paths are usedMaps unioned with Bitmaptexture file names, so a file Max will not list is still
@@ -177,6 +180,7 @@ def _materials(n, glue):
             if path not in paths:
                 paths.append(path)
         missing = [p for p in paths if _file_missing(glue, p, label)]
+        sizes = {p: _map_size(glue, p, sizer) for p in paths if p not in missing} if sizer else {}
         opacity = None
         try:
             if rt.classOf(m) == rt.Standardmaterial:
@@ -186,8 +190,51 @@ def _materials(n, glue):
         except Exception:  # noqa: BLE001 - unreadable opacity stays None (judged fail-closed by the core)
             opacity = None
         out.append({'name': label, 'cls': str(rt.classOf(m)), 'maps': paths, 'missing': missing,
-                    'opacity': opacity})
+                    'opacity': opacity, 'sizes': {p: s for p, s in sizes.items() if s is not None}})
     return out
+
+
+def _map_size(glue, path, sizer):
+    """[w, h] from the file header (scene.census large maps, suite_core.image_size); None when unreadable.
+    Only the first 64 KiB are read: the bitmap is never loaded (Optimise_info loaded every 8K map, T04)."""
+    try:
+        with open(glue._resolve(path), 'rb') as fh:
+            head = fh.read(65536)
+    except (OSError, TypeError, ValueError):
+        return None
+    size = sizer(head)
+    return list(size) if size else None
+
+
+def _shared_maps(agr, nodes):
+    """Missing map files from the shared bitmap enumerator of tex_max (`_scene_maps(core, nodes)`: materials of the
+    nodes, scene materials, AssetManager; owner E1, read only here). Returns ({node handle: [paths]}, [paths with
+    no owner node]). usedMaps drops a Bitmaptexture whose file is missing (#886, polygon known bug
+    census-usedmaps-drops-missing-file); this reader does not."""
+    tex = agr._load_core('tex_max.py', 'agr_tools_tex_max_census')
+    core = agr._load_core('tex_core.py', 'agr_tools_tex_core_census')
+    records, _notes = tex._scene_maps(core, nodes)
+    by_node, scene = {}, []
+    for rec in records:
+        path = rec.get('path')
+        if not path or tex._exists(path):
+            continue
+        owners = [o for o in rec.get('owners') or [] if o.get('handle') is not None]
+        if not owners and path not in scene:
+            scene.append(path)
+        for o in owners:
+            lst = by_node.setdefault(int(o['handle']), [])
+            if path not in lst:
+                lst.append(path)
+    return by_node, sorted(scene)
+
+
+def _renderer():
+    rt = _rt()
+    try:
+        return str(rt.classOf(rt.renderers.current))
+    except Exception:  # noqa: BLE001 - reported as unknown, the census is read-only
+        return None
 
 
 def _mesh_reader(n, scale):
@@ -212,7 +259,7 @@ def _mesh_reader(n, scale):
     return read
 
 
-def _row(agr, glue, n, scale):
+def _row(agr, glue, n, scale, sizer=None):
     rt = _rt()
     sc = _superclass(n)
     geo = sc == 'geometry' and bool(rt.canConvertTo(n, rt.TriMeshGeometry))
@@ -242,7 +289,7 @@ def _row(agr, glue, n, scale):
     return {
         'key': int(rt.getHandleByAnim(n)), 'name': str(n.name), 'fbx': agr._prop(n, 'AGR_EXPORT_PATH'),
         'superclass': sc, 'cls': str(rt.classOf(n)), 'faces': faces, 'verts': verts,
-        'materials': _materials(n, glue) if sc == 'geometry' else [],
+        'materials': _materials(n, glue, sizer) if sc == 'geometry' else [],
         'parent': str(n.parent.name) if n.parent is not None and n.parent != rt.undefined else None,
         'children': int(n.children.count), 'group': group, 'animated': animated,
         'modifiers': [str(md.name) for md in n.modifiers], 'layer': str(n.layer.name),
@@ -250,7 +297,7 @@ def _row(agr, glue, n, scale):
         'mirror': det < 0,
         'bbox': ((float(bb[0].x) * scale, float(bb[0].y) * scale, float(bb[0].z) * scale),
                  (float(bb[1].x) * scale, float(bb[1].y) * scale, float(bb[1].z) * scale)),
-        'instances': count, 'zero_m': zero, 'roof_set': agr._prop(n, 'AGR_ROOF_SET') in ('1', 1, True),
+        'instances': count, 'base_key': int(rt.getHandleByAnim(n.baseObject)), 'zero_m': zero, 'roof_set': agr._prop(n, 'AGR_ROOF_SET') in ('1', 1, True),
         'mesh': _mesh_reader(n, scale) if geo else {'verts': [], 'tris': []},
     }
 
@@ -283,9 +330,16 @@ def run(agr, glue, core, tool, nodes=None, select=True):
         return core.scene_report('units', scene['path'], core.units(scene))
     nodes = targets(agr, nodes)
     scale = agr._unit_m()
-    rows = [_row(agr, glue, n, scale) for n in nodes]
+    sizer = core.image_size if tool in ('census', 'preflight') else None
+    rows = [_row(agr, glue, n, scale, sizer) for n in nodes]
     audit = None
     scene = scene_units() if tool == 'preflight' else None  # qa.preflight includes scene.units (#882)
+    if tool in ('census', 'preflight'):  # missing maps from the shared enumerator too (#979, #886)
+        by_node, scene_missing = _shared_maps(agr, nodes)
+        for row in rows:
+            row['extra_missing'] = by_node.get(row['key'], [])
+        if tool == 'census':
+            scene = {'renderer': _renderer(), 'scene_missing': scene_missing}
     if tool in ('ucx_audit', 'preflight'):
         try:
             audit = agr._load_core('ucx_audit_core.py', 'agr_ucx_audit_core')  # shipped slice (MZP)
