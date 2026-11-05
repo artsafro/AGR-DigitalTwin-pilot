@@ -216,14 +216,16 @@ def test_write_then_check_round_trip(tmp_path):
 
 # --- PROJECT_STATE milestones ----------------------------------------------------------------------
 
-def test_milestones_render_before_in_production(tmp_path):
+def test_milestones_render_inside_goal_without_a_new_heading(tmp_path):
     module = _state()
     (tmp_path / "docs").mkdir()
     (tmp_path / "docs" / "PROJECT_STATE.milestones.md").write_text(
         "Ground v015 accepted (#906)\n\nAGR Tools 0.8.0 released (#979)\n", encoding="utf-8")
     lines = module._milestone_lines(tmp_path)
     text = module.render([("abc1234", "Merge pull request #1 from a/b")], [], milestone_lines=lines)
-    assert text.index("## Milestones") < text.index("## In production")
+    assert text.index("## Goal") < text.index("Reached so far") < text.index("## In production")
+    assert [line for line in text.splitlines() if line.startswith("#")] == [
+        "# Project state", "## Goal", "## In production", "## Harness", "## Next step", "## Links"]
     assert "- Ground v015 accepted (#906)" in text
     assert "- AGR Tools 0.8.0 released (#979)" in text
 
@@ -245,7 +247,7 @@ def test_absent_milestones_render_nothing(tmp_path):
     module = _state()
     assert module._milestone_lines(tmp_path) == []
     text = module.render([("abc1234", "Merge pull request #1 from a/b")], [])
-    assert "## Milestones" not in text
+    assert "Reached so far" not in text
 
 
 def test_milestones_file_is_a_protected_input(tmp_path):
@@ -255,7 +257,7 @@ def test_milestones_file_is_a_protected_input(tmp_path):
 
 def test_checked_in_state_names_the_merged_milestones():
     text = (ROOT / "docs" / "PROJECT_STATE.md").read_text(encoding="utf-8")
-    section = text.split("## Milestones", 1)[1].split("\n## ", 1)[0]
+    section = text.split("Reached so far", 1)[1].split("\n## ", 1)[0]
     for needle in ("Ground v015", "#906", "D193", "AC08", "#891", "#968", "#1006",
                    "0.8.0", "0.9", "#887"):
         assert needle in section, needle

@@ -153,7 +153,22 @@ def require_sources(merges, opens):
 
 
 def _next_lines(repo):
-    path = repo / "docs" / "PROJECT_STATE.next.md"
+    return _curated_lines(repo / "docs" / "PROJECT_STATE.next.md")
+
+
+MILESTONE_REF = re.compile(r"#[1-9][0-9]*")
+
+
+def _milestone_lines(repo):
+    """Curated accepted/released milestones; every line cites its PR or issue (#n)."""
+    rows = _curated_lines(repo / "docs" / "PROJECT_STATE.milestones.md")
+    for row in rows:
+        if not MILESTONE_REF.search(row):
+            raise FailClosed("unsupported")
+    return rows
+
+
+def _curated_lines(path):
     if not path.exists():
         return []
     text = path.read_text(encoding="utf-8")
@@ -209,7 +224,7 @@ def _capability_line(repo, slug, label, group):
             f'Reference: `evals/{slug}/reference.json`.']
 
 
-def render(merges, opens, next_lines=None, capability_lines=None):
+def render(merges, opens, next_lines=None, capability_lines=None, milestone_lines=None):
     require_sources(merges, opens)
     opens = sorted(opens, key=lambda pr: pr["number"])
     next_lines = list(next_lines or [])
@@ -224,6 +239,11 @@ def render(merges, opens, next_lines=None, capability_lines=None):
         "NPM and VPM deliveries for buildings, Ground, MAF, Flora and UCX, plus the Unreal experience. "
         "Sections below are generated from merged and open pull requests.",
         "",
+    ]
+    if milestone_lines:
+        lines.extend(["Reached so far (curated in `docs/PROJECT_STATE.milestones.md`; each line cites its PR or issue):",
+                      *(f"- {line}" for line in milestone_lines), ""])
+    lines += [
         "## In production",
         "",
         "PR merges do not imply delivery acceptance. Per-object gates stay in `jobs/<ID>/STATE.md`. "
@@ -290,6 +310,7 @@ def _inputs(repo):
                 if common.is_file():
                     found.append((metadata / common.read_text(encoding="utf-8").strip()).resolve())
     found.append(repo / "docs" / "PROJECT_STATE.next.md")
+    found.append(repo / "docs" / "PROJECT_STATE.milestones.md")
     found.append(repo / "evals/capability-b01/reference.json")
     found.append(repo / "evals/capability-ticket/reference.json")
     found.append(Path(__file__).resolve())
@@ -379,7 +400,8 @@ def generate(repo, output, max_merges, max_open):
     merges = normalize_merges(merges_raw)[:max_merges]
     opens = _load_opens(opens_raw)[:max_open]
     require_sources(merges, opens)
-    text = finalize(render(merges, opens, _next_lines(repo), _capability_lines(repo)))
+    text = finalize(render(merges, opens, _next_lines(repo), _capability_lines(repo),
+                           _milestone_lines(repo)))
     _publish(output, text)
     return text
 
