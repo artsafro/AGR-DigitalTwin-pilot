@@ -133,6 +133,26 @@ def _is_glass_material(m):
     return 'glass' in name.lower() or (_finite(op) and op < 1.0 - OPACITY_TOL)
 
 
+def _map_field(m, field):
+    """File-name list on a material row. No field: unmapped material. A bad entry is unreadable, never skipped."""
+    if not isinstance(m, dict):
+        raise ValueError('unmapped material {}'.format(m))
+    name = m.get('name')
+    if not isinstance(name, str) or not name.strip() or field not in m:
+        shown = name.strip() if isinstance(name, str) and name.strip() else m
+        raise ValueError('unmapped material {}'.format(shown))
+    value = m[field]
+    if not isinstance(value, list):
+        raise ValueError('unreadable map entry on {}: {}'.format(name, field))
+    out = []
+    for item in value:
+        if not isinstance(item, str) or not item.strip():
+            raise ValueError('unreadable map entry on {}: {!r}'.format(name, item))
+        if item not in out:
+            out.append(item)
+    return out
+
+
 # --- scene.census -------------------------------------------------------------------------------------
 def census(rows):
     """Census of the scene: per class, materials, maps (missing files are findings), bbox, instances.
@@ -148,13 +168,19 @@ def census(rows):
     for r in rows:
         sc = str(_need(r, 'superclass'))
         by_class[sc] = by_class.get(sc, 0) + 1
+        seen_missing = set()
         for m in _materials(r):
-            mats.add(str(m.get('name')))
-            for p in m.get('maps') or []:
+            paths = _map_field(m, 'maps')
+            miss = _map_field(m, 'missing')
+            mats.add(m['name'])
+            for p in paths:
                 maps.add(p)
-            for p in m.get('missing') or []:
+            for p in miss:
+                if p in seen_missing:
+                    continue
+                seen_missing.add(p)
                 missing.add(p)
-                _add(found, r['key'], 'missing_map', 'нет файла: ' + str(p))
+                _add(found, r['key'], 'missing_map', 'нет файла: ' + p)
         box = r.get('bbox')
         if box is not None:
             if not (len(box) == 2 and all(_finite(*c) for c in box)):
