@@ -751,7 +751,9 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "0.9",
-   "icon": "mafuv"
+   "icon": "mafuv",
+   "lab_report": "docs/experiments/udim.matid_unwrap.md",
+   "lab_status": "lab 0.9 L06: as documented; ID n -> 1000+n (holes for sparse IDs), no overlaps, TD same in m/cm; collapses primitive stacks, packer blind to Unwrap and crosses UDIM borders; take_fix"
   },
   {
    "id": "udim.rescale",
@@ -943,7 +945,9 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "0.9",
-   "icon": "groundel"
+   "icon": "groundel",
+   "lab_report": "docs/experiments/atlas.groundel.md",
+   "lab_status": "lab 0.9 L06: broken; Find errors throws before GroundEl, 512 rule (square 128/256/512, any alpha = error) never runs; missing maps silent; merge"
   },
   {
    "id": "atlas.unatlas",
@@ -1039,7 +1043,9 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "0.9",
-   "icon": "ground"
+   "icon": "ground",
+   "lab_report": "docs/experiments/place.drop_to_ground.md",
+   "lab_status": "lab 0.9 L06: offset sign defect confirmed in Max 2024 (= 2026), no-align sinks on slopes, flips objects under closed ground; aligned path exact; take_fix"
   },
   {
    "id": "place.maf_generator",
@@ -1331,7 +1337,9 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "0.9",
-   "icon": "address"
+   "icon": "address",
+   "lab_report": "docs/experiments/qa.address.md",
+   "lab_status": "lab 0.9 L05: differs; only Street_House passes; house parts at token 2-3, extra \"_\", no length check, substring false fails, CP1251/missing CSV; take_fix"
   },
   {
    "id": "qa.facade_compare",
@@ -1363,7 +1371,9 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "0.9",
-   "icon": "normals"
+   "icon": "normals",
+   "lab_report": "docs/experiments/qa.normals.md",
+   "lab_status": "lab 0.9 L05: differs; LMB thresholds in system units, one pair per face (order misses), RMB bbox-centre false inward, View Normals leaves viewport changed; take_fix (plan: take)"
   },
   {
    "id": "qa.sintez",
@@ -1563,7 +1573,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.9",
-   "icon": "lightcheck"
+   "icon": "lightcheck",
+   "lab_report": "docs/experiments/light.check.md",
+   "lab_status": "lab 0.9 L05: GeoAGR part differs; strict <, source positions, thresholds in system units (cm scene misses all), invalid types skip pairs, Add Selected cap 250; merge"
   },
   {
    "id": "light.export",
