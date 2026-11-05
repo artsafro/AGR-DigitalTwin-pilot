@@ -21,7 +21,22 @@
 
 ### A — замены и МАФ (`improve/issue-979-place`)
 
-- Заглушка ветки A: `place.replace`, `place.schedule`, `place.drop_to_ground`, `place.maf_checks`, `place.flora_repair`.
+- `place.drop_to_ground` (undo): лучи вниз от каждой вершины на все `*_Ground` (скрытые тоже) или `options.ground`;
+  `offset_m` в метрах, «+» поднимает; `align` — аналитический поворот оси Z к нормали (без 360 копий);
+  объект под рельефом поднимается только с `lift_buried` и не переворачивается; промах → `ground_miss`, не двигается.
+  Исправлены дефекты Glue (L06): знак offset, плоскость под пивотом, пивот вместо низа, обратный луч, один Ground.
+- `place.maf_checks` (чтение): AABB-предфильтр, затем лучи от вершин; `maf_flying` (зазор, м), `maf_sunk` (глубина, м),
+  `maf_intersect` (пара, пересечение треугольников в 3D, касание не считается); допуски `fly_tol_m`/`sink_tol_m` 1 мм,
+  целевой зазор `gap_m`; скрытые/замороженные — в отчёте с флагом, ничего не выделяется.
+- `place.replace` (undo): мастер по точному имени, маска — точное имя или явный glob; инстанс/копия; сохраняются
+  мировой трансформ, слой, родитель, дети, user props; мастер, его инстансы и копии не цели (повтор ничего не меняет);
+  `stub` — Box по oriented bbox (width X, length Y, пивот в основании, трансформ один раз).
+- `place.schedule` (копии): ведомость `rows`/CSV/JSON (м, мир): отчёт по каждой строке — поставлено / `no_library_model` /
+  `outside_ground` / `blocked_by_obstacle` (здания `*_Main`, ранее поставленные) / `already_placed`; инстансы эталона на
+  `placement_instances`, посадка лучами `drop_to_ground` с утоплением 10 см; повтор без дублей.
+- `place.flora_repair` (копии): коды `negative_scale`, `rotated`, `shear`, `ngon`; shear → мировой меш с единичным
+  трансформом, остальное — триангулированный снимок; копии на `AGR_flora_repair` со сверкой с исходником (0,05 мм,
+  UV 2e-5); оригиналы не меняются и не удаляются; без UV / пустой меш → `skipped` с причиной.
 
 ### B — текстуры, UDIM, атласы (`improve/issue-979-tex-udim-atlas`)
 
