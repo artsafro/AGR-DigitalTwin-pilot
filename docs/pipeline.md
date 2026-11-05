@@ -1,6 +1,7 @@
 # Pipeline stages
 
-Status of each production stage. Rules: `docs/domain/`; tools: `docs/agents/CAPABILITIES.md`;
+Status of each production stage. Rules: `docs/domain/`; tools: `docs/agents/CAPABILITIES.md` (registry) and
+`docs/pipeline-tools.md` (catalogue: commands, exit codes, limits);
 open work: `docs/backlog.md` (IDs in the last column).
 Status: **proven** (accepted on a real object) · **partial** · **tool only** (no real
 object yet) · **missing**.

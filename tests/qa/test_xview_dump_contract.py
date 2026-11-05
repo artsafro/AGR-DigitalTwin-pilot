@@ -26,6 +26,7 @@ spec.loader.exec_module(xp)
 MS = ROOT / "tools" / "qa" / "xview_dump.ms"
 REVIEW = ROOT / "jobs" / "vyatskaya-tow02" / "scripts" / "xview_review.ms"
 CAPS = ROOT / "docs" / "agents" / "CAPABILITIES.md"
+CATALOGUE = ROOT / "docs" / "pipeline-tools.md"  # command-line detail of the shared tools registered in CAPS
 
 
 def sha(p):
@@ -54,7 +55,8 @@ def test_review_header_points_at_shared_runner():
 
 
 def test_capabilities_lists_the_runner():
-    text = CAPS.read_text(encoding="utf-8")
+    assert "tools/qa/xview_dump.ms" in CAPS.read_text(encoding="utf-8")
+    text = CATALOGUE.read_text(encoding="utf-8")
     assert "tools/qa/xview_dump.ms" in text
     assert "2mm" in text and ".max" in text
 
@@ -83,7 +85,7 @@ def _hash_name_pairs(path):
 
 def test_capabilities_xview_runner_evidence_links():
     """Relative evidence links resolve, and source hash lists are the same (hash, name) set."""
-    section = _xview_runner_section(CAPS.read_text(encoding="utf-8"))
+    section = _xview_runner_section(CATALOGUE.read_text(encoding="utf-8"))
     assert "not measured" not in section
     assert "not-measured.json" not in section
     links = re.findall(re.escape(_XVIEW_EVIDENCE) + r"[A-Za-z0-9_./-]+", section)

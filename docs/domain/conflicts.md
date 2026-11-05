@@ -1,6 +1,6 @@
 # Conflicts and dubious rules
 
-Keys: `reg p.N` = `Rasporyajenies19012026trebovaniya(2).pdf` page N (read by me unless noted). `local:` relative to the repo root (AGR knowledge base; AGR `docs/` lives in `docs/agr/`). No side is chosen here.
+Keys: `reg p.N` = `Rasporyajenies19012026trebovaniya(2).pdf` page N (read by me unless noted). `local:` relative to the repo root (AGR knowledge base; AGR `docs/` lives in `docs/agr/`); origin and citation keys of the rules: `docs/domain/sources.md`. No side is chosen here.
 
 Decided items keep their text and carry a **Decided** note; the YAML `conflicts:` entry for them is `status: noted`. Checker references: SINTEZ AGR Checker v1.6.1 (`scripts/autochecks/check_utils.py`, `hp_checks.py`, `constants.py`), installed under `%APPDATA%\Blender Foundation\Blender\4.4\extensions\user_default\sintez_agr_checker`.
 

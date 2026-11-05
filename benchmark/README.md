@@ -1,6 +1,6 @@
 # Benchmark
 
-Hand-made etalons and the checks that compare a model with them (historical `docs/HARNESS_PLAN.md` §5).
+Hand-made etalons and the checks that compare a model with them (historical `archive/2026-11:docs/HARNESS_PLAN.md` §5).
 Terms: Etalon, Spec, Level contour in `GLOSSARY.md`.
 
 - An etalon is modelled by the user in 3ds Max on a grid, in whole numbers, with level

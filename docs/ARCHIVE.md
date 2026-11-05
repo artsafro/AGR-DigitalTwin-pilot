@@ -70,6 +70,8 @@ The report with the verdict stays in the tree: `docs/experiments/<report>.md`.
 | Path | Note |
 |---|---|
 | `docs/research/team-plugins-inventory.json` | 7.25 MB row-per-file inventory behind `docs/research/team-plugins-audit.md` |
+| `docs/HARNESS_PLAN.md` | harness plan, frozen 2026-11-03; cited as `archive/2026-11:docs/HARNESS_PLAN.md` §N; current rules in `docs/pipeline.md`, `docs/decisions.md`, `docs/agents/WORKFLOW.md`, `docs/domain/` |
+| `docs/prd/agent-ready-harness.md` | agent-ready harness spec (#118); decisions D088-D092 in `docs/decisions.md`; story 38 closed |
 
 Orphan docs (no test, doc or code named them on 2026-11-05):
 
