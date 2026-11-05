@@ -9,6 +9,10 @@ NPM and VPM deliveries for buildings, Ground, MAF, Flora and UCX, plus the Unrea
 ## In production
 
 PR merges do not imply delivery acceptance. Per-object gates stay in `jobs/<ID>/STATE.md`. Merged pull requests, newest first:
+- `a875254` Merge pull request #1022 from artsafro/feature/library-window-preview
+- `979b973` Merge pull request #805 from artsafro/improve/issue-790-maf-generator-parametric-step-3-tool-fir
+- `1c303f9` Merge pull request #917 from artsafro/improve/issue-817-maf-gen-bench-checks-exit-1-on-any-fail
+- `43f9cb7` Merge pull request #1014 from artsafro/docs/state-after-pr1013
 - `933bc9b` Merge pull request #1013 from artsafro/harness/repo-hygiene-code-layout
 - `16be0a8` Merge pull request #1012 from artsafro/docs/state-after-pr1011
 - `52b587c` Merge pull request #1011 from artsafro/harness/repo-hygiene-docs
@@ -17,10 +21,6 @@ PR merges do not imply delivery acceptance. Per-object gates stay in `jobs/<ID>/
 - `cb1ad1d` Merge pull request #1007: AGR Tools 0.9 branch E3: rework package/suite (#979)
 - `556ed58` Merge pull request #1001: E3 shared hooks: export.cleanup options in runtime, close census known bug (#979)
 - `81ccace` Merge pull request #1003: branch D follow-up, export.batch on the real qa.procedural_objects (#979)
-- `bf12a41` Merge pull request #969 from artsafro/job/elv-tc-vpm
-- `aba8f21` Merge pull request #1000: AGR Tools 0.9 branch C (#979)
-- `0c0d88a` Merge pull request #998: AGR Tools 0.9 branch E2: rework ucx/pivot/udim (#979)
-- `a3d850d` Merge pull request #997: AGR Tools 0.9 branch E1: rework tex/names (#979)
 
 ## Harness
 
@@ -28,9 +28,8 @@ Capability A (`capability-b01`, codex): benchmark 1 passed / 0 failed / 0 not me
 Capability B (`capability-ticket`, codex): local_pr 0 passed / 1 failed / 0 not measured; procedural 0 passed / 0 failed / 10 not measured; not ready; repository + user skills. Reference: `evals/capability-ticket/reference.json`.
 
 Open pull requests:
-- #805 MAF generator: parametric step-3 tool, «Верона» benches rows 1-10 (#790) [improve/issue-790-maf-generator-parametric-step-3-tool-fir]
+- #803 job(silikatny-maf-viz): visualisation MAF set, D189-D190 [job/silikatny-maf-viz] draft
 - #876 Improve: AGR Tools 0.6.0 panel: tooltip requirement ids = docs/plans/agr-tools-suite.json (#862) [improve/agr-tools-ui-reqs-match-suite-json]
-- #917 maf_gen_bench_checks: exit 1 on any fail, check against the schedule/DWG reference size (#817) [improve/issue-817-maf-gen-bench-checks-exit-1-on-any-fail]
 - #964 docs: mark remaining HARNESS_PLAN mentions historical (#958) [improve/issue-958-p3-20-unmarked-harness-plan-mentions-lef]
 - #974 fix: maf_gen_bench_checks unwritable output exits 2 (#931) [improve/issue-931-maf-gen-bench-checks-unwritable-output-p]
 - #982 test: mesh.py acceptance row runs the checker (#965) [improve/issue-965-p3-mesh-py-acceptance-row-test-asserts-a]
