@@ -36,6 +36,7 @@
    {"name": "SM_GjX_Main", "scene": "polygon_all", "expect": "fail", "codes": ["property"]},
    {"name": "SM_GjX_MainGlass", "scene": "polygon_all", "expect": "pass", "codes": []}],
   "options": {"folder": "C:/x/test-polygon/e3/geojson", "image": "C:/x/test-polygon/e3/geojson/preview.jpg",
+              "pivot": {"floor_z": "0.000"},
               "properties": {"address": "synthetic", "okrug": "synthetic", "rajon": "synthetic", "name": "synthetic",
                              "developer": "", "designer": "synthetic", "cadNum": "synthetic", "FNO_code": "010004",
                              "FNO_name": "Общежитие", "ZU_area": "synthetic", "h_relief": "synthetic",

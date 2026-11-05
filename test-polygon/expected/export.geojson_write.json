@@ -26,6 +26,9 @@
  "options": {
   "folder": "C:/x/test-polygon/e3/geojson",
   "image": "C:/x/test-polygon/e3/geojson/preview.jpg",
+  "pivot": {
+   "floor_z": "0.000"
+  },
   "properties": {
    "address": "synthetic",
    "okrug": "synthetic",
