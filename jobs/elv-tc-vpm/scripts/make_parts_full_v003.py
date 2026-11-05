@@ -23,7 +23,7 @@ P["parts"] += [
      "sources": [user, {"kind": "pdf", "reference": "booklet item 14 «нащельник RAL 7021»"},
                  {"kind": "model", "reference": "Revit (SC)-Batten_FS-8P ..._horizontal 165 x 22 mm, 24 outlines "
                                                 "(customer-clarify-v001/data/nakl_verts.json)"}],
-     "legend_item": "ID20 metal RAL 7021. Closed boxes 165 x 22 mm, 6 mm off the facade [D201], only where the Revit "
+     "legend_item": "ID20 metal RAL 7021. Closed boxes 165 x 22 mm, 6 mm off the facade [D197], only where the Revit "
                     "outline lies on our sandwich / TP facade (the parts behind the pilot cladding are not built), cut "
                     "around lights / Arktos / joints with G.",
      "operation": "primitive", "triangle_budget": {"npm": 0, "vpm": 1500}, "build_as": "box"},

@@ -84,7 +84,7 @@ Intake per [D186], 2026-11-04. Profile: **VPM-OKS only** (no NPM). One OKS, so n
   from the address) confirmed.
 - Attachments stand off by 6 mm instead of the 10 mm embed; the 4 remaining self-intersections of the pilot niche frame
   are accepted (conflicts #44). UCX names keep the project form `UCX_SM_Elevatornaya_1A_Main_NNN` (#45). V007 DirectX
-  review on flat tiles accepted (#46) [D201].
+  review on flat tiles accepted (#46) [D197].
 - Next: renders of build-v006 (all sides, day and night), 3ds Max xView 5/2 mm after Mesh + Weld 0.002 in an own Max
   instance, then one acceptance pack: Gate 1 for P21–P42, library types ELV-01..20 [D140], visual acceptance.
 

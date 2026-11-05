@@ -6,7 +6,7 @@ scene, their blank ZIP). NPM was out of scope.
 
 Sources: the main session transcript `271fa1bc-…jsonl` and its 24 subagent transcripts. Each was parsed by a script,
 so the numbers below come from timestamps, not memory. Also used: `git log main..job/elv-tc-vpm` (26 commits),
-`TASK.md`, `outputs/*/` and `docs/decisions.md` D201–D200. Times are local (UTC+1).
+`TASK.md`, `outputs/*/` and `docs/decisions.md` D197–D200. Times are local (UTC+1).
 
 Numbers: wall-clock **20:14 → 12:33, 16 h 19 min**. Take out the night (01:20 → 07:02, 5 h 42 min) and the
 session ran **~10.6 h**. **24 background agents** ran **~9.3 h** in total, and **34 user messages** came in: 7 of
@@ -66,7 +66,7 @@ error. Bash heredoc quoting failed 4×.
 | F4 | Wood #C4ABAA reads pink | flagged by us in the v003 report; user agreed | one delivery round, 21 min | Colour taken from an underexposed photo (hue from the photo, lightness from RAL 1001). We noticed only on the finished renders | a swatch sheet (candidate vs booklet render vs accepted colour, with ΔE) before the build, not after the package |
 | F5 | Hand-off was triangulated; hard to edit | 11:01 «я хочу геометрию получать не триангулированную…» | 1 round-trip, small | [D152] keeps quads only in the master; the review artefact was never defined, so the user got the delivered FBX | **[D198] (user rule)**: a non-triangulated work FBX next to every delivery, read back against the package |
 | F6 | Edge loops / rings stop mid-run (welded, but not carried on) | 12:33 «кое-где идет луп, потом он обрывается… хочется луп этот продлить» | user fixes it by hand | Parts are generated separately and then welded. Closed-mesh, open-edge and xView checks all pass on such a mesh | **[D200] (user rule)**: count T-vertices / valence-3 vertices inside flat quad regions of the work FBX; report and fix before the hand-off |
-| F7 | Decor floats on a stand-off instead of a 10–20 mm embed | 12:33 «…висят в воздухе… лучше делать… врезку… на 10 на 20 миллиметров» | user fixes it by hand | We chose the 6 mm stand-off ourselves (v002, [D201]) because V004 counts embeds as self-intersections. The user accepted the recommendation at 07:20 without seeing a close-up of the gap. The validator-vs-rule conflict (#44) was settled on the validator's side | **[D199] (user rule)**: embed 10–20 mm and budget the V004 count per job; a gap check that flags any attachment 1–30 mm off its host |
+| F7 | Decor floats on a stand-off instead of a 10–20 mm embed | 12:33 «…висят в воздухе… лучше делать… врезку… на 10 на 20 миллиметров» | user fixes it by hand | We chose the 6 mm stand-off ourselves (v002, [D197]) because V004 counts embeds as self-intersections. The user accepted the recommendation at 07:20 without seeing a close-up of the gap. The validator-vs-rule conflict (#44) was settled on the validator's side | **[D199] (user rule)**: embed 10–20 mm and budget the V004 count per job; a gap check that flags any attachment 1–30 mm off its host |
 
 Pattern: our gates prove the file is legal (validator, xView, readback, SINTEZ). Nothing proves it looks finished
 to a modeller in Max (continuous patterns, elements and loops; no gaps; editable topology). All 7 defects are in
@@ -115,7 +115,7 @@ fast path. That is ~7.5 h active instead of ~10.6 h, with no defects left for th
 | 10 | Shared Max viewer launcher: ASCII staging, UDIM Viewer rollout lookup, status file, own process | `adapters/max/` or `tools/`, CAPABILITIES.md | ~10 min per Max open (S8) | **Proposal**; 4 job scripts to merge |
 | 11 | Job-local decision IDs until merge (or allocation at merge) | `docs/decisions.md` procedure, test_decisions | ~10 min per conflict (S5) | **Proposal** |
 
-None of the proposals is applied in this branch. D201–D200 are recorded; the rest waits for «да».
+None of the proposals is applied in this branch. D197–D200 are recorded; the rest waits for «да».
 
 ## 7. Questions to the user
 

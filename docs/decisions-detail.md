@@ -299,23 +299,23 @@ for the quotes, locators and context the short row leaves out. The short row lin
 |---|---|---|---|---|
 | D196 | 2026-11-04 | AGR Tools: a face matID outside the Multimaterial `materialIDList` is a BLOCKING MatID finding (`empty_slot`) in the MatID check and the export gate, even though the 3ds Max FBX export wraps it onto a listed sub-material (the face gets another material in the delivery); the textures check keeps measuring the wrapped slot with the advisory `tex_matid_wrapped` | `adapters/max/agr_tools/checks_core.py` (`listed_submaterial_index`), `adapters/max/agr_tools/runtime.py` (`matid`, `_slot_gaps`) | issue #844 comment 2026-11-04 (Artem); renumbered from D195 on merge with main (id clash with #735) |
 
-## D201
+## D197
 
 | ID | Date | Decision | Applies to | Source |
 |---|---|---|---|---|
-| D201 | 2026-11-05 | Job elv-tc-vpm delivery v002: attachments stand off their receiving surface by 6 mm instead of the 10 mm constructive embed, so V004 counts no embeds (max 4, the remaining pilot niche frame faces accepted); UCX names keep the project YAML form `UCX_SM_<Address>_Main_NNN`; V007 DirectX review on flat normal tiles accepted. Job-scoped; project-wide rules stay open (conflicts #43-#46). Renumbered D196 -> D201 at the main merge (main took D196). | job elv-tc-vpm; conflicts #44-#46 | Artem in chat, 2026-11-05 («Принимаю все») |
+| D197 | 2026-11-05 | Job elv-tc-vpm delivery v002: attachments stand off their receiving surface by 6 mm instead of the 10 mm constructive embed, so V004 counts no embeds (max 4, the remaining pilot niche frame faces accepted); UCX names keep the project YAML form `UCX_SM_<Address>_Main_NNN`; V007 DirectX review on flat normal tiles accepted. Job-scoped; project-wide rules stay open (conflicts #43-#46). Renumbered D196 -> D197 at the main merge (main took D196). | job elv-tc-vpm; conflicts #44-#46 | Artem in chat, 2026-11-05 («Принимаю все») |
 
 ## D198
 
 | ID | Date | Decision | Applies to | Source |
 |---|---|---|---|---|
-| D198 | 2026-11-05 | Every delivery of an OKS model also gets a non-triangulated work FBX (quads / n-gons as built; same pivot, object and material names, material slots and UVs as the delivered FBX; no UCX), next to the package, not inside it. The delivered FBX stays triangulated per the regulation (reg p.29 §3.17, V003) and [D152]. First applied: job elv-tc-vpm delivery v004 (`work_export_v004.py`). Renumbered D201 -> D198 at the main merge (main took D196). | all delivery jobs; [D152] | Artem in chat, 2026-11-05 («я хочу геометрию получать не триангулированную… Да, делай») |
+| D198 | 2026-11-05 | Every delivery of an OKS model also gets a non-triangulated work FBX (quads / n-gons as built; same pivot, object and material names, material slots and UVs as the delivered FBX; no UCX), next to the package, not inside it. The delivered FBX stays triangulated per the regulation (reg p.29 §3.17, V003) and [D152]. First applied: job elv-tc-vpm delivery v004 (`work_export_v004.py`). Renumbered D197 -> D198 at the main merge (main took D196). | all delivery jobs; [D152] | Artem in chat, 2026-11-05 («я хочу геометрию получать не триангулированную… Да, делай») |
 
 ## D199
 
 | ID | Date | Decision | Applies to | Source |
 |---|---|---|---|---|
-| D199 | 2026-11-05 | Future modelling: decor and attachments (arches, light fixtures, frames and similar) are embedded 10-20 mm into the facade they sit on, closing the gap, instead of a stand-off that leaves them visibly floating. For job elv-tc-vpm the 6 mm stand-off of [D201] stays (the user fixes it by hand). The V004 self-intersection count of such embeds (conflicts #44) must be planned for per job. | all modelling jobs; geometry.md; conflicts #44 | Artem in chat, 2026-11-05 («лучше делать… врезку… на 10 на 20 миллиметров, тем самым закрывая щели… на будущее») |
+| D199 | 2026-11-05 | Future modelling: decor and attachments (arches, light fixtures, frames and similar) are embedded 10-20 mm into the facade they sit on, closing the gap, instead of a stand-off that leaves them visibly floating. For job elv-tc-vpm the 6 mm stand-off of [D197] stays (the user fixes it by hand). The V004 self-intersection count of such embeds (conflicts #44) must be planned for per job. | all modelling jobs; geometry.md; conflicts #44 | Artem in chat, 2026-11-05 («лучше делать… врезку… на 10 на 20 миллиметров, тем самым закрывая щели… на будущее») |
 
 ## D200
 

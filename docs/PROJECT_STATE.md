@@ -38,7 +38,7 @@ Open pull requests:
 - #991 MAF showcase: colour zones with material IDs for the 13 Vatutino positions (#889) [improve/issue-889-maf-showcase-split-the-13-vatutino-posit]
 - #999 Research: Research: which #979 base-test assertions will still break when branches B/C/E commit their fragments? [docs/research-agr-tools-090-base-tests-fragment-brittleness]
 - #1005 fix: agr-mcp stale reclaim mutex exclusive in every interleaving (#972) [improve/issue-972-agr-mcp-locks-stale-reclaim-mutex-unlink]
-- #1006 AC08 kernel: invariants relative to the source [D201], rerun 19 ops + L4 gates (#968) [improve/issue-968-ac08-kernel-invariants-relative-to-the-s]
+- #1006 AC08 kernel: invariants relative to the source [D197], rerun 19 ops + L4 gates (#968) [improve/issue-968-ac08-kernel-invariants-relative-to-the-s]
 - #1008 job(skug26-k5-ac): VPM 4K conditioner texture, UDIM 1004 — accepted case [job/skug26-k5-ac-vpm-texture]
 
 ## Next step

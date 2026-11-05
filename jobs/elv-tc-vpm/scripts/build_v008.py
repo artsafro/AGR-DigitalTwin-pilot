@@ -1,6 +1,6 @@
 """elv-tc-vpm build-v008 = build-v007c geometry (delivery v004, accepted) + the Max review rework of v004 (user 2026-11-05):
 
-item 2 — joint cover strips P44 (Batten_FS-8P 165 x 22 mm, ID20 RAL 7021, G = 6 mm off the facade [D201]) rebuilt as
+item 2 — joint cover strips P44 (Batten_FS-8P 165 x 22 mm, ID20 RAL 7021, G = 6 mm off the facade [D197]) rebuilt as
   CONTINUOUS runs: the Revit strip segments of one height are chained along the contour (ends within 0.6 m) and joined at
   the corners by mitres (intersection of the offset facade lines at G and G + 22 mm), one connected closed mesh element
   per run (quads, <= 3.9 m long faces, end caps only at the run ends). Run ends that are not corners stay where v007 ended
