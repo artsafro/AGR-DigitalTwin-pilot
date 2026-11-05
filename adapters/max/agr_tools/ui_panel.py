@@ -453,6 +453,8 @@ class AgrPanel(QtWidgets.QDockWidget):
         Max 2024 blocked for 1.36 s inside a 25-object chunk. Predicting the next
         object from the one just finished keeps the gap under 0.1 s without calling
         the tool once per object (that would redo the MaxScript setup on 2026).
+        Cancel is not raised here: the chunk's results would be lost. run_batched
+        reads the flag before the next chunk (about 0.9 s later on Max 2024).
         """
         now = self._clock()
         cost = now - self._mark
