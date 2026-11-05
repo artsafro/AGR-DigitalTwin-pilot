@@ -152,6 +152,33 @@ def test_prompt_dispatcher_plain_prompt_is_silent(tmp_path):
     assert r.returncode == 0 and r.stdout == "" and not log.exists()
 
 
+def test_prompt_dispatcher_acceptance_nudges_experience_transfer(tmp_path):
+    payload = {"session_id": "s1", "hook_event_name": "UserPromptSubmit", "prompt": "Видны, принято"}
+    r = subprocess.run([sys.executable, str(PROMPT)], input=json.dumps(payload), capture_output=True, text=True,
+                       encoding="utf-8", env=_prompt_env(tmp_path / "u.jsonl"))
+    assert r.returncode == 0, r.stderr
+    assert "experience-transfer" in json.loads(r.stdout)["hookSpecificOutput"]["additionalContext"]
+
+
+def test_prompt_dispatcher_acceptance_joins_context_warning(tmp_path):
+    t = tmp_path / "s.jsonl"
+    t.write_text(json.dumps(_response(150_000)) + "\n", encoding="utf-8")
+    payload = {"session_id": "s1", "transcript_path": str(t), "hook_event_name": "UserPromptSubmit",
+               "prompt": "все норм, спасибо"}
+    r = subprocess.run([sys.executable, str(PROMPT)], input=json.dumps(payload), capture_output=True, text=True,
+                       encoding="utf-8", env=_prompt_env(tmp_path / "u.jsonl"))
+    text = json.loads(r.stdout)["hookSpecificOutput"]["additionalContext"]
+    assert "strongly urge" in text and "experience-transfer" in text
+
+
+@pytest.mark.parametrize("prompt", ["не принято, переделай", "ты перемудрил, отлично было бы проще"])
+def test_prompt_dispatcher_rejection_does_not_nudge(prompt, tmp_path):
+    payload = {"session_id": "s1", "hook_event_name": "UserPromptSubmit", "prompt": prompt}
+    r = subprocess.run([sys.executable, str(PROMPT)], input=json.dumps(payload), capture_output=True, text=True,
+                       encoding="utf-8", env=_prompt_env(tmp_path / "u.jsonl"))
+    assert r.returncode == 0 and r.stdout == ""
+
+
 @pytest.mark.parametrize("raw", ["not json", "[]", "{}", ""])
 def test_prompt_dispatcher_bad_input_is_silent(raw, tmp_path):
     r = subprocess.run([sys.executable, str(PROMPT)], input=raw, capture_output=True, text=True,

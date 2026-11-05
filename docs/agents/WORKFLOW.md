@@ -255,7 +255,8 @@ An event makes a skill or subagent mandatory, not optional:
 | "Is there a rule for …?" (pattern, case, conflict) | subagent `pattern-librarian` |
 | Benchmarks or the test suite must run | subagent `bench-runner` |
 | A numeric question about an FBX or a dump | subagent `mesh-reader` |
-| The user accepts a result | skill `experience-transfer` |
+| The user accepts a result | skill `experience-transfer` (Claude Code: the UserPromptSubmit hook reminds) |
+| The user corrected or rejected the agent in a session, at `/handover` | `/retro` for the session ([Session retro](#session-retro)) |
 
 A background agent that polls a long run has a timeout and reports progress. Default: stop at 6 polls or
 30 minutes, whichever comes first. Every poll writes one progress line: elapsed time, the last output line,
@@ -361,6 +362,22 @@ stage ends with the `experience-transfer` skill: exact acceptance scope, inputs/
 hashes, code used, checks actually run, failures and fixes, reuse candidates. Add it to
 `docs/cases.md`. Praise does not replace QA. A procedure becomes a general tool or skill
 only after it works on a second representative object.
+
+## Session retro
+
+Acceptance teaches what worked; the user's corrections teach what to stop doing. A session in which the user
+corrected the agent, rejected a result or interrupted it ends with a retro (`.claude/commands/retro.md`; step 7a of
+`/handover`); `/retro --since <date>` reviews several sessions at once. The loop:
+
+1. `tools/retro/condense_transcript.py` reduces transcripts to the conversation (user `!` correction / `+`
+   acceptance signals, tool errors, interrupts).
+2. Each incident gets one cause and is checked against the rules; the result is `docs/retros/<date>-<slug>.md`.
+3. Actionable items become deduplicated issues labelled `needs-triage` + `retro` (template `task.md`), never
+   `ready-for-agent`; triage or the user makes them ready, then the Kanban worker takes them like any issue.
+4. A retro issue whose mistake is visible in a transcript or an output closes only with a regression check that
+   reproduces it: an `evals/` grader (run before every merge) or a pytest. Evals only re-check known mistakes;
+   the retro is how new ones reach them.
+5. A preference or a rule only the user can set goes into one triage issue; the agent never writes the D-line.
 
 ## Permission matrix
 
