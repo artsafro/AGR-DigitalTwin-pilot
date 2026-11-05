@@ -283,7 +283,8 @@ def ucx_triangulate():
     before = emax.snapshot(geo)
     hid_src = rt.getNodeByName('UCX_Hidden')
     hidden_before = list(rt.polyop.getHiddenFaces(hid_src))
-    pv = agr.edits_080('ucx.triangulate', 'preview', nodes=nodes)
+    # 0.8 acceptance with the 0.8 hull fallback (#979: hull is opt-in, the default reports non-convex pieces)
+    pv = agr.edits_080('ucx.triangulate', 'preview', nodes=nodes, options={'nonconvex': 'hull'})
     skipped = {s['item']: s['reason'] for s in pv['plan']['skipped']}
     assert 'UCX_Helper' in skipped, skipped
     rows = {r['name']: r for r in pv['plan']['rows']}
@@ -469,8 +470,343 @@ def pivot_place():
     return out
 
 
+# ==== #979 branch E2 ==========================================================================================
+geom = agr._load_core('geom_core.py', 'agr_tools_geom_core')
+geom_glue = agr._load_core('geom_max.py', 'agr_tools_geom_max')
+udim = agr._load_core('udim_core.py', 'agr_tools_udim_core')
+
+
+def mk_tris(name, pts, polys):
+    """Welded closed piece from vertex list + polygons (0-based); each polygon built then welded."""
+    node = mkpoly(name, [[P(*pts[i]) for i in poly] for poly in polys])
+    rt.polyop.weldVertsByThreshold(node, rt.execute('#all'))
+    assert int(rt.polyop.getNumVerts(node)) == len(pts), (name, int(rt.polyop.getNumVerts(node)), len(pts))
+    return node
+
+
+BOX_PTS = [(0, 0, 0), (2, 0, 0), (2, 2, 0), (0, 2, 0), (0, 0, 2), (2, 0, 2), (2, 2, 2), (0, 2, 2)]
+BOX_Q = [[0, 3, 2, 1], [4, 5, 6, 7], [0, 1, 5, 4], [1, 2, 6, 5], [2, 3, 7, 6], [3, 0, 4, 7]]
+
+
+def valley_piece(name, dz, valley=True, pos=(0, 0, 0)):
+    pts = [list(p) for p in BOX_PTS]
+    pts[6][2] += dz
+    pts = [(p[0] + pos[0], p[1] + pos[1], p[2] + pos[2]) for p in pts]
+    tris = []
+    for q in BOX_Q[:1] + BOX_Q[2:]:
+        a, b, c, d = q
+        tris += [[a, b, c], [a, c, d]]
+    a, b, c, d = BOX_Q[1]
+    tris += [[a, b, d], [b, c, d]] if valley else [[a, b, c], [a, c, d]]
+    return mk_tris(name, pts, tris)
+
+
+def dart_piece(name, pos=(0, 0, 0)):
+    """Prism over the plan outline b(0,0) c(2,0) a(2,2) d(2.5,3); lid triangles a-b-c and b-a-d, d lifted."""
+    plan = [(0.0, 0.0), (2.0, 0.0), (2.0, 2.0), (2.5, 3.0)]  # b c a d
+    top_z = [1.0, 1.0, 1.0, 1.5]
+    pts = [(x + pos[0], y + pos[1], pos[2]) for x, y in plan] + \
+          [(x + pos[0], y + pos[1], z + pos[2]) for (x, y), z in zip(plan, top_z)]
+    b, c, a, d = 4, 5, 6, 7
+    polys = [[a, b, c], [b, a, d], [2, 1, 0], [0, 3, 2]]
+    for i in range(4):
+        j = (i + 1) % 4
+        polys.append([i, j, 4 + j, 4 + i])
+    return mk_tris(name, pts, polys)
+
+
+def noisy_piece(name, n=12, noise=0.02, pos=(0, 0, 0)):
+    import random
+    rnd = random.Random(3)
+    m = n + 1
+    top = [(i / n * 4.0, j / n * 2.0, 1.0 + rnd.uniform(-noise, noise)) for j in range(m) for i in range(m)]
+    pts = top + [(x, y, 0.0) for x, y, _ in top]
+    pts = [(x + pos[0], y + pos[1], z + pos[2]) for x, y, z in pts]
+    off = len(top)
+    polys = []
+    for j in range(n):
+        for i in range(n):
+            a, b, c, d = j * m + i, j * m + i + 1, (j + 1) * m + i + 1, (j + 1) * m + i
+            polys += [[a, b, c, d], [off + a, off + d, off + c, off + b]]
+    rim = list(range(m)) + [m * k + n for k in range(1, m)] + [n * m + i for i in range(n - 1, -1, -1)] + \
+        [m * k for k in range(n - 1, 0, -1)]
+    for k in range(len(rim)):
+        a, b = rim[k], rim[(k + 1) % len(rim)]
+        polys.append([b, a, off + a, off + b])
+    return mk_tris(name, pts, polys)
+
+
+def ucx_979():
+    reset()
+    valley = valley_piece('UCX_E2_Valley', 0.6)
+    ridge = valley_piece('UCX_E2_Ridge', 0.6, valley=False, pos=(5, 0, 0))
+    fold = valley_piece('UCX_E2_Fold', 1e-6, pos=(10, 0, 0))
+    dart = dart_piece('UCX_E2_Dart', pos=(15, 0, 0))
+    noisy = noisy_piece('UCX_E2_Noisy', pos=(20, 0, 0))
+    stack = valley_piece('UCX_E2_Stack', 0.6, pos=(30, 0, 0))
+    rt.addModifier(stack, rt.Edit_Poly())
+    nodes = [valley, ridge, fold, dart, noisy, stack]
+    before = emax.snapshot(nodes)
+    mods_before = int(stack.modifiers.count)
+    pv = agr.edits_080('ucx.triangulate', 'preview', nodes=nodes)
+    rows = {r['name']: r for r in pv['plan']['rows']}
+    codes = {o['name']: sorted(f['code'] for f in o['findings']) for o in pv['objects']}
+    assert emax.snapshot(nodes) == before, 'preview changed the scene'
+    assert rows['UCX_E2_Valley']['flips'] == 1 and rows['UCX_E2_Valley']['convex'], rows['UCX_E2_Valley']
+    assert rows['UCX_E2_Ridge']['action'] == 'none' and rows['UCX_E2_Ridge']['flips'] == 0
+    assert rows['UCX_E2_Fold']['action'] == 'none' and rows['UCX_E2_Fold']['flips'] == 0, rows['UCX_E2_Fold']
+    assert rows['UCX_E2_Dart']['flips'] == 0 and not rows['UCX_E2_Dart']['convex']
+    assert 'dart' in {r['reason'] for r in rows['UCX_E2_Dart']['refused']}, rows['UCX_E2_Dart']['refused']
+    assert any('UCX_E2_Dart' in a for a in pv['plan']['ambiguous'])
+    assert codes['UCX_E2_Valley'] == ['reflex_edge'] and codes['UCX_E2_Dart'] == ['not_convex'], codes
+    assert codes['UCX_E2_Ridge'] == [] and codes['UCX_E2_Fold'] == [], codes
+    ap = agr.edits_080('ucx.triangulate', 'apply', pv)
+    assert emax.snapshot(nodes) == before, 'working UCX changed'
+    assert int(stack.modifiers.count) == mods_before, 'source stack collapsed'
+    out = {'preview_codes': codes, 'pieces': {}}
+    for c in ap['plan']['copies']:
+        node = rt.getNodeByName(c['copy'])
+        st = stats(node)
+        quads = sum(1 for d in st['deg'] if d > 3)
+        assert quads == 0, (c['copy'], quads)
+        assert c['verts_after'] == c['verts_before'], c
+        out['pieces'][c['source']] = {'action': c['action'], 'flips': c['flips'], 'rebuilt': c['rebuilt'],
+                                      'convex': c['check'] and c['check']['convex'], 'quads': quads,
+                                      'refused': len(c['refused']), 'faces': len(st['deg'])}
+    p = out['pieces']
+    assert p['UCX_E2_Valley']['convex'] and p['UCX_E2_Valley']['flips'] == 1
+    assert p['UCX_E2_Stack']['convex'] and p['UCX_E2_Stack']['flips'] == 1
+    assert p['UCX_E2_Fold']['flips'] == 0 and p['UCX_E2_Ridge']['convex']
+    assert p['UCX_E2_Dart']['flips'] == 0 and not p['UCX_E2_Dart']['convex']
+    assert p['UCX_E2_Noisy']['quads'] == 0 and p['UCX_E2_Noisy']['flips'] > 0
+    # the copy of the fold keeps exactly the source triangles
+    fold_copy = rt.getNodeByName([c['copy'] for c in ap['plan']['copies'] if c['source'] == 'UCX_E2_Fold'][0])
+    assert geom_glue.poly_data(fold_copy.baseObject)[1] == geom_glue.poly_data(fold.baseObject)[1]
+    return out
+
+
+# ---- export.pivot_place: axes (L07 acceptance) -----------------------------------------------------------
+SCENES = {'m_zero': ('meters', 1.0, (0.0, 0.0)), 'cm': ('centimeters', 100.0, (234567800.0, 123456700.0)),
+          'm_far': ('meters', 1.0, (2345678.0, 1234567.0))}
+
+
+def reset_units(system):
+    rt.resetMaxFile(rt.name('noPrompt'))
+    rt.units.SystemType = rt.name(system)
+    rt.units.SystemScale = 1.0
+
+
+def cell_node(name, angle, unit, xy, size=(4.0, 1.0, 0.5), segs=(8, 2, 1)):
+    """L07 cell: box 4 x 1 x 0.5 m (x unit), rotation baked into the mesh, node at the far X/Y, no node rotation."""
+    b = rt.Box(name=name, width=size[0] * unit, length=size[1] * unit, height=size[2] * unit,
+               widthsegs=segs[0], lengthsegs=segs[1], heightsegs=segs[2])
+    rt.convertTo(b, rt.Editable_Poly)
+    a = math.radians(angle)
+    for v in range(1, int(rt.polyop.getNumVerts(b)) + 1):
+        p = rt.polyop.getVert(b.baseObject, v)
+        x, y = float(p.x), float(p.y)
+        rt.polyop.setVert(b.baseObject, v, P(x * math.cos(a) - y * math.sin(a), x * math.sin(a) + y * math.cos(a),
+                                             float(p.z)))
+    b.pos = P(xy[0], xy[1], 0.0)
+    return b
+
+
+def world_double(n):
+    node_rows, off_rows, pts = geom_glue.read_frame(n)
+    return geom.world_points(pts, off_rows, node_rows)
+
+
+def x_angle(n):
+    r = n.transform.row1
+    return math.degrees(math.atan2(float(r.y), float(r.x)))
+
+
+PIVOT_OPTS = {'orient': 'long_side', 'pivot_at': 'bottom_centre', 'target': 'npm'}
+
+
+def pivot_cells():
+    import pymxs
+    out = {}
+    for scene, (system, unit, xy) in SCENES.items():
+        reset_units(system)
+        with pymxs.undo(False):
+            nodes = [cell_node('SM_Cell_%d' % a, a, unit, (xy[0] + 10 * unit * i, xy[1])) for i, a in
+                     enumerate((17, 45, 89, 135))]
+        rt.clearUndoBuffer()
+        before = emax.snapshot(nodes)
+        world_before = {str(n.name): world_double(n) for n in nodes}
+        hash_before = {str(n.name): emax.mesh_hash(n) for n in nodes}
+        pv = agr.edits_080('export.pivot_place', 'preview', nodes=nodes, options=PIVOT_OPTS)
+        assert pv['status'] == 'pass', pv['objects']
+        assert emax.snapshot(nodes) == before, 'dry-run (preview) changed the scene'
+        ap = agr.edits_080('export.pivot_place', 'apply', pv)
+        assert ap['status'] == 'pass', ap['objects']
+        assert emax.snapshot(nodes) == before, 'working objects changed'
+        res = {}
+        for c in ap['plan']['copies']:
+            node = [n for n in rt.objects if int(rt.getHandleByAnim(n)) == c['handle']][0]
+            ang = int(c['source'].split('_')[-1])
+            err = abs(geom.canonical_angle(x_angle(node)) - ang)
+            err = min(err, 180 - err)
+            drift = max(math.dist(a, b) for a, b in zip(world_double(node), world_before[c['source']]))
+            z = node.transform.row3
+            same_hash = emax.mesh_hash(node) == hash_before[c['source']]
+            res[ang] = {'axis_err_deg': err, 'drift': drift, 'z_up': [float(z.x), float(z.y), float(z.z)],
+                        'world_hash_same': same_hash, 'pivot': c['pivot']}
+            assert err <= 0.01, (scene, ang, err)
+            assert drift <= 1e-4, (scene, ang, drift)  # system units (m or cm)
+            assert abs(float(z.z) - 1.0) < 1e-6, (scene, ang, res[ang]['z_up'])
+        # one undo record returns every transform: the copies disappear, the working nodes are as before
+        count = len(rt.objects)
+        rt.execute('max undo')
+        res['undo'] = {'objects_before': count, 'objects_after': len(rt.objects)}
+        assert len(rt.objects) == count - 4, res['undo']
+        assert emax.snapshot(nodes) == before
+        out[scene] = res
+    return out
+
+
+def pivot_doors_and_limits():
+    reset_units('meters')
+    far = (2345678.912, 1234567.891)
+    door = rt.Box(name='SM_Door', width=0.9, length=0.05, height=2.1)
+    rt.convertTo(door, rt.Editable_Poly)
+    rt.rotate(door, rt.EulerAngles(0, 0, 30))
+    door.pos = P(far[0], far[1], 150.0)
+    parent = rt.Dummy(name='Frame_Parent', pos=P(far[0] + 5, far[1], 150.0))
+    rt.rotate(parent, rt.EulerAngles(0, 0, 15))
+    kid = rt.Box(name='SM_Door_Child', width=0.9, length=0.05, height=2.1)
+    rt.convertTo(kid, rt.Editable_Poly)
+    kid.parent = parent
+    kid.transform = rt.Matrix3(1) * rt.rotateZMatrix(45) * rt.transMatrix(P(far[0] + 5, far[1] + 1, 150.0))
+    mesh = rt.Box(name='SM_Door_Mesh', width=0.9, length=0.05, height=2.1)
+    rt.convertToMesh(mesh)
+    rt.rotate(mesh, rt.EulerAngles(0, 0, 60))
+    mesh.pos = P(far[0] + 10, far[1], 150.0)
+    big = cell_node('SM_Cell_5000', 17, 1.0, (far[0] + 20, far[1]), segs=(80, 20, 9))
+    nodes = [door, kid, mesh, big]
+    nverts = int(rt.polyop.getNumVerts(big))
+    t0 = time.perf_counter()
+    node_rows, off_rows, pts = geom_glue.read_frame(big)
+    t_read = time.perf_counter() - t0
+    t0 = time.perf_counter()
+    geom.axes_long_side(pts, geom.mat3_mul(off_rows[:3], node_rows[:3]))
+    t_axes = time.perf_counter() - t0
+    t0 = time.perf_counter()
+    emax.snapshot([big])
+    t_snap = time.perf_counter() - t0
+    t0 = time.perf_counter()
+    pv_big = agr.edits_080('export.pivot_place', 'preview', nodes=[big], options=PIVOT_OPTS)
+    t_big = time.perf_counter() - t0
+    timing = {'read_frame_s': round(t_read, 3), 'axes_s': round(t_axes, 3), 'snapshot_s': round(t_snap, 3),
+              'preview_s': round(t_big, 3), 'vertices': nverts}
+    summary.setdefault('timing_5000', timing)
+    assert pv_big['status'] == 'pass' and nverts >= 5000 and t_big < 2.0, timing
+    t_prev = t_big
+    before = emax.snapshot(nodes)
+    parent_tm = emax.snapshot([parent])
+    world_before = {str(n.name): world_double(n) for n in nodes}
+    expect = {str(n.name): geom.canonical_angle(x_angle(n)) for n in (door, kid, mesh)}
+    expect['SM_Cell_5000'] = 17.0
+    pv = agr.edits_080('export.pivot_place', 'preview', nodes=nodes, options=PIVOT_OPTS)
+    assert pv['status'] == 'pass', (pv['objects'], pv['plan']['skipped'])
+    ap = agr.edits_080('export.pivot_place', 'apply', pv)
+    assert ap['status'] == 'pass', ap['objects']
+    assert emax.snapshot(nodes) == before and emax.snapshot([parent]) == parent_tm
+    out = {'preview_s_5000': round(t_prev, 3), 'vertices_big': nverts, 'copies': {}, 'expect': expect}
+    for c in ap['plan']['copies']:
+        node = [n for n in rt.objects if int(rt.getHandleByAnim(n)) == c['handle']][0]
+        err = abs(geom.canonical_angle(x_angle(node)) - expect[c['source']])
+        err = min(err, 180 - err)
+        drift = max(math.dist(a, b) for a, b in zip(world_double(node), world_before[c['source']]))
+        zmin = min(p[2] for p in world_before[c['source']])
+        piv_z = float(node.transform.row4.z)
+        out['copies'][c['source']] = {'axis_err_deg': err, 'drift': drift, 'pivot_z': piv_z, 'bottom_z': zmin,
+                                      'class': str(rt.classOf(node.baseObject)),
+                                      'parent': str(node.parent.name) if node.parent else None}
+        assert err <= 0.01 and drift <= 1e-4, (c['source'], err, drift)
+        assert abs(piv_z - zmin) <= 1e-3 + ulp32(150.0), (c['source'], piv_z, zmin)
+    # refusals: square cell and a scaled node -> listed with the exact reason, transform untouched
+    sq = cell_node('SM_Square', 30, 1.0, (far[0] + 40, far[1]), size=(1.0, 1.0, 0.5))
+    sc = cell_node('SM_Scaled', 30, 1.0, (far[0] + 50, far[1]))
+    sc.scale = P(2, 1, 1)
+    ref_before = emax.snapshot([sq, sc])
+    count = len(rt.objects)
+    pv2 = agr.edits_080('export.pivot_place', 'preview', nodes=[sq, sc, door], options=PIVOT_OPTS)
+    reasons = {s['item']: s['reason'] for s in pv2['plan']['skipped']}
+    codes = {o['name']: [f['code'] for f in o['findings']] for o in pv2['objects']}
+    assert 'square or degenerate footprint' in reasons['SM_Square'], reasons
+    assert 'node scale' in reasons['SM_Scaled'], reasons
+    assert codes['SM_Square'] == ['pivot_axis_undefined'] and codes['SM_Scaled'] == ['pivot_node_scale'], codes
+    agr.edits_080('export.pivot_place', 'apply', pv2)
+    assert emax.snapshot([sq, sc]) == ref_before and len(rt.objects) == count + 1
+    out['refusals'] = reasons
+    return out
+
+
+# ---- udim.ids_to_udims (keep layout, stacks, 5000 faces) ---------------------------------------------------
+def udim_979():
+    import random
+    reset()
+    plane = rt.Plane(name='SM_Udim5000', length=50, width=50, lengthsegs=50, widthsegs=50, mapcoords=True)
+    rt.convertToMesh(plane)
+    rnd = random.Random(7)
+    nf = int(plane.numfaces)
+    for f in range(1, nf + 1, 2):
+        mid = rnd.randint(1, 100)
+        rt.setFaceMatID(plane, f, mid)
+        rt.setFaceMatID(plane, f + 1, mid)
+    rt.update(plane)
+    stack = rt.Plane(name='SM_UdimStack', length=4, width=4, lengthsegs=4, widthsegs=4, mapcoords=True,
+                     pos=P(60, 0, 0))
+    rt.convertTo(stack, rt.Editable_Poly)
+    for f in range(1, 17):
+        rt.polyop.setFaceMatID(stack, f, 1 + (f - 1) % 4 if f != 16 else 101)
+    rt.addModifier(stack, rt.Unwrap_UVW())
+    rt.addModifier(stack, rt.UVW_Xform(U_Offset=-1.5, V_Offset=-0.25))
+    nodes = [plane, stack]
+    before = emax.snapshot(nodes)
+    umax = agr._load_core('udim_max.py', 'agr_tools_udim_max')
+
+    class Ctx:
+        pass
+    ctx = Ctx()
+    ctx.agr = agr
+    eval_before = {str(n.name): umax._read_eval(ctx, n) for n in nodes}
+    pv = agr.edits_080('udim.ids_to_udims', 'preview', nodes=nodes, options={'mode': 'keep'})
+    codes = {o['name']: sorted({f['code'] for f in o['findings']}) for o in pv['objects']}
+    assert codes == {'SM_Udim5000': [], 'SM_UdimStack': ['udim_id_out_of_range']}, codes
+    rt.select(nodes)  # apply re-reads the selection, as the panel does
+    ap = agr.edits_080('udim.ids_to_udims', 'apply', pv)
+    assert emax.snapshot(nodes) == before and int(stack.modifiers.count) == 2, 'working objects changed'
+    out = {'nf_plane': nf}
+    for name in ap['plan']['copies']:
+        c = rt.getNodeByName(name)
+        back = agr._read_channel(c)
+        src = eval_before[name.split('_AGR_export_')[0]]
+        ids = udim.ids_from_tiles(back['uvs'], back['face_uvs'])
+        ok = sum(1 for a, b in zip(ids, back['ids']) if a == b)
+        placed = [i for i, m in enumerate(back['ids']) if 1 <= m <= 100]
+        kept = True
+        for f in range(len(back['ids'])):  # every face moved by whole tiles from the EVALUATED source UVs
+            d = {(round(float(back['uvs'][j][0]) - float(src['uvs'][k][0]), 5),
+                  round(float(back['uvs'][j][1]) - float(src['uvs'][k][1]), 5))
+                 for j, k in zip(back['face_uvs'][f], src['face_uvs'][f])}
+            if len(d) != 1 or any(abs(x - round(x)) > 1e-5 for x in next(iter(d))):
+                kept = False
+        out[name] = {'faces': len(back['ids']), 'round_trip_ok': ok, 'placed': len(placed), 'layout_kept': kept,
+                     'modifiers_on_copy': int(c.modifiers.count)}
+        assert ok == len(placed) and kept, out[name]
+    assert any(v['faces'] == 5000 and v['round_trip_ok'] == 5000 for k, v in out.items() if isinstance(v, dict))
+    return out
+
+
 for name, fn in (('model_triangulate', model_triangulate), ('ucx_triangulate', ucx_triangulate),
-                 ('pivot_place', pivot_place), ('pivot_refusals', pivot_refusals)):
+                 ('pivot_place', pivot_place), ('pivot_refusals', pivot_refusals),
+                 ('e2_ucx', ucx_979), ('e2_pivot_cells', pivot_cells), ('e2_pivot_doors', pivot_doors_and_limits),
+                 ('e2_udim', udim_979)):
+    if os.environ.get('AGR_E2_ONLY') and not name.startswith('e2_'):
+        continue
     check(name, fn)
 summary['scene_saved'] = bool(str(rt.maxFileName))
 (OUT / 'summary.json').write_text(json.dumps(summary, ensure_ascii=False, indent=1), encoding='utf-8')

@@ -17,6 +17,10 @@ Lab findings fixed here (docs/experiments/<id>.md, no GeoAGR code, #853):
 * export.pivot_place. Floor height is the min z of the selected floor faces/vertices or an explicit ±0.000
   (validated text, never an empty field read as 0, never the bbox bottom). Coordinates are doubles and every
   text form uses fixed decimals. Rotation is reported as the Max UI shows it (controller sign, Euler XYZ).
+
+#979 rework (branch E2, improve/issue-979-rework-geom-udim): ucx.triangulate turns reflex diagonals
+(`flip_concave`, ConcaveFixer idea with the T03 defects fixed); export.pivot_place orients the pivot
+(`axes_long_side`, `axes_pca`, `new_offset`; L07/T06/T08/T03 defects fixed). See the sections below.
 """
 import math
 import re
@@ -30,7 +34,8 @@ CONVEX_TOL_M = 1e-4    # reg 2.13.1 post-check: every vertex behind every face p
 EXACT_MAX_CORNERS = 9  # non-planar UCX polygons up to this size are searched exhaustively (Catalan(7) = 429)
 DECIMALS = 4           # fixed decimals of every coordinate text (0.1 mm in metres)
 TARGETS = ('npm', 'vpm', 'both')
-PIVOT_OPTIONS = {'target', 'floor_z', 'vpm_rotate_z'}
+PIVOT_OPTIONS = {'target', 'floor_z', 'vpm_rotate_z', 'orient', 'pivot_at'}
+UCX_OPTIONS = {'nonconvex'}
 _NUMBER = re.compile(r'^[+-]?(\d+([.,]\d*)?|[.,]\d+)$')
 
 
@@ -371,10 +376,169 @@ def ucx_polygon(points, verts, poly_points, tol, sign):
     return None
 
 
-def ucx_plan(points, polygons, tol):
-    """Plan for one UCX piece: {'action': 'diagonals'|'hull'|'none', 'pairs', 'hull', 'reason'}.
+MAX_BEND_DEG = 60.0  # a reflex edge between triangles bent more than this is a corner of the piece, not a diagonal
 
-    points: object-space vertices; polygons: vertex-id lists (0-based) in Max winding (outward CCW)."""
+
+def _unit(v):
+    ln = _length(v)
+    return None if ln <= 0.0 else (v[0] / ln, v[1] / ln, v[2] / ln)
+
+
+def _tri_normal(points, tri, sign):
+    a, b, c = (points[i] for i in tri)
+    n = _cross(_sub(b, a), _sub(c, a))
+    return (sign * n[0], sign * n[1], sign * n[2])
+
+
+def _edges_of(tris):
+    """{directed edge (a, b): triangle index} of a triangle list."""
+    out = {}
+    for ti, (a, b, c) in enumerate(tris):
+        for e in ((a, b), (b, c), (c, a)):
+            out[e] = ti
+    return out
+
+
+def _reflex_depth(points, tri, d, sign):
+    """Signed distance of vertex d in front of the outward plane of `tri` (> 0: the shared edge is reflex)."""
+    n = _unit(_tri_normal(points, tri, sign))
+    if n is None:
+        return 0.0
+    return _dot(n, _sub(points[d], points[tri[0]]))
+
+
+def concave_edges(points, tris, tol, sign=1.0):
+    """[(depth, a, b, ti, tj, c, d)] of the interior edges whose dihedral is reflex by more than `tol`.
+
+    Edge a-b of triangle ti = (a, b, c) and tj = (b, a, d). `tol` is the 1e-4 m convexity tolerance in object
+    units, so a 1e-6 fold is never called concave (T03 ConcaveFixer flagged 1e-6 noise). Deepest first."""
+    edges = _edges_of(tris)
+    out = []
+    for (a, b), ti in edges.items():
+        if a > b or (b, a) not in edges:
+            continue
+        tj = edges[(b, a)]
+        t1, t2 = tris[ti], tris[tj]
+        c = t1[3 - t1.index(a) - t1.index(b)]
+        d = t2[3 - t2.index(a) - t2.index(b)]
+        depth = max(_reflex_depth(points, t1, d, sign), _reflex_depth(points, t2, c, sign))
+        if depth > tol:
+            out.append((depth, a, b, ti, tj, c, d))
+    out.sort(key=lambda r: (-r[0], r[1], r[2]))
+    return out
+
+
+def _flip_check(points, tris, row, tol, sign, edge_set):
+    """'' when edge a-b can be turned into c-d, else the reason it is refused.
+
+    Conditions (T03/ConcaveFixer card): the quad a-d-b-c is strictly convex in its own plan (a «dart» is not:
+    turning it folds a triangle face-down), the new edge does not exist yet, both new triangles keep the outward
+    side of the old pair, and the new edge itself is not reflex."""
+    _, a, b, ti, tj, c, d = row
+    if (min(c, d), max(c, d)) in edge_set:
+        return 'edge_exists'
+    n1 = _unit(_tri_normal(points, tris[ti], sign))
+    n2 = _unit(_tri_normal(points, tris[tj], sign))
+    if n1 is None or n2 is None:
+        return 'degenerate'
+    if _dot(n1, n2) < math.cos(math.radians(MAX_BEND_DEG)):
+        return 'sharp'
+    nrm = _unit((n1[0] + n2[0], n1[1] + n2[1], n1[2] + n2[2]))
+    if nrm is None:
+        return 'folded'
+    axis = min(range(3), key=lambda i: abs(nrm[i]))
+    tmp = [0.0, 0.0, 0.0]
+    tmp[axis] = 1.0
+    u = _unit(_cross(nrm, tuple(tmp)))
+    v = _cross(nrm, u)
+    o = points[a]
+    span = max(_length(_sub(points[i], o)) for i in (b, c, d)) or 1.0
+    flat = {i: (_dot(_sub(points[i], o), u) / span, _dot(_sub(points[i], o), v) / span) for i in (a, b, c, d)}
+    pa, pb, pc, pd = flat[a], flat[b], flat[c], flat[d]
+    eps = 1e-9
+    # proper crossing of a-b and c-d in plan <=> strictly convex quad
+    d1, d2 = _orient2(pc, pd, pa), _orient2(pc, pd, pb)
+    d3, d4 = _orient2(pa, pb, pc), _orient2(pa, pb, pd)
+    if not (((d1 > eps and d2 < -eps) or (d1 < -eps and d2 > eps)) and
+            ((d3 > eps and d4 < -eps) or (d3 < -eps and d4 > eps))):
+        return 'dart'
+    new1, new2 = (c, a, d), (d, b, c)
+    for t in (new1, new2):
+        nt = _unit(_tri_normal(points, t, sign))
+        if nt is None or _dot(nt, nrm) <= 0.0:
+            return 'folded'
+    if max(_reflex_depth(points, new1, b, sign), _reflex_depth(points, new2, a, sign)) > tol:
+        return 'still_concave'
+    return ''
+
+
+def flip_concave(points, tris, tol, sign=1.0, locked=()):
+    """Turn reflex diagonals until a fixed point. Returns (tris, flips, refused).
+
+    flips: [[a, b, c, d]] (edge a-b became c-d); refused: [{'edge': [a, b], 'reason', 'depth'}] for every reflex
+    edge left at the fixed point. `locked`: undirected edges that are outlines of the source polygons (a real
+    crease of the piece, never turned). Vertex count and the triangle count never change."""
+    tris = [tuple(int(i) for i in t) for t in tris]
+    locked = {(min(e), max(e)) for e in locked}
+    flips = []
+    blocked = set()
+
+    def check(row, edge_set):
+        if (row[1], row[2]) in locked:
+            return 'crease'
+        return _flip_check(points, tris, row, tol, sign, edge_set)
+    for _ in range(4 * len(tris) + 10):
+        rows = concave_edges(points, tris, tol, sign)
+        edge_set = {(min(e), max(e)) for e in _edges_of(tris)}
+        done = False
+        for row in rows:
+            key = (row[1], row[2])
+            if key in blocked:
+                continue
+            why = check(row, edge_set)
+            if why:
+                blocked.add(key)
+                continue
+            _, a, b, ti, tj, c, d = row
+            tris[ti], tris[tj] = (c, a, d), (d, b, c)
+            flips.append([a, b, c, d])
+            blocked = set()  # a turn changes the neighbours: re-judge every edge
+            done = True
+            break
+        if not done:
+            break
+    refused = []
+    edge_set = {(min(e), max(e)) for e in _edges_of(tris)}
+    for row in concave_edges(points, tris, tol, sign):
+        refused.append({'edge': [row[1], row[2]], 'depth': row[0], 'reason': check(row, edge_set) or 'cycle'})
+    return tris, flips, refused
+
+
+NONCONVEX = ('report', 'hull')
+REFUSE_TEXT = {'sharp': 'the triangles meet at more than {}°: a real corner of the piece, not a diagonal'.format(
+                   MAX_BEND_DEG),
+               'crease': 'an outline edge of the source polygons: a real crease of the piece, not a diagonal',
+               'dart': 'the quad around the edge is not convex in plan («dart»): turning it would fold a triangle',
+               'edge_exists': 'the turned edge already exists in the piece',
+               'still_concave': 'the turned edge would be reflex as well',
+               'folded': 'a turned triangle would face inward', 'degenerate': 'zero-area triangle at the edge',
+               'cycle': 'no turn removes it'}
+
+
+def ucx_plan(points, polygons, tol, nonconvex='report'):
+    """Plan for one UCX piece: {'action': 'none'|'diagonals'|'mesh'|'hull', 'pairs', 'tris', 'flips',
+    'refused', 'hull', 'reason'}.
+
+    points: object-space vertices; polygons: vertex-id lists (0-based) in Max winding (outward CCW).
+    1. every n-gon takes a triangulation whose triangles support the piece (or its ear-clip triangulation);
+    2. a flip pass turns reflex diagonals inside convex-in-plan quads until a fixed point (T03 ConcaveFixer idea,
+       with its defects fixed: no dart flip, new edge checked, 1e-4 m epsilon, post-check);
+    3. 'diagonals': only n-gons were split (polyop.createEdge keeps UVs/IDs); 'mesh': flips happened, the copy
+       gets the whole triangle list (vertex count unchanged); 'none': nothing to do.
+    A piece that is still not convex is reported (`refused`, reason) and left as triangulated; nonconvex='hull'
+    rebuilds it as its convex hull instead (the 0.8 behaviour)."""
+    if nonconvex not in NONCONVEX:
+        raise ValueError('nonconvex must be report or hull')
     pts = _finite_points(points, 'UCX piece')
     fan = [(p[0], p[i], p[i + 1]) for p in polygons for i in range(1, len(p) - 1)]
     if not fan:
@@ -382,13 +546,15 @@ def ucx_plan(points, polygons, tol):
     vol = _signed_volume(pts, fan)
     sign = 1.0 if vol >= 0 else -1.0
     pairs, tris, ngons = [], [], 0
-    convex = True
     for poly in polygons:
         poly = [int(v) for v in poly]
         got = ucx_polygon(pts, poly, [pts[v] for v in poly], tol, sign)
         if got is None:
-            convex = False
-            break
+            if len(poly) == 3:
+                got = [tuple(poly)]
+            else:
+                t = triangulate_polygon([pts[v] for v in poly])
+                got = [tuple(poly[i] for i in tri) for tri in t['triangles']]
         tris.extend(got)
         if len(poly) > 3:
             ngons += 1
@@ -400,14 +566,35 @@ def ucx_plan(points, polygons, tol):
                         pr = sorted((a, b))
                         if pr not in pairs:
                             pairs.append(pr)
-    if convex:
-        return {'action': 'diagonals' if ngons else 'none', 'pairs': pairs, 'hull': None,
-                'reason': '' if ngons else 'already triangles'}
-    ucx = _ucx_core()
-    hverts, htris = ucx._convex_hull(pts)
-    return {'action': 'hull', 'pairs': [], 'hull': {'verts': [list(v) for v in hverts],
-                                                     'tris': [list(t) for t in htris]},
-            'reason': 'no supporting triangulation: the piece is not convex; rebuilt as its convex hull'}
+    locked = set()  # outline edges of source n-gons are real creases; edges between source triangles may be
+    for poly in polygons:  # the diagonals of an earlier triangulation and stay candidates (ConcaveFixer input)
+        if len(poly) > 3:
+            for i in range(len(poly)):
+                a, b = int(poly[i]), int(poly[(i + 1) % len(poly)])
+                locked.add((min(a, b), max(a, b)))
+    tris, flips, refused = flip_concave(pts, tris, tol, sign, locked)
+    convex = not refused and _ucx_core().convexity(pts, tris, tol)['convex']
+    out = {'pairs': pairs, 'tris': [list(t) for t in tris], 'flips': flips, 'refused': refused, 'hull': None,
+           'convex': convex}
+    if not convex and nonconvex == 'hull':
+        ucx = _ucx_core()
+        hverts, htris = ucx._convex_hull(pts)
+        out.update(action='hull', pairs=[], tris=[], flips=[],
+                   hull={'verts': [list(v) for v in hverts], 'tris': [list(t) for t in htris]},
+                   reason='not convex after {} turn(s); rebuilt as its convex hull (nonconvex=hull)'.format(len(flips)))
+        return out
+    if flips:
+        out.update(action='mesh', reason='{} reflex diagonal(s) turned'.format(len(flips)))
+    elif ngons:
+        out.update(action='diagonals', reason='')
+    else:
+        out.update(action='none', reason='already triangles')
+    if not convex:
+        why = sorted({r['reason'] for r in refused}) or ['no supporting triangulation']
+        out['reason'] = (out['reason'] + '; ' if out['reason'] else '') + \
+            'still not convex: {}; the piece is left triangulated, rebuild it (ucx.build) or split it'.format(
+                ', '.join(REFUSE_TEXT.get(w, w) for w in why))
+    return out
 
 
 def _ucx_core():
@@ -479,6 +666,16 @@ def check_options(options):
     out['vpm_rotate_z'] = parse_level(rot) if isinstance(rot, str) else float(rot)
     if not math.isfinite(out['vpm_rotate_z']) or abs(out['vpm_rotate_z']) > 360.0:
         raise ValueError('vpm_rotate_z must be within ±360 degrees')
+    orient = options.get('orient', 'keep')
+    if orient not in ORIENTS:
+        raise ValueError('orient must be one of ' + '/'.join(ORIENTS))
+    at = options.get('pivot_at', 'floor')
+    if at not in PIVOT_AT:
+        raise ValueError('pivot_at must be one of ' + '/'.join(PIVOT_AT))
+    if at != 'floor' and 'floor_z' in out:
+        raise ValueError('floor_z belongs to pivot_at=floor')
+    if orient != 'keep' or at != 'floor':  # 0.8 defaults stay out of the report shape
+        out['orient'], out['pivot_at'] = orient, at
     return out
 
 
@@ -534,6 +731,315 @@ def vpm_translate(positions, pivot):
     """VPM placement of several copies sharing one pivot: each moves by -pivot, so their offsets are kept
     (lab: GeoAGR "Combine near zero" aligned the bbox centres and lost the offset between the models)."""
     return [[float(p[i]) - float(pivot[i]) for i in range(3)] for p in positions]
+
+
+# ---- pivot axes (export.pivot_place, #979 rework) -----------------------------------------------------
+# Ideas, not code (#853): AC Pivot Align `rotate_pivot_tool.ms` sha256 6344571f…5e20 (X along the long side,
+# Z up, dry-run, one undo), straighten_object.ms 94005fef…0221 (principal axes), align_door_pivots_to_bottom.ms
+# e22ab117…1608 (pivot at the bottom of a door). Measured defects fixed here (L07, T06, T08, T03):
+# * the axis was fitted on world float32 vertices: 1.43° off at 2 345 678 m without a warning -> fitted on
+#   translation-free double coordinates (object vertices times the rotation part of the object transform);
+# * O(n³) pair search and a 3..512 vertex limit -> convex hull + rotating calipers, O(n log n), no limit;
+# * the sign of X was arbitrary (cell at 135° -> X at -45°) -> X angle in [0°, 180°), stated in the report;
+# * PCA ran before the rotation and nothing was straightened; «pivot bottom» left the object by 858 units ->
+#   PCA in double on centred coordinates, the frame is written, the bottom is the oriented bbox bottom;
+# * the door pivot used world axes and moved the mesh by 491 / 1675 units -> the object's own frame, the mesh
+#   stays (objectOffset is recomputed in double so that object-to-world is unchanged).
+ORIENTS = ('keep', 'long_side', 'pca')
+PIVOT_AT = ('floor', 'bottom_centre', 'centre')
+ANGLE_TOL_DEG = 0.01        # L07 acceptance: axis error <= 0.01°
+SQUARE_REL = 1e-3           # long and short side within 0.1 %: the long side is undefined
+EIGEN_REL = 1e-3            # principal values within 0.1 %: the principal axes are undefined
+SCALE_TOL = 1e-6            # unit node scale
+
+
+def _f32_spacing(x):
+    """Spacing of float32 numbers around |x| (3ds Max stores vertices and matrices as float32)."""
+    x = abs(float(x))
+    if x == 0.0:
+        return 2.0 ** -149
+    m, e = math.frexp(x)
+    return 2.0 ** (e - 24)
+
+
+def hull2d(points):
+    """Convex hull (CCW, no collinear points) of 2D points, monotone chain in double precision."""
+    pts = sorted({(float(p[0]), float(p[1])) for p in points})
+    if len(pts) < 3:
+        return pts
+
+    def half(seq):
+        out = []
+        for p in seq:
+            while len(out) >= 2 and _orient2(out[-2], out[-1], p) <= 0.0:
+                out.pop()
+            out.append(p)
+        return out
+    lower, upper = half(pts), half(reversed(pts))
+    return lower[:-1] + upper[:-1]
+
+
+def min_area_rect(points):
+    """Minimum-area enclosing rectangle of 2D points: rotating calipers over the hull edges.
+
+    Returns {'angle': degrees of the long side in [0, 180), 'long', 'short', 'centre': (x, y), 'hull': n}."""
+    hull = hull2d(points)
+    if len(hull) < 3:
+        raise ValueError('degenerate footprint: fewer than 3 hull corners in plan')
+    n = len(hull)
+    best = None
+    j = k = m = None
+    for i in range(n):
+        p, q = hull[i], hull[(i + 1) % n]
+        ex, ey = q[0] - p[0], q[1] - p[1]
+        ln = math.hypot(ex, ey)
+        if ln <= 0.0:
+            continue
+        ux, uy = ex / ln, ey / ln
+
+        def along(t):
+            return t[0] * ux + t[1] * uy
+
+        def across(t):
+            return -t[0] * uy + t[1] * ux
+        if j is None:
+            j = max(range(n), key=lambda t: along(hull[t]))
+            k = max(range(n), key=lambda t: across(hull[t]))
+            m = min(range(n), key=lambda t: along(hull[t]))
+        for _ in range(n):  # the calipers only move forward (CCW hull); n steps bound every pointer
+            if along(hull[(j + 1) % n]) > along(hull[j]):
+                j = (j + 1) % n
+            else:
+                break
+        for _ in range(n):
+            if across(hull[(k + 1) % n]) > across(hull[k]):
+                k = (k + 1) % n
+            else:
+                break
+        for _ in range(n):
+            if along(hull[(m + 1) % n]) < along(hull[m]):
+                m = (m + 1) % n
+            else:
+                break
+        lo_a, hi_a = along(hull[m]), along(hull[j])
+        lo_c, hi_c = across(p), across(hull[k])
+        w, h = hi_a - lo_a, hi_c - lo_c
+        area = w * h
+        if best is None or area < best[0] * (1.0 - 1e-12):
+            ca, cc = (lo_a + hi_a) / 2.0, (lo_c + hi_c) / 2.0
+            centre = (ca * ux - cc * uy, ca * uy + cc * ux)
+            best = (area, w, h, math.atan2(uy, ux), centre)
+    _, w, h, ang, centre = best
+    if h > w:
+        w, h, ang = h, w, ang + math.pi / 2.0
+    return {'angle': canonical_angle(math.degrees(ang)), 'long': w, 'short': h, 'centre': centre, 'hull': n}
+
+
+def canonical_angle(deg):
+    """Direction of an undirected axis as an angle in [0, 180) (the X sign rule, T06: 135° stays 135°)."""
+    a = math.fmod(float(deg), 180.0)
+    if a < 0.0:
+        a += 180.0
+    if a >= 180.0 - 1e-9:
+        a = 0.0
+    return a
+
+
+def angle_uncertainty(points_obj, long_side):
+    """Degrees of axis uncertainty from the float32 storage of the object vertices over the long side."""
+    if long_side <= 0.0:
+        return 180.0
+    mag = max((abs(c) for p in points_obj for c in p), default=0.0)
+    return math.degrees(math.atan2(2.0 * _f32_spacing(mag), long_side))
+
+
+def mat3_mul(a, b):
+    return [[sum(a[i][k] * b[k][j] for k in range(3)) for j in range(3)] for i in range(3)]
+
+
+def vec_mat(v, m):
+    """Row vector times 3x3 matrix (Max convention)."""
+    return [v[0] * m[0][j] + v[1] * m[1][j] + v[2] * m[2][j] for j in range(3)]
+
+
+def transpose(m):
+    return [[m[j][i] for j in range(3)] for i in range(3)]
+
+
+def oriented(points_obj, obj_rot):
+    """Translation-free world-oriented coordinates: object vertex times the 3x3 part of objectTransform."""
+    return [vec_mat(p, obj_rot) for p in points_obj]
+
+
+def _jacobi(a):
+    """Eigenvalues and eigenvectors (columns) of a symmetric 3x3 matrix."""
+    a = [row[:] for row in a]
+    v = [[1.0 if i == j else 0.0 for j in range(3)] for i in range(3)]
+    for _ in range(64):
+        p, q = max(((0, 1), (0, 2), (1, 2)), key=lambda t: abs(a[t[0]][t[1]]))
+        if abs(a[p][q]) <= 1e-300 or abs(a[p][q]) <= 1e-18 * (abs(a[p][p]) + abs(a[q][q])):
+            break
+        theta = (a[q][q] - a[p][p]) / (2.0 * a[p][q])
+        t = (1.0 if theta >= 0 else -1.0) / (abs(theta) + math.sqrt(theta * theta + 1.0))
+        c = 1.0 / math.sqrt(t * t + 1.0)
+        s = t * c
+        for k in range(3):
+            akp, akq = a[k][p], a[k][q]
+            a[k][p], a[k][q] = c * akp - s * akq, s * akp + c * akq
+        for k in range(3):
+            apk, aqk = a[p][k], a[q][k]
+            a[p][k], a[q][k] = c * apk - s * aqk, s * apk + c * aqk
+        for k in range(3):
+            vkp, vkq = v[k][p], v[k][q]
+            v[k][p], v[k][q] = c * vkp - s * vkq, s * vkp + c * vkq
+    return [a[i][i] for i in range(3)], [[v[r][i] for r in range(3)] for i in range(3)]
+
+
+def _axis_sign(x):
+    """X sign rule: plan angle in [0, 180); a vertical X points up."""
+    xy = math.hypot(x[0], x[1])
+    if xy > 1e-9:
+        ang = math.degrees(math.atan2(x[1], x[0]))
+        if abs(canonical_angle(ang) - (ang % 360.0)) > 1e-6:
+            return [-c for c in x]
+        return list(x)
+    return list(x) if x[2] >= 0 else [-c for c in x]
+
+
+def frame_rows(x_axis, z_axis):
+    """Orthonormal right-handed rows (X, Y, Z) from X and an approximate Z."""
+    z = _unit(tuple(z_axis))
+    x = tuple(x_axis)
+    d = _dot(x, z)
+    x = _unit((x[0] - d * z[0], x[1] - d * z[1], x[2] - d * z[2]))
+    y = _cross(z, x)
+    return [list(x), list(y), list(z)]
+
+
+def axes_long_side(points_obj, obj_rot):
+    """{'rows', 'angle', 'long', 'short', 'uncertainty'} — X along the long side of the plan, Z world up.
+
+    Refuses (ValueError with the exact reason) a square or degenerate footprint and an axis whose float32
+    uncertainty exceeds ANGLE_TOL_DEG."""
+    world = oriented(points_obj, obj_rot)
+    rect = min_area_rect([(p[0], p[1]) for p in world])
+    if rect['long'] <= 0.0 or (rect['long'] - rect['short']) <= SQUARE_REL * rect['long']:
+        raise ValueError('square or degenerate footprint: long side {:.6g} vs short side {:.6g}, the long side '
+                         'is undefined'.format(rect['long'], rect['short']))
+    unc = angle_uncertainty(points_obj, rect['long'])
+    if unc > ANGLE_TOL_DEG:
+        raise ValueError('axis uncertainty {:.4f}° > {}°: object vertices are stored too far from the pivot '
+                         '(float32); move the pivot near the object first'.format(unc, ANGLE_TOL_DEG))
+    a = math.radians(rect['angle'])
+    rows = frame_rows((math.cos(a), math.sin(a), 0.0), (0.0, 0.0, 1.0))
+    return {'rows': rows, 'angle': rect['angle'], 'long': rect['long'], 'short': rect['short'],
+            'uncertainty': unc}
+
+
+def axes_pca(points_obj, obj_rot):
+    """Principal axes in double: X the major axis, Z the minor axis turned up. Refuses ties."""
+    world = oriented(points_obj, obj_rot)
+    n = len(world)
+    if n < 4:
+        raise ValueError('degenerate object: fewer than 4 vertices for principal axes')
+    c = [sum(p[i] for p in world) / n for i in range(3)]
+    cov = [[sum((p[i] - c[i]) * (p[j] - c[j]) for p in world) / n for j in range(3)] for i in range(3)]
+    vals, vecs = _jacobi(cov)
+    order = sorted(range(3), key=lambda i: -vals[i])
+    lam = [vals[i] for i in order]
+    if lam[0] <= 0.0 or (lam[0] - lam[1]) <= EIGEN_REL * lam[0] or (lam[1] - lam[2]) <= EIGEN_REL * lam[0]:
+        raise ValueError('principal axes undefined: principal values {} are not distinct'.format(
+            ', '.join('{:.6g}'.format(v) for v in lam)))
+    x = _axis_sign(vecs[order[0]])
+    z = list(vecs[order[2]])
+    if z[2] < 0 or (abs(z[2]) <= 1e-12 and _dot(_cross(tuple(z), tuple(x)), (0.0, 0.0, 1.0)) < 0):
+        z = [-v for v in z]
+    rows = frame_rows(x, z)
+    ext = max(math.sqrt(max(v, 0.0)) for v in lam)
+    return {'rows': rows, 'angle': canonical_angle(math.degrees(math.atan2(rows[0][1], rows[0][0]))),
+            'principal': lam, 'uncertainty': angle_uncertainty(points_obj, 2.0 * ext)}
+
+
+def frame_bounds(points_obj, obj_rot, rows):
+    """(min, max) of the object in the frame `rows` (translation-free, double)."""
+    world = oriented(points_obj, obj_rot)
+    local = [vec_mat(p, transpose(rows)) for p in world]
+    return ([min(p[i] for p in local) for i in range(3)], [max(p[i] for p in local) for i in range(3)])
+
+
+def frame_point(local, rows):
+    """Translation-free world vector of a point given in the frame `rows`."""
+    return vec_mat(local, rows)
+
+
+def f32(x):
+    import struct
+    return struct.unpack('<f', struct.pack('<f', float(x)))[0]
+
+
+def check_unit_scale(node_rows):
+    """Refusal text when the node scale is not 1 (the offset recomputation keeps rotation and position only)."""
+    s = [_length(tuple(r)) for r in node_rows[:3]]
+    if any(abs(v - 1.0) > SCALE_TOL for v in s):
+        return 'node scale is {} not 1: reset the scale (Reset XForm) on the copy first'.format(
+            ', '.join('{:.6g}'.format(v) for v in s))
+    return ''
+
+
+def new_offset(node_rows, offset_rows, new_rows, new_pos32):
+    """objectOffset of a node turned to `new_rows` and moved to `new_pos32`, with object-to-world unchanged.
+
+    node_rows: 4 rows of the node transform; offset_rows: 4 rows of the objectOffset matrix (scale*rot, pos).
+    Max row-vector: world = x*Mo*R + po*R + t. New: Mo' = Mo R R'^T; po' = (po R + (t - t')) R'^T, where
+    t - t' is taken in double from the float32 values, so nothing is lost at 2 345 678 m."""
+    r_old = [list(map(float, r)) for r in node_rows[:3]]
+    t_old = [float(c) for c in node_rows[3]]
+    mo = [list(map(float, r)) for r in offset_rows[:3]]
+    po = [float(c) for c in offset_rows[3]]
+    rt_new = transpose(new_rows)
+    mo_new = mat3_mul(mat3_mul(mo, r_old), rt_new)
+    shift = [t_old[i] - float(new_pos32[i]) for i in range(3)]
+    po_r = vec_mat(po, r_old)
+    po_new = vec_mat([po_r[i] + shift[i] for i in range(3)], rt_new)
+    return mo_new, po_new
+
+
+def world_points(points_obj, offset_rows, node_rows):
+    """World vertices in double: x*Mo*R + po*R + t (for the before/after drift check)."""
+    mo = [list(map(float, r)) for r in offset_rows[:3]]
+    po = [float(c) for c in offset_rows[3]]
+    r = [list(map(float, row)) for row in node_rows[:3]]
+    t = [float(c) for c in node_rows[3]]
+    pr = vec_mat(po, r)
+    out = []
+    for p in points_obj:
+        q = vec_mat(vec_mat(p, mo), r)
+        out.append([q[i] + pr[i] + t[i] for i in range(3)])
+    return out
+
+
+REFUSAL_CODES = (('square or degenerate footprint', 'pivot_axis_undefined'),
+                 ('degenerate footprint', 'pivot_axis_undefined'),
+                 ('principal axes undefined', 'pivot_axis_undefined'),
+                 ('degenerate object', 'pivot_axis_undefined'),
+                 ('no vertices', 'pivot_axis_undefined'),
+                 ('axis uncertainty', 'pivot_axis_uncertain'),
+                 ('node scale', 'pivot_node_scale'))
+
+
+def refusal_code(text):
+    """Finding code of a pivot refusal (the reason text stays the detail)."""
+    for words, code in REFUSAL_CODES:
+        if words in str(text):
+            return code
+    return 'pivot_refused'
+
+
+def axis_error_deg(rows, expected_deg):
+    """Angle between X in plan and an expected undirected direction (degrees, 0..90)."""
+    got = math.degrees(math.atan2(rows[0][1], rows[0][0]))
+    d = abs(canonical_angle(got) - canonical_angle(expected_deg))
+    return min(d, 180.0 - d)
 
 
 # ---- piece classification (ucx.triangulate / model.triangulate) ---------------------------------------
