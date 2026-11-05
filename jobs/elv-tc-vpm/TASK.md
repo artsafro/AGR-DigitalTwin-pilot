@@ -133,6 +133,15 @@ User answers 2 (2026-11-05, after `outputs/customer-clarify-v001/`), all recomme
 0,0,0, cassette RAL 7024, smooth wood #C4ABAA (photo), 15 cover strips 289 m (P44), 30 interior capsules (P43, ID34),
 ELV-21 doors No 1/4/11/21/25, door No 30 (ELV-08). Open: FNO, УКЭП, wood colour, address, door No 30 type, Gate 1 P43/P44.
 
+Acceptance of v003 (user, 2026-11-05, «Принимаю всё» on Claude's recommendations):
+- Wood #C4ABAA reads pink → shift to a warm beige (photo texture feel kept), until the act gives the target. Rebuild as
+  tex-v005 / delivery-v004.
+- Door No 30 stays blind ELV-08 (1800×2050). Entrance-niche capsule 2.30 m and T1 west glazing capsule 0.45 m accepted.
+- The 9 cover strips hidden behind the cladding are not built.
+- Gate 1 accepted for P43 (interior capsules), P44 (cover strips) and library type ELV-21 [D140].
+- Still open: address (R12), FNO code/name and the УКЭП `.sig` (customer), signage TZ, `_Light.fbx` (user), parts
+  file `history` key fails the schema (v002 too).
+
 ## Не трогать
 
 - Source files in `for_ai\` (work on byte-identical copies only).
