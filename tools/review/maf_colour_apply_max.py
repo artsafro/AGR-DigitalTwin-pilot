@@ -1,6 +1,6 @@
 """new-case: MAF colour-zone apply step. Apply #889 colour-zone material IDs in 3ds Max 2026. Run only via dcc_batch.py.
 
-Reads each showcase FBX, assigns v005 material IDs, exports a new FBX. Vertex and face
+Reads each showcase FBX, assigns v006 material IDs (the job names the list), exports a new FBX. Vertex and face
 counts are checked before the write and again on the node after the assignment. An
 output path that is an input is refused and nothing is written. Inputs are not deleted.
 """
@@ -10,14 +10,16 @@ import json
 import sys
 from pathlib import Path
 
-ROOT = Path(r"C:\Users\artsafro\agr-pilot\AGR-DigitalTwin\.worktrees\t_f6c68418")
+JOB = Path(r"C:\x\889-maf-colour-zones\apply-job.json")
+# python.ExecuteFile gives no reliable __file__; the repo is the one that owns the job's ID list
+# (<repo>/library/maf/material_ids_vNNN.json), never a hardcoded worktree.
+ROOT = Path(json.loads(JOB.read_text(encoding="utf-8"))["ids"]).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tools" / "review"))
 import maf_colour_zones as zones  # noqa: E402
 
 import pymxs  # noqa: E402
 
 rt = pymxs.runtime
-JOB = Path(r"C:\x\889-maf-colour-zones\apply-job.json")
 REPORT = Path(r"C:\x\889-maf-colour-zones\applied.json")
 
 

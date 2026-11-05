@@ -12,7 +12,7 @@ QA: `maf_surface` readback from tools/blender/fbx_readback.py.
 
 Photo status: not_required. Accepted: False.
 
-APPLIED C:\x\889-maf-colour-zones\applied-v002.json max_exit_code=4294967166 (known polyunwrapper_autoload.mse startup error)
+APPLIED C:\x\889-maf-colour-zones\applied-v003.json max_exit_code=4294967166 (known polyunwrapper_autoload.mse startup error)
 
 | position | zone | ID | key | colour | npm faces before | npm faces after | npm verts before | npm verts after | vpm faces before | vpm faces after | vpm verts before | vpm verts after | zone faces npm | zone faces vpm | colour source |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -31,7 +31,7 @@ APPLIED C:\x\889-maf-colour-zones\applied-v002.json max_exit_code=4294967166 (kn
 | VAT_MAF_T3510_12 | frame | 4 | paint_ral7047 | #D0D0D0 | 678 | 678 | 416 | 416 | 678 | 678 | 416 | 416 | 190 | 190 | schedule RAL 7047 |
 | VAT_MAF_T3510_16 | boards | 14 | wood_light | #C49A6C | 2281 | 2281 | 1356 | 1356 | 4562 | 4562 | 2580 | 2580 | 200 | 112 | schedule finish light oak; no RAL; vendor candidates_part*.jpg and candidates_sheet.jpg are library viewport colours, not a finish measurement; colour assumed; atlas slot larch_light_oak #C49A6C |
 | VAT_MAF_T3510_16 | frame | 4 | paint_ral7047 | #D0D0D0 | 2281 | 2281 | 1356 | 1356 | 4562 | 4562 | 2580 | 2580 | 2081 | 4450 | schedule RAL 7047 |
-| VAT_MAF_T3510_26 | hpl | 14 | wood_light | #B4825A | 3043 | 3043 | 1300 | 1300 | 8696 | 8696 | 4184 | 4184 | 12 | 35 | schedule HPL satin wood; no RAL; vendor images are library viewport colours, not a finish measurement; colour assumed; atlas slot hpl_satin_wood #B4825A |
+| VAT_MAF_T3510_26 | hpl | 32 | wood_hpl_satin | #B4825A | 3043 | 3043 | 1300 | 1300 | 8696 | 8696 | 4184 | 4184 | 12 | 35 | schedule HPL satin wood; no RAL; vendor images are library viewport colours, not a finish measurement; colour assumed; atlas slot hpl_satin_wood #B4825A |
 | VAT_MAF_T3510_26 | frame | 4 | paint_ral7047 | #D0D0D0 | 3043 | 3043 | 1300 | 1300 | 8696 | 8696 | 4184 | 4184 | 3031 | 8661 | schedule RAL 7047 |
 | VAT_MAF_T3510_27 | boards | 14 | wood_light | #C49A6C | 540 | 540 | 292 | 292 | 540 | 540 | 292 | 292 | 364 | 364 | schedule finish light oak; no RAL; vendor candidates_part*.jpg and candidates_sheet.jpg are library viewport colours, not a finish measurement; colour assumed; atlas slot larch_light_oak #C49A6C |
 | VAT_MAF_T3510_27 | frame | 4 | paint_ral7047 | #D0D0D0 | 540 | 540 | 292 | 292 | 540 | 540 | 292 | 292 | 176 | 176 | schedule RAL 7047 |

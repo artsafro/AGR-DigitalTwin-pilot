@@ -921,8 +921,8 @@ def main(argv=None) -> int:
         else:
             rows = rows_from_set(report_in, catalogue, counts)
         required = list(args.required) if args.required else [row["set_id"] for row in rows]
-        check_rows_id_colours(rows)
         report = compile_zones(required, rows, catalogue)
+        check_rows_id_colours(report["positions"])
         if args.applied:
             if args.max_exit is None:
                 raise ZoneError("max exit missing")

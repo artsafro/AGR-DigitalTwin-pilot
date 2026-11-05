@@ -14,7 +14,7 @@
      "id": 14,
      "colour": "#C49A6C",
      "ral": null,
-     "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
+     "name": "WOOD светлая: лиственница «светлый дуб», сосна",
      "colour_source": "schedule finish light oak; no RAL; vendor candidates_part*.jpg and candidates_sheet.jpg are library viewport colours, not a finish measurement; colour assumed; atlas slot larch_light_oak #C49A6C"
     },
     {
@@ -110,7 +110,7 @@
      "id": 14,
      "colour": "#C49A6C",
      "ral": null,
-     "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
+     "name": "WOOD светлая: лиственница «светлый дуб», сосна",
      "colour_source": "schedule finish light oak; no RAL; vendor candidates_part*.jpg and candidates_sheet.jpg are library viewport colours, not a finish measurement; colour assumed; atlas slot larch_light_oak #C49A6C"
     },
     {
@@ -164,7 +164,7 @@
      "id": 14,
      "colour": "#C49A6C",
      "ral": null,
-     "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
+     "name": "WOOD светлая: лиственница «светлый дуб», сосна",
      "colour_source": "schedule finish light oak; no RAL; vendor candidates_part*.jpg and candidates_sheet.jpg are library viewport colours, not a finish measurement; colour assumed; atlas slot larch_light_oak #C49A6C"
     },
     {
@@ -218,7 +218,7 @@
      "id": 14,
      "colour": "#C49A6C",
      "ral": null,
-     "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
+     "name": "WOOD светлая: лиственница «светлый дуб», сосна",
      "colour_source": "schedule finish light oak; no RAL; vendor candidates_part*.jpg and candidates_sheet.jpg are library viewport colours, not a finish measurement; colour assumed; atlas slot larch_light_oak #C49A6C"
     },
     {
@@ -272,7 +272,7 @@
      "id": 14,
      "colour": "#C49A6C",
      "ral": null,
-     "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
+     "name": "WOOD светлая: лиственница «светлый дуб», сосна",
      "colour_source": "schedule finish light oak; no RAL; vendor candidates_part*.jpg and candidates_sheet.jpg are library viewport colours, not a finish measurement; colour assumed; atlas slot larch_light_oak #C49A6C"
     },
     {
@@ -338,7 +338,7 @@
      "id": 14,
      "colour": "#C49A6C",
      "ral": null,
-     "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
+     "name": "WOOD светлая: лиственница «светлый дуб», сосна",
      "colour_source": "schedule finish light oak; no RAL; vendor candidates_part*.jpg and candidates_sheet.jpg are library viewport colours, not a finish measurement; colour assumed; atlas slot larch_light_oak #C49A6C"
     },
     {
@@ -388,11 +388,11 @@
    "zones": [
     {
      "zone": "hpl",
-     "id_key": "wood_light",
-     "id": 14,
+     "id_key": "wood_hpl_satin",
+     "id": 32,
      "colour": "#B4825A",
      "ral": null,
-     "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
+     "name": "HPL «атласное дерево» (столешница теннисного стола)",
      "colour_source": "schedule HPL satin wood; no RAL; vendor images are library viewport colours, not a finish measurement; colour assumed; atlas slot hpl_satin_wood #B4825A"
     },
     {
@@ -433,7 +433,7 @@
    "material_reason": "2643 = table top at z 0.76 (HPL); 2641 = top edge strip z 0.76 (HPL); 2648 = frame/net (steel)",
    "split_note": null,
    "schedule_finishes": [
-    "wood_light",
+    "wood_hpl_satin",
     "paint_ral7047"
    ]
   },
@@ -446,7 +446,7 @@
      "id": 14,
      "colour": "#C49A6C",
      "ral": null,
-     "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
+     "name": "WOOD светлая: лиственница «светлый дуб», сосна",
      "colour_source": "schedule finish light oak; no RAL; vendor candidates_part*.jpg and candidates_sheet.jpg are library viewport colours, not a finish measurement; colour assumed; atlas slot larch_light_oak #C49A6C"
     },
     {
@@ -554,7 +554,7 @@
      "id": 14,
      "colour": "#C49A6C",
      "ral": null,
-     "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
+     "name": "WOOD светлая: лиственница «светлый дуб», сосна",
      "colour_source": "schedule finish light oak; no RAL; vendor candidates_part*.jpg and candidates_sheet.jpg are library viewport colours, not a finish measurement; colour assumed; atlas slot larch_light_oak #C49A6C"
     },
     {
@@ -620,7 +620,7 @@
      "id": 14,
      "colour": "#C49A6C",
      "ral": null,
-     "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
+     "name": "WOOD светлая: лиственница «светлый дуб», сосна",
      "colour_source": "schedule finish light oak; no RAL; vendor candidates_part*.jpg and candidates_sheet.jpg are library viewport colours, not a finish measurement; colour assumed; atlas slot larch_light_oak #C49A6C"
     },
     {
@@ -709,7 +709,7 @@
   }
  ],
  "apply_marker": "APPLIED",
- "apply_report": "C:\\x\\889-maf-colour-zones\\applied-v002.json",
+ "apply_report": "C:\\x\\889-maf-colour-zones\\applied-v003.json",
  "max_exit_code": 4294967166,
  "max_exit_note": "known polyunwrapper_autoload.mse startup error",
  "maf_surface": {
