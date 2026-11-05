@@ -11,7 +11,17 @@ Guarantees (each has a test):
 - Every model-space entity is one record in ``entities``, status ``used`` or ``dropped``,
   and the handles are unique. A count that does not match the model space is an error.
 - A layer that is not in the caller's map is an error naming that layer. Nothing is written.
-- A role other than ``wall``, ``symbol`` or ``drop:<reason>`` is an error naming it.
+- A role other than ``wall``, ``symbol``, ``hatch`` or ``drop:<reason>`` is an error naming it.
+- ``hatch`` layers hold HATCH entities only (anything else is an error naming the type); their boundary
+  paths (even-odd per hatch) united are the drawn wall mass. A hatch with no area is an error naming it.
+- ``contour_source`` is ``lines`` (default: the wall lines) or ``hatch`` (the hatch union, closed the same
+  way as contours.py: grown by ``gap_close_m``, outlines filled, shrunk back). Anything else is an error;
+  ``hatch`` with no hatch entity is an error.
+- Coverage (review #989): when a hatch layer is mapped, the kept pieces must cover strictly more than
+  COVERAGE_MIN_SHARE (0.9) of the hatch area and every bbox side must sit strictly within COVERAGE_BBOX_M
+  (0.1 m) of the hatch bbox. Otherwise the extract is an error naming the coverage: no contour that lost
+  the drawn wall is written. Exactly 0.9 or exactly 0.1 m fails. With no hatch layer the coverage is
+  ``not measured`` with the reason.
 - A non-finite coordinate is an error naming the handle. An empty model space is an error.
 - A wall or symbol entity whose type this reader does not support is an error naming the
   type (a CIRCLE on a wall layer is not a contour).
@@ -50,6 +60,9 @@ if str(_BODY) not in sys.path:
     sys.path.insert(0, str(_BODY))
 from contours import GAP_CLOSE_M, MIN_PIECE_M2  # noqa: E402
 
+COVERAGE_MIN_SHARE = 0.9  # covered share of the wall hatch must be strictly above this
+COVERAGE_BBOX_M = 0.1  # every bbox side strictly within this of the hatch bbox
+CONTOUR_SOURCES = ("lines", "hatch")
 FACE_LIMIT_M = 1.0  # a host-wall face is strictly closer than this; exactly 1.0 m is not used
 # L03 of АС.03. Only A-WALL-____-MCUT is the exterior cut. I-WALL stays out (accepted Q1).
 # Symbol layers are read and then kept only when the block is a door or a window (Q3).
@@ -60,7 +73,7 @@ KPP1_LAYER_ROLES = {
     "A-DETL-GENF-OTLN": "drop:detail fill",
     "A-DETL-____-OTLN": "drop:detail outline",
     "A-____-NOTE-TEXT": "drop:note",
-    "A-WALL-____-PATT": "drop:wall hatch, not a boundary",
+    "A-WALL-____-PATT": "hatch",
     "I-WALL-____-MCUT": "drop:interior wall cut, not used as the exterior contour (Q1)",
     "A-WALL-____-MCUT": "wall",
     "I-WALL-____-OTLN": "drop:interior wall outline, not used as the exterior contour (Q1)",
@@ -96,7 +109,7 @@ def decode_dxf_text(text: str) -> str:
 
 
 def _role(spec: str) -> tuple[str, str]:
-    if spec in ("wall", "symbol"):
+    if spec in ("wall", "symbol", "hatch"):
         return spec, ""
     if isinstance(spec, str) and spec.startswith("drop:"):
         reason = spec[5:].strip()
@@ -139,6 +152,78 @@ def _segments(entity) -> list[LineString]:
     raise ValueError(f"handle {handle}: unsupported {kind} on a wall layer")
 
 
+def _hatch_area(entity, origin_mm, frame_shift_m):
+    """The hatch's boundary paths in metres, even-odd inside one hatch. No area is an error naming it."""
+    from ezdxf import path as dxf_path
+
+    handle = str(entity.dxf.handle)
+    rings = []
+    for boundary in dxf_path.from_hatch(entity):
+        pts = [_to_m(*_finite_point(v, handle), origin_mm, frame_shift_m) for v in boundary.flattening(0.5)]
+        if len(pts) >= 3:
+            ring = Polygon(pts).buffer(0)
+            if not ring.is_empty and ring.area > 0:
+                rings.append(ring)
+    if not rings:
+        raise ValueError(f"handle {handle}: hatch has no area")
+    area = rings[0]
+    for ring in rings[1:]:
+        area = area.symmetric_difference(ring)
+    if area.is_empty or area.area <= 0:
+        raise ValueError(f"handle {handle}: hatch has no area")
+    return area
+
+
+def _split(parts) -> tuple[list[Polygon], list[Polygon]]:
+    keep, dropped = [], []
+    for part in parts:
+        if part.geom_type != "Polygon":
+            continue
+        part = orient(part, 1.0)
+        # exactly 0.5 m2 is not kept; a hair of float noise above 0.5 still counts as the threshold
+        if part.area <= MIN_PIECE_M2 + 1e-6:
+            dropped.append(part)
+        else:
+            keep.append(part)
+    return keep, dropped
+
+
+def _fill_pieces(areas: list, gap_close_m: float) -> tuple[list[Polygon], list[Polygon]]:
+    """Hatched wall mass to plan pieces: grown, outlines filled, shrunk back (contours.py closing)."""
+    radius = float(gap_close_m) - 1e-4
+    thick = unary_union([a.buffer(radius, quad_segs=2) for a in areas])
+    geoms = list(thick.geoms) if thick.geom_type == "MultiPolygon" else [thick]
+    filled = []
+    for geom in geoms:
+        if geom.geom_type != "Polygon":
+            continue
+        shrunk = Polygon(geom.exterior).buffer(-radius, quad_segs=2)
+        filled.extend(list(shrunk.geoms) if shrunk.geom_type == "MultiPolygon" else [shrunk])
+    merged = unary_union([p for p in filled if not p.is_empty])
+    if merged.is_empty:
+        return [], []
+    return _split(list(merged.geoms) if merged.geom_type == "MultiPolygon" else [merged])
+
+
+def coverage_check(keep: list, hatch) -> dict:
+    """Share of the hatch area under the kept pieces and the largest bbox side offset; fail-closed."""
+    if hatch is None or hatch.is_empty or not hatch.area > 0:
+        raise ValueError("coverage: the hatch reference has no area")
+    parts = [p for p in keep if not p.is_empty and p.area > 0]
+    kept = unary_union(parts) if parts else None
+    hatch_area = float(hatch.area)
+    if kept is None or kept.is_empty or not kept.area > 0:
+        return {"status": "fail", "hatch_area_m2": round(hatch_area, 4), "kept_area_m2": 0.0,
+                "covered_share": 0.0, "bbox_delta_m": None, "reason": "no kept piece"}
+    share = round(float(kept.intersection(hatch).area) / hatch_area, 9)
+    delta = round(max(abs(a - b) for a, b in zip(kept.bounds, hatch.bounds)), 9)
+    ok = math.isfinite(share) and math.isfinite(delta) and share > COVERAGE_MIN_SHARE and delta < COVERAGE_BBOX_M
+    return {"status": "pass" if ok else "fail", "hatch_area_m2": round(hatch_area, 4),
+            "kept_area_m2": round(float(kept.area), 4), "covered_share": share, "bbox_delta_m": delta,
+            "hatch_bbox_m": [round(v, 4) for v in hatch.bounds], "kept_bbox_m": [round(v, 4) for v in kept.bounds],
+            "min_share": COVERAGE_MIN_SHARE, "max_bbox_delta_m": COVERAGE_BBOX_M}
+
+
 def _pieces(lines: list[LineString], gap_close_m: float) -> tuple[list[Polygon], list[Polygon]]:
     """Closed loops, plus gap-close of gaps strictly under ``2 * gap_close_m``.
 
@@ -177,18 +262,7 @@ def _pieces(lines: list[LineString], gap_close_m: float) -> tuple[list[Polygon],
     merged = unary_union(chosen)
     if merged.is_empty:
         return [], []
-    keep, dropped = [], []
-    parts = list(merged.geoms) if merged.geom_type == "MultiPolygon" else [merged]
-    for part in parts:
-        if part.geom_type != "Polygon":
-            continue
-        part = orient(part, 1.0)
-        # exactly 0.5 m2 is not kept; a hair of float noise above 0.5 still counts as the threshold
-        if part.area <= MIN_PIECE_M2 + 1e-6:
-            dropped.append(part)
-        else:
-            keep.append(part)
-    return keep, dropped
+    return _split(list(merged.geoms) if merged.geom_type == "MultiPolygon" else [merged])
 
 
 def _parse_symbol(name: str) -> tuple[float, float, float] | None:
@@ -289,8 +363,10 @@ def extract_plan(doc, layer_map: dict, *, z0: float, z1: float | None = None,
                  opening_decision: str | None = None,
                  origin_mm: tuple[float, float] = (0.0, 0.0),
                  frame_shift_m: tuple[float, float] = (0.0, 0.0),
-                 gap_close_m: float = GAP_CLOSE_M) -> dict:
+                 gap_close_m: float = GAP_CLOSE_M, contour_source: str = "lines") -> dict:
     """One sheet's plan account. See the module docstring for the fail-closed rules."""
+    if contour_source not in CONTOUR_SOURCES:
+        raise ValueError(f"unknown contour_source {contour_source!r}; known: {', '.join(CONTOUR_SOURCES)}")
     if opening_insert not in (None, "centre"):
         raise ValueError(f"unknown opening_insert {opening_insert!r}; known: centre")
     if opening_decision is not None and (not isinstance(opening_decision, str) or not opening_decision.strip()):
@@ -326,6 +402,7 @@ def extract_plan(doc, layer_map: dict, *, z0: float, z1: float | None = None,
     records = []
     wall_lines: list[tuple[str, LineString]] = []
     symbols = []
+    hatches = []
     for entity in entities:
         handle = str(entity.dxf.handle)
         layer = entity.dxf.layer
@@ -341,27 +418,51 @@ def extract_plan(doc, layer_map: dict, *, z0: float, z1: float | None = None,
                 wall_lines.append((handle, LineString([a, b])))
             records.append({"handle": handle, "layer": layer, "type": kind, "status": "used", "reason": "wall"})
             continue
+        if role == "hatch":
+            if kind != "HATCH":
+                raise ValueError(f"handle {handle}: unsupported {kind} on a hatch layer")
+            hatches.append(_hatch_area(entity, origin_mm, frame_shift_m))
+            records.append({"handle": handle, "layer": layer, "type": kind, "status": "used", "reason": "wall hatch"})
+            continue
         if kind != "INSERT":
             raise ValueError(f"handle {handle}: unsupported {kind} on a symbol layer")
         _finite_point(entity.dxf.insert, handle)
         symbols.append(entity)
         records.append({"handle": handle, "layer": layer, "type": kind, "status": "used", "reason": "symbol"})
 
-    by_handle = {h: ln for h, ln in wall_lines}
-    keep, small = _pieces([ln for _, ln in wall_lines], gap_close_m)
+    by_handle: dict[str, list[LineString]] = {}
+    for h, ln in wall_lines:
+        by_handle.setdefault(h, []).append(ln)
+    if contour_source == "hatch":
+        if not hatches:
+            raise ValueError("contour_source hatch needs a hatch layer with at least one HATCH")
+        keep, small = _fill_pieces(hatches, gap_close_m)
+    else:
+        keep, small = _pieces([ln for _, ln in wall_lines], gap_close_m)
+    if hatches:
+        coverage = coverage_check(keep, unary_union(hatches))
+        if coverage["status"] != "pass":
+            raise ValueError(
+                f"coverage: kept {contour_source} pieces cover {coverage['covered_share']:.1%} of the wall hatch "
+                f"({coverage['hatch_area_m2']} m2), bbox offset {coverage['bbox_delta_m']} m; need > "
+                f"{COVERAGE_MIN_SHARE:.0%} and < {COVERAGE_BBOX_M} m")
+    else:
+        coverage = {"status": "not measured", "reason": "no hatch layer mapped, no drawn wall mass to compare"}
     if not keep:
         raise ValueError("no plan contour")
     kept_cover = unary_union([p.buffer(1e-6) for p in keep])
     for rec in records:
         if rec["reason"] != "wall":
             continue
-        line = by_handle.get(rec["handle"])
-        if line is None:
+        segs = by_handle.get(rec["handle"])
+        if not segs:
+            rec["status"], rec["reason"] = "dropped", "zero-length wall entity"
             continue
-        mid = line.interpolate(0.5)
-        if not kept_cover.covers(Point(mid.x, mid.y)):
+        # the true midpoint of each segment; the entity stays used when any segment is on the kept contour
+        if not any(kept_cover.covers(seg.interpolate(0.5, normalized=True)) for seg in segs):
             rec["status"] = "dropped"
-            rec["reason"] = "piece area <= 0.5 m2"
+            rec["reason"] = ("piece area <= 0.5 m2" if contour_source == "lines"
+                             else "wall line outside the kept hatch contour")
 
     faces = [ln for _, ln in wall_lines]
     openings = []
@@ -421,10 +522,11 @@ def extract_plan(doc, layer_map: dict, *, z0: float, z1: float | None = None,
               "origin_mm": [origin_mm[0], origin_mm[1]],
               "frame_shift_m": [frame_shift_m[0], frame_shift_m[1]],
               "levels_m": levels_out,
-              "bands": bands, "openings": openings, "empty_bands": [],
+              "bands": bands, "openings": openings, "empty_bands": [], "coverage": coverage,
               "entities": records,
               "params": {"min_piece_m2": MIN_PIECE_M2, "gap_close_m": gap_close_m,
-                         "face_limit_m": FACE_LIMIT_M, "opening_insert": opening_insert}}
+                         "face_limit_m": FACE_LIMIT_M, "opening_insert": opening_insert,
+                         "contour_source": contour_source}}
     if opening_decision is not None:
         result["opening_decision"] = opening_decision.strip()
     return result
@@ -487,6 +589,7 @@ def main(argv=None) -> int:
     parser.add_argument("--levels", default=None, help="comma-separated elevations in metres, strictly increasing")
     parser.add_argument("--opening-insert", default=None)
     parser.add_argument("--opening-decision", default=None)
+    parser.add_argument("--contour-source", default="lines", help="lines (wall lines) or hatch (wall hatch union)")
     parser.add_argument("--origin-mm", default="0,0")
     parser.add_argument("--frame-shift-m", default="0,0")
     args = parser.parse_args(argv)
@@ -514,7 +617,7 @@ def main(argv=None) -> int:
             raise ValueError("z0 is not finite: None")
         result = extract_plan(doc, _map_list(args.map), z0=z0, z1=args.z1, levels_m=levels,
                               opening_insert=args.opening_insert, opening_decision=args.opening_decision,
-                              origin_mm=(ox, oy), frame_shift_m=(sx, sy))
+                              origin_mm=(ox, oy), frame_shift_m=(sx, sy), contour_source=args.contour_source)
     except Refused as exc:
         print(f"PLAN_DXF refused: {exc}", file=sys.stderr)
         return 4
