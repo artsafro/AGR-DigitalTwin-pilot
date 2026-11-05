@@ -11,6 +11,12 @@ Research card t_b0dfbdf1 (report only, no writer change). Parent: `docs/research
 - **The 65.4 m split (band 8) is gone** in full snap, as in only_8_10: band 8 top is single `cdcc8242` (1,041 refs). Band 7's top is single `9a99f541` (1,050 refs).
 - **Verdict.** The 13.7 m split is not "lucky geometry" that vanished; it is still there. Why the boolean output is clean while the self-intersect proxy shows 3 odd edges is **not explained** by this run (see Open questions).
 
+- **Scope of "full snap" (#880).** The full snap in this report is the cached file of the t_ad9bc345 probe
+  (`C:/x/t_ad9bc345/snap.py`), not the shipped `contours.snap_band_z0`. They differ in z0 of bands 3, 8, 9, 10
+  (same parents, z1 and polygons). On the shipped snap the face-domain self-intersect count is 6, not 3; point
+  domain gives 0 on both. Per-band table and causes:
+  `docs/experiments/body-gn-full-snap-edge-locator-rerun.md`, section on the probe snap.
+
 ## Findings
 
 All numbers are verified in this run (`C:/x/t_b0dfbdf1/run5.json`, `run5.log`).

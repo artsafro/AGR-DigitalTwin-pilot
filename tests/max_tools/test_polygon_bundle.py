@@ -37,6 +37,8 @@ def test_stage_writes_slices_outside_the_user_bundle(tmp_path, monkeypatch):
     assert (folder / 'hygiene_core.py').is_file()
     assert (folder / 'uv_nudge_core.py').is_file()
     assert (folder / 'ucx_audit_core.py').is_file()
+    data = sorted(p.relative_to(source).as_posix() for p in (source / 'data').rglob('*') if p.is_file())
+    assert data and all((folder / rel).read_bytes() == (source / rel).read_bytes() for rel in data)  # #979: data/ staged
     assert not (source / 'hygiene_core.py').exists()
     assert {path.name: path.read_bytes() for path in source.glob('*.py')} == before
     assert not (app / 'Autodesk').exists()

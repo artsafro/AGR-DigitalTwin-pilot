@@ -1,8 +1,9 @@
 """new-case: pure model of the AGR Tools 0.6.0 panel (#808); no Qt, no pymxs.
 
 Actions, sections, Russian labels and tooltips, report -> table rows, the batched
-progress loop with cancel, dock-state parsing and palette-derived accents. Everything
-here runs under plain pytest; ui_panel.py only draws it.
+progress loop with cancel (read on the next chunk boundary, about 0.9 s on Max 2024),
+dock-state parsing and palette-derived accents. Everything here runs under plain
+pytest; ui_panel.py only draws it.
 """
 import base64
 import binascii
@@ -12,11 +13,12 @@ import math
 import os
 from collections import namedtuple
 
-VERSION = '0.7.0'
+VERSION = '0.8.0'
 
 Action = namedtuple('Action', 'id tool icon section label tip reqs macro batch')
 
-SECTIONS = ('Проверки', 'UV и атласы', 'Коллизии UCX', 'Экспорт', 'GeoJSON', 'Сдача (копии)')
+SECTIONS = ('Проверки', 'UV и атласы', 'Коллизии UCX', 'Экспорт', 'GeoJSON', 'Сдача (копии)',
+            'Проверить и выделить', 'Исправить — копии / undo / новые файлы')  # 6, 7: 0.9 rows by mode (#979)
 
 # id == icon name in tools/max/agr_icons.py; tool == runtime.ui() argument; macro == macroScript name.
 # batch=True only for tools whose report is a per-object independent list (merge is exact).
@@ -152,6 +154,67 @@ ACTIONS = (
     Action('zip', 'export.zip', 'zip', 5, 'Архив пакета → новый ZIP',
            'Пробно, затем пишет новый ZIP НПМ/ВПМ с лимитами 500 МБ / 1 ГБ, проверка до и после.',
            ('NPM-2.1-1.a', 'VPM-2.1-1.a', 'VPM-2.1-1.b', 'VPM-2.1-2.b'), 'AGRToolsZip', False),
+    # 0.9 rows (#979): one Action per plan row of version 0.9, plan order; tool == plan row id, routed to
+    # runtime.edits_090. The section names the mode: 6 = read/select (scene unchanged), 7 = copies / undo / new files.
+    # Logic is written by branches A–D; until then every press answers status not_implemented.
+    Action('erm_normal_check', 'tex.erm_normal_check', 'ermn', 6, 'ERM и нормали DirectX',
+           'Проверяет каналы ERM (R только свечение) и ориентацию нормалей DirectX (только чтение).',
+           ('VPM-2.5-1.7', 'VPM-2.14-1', 'VPM-2.14-2', 'VPM-2.14-3'), 'AGRToolsErmNormalCheck', False),
+    Action('finish_map', 'tex.finish_map', 'finish', 7, 'Покраска по легенде → копии',
+           'Пробно, затем на копиях: ID → отделка по листу цветового решения, легенда, кольца швов, проверка.',
+           ('NPM-2.4-4', 'VPM-2.4-1.a'), 'AGRToolsFinishMap', False),
+    Action('matid_unwrap', 'udim.matid_unwrap', 'mafuv', 7, 'MatID → UDIM (МАФ) → копии',
+           'Пробно, затем на копиях: развёртка по MatID в тайлы с плотностью и упаковкой.',
+           ('VPM-2.6-2', 'VPM-2.5-2.1.3.a'), 'AGRToolsMatidUnwrap', False),
+    Action('udim_slots', 'udim.slots', 'slots', 6, 'UDIM: тайлы и слоты',
+           '1001… без пропусков, ≤100 карт на материал, SlotNumber 1…7 подряд (только чтение).',
+           ('VPM-2.4-3.a', 'VPM-2.4-3.b', 'VPM-2.5-2.1.3.a', 'VPM-2.11-0.b'), 'AGRToolsUdimSlots', False),
+    Action('atlas_flora', 'atlas.flora', 'flora', 7, 'Атлас Flora → новые файлы',
+           'Пробно, затем пишет новые атласы: диффуз флоры + прозрачность, кроп по UV, тайл на текстуру.',
+           ('NPM-2.5-13.a', 'NPM-2.5-13.b', 'NPM-2.5-4'), 'AGRToolsAtlasFlora', False),
+    Action('atlas_groundel', 'atlas.groundel', 'groundel', 7, 'Атлас GroundEl ≤512 → копии',
+           'Пробно, затем на копиях: один набор элементов благоустройства, ≤512 px.',
+           ('NPM-2.5-12', 'NPM-2.1-5.b'), 'AGRToolsAtlasGroundel', False),
+    Action('flora_repair', 'place.flora_repair', 'florafix', 7, 'Flora: ремонт → копии',
+           'Пробно, затем на копиях чинит трансформы и треугольники Flora и проверяет набор.',
+           ('NPM-2.5-13.a', 'NPM-2.3-14'), 'AGRToolsFloraRepair', False),
+    Action('maf_checks', 'place.maf_checks', 'mafcheck', 6, 'Проверки МАФ',
+           'Летающие и утопленные МАФ: AABB-предфильтр, лучи вниз к Ground с допуском; пересечения (только чтение).',
+           ('NPM-2.3-6.b', 'NPM-2.5-12'), 'AGRToolsMafChecks', False),
+    Action('replace', 'place.replace', 'replace', 7, 'Замена объектов (Undo)',
+           'Пробно, затем заменяет объекты по маске или выделению на эталон одной записью Undo; отчёт со списками.',
+           ('NPM-2.3-5', 'VPM-2.3-8'), 'AGRToolsReplace', False),
+    Action('schedule', 'place.schedule', 'schedule', 7, 'Расстановка по ведомости → копии',
+           'Пробно, затем ставит МАФ по ведомости; отчёт: поставлено / нет эталона / нет места.',
+           ('NPM-2.1-5.a',), 'AGRToolsSchedule', False),
+    Action('drop_to_ground', 'place.drop_to_ground', 'ground', 7, 'Посадить на рельеф (Undo)',
+           'Пробно, затем опускает выделенные объекты на Ground лучом вниз одной записью Undo.',
+           ('-',), 'AGRToolsDropToGround', False),
+    Action('address', 'qa.address', 'address', 6, 'Адрес и улицы',
+           'Проверка Address по справочнику улиц, составных частей и длины (только чтение).',
+           ('NPM-1.3-2.a', 'NPM-1.3-3.a', 'VPM-1.3-2.a', 'VPM-1.3-3.a'), 'AGRToolsAddress', False),
+    Action('facade_compare', 'qa.facade_compare', 'compare', 6, 'Сравнение с листом фасада',
+           'Картинка «лист | ВПМ | НПМ» в одном масштабе и счёт швов (только чтение).',
+           ('-',), 'AGRToolsFacadeCompare', False),
+    Action('normals', 'qa.normals', 'normals', 6, 'Нормали и двойные грани',
+           'Нормали к наблюдателю, двусторонние полигоны стекла/Flora, сглаживание (только чтение).',
+           ('NPM-2.3-8.a', 'NPM-2.3-15', 'VPM-2.3-14', 'VPM-2.3-15.a', 'VPM-2.12-3'), 'AGRToolsNormals', False),
+    Action('sintez', 'qa.sintez', 'sintez', 6, 'Сверка с SINTEZ',
+           'Сравнивает наши находки с отчётом SINTEZ по тем же правилам (только чтение).',
+           ('VPM-2.3-17',), 'AGRToolsSintez', False),
+    Action('batch', 'export.batch', 'batch', 7, 'Пакетный экспорт → новые FBX',
+           'Пробно, затем пишет все FBX сцены по AGR_EXPORT_PATH одним запуском с одним отчётом.',
+           ('NPM-2.1-2',), 'AGRToolsBatch', False),
+    Action('maps_usage', 'scene.maps_usage', 'mapsuse', 6, 'Карты: использованные / лишние',
+           'Какие файлы карт используются геометрией, какие лишние в папке maps, какие пропали (только чтение).',
+           ('-',), 'AGRToolsMapsUsage', False),
+    Action('light_check', 'light.check', 'lightcheck', 6, 'Проверка света',
+           '≤250 источников, только Omni/Spot, Omni ≥5 м, Spot ≥1.5 м, корень и пивот (только чтение, выделяет нарушителей).',
+           ('VPM-2.15-2', 'VPM-2.15-4', 'VPM-2.15-5.a', 'VPM-2.15-5.b', 'VPM-2.15-6', 'VPM-2.15-8', 'VPM-2.15-9.b'),
+           'AGRToolsLightCheck', False),
+    Action('procedural_objects', 'qa.procedural_objects', 'procobj', 6, 'Процедурные объекты',
+           'Несвёрнутые Forest Pack, RailClone, MultiScatter, Chaos Scatter, tyFlow, RayFire, Populate перед FBX '
+           '(только чтение и выделение).', ('-',), 'AGRToolsProceduralObjects', False),
 )
 BY_ID = {a.id: a for a in ACTIONS}
 BY_TOOL = {a.tool: a for a in ACTIONS}
@@ -194,8 +257,10 @@ def rows(report):
         raise ValueError('not an AGR Tools report')
     check = report['tool']
     status = report.get('status')
-    if status == 'not_implemented':  # 0.8 stub module (#908): one error row, never a pass
-        return [Row(None, '—', check, False, 'not_implemented', 'в работе (#908): модуль ещё пуст', ())]
+    if status == 'not_implemented':  # 0.8/0.9 stub module (#908/#979): one error row, never a pass
+        plan = report.get('plan') if isinstance(report.get('plan'), dict) else {}
+        issue = plan.get('issue') if isinstance(plan.get('issue'), str) else '#908'
+        return [Row(None, '—', check, False, 'not_implemented', 'в работе ({}): модуль ещё пуст'.format(issue), ())]
     if status not in ('pass', 'fail'):
         raise ValueError('report without pass/fail status: ' + repr(status))
     objects = report.get('objects')
@@ -258,6 +323,25 @@ def _object_rows(check, objects):
     return out
 
 
+# (report tool, finding code) -> component kind of the finding ids (#861). The ids are 1-based polyop indices of
+# the checked node's Editable_Poly copy; any other check or code is selected as the whole object.
+COMPONENT_IDS = {('xview', 'overlap_vertices'): 'vertex', ('xview', 'overlap_faces'): 'face',
+                 ('matid', 'udim_id'): 'face', ('matid', 'empty_id'): 'face', ('matid', 'empty_slot'): 'face',
+                 ('matid', 'missing_material'): 'face'}
+
+
+def component_selection(row, num_verts, num_faces):
+    """Row -> (kind, sorted unique ids) to select on its node, or None = select the object only.
+    Fail-closed: an unknown (check, code), empty ids, a non-int id or an id outside 1..count gives None."""
+    kind = COMPONENT_IDS.get((row.check, row.code))
+    if kind is None or not row.ids:
+        return None
+    count = num_verts if kind == 'vertex' else num_faces
+    if any(type(i) is not int or not 1 <= i <= count for i in row.ids):
+        return None
+    return kind, sorted(set(row.ids))
+
+
 def counts(row_list):
     bad = sum(1 for r in row_list if not r.ok)
     return bad, len(row_list) - bad
@@ -301,6 +385,8 @@ class Cancelled(Exception):
 # inside one 25-object xView chunk before the next processEvents; Max 2026 chunks
 # were already under 0.2 s. The gap must stay strictly under PUMP_GAP_LIMIT_S.
 # A budget of exactly that limit (or anything outside (0, limit)) is an error.
+# One pymxs object is atomic, so a gap is at most the budget plus that object.
+# PUMP_BUDGET_S leaves headroom under the limit for a small object.
 PUMP_GAP_LIMIT_S = 0.1
 PUMP_BUDGET_S = 0.09
 
@@ -323,55 +409,14 @@ def check_pump_cost(cost):
     return value
 
 
-def pump_gaps(costs, budget):
-    """Gaps between event pumps for cooperative per-object costs.
-
-    A gap closes before elapsed cost meets `budget` (exactly-at-threshold does
-    not extend the open gap). A single huge cost is sliced so the bound still
-    holds. Empty, partial, non-finite and negative input is an error.
-    """
-    limit = check_pump_budget(budget)
-    if isinstance(costs, (str, bytes)) or not isinstance(costs, (list, tuple)) or len(costs) == 0:
-        raise ValueError('empty pump costs')
-    gaps = []
-    since = 0.0
-    steps = 0
-    for raw in costs:
-        left = check_pump_cost(raw)
-        if left == 0.0:
-            continue
-        while left > 0.0:
-            steps += 1
-            if steps > 1000000:
-                raise ValueError('pump slice did not finish')
-            room = limit - since
-            if left < room:
-                since += left
-                break
-            if since > 0.0:
-                gaps.append(since)
-                since = 0.0
-                continue
-            step = limit * 0.5
-            if not math.isfinite(step) or step <= 0.0 or step >= limit:
-                raise ValueError('pump slice')
-            gaps.append(step)
-            left -= step
-    if since > 0.0:
-        if since >= limit:
-            raise ValueError('pump gap at threshold')
-        gaps.append(since)
-    if not gaps:
-        gaps.append(0.0)
-    return gaps
-
-
 def object_pump(since, estimate, cost, budget=PUMP_BUDGET_S):
     """Online pump decision after one atomic object (pymxs cannot be sliced).
 
     `cost` is that object's wall time. Returns (pump, since, estimate). The next
     similar object is assumed to cost `estimate`, so the open gap closes before
-    it would meet the budget. A non-finite or negative cost is an error.
+    it would meet the budget. A huge object is not sliced: the gap that just
+    closed is at most the budget plus that one object. Empty, partial, unsupported,
+    non-finite, negative and a budget of exactly PUMP_GAP_LIMIT_S are errors.
     """
     limit = check_pump_budget(budget)
     spent = check_pump_cost(cost)
@@ -387,7 +432,13 @@ def object_pump(since, estimate, cost, budget=PUMP_BUDGET_S):
 
 def run_batched(tool, fn, nodes, size, progress, cancelled):
     """Run fn(chunk) per chunk; progress(done, total) after each; cancelled() before each.
-    A cancel raises Cancelled with the partial report attached (never a pass)."""
+
+    Cancel is not read inside a chunk. A Cancel click takes effect only before the
+    next chunk, so on Max 2024 the latency is one 25-object chunk (about 0.9 s).
+    The chunk already running is still merged and counted; raising from the
+    per-object pump would drop that chunk's results. A cancel raises Cancelled
+    with the partial report attached (status fail, never a pass).
+    """
     nodes = list(nodes)
     if not nodes:
         raise ValueError('empty target set')
@@ -463,7 +514,8 @@ def contrast(a, b):
 _HUES = {'error': 0.0, 'ok': 1.0 / 3.0, 'warn': 1.0 / 7.0}
 # Section accents (Artem 2026-11-04: «разбавить цветовыми оттенками»): hue per work step, chosen
 # >= 30 degrees away from the status hues red 0 and green 120 so a section never reads as a status.
-SECTION_HUES = (210.0, 275.0, 35.0, 185.0, 320.0, 245.0)  # Проверки, UV, UCX, Экспорт, GeoJSON, Сдача (deg)
+SECTION_HUES = (210.0, 275.0, 35.0, 185.0, 320.0, 245.0,  # Проверки, UV, UCX, Экспорт, GeoJSON, Сдача (deg)
+                60.0, 155.0)  # 0.9 (#979): Проверить и выделить, Исправить
 STATUS_HUES_DEG = (0.0, 120.0)
 
 
@@ -519,6 +571,7 @@ ROW = {'xview': 'qa.xview', 'matid': 'qa.matid', 'names': 'qa.names', 'tris': 'q
        'preflight': 'qa.preflight', 'scene_hygiene': 'qa.scene_hygiene', 'xform': 'qa.xform',
        'zero_area': 'qa.zero_area'}
 ROW.update({a.id: a.tool for a in ACTIONS if a.section == SECTIONS.index('Сдача (копии)')})  # 0.8: tool == row id
+ROW.update({a.id: a.tool for a in ACTIONS if a.section in (6, 7)})  # 0.9 (#979): tool == row id
 NEUTRAL_SAT = 0.06   # block 0 «Сцена» is a service block: almost grey (plan §7)
 BLOCK_SAT = 0.6
 

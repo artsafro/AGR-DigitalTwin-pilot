@@ -71,8 +71,10 @@
   {
    "name": "UCX bad",
    "scene": "polygon_all",
-   "expect": "pass",
-   "codes": []
+   "expect": "fail",
+   "codes": [
+    "kind_unknown"
+   ]
   },
   {
    "name": "UCX_SM_Polygon_001_Main_004",
@@ -105,8 +107,10 @@
   {
    "name": "Bad Name",
    "scene": "polygon_all",
-   "expect": "pass",
-   "codes": []
+   "expect": "fail",
+   "codes": [
+    "kind_unknown"
+   ]
   },
   {
    "name": "SM_Polygon_008_Main",
@@ -199,6 +203,12 @@
    "codes": [
     "drop_unmeasurable"
    ]
+  },
+  {
+   "name": "SM_Polygon_Layer_Main",
+   "scene": "polygon_all",
+   "expect": "pass",
+   "codes": []
   },
   {
    "name": "SM_Polygon_NudgeOk_Main",

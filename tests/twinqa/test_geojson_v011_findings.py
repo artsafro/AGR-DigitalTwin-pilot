@@ -24,7 +24,7 @@ def document():
     Image.new("RGB", (256, 256), (120, 130, 140)).save(image, "JPEG")
     properties = {key: "synthetic" for key in PROPERTY_KEYS}
     properties.update(
-        FNO_code="123 456", other="", act_AGR="",
+        FNO_code="010 004", FNO_name="Общежитие", other="", act_AGR="",
         imageBase64=base64.b64encode(image.getvalue()).decode("ascii"),
     )
     return {

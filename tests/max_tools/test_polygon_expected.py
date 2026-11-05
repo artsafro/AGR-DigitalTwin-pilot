@@ -40,14 +40,32 @@ def test_shipped_actions_map_onto_a_suite_row():
         assert doc['tool'] in (action, doc['tool'])
 
 
+def _catalog():
+    """The builder input: polygon + #979 station fragments (polygon_core.load_catalog), not only catalog.json."""
+    from test_polygon_support import load_catalog
+    return load_catalog()
+
+
 def test_catalog_has_the_required_kinds():
-    catalog = json.loads((POLY / 'catalog.json').read_text(encoding='utf-8'))
+    catalog = _catalog()
     roles = {o['role'] for o in catalog['objects']}
     for role in ('Main', 'MainGlass', 'Ground', 'GroundEl', 'Flora', 'UCX', 'camera', 'light', 'shape', 'helper'):
         assert role in roles, role
     for obj in catalog['objects']:
         assert 'AGR_TEST' in obj and obj['AGR_TEST']
-        assert obj['scene'] in ('polygon_all', 'cm_units', 'empty', 'vpm')
+        assert obj['scene'] in ('polygon_all', 'cm_units', 'empty', 'vpm') or (
+            obj.get('fragment') and obj['scene'].startswith('frag_' + obj['fragment'].lower() + '_'))
+
+
+def test_committed_catalog_is_the_snapshot_of_bases_01_to_07():
+    """catalog.json is R's snapshot: a branch of #979 adds a fragment and never rewrites it, so only the rows of the
+    bases 0.8 / 0.9 may differ from load_catalog(); the bases 0.1-0.7 stay byte-for-byte the generated ones."""
+    from test_polygon_support import fragment_part
+    committed = json.loads((POLY / 'catalog.json').read_text(encoding='utf-8'))
+    generated = _catalog()
+    assert [o for o in committed['objects'] if not fragment_part(o)] ==         [o for o in generated['objects'] if not fragment_part(o)]
+    assert {k: v for k, v in committed.items() if k != 'objects'} == {
+        k: v for k, v in generated.items() if k != 'objects'}
 
 
 def test_variant_scene_specs_exist():
@@ -62,7 +80,7 @@ def test_bases_stations_and_button_versions():
     from test_polygon_support import bases, load_expected, stations, suite_rows
     built = bases()
     built_ids = [item['version'] for item in built]
-    assert built_ids == ['0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7']
+    assert built_ids == ['0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9']
     colours = [tuple(item['colour']) for item in built]
     assert len(colours) == len(set(colours))
     placed = stations()
@@ -108,7 +126,7 @@ def test_fixtures_are_excluded_and_no_check_names_them():
     blob = json.dumps(docs)
     assert '_base_' not in blob
     assert '_label_' not in blob
-    catalog = json.loads((POLY / 'catalog.json').read_text(encoding='utf-8'))
+    catalog = _catalog()
     fixtures = [obj for obj in catalog['objects'] if excluded_name(obj['name'])]
     assert fixtures
     assert any(obj['layer'] == '_bases' and obj['name'].startswith('_base_') for obj in fixtures)
@@ -142,7 +160,7 @@ def test_report_groups_rows_by_base_and_station():
 
 
 def test_catalog_station_ids_and_base_layers():
-    catalog = json.loads((POLY / 'catalog.json').read_text(encoding='utf-8'))
+    catalog = _catalog()
     from test_polygon_support import excluded_name, stations
     known = {item['id'] for item in stations()}
     for obj in catalog['objects']:
@@ -153,7 +171,8 @@ def test_catalog_station_ids_and_base_layers():
             assert ('station=' + obj['station']) in obj['AGR_TEST']
     named = {obj['name']: obj for obj in catalog['objects']}
     assert named['SM_Polygon_001_Main']['station'] == '0.1.1'
-    assert named['SM_Polygon_001_Main']['layer'] == 'База 0.1'
+    assert named['SM_Polygon_001_Main']['layer'] == '0'  # default layer, as a delivery scene (hyg_layer, 0.8.1)
+    assert named['SM_Polygon_Layer_Main']['layer'] != '0'  # the one hyg_layer fixture
     assert named['_base_0_6']['layer'] == '_bases'
     assert named['_base_0_6']['colour'] != named['_base_0_1']['colour']
 

@@ -98,7 +98,8 @@ def _stem(role: str) -> str:
 
 def _properties() -> dict:
     props = {key: "synthetic" for key in KEYS}
-    props["FNO_code"] = "123 456"
+    props["FNO_code"] = "010 004"
+    props["FNO_name"] = "Общежитие"
     props["act_AGR"] = "synthetic-act"
     props["name"] = "synthetic"
     props["imageBase64"] = IMAGE_B64
@@ -198,7 +199,7 @@ def test_synthetic_document_contract():
     assert set(props) == set(KEYS)
     assert props["act_AGR"] == "synthetic-act"
     assert props["name"] == "synthetic"
-    assert props["FNO_code"] == "123 456"
+    assert props["FNO_code"] == "010 004"
     digits = props["FNO_code"].replace(" ", "")
     assert digits.isdigit() and len(digits) == 6
     raw = base64.b64decode(props["imageBase64"], validate=True)

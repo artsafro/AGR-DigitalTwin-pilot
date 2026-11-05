@@ -197,6 +197,12 @@
    "codes": []
   },
   {
+   "name": "SM_Polygon_Layer_Main",
+   "scene": "polygon_all",
+   "expect": "pass",
+   "codes": []
+  },
+  {
    "name": "SM_Polygon_NudgeOk_Main",
    "scene": "polygon_all",
    "expect": "pass",

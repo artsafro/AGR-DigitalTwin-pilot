@@ -16,7 +16,7 @@ The etalon is KPP1 v005 finished to 100 % by hand (v005 is ~90 %; an etalon with
 User decisions 2026-10-11 [D053]: KPP1 material IDs from `jobs/KPP1/materials.json` (finish -> ID by the ranges of
 ADR 0001; asphalt of the blind area = 0, Ground, a question); the checker reads them from the UDIM tile of
 every triangle (the VPM FBX has one material, finishes are tiles: `measure_spec_blender.py` writes
-`udim_tiles`, `object.json` `materials` names the table); `geometry` thresholds = the HARNESS_PLAN §5
+`udim_tiles`, `object.json` `materials` names the table); `geometry` thresholds = the archive/2026-11:docs/HARNESS_PLAN.md §5
 starting numbers (as B01) with `open_part_groups` attachment and metal (railings, ladder, cage, alpha
 planes may be open shells). `object.json`: frames, levels and contour heights of `jobs/KPP1/object.json`
 plus build inputs (parapet 0.555 m). The runner takes the spec's levels when the source has no LEVEL_

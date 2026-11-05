@@ -30,10 +30,11 @@ Read on demand, one line each. Read the domain file that matches the task before
 - Open conflicts between sources: `docs/domain/conflicts.md`.
 - Pipeline stages and their status: `docs/pipeline.md`.
 - Unsolved work: `docs/backlog.md`.
+- Removed closed jobs, experiments and orphan docs (tag `archive/2026-11`): `docs/ARCHIVE.md`.
 - Accepted cases and lessons: `docs/cases.md`.
 - Terms: `GLOSSARY.md`.
 - Names for scripts, tools, jobs, outputs, branches and tags; object ids: `docs/agents/NAMING.md`, `jobs/REGISTRY.md`.
-- Benchmark etalons and pattern registry: `benchmark/`, `docs/domain/patterns/INDEX.md`. `docs/HARNESS_PLAN.md` is historical.
+- Benchmark etalons and pattern registry: `benchmark/`, `docs/domain/patterns/INDEX.md`. Removed historical files: `docs/ARCHIVE.md`.
 - Machine-readable rules: `standards/` (locked; change procedure in `standards/README.md`).
 - AGR knowledge base (Russian originals, read-only): `docs/agr/INDEX.md` only, then the file it names.
 - Code map, checks and plugin configuration: `docs/agents/agents-reference.md`.

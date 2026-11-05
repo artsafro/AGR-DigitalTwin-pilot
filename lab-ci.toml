@@ -38,8 +38,8 @@ log = "junit.xml"
 report = "junit"
 
 [[job]]
-name = "unit"                    # the default suite (pyproject addopts exclude blender/dcc/max/acad/perf/panel_texture)
-when = "nightly"                 # ~16.9k tests: nightly, first and manual batches only, not every push
+name = "unit"                    # the default suite (pyproject addopts exclude blender/dcc/max/acad/perf/job/panel_texture)
+when = "nightly"                 # ~18.3k tests: nightly, first and manual batches only, not every push
 app = "blender"                  # holds a Blender slot only to share the lab's capacity fairly; starts no DCC
 version = "5.1"
 host = ["uv", "run", "--frozen", "--no-sync", "pytest", "-p", "no:cacheprovider", "-q", "-n", "8",

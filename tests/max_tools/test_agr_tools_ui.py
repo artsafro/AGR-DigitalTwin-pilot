@@ -34,7 +34,11 @@ NEW_070 = {'census', 'units', 'perimeter_drop', 'material_type', 'ucx_audit', 's
 NEW_080 = {'scene.missing_maps', 'model.triangulate', 'tex.format_fix', 'tex.placeholders', 'ucx.triangulate',
            'ucx.rename', 'udim.ids_to_udims', 'qa.names_fix', 'qa.package', 'export.geojson_write',
            'export.ground_fbx', 'export.pivot_place', 'export.zip'}  # 0.8 (#908): tool == plan row id
-ALL_TOOLS = OLD_TOOLS | NEW_070 | NEW_080
+NEW_090 = {'tex.erm_normal_check', 'tex.finish_map', 'udim.matid_unwrap', 'udim.slots', 'atlas.flora',
+           'atlas.groundel', 'place.flora_repair', 'place.maf_checks', 'place.replace', 'place.schedule',
+           'place.drop_to_ground', 'qa.address', 'qa.facade_compare', 'qa.normals', 'qa.sintez', 'export.batch',
+           'scene.maps_usage', 'light.check', 'qa.procedural_objects'}  # 0.9 (#979): tool == plan row id
+ALL_TOOLS = OLD_TOOLS | NEW_070 | NEW_080 | NEW_090
 
 
 def ui_branches():
@@ -46,17 +50,19 @@ def ui_branches():
     tools |= set(re.findall(r"'(\w+)'", re.search(r"CHECKS_070 = \(([^)]*)\)", src).group(1)))
     tools |= {'xview', 'matid'}
     tools |= set(re.findall(r"'([\w.]+)': \('", re.search(r"EDITS_080 = \{(.*?)\n\}", src, re.S).group(1)))
+    tools |= set(re.findall(r"'([\w.]+)': \('", re.search(r"EDITS_090 = \{(.*?)\n\}", src, re.S).group(1)))
     return tools
 
 
 def test_every_existing_action_is_in_the_panel_once():
     assert ui_branches() == ALL_TOOLS
     assert {a.tool for a in m.ACTIONS} == ALL_TOOLS
-    assert len({a.id for a in m.ACTIONS}) == len(m.ACTIONS) == 42
-    assert len({a.macro for a in m.ACTIONS}) == 42
-    assert sum(len(acts) for _, acts in m.sections()) == 42
+    assert len({a.id for a in m.ACTIONS}) == len(m.ACTIONS) == 61
+    assert len({a.macro for a in m.ACTIONS}) == 61
+    assert sum(len(acts) for _, acts in m.sections()) == 61
     assert [t for t, _ in m.sections()] == ['Проверки', 'UV и атласы', 'Коллизии UCX', 'Экспорт', 'GeoJSON',
-                                            'Сдача (копии)']
+                                            'Сдача (копии)', 'Проверить и выделить',
+                                            'Исправить — копии / undo / новые файлы']
     assert set(a.icon for a in m.ACTIONS) <= set(icons.names())
 
 
@@ -248,81 +254,202 @@ def test_percent_bounds():
     assert m.percent(-1, 10) == 0
 
 
-def test_event_pumps_follow_elapsed_cost_not_object_count():
-    """Invariant: a batch pumps the event loop by elapsed per-object cost.
+def simulate_gaps(costs, budget):
+    """Gaps closed by the same object_pump decision the panel uses.
 
-    Every gap stays strictly under the budget, and the budget stays strictly under
-    0.1 s, whether an object costs 0 or a huge finite time. Object count is not the
-    cadence (a chunk of 25 costs is one count-based gap and many timed gaps).
-
-    Probe: generated costs, including 0 and huge. Budget 0, exactly 0.1, huge, NaN
-    and inf is an error. A cost equal to the budget is sliced so the gap stays
-    strictly under the budget; it is not returned as a gap sitting on the budget.
+    One object is atomic. Empty, partial and unsupported cost lists are an error
+    before any gap is returned.
     """
-    budget = math.nextafter(m.PUMP_GAP_LIMIT_S, 0.0)
+    if isinstance(costs, (str, bytes)) or not isinstance(costs, (list, tuple)):
+        raise ValueError('unsupported pump costs')
+    if len(costs) == 0:
+        raise ValueError('empty pump costs')
+    since = estimate = 0.0
+    groups = []
+    group = []
+    open_gap = 0.0
+    for raw in costs:
+        pump, since, estimate = m.object_pump(since, estimate, raw, budget)
+        spent = m.check_pump_cost(raw)
+        open_gap += spent
+        group.append(spent)
+        if pump:
+            groups.append((open_gap, group))
+            open_gap = 0.0
+            group = []
+    if group:
+        groups.append((open_gap, group))
+    if not groups:
+        groups.append((0.0, []))
+    return groups
+
+
+def test_pump_gaps_is_absent_from_the_bundle():
+    """The offline slicer must not ship: the panel decides with object_pump."""
+    text = (PKG / 'ui_model.py').read_text(encoding='utf-8')
+    assert 'pump_gaps' not in text
+    assert not hasattr(m, 'pump_gaps')
+
+
+def test_event_pumps_follow_elapsed_cost_not_object_count():
+    """Invariant: the panel pumps by object_pump, on elapsed cost, not object count.
+
+    A huge cost is atomic, so a gap is at most the budget plus that one object.
+    Sequences whose costs are small (each one fits in the headroom under the
+    0.1 s limit, or an equal per-object cost under that limit) stay strictly
+    under PUMP_GAP_LIMIT_S. The panel budget itself stays strictly under the limit.
+
+    Probe: the same generated sequences as before, plus a brute force of mixed,
+    headroom-small and equal costs. Empty, partial, unsupported, NaN/inf,
+    negative, bool and a budget sitting on the limit are errors from object_pump.
+    """
+    budget = m.PUMP_BUDGET_S
     assert budget < m.PUMP_GAP_LIMIT_S
+    headroom = m.PUMP_GAP_LIMIT_S - budget
+    assert headroom > 0.0
+    scale = math.nextafter(m.PUMP_GAP_LIMIT_S, 0.0)
     rnd = random.Random(868)
     sequences = []
-    mixed = [0.0, 0.0, rnd.random() * (budget * 0.5), 50.0, 0.0, budget * 0.99, 1e3]
+    mixed = [0.0, 0.0, rnd.random() * (scale * 0.5), 50.0, 0.0, scale * 0.99, 1e3]
     for _ in range(30):
-        sequences.append([rnd.choice((0.0, rnd.random() * budget * 0.5, 80.0)) for _ in range(40)])
+        sequences.append([rnd.choice((0.0, rnd.random() * scale * 0.5, 80.0)) for _ in range(40)])
     sequences.append(mixed)
     sequences.append([0.0] * 20)
     sequences.append([50.0])
     sequences.append([0.06] * 25)  # one count-based chunk: 1.5 s if pumped every 25
+    brute = random.Random(898)
+    for _ in range(40):
+        sequences.append([
+            brute.choice((0.0, brute.random() * headroom, brute.choice((50.0, 80.0, 1e3, 1e6))))
+            for _ in range(brute.randint(1, 48))
+        ])
+    small_sequences = [[0.0] * 20]
+    for _ in range(40):
+        small_sequences.append([brute.random() * headroom for _ in range(brute.randint(1, 80))])
+    equal_costs = [0.06]
+    for _ in range(15):
+        equal_costs.append(brute.random() * math.nextafter(m.PUMP_GAP_LIMIT_S, 0.0))
+    for cost in equal_costs:
+        small_sequences.append([cost] * 25)
     probed = 0
     for costs in sequences:
-        gaps = m.pump_gaps(costs, budget)
-        assert gaps, costs[:4]
-        assert max(gaps) < budget
-        assert max(gaps) < m.PUMP_GAP_LIMIT_S
-        assert all(g < budget for g in gaps)
+        groups = simulate_gaps(costs, budget)
+        assert groups, costs[:4]
+        for gap, group in groups:
+            one = max(group) if group else 0.0
+            assert gap <= budget + one
+        probed += 1
+    for costs in small_sequences:
+        groups = simulate_gaps(costs, budget)
+        assert groups
+        assert max(gap for gap, _ in groups) < m.PUMP_GAP_LIMIT_S
+        for gap, group in groups:
+            one = max(group) if group else 0.0
+            assert gap <= budget + one
         probed += 1
     chunk = [0.06] * 25
     assert sum(chunk) == pytest.approx(1.5)
-    timed = m.pump_gaps(chunk, budget)
-    assert max(timed) < m.PUMP_GAP_LIMIT_S
-    assert max(timed) < sum(chunk)
-    # Exactly-at-threshold: halves that sum to the budget, and one cost equal to
-    # the budget, must not come back as a single gap sitting on the budget.
+    timed = simulate_gaps(chunk, budget)
+    assert max(gap for gap, _ in timed) < m.PUMP_GAP_LIMIT_S
+    assert max(gap for gap, _ in timed) < sum(chunk)
+    # Halves that sum to the budget still close as separate atomic objects.
+    # One object whose cost equals the budget is kept whole: the gap is that
+    # object, which is the budget plus nothing further, not a sliced remainder.
     half = budget / 2.0
-    exact = m.pump_gaps([half, half], budget)
-    assert max(exact) < budget and sum(exact) == pytest.approx(budget)
-    on_budget = m.pump_gaps([budget], budget)
-    assert max(on_budget) < budget
-    since = estimate = 0.0
-    open_gap = 0.0
-    online = []
-    for cost in chunk:
-        pump, since, estimate = m.object_pump(since, estimate, cost)
-        open_gap += cost
-        if pump:
-            online.append(open_gap)
-            open_gap = 0.0
-    if open_gap:
-        online.append(open_gap)
-    assert online and max(online) < m.PUMP_GAP_LIMIT_S
-    assert max(online) < sum(chunk)
+    exact = simulate_gaps([half, half], budget)
+    assert max(gap for gap, _ in exact) < budget
+    assert sum(gap for gap, _ in exact) == pytest.approx(budget)
+    on_budget = simulate_gaps([budget], budget)
+    assert on_budget == [(budget, [budget])]
+    assert on_budget[0][0] <= budget + budget
     probed += 2
     bad_budgets = (0, 0.0, m.PUMP_GAP_LIMIT_S, 1e9, float('nan'), float('inf'), float('-inf'),
-                   True, '0.05', None)
+                   True, False, '0.05', None, [], (), {'budget': budget})
     budget_errors = 0
     for bad in bad_budgets:
         with pytest.raises(ValueError):
-            m.pump_gaps([0.01, 0.02], bad)
+            m.object_pump(0.0, 0.0, 0.01, bad)
+        with pytest.raises(ValueError):
+            m.check_pump_budget(bad)
         budget_errors += 1
     assert budget_errors == len(bad_budgets)
-    bad_costs = (float('nan'), float('inf'), float('-inf'), -0.01, True, None, '0', [])
+    # Exactly the limit, then the next ulps above it, and 0 then the next ulps below.
+    edge = m.PUMP_GAP_LIMIT_S
+    below = 0.0
+    for _ in range(24):
+        with pytest.raises(ValueError):
+            m.object_pump(0.0, 0.0, 0.01, edge)
+        with pytest.raises(ValueError):
+            m.check_pump_budget(edge)
+        edge = math.nextafter(edge, math.inf)
+        with pytest.raises(ValueError):
+            m.object_pump(0.0, 0.0, 0.01, below)
+        below = math.nextafter(below, -math.inf)
+        budget_errors += 1
+    just_under = math.nextafter(m.PUMP_GAP_LIMIT_S, 0.0)
+    assert m.check_pump_budget(just_under) == just_under
+    assert m.object_pump(0.0, 0.0, 0.0, just_under) == (False, 0.0, 0.0)
+    bad_costs = (float('nan'), float('inf'), float('-inf'), -0.01,
+                 math.nextafter(0.0, -math.inf), True, False, None, '0', [], (), (0.01,),
+                 {'cost': 0.01})
     cost_errors = 0
     for bad in bad_costs:
+        for args in ((bad, 0.0, 0.01), (0.0, bad, 0.01), (0.0, 0.0, bad)):
+            with pytest.raises(ValueError):
+                m.object_pump(*args, budget)
+            cost_errors += 1
         with pytest.raises(ValueError):
-            m.pump_gaps([0.01, bad], budget)
+            m.check_pump_cost(bad)
+        cost_errors += 1
+    unsupported_lists = ('', b'', None, 0.05, {'costs': [0.01]}, (), [])
+    for bad in unsupported_lists:
+        with pytest.raises(ValueError):
+            simulate_gaps(bad, budget)
         cost_errors += 1
     with pytest.raises(ValueError):
-        m.pump_gaps([], budget)
-    cost_errors += 1
-    assert cost_errors == len(bad_costs) + 1
-    assert probed == len(sequences) + 2
+        simulate_gaps([0.01, float('nan')], budget)
+    with pytest.raises(ValueError):
+        simulate_gaps([0.01, True], budget)
+    cost_errors += 2
+    assert cost_errors == len(bad_costs) * 4 + len(unsupported_lists) + 2
+    assert probed == len(sequences) + len(small_sequences) + 2
+
+
+def test_cancel_set_inside_a_chunk_waits_for_the_next_boundary():
+    """Cancel is read only between chunks. A flag set inside a chunk still merges that chunk.
+
+    The following chunk is not started: status is fail and Cancelled carries the partial.
+    """
+    rnd = random.Random(898)
+    probed = 0
+    for _ in range(40):
+        size = rnd.randint(1, 25)
+        chunk_count = rnd.randint(2, 8)
+        fire = rnd.randrange(chunk_count - 1)
+        total = size * chunk_count
+        nodes = list(range(1, total + 1))
+        flag = {'on': False, 'seen': 0}
+        calls = []
+
+        def fn(chunk, flag=flag, calls=calls, fire=fire):
+            calls.append(list(chunk))
+            if flag['seen'] == fire:
+                flag['on'] = True
+            flag['seen'] += 1
+            return fake_xview(chunk)
+
+        with pytest.raises(m.Cancelled) as exc:
+            m.run_batched('xview', fn, nodes, size, lambda d, t: None, lambda flag=flag: flag['on'])
+        done = (fire + 1) * size
+        assert len(calls) == fire + 1
+        assert exc.value.done == done
+        assert len(exc.value.partial['objects']) == done
+        assert exc.value.partial['status'] == 'fail'
+        assert exc.value.partial['cancelled'] == {'done': done, 'total': total}
+        assert calls[-1] == nodes[fire * size:(fire + 1) * size]
+        assert [o['handle'] for o in exc.value.partial['objects']] == nodes[:done]
+        probed += 1
+    assert probed == 40
 
 
 @pytest.mark.parametrize('text', ['', 'not json', '[]', 'null', '{"area": 3}', '{"area": true}',
@@ -354,10 +481,10 @@ def test_accents_contrast_and_distinct_for_every_palette():
     import colorsys
     for base, text in _palettes():
         status = [m.accent(k, base, text) for k in ('error', 'ok')]
-        secs = [m.section_accent(i, base, text) for i in range(6)]
+        secs = [m.section_accent(i, base, text) for i in range(8)]
         for c in status + secs:
             assert m.contrast(c, base) >= 3.0
-        assert len(set(secs)) == 6 and status[0] != status[1]
+        assert len(set(secs)) == 8 and status[0] != status[1]
         for c in secs:
             h = colorsys.rgb_to_hls(*(v / 255 for v in c))[0] * 360
             assert min(m.hue_gap(h, s) for s in m.STATUS_HUES_DEG) >= 25
@@ -375,7 +502,7 @@ def test_accent_rejects_bad_palette(bad):
     with pytest.raises(KeyError):
         m.accent('blue', (0, 0, 0), (255, 255, 255))
     with pytest.raises(KeyError):
-        m.section_accent(6, (0, 0, 0), (255, 255, 255))
+        m.section_accent(8, (0, 0, 0), (255, 255, 255))
 
 
 def test_theme_name():
@@ -403,7 +530,7 @@ def test_every_action_has_a_macro_with_icon_and_menu_entry():
     assert 'agr_tools_runtime.panel()' in mcr and 'AGRToolsClassic' in mcr
     assert '#cuiRegisterMenus' in menu and 'id:#agrTools' in menu and 'removeScripts id:#agrTools' in menu
     ids = re.findall(r'"([0-9a-f]{8}-[0-9a-f-]{27})"', menu)
-    assert len(set(ids)) == 1 + 1 + 6 * 2 + 42 and ids.count(m.MENU_ID) == 2  # create + presence check
+    assert len(set(ids)) == 1 + 1 + 8 * 2 + 61 and ids.count(m.MENU_ID) == 2  # create + presence check
 
 
 MS_FILES = ('agr_tools.mcr', 'menu.ms', 'startup.ms', 'install.ms')
@@ -437,7 +564,7 @@ def test_maxscript_pitfalls_no_tooltip_reads_and_no_undeclared_assignments():
 # ---- bundle -------------------------------------------------------------------------------------------
 def test_icon_entries_svg_from_generator_and_png_from_dir(synthetic_icon_pngs):
     got = builder.icon_entries()
-    assert set(got) == set(builder.icon_files()) and len(got) == 2 * 49 * 5
+    assert set(got) == set(builder.icon_files()) and len(got) == 2 * 68 * 5
     for rel, data in got.items():
         theme, _, fname = rel.split('/')
         if rel.endswith('.svg'):
@@ -448,9 +575,9 @@ def test_icon_entries_svg_from_generator_and_png_from_dir(synthetic_icon_pngs):
 
 def test_package_contents_is_valid_and_complete():
     root = ET.fromstring(builder.package_contents())
-    assert root.tag == 'ApplicationPackage' and root.get('AppVersion') == '0.7.0'
+    assert root.tag == 'ApplicationPackage' and root.get('AppVersion') == '0.8.0'
     assert root.get('UpgradeCode') == '{BA2C2E6E-54F9-402E-8875-3D616C9030FD}'
-    assert root.get('ProductCode') == m.product_code('0.7.0') != m.product_code('0.6.0')
+    assert root.get('ProductCode') == m.product_code('0.8.0') != m.product_code('0.7.0')
     descs = {c.get('Description'): c.find('ComponentEntry').get('ModuleName') for c in root.iter('Components')}
     assert descs == {'macroscripts parts': './Contents/agr_tools/agr_tools.mcr',
                      'post-start-up scripts parts': './Contents/agr_tools/startup.ms',

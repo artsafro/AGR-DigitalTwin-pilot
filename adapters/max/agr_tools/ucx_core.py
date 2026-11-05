@@ -11,7 +11,6 @@ from __future__ import annotations
 import hashlib
 import json
 import math
-import os
 from collections import deque
 from pathlib import Path
 
@@ -378,6 +377,46 @@ def _convex_hull(raw):
     if len(verts) < 4 or not tris:
         raise ValueError('flat hull')
     return verts, tuple(tris)
+
+
+CONVEX_TOL_M = 1e-4  # reg 2.13.1 post-check of ucx.triangulate (#908, branch A)
+
+
+def convexity(verts, tris, tol=CONVEX_TOL_M):
+    """Post-check of one triangulated collision piece (reg 2.13.1): convex, closed, no zero-area triangles.
+
+    Convex: every vertex lies behind (or within `tol` of) the plane of every triangle, outward taken from the
+    sign of the enclosed volume (a fully flipped piece is still judged by its shape). Closed: every edge is
+    shared by exactly two triangles with opposite directions. Returns a JSON-ready dict; `ok` is the verdict."""
+    points, faces = _check(verts, tris)
+    origin = points[0]
+    vol = 0.0
+    for a, b, c in faces:
+        pa, pb, pc = _sub(points[a], origin), _sub(points[b], origin), _sub(points[c], origin)
+        vol += _dot(pa, _cross(pb, pc))
+    sign = 1.0 if vol >= 0 else -1.0
+    span = max(max(p[k] for p in points) - min(p[k] for p in points) for k in range(3))
+    area_tol = (max(span, 1e-12) ** 2) * 1e-12
+    worst, outside, zero = 0.0, [], []
+    for ti, (a, b, c) in enumerate(faces):
+        n = _cross(_sub(points[b], points[a]), _sub(points[c], points[a]))
+        ln = _norm(n)
+        if ln <= area_tol:
+            zero.append(ti)
+            continue
+        n = (sign * n[0] / ln, sign * n[1] / ln, sign * n[2] / ln)
+        d = max(_dot(n, _sub(p, points[a])) for p in points)
+        worst = max(worst, d)
+        if d > tol:
+            outside.append(ti)
+    directed = {}
+    for a, b, c in faces:
+        for e in ((a, b), (b, c), (c, a)):
+            directed[e] = directed.get(e, 0) + 1
+    open_edges = sum(1 for (a, b), k in directed.items() if k != 1 or directed.get((b, a)) != 1)
+    return {'ok': not outside and not zero and open_edges == 0 and abs(vol) > 0.0,
+            'convex': not outside, 'closed': open_edges == 0, 'worst': worst, 'outside': outside,
+            'zero_area': zero, 'open_edges': open_edges, 'volume': abs(vol) / 6.0}
 
 
 def world_metres(points, rows, to_m):
@@ -1022,19 +1061,16 @@ def build(verts, tris, *, mesh, kind=None, model_triangles=None):
     }
 
 
-def _same(a, b):
-    a, b = Path(a), Path(b)
-    try:
-        if os.path.normcase(str(a.resolve())) == os.path.normcase(str(b.resolve())):
-            return True
-    except OSError as exc:
-        raise ValueError(f'cannot resolve paths: {exc}') from exc
-    if a.exists() and b.exists():
-        try:
-            return os.path.samefile(a, b)
-        except OSError as exc:
-            raise ValueError(f'cannot compare input and output identity: {exc}') from exc
-    return False
+def _session_core():
+    """Shared helpers (session_core.py next to this file), loaded by path like the other sibling cores."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('agr_tools_session_core', Path(__file__).with_name('session_core.py'))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+_same = _session_core().same
 
 
 def publish(source, dest, payload, report=None):

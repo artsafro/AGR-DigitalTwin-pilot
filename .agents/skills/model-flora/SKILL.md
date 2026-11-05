@@ -32,6 +32,8 @@ Every step carries three lines:
   headless (`blender --background --factory-startup`). Live programs only through `max_exec.py` / `blender_exec.py`
   after a `--ping` (COORDINATION_RULES 22; the 3ds Max bridge runs in safe mode, so library reads go headless);
   before any DCC write apply the [DCC gate](../../../docs/agents/WORKFLOW.md#gate-dcc-authorization).
+  `dcc_batch.py`, `max_exec.py` and `blender_exec.py` are not in this repo: they live in
+  `C:\Users\artsafro\hermes_kanban\scripts\`.
 - `Needs:` `headless` (an agent runs it today), `live` (the program open by the user), `human` (a user decision or
   a visual look). `no tool yet` means the route exists but no reviewed script does the step.
 - `Done when:` the evidence that closes the step.

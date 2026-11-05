@@ -1,4 +1,4 @@
-"""Intake folder checks (docs/HARNESS_PLAN.md §15, IN1). Synthetic folders built from the B01 fixture spec;
+"""Intake folder checks (archive/2026-11:docs/HARNESS_PLAN.md §15, IN1). Synthetic folders built from the B01 fixture spec;
 not a real object."""
 import json
 from pathlib import Path

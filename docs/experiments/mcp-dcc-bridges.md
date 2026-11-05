@@ -13,7 +13,7 @@ workers use today, and are they worth adopting?
 ## Methods tested (2 of the report's proposals)
 
 - **M1 — program lease over a whole workflow** (report 2.3.1–2.3.4, Task 1). Prototype
-  `experiments/mcp-dcc-bridges/dcc_lease.py` (142 lines, stdlib + ctypes): `O_EXCL` lease file
+  `archive/2026-11:experiments/mcp-dcc-bridges/dcc_lease.py` (142 lines, stdlib + ctypes): `O_EXCL` lease file
   `%LOCALAPPDATA%\Temp\agr-dcc-leases\blender.lease`, owner = PID + process creation time (`GetProcessTimes`),
   monotonically increasing fencing token checked before every step, dead owner → reclaim only after the
   DCC answers a ping, otherwise `Quarantined`. Baseline: today's per-call lock in `blender_exec.py`.
@@ -35,7 +35,7 @@ code-reading only), enforcing broker (report itself says it does not exist yet).
   object) → move x+10 → **scene-wide readback** (mesh-object count, vertex sum, world min-x; any mismatch
   with the agent's own expectation = torn read) → cleanup.
 - Concurrency: 2 agent processes in parallel, 3 meshes × 2 rounds each = 12 workflows / 60 calls per run;
-  4 configs × 3 reps. `uv run python experiments/mcp-dcc-bridges/harness.py fixtures|concurrency 3|recovery`
+  4 configs × 3 reps. `uv run python archive/2026-11:experiments/mcp-dcc-bridges/harness.py fixtures|concurrency 3|recovery`
   (≈ 2 min total). Raw: `experiments/mcp-dcc-bridges/results_{concurrency,recovery}.json`.
 
 ## Results

@@ -3,7 +3,7 @@
     uv run python tools/qa/run_benchmark.py --etalon <etalon.fbx|.blend> --object <object.json> \
         --tolerances benchmark/<bench-id>/tolerances.json --output <new run folder> [--blender <exe>]
 
-Steps (docs/HARNESS_PLAN.md §5, §8, §9), every output in the new run folder:
+Steps (historical: archive/2026-11:docs/HARNESS_PLAN.md §5, §8, §9), every output in the new run folder:
 1. etalon-dump.json   tools/source/measure_spec_blender.py on the etalon
 2. spec.json          dt_ai.spec.extract_spec (+ spec.report.json; questions stop nothing, they are reported)
 3. model-dump.json    dt_ai.geometry.from_spec.build with the `build` block of object.json

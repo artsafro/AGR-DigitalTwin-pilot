@@ -1,4 +1,4 @@
-"""Geometry checks of a model against its etalon (docs/HARNESS_PLAN.md §5, benchmark/README.md).
+"""Geometry checks of a model against its etalon (archive/2026-11:docs/HARNESS_PLAN.md §5, benchmark/README.md).
 
 Input: two mesh dumps in one object system, the etalon's spec and the `geometry` block of the
 benchmark's tolerances.json; every threshold comes from there. Each check returns

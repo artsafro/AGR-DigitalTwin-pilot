@@ -1,11 +1,257 @@
 # AGR Tools changelog
 
-## 0.8.0 (#908) — в работе
+## 0.9.0 (#979) — в работе
 
-Сдача: правки только на экспортных копиях или в новых файлах, каждая с preview. Пакет пока остаётся 0.7.0:
-кнопки 0.8 есть в меню и MCP, в панели они серые «в версии 0.8» до релизной ветки.
+Пакет остаётся 0.8.x до релизной ветки R: кнопки 0.9 есть в меню и MCP, в панели они серые «в версии 0.9».
+Каждая ветка пишет только в свой подзаголовок ниже.
 
 ### Основа (ветка 0)
+
+- `runtime.EDITS_090` (19 строк плана 0.9: id → файл ядра, функция), `READ_090` (режимы `read`/`select`: только
+  preview), `SELECT_090` (`light.check`: нарушителей выделяет обвязка UI одной записью Undo, не ядро) и
+  диспетчер `runtime.edits_090(tool, mode, preview, nodes, options)` на контракте `edit_core` 0.8; пустой модуль
+  отвечает `status: not_implemented` с `issue: #979`.
+- Заглушки модулей A–D, `data/procedural_classes.json` и `data/streets/` (владелец C); сборщик кладёт `data/` в пакет.
+- `cleanup_preview` / `cleanup_apply`: проход `options` (`channels`, `keys`; по умолчанию выключены) в
+  `export_core._cleanup_channels`.
+- 19 Action в секциях «Проверить и выделить» / «Исправить — копии / undo / новые файлы», 19 macroScript и пунктов
+  меню, 19 иконок, 19 MCP-инструментов `agr_<блок>_<имя>` (только `mode=preview`).
+- Полигон: базы 0.8 и 0.9 (32 станции), хук фрагментов `test-polygon/stations/<ветка>.json`, `load_catalog()`.
+- `roadmap.load()` отклоняет 8 из 8 испорченных JSON плана (SYNTHESIS §4).
+
+### A — замены и МАФ (`improve/issue-979-place`)
+
+- `place.drop_to_ground` (undo): лучи вниз от каждой вершины на все `*_Ground` (скрытые тоже) или `options.ground`;
+  `offset_m` в метрах, «+» поднимает; `align` — аналитический поворот оси Z к нормали (без 360 копий);
+  объект под рельефом поднимается только с `lift_buried` и не переворачивается; промах → `ground_miss`, не двигается.
+  Исправлены дефекты Glue (L06): знак offset, плоскость под пивотом, пивот вместо низа, обратный луч, один Ground.
+- `place.maf_checks` (чтение): AABB-предфильтр, затем лучи от вершин; `maf_flying` (зазор, м), `maf_sunk` (глубина, м),
+  `maf_intersect` (пара, пересечение треугольников в 3D, касание не считается); допуски `fly_tol_m`/`sink_tol_m` 1 мм,
+  целевой зазор `gap_m`; скрытые/замороженные — в отчёте с флагом, ничего не выделяется.
+- `place.replace` (undo): мастер по точному имени, маска — точное имя или явный glob; инстанс/копия; сохраняются
+  мировой трансформ, слой, родитель, дети, user props; мастер, его инстансы и копии не цели (повтор ничего не меняет);
+  `stub` — Box по oriented bbox (width X, length Y, пивот в основании, трансформ один раз).
+- `place.schedule` (копии): ведомость `rows`/CSV/JSON (м, мир): отчёт по каждой строке — поставлено / `no_library_model` /
+  `outside_ground` / `blocked_by_obstacle` (здания `*_Main`, ранее поставленные) / `already_placed`; инстансы эталона на
+  `placement_instances`, посадка лучами `drop_to_ground` с утоплением 10 см; повтор без дублей.
+- `place.flora_repair` (копии): коды `negative_scale`, `rotated`, `shear`, `ngon`; shear → мировой меш с единичным
+  трансформом, остальное — триангулированный снимок; копии на `AGR_flora_repair` со сверкой с исходником (0,05 мм,
+  UV 2e-5); оригиналы не меняются и не удаляются; без UV / пустой меш → `skipped` с причиной.
+
+### B — текстуры, UDIM, атласы (`improve/issue-979-tex-udim-atlas`)
+
+- `tex.erm_normal_check` (чтение, `texqa_core`/`texqa_max`): PNG читается stdlib (заголовок `checks_core.png_info`,
+  пиксели zlib), формат — по сигнатуре (JPG с `.png` → `format_mismatch`). Нормаль: ориентация по ротору поля
+  (OpenGL → `normal_opengl`, нерешаемо → `ambiguous`), отклонение плоских мест от (128,128,255), единичность. ERM:
+  ложное свечение в R без эмиссии материала, серая ERM, альфа, глубина ≠ 8. Без порога 50 %, палитры и ImageMagick
+  (GeoAGR R02, `GeoAGR.ms:1685`, `:2188-2216`).
+- `tex.finish_map` (копии, `finish_core`/`finish_max`): обязательная легенда JSON/CSV со строгой проверкой (12 мутаций →
+  `ValueError`); ID без строки легенды и ID легенды без граней — находки до любой сборки; швы-кольца разрезаются только на
+  копии, проверка ±1 мм, швы по фасадам; невозможный шов — отказ без копии.
+- `udim.matid_unwrap` (копии, `uvtile_*`): развёртка по плоскостям граней, ID n → свой тайл (1000+n), одна плотность px/м
+  на все ID через `SystemScale` (±2 %, м и см одинаково), паддинг ≥ 8 px, острова внутри своего UDIM, переполнение —
+  находка с расчётом; стек исходника не трогается, копия примитива с модификаторами схлопывается и это в отчёте (L06).
+- `udim.slots` (чтение, `uvtile_*`): имена разбирает грамматика `names_core` (E1); `udim_gap`, `slot_gap`,
+  `maps_over_100`, `slot_over_7`, `name_unparsed`.
+- `atlas.flora` (новые файлы, `flora_atlas_max` + `atlas_core`): тайл на уникальную текстуру, инстанс перемапливается
+  один раз, кроп по UV, без апскейла, паддинг ≥ 8 px с bleed, диффуз RGB 24 бит, прозрачность отдельным атласом,
+  PNG пишет stdlib (одинаковые байты в любой версии Max), без C#.
+- `atlas.groundel` (копии): профиль `groundel` в `atlas_core.pack` — один набор ≤ 512, правило карт L06 (квадрат 128–512,
+  альфа по пикселям, нет карты → `map_missing`), непомещение → `atlas_overflow` с расчётом; 24 бит RGB.
+- Доработка `atlas.npm` (VPM_to_NPM, в ядре): профиль `npm` + `shrink` — атлас уменьшается до содержимого при том же
+  текселе (Ground 35 ± 0,1 px/м), 24 бит, паддинг 8, TGA → `skipped` без падения; доступна через
+  `atlas.groundel` с `profile: npm`. Кнопка 0.2 (`runtime.atlas_apply`) пока пишет PNG через Max — см. #979.
+
+### C — проверки (`improve/issue-979-qa`)
+
+Все пять кнопок — только чтение (preview); сцена, материалы, вьюпорт, рендерер и выделение не меняются.
+Ядра `qa9_core.py` / `facade_core.py` на stdlib, обвязка `qa9_max.py` / `facade_max.py`.
+
+- `qa.address`: грамматика Address `Улица_Дом[_K_n][_Str_n]…` и справочник улиц. Коды `addr_chars`, `addr_parts`,
+  `addr_length`, `addr_case`, `addr_abbr`, `addr_translit`, `addr_street_unknown`; у каждого адреса одна основная
+  причина, остальные — в детали. `D`/`Dom` и `Uch` — предупреждения (`plan.warnings`). Исправлены дефекты L05:
+  части дома на позиции 2–3, пустые элементы (лишний `_`), нет проверки длины (лимит 214 = 254 − обёртка имени),
+  сравнение по подстроке (`Parkovaya`, `Valovaya`), числительное 171н (`2jKotelnicheskijPer`), каскад и регистр,
+  пробел как «транслит», молчаливый CP1251 / отсутствие словаря (теперь явная ошибка).
+  Справочник — `data/streets/`: ОМК УМ (data.mos.ru, выгрузка из SINTEZ 1.6.1) и поселения Wikidata (CC0),
+  происхождение и SHA256 в `PROVENANCE.md`. CSV GeoAGR не копируются. Транслит улиц — ГОСТ 7.79-Б из классификатора
+  (Й → J); форма через Y — `addr_translit` с подсказкой. Подсказка для свободного текста — таблица `names_core`.
+- `qa.normals`: `normal_inward` (замкнутый элемент: согласование ориентации по рёбрам + знак объёма, не центр bbox
+  объекта), `double_face` (все пары через пространственный хэш, обе грани в отчёте; сонаправленные ближе 5 мм —
+  VPM-2.3-13; встречные до 2 см, где второй стороны быть не должно), `double_side_offset` (вторая сторона
+  стекла/Flora/opacity вне 3–10 мм, VPM-2.12-3), `missing_double_side`, `sg_none`. Пороги в метрах
+  (`SystemType` × `SystemScale`, без `decodeValue`): сцены в м и см дают одно и то же. Зазор пары меряется в
+  центре области перекрытия по копланарному «пятну» и не зависит от размера граней и триангуляции. Editable_Mesh,
+  примитивы и Editable_Poly — одинаково; узел без сетки (Populate Crowd) — в `skipped` с причиной. Материалы и
+  Nitrous не подменяются (дефект View Normals).
+- `qa.sintez`: таблица правило → наш вердикт / SINTEZ / совпадение. Вход: отчёт SINTEZ (`run_agr_checker.py`) и
+  отчёт `qa.preflight` (файл или прогон на сцене) и/или `qa.package`. `sintez_mismatch` — расхождение, с правилом;
+  `sintez_unmatched` — SINTEZ fail по правилу, которого мы не проверяем. 2.3.17 сверяется по `qa.package` V003.
+- `qa.facade_compare`: картинка «лист | ВПМ | НПМ» в одном масштабе (новый PNG, `_vNNN`), счёт швов по пикселям.
+  Модель не рендерится: снимок сетки растеризуется в Python при фиксированных px/м, рендерер сцены и вьюпорт не
+  трогаются (дефект `apply_atlas_uv`). Лист — PNG/BMP/PGM. Расхождение числа швов → `facade_joints`.
+- `qa.procedural_objects`: классы — данные (`data/procedural_classes.json`, L07: Chaos Scatter, Corona Scatter,
+  Populate, ScatterGeometry измерены; Forest Pack, RailClone, MultiScatter, RayFire, tyFlow — по именам T07),
+  заглушка отсутствующего плагина `Missing_*` → `proc_missing_plugin`. Ничего не сворачивается. Отчёт отдаёт
+  стабильный список `plan.procedural` / `plan.blocking` для `export.batch`, плагины без классов в этой Max —
+  «плагин не установлен», предупреждение: треугольники этих объектов `qa.tris` не посчитал.
+
+### D — экспорт, карты, свет (`improve/issue-979-export-scene-light`)
+
+- `light.check` (выделение, `light_core.py` / `light_max.py`): ≤ 250 источников (`light_count` на тех, что сверх
+  лимита; список не обрезается), только Omni и Free/Target Spot (`light_type`; пары Omni/Spot всё равно проверяются),
+  Omni ↔ любой ≥ 5 м и Spot ↔ Spot ≥ 1,5 м попарно в 3D по позиции источника, строгое «<» (`light_omni_distance`,
+  `light_spot_distance`), один корневой Dummy (`light_no_root`, `light_root_many`), пивот корня = опорная точка
+  (`light_root_pivot`, по умолчанию начало координат или `options.reference`), маски имён без лимита номера 050
+  (`light_name`). Метры через `units.SystemType` × `SystemScale`, `decodeValue` не используется: сцена в см даёт те
+  же нарушения. Цель Target Spot не считается корнем. Скрытые и замороженные нарушители — в `plan.ambiguous`, не в
+  выделении; wirecolor и сцена не меняются; отчёт со всеми парами-нарушениями и d в метрах.
+- `scene.maps_usage` (чтение, `mapsuse_core.py` / `mapsuse_max.py`): общий перечислитель `tex_max._scene_maps` +
+  все экземпляры `BitmapTexture` с узлами-владельцами (Blend, DoubleSided, Shell, сплайны, свет) + окружение;
+  сравнение по нормализованному пути, одноимённые — по SHA256 (копия по другому пути — `copies`, не «лишняя»);
+  пропавшая карта не подменяется одноимённым файлом (он только кандидат); лишние файлы — `plan.ambiguous`
+  (решение за человеком), удаления нет. Папка карт: `options.folders`, иначе `maps`/`textures` рядом со сценой,
+  иначе папки используемых карт.
+- `export.batch` (новые файлы, `batch_core.py` / `batch_max.py`): группы по `AGR_EXPORT_PATH`, каждая — через
+  `runtime.export_preview` / `export_commit` (ворота и readback `export.checked` как есть); существующий FBX (или его
+  `.report.json` / `.partial`) — следующая версия `_vNNN` уже в preview; упавшая группа не останавливает остальные,
+  итог fail; один отчёт. Процедурные объекты из `runtime.edits_090('qa.procedural_objects', 'preview')` блокируют
+  свою группу (`plan.procedural` / `plan.blocking` ответа ветки C, #1000); если строка отвечает `not_implemented` или
+  падает, не экспортируется ни одна группа (fail closed).
+- Полигон: станции 0.9.17 и 0.9.18 (`stations/D.json`, `stations/D_build.py` — узлы света, сцена в м и в см).
+
+### E1 — доработка: текстуры и имена (`improve/issue-979-rework-tex-names`)
+
+Карточки аудита T01/T02/T05/T06; каждый дефект — регресс RED на модели командного скрипта → GREEN
+(`test_agr_tools_tex.py::test_T0*`, `test_agr_tools_names.py::test_V13_*|AMR_*|CN_*|A101_*`).
+
+- `tex.format_fix`: сначала lossless; иначе палитра ≤ 256 с дизерингом Флойда–Стейнберга (Q01), потом
+  постеризация — порядок решения Артёма. Новый порог `max_rmse` (по умолчанию 0,03; Q02 открыт). Лучший
+  вписавшийся вариант выше порога — отказ с измеренным RMSE, а не «готово» (T01: 8 цветов, RMSE 0,157).
+  Файл под лимитом не квантуется; ядро не пишет temp-файлов. Нажатие с выделения даёт объекты отчёта по
+  владельцам текстур (`tex_quality` / `tex_refused`).
+- `tex.placeholders`: средний цвет по видимым пикселям с округлением (T01 floor, T05 прозрачные как чёрные),
+  RGB 24 бит, размеры 128 и 256. `udims`: дубль UDIM в одном вызове — второй отказ, ничего не перезаписано
+  (T02: 6 записей → 3 файла). `metal_slots`: ERM `[0,0,255]`, неметалл как в 0.8 (Q03 открыт). Нормаль
+  `[128,128,255]`. Нечитаемый `diffuse_from` (TGA, EXR, PSD) — Diffuse `skipped` с причиной вместо серого 128
+  (T05). Один набор на адрес каждого выделенного объекта, находки `placeholder_exists|duplicate|source`.
+- `scene.missing_maps`: кандидаты по маске проекта владельца и роли слота (`T_<Адрес>[_NNN]_<Тип>_<d|n|…>_1.*`,
+  VPM `T_<Адрес>_<Карта>_1.<UDIM>.*`) с рангом 2, любые расширения (`.png` и `.jpg`), флаг неоднозначности.
+  Папки поиска по умолчанию — из путей карт (ближайший существующий родитель), относительная папка
+  (`"123"`) — отказ (T06 TexFinder). Перечислитель `tex_max._scene_maps(core, nodes)` не менял сигнатуру;
+  владельцы получили ключи `slot` и `role`.
+- `qa.names_fix`: файл с именем по маске и другим содержимым не перезаписан и не привязан, конфликт —
+  в `failures` (V13 `File.Copy overwrite`, Asset Material Renamer «skip existing»). Таблица слотов
+  `names_core.SLOT_TABLE`: `reflectionMap` без роли, `_m` только из `specularLevelMap`. `folder` — копии карт
+  в отдельную папку. Профиль `library` (`Brand_Name_Article_high|low`): невидимые символы, омоглифы и
+  транслит за один проход, дефис, сегмент с цифры и `.001` — отказ с причиной (CheckAssetNames v8). Имя,
+  занятое другим объектом сцены, — `ambiguous` (0 дублей). `role_names()` — имена 7 ролей по адресу, № ОКС,
+  слоту и FBX без `__` (A101LP :388); опции `address`/`oks`. Транслит: публичные `TRANSLIT`, `transliterate`,
+  `translit_variants` (Й → y, вариант j как в `GeoAGR.ms:194`) — одна таблица с `qa.address`.
+- `ucx.rename`: в preview кусок, который будет переименован, несёт находку `ucx_name` (что сделает apply).
+- Полигон: станции 0.8.1 `scene.missing_maps`, 0.8.3 `tex.format_fix`, 0.8.4 `tex.placeholders`, 0.8.6
+  `ucx.rename`, 0.8.8 `qa.names_fix` (`stations/E1.json`, `stations/E1_build.py`), по PASS и FAIL на кнопку.
+
+### E2 — доработка: геометрия и UDIM (`improve/issue-979-rework-geom-udim`)
+
+- `ucx.triangulate`: после триангуляции копии — проход переворота вогнутых диагоналей (идея ConcaveFixer, T03):
+  только квад, выпуклый в своей плоскости («дротик» не переворачивается и попадает в `ambiguous`), новое ребро
+  проверяется, допуск 1e-4 м (складка 1e-6 не трогается), до неподвижной точки, затем пост-проверка выпуклости.
+  Рёбра контуров исходных n-гонов и изломы > 60° не переворачиваются. Отказ `createEdge` больше не оставляет
+  квадов: копия получает запланированные треугольники. Невыпуклый кусок теперь в отчёте (`not_convex`),
+  выпуклая оболочка — только по опции `nonconvex: hull` (поведение 0.8). В preview находка `reflex_edge`.
+- `export.pivot_place`: опции `orient` (`long_side` — X по длинной стороне в плане, Z вверх; `pca` — главные
+  оси) и `pivot_at` (`bottom_centre` — пивот двери, `centre`). Ось подбирается в double по координатам без
+  переноса (L07: у AC Pivot Align до 1,43° на 2 345 678 м), выпуклая оболочка + rotating calipers вместо O(n³),
+  без лимита 512 вершин, знак X — угол в [0°, 180°). Пивот ставится через transform + objectOffset,
+  пересчитанный в double: меш не двигается (в т. ч. у ребёнка и у Editable_Mesh). Отказы с причиной и кодом:
+  квадратный след (`pivot_axis_undefined`), неопределённость оси > 0,01° (`pivot_axis_uncertain`), масштаб
+  узла ≠ 1 (`pivot_node_scale`).
+- `udim.ids_to_udims`: режим `keep` («сохранить раскладку», идея UDIM Tool v9.2): каждая грань сдвигается на
+  целые тайлы в 1000+ID, `floor` вместо зажима 1001..1100 (отрицательные UV), разрез швов по смещению
+  (не зависит от порядка граней), грань через линию тайла — отказ ID (`udim_straddles`), ID > 100 не тянет
+  общие вершины. Объекты со стеком (Unwrap_UVW, UVW_Xform) больше не пропускаются: раскладка читается со
+  стека, свёртывается только копия.
+- Полигон: станции `stations/E2.json` + `E2_build.py` для `ucx.triangulate`, `export.pivot_place`,
+  `udim.ids_to_udims`, `model.triangulate` (база 0.8).
+
+### E3 — доработка: пакет и предсдача (`improve/issue-979-rework-package-suite`)
+
+- **`export.zip`** — контракт AGR_Arxiv 1.5 (только документация, SHA256 в #979): каждый apply пишет новую папку
+  `Сборка_<дата_время>` (в папке поставки или в `options.out`), в ней ZIP, `report.json` и маркер `ГОТОВО.txt`
+  только при полном успехе, иначе `ОШИБКА.txt`; файлы поставки и прежние ZIP не трогаются. Имена с `../`,
+  абсолютным путём, NUL и вложенные папки (в т. ч. ВПМ) — отказ до записи, у каждого свой код
+  (`member_traversal`, `member_absolute`, `member_nul`, `member_nested`); подпапки попадают в `skipped` с причиной.
+  Правила AGR Zipper v2.1: в НПМ только FBX, единый Address. Без IPC (у Zipper — pickle по localhost).
+- **`qa.package`** — корпус испорченных архивов без падения, у каждого свой `data.code`: `zip_traversal`,
+  `zip_absolute`, `zip_nul_name` (раньше проходил), `zip_nested`, `zip_unreadable` (усечённый), `zip_encrypted`
+  (раньше — трейсбек), `png_not_png`, `png_alpha` (в т. ч. tRNS); коды видны в таблице стадий кнопки. Правила
+  Light FBX по идее AGR Checker: один `<a>[_Ground]_Root` со сброшенными трансформациями, все светильники под ним,
+  имена `<a>_[Spot|Omni]_NNN` 001–050, ≤ 250, тип в имени = тип света (V012, коды `light_*`). Кросс-проверка
+  паспортов ОКС ↔ Ground (`geojson_cross`: address, okrug, rajon, developer, designer, cadNum, ZU_area,
+  h_relief, act_AGR), в том числе для одиночного ZIP с парой рядом.
+- **`export.cleanup`** — по умолчанию вершинные каналы 0/−1/−2, ключи анимации и UDP конвейера
+  (`AGR_EXPORT_PATH`, `AGR_TEXEL_*`, …) остаются на копии; `options.channels` / `options.keys` (opt-in) удаляют
+  каналы и ключи (узел, стек, материал) только на копии; оригинал сверяется после apply
+  (`export_core.cleanup_plan`, `cleanup_scene_ops`; сцена — `runtime.cleanup_apply`, маленький PR).
+- **`qa.zero_area`** — код `sliver_face` (рекомендация, в `qa.preflight` не входит): высота < 0,2 мм, угол —
+  параметр в градусах (по умолчанию выключен: стекло 5 мм даёт треугольники 0,04°); грань с нулевым ребром
+  находится. Сверка после экспорта без Max: `tools/qa/fbx_zero_area.py <fbx>` (binary 7.4/7.5 и ASCII, по имени
+  объекта; `export_core.fbx_meshes`).
+- **`scene.census`** — `missing_map` и через общий перечислитель `tex_max._scene_maps` (снята известная ошибка
+  полигона `census-usedmaps-drops-missing-file`); сводка: треугольники (не полигоны) по слоям и префиксам,
+  самые тяжёлые объекты, меши > 100k, карты > 4096 по любой стороне (6000×3000; размеры из заголовков файлов,
+  пропавшая карта не роняет), кириллица в именах, далеко от нуля, рендерер, группы инстансов (пара = 1),
+  `suite_core.census_dump` в UTF-8. Сцена не меняется.
+- Полигон: станции `export.zip`, `qa.package`, `export.ground_fbx`, `export.geojson_write` (база 0.8, фрагмент
+  `stations/E3.json` + билдер `E3_build.py`).
+
+## 0.8.1 (#908)
+
+Решения владельца от 05.11.2026 по командному аудиту T04 (GeoAGR-private `work/team-scripts-audit/T04/REPORT.md`,
+«Открытые вопросы» 1–3).
+
+### qa.scene_hygiene: всё на слое «0»
+
+- Новый код `hyg_layer`: объект не на слое по умолчанию «0» → fail с текстом «объект на слое «X», а должен быть на
+  слое «0»: все объекты в одном слое по умолчанию, других слоёв нет (reg p.28 §3.2)». Норматив есть: регламент
+  стр. 28 §3.2 (требование 2.3.2 «Коллекция одна», `VPM_STANDARD.yaml geometry.one_default_layer_or_collection`).
+  Идея из командного скрипта `agr_max_check_37.ms` `check_Layers` (sha256 `ead38669…`), код не брали. Имя слоя
+  сравнивается точно; нет поля `layer` — ошибка, а не pass. Входит и в `qa.preflight`.
+- Полигон: объекты станций теперь на слое «0» (как сдаваемая сцена), служебные `_bases/_labels/_cameras` не
+  проверяются; новый объект `SM_Polygon_Layer_Main` на «Лишний слой» (станция 0.7.10) — fail `hyg_layer`.
+- Тесты: `tests/max_tools/test_agr_tools_owner_decisions.py` (RED на 0.8.0 → GREEN); нативно Max 2024
+  `tests/max_tools/run_agr_tools_owner_native.py`, job `20261105-104812-f5ac560d`: бокс на «0» — pass, на
+  `Extra_Layer` — ровно `hyg_layer`, сцена не изменена.
+
+### Реестр ФНО
+
+- `standards/data/fno_codes_utf8.csv` — побайтовая копия реестра из SINTEZ AGR Checker 1.6.1 (566 кодов, sha256
+  `397e75e3…`, совпадает с копией в `AGR_Checker.zip`); происхождение — `standards/data/fno_codes.PROVENANCE.md`.
+- `twinqa.fno` + V011 (`qa.package`, `qa.geojson`, `validate_package.py`): для ОКС `FNO_code not in registry`
+  (код верного формата, но нет в классификаторе) и `FNO_name vs registry` (имя не совпадает, пробелы не
+  учитываются, как в SINTEZ) — fail. Ground не сверяется. Нечитаемый реестр — `not_run`, не pass.
+- Синтетические фикстуры перешли на реальную пару `010 004` / «Общежитие».
+
+### V004 и «центр XY» на FBX из Max
+
+- Из пяти реальных архивов на ноутбуке FBX из 3ds Max только в двух (`1113_…_10_3`, `SM_…_4368_002`), остальные —
+  Blender 4.4/5.2 (заголовок `SceneInfo ApplicationName`, новый `twinqa.fbx_header.fbx_application`).
+- Дефект 0.8.0: правило «identity в любом режиме импорта» давало ложный pass объекту Max, повёрнутому на +90° X
+  (импорт с bake добавляет −90° X). Измерено на эталонных FBX из Max 2024 (job `20261105-104812-f5ac560d`).
+  Теперь FBX из Max судится только по обычному импорту; прочие экспортёры — как в 0.8.0.
+- Реальные архивы: V004 pass на 4, fail на `1113_77_17_0120114_5803_10_3` (два меша повёрнуты на −28° по Z — верный
+  fail); «центр XY» (V013 `pivot at geometric centre`) — pass 0/0 % на обоих ВПМ, ложного fail по Y-up нет.
+  Ожидания: `tests/qa/real_deliveries_081.json` (имя архива, SHA256, вердикты); архивы не коммитятся, тесты
+  без них пропускаются.
+
+## 0.8.0 (#908)
+
+Сдача: 13 кнопок плана версии 0.8 (секция «Сдача (копии)», 13 macroScript, пункты меню, иконки, MCP
+`agr_<block>_<name>`). Правки только на экспортных копиях или в новых файлах, каждая с preview → apply по
+хэшу, одна запись Undo на запуск, выделение восстанавливается, отчёт со списками `done` / `skipped` / `ambiguous`.
+
+### Контракт правки
 
 - `edit_core.py`: контракт правки — preview → apply со сверкой хэша, `new_path()` без перезаписи,
   списки `done` / `skipped` (с причиной) / `ambiguous`, JSON-контракт 0.5.0, статус `not_implemented`.
@@ -13,22 +259,101 @@
 - `runtime.EDITS_080` (13 строк плана) и `runtime.edits_080(tool, mode, preview)`; пустой модуль отвечает
   `status: not_implemented`. Секция «Сдача (копии)»: 13 macroScript, пункты меню, 13 иконок, 13 MCP-инструментов.
 - План: вердикт `take_fix` по лаборатории #907 для `model.triangulate`, `ucx.triangulate`, `export.ground_fbx`.
+- `edit_max.session` (общий, #908 R): исключение внутри `pymxs.undo(True, …)` в Max 2024 batch не выходило из
+  блока (job `20261105-011438-a488a8fd`, найдено веткой C) — упавший apply продолжался как успешный. Теперь
+  ошибка ловится внутри записи Undo и пробрасывается после неё (`test_session_reraises_an_error_swallowed_by_the_undo_context`);
+  обход `names_max.in_session` остаётся совместимым.
 
-### A — геометрия (`improve/issue-908-geom`)
+### Геометрия и пивот
 
-- Заглушка ветки A: `model.triangulate`, `ucx.triangulate`, `export.pivot_place`.
+- `model.triangulate` (`geom_core.py` / `geom_max.py`): n-гоны экспортной копии триангулируются без DLL и диалога.
+  Пороги относительные (грань нормируется к единичному боксу), поэтому октагоны 0,1 мм и U 0,6 мм в метровой
+  сцене триангулируются так же, как 1 км. Ровно n−3 непересекающиеся диагонали на грань (ear clipping +
+  флипы Делоне только внутри строго выпуклых четырёхугольников, без длинных клиньев). Применение одним
+  циклом `polyop.createEdge`. Проверка «0 n-гонов» на чтении копии; вырожденные контуры в `ambiguous`.
+  Площадь, UV, ID материалов, SG и скрытые грани сохраняются; Box/Mesh/модификаторы конвертируются на копии.
+- `ucx.triangulate`: диагональ выбирается с учётом выпуклости (все вершины за плоскостью каждого треугольника,
+  допуск 1e-4 м), для невыпуклого куска — его выпуклая оболочка. Проверка после (`ucx_core.convexity`):
+  выпуклость, замкнутость, нет нулевых треугольников. Box, Editable Mesh и Poly с модификаторами
+  конвертируются на копии и перечисляются, прочее — в `skipped` с причиной. Скрытые грани остаются скрытыми.
+- `export.pivot_place`: копии НПМ (МСК X/Y/Z без изменений, пивот в [центр X, центр Y, ±0.000]) и ВПМ
+  (пивот пола в [0,0,0]). ±0.000 = min z выделенных граней/рёбер/вершин пола или явное значение (`floor_z`,
+  в интерактивном Max — запрос); без выборки отказ, низ bbox не используется. Ввод проверяется (пустое поле,
+  экспонента, nan — отказ). Координаты в double, текст с фиксированными 4 знаками. Поворот как в UI (знак
+  контроллера). Общий пивот у всех выбранных узлов: взаимное смещение моделей сохраняется.
 
-### B — текстуры (`improve/issue-908-tex`)
+### Текстуры
 
-- Заглушка ветки B: `tex.format_fix`, `tex.placeholders`, `scene.missing_maps`.
+- `tex.format_fix` (`tex_core.py` / `tex_max.py`): исправленные PNG только в **новую** папку (по умолчанию
+  `AGR_format_fix[_vNNN]` рядом с исходником; явная `out` — новая или пустая, не папка исходника). Формат из IHDR
+  через `checks_core.png_info` (палитра и 16 бит видны), полный stdlib-декодер PNG (все типы, 1–16 бит, Adam7),
+  запись PNG на stdlib zlib: 8 бит, colour type 2. Альфа снимается только где правило запрещает: явный фон
+  `background` или `dilate` (цвет края), иначе отказ с причиной; непрозрачная альфа снимается без потерь;
+  VPM Diffuse сохраняет альфу. JPG и прочие форматы — через .NET в Max, пакет не прерывается. Пропорции
+  сохраняются (`max_side` уменьшает вдвое по обеим осям), неквадратные в отчёте. Лимит `max_bytes` (по
+  умолчанию 3 MiB) — сначала без потерь, затем постеризация с RMSE в отчёте; недостижимый лимит — отказ с
+  причиной. Dilate выключен по умолчанию. Исходник уже в норме копируется байт в байт.
+- `tex.format_fix`, палитра (решение Артёма 05.11.2026: палитровый PNG допускается; командный аудит T01: 2048²
+  при 256 цветах 2,36 МБ палитрой против 5,70 МБ RGB): colour type 3 — валидный формат (палитровый исходник в
+  норме копируется). Сверх лимита порядок такой: RGB без потерь → точная палитра (≤ 256 цветов, без потерь) →
+  квантизация в 256 цветов (median cut) → постеризация RGB. В отчёте `encoding`, число цветов,
+  `max_channel_error` и RMSE. `palette: false` выключает палитру; RGBA в палитру не переводится.
+- `tex.placeholders`: однотонные D/ERM/N, PNG 8 бит RGB без альфы, точный цвет, Normal [128,128,255]; имена
+  VPM-2.10-4.3 `T_{Address}[_Ground]_{Diffuse|ERM|Normal}_{Slot}.{UDIM}.png` одним вызовом для слотов; размеры
+  128…4096, по умолчанию 256; папка через `os.path.join` (без завершающего `\` пишет внутрь), по умолчанию
+  `Maps` рядом с сохранённой сценой (несохранённая — отказ, без относительного `Maps\`); существующий файл —
+  отказ или `_v002` (`on_exists`); Diffuse средним цветом исходника (`diffuse_from`).
+- `scene.missing_maps` (только чтение, без apply): все bitmap-подобные карты всех узлов (скрытые и `UCX_` с
+  флагом), scene materials и AssetManager; `doesFileExist`; `<UDIM>`/`<UVTILE>` по тайлам из UV и диска;
+  кандидаты по базовому имени (то же имя+расширение — ранг 0, другое расширение — ранг 1) с флагом
+  неоднозначности; разрешение существующих (PNG/JPG/TGA); каждый путь один раз с владельцами; JSON + таблица.
+- MatID (#844): matID грани вне `materialIDList` снова блокирующий `empty_slot` в проверке MatID и в экспорте
+  (решение Артёма 2026-11-04 [D196]: экспорт FBX переносит его на другой sub-material, грань получает чужой
+  материал). Поиск без переноса — `checks_core.listed_submaterial_index`; текстуры по-прежнему меряют
+  перенесённый слот и дают рекомендацию `tex_matid_wrapped`. Нативно (Max 2024 batch): `#(1,2)`,
+  matID 1001 и 2 (пустой слот) → `empty_slot: [1, 2]`.
 
-### C — имена и UDIM (`improve/issue-908-names`)
+### Имена и UDIM
 
-- Заглушка ветки C: `qa.names_fix`, `ucx.rename`, `udim.ids_to_udims`.
+- `ucx.rename` (`names_core.ucx_plan`, `names_max.ucx_rename`): переименовывает на месте только UCX-геометрию
+  в `UCX_SM_<Address>_(Main|Ground)_NNN` одной записью Undo. Рендер-модель, хелперы, камеры, свет пропущены
+  и в отчёте; порядок по старому номеру; адрес не обрезается; префикс без учёта регистра; 001..999, больше —
+  ошибка группы; номера, занятые невыделенными узлами, не выдаются; повторный запуск ничего не меняет.
+- `qa.names_fix` (`names_core.names_fix_plan`, `names_max.qa_names_fix`): одна грамматика с `ucx.rename`.
+  На экспортных копиях (слой `AGR_export_names`) объекты, материалы (SlotNumber 1..7) и карты получают имена
+  по маскам NPM/VPM; файлы карт копируются рядом с исходником под именем по маске (папки не меняются),
+  без перезаписи; существующий файл назначения переиспользуется с его хэшем в отчёте; пропавший исходник —
+  карта очищается на копии и сбой в отчёте; свой материал цели в режиме донора не заменяется без
+  `replace_material` и всегда в отчёте; повторный запуск — неоднозначность, не перезапись.
+- `udim.ids_to_udims` (`udim_core`, `udim_max`): ID n → UDIM 1000+n на копиях (слой `AGR_export_udim`), все
+  выбранные объекты; ID вне 1..100 и группы нулевой протяжённости отклонены с отчётом (без NaN); режимы
+  `fit` (0.95 на ID) и `texel` (одно отношение UV/3D на все ID); UV-вершины разделяются между ID; отчёт по
+  каждому ID и readback «каждая грань в своём тайле».
 
-### D — пакет (`improve/issue-908-package`)
+### Пакет и экспорт
 
-- Заглушка ветки D: `qa.package`, `export.zip`, `export.ground_fbx`, `export.geojson_write`.
+- `qa.package` (только чтение): движок — валидатор пилота `tools/qa/validate_package.py --json`, по умолчанию
+  `--scene`, в интерпретаторе проекта (`AGR_PYTHON`). Отчёт: таблица стадий V001–V017 и код выхода 0/1/2 на каждый
+  ZIP (или на все ZIP папки). Валидатор (лаборатория L04): профиль по грамматике имени (`{code4}_{Address}` → NPM,
+  `SM_{Address}` → VPM), а не по содержимому; V006 «embedded textures» больше не проходит на NPM FBX без текстур
+  (OKS — fail, Ground — review). По аудиту командных скриптов T04: FBX со светом читается в Blender 5.1.2
+  (флаг `cast_shadow` для импортёра), одна нечитаемая FBX больше не обрывает проверку остальных, V004
+  «applied transforms» — тождество хотя бы в одном режиме импорта (FBX из Max и запечённый экспорт Blender
+  проходят, реальный поворот падает), V010 «UCX shape» — открытые/невыпуклые куски fail, логи Blender не в cwd.
+- `export.zip`: состав по точной грамматике и по адресу — NPM `{code4}_{Address}_{01..20}.fbx` + `_Ground.fbx`
+  (части без пропусков), VPM `SM_{Address}[_NNN]` + `_Light.fbx` + `.geojson` + `T_…_{Diffuse|ERM|Normal}`;
+  смешанные адреса и коды отклоняются, приманки не трогаются и перечислены. ZIP пишется в процессе (без 7-Zip),
+  только новым файлом (`.partial` + ссылка без перезаписи), лимиты двоичные `<=` (OKS 500 MiB, Ground и NPM
+  1 GiB, D015); на каждом записанном архиве — валидатор.
+- `export.ground_fbx`: Ground, GroundGlass, GroundEl, GroundElGlass, Flora → `{code4}_{Address}_Ground.fbx`, ОКС
+  `SM_{Address}_{NNN}_*` → `{code4}_{Address}_{NN}.fbx`; имя из адреса, не из первого выбранного; не зависит от
+  порядка выбора; Triangulate включён (остальные настройки FBX как в GeoAGR: 7400 binary, м, масштаб 1, текстуры
+  встроены); экспортируются сами объекты без изменений, без раскрытия скрытых, без перезаписи; выделение
+  восстанавливается; readback валидатором (V002/V003/V012 в слоте Blender).
+- `export.geojson_write`: новый `SM_{Address}[_Ground].geojson` — свойства App.3 только из options (ничего не
+  выдумывается, пустое обязательное поле — находка), точка МСК-77 только из preview `export.pivot_place`
+  (3 знака), превью JPG 256×256 в Base64, `Glasses` из стеклянных материалов; сразу после записи — `qa.geojson`
+  0.5.0. Кнопки GeoAGR `GeoAGR.ms:64642-64644` отключены и без обработчиков — переносить нечего.
 
 ## 0.7.0 (#860)
 
@@ -57,7 +382,9 @@ Native Qt UI over all 17 existing actions; no check logic changed.
   (stripe, header, icon tint) derived from the Max palette; result table (red/green), click selects
   the object, «Выделить ошибки», «Сохранить отчёт JSON…».
 - Progress bar + «Отмена» and the Max progress bar (progressStart/Update/getProgressCancel/End).
-  xView and MatID run in chunks of 25 objects (exact merge); other actions are one runtime call
+  xView and MatID run in chunks of 25 objects (exact merge). Cancel is read only between
+  chunks, so a click takes effect on the next chunk (about 0.9 s on Max 2024); the chunk
+  already running is kept. Other actions are one runtime call
   with a busy bar. Buttons are disabled while running.
 - Every action is a macroScript with `iconName:"AgrIcons/agr_<id>"`, Russian label and tooltip
   (what it does + requirement ids); `agr_tools_runtime.ui('<tool>')` and `agr_tools_runtime.panel()`
@@ -90,8 +417,14 @@ its `GeoAGR.ms:<line>` and its changes.
   alpha, 8 bits per channel (from the PNG header), file size, the UDIM set and UV padding. Padding is
   NPM 8 px and VPM 16/32 px for 2048/4096 maps; GeoAGR's 16/32 px branch was commented out.
   Padding is measured per texture atlas: each face goes to its matID's sub-material maps, and the
-  islands of all objects of one FBX that share an atlas are measured together (per UDIM tile). An
-  unmapped matID is `tex_unmeasurable`; a sub-material without maps is `tex_missing`. In VPM, touching
+  islands of all objects of one FBX that share an atlas are measured together (per UDIM tile). A face
+  matID outside `materialIDList` is resolved as the 3ds Max FBX export does (measured in Max 2026.3,
+  #827): it wraps by the highest listed ID n, `(id - 1) mod n + 1` (`#(1,2)`: 3 -> 1, 4 -> 2;
+  `#(1,5)`: 6 -> 1, 10 -> 5), is measured on that sub-material and reported as the advisory
+  `tex_matid_wrapped` naming `matID 3 -> sub 1`. A wrapped ID that is still not listed (`#(1,5)`: 2, 3,
+  4, 7; the export writes an empty placeholder slot) and a Multimaterial with no sub-materials are
+  `tex_unmeasurable`; a sub-material without maps is `tex_missing`. The MatID check (`empty_slot`) and
+  the export material evidence use the same resolver (`checks_core.max_submaterial_index`). In VPM, touching
   or overlapping islands (gap 0) are the review-level `tex_overlap_review`, not `tex_padding`:
   regulation 2.5.1.5 applies padding only to islands with unique images, and repeating islands may
   overlap. A VPM gap above 0 and below 16/32 px is still `tex_padding`; NPM is unchanged.

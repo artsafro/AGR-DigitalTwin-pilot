@@ -39,7 +39,7 @@ One command, every step's output in the run folder: etalon dump (`measure_spec_b
 `etalon-self.json` (the etalon against itself: must pass, or the etalon or a threshold is wrong)
 and `report.json` (the model against the etalon); `summary.json` lists the steps. Exit 0 both pass.
 
-## Checks (`twinqa.geometry`, starting numbers of HARNESS_PLAN §5)
+## Checks (`twinqa.geometry`, starting numbers of archive/2026-11:docs/HARNESS_PLAN.md §5)
 
 | Check | Rule |
 |---|---|
