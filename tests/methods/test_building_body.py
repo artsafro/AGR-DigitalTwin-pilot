@@ -536,3 +536,79 @@ def test_combined_round1_and_round2_guards_on_one_input(tmp_path):
     assert row["class_metrics"]["body"]["closed_shell_share"] == pytest.approx(12 / 14, abs=1e-5)
     r = _run("contours.py", src, src)  # round-1 data-loss witness, fresh process
     assert r.returncode == 4 and src.read_bytes() == before
+
+
+# --- #735: synthetic vs drawing side by side (user decision 2026-11-04 [D195]) ---
+
+def _cmp_row(rid, bench, variant, tris, dev=(0.5, 0.2), shells=(1, 2), synthetic=True):
+    r = {"row": rid, "class": "building-body", "benchmark": bench, "variant": variant, "triangles": {"model": tris},
+         "class_metrics": {"body": {"deviation_max_m": dev[0], "deviation_p95_m": dev[1],
+                                    "closed_components": shells[0], "components": shells[1]}}}
+    if synthetic is not None:
+        r["synthetic"] = synthetic
+        if synthetic is True:
+            r["synthetic_reason"] = "measured from the source mesh"
+    return r
+
+
+def _cmp_lines(md):
+    part = md.split("Synthetic vs drawing", 1)[1]
+    return [ln for ln in part.splitlines() if ln.startswith("| ") and not ln.startswith("| Object")]
+
+
+def test_results_md_puts_synthetic_and_drawing_numbers_side_by_side():
+    rows = [_cmp_row("R1", "kpp1", "kernel-prisms", 3896, (0.75, 0.275), (1, 2)),
+            _cmp_row("R2", "kpp1", "kernel-prisms", 4100, (0.05, 0.01), (2, 2), synthetic=None)]
+    lines = _cmp_lines(rmd.render(rows, "building-body"))
+    assert lines == ["| kpp1 | kernel-prisms | R1 / R2 | 3896 / 4100 | 0.75 / 0.05 | 0.275 / 0.01 | 1/2 / 2/2 "
+                     "| measured |"]
+
+
+def test_synthetic_row_without_a_drawing_row_says_not_measured_never_a_number():
+    lines = _cmp_lines(rmd.render([_cmp_row("R1", "ac08", "kernel-prisms", 40)], "building-body"))
+    assert lines == ["| ac08 | kernel-prisms | R1 / - | 40 / - | 0.5 / - | 0.2 / - | 1/2 / - "
+                     "| not measured: no drawing row in results.jsonl |"]
+
+
+def test_drawing_row_without_a_synthetic_row_is_listed_not_dropped():
+    rows = [_cmp_row("R1", "ac08", "kernel-prisms", 40),
+            _cmp_row("R2", "tow02", "blender-gn-union", 900, synthetic=False)]
+    lines = _cmp_lines(rmd.render(rows, "building-body"))
+    assert len(lines) == 2 and lines[1].startswith("| tow02 | blender-gn-union | - / R2 | - / 900 |")
+    assert lines[1].endswith("| no synthetic row |")
+
+
+@pytest.mark.parametrize("dup", [True, None])
+def test_two_rows_of_one_kind_for_one_object_and_variant_is_an_error_naming_them(dup):
+    rows = [_cmp_row("R1", "kpp1", "kernel-prisms", 1, synthetic=dup),
+            _cmp_row("R2", "kpp1", "kernel-prisms", 2, synthetic=dup), _cmp_row("R3", "kpp1", "x", 3)]
+    with pytest.raises(ValueError, match=r"R1.*R2"):
+        rmd.render(rows, "building-body")
+
+
+@pytest.mark.parametrize("bad", ["false", "true", 1, 0, None.__class__])
+def test_non_boolean_synthetic_marker_is_an_error_naming_the_row(bad):
+    with pytest.raises(ValueError, match="R1"):
+        rmd.render([_cmp_row("R1", "kpp1", "kernel-prisms", 1, synthetic=bad)], "building-body")
+
+
+def test_no_synthetic_row_means_no_comparison_section():
+    md = rmd.render([_cmp_row("R1", "kpp1", "kernel-prisms", 1, synthetic=None)], "building-body")
+    assert "Synthetic vs drawing" not in md
+
+
+def test_committed_building_body_results_md_is_regenerated_and_all_rows_stay_synthetic_per_d195():
+    results = DECISIONS_MD.parent / "methods" / "building-body" / "results.jsonl"
+    rows = rmd.read_rows(results)
+    md = rmd.render(rows, "building-body")
+    assert (results.parent / "RESULTS.md").read_text(encoding="utf-8") == md
+    lines = _cmp_lines(md)
+    assert len(lines) == 12 and all(ln.endswith("| not measured: no drawing row in results.jsonl |") for ln in lines)
+    assert {(r["benchmark"], r["synthetic"]) for r in rows} == {("kpp1", True), ("ac08", True), ("tow02", True)}
+    d195 = _decision_rows().get("D195", [])
+    assert len(d195) == 1 and "#735" in d195[0] and "2026-11-04" in d195[0]
+    assert id_collisions("D195", "#735", _decision_rows(), OPEN_PR_DECISIONS) == []
+    # witness: D194 was taken on main by #885 (test polygon) while this branch was open
+    assert id_collisions("D194", "#735", _decision_rows(), OPEN_PR_DECISIONS)
+    for doc in ("VARIANTS.md", "WHEN.md"):
+        assert "[D195]" in (results.parent / doc).read_text(encoding="utf-8"), doc

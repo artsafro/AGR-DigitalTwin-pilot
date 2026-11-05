@@ -8,8 +8,8 @@
     local boot = AGRToolsStartupRoot + "AGRTools-0.7.0.ms"
     if doesFileExist boot do throw "AGR Tools startup file already exists"
     local files = getFiles (source + "agr_tools/*")
-    if files.count < 24 do throw "AGR Tools archive incomplete"
-    local required = #("runtime.py", "atlas_core.py", "uv_nudge_core.py", "startup.ms", "agr_tools.mcr", "menu.ms", "bootstrap.py", "hygiene_core.py", "README.md", "ucx_core.py", "texel_core.py", "ucx_audit_core.py", "export_core.py", "checks_core.py", "checks_max.py", "CHANGELOG.md", "ui_model.py", "ui_qt.py", "ui_panel.py", "ui_max.py", "suite_core.py", "suite_max.py", "roadmap.py", "agr-tools-suite.json")
+    if files.count < 36 do throw "AGR Tools archive incomplete"
+    local required = #("runtime.py", "atlas_core.py", "uv_nudge_core.py", "startup.ms", "agr_tools.mcr", "menu.ms", "bootstrap.py", "hygiene_core.py", "README.md", "ucx_core.py", "texel_core.py", "ucx_audit_core.py", "export_core.py", "checks_core.py", "checks_max.py", "CHANGELOG.md", "ui_model.py", "ui_qt.py", "ui_panel.py", "ui_max.py", "suite_core.py", "suite_max.py", "roadmap.py", "agr-tools-suite.json", "edit_core.py", "edit_max.py", "geom_core.py", "geom_max.py", "tex_core.py", "tex_max.py", "names_core.py", "names_max.py", "udim_core.py", "udim_max.py", "package_core.py", "package_max.py")
     for name in required do (
         local found = false
         for f in files where (filenameFromPath f) == name do found = true
@@ -18,7 +18,7 @@
     local themes = #("Dark", "Light")
     for theme in themes do (
         local icons = getFiles (source + "agr_tools/icons/" + theme + "/AgrIcons/*.png")
-        if icons.count < 144 do throw ("AGR Tools archive missing icons " + theme)
+        if icons.count < 196 do throw ("AGR Tools archive missing icons " + theme)
     )
     makeDir AGRToolsInstallRoot all:true
     for f in files do (

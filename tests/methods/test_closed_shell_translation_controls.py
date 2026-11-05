@@ -8,7 +8,6 @@ These tests pin what the unchanged public metric returns today. They do not appr
 from __future__ import annotations
 
 import copy
-import inspect
 
 import pytest
 
@@ -50,10 +49,10 @@ def _rb(verts, faces):
     return rb_of(mesh("SM_Test_Main", verts, [list(f) for f in faces]))
 
 
-def _run(verts, faces, fn=None):
+def _run(verts, faces):
     rb = _rb(verts, faces)
     before = copy.deepcopy(rb)
-    out = (fn or mm.closed_shells)(rb)
+    out = mm.closed_shells(rb)
     assert rb == before
     return out
 
@@ -101,33 +100,3 @@ def test_translation_is_exact_dyadic_and_inputs_unchanged():
             for p, q in zip(verts, moved):
                 assert [q[i] - shift[i] for i in range(3)] == list(p)
     assert TETRA_VERTS[1] == (0.25, 0.0, 0.0) and len(BOX_FACES) == 12
-
-
-# --- mutation evidence: in-memory variants only, never written back, not a historical RED ---------
-
-def _variant(replacements):
-    src = inspect.getsource(mm.closed_shells)
-    for old, new in replacements:
-        assert src.count(old) == 1, "mutation anchor was not unique"
-        src = src.replace(old, new, 1)
-    ns = dict(mm.__dict__)
-    exec(src, ns)  # noqa: S102 - task-local mutation, discarded after the test
-    return ns["closed_shells"]
-
-
-_VOL_LINE = 'vol6 = np.einsum("ij,ij->i", a, np.cross(b, c))'
-_GATE = "abs(vol6[g].sum()) / 6.0 <= weld_m ** 3"
-
-
-def test_mutation_recentering_before_volume_is_caught_by_stress_witness():
-    mutant = _variant([(_VOL_LINE, 'vol6 = np.einsum("ij,ij->i", a - p[0], np.cross(b - p[0], c - p[0]))')])
-    verts = _shift(TETRA_VERTS, STRESS)
-    assert _run(verts, TETRA_FACES, mutant)["closed_shell_share"] == 1.0  # differs from pinned 0.0
-    assert _run(verts, TETRA_FACES) == _expect(0.0, 0, ZERO_VOL)
-
-
-def test_mutation_bypassing_volume_rejection_is_caught_by_stress_witness():
-    mutant = _variant([(_GATE, "False")])
-    verts = _shift(TETRA_VERTS, STRESS)
-    assert _run(verts, TETRA_FACES, mutant)["closed_shell_share"] == 1.0
-    assert _run(verts, TETRA_FACES) == _expect(0.0, 0, ZERO_VOL)

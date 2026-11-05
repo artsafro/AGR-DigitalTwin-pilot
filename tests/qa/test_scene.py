@@ -115,7 +115,8 @@ def test_ucx_excluded_from_model_triangles_and_budget_checked():
                            PROFILES.vpm)
     assert next(f for f in found["V003"] if f.name == "triangle count").observed.endswith(": 100000")
     assert statuses(found, "V010") == {"UCX present": "pass", "UCX material slots": "pass",
-                                       "UCX triangle budget": "fail", "UCX shape and coverage": "not_run",
+                                       "UCX triangle budget": "fail", "UCX shape": "not_run",
+                                       "UCX coverage and offsets": "not_run",
                                        "UCX intersections": "not_run", "UCX intersections coverage": "not_run",
                                        "UCX piece gap (advisory)": "not_run"}
 

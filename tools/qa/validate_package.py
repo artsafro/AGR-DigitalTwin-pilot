@@ -2,6 +2,8 @@
 
     py -3 tools/qa/validate_package.py <package.zip | model.fbx | model.geojson> [--profile npm|vpm] [--json] [--scene]
 
+Without --profile the profile comes from the name grammar ({code4}_{Address} NPM, SM_{Address} VPM); only a name
+that matches neither falls back to the content (lab L04, #908).
 Exit code: 0 passed (every blocking machine stage ran and passed), 1 any fail,
 2 only review / not_run remain. Stages that need the FBX scene (units, triangles,
 UV islands, UCX, coordinates) are not_run unless --scene runs the Blender readback
@@ -39,7 +41,31 @@ from twinqa.uv import sequential_tiles  # noqa: E402
 
 STEM = re.compile(r"^[A-Za-z0-9_]+$")
 NPM_ARCHIVE = re.compile(r"^(?P<code>[0-9]{4})_(?P<address>[A-Za-z0-9_]+)$")
+VPM_STEM = re.compile(r"^SM_[A-Za-z0-9_]+$")
 SCENE_NOTE = "needs the FBX scene: run tools/blender readback"
+
+
+def profile_from_name(name: str) -> str | None:
+    """Profile from the archive/FBX name grammar (lab L04, #908): NPM `{code4}_{Address}[...]`, VPM `SM_{Address}[...]`.
+    None when the name matches neither; only then is the profile guessed from the content."""
+    stem = Path(name).stem
+    if NPM_ARCHIVE.match(stem):
+        return "npm"
+    if VPM_STEM.match(stem):
+        return "vpm"
+    return None
+
+
+def _no_texture_findings(found: dict, role: str, name: str, rb: dict):
+    """NPM textures are embedded in the FBX (reg p.9 §5.1). A readback with no image at all is not an
+    'all embedded' pass (lab L04: vacuous V006 pass): OKS FBX fail, Ground FBX review (GroundGlass is untextured)."""
+    if rb.get("images"):
+        return
+    status = "review" if role == "ground" else "fail"
+    v6 = [f for f in found.get("V006", []) if f.name != "embedded textures"]
+    v6.append(finding(status, "embedded textures", f"{name}: no texture in the FBX",
+                      "PNG atlases embedded in FBX", [9], name))
+    found["V006"] = v6
 
 
 def finding(status, name, observed, expected, pages, evidence="", conflicts=(), data=None):
@@ -169,11 +195,14 @@ def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, byt
             try:
                 rb = readback(path)
             except (OSError, RuntimeError) as exc:
+                # one unreadable FBX must not hide the others (team audit T04: a _Light import error ended the loop)
                 notes.append(f"scene readback skipped for {name}: {exc}")
-                return
-            for stage_id, findings in scene_findings(rb, kind, fbx_role(name), profile,
-                                                        ground_area_m2=ground_area_m2,
-                                                        footprint_holes=footprint_holes).items():
+                continue
+            found = scene_findings(rb, kind, fbx_role(name), profile, ground_area_m2=ground_area_m2,
+                                   footprint_holes=footprint_holes)
+            if kind == "npm":
+                _no_texture_findings(found, fbx_role(name), name, rb)
+            for stage_id, findings in found.items():
                 if stage_id in st:
                     st[stage_id].findings.extend(findings)
             notes.append(f"scene readback: {name} in Blender {rb.get('blender')}")
@@ -192,11 +221,15 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
         check_ground_area(ground_area_m2)
     data = target.read_bytes()
     suffix = target.suffix.lower()
+    files, notes = {}, []
     if suffix == ".geojson":
         kind = "vpm"
-    elif kind is None and suffix in (".fbx", ".png"):
+    elif kind is None and suffix in (".zip", ".fbx"):
+        kind = profile_from_name(target.name)
+        if kind is not None:
+            notes.append(f"profile {kind.upper()} from the name grammar of {target.name}")
+    if kind is None and suffix in (".fbx", ".png"):
         kind = "npm"
-    files, notes = {}, []
     if suffix == ".zip":
         try:
             files = read_bundle(target, max_uncompressed=4 * 10**9)
@@ -221,7 +254,8 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
             return report(target, data, kind, profiles, st, notes)
         if kind is None:
             kind = "vpm" if any(n.lower().endswith((".geojson", ".png")) for n in files) else "npm"
-            notes.append(f"profile auto-detected as {kind.upper()} from archive content")
+            notes.append(f"profile auto-detected as {kind.upper()} from archive content "
+                         "(the name matches neither {code4}_{Address} nor SM_{Address})")
     profile = profiles.profile(kind)
     st = build_stages(profiles, kind)
 

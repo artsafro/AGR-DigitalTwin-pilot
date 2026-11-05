@@ -181,8 +181,12 @@ def part_metrics(name, p):
     }
 
 
-def scene_metrics(state):
+def scene_metrics(state, raw_bounds=False):
+    """Per-part metrics; `raw_bounds` adds unrounded `bounds_raw_m` (parity only, never written to evidence)."""
     parts = {k: part_metrics(k, p) for k, p in state.items()}
+    if raw_bounds:
+        for k, p in state.items():
+            parts[k]["bounds_raw_m"] = [p["v"].min(0).tolist(), p["v"].max(0).tolist()]
     names = list(state)
     joined = PolyMesh(np.concatenate([state[k]["v"] for k in names]),
                       tuple(tuple(i + off for i in f) for k, off in zip(names, np.cumsum(
@@ -475,6 +479,13 @@ def parity(mem: dict, back: dict, mem_state=None, rb_state=None):
         for key in COMPARE_KEYS:
             va, vb = (None if a is None else a[key]), (None if b is None else b[key])
             tol = va == vb
+            if key == "bounds_m" and va is not None and vb is not None:
+                ra, rb = a.get("bounds_raw_m"), b.get("bounds_raw_m")
+                if ra is not None and rb is not None:       # unrounded bounds: per coordinate <= VERTEX_TOL_M
+                    tol = (np.shape(ra) == np.shape(rb) and bool(np.all(np.isfinite(ra))) and bool(np.all(np.isfinite(rb)))
+                           and bool(np.all(np.abs(np.asarray(ra, float) - np.asarray(rb, float)) <= VERTEX_TOL_M)))
+                else:                                       # raw bounds missing: strict equality, never a widened tolerance
+                    tol = va == vb
             if key == "area_m2" and va is not None and vb is not None:
                 tol = abs(va - vb) <= VERTEX_TOL_M * max(a["edge_length_m"], b["edge_length_m"])
             rows.append({"part": part, "metric": key, "in_memory": va, "readback": vb, "equal": va == vb,
@@ -507,7 +518,7 @@ def parity(mem: dict, back: dict, mem_state=None, rb_state=None):
 
 
 def readback_metrics(rb_state):
-    m = scene_metrics(rb_state)
+    m = scene_metrics(rb_state, raw_bounds=True)
     for k, p in rb_state.items():
         m["parts"][k]["material_slots"] = p["material_slots"]
     return m
@@ -526,8 +537,8 @@ def compare_state(candidate, report):
     exp = rounded(export_state(candidate))
     rb = state_from_readback(report)
     back = readback_metrics(rb)
-    cp = parity(scene_metrics(cand), back, cand, rb)
-    pp = parity(scene_metrics(exp), back, exp, rb)
+    cp = parity(scene_metrics(cand, raw_bounds=True), back, cand, rb)
+    pp = parity(scene_metrics(exp, raw_bounds=True), back, exp, rb)
     loss = {k: sum(c is not None for c in p["uv"]) for k, p in candidate.items()
             if any(c is not None for c in p["uv"]) and not all(c is not None for c in p["uv"])}
     return {"candidate_parity": cp, "payload_parity": pp, "export_uv_loss": loss, "back": back,
@@ -659,7 +670,7 @@ def markdown(r):
     if "readback" in r:
         lines += ["", "## FBX readback parity (in-memory at 1e-6 m vs readback)", "",
                   f"Strict equality; `tol` = within the declared float32 storage tolerance: vertices <= "
-                  f"{VERTEX_TOL_M} m, area <= sum(edge lengths) x {VERTEX_TOL_M} m, UV <= 1e-6; every other "
+                  f"{VERTEX_TOL_M} m, area <= sum(edge lengths) x {VERTEX_TOL_M} m, bounds_m per coordinate <= {VERTEX_TOL_M} m (unrounded), UV <= 1e-6; every other "
                   "metric strictly; per-polygon material ids compared polygon by polygon. Candidate = the op's "
                   "actual after-state; payload = what the FBX writer received (UV of a partially mapped object "
                   "is dropped: the writer has no missing-UV representation, so that state is NOT accepted).", "",

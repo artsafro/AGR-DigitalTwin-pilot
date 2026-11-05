@@ -1,4 +1,4 @@
-"""Check an intake folder (docs/HARNESS_PLAN.md §15): `dt intake check --dir jobs/<JOB>/intake`.
+"""Check an intake folder (historical: docs/HARNESS_PLAN.md §15): `dt intake check --dir jobs/<JOB>/intake`.
 
 The four files and their rules (user decisions 2026-10-11 [D049]):
 - sources.json (dt_ai.intake.model.SourcesFile): every file, what was read (only what its format can
@@ -26,7 +26,7 @@ nothing is measured or read from a drawing and no spec is built. The draft is bu
 required block is filled, no block is null, every filled block cites the primary source (when there is
 one) and the assembled spec validates — the engine runs on nothing less. Blocks the draft leaves out take
 the spec's documented defaults, listed in the report.
-Pattern: none — intake code (REVIEW_CHECKLIST Q1: new-case, HARNESS_PLAN §15).
+Pattern: none — intake code (REVIEW_CHECKLIST Q1: new-case, HARNESS_PLAN §15 (historical)).
 """
 import json
 import re

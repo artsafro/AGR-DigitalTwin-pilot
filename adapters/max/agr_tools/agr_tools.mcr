@@ -60,6 +60,32 @@ macroScript AGRToolsZeroArea category:"AGR Tools" buttonText:"Нулевые п�
 (on execute do python.Execute "agr_tools_runtime.ui('zero_area')")
 macroScript AGRToolsPreflight category:"AGR Tools" buttonText:"Предсдача: все проверки" tooltip:"Все проверки 0.7 одним нажатием, одна таблица; сцена не меняется. Треб.: NPM-2.1-3.c, VPM-2.3-1" iconName:"AgrIcons/agr_preflight"
 (on execute do python.Execute "agr_tools_runtime.ui('preflight')")
+macroScript AGRToolsMissingMaps category:"AGR Tools" buttonText:"Пропавшие карты" tooltip:"Список битмапов с несуществующим путём и кандидаты для relink; файлы не переименовываются (только чтение). Треб.: NPM-2.1-1.b, VPM-2.4-2" iconName:"AgrIcons/agr_missing"
+(on execute do python.Execute "agr_tools_runtime.ui('scene.missing_maps')")
+macroScript AGRToolsTriangulate category:"AGR Tools" buttonText:"Триангуляция → копии" tooltip:"Первое нажатие: пробно; второе на том же выделении триангулирует n-гоны на экспортных копиях. Треб.: NPM-2.3-11, VPM-2.3-17" iconName:"AgrIcons/agr_triangulate"
+(on execute do python.Execute "agr_tools_runtime.ui('model.triangulate')")
+macroScript AGRToolsFormatFix category:"AGR Tools" buttonText:"PNG: формат → новые файлы" tooltip:"Пробно, затем пишет исправленные PNG в новую папку: без альфы, 24 бит, до лимита; исходники не трогает. Треб.: NPM-2.5-2.a, NPM-2.5-3, NPM-2.5-5, VPM-2.5-1.6, VPM-2.5-1.9" iconName:"AgrIcons/agr_pngfix"
+(on execute do python.Execute "agr_tools_runtime.ui('tex.format_fix')")
+macroScript AGRToolsPlaceholders category:"AGR Tools" buttonText:"Заглушки 256 / 128" tooltip:"Пробно, затем создаёт новые однотонные заглушки Diffuse/ERM/Normal нужного размера и цвета. Треб.: VPM-2.5-3.1, VPM-2.5-3.3, VPM-2.5-3.4, NPM-2.5-7" iconName:"AgrIcons/agr_plug"
+(on execute do python.Execute "agr_tools_runtime.ui('tex.placeholders')")
+macroScript AGRToolsUcxTriangulate category:"AGR Tools" buttonText:"UCX: триангуляция → копии" tooltip:"Пробно, затем триангулирует UCX на копиях и проверяет выпуклость после. Треб.: VPM-2.3-17, VPM-2.13-1.a" iconName:"AgrIcons/agr_ucxtri"
+(on execute do python.Execute "agr_tools_runtime.ui('ucx.triangulate')")
+macroScript AGRToolsUcxRename category:"AGR Tools" buttonText:"UCX: имена" tooltip:"Пробно, затем переименовывает куски в UCX_SM_<Address>_Main/Ground_NNN одной записью Undo. Треб.: VPM-2.13-1.d, VPM-2.10-4.2.b" iconName:"AgrIcons/agr_ucxname"
+(on execute do python.Execute "agr_tools_runtime.ui('ucx.rename')")
+macroScript AGRToolsIdsToUdims category:"AGR Tools" buttonText:"ID → UDIM на копии" tooltip:"Пробно, затем раскладывает материал ID n в тайл 1000+n на экспортных копиях. Треб.: VPM-2.5-2.1.3.a, VPM-2.5-2.1.3.b" iconName:"AgrIcons/agr_id2udim"
+(on execute do python.Execute "agr_tools_runtime.ui('udim.ids_to_udims')")
+macroScript AGRToolsNamesFix category:"AGR Tools" buttonText:"Исправить имена → копии" tooltip:"Пробно, затем переименовывает объекты, материалы и файлы карт по маске на экспортных копиях. Треб.: NPM-2.10-3.3.a, NPM-2.10-3.4.a, VPM-2.11-0.a, VPM-2.10-4.3" iconName:"AgrIcons/agr_namefix"
+(on execute do python.Execute "agr_tools_runtime.ui('qa.names_fix')")
+macroScript AGRToolsPackage category:"AGR Tools" buttonText:"Проверка пакета ZIP" tooltip:"ZIP: размеры, состав FBX/PNG/GeoJSON, имена, битые файлы, readback (только чтение). Треб.: NPM-2.1-1.a, NPM-2.1-1.b, VPM-2.1-1.a, VPM-2.1-1.b, VPM-2.1-2.a, VPM-2.1-2.c, VPM-2.1-2.d" iconName:"AgrIcons/agr_package"
+(on execute do python.Execute "agr_tools_runtime.ui('qa.package')")
+macroScript AGRToolsGeojsonWrite category:"AGR Tools" buttonText:"Паспорт GeoJSON → новый файл" tooltip:"Пробно, затем пишет новый GeoJSON из сцены (пивот, положение, адрес, превью) и сразу проверяет. Треб.: VPM-2.2-1, VPM-2.2-2, VPM-2.2-6.a, VPM-2.2-7, GJ-1, GJ-19.a, GJ-19.b, GJ-21.a, VPM-2.10-4.1.e" iconName:"AgrIcons/agr_geojsonw"
+(on execute do python.Execute "agr_tools_runtime.ui('export.geojson_write')")
+macroScript AGRToolsGroundFbx category:"AGR Tools" buttonText:"FBX благоустройства" tooltip:"Пробно, затем пишет новый _Ground.fbx: Ground, GroundEl, Flora, GroundGlass в одном файле. Треб.: NPM-2.1-5.a, VPM-2.1-4" iconName:"AgrIcons/agr_groundfbx"
+(on execute do python.Execute "agr_tools_runtime.ui('export.ground_fbx')")
+macroScript AGRToolsPivotPlace category:"AGR Tools" buttonText:"Пивот и положение → копии" tooltip:"Пробно, затем ставит пивот на копиях: НПМ в МСК с высотами, ВПМ в ноль (чистый пол). Треб.: NPM-2.8-1, NPM-2.8-2, VPM-2.9-4.b, VPM-2.9-5" iconName:"AgrIcons/agr_place"
+(on execute do python.Execute "agr_tools_runtime.ui('export.pivot_place')")
+macroScript AGRToolsZip category:"AGR Tools" buttonText:"Архив пакета → новый ZIP" tooltip:"Пробно, затем пишет новый ZIP НПМ/ВПМ с лимитами 500 МБ / 1 ГБ, проверка до и после. Треб.: NPM-2.1-1.a, VPM-2.1-1.a, VPM-2.1-1.b, VPM-2.1-2.b" iconName:"AgrIcons/agr_zip"
+(on execute do python.Execute "agr_tools_runtime.ui('export.zip')")
 macroScript AGRToolsClassic category:"AGR Tools" tooltip:"AGR Tools (classic rollout)" buttonText:"AGR Tools (classic)"
 (
     on execute do (
@@ -95,6 +121,19 @@ macroScript AGRToolsClassic category:"AGR Tools" tooltip:"AGR Tools (classic rol
             button b_xform "Трансформы сброшены" width:340
             button b_zero_area "Нулевые площади и рёбра" width:340
             button b_preflight "Предсдача: все проверки" width:340
+            button b_missing_maps "Пропавшие карты" width:340
+            button b_triangulate "Триангуляция → копии" width:340
+            button b_format_fix "PNG: формат → новые файлы" width:340
+            button b_placeholders "Заглушки 256 / 128" width:340
+            button b_ucx_triangulate "UCX: триангуляция → копии" width:340
+            button b_ucx_rename "UCX: имена" width:340
+            button b_ids_to_udims "ID → UDIM на копии" width:340
+            button b_names_fix "Исправить имена → копии" width:340
+            button b_package "Проверка пакета ZIP" width:340
+            button b_geojson_write "Паспорт GeoJSON → новый файл" width:340
+            button b_ground_fbx "FBX благоустройства" width:340
+            button b_pivot_place "Пивот и положение → копии" width:340
+            button b_zip "Архив пакета → новый ZIP" width:340
             label info "JSON report in Listener; checks select offenders."
             on b_xview pressed do python.Execute "agr_tools_runtime.ui('xview')"
             on b_matid pressed do python.Execute "agr_tools_runtime.ui('matid')"
@@ -125,6 +164,19 @@ macroScript AGRToolsClassic category:"AGR Tools" tooltip:"AGR Tools (classic rol
             on b_xform pressed do python.Execute "agr_tools_runtime.ui('xform')"
             on b_zero_area pressed do python.Execute "agr_tools_runtime.ui('zero_area')"
             on b_preflight pressed do python.Execute "agr_tools_runtime.ui('preflight')"
+            on b_missing_maps pressed do python.Execute "agr_tools_runtime.ui('scene.missing_maps')"
+            on b_triangulate pressed do python.Execute "agr_tools_runtime.ui('model.triangulate')"
+            on b_format_fix pressed do python.Execute "agr_tools_runtime.ui('tex.format_fix')"
+            on b_placeholders pressed do python.Execute "agr_tools_runtime.ui('tex.placeholders')"
+            on b_ucx_triangulate pressed do python.Execute "agr_tools_runtime.ui('ucx.triangulate')"
+            on b_ucx_rename pressed do python.Execute "agr_tools_runtime.ui('ucx.rename')"
+            on b_ids_to_udims pressed do python.Execute "agr_tools_runtime.ui('udim.ids_to_udims')"
+            on b_names_fix pressed do python.Execute "agr_tools_runtime.ui('qa.names_fix')"
+            on b_package pressed do python.Execute "agr_tools_runtime.ui('qa.package')"
+            on b_geojson_write pressed do python.Execute "agr_tools_runtime.ui('export.geojson_write')"
+            on b_ground_fbx pressed do python.Execute "agr_tools_runtime.ui('export.ground_fbx')"
+            on b_pivot_place pressed do python.Execute "agr_tools_runtime.ui('export.pivot_place')"
+            on b_zip pressed do python.Execute "agr_tools_runtime.ui('export.zip')"
         )
         createDialog AGRToolsDialog
     )

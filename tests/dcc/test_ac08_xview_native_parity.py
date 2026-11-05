@@ -156,6 +156,19 @@ def test_vertex_symmetric_difference_names_the_mesh(lib):
     assert err.mesh == "quad"
 
 
+def test_symdiff_text_prints_sorted_lists_and_index_base(lib):
+    text = lib._symdiff_text({"vertices_only_ours": [8, 2, 3, 5], "vertices_only_max": [],
+                              "thresholds_m": [0.002, 0.005]})
+    assert "python [2, 3, 5, 8]" in text and "native []" in text
+    assert "tol_v=0.002 m" in text and "vertex" in text and "1-based" in text
+
+
+def test_native_only_vertex_message_has_sorted_native_and_base(lib):
+    err = _raises(lib, _dump([_quad(overlap_vertices=[1])]))
+    assert "native [1]" in str(err) and "python []" in str(err)
+    assert "tol_v=0.002 m" in str(err) and "1-based" in str(err)
+
+
 def test_face_symmetric_difference_names_the_mesh(lib):
     err = _raises(lib, _dump([_quad(overlap_faces=[1])]))
     assert err.mesh == "quad"
@@ -648,14 +661,48 @@ def _mutate_units_name(dump):
     dump["imports"][0]["m_per_unit"] = "inches"
 
 
+def _append_off_mesh_pair(item, dx):
+    """Two vertices at y=-1000. Only x differs, so the distance is `dx` bit for bit."""
+    for node in item["nodes"]:
+        if node["name"] == "AC08_body":
+            node["vertices"] += [[0.0, -1000.0, 0.0], [dx, -1000.0, 0.0]]
+            node["num_verts"] = len(node["vertices"])
+
+
 def _mutate_vertex_exactly_2mm(dump):
-    def shift(item):
+    """Geometry-valid threshold witness (#797, #823): two appended vertices exactly tol_v_units apart.
+
+    The pair is off the mesh at y=-1000. Vertex 0 of the synthetic AC08_body is the origin, so the
+    old pair at y=0 was a 0-distance duplicate and did not witness the threshold. Only x differs,
+    so the distance equals the vertex threshold bit for bit. No face is touched, so every polygon
+    of the synthetic fixture and of the retained real dump stays exactly as recorded (simple).
+    The recorded native sets stay empty, so a correct harness sees a symmetric difference on AC08_body.
+    """
+    def add_pair(item):
+        _append_off_mesh_pair(item, item["tol_v_units"])
+
+    _both_reps(dump, "S00_source", add_pair)
+
+
+def _mutate_vertex_just_over_2mm(dump):
+    """Control (#823): the same off-mesh pair, one step past the vertex threshold."""
+    def add_pair(item):
+        tol = item["tol_v_units"]
+        _append_off_mesh_pair(item, tol * (1 + 1e-9))
+
+    _both_reps(dump, "S00_source", add_pair)
+
+
+def _mutate_unsupported_self_intersecting(dump):
+    """Bow-tie: swap the middle corners of AC08_body face 0 (a quad on both dumps)."""
+    def twist(item):
         for node in item["nodes"]:
             if node["name"] == "AC08_body":
-                origin = node["vertices"][0]
-                node["vertices"][1] = [origin[0] + 0.002, origin[1], origin[2]]
+                face = node["faces"][0]
+                assert len(face) == 4, face
+                node["faces"][0] = [face[0], face[2], face[1], face[3]]
 
-    _both_reps(dump, "S00_source", shift)
+    _both_reps(dump, "S00_source", twist)
 
 
 _MUTATIONS = {
@@ -683,7 +730,8 @@ _MUTATIONS = {
     "tol_f_exactly_2mm": (_mutate_tol_f_at_vertex_threshold, "tol_f_units"),
     "units_millimetre": (_mutate_units_mm, "metre"),
     "units_unsupported": (_mutate_units_name, "unsupported"),
-    "vertex_exactly_2mm": (_mutate_vertex_exactly_2mm, "AC08_body"),
+    "vertex_exactly_2mm": (_mutate_vertex_exactly_2mm, "AC08_body: vertex symmetric difference at tol_v=0.002 m: python ["),
+    "unsupported_self_intersecting": (_mutate_unsupported_self_intersecting, "self-intersecting"),
 }
 
 
@@ -698,6 +746,112 @@ def test_native_mutation_is_not_certified(lib, mutation_id):
     text = _reject(lib, dump)
     assert cause in text
     assert "pass" not in text
+
+
+def _witness_dumps(lib):
+    """Default synthetic stand-in, plus the retained real dump when that file is configured."""
+    dumps = [_pinned_dump(lib, synthetic=True)]
+    raw = os.environ.get(lib.NATIVE_DUMP_ENV)
+    if raw and Path(raw).is_file():
+        recorded = json.loads(Path(raw).read_text(encoding="utf-8"))
+        if recorded.get("synthetic") is True:
+            pytest.fail("synthetic dump cannot confirm native parity")
+        dumps.append(recorded)
+    return dumps
+
+
+def _assert_off_mesh_pair(dump, before):
+    """Appended AC08_body vertices are the y=-1000 pair and clear every previous vertex by > 1 m."""
+    import numpy as np
+
+    touched = 0
+    for item, old in zip(dump["imports"], before["imports"]):
+        for node, prev in zip(item["nodes"], old["nodes"]):
+            assert node["faces"] == prev["faces"]
+            if node["name"] != "AC08_body" or item["state"] != "S00_source":
+                assert node == prev
+                continue
+            touched += 1
+            n = len(prev["vertices"])
+            assert node["vertices"][:n] == prev["vertices"]
+            added = node["vertices"][n:]
+            assert len(added) == 2
+            assert added[0][1] == added[1][1] == -1000.0
+            assert added[0][2] == added[1][2] == 0.0
+            assert added[0][0] == 0.0
+            m = float(item["m_per_unit"])
+            new = np.asarray(added, dtype=float)
+            old_v = np.asarray(prev["vertices"], dtype=float)
+            gap_m = float(np.linalg.norm(new[:, None, :] - old_v[None, :, :], axis=2).min() * m)
+            assert gap_m > 1.0
+    assert touched == 2
+
+
+def test_vertex_threshold_witness_is_geometry_valid(lib):
+    """#797/#823: the off-mesh 2 mm witness is simple, exactly on the vertex threshold, and rejected."""
+    import numpy as np
+
+    from dt_ai.ops import inv_xview
+
+    for source in _witness_dumps(lib):
+        dump = copy.deepcopy(source)
+        before = copy.deepcopy(source)
+        _mutate_vertex_exactly_2mm(dump)
+        _assert_off_mesh_pair(dump, before)
+        for item, old in zip(dump["imports"], before["imports"]):
+            for node, prev in zip(item["nodes"], old["nodes"]):
+                if node["name"] != "AC08_body" or item["state"] != "S00_source":
+                    continue
+                m = float(item["m_per_unit"])
+                tol = float(item["tol_v_units"])
+                n = len(prev["vertices"])
+                assert node["vertices"][n + 1][0] == tol
+                v = np.asarray(node["vertices"], dtype=float) * m
+                a, b, d = inv_xview.vertex_pairs(v, tol * m)
+                hit = [(x, y, z) for x, y, z in zip(a.tolist(), b.tolist(), d.tolist()) if (x, y) == (n, n + 1)]
+                assert hit and hit[0][2] == tol * m
+                mesh, _, _ = lib.parity_module()._node(node)
+                for k, face in enumerate(mesh.faces):
+                    assert inv_xview._polygon_triangles(k, face, mesh.vertices * m)
+        text = _reject(lib, dump)
+        assert "AC08_body: vertex symmetric difference at tol_v=0.002 m: python [" in text
+        assert "vertex" in text and "tol_v=0.002" in text and "native [" in text
+
+
+def test_vertex_just_over_threshold_certifies_fourteen_rows(lib):
+    """#823: tol*(1+1e-9) on the same off-mesh pair is outside the vertex threshold and certifies."""
+    for source in _witness_dumps(lib):
+        dump = copy.deepcopy(source)
+        before = copy.deepcopy(source)
+        _mutate_vertex_just_over_2mm(dump)
+        _assert_off_mesh_pair(dump, before)
+        for item, old in zip(dump["imports"], before["imports"]):
+            for node, prev in zip(item["nodes"], old["nodes"]):
+                if node["name"] != "AC08_body" or item["state"] != "S00_source":
+                    continue
+                tol = float(item["tol_v_units"])
+                n = len(prev["vertices"])
+                assert node["vertices"][n + 1][0] == tol * (1 + 1e-9)
+        report = _certify(lib, dump)
+        assert report["status"] == "pass"
+        assert report["delivery_passed"] is False
+        assert report["mesh_import_rows"] == 14
+        assert all(row["equal"] for row in report["rows"])
+        if source.get("synthetic") is True:
+            native = copy.deepcopy(dump)
+            native["synthetic"] = False
+            confirmed = lib.confirm_native(native)
+            assert confirmed["status"] == "pass"
+            assert confirmed["mesh_import_rows"] == 14
+            assert confirmed["delivery_passed"] is False
+
+
+def test_unsupported_polygon_is_named_harness_error_not_value_error(lib):
+    dump = copy.deepcopy(_control_dump(lib))
+    _mutate_unsupported_self_intersecting(dump)
+    dump["synthetic"] = False
+    with pytest.raises(lib.HarnessError, match="AC08_body: unsupported geometry: .*self-intersecting"):
+        lib.confirm_native(dump)
 
 
 def test_unmutated_control_yields_fourteen_rows(lib):
@@ -843,3 +997,14 @@ def test_probe_never_certify_wrong_tolerance(lib):
         _mutate_vertex_exactly_2mm,
     ]
     assert _probe_reject_all(lib, mutations) == 24
+
+
+def test_symdiff_text_names_face_kind_and_threshold(lib):
+    """#829: a face-set mismatch names 'face', tol_f in metres and both id sets."""
+    row = {"thresholds_m": [0.002, 0.005], "vertices_only_ours": [], "vertices_only_max": [],
+           "faces_only_ours_contact": [3], "faces_only_max": [7]}
+    text = lib._symdiff_text(row)
+    assert "face symmetric difference at tol_f=0.005 m: python [3] vs native [7]" in text
+    assert "vertex" not in text
+    both = dict(row, vertices_only_ours=[1, 2])
+    assert "vertex symmetric difference at tol_v=0.002 m: python [1, 2] vs native []" in lib._symdiff_text(both)

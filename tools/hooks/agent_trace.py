@@ -49,7 +49,9 @@ def _git(*args):
 def _short(reason):
     text = " ".join(str(reason).split()) or "unknown"
     if len(text) > 160:
-        text = text[:157] + "..."
+        # Elide the middle, not the tail: reasons usually start with an absolute path and end with the
+        # cause ("... does not exist"), so a long temp/CI path must not cut the cause off.
+        text = text[:60] + "..." + text[-97:]
     return text
 
 

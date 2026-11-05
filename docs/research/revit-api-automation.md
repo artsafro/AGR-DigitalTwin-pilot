@@ -287,7 +287,7 @@ claims.
   route is broken (CONNECTION_CLOSED) and must not be used; only
   `revit-http-2025` is documented operational.
 - **Intake Hierarchy Alignment (`src/dt_ai/intake/model.py`,
-  `docs/HARNESS_PLAN.md` §15):**
+  historical `docs/HARNESS_PLAN.md` §15):**
   The intake model defines format priority ranking where `rvt` and `ifc` hold
 top priority (Rank 1). Data must be classified by confidence (`measured`,
 `read_from_drawing`, `estimated`, `unknown`), strictly enforcing
@@ -335,7 +335,7 @@ scales[15], and validate extraction against KPP1 benchmark tolerances
 (`benchmark/bench-k01-kpp1/tolerances.json`: levels $\pm 0.03$ m, contour area
 rel 0.02, Hausdorff 0.05 m, opening bbox 0.05 m, equal level and kink counts,
 equal opening count excluding grilles per `opening_kinds_not_in_verdict`) per
-HARNESS_PLAN benchmark tolerances.
+historical HARNESS_PLAN benchmark tolerances.
 - **Value:** L
 - **Effort:** M (optional estimate: 3–4 days).
 
@@ -354,7 +354,7 @@ bilingual names; localized template cascades remain unverified.
 Extend `tools/source/measure_spec_revit_twin.mjs` and `src/dt_ai/spec/markup.py`
 to query Revit Grids (`list_elements` with `OST_Grids`) and generate
 `AXIS_<name>` helper lines in `twin-data.json`, linking to backlog MH3
-(`docs/backlog.md`) and the HARNESS_PLAN `markup-helpers` pattern to bind
+(`docs/backlog.md`) and the historical HARNESS_PLAN `markup-helpers` pattern to bind
 opening positions to architectural structural axes.
 - **Value:** M
 - **Effort:** M (optional estimate: 2 days).
