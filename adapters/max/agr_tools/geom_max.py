@@ -89,8 +89,10 @@ fn agr979_frame n = (
     local nv = m.numverts
     format "%\n" nv to:ss
     for i = 1 to nv do (
+        -- 9 significant digits restore a float32 exactly (shorter text than .17g, faster on 5000+ vertices)
         local p = getVert m i
-        format "% % %\n" (agr908_g p.x) (agr908_g p.y) (agr908_g p.z) to:ss
+        format "% % %\n" (formattedPrint p.x format:".9g") (formattedPrint p.y format:".9g") \
+            (formattedPrint p.z format:".9g") to:ss
     )
     ss as string
 )
