@@ -1,0 +1,56 @@
+{"schema": 1, "branch": "C", "issue": "#979", "stations": [
+ {"button": "qa.address",
+  "objects": [
+   {"name": "SM_Tverskaya_7_Main", "role": "Main", "size": [1, 1, 1]},
+   {"name": "SM_Tverskaya_Dom_7_Main", "role": "Main", "size": [1, 1, 1]},
+   {"name": "SM_Tverskaya__7_Main", "role": "Main", "size": [1, 1, 1]},
+   {"name": "SM_Qwxz_7_Main", "role": "Main", "size": [1, 1, 1]}],
+  "expected": [
+   {"name": "SM_Tverskaya_7_Main", "scene": "polygon_all", "expect": "pass", "codes": []},
+   {"name": "SM_Tverskaya_Dom_7_Main", "scene": "polygon_all", "expect": "pass", "codes": []},
+   {"name": "SM_Tverskaya__7_Main", "scene": "polygon_all", "expect": "fail", "codes": ["addr_parts"]},
+   {"name": "SM_Qwxz_7_Main", "scene": "polygon_all", "expect": "fail", "codes": ["addr_street_unknown"]}],
+  "reason": ""},
+ {"button": "qa.facade_compare",
+  "objects": [
+   {"name": "SM_FacadeSix_Main", "role": "Main", "size": [7, 1, 3], "builder": "C_build", "extra": {"kind": "facade_7_panels"}},
+   {"name": "SM_FacadeSixB_Main", "role": "Main", "size": [7, 1, 3], "builder": "C_build", "extra": {"kind": "facade_7_panels"}}],
+  "expected": [
+   {"name": "SM_FacadeSix_Main", "scene": "polygon_all", "expect": "pass", "codes": []},
+   {"name": "SM_FacadeSixB_Main", "scene": "polygon_all", "expect": "fail", "codes": ["facade_joints"]}],
+  "reason": "",
+  "options": {"facade": "-y", "px_per_m": 50,
+              "sheets": {"SM_FacadeSix_Main": {"path": "tests/max_tools/fixtures_qa9/facade_sheet_6.pgm", "px_per_m": 50},
+                         "SM_FacadeSixB_Main": {"path": "tests/max_tools/fixtures_qa9/facade_sheet_7.pgm", "px_per_m": 50}}}},
+ {"button": "qa.normals",
+  "objects": [
+   {"name": "SM_NormalsOk_Main", "role": "Main", "size": [1, 1, 1], "builder": "C_build", "extra": {"kind": "box"}},
+   {"name": "SM_NormalsFlip_Main", "role": "Main", "size": [1, 1, 1], "builder": "C_build", "extra": {"kind": "box_flipped"}},
+   {"name": "SM_NormalsDouble_Main", "role": "Main", "size": [1, 1, 1], "builder": "C_build", "extra": {"kind": "double_1mm"}},
+   {"name": "SM_NormalsPane_001_MainGlass", "role": "MainGlass", "size": [1, 1, 1], "builder": "C_build", "extra": {"kind": "card_single"}},
+   {"name": "SM_NormalsCard_Flora", "role": "Flora", "size": [1, 1, 1], "builder": "C_build", "extra": {"kind": "card_double_5mm"}}],
+  "expected": [
+   {"name": "SM_NormalsOk_Main", "scene": "polygon_all", "expect": "pass", "codes": []},
+   {"name": "SM_NormalsFlip_Main", "scene": "polygon_all", "expect": "fail", "codes": ["normal_inward"]},
+   {"name": "SM_NormalsDouble_Main", "scene": "polygon_all", "expect": "fail", "codes": ["double_face"]},
+   {"name": "SM_NormalsPane_001_MainGlass", "scene": "polygon_all", "expect": "fail", "codes": ["missing_double_side"]},
+   {"name": "SM_NormalsCard_Flora", "scene": "polygon_all", "expect": "pass", "codes": []}],
+  "reason": ""},
+ {"button": "qa.sintez",
+  "objects": [
+   {"name": "SM_SintezOk_Main", "role": "Main", "size": [1, 1, 1]},
+   {"name": "SM_SintezScaled_Main", "role": "Main", "size": [1, 1, 1], "scale": [2.0, 1.0, 1.0]}],
+  "expected": [
+   {"name": "SM_SintezOk_Main", "scene": "polygon_all", "expect": "pass", "codes": []},
+   {"name": "SM_SintezScaled_Main", "scene": "polygon_all", "expect": "fail", "codes": ["sintez_mismatch"]}],
+  "reason": "",
+  "options": {"sintez": "tests/max_tools/fixtures_qa9/sintez_hp_all_verified.json"}},
+ {"button": "qa.procedural_objects",
+  "objects": [
+   {"name": "SM_ProcOk_Main", "role": "Main", "size": [1, 1, 1]},
+   {"name": "Proc_PopulateIdle", "role": "procedural", "size": [1, 1, 1], "builder": "C_build", "extra": {"kind": "populate_idle_area"}}],
+  "expected": [
+   {"name": "SM_ProcOk_Main", "scene": "polygon_all", "expect": "pass", "codes": []},
+   {"name": "Proc_PopulateIdle", "scene": "polygon_all", "expect": "fail", "codes": ["proc_object"]}],
+  "reason": ""}
+]}

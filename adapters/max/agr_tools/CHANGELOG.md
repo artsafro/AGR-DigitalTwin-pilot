@@ -64,7 +64,37 @@
 
 ### C — проверки (`improve/issue-979-qa`)
 
-- Заглушка ветки C: `qa.address`, `qa.normals`, `qa.sintez`, `qa.facade_compare`, `qa.procedural_objects`.
+Все пять кнопок — только чтение (preview); сцена, материалы, вьюпорт, рендерер и выделение не меняются.
+Ядра `qa9_core.py` / `facade_core.py` на stdlib, обвязка `qa9_max.py` / `facade_max.py`.
+
+- `qa.address`: грамматика Address `Улица_Дом[_K_n][_Str_n]…` и справочник улиц. Коды `addr_chars`, `addr_parts`,
+  `addr_length`, `addr_case`, `addr_abbr`, `addr_translit`, `addr_street_unknown`; у каждого адреса одна основная
+  причина, остальные — в детали. `D`/`Dom` и `Uch` — предупреждения (`plan.warnings`). Исправлены дефекты L05:
+  части дома на позиции 2–3, пустые элементы (лишний `_`), нет проверки длины (лимит 214 = 254 − обёртка имени),
+  сравнение по подстроке (`Parkovaya`, `Valovaya`), числительное 171н (`2jKotelnicheskijPer`), каскад и регистр,
+  пробел как «транслит», молчаливый CP1251 / отсутствие словаря (теперь явная ошибка).
+  Справочник — `data/streets/`: ОМК УМ (data.mos.ru, выгрузка из SINTEZ 1.6.1) и поселения Wikidata (CC0),
+  происхождение и SHA256 в `PROVENANCE.md`. CSV GeoAGR не копируются. Транслит улиц — ГОСТ 7.79-Б из классификатора
+  (Й → J); форма через Y — `addr_translit` с подсказкой. Подсказка для свободного текста — таблица `names_core`.
+- `qa.normals`: `normal_inward` (замкнутый элемент: согласование ориентации по рёбрам + знак объёма, не центр bbox
+  объекта), `double_face` (все пары через пространственный хэш, обе грани в отчёте; сонаправленные ближе 5 мм —
+  VPM-2.3-13; встречные до 2 см, где второй стороны быть не должно), `double_side_offset` (вторая сторона
+  стекла/Flora/opacity вне 3–10 мм, VPM-2.12-3), `missing_double_side`, `sg_none`. Пороги в метрах
+  (`SystemType` × `SystemScale`, без `decodeValue`): сцены в м и см дают одно и то же. Зазор пары меряется в
+  центре области перекрытия по копланарному «пятну» и не зависит от размера граней и триангуляции. Editable_Mesh,
+  примитивы и Editable_Poly — одинаково; узел без сетки (Populate Crowd) — в `skipped` с причиной. Материалы и
+  Nitrous не подменяются (дефект View Normals).
+- `qa.sintez`: таблица правило → наш вердикт / SINTEZ / совпадение. Вход: отчёт SINTEZ (`run_agr_checker.py`) и
+  отчёт `qa.preflight` (файл или прогон на сцене) и/или `qa.package`. `sintez_mismatch` — расхождение, с правилом;
+  `sintez_unmatched` — SINTEZ fail по правилу, которого мы не проверяем. 2.3.17 сверяется по `qa.package` V003.
+- `qa.facade_compare`: картинка «лист | ВПМ | НПМ» в одном масштабе (новый PNG, `_vNNN`), счёт швов по пикселям.
+  Модель не рендерится: снимок сетки растеризуется в Python при фиксированных px/м, рендерер сцены и вьюпорт не
+  трогаются (дефект `apply_atlas_uv`). Лист — PNG/BMP/PGM. Расхождение числа швов → `facade_joints`.
+- `qa.procedural_objects`: классы — данные (`data/procedural_classes.json`, L07: Chaos Scatter, Corona Scatter,
+  Populate, ScatterGeometry измерены; Forest Pack, RailClone, MultiScatter, RayFire, tyFlow — по именам T07),
+  заглушка отсутствующего плагина `Missing_*` → `proc_missing_plugin`. Ничего не сворачивается. Отчёт отдаёт
+  стабильный список `plan.procedural` / `plan.blocking` для `export.batch`, плагины без классов в этой Max —
+  «плагин не установлен», предупреждение: треугольники этих объектов `qa.tris` не посчитал.
 
 ### D — экспорт, карты, свет (`improve/issue-979-export-scene-light`)
 
@@ -86,7 +116,8 @@
   `runtime.export_preview` / `export_commit` (ворота и readback `export.checked` как есть); существующий FBX (или его
   `.report.json` / `.partial`) — следующая версия `_vNNN` уже в preview; упавшая группа не останавливает остальные,
   итог fail; один отчёт. Процедурные объекты из `runtime.edits_090('qa.procedural_objects', 'preview')` блокируют
-  свою группу; пока эта строка отвечает `not_implemented`, не экспортируется ни одна группа (fail closed).
+  свою группу (`plan.procedural` / `plan.blocking` ответа ветки C, #1000); если строка отвечает `not_implemented` или
+  падает, не экспортируется ни одна группа (fail closed).
 - Полигон: станции 0.9.17 и 0.9.18 (`stations/D.json`, `stations/D_build.py` — узлы света, сцена в м и в см).
 
 ### E1 — доработка: текстуры и имена (`improve/issue-979-rework-tex-names`)
@@ -123,7 +154,26 @@
 
 ### E2 — доработка: геометрия и UDIM (`improve/issue-979-rework-geom-udim`)
 
-- Заглушка ветки E2: доработки `ucx.triangulate`, `export.pivot_place`, `udim.ids_to_udims`.
+- `ucx.triangulate`: после триангуляции копии — проход переворота вогнутых диагоналей (идея ConcaveFixer, T03):
+  только квад, выпуклый в своей плоскости («дротик» не переворачивается и попадает в `ambiguous`), новое ребро
+  проверяется, допуск 1e-4 м (складка 1e-6 не трогается), до неподвижной точки, затем пост-проверка выпуклости.
+  Рёбра контуров исходных n-гонов и изломы > 60° не переворачиваются. Отказ `createEdge` больше не оставляет
+  квадов: копия получает запланированные треугольники. Невыпуклый кусок теперь в отчёте (`not_convex`),
+  выпуклая оболочка — только по опции `nonconvex: hull` (поведение 0.8). В preview находка `reflex_edge`.
+- `export.pivot_place`: опции `orient` (`long_side` — X по длинной стороне в плане, Z вверх; `pca` — главные
+  оси) и `pivot_at` (`bottom_centre` — пивот двери, `centre`). Ось подбирается в double по координатам без
+  переноса (L07: у AC Pivot Align до 1,43° на 2 345 678 м), выпуклая оболочка + rotating calipers вместо O(n³),
+  без лимита 512 вершин, знак X — угол в [0°, 180°). Пивот ставится через transform + objectOffset,
+  пересчитанный в double: меш не двигается (в т. ч. у ребёнка и у Editable_Mesh). Отказы с причиной и кодом:
+  квадратный след (`pivot_axis_undefined`), неопределённость оси > 0,01° (`pivot_axis_uncertain`), масштаб
+  узла ≠ 1 (`pivot_node_scale`).
+- `udim.ids_to_udims`: режим `keep` («сохранить раскладку», идея UDIM Tool v9.2): каждая грань сдвигается на
+  целые тайлы в 1000+ID, `floor` вместо зажима 1001..1100 (отрицательные UV), разрез швов по смещению
+  (не зависит от порядка граней), грань через линию тайла — отказ ID (`udim_straddles`), ID > 100 не тянет
+  общие вершины. Объекты со стеком (Unwrap_UVW, UVW_Xform) больше не пропускаются: раскладка читается со
+  стека, свёртывается только копия.
+- Полигон: станции `stations/E2.json` + `E2_build.py` для `ucx.triangulate`, `export.pivot_place`,
+  `udim.ids_to_udims`, `model.triangulate` (база 0.8).
 
 ### E3 — доработка: пакет и предсдача (`improve/issue-979-rework-package-suite`)
 

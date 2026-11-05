@@ -329,6 +329,8 @@ def apply_sashes(types_doc, sources):
                 sashes = {"candidate": len(obj["rings"]), "rects_m": [r["rect_m"] for r in obj["rings"]],
                           "reason": _REASONS[obj["reading"]], "source": path}
             handing = {"candidate": None, "reason": _HAND_MAX}
+        elif t.get("source", {}).get("census_key") and t.get("unconfirmed"):
+            continue                      # a job census carries its own reading (build_window_types.census_types)
         else:
             sashes = {"candidate": None, "reason": _SASH_NONE}
             handing = {"candidate": None, "reason": _HAND_NONE}

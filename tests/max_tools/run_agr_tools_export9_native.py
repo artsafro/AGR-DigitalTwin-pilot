@@ -11,9 +11,8 @@ Installs the MZP into OUT (no user folders touched), then in the real Max Python
 * scene.maps_usage - the T08 synthetic (12 files, 2 truly unused; Blend, DoubleSided, Shell, renderable spline,
   environment, light projector, a copy used through another folder): exactly 2 extra; a missing map with a
   same-name file stays missing; files on disk and the scene unchanged;
-* export.batch - 3 groups (clean / dirty geometry / existing FBX): while qa.procedural_objects (branch C) answers
-  not_implemented every group is refused and nothing is written; with a stand-in answer of that row (no
-  procedural object) the clean group is written and read back, the dirty one fails at the gates, the existing FBX
+* export.batch - 3 groups (clean / dirty geometry / existing FBX) with the real qa.procedural_objects of
+  branch C (#1000; boxes are not procedural): the clean group is written and read back, the dirty one fails at the gates, the existing FBX
   gets `_v002` and stays byte-identical, the originals are unchanged; a stand-in procedural offender blocks only
   its group.
 Nothing is saved; the scenes are reset between parts.
@@ -350,71 +349,63 @@ def batch_scene(out):
 
 
 def _stand_in(offenders=()):
+    """A procedural offender in the shape of qa9_core.procedural_report (plan.blocking): this Max has no Forest
+    Pack / RailClone, so a blocked group needs a stand-in; the clean flow runs on the REAL answer of branch C."""
     real = agr.edits_090
 
     def edits(tool, mode, preview=None, nodes=None, options=None):
         if tool == 'qa.procedural_objects':
-            objs = [EDIT.entry(int(rt.getHandleByAnim(rt.getNodeByName(n))), n,
-                               [EDIT.finding('procedural_class', (), 'stand-in: ForestPackPro')]) for n in offenders]
-            return EDIT.report(tool, 'preview', objs, state_hash='stand-in for branch C')
+            hs = [(int(rt.getHandleByAnim(rt.getNodeByName(n))), n) for n in offenders]
+            objs = [EDIT.entry(h, n, [EDIT.finding('proc_object', (), 'stand-in: Forest_Pro')]) for h, n in hs]
+            return EDIT.report(tool, 'preview', objs, state_hash='stand-in for a plugin object',
+                               extra={'blocking': [h for h, _ in hs]})
         return real(tool, mode, preview, nodes, options)
     return real, edits
 
 
-def batch_refused_while_c_is_empty():
-    out = OUT / 'batch_refused'
-    batch_scene(out)
-    proc = agr.edits_090('qa.procedural_objects', 'preview')
-    if proc['status'] != 'not_implemented':
-        return {'skipped': 'qa.procedural_objects is implemented: ' + proc['status']}
-    p = agr.edits_090('export.batch', 'preview')
-    assert all(c == ['procedural_unchecked'] for c in codes(p).values()) and p['plan']['done'] == [], codes(p)
-    a = agr.edits_090('export.batch', 'apply', p)
-    assert a['plan']['done'] == [] and sorted(x.name for x in out.iterdir()) == ['old.fbx']
-    return {'preview': p['status'], 'apply_done': a['plan']['done'], 'files': sorted(x.name for x in out.iterdir())}
-
-
 def batch_acceptance():
+    """The real qa.procedural_objects (branch C, #1000): plain boxes are not procedural, so no group is blocked."""
     out = OUT / 'batch'
     nodes = batch_scene(out)
-    real, edits = _stand_in()
-    agr.edits_090 = edits
+    proc = agr.edits_090('qa.procedural_objects', 'preview')
+    assert proc['status'] == 'pass' and proc['plan']['blocking'] == [], proc['status']
+    snap = agr._load_core('edit_max.py', 'agr_tools_edit_max').snapshot(nodes)
+    p = agr.edits_090('export.batch', 'preview')
+    assert p['plan']['procedural']['state'] == 'checked', p['plan']['procedural']
+    rows = {Path(g['requested']).name: g for g in p['plan']['groups']}
+    assert rows['clean.fbx']['status'] == 'pass' and rows['old.fbx']['status'] == 'pass', rows
+    assert rows['dirty.fbx']['status'] == 'fail' and rows['dirty.fbx']['stopped'] == 'xview', rows['dirty.fbx']
+    assert Path(rows['old.fbx']['target']).name == 'old_v002.fbx'
+    assert sorted(x.name for x in out.iterdir()) == ['old.fbx']
+    a = agr.edits_090('export.batch', 'apply', p)
+    done = {Path(d['item']).name: d for d in a['plan']['done']}
+    assert set(done) == {'clean.fbx', 'old_v002.fbx'}, a['plan']
+    assert done['clean.fbx']['readback']['object_count'] == 2 and done['old_v002.fbx']['readback']['object_count'] == 1
+    assert (out / 'old.fbx').read_bytes() == b'previous delivery'
+    files = sorted(x.name for x in out.iterdir())
+    assert files == ['clean.fbx', 'clean.report.json', 'old.fbx', 'old_v002.fbx', 'old_v002.report.json'], files
+    assert agr._load_core('edit_max.py', 'agr_tools_edit_max').snapshot(nodes) == snap
+    assert a['status'] == 'fail' and codes(a)['SM_BatchDirty_Main']
+    # a procedural offender blocks only its group (the files above now exist: clean -> _v002)
+    real, blocked = _stand_in(['SM_BatchOld_Main'])
+    agr.edits_090 = blocked
     try:
-        snap = agr._load_core('edit_max.py', 'agr_tools_edit_max').snapshot(nodes)
-        p = edits('export.batch', 'preview')
-        rows = {Path(g['requested']).name: g for g in p['plan']['groups']}
-        assert rows['clean.fbx']['status'] == 'pass' and rows['old.fbx']['status'] == 'pass', rows
-        assert rows['dirty.fbx']['status'] == 'fail' and rows['dirty.fbx']['stopped'] == 'xview', rows['dirty.fbx']
-        assert Path(rows['old.fbx']['target']).name == 'old_v002.fbx'
-        assert sorted(x.name for x in out.iterdir()) == ['old.fbx']
-        a = edits('export.batch', 'apply', p)
-        done = {Path(d['item']).name: d for d in a['plan']['done']}
-        assert set(done) == {'clean.fbx', 'old_v002.fbx'}, a['plan']
-        assert done['clean.fbx']['readback']['object_count'] == 2 and done['old_v002.fbx']['readback']['object_count'] == 1
-        assert (out / 'old.fbx').read_bytes() == b'previous delivery'
-        files = sorted(x.name for x in out.iterdir())
-        assert files == ['clean.fbx', 'clean.report.json', 'old.fbx', 'old_v002.fbx', 'old_v002.report.json'], files
-        assert agr._load_core('edit_max.py', 'agr_tools_edit_max').snapshot(nodes) == snap
-        assert a['status'] == 'fail' and codes(a)['SM_BatchDirty_Main']
-        # a stand-in procedural offender blocks only its group (the files above now exist: clean -> _v002)
-        _, blocked = _stand_in(['SM_BatchOld_Main'])
-        agr.edits_090 = blocked
         q = blocked('export.batch', 'preview')
-        st = {Path(g['requested']).name: (g['status'], Path(g['target']).name) for g in q['plan']['groups']}
-        assert st == {'clean.fbx': ('pass', 'clean_v002.fbx'), 'dirty.fbx': ('fail', 'dirty.fbx'),
-                      'old.fbx': ('blocked', 'old_v003.fbx')}, st
-        assert codes(q)['SM_BatchOld_Main'] == ['procedural_object']
     finally:
         agr.edits_090 = real
-    return {'preview_groups': {k: (v['status'], Path(v['target']).name) for k, v in rows.items()},
+    st = {Path(g['requested']).name: (g['status'], Path(g['target']).name) for g in q['plan']['groups']}
+    assert st == {'clean.fbx': ('pass', 'clean_v002.fbx'), 'dirty.fbx': ('fail', 'dirty.fbx'),
+                  'old.fbx': ('blocked', 'old_v003.fbx')}, st
+    assert codes(q)['SM_BatchOld_Main'] == ['procedural_object']
+    return {'procedural': proc['plan']['summary'], 'preview_groups': {k: (v['status'], Path(v['target']).name)
+                                                                      for k, v in rows.items()},
             'apply_done': {k: v['readback']['object_count'] for k, v in done.items()}, 'files': files,
             'dirty_codes': codes(a)['SM_BatchDirty_Main'], 'blocked': st, 'snapshot_unchanged': True}
 
 
 for name, fn in (('light_units', light_units), ('light_select_press', light_select_press),
                  ('light_count_and_scale', light_count_and_scale), ('maps_t08', maps_t08),
-                 ('maps_missing', maps_missing), ('batch_refused_while_c_is_empty', batch_refused_while_c_is_empty),
-                 ('batch_acceptance', batch_acceptance)):
+                 ('maps_missing', maps_missing), ('batch_acceptance', batch_acceptance)):
     check(name, fn)
 summary['scene_saved'] = bool(str(rt.maxFileName))
 (OUT / 'summary.json').write_text(json.dumps(summary, ensure_ascii=False, indent=1), encoding='utf-8')
