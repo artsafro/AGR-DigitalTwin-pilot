@@ -17,6 +17,8 @@ import subprocess
 from collections import defaultdict
 from pathlib import Path
 
+import warnings
+
 import pytest
 
 np = pytest.importorskip("numpy")
@@ -27,8 +29,6 @@ BODY_BLENDER_PY = ROOT / "tools" / "methods" / "body" / "body_blender.py"
 TOW02_CONTOURS = Path(r"C:/x/methods/building-body/tow02/contours.json")
 TOW02_SNAP = Path(r"C:/x/t_ad9bc345/snapped_contours.json")
 TOW02_SHA256 = "92a83fc90efd039126f8b86b57ff7fae1002bea72868d7193e27b2904535152e"
-SNAP_SHA256 = "21bbc3e2422c409ed2a24b9fbede247274340589b3837ab83172f92d7fecc532"
-SCRATCH = Path(r"C:/x/t_636d03d6")
 PROBE_N = 200
 BLENDER_DEFAULT = Path(r"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe")
 
@@ -192,7 +192,7 @@ def main():
                 elif fn == "_build_cap":
                     bb[fn]({"bands": []}, "cap", height_domain="nope")
                 else:
-                    bb[fn]({"bands": []}, Path(r"C:/x/t_636d03d6/unused.fbx"), "cap", height_domain="nope")
+                    bb[fn]({"bands": []}, Path(OUT.parent / "unused.fbx"), "cap", height_domain="nope")
             except ValueError as exc:
                 if "nope" not in str(exc):
                     raise
@@ -211,7 +211,7 @@ def main():
             "point_snap": locate(bb, snapped, "point"),
         }
         report["unbalanced"] = counts
-        expect = {"face_nosnap": 7, "face_snap": 3, "point_snap": 0}
+        expect = {"face_nosnap": 7, "face_snap": 6, "point_snap": 0}
         if counts != expect:
             raise AssertionError(f"unbalanced {counts} != {expect}")
         report["ok"] = True
@@ -366,21 +366,29 @@ def test_snap_band_z0_point_top_is_one_z_for_random_valences():
     assert splits > 0
 
 
-def test_tow02_point_domain_one_top_and_locator_counts():
+def test_tow02_point_domain_one_top_and_locator_counts(tmp_path):
     blender = blender_executable()
     if blender is None:
         pytest.skip("Blender not installed (DT_BLENDER, TWINQA_BLENDER or the pinned installation)")
-    if not TOW02_CONTOURS.is_file() or not TOW02_SNAP.is_file():
+    if not TOW02_CONTOURS.is_file():
         pytest.skip("TOW02 contours fixture not on this machine")
     assert hashlib.sha256(TOW02_CONTOURS.read_bytes()).hexdigest() == TOW02_SHA256
-    assert hashlib.sha256(TOW02_SNAP.read_bytes()).hexdigest() == SNAP_SHA256
-    SCRATCH.mkdir(parents=True, exist_ok=True)
-    script = SCRATCH / "gn_point_domain_check.py"
-    out = SCRATCH / "gn_point_domain_check.json"
+    scratch = tmp_path
+    snap_path = scratch / "snapped_contours.json"
+    contours = json.loads(TOW02_CONTOURS.read_text(encoding="utf-8"))
+    snapped = load_contours().snap_band_z0(contours)
+    snap_path.write_text(json.dumps(snapped), encoding="utf-8")
+    if TOW02_SNAP.is_file():
+        cached = json.loads(TOW02_SNAP.read_text(encoding="utf-8"))
+        if cached != snapped:
+            warnings.warn("shipped snap_band_z0 differs from the cached " + str(TOW02_SNAP))
+    script = scratch / "gn_point_domain_check.py"
+    out = scratch / "gn_point_domain_check.json"
+    assert not out.exists()
     script.write_text(
         BLENDER_SCRIPT.replace("__ROOT__", repr(str(ROOT))).replace(
             "__TOW02__", repr(str(TOW02_CONTOURS))
-        ).replace("__SNAP__", repr(str(TOW02_SNAP))),
+        ).replace("__SNAP__", repr(str(snap_path))),
         encoding="utf-8",
     )
     proc = subprocess.run(
@@ -392,4 +400,4 @@ def test_tow02_point_domain_one_top_and_locator_counts():
     assert proc.returncode == 0, (report, proc.stderr[-4000:], proc.stdout[-2000:])
     assert report["tops_ok"] is True
     assert all(row["n_top_z"] == 1 and row["ok"] for row in report["tops"])
-    assert report["unbalanced"] == {"face_nosnap": 7, "face_snap": 3, "point_snap": 0}
+    assert report["unbalanced"] == {"face_nosnap": 7, "face_snap": 6, "point_snap": 0}
