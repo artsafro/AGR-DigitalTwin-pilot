@@ -58,7 +58,7 @@
   кандидаты по базовому имени (то же имя+расширение — ранг 0, другое расширение — ранг 1) с флагом
   неоднозначности; разрешение существующих (PNG/JPG/TGA); каждый путь один раз с владельцами; JSON + таблица.
 - MatID (#844): matID грани вне `materialIDList` снова блокирующий `empty_slot` в проверке MatID и в экспорте
-  (решение Артёма 2026-11-04 [D195]: экспорт FBX переносит его на другой sub-material, грань получает чужой
+  (решение Артёма 2026-11-04 [D196]: экспорт FBX переносит его на другой sub-material, грань получает чужой
   материал). Поиск без переноса — `checks_core.listed_submaterial_index`; текстуры по-прежнему меряют
   перенесённый слот и дают рекомендацию `tex_matid_wrapped`. Нативно (Max 2024 batch): `#(1,2)`,
   matID 1001 и 2 (пустой слот) → `empty_slot: [1, 2]`.
@@ -113,7 +113,9 @@ Native Qt UI over all 17 existing actions; no check logic changed.
   (stripe, header, icon tint) derived from the Max palette; result table (red/green), click selects
   the object, «Выделить ошибки», «Сохранить отчёт JSON…».
 - Progress bar + «Отмена» and the Max progress bar (progressStart/Update/getProgressCancel/End).
-  xView and MatID run in chunks of 25 objects (exact merge); other actions are one runtime call
+  xView and MatID run in chunks of 25 objects (exact merge). Cancel is read only between
+  chunks, so a click takes effect on the next chunk (about 0.9 s on Max 2024); the chunk
+  already running is kept. Other actions are one runtime call
   with a busy bar. Buttons are disabled while running.
 - Every action is a macroScript with `iconName:"AgrIcons/agr_<id>"`, Russian label and tooltip
   (what it does + requirement ids); `agr_tools_runtime.ui('<tool>')` and `agr_tools_runtime.panel()`

@@ -540,7 +540,7 @@
    "text": null,
    "colour": null,
    "zero": 0.0,
-   "AGR_TEST": "station=0.7.5;scene.census=pass;model.perimeter_drop=pass;tex.check=tex_missing;tex.material_type=mat_none;ucx.audit=pass;atlas.sets_count=pass;qa.fbx_split=fbx_objects;qa.glass=pass;qa.names=name_separator,name_symbols;qa.pivot=pass;qa.preflight=fbx_objects,mat_none;qa.scene_hygiene=pass;qa.tris=pass;qa.xform=pass;qa.zero_area=pass",
+   "AGR_TEST": "station=0.7.5;scene.census=pass;model.perimeter_drop=kind_unknown;tex.check=tex_missing;tex.material_type=mat_none;ucx.audit=pass;atlas.sets_count=pass;qa.fbx_split=fbx_objects;qa.glass=pass;qa.names=name_separator,name_symbols;qa.pivot=pass;qa.preflight=fbx_objects,kind_unknown,mat_none;qa.scene_hygiene=pass;qa.tris=pass;qa.xform=pass;qa.zero_area=pass",
    "synthetic": true
   },
   {
@@ -785,7 +785,7 @@
    "text": null,
    "colour": null,
    "zero": 0.0,
-   "AGR_TEST": "station=0.5.3;scene.census=pass;model.perimeter_drop=pass;tex.check=tex_missing;tex.material_type=pass;ucx.audit=pass;atlas.sets_count=pass;qa.fbx_split=fbx_objects;qa.glass=pass;qa.names=name_separator,name_symbols;qa.pivot=pass;qa.preflight=fbx_objects;qa.scene_hygiene=pass;qa.tris=pass;qa.xform=pass;qa.zero_area=pass",
+   "AGR_TEST": "station=0.5.3;scene.census=pass;model.perimeter_drop=kind_unknown;tex.check=tex_missing;tex.material_type=pass;ucx.audit=pass;atlas.sets_count=pass;qa.fbx_split=fbx_objects;qa.glass=pass;qa.names=name_separator,name_symbols;qa.pivot=pass;qa.preflight=fbx_objects,kind_unknown;qa.scene_hygiene=pass;qa.tris=pass;qa.xform=pass;qa.zero_area=pass",
    "synthetic": true
   },
   {

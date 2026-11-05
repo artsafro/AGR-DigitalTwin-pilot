@@ -162,6 +162,11 @@ exactly at a limit is `tri_at_limit` / `at_threshold`, which is a finding, never
 items are listed in `plan.dropped` with a reason. Defects D1-D8 and the source lines are in
 `CHANGELOG.md`.
 
+Review-level codes count as non-pass. Every review-level code in this package is
+`at_threshold`, `name_conflict` and `tex_overlap_review`. A report whose only finding is
+one of them has status `fail`, and a person reviews that finding. The schema stays
+`pass` or `fail`. A `review` status may come later only if the UI needs it.
+
 | Requirement id | Button | Status in 0.5.0 |
 | --- | --- | --- |
 | NPM-1.3-2.b, VPM-1.3-2.b, NPM-2.10-2, VPM-2.10-2.a | Names check | checks (Latin, digits, `_`; space/dot/Cyrillic named) |

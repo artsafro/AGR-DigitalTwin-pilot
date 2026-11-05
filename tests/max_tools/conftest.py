@@ -2,12 +2,16 @@
 
 Real PNGs are rendered from the SVG sources with PySide6 at release build time (tools/max/agr_icons.py);
 they are never committed (*.png is LFS-tracked, LFS is not used).
+QT_QPA_PLATFORM=offscreen is set here, before any PySide6 import in this directory (#897).
 """
 import os
-import struct
-import zlib
 
-import pytest
+os.environ.setdefault('QT_QPA_PLATFORM', 'offscreen')
+
+import struct  # noqa: E402
+import zlib  # noqa: E402
+
+import pytest  # noqa: E402
 
 
 def _png(size):

@@ -52,13 +52,14 @@ PREFLIGHT = ('material_type', 'perimeter_drop', 'ucx_audit', 'sets_count', 'fbx_
 CODES = {
     'census': {'missing_map'},
     'units': set(),
-    'perimeter_drop': {'drop_short', 'drop_unmeasurable', 'at_threshold', 'fbx_unmapped'},
+    'perimeter_drop': {'drop_short', 'drop_unmeasurable', 'at_threshold', 'fbx_unmapped', 'kind_unknown'},
     'material_type': {'mat_none', 'mat_class'},
     'ucx_audit': {'ucx_open', 'ucx_concave', 'ucx_material', 'ucx_name', 'ucx_intersect', 'ucx_unmeasurable',
                   'ucx_budget', 'ucx_orphan'},
     'sets_count': {'sets_limit', 'fbx_unmapped'},
     'fbx_split': {'fbx_count', 'fbx_objects', 'fbx_ground_missing', 'fbx_numbering', 'fbx_unmapped'},
-    'glass': {'glass_not_separate', 'glass_objects', 'glass_materials', 'glass_maps', 'glass_opacity'},
+    'glass': {'glass_not_separate', 'glass_objects', 'glass_materials', 'glass_maps', 'glass_opacity',
+              'glass_opaque_material'},
     'scene_hygiene': {'hyg_non_mesh', 'hyg_animation', 'hyg_hierarchy', 'hyg_group', 'hyg_empty',
                       'hyg_modifier'},
     'xform': {'xform_scale', 'xform_rotation', 'xform_mirror', 'xform_parent', 'xform_unmeasurable'},
@@ -127,10 +128,41 @@ def _materials(row):
     return mats
 
 
+_NAME_TOKEN = re.compile(r'[^0-9A-Za-z]+')
+_GLASS_TOKENS = frozenset({'glass', 'mainglass', 'groundglass', 'groundelglass'})
+
+
 def _is_glass_material(m):
+    """Glass by an exact name token ``glass`` or by opacity strictly below 1 - OPACITY_TOL.
+
+    The name is split on non-alphanumeric characters, underscores included. A case-insensitive token
+    in glass/mainglass/groundglass/groundelglass counts (``M_Glass``, ``M_A_MainGlass_1``). A substring
+    does not (``M_Fiberglass_Panel``). Non-finite opacity and opacity exactly at the threshold are not glass.
+    """
     name = str(m.get('name', ''))
+    by_name = any(tok.lower() in _GLASS_TOKENS for tok in _NAME_TOKEN.split(name) if tok)
     op = m.get('opacity')
-    return 'glass' in name.lower() or (_finite(op) and op < 1.0 - OPACITY_TOL)
+    return by_name or (_finite(op) and op < 1.0 - OPACITY_TOL)
+
+
+def _map_field(m, field):
+    """File-name list on a material row. No field: unmapped material. A bad entry is unreadable, never skipped."""
+    if not isinstance(m, dict):
+        raise ValueError('unmapped material {}'.format(m))
+    name = m.get('name')
+    if not isinstance(name, str) or not name.strip() or field not in m:
+        shown = name.strip() if isinstance(name, str) and name.strip() else m
+        raise ValueError('unmapped material {}'.format(shown))
+    value = m[field]
+    if not isinstance(value, list):
+        raise ValueError('unreadable map entry on {}: {}'.format(name, field))
+    out = []
+    for item in value:
+        if not isinstance(item, str) or not item.strip():
+            raise ValueError('unreadable map entry on {}: {!r}'.format(name, item))
+        if item not in out:
+            out.append(item)
+    return out
 
 
 # --- scene.census -------------------------------------------------------------------------------------
@@ -148,13 +180,19 @@ def census(rows):
     for r in rows:
         sc = str(_need(r, 'superclass'))
         by_class[sc] = by_class.get(sc, 0) + 1
+        seen_missing = set()
         for m in _materials(r):
-            mats.add(str(m.get('name')))
-            for p in m.get('maps') or []:
+            paths = _map_field(m, 'maps')
+            miss = _map_field(m, 'missing')
+            mats.add(m['name'])
+            for p in paths:
                 maps.add(p)
-            for p in m.get('missing') or []:
+            for p in miss:
+                if p in seen_missing:
+                    continue
+                seen_missing.add(p)
                 missing.add(p)
-                _add(found, r['key'], 'missing_map', 'нет файла: ' + str(p))
+                _add(found, r['key'], 'missing_map', 'нет файла: ' + p)
         box = r.get('bbox')
         if box is not None:
             if not (len(box) == 2 and all(_finite(*c) for c in box)):
@@ -204,6 +242,8 @@ def perimeter_drop(rows):
     `drop_unmeasurable`, never measured against 0. Exactly 1 m is `at_threshold` (review), as 0.5.0.
     Only the perimeter meshes (exact suffix Main / Ground, checks.mesh_kind) are measured: MainGlass,
     GroundEl, Flora etc. stand above ±0.000 by design and are listed in summary `not_applicable`.
+    A geometry mesh whose suffix is not one of those known kinds is `kind_unknown` (a finding, never a
+    skip): a misnamed perimeter mesh must not disappear into `not_applicable`.
     """
     rows = Rows(rows)
     found, dropped, skipped = {}, [], []
@@ -211,8 +251,12 @@ def perimeter_drop(rows):
         if checks.is_ucx(r['name']) or not _geo(r):
             continue
         mk = checks.mesh_kind(r['name'])
+        if mk is None:
+            _add(found, r['key'], 'kind_unknown',
+                 'суффикс не Main/MainGlass/Ground/GroundGlass/GroundEl/GroundElGlass/Flora: ' + repr(r.get('name')))
+            continue
         if mk not in ('Main', 'Ground'):
-            skipped.append({'name': r['name'], 'kind': mk or 'unknown suffix'})
+            skipped.append({'name': r['name'], 'kind': mk})
             continue
         if _kind(r) is None:
             _add(found, r['key'], 'fbx_unmapped', 'AGR_EXPORT_PATH не задан или не по маске: ' + repr(r.get('fbx')))
@@ -405,12 +449,15 @@ def fbx_split(rows):
 # --- qa.glass -----------------------------------------------------------------------------------------
 def glass(rows):
     """Glass: on a separate *Glass mesh, <= 20 translucent objects per FBX, <= 7 glass materials per FBX,
-    no texture maps, NPM opacity 0.5.
+    no texture maps, NPM opacity 0.5. An opaque material sharing that mesh is ``glass_opaque_material``.
 
     adapted from GeoAGR 13.64 (author Artem), GeoAGR.ms:65330-65375 Prepare LowPoly MainGlass branch;
     changes: D2 - the branch is reached by the exact suffix token (checks.mesh_kind), not a substring
     `case` that matched Main first; D3 - "no textures" counts the usedMaps ARRAY (an empty list is no
-    maps), the old test against undefined fired on every material.
+    maps), the old test against undefined fired on every material. Glass is an exact name token or
+    opacity < 1 - OPACITY_TOL (see ``_is_glass_material``), not a substring. When the mesh has at least
+    one glass material, every other non-multi material is ``glass_opaque_material`` (named in the
+    message) and is not checked as glass. When it has none, every non-multi material is checked as before.
     """
     rows = Rows(rows)
     found = {}
@@ -420,7 +467,8 @@ def glass(rows):
             continue
         is_glass_mesh = str(checks.mesh_kind(r['name']) or '').endswith('Glass')
         mats = _materials(r)
-        gm = [m for m in mats if str(m.get('cls')) != 'Multimaterial' and _is_glass_material(m)]
+        plain = [m for m in mats if str(m.get('cls')) != 'Multimaterial']
+        gm = [m for m in plain if _is_glass_material(m)]
         if gm and not is_glass_mesh:
             _add(found, r['key'], 'glass_not_separate', 'стекло на непрозрачном объекте: ' +
                  ', '.join(str(m.get('name')) for m in gm))
@@ -428,7 +476,12 @@ def glass(rows):
             continue
         slot = per_fbx.setdefault(r.get('fbx'), {'rows': [], 'materials': set()})
         slot['rows'].append(r)
-        for m in gm or [m for m in mats if str(m.get('cls')) != 'Multimaterial']:
+        if gm:
+            for m in plain:
+                if not _is_glass_material(m):
+                    _add(found, r['key'], 'glass_opaque_material',
+                         'непрозрачный материал на стекле: {}'.format(m.get('name')))
+        for m in gm or plain:
             slot['materials'].add(str(m.get('name')))
             maps = m.get('maps')
             if not isinstance(maps, list):
@@ -563,12 +616,17 @@ def zero_area(rows):
 
 
 # --- qa.preflight -------------------------------------------------------------------------------------
-def preflight(rows, audit):
-    """All object checks of 0.7 in one pass, one table; nothing changes the scene.
+def preflight(rows, audit, scene):
+    """All checks of 0.7 in one pass, one table; nothing changes the scene.
 
     Replaces GeoAGR Prepare LowPoly GeoAGR.ms:65278 / Prepare HighPoly :65653 (destructive: D6 ResetXForm +
     collapse, D1, D2, D7, D8) with the read-only checks above. Each finding detail starts with its check.
+    scene.units runs too (#882, D5): its items become scene-level rows (report plan.findings, names prefixed
+    'scene.units: ') and summary checks['units']. No scene dict -> ValueError, never a units-less pass.
     """
+    if not isinstance(scene, dict):
+        raise ValueError('preflight needs the scene units (scene.units): scene not read')
+    scene_rows = [dict(x, name=PLAN_ROW['units'] + ': ' + x['name']) for x in units(scene)]
     found, dropped, status = {}, [], {}
     for tool in PREFLIGHT:
         f, d, _ = run(tool, rows, audit)
@@ -577,17 +635,19 @@ def preflight(rows, audit):
             for code, detail, ids in items:
                 _add(found, key, code, '{}: {}'.format(PLAN_ROW[tool], detail), ids)
         dropped += [{'name': x['name'], 'reason': tool + ': ' + x['reason']} for x in d]
-    return found, dropped, {'checks': status}
+    status['units'] = 'pass' if all(x['status'] == 'pass' for x in scene_rows) else 'fail'
+    return found, dropped, {'checks': status, 'scene': {'path': str(scene.get('path')), 'findings': scene_rows}}
 
 
-def run(tool, rows, audit=None):
+def run(tool, rows, audit=None, scene=None):
+    """scene: the scene.units dict; required by preflight (see preflight), ignored by object checks."""
     fn = {'census': census, 'perimeter_drop': perimeter_drop, 'material_type': material_type,
           'sets_count': sets_count, 'fbx_split': fbx_split, 'glass': glass, 'scene_hygiene': scene_hygiene,
           'xform': xform, 'zero_area': zero_area}
     if tool == 'ucx_audit':
         return ucx_audit(rows, audit)
     if tool == 'preflight':
-        return preflight(rows, audit)
+        return preflight(rows, audit, scene)
     if tool not in fn:
         raise KeyError('unknown 0.7 check: ' + repr(tool))
     return fn[tool](rows)
@@ -600,8 +660,13 @@ def report(tool, rows, found, dropped, summary):
     for r in rows:
         fs = [{'code': c, 'ids': sorted(set(int(i) for i in ids)), 'detail': d} for c, d, ids in found.get(r['key'], [])]
         objects.append({'handle': int(r['key']), 'name': str(r['name']), 'findings': fs})
-    out = {'schema': 1, 'tool': tool, 'status': 'fail' if any(o['findings'] for o in objects) else 'pass',
-           'objects': objects, 'plan': {'dropped': list(dropped), 'summary': summary}}
+    plan = {'dropped': list(dropped), 'summary': summary}
+    if tool == 'preflight':  # scene.units rows (#882): plan.findings/path, the scene_report shape
+        summary = dict(summary)
+        scene = summary.pop('scene')
+        plan = {'dropped': list(dropped), 'summary': summary, 'path': scene['path'], 'findings': scene['findings']}
+    bad = any(o['findings'] for o in objects) or any(f['status'] != 'pass' for f in plan.get('findings', ()))
+    out = {'schema': 1, 'tool': tool, 'status': 'fail' if bad else 'pass', 'objects': objects, 'plan': plan}
     return validate_report(json.loads(json.dumps(out, allow_nan=False)))
 
 
@@ -621,15 +686,10 @@ def validate_report(r):
     if r['tool'] in SCENE_TOOLS:
         if r['objects'] != [] or not isinstance(plan, dict) or set(plan) != {'path', 'findings'}:
             raise ValueError('incomplete plan')
-        if not plan['findings']:
-            raise ValueError('empty findings')
-        for f in plan['findings']:
-            if not isinstance(f, dict) or set(f) != {'name', 'status', 'observed', 'expected'} \
-                    or f['status'] not in ('pass', 'fail'):
-                raise ValueError('incomplete finding')
-        expected = 'pass' if all(f['status'] == 'pass' for f in plan['findings']) else 'fail'
+        expected = _scene_status(plan['findings'])
     else:
-        if not isinstance(plan, dict) or set(plan) != {'dropped', 'summary'} or not isinstance(plan['dropped'], list):
+        keys = {'dropped', 'summary'} | ({'path', 'findings'} if r['tool'] == 'preflight' else set())
+        if not isinstance(plan, dict) or set(plan) != keys or not isinstance(plan['dropped'], list):
             raise ValueError('incomplete plan')
         for d in plan['dropped']:
             if not isinstance(d, dict) or set(d) != {'name', 'reason'} or not d['reason']:
@@ -647,6 +707,25 @@ def validate_report(r):
                 if not isinstance(f, dict) or set(f) != {'code', 'ids', 'detail'} or f['code'] not in CODES[r['tool']]:
                     raise ValueError('unmapped finding: ' + repr(f.get('code') if isinstance(f, dict) else f))
         expected = 'fail' if any(o['findings'] for o in r['objects']) else 'pass'
+        if r['tool'] == 'preflight':
+            checks_ = plan['summary'].get('checks') if isinstance(plan['summary'], dict) else None
+            units_status = _scene_status(plan['findings'])
+            if not isinstance(checks_, dict) or set(checks_) != set(PREFLIGHT) | {'units'} \
+                    or any(v not in ('pass', 'fail') for v in checks_.values()) or checks_['units'] != units_status:
+                raise ValueError('preflight checks incomplete or units status inconsistent')
+            if units_status == 'fail':
+                expected = 'fail'
     if r['status'] != expected:
         raise ValueError('inconsistent status')
     return r
+
+
+def _scene_status(findings):
+    """Scene-level items (scene.units): non-empty, complete, pass/fail only; -> derived status."""
+    if not isinstance(findings, list) or not findings:
+        raise ValueError('empty findings')
+    for f in findings:
+        if not isinstance(f, dict) or set(f) != {'name', 'status', 'observed', 'expected'} \
+                or f['status'] not in ('pass', 'fail'):
+            raise ValueError('incomplete finding')
+    return 'pass' if all(f['status'] == 'pass' for f in findings) else 'fail'

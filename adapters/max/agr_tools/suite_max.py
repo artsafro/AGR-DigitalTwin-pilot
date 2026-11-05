@@ -1,9 +1,12 @@
 """new-case: read-only pymxs glue for the AGR Tools 0.7.0 checks (suite_core.py holds the logic, #860).
 
 Builds the plain row dicts of suite_core's contract. Geometry comes from snapshotAsMesh copies in memory
-(deleted after reading); maps from usedMaps; nothing is converted, reset, collapsed or saved (GeoAGR D6).
+(deleted after reading); maps from usedMaps plus Bitmaptexture file names (usedMaps drops a missing file);
+nothing is converted, reset, collapsed or saved (GeoAGR D6).
 """
 import os
+
+_FILE_PROPS = ('filename', 'fileName', 'HDRIMapName', 'bitmapFileName', 'Filename')
 
 
 def _rt():
@@ -25,16 +28,155 @@ def _superclass(n):
     return str(sc).lower()
 
 
-def _materials(n, glue):
-    """Every material of the node (Multi/Sub and its subs), each with class, maps, missing maps, opacity."""
-    rt = _rt()
+def _node_label(node):
+    """(name, error). A blank or unreadable name is an error; the caller chooses the message."""
+    try:
+        text = str(node.name).strip()
+    except Exception as exc:  # noqa: BLE001 - the caller fails closed with this cause
+        return repr(node), exc
+    if not text:
+        return repr(node), ValueError('blank name')
+    return text, None
+
+
+def _map_fail(material_node, label, exc):
+    if material_node:
+        raise ValueError('unmapped material {}: {}'.format(label, exc)) from exc
+    raise ValueError('unreadable map entry on {}: {}'.format(label, exc)) from exc
+
+
+def _used_paths(rt, mat, label):
+    """Filenames from usedMaps. undefined is no maps (D3); a broken entry is an error, never a pass."""
+    try:
+        maps = rt.usedMaps(mat)
+    except Exception as exc:  # noqa: BLE001
+        raise ValueError('unreadable map entry on {}: {}'.format(label, exc)) from exc
+    if maps is None or maps == rt.undefined:
+        return []
+    try:
+        count = int(maps.count)
+    except Exception as exc:  # noqa: BLE001
+        raise ValueError('unreadable map entry on {}: {}'.format(label, exc)) from exc
     out = []
-    for m in glue._materials(n.material):
-        maps = rt.usedMaps(m)
-        paths = [str(maps[i]) for i in range(int(maps.count))] if maps is not None else []
+    for i in range(count):
+        try:
+            item = maps[i]
+        except Exception as exc:  # noqa: BLE001
+            raise ValueError('unreadable map entry on {}: {}'.format(label, exc)) from exc
+        if item is None or item == rt.undefined:
+            raise ValueError('unreadable map entry on {}: {!r}'.format(label, item))
+        try:
+            text = str(item).strip()
+        except Exception as exc:  # noqa: BLE001
+            raise ValueError('unreadable map entry on {}: {}'.format(label, exc)) from exc
+        if not text:
+            raise ValueError('unreadable map entry on {}: {!r}'.format(label, item))
+        if text not in out:
+            out.append(text)
+    return out
+
+
+def _bitmap_file(rt, node, label):
+    """Bitmaptexture file name, including a path whose file is not on disk."""
+    for prop in _FILE_PROPS:
+        try:
+            if not rt.isProperty(node, prop):
+                continue
+            value = rt.getProperty(node, prop)
+        except Exception as exc:  # noqa: BLE001
+            raise ValueError('unreadable map entry on {}: {}'.format(label, exc)) from exc
+        if value is None or value == rt.undefined:
+            continue
+        try:
+            text = str(value).strip()
+        except Exception as exc:  # noqa: BLE001
+            raise ValueError('unreadable map entry on {}: {}'.format(label, exc)) from exc
+        if text:
+            return text
+    raise ValueError('unreadable map entry on {}: Bitmaptexture has no file name'.format(label))
+
+
+def _bitmap_paths(rt, mat):
+    """File names of Bitmaptexture nodes in this material's texmap tree, each once.
+
+    Sub-materials are not walked: glue._materials yields them on their own. usedMaps omits a
+    Bitmaptexture whose file does not exist (#886); the file name is still returned.
+    """
+    out, seen = [], set()
+    stack = [(mat, True)]
+    while stack:
+        node, material_node = stack.pop()
+        if node is None or node == rt.undefined:
+            continue
+        label, name_exc = _node_label(node)
+        if name_exc is not None:
+            _map_fail(material_node, label, name_exc)
+        try:
+            key = int(rt.getHandleByAnim(node))
+            cls = rt.classOf(node)
+        except Exception as exc:  # noqa: BLE001
+            _map_fail(material_node, label, exc)
+        if key in seen:
+            continue
+        seen.add(key)
+        if cls == rt.Bitmaptexture:
+            path = _bitmap_file(rt, node, label)
+            if path not in out:
+                out.append(path)
+        try:
+            count = int(rt.getNumSubTexmaps(node))
+        except Exception as exc:  # noqa: BLE001
+            _map_fail(material_node, label, exc)
+        children = []
+        for i in range(count):
+            try:
+                children.append(rt.getSubTexmap(node, i + 1))
+            except Exception as exc:  # noqa: BLE001
+                raise ValueError('unreadable map entry on {}: {}'.format(label, exc)) from exc
+        for child in reversed(children):  # first slot is read first
+            stack.append((child, False))
+    return out
+
+
+def _file_missing(glue, path, label):
+    try:
+        resolved = glue._resolve(path)
+    except Exception as exc:  # noqa: BLE001
+        raise ValueError('unreadable map entry on {}: {}'.format(label, exc)) from exc
+    try:
+        return not (resolved and os.path.isfile(resolved))
+    except Exception as exc:  # noqa: BLE001
+        raise ValueError('unreadable map entry on {}: {}'.format(label, exc)) from exc
+
+
+def _materials(n, glue):
+    """Every material of the node (Multi/Sub and its subs), each with class, maps, missing maps, opacity.
+
+    Map paths are usedMaps unioned with Bitmaptexture file names, so a file Max will not list is still
+    `missing`. A material that cannot be read raises, naming it.
+    """
+    rt = _rt()
+    mat = n.material
+    if mat is None or mat == rt.undefined:
+        return []
+    found = list(glue._materials(mat))
+    if not found:
+        label, name_exc = _node_label(mat)
+        if name_exc is not None:
+            raise ValueError('unmapped material {}'.format(label)) from name_exc
+        raise ValueError('unmapped material {}'.format(label))
+    out = []
+    for m in found:
+        label, name_exc = _node_label(m)
+        if name_exc is not None:
+            raise ValueError('unmapped material {}'.format(label)) from name_exc
+        paths = _used_paths(rt, m, label)
         if rt.classOf(m) == rt.Multimaterial:
-            paths = []  # the subs carry their own maps
-        missing = [p for p in paths if not os.path.isfile(glue._resolve(p))]
+            paths = []  # the subs carry their own maps; usedMaps on the multi repeats them
+        for path in _bitmap_paths(rt, m):
+            if path not in paths:
+                paths.append(path)
+        missing = [p for p in paths if _file_missing(glue, p, label)]
         opacity = None
         try:
             if rt.classOf(m) == rt.Standardmaterial:
@@ -43,7 +185,7 @@ def _materials(n, glue):
                 opacity = 1.0 - float(m.transparency)
         except Exception:  # noqa: BLE001 - unreadable opacity stays None (judged fail-closed by the core)
             opacity = None
-        out.append({'name': str(m.name), 'cls': str(rt.classOf(m)), 'maps': paths, 'missing': missing,
+        out.append({'name': label, 'cls': str(rt.classOf(m)), 'maps': paths, 'missing': missing,
                     'opacity': opacity})
     return out
 
@@ -143,12 +285,13 @@ def run(agr, glue, core, tool, nodes=None, select=True):
     scale = agr._unit_m()
     rows = [_row(agr, glue, n, scale) for n in nodes]
     audit = None
+    scene = scene_units() if tool == 'preflight' else None  # qa.preflight includes scene.units (#882)
     if tool in ('ucx_audit', 'preflight'):
         try:
             audit = agr._load_core('ucx_audit_core.py', 'agr_ucx_audit_core')  # shipped slice (MZP)
         except ValueError:  # source checkout: the slice is generated at build time
             from twinqa.geometry import ucx_audit as audit
-    found, dropped, summary = core.run(tool, rows, audit)
+    found, dropped, summary = core.run(tool, rows, audit, scene=scene)
     report = core.report(tool, rows, found, dropped, summary)
     if select:
         rt.select([n for n, o in zip(nodes, report['objects']) if o['findings']])

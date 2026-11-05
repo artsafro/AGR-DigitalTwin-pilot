@@ -86,6 +86,36 @@ mismatch remains, but the per-vertex split is gone.
 Code size: the prototype adds 4 nodes (Named Attribute, Combine XYZ, Set Position, plus a constant extrude offset) and
 about 10 lines in the cap builder (face -> point copy of `band_h`).
 
+### The "full snap" here is the t_ad9bc345 probe snap, not the shipped `snap_band_z0` (#880)
+
+Every `full_snap` number above was measured on the cached `snapped_contours.json` (SHA-256 `21bbc3e2…c7fecc532`).
+That file was written by the scratch probe `C:/x/t_ad9bc345/snap.py` (SHA-256 `419f86fd…152e`, line 274), not by
+any revision of `tools/methods/body/contours.py::snap_band_z0` (added later in `e6f38048`). The probe read each lower
+band's top z in Blender on the **unsnapped** contours (face-domain extrude), in **one pass**, and **skipped** an upper
+band when that lower top had two float32 z values. The shipped function computes `f32(f32(z0) + f32(z1 - z0))`
+and walks the bands lower-first, so a snapped lower `z0` feeds the band above it.
+
+`tools/methods/body/snap_diff.py` diffs the two sets band by band (input `C:/x/t_ad9bc345/in/contours.json`,
+`92a83fc9…8e92`; report `snap_diff_tow02.json`, `6235976e…bb70`). Parent ids are the same for
+all 12 snapped bands (band i -> i-1), and so are z1, polygons and vertex counts. Only `z0` differs, in 4 bands:
+
+| Band | Parent | z1 | Vertices | Source z0 | Cached z0 (probe) | Shipped z0 | Cause |
+|---|---|---|---|---|---|---|---|
+| 3 | 2 | 17.1 | 338 | 13.7 | 13.7 | 13.699999809265137 | probe skipped: band 2's top had 2 float32 z (41 / 877 refs) |
+| 8 | 7 | 65.4 | 349 | 30.7 | 30.69999885559082 | 30.700000762939453 | single pass: top of band 7 from its source z0 27.3; shipped uses the snapped 27.299999237060547 |
+| 9 | 8 | 69.45 | 205 | 65.4 | 65.4 | 65.4000015258789 | probe skipped: band 8's top had 2 float32 z (719 / 322 refs) |
+| 10 | 9 | 72.2 | 220 | 69.45 | 69.45000457763672 | 69.44999694824219 | single pass: top of band 9 from its source z0 65.4; shipped uses the snapped 65.4000015258789 |
+
+Effect on the numbers above (Blender 5.1.2, `tests/methods/test_body_gn_point_domain.py` locator, rerun for #880):
+face domain + snap gives **3** unbalanced edges on the cached file (main's test, report `cached/gn_point_domain_check.json`
+`52ba5c3c…01fc`) and **6** on the shipped snap (PR #874's test at `2c4c2959`, report
+`shipped/gn_point_domain_check.json` `b6e1f986…0ec2`); face domain without snap gives 7 and point domain + snap gives
+**0** on both. `snap_diff.py` on the shipped snapped file (`shipped/snapped_contours.json` `8ea89d04…320f`) reports 13 / 13
+bands equal. Evidence: `G:/Мой диск/AGR-evidence/880-cached-snap-diff/` with `SHA256SUMS.txt` (5 files, all OK).
+So the M2b "Baseline full_snap" column (3, band 2 split 418 / 500) describes the probe snap only.
+The adopted result (point-domain `band_h` + z0 snap -> 0) holds for the shipped `snap_band_z0`. The cached file
+stays as frozen evidence (it is in `SHA256SUMS.txt` on Drive) and is not refreshed.
+
 ## Verdicts
 
 | Method | Verdict | Reason |

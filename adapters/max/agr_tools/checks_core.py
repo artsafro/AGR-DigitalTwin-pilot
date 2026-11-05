@@ -623,7 +623,7 @@ def max_submaterial_index(mid, ids):
 def listed_submaterial_index(mid, ids):
     """Index of face matID `mid` in materialIDList WITHOUT the FBX wrap; None when `mid` is not listed
     exactly once. The MatID check and the export `empty_slot` use it: a matID outside the list is a
-    blocking finding even though the export wraps it onto another sub-material (#844, [D195]
+    blocking finding even though the export wraps it onto another sub-material (#844, [D196]
     2026-11-04: the face gets another material in the delivery). Fail-closed like max_submaterial_index."""
     if type(mid) is not int or not ids or [int(i) for i in ids].count(mid) != 1:
         return None

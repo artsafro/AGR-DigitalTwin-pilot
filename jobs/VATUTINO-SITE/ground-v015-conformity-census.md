@@ -1,7 +1,7 @@
 # Ground v015 strict-remesh: conformity census (NOT_DELIVERY)
 
 Session: Claude lane, 2026-10-21/22, after Codex pause. Base `59799c6` (pushed) + positive-template
-fallback in `src/dt_ai/geometry/ground_strips.py`. Input: CPU v009 masters
+fallback in `src/dt_ai/geometry/ground_strips.py` (module removed in #911, unused; see git history). Input: CPU v009 masters
 (`master-npm.json` sha256 `c26b7feb…26ca1a`, `master-vpm.json` `59310ac9…452eb4`), unchanged.
 Gates unchanged (strict `texel_ready`, 50k surface / 180k NPM, xView 0.002/0.005, 2.2 mm, 10 mm).
 Scripts: `tmp/claude-census-v001.py`, `tmp/claude-conforming-estimate-v001.py` (gitignored, copied
