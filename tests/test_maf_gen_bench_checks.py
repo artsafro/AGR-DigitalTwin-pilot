@@ -187,6 +187,65 @@ def test_unwritable_output_exits_2_and_writes_nothing(tmp_path, capsys):
     assert "error:" in capsys.readouterr().err
 
 
+def _hook_out_open(monkeypatch, out, hook):
+    """Path.open on `out` in exclusive mode goes through `hook(real_open, path, mode, ...)`."""
+    real_open = Path.open
+
+    def fake_open(self, mode="r", *a, **k):
+        if self == out and "x" in mode:
+            return hook(real_open, self, mode, *a, **k)
+        return real_open(self, mode, *a, **k)
+
+    monkeypatch.setattr(Path, "open", fake_open)
+
+
+class _FailingWriter:
+    """Writes 10 bytes, then fails like a full disk."""
+
+    def __init__(self, fh):
+        self.fh = fh
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        self.fh.close()
+
+    def write(self, data):
+        self.fh.write(data[:10])
+        self.fh.flush()
+        raise OSError(28, "No space left on device")
+
+
+def test_write_failing_after_open_leaves_no_partial_file(tmp_path, monkeypatch, capsys):
+    report, rb, out = make_case(tmp_path, DIMS)
+    _hook_out_open(monkeypatch, out, lambda real, p, *a, **k: _FailingWriter(real(p, *a, **k)))
+    assert run(report, rb, out) == 2
+    assert not out.exists() and "error:" in capsys.readouterr().err
+
+
+def test_output_created_between_check_and_open_is_kept(tmp_path, monkeypatch, capsys):
+    report, rb, out = make_case(tmp_path, DIMS)
+
+    def race(real, p, *a, **k):
+        p.write_bytes(b"someone else's file")
+        return real(p, *a, **k)
+
+    _hook_out_open(monkeypatch, out, race)
+    assert run(report, rb, out) == 2
+    assert out.read_bytes() == b"someone else's file" and "error:" in capsys.readouterr().err
+
+
+def test_fresh_process_missing_output_dir_exits_2_without_traceback(tmp_path):
+    report, rb, _ = make_case(tmp_path, DIMS)
+    nodir = tmp_path / "nodir" / "c.json"
+    proc = subprocess.run([sys.executable, str(TOOL), str(report), str(rb), str(nodir)],
+                          capture_output=True, text=True, cwd=ROOT)
+    assert proc.returncode == 2, proc.stderr
+    assert "error:" in proc.stderr and "Traceback" not in proc.stderr
+    assert not nodir.parent.exists()
+
+
 def test_fresh_process_exit_codes(tmp_path):
     ok_dir, bad_dir = tmp_path / "ok", tmp_path / "bad"
     ok_dir.mkdir(), bad_dir.mkdir()
