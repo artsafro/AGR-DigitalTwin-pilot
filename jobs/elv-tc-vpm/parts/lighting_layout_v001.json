@@ -1,0 +1,3083 @@
+{
+ "schema": "elv-tc-vpm.lighting_layout",
+ "version": "v001",
+ "status": "analysis (not built); technical QA and user acceptance open",
+ "source": {
+  "booklet_copy": "C:\\Users\\artsafro\\AppData\\Local\\Temp\\claude\\46a05a659c0dc81f\\271fa1bc-980a-4ebd-9013-c1343624538e\\scratchpad\\src\\booklet.pdf",
+  "sha256": "49C105275EA56F16F9F281B3586876818215D99544D82644A5AAB8E1CFBA9545",
+  "sheets": {
+   "33": "facades И-А, 1-12 + legend",
+   "34": "facades 12-1, А-И, 6-1 + legend",
+   "35": "plan L1 (point fixtures only)",
+   "36-39": "light renders",
+   "40": "equipment"
+  }
+ },
+ "coordinate_system": "building metres, ±0.000 = L1 floor; axes X 1=-8.4, 3=0, +8.4 per axis to 12=75.6; Y А=+2.566 ... И=-50.034",
+ "method": [
+  "vector extraction (PyMuPDF get_drawings) by exact legend fill colour; each 1.0 m Range LINE is a separate 9.36 pt rectangle",
+  "along-facade coordinate: piecewise-linear between axis-bubble centres (axis 2 not used as an anchor)",
+  "z: least-squares fit of the level marks (arrow tips) of each view",
+  "facade depth (3rd coordinate): pilot parts v002 FBX planes; point fixtures from plan sheet 35; north skew fitted to the sheet-35 TUBE points"
+ ],
+ "calibration": {
+  "E": {
+   "sheet": 33,
+   "view": "Фасад в осях И-А",
+   "h_m_per_pt": [
+    0.1057,
+    0.106
+   ],
+   "z_m_per_pt": 0.1058,
+   "levels": [
+    [
+     146.04,
+     13.92
+    ],
+    [
+     232.92,
+     4.72
+    ],
+    [
+     277.56,
+     0.0
+    ]
+   ],
+   "z_residuals_m": [
+    0.001,
+    -0.003,
+    0.002
+   ]
+  },
+  "S": {
+   "sheet": 33,
+   "view": "Фасад в осях 1-12",
+   "h_m_per_pt": [
+    0.1057,
+    0.106
+   ],
+   "z_m_per_pt": 0.1058,
+   "levels": [
+    [
+     482.04,
+     13.92
+    ],
+    [
+     569.04,
+     4.72
+    ],
+    [
+     613.56,
+     0.0
+    ]
+   ],
+   "z_residuals_m": [
+    -0.002,
+    0.005,
+    -0.003
+   ]
+  },
+  "N": {
+   "sheet": 34,
+   "view": "Фасад в осях 12-1",
+   "h_m_per_pt": [
+    0.1057,
+    0.1059
+   ],
+   "z_m_per_pt": 0.1059,
+   "levels": [
+    [
+     105.24,
+     15.42
+    ],
+    [
+     119.4,
+     13.92
+    ],
+    [
+     206.28,
+     4.72
+    ],
+    [
+     232.44,
+     1.95
+    ],
+    [
+     250.92,
+     0.0
+    ]
+   ],
+   "z_residuals_m": [
+    0.001,
+    0.0,
+    -0.002,
+    -0.003,
+    0.004
+   ]
+  },
+  "W": {
+   "sheet": 34,
+   "view": "Фасад в осях А-И",
+   "h_m_per_pt": [
+    0.1057,
+    0.106
+   ],
+   "z_m_per_pt": 0.1058,
+   "levels": [
+    [
+     468.72,
+     4.52
+    ],
+    [
+     511.44,
+     0.0
+    ]
+   ],
+   "z_residuals_m": [
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "north_skew_fit": {
+  "y_eq": "y = -1.1253 + 0.107773*x",
+  "angle_deg": 6.15,
+  "residuals_m": [
+   0.0,
+   -0.001,
+   0.001,
+   0.0,
+   -0.003,
+   0.001
+  ]
+ },
+ "fixture_types": {
+  "TUBE_M": {
+   "name": "TUBE M wall light",
+   "spec": "20 W, 220 V, 130 deg, 3000K",
+   "cct": "3000K",
+   "kind": "point",
+   "housing_mm": [
+    200,
+    80,
+    100
+   ],
+   "housing_note": "assumption: no dimensions on sheet 40; box from the product photo proportions (~2.5:1), glow on the top and bottom faces (up/down light)",
+   "legend_swatch_rgb": [
+    45,
+    108,
+    147
+   ],
+   "emissive_srgb": [
+    255,
+    180,
+    107
+   ],
+   "emissive_srgb_source": "blackbody 3000K (CIE 1931 2deg -> sRGB)"
+  },
+  "LINE_PURPLE": {
+   "name": "Range LINE 2019",
+   "spec": "12 W, 24 V, 1.0 m, 120 deg, PURPLE",
+   "cct": "PURPLE",
+   "kind": "line",
+   "housing_mm": [
+    1000,
+    30,
+    40
+   ],
+   "housing_note": "length 1.0 m per sheets 33/40; section 30x40 assumed (typical linear wall-washer, photo sheet 40), glow on the front (lens) face",
+   "legend_swatch_rgb": [
+    197,
+    128,
+    124
+   ],
+   "emissive_srgb": [
+    205,
+    6,
+    189
+   ],
+   "emissive_srgb_source": "render sheet 38 view 3, parapet glow sample"
+  },
+  "LINE_2700K": {
+   "name": "Range LINE 2019",
+   "spec": "12 W, 24 V, 1.0 m, 120 deg, 2700K",
+   "cct": "2700K",
+   "kind": "line",
+   "housing_mm": [
+    1000,
+    30,
+    40
+   ],
+   "housing_note": "as LINE_PURPLE",
+   "legend_swatch_rgb": [
+    103,
+    152,
+    112
+   ],
+   "emissive_srgb": [
+    255,
+    169,
+    87
+   ],
+   "emissive_srgb_source": "blackbody 2700K (CIE 1931 2deg -> sRGB)"
+  },
+  "LINE_2000K": {
+   "name": "Range LINE 2019",
+   "spec": "12 W, 24 V, 1.0 m, 120 deg, 2000K",
+   "cct": "2000K",
+   "kind": "line",
+   "housing_mm": [
+    1000,
+    30,
+    40
+   ],
+   "housing_note": "as LINE_PURPLE",
+   "legend_swatch_rgb": [
+    175,
+    218,
+    165
+   ],
+   "emissive_srgb": [
+    255,
+    137,
+    14
+   ],
+   "emissive_srgb_source": "blackbody 2000K (CIE 1931 2deg -> sRGB)"
+  },
+  "LINE_4000K": {
+   "name": "Range LINE 2019",
+   "spec": "12 W, 24 V, 1.0 m, 120 deg, 4000K",
+   "cct": "4000K",
+   "kind": "line",
+   "housing_mm": [
+    1000,
+    30,
+    40
+   ],
+   "housing_note": "as LINE_PURPLE",
+   "legend_swatch_rgb": [
+    74,
+    117,
+    97
+   ],
+   "emissive_srgb": [
+    255,
+    209,
+    163
+   ],
+   "emissive_srgb_source": "blackbody 4000K (CIE 1931 2deg -> sRGB)"
+  },
+  "FOCUS": {
+   "name": "Range FOCUS 6035",
+   "spec": "18 W 0.5 m / 12 W 0.3 m, 24 V, 10 deg, RGB",
+   "cct": "RGB",
+   "kind": "line",
+   "housing_mm": [
+    [
+     500,
+     60,
+     35
+    ],
+    [
+     300,
+     60,
+     35
+    ]
+   ],
+   "housing_note": "lengths 0.5/0.3 m per sheets 33/40; section 60x35 assumed from the model number 6035 and the photo (bar on two brackets)",
+   "legend_swatch_rgb": [
+    128,
+    0,
+    64
+   ],
+   "emissive_srgb": [
+    255,
+    244,
+    190
+   ],
+   "emissive_srgb_source": "RGB fixture; static colour from the render sheet 38 view 2 (warm white on the ribs)"
+  },
+  "PLAT_A4": {
+   "name": "PLAT-A4 projector",
+   "spec": "24 V, 3 deg, RGB; 10.5 W on sheet 33 vs 5 W on sheet 40",
+   "cct": "RGB",
+   "kind": "point",
+   "housing_mm": [
+    100,
+    100,
+    60
+   ],
+   "housing_note": "assumption: no dimensions; drawn pitch 0.30 m, square projector on a U-bracket (photo sheet 40)",
+   "legend_swatch_rgb": [
+    142,
+    112,
+    143
+   ],
+   "emissive_srgb": [
+    255,
+    244,
+    190
+   ],
+   "emissive_srgb_source": "RGB fixture; static colour from the render sheet 38 view 2 (warm white on the ribs)"
+  },
+  "DECO": {
+   "name": "DECO wall projector",
+   "spec": "30 W, 220 V, 30 deg, 4000K",
+   "cct": "4000K",
+   "kind": "point",
+   "housing_mm": [
+    220,
+    200,
+    140
+   ],
+   "housing_note": "assumption: no dimensions on sheet 40; wall-pack from the photo, glow on the bottom lens",
+   "legend_swatch_rgb": [
+    64,
+    128,
+    128
+   ],
+   "emissive_srgb": [
+    255,
+    209,
+    163
+   ],
+   "emissive_srgb_source": "blackbody 4000K (CIE 1931 2deg -> sRGB)"
+  }
+ },
+ "erm_rule": "ERM R = glow intensity only (reg p.37 §14, materials.md); glow colour goes to Diffuse of the emissive face; housings are OKS geometry; light sources (_Light.fbx) are made by the user later",
+ "fixtures": [
+  {
+   "id": "L001",
+   "type": "LINE_4000K",
+   "facade": "east",
+   "sheet": 33,
+   "view": "Фасад в осях И-А",
+   "kind": "line",
+   "start": [
+    79.03,
+    -50.74,
+    13.957
+   ],
+   "end": [
+    79.03,
+    -42.822,
+    13.957
+   ],
+   "mount_z": 13.957,
+   "drawn_length_m": 7.919,
+   "plane_note": "E upper face x 79.03 (pilot v002)",
+   "page_bbox": [
+    235.68,
+    144.6,
+    310.56,
+    146.76
+   ],
+   "count": 8,
+   "nominal_length_m": 8.0
+  },
+  {
+   "id": "L002",
+   "type": "LINE_4000K",
+   "facade": "east",
+   "sheet": 33,
+   "view": "Фасад в осях И-А",
+   "kind": "line",
+   "start": [
+    79.03,
+    -4.57,
+    13.976
+   ],
+   "end": [
+    79.03,
+    3.338,
+    13.976
+   ],
+   "mount_z": 13.976,
+   "drawn_length_m": 7.908,
+   "plane_note": "E upper face x 79.03 (pilot v002)",
+   "page_bbox": [
+    672.0,
+    144.36,
+    746.76,
+    146.64
+   ],
+   "count": 8,
+   "nominal_length_m": 8.0
+  },
+  {
+   "id": "L003",
+   "type": "LINE_4000K",
+   "facade": "east",
+   "sheet": 33,
+   "view": "Фасад в осях И-А",
+   "kind": "line",
+   "start": [
+    79.03,
+    -50.74,
+    4.717
+   ],
+   "end": [
+    79.03,
+    -42.822,
+    4.717
+   ],
+   "mount_z": 4.717,
+   "drawn_length_m": 7.919,
+   "plane_note": "E upper face x 79.03 (pilot v002)",
+   "page_bbox": [
+    235.68,
+    231.84,
+    310.56,
+    234.12
+   ],
+   "count": 8,
+   "nominal_length_m": 8.0
+  },
+  {
+   "id": "L004",
+   "type": "LINE_4000K",
+   "facade": "east",
+   "sheet": 33,
+   "view": "Фасад в осях И-А",
+   "kind": "line",
+   "start": [
+    79.03,
+    -4.57,
+    4.717
+   ],
+   "end": [
+    79.03,
+    3.338,
+    4.717
+   ],
+   "mount_z": 4.717,
+   "drawn_length_m": 7.908,
+   "plane_note": "E upper face x 79.03 (pilot v002)",
+   "page_bbox": [
+    672.0,
+    231.84,
+    746.76,
+    234.12
+   ],
+   "count": 8,
+   "nominal_length_m": 8.0
+  },
+  {
+   "id": "L005",
+   "type": "FOCUS",
+   "facade": "east",
+   "sheet": 33,
+   "view": "Фасад в осях И-А",
+   "kind": "row",
+   "start": [
+    79.03,
+    -42.644,
+    13.779
+   ],
+   "end": [
+    79.03,
+    -31.691,
+    13.779
+   ],
+   "mount_z": 13.779,
+   "drawn_length_m": 10.952,
+   "plane_note": "E upper face x 79.03 (pilot v002)",
+   "page_bbox": [
+    312.24,
+    145.68,
+    415.68,
+    149.04
+   ],
+   "count": 19,
+   "count_0_5m": 9,
+   "count_0_3m": 10,
+   "nominal_length_m": 7.5,
+   "pieces": [
+    [
+     -42.644,
+     -42.338,
+     0.3
+    ],
+    [
+     -42.338,
+     -41.842,
+     0.5
+    ],
+    [
+     -41.461,
+     -41.156,
+     0.3
+    ],
+    [
+     -41.156,
+     -40.66,
+     0.5
+    ],
+    [
+     -40.265,
+     -39.973,
+     0.3
+    ],
+    [
+     -39.973,
+     -39.477,
+     0.5
+    ],
+    [
+     -39.082,
+     -38.79,
+     0.3
+    ],
+    [
+     -38.79,
+     -38.294,
+     0.5
+    ],
+    [
+     -37.899,
+     -37.594,
+     0.3
+    ],
+    [
+     -37.594,
+     -37.098,
+     0.5
+    ],
+    [
+     -36.717,
+     -36.411,
+     0.3
+    ],
+    [
+     -36.411,
+     -35.916,
+     0.5
+    ],
+    [
+     -35.523,
+     -35.231,
+     0.3
+    ],
+    [
+     -35.231,
+     -34.736,
+     0.5
+    ],
+    [
+     -34.356,
+     -34.051,
+     0.3
+    ],
+    [
+     -34.051,
+     -33.557,
+     0.5
+    ],
+    [
+     -33.163,
+     -32.859,
+     0.3
+    ],
+    [
+     -32.859,
+     -32.364,
+     0.5
+    ],
+    [
+     -31.983,
+     -31.691,
+     0.3
+    ]
+   ]
+  },
+  {
+   "id": "L006",
+   "type": "FOCUS",
+   "facade": "east",
+   "sheet": 33,
+   "view": "Фасад в осях И-А",
+   "kind": "row",
+   "start": [
+    79.03,
+    -15.739,
+    13.773
+   ],
+   "end": [
+    79.03,
+    -4.799,
+    13.773
+   ],
+   "mount_z": 13.773,
+   "drawn_length_m": 10.94,
+   "plane_note": "E upper face x 79.03 (pilot v002)",
+   "page_bbox": [
+    566.4,
+    145.68,
+    669.84,
+    149.16
+   ],
+   "count": 19,
+   "count_0_5m": 9,
+   "count_0_3m": 10,
+   "nominal_length_m": 7.5,
+   "pieces": [
+    [
+     -15.739,
+     -15.434,
+     0.3
+    ],
+    [
+     -15.053,
+     -14.558,
+     0.5
+    ],
+    [
+     -14.558,
+     -14.266,
+     0.3
+    ],
+    [
+     -13.873,
+     -13.378,
+     0.5
+    ],
+    [
+     -13.378,
+     -13.073,
+     0.3
+    ],
+    [
+     -12.692,
+     -12.197,
+     0.5
+    ],
+    [
+     -12.197,
+     -11.892,
+     0.3
+    ],
+    [
+     -11.499,
+     -11.004,
+     0.5
+    ],
+    [
+     -11.004,
+     -10.712,
+     0.3
+    ],
+    [
+     -10.331,
+     -9.823,
+     0.5
+    ],
+    [
+     -9.823,
+     -9.532,
+     0.3
+    ],
+    [
+     -9.138,
+     -8.643,
+     0.5
+    ],
+    [
+     -8.643,
+     -8.339,
+     0.3
+    ],
+    [
+     -7.958,
+     -7.463,
+     0.5
+    ],
+    [
+     -7.463,
+     -7.159,
+     0.3
+    ],
+    [
+     -6.766,
+     -6.271,
+     0.5
+    ],
+    [
+     -6.271,
+     -5.979,
+     0.3
+    ],
+    [
+     -5.598,
+     -5.103,
+     0.5
+    ],
+    [
+     -5.103,
+     -4.799,
+     0.3
+    ]
+   ]
+  },
+  {
+   "id": "L007",
+   "type": "FOCUS",
+   "facade": "east",
+   "sheet": 33,
+   "view": "Фасад в осях И-А",
+   "kind": "row",
+   "start": [
+    79.03,
+    -42.644,
+    4.856
+   ],
+   "end": [
+    79.03,
+    -31.691,
+    4.856
+   ],
+   "mount_z": 4.856,
+   "drawn_length_m": 10.952,
+   "plane_note": "E upper face x 79.03 (pilot v002)",
+   "page_bbox": [
+    312.24,
+    229.92,
+    415.68,
+    233.4
+   ],
+   "count": 19,
+   "count_0_5m": 9,
+   "count_0_3m": 10,
+   "nominal_length_m": 7.5,
+   "pieces": [
+    [
+     -42.644,
+     -42.338,
+     0.3
+    ],
+    [
+     -42.338,
+     -41.842,
+     0.5
+    ],
+    [
+     -41.461,
+     -41.156,
+     0.3
+    ],
+    [
+     -41.156,
+     -40.66,
+     0.5
+    ],
+    [
+     -40.265,
+     -39.973,
+     0.3
+    ],
+    [
+     -39.973,
+     -39.477,
+     0.5
+    ],
+    [
+     -39.082,
+     -38.79,
+     0.3
+    ],
+    [
+     -38.79,
+     -38.294,
+     0.5
+    ],
+    [
+     -37.899,
+     -37.594,
+     0.3
+    ],
+    [
+     -37.594,
+     -37.098,
+     0.5
+    ],
+    [
+     -36.717,
+     -36.411,
+     0.3
+    ],
+    [
+     -36.411,
+     -35.916,
+     0.5
+    ],
+    [
+     -35.523,
+     -35.231,
+     0.3
+    ],
+    [
+     -35.231,
+     -34.736,
+     0.5
+    ],
+    [
+     -34.356,
+     -34.051,
+     0.3
+    ],
+    [
+     -34.051,
+     -33.557,
+     0.5
+    ],
+    [
+     -33.163,
+     -32.859,
+     0.3
+    ],
+    [
+     -32.859,
+     -32.364,
+     0.5
+    ],
+    [
+     -31.983,
+     -31.691,
+     0.3
+    ]
+   ]
+  },
+  {
+   "id": "L008",
+   "type": "FOCUS",
+   "facade": "east",
+   "sheet": 33,
+   "view": "Фасад в осях И-А",
+   "kind": "row",
+   "start": [
+    79.03,
+    -15.739,
+    4.856
+   ],
+   "end": [
+    79.03,
+    -4.799,
+    4.856
+   ],
+   "mount_z": 4.856,
+   "drawn_length_m": 10.94,
+   "plane_note": "E upper face x 79.03 (pilot v002)",
+   "page_bbox": [
+    566.4,
+    229.92,
+    669.84,
+    233.4
+   ],
+   "count": 19,
+   "count_0_5m": 9,
+   "count_0_3m": 10,
+   "nominal_length_m": 7.5,
+   "pieces": [
+    [
+     -15.739,
+     -15.434,
+     0.3
+    ],
+    [
+     -15.053,
+     -14.558,
+     0.5
+    ],
+    [
+     -14.558,
+     -14.266,
+     0.3
+    ],
+    [
+     -13.873,
+     -13.378,
+     0.5
+    ],
+    [
+     -13.378,
+     -13.073,
+     0.3
+    ],
+    [
+     -12.692,
+     -12.197,
+     0.5
+    ],
+    [
+     -12.197,
+     -11.892,
+     0.3
+    ],
+    [
+     -11.499,
+     -11.004,
+     0.5
+    ],
+    [
+     -11.004,
+     -10.712,
+     0.3
+    ],
+    [
+     -10.331,
+     -9.823,
+     0.5
+    ],
+    [
+     -9.823,
+     -9.532,
+     0.3
+    ],
+    [
+     -9.138,
+     -8.643,
+     0.5
+    ],
+    [
+     -8.643,
+     -8.339,
+     0.3
+    ],
+    [
+     -7.958,
+     -7.463,
+     0.5
+    ],
+    [
+     -7.463,
+     -7.159,
+     0.3
+    ],
+    [
+     -6.766,
+     -6.271,
+     0.5
+    ],
+    [
+     -6.271,
+     -5.979,
+     0.3
+    ],
+    [
+     -5.598,
+     -5.103,
+     0.5
+    ],
+    [
+     -5.103,
+     -4.799,
+     0.3
+    ]
+   ]
+  },
+  {
+   "id": "L009",
+   "type": "PLAT_A4",
+   "facade": "east",
+   "sheet": 33,
+   "view": "Фасад в осях И-А",
+   "kind": "row",
+   "start": [
+    79.03,
+    -31.349,
+    13.798
+   ],
+   "end": [
+    76.0,
+    -26.754,
+    13.798
+   ],
+   "mount_z": 13.798,
+   "drawn_length_m": 4.595,
+   "plane_note": "E upper face x 79.03 (pilot v002)",
+   "page_bbox": [
+    418.92,
+    146.04,
+    462.36,
+    148.32
+   ],
+   "count": 15,
+   "positions": [
+    [
+     79.03,
+     -31.203,
+     13.798
+    ],
+    [
+     79.03,
+     -30.892,
+     13.798
+    ],
+    [
+     79.03,
+     -30.588,
+     13.798
+    ],
+    [
+     79.0,
+     -30.277,
+     13.798
+    ],
+    [
+     78.98,
+     -29.979,
+     13.798
+    ],
+    [
+     78.927,
+     -29.662,
+     13.798
+    ],
+    [
+     78.844,
+     -29.363,
+     13.798
+    ],
+    [
+     78.72,
+     -29.046,
+     13.798
+    ],
+    [
+     78.563,
+     -28.748,
+     13.798
+    ],
+    [
+     78.345,
+     -28.431,
+     13.798
+    ],
+    [
+     78.078,
+     -28.133,
+     13.798
+    ],
+    [
+     77.698,
+     -27.815,
+     13.798
+    ],
+    [
+     77.174,
+     -27.517,
+     13.798
+    ],
+    [
+     76.0,
+     -27.199,
+     13.798
+    ],
+    [
+     76.0,
+     -26.9,
+     13.798
+    ]
+   ],
+   "pitch_m": 0.306
+  },
+  {
+   "id": "L010",
+   "type": "PLAT_A4",
+   "facade": "east",
+   "sheet": 33,
+   "view": "Фасад в осях И-А",
+   "kind": "row",
+   "start": [
+    76.0,
+    -20.603,
+    13.798
+   ],
+   "end": [
+    79.03,
+    -16.006,
+    13.798
+   ],
+   "mount_z": 13.798,
+   "drawn_length_m": 4.597,
+   "plane_note": "E centre bay x 76.00 (pilot v002)",
+   "page_bbox": [
+    520.44,
+    146.04,
+    563.88,
+    148.32
+   ],
+   "count": 15,
+   "positions": [
+    [
+     76.0,
+     -20.456,
+     13.798
+    ],
+    [
+     76.549,
+     -20.145,
+     13.798
+    ],
+    [
+     77.384,
+     -19.84,
+     13.798
+    ],
+    [
+     77.852,
+     -19.529,
+     13.798
+    ],
+    [
+     78.173,
+     -19.23,
+     13.798
+    ],
+    [
+     78.431,
+     -18.913,
+     13.798
+    ],
+    [
+     78.619,
+     -18.615,
+     13.798
+    ],
+    [
+     78.77,
+     -18.297,
+     13.798
+    ],
+    [
+     78.875,
+     -17.999,
+     13.798
+    ],
+    [
+     78.95,
+     -17.681,
+     13.798
+    ],
+    [
+     78.99,
+     -17.383,
+     13.798
+    ],
+    [
+     79.03,
+     -17.072,
+     13.798
+    ],
+    [
+     79.03,
+     -16.767,
+     13.798
+    ],
+    [
+     79.03,
+     -16.45,
+     13.798
+    ],
+    [
+     79.03,
+     -16.152,
+     13.798
+    ]
+   ],
+   "pitch_m": 0.306
+  },
+  {
+   "id": "L011",
+   "type": "PLAT_A4",
+   "facade": "east",
+   "sheet": 33,
+   "view": "Фасад в осях И-А",
+   "kind": "row",
+   "start": [
+    79.03,
+    -31.374,
+    4.818
+   ],
+   "end": [
+    76.0,
+    -26.767,
+    4.818
+   ],
+   "mount_z": 4.818,
+   "drawn_length_m": 4.608,
+   "plane_note": "E upper face x 79.03 (pilot v002)",
+   "page_bbox": [
+    418.68,
+    230.88,
+    462.24,
+    233.16
+   ],
+   "count": 15,
+   "positions": [
+    [
+     79.03,
+     -31.222,
+     4.818
+    ],
+    [
+     79.03,
+     -30.905,
+     4.818
+    ],
+    [
+     79.03,
+     -30.607,
+     4.818
+    ],
+    [
+     79.0,
+     -30.29,
+     4.818
+    ],
+    [
+     78.981,
+     -29.991,
+     4.818
+    ],
+    [
+     78.929,
+     -29.674,
+     4.818
+    ],
+    [
+     78.849,
+     -29.376,
+     4.818
+    ],
+    [
+     78.728,
+     -29.065,
+     4.818
+    ],
+    [
+     78.57,
+     -28.761,
+     4.818
+    ],
+    [
+     78.355,
+     -28.444,
+     4.818
+    ],
+    [
+     78.091,
+     -28.145,
+     4.818
+    ],
+    [
+     77.725,
+     -27.834,
+     4.818
+    ],
+    [
+     77.202,
+     -27.529,
+     4.818
+    ],
+    [
+     76.0,
+     -27.218,
+     4.818
+    ],
+    [
+     76.0,
+     -26.919,
+     4.818
+    ]
+   ],
+   "pitch_m": 0.307
+  },
+  {
+   "id": "L012",
+   "type": "PLAT_A4",
+   "facade": "east",
+   "sheet": 33,
+   "view": "Фасад в осях И-А",
+   "kind": "row",
+   "start": [
+    76.0,
+    -20.603,
+    4.818
+   ],
+   "end": [
+    79.03,
+    -16.006,
+    4.818
+   ],
+   "mount_z": 4.818,
+   "drawn_length_m": 4.597,
+   "plane_note": "E centre bay x 76.00 (pilot v002)",
+   "page_bbox": [
+    520.44,
+    230.88,
+    563.88,
+    233.16
+   ],
+   "count": 15,
+   "positions": [
+    [
+     76.0,
+     -20.456,
+     4.818
+    ],
+    [
+     76.549,
+     -20.145,
+     4.818
+    ],
+    [
+     77.384,
+     -19.84,
+     4.818
+    ],
+    [
+     77.852,
+     -19.529,
+     4.818
+    ],
+    [
+     78.173,
+     -19.23,
+     4.818
+    ],
+    [
+     78.431,
+     -18.913,
+     4.818
+    ],
+    [
+     78.619,
+     -18.615,
+     4.818
+    ],
+    [
+     78.77,
+     -18.297,
+     4.818
+    ],
+    [
+     78.875,
+     -17.999,
+     4.818
+    ],
+    [
+     78.95,
+     -17.681,
+     4.818
+    ],
+    [
+     78.99,
+     -17.383,
+     4.818
+    ],
+    [
+     79.03,
+     -17.072,
+     4.818
+    ],
+    [
+     79.03,
+     -16.767,
+     4.818
+    ],
+    [
+     79.03,
+     -16.45,
+     4.818
+    ],
+    [
+     79.03,
+     -16.152,
+     4.818
+    ]
+   ],
+   "pitch_m": 0.306
+  },
+  {
+   "id": "L013",
+   "type": "LINE_2000K",
+   "facade": "south",
+   "sheet": 33,
+   "view": "Фасад в осях 1-12",
+   "kind": "line",
+   "start": [
+    0.278,
+    -50.66,
+    4.696
+   ],
+   "end": [
+    41.872,
+    -50.76,
+    4.696
+   ],
+   "mount_z": 4.696,
+   "drawn_length_m": 41.594,
+   "plane_note": "S metal face y -50.66 (pilot v002)",
+   "page_bbox": [
+    196.8,
+    568.08,
+    589.8,
+    570.36
+   ],
+   "count": 42,
+   "nominal_length_m": 42.0
+  },
+  {
+   "id": "L014",
+   "type": "LINE_2700K",
+   "facade": "south",
+   "sheet": 33,
+   "view": "Фасад в осях 1-12",
+   "kind": "line",
+   "start": [
+    41.872,
+    -50.76,
+    13.915
+   ],
+   "end": [
+    79.493,
+    -50.76,
+    13.915
+   ],
+   "mount_z": 13.915,
+   "drawn_length_m": 37.62,
+   "plane_note": "S upper volume y -50.76 (pilot v002)",
+   "page_bbox": [
+    589.8,
+    480.96,
+    945.24,
+    483.24
+   ],
+   "count": 38,
+   "nominal_length_m": 38.0
+  },
+  {
+   "id": "L015",
+   "type": "LINE_4000K",
+   "facade": "south",
+   "sheet": 33,
+   "view": "Фасад в осях 1-12",
+   "kind": "line",
+   "start": [
+    41.872,
+    -50.76,
+    4.696
+   ],
+   "end": [
+    79.493,
+    -50.76,
+    4.696
+   ],
+   "mount_z": 4.696,
+   "drawn_length_m": 37.62,
+   "plane_note": "S upper volume y -50.76 (pilot v002)",
+   "page_bbox": [
+    589.8,
+    568.08,
+    945.24,
+    570.36
+   ],
+   "count": 38,
+   "nominal_length_m": 38.0
+  },
+  {
+   "id": "L016",
+   "type": "LINE_4000K",
+   "facade": "south",
+   "sheet": 33,
+   "view": "Фасад в осях 1-12",
+   "kind": "line",
+   "start": [
+    -1.879,
+    -19.77,
+    3.083
+   ],
+   "end": [
+    -0.889,
+    -19.77,
+    3.083
+   ],
+   "mount_z": 3.083,
+   "drawn_length_m": 0.99,
+   "plane_note": "west annex south face at axis Г, y -19.77 estimated from the sheet-35 wall hatch (snap to FBX)",
+   "page_bbox": [
+    176.4,
+    583.32,
+    185.76,
+    585.6
+   ],
+   "count": 1,
+   "nominal_length_m": 1.0
+  },
+  {
+   "id": "L017",
+   "type": "LINE_4000K",
+   "facade": "south",
+   "sheet": 33,
+   "view": "Фасад в осях 1-12",
+   "kind": "line",
+   "start": [
+    10.439,
+    -50.66,
+    3.083
+   ],
+   "end": [
+    17.37,
+    -50.66,
+    3.083
+   ],
+   "mount_z": 3.083,
+   "drawn_length_m": 6.931,
+   "plane_note": "S metal face y -50.66 (pilot v002)",
+   "page_bbox": [
+    292.8,
+    583.32,
+    358.2,
+    585.6
+   ],
+   "count": 7,
+   "nominal_length_m": 7.0
+  },
+  {
+   "id": "L018",
+   "type": "LINE_4000K",
+   "facade": "south",
+   "sheet": 33,
+   "view": "Фасад в осях 1-12",
+   "kind": "line",
+   "start": [
+    25.174,
+    -50.66,
+    3.083
+   ],
+   "end": [
+    29.126,
+    -50.66,
+    3.083
+   ],
+   "mount_z": 3.083,
+   "drawn_length_m": 3.952,
+   "plane_note": "S metal face y -50.66 (pilot v002)",
+   "page_bbox": [
+    432.0,
+    583.32,
+    469.32,
+    585.6
+   ],
+   "count": 4,
+   "nominal_length_m": 4.0
+  },
+  {
+   "id": "L019",
+   "type": "LINE_4000K",
+   "facade": "south",
+   "sheet": 33,
+   "view": "Фасад в осях 1-12",
+   "kind": "line",
+   "start": [
+    33.599,
+    -50.66,
+    3.083
+   ],
+   "end": [
+    36.568,
+    -50.66,
+    3.083
+   ],
+   "mount_z": 3.083,
+   "drawn_length_m": 2.969,
+   "plane_note": "S metal face y -50.66 (pilot v002)",
+   "page_bbox": [
+    511.56,
+    583.32,
+    539.64,
+    585.6
+   ],
+   "count": 3,
+   "nominal_length_m": 3.0
+  },
+  {
+   "id": "L020",
+   "type": "LINE_4000K",
+   "facade": "south",
+   "sheet": 33,
+   "view": "Фасад в осях 1-12",
+   "kind": "line",
+   "start": [
+    53.193,
+    -50.66,
+    3.083
+   ],
+   "end": [
+    63.093,
+    -50.66,
+    3.083
+   ],
+   "mount_z": 3.083,
+   "drawn_length_m": 9.9,
+   "plane_note": "S metal face y -50.66 (pilot v002)",
+   "page_bbox": [
+    696.72,
+    583.32,
+    790.32,
+    585.6
+   ],
+   "count": 10,
+   "nominal_length_m": 10.0
+  },
+  {
+   "id": "L021",
+   "type": "LINE_PURPLE",
+   "facade": "south",
+   "sheet": 33,
+   "view": "Фасад в осях 1-12",
+   "kind": "line",
+   "start": [
+    0.291,
+    -50.66,
+    13.915
+   ],
+   "end": [
+    41.872,
+    -50.76,
+    13.915
+   ],
+   "mount_z": 13.915,
+   "drawn_length_m": 41.581,
+   "plane_note": "S metal face y -50.66 (pilot v002)",
+   "page_bbox": [
+    196.92,
+    480.96,
+    589.8,
+    483.24
+   ],
+   "count": 42,
+   "nominal_length_m": 42.0
+  },
+  {
+   "id": "L022",
+   "type": "LINE_2700K",
+   "facade": "north",
+   "sheet": 34,
+   "view": "Фасад в осях 12-1",
+   "kind": "line",
+   "start": [
+    78.4,
+    3.29,
+    13.812
+   ],
+   "end": [
+    59.596,
+    3.29,
+    13.812
+   ],
+   "mount_z": 13.812,
+   "drawn_length_m": 18.803,
+   "plane_note": "N upper volume y 3.29 (pilot v002)",
+   "page_bbox": [
+    213.48,
+    119.28,
+    391.2,
+    121.56
+   ],
+   "count": 19,
+   "nominal_length_m": 19.0
+  },
+  {
+   "id": "L023",
+   "type": "LINE_4000K",
+   "facade": "north",
+   "sheet": 34,
+   "view": "Фасад в осях 12-1",
+   "kind": "line",
+   "start": [
+    78.4,
+    3.29,
+    4.716
+   ],
+   "end": [
+    59.596,
+    3.29,
+    4.716
+   ],
+   "mount_z": 4.716,
+   "drawn_length_m": 18.803,
+   "plane_note": "N upper volume y 3.29 (pilot v002)",
+   "page_bbox": [
+    213.48,
+    205.2,
+    391.2,
+    207.48
+   ],
+   "count": 19,
+   "nominal_length_m": 19.0
+  },
+  {
+   "id": "L024",
+   "type": "LINE_PURPLE",
+   "facade": "north",
+   "sheet": 34,
+   "view": "Фасад в осях 12-1",
+   "kind": "line",
+   "start": [
+    59.482,
+    3.29,
+    15.476
+   ],
+   "end": [
+    41.645,
+    3.19,
+    15.476
+   ],
+   "mount_z": 15.476,
+   "drawn_length_m": 17.837,
+   "plane_note": "N upper volume y 3.29 (pilot v002)",
+   "page_bbox": [
+    392.28,
+    103.56,
+    560.76,
+    105.84
+   ],
+   "count": 18,
+   "nominal_length_m": 18.0
+  },
+  {
+   "id": "L025",
+   "type": "LINE_PURPLE",
+   "facade": "north",
+   "sheet": 34,
+   "view": "Фасад в осях 12-1",
+   "kind": "line",
+   "start": [
+    41.645,
+    3.19,
+    13.99
+   ],
+   "end": [
+    -8.83,
+    -2.077,
+    13.99
+   ],
+   "mount_z": 13.99,
+   "drawn_length_m": 50.475,
+   "plane_note": "N metal face y 3.19 (pilot v002)",
+   "page_bbox": [
+    560.76,
+    117.6,
+    1037.76,
+    119.88
+   ],
+   "count": 51,
+   "nominal_length_m": 51.0
+  },
+  {
+   "id": "P026",
+   "type": "TUBE_M",
+   "facade": "east",
+   "sheet": 33,
+   "view": "Фасад в осях И-А",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 1.96,
+   "page_bbox": [
+    417.12,
+    257.88,
+    420.48,
+    260.16
+   ],
+   "plan_xy_sheet35": [
+    76.475,
+    -31.369
+   ],
+   "plan_match_delta_m": 0.007,
+   "position": [
+    76.475,
+    -31.362,
+    1.96
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P027",
+   "type": "TUBE_M",
+   "facade": "east",
+   "sheet": 33,
+   "view": "Фасад в осях И-А",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 1.96,
+   "page_bbox": [
+    443.64,
+    257.88,
+    447.0,
+    260.16
+   ],
+   "plan_xy_sheet35": [
+    76.272,
+    -28.51
+   ],
+   "plan_match_delta_m": 0.048,
+   "position": [
+    76.272,
+    -28.558,
+    1.96
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P028",
+   "type": "TUBE_M",
+   "facade": "east",
+   "sheet": 33,
+   "view": "Фасад в осях И-А",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 1.96,
+   "page_bbox": [
+    535.2,
+    257.88,
+    538.56,
+    260.16
+   ],
+   "plan_xy_sheet35": [
+    76.272,
+    -18.928
+   ],
+   "plan_match_delta_m": 0.065,
+   "position": [
+    76.272,
+    -18.862,
+    1.96
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P029",
+   "type": "TUBE_M",
+   "facade": "east",
+   "sheet": 33,
+   "view": "Фасад в осях И-А",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 1.96,
+   "page_bbox": [
+    561.72,
+    257.88,
+    565.08,
+    260.16
+   ],
+   "plan_xy_sheet35": [
+    76.475,
+    -16.068
+   ],
+   "plan_match_delta_m": 0.012,
+   "position": [
+    76.475,
+    -16.056,
+    1.96
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P030",
+   "type": "TUBE_M",
+   "facade": "east",
+   "sheet": 33,
+   "view": "Фасад в осях И-А",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 1.96,
+   "page_bbox": [
+    523.44,
+    257.88,
+    526.8,
+    260.16
+   ],
+   "plan_xy_sheet35": [
+    74.111,
+    -20.394
+   ],
+   "plan_match_delta_m": 0.287,
+   "position": [
+    74.111,
+    -20.107,
+    1.96
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P031",
+   "type": "TUBE_M",
+   "facade": "east",
+   "sheet": 33,
+   "view": "Фасад в осях И-А",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 1.96,
+   "page_bbox": [
+    455.4,
+    257.88,
+    458.88,
+    260.16
+   ],
+   "plan_xy_sheet35": [
+    74.105,
+    -27.05
+   ],
+   "plan_match_delta_m": 0.257,
+   "position": [
+    74.105,
+    -27.307,
+    1.96
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P032",
+   "type": "TUBE_M",
+   "facade": "east",
+   "sheet": 33,
+   "view": "Фасад в осях И-А",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 1.96,
+   "page_bbox": [
+    247.08,
+    257.88,
+    250.44,
+    260.16
+   ],
+   "plan_xy_sheet35": [
+    76.475,
+    -48.061
+   ],
+   "plan_match_delta_m": 1.297,
+   "position": [
+    76.475,
+    -49.358,
+    1.96
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P033",
+   "type": "TUBE_M",
+   "facade": "east",
+   "sheet": 33,
+   "view": "Фасад в осях И-А",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 1.96,
+   "page_bbox": [
+    731.76,
+    257.88,
+    735.12,
+    260.16
+   ],
+   "plan_xy_sheet35": [
+    76.475,
+    0.629
+   ],
+   "plan_match_delta_m": 1.3,
+   "position": [
+    76.475,
+    1.929,
+    1.96
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P034",
+   "type": "TUBE_M",
+   "facade": "south",
+   "sheet": 33,
+   "view": "Фасад в осях 1-12",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 2.004,
+   "page_bbox": [
+    821.16,
+    593.52,
+    824.64,
+    595.8
+   ],
+   "plan_xy_sheet35": [
+    66.506,
+    -50.896
+   ],
+   "plan_match_delta_m": 0.032,
+   "position": [
+    66.538,
+    -50.896,
+    2.004
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P035",
+   "type": "TUBE_M",
+   "facade": "south",
+   "sheet": 33,
+   "view": "Фасад в осях 1-12",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 2.004,
+   "page_bbox": [
+    859.92,
+    593.52,
+    863.4,
+    595.8
+   ],
+   "plan_xy_sheet35": [
+    70.61,
+    -50.896
+   ],
+   "plan_match_delta_m": 0.032,
+   "position": [
+    70.642,
+    -50.896,
+    2.004
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P036",
+   "type": "TUBE_M",
+   "facade": "south",
+   "sheet": 33,
+   "view": "Фасад в осях 1-12",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 2.004,
+   "page_bbox": [
+    659.28,
+    593.52,
+    662.64,
+    595.8
+   ],
+   "plan_xy_sheet35": [
+    49.376,
+    -50.896
+   ],
+   "plan_match_delta_m": 0.032,
+   "position": [
+    49.408,
+    -50.896,
+    2.004
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P037",
+   "type": "TUBE_M",
+   "facade": "south",
+   "sheet": 33,
+   "view": "Фасад в осях 1-12",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 2.004,
+   "page_bbox": [
+    616.68,
+    593.52,
+    620.16,
+    595.8
+   ],
+   "plan_xy_sheet35": [
+    44.872,
+    -50.896
+   ],
+   "plan_match_delta_m": 0.032,
+   "position": [
+    44.903,
+    -50.896,
+    2.004
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P038",
+   "type": "TUBE_M",
+   "facade": "south",
+   "sheet": 33,
+   "view": "Фасад в осях 1-12",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 2.004,
+   "page_bbox": [
+    544.44,
+    593.52,
+    547.8,
+    595.8
+   ],
+   "plan_xy_sheet35": [
+    37.235,
+    -50.845
+   ],
+   "plan_match_delta_m": 0.019,
+   "position": [
+    37.254,
+    -50.845,
+    2.004
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P039",
+   "type": "TUBE_M",
+   "facade": "south",
+   "sheet": 33,
+   "view": "Фасад в осях 1-12",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 1.991,
+   "page_bbox": [
+    493.8,
+    593.64,
+    497.16,
+    595.92
+   ],
+   "plan_xy_sheet35": [
+    31.896,
+    -50.845
+   ],
+   "plan_match_delta_m": 0.0,
+   "position": [
+    31.896,
+    -50.845,
+    1.991
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P040",
+   "type": "TUBE_M",
+   "facade": "south",
+   "sheet": 33,
+   "view": "Фасад в осях 1-12",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 1.991,
+   "page_bbox": [
+    397.2,
+    593.64,
+    400.56,
+    595.92
+   ],
+   "plan_xy_sheet35": [
+    21.647,
+    -50.845
+   ],
+   "plan_match_delta_m": 0.025,
+   "position": [
+    21.672,
+    -50.845,
+    1.991
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P041",
+   "type": "TUBE_M",
+   "facade": "south",
+   "sheet": 33,
+   "view": "Фасад в осях 1-12",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 1.991,
+   "page_bbox": [
+    264.24,
+    593.64,
+    267.72,
+    595.92
+   ],
+   "plan_xy_sheet35": [
+    7.566,
+    -50.845
+   ],
+   "plan_match_delta_m": 0.032,
+   "position": [
+    7.598,
+    -50.845,
+    1.991
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P042",
+   "type": "TUBE_M",
+   "facade": "south",
+   "sheet": 33,
+   "view": "Фасад в осях 1-12",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 1.991,
+   "page_bbox": [
+    214.8,
+    593.64,
+    218.16,
+    595.92
+   ],
+   "plan_xy_sheet35": [
+    2.367,
+    -50.845
+   ],
+   "plan_match_delta_m": 0.006,
+   "position": [
+    2.361,
+    -50.845,
+    1.991
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P043",
+   "type": "DECO",
+   "facade": "south",
+   "sheet": 33,
+   "view": "Фасад в осях 1-12",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 4.124,
+   "page_bbox": [
+    167.88,
+    572.64,
+    171.84,
+    576.6
+   ],
+   "plan_xy_sheet35": null,
+   "position": [
+    -2.571,
+    -19.77,
+    4.124
+   ],
+   "plane_note": "west annex south face at axis Г, y -19.77 estimated from the sheet-35 wall hatch (snap to FBX); NOT on plan sheet 35"
+  },
+  {
+   "id": "P044",
+   "type": "TUBE_M",
+   "facade": "north",
+   "sheet": 34,
+   "view": "Фасад в осях 12-1",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 1.927,
+   "page_bbox": [
+    285.36,
+    231.6,
+    288.72,
+    233.76
+   ],
+   "plan_xy_sheet35": [
+    70.648,
+    3.494
+   ],
+   "plan_match_delta_m": 0.026,
+   "position": [
+    70.622,
+    3.494,
+    1.927
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P045",
+   "type": "TUBE_M",
+   "facade": "north",
+   "sheet": 34,
+   "view": "Фасад в осях 12-1",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 1.927,
+   "page_bbox": [
+    327.84,
+    231.6,
+    331.2,
+    233.76
+   ],
+   "plan_xy_sheet35": [
+    66.145,
+    3.494
+   ],
+   "plan_match_delta_m": 0.016,
+   "position": [
+    66.129,
+    3.494,
+    1.927
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P046",
+   "type": "TUBE_M",
+   "facade": "north",
+   "sheet": 34,
+   "view": "Фасад в осях 12-1",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 1.927,
+   "page_bbox": [
+    356.16,
+    231.6,
+    359.52,
+    233.76
+   ],
+   "plan_xy_sheet35": [
+    63.15,
+    3.494
+   ],
+   "plan_match_delta_m": 0.021,
+   "position": [
+    63.129,
+    3.494,
+    1.927
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P047",
+   "type": "TUBE_M",
+   "facade": "north",
+   "sheet": 34,
+   "view": "Фасад в осях 12-1",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 1.927,
+   "page_bbox": [
+    449.64,
+    231.6,
+    453.0,
+    233.76
+   ],
+   "plan_xy_sheet35": [
+    53.256,
+    3.494
+   ],
+   "plan_match_delta_m": 0.023,
+   "position": [
+    53.233,
+    3.494,
+    1.927
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P048",
+   "type": "TUBE_M",
+   "facade": "north",
+   "sheet": 34,
+   "view": "Фасад в осях 12-1",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 1.927,
+   "page_bbox": [
+    418.44,
+    231.6,
+    421.92,
+    233.76
+   ],
+   "plan_xy_sheet35": [
+    56.652,
+    3.494
+   ],
+   "plan_match_delta_m": 0.124,
+   "position": [
+    56.529,
+    3.494,
+    1.927
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P049",
+   "type": "TUBE_M",
+   "facade": "north",
+   "sheet": 34,
+   "view": "Фасад в осях 12-1",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 1.927,
+   "page_bbox": [
+    507.72,
+    231.6,
+    511.08,
+    233.76
+   ],
+   "plan_xy_sheet35": [
+    47.21,
+    3.399
+   ],
+   "plan_match_delta_m": 0.126,
+   "position": [
+    47.084,
+    3.399,
+    1.927
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P050",
+   "type": "TUBE_M",
+   "facade": "north",
+   "sheet": 34,
+   "view": "Фасад в осях 12-1",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 1.927,
+   "page_bbox": [
+    572.88,
+    231.6,
+    576.24,
+    233.76
+   ],
+   "plan_xy_sheet35": [
+    40.217,
+    3.209
+   ],
+   "plan_match_delta_m": 0.031,
+   "position": [
+    40.186,
+    3.209,
+    1.927
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P051",
+   "type": "TUBE_M",
+   "facade": "north",
+   "sheet": 34,
+   "view": "Фасад в осях 12-1",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 1.927,
+   "page_bbox": [
+    677.16,
+    231.6,
+    680.52,
+    233.76
+   ],
+   "plan_xy_sheet35": [
+    29.164,
+    2.017
+   ],
+   "plan_match_delta_m": 0.011,
+   "position": [
+    29.153,
+    2.017,
+    1.927
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P052",
+   "type": "TUBE_M",
+   "facade": "north",
+   "sheet": 34,
+   "view": "Фасад в осях 12-1",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 1.927,
+   "page_bbox": [
+    858.0,
+    231.6,
+    861.36,
+    233.76
+   ],
+   "plan_xy_sheet35": [
+    9.979,
+    -0.05
+   ],
+   "plan_match_delta_m": 0.043,
+   "position": [
+    10.022,
+    -0.05,
+    1.927
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P053",
+   "type": "TUBE_M",
+   "facade": "north",
+   "sheet": 34,
+   "view": "Фасад в осях 12-1",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 1.927,
+   "page_bbox": [
+    785.16,
+    231.6,
+    788.52,
+    233.76
+   ],
+   "plan_xy_sheet35": [
+    17.733,
+    0.787
+   ],
+   "plan_match_delta_m": 0.006,
+   "position": [
+    17.727,
+    0.787,
+    1.927
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P054",
+   "type": "TUBE_M",
+   "facade": "north",
+   "sheet": 34,
+   "view": "Фасад в осях 12-1",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 1.927,
+   "page_bbox": [
+    919.32,
+    231.6,
+    922.8,
+    233.76
+   ],
+   "plan_xy_sheet35": [
+    3.535,
+    -0.747
+   ],
+   "plan_match_delta_m": 0.009,
+   "position": [
+    3.525,
+    -0.747,
+    1.927
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P055",
+   "type": "TUBE_M",
+   "facade": "north",
+   "sheet": 34,
+   "view": "Фасад в осях 12-1",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 1.927,
+   "page_bbox": [
+    992.04,
+    231.6,
+    995.52,
+    233.76
+   ],
+   "plan_xy_sheet35": [
+    -4.151,
+    -1.571
+   ],
+   "plan_match_delta_m": 0.022,
+   "position": [
+    -4.173,
+    -1.571,
+    1.927
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P056",
+   "type": "DECO",
+   "facade": "west",
+   "sheet": 34,
+   "view": "Фасад в осях А-И",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 4.33,
+   "page_bbox": [
+    160.8,
+    468.6,
+    164.76,
+    472.44
+   ],
+   "plan_xy_sheet35": [
+    -8.999,
+    -5.781
+   ],
+   "plan_match_delta_m": 0.046,
+   "position": [
+    -8.999,
+    -5.828,
+    4.33
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P057",
+   "type": "DECO",
+   "facade": "west",
+   "sheet": 34,
+   "view": "Фасад в осях А-И",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 4.33,
+   "page_bbox": [
+    190.44,
+    468.6,
+    194.4,
+    472.44
+   ],
+   "plan_xy_sheet35": [
+    -9.1,
+    -8.933
+   ],
+   "plan_match_delta_m": 0.029,
+   "position": [
+    -9.1,
+    -8.962,
+    4.33
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P058",
+   "type": "DECO",
+   "facade": "west",
+   "sheet": 34,
+   "view": "Фасад в осях А-И",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 4.33,
+   "page_bbox": [
+    312.84,
+    468.6,
+    316.8,
+    472.44
+   ],
+   "plan_xy_sheet35": [
+    -0.661,
+    -22.684
+   ],
+   "plan_match_delta_m": 0.76,
+   "position": [
+    -0.661,
+    -21.924,
+    4.33
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P059",
+   "type": "DECO",
+   "facade": "west",
+   "sheet": 34,
+   "view": "Фасад в осях А-И",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 4.298,
+   "page_bbox": [
+    350.28,
+    468.84,
+    354.24,
+    472.8
+   ],
+   "plan_xy_sheet35": [
+    -0.338,
+    -25.844
+   ],
+   "plan_match_delta_m": 0.039,
+   "position": [
+    -0.338,
+    -25.883,
+    4.298
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P060",
+   "type": "DECO",
+   "facade": "west",
+   "sheet": 34,
+   "view": "Фасад в осях А-И",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 4.298,
+   "page_bbox": [
+    389.88,
+    468.84,
+    393.84,
+    472.8
+   ],
+   "plan_xy_sheet35": [
+    -0.585,
+    -29.99
+   ],
+   "plan_match_delta_m": 0.084,
+   "position": [
+    -0.585,
+    -30.074,
+    4.298
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P061",
+   "type": "DECO",
+   "facade": "west",
+   "sheet": 34,
+   "view": "Фасад в осях А-И",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 4.298,
+   "page_bbox": [
+    429.12,
+    468.84,
+    433.08,
+    472.8
+   ],
+   "plan_xy_sheet35": [
+    -0.61,
+    -34.145
+   ],
+   "plan_match_delta_m": 0.085,
+   "position": [
+    -0.61,
+    -34.23,
+    4.298
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P062",
+   "type": "DECO",
+   "facade": "west",
+   "sheet": 34,
+   "view": "Фасад в осях А-И",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 4.298,
+   "page_bbox": [
+    467.4,
+    468.84,
+    471.36,
+    472.8
+   ],
+   "plan_xy_sheet35": [
+    -0.433,
+    -38.247
+   ],
+   "plan_match_delta_m": 0.035,
+   "position": [
+    -0.433,
+    -38.282,
+    4.298
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  },
+  {
+   "id": "P063",
+   "type": "DECO",
+   "facade": "west",
+   "sheet": 34,
+   "view": "Фасад в осях А-И",
+   "kind": "point",
+   "count": 1,
+   "mount_z": 4.298,
+   "page_bbox": [
+    505.68,
+    468.84,
+    509.64,
+    472.8
+   ],
+   "plan_xy_sheet35": [
+    -0.56,
+    -42.225
+   ],
+   "plan_match_delta_m": 0.107,
+   "position": [
+    -0.56,
+    -42.332,
+    4.298
+   ],
+   "plane_note": "xy: plan sheet 35 symbol centre (snap to the facade face in the model); z: elevation"
+  }
+ ],
+ "plan_points_unmatched": [],
+ "arktos_mapping": [
+  {
+   "fbx_xyz": [
+    21.16,
+    -50.6,
+    4.9
+   ],
+   "facade": "south",
+   "sheet": 33,
+   "booklet_symbol": "grey box (fill RGB 194,194,195), not in the lighting legend",
+   "booklet_h": 21.196,
+   "booklet_z": 4.988,
+   "booklet_size_m": [
+    0.6,
+    0.47
+   ],
+   "delta_h_m": 0.036,
+   "page_bbox": [
+    391.56,
+    564.24,
+    397.2,
+    568.68
+   ]
+  },
+  {
+   "fbx_xyz": [
+    24.46,
+    -50.6,
+    4.9
+   ],
+   "facade": "south",
+   "sheet": 33,
+   "booklet_symbol": "grey box (fill RGB 194,194,195), not in the lighting legend",
+   "booklet_h": 24.489,
+   "booklet_z": 4.988,
+   "booklet_size_m": [
+    0.61,
+    0.47
+   ],
+   "delta_h_m": 0.029,
+   "page_bbox": [
+    422.64,
+    564.24,
+    428.4,
+    568.68
+   ]
+  },
+  {
+   "fbx_xyz": [
+    25.93,
+    -50.6,
+    4.9
+   ],
+   "facade": "south",
+   "sheet": 33,
+   "booklet_symbol": "grey box (fill RGB 194,194,195), not in the lighting legend",
+   "booklet_h": 25.955,
+   "booklet_z": 4.988,
+   "booklet_size_m": [
+    0.6,
+    0.47
+   ],
+   "delta_h_m": 0.025,
+   "page_bbox": [
+    436.56,
+    564.24,
+    442.2,
+    568.68
+   ]
+  },
+  {
+   "fbx_xyz": [
+    32.91,
+    -50.6,
+    4.9
+   ],
+   "facade": "south",
+   "sheet": 33,
+   "booklet_symbol": "grey box (fill RGB 194,194,195), not in the lighting legend",
+   "booklet_h": 32.945,
+   "booklet_z": 4.988,
+   "booklet_size_m": [
+    0.7,
+    0.57
+   ],
+   "delta_h_m": 0.035,
+   "page_bbox": [
+    502.08,
+    563.76,
+    508.68,
+    569.16
+   ]
+  },
+  {
+   "fbx_xyz": [
+    -2.97,
+    -1.7,
+    4.9
+   ],
+   "facade": "north",
+   "sheet": 34,
+   "booklet_symbol": "grey box (fill RGB 194,194,195), not in the lighting legend",
+   "booklet_h": -2.992,
+   "booklet_z": 4.9,
+   "booklet_size_m": [
+    0.5,
+    0.41
+   ],
+   "delta_h_m": -0.022,
+   "page_bbox": [
+    980.28,
+    202.68,
+    984.96,
+    206.52
+   ]
+  },
+  {
+   "fbx_xyz": [
+    -1.13,
+    -1.7,
+    4.9
+   ],
+   "facade": "north",
+   "sheet": 34,
+   "booklet_symbol": "grey box (fill RGB 194,194,195), not in the lighting legend",
+   "booklet_h": -1.162,
+   "booklet_z": 4.9,
+   "booklet_size_m": [
+    0.5,
+    0.41
+   ],
+   "delta_h_m": -0.032,
+   "page_bbox": [
+    963.0,
+    202.68,
+    967.68,
+    206.52
+   ]
+  }
+ ],
+ "render_samples_srgb": {
+  "sheet38_view3_south": {
+   "metal_parapet_PURPLE": [
+    205,
+    6,
+    189
+   ],
+   "metal_belt_2000K": [
+    254,
+    204,
+    79
+   ],
+   "upper_parapet_2700K": [
+    254,
+    221,
+    137
+   ],
+   "upper_belt_4000K": [
+    254,
+    241,
+    215
+   ],
+   "canopy_4000K": [
+    254,
+    246,
+    217
+   ]
+  },
+  "sheet38_view2_east": {
+   "ribs_FOCUS_upper": [
+    255,
+    244,
+    190
+   ],
+   "ribs_FOCUS_lower": [
+    254,
+    244,
+    189
+   ],
+   "upper_volume_4000K_top": [
+    255,
+    223,
+    134
+   ],
+   "upper_volume_4000K_belt": [
+    254,
+    243,
+    215
+   ],
+   "TUBE_M": [
+    202,
+    161,
+    126
+   ]
+  }
+ },
+ "summary": {
+  "LINE_4000K": {
+   "count": 114,
+   "length_m": 114.0,
+   "facades": [
+    "east",
+    "north",
+    "south"
+   ]
+  },
+  "FOCUS": {
+   "count": 76,
+   "length_m": 30.0,
+   "facades": [
+    "east"
+   ]
+  },
+  "PLAT_A4": {
+   "count": 60,
+   "length_m": 0.0,
+   "facades": [
+    "east"
+   ]
+  },
+  "LINE_2000K": {
+   "count": 42,
+   "length_m": 42.0,
+   "facades": [
+    "south"
+   ]
+  },
+  "LINE_2700K": {
+   "count": 57,
+   "length_m": 57.0,
+   "facades": [
+    "north",
+    "south"
+   ]
+  },
+  "LINE_PURPLE": {
+   "count": 111,
+   "length_m": 111.0,
+   "facades": [
+    "north",
+    "south"
+   ]
+  },
+  "TUBE_M": {
+   "count": 29,
+   "length_m": 0.0,
+   "facades": [
+    "east",
+    "north",
+    "south"
+   ]
+  },
+  "DECO": {
+   "count": 9,
+   "length_m": 0.0,
+   "facades": [
+    "south",
+    "west"
+   ]
+  }
+ },
+ "choices": [
+  "2000K vs 2700K: legend of sheet 33 kept as drawn - light-green swatch (175,218,165) = 2000K = belt +4.72 over the metal facade (S, x 0.3..41.9); mid-green (103,152,112) = 2700K = parapet of the upper (wood) volume S and N. Render sheet 38 view 3 confirms: metal belt glows amber (sample [254, 204, 79]), upper parapet pale warm ([254, 221, 137]), upper belt near white 4000K ([254, 241, 215]). Sheet 34 legend lists only 2700K/4000K and uses them the same way (N upper volume).",
+  "Range LINE counted as drawn: one 1.0 m fixture per 9.36 pt rectangle; a run can be modelled as one continuous strip of its nominal length",
+  "FOCUS rows alternate 0.3 m / 0.5 m bars (sheet 33 both legend entries share one colour; separated by drawn length)",
+  "RGB fixtures (FOCUS, PLAT-A4) get one static colour for ERM: warm white sampled from render sheet 38 view 2 (the only colour shown in the renders)",
+  "3rd coordinate: facade planes from pilot parts v002 (FBX-measured); point fixtures: plan sheet 35 symbol centres (symbol stands ~0.2 m proud of the face - snap to the face)",
+  "z: centre of the drawn symbol; lines are drawn centred on the level line (parapet +13.92 / belt +4.72) - mount the housing just under the parapet flashing / on the belt",
+  "Housing sizes: only lengths are given on sheets 33/40; sections are assumptions (see fixture_types.*.housing_note)"
+ ],
+ "open_questions": [
+  "Axis 2: the booklet dimensions read 1-2 = 4400, 2-3 = 4000 (axis 2 at x -4.0), the task coordinates use -4.4. Axis 2 is not used as an anchor here (interpolation 1->3).",
+  "PLAT-A4 power: 10.5 W on sheet 33 vs 5 W on sheet 40 (geometry not affected).",
+  "DECO P(south) at x -2.57, z 4.12 and a 1 m 4000K line over a small canopy at x -1.9..-0.9, z 3.08 are on the south view only (west annex entrance); not on plan sheet 35; y -19.77 is an estimate.",
+  "DECO at y -21.92 (west elevation) vs -22.68 on plan sheet 35: 0.76 m apart; elevation value used.",
+  "East corner TUBE M: elevation y -49.36 / +1.93 vs plan sheet 35 y -48.06 / +0.63 (1.3 m apart, both near the rounded ground-floor corners); elevation value used along the facade, plan for depth.",
+  "East TUBE M x2 at x 74.1 sit in the entrance niche (niche wall x ~73.1-76.0), z 1.96.",
+  "Corners R3.15 of the upper volume are drawn in both adjacent views (S/E and N/E): projected lengths overlap by ~3.15 m per corner; along the arc ~5 fixtures fit, not 6-8 drawn. Place by developed length.",
+  "Sheet 34 view 6-1 (skewed north wall, developed) has no fixtures; north line y on the skewed part is taken from the sheet-35 TUBE fit.",
+  "Arktos x6: booklet shows them as grey 0.5-0.6 m boxes (not in the lighting legend) on the +4.72 joint; render sheet 38 view 3 shows them dark (unlit) against the 2000K belt. They are not booklet luminaires; keep as geometry with ERM R black unless the user says otherwise."
+ ]
+}

@@ -20,7 +20,7 @@ CONFIRMED = {"W01", "W02", "W03", "W04", "W05", "W06", "W07", "D01", "D02", "D03
 
 def test_every_entry_has_the_agreed_fields():
     ids = [t["id"] for t in DOC["types"]]
-    assert len(ids) == len(set(ids)) == 46
+    assert len(ids) == len(set(ids)) == 67      # 46 + 21 from the elv-tc-vpm census
     for t in DOC["types"]:
         assert KEYS <= set(t), t["id"]
         assert t["status"] in ("confirmed", "unconfirmed") and t["handing"] is None and t["sashes"] is None, t["id"]
@@ -206,8 +206,8 @@ def test_synthetic_layout_probes(n_fields, fan_partitions, fan_opaque, lower_pan
 
 
 def test_catalog_consistency_recomputes_stored_layout():
-    # issue #45: recompute layout for all 46 catalog entries panes_m plus opaque_m against stored sections/transoms
-    assert len(DOC["types"]) == 46
+    # issue #45: recompute layout for all catalog entries panes_m plus opaque_m against stored sections/transoms
+    assert len(DOC["types"]) == 67
     for t in DOC["types"]:
         panes = (t.get("panes_m") or []) + (t.get("opaque_m") or [])
         opaque = t.get("opaque_m") or []
@@ -219,3 +219,71 @@ def test_all_opaque_fallback():
     # issue #45: preserving all-opaque fallback (safeguards documented fallback for no glass)
     opaque = [[0.05, 0.05, 0.95, 2.0], [1.05, 0.05, 1.95, 2.0], [0.05, 2.1, 1.95, 2.7]]
     assert layout(opaque, opaque) == (2, 1)
+
+
+# job census elv-tc-vpm (2026-11-04): missing types are added to the library first, then placed from it
+
+CENSUS = ROOT / "library" / "windows" / "sources" / "elv-tc-vpm-census-v001.json"
+
+
+def test_census_types_are_added_unconfirmed_with_provenance():
+    elv = [t for t in DOC["types"] if t["id"].startswith("ELV-")]
+    source = json.loads(CENSUS.read_text(encoding="utf-8"))
+    assert [t["id"] for t in elv] == [f"ELV-{n:02d}" for n in range(1, 22)]
+    assert [t["source"]["census_key"] for t in elv] == [t["key"] for t in source["types"]]
+    for t in elv:
+        assert t["status"] == "unconfirmed" and t["typed"] and t["same_as"] is None, t["id"]
+        assert t["source"]["object"] == "elv-tc-vpm" and t["source"]["file"] == "library/windows/sources/elv-tc-vpm-census-v001.json"
+        assert "fbx_type" in t["source"] and t["source"]["booklet_sheets"], t["id"]
+        assert t["frame_finish"].startswith("RAL "), t["id"]
+        assert t["name"].endswith(f"{round(t['width_m'] * 1000)}×{round(t['height_m'] * 1000)}"), t["name"]
+        assert "ЭЛВ" not in t["name"] and "СРЕ" not in t["name"] and "створ" not in t["name"], t["name"]
+        assert set(t["unconfirmed"]) == {"sashes", "handing"} and t["unconfirmed"]["handing"]["candidate"] is None
+    assert {t["frame_finish"] for t in elv if t["role"] == "gate"} == {"RAL 7040"}
+    assert {t["id"]: t["variant_of"] for t in elv if t["variant_of"]} == {"ELV-03": "ELV-02", "ELV-06": "D02", "ELV-07": "D02",
+                                                                     "ELV-19": "ELV-18", "ELV-20": "ELV-18", "ELV-21": "ELV-08"}
+
+
+def test_panes_lie_inside_their_frame():
+    for t in DOC["types"]:
+        for x0, z0, x1, z1 in (t.get("panes_m") or []) + (t.get("opaque_m") or []):
+            assert 0 <= x0 < x1 <= t["width_m"] + 1e-9 and 0 <= z0 < z1 <= t["height_m"] + 1e-9, t["id"]
+
+
+def test_curtain_grid_expands_to_one_module():
+    import build_window_types as b
+    grid = {"module_m": 1.19, "mullion_m": 0.05, "rows": [{"z0": 0.0, "z1": 1.28, "infill": "stemalit"},
+                                                          {"z0": 1.3, "z1": 2.91, "infill": "glass"}]}
+    assert b.grid_panes(grid) == ([[0.025, 1.3, 1.165, 2.91]], [[0.025, 0.0, 1.165, 1.28]])
+    bay = next(t for t in DOC["types"] if t["source"].get("census_key") == "cw-f50-upper-bay")
+    assert bay["width_m"] == bay["grid"]["module_m"] == 1.19 and bay["panes"] == 3 and len(bay["opaque_m"]) == 2
+    assert bay["opaque_infill"] == "stemalit RAL 5024"
+
+
+def test_inserts_and_drum_refer_to_library_types():
+    by_id = {t["id"]: t for t in DOC["types"]}
+    entrance = next(t for t in DOC["types"] if t["source"].get("census_key") == "cw-f50-entrance")
+    for ins in entrance["inserts"]:
+        x0, z0, x1, z1 = ins["rect_m"]
+        assert ins["type"] in by_id and 0 <= x0 < x1 <= entrance["width_m"] and z1 <= entrance["height_m"]
+        assert abs(by_id[ins["type"]]["width_m"] - (x1 - x0)) <= 0.45, ins   # revolving drum is wider than its gap
+    revolving = by_id["ELV-17"]
+    assert revolving["role"] == "revolving_door" and revolving["panes_m"] is None
+    d = revolving["drum"]
+    assert d["inner_diameter_m"] < d["diameter_m"] == revolving["width_m"] and d["canopy_m"][1] == revolving["height_m"]
+
+
+def test_rebuild_from_base_is_idempotent(tmp_path, monkeypatch):
+    # the census entries are rebuilt, every other entry and the confirmations are kept as they are
+    import build_window_types as b
+    monkeypatch.chdir(ROOT)                      # source paths are recorded repo-relative
+    out = tmp_path / "window_types.json"
+    b.main(["--base", "library/windows/window_types.json",
+            "--census-source", "library/windows/sources/elv-tc-vpm-census-v001.json", "--output", str(out)])
+    assert json.loads(out.read_text(encoding="utf-8")) == DOC
+
+
+def test_without_inputs_or_base_the_build_stops(tmp_path):
+    import build_window_types as b
+    with pytest.raises(SystemExit, match="or --base"):
+        b.main(["--output", str(tmp_path / "o.json")])

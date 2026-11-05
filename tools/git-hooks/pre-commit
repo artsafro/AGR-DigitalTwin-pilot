@@ -1,7 +1,7 @@
 #!/bin/sh
 # 1. Commit large new files as links (tools/git-hooks/link_large_files.py, toggle: git config twin.linkLarge).
 # 2. Pipeline gate on the resulting index: a job status above draft needs spec + extractor report + checker
-#    report (tools/git-hooks/pipeline_gate.py, docs/HARNESS_PLAN.md §16). It runs after linking, because
+#    report (tools/git-hooks/pipeline_gate.py, archive/2026-11:docs/HARNESS_PLAN.md §16). It runs after linking, because
 #    linking may unstage a file the gate needs (review 1 of PR #73).
 top="$(git rev-parse --show-toplevel)" || top=""   # its exit status counts, not its output (review 2 of #79)
 if [ -z "$top" ] || [ ! -d "$top" ]; then        # fail closed: no root, no checks (review 1 of PR #79)

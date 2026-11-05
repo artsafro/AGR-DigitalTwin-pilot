@@ -146,7 +146,8 @@ def _glasses_object(row: str) -> dict:
 def document_bytes(row: str) -> bytes:
     """JSON text via json.dumps without sort_keys so member order is the insertion order."""
     properties = {key: "synthetic" for key in PROPERTY_KEYS}
-    properties["FNO_code"] = "123 456"
+    properties["FNO_code"] = "010 004"
+    properties["FNO_name"] = "Общежитие"
     properties["other"] = ""
     properties["act_AGR"] = ""
     properties["imageBase64"] = IMAGE_B64
@@ -304,7 +305,7 @@ def test_rgb_and_optic_value_types(row):
 def test_number_spellings_are_fixed(row):
     raw = document_bytes(row).decode("utf-8")
     assert '"coordinates": [12345.678, 6789.012]' in raw
-    assert '"FNO_code": "123 456"' in raw
+    assert '"FNO_code": "010 004"' in raw
     assert '"other": ""' in raw and '"act_AGR": ""' in raw
     assert '"address": "synthetic"' in raw
     assert '"Red": 120' in raw and '"Green": 130' in raw

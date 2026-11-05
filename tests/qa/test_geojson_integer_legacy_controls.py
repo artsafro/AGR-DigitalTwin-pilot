@@ -76,7 +76,8 @@ def _template() -> str:
     keys = PROFILE["geojson"]["properties_keys"]
     props = {key: "synthetic" for key in keys}
     props["act_AGR"] = "synthetic-act"
-    props["FNO_code"] = "123456"
+    props["FNO_code"] = "010004"
+    props["FNO_name"] = "Общежитие"
     props["imageBase64"] = _jpeg_base64()
     props["developer"] = _DEV_MARK
     props["other"] = ""
@@ -225,7 +226,7 @@ def _assert_integer_x(tmp_path: Path, token: str, ground: bool) -> None:
 def test_synthetic_fixture_is_complete_and_shared_by_ground_stem(tmp_path):
     data = geojson_bytes(_ORD_X, _ORD_Y)
     assert b'"act_AGR": "synthetic-act"' in data
-    assert b'"FNO_code": "123456"' in data
+    assert b'"FNO_code": "010004"' in data
     assert f"[{_ORD_X}, {_ORD_Y}]".encode("ascii") in data
     image = _read(data)["features"][0]["properties"]["imageBase64"]
     parsed = Image.open(BytesIO(base64.b64decode(image, validate=True)))

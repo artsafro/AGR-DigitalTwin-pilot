@@ -84,10 +84,10 @@ ERM/Normal не выдумывались. Revit MCP вернул revit_unavailab
 Команды из корня репозитория:
 
 ```powershell
-.venv\Scripts\python.exe tools/prepare_floor_uv.py jobs/OBR22-K02/outputs
-& 'C:\Program Files\Blender Foundation\Blender 4.4\blender.exe' --background --factory-startup --python-exit-code 1 --python tools/floor_uv_blender.py -- jobs/OBR22-K02/outputs
-& 'C:\Program Files\Blender Foundation\Blender 4.4\blender.exe' --background --factory-startup --python-exit-code 1 --python tools/floor_uv_blender.py -- jobs/OBR22-K02/outputs --check
-.venv\Scripts\python.exe tools/check_floor_uv.py jobs/OBR22-K02/outputs
+.venv\Scripts\python.exe jobs/OBR22-K02/scripts/prepare_floor_uv.py jobs/OBR22-K02/outputs
+& 'C:\Program Files\Blender Foundation\Blender 4.4\blender.exe' --background --factory-startup --python-exit-code 1 --python jobs/OBR22-K02/scripts/floor_uv_blender.py -- jobs/OBR22-K02/outputs
+& 'C:\Program Files\Blender Foundation\Blender 4.4\blender.exe' --background --factory-startup --python-exit-code 1 --python jobs/OBR22-K02/scripts/floor_uv_blender.py -- jobs/OBR22-K02/outputs --check
+.venv\Scripts\python.exe jobs/OBR22-K02/scripts/check_floor_uv.py jobs/OBR22-K02/outputs
 ```
 
 Отчёты: `uv-manifest.json`, `blender-uv-readback.json` (SHA всех трёх файлов), `uv-qa.json`.
@@ -121,9 +121,9 @@ v007иv006сохранены. ПослеreadbackBlender4.4и реальногоJ
 Раскладкаменялась, измеренныепроёмы,панели,посадка/толщина — нет.
 
 ```powershell
-.venv\Scripts\python.exe tools/build_shell_windows.py jobs/OBR22-K02/outputs --clean
-& 'C:\Program Files\Blender Foundation\Blender 4.4\blender.exe' --background --factory-startup --python-exit-code 1 --python tools/shell_windows_blender.py -- jobs/OBR22-K02/outputs --optimized
-& 'C:\Program Files\Blender Foundation\Blender 4.4\blender.exe' --background --factory-startup --python-exit-code 1 --python tools/shell_windows_blender.py -- jobs/OBR22-K02/outputs --optimized --check
+.venv\Scripts\python.exe jobs/OBR22-K02/scripts/build_shell_windows.py jobs/OBR22-K02/outputs --clean
+& 'C:\Program Files\Blender Foundation\Blender 4.4\blender.exe' --background --factory-startup --python-exit-code 1 --python jobs/OBR22-K02/scripts/shell_windows_blender.py -- jobs/OBR22-K02/outputs --optimized
+& 'C:\Program Files\Blender Foundation\Blender 4.4\blender.exe' --background --factory-startup --python-exit-code 1 --python jobs/OBR22-K02/scripts/shell_windows_blender.py -- jobs/OBR22-K02/outputs --optimized --check
 .venv\Scripts\python.exe tools/check_shell_windows.py jobs/OBR22-K02/outputs --optimized --readback
 ```
 
@@ -173,9 +173,9 @@ SHA256: `83419e1e9a77147f2483370629c076ba43a84a6d54c99d300605f29ab44b86dd`.
 Воспроизведение из корня:
 
 ```powershell
-.venv\Scripts\python.exe tools/build_shell_windows.py jobs/OBR22-K02/outputs
-& 'C:\Program Files\Blender Foundation\Blender 4.4\blender.exe' --background --factory-startup --python-exit-code 1 --python tools/shell_windows_blender.py -- jobs/OBR22-K02/outputs
-& 'C:\Program Files\Blender Foundation\Blender 4.4\blender.exe' --background --factory-startup --python-exit-code 1 --python tools/shell_windows_blender.py -- jobs/OBR22-K02/outputs --check
+.venv\Scripts\python.exe jobs/OBR22-K02/scripts/build_shell_windows.py jobs/OBR22-K02/outputs
+& 'C:\Program Files\Blender Foundation\Blender 4.4\blender.exe' --background --factory-startup --python-exit-code 1 --python jobs/OBR22-K02/scripts/shell_windows_blender.py -- jobs/OBR22-K02/outputs
+& 'C:\Program Files\Blender Foundation\Blender 4.4\blender.exe' --background --factory-startup --python-exit-code 1 --python jobs/OBR22-K02/scripts/shell_windows_blender.py -- jobs/OBR22-K02/outputs --check
 .venv\Scripts\python.exe tools/check_shell_windows.py jobs/OBR22-K02/outputs --readback
 ```
 
@@ -227,9 +227,9 @@ geometry_checks_passed=true относится только к этой пове
 Воспроизведение из корня репозитория (нужен extra contour-model и локальные исходники):
 
 ```powershell
-.venv\Scripts\python.exe tools/build_exterior_surface.py jobs/OBR22-K02/outputs
-& 'C:\Program Files\Blender Foundation\Blender 4.4\blender.exe' --background --factory-startup --python-exit-code 1 --python tools/exterior_surface_blender.py -- jobs/OBR22-K02/outputs
-& 'C:\Program Files\Blender Foundation\Blender 4.4\blender.exe' --background --factory-startup --python-exit-code 1 --python tools/exterior_surface_blender.py -- jobs/OBR22-K02/outputs --check
+.venv\Scripts\python.exe jobs/OBR22-K02/scripts/build_exterior_surface.py jobs/OBR22-K02/outputs
+& 'C:\Program Files\Blender Foundation\Blender 4.4\blender.exe' --background --factory-startup --python-exit-code 1 --python jobs/OBR22-K02/scripts/exterior_surface_blender.py -- jobs/OBR22-K02/outputs
+& 'C:\Program Files\Blender Foundation\Blender 4.4\blender.exe' --background --factory-startup --python-exit-code 1 --python jobs/OBR22-K02/scripts/exterior_surface_blender.py -- jobs/OBR22-K02/outputs --check
 .venv\Scripts\python.exe tools/check_exterior_surface.py jobs/OBR22-K02/outputs
 .venv\Scripts\python.exe -m pytest -q
 .venv\Scripts\dt.exe profiles check
@@ -290,13 +290,13 @@ v004 проверен SHA256 и не изменён; область BODY по-п
 Повторение из сохранённых контуров (после команд предыдущего этапа):
 
 ```powershell
-.venv\Scripts\python.exe tools/build_body_minimal_grid.py jobs/OBR22-K02/outputs
-.venv\Scripts\python.exe tools/reduce_body_planar_strips.py jobs/OBR22-K02/outputs --apply
-.venv\Scripts\python.exe tools/remap_body_face_sources.py jobs/OBR22-K02/outputs
+.venv\Scripts\python.exe jobs/OBR22-K02/scripts/build_body_minimal_grid.py jobs/OBR22-K02/outputs
+.venv\Scripts\python.exe jobs/OBR22-K02/scripts/reduce_body_planar_strips.py jobs/OBR22-K02/outputs --apply
+.venv\Scripts\python.exe jobs/OBR22-K02/scripts/remap_body_face_sources.py jobs/OBR22-K02/outputs
 $blenderExe = 'C:\Program Files\Blender Foundation\Blender 4.4\blender.exe'
-& $blenderExe --background --factory-startup --python-exit-code 1 --python tools/build_floor_body_blender.py -- jobs/OBR22-K02/outputs --optimized
-& $blenderExe --background --factory-startup --python-exit-code 1 --python tools/audit_floor_body_blender.py -- jobs/OBR22-K02/outputs --optimized
-.venv\Scripts\python.exe tools/verify_floor_body_surface.py jobs/OBR22-K02/outputs
+& $blenderExe --background --factory-startup --python-exit-code 1 --python jobs/OBR22-K02/scripts/build_floor_body_blender.py -- jobs/OBR22-K02/outputs --optimized
+& $blenderExe --background --factory-startup --python-exit-code 1 --python jobs/OBR22-K02/scripts/audit_floor_body_blender.py -- jobs/OBR22-K02/outputs --optimized
+.venv\Scripts\python.exe jobs/OBR22-K02/scripts/verify_floor_body_surface.py jobs/OBR22-K02/outputs
 ```
 
 Перед повторением после ручного редактирования менять имя версии: команда сборки
@@ -366,13 +366,13 @@ SHA256: `76f3fd7fa2603159e8453b638efe0351a2c19a7b9407d01ec9e6414502af18e1`.
 ```powershell
 .venv\Scripts\python.exe -m pip install -e '.[dev,contour-model]'
 $blenderExe = 'C:\Program Files\Blender Foundation\Blender 4.4\blender.exe'
-& $blenderExe --background --factory-startup --python-exit-code 1 --python tools/extract_floor_contours.py -- jobs/OBR22-K02/outputs
-.venv\Scripts\python.exe tools/build_floor_body_contours.py jobs/OBR22-K02/outputs
-.venv\Scripts\python.exe tools/build_floor_body_contours.py jobs/OBR22-K02/outputs --crosscheck-y
-.venv\Scripts\python.exe tools/compact_floor_body.py jobs/OBR22-K02/outputs --structured
-& $blenderExe --background --factory-startup --python-exit-code 1 --python tools/build_floor_body_blender.py -- jobs/OBR22-K02/outputs --structured
-& $blenderExe --background --factory-startup --python-exit-code 1 --python tools/audit_floor_body_blender.py -- jobs/OBR22-K02/outputs --structured
-.venv\Scripts\python.exe tools/verify_floor_body_surface.py jobs/OBR22-K02/outputs
+& $blenderExe --background --factory-startup --python-exit-code 1 --python jobs/OBR22-K02/scripts/extract_floor_contours.py -- jobs/OBR22-K02/outputs
+.venv\Scripts\python.exe jobs/OBR22-K02/scripts/build_floor_body_contours.py jobs/OBR22-K02/outputs
+.venv\Scripts\python.exe jobs/OBR22-K02/scripts/build_floor_body_contours.py jobs/OBR22-K02/outputs --crosscheck-y
+.venv\Scripts\python.exe jobs/OBR22-K02/scripts/compact_floor_body.py jobs/OBR22-K02/outputs --structured
+& $blenderExe --background --factory-startup --python-exit-code 1 --python jobs/OBR22-K02/scripts/build_floor_body_blender.py -- jobs/OBR22-K02/outputs --structured
+& $blenderExe --background --factory-startup --python-exit-code 1 --python jobs/OBR22-K02/scripts/audit_floor_body_blender.py -- jobs/OBR22-K02/outputs --structured
+.venv\Scripts\python.exe jobs/OBR22-K02/scripts/verify_floor_body_surface.py jobs/OBR22-K02/outputs
 ```
 
 Это прототип для данного локального источника, не общий Revit-адаптер. `contour-source.json`
@@ -410,7 +410,7 @@ $blenderExe = 'C:\Program Files\Blender Foundation\Blender 4.4\blender.exe'
 интерпретация нормативного PDF. **v001 этим критериям НЕ соответствует.**
 Предыдущее readback pass относится только к переносу/чтению и ID, не к чистоте топологии.
 
-Фактическая read-only проверка `tools/audit_floor_topology.py`, только995 видимых мешей:
+Фактическая read-only проверка `jobs/OBR22-K02/scripts/audit_floor_topology.py`, только995 видимых мешей:
 65218 вершин;117385 граней:110899 треугольников,5862 quad (4.994%),624 n-gon.
 Точных дублей координат/граней внутри отдельных мешей не найдено, но между объектами
 есть2924 повторных совпадения позиций вершин и440 повторных геометрически идентичных
@@ -518,13 +518,13 @@ Text datablock `Revit_material_registry.json`. Материалы по гран�
 
 ```powershell
 $blenderExe = 'C:\Program Files\Blender Foundation\Blender 4.4\blender.exe'
-& $blenderExe --background --factory-startup --python-exit-code 1 --python tools/prepare_revit_floor_fbx.py -- jobs/OBR22-K02/outputs
-& $blenderExe --background --factory-startup --python-exit-code 1 --python tools/build_revit_floor_blender.py -- jobs/OBR22-K02/outputs
-& $blenderExe --background --factory-startup --python-exit-code 1 --python tools/audit_revit_floor_blender.py -- jobs/OBR22-K02/outputs
+& $blenderExe --background --factory-startup --python-exit-code 1 --python jobs/OBR22-K02/scripts/prepare_revit_floor_fbx.py -- jobs/OBR22-K02/outputs
+& $blenderExe --background --factory-startup --python-exit-code 1 --python jobs/OBR22-K02/scripts/build_revit_floor_blender.py -- jobs/OBR22-K02/outputs
+& $blenderExe --background --factory-startup --python-exit-code 1 --python jobs/OBR22-K02/scripts/audit_revit_floor_blender.py -- jobs/OBR22-K02/outputs
 ```
 
-MCP SDK клиент: `tools/revit_mcp_request.mjs`, прототип с путями этой машины.
-Пример безопасного запроса: `node tools/revit_mcp_request.mjs http jobs/OBR22-K02/outputs/ping-request.json jobs/OBR22-K02/outputs/ping-new.json`.
+MCP SDK клиент: `jobs/OBR22-K02/scripts/revit_mcp_request.mjs`, прототип с путями этой машины.
+Пример безопасного запроса: `node jobs/OBR22-K02/scripts/revit_mcp_request.mjs http jobs/OBR22-K02/outputs/ping-request.json jobs/OBR22-K02/outputs/ping-new.json`.
 Запросы/ответы сохранены в outputs. Перед любыми командами проверить активный документ:
 он должен быть копией этого RVT. Не повторять create-view вслепую; ID действительны
 только для текущего документа/сеанса. Геометрия и сохранённые запросы не отправлялись в GitHub.

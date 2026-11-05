@@ -1,0 +1,46 @@
+{"schema": 1, "branch": "E3", "issue": "#979", "stations": [
+ {"button": "export.zip",
+  "objects": [
+   {"name": "0813_ZipOk.zip", "role": "Main", "builder": "E3_build",
+    "extra": {"writes": {"C:/x/test-polygon/e3/zip": "zip", "C:/x/test-polygon/e3/geojson": "geojson"}}},
+   {"name": "SM_ZipOk.zip", "role": "Main", "builder": "E3_build"}],
+  "expected": [
+   {"name": "0813_ZipOk.zip", "scene": "polygon_all", "expect": "pass", "codes": []},
+   {"name": "SM_ZipOk.zip", "scene": "polygon_all", "expect": "fail", "codes": ["archive"]}],
+  "options": {"folder": "C:/x/test-polygon/e3/zip"}},
+ {"button": "qa.package",
+  "objects": [
+   {"name": "SM_PkgOk.zip", "role": "Main", "builder": "E3_build",
+    "extra": {"writes": {"C:/x/test-polygon/e3/pkg": "pkg"}}},
+   {"name": "SM_PkgBad.zip", "role": "Main", "builder": "E3_build"}],
+  "expected": [
+   {"name": "SM_PkgOk.zip", "scene": "polygon_all", "expect": "pass", "codes": []},
+   {"name": "SM_PkgBad.zip", "scene": "polygon_all", "expect": "fail", "codes": ["V001"]}],
+  "options": {"path": "C:/x/test-polygon/e3/pkg", "scene": false}},
+ {"button": "export.ground_fbx",
+  "objects": [
+   {"name": "SM_GrFbx_Ground", "role": "Ground", "size": [4, 4, 0.2], "mat": "std",
+    "mat_name": "M_GrFbx_Ground_1", "pivot": [3000.0, 3000.0, 0.0]},
+   {"name": "SM_GrFbx_001_Main", "role": "Main", "size": [2, 2, 2], "mat": "ray",
+    "mat_name": "M_GrFbx_001_Main_1", "pivot": [3000.0, 3000.0, 0.0]}],
+  "expected": [
+   {"name": "SM_GrFbx_Ground", "scene": "polygon_all", "expect": "pass", "codes": []},
+   {"name": "SM_GrFbx_001_Main", "scene": "polygon_all", "expect": "fail", "codes": ["material"]}],
+  "options": {"code": "0811", "folder": "C:/x/test-polygon/e3/ground"}},
+ {"button": "export.geojson_write",
+  "objects": [
+   {"name": "SM_GjX_Main", "role": "Main", "size": [3, 3, 3], "mat": "std", "mat_name": "M_GjX_Main_1"},
+   {"name": "SM_GjX_MainGlass", "role": "MainGlass", "size": [3, 0.1, 3], "mat": "glass", "opacity": 0.5,
+    "mat_name": "M_GjX_MainGlass_1"}],
+  "expected": [
+   {"name": "SM_GjX_Main", "scene": "polygon_all", "expect": "fail", "codes": ["property"]},
+   {"name": "SM_GjX_MainGlass", "scene": "polygon_all", "expect": "pass", "codes": []}],
+  "options": {"folder": "C:/x/test-polygon/e3/geojson", "image": "C:/x/test-polygon/e3/geojson/preview.jpg",
+              "pivot": {"floor_z": "0.000"},
+              "properties": {"address": "synthetic", "okrug": "synthetic", "rajon": "synthetic", "name": "synthetic",
+                             "developer": "", "designer": "synthetic", "cadNum": "synthetic", "FNO_code": "010004",
+                             "FNO_name": "Общежитие", "ZU_area": "synthetic", "h_relief": "synthetic",
+                             "h_otn": "synthetic", "h_abs": "synthetic", "s_obsh": "synthetic", "s_naz": "synthetic",
+                             "s_podz": "synthetic", "spp_gns": "synthetic", "act_AGR": "synthetic",
+                             "other": "synthetic"}}}
+]}

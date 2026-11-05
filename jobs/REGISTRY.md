@@ -3,6 +3,11 @@
 Object ids follow `docs/agents/NAMING.md`. Legacy job folders keep their names until the
 code migration renames them.
 
+Archived (removed from the tree, readable in tag `archive/2026-11`; index and status: `docs/ARCHIVE.md`):
+`A-MAIN-ATLAS`, `B-MAIN-ATLAS`, `FACADE-SIGNS`, `FACADES-ATLAS`, `GLB-NPM`, `GROUND-PROJECTION`, `MASHI-LP`,
+`MESH-OPT-AUDIT`, `REVIT-OPENINGS`, `UV-CONTINUOUS`, `WINDOW-ATLAS`, `WINDOW-FRAMES`, `flora-textures`
+(each as `archive/2026-11:jobs/<folder>/`).
+
 | Object id | Name (RU) | Site | Job folder | Sources | Notes |
 |---|---|---|---|---|---|
 | `tec26-oks` | ОКС АС.04–09 и дымовая труба — intake | ТЭЦ-26 | `jobs/TEC26-OKS/` | `jobs/TEC26-OKS/census/sources.json` (hash-pinned copies) | `jobs/TEC26-OKS/STATE.md`, #558; drawing analysis #561–566, truba #560 |

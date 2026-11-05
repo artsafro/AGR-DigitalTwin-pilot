@@ -48,13 +48,41 @@ class MaxBackend:
         return fn(chunk, on_item=on_item)
 
     def run_tool(self, tool, scope_all):
-        if scope_all:  # 0.7 checks see every object (hygiene must find cameras, lights, helpers)
-            rt.select(rt.objects if tool in self.agr.CHECKS_070 else rt.geometry)
-        if tool in self.agr.EDITS_080:  # 0.8 delivery edits (#908): preview -> apply through runtime.edits_080
-            report = self.agr.edit_ui(tool)
+        if not scope_all:
+            return self._run_tool(tool)
+        # runtime.ui reads rt.selection, so "вся сцена" selects the scope for the call and then puts the
+        # user's selection back, also on error; nodes deleted by the tool are dropped (#861).
+        keep = list(rt.selection)
+        # 0.7 checks and 0.9 rows (lights, scatters, maps) see every object, the rest only geometry
+        rt.select(rt.objects if tool in self.agr.CHECKS_070 or tool in self.agr.EDITS_090 else rt.geometry)
+        report = None
+        try:
+            report = self._run_tool(tool, select=False)
+            return report
+        finally:
+            alive = [n for n in keep if rt.isValidNode(n)]
+            if alive:
+                rt.select(alive)
+            else:
+                rt.clearSelection()
+            self._select_offenders(tool, report)  # after the user's selection is back, so Ctrl+Z returns to it
+
+    def _run_tool(self, tool, select=True):
+        if tool in self.agr.EDITS_080 or tool in self.agr.EDITS_090:
+            # 0.8 (#908) / 0.9 (#979): preview -> apply through runtime.edits_080 / edits_090; a `select` row
+            # (SELECT_090) selects its offenders here, never in the core
+            report = self.agr.edit_ui(tool, select=False)
             self.log(report)
+            if select:
+                self._select_offenders(tool, report)
             return report
         return self.agr.ui(tool)
+
+    def _select_offenders(self, tool, report):
+        """`select` rows (light.check): offenders become the selection as ONE undo record (Ctrl+Z restores)."""
+        if (isinstance(report, dict) and tool in self.agr.SELECT_090
+                and report.get('status') not in (None, 'not_implemented')):
+            self.agr.select_offenders(report)
 
     def _node(self, handle):
         """Report handles are anim handles (getHandleByAnim), not node handles."""
@@ -73,7 +101,23 @@ class MaxBackend:
             rt.clearSelection()
             return False
         rt.select(n)
-        return True
+        # Finding ids index the node's poly copy; they match the node itself only for a plain Editable_Poly
+        # (no modifiers). Otherwise, or for an unknown id type, the object stays the selection (#861).
+        if rt.classOf(n.baseObject) != rt.Editable_Poly or len(n.modifiers):
+            return 'object'
+        sel = model.component_selection(row, int(rt.polyop.getNumVerts(n)), int(rt.polyop.getNumFaces(n)))
+        if sel is None:
+            return 'object'
+        kind, ids = sel
+        rt.setCommandPanelTaskMode(rt.Name('modify'))
+        if kind == 'vertex':
+            rt.polyop.setVertSelection(n, ids)
+            rt.subObjectLevel = 1
+        else:
+            rt.polyop.setFaceSelection(n, ids)
+            rt.subObjectLevel = 4
+        rt.redrawViews()
+        return kind
 
     # ---- progress -----------------------------------------------------------------------
     def progress_start(self, label):

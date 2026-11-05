@@ -85,6 +85,7 @@
    "expect": "fail",
    "codes": [
     "fbx_objects",
+    "kind_unknown",
     "mat_none"
    ]
   },
@@ -127,7 +128,8 @@
    "scene": "polygon_all",
    "expect": "fail",
    "codes": [
-    "fbx_objects"
+    "fbx_objects",
+    "kind_unknown"
    ]
   },
   {
@@ -183,15 +185,7 @@
    "codes": [
     "fbx_objects",
     "missing_map"
-   ],
-   "known_bug": {
-    "id": "census-usedmaps-drops-missing-file",
-    "issue": 886,
-    "got_expect": "fail",
-    "got_codes": [
-     "fbx_objects"
-    ]
-   }
+   ]
   },
   {
    "name": "SM_Polygon_018_Main",
@@ -272,6 +266,15 @@
     "drop_unmeasurable",
     "fbx_objects",
     "hyg_empty"
+   ]
+  },
+  {
+   "name": "SM_Polygon_Layer_Main",
+   "scene": "polygon_all",
+   "expect": "fail",
+   "codes": [
+    "fbx_objects",
+    "hyg_layer"
    ]
   },
   {

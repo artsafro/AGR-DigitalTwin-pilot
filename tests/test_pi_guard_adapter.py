@@ -168,7 +168,10 @@ def test_names_fields_cwd_and_project_root_match_claude(sandbox, tool, claude, t
     if tool == "edit":
         (sandbox / "a.txt").write_text("old", encoding="utf-8")
     settings = json.loads((ROOT / ".claude/settings.json").read_text())
-    entries = settings["hooks"]["PreToolUse"][:2]
+    # guard.py and pipeline_gate.py run in one dispatcher process (.claude/hooks/pretool.py).
+    entries = [e for e in settings["hooks"]["PreToolUse"]
+               if any("pretool.py" in h["command"] for h in e["hooks"])]
+    assert len(entries) == 1
     assert all(re.fullmatch(entry["matcher"], claude) for entry in entries)
     check = f'''import json, os, sys
 p = json.load(sys.stdin)

@@ -4,7 +4,7 @@
 target table (OKS Main texture-set targets sit in the same index). NPM delivers embedded PNG atlases;
 VPM lays out UDIM on one channel. In scope: texture-set targets per object class, Ground relief
 density, UV channel / UDIM / glass tile, and island padding and margins. Out of scope: map types,
-suffixes, naming and PNG format details (future `areas/textures.md`, T-TEX-1), materials, Ground
+suffixes, naming and PNG format details (`docs/domain/areas/textures.md`, T-TEX-1), materials, Ground
 geometry and UCX.
 
 **Readiness:** [roadmap §7.4 and §7.10](../../research/capability-roadmap.md#74-uv--atlas--l2-partial-cross-cutting-rule-table)

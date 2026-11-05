@@ -219,7 +219,7 @@ Kanban task id. All subsequent native calls supply `--card` explicitly.
 
 ## Reproduction and evidence
 
-Harness: `experiments/max-headless-agr-roundtrip/`. Paths are intentionally pinned
+Harness: `archive/2026-11:experiments/max-headless-agr-roundtrip/`. Paths are intentionally pinned
 to this card/workstation. For a new experiment use a new scratch root in all
 `BASE`/`SCRATCH` constants; do not reuse existing `.max`/FBX/OBJ destinations.
 `prepare.py` copies references first and verifies manifest hashes.

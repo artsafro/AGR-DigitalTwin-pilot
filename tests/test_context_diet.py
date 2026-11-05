@@ -183,6 +183,18 @@ def test_rule_headings_and_bullets_survive_in_the_file_or_a_linked_doc():
              for source in (before_agents, before_claude)
              for paragraph in source.split("\n\n")
              if paragraph.strip() and not paragraph.startswith(("#", "|", "-", "@"))]
+    # Repo hygiene 2026-11-05 corrected two stale facts of the baseline: the repo is the -pilot one, and the
+    # default suite is too long to run serially. The corrected text must be in the closure instead.
+    corrected = {
+        "GitHub Issues of `artsafro/AGR-DigitalTwin` via `gh`.":
+            "GitHub Issues of `artsafro/AGR-DigitalTwin-pilot` via `gh`.",
+        "Parallel suite, opt-in only (pytest-xdist; the default run stays serial): `uv run pytest -q -n 8`.":
+            "run it in parallel (pytest-xdist): `uv run pytest -q -n auto`.",
+    }
+    for old, new in corrected.items():
+        assert any(old in paragraph for paragraph in prose) and new in flat, old
+        prose = [paragraph.replace(old, "").strip() for paragraph in prose]
+    prose = [paragraph for paragraph in prose if paragraph]
     assert all(paragraph in flat for paragraph in prose), "A baseline prose rule was lost"
     for qualifier in ("only on `main` after a merge", "≤ 80 lines, fixed sections",
                       "in task branches report state changes in the final summary"):

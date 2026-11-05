@@ -205,6 +205,14 @@
    "codes": []
   },
   {
+   "name": "SM_Polygon_Layer_Main",
+   "scene": "polygon_all",
+   "expect": "fail",
+   "codes": [
+    "name_type"
+   ]
+  },
+  {
    "name": "SM_Polygon_NudgeOk_Main",
    "scene": "polygon_all",
    "expect": "fail",

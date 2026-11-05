@@ -257,3 +257,43 @@ def test_runner_valid_pairwise_control_exit_0(tmp_path, monkeypatch):
     res = json.loads((out / "results.json").read_text(encoding="utf-8"))
     assert res["errors"] == {}
     assert res["pairs"]["x~y/A"]["consistent_share"] == 1.0 and res["pairs"]["x~y/A"]["dropped"] == []
+
+
+# --- #781: primary-source provenance of the report -------------------------------------------------------
+REPORT = ROOT / "docs/experiments/vlm-6view-checklist.md"
+PROV_HEAD = "## Primary-source provenance (#781)"
+STATUSES = {"paper-supported", "adapted", "own heuristic"}
+
+
+def _provenance_section(text: str) -> str:
+    assert PROV_HEAD in text, f"missing section {PROV_HEAD!r}"
+    sec = text.split(PROV_HEAD, 1)[1]
+    return sec.split("\n## ", 1)[0]
+
+
+def test_report_has_no_unchecked_source_claim():
+    assert "not re-checked" not in REPORT.read_text(encoding="utf-8")
+
+
+def test_every_cited_arxiv_id_has_a_versioned_quoted_source_row():
+    import re
+    text = REPORT.read_text(encoding="utf-8")
+    ids = set(re.findall(r"arXiv[: ]?(\d{4}\.\d{5})", text))
+    assert ids, "report cites no arXiv id"  # fail closed: an empty citation set is not a pass
+    sec = _provenance_section(text)
+    for i in sorted(ids):
+        rows = [ln for ln in sec.splitlines() if ln.startswith("|") and re.search(rf"\b{re.escape(i)}v\d+\b", ln)]
+        assert rows, f"arXiv {i} cited but has no versioned row in {PROV_HEAD}"
+        assert any(re.search(r"\u201c[^\u201d]{20,}\u201d", ln) for ln in rows), f"arXiv {i}: no quoted passage"
+
+
+def test_every_method_element_is_attributed_with_a_known_status():
+    sec = _provenance_section(REPORT.read_text(encoding="utf-8"))
+    rows = [ln for ln in sec.splitlines() if ln.startswith("| M")]
+    assert rows, "no method attribution rows (| M<n> ...)"
+    seen = set()
+    for ln in rows:
+        cells = [c.strip() for c in ln.strip("|").split("|")]
+        assert cells[2] in STATUSES, f"{cells[0]}: status {cells[2]!r} not in {sorted(STATUSES)}"
+        seen.add(cells[2])
+    assert "own heuristic" in seen and "paper-supported" in seen

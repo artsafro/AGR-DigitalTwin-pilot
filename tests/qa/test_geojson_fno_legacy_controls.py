@@ -6,8 +6,9 @@ FNO_code is a known unchecked boundary, never an endorsement and never delivery
 acceptance. Synthetic fixtures only; no real object.
 
 Acceptance (input -> exact helper findings; test):
-- OKS "123"/"123456"/"123456789"/"123 456" -> imageBase64, Glasses, schema all pass;
-  V011 pass (test_legacy_oks_fno_code_findings).
+- OKS "123"/"123456"/"123456789"/"123 456" (format ok, not in the FNO classifier) -> FNO_code not in
+  registry fail, no schema pass (0.8.1 owner decision, standards/data/fno_codes_utf8.csv); OKS "010 004"
+  (a real code) with FNO_name "synthetic" -> FNO_name vs registry fail (test_legacy_oks_fno_code_findings).
 - OKS "1234"/"abc" -> FNO_code format fail, no schema pass (same test).
 - OKS null/"" -> FNO_code empty fail (same test).
 - OKS int 123/1234, true, [], {}, Arabic-Indic, fullwidth, superscript-two -> schema pass
@@ -15,8 +16,8 @@ Acceptance (input -> exact helper findings; test):
 - Ground (selected by *_Ground.geojson) null/""/"1234"/"abc" -> schema pass
   (test_legacy_ground_fno_code_currently_passes).
 - CLI validate_package.py --profile vpm --json, parity with helper, report retained:
-  OKS "123", int 123, superscript-two, Ground "" and "1234" -> V011 pass, every other stage
-  not_run, passed=false, exit 2; OKS "1234" -> V011 fail, passed=false, exit 1
+  OKS int 123, superscript-two, Ground "" and "1234" -> V011 pass, every other stage
+  not_run, passed=false, exit 2; OKS "1234" and "123" -> V011 fail, passed=false, exit 1
   (test_legacy_cli_v011_matches_helper).
 """
 import base64
@@ -41,6 +42,8 @@ KEYS = tuple(PROFILE["geojson"]["properties_keys"])
 PASS = (("imageBase64", "pass"), ("Glasses", "pass"), ("schema", "pass"))
 FORMAT_FAIL = (("FNO_code format", "fail"), ("imageBase64", "pass"), ("Glasses", "pass"))
 EMPTY_FAIL = (("FNO_code empty", "fail"), ("imageBase64", "pass"), ("Glasses", "pass"))
+REGISTRY_FAIL = (("FNO_code not in registry", "fail"), ("imageBase64", "pass"), ("Glasses", "pass"))
+NAME_FAIL = (("FNO_name vs registry", "fail"), ("imageBase64", "pass"), ("Glasses", "pass"))
 
 ARABIC_INDIC_3 = "\u0661\u0662\u0663"
 FULLWIDTH_3 = "\uff11\uff12\uff13"
@@ -109,10 +112,11 @@ def _pairs(path: Path):
 
 
 @pytest.mark.parametrize("fno, expected", [
-    pytest.param("123", PASS, id="legacy-oks-ascii-123"),
-    pytest.param("123456", PASS, id="legacy-oks-ascii-123456"),
-    pytest.param("123456789", PASS, id="legacy-oks-ascii-123456789"),
-    pytest.param("123 456", PASS, id="legacy-oks-ascii-spaced-123-456"),
+    pytest.param("123", REGISTRY_FAIL, id="legacy-oks-ascii-123"),
+    pytest.param("123456", REGISTRY_FAIL, id="legacy-oks-ascii-123456"),
+    pytest.param("123456789", REGISTRY_FAIL, id="legacy-oks-ascii-123456789"),
+    pytest.param("123 456", REGISTRY_FAIL, id="legacy-oks-ascii-spaced-123-456"),
+    pytest.param("010 004", NAME_FAIL, id="registry-oks-real-code-wrong-name"),
     pytest.param("1234", FORMAT_FAIL, id="legacy-oks-ascii-1234"),
     pytest.param("abc", FORMAT_FAIL, id="legacy-oks-ascii-abc"),
     pytest.param(None, EMPTY_FAIL, id="legacy-oks-null"),
@@ -158,7 +162,7 @@ def _cli(path: Path):
 
 
 @pytest.mark.parametrize("role, fno, expected, exit_code", [
-    pytest.param("OKS", "123", PASS, 2, id="legacy-cli-oks-ascii-123"),
+    pytest.param("OKS", "123", REGISTRY_FAIL, 1, id="legacy-cli-oks-ascii-123"),
     pytest.param("OKS", "1234", FORMAT_FAIL, 1, id="legacy-cli-oks-ascii-1234"),
     pytest.param("OKS", 123, PASS, 2, id="legacy-cli-oks-int-123"),
     pytest.param("OKS", SUPERSCRIPT_TWO_3, PASS, 2, id="legacy-cli-oks-superscript-two"),
