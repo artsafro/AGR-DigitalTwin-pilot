@@ -11,6 +11,17 @@ real Max Python on SYNTHETIC files under OUT/data and a disposable unsaved scene
   owners, a material without maps, a UDIM bitmap with one of three UV tiles missing; disk, names, file names and
   the save-required flag unchanged; no apply.
 Nothing is saved; the scene is never written.
+
+0.9 (#979 branch E1, cards T01/T02/T05/T06) adds:
+* format_fix_e1: defaults (dither on, max_rmse 0.03): 1536^2 noise -> refused for quality (RMSE in the reason, not
+  «готово»), 256^2 textured file under the limit untouched, RGBA half transparent -> colour type 2, 16-bit gray ->
+  8 bit (not 255), %TEMP% listing identical before/after (a JPG decoded through .NET in between); panel press
+  from a selection reports per object (`tex_quality` finding);
+* placeholders_e1: UDIMs [1001, 1001] -> second set refused, never written twice; metal slot ERM [0,0,255]; TGA
+  diffuse source -> Diffuse skipped with reason, ERM/Normal written; two selected addresses -> two sets, an
+  existing file -> `placeholder_exists` on its object only;
+* missing_maps_e1: missing map of SM_Bench_001_Main with mask candidates .png and .jpg -> both, rank 2, ambiguous,
+  without any search folder; a relative search folder is refused; disk unchanged.
 """
 import hashlib
 import json
@@ -124,7 +135,8 @@ def format_fix():
     sources = sorted(str(p) for p in src.iterdir())
     before = {p: md5(p) for p in sources}
     out = DATA / 'fmt_out' / 'out'
-    opts = {'files': sources, 'out': str(out), 'background': [0, 0, 0]}
+    # 0.8 lab L03 acceptance under the 0.8 settings (no dithering, no quality floor); 0.9 defaults: format_fix_e1
+    opts = {'files': sources, 'out': str(out), 'background': [0, 0, 0], 'dither': False, 'max_rmse': 1.0}
     prev = agr.edits_080('tex.format_fix', 'preview', options=opts)
     assert agr.parse_report(json.dumps(prev)) == prev
     assert not out.exists(), 'preview wrote files'
@@ -321,8 +333,122 @@ def missing_maps():
             'notes': rep['plan']['notes'], 'table_lines': len(rep['plan']['table'])}
 
 
+# ---- 0.9 rework (#979 E1) -------------------------------------------------------------------------------
+def format_fix_e1():
+    import tempfile
+    src = DATA / 'fmt_e1'
+    src.mkdir(parents=True)
+    rnd = random.Random(979)
+    files = {
+        'T_noise_d_1.png': _png(1536, 1536, 2, 8, [rnd.randbytes(1536 * 3) for _ in range(1536)]),
+        'T_tex_d_1.png': _png(256, 256, 2, 8, [b''.join(bytes((x, y, (x * y) % 256)) for x in range(256))
+                                               for y in range(256)]),
+        'T_rgba_d_1.png': _png(64, 64, 6, 8, [bytes((200, 40, 40, 255)) * 32 + bytes((0, 255, 0, 0)) * 32] * 64),
+        'T_g16_d_1.png': _png(16, 16, 0, 16, [struct.pack('>16H', *([1000] * 16))] * 16),
+    }
+    for k, v in files.items():
+        (src / k).write_bytes(v)
+    jpg(src / 'T_photo_d_1.jpg', (10, 120, 30))
+    sources = sorted(str(p) for p in src.iterdir())
+    temp = Path(tempfile.gettempdir())
+    temp_before = sorted(p.name for p in temp.iterdir())
+    t0 = time.time()
+    prev = agr.edits_080('tex.format_fix', 'preview', options={'files': sources, 'out': str(DATA / 'fmt_e1_out'),
+                                                               'background': [0, 0, 0]})
+    seconds = round(time.time() - t0, 1)
+    rep = agr.edits_080('tex.format_fix', 'apply', prev)
+    temp_after = sorted(p.name for p in temp.iterdir())
+    by = {Path(f['source']).name: f for f in rep['plan']['files']}
+    noise = by['T_noise_d_1.png']
+    assert noise.get('quality_fail') and 'max_rmse' in noise['reason'] and 'out' not in noise, noise
+    assert by['T_tex_d_1.png']['actions'] == ['copied_unchanged']
+    assert checks_core.png_info(Path(by['T_rgba_d_1.png']['out']).read_bytes())[3] == 2
+    g16, _ = tex.decode_png(Path(by['T_g16_d_1.png']['out']).read_bytes())
+    assert set(g16.px) == {4}, sorted(set(g16.px))[:4]
+    assert len(rep['plan']['written']) == 4 and temp_after == temp_before, (set(temp_after) ^ set(temp_before))
+    # panel press from the selection: one object per texture owner, `tex_quality` on the noise owner
+    good = rt.Box(name='SM_FmtOk_Main', length=1, width=1, height=1)
+    good.material = rt.StandardMaterial(name='M_FmtOk', diffuseMap=rt.BitmapTexture(filename=str(src / 'T_tex_d_1.png')))
+    bad = rt.Box(name='SM_FmtBad_Main', length=1, width=1, height=1)
+    bad.material = rt.StandardMaterial(name='M_FmtBad', diffuseMap=rt.BitmapTexture(filename=str(src / 'T_noise_d_1.png')))
+    rt.select([good, bad])
+    sel = agr.edits_080('tex.format_fix', 'preview')
+    codes = {o['name']: [f['code'] for f in o['findings']] for o in sel['objects']}
+    rt.delete([good, bad])
+    assert codes == {'SM_FmtOk_Main': [], 'SM_FmtBad_Main': ['tex_quality']} and sel['status'] == 'fail', codes
+    return {'noise': {k: noise.get(k) for k in ('encoding', 'rmse', 'tried', 'reason')}, 'preview_seconds': seconds,
+            'temp_unchanged': True, 'selection_codes': codes}
+
+
+def placeholders_e1():
+    folder = DATA / 'maps_e1'
+    prev = agr.edits_080('tex.placeholders', 'preview', options={
+        'folder': str(folder), 'address': 'Dup', 'udims': [1001, 1001], 'slots': [1, 2], 'metal_slots': [2]})
+    dup = [f for f in prev['plan']['files'] if f.get('code') == 'placeholder_duplicate']
+    rep = agr.edits_080('tex.placeholders', 'apply', prev)
+    written = rep['plan']['written']
+    assert len(dup) == 6 and len(written) == len(set(written)) == 6, (len(dup), written)
+    erm2 = [w for w in written if '_ERM_2.' in w][0]
+    img, _ = tex.decode_png(Path(erm2).read_bytes())
+    assert set(zip(*[iter(img.px)] * 3)) == {(0, 0, 255)}
+    tga = DATA / 'src_e1.tga'
+    tga.write_bytes(bytes([0, 0, 2]) + bytes(9) + struct.pack('<HH', 4, 4) + b'\x18\x00' + bytes(48))
+    t = agr.edits_080('tex.placeholders', 'preview', options={'folder': str(DATA / 'maps_tga'), 'address': 'Tga',
+                                                              'diffuse_from': str(tga)})
+    by = {f['map']: f for f in t['plan']['files']}
+    assert by['Diffuse'].get('code') == 'placeholder_source' and 'reason' not in by['ERM'], by
+    sel_folder = DATA / 'maps_sel_e1'
+    sel_folder.mkdir()
+    (sel_folder / 'T_PhBad_Diffuse_1.1001.png').write_bytes(b'old')
+    a = rt.Box(name='SM_PhOk_Main', length=1, width=1, height=1)
+    b = rt.Box(name='SM_PhBad_Main', length=1, width=1, height=1)
+    rt.select([a, b])
+    two = agr.edits_080('tex.placeholders', 'preview', options={'folder': str(sel_folder)})
+    rt.delete([a, b])
+    codes = {o['name']: [f['code'] for f in o['findings']] for o in two['objects']}
+    assert codes == {'SM_PhOk_Main': [], 'SM_PhBad_Main': ['placeholder_exists']}, codes
+    assert (sel_folder / 'T_PhBad_Diffuse_1.1001.png').read_bytes() == b'old'
+    return {'duplicates_refused': len(dup), 'written': len(written), 'tga_reason': by['Diffuse']['reason'],
+            'two_sets_codes': codes}
+
+
+def missing_maps_e1():
+    root = DATA / 'scene_e1'
+    lib = root / 'lib'
+    lib.mkdir(parents=True)
+    ok = lib / 'T_MmOk_d_1.png'
+    ok.write_bytes(_png(4, 4, 2, 8, [bytes(12)] * 4))
+    (lib / 'T_Bench_001_Main_d_1.png').write_bytes(_png(4, 4, 2, 8, [bytes(12)] * 4))
+    jpg(lib / 'T_Bench_001_Main_d_1.jpg', (1, 2, 3), 4, 4)
+    good = rt.Box(name='SM_MmOk_Main', length=1, width=1, height=1)
+    good.material = _bitmap_mat('M_MmOk', ok)
+    bench = rt.Box(name='SM_Bench_001_Main', length=1, width=1, height=1)
+    bench.material = _bitmap_mat('M_Bench', lib / 'old' / 'src_diffuse.png')
+    disk = tree(root)
+    rt.select([good, bench])
+    rep = agr.edits_080('scene.missing_maps', 'preview')
+    assert tree(root) == disk
+    row = [r for r in rep['plan']['maps'] if r['path'].endswith('src_diffuse.png')][0]
+    names = sorted(Path(c['path']).name for c in row['candidates'])
+    assert names == ['T_Bench_001_Main_d_1.jpg', 'T_Bench_001_Main_d_1.png'] and row['ambiguous'], row
+    assert {c['rank'] for c in row['candidates']} == {2} and row['owners'][0]['role'] == 'diffuse', row
+    codes = {o['name']: [f['code'] for f in o['findings']] for o in rep['objects']}
+    assert codes == {'SM_MmOk_Main': [], 'SM_Bench_001_Main': ['map_missing']}, codes
+    try:
+        agr.edits_080('scene.missing_maps', 'preview', options={'search': ['123']})
+    except ValueError as exc:
+        relative = str(exc)[:80]
+    else:
+        raise AssertionError('relative search folder accepted')
+    rt.delete([good, bench])
+    return {'candidates': row['candidates'], 'masks': row['masks'], 'slot': row['owners'][0]['slot'],
+            'relative_refused': relative}
+
+
 for name, fn in (('format_fix', format_fix), ('format_fix_selection', format_fix_from_selection),
-                 ('placeholders', placeholders), ('missing_maps', missing_maps)):
+                 ('placeholders', placeholders), ('missing_maps', missing_maps),
+                 ('format_fix_e1', format_fix_e1), ('placeholders_e1', placeholders_e1),
+                 ('missing_maps_e1', missing_maps_e1)):
     check(name, fn)
 summary['scene_saved'] = bool(str(rt.maxFileName))
 (OUT / 'summary.json').write_text(json.dumps(summary, ensure_ascii=False, indent=1), encoding='utf-8')
