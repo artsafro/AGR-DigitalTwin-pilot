@@ -1,3 +1,6 @@
+import os
+
+os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")  # Qt panel tests run headless (#897)
 import statistics
 import time
 from pathlib import Path
