@@ -473,10 +473,84 @@ def test_shared_atlas_padding_combined_with_d1_and_single_material_rows():
 
 
 def test_unmapped_face_matid_is_an_error_naming_it():
+    """matID 5 on #(1, 3) wraps to ID 2 (highest ID 3), which has no sub-material: the 3ds Max 2026 FBX
+    export writes an empty placeholder slot there (measured, PR #827 body), so it stays unmeasurable."""
     d1 = ('T_Tverskaya_12_001_Main_d_1.png', png(1024, 1024))
-    uv = full_square_islands([1, 7])
-    found, _ = core.textures_scene([slot_row(1, 'SM_Tverskaya_12_001_Main', {1: [d1]}, NPM_FBX, uv)])
-    assert codes(found[1]) == ['tex_unmeasurable'] and 'matID 7' in found[1][0][1]
+    uv = full_square_islands([1, 5])
+    found, _ = core.textures_scene([slot_row(1, 'SM_Tverskaya_12_001_Main', {1: [d1], 3: [d1]}, NPM_FBX, uv)])
+    assert codes(found[1]) == ['tex_unmeasurable'] and 'matID 5' in found[1][0][1]
+
+
+# Measured in 3ds Max 2026.3 (3dsmaxbatch, FBX export + re-import, card t_8fc3cd5f / #827):
+# face matID -> materialIDList entry the exported polygon gets; None = empty placeholder "Slot #k".
+MAX_FBX_MATID = {
+    (1, 2): {1: 1, 2: 2, 3: 1, 4: 2, 5: 1, 6: 2},
+    (1, 5): {1: 1, 2: None, 3: None, 4: None, 5: 5, 6: 1, 7: None, 10: 5, 11: 1},
+    (2, 3): {1: None, 2: 2, 3: 3, 4: None, 5: 2, 6: 3},
+}
+
+
+@pytest.mark.parametrize('ids', sorted(MAX_FBX_MATID))
+def test_max_submaterial_index_matches_the_max_fbx_measurement(ids):
+    for mid, want in MAX_FBX_MATID[ids].items():
+        got = core.max_submaterial_index(mid, list(ids))
+        assert (None if got is None else ids[got]) == want, (ids, mid)
+
+
+def test_max_submaterial_index_fails_closed():
+    assert core.max_submaterial_index(1, []) is None  # 0 sub-materials
+    assert core.max_submaterial_index(3, [1, 1]) is None  # duplicated ID: ambiguous, never the first
+    assert core.max_submaterial_index(1, [1, 1]) is None
+    assert core.max_submaterial_index(0, [1, 2]) is None and core.max_submaterial_index(-1, [1, 2]) is None
+    assert core.max_submaterial_index(None, [1, 2]) is None and core.max_submaterial_index(2.0, [1, 2]) is None
+
+
+def test_runtime_lookups_share_the_max_resolver():
+    """matid / _material_names / _slot_gaps resolve a Multimaterial slot through one helper.
+    RED: r2 runtime looked IDs up strictly, so matID 3 on #(1, 2) was an empty slot."""
+    import types
+    a, b = types.SimpleNamespace(name='A'), types.SimpleNamespace(name='B')
+    mm = types.SimpleNamespace(materialIDList=[1, 2], materialList=[a, None])
+    assert runtime._max_submaterial(mm, 3) is a and runtime._max_submaterial(mm, 1) is a
+    assert runtime._max_submaterial(mm, 4) is None and runtime._max_submaterial(mm, 2) is None
+    mm = types.SimpleNamespace(materialIDList=[1, 5], materialList=[a, b])
+    assert [runtime._max_submaterial(mm, m) for m in (6, 10, 3)] == [a, b, None]
+    src = (PKG / 'runtime.py').read_text(encoding='utf-8')
+    assert src.count('_max_submaterial(') == 4 and 'materialIDList[i]) ==' not in src
+
+
+def two_slot_rows(mat_ids):
+    d1 = ('T_Tverskaya_12_001_Main_d_1.png', png(1024, 1024))
+    d2 = ('T_Tverskaya_12_001_Main_d_2.png', png(1024, 1024))
+    return [slot_row(1, 'SM_Tverskaya_12_001_Main', {1: [d1], 2: [d2]}, NPM_FBX, full_square_islands(mat_ids))]
+
+
+def test_matid_outside_list_is_measured_on_the_max_slot_with_an_advisory():
+    """(a) matID 3 on #(1, 2): 3ds Max exports it with sub 1 (matID 1). RED: r2 said tex_unmeasurable."""
+    found, dropped = core.textures_scene(two_slot_rows([2, 3]))
+    assert codes(found[1]) == ['tex_matid_wrapped'] and len(found[1]) == 1 and dropped == []
+    assert 'matID 3 -> sub 1 (matID 1)' in found[1][0][1]
+    assert 'tex_matid_wrapped' in core.CODES['textures']
+    # witness: the matID 3 island is pooled with the matID 1 island (same atlas d_1), not with matID 2
+    found, _ = core.textures_scene(two_slot_rows([1, 3]))
+    assert codes(found[1]) == ['tex_matid_wrapped', 'tex_padding']
+    assert [i[2] for i in found[1] if i[0] == 'tex_padding'] == [[1, 2, 3, 4]]
+
+
+def test_listed_matids_only_are_unchanged():
+    """(b) no face outside the list: no advisory, same findings as before."""
+    assert core.textures_scene(two_slot_rows([1, 2])) == ({1: []}, [])
+    found, _ = core.textures_scene(two_slot_rows([1, 1]))
+    assert codes(found[1]) == ['tex_padding']
+
+
+def test_multimaterial_without_submaterials_is_unmeasurable():
+    """(c) 0 sub-materials: no slot to wrap to. RED: r2 returned no finding at all (silent pass)."""
+    d1 = ('T_Tverskaya_12_001_Main_d_1.png', png(1024, 1024))
+    row = slot_row(1, 'SM_Tverskaya_12_001_Main', {}, NPM_FBX, full_square_islands([1]))
+    row['maps'] = [d1]
+    found, _ = core.textures_scene([row])
+    assert codes(found[1]) == ['tex_unmeasurable'] and 'no sub-materials' in found[1][0][1]
 
 
 def test_slot_without_maps_is_missing_and_dropped_by_name():

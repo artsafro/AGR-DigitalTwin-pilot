@@ -48,8 +48,8 @@ CODES = {
               'name_type', 'name_case', 'name_digits', 'name_conflict', 'fbx_unmapped'},
     'tris': {'tri_limit', 'tri_at_limit', 'tri_unmeasurable', 'ucx_tri_limit', 'fbx_unmapped'},
     'textures': {'tex_missing', 'tex_unreadable', 'tex_format', 'tex_size', 'tex_alpha', 'tex_bit_depth',
-                 'tex_file_size', 'tex_udim', 'tex_set', 'tex_padding', 'tex_overlap_review', 'tex_unmeasurable',
-                 'at_threshold', 'fbx_unmapped'},
+                 'tex_file_size', 'tex_udim', 'tex_set', 'tex_padding', 'tex_overlap_review', 'tex_matid_wrapped',
+                 'tex_unmeasurable', 'at_threshold', 'fbx_unmapped'},
     'pivot': {'pivot_z', 'pivot_mismatch', 'pivot_reference_ambiguous', 'pivot_unmeasurable', 'at_threshold',
               'fbx_unmapped'},
     'geojson': set(),
@@ -593,6 +593,23 @@ def atlas_id(paths, model):
     return tuple(sorted(base or every))
 
 
+def max_submaterial_index(mid, ids):
+    """Index into a Multimaterial's materialIDList for face matID `mid`, as the 3ds Max 2026 FBX export
+    resolves it; None = no sub-material (the export writes an empty placeholder slot).
+    Measured (3dsmaxbatch 2026.3, FBX export + re-import, PR for #827): the ID wraps by the HIGHEST
+    listed ID n, w = (mid - 1) mod n + 1, then w must be in the list: #(1,2): 3->1, 4->2; #(1,5): 6->1,
+    10->5, 2/3/4/7->none; #(2,3): 1/4->none, 5->2. Fail-closed: no IDs, a non-int or < 1 matID, or a
+    duplicated resolved ID (ambiguous) give None, never the first entry."""
+    if type(mid) is not int or mid < 1 or not ids:
+        return None
+    ids = [int(i) for i in ids]
+    if max(ids) < 1:
+        return None
+    w = (mid - 1) % max(ids) + 1
+    hits = [i for i, v in enumerate(ids) if v == w]
+    return hits[0] if len(hits) == 1 else None
+
+
 def textures_scene(rows):
     """rows: [{'key', 'name', 'fbx', 'maps': [(path, bytes|None)], 'slots': {matID: [path]} (optional: a
     Multimaterial; absent = one material for every face), 'uv': callable -> (uvs, faces)}], faces are
@@ -644,6 +661,9 @@ def textures_scene(rows):
             slots = {None: [p for p, _ in maps]}
         elif not isinstance(slots, dict):
             raise ValueError('slot map required for ' + r['name'])
+        elif not slots:
+            f.append(('tex_unmeasurable', 'the Multimaterial has no sub-materials: no slot for any face'))
+            continue
         known = {p for p, _ in maps}
         slot_atlas = {}
         for mid, paths in slots.items():
@@ -676,13 +696,18 @@ def textures_scene(rows):
         if not faces:
             f.append(('tex_unmeasurable', 'no UV faces'))
             continue
-        offsets, unmapped = {}, set()
+        offsets, unmapped, wrapped = {}, set(), {}
+        ids = [k for k in slots if k is not None]
         for face in faces:
             fid, idx = face[0], face[1]
             mid = None if None in slots else (face[2] if len(face) > 2 else None)
             if mid not in slots:
-                unmapped.add(mid)
-                continue
+                i = None if None in slots else max_submaterial_index(mid, ids)
+                if i is None:
+                    unmapped.add(mid)
+                    continue
+                wrapped.setdefault(mid, (i, []))[1].append(fid)
+                mid = ids[i]
             a = slot_atlas.get(mid)
             if a is None:  # slot already reported (no maps / no padding rule)
                 continue
@@ -695,6 +720,10 @@ def textures_scene(rows):
             a['faces'].append(((r['key'], fid), [i + off for i in idx]))
         for mid in sorted(unmapped, key=repr):
             f.append(('tex_unmeasurable', f'face matID {mid} has no sub-material in the Multimaterial'))
+        for mid, (i, fids) in sorted(wrapped.items()):
+            f.append(('tex_matid_wrapped', f'face matID {mid} -> sub {i + 1} (matID {ids[i]}): not in '
+                      f'materialIDList {ids}; 3ds Max FBX export wraps it by the highest ID {max(ids)}, '
+                      'padding measured on that sub-material', fids))
     for a in atlases.values():
         if not a['faces']:
             continue

@@ -141,8 +141,14 @@ its `GeoAGR.ms:<line>` and its changes.
   alpha, 8 bits per channel (from the PNG header), file size, the UDIM set and UV padding. Padding is
   NPM 8 px and VPM 16/32 px for 2048/4096 maps; GeoAGR's 16/32 px branch was commented out.
   Padding is measured per texture atlas: each face goes to its matID's sub-material maps, and the
-  islands of all objects of one FBX that share an atlas are measured together (per UDIM tile). An
-  unmapped matID is `tex_unmeasurable`; a sub-material without maps is `tex_missing`. In VPM, touching
+  islands of all objects of one FBX that share an atlas are measured together (per UDIM tile). A face
+  matID outside `materialIDList` is resolved as the 3ds Max FBX export does (measured in Max 2026.3,
+  #827): it wraps by the highest listed ID n, `(id - 1) mod n + 1` (`#(1,2)`: 3 -> 1, 4 -> 2;
+  `#(1,5)`: 6 -> 1, 10 -> 5), is measured on that sub-material and reported as the advisory
+  `tex_matid_wrapped` naming `matID 3 -> sub 1`. A wrapped ID that is still not listed (`#(1,5)`: 2, 3,
+  4, 7; the export writes an empty placeholder slot) and a Multimaterial with no sub-materials are
+  `tex_unmeasurable`; a sub-material without maps is `tex_missing`. The MatID check (`empty_slot`) and
+  the export material evidence use the same resolver (`checks_core.max_submaterial_index`). In VPM, touching
   or overlapping islands (gap 0) are the review-level `tex_overlap_review`, not `tex_padding`:
   regulation 2.5.1.5 applies padding only to islands with unique images, and repeating islands may
   overlap. A VPM gap above 0 and below 16/32 px is still `tex_padding`; NPM is unchanged.
