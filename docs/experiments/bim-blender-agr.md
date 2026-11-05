@@ -28,18 +28,18 @@ Only one method was measured. A second one could not be done properly in the tim
 - Geometry: engine dump `from_spec.build(spec)` (**SYNTHETIC**, engine-generated). The native `etalon.fbx` files are not
   on disk (the `data/benchmark/` folder is missing), so this experiment does not cover native-etalon extraction. The
   checker's etalon is the clean engine dump itself, so the geometry checks measure round-trip parity.
-- Variants per bench (from `experiments/blender-bpy-automation/make_fixtures.py`): `clean`; `flip1`, where one facade
+- Variants per bench (from `archive/2026-11:experiments/blender-bpy-automation/make_fixtures.py`): `clean`; `flip1`, where one facade
   polygon is reversed; `flipall`, where the whole body is inverted.
 - Routes, each run 3 times (3 benches × 3 variants × 2 routes × 3 reps = **54 realizations, 108 fresh readbacks**):
   - **headless (baseline)**: `run_blender(tools/export/export_mesh_blender.py)` on Blender **5.1.2** headless, then `.blend` + FBX.
-  - **live (prototype)**: `experiments/bim-blender-agr/live_realize.py` through `blender_exec.py --code`, in **Blender 4.4.0 live**.
+  - **live (prototype)**: `archive/2026-11:experiments/bim-blender-agr/live_realize.py` through `blender_exec.py --code`, in **Blender 4.4.0 live**.
     It uses the same data-API realization but no `read_factory_settings`. It creates only owned datablocks, writes the
     `.blend` with `bpy.data.libraries.write` around a temporary scene (the user's open file is never saved), exports the
     owned selection to FBX, and removes everything it created.
   - Readback for both routes: a fresh headless 5.1.2 `measure_spec_blender.py` run on the FBX and on the `.blend`, then
     `checks.run(readback, clean_dump, spec, tolerances.geometry)`.
-- Commands: `uv run python experiments/bim-blender-agr/run.py <S> 3`, then `uv run python experiments/bim-blender-agr/analyze.py <S>`.
-  Raw output: `experiments/bim-blender-agr/{results,summary}.json`.
+- Commands: `uv run python archive/2026-11:experiments/bim-blender-agr/run.py <S> 3`, then `uv run python archive/2026-11:experiments/bim-blender-agr/analyze.py <S>`.
+  Raw output: `archive/2026-11:experiments/bim-blender-agr/{results,summary}.json`.
 
 ## Results
 
@@ -76,7 +76,7 @@ was not re-run. This card changed no `src/` code.
 ## Proposed follow-up (adopt)
 
 - **Title:** "Route-parity regression: headless vs live realization of B01/B02/B02t"
-  **Scope:** move `experiments/bim-blender-agr/live_realize.py` behind a `--route live` flag of a small harness tool
+  **Scope:** move `archive/2026-11:experiments/bim-blender-agr/live_realize.py` behind a `--route live` flag of a small harness tool
   (not `export_mesh_blender.py` itself). Add a `dcc` + `blender` marked pytest that realizes the clean B01 dump through both
   routes and asserts equal readback facts and signatures. Document in `docs/agents/CAPABILITIES.md` that live realization
   writes owned data only (`libraries.write` + temporary scene + cleanup check). Extend later with UV/material/instanced

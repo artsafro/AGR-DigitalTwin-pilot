@@ -66,7 +66,7 @@
 - Read-only гигиена: `tools/project_hygiene.py`; цикл — [GitHub workflow](../docs/organization/GITHUB_CODEX_WORKFLOW.md).
 - Connect: `tools/quad_connect.py`, `src/dt_ai/geometry/connect.py`; Exterior: `tools/run_exterior.py`; Shell: `tools/run_body_shell.py`. Читать AdapterReport и ограничения конкретного пакета.
 - Фасадный рисунок: `tools/facades_texture_pattern.py`; геометрия/ID/UV и native roundtrip проверяются отдельно.
-- Box lights: [job README](../jobs/WINDOW-FRAMES/README.md); UV/экспорт/Checker не следуют из принятия размещения.
+- Box lights: job README (`archive/2026-11:jobs/WINDOW-FRAMES/README.md`); UV/экспорт/Checker не следуют из принятия размещения.
 
 ## Пополнение библиотеки
 

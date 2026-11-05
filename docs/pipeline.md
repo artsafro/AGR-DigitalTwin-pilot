@@ -30,7 +30,7 @@ object yet) · **missing**.
 
 | Stage | Status | Where | Backlog |
 |---|---|---|---|
-| Ground (NPM-territory) | partial (contours/materials accepted) | `jobs/GROUND-PROJECTION/` | P9 |
+| Ground (NPM-territory) | partial (contours/materials accepted) | `archive/2026-11:jobs/GROUND-PROJECTION/` | P9 |
 | MAF (GroundEl) | missing | 3ds Max scripts inventory `docs/tools/max-scripts.md` | P10 |
 | Flora | tool only | SpeedTree MCP | P11 |
 

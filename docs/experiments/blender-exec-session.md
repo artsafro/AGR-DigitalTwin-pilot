@@ -11,11 +11,11 @@ and what should be fixed?
 ## Setup
 
 - Blender 4.4.0, blender-mcp add-on on 127.0.0.1:9876, unsaved scene: 0 objects, 1 mesh, 2 materials.
-- Harness: `experiments/blender-exec-session/harness.py` (sections `latency cubes output errors lock tmpdir`),
-  raw numbers in `experiments/blender-exec-session/results.json`. It calls the CLI as a subprocess
+- Harness: `archive/2026-11:experiments/blender-exec-session/harness.py` (sections `latency cubes output errors lock tmpdir`),
+  raw numbers in `archive/2026-11:experiments/blender-exec-session/results.json`. It calls the CLI as a subprocess
   (what workers do) and, for comparison, the script's own `send()` directly (no interpreter start, no lock,
   no output cap).
-- Run: `python experiments/blender-exec-session/harness.py` (≈ 3.5 min). Windows 11, Python 3.14.
+- Run: `python archive/2026-11:experiments/blender-exec-session/harness.py` (≈ 3.5 min). Windows 11, Python 3.14.
 - Scene before / after every section: `0 objects, 1 mesh` (all test objects are `agrexp_*` and removed).
 
 ## Results
