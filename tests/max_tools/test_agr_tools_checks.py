@@ -570,7 +570,7 @@ def _fake_rt(monkeypatch, face_ids):
 
 def test_matid_wrapped_id_is_a_blocking_empty_slot(monkeypatch):
     """#844 RED: after PR #842 matID 3 on #(1, 2) wrapped to sub 1 and the MatID check said nothing.
-    User decision 2026-11-04: it is a blocking empty_slot again (the face gets another material)."""
+    User decision 2026-11-04 [D195]: it is a blocking empty_slot again (the face gets another material)."""
     import types
     a = types.SimpleNamespace(name='A')
     node = types.SimpleNamespace(name='n', material=_FakeMM([1, 2], [a, a]))
@@ -588,7 +588,8 @@ def test_matid_listed_ids_only_pass_and_empty_sub_still_blocks(monkeypatch):
     _fake_rt(monkeypatch, {'n': [1, 5, 6, 10, 1]})
     got = {f['code']: f['ids'] for f in runtime.matid([node])['objects'][0]['findings']}
     assert got == {'empty_slot': [2, 3, 4]}, got  # 5: empty sub; 6 -> 1 and 10 -> 5 wrap: still blocking
-    node = types.SimpleNamespace(name='n', material=_FakeMM([1, 5], [a, a]))
+    _fake_rt(monkeypatch, {'m': [1, 5, 5, 1]})
+    node = types.SimpleNamespace(name='m', material=_FakeMM([1, 5], [a, a]))
     assert runtime.matid([node])['status'] == 'pass'
 
 

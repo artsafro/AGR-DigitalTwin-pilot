@@ -498,8 +498,8 @@ def xview(nodes=None, on_item=None):
 
 
 def matid(nodes=None, on_item=None):
-    """Native per-face IDs, no remapping; a Multimaterial slot is looked up the way the 3ds Max FBX
-    export resolves it (_max_submaterial: an ID outside materialIDList wraps by the highest ID)."""
+    """Native per-face IDs, no remapping; a Multimaterial slot must be listed exactly once and filled
+    (_max_submaterial wrap=False): a matID outside materialIDList is empty_slot although the FBX export wraps it (#844)."""
     rt = _rt()
     nodes = _targets(nodes)
     entries = []
@@ -515,7 +515,7 @@ def matid(nodes=None, on_item=None):
                 if mid <= 0:
                     empty.append(face)
                 if material is not None and rt.classOf(material) == rt.MultiMaterial:
-                    if _max_submaterial(material, mid) is None:
+                    if _max_submaterial(material, mid, wrap=False) is None:
                         slots.append(face)
             fs = []
             for code, ids in (('udim_id', bad), ('empty_id', empty), ('empty_slot', slots)):
@@ -757,16 +757,20 @@ def _prop(n, key):
 
 
 _SUBMATERIAL_INDEX = None
+_LISTED_INDEX = None
 
 
-def _max_submaterial(material, mid):
+def _max_submaterial(material, mid, wrap=True):
     """Sub-material a face with matID `mid` gets in the 3ds Max FBX export (the ID wraps by the highest
-    listed ID, checks_core.max_submaterial_index), or None when that slot is absent or empty."""
-    global _SUBMATERIAL_INDEX
+    listed ID, checks_core.max_submaterial_index), or None when that slot is absent or empty.
+    wrap=False: `mid` itself must be listed (checks_core.listed_submaterial_index) - the MatID check
+    and the export empty_slot block a wrapped matID (#844)."""
+    global _SUBMATERIAL_INDEX, _LISTED_INDEX
     if _SUBMATERIAL_INDEX is None:  # load the core once, not once per face
-        _SUBMATERIAL_INDEX = _checks_core().max_submaterial_index
+        core = _checks_core()
+        _SUBMATERIAL_INDEX, _LISTED_INDEX = core.max_submaterial_index, core.listed_submaterial_index
     ids = [int(material.materialIDList[i]) for i in range(len(material.materialIDList))]
-    i = _SUBMATERIAL_INDEX(mid, ids)
+    i = (_SUBMATERIAL_INDEX if wrap else _LISTED_INDEX)(mid, ids)
     return None if i is None else material.materialList[i]
 
 
@@ -1742,7 +1746,7 @@ def _slot_gaps(n, ids):
         return []
     gaps = []
     for index, mid in enumerate(ids, 1):
-        if _max_submaterial(material, int(mid)) is None:
+        if _max_submaterial(material, int(mid), wrap=False) is None:
             gaps.append(index)
     return gaps
 
