@@ -142,6 +142,13 @@ Acceptance of v003 (user, 2026-11-05, «Принимаю всё» on Claude's re
 - Still open: address (R12), FNO code/name and the УКЭП `.sig` (customer), signage TZ, `_Light.fbx` (user), parts
   file `history` key fails the schema (v002 too).
 
+## Delivery v004 (2026-11-05) — accepted by the user («Принимаю»)
+
+Wood (all wood IDs) warm beige **#C1AE93** (sRGB 193/174/147, nearest RAL 7032 ΔE76 7.6), tex-v005: only Diffuse tiles
+1003/1011/1012/1014 changed. Geometry identical to v003 (961 objects, hashes), so `xview-max-v002` 0/0 stands. Validator,
+readback, Blender xView 0/0, SINTEZ as v003. `outputs/delivery-v004/` (ZIP sha256 f9c714f1…0bceb) is the current
+delivery candidate; passed=false until FNO code/name and the УКЭП `.sig` arrive. Open items as listed above.
+
 ## Не трогать
 
 - Source files in `for_ai\` (work on byte-identical copies only).
