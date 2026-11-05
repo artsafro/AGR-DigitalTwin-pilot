@@ -708,7 +708,7 @@ def test_glue_normals_metres_and_centimetres_agree(fake):
         scenes[unit] = [(o['name'], [(f['code'], f['ids']) for f in o['findings']]) for o in r['objects']]
         assert r['plan']['m_per_unit'] == pytest.approx(1.0 / k)
     assert scenes['meters'] == scenes['centimeters']
-    assert scenes['meters'] == [('SM_Pair_Main', [('double_face', [1, 3]), ('double_face', [2, 4])]),
+    assert scenes['meters'] == [('SM_Pair_Main', [('double_face', [1, 2, 3, 4])]),
                                 ('SM_Box_Main', [('normal_inward', list(range(1, 13)))]),
                                 ('SM_Glass_001_MainGlass', [('missing_double_side', [1, 2])])]
 

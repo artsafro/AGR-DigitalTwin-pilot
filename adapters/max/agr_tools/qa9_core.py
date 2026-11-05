@@ -694,9 +694,42 @@ def mesh_normals(obj, opts):
             for y in range(lo[1], hi[1] + 1):
                 for z in range(lo[2], hi[2] + 1):
                     grid.setdefault((x, y, z), []).append(fi)
-    face_area = {}
+    elem_of = {}
+    for root, members in elements.items():
+        for fi in members:
+            elem_of[fi] = root
+
+    def plane(fi):
+        n = normals[fi]
+        return (round(n[0] * 1000), round(n[1] * 1000), round(n[2] * 1000), round(_dot(n, tris[fi][0]) * 1e4))
+    planes = [plane(fi) for fi in range(len(faces))]
+    copy_of, seen_tri = [], {}
+    for fi in range(len(faces)):  # 0 for the first triangle on a vertex triple, 1 for its exact duplicate, ...
+        key = frozenset(wf[fi])
+        copy_of.append(seen_tri.get(key, 0))
+        seen_tri[key] = copy_of[-1] + 1
+    pp = list(range(len(faces)))
+
+    def pfind(x):
+        while pp[x] != x:
+            pp[x] = pp[pp[x]]
+            x = pp[x]
+        return x
+    for users in edges.values():
+        for ui in range(len(users)):
+            for uj in range(ui + 1, len(users)):
+                (fi, a1, b1), (gj, a2, b2) = users[ui], users[uj]
+                # a manifold neighbour in the same plane walks the edge the other way; an exact duplicate (the
+                # same vertices, the same way round) is never merged into the patch of its original
+                if a1 == b2 and b1 == a2 and planes[fi] == planes[gj] and copy_of[fi] == copy_of[gj]:
+                    ra, rb = pfind(fi), pfind(gj)
+                    if ra != rb:
+                        pp[ra] = rb
+    # Coplanar part of an element: the unit of a pair, whatever the triangulation (poly or triangle ids).
+    patch_of = [pfind(fi) for fi in range(len(faces))]
+    patch_area = {}
     for fi in range(len(faces)):
-        face_area[ids[fi]] = face_area.get(ids[fi], 0.0) + areas[fi]
+        patch_area[patch_of[fi]] = patch_area.get(patch_of[fi], 0.0) + areas[fi]
     seen, acc = set(), {}
     for bucket in grid.values():
         for ai in range(len(bucket)):
@@ -704,7 +737,7 @@ def mesh_normals(obj, opts):
             for bj in range(ai + 1, len(bucket)):
                 j = bucket[bj]
                 key = (i, j) if i < j else (j, i)
-                if key in seen or ids[i] == ids[j]:
+                if key in seen or patch_of[i] == patch_of[j]:
                     continue
                 seen.add(key)
                 i, j = key
@@ -715,32 +748,28 @@ def mesh_normals(obj, opts):
                 if area <= 1e-12:
                     continue
                 signed = _dot(_sub(c, tris[j][0]), normals[j])
-                fk = (min(ids[i], ids[j]), max(ids[i], ids[j]), d > 0)
-                a = acc.setdefault(fk, [0.0, 0.0, set(), set()])
+                pk = (patch_of[i], patch_of[j]) if patch_of[i] < patch_of[j] else (patch_of[j], patch_of[i])
+                a = acc.setdefault(pk + (d > 0,), [0.0, 0.0, set()])
                 a[0] += area
-                a[1] += area * signed
-                a[2].add(i)
-                a[3].add(j)
+                a[1] += area * (signed if patch_of[i] == pk[0] else -signed if d > 0 else signed)
+                a[2] |= {i, j}
     pairs = []
-    for (fa, fb, same), (area, moment, ti_, tj_) in sorted(acc.items()):
-        if area <= max(1e-9, 0.01 * min(face_area[fa], face_area[fb])):
+    for (pa, pb, same), (area, moment, tri_set) in sorted(acc.items(), key=lambda kv: sorted(kv[1][2])):
+        if area <= max(1e-9, 0.01 * min(patch_area[pa], patch_area[pb])):
             continue
         gap = abs(moment / area)
         if gap > reach:
             continue
-        pairs.append((fa, fb, same, gap, ti_ | tj_))
+        pairs.append((sorted({ids[t] for t in tri_set}), same, gap, tri_set))
     partner = set()
-    elem_of = {}
-    for root, members in elements.items():
-        for fi in members:
-            elem_of[fi] = root
     double_sided = bool(obj.get('double_sided')) and opts['model'] == 'vpm'
-    for fa, fb, same, gap, tri_set in pairs:
-        both = [fa, fb]
+    for both, same, gap, tri_set in pairs:
+        fa, fb = both[0], both[-1]
+        names = ', '.join(map(str, both))
         if same:
             if gap < opts['same_min_m']:
-                found.append(('double_face', both, 'сонаправленные грани {} и {}: зазор {:.4f} м < {} м '
-                                                   '(VPM-2.3-13)'.format(fa, fb, gap, opts['same_min_m'])))
+                found.append(('double_face', both, 'сонаправленные грани {}: зазор {:.4f} м < {} м '
+                                                   '(VPM-2.3-13)'.format(names, gap, opts['same_min_m'])))
             continue
         roots = {elem_of[t] for t in tri_set}
         if len(roots) == 1 and closed_of[next(iter(roots))]:
@@ -748,14 +777,14 @@ def mesh_normals(obj, opts):
         partner |= tri_set
         if double_sided:
             if not opts['side_min_m'] <= gap <= opts['side_max_m']:
-                found.append(('double_side_offset', both, 'вторая сторона граней {} и {}: смещение {:.4f} м вне '
-                                                          '{}..{} м (VPM-2.12-3)'.format(fa, fb, gap,
+                found.append(('double_side_offset', both, 'вторая сторона граней {}: смещение {:.4f} м вне '
+                                                          '{}..{} м (VPM-2.12-3)'.format(names, gap,
                                                                                          opts['side_min_m'],
                                                                                          opts['side_max_m'])))
         else:
             why = 'NPM-2.3-13: полигоны с opacity односторонние' if obj.get('double_sided') else                 'двойная грань там, где второй стороны быть не должно'
-            found.append(('double_face', both, 'встречные грани {} и {}: зазор {:.4f} м ({})'.format(
-                fa, fb, gap, why)))
+            found.append(('double_face', both, 'встречные грани {}: зазор {:.4f} м ({})'.format(
+                names, gap, why)))
     if double_sided:
         lonely = [fi for fi in range(len(faces)) if fi not in partner and not closed_of[elem_of[fi]]
                   and areas[fi] > 0]
