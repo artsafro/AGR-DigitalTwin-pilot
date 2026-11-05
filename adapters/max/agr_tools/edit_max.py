@@ -2,7 +2,8 @@
 
 * `export_copies()` — deep copies of the working nodes under a new name (and optionally a layer); the
   working objects are never touched. Materials are copied so a copy edit cannot reach the original.
-* `session(label)` — ONE undo record per run (`pymxs.undo(True, label)`) plus selection save/restore.
+* `session(label)` — ONE undo record per run (`pymxs.undo(True, label)`) plus selection save/restore; an error
+  inside the record is re-raised after it (pymxs.undo swallows it in Max 2024).
 * `snapshot()` — before/after fingerprint for tests and for `edit_core.require_current`: names, transforms,
   mesh hash (vertices, faces, material IDs) per node, in handle order.
 
@@ -42,10 +43,20 @@ def keep_selection():
 
 @contextlib.contextmanager
 def undo_record(label):
-    """Exactly one undo record for everything inside (one Ctrl+Z removes the whole run)."""
+    """Exactly one undo record for everything inside (one Ctrl+Z removes the whole run).
+
+    Measured (job 20261105-011438-a488a8fd, Max 2024 batch, #908 branch C): an exception inside
+    `pymxs.undo(True, ...)` does not leave the `with` block, so a failed apply would carry on as a success.
+    The error is caught inside the record and re-raised after the record is closed."""
     import pymxs
+    failed = []
     with pymxs.undo(True, 'AGR Tools: ' + str(label)):
-        yield
+        try:
+            yield
+        except BaseException as exc:  # noqa: BLE001 - re-raised below, outside the undo context
+            failed.append(exc)
+    if failed:
+        raise failed[0]
 
 
 @contextlib.contextmanager

@@ -347,7 +347,7 @@ def test_rail_has_path_and_ten_blocks_in_order_with_planned_greyed(main):
     assert items == ['Путь'] + ['{} {}'.format(b['number'], b['short_ru']) for b in suite['blocks']]
     assert p.pages.count() == 11 and p.rail.currentRow() == 0
     planned = [r for r in suite['rows'] if roadmap.vkey(r['version']) > roadmap.vkey(model.VERSION)]
-    assert set(p.planned) == {r['id'] for r in planned} and len(planned) == 65
+    assert set(p.planned) == {r['id'] for r in planned} and len(planned) == 59  # 0.9-1.x, +7 audit rows
     for r in planned:
         b = p.planned[r['id']]
         assert not b.isEnabled() and b.text().endswith('в версии ' + r['version'])
@@ -364,7 +364,7 @@ def test_path_nodes_open_tabs_tooltips_and_cards(main, qtbot):
     btn = p.findChild(QtWidgets.QToolButton, 'agr_path_qa.glass')
     assert btn.isEnabled() and 'NPM-2.7-2' in btn.toolTip() and 'Когда:' in btn.toolTip()
     planned = p.findChild(QtWidgets.QToolButton, 'agr_path_light.check')
-    assert not planned.isEnabled() and 'в версии 1.0' in planned.text()
+    assert not planned.isEnabled() and 'в версии 0.9' in planned.text()  # moved from 1.0
     box = p.show_card('qa.glass')
     text = box.text()
     for part in ('Что делает:', 'Когда нужна:', 'Вход:', 'Результат:', 'Сцена: только чтение', 'Связанные кнопки:'):
