@@ -10,7 +10,7 @@ the model by hand in 3ds Max (2026-10-21, `outputs/xview-v005/tow02_ovl23_v001.m
 2026-10-22 [D185]: the user's `for_placement/0213_Vyatskaya_Vl_47_49_05.fbx` stays as delivered; validate-delivery
 not passed (`docs/deliveries/vyatskaya-tow02-npm-user-v05-2026-10-21.md`), zero-UV agreed, texture findings disputed
 Context: GLOSSARY.md (Body, NPM, Level contour), docs/domain/geometry.md (project modeling rules),
-docs/HARNESS_PLAN.md §3–4, §14–16, docs/backlog.md EG1, EG2, EG4, EG6, docs/domain/patterns/wall-from-contour.md,
+historical docs/HARNESS_PLAN.md §3–4, §14–16, docs/backlog.md EG1, EG2, EG4, EG6, docs/domain/patterns/wall-from-contour.md,
 terrace.md, facade-decor-inset.md.
 
 ## Requirement

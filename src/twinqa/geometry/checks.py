@@ -1201,6 +1201,17 @@ def check_orientation(model: Soup, tol: dict) -> dict:
 HORIZONTAL_COS_TOL = 1e-6
 # a hit this far (m) above the ray is a real crossing; closer is the face itself or a coplanar neighbour
 _HOR_DEPTH = 1e-6
+# Planarity of a boundary loop / sheet also accepts float32 storage noise: FBX keeps vertices as
+# float32, so a plane at z = 6.6 m reads back with a Z spread of ~1.4e-6 m (3 float32 ulps), above
+# _HOR_DEPTH. 16 ulps of the largest |z| (~1.3e-5 m at 6.6 m, ~1.9e-4 m at 100 m) stay far below
+# _HOR_CAP_M and any modelled step.
+_HOR_FLAT_F32_ULPS = 16
+
+
+def _hor_flat_tol(z) -> np.ndarray | float:
+    """Z spread (m) still treated as one plane at height(s) |z|: _HOR_DEPTH or the float32 noise."""
+    scale = _HOR_FLAT_F32_ULPS * float(np.finfo(np.float32).eps)
+    return np.maximum(_HOR_DEPTH, scale * np.abs(np.asarray(z, dtype=float)))
 # barycentric distance to an edge at or below this is a boundary hit, not a strict interior crossing
 _HOR_BOUNDARY = 1e-8
 # weld for joining meshes into volumes when tol has none: the Spec default (weld_m 0 overflows the weld grid)
@@ -1488,7 +1499,8 @@ def _cap_footprints(chunk, triangles, vertices, weld_m):
     boundary = edges[(counts == 1) & (edges[:, 0] != edges[:, 1])]
     if not len(boundary):
         return []
-    flat = np.abs(points[boundary[:, 0], 2] - points[boundary[:, 1], 2]) <= _HOR_DEPTH
+    za, zb = points[boundary[:, 0], 2], points[boundary[:, 1], 2]
+    flat = np.abs(za - zb) <= _hor_flat_tol(np.maximum(np.abs(za), np.abs(zb)))
     adjacency = {}
     for a, b in boundary[flat]:
         adjacency.setdefault(int(a), set()).add(int(b))
@@ -1514,7 +1526,7 @@ def _cap_footprints(chunk, triangles, vertices, weld_m):
         if current != seed or len(ring) != len(seen):
             continue
         coords = points[ring]
-        if np.ptp(coords[:, 2]) > _HOR_DEPTH:
+        if np.ptp(coords[:, 2]) > _hor_flat_tol(np.max(np.abs(coords[:, 2]))):
             continue
         poly = shapely.Polygon(coords[:, :2])
         if poly.is_valid and poly.area > 0:
@@ -1522,7 +1534,7 @@ def _cap_footprints(chunk, triangles, vertices, weld_m):
     planes = []
     for z, poly in loops:
         for i, (plane_z, footprint) in enumerate(planes):
-            if abs(z - plane_z) <= _HOR_DEPTH:
+            if abs(z - plane_z) <= _hor_flat_tol(max(abs(z), abs(plane_z))):
                 planes[i] = (plane_z, footprint.symmetric_difference(poly))
                 break
         else:
@@ -1554,7 +1566,7 @@ def _cap_contexts(open_parts, triangles, vertices, weld_m):
     if not open_parts:
         return []
     corners = [vertices[triangles[ix]] for ix in open_parts]
-    sheet = [np.ptp(c[..., 2]) <= _HOR_DEPTH for c in corners]
+    sheet = [bool(np.ptp(c[..., 2]) <= _hor_flat_tol(np.max(np.abs(c[..., 2])))) for c in corners]
     footprints = [(i, z, poly) for i, ix in enumerate(open_parts) if not sheet[i]
                   for z, poly in _cap_footprints(ix, triangles, vertices, weld_m)]
     joined = {i: [ix] for i, ix in enumerate(open_parts) if not sheet[i]}
@@ -1659,7 +1671,8 @@ def _pure_sheet(tri_idx: np.ndarray, corners: np.ndarray, length: np.ndarray, nz
         return False
     if not np.all(np.abs(nz[live]) >= (1.0 - HORIZONTAL_COS_TOL) * length[live]):
         return False
-    return float(np.ptp(corners[live][..., 2])) <= _HOR_DEPTH
+    z = corners[live][..., 2]
+    return bool(float(np.ptp(z)) <= _hor_flat_tol(float(np.max(np.abs(z)))))
 
 
 def _sheet_owner_side(sheet_ix: np.ndarray, sheet_label: int, contexts, corners: np.ndarray,

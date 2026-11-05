@@ -33,7 +33,7 @@ Read on demand, one line each. Read the domain file that matches the task before
 - Accepted cases and lessons: `docs/cases.md`.
 - Terms: `GLOSSARY.md`.
 - Names for scripts, tools, jobs, outputs, branches and tags; object ids: `docs/agents/NAMING.md`, `jobs/REGISTRY.md`.
-- Harness plan, benchmark etalons, pattern registry: `docs/HARNESS_PLAN.md`, `benchmark/`, `docs/domain/patterns/INDEX.md`.
+- Benchmark etalons and pattern registry: `benchmark/`, `docs/domain/patterns/INDEX.md`. `docs/HARNESS_PLAN.md` is historical.
 - Machine-readable rules: `standards/` (locked; change procedure in `standards/README.md`).
 - AGR knowledge base (Russian originals, read-only): `docs/agr/INDEX.md` only, then the file it names.
 - Code map, checks and plugin configuration: `docs/agents/agents-reference.md`.

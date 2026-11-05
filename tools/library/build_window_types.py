@@ -262,7 +262,7 @@ def main(argv=None):
     types = dedupe(types)
     types = confirm(types, json.loads(args.confirmations.read_text(encoding="utf-8")))
     doc = {"schema": "window-types/1",
-           "note": "Machine-readable window type list (HARNESS_PLAN §6, issue #4). An entry is unconfirmed until "
+           "note": "Machine-readable window type list (HARNESS_PLAN §6 (historical), issue #4). An entry is unconfirmed until "
                    "the user confirms and names it (library/windows/confirmations.json); handing is null; sashes are not in "
                    "the sources. Sizes are the rough opening with its frame (spec v0.3); panes_m are glass "
                    "rectangles [x0, z0, x1, z1] from the bottom left of the opening. Built by "

@@ -1,9 +1,13 @@
-"""new-case: AGR Tools 0.6.0 Qt panel under pytest-qt with a fake backend (#808).
+"""new-case: AGR Tools 0.6.0/0.7.0 Qt panel under pytest-qt with a fake backend (#808).
 
-Runs outside 3ds Max (PySide6 from PyPI). Skipped when PySide6 / pytest-qt are not installed:
-uv run --with PySide6 --with pytest-qt pytest tests/max_tools/test_agr_tools_ui_qt.py
+Runs outside 3ds Max (PySide6-Essentials + pytest-qt from the uv dev group, #897):
+uv run pytest tests/max_tools/test_agr_tools_ui_qt.py
+QT_QPA_PLATFORM=offscreen is set by tests/max_tools/conftest.py before any PySide6 import.
+A missing Qt package FAILS this module when the rest of the dev group is installed; it is a skip
+only without the dev group (tests/max_tools/_qt_guard.py).
 """
 import importlib.util
+import inspect
 import json
 import os
 import sys
@@ -11,11 +15,16 @@ from pathlib import Path
 
 import pytest
 
+ROOT = Path(__file__).resolve().parents[2]
+_gspec = importlib.util.spec_from_file_location('agr_qt_guard_mod', Path(__file__).with_name('_qt_guard.py'))
+_guard = importlib.util.module_from_spec(_gspec)
+_gspec.loader.exec_module(_guard)
+_status, _reason = _guard.qt_status(ROOT / 'pyproject.toml')
+if _status == 'fail':
+    pytest.fail('Qt panel tests: ' + _reason, pytrace=False)
 pytest.importorskip('PySide6')
 pytest.importorskip('pytestqt')
-os.environ.setdefault('QT_QPA_PLATFORM', 'offscreen')
 
-ROOT = Path(__file__).resolve().parents[2]
 PKG = ROOT / 'adapters/max/agr_tools'
 
 
@@ -29,6 +38,8 @@ def _load(name, module):
 
 qt = _load('ui_qt.py', 'agr_tools_ui_qt')
 model = _load('ui_model.py', 'agr_tools_ui_model')
+roadmap = _load('roadmap.py', 'agr_tools_roadmap')
+SUITE = ROOT / 'docs/plans/agr-tools-suite.json'
 ui = _load('ui_panel.py', 'agr_tools_ui_panel')
 _ispec = importlib.util.spec_from_file_location('agr_icons_qt', ROOT / 'tools/max/agr_icons.py')
 ICONS = importlib.util.module_from_spec(_ispec)
@@ -46,6 +57,13 @@ class FakeBackend:
         self.settings = ''
         self.native_pct = []
         self.enabled_during_run = set()
+        self.reports = {}
+
+    def suite(self):
+        return roadmap.load_file(SUITE)
+
+    def last_reports(self):
+        return dict(self.reports)
 
     def icon(self, name):
         icon = QtGui.QIcon()
@@ -58,10 +76,13 @@ class FakeBackend:
     def targets(self, scope_all):
         return list(self.nodes)
 
-    def run_chunk(self, tool, chunk):
+    def run_chunk(self, tool, chunk, on_item=None):
         if self.panel is not None:
             self.enabled_during_run |= {k for k, b in self.panel.buttons.items() if b.isEnabled()}
             self.panel.run('matid')  # re-entry through processEvents must be refused
+        if on_item is not None:
+            for _h in chunk:
+                on_item()
         return {'schema': 1, 'tool': tool, 'status': 'pass',
                 'objects': [{'handle': h, 'name': 'N%d' % h,
                              'findings': [] if h % 100 else [{'code': 'overlap_faces', 'ids': [1]}]}
@@ -71,7 +92,9 @@ class FakeBackend:
         self.events.append(('tool', tool, scope_all))
         if tool == 'export':
             raise ValueError('dry-run gate failed')
-        return {'schema': 1, 'tool': tool, 'status': 'pass', 'objects': [{'handle': 5, 'name': 'A', 'findings': []}]}
+        rep = {'schema': 1, 'tool': tool, 'status': 'pass', 'objects': [{'handle': 5, 'name': 'A', 'findings': []}]}
+        self.reports[tool] = rep
+        return rep
 
     def select_failed(self, report):
         self.selected = [o['handle'] for o in report['objects'] if o['findings']]
@@ -93,7 +116,7 @@ class FakeBackend:
         self.events.append(('end',))
 
     def log(self, report):
-        pass
+        self.reports[report['tool']] = report
 
     def log_error(self, tool, exc):
         self.events.append(('error', tool, str(exc)))
@@ -128,14 +151,18 @@ def make(main, backend):
 def test_layout_has_all_sections_and_actions(main):
     p = make(main, FakeBackend())
     assert p.objectName() == 'AgrToolsPanel' and isinstance(p, QtWidgets.QDockWidget)
-    assert [s.header.text() for s in p.sections] == list(model.SECTIONS)
-    assert set(p.buttons) == {a.id for a in model.ACTIONS}
-    for a in model.ACTIONS:
+    assert {s.header.text() for s in p.sections} == set(roadmap.STEP_RU)
+    suite = roadmap.load_file(SUITE)
+    shipped = [a for a in model.ACTIONS
+               if roadmap.shipped(roadmap.row(suite, model.row_of(a.id))['version'], model.VERSION)]
+    assert set(p.buttons) == {a.id for a in shipped}  # 0.8 actions stay greyed until VERSION 0.8.0 (#908)
+    for a in shipped:
         b = p.buttons[a.id]
-        assert b.toolTip() == model.tooltip(a) and b.text() == a.label and not b.icon().isNull()
+        assert b.toolTip().startswith(model.tooltip(a)) and 'Когда:' in b.toolTip()
+        assert b.text() == a.label and not b.icon().isNull()
     assert main.dockWidgetArea(p) == QtCore.Qt.RightDockWidgetArea
     colours = {s.color.name() for s in p.sections}
-    assert len(colours) == 5
+    assert len(colours) == 10  # one accent per block
 
 
 def test_batched_run_on_1000_objects_progress_and_buttons_disabled(main):
@@ -165,10 +192,10 @@ def test_panel_cancel_button(main, qtbot):
     p = make(main, be)
     orig = be.run_chunk
 
-    def chunk(tool, c):
+    def chunk(tool, c, on_item=None):
         if c[0] == 101:
             qtbot.mouseClick(p.cancel_btn, QtCore.Qt.LeftButton)
-        return orig(tool, c)
+        return orig(tool, c, on_item=on_item)
     be.run_chunk = chunk
     p.run('matid')
     assert p.table.rowCount() == 126 and 'Отменено' in p.summary.text()  # 125 objects + the cancelled row
@@ -254,12 +281,50 @@ def test_accents_follow_the_palette(main, theme, window, base, text):
         QtWidgets.QApplication.instance().setPalette(QtGui.QPalette())
 
 
+def test_batched_progress_pumps_by_elapsed_time(main, monkeypatch):
+    """Invariant: 25-object chunks must not be the event-loop cadence.
+
+    Each object costs 0.06 s, so a count-based chunk of 25 blocks for 1.5 s.
+    Pumps follow the clock and the max gap stays strictly under 0.1 s.
+    """
+    t = {'n': 0.0}
+    marks = []
+
+    def pumped(*_a, **_k):
+        marks.append(t['n'])
+
+    monkeypatch.setattr(QtWidgets.QApplication, 'processEvents', pumped)
+    be = FakeBackend(50)
+    orig = be.run_chunk
+
+    def run_chunk(tool, chunk, on_item=None):
+        for _h in chunk:
+            t['n'] += 0.06
+            if on_item is not None:
+                on_item()
+        return orig(tool, chunk)
+
+    be.run_chunk = run_chunk
+    kwargs = {}
+    if 'clock' in inspect.signature(ui.AgrPanel.__init__).parameters:
+        kwargs['clock'] = lambda: t['n']
+    p = ui.AgrPanel(be, main, **kwargs)
+    be.panel = p
+    ui.place(p, main, model.parse_dock(be.load_settings()))
+    main.show()
+    p.run('xview')
+    gaps = [b - a for a, b in zip(marks, marks[1:])]
+    assert gaps, marks
+    assert max(gaps) < 0.1, 'max_gap_s={:.3f} pumps={}'.format(max(gaps), len(marks))
+
+
 def test_theme_switch_after_creation_recolours_sections(main):
     """Max can switch Dark/Light at runtime (colorMan.setColorTheme): accents must follow."""
     app = QtWidgets.QApplication.instance()
     p = make(main, FakeBackend(5))
     before = [s.color.name() for s in p.sections]
     pal = QtGui.QPalette()
+    pal.setColor(QtGui.QPalette.Window, QtGui.QColor('#444444'))
     pal.setColor(QtGui.QPalette.Base, QtGui.QColor('#2e2e2e'))
     pal.setColor(QtGui.QPalette.Text, QtGui.QColor('#dcdcdc'))
     app.setPalette(pal)
@@ -272,3 +337,53 @@ def test_theme_switch_after_creation_recolours_sections(main):
             assert model.contrast((s.color.red(), s.color.green(), s.color.blue()), b) >= 3
     finally:
         app.setPalette(QtGui.QPalette())
+
+
+# ---- 0.7.0: tab rail + «Путь» (#860) -------------------------------------------------------------------
+def test_rail_has_path_and_ten_blocks_in_order_with_planned_greyed(main):
+    p = make(main, FakeBackend(5))
+    suite = roadmap.load_file(SUITE)
+    items = [p.rail.item(i).text() for i in range(p.rail.count())]
+    assert items == ['Путь'] + ['{} {}'.format(b['number'], b['short_ru']) for b in suite['blocks']]
+    assert p.pages.count() == 11 and p.rail.currentRow() == 0
+    planned = [r for r in suite['rows'] if roadmap.vkey(r['version']) > roadmap.vkey(model.VERSION)]
+    assert set(p.planned) == {r['id'] for r in planned} and len(planned) == 65
+    for r in planned:
+        b = p.planned[r['id']]
+        assert not b.isEnabled() and b.text().endswith('в версии ' + r['version'])
+    rail_colours = {p.rail.item(i).foreground().color().name() for i in range(1, 11)}
+    assert len(rail_colours) == 10
+
+
+def test_path_nodes_open_tabs_tooltips_and_cards(main, qtbot):
+    p = make(main, FakeBackend(5))
+    suite = roadmap.load_file(SUITE)
+    assert list(p.nodes) == [b['id'] for b in suite['blocks']]
+    qtbot.mouseClick(p.findChild(QtWidgets.QToolButton, 'agr_open_qa'), QtCore.Qt.LeftButton)
+    assert p.rail.currentRow() == 8 and p.pages.currentIndex() == 8
+    btn = p.findChild(QtWidgets.QToolButton, 'agr_path_qa.glass')
+    assert btn.isEnabled() and 'NPM-2.7-2' in btn.toolTip() and 'Когда:' in btn.toolTip()
+    planned = p.findChild(QtWidgets.QToolButton, 'agr_path_light.check')
+    assert not planned.isEnabled() and 'в версии 1.0' in planned.text()
+    box = p.show_card('qa.glass')
+    text = box.text()
+    for part in ('Что делает:', 'Когда нужна:', 'Вход:', 'Результат:', 'Сцена: только чтение', 'Связанные кнопки:'):
+        assert part in text, part
+    box.close()
+
+
+def test_live_status_and_next_step_follow_the_runs(main):
+    be = FakeBackend(5)
+    p = make(main, be)
+    assert p.next_label.text() == 'Следующий шаг: 0 Сцена и источник: запустить проверки'
+    assert p.nodes['scene'][1].text() == 'Статус: не запускалось'
+    p.run('census')
+    p.run('units')
+    assert p.status_by_block['scene'] == 'ok' and p.nodes['scene'][1].text() == 'Статус: ок'
+    assert p.next_label.text().startswith('Следующий шаг: 1 Моделирование')
+    be.reports['xform'] = {'schema': 1, 'tool': 'xform', 'status': 'fail', 'objects': []}
+    p.refresh_path()
+    assert p.status_by_block['qa'] == 'errors' and p.nodes['qa'][1].text() == 'Статус: ошибки'
+    out = os.environ.get('AGR_UI_SHOTS')
+    if out:
+        main.grab().save(str(Path(out) / 'offscreen_path_live.png'))
