@@ -127,7 +127,8 @@ def test_documentation_correction_keeps_all_guard_inventory_rows_and_hook():
     for component in (".claude/hooks/guard.py", "SHELL_RULES", "PRODUCTION_EXT", "ALLOWED_WRITE_ROOTS"):
         assert component in rows
         assert rows[component][5] == "none"
-    assert ".claude/hooks/guard.py" in settings_hooks()
+    assert ".claude/hooks/pretool.py" in settings_hooks()        # the dispatcher runs guard.py in-process
+    assert '("guard.py", None)' in (ROOT / ".claude/hooks/pretool.py").read_text(encoding="utf-8")
 
 
 @pytest.mark.parametrize("component", (*PROCEDURAL_ONLY, "tools/hooks/skill_gate.py"))
