@@ -9,18 +9,18 @@ NPM and VPM deliveries for buildings, Ground, MAF, Flora and UCX, plus the Unrea
 ## In production
 
 PR merges do not imply delivery acceptance. Per-object gates stay in `jobs/<ID>/STATE.md`. Merged pull requests, newest first:
+- `52b587c` Merge pull request #1011 from artsafro/harness/repo-hygiene-docs
+- `8866c9a` Merge pull request #1010 from artsafro/harness/repo-hygiene-archive
+- `9576440` Merge pull request #1009 from artsafro/harness/repo-hygiene-cleanup
+- `cb1ad1d` Merge pull request #1007: AGR Tools 0.9 branch E3: rework package/suite (#979)
+- `556ed58` Merge pull request #1001: E3 shared hooks: export.cleanup options in runtime, close census known bug (#979)
+- `81ccace` Merge pull request #1003: branch D follow-up, export.batch on the real qa.procedural_objects (#979)
 - `bf12a41` Merge pull request #969 from artsafro/job/elv-tc-vpm
 - `aba8f21` Merge pull request #1000: AGR Tools 0.9 branch C (#979)
 - `0c0d88a` Merge pull request #998: AGR Tools 0.9 branch E2: rework ucx/pivot/udim (#979)
 - `a3d850d` Merge pull request #997: AGR Tools 0.9 branch E1: rework tex/names (#979)
 - `3f911c7` Merge pull request #996: polygon stage_tools copies package data/ (#979)
 - `adcfd7a` Merge pull request #995: AGR Tools 0.9 branch A: place.* (#979)
-- `bc5df51` Merge pull request #994: AGR Tools 0.9 branch B: tex/udim/atlas (#979)
-- `dc4444b` Merge pull request #992: fragment station may give its own reason (#979)
-- `42888fd` Merge pull request #990: AGR Tools 0.9 branch D: export.batch, scene.maps_usage, light.check (#979)
-- `5c3264e` Merge pull request #988: #979 base tests tolerate committed station fragments
-- `56c7e5b` Merge pull request #984: Lab 0.9 L05+L06 reports (#979)
-- `352f733` Merge pull request #981 from artsafro/improve/issue-951-agr-mcp-locks-agr-package-validate-scene
 
 ## Harness
 
@@ -28,7 +28,6 @@ Capability A (`capability-b01`, codex): benchmark 1 passed / 0 failed / 0 not me
 Capability B (`capability-ticket`, codex): local_pr 0 passed / 1 failed / 0 not measured; procedural 0 passed / 0 failed / 10 not measured; not ready; repository + user skills. Reference: `evals/capability-ticket/reference.json`.
 
 Open pull requests:
-- #803 job(silikatny-maf-viz): visualisation MAF set, D189-D190 [job/silikatny-maf-viz] draft
 - #805 MAF generator: parametric step-3 tool, «Верона» benches rows 1-10 (#790) [improve/issue-790-maf-generator-parametric-step-3-tool-fir]
 - #876 Improve: AGR Tools 0.6.0 panel: tooltip requirement ids = docs/plans/agr-tools-suite.json (#862) [improve/agr-tools-ui-reqs-match-suite-json]
 - #917 maf_gen_bench_checks: exit 1 on any fail, check against the schedule/DWG reference size (#817) [improve/issue-817-maf-gen-bench-checks-exit-1-on-any-fail]
@@ -38,7 +37,9 @@ Open pull requests:
 - #989 Methods / building-body: kpp1 on the real АС.03 drawings (#967) [improve/issue-967-methods-building-body-kpp1-on-the-real-0]
 - #991 MAF showcase: colour zones with material IDs for the 13 Vatutino positions (#889) [improve/issue-889-maf-showcase-split-the-13-vatutino-posit]
 - #999 Research: Research: which #979 base-test assertions will still break when branches B/C/E commit their fragments? [docs/research-agr-tools-090-base-tests-fragment-brittleness]
-- #1001 E3 shared hooks: export.cleanup options in runtime, close census known bug (#979) [improve/issue-979-e3-shared-hooks]
+- #1005 fix: agr-mcp stale reclaim mutex exclusive in every interleaving (#972) [improve/issue-972-agr-mcp-locks-stale-reclaim-mutex-unlink]
+- #1006 AC08 kernel: invariants relative to the source [D197], rerun 19 ops + L4 gates (#968) [improve/issue-968-ac08-kernel-invariants-relative-to-the-s]
+- #1008 job(skug26-k5-ac): VPM 4K conditioner texture, UDIM 1004 — accepted case [job/skug26-k5-ac-vpm-texture]
 
 ## Next step
 
