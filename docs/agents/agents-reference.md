@@ -16,7 +16,12 @@ Per-card reading order and shared safety rules stay in `AGENTS.md` [D121].
 - `data/` — local only, git-ignored: heavy sources (`data/sources/`), archives.
 
 Checks: `uv run pytest -q`, `uv run dt profiles check`, `uv run dt schemas --check`.
-Parallel suite, opt-in only (pytest-xdist; the default run stays serial): `uv run pytest -q -n 8`.
+The default suite is ~18.3k tests; a serial run takes over an hour, so run it in parallel (pytest-xdist):
+`uv run pytest -q -n auto`. Default `addopts` deselect the opt-in lanes `blender`, `dcc`, `acad`, `max`,
+`panel_texture`, `perf` (budgets and brute-force/exhaustive cases) and `job` (slow tests tied to one job's data:
+TEC26 AC08, tow02); select one with `-m <marker>`. A command-line `-m` replaces the default expression, so name
+every lane to keep excluded. Real delivery archives: `tests/qa/test_owner_decisions_081.py` runs its archive
+check only with `AGR_REAL_DELIVERIES` set.
 
 ## Skills
 
@@ -30,7 +35,7 @@ Matt Pocock's engineering skills (`mattpocock-skills` plugin) read this configur
 
 ### Issue tracker
 
-GitHub Issues of `artsafro/AGR-DigitalTwin` via `gh`. See `docs/agents/issue-tracker.md`.
+GitHub Issues of `artsafro/AGR-DigitalTwin-pilot` via `gh`. See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 

@@ -499,6 +499,7 @@ def test_preflight_report_scene_rows_are_validated():
         core.validate_report(dict(xf, plan=dict(xf['plan'], path='x', findings=[])))
 
 
+@pytest.mark.perf
 def test_preflight_status_includes_units_bruteforce():
     """invariant: preflight fails iff an object finding or a scene.units item fails; units pass iff the
     standalone scene.units check passes (400 cases, NaN/inf/None/missing/at-threshold values)."""

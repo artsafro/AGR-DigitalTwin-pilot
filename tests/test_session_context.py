@@ -103,6 +103,16 @@ def test_stale_foreign_and_old_handoffs_are_flagged(repo):
     assert "no `Branch:` line" in ctx and "uncommitted changes" in ctx and "?? " not in ctx
 
 
+def test_foreign_handoff_body_is_a_pointer_line_only(repo):
+    git(repo, "switch", "-q", "-c", "task/b")
+    ctx = start(repo, "startup")
+    assert "docs/HANDOFF.md not injected: its `Branch:` is `task/a`, this session is on `task/b`" in ctx
+    assert "--- docs/HANDOFF.md ---" not in ctx and "Do X." not in ctx
+    (repo / "docs/HANDOFF.md").write_text("# Handoff\n\nold format\n", encoding="utf-8")
+    ctx = start(repo, "startup")
+    assert "its `Branch:` is missing" in ctx and "old format" not in ctx
+
+
 def test_compact_with_a_stale_handoff_asks_for_a_checkpoint(repo):
     assert "handover procedure" not in start(repo, "compact")
     (repo / "x.txt").write_text("x", encoding="utf-8")

@@ -27,6 +27,8 @@ import make_npm_atlas  # noqa: E402
 import make_textures  # noqa: E402
 import qa_packages  # noqa: E402
 
+pytestmark = pytest.mark.job  # TEC26 AC08 job data; opt-in with -m job
+
 SPEC = fm.load(AC08 / "vpm_textures.json")
 KPP = fm.load(ROOT / "jobs/KPP1/scripts/vpm_textures.json")
 DUMP = fm.load(AC08 / "max-dump-008.json")

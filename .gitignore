@@ -11,6 +11,9 @@
 !/jobs/**/*.yaml
 !/jobs/**/*.ms
 !/jobs/**/*.rb
+!/jobs/**/*.sh
+!/jobs/**/*.mjs
+!/jobs/**/*.txt
 /jobs/*/outputs/
 /jobs/*/pipeline/dump-*.json
 /jobs/*/runs/

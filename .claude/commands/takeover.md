@@ -9,8 +9,8 @@ Take over after a context rotation (docs/agents/WORKFLOW.md, "Context rotation")
 
 This command only reads and reports. Change no file, run no DCC call, push nothing.
 
-1. **Read** `docs/HANDOFF.md` in full (the state above may cut it), then the parts of `docs/PROJECT_STATE.md`
-   and `docs/backlog.md` that name this branch, task, job or the issues in the handoff. For a job also
+1. **Read** `docs/HANDOFF.md` in full (the state above may cut it, or name only the file when its `Branch:` is another
+   branch), then the parts of `docs/PROJECT_STATE.md` and `docs/backlog.md` that name this branch, task, job or the issues in the handoff. For a job also
    `jobs/<ID>/STATE.md`.
 2. **Reconcile** the handoff with reality and list every discrepancy:
    - branch and worktree vs the handoff's `Branch:` line;
