@@ -3,10 +3,12 @@ direct call of the wrapped function on the same synthetic input; locks, audit, u
 """
 import base64
 import json
+import math
 import re
 import sys
 import threading
 import types
+import zipfile
 from pathlib import Path
 
 import anyio
@@ -411,7 +413,7 @@ def test_leaked_live_agr_mcp_lock_is_acquired_an_hour_past_until(tmp_path, monke
 @pytest.mark.parametrize("name,args,want", [
     ("agr_fbx_readback", {"fbx_path": "a.fbx", "timeout": 7200}, 7200.0),
     ("agr_fbx_readback", {"fbx_path": "a.fbx"}, 600.0),
-    ("agr_package_validate", {"target": "a.zip", "scene": True}, 600.0),
+    ("agr_package_validate", {"target": "a.zip", "scene": True}, 21 * 600.0),
     ("agr_xview_check", {"scene": "live"}, tools.MAX_TIMEOUT),
     ("agr_exec_unsafe", {"code": "1", "timeout": 3000}, 3000.0),
 ])
@@ -710,6 +712,156 @@ def test_probe_release_failures_are_retried_then_reported(tmp_path, monkeypatch,
                 assert "release failed" not in err.lower()
             n += 1
     assert n == len(errors) * len(fail_counts) == 28
+
+
+def _zip_with_fbx(path: Path, count: int) -> None:
+    with zipfile.ZipFile(path, "w") as archive:
+        for i in range(count):
+            archive.writestr(f"part_{i:02d}.fbx", b"synthetic")
+
+
+def _lease(path, timeout: float) -> float:
+    info = json.loads(path.read_text(encoding="utf-8"))
+    return info["until"] - info["t"]
+
+
+def test_package_validate_scene_lock_covers_two_fbx_readbacks(tmp_path, monkeypatch):
+    """#951: a 2-FBX scene=true call keeps blender-batch busy at 721 s and at 1100 s.
+
+    The second holder acquires only once the lease reaches 2*READBACK_TIMEOUT+120
+    (the same `until` rule as every other agr-mcp lock: stale when time >= until).
+    """
+    pkg = tmp_path / "two.zip"
+    _zip_with_fbx(pkg, 2)
+    spec = tools.catalog()["agr_package_validate"]
+    args = {"target": str(pkg), "scene": True}
+    timeout = spec.timeout(args)
+    assert timeout == 2 * tools.READBACK_TIMEOUT
+    assert spec.host(args) == "blender-batch"
+    t0 = 1_000_000.0
+    clock = [t0]
+    monkeypatch.setattr(locks, "time", types.SimpleNamespace(time=lambda: clock[0]))
+    with locks.hold("blender-batch", "a", timeout) as path:
+        assert _lease(path, timeout) == 2 * tools.READBACK_TIMEOUT + 120
+        for elapsed in (721, 1100, tools.READBACK_TIMEOUT + 120):
+            clock[0] = t0 + elapsed
+            with pytest.raises(locks.LockBusy):
+                with locks.hold("blender-batch", "b", tools.READBACK_TIMEOUT):
+                    pass
+            assert json.loads(path.read_text(encoding="utf-8"))["card"] == "a"
+        clock[0] = t0 + 2 * tools.READBACK_TIMEOUT + 120
+        with locks.hold("blender-batch", "b", tools.READBACK_TIMEOUT) as taken:
+            assert json.loads(taken.read_text(encoding="utf-8"))["card"] == "b"
+
+
+def test_probe_package_validate_lease_covers_every_fbx_count(tmp_path, monkeypatch):
+    """#951: for N = 1..21 the scene lock lease is at least N*READBACK_TIMEOUT+120."""
+    spec = tools.catalog()["agr_package_validate"]
+    t0 = 1_000_000.0
+    clock = [t0]
+    monkeypatch.setattr(locks, "time", types.SimpleNamespace(time=lambda: clock[0]))
+    seen = 0
+    for n in range(1, 22):
+        pkg = tmp_path / f"n{n}.zip"
+        _zip_with_fbx(pkg, n)
+        timeout = spec.timeout({"target": str(pkg), "scene": True})
+        assert timeout >= n * tools.READBACK_TIMEOUT
+        with locks.hold("blender-batch", "a", timeout) as path:
+            assert _lease(path, timeout) >= n * tools.READBACK_TIMEOUT + 120
+            clock[0] = t0 + n * tools.READBACK_TIMEOUT + 120 - 1e-6
+            with pytest.raises(locks.LockBusy):
+                with locks.hold("blender-batch", "b", 60):
+                    pass
+        clock[0] = t0
+        seen += 1
+    assert seen == 21
+
+
+def test_package_validate_scene_lock_fails_closed(tmp_path, monkeypatch):
+    """Missing, empty, partial, unsupported and non-finite inputs never take a one-readback lease.
+
+    A count that cannot be read uses the NPM upper bound (21). A readable package with
+    no FBX is still at least one readback. Exactly at the one-readback threshold the
+    second holder stays busy.
+    """
+    spec = tools.catalog()["agr_package_validate"]
+    upper = tools.PACKAGE_SCENE_FBX_UPPER
+    from twinqa.profiles import load_profiles
+    assert upper == load_profiles().profile("npm")["archive"]["fbx_total"]["max"] == 21
+    assert upper >= 1
+    undetermined = [
+        {"target": str(tmp_path / "missing.zip"), "scene": True},
+        {"target": "", "scene": True},
+        {"target": str(tmp_path), "scene": True},  # directory, not a file
+    ]
+    empty_zip = tmp_path / "empty.zip"
+    _zip_with_fbx(empty_zip, 0)
+    partial = tmp_path / "partial.zip"
+    partial.write_bytes(b"PK\x03\x04truncated")
+    unsupported = []
+    for suffix in (".png", ".geojson", ".txt", ".fbx.bak"):
+        path = tmp_path / f"bad{suffix}"
+        path.write_bytes(b"not-a-package")
+        unsupported.append({"target": str(path), "scene": True})
+    single = tmp_path / "one.FBX"
+    single.write_bytes(b"Kaydara FBX Binary")
+    offline = tmp_path / "offline.zip"
+    _zip_with_fbx(offline, 2)
+
+    t0 = 1_000_000.0
+    clock = [t0]
+    monkeypatch.setattr(locks, "time", types.SimpleNamespace(time=lambda: clock[0]))
+
+    def assert_busy_past_one_readback(timeout: float) -> None:
+        assert timeout >= tools.READBACK_TIMEOUT
+        assert math.isfinite(timeout)
+        with locks.hold("blender-batch", "a", timeout) as path:
+            assert _lease(path, timeout) >= tools.READBACK_TIMEOUT + 120
+            clock[0] = t0 + tools.READBACK_TIMEOUT + 120  # exactly the old one-readback lease
+            if timeout == tools.READBACK_TIMEOUT:
+                with locks.hold("blender-batch", "b", 60) as taken:
+                    assert json.loads(taken.read_text(encoding="utf-8"))["card"] == "b"
+            else:
+                with pytest.raises(locks.LockBusy):
+                    with locks.hold("blender-batch", "b", 60):
+                        pass
+                assert json.loads(path.read_text(encoding="utf-8"))["card"] == "a"
+        clock[0] = t0
+
+    for args in undetermined + unsupported:
+        timeout = spec.timeout(args)
+        assert timeout == upper * tools.READBACK_TIMEOUT
+        assert_busy_past_one_readback(timeout)
+    # readable, zero FBX: never fewer than one readback, not the 21-wide bound
+    zero = spec.timeout({"target": str(empty_zip), "scene": True})
+    assert zero == tools.READBACK_TIMEOUT
+    assert_busy_past_one_readback(zero)
+    # one FBX file, any case of the suffix
+    one = spec.timeout({"target": str(single), "scene": True})
+    assert one == tools.READBACK_TIMEOUT
+    assert_busy_past_one_readback(one)
+    # more than the profile max is still the real count
+    big = tmp_path / "big.zip"
+    _zip_with_fbx(big, upper + 1)
+    over = spec.timeout({"target": str(big), "scene": True})
+    assert over == (upper + 1) * tools.READBACK_TIMEOUT
+    assert_busy_past_one_readback(over)
+    # partial / unreadable zip cannot be counted
+    broken = spec.timeout({"target": str(partial), "scene": True})
+    assert broken == upper * tools.READBACK_TIMEOUT
+    assert_busy_past_one_readback(broken)
+    # scene false keeps the previous single timeout and does not lock blender
+    assert spec.timeout({"target": str(offline), "scene": False}) == float(tools.READBACK_TIMEOUT)
+    assert spec.timeout({"target": str(offline)}) == float(tools.READBACK_TIMEOUT)
+    assert spec.host({"target": str(offline), "scene": False}) == "offline"
+    for bad in (
+        {"target": str(offline), "scene": True, "ground_area_m2": float("nan")},
+        {"target": str(offline), "scene": True, "ground_area_m2": float("inf")},
+        {"target": str(offline), "scene": True, "ground_area_m2": float("-inf")},
+        {"target": str(offline), "scene": True, "footprint_holes": [[float("nan"), 0.0]]},
+    ):
+        with pytest.raises(ValueError):
+            spec.timeout(bad)
 
 
 def test_probe_audit_lines_equal_calls_seed_841(tmp_path):

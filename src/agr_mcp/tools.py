@@ -108,10 +108,55 @@ def _const(host: str) -> Callable[[dict], str]:
 
 READBACK_TIMEOUT = 600  # twinqa.scene.readback default
 EXEC_TIMEOUT = 120
+# NPM archive.fbx_total.max: 1 Ground + up to 20 OKS (standards/NPM_STANDARD.yaml).
+# scene=true uses this when the FBX count cannot be read, never a single readback.
+PACKAGE_SCENE_FBX_UPPER = 21
 
 
 def _arg_timeout(default: float) -> Callable[[dict], float]:
     return lambda args: float(args.get("timeout", default))
+
+
+def _package_fbx_count(target: str) -> int | None:
+    """FBX members a scene readback will walk, or None when that cannot be known.
+
+    Names only: the central directory, not member bytes. Missing, unreadable and
+    unsupported targets return None so the caller keeps the profile upper bound.
+    """
+    import zipfile
+    try:
+        path = Path(target)
+        if not path.is_file():
+            return None
+        suffix = path.suffix.lower()
+        if suffix == ".fbx":
+            return 1
+        if suffix != ".zip":
+            return None
+        with zipfile.ZipFile(path) as archive:
+            return sum(1 for info in archive.infolist()
+                       if not info.is_dir() and info.filename.lower().endswith(".fbx"))
+    except Exception:
+        return None
+
+
+def _package_validate_timeout(args: dict) -> float:
+    """Lock budget for agr_package_validate.
+
+    scene=false stays one READBACK_TIMEOUT (no Blender). scene=true is one readback
+    per FBX, sequentially, each READBACK_TIMEOUT (validate_package.add_scene). A count
+    below 1 is still one readback. An unreadable target uses PACKAGE_SCENE_FBX_UPPER.
+    Non-finite arguments are an error, never a short lease.
+    """
+    _check_finite(args, "arguments")
+    if not args.get("scene"):
+        return float(READBACK_TIMEOUT)
+    count = _package_fbx_count(str(args.get("target", "")))
+    if count is None:
+        count = PACKAGE_SCENE_FBX_UPPER
+    if count < 1:
+        count = 1
+    return float(count) * float(READBACK_TIMEOUT)
 
 
 def _max_timeout(_args: dict) -> float:
@@ -249,7 +294,7 @@ def catalog(unsafe: bool = False, max_transport=None) -> dict[str, Spec]:
                              "footprint_holes": {}}},
              {"type": "object", "required": ["stages"]}, h_package_validate,
              lambda a: "blender-batch" if a.get("scene") else "offline",
-             timeout=lambda _a: float(READBACK_TIMEOUT)),
+             timeout=_package_validate_timeout),
         Spec("agr_mesh_names", "twinqa.naming.mesh_name_findings: V012 mesh/UCX names of one FBX (offline).",
              {"type": "object", "required": ["names", "kind", "role", "fbx_stem", "limit", "src"],
               "additionalProperties": False,
