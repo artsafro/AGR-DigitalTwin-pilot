@@ -1,8 +1,9 @@
 """new-case: pure model of the AGR Tools 0.6.0 panel (#808); no Qt, no pymxs.
 
 Actions, sections, Russian labels and tooltips, report -> table rows, the batched
-progress loop with cancel, dock-state parsing and palette-derived accents. Everything
-here runs under plain pytest; ui_panel.py only draws it.
+progress loop with cancel (read on the next chunk boundary, about 0.9 s on Max 2024),
+dock-state parsing and palette-derived accents. Everything here runs under plain
+pytest; ui_panel.py only draws it.
 """
 import base64
 import binascii
@@ -320,6 +321,8 @@ class Cancelled(Exception):
 # inside one 25-object xView chunk before the next processEvents; Max 2026 chunks
 # were already under 0.2 s. The gap must stay strictly under PUMP_GAP_LIMIT_S.
 # A budget of exactly that limit (or anything outside (0, limit)) is an error.
+# One pymxs object is atomic, so a gap is at most the budget plus that object.
+# PUMP_BUDGET_S leaves headroom under the limit for a small object.
 PUMP_GAP_LIMIT_S = 0.1
 PUMP_BUDGET_S = 0.09
 
@@ -342,55 +345,14 @@ def check_pump_cost(cost):
     return value
 
 
-def pump_gaps(costs, budget):
-    """Gaps between event pumps for cooperative per-object costs.
-
-    A gap closes before elapsed cost meets `budget` (exactly-at-threshold does
-    not extend the open gap). A single huge cost is sliced so the bound still
-    holds. Empty, partial, non-finite and negative input is an error.
-    """
-    limit = check_pump_budget(budget)
-    if isinstance(costs, (str, bytes)) or not isinstance(costs, (list, tuple)) or len(costs) == 0:
-        raise ValueError('empty pump costs')
-    gaps = []
-    since = 0.0
-    steps = 0
-    for raw in costs:
-        left = check_pump_cost(raw)
-        if left == 0.0:
-            continue
-        while left > 0.0:
-            steps += 1
-            if steps > 1000000:
-                raise ValueError('pump slice did not finish')
-            room = limit - since
-            if left < room:
-                since += left
-                break
-            if since > 0.0:
-                gaps.append(since)
-                since = 0.0
-                continue
-            step = limit * 0.5
-            if not math.isfinite(step) or step <= 0.0 or step >= limit:
-                raise ValueError('pump slice')
-            gaps.append(step)
-            left -= step
-    if since > 0.0:
-        if since >= limit:
-            raise ValueError('pump gap at threshold')
-        gaps.append(since)
-    if not gaps:
-        gaps.append(0.0)
-    return gaps
-
-
 def object_pump(since, estimate, cost, budget=PUMP_BUDGET_S):
     """Online pump decision after one atomic object (pymxs cannot be sliced).
 
     `cost` is that object's wall time. Returns (pump, since, estimate). The next
     similar object is assumed to cost `estimate`, so the open gap closes before
-    it would meet the budget. A non-finite or negative cost is an error.
+    it would meet the budget. A huge object is not sliced: the gap that just
+    closed is at most the budget plus that one object. Empty, partial, unsupported,
+    non-finite, negative and a budget of exactly PUMP_GAP_LIMIT_S are errors.
     """
     limit = check_pump_budget(budget)
     spent = check_pump_cost(cost)
@@ -406,7 +368,13 @@ def object_pump(since, estimate, cost, budget=PUMP_BUDGET_S):
 
 def run_batched(tool, fn, nodes, size, progress, cancelled):
     """Run fn(chunk) per chunk; progress(done, total) after each; cancelled() before each.
-    A cancel raises Cancelled with the partial report attached (never a pass)."""
+
+    Cancel is not read inside a chunk. A Cancel click takes effect only before the
+    next chunk, so on Max 2024 the latency is one 25-object chunk (about 0.9 s).
+    The chunk already running is still merged and counted; raising from the
+    per-object pump would drop that chunk's results. A cancel raises Cancelled
+    with the partial report attached (status fail, never a pass).
+    """
     nodes = list(nodes)
     if not nodes:
         raise ValueError('empty target set')
