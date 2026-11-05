@@ -701,7 +701,8 @@ def textures_scene(rows):
             f.append(('tex_unmeasurable', 'no UV faces'))
             continue
         offsets, unmapped, wrapped = {}, set(), {}
-        ids = [k for k in slots if k is not None]
+        ids = r.get('id_list')  # the materialIDList as given (duplicates kept), like the FBX export sees it
+        ids = [k for k in slots if k is not None] if ids is None else list(ids)
         for face in faces:
             fid, idx = face[0], face[1]
             mid = None if None in slots else (face[2] if len(face) > 2 else None)

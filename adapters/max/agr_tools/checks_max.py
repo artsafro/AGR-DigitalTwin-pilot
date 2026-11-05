@@ -96,6 +96,12 @@ def _slots(n):
     return out
 
 
+def _id_list(n):
+    """The Multimaterial's materialIDList as given (duplicates kept); the core resolves wrapped matIDs on it."""
+    ids = n.material.materialIDList
+    return [int(ids[i]) for i in range(int(ids.count))]
+
+
 def _uv_faces(n):
     """(uvs, faces) of map channel 1 from an in-memory snapshot; faces are (snapshot triangle id,
     [uv indices], face matID) so the core can send each face to its sub-material's atlas."""
@@ -181,6 +187,7 @@ def textures(agr, core, nodes):
     for r in rows:
         paths = _used_maps(r['node'])
         r['slots'] = _slots(r['node'])
+        r['id_list'] = _id_list(r['node']) if r['slots'] else None
         for sub in (r['slots'] or {}).values():
             paths += [p for p in (sub or []) if p not in paths]
         r['maps'] = [(path, _read(path)) for path in paths]

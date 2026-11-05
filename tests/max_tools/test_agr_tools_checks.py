@@ -406,12 +406,13 @@ def full_square_islands(mat_ids, x0=0.0, s=1.0):
 def slot_row(key, name, slots, fbx, uv):
     maps, seen = [], set()
     for paths in slots.values():
-        for p, d in paths:
+        for p, d in paths or []:
             if p not in seen:
                 seen.add(p)
                 maps.append((p, d))
     return {'key': key, 'name': name, 'fbx': fbx, 'maps': maps,
-            'slots': {mid: [p for p, _ in paths] for mid, paths in slots.items()}, 'uv': lambda: uv}
+            'slots': {mid: None if paths is None else [p for p, _ in paths]
+                                         for mid, paths in slots.items()}, 'uv': lambda: uv}
 
 
 def geoagr_pooled_padding(uvs, faces, size, need):
@@ -1023,3 +1024,45 @@ def test_duplicate_matid_does_not_hide_the_other_slot():
     assert slots[1] is None and slots[2] == ['T_Tverskaya_12_001_Main_d_2.png']
     unm = [x for x in found[1] if x[0] == 'tex_unmeasurable']
     assert len(unm) == 1 and 'matID 1' in unm[0][1]
+
+
+def _wrap_row(id_list, mat_ids, slots, gapped=False):
+    uv = full_square_islands(mat_ids)
+    if gapped:  # two islands of the same slot 0.001 apart: a padding finding with a value
+        u, f = full_square_islands(mat_ids * 2, s=0.4)
+        u = [(x + (0.401 if i >= 4 else 0.0), y) for i, (x, y) in enumerate(u)]
+        uv = (u, f)
+    row = slot_row(1, 'SM_Tverskaya_12_001_Main', slots, NPM_FBX, uv)
+    row['id_list'] = id_list
+    return row
+
+
+_D1 = ('T_Tverskaya_12_001_Main_d_1.png', png(1024, 1024))
+_D2 = ('T_Tverskaya_12_001_Main_d_2.png', png(1024, 1024))
+
+
+def test_wrap_to_duplicated_matid_is_unmeasurable_not_wrapped():
+    """RED: matID 3 wrapped to the unique key set {1, 2} (-> sub 1) and was measured."""
+    found, _ = core.textures_scene([_wrap_row([1, 1, 2], [3], {1: None, 2: [_D2]})])
+    assert 'tex_matid_wrapped' not in codes(found[1])
+    unm = [x[1] for x in found[1] if x[0] == 'tex_unmeasurable' and 'face matID 3' in x[1]]
+    assert len(unm) == 1
+
+
+def test_wrap_without_duplicate_unchanged():
+    found, _ = core.textures_scene([_wrap_row([1, 2], [3], {1: [_D1], 2: [_D2]})])
+    w = [x[1] for x in found[1] if x[0] == 'tex_matid_wrapped']
+    assert len(w) == 1 and '-> sub 1 (matID 1)' in w[0] and 'materialIDList [1, 2]' in w[0]
+
+
+def test_unique_matid_next_to_duplicate_is_measured():
+    """P3 of #848: slot 2 of [1, 1, 2] is measured (its padding is reported)."""
+    found, _ = core.textures_scene([_wrap_row([1, 1, 2], [2], {1: None, 2: [_D2]}, gapped=True)])
+    pad = [x for x in found[1] if x[0] == 'tex_padding']
+    assert pad and any(ch.isdigit() for ch in pad[0][1])
+
+
+def test_wrapped_message_prints_list_as_given():
+    found, _ = core.textures_scene([_wrap_row([2, 1, 2, 5], [6], {2: None, 1: [_D1], 5: [_D2]})])
+    w = [x[1] for x in found[1] if x[0] == 'tex_matid_wrapped']
+    assert w and 'materialIDList [2, 1, 2, 5]' in w[0] and '[1, 2, 5]' not in w[0]
