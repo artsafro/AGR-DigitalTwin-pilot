@@ -799,16 +799,17 @@ def predict_all():
         doc['version'] = versions[button]
 
     by_scene = {}
+    # synthetic metre scene units; qa.preflight needs them since #882 (its scene.units row passes)
+    good_units = {'unit_type': 'meters', 'unit_scale': 1.0, 'file_in_gamma': 1.0, 'file_out_gamma': 1.0}
     for scene in ('polygon_all', 'vpm'):
         rows = suite_rows_for(scene)
         by_scene[scene] = rows
         for tool, button in suite.PLAN_ROW.items():
             if tool == 'units':
                 continue
-            found, _d, _s = suite.run(tool, rows, audit)
+            found, _d, _s = suite.run(tool, rows, audit, scene=dict(good_units, path=scene))
             docs[button]['objects'].extend(_from_found(scene, rows, found))
 
-    good_units = {'unit_type': 'meters', 'unit_scale': 1.0, 'file_in_gamma': 1.0, 'file_out_gamma': 1.0}
     cm_units = dict(good_units, unit_type='centimeters')
     for scene, payload in (('polygon_all', good_units), ('cm_units', cm_units)):
         findings = suite.units(payload)

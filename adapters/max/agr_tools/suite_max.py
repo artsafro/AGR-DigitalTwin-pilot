@@ -143,12 +143,13 @@ def run(agr, glue, core, tool, nodes=None, select=True):
     scale = agr._unit_m()
     rows = [_row(agr, glue, n, scale) for n in nodes]
     audit = None
+    scene = scene_units() if tool == 'preflight' else None  # qa.preflight includes scene.units (#882)
     if tool in ('ucx_audit', 'preflight'):
         try:
             audit = agr._load_core('ucx_audit_core.py', 'agr_ucx_audit_core')  # shipped slice (MZP)
         except ValueError:  # source checkout: the slice is generated at build time
             from twinqa.geometry import ucx_audit as audit
-    found, dropped, summary = core.run(tool, rows, audit)
+    found, dropped, summary = core.run(tool, rows, audit, scene=scene)
     report = core.report(tool, rows, found, dropped, summary)
     if select:
         rt.select([n for n, o in zip(nodes, report['objects']) if o['findings']])

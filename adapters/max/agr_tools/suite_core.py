@@ -563,12 +563,17 @@ def zero_area(rows):
 
 
 # --- qa.preflight -------------------------------------------------------------------------------------
-def preflight(rows, audit):
-    """All object checks of 0.7 in one pass, one table; nothing changes the scene.
+def preflight(rows, audit, scene):
+    """All checks of 0.7 in one pass, one table; nothing changes the scene.
 
     Replaces GeoAGR Prepare LowPoly GeoAGR.ms:65278 / Prepare HighPoly :65653 (destructive: D6 ResetXForm +
     collapse, D1, D2, D7, D8) with the read-only checks above. Each finding detail starts with its check.
+    scene.units runs too (#882, D5): its items become scene-level rows (report plan.findings, names prefixed
+    'scene.units: ') and summary checks['units']. No scene dict -> ValueError, never a units-less pass.
     """
+    if not isinstance(scene, dict):
+        raise ValueError('preflight needs the scene units (scene.units): scene not read')
+    scene_rows = [dict(x, name=PLAN_ROW['units'] + ': ' + x['name']) for x in units(scene)]
     found, dropped, status = {}, [], {}
     for tool in PREFLIGHT:
         f, d, _ = run(tool, rows, audit)
@@ -577,17 +582,19 @@ def preflight(rows, audit):
             for code, detail, ids in items:
                 _add(found, key, code, '{}: {}'.format(PLAN_ROW[tool], detail), ids)
         dropped += [{'name': x['name'], 'reason': tool + ': ' + x['reason']} for x in d]
-    return found, dropped, {'checks': status}
+    status['units'] = 'pass' if all(x['status'] == 'pass' for x in scene_rows) else 'fail'
+    return found, dropped, {'checks': status, 'scene': {'path': str(scene.get('path')), 'findings': scene_rows}}
 
 
-def run(tool, rows, audit=None):
+def run(tool, rows, audit=None, scene=None):
+    """scene: the scene.units dict; required by preflight (see preflight), ignored by object checks."""
     fn = {'census': census, 'perimeter_drop': perimeter_drop, 'material_type': material_type,
           'sets_count': sets_count, 'fbx_split': fbx_split, 'glass': glass, 'scene_hygiene': scene_hygiene,
           'xform': xform, 'zero_area': zero_area}
     if tool == 'ucx_audit':
         return ucx_audit(rows, audit)
     if tool == 'preflight':
-        return preflight(rows, audit)
+        return preflight(rows, audit, scene)
     if tool not in fn:
         raise KeyError('unknown 0.7 check: ' + repr(tool))
     return fn[tool](rows)
@@ -600,8 +607,13 @@ def report(tool, rows, found, dropped, summary):
     for r in rows:
         fs = [{'code': c, 'ids': sorted(set(int(i) for i in ids)), 'detail': d} for c, d, ids in found.get(r['key'], [])]
         objects.append({'handle': int(r['key']), 'name': str(r['name']), 'findings': fs})
-    out = {'schema': 1, 'tool': tool, 'status': 'fail' if any(o['findings'] for o in objects) else 'pass',
-           'objects': objects, 'plan': {'dropped': list(dropped), 'summary': summary}}
+    plan = {'dropped': list(dropped), 'summary': summary}
+    if tool == 'preflight':  # scene.units rows (#882): plan.findings/path, the scene_report shape
+        summary = dict(summary)
+        scene = summary.pop('scene')
+        plan = {'dropped': list(dropped), 'summary': summary, 'path': scene['path'], 'findings': scene['findings']}
+    bad = any(o['findings'] for o in objects) or any(f['status'] != 'pass' for f in plan.get('findings', ()))
+    out = {'schema': 1, 'tool': tool, 'status': 'fail' if bad else 'pass', 'objects': objects, 'plan': plan}
     return validate_report(json.loads(json.dumps(out, allow_nan=False)))
 
 
@@ -621,15 +633,10 @@ def validate_report(r):
     if r['tool'] in SCENE_TOOLS:
         if r['objects'] != [] or not isinstance(plan, dict) or set(plan) != {'path', 'findings'}:
             raise ValueError('incomplete plan')
-        if not plan['findings']:
-            raise ValueError('empty findings')
-        for f in plan['findings']:
-            if not isinstance(f, dict) or set(f) != {'name', 'status', 'observed', 'expected'} \
-                    or f['status'] not in ('pass', 'fail'):
-                raise ValueError('incomplete finding')
-        expected = 'pass' if all(f['status'] == 'pass' for f in plan['findings']) else 'fail'
+        expected = _scene_status(plan['findings'])
     else:
-        if not isinstance(plan, dict) or set(plan) != {'dropped', 'summary'} or not isinstance(plan['dropped'], list):
+        keys = {'dropped', 'summary'} | ({'path', 'findings'} if r['tool'] == 'preflight' else set())
+        if not isinstance(plan, dict) or set(plan) != keys or not isinstance(plan['dropped'], list):
             raise ValueError('incomplete plan')
         for d in plan['dropped']:
             if not isinstance(d, dict) or set(d) != {'name', 'reason'} or not d['reason']:
@@ -647,6 +654,25 @@ def validate_report(r):
                 if not isinstance(f, dict) or set(f) != {'code', 'ids', 'detail'} or f['code'] not in CODES[r['tool']]:
                     raise ValueError('unmapped finding: ' + repr(f.get('code') if isinstance(f, dict) else f))
         expected = 'fail' if any(o['findings'] for o in r['objects']) else 'pass'
+        if r['tool'] == 'preflight':
+            checks_ = plan['summary'].get('checks') if isinstance(plan['summary'], dict) else None
+            units_status = _scene_status(plan['findings'])
+            if not isinstance(checks_, dict) or set(checks_) != set(PREFLIGHT) | {'units'} \
+                    or any(v not in ('pass', 'fail') for v in checks_.values()) or checks_['units'] != units_status:
+                raise ValueError('preflight checks incomplete or units status inconsistent')
+            if units_status == 'fail':
+                expected = 'fail'
     if r['status'] != expected:
         raise ValueError('inconsistent status')
     return r
+
+
+def _scene_status(findings):
+    """Scene-level items (scene.units): non-empty, complete, pass/fail only; -> derived status."""
+    if not isinstance(findings, list) or not findings:
+        raise ValueError('empty findings')
+    for f in findings:
+        if not isinstance(f, dict) or set(f) != {'name', 'status', 'observed', 'expected'} \
+                or f['status'] not in ('pass', 'fail'):
+            raise ValueError('incomplete finding')
+    return 'pass' if all(f['status'] == 'pass' for f in findings) else 'fail'
