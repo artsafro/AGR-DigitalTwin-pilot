@@ -150,9 +150,38 @@ def _props(node, obj):
     rt.setUserPropBuffer(node, '\r\n'.join(lines) + '\r\n')
 
 
+def _fragment_builder(name):
+    """test-polygon/stations/<branch>_build.py of a #979 branch: make(obj, rt) -> node for a node kind this
+    builder does not know (lights, scatters, ...). The fragment loader allows only `<branch>_build`."""
+    import importlib.util
+    path = core.STATIONS_DIR / (name + '.py')
+    if not path.is_file():
+        raise RuntimeError('fragment builder missing: ' + str(path))
+    spec = importlib.util.spec_from_file_location('agr_polygon_' + name, path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def catalog_objects():
+    """The builder input: AGR_POLYGON_CATALOG (written by run_polygon.py from polygon_core.load_catalog(), the
+    polygon plus the #979 station fragments), else the committed catalog.json snapshot."""
+    import os
+    path = os.environ.get('AGR_POLYGON_CATALOG')
+    source = Path(path) if path else POLY / 'catalog.json'
+    return json.loads(source.read_text(encoding='utf-8'))['objects']
+
+
 def _make(obj):
     rt = _rt()
     kind = obj['superclass']
+    if obj.get('builder'):
+        node = _fragment_builder(obj['builder']).make(obj, rt)
+        if node is None or not rt.isValidNode(node):
+            raise RuntimeError('fragment builder made no node for ' + obj['name'])
+        _props(node, obj)
+        _layer(obj['layer']).addNode(node)
+        return node
     if kind == 'camera' and obj.get('camera_span'):
         node = _base_camera(obj)
     elif kind == 'camera':
@@ -260,7 +289,7 @@ def build(scene, texture_dir=''):
     rt = _rt()
     rt.resetMaxFile(rt.Name('noPrompt'))
     _units(scene)
-    catalog = json.loads((POLY / 'catalog.json').read_text(encoding='utf-8'))
+    catalog = {'objects': catalog_objects()}
     made = {}
     if scene == 'empty':
         return made

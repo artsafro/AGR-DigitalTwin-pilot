@@ -182,7 +182,12 @@ def main(argv=None):
     if args.actual is None:
         if not DCC.is_file():
             raise SystemExit('shared DCC lock runner is missing: ' + str(DCC))
-        env = dict(os.environ, AGR_POLYGON_OUT=str(out), AGR_POLYGON_ROOT=str(ROOT))
+        # The builder input with the #979 station fragments (polygon_core.load_catalog), not only catalog.json.
+        catalog_path = out / 'catalog.json'
+        catalog_path.write_text(json.dumps(core.load_catalog(), ensure_ascii=False, indent=1) + '\n',
+                                encoding='utf-8')
+        env = dict(os.environ, AGR_POLYGON_OUT=str(out), AGR_POLYGON_ROOT=str(ROOT),
+                   AGR_POLYGON_CATALOG=str(catalog_path))
         proc = subprocess.run([sys.executable, str(DCC), 'max', '--file',
                                str(POLY / 'build' / 'run_inside_max.py'), '--version', args.version,
                                '--out', str(out / 'max.log')], env=env)
