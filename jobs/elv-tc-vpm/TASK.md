@@ -100,7 +100,7 @@ Intake per [D186], 2026-11-04. Profile: **VPM-OKS only** (no NPM). One OKS, so n
 
 ## Customer TZ 2026-11-05 (rework list on the customer's blank `SM_Elevatornaya_Vl_1_A_001`)
 
-Inputs (read-only copies): `Dima_Andrew_sreda\customer_2026-11-05\` — `TC_Sreda-04-11-2026-1.pur` (sha256 1e088d29…849b),
+Inputs (read-only copies): `Dima_Andrew\3_sreda\customer_2026-11-05\` — `TC_Sreda-04-11-2026-1.pur` (sha256 1e088d29…849b),
 `SREDA_fasad_v0.6.blend` (acecd0ad…615e), `SM_Elevatornaya_Vl_1_A_001.zip` (3051e465…813f). Analysis:
 `outputs/customer-tz-v001/tz_summary.md`, `outputs/customer-blank-v001/compare.md`.
 
