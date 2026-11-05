@@ -1,0 +1,784 @@
+{
+ "schema": 1,
+ "branch": "D",
+ "issue": "#979",
+ "stations": [
+  {
+   "button": "light.check",
+   "objects": [
+    {
+     "name": "Poly_Root",
+     "role": "helper",
+     "scene": "frag_d_light",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "helper",
+     "cls": "Dummy"
+    },
+    {
+     "name": "Poly_Spot_001",
+     "role": "light",
+     "scene": "frag_d_light",
+     "pos": [
+      0,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "freeSpot",
+     "builder": "D_build",
+     "extra": {
+      "light": "freeSpot",
+      "units": "meters"
+     },
+     "parent": "Poly_Root"
+    },
+    {
+     "name": "Poly_Spot_002",
+     "role": "light",
+     "scene": "frag_d_light",
+     "pos": [
+      1.0,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "targetSpot",
+     "builder": "D_build",
+     "extra": {
+      "light": "targetSpot",
+      "units": "meters"
+     },
+     "parent": "Poly_Root"
+    },
+    {
+     "name": "Poly_Spot_003",
+     "role": "light",
+     "scene": "frag_d_light",
+     "pos": [
+      20,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "freeSpot",
+     "builder": "D_build",
+     "extra": {
+      "light": "freeSpot",
+      "units": "meters"
+     },
+     "parent": "Poly_Root"
+    },
+    {
+     "name": "Poly_Spot_004",
+     "role": "light",
+     "scene": "frag_d_light",
+     "pos": [
+      21.5,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "freeSpot",
+     "builder": "D_build",
+     "extra": {
+      "light": "freeSpot",
+      "units": "meters"
+     },
+     "parent": "Poly_Root"
+    },
+    {
+     "name": "Poly_Spot_005",
+     "role": "light",
+     "scene": "frag_d_light",
+     "pos": [
+      30,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "freeSpot",
+     "builder": "D_build",
+     "extra": {
+      "light": "freeSpot",
+      "units": "meters"
+     },
+     "parent": "Poly_Root"
+    },
+    {
+     "name": "Poly_Spot_006",
+     "role": "light",
+     "scene": "frag_d_light",
+     "pos": [
+      31.49,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "freeSpot",
+     "builder": "D_build",
+     "extra": {
+      "light": "freeSpot",
+      "units": "meters"
+     },
+     "parent": "Poly_Root"
+    },
+    {
+     "name": "Poly_Omni_001",
+     "role": "light",
+     "scene": "frag_d_light",
+     "pos": [
+      50,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "Omnilight",
+     "builder": "D_build",
+     "extra": {
+      "light": "Omnilight",
+      "units": "meters"
+     },
+     "parent": "Poly_Root"
+    },
+    {
+     "name": "Poly_Omni_002",
+     "role": "light",
+     "scene": "frag_d_light",
+     "pos": [
+      54.9,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "Omnilight",
+     "builder": "D_build",
+     "extra": {
+      "light": "Omnilight",
+      "units": "meters"
+     },
+     "parent": "Poly_Root"
+    },
+    {
+     "name": "Poly_Omni_003",
+     "role": "light",
+     "scene": "frag_d_light",
+     "pos": [
+      70,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "Omnilight",
+     "builder": "D_build",
+     "extra": {
+      "light": "Omnilight",
+      "units": "meters"
+     },
+     "parent": "Poly_Root"
+    },
+    {
+     "name": "Poly_Omni_004",
+     "role": "light",
+     "scene": "frag_d_light",
+     "pos": [
+      75,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "Omnilight",
+     "builder": "D_build",
+     "extra": {
+      "light": "Omnilight",
+      "units": "meters"
+     },
+     "parent": "Poly_Root"
+    },
+    {
+     "name": "Poly_Photo_001",
+     "role": "light",
+     "scene": "frag_d_light",
+     "pos": [
+      90,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "Free_Light",
+     "builder": "D_build",
+     "extra": {
+      "light": "Free_Light",
+      "units": "meters"
+     },
+     "parent": "Poly_Root"
+    },
+    {
+     "name": "Poly_Omni_005",
+     "role": "light",
+     "scene": "frag_d_light",
+     "pos": [
+      110,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "Omnilight",
+     "builder": "D_build",
+     "extra": {
+      "light": "Omnilight",
+      "units": "meters"
+     }
+    },
+    {
+     "name": "Poly_Root",
+     "role": "helper",
+     "scene": "frag_d_lightcm",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "helper",
+     "cls": "Dummy"
+    },
+    {
+     "name": "Poly_Spot_001",
+     "role": "light",
+     "scene": "frag_d_lightcm",
+     "pos": [
+      0,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "freeSpot",
+     "builder": "D_build",
+     "extra": {
+      "light": "freeSpot",
+      "units": "centimeters"
+     },
+     "parent": "Poly_Root"
+    },
+    {
+     "name": "Poly_Spot_002",
+     "role": "light",
+     "scene": "frag_d_lightcm",
+     "pos": [
+      1.0,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "targetSpot",
+     "builder": "D_build",
+     "extra": {
+      "light": "targetSpot",
+      "units": "centimeters"
+     },
+     "parent": "Poly_Root"
+    },
+    {
+     "name": "Poly_Spot_003",
+     "role": "light",
+     "scene": "frag_d_lightcm",
+     "pos": [
+      20,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "freeSpot",
+     "builder": "D_build",
+     "extra": {
+      "light": "freeSpot",
+      "units": "centimeters"
+     },
+     "parent": "Poly_Root"
+    },
+    {
+     "name": "Poly_Spot_004",
+     "role": "light",
+     "scene": "frag_d_lightcm",
+     "pos": [
+      21.5,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "freeSpot",
+     "builder": "D_build",
+     "extra": {
+      "light": "freeSpot",
+      "units": "centimeters"
+     },
+     "parent": "Poly_Root"
+    },
+    {
+     "name": "Poly_Spot_005",
+     "role": "light",
+     "scene": "frag_d_lightcm",
+     "pos": [
+      30,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "freeSpot",
+     "builder": "D_build",
+     "extra": {
+      "light": "freeSpot",
+      "units": "centimeters"
+     },
+     "parent": "Poly_Root"
+    },
+    {
+     "name": "Poly_Spot_006",
+     "role": "light",
+     "scene": "frag_d_lightcm",
+     "pos": [
+      31.49,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "freeSpot",
+     "builder": "D_build",
+     "extra": {
+      "light": "freeSpot",
+      "units": "centimeters"
+     },
+     "parent": "Poly_Root"
+    },
+    {
+     "name": "Poly_Omni_001",
+     "role": "light",
+     "scene": "frag_d_lightcm",
+     "pos": [
+      50,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "Omnilight",
+     "builder": "D_build",
+     "extra": {
+      "light": "Omnilight",
+      "units": "centimeters"
+     },
+     "parent": "Poly_Root"
+    },
+    {
+     "name": "Poly_Omni_002",
+     "role": "light",
+     "scene": "frag_d_lightcm",
+     "pos": [
+      54.9,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "Omnilight",
+     "builder": "D_build",
+     "extra": {
+      "light": "Omnilight",
+      "units": "centimeters"
+     },
+     "parent": "Poly_Root"
+    },
+    {
+     "name": "Poly_Omni_003",
+     "role": "light",
+     "scene": "frag_d_lightcm",
+     "pos": [
+      70,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "Omnilight",
+     "builder": "D_build",
+     "extra": {
+      "light": "Omnilight",
+      "units": "centimeters"
+     },
+     "parent": "Poly_Root"
+    },
+    {
+     "name": "Poly_Omni_004",
+     "role": "light",
+     "scene": "frag_d_lightcm",
+     "pos": [
+      75,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "Omnilight",
+     "builder": "D_build",
+     "extra": {
+      "light": "Omnilight",
+      "units": "centimeters"
+     },
+     "parent": "Poly_Root"
+    },
+    {
+     "name": "Poly_Photo_001",
+     "role": "light",
+     "scene": "frag_d_lightcm",
+     "pos": [
+      90,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "Free_Light",
+     "builder": "D_build",
+     "extra": {
+      "light": "Free_Light",
+      "units": "centimeters"
+     },
+     "parent": "Poly_Root"
+    },
+    {
+     "name": "Poly_Omni_005",
+     "role": "light",
+     "scene": "frag_d_lightcm",
+     "pos": [
+      110,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "Omnilight",
+     "builder": "D_build",
+     "extra": {
+      "light": "Omnilight",
+      "units": "centimeters"
+     }
+    }
+   ],
+   "expected": [
+    {
+     "name": "Poly_Root",
+     "scene": "frag_d_light",
+     "expect": "pass",
+     "codes": []
+    },
+    {
+     "name": "Poly_Spot_001",
+     "scene": "frag_d_light",
+     "expect": "fail",
+     "codes": [
+      "light_spot_distance"
+     ]
+    },
+    {
+     "name": "Poly_Spot_002",
+     "scene": "frag_d_light",
+     "expect": "fail",
+     "codes": [
+      "light_spot_distance"
+     ]
+    },
+    {
+     "name": "Poly_Spot_003",
+     "scene": "frag_d_light",
+     "expect": "pass",
+     "codes": []
+    },
+    {
+     "name": "Poly_Spot_004",
+     "scene": "frag_d_light",
+     "expect": "pass",
+     "codes": []
+    },
+    {
+     "name": "Poly_Spot_005",
+     "scene": "frag_d_light",
+     "expect": "fail",
+     "codes": [
+      "light_spot_distance"
+     ]
+    },
+    {
+     "name": "Poly_Spot_006",
+     "scene": "frag_d_light",
+     "expect": "fail",
+     "codes": [
+      "light_spot_distance"
+     ]
+    },
+    {
+     "name": "Poly_Omni_001",
+     "scene": "frag_d_light",
+     "expect": "fail",
+     "codes": [
+      "light_omni_distance"
+     ]
+    },
+    {
+     "name": "Poly_Omni_002",
+     "scene": "frag_d_light",
+     "expect": "fail",
+     "codes": [
+      "light_omni_distance"
+     ]
+    },
+    {
+     "name": "Poly_Omni_003",
+     "scene": "frag_d_light",
+     "expect": "pass",
+     "codes": []
+    },
+    {
+     "name": "Poly_Omni_004",
+     "scene": "frag_d_light",
+     "expect": "pass",
+     "codes": []
+    },
+    {
+     "name": "Poly_Photo_001",
+     "scene": "frag_d_light",
+     "expect": "fail",
+     "codes": [
+      "light_type"
+     ]
+    },
+    {
+     "name": "Poly_Omni_005",
+     "scene": "frag_d_light",
+     "expect": "fail",
+     "codes": [
+      "light_no_root"
+     ]
+    },
+    {
+     "name": "Poly_Root",
+     "scene": "frag_d_lightcm",
+     "expect": "pass",
+     "codes": []
+    },
+    {
+     "name": "Poly_Spot_001",
+     "scene": "frag_d_lightcm",
+     "expect": "fail",
+     "codes": [
+      "light_spot_distance"
+     ]
+    },
+    {
+     "name": "Poly_Spot_002",
+     "scene": "frag_d_lightcm",
+     "expect": "fail",
+     "codes": [
+      "light_spot_distance"
+     ]
+    },
+    {
+     "name": "Poly_Spot_003",
+     "scene": "frag_d_lightcm",
+     "expect": "pass",
+     "codes": []
+    },
+    {
+     "name": "Poly_Spot_004",
+     "scene": "frag_d_lightcm",
+     "expect": "pass",
+     "codes": []
+    },
+    {
+     "name": "Poly_Spot_005",
+     "scene": "frag_d_lightcm",
+     "expect": "fail",
+     "codes": [
+      "light_spot_distance"
+     ]
+    },
+    {
+     "name": "Poly_Spot_006",
+     "scene": "frag_d_lightcm",
+     "expect": "fail",
+     "codes": [
+      "light_spot_distance"
+     ]
+    },
+    {
+     "name": "Poly_Omni_001",
+     "scene": "frag_d_lightcm",
+     "expect": "fail",
+     "codes": [
+      "light_omni_distance"
+     ]
+    },
+    {
+     "name": "Poly_Omni_002",
+     "scene": "frag_d_lightcm",
+     "expect": "fail",
+     "codes": [
+      "light_omni_distance"
+     ]
+    },
+    {
+     "name": "Poly_Omni_003",
+     "scene": "frag_d_lightcm",
+     "expect": "pass",
+     "codes": []
+    },
+    {
+     "name": "Poly_Omni_004",
+     "scene": "frag_d_lightcm",
+     "expect": "pass",
+     "codes": []
+    },
+    {
+     "name": "Poly_Photo_001",
+     "scene": "frag_d_lightcm",
+     "expect": "fail",
+     "codes": [
+      "light_type"
+     ]
+    },
+    {
+     "name": "Poly_Omni_005",
+     "scene": "frag_d_lightcm",
+     "expect": "fail",
+     "codes": [
+      "light_no_root"
+     ]
+    }
+   ],
+   "reason": ""
+  },
+  {
+   "button": "scene.maps_usage",
+   "objects": [
+    {
+     "name": "SM_MapsUse_Ok_Main",
+     "role": "Main",
+     "scene": "frag_d_maps",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "tex": "ok256",
+     "mat_name": "M_MapsUse_Ok_Main_1",
+     "fbx": null
+    },
+    {
+     "name": "SM_MapsUse_Gone_Main",
+     "role": "Main",
+     "scene": "frag_d_maps",
+     "pos": [
+      6,
+      0,
+      0
+     ],
+     "mat": "missing",
+     "mat_name": "M_MapsUse_Gone_Main_1",
+     "map_path": "C:/x/test-polygon/missing/T_MapsUse_Gone_d_1.png",
+     "fbx": null
+    }
+   ],
+   "expected": [
+    {
+     "name": "SM_MapsUse_Ok_Main",
+     "scene": "frag_d_maps",
+     "expect": "pass",
+     "codes": []
+    },
+    {
+     "name": "SM_MapsUse_Gone_Main",
+     "scene": "frag_d_maps",
+     "expect": "fail",
+     "codes": [
+      "map_missing"
+     ]
+    }
+   ],
+   "reason": ""
+  }
+ ]
+}
