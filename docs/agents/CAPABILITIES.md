@@ -273,7 +273,7 @@ Removal candidates by the rule (no evidence, no eval): `permissions.allow`, `per
   `docs/adr`, `.agents/skills`, `standards/` and the plan / state files (`PROJECT_STATE`, historical `HARNESS_PLAN`, `backlog`,
   `cases`, `pipeline`, `HANDOFF`, `decisions`). Out of it: `docs/agr`, `jobs`, `technical_library`.
 - Command (Git Bash, from the repository root; divide by four):
-  `{ find . -maxdepth 1 -type f \( -name '*.md' -o -name '*.yaml' -o -name '*.json' \); find docs/agents docs/domain docs/adr .agents/skills standards -type f \( -name '*.md' -o -name '*.yaml' -o -name '*.json' \); ls docs/PROJECT_STATE.md docs/HARNESS_PLAN.md docs/backlog.md docs/cases.md docs/pipeline.md docs/HANDOFF.md docs/decisions.md; } | tr '\n' '\0' | xargs -0 cat | wc -c`
+  `{ find . -maxdepth 1 -type f \( -name '*.md' -o -name '*.yaml' -o -name '*.json' \); find docs/agents docs/domain docs/adr .agents/skills standards -type f \( -name '*.md' -o -name '*.yaml' -o -name '*.json' \); ls docs/PROJECT_STATE.md docs/HARNESS_PLAN.md docs/backlog.md docs/cases.md docs/pipeline.md docs/HANDOFF.md docs/decisions.md; } | tr '\n' '\0' | xargs -0 cat | wc -c`  # historical docs/HARNESS_PLAN.md stays in this 2026-10-15 measurement
   The command is the 2026-10-15 measurement and still names `docs/HARNESS_PLAN.md`; that file is historical.
 - Threshold: **200k tokens**. Below it the agent loads the relevant file whole; no semantic index, no vector store,
   no BM25. Retrieval tooling is reconsidered only when a measurement passes 200k.
@@ -423,7 +423,7 @@ Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 20
   most estimated, the primary source by priority, the scale anchor; reports `buildable`. Procedure: skill
   `analyze-architectural-source`, intake mode. Adapters per format: IN2-IN7.
 - Spec comparison (Claude, 2026-10-08, #11): `dt spec compare --a <spec> --b <spec> --tolerances
-  benchmark/<id>/tolerances.json --output <cmp.json>` (+ `.md`): rows per criterion (historical HARNESS_PLAN §4)
+  benchmark/<id>/tolerances.json --output <cmp.json>` (+ `.md`): rows per criterion of historical HARNESS_PLAN §4
   with both values, threshold and reference side, contour difference regions; thresholds, reference
   sides and whether a verdict is given come from tolerances.json. KPP1: `jobs/KPP1/spec-compare-v001.md`.
 

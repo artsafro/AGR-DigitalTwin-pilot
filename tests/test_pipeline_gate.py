@@ -1,4 +1,4 @@
-"""pipeline_gate: a job status above draft needs spec + extractor report + checker report (HARNESS_PLAN §16)."""
+"""pipeline_gate: a job status above draft needs spec + extractor report + checker report (docs/agents/WORKFLOW.md)."""
 import importlib.util
 import json
 import os

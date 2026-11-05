@@ -1,4 +1,4 @@
-"""PreToolUse pipeline gate for Claude Code (docs/HARNESS_PLAN.md §16; rules in tools/git-hooks/pipeline_gate.py).
+"""PreToolUse pipeline gate for Claude Code (docs/agents/WORKFLOW.md; rules in tools/git-hooks/pipeline_gate.py).
 
 Blocks (permission "deny", unlike guard.py's "ask": it checks the pipeline state, not a danger):
 - a Write/Edit of `jobs/<JOB>/STATE.md` that leaves a `Pipeline status` above draft without the job's
@@ -30,7 +30,7 @@ def deny(reasons):
     print(json.dumps({"hookSpecificOutput": {
         "hookEventName": "PreToolUse",
         "permissionDecision": "deny",
-        "permissionDecisionReason": "pipeline_gate: " + "; ".join(reasons) + " (docs/HARNESS_PLAN.md §16)",
+        "permissionDecisionReason": "pipeline_gate: " + "; ".join(reasons) + " (docs/agents/WORKFLOW.md; tools/git-hooks/pipeline_gate.py)",
     }}))
     sys.exit(0)
 
