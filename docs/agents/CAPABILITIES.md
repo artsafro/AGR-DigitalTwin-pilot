@@ -67,9 +67,26 @@ the exact gap. An application not listed here has no MCP — do not claim live c
 substitute ad-hoc scripting.
 
 ### 3ds Max — `3dsmax-mcp`
-- Status: CONFIGURED (server health check passed 2026-10-06; no live-scene operation validated)
+- Status: WORKING for one scoped live cycle (Codex, 2026-11-03, Max 2026.3.0.30732, dedicated
+  empty process pinned by PID, synthetic Box + Sphere): create → read → transform → `undo_last`
+  (position restored, confirmed by readback) → `geometry_qa` → agent viewport → Save As (MAXScript)
+  → reopen with an unsaved sentinel gone. Not validated: production scenes, export/import,
+  materials/UV, render, Max 2024. Server health check 2026-10-06.
+- Evidence (outside this repo, git-ignored): `C:\Users\artsafro\.codex\worktrees\ece9\.AGR_Project\tmp\mcp-research-20261103\`
+  `LIVE_TEST.md`, `LIVE_QA.json` (sha256 `94b30523…b1b0`), `mcp_cycle_2026_v001.max` (`91f10f5a…bab5`);
+  comparison with Max Ultra 1.5.4 and MaxForge in `..\mcp-compare-20261103\COMPARISON.md`: keep this
+  route (both candidates failed Undo in that test; Max Ultra is `UNLICENSED`, MaxForge forbids
+  derivative works).
+- Known issues (same run): `create_object` with `pos` fails («Invalid position parameter», nothing
+  created) — create without `pos`, then `transform`; `manage_scene(save)` saves only to the current
+  path — Save As to a new versioned path via MAXScript; a newly started Max registers itself and
+  becomes the default target — pin the exact PID; the agent viewport does not redraw while Max is
+  hidden; the Max 2026 startup shows the `polyunwrapper_autoload.mse` .NET error dialog (see
+  Toolchain smoke above). Source review (PR #793): `query_scene(action="class", scope="refs")`
+  passes `class_name`/`superclass` to MAXScript `execute`, and the TCP fallback of `property`
+  inserts `property_name` as code — safe_mode does not block that; hence the narrow read-only row.
 - Owner: Claude (main) · scope: user (all projects)
-- Server: cl0nazepamm/3dsmax-mcp v1.7.5, `C:\Users\artsafro\tools\3dsmax-mcp`; plugin in
+- Server: cl0nazepamm/3dsmax-mcp v1.7.5 (commit `bcd4e4c6`, licence MIT), `C:\Users\artsafro\tools\3dsmax-mcp`; plugin in
   `C:\ProgramData\Autodesk\ApplicationPlugins\3dsmax-mcp`; `safe_mode = true`
 - Use: 3ds Max 2026 (2024 is forced to run as administrator and may not connect from a
   non-elevated client). Skill: `3dsmax-mcp-dev`.
@@ -161,7 +178,8 @@ that those tools have been tested. No generic MCP sandbox is implemented by guar
 
 | Route | Tool / operation (all unmatched operations use the route's fallback) | Risk |
 |---|---|---|
-| 3dsmax-mcp | All tools, including script execution; inspect schema before use (no live inspection subset validated) | destructive |
+| 3dsmax-mcp | `get_selected_max_instance`; `query_scene` with `action` `overview` or `selection` only; `get_object_properties` by `name`/`handle`; `geometry_qa` (scene untouched; the server writes and deletes its own temp snapshot file) — source-inspected at `bcd4e4c6`, used in the 2026-11-03 live cycle | read-only |
+| 3dsmax-mcp | All other tools and operations, including `query_scene` `class`/`property`/`filter`/`delta` (caller strings reach MAXScript `execute` or unquoted code on the TCP path; `delta` resets a baseline), `select_max_instance` (rebinds the session), `manage_scene`, viewport tools and script execution; inspect schema before use | destructive |
 | revit-bridge | `revit_status` | read-only |
 | revit-bridge | `export_fbx*`, `agr_export_fbx` to new versioned destinations | versioned-write |
 | revit-bridge | All other tools, including `open_document`, link load/unload/reload/repath | destructive |
@@ -255,7 +273,7 @@ Removal candidates by the rule (no evidence, no eval): `permissions.allow`, `per
   `docs/adr`, `.agents/skills`, `standards/` and the plan / state files (`PROJECT_STATE`, historical `HARNESS_PLAN`, `backlog`,
   `cases`, `pipeline`, `HANDOFF`, `decisions`). Out of it: `docs/agr`, `jobs`, `technical_library`.
 - Command (Git Bash, from the repository root; divide by four):
-  `{ find . -maxdepth 1 -type f \( -name '*.md' -o -name '*.yaml' -o -name '*.json' \); find docs/agents docs/domain docs/adr .agents/skills standards -type f \( -name '*.md' -o -name '*.yaml' -o -name '*.json' \); ls docs/PROJECT_STATE.md docs/HARNESS_PLAN.md docs/backlog.md docs/cases.md docs/pipeline.md docs/HANDOFF.md docs/decisions.md; } | tr '\n' '\0' | xargs -0 cat | wc -c`
+  `{ find . -maxdepth 1 -type f \( -name '*.md' -o -name '*.yaml' -o -name '*.json' \); find docs/agents docs/domain docs/adr .agents/skills standards -type f \( -name '*.md' -o -name '*.yaml' -o -name '*.json' \); ls docs/PROJECT_STATE.md docs/HARNESS_PLAN.md docs/backlog.md docs/cases.md docs/pipeline.md docs/HANDOFF.md docs/decisions.md; } | tr '\n' '\0' | xargs -0 cat | wc -c`  # historical docs/HARNESS_PLAN.md stays in this 2026-10-15 measurement
   The command is the 2026-10-15 measurement and still names `docs/HARNESS_PLAN.md`; that file is historical.
 - Threshold: **200k tokens**. Below it the agent loads the relevant file whole; no semantic index, no vector store,
   no BM25. Retrieval tooling is reconsidered only when a measurement passes 200k.
@@ -405,7 +423,7 @@ Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 20
   most estimated, the primary source by priority, the scale anchor; reports `buildable`. Procedure: skill
   `analyze-architectural-source`, intake mode. Adapters per format: IN2-IN7.
 - Spec comparison (Claude, 2026-10-08, #11): `dt spec compare --a <spec> --b <spec> --tolerances
-  benchmark/<id>/tolerances.json --output <cmp.json>` (+ `.md`): rows per criterion (historical HARNESS_PLAN §4)
+  benchmark/<id>/tolerances.json --output <cmp.json>` (+ `.md`): rows per criterion of historical HARNESS_PLAN §4
   with both values, threshold and reference side, contour difference regions; thresholds, reference
   sides and whether a verdict is given come from tolerances.json. KPP1: `jobs/KPP1/spec-compare-v001.md`.
 

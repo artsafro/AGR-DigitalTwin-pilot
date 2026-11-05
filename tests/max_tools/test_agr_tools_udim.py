@@ -212,3 +212,161 @@ def test_report_rows_fit_the_edit_contract():
 def test_glue_module_loads_without_pymxs():
     um = _load('udim_max.py', 'agr_tools_udim_max_t')
     assert callable(um.udim_ids_to_udims) and um.LAYER == 'AGR_export_udim'
+
+
+# ---- #979 rework: «keep the layout» (UDIM Tool v9.2 idea, T02/udim_tool_v92 card) ---------------------------
+# Team script `UDIM_Tool_new.mzp` sha256 ded25b7f71c9f717971d7ac70756a38f7baf198f846063045a7996ddae96e1cd: ideas
+# only (#853). The model below is written from the T02 measurements and notes (clamp D2, V7, V8), not its code.
+def source_v92_keep(m):
+    """v9.2 ID -> UDIM All: per map vertex its faces (IDs 1..100 only, V8) are grouped by target tile; each group
+    takes the offset of its FIRST face (V7), offset = target origin - origin of the CLAMPED centroid tile (D2)."""
+    uvs = [tuple(p) for p in m['uvs']]
+    fuv = [list(f) for f in m['face_uvs']]
+
+    def clamp_origin(idx):
+        cu = sum(uvs[i][0] for i in idx) / len(idx)
+        cv = sum(uvs[i][1] for i in idx) / len(idx)
+        t = min(max(1001 + math.floor(cu) + 10 * math.floor(cv), 1001), 1100)
+        return uc.tile_origin(t)
+    offsets = {}
+    for f, mid in enumerate(m['ids']):
+        if 1 <= mid <= 100:
+            o = clamp_origin(m['face_uvs'][f])
+            t = uc.tile_origin(1000 + mid)
+            offsets[f] = (t[0] - o[0], t[1] - o[1], 1000 + mid)
+    vert_faces = {}
+    for f in offsets:
+        for i in m['face_uvs'][f]:
+            vert_faces.setdefault(i, []).append(f)
+    new = list(uvs)
+    for i, faces in vert_faces.items():
+        groups = {}
+        for f in faces:
+            groups.setdefault(offsets[f][2], []).append(f)
+        for k, (tile, members) in enumerate(groups.items()):
+            du, dv, _ = offsets[members[0]]
+            p = (uvs[i][0] + du, uvs[i][1] + dv)
+            if k == 0:
+                new[i] = p
+            else:
+                new.append(p)
+                for f in members:
+                    fuv[f] = [len(new) - 1 if j == i else j for j in fuv[f]]
+    return dict(m, uvs=new, face_uvs=fuv)
+
+
+def keep(meshes):
+    return impl_layout(meshes, mode='keep')
+
+
+def face_uv(m, f):
+    return [tuple(round(c, 9) for c in m['uvs'][i]) for i in m['face_uvs'][f]]
+
+
+def fractions_kept(before, after, faces):
+    """Every corner moved by the same whole-tile offset per face: the layout inside the tile is unchanged."""
+    for f in faces:
+        d = {(round(a[0] - b[0], 9), round(a[1] - b[1], 9)) for a, b in zip(face_uv(after, f), face_uv(before, f))}
+        if len(d) != 1 or any(abs(x - round(x)) > 1e-9 for x in next(iter(d))):
+            return False
+    return True
+
+
+def test_e2_d9_negative_uvs_floor_not_clamp():
+    """T02: the clamp 1001..1100 shifts a layout with negative UVs by one tile (v9.2 neguv: cons 0)."""
+    m = Mesh().quad(3, 0, 0, 1, 1, -0.8, 0.2, 0.6, 0.6).quad(3, 1, 0, 1, 1, -0.9, -0.7, 0.3, 0.3).m
+    red_green(lambda out: tiles_ok(out) and fractions_kept(m, out, [0, 1]),
+              lambda: source_v92_keep(m), lambda: keep([m])[0][0])
+    out = keep([m])[0][0]
+    assert face_uv(out, 0)[0] == (2.2, 0.2) and face_uv(out, 1)[0] == (2.1, 0.3)  # floor(-0.8) = -1
+
+
+def test_e2_d10_v7_result_does_not_depend_on_face_order():
+    """T02 V7: a vertex shared by faces in two cells with one target takes the first face's offset."""
+    a = [(0.5, 0.2), (1.0, 0.2), (1.0, 0.8), (0.5, 0.8)]
+    b = [(1.0, 0.2), (1.5, 0.2), (1.5, 0.8), (1.0, 0.8)]
+
+    def mesh(order):
+        uvs = [(0.5, 0.2), (1.0, 0.2), (1.0, 0.8), (0.5, 0.8), (1.5, 0.2), (1.5, 0.8)]
+        faces = {'a': [0, 1, 2, 3], 'b': [1, 4, 5, 2]}
+        return {'vertices': [(x, y, 0.0) for x, y in uvs], 'uvs': uvs, 'faces': [faces[k] for k in order],
+                'face_uvs': [faces[k] for k in order], 'ids': [2, 2]}
+    assert [mesh('ab')['uvs'][i] for i in mesh('ab')['face_uvs'][0]] == a
+    assert [mesh('ab')['uvs'][i] for i in mesh('ab')['face_uvs'][1]] == b
+
+    def same(fn):
+        x, y = fn(mesh('ab')), fn(mesh('ba'))
+        return sorted(face_uv(x, f) for f in range(2)) == sorted(face_uv(y, f) for f in range(2)) and tiles_ok(x)
+    red_green(same, lambda: source_v92_keep, lambda: (lambda m: keep([m])[0][0]))
+    out = keep([mesh('ab')])[0][0]
+    assert face_uv(out, 0) == [(1.5, 0.2), (2.0, 0.2), (2.0, 0.8), (1.5, 0.8)]
+    assert face_uv(out, 1) == b  # already in tile 1002: offset 0, its own copy of the shared corners
+
+
+def test_e2_d13_v8_id_over_100_keeps_its_shared_uv_vertices():
+    uvs = [(0.2, 0.2), (0.6, 0.2), (0.6, 0.6), (0.2, 0.6), (0.9, 0.2), (0.9, 0.6)]
+    m = {'vertices': [(x, y, 0.0) for x, y in uvs], 'uvs': uvs, 'faces': [[0, 1, 2, 3], [1, 4, 5, 2]],
+         'face_uvs': [[0, 1, 2, 3], [1, 4, 5, 2]], 'ids': [3, 101]}
+    red_green(lambda out: face_uv(out, 1) == face_uv(m, 1), lambda: source_v92_keep(m), lambda: keep([m])[0][0])
+    out, scales = keep([m])
+    assert scales[(0, 101)]['status'] == 'rejected' and tiles_ok(out[0], ids={3})
+
+
+def test_e2_d11_face_across_a_tile_line_refuses_its_id():
+    m = Mesh().quad(4, 0, 0, 1, 1, 0.8, 0.2, 0.4, 0.4).quad(6, 1, 0, 1, 1, 0.1, 0.1, 0.2, 0.2).m
+    out, scales = keep([m])
+    s = scales[(0, 4)]
+    assert s['status'] == 'straddles' and s['faces'] == [1] and 'cross a tile line' in s['reason']
+    assert face_uv(out[0], 0) == face_uv(m, 0) and tiles_ok(out[0], ids={6})
+    rows = uc.id_rows(m, scales, 0)
+    assert [r['status'] for r in rows] == ['straddles', 'placed']
+
+
+def plane50(seed=7):
+    """50 x 50 quads split into 5000 triangles, planar UVs u = x/10 - 2, v = y/10 - 1 (negative UVs included,
+    tile lines on grid lines), random IDs 1..100 per quad."""
+    import random
+    rnd = random.Random(seed)
+    m = {'vertices': [], 'uvs': [], 'faces': [], 'face_uvs': [], 'ids': []}
+    for j in range(51):
+        for i in range(51):
+            m['vertices'].append((float(i), float(j), 0.0))
+            m['uvs'].append((i / 10.0 - 2.0, j / 10.0 - 1.0))
+    for j in range(50):
+        for i in range(50):
+            a, b, c, d = j * 51 + i, j * 51 + i + 1, (j + 1) * 51 + i + 1, (j + 1) * 51 + i
+            mid = rnd.randint(1, 100)
+            for tri in ([a, b, c], [a, c, d]):
+                m['faces'].append(tri)
+                m['face_uvs'].append(list(tri))
+                m['ids'].append(mid)
+    return m
+
+
+@pytest.mark.parametrize('mode', ['keep', 'fit'])
+def test_e2_plane_5000_faces_id_udim_id_round_trip(mode):
+    m = plane50()
+    assert len(m['ids']) == 5000
+    out, scales = impl_layout([m], mode=mode)
+    back = uc.ids_from_tiles(out[0]['uvs'], out[0]['face_uvs'])
+    assert sum(1 for a, b in zip(back, m['ids']) if a == b) == 5000
+    if mode == 'keep':
+        assert fractions_kept(m, out[0], range(5000))
+        src = source_v92_keep(m)  # RED on the source model: the clamp sends negative UVs to the wrong tile
+        assert sum(1 for a, b in zip(uc.ids_from_tiles(src['uvs'], src['face_uvs']), m['ids']) if a == b) < 5000
+
+
+def test_e2_keep_mode_option_and_cell_rule():
+    assert 'keep' in uc.MODES
+    assert uc.face_cell([(-0.5, -0.5), (-0.1, -0.5), (-0.1, -0.1)], [0, 1, 2]) == (-1, -1)
+    assert uc.face_cell([(0.9, 0.5), (1.1, 0.5), (1.0, 0.6)], [0, 1, 2]) is None
+    assert uc.ids_from_tiles([(0.5, 0.5), (0.6, 0.5), (0.5, 0.6), (-0.5, 0.5), (-0.4, 0.5), (-0.5, 0.6)],
+                             [[0, 1, 2], [3, 4, 5]]) == [1, None]
+
+
+def test_e2_d12_glue_reads_the_evaluated_stack_and_collapses_only_the_copy():
+    """T02 V4: v9.2 edited the base channel under Unwrap_UVW / UVW_Xform. The glue no longer refuses or edits
+    under a stack; it reads a collapsed throwaway copy and collapses the export copy (the native run checks it)."""
+    text = (PKG / 'udim_max.py').read_text(encoding='utf-8')
+    assert 'has a modifier stack' not in text
+    assert '_collapse(c)' in text and '_read_eval(ctx, n)' in text

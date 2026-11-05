@@ -7,11 +7,16 @@ description: 'Inspect the configured 3ds Max MCP route and safely authorize vers
 
 ## Identify before calling
 
-1. Read `docs/agents/CAPABILITIES.md`, 3ds Max entry. The configured route is
-   `3dsmax-mcp` v1.7.5 with safe_mode enabled; this is not live-scene validation.
+1. Read `docs/agents/CAPABILITIES.md`, 3ds Max entry. The route is `3dsmax-mcp`
+   v1.7.5 with safe_mode enabled; one scoped live cycle on a synthetic scene is
+   validated, production scenes are not.
 2. Confirm the intended application/version, active document, units, saved/dirty
    state and scene/port/export ownership. Start read-only. Inspect the actual
    advertised tool schemas; do not invent tool names or substitute another route.
+   Pin the exact Max process (PID) before any scene call: a newly started Max
+   registers itself and becomes the default target, so never rely on the default.
+   Pinning (`select_max_instance`) rebinds the session and is in the destructive
+   class: name the PID and get it authorized like any other mutation.
 3. If the route cannot inspect without mutation, stop with the exact missing
    capability. Do not test a connection by changing the user's production scene.
 
@@ -19,8 +24,9 @@ description: 'Inspect the configured 3ds Max MCP route and safely authorize vers
 
 Before any write, name the exact tool/operation and its risk class from
 [`CAPABILITIES.md#dcc-tool-risk-classes`](../../../docs/agents/CAPABILITIES.md#dcc-tool-risk-classes).
-No live inspection subset is validated for this route, so its tools default to
-`destructive`; inspect the schema and script before use. Arbitrary MaxScript/Python
+Only the read-only subset listed there is registered, and it is restricted by
+arguments (e.g. `query_scene` only with `overview`/`selection`); every other tool or
+operation defaults to `destructive`; inspect the schema and script before use. Arbitrary MaxScript/Python
 is destructive even if the script plans to save a new output. Require explicit
 user authorization for the exact mutation; safe_mode is not an authorization ledger.
 For a registered `versioned-write`, require task authorization and a new versioned
@@ -37,3 +43,15 @@ After timeout the outcome is unknown: inspect the active document and existing
 outputs before retrying, preserve partial evidence, and stop after two failures
 with the same cause. Do not discard user work or close an unrelated scene as cleanup.
 Report exact calls, results, evidence paths and unverified gates separately.
+
+## Known pitfalls (live cycle 2026-11-03)
+
+- `create_object` with `pos` fails («Invalid position parameter») and creates
+  nothing: create without `pos`, then `transform`, then read the position back.
+- `manage_scene(save)` saves only to the current path: Save As to a new versioned
+  path through MAXScript, then reopen that file and compare object count and geometry.
+- Undo counts only after a readback shows the previous state, never on a `true` reply.
+- The agent viewport does not redraw while the Max window is hidden: show the
+  pinned process window before capturing.
+- Max 2026 starts with a `polyunwrapper_autoload.mse` .NET error dialog: acknowledge
+  it once, do not edit the plugin or startup scripts.

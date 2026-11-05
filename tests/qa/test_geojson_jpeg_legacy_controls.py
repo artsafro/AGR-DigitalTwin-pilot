@@ -71,7 +71,7 @@ def _load(raw: bytes):
 
 def _doc(value) -> dict:
     props = {k: "synthetic" for k in KEYS}
-    props.update(FNO_code="123 456", other="", act_AGR="", imageBase64=value)
+    props.update(FNO_code="010 004", FNO_name="Общежитие", other="", act_AGR="", imageBase64=value)
     return {"type": "FeatureCollection", "features": [{
         "type": "ObjectFeature",
         "geometry": {"type": "Point", "coordinates": [12345.678, 6789.012]},

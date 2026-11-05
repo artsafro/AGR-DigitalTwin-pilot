@@ -355,20 +355,6 @@ def test_textures_scene_vpm_overlap_review_npm_overlap_padding():
     assert 'tex_overlap_review' in core.CODES['textures']
 
 
-def _review_level_codes():
-    """Codes the package text marks as review-level: `name` (review), review-level `name`, or a review detail."""
-    found = set()
-    for path in sorted(PKG.glob('*.py')):
-        text = path.read_text(encoding='utf-8')
-        found.update(re.findall(r'`([a-z][a-z0-9_]*)`\s*\(review\)', text))
-        for match in re.finditer(r'review-level', text):
-            named = re.search(r'`([a-z][a-z0-9_]*)`', text[match.start():match.start() + 240])
-            if named:
-                found.add(named.group(1))
-        found.update(re.findall(r"\('([a-z][a-z0-9_]*)',\s*(?:f)?'[^'\n]*review", text))
-    return found
-
-
 def _diag_report(tool, findings, fbx=VPM_FBX):
     kind = core.fbx_kind(fbx)
     plan = {'fbx': [{'fbx': fbx, 'model': kind[0], 'role': kind[1], 'objects': 1, 'render_triangles': None,
@@ -389,10 +375,11 @@ def test_review_level_finding_keeps_report_status_fail():
     """#836: review-level codes are non-pass. Status stays fail; empty findings still pass.
 
     Invariant: a report whose only finding is a review-level code is never 'pass'.
-    Probe: one report per code marked review-level in adapters/max/agr_tools/*.py.
+    Probe: one report per code in core.REVIEW_CODES (explicit constant, not parsed from prose).
     """
-    marked = _review_level_codes()
-    assert marked == {'at_threshold', 'name_conflict', 'tex_overlap_review'}
+    marked = set(core.REVIEW_CODES)
+    assert marked == {'at_threshold', 'tri_at_limit', 'name_conflict', 'tex_overlap_review'}
+    assert marked <= set().union(*core.CODES.values())
     readme = (PKG / 'README.md').read_text(encoding='utf-8')
     paragraph = next(block.strip() for block in readme.split('\n\n')
                      if 'Review-level codes count as non-pass' in block)
@@ -582,8 +569,8 @@ def test_max_submaterial_index_fails_closed():
 
 
 def test_runtime_lookups_share_the_max_resolver():
-    """matid / _material_names / _slot_gaps resolve a Multimaterial slot through one helper.
-    RED: r2 runtime looked IDs up strictly, so matID 3 on #(1, 2) was an empty slot."""
+    """_material_names resolves a Multimaterial slot the way the FBX export does (wraps); matid and
+    _slot_gaps use the listed-only lookup (#844, Artem 2026-11-04: a wrapped matID blocks)."""
     import types
     a, b = types.SimpleNamespace(name='A'), types.SimpleNamespace(name='B')
     mm = types.SimpleNamespace(materialIDList=[1, 2], materialList=[a, None])
@@ -591,8 +578,91 @@ def test_runtime_lookups_share_the_max_resolver():
     assert runtime._max_submaterial(mm, 4) is None and runtime._max_submaterial(mm, 2) is None
     mm = types.SimpleNamespace(materialIDList=[1, 5], materialList=[a, b])
     assert [runtime._max_submaterial(mm, m) for m in (6, 10, 3)] == [a, b, None]
+    assert [runtime._max_submaterial(mm, m, wrap=False) for m in (1, 5, 6, 10, 3)] == [a, b, None, None, None]
     src = (PKG / 'runtime.py').read_text(encoding='utf-8')
-    assert src.count('_max_submaterial(') == 4 and 'materialIDList[i]) ==' not in src
+    assert 'materialIDList[i]) ==' not in src
+
+
+def test_listed_submaterial_index_needs_the_id_in_the_list():
+    """#844: a matID outside materialIDList has no listed slot even when the FBX export wraps it."""
+    assert [core.listed_submaterial_index(m, [1, 2]) for m in (1, 2, 3, 4)] == [0, 1, None, None]
+    assert [core.listed_submaterial_index(m, [1, 5]) for m in (1, 5, 6, 10, 2)] == [0, 1, None, None, None]
+    assert core.listed_submaterial_index(1, [1, 1]) is None  # duplicated: ambiguous, never the first
+    for bad in (0, -1, None, 2.0, True):
+        assert core.listed_submaterial_index(bad, [1, 2]) is None
+    assert core.listed_submaterial_index(1, []) is None
+
+
+def test_listed_submaterial_probe_brute_force():
+    """Probe: for every ids list over 1..6 (len 1..3, duplicates allowed) and mid in -1..14, the listed
+    index is set iff mid occurs exactly once, and then it points at mid and agrees with the wrap resolver."""
+    import itertools
+    n = 0
+    for k in (1, 2, 3):
+        for ids in itertools.product(range(1, 7), repeat=k):
+            for mid in range(-1, 15):
+                i = core.listed_submaterial_index(mid, list(ids))
+                if list(ids).count(mid) == 1:
+                    assert i == ids.index(mid) == core.max_submaterial_index(mid, list(ids)), (ids, mid)
+                else:
+                    assert i is None, (ids, mid)
+                n += 1
+    assert n == 16 * (6 + 36 + 216)
+
+
+class _FakeMM:
+    def __init__(self, ids, subs):
+        self.materialIDList, self.materialList, self.name = ids, subs, 'mm'
+
+
+def _fake_rt(monkeypatch, face_ids):
+    import types
+    rt = types.SimpleNamespace()
+    rt.MultiMaterial = _FakeMM
+    rt.classOf = lambda m: type(m)
+    rt.polyop = types.SimpleNamespace(getNumFaces=lambda c: len(face_ids[c.name]),
+                                      getFaceMatID=lambda c, f: face_ids[c.name][f - 1])
+    rt.delete = lambda c: None
+    rt.getHandleByAnim = lambda n: 7
+    rt.select = lambda nodes: None
+    monkeypatch.setattr(runtime, '_rt', lambda: rt)
+    monkeypatch.setattr(runtime, '_targets', lambda nodes: list(nodes))
+    monkeypatch.setattr(runtime, '_poly_copy', lambda n: n)
+
+
+def test_matid_wrapped_id_is_a_blocking_empty_slot(monkeypatch):
+    """#844 RED: after PR #842 matID 3 on #(1, 2) wrapped to sub 1 and the MatID check said nothing.
+    User decision 2026-11-04 [D196]: it is a blocking empty_slot again (the face gets another material)."""
+    import types
+    a = types.SimpleNamespace(name='A')
+    node = types.SimpleNamespace(name='n', material=_FakeMM([1, 2], [a, a]))
+    _fake_rt(monkeypatch, {'n': [1, 2, 3, 4, 1001]})
+    report = runtime.matid([node])
+    got = {f['code']: f['ids'] for f in report['objects'][0]['findings']}
+    assert report['status'] == 'fail'
+    assert got == {'udim_id': [5], 'empty_slot': [3, 4, 5]}, got
+
+
+def test_matid_listed_ids_only_pass_and_empty_sub_still_blocks(monkeypatch):
+    import types
+    a = types.SimpleNamespace(name='A')
+    node = types.SimpleNamespace(name='n', material=_FakeMM([1, 5], [a, None]))
+    _fake_rt(monkeypatch, {'n': [1, 5, 6, 10, 1]})
+    got = {f['code']: f['ids'] for f in runtime.matid([node])['objects'][0]['findings']}
+    assert got == {'empty_slot': [2, 3, 4]}, got  # 5: empty sub; 6 -> 1 and 10 -> 5 wrap: still blocking
+    _fake_rt(monkeypatch, {'m': [1, 5, 5, 1]})
+    node = types.SimpleNamespace(name='m', material=_FakeMM([1, 5], [a, a]))
+    assert runtime.matid([node])['status'] == 'pass'
+
+
+def test_export_slot_gaps_block_a_wrapped_id(monkeypatch):
+    """The export evidence's empty_slot (export_core) uses the same listed-only lookup as matid."""
+    import types
+    a = types.SimpleNamespace(name='A')
+    node = types.SimpleNamespace(name='n', material=_FakeMM([1, 2], [a, a]))
+    _fake_rt(monkeypatch, {'n': []})
+    assert runtime._slot_gaps(node, [1, 2, 3, 4]) == [3, 4]
+    assert runtime._material_names(node, [3, 4]) == ['A', 'A']  # names still follow the FBX wrap
 
 
 def two_slot_rows(mat_ids):
@@ -939,10 +1009,10 @@ def test_buttons_registered_in_rollout_and_package():
                         ('Текстуры (все)', 'textures'), ('Пивот', 'pivot'),
                         ('Проверка GeoJSON', 'geojson')):
         assert f'"{label}"' in mcr and f"ui('{tool}')" in mcr
-    assert 'VERSION = "0.7.0"' in (PKG / 'runtime.py').read_text(encoding='utf-8')
-    assert 'version=0.7.0' in (PKG / 'startup.ms').read_text(encoding='utf-8')
+    assert 'VERSION = "0.8.0"' in (PKG / 'runtime.py').read_text(encoding='utf-8')
+    assert 'version=0.8.0' in (PKG / 'startup.ms').read_text(encoding='utf-8')
     install = (PKG / 'install.ms').read_text(encoding='utf-8')
-    assert 'AGRTools-0.7.0' in install and '"checks_core.py", "checks_max.py"' in install
+    assert 'AGRTools-0.8.0' in install and '"checks_core.py", "checks_max.py"' in install
     assert (PKG / 'mzp.run').read_text(encoding='utf-8').splitlines()[1] == 'version 0.6'
 
 

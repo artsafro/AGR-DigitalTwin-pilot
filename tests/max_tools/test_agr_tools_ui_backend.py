@@ -189,7 +189,8 @@ def _agr(rt, seen, raise_for=()):
             raise RuntimeError('boom')
         return {'tool': tool}
     return types.SimpleNamespace(CHECKS_070=('census',), EDITS_080={'model.triangulate': 1},
-                                 ui=run, edit_ui=run, remember=lambda r: None)
+                                 EDITS_090={}, SELECT_090=(),  # 0.9 base (#979)
+                                 ui=run, edit_ui=lambda tool, select=True: run(tool), remember=lambda r: None)
 
 
 @pytest.mark.parametrize('tool,scope', [('cleanup', 'geometry'), ('census', 'objects'),

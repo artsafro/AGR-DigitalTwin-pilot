@@ -621,15 +621,15 @@ def test_flow_tooltips_and_cards_from_json():
     suite = roadmap.load_file(SUITE)
     nodes = roadmap.flow(suite, model.VERSION)
     assert [n['number'] for n in nodes] == list(range(10))
-    assert sum(n['total'] for n in nodes) == len(suite['rows']) == 90
-    assert sum(n['done'] for n in nodes) == 13 + 12  # 0.1-0.5 + 0.7
+    assert sum(n['total'] for n in nodes) == len(suite['rows']) == 92  # 97 - 6 removed + 1 new (#973 decisions)
+    assert sum(n['done'] for n in nodes) == 13 + 12 + 13  # 0.1-0.5 + 0.7 + 0.8
     for r in suite['rows']:
         tip = roadmap.tooltip(suite, r)
         assert r['does_ru'] in tip and r['reqs'] in tip and 'Когда:' in tip
         c = roadmap.card(suite, r, model.VERSION)
         assert set(c) == {'title', 'what', 'when', 'input', 'result', 'mode', 'reqs', 'state', 'block', 'related',
                           'why'}
-        assert c['state'] == ('есть в этой версии' if roadmap.vkey(r['version']) <= roadmap.vkey('0.7.0')
+        assert c['state'] == ('есть в этой версии' if roadmap.vkey(r['version']) <= roadmap.vkey(model.VERSION)
                               else 'в версии ' + r['version'])
     assert roadmap.vkey('1.x') > roadmap.vkey('1.0') > roadmap.vkey('0.9') > roadmap.vkey('0.7.0')
 
@@ -659,7 +659,7 @@ def test_rail_maps_every_action_to_a_plan_row_and_greys_the_rest():
     assert [b['id'] for b, _, _ in rail] == [b['id'] for b in suite['blocks']]
     done_rows = {model.row_of(a.id) for _, done, _ in rail for a in done}
     planned = [r for _, _, p in rail for r in p]
-    assert len(done_rows) + len(planned) == 90
+    assert len(done_rows) + len(planned) == 92
     assert all(roadmap.vkey(r['version']) > roadmap.vkey(model.VERSION) for r in planned)
     with pytest.raises(KeyError):
         model.row_of('nope')

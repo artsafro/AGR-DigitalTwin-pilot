@@ -1,4 +1,4 @@
-"""Pipeline gate: a job's status cannot rise above draft without the harness's own files (HARNESS_PLAN §16 (historical)).
+"""Pipeline gate: a job's status cannot rise above draft without the harness's own files (docs/agents/WORKFLOW.md; tools/git-hooks/pipeline_gate.py).
 
     py -3 tools/git-hooks/pipeline_gate.py --staged          # pre-commit: the index
     py -3 tools/git-hooks/pipeline_gate.py --job jobs/<JOB>  # delivery: the working tree
@@ -16,7 +16,7 @@ Rules (user decisions 2026-10-11 [D050], case alina-bld):
   blocked until the branch is renamed by docs/agents/NAMING.md (user 2026-10-14 [D078]).
 - Delivery (--job) also needs a committed `.py` for every `.pyc` under `scripts/` (a lost source with a
   live `.pyc` must not happen again).
-- Attempts limit (#128, docs/HARNESS_PLAN.md §8 (historical)): `jobs/<JOB>/pipeline/state.json` records failures per item;
+- Attempts limit (#128, docs/agents/WORKFLOW.md): `jobs/<JOB>/pipeline/state.json` records failures per item;
   an item with two open failures of the same cause or three open failures is locked: no further failure, no
   rewritten `check.json`, no status write and no run of the job until a stop record covers them. Appended
   failures are judged one by one, so one commit cannot walk an item past the limit. A malformed state.json
@@ -56,7 +56,7 @@ ITEM_LIMIT = 3
 STATE_JSON = "pipeline/state.json"
 ITEM = re.compile(r"^(module|check):\S+$")
 STOP_FIELDS = ("tried", "numbers", "next_step")
-ESCALATION = ("escalation (docs/HARNESS_PLAN.md §8 (historical)): change the pattern, split the module, one review round, "
+ESCALATION = ("escalation (docs/agents/WORKFLOW.md; tools/git-hooks/pipeline_gate.py): change the pattern, split the module, one review round, "
               "then `blocked`; add a stop record (item, after, tried, numbers, next_step) to pipeline/state.json "
               "to go on")
 
@@ -511,12 +511,12 @@ def main(argv=None):
         errors = staged(root) if args.staged else delivery(root, args.job)
     except (ValueError, GitError) as exc:
         print(f"pipeline_gate: {exc}", file=sys.stderr)
-        print("pipeline_gate: blocked (docs/HARNESS_PLAN.md §16 (historical))", file=sys.stderr)
+        print("pipeline_gate: blocked (docs/agents/WORKFLOW.md; tools/git-hooks/pipeline_gate.py)", file=sys.stderr)
         return 2
     for e in errors:
         print(f"pipeline_gate: {e}", file=sys.stderr)
     if errors:
-        print("pipeline_gate: blocked (docs/HARNESS_PLAN.md §16 (historical))", file=sys.stderr)
+        print("pipeline_gate: blocked (docs/agents/WORKFLOW.md; tools/git-hooks/pipeline_gate.py)", file=sys.stderr)
     return 1 if errors else 0
 
 

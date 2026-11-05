@@ -4,7 +4,8 @@ The server sends one MAXScript expression that puts this file's folder on sys.pa
 calls `call(tool, root_hex, args_hex)`. Arguments travel hex-encoded so no MAXScript string escaping is needed.
 `call` imports the INSTALLED AGR Tools `runtime.py` from `root` (default: userScripts/AGRTools-0.5.0),
 resolves `handles` to nodes and calls exactly one `runtime.*` function: read-only, or a 0.8 edit
-(`edits_080`: preview, or apply of that preview on export copies / new files, #908). Apart from new files
+(`edits_080`: preview, or apply of that preview on export copies / new files, #908), or a 0.9 row preview
+(`edits_090`, #979: mode=preview only, changes nothing). Apart from new files
 written by a 0.8 apply, it never opens, saves,
 imports or exports a file and never passes `select=` (plan section 2: the runtime default is kept).
 Returns a JSON string: {"ok": true, "result": ..., "runtime_version": ..., "runtime_file": ...}
@@ -25,7 +26,7 @@ CHECKS_070 = {"agr_scene_census": "census", "agr_scene_units": "units", "agr_mod
               "agr_qa_zero_area": "zero_area"}
 RUNTIME_070 = "0.7.0"
 # AGR Tools 0.8 delivery edits (#908): runtime.edits_080(<plan row id>, mode, preview, nodes, options).
-# Branches A-D build on package version 0.7.0 with runtime.edits_080; the release branch sets "0.8.0" here.
+# Released in package version 0.8.0 (release branch R, #908).
 EDITS_080 = {"agr_scene_missing_maps": "scene.missing_maps", "agr_model_triangulate": "model.triangulate",
              "agr_tex_format_fix": "tex.format_fix", "agr_tex_placeholders": "tex.placeholders",
              "agr_ucx_triangulate": "ucx.triangulate", "agr_ucx_rename": "ucx.rename",
@@ -33,7 +34,21 @@ EDITS_080 = {"agr_scene_missing_maps": "scene.missing_maps", "agr_model_triangul
              "agr_qa_package": "qa.package", "agr_export_geojson_write": "export.geojson_write",
              "agr_export_ground_fbx": "export.ground_fbx", "agr_export_pivot_place": "export.pivot_place",
              "agr_export_zip": "export.zip"}
-RUNTIME_080 = "0.7.0"
+RUNTIME_080 = "0.8.0"
+# AGR Tools 0.9 rows (#979): runtime.edits_090(<plan row id>, "preview", None, nodes, options). Only preview: an
+# editing 0.9 row is never applied over MCP in the base, and a `select` row (light.check) selects nothing here.
+# Branches A-E3 build on package version 0.8.x with runtime.edits_090; the release branch R sets "0.9.0" here.
+EDITS_090 = {"agr_tex_erm_normal_check": "tex.erm_normal_check", "agr_tex_finish_map": "tex.finish_map",
+             "agr_udim_matid_unwrap": "udim.matid_unwrap", "agr_udim_slots": "udim.slots",
+             "agr_atlas_flora": "atlas.flora", "agr_atlas_groundel": "atlas.groundel",
+             "agr_place_flora_repair": "place.flora_repair", "agr_place_maf_checks": "place.maf_checks",
+             "agr_place_replace": "place.replace", "agr_place_schedule": "place.schedule",
+             "agr_place_drop_to_ground": "place.drop_to_ground", "agr_qa_address": "qa.address",
+             "agr_qa_facade_compare": "qa.facade_compare", "agr_qa_normals": "qa.normals",
+             "agr_qa_sintez": "qa.sintez", "agr_export_batch": "export.batch",
+             "agr_scene_maps_usage": "scene.maps_usage", "agr_light_check": "light.check",
+             "agr_qa_procedural_objects": "qa.procedural_objects"}
+RUNTIME_090 = "0.8.0"
 
 
 def _rt():
@@ -96,9 +111,12 @@ def _nodes(rt, handles):
 
 
 def run(tool, root, args):
-    if tool not in FUNCTIONS and tool not in CHECKS_070 and tool not in EDITS_080:
+    if tool not in FUNCTIONS and tool not in CHECKS_070 and tool not in EDITS_080 and tool not in EDITS_090:
         raise ValueError("unsupported tool " + repr(tool))
-    expected = RUNTIME_070 if tool in CHECKS_070 else RUNTIME_080 if tool in EDITS_080 else EXPECTED_RUNTIME
+    if tool in EDITS_090 and (args.get("mode", "preview") != "preview" or args.get("preview") is not None):
+        raise ValueError(tool + ": 0.9 rows take only mode=preview over MCP (#979)")
+    expected = (RUNTIME_070 if tool in CHECKS_070 else RUNTIME_080 if tool in EDITS_080
+                else RUNTIME_090 if tool in EDITS_090 else EXPECTED_RUNTIME)
     rt = _rt()
     scene = args.get("scene")
     if not isinstance(scene, str) or not scene:
@@ -112,6 +130,11 @@ def run(tool, root, args):
             raise RuntimeError("AGR Tools runtime at " + str(mod.__file__) + " has no edits_080 (0.8 base, #908)")
         result = mod.edits_080(EDITS_080[tool], args.get("mode", "preview"), args.get("preview"),
                                _nodes(rt, args.get("handles") or []), args.get("options"))
+    elif tool in EDITS_090:
+        if not hasattr(mod, "edits_090"):
+            raise RuntimeError("AGR Tools runtime at " + str(mod.__file__) + " has no edits_090 (0.9 base, #979)")
+        result = mod.edits_090(EDITS_090[tool], "preview", None, _nodes(rt, args.get("handles") or []),
+                               args.get("options"))
     elif tool in CHECKS_070:
         result = mod.checks_070(CHECKS_070[tool], _nodes(rt, args.get("handles") or []))
     else:

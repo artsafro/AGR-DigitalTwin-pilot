@@ -5,7 +5,7 @@ Native xView uses 0.002 m vertices and 0.005 m faces.
 import json
 import sys
 
-VERSION = "0.7.0"
+VERSION = "0.8.0"
 CODES = {'xview': {'overlap_vertices', 'overlap_faces'},
          'matid': {'udim_id', 'empty_id', 'empty_slot', 'missing_material'},
          'cleanup': {'remove_custom_attributes', 'clear_user_defined_lines',
@@ -39,6 +39,39 @@ EDITS_080 = {
     'export.zip': ('package_core.py', 'export_zip'),
 }
 READ_080 = ('scene.missing_maps', 'qa.package')  # plan mode `read`: preview only, there is no apply
+# 0.9 rows (#979): plan row id -> (core file, function), same contract as EDITS_080 (edit_core.py). The function
+# lives in the glue of the core (place_core.py -> place_max.py; GLUE_090 names the exceptions). While it is absent
+# the report is `status: not_implemented`. Owners (parallel branches of #979): place A; texqa/finish/uvtile/atlas
+# B; qa9/facade C; batch/mapsuse/light D. Only branch 0 and the release branch R edit this table.
+EDITS_090 = {
+    'tex.erm_normal_check': ('texqa_core.py', 'tex_erm_normal_check'),
+    'tex.finish_map': ('finish_core.py', 'tex_finish_map'),
+    'udim.matid_unwrap': ('uvtile_core.py', 'udim_matid_unwrap'),
+    'udim.slots': ('uvtile_core.py', 'udim_slots'),
+    'atlas.flora': ('atlas_core.py', 'atlas_flora'),
+    'atlas.groundel': ('atlas_core.py', 'atlas_groundel'),
+    'place.flora_repair': ('place_core.py', 'place_flora_repair'),
+    'place.maf_checks': ('place_core.py', 'place_maf_checks'),
+    'place.replace': ('place_core.py', 'place_replace'),
+    'place.schedule': ('place_core.py', 'place_schedule'),
+    'place.drop_to_ground': ('place_core.py', 'place_drop_to_ground'),
+    'qa.address': ('qa9_core.py', 'qa_address'),
+    'qa.facade_compare': ('facade_core.py', 'qa_facade_compare'),
+    'qa.normals': ('qa9_core.py', 'qa_normals'),
+    'qa.sintez': ('qa9_core.py', 'qa_sintez'),
+    'export.batch': ('batch_core.py', 'export_batch'),
+    'scene.maps_usage': ('mapsuse_core.py', 'scene_maps_usage'),
+    'light.check': ('light_core.py', 'light_check'),
+    'qa.procedural_objects': ('qa9_core.py', 'qa_procedural_objects'),
+}
+# plan modes `read` and `select`: preview only, there is no apply. `select` (light.check): the preview report
+# names the offenders; the UI glue (ui_max.py / edit_ui) selects them, never the core.
+READ_090 = ('tex.erm_normal_check', 'udim.slots', 'place.maf_checks', 'qa.address', 'qa.facade_compare',
+            'qa.normals', 'qa.sintez', 'scene.maps_usage', 'light.check', 'qa.procedural_objects')
+SELECT_090 = ('light.check',)
+# core file -> glue file where it is not <stem>_max.py: atlas_core.py is shared with atlas.npm (0.2), and the
+# 0.9 atlas glue of branch B is flora_atlas_max.py (Flora + GroundEl).
+GLUE_090 = {'atlas_core.py': 'flora_atlas_max.py'}
 EXPORT_PLAN = {'target', 'report', 'units', 'axis', 'unit_scale_factor', 'object_count',
                'triangle_count', 'material_count', 'object_names', 'triangles_by_name',
                'gates', 'dropped', 'texel', 'readback', 'stopped', 'digest'}
@@ -184,6 +217,8 @@ def parse_report(text):
     r = json.loads(text, object_pairs_hook=_unique, parse_constant=_reject)
     if isinstance(r, dict) and isinstance(r.get('tool'), str) and r['tool'] in EDITS_080:
         return _edit_core().validate_report(r, EDITS_080)
+    if isinstance(r, dict) and isinstance(r.get('tool'), str) and r['tool'] in EDITS_090:
+        return _edit_core().validate_report(r, EDITS_090)
     if isinstance(r, dict) and r.get('tool') in CHECKS_070:
         return _suite_core().validate_report(r)
     checks = _checks_core() if isinstance(r, dict) and r.get('tool') in CHECKS_050 else None
@@ -223,7 +258,7 @@ def parse_report(text):
             ids = f['ids']
             if not isinstance(ids, list) or any(type(i) is not int or i <= 0 for i in ids) or len(set(ids)) != len(ids):
                 raise ValueError('invalid component IDs')
-    # Review-level codes (at_threshold, name_conflict, tex_overlap_review) are non-pass:
+    # Review-level codes (checks_core.REVIEW_CODES) are non-pass:
     # any finding makes status 'fail'. A person reviews them. No 'review' status unless the UI needs one.
     expected = 'fail' if any(o['findings'] for o in r['objects']) else 'pass'
     if r['status'] != expected:
@@ -281,8 +316,28 @@ def edits_080(tool, mode, preview=None, nodes=None, options=None):
     `options` (JSON object: paths, profile) belong to the preview; the glue records them in the preview plan,
     so apply takes none. An empty stub module answers `status: not_implemented`, so the base ships before A–D.
     Glue call: `<function>(ctx, mode, nodes, preview)`, ctx = agr, core, edit, emax, options."""
+    return _dispatch_edit(EDITS_080, READ_080, {}, '#908', tool, mode, preview, nodes, options)
+
+
+def edits_090(tool, mode, preview=None, nodes=None, options=None):
+    """0.9 rows (#979) on the contract of edits_080 / edit_core.py: preview -> apply through the glue of EDITS_090.
+
+    Read rows (READ_090, plan modes `read` and `select`) answer only a preview; `light.check` (`select`) lists the
+    offenders in the report and the UI glue selects them. An empty stub module answers `status: not_implemented`
+    (issue #979), so the base ships before branches A–D. Glue call and ctx exactly as in edits_080."""
+    return _dispatch_edit(EDITS_090, READ_090, GLUE_090, '#979', tool, mode, preview, nodes, options)
+
+
+def glue_file(core_file, glue=None):
+    """Glue file of a core file: <stem>_max.py unless the table names an exception (GLUE_090)."""
+    if not core_file.endswith('_core.py'):
+        raise ValueError('core file must end with _core.py: ' + repr(core_file))
+    return (glue or {}).get(core_file) or core_file[:-len('_core.py')] + '_max.py'
+
+
+def _dispatch_edit(table, read, glue_map, issue, tool, mode, preview, nodes, options):
     import types
-    if not isinstance(tool, str) or tool not in EDITS_080:
+    if not isinstance(tool, str) or tool not in table:
         raise ValueError('unsupported edit tool: ' + repr(tool))
     edit = _edit_core()
     if mode not in edit.MODES:
@@ -292,7 +347,7 @@ def edits_080(tool, mode, preview=None, nodes=None, options=None):
             raise ValueError('options must be a JSON object')
         edit.canonical(options)
     if mode == 'apply':
-        if tool in READ_080:
+        if tool in read:
             raise ValueError(tool + ' is read-only: there is no apply')
         if preview is None:
             raise ValueError('apply needs the preview report of the last answer')
@@ -301,17 +356,18 @@ def edits_080(tool, mode, preview=None, nodes=None, options=None):
         edit.check_preview(tool, preview)
     elif preview is not None:
         raise ValueError('preview mode takes no preview argument')
-    core_file, fn_name = EDITS_080[tool]
+    core_file, fn_name = table[tool]
     stem = core_file[:-len('_core.py')]
-    glue = _load_core(stem + '_max.py', 'agr_tools_{}_max'.format(stem))
+    glue_name = glue_file(core_file, glue_map)
+    glue = _load_core(glue_name, 'agr_tools_' + glue_name[:-len('.py')])
     fn = getattr(glue, fn_name, None)
     if fn is None:
-        return edit.not_implemented(tool, mode)
+        return edit.not_implemented(tool, mode, issue)
     ctx = types.SimpleNamespace(agr=types.SimpleNamespace(**globals()), edit=edit,
                                 core=_load_core(core_file, 'agr_tools_' + stem + '_core'),
                                 emax=_load_core('edit_max.py', 'agr_tools_edit_max'), options=dict(options or {}))
     report = fn(ctx, mode, nodes, preview)
-    edit.validate_report(report, EDITS_080)
+    edit.validate_report(report, table)
     if report['tool'] != tool or (report['status'] != 'not_implemented' and report['plan']['mode'] != mode):
         raise ValueError('edit glue answered another tool/mode: ' + repr((report['tool'], report['plan']['mode'])))
     return report
@@ -501,8 +557,8 @@ def xview(nodes=None, on_item=None):
 
 
 def matid(nodes=None, on_item=None):
-    """Native per-face IDs, no remapping; a Multimaterial slot is looked up the way the 3ds Max FBX
-    export resolves it (_max_submaterial: an ID outside materialIDList wraps by the highest ID)."""
+    """Native per-face IDs, no remapping; a Multimaterial slot must be listed exactly once and filled
+    (_max_submaterial wrap=False): a matID outside materialIDList is empty_slot although the FBX export wraps it (#844)."""
     rt = _rt()
     nodes = _targets(nodes)
     entries = []
@@ -518,7 +574,7 @@ def matid(nodes=None, on_item=None):
                 if mid <= 0:
                     empty.append(face)
                 if material is not None and rt.classOf(material) == rt.MultiMaterial:
-                    if _max_submaterial(material, mid) is None:
+                    if _max_submaterial(material, mid, wrap=False) is None:
                         slots.append(face)
             fs = []
             for code, ids in (('udim_id', bad), ('empty_id', empty), ('empty_slot', slots)):
@@ -592,10 +648,16 @@ def snapshot(nodes=None):
     return result
 
 
-def cleanup_preview(nodes=None):
-    """No mutation; use our already-tested repair planner, shipped as an AST slice."""
+def cleanup_preview(nodes=None, options=None):
+    """No mutation; use our already-tested repair planner, shipped as an AST slice.
+
+    `options` (0.9 base, #979): opt-in passes `channels` / `keys`, both off by default, validated by
+    export_core.cleanup_options and handed to export_core._cleanup_channels; recorded in the preview so apply
+    re-plans with exactly them. What an option does is branch E3's work."""
     import importlib.util
     from pathlib import Path
+    export = _load_core('export_core.py', 'agr_tools_export')
+    opts = export.cleanup_options(options)
     spec = importlib.util.spec_from_file_location('agr_tools_hygiene', Path(__file__).with_name('hygiene_core.py'))
     core = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(core)
@@ -603,20 +665,24 @@ def cleanup_preview(nodes=None):
     nodes = _targets(nodes)
     state = snapshot(nodes)
     plan = repair_plan([o['hygiene'] for o in state])
+    channels = [export._cleanup_channels(item['actions'], opts) for item in plan['objects']]
     entries = []
     for n, item in zip(nodes, plan['objects']):
         if item['unrepairable']:
             raise ValueError(str(n.name) + ': ' + '; '.join(item['unrepairable']))
         entries.append(_entry(n, [_finding(a['action'], detail=json.dumps(a, sort_keys=True))
                                   for a in item['actions']]))
-    return {'state': state, 'plan': plan, 'report': _report('cleanup', entries, nodes, select=False)}
+    return {'state': state, 'plan': plan, 'options': opts, 'channels': channels,
+            'report': _report('cleanup', entries, nodes, select=False)}
 
 
 def cleanup_apply(nodes, preview):
-    """Apply only a current, unaltered preview to fresh deep export-copy nodes."""
+    """Apply only a current, unaltered preview to fresh deep export-copy nodes (options come from the preview)."""
     rt = _rt()
     nodes = _targets(nodes)
-    current = cleanup_preview(nodes)
+    if not isinstance(preview, dict):
+        raise ValueError('stale or altered cleanup preview; run dry-run again')
+    current = cleanup_preview(nodes, preview.get('options'))
     if preview != current:
         raise ValueError('stale or altered cleanup preview; run dry-run again')
     copies = []
@@ -639,7 +705,7 @@ def cleanup_apply(nodes, preview):
                     api = rt.polyop if rt.classOf(c.baseObject) == rt.Editable_Poly else rt.meshop
                     api.setMapSupport(c.baseObject, ch, False)
             rt.setUserPropBuffer(c, item['cleaned']['user_props'])
-        after = cleanup_preview(copies)['report']
+        after = cleanup_preview(copies, current['options'])['report']
         if after['status'] != 'pass':
             raise RuntimeError('cleanup verification failed: ' + json.dumps(after))
         if snapshot(nodes) != current['state']:
@@ -760,16 +826,20 @@ def _prop(n, key):
 
 
 _SUBMATERIAL_INDEX = None
+_LISTED_INDEX = None
 
 
-def _max_submaterial(material, mid):
+def _max_submaterial(material, mid, wrap=True):
     """Sub-material a face with matID `mid` gets in the 3ds Max FBX export (the ID wraps by the highest
-    listed ID, checks_core.max_submaterial_index), or None when that slot is absent or empty."""
-    global _SUBMATERIAL_INDEX
+    listed ID, checks_core.max_submaterial_index), or None when that slot is absent or empty.
+    wrap=False: `mid` itself must be listed (checks_core.listed_submaterial_index) - the MatID check
+    and the export empty_slot block a wrapped matID (#844)."""
+    global _SUBMATERIAL_INDEX, _LISTED_INDEX
     if _SUBMATERIAL_INDEX is None:  # load the core once, not once per face
-        _SUBMATERIAL_INDEX = _checks_core().max_submaterial_index
+        core = _checks_core()
+        _SUBMATERIAL_INDEX, _LISTED_INDEX = core.max_submaterial_index, core.listed_submaterial_index
     ids = [int(material.materialIDList[i]) for i in range(len(material.materialIDList))]
-    i = _SUBMATERIAL_INDEX(mid, ids)
+    i = (_SUBMATERIAL_INDEX if wrap else _LISTED_INDEX)(mid, ids)
     return None if i is None else material.materialList[i]
 
 
@@ -1745,7 +1815,7 @@ def _slot_gaps(n, ids):
         return []
     gaps = []
     for index, mid in enumerate(ids, 1):
-        if _max_submaterial(material, int(mid)) is None:
+        if _max_submaterial(material, int(mid), wrap=False) is None:
             gaps.append(index)
     return gaps
 
@@ -2013,19 +2083,46 @@ def _selection_key():
     return tuple(sorted(int(rt.getHandleByAnim(n)) for n in rt.selection))
 
 
-def edit_ui(tool):
-    """Panel/macro press of a 0.8 edit: first press = preview; the next press on the same selection applies
-    that preview. Read-only rows always preview. The stored preview is dropped after any apply attempt."""
-    if not isinstance(tool, str) or tool not in EDITS_080:
+def edit_ui(tool, select=True):
+    """Panel/macro press of a 0.8/0.9 edit: first press = preview; the next press on the same selection applies
+    that preview. Read-only rows always preview; a `select` row (SELECT_090) then selects its offenders unless
+    `select=False` (the panel selects them itself after putting its scope selection back).
+    The stored preview is dropped after any apply attempt."""
+    if isinstance(tool, str) and tool in EDITS_080:
+        run, read = edits_080, READ_080
+    elif isinstance(tool, str) and tool in EDITS_090:
+        run, read = edits_090, READ_090
+    else:
         raise ValueError('unsupported edit tool: ' + repr(tool))
     key = _selection_key()
     held = _edits.pop(tool, None)
-    if tool not in READ_080 and held is not None and held[0] == key:
-        return edits_080(tool, 'apply', held[1])
-    report = edits_080(tool, 'preview')
-    if tool not in READ_080 and report['status'] != 'not_implemented':
+    if tool not in read and held is not None and held[0] == key:
+        return run(tool, 'apply', held[1])
+    report = run(tool, 'preview')
+    if tool not in read and report['status'] != 'not_implemented':
         _edits[tool] = (key, report)
+    if select and tool in SELECT_090 and report['status'] != 'not_implemented':
+        select_offenders(report)
     return report
+
+
+def offender_handles(report):
+    """Handles of the report objects with at least one finding, in report order (pure; no pymxs)."""
+    return [o['handle'] for o in report['objects'] if o['findings']]
+
+
+def select_offenders(report):
+    """Select the offenders of a `select` report as ONE undo record, so Ctrl+Z restores the previous selection.
+    No offender: the selection stays as it was. Report handles are anim handles (getHandleByAnim).
+    Returns the number of selected nodes."""
+    import pymxs
+    rt = _rt()
+    nodes = [n for n in (rt.getAnimByHandle(int(h)) for h in offender_handles(report))
+             if n is not None and rt.isValidNode(n)]
+    if nodes:
+        with pymxs.undo(True, 'AGR Tools: выделить нарушителей'):
+            rt.select(nodes)
+    return len(nodes)
 
 
 def ui(tool):
@@ -2092,7 +2189,7 @@ def ui(tool):
         report = checks_050(tool)
     elif tool in CHECKS_070:
         report = checks_070(tool)
-    elif tool in EDITS_080:
+    elif tool in EDITS_080 or tool in EDITS_090:
         report = edit_ui(tool)
     elif tool in ('xview', 'matid'):
         report = {'xview': xview, 'matid': matid}[tool]()

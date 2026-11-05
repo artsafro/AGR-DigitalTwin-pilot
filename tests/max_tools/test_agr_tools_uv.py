@@ -39,12 +39,12 @@ def test_version_macros_and_roadmap_text():
     readme = (PACKAGE / 'README.md').read_text(encoding='utf-8')
     startup = (PACKAGE / 'startup.ms').read_text(encoding='utf-8')
     install = (PACKAGE / 'install.ms').read_text(encoding='utf-8')
-    assert 'VERSION = "0.7.0"' in runtime
+    assert 'VERSION = "0.8.0"' in runtime
     assert '0.002' in runtime and '0.005' in runtime
     for name in ('AGRToolsNudge', 'AGRToolsNudgeApply', 'AGRToolsAtlas', 'AGRToolsAtlasApply'):
         assert name in mcr
-    assert '0.7.0' in startup and 'Nudge' in startup and 'Atlas' in startup
-    assert 'AGRTools-0.7.0' in install
+    assert '0.8.0' in startup and 'Nudge' in startup and 'Atlas' in startup
+    assert 'AGRTools-0.8.0' in install
     assert 'UV integer-tile nudge' in readme and 'UDIM -> NPM atlas' in readme
     assert 'collision generator' in readme.lower()
     assert 'texel' in readme.lower() and 'checked export' in readme.lower()
@@ -242,15 +242,14 @@ def test_ground_pack_of_two_tile_and_textured_is_a_fixed_point(case):
                      mesh['fmats'], mesh['mats'], mode='ground', size=2048, pad=8)
     twice = core.pack(mesh['verts'], once['uvs'], mesh['faces'], once['face_uvs'],
                       mesh['fmats'], mesh['mats'], mode='ground', size=2048, pad=8)
-    changed = []
+    # zip() truncates: pin the lengths so a dropped face or corner cannot pass vacuously.
+    assert len(twice['face_uvs']) == len(once['face_uvs']) == len(mesh['faces'])
     for index, (left, right) in enumerate(zip(once['face_uvs'], twice['face_uvs'])):
+        assert len(left) == len(right) == len(mesh['faces'][index]), index
         delta = max(max(abs(once['uvs'][a][0] - twice['uvs'][b][0]),
                         abs(once['uvs'][a][1] - twice['uvs'][b][1]))
                     for a, b in zip(left, right))
-        if delta > 1e-9:
-            changed.append(index)
-        assert delta <= 1e-9
-    assert changed == []
+        assert delta <= 1e-9, index
 
 
 def test_atlas_random_probe_matches_pack_or_the_same_error():

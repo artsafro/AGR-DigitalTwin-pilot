@@ -89,4 +89,4 @@ desktop.ini
 /autoresearch-results/
 
 # Stray dir from the mangled User PYTEST_ADDOPTS basetemp (docs/research/mangled-pytest-basetemp-in-worktrees-source.md)
-/Users*pytest_tmp/
+Users*pytest_tmp/

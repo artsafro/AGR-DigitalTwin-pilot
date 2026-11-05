@@ -329,12 +329,13 @@ def test_palette_order_exact_then_quantized_then_posterize(tmp_path):
     assert r['encoding'] == 'palette_exact' and r['rmse'] == 0.0 and r['max_channel_error'] == 0
     img, info = tc.decode_png(r['png'])
     assert info['color_type'] == 3 and img.px == tc.decode_png(few)[0].px
-    r = _fit_one(tmp_path / 'b', noise_png(128), max_bytes=24 * 1024)
+    # 0.8 order kept under the 0.8 settings (no dithering, no quality floor); 0.9 defaults: test_T01_* below
+    r = _fit_one(tmp_path / 'b', noise_png(128), max_bytes=24 * 1024, dither=False, max_rmse=1.0)
     assert r['encoding'] == 'palette_quantized' and r['colours'] <= 256 and r['bytes_out'] <= 24 * 1024
     out = tc.decode_png(r['png'])[0].px
     assert r['rmse'] == tc.rmse(tc.decode_png(noise_png(128))[0].px, out) > 0
     assert r['max_channel_error'] == tc.max_channel_error(tc.decode_png(noise_png(128))[0].px, out)
-    r = _fit_one(tmp_path / 'c', noise_png(128), max_bytes=24 * 1024, palette=False)
+    r = _fit_one(tmp_path / 'c', noise_png(128), max_bytes=24 * 1024, palette=False, max_rmse=1.0)
     assert r['encoding'] == 'rgb_posterize' and cc.png_info(r['png'])[3] == 2
 
 
@@ -344,7 +345,8 @@ def test_palette_input_is_valid_and_rgba_never_palettized(tmp_path):
     assert r['actions'] == ['copied_unchanged'] and r['png'] == pal
     rnd = random.Random(6)
     keep = png(128, 128, 6, 8, lambda x, y: (rnd.randrange(256), rnd.randrange(256), rnd.randrange(256), 128))
-    r = _fit_one(tmp_path / 'b', keep, name='T_a_Diffuse_1.1001.png', profile='vpm', max_bytes=24 * 1024)
+    r = _fit_one(tmp_path / 'b', keep, name='T_a_Diffuse_1.1001.png', profile='vpm', max_bytes=24 * 1024,
+                 max_rmse=1.0)
     assert cc.png_info(r['png'])[3] == 6 and r['encoding'] == 'rgb_posterize'
 
 
@@ -434,8 +436,11 @@ def test_acceptance_format_fix(tmp_path):
     assert img.px[(10 * 64 + 63) * 3:(10 * 64 + 64) * 3] == b'\x00\x00\x00'
     assert by['wide.png']['size_px'] == [512, 256] and 'not square 512x256' in by['wide.png']['notes'][0]
     noise = by['noise.png']
-    assert noise['bytes_out'] <= limit and noise['rmse'] > 0 and noise['encoding'] == 'palette_quantized'
-    assert noise['colours'] == 256 and noise['max_channel_error'] > 0
+    # 0.9 (#979 T01): the dithered palette of uniform noise is over max_rmse, so the next candidate in Artem's
+    # order (posterize) is taken; the RMSE stays reported and within the floor
+    assert noise['bytes_out'] <= limit and 0 < noise['rmse'] <= opts['max_rmse']
+    assert noise['encoding'] == 'rgb_posterize' and noise['max_channel_error'] > 0
+    assert any(t.startswith('palette_dithered') for t in noise['tried'])
     assert Path(by['control.png']['out']).read_bytes() == files['control.png']
     assert by['photo.jpg']['out'].endswith('photo.png')
     ec.validate_report(rep)
@@ -754,3 +759,368 @@ def test_options_validation():
         with pytest.raises(ValueError):
             tc.placeholder_options(bad)
     assert tc.format_options({})['max_bytes'] == 3 * 1024 * 1024
+
+
+# =========================================================================================================
+# 0.9 rework (#979, branch E1): team-audit cards T01/T02/T05/T06. Each card defect is RED on a behaviour model
+# of the team script AS MEASURED by the card (no team code, #853; scripts named by file + SHA256) and GREEN on
+# tex_core / tex_max. Models are written from the card text (ref cards_digest, SYNTHESIS §4 A).
+# =========================================================================================================
+def red_green(prop, source, impl):
+    """The property fails on the source model (RED) and holds on the implementation (GREEN)."""
+    assert not prop(source()), 'source model already satisfies the property: not a regression'
+    assert prop(impl())
+
+
+def _format(tmp_path, files, **opts):
+    """Run tex.format_fix core over {name: bytes} in tmp_path/src; rows by name, report, options."""
+    src = tmp_path / 'src'
+    src.mkdir(parents=True, exist_ok=True)
+    for k, v in files.items():
+        (src / k).write_bytes(v)
+    sources = [str(src / k) for k in files]
+    o = tc.format_options(dict({'files': sources, 'out': str(tmp_path / 'out')}, **opts))
+    out, rows = tc.format_fix(sources, o, lambda q: Path(q).read_bytes() if Path(q).is_file() else None, fake_decode)
+    owners = {s: [[i + 1, 'SM_T{}_Main'.format(i + 1)]] for i, s in enumerate(sources)}
+    rep = tc.format_report(ec, 'preview', out, rows, 'h' * 64, o, owners=owners)
+    return {Path(r['source']).name: r for r in rows}, rep, o
+
+
+class SourceCompressor:
+    """T01/png_compressor as measured (compress_png.py 75ff969bc1d8165f..., compress_png_gui.py e8cb568767dc3065...):
+    without ImageMagick lossless is not tried for files <= 10 MB; colours are reduced until the file fits and the
+    run says «готово (<= лимита)»; alpha dropped by convert('RGB') (hidden RGB shows); RGBA kept as colour type 6;
+    16-bit gray clipped to 255; the best temp copy stays in %TEMP%."""
+
+    @staticmethod
+    def compress(data, limit, tmpdir=None):
+        img, info = tc.decode_png(data)
+        if info['depth'] == 16 and info['color_type'] == 0:
+            img = tc.Image(img.w, img.h, 3, b'\xff' * (img.w * img.h * 3))  # Pillow clip
+        colours = 256
+        while True:
+            pal, idx, out = tc.quantize(tc.Image(img.w, img.h, 3, img.rgb()), colours)  # convert('RGB'): no flatten
+            png_ = tc.encode_palette_png(img.w, img.h, pal, idx)
+            if len(png_) <= limit or colours <= 2:
+                break
+            colours //= 2
+        if tmpdir is not None:
+            Path(tmpdir, 'tmpbest.png').write_bytes(png_)  # never deleted
+        ctype = 6 if img.n == 4 else 3
+        return {'status': 'готово', 'png': png_, 'pixels': out, 'colours': len(pal), 'color_type': ctype,
+                'rmse': tc.rmse(img.rgb(), out)}
+
+
+def _gradient(side, seed=3):
+    rnd = random.Random(seed)  # gradient + small noise: > 256 colours, lossless over the limit
+    return png(side, side, 2, 8, lambda x, y: tuple(max(0, min(255, v + rnd.randrange(-6, 7))) for v in (
+        (x * 255) // (side - 1), (y * 255) // (side - 1), ((x + y) * 127) // side)))
+
+
+def test_T01_quality_floor_rmse_over_threshold_is_a_refusal_not_done(tmp_path):
+    """4096 -> 8 colours, RMSE 0.157, was «готово»: here a lossy result over max_rmse is refused with the value."""
+    data = noise_png(128)
+    limit = 20 * 1024  # the dithered palette fits (17 kB) with RMSE 0.056
+    rows, rep, o = _format(tmp_path, {'T_n_d_1.png': data}, max_bytes=limit)
+    r = rows['T_n_d_1.png']
+    red_green(lambda res: not (res['status'] in ('готово', 'done') and res['rmse'] > 0.03),
+              lambda: SourceCompressor.compress(data, limit),
+              lambda: {'status': 'done' if 'png' in r else 'refused', 'rmse': r.get('rmse', 0.0)})
+    assert r.get('quality_fail') and 'max_rmse' in r['reason'] and r['rmse'] > o['max_rmse'] and 'png' not in r
+    assert rep['plan']['done'] == [] and rep['status'] == 'fail'
+    assert rep['objects'][0]['findings'][0]['code'] == 'tex_quality'
+    ok, _, _ = _format(tmp_path / 'b', {'T_n_d_1.png': data}, max_bytes=limit, max_rmse=1.0)
+    assert 'png' in ok['T_n_d_1.png']  # the floor is a parameter (Q02 open)
+
+
+def test_T01_file_under_the_limit_is_never_quantized(tmp_path):
+    """175 KB textured file -> 256 colours (mean diff 4.6) although under the limit."""
+    data = rgb8(256, 256)
+    rows, rep, _ = _format(tmp_path, {'T_a_d_1.png': data})
+    r = rows['T_a_d_1.png']
+    src_px = tc.decode_png(data)[0].px
+    red_green(lambda px: px == src_px,
+              lambda: SourceCompressor.compress(data, 3 * tc.MIB)['pixels'],
+              lambda: tc.decode_png(r['png'])[0].px)
+    assert r['actions'] == ['copied_unchanged'] and rep['objects'][0]['findings'] == []
+
+
+def test_T01_alpha_flattened_never_dropped_to_hidden_rgb(tmp_path):
+    data = rgba_half()  # transparent half hides bright green
+    rows, _, _ = _format(tmp_path, {'T_a_d_1.png': data}, background=[0, 0, 0])
+    green = bytes((0, 255, 0))
+
+    def no_hidden(px):
+        return all(px[i:i + 3] != green for i in range(0, len(px), 3))
+    red_green(no_hidden, lambda: SourceCompressor.compress(data, 3 * tc.MIB)['pixels'],
+              lambda: tc.decode_png(rows['T_a_d_1.png']['png'])[0].px)
+
+
+def test_T01_output_24bit_and_16bit_gray_not_clipped(tmp_path):
+    rgba = rgba_half()
+    gray16 = png(8, 8, 0, 16, lambda x, y: (1000,))  # 1000/65535 -> 4, Pillow clipped to 255
+    rows, _, _ = _format(tmp_path, {'T_a_d_1.png': rgba, 'T_g_d_1.png': gray16}, background=[9, 9, 9])
+    red_green(lambda ct: ct in (2, 3), lambda: SourceCompressor.compress(rgba, 3 * tc.MIB)['color_type'],
+              lambda: cc.png_info(rows['T_a_d_1.png']['png'])[3])
+    red_green(lambda px: set(px) == {4}, lambda: SourceCompressor.compress(gray16, 3 * tc.MIB)['pixels'],
+              lambda: tc.decode_png(rows['T_g_d_1.png']['png'])[0].px)
+
+
+def test_T01_temp_folder_is_the_same_before_and_after(tmp_path, monkeypatch):
+    """Team CLI left 18 files / 78 MB in %TEMP%. Core: no temp files; glue decoder: its mkdtemp is removed."""
+    import tempfile
+    temp = tmp_path / 'TEMP'
+    temp.mkdir()
+    monkeypatch.setattr(tempfile, 'tempdir', str(temp))
+    data = noise_png(64)
+    _format(tmp_path / 'a', {'T_n_d_1.png': data}, max_bytes=8 * 1024, max_rmse=1.0)
+    rt = _FakeRT()
+
+    class _Bmp:
+        def __init__(self, path):
+            self.path = path
+
+        def Save(self, out, fmt):  # noqa: N802 - .NET name
+            Path(out).write_bytes(rgb8(4, 4))
+
+        def Dispose(self):  # noqa: N802
+            pass
+    rt.dotNetObject = lambda cls, path: _Bmp(path)
+    rt.dotNetClass = lambda name: types.SimpleNamespace(Png='png')
+    mod = types.ModuleType('pymxs')
+    mod.runtime = rt
+    monkeypatch.setitem(sys.modules, 'pymxs', mod)
+    img = tm._decode_other(tc)(str(fake_jpg(tmp_path)))
+    assert img.w == 4
+    leak = tmp_path / 'leak'
+    leak.mkdir()
+    red_green(lambda folder: list(Path(folder).iterdir()) == [],
+              lambda: (SourceCompressor.compress(data, 8 * 1024, leak), leak)[1], lambda: temp)
+
+
+def test_T01_dithered_palette_and_order_palette_first(tmp_path):
+    """Q01 (Artem): palette <= 256 with dithering is allowed and tried before posterisation."""
+    smooth = _gradient(192)
+    rows, _, o = _format(tmp_path, {'T_s_d_1.png': smooth}, max_bytes=40 * 1024)
+    r = rows['T_s_d_1.png']
+    assert o['dither'] is True and r['tried'][1].startswith('palette_dithered')
+    assert r['encoding'] == 'palette_dithered' and 0 < r['rmse'] <= o['max_rmse'] and r['colours'] <= 256
+    pal, _, _ = tc.quantize(tc.decode_png(smooth)[0])
+    idx, out = tc.dither(tc.decode_png(smooth)[0], pal)
+    assert len(idx) == 192 * 192 and max(idx) < len(pal) and len(out) == 192 * 192 * 3
+
+
+def test_T01_acceptance_scaled(tmp_path, monkeypatch):
+    """#979 acceptance of tex.format_fix on the pure-Python core, scaled by 1/16 in pixels (1024 noise and a
+    1.1 MiB limit, where the dithered palette fits with RMSE 0.057, instead of 4096 and 3 MiB): noise, 175-KB-class texture, RGBA half
+    transparent, 16-bit gray. Under-limit untouched, RMSE over the floor = fail, temp unchanged."""
+    import tempfile
+    files = {'T_noise_d_1.png': noise_png(1024), 'T_tex_d_1.png': rgb8(256, 256), 'T_rgba_d_1.png': rgba_half(),
+             'T_g16_d_1.png': png(16, 16, 0, 16, lambda x, y: (x * 4000,))}
+    temp = tmp_path / 'TEMP'  # a private %TEMP%: the shared one changes under other processes
+    temp.mkdir()
+    monkeypatch.setattr(tempfile, 'tempdir', str(temp))
+    before = sorted(os.listdir(tempfile.gettempdir()))
+    rows, rep, o = _format(tmp_path, files, max_bytes=1100 * 1024, background=[0, 0, 0])
+    assert rows['T_noise_d_1.png'].get('quality_fail') and 'png' not in rows['T_noise_d_1.png']
+    assert rows['T_tex_d_1.png']['actions'] == ['copied_unchanged']
+    assert cc.png_info(rows['T_rgba_d_1.png']['png'])[3] == 2
+    assert cc.png_info(rows['T_g16_d_1.png']['png'])[2:4] == (8, 2)
+    assert rep['status'] == 'fail' and [x['source'] for x in rep['plan']['done']] == [
+        str(tmp_path / 'src' / k) for k in ('T_tex_d_1.png', 'T_rgba_d_1.png', 'T_g16_d_1.png')]
+    assert sorted(os.listdir(tempfile.gettempdir())) == before
+    ec.validate_report(rep)
+
+
+# ---- tex.placeholders: T01/index_to_rgb, T05/Texture_Zaglushki_Ground, T02/atlas_builder v9 maf -----------
+class SourceIndexToRgb:
+    """T01/index_to_rgb ('index to rgb.py' 90070bbf04c7545b...): palette PNG (ct 3), integer floor mean over all
+    pixels (transparent included), only 256x256."""
+    sizes = (256,)
+
+    @staticmethod
+    def mean(img):
+        n = img.w * img.h
+        return [sum(img.px[i * img.n + c] for i in range(n)) // n for c in range(3)]
+
+    @staticmethod
+    def colour_type():
+        return 3
+
+
+class SourceZaglushki:
+    """T05/Texture_Zaglushki_Ground.ms (888eacc9f477b3de..., measured Max 2026): 256 only; mean over premultiplied
+    pixels (transparent = black); TGA silently grey 128."""
+    sizes = (256,)
+
+    @staticmethod
+    def mean(img):
+        n = img.w * img.h
+
+        def a(i):
+            return img.px[i * 4 + 3] if img.n == 4 else 255
+        return [round(sum(img.px[i * img.n + c] * a(i) / 255 for i in range(n)) / n) for c in range(3)]
+
+    @staticmethod
+    def from_file(path):
+        return [128, 128, 128] if str(path).lower().endswith('.tga') else None
+
+
+class SourceAtlasStubs:
+    """T02/atlas_builder v9 maf (atlas_builder.py e6477f519fd2159d...): every stub record written to its name, equal
+    UDIM overwrites silently (6 records -> 3 files); stub normal 127,127,255."""
+    normal = (127, 127, 255)
+
+    @staticmethod
+    def write(records, folder):
+        written = {}
+        for name, colour in records:
+            Path(folder, name).write_bytes(tc.solid_png(4, colour))
+            written[name] = colour
+        return written
+
+
+def test_T01_T05_average_rounds_over_visible_pixels():
+    mean_img = tc.Image(1000, 1, 3, bytes([92, 0, 0]) * 934 + bytes([91, 0, 0]) * 66)  # mean 91.934
+    red_green(lambda c: c[0] == 92, lambda: SourceIndexToRgb.mean(mean_img), lambda: tc.average_colour(mean_img))
+    half = tc.decode_png(png(8, 8, 6, 8, lambda x, y: (90, 90, 90, 255) if y < 4 else (0, 0, 0, 0)))[0]
+    red_green(lambda c: c == [90, 90, 90], lambda: SourceZaglushki.mean(half), lambda: tc.average_colour(half))
+    rgba = tc.decode_png(png(8, 8, 6, 8, lambda x, y: (50, 200, 50, 255) if x < 4 else (200, 50, 50, 0)))[0]
+    red_green(lambda c: c == [50, 200, 50], lambda: SourceIndexToRgb.mean(rgba), lambda: tc.average_colour(rgba))
+
+
+def test_T01_T05_sizes_128_and_256_and_rgb24(tmp_path):
+    opts = tc.placeholder_options({'folder': str(tmp_path), 'address': 'A', 'sizes': [128, 256]})
+    red_green(lambda sizes: {128, 256} <= set(sizes), lambda: SourceZaglushki.sizes, lambda: opts['sizes'])
+    red_green(lambda ct: ct == 2, SourceIndexToRgb.colour_type, lambda: cc.png_info(tc.solid_png(128, [1, 2, 3]))[3])
+
+
+def test_T05_tga_diffuse_source_is_skipped_with_reason(tmp_path):
+    tga = tmp_path / 'T_src.tga'
+    tga.write_bytes(bytes([0, 0, 2]) + bytes(9) + struct.pack('<HH', 4, 4) + b'\x18\x00' + bytes(48))
+    colour, reason = tc.diffuse_source(str(tga), tga.read_bytes(), fake_decode)
+    red_green(lambda c: c is None, lambda: SourceZaglushki.from_file(tga), lambda: colour)
+    assert 'Diffuse placeholder skipped' in reason
+    opts = tc.placeholder_options({'folder': str(tmp_path / 'm'), 'address': 'A'})
+    opts['diffuse_reason'] = reason
+    rows = tc.placeholder_plan(opts, sets=[{'address': 'A', 'ground': False, 'owners': [[5, 'SM_A_Main']]}])
+    by = {r['map']: r for r in rows}
+    assert by['Diffuse']['code'] == 'placeholder_source' and 'reason' not in by['ERM'] and 'reason' not in by['Normal']
+    rep = tc.placeholder_report(ec, 'preview', opts, rows, 'h')
+    assert rep['objects'][0]['findings'][0]['code'] == 'placeholder_source' and len(rep['plan']['done']) == 2
+    png_colour, none = tc.diffuse_source('x.png', png(2, 2, 2, 8, lambda x, y: (10, 20, 30)), None)
+    assert png_colour == [10, 20, 30] and none is None
+    assert tc.diffuse_source('x.png', None)[1].startswith('diffuse_from not found')
+
+
+def test_T02_equal_udim_second_refused_never_overwritten(tmp_path):
+    folder = tmp_path / 'stubs'
+    folder.mkdir()
+    records = [('T_A_{}_1.1001.png'.format(m), c) for m, c in (('Diffuse', (1, 1, 1)), ('ERM', (0, 255, 0)),
+                                                               ('Normal', (128, 128, 255)))] * 2
+    opts = tc.placeholder_options({'folder': str(tmp_path / 'out'), 'address': 'A', 'udims': [1001, 1002, 1001]})
+    rows = tc.placeholder_plan(opts)
+    red_green(lambda lost: lost == 0, lambda: len(records) - len(SourceAtlasStubs.write(records, folder)),
+              lambda: sum(1 for r in rows if 'reason' not in r) - len({r['path'] for r in rows if 'reason' not in r}))
+    dup = [r for r in rows if r.get('code') == 'placeholder_duplicate']
+    assert len(rows) == 9 and len(dup) == 3 and all(r['udim'] == 1001 for r in dup)
+    written = tc.write_placeholders(ec, rows)
+    assert len(written) == len(set(written)) == 6
+
+
+def test_T02_normal_128_and_erm_metal_slots(tmp_path):
+    opts = tc.placeholder_options({'folder': str(tmp_path), 'address': 'A', 'slots': [1, 2], 'metal_slots': [2]})
+    red_green(lambda c: tuple(c) == (128, 128, 255), lambda: SourceAtlasStubs.normal,
+              lambda: opts['colours']['Normal'])
+    erm = {r['slot']: r['colour'] for r in tc.placeholder_plan(opts) if r['map'] == 'ERM'}
+    assert erm == {1: [0, 255, 0], 2: [0, 0, 255]}  # non-metal as 0.8 (Q03 open), metal: roughness 0, metal 255
+    with pytest.raises(ValueError):
+        tc.placeholder_options({'slots': [1], 'metal_slots': [3]})
+    with pytest.raises(ValueError):
+        tc.placeholder_options({'udim': 1001, 'udims': [1001]})
+
+
+def test_placeholder_one_set_per_address_with_owner_findings(tmp_path):
+    folder = tmp_path / 'Maps'
+    folder.mkdir()
+    (folder / 'T_Bad_Diffuse_1.1001.png').write_bytes(b'old')
+    opts = tc.placeholder_options({'folder': str(folder)})
+    sets = [{'address': 'Ok', 'ground': False, 'owners': [[1, 'SM_Ok_Main']]},
+            {'address': 'Bad', 'ground': False, 'owners': [[2, 'SM_Bad_Main']]}]
+    rows = tc.placeholder_plan(opts, sets=sets)
+    rep = tc.placeholder_report(ec, 'preview', opts, rows, 'h')
+    objs = {o['name']: [f['code'] for f in o['findings']] for o in rep['objects']}
+    assert objs == {'SM_Ok_Main': [], 'SM_Bad_Main': ['placeholder_exists']} and rep['status'] == 'fail'
+    assert (folder / 'T_Bad_Diffuse_1.1001.png').read_bytes() == b'old'
+
+
+# ---- scene.missing_maps: T06/alexyo_texfinder_v2 ---------------------------------------------------------
+class SourceTexFinder:
+    """T06/AlexYo_TexFinderV2 (2).ms (056bc4b47eba927a..., measured Max 2024): folder default "123" (relative,
+    auto-detection skipped -> nothing found); only `.png` candidates; the first of several taken silently."""
+
+    @staticmethod
+    def find(path, node, folder='123'):
+        if not os.path.isabs(folder):
+            return []
+        stem = 'T' + node[2:] + '_d_1'
+        hits = sorted(p for p in Path(folder).iterdir() if p.name.lower() == (stem + '.png').lower())
+        return [{'path': str(hits[0]), 'rank': 0}] if hits else []
+
+
+def _mask_scene(tmp_path):
+    lib = tmp_path / 'lib'
+    lib.mkdir()
+    (lib / 'T_Bench_001_Main_d_1.png').write_bytes(rgb8(4, 4))
+    (lib / 'T_Bench_001_Main_d_1.jpg').write_bytes(b'\xff\xd8x')
+    gone = str(tmp_path / 'gone' / 'src_diffuse.png')
+    owner = {'handle': 1, 'node': 'SM_Bench_001_Main', 'material': 'M', 'map': 'Map #1', 'hidden': False,
+             'ucx': False, 'slot': 'Diffuse Color', 'role': None}
+    return lib, gone, [{'path': gone, 'owners': [owner]}]
+
+
+def test_T06_mask_candidates_png_and_jpg_ranked_and_ambiguous(tmp_path):
+    lib, gone, maps = _mask_scene(tmp_path)
+    rows = tc.missing_maps(maps, os.path.isfile, lambda p: None, tc.candidate_index([str(lib)]))
+    r = rows[0]
+    red_green(lambda c: sorted(Path(x['path']).suffix for x in c) == ['.jpg', '.png'],
+              lambda: SourceTexFinder.find(gone, 'SM_Bench_001_Main', str(lib)), lambda: r['candidates'])
+    assert r['ambiguous'] and {c['rank'] for c in r['candidates']} == {2} and r['masks'][0] == 't_bench_001_main_d_1'
+    rep = tc.missing_report(ec, rows, 'h' * 64, [(1, 'SM_Bench_001_Main')])
+    assert rep['plan']['ambiguous'][0]['candidates'] and rep['objects'][0]['findings'][0]['code'] == 'map_missing'
+
+
+def test_T06_search_defaults_to_the_map_path_not_123(tmp_path):
+    lib, gone, maps = _mask_scene(tmp_path)
+    moved = str(lib / 'sub' / 'T_Bench_001_Main_d_1.png')  # folder gone: its nearest existing parent is searched
+    flat, deep = tc.search_folders([moved], (), '', ())
+    red_green(lambda found: len(found) > 0, lambda: SourceTexFinder.find(moved, 'SM_Bench_001_Main'),
+              lambda: tc.candidates(moved, tc.candidate_index(flat, recursive=deep)))
+    assert str(lib) in flat and deep == []
+    with pytest.raises(ValueError, match='absolute'):
+        tc.search_folders([], (), '', ['123'])
+
+
+def test_T06_slot_roles_reflection_is_not_metalness():
+    assert tc.role_of_slot('Reflection') is None and tc.role_of_slot('reflectionMap') is None
+    assert tc.role_of_slot('Specular Level') == 'metalness' and tc.role_of_slot('metalness_map') == 'metalness'
+    assert tc.role_of_slot('Diffuse Color') == 'diffuse' and tc.role_of_slot('base_color_map') == 'diffuse'
+    assert tc.role_of_slot('Bump') == 'normal' and tc.role_of_slot('coat_roughness_map') is None
+    assert tc.mask_stems('SM_Addr_Main', 'diffuse', 1002) == ['t_addr_diffuse_1.1002']
+    assert tc.mask_stems('Box001', 'diffuse') == [] and tc.mask_stems('SM_A_001_Main', None) == []
+
+
+def test_T06_acceptance_missing_maps_read_only(tmp_path):
+    """#979: missing map with .png and .jpg mask candidates -> both listed, ranked, ambiguous; empty search
+    folder -> auto search from the map path; disk unchanged."""
+    lib, gone, maps = _mask_scene(tmp_path)
+    maps[0]['path'] = str(lib / 'old' / 'src_diffuse.png')
+
+    def tree():
+        return sorted((str(p), md5(p)) for p in tmp_path.rglob('*') if p.is_file())
+    before = tree()
+    flat, deep = tc.search_folders([m['path'] for m in maps], (), '', [])
+    rows = tc.missing_maps(maps, os.path.isfile, lambda p: None, tc.candidate_index(flat, recursive=deep))
+    assert [Path(c['path']).name for c in rows[0]['candidates']] == ['T_Bench_001_Main_d_1.jpg',
+                                                                    'T_Bench_001_Main_d_1.png']
+    assert rows[0]['ambiguous'] and tree() == before
