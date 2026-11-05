@@ -43,13 +43,31 @@ class MaxBackend:
     def targets(self, scope_all):
         return self.agr._targets(list(rt.geometry) if scope_all else None)
 
-    def run_chunk(self, tool, chunk):
+    def run_chunk(self, tool, chunk, on_item=None):
         fn = {'xview': self.agr.xview, 'matid': self.agr.matid}[tool]
-        return fn(chunk)
+        return fn(chunk, on_item=on_item)
 
     def run_tool(self, tool, scope_all):
-        if scope_all:
-            rt.select(rt.geometry)
+        if not scope_all:
+            return self._run_tool(tool)
+        # runtime.ui reads rt.selection, so "вся сцена" selects the scope for the call and then puts the
+        # user's selection back, also on error; nodes deleted by the tool are dropped (#861).
+        keep = list(rt.selection)
+        rt.select(rt.objects if tool in self.agr.CHECKS_070 else rt.geometry)  # 0.7 checks see every object
+        try:
+            return self._run_tool(tool)
+        finally:
+            alive = [n for n in keep if rt.isValidNode(n)]
+            if alive:
+                rt.select(alive)
+            else:
+                rt.clearSelection()
+
+    def _run_tool(self, tool):
+        if tool in self.agr.EDITS_080:  # 0.8 delivery edits (#908): preview -> apply through runtime.edits_080
+            report = self.agr.edit_ui(tool)
+            self.log(report)
+            return report
         return self.agr.ui(tool)
 
     def _node(self, handle):
@@ -69,7 +87,23 @@ class MaxBackend:
             rt.clearSelection()
             return False
         rt.select(n)
-        return True
+        # Finding ids index the node's poly copy; they match the node itself only for a plain Editable_Poly
+        # (no modifiers). Otherwise, or for an unknown id type, the object stays the selection (#861).
+        if rt.classOf(n.baseObject) != rt.Editable_Poly or len(n.modifiers):
+            return 'object'
+        sel = model.component_selection(row, int(rt.polyop.getNumVerts(n)), int(rt.polyop.getNumFaces(n)))
+        if sel is None:
+            return 'object'
+        kind, ids = sel
+        rt.setCommandPanelTaskMode(rt.Name('modify'))
+        if kind == 'vertex':
+            rt.polyop.setVertSelection(n, ids)
+            rt.subObjectLevel = 1
+        else:
+            rt.polyop.setFaceSelection(n, ids)
+            rt.subObjectLevel = 4
+        rt.redrawViews()
+        return kind
 
     # ---- progress -----------------------------------------------------------------------
     def progress_start(self, label):
@@ -87,6 +121,15 @@ class MaxBackend:
     # ---- log / files --------------------------------------------------------------------
     def log(self, report):
         print(json.dumps(report, ensure_ascii=True, allow_nan=False))
+        self.agr.remember(report)
+
+    # ---- «Путь» (0.7.0) -----------------------------------------------------------------
+    def suite(self):
+        import agr_tools_roadmap as roadmap
+        return roadmap.load_file(self.agr.suite_path())
+
+    def last_reports(self):
+        return self.agr.last_reports()
 
     def log_error(self, tool, exc):
         print('AGR_TOOLS_ERROR tool={} {}'.format(tool, ''.join(traceback.format_exception_only(type(exc), exc)).strip()))

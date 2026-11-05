@@ -11,70 +11,90 @@
    "number": 0,
    "title_ru": "Сцена и источник",
    "hue": null,
-   "added_because": "добавлен: TOW02 потерял ~1.5 ч, потому что класс источника не проверили до выбора маршрута (job-retro-vyatskaya-tow02-pr392); дефект GeoAGR D5 (тексель в 100 раз меньше в сцене в см) — это проблема единиц; TEC26 начался с 60-минутной переписи сцен (job-retro-tec26-oks-pr570). Все остальные блоки предполагают метры и известную сцену."
+   "added_because": "добавлен: TOW02 потерял ~1.5 ч, потому что класс источника не проверили до выбора маршрута (job-retro-vyatskaya-tow02-pr392); дефект GeoAGR D5 (тексель в 100 раз меньше в сцене в см) — это проблема единиц; TEC26 начался с 60-минутной переписи сцен (job-retro-tec26-oks-pr570). Все остальные блоки предполагают метры и известную сцену.",
+   "short_ru": "Сцена",
+   "when_ru": "В начале работы со сценой, до любых правок: что за источник, какие единицы, чего не хватает."
   },
   {
    "id": "model",
    "number": 1,
    "title_ru": "Моделирование",
    "hue": 212,
-   "added_because": ""
+   "added_because": "",
+   "short_ru": "Модель",
+   "when_ru": "Пока строится геометрия ОКС и Ground, до текстур и развёртки."
   },
   {
    "id": "tex",
    "number": 2,
    "title_ru": "Текстуры и материалы",
    "hue": 276,
-   "added_because": ""
+   "added_because": "",
+   "short_ru": "Текстуры",
+   "when_ru": "Когда назначены материалы и текстуры, до развёртки и атласа."
   },
   {
    "id": "ucx",
    "number": 3,
    "title_ru": "Коллизии UCX",
    "hue": 162,
-   "added_because": ""
+   "added_because": "",
+   "short_ru": "UCX",
+   "when_ru": "Для ВПМ, когда геометрия готова: коллизии строятся и проверяются до экспорта."
   },
   {
    "id": "udim",
    "number": 4,
    "title_ru": "UDIM и тексель",
    "hue": 234,
-   "added_because": ""
+   "added_because": "",
+   "short_ru": "UDIM",
+   "when_ru": "Когда развёртка готова: тексель и UDIM-тайлы до сборки атласа."
   },
   {
    "id": "atlas",
    "number": 5,
    "title_ru": "Атласы / не-атласы",
    "hue": 298,
-   "added_because": ""
+   "added_because": "",
+   "short_ru": "Атласы",
+   "when_ru": "Когда UDIM готовы: собрать атлас НПМ и проверить число наборов."
   },
   {
    "id": "place",
    "number": 6,
    "title_ru": "Замены и расстановка",
    "hue": 85,
-   "added_because": ""
+   "added_because": "",
+   "short_ru": "Замены",
+   "when_ru": "Когда нужны МАФ, Flora и замены по ведомости: после модели, до проверок."
   },
   {
    "id": "qa",
    "number": 7,
    "title_ru": "Проверки и сдача",
    "hue": 190,
-   "added_because": ""
+   "added_because": "",
+   "short_ru": "Проверки",
+   "when_ru": "Перед сдачей: прочитать сцену и найти ошибки; сцена не меняется."
   },
   {
    "id": "export",
    "number": 8,
    "title_ru": "Экспорт и пакет",
    "hue": 256,
-   "added_because": ""
+   "added_because": "",
+   "short_ru": "Экспорт",
+   "when_ru": "Когда проверки чистые: FBX с проверкой, пакет и архив."
   },
   {
    "id": "light",
    "number": 9,
    "title_ru": "Освещение ВПМ",
    "hue": 320,
-   "added_because": "добавлен: VPM-2.15-* (≤250 источников, только Omni/Spot, 5 м / 1.5 м, пивот корня) и VPM-2.1-2.b (FBX _Light) — правила сдачи; пробел GeoAGR №7 (Omni теряются в _Light.fbx, 66915) и три командных скрипта (Light.ms, Light_Metr.ms, FreeSpot_Tools.ms) показывают, что эта работа есть; ни один блок списка Артёма её не держит."
+   "added_because": "добавлен: VPM-2.15-* (≤250 источников, только Omni/Spot, 5 м / 1.5 м, пивот корня) и VPM-2.1-2.b (FBX _Light) — правила сдачи; пробел GeoAGR №7 (Omni теряются в _Light.fbx, 66915) и три командных скрипта (Light.ms, Light_Metr.ms, FreeSpot_Tools.ms) показывают, что эта работа есть; ни один блок списка Артёма её не держит.",
+   "short_ru": "Свет",
+   "when_ru": "Только ВПМ, когда нужен файл освещения _Light."
   }
  ],
  "rows": [
@@ -101,10 +121,10 @@
    "does_ru": "Проверяет System Unit = метры, 1 unit = 1 m, гамму 2.2/1.0; предлагает исправить",
    "source": "GeoAGR: System Setup btn_set_meters GeoAGR.ms:12547, btn_set_alpha :12554",
    "verdict": "take_fix",
-   "verdict_note": "only check by default; Set Meters does not rescale geometry (playbook caveat); fixes D5 at the source",
+   "verdict_note": "only check by default; Set Meters does not rescale geometry (playbook caveat); fixes D5 at the source; 0.7 ships the check only (#860), the fix stays a separate confirmed action",
    "evidence": "GeoAGR T06-02: texel 2048 px/m shown as 20.48 in a cm scene (D5)",
    "reqs": "NPM-1.2-1 VPM-1.2-1",
-   "mode": "undo",
+   "mode": "read",
    "mcp": "yes",
    "priority": "P1",
    "version": "0.7",
@@ -124,7 +144,9 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "0.8",
-   "icon": "missing"
+   "icon": "missing",
+   "lab_report": "docs/experiments/scene.missing_maps.md",
+   "lab_status": "source cannot list missing maps (usedMaps); take_fix: read-only list, candidates by base name"
   },
   {
    "id": "scene.source_class",
@@ -164,15 +186,17 @@
    "label_ru": "Триангуляция (Делоне)",
    "does_ru": "Триангулирует n-гоны на экспортной копии по Делоне, без длинных клиньев",
    "source": "GeoAGR: Triangulate btn_TriangulateRight GeoAGR.ms:50991 (DelaunayCore.dll)",
-   "verdict": "take",
-   "verdict_note": "Max T08-08..10 correct; run only on export copies",
+   "verdict": "take_fix",
+   "verdict_note": "лаборатория #907: sub-mm faces stay n-gons, redundant pairs; fix both; run only on export copies",
    "evidence": "TEC26: UCX triangulation fails SINTEZ 2.3.17 in both profiles (job-retro-tec26-oks-pr574.md)",
    "reqs": "NPM-2.3-11 VPM-2.3-17",
    "mode": "copy",
    "mcp": "yes",
    "priority": "P1",
    "version": "0.8",
-   "icon": "triangulate"
+   "icon": "triangulate",
+   "lab_report": "docs/experiments/model.triangulate.md",
+   "lab_status": "works with defects (sub-mm faces stay n-gons, redundant pairs); take_fix (лаборатория #907; plan was: take)"
   },
   {
    "id": "model.glass_planes",
@@ -412,7 +436,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.8",
-   "icon": "pngfix"
+   "icon": "pngfix",
+   "lab_report": "docs/experiments/tex.format_fix.md",
+   "lab_status": "overwrites in place, wrong format detection, Compress ignores target; take_fix"
   },
   {
    "id": "tex.material_type",
@@ -492,7 +518,9 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "0.8",
-   "icon": "plug"
+   "icon": "plug",
+   "lab_report": "docs/experiments/tex.placeholders.md",
+   "lab_status": "Make D/N/ERM works (exact colour, 8-bit RGB), Set Normal/ERM crash, no 128, silent overwrite; merge"
   },
   {
    "id": "tex.vpm_sets",
@@ -596,15 +624,17 @@
    "label_ru": "UCX: триангуляция",
    "does_ru": "Триангулирует UCX на копии и проверяет выпуклость после",
    "source": "GeoAGR: UCX Triangulate GeoAGR.ms:62890",
-   "verdict": "take",
-   "verdict_note": "unverified: confirm in Max; run on copies",
+   "verdict": "take_fix",
+   "verdict_note": "лаборатория #907: convexity can break after triangulation, non-Poly skipped silently; fix both; run on copies",
    "evidence": "TEC26: SINTEZ 2.3.17 fails on UCX triangulation (job-retro-tec26-oks-pr574.md, open)",
    "reqs": "VPM-2.3-17 VPM-2.13-1.a",
    "mode": "copy",
    "mcp": "yes",
    "priority": "P1",
    "version": "0.8",
-   "icon": "ucxtri"
+   "icon": "ucxtri",
+   "lab_report": "docs/experiments/ucx.triangulate.md",
+   "lab_status": "works with defects (convexity can break, skips non-Poly silently); take_fix (лаборатория #907; plan was: take)"
   },
   {
    "id": "ucx.gap",
@@ -652,7 +682,9 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "0.8",
-   "icon": "ucxname"
+   "icon": "ucxname",
+   "lab_report": "docs/experiments/ucx.rename.md",
+   "lab_status": "renames anything selected, address damage, no undo; take_fix"
   },
   {
    "id": "ucx.stairs",
@@ -684,7 +716,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.8",
-   "icon": "id2udim"
+   "icon": "id2udim",
+   "lab_report": "docs/experiments/udim.ids_to_udims.md",
+   "lab_status": "ID n -> 1000+n correct for 1..100; first object only, ID>100 skipped, NaN on zero extent; take_fix"
   },
   {
    "id": "udim.nudge",
@@ -1148,7 +1182,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.8",
-   "icon": "namefix"
+   "icon": "namefix",
+   "lab_report": "docs/experiments/qa.names_fix.md",
+   "lab_status": "Material Cloner is not an object renamer; overwrite claim not reproduced; merge (one new renamer)"
   },
   {
    "id": "qa.package",
@@ -1164,7 +1200,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.8",
-   "icon": "package"
+   "icon": "package",
+   "lab_report": "docs/experiments/qa.package.md",
+   "lab_status": "as documented; profile guess and vacuous V006 defects; merge"
   },
   {
    "id": "qa.pivot",
@@ -1404,7 +1442,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.8",
-   "icon": "geojsonw"
+   "icon": "geojsonw",
+   "lab_report": null,
+   "lab_status": "not checked in the lab"
   },
   {
    "id": "export.ground_fbx",
@@ -1412,15 +1452,17 @@
    "label_ru": "FBX благоустройства",
    "does_ru": "Ground, GroundEl, Flora, GroundGlass в один файл _Ground",
    "source": "GeoAGR: Export LowPoly :66532 (Ground branch); Telegram: A101AGRLP.ms Ground rollout :388",
-   "verdict": "merge",
-   "verdict_note": "A101 writes an extra underscore; one export path with modes",
+   "verdict": "take_fix",
+   "verdict_note": "лаборатория #907: Flora not in _Ground, name from first selected, no triangulation; one export path with modes",
    "evidence": "Vatutino Ground v014/v015",
    "reqs": "NPM-2.1-5.a VPM-2.1-4",
    "mode": "file",
    "mcp": "yes",
    "priority": "P1",
    "version": "0.8",
-   "icon": "groundfbx"
+   "icon": "groundfbx",
+   "lab_report": "docs/experiments/export.ground_fbx.md",
+   "lab_status": "differs: Flora not in _Ground, name from first selected, no triangulation; take_fix (лаборатория #907; plan was: merge)"
   },
   {
    "id": "export.pivot_place",
@@ -1436,7 +1478,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.8",
-   "icon": "place"
+   "icon": "place",
+   "lab_report": "docs/experiments/export.pivot_place.md",
+   "lab_status": "partly works (floor-face pivot, 0,0,0); precision loss, bbox fallback, no copy mode; take_fix"
   },
   {
    "id": "export.zip",
@@ -1452,7 +1496,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.8",
-   "icon": "zip"
+   "icon": "zip",
+   "lab_report": "docs/experiments/export.zip.md",
+   "lab_status": "broken: bundled 7z creates nothing, _Light missing; merge (new archiver)"
   },
   {
    "id": "export.batch",
@@ -1793,7 +1839,7 @@
   {
    "version": "0.6",
    "title_ru": "Qt-панель: док, иконки Dark/Light, прогресс/отмена, меню, пакет",
-   "status": "in work",
+   "status": "done",
    "effort": "-",
    "issue": "#808",
    "rows": []
@@ -1801,9 +1847,9 @@
   {
    "version": "0.7",
    "title_ru": "Предсдача: недостающие проверки (только чтение) + блоковые цвета UI + перепись сцены",
-   "status": "planned",
+   "status": "in work",
    "effort": "L: ~2 дня агента (11 проверок на готовых twinqa-модулях, без правок сцены)",
-   "issue": "new",
+   "issue": "#860",
    "rows": [
     "scene.census",
     "scene.units",
@@ -1822,9 +1868,9 @@
   {
    "version": "0.8",
    "title_ru": "Сдача: имена, PNG, ID→UDIM, триангуляция, пивот, GeoJSON, ZIP, пакет",
-   "status": "planned",
+   "status": "in work",
    "effort": "L: ~3 дня (правки только на копиях/новых файлах, каждая с preview)",
-   "issue": "new",
+   "issue": "#908",
    "rows": [
     "scene.missing_maps",
     "model.triangulate",
@@ -1925,9 +1971,9 @@
   "rows": 90,
   "by_verdict": {
    "done": 13,
-   "take": 16,
-   "take_fix": 27,
-   "merge": 18,
+   "take": 14,
+   "take_fix": 30,
+   "merge": 17,
    "new": 16
   },
   "by_priority": {
@@ -1949,7 +1995,7 @@
    "1.x": 18
   },
   "mcp_yes": 77,
-  "read_only": 38,
+  "read_only": 39,
   "noise": 42,
   "geoagr_line_citations_verified": 29
  }

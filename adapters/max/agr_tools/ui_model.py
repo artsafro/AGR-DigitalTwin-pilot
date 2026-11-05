@@ -1,8 +1,9 @@
 """new-case: pure model of the AGR Tools 0.6.0 panel (#808); no Qt, no pymxs.
 
 Actions, sections, Russian labels and tooltips, report -> table rows, the batched
-progress loop with cancel, dock-state parsing and palette-derived accents. Everything
-here runs under plain pytest; ui_panel.py only draws it.
+progress loop with cancel (read on the next chunk boundary, about 0.9 s on Max 2024),
+dock-state parsing and palette-derived accents. Everything here runs under plain
+pytest; ui_panel.py only draws it.
 """
 import base64
 import binascii
@@ -12,11 +13,11 @@ import math
 import os
 from collections import namedtuple
 
-VERSION = '0.6.0'
+VERSION = '0.7.0'
 
 Action = namedtuple('Action', 'id tool icon section label tip reqs macro batch')
 
-SECTIONS = ('Проверки', 'UV и атласы', 'Коллизии UCX', 'Экспорт', 'GeoJSON')
+SECTIONS = ('Проверки', 'UV и атласы', 'Коллизии UCX', 'Экспорт', 'GeoJSON', 'Сдача (копии)')
 
 # id == icon name in tools/max/agr_icons.py; tool == runtime.ui() argument; macro == macroScript name.
 # batch=True only for tools whose report is a per-object independent list (merge is exact).
@@ -72,6 +73,86 @@ ACTIONS = (
     Action('geojson', 'geojson', 'geojson', 4, 'Проверка GeoJSON',
            'Проверяет паспорт GeoJSON проверяющим модулем twinqa (выбор файла).',
            ('VPM GeoJSON',), 'AGRToolsGeojson', False),
+    # 0.7.0 pre-delivery checks (#860): read-only, plan rows of version 0.7 (docs/plans/agr-tools-suite.json)
+    Action('census', 'census', 'census', 0, 'Перепись сцены',
+           'Перепись: классы объектов, материалы, карты, пропавшие файлы, bbox, инстансы (только чтение).',
+           ('NPM-2.1-1.b', 'VPM-2.1-1.c'), 'AGRToolsCensus', False),
+    Action('units', 'units', 'units', 0, 'Единицы и гамма',
+           'Проверяет System Unit = метры, масштаб 1, гамму файлов 1.0 (только чтение).',
+           ('NPM-1.2-1', 'VPM-1.2-1'), 'AGRToolsUnits', False),
+    Action('perimeter_drop', 'perimeter_drop', 'drop', 0, 'Опуск периметра ≥1 м',
+           'Нижняя точка ОКС/Ground не меньше 1 м ниже ±0.000 (AGR_ZERO_M) (только чтение).',
+           ('NPM-2.3-4', 'VPM-2.3-6', 'VPM-2.3-7.a'), 'AGRToolsPerimeterDrop', False),
+    Action('material_type', 'material_type', 'mattype', 0, 'Тип материала',
+           'Только Standard/Physical; Corona, VRay и другие — ошибка с именем материала (только чтение).',
+           ('NPM-2.4-1.a', 'NPM-2.4-1.b', 'VPM-2.4-1.a', 'VPM-2.4-1.b'), 'AGRToolsMaterialType', False),
+    Action('ucx_audit', 'ucx_audit', 'ucxaudit', 0, 'UCX: аудит сцены',
+           'Готовые UCX_: замкнутость, выпуклость, без материалов, имя, пересечения SAT, бюджет (только чтение).',
+           ('VPM-2.13-1.a', 'VPM-2.13-3', 'VPM-2.13-4.a', 'VPM-2.13-7.a'), 'AGRToolsUcxAudit', False),
+    Action('sets_count', 'sets_count', 'setscount', 0, 'Число текстурных наборов',
+           'Наборы на FBX: ОКС ≤40 (+1 кровля), Ground ≤20, GroundEl 1, Flora 1 (только чтение).',
+           ('NPM-2.1-4.c', 'NPM-2.1-5.b', 'NPM-2.5-11.a', 'NPM-2.5-11.b'), 'AGRToolsSetsCount', False),
+    Action('fbx_split', 'fbx_split', 'split', 0, 'Разделение FBX',
+           'ОКС ≤20 FBX, ≤20 объектов на FBX, Ground обязателен, нумерация сквозная (только чтение).',
+           ('NPM-2.1-2', 'NPM-2.1-4.a', 'NPM-2.2-1', 'VPM-2.1-3.a'), 'AGRToolsFbxSplit', False),
+    Action('glass', 'glass', 'glasscheck', 0, 'Стекло',
+           'Стекло на отдельном *Glass, ≤20 прозрачных, ≤7 материалов, без карт, 50 % (только чтение).',
+           ('NPM-2.7-2', 'NPM-2.4-2', 'VPM-2.8-1', 'VPM-2.8-2'), 'AGRToolsGlass', False),
+    Action('scene_hygiene', 'scene_hygiene', 'hygiene', 0, 'Лишнее в сцене',
+           'Камеры, свет, кости, анимация, группы и иерархия, пустые объекты, модификаторы (только чтение).',
+           ('NPM-2.1-3.a', 'NPM-2.1-3.b', 'VPM-2.3-1', 'VPM-2.3-2'), 'AGRToolsSceneHygiene', False),
+    Action('xform', 'xform', 'xform', 0, 'Трансформы сброшены',
+           'Несброшенный масштаб, поворот, зеркало и родители; сброс только на копиях (только чтение).',
+           ('NPM-2.3-14', 'VPM-2.3-18'), 'AGRToolsXform', False),
+    Action('zero_area', 'zero_area', 'zero', 0, 'Нулевые площади и рёбра',
+           'Грани нулевой площади, рёбра нулевой длины, изолированные вершины (только чтение).',
+           ('NPM-2.3-7.b', 'NPM-2.3-7.c', 'VPM-2.3-11.b', 'VPM-2.3-11.c'), 'AGRToolsZeroArea', False),
+    Action('preflight', 'preflight', 'preflight', 0, 'Предсдача: все проверки',
+           'Все проверки 0.7 одним нажатием, одна таблица; сцена не меняется.',
+           ('NPM-2.1-3.c', 'VPM-2.3-1'), 'AGRToolsPreflight', False),
+    # 0.8 delivery edits (#908): one Action per plan row of version 0.8; tool == plan row id, routed to
+    # runtime.edits_080 (preview, then apply on the same selection). Copies / new files only, never overwrite.
+    Action('missing_maps', 'scene.missing_maps', 'missing', 5, 'Пропавшие карты',
+           'Список битмапов с несуществующим путём и кандидаты для relink; файлы не переименовываются (только чтение).',
+           ('NPM-2.1-1.b', 'VPM-2.4-2'), 'AGRToolsMissingMaps', False),
+    Action('triangulate', 'model.triangulate', 'triangulate', 5, 'Триангуляция → копии',
+           'Первое нажатие: пробно; второе на том же выделении триангулирует n-гоны на экспортных копиях.',
+           ('NPM-2.3-11', 'VPM-2.3-17'), 'AGRToolsTriangulate', False),
+    Action('format_fix', 'tex.format_fix', 'pngfix', 5, 'PNG: формат → новые файлы',
+           'Пробно, затем пишет исправленные PNG в новую папку: без альфы, 24 бит, до лимита; исходники не трогает.',
+           ('NPM-2.5-2.a', 'NPM-2.5-3', 'NPM-2.5-5', 'VPM-2.5-1.6', 'VPM-2.5-1.9'), 'AGRToolsFormatFix', False),
+    Action('placeholders', 'tex.placeholders', 'plug', 5, 'Заглушки 256 / 128',
+           'Пробно, затем создаёт новые однотонные заглушки Diffuse/ERM/Normal нужного размера и цвета.',
+           ('VPM-2.5-3.1', 'VPM-2.5-3.3', 'VPM-2.5-3.4', 'NPM-2.5-7'), 'AGRToolsPlaceholders', False),
+    Action('ucx_triangulate', 'ucx.triangulate', 'ucxtri', 5, 'UCX: триангуляция → копии',
+           'Пробно, затем триангулирует UCX на копиях и проверяет выпуклость после.',
+           ('VPM-2.3-17', 'VPM-2.13-1.a'), 'AGRToolsUcxTriangulate', False),
+    Action('ucx_rename', 'ucx.rename', 'ucxname', 5, 'UCX: имена',
+           'Пробно, затем переименовывает куски в UCX_SM_<Address>_Main/Ground_NNN одной записью Undo.',
+           ('VPM-2.13-1.d', 'VPM-2.10-4.2.b'), 'AGRToolsUcxRename', False),
+    Action('ids_to_udims', 'udim.ids_to_udims', 'id2udim', 5, 'ID → UDIM на копии',
+           'Пробно, затем раскладывает материал ID n в тайл 1000+n на экспортных копиях.',
+           ('VPM-2.5-2.1.3.a', 'VPM-2.5-2.1.3.b'), 'AGRToolsIdsToUdims', False),
+    Action('names_fix', 'qa.names_fix', 'namefix', 5, 'Исправить имена → копии',
+           'Пробно, затем переименовывает объекты, материалы и файлы карт по маске на экспортных копиях.',
+           ('NPM-2.10-3.3.a', 'NPM-2.10-3.4.a', 'VPM-2.11-0.a', 'VPM-2.10-4.3'), 'AGRToolsNamesFix', False),
+    Action('package', 'qa.package', 'package', 5, 'Проверка пакета ZIP',
+           'ZIP: размеры, состав FBX/PNG/GeoJSON, имена, битые файлы, readback (только чтение).',
+           ('NPM-2.1-1.a', 'NPM-2.1-1.b', 'VPM-2.1-1.a', 'VPM-2.1-1.b', 'VPM-2.1-2.a', 'VPM-2.1-2.c',
+            'VPM-2.1-2.d'), 'AGRToolsPackage', False),
+    Action('geojson_write', 'export.geojson_write', 'geojsonw', 5, 'Паспорт GeoJSON → новый файл',
+           'Пробно, затем пишет новый GeoJSON из сцены (пивот, положение, адрес, превью) и сразу проверяет.',
+           ('VPM-2.2-1', 'VPM-2.2-2', 'VPM-2.2-6.a', 'VPM-2.2-7', 'GJ-1', 'GJ-19.a', 'GJ-19.b', 'GJ-21.a',
+            'VPM-2.10-4.1.e'), 'AGRToolsGeojsonWrite', False),
+    Action('ground_fbx', 'export.ground_fbx', 'groundfbx', 5, 'FBX благоустройства',
+           'Пробно, затем пишет новый _Ground.fbx: Ground, GroundEl, Flora, GroundGlass в одном файле.',
+           ('NPM-2.1-5.a', 'VPM-2.1-4'), 'AGRToolsGroundFbx', False),
+    Action('pivot_place', 'export.pivot_place', 'place', 5, 'Пивот и положение → копии',
+           'Пробно, затем ставит пивот на копиях: НПМ в МСК с высотами, ВПМ в ноль (чистый пол).',
+           ('NPM-2.8-1', 'NPM-2.8-2', 'VPM-2.9-4.b', 'VPM-2.9-5'), 'AGRToolsPivotPlace', False),
+    Action('zip', 'export.zip', 'zip', 5, 'Архив пакета → новый ZIP',
+           'Пробно, затем пишет новый ZIP НПМ/ВПМ с лимитами 500 МБ / 1 ГБ, проверка до и после.',
+           ('NPM-2.1-1.a', 'VPM-2.1-1.a', 'VPM-2.1-1.b', 'VPM-2.1-2.b'), 'AGRToolsZip', False),
 )
 BY_ID = {a.id: a for a in ACTIONS}
 BY_TOOL = {a.tool: a for a in ACTIONS}
@@ -114,6 +195,8 @@ def rows(report):
         raise ValueError('not an AGR Tools report')
     check = report['tool']
     status = report.get('status')
+    if status == 'not_implemented':  # 0.8 stub module (#908): one error row, never a pass
+        return [Row(None, '—', check, False, 'not_implemented', 'в работе (#908): модуль ещё пуст', ())]
     if status not in ('pass', 'fail'):
         raise ValueError('report without pass/fail status: ' + repr(status))
     objects = report.get('objects')
@@ -176,6 +259,25 @@ def _object_rows(check, objects):
     return out
 
 
+# (report tool, finding code) -> component kind of the finding ids (#861). The ids are 1-based polyop indices of
+# the checked node's Editable_Poly copy; any other check or code is selected as the whole object.
+COMPONENT_IDS = {('xview', 'overlap_vertices'): 'vertex', ('xview', 'overlap_faces'): 'face',
+                 ('matid', 'udim_id'): 'face', ('matid', 'empty_id'): 'face', ('matid', 'empty_slot'): 'face',
+                 ('matid', 'missing_material'): 'face'}
+
+
+def component_selection(row, num_verts, num_faces):
+    """Row -> (kind, sorted unique ids) to select on its node, or None = select the object only.
+    Fail-closed: an unknown (check, code), empty ids, a non-int id or an id outside 1..count gives None."""
+    kind = COMPONENT_IDS.get((row.check, row.code))
+    if kind is None or not row.ids:
+        return None
+    count = num_verts if kind == 'vertex' else num_faces
+    if any(type(i) is not int or not 1 <= i <= count for i in row.ids):
+        return None
+    return kind, sorted(set(row.ids))
+
+
 def counts(row_list):
     bad = sum(1 for r in row_list if not r.ok)
     return bad, len(row_list) - bad
@@ -215,9 +317,64 @@ class Cancelled(Exception):
         self.done = done
 
 
+# Event-loop pumps during a batch are timed, not counted. Max 2024 spent 1.36 s
+# inside one 25-object xView chunk before the next processEvents; Max 2026 chunks
+# were already under 0.2 s. The gap must stay strictly under PUMP_GAP_LIMIT_S.
+# A budget of exactly that limit (or anything outside (0, limit)) is an error.
+# One pymxs object is atomic, so a gap is at most the budget plus that object.
+# PUMP_BUDGET_S leaves headroom under the limit for a small object.
+PUMP_GAP_LIMIT_S = 0.1
+PUMP_BUDGET_S = 0.09
+
+
+def check_pump_budget(budget):
+    if isinstance(budget, bool) or not isinstance(budget, (int, float)):
+        raise ValueError('unsupported pump budget')
+    value = float(budget)
+    if not math.isfinite(value) or value <= 0.0 or value >= PUMP_GAP_LIMIT_S:
+        raise ValueError('pump budget out of range')
+    return value
+
+
+def check_pump_cost(cost):
+    if isinstance(cost, bool) or not isinstance(cost, (int, float)):
+        raise ValueError('unsupported pump cost')
+    value = float(cost)
+    if not math.isfinite(value) or value < 0.0:
+        raise ValueError('pump cost out of range')
+    return value
+
+
+def object_pump(since, estimate, cost, budget=PUMP_BUDGET_S):
+    """Online pump decision after one atomic object (pymxs cannot be sliced).
+
+    `cost` is that object's wall time. Returns (pump, since, estimate). The next
+    similar object is assumed to cost `estimate`, so the open gap closes before
+    it would meet the budget. A huge object is not sliced: the gap that just
+    closed is at most the budget plus that one object. Empty, partial, unsupported,
+    non-finite, negative and a budget of exactly PUMP_GAP_LIMIT_S are errors.
+    """
+    limit = check_pump_budget(budget)
+    spent = check_pump_cost(cost)
+    since = check_pump_cost(since)
+    estimate = check_pump_cost(estimate)
+    since += spent
+    if spent > 0.0:
+        estimate = spent
+    if since >= limit or (estimate > 0.0 and since + estimate >= limit):
+        return True, 0.0, estimate
+    return False, since, estimate
+
+
 def run_batched(tool, fn, nodes, size, progress, cancelled):
     """Run fn(chunk) per chunk; progress(done, total) after each; cancelled() before each.
-    A cancel raises Cancelled with the partial report attached (never a pass)."""
+
+    Cancel is not read inside a chunk. A Cancel click takes effect only before the
+    next chunk, so on Max 2024 the latency is one 25-object chunk (about 0.9 s).
+    The chunk already running is still merged and counted; raising from the
+    per-object pump would drop that chunk's results. A cancel raises Cancelled
+    with the partial report attached (status fail, never a pass).
+    """
     nodes = list(nodes)
     if not nodes:
         raise ValueError('empty target set')
@@ -293,7 +450,7 @@ def contrast(a, b):
 _HUES = {'error': 0.0, 'ok': 1.0 / 3.0, 'warn': 1.0 / 7.0}
 # Section accents (Artem 2026-11-04: «разбавить цветовыми оттенками»): hue per work step, chosen
 # >= 30 degrees away from the status hues red 0 and green 120 so a section never reads as a status.
-SECTION_HUES = (210.0, 275.0, 35.0, 185.0, 320.0)  # Проверки, UV, UCX, Экспорт, GeoJSON (degrees)
+SECTION_HUES = (210.0, 275.0, 35.0, 185.0, 320.0, 245.0)  # Проверки, UV, UCX, Экспорт, GeoJSON, Сдача (deg)
 STATUS_HUES_DEG = (0.0, 120.0)
 
 
@@ -334,6 +491,82 @@ def _accent_hue(hue, base_rgb, text_rgb):
 
 def theme_name(window_rgb):
     return 'Dark' if _lum(window_rgb) < 0.2 else 'Light'
+
+
+# ---- 0.7.0 tab rail: blocks of the plan (#853/#860) ---------------------------------------------------
+# Every panel action is one row of docs/plans/agr-tools-suite.json; the *_apply variants share the row of
+# their dry run. A test checks this map against the JSON (no action without a row, no row id twice).
+ROW = {'xview': 'qa.xview', 'matid': 'qa.matid', 'names': 'qa.names', 'tris': 'qa.tris', 'textures': 'tex.check',
+       'pivot': 'qa.pivot', 'nudge': 'udim.nudge', 'nudge_apply': 'udim.nudge', 'atlas': 'atlas.npm',
+       'atlas_apply': 'atlas.npm', 'texel': 'udim.texel', 'ucx': 'ucx.build', 'ucx_apply': 'ucx.build',
+       'cleanup': 'export.cleanup', 'cleanup_apply': 'export.cleanup', 'export': 'export.checked',
+       'geojson': 'qa.geojson', 'census': 'scene.census', 'units': 'scene.units',
+       'perimeter_drop': 'model.perimeter_drop', 'material_type': 'tex.material_type', 'ucx_audit': 'ucx.audit',
+       'sets_count': 'atlas.sets_count', 'fbx_split': 'qa.fbx_split', 'glass': 'qa.glass',
+       'preflight': 'qa.preflight', 'scene_hygiene': 'qa.scene_hygiene', 'xform': 'qa.xform',
+       'zero_area': 'qa.zero_area'}
+ROW.update({a.id: a.tool for a in ACTIONS if a.section == SECTIONS.index('Сдача (копии)')})  # 0.8: tool == row id
+NEUTRAL_SAT = 0.06   # block 0 «Сцена» is a service block: almost grey (plan §7)
+BLOCK_SAT = 0.6
+
+
+def row_of(action_id):
+    if action_id not in ROW:
+        raise KeyError('action without a plan row: ' + repr(action_id))
+    return ROW[action_id]
+
+
+def block_accent(hue_deg, window_rgb, base_rgb, text_rgb):
+    """Block colour derived from the Max theme (plan §7): hue of the block, lightness moved away from the
+    background until the contrast is >= 3:1 against BOTH window and base; unreachable -> ValueError."""
+    if hue_deg is not None and (not isinstance(hue_deg, (int, float)) or isinstance(hue_deg, bool)
+                                or not math.isfinite(hue_deg) or not 0 <= hue_deg < 360):
+        raise ValueError('bad block hue: ' + repr(hue_deg))
+    for v in (*window_rgb, *base_rgb, *text_rgb):
+        if not isinstance(v, (int, float)) or isinstance(v, bool) or not math.isfinite(v) or not 0 <= v <= 255:
+            raise ValueError('bad palette colour')
+    hue = (hue_deg or 0.0) / 360.0
+    sat = NEUTRAL_SAT if hue_deg is None else BLOCK_SAT
+    dark = _lum(base_rgb) < _lum(text_rgb)
+    start = 62 if dark else 36
+    # nearest lightness to the theme's start that clears 3:1 against both backgrounds (either direction)
+    for step in sorted(range(3, 98), key=lambda v: (abs(v - start), -v if dark else v)):
+        rgb = tuple(int(round(c * 255)) for c in colorsys.hls_to_rgb(hue, step / 100.0, sat))
+        if contrast(rgb, base_rgb) >= 3.0 and contrast(rgb, window_rgb) >= 3.0:
+            return rgb
+    raise ValueError('no block accent with contrast >= 3 for this palette')
+
+
+def _vkey(version):
+    """'0.7' / '0.7.0' / '1.x' -> sortable tuple (same order as roadmap.vkey)."""
+    out = [(1, 0) if part == 'x' else (0, int(part)) for part in str(version).split('.')]
+    return tuple(out + [(0, 0)] * (3 - len(out)))
+
+
+def rail(suite_blocks, suite_rows, version=None):
+    """[(block, [done actions], [planned rows])] in the plan's block order (Artem's order, 0..9).
+    Done = a panel action exists for the row AND the row's version is shipped by this package version
+    (0.8 actions exist from the base branch on, but stay greyed «в версии 0.8» until VERSION is 0.8.0)."""
+    version = version or VERSION
+    have = {}
+    for a in ACTIONS:
+        have.setdefault(row_of(a.id), []).append(a)
+    by_id = {r['id']: r for r in suite_rows}
+    for rid in have:
+        if rid not in by_id:
+            raise KeyError('plan row missing from agr-tools-suite.json: ' + rid)
+    out = []
+    for b in suite_blocks:
+        done, planned = [], []
+        for r in suite_rows:
+            if r['block'] != b['id']:
+                continue
+            if r['id'] in have and _vkey(r['version']) <= _vkey(version):
+                done += have[r['id']]
+            else:
+                planned.append(r)
+        out.append((b, done, planned))
+    return out
 
 
 # ---- MAXScript entry points (generated; tests compare them with the committed files) -------------

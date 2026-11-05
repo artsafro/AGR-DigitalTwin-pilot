@@ -1,6 +1,9 @@
 """new-case: driver for the #808 native UI run: lock, install bundle, interactive Max, uninstall, leftovers.
 
 python tests/max_tools/drive_agr_tools_ui_native.py --bundle <AGR-Tools zip> --out <new dir> [--version 2026]
+max_exit is not a check (#868): Max 2024.2.5 and 2026.3 exit 0xC0000409 (3221226505) after quitMax from the
+run script's QTimer callback also with --no-bundle; a bare `quitMax` timer script gives 127, a direct
+startup-script quitMax 0. Evidence: G:/Мой диск/AGR-evidence/868-ui-freeze-quit/.
 Uses the shared live-Max lock (%LOCALAPPDATA%/Temp/agr-3dsmax-live.lock); refuses when 3dsmax.exe runs.
 """
 import argparse
@@ -34,7 +37,9 @@ def ini_has_section(ini):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--bundle', type=Path, required=True)
+    ap.add_argument('--bundle', type=Path, default=None, help='AGR-Tools.zip; omit with --no-bundle')
+    ap.add_argument('--no-bundle', action='store_true', help='quit baseline without AGR Tools (#868)')
+    ap.add_argument('--steps', default=None, help="AGR_UI_STEPS for the run script ('' = none); default all")
     ap.add_argument('--out', type=Path, required=True)
     ap.add_argument('--version', default='2026')
     ap.add_argument('--timeout', type=int, default=1200)
@@ -43,6 +48,8 @@ def main():
     ap.add_argument('--leave-area', default='', help='dock area the session leaves the panel in (1/2/4/8)')
     ap.add_argument('--expect-area', default='', help='dock area the previous session left')
     a = ap.parse_args()
+    if a.no_bundle == (a.bundle is not None):
+        ap.error('give exactly one of --bundle and --no-bundle')
     a.out.mkdir(parents=True, exist_ok=False)
     running = subprocess.run(['tasklist', '/FI', 'IMAGENAME eq 3dsmax.exe'], capture_output=True).stdout.decode('ascii', 'replace')
     if '3dsmax.exe' in running:
@@ -57,15 +64,20 @@ def main():
     spec.loader.exec_module(b)
     plugins = Path(os.environ['APPDATA']) / 'Autodesk' / 'ApplicationPlugins'
     ini = Path(os.environ['LOCALAPPDATA']) / 'Autodesk' / '3dsMax' / '{} - 64bit'.format(a.version) / 'ENU' / '3dsMax.ini'
-    log = {'bundle_sha256': hashlib.sha256(a.bundle.read_bytes()).hexdigest(), 'plugins_dir': str(plugins)}
+    log = {'bundle_sha256': hashlib.sha256(a.bundle.read_bytes()).hexdigest() if a.bundle else None,
+           'plugins_dir': str(plugins), 'steps': a.steps}
     try:
         plugins.mkdir(parents=True, exist_ok=True)
         before = snapshot(plugins)
         log['ini_section_before'] = ini_has_section(ini)
-        log['installed'] = len(b.install_bundle(a.bundle, plugins))
+        if a.no_bundle and (plugins / b.BUNDLE).exists():
+            raise FileExistsError('--no-bundle but installed: ' + str(plugins / b.BUNDLE))
+        log['installed'] = 0 if a.no_bundle else len(b.install_bundle(a.bundle, plugins))
         exe = Path(r'C:\Program Files\Autodesk\3ds Max {}\3dsmax.exe'.format(a.version))
         env = dict(os.environ, AGR_UI_OUT=str(a.out), AGR_UI_LEAVE_AREA=a.leave_area,
                    AGR_UI_EXPECT_AREA=a.expect_area)
+        if a.steps is not None:
+            env['AGR_UI_STEPS'] = a.steps
         clrx = ini.parent / 'en-US' / 'UI' / 'MaxStartUI.clrx'
         if a.light:
             backup = clrx.read_bytes()
@@ -85,7 +97,7 @@ def main():
             clrx.write_bytes((a.out / 'MaxStartUI.clrx.backup').read_bytes())
             log['theme_restored'] = clrx.read_bytes().count(b'<appFrameColorTheme value="0" />') == 1
         removed = (b.uninstall_bundle(plugins, [] if a.keep_ini else [ini])
-                   if (plugins / b.BUNDLE).exists() else [])
+                   if (plugins / b.BUNDLE).exists() and not a.no_bundle else [])
         log['ini_cleaned'] = removed
         after = snapshot(plugins)
         log['leftover_files'] = sorted(set(after) ^ set(before))

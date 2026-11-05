@@ -1,6 +1,6 @@
 # building-body - when to use which variant
 
-From [RESULTS.md](RESULTS.md) (3 objects x 3 variants + the source-as-is reference; Blender 5.1.2, 3ds Max 2026.3; outputs built at 77382a88, rows re-measured at 100f3ca3 with identical metrics after the D187 renumbering). Every row is marked `synthetic` [D187]: contours are measured from the source mesh (no DWG in the benchmark set), so these rules compare tools on the same input, not drawings against models.
+From [RESULTS.md](RESULTS.md) (3 objects x 3 variants + the source-as-is reference; Blender 5.1.2, 3ds Max 2026.3; outputs built at 77382a88, rows re-measured at 100f3ca3 with identical metrics after the D187 renumbering). Every row is marked `synthetic` [D187]: contours are measured from the source mesh (no DWG in the benchmark set), so these rules compare tools on the same input, not drawings against models. No drawing exists for kpp1 / ac08 / tow02, so the drawing rerun (#735) measured nothing and every row stays synthetic [D195]; RESULTS.md "Synthetic vs drawing" shows the empty drawing side.
 
 - Keep the supplied mesh (source-as-is or max-pymxs-cleanup) when it exists: deviation from the source 0.0001 m max (R1, R4, R5, R8, R9, R12) against 0.10-6.34 m for any from-contour rebuild (R6, R7, R10, R11).
 - Use max-pymxs-cleanup to close open shells of a supplied body with few flat parts: closed-shell share 3.3 % -> 98.2 % on KPP1 (R1 -> R4), 0 % -> 100 % on AC08 (R5 -> R8).

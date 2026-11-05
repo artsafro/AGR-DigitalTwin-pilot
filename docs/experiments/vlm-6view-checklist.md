@@ -10,13 +10,16 @@ Can a VLM looking at 6 RGB views catch the "does not look like the slide" defect
 
 - **Variant A** — fixed 12-item binary checklist (panel colour, frame colour, plinth colour, rib count per facade x4,
   field outline, door, windows, no extra elements, NPM vs VPM consistency); `tools/qa/vlm_checklist.py`
-  `CHECKLIST_A`. Idea: arXiv 2607.10826 (checklist judge), forum harvest; not re-checked against the paper body.
-- **Variant B** — generated yes/no questions (arXiv 2410.05340 style): the VLM reads the slide + legend, writes
-  8-12 yes/no questions with a category and a facade, then answers them on the renders. Questions are generated
-  once per slide, so v007 and v010 get the same questions.
-- **Both-order** (arXiv 2606.18451 idea): every checklist is answered twice, views in forward and reversed order;
-  an item whose two answers differ is **dropped** (and counts as missed). Pairwise: v007 vs v010 per item,
-  "first / second / equal", in both orders; only order-consistent winners are kept.
+  `CHECKLIST_A`. The checklist output format and the 6-view RGB input follow arXiv 2607.10826; the 12 items
+  themselves are our own (the paper's defects are generic and judged against a text prompt, not a slide). See
+  "Primary-source provenance" below (M1-M3).
+- **Variant B** — generated yes/no questions, adapted from arXiv 2410.05340 (CADCodeVerify): the VLM reads the
+  slide + legend, writes 8-12 yes/no questions with a category and a facade, then answers them on the renders.
+  Questions are generated once per slide, so v007 and v010 get the same questions (M4-M5).
+- **Both-order.** Pairwise: v007 vs v010 per item, "first / second / equal", in both orders; only order-consistent
+  winners are kept — the swap-and-keep-consistent correction of arXiv 2606.18451, adapted (M6). Checklist: every
+  checklist is answered twice, views in forward and reversed order; an item whose two answers differ is
+  **dropped** (and counts as missed) — **our own heuristic**, not in that paper (M7).
 
 ## Setup
 
@@ -111,6 +114,41 @@ Pairwise answer validation (review round 1): every raw pairwise list is checked 
 once, value `first|second|equal`, no unknown id); duplicates fail with a named error and exit 1. Re-checked on the
 retained raw bundles: 8/8 pairwise calls (run 1: 4/4, run 2: 4/4) pass the strict parser, so the measured numbers
 above are unchanged.
+
+## Primary-source provenance (#781)
+
+Checked 2026-11-04 against the arXiv abstract pages, the full-text HTML of the latest versions below, and
+OpenReview. Snapshots: `G:/Мой диск/AGR-evidence/781-vlm-provenance/` + `SHA256SUMS.txt` (8/8 OK). All three are
+arXiv preprints; only 2410.05340 has a venue (ICLR 2025 poster, OpenReview note `BLWaTeucYX`; its arXiv page has
+no journal-ref). Quotes are verbatim from the HTML.
+
+| arXiv | Title, authors, dates | Passage used |
+|---|---|---|
+| 2607.10826v2 | "3D-DefectBench: A Controlled Factorial Study of Vision-Language Model Evaluation Pipelines for Fine-Grained 3D Generation Defects", Zhao, Jia, Je, Tang, Chan, Spedden, Palleschi, Huang, Wang et al.; v1 12 Jul 2026, v2 6 Oct 2026; cs.CV | Abstract: “a compact six-view RGB protocol performs comparably to denser view sets and configurations augmented with depth or normal channels, making it a strong cost-effective default.” §4 Prompt schemas: “a full rubric with named failure examples emitted as a per-defect checklist (Rubric-Guided Checklist, used by c004 )”. Abstract: “the best of 12 VLMs still trail trained human labelers”. |
+| 2606.18451v1 | "A Cross-Model VLM-Judge Protocol for Single-Image 3D Mesh Quality (and Why Cheap Proxies Fall Short)", Asaria, Salomone, Gandhi (Transformer Lab); v1 16 Jun 2026; cs.LG | §3 Position-bias correction: “For each pair we query the judge in both orders ( A,B and B,A ) and keep the verdict only if it is consistent across the swap; order-dependent verdicts are discarded as position-biased.” |
+| 2410.05340v2 | "Generating CAD Code with Vision-Language Models for 3D Designs" (CADCodeVerify; CADPrompt benchmark), Alrashedy, Tambwekar, Zaidi, Langwasser, Xu, Gombolay; v1 7 Oct 2024, v2 28 Feb 2025; cs.LG; ICLR 2025 poster | §3.3: “CADCodeVerify first generates a set of binary “Yes/No” verification questions, …, based on the language description”; “CADCodeVerify generates between two to five questions per example”; “To answer these questions, CADCodeVerify uses the reference images of the generated 3D object”. |
+| 2412.13810v3 | Mallis, Karadeniz et al.; v1 18 Dec 2024 | **Not a source** of this experiment; listed only to correct the #768 wording (below). Title: “CAD-Assistant: Tool-Augmented VLLMs as Generic CAD Task Solvers”. |
+
+Method attribution. Status: `paper-supported` = the paper does this; `adapted` = the paper's mechanism with changed
+inputs or use; `own heuristic` = in none of the three papers.
+
+| id | element | status | basis / difference |
+|---|---|---|---|
+| M1 | 6 RGB views as VLM input | adapted | 2607.10826 §5.4: six oblique turntable views packed into one 3x2 grid image; ours = 4 orthographic elevations + VPM iso + NPM iso as 6 separate image files. |
+| M2 | binary per-item checklist output | paper-supported | 2607.10826 Table 3, Rubric-Guided Checklist (c004). |
+| M3 | the 12 items of `CHECKLIST_A`, judged against a colour-scheme slide | own heuristic | the paper's 9 defects are generic geometry/texture/prompt-adherence defects judged against a text prompt; no reference image. |
+| M4 | VLM writes yes/no questions, then answers them on images of the object | paper-supported | 2410.05340 §3.3. |
+| M5 | questions from slide image + legend, 8-12 per slide with category and facade; answers scored for recall/FP | adapted | paper: from a text description with few-shot examples, 2-5 questions, an "Unclear" answer allowed; answers feed code refinement, not defect scoring. |
+| M6 | pairwise A/B in both presentation orders, keep only order-consistent verdicts | paper-supported | 2606.18451 §3; ours compares per item and allows "equal" (the paper describes no tie option), 6 views instead of its 24-view rig, Claude Sonnet instead of Qwen2.5-VL-7B / InternVL3-8B. |
+| M7 | single-object checklist answered with views forward and reversed; inconsistent items dropped and counted as missed | own heuristic | 2606.18451 swaps the order of the two candidates in a pair, not the order of views; 2607.10826 mentions position bias only in related work and does not swap. |
+
+Corrections to earlier attributions: the #768 issue text called variant B "CAD-Assistant/CADPrompt style".
+CADPrompt is the benchmark of 2410.05340; **CAD-Assistant** is a different paper (arXiv 2412.13810, Mallis et al.)
+and is not a source of this experiment.
+"ICLR 2025" for 2410.05340 is confirmed by OpenReview, not by arXiv. Both-order on the checklist was earlier
+credited to 2606.18451 as a whole; only its pairwise part is (M6 vs M7). None of the three papers measures recall
+on architectural facade defects; the thresholds (recall >= 80 %, <= 1 FP) are ours. This section changes no number,
+verdict or gate.
 
 ## Verdict: **advisory** (variant A), not adopt; variant B: **no**
 

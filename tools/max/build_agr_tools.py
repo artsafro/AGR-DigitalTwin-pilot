@@ -21,7 +21,12 @@ HYGIENE_NAMES = {'ORIGIN', 'UV_NAME', 'CA_OWNERS', 'OBJECT_KEYS', 'MAX_MAP_CHANN
                  '_channel1_problem', '_extra_channels', 'repair_plan'}
 FILES = ('mzp.run', 'install.ms', 'startup.ms', 'agr_tools.mcr', 'menu.ms', 'runtime.py', 'bootstrap.py',
          'README.md', 'CHANGELOG.md', 'atlas_core.py', 'ucx_core.py', 'texel_core.py', 'export_core.py',
-         'checks_core.py', 'checks_max.py', 'ui_model.py', 'ui_qt.py', 'ui_panel.py', 'ui_max.py')
+         'checks_core.py', 'checks_max.py', 'ui_model.py', 'ui_qt.py', 'ui_panel.py', 'ui_max.py',
+         'suite_core.py', 'suite_max.py', 'roadmap.py',
+         # 0.8 (#908): edit contract + stub modules of branches A-D (this list does not change in A-D)
+         'edit_core.py', 'edit_max.py', 'geom_core.py', 'geom_max.py', 'tex_core.py', 'tex_max.py',
+         'names_core.py', 'names_max.py', 'udim_core.py', 'udim_max.py', 'package_core.py', 'package_max.py')
+SUITE_JSON = ROOT / 'docs/plans/agr-tools-suite.json'  # «Путь» source of truth, shipped as agr-tools-suite.json
 BUNDLE = 'AGR-Tools.bundle'
 ICONS = ROOT / 'tools/max/agr_icons.py'
 
@@ -132,6 +137,8 @@ def _collect():
     inputs[NUDGE] = NUDGE.read_bytes()
     inputs[TILES] = TILES.read_bytes()
     inputs[UCX_AUDIT] = UCX_AUDIT.read_bytes()
+    inputs[SUITE_JSON] = SUITE_JSON.read_bytes()
+    entries['agr-tools-suite.json'] = inputs[SUITE_JSON].replace(b'\r\n', b'\n')
     entries['hygiene_core.py'] = hygiene_slice(inputs[HYGIENE].decode('utf-8').replace('\r\n', '\n'))
     entries['uv_nudge_core.py'] = nudge_slice(
         inputs[NUDGE].decode('utf-8').replace('\r\n', '\n'),

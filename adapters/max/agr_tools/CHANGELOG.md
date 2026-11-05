@@ -1,5 +1,103 @@
 # AGR Tools changelog
 
+## 0.8.0 (#908) — в работе
+
+Сдача: правки только на экспортных копиях или в новых файлах, каждая с preview. Пакет пока остаётся 0.7.0:
+кнопки 0.8 есть в меню и MCP, в панели они серые «в версии 0.8» до релизной ветки.
+
+### Основа (ветка 0)
+
+- `edit_core.py`: контракт правки — preview → apply со сверкой хэша, `new_path()` без перезаписи,
+  списки `done` / `skipped` (с причиной) / `ambiguous`, JSON-контракт 0.5.0, статус `not_implemented`.
+- `edit_max.py`: экспортные копии, одна запись Undo на запуск, восстановление выделения, снимок до/после.
+- `runtime.EDITS_080` (13 строк плана) и `runtime.edits_080(tool, mode, preview)`; пустой модуль отвечает
+  `status: not_implemented`. Секция «Сдача (копии)»: 13 macroScript, пункты меню, 13 иконок, 13 MCP-инструментов.
+- План: вердикт `take_fix` по лаборатории #907 для `model.triangulate`, `ucx.triangulate`, `export.ground_fbx`.
+
+### A — геометрия (`improve/issue-908-geom`)
+
+- `model.triangulate` (`geom_core.py` / `geom_max.py`): n-гоны экспортной копии триангулируются без DLL и диалога.
+  Пороги относительные (грань нормируется к единичному боксу), поэтому октагоны 0,1 мм и U 0,6 мм в метровой
+  сцене триангулируются так же, как 1 км. Ровно n−3 непересекающиеся диагонали на грань (ear clipping +
+  флипы Делоне только внутри строго выпуклых четырёхугольников, без длинных клиньев). Применение одним
+  циклом `polyop.createEdge`. Проверка «0 n-гонов» на чтении копии; вырожденные контуры в `ambiguous`.
+  Площадь, UV, ID материалов, SG и скрытые грани сохраняются; Box/Mesh/модификаторы конвертируются на копии.
+- `ucx.triangulate`: диагональ выбирается с учётом выпуклости (все вершины за плоскостью каждого треугольника,
+  допуск 1e-4 м), для невыпуклого куска — его выпуклая оболочка. Проверка после (`ucx_core.convexity`):
+  выпуклость, замкнутость, нет нулевых треугольников. Box, Editable Mesh и Poly с модификаторами
+  конвертируются на копии и перечисляются, прочее — в `skipped` с причиной. Скрытые грани остаются скрытыми.
+- `export.pivot_place`: копии НПМ (МСК X/Y/Z без изменений, пивот в [центр X, центр Y, ±0.000]) и ВПМ
+  (пивот пола в [0,0,0]). ±0.000 = min z выделенных граней/рёбер/вершин пола или явное значение (`floor_z`,
+  в интерактивном Max — запрос); без выборки отказ, низ bbox не используется. Ввод проверяется (пустое поле,
+  экспонента, nan — отказ). Координаты в double, текст с фиксированными 4 знаками. Поворот как в UI (знак
+  контроллера). Общий пивот у всех выбранных узлов: взаимное смещение моделей сохраняется.
+
+### B — текстуры (`improve/issue-908-tex`)
+
+- `tex.format_fix` (`tex_core.py` / `tex_max.py`): исправленные PNG только в **новую** папку (по умолчанию
+  `AGR_format_fix[_vNNN]` рядом с исходником; явная `out` — новая или пустая, не папка исходника). Формат из IHDR
+  через `checks_core.png_info` (палитра и 16 бит видны), полный stdlib-декодер PNG (все типы, 1–16 бит, Adam7),
+  запись PNG на stdlib zlib: 8 бит, colour type 2. Альфа снимается только где правило запрещает: явный фон
+  `background` или `dilate` (цвет края), иначе отказ с причиной; непрозрачная альфа снимается без потерь;
+  VPM Diffuse сохраняет альфу. JPG и прочие форматы — через .NET в Max, пакет не прерывается. Пропорции
+  сохраняются (`max_side` уменьшает вдвое по обеим осям), неквадратные в отчёте. Лимит `max_bytes` (по
+  умолчанию 3 MiB) — сначала без потерь, затем постеризация с RMSE в отчёте; недостижимый лимит — отказ с
+  причиной. Dilate выключен по умолчанию. Исходник уже в норме копируется байт в байт.
+- `tex.format_fix`, палитра (решение Артёма 05.11.2026: палитровый PNG допускается; командный аудит T01: 2048²
+  при 256 цветах 2,36 МБ палитрой против 5,70 МБ RGB): colour type 3 — валидный формат (палитровый исходник в
+  норме копируется). Сверх лимита порядок такой: RGB без потерь → точная палитра (≤ 256 цветов, без потерь) →
+  квантизация в 256 цветов (median cut) → постеризация RGB. В отчёте `encoding`, число цветов,
+  `max_channel_error` и RMSE. `palette: false` выключает палитру; RGBA в палитру не переводится.
+- `tex.placeholders`: однотонные D/ERM/N, PNG 8 бит RGB без альфы, точный цвет, Normal [128,128,255]; имена
+  VPM-2.10-4.3 `T_{Address}[_Ground]_{Diffuse|ERM|Normal}_{Slot}.{UDIM}.png` одним вызовом для слотов; размеры
+  128…4096, по умолчанию 256; папка через `os.path.join` (без завершающего `\` пишет внутрь), по умолчанию
+  `Maps` рядом с сохранённой сценой (несохранённая — отказ, без относительного `Maps\`); существующий файл —
+  отказ или `_v002` (`on_exists`); Diffuse средним цветом исходника (`diffuse_from`).
+- `scene.missing_maps` (только чтение, без apply): все bitmap-подобные карты всех узлов (скрытые и `UCX_` с
+  флагом), scene materials и AssetManager; `doesFileExist`; `<UDIM>`/`<UVTILE>` по тайлам из UV и диска;
+  кандидаты по базовому имени (то же имя+расширение — ранг 0, другое расширение — ранг 1) с флагом
+  неоднозначности; разрешение существующих (PNG/JPG/TGA); каждый путь один раз с владельцами; JSON + таблица.
+
+### C — имена и UDIM (`improve/issue-908-names`)
+
+- `ucx.rename` (`names_core.ucx_plan`, `names_max.ucx_rename`): переименовывает на месте только UCX-геометрию
+  в `UCX_SM_<Address>_(Main|Ground)_NNN` одной записью Undo. Рендер-модель, хелперы, камеры, свет пропущены
+  и в отчёте; порядок по старому номеру; адрес не обрезается; префикс без учёта регистра; 001..999, больше —
+  ошибка группы; номера, занятые невыделенными узлами, не выдаются; повторный запуск ничего не меняет.
+- `qa.names_fix` (`names_core.names_fix_plan`, `names_max.qa_names_fix`): одна грамматика с `ucx.rename`.
+  На экспортных копиях (слой `AGR_export_names`) объекты, материалы (SlotNumber 1..7) и карты получают имена
+  по маскам NPM/VPM; файлы карт копируются рядом с исходником под именем по маске (папки не меняются),
+  без перезаписи; существующий файл назначения переиспользуется с его хэшем в отчёте; пропавший исходник —
+  карта очищается на копии и сбой в отчёте; свой материал цели в режиме донора не заменяется без
+  `replace_material` и всегда в отчёте; повторный запуск — неоднозначность, не перезапись.
+- `udim.ids_to_udims` (`udim_core`, `udim_max`): ID n → UDIM 1000+n на копиях (слой `AGR_export_udim`), все
+  выбранные объекты; ID вне 1..100 и группы нулевой протяжённости отклонены с отчётом (без NaN); режимы
+  `fit` (0.95 на ID) и `texel` (одно отношение UV/3D на все ID); UV-вершины разделяются между ID; отчёт по
+  каждому ID и readback «каждая грань в своём тайле».
+- Найдено нативно: исключение внутри `pymxs.undo` (через `edit_max.session`) не выходит из блока в Max 2024
+  batch; обвязки C ловят его внутри и пробрасывают после записи Undo.
+
+### D — пакет (`improve/issue-908-package`)
+
+- Заглушка ветки D: `qa.package`, `export.zip`, `export.ground_fbx`, `export.geojson_write`.
+
+## 0.7.0 (#860)
+
+Pre-delivery checks (read-only) + tab rail by block + «Путь», all from `agr-tools-suite.json` (#853 plan).
+
+- 12 checks of plan version 0.7 (`suite_core.py` logic, `suite_max.py` pymxs reads, snapshots only, D6):
+  `scene.census`, `scene.units` (D5), `model.perimeter_drop` (AGR_ZERO_M, ≥ 1 m), `tex.material_type`,
+  `ucx.audit` (twinqa ucx_audit slice), `atlas.sets_count`, `qa.fbx_split`, `qa.glass` (D2, D3),
+  `qa.preflight` (all object checks, one table), `qa.scene_hygiene` (D7), `qa.xform` (D6), `qa.zero_area`.
+  JSON report contract of 0.5.0 (`schema`/`tool`/`status`/`objects`/`plan`), status derived from findings.
+- Panel: tab rail on the left — «Путь» + the 10 blocks in plan order, one accent per block derived from the
+  Max palette (≥ 3:1 against window and base, else an error, never a pale colour). Planned buttons of
+  versions 0.8–1.x are shown greyed with «в версии 0.x».
+- «Путь»: pipeline nodes in block colours with steps and buttons, tooltip (what / when / mode / requirements),
+  «?» card, live status per block from the last reports of this scene (`%LOCALAPPDATA%/AGRTools/reports`),
+  «Следующий шаг». `docs/agr-tools/GUIDE.md` + `flow.svg` are generated from the same JSON.
+- MCP (`agr-mcp` phase 0): 12 read-only tools `agr_<block>_<name>` over `runtime.checks_070`.
+
 ## 0.6.0 (#808)
 
 Native Qt UI over all 17 existing actions; no check logic changed.
@@ -10,7 +108,9 @@ Native Qt UI over all 17 existing actions; no check logic changed.
   (stripe, header, icon tint) derived from the Max palette; result table (red/green), click selects
   the object, «Выделить ошибки», «Сохранить отчёт JSON…».
 - Progress bar + «Отмена» and the Max progress bar (progressStart/Update/getProgressCancel/End).
-  xView and MatID run in chunks of 25 objects (exact merge); other actions are one runtime call
+  xView and MatID run in chunks of 25 objects (exact merge). Cancel is read only between
+  chunks, so a click takes effect on the next chunk (about 0.9 s on Max 2024); the chunk
+  already running is kept. Other actions are one runtime call
   with a busy bar. Buttons are disabled while running.
 - Every action is a macroScript with `iconName:"AgrIcons/agr_<id>"`, Russian label and tooltip
   (what it does + requirement ids); `agr_tools_runtime.ui('<tool>')` and `agr_tools_runtime.panel()`
@@ -43,8 +143,14 @@ its `GeoAGR.ms:<line>` and its changes.
   alpha, 8 bits per channel (from the PNG header), file size, the UDIM set and UV padding. Padding is
   NPM 8 px and VPM 16/32 px for 2048/4096 maps; GeoAGR's 16/32 px branch was commented out.
   Padding is measured per texture atlas: each face goes to its matID's sub-material maps, and the
-  islands of all objects of one FBX that share an atlas are measured together (per UDIM tile). An
-  unmapped matID is `tex_unmeasurable`; a sub-material without maps is `tex_missing`. In VPM, touching
+  islands of all objects of one FBX that share an atlas are measured together (per UDIM tile). A face
+  matID outside `materialIDList` is resolved as the 3ds Max FBX export does (measured in Max 2026.3,
+  #827): it wraps by the highest listed ID n, `(id - 1) mod n + 1` (`#(1,2)`: 3 -> 1, 4 -> 2;
+  `#(1,5)`: 6 -> 1, 10 -> 5), is measured on that sub-material and reported as the advisory
+  `tex_matid_wrapped` naming `matID 3 -> sub 1`. A wrapped ID that is still not listed (`#(1,5)`: 2, 3,
+  4, 7; the export writes an empty placeholder slot) and a Multimaterial with no sub-materials are
+  `tex_unmeasurable`; a sub-material without maps is `tex_missing`. The MatID check (`empty_slot`) and
+  the export material evidence use the same resolver (`checks_core.max_submaterial_index`). In VPM, touching
   or overlapping islands (gap 0) are the review-level `tex_overlap_review`, not `tex_padding`:
   regulation 2.5.1.5 applies padding only to islands with unique images, and repeating islands may
   overlap. A VPM gap above 0 and below 16/32 px is still `tex_padding`; NPM is unchanged.

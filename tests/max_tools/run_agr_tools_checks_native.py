@@ -21,7 +21,7 @@ if _venv_python.is_file():
     os.environ['AGR_PYTHON'] = str(_venv_python)
 OUT = Path(os.environ['AGR_TEST_OUTPUT'])
 OUT.mkdir(parents=True, exist_ok=False)
-PACKAGE = Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.6.0.mzp'))
+PACKAGE = Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools.mzp'))
 print('AGR_PACKAGE_SHA256', hashlib.sha256(PACKAGE.read_bytes()).hexdigest())
 print('AGR_CHECKS_START version={} file={}'.format(rt.maxVersion()[0], rt.maxFileName))
 assert rt.maxVersion()[0] in (26000, 28000)
@@ -37,7 +37,11 @@ assert rt.execute('global AGRToolsRegistered; AGRToolsRegistered == true'), 'MZP
 sys.path.insert(0, str(OUT / 'installed'))
 import runtime as agr  # noqa: E402
 
-assert agr.VERSION == '0.6.0'
+# Startup file name from the INSTALLED build (install.ms writes AGRTools-<VERSION>.ms), never a literal:
+# a pinned 0.6.0 kept CI red after the 0.7.0 build (lab CI ace829fd).
+STARTUP = OUT / 'startup' / 'AGRTools-{}.ms'.format(agr.VERSION)
+assert sorted(p.name for p in (OUT / 'startup').glob('AGRTools-*.ms')) == [STARTUP.name], sorted(
+    p.name for p in (OUT / 'startup').glob('*'))
 results = {'version': list(rt.maxVersion()), 'checks': {}, 'read_only': {}, 'macros': {}}
 
 

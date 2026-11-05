@@ -307,7 +307,10 @@ def test_joints_and_rows_carry_approval_beside_joint_trim():
     assert all(j['approved_by'] == 'synthetic-reviewer' for j in joints)
 
 
-LEGACY_DIGEST = '0f4465405faa45a09ab900575692a69f8d415a3a31fa9391af34d65bf3853d2d'
+# Re-pinned on #371: a621607 conforms stair side walls to riser elevations (removes a
+# T-junction xView reports as overlapping faces). Only the stair case changes (56 -> 72
+# faces); the two curb-only cases keep their pre-#512 digests (checked per case on merge).
+LEGACY_DIGEST = 'ddb4ebfae8b9e28c65592908f722c53d1684ceab09cf7ace1f022afadbea34f6'
 
 
 def _legacy_digest():

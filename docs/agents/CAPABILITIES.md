@@ -99,7 +99,7 @@ substitute ad-hoc scripting.
   `feature/revit-workflow` (archive bundle); the Claude user registration points at that
   worktree. Not part of this repo — backlog H3.
 - 2026-10-08 (Claude): still fails to connect (CONNECTION_CLOSED). The Revit spec extractor
-  uses `revit-http-2025` instead (`docs/HARNESS_PLAN.md` §4).
+  uses `revit-http-2025` instead (historical `docs/HARNESS_PLAN.md` §4; current route is this section).
 
 ### AutoCAD — `multiCAD`
 - Status: WORKING (Codex, 2026-10-06, AutoCAD 2025): inspection on `flora.dwg`; on a fixture, seven
@@ -252,10 +252,11 @@ Removal candidates by the rule (no evidence, no eval): `permissions.allow`, `per
 ### Rule-layer size
 - Measured 2026-10-15 at commit 32813c6: **141k tokens** (564 970 characters / 4; an estimate, not a tokenizer
   count). Scope as in the spec: Markdown, YAML and JSON at the root (top level only), `docs/agents`, `docs/domain`,
-  `docs/adr`, `.agents/skills`, `standards/` and the plan / state files (`PROJECT_STATE`, `HARNESS_PLAN`, `backlog`,
+  `docs/adr`, `.agents/skills`, `standards/` and the plan / state files (`PROJECT_STATE`, historical `HARNESS_PLAN`, `backlog`,
   `cases`, `pipeline`, `HANDOFF`, `decisions`). Out of it: `docs/agr`, `jobs`, `technical_library`.
 - Command (Git Bash, from the repository root; divide by four):
   `{ find . -maxdepth 1 -type f \( -name '*.md' -o -name '*.yaml' -o -name '*.json' \); find docs/agents docs/domain docs/adr .agents/skills standards -type f \( -name '*.md' -o -name '*.yaml' -o -name '*.json' \); ls docs/PROJECT_STATE.md docs/HARNESS_PLAN.md docs/backlog.md docs/cases.md docs/pipeline.md docs/HANDOFF.md docs/decisions.md; } | tr '\n' '\0' | xargs -0 cat | wc -c`
+  The command is the 2026-10-15 measurement and still names `docs/HARNESS_PLAN.md`; that file is historical.
 - Threshold: **200k tokens**. Below it the agent loads the relevant file whole; no semantic index, no vector store,
   no BM25. Retrieval tooling is reconsidered only when a measurement passes 200k.
 
@@ -343,7 +344,7 @@ checker). Note: the desktop app did not load project subagents from this worktre
 - `tools/git-hooks/pipeline_gate.py --staged` (pre-commit, every agent) and `--job jobs/<JOB>` (delivery):
   `Pipeline status` above draft needs `pipeline/spec.json` + `spec.report.json` + `check.json`; new job
   scripts name an engine gap `EG<n>`; delivery needs a committed `.py` for every `.pyc`;
-  attempts limit (pipeline/state.json, #128) (`docs/HARNESS_PLAN.md` §16). Claude Code also blocks such writes at PreToolUse
+  attempts limit (pipeline/state.json, #128) (historical `docs/HARNESS_PLAN.md` §16; current rule: `docs/agents/WORKFLOW.md`). Claude Code also blocks such writes at PreToolUse
   (`.claude/hooks/pipeline_gate.py`, permission "deny"), and runs of a locked job (Bash/PowerShell runner
   commands; `dt` itself refuses with exit 2). Run interception is partial (known bypasses: #144); the
   guaranteed part is the write/status/commit gate.
@@ -398,13 +399,13 @@ Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 20
   transparency, doors from records, attachments by the main-walls hull rule (user decision 2026-10-08 [D027]). The
   document is not modified (flag checked before and after); files go only to the new folder.
   KPP1: contours equal to the mesh path (0.0 mm), `jobs/KPP1/spec-compare-v002.md`.
-- Intake check (Claude, 2026-10-11, IN1, HARNESS_PLAN §15): `dt intake check --dir jobs/<JOB>/intake` validates
+- Intake check (Claude, 2026-10-11, IN1, historical HARNESS_PLAN §15): `dt intake check --dir jobs/<JOB>/intake` validates
   `sources.json` / `spec-draft.json` (schemas `IntakeSources`, `IntakeSpecDraft`), `picture.md` (Facts and
   Contradictions tables) and `questions.md`: sources and confidence of every fact, null = unknown, images at
   most estimated, the primary source by priority, the scale anchor; reports `buildable`. Procedure: skill
   `analyze-architectural-source`, intake mode. Adapters per format: IN2-IN7.
 - Spec comparison (Claude, 2026-10-08, #11): `dt spec compare --a <spec> --b <spec> --tolerances
-  benchmark/<id>/tolerances.json --output <cmp.json>` (+ `.md`): rows per criterion of HARNESS_PLAN §4
+  benchmark/<id>/tolerances.json --output <cmp.json>` (+ `.md`): rows per criterion (historical HARNESS_PLAN §4)
   with both values, threshold and reference side, contour difference regions; thresholds, reference
   sides and whether a verdict is given come from tolerances.json. KPP1: `jobs/KPP1/spec-compare-v001.md`.
 
@@ -493,7 +494,7 @@ Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 20
 - Limits: pairs only within one object (a joined mesh is one object, as in xView); FBX / .blend need Blender.
 
 ### 3ds Max xView runner — `tools/qa/xview_dump.ms` (#528)
-- Status: contract-tested and native-measured on Max 2024 (2026-10-24) via both `3dsmax.exe -U MAXScript tools/qa/xview_dump.ms` and the supported route `dcc_batch.py max --version 2024 --file tools/qa/xview_dump.ms` (3dsmaxbatch, shared lock, run on copies).
+- Status: contract-tested and native-measured on Max 2024 (2026-10-24) via the supported batch route `dcc_batch.py max --version 2024 --file tools/qa/xview_dump.ms` (3dsmaxbatch, shared lock, run on copies); this is the only launcher evidenced by the retained `SUMMARY.md` and the four JSON (the JSON carry no launcher identity). The startup invocation `3dsmax.exe -U MAXScript tools/qa/xview_dump.ms` below is documented but has no retained native measurement.
   `3dsmax.exe -U MAXScript tools/qa/xview_dump.ms` with `XVIEW_OUT` (alias `TOW02_XV_OUT`) a directory that
   already contains `jobs.txt`. The receipt line is `#nonce:<id>`; each model is exactly six fields
   `label|path|node|mode|material|slot`. Path is `.fbx` (import into a reset scene) or `.max`

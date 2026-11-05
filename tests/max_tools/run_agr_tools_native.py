@@ -18,7 +18,7 @@ if _venv_python.is_file():
     os.environ['AGR_PYTHON'] = str(_venv_python)
 OUT = Path(os.environ['AGR_TEST_OUTPUT'])
 OUT.mkdir(parents=True, exist_ok=False)
-_package = Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.6.0.mzp'))
+_package = Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools.mzp'))
 print('AGR_PACKAGE_SHA256', hashlib.sha256(_package.read_bytes()).hexdigest())
 print('AGR_NATIVE_START version={} file={} units={}'.format(rt.maxVersion()[0], rt.maxFileName, rt.units.SystemType))
 assert rt.maxVersion()[0] in (26000, 28000)
@@ -30,11 +30,17 @@ rt.execute('global AGRToolsInstallRoot; global AGRToolsStartupRoot')
 rt.AGRToolsInstallRoot = str(OUT / 'installed') + '/'
 rt.AGRToolsStartupRoot = str(OUT / 'startup') + '/'
 rt.makeDir(rt.AGRToolsStartupRoot, all=True)
-rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.6.0.mzp'))))
+rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools.mzp'))))
 assert rt.execute('global AGRToolsRegistered; AGRToolsRegistered == true'), 'MZP macros not registered'
 print('AGR_INSTALL_REGISTERED xView Cleanup MatID Open Nudge NudgeApply Atlas AtlasApply Ucx UcxApply Texel Export')
 sys.path.insert(0, str(OUT / 'installed'))
 import runtime as agr
+
+# Startup file name from the INSTALLED build (install.ms writes AGRTools-<VERSION>.ms), never a literal:
+# a pinned 0.6.0 kept CI red after the 0.7.0 build (lab CI ace829fd).
+STARTUP = OUT / 'startup' / 'AGRTools-{}.ms'.format(agr.VERSION)
+assert sorted(p.name for p in (OUT / 'startup').glob('AGRTools-*.ms')) == [STARTUP.name], sorted(
+    p.name for p in (OUT / 'startup').glob('*'))
 
 
 def findings(report):
@@ -92,7 +98,7 @@ assert findings(report) == {'overlap_vertices': [1,2,3,4,5,6], 'overlap_faces': 
 assert list(rt.selection) == [bad]
 results['defective']['xview'] = report
 report = agr.matid([bad])
-assert findings(report) == {'udim_id': [1], 'empty_slot': [1,2]}, report
+assert findings(report) == {'udim_id': [1], 'empty_slot': [2]}, report  # matID 1001 wraps to sub 1 like the Max FBX export (#827)
 results['defective']['matid'] = report
 before = agr.snapshot([bad])
 preview = agr.cleanup_preview([bad])
@@ -585,10 +591,10 @@ for macro in ('AGRToolsNudge', 'AGRToolsAtlas'):
 results['guards']['registered_uv_buttons'] = 2
 # Startup re-registration and repeated install must not overwrite installed files.
 rt.AGRToolsRegistered = False
-rt.fileIn(str(OUT / 'startup/AGRTools-0.6.0.ms'))
+rt.fileIn(str(STARTUP))
 assert rt.AGRToolsRegistered
 install_hash = hashlib.sha256((OUT / 'installed/runtime.py').read_bytes()).hexdigest()
-results['guards']['repeat_install'] = raises(lambda: rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools-0.6.0.mzp')))), 'already exists')
+results['guards']['repeat_install'] = raises(lambda: rt.fileIn(str(Path(os.environ.get('AGR_TEST_PACKAGE', ROOT / 'tmp/AGR-Tools.mzp')))), 'already exists')
 assert hashlib.sha256((OUT / 'installed/runtime.py').read_bytes()).hexdigest() == install_hash
 assert hashlib.sha256((OUT / 'fixture-source.max').read_bytes()).hexdigest() == source_hash
 results['version'] = list(rt.maxVersion())

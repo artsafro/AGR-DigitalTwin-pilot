@@ -1,4 +1,4 @@
-"""Build the exterior mesh of a building from its spec (docs/HARNESS_PLAN.md §9): the only engine.
+"""Build the exterior mesh of a building from its spec (historical: docs/HARNESS_PLAN.md §9): the only engine.
 
 Input: a `Spec` (written by an extractor) and the build inputs the spec does not carry — the
 parapet wall thickness and the material IDs of the object (`jobs/<object>/materials.json`, ADR 0001).
