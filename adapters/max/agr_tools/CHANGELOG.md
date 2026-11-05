@@ -79,7 +79,28 @@
 
 ### D — пакет (`improve/issue-908-package`)
 
-- Заглушка ветки D: `qa.package`, `export.zip`, `export.ground_fbx`, `export.geojson_write`.
+- `qa.package` (только чтение): движок — валидатор пилота `tools/qa/validate_package.py --json`, по умолчанию
+  `--scene`, в интерпретаторе проекта (`AGR_PYTHON`). Отчёт: таблица стадий V001–V017 и код выхода 0/1/2 на каждый
+  ZIP (или на все ZIP папки). Валидатор (лаборатория L04): профиль по грамматике имени (`{code4}_{Address}` → NPM,
+  `SM_{Address}` → VPM), а не по содержимому; V006 «embedded textures» больше не проходит на NPM FBX без текстур
+  (OKS — fail, Ground — review). По аудиту командных скриптов T04: FBX со светом читается в Blender 5.1.2
+  (флаг `cast_shadow` для импортёра), одна нечитаемая FBX больше не обрывает проверку остальных, V004
+  «applied transforms» — тождество хотя бы в одном режиме импорта (FBX из Max и запечённый экспорт Blender
+  проходят, реальный поворот падает), V010 «UCX shape» — открытые/невыпуклые куски fail, логи Blender не в cwd.
+- `export.zip`: состав по точной грамматике и по адресу — NPM `{code4}_{Address}_{01..20}.fbx` + `_Ground.fbx`
+  (части без пропусков), VPM `SM_{Address}[_NNN]` + `_Light.fbx` + `.geojson` + `T_…_{Diffuse|ERM|Normal}`;
+  смешанные адреса и коды отклоняются, приманки не трогаются и перечислены. ZIP пишется в процессе (без 7-Zip),
+  только новым файлом (`.partial` + ссылка без перезаписи), лимиты двоичные `<=` (OKS 500 MiB, Ground и NPM
+  1 GiB, D015); на каждом записанном архиве — валидатор.
+- `export.ground_fbx`: Ground, GroundGlass, GroundEl, GroundElGlass, Flora → `{code4}_{Address}_Ground.fbx`, ОКС
+  `SM_{Address}_{NNN}_*` → `{code4}_{Address}_{NN}.fbx`; имя из адреса, не из первого выбранного; не зависит от
+  порядка выбора; Triangulate включён (остальные настройки FBX как в GeoAGR: 7400 binary, м, масштаб 1, текстуры
+  встроены); экспортируются сами объекты без изменений, без раскрытия скрытых, без перезаписи; выделение
+  восстанавливается; readback валидатором (V002/V003/V012 в слоте Blender).
+- `export.geojson_write`: новый `SM_{Address}[_Ground].geojson` — свойства App.3 только из options (ничего не
+  выдумывается, пустое обязательное поле — находка), точка МСК-77 только из preview `export.pivot_place`
+  (3 знака), превью JPG 256×256 в Base64, `Glasses` из стеклянных материалов; сразу после записи — `qa.geojson`
+  0.5.0. Кнопки GeoAGR `GeoAGR.ms:64642-64644` отключены и без обработчиков — переносить нечего.
 
 ## 0.7.0 (#860)
 

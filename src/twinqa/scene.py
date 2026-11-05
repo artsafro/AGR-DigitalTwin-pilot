@@ -3,13 +3,15 @@
 Fills the scene stages the header-only validator leaves not_run: V002 (units and scale;
 units come from a pure-Python GlobalSettings read), V003 (triangulation,
 triangle limits, object types), V004 (applied transforms, co-directional overlap clearance, regulatory topology defect count, MAF smoothing/flipped normals/dimensions (GroundEl)), V006 (NPM embedded images),
-V008 (one UV channel, mirrored islands, glass tile, texel density when the readback has UV and one diffuse size), V010 (UCX presence, no material slots, triangle budget, intersections, intersection coverage, advisory gap; shape and coverage stay not_run),
+V008 (one UV channel, mirrored islands, glass tile, texel density when the readback has UV and one diffuse size), V010 (UCX presence, no material slots, triangle budget, intersections, intersection coverage, advisory gap, piece shape closed/convex; coverage and offsets stay not_run),
 V013 (origin, geometric-centre pivot, shared pivot). Triangle limits follow the 2026-10-07 decisions on conflicts #1 and #3.
 Ground FBX: Flora checks from twinqa.flora (V015 dimensions, V005 maps, V003 Flora share; #191).
 """
 import itertools
 import math
+import os
 import tempfile
+import uuid
 from fractions import Fraction
 from pathlib import Path
 
@@ -56,11 +58,18 @@ def find_blender() -> str | None:
     return executable if Path(executable).is_file() else None
 
 
+def readback_log_dir() -> Path:
+    """Blender logs of the readback: TWINQA_LOG_DIR, else the system temp folder; never the caller's cwd
+    (team audit T04: run_blender's default `<cwd>/logs/blender` littered the repository a check ran from)."""
+    return Path(os.environ.get("TWINQA_LOG_DIR") or Path(tempfile.gettempdir()) / "twinqa" / "blender_logs")
+
+
 def readback(fbx_path: Path, blender: str | None = None, timeout: int = 600) -> dict:
+    log = readback_log_dir() / f"readback-{uuid.uuid4().hex}.log"
     with tempfile.TemporaryDirectory() as tmp:
         out = Path(tmp) / "readback.json"
         rb = run_blender(READBACK, [str(fbx_path), str(out)], executable=blender,
-                         output_json=out, timeout=timeout)
+                         output_json=out, timeout=timeout, log_path=log)
     try:
         data = Path(fbx_path).read_bytes()
     except OSError as exc:
@@ -280,6 +289,25 @@ def _ucx_piece(mesh: dict) -> dict:
     else:
         reason = None
     return {"name": mesh["name"], "hull": welded, "reason": reason}
+
+
+def _identity_transform(rotation_deg, scale) -> bool:
+    return (all(abs(a) <= ANGLE_TOL_DEG for a in rotation_deg)
+            and all(abs(s - 1) <= SCALE_TOL for s in scale))
+
+
+def _ucx_shape_finding(ucx: list[dict], src: str) -> Finding:
+    """V010 'UCX shape': every UCX piece closed, convex, non-degenerate (reg p.34-36). Team audit T04 (P14): open and
+    concave UCX stayed not_run. A readback without hull data stays not_run, never a pass."""
+    pieces = [_ucx_piece(mesh) for mesh in ucx]
+    bad = {p["name"]: p["reason"] for p in pieces if p["reason"] not in (None, "no hull")}
+    unread = [p["name"] for p in pieces if p["reason"] == "no hull"]
+    expected = "closed, convex, non-degenerate UCX pieces"
+    if bad:
+        return _f("fail", "UCX shape", f"{src}: {bad}", expected, [34, 36], src)
+    if unread:
+        return _f("not_run", "UCX shape", f"{src}: readback without UCX hull data: {unread[:5]}", expected, [34, 36], src)
+    return _f("pass", "UCX shape", f"{src}: {len(pieces)} closed convex piece(s)", expected, [34, 36], src)
 
 
 def _neighbour_gap_kind(gap_m: float) -> str:
@@ -901,8 +929,12 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
                               "meshes only (lights only in the _Light FBX)", [4, 24, 33], src))
 
     # V004: transforms applied, rotation 0 (reg p.8, 29, 32-33)
+    # Identity in either import mode (bake_space_transform off/on) = applied: Max writes the axis correction on the
+    # node, a baked Blender export into the geometry (team audit T04; lab job 20261105-015151-c6e23463).
     bad = [m["name"] for m in meshes
-           if any(abs(a) > ANGLE_TOL_DEG for a in m["rotation_euler_deg"]) or any(abs(s - 1) > SCALE_TOL for s in m["scale"])]
+           if not _identity_transform(m["rotation_euler_deg"], m["scale"])
+           and not ("baked_rotation_euler_deg" in m
+                    and _identity_transform(m["baked_rotation_euler_deg"], m.get("baked_scale", [1, 1, 1])))]
     out["V004"].append(_f("fail" if bad else "pass", "applied transforms", f"{src}: {bad or 'rotation 0, scale 1'}",
                           "rotation 0, scale 1 after reset", [8, 29, 33], src))
     out["V004"].append(_topology_finding(meshes, profile, src))
@@ -928,8 +960,9 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
             out["V010"].append(_f("fail" if ucx_tris > budget else "pass", "UCX triangle budget",
                                   f"{src}: {ucx_tris} UCX for {tris} model triangles", f"<= {budget}", [36, 37], src))
             out["V010"].extend(_ucx_pair_findings(ucx, src))
-            out["V010"].append(_f("not_run", "UCX shape and coverage", "convex, closed, coverage, offsets",
-                                  "reg p.34-37", [34, 36, 37], src))
+            out["V010"].append(_ucx_shape_finding(ucx, src))
+            out["V010"].append(_f("not_run", "UCX coverage and offsets", "coverage of the model, offsets",
+                                  "reg p.34-37", [34, 37], src))
         # V008: one UV channel, no mirrored islands, glass only in 1001 (reg p.31-32, 39)
         multi = [m["name"] for m in meshes if m not in ucx and m["uv_channels"] != 1]
         mirrored = {m["name"]: m["mirrored_uv_triangles"] for m in meshes if m["mirrored_uv_triangles"]}

@@ -200,10 +200,50 @@ def material_facts():
     return materials
 
 
+def light_import_compat():
+    """Blender 5.1.2's FBX importer sets `lamp.cycles.cast_shadow`, which Cycles no longer has, so any FBX with a
+    light fails to import (team audit T04; lab job 20261105-015046-6f7cf91b). Give the Cycles light settings that
+    property back (a no-op flag) before importing; returns what was done."""
+    probe = bpy.data.lights.new("__twinqa_probe", "POINT")
+    try:
+        cyc = getattr(probe, "cycles", None)
+        if cyc is None or hasattr(cyc, "cast_shadow"):
+            return None
+        type(cyc).cast_shadow = bpy.props.BoolProperty(default=True)
+        return "Cycles light settings: cast_shadow added for the FBX importer"
+    finally:
+        bpy.data.lights.remove(probe)
+
+
+LIGHT_TYPES = ("LIGHT", "EMPTY")
+IDENTITY_ANGLE_DEG, IDENTITY_SCALE = 1e-3, 1e-4  # same tolerances as twinqa.scene V004
+
+
+def _identity(rotation_deg, scale):
+    return all(abs(a) <= IDENTITY_ANGLE_DEG for a in rotation_deg) and all(abs(s - 1) <= IDENTITY_SCALE for s in scale)
+
+
+def baked_transforms(meshes, path):
+    """V004 needs the transform the FILE carries, but the importer folds its axis/unit correction into object
+    transforms (bake off) or into the mesh data (bake on); measured on Max and Blender FBX (lab job
+    20261105-015151-c6e23463, team audit T04). When a mesh is not identity in the default import, import again with
+    bake_space_transform=True and record that transform too: identity in either mode = transforms applied."""
+    if all(_identity(m["rotation_euler_deg"], m["scale"]) for m in meshes):
+        return
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+    light_import_compat()
+    bpy.ops.import_scene.fbx(filepath=str(path), bake_space_transform=True)
+    baked = {o.name: o for o in bpy.context.scene.objects if o.type == "MESH"}
+    for m in meshes:
+        o = baked.get(m["name"])
+        if o is not None:
+            m["baked_rotation_euler_deg"] = [math.degrees(a) for a in o.rotation_euler]
+            m["baked_scale"] = list(o.scale)
 report = {"source": str(source), "readback_ok": False, "blender": bpy.app.version_string,
           "scope": "structural readback only; not a delivery verdict", "meshes": [], "other_objects": []}
 try:
     bpy.ops.wm.read_factory_settings(use_empty=True)
+    report["compat"] = light_import_compat()
     bpy.ops.import_scene.fbx(filepath=str(source))
     for obj in bpy.context.scene.objects:
         if obj.type == "MESH":
@@ -212,7 +252,10 @@ try:
             report["other_objects"].append({"name": obj.name, "type": obj.type})
     report["images"] = image_facts()
     report["materials"] = material_facts()
-    report["readback_ok"] = bool(report["meshes"]) and all(m["polygons"] > 0 for m in report["meshes"])
+    baked_transforms(report["meshes"], source)
+    lights_only = (not report["meshes"] and bool(report["other_objects"])
+                   and all(o["type"] in LIGHT_TYPES for o in report["other_objects"]))
+    report["readback_ok"] = lights_only or (bool(report["meshes"]) and all(m["polygons"] > 0 for m in report["meshes"]))
     if not report["readback_ok"]:
         report["error"] = "no non-empty meshes"
 except Exception as exc:  # report, never hide
