@@ -19,7 +19,7 @@
 <rect x="264" y="20" width="8" height="92" rx="3" fill="#255893"/>
 <text x="282" y="46" font-size="15" font-weight="bold" fill="#255893">1 Модель</text>
 <text x="282" y="68" font-size="12" fill="#333333">Моделирование</text>
-<text x="282" y="90" font-size="12" fill="#333333">кнопок: 2 из 18</text>
+<text x="282" y="90" font-size="12" fill="#333333">кнопок: 2 из 12</text>
 <rect x="508" y="20" width="210" height="92" rx="8" fill="#ffffff" stroke="#672593" stroke-width="2.5"/>
 <rect x="508" y="20" width="8" height="92" rx="3" fill="#672593"/>
 <text x="526" y="46" font-size="15" font-weight="bold" fill="#672593">2 Текстуры</text>
@@ -49,7 +49,7 @@
 <rect x="508" y="146" width="8" height="92" rx="3" fill="#258193"/>
 <text x="526" y="172" font-size="15" font-weight="bold" fill="#258193">7 Проверки</text>
 <text x="526" y="194" font-size="12" fill="#333333">Проверки и сдача</text>
-<text x="526" y="216" font-size="12" fill="#333333">кнопок: 14 из 19</text>
+<text x="526" y="216" font-size="12" fill="#333333">кнопок: 14 из 20</text>
 <rect x="264" y="146" width="210" height="92" rx="8" fill="#ffffff" stroke="#422593" stroke-width="2.5"/>
 <rect x="264" y="146" width="8" height="92" rx="3" fill="#422593"/>
 <text x="282" y="172" font-size="15" font-weight="bold" fill="#422593">8 Экспорт</text>
