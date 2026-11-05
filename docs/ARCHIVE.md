@@ -22,7 +22,7 @@ Run `git fetch origin tag archive/2026-11` first if the tag is missing locally.
 | `B-MAIN-ATLAS` | sibling of A-MAIN-ATLAS; reusable part in `technical_library/glb_atlas` |
 | `FACADE-SIGNS` | one-off v001 (2026-09-27) |
 | `FACADES-ATLAS` | v003 tile accepted; `docs/cases.md` (Facades atlas) |
-| `GLB-NPM` | v023 not accepted, stalled; `adapters/sketchup/*` scripts still name its local `outputs/` |
+| `GLB-NPM` | v023 not accepted, stalled; its 56 job scripts in `adapters/sketchup/` were removed in phase 4 (see "Job scripts removed from shared folders") |
 | `GROUND-PROJECTION` | historical v008 report; `docs/cases.md` (Ground contours); superseded by skill `model-ground` |
 | `MASHI-LP` | scene audit accepted; `docs/cases.md` (MASHI-LP scene audit) |
 | `MESH-OPT-AUDIT` | audit done 2026-09-28; reusable part in `technical_library/mesh_audit` |
@@ -72,6 +72,21 @@ The report with the verdict stays in the tree: `docs/experiments/<report>.md`.
 | `docs/research/team-plugins-inventory.json` | 7.25 MB row-per-file inventory behind `docs/research/team-plugins-audit.md` |
 | `docs/HARNESS_PLAN.md` | harness plan, frozen 2026-11-03; cited as `archive/2026-11:docs/HARNESS_PLAN.md` §N; current rules in `docs/pipeline.md`, `docs/decisions.md`, `docs/agents/WORKFLOW.md`, `docs/domain/` |
 | `docs/prd/agent-ready-harness.md` | agent-ready harness spec (#118); decisions D088-D092 in `docs/decisions.md`; story 38 closed |
+
+## Job scripts removed from shared folders
+
+Repo hygiene phase 4 (2026-11-05) removed job- and object-specific scripts from shared folders
+(`docs/agents/NAMING.md`: no version and no object code in shared tools). Each was unchanged since `cb1ad1d4`,
+so the tag holds the last version. OBR22-K02 scripts were moved, not removed: `jobs/OBR22-K02/scripts/`,
+`jobs/ORCH-OBR22-NPM/scripts/run_profile_pilot.py` (engine gap EG7 in `docs/backlog.md`).
+
+| Paths | Owner | Note |
+|---|---|---|
+| `tools/{build_facades_textures_v004,check_facades_atlas,check_facades_max_roundtrip,check_facades_v005_package,export_facades_max,inspect_facades_atlas,package_facades_v004,probe_facades_uv,remap_facades_atlas,render_facades_atlas,stabilize_facades_phase,update_facades_600x1200}.py`, `tests/test_facade_corner_match.py` | `FACADES-ATLAS` | `tools/facades_texture_pattern.py` stays (shared); `experiments/hyp83` hashes `check_facades_max_roundtrip.py` and needs the tag to rerun |
+| `tools/{probe_geoagr_ucx,probe_geoagr_uvdilate}.py` | GeoAGR review | `docs/agr/inventory/GEOAGR_13_63_REVIEW.md` |
+| `tools/max_flora_{archive,inventory,transform_repair,tri_repair,verify}.py` | `experiments/flora-library-audit` | superseded by `adapters/max/agr_tools/place_core.py` (`place.flora_repair`) |
+| `tools/audit_max_tool_sources.py`, `tools/bootstrap_evidence.py` | one-off workstation inventory; `SYNTH-001` | — |
+| `adapters/sketchup/*` except `README.md`, `inspection.rb`, `prepare_package.py`, `prepare_readonly.py`, `probe_readonly.py`, `requirements-installed.txt`, `.gitignore` (56 files) | `GLB-NPM` | `check_model_clearance.py` lives on as `src/twinqa/clearance.py` |
 
 Orphan docs (no test, doc or code named them on 2026-11-05):
 

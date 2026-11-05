@@ -10,7 +10,7 @@ shapely=pytest.importorskip('shapely')
 
 
 def load_tool(monkeypatch):
-    directory=Path(__file__).parents[1]/'tools'
+    directory=Path(__file__).parents[1]/'jobs/OBR22-K02/scripts'
     monkeypatch.syspath_prepend(str(directory))
     spec=importlib.util.spec_from_file_location('exterior_builder',directory/'build_exterior_surface.py')
     module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)

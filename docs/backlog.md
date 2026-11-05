@@ -100,6 +100,9 @@ the engine covers it.
   (no reveal to measure on a panel facade), found 0 decor, and the engine stopped at BuildError "2D plan weld
   moves ... 0.0036 m, beyond weld_m 0.003" (`jobs/vyatskaya-tow02/pipeline/spec-v002.*`, `outputs/spec-v001/`).
   Also seen there: the dumper writes mirrored-matrix meshes (negative scale) with inward faces.
+- **EG7** Legacy job scripts moved from `tools/` root (repo hygiene phase 4, 2026-11-05): written before the gate;
+  they fill no engine gap and are kept only as the job's recorded workflow (`jobs/OBR22-K02/scripts/`,
+  `jobs/ORCH-OBR22-NPM/scripts/`).
 
 ## Markup helpers (after the terrace; owner Claude, code parts Codex)
 

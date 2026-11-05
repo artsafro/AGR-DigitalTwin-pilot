@@ -6,8 +6,8 @@ pytest.importorskip('numpy')
 
 
 def packer(monkeypatch):
-    monkeypatch.syspath_prepend(str(Path(__file__).parents[1]/'tools'))
-    spec=importlib.util.spec_from_file_location('prepare_uv',Path(__file__).parents[1]/'tools/prepare_floor_uv.py')
+    monkeypatch.syspath_prepend(str(Path(__file__).parents[1]/'jobs/OBR22-K02/scripts'))
+    spec=importlib.util.spec_from_file_location('prepare_uv',Path(__file__).parents[1]/'jobs/OBR22-K02/scripts/prepare_floor_uv.py')
     module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
     return module.pack
 
@@ -31,7 +31,7 @@ def test_oversized_face_has_explicit_density_exception_not_cross_tile_uv(monkeyp
 
 def test_connect_propagates_to_shared_edge_without_t_junction(monkeypatch):
     import numpy as np
-    monkeypatch.syspath_prepend(str(Path(__file__).parents[1]/'tools'))
+    monkeypatch.syspath_prepend(str(Path(__file__).parents[1]/'jobs/OBR22-K02/scripts'))
     from quad_connect import subdivide
     # Long face above a tapered neighbour: subdivisions must agree on the shared edge.
     vertices=[[0,0,0],[12,0,0],[12,1,0],[0,1,0],[9,2,0],[3,2,0]]

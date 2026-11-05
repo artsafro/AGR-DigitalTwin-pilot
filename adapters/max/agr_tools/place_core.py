@@ -17,8 +17,8 @@ Sources (#853: ideas only, no team code copied; team files are cited by name + S
   `place_box001_on_doors.ms` (SHA256 93eb2d12…a928); lab L07 `docs/experiments/place.replace.md` (oriented box).
 * schedule: pilot `tools/placement_site.py`, `jobs/VATUTINO-SITE/placement_report.py`; lab L08
   `docs/experiments/place.schedule.md` (report-first, partial placement, obstacles, idempotent re-run).
-* Flora repair: pilot `tools/max_flora_transform_repair.py`, `tools/max_flora_tri_repair.py`,
-  `tools/max_flora_verify.py`, `experiments/flora-library-audit/mesh_compare.py`; lab L08
+* Flora repair: pilot `archive/2026-11:tools/max_flora_transform_repair.py`, `max_flora_tri_repair.py`,
+  `max_flora_verify.py` (same tag folder), `experiments/flora-library-audit/mesh_compare.py`; lab L08
   `docs/experiments/place.flora_repair.md` (copies only, no isolation delete, one undo record).
 """
 import csv

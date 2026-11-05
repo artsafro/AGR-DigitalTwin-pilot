@@ -59,21 +59,17 @@ def _node(h):
     return n
 
 
-def in_session(emax, label, fn):
-    """Run fn() inside emax.session (one undo record, selection restored) and RE-RAISE its error afterwards.
+def _session_core():
+    """Shared helpers (session_core.py next to this file), loaded by path like the other sibling cores."""
+    import importlib.util
+    from pathlib import Path
+    spec = importlib.util.spec_from_file_location('agr_tools_session_core', Path(__file__).with_name('session_core.py'))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
 
-    Measured (job 20261105-011438-a488a8fd, Max 2024 batch): an exception inside `pymxs.undo(True, ...)` does not
-    leave the `with` block, so a failed apply would carry on as if it had worked. The error is kept and raised
-    after the context exits; fn() cleans up its own copies/files before it fails."""
-    box = {}
-    with emax.session(label):
-        try:
-            box['value'] = fn()
-        except BaseException as exc:  # noqa: BLE001 - re-raised below, outside the undo context
-            box['error'] = exc
-    if 'error' in box:
-        raise box['error']
-    return box['value']
+
+in_session = _session_core().in_session  # public name kept (CHANGELOG cites names_max.in_session)
 
 
 def _is_geometry(n):

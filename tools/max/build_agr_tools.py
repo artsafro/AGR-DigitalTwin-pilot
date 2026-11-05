@@ -30,7 +30,8 @@ FILES = ('mzp.run', 'install.ms', 'startup.ms', 'agr_tools.mcr', 'menu.ms', 'run
          'place_core.py', 'place_max.py', 'texqa_core.py', 'texqa_max.py', 'finish_core.py', 'finish_max.py',
          'uvtile_core.py', 'uvtile_max.py', 'flora_atlas_max.py', 'qa9_core.py', 'qa9_max.py', 'facade_core.py',
          'facade_max.py', 'batch_core.py', 'batch_max.py', 'mapsuse_core.py', 'mapsuse_max.py', 'light_core.py',
-         'light_max.py')
+         'light_max.py',
+         'session_core.py')  # shared in_session / same (one copy instead of one per module)
 # 0.9 (#979): every file below adapters/max/agr_tools/data/ ships as agr_tools/data/<rel> (owner files of branch C:
 # procedural_classes.json, streets/). At most one sub-folder level: install.ms copies data/ and data/<dir>/.
 DATA_DIR = 'data'

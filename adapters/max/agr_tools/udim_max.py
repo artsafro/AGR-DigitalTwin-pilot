@@ -38,18 +38,17 @@ def _options(ctx, mode, preview):
     return out
 
 
-def _in_session(emax, label, fn):
-    """fn() inside emax.session; its error is re-raised AFTER the undo context (an exception inside
-    `pymxs.undo(True, ...)` did not leave the block in Max 2024 batch, job 20261105-011438-a488a8fd)."""
-    box = {}
-    with emax.session(label):
-        try:
-            box['value'] = fn()
-        except BaseException as exc:  # noqa: BLE001 - re-raised below
-            box['error'] = exc
-    if 'error' in box:
-        raise box['error']
-    return box['value']
+def _session_core():
+    """Shared helpers (session_core.py next to this file), loaded by path like the other sibling cores."""
+    import importlib.util
+    from pathlib import Path
+    spec = importlib.util.spec_from_file_location('agr_tools_session_core', Path(__file__).with_name('session_core.py'))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+_in_session = _session_core().in_session
 
 
 def _nodes(nodes):

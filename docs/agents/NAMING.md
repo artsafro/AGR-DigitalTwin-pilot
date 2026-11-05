@@ -43,7 +43,8 @@ Shared tools are grouped by pipeline stage. Existing stage folders: `tools/sourc
 `tools/export/`, `tools/qa/` (plus `tools/mcp/`, `tools/herdr/`, `tools/git-hooks/`). Target folders, created
 with their first shared tool (backlog H7): `tools/geometry/`, `tools/uv/`, `tools/render/`.
 Target examples (not created yet): `seal.py` → `tools/geometry/seal_joints.py`; `qa_master_psu275.py` →
-`tools/qa/check_mesh.py`; `build_facades_textures_v004.py` → `tools/materials/texture_facades.py`.
+`tools/qa/check_mesh.py`; `build_facades_textures_v004.py` (removed, kept in tag `archive/2026-11`) →
+`tools/materials/texture_facades.py`.
 
 ## Job folders
 
