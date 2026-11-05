@@ -7,6 +7,7 @@ D5 (texel per system unit) belongs to the 0.3.0 texel readout and D7 (unreachabl
 import importlib.util
 import json
 import math
+import re
 import struct
 import zlib
 from pathlib import Path
@@ -352,6 +353,80 @@ def test_textures_scene_vpm_overlap_review_npm_overlap_padding():
                                                                        png(1024, 1024))], gap=IDENTICAL)])[0][1]
     assert codes(npm) == ['tex_padding']
     assert 'tex_overlap_review' in core.CODES['textures']
+
+
+def _review_level_codes():
+    """Codes the package text marks as review-level: `name` (review), review-level `name`, or a review detail."""
+    found = set()
+    for path in sorted(PKG.glob('*.py')):
+        text = path.read_text(encoding='utf-8')
+        found.update(re.findall(r'`([a-z][a-z0-9_]*)`\s*\(review\)', text))
+        for match in re.finditer(r'review-level', text):
+            named = re.search(r'`([a-z][a-z0-9_]*)`', text[match.start():match.start() + 240])
+            if named:
+                found.add(named.group(1))
+        found.update(re.findall(r"\('([a-z][a-z0-9_]*)',\s*(?:f)?'[^'\n]*review", text))
+    return found
+
+
+def _diag_report(tool, findings, fbx=VPM_FBX):
+    kind = core.fbx_kind(fbx)
+    plan = {'fbx': [{'fbx': fbx, 'model': kind[0], 'role': kind[1], 'objects': 1, 'render_triangles': None,
+                     'ucx_triangles': None, 'limit': None, 'ucx_limit': None}], 'dropped': []}
+    return runtime._report(tool, [{'handle': 1, 'name': 'SM_Tverskaya_12_Main', 'findings': findings}],
+                           [], select=False, extra={'plan': plan})
+
+
+def _finding_dicts(items):
+    out = []
+    for item in items:
+        ids = list(item[2]) if len(item) > 2 else []
+        out.append({'code': item[0], 'ids': ids, 'detail': item[1]})
+    return out
+
+
+def test_review_level_finding_keeps_report_status_fail():
+    """#836: review-level codes are non-pass. Status stays fail; empty findings still pass.
+
+    Invariant: a report whose only finding is a review-level code is never 'pass'.
+    Probe: one report per code marked review-level in adapters/max/agr_tools/*.py.
+    """
+    marked = _review_level_codes()
+    assert marked == {'at_threshold', 'name_conflict', 'tex_overlap_review'}
+    readme = (PKG / 'README.md').read_text(encoding='utf-8')
+    paragraph = next(block.strip() for block in readme.split('\n\n')
+                     if 'Review-level codes count as non-pass' in block)
+    known = set().union(*core.CODES.values())
+    assert {code for code in re.findall(r'`([a-z][a-z0-9_]*)`', paragraph) if code in known} == marked
+    assert "status `fail`" in paragraph and 'A `review` status may come later only if the UI needs it.' in paragraph
+
+    overlap = core.textures_scene([tex_row(1, 'SM_Tverskaya_12_Main', vpm_set(), VPM_FBX, -0.3)])[0][1]
+    assert [item[0] for item in overlap] == ['tex_overlap_review']
+    overlap_report = _diag_report('textures', _finding_dicts(overlap))
+    assert overlap_report['status'] == 'fail'
+
+    # UV gap equal to the VPM minimum (16 px at 2048) is at_threshold, never a pass.
+    exact = core.textures_scene([tex_row(1, 'SM_Tverskaya_12_Main', vpm_set(), VPM_FBX, 16 / 2048)])[0][1]
+    assert [item[0] for item in exact] == ['at_threshold']
+    assert _diag_report('textures', _finding_dicts(exact))['status'] == 'fail'
+
+    clean = core.textures_scene([tex_row(1, 'SM_Tverskaya_12_Main', vpm_set(), VPM_FBX)])[0][1]
+    assert clean == []
+    assert _diag_report('textures', [])['status'] == 'pass'
+
+    owners = {}
+    for tool, allowed in core.CODES.items():
+        for code in marked:
+            if code in allowed and code not in owners:
+                owners[code] = tool
+    assert set(owners) == marked
+    for code, tool in sorted(owners.items()):
+        report = _diag_report(tool, [{'code': code, 'ids': [], 'detail': 'review-level only'}])
+        assert report['status'] != 'pass' and report['status'] == 'fail', code
+        claimed = json.loads(json.dumps(report))
+        claimed['status'] = 'pass'
+        with pytest.raises(ValueError, match='inconsistent status'):
+            runtime.parse_report(json.dumps(claimed))
 
 
 def test_padding_geoagr_live_8px_would_pass_a_12px_gap():
