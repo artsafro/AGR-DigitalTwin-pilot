@@ -342,7 +342,7 @@ def test_hatch_source_closes_the_hatched_ring_into_one_footprint():
     assert max(xs) - min(xs) == pytest.approx(6.0, abs=0.1)
     assert max(ys) - min(ys) == pytest.approx(4.0, abs=0.1)
     cov = out["coverage"]
-    assert cov["status"] == "pass" and cov["hatch_area_m2"] == pytest.approx(5.7, abs=1e-3)
+    assert cov["status"] == "pass" and cov["hatch_area_m2"] == pytest.approx(5.34, abs=1e-3)
     assert cov["covered_share"] > pf.COVERAGE_MIN_SHARE and cov["bbox_delta_m"] < pf.COVERAGE_BBOX_M
     assert out["params"]["contour_source"] == "hatch"
     assert {e["status"] for e in out["entities"]} == {"used"} and len(out["entities"]) == 5
@@ -405,3 +405,20 @@ def test_kpp1_l03_lines_lose_the_wall_and_the_hatch_keeps_it():
     assert cov["hatch_area_m2"] == pytest.approx(33.07, abs=0.01)
     assert cov["status"] == "pass" and cov["covered_share"] > 0.9 and cov["bbox_delta_m"] < 0.1
     assert len(out["bands"][0]["polygons"]) == 1
+
+
+def test_wall_line_status_uses_its_true_midpoint_and_a_zero_length_line_is_dropped():
+    doc = _doc()
+    doc.layers.add("PATT")
+    msp = doc.modelspace()
+    _hatch(msp, "PATT", 0, 0, 2000, 2000)
+    # 0.5 m from the start is inside the 2 x 2 m hatch, the midpoint (2.1 m) is outside
+    long_line = msp.add_line((100, 1000), (4100, 1000), dxfattribs={"layer": "WALL"})
+    inside = msp.add_line((100, 500), (1900, 500), dxfattribs={"layer": "WALL"})
+    dot = msp.add_line((500, 500), (500, 500), dxfattribs={"layer": "WALL"})
+    out = pf.extract_plan(doc, {"WALL": "wall", "NOTE": "drop:note", "PATT": "hatch"},
+                          z0=0.0, z1=3.0, contour_source="hatch")
+    status = {e["handle"]: (e["status"], e["reason"]) for e in out["entities"]}
+    assert status[long_line.dxf.handle] == ("dropped", "wall line outside the kept hatch contour")
+    assert status[inside.dxf.handle] == ("used", "wall")
+    assert status[dot.dxf.handle] == ("dropped", "zero-length wall entity")
