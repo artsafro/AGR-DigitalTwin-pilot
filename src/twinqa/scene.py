@@ -16,7 +16,7 @@ from fractions import Fraction
 from pathlib import Path
 
 from dt_ai.core.blender_runner import blender_executable, run_blender
-from twinqa.fbx_header import fbx_units
+from twinqa.fbx_header import fbx_application, fbx_units
 from twinqa.maf_checks import SMOOTHING_ANGLE_DEG, maf_findings
 from twinqa.flora import FLORA_SHARE, flora_findings
 from twinqa.geometry.ucx_audit import (
@@ -74,8 +74,10 @@ def readback(fbx_path: Path, blender: str | None = None, timeout: int = 600) -> 
         data = Path(fbx_path).read_bytes()
     except OSError as exc:
         rb["fbx_units"] = {"unit_scale_factor": None, "original_unit_scale_factor": None, "error": str(exc)}
+        rb["fbx_application"] = None
     else:
         rb["fbx_units"] = fbx_units(data)
+        rb["fbx_application"] = fbx_application(data)
     return rb
 
 
@@ -289,6 +291,11 @@ def _ucx_piece(mesh: dict) -> dict:
     else:
         reason = None
     return {"name": mesh["name"], "hull": welded, "reason": reason}
+
+
+def _from_max(rb: dict) -> bool:
+    """FBX written by 3ds Max (SceneInfo ApplicationName, twinqa.fbx_header.fbx_application)."""
+    return "3ds max" in str(rb.get("fbx_application") or "").lower()
 
 
 def _identity_transform(rotation_deg, scale) -> bool:
@@ -929,13 +936,20 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
                               "meshes only (lights only in the _Light FBX)", [4, 24, 33], src))
 
     # V004: transforms applied, rotation 0 (reg p.8, 29, 32-33)
-    # Identity in either import mode (bake_space_transform off/on) = applied: Max writes the axis correction on the
-    # node, a baked Blender export into the geometry (team audit T04; lab job 20261105-015151-c6e23463).
+    # Max writes the axis correction on the node: its default import is the object's own transform, and the baked
+    # import adds -90 deg X (lab job 20261105-015151-c6e23463), so a Max object really rotated +90 deg X would pass
+    # there. A Max FBX is judged on the default import only (real Max exports, owner decision 05.11.2026, #908);
+    # other exporters: identity in either import mode (a baked Blender export carries the axes in the geometry).
+    max_fbx = _from_max(rb)
     bad = [m["name"] for m in meshes
            if not _identity_transform(m["rotation_euler_deg"], m["scale"])
-           and not ("baked_rotation_euler_deg" in m
-                    and _identity_transform(m["baked_rotation_euler_deg"], m.get("baked_scale", [1, 1, 1])))]
-    out["V004"].append(_f("fail" if bad else "pass", "applied transforms", f"{src}: {bad or 'rotation 0, scale 1'}",
+           and (max_fbx or not ("baked_rotation_euler_deg" in m
+                                and _identity_transform(m["baked_rotation_euler_deg"], m.get("baked_scale", [1, 1, 1]))))]
+    detail = ", ".join(f"{m['name']} rotation {[round(a, 3) for a in m['rotation_euler_deg']]} scale "
+                       f"{[round(s, 4) for s in m['scale']]}" for m in meshes if m["name"] in bad[:5])
+    origin = f" ({rb.get('fbx_application')} FBX, default import)" if max_fbx else ""
+    out["V004"].append(_f("fail" if bad else "pass", "applied transforms",
+                          f"{src}: {detail or 'rotation 0, scale 1'}{origin}",
                           "rotation 0, scale 1 after reset", [8, 29, 33], src))
     out["V004"].append(_topology_finding(meshes, profile, src))
     angle = SMOOTHING_ANGLE_DEG if smoothing_angle_deg is None else smoothing_angle_deg

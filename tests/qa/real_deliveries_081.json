@@ -1,0 +1,234 @@
+{
+ "schema": 1,
+ "purpose": "Owner decision 05.11.2026 (#908, T04 open question 3): expected V004 'applied transforms' and V013 centre-XY verdicts on real delivery FBX; real archives are never committed, tests skip without them.",
+ "measured": "2026-11-05, tools/qa/validate_package.py --scene --json, Blender 5.1.2 readback, Artem's laptop",
+ "search_dirs": [
+  "%USERPROFILE%/Downloads",
+  "%USERPROFILE%/Downloads/Telegram Desktop"
+ ],
+ "rule": {
+  "V004 applied transforms": "3ds Max FBX: default import only (rotation 0, scale 1); other exporters: identity in the default or bake_space_transform import. Regulation reg p.8, 29, 33.",
+  "V013 pivot at geometric centre": "VPM only; bbox centre within 10 % of the X/Y size from the Main origin, measured in the Z-up readback, so Y-up FBX are not a false fail (reg p.32-33)."
+ },
+ "archives": [
+  {
+   "archive": "0619_77_05_0006003_4368.zip",
+   "found_in": "Downloads",
+   "sha256": "deda539d33b8379d361bf8a87607b44c51cf0a6424406d4ccc0f903f768b23e3",
+   "size": 14917042,
+   "profile": "npm",
+   "fbx": [
+    {
+     "name": "0619_77_05_0006003_4368_01.fbx",
+     "sha256": "85ee6b90d5a6896b299fd1ed112bec5e746889f8ff467db9168ff970828c8746",
+     "application": "Blender (stable FBX IO)",
+     "verdicts": {
+      "applied transforms": "pass"
+     },
+     "observed": {
+      "applied transforms": "0619_77_05_0006003_4368_01.fbx: rotation 0, scale 1"
+     }
+    },
+    {
+     "name": "0619_77_05_0006003_4368_Ground.fbx",
+     "sha256": "9a37c038edf56e8269f87f58588d02a63472d6427bf8b870ae16f5bcc03b8ce3",
+     "application": "Blender (stable FBX IO)",
+     "verdicts": {
+      "applied transforms": "pass"
+     },
+     "observed": {
+      "applied transforms": "0619_77_05_0006003_4368_Ground.fbx: rotation 0, scale 1"
+     }
+    }
+   ],
+   "geojson": {},
+   "validator_passed": false
+  },
+  {
+   "archive": "1113_77_17_0120114_5803_10_3.zip",
+   "found_in": "Downloads",
+   "sha256": "063fbc4c814bf0f83e97a88a694fc0812873486608c77f7ad14a55a2b2d0442d",
+   "size": 6924831,
+   "profile": "npm",
+   "fbx": [
+    {
+     "name": "1113_77_17_0120114_5803_10_3_01.fbx",
+     "sha256": "4ffe1210b5dda1b91dcce3230236caf519ad922a10e02b5136b580df9cc70a5f",
+     "application": "3ds Max",
+     "verdicts": {
+      "applied transforms": "fail"
+     },
+     "observed": {
+      "applied transforms": "1113_77_17_0120114_5803_10_3_01.fbx: SM_77_17_0120114_5803_10_3_002_Main rotation [-0.0, -0.0, -27.989] scale [1.0, 1.0, 1.0], SM_77_17_0120114_5803_10_3_003_Main rotation [-0.0, -0.0, -27.989] scale [1.0, 1.0, 1.0] (3ds Max FBX, default import)"
+     }
+    }
+   ],
+   "geojson": {},
+   "validator_passed": false
+  },
+  {
+   "archive": "0607_77_05_0009005_117.zip",
+   "found_in": "Downloads/Telegram Desktop",
+   "sha256": "d8618eac7aa0528a2fbecc2c3f8991b8010ec0885e94af8836c2fcc0edf5fa52",
+   "size": 16036830,
+   "profile": "npm",
+   "fbx": [
+    {
+     "name": "0607_77_05_0009005_117_01.fbx",
+     "sha256": "11cf9b27ae4dc56c7c29ca7ed82db4c40ddac93578dc274bd33cd5d7b0352cb3",
+     "application": "Blender (stable FBX IO)",
+     "verdicts": {
+      "applied transforms": "pass"
+     },
+     "observed": {
+      "applied transforms": "0607_77_05_0009005_117_01.fbx: rotation 0, scale 1"
+     }
+    },
+    {
+     "name": "0607_77_05_0009005_117_02.fbx",
+     "sha256": "aa61421b6b607129cd1759fa3a8b7e0578efcaa45d88dfcabd7ef62a97a47a56",
+     "application": "Blender (stable FBX IO)",
+     "verdicts": {
+      "applied transforms": "pass"
+     },
+     "observed": {
+      "applied transforms": "0607_77_05_0009005_117_02.fbx: rotation 0, scale 1"
+     }
+    },
+    {
+     "name": "0607_77_05_0009005_117_Ground.fbx",
+     "sha256": "cdb41032b07a0ef9dd4f77c1d69b63db5e48d7ffdf8dccfd98653c5e058cf7b0",
+     "application": "Blender (stable FBX IO)",
+     "verdicts": {
+      "applied transforms": "pass"
+     },
+     "observed": {
+      "applied transforms": "0607_77_05_0009005_117_Ground.fbx: rotation 0, scale 1"
+     }
+    }
+   ],
+   "geojson": {},
+   "validator_passed": false
+  },
+  {
+   "archive": "SM_77_05_0006003_4368_001.zip",
+   "found_in": "Downloads",
+   "sha256": "d087261568e8d846d9f1f34bcdecc1af945954c76684117eded89493f91ac475",
+   "size": 25799583,
+   "profile": "vpm",
+   "fbx": [
+    {
+     "name": "SM_77_05_0006003_4368_001.fbx",
+     "sha256": "6f7d8f6624f9b1950027d441ff736634aa5820b00c2fa78e15240528573ee0d5",
+     "application": "Blender (stable FBX IO)",
+     "verdicts": {
+      "applied transforms": "pass",
+      "origin at FBX zero": "pass",
+      "pivot at geometric centre": "pass",
+      "shared pivot": "pass"
+     },
+     "observed": {
+      "applied transforms": "SM_77_05_0006003_4368_001.fbx: rotation 0, scale 1",
+      "pivot at geometric centre": "SM_77_05_0006003_4368_001.fbx: X/Y offset [0.0, 0.0] %"
+     }
+    },
+    {
+     "name": "SM_77_05_0006003_4368_001_Light.fbx",
+     "sha256": "2b694cf2d7067ea2fa86b3ba0d93a0273256e70a5cac82fbf902ecb4388bf72e",
+     "application": "Blender (stable FBX IO)",
+     "verdicts": {
+      "applied transforms": "pass"
+     },
+     "observed": {
+      "applied transforms": "SM_77_05_0006003_4368_001_Light.fbx: rotation 0, scale 1"
+     }
+    }
+   ],
+   "geojson": {
+    "schema": "pass",
+    "fno_findings": []
+   },
+   "validator_passed": false
+  },
+  {
+   "archive": "SM_77_05_0006003_4368_002.zip",
+   "found_in": "Downloads",
+   "sha256": "b44c6b50ec6f344e38093e12b926464283652d37e66fc155fc578adb069b892f",
+   "size": 21579114,
+   "profile": "vpm",
+   "fbx": [
+    {
+     "name": "SM_77_05_0006003_4368_002.fbx",
+     "sha256": "d57e9f9483e7e11e48b44a8b012945fe4aeed0875ff6c2345e1bced176cfbee8",
+     "application": "3ds Max",
+     "verdicts": {
+      "applied transforms": "pass",
+      "origin at FBX zero": "pass",
+      "pivot at geometric centre": "pass",
+      "shared pivot": "pass"
+     },
+     "observed": {
+      "applied transforms": "SM_77_05_0006003_4368_002.fbx: rotation 0, scale 1 (3ds Max FBX, default import)",
+      "pivot at geometric centre": "SM_77_05_0006003_4368_002.fbx: X/Y offset [0.0, 0.0] %"
+     }
+    }
+   ],
+   "geojson": {
+    "schema": "pass",
+    "fno_findings": []
+   },
+   "validator_passed": false
+  }
+ ],
+ "max_synthetic_references": {
+  "job": "20261105-104812-f5ac560d (lab runner, Max 2024 slot max2024-1, tests/max_tools/run_agr_tools_owner_native.py)",
+  "export": "FBX exporter: binary FBX201400, UpAxis Y, selected box 2x2x2 m, SM_X_001_Main",
+  "readback": "twinqa.scene.readback, Blender 5.1.2",
+  "files": {
+   "0101_X_identity.fbx": {
+    "application": "3ds Max",
+    "default_rot": [
+     -0.0,
+     0.0,
+     0.0
+    ],
+    "baked_rot": null,
+    "rule_080": "pass",
+    "rule_081": "pass",
+    "sha256": "54e42be679e137d4b1066ae990ab732d70bb9195adec9e6207469254a2fda4fa"
+   },
+   "0101_X_rot_x_plus90.fbx": {
+    "application": "3ds Max",
+    "default_rot": [
+     90.0,
+     -0.0,
+     0.0
+    ],
+    "baked_rot": [
+     0.0,
+     -0.0,
+     0.0
+    ],
+    "rule_080": "pass",
+    "rule_081": "fail",
+    "sha256": "ef6adf7bbde8da4f09d16088a147561fd2e80bdf9c1700942ff3721fe0ec45b5"
+   },
+   "0101_X_rot_z_minus28.fbx": {
+    "application": "3ds Max",
+    "default_rot": [
+     -0.0,
+     -0.0,
+     -28.0
+    ],
+    "baked_rot": [
+     -90.0,
+     -0.0,
+     -28.0
+    ],
+    "rule_080": "fail",
+    "rule_081": "fail",
+    "sha256": "ed44c0019e5cdebe401826c70fa7ecde2a4c76555ca2c47454ac069c0b9a9842"
+   }
+  }
+ }
+}

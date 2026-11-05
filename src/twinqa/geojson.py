@@ -13,6 +13,7 @@ from io import BytesIO
 
 from PIL import Image
 
+from twinqa import fno
 from twinqa.io import read_json
 from twinqa.report import Finding
 
@@ -24,6 +25,16 @@ OKS_MAY_BE_EMPTY = {"other", "act_AGR"}  # conflict #2, decided 2026-10-07 [D011
 def _f(status, name, observed, expected, pages=PAGES, conflicts=(), data=None):
     return Finding(name, status, observed, expected, list(pages), "GeoJSON", list(conflicts),
                    data={} if data is None else data)
+
+
+def _fno_registry(code, name) -> list[Finding]:
+    """OKS FNO_code / FNO_name against the FNO classifier (twinqa.fno; owner decision 05.11.2026, #908).
+    A match adds no finding (the `schema` pass covers it); an unreadable registry is not_run, never a pass."""
+    try:
+        problems = fno.check(code, name)
+    except (OSError, ValueError) as exc:
+        return [_f("not_run", "FNO registry", str(exc)[:120], "standards/data/fno_codes_utf8.csv", [53])]
+    return [_f("fail", n, observed, expected, [53]) for n, observed, expected in problems]
 
 
 def _number(value) -> bool:
@@ -145,6 +156,8 @@ def geojson_findings(data: bytes, profile: dict, ground: bool, glass_names: set[
             digits = value.replace(" ", "")
             if not (digits.isdigit() and len(digits) in (3, 6, 9)):
                 out.append(_f("fail", "FNO_code format", repr(value), "XXX, XXX XXX or XXX XXX XXX (FNO classifier)", [53]))
+            else:
+                out.extend(_fno_registry(value, props.get("FNO_name")))
     if "imageBase64" in props:
         out.append(_image(props["imageBase64"], source_name))
 

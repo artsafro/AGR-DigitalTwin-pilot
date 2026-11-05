@@ -50,7 +50,7 @@ GOOD_GLASS = ('{"M_Address_MainGlass_1":{"color_RGB":{"Red":1,"Green":2,"Blue":3
 
 def _geojson(glasses_json: str, developer_json: str = '"value"') -> bytes:
     props = {k: "synthetic" for k in KEYS}
-    props.update(FNO_code="123456", other="", act_AGR="", imageBase64=IMAGE)
+    props.update(FNO_code="010004", FNO_name="Общежитие", other="", act_AGR="", imageBase64=IMAGE)
     body = json.dumps(props, ensure_ascii=True)
     body = body.replace('"developer": "synthetic"', '"developer": ' + developer_json)
     text = ('{"type":"FeatureCollection","features":[{"type":"ObjectFeature",'

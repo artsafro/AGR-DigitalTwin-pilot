@@ -277,6 +277,15 @@
    ]
   },
   {
+   "name": "SM_Polygon_Layer_Main",
+   "scene": "polygon_all",
+   "expect": "fail",
+   "codes": [
+    "fbx_objects",
+    "hyg_layer"
+   ]
+  },
+  {
    "name": "SM_Polygon_NudgeOk_Main",
    "scene": "polygon_all",
    "expect": "fail",
