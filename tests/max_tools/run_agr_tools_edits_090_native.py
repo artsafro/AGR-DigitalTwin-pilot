@@ -1,14 +1,15 @@
-"""new-case: #979 native smoke of the AGR Tools 0.9 BASE (branch 0) in locked batch Max on DISPOSABLE synthetic scenes.
+"""new-case: #979 native smoke of the AGR Tools 0.9.0 RELEASE (branch R) in locked batch Max on DISPOSABLE scenes.
 
 Run via the lab DCC runner; AGR_TEST_OUTPUT must name a NEW directory, AGR_TEST_PACKAGE the built MZP.
 Installs the MZP into OUT (no user folders touched), then checks in the real Max Python:
-the package still says 0.8.x (VERSION moves only in the release branch R), data/ is installed, runtime.EDITS_090
-has the 19 plan rows and every stub answers `not_implemented` (#979), the dispatcher refusals, all 19 new
-macroScripts are registered and run through runtime.ui (report written, nothing changed in the scene), the panel
-model greys the 0.9 rows, the 19 icons are installed, `select_offenders` selects light offenders by anim handle,
-the cleanup `options` pass (defaults off, unknown key refused, preview/apply carry them), and finally the polygon
-builder builds the committed catalog with the bases 0.8 / 0.9: 32 new station captions, 2 base rectangles and
-2 top cameras. Nothing is saved; the scenes are never written.
+runtime and panel model say 0.9.0, data/ is installed, runtime.EDITS_090 has the 19 plan rows and none answers
+`not_implemented` (with nothing selected a preview reports or refuses), the dispatcher refusals, all 19 macroScripts
+are registered and run through runtime.ui, then two panel presses (preview, then apply of that preview for an
+editing row) go through the same runtime object; refusal texts are recorded, a stub answer fails. The panel model
+shows the 0.9 rows (not greyed), the 19 icons are installed, `select_offenders` selects light offenders by anim
+handle, the cleanup `options` pass, and the polygon builder builds the committed catalog (bases 0.1-0.9 from the
+station fragments). Nothing is saved; the scenes are never written.
+(Base-branch version of this smoke: job 20261105-125103-6dc1d28d.)
 """
 import hashlib
 import json
@@ -58,7 +59,7 @@ ACTS = [a for a in model.ACTIONS if a.tool in agr.EDITS_090]
 
 
 def package():
-    assert agr.VERSION.startswith('0.8.') and model.VERSION == agr.VERSION, agr.VERSION
+    assert agr.VERSION == '0.9.0' and model.VERSION == agr.VERSION, agr.VERSION
     data = OUT / 'installed' / 'data'
     got = sorted(p.relative_to(data).as_posix() for p in data.rglob('*') if p.is_file())
     assert {'procedural_classes.json', 'streets/PROVENANCE.md'} <= set(got), got
@@ -72,9 +73,13 @@ def registry():
     rt.clearSelection()
     out = {}
     for tool in agr.EDITS_090:
-        r = agr.edits_090(tool, 'preview')
+        try:
+            r = agr.edits_090(tool, 'preview')
+        except (ValueError, RuntimeError) as exc:  # nothing selected / no input file: a named refusal
+            out[tool] = 'refused: ' + str(exc)[:120]
+            continue
         assert agr.parse_report(json.dumps(r)) == r
-        assert r['status'] == 'not_implemented' and r['plan']['issue'] == '#979', (tool, r['status'])
+        assert r['status'] != 'not_implemented', (tool, r['status'])
         out[tool] = r['status']
     return out
 
@@ -102,26 +107,40 @@ def _macro_module():
 
 
 def macros():
-    """Every new macroScript is registered and routes to runtime.ui -> edit_ui -> edits_090: the stub answer is
-    written to the report memory, nothing in the scene changes (same nodes, same selection)."""
+    """Every macroScript is registered and routes to runtime.ui (one press on a synthetic box); then two panel presses
+    (preview, then apply of that preview for an editing row) through the SAME runtime object the macros use, so a
+    refusal keeps its text. Options-less presses may refuse (no schedule, no legend, no ground): recorded; a stub
+    answer fails. A read row never changes the scene."""
     mod = _macro_module()
     box = rt.Box(name='SM_Smoke_979_Main_001', length=2, width=2, height=2)
     out = {}
     for a in ACTS:
+        res = []
         rt.select(box)
-        before = sorted(str(n.name) for n in rt.objects)
         path = Path(agr.reports_dir()) / (a.tool + '.json')
         mtime = path.stat().st_mtime_ns if path.is_file() else None
         ran = bool(rt.macros.run('AGR Tools', a.macro))
-        written = path.is_file() and path.stat().st_mtime_ns != mtime
-        rep = mod.ui(a.tool)  # the same press through the runtime object the macros use
-        assert ran and written, (a.macro, ran, written)
-        assert rep['tool'] == a.tool and rep['status'] == 'not_implemented', (a.macro, rep['status'])
-        assert sorted(str(n.name) for n in rt.objects) == before and [str(n.name) for n in rt.selection] == [
-            'SM_Smoke_979_Main_001'], a.macro
-        assert a.tool not in mod._edits
-        out[a.macro] = 'ran, report written, not_implemented'
-    rt.delete(box)
+        res.append('macro ran={} report={}'.format(ran, path.is_file() and path.stat().st_mtime_ns != mtime))
+        assert ran, a.macro
+        mod._edits.pop(a.tool, None)  # the presses below start from a fresh preview
+        for press in (1, 2):
+            if not rt.isValidNode(box):
+                box = rt.Box(name='SM_Smoke_979_Main_001', length=2, width=2, height=2)
+            rt.select(box)
+            before = sorted(str(n.name) for n in rt.objects)
+            try:
+                rep = mod.ui(a.tool)
+            except Exception as exc:  # noqa: BLE001 - the refusal text is the evidence
+                res.append('press{} refused: {}'.format(press, (str(exc).splitlines() or [type(exc).__name__])[0][:160]))
+                continue
+            assert rep['tool'] == a.tool and rep['status'] != 'not_implemented', (a.macro, rep['status'])
+            if a.tool in agr.READ_090:
+                assert sorted(str(n.name) for n in rt.objects) == before, a.macro  # read rows change nothing
+            plan = rep.get('plan') if isinstance(rep.get('plan'), dict) else {}
+            res.append('press{} {}:{}'.format(press, plan.get('mode', '?'), rep['status']))
+        out[a.macro] = res
+    if rt.isValidNode(box):
+        rt.delete(box)
     return out
 
 
@@ -131,11 +150,11 @@ def panel_model():
     rail = model.rail(suite['blocks'], suite['rows'])
     done = {model.row_of(a.id) for _, d, _ in rail for a in d}
     planned = {r['id'] for _, _, p in rail for r in p}
-    assert set(agr.EDITS_090) <= planned and not done & set(agr.EDITS_090)  # greyed «в версии 0.9»
+    assert set(agr.EDITS_090) <= done and not planned & set(agr.EDITS_090)  # released: shown, not greyed
     assert set(agr.EDITS_080) <= done
-    rows = model.rows(agr.edits_090('qa.normals', 'preview'))
-    assert [(r.ok, r.code, r.detail) for r in rows] == [(False, 'not_implemented', 'в работе (#979): модуль ещё пуст')]
-    return {'greyed_09': len(set(agr.EDITS_090) & planned), 'sections': list(model.SECTIONS[6:])}
+    assert all(roadmap.vkey(r['version']) > roadmap.vkey('0.9') for _, _, p in rail for r in p)  # 1.0 and 1.x only
+    return {'shown_09': len(set(agr.EDITS_090) & done), 'done_rows': len(done), 'planned_rows': len(planned),
+            'sections': list(model.SECTIONS[6:])}
 
 
 def icons():
@@ -202,7 +221,7 @@ def cleanup_options():
 
 
 def polygon():
-    """The builder builds the committed catalog (bases 0.1-0.9; branch 0 has no fragment yet): 32 new stations."""
+    """The builder builds the committed catalog of R (bases 0.1-0.9 with the station fragments): 32 new stations."""
     sys.path.insert(0, str(ROOT / 'test-polygon' / 'build'))
     sys.path.insert(0, str(ROOT / 'test-polygon'))
     import polygon_core as core
@@ -219,7 +238,7 @@ def polygon():
     for x in ('_base_0_8', '_base_0_9', '_cam_База 0.8', '_cam_База 0.9'):
         assert rt.getNodeByName(x) is not None, x
     text = str(rt.getNodeByName('_label_0_9_9').text)
-    assert 'Станция 0.9.9' in text and 'причина в README' in text, text
+    assert 'Станция 0.9.9' in text and 'в работе' not in text, text
     layer = rt.LayerManager.getLayerFromName('_labels')
     return {'stations_new': len(new), 'nodes_built': len(made), 'catalog_polygon_all': len(want),
             'label_0_9_9': text.replace('\r\n', ' | ')[:160], 'labels_layer': layer is not None}

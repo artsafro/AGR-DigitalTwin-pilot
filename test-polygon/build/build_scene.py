@@ -141,7 +141,10 @@ def _props(node, obj):
     mat = obj.get('mat_name')
     if obj.get('uv_periods') and mat:
         lines.append('AGR_UV_PERIODS={}={}'.format(mat, obj['uv_periods']))
-    if obj.get('atlas'):
+    if obj.get('atlas') == 'ground':  # 0.9.0 npm profile station: Ground mode, largest atlas 2048 (shrinks)
+        lines.append('AGR_ATLAS_MODE=ground')
+        lines.append('AGR_ATLAS_SIZE=2048')
+    elif obj.get('atlas'):
         lines.append('AGR_ATLAS_MODE=oks')
         lines.append('AGR_ATLAS_SIZE=1024')
     if obj.get('texel_px') and mat:

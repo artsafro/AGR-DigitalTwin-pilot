@@ -360,14 +360,14 @@ def test_icons_are_new_and_distinct():
     assert len(icons.names()) == 68
 
 
-def test_rail_greys_the_09_actions_until_version_090():
-    rail = m.rail(suite['blocks'], suite['rows'])  # VERSION stays 0.8.x in the base
-    assert m.VERSION.startswith('0.8.') and runtime().VERSION.startswith('0.8.')
-    done = {m.row_of(a.id) for _, d, _ in rail for a in d}
+def test_rail_shows_09_actions_from_version_090_and_greys_them_before():
+    rail08 = m.rail(suite['blocks'], suite['rows'], '0.8.1')  # what the branches A-E3 shipped on
+    done = {m.row_of(a.id) for _, d, _ in rail08 for a in d}
     assert not done & set(ROWS_090)
-    rail9 = m.rail(suite['blocks'], suite['rows'], '0.9.0')
-    assert set(ROWS_090) <= {m.row_of(a.id) for _, d, _ in rail9 for a in d}
-    assert not any(rm.shipped(r['version'], m.VERSION) for r in ROWS_090.values())
+    assert m.VERSION == runtime().VERSION == '0.9.0'  # release branch R (#979)
+    rail = m.rail(suite['blocks'], suite['rows'])
+    assert set(ROWS_090) <= {m.row_of(a.id) for _, d, _ in rail for a in d}
+    assert all(rm.shipped(r['version'], m.VERSION) for r in ROWS_090.values())
 
 
 def test_section_accents_stay_distinct_and_away_from_status_hues():
@@ -446,13 +446,22 @@ def test_mcp_has_19_preview_only_tools():
 
 
 # ---- changelog ---------------------------------------------------------------------------------------------
-def test_changelog_has_the_09_section_with_a_stub_line_per_branch():
+def test_changelog_has_one_released_09_section_naming_all_19_rows():
+    """Release branch R (#979): the branch subsections (0, A-D, E1-E3) are merged into one `0.9.0 (#979)` section."""
     text = (PKG / 'CHANGELOG.md').read_text(encoding='utf-8')
-    head = text[text.index('## 0.9.0 (#979) — в работе\n'):text.index('## 0.8.1')]
-    subs = re.findall(r'^### (\S+)', head, re.M)
-    assert subs == ['Основа', 'A', 'B', 'C', 'D', 'E1', 'E2', 'E3']
-    for part in re.split(r'^### ', head, flags=re.M)[2:]:
-        assert re.search(r'^- \S', part, re.M), part[:40]  # a non-empty line: branch hunks are never adjacent
+    assert 'в работе' not in text[:text.index('## 0.8.1')] and text.count('## 0.9.0') == 1
+    head = text[text.index('## 0.9.0 (#979)\n'):text.index('## 0.8.1')]
+    assert not re.search(r'^### (?:[ABCD]|E[123]) ', head, re.M) and '(ветка 0)' not in head
+    subs = re.split(r'^### ', head, flags=re.M)[1:]
+    assert [s.splitlines()[0] for s in subs] == [
+        'Контракт и регистрация', 'Замены и МАФ', 'Текстуры, UDIM, атласы', 'Проверки', 'Экспорт, карты, свет',
+        'Доработки 0.8: текстуры и имена', 'Доработки 0.8: геометрия и UDIM', 'Доработки 0.1–0.8: пакет и предсдача',
+        'Релиз']
+    for s in subs:
+        assert re.search(r'^- \S', s, re.M), s[:40]
+    for rid in ROWS_090:
+        assert '`{}`'.format(rid) in head, rid
+    assert 'пока пишет PNG через Max' not in head  # atlas.npm moved to the npm profile in R
 
 
 # ---- polygon: bases 0.8 / 0.9 and the station fragments ---------------------------------------------------
@@ -625,6 +634,23 @@ def test_roadmap_load_more_gaps():
     rm.load(SUITE.read_text(encoding='utf-8'), requirements=reqs)
     with pytest.raises(ValueError, match='unknown requirement'):
         rm.load(SUITE.read_text(encoding='utf-8'), requirements=reqs - {'VPM-2.15-2'})
+
+
+def test_roadmap_checks_the_short_geoagr_citation_form_and_pins_every_cited_button():
+    """Release R (#979): `btn_x :123` after a GeoAGR.ms citation was not checked at all (RED on 0.8.x: a wrong line
+    or an unpinned button passed). Every button the plan cites, in either form, is pinned."""
+    cited = {n for r in suite['rows'] for n, _ in rm.GEOAGR_CITE_RE.findall(r['source'])}
+    assert cited == set(rm.GEOAGR_BUTTONS)
+    for rid, old, new, word in (('scene.units', 'btn_set_alpha :12554', 'btn_set_alpha :12555', '12555'),
+                                ('qa.address', 'btn_Streets_List :42460', 'btn_Streets_Lst :42460', 'btn_Streets_Lst'),
+                                ('qa.normals', 'btn_View_Normals GeoAGR.ms:47595', 'btn_View_Normals GeoAGR.ms:47594',
+                                 '47594')):
+        d = copy.deepcopy(suite)
+        r = next(x for x in d['rows'] if x['id'] == rid)
+        assert old in r['source'], rid
+        r['source'] = r['source'].replace(old, new)
+        with pytest.raises(ValueError, match=word):
+            rm.load(json.dumps(d, ensure_ascii=False))
 
 
 @pytest.mark.skipif(not GEOAGR_MS.is_file(), reason='GeoAGR-private GeoAGR.ms is not on this machine')

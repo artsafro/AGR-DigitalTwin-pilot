@@ -320,91 +320,91 @@
      "button": "scene.missing_maps",
      "label_ru": "Пропавшие карты",
      "expected": "expected/scene.missing_maps.json",
-     "reason": "станция в работе, #979, ветка E1"
+     "reason": "missing map with mask candidates T_E1Mm_001_Main_d_1.png and .jpg (rank 2, ambiguous) found without a search folder (T06 TexFinder)"
     },
     {
      "id": "0.8.2",
      "button": "model.triangulate",
      "label_ru": "Триангуляция (Делоне)",
      "expected": "expected/model.triangulate.json",
-     "reason": "станция в работе, #979, ветка E2"
+     "reason": "Объекта FAIL нет: preview model.triangulate (0.8, без доработки в 0.9) не даёт находок по объекту — n-гоны это работа кнопки, а вырожденный контур уходит в ambiguous без кода объекта. PASS — восьмигранная призма SM_E2_Ngon_Main (8-угольные крышки получают по 5 диагоналей на копии)."
     },
     {
      "id": "0.8.3",
      "button": "tex.format_fix",
      "label_ru": "Формат PNG: альфа, 24 бит, ≤3 МБ",
      "expected": "expected/tex.format_fix.json",
-     "reason": "станция в работе, #979, ветка E1"
+     "reason": "16-bit RGB -> 8-bit lossless (pass); 128^2 noise under 20 kB only as a dithered palette with RMSE 0.056 > max_rmse 0.03 -> tex_quality, not «готово» (T01)"
     },
     {
      "id": "0.8.4",
      "button": "tex.placeholders",
      "label_ru": "Заглушки 256 / 128",
      "expected": "expected/tex.placeholders.json",
-     "reason": "станция в работе, #979, ветка E1"
+     "reason": "one placeholder set per selected address in Maps/ beside the saved scene; an existing file is refused, never overwritten (GeoAGR overwrote silently)"
     },
     {
      "id": "0.8.5",
      "button": "ucx.triangulate",
      "label_ru": "UCX: триангуляция",
      "expected": "expected/ucx.triangulate.json",
-     "reason": "станция в работе, #979, ветка E2"
+     "reason": ""
     },
     {
      "id": "0.8.6",
      "button": "ucx.rename",
      "label_ru": "UCX: имена",
      "expected": "expected/ucx.rename.json",
-     "reason": "станция в работе, #979, ветка E1"
+     "reason": "preview: a piece whose name is not its planned mask name carries ucx_name (will be UCX_SM_E1Ucx_Main_002)"
     },
     {
      "id": "0.8.7",
      "button": "udim.ids_to_udims",
      "label_ru": "ID → UDIM на копии",
      "expected": "expected/udim.ids_to_udims.json",
-     "reason": "станция в работе, #979, ветка E2"
+     "reason": ""
     },
     {
      "id": "0.8.8",
      "button": "qa.names_fix",
      "label_ru": "Исправить имена",
      "expected": "expected/qa.names_fix.json",
-     "reason": "станция в работе, #979, ветка E1"
+     "reason": "the mask file name is held by a file with other content: not overwritten and not linked (T06 renamer V13 / Asset Material Renamer)"
     },
     {
      "id": "0.8.9",
      "button": "qa.package",
      "label_ru": "Проверка пакета ZIP",
      "expected": "expected/qa.package.json",
-     "reason": "станция в работе, #979, ветка E3"
+     "reason": ""
     },
     {
      "id": "0.8.10",
      "button": "export.geojson_write",
      "label_ru": "Паспорт GeoJSON",
      "expected": "expected/export.geojson_write.json",
-     "reason": "станция в работе, #979, ветка E3"
+     "reason": ""
     },
     {
      "id": "0.8.11",
      "button": "export.ground_fbx",
      "label_ru": "FBX благоустройства",
      "expected": "expected/export.ground_fbx.json",
-     "reason": "станция в работе, #979, ветка E3"
+     "reason": ""
     },
     {
      "id": "0.8.12",
      "button": "export.pivot_place",
      "label_ru": "Пивот и положение",
      "expected": "expected/export.pivot_place.json",
-     "reason": "станция в работе, #979, ветка E2"
+     "reason": ""
     },
     {
      "id": "0.8.13",
      "button": "export.zip",
      "label_ru": "Архив пакета",
      "expected": "expected/export.zip.json",
-     "reason": "станция в работе, #979, ветка E3"
+     "reason": ""
     }
    ]
   },
@@ -443,133 +443,133 @@
      "button": "tex.erm_normal_check",
      "label_ru": "ERM и нормали DirectX",
      "expected": "expected/tex.erm_normal_check.json",
-     "reason": "станция в работе, #979, ветка B"
+     "reason": "Плоская нормаль (128,128,255) и ERM без свечения — PASS; купол в OpenGL (G вверх) — FAIL normal_opengl. Файлы пишет B_build.py в папку прогона."
     },
     {
      "id": "0.9.2",
      "button": "tex.finish_map",
      "label_ru": "Покраска по легенде",
      "expected": "expected/tex.finish_map.json",
-     "reason": "станция в работе, #979, ветка B"
+     "reason": "Легенда на 5 отделок, 4 ID (B_build.py пишет её рядом с текстурами прогона). ID 7 без строки легенды — FAIL finish_id_unmapped."
     },
     {
      "id": "0.9.3",
      "button": "udim.matid_unwrap",
      "label_ru": "MatID → UDIM (МАФ)",
      "expected": "expected/udim.matid_unwrap.json",
-     "reason": "станция в работе, #979, ветка B"
+     "reason": "МАФ из L06 (MatID 1, 2, 7, 12, 40) — PASS; одна грань с ID 101 — FAIL id_out_of_range (тайла UDIM нет)."
     },
     {
      "id": "0.9.4",
      "button": "udim.slots",
      "label_ru": "UDIM: тайлы и слоты",
      "expected": "expected/udim.slots.json",
-     "reason": "станция в работе, #979, ветка B"
+     "reason": "Тайлы 1001–1002 в слотах 1–2 — PASS; 1001, 1002, 1004 — FAIL udim_gap (нет 1003)."
     },
     {
      "id": "0.9.5",
      "button": "atlas.flora",
      "label_ru": "Атлас Flora",
      "expected": "expected/atlas.flora.json",
-     "reason": "станция в работе, #979, ветка B"
+     "reason": "Лист RGBA с инстансом и трава — PASS; карточка с TGA — FAIL texture_unsupported (атлас не строится, пока источник не PNG)."
     },
     {
      "id": "0.9.6",
      "button": "atlas.groundel",
      "label_ru": "Атлас GroundEl ≤512",
      "expected": "expected/atlas.groundel.json",
-     "reason": "станция в работе, #979, ветка B"
+     "reason": "Карта 256² — PASS; карта 1024² — FAIL groundel_size (правило 512 из L06); атлас на копии собирает обе в один набор ≤ 512."
     },
     {
      "id": "0.9.7",
      "button": "place.flora_repair",
      "label_ru": "Flora: ремонт и проверка",
      "expected": "expected/place.flora_repair.json",
-     "reason": "станция в работе, #979, ветка A"
+     "reason": ""
     },
     {
      "id": "0.9.8",
      "button": "place.maf_checks",
      "label_ru": "Проверки МАФ",
      "expected": "expected/place.maf_checks.json",
-     "reason": "станция в работе, #979, ветка A"
+     "reason": ""
     },
     {
      "id": "0.9.9",
      "button": "place.replace",
      "label_ru": "Замена объектов",
      "expected": "expected/place.replace.json",
-     "reason": "станция в работе, #979, ветка A"
+     "reason": ""
     },
     {
      "id": "0.9.10",
      "button": "place.schedule",
      "label_ru": "Расстановка по ведомости",
      "expected": "expected/place.schedule.json",
-     "reason": "станция в работе, #979, ветка A"
+     "reason": ""
     },
     {
      "id": "0.9.11",
      "button": "place.drop_to_ground",
      "label_ru": "Посадить на рельеф",
      "expected": "expected/place.drop_to_ground.json",
-     "reason": "станция в работе, #979, ветка A"
+     "reason": ""
     },
     {
      "id": "0.9.12",
      "button": "qa.address",
      "label_ru": "Адрес и улицы",
      "expected": "expected/qa.address.json",
-     "reason": "станция в работе, #979, ветка C"
+     "reason": ""
     },
     {
      "id": "0.9.13",
      "button": "qa.facade_compare",
      "label_ru": "Сравнение с листом фасада",
      "expected": "expected/qa.facade_compare.json",
-     "reason": "станция в работе, #979, ветка C"
+     "reason": ""
     },
     {
      "id": "0.9.14",
      "button": "qa.normals",
      "label_ru": "Нормали и двойные грани",
      "expected": "expected/qa.normals.json",
-     "reason": "станция в работе, #979, ветка C"
+     "reason": ""
     },
     {
      "id": "0.9.15",
      "button": "qa.sintez",
      "label_ru": "Сверка с SINTEZ",
      "expected": "expected/qa.sintez.json",
-     "reason": "станция в работе, #979, ветка C"
+     "reason": ""
     },
     {
      "id": "0.9.16",
      "button": "export.batch",
      "label_ru": "Пакетный экспорт",
      "expected": "expected/export.batch.json",
-     "reason": "станция в работе, #979, ветка D"
+     "reason": ""
     },
     {
      "id": "0.9.17",
      "button": "scene.maps_usage",
      "label_ru": "Карты: использованные / лишние",
      "expected": "expected/scene.maps_usage.json",
-     "reason": "станция в работе, #979, ветка D"
+     "reason": ""
     },
     {
      "id": "0.9.18",
      "button": "light.check",
      "label_ru": "Проверка света",
      "expected": "expected/light.check.json",
-     "reason": "станция в работе, #979, ветка D"
+     "reason": ""
     },
     {
      "id": "0.9.19",
      "button": "qa.procedural_objects",
      "label_ru": "Процедурные объекты",
      "expected": "expected/qa.procedural_objects.json",
-     "reason": "станция в работе, #979, ветка C"
+     "reason": ""
     }
    ]
   }

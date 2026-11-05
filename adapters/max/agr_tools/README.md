@@ -1,4 +1,4 @@
-# AGR Tools 0.8.0 — 3ds Max 2024 / 2026
+# AGR Tools 0.9.0 — 3ds Max 2024 / 2026
 
 Own implementations. The 0.5.0 diagnostics adapt GeoAGR 13.64 functions with the permission of
 their author (Artem). Only the logic in use is adapted (`checks_core.py`), not GeoAGR.ms; no team
@@ -7,8 +7,8 @@ This is a diagnostic/export-copy tool, not a delivery validator or production jo
 
 ## Build and install
 
-`python tools/max/build_agr_tools.py <new-path>/AGR-Tools-0.8.0.mzp` (MZP) or
-`python tools/max/build_agr_tools.py --bundle <new-path>/AGR-Tools-0.8.0.bundle.zip` (plugin package:
+`python tools/max/build_agr_tools.py <new-path>/AGR-Tools-0.9.0.mzp` (MZP) or
+`python tools/max/build_agr_tools.py --bundle <new-path>/AGR-Tools-0.9.0.bundle.zip` (plugin package:
 unzip into `%APPDATA%\Autodesk\ApplicationPlugins`; uninstall = delete `AGR-Tools.bundle` and the
 `[AGRTools]` section of `3dsMax.ini`). PNG icons are rendered from the SVG sources with PySide6
 (`uv run --with PySide6 ...`), or taken from `AGR_ICON_PNG_DIR`.
@@ -144,6 +144,27 @@ never a clean result. Objects are identified by unique Max handles as well as na
   VPM 512–1706 px/m and NPM 10–40 px/m. A zero area or a zero map size is
   `at_threshold` and is an error.
 
+## 0.9.0 placement, Flora/MAF, textures, checks, batch export and light (#979)
+
+Nineteen buttons of plan version 0.9, in the block tabs under «Проверить и выделить» (read / select) and
+«Исправить — копии / undo / новые файлы», each a `runtime.ui('<tool>')` macro, a menu entry and an MCP tool
+`agr_<block>_<name>` (MCP: `mode: preview` only):
+
+- place: `place.replace` and `place.drop_to_ground` (one Undo record), `place.schedule`, `place.flora_repair`
+  (copies), `place.maf_checks` (read);
+- textures / UDIM / atlas: `tex.erm_normal_check`, `udim.slots` (read), `tex.finish_map`, `udim.matid_unwrap`,
+  `atlas.groundel` (copies), `atlas.flora` (new files);
+- checks: `qa.address`, `qa.normals`, `qa.sintez`, `qa.facade_compare`, `qa.procedural_objects` (read);
+- export / scene / light: `export.batch` (new files), `scene.maps_usage` (read), `light.check` (selects the
+  offenders, one Undo record restores the selection).
+
+Thirteen shipped buttons were reworked after the team-script audit and lab 0.9 (L05–L08): `tex.format_fix`,
+`tex.placeholders`, `scene.missing_maps`, `qa.names_fix`, `ucx.triangulate`, `export.pivot_place`,
+`udim.ids_to_udims`, `export.zip`, `qa.package`, `export.cleanup`, `qa.zero_area`, `scene.census` and the 0.2
+atlas `atlas.npm`, which now packs on the `npm` profile: the atlas shrinks to its content at the same texel
+(Ground 35 px/m), the diffuse is a 24-bit RGB PNG and the opacity a separate 8-bit grey PNG, both new files whose
+headers are read back. Behaviour changes for 0.8 users are listed in `CHANGELOG.md` (0.9.0).
+
 ## 0.8.0 delivery edits on copies (#908)
 
 Thirteen buttons of plan version 0.8 in the section «Сдача (копии)» and in their block tabs, each a
@@ -250,4 +271,5 @@ nudge, UDIM to NPM atlas, UCX collision, texel readout and checked export.
 0.5.0 adds read-only names, triangle, texture, pivot and GeoJSON diagnostics.
 0.7.0 adds 12 read-only pre-delivery checks, the block tab rail and «Путь».
 0.8.0 adds 13 delivery edits on export copies / new files with preview → apply.
+0.9.0 adds 19 buttons (placement, Flora/MAF, textures/UDIM/atlas, checks, batch export, light) and reworks 13.
 No licensing, obfuscation, GeoAGR.ms copy or decryption is included.

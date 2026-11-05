@@ -5,7 +5,10 @@ Native xView uses 0.002 m vertices and 0.005 m faces.
 import json
 import sys
 
-VERSION = "0.8.0"
+VERSION = "0.9.0"
+# atlas.npm (0.2 button) on the npm profile of atlas_core (0.9, #979 branch B; wired by the release branch R)
+ATLAS_PROFILE = 'npm'
+ATLAS_TARGET_PX_M = 35.0
 CODES = {'xview': {'overlap_vertices', 'overlap_faces'},
          'matid': {'udim_id', 'empty_id', 'empty_slot', 'missing_material'},
          'cleanup': {'remove_custom_attributes', 'clear_user_defined_lines',
@@ -130,9 +133,17 @@ def _validate_plan(tool, plan):
             if island['reason'] not in ('repeating', 'non-repeating'):
                 raise ValueError('unmapped island reason: ' + str(island['reason']))
     elif tool == 'atlas':
-        if set(plan) != {'tiles', 'cells', 'dropped'}:
+        if set(plan) != {'tiles', 'cells', 'dropped', 'atlas'}:
             raise ValueError('incomplete plan')
         if not isinstance(plan['tiles'], list) or not isinstance(plan['cells'], dict) or not isinstance(plan['dropped'], list):
+            raise ValueError('incomplete plan')
+        # 0.9.0 (#979 R): npm profile facts; `files` (PNG header readback) only in the apply report
+        atlas = plan['atlas']
+        if not isinstance(atlas, dict) or not {'profile', 'sizes', 'texel_px_per_m'} <= set(atlas) \
+                or not set(atlas) <= {'profile', 'sizes', 'texel_px_per_m', 'files'}:
+            raise ValueError('incomplete plan')
+        if atlas['profile'] != ATLAS_PROFILE or not isinstance(atlas['sizes'], list) \
+                or not isinstance(atlas['texel_px_per_m'], dict):
             raise ValueError('incomplete plan')
     elif tool == 'ucx':
         if set(plan) != {'variant', 'kind', 'pieces', 'triangles', 'limit', 'names', 'audit', 'dropped'}:
@@ -1325,15 +1336,18 @@ def atlas_preview(nodes=None):
     core = _load_core('atlas_core.py', 'agr_tools_atlas')
     nodes = _targets(nodes)
     state, plans, entries, images = [], [], [], []
-    tiles, cells = [], {}
+    tiles, cells, sizes, texel = [], {}, [], {}
     for n in nodes:
         mesh = _read_channel(n)
         names = _material_names(n, mesh['ids'])
         mode, size = _atlas_settings(n)
         specs = _atlas_materials(n)
         try:
+            # 0.9.0 (#979 R): profile 'npm' of branch B. AGR_ATLAS_SIZE is the largest atlas; shrink returns the
+            # smallest npm square (256..2048) that holds the same cells at the same texel (Ground 35 px/m).
             laid = core.pack(mesh['vertices'], mesh['uvs'], mesh['faces'], mesh['face_uvs'], names,
-                             specs, mode=mode, size=size, pad=8, unit_m=_unit_m())
+                             specs, mode=mode, size=size, pad=8, unit_m=_unit_m(), target=ATLAS_TARGET_PX_M,
+                             profile=ATLAS_PROFILE, shrink=True)
         except core.AtlasError as exc:
             raise ValueError(str(exc)) from exc
         if laid['dropped']:
@@ -1358,7 +1372,9 @@ def atlas_preview(nodes=None):
             {'tiles': laid['tiles'], 'cells': laid['cells']}, sort_keys=True))] if changed else []
         state.append(mesh)
         plans.append({'uvs': laid['uvs'], 'face_uvs': laid['face_uvs'], 'tiles': laid['tiles'],
-                      'cells': laid['cells']})
+                      'cells': laid['cells'], 'size': laid['size']})
+        sizes.append(laid['size'])
+        texel.update(laid['texel_px_per_m'])
         images.append({'rgb': laid['rgb'], 'alpha': laid['alpha'], 'size': laid['size'],
                        'cells': laid['cells'], 'kinds': laid['kinds'], 'materials': specs})
         tiles.extend(laid['tiles'])
@@ -1368,17 +1384,9 @@ def atlas_preview(nodes=None):
             cells[name] = box
         entries.append(_entry(n, findings))
     report = _report('atlas', entries, nodes, select=False, extra={
-        'plan': {'tiles': sorted(set(tiles)), 'cells': cells, 'dropped': []}})
+        'plan': {'tiles': sorted(set(tiles)), 'cells': cells, 'dropped': [],
+                 'atlas': {'profile': ATLAS_PROFILE, 'sizes': sizes, 'texel_px_per_m': texel}}})
     return {'state': state, 'plans': plans, 'report': report, 'images': images}
-
-
-def _write_bitmap(size, fill, rows):
-    """rows(y) -> sequence of colors for one full scanline. The bitmap stays in memory."""
-    rt = _rt()
-    bm = rt.bitmap(size, size, color=fill)
-    for y, colors in rows:
-        rt.setPixels(bm, rt.point2(0, y), colors)
-    return bm
 
 
 def save_bitmap(bm):
@@ -1397,8 +1405,11 @@ def save_bitmap(bm):
         rt.execute('pngio.setAlpha ' + ('true' if previous_alpha else 'false'))
 
 
-def _publish_bitmap(bm, label):
-    """Save a new PNG, then bind it. Max refuses an unsaved bitmap on Bitmaptexture."""
+def _publish_png(data, label):
+    """Write a NEW PNG file (exclusive create, never overwrite), then bind it on a Bitmaptexture.
+
+    0.9.0 (#979 R): the bytes come from atlas_core.atlas_png (stdlib writer of branch B), not from a Max bitmap
+    save: the diffuse is 24-bit RGB (colour type 2) in every Max version, the opacity a separate 8-bit grey PNG."""
     import os
     import uuid
     from pathlib import Path
@@ -1410,12 +1421,8 @@ def _publish_bitmap(bm, label):
         folder = Path(str(rt.getDir(rt.name('temp')))) / 'agr-tools-atlases'
     folder.mkdir(parents=True, exist_ok=True)
     dest = folder / f'{label}-{uuid.uuid4().hex}.png'
-    if dest.exists():
-        raise RuntimeError('atlas bitmap already exists: ' + str(dest))
-    bm.filename = str(dest)
-    save_bitmap(bm)
-    if not dest.is_file():
-        raise RuntimeError('atlas bitmap was not saved: ' + str(dest))
+    with open(dest, 'xb') as f:
+        f.write(data)
     tex = rt.Bitmaptexture()
     tex.name = label
     tex.filename = str(dest)
@@ -1438,35 +1445,10 @@ def _bind_atlas(node, image):
             _require_neutral_bitmap_coordinates(name, 'diffuse', diffuse_map)
         if _bitmap_texture(opacity_map):
             _require_neutral_bitmap_coordinates(name, 'opacity', opacity_map)
-    size = image['size']
-    rgb, alpha = image['rgb'], image['alpha']
-    dirty = set()
-    for box in image['cells'].values():
-        y, h = box[1], box[3]
-        dirty.update(range(y, y + h))
-
-    def diffuse_rows():
-        for y in sorted(dirty):
-            base = y * size * 3
-            colors = []
-            for x in range(size):
-                o = base + x * 3
-                colors.append(rt.color(int(rgb[o]), int(rgb[o + 1]), int(rgb[o + 2])))
-            yield y, colors
-
-    diffuse = _publish_bitmap(_write_bitmap(size, rt.color(90, 90, 90), diffuse_rows()), 'AGR_atlas_diffuse')
-    opacity = None
-    if alpha is not None:
-        def opacity_rows():
-            for y in sorted(dirty):
-                base = y * size
-                colors = []
-                for x in range(size):
-                    v = int(alpha[base + x])
-                    colors.append(rt.color(v, v, v))
-                yield y, colors
-
-        opacity = _publish_bitmap(_write_bitmap(size, rt.color(255, 255, 255), opacity_rows()), 'AGR_atlas_opacity')
+    core = _load_core('atlas_core.py', 'agr_tools_atlas')
+    diffuse_png, opacity_png = core.atlas_png(image)
+    diffuse = _publish_png(diffuse_png, 'AGR_atlas_diffuse')
+    opacity = _publish_png(opacity_png, 'AGR_atlas_opacity') if opacity_png is not None else None
     for name, mat in _submaterials(node).items():
         if name not in specs or 'rgb' not in specs[name]:
             continue
@@ -1477,10 +1459,38 @@ def _bind_atlas(node, image):
             mat.opacityMap = opacity
 
 
+def _atlas_file_readback(copy, image):
+    """Headers of the PNG files bound on the copy: the diffuse must be 24-bit RGB (colour type 2, 8 bit) and the
+    opacity, when there is one, 8-bit grey (colour type 0), both of the planned size. Fail closed (#979 R)."""
+    files = {}
+    want = {'diffuseMap': 2, 'opacityMap': 0}
+    for name, mat in _submaterials(copy).items():
+        spec = image['materials'].get(name)
+        if not spec or 'rgb' not in spec:
+            continue
+        for slot, ctype in want.items():
+            if slot == 'opacityMap' and image['alpha'] is None:
+                continue
+            tex = getattr(mat, slot, None) if hasattr(mat, slot) else None
+            if not _bitmap_texture(tex):
+                raise RuntimeError('atlas {} of {} is not bound'.format(slot, name))
+            path = str(tex.filename)
+            with open(path, 'rb') as f:
+                data = f.read()
+            w, h, depth, got, has_alpha = _checks_core().png_info(data)
+            if (w, h, depth, got, has_alpha) != (image['size'], image['size'], 8, ctype, False):
+                raise RuntimeError('atlas {} {} is {}x{} {}-bit colour type {} alpha {}; expected {}x{} 8-bit '
+                                   'colour type {}'.format(slot, path, w, h, depth, got, has_alpha,
+                                                           image['size'], image['size'], ctype))
+            files[slot] = {'size': w, 'bit_depth': depth, 'color_type': got}
+    return files
+
+
 def _applied_atlas_report(copies, current):
-    """Read back the written UVs. Flat Kd copies are previewed again; a bound atlas is not repacked."""
+    """Read back the written UVs. Flat Kd copies are previewed again; a bound atlas is not repacked, its PNG
+    headers are read back (24-bit diffuse, separate grey opacity)."""
     entries = []
-    tiles, cells = [], {}
+    tiles, cells, files = [], {}, []
     for copy, plan, image in zip(copies, current['plans'], current['images']):
         written = _read_channel(copy)
         for got, exp in zip(written['uvs'], plan['uvs']):
@@ -1489,6 +1499,7 @@ def _applied_atlas_report(copies, current):
             raise RuntimeError('atlas face UVs do not match the preview')
         bound = any('rgb' in spec for spec in image['materials'].values())
         if bound:
+            files.append(_atlas_file_readback(copy, image))
             entries.append(_entry(copy, []))
         else:
             again = atlas_preview([copy])
@@ -1501,7 +1512,8 @@ def _applied_atlas_report(copies, current):
                 raise ValueError('duplicate material name: ' + name)
             cells[name] = box
     return _report('atlas', entries, copies, select=False, extra={
-        'plan': {'tiles': sorted(set(tiles)), 'cells': cells, 'dropped': []}})
+        'plan': {'tiles': sorted(set(tiles)), 'cells': cells, 'dropped': [],
+                 'atlas': dict(current['report']['plan']['atlas'], files=files)}})
 
 
 def atlas_apply(nodes, preview):

@@ -13,7 +13,7 @@ import math
 import os
 from collections import namedtuple
 
-VERSION = '0.8.0'
+VERSION = '0.9.0'
 
 Action = namedtuple('Action', 'id tool icon section label tip reqs macro batch')
 
@@ -612,7 +612,8 @@ def _vkey(version):
 def rail(suite_blocks, suite_rows, version=None):
     """[(block, [done actions], [planned rows])] in the plan's block order (Artem's order, 0..9).
     Done = a panel action exists for the row AND the row's version is shipped by this package version
-    (0.8 actions exist from the base branch on, but stay greyed «в версии 0.8» until VERSION is 0.8.0)."""
+    (the actions of a version exist from its base branch on, but stay greyed «в версии 0.x» until VERSION ships it:
+    0.8 in 0.8.0, 0.9 in 0.9.0)."""
     version = version or VERSION
     have = {}
     for a in ACTIONS:

@@ -1,11 +1,17 @@
 # AGR Tools changelog
 
-## 0.9.0 (#979) — в работе
+## 0.9.0 (#979)
 
-Пакет остаётся 0.8.x до релизной ветки R: кнопки 0.9 есть в меню и MCP, в панели они серые «в версии 0.9».
-Каждая ветка пишет только в свой подзаголовок ниже.
+Замены и расстановка, Flora/МАФ, текстуры и UDIM, проверки, пакетный экспорт и свет: 19 кнопок плана версии 0.9
+(секции «Проверить и выделить» / «Исправить — копии / undo / новые файлы», 19 macroScript, пункты меню, иконки,
+MCP `agr_<блок>_<имя>`, только `mode=preview`) и доработки 13 выпущенных кнопок 0.1–0.8 по аудиту командных
+скриптов и лаборатории 0.9 (L05–L08). Правки — на копиях, в новых файлах или одной записью Undo (`place.replace`,
+`place.drop_to_ground`); `light.check` выделяет нарушителей. Поведение 0.8, которое изменилось: `tex.format_fix`
+отказывает при потере качества, `qa.names_fix` не привязывает чужой файл, `ucx.triangulate` сообщает о невыпуклых
+кусках (старая оболочка — `nonconvex: hull`), preview `ucx.rename` падает, пока остаются куски, `export.zip` пишет
+новую папку `Сборка_<время>` на каждый запуск; атлас `atlas.npm` уменьшается до содержимого.
 
-### Основа (ветка 0)
+### Контракт и регистрация
 
 - `runtime.EDITS_090` (19 строк плана 0.9: id → файл ядра, функция), `READ_090` (режимы `read`/`select`: только
   preview), `SELECT_090` (`light.check`: нарушителей выделяет обвязка UI одной записью Undo, не ядро) и
@@ -19,7 +25,7 @@
 - Полигон: базы 0.8 и 0.9 (32 станции), хук фрагментов `test-polygon/stations/<ветка>.json`, `load_catalog()`.
 - `roadmap.load()` отклоняет 8 из 8 испорченных JSON плана (SYNTHESIS §4).
 
-### A — замены и МАФ (`improve/issue-979-place`)
+### Замены и МАФ
 
 - `place.drop_to_ground` (undo): лучи вниз от каждой вершины на все `*_Ground` (скрытые тоже) или `options.ground`;
   `offset_m` в метрах, «+» поднимает; `align` — аналитический поворот оси Z к нормали (без 360 копий);
@@ -38,7 +44,7 @@
   трансформом, остальное — триангулированный снимок; копии на `AGR_flora_repair` со сверкой с исходником (0,05 мм,
   UV 2e-5); оригиналы не меняются и не удаляются; без UV / пустой меш → `skipped` с причиной.
 
-### B — текстуры, UDIM, атласы (`improve/issue-979-tex-udim-atlas`)
+### Текстуры, UDIM, атласы
 
 - `tex.erm_normal_check` (чтение, `texqa_core`/`texqa_max`): PNG читается stdlib (заголовок `checks_core.png_info`,
   пиксели zlib), формат — по сигнатуре (JPG с `.png` → `format_mismatch`). Нормаль: ориентация по ротору поля
@@ -60,9 +66,10 @@
   альфа по пикселям, нет карты → `map_missing`), непомещение → `atlas_overflow` с расчётом; 24 бит RGB.
 - Доработка `atlas.npm` (VPM_to_NPM, в ядре): профиль `npm` + `shrink` — атлас уменьшается до содержимого при том же
   текселе (Ground 35 ± 0,1 px/м), 24 бит, паддинг 8, TGA → `skipped` без падения; доступна через
-  `atlas.groundel` с `profile: npm`. Кнопка 0.2 (`runtime.atlas_apply`) пока пишет PNG через Max — см. #979.
+  `atlas.groundel` с `profile: npm`. Кнопка 0.2 (`runtime.atlas_preview` / `atlas_apply`) переведена на этот профиль
+  в релизе (раздел «Релиз» ниже).
 
-### C — проверки (`improve/issue-979-qa`)
+### Проверки
 
 Все пять кнопок — только чтение (preview); сцена, материалы, вьюпорт, рендерер и выделение не меняются.
 Ядра `qa9_core.py` / `facade_core.py` на stdlib, обвязка `qa9_max.py` / `facade_max.py`.
@@ -96,7 +103,7 @@
   стабильный список `plan.procedural` / `plan.blocking` для `export.batch`, плагины без классов в этой Max —
   «плагин не установлен», предупреждение: треугольники этих объектов `qa.tris` не посчитал.
 
-### D — экспорт, карты, свет (`improve/issue-979-export-scene-light`)
+### Экспорт, карты, свет
 
 - `light.check` (выделение, `light_core.py` / `light_max.py`): ≤ 250 источников (`light_count` на тех, что сверх
   лимита; список не обрезается), только Omni и Free/Target Spot (`light_type`; пары Omni/Spot всё равно проверяются),
@@ -120,7 +127,7 @@
   падает, не экспортируется ни одна группа (fail closed).
 - Полигон: станции 0.9.17 и 0.9.18 (`stations/D.json`, `stations/D_build.py` — узлы света, сцена в м и в см).
 
-### E1 — доработка: текстуры и имена (`improve/issue-979-rework-tex-names`)
+### Доработки 0.8: текстуры и имена
 
 Карточки аудита T01/T02/T05/T06; каждый дефект — регресс RED на модели командного скрипта → GREEN
 (`test_agr_tools_tex.py::test_T0*`, `test_agr_tools_names.py::test_V13_*|AMR_*|CN_*|A101_*`).
@@ -152,7 +159,7 @@
 - Полигон: станции 0.8.1 `scene.missing_maps`, 0.8.3 `tex.format_fix`, 0.8.4 `tex.placeholders`, 0.8.6
   `ucx.rename`, 0.8.8 `qa.names_fix` (`stations/E1.json`, `stations/E1_build.py`), по PASS и FAIL на кнопку.
 
-### E2 — доработка: геометрия и UDIM (`improve/issue-979-rework-geom-udim`)
+### Доработки 0.8: геометрия и UDIM
 
 - `ucx.triangulate`: после триангуляции копии — проход переворота вогнутых диагоналей (идея ConcaveFixer, T03):
   только квад, выпуклый в своей плоскости («дротик» не переворачивается и попадает в `ambiguous`), новое ребро
@@ -175,7 +182,7 @@
 - Полигон: станции `stations/E2.json` + `E2_build.py` для `ucx.triangulate`, `export.pivot_place`,
   `udim.ids_to_udims`, `model.triangulate` (база 0.8).
 
-### E3 — доработка: пакет и предсдача (`improve/issue-979-rework-package-suite`)
+### Доработки 0.1–0.8: пакет и предсдача
 
 - **`export.zip`** — контракт AGR_Arxiv 1.5 (только документация, SHA256 в #979): каждый apply пишет новую папку
   `Сборка_<дата_время>` (в папке поставки или в `options.out`), в ней ZIP, `report.json` и маркер `ГОТОВО.txt`
@@ -205,6 +212,24 @@
   `suite_core.census_dump` в UTF-8. Сцена не меняется.
 - Полигон: станции `export.zip`, `qa.package`, `export.ground_fbx`, `export.geojson_write` (база 0.8, фрагмент
   `stations/E3.json` + билдер `E3_build.py`).
+
+### Релиз
+
+- `VERSION 0.9.0` (`runtime.py`, `ui_model.py`, `install.ms` → `AGRTools-0.9.0`, `startup.ms`, заголовки
+  macroScript/меню), MCP `RUNTIME_090 = "0.9.0"`: 19 кнопок 0.9 показаны в рельсе, не серые.
+- `atlas.npm` (кнопка 0.2, `runtime.atlas_preview` / `atlas_apply`) на профиле `npm` ядра `atlas_core`:
+  `AGR_ATLAS_SIZE` — наибольший атлас, `shrink` даёт наименьший квадрат 256–2048 с теми же ячейками при том же
+  текселе (Ground 35 px/м); диффуз пишется stdlib-писателем PNG 24 бит RGB (тип цвета 2), прозрачность — отдельным
+  8-битным серым PNG (тип 0), а не сохранением битмапа Max с альфой; новый файл, без перезаписи. Apply читает
+  заголовки записанных PNG и отказывает, если они другие (`plan.atlas.files`)
+  (`test_agr_tools_release_090.py`).
+- `roadmap.GEOAGR_BUTTONS`: +15 кнопок, сверены с `GeoAGR.ms` 13.64 (обработчики `on btn_… pressed`), в том числе
+  кнопки строк 0.9 и доработок (`btn_Streets_List`, `btn_View_Normals`, `btn_pivot_get/set`, `btn_resetXForm`,
+  `btn_combine_two_models`, `btn_make_tex_diffuse`, `btn_open_tex_normal/erm`, `btn_UCX_connect`); проверяется и
+  короткая форма `btn_x :строка` (раньше не проверялась вовсе).
+- План: версия 0.9 → `done`, `lab_status`/`lab_report` 19 строк (ветка и PR) и 13 доработок; лоты L07/L08.
+- Полигон: `catalog.json` / `bases.json` перегенерированы из фрагментов веток (9 баз, 57 станций); станция 0.2.2
+  получила сцену `atlas_npm` с текстурным объектом: apply атласа сверяется по профилю, текселю и заголовкам PNG.
 
 ## 0.8.1 (#908)
 
