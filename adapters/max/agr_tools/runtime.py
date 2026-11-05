@@ -5,7 +5,7 @@ Native xView uses 0.002 m vertices and 0.005 m faces.
 import json
 import sys
 
-VERSION = "0.7.0"
+VERSION = "0.8.0"
 CODES = {'xview': {'overlap_vertices', 'overlap_faces'},
          'matid': {'udim_id', 'empty_id', 'empty_slot', 'missing_material'},
          'cleanup': {'remove_custom_attributes', 'clear_user_defined_lines',
