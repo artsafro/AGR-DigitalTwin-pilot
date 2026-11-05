@@ -203,6 +203,19 @@ def test_write_refuses_a_receipt_path_that_is_an_entry_file(tmp_path):
     assert target.read_bytes() == before
 
 
+def test_crlf_checkout_does_not_change_the_total(tmp_path):
+    module = _budget()
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "AGENTS.md").write_bytes(b"a\nb\nc\n")
+    (tmp_path / "docs" / "PROJECT_STATE.md").write_bytes(b"d\ne\n")
+    out = tmp_path / "receipt.json"
+    module.write_receipt(tmp_path, ["AGENTS.md", "docs/PROJECT_STATE.md"], "synthetic", out, counter=len)
+    assert b"\r\n" not in out.read_bytes()
+    lf_total = module.check(tmp_path, out)[1]
+    (tmp_path / "AGENTS.md").write_bytes(b"a\r\nb\r\nc\r\n")
+    assert module.check(tmp_path, out)[1] == lf_total == 10
+
+
 def test_write_then_check_round_trip(tmp_path):
     module = _budget()
     _tree(tmp_path, [120, 80], [1, 1])

@@ -60,7 +60,7 @@ def _text(path, rel):
     if not path.is_file():
         raise FailClosed(f"partial: entry file missing: {rel}")
     with path.open(encoding="utf-8", newline="") as source:
-        text = source.read()
+        text = source.read().replace("\r\n", "\n")  # checkout line endings must not move the total
     if text.strip() == "":
         raise FailClosed(f"empty entry file: {rel}")
     return text
@@ -144,7 +144,8 @@ def write_receipt(root, rels, card, output, counter=None):
             "files": files, "total_tokens": sum(row["tokens"] for row in files)}
     output.parent.mkdir(parents=True, exist_ok=True)
     partial = output.with_name(output.name + ".partial")
-    partial.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    with partial.open("w", encoding="utf-8", newline="\n") as sink:
+        sink.write(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
     os.replace(partial, output)
     return data
 
