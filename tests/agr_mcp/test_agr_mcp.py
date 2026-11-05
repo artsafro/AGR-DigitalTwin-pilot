@@ -484,6 +484,329 @@ def test_two_concurrent_reclaimers_of_one_stale_lock_exactly_one_wins(tmp_path, 
         assert sorted(p.name for p in lock.parent.iterdir()) == [], "reclaim left a temp file"
 
 
+def test_restore_rename_race_cannot_give_two_holders(tmp_path, monkeypatch):
+    """#896: B renames after A has created a fresh lock; C creates before B restores. One holder.
+
+    Barriers force that interleaving when reclaim still renames the lock aside. A reclaim that
+    never moves a live lock aside leaves no such window: B finishes busy, and C then sees A's lock.
+    """
+    import os
+    lock = tmp_path / "locks" / "agr-blender-batch.lock"
+    lock.parent.mkdir()
+    lock.write_text(json.dumps({"card": "dead", "pid": 999999999}), encoding="utf-8")
+    real_stale = locks._stale
+    real_rename = os.rename
+    b_saw_stale = threading.Event()
+    a_holding = threading.Event()
+    window_open = threading.Event()
+    c_holding = threading.Event()
+    b_finished = threading.Event()
+    race_done = threading.Event()
+    state = {"current": 0, "max": 0}
+    guard = threading.Lock()
+    errors = []
+
+    def enter():
+        with guard:
+            state["current"] += 1
+            state["max"] = max(state["max"], state["current"])
+
+    def leave():
+        with guard:
+            state["current"] -= 1
+
+    def stale(path):
+        verdict = real_stale(path)
+        if threading.current_thread().name == "B" and not getattr(stale, "b_waited", False):
+            stale.b_waited = True
+            b_saw_stale.set()
+            if not a_holding.wait(5):
+                errors.append("A did not acquire while B was past the stale check")
+        return verdict
+
+    def rename(src, dst):
+        src_p, dst_p = Path(src), Path(dst)
+        aside = src_p == lock and ".reclaim-" in dst_p.name
+        if threading.current_thread().name == "B" and aside:
+            real_rename(src, dst)
+            window_open.set()
+            if not c_holding.wait(5):
+                errors.append("C did not create before B's restore")
+            return
+        return real_rename(src, dst)
+
+    def thread_b():
+        try:
+            with locks.hold("blender-batch", "B", 60):
+                enter()
+                errors.append("B acquired; the forced window expects B to restore and lose")
+                leave()
+        except locks.LockBusy:
+            pass
+        except Exception as exc:  # noqa: BLE001 — reported to the main thread
+            errors.append(repr(exc))
+        finally:
+            b_finished.set()
+
+    def thread_a():
+        if not b_saw_stale.wait(5):
+            errors.append("B did not reach the stale check")
+            return
+        try:
+            with locks.hold("blender-batch", "A", 60):
+                enter()
+                a_holding.set()
+                if not race_done.wait(5):
+                    errors.append("race did not finish while A held")
+                leave()
+        except locks.LockBusy:
+            errors.append("A was busy; A must win the stale lock before B renames")
+        except Exception as exc:  # noqa: BLE001
+            errors.append(repr(exc))
+
+    def thread_c():
+        while not window_open.is_set() and not b_finished.is_set():
+            window_open.wait(0.02)
+        opened = window_open.is_set()
+        try:
+            with locks.hold("blender-batch", "C", 60):
+                enter()
+                c_holding.set()
+                if opened and not b_finished.wait(5):
+                    errors.append("B did not finish the restore while C held")
+                leave()
+        except locks.LockBusy:
+            if opened:
+                errors.append("C found the lock busy inside the aside window")
+        except Exception as exc:  # noqa: BLE001
+            errors.append(repr(exc))
+        finally:
+            race_done.set()
+
+    monkeypatch.setattr(locks, "_stale", stale)
+    monkeypatch.setattr(os, "rename", rename)
+    threads = [
+        threading.Thread(target=thread_b, name="B", daemon=True),
+        threading.Thread(target=thread_c, name="C", daemon=True),
+        threading.Thread(target=thread_a, name="A", daemon=True),
+    ]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join(15)
+        if thread.is_alive():
+            errors.append(f"{thread.name} still running")
+    race_done.set()
+    assert errors == []
+    assert state["max"] == 1
+    aside = [p.name for p in lock.parent.iterdir() if ".reclaim-" in p.name]
+    assert aside == []
+
+
+def _lock_file(host="blender-batch"):
+    path = locks.lock_path(host)
+    assert path is not None
+    path.parent.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+def _aside_names(path):
+    return [p.name for p in path.parent.iterdir() if ".reclaim-" in p.name]
+
+
+def test_odd_lock_input_is_busy_or_error_and_never_two_holders(tmp_path):
+    """Unsupported bodies and a live reclaim mutex fail closed: error or busy, one holder at most."""
+    import os
+    import time
+    with pytest.raises(ValueError):
+        with locks.hold("not-a-host", "c", 10):
+            pass
+    path = _lock_file()
+    odd = ["", "{", "[]", "null", '{"pid": true}', '{"pid": false}', '{"pid": "1"}',
+           '{"pid": 1.5}', '{"until": "soon"}', '{"until": true}']
+    for body in odd:
+        path.write_text(body, encoding="utf-8")
+        with pytest.raises(locks.LockBusy):
+            with locks.hold("blender-batch", "c", 10):
+                pass
+        assert path.read_text(encoding="utf-8") == body
+    path.write_text("{", encoding="utf-8")
+    barrier = threading.Barrier(2)
+    outcomes = []
+
+    def both():
+        barrier.wait(5)
+        try:
+            with locks.hold("blender-batch", "c", 10):
+                outcomes.append("held")
+        except locks.LockBusy:
+            outcomes.append("busy")
+
+    threads = [threading.Thread(target=both) for _ in range(2)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join(10)
+    assert outcomes == ["busy", "busy"]
+    assert path.read_text(encoding="utf-8") == "{"
+    path.write_text(json.dumps({"pid": 999999999}), encoding="utf-8")
+    mutex = path.with_name(f".{path.name}.mutex")
+    mutex.write_text(json.dumps({"pid": os.getpid(), "until": time.time() + 30, "token": "live"}),
+                     encoding="utf-8")
+    with pytest.raises(locks.LockBusy):
+        with locks.hold("blender-batch", "c", 10):
+            pass
+    assert json.loads(path.read_text(encoding="utf-8"))["pid"] == 999999999
+    assert mutex.exists()
+    mutex.unlink()
+    mutex.mkdir()
+    with locks.hold("blender-batch", "c", 10) as held:
+        assert json.loads(held.read_text(encoding="utf-8"))["card"] == "c"
+    assert not path.exists() and not mutex.exists()
+    assert _aside_names(path) == []
+
+
+def test_probe_at_most_one_holder_seed_896(tmp_path):
+    """#896: seeded reclaim interleavings, 4 threads x 8 rounds x 6 setups. Max holders is 1."""
+    import os
+    import random
+    import time
+    rnd = random.Random(896)
+    path = _lock_file()
+    kinds = ["absent", "stale", "dead-mutex", "expired-mutex", "garbage-mutex", "dir-mutex"]
+    rounds = 8
+    n_threads = 4
+    seen = 0
+    for _round in range(rounds):
+        order = kinds[:]
+        rnd.shuffle(order)
+        for kind in order:
+            for child in path.parent.iterdir():
+                if child.is_dir():
+                    child.rmdir()
+                else:
+                    child.unlink()
+            mutex = path.with_name(f".{path.name}.mutex")
+            if kind != "absent":
+                path.write_text(json.dumps({"pid": 999999999, "card": "dead"}), encoding="utf-8")
+            if kind == "dead-mutex":
+                mutex.write_text(json.dumps({"pid": 999999999, "until": time.time() + 30, "token": "d"}),
+                                 encoding="utf-8")
+            elif kind == "expired-mutex":
+                mutex.write_text(json.dumps({"pid": os.getpid(), "until": time.time() - 1, "token": "e"}),
+                                 encoding="utf-8")
+            elif kind == "garbage-mutex":
+                mutex.write_text("{", encoding="utf-8")
+            elif kind == "dir-mutex":
+                mutex.mkdir()
+            started = threading.Barrier(n_threads)
+            tried = threading.Barrier(n_threads)
+            guard = threading.Lock()
+            state = {"current": 0, "max": 0}
+            results = []
+            errors = []
+
+            def worker():
+                try:
+                    started.wait(10)
+                    try:
+                        with locks.hold("blender-batch", "c", 30):
+                            with guard:
+                                state["current"] += 1
+                                state["max"] = max(state["max"], state["current"])
+                            tried.wait(10)
+                            with guard:
+                                state["current"] -= 1
+                            results.append("held")
+                    except locks.LockBusy:
+                        tried.wait(10)
+                        results.append("busy")
+                except Exception as exc:  # noqa: BLE001
+                    errors.append(repr(exc))
+
+            threads = [threading.Thread(target=worker, daemon=True) for _ in range(n_threads)]
+            for thread in threads:
+                thread.start()
+            for thread in threads:
+                thread.join(15)
+                if thread.is_alive():
+                    errors.append("thread still running")
+            assert errors == []
+            assert state["max"] == 1, kind
+            assert results.count("held") == 1, (kind, results)
+            assert _aside_names(path) == []
+            seen += 1
+    assert seen == rounds * len(kinds) == 48
+
+
+def test_probe_reclaim_leaves_no_aside_files_seed_896(tmp_path):
+    """#896: no `*.reclaim-*` name is created across seeded reclaim interleavings."""
+    import os
+    import random
+    import time
+    rnd = random.Random(896)
+    path = _lock_file()
+    kinds = ["absent", "stale", "dead-mutex", "expired-mutex", "garbage-mutex", "live"]
+    rounds = 8
+    n_threads = 4
+    seen = 0
+    spotted = []
+    for _round in range(rounds):
+        order = kinds[:]
+        rnd.shuffle(order)
+        for kind in order:
+            for child in path.parent.iterdir():
+                if child.is_dir():
+                    child.rmdir()
+                else:
+                    child.unlink()
+            mutex = path.with_name(f".{path.name}.mutex")
+            if kind == "live":
+                path.write_text(json.dumps({"pid": os.getpid(), "until": time.time() + 60, "token": "L",
+                                            "card": "live"}), encoding="utf-8")
+            elif kind != "absent":
+                path.write_text(json.dumps({"pid": 999999999, "card": "dead"}), encoding="utf-8")
+            if kind == "dead-mutex":
+                mutex.write_text(json.dumps({"pid": 999999999, "until": time.time() + 30, "token": "d"}),
+                                 encoding="utf-8")
+            elif kind == "expired-mutex":
+                mutex.write_text(json.dumps({"pid": os.getpid(), "until": time.time() - 5, "token": "e"}),
+                                 encoding="utf-8")
+            elif kind == "garbage-mutex":
+                mutex.write_text("not-json", encoding="utf-8")
+            started = threading.Barrier(n_threads)
+            tried = threading.Barrier(n_threads)
+            results = []
+
+            def worker():
+                started.wait(10)
+                spotted.extend(_aside_names(path))
+                try:
+                    with locks.hold("blender-batch", "c", 30):
+                        spotted.extend(_aside_names(path))
+                        tried.wait(10)
+                        results.append("held")
+                    spotted.extend(_aside_names(path))
+                except locks.LockBusy:
+                    spotted.extend(_aside_names(path))
+                    tried.wait(10)
+                    results.append("busy")
+
+            threads = [threading.Thread(target=worker, daemon=True) for _ in range(n_threads)]
+            for thread in threads:
+                thread.start()
+            for thread in threads:
+                thread.join(15)
+            spotted.extend(_aside_names(path))
+            if kind == "live":
+                assert results.count("held") == 0
+            else:
+                assert results.count("held") == 1, (kind, results)
+            seen += 1
+    assert spotted == []
+    assert seen == rounds * len(kinds) == 48
+
+
 # ---- audit --------------------------------------------------------------------------------------------------
 def test_audit_lines_equal_calls_and_carry_plan_fields(tmp_path):
     calls = [("agr_mesh_names", MESH_ARGS)] * 3 + [("agr_xview_parity", {"dump": {}})] + [("nope", {})]
