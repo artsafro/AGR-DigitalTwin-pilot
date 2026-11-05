@@ -1,4 +1,4 @@
-"""Floor classification of the spec (HARNESS_PLAN §4, issue #8).
+"""Floor classification of the spec (HARNESS_PLAN §4 (historical), issue #8).
 
 Pattern: typical-floor-repeat (docs/domain/patterns/INDEX.md) — this module writes what it reads.
 
