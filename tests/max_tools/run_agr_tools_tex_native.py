@@ -425,8 +425,8 @@ def missing_maps_e1():
     bench = rt.Box(name='SM_Bench_001_Main', length=1, width=1, height=1)
     bench.material = _bitmap_mat('M_Bench', lib / 'old' / 'src_diffuse.png')
     disk = tree(root)
-    rt.select([good, bench])
-    rep = agr.edits_080('scene.missing_maps', 'preview')
+    # without nodes the tool reads the whole scene (the 0.8 check's nodes are still there): name the two objects
+    rep = agr.edits_080('scene.missing_maps', 'preview', nodes=[good, bench])
     assert tree(root) == disk
     row = [r for r in rep['plan']['maps'] if r['path'].endswith('src_diffuse.png')][0]
     names = sorted(Path(c['path']).name for c in row['candidates'])

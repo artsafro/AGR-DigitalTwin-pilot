@@ -57,7 +57,35 @@
 
 ### E1 — доработка: текстуры и имена (`improve/issue-979-rework-tex-names`)
 
-- Заглушка ветки E1: доработки `tex.format_fix`, `tex.placeholders`, `scene.missing_maps`, `qa.names_fix`.
+Карточки аудита T01/T02/T05/T06; каждый дефект — регресс RED на модели командного скрипта → GREEN
+(`test_agr_tools_tex.py::test_T0*`, `test_agr_tools_names.py::test_V13_*|AMR_*|CN_*|A101_*`).
+
+- `tex.format_fix`: сначала lossless; иначе палитра ≤ 256 с дизерингом Флойда–Стейнберга (Q01), потом
+  постеризация — порядок решения Артёма. Новый порог `max_rmse` (по умолчанию 0,03; Q02 открыт). Лучший
+  вписавшийся вариант выше порога — отказ с измеренным RMSE, а не «готово» (T01: 8 цветов, RMSE 0,157).
+  Файл под лимитом не квантуется; ядро не пишет temp-файлов. Нажатие с выделения даёт объекты отчёта по
+  владельцам текстур (`tex_quality` / `tex_refused`).
+- `tex.placeholders`: средний цвет по видимым пикселям с округлением (T01 floor, T05 прозрачные как чёрные),
+  RGB 24 бит, размеры 128 и 256. `udims`: дубль UDIM в одном вызове — второй отказ, ничего не перезаписано
+  (T02: 6 записей → 3 файла). `metal_slots`: ERM `[0,0,255]`, неметалл как в 0.8 (Q03 открыт). Нормаль
+  `[128,128,255]`. Нечитаемый `diffuse_from` (TGA, EXR, PSD) — Diffuse `skipped` с причиной вместо серого 128
+  (T05). Один набор на адрес каждого выделенного объекта, находки `placeholder_exists|duplicate|source`.
+- `scene.missing_maps`: кандидаты по маске проекта владельца и роли слота (`T_<Адрес>[_NNN]_<Тип>_<d|n|…>_1.*`,
+  VPM `T_<Адрес>_<Карта>_1.<UDIM>.*`) с рангом 2, любые расширения (`.png` и `.jpg`), флаг неоднозначности.
+  Папки поиска по умолчанию — из путей карт (ближайший существующий родитель), относительная папка
+  (`"123"`) — отказ (T06 TexFinder). Перечислитель `tex_max._scene_maps(core, nodes)` не менял сигнатуру;
+  владельцы получили ключи `slot` и `role`.
+- `qa.names_fix`: файл с именем по маске и другим содержимым не перезаписан и не привязан, конфликт —
+  в `failures` (V13 `File.Copy overwrite`, Asset Material Renamer «skip existing»). Таблица слотов
+  `names_core.SLOT_TABLE`: `reflectionMap` без роли, `_m` только из `specularLevelMap`. `folder` — копии карт
+  в отдельную папку. Профиль `library` (`Brand_Name_Article_high|low`): невидимые символы, омоглифы и
+  транслит за один проход, дефис, сегмент с цифры и `.001` — отказ с причиной (CheckAssetNames v8). Имя,
+  занятое другим объектом сцены, — `ambiguous` (0 дублей). `role_names()` — имена 7 ролей по адресу, № ОКС,
+  слоту и FBX без `__` (A101LP :388); опции `address`/`oks`. Транслит: публичные `TRANSLIT`, `transliterate`,
+  `translit_variants` (Й → y, вариант j как в `GeoAGR.ms:194`) — одна таблица с `qa.address`.
+- `ucx.rename`: в preview кусок, который будет переименован, несёт находку `ucx_name` (что сделает apply).
+- Полигон: станции 0.8.1 `scene.missing_maps`, 0.8.3 `tex.format_fix`, 0.8.4 `tex.placeholders`, 0.8.6
+  `ucx.rename`, 0.8.8 `qa.names_fix` (`stations/E1.json`, `stations/E1_build.py`), по PASS и FAIL на кнопку.
 
 ### E2 — доработка: геометрия и UDIM (`improve/issue-979-rework-geom-udim`)
 
