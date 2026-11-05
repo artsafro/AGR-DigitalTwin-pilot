@@ -349,7 +349,8 @@ def test_held_lock_format_is_seen_by_max_exec_and_dcc_batch(tmp_path):
 
 
 def test_lock_lifetime_covers_the_wrapped_call_timeout(tmp_path, monkeypatch):
-    """#871: a 1800 s readback keeps its lock past the old fixed 900 + 120 s window while its pid lives."""
+    """#871: a 1800 s readback keeps its lock past the old fixed 900 + 120 s window.
+    #895: once `until` itself has passed, a live agr-mcp pid does not keep the lock."""
     clock = [1_000_000.0]
     monkeypatch.setattr(locks, "time", types.SimpleNamespace(time=lambda: clock[0]))
     fbx = tmp_path / "a.fbx"
@@ -366,14 +367,45 @@ def test_lock_lifetime_covers_the_wrapped_call_timeout(tmp_path, monkeypatch):
 
     def fake_readback(args):
         assert args["timeout"] == 1800
-        probe(1021)
-        probe(1800 + 121)  # `until` passed, holder pid alive, owner agr-mcp: still held
+        probe(1021)  # past the old fixed 900 + 120 window, still inside `until`
+        probe(1800 + 121)  # past `until`: a live agr-mcp pid does not keep the lock
         return {"source": "synthetic"}
 
     monkeypatch.setattr(tools, "h_fbx_readback", fake_readback)
     _, (res,) = run_calls([("agr_fbx_readback", {"fbx_path": str(fbx), "timeout": 1800})])
     ok(res)
-    assert seen == {1021: "busy", 1921: "busy"}
+    assert seen == {1021: "busy", 1921: "acquired"}
+
+
+def test_leaked_live_agr_mcp_lock_is_acquired_an_hour_past_until(tmp_path, monkeypatch):
+    """#895 witness: os.remove fails, the server pid stays alive, hold() an hour past `until` acquires."""
+    import os
+    clock = [1_000_000.0]
+    monkeypatch.setattr(locks, "time", types.SimpleNamespace(time=lambda: clock[0]))
+    real_remove = os.remove
+
+    def sharing_violation(path):
+        raise PermissionError(32, "The process cannot access the file because it is being used by another process")
+
+    monkeypatch.setattr(os, "remove", sharing_violation)
+    with locks.hold("blender-batch", "a", 900) as path:
+        assert path is not None
+        body = path.read_text(encoding="utf-8")
+    assert path.exists(), "a failed release leaves the lock behind"
+    info = json.loads(body)
+    until = info["until"]
+    assert info["owner"] == "agr-mcp" and info["pid"] == os.getpid() and locks._alive(info["pid"])
+    assert until == 1_000_000.0 + 900 + 120
+    monkeypatch.setattr(os, "remove", real_remove)
+    clock[0] = until - 1  # live agr-mcp pid, still inside the lease: not stolen
+    with pytest.raises(locks.LockBusy):
+        with locks.hold("blender-batch", "early", 60):
+            pass
+    assert path.read_text(encoding="utf-8") == body
+    clock[0] = until + 3600  # one hour past `until`, same live process
+    with locks.hold("blender-batch", "b", 60) as taken:
+        assert json.loads(taken.read_text(encoding="utf-8"))["card"] == "b"
+    assert not path.exists()
 
 
 @pytest.mark.parametrize("name,args,want", [
@@ -549,6 +581,135 @@ def test_probe_lock_refuses_every_second_holder_seed_841():
         assert not held.exists()
         n += 1
     assert n == 60
+
+
+def test_failed_release_is_retried_then_reported(tmp_path, monkeypatch, capsys):
+    """#895: a sharing violation on os.remove is retried a few times, then written to stderr."""
+    import os
+    pauses = []
+    calls = []
+    monkeypatch.setattr(locks, "_sleep", lambda delay: pauses.append(delay), raising=False)
+
+    def sharing_violation(path):
+        calls.append(path)
+        raise PermissionError(32, "sharing violation")
+
+    monkeypatch.setattr(os, "remove", sharing_violation)
+    with locks.hold("blender-batch", "a", 900) as path:
+        pass
+    assert path.exists()
+    assert len(calls) >= 3, f"release tried os.remove {len(calls)} time(s) and swallowed the error"
+    assert pauses == [locks._RELEASE_PAUSE_S] * (len(calls) - 1)
+    assert 0 < locks._RELEASE_PAUSE_S <= 0.25
+    assert len(calls) == locks._RELEASE_ATTEMPTS
+    err = capsys.readouterr().err
+    assert "release failed" in err.lower()
+    assert path.name in err
+
+
+def test_probe_live_agr_mcp_holder_stale_iff_time_reaches_until(tmp_path, monkeypatch):
+    """#895: a live agr-mcp holder is stale iff time >= until, including exactly at until."""
+    import os
+    t0 = 1_000_000.0
+    clock = [t0]
+    monkeypatch.setattr(locks, "time", types.SimpleNamespace(time=lambda: clock[0]))
+    assert locks._alive(os.getpid())
+    timeouts = [0, 0.5, 1, 30, 60, 90, 120, 121, 900, 1800, 3600, 7200]
+    deltas = [-3600.0, -120.0, -1.0, -1e-6, 0.0, 1e-6, 1.0, 120.0, 3600.0]
+    lock = tmp_path / "locks" / "agr-blender-batch.lock"
+    lock.parent.mkdir(parents=True, exist_ok=True)
+    n = 0
+    for timeout in timeouts:
+        for delta in deltas:
+            until = t0 + timeout + 120
+            body = json.dumps({"card": "a", "pid": os.getpid(), "t": t0, "timeout": timeout,
+                               "until": until, "owner": "agr-mcp", "token": "holder-token"})
+            lock.write_text(body, encoding="utf-8")
+            clock[0] = until + delta
+            expect_stale = clock[0] >= until
+            assert locks._stale(lock) is expect_stale
+            if expect_stale:
+                with locks.hold("blender-batch", "b", 60) as got:
+                    assert json.loads(got.read_text(encoding="utf-8"))["card"] == "b"
+                assert not lock.exists()
+            else:
+                with pytest.raises(locks.LockBusy):
+                    with locks.hold("blender-batch", "b", 60):
+                        pass
+                assert lock.read_text(encoding="utf-8") == body
+            n += 1
+    assert n == len(timeouts) * len(deltas) == 108
+
+
+def test_probe_dead_holder_is_stale_on_either_side_of_until(tmp_path, monkeypatch):
+    """A dead holder pid is stale before and after `until`."""
+    t0 = 1_000_000.0
+    clock = [t0]
+    monkeypatch.setattr(locks, "time", types.SimpleNamespace(time=lambda: clock[0]))
+    monkeypatch.setattr(locks, "_alive", lambda pid: False)
+    timeouts = [0, 1, 60, 900, 1800, 7200]
+    deltas = [-3600.0, -1.0, 0.0, 1.0, 3600.0]
+    lock = tmp_path / "locks" / "agr-blender-batch.lock"
+    lock.parent.mkdir(parents=True, exist_ok=True)
+    n = 0
+    for timeout in timeouts:
+        for delta in deltas:
+            until = t0 + timeout + 120
+            lock.write_text(json.dumps({"card": "dead", "pid": 999_999_999, "t": t0, "timeout": timeout,
+                                        "until": until, "owner": "agr-mcp", "token": "dead-token"}),
+                            encoding="utf-8")
+            clock[0] = until + delta
+            assert locks._stale(lock) is True
+            with locks.hold("blender-batch", "b", 60) as got:
+                assert json.loads(got.read_text(encoding="utf-8"))["card"] == "b"
+            assert not lock.exists()
+            n += 1
+    assert n == len(timeouts) * len(deltas) == 30
+
+
+def test_probe_release_failures_are_retried_then_reported(tmp_path, monkeypatch, capsys):
+    """Every OSError on release is retried, then reported only once the attempts are exhausted."""
+    import os
+    attempts = getattr(locks, "_RELEASE_ATTEMPTS", 1)
+    assert isinstance(attempts, int) and attempts >= 3
+    pause = locks._RELEASE_PAUSE_S
+    assert 0 < pause <= 0.25
+    real_remove = os.remove
+    errors = [PermissionError(32, "sharing violation"), OSError(13, "permission denied"),
+              BlockingIOError(11, "resource busy"), TimeoutError("file locked")]
+    fail_counts = list(range(0, attempts + 3))
+    n = 0
+    for error in errors:
+        for fail_count in fail_counts:
+            calls = []
+            pauses = []
+            left = {"n": fail_count}
+
+            def boom(path, error=error, calls=calls, left=left):
+                calls.append(path)
+                if left["n"] > 0:
+                    left["n"] -= 1
+                    raise error
+                return real_remove(path)
+
+            monkeypatch.setattr(os, "remove", boom)
+            monkeypatch.setattr(locks, "_sleep", lambda delay, pauses=pauses: pauses.append(delay), raising=False)
+            with locks.hold("max-live", "a", 30) as path:
+                pass
+            exhausted = fail_count >= attempts
+            expect_calls = attempts if exhausted else fail_count + 1
+            assert len(calls) == expect_calls
+            assert pauses == [pause] * (expect_calls - 1)
+            err = capsys.readouterr().err
+            if exhausted:
+                assert path.exists()
+                assert "release failed" in err.lower() and path.name in err
+                real_remove(path)
+            else:
+                assert not path.exists()
+                assert "release failed" not in err.lower()
+            n += 1
+    assert n == len(errors) * len(fail_counts) == 28
 
 
 def test_probe_audit_lines_equal_calls_seed_841(tmp_path):
