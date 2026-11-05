@@ -176,6 +176,17 @@ def test_output_onto_an_input_or_existing_file_is_refused(tmp_path, target):
     assert dest.read_bytes() == before
 
 
+def test_unwritable_output_exits_2_and_writes_nothing(tmp_path, capsys):
+    report, rb, _ = make_case(tmp_path, DIMS)
+    nodir = tmp_path / "nodir" / "c.json"
+    assert run(report, rb, nodir) == 2
+    assert not nodir.parent.exists() and "error:" in capsys.readouterr().err
+    parent_is_file = tmp_path / "afile"
+    parent_is_file.write_text("x", encoding="utf-8")
+    assert run(report, rb, parent_is_file / "c.json") == 2
+    assert "error:" in capsys.readouterr().err
+
+
 def test_fresh_process_exit_codes(tmp_path):
     ok_dir, bad_dir = tmp_path / "ok", tmp_path / "bad"
     ok_dir.mkdir(), bad_dir.mkdir()

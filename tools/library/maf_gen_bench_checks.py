@@ -167,6 +167,8 @@ def main(argv) -> int:
         inputs = [report_path] + ([Path(args.reference)] if args.reference else [])
         if out.exists() or any(_same(out, p) for p in inputs):
             raise InputError(f"refusing to overwrite {out}")
+        if not out.parent.is_dir():
+            raise InputError(f"output directory {out.parent} does not exist")
         report = _read_json(report_path, "build report")
         atlas_path = Path(report["atlas_uv_json"])
         if _same(out, atlas_path):
@@ -185,7 +187,13 @@ def main(argv) -> int:
     res = {"verdict": "fail" if bad else "pass", "failures": bad,
            "reference_file": str(Path(args.reference).resolve()) if args.reference else None,
            "reference_rows_unused": unused, **res}
-    out.write_text(json.dumps(res, indent=1, ensure_ascii=False), encoding="utf-8")
+    try:
+        with out.open("x", encoding="utf-8") as fh:
+            fh.write(json.dumps(res, indent=1, ensure_ascii=False))
+    except OSError as exc:
+        print(f"error: cannot write {out}: {exc}", file=sys.stderr)
+        out.unlink(missing_ok=True) if not isinstance(exc, FileExistsError) else None
+        return 2
     for row in res["rows"]:
         for role in ROLES:
             e = row[role]
