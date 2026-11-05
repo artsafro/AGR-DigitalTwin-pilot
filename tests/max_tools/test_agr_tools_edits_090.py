@@ -476,7 +476,13 @@ def test_polygon_has_32_new_stations_each_with_expected_and_reason():
         passes = [o for o in doc['objects'] if o['expect'] == 'pass']
         fails = [o for o in doc['objects'] if o['expect'] == 'fail']
         if not (passes and fails):
-            assert doc['reason'] == 'станция в работе, #979, ветка ' + core.OWNER[s['button']], s['button']
+            # stations/README.md: at least one PASS and one FAIL, else a non-empty reason. A station a branch has
+            # not filled keeps the base text; a filled fragment station may give its own reason (#979).
+            frag = core.load_fragments().get(s['button'])
+            if frag and frag['expected']:
+                assert doc['reason'].strip(), s['button']
+            else:
+                assert doc['reason'] == 'станция в работе, #979, ветка ' + core.OWNER[s['button']], s['button']
     cat = support.load_catalog()
     labels = {o['name'] for o in cat['objects'] if o['name'].startswith('_label_0_8_') or
               o['name'].startswith('_label_0_9_')}
@@ -498,6 +504,9 @@ def _fragment(**station):
 
 def test_station_fragment_hook_adds_objects_without_touching_older_buttons(tmp_path, monkeypatch):
     core, support = _poly()
+    empty = tmp_path / 'none'
+    empty.mkdir()
+    monkeypatch.setattr(core, 'STATIONS_DIR', empty)  # the committed branch fragments stay out of this test
     before = core.predict_all()
     (tmp_path / 'A.json').write_text(json.dumps(_fragment(), ensure_ascii=False), encoding='utf-8')
     monkeypatch.setattr(core, 'STATIONS_DIR', tmp_path)
@@ -562,9 +571,10 @@ def test_unknown_fragment_file_and_branch_writer(tmp_path, monkeypatch):
         core.write_branch('Q')
 
 
-def test_no_fragment_is_committed_by_the_base():
-    core, _ = _poly()
-    assert not list(core.STATIONS_DIR.glob('*.json')) and (core.STATIONS_DIR / 'README.md').is_file()
+def test_committed_fragments_are_branch_fragments():
+    core, _ = _poly()  # branches A-E3 of #979 commit stations/<branch>.json (+ <branch>_build.py); nothing else
+    assert {p.stem for p in core.STATIONS_DIR.glob('*.json')} <= set(core.BRANCHES)
+    assert (core.STATIONS_DIR / 'README.md').is_file()
 
 
 # ---- roadmap.load: 8 of 8 broken plans are rejected (SYNTHESIS §4, T09 R3) ---------------------------------
