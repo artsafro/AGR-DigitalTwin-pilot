@@ -1,14 +1,34 @@
 {
  "schema": 1,
  "button": "place.replace",
- "tool": null,
+ "tool": "place.replace",
  "version": "0.9",
- "shipped": false,
+ "shipped": true,
  "select": "named",
- "reason": "Кнопки ещё нет в AGR Tools 0.7: в панели её нет, объекты полигона и эта запись появляются в том же изменении, что и сама кнопка.",
+ "reason": "",
  "apply_status": null,
- "objects": [],
- "base": null,
- "station": null,
- "stations": []
+ "objects": [
+  {
+   "name": "SM_FragA_Target_GroundEl",
+   "scene": "frag_a_replace",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_FragA_Master_GroundEl",
+   "scene": "frag_a_replace",
+   "expect": "fail",
+   "codes": [
+    "is_master"
+   ]
+  }
+ ],
+ "options": {
+  "master": "SM_FragA_Master_GroundEl"
+ },
+ "base": "0.9",
+ "station": "0.9.9",
+ "stations": [
+  "0.9.9"
+ ]
 }

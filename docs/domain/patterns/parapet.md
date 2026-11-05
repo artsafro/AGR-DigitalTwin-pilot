@@ -1,6 +1,6 @@
 # Parapet and roof (`parapet`)
 
-Status: draft. Source: historical `docs/HARNESS_PLAN.md` §3–§4; issues #16, #9; user decisions 2026-10-08 [D024].
+Status: draft. Source: historical `archive/2026-11:docs/HARNESS_PLAN.md` §3–§4; issues #16, #9; user decisions 2026-10-08 [D024].
 
 ## Signs in the spec
 
@@ -40,7 +40,7 @@ Status: draft. Source: historical `docs/HARNESS_PLAN.md` §3–§4; issues #16, 
 
 ## Check
 
-- Roof height (area-weighted) ±10 cm of the input level; parapet height ±3 cm (historical HARNESS_PLAN §5).
+- Roof height (area-weighted) ±10 cm of the input level; parapet height ±3 cm (historical archive/2026-11:docs/HARNESS_PLAN.md §5).
 
 ## Traps
 

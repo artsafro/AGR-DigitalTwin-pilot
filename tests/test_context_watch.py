@@ -40,7 +40,8 @@ def run(payload, env=None):
 
 def test_hook_is_wired():
     hooks = json.loads((ROOT / ".claude/settings.json").read_text(encoding="utf-8"))["hooks"]
-    assert hooks["UserPromptSubmit"][0]["hooks"][0]["command"].endswith('context_watch.py"')
+    assert hooks["UserPromptSubmit"][0]["hooks"][0]["command"].endswith('prompt_hooks.py"')
+    assert "context_watch.check(payload)" in (ROOT / "tools/hooks/prompt_hooks.py").read_text(encoding="utf-8")
 
 
 @pytest.mark.parametrize("model, env, size", [

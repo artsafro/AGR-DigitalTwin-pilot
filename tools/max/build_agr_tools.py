@@ -25,7 +25,16 @@ FILES = ('mzp.run', 'install.ms', 'startup.ms', 'agr_tools.mcr', 'menu.ms', 'run
          'suite_core.py', 'suite_max.py', 'roadmap.py',
          # 0.8 (#908): edit contract + stub modules of branches A-D (this list does not change in A-D)
          'edit_core.py', 'edit_max.py', 'geom_core.py', 'geom_max.py', 'tex_core.py', 'tex_max.py',
-         'names_core.py', 'names_max.py', 'udim_core.py', 'udim_max.py', 'package_core.py', 'package_max.py')
+         'names_core.py', 'names_max.py', 'udim_core.py', 'udim_max.py', 'package_core.py', 'package_max.py',
+         # 0.9 (#979): stub modules of branches A-D (this list does not change in A-E3; data/ is collected below)
+         'place_core.py', 'place_max.py', 'texqa_core.py', 'texqa_max.py', 'finish_core.py', 'finish_max.py',
+         'uvtile_core.py', 'uvtile_max.py', 'flora_atlas_max.py', 'qa9_core.py', 'qa9_max.py', 'facade_core.py',
+         'facade_max.py', 'batch_core.py', 'batch_max.py', 'mapsuse_core.py', 'mapsuse_max.py', 'light_core.py',
+         'light_max.py',
+         'session_core.py')  # shared in_session / same (one copy instead of one per module)
+# 0.9 (#979): every file below adapters/max/agr_tools/data/ ships as agr_tools/data/<rel> (owner files of branch C:
+# procedural_classes.json, streets/). At most one sub-folder level: install.ms copies data/ and data/<dir>/.
+DATA_DIR = 'data'
 SUITE_JSON = ROOT / 'docs/plans/agr-tools-suite.json'  # «Путь» source of truth, shipped as agr-tools-suite.json
 BUNDLE = 'AGR-Tools.bundle'
 ICONS = ROOT / 'tools/max/agr_icons.py'
@@ -41,6 +50,24 @@ def _load(path, name):
 
 def _model():
     return _load(PACKAGE / 'ui_model.py', 'agr_build_ui_model')
+
+
+def data_files(package=None):
+    """Sorted 'data/<rel>' of every file below <package>/data (at most data/<dir>/<file>; deeper is an error)."""
+    root = Path(package or PACKAGE) / DATA_DIR
+    if not root.is_dir():
+        raise ValueError('package data folder missing: ' + str(root))
+    out = []
+    for p in sorted(root.rglob('*')):
+        if p.is_dir():
+            continue
+        rel = p.relative_to(root.parent).as_posix()
+        if rel.count('/') > 2:
+            raise ValueError('data file nested deeper than one sub-folder: ' + rel)
+        if p.name.startswith('.') or p.suffix in ('.pyc', '.tmp'):
+            raise ValueError('stray file in package data: ' + rel)
+        out.append(rel)
+    return out
 
 
 def icon_files():
@@ -133,6 +160,10 @@ def _collect():
         p = PACKAGE / name
         inputs[p] = p.read_bytes()
         entries[name] = inputs[p].replace(b'\r\n', b'\n')
+    for rel in data_files():
+        p = PACKAGE / rel
+        inputs[p] = p.read_bytes()
+        entries[rel] = inputs[p].replace(b'\r\n', b'\n') if p.suffix in ('.json', '.md', '.txt', '.csv') else inputs[p]
     inputs[HYGIENE] = HYGIENE.read_bytes()
     inputs[NUDGE] = NUDGE.read_bytes()
     inputs[TILES] = TILES.read_bytes()

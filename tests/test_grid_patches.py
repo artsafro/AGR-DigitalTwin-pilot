@@ -11,7 +11,7 @@ from dt_ai.geometry import grid_patches
 @pytest.fixture(params=["dt_ai.geometry.grid_patches", "dt_ai.geometry.exterior",
                         "build_exterior_surface"])
 def clusterer(request, monkeypatch):
-    monkeypatch.syspath_prepend(str(Path(__file__).parents[1] / "tools"))
+    monkeypatch.syspath_prepend(str(Path(__file__).parents[1] / "jobs/OBR22-K02/scripts"))
     return importlib.import_module(request.param).clustered
 
 
@@ -38,7 +38,7 @@ def test_coordinate_cluster_boundaries(clusterer, values, span, expected):
 @pytest.fixture(params=["dt_ai.geometry.grid_patches", "compact_floor_body",
                         "build_exterior_surface"])
 def rectangle_extractor(request, monkeypatch):
-    monkeypatch.syspath_prepend(str(Path(__file__).parents[1] / "tools"))
+    monkeypatch.syspath_prepend(str(Path(__file__).parents[1] / "jobs/OBR22-K02/scripts"))
     return importlib.import_module(request.param).rectangles
 
 

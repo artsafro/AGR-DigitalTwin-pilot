@@ -1,0 +1,27 @@
+{
+ "schema": 1,
+ "issue": "#979",
+ "owner": "C",
+ "branch": "improve/issue-979-qa",
+ "button": "qa.procedural_objects",
+ "note": "Class names only (no plugin code was read or run). Object classes whose geometry is generated at render/evaluation time and must be collapsed to Editable Poly before FBX export. Objects of plugins missing on the machine are recognised by their Max placeholder class Missing_* in qa9_core (not listed here). measured: classOf/superClassOf seen in Max 2024 on the laptop, lab L07 job 20261105-123418-96cf611e; false: name from the team-audit T07 cards only (plugin not installed on the laptop; PC probe pending, lab L07 «Лот частичный»).",
+ "classes": [
+  {"class": "ChaosScatter", "product": "Chaos Scatter", "superclass": "GeometryClass", "measured": true, "source": "L07 job 20261105-123418-96cf611e; FBX 0 objects at export ok (job 20261105-123946-ec4c68ca)"},
+  {"class": "CScatter", "product": "Corona Scatter", "superclass": "GeometryClass", "measured": true, "source": "L07 job 20261105-123418-96cf611e"},
+  {"class": "Flow", "product": "Populate", "superclass": "GeometryClass", "measured": true, "source": "L07 job 20261105-123418-96cf611e; FBX only the path surface (job 20261105-123702-11647754)"},
+  {"class": "IdleAreaObj", "product": "Populate", "superclass": "GeometryClass", "measured": true, "source": "L07 job 20261105-123418-96cf611e; FBX 0/0 (job 20261105-123702-11647754)"},
+  {"class": "Crowd", "product": "Populate", "superclass": "helper", "measured": true, "source": "L07 job 20261105-123418-96cf611e"},
+  {"class": "ScatterGeometry", "product": "SiNi Scatter (scatter.dlo)", "superclass": "GeometryClass", "measured": true, "source": "L07 job 20261105-123418-96cf611e; Max snapshot 0 tris vs FBX 824 (job 20261105-123702-11647754)"},
+  {"class": "Forest_Pro", "product": "Forest Pack Pro", "superclass": "GeometryClass", "measured": false, "source": "T07/scatter (Forest Pack Pro 9.2.4)"},
+  {"class": "Forest_Lite", "product": "Forest Pack Lite", "superclass": "GeometryClass", "measured": false, "source": "T07/scatter"},
+  {"class": "RailClone_Pro", "product": "RailClone Pro", "superclass": "GeometryClass", "measured": false, "source": "T07/scatter (RailClone Pro)"},
+  {"class": "RailClone_Lite", "product": "RailClone Lite", "superclass": "GeometryClass", "measured": false, "source": "T07/scatter"},
+  {"class": "MultiScatter", "product": "MultiScatter", "superclass": "GeometryClass", "measured": false, "source": "T07/scatter (MultiScatter 1.630)"},
+  {"class": "MultiPainter", "product": "MultiScatter", "superclass": "GeometryClass", "measured": false, "source": "T07/scatter (MultiScatter 1.630)"},
+  {"class": "RayFireBomb", "product": "RayFire", "superclass": "GeometryClass", "measured": false, "source": "T07/vfx (RayFire 2024)"},
+  {"class": "RFCloth", "product": "RayFire", "superclass": "GeometryClass", "measured": false, "source": "T07/vfx (RayFire 2024)"},
+  {"class": "tyFlow", "product": "tyFlow", "superclass": "GeometryClass", "measured": false, "source": "T07/vfx (tyFlow)"},
+  {"class": "tyCache", "product": "tyFlow", "superclass": "GeometryClass", "measured": false, "source": "T07/vfx (tyFlow)"},
+  {"class": "tyMesher", "product": "tyFlow", "superclass": "GeometryClass", "measured": false, "source": "T07/vfx (tyFlow)"}
+ ]
+}

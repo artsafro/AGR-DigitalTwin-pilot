@@ -115,7 +115,8 @@ def test_ucx_excluded_from_model_triangles_and_budget_checked():
                            PROFILES.vpm)
     assert next(f for f in found["V003"] if f.name == "triangle count").observed.endswith(": 100000")
     assert statuses(found, "V010") == {"UCX present": "pass", "UCX material slots": "pass",
-                                       "UCX triangle budget": "fail", "UCX shape and coverage": "not_run",
+                                       "UCX triangle budget": "fail", "UCX shape": "not_run",
+                                       "UCX coverage and offsets": "not_run",
                                        "UCX intersections": "not_run", "UCX intersections coverage": "not_run",
                                        "UCX piece gap (advisory)": "not_run"}
 
@@ -459,6 +460,7 @@ def test_readback_returncode_0_with_valid_report_returns_dictionary(monkeypatch)
 
     result = readback(synthetic_fbx, blender="not-executed")
     units = result.pop("fbx_units")
+    assert result.pop("fbx_application") is None  # not a real FBX
     assert units["unit_scale_factor"] is None and units["original_unit_scale_factor"] is None
     assert units["error"]
     assert result == expected_data

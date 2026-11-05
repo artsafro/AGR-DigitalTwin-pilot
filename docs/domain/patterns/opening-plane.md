@@ -1,6 +1,6 @@
 # Opening plane with window ID (`opening-plane`)
 
-Status: draft. Source: historical `docs/HARNESS_PLAN.md` §3, §6, §7; `docs/domain/geometry.md` (window rules);
+Status: draft. Source: historical `archive/2026-11:docs/HARNESS_PLAN.md` §3, §6, §7; `docs/domain/geometry.md` (window rules);
 spec v0.3 (#36); window library `library/windows/window_types.json` (#4).
 
 ## Signs in the spec

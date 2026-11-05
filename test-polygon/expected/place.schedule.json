@@ -1,14 +1,56 @@
 {
  "schema": 1,
  "button": "place.schedule",
- "tool": null,
+ "tool": "place.schedule",
  "version": "0.9",
- "shipped": false,
+ "shipped": true,
  "select": "named",
- "reason": "Кнопки ещё нет в AGR Tools 0.7: в панели её нет, объекты полигона и эта запись появляются в том же изменении, что и сама кнопка.",
+ "reason": "",
  "apply_status": null,
- "objects": [],
- "base": null,
- "station": null,
- "stations": []
+ "objects": [
+  {
+   "name": "SM_FragA_Bench_GroundEl",
+   "scene": "frag_a_sched",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_FragA_Lamp_GroundEl",
+   "scene": "frag_a_sched",
+   "expect": "fail",
+   "codes": [
+    "blocked_by_obstacle"
+   ]
+  }
+ ],
+ "options": {
+  "rows": [
+   {
+    "id": "P01",
+    "model": "SM_FragA_Bench_GroundEl",
+    "x": -5.0,
+    "y": -5.0,
+    "rotation_deg": 30.0
+   },
+   {
+    "id": "P02",
+    "model": "SM_FragA_Lamp_GroundEl",
+    "x": -5.0,
+    "y": 5.0,
+    "rotation_deg": 0.0
+   },
+   {
+    "id": "P03",
+    "model": "SM_FragA_Lamp_GroundEl",
+    "x": 8.0,
+    "y": 8.0,
+    "rotation_deg": 0.0
+   }
+  ]
+ },
+ "base": "0.9",
+ "station": "0.9.10",
+ "stations": [
+  "0.9.10"
+ ]
 }

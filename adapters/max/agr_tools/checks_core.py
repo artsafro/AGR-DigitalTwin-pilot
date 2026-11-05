@@ -43,6 +43,9 @@ OKS_NUMBER = re.compile(r'(?:00[1-9]|01[0-9]|020)')
 UCX_INDEX = re.compile(r'(?:00[1-9]|0[1-9][0-9]|[1-9][0-9]{2})')
 NAME_CHARS = re.compile(r'[A-Za-z0-9_]+')
 
+# Review-level codes: a finding at a limit or needing a person. Status stays `fail`, never `pass` (#836, #934).
+REVIEW_CODES = frozenset({'at_threshold', 'tri_at_limit', 'name_conflict', 'tex_overlap_review'})
+
 CODES = {
     'names': {'name_empty', 'name_length', 'name_symbols', 'name_separator', 'name_prefix', 'name_suffix',
               'name_type', 'name_case', 'name_digits', 'name_conflict', 'fbx_unmapped'},
@@ -618,6 +621,16 @@ def max_submaterial_index(mid, ids):
     w = (mid - 1) % max(ids) + 1
     hits = [i for i, v in enumerate(ids) if v == w]
     return hits[0] if len(hits) == 1 else None
+
+
+def listed_submaterial_index(mid, ids):
+    """Index of face matID `mid` in materialIDList WITHOUT the FBX wrap; None when `mid` is not listed
+    exactly once. The MatID check and the export `empty_slot` use it: a matID outside the list is a
+    blocking finding even though the export wraps it onto another sub-material (#844, [D196]
+    2026-11-04: the face gets another material in the delivery). Fail-closed like max_submaterial_index."""
+    if type(mid) is not int or not ids or [int(i) for i in ids].count(mid) != 1:
+        return None
+    return max_submaterial_index(mid, ids)
 
 
 def textures_scene(rows):

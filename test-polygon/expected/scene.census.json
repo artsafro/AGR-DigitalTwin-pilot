@@ -140,13 +140,7 @@
    "expect": "fail",
    "codes": [
     "missing_map"
-   ],
-   "known_bug": {
-    "id": "census-usedmaps-drops-missing-file",
-    "issue": 886,
-    "got_expect": "pass",
-    "got_codes": []
-   }
+   ]
   },
   {
    "name": "SM_Polygon_018_Main",
@@ -198,6 +192,12 @@
   },
   {
    "name": "SM_Polygon_017_Main",
+   "scene": "polygon_all",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_Polygon_Layer_Main",
    "scene": "polygon_all",
    "expect": "pass",
    "codes": []

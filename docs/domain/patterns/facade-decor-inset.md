@@ -53,7 +53,7 @@ recorded from a real job; catalogue `benchmark/bench-k02-decor-fragment/decor-ca
 - Questions only where these rules do not cover a piece: `decor-shape` (on a wall but no box, or off a wall
   of a storey it crosses), `decor-merge` (above), `decor-column` (a column off a level) and `decor-deep` (the
   attachment candidates, to confirm their kind) — never for a number at a threshold.
-- **One question per type** (user 2026-10-12 [D058], general rule of the gray zone, historical HARNESS_PLAN §7): one kind and
+- **One question per type** (user 2026-10-12 [D058], general rule of the gray zone, historical archive/2026-11:docs/HARNESS_PLAN.md §7): one kind and
   one cross-section (projection and height within 5 mm), repeated on the facade, is one question with its
   count and all positions — never one question per piece.
 

@@ -2,14 +2,14 @@
 (
     global AGRToolsInstallRoot, AGRToolsStartupRoot
     local source = getFilenamePath (getSourceFileName())
-    if AGRToolsInstallRoot == undefined do AGRToolsInstallRoot = (getDir #userScripts) + "/AGRTools-0.7.0/"
+    if AGRToolsInstallRoot == undefined do AGRToolsInstallRoot = (getDir #userScripts) + "/AGRTools-0.8.0/"
     if AGRToolsStartupRoot == undefined do AGRToolsStartupRoot = (getDir #userStartupScripts) + "/"
     if doesDirectoryExist AGRToolsInstallRoot do throw "AGR Tools destination already exists; choose a new versioned path"
-    local boot = AGRToolsStartupRoot + "AGRTools-0.7.0.ms"
+    local boot = AGRToolsStartupRoot + "AGRTools-0.8.0.ms"
     if doesFileExist boot do throw "AGR Tools startup file already exists"
     local files = getFiles (source + "agr_tools/*")
-    if files.count < 36 do throw "AGR Tools archive incomplete"
-    local required = #("runtime.py", "atlas_core.py", "uv_nudge_core.py", "startup.ms", "agr_tools.mcr", "menu.ms", "bootstrap.py", "hygiene_core.py", "README.md", "ucx_core.py", "texel_core.py", "ucx_audit_core.py", "export_core.py", "checks_core.py", "checks_max.py", "CHANGELOG.md", "ui_model.py", "ui_qt.py", "ui_panel.py", "ui_max.py", "suite_core.py", "suite_max.py", "roadmap.py", "agr-tools-suite.json", "edit_core.py", "edit_max.py", "geom_core.py", "geom_max.py", "tex_core.py", "tex_max.py", "names_core.py", "names_max.py", "udim_core.py", "udim_max.py", "package_core.py", "package_max.py")
+    if files.count < 56 do throw "AGR Tools archive incomplete"
+    local required = #("runtime.py", "atlas_core.py", "uv_nudge_core.py", "startup.ms", "agr_tools.mcr", "menu.ms", "bootstrap.py", "hygiene_core.py", "README.md", "ucx_core.py", "texel_core.py", "ucx_audit_core.py", "export_core.py", "checks_core.py", "checks_max.py", "CHANGELOG.md", "ui_model.py", "ui_qt.py", "ui_panel.py", "ui_max.py", "suite_core.py", "suite_max.py", "roadmap.py", "agr-tools-suite.json", "edit_core.py", "edit_max.py", "geom_core.py", "geom_max.py", "tex_core.py", "tex_max.py", "names_core.py", "names_max.py", "udim_core.py", "udim_max.py", "package_core.py", "package_max.py", "place_core.py", "place_max.py", "texqa_core.py", "texqa_max.py", "finish_core.py", "finish_max.py", "uvtile_core.py", "uvtile_max.py", "flora_atlas_max.py", "qa9_core.py", "qa9_max.py", "facade_core.py", "facade_max.py", "batch_core.py", "batch_max.py", "mapsuse_core.py", "mapsuse_max.py", "light_core.py", "light_max.py", "session_core.py")
     for name in required do (
         local found = false
         for f in files where (filenameFromPath f) == name do found = true
@@ -18,8 +18,12 @@
     local themes = #("Dark", "Light")
     for theme in themes do (
         local icons = getFiles (source + "agr_tools/icons/" + theme + "/AgrIcons/*.png")
-        if icons.count < 196 do throw ("AGR Tools archive missing icons " + theme)
+        if icons.count < 272 do throw ("AGR Tools archive missing icons " + theme)
     )
+    -- 0.9 (#979): data/ (owner files of branch C) is a tree of at most one sub-folder level
+    local dataSrc = source + "agr_tools/data/"
+    if (getFiles (dataSrc + "procedural_classes.json")).count != 1 do throw "AGR Tools archive missing data/procedural_classes.json"
+    if (getFiles (dataSrc + "streets/PROVENANCE.md")).count != 1 do throw "AGR Tools archive missing data/streets/PROVENANCE.md"
     makeDir AGRToolsInstallRoot all:true
     for f in files do (
         if not copyFile f (AGRToolsInstallRoot + filenameFromPath f) do throw ("AGR Tools cannot install " + f)
@@ -29,6 +33,18 @@
         makeDir dst all:true
         for f in getFiles (source + "agr_tools/icons/" + theme + "/AgrIcons/*") do (
             if not copyFile f (dst + filenameFromPath f) do throw ("AGR Tools cannot install " + f)
+        )
+    )
+    local dataDst = AGRToolsInstallRoot + "data/"
+    makeDir dataDst all:true
+    for f in getFiles (dataSrc + "*") do (
+        if not copyFile f (dataDst + filenameFromPath f) do throw ("AGR Tools cannot install " + f)
+    )
+    for d in getDirectories (dataSrc + "*") do (
+        local sub = dataDst + (filenameFromPath (trimRight d "\\/")) + "/"
+        makeDir sub all:true
+        for f in getFiles (d + "*") do (
+            if not copyFile f (sub + filenameFromPath f) do throw ("AGR Tools cannot install " + f)
         )
     )
     local stream = createFile boot

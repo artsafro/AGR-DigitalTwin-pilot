@@ -1,4 +1,4 @@
-# AGR Tools 0.7.0 — 3ds Max 2024 / 2026
+# AGR Tools 0.8.0 — 3ds Max 2024 / 2026
 
 Own implementations. The 0.5.0 diagnostics adapt GeoAGR 13.64 functions with the permission of
 their author (Artem). Only the logic in use is adapted (`checks_core.py`), not GeoAGR.ms; no team
@@ -7,8 +7,8 @@ This is a diagnostic/export-copy tool, not a delivery validator or production jo
 
 ## Build and install
 
-`python tools/max/build_agr_tools.py <new-path>/AGR-Tools-0.7.0.mzp` (MZP) or
-`python tools/max/build_agr_tools.py --bundle <new-path>/AGR-Tools-0.7.0.bundle.zip` (plugin package:
+`python tools/max/build_agr_tools.py <new-path>/AGR-Tools-0.8.0.mzp` (MZP) or
+`python tools/max/build_agr_tools.py --bundle <new-path>/AGR-Tools-0.8.0.bundle.zip` (plugin package:
 unzip into `%APPDATA%\Autodesk\ApplicationPlugins`; uninstall = delete `AGR-Tools.bundle` and the
 `[AGRTools]` section of `3dsMax.ini`). PNG icons are rendered from the SVG sources with PySide6
 (`uv run --with PySide6 ...`), or taken from `AGR_ICON_PNG_DIR`.
@@ -72,7 +72,8 @@ never a clean result. Objects are identified by unique Max handles as well as na
   creates independent export-copy nodes/materials; it never cleans originals.
   Reports planned actions and re-inspected results. Nothing is saved/exported.
 - **MatID check**: face IDs >= **1001**, unassigned ID 0, missing materials,
-  unresolved or empty Multi/Sub slots; lists face IDs and selects offending nodes.
+  unresolved or empty Multi/Sub slots, and a face ID not listed in `materialIDList` even when the FBX
+  export would wrap it (`empty_slot`, #844); lists face IDs and selects offending nodes.
   Pilot #548 / D030. This is not the complete semantic 1–35 reading-scheme gate;
   no arbitrary ID remapping, empty-slot fallback or UDIM renumbering is done.
 - **UV integer-tile nudge**: dry-run reports channel-1 islands and integer period
@@ -143,6 +144,22 @@ never a clean result. Objects are identified by unique Max handles as well as na
   VPM 512–1706 px/m and NPM 10–40 px/m. A zero area or a zero map size is
   `at_threshold` and is an error.
 
+## 0.8.0 delivery edits on copies (#908)
+
+Thirteen buttons of plan version 0.8 in the section «Сдача (копии)» and in their block tabs, each a
+`runtime.ui('<tool>')` macro and an MCP tool `agr_<block>_<name>`: `scene.missing_maps` (read-only),
+`model.triangulate`, `ucx.triangulate`, `ucx.rename`, `export.pivot_place`, `tex.format_fix`,
+`tex.placeholders`, `qa.names_fix`, `udim.ids_to_udims`, `qa.package` (read-only, pilot validator),
+`export.ground_fbx`, `export.geojson_write`, `export.zip`.
+
+Every editing button works in two presses: **preview** (nothing changes, the report lists `done`,
+`skipped` with a reason and `ambiguous`) and **apply**, which accepts only the preview of the same tool
+and selection and refuses when its hash or the scene state changed (`edit_core.py`). Edits go to export
+copies (`*_AGR_export_*`, own layers) or to new files; nothing is overwritten (`new_path()` versions or
+refuses). One run = one Undo record, the selection is restored; an error inside the run is re-raised
+after the Undo record closes. Only `ucx.rename` renames UCX nodes in place (one Undo record).
+MCP: editing tools take `mode: preview`, and `mode: apply` only with that preview.
+
 ## 0.7.0 pre-delivery checks, rail and «Путь» (#860)
 
 Twelve read-only checks (plan version 0.7), each a button of its block tab, a `runtime.ui('<tool>')`
@@ -161,6 +178,12 @@ exactly at a limit is `tri_at_limit` / `at_threshold`, which is a finding, never
 items are listed in `plan.dropped` with a reason. Defects D1-D8 and the source lines are in
 `CHANGELOG.md`.
 
+Review-level codes count as non-pass. Every review-level code in this package is
+`at_threshold`, `tri_at_limit`, `name_conflict` and `tex_overlap_review`
+(`REVIEW_CODES` in `checks_core.py`). A report whose only finding is
+one of them has status `fail`, and a person reviews that finding. The schema stays
+`pass` or `fail`. A `review` status may come later only if the UI needs it.
+
 | Requirement id | Button | Status in 0.5.0 |
 | --- | --- | --- |
 | NPM-1.3-2.b, VPM-1.3-2.b, NPM-2.10-2, VPM-2.10-2.a | Names check | checks (Latin, digits, `_`; space/dot/Cyrillic named) |
@@ -176,7 +199,7 @@ items are listed in `plan.dropped` with a reason. Defects D1-D8 and the source l
 | NPM-2.5-4 | Textures check | checks (≥ 8 px between islands of one atlas, across the objects of one FBX) |
 | VPM-2.5-1.2, VPM-2.5-1.6, VPM-2.5-1.9, VPM-2.5-1.4.a | Textures check | checks (2048/4096 or 256 placeholder, alpha only in Diffuse, 8 bit, D+ERM+N per tile) |
 | VPM-2.5-1.5 | Textures check | checks (16 px at 2048, 32 px at 4096, per atlas and UDIM tile) |
-| — (3ds Max 2026.3 FBX export, measured #827) | Textures check, MatID check | resolves a face matID outside `materialIDList` as the export does: wraps by the highest listed ID, `(id - 1) mod n + 1`, then that ID must be listed; advisory `tex_matid_wrapped` (`matID 3 -> sub 1`) |
+| — (3ds Max 2026.3 FBX export, measured #827) | Textures check | resolves a face matID outside `materialIDList` as the export does: wraps by the highest listed ID, `(id - 1) mod n + 1`, then that ID must be listed; advisory `tex_matid_wrapped` (`matID 3 -> sub 1`). The MatID check and export `empty_slot` do not wrap: an unlisted ID blocks (#844) |
 | VPM-2.5-1.5 (repeating islands), VPM uv.repeating_islands_may_overlap | Textures check | review (`tex_overlap_review`: touching or overlapping VPM islands; padding applies only to islands with unique images) |
 | VPM-2.5-2.1.3.a | Textures check | checks (UDIM from 1001 without gaps) |
 | VPM-2.9-4.b, VPM-2.9-5 | Pivot check | checks (Z = 0 and one pivot per FBX, 1 mm) |
@@ -225,4 +248,6 @@ results, writes the report exclusively and emits a completion marker at the end.
 First rollout complete: xView, pre-export clean-up, MatID, UV integer-tile
 nudge, UDIM to NPM atlas, UCX collision, texel readout and checked export.
 0.5.0 adds read-only names, triangle, texture, pivot and GeoJSON diagnostics.
+0.7.0 adds 12 read-only pre-delivery checks, the block tab rail and «Путь».
+0.8.0 adds 13 delivery edits on export copies / new files with preview → apply.
 No licensing, obfuscation, GeoAGR.ms copy or decryption is included.

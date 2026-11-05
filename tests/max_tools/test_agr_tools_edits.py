@@ -160,7 +160,7 @@ def test_registry_matches_the_13_plan_rows_of_version_08():
         assert core_file == OWNER[rid] + '_core.py' and (PKG / core_file).is_file()
         assert (PKG / core_file.replace('_core.py', '_max.py')).is_file()
         assert fn == rid.replace('.', '_')
-    assert rt.VERSION == m.VERSION == '0.7.0'  # 0.8 stays unshipped until the release branch R
+    assert rt.VERSION == m.VERSION == '0.8.0'  # release branch R ships 0.8
 
 
 def _glue_functions(stem):
@@ -288,12 +288,15 @@ def test_two_press_ui_keeps_the_preview_per_selection(monkeypatch):
                         if filename == 'tex_max.py' else loaded(filename, module_name))
     assert rt.edit_ui('scene.missing_maps')['status'] == 'not_implemented'
     assert 'scene.missing_maps' not in rt._edits
-    assert "elif tool in EDITS_080:\n        report = edit_ui(tool)" in (PKG / 'runtime.py').read_text(encoding='utf-8')
+    assert "elif tool in EDITS_080 or tool in EDITS_090:\n        report = edit_ui(tool)" in (  # 0.9 base (#979)
+        PKG / 'runtime.py').read_text(encoding='utf-8')
 
 
 def test_panel_backend_routes_edit_tools_to_edits_080():
     src = (PKG / 'ui_max.py').read_text(encoding='utf-8')
-    assert 'if tool in self.agr.EDITS_080:' in src and 'self.agr.edit_ui(tool)' in src
+    # 0.9 base (#979): the same route also takes EDITS_090; `select` rows are selected by the backend itself
+    assert 'if tool in self.agr.EDITS_080 or tool in self.agr.EDITS_090:' in src
+    assert 'self.agr.edit_ui(tool, select=False)' in src
 
 
 # ---- UI: section, actions, macros, menu, icons ---------------------------------------------------------
@@ -314,13 +317,13 @@ def test_each_08_row_has_one_action_with_macro_icon_and_menu_entry():
          'geojsonw', 'groundfbx', 'place', 'zip'])
 
 
-def test_rail_keeps_08_actions_greyed_until_version_080():
-    rail = m.rail(suite['blocks'], suite['rows'])
-    done = {m.row_of(a.id) for _, d, _ in rail for a in d}
-    planned = {r['id'] for _, _, p in rail for r in p}
+def test_rail_shows_08_actions_from_version_080_and_greys_them_before():
+    rail07 = m.rail(suite['blocks'], suite['rows'], '0.7.0')
+    done = {m.row_of(a.id) for _, d, _ in rail07 for a in d}
+    planned = {r['id'] for _, _, p in rail07 for r in p}
     assert not done & set(ROWS_080) and set(ROWS_080) <= planned
-    rail08 = m.rail(suite['blocks'], suite['rows'], '0.8.0')
-    assert set(ROWS_080) <= {m.row_of(a.id) for _, d, _ in rail08 for a in d}
+    rail = m.rail(suite['blocks'], suite['rows'])  # released: VERSION 0.8.0
+    assert set(ROWS_080) <= {m.row_of(a.id) for _, d, _ in rail for a in d}
 
 
 def test_builder_ships_the_edit_contract_and_every_stub():
@@ -374,14 +377,18 @@ def test_lab_verdict_wins_for_three_rows():
     assert suite['stats']['by_verdict'] == by
 
 
-def test_changelog_has_08_in_work_with_four_non_empty_branch_subsections():
+def test_changelog_has_one_released_08_section_naming_all_13_rows():
     text = (PKG / 'CHANGELOG.md').read_text(encoding='utf-8')
-    head = text[text.index('## 0.8.0 (#908) — в работе'):text.index('## 0.7.0')]
+    # 0.9 (#979) opens its own «в работе» section above; the released 0.8 sections stay closed
+    assert 'в работе' not in text[text.index('## 0.8.1'):text.index('## 0.7.0')] and text.count('## 0.8.0') == 1
+    head = text[text.index('## 0.8.0 (#908)\n'):text.index('## 0.7.0')]
+    assert not re.search(r'^### [ABCD] ', head, re.M)  # branch subsections merged by the release branch R
     subs = re.split(r'^### ', head, flags=re.M)[1:]
-    letters = [s.split(' ', 1)[0] for s in subs]
-    assert letters == ['Основа', 'A', 'B', 'C', 'D']
+    assert len(subs) == 5
     for s in subs:
         assert re.search(r'^- \S', s, re.M), s[:40]
+    for rid in ROWS_080:
+        assert '`{}`'.format(rid) in head, rid
 
 
 def test_native_runners_derive_the_startup_file_from_the_installed_version():
@@ -392,3 +399,45 @@ def test_native_runners_derive_the_startup_file_from_the_installed_version():
         assert "STARTUP = OUT / 'startup' / 'AGRTools-{}.ms'.format(agr.VERSION)" in src, name
     install = (PKG / 'install.ms').read_text(encoding='utf-8-sig')
     assert 'AGRTools-{}.ms'.format(runtime().VERSION) in install
+
+
+# ---- edit_max.session: an error inside the undo record must leave the with block (#908, branch C) -----------
+class _SwallowingUndo:
+    """Model of `pymxs.undo(True, label)` as measured in Max 2024 batch (job 20261105-011438-a488a8fd): its exit
+    swallows the exception, so without the fix a failed apply carries on as if it had worked."""
+    records = []
+
+    def __init__(self, on, label):
+        self.label = label
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        _SwallowingUndo.records.append(self.label)
+        return True
+
+
+def _fake_pymxs(monkeypatch):
+    rt = types.SimpleNamespace(selection=[], clearSelection=lambda: None, isValidNode=lambda n: True,
+                               select=lambda nodes: None)
+    monkeypatch.setitem(sys.modules, 'pymxs', types.SimpleNamespace(undo=_SwallowingUndo, runtime=rt))
+    _SwallowingUndo.records = []
+    return _load(PKG / 'edit_max.py', 'agr_tools_edit_max_t')
+
+
+def test_session_reraises_an_error_swallowed_by_the_undo_context(monkeypatch):
+    emax = _fake_pymxs(monkeypatch)
+    after = []
+    with pytest.raises(ValueError, match='apply failed'):
+        with emax.session('model.triangulate'):
+            raise ValueError('apply failed')
+        after.append('carried on')  # the measured defect: the run continued as a success
+    assert after == [] and _SwallowingUndo.records == ['AGR Tools: model.triangulate']  # still one record
+
+
+def test_session_success_yields_selection_and_one_record(monkeypatch):
+    emax = _fake_pymxs(monkeypatch)
+    with emax.session('export.zip') as before:
+        assert before == []
+    assert _SwallowingUndo.records == ['AGR Tools: export.zip']

@@ -99,13 +99,16 @@ def report(tool, mode, objects=(), done=(), skipped_=(), ambiguous=(), state_has
     return validate_report(out)
 
 
-def not_implemented(tool, mode):
-    """Report of a tool whose module is still an empty stub (the base ships and builds before A–D)."""
+def not_implemented(tool, mode, issue=ISSUE):
+    """Report of a tool whose module is still an empty stub (the base ships and builds before its branch).
+    `issue`: the issue of the version that owns the row (#908 for 0.8, #979 for 0.9)."""
     if mode not in MODES:
         raise ValueError('unknown edit mode: ' + repr(mode))
+    if not isinstance(issue, str) or not issue.startswith('#'):
+        raise ValueError('issue must look like #NNN: ' + repr(issue))
     return validate_report({'schema': SCHEMA, 'tool': str(tool), 'status': 'not_implemented', 'objects': [],
                             'plan': {'mode': mode, 'contract': CONTRACT, 'done': [], 'skipped': [], 'ambiguous': [],
-                                     'issue': ISSUE}})
+                                     'issue': issue}})
 
 
 def validate_report(r, tools=None):

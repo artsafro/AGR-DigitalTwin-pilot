@@ -3,6 +3,9 @@
     uv run python tools/library/build_window_types.py --type-map <type-map.json> \
         --library-v001 <curtain-types.json> --kpp1-twin <twin-data.json> --kpp1-spec <spec.json> \
         --output library/windows/window_types.json
+    # add or rebuild a job census without the user-project inputs (existing entries kept as built):
+    uv run python tools/library/build_window_types.py --base library/windows/window_types.json \
+        --census-source library/windows/sources/elv-tc-vpm-census-v001.json --output library/windows/window_types.json
 
 Pattern: none — library tooling, not a building node (REVIEW_CHECKLIST Q1: new-case).
 
@@ -116,6 +119,47 @@ def max_types(source, path):
             opaque_m=o["opaque_m"] or None))
         if sections is not None:                  # members of the layout include the opaque infill
             out[-1]["sections"], out[-1]["transoms"] = sections, transoms
+    return out
+
+
+CENSUS_EXTRA = ("grid", "inserts", "drum", "sill_m", "opaque_infill")
+EXTENSIONS_NOTE = (
+    "Optional fields (window-source-census/1): `frame_finish` holds the frame colour; `grid` makes a curtain type "
+    "parametric — the entry is one module (bay) of width module_m whose panes are expanded from grid.rows and "
+    "repeated along the wall; `inserts` place other types (doors) in a curtain opening by rect_m; `drum` "
+    "describes a revolving door (plan diameters, door and canopy heights; panes_m null); roles `gate` and "
+    "`revolving_door` are census roles.")
+
+
+def grid_panes(grid):
+    """Glass and opaque rectangles of one curtain-wall module from its rows (mullion centred on the module edges)."""
+    x0, x1 = grid["mullion_m"] / 2, grid["module_m"] - grid["mullion_m"] / 2
+    glass, opaque = [], []
+    for row in grid["rows"]:
+        (glass if row["infill"] == "glass" else opaque).append([round(x0, 3), row["z0"], round(x1, 3), row["z1"]])
+    return glass, opaque
+
+
+def census_types(source, path):
+    """Types of a job census (library/windows/sources/*-census-*.json, schema window-source-census/1): sizes and
+    pane layouts measured from the job's FBX and album; ids <prefix>-NN in file order; names form + size."""
+    if source.get("schema") != "window-source-census/1":
+        raise SystemExit(f"not a census source: {path}")
+    out, prefix, src = [], source["id_prefix"], source["source"]
+    for n, t in enumerate(source["types"], 1):
+        glass, opaque = (grid_panes(t["grid"]) if t.get("grid") else (t["glass_m"], t["opaque_m"]))
+        e = entry(f"{prefix}-{n:02d}", t["name"], t["role"], t["width_m"], t["height_m"], glass,
+                  source={"object": src["job"], "file": Path(path).as_posix(), "census_key": t["key"],
+                          **t["provenance"], "occurrences": t["occurrences"]},
+                  variant_of=t.get("variant_of"), infill=t["infill"], frame_finish=t["frame_finish"],
+                  opaque_m=opaque or None, note=t.get("note"),
+                  **{k: t[k] for k in CENSUS_EXTRA if k in t})
+        if glass or opaque:
+            e["sections"], e["transoms"] = layout(glass + opaque, opaque)
+        e["unconfirmed"] = {
+            "sashes": {"candidate": t["sashes_candidate"], "reason": t["sashes_reason"], "source": Path(path).as_posix()},
+            "handing": {"candidate": None, "reason": "handing is per placement (the FBX has L and R instances)"}}
+        out.append(e)
     return out
 
 
@@ -236,17 +280,24 @@ def confirm(types, confirmations):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--type-map", type=Path, required=True)
-    ap.add_argument("--library-v001", type=Path, required=True)
-    ap.add_argument("--kpp1-twin", type=Path, required=True)
-    ap.add_argument("--kpp1-spec", type=Path, required=True)
+    ap.add_argument("--type-map", type=Path)
+    ap.add_argument("--library-v001", type=Path)
+    ap.add_argument("--kpp1-twin", type=Path)
+    ap.add_argument("--kpp1-spec", type=Path)
     ap.add_argument("--output", type=Path, required=True)
     ap.add_argument("--max-source", type=Path, action="append", default=[],
                     help="a 3ds Max window source (library/windows/sources/*.json); repeatable")
+    ap.add_argument("--census-source", type=Path, action="append", default=[],
+                    help="a job census source (library/windows/sources/*-census-*.json); repeatable")
+    ap.add_argument("--base", type=Path,
+                    help="an existing window_types.json whose entries are kept as built (when the user-project inputs "
+                         "are not on this machine); entries from the given census files are rebuilt")
     ap.add_argument("--confirmations", type=Path, default=Path(__file__).resolve().parents[2] / "library" / "windows" / "confirmations.json")
     args = ap.parse_args(argv)
     if not args.confirmations.exists():                 # never drop the user's decisions silently (PR #42 review 1)
         raise SystemExit(f"confirmations file not found: {args.confirmations}")
+    if not args.base and not all((args.type_map, args.library_v001, args.kpp1_twin, args.kpp1_spec)):
+        raise SystemExit("give --type-map, --library-v001, --kpp1-twin and --kpp1-spec, or --base")
     max_sources, prefixes = [], set()
     for src in args.max_source:                           # one id space per source (PR #43 review 1)
         source = json.loads(src.read_text(encoding="utf-8"))
@@ -254,20 +305,39 @@ def main(argv=None):
             raise SystemExit(f"max source given twice or prefix {source['id_prefix']} reused: {src}")
         prefixes.add(source["id_prefix"])
         max_sources.append((src, source))
-    types = (sosh(json.loads(args.type_map.read_text(encoding="utf-8")),
-                  json.loads(args.library_v001.read_text(encoding="utf-8")))
-             + kpp1(args.kpp1_twin, args.kpp1_spec))
-    for src, source in max_sources:
-        types += max_types(source, src)
+    censuses = []
+    for src in args.census_source:
+        source = json.loads(src.read_text(encoding="utf-8"))
+        if source["id_prefix"] in prefixes:
+            raise SystemExit(f"census source given twice or prefix {source['id_prefix']} reused: {src}")
+        prefixes.add(source["id_prefix"])
+        censuses.append((src, source))
+    note = ("Machine-readable window type list (archive/2026-11:docs/HARNESS_PLAN.md §6 (historical), issue #4). An entry is unconfirmed until "
+            "the user confirms and names it (library/windows/confirmations.json); handing is null; sashes are not in "
+            "the sources. Sizes are the rough opening with its frame (spec v0.3); panes_m are glass "
+            "rectangles [x0, z0, x1, z1] from the bottom left of the opening. Built by "
+            "tools/library/build_window_types.py.")
+    if args.base:
+        base = json.loads(args.base.read_text(encoding="utf-8"))
+        rebuilt = {Path(src).as_posix() for src, _ in censuses}
+        types = [t for t in base["types"] if t["source"].get("file") not in rebuilt]
+        clash = {t["id"].split("-")[0] for t in types} & prefixes
+        if max_sources or clash:
+            raise SystemExit(f"--base keeps its entries; prefix already in the base: {sorted(clash) or 'max sources'}")
+        note = base["note"]
+    else:
+        types = (sosh(json.loads(args.type_map.read_text(encoding="utf-8")),
+                      json.loads(args.library_v001.read_text(encoding="utf-8")))
+                 + kpp1(args.kpp1_twin, args.kpp1_spec))
+        for src, source in max_sources:
+            types += max_types(source, src)
+    for src, source in censuses:
+        types += census_types(source, src)
+    if censuses and EXTENSIONS_NOTE not in note:
+        note = f"{note} {EXTENSIONS_NOTE}"
     types = dedupe(types)
     types = confirm(types, json.loads(args.confirmations.read_text(encoding="utf-8")))
-    doc = {"schema": "window-types/1",
-           "note": "Machine-readable window type list (HARNESS_PLAN §6, issue #4). An entry is unconfirmed until "
-                   "the user confirms and names it (library/windows/confirmations.json); handing is null; sashes are not in "
-                   "the sources. Sizes are the rough opening with its frame (spec v0.3); panes_m are glass "
-                   "rectangles [x0, z0, x1, z1] from the bottom left of the opening. Built by "
-                   "tools/library/build_window_types.py.",
-           "types": types}
+    doc = {"schema": "window-types/1", "note": note, "types": types}
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(doc, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     print(f"window types: {len(types)} ({sum(t['status'] == 'confirmed' for t in types)} confirmed, "

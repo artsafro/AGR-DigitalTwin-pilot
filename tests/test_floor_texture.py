@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-spec = importlib.util.spec_from_file_location('texture_floor', Path(__file__).parents[1]/'tools/texture_floor.py')
+spec = importlib.util.spec_from_file_location('texture_floor', Path(__file__).parents[1]/'jobs/OBR22-K02/scripts/texture_floor.py')
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
 

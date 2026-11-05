@@ -2,7 +2,7 @@
 
 Status: accepted (2026-10-08 [D030], plan grilling Q4).
 
-Inside the working model, material IDs follow group ranges (`docs/HARNESS_PLAN.md` §6:
+Inside the working model, material IDs follow group ranges (`archive/2026-11:docs/HARNESS_PLAN.md` §6:
 1–5 facade, 6–10 reveals, 11–15 openings, …), and an unused group leaves its range empty.
 This scheme exists so an agent or a person can read the model. It is not the delivery
 numbering: the regulation requires VPM UDIM tiles 1001..1100 without gaps and glass only

@@ -67,7 +67,8 @@ def parser():
     fsrc = sub.add_parser("from-source", help=fsrc_help, description=fsrc_help)
     for a in ("--dump", "--modules", "--object", "--output"):
         fsrc.add_argument(a, type=Path, required=True)
-    intake = sub.add_parser("intake", help="Check an intake folder ('study the sources', HARNESS_PLAN §15)")
+    intake_help = "Check an intake folder ('study the sources', archive/2026-11:docs/HARNESS_PLAN.md §15 (historical))"
+    intake = sub.add_parser("intake", help=intake_help, description=intake_help)
     intake.add_argument("action", choices=["check"])
     intake.add_argument("--dir", type=Path, required=True, help="jobs/<JOB>/intake")
     evals = sub.add_parser("evals", help="Run agent-behaviour eval tasks (evals/<task>/task.json); report in a new run folder")
