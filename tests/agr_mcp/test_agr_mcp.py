@@ -809,6 +809,402 @@ def test_probe_reclaim_leaves_no_aside_files_seed_896(tmp_path):
     assert seen == rounds * len(kinds) == 48
 
 
+def test_stale_mutex_unlink_by_name_cannot_admit_two(tmp_path, monkeypatch):
+    """#972: X reads a stale reclaim mutex, pauses; Y links a fresh one; X resumes.
+
+    At most one caller may be inside the mutex. Unlinking the mutex by name deletes Y's live file.
+    """
+    import time
+    path = _lock_file()
+    path.write_text(json.dumps({"pid": 999999999, "card": "dead"}), encoding="utf-8")
+    mutex = path.with_name(f".{path.name}.mutex")
+    mutex.write_text(json.dumps({"pid": 999999999, "until": time.time() + 60, "token": "stale"}),
+                     encoding="utf-8")
+    real_stale = locks._mutex_stale
+    real_acquire = locks._mutex_acquire
+    real_release = locks._mutex_release
+    real_drop = locks._drop_stale_inode
+    x_paused = threading.Event()
+    y_inside = threading.Event()
+    x_finished = threading.Event()
+    guard = threading.Lock()
+    state = {"current": 0, "max": 0}
+    errors = []
+    paused = {"x": False}
+
+    def enter():
+        with guard:
+            state["current"] += 1
+            state["max"] = max(state["max"], state["current"])
+
+    def leave():
+        with guard:
+            state["current"] -= 1
+
+    def mutex_stale(target):
+        verdict = real_stale(target)
+        if threading.current_thread().name == "X" and verdict and not paused["x"]:
+            paused["x"] = True
+            x_paused.set()
+            if not y_inside.wait(5):
+                errors.append("Y did not enter while X held the stale verdict")
+        return verdict
+
+    def acquire(lock, token):
+        if threading.current_thread().name == "Y" and not x_paused.wait(5):
+            errors.append("X did not observe the stale mutex")
+        ok = real_acquire(lock, token)
+        if ok:
+            enter()
+        if threading.current_thread().name == "X":
+            x_finished.set()
+        return ok
+
+    def release(lock, token):
+        try:
+            real_release(lock, token)
+        finally:
+            leave()
+
+    def drop(lock, token):
+        if threading.current_thread().name == "Y":
+            try:
+                snapshot = mutex.read_bytes()
+            except OSError as exc:
+                errors.append(f"Y mutex missing before resume: {exc!r}")
+                snapshot = None
+            y_inside.set()
+            if not x_finished.wait(5):
+                errors.append("X did not finish acquire while Y was inside")
+            try:
+                after = mutex.read_bytes()
+            except OSError as exc:
+                errors.append(f"Y mutex missing after X resumed: {exc!r}")
+            else:
+                if snapshot is not None and after != snapshot:
+                    errors.append("X unlinked or rewrote Y's live mutex")
+        return real_drop(lock, token)
+
+    monkeypatch.setattr(locks, "_mutex_stale", mutex_stale)
+    monkeypatch.setattr(locks, "_mutex_acquire", acquire)
+    monkeypatch.setattr(locks, "_mutex_release", release)
+    monkeypatch.setattr(locks, "_drop_stale_inode", drop)
+
+    def run(name):
+        try:
+            with locks.hold("blender-batch", name, 30):
+                pass
+        except locks.LockBusy:
+            pass
+        except Exception as exc:  # noqa: BLE001 — reported to the main thread
+            errors.append(f"{name}: {exc!r}")
+
+    threads = [threading.Thread(target=run, args=(name,), name=name, daemon=True) for name in ("X", "Y")]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join(15)
+        if thread.is_alive():
+            errors.append(f"{thread.name} still running")
+    x_finished.set()
+    assert errors == []
+    assert paused["x"] and y_inside.is_set()
+    assert state["max"] == 1
+    assert state["current"] == 0
+    assert [p.name for p in path.parent.iterdir()] == []
+
+
+def _clear_lock_dir(path):
+    for child in list(path.parent.iterdir()):
+        if child.is_dir():
+            child.rmdir()
+        else:
+            child.unlink()
+
+
+def _plant_mutex(path, kind, clock):
+    import os
+    mutex = path.with_name(f".{path.name}.mutex")
+    if kind == "dead":
+        body = {"pid": 999999999, "until": clock + 30, "token": "d"}
+    elif kind == "expired-live":
+        body = {"pid": os.getpid(), "until": clock - 1, "token": "e"}
+    elif kind == "exact-until":
+        body = {"pid": os.getpid(), "until": clock, "token": "x"}
+    elif kind == "empty":
+        mutex.write_bytes(b"")
+        return mutex
+    elif kind == "partial":
+        mutex.write_text("{", encoding="utf-8")
+        return mutex
+    elif kind == "garbled":
+        mutex.write_text("not-json", encoding="utf-8")
+        return mutex
+    elif kind == "dir":
+        mutex.mkdir()
+        return mutex
+    elif kind == "nan":
+        body = {"pid": os.getpid(), "until": float("nan"), "token": "n"}
+    elif kind == "inf":
+        body = {"pid": os.getpid(), "until": float("inf"), "token": "i"}
+    elif kind == "future":
+        body = {"pid": os.getpid(), "until": clock + 60, "token": "f"}
+    else:
+        raise AssertionError(kind)
+    mutex.write_text(json.dumps(body), encoding="utf-8")
+    return mutex
+
+
+def _leftover_names(path):
+    bad = []
+    for child in path.parent.iterdir():
+        name = child.name
+        if ".take-" in name or ".partial" in name or ".mutex-" in name or ".reclaim-" in name:
+            bad.append(name)
+    return bad
+
+
+def test_probe_mutex_exclusivity_seed_972(tmp_path, monkeypatch):
+    """#972: seeded interleavings and N-thread hammers. At most one caller inside the mutex."""
+    import os
+    import random
+    clock = [1_000_000.0]
+    monkeypatch.setattr(locks, "time", types.SimpleNamespace(time=lambda: clock[0]))
+    path = _lock_file()
+    real_stale = locks._mutex_stale
+    real_acquire = locks._mutex_acquire
+    real_release = locks._mutex_release
+    real_drop = locks._drop_stale_inode
+    guard = threading.Lock()
+    state = {"current": 0, "max": 0}
+    plan = {"pause": False}
+
+    def enter():
+        with guard:
+            state["current"] += 1
+            state["max"] = max(state["max"], state["current"])
+
+    def mutex_stale(target):
+        verdict = real_stale(target)
+        if (plan["pause"] and verdict and threading.current_thread().name == "X"
+                and not plan["did"]):
+            plan["did"] = True
+            plan["x_paused"].set()
+            if not plan["y_inside"].wait(5):
+                plan["errors"].append("Y did not enter")
+        return verdict
+
+    def acquire(lock, token):
+        if plan["pause"] and threading.current_thread().name == "Y":
+            if not plan["x_paused"].wait(5):
+                plan["errors"].append("X did not observe the stale mutex")
+        ok = real_acquire(lock, token)
+        if ok:
+            enter()
+        if plan["pause"] and threading.current_thread().name == "X":
+            plan["x_finished"].set()
+        return ok
+
+    def release(lock, token):
+        try:
+            real_release(lock, token)
+        finally:
+            with guard:
+                state["current"] -= 1
+
+    def drop(lock, token):
+        if plan["pause"] and threading.current_thread().name == "Y":
+            try:
+                snapshot = plan["mutex"].read_bytes()
+            except OSError as exc:
+                plan["errors"].append(repr(exc))
+                snapshot = None
+            plan["y_inside"].set()
+            if not plan["x_finished"].wait(5):
+                plan["errors"].append("X did not finish")
+            try:
+                after = plan["mutex"].read_bytes()
+            except OSError as exc:
+                plan["errors"].append(repr(exc))
+            else:
+                if snapshot is not None and after != snapshot:
+                    plan["errors"].append("live mutex changed")
+        return real_drop(lock, token)
+
+    monkeypatch.setattr(locks, "_mutex_stale", mutex_stale)
+    monkeypatch.setattr(locks, "_mutex_acquire", acquire)
+    monkeypatch.setattr(locks, "_mutex_release", release)
+    monkeypatch.setattr(locks, "_drop_stale_inode", drop)
+
+    stale_kinds = ["dead", "expired-live", "exact-until", "empty", "partial", "garbled", "dir"]
+    closed_kinds = ["nan", "inf", "future"]
+    rnd = random.Random(972)
+    seen = 0
+
+    def run_hold(name, results, started, tried):
+        if started is not None:
+            started.wait(10)
+        try:
+            with locks.hold("blender-batch", name, 30):
+                if tried is not None:
+                    tried.wait(10)
+                results.append("held")
+        except locks.LockBusy:
+            if tried is not None:
+                tried.wait(10)
+            results.append("busy")
+        except Exception as exc:  # noqa: BLE001
+            plan["errors"].append(f"{name}: {exc!r}")
+
+    def one(kind, pause, n_threads):
+        nonlocal seen
+        _clear_lock_dir(path)
+        path.write_text(json.dumps({"pid": 999999999, "card": "dead"}), encoding="utf-8")
+        mutex = _plant_mutex(path, kind, clock[0])
+        state["current"] = 0
+        state["max"] = 0
+        plan["pause"] = pause
+        plan["did"] = False
+        plan["errors"] = []
+        plan["mutex"] = mutex
+        plan["x_paused"] = threading.Event()
+        plan["y_inside"] = threading.Event()
+        plan["x_finished"] = threading.Event()
+        results = []
+        if pause:
+            names = ["X", "Y"]
+            started = tried = None
+        else:
+            names = [f"t{i}" for i in range(n_threads)]
+            started = threading.Barrier(n_threads)
+            tried = threading.Barrier(n_threads)
+        threads = [threading.Thread(target=run_hold, args=(name, results, started, tried), name=name, daemon=True)
+                   for name in names]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join(15)
+            if thread.is_alive():
+                plan["errors"].append(f"{thread.name} still running")
+        plan["x_finished"].set()
+        expect = 0 if kind in closed_kinds else 1
+        assert plan["errors"] == [], (kind, pause, plan["errors"])
+        assert state["max"] == expect, (kind, pause, state["max"], results)
+        assert state["current"] == 0
+        assert results.count("held") == expect, (kind, pause, results)
+        assert _leftover_names(path) == []
+        if expect == 0:
+            assert mutex.exists()
+        seen += 1
+
+    for _round in range(4):
+        order = stale_kinds[:]
+        rnd.shuffle(order)
+        for kind in order:
+            one(kind, pause=True, n_threads=2)
+    for _round in range(4):
+        order = stale_kinds + closed_kinds
+        rnd.shuffle(order)
+        for kind in order:
+            one(kind, pause=False, n_threads=4)
+    assert seen == 4 * len(stale_kinds) + 4 * (len(stale_kinds) + len(closed_kinds)) == 68
+
+
+def test_posix_drop_keeps_a_lock_replaced_before_unlink(tmp_path, monkeypatch):
+    """#972: POSIX stat/rename-then-remove must not delete a fresh lock swapped in at that window."""
+    import os
+    import time
+    path = _lock_file()
+    token = "owner-token"
+    mutex = path.with_name(f".{path.name}.mutex")
+    mutex.write_text(json.dumps({"pid": os.getpid(), "until": time.time() + 30, "token": token}),
+                     encoding="utf-8")
+    path.write_text(json.dumps({"pid": 999999999, "card": "dead"}), encoding="utf-8")
+    fresh = json.dumps({"pid": os.getpid(), "until": time.time() + 60, "card": "fresh", "token": "live"}).encode()
+    real_stat = os.stat
+    real_rename = os.rename
+    real_remove = os.remove
+    swapped = {"done": False}
+
+    def swap():
+        if swapped["done"] or not path.exists():
+            return
+        swapped["done"] = True
+        real_remove(path)
+        path.write_bytes(fresh)
+
+    def stat(target, *args, **kwargs):
+        result = real_stat(target, *args, **kwargs)
+        if Path(target) == path:
+            swap()
+        return result
+
+    def rename(src, dst):
+        if Path(src) == path:
+            swap()
+        return real_rename(src, dst)
+
+    monkeypatch.setattr(os, "stat", stat)
+    monkeypatch.setattr(os, "rename", rename)
+    assert locks._drop_stale_inode_posix(path, token) is False
+    assert path.read_bytes() == fresh
+    assert _leftover_names(path) == []
+    assert mutex.exists()
+
+
+def test_probe_posix_inode_drop_seed_972(tmp_path, monkeypatch):
+    """#972: seeded POSIX drop windows. A replaced lock survives; a stale inode is the only one removed."""
+    import os
+    import random
+    import time
+    rnd = random.Random(972)
+    path = _lock_file()
+    token = "owner-token"
+    mutex = path.with_name(f".{path.name}.mutex")
+    real_rename = os.rename
+    real_remove = os.remove
+    seen = 0
+    for trial in range(24):
+        _clear_lock_dir(path)
+        mutex.write_text(json.dumps({"pid": os.getpid(), "until": time.time() + 30, "token": token}),
+                         encoding="utf-8")
+        stale = json.dumps({"pid": 999999999, "card": f"dead-{trial}"}).encode()
+        fresh = json.dumps({"pid": os.getpid(), "until": time.time() + 60, "card": f"fresh-{trial}",
+                            "token": "live"}).encode()
+        path.write_bytes(stale)
+        mode = rnd.choice(["swap-on-rename", "already-fresh", "stale-inode", "garbled"])
+        swapped = {"done": False}
+
+        def rename(src, dst, swapped=swapped, fresh=fresh, mode=mode):
+            if mode == "swap-on-rename" and Path(src) == path and not swapped["done"]:
+                swapped["done"] = True
+                real_remove(path)
+                path.write_bytes(fresh)
+            return real_rename(src, dst)
+
+        monkeypatch.setattr(os, "rename", rename)
+        if mode == "already-fresh":
+            path.write_bytes(fresh)
+            assert locks._drop_stale_inode_posix(path, token) is False
+            assert path.read_bytes() == fresh
+        elif mode == "garbled":
+            path.write_bytes(b"{")
+            assert locks._drop_stale_inode_posix(path, token) is False
+            assert path.read_bytes() == b"{"
+        elif mode == "stale-inode":
+            assert locks._drop_stale_inode_posix(path, token) is True
+            assert not path.exists()
+        else:
+            assert locks._drop_stale_inode_posix(path, token) is False
+            assert path.read_bytes() == fresh
+            assert swapped["done"]
+        assert _leftover_names(path) == []
+        assert mutex.read_text(encoding="utf-8").startswith("{")
+        seen += 1
+    monkeypatch.setattr(os, "rename", real_rename)
+    assert seen == 24
+
+
 # ---- audit --------------------------------------------------------------------------------------------------
 def test_audit_lines_equal_calls_and_carry_plan_fields(tmp_path):
     calls = [("agr_mesh_names", MESH_ARGS)] * 3 + [("agr_xview_parity", {"dump": {}})] + [("nope", {})]

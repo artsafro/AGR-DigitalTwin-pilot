@@ -15,20 +15,26 @@ that grace already covers the wrapped call. Past `until` the lock is stale even 
 alive, so a leaked release cannot pin the host until the server exits. A release that fails (Windows
 sharing violation while a reader still has the file open) is retried a few times, then reported on
 stderr; it is not swallowed.
-Reclaim (#872, #896): a stale lock is removed only while this process holds a short-lived mutex file,
-`.<lockname>.mutex`. The mutex is published by hard-linking an already-written file onto that name
+Reclaim (#872, #896, #972): a stale lock is removed only while this process holds a short-lived mutex
+file, `.<lockname>.mutex`. The mutex is published by hard-linking an already-written file onto that name
 (O_EXCL via FileExistsError), so its pid / until / token body is never visible half-written. Under the
 mutex the caller re-reads the lock and deletes it only when that same inode is still stale. A live lock
 is never renamed aside and never unlinked. The mutex is stale when its owner pid is dead, its until has
 passed, or its body does not prove a live owner — a crashed or wedged reclaimer cannot block the host.
-The owner unlinks the mutex only while the token is still its own. O_EXCL create of the lock then picks
-the single holder. Reclaim leaves no `*.reclaim-*` aside file.
+A live pid whose `until` is NaN or infinite has not proved expiry, so the mutex stays held. Taking a
+stale mutex deletes only the inode whose own bytes were stale (Windows: delete through that handle;
+elsewhere: rename to a unique name and keep the delete only when the inode still matches), never the
+name after a later replacement. The owner unlinks the mutex only while that same inode still carries
+its token. O_EXCL create of the lock then picks the single holder. Reclaim leaves no `*.reclaim-*` or
+`*.take-*` aside file.
 """
 from __future__ import annotations
 
 import json
+import math
 import os
 import secrets
+import stat
 import sys
 import tempfile
 import time
@@ -122,18 +128,39 @@ def _mutex_path(path: Path) -> Path:
     return path.with_name(f".{path.name}.mutex")
 
 
+def _json_constant(name: str) -> float:
+    return {"NaN": float("nan"), "Infinity": float("inf"), "-Infinity": float("-inf")}[name]
+
+
+def _load_mutex_json(raw: bytes):
+    """Mutex JSON, including NaN/Infinity. None when the bytes are not an object."""
+    try:
+        info = json.loads(raw.decode("utf-8"), parse_constant=_json_constant)
+    except (UnicodeError, ValueError):
+        return None
+    return info if isinstance(info, dict) else None
+
+
+def _mutex_token_ours(raw: bytes, token: str) -> bool:
+    info = _load_mutex_json(raw)
+    return isinstance(info, dict) and info.get("token") == token and info.get("pid") == os.getpid()
+
+
 def _mutex_is_ours(mutex: Path, token: str) -> bool:
-    info = _read_info(mutex)
-    return bool(info) and info.get("token") == token and info.get("pid") == os.getpid()
+    try:
+        raw = mutex.read_bytes()
+    except OSError:
+        return False
+    return _mutex_token_ours(raw, token)
 
 
-def _mutex_stale(mutex: Path) -> bool:
+def _mutex_info_stale(info) -> bool:
     """Stale unless the body proves a live owner whose until is still ahead.
 
-    Unreadable, odd, dead, or expired: the next caller may remove it. A crashed reclaimer
-    (dead pid, or a body never published) does not wedge the host.
+    Unreadable, odd, dead, or expired: one later caller may remove this inode. A live pid with
+    NaN or infinite `until` has not proved expiry (fail closed: the mutex stays held). Exactly
+    `until` (== now) has passed, same rule as a host lock. A crashed reclaimer does not wedge the host.
     """
-    info = _read_info(mutex)
     if not isinstance(info, dict):
         return True
     pid = info.get("pid")
@@ -142,20 +169,23 @@ def _mutex_stale(mutex: Path) -> bool:
         return True
     if not _alive(pid):
         return True
+    if type(until) is int and abs(until) > 2**63:
+        return until <= 0  # live pid, until outside the float range: only a past value has expired
+    if not math.isfinite(float(until)):
+        return False
     return time.time() >= until
 
 
-def _unlink_mutex(mutex: Path) -> bool:
+def _mutex_bytes_stale(raw: bytes) -> bool:
+    return _mutex_info_stale(_load_mutex_json(raw))
+
+
+def _mutex_stale(mutex: Path) -> bool:
     try:
-        if mutex.is_dir():
-            os.rmdir(mutex)
-        else:
-            os.remove(mutex)
-    except FileNotFoundError:
-        return True
+        raw = mutex.read_bytes()
     except OSError:
-        return False
-    return True
+        return True
+    return _mutex_bytes_stale(raw)
 
 
 def _mutex_acquire(path: Path, token: str) -> bool:
@@ -173,18 +203,17 @@ def _mutex_acquire(path: Path, token: str) -> bool:
             try:
                 os.link(temporary, mutex)
             except FileExistsError:
-                if not (_mutex_stale(mutex) and _unlink_mutex(mutex)):
+                if not (_mutex_stale(mutex) and _consume_stale_mutex(mutex)):
                     return False
                 continue
             except OSError:
-                if mutex.exists() and _mutex_stale(mutex) and _unlink_mutex(mutex):
+                if mutex.exists() and _mutex_stale(mutex) and _consume_stale_mutex(mutex):
                     continue
                 return False
             if _mutex_is_ours(mutex, token):
                 return True
-            try:  # our link did not stick as our body: drop it only if it is still the bytes we wrote
-                if mutex.read_bytes() == payload:
-                    _unlink_mutex(mutex)
+            try:  # our link did not stick as our body: drop that inode only, never a later file
+                _consume_if(mutex, lambda raw, payload=payload: raw == payload, allow_dir=False)
             except OSError:
                 pass
             return False
@@ -197,18 +226,13 @@ def _mutex_acquire(path: Path, token: str) -> bool:
 
 
 def _mutex_release(path: Path, token: str) -> None:
+    """Unlink the mutex inode that still carries our token. A replacement at this name stays."""
     mutex = _mutex_path(path)
     for _attempt in range(_RELEASE_ATTEMPTS):
-        if not _mutex_is_ours(mutex, token):
+        outcome = _consume_if(mutex, lambda raw, token=token: _mutex_token_ours(raw, token), allow_dir=False)
+        if outcome in ("gone", "foreign"):
             return
-        try:
-            os.remove(mutex)
-        except FileNotFoundError:
-            return
-        except OSError:
-            _sleep(_RELEASE_PAUSE_S)
-        else:
-            return
+        _sleep(_RELEASE_PAUSE_S)
 
 
 def _drop_stale_inode(path: Path, token: str) -> bool:
@@ -218,28 +242,105 @@ def _drop_stale_inode(path: Path, token: str) -> bool:
     return _drop_stale_inode_posix(path, token)
 
 
-def _drop_stale_inode_posix(path: Path, token: str) -> bool:
+def _restore_displaced(unique: Path, path: Path) -> None:
+    """Put a displaced file back on `path`. Never delete it: it is not the inode we meant to drop."""
     try:
-        fd = os.open(path, os.O_RDONLY)
+        os.rename(unique, path)
+    except (FileNotFoundError, OSError):
+        return
+
+
+def _displace_inode(path: Path, ident: tuple, *, directory: bool, pred) -> bool:
+    """Move `path` aside and delete it only when that inode is still `ident` and `pred` holds.
+
+    A different inode is renamed back. True means this name no longer has a file.
+    """
+    unique = path.with_name(f".{path.name}.take-{secrets.token_hex(8)}")
+    try:
+        os.rename(path, unique)
     except FileNotFoundError:
         return True
     except OSError:
         return False
     try:
-        raw = os.read(fd, 65536)
-        if not _bytes_stale(raw) or not _mutex_is_ours(_mutex_path(path), token):
-            return False
-        held = os.fstat(fd)
         try:
-            current = os.stat(path)
+            moved = os.lstat(unique)
         except FileNotFoundError:
             return True
-        if (current.st_dev, current.st_ino) != (held.st_dev, held.st_ino):
+        same = (moved.st_dev, moved.st_ino) == ident and stat.S_ISDIR(moved.st_mode) == directory
+        if not same:
+            _restore_displaced(unique, path)
             return False
-        os.remove(path)
+        if directory:
+            os.rmdir(unique)
+            return True
+        raw = unique.read_bytes()
+        if pred is not None and not pred(raw):
+            _restore_displaced(unique, path)
+            return False
+        os.remove(unique)
         return True
+    except OSError:
+        _restore_displaced(unique, path)
+        return False
+
+
+def _consume_posix(path: Path, pred) -> str:
+    """'gone' | 'foreign' | 'failed'. Deletes only the inode whose bytes satisfy `pred`."""
+    try:
+        fd = os.open(os.fspath(path), os.O_RDONLY)
+    except FileNotFoundError:
+        return "gone"
+    except OSError:
+        return "failed"
+    try:
+        raw = os.read(fd, 65536)
+        held = os.fstat(fd)
+    except OSError:
+        return "failed"
     finally:
         os.close(fd)
+    if not pred(raw):
+        return "foreign"
+    ident = (held.st_dev, held.st_ino)
+    if _displace_inode(path, ident, directory=False, pred=pred):
+        return "gone"
+    try:
+        still = path.read_bytes()
+    except FileNotFoundError:
+        return "gone"
+    except OSError:
+        return "failed"
+    return "failed" if pred(still) else "foreign"
+
+
+def _consume_if(path: Path, pred, *, allow_dir: bool) -> str:
+    try:
+        info = os.lstat(path)
+    except FileNotFoundError:
+        return "gone"
+    except OSError:
+        return "failed"
+    if stat.S_ISDIR(info.st_mode):
+        if not allow_dir:
+            return "foreign"
+        ident = (info.st_dev, info.st_ino)
+        return "gone" if _displace_inode(path, ident, directory=True, pred=None) else "failed"
+    if os.name == "nt":
+        return _consume_handle(path, pred)
+    return _consume_posix(path, pred)
+
+
+def _consume_stale_mutex(mutex: Path) -> bool:
+    """Remove the mutex inode iff its own bytes are stale. False leaves whatever is at the name."""
+    return _consume_if(mutex, _mutex_bytes_stale, allow_dir=True) == "gone"
+
+
+def _drop_stale_inode_posix(path: Path, token: str) -> bool:
+    def pred(raw: bytes, path: Path = path, token: str = token) -> bool:
+        return _bytes_stale(raw) and _mutex_is_ours(_mutex_path(path), token)
+
+    return _consume_posix(path, pred) == "gone"
 
 
 def _kernel32():
@@ -267,7 +368,8 @@ def _kernel32():
     return dll
 
 
-def _drop_stale_inode_win(path: Path, token: str) -> bool:
+def _consume_handle(path: Path, pred) -> str:
+    """'gone' | 'foreign' | 'failed'. Delete disposition applies to this handle's inode only."""
     import ctypes
     k = _kernel32()
     wintypes = _kernel32.wintypes
@@ -277,7 +379,7 @@ def _drop_stale_inode_win(path: Path, token: str) -> bool:
     invalid = ctypes.c_void_p(-1).value
     if handle is None or ctypes.c_void_p(handle).value in (None, 0, invalid):
         err = ctypes.get_last_error()
-        return err in (2, 3)  # not found: already gone; the caller may O_EXCL
+        return "gone" if err in (2, 3) else "failed"
     try:
         chunks = []
         buf = ctypes.create_string_buffer(4096)
@@ -287,14 +389,12 @@ def _drop_stale_inode_win(path: Path, token: str) -> bool:
                 err = ctypes.get_last_error()
                 if err == 38 or got.value == 0:  # EOF
                     break
-                return False
+                return "failed"
             if got.value == 0:
                 break
             chunks.append(buf.raw[:got.value])
-        if not _bytes_stale(b"".join(chunks)):
-            return False
-        if not _mutex_is_ours(_mutex_path(path), token):
-            return False
+        if not pred(b"".join(chunks)):
+            return "foreign"
 
         class _Disposition(ctypes.Structure):
             _fields_ = [("Flags", wintypes.DWORD)]
@@ -302,10 +402,17 @@ def _drop_stale_inode_win(path: Path, token: str) -> bool:
         # FileDispositionInfoEx: DELETE | POSIX_SEMANTICS. Closes this inode only.
         info = _Disposition(0x1 | 0x2)
         if not k.SetFileInformationByHandle(handle, 21, ctypes.byref(info), ctypes.sizeof(info)):
-            return not path.exists()
-        return True
+            return "gone" if not path.exists() else "failed"
+        return "gone"
     finally:
         k.CloseHandle(handle)
+
+
+def _drop_stale_inode_win(path: Path, token: str) -> bool:
+    def pred(raw: bytes, path: Path = path, token: str = token) -> bool:
+        return _bytes_stale(raw) and _mutex_is_ours(_mutex_path(path), token)
+
+    return _consume_handle(path, pred) == "gone"
 
 
 def _reclaim(path: Path, token: str) -> bool:
