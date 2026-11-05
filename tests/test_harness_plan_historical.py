@@ -152,3 +152,61 @@ def test_load_text_fails_closed_on_missing_and_empty(tmp_path):
     empty.write_text(" \n\t\n", encoding="utf-8")
     with pytest.raises(AssertionError, match="empty live file"):
         load_text(empty)
+
+
+def unmarked_lines(text: str) -> list[int]:
+    """1-based line numbers whose HARNESS_PLAN mention has no strict marker."""
+    lines = text.splitlines()
+    out: list[int] = []
+    for i, line in enumerate(lines):
+        nxt = lines[i + 1] if i + 1 < len(lines) else ""
+        window = f"{line}{nxt}"
+        if _TOKEN in line and _MARKER.search(window) is None:
+            out.append(i + 1)
+    return out
+
+
+def test_no_unmarked_mention_anywhere_in_src_and_tools():
+    """Acceptance row 1: the grep over src and tools finds 0 unmarked mentions."""
+    bad: list[str] = []
+    for top in ("src", "tools"):
+        for path in sorted((ROOT / top).rglob("*.py")):
+            if "__pycache__" in path.parts:
+                continue
+            text = path.read_text(encoding="utf-8")
+            if _TOKEN not in text:
+                continue
+            bad += [f"{path.relative_to(ROOT)}:{n}" for n in unmarked_lines(text)]
+    assert not bad, bad
+
+
+@pytest.mark.parametrize("rel", [r for r in LIVE if r.endswith(".py")])
+def test_removing_the_marker_fails_naming_file_and_line(rel):
+    """Acceptance row 2: strip every marker from a LIVE file; each mention is reported."""
+    text = load_text(ROOT / rel)
+    assert unmarked_lines(text) == []
+    stripped = re.sub(r"\(historical\)|historical:|\bis historical\b", "", text, flags=re.IGNORECASE)
+    hit = unmarked_lines(stripped)
+    assert hit, f"{rel}: stripping markers was not detected"
+    msg = f"{rel}:{hit[0]}"
+    assert rel in msg and str(hit[0]) in msg
+
+
+def test_mesh_frame_error_string_carries_the_marker():
+    """Acceptance row 3: the user-visible 'every spec needs a frame' error is marked."""
+    lines = load_text(ROOT / "src" / "dt_ai" / "spec" / "mesh.py").splitlines()
+    idx = next(i for i, ln in enumerate(lines) if "every spec needs a frame" in ln)
+    window = "".join(lines[idx : idx + 2])
+    assert _TOKEN in window and _MARKER.search(window), lines[idx]
+    stripped = _MARKER.sub("", window)
+    assert _MARKER.search(stripped) is None
+
+
+def test_missing_live_file_fails_never_skips(monkeypatch):
+    """Acceptance row 4: a LIVE entry that does not exist is an error, not a skip."""
+    import sys
+
+    mod = sys.modules[__name__]
+    monkeypatch.setattr(mod, "LIVE", LIVE + ("src/dt_ai/spec/does_not_exist.py",))
+    with pytest.raises(AssertionError, match="missing live file"):
+        test_live_set_never_leaves_a_harness_plan_mention_unmarked()
