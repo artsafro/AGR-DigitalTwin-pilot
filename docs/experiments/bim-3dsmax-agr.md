@@ -11,7 +11,7 @@ Does an explicit Standard/Multi-Sub material table repair the engine-array → M
 without changing geometry? **Yes on B01/B02: adopt for internal transport, not AGR delivery.**
 
 One method only, two arms. The baseline reproduces the existing geometry-only `create` logic in
-`experiments/max-headless-agr-roundtrip/native_job.py`. The prototype adds the seven-line
+`archive/2026-11:experiments/max-headless-agr-roundtrip/native_job.py`. The prototype adds the seven-line
 `if explicit` material table in this experiment's `native.py`; no production implementation is replaced.
 The unchanged `from_spec` engine builds both inputs. This extends the previous experiment's missing-material
 finding rather than repeating startup optimization or OBJ tests. The current checker has **10 checks**,
@@ -62,7 +62,7 @@ used together, never a stale log/exit code alone.
 Times are medians of **three in-process operations**, not process-startup medians. Export excludes creation
 and pre-export diagnostic dump; create+export sums the two timed operations. Independent readback includes
 import plus complete native dump, excluding startup. Raw samples/getters/hashes/check values are in
-[`evidence.json`](../../experiments/bim-3dsmax-agr/evidence.json).
+`archive/2026-11:experiments/bim-3dsmax-agr/evidence.json`.
 
 | Fixture / arm | Engine vertices / triangles | Checks on fresh readback | Correct finish triangles | Correct surface area | Create median, s | Export median, s | Create+export median, s | Import+dump median, s |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
