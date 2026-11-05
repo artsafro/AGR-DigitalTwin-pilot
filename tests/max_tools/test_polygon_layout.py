@@ -1,17 +1,17 @@
 """new-case: the polygon layout is readable for a human (#885 user verdict 2026-11-04 [D194]).
 
 Every specimen sits on its own base rectangle, every base has a top camera, captions are
-multi-line and do not overlap each other. Reads the committed catalog.json (the builder input).
+multi-line and do not overlap each other. Reads polygon_core.load_catalog() (the builder input: the polygon plus
+the #979 station fragments test-polygon/stations/<branch>.json), not only the committed catalog.json.
 """
-import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-CATALOG = ROOT / 'test-polygon' / 'catalog.json'
 
 
 def _objects():
-    return json.loads(CATALOG.read_text(encoding='utf-8'))['objects']
+    from test_polygon_support import load_catalog
+    return load_catalog()['objects']
 
 
 def _rects(objects):

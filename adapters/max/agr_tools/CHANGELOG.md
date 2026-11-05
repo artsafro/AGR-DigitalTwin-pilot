@@ -1,5 +1,53 @@
 # AGR Tools changelog
 
+## 0.9.0 (#979) — в работе
+
+Пакет остаётся 0.8.x до релизной ветки R: кнопки 0.9 есть в меню и MCP, в панели они серые «в версии 0.9».
+Каждая ветка пишет только в свой подзаголовок ниже.
+
+### Основа (ветка 0)
+
+- `runtime.EDITS_090` (19 строк плана 0.9: id → файл ядра, функция), `READ_090` (режимы `read`/`select`: только
+  preview), `SELECT_090` (`light.check`: нарушителей выделяет обвязка UI одной записью Undo, не ядро) и
+  диспетчер `runtime.edits_090(tool, mode, preview, nodes, options)` на контракте `edit_core` 0.8; пустой модуль
+  отвечает `status: not_implemented` с `issue: #979`.
+- Заглушки модулей A–D, `data/procedural_classes.json` и `data/streets/` (владелец C); сборщик кладёт `data/` в пакет.
+- `cleanup_preview` / `cleanup_apply`: проход `options` (`channels`, `keys`; по умолчанию выключены) в
+  `export_core._cleanup_channels`.
+- 19 Action в секциях «Проверить и выделить» / «Исправить — копии / undo / новые файлы», 19 macroScript и пунктов
+  меню, 19 иконок, 19 MCP-инструментов `agr_<блок>_<имя>` (только `mode=preview`).
+- Полигон: базы 0.8 и 0.9 (32 станции), хук фрагментов `test-polygon/stations/<ветка>.json`, `load_catalog()`.
+- `roadmap.load()` отклоняет 8 из 8 испорченных JSON плана (SYNTHESIS §4).
+
+### A — замены и МАФ (`improve/issue-979-place`)
+
+- Заглушка ветки A: `place.replace`, `place.schedule`, `place.drop_to_ground`, `place.maf_checks`, `place.flora_repair`.
+
+### B — текстуры, UDIM, атласы (`improve/issue-979-tex-udim-atlas`)
+
+- Заглушка ветки B: `tex.erm_normal_check`, `tex.finish_map`, `udim.matid_unwrap`, `udim.slots`, `atlas.flora`,
+  `atlas.groundel`; доработка `atlas.npm`.
+
+### C — проверки (`improve/issue-979-qa`)
+
+- Заглушка ветки C: `qa.address`, `qa.normals`, `qa.sintez`, `qa.facade_compare`, `qa.procedural_objects`.
+
+### D — экспорт, карты, свет (`improve/issue-979-export-scene-light`)
+
+- Заглушка ветки D: `export.batch`, `scene.maps_usage`, `light.check`.
+
+### E1 — доработка: текстуры и имена (`improve/issue-979-rework-tex-names`)
+
+- Заглушка ветки E1: доработки `tex.format_fix`, `tex.placeholders`, `scene.missing_maps`, `qa.names_fix`.
+
+### E2 — доработка: геометрия и UDIM (`improve/issue-979-rework-geom-udim`)
+
+- Заглушка ветки E2: доработки `ucx.triangulate`, `export.pivot_place`, `udim.ids_to_udims`.
+
+### E3 — доработка: пакет и предсдача (`improve/issue-979-rework-package-suite`)
+
+- Заглушка ветки E3: доработки `export.zip`, `qa.package`, `export.cleanup`, `qa.zero_area`, `scene.census`.
+
 ## 0.8.1 (#908)
 
 Решения владельца от 05.11.2026 по командному аудиту T04 (GeoAGR-private `work/team-scripts-audit/T04/REPORT.md`,

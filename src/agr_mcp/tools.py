@@ -223,6 +223,35 @@ EDIT_080_OUT = {"type": "object", "required": ["schema", "tool", "status", "obje
                                "objects": {"type": "array"},
                                "plan": {"type": "object", "required": ["mode", "done", "skipped", "ambiguous"]}}}
 
+# 0.9 rows (#979): agr_<block>_<name> -> runtime.edits_090(<plan row id>, "preview"). Every 0.9 tool takes only
+# mode=preview over MCP (nothing changes; an editing row's apply stays in the panel), so all are read-only here.
+# (name, plan row id, what, plan mode) with plan mode: read | select | copy | undo | file (agr-tools-suite.json)
+EDITS_090 = (
+    ("agr_tex_erm_normal_check", "tex.erm_normal_check", "ERM channels (R = emission only) and DirectX normals", "read"),
+    ("agr_tex_finish_map", "tex.finish_map", "ID -> finish by the colour legend sheet, seams, check", "copy"),
+    ("agr_udim_matid_unwrap", "udim.matid_unwrap", "MatID -> UDIM tiles with density and packing (MAF)", "copy"),
+    ("agr_udim_slots", "udim.slots", "UDIM 1001.. without gaps, <=100 maps per material, SlotNumber 1..7", "read"),
+    ("agr_atlas_flora", "atlas.flora", "Flora diffuse + opacity atlas, crop by UV", "file"),
+    ("agr_atlas_groundel", "atlas.groundel", "one GroundEl texture set, <=512 px", "copy"),
+    ("agr_place_flora_repair", "place.flora_repair", "Flora transforms and triangles repair, set check", "copy"),
+    ("agr_place_maf_checks", "place.maf_checks", "flying / sunk MAF by rays down to Ground; intersections", "read"),
+    ("agr_place_replace", "place.replace", "replace objects by mask or selection with a reference", "undo"),
+    ("agr_place_schedule", "place.schedule", "place MAF by a schedule: placed / no reference / no room", "copy"),
+    ("agr_place_drop_to_ground", "place.drop_to_ground", "drop selected objects onto Ground by a ray down", "undo"),
+    ("agr_qa_address", "qa.address", "Address against the street list, parts and length", "read"),
+    ("agr_qa_facade_compare", "qa.facade_compare", "facade sheet | VPM | NPM picture in one scale, seam count", "read"),
+    ("agr_qa_normals", "qa.normals", "normals to the viewer, double-sided glass/Flora, smoothing", "read"),
+    ("agr_qa_sintez", "qa.sintez", "our findings against a SINTEZ report by the same rules", "read"),
+    ("agr_export_batch", "export.batch", "every FBX of the scene by AGR_EXPORT_PATH in one run, one report", "file"),
+    ("agr_scene_maps_usage", "scene.maps_usage", "map files used by geometry / extra in maps / missing", "read"),
+    ("agr_light_check", "light.check", "<=250 lights, Omni/Spot only, Omni >=5 m, Spot >=1.5 m, root and pivot",
+     "select"),
+    ("agr_qa_procedural_objects", "qa.procedural_objects", "uncollapsed scatter/procedural objects before FBX",
+     "read"),
+)
+EDIT_090_IN = {"type": "object", "required": ["scene"], "additionalProperties": False,
+               "properties": dict(_LOCATE, mode={"const": "preview"}, options=_OPTIONS)}
+
 
 def catalog(unsafe: bool = False, max_transport=None) -> dict[str, Spec]:
     specs = [
@@ -286,6 +315,12 @@ def catalog(unsafe: bool = False, max_transport=None) -> dict[str, Spec]:
                           READ_080_IN if kind == "read" else EDIT_080_IN, EDIT_080_OUT,
                           _max_tool(name, max_transport), _const("max-live"), read_only=kind == "read",
                           destructive=kind == "rename", timeout=_max_timeout))
+    for name, row, what, mode in EDITS_090:
+        text = ("AGR Tools 0.9 runtime.edits_090 '{}' in the pinned open 3ds Max: {}. Plan mode {}; over MCP only "
+                "mode=preview (changes nothing, selects nothing). An empty stub answers status not_implemented "
+                "(#979).".format(row, what, mode))
+        specs.append(Spec(name, text, EDIT_090_IN, EDIT_080_OUT, _max_tool(name, max_transport), _const("max-live"),
+                          read_only=True, destructive=False, timeout=_max_timeout))
     if unsafe:
         def h_exec(args: dict):
             raw = (max_transport or max_pipe.pipe_transport)(args["code"], float(args.get("timeout", EXEC_TIMEOUT)))
@@ -300,5 +335,5 @@ def catalog(unsafe: bool = False, max_transport=None) -> dict[str, Spec]:
     return {s.name: s for s in specs}
 
 
-PHASE0 = tuple(n for n, _ in CHECKS_070) + tuple(n for n, *_ in EDITS_080) + ("agr_xview_check", "agr_matid_check", "agr_texel_readout", "agr_fbx_readback", "agr_package_validate",
+PHASE0 = tuple(n for n, _ in CHECKS_070) + tuple(n for n, *_ in EDITS_080) + tuple(n for n, *_ in EDITS_090) + ("agr_xview_check", "agr_matid_check", "agr_texel_readout", "agr_fbx_readback", "agr_package_validate",
           "agr_mesh_names", "agr_geojson_check", "agr_xview_parity")

@@ -245,8 +245,33 @@ def _drop_all(objects, pieces, reason):
     return rows
 
 
-def _cleanup_channels(actions):
-    """Map-channel ids actually named by the repair plan. Non-channel actions add none."""
+CLEANUP_OPTIONS = ('channels', 'keys')  # 0.9 (#979): opt-in cleanup passes on export copies; off by default
+
+
+def cleanup_options(options=None):
+    """Validated cleanup options: only `channels` and `keys`, both booleans, both off unless switched on.
+
+    0.9 base (#979, branch 0) only carries them from runtime.cleanup_preview/cleanup_apply to
+    _cleanup_channels; what an option does is written by branch E3. Unknown keys / non-bools are errors."""
+    out = {key: False for key in CLEANUP_OPTIONS}
+    if options is None:
+        return out
+    if not isinstance(options, dict):
+        raise ValueError('cleanup options must be a JSON object')
+    unknown = sorted(set(options) - set(CLEANUP_OPTIONS))
+    if unknown:
+        raise ValueError('unknown cleanup option(s): ' + ', '.join(map(str, unknown)))
+    for key, value in options.items():
+        if type(value) is not bool:
+            raise ValueError('cleanup option {} must be true or false'.format(key))
+        out[key] = value
+    return out
+
+
+def _cleanup_channels(actions, options=None):
+    """Map-channel ids actually named by the repair plan. Non-channel actions add none.
+    `options` (cleanup_options): validated here; with both off (the default) the result is the 0.8 one."""
+    cleanup_options(options)
     ids = []
     for action in actions:
         for channel in action.get('channels') or []:
