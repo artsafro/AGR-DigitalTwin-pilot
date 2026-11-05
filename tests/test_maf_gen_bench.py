@@ -419,3 +419,23 @@ def test_texture_box_uv_stays_inside_unit_square_at_any_corner(path):
     for _f, uv, _m in _uv_faces(mesh):
         for s, t in uv:
             assert 0.0 <= s <= 1.0 and 0.0 <= t <= 1.0
+
+
+# --- #819: the forms Artem rejected on 2026-11-03 are gone («Верона» = clad box A, board seams by texture) ----------
+def test_rejected_forms_are_removed():
+    assert not hasattr(gen, "build_bench"), "slab on posts (variant B) was rejected"
+    assert not (ROOT / "jobs/VATUTINO-SITE/maf/verona-gen-b.config.json").exists()
+    writer = (ROOT / "tools/blender/maf_gen_bench_build.py").read_text(encoding="utf-8")
+    assert "slab_on_posts" not in writer and "build_bench" not in writer
+
+
+@pytest.mark.parametrize("mode", ["geometry", "Texture", "", 1])
+def test_seams_other_than_texture_are_refused_by_name(mode):
+    with pytest.raises(ValueError, match="seams"):
+        gen.build_clad_box(clad(STRAIGHT, seams=mode))
+
+
+def test_omitted_seams_builds_the_texture_box():
+    plain = gen.build_clad_box({k: v for k, v in clad(STRAIGHT).items() if k != "seams"})
+    assert plain == gen.build_clad_box(clad(STRAIGHT, seams="texture"))
+    assert "face_uv" in plain
