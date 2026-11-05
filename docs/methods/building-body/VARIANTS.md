@@ -17,8 +17,11 @@ reason. Opening subtraction is a tested capability (variant 2), not measured on 
 kpp1 / ac08 / tow02 were the follow-up #735; none exists (no DWG plan, no Revit `openings_spec.json`), so all
 rows stay synthetic [D195]. #967 then measured KPP1 from the real drawings (АС.03, `kpp1-drawing/`): L03 is the
 plan at 0.000, L01 the facades, L02 the colour facades, and there is no section. Storey tops are
-`jobs/KPP1/object.json` (0.000 / 3.900 / 7.909). The 0.75 m gap is unchanged, so the wall cut stays 9 pieces and
-does not close into the synthetic 33.28 × 14.75 m footprint. Openings are not cut: the insert was measured on
+`jobs/KPP1/object.json` (0.000 / 3.900 / 7.909). The plan contour is the exterior wall hatch
+(`A-WALL-____-PATT`, 33.07 m²) closed with the unchanged 0.75 m gap: one footprint of 27.60 × 13.06 m that
+covers 99.2 % of the hatch (`plan_from_dxf.py --contour-source hatch`). The wall lines alone kept 32 % of
+it, and the extract now refuses any contour that covers 90 % of the hatch or less, or whose bbox is 0.1 m or
+more off it. The footprint lies inside the larger synthetic mesh contour (33.28 × 14.75 m). Openings are not cut: the insert was measured on
 the plan and on L01 and is not the opening centre (see `kpp1-drawing/mapping-questions.md`). kernel-prisms and
 blender-gn-union on that contour are R14 and R15. source-as-is and max-pymxs-cleanup do not read the plan
 (R13, R16). ac08 and tow02 have no drawing row.

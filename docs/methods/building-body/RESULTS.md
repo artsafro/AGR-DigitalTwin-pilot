@@ -18,8 +18,8 @@ Row ids are cited by WHEN.md. Field meanings: docs/methods/README.md#row-fields.
 | R11 | tow02 | blender-gn-union | 23.06 | 39446 | 0 / - / - | fail | UCX present: fail | -/0 | - / - | - | - | 379 / 3533 | - / - | pass | 887 | - | 6.3392 / 0.9371 | 0/1 (0.0%) | 39446 / 150000 (26.3%) |
 | R12 | tow02 | max-pymxs-cleanup | 0.33 | 82117 | 0 / - / - | fail | UCX present: fail | -/0 | - / - | - | - | 0 / 3613 | 0.0 / 16.49 | pass | 1922 | - | 0.0001 / 0.0001 | 874/1375 (41.8%) | 82117 / 150000 (54.7%) |
 | R13 | kpp1 | source-as-is drawing | - | - | - / - / - | - | - | -/- | - / - | - | - | - / - | - / - | - | - | - | - / - | -/- (-) | - / - (-) |
-| R14 | kpp1 | kernel-prisms drawing | 0.04 | 1008 | 0 / - / - | fail | UCX present: fail | -/0 | - / - | - | - | 135 / 1174 | - / - | pass | 28 | - | 7.0361 / 4.8894 | 0/9 (0.0%) | 1008 / 150000 (0.7%) |
-| R15 | kpp1 | blender-gn-union drawing | 0.29 | 737 | 0 / - / - | fail | UCX present: fail | -/0 | - / - | - | - | 0 / 0 | - / - | pass | 27 | - | 7.0361 / 4.8894 | 0/9 (0.0%) | 737 / 150000 (0.5%) |
+| R14 | kpp1 | kernel-prisms drawing | 0.11 | 2128 | 0 / - / - | fail | UCX present: fail | -/0 | - / - | - | - | 273 / 2787 | - / - | pass | 44 | - | 4.1114 / 1.2104 | 0/1 (0.0%) | 2128 / 150000 (1.4%) |
+| R15 | kpp1 | blender-gn-union drawing | 1.03 | 1856 | 0 / - / - | fail | UCX present: fail | -/0 | - / - | - | - | 3 / 0 | - / - | pass | 44 | - | 4.1114 / 1.2104 | 0/1 (0.0%) | 1856 / 150000 (1.2%) |
 | R16 | kpp1 | max-pymxs-cleanup drawing | - | - | - / - / - | - | - | -/- | - / - | - | - | - / - | - / - | - | - | - | - / - | -/- (-) | - / - (-) |
 
 Null metrics and why:
@@ -42,15 +42,15 @@ Synthetic inputs and why:
 
 Drawing inputs and why:
 
-- KPP1 drawing (АС.03 L03, plan at 0.000) keeps the 0.75 m gap and uses jobs/KPP1/object.json storeys 0.000 / 3.900 / 7.909. The wall cut stays 9 pieces (13 pieces at or under 0.5 m2 dropped) inside a 27.66 x 12.36 m piece bbox and does not close into the synthetic mesh footprint of 33.28 x 14.75 m (9 bands, 10 pieces). Both bands reuse the 0.000 plan: the set has no L1 plan and no section. No opening is cut: the insert is not proven to be the opening centre (facade L01 doors sit on y=0 and y=3900 mm, the floor marks, while handle 529 and A17 on the plan are off the gap centre). Imposts and the 1000x500 grille are not openings. (R13, R14, R15, R16)
+- KPP1 drawing (АС.03 L03, plan at 0.000): the exterior wall is the A-WALL-____-PATT hatch union (33.0739 m2, 68 hatches), closed with the same 0.75 m gap rule as the synthetic contours; one filled footprint of 269.1769 m2, bbox 27.66 x 13.06 m, covering 99.2% of the hatch, bbox within 0.064 m of it. Storeys from jobs/KPP1/object.json 0.000 / 3.900 / 7.909, both bands reuse the 0.000 plan (the set has no L1 plan and no section). No opening is cut: the insert is not proven to be the opening centre. Imposts and the 1000x500 grille are not openings. Differs from the synthetic rows (R14/R15 4.1114 / 1.2104 m against R2/R3 0.75 / 0.275 m) because the source mesh is larger than this drawing, not because the extract lost wall: the drawn footprint lies wholly inside the mesh contour (0.0 m2 outside it), the mesh contour is 150.79 m2 larger (bbox 33.28 x 14.75 m against 27.60 x 13.06 m; its east edge is at x 16.61 m against 12.61 m on the plan, 4.0 m), and the mesh bands run -1.200 to 9.925 m against the drawing storeys 0.000 to 7.909 m. (R13, R14, R15, R16)
 
 Synthetic vs drawing (same object and variant; drawing = row without the synthetic marker):
 
 | Object | Variant | Rows synthetic / drawing | Model tris | Deviation max m | Deviation p95 m | Closed shells | Drawing |
 |---|---|---|---|---|---|---|---|
 | kpp1 | source-as-is | R1 / R13 | 24988 / - | 0.0001 / - | 0.0 / - | 32/155 / -/- | not measured: source-as-is is the supplied FBX, not a rebuild from the plan contour |
-| kpp1 | kernel-prisms | R2 / R14 | 3896 / 1008 | 0.75 / 7.0361 | 0.275 / 4.8894 | 1/2 / 0/9 | measured |
-| kpp1 | blender-gn-union | R3 / R15 | 7539 / 737 | 0.75 / 7.0361 | 0.275 / 4.8894 | 0/2 / 0/9 | measured |
+| kpp1 | kernel-prisms | R2 / R14 | 3896 / 2128 | 0.75 / 4.1114 | 0.275 / 1.2104 | 1/2 / 0/1 | measured |
+| kpp1 | blender-gn-union | R3 / R15 | 7539 / 1856 | 0.75 / 4.1114 | 0.275 / 1.2104 | 0/2 / 0/1 | measured |
 | kpp1 | max-pymxs-cleanup | R4 / R16 | 26821 / - | 0.0001 / - | 0.0 / - | 113/155 / -/- | not measured: max-pymxs-cleanup edits the supplied FBX and does not read the plan contour |
 | ac08 | source-as-is | R5 / - | 386 / - | 0.0001 / - | 0.0 / - | 0/3 / - | not measured: no drawing row in results.jsonl |
 | ac08 | kernel-prisms | R6 / - | 40 / - | 0.1028 / - | 0.0915 / - | 2/2 / - | not measured: no drawing row in results.jsonl |
