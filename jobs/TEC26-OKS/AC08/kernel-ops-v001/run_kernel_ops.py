@@ -482,11 +482,10 @@ def parity(mem: dict, back: dict, mem_state=None, rb_state=None):
             if key == "bounds_m" and va is not None and vb is not None:
                 ra, rb = a.get("bounds_raw_m"), b.get("bounds_raw_m")
                 if ra is not None and rb is not None:       # unrounded bounds: per coordinate <= VERTEX_TOL_M
-                    lim = VERTEX_TOL_M
-                else:                                       # 5-decimal rounded bounds: add the rounding half-steps
-                    ra, rb, lim = va, vb, VERTEX_TOL_M + 1e-9
-                tol = (np.shape(ra) == np.shape(rb) and bool(np.all(np.isfinite(ra))) and bool(np.all(np.isfinite(rb)))
-                       and bool(np.all(np.abs(np.asarray(ra, float) - np.asarray(rb, float)) <= lim)))
+                    tol = (np.shape(ra) == np.shape(rb) and bool(np.all(np.isfinite(ra))) and bool(np.all(np.isfinite(rb)))
+                           and bool(np.all(np.abs(np.asarray(ra, float) - np.asarray(rb, float)) <= VERTEX_TOL_M)))
+                else:                                       # raw bounds missing: strict equality, never a widened tolerance
+                    tol = va == vb
             if key == "area_m2" and va is not None and vb is not None:
                 tol = abs(va - vb) <= VERTEX_TOL_M * max(a["edge_length_m"], b["edge_length_m"])
             rows.append({"part": part, "metric": key, "in_memory": va, "readback": vb, "equal": va == vb,
