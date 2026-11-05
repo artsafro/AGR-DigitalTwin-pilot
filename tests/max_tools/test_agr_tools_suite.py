@@ -226,6 +226,72 @@ def test_glass_d2_mainglass_reached_and_d3_no_maps_passes():
     assert codes(f, 1) == ['glass_opacity']
 
 
+def test_glass_opaque_material_on_glass_mesh():
+    """Probe: MainGlass with a real glass material and an opaque sibling must name that sibling."""
+    glass = {'name': 'M_Glass', 'cls': 'Standardmaterial', 'maps': [], 'missing': [], 'opacity': 0.5}
+    brick = {'name': 'M_Brick', 'cls': 'Standardmaterial', 'maps': ['b.png'], 'missing': [], 'opacity': 1.0}
+    f, _, _ = core.glass([obj(1, 'SM_Addr_001_MainGlass', materials=[glass, brick])])
+    assert f[1] == [('glass_opaque_material', 'непрозрачный материал на стекле: M_Brick', ())]
+    # a *Glass mesh with no glass material at all still checks every non-multi material
+    f, _, _ = core.glass([obj(1, 'SM_Addr_001_MainGlass', materials=[brick])])
+    assert codes(f, 1) == ['glass_maps', 'glass_opacity']
+
+
+def test_glass_token_opacity_and_sets_count_probe():
+    """Glass is an exact name token or opacity < 1 - tol. Fiberglass is an opaque set. NaN, inf and
+    opacity exactly at the threshold never count as glass."""
+    glass_names = ['Glass', 'M_Glass', 'M_Glass_01', 'GLASS', 'a.glass.b', 'x-Glass-y', 'glass',
+                   'M_A_MainGlass_1', 'M_A_GroundGlass_1', 'M_A_GroundElGlass_1', 'mainglass']
+    opaque_names = ['M_Fiberglass_Panel', 'Fiberglass', 'stainedglass', 'glassy',
+                    'hourglass', 'M_Brick', 'glass2', '2glass']
+    threshold = 1.0 - core.OPACITY_TOL
+    below = math.nextafter(threshold, 0.0)
+    by_opacity = (0.0, 0.5, below)
+    not_by_opacity = (threshold, 1.0, float('nan'), float('inf'), float('-inf'), None)
+
+    def mat(name, opacity, maps=()):
+        return {'name': name, 'cls': 'Standardmaterial', 'maps': list(maps), 'missing': [], 'opacity': opacity}
+
+    def forty():
+        return [dict(STD, name='M_{}'.format(i)) for i in range(40)]
+
+    for name in glass_names:
+        assert core._is_glass_material(mat(name, 1.0)), name
+        f, _, _ = core.glass([obj(1, 'SM_Addr_001_Main', materials=[mat(name, 1.0)])])
+        assert codes(f, 1) == ['glass_not_separate'], name
+        for op in not_by_opacity:
+            assert core._is_glass_material(mat(name, op)), (name, op)
+            f, _, _ = core.sets_count([obj(1, materials=forty() + [mat(name, op)])])
+            assert codes(f, 1) == [], (name, op)  # token still keeps it out of the opaque sets
+
+    for name in opaque_names:
+        for op in not_by_opacity:
+            assert not core._is_glass_material(mat(name, op)), (name, op)
+        for op in by_opacity:
+            assert core._is_glass_material(mat(name, op)), (name, op)
+
+    fiber = mat('M_Fiberglass_Panel', 1.0, maps=['f.png'])
+    f, _, _ = core.sets_count([obj(1, materials=forty() + [fiber])])
+    assert codes(f, 1) == ['sets_limit']  # name is not glass, so it is an opaque set
+    f, _, _ = core.glass([obj(1, 'SM_Addr_001_Main', materials=[fiber])])
+    assert codes(f, 1) == []
+    f, _, _ = core.sets_count([obj(1, materials=forty() + [mat('M_Fiberglass_Panel', 0.5)])])
+    assert codes(f, 1) == []  # opacity still makes it glass, so it is not a set
+    f, _, _ = core.sets_count([obj(1, materials=forty() + [mat('Glass', 1.0)])])
+    assert codes(f, 1) == []
+    f, _, _ = core.sets_count([obj(1, materials=forty() + [mat('M_Glass', 1.0)])])
+    assert codes(f, 1) == []
+
+    real = mat('M_Glass', 0.5)
+    for name in opaque_names:
+        for op in (float('nan'), float('inf'), float('-inf'), threshold):
+            f, _, _ = core.sets_count([obj(1, materials=forty() + [mat(name, op)])])
+            assert codes(f, 1) == ['sets_limit'], (name, op)
+            f, _, _ = core.glass([obj(1, 'SM_Addr_001_MainGlass', materials=[real, mat(name, op)])])
+            assert codes(f, 1) == ['glass_opaque_material'], (name, op)
+            assert name in f[1][0][1], (name, op)
+
+
 def test_scene_hygiene_d7_rules_always_on():
     rows = [obj(1, superclass='camera', cls='Physical', faces=0), obj(2, animated=True), obj(3, parent='X'),
             obj(4, group=True), obj(5, faces=0), obj(6, modifiers=['TurboSmooth']), obj(7, children=2),
