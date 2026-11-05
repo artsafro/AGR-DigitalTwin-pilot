@@ -141,3 +141,16 @@ def test_pipeline_keys_match_the_runtime_held_off_set():
     start = src.index('_HELD_OFF = {')
     held = set(eval(src[start + len('_HELD_OFF = '):src.index('}', start) + 1]))  # noqa: S307 - our own literal
     assert held == set(ex.PIPELINE_UDP)
+
+
+def test_runtime_report_accepts_the_opt_in_actions():
+    """Native run (Max 2024) found it: the cleanup preview report with an opt-in action was refused by
+    runtime.parse_report as an unmapped finding. Every action cleanup_plan can plan is a mapped cleanup code."""
+    rt = _load(PKG / 'runtime.py', 'agr_runtime_cleanup9')
+    (item,) = cleanup_core([dump()], [FACT], {'channels': True, 'keys': True})['objects']
+    assert {a['action'] for a in item['actions']} <= rt.CODES['cleanup']
+    report = {'schema': 1, 'tool': 'cleanup', 'status': 'fail',
+              'objects': [{'handle': 1, 'name': 'SM_A_001_Main',
+                           'findings': [{'code': a['action'], 'ids': [], 'detail': ''} for a in item['actions']]}]}
+    import json
+    assert rt.parse_report(json.dumps(report)) == report

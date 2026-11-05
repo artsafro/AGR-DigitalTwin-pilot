@@ -9,7 +9,8 @@ VERSION = "0.8.0"
 CODES = {'xview': {'overlap_vertices', 'overlap_faces'},
          'matid': {'udim_id', 'empty_id', 'empty_slot', 'missing_material'},
          'cleanup': {'remove_custom_attributes', 'clear_user_defined_lines',
-                     'delete_map_channels', 'rename_map_channel_1'},
+                     'delete_map_channels', 'rename_map_channel_1',
+                     'delete_vertex_channels', 'delete_animation_keys'},  # opt-in actions (#979 E3)
          'nudge': {'tile_move'},
          'atlas': {'atlas_cell'},
          'ucx': {'ucx_audit', 'ucx_unmeasurable', 'at_threshold'},
