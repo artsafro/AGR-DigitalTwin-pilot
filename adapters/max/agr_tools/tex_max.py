@@ -9,6 +9,11 @@ Nothing here edits the scene: maps are read from materials/texmaps of ALL nodes 
 from scene materials and from the AssetManager; paths are checked with `doesFileExist`; UV tiles come from
 in-memory `snapshotAsMesh` copies. Files are written only by tex.format_fix / tex.placeholders, only as new
 files (edit_core.write_new, exclusive create) into new folders.
+
+Shared enumerator (read by branches D `scene.maps_usage` and E3 `scene.census`, SPLIT #979): the signature
+`_scene_maps(core, nodes) -> (records, notes)` and the record keys `path, owners, uv_tiles, source` are kept;
+0.9 (#979 E1) only ADDS owner keys `slot` (sub-texmap slot name in its parent) and `role` (names_core role or
+None) for the mask candidates of scene.missing_maps.
 """
 import os
 import shutil
@@ -118,6 +123,41 @@ def _materials(mat):
     return mats, maps
 
 
+def _slot_names(mat):
+    """{texmap anim handle: slot name in its parent} below `mat` (first parent wins, depth first)."""
+    rt = _rt()
+    out, stack, seen = {}, [mat], set()
+    while stack:
+        m = stack.pop()
+        if _undef(m):
+            continue
+        try:
+            key = _handle(m)
+        except Exception:  # noqa: BLE001
+            continue
+        if key in seen:
+            continue
+        seen.add(key)
+        try:
+            for i in range(int(rt.getNumSubMtls(m))):
+                stack.append(rt.getSubMtl(m, i + 1))
+        except Exception:  # noqa: BLE001
+            pass
+        try:
+            for i in range(int(rt.getNumSubTexmaps(m))):
+                sub = rt.getSubTexmap(m, i + 1)
+                if _undef(sub):
+                    continue
+                try:
+                    out.setdefault(_handle(sub), str(rt.getSubTexmapSlotName(m, i + 1)))
+                except Exception:  # noqa: BLE001 - a slot without a name has no role
+                    pass
+                stack.append(sub)
+        except Exception:  # noqa: BLE001
+            pass
+    return out
+
+
 def _map_file(tm):
     rt = _rt()
     for prop in _FILE_PROPS:
@@ -157,59 +197,91 @@ def _node_maps(nodes):
     return out
 
 
+def _node_map_owners(nodes):
+    """{resolved map path: [[handle, name]]} over the usedMaps of the nodes' materials."""
+    rt = _rt()
+    out = {}
+    for n in nodes:
+        if _undef(n.material):
+            continue
+        maps = rt.usedMaps(n.material)
+        for i in range(int(maps.count) if maps is not None else 0):
+            p = _resolve(str(maps[i]))
+            owner = [_handle(n), str(n.name)]
+            if owner not in out.setdefault(p, []):
+                out[p].append(owner)
+    return out
+
+
 def _sources(ctx, opts, nodes):
+    """(sources, owners). owners {path: [[handle, name]]} only when the files come from the target objects."""
     core = ctx.core
     if opts.get('files'):
-        return [os.path.abspath(p) for p in opts['files']]
+        return [os.path.abspath(p) for p in opts['files']], {}
     if opts.get('folder'):
         if not os.path.isdir(opts['folder']):
             raise ValueError('folder not found: ' + opts['folder'])
-        return core.list_sources(os.path.abspath(opts['folder']))
+        return core.list_sources(os.path.abspath(opts['folder'])), {}
     targets = ctx.agr._targets(nodes)
-    paths = [p for p in _node_maps(targets) if os.path.splitext(p)[1].lower() in core.IMAGE_EXTS]
+    owners = {p: o for p, o in _node_map_owners(targets).items()
+              if os.path.splitext(p)[1].lower() in core.IMAGE_EXTS}
+    paths = sorted(owners, key=str.lower)
     if not paths:
         raise ValueError('no texture files on the target objects; give options.files or options.folder')
-    return paths
+    return paths, owners
 
 
 def tex_format_fix(ctx, mode, nodes, preview):
+    """Temporary files: only the .NET decoder makes one (mkdtemp) and removes it in `finally` (T01: the team
+    compressor left 18 files / 78 MB in %TEMP%)."""
     core, edit = ctx.core, ctx.edit
     if mode == 'preview':
         opts = core.format_options(ctx.options)
-        sources = _sources(ctx, opts, nodes)
+        sources, owners = _sources(ctx, opts, nodes)
         opts['files'] = sources
         opts.pop('folder', None)
         out, rows = core.format_fix(sources, opts, _read, _decode_other(core), exists=os.path.exists)
         state = core.format_state(sources, _read, opts, out)
-        return core.format_report(edit, 'preview', out, rows, edit.fingerprint(state), opts)
+        rep = core.format_report(edit, 'preview', out, rows, edit.fingerprint(dict(state, owners=owners)), opts,
+                                 owners=owners)
+        return rep
     plan = preview['plan']
     opts, out = plan['options'], plan['out']
     sources = opts['files']
-    edit.require_current(preview, core.format_state(sources, _read, opts, out))
+    owners = plan.get('owners') or {}
+    edit.require_current(preview, dict(core.format_state(sources, _read, opts, out), owners=owners))
     run = dict(opts, out=out)
     out2, rows = core.format_fix(sources, run, _read, _decode_other(core), exists=os.path.exists)
     planned = [(f['source'], f.get('out'), f.get('sha256_out')) for f in plan['files']]
     if [(r['source'], r.get('out'), r.get('sha256_out')) for r in rows] != planned:
         raise edit.StalePreview('apply result differs from the preview; run preview again')
     written = core.write_outputs(edit, out2, rows)
-    return core.format_report(edit, 'apply', out2, rows, None, opts, written)
+    return core.format_report(edit, 'apply', out2, rows, None, opts, written, owners=owners)
 
 
 # ---- tex.placeholders ----------------------------------------------------------------------------------
 def _scene_address(ctx, nodes):
-    """Address and Ground flag from the target names SM_{Address}_{Main|MainGlass|Ground}[_NNN]."""
+    """Address and Ground flag of ONE target set (0.8 API): from the names SM_{Address}_{Main|MainGlass|Ground}."""
+    sets = _address_sets(nodes)
+    if len(sets) != 1:
+        raise ValueError('address unknown: select one SM_<Address>_Main/Ground object or give options.address '
+                         '(found {})'.format(sorted((s['address'], s['ground']) for s in sets)))
+    return sets[0]['address'], sets[0]['ground']
+
+
+def _address_sets(nodes):
+    """One placeholder set per (address, ground) of the selected names SM_{Address}_{Main|MainGlass|Ground}[_NNN]
+    (as 0.8), owners = the nodes of that address (several addresses: several sets in one call)."""
     import re
     rt = _rt()
     src = list(nodes) if nodes is not None else list(rt.selection)
-    found = set()
+    found = {}
     for n in src:
         m = re.match(r'^(?:UCX_)?SM_([A-Za-z0-9_]+?)_(Main|MainGlass|Ground)(?:_\d{3})?$', str(n.name))
         if m:
-            found.add((m.group(1), m.group(2) == 'Ground'))
-    if len(found) != 1:
-        raise ValueError('address unknown: select one SM_<Address>_Main/Ground object or give options.address '
-                         '(found {})'.format(sorted(found)))
-    return found.pop()
+            key = (m.group(1), m.group(2) == 'Ground')
+            found.setdefault(key, []).append([_handle(n), str(n.name)])
+    return [{'address': a, 'ground': g, 'owners': sorted(o)} for (a, g), o in sorted(found.items())]
 
 
 def _placeholder_opts(ctx, nodes):
@@ -217,7 +289,14 @@ def _placeholder_opts(ctx, nodes):
     rt = _rt()
     opts = core.placeholder_options(ctx.options)
     if opts['address'] is None:
-        opts['address'], opts['ground'] = _scene_address(ctx, nodes)
+        sets = _address_sets(nodes)
+        if not sets:
+            raise ValueError('address unknown: select SM_<Address>_Main/Ground objects or give options.address')
+    else:
+        src = list(nodes) if nodes is not None else list(rt.selection)
+        sets = [{'address': opts['address'], 'ground': opts['ground'],
+                 'owners': sorted([_handle(n), str(n.name)] for n in src)}]
+    opts['sets'] = sets
     if opts['folder'] is None:
         scene = str(rt.maxFilePath)
         if not scene:
@@ -226,11 +305,11 @@ def _placeholder_opts(ctx, nodes):
     opts['folder'] = os.path.abspath(opts['folder'])
     if opts['diffuse_from']:
         path = _resolve(opts['diffuse_from'])
-        data = _read(path)
-        if data is None:
-            raise ValueError('diffuse_from not found: ' + opts['diffuse_from'])
-        img = core.decode_png(data)[0] if data[:8] == core.PNG_SIG else _decode_other(core)(path)
-        opts['colours']['Diffuse'] = core.average_colour(img)
+        colour, reason = core.diffuse_source(path, _read(path), _decode_other(core))
+        if reason:
+            opts['diffuse_reason'] = reason
+        else:
+            opts['colours']['Diffuse'] = colour
         opts['diffuse_from'] = path
     return opts
 
@@ -244,7 +323,7 @@ def tex_placeholders(ctx, mode, nodes, preview):
     core, edit = ctx.core, ctx.edit
     if mode == 'preview':
         opts = _placeholder_opts(ctx, nodes)
-        rows = core.placeholder_plan(opts)
+        rows = core.placeholder_plan(opts, sets=opts['sets'])
         return core.placeholder_report(edit, 'preview', opts, rows, edit.fingerprint(_placeholder_state(rows, opts)))
     plan = preview['plan']
     opts = plan['options']
@@ -300,6 +379,7 @@ def _scene_maps(core, nodes):
         if _undef(mat):
             continue
         mats, maps = _materials(mat)
+        slots = _slot_names(mat)
         done_mats |= {_handle(m) for m in mats}
         name = str(n.name)
         info = {'handle': _handle(n), 'node': name, 'hidden': _hidden(n), 'ucx': name.upper().startswith('UCX_')}
@@ -311,7 +391,9 @@ def _scene_maps(core, nodes):
             tiles = None
             if core.udim_pattern(path):
                 tiles = sorted(core.uv_tiles(_uv_faces(n, _map_channel(tm))))
-            owner = dict(info, material=top, map=str(tm.name))
+            slot = slots.get(_handle(tm))
+            role_of = getattr(core, 'role_of_slot', None)  # a reader passing an older core still works
+            owner = dict(info, material=top, map=str(tm.name), slot=slot, role=role_of(slot) if role_of else None)
             records.append({'path': _resolve(path), 'owners': [owner], 'uv_tiles': tiles, 'source': 'material'})
     try:
         for i in range(int(rt.sceneMaterials.count)):
@@ -342,17 +424,17 @@ def _scene_maps(core, nodes):
     return records, notes
 
 
-def _search_folders(records, opts):
+def _search_folders(core, records, opts):
+    """Candidate folders: core.search_folders over the map paths (auto, no "123" default), user map paths, scene
+    folder; options.search adds absolute folders searched recursively."""
     rt = _rt()
-    folders = {os.path.dirname(r['path']) for r in records if r['path'] and os.path.isabs(r['path'])}
+    user = []
     try:
         for i in range(int(rt.mapPaths.count())):
-            folders.add(str(rt.mapPaths.get(i + 1)))
+            user.append(str(rt.mapPaths.get(i + 1)))
     except Exception:  # noqa: BLE001 - no user map paths
         pass
-    if str(rt.maxFilePath):
-        folders.add(str(rt.maxFilePath))
-    return sorted(f for f in folders if f), list(opts.get('search') or [])
+    return core.search_folders([r['path'] for r in records], user, str(rt.maxFilePath), opts.get('search') or [])
 
 
 def scene_missing_maps(ctx, mode, nodes, preview):
@@ -365,9 +447,10 @@ def scene_missing_maps(ctx, mode, nodes, preview):
     if opts.get('search') is not None and (not isinstance(opts['search'], list)
                                            or not all(isinstance(p, str) for p in opts['search'])):
         raise ValueError('search must be a list of folders')
+    core.search_folders([], (), '', opts.get('search') or [])  # refuse a relative folder before any scene walk
     targets = list(nodes) if nodes is not None else list(rt.objects)
     records, notes = _scene_maps(core, targets)
-    flat, deep = _search_folders(records, opts)
+    flat, deep = _search_folders(core, records, opts)
     index = core.candidate_index(flat, recursive=deep)
     rows = core.missing_maps(records, _exists, _read_head, index)
     owners = sorted({(o['handle'], o['node']) for r in rows for o in r['owners'] if o.get('handle')})
