@@ -83,7 +83,9 @@ row 1 is built in both forms and Artem chooses.
 `centreline_from_outline` turns a DWG strip outline into the run. Writer `tools/blender/maf_gen_bench_build.py`
 (atlas v005 materials, box UV inside the 512 slots, triangulated FBX per MAF-18, hard edges by angle 40°, NPM + VPM,
 refuses overwrite); checks `tools/library/maf_gen_bench_checks.py` (readback -> `maf_findings`, dimensions within
-0.10 m [D094], atlas-slot count); overlap gate `dt qa xview`. Tests: `tests/test_maf_gen_bench.py` (synthetic straight /
+0.10 m [D094] of the per-row reference `verona-reference-sizes.json` given with `--reference` (rows 1-6 schedule,
+7-10 DWG outline; without it only the generator's own dims), atlas-slot count; exit 0 only when every row/role
+passes, 1 on any fail, 2 on an input error, #817); overlap gate `dt qa xview`. Tests: `tests/test_maf_gen_bench.py` (synthetic straight /
 L / U / skewed / random runs for both forms), 81 passed.
 
 | Config | Form | Parameters (source) |
@@ -208,7 +210,7 @@ Commands (all exit 0; Blender 5.1.2, factory startup):
 ```
 blender --background --factory-startup --python-exit-code 1 --python tools/blender/maf_gen_bench_build.py -- jobs/VATUTINO-SITE/maf/verona-gen.config.json jobs/VATUTINO-SITE/maf/verona-plan-shapes.json C:/x/vatutino-maf/gen-v001/atlas-v006/vatutino_maf_atlas_512_v006p.json C:/x/vatutino-maf/gen-v001/atlas-v006/vatutino_maf_atlas_512_v006p.png C:/x/vatutino-maf/gen-v001/rows-v006p-2
 blender ... --python tools/blender/fbx_readback.py -- <rows-v006p-2>/<npm|vpm>/VAT_MAF_T3508_<NN>.fbx <rows-v006p-2>/readback/<npm|vpm>_VAT_MAF_T3508_<NN>.json   (20 runs)
-uv run python tools/library/maf_gen_bench_checks.py <rows-v006p-2>/build-report.json <rows-v006p-2>/readback <rows-v006p-2>/checks.json
+uv run python tools/library/maf_gen_bench_checks.py <rows-v006p-2>/build-report.json <rows-v006p-2>/readback <rows-v006p-2>/checks.json --reference jobs/VATUTINO-SITE/maf/verona-reference-sizes.json   (#817: exit 0 = verdict pass, 10/10 rows, max deviation 0.019 m)
 uv run dt qa xview <rows-v006p-2>/<npm|vpm>/VAT_MAF_T3508_<NN>.fbx --out <rows-v006p-2>/readback/xview_<npm|vpm>_VAT_MAF_T3508_<NN>.json --profile <NPM|VPM>   (20 runs)
 ```
 
