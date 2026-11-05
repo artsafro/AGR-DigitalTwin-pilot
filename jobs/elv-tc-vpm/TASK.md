@@ -171,6 +171,12 @@ exported before the triangulation step), next to the ZIP and not inside it.
    edge faces of the shell deleted.
 4. SINTEZ need not be rerun for this round. Hand-off for acceptance: the non-triangulated work FBX [D198].
 
+**Delivery v005 (2026-11-05, technical QA only; user acceptance open)** — `outputs/delivery-v005/delivery_report_v005.md`:
+joints harmonised (uv_tex_full_v008.py; checker joint_continuity_v008.py 423 -> 4 unmatched crossings), P44 as 3 continuous
+mitred runs (DECO P059-P062 moved out 28 mm, 3 Arktos raised 6 mm), 106 corner panes as 6 mm two-face shells; validator
+as v004 (V004 max 4), Blender xView 0/0, Max 2024 xView 0/0 (954 nodes). Work FBX for acceptance [D198] also in
+`C:\x\elv_view_v005\`. Open: Q1 one lattice per plane vs irregular FBX panel joints, Q2 DECO stand-off, Q3 corner set.
+
 ## Не трогать
 
 - Source files in `for_ai\` (work on byte-identical copies only).
