@@ -21,9 +21,9 @@ JOB = Path(r"C:\x\889-maf-colour-zones\apply-job.json")
 REPORT = Path(r"C:\x\889-maf-colour-zones\applied.json")
 
 
-def _write_error(message: str) -> None:
-    REPORT.parent.mkdir(parents=True, exist_ok=True)
-    REPORT.write_text(json.dumps({"ok": False, "error": message}, ensure_ascii=False), encoding="utf-8")
+def _write_error(message: str, report_path: Path = REPORT) -> None:
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(json.dumps({"ok": False, "error": message}, ensure_ascii=False), encoding="utf-8")
 
 
 def _canon(name: str) -> str:
@@ -100,8 +100,8 @@ def _material(node, ids, colours: dict) -> None:
     node.material = multi
 
 
-def _one(path: Path, set_id: str, catalogue: dict, colours: dict, out_path: Path) -> dict:
-    zones.assert_distinct_paths({"input": path, "output": out_path, "report": REPORT})
+def _one(path: Path, set_id: str, catalogue: dict, colours: dict, out_path: Path, report_path: Path) -> dict:
+    zones.assert_distinct_paths({"input": path, "output": out_path, "report": report_path})
     if out_path.exists():
         raise zones.ZoneError(f"output exists, refusing to overwrite: {out_path}")
     rt.resetMaxFile(rt.Name("noPrompt"))
@@ -182,6 +182,7 @@ def _one(path: Path, set_id: str, catalogue: dict, colours: dict, out_path: Path
 
 def main() -> None:
     job = json.loads(JOB.read_text(encoding="utf-8"))
+    report_path = Path(job["report"]) if job.get("report") else REPORT
     catalogue = zones.load_id_catalogue(json.loads(Path(job["ids"]).read_text(encoding="utf-8-sig")))
     colours = {entry["id"]: entry["target"] for entry in catalogue.values()}
     for row in zones.FINISH.values():
@@ -202,11 +203,12 @@ def main() -> None:
                 src = Path(pos[prof]["fbx"])
                 dest = out_dir / prof / f"{set_id}.fbx"
                 print("APPLY", set_id, prof, flush=True)
-                applied["positions"][set_id][prof] = _one(src, set_id, catalogue, colours, dest)
-        REPORT.write_text(json.dumps(applied, ensure_ascii=False, indent=1), encoding="utf-8")
-        print("APPLIED", REPORT, flush=True)
+                applied["positions"][set_id][prof] = _one(src, set_id, catalogue, colours, dest, report_path)
+        report_path.parent.mkdir(parents=True, exist_ok=True)
+        report_path.write_text(json.dumps(applied, ensure_ascii=False, indent=1), encoding="utf-8")
+        print("APPLIED", report_path, flush=True)
     except Exception as exc:
-        _write_error(str(exc))
+        _write_error(str(exc), report_path)
         raise
 
 

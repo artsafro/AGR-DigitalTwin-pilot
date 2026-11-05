@@ -74,8 +74,10 @@ POSITION_POLICY = {
                          "tube": "paint_ral7047", "fastener": "paint_ral7047"},
     "VAT_MAF_T3510_12": {"slab": "wood_light", "shell": "paint_ral7047",
                          "tube": "paint_ral7047", "fastener": "cap_black"},
-    "VAT_MAF_T3510_16": {"slab": "wood_light", "shell": "wood_light",
-                         "tube": "wood_light", "fastener": "cap_black"},
+    # ДП 090: schedule is steel RAL 7047 + larch. groups.json "frame" is shell+tube
+    # (npm 957+240). Slabs stay larch. A large fastener share folds into shell.
+    "VAT_MAF_T3510_16": {"slab": "wood_light", "shell": "paint_ral7047",
+                         "tube": "paint_ral7047", "fastener": "cap_black"},
     "VAT_MAF_T3510_29": {"slab": "wood_light", "shell": "wood_light",
                          "tube": "paint_ral7047", "fastener": "cap_black"},
     "VAT_MAF_T3510_31": {"slab": "wood_light", "shell": "wood_light",
@@ -89,6 +91,24 @@ ZONE_OF_KEY = {
 # Split keys use the larch atlas hex for wood. HPL keeps its own slot through finish_colour.
 KEY_SLOT = {"wood_light": "larch_light_oak", "paint_ral7047": "steel_ral7047", "rope_pp": "rope_pp"}
 CAP_SOURCE = "schedule polyamide caps; no RAL; colour assumed; v005 cap_black #303030"
+# Finishes the schedule assigns to the showcase position. The AST boilerplate pastes
+# "лиственница" onto the steel urn (*T3510/2); that position's record is steel only.
+# The tree grate (*T3510/32) is "сталь RAL 7047" only. ДП 090 names steel and larch.
+SCHEDULE_FINISHES = {
+    "VAT_MAF_T3510_01": ("wood_light", "paint_ral7047"),
+    "VAT_MAF_T3510_02": ("paint_ral7047",),
+    "VAT_MAF_T3510_07": ("wood_light", "paint_ral7047"),
+    "VAT_MAF_T3510_09": ("wood_light", "paint_ral7047"),
+    "VAT_MAF_T3510_11": ("wood_light", "paint_ral7047"),
+    "VAT_MAF_T3510_12": ("wood_light", "paint_ral7047", "cap_black"),
+    "VAT_MAF_T3510_16": ("wood_light", "paint_ral7047"),
+    "VAT_MAF_T3510_26": ("wood_light", "paint_ral7047"),
+    "VAT_MAF_T3510_27": ("wood_light", "paint_ral7047"),
+    "VAT_MAF_T3510_28": ("rope_pp", "paint_ral7047"),
+    "VAT_MAF_T3510_29": ("wood_light", "paint_ral7047", "cap_black"),
+    "VAT_MAF_T3510_31": ("wood_light", "paint_ral7047"),
+    "VAT_MAF_T3510_32": ("paint_ral7047",),
+}
 
 
 class ZoneError(Exception):
@@ -433,6 +453,22 @@ def _zone_record(zone_name: str, id_key: str, colour_source: str, catalogue: dic
             "ral": entry["ral"], "name": entry["name"], "colour_source": colour_source.strip()}
 
 
+def guard_schedule_zones(set_id: str, finishes, zones: list) -> None:
+    """A schedule that names two or more finishes cannot end as one zone."""
+    if finishes is None:
+        return
+    if not isinstance(finishes, (list, tuple)) or not finishes:
+        raise ZoneError(f"{set_id}: schedule finishes missing")
+    named = []
+    for key in finishes:
+        if not isinstance(key, str) or key not in ZONE_OF_KEY:
+            raise ZoneError(f"unmapped material: {key}")
+        if key not in named:
+            named.append(key)
+    if len(named) >= 2 and len(zones) < 2:
+        raise ZoneError(f"{set_id}: schedule names {len(named)} finishes but one zone")
+
+
 def _profiles(set_id: str, zones: list, profiles: dict) -> dict:
     if not isinstance(profiles, dict) or set(profiles) != {"npm", "vpm"}:
         raise ZoneError(f"{set_id}: profiles must be npm and vpm")
@@ -507,11 +543,13 @@ def compile_zones(required_ids, rows, catalogue: dict) -> dict:
         zones = [_zone_record(z.get("zone"), z.get("id_key"), z.get("colour_source"), catalogue,
                               z.get("colour"))
                  for z in raw_zones]
+        guard_schedule_zones(set_id, row.get("schedule_finishes"), zones)
         if any(z["id"] >= UDIM_AS_MATERIAL_ID for z in zones):
             raise ZoneError(f"{set_id}: material id >= {UDIM_AS_MATERIAL_ID}")
         profiles = _profiles(set_id, zones, row.get("profiles"))
         item = {"set_id": set_id, "zones": zones, "profiles": profiles}
-        for field in ("name", "catalogue_id", "schedule", "material_reason", "split_note"):
+        for field in ("name", "catalogue_id", "schedule", "material_reason", "split_note",
+                      "schedule_finishes"):
             if field in row:
                 item[field] = row[field]
         positions.append(item)
@@ -615,19 +653,30 @@ def rows_from_set(set_report: dict, catalogue: dict, counts: dict) -> list:
     return rows
 
 
-def rows_from_applied(set_report: dict, applied: dict, catalogue: dict) -> list:
-    """Zone rows from the Max assignment. Counts must match and every face must sit in a zone."""
+def rows_from_applied(set_report: dict, applied: dict, catalogue: dict, before_counts=None) -> list:
+    """Zone rows from the Max assignment. Before-counts are the pre-apply read; after is the apply readback."""
     if not isinstance(applied, dict) or applied.get("ok") is not True:
         raise ZoneError("applied report is not ok")
     positions = applied.get("positions")
     if not isinstance(positions, dict) or not positions:
         raise ZoneError("applied report has no positions")
+    if before_counts is not None and not isinstance(before_counts, dict):
+        raise ZoneError("empty geometry counts")
     rows = []
+    seen = []
     for pos in set_report.get("positions") or []:
         set_id = pos.get("set_id")
         if set_id not in positions:
             raise ZoneError(f"unmapped position: {set_id}")
+        seen.append(set_id)
+        if set_id not in SCHEDULE_FINISHES:
+            raise ZoneError(f"unmapped position: {set_id}")
         block = positions[set_id]
+        prior = None
+        if before_counts is not None:
+            prior = before_counts.get(set_id)
+            if not isinstance(prior, dict):
+                raise ZoneError(f"{set_id}: geometry counts missing")
         profiles = {}
         zone_names = None
         zone_meta = None
@@ -637,8 +686,21 @@ def rows_from_applied(set_report: dict, applied: dict, catalogue: dict) -> list:
                 raise ZoneError(f"{set_id} {prof}: geometry counts missing")
             vertices = _finite_int(side.get("vertices"), f"{set_id} {prof} vertices")
             faces = _finite_int(side.get("faces"), f"{set_id} {prof} faces")
-            if side.get("vertices_after") != vertices or side.get("faces_after") != faces:
-                raise ZoneError(f"{set_id} {prof}: vertices {vertices} != {side.get('vertices_after')}")
+            vertices_after = _finite_int(side.get("vertices_after"), f"{set_id} {prof} vertices_after")
+            faces_after = _finite_int(side.get("faces_after"), f"{set_id} {prof} faces_after")
+            if vertices_after != vertices or faces_after != faces:
+                raise ZoneError(f"{set_id} {prof}: vertices {vertices} != {vertices_after}")
+            if prior is None:
+                vertices_before, faces_before = vertices, faces
+            else:
+                measured = prior.get(prof)
+                if not isinstance(measured, dict):
+                    raise ZoneError(f"{set_id} {prof}: geometry counts missing")
+                vertices_before = _finite_int(measured.get("vertices"), f"{set_id} {prof} vertices_before")
+                faces_before = _finite_int(measured.get("faces"), f"{set_id} {prof} faces_before")
+                if vertices_before != vertices_after or faces_before != faces_after:
+                    raise ZoneError(
+                        f"{set_id} {prof}: vertices {vertices_before} != {vertices_after}")
             raw = side.get("zones")
             if not isinstance(raw, list) or not raw:
                 raise ZoneError(f"{set_id} {prof}: empty zone list")
@@ -661,19 +723,27 @@ def rows_from_applied(set_report: dict, applied: dict, catalogue: dict) -> list:
                 zone_meta = meta
             elif names != zone_names:
                 raise ZoneError(f"{set_id}: npm/vpm zones differ: {zone_names} vs {names}")
-            profiles[prof] = {"vertices_before": vertices, "faces_before": faces,
-                              "vertices_after": vertices, "faces_after": faces, "zone_faces": counts}
+            profiles[prof] = {"vertices_before": vertices_before, "faces_before": faces_before,
+                              "vertices_after": vertices_after, "faces_after": faces_after,
+                              "zone_faces": counts}
         zones = []
         for name in zone_names:
             src = zone_meta[name]
             zones.append({"zone": name, "id_key": src.get("id_key"), "colour_source": src.get("colour_source"),
                           "colour": src.get("colour")})
+        finishes = list(SCHEDULE_FINISHES[set_id])
         note = None
         if len(zones) == 1:
-            note = "face groups share one schedule finish; vertex and face counts unchanged"
+            policy_keys = set(POSITION_POLICY.get(set_id, {}).values())
+            if len(policy_keys) <= 1 and len(finishes) == 1:
+                note = "schedule names one finish; face groups keep that material id"
         rows.append({"set_id": set_id, "catalogue_id": pos.get("catalogue_id"), "schedule": pos.get("schedule"),
                      "name": pos.get("name"), "material_reason": pos.get("material_reason"),
-                     "split_note": note, "zones": zones, "profiles": profiles})
+                     "split_note": note, "schedule_finishes": finishes,
+                     "zones": zones, "profiles": profiles})
+    dropped = [sid for sid in positions if sid not in seen]
+    if dropped:
+        raise ZoneError(f"unmapped position: {', '.join(dropped)}")
     return rows
 
 
@@ -681,29 +751,110 @@ def render_md(report: dict) -> str:
     lines = [
         "# Vatutino showcase MAF colour zones (#889)",
         "",
-        "Geometry is the accepted v005-set mesh: vertex and face counts are equal before and after.",
+        "Geometry is the accepted v005-set mesh. `before` is the pre-apply readback",
+        "(site-maf-set.md / site-maf-zone-counts.json). `after` is the apply readback.",
+        "Vertex and face counts are equal before and after.",
         "A schedule RAL is stated as that paint. A named finish with no number keeps the atlas-slot",
         "hex and is marked colour assumed (the vendor candidate sheet is a library viewport, not a measurement).",
         "Single-material meshes are split into face groups at a dihedral of 40 degrees; the kind of each",
         "group (slab, tube, shell, fastener) is mapped by POSITION_POLICY.",
         "",
+        "QA: `maf_surface` readback from tools/blender/fbx_readback.py.",
+        "",
         f"Photo status: {report.get('photo_status')}. Accepted: {report.get('accepted')}.",
         "",
-        "| position | zone | ID | key | colour | faces npm | faces vpm | vertices npm | vertices vpm | colour source |",
-        "|---|---|---|---|---|---|---|---|---|---|",
+    ]
+    if report.get("apply_marker"):
+        lines.append(
+            f"{report['apply_marker']} {report.get('apply_report', '')} "
+            f"max_exit_code={report.get('max_exit_code')} ({report.get('max_exit_note', '')})"
+        )
+        lines.append("")
+    lines += [
+        "| position | zone | ID | key | colour | npm faces before | npm faces after | npm verts before | npm verts after | vpm faces before | vpm faces after | vpm verts before | vpm verts after | zone faces npm | zone faces vpm | colour source |",
+        "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|",
     ]
     for pos in report["positions"]:
         npm, vpm = pos["profiles"]["npm"], pos["profiles"]["vpm"]
         for zone in pos["zones"]:
             lines.append(
                 f"| {pos['set_id']} | {zone['zone']} | {zone['id']} | {zone['id_key']} | {zone['colour']} "
-                f"| {npm['zone_faces'][zone['zone']]} | {vpm['zone_faces'][zone['zone']]} "
-                f"| {npm['vertices_before']} | {vpm['vertices_before']} | {zone['colour_source']} |"
+                f"| {npm['faces_before']} | {npm['faces_after']} | {npm['vertices_before']} | {npm['vertices_after']} "
+                f"| {vpm['faces_before']} | {vpm['faces_after']} | {vpm['vertices_before']} | {vpm['vertices_after']} "
+                f"| {npm['zone_faces'][zone['zone']]} | {vpm['zone_faces'][zone['zone']]} | {zone['colour_source']} |"
             )
         if pos.get("split_note"):
-            lines.append(f"| {pos['set_id']} | — | — | — | — | — | — | — | — | {pos['split_note']} |")
+            lines.append(
+                f"| {pos['set_id']} | — | — | — | — | — | — | — | — | — | — | — | — | — | — | {pos['split_note']} |"
+            )
     lines += ["", "Method: shared-edge components with dihedral <= 40 deg; slab / tube / shell / fastener extents as in the module docstring.", ""]
+    surface = report.get("maf_surface")
+    if isinstance(surface, dict) and surface:
+        lines += [
+            "maf_surface (tools/blender/fbx_readback.py):",
+            "",
+            "| position | profile | vertices | faces | flipped_faces | inconsistent_edges | soft_over_40 |",
+            "|---|---|---|---|---|---|---|",
+        ]
+        for set_id, profs in surface.items():
+            for prof in ("npm", "vpm"):
+                row = profs[prof]
+                lines.append(
+                    f"| {set_id} | {prof} | {row['vertices']} | {row['faces']} | {row['flipped_faces']} "
+                    f"| {row['inconsistent_edges']} | {row['soft_over_40']} |"
+                )
+        lines.append("")
     return "\n".join(lines)
+
+
+def _exit_code(value) -> int:
+    if isinstance(value, bool) or not isinstance(value, (int, str)):
+        raise ZoneError(f"max exit: not a finite integer: {value!r}")
+    if isinstance(value, int):
+        return value
+    text = value.strip()
+    if not text.lstrip("-").isdigit():
+        raise ZoneError(f"max exit: not a finite integer: {value!r}")
+    return int(text)
+
+
+def _load_surface(path, report: dict) -> dict:
+    """maf_surface facts from tools/blender/fbx_readback.py. Counts must match the apply readback."""
+    doc = _load(path, "maf_surface")
+    if not isinstance(doc, dict) or not doc:
+        raise ZoneError("maf_surface: empty")
+    needed = [pos["set_id"] for pos in report["positions"]]
+    missing = [sid for sid in needed if sid not in doc]
+    extra = [sid for sid in doc if sid not in needed]
+    if missing or extra:
+        raise ZoneError(f"unmapped position: {', '.join(missing or extra)}")
+    out = {}
+    for pos in report["positions"]:
+        set_id = pos["set_id"]
+        block = doc[set_id]
+        if not isinstance(block, dict):
+            raise ZoneError(f"{set_id}: maf_surface missing")
+        out[set_id] = {}
+        for prof in ("npm", "vpm"):
+            row = block.get(prof)
+            if not isinstance(row, dict):
+                raise ZoneError(f"{set_id} {prof}: maf_surface missing")
+            for field in ("vertices", "faces", "flipped_faces", "inconsistent_edges", "soft_over_40"):
+                if field not in row:
+                    raise ZoneError(f"{set_id} {prof}: {field} missing")
+            vertices = _finite_int(row["vertices"], f"{set_id} {prof} vertices")
+            faces = _finite_int(row["faces"], f"{set_id} {prof} faces")
+            geo = pos["profiles"][prof]
+            if vertices != geo["vertices_after"] or faces != geo["faces_after"]:
+                raise ZoneError(f"{set_id} {prof}: vertices {vertices} != {geo['vertices_after']}")
+            out[set_id][prof] = {
+                "vertices": vertices,
+                "faces": faces,
+                "flipped_faces": _finite_int(row["flipped_faces"], f"{set_id} {prof} flipped_faces"),
+                "inconsistent_edges": _finite_int(row["inconsistent_edges"], f"{set_id} {prof} inconsistent_edges"),
+                "soft_over_40": _finite_int(row["soft_over_40"], f"{set_id} {prof} soft_over_40"),
+            }
+    return out
 
 
 def _load(path: Path, what: str):
@@ -722,6 +873,9 @@ def main(argv=None) -> int:
     ap.add_argument("--out-json", required=True)
     ap.add_argument("--out-md", required=True)
     ap.add_argument("--required", nargs="*", default=None)
+    ap.add_argument("--max-exit", default=None, help="raw 3dsmaxbatch exit code recorded next to APPLIED")
+    ap.add_argument("--max-exit-note", default="known polyunwrapper_autoload.mse startup error")
+    ap.add_argument("--surface", default=None, help="maf_surface summary json from fbx_readback.py")
     args = ap.parse_args(argv)
     out_json, out_md = Path(args.out_json), Path(args.out_md)
     try:
@@ -731,16 +885,27 @@ def main(argv=None) -> int:
         }
         if args.applied:
             paths["applied"] = args.applied
+        if args.surface:
+            paths["surface"] = args.surface
         assert_distinct_paths(paths)
         catalogue = load_id_catalogue(_load(args.ids, "id catalogue"))
         report_in = _load(args.set, "set report")
         counts = _load(args.counts, "geometry counts")
         if args.applied:
-            rows = rows_from_applied(report_in, _load(args.applied, "applied report"), catalogue)
+            rows = rows_from_applied(report_in, _load(args.applied, "applied report"), catalogue, counts)
         else:
             rows = rows_from_set(report_in, catalogue, counts)
         required = list(args.required) if args.required else [row["set_id"] for row in rows]
         report = compile_zones(required, rows, catalogue)
+        if args.applied:
+            if args.max_exit is None:
+                raise ZoneError("max exit missing")
+            report["apply_marker"] = "APPLIED"
+            report["apply_report"] = str(Path(args.applied))
+            report["max_exit_code"] = _exit_code(args.max_exit)
+            report["max_exit_note"] = args.max_exit_note
+        if args.surface:
+            report["maf_surface"] = _load_surface(args.surface, report)
         text = json.dumps(report, ensure_ascii=False, indent=1)
         md = render_md(report)
         out_json.parent.mkdir(parents=True, exist_ok=True)

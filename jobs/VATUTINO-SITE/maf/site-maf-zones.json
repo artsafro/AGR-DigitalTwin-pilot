@@ -53,7 +53,11 @@
    "catalogue_id": "MAF_0326",
    "schedule": "*T3510/1",
    "material_reason": "sub-mat 1 = slats z 0.38-0.45 m (larch); 2 = frame/legs (steel)",
-   "split_note": null
+   "split_note": null,
+   "schedule_finishes": [
+    "wood_light",
+    "paint_ral7047"
+   ]
   },
   {
    "set_id": "VAT_MAF_T3510_02",
@@ -92,7 +96,10 @@
    "catalogue_id": "MAF_0794",
    "schedule": "*T3510/2",
    "material_reason": "single source material; urn body steel RAL 7047",
-   "split_note": "face groups share one schedule finish; vertex and face counts unchanged"
+   "split_note": "schedule names one finish; face groups keep that material id",
+   "schedule_finishes": [
+    "paint_ral7047"
+   ]
   },
   {
    "set_id": "VAT_MAF_T3510_07",
@@ -142,7 +149,11 @@
    "catalogue_id": "MAF_0747",
    "schedule": "*T3510/7",
    "material_reason": "single source material; deck area 9.5 m2 dominates -> larch",
-   "split_note": null
+   "split_note": null,
+   "schedule_finishes": [
+    "wood_light",
+    "paint_ral7047"
+   ]
   },
   {
    "set_id": "VAT_MAF_T3510_09",
@@ -192,7 +203,11 @@
    "catalogue_id": "MAF_0506",
    "schedule": "*T3510/9",
    "material_reason": "2641 = 1160 small faces, area 1.0 m2 (frame, steel); 2648 = 300 faces, area 2.9 m2 (slats, larch)",
-   "split_note": null
+   "split_note": null,
+   "schedule_finishes": [
+    "wood_light",
+    "paint_ral7047"
+   ]
   },
   {
    "set_id": "VAT_MAF_T3510_11",
@@ -242,7 +257,11 @@
    "catalogue_id": "MAF_0322",
    "schedule": "*T3510/11",
    "material_reason": "sub-mat 1 = seat body z 0.26-0.47 (larch); 2 = spring/handles (steel)",
-   "split_note": null
+   "split_note": null,
+   "schedule_finishes": [
+    "wood_light",
+    "paint_ral7047"
+   ]
   },
   {
    "set_id": "VAT_MAF_T3510_12",
@@ -303,7 +322,12 @@
    "catalogue_id": "MAF_0920",
    "schedule": "*T3510/12",
    "material_reason": "single source material; swing frame steel RAL 7047",
-   "split_note": null
+   "split_note": null,
+   "schedule_finishes": [
+    "wood_light",
+    "paint_ral7047",
+    "cap_black"
+   ]
   },
   {
    "set_id": "VAT_MAF_T3510_16",
@@ -316,6 +340,15 @@
      "ral": null,
      "name": "WOOD светлая: лиственница «светлый дуб», сосна, HPL «атласное дерево» (на проверку)",
      "colour_source": "schedule finish light oak; no RAL; vendor candidates_part*.jpg and candidates_sheet.jpg are library viewport colours, not a finish measurement; colour assumed; atlas slot larch_light_oak #C49A6C"
+    },
+    {
+     "zone": "frame",
+     "id_key": "paint_ral7047",
+     "id": 4,
+     "colour": "#D0D0D0",
+     "ral": "7047",
+     "name": "краска RAL 7047 телегрей",
+     "colour_source": "schedule RAL 7047"
     }
    ],
    "profiles": {
@@ -325,7 +358,8 @@
      "vertices_after": 1356,
      "faces_after": 2281,
      "zone_faces": {
-      "boards": 2281
+      "boards": 200,
+      "frame": 2081
      }
     },
     "vpm": {
@@ -334,7 +368,8 @@
      "vertices_after": 2580,
      "faces_after": 4562,
      "zone_faces": {
-      "boards": 4562
+      "boards": 112,
+      "frame": 4450
      }
     }
    },
@@ -342,7 +377,11 @@
    "catalogue_id": "MAF_0803",
    "schedule": "*T3510/16",
    "material_reason": "single source material; playground ДП 090 timber dominates -> larch",
-   "split_note": "face groups share one schedule finish; vertex and face counts unchanged"
+   "split_note": null,
+   "schedule_finishes": [
+    "wood_light",
+    "paint_ral7047"
+   ]
   },
   {
    "set_id": "VAT_MAF_T3510_26",
@@ -392,7 +431,11 @@
    "catalogue_id": "MAF_0677",
    "schedule": "*T3510/26",
    "material_reason": "2643 = table top at z 0.76 (HPL); 2641 = top edge strip z 0.76 (HPL); 2648 = frame/net (steel)",
-   "split_note": null
+   "split_note": null,
+   "schedule_finishes": [
+    "wood_light",
+    "paint_ral7047"
+   ]
   },
   {
    "set_id": "VAT_MAF_T3510_27",
@@ -442,7 +485,11 @@
    "catalogue_id": "MAF_0219",
    "schedule": "*T3510/27",
    "material_reason": "sub-mat 1 = seats/top z 0.41-0.77, area 7.4 m2 (larch); 3 = frame (steel)",
-   "split_note": null
+   "split_note": null,
+   "schedule_finishes": [
+    "wood_light",
+    "paint_ral7047"
+   ]
   },
   {
    "set_id": "VAT_MAF_T3510_28",
@@ -492,7 +539,11 @@
    "catalogue_id": "MAF_0127",
    "schedule": "*T3510/28",
    "material_reason": "sub-mat 3 = frame 1.71 x 2.00 m, thin tubes (steel); 4 = nest/ropes area 4.8 m2 (PP rope)",
-   "split_note": null
+   "split_note": null,
+   "schedule_finishes": [
+    "rope_pp",
+    "paint_ral7047"
+   ]
   },
   {
    "set_id": "VAT_MAF_T3510_29",
@@ -553,7 +604,12 @@
    "catalogue_id": "MAF_0159",
    "schedule": "*T3510/29",
    "material_reason": "single source material; chair seat/back slats dominate -> larch",
-   "split_note": null
+   "split_note": null,
+   "schedule_finishes": [
+    "wood_light",
+    "paint_ral7047",
+    "cap_black"
+   ]
   },
   {
    "set_id": "VAT_MAF_T3510_31",
@@ -603,7 +659,11 @@
    "catalogue_id": "MAF_0722",
    "schedule": "*T3510/31",
    "material_reason": "single source material; table top area dominates -> larch",
-   "split_note": null
+   "split_note": null,
+   "schedule_finishes": [
+    "wood_light",
+    "paint_ral7047"
+   ]
   },
   {
    "set_id": "VAT_MAF_T3510_32",
@@ -642,7 +702,224 @@
    "catalogue_id": "MAF_0687",
    "schedule": "*T3510/32",
    "material_reason": "schedule: steel RAL 7047 only",
-   "split_note": "face groups share one schedule finish; vertex and face counts unchanged"
+   "split_note": "schedule names one finish; face groups keep that material id",
+   "schedule_finishes": [
+    "paint_ral7047"
+   ]
   }
- ]
+ ],
+ "apply_marker": "APPLIED",
+ "apply_report": "C:\\x\\889-maf-colour-zones\\applied-v002.json",
+ "max_exit_code": 4294967166,
+ "max_exit_note": "known polyunwrapper_autoload.mse startup error",
+ "maf_surface": {
+  "VAT_MAF_T3510_01": {
+   "npm": {
+    "vertices": 140,
+    "faces": 240,
+    "flipped_faces": 0,
+    "inconsistent_edges": 0,
+    "soft_over_40": 0
+   },
+   "vpm": {
+    "vertices": 140,
+    "faces": 240,
+    "flipped_faces": 0,
+    "inconsistent_edges": 0,
+    "soft_over_40": 0
+   }
+  },
+  "VAT_MAF_T3510_02": {
+   "npm": {
+    "vertices": 96,
+    "faces": 146,
+    "flipped_faces": 0,
+    "inconsistent_edges": 0,
+    "soft_over_40": 0
+   },
+   "vpm": {
+    "vertices": 96,
+    "faces": 146,
+    "flipped_faces": 0,
+    "inconsistent_edges": 0,
+    "soft_over_40": 0
+   }
+  },
+  "VAT_MAF_T3510_07": {
+   "npm": {
+    "vertices": 240,
+    "faces": 364,
+    "flipped_faces": 0,
+    "inconsistent_edges": 0,
+    "soft_over_40": 0
+   },
+   "vpm": {
+    "vertices": 240,
+    "faces": 364,
+    "flipped_faces": 0,
+    "inconsistent_edges": 0,
+    "soft_over_40": 0
+   }
+  },
+  "VAT_MAF_T3510_09": {
+   "npm": {
+    "vertices": 421,
+    "faces": 730,
+    "flipped_faces": 0,
+    "inconsistent_edges": 0,
+    "soft_over_40": 0
+   },
+   "vpm": {
+    "vertices": 786,
+    "faces": 1460,
+    "flipped_faces": 0,
+    "inconsistent_edges": 0,
+    "soft_over_40": 0
+   }
+  },
+  "VAT_MAF_T3510_11": {
+   "npm": {
+    "vertices": 236,
+    "faces": 434,
+    "flipped_faces": 0,
+    "inconsistent_edges": 0,
+    "soft_over_40": 0
+   },
+   "vpm": {
+    "vertices": 388,
+    "faces": 724,
+    "flipped_faces": 0,
+    "inconsistent_edges": 0,
+    "soft_over_40": 0
+   }
+  },
+  "VAT_MAF_T3510_12": {
+   "npm": {
+    "vertices": 416,
+    "faces": 678,
+    "flipped_faces": 0,
+    "inconsistent_edges": 0,
+    "soft_over_40": 0
+   },
+   "vpm": {
+    "vertices": 416,
+    "faces": 678,
+    "flipped_faces": 0,
+    "inconsistent_edges": 0,
+    "soft_over_40": 0
+   }
+  },
+  "VAT_MAF_T3510_16": {
+   "npm": {
+    "vertices": 1356,
+    "faces": 2281,
+    "flipped_faces": 0,
+    "inconsistent_edges": 0,
+    "soft_over_40": 0
+   },
+   "vpm": {
+    "vertices": 2580,
+    "faces": 4562,
+    "flipped_faces": 0,
+    "inconsistent_edges": 0,
+    "soft_over_40": 0
+   }
+  },
+  "VAT_MAF_T3510_26": {
+   "npm": {
+    "vertices": 1300,
+    "faces": 3043,
+    "flipped_faces": 0,
+    "inconsistent_edges": 0,
+    "soft_over_40": 0
+   },
+   "vpm": {
+    "vertices": 4184,
+    "faces": 8696,
+    "flipped_faces": 0,
+    "inconsistent_edges": 0,
+    "soft_over_40": 0
+   }
+  },
+  "VAT_MAF_T3510_27": {
+   "npm": {
+    "vertices": 292,
+    "faces": 540,
+    "flipped_faces": 0,
+    "inconsistent_edges": 0,
+    "soft_over_40": 0
+   },
+   "vpm": {
+    "vertices": 292,
+    "faces": 540,
+    "flipped_faces": 0,
+    "inconsistent_edges": 0,
+    "soft_over_40": 0
+   }
+  },
+  "VAT_MAF_T3510_28": {
+   "npm": {
+    "vertices": 1027,
+    "faces": 2030,
+    "flipped_faces": 0,
+    "inconsistent_edges": 0,
+    "soft_over_40": 0
+   },
+   "vpm": {
+    "vertices": 1027,
+    "faces": 2030,
+    "flipped_faces": 0,
+    "inconsistent_edges": 0,
+    "soft_over_40": 0
+   }
+  },
+  "VAT_MAF_T3510_29": {
+   "npm": {
+    "vertices": 156,
+    "faces": 320,
+    "flipped_faces": 0,
+    "inconsistent_edges": 0,
+    "soft_over_40": 0
+   },
+   "vpm": {
+    "vertices": 156,
+    "faces": 320,
+    "flipped_faces": 0,
+    "inconsistent_edges": 0,
+    "soft_over_40": 0
+   }
+  },
+  "VAT_MAF_T3510_31": {
+   "npm": {
+    "vertices": 136,
+    "faces": 212,
+    "flipped_faces": 0,
+    "inconsistent_edges": 0,
+    "soft_over_40": 0
+   },
+   "vpm": {
+    "vertices": 136,
+    "faces": 212,
+    "flipped_faces": 0,
+    "inconsistent_edges": 0,
+    "soft_over_40": 0
+   }
+  },
+  "VAT_MAF_T3510_32": {
+   "npm": {
+    "vertices": 1953,
+    "faces": 3726,
+    "flipped_faces": 0,
+    "inconsistent_edges": 0,
+    "soft_over_40": 0
+   },
+   "vpm": {
+    "vertices": 1953,
+    "faces": 3726,
+    "flipped_faces": 0,
+    "inconsistent_edges": 0,
+    "soft_over_40": 0
+   }
+  }
+ }
 }

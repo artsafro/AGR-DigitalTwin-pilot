@@ -321,6 +321,14 @@ def test_committed_zone_table_splits_without_changing_counts():
     assert {z["zone"] for z in by["VAT_MAF_T3510_31"]["zones"]} >= {"boards", "frame"}
     assert len(by["VAT_MAF_T3510_02"]["zones"]) == 1
     assert len(by["VAT_MAF_T3510_32"]["zones"]) == 1
+    zones_16 = {z["zone"]: z for z in by["VAT_MAF_T3510_16"]["zones"]}
+    assert zones_16["frame"]["id"] == 4
+    assert zones_16["boards"]["id"] == 14
+    assert by["VAT_MAF_T3510_16"]["profiles"]["npm"]["zone_faces"]["frame"] > 0
+    assert by["VAT_MAF_T3510_16"]["profiles"]["npm"]["zone_faces"]["boards"] > 0
+    assert "share one schedule finish" not in (by["VAT_MAF_T3510_16"].get("split_note") or "")
+    assert report.get("max_exit_code") == 4294967166
+    assert report.get("apply_marker") == "APPLIED"
     for pos in report["positions"]:
         for zone in pos["zones"]:
             assert isinstance(zone["id"], int) and 1 <= zone["id"] < 1001
@@ -331,6 +339,30 @@ def test_committed_zone_table_splits_without_changing_counts():
             assert geo["vertices_before"] == geo["vertices_after"]
             assert geo["faces_before"] == geo["faces_after"]
             assert sum(geo["zone_faces"].values()) == geo["faces_before"]
+
+
+def test_position_16_policy_paints_tube_faces_id_4(z, catalogue):
+    """ДП 090 schedule is steel RAL 7047 + larch. Tube groups take paint ID 4."""
+    mesh = _board_and_tube()
+    out = z.split_mesh(mesh, z.POSITION_POLICY["VAT_MAF_T3510_16"], catalogue)
+    assert out["material_ids"][:2] == [14, 14]
+    assert out["material_ids"][2:] == [4] * 8
+    assert out["zone_faces"]["tube"] == 8
+    assert 4 in out["material_ids"]
+
+
+def test_two_schedule_finishes_cannot_end_as_one_zone(z, catalogue):
+    """A schedule that names two finishes must not compile as a single zone."""
+    row = _pos("VAT_MAF_T3510_16", faces=4, verts=6)
+    row["zones"] = [row["zones"][0]]
+    for prof in ("npm", "vpm"):
+        row["profiles"][prof]["zone_faces"] = {"boards": 4}
+    row["schedule_finishes"] = ["wood_light", "paint_ral7047"]
+    with pytest.raises(z.ZoneError, match="VAT_MAF_T3510_16"):
+        z.compile_zones(["VAT_MAF_T3510_16"], [row], catalogue)
+    kept = _pos("VAT_MAF_T3510_16", faces=4, verts=6)
+    kept["schedule_finishes"] = ["wood_light", "paint_ral7047"]
+    assert z.compile_zones(["VAT_MAF_T3510_16"], [kept], catalogue)["ok"] is True
 
 
 def test_finish_colour_uses_schedule_ral_or_marks_assumed(z, catalogue):
