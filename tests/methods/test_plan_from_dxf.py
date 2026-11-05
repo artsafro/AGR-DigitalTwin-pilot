@@ -253,6 +253,7 @@ def test_kpp1_wall_map_keeps_interior_walls_out_and_names_every_sheet_layer():
     import json
     roles = pf.KPP1_LAYER_ROLES
     assert roles["A-WALL-____-MCUT"] == "wall"
+    assert roles["A-WALL-____-PATT"] == "hatch"
     assert all(roles[name].startswith("drop:") and roles[name] != "drop:"
                for name in roles if name.startswith("I-WALL"))
     census = json.loads((ROOT / "docs/methods/building-body/kpp1-drawing/sheet-census.json"
@@ -260,7 +261,7 @@ def test_kpp1_wall_map_keeps_interior_walls_out_and_names_every_sheet_layer():
     sheet = next(s for s in census["sheets"] if s["sheet"] == "L03")
     assert set(sheet["model_layers"]) == set(roles)
     for name, spec in roles.items():
-        assert spec == "wall" or spec == "symbol" or (spec.startswith("drop:") and spec[5:].strip()), name
+        assert spec in ("wall", "symbol", "hatch") or (spec.startswith("drop:") and spec[5:].strip()), name
 
 
 def test_published_kpp1_contour_is_the_runnable_drawing_input():
@@ -276,8 +277,131 @@ def test_published_kpp1_contour_is_the_runnable_drawing_input():
     assert data["levels_m"] == levels
     assert [(b["z0"], b["z1"]) for b in data["bands"]] == list(zip(levels, levels[1:]))
     assert data["bands"][0]["polygons"] == data["bands"][1]["polygons"]
-    assert len(data["bands"][0]["polygons"]) == 9
+    assert len(data["bands"][0]["polygons"]) == 1
+    assert data["params"]["contour_source"] == "hatch"
+    cov = data["coverage"]
+    assert cov["status"] == "pass" and cov["hatch_area_m2"] == pytest.approx(33.07, abs=0.01)
+    assert cov["covered_share"] > 0.9 and cov["bbox_delta_m"] < 0.1
     assert data["openings"] == []
     assert data["params"]["gap_close_m"] == 0.75
     assert data["params"]["opening_insert"] is None
     assert "not proven" in data["opening_decision"]
+
+
+# --- review round 1 (#989): wall hatch as the boundary source + fail-closed coverage ---
+
+L03_DXF = Path("C:/x/methods/building-body/kpp1/readback/ascii/L03/L03.dxf")
+
+
+def _hatch(msp, layer, x0, y0, x1, y1):
+    h = msp.add_hatch(dxfattribs={"layer": layer})
+    h.paths.add_polyline_path([(x0, y0), (x1, y0), (x1, y1), (x0, y1)], is_closed=True)
+    return h
+
+
+def _ring_doc(door_mm=1000):
+    """A 6 x 4 m exterior wall, 300 mm thick, hatched, with a door gap in the south wall.
+
+    Wall lines are only the two faces of each wall run (open pairs), the hatch is the cut mass.
+    """
+    doc = _doc()
+    doc.layers.add("PATT")
+    msp = doc.modelspace()
+    t = 300
+    left = (6000 - door_mm) / 2
+    for x0, y0, x1, y1 in ((0, 0, left, t), (left + door_mm, 0, 6000, t), (0, 4000 - t, 6000, 4000),
+                           (0, t, t, 4000 - t), (6000 - t, t, 6000, 4000 - t)):
+        _hatch(msp, "PATT", x0, y0, x1, y1)
+    return doc
+
+
+def _open_pairs_doc():
+    """Witness: eight short open wall pairs (0.6 x 0.3 m, 1.6 m apart) and one closed 1.0 x 0.6 m block.
+
+    Each pair fills to 0.18 m2 and is dropped (<= 0.5 m2), so most of the hatched mass is lost.
+    """
+    doc = _doc()
+    doc.layers.add("PATT")
+    msp = doc.modelspace()
+    for i in range(8):
+        x0 = i * 2200
+        msp.add_line((x0, 0), (x0 + 600, 0), dxfattribs={"layer": "WALL"})
+        msp.add_line((x0, 300), (x0 + 600, 300), dxfattribs={"layer": "WALL"})
+        _hatch(msp, "PATT", x0, 0, x0 + 600, 300)
+    _rect(msp, "WALL", 30000, 0, 31000, 600)
+    _hatch(msp, "PATT", 30000, 0, 31000, 600)
+    return doc
+
+
+def test_hatch_source_closes_the_hatched_ring_into_one_footprint():
+    out = pf.extract_plan(_ring_doc(), {"WALL": "wall", "NOTE": "drop:note", "PATT": "hatch"},
+                          z0=0.0, z1=3.0, contour_source="hatch")
+    polys = out["bands"][0]["polygons"]
+    assert len(polys) == 1
+    xs, ys = zip(*polys[0]["exterior"])
+    assert max(xs) - min(xs) == pytest.approx(6.0, abs=0.1)
+    assert max(ys) - min(ys) == pytest.approx(4.0, abs=0.1)
+    cov = out["coverage"]
+    assert cov["status"] == "pass" and cov["hatch_area_m2"] == pytest.approx(5.7, abs=1e-3)
+    assert cov["covered_share"] > pf.COVERAGE_MIN_SHARE and cov["bbox_delta_m"] < pf.COVERAGE_BBOX_M
+    assert out["params"]["contour_source"] == "hatch"
+    assert {e["status"] for e in out["entities"]} == {"used"} and len(out["entities"]) == 5
+
+
+def test_open_wall_pairs_mostly_dropped_fail_the_coverage_check_witness():
+    doc = _open_pairs_doc()
+    roles = {"WALL": "wall", "NOTE": "drop:note", "PATT": "hatch"}
+    for source in ("lines", "hatch"):
+        with pytest.raises(ValueError, match="coverage"):
+            pf.extract_plan(doc, roles, z0=0.0, z1=3.0, contour_source=source)
+
+
+def test_coverage_exactly_at_the_threshold_fails():
+    from shapely.geometry import box
+    hatch = box(0, 0, 10, 1)
+    at_share = pf.coverage_check([box(0, 0, 9, 1)], hatch)
+    assert at_share["covered_share"] == 0.9 and at_share["status"] == "fail"
+    at_bbox = pf.coverage_check([box(0, 0, 10, 1.1)], box(0, 0, 10, 1))
+    assert at_bbox["bbox_delta_m"] == 0.1 and at_bbox["status"] == "fail"
+    assert pf.coverage_check([box(0, 0, 10, 1)], hatch)["status"] == "pass"
+    for bad in ([], [box(0, 0, 0, 0)]):
+        assert pf.coverage_check(bad, hatch)["status"] == "fail"
+    with pytest.raises(ValueError, match="hatch"):
+        pf.coverage_check([box(0, 0, 1, 1)], box(0, 0, 0, 0))
+
+
+def test_contour_source_errors_name_the_problem():
+    roles = {"WALL": "wall", "NOTE": "drop:note"}
+    with pytest.raises(ValueError, match="contour_source"):
+        pf.extract_plan(_square(2000), roles, z0=0.0, z1=3.0, contour_source="mesh")
+    with pytest.raises(ValueError, match="hatch layer"):
+        pf.extract_plan(_square(2000), roles, z0=0.0, z1=3.0, contour_source="hatch")
+    doc = _square(2000)
+    doc.layers.add("PATT")
+    doc.modelspace().add_line((0, 0), (1, 1), dxfattribs={"layer": "PATT"})
+    with pytest.raises(ValueError, match="unsupported LINE on a hatch layer"):
+        pf.extract_plan(doc, {**roles, "PATT": "hatch"}, z0=0.0, z1=3.0)
+    doc = _square(2000)
+    doc.layers.add("PATT")
+    h = _hatch(doc.modelspace(), "PATT", 0, 0, 0, 0)
+    with pytest.raises(ValueError, match=f"handle {h.dxf.handle}"):
+        pf.extract_plan(doc, {**roles, "PATT": "hatch"}, z0=0.0, z1=3.0)
+
+
+def test_lines_without_a_hatch_reference_record_coverage_not_measured():
+    out = pf.extract_plan(_square(2000), {"WALL": "wall", "NOTE": "drop:note"}, z0=0.0, z1=3.0)
+    assert out["coverage"]["status"] == "not measured"
+    assert out["coverage"]["reason"].startswith("no hatch layer")
+
+
+@pytest.mark.skipif(not L03_DXF.is_file(), reason=f"L03 readback not on this PC: {L03_DXF}")
+def test_kpp1_l03_lines_lose_the_wall_and_the_hatch_keeps_it():
+    doc = ezdxf.readfile(L03_DXF)
+    kw = dict(z0=0.0, levels_m=None, z1=3.9, origin_mm=pf.KPP1_ORIGIN_MM, frame_shift_m=pf.KPP1_FRAME_SHIFT_M)
+    with pytest.raises(ValueError, match="coverage"):
+        pf.extract_plan(doc, pf.KPP1_LAYER_ROLES, contour_source="lines", **kw)
+    out = pf.extract_plan(doc, pf.KPP1_LAYER_ROLES, contour_source="hatch", **kw)
+    cov = out["coverage"]
+    assert cov["hatch_area_m2"] == pytest.approx(33.07, abs=0.01)
+    assert cov["status"] == "pass" and cov["covered_share"] > 0.9 and cov["bbox_delta_m"] < 0.1
+    assert len(out["bands"][0]["polygons"]) == 1
