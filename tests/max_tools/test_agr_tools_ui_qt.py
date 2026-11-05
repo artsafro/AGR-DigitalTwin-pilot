@@ -4,7 +4,10 @@ Runs outside 3ds Max (PySide6-Essentials + pytest-qt from the uv dev group, #897
 uv run pytest tests/max_tools/test_agr_tools_ui_qt.py
 QT_QPA_PLATFORM=offscreen is set by tests/max_tools/conftest.py before any PySide6 import.
 A missing Qt package FAILS this module when the rest of the dev group is installed; it is a skip
-only without the dev group (tests/max_tools/_qt_guard.py).
+only without the dev group (tests/max_tools/_qt_guard.py). Exception: with pytest-qt installed and
+PySide6 missing, the pytest-qt plugin aborts the whole session at startup (exit 4, "No module named
+'PySide6'") before this guard runs; that is loud, not a skip. When the guard says 'ok' the imports
+below are direct, so a broken install (for example a DLL error on Windows) fails instead of skipping.
 """
 import importlib.util
 import inspect
@@ -22,8 +25,12 @@ _gspec.loader.exec_module(_guard)
 _status, _reason = _guard.qt_status(ROOT / 'pyproject.toml')
 if _status == 'fail':
     pytest.fail('Qt panel tests: ' + _reason, pytrace=False)
-pytest.importorskip('PySide6')
-pytest.importorskip('pytestqt')
+if _status == 'ok':
+    import PySide6  # noqa: F401  # a broken install must fail, not skip
+    import pytestqt  # noqa: F401
+else:
+    pytest.importorskip('PySide6')
+    pytest.importorskip('pytestqt')
 
 PKG = ROOT / 'adapters/max/agr_tools'
 

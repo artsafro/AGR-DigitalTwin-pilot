@@ -54,3 +54,13 @@ def test_empty_dev_group_fails(tmp_path):
     path = tmp_path / 'pyproject.toml'
     path.write_text('[project]\nname = "x"\n', encoding='utf-8')
     assert guard.qt_status(path, lambda n: False)[0] == 'fail'
+
+
+def test_ui_qt_header_imports_directly_after_ok():
+    """#928: after qt_status 'ok' the module imports PySide6 directly (importorskip would hide a broken DLL)."""
+    src = Path(__file__).with_name('test_agr_tools_ui_qt.py').read_text(encoding='utf-8')
+    head = src.split("PKG = ROOT", 1)[0]
+    ok_branch, _, else_branch = head.partition("if _status == 'ok':")[2].partition('else:')
+    assert 'import PySide6' in ok_branch and 'importorskip' not in ok_branch
+    assert 'importorskip' in else_branch
+    assert 'aborts the whole session' in head
