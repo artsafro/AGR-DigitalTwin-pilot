@@ -53,19 +53,19 @@ def plan_target(edit, requested, exists=os.path.exists):
 
 def group_nodes(rows):
     """rows: [{handle, name, path}] (path = AGR_EXPORT_PATH text or None). Returns (groups, skipped):
-    groups [{requested, key, members: [{handle, name}]}] sorted by path; skipped [(name, reason)]."""
+    groups [{requested, key, members: [{handle, name}]}] sorted by path; skipped [(handle, name, reason)]."""
     groups, skipped = {}, []
     for row in sorted(rows, key=lambda r: r['handle']):
         path = row.get('path')
         if not path:
-            skipped.append((row['name'], 'нет ' + KEY))
+            skipped.append((row['handle'], row['name'], 'нет ' + KEY))
             continue
         path = os.path.normpath(str(path).strip())
         if not os.path.isabs(path):
-            skipped.append((row['name'], '{} не абсолютный: {}'.format(KEY, path)))
+            skipped.append((row['handle'], row['name'], '{} не абсолютный: {}'.format(KEY, path)))
             continue
         if os.path.splitext(path)[1].lower() != '.fbx':
-            skipped.append((row['name'], '{} не .fbx: {}'.format(KEY, path)))
+            skipped.append((row['handle'], row['name'], '{} не .fbx: {}'.format(KEY, path)))
             continue
         key = path_key(path)
         grp = groups.setdefault(key, {'requested': path, 'key': key, 'members': []})
@@ -179,8 +179,11 @@ def batch_report(edit, mode, groups, skipped, procedural, state_hash=None):
     findings = the gate findings of export.checked by node name, `procedural_object` on a blocker,
     `procedural_unchecked` on every node while the procedural state is unknown, `export_error` on every node
     of a group whose export raised. done: groups that pass (preview: would be written; apply: written and read
-    back); skipped: every other group and every node without a usable AGR_EXPORT_PATH."""
-    entries, done, skip, rows = {}, [], [edit.skipped(n, r) for n, r in skipped], []
+    back); skipped: every other group and every node without a usable AGR_EXPORT_PATH (that node is a report object
+    without findings: nothing is wrong with it, it is just in no FBX)."""
+    entries = {h: {'name': n, 'findings': [] if r == 'нет ' + KEY else [edit.finding('export_path_invalid', (), r)]}
+               for h, n, r in skipped}  # a written but unusable path is a defect; no path at all is not
+    done, skip, rows = [], [edit.skipped(n, r) for _, n, r in skipped], []
     for g in groups:
         for m in g['members']:
             entries.setdefault(m['handle'], {'name': m['name'], 'findings': []})

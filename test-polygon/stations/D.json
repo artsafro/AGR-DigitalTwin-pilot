@@ -4,6 +4,73 @@
  "issue": "#979",
  "stations": [
   {
+   "button": "export.batch",
+   "objects": [
+    {
+     "name": "SM_BatchA_Main",
+     "role": "Main",
+     "scene": "frag_d_batch",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "fbx": "D_batch_a.fbx",
+     "mat_name": "M_BatchA_Main_1"
+    },
+    {
+     "name": "SM_BatchDirty_Main",
+     "role": "Main",
+     "scene": "frag_d_batch",
+     "pos": [
+      6,
+      0,
+      0
+     ],
+     "mesh": "overlap",
+     "fbx": "D_batch_dirty.fbx",
+     "mat_name": "M_BatchDirty_Main_1"
+    },
+    {
+     "name": "SM_BatchNoPath_Main",
+     "role": "Main",
+     "scene": "frag_d_batch",
+     "pos": [
+      12,
+      0,
+      0
+     ],
+     "fbx": null,
+     "mat_name": "M_BatchNoPath_Main_1"
+    }
+   ],
+   "expected": [
+    {
+     "name": "SM_BatchA_Main",
+     "scene": "frag_d_batch",
+     "expect": "fail",
+     "codes": [
+      "procedural_unchecked"
+     ]
+    },
+    {
+     "name": "SM_BatchDirty_Main",
+     "scene": "frag_d_batch",
+     "expect": "fail",
+     "codes": [
+      "procedural_unchecked"
+     ]
+    },
+    {
+     "name": "SM_BatchNoPath_Main",
+     "scene": "frag_d_batch",
+     "expect": "pass",
+     "codes": []
+    }
+   ],
+   "reason": ""
+  },
+  {
    "button": "light.check",
    "objects": [
     {

@@ -22,7 +22,10 @@ def make(obj, rt):
              'Free_Light': rt.Free_Light, 'Directionallight': rt.Directionallight, 'Skylight': rt.Skylight}.get(cls)
     if maker is None:
         raise ValueError('D_build: unknown light class ' + repr(cls))
-    node = maker(name=obj['name'])
+    if cls == 'targetSpot':  # pymxs creates a Target Spot without its target unless one is given
+        node = maker(name=obj['name'], target=rt.Targetobject(name=obj['name'] + '.Target'))
+    else:
+        node = maker(name=obj['name'])
     k = SCALE[units]
     node.pos = rt.Point3(*(float(v) * k for v in obj['pos']))
     return node

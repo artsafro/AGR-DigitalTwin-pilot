@@ -285,7 +285,9 @@ def test_grouping_and_skipped_nodes_have_reasons(tmp_path):
             {'handle': 5, 'name': 'E', 'path': 'C:/x/e.obj'}]
     groups, skipped = bc.group_nodes(rows)
     assert [[m['name'] for m in g['members']] for g in groups] == [['A', 'B']]
-    assert [s[0] for s in skipped] == ['C', 'D', 'E'] and all(s[1] for s in skipped)
+    assert [s[1] for s in skipped] == ['C', 'D', 'E'] and all(s[2] for s in skipped)
+    rep = bc.batch_report(ec, 'preview', [], skipped, {'state': 'checked', 'offenders': {}}, 's')
+    assert codes(rep) == {'C': [], 'D': ['export_path_invalid'], 'E': ['export_path_invalid']}  # no key: no defect
     with pytest.raises(ValueError, match='empty batch'):
         bc.plan_batch(ec, rows[2:], CLEAN, lambda g: None)
 
