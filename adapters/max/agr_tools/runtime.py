@@ -223,7 +223,7 @@ def parse_report(text):
             ids = f['ids']
             if not isinstance(ids, list) or any(type(i) is not int or i <= 0 for i in ids) or len(set(ids)) != len(ids):
                 raise ValueError('invalid component IDs')
-    # Review-level codes (at_threshold, name_conflict, tex_overlap_review) are non-pass:
+    # Review-level codes (checks_core.REVIEW_CODES) are non-pass:
     # any finding makes status 'fail'. A person reviews them. No 'review' status unless the UI needs one.
     expected = 'fail' if any(o['findings'] for o in r['objects']) else 'pass'
     if r['status'] != expected:

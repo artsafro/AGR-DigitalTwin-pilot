@@ -178,7 +178,8 @@ items are listed in `plan.dropped` with a reason. Defects D1-D8 and the source l
 `CHANGELOG.md`.
 
 Review-level codes count as non-pass. Every review-level code in this package is
-`at_threshold`, `name_conflict` and `tex_overlap_review`. A report whose only finding is
+`at_threshold`, `tri_at_limit`, `name_conflict` and `tex_overlap_review`
+(`REVIEW_CODES` in `checks_core.py`). A report whose only finding is
 one of them has status `fail`, and a person reviews that finding. The schema stays
 `pass` or `fail`. A `review` status may come later only if the UI needs it.
 

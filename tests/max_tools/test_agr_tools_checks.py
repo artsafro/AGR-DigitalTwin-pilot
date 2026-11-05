@@ -355,20 +355,6 @@ def test_textures_scene_vpm_overlap_review_npm_overlap_padding():
     assert 'tex_overlap_review' in core.CODES['textures']
 
 
-def _review_level_codes():
-    """Codes the package text marks as review-level: `name` (review), review-level `name`, or a review detail."""
-    found = set()
-    for path in sorted(PKG.glob('*.py')):
-        text = path.read_text(encoding='utf-8')
-        found.update(re.findall(r'`([a-z][a-z0-9_]*)`\s*\(review\)', text))
-        for match in re.finditer(r'review-level', text):
-            named = re.search(r'`([a-z][a-z0-9_]*)`', text[match.start():match.start() + 240])
-            if named:
-                found.add(named.group(1))
-        found.update(re.findall(r"\('([a-z][a-z0-9_]*)',\s*(?:f)?'[^'\n]*review", text))
-    return found
-
-
 def _diag_report(tool, findings, fbx=VPM_FBX):
     kind = core.fbx_kind(fbx)
     plan = {'fbx': [{'fbx': fbx, 'model': kind[0], 'role': kind[1], 'objects': 1, 'render_triangles': None,
@@ -389,10 +375,11 @@ def test_review_level_finding_keeps_report_status_fail():
     """#836: review-level codes are non-pass. Status stays fail; empty findings still pass.
 
     Invariant: a report whose only finding is a review-level code is never 'pass'.
-    Probe: one report per code marked review-level in adapters/max/agr_tools/*.py.
+    Probe: one report per code in core.REVIEW_CODES (explicit constant, not parsed from prose).
     """
-    marked = _review_level_codes()
-    assert marked == {'at_threshold', 'name_conflict', 'tex_overlap_review'}
+    marked = set(core.REVIEW_CODES)
+    assert marked == {'at_threshold', 'tri_at_limit', 'name_conflict', 'tex_overlap_review'}
+    assert marked <= set().union(*core.CODES.values())
     readme = (PKG / 'README.md').read_text(encoding='utf-8')
     paragraph = next(block.strip() for block in readme.split('\n\n')
                      if 'Review-level codes count as non-pass' in block)
