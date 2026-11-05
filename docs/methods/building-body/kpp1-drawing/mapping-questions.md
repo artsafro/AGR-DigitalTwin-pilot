@@ -24,3 +24,14 @@ The synthetic kpp1 contour (`C:/x/methods/building-body/kpp1/contours.json`) is 
 5. **Gap close.** The #727 rule closes gaps strictly under 1.5 m. The plan has a 1960 mm double door, so the architectural wall cut stays in pieces (9 kept above 0.5 m², 13 smaller pieces dropped). Recommendation: do not raise the 0.75 m constant for this one sheet. The kept pieces are wall strips, not one outline.
 
 6. **Frame.** Recommendation: keep the axis-1 / axis-А origin plus the object.json shift above, because the outer wall faces then land on the recorded 0.000 corners (−0.330 / 27.330 × −0.330 / 11.330 m) within a millimetre. Confirm before any measured deviation row is written.
+
+## Answers
+
+Accepted as written. The runnable contour is `plan-contours.json` (metres, origin axis 1 / axis А at 25884.5, 0 mm, then `frame_shift_m` −14.655, −5.355).
+
+1. **Interior walls.** `I-WALL-____-MCUT` and `I-WALL-____-OTLN` stay out of the exterior contour. Only `A-WALL-____-MCUT` is the wall cut.
+2. **Insert base point.** Not proven, so no cutter is written (`openings` is empty). On plan L03 the insert is the gap centre for some doors and not for others: handle 59E (1000×2100, rotation 270°, insert 32904.5, 8489.8 mm) has wall-cut ends at −500 and +500 mm, midpoint 0 mm from the insert; handle 617 (1000×2100, rotation 0°, insert 35736.7, 11275 mm) is the same, gap 1000 mm; handle 82E (1960×2080, rotation 180°, insert 35384.5, −275 mm) has ends at −1000 and +1000 mm, midpoint 0 (named leaf 1960 mm, gap 2000 mm). Handle 529 is 270 mm off the gap midpoint and handle A17 is 530 mm off. On facade L01 the placed 1000×2100 doors sit at y = 0 and y = 3900 mm, the floor marks 0.000 and +3.900, not at mid-height 1050 or 4950. An AGS68 window on L01 sits at y = 0 and y = 3650 mm. The insert is therefore not the opening centre for the set.
+3. **Mullions and the grille.** Imposts (`Прямоугольный импост`) and `Решетка 1000х500` are not openings. They stay dropped.
+4. **Storey height.** Bands are 0.000–3.900 and 3.900–7.909 from `jobs/KPP1/object.json`. Both bands reuse the 0.000 plan: this set has no L1 plan and no section. +9.500 is not a band top.
+5. **Gap close.** The constant stays 0.75 m. Nine pieces are kept and 13 pieces at or under 0.5 m² are dropped. The piece bbox is 27.66 × 12.36 m (x −14.985…12.675, y −6.385…5.975). It does not close into the synthetic mesh footprint of 33.28 × 14.75 m (9 bands, 10 pieces).
+6. **Frame.** Axis 1 / axis А plus the object.json shift, as above. The measured drawing rows are R14 (kernel-prisms, 1008 triangles, deviation 7.0361 / 4.8894 m, 0/9 closed shells) and R15 (blender-gn-union, 737 triangles, the same deviation, 0/9 closed shells). R13 and R16 are not measured: source-as-is is the supplied FBX, and max-pymxs-cleanup does not read the plan.

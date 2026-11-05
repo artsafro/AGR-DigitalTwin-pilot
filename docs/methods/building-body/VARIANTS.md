@@ -15,10 +15,13 @@ class is written with `run_variant.py --synthetic <reason>` (`"synthetic": true`
 lists them under "Synthetic inputs and why"); `run_variant.py` refuses a building-body row without a non-blank
 reason. Opening subtraction is a tested capability (variant 2), not measured on the benchmarks. Real DWG plans for
 kpp1 / ac08 / tow02 were the follow-up #735; none exists (no DWG plan, no Revit `openings_spec.json`), so all
-rows stay synthetic [D195]. #967 read the real KPP1 drawings (АС.03, `kpp1-drawing/`): L03 is the plan at 0.000,
-L01 the facades, L02 the colour facades, and there is no section. The plan wall cut does not close into one
-contour under the 0.75 m gap rule, openings are not boxed (the insert base point is not declared), and no
-storey height was taken from the facade spot marks, so RESULTS.md still has no kpp1 drawing row.
+rows stay synthetic [D195]. #967 then measured KPP1 from the real drawings (АС.03, `kpp1-drawing/`): L03 is the
+plan at 0.000, L01 the facades, L02 the colour facades, and there is no section. Storey tops are
+`jobs/KPP1/object.json` (0.000 / 3.900 / 7.909). The 0.75 m gap is unchanged, so the wall cut stays 9 pieces and
+does not close into the synthetic 33.28 × 14.75 m footprint. Openings are not cut: the insert was measured on
+the plan and on L01 and is not the opening centre (see `kpp1-drawing/mapping-questions.md`). kernel-prisms and
+blender-gn-union on that contour are R14 and R15. source-as-is and max-pymxs-cleanup do not read the plan
+(R13, R16). ac08 and tow02 have no drawing row.
 RESULTS.md "Synthetic vs drawing" pairs each synthetic row with the drawing row of
 the same object and variant (a row without the marker); a missing drawing row reads "not measured", never a number. Re-measure the kept outputs without rebuilding:
 `uv run python tools/methods/body/run_benchmarks.py --measure-only` (one row:

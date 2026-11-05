@@ -206,3 +206,78 @@ def test_cli_refuses_an_output_that_is_the_input_and_writes_nothing(tmp_path):
 
 def test_literal_dxf_unicode_escape_decodes():
     assert pf.decode_dxf_text(r"\U+041F\U+043B\U+0430\U+043D") == "План"
+
+
+def test_storey_levels_copy_one_plan_into_one_band_per_storey():
+    """One plan plus the object.json elevations is runnable: two bands, same pieces (#967)."""
+    doc = _square(2000)
+    out = pf.extract_plan(doc, {"WALL": "wall"}, z0=0.0, levels_m=[0.0, 3.9, 7.909])
+    assert out["provisional"] is False
+    assert out["levels_m"] == [0.0, 3.9, 7.909]
+    assert [(b["z0"], b["z1"]) for b in out["bands"]] == [(0.0, 3.9), (3.9, 7.909)]
+    assert out["bands"][0]["polygons"] == out["bands"][1]["polygons"]
+    assert out["openings"] == []
+
+
+def test_bad_level_lists_are_errors_naming_the_value_brute_force():
+    """Generated bad level lists. Each must name the problem; a good list still builds every band."""
+    import random
+    doc = _square(2000)
+    bad = [
+        [],
+        [0.0],
+        [1.0, 0.0],
+        [0.0, 0.0],
+        [0.0, math.nan],
+        [0.0, math.inf],
+        [math.nan, 1.0],
+        [0.0, 1.0, 1.0],
+        [True, 2.0],
+        [0.0, False],
+    ]
+    for levels in bad:
+        with pytest.raises(ValueError, match="levels_m"):
+            pf.extract_plan(doc, {"WALL": "wall"}, z0=0.0, levels_m=levels)
+    rng = random.Random(967)
+    for _ in range(24):
+        levels = [0.0]
+        for _step in range(rng.randint(1, 5)):
+            levels.append(levels[-1] + rng.uniform(0.05, 4.0))
+        out = pf.extract_plan(doc, {"WALL": "wall"}, z0=0.0, levels_m=levels)
+        assert out["provisional"] is False and len(out["bands"]) == len(levels) - 1
+        assert all(b["polygons"] == out["bands"][0]["polygons"] for b in out["bands"])
+        assert out["levels_m"] == pytest.approx(levels)
+
+
+def test_kpp1_wall_map_keeps_interior_walls_out_and_names_every_sheet_layer():
+    import json
+    roles = pf.KPP1_LAYER_ROLES
+    assert roles["A-WALL-____-MCUT"] == "wall"
+    assert all(roles[name].startswith("drop:") and roles[name] != "drop:"
+               for name in roles if name.startswith("I-WALL"))
+    census = json.loads((ROOT / "docs/methods/building-body/kpp1-drawing/sheet-census.json"
+                         ).read_text(encoding="utf-8"))
+    sheet = next(s for s in census["sheets"] if s["sheet"] == "L03")
+    assert set(sheet["model_layers"]) == set(roles)
+    for name, spec in roles.items():
+        assert spec == "wall" or spec == "symbol" or (spec.startswith("drop:") and spec[5:].strip()), name
+
+
+def test_published_kpp1_contour_is_the_runnable_drawing_input():
+    import json
+    path = ROOT / "docs/methods/building-body/kpp1-drawing/plan-contours.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    levels = [row["elev_m"] for row in json.loads(
+        (ROOT / "jobs/KPP1/object.json").read_text(encoding="utf-8"))["levels"]]
+    assert data["provisional"] is False and data["synthetic_drawing"] is False
+    assert data["units"] == "m" and data["source_units"] == "mm"
+    assert data["origin_mm"] == [25884.5, 0.0]
+    assert data["frame_shift_m"] == [-14.655, -5.355]
+    assert data["levels_m"] == levels
+    assert [(b["z0"], b["z1"]) for b in data["bands"]] == list(zip(levels, levels[1:]))
+    assert data["bands"][0]["polygons"] == data["bands"][1]["polygons"]
+    assert len(data["bands"][0]["polygons"]) == 9
+    assert data["openings"] == []
+    assert data["params"]["gap_close_m"] == 0.75
+    assert data["params"]["opening_insert"] is None
+    assert "not proven" in data["opening_decision"]

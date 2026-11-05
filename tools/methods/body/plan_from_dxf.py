@@ -20,6 +20,9 @@ Guarantees (each has a test):
   1.5 m stays two pieces.
 - ``z1`` missing, non-finite, or <= ``z0`` does not yield a runnable contour: the result is
   ``provisional`` and the CLI exits 2. The CLI never returns 0 for a provisional result.
+- ``levels_m`` is a list of at least two finite, strictly increasing elevations. Anything else
+  (empty, one value, NaN, inf, a bool, a step that does not rise) is an error naming ``levels_m``.
+  One plan is copied into one band per consecutive pair. ``z0`` must equal the first elevation.
 - An opening symbol becomes a cutter box only when the block name parses a finite width,
   height and level, the rotation is a right angle, ``opening_insert`` is ``centre``, and two
   wall faces sit strictly within 1.0 m on opposite sides of that centre. Otherwise the
@@ -31,6 +34,7 @@ Guarantees (each has a test):
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import math
 import re
@@ -47,6 +51,40 @@ if str(_BODY) not in sys.path:
 from contours import GAP_CLOSE_M, MIN_PIECE_M2  # noqa: E402
 
 FACE_LIMIT_M = 1.0  # a host-wall face is strictly closer than this; exactly 1.0 m is not used
+# L03 of АС.03. Only A-WALL-____-MCUT is the exterior cut. I-WALL stays out (accepted Q1).
+# Symbol layers are read and then kept only when the block is a door or a window (Q3).
+KPP1_ORIGIN_MM = (25884.5, 0.0)  # grid axis 1 / axis А, millimetres, from the plan
+KPP1_FRAME_SHIFT_M = (-14.655, -5.355)  # minus jobs/KPP1/object.json to_object
+KPP1_LAYER_ROLES = {
+    "A-DETL-____-THIN": "drop:detail thin line",
+    "A-DETL-GENF-OTLN": "drop:detail fill",
+    "A-DETL-____-OTLN": "drop:detail outline",
+    "A-____-NOTE-TEXT": "drop:note",
+    "A-WALL-____-PATT": "drop:wall hatch, not a boundary",
+    "I-WALL-____-MCUT": "drop:interior wall cut, not used as the exterior contour (Q1)",
+    "A-WALL-____-MCUT": "wall",
+    "I-WALL-____-OTLN": "drop:interior wall outline, not used as the exterior contour (Q1)",
+    "A-DOOR-____-OTLN": "symbol",
+    "A-FLOR-____-OTLN": "drop:floor outline, not the wall cut",
+    "A-GLAZ-CWMG-OTLN": "symbol",
+    "S-STRS-____-OTLN": "drop:stair",
+    "S-STRS-____-MBND": "drop:stair boundary",
+    "A-GLAZ-____-OTLN": "symbol",
+    "P-SANR-FIXT-OTLN": "drop:sanitary fixture",
+    "I-FURN-____-OTLN": "drop:furniture",
+    "A-DETL-____-MBND": "drop:detail boundary",
+    "A-WALL-____-OTLN": "drop:wall outline fragments, not the plan cut",
+    "A-GENM-____-OTLN": "drop:generic model outline",
+    "G-____-____-TEXT": "drop:text",
+    "S-GRID-____-IDEN": "drop:grid bubble",
+    "S-GRID-____-OTLN": "drop:grid line",
+    "G-____-____-SYMB": "drop:symbol",
+    "A-____-____-DIMS": "drop:dimension",
+    "A-AREA-____-IDEN": "drop:room area tag",
+    "G-____-____-DIMS": "drop:dimension",
+    "A-DOOR-____-IDEN": "drop:door tag",
+    "A-WALL-____-IDEN": "drop:wall tag",
+}
 _SIZE = re.compile(r"(\d+(?:[.,]\d+)?)\s*[xх×]\s*(\d+(?:[.,]\d+)?)h?", re.IGNORECASE)
 _LEVEL = re.compile(r"отм_?\s*([+-]?\d+)[_,.](\d+)")
 _U = re.compile(r"\\U\+([0-9A-Fa-f]{4})")
@@ -224,24 +262,59 @@ def _ring(polygon: Polygon) -> dict:
             "holes": [coords(r) for r in polygon.interiors]}
 
 
-def extract_plan(doc, layer_map: dict, *, z0: float, z1: float | None,
+def _parse_levels(levels, z0: float) -> list[float]:
+    """Finite, strictly increasing elevations. ``z0`` is the first one. Errors name ``levels_m``."""
+    if isinstance(levels, str) or not isinstance(levels, (list, tuple)):
+        raise ValueError(f"levels_m must be a list of elevations, got {levels!r}")
+    if len(levels) < 2:
+        raise ValueError(f"levels_m needs at least two elevations, got {levels!r}")
+    out = []
+    for i, z in enumerate(levels):
+        if isinstance(z, bool) or not isinstance(z, (int, float)) or not math.isfinite(float(z)):
+            raise ValueError(f"levels_m[{i}] is not finite: {z!r}")
+        out.append(float(z))
+    for a, b in zip(out, out[1:]):
+        if not b > a:
+            raise ValueError(f"levels_m must increase, got {a} then {b}")
+    if isinstance(z0, bool) or not isinstance(z0, (int, float)) or not math.isfinite(float(z0)):
+        raise ValueError(f"z0 is not finite: {z0!r}")
+    if float(z0) != out[0]:
+        raise ValueError(f"z0 {float(z0)} does not match levels_m[0] {out[0]}")
+    return out
+
+
+def extract_plan(doc, layer_map: dict, *, z0: float, z1: float | None = None,
+                 levels_m: list[float] | None = None,
                  opening_insert: str | None = None,
+                 opening_decision: str | None = None,
                  origin_mm: tuple[float, float] = (0.0, 0.0),
                  frame_shift_m: tuple[float, float] = (0.0, 0.0),
                  gap_close_m: float = GAP_CLOSE_M) -> dict:
     """One sheet's plan account. See the module docstring for the fail-closed rules."""
     if opening_insert not in (None, "centre"):
         raise ValueError(f"unknown opening_insert {opening_insert!r}; known: centre")
-    if not math.isfinite(float(z0)):
-        raise ValueError(f"z0 is not finite: {z0!r}")
-    z0 = float(z0)
-    runnable = z1 is not None
-    if runnable:
-        if isinstance(z1, bool) or not isinstance(z1, (int, float)) or not math.isfinite(float(z1)):
-            raise ValueError(f"z1 is not finite: {z1!r}")
-        z1 = float(z1)
-        if z1 <= z0:
-            raise ValueError(f"z1 must be > z0, got {z0}..{z1}")
+    if opening_decision is not None and (not isinstance(opening_decision, str) or not opening_decision.strip()):
+        raise ValueError("opening_decision is empty")
+    spans = None
+    if levels_m is not None:
+        if z1 is not None:
+            raise ValueError("pass z1 or levels_m, not both")
+        levels = _parse_levels(levels_m, z0)
+        spans = list(zip(levels, levels[1:]))
+        z0 = levels[0]
+        runnable = True
+        z1 = None
+    else:
+        if isinstance(z0, bool) or not isinstance(z0, (int, float)) or not math.isfinite(float(z0)):
+            raise ValueError(f"z0 is not finite: {z0!r}")
+        z0 = float(z0)
+        runnable = z1 is not None
+        if runnable:
+            if isinstance(z1, bool) or not isinstance(z1, (int, float)) or not math.isfinite(float(z1)):
+                raise ValueError(f"z1 is not finite: {z1!r}")
+            z1 = float(z1)
+            if z1 <= z0:
+                raise ValueError(f"z1 must be > z0, got {z0}..{z1}")
     roles = {name: _role(spec) for name, spec in layer_map.items()}
     entities = list(doc.modelspace())
     if not entities:
@@ -327,21 +400,33 @@ def extract_plan(doc, layer_map: dict, *, z0: float, z1: float | None,
     handles = [r["handle"] for r in records]
     if len(handles) != len(set(handles)) or len(records) != len(entities):
         raise RuntimeError("entity account does not match the model space")
-    band = {"z0": z0, "polygons": [_ring(p) for p in keep],
-            "dropped_piece_areas_m2": [round(p.area, 4) for p in small]}
-    provisional = not runnable
-    if runnable:
-        band["z1"] = z1
+    rings = [_ring(p) for p in keep]
+    dropped = [round(p.area, 4) for p in small]
+    if spans is None:
+        band = {"z0": z0, "polygons": rings, "dropped_piece_areas_m2": dropped}
+        provisional = not runnable
+        if runnable:
+            band["z1"] = z1
+        bands = [band]
+        levels_out = [z0, z1] if runnable else [z0]
+    else:
+        # one plan, one band per storey; each band gets its own ring list
+        bands = [{"z0": a, "z1": b, "polygons": copy.deepcopy(rings), "dropped_piece_areas_m2": list(dropped)}
+                 for a, b in spans]
+        levels_out = [spans[0][0], *[b for _, b in spans]]
+        provisional = False
     result = {"schema": "body-contours/1", "synthetic_drawing": False, "provisional": provisional,
               "method": "plan wall lines from a DXF readback (tools/methods/body/plan_from_dxf.py)",
               "units": "m", "source_units": "mm",
               "origin_mm": [origin_mm[0], origin_mm[1]],
               "frame_shift_m": [frame_shift_m[0], frame_shift_m[1]],
-              "levels_m": [z0, z1] if runnable else [z0],
-              "bands": [band], "openings": openings, "empty_bands": [],
+              "levels_m": levels_out,
+              "bands": bands, "openings": openings, "empty_bands": [],
               "entities": records,
               "params": {"min_piece_m2": MIN_PIECE_M2, "gap_close_m": gap_close_m,
                          "face_limit_m": FACE_LIMIT_M, "opening_insert": opening_insert}}
+    if opening_decision is not None:
+        result["opening_decision"] = opening_decision.strip()
     return result
 
 
@@ -399,7 +484,9 @@ def main(argv=None) -> int:
     parser.add_argument("--map", action="append", default=[])
     parser.add_argument("--z0", type=float)
     parser.add_argument("--z1", type=float)
+    parser.add_argument("--levels", default=None, help="comma-separated elevations in metres, strictly increasing")
     parser.add_argument("--opening-insert", default=None)
+    parser.add_argument("--opening-decision", default=None)
     parser.add_argument("--origin-mm", default="0,0")
     parser.add_argument("--frame-shift-m", default="0,0")
     args = parser.parse_args(argv)
@@ -416,8 +503,18 @@ def main(argv=None) -> int:
             return 0
         ox, oy = (float(v) for v in args.origin_mm.split(","))
         sx, sy = (float(v) for v in args.frame_shift_m.split(","))
-        result = extract_plan(doc, _map_list(args.map), z0=args.z0, z1=args.z1,
-                              opening_insert=args.opening_insert, origin_mm=(ox, oy), frame_shift_m=(sx, sy))
+        levels = None
+        z0 = args.z0
+        if args.levels is not None:
+            levels = [float(v) for v in args.levels.split(",") if v.strip()]
+            if any(isinstance(v, bool) or not math.isfinite(v) for v in levels):
+                raise ValueError(f"levels_m is not finite: {args.levels!r}")
+            z0 = levels[0] if z0 is None else z0
+        if z0 is None:
+            raise ValueError("z0 is not finite: None")
+        result = extract_plan(doc, _map_list(args.map), z0=z0, z1=args.z1, levels_m=levels,
+                              opening_insert=args.opening_insert, opening_decision=args.opening_decision,
+                              origin_mm=(ox, oy), frame_shift_m=(sx, sy))
     except Refused as exc:
         print(f"PLAN_DXF refused: {exc}", file=sys.stderr)
         return 4

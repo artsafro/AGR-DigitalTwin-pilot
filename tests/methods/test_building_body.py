@@ -200,8 +200,11 @@ def test_scope_decision_is_free_logged_once_and_cited_by_every_reason():
     for v in (batch.BASELINE,) + batch.VARIANTS:
         assert f"[{sid}]" in batch.synthetic_reason(v) and "D186" not in batch.synthetic_reason(v), v
     results = DECISIONS_MD.parent / "methods" / "building-body" / "results.jsonl"
-    reasons = [json.loads(x)["synthetic_reason"] for x in results.read_text(encoding="utf-8").splitlines() if x]
+    stored = [json.loads(x) for x in results.read_text(encoding="utf-8").splitlines() if x]
+    reasons = [r["synthetic_reason"] for r in stored if r.get("synthetic") is True]
     assert len(reasons) == 12 and all(f"[{sid}]" in r and "D186" not in r for r in reasons)
+    drawing = [r for r in stored if r.get("synthetic") is False]
+    assert drawing and all(r.get("drawing_reason") and "synthetic_reason" not in r for r in drawing)
 
 
 @pytest.mark.parametrize("variant,make", [("source-as-is", ()), ("kernel-prisms", ("out",)),
@@ -597,14 +600,58 @@ def test_no_synthetic_row_means_no_comparison_section():
     assert "Synthetic vs drawing" not in md
 
 
+def test_unmeasured_drawing_row_states_the_reason_and_never_a_number():
+    body = {"deviation_max_m": None, "deviation_p95_m": None, "closed_components": None, "components": None}
+    drawing = _cmp_row("R2", "kpp1", "max-pymxs-cleanup", None, (None, None), (None, None), synthetic=False)
+    drawing["triangles"] = {"model": None}
+    drawing["class_metrics"] = {"body": body}
+    drawing["not_measured"] = "not measured: Max batch was not run"
+    lines = _cmp_lines(rmd.render([
+        _cmp_row("R1", "kpp1", "max-pymxs-cleanup", 26821, (0.0001, 0.0), (113, 155)),
+        drawing], "building-body"))
+    assert lines == ["| kpp1 | max-pymxs-cleanup | R1 / R2 | 26821 / - | 0.0001 / - | 0.0 / - | 113/155 / -/- "
+                     "| not measured: Max batch was not run |"]
+
+
+def test_bad_not_measured_reasons_append_nothing_brute_force(tmp_path):
+    import math
+    results = tmp_path / "results.jsonl"
+    results.write_text('{"row":"keep"}\n', encoding="utf-8")
+    before = results.read_bytes()
+    sibling = tmp_path / "input.json"
+    sibling.write_text("{}", encoding="utf-8")
+    bad = ["", "   ", "measured", "not measured:", "not measured:   ", "NOT MEASURED: blender",
+           None, 0, math.nan, math.inf]
+    for reason in bad:
+        with pytest.raises(ValueError, match="not measured"):
+            rv.append_not_measured(results, benchmark="kpp1", variant="source-as-is", reason=reason,
+                                   drawing_reason="plan L03")
+        assert results.read_bytes() == before and sibling.read_text(encoding="utf-8") == "{}"
+
+
 def test_committed_building_body_results_md_is_regenerated_and_all_rows_stay_synthetic_per_d195():
     results = DECISIONS_MD.parent / "methods" / "building-body" / "results.jsonl"
     rows = rmd.read_rows(results)
     md = rmd.render(rows, "building-body")
     assert (results.parent / "RESULTS.md").read_text(encoding="utf-8") == md
     lines = _cmp_lines(md)
-    assert len(lines) == 12 and all(ln.endswith("| not measured: no drawing row in results.jsonl |") for ln in lines)
-    assert {(r["benchmark"], r["synthetic"]) for r in rows} == {("kpp1", True), ("ac08", True), ("tow02", True)}
+    assert len(lines) == 12
+    kpp1 = [ln for ln in lines if ln.startswith("| kpp1 |")]
+    rest = [ln for ln in lines if not ln.startswith("| kpp1 |")]
+    assert len(kpp1) == 4 and len(rest) == 8
+    assert all("no drawing row in results.jsonl" not in ln for ln in kpp1)
+    assert any(ln.startswith("| kpp1 | kernel-prisms |") and ln.endswith("| measured |") for ln in kpp1)
+    assert any(ln.startswith("| kpp1 | blender-gn-union |") and ln.endswith("| measured |") for ln in kpp1)
+    assert any("source-as-is is the supplied FBX" in ln for ln in kpp1)
+    assert any("does not read the plan contour" in ln for ln in kpp1)
+    assert all(ln.endswith("| not measured: no drawing row in results.jsonl |") for ln in rest)
+    drawing = [r for r in rows if r.get("synthetic") is False]
+    assert {r["benchmark"] for r in drawing} == {"kpp1"}
+    assert {r["variant"] for r in drawing} == {
+        "source-as-is", "kernel-prisms", "blender-gn-union", "max-pymxs-cleanup"}
+    assert "33.28 x 14.75" in md
+    assert {(r["benchmark"], r["synthetic"]) for r in rows if r["benchmark"] != "kpp1"} == {
+        ("ac08", True), ("tow02", True)}
     d195 = _decision_rows().get("D195", [])
     assert len(d195) == 1 and "#735" in d195[0] and "2026-11-04" in d195[0]
     assert id_collisions("D195", "#735", _decision_rows(), OPEN_PR_DECISIONS) == []
