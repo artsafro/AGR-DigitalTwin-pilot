@@ -11,6 +11,7 @@ select named specimens only.
 """
 import json
 import math
+import os
 import sys
 from pathlib import Path
 
@@ -336,4 +337,11 @@ def _start_view(made):
 def save(path):
     """Write a 2024-format .max. The path must already be a new output, not a source."""
     target = str(Path(path).resolve()).replace('\\', '/')
-    _rt().execute('saveMaxFile "{}" saveAsVersion:2024 quiet:true'.format(target))
+    rt = _rt()
+    rt.execute('saveMaxFile "{}" saveAsVersion:2024 quiet:true'.format(target))
+    # Max 2024 makes the saved file current. Max 2025+ treats saveAsVersion:2024 as "save a copy": the open scene
+    # stays untitled and buttons that need a saved scene (tex.finish_map, tex.placeholders) refuse. Reopen the
+    # written 2024 file so every Max version presses buttons in the same saved scene (PR #1042, Max 2026 run).
+    current = (str(rt.maxFilePath) + str(rt.maxFileName)).replace('\\', '/')
+    if os.path.normcase(os.path.normpath(current)) != os.path.normcase(os.path.normpath(target)):
+        rt.execute('loadMaxFile "{}" quiet:true'.format(target))
