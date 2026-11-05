@@ -94,14 +94,22 @@ class World:
 
 
 NOT_IMPL = ec.not_implemented('qa.procedural_objects', 'preview', '#979')
+qc = _load(PKG / 'qa9_core.py', 'agr_tools_qa9_core_batch_t')  # the real answer of branch C (#1000)
+CLASSES = qc.load_classes(str(PKG / 'data' / 'procedural_classes.json'))
 
 
-def proc_report(offenders=()):
-    objects = [ec.entry(h, n, [ec.finding('procedural_class', (), 'ForestPackPro')]) for h, n in offenders]
-    return ec.report('qa.procedural_objects', 'preview', objects, state_hash='scene')
+def proc_report(offenders=(), others=()):
+    """The real qa.procedural_objects preview (qa9_core.procedural_scan + procedural_report): offenders are
+    Forest_Pro nodes, others plain Editable_Poly nodes."""
+    rows = [{'handle': h, 'name': n, 'cls': 'Forest_Pro', 'superclass': 'GeometryClass', 'hidden': False,
+             'frozen': False} for h, n in offenders]
+    rows += [{'handle': h, 'name': n, 'cls': 'Editable_Poly', 'superclass': 'GeometryClass', 'hidden': False,
+              'frozen': False} for h, n in others]
+    hits, products = qc.procedural_scan(rows, CLASSES, {'forest_pro'})
+    return qc.procedural_report(ec, rows, hits, products, 'scene')
 
 
-CLEAN = proc_report()
+CLEAN = proc_report(others=[(1, 'SM_Clean_Main'), (2, 'SM_Clean_Main_2'), (3, 'SM_Dirty_Main'), (4, 'SM_Old_Main')])
 
 
 def preview(world, proc=CLEAN):
@@ -239,34 +247,52 @@ def test_version_skips_the_report_and_partial_files_and_planned_targets(tmp_path
 
 
 # ---- procedural objects (branch C) ------------------------------------------------------------------------
-def test_while_qa_procedural_objects_is_not_implemented_every_group_is_refused(three):
+def test_with_the_real_answer_of_c_a_procedural_object_blocks_only_its_group(three):
+    """Replaces the not_implemented refusal test of #990: branch C is in main (#1000). A Forest_Pro node in the
+    old.fbx group blocks that group; the clean groups go through the gates and are written with readback."""
     w, out = three
-    prev, _ = preview(w, NOT_IMPL)
-    assert prev['plan']['done'] == [] and prev['status'] == 'fail'
-    assert all(c == ['procedural_unchecked'] for c in codes(prev).values())
-    assert all(r['status'] == 'blocked' for r in prev['plan']['groups'])
-    assert prev['plan']['procedural']['state'] == 'not_implemented'
-    rep = apply(w, prev, NOT_IMPL)
-    assert rep['plan']['done'] == [] and sorted(p.name for p in out.iterdir()) == ['old.fbx']
-
-
-def test_a_procedural_object_blocks_only_its_group(three):
-    w, out = three
-    proc = proc_report([(4, 'SM_Old_Main')])
+    proc = proc_report([(4, 'SM_Old_Main')], [(1, 'SM_Clean_Main'), (2, 'SM_Clean_Main_2'), (3, 'SM_Dirty_Main')])
+    assert proc['plan']['blocking'] == [4]  # the stable list of qa9_core.procedural_report
     prev, _ = preview(w, proc)
     rows = {Path(r['requested']).name: r['status'] for r in prev['plan']['groups']}
     assert rows == {'clean.fbx': 'pass', 'dirty.fbx': 'fail', 'old.fbx': 'blocked'}
-    assert codes(prev)['SM_Old_Main'] == ['procedural_object']
-    assert 'ForestPackPro' in prev['objects'][3]['findings'][0]['detail']
+    assert codes(prev)['SM_Old_Main'] == ['procedural_object'] and prev['plan']['procedural']['state'] == 'checked'
+    old = next(o for o in prev['objects'] if o['name'] == 'SM_Old_Main')
+    assert 'proc_object Forest_Pro' in old['findings'][0]['detail']
     rep = apply(w, prev, proc)
-    assert [Path(d['item']).name for d in rep['plan']['done']] == ['clean.fbx']
-    assert not (out / 'old_v002.fbx').exists()
+    done = {Path(d['item']).name: d for d in rep['plan']['done']}
+    assert set(done) == {'clean.fbx'} and done['clean.fbx']['readback']['object_count'] == 2
+    assert not (out / 'old_v002.fbx').exists() and (out / 'old.fbx').read_bytes() == b'previous delivery'
 
 
-def test_a_failing_procedural_check_blocks_everything():
+def test_with_the_real_answer_of_c_and_no_procedural_object_every_clean_group_is_written(three):
+    w, out = three
+    prev, _ = preview(w, CLEAN)
+    assert CLEAN['status'] == 'pass' and CLEAN['plan']['blocking'] == []
+    assert not any(r['status'] == 'blocked' for r in prev['plan']['groups'])
+    rep = apply(w, prev, CLEAN)
+    assert sorted(Path(d['item']).name for d in rep['plan']['done']) == ['clean.fbx', 'old_v002.fbx']
+
+
+def test_a_missing_plugin_placeholder_blocks_its_group(three):
+    w, _ = three
+    rows = [{'handle': 1, 'name': 'SM_Clean_Main', 'cls': 'Missing_Geom', 'superclass': 'GeometryClass',
+             'hidden': True, 'frozen': False}]
+    hits, products = qc.procedural_scan(rows, CLASSES, set())
+    proc = qc.procedural_report(ec, rows, hits, products, 'scene')
+    prev, _ = preview(w, proc)
+    rows = {Path(r['requested']).name: r['status'] for r in prev['plan']['groups']}
+    assert rows['clean.fbx'] == 'blocked' and rows['old.fbx'] == 'pass'
+
+
+def test_unknown_procedural_state_still_blocks_everything():
+    """Fail closed stays in the core: a not_implemented answer, an error or another tool's answer."""
+    assert bc.procedural_state(NOT_IMPL)[0] == 'not_implemented'
     state, offenders, detail = bc.procedural_state(RuntimeError('class table unreadable'))
     assert state == 'error' and 'unreadable' in detail
     assert bc.procedural_state({'tool': 'qa.normals'})[0] == 'error'
+    groups, _ = bc.group_nodes([{'handle': 1, 'name': 'A', 'path': 'C:/x/a.fbx'}])
+    assert bc.judge(groups, 'not_implemented', {}, 'x')[0]['blocked']
 
 
 def test_glue_gets_the_list_only_through_runtime_edits_090():
