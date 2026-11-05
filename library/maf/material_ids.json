@@ -1,7 +1,7 @@
 {
  "schema": "library-maf-material-ids-pointer",
- "active": "v005",
- "path": "library/maf/material_ids_v005.json",
- "sha256": "21a605c72c76136c83c71649f53dd203b089e495aea044cc279b92d0cbe61ff9",
- "note": "Active MAF material ID list. v005 is approved-v1. The v003 proposal that used to live at this path stays a generator output, not the active list. Nothing is reassigned in library MAF scenes."
+ "active": "v006",
+ "path": "library/maf/material_ids_v006.json",
+ "sha256": "9614d861ec0eb344d5c9e71b3768b51efb6f54b03a99d1e2c5f82300120e4a92",
+ "note": "Active MAF material ID list. v006 = v005 + ID 32 wood_hpl_satin (D201, #993); v005 stays approved-v1 and unchanged. The v003 proposal that used to live at this path stays a generator output, not the active list. Nothing is reassigned in library MAF scenes."
 }

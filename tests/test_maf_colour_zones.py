@@ -1,6 +1,6 @@
 """new-case: MAF colour zones for the 13 Vatutino showcase positions (#889).
 
-Material IDs come from the approved v005 list. A face ID >= 1001 is an error.
+Material IDs come from the approved v006 list (v005 + ID 32 HPL, D201). A face ID >= 1001 is an error.
 Geometry counts are unchanged by the assignment. Unmapped positions, zones and
 materials are errors that name the missing key. Empty, partial, non-finite and
 exactly-at-threshold input fail. An output path that is an input writes nothing.
@@ -18,7 +18,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 SET = ROOT / "jobs" / "VATUTINO-SITE" / "maf" / "site-maf-set.json"
 COUNTS = ROOT / "jobs" / "VATUTINO-SITE" / "maf" / "site-maf-zone-counts.json"
-IDS = ROOT / "library" / "maf" / "material_ids_v005.json"
+IDS = ROOT / "library" / "maf" / "material_ids_v006.json"  # v006 = v005 + ID 32 (D201)
 SHOW = ("VAT_MAF_T3510_01", "VAT_MAF_T3510_02", "VAT_MAF_T3510_07", "VAT_MAF_T3510_09",
         "VAT_MAF_T3510_11", "VAT_MAF_T3510_12", "VAT_MAF_T3510_16", "VAT_MAF_T3510_26",
         "VAT_MAF_T3510_27", "VAT_MAF_T3510_28", "VAT_MAF_T3510_29", "VAT_MAF_T3510_31",
@@ -384,3 +384,40 @@ def test_finish_colour_uses_schedule_ral_or_marks_assumed(z, catalogue):
     assert hpl["id"] < 1001
     with pytest.raises(z.ZoneError, match="missing_slot"):
         z.finish_colour("missing_slot", catalogue)
+
+
+ZONES_JSON = ROOT / "jobs" / "VATUTINO-SITE" / "maf" / "site-maf-zones.json"
+
+
+def test_one_id_with_two_colours_across_the_set_fails(z):
+    # #993: per-node checks passed while ID 14 was #C49A6C on 01..31 and #B4825A on 26.
+    records = [("VAT_MAF_T3510_01/npm", 14, "#C49A6C"), ("VAT_MAF_T3510_26/npm", 14, "#B4825A")]
+    with pytest.raises(z.ZoneError, match=r"material id 14 has two colours: #C49A6C .*_01.* #B4825A .*_26"):
+        z.check_id_colours(records)
+    assert z.check_id_colours(records[:1] + [("VAT_MAF_T3510_26/npm", 32, "#B4825A")]) == {
+        14: "#C49A6C", 32: "#B4825A"}
+    with pytest.raises(z.ZoneError, match="empty"):
+        z.check_id_colours([])
+
+
+def test_hpl_has_its_own_id_and_every_finish_id_one_colour(z, catalogue):
+    hpl = z.finish_colour("hpl_satin_wood", catalogue)
+    assert (hpl["id"], hpl["id_key"], hpl["colour"]) == (32, "wood_hpl_satin", "#B4825A")
+    assert z.finish_colour("larch_light_oak", catalogue)["id"] == 14
+    z.check_id_colours((slot, z.finish_colour(slot, catalogue)["id"], row["colour"])
+                       for slot, row in z.FINISH.items())
+    assert "wood_hpl_satin" in z.SCHEDULE_FINISHES["VAT_MAF_T3510_26"]
+
+
+def test_committed_zone_table_has_one_colour_per_id(z):
+    doc = json.loads(ZONES_JSON.read_text(encoding="utf-8"))
+    got = z.check_id_colours((p["set_id"], zone["id"], zone["colour"])
+                             for p in doc["positions"] for zone in p["zones"])
+    assert got[14] == "#C49A6C" and got[32] == "#B4825A"
+
+
+def test_compile_rejects_applied_report_with_two_colours_for_one_id(z):
+    rows = [{"set_id": "A", "zones": [{"zone": "boards", "id_key": "wood_light", "id": 14, "colour": "#C49A6C"}]},
+            {"set_id": "B", "zones": [{"zone": "hpl", "id_key": "wood_light", "id": 14, "colour": "#B4825A"}]}]
+    with pytest.raises(z.ZoneError, match="material id 14 has two colours"):
+        z.check_rows_id_colours(rows)

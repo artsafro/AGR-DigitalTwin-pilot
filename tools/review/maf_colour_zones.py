@@ -38,7 +38,7 @@ from pathlib import Path
 
 UDIM_AS_MATERIAL_ID = 1001
 
-# Existing site-atlas slot -> approved v005 key, zone name and stated colour.
+# Existing site-atlas slot -> approved v006 key, zone name and stated colour.
 # No other slot is accepted. ``colour assumed`` means the schedule names the
 # finish but not a number, and the vendor sheet was not measured.
 FINISH = {
@@ -52,8 +52,9 @@ FINISH = {
                           "candidates_sheet.jpg are library viewport colours, not a finish measurement; "
                           "colour assumed; atlas slot larch_light_oak #C49A6C"),
     },
+    # D201 (#993): HPL has its own ID 32; ID 14 stays larch / light oak.
     "hpl_satin_wood": {
-        "id_key": "wood_light", "zone": "hpl", "colour": "#B4825A",
+        "id_key": "wood_hpl_satin", "zone": "hpl", "colour": "#B4825A",
         "colour_source": ("schedule HPL satin wood; no RAL; vendor images are library viewport colours, "
                           "not a finish measurement; colour assumed; atlas slot hpl_satin_wood #B4825A"),
     },
@@ -87,9 +88,11 @@ POSITION_POLICY = {
 }
 ZONE_OF_KEY = {
     "wood_light": "boards", "paint_ral7047": "frame", "cap_black": "fasteners", "rope_pp": "rope",
+    "wood_hpl_satin": "hpl",
 }
-# Split keys use the larch atlas hex for wood. HPL keeps its own slot through finish_colour.
-KEY_SLOT = {"wood_light": "larch_light_oak", "paint_ral7047": "steel_ral7047", "rope_pp": "rope_pp"}
+# Split keys use the atlas slot hex of their key. One ID has one colour across the set (#993).
+KEY_SLOT = {"wood_light": "larch_light_oak", "paint_ral7047": "steel_ral7047", "rope_pp": "rope_pp",
+            "wood_hpl_satin": "hpl_satin_wood"}
 CAP_SOURCE = "schedule polyamide caps; no RAL; colour assumed; v005 cap_black #303030"
 # Finishes the schedule assigns to the showcase position. The AST boilerplate pastes
 # "лиственница" onto the steel urn (*T3510/2); that position's record is steel only.
@@ -102,7 +105,7 @@ SCHEDULE_FINISHES = {
     "VAT_MAF_T3510_11": ("wood_light", "paint_ral7047"),
     "VAT_MAF_T3510_12": ("wood_light", "paint_ral7047", "cap_black"),
     "VAT_MAF_T3510_16": ("wood_light", "paint_ral7047"),
-    "VAT_MAF_T3510_26": ("wood_light", "paint_ral7047"),
+    "VAT_MAF_T3510_26": ("wood_hpl_satin", "paint_ral7047"),
     "VAT_MAF_T3510_27": ("wood_light", "paint_ral7047"),
     "VAT_MAF_T3510_28": ("rope_pp", "paint_ral7047"),
     "VAT_MAF_T3510_29": ("wood_light", "paint_ral7047", "cap_black"),
@@ -385,6 +388,28 @@ def finish_colour(slot, catalogue: dict) -> dict:
     return {"zone": row["zone"], "id_key": row["id_key"], "id": entry["id"],
             "colour": _hex(row["colour"], slot), "ral": entry["ral"], "name": entry["name"],
             "colour_source": row["colour_source"]}
+
+
+def check_id_colours(records) -> dict:
+    """``(where, id, colour)`` records across the whole site set -> {id: colour}.
+
+    The site 512 set has one atlas cell per ID, so one ID with two colours loses one of them (#993).
+    """
+    seen, where_of = {}, {}
+    for where, mid, colour in records:
+        colour = _hex(colour, str(where))
+        if mid in seen and seen[mid] != colour:
+            raise ZoneError(f"material id {mid} has two colours: {seen[mid]} ({where_of[mid]}) and {colour} ({where})")
+        seen.setdefault(mid, colour)
+        where_of.setdefault(mid, where)
+    if not seen:
+        raise ZoneError("colour per id: empty set")
+    return seen
+
+
+def check_rows_id_colours(rows) -> dict:
+    """Zone rows of every position (``set_id`` + ``zones``) -> one colour per ID or ZoneError."""
+    return check_id_colours((row["set_id"], zone["id"], zone["colour"]) for row in rows for zone in row["zones"])
 
 
 def zone_rows_for_keys(keys, catalogue: dict) -> list:
@@ -896,6 +921,7 @@ def main(argv=None) -> int:
         else:
             rows = rows_from_set(report_in, catalogue, counts)
         required = list(args.required) if args.required else [row["set_id"] for row in rows]
+        check_rows_id_colours(rows)
         report = compile_zones(required, rows, catalogue)
         if args.applied:
             if args.max_exit is None:

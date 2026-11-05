@@ -148,7 +148,7 @@ def _one(path: Path, set_id: str, catalogue: dict, colours: dict, out_path: Path
         zone_rows = zones.zone_rows_for_keys(keys, catalogue)
     else:
         ids = [zones.finish_colour(slot, catalogue)["id"] for slot in used_names]
-        # Keep slot identity so HPL stays hpl even though its id is wood_light.
+        # Keep slot identity: zone name and colour come from the atlas slot.
         counts = {}
         for slot in used_names:
             counts[slot] = counts.get(slot, 0) + 1
@@ -187,8 +187,6 @@ def main() -> None:
     colours = {entry["id"]: entry["target"] for entry in catalogue.values()}
     for row in zones.FINISH.values():
         colours[catalogue[row["id_key"]]["id"]] = row["colour"]
-    # wood_light is shared by larch and HPL; the split uses the larch hex.
-    colours[catalogue["wood_light"]["id"]] = zones.FINISH["larch_light_oak"]["colour"]
     colours[catalogue["cap_black"]["id"]] = catalogue["cap_black"]["target"]
     report_in = json.loads(Path(job["set"]).read_text(encoding="utf-8-sig"))
     out_dir = Path(job["out_dir"])
@@ -204,6 +202,10 @@ def main() -> None:
                 dest = out_dir / prof / f"{set_id}.fbx"
                 print("APPLY", set_id, prof, flush=True)
                 applied["positions"][set_id][prof] = _one(src, set_id, catalogue, colours, dest, report_path)
+        # One ID, one colour across every node of the set (#993); fail before the report is written.
+        zones.check_id_colours((f"{sid}/{prof}", zone["id"], zone["colour"])
+                               for sid, profs in applied["positions"].items()
+                               for prof, info in profs.items() for zone in info["zones"])
         report_path.parent.mkdir(parents=True, exist_ok=True)
         report_path.write_text(json.dumps(applied, ensure_ascii=False, indent=1), encoding="utf-8")
         print("APPLIED", report_path, flush=True)
