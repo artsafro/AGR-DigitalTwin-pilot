@@ -1,4 +1,4 @@
-"""Benchmark geometry checks (twinqa.geometry, HARNESS_PLAN §5) on SYNTHETIC B01-like boxes.
+"""Benchmark geometry checks (twinqa.geometry, archive/2026-11:docs/HARNESS_PLAN.md §5) on SYNTHETIC B01-like boxes.
 
 The box below is synthetic test data, not the user's etalon (issue #12): 10 x 10 m, levels
 0 / 3.3 / 6.6, parapet 0.6 m, one 1.5 x 1.5 m window per storey on wall 0 with reveals and an

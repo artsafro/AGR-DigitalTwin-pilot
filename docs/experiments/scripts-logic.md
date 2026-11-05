@@ -17,7 +17,7 @@ P5 (unused imports) is checked as a side note only.
 
 ## Setup
 
-- Synthetic fake Blender: `experiments/scripts-logic/fake_blender.py`, launched through a `blender.cmd`
+- Synthetic fake Blender: `archive/2026-11:experiments/scripts-logic/fake_blender.py`, launched through a `blender.cmd`
   wrapper in `%TEMP%\agr-exp-t_e8a3e3a4\` (set as `TWINQA_BLENDER` / passed as executable). Modes:
   `ok`, `valid_exit7` (writes valid JSON, exits 7), `no_output`, `malformed`, `empty`, `hang` (sleeps 120 s).
   No real Blender, no data/ or etalon files used.
@@ -26,15 +26,15 @@ P5 (unused imports) is checked as a side note only.
   `tools/qa/run_benchmark.blender_run` + `produced` (what `run()` does after each step),
   `technical_library/uv_continuous/common.run_dcc`. `tools/run_profile_pilot.py` / `run_profile_checks.py`
   go through `RunRecord.run_stage` (already tree-kills on timeout) and were not probed.
-- Prototype: `experiments/scripts-logic/blender_runner.py` (53 non-blank lines): fixed flags
+- Prototype: `archive/2026-11:experiments/scripts-logic/blender_runner.py` (53 non-blank lines): fixed flags
   `--background --factory-startup --disable-autoexec --python-exit-code 1`, mandatory timeout,
   `Popen` + `taskkill /T /F` on timeout, log file, nonzero exit rejected, promised outputs must exist,
   be non-empty and parse as JSON.
 - Commands:
-  - `uv run python experiments/scripts-logic/probe_matrix.py %TEMP%/agr-exp-t_e8a3e3a4` (full matrix, ~6 min
+  - `uv run python archive/2026-11:experiments/scripts-logic/probe_matrix.py %TEMP%/agr-exp-t_e8a3e3a4` (full matrix, ~6 min
     because two baseline hang probes take 120 s each)
   - `... probe_matrix.py <dir> runner` (prototype only, after the tree-kill change)
-  - `uv run pytest -q experiments/scripts-logic/test_blender_runner.py` -> 7 passed
+  - `uv run pytest -q archive/2026-11:experiments/scripts-logic/test_blender_runner.py` -> 7 passed
   - `uv run pytest -q tests/qa/test_scene.py tests/qa/test_from_spec.py tests/integration --basetemp=<scratch>`
     -> 175 passed, 1 skipped, 3 runs: 37.8 / 37.1 / 37.3 s (median 37.3 s). Project code untouched.
     (Without `--basetemp` 30 tests error: `%TEMP%\pytest-of-artsafro` is not writable on this host.)
@@ -85,7 +85,7 @@ Side check (P5): `ruff --select F401` confirms exactly the two unused imports th
 ## Proposed follow-up (adopt)
 
 **Title:** Shared headless Blender runner for Python call sites
-**Scope:** move `experiments/scripts-logic/blender_runner.py` into `src/twinqa/` (or `dt_ai.core`), with its
+**Scope:** move `archive/2026-11:experiments/scripts-logic/blender_runner.py` into `src/twinqa/` (or `dt_ai.core`), with its
 tests; switch `dt_ai.core.build.run_blender`, `twinqa.scene.readback`, `tools/qa/check_clearance.faces_from_fbx`,
 `tools/qa/run_benchmark.blender_run` (and `run_from_source.py` through it), `technical_library/uv_continuous/common.run_dcc`
 (add a timeout and an output check there). Keep `RunRecord.run_stage` sites as they are (they already

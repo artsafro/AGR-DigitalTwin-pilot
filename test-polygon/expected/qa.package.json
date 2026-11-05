@@ -1,14 +1,35 @@
 {
  "schema": 1,
  "button": "qa.package",
- "tool": null,
+ "tool": "qa.package",
  "version": "0.8",
- "shipped": false,
+ "shipped": true,
  "select": "named",
- "reason": "Кнопки ещё нет в AGR Tools 0.7: в панели её нет, объекты полигона и эта запись появляются в том же изменении, что и сама кнопка.",
+ "reason": "",
  "apply_status": null,
- "objects": [],
- "base": null,
- "station": null,
- "stations": []
+ "objects": [
+  {
+   "name": "SM_PkgOk.zip",
+   "scene": "polygon_all",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_PkgBad.zip",
+   "scene": "polygon_all",
+   "expect": "fail",
+   "codes": [
+    "V001"
+   ]
+  }
+ ],
+ "options": {
+  "path": "C:/x/test-polygon/e3/pkg",
+  "scene": false
+ },
+ "base": "0.8",
+ "station": "0.8.9",
+ "stations": [
+  "0.8.9"
+ ]
 }

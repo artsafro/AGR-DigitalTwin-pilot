@@ -15,7 +15,7 @@ uv run dt profiles check
 uv run dt schemas --check
 ```
 
-Install the pre-commit hook (pipeline gate, `tools/git-hooks/pipeline_gate.py`; historical note in `docs/HARNESS_PLAN.md` §16; files over 50 MB committed as links):
+Install the pre-commit hook (pipeline gate, `tools/git-hooks/pipeline_gate.py`; historical note in `archive/2026-11:docs/HARNESS_PLAN.md` §16; files over 50 MB committed as links):
 
 ```powershell
 Copy-Item tools/git-hooks/pre-commit .git/hooks/pre-commit

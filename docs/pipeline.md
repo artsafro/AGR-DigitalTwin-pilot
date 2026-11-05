@@ -1,6 +1,7 @@
 # Pipeline stages
 
-Status of each production stage. Rules: `docs/domain/`; tools: `docs/agents/CAPABILITIES.md`;
+Status of each production stage. Rules: `docs/domain/`; tools: `docs/agents/CAPABILITIES.md` (registry) and
+`docs/pipeline-tools.md` (catalogue: commands, exit codes, limits);
 open work: `docs/backlog.md` (IDs in the last column).
 Status: **proven** (accepted on a real object) · **partial** · **tool only** (no real
 object yet) · **missing**.
@@ -30,7 +31,7 @@ object yet) · **missing**.
 
 | Stage | Status | Where | Backlog |
 |---|---|---|---|
-| Ground (NPM-territory) | partial (contours/materials accepted) | `jobs/GROUND-PROJECTION/` | P9 |
+| Ground (NPM-territory) | partial (contours/materials accepted) | `archive/2026-11:jobs/GROUND-PROJECTION/` | P9 |
 | MAF (GroundEl) | missing | 3ds Max scripts inventory `docs/tools/max-scripts.md` | P10 |
 | Flora | tool only | SpeedTree MCP | P11 |
 

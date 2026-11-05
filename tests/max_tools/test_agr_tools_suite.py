@@ -2,6 +2,7 @@
 import importlib.util
 import json
 import math
+import os
 import random
 import subprocess
 import sys
@@ -52,8 +53,12 @@ def codes(found, key):
     return sorted(c for c, _, _ in found.get(key, []))
 
 
-def report_of(tool, rows):
-    f, d, s = core.run(tool, rows, audit)
+METRE_SCENE = {'unit_type': 'meters', 'unit_scale': 1.0, 'file_in_gamma': 1.0, 'file_out_gamma': 1.0,
+               'path': 'C:/s.max'}
+
+
+def report_of(tool, rows, scene=None):
+    f, d, s = core.run(tool, rows, audit, scene=dict(scene or METRE_SCENE))
     return core.report(tool, rows, f, d, s)
 
 
@@ -144,6 +149,99 @@ def test_perimeter_drop_only_main_and_ground():
     assert {k: codes(f, k) for k in range(1, 6)} == {1: ['drop_short'], 2: [], 3: ['at_threshold'], 4: [], 5: []}
 
 
+NON_PERIMETER = ('MainGlass', 'GroundGlass', 'GroundEl', 'GroundElGlass', 'Flora')
+
+
+def test_perimeter_drop_unknown_suffix_is_a_finding():
+    """#884: SM_Addr_001_Main_1 / SM_Addr_main are kind_unknown, not a silent skip."""
+    for name in ('SM_Addr_001_Main_1', 'SM_Addr_main'):
+        f, _, s = core.perimeter_drop([obj(1, name, zero_m=-0.2)])
+        assert codes(f, 1) == ['kind_unknown'], name
+        assert s['not_applicable'] == []
+        rep = report_of('perimeter_drop', [obj(1, name, zero_m=-0.2)])
+        assert rep['status'] == 'fail' and rep['objects'][0]['findings'][0]['code'] == 'kind_unknown'
+    rows = [obj(1, 'SM_Addr_001_Main_1', zero_m=-0.2), obj(2, 'SM_Addr_Ground', NPM_GROUND)]
+    pre = report_of('preflight', rows)
+    assert codes_of(pre, 'SM_Addr_001_Main_1') == ['kind_unknown']
+    assert pre['plan']['summary']['checks']['perimeter_drop'] == 'fail'
+    known = [obj(i + 1, 'SM_Addr_001_' + kind, zero_m=-0.2) for i, kind in enumerate(NON_PERIMETER)]
+    f, _, s = core.perimeter_drop(known)
+    assert {k: codes(f, k) for k in range(1, len(known) + 1)} == {k: [] for k in range(1, len(known) + 1)}
+    assert [n['kind'] for n in s['not_applicable']] == list(NON_PERIMETER)
+
+
+def codes_of(rep, name):
+    hit = next(o for o in rep['objects'] if o['name'] == name)
+    return sorted(f['code'] for f in hit['findings'])
+
+
+def test_unknown_suffix_probe_fail_closed():
+    """Every unknown-suffix mesh yields kind_unknown; known non-perimeter kinds never do.
+
+    Empty, partial, non-string, NaN/inf and exactly-1 m input fail or error, never pass.
+    """
+    rnd = random.Random(884)
+    names = [
+        'SM_Addr_001_Main_1', 'SM_Addr_main', 'SM_Addr_MAIN', 'SM_Addr_MainGlass_1',
+        '', ' ', '1', 'Main_1', 'ground', 'SM_Addr_001_Mai', None, 0, 1.5,
+        'SM_Addr_001_Main\t', '___',
+    ]
+    tokens = list(NON_PERIMETER) + ['Main', 'Ground', 'main', 'MAIN', '1', 'x', 'Glass', '']
+    for _ in range(240):
+        parts = [rnd.choice(('SM', 'XX', 'A', '')) for _ in range(rnd.randint(1, 4))]
+        parts.append(rnd.choice(tokens) + rnd.choice(('', '1', 'x', '_')))
+        name = '_'.join(parts)
+        if isinstance(name, str) and name.upper().startswith('UCX_'):
+            name = 'Z' + name
+        last = name.split('_')[-1] if name else ''
+        if last in checks.NPM_TYPES:
+            name += 'Z'
+        names.append(name)
+    zeros = (0.0, -0.2, -1.0, -1.5, None, float('nan'), float('inf'), float('-inf'))
+    rows, unknown_keys = [], []
+    for i, name in enumerate(names):
+        row = obj(i + 1, 'placeholder', zero_m=zeros[i % len(zeros)])
+        row['name'] = name
+        if i % 17 == 0:
+            row['mesh'] = {'verts': [], 'tris': []}
+        if i % 19 == 0:
+            row['mesh'] = {'verts': [(0, 0, float('nan'))], 'tris': []}
+        if i % 23 == 0:
+            row.pop('mesh')
+        rows.append(row)
+        unknown_keys.append(i + 1)
+    known_keys = []
+    for kind in NON_PERIMETER:
+        for z in zeros:
+            key = len(rows) + 1
+            rows.append(obj(key, 'SM_Addr_001_' + kind, zero_m=z))
+            known_keys.append(key)
+    ucx_key = len(rows) + 1
+    rows.append(obj(ucx_key, 'UCX_SM_Addr_Main_001', zero_m=float('nan')))
+    cam_key = ucx_key + 1
+    rows.append(obj(cam_key, 'NotAMesh', superclass='camera', cls='Freecamera', faces=0, materials=[],
+                    mesh={'verts': [], 'tris': []}, zero_m=None))
+    f, _, s = core.perimeter_drop(rows)
+    for key in unknown_keys:
+        assert codes(f, key) == ['kind_unknown'], (key, rows[key - 1]['name'])
+    for key in known_keys:
+        assert 'kind_unknown' not in codes(f, key) and codes(f, key) == []
+    assert codes(f, ucx_key) == [] and codes(f, cam_key) == []
+    assert [n['kind'] for n in s['not_applicable']] == [rows[k - 1]['name'].split('_')[-1] for k in known_keys]
+    assert 'unknown suffix' not in {n['kind'] for n in s['not_applicable']}
+    rep = report_of('perimeter_drop', [obj(1, 'SM_Addr_001_Main_1', zero_m=-1.0)])
+    assert rep['status'] == 'fail' and codes_of(rep, 'SM_Addr_001_Main_1') == ['kind_unknown']
+    with pytest.raises(ValueError):
+        core.perimeter_drop([])
+    with pytest.raises(ValueError):
+        core.perimeter_drop([obj(1), obj(1)])
+    partial = obj(1)
+    partial.pop('mesh')
+    with pytest.raises(ValueError):
+        core.perimeter_drop([partial])
+    assert len(unknown_keys) + len(known_keys) == 255 + 40
+
+
 def test_preflight_passes_valid_scene_with_every_kind():
     rep = report_of('preflight', _kinds_scene())
     assert rep['status'] == 'pass', [(o['name'], o['findings']) for o in rep['objects'] if o['findings']]
@@ -222,6 +320,72 @@ def test_glass_d2_mainglass_reached_and_d3_no_maps_passes():
     assert codes(f, 1) == ['glass_opacity']
 
 
+def test_glass_opaque_material_on_glass_mesh():
+    """Probe: MainGlass with a real glass material and an opaque sibling must name that sibling."""
+    glass = {'name': 'M_Glass', 'cls': 'Standardmaterial', 'maps': [], 'missing': [], 'opacity': 0.5}
+    brick = {'name': 'M_Brick', 'cls': 'Standardmaterial', 'maps': ['b.png'], 'missing': [], 'opacity': 1.0}
+    f, _, _ = core.glass([obj(1, 'SM_Addr_001_MainGlass', materials=[glass, brick])])
+    assert f[1] == [('glass_opaque_material', 'непрозрачный материал на стекле: M_Brick', ())]
+    # a *Glass mesh with no glass material at all still checks every non-multi material
+    f, _, _ = core.glass([obj(1, 'SM_Addr_001_MainGlass', materials=[brick])])
+    assert codes(f, 1) == ['glass_maps', 'glass_opacity']
+
+
+def test_glass_token_opacity_and_sets_count_probe():
+    """Glass is an exact name token or opacity < 1 - tol. Fiberglass is an opaque set. NaN, inf and
+    opacity exactly at the threshold never count as glass."""
+    glass_names = ['Glass', 'M_Glass', 'M_Glass_01', 'GLASS', 'a.glass.b', 'x-Glass-y', 'glass',
+                   'M_A_MainGlass_1', 'M_A_GroundGlass_1', 'M_A_GroundElGlass_1', 'mainglass']
+    opaque_names = ['M_Fiberglass_Panel', 'Fiberglass', 'stainedglass', 'glassy',
+                    'hourglass', 'M_Brick', 'glass2', '2glass']
+    threshold = 1.0 - core.OPACITY_TOL
+    below = math.nextafter(threshold, 0.0)
+    by_opacity = (0.0, 0.5, below)
+    not_by_opacity = (threshold, 1.0, float('nan'), float('inf'), float('-inf'), None)
+
+    def mat(name, opacity, maps=()):
+        return {'name': name, 'cls': 'Standardmaterial', 'maps': list(maps), 'missing': [], 'opacity': opacity}
+
+    def forty():
+        return [dict(STD, name='M_{}'.format(i)) for i in range(40)]
+
+    for name in glass_names:
+        assert core._is_glass_material(mat(name, 1.0)), name
+        f, _, _ = core.glass([obj(1, 'SM_Addr_001_Main', materials=[mat(name, 1.0)])])
+        assert codes(f, 1) == ['glass_not_separate'], name
+        for op in not_by_opacity:
+            assert core._is_glass_material(mat(name, op)), (name, op)
+            f, _, _ = core.sets_count([obj(1, materials=forty() + [mat(name, op)])])
+            assert codes(f, 1) == [], (name, op)  # token still keeps it out of the opaque sets
+
+    for name in opaque_names:
+        for op in not_by_opacity:
+            assert not core._is_glass_material(mat(name, op)), (name, op)
+        for op in by_opacity:
+            assert core._is_glass_material(mat(name, op)), (name, op)
+
+    fiber = mat('M_Fiberglass_Panel', 1.0, maps=['f.png'])
+    f, _, _ = core.sets_count([obj(1, materials=forty() + [fiber])])
+    assert codes(f, 1) == ['sets_limit']  # name is not glass, so it is an opaque set
+    f, _, _ = core.glass([obj(1, 'SM_Addr_001_Main', materials=[fiber])])
+    assert codes(f, 1) == []
+    f, _, _ = core.sets_count([obj(1, materials=forty() + [mat('M_Fiberglass_Panel', 0.5)])])
+    assert codes(f, 1) == []  # opacity still makes it glass, so it is not a set
+    f, _, _ = core.sets_count([obj(1, materials=forty() + [mat('Glass', 1.0)])])
+    assert codes(f, 1) == []
+    f, _, _ = core.sets_count([obj(1, materials=forty() + [mat('M_Glass', 1.0)])])
+    assert codes(f, 1) == []
+
+    real = mat('M_Glass', 0.5)
+    for name in opaque_names:
+        for op in (float('nan'), float('inf'), float('-inf'), threshold):
+            f, _, _ = core.sets_count([obj(1, materials=forty() + [mat(name, op)])])
+            assert codes(f, 1) == ['sets_limit'], (name, op)
+            f, _, _ = core.glass([obj(1, 'SM_Addr_001_MainGlass', materials=[real, mat(name, op)])])
+            assert codes(f, 1) == ['glass_opaque_material'], (name, op)
+            assert name in f[1][0][1], (name, op)
+
+
 def test_scene_hygiene_d7_rules_always_on():
     rows = [obj(1, superclass='camera', cls='Physical', faces=0), obj(2, animated=True), obj(3, parent='X'),
             obj(4, group=True), obj(5, faces=0), obj(6, modifiers=['TurboSmooth']), obj(7, children=2),
@@ -248,8 +412,10 @@ def test_zero_area_faces_edges_isolated():
     f, _, _ = core.zero_area([obj(1, mesh={'verts': v, 'tris': t}), obj(2),
                               obj(3, mesh={'verts': [(0, 0, float('inf'))], 'tris': []}),
                               obj(4, mesh={'verts': CUBE_V, 'tris': [(0, 1, 99)]})])
-    assert codes(f, 1) == ['zero_area_face', 'zero_length_edge']
+    # face 14 has area (a 1e-7 m edge): zero_length_edge plus the advisory sliver_face since 0.9 (#979)
+    assert codes(f, 1) == ['sliver_face', 'zero_area_face', 'zero_length_edge']
     assert [ids for c, _, ids in f[1] if c == 'zero_area_face'] == [(13,)]
+    assert [ids for c, _, ids in f[1] if c == 'sliver_face'] == [(14,)]
     assert codes(f, 2) == []
     assert codes(f, 3) == ['zero_unmeasurable'] and codes(f, 4) == ['zero_unmeasurable']
     v2 = list(CUBE_V) + [(5, 5, 5)]
@@ -283,22 +449,116 @@ def test_preflight_one_table_prefixed_and_status_per_check():
     rep = report_of('preflight', rows)
     assert rep['status'] == 'fail' and rep['plan']['summary']['checks']['xform'] == 'fail'
     assert rep['objects'][0]['findings'][0]['detail'].startswith('qa.xform: ')
-    assert sum(1 for v in rep['plan']['summary']['checks'].values() if v == 'pass') == len(core.PREFLIGHT) - 1
+    assert sum(1 for v in rep['plan']['summary']['checks'].values() if v == 'pass') == len(core.PREFLIGHT)  # + units
+
+
+# ---- qa.preflight includes scene.units (#882) -----------------------------------------------------------
+def test_preflight_includes_scene_units_d5():
+    """#882 / D5: a centimetre scene with clean objects fails preflight on a scene-level scene.units row."""
+    rows = [obj(1), obj(2, 'SM_Addr_Ground', NPM_GROUND)]
+    ok = report_of('preflight', rows)
+    assert ok['status'] == 'pass' and ok['plan']['summary']['checks']['units'] == 'pass'
+    assert set(ok['plan']['summary']['checks']) == set(core.PREFLIGHT) | {'units'}
+    assert [f['name'] for f in ok['plan']['findings']] == [
+        'scene.units: ' + n for n in ('system_unit', 'system_scale', 'file_in_gamma', 'file_out_gamma')]
+    cm = report_of('preflight', rows, dict(METRE_SCENE, unit_type='centimeters'))
+    assert cm['status'] == 'fail' and cm['plan']['summary']['checks']['units'] == 'fail'
+    assert all(not o['findings'] for o in cm['objects'])  # objects are clean: only the scene row fails
+    assert cm['plan']['path'] == 'C:/s.max'
+    table = model.rows(runtime.parse_report(json.dumps(cm)))
+    bad = [r for r in table if not r.ok]
+    assert [(r.name, r.code) for r in bad] == [('s.max', 'scene.units: system_unit')]
+    assert 'centimeters' in bad[0].detail and len([r for r in table if r.ok]) == 2
+
+
+def test_preflight_without_scene_raises():
+    """Fail-closed: preflight never runs (or passes) without the scene units."""
+    for scene in (None, 'C:/s.max', [], 0):
+        with pytest.raises(ValueError):
+            core.run('preflight', [obj(1)], audit, scene=scene)
+    with pytest.raises(ValueError):
+        core.run('preflight', [obj(1)], audit)
+
+
+def test_preflight_report_scene_rows_are_validated():
+    cm = report_of('preflight', [obj(1)], dict(METRE_SCENE, unit_scale=0.01))
+    with pytest.raises(ValueError):
+        core.validate_report(dict(cm, status='pass'))  # claimed pass over a failing units row
+    for mutate in (lambda r: r['plan'].pop('findings'), lambda r: r['plan'].pop('path'),
+                   lambda r: r['plan'].__setitem__('findings', []),
+                   lambda r: r['plan']['summary']['checks'].pop('units'),
+                   lambda r: r['plan']['summary']['checks'].__setitem__('units', 'pass'),
+                   lambda r: r['plan']['findings'][1].__setitem__('status', 'not_run'),
+                   lambda r: r['plan']['findings'][1].pop('observed')):
+        bad = json.loads(json.dumps(cm))
+        mutate(bad)
+        with pytest.raises(ValueError):
+            core.validate_report(bad)
+    xf = report_of('xform', [obj(1)])
+    with pytest.raises(ValueError):  # object checks keep the 0.7 plan shape (no scene rows)
+        core.validate_report(dict(xf, plan=dict(xf['plan'], path='x', findings=[])))
+
+
+@pytest.mark.perf
+def test_preflight_status_includes_units_bruteforce():
+    """invariant: preflight fails iff an object finding or a scene.units item fails; units pass iff the
+    standalone scene.units check passes (400 cases, NaN/inf/None/missing/at-threshold values)."""
+    rnd = random.Random(882)
+    values = {'unit_type': ['meters', 'centimeters', 'millimeters', None, ''],
+              'unit_scale': [1.0, 0.01, 100.0, float('nan'), float('inf'), None, 1.0 + 1e-9, 1.0 + 2e-9],
+              'file_in_gamma': [1.0, 2.2, float('nan'), None, 1.0 + 1e-6, 1.0 + 2e-6],
+              'file_out_gamma': [1.0, 2.2, float('-inf'), None]}
+    seen = set()
+    for case in range(400):
+        scene = {k: rnd.choice(v) for k, v in values.items()}
+        if rnd.random() < 0.4:
+            scene = dict(METRE_SCENE)
+        scene['path'] = 'C:/s.max'
+        if rnd.random() < 0.1:
+            scene.pop(rnd.choice(list(values)))
+        rows = [obj(k + 1, scale=(rnd.choice([1.0, 1.0, 1.0, 2.0]),) * 3) for k in range(rnd.randint(1, 4))]
+        rows.append(obj(len(rows) + 1, 'SM_Addr_Ground', NPM_GROUND))
+        f, d, s = core.run('preflight', rows, audit, scene=scene)
+        rep = core.report('preflight', rows, f, d, s)
+        units_ok = all(x['status'] == 'pass' for x in core.units(scene))
+        assert rep['plan']['summary']['checks']['units'] == ('pass' if units_ok else 'fail'), case
+        obj_bad = any(o['findings'] for o in rep['objects'])
+        assert rep['status'] == ('fail' if obj_bad or not units_ok else 'pass'), case
+        assert runtime.parse_report(json.dumps(rep)) == rep
+        seen.add((units_ok, obj_bad))
+    assert seen == {(True, True), (True, False), (False, True), (False, False)}
+
+
+def test_suite_max_passes_scene_units_to_preflight(monkeypatch):
+    """The Max glue reads the scene units for preflight (fake runtime, no pymxs)."""
+    import types
+    sm = _load('suite_max.py', 'agr_tools_suite_max_test882')
+    rt = types.SimpleNamespace(units=types.SimpleNamespace(SystemType='centimeters', SystemScale=1.0),
+                               fileInGamma=1.0, fileOutGamma=1.0, maxFilePath='C:/w/', maxFileName='a.max',
+                               select=lambda nodes: None)
+    monkeypatch.setattr(sm, '_rt', lambda: rt)
+    monkeypatch.setattr(sm, 'targets', lambda agr, nodes: ['n1'])
+    monkeypatch.setattr(sm, '_row', lambda agr, glue, n, scale, sizer=None: obj(1))
+    monkeypatch.setattr(sm, '_shared_maps', lambda agr, nodes: ({}, []))
+    agr = types.SimpleNamespace(_unit_m=lambda: 1.0, _load_core=lambda *a: audit)
+    rep = sm.run(agr, None, core, 'preflight')
+    assert rep['status'] == 'fail' and rep['plan']['summary']['checks']['units'] == 'fail'
+    assert rep['plan']['path'].endswith('a.max')
 
 
 # ---- fail-closed contract -----------------------------------------------------------------------------
 @pytest.mark.parametrize('tool', [t for t in core.TOOLS if t != 'units'])
 def test_empty_duplicate_partial_rows_raise(tool):
     with pytest.raises(ValueError):
-        core.run(tool, [], audit)
+        core.run(tool, [], audit, scene=dict(METRE_SCENE))
     with pytest.raises(ValueError):
-        core.run(tool, [obj(1), obj(1)], audit)
+        core.run(tool, [obj(1), obj(1)], audit, scene=dict(METRE_SCENE))
     partial = obj(1)
     for field in ('materials', 'mesh', 'superclass', 'faces', 'instances', 'animated', 'modifiers', 'mirror'):
         partial.pop(field)
     if tool != 'fbx_split':  # fbx_split reads only key/name/fbx
         with pytest.raises(ValueError):
-            core.run(tool, [partial], audit)
+            core.run(tool, [partial], audit, scene=dict(METRE_SCENE))
 
 
 def test_unknown_check_and_bad_reports_raise():
@@ -365,15 +625,15 @@ def test_flow_tooltips_and_cards_from_json():
     suite = roadmap.load_file(SUITE)
     nodes = roadmap.flow(suite, model.VERSION)
     assert [n['number'] for n in nodes] == list(range(10))
-    assert sum(n['total'] for n in nodes) == len(suite['rows']) == 90
-    assert sum(n['done'] for n in nodes) == 13 + 12  # 0.1-0.5 + 0.7
+    assert sum(n['total'] for n in nodes) == len(suite['rows']) == 92  # 97 - 6 removed + 1 new (#973 decisions)
+    assert sum(n['done'] for n in nodes) == 13 + 12 + 13  # 0.1-0.5 + 0.7 + 0.8
     for r in suite['rows']:
         tip = roadmap.tooltip(suite, r)
         assert r['does_ru'] in tip and r['reqs'] in tip and 'Когда:' in tip
         c = roadmap.card(suite, r, model.VERSION)
         assert set(c) == {'title', 'what', 'when', 'input', 'result', 'mode', 'reqs', 'state', 'block', 'related',
                           'why'}
-        assert c['state'] == ('есть в этой версии' if roadmap.vkey(r['version']) <= roadmap.vkey('0.7.0')
+        assert c['state'] == ('есть в этой версии' if roadmap.vkey(r['version']) <= roadmap.vkey(model.VERSION)
                               else 'в версии ' + r['version'])
     assert roadmap.vkey('1.x') > roadmap.vkey('1.0') > roadmap.vkey('0.9') > roadmap.vkey('0.7.0')
 
@@ -403,7 +663,7 @@ def test_rail_maps_every_action_to_a_plan_row_and_greys_the_rest():
     assert [b['id'] for b, _, _ in rail] == [b['id'] for b in suite['blocks']]
     done_rows = {model.row_of(a.id) for _, done, _ in rail for a in done}
     planned = [r for _, _, p in rail for r in p]
-    assert len(done_rows) + len(planned) == 90
+    assert len(done_rows) + len(planned) == 92
     assert all(roadmap.vkey(r['version']) > roadmap.vkey(model.VERSION) for r in planned)
     with pytest.raises(KeyError):
         model.row_of('nope')
@@ -443,6 +703,319 @@ def test_report_memory_roundtrip(tmp_path):
 
 
 # ---- MCP -------------------------------------------------------------------------------------------------
+# ---- #886 usedMaps drops a Bitmaptexture whose file is absent ---------------------------------------
+class _Tok:
+    def __init__(self, name):
+        self.name = name
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return self.name
+
+
+class _Arr(list):
+    @property
+    def count(self):
+        return len(self)
+
+
+class _MapNode:
+    def __init__(self, handle, kind, name, filename=None, subtex=(), submtls=(), opacity=100.0):
+        self.handle = handle
+        self.kind = kind
+        self.name = name
+        self.filename = filename
+        self.fileName = filename
+        self.subtex = list(subtex)
+        self.submtls = list(submtls)
+        self.opacity = opacity
+        self.cls = None  # filled once the runtime tokens exist
+
+
+class _Rt:
+    """usedMaps returns only bitmap files that exist. Absent Bitmaptexture.fileName values are omitted."""
+
+    def __init__(self):
+        self.undefined = object()
+        self.Bitmaptexture = _Tok('Bitmaptexture')
+        self.Multimaterial = _Tok('Multimaterial')
+        self.Standardmaterial = _Tok('Standardmaterial')
+        self.PhysicalMaterial = _Tok('PhysicalMaterial')
+        self.Mix = _Tok('Mix')
+        self.mapPaths = self
+
+    def classOf(self, node):
+        if getattr(node, 'bad_class', False):
+            raise RuntimeError('classOf failed')
+        return node.cls
+
+    def getHandleByAnim(self, node):
+        if getattr(node, 'bad_handle', False):
+            raise RuntimeError('no handle')
+        return node.handle
+
+    def isProperty(self, node, prop):
+        if getattr(node, 'bad_file', False):
+            raise RuntimeError('unreadable ' + prop)
+        return prop in ('filename', 'fileName') and node.cls == self.Bitmaptexture
+
+    def getProperty(self, node, prop):
+        if getattr(node, 'bad_file', False):
+            raise RuntimeError('unreadable ' + prop)
+        return getattr(node, prop)
+
+    def getNumSubMtls(self, node):
+        return len(node.submtls)
+
+    def getSubMtl(self, node, index):
+        return node.submtls[index - 1]
+
+    def getNumSubTexmaps(self, node):
+        if getattr(node, 'bad_tex', False):
+            raise RuntimeError('texmaps unreadable')
+        return len(node.subtex)
+
+    def getSubTexmap(self, node, index):
+        child = node.subtex[index - 1]
+        if child == 'odd':
+            raise RuntimeError('odd subtex')
+        return child
+
+    def getFullFilePath(self, path):
+        return ''
+
+    def usedMaps(self, node):
+        if getattr(node, 'bad_used', False):
+            raise RuntimeError('usedMaps failed')
+        if getattr(node, 'odd_used', False):
+            return _Arr([None])
+        found = []
+
+        def walk(n, seen):
+            if n is None or n == self.undefined or n == 'odd':
+                return
+            if n.handle in seen:
+                return
+            seen.add(n.handle)
+            if n.cls == self.Bitmaptexture and n.filename and os.path.isfile(n.filename):
+                if n.filename not in found:
+                    found.append(n.filename)
+            for child in n.subtex:
+                walk(child, seen)
+
+        if not getattr(node, 'drop_present', False):
+            walk(node, set())
+        return _Arr(found)
+
+
+def _bind_runtime():
+    sm = _load('suite_max.py', 'agr_suite_max_886')
+    cm = _load('checks_max.py', 'agr_checks_max_886')
+    rt = _Rt()
+    sm._rt = lambda: rt
+    cm._rt = lambda: rt
+    return sm, cm, rt
+
+
+def _as_kind(rt, node):
+    node.cls = getattr(rt, node.kind)
+    for child in list(node.subtex) + list(node.submtls):
+        if isinstance(child, _MapNode):
+            _as_kind(rt, child)
+    return node
+
+
+def _witness_scene(tmp_path):
+    """One present bitmap (usedMaps keeps it) and the polygon's absent bitmap (usedMaps drops it)."""
+    sm, glue, rt = _bind_runtime()
+    present = tmp_path / 'T_Polygon_007_Main_d_2.png'
+    present.write_bytes(b'png')
+    absent = 'C:/x/test-polygon/missing/T_Polygon_007_Main_d_1.png'
+    assert not os.path.isfile(absent)
+    ok = _MapNode(2, 'Bitmaptexture', 'T_ok', filename=str(present))
+    gone = _MapNode(3, 'Bitmaptexture', 'T_Polygon_007_Main_d_1', filename=absent)
+    mat = _MapNode(1, 'Standardmaterial', 'M_Polygon_007_Main_1', subtex=[ok, gone])
+    _as_kind(rt, mat)
+    node = _MapNode(10, 'Standardmaterial', 'SM_Polygon_007_Main')
+    node.material = mat
+    return sm, glue, node, str(present), absent
+
+
+def test_census_reports_bitmap_file_usedmaps_drops(tmp_path):
+    """#886: usedMaps omits Bitmaptexture fileName when the file is absent; missing_map still fires."""
+    sm, glue, node, present, absent = _witness_scene(tmp_path)
+    mats = sm._materials(node, glue)
+    assert [m['name'] for m in mats] == ['M_Polygon_007_Main_1']
+    assert mats[0]['maps'] == [present, absent]
+    assert mats[0]['missing'] == [absent]
+    row = obj(1, 'SM_Polygon_007_Main', materials=mats)
+    found, _, summary = core.census([row])
+    assert codes(found, 1) == ['missing_map']
+    assert summary['missing_maps'] == [absent]
+    assert [d for _, d, _ in found[1]] == ['нет файла: ' + absent]
+    rep = report_of('preflight', [row])
+    assert rep['status'] == 'fail'
+    assert 'missing_map' in [f['code'] for f in rep['objects'][0]['findings']]
+
+
+def _random_material(rnd, rt, tmp_path, seq, absent, present):
+    """A Standardmaterial, or a Multimaterial of them. Bitmaps sit in slots or under a Mix."""
+
+    def bitmap(want_absent):
+        seq[0] += 1
+        handle = seq[0]
+        if want_absent:
+            path = str(tmp_path / 'missing' / 'T_{}.png'.format(handle))
+            absent.add(path)
+        else:
+            path = str(tmp_path / 'present' / 'T_{}.png'.format(handle))
+            Path(path).parent.mkdir(parents=True, exist_ok=True)
+            Path(path).write_bytes(b'x')
+            present.add(path)
+        return _MapNode(handle, 'Bitmaptexture', 'Map_{}'.format(handle), filename=path)
+
+    def standard():
+        slots = []
+        for _ in range(rnd.randint(0, 5)):
+            roll = rnd.randrange(5)
+            if roll == 0:
+                slots.append(None)  # empty slot
+            elif roll == 1:
+                slots.append(bitmap(True))
+            elif roll == 2:
+                slots.append(bitmap(False))
+            else:
+                kids = [bitmap(rnd.random() < 0.6) for _ in range(rnd.randint(1, 3))]
+                if kids and rnd.random() < 0.3:
+                    kids.append(kids[0])  # same Bitmaptexture twice
+                seq[0] += 1
+                slots.append(_MapNode(seq[0], 'Mix', 'Mix_{}'.format(seq[0]), subtex=kids))
+        slots.append(bitmap(True))  # every material has one absent file: an empty usedMaps result cannot pass
+        seq[0] += 1
+        mat = _MapNode(seq[0], 'Standardmaterial', 'M_{}'.format(seq[0]), subtex=slots, opacity=100.0)
+        if rnd.random() < 0.5:
+            mat.drop_present = True  # usedMaps returns nothing; the file check still decides
+        return mat
+
+    if rnd.random() < 0.5:
+        subs = [standard() for _ in range(rnd.randint(1, 4))]
+        seq[0] += 1
+        top = _MapNode(seq[0], 'Multimaterial', 'Multi_{}'.format(seq[0]), submtls=subs)
+    else:
+        top = standard()
+    return _as_kind(rt, top)
+
+
+def test_absent_bitmaps_land_in_missing_once_probe(tmp_path):
+    """Probe: every absent Bitmaptexture path is in `missing` once; no present path is."""
+    sm, glue, rt = _bind_runtime()
+    rnd = random.Random(886)
+    for case in range(60):
+        absent, present = set(), set()
+        mat = _random_material(rnd, rt, tmp_path / str(case), [0], absent, present)
+        node = _MapNode(0, 'Standardmaterial', 'SM')
+        node.material = mat
+        mats = sm._materials(node, glue)
+        listed = []
+        for m in mats:
+            assert m['missing'] == list(dict.fromkeys(m['missing']))
+            assert set(m['missing']).isdisjoint(present)
+            if m['cls'] == 'Multimaterial':
+                assert m['maps'] == [] and m['missing'] == []
+            listed.extend(m['missing'])
+        found, _, summary = core.census([obj(1, materials=mats)])
+        assert set(listed) == absent, case
+        assert summary['missing_maps'] == sorted(absent)
+        assert len(found.get(1, [])) == len(absent)
+        assert len({d for _, d, _ in found.get(1, [])}) == len(absent)
+        assert absent  # each trial has a missing file, so an empty usedMaps result cannot pass
+
+
+def test_odd_maps_and_unmapped_materials_fail_closed_probe(tmp_path):
+    """Probe: a broken texmap or a material that cannot be read raises, naming it; it does not pass."""
+    sm, glue, rt = _bind_runtime()
+    rnd = random.Random(8861)
+    for case in range(40):
+        absent, present = set(), set()
+        mat = _random_material(rnd, rt, tmp_path / str(case), [0], absent, present)
+        node = _MapNode(0, 'Standardmaterial', 'SM')
+        node.material = mat
+        bitmaps = []
+
+        def collect(n, seen):
+            if not isinstance(n, _MapNode) or n.handle in seen:
+                return
+            seen.add(n.handle)
+            if n.kind == 'Bitmaptexture':
+                bitmaps.append(n)
+            for child in n.subtex + n.submtls:
+                collect(child, seen)
+
+        collect(mat, set())
+        target = rnd.choice(bitmaps)
+        fault = rnd.choice(('bad_file', 'odd', 'bad_tex', 'bad_used', 'odd_used', 'empty_glue'))
+        if fault == 'bad_file':
+            target.bad_file = True
+            name = target.name
+        elif fault == 'odd':
+            owners = [mat]
+            def owners_of(n):
+                for child in n.subtex:
+                    if child is target or (isinstance(child, _MapNode) and target in getattr(child, 'subtex', [])):
+                        owners.append(n)
+                    if isinstance(child, _MapNode):
+                        owners_of(child)
+            owners_of(mat)
+            host = rnd.choice([o for o in owners if isinstance(o, _MapNode)])
+            host.subtex = list(host.subtex) + ['odd']
+            name = host.name
+        elif fault == 'bad_tex':
+            mat.bad_tex = True
+            name = mat.name
+        elif fault == 'bad_used':
+            mat.bad_used = True
+            name = mat.name
+        elif fault == 'odd_used':
+            mat.odd_used = True
+            name = mat.name
+        else:
+            class Empty:
+                def _materials(self, material):
+                    return []
+
+                def _resolve(self, path):
+                    return path
+            glue_i = Empty()
+            with pytest.raises(ValueError, match=mat.name):
+                sm._materials(node, glue_i)
+            continue
+        with pytest.raises(ValueError, match=name):
+            sm._materials(node, glue)
+
+
+def test_census_map_fields_fail_closed_and_report_once_probe():
+    """Probe: odd map entries and a material without map fields raise, naming it; duplicates once."""
+    rnd = random.Random(8862)
+    for case in range(40):
+        paths = ['missing_{}_{}.png'.format(case, i) for i in range(rnd.randint(1, 5))]
+        dup = paths + list(reversed(paths))
+        present = ['ok_{}_{}.png'.format(case, i) for i in range(rnd.randint(0, 3))]
+        row_m = dict(STD, name='M_case_{}'.format(case), maps=present + paths, missing=dup)
+        found, _, summary = core.census([obj(1, materials=[row_m, dict(row_m)]),
+                                         obj(2, materials=[dict(row_m)])])
+        assert summary['missing_maps'] == sorted(paths)
+        assert len(found[1]) == len(paths) and len(found[2]) == len(paths)
+        odd = rnd.choice([None, '', '  ', 3, b'x.png'])
+        broken = dict(STD, name='M_odd_{}'.format(case), maps=[odd], missing=[])
+        with pytest.raises(ValueError, match='M_odd_{}'.format(case)):
+            core.census([obj(1, materials=[broken])])
+        unnamed = {'cls': 'Standardmaterial', 'opacity': 1.0}
+        with pytest.raises(ValueError, match='unmapped material'):
+            core.census([obj(1, materials=[unnamed])])
+
+
 def test_mcp_registers_the_12_checks_read_only():
     from agr_mcp import tools
     from agr_mcp.max_side import max_bridge

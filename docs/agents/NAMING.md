@@ -39,10 +39,10 @@ Subjects are glossary terms (`GLOSSARY.md`): `body`, `shell`, `roof`, `openings`
 the glossary first. The DCC suffix (`_blender`, `_max`, `_revit`, `_autocad`) appears only
 when the file runs inside that application.
 
-Shared tools are grouped by pipeline stage: `tools/source/`, `tools/geometry/`, `tools/uv/`,
-`tools/materials/`, `tools/export/`, `tools/qa/`, `tools/render/` (plus the existing
-`tools/mcp/`, `tools/herdr/`, `tools/git-hooks/`).
-Examples: `seal.py` → `tools/geometry/seal_joints.py`; `qa_master_psu275.py` →
+Shared tools are grouped by pipeline stage. Existing stage folders: `tools/source/`, `tools/materials/`,
+`tools/export/`, `tools/qa/` (plus `tools/mcp/`, `tools/herdr/`, `tools/git-hooks/`). Target folders, created
+with their first shared tool (backlog H7): `tools/geometry/`, `tools/uv/`, `tools/render/`.
+Target examples (not created yet): `seal.py` → `tools/geometry/seal_joints.py`; `qa_master_psu275.py` →
 `tools/qa/check_mesh.py`; `build_facades_textures_v004.py` → `tools/materials/texture_facades.py`.
 
 ## Job folders

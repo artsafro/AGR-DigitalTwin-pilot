@@ -86,12 +86,13 @@ def _shell(developer: bytes, *, duplicate_designer: bool = False) -> bytes:
         "h_abs", "s_obsh", "s_naz", "s_podz", "spp_gns", "act_AGR", "imageBase64", "other",
     )
     values = {key: "value" for key in before + after}
-    values["FNO_code"] = "123 456"
+    values["FNO_code"] = "010 004"
+    values["FNO_name"] = "Общежитие"
     values["other"] = ""
     values["imageBase64"] = _IMAGE_B64
 
     def field(key: str) -> bytes:
-        return b'"' + key.encode("ascii") + b'":"' + values[key].encode("ascii") + b'"'
+        return b'"' + key.encode("ascii") + b'":"' + values[key].encode("utf-8") + b'"'
 
     props = b",".join(field(key) for key in before)
     props += b',"developer":' + developer

@@ -3,10 +3,12 @@ direct call of the wrapped function on the same synthetic input; locks, audit, u
 """
 import base64
 import json
+import math
 import re
 import sys
 import threading
 import types
+import zipfile
 from pathlib import Path
 
 import anyio
@@ -160,9 +162,11 @@ def offline_cases(tmp_path):
 def test_tools_list_is_the_phase0_eight_without_code_argument():
     listed, _ = run_calls([], list_only=True)
     assert sorted(listed) == sorted(tools.PHASE0)
+    editing = {n for n, _row, _what, kind in tools.EDITS_080 if kind != "read"}  # 0.8 preview -> apply (#908)
     for spec in tools.catalog().values():
         assert "code" not in json.dumps(spec.input), spec.name
-        assert spec.read_only and not spec.destructive
+        assert spec.read_only == (spec.name not in editing), spec.name
+        assert spec.destructive == (spec.name == "agr_ucx_rename"), spec.name  # renames in place (one undo)
 
 
 def test_exit_offline_tools_equal_direct_call(tmp_path):
@@ -347,7 +351,8 @@ def test_held_lock_format_is_seen_by_max_exec_and_dcc_batch(tmp_path):
 
 
 def test_lock_lifetime_covers_the_wrapped_call_timeout(tmp_path, monkeypatch):
-    """#871: a 1800 s readback keeps its lock past the old fixed 900 + 120 s window while its pid lives."""
+    """#871: a 1800 s readback keeps its lock past the old fixed 900 + 120 s window.
+    #895: once `until` itself has passed, a live agr-mcp pid does not keep the lock."""
     clock = [1_000_000.0]
     monkeypatch.setattr(locks, "time", types.SimpleNamespace(time=lambda: clock[0]))
     fbx = tmp_path / "a.fbx"
@@ -364,20 +369,51 @@ def test_lock_lifetime_covers_the_wrapped_call_timeout(tmp_path, monkeypatch):
 
     def fake_readback(args):
         assert args["timeout"] == 1800
-        probe(1021)
-        probe(1800 + 121)  # `until` passed, holder pid alive, owner agr-mcp: still held
+        probe(1021)  # past the old fixed 900 + 120 window, still inside `until`
+        probe(1800 + 121)  # past `until`: a live agr-mcp pid does not keep the lock
         return {"source": "synthetic"}
 
     monkeypatch.setattr(tools, "h_fbx_readback", fake_readback)
     _, (res,) = run_calls([("agr_fbx_readback", {"fbx_path": str(fbx), "timeout": 1800})])
     ok(res)
-    assert seen == {1021: "busy", 1921: "busy"}
+    assert seen == {1021: "busy", 1921: "acquired"}
+
+
+def test_leaked_live_agr_mcp_lock_is_acquired_an_hour_past_until(tmp_path, monkeypatch):
+    """#895 witness: os.remove fails, the server pid stays alive, hold() an hour past `until` acquires."""
+    import os
+    clock = [1_000_000.0]
+    monkeypatch.setattr(locks, "time", types.SimpleNamespace(time=lambda: clock[0]))
+    real_remove = os.remove
+
+    def sharing_violation(path):
+        raise PermissionError(32, "The process cannot access the file because it is being used by another process")
+
+    monkeypatch.setattr(os, "remove", sharing_violation)
+    with locks.hold("blender-batch", "a", 900) as path:
+        assert path is not None
+        body = path.read_text(encoding="utf-8")
+    assert path.exists(), "a failed release leaves the lock behind"
+    info = json.loads(body)
+    until = info["until"]
+    assert info["owner"] == "agr-mcp" and info["pid"] == os.getpid() and locks._alive(info["pid"])
+    assert until == 1_000_000.0 + 900 + 120
+    monkeypatch.setattr(os, "remove", real_remove)
+    clock[0] = until - 1  # live agr-mcp pid, still inside the lease: not stolen
+    with pytest.raises(locks.LockBusy):
+        with locks.hold("blender-batch", "early", 60):
+            pass
+    assert path.read_text(encoding="utf-8") == body
+    clock[0] = until + 3600  # one hour past `until`, same live process
+    with locks.hold("blender-batch", "b", 60) as taken:
+        assert json.loads(taken.read_text(encoding="utf-8"))["card"] == "b"
+    assert not path.exists()
 
 
 @pytest.mark.parametrize("name,args,want", [
     ("agr_fbx_readback", {"fbx_path": "a.fbx", "timeout": 7200}, 7200.0),
     ("agr_fbx_readback", {"fbx_path": "a.fbx"}, 600.0),
-    ("agr_package_validate", {"target": "a.zip", "scene": True}, 600.0),
+    ("agr_package_validate", {"target": "a.zip", "scene": True}, 21 * 600.0),
     ("agr_xview_check", {"scene": "live"}, tools.MAX_TIMEOUT),
     ("agr_exec_unsafe", {"code": "1", "timeout": 3000}, 3000.0),
 ])
@@ -448,6 +484,329 @@ def test_two_concurrent_reclaimers_of_one_stale_lock_exactly_one_wins(tmp_path, 
         assert sorted(results) == ["acquired", "busy"]
         assert not lock.exists()
         assert sorted(p.name for p in lock.parent.iterdir()) == [], "reclaim left a temp file"
+
+
+def test_restore_rename_race_cannot_give_two_holders(tmp_path, monkeypatch):
+    """#896: B renames after A has created a fresh lock; C creates before B restores. One holder.
+
+    Barriers force that interleaving when reclaim still renames the lock aside. A reclaim that
+    never moves a live lock aside leaves no such window: B finishes busy, and C then sees A's lock.
+    """
+    import os
+    lock = tmp_path / "locks" / "agr-blender-batch.lock"
+    lock.parent.mkdir()
+    lock.write_text(json.dumps({"card": "dead", "pid": 999999999}), encoding="utf-8")
+    real_stale = locks._stale
+    real_rename = os.rename
+    b_saw_stale = threading.Event()
+    a_holding = threading.Event()
+    window_open = threading.Event()
+    c_holding = threading.Event()
+    b_finished = threading.Event()
+    race_done = threading.Event()
+    state = {"current": 0, "max": 0}
+    guard = threading.Lock()
+    errors = []
+
+    def enter():
+        with guard:
+            state["current"] += 1
+            state["max"] = max(state["max"], state["current"])
+
+    def leave():
+        with guard:
+            state["current"] -= 1
+
+    def stale(path):
+        verdict = real_stale(path)
+        if threading.current_thread().name == "B" and not getattr(stale, "b_waited", False):
+            stale.b_waited = True
+            b_saw_stale.set()
+            if not a_holding.wait(5):
+                errors.append("A did not acquire while B was past the stale check")
+        return verdict
+
+    def rename(src, dst):
+        src_p, dst_p = Path(src), Path(dst)
+        aside = src_p == lock and ".reclaim-" in dst_p.name
+        if threading.current_thread().name == "B" and aside:
+            real_rename(src, dst)
+            window_open.set()
+            if not c_holding.wait(5):
+                errors.append("C did not create before B's restore")
+            return
+        return real_rename(src, dst)
+
+    def thread_b():
+        try:
+            with locks.hold("blender-batch", "B", 60):
+                enter()
+                errors.append("B acquired; the forced window expects B to restore and lose")
+                leave()
+        except locks.LockBusy:
+            pass
+        except Exception as exc:  # noqa: BLE001 — reported to the main thread
+            errors.append(repr(exc))
+        finally:
+            b_finished.set()
+
+    def thread_a():
+        if not b_saw_stale.wait(5):
+            errors.append("B did not reach the stale check")
+            return
+        try:
+            with locks.hold("blender-batch", "A", 60):
+                enter()
+                a_holding.set()
+                if not race_done.wait(5):
+                    errors.append("race did not finish while A held")
+                leave()
+        except locks.LockBusy:
+            errors.append("A was busy; A must win the stale lock before B renames")
+        except Exception as exc:  # noqa: BLE001
+            errors.append(repr(exc))
+
+    def thread_c():
+        while not window_open.is_set() and not b_finished.is_set():
+            window_open.wait(0.02)
+        opened = window_open.is_set()
+        try:
+            with locks.hold("blender-batch", "C", 60):
+                enter()
+                c_holding.set()
+                if opened and not b_finished.wait(5):
+                    errors.append("B did not finish the restore while C held")
+                leave()
+        except locks.LockBusy:
+            if opened:
+                errors.append("C found the lock busy inside the aside window")
+        except Exception as exc:  # noqa: BLE001
+            errors.append(repr(exc))
+        finally:
+            race_done.set()
+
+    monkeypatch.setattr(locks, "_stale", stale)
+    monkeypatch.setattr(os, "rename", rename)
+    threads = [
+        threading.Thread(target=thread_b, name="B", daemon=True),
+        threading.Thread(target=thread_c, name="C", daemon=True),
+        threading.Thread(target=thread_a, name="A", daemon=True),
+    ]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join(15)
+        if thread.is_alive():
+            errors.append(f"{thread.name} still running")
+    race_done.set()
+    assert errors == []
+    assert state["max"] == 1
+    aside = [p.name for p in lock.parent.iterdir() if ".reclaim-" in p.name]
+    assert aside == []
+
+
+def _lock_file(host="blender-batch"):
+    path = locks.lock_path(host)
+    assert path is not None
+    path.parent.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+def _aside_names(path):
+    return [p.name for p in path.parent.iterdir() if ".reclaim-" in p.name]
+
+
+def test_odd_lock_input_is_busy_or_error_and_never_two_holders(tmp_path):
+    """Unsupported bodies and a live reclaim mutex fail closed: error or busy, one holder at most."""
+    import os
+    import time
+    with pytest.raises(ValueError):
+        with locks.hold("not-a-host", "c", 10):
+            pass
+    path = _lock_file()
+    odd = ["", "{", "[]", "null", '{"pid": true}', '{"pid": false}', '{"pid": "1"}',
+           '{"pid": 1.5}', '{"until": "soon"}', '{"until": true}']
+    for body in odd:
+        path.write_text(body, encoding="utf-8")
+        with pytest.raises(locks.LockBusy):
+            with locks.hold("blender-batch", "c", 10):
+                pass
+        assert path.read_text(encoding="utf-8") == body
+    path.write_text("{", encoding="utf-8")
+    barrier = threading.Barrier(2)
+    outcomes = []
+
+    def both():
+        barrier.wait(5)
+        try:
+            with locks.hold("blender-batch", "c", 10):
+                outcomes.append("held")
+        except locks.LockBusy:
+            outcomes.append("busy")
+
+    threads = [threading.Thread(target=both) for _ in range(2)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join(10)
+    assert outcomes == ["busy", "busy"]
+    assert path.read_text(encoding="utf-8") == "{"
+    path.write_text(json.dumps({"pid": 999999999}), encoding="utf-8")
+    mutex = path.with_name(f".{path.name}.mutex")
+    mutex.write_text(json.dumps({"pid": os.getpid(), "until": time.time() + 30, "token": "live"}),
+                     encoding="utf-8")
+    with pytest.raises(locks.LockBusy):
+        with locks.hold("blender-batch", "c", 10):
+            pass
+    assert json.loads(path.read_text(encoding="utf-8"))["pid"] == 999999999
+    assert mutex.exists()
+    mutex.unlink()
+    mutex.mkdir()
+    with locks.hold("blender-batch", "c", 10) as held:
+        assert json.loads(held.read_text(encoding="utf-8"))["card"] == "c"
+    assert not path.exists() and not mutex.exists()
+    assert _aside_names(path) == []
+
+
+def test_probe_at_most_one_holder_seed_896(tmp_path):
+    """#896: seeded reclaim interleavings, 4 threads x 8 rounds x 6 setups. Max holders is 1."""
+    import os
+    import random
+    import time
+    rnd = random.Random(896)
+    path = _lock_file()
+    kinds = ["absent", "stale", "dead-mutex", "expired-mutex", "garbage-mutex", "dir-mutex"]
+    rounds = 8
+    n_threads = 4
+    seen = 0
+    for _round in range(rounds):
+        order = kinds[:]
+        rnd.shuffle(order)
+        for kind in order:
+            for child in path.parent.iterdir():
+                if child.is_dir():
+                    child.rmdir()
+                else:
+                    child.unlink()
+            mutex = path.with_name(f".{path.name}.mutex")
+            if kind != "absent":
+                path.write_text(json.dumps({"pid": 999999999, "card": "dead"}), encoding="utf-8")
+            if kind == "dead-mutex":
+                mutex.write_text(json.dumps({"pid": 999999999, "until": time.time() + 30, "token": "d"}),
+                                 encoding="utf-8")
+            elif kind == "expired-mutex":
+                mutex.write_text(json.dumps({"pid": os.getpid(), "until": time.time() - 1, "token": "e"}),
+                                 encoding="utf-8")
+            elif kind == "garbage-mutex":
+                mutex.write_text("{", encoding="utf-8")
+            elif kind == "dir-mutex":
+                mutex.mkdir()
+            started = threading.Barrier(n_threads)
+            tried = threading.Barrier(n_threads)
+            guard = threading.Lock()
+            state = {"current": 0, "max": 0}
+            results = []
+            errors = []
+
+            def worker():
+                try:
+                    started.wait(10)
+                    try:
+                        with locks.hold("blender-batch", "c", 30):
+                            with guard:
+                                state["current"] += 1
+                                state["max"] = max(state["max"], state["current"])
+                            tried.wait(10)
+                            with guard:
+                                state["current"] -= 1
+                            results.append("held")
+                    except locks.LockBusy:
+                        tried.wait(10)
+                        results.append("busy")
+                except Exception as exc:  # noqa: BLE001
+                    errors.append(repr(exc))
+
+            threads = [threading.Thread(target=worker, daemon=True) for _ in range(n_threads)]
+            for thread in threads:
+                thread.start()
+            for thread in threads:
+                thread.join(15)
+                if thread.is_alive():
+                    errors.append("thread still running")
+            assert errors == []
+            assert state["max"] == 1, kind
+            assert results.count("held") == 1, (kind, results)
+            assert _aside_names(path) == []
+            seen += 1
+    assert seen == rounds * len(kinds) == 48
+
+
+def test_probe_reclaim_leaves_no_aside_files_seed_896(tmp_path):
+    """#896: no `*.reclaim-*` name is created across seeded reclaim interleavings."""
+    import os
+    import random
+    import time
+    rnd = random.Random(896)
+    path = _lock_file()
+    kinds = ["absent", "stale", "dead-mutex", "expired-mutex", "garbage-mutex", "live"]
+    rounds = 8
+    n_threads = 4
+    seen = 0
+    spotted = []
+    for _round in range(rounds):
+        order = kinds[:]
+        rnd.shuffle(order)
+        for kind in order:
+            for child in path.parent.iterdir():
+                if child.is_dir():
+                    child.rmdir()
+                else:
+                    child.unlink()
+            mutex = path.with_name(f".{path.name}.mutex")
+            if kind == "live":
+                path.write_text(json.dumps({"pid": os.getpid(), "until": time.time() + 60, "token": "L",
+                                            "card": "live"}), encoding="utf-8")
+            elif kind != "absent":
+                path.write_text(json.dumps({"pid": 999999999, "card": "dead"}), encoding="utf-8")
+            if kind == "dead-mutex":
+                mutex.write_text(json.dumps({"pid": 999999999, "until": time.time() + 30, "token": "d"}),
+                                 encoding="utf-8")
+            elif kind == "expired-mutex":
+                mutex.write_text(json.dumps({"pid": os.getpid(), "until": time.time() - 5, "token": "e"}),
+                                 encoding="utf-8")
+            elif kind == "garbage-mutex":
+                mutex.write_text("not-json", encoding="utf-8")
+            started = threading.Barrier(n_threads)
+            tried = threading.Barrier(n_threads)
+            results = []
+
+            def worker():
+                started.wait(10)
+                spotted.extend(_aside_names(path))
+                try:
+                    with locks.hold("blender-batch", "c", 30):
+                        spotted.extend(_aside_names(path))
+                        tried.wait(10)
+                        results.append("held")
+                    spotted.extend(_aside_names(path))
+                except locks.LockBusy:
+                    spotted.extend(_aside_names(path))
+                    tried.wait(10)
+                    results.append("busy")
+
+            threads = [threading.Thread(target=worker, daemon=True) for _ in range(n_threads)]
+            for thread in threads:
+                thread.start()
+            for thread in threads:
+                thread.join(15)
+            spotted.extend(_aside_names(path))
+            if kind == "live":
+                assert results.count("held") == 0
+            else:
+                assert results.count("held") == 1, (kind, results)
+            seen += 1
+    assert spotted == []
+    assert seen == rounds * len(kinds) == 48
 
 
 # ---- audit --------------------------------------------------------------------------------------------------
@@ -523,7 +882,9 @@ def test_fresh_stdio_process_lists_tools(unsafe, tmp_path):
     names = [x["name"] for x in t["tools"]]
     assert sorted(names) == sorted(tools.PHASE0 + (("agr_exec_unsafe",) if unsafe else ()))
     assert t["serverInfo"]["name"] == "agr-mcp"
-    assert all(x["readOnlyHint"] for x in t["tools"] if x["name"] != "agr_exec_unsafe")
+    editing = {n for n, _row, _what, kind in tools.EDITS_080 if kind != "read"}
+    assert all(x["readOnlyHint"] for x in t["tools"] if x["name"] != "agr_exec_unsafe" and x["name"] not in editing)
+    assert not any(x["readOnlyHint"] for x in t["tools"] if x["name"] in editing)
 
 
 # ---- generated probes (invariant -> probe -> N/N) -------------------------------------------------------
@@ -545,6 +906,285 @@ def test_probe_lock_refuses_every_second_holder_seed_841():
         assert not held.exists()
         n += 1
     assert n == 60
+
+
+def test_failed_release_is_retried_then_reported(tmp_path, monkeypatch, capsys):
+    """#895: a sharing violation on os.remove is retried a few times, then written to stderr."""
+    import os
+    pauses = []
+    calls = []
+    monkeypatch.setattr(locks, "_sleep", lambda delay: pauses.append(delay), raising=False)
+
+    def sharing_violation(path):
+        calls.append(path)
+        raise PermissionError(32, "sharing violation")
+
+    monkeypatch.setattr(os, "remove", sharing_violation)
+    with locks.hold("blender-batch", "a", 900) as path:
+        pass
+    assert path.exists()
+    assert len(calls) >= 3, f"release tried os.remove {len(calls)} time(s) and swallowed the error"
+    assert pauses == [locks._RELEASE_PAUSE_S] * (len(calls) - 1)
+    assert 0 < locks._RELEASE_PAUSE_S <= 0.25
+    assert len(calls) == locks._RELEASE_ATTEMPTS
+    err = capsys.readouterr().err
+    assert "release failed" in err.lower()
+    assert path.name in err
+
+
+def test_probe_live_agr_mcp_holder_stale_iff_time_reaches_until(tmp_path, monkeypatch):
+    """#895: a live agr-mcp holder is stale iff time >= until, including exactly at until."""
+    import os
+    t0 = 1_000_000.0
+    clock = [t0]
+    monkeypatch.setattr(locks, "time", types.SimpleNamespace(time=lambda: clock[0]))
+    assert locks._alive(os.getpid())
+    timeouts = [0, 0.5, 1, 30, 60, 90, 120, 121, 900, 1800, 3600, 7200]
+    deltas = [-3600.0, -120.0, -1.0, -1e-6, 0.0, 1e-6, 1.0, 120.0, 3600.0]
+    lock = tmp_path / "locks" / "agr-blender-batch.lock"
+    lock.parent.mkdir(parents=True, exist_ok=True)
+    n = 0
+    for timeout in timeouts:
+        for delta in deltas:
+            until = t0 + timeout + 120
+            body = json.dumps({"card": "a", "pid": os.getpid(), "t": t0, "timeout": timeout,
+                               "until": until, "owner": "agr-mcp", "token": "holder-token"})
+            lock.write_text(body, encoding="utf-8")
+            clock[0] = until + delta
+            expect_stale = clock[0] >= until
+            assert locks._stale(lock) is expect_stale
+            if expect_stale:
+                with locks.hold("blender-batch", "b", 60) as got:
+                    assert json.loads(got.read_text(encoding="utf-8"))["card"] == "b"
+                assert not lock.exists()
+            else:
+                with pytest.raises(locks.LockBusy):
+                    with locks.hold("blender-batch", "b", 60):
+                        pass
+                assert lock.read_text(encoding="utf-8") == body
+            n += 1
+    assert n == len(timeouts) * len(deltas) == 108
+
+
+def test_probe_dead_holder_is_stale_on_either_side_of_until(tmp_path, monkeypatch):
+    """A dead holder pid is stale before and after `until`."""
+    t0 = 1_000_000.0
+    clock = [t0]
+    monkeypatch.setattr(locks, "time", types.SimpleNamespace(time=lambda: clock[0]))
+    monkeypatch.setattr(locks, "_alive", lambda pid: False)
+    timeouts = [0, 1, 60, 900, 1800, 7200]
+    deltas = [-3600.0, -1.0, 0.0, 1.0, 3600.0]
+    lock = tmp_path / "locks" / "agr-blender-batch.lock"
+    lock.parent.mkdir(parents=True, exist_ok=True)
+    n = 0
+    for timeout in timeouts:
+        for delta in deltas:
+            until = t0 + timeout + 120
+            lock.write_text(json.dumps({"card": "dead", "pid": 999_999_999, "t": t0, "timeout": timeout,
+                                        "until": until, "owner": "agr-mcp", "token": "dead-token"}),
+                            encoding="utf-8")
+            clock[0] = until + delta
+            assert locks._stale(lock) is True
+            with locks.hold("blender-batch", "b", 60) as got:
+                assert json.loads(got.read_text(encoding="utf-8"))["card"] == "b"
+            assert not lock.exists()
+            n += 1
+    assert n == len(timeouts) * len(deltas) == 30
+
+
+def test_probe_release_failures_are_retried_then_reported(tmp_path, monkeypatch, capsys):
+    """Every OSError on release is retried, then reported only once the attempts are exhausted."""
+    import os
+    attempts = getattr(locks, "_RELEASE_ATTEMPTS", 1)
+    assert isinstance(attempts, int) and attempts >= 3
+    pause = locks._RELEASE_PAUSE_S
+    assert 0 < pause <= 0.25
+    real_remove = os.remove
+    errors = [PermissionError(32, "sharing violation"), OSError(13, "permission denied"),
+              BlockingIOError(11, "resource busy"), TimeoutError("file locked")]
+    fail_counts = list(range(0, attempts + 3))
+    n = 0
+    for error in errors:
+        for fail_count in fail_counts:
+            calls = []
+            pauses = []
+            left = {"n": fail_count}
+
+            def boom(path, error=error, calls=calls, left=left):
+                calls.append(path)
+                if left["n"] > 0:
+                    left["n"] -= 1
+                    raise error
+                return real_remove(path)
+
+            monkeypatch.setattr(os, "remove", boom)
+            monkeypatch.setattr(locks, "_sleep", lambda delay, pauses=pauses: pauses.append(delay), raising=False)
+            with locks.hold("max-live", "a", 30) as path:
+                pass
+            exhausted = fail_count >= attempts
+            expect_calls = attempts if exhausted else fail_count + 1
+            assert len(calls) == expect_calls
+            assert pauses == [pause] * (expect_calls - 1)
+            err = capsys.readouterr().err
+            if exhausted:
+                assert path.exists()
+                assert "release failed" in err.lower() and path.name in err
+                real_remove(path)
+            else:
+                assert not path.exists()
+                assert "release failed" not in err.lower()
+            n += 1
+    assert n == len(errors) * len(fail_counts) == 28
+
+
+def _zip_with_fbx(path: Path, count: int) -> None:
+    with zipfile.ZipFile(path, "w") as archive:
+        for i in range(count):
+            archive.writestr(f"part_{i:02d}.fbx", b"synthetic")
+
+
+def _lease(path, timeout: float) -> float:
+    info = json.loads(path.read_text(encoding="utf-8"))
+    return info["until"] - info["t"]
+
+
+def test_package_validate_scene_lock_covers_two_fbx_readbacks(tmp_path, monkeypatch):
+    """#951: a 2-FBX scene=true call keeps blender-batch busy at 721 s and at 1100 s.
+
+    The second holder acquires only once the lease reaches 2*READBACK_TIMEOUT+120
+    (the same `until` rule as every other agr-mcp lock: stale when time >= until).
+    """
+    pkg = tmp_path / "two.zip"
+    _zip_with_fbx(pkg, 2)
+    spec = tools.catalog()["agr_package_validate"]
+    args = {"target": str(pkg), "scene": True}
+    timeout = spec.timeout(args)
+    assert timeout == 2 * tools.READBACK_TIMEOUT
+    assert spec.host(args) == "blender-batch"
+    t0 = 1_000_000.0
+    clock = [t0]
+    monkeypatch.setattr(locks, "time", types.SimpleNamespace(time=lambda: clock[0]))
+    with locks.hold("blender-batch", "a", timeout) as path:
+        assert _lease(path, timeout) == 2 * tools.READBACK_TIMEOUT + 120
+        for elapsed in (721, 1100, tools.READBACK_TIMEOUT + 120):
+            clock[0] = t0 + elapsed
+            with pytest.raises(locks.LockBusy):
+                with locks.hold("blender-batch", "b", tools.READBACK_TIMEOUT):
+                    pass
+            assert json.loads(path.read_text(encoding="utf-8"))["card"] == "a"
+        clock[0] = t0 + 2 * tools.READBACK_TIMEOUT + 120
+        with locks.hold("blender-batch", "b", tools.READBACK_TIMEOUT) as taken:
+            assert json.loads(taken.read_text(encoding="utf-8"))["card"] == "b"
+
+
+def test_probe_package_validate_lease_covers_every_fbx_count(tmp_path, monkeypatch):
+    """#951: for N = 1..21 the scene lock lease is at least N*READBACK_TIMEOUT+120."""
+    spec = tools.catalog()["agr_package_validate"]
+    t0 = 1_000_000.0
+    clock = [t0]
+    monkeypatch.setattr(locks, "time", types.SimpleNamespace(time=lambda: clock[0]))
+    seen = 0
+    for n in range(1, 22):
+        pkg = tmp_path / f"n{n}.zip"
+        _zip_with_fbx(pkg, n)
+        timeout = spec.timeout({"target": str(pkg), "scene": True})
+        assert timeout >= n * tools.READBACK_TIMEOUT
+        with locks.hold("blender-batch", "a", timeout) as path:
+            assert _lease(path, timeout) >= n * tools.READBACK_TIMEOUT + 120
+            clock[0] = t0 + n * tools.READBACK_TIMEOUT + 120 - 1e-6
+            with pytest.raises(locks.LockBusy):
+                with locks.hold("blender-batch", "b", 60):
+                    pass
+        clock[0] = t0
+        seen += 1
+    assert seen == 21
+
+
+def test_package_validate_scene_lock_fails_closed(tmp_path, monkeypatch):
+    """Missing, empty, partial, unsupported and non-finite inputs never take a one-readback lease.
+
+    A count that cannot be read uses the NPM upper bound (21). A readable package with
+    no FBX is still at least one readback. Exactly at the one-readback threshold the
+    second holder stays busy.
+    """
+    spec = tools.catalog()["agr_package_validate"]
+    upper = tools.PACKAGE_SCENE_FBX_UPPER
+    from twinqa.profiles import load_profiles
+    assert upper == load_profiles().profile("npm")["archive"]["fbx_total"]["max"] == 21
+    assert upper >= 1
+    undetermined = [
+        {"target": str(tmp_path / "missing.zip"), "scene": True},
+        {"target": "", "scene": True},
+        {"target": str(tmp_path), "scene": True},  # directory, not a file
+    ]
+    empty_zip = tmp_path / "empty.zip"
+    _zip_with_fbx(empty_zip, 0)
+    partial = tmp_path / "partial.zip"
+    partial.write_bytes(b"PK\x03\x04truncated")
+    unsupported = []
+    for suffix in (".png", ".geojson", ".txt", ".fbx.bak"):
+        path = tmp_path / f"bad{suffix}"
+        path.write_bytes(b"not-a-package")
+        unsupported.append({"target": str(path), "scene": True})
+    single = tmp_path / "one.FBX"
+    single.write_bytes(b"Kaydara FBX Binary")
+    offline = tmp_path / "offline.zip"
+    _zip_with_fbx(offline, 2)
+
+    t0 = 1_000_000.0
+    clock = [t0]
+    monkeypatch.setattr(locks, "time", types.SimpleNamespace(time=lambda: clock[0]))
+
+    def assert_busy_past_one_readback(timeout: float) -> None:
+        assert timeout >= tools.READBACK_TIMEOUT
+        assert math.isfinite(timeout)
+        with locks.hold("blender-batch", "a", timeout) as path:
+            assert _lease(path, timeout) >= tools.READBACK_TIMEOUT + 120
+            clock[0] = t0 + tools.READBACK_TIMEOUT + 120  # exactly the old one-readback lease
+            if timeout == tools.READBACK_TIMEOUT:
+                with locks.hold("blender-batch", "b", 60) as taken:
+                    assert json.loads(taken.read_text(encoding="utf-8"))["card"] == "b"
+            else:
+                with pytest.raises(locks.LockBusy):
+                    with locks.hold("blender-batch", "b", 60):
+                        pass
+                assert json.loads(path.read_text(encoding="utf-8"))["card"] == "a"
+        clock[0] = t0
+
+    for args in undetermined + unsupported:
+        timeout = spec.timeout(args)
+        assert timeout == upper * tools.READBACK_TIMEOUT
+        assert_busy_past_one_readback(timeout)
+    # readable, zero FBX: never fewer than one readback, not the 21-wide bound
+    zero = spec.timeout({"target": str(empty_zip), "scene": True})
+    assert zero == tools.READBACK_TIMEOUT
+    assert_busy_past_one_readback(zero)
+    # one FBX file, any case of the suffix
+    one = spec.timeout({"target": str(single), "scene": True})
+    assert one == tools.READBACK_TIMEOUT
+    assert_busy_past_one_readback(one)
+    # more than the profile max is still the real count
+    big = tmp_path / "big.zip"
+    _zip_with_fbx(big, upper + 1)
+    over = spec.timeout({"target": str(big), "scene": True})
+    assert over == (upper + 1) * tools.READBACK_TIMEOUT
+    assert_busy_past_one_readback(over)
+    # partial / unreadable zip cannot be counted
+    broken = spec.timeout({"target": str(partial), "scene": True})
+    assert broken == upper * tools.READBACK_TIMEOUT
+    assert_busy_past_one_readback(broken)
+    # scene false keeps the previous single timeout and does not lock blender
+    assert spec.timeout({"target": str(offline), "scene": False}) == float(tools.READBACK_TIMEOUT)
+    assert spec.timeout({"target": str(offline)}) == float(tools.READBACK_TIMEOUT)
+    assert spec.host({"target": str(offline), "scene": False}) == "offline"
+    for bad in (
+        {"target": str(offline), "scene": True, "ground_area_m2": float("nan")},
+        {"target": str(offline), "scene": True, "ground_area_m2": float("inf")},
+        {"target": str(offline), "scene": True, "ground_area_m2": float("-inf")},
+        {"target": str(offline), "scene": True, "footprint_holes": [[float("nan"), 0.0]]},
+    ):
+        with pytest.raises(ValueError):
+            spec.timeout(bad)
 
 
 def test_probe_audit_lines_equal_calls_seed_841(tmp_path):

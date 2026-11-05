@@ -85,7 +85,7 @@ python tools/methods/agent_lookup.py run C:/x/methods/lookup/t_99d4aef2
 python tools/methods/agent_lookup.py judge C:/x/methods/lookup/t_99d4aef2
 python tools/methods/agent_lookup.py validate docs/methods/sources/agent-lookup/results.jsonl
 python tools/methods/agent_lookup.py summarize docs/methods/sources/agent-lookup/results.jsonl
-uv run pytest -q tools/methods/test_agent_lookup.py -p no:cacheprovider --basetemp=C:/x/t_99d4aef2-controls
+uv run pytest -q tests/methods/test_agent_lookup.py -p no:cacheprovider --basetemp=C:/x/t_99d4aef2-controls
 ```
 
 The first two commands were run once more after excluding the entire non-isolated attempt.

@@ -1,0 +1,2 @@
+# Byte-exact copies of third-party registries: the SHA256 in the provenance note must hold after checkout.
+fno_codes_utf8.csv -text

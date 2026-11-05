@@ -23,6 +23,14 @@ THEMES = {"Dark": "#dcdcdc", "Light": "#383838"}
 
 _S = 'fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"'
 _F = 'fill="currentColor" stroke="none"'
+# shared parts of the 0.9 bodies (mock-up sheet #853): a badge sits in the lower-right quarter
+_B_CHECK = f'<circle {_S} cx="18" cy="18" r="4.6"/><path {_S} d="M16 18l1.4 1.4 2.6-2.8"/>'
+_B_EYE = f'<circle {_S} cx="17" cy="17" r="3.4"/><path {_S} d="M19.5 19.5L22.5 22.5"/>'
+_B_FIX = f'<path {_S} d="M14 22.5l4.6-4.6"/><circle {_S} cx="20.2" cy="16.3" r="2.6"/>'
+_B_OUT = f'<path {_S} d="M14 18h8M19 15l3 3-3 3"/>'
+_BENCH = f'<path {_S} d="M3 11h18M5 11v7M19 11v7M4 7h16M3 14h18"/>'
+_TREE = f'<circle {_S} cx="12" cy="9" r="6"/><path {_S} d="M12 15v6M9 21h6"/>'
+_BULB = f'<path {_S} d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9V16h7v-2.1A6 6 0 0 0 12 3Z"/>'
 
 # name -> (Russian label, SVG body on a 24x24 grid using currentColor)
 BASE: dict[str, tuple[str, str]] = {
@@ -117,6 +125,97 @@ BASE: dict[str, tuple[str, str]] = {
     "roadmap": ("Путь: как пользоваться",
                 f'<circle {_S} cx="5" cy="5" r="2.5"/><circle {_S} cx="19" cy="12" r="2.5"/><circle {_S} cx="5" cy="19" r="2.5"/>'
                 f'<path {_S} d="M7.5 5H14a5 5 0 0 1 0 7M16.5 12H10a5 5 0 0 0 0 7H7.5"/>'),
+    # 0.8 delivery edits (#908): names = `icon` of the plan rows of version 0.8 (agr-tools-suite.json)
+    "missing": ("Пропавшие карты",
+                f'<rect {_S} x="3" y="4" width="13" height="13" rx="1"/><path {_S} d="M3 14l4-4 3 3 2-2 4 4"/>'
+                f'<circle {_S} cx="17.5" cy="17.5" r="4"/><path {_S} d="M17.5 15.5v2.3"/>'
+                f'<circle {_F} cx="17.5" cy="19.6" r="0.8"/>'),
+    "triangulate": ("Триангуляция",
+                    f'<path {_S} d="M3 6h18v12H3Z"/><path {_S} d="M3 18L10 6l5 12 6-12"/>'),
+    "pngfix": ("PNG: формат",
+               f'<path {_S} d="M5 3h9l5 5v13H5Z"/><path {_S} d="M14 3v5h5"/>'
+               f'<path {_S} d="M8 16l2.5 2.5L16 13"/>'),
+    "plug": ("Заглушки текстур",
+             f'<rect {_S} x="3" y="3" width="18" height="18" rx="1.5"/><rect {_F} x="7" y="7" width="10" height="10" '
+             f'rx="1" opacity="0.55"/><path {_S} d="M7 7l10 10"/>'),
+    "ucxtri": ("UCX: триангуляция",
+               f'<path {_S} d="M12 2.5l8.5 4.75v9.5L12 21.5l-8.5-4.75v-9.5Z" stroke-dasharray="2.4 1.8"/>'
+               f'<path {_S} d="M7 16l5-9 5 9Z"/><path {_S} d="M12 7v9"/>'),
+    "ucxname": ("UCX: имена",
+                '<g transform="scale(0.68)">'
+                f'<path {_S} d="M12 2.5l8.5 4.75v9.5L12 21.5l-8.5-4.75v-9.5Z" stroke-dasharray="2.4 1.8"/></g>'
+                f'<path {_S} d="M11 14h10l-2.5 3.5L21 21H11Z"/>'),
+    "id2udim": ("ID → UDIM",
+                f'<rect {_S} x="2.5" y="8" width="6" height="8" rx="1"/><path {_S} d="M10 12h3M11.5 10.5L13 12l-1.5 1.5"/>'
+                f'<rect {_S} x="15" y="4" width="7" height="7"/><rect {_S} x="15" y="13" width="7" height="7"/>'),
+    "namefix": ("Исправить имена",
+                f'<path {_S} d="M3 6.5V4h11l7 8-7 8H3v-2.5"/><path {_S} d="M6 12l2.5 2.5L13 9.5"/>'),
+    "package": ("Проверка пакета",
+                f'<path {_S} d="M3 7l9-4 9 4v10l-9 4-9-4Z"/><path {_S} d="M3 7l9 4 9-4M12 11v10"/>'
+                f'<path {_S} d="M7.5 5l9 4"/>'),
+    "geojsonw": ("Паспорт GeoJSON",
+                 f'<path {_S} d="M3 19l5-2 8 3 5-2V6l-5 2-8-3-5 2Z" opacity="0.6"/>'
+                 f'<path {_S} d="M8 15l7-7 2 2-7 7H8Z"/>'),
+    "groundfbx": ("FBX благоустройства",
+                  f'<path {_S} d="M2 17l5-3 5 2 5-3 5 2"/><path {_S} d="M7 14V9M5 10.5L7 7l2 3.5"/>'
+                  f'<path {_S} d="M14 21v-6M11.5 18.5L14 21l2.5-2.5"/>'),
+    "place": ("Пивот и положение",
+              f'<path {_S} d="M3 19h18"/><circle {_S} cx="12" cy="12" r="4"/><path {_S} d="M12 3v5M12 16v3"/>'
+              f'<circle {_F} cx="12" cy="12" r="1.5"/>'),
+    "zip": ("Архив пакета",
+            f'<rect {_S} x="4" y="3" width="16" height="18" rx="1.5"/>'
+            f'<path {_S} d="M11 3v2h2v2h-2v2h2v2h-2"/><rect {_S} x="10" y="13" width="4" height="4" rx="0.8"/>'),
+    # 0.9 rows (#979): names = `icon` of the plan rows of version 0.9 (agr-tools-suite.json). Bodies from the #853
+    # mock-up sheet (make_mockup.py, team-scripts agent-jobs/agr-tools-suite, SHA256 4a1be887...be54; SYNTHESIS §4
+    # «не строки плана»), the 0.6 sheet style; `mapsuse` and `procobj` are new rows (SYNTHESIS §4) drawn here.
+    "ermn": ("ERM и нормали DirectX",
+             f'<circle {_S} cx="9" cy="9" r="5"/><circle {_S} cx="15" cy="9" r="5"/><circle {_S} cx="12" cy="14.5" r="5"/>'),
+    "finish": ("Покраска по легенде",
+               f'<rect {_S} x="3" y="3" width="14" height="6" rx="1"/><path {_S} d="M17 6h3v5h-8v3"/>'
+               f'<rect {_F} x="10" y="14" width="4" height="7" rx="1"/>'),
+    "mafuv": ("MatID → UDIM (МАФ)",
+              f'<g transform="scale(0.68)">{_BENCH}</g><path {_S} d="M14 14h8v8h-8ZM18 14v8M14 18h8"/>'),
+    "slots": ("UDIM: тайлы и слоты",
+              f'<rect {_S} x="2.5" y="6" width="5" height="12" rx="1"/><rect {_S} x="9.5" y="6" width="5" height="12" rx="1"/>'
+              f'<rect {_F} x="16.5" y="6" width="5" height="12" rx="1" opacity="0.55"/>'),
+    "flora": ("Атлас Flora", _TREE),
+    "groundel": ("Атлас GroundEl", _BENCH),
+    "florafix": ("Flora: ремонт и проверка", f'<g transform="scale(0.68)">{_TREE}</g>{_B_FIX}'),
+    "mafcheck": ("Проверки МАФ", f'<g transform="scale(0.68)">{_BENCH}</g>{_B_CHECK}'),
+    "replace": ("Замена объектов",
+                f'<rect {_S} x="3" y="3" width="8" height="8" rx="1"/><circle {_S} cx="17" cy="17" r="4"/>'
+                f'<path {_S} d="M14 6h6M18 4l2 2-2 2M10 18H4M6 16l-2 2 2 2"/>'),
+    "schedule": ("Расстановка по ведомости",
+                 f'<rect {_S} x="3" y="3" width="11" height="17" rx="1"/><path {_S} d="M6 8h5M6 12h5M6 16h3"/>'
+                 f'<path {_S} d="M18.5 21s-3.5-3.4-3.5-6a3.5 3.5 0 0 1 7 0c0 2.6-3.5 6-3.5 6Z"/>'),
+    "ground": ("Посадить на рельеф",
+               f'<rect {_S} x="8" y="3" width="8" height="6" rx="1"/>'
+               f'<path {_S} d="M12 10.5v6M9.5 14L12 16.5l2.5-2.5M3 20c4-2 14-2 18 0"/>'),
+    "address": ("Адрес и улицы",
+                f'<path {_S} d="M12 21.5s-7-6.5-7-11.5a7 7 0 0 1 14 0c0 5-7 11.5-7 11.5Z"/>'
+                f'<circle {_S} cx="12" cy="10" r="2.5"/>'),
+    "compare": ("Сравнение с листом фасада",
+                f'<rect {_S} x="2" y="5" width="6" height="14" rx="1"/><rect {_S} x="9" y="5" width="6" height="14" rx="1"/>'
+                f'<rect {_S} x="16" y="5" width="6" height="14" rx="1"/><path {_S} d="M4 9h2M11 9h2M18 9h2"/>'),
+    "normals": ("Нормали и двойные грани",
+                f'<path {_S} d="M3 18h18M7 18V9M12 18V6M17 18V9M5.5 10.5L7 9l1.5 1.5M10.5 7.5L12 6l1.5 1.5'
+                f'M15.5 10.5L17 9l1.5 1.5"/>'),
+    "sintez": ("Сверка с SINTEZ",
+               f'<rect {_S} x="3" y="3" width="9" height="12" rx="1"/><rect {_S} x="12" y="9" width="9" height="12" rx="1"/>'
+               f'<path {_S} d="M14.5 14h4M14.5 17h4"/>'),
+    "batch": ("Пакетный экспорт",
+              f'<rect {_S} x="3" y="3" width="12" height="9" rx="1"/><rect {_S} x="3" y="13" width="12" height="8" rx="1"/>'
+              f'{_B_OUT}'),
+    "mapsuse": ("Карты: использованные / лишние",
+                '<g transform="scale(0.68)">'
+                f'<rect {_S} x="3" y="4" width="18" height="16" rx="1.5"/><path {_S} d="M3 16l5-5 4 4 3-3 6 6"/></g>'
+                f'<path {_S} d="M14 15h8M14 18h8M14 21h5"/>'),
+    "lightcheck": ("Проверка света", f'<g transform="scale(0.68)">{_BULB}</g>{_B_CHECK}'),
+    "procobj": ("Процедурные объекты",
+                '<g transform="scale(0.68)">'
+                + "".join(f'<circle {_F} cx="{x}" cy="{y}" r="1.6"/>' for x, y in
+                          [(5, 6), (11, 4), (18, 7), (7, 12), (14, 11), (20, 14), (4, 18), (11, 18), (17, 20)])
+                + f'</g>{_B_EYE}'),
     # status / control icons for the result table and the progress row
     "ok": ("Статус: ок",
            f'<circle {_S} cx="12" cy="12" r="9"/><path {_S} d="M7.5 12.5l3 3 6-6.5"/>'),

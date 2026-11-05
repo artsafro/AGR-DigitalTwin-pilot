@@ -14,6 +14,8 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+pytestmark = pytest.mark.job  # TEC26 AC08 job data; opt-in with -m job
+
 ROOT = Path(__file__).resolve().parents[2]
 JOB = ROOT / "jobs" / "TEC26-OKS" / "AC08" / "kernel-ops-v001"
 EVIDENCE = JOB / "evidence" / "kernel_ops.json"
@@ -102,8 +104,18 @@ def test_bounds_parity_uses_vertex_tolerance_not_rounding(delta, ok, raw):
     a = {"b": _box(36.6034249)}   # +4e-6 -> 36.6034289: rounds to 36.60343 vs 36.60342 (crosses 5th decimal)
     b = {"b": {**a["b"], "v": a["b"]["v"] + delta}}
     row = _bounds_row(a, b, raw)
+    if not raw:
+        ok = delta == 0.0   # raw bounds missing: strict equality, no widened tolerance (#915)
     assert row["equal_within_tol"] is ok
     assert row["equal"] is (delta == 0.0)   # strict equality would fail on main's rule
+
+
+@pytest.mark.parametrize("base", [36.603421, 36.60341])
+@pytest.mark.parametrize("delta", [1e-5, 1.4e-5])
+def test_bounds_parity_without_raw_bounds_is_not_widened(base, delta):
+    a = {"b": _box(base)}
+    b = {"b": {**a["b"], "v": a["b"]["v"] + delta}}
+    assert _bounds_row(a, b, raw=False)["equal_within_tol"] is False
 
 
 def test_bounds_parity_vertex_count_difference_still_fails():

@@ -1,4 +1,4 @@
-"""Harness inventory in docs/agents/CAPABILITIES.md (#129, spec docs/prd/agent-ready-harness.md).
+"""Harness inventory in docs/agents/harness-inventory.md (#129, spec archive/2026-11:docs/prd/agent-ready-harness.md).
 
 Every hook command (in .claude/settings.json and in the subagents' frontmatter), every command, subagent and git
 hook has a row: component -> failure prevented -> evidence -> last verified -> covering eval. Eval ids are tasks
@@ -11,6 +11,7 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
+INVENTORY = ROOT / "docs" / "agents" / "harness-inventory.md"
 CAPABILITIES = ROOT / "docs" / "agents" / "CAPABILITIES.md"
 WORKFLOW = ROOT / "docs" / "agents" / "WORKFLOW.md"
 HEADER = ["Component", "Kind", "Failure it prevents", "Evidence it happened", "Last verified", "Eval"]
@@ -22,10 +23,10 @@ SCRIPT = re.compile(r"""["']?\$CLAUDE_PROJECT_DIR/((?:\.claude|tools)/[\w./-]+\.
 
 
 def inventory_rows(text=None):
-    """The rows of the "Harness inventory" table as {component code span: [cells]}."""
-    text = CAPABILITIES.read_text(encoding="utf-8") if text is None else text
-    match = re.search(r"^### Harness inventory\n(.*?)(?=^##)", text, re.M | re.S)
-    assert match, "CAPABILITIES.md has no '### Harness inventory' section"
+    """The rows of the "Components" table of harness-inventory.md as {component code span: [cells]}."""
+    text = INVENTORY.read_text(encoding="utf-8") if text is None else text
+    match = re.search(r"^## Components\b[^\n]*\n(.*?)(?=^## )", text, re.M | re.S)
+    assert match, "harness-inventory.md has no '## Components' section"
     lines = [line for line in match.group(1).splitlines() if line.startswith("|")]
     assert lines, "the Harness inventory has no table"
     header = [c.strip() for c in lines[0].strip("|").split("|")]
@@ -67,7 +68,7 @@ def test_every_settings_hook_has_a_row():
 
 
 def test_a_hook_without_a_row_fails():
-    text = CAPABILITIES.read_text(encoding="utf-8").replace("`tools/hooks/skill_gate.py`", "`skill gate`")
+    text = INVENTORY.read_text(encoding="utf-8").replace("`tools/hooks/skill_gate.py`", "`skill gate`")
     assert "tools/hooks/skill_gate.py" in settings_hooks()
     assert "tools/hooks/skill_gate.py" not in inventory_rows(text)
 
@@ -134,7 +135,7 @@ def test_no_hook_denial_is_only_an_indirect_procedural_signal(component):
     """Exhaustively probe every protection previously mapped to no-hook-denial."""
     cells = inventory_rows()[component]
     assert cells[5] == "none"
-    text = CAPABILITIES.read_text(encoding="utf-8")
+    text = INVENTORY.read_text(encoding="utf-8")
     indirect = text.split("**Indirect procedural signals**", 1)[1].split("Removal candidates", 1)[0]
     assert f"`{component}`" in indirect
     assert "`no-hook-denial`" in indirect
@@ -147,8 +148,8 @@ def test_no_inventory_behavior_eval_uses_no_hook_denial():
 
 
 def test_procedural_mapping_cannot_justify_guard_removal():
-    text = CAPABILITIES.read_text(encoding="utf-8")
-    body = text.split("### Harness inventory\n", 1)[1].split("### Rule-layer size", 1)[0]
+    text = INVENTORY.read_text(encoding="utf-8")
+    body = re.split(r"^## Components\b[^\n]*\n", text, maxsplit=1, flags=re.M)[1].split("\n## Rule-layer size", 1)[0]
     for phrase in (
         "not component behavior coverage", "accepted calls", "non-blocking hook failures",
         "fail-open guard can pass", "must not be used alone", "removal decisions",
@@ -158,18 +159,31 @@ def test_procedural_mapping_cannot_justify_guard_removal():
 
 
 def test_rule_layer_size_and_threshold_recorded():
-    text = CAPABILITIES.read_text(encoding="utf-8")
-    match = re.search(r"^### Rule-layer size\n(.*?)(?=^##)", text, re.M | re.S)
-    assert match, "CAPABILITIES.md has no '### Rule-layer size' section"
+    text = INVENTORY.read_text(encoding="utf-8")
+    match = re.search(r"^## Rule-layer size\n(.*?)(?=^## )", text, re.M | re.S)
+    assert match, "harness-inventory.md has no '## Rule-layer size' section"
     body = match.group(1)
     assert re.search(r"\b\d{2,3}k tokens\b", body), "no measured size in tokens"
     assert "200k" in body and "wc -c" in body, "no threshold or no measuring command"
 
 
-def test_workflow_has_the_inventory_rule():
-    text = WORKFLOW.read_text(encoding="utf-8")
-    match = re.search(r"^## Harness inventory\b[^\n]*\n(.*?)(?=^##|\Z)", text, re.M | re.S)
-    assert match, "WORKFLOW.md has no '## Harness inventory' section"
+def test_inventory_has_the_re_examination_rule():
+    text = INVENTORY.read_text(encoding="utf-8")
+    match = re.search(r"^## Re-examination rules\b[^\n]*\n(.*?)(?=^## |\Z)", text, re.M | re.S)
+    assert match, "harness-inventory.md has no '## Re-examination rules' section"
     body = match.group(1)
     for phrase in ("model change", "component is added", "removal", "200k"):
         assert phrase in body, phrase
+
+
+def test_workflow_and_capabilities_point_at_the_single_inventory():
+    """The inventory and its rules have one owner; the two former homes keep only a pointer."""
+    workflow = WORKFLOW.read_text(encoding="utf-8")
+    match = re.search(r"^## Harness inventory\b[^\n]*\n(.*?)(?=^## |\Z)", workflow, re.M | re.S)
+    assert match, "WORKFLOW.md has no '## Harness inventory' pointer section"
+    assert "docs/agents/harness-inventory.md" in match.group(1)
+    capabilities = CAPABILITIES.read_text(encoding="utf-8")
+    assert "docs/agents/harness-inventory.md" in capabilities
+    for text in (workflow, capabilities):
+        assert "| Component | Kind |" not in text, "a second copy of the inventory table"
+        assert "### Rule-layer size" not in text
