@@ -115,6 +115,18 @@ User answers (2026-11-05):
   the photo until the act gives the target.
 - Checker: SINTEZ AGR Checker run and clean except FNO code (no data).
 
+User answers 2 (2026-11-05, after `outputs/customer-clarify-v001/`), all recommendations accepted:
+- «Накладки» = the 24 horizontal joint cover strips (booklet item 14 «нащельник RAL 7021», Revit Batten_FS-8P,
+  165 × 22 mm, +4.535…4.700 and +10.285…10.450, ~413 m) → geometry, RAL 7021. Other joints stay in the texture.
+- Stemalit on И-А: nothing to cut (our openings are real glass; TZ item 5 describes the customer blank).
+- False rooms = **interior capsules**: behind every window and glazed door a box (parallelepiped) with the opening
+  side removed, so through the glass one never sees back faces or the void. Its open-edge contour sits inside the
+  opening at the depth of the **middle of the frame** (window / door frame, or reveal), sized to the opening, so at a
+  grazing view (~180°) through the glass the open edges stay hidden. Dark interior ID. Customer depth reference
+  0.80 m (0.92 m on the slanted NW wall).
+- Check west opening №30 (door per booklet and customer, missing in ours?) and the glass vision panels of doors
+  №1, 4, 11, 21, 25; fix per booklet.
+
 ## Не трогать
 
 - Source files in `for_ai\` (work on byte-identical copies only).
