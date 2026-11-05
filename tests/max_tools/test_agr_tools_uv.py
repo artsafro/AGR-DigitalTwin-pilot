@@ -242,15 +242,14 @@ def test_ground_pack_of_two_tile_and_textured_is_a_fixed_point(case):
                      mesh['fmats'], mesh['mats'], mode='ground', size=2048, pad=8)
     twice = core.pack(mesh['verts'], once['uvs'], mesh['faces'], once['face_uvs'],
                       mesh['fmats'], mesh['mats'], mode='ground', size=2048, pad=8)
-    changed = []
+    # zip() truncates: pin the lengths so a dropped face or corner cannot pass vacuously.
+    assert len(twice['face_uvs']) == len(once['face_uvs']) == len(mesh['faces'])
     for index, (left, right) in enumerate(zip(once['face_uvs'], twice['face_uvs'])):
+        assert len(left) == len(right) == len(mesh['faces'][index]), index
         delta = max(max(abs(once['uvs'][a][0] - twice['uvs'][b][0]),
                         abs(once['uvs'][a][1] - twice['uvs'][b][1]))
                     for a, b in zip(left, right))
-        if delta > 1e-9:
-            changed.append(index)
-        assert delta <= 1e-9
-    assert changed == []
+        assert delta <= 1e-9, index
 
 
 def test_atlas_random_probe_matches_pack_or_the_same_error():
