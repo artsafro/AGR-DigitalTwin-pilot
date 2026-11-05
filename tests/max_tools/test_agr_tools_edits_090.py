@@ -503,7 +503,7 @@ def test_station_fragment_hook_adds_objects_without_touching_older_buttons(tmp_p
     monkeypatch.setattr(core, 'STATIONS_DIR', tmp_path)
     docs = core.predict_all()
     for button, doc in docs.items():
-        if button != 'place.replace':
+        if button not in core.OWNER:  # rows of the bases 0.8/0.9 follow the fragments committed by A-E3
             assert doc == before[button], button  # 0.1-0.7 predictions never see a fragment object
     doc = docs['place.replace']
     assert doc['shipped'] is True and doc['tool'] == 'place.replace' and doc['reason'] == ''
@@ -562,9 +562,13 @@ def test_unknown_fragment_file_and_branch_writer(tmp_path, monkeypatch):
         core.write_branch('Q')
 
 
-def test_no_fragment_is_committed_by_the_base():
+def test_committed_fragments_are_branch_files_only():
+    """Branches A-E3 commit stations/<branch>.json (+ <branch>_build.py); nothing else lands there (#979)."""
     core, _ = _poly()
-    assert not list(core.STATIONS_DIR.glob('*.json')) and (core.STATIONS_DIR / 'README.md').is_file()
+    assert (core.STATIONS_DIR / 'README.md').is_file()
+    assert {p.stem for p in core.STATIONS_DIR.glob('*.json')} <= set(core.BRANCHES)
+    assert {p.stem for p in core.STATIONS_DIR.glob('*.py')} <= {b + '_build' for b in core.BRANCHES}
+    core.load_fragments()  # every committed fragment validates
 
 
 # ---- roadmap.load: 8 of 8 broken plans are rejected (SYNTHESIS §4, T09 R3) ---------------------------------
