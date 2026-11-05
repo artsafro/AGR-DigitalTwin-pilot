@@ -19,11 +19,23 @@ D5 Unwrap_UVW was added to the working object (`GeoAGR.ms:35933`, D030) -> copie
 D6 UV vertices shared between faces of different IDs were dragged along -> split per ID before moving;
 D7 no report -> per-ID rows (faces, tile, scale, bbox, UV/3D ratio) and a readback: every face of a placed ID
    lies inside its tile.
+
+#979 rework (team script UDIM Tool v9.2, `UDIM_Tool_new.mzp` sha256
+ded25b7f71c9f717971d7ac70756a38f7baf198f846063045a7996ddae96e1cd, T02/udim_tool_v92 card; ideas only):
+D8 mode `keep` = the v9.2 «ID -> UDIM All, keep the layout»: every face moves by a whole-tile offset into tile
+   1000+ID, nothing is scaled; seams are cut per (UV vertex, offset), so a vertex shared by faces that move
+   differently is split (v9.2 keyed it by target tile only: one offset for a face straddling a tile line, V7);
+D9 the v9.2 clamp of the source tile to 1001..1100 moved a layout with negative UVs one tile off -> `floor`;
+D10 the tile chosen from the first face of a vertex depended on face order -> every face uses its own centroid;
+D11 a face that crosses a tile line cannot keep its layout inside one tile -> its ID is refused (`straddles`);
+D12 v9.2 edited the base channel under Unwrap_UVW / UVW_Xform (hidden or shifted result) -> the glue reads the
+    evaluated stack and collapses the stack on the copy only;
+D13 ID > 100 left shared vertices moved (v9.2 V8) -> faces of a refused ID keep their own UV vertices.
 """
 import math
 
 ID_MIN, ID_MAX = 1, 100
-MODES = ('fit', 'texel')
+MODES = ('fit', 'texel', 'keep')
 DEFAULT_SCALE = 0.95
 EPS = 1e-9
 INSIDE_TOL = 1e-6
@@ -63,6 +75,30 @@ def face_tile(uvs, idx, tol=INSIDE_TOL):
         if not (u0 - tol <= u <= u0 + 1 + tol and v0 - tol <= v <= v0 + 1 + tol):
             return None
     return tile
+
+
+def face_cell(uvs, idx, tol=INSIDE_TOL):
+    """(floor u, floor v) of the face's UV centroid when every corner lies in that unit cell (tolerance), else
+    None. No clamp and no grid limit: a face at u -0.7 is in cell -1 (D9)."""
+    pts = [uvs[i] for i in idx]
+    cu = sum(float(p[0]) for p in pts) / len(pts)
+    cv = sum(float(p[1]) for p in pts) / len(pts)
+    fu, fv = math.floor(cu), math.floor(cv)
+    for u, v in pts:
+        if not (fu - tol <= u <= fu + 1 + tol and fv - tol <= v <= fv + 1 + tol):
+            return None
+    return fu, fv
+
+
+def ids_from_tiles(uvs, face_uvs):
+    """UDIM -> ID of every face (tile - 1000 of the face's tile), None where the face is in no tile 1001..1100.
+
+    The reverse direction (udim.udims_to_ids rule: centroid tile, `floor`) for the round-trip check."""
+    out = []
+    for idx in face_uvs:
+        t = face_tile(uvs, idx)
+        out.append(None if t is None else t - 1000)
+    return out
 
 
 def _area3(a, b, c):
@@ -128,6 +164,15 @@ def plan_scales(meshes, mode='fit', scale=DEFAULT_SCALE):
                 out[key] = {'status': 'rejected', 'scale': None,
                             'reason': 'material ID {} outside 1..100 has no UDIM tile; UVs kept'.format(mid)}
                 continue
+            if mode == 'keep':
+                bad = [f + 1 for f in g['faces'] if face_cell(mesh['uvs'], mesh['face_uvs'][f]) is None]
+                if bad:
+                    out[key] = {'status': 'straddles', 'scale': None, 'faces': bad[:1000],
+                                'reason': 'ID {}: {} face(s) cross a tile line, the layout cannot be kept inside '
+                                          'one tile; UVs kept'.format(mid, len(bad))}
+                else:
+                    out[key] = {'status': 'placed', 'scale': 1.0, 'keep': True}
+                continue
             w, h = g['bbox'][2] - g['bbox'][0], g['bbox'][3] - g['bbox'][1]
             ext = max(w, h)
             if not ext > EPS:
@@ -150,27 +195,41 @@ def plan_scales(meshes, mode='fit', scale=DEFAULT_SCALE):
 def layout(mesh, scales, mesh_index=0):
     """New (uvs, face_uvs) with every placed ID moved into its tile and every other face unchanged.
 
-    UV vertices are split per ID (D6): a UV vertex used by faces of two IDs becomes two vertices."""
+    UV vertices are split per ID (D6): a UV vertex used by faces of two IDs becomes two vertices. In `keep`
+    mode (scales with scale 1.0 and no bbox fit) every face moves by its own whole-tile offset and the split key
+    includes the offset (D8/D10)."""
     groups = measure(mesh)
     remap, uvs = {}, []
     face_uvs = []
-    xform = {}
+    xform, keep = {}, {}
     for mid, g in groups.items():
         s = scales[(mesh_index, mid)]
         if s['status'] != 'placed':
             continue
         u0, v0 = tile_origin(tile_of_id(mid))
+        if s.get('keep'):
+            keep[mid] = (u0, v0)
+            continue
         b = g['bbox']
         cu, cv = (b[0] + b[2]) / 2.0, (b[1] + b[3]) / 2.0
         xform[mid] = (s['scale'], cu, cv, u0 + 0.5, v0 + 0.5)
     for f, idx in enumerate(mesh['face_uvs']):
         mid = int(mesh['ids'][f])
+        shift = None
+        if mid in keep:
+            fu, fv = face_cell(mesh['uvs'], idx)
+            shift = (keep[mid][0] - fu, keep[mid][1] - fv)
         row = []
         for i in idx:
-            key = (mid, i) if mid in xform else (None, i)
+            if shift is not None:
+                key = (mid, i) + shift
+            else:
+                key = (mid, i) if mid in xform else (None, i)
             if key not in remap:
                 u, v = float(mesh['uvs'][i][0]), float(mesh['uvs'][i][1])
-                if mid in xform:
+                if shift is not None:
+                    u, v = u + shift[0], v + shift[1]
+                elif mid in xform:
                     s, cu, cv, tu, tv = xform[mid]
                     u, v = (u - cu) * s + tu, (v - cv) * s + tv
                 if not (math.isfinite(u) and math.isfinite(v)):
