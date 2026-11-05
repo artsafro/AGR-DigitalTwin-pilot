@@ -486,7 +486,7 @@ def test_missing_values_are_findings_never_invented(tmp_path):
     plan = pc.geojson_plan(['SM_X_Main'], props, None, pivot_preview(), [], str(tmp_path))
     text = ' '.join(d for _, d in plan['findings'])
     assert 'FNO_code is empty' in text and 'developer is empty' in text and 'cadNum is empty' in text
-    assert 'no preview' in text
+    assert 'no picture' in text
     doc = json.loads(plan['data'])['features'][0]['properties']
     assert doc['cadNum'] is None and doc['FNO_code'] == ''  # written as given; the checker fails it, nothing invented
     with pytest.raises(ValueError, match='unknown or reserved'):

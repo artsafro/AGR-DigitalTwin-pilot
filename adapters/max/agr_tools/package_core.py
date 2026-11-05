@@ -491,9 +491,9 @@ def preview_image(data):
     try:
         size = jpeg_size(data)
     except ValueError as exc:
-        return None, [('image', 'preview: {} (a 256x256 JPG is needed)'.format(exc))]
+        return None, [('image', 'picture: {} (a 256x256 JPG is needed)'.format(exc))]
     if size != (256, 256):
-        return None, [('image', 'preview is {}x{}; a 256x256 JPG is needed'.format(*size))]
+        return None, [('image', 'picture is {}x{}; a 256x256 JPG is needed'.format(*size))]
     return base64.b64encode(bytes(data)).decode('ascii'), []
 
 
@@ -590,7 +590,7 @@ def geojson_plan(names, properties, image_bytes, pivot_report, glass_materials, 
     stem, ground, address, glass_meshes = geojson_stem(names)
     findings = property_findings(properties, ground)
     if image_bytes is None:
-        image_b64, more = None, [('image', 'no preview: options.image must name a 256x256 JPG')]
+        image_b64, more = None, [('image', 'no picture: options.image must name a 256x256 JPG')]
     else:
         image_b64, more = preview_image(image_bytes)
     findings += more
