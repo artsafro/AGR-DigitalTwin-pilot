@@ -2,6 +2,7 @@
 
 A border is hidden by another part or by another shared-vertex component of the same part,
 at least embed_min_m inside that shell. The component that owns the edge never hides it.
+Pattern: none | new-case: same-part shell hiding for the open_borders_hidden kernel invariant.
 """
 import numpy as np
 import pytest
