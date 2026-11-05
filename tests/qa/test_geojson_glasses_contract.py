@@ -81,7 +81,7 @@ def _working_glasses():
 
 def _document(glasses):
     properties = {key: "synthetic" for key in PROPERTY_KEYS}
-    properties.update(FNO_code="123 456", other="", act_AGR="", imageBase64=_image_b64())
+    properties.update(FNO_code="010 004", FNO_name="Общежитие", other="", act_AGR="", imageBase64=_image_b64())
     return {
         "type": "FeatureCollection",
         "features": [{

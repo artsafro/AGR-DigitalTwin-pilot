@@ -48,6 +48,8 @@ for _action, _row in ACTION_ROW.items():
 # offline cores never receive them. A later version extends the row by moving TOUR_LAST.
 TOUR_LAST = '0.7'
 BASE_LAYER = '_bases'
+DEFAULT_LAYER = '0'  # the Max default layer: every checked object sits here (hyg_layer)
+EXTRA_LAYER = 'Лишний слой'  # the one qa.scene_hygiene hyg_layer fixture
 LABEL_LAYER = '_labels'
 CAMERA_LAYER = '_cameras'
 # Caption sizes in metres: readable in the top view of one base and in the default
@@ -113,7 +115,7 @@ STATION_SPECS = (
     {'id': '0.7.9', 'version': '0.7', 'button': 'qa.preflight', 'homes': ()},
     {'id': '0.7.10', 'version': '0.7', 'button': 'qa.scene_hygiene',
      'homes': ('SM_Polygon_014_Main', 'Helper_Polygon', 'SM_Polygon_015_Main',
-               'SM_Polygon_016_Main', 'SM_Polygon_017_Main', 'Camera_Polygon',
+               'SM_Polygon_016_Main', 'SM_Polygon_017_Main', 'SM_Polygon_Layer_Main', 'Camera_Polygon',
                'Light_Polygon', 'Spline_Polygon')},
     {'id': '0.7.11', 'version': '0.7', 'button': 'qa.xform',
      'homes': ('SM_Polygon_008_Main',)},
@@ -315,7 +317,7 @@ def materials_of(obj):
 def _obj(name, role, zone, pos, size=(2, 2, 2), mesh='box', fbx='0101_Polygon_01.fbx', **kw):
     item = {
         'name': name, 'role': role, 'scene': kw.pop('scene', 'polygon_all'), 'zone': zone,
-        'layer': '', 'base': '', 'station': '', 'pos': list(pos), 'size': list(size), 'mesh': mesh, 'fbx': fbx,
+        'layer': DEFAULT_LAYER, 'base': '', 'station': '', 'pos': list(pos), 'size': list(size), 'mesh': mesh, 'fbx': fbx,
         'mat': 'std', 'zero': 0.0, 'superclass': 'geometry', 'cls': 'Editable_Poly',
         'scale': [1.0, 1.0, 1.0], 'parent': None, 'children': 0, 'animated': False,
         'modifiers': [], 'opacity': 1.0,
@@ -379,6 +381,8 @@ def scene_objects(captions=None):
              mat_name='M_Polygon_001_Main_1'),
         _obj('SM_Polygon_016_Main', 'Main', 'qa', (320, 0, -2), animated=True, mat_name='M_Polygon_001_Main_1'),
         _obj('SM_Polygon_017_Main', 'Main', 'qa', (324, 0, -2), mesh='empty', mat_name='M_Polygon_001_Main_1'),
+        _obj('SM_Polygon_Layer_Main', 'Main', 'qa', (328, 0, -2), mat_name='M_Polygon_001_Main_1',
+             own_layer=EXTRA_LAYER),
         _obj('SM_Polygon_NudgeOk_Main', 'Main', 'udim', (160, 0, -2), (1, 1, 0), mesh='quad',
              mat_name='M_Polygon_NudgeOk_Main_1', uv_periods='none'),
         _obj('SM_Polygon_NudgeBad_Main', 'Main', 'udim', (164, 0, -2), (1, 1, 0), mesh='quad',
@@ -450,7 +454,9 @@ def _apply_layout(rows, captions=None):
         obj['station'] = spec['id']
         obj['base'] = spec['version']
         obj['zone'] = spec['version']
-        obj['layer'] = 'База ' + spec['version']
+        # every station object on the default layer "0", as a delivery scene (reg p.28 §3.2, qa.scene_hygiene
+        # hyg_layer, owner decision 05.11.2026 #908); only the hyg_layer fixture keeps its own layer
+        obj['layer'] = obj.get('own_layer') or DEFAULT_LAYER
     by_name = {}
     for obj in rows:
         if obj['scene'] == 'polygon_all':
@@ -782,7 +788,8 @@ def _geojson_bytes():
     buf = BytesIO()
     Image.new('RGB', (256, 256), (180, 160, 140)).save(buf, format='JPEG', quality=30)
     props = {key: 'synthetic' for key in keys}
-    props['FNO_code'] = '123456'
+    props['FNO_code'] = '010004'
+    props['FNO_name'] = 'Общежитие'  # a real pair of standards/data/fno_codes_utf8.csv
     props['imageBase64'] = base64.b64encode(buf.getvalue()).decode('ascii')
     valid = {'type': 'FeatureCollection', 'features': [{
         'type': 'ObjectFeature', 'geometry': {'type': 'Point', 'coordinates': [12345.678, 6789.012]},

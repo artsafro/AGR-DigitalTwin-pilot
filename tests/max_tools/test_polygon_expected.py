@@ -153,7 +153,8 @@ def test_catalog_station_ids_and_base_layers():
             assert ('station=' + obj['station']) in obj['AGR_TEST']
     named = {obj['name']: obj for obj in catalog['objects']}
     assert named['SM_Polygon_001_Main']['station'] == '0.1.1'
-    assert named['SM_Polygon_001_Main']['layer'] == 'База 0.1'
+    assert named['SM_Polygon_001_Main']['layer'] == '0'  # default layer, as a delivery scene (hyg_layer, 0.8.1)
+    assert named['SM_Polygon_Layer_Main']['layer'] != '0'  # the one hyg_layer fixture
     assert named['_base_0_6']['layer'] == '_bases'
     assert named['_base_0_6']['colour'] != named['_base_0_1']['colour']
 

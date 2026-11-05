@@ -39,7 +39,7 @@ def jpg256():
 
 def geojson(**over):
     props = {k: "value" for k in KEYS}
-    props.update(imageBase64=jpg256(), other="", FNO_code="123 456")
+    props.update(imageBase64=jpg256(), other="", FNO_code="010 004", FNO_name="Общежитие")
     feature = {"type": "ObjectFeature", "properties": props,
                "geometry": {"type": "Point", "coordinates": [12345.678, 6789.012]}, "Glasses": []}
     for key, value in over.items():
@@ -106,7 +106,7 @@ def test_geojson_type_errors_fail(tmp_path, over):
 @pytest.mark.parametrize("over, status", [
     ({"FNO_code": ""}, "fail"),          # mandatory for OKS (conflict #2 decided as the checker)
     ({"FNO_code": "12345"}, "fail"),     # XXX, XXX XXX or XXX XXX XXX
-    ({"FNO_code": "123456789"}, "pass"),
+    ({"FNO_code": "001002001", "FNO_name": "Суд"}, "pass"),  # 9 digits, a real FNO classifier pair
     ({"act_AGR": ""}, "pass"),           # may be empty
 ])
 def test_oks_empty_fields_follow_checker_conflict_2(tmp_path, over, status):

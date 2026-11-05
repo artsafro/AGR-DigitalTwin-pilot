@@ -111,7 +111,7 @@ def _jpeg_b64() -> str:
 
 def _feature() -> dict:
     properties = {key: "synthetic" for key in PROPERTY_KEYS}
-    properties.update(FNO_code="123 456", other="", act_AGR="", imageBase64=_jpeg_b64())
+    properties.update(FNO_code="010 004", FNO_name="Общежитие", other="", act_AGR="", imageBase64=_jpeg_b64())
     return {
         "type": "ObjectFeature",
         "geometry": {"type": "Point", "coordinates": [12345.678, 6789.012]},

@@ -60,7 +60,7 @@ def _jpeg_b64() -> str:
 
 def _props() -> dict:
     props = {key: "synthetic" for key in KEYS}
-    props.update(FNO_code="123 456", other="", act_AGR="synthetic", imageBase64=_jpeg_b64())
+    props.update(FNO_code="010 004", FNO_name="Общежитие", other="", act_AGR="synthetic", imageBase64=_jpeg_b64())
     assert props["act_AGR"] not in ("", None)
     return props
 

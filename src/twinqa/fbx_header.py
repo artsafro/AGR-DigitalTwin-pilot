@@ -148,6 +148,36 @@ def _double_prop(props: list[tuple[str, object]], name: str) -> float | None:
     return None if value is None else float(value)
 
 
+def fbx_application(data: bytes) -> str | None:
+    """`LastSaved|ApplicationName` (else `Original|...`) from FBXHeaderExtension -> SceneInfo -> Properties70,
+    e.g. '3ds Max' or 'Blender (stable FBX IO)'. None when absent or unreadable; never raises."""
+    try:
+        encoding, version = fbx_header(data)
+        if encoding != "binary" or version is None:
+            return None
+        found = {}
+        for top in _iter_nodes(data, 27, len(data), version):
+            if top["name"] != "FBXHeaderExtension":
+                continue
+            for info in _iter_nodes(data, top["props_end"], top["end_offset"], version):
+                if info["name"] != "SceneInfo":
+                    continue
+                for props70 in _iter_nodes(data, info["props_end"], info["end_offset"], version):
+                    if props70["name"] != "Properties70":
+                        continue
+                    for record in _iter_nodes(data, props70["props_end"], props70["end_offset"], version):
+                        if record["name"] != "P":
+                            continue
+                        strings = [v for c, v in _parse_props(data, record["props_at"], record["props_end"],
+                                                              record["num_props"]) if c == "S"]
+                        if strings and strings[0] in ("LastSaved|ApplicationName", "Original|ApplicationName"):
+                            found[strings[0]] = strings[-1]
+            break
+        return found.get("LastSaved|ApplicationName") or found.get("Original|ApplicationName") or None
+    except Exception:  # noqa: BLE001 - an unreadable header means "unknown application"
+        return None
+
+
 def fbx_units(data: bytes) -> dict:
     """UnitScaleFactor from GlobalSettings -> Properties70 -> P. Never raises.
 
