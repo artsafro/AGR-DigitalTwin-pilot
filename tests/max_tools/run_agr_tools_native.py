@@ -98,7 +98,7 @@ assert findings(report) == {'overlap_vertices': [1,2,3,4,5,6], 'overlap_faces': 
 assert list(rt.selection) == [bad]
 results['defective']['xview'] = report
 report = agr.matid([bad])
-assert findings(report) == {'udim_id': [1], 'empty_slot': [2]}, report  # matID 1001 wraps to sub 1 like the Max FBX export (#827)
+assert findings(report) == {'udim_id': [1], 'empty_slot': [1,2]}, report  # matID 1001 is outside #(1,2): blocking even though the FBX export wraps it (#844)
 results['defective']['matid'] = report
 before = agr.snapshot([bad])
 preview = agr.cleanup_preview([bad])
