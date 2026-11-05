@@ -62,7 +62,7 @@ class Opening(SpecPart):
 
 class Floor(SpecPart):
     level: str
-    # [x, y] or [x, y, {"r": radius}] for a rounded corner (HARNESS_PLAN §3)
+    # [x, y] or [x, y, {"r": radius}] for a rounded corner (archive/2026-11:docs/HARNESS_PLAN.md §3)
     contour: list[list[Finite | dict[str, Positive]]] | None = None
     openings: list[Opening] = []
     typical_of: str | None = None

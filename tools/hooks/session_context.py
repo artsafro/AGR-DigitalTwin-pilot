@@ -1,7 +1,8 @@
 """Session context for a context rotation (/handover -> /clear -> "продолжай" or /takeover; docs/agents/WORKFLOW.md).
 
   py -3 tools/hooks/session_context.py start       SessionStart (startup / clear / compact): the git state, open PRs
-                                                   and docs/HANDOFF.md as additionalContext
+                                                   and docs/HANDOFF.md as additionalContext (the body only when
+                                                   its `Branch:` is the current branch, else one pointer line)
   py -3 tools/hooks/session_context.py precompact  PreCompact: a manual /compact with a stale HANDOFF is blocked
                                                    (`/compact force` passes); an auto compaction is logged, never
                                                    blocked - the agent is told after it (SessionStart compact)
@@ -261,13 +262,18 @@ def context(source):
     fresh = branch_freshness()
     if fresh:
         head += ["Branch freshness:", *(("  - " + w) for w in fresh)]
-    head += [t for t in [transcript_line(text)] if t]
+    m = BRANCH_LINE.search(text or "")
+    own = bool(m) and m.group(1) == branch           # only this branch's handoff is injected in full
+    if text and not own:
+        head += [f"{HANDOFF} not injected: its `Branch:` is " + (f"`{m.group(1)}`" if m else "missing")
+                 + f", this session is on `{branch}`. Read the file only if this task continues that work."]
+    head += [t for t in [transcript_line(text) if own else None] if t]
     if source in ("startup", "clear", "compact"):
         head += ["If the user says «продолжай»: first name the branch, the HEAD commit and the next step from the "
                  "handoff (and any warning above), then do that step. /takeover is the full reconciliation."]
     body = "\n".join(_line(h) for h in head)[:LIMIT - 1000]   # metadata never crowds the handoff out (review 1)
     room = LIMIT - len(body) - 200
-    if text:
+    if text and own:
         cut = text if len(text) <= room else text[:max(room, 0)] + f"\n[... cut at {room} characters: read {HANDOFF}]"
         body += f"\n\n--- {HANDOFF} ---\n{cut}"
     return body[:LIMIT]

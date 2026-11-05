@@ -18,14 +18,17 @@ import os
 UCX_TOOL = 'ucx.rename'
 FIX_TOOL = 'qa.names_fix'
 LAYER = 'AGR_export_names'
-FIX_OPTIONS = {'model', 'donor', 'replace_material'}
+FIX_OPTIONS = {'model', 'donor', 'replace_material', 'profile', 'folder', 'address', 'oks'}
 
-# Material class -> [(property path, role)]. A Normal_Bump in a bump slot is followed to its normal map.
+# Material class -> [(property path, role)] = names_core.SLOT_TABLE (V13 slot table, #979 E1); role None: the
+# slot has no texture role and its bitmap is reported, never renamed (reflection is not `_m`). A Normal_Bump in a
+# bump slot is followed to its normal map. Kept here as constants: this file loads without the core.
 PHYSICAL = (('base_color_map', 'diffuse'), ('bump_map', 'normal'), ('roughness_map', 'roughness'),
             ('metalness_map', 'metalness'), ('cutout_map', 'opacity'), ('transparency_map', 'opacity'),
-            ('emission_map', 'emission'))
+            ('emission_map', 'emission'), ('reflectivity_map', None))
 STANDARD = (('diffuseMap', 'diffuse'), ('bumpMap', 'normal'), ('opacityMap', 'opacity'),
-            ('glossinessMap', 'roughness'), ('specularLevelMap', 'metalness'))
+            ('glossinessMap', 'roughness'), ('specularLevelMap', 'metalness'), ('reflectionMap', None),
+            ('specularMap', None))
 
 
 def _rt():
@@ -56,21 +59,17 @@ def _node(h):
     return n
 
 
-def in_session(emax, label, fn):
-    """Run fn() inside emax.session (one undo record, selection restored) and RE-RAISE its error afterwards.
+def _session_core():
+    """Shared helpers (session_core.py next to this file), loaded by path like the other sibling cores."""
+    import importlib.util
+    from pathlib import Path
+    spec = importlib.util.spec_from_file_location('agr_tools_session_core', Path(__file__).with_name('session_core.py'))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
 
-    Measured (job 20261105-011438-a488a8fd, Max 2024 batch): an exception inside `pymxs.undo(True, ...)` does not
-    leave the `with` block, so a failed apply would carry on as if it had worked. The error is kept and raised
-    after the context exits; fn() cleans up its own copies/files before it fails."""
-    box = {}
-    with emax.session(label):
-        try:
-            box['value'] = fn()
-        except BaseException as exc:  # noqa: BLE001 - re-raised below, outside the undo context
-            box['error'] = exc
-    if 'error' in box:
-        raise box['error']
-    return box['value']
+
+in_session = _session_core().in_session  # public name kept (CHANGELOG cites names_max.in_session)
 
 
 def _is_geometry(n):
@@ -104,7 +103,11 @@ def ucx_rename(ctx, mode, nodes, preview):
     pieces = sorted([r['key'] for r in plan['rename']] + [u['key'] for u in plan['unchanged']])
     extra = {'unchanged': unchanged, 'occupied': state['occupied'], 'grammar': core.UCX_MASK.pattern, 'issue': '#908'}
     if mode == 'preview':
-        objects = [edit.entry(k, names[k]) for k in pieces]
+        # 0.9 (#979 E1): a piece whose name is not its planned mask name carries `ucx_name` (what apply will do),
+        # so the preview reads as a check (pass = already canonical and in order).
+        planned = {r['key']: r['new'] for r in plan['rename']}
+        objects = [edit.entry(k, names[k], [edit.finding('ucx_name', (), '{!r} -> {!r}'.format(names[k], planned[k]))]
+                              if k in planned else []) for k in pieces]
         return edit.report(UCX_TOOL, 'preview', objects, done, skipped, ambiguous,
                            state_hash=edit.fingerprint(state), extra=extra)
     edit.require_current(preview, state)
@@ -137,7 +140,11 @@ def _fix_options(ctx, mode, preview):
     unknown = set(opts) - FIX_OPTIONS
     if unknown:
         raise ValueError('unknown qa.names_fix options: ' + ', '.join(sorted(unknown)))
-    return {'model': opts.get('model'), 'donor': opts.get('donor'), 'replace_material': opts.get('replace_material', False)}
+    out = {'model': opts.get('model'), 'donor': opts.get('donor'), 'replace_material': opts.get('replace_material', False)}
+    for k in ('profile', 'folder', 'address', 'oks'):  # 0.9 (#979): only recorded when given
+        if opts.get(k) is not None:
+            out[k] = opts[k]
+    return out
 
 
 def _texmap(mat, prop):
@@ -214,6 +221,9 @@ def _read_single(mat):
         tex, path = _texmap(mat, prop)
         if tex is None:
             continue
+        if role is None:  # V2: a bitmap in a slot without a texture role is reported, never renamed
+            maps.append({'key': path, 'role': None, 'path': None, 'name': str(tex.name)})
+            continue
         if rt.classOf(tex) != rt.Bitmaptexture:
             maps.append({'key': path, 'role': 'unsupported map class {}'.format(rt.classOf(tex)), 'path': None,
                          'name': str(tex.name)})
@@ -252,13 +262,17 @@ def _fix_state(ctx, nodes):
     export_names = []
     if layer is not None and layer != rt.undefined:
         export_names = sorted({str(o.name) for o in rt.objects if str(o.layer.name) == LAYER})
+    chosen = {_handle(n) for n in nodes}
+    scene_names = sorted({str(o.name) for o in rt.objects
+                          if _handle(o) not in chosen and str(o.layer.name) != LAYER})  # V6
     paths = set()
     for o in objects:
         for m in _materials(o['material']):
             for mp in m.get('maps') or ():
                 if mp['path']:
                     paths.add(mp['path'])
-    return {'objects': objects, 'files': {p: _file_info(p) for p in sorted(paths)}, 'export_names': export_names}
+    return {'objects': objects, 'files': {p: _file_info(p) for p in sorted(paths)}, 'export_names': export_names,
+            'scene_names': scene_names}
 
 
 def _materials(material):
@@ -348,6 +362,8 @@ def qa_names_fix(ctx, mode, nodes, preview):
             for f in plan['files']:
                 mat = copy_of[f['key']].material
                 owner = mat if not f['sub'] else _sub(mat, f['sub'][0])
+                if f['action'].startswith('keep'):  # V1: a foreign file holds the name; map stays on its source
+                    continue
                 tex = _get_texmap(owner, f['map'])
                 if f['action'].startswith('clear'):
                     _set_texmap(owner, f['map'], None)
@@ -356,6 +372,7 @@ def qa_names_fix(ctx, mode, nodes, preview):
                     dst = made.get(f['target'])
                     if dst is None:
                         dst = edit.new_path(f['target'])  # refuses if the file appeared since the preview
+                        os.makedirs(os.path.dirname(dst), exist_ok=True)  # options.folder may be new (V4)
                         with open(f['source'], 'rb') as src:
                             data = src.read()
                         if hashlib.sha256(data).hexdigest() != f['source_sha256']:
@@ -408,7 +425,7 @@ def _readback(ctx, copy, obj, files):
     if str(copy.name) != obj['new']:
         out.append(edit.finding('name_fix_failed', (), 'copy readback name {!r} != {!r}'.format(str(copy.name), obj['new'])))
     for f in files:
-        if f['action'].startswith('clear'):
+        if f['action'].startswith('clear') or f['action'].startswith('keep'):
             continue
         mat = copy.material
         owner = mat if not f['sub'] else _sub(mat, f['sub'][0])
@@ -416,8 +433,8 @@ def _readback(ctx, copy, obj, files):
         path = str(tex.filename)
         if not os.path.isfile(path):
             out.append(edit.finding('name_fix_failed', (), 'map points to a missing file: ' + path))
-        if f['target'] and os.path.dirname(path) != os.path.dirname(f['source']):
-            out.append(edit.finding('name_fix_failed', (), 'map folder changed: ' + path))
+        if f['target'] and os.path.normcase(os.path.dirname(path)) != os.path.normcase(os.path.dirname(f['target'])):
+            out.append(edit.finding('name_fix_failed', (), 'map folder is not the planned folder: ' + path))
         if str(tex.name) != f['name']:
             out.append(edit.finding('name_fix_failed', (), 'map name {!r} != {!r}'.format(str(tex.name), f['name'])))
     return out

@@ -16,7 +16,7 @@ Gates fail closed: an unknown mesh, an unmapped or ambiguous material, a missing
 a tolerance breach is a failure naming the item; never a default. Outputs must be new paths, and no output may alias
 an input. Nothing writes or deletes an input. The album (slide 49) and SINTEZ gates are measured by their own job
 scripts (compare_facades.py, run_agr_checker.py) and recorded in REPORT.md.
-`--invariants relative` (default, [D197], #968): the kernel judges every op against the source baseline (no new
+`--invariants relative` (default, [D201], #968): the kernel judges every op against the source baseline (no new
 violators) plus UV/material preservation; the source's own violations are the recorded baseline gate, not a failure.
 `--invariants absolute` reproduces the #753 run.
 Pattern: none | new-case: job-local AC08 L4 source-FBX -> kernel -> delivered-FBX comparison driver (#753).
@@ -228,7 +228,7 @@ def op_footprint(source, after):
 def kernel_output(source, rows, conflicts: list | None = None):
     """Source + every op the kernel APPLIED. Each op ran on a fresh copy of the source, so its footprint
     (changed, added and removed keys of its after_state vs the source) is applied; overlapping footprints
-    of two applied ops are an error naming both. `conflicts` a list [D197 run, #968]: the ops are alternatives on
+    of two applied ops are an error naming both. `conflicts` a list [D201 run, #968]: the ops are alternatives on
     one source, so a later applied op whose footprint overlaps an earlier composed one is NOT composed and is
     appended there ({op, conflicts_with, part}) instead of raising; the op order of the #752 table decides."""
     out = rko.copy_state(source)
@@ -400,7 +400,7 @@ def run(source_fbx: Path, delivered_fbx: Path, work: Path, evidence: Path, blend
             not_exported[label] = f"not exported: polygons merge different material ids {merged}"
             continue
         payload[label], notes[label] = rko.export_payload(st)
-    result = {"issue": 968 if relative else 753, "invariants": "relative [D197]" if relative else "absolute",
+    result = {"issue": 968 if relative else 753, "invariants": "relative [D201]" if relative else "absolute",
               "inputs": hashes, "source_parity": parity_rows, "drops": drops, "profile": rko.PROFILE,
               "parts": {k: {"faces": len(p["faces"]), "vertices": len(p["v"])} for k, p in source.items()},
               "before": before, "before_visibility": rko.visibility(source, ctx), "ops": rows,
@@ -442,7 +442,7 @@ def gates(r):
     inv = {"passed": bool(r["before_visibility"]) and all(x["passed"] for x in r["before_visibility"].values()),
            "numbers": ", ".join(f"{k}={x['count']}" for k, x in r["before_visibility"].items())}
     if r.get("invariants", "absolute") != "absolute":
-        # [D197]: the source's own violations are the baseline every op is judged against, not a failure
+        # [D201]: the source's own violations are the baseline every op is judged against, not a failure
         inv_gate = ("source_baseline_recorded", {"passed": bool(r["before_visibility"]),
                                                  "numbers": "baseline (было до нас): " + inv["numbers"]})
     else:
@@ -514,7 +514,7 @@ def main(argv=None):
     ap.add_argument("--work", required=True, type=Path)
     ap.add_argument("--evidence", type=Path, default=HERE / "evidence")
     ap.add_argument("--invariants", choices=("relative", "absolute"), default="relative",
-                    help="relative = judged against the source baseline [D197]; absolute = the #753 run")
+                    help="relative = judged against the source baseline [D201]; absolute = the #753 run")
     a = ap.parse_args(argv)
     try:
         r = run(a.source_fbx, a.delivered_fbx, a.work, a.evidence, relative=a.invariants == "relative")

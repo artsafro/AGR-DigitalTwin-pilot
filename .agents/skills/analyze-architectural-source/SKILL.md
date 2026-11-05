@@ -77,7 +77,7 @@ against both NPM and VPM.
 Every step has a recorded result. Unknowns are written as unknowns with the reason,
 never filled by assumption. Synthetic or estimated values are labelled.
 
-## Intake mode — "study the sources" (historical HARNESS_PLAN §15; procedure in this section)
+## Intake mode — "study the sources" (historical archive/2026-11:docs/HARNESS_PLAN.md §15; procedure in this section)
 
 When the user puts every source of an object into `jobs/<JOB>/sources/` and says "изучи исходники",
 run the steps above for each file and write `jobs/<JOB>/intake/` (read only: nothing in `sources/` changes,

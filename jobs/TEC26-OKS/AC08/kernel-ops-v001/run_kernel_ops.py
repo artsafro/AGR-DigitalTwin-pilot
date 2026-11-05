@@ -244,7 +244,7 @@ def op_kernel(state, name, part, fn, ctx, params):
 
 
 def preservation(source, after):
-    """[D197] UV/material preservation of a candidate state against the source: faces that had UV and lost it,
+    """[D201] UV/material preservation of a candidate state against the source: faces that had UV and lost it,
     merged material ids (0) and source material ids that vanished. Empty list = preserved."""
     why = []
     lost = sum(1 for p in after.values() for c in p["uv"] if c is None) - \
@@ -262,7 +262,7 @@ def preservation(source, after):
 
 
 def run_ops(source, relative=False):
-    """The #752 op set. `relative` [D197, #968]: invariants judged against the source (no new violators) and an
+    """The #752 op set. `relative` [D201, #968]: invariants judged against the source (no new violators) and an
     op counts as applied only when it also preserves UV and material ids (`preservation`)."""
     ctx = Context(source=tri_scene(source)) if relative else Context()
     rows = []

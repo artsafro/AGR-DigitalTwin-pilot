@@ -69,7 +69,7 @@ uv run python jobs/TEC26-OKS/scripts/compare_facades.py jobs/TEC26-OKS/AC08/vpm_
 blender --background --factory-startup --python-exit-code 1 --python jobs/TEC26-OKS/scripts/run_agr_checker.py -- <dir with both zips> <out.json>
 ```
 
-## Rerun with invariants relative to the source [D197] (#968)
+## Rerun with invariants relative to the source [D201] (#968)
 
 Same inputs (hashes equal to the #753 run). The kernel now judges every op against the source baseline: per
 invariant the source's violators (border edges not hidden, back-face pixels on one probe frame, close-overlap pairs)
@@ -79,7 +79,7 @@ ids. Generated numbers: `evidence-d197/e2e.md` / `e2e.json`, `evidence-d197/albu
 `G:/Мой диск/AGR-evidence/968-ac08-relative-invariants/` + `SHA256SUMS.txt` (28 files, `sha256sum -c` OK; copy
 `evidence-d197/DRIVE-SHA256SUMS.txt`). Technical QA only; `passed=true` is not claimed.
 
-| # | gate | #753 (absolute) | #968 (relative, D197) |
+| # | gate | #753 (absolute) | #968 (relative, D201) |
 |---|---|---|---|
 | 1 | source FBX = pinned dump | pass: 180/180, corner dev 5.7e-7 m | pass: same |
 | 2 | kernel invariants on the source | FAIL: back faces 3107 px, borders 16 + 4 | baseline recorded: 3107 px, borders 16 + 4 (20 edges), overlaps 0 |

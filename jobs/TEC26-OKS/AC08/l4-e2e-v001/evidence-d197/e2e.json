@@ -1,6 +1,6 @@
 {
  "issue": 968,
- "invariants": "relative [D197]",
+ "invariants": "relative [D201]",
  "inputs": {
   "G:/Мой диск/AGR-evidence/753-ac08-l4-e2e/source/AC08_source_geomfinal.fbx": "9cae468e714118c501dfffa77531aabecd88662c4e34d0be57274d446bb3e5fd",
   "C:/x/tec26-oks/AC08/pilot-v010/package-vpm/SM_Nku_1/SM_Nku_1.fbx": "ca4715a446db660d2c82766d4be8547fac954c4fab1363ef171bde4b99a4277b",

@@ -1,6 +1,6 @@
 # Corner that is not 90° (`non-90-corner`)
 
-Status: draft. Source: historical `docs/HARNESS_PLAN.md` §3–§4, §7; extractor `src/dt_ai/spec/mesh.py`
+Status: draft. Source: historical `archive/2026-11:docs/HARNESS_PLAN.md` §3–§4, §7; extractor `src/dt_ai/spec/mesh.py`
 (kinks, arcs); `docs/domain/geometry.md` (contour orthogonalization, corner windows). Benchmark: B02.
 
 ## Signs in the spec

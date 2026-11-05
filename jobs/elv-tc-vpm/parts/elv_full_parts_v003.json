@@ -1,0 +1,1279 @@
+{
+ "schema_version": "1.0.0",
+ "synthetic": false,
+ "object_id": "SM_Elevatornaya_1A",
+ "source_tier": "B",
+ "status": "draft",
+ "gate1": {
+  "actor": "Artem (user)",
+  "date": "2026-11-04",
+  "scope": "project",
+  "note": "Gate 1 of pilot И-А parts v001 confirmed in chat 2026-11-04 with one change: F50 mullion/transom caps are geometry, not texture (Q1). All other questions resolved as recommended (jobs/elv-tc-vpm/TASK.md, Gate 1 paragraph). Applies to P01-P20 only; P21-P41 pending."
+ },
+ "sources": [
+  {
+   "kind": "model",
+   "reference": "for_ai/00900-МСК-ЭЛВ-ГП1-Р-АР_building (1).fbx (Revit 2023 export, feet); byte-identical copy used",
+   "sha256": "7ccf502d9dc1494daa885e650dd8b2b7e261c7b90b262ee157c188ec3a78b961"
+  },
+  {
+   "kind": "model",
+   "reference": "jobs/elv-tc-vpm/outputs/ref-v001/elv_ref_clean_v001.blend (clean reference: 3713 objects removed, transforms baked, 22 category collections); measurements pilot_IA_measure_v001.json",
+   "sha256": "0d7e9624d6618d4b6bf795584eb217bd7493f64ea429f368a9f896b435c01a78"
+  },
+  {
+   "kind": "pdf",
+   "reference": "for_ai/ЭЛВ_ИД_АГР_45-4-25-С_Буклет АГР от 27.01.2025: sheet 18 facade legend (finishes), sheet 25 plan 1st floor (revolving door)",
+   "page": 18,
+   "sha256": "49c105275ea56f16f9f281b3586876818215d99544d82644a5aab8e1cfba9545"
+  },
+  {
+   "kind": "user",
+   "reference": "jobs/elv-tc-vpm/TASK.md decisions 2026-11-04 (D01-D14, D16 accepted as recommended); Gate 1 confirmed by the user 2026-11-04 (F50 caps = geometry)"
+  },
+  {
+   "kind": "model",
+   "reference": "jobs/elv-tc-vpm/outputs/build-v001/elv_pilot_IA_v001.blend (pilot И-А accepted 2026-11-04, imported unchanged)"
+  },
+  {
+   "kind": "pdf",
+   "reference": "booklet sheet 19 (facades 12-1, А-И, 6-1: fire ladders, added north door)",
+   "page": 19,
+   "sha256": "49c105275ea56f16f9f281b3586876818215d99544d82644a5aab8e1cfba9545"
+  }
+ ],
+ "triangle_budget": {
+  "npm": 0,
+  "vpm": 150000
+ },
+ "parts": [
+  {
+   "id": "P01_WoodVolume",
+   "part_class": "wall",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "collection wood_cassette, Revit 'Базовая стена (AR)_metall kasset WOOD' 432 obj (E 78, S 231, N 123)"
+    },
+    {
+     "kind": "region",
+     "reference": "upper volume face E x 79.03, S y -50.76 to x 41.85, N y 3.29 to x 59.40; z 4.72-13.88; corners R 3.15 (outer fit, centres 75.88/-47.61 and 75.88/0.14)"
+    }
+   ],
+   "legend_item": "ID 3 wood cassette RAL 1001 (sheet 18: 'обшивка фасада из метал. панелей с фактурой дерева, цвет сосна, RAL 1001'); op: body ring from the outline, one quad face per <=4 m, corner arcs 24 segments/quarter, cassette grid 1000x1530 joint 20 as texture [D04, D08]",
+   "operation": "contour_rebuild",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 1500
+   }
+  },
+  {
+   "id": "P02_MetalBase",
+   "part_class": "wall",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "collection metal_cassette, Revit 'Базовая стена (Ext)_(Ins-150)_metall panels' 462 obj"
+    },
+    {
+     "kind": "region",
+     "reference": "ground-floor face E x 76.17, S y -50.61 to x 41.88, N y 3.14 to x 59.43; z 0.22-4.68; corners R 1.77 (centres 74.40/-48.83 and 74.40/1.37)"
+    }
+   ],
+   "legend_item": "ID 2 metal cassette RAL 7021 (sheet 18 'обшивка фасада из метал. панелей цвет RAL 7021'); op: body ring, cassette grid 1500x500 joint 20 as texture [D03, D08]; openings of P06/P07/P09/P17 cut as holes",
+   "operation": "contour_rebuild",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 1000
+   }
+  },
+  {
+   "id": "P03_Plinth",
+   "part_class": "band",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "collection plinth: 'Базовая стена Цоколь', '(WL)-Ext_(Ins-100)_ТЕХНО', 'монолитный желе' 19 obj in pilot"
+    },
+    {
+     "kind": "region",
+     "reference": "face x 76.22 (E), y -50.66 (S), y 3.19 (N); z -0.45..0.22; extended to -1.00 for the 1 m perimeter drop (BODY-H, TASK)"
+    }
+   ],
+   "legend_item": "ID 4 plinth RAL 7021 (sheet 19 text: цоколь, окраска); op: band ring under P02 with the 1 m drop below grade",
+   "operation": "contour_rebuild",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 400
+   }
+  },
+  {
+   "id": "P04_Soffit_Canopy",
+   "part_class": "slab",
+   "sources": [
+    {
+     "kind": "region",
+     "reference": "MISSING in FBX: underside of the 2.86 m cantilever between metal face x 76.17 and upper face x 79.03 at z 4.70 along y -48.8..2.5 incl. corners; niche ceiling x 73.10..76.00, y -27.31..-20.16 at z 4.65 (no object in source or delete list)"
+    },
+    {
+     "kind": "object",
+     "reference": "edge flashing 'Низ (SC)-Batten_FS11 низ_RAL 5025' [16357576] [16357415]"
+    }
+   ],
+   "legend_item": "ID 19 canopy RAL 1001 (sheet 18 'козырек над входом, метал. панели с фактурой дерева, цвет сосна, RAL 1001'; sheet 19 'главный вход углублен ... пространство с навесом'); op: horizontal face built from the two outlines (from_face), facing down; confirmed at Gate 1: soffit and niche ceiling wood ID 19 RAL 1001",
+   "operation": "from_face",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 600
+   }
+  },
+  {
+   "id": "P05_CW_Upper",
+   "part_class": "glazing",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "collections stemalit (64 E-upper panels), mullion (cw_upper_profile 192), glass x 78.98 (96 panels)"
+    },
+    {
+     "kind": "region",
+     "reference": "CW-E-UP: planes x 79.03 on y -42.84..-29.52 and -17.94..-4.63, quarter arcs R 3.08 (centres 75.92/-30.33, 75.92/-17.13), centre bay x 76.00 y -27.25..-20.21; module 1190; stemalit z 4.70-5.96 (1.26) and 10.91-13.90 (2.98-2.99); glass rows 6.00-7.61, 7.63-9.24, 9.26-10.89"
+    }
+   ],
+   "legend_item": "ID 12 F50 frame + ID 13 stemalit RAL 5024 (sheet 18 'стемалит RAL 5024', 'ALT F50'), frames RAL 7021 (Gate 1); op: relief over the CW base line: F50 mullion/transom caps as GEOMETRY [Gate 1 Q1] - simple boxes 50 mm wide, 20 mm proud of the frame plane, quads, welded into one relief (no overlaps, no back faces); one recessed cell per glass panel (cap sides 35 mm down to the glass plane), stemalit cells as faces ID 13 10 mm behind the frame plane; glass in P20 [D06]",
+   "operation": "contour_rebuild",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 7000
+   }
+  },
+  {
+   "id": "P06_CW_Lower",
+   "part_class": "glazing",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "glass x 76.31 rows 0.05-2.08 / 2.12-3.98, stemalit 4.03-4.64, mullion cw_lower_profile 142; 'Базовая стена Главный вход - К' side panels 4"
+    },
+    {
+     "kind": "region",
+     "reference": "CW-E-LOW one plane x 76.31-76.36, segments y -44.43..-33.54 and -13.93..-3.04; module 1190 (second plane at x 76.34/76.09 removed as true duplicate)"
+    }
+   ],
+   "legend_item": "ID 12 F50 frame + ID 13 stemalit RAL 5024, frames RAL 7021 (Gate 1); op: as P05 - F50 caps as geometry boxes 50x20 mm welded in the relief [Gate 1 Q1]; door cells recessed to the door plane with reveals ID 6 (P09); glass in P20",
+   "operation": "contour_rebuild",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 3000
+   }
+  },
+  {
+   "id": "P07_EntranceNiche",
+   "part_class": "wall",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "niche glass x 73.08 (21), stemalit 4.05-4.65 (5), mullion cw_niche_profile 133, metal panels in returns (x 74.42-75.77, rounded) and above doors x 73.21 z 2.21-4.19, plinth returns"
+    },
+    {
+     "kind": "region",
+     "reference": "niche x 73.10..76.17, y -27.36..-20.11 (7.25 m wide, 3.07 m deep), z 0..4.68"
+    }
+   ],
+   "legend_item": "ID 2 metal cassette RAL 7021 returns + ID 12/13 back CW ELV-16 with F50 caps as geometry (as P05, Gate 1 Q1); reveal faces of the door and revolving-door openings ID 6 (grey) [TASK reveals]; op: niche walls from the plan outline, back CW as P05",
+   "operation": "contour_rebuild",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 1500
+   }
+  },
+  {
+   "id": "P08_RevolvingDoor",
+   "part_class": "door",
+   "sources": [
+    {
+     "kind": "region",
+     "reference": "NOT in FBX; booklet sheet 25 plan: drum outer D 4.12 (+-0.03), inner 3.74, centre x 73.08 y -23.73 (on the niche CW line, half outside); sheet 18 legend item 2 'револьверные входные двери'"
+    }
+   ],
+   "legend_item": "ID 14 metal door frame/canopy disc + MainGlass drum (sheet 18 'остекление нетонированным прозрачным'); op: new library type revolving_door_D4120 (TASK: missing types go to library/windows first, D116), placed at the measured centre [D07]; Gate 1: height 2.72 (niche transom line), library ELV-17",
+   "operation": "library_replace",
+   "library_ref": "library/windows (to add): revolving_door_D4120_H2720",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 1500
+   }
+  },
+  {
+   "id": "P09_GlassDoors",
+   "part_class": "door",
+   "sources": [
+    {
+     "kind": "object",
+     "reference": "4x '(DR)Ext-2H(M_1500x2050)L/R_Z_glass2' at x 75.85 y -43.47/-35.67/-13.49/-5.69; 2x niche '(DR)Ext-2H(M_1200x2150)L', '(M_1200x2050)R' at x 73.01 y -27.30/-21.58"
+    }
+   ],
+   "legend_item": "ID 12 frame (sheet 18 'входные двери в составе витража ... ALT F50') + MainGlass; op: library door types 1500x2050 and 1200x2150 placed in the CW openings (D116)",
+   "operation": "library_replace",
+   "library_ref": "library/windows: door_2H_glass_1500x2050, door_2H_glass_1200x2150 (add if missing)",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 900
+   }
+  },
+  {
+   "id": "P10_Ribs",
+   "part_class": "decor",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "collection rib_lamella E: 58 'Базовая стена (In)_25(DW-25.Fin-3)' (44 flat incl. 6 on the centre bay, 14 radial on the R 3.08 arcs)"
+    },
+    {
+     "kind": "region",
+     "reference": "section 430x50, z 4.70-13.90, from the CW face outward (x 79.03-79.47); steps 1190 / 350 / 300 / 250-310 near the arcs"
+    }
+   ],
+   "legend_item": "ID 17 ribs RAL 1001 (sheet 18 'ламели, метал. панели с фактурой дерева, цвет сосна, RAL 1001') [D05]; op: one box per rib extruded from its F50 mullion cap (430 mm from the frame plane, 50 mm), welded into the P05 relief, no back face",
+   "operation": "primitive",
+   "build_as": "box",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 2500
+   }
+  },
+  {
+   "id": "P11_SignFrames",
+   "part_class": "frame",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "collection sign_frame: 'Прямоугольный импост black 10*10' 112 members = 28 frames in the pilot"
+    },
+    {
+     "kind": "region",
+     "reference": "E: 6x 5.00x2.00 (inner 4.88) at x 79.05-79.11 z 5.70/8.20/10.70; 4x 3.50x1.25 (inner 3.38) at x 76.20-76.33 z 1.45/2.85; S: 6x 2.94x2.0, 2x 2.92x2.0, 6x 5.06x2.0, 2x 5.08x2.0, 2x 3.5x1.25; profile 60x60, 80 mm proud of the cassette face"
+    }
+   ],
+   "legend_item": "ID 16 frames RAL 7021; op: one rectangular ring per frame (profile 60x60, back face deleted), no brands [D09]",
+   "operation": "primitive",
+   "build_as": "frame",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 1000
+   }
+  },
+  {
+   "id": "P12_ParapetCaps",
+   "part_class": "parapet",
+   "sources": [
+    {
+     "kind": "object",
+     "reference": "'(SC)-Batten_top' 450_RAL1001 [21694649][21694651], 450_RAL5024 [21694872][21694874][21694875], 600_RAL1001 [21694296][21694298]"
+    },
+    {
+     "kind": "region",
+     "reference": "z 13.92-14.04, overhang 0.16 m beyond the facade face (x 78.61-79.19 on E)"
+    }
+   ],
+   "legend_item": "ID 18 flashings by zone: RAL 1001 over wood, RAL 5024 over CW [D13]; op: profile extruded along the parapet line incl. arcs",
+   "operation": "primitive",
+   "build_as": "profile_extrude",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 600
+   }
+  },
+  {
+   "id": "P13_BaseFlashing",
+   "part_class": "band",
+   "sources": [
+    {
+     "kind": "object",
+     "reference": "'(SC)-Batten_RAL7021_кассеты' [16261252][16261179][16261055][16260946], '(SC)-Batten_RAL7021' [16255841] (N)"
+    },
+    {
+     "kind": "region",
+     "reference": "z 0.13-0.40, x 76.03-76.25 (80 mm proud of the metal face)"
+    }
+   ],
+   "legend_item": "ID 18 flashing RAL 7021 (zone: neither wood nor CW) [D13]; op: profile extruded along the plinth line; Gate 1: the flush CW base flashing ('RAL 5025' in FBX) is RAL 5024 (texture, P14)",
+   "operation": "primitive",
+   "build_as": "profile_extrude",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 300
+   }
+  },
+  {
+   "id": "P14_FlushDetails_Texture",
+   "part_class": "decor",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "mullion cassette_joint_20mm 1368 obj (wood/metal cassette joints)"
+    },
+    {
+     "kind": "object",
+     "reference": "'Низ ... FS11 низ_RAL 5025' (10 mm proud), '(SC)-Batten_FS11 низ_RAL 1002' [10547842], '(SC)-Batten_windows.3' [e2d91e9]; '(SC)-Batten_FS-8P' behind the cassette face (hidden, dropped)"
+    }
+   ],
+   "legend_item": "ID 2/3 joint grid, ID 18 flush flashings (incl. the CW base flashing RAL 5024, Gate 1); op: baked into texture, reg p.32 §7 (<= 5 cm). F50 caps are NOT here any more: geometry in P05/P06/P07 [Gate 1 Q1]",
+   "operation": "to_texture",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 0
+   }
+  },
+  {
+   "id": "P15_RoofEdge",
+   "part_class": "slab",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "roof 'Базовая крыша (Ext)_(Ins-115) ПО БЕТО' z 11.92-12.46, 'Перекрытие эксплуатируемая к' z 11.70-12.41, parapet backs '(WL)-Ext_(Ins-150)_техно' x 78.72-78.88 z 10.92-13.92, sandwich parapet inner faces (x 78.5 z 11.9-13.9), 'Batten_parapet_170'"
+    },
+    {
+     "kind": "region",
+     "reference": "roof strip of the pilot zone: from the parapet inner face to x 72.0 (E), 3 m deep on the S/N returns; parapet inner faces up to 13.92"
+    }
+   ],
+   "legend_item": "ID 21 roof (RAL per roof spec, open) + parapet inner faces ID 1 sandwich RAL 7021 [D02]; op: roof plane and parapet inner ring from the outline",
+   "operation": "contour_rebuild",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 1200
+   }
+  },
+  {
+   "id": "P16_Windows",
+   "part_class": "window",
+   "sources": [
+    {
+     "kind": "object",
+     "reference": "2x '(WN)-RD_2H_Vendor Двустворчатое окно 2' S x 54.12/61.12, 980x1180 at z 0.81"
+    }
+   ],
+   "legend_item": "ID 11 window W72 RAL 7021 + MainGlass (sheet 18 'ALT W72 ... RAL7021'); op: library type placed in the measured opening (D116)",
+   "operation": "library_replace",
+   "library_ref": "library/windows: W72_2sash_980x1180 (add if missing)",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 200
+   }
+  },
+  {
+   "id": "P17_MetalDoors_N",
+   "part_class": "door",
+   "sources": [
+    {
+     "kind": "object",
+     "reference": "'(DR)Ext-2H(M_1600x2050)L_Z_Antipa' N x 59.74-61.54; '(DR)In-2H(M_1200x2050)L_antipanic' N x 67.60-69.00"
+    }
+   ],
+   "legend_item": "ID 14 metal door RAL 7021 (sheet 18 'входные двери металлические ... RAL 7021'); op: library door types (D116)",
+   "operation": "library_replace",
+   "library_ref": "library/windows: door_2H_metal_1600x2050, door_2H_metal_1200x2050 (add if missing)",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 300
+   }
+  },
+  {
+   "id": "P18_SouthCanopy",
+   "part_class": "slab",
+   "sources": [
+    {
+     "kind": "object",
+     "reference": "'Перекрытие (Ext)_metall kasset WOOD' [9133790] x 53.15-63.08 y -51.08..-50.61 z 2.88-2.93; hanger '(SEQ)-G_Gutter_mini' [14647834] (1810 tris in source)"
+    }
+   ],
+   "legend_item": "ID 19 canopy RAL 1001; op: box 9.93x0.47x0.05, hanger as a simple box (source mesh not copied)",
+   "operation": "primitive",
+   "build_as": "box",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 100
+   }
+  },
+  {
+   "id": "P19_SouthLamellas",
+   "part_class": "decor",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "rib_lamella S in pilot: 28 lamellas 50x180x2500, x 53.35-63.13, z 0.20-2.70"
+    }
+   ],
+   "legend_item": "ID 17 lamellas RAL 1001; op: one box per lamella, back face deleted",
+   "operation": "primitive",
+   "build_as": "box",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 300
+   }
+  },
+  {
+   "id": "P20_MainGlass",
+   "part_class": "glazing",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "collection glass in pilot: 253 panels (E upper 96 + arcs, lower 70, niche 21) + door/window glass of P08/P09/P16"
+    }
+   ],
+   "legend_item": "MainGlass, clear (sheet 18 'стекло закаленное типа триплекс, прозрачное нетонированное') [D11, WIN-11..14]; op: one quad per panel in the P05/P06/P07 cells (arcs keep their facets, D172), 15 mm behind the frame plane (35 mm behind the F50 cap face), edges 10 mm under the frame, UV in 1001",
+   "operation": "from_face",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 800
+   }
+  },
+  {
+   "id": "P21_S_Facade",
+   "part_class": "wall",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "collection sandwich, south y -50.46 x -0.43..41.88"
+    },
+    {
+     "kind": "region",
+     "reference": "outputs/ref-v002/ref_objects_full_v001.json + ref_sections_full_v001.json (clean reference, whole building)"
+    }
+   ],
+   "legend_item": "ID 1 sandwich RAL 7021 (sheet 19 legend 12, D02); op: relief over the outline (openings, reveals ID 6); SW sign frame 2.0x0.5 ID 16 (D09) Gate 1: pending (pattern of the accepted pilot И-А).",
+   "operation": "contour_rebuild",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 6000
+   }
+  },
+  {
+   "id": "P22_W_Facade",
+   "part_class": "wall",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "collection sandwich, west x -0.42 y -50.46..-19.95, step x -4.42"
+    },
+    {
+     "kind": "region",
+     "reference": "outputs/ref-v002/ref_objects_full_v001.json + ref_sections_full_v001.json (clean reference, whole building)"
+    }
+   ],
+   "legend_item": "ID 1 sandwich RAL 7021 (facade А-И, sheet 19); op: relief over the outline Gate 1: pending (pattern of the accepted pilot И-А).",
+   "operation": "contour_rebuild",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 5000
+   }
+  },
+  {
+   "id": "P23_TP_Annex",
+   "part_class": "wall",
+   "sources": [
+    {
+     "kind": "region",
+     "reference": "TP annex walls x -8.82 (y -2.46..-11.13) and y -11.13 (x -8.82..-4.42)"
+    }
+   ],
+   "legend_item": "ID 5 TP annex paint RAL 7021 [D16]; ELV-11 doors (sheet 18); brick plinth 640 as plinth h 0.45 Gate 1: pending (pattern of the accepted pilot И-А).",
+   "operation": "contour_rebuild",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 1500
+   }
+  },
+  {
+   "id": "P24_N_Facade",
+   "part_class": "wall",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "collection sandwich, north straight y 2.99 x 41.68..59.43 (to +15.42), skew 6.16 deg x -8.82..41.68"
+    },
+    {
+     "kind": "region",
+     "reference": "outputs/ref-v002/ref_objects_full_v001.json + ref_sections_full_v001.json (clean reference, whole building)"
+    }
+   ],
+   "legend_item": "ID 1 sandwich RAL 7021 (facades 12-1 and 6-1, sheet 19); op: relief over the outline Gate 1: pending (pattern of the accepted pilot И-А).",
+   "operation": "contour_rebuild",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 6000
+   }
+  },
+  {
+   "id": "P25_Plinth_Flashing_New",
+   "part_class": "band",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "collection plinth (Ins-100 face 0.20 proud), battens z 0.15-0.42"
+    }
+   ],
+   "legend_item": "ID 4 plinth + ID 18 base flashing RAL 7021 (as pilot P03/P13); 1 m perimeter drop Gate 1: pending (pattern of the accepted pilot И-А).",
+   "operation": "contour_rebuild",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 3000
+   }
+  },
+  {
+   "id": "P26_Windows_New",
+   "part_class": "window",
+   "sources": [
+    {
+     "kind": "object",
+     "reference": "(WN)_Blinds 1190x1500, Окно 2-Распашное, (WN)-RD_2H_Vendor Одностворчатое"
+    }
+   ],
+   "legend_item": "ID 11 W72 RAL 7021 + MainGlass; ELV-01 x7, ELV-02 x3, ELV-03 x2, ELV-05 x2 in sandwich holes, reveals ID 6 Gate 1: pending (pattern of the accepted pilot И-А).",
+   "operation": "library_replace",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 1500
+   },
+   "library_ref": "library/windows/window_types.json ELV-01/02/03/05"
+  },
+  {
+   "id": "P27_Doors_New",
+   "part_class": "door",
+   "sources": [
+    {
+     "kind": "object",
+     "reference": "(DR)-2H Ext doors 1600/1200/2200x2050, In-1H 900/1100 on the facade"
+    }
+   ],
+   "legend_item": "ID 14 metal doors RAL 7021; ELV-08 x6 (incl. the added north door x 38.4 [D14]), ELV-09 x2, ELV-10 x1; 3 single doors from the library ELV-18 (In-1H 900, west), ELV-19 (In-1H 1100, north skew), ELV-20 (In-1H 1100 with a 2250 frame, TP annex) Gate 1: pending (pattern of the accepted pilot И-А).",
+   "operation": "library_replace",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 1500
+   },
+   "library_ref": "library/windows/window_types.json ELV-08/09/10/18/19/20"
+  },
+  {
+   "id": "P28_Gates_DockShelters",
+   "part_class": "door",
+   "sources": [
+    {
+     "kind": "object",
+     "reference": "(DR)-LG Gate SPU 42 HORMANN, (SEQ)-DS_403M 3400x3400"
+    }
+   ],
+   "legend_item": "ID 15 gates RAL 7040 [D10] ELV-12 x1 + ELV-13 x3; dock shelters DS_403M simplified U frames ID 26 Gate 1: pending (pattern of the accepted pilot И-А).",
+   "operation": "library_replace",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 800
+   },
+   "library_ref": "library/windows/window_types.json ELV-12/13"
+  },
+  {
+   "id": "P29_Canopies_New",
+   "part_class": "slab",
+   "sources": [
+    {
+     "kind": "object",
+     "reference": "Перекрытие (Ext)_metall kasset WOOD [25799101] [10493033]; fascias (In)_25 at x 10.33-17.42 and 33.56-36.55"
+    }
+   ],
+   "legend_item": "ID 19 canopy RAL 1001 (sheet 19 legend 11); 2 south canopies added per album [D14]; simple boxes Gate 1: pending (pattern of the accepted pilot И-А).",
+   "operation": "primitive",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 300
+   },
+   "build_as": "box"
+  },
+  {
+   "id": "P30_Lamellas_New",
+   "part_class": "decor",
+   "sources": [
+    {
+     "kind": "object",
+     "reference": "rib_lamella (In)_25(DW-25.Fin-3) 29 pcs south / west"
+    }
+   ],
+   "legend_item": "ID 17 lamellas RAL 1001 (sheet 19 legend 15); one box per lamella, back face deleted Gate 1: pending (pattern of the accepted pilot И-А).",
+   "operation": "primitive",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 600
+   },
+   "build_as": "box"
+  },
+  {
+   "id": "P31_Parapets_New",
+   "part_class": "parapet",
+   "sources": [
+    {
+     "kind": "region",
+     "reference": "parapet top +13.92, inner face 0.40, cap +14.04, overhang 0.05"
+    }
+   ],
+   "legend_item": "ID 18 caps (zone RAL 7021, D13) + ID 1 inner faces; as pilot P12/P15 Gate 1: pending (pattern of the accepted pilot И-А).",
+   "operation": "contour_rebuild",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 3000
+   }
+  },
+  {
+   "id": "P32_Roof_Main",
+   "part_class": "slab",
+   "sources": [
+    {
+     "kind": "object",
+     "reference": "Базовая крыша (Ext)_(Ins-115) ПО БЕТО (+11.92..+12.46)"
+    }
+   ],
+   "legend_item": "ID 21 roof; flat +12.45 (source slope +12.1..+12.46 not modelled); grid of <= 3.9 m cells Gate 1: pending (pattern of the accepted pilot И-А).",
+   "operation": "from_face",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 6000
+   }
+  },
+  {
+   "id": "P33_Terrace",
+   "part_class": "slab",
+   "sources": [
+    {
+     "kind": "object",
+     "reference": "Перекрытие эксплуатируемая кровля [67b0a5c] +11.46, [f41f575] +12.41; fence panels y -19.17"
+    }
+   ],
+   "legend_item": "ID 23 terrace deck (lower pit +11.46, upper +12.45 east of x 50.65); sandwich screens ID 1 Gate 1: pending (pattern of the accepted pilot И-А).",
+   "operation": "from_face",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 1500
+   }
+  },
+  {
+   "id": "P34_Railings",
+   "part_class": "railing",
+   "sources": [
+    {
+     "kind": "region",
+     "reference": "terrace fence (Сетка-Рабица) y -19.17, x 50.65; pit edge x 58.74"
+    }
+   ],
+   "legend_item": "ID 20 metal RAL 7021; SIMPLE geometry default (posts + top rail, no infill) - geometry vs alpha open (TASK: decided together later) Gate 1: pending (pattern of the accepted pilot И-А).",
+   "operation": "primitive",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 1500
+   },
+   "build_as": "box"
+  },
+  {
+   "id": "P35_Skylight",
+   "part_class": "glazing",
+   "sources": [
+    {
+     "kind": "object",
+     "reference": "Основание светоаэрационного фонаря, Системная панель С остеклением (roof, 37.84..62.96 x -27.94..-19.58)"
+    }
+   ],
+   "legend_item": "ID 12 frame + MainGlass; hipped 25.12 x 8.36, eave +12.75, ridge +13.65; ridge/hip/rafter boxes 60x60 Gate 1: pending (pattern of the accepted pilot И-А).",
+   "operation": "contour_rebuild",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 2000
+   }
+  },
+  {
+   "id": "P36_Superstructures",
+   "part_class": "superstructure",
+   "sources": [
+    {
+     "kind": "region",
+     "reference": "T1 x 47.8..59.40 y -1.5..2.99 to +15.42, T2 x 47.8..53.0 y -11.45..-6.2 to +16.22, pit walls"
+    }
+   ],
+   "legend_item": "ID 1 sandwich + ID 12/MainGlass glazing + ELV-06 doors; flat tops ID 21 (inner roof wells closed) Gate 1: pending (pattern of the accepted pilot И-А).",
+   "operation": "contour_rebuild",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 6000
+   }
+  },
+  {
+   "id": "P37_RoofBoxes",
+   "part_class": "superstructure",
+   "sources": [
+    {
+     "kind": "region",
+     "reference": "roof_clusters.py: 26 shafts/exits, 16 KPN-S cups, curbs, stair"
+    }
+   ],
+   "legend_item": "ID 22 roof structures RAL 7021; bbox boxes (simplified) Gate 1: pending (pattern of the accepted pilot И-А).",
+   "operation": "primitive",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 3000
+   },
+   "build_as": "box"
+  },
+  {
+   "id": "P38_FireLadders",
+   "part_class": "rod_ladder",
+   "sources": [
+    {
+     "kind": "region",
+     "reference": "booklet sheet 19: north 6-1 at axes 7 and 4, west near Ж-И"
+    }
+   ],
+   "legend_item": "ID 20 metal RAL 7021; simplified: 2 stringers + rungs every 0.35 + brackets (no cage); geometry vs alpha open with the railings Gate 1: pending (pattern of the accepted pilot И-А).",
+   "operation": "primitive",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 4000
+   },
+   "build_as": "box"
+  },
+  {
+   "id": "P39_Downpipes",
+   "part_class": "decor",
+   "sources": [
+    {
+     "kind": "object",
+     "reference": "(SEQ)-G_Gutter_mini at the canopies"
+    }
+   ],
+   "legend_item": "ID 20 metal; 100x100 boxes canopy -> ground Gate 1: pending (pattern of the accepted pilot И-А).",
+   "operation": "primitive",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 100
+   },
+   "build_as": "box"
+  },
+  {
+   "id": "P40_Arktos",
+   "part_class": "other",
+   "sources": [
+    {
+     "kind": "object",
+     "reference": "(AT)-SG_ARN_Arktos_External 6 pcs"
+    }
+   ],
+   "legend_item": "ID 27 (attachments, RAL 7021 like the housings) 6 Arktos boxes kept as geometry WITHOUT emission (not booklet luminaires, sheet 38 shows them unlit)",
+   "operation": "primitive",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 100
+   },
+   "build_as": "box"
+  },
+  {
+   "id": "P41_Joints",
+   "part_class": "wall",
+   "sources": [
+    {
+     "kind": "region",
+     "reference": "pilot joints x 41.85/41.88 south, x 59.40/59.43 north"
+    }
+   ],
+   "legend_item": "returns / end faces between the accepted pilot and the new facades (ID 2/3/1/18/19) Gate 1: pending (pattern of the accepted pilot И-А).",
+   "operation": "contour_rebuild",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 100
+   }
+  },
+  {
+   "id": "P42_Lights",
+   "part_class": "other",
+   "sources": [
+    {
+     "kind": "pdf",
+     "reference": "booklet sheets 33-35 (lighting facades + plan L1), 40 (equipment) -> parts/lighting_layout_v001.json (498 fixtures in 63 runs / points)"
+    }
+   ],
+   "legend_item": "housings ID 27 (RAL 7021); glow faces ID 28 purple, 29 2700K, 30 2000K, 31 4000K (LINE + DECO), 32 RGB static warm white (FOCUS, PLAT-A4), 33 3000K (TUBE M); colour in Diffuse, ERM R = emission strength only on 28-33. Lines as continuous strips per drawn run (30 x 40), cut around anything proud of the wall; points as boxes; all open-backed 8 mm off the wall. Sections assumed (sheet 40 gives lengths only).",
+   "operation": "primitive",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 6000
+   },
+   "build_as": "box"
+  },
+  {
+   "id": "P43_InteriorCapsules",
+   "part_class": "other",
+   "sources": [
+    {
+     "kind": "user",
+     "reference": "jobs/elv-tc-vpm/TASK.md «User answers 2» 2026-11-05"
+    },
+    {
+     "kind": "model",
+     "reference": "customer blank SM_Elevatornaya_Vl_1_A_001 fake rooms (tile 1003), depth 0.80 m / 0.92 m on the slanted NW wall (outputs/customer-clarify-v001)"
+    }
+   ],
+   "legend_item": "ID34 dark interior placeholder (new working ID, interior group 31-35). A box behind every window, glazed door and curtain wall, the opening side removed; rim 7.5 mm in front of the glass (middle of the frame), rim = glass extents + 25 mm; depth 0.80 m (0.92 NW skew wall, 2.30 entrance niche over the revolving door), less where geometry is in the way; normals inward.",
+   "operation": "primitive",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 2000
+   },
+   "build_as": "box"
+  },
+  {
+   "id": "P44_CoverStrips",
+   "part_class": "other",
+   "sources": [
+    {
+     "kind": "user",
+     "reference": "jobs/elv-tc-vpm/TASK.md «User answers 2» 2026-11-05"
+    },
+    {
+     "kind": "pdf",
+     "reference": "booklet item 14 «нащельник RAL 7021»"
+    },
+    {
+     "kind": "model",
+     "reference": "Revit (SC)-Batten_FS-8P ..._horizontal 165 x 22 mm, 24 outlines (customer-clarify-v001/data/nakl_verts.json)"
+    }
+   ],
+   "legend_item": "ID20 metal RAL 7021. Closed boxes 165 x 22 mm, 6 mm off the facade [D201], only where the Revit outline lies on our sandwich / TP facade (the parts behind the pilot cladding are not built), cut around lights / Arktos / joints with G.",
+   "operation": "primitive",
+   "triangle_budget": {
+    "npm": 0,
+    "vpm": 1500
+   },
+   "build_as": "box"
+  }
+ ],
+ "joints": [
+  {
+   "parts": [
+    "P01_WoodVolume",
+    "P05_CW_Upper"
+   ],
+   "decision": "weld",
+   "reason": "same plane x 79.03; the CW band lines continue as edges on the wood column edge",
+   "extra_edges": 7
+  },
+  {
+   "parts": [
+    "P01_WoodVolume",
+    "P04_Soffit_Canopy"
+   ],
+   "decision": "weld",
+   "reason": "soffit outline follows the wood ring edge at z 4.72",
+   "extra_edges": 0
+  },
+  {
+   "parts": [
+    "P02_MetalBase",
+    "P04_Soffit_Canopy"
+   ],
+   "decision": "weld",
+   "reason": "soffit inner outline follows the metal ring top at z 4.68",
+   "extra_edges": 0
+  },
+  {
+   "parts": [
+    "P05_CW_Upper",
+    "P04_Soffit_Canopy"
+   ],
+   "decision": "weld",
+   "reason": "CW bottom edge = soffit outer edge",
+   "extra_edges": 0
+  },
+  {
+   "parts": [
+    "P06_CW_Lower",
+    "P04_Soffit_Canopy"
+   ],
+   "decision": "weld",
+   "reason": "CW top edge = soffit inner edge",
+   "extra_edges": 0
+  },
+  {
+   "parts": [
+    "P02_MetalBase",
+    "P03_Plinth"
+   ],
+   "decision": "weld",
+   "reason": "plinth top = metal bottom at z 0.22, 5 cm step closed by one face",
+   "extra_edges": 0
+  },
+  {
+   "parts": [
+    "P02_MetalBase",
+    "P06_CW_Lower"
+   ],
+   "decision": "weld",
+   "reason": "CW plane 0.14 m proud; return faces share the metal hole edges",
+   "extra_edges": 3
+  },
+  {
+   "parts": [
+    "P02_MetalBase",
+    "P07_EntranceNiche"
+   ],
+   "decision": "weld",
+   "reason": "niche returns continue the metal ring",
+   "extra_edges": 2
+  },
+  {
+   "parts": [
+    "P07_EntranceNiche",
+    "P04_Soffit_Canopy"
+   ],
+   "decision": "weld",
+   "reason": "niche ceiling outline = niche wall tops",
+   "extra_edges": 0
+  },
+  {
+   "parts": [
+    "P08_RevolvingDoor",
+    "P07_EntranceNiche"
+   ],
+   "decision": "embed",
+   "reason": "library drum crosses the niche CW line; the CW hole is hidden by the drum",
+   "extra_edges": 16,
+   "embed_depth_m": 0.015
+  },
+  {
+   "parts": [
+    "P09_GlassDoors",
+    "P06_CW_Lower"
+   ],
+   "decision": "embed",
+   "reason": "library door units seated in CW openings",
+   "extra_edges": 8,
+   "embed_depth_m": 0.01
+  },
+  {
+   "parts": [
+    "P09_GlassDoors",
+    "P07_EntranceNiche"
+   ],
+   "decision": "embed",
+   "reason": "library door units seated in niche CW openings",
+   "extra_edges": 8,
+   "embed_depth_m": 0.01
+  },
+  {
+   "parts": [
+    "P10_Ribs",
+    "P05_CW_Upper"
+   ],
+   "decision": "weld",
+   "reason": "each rib is the outward extrusion of its F50 mullion cap (Gate 1 Q1: caps are geometry); welding avoids coplanar rib/cap sides",
+   "extra_edges": 0
+  },
+  {
+   "parts": [
+    "P12_ParapetCaps",
+    "P01_WoodVolume"
+   ],
+   "decision": "embed",
+   "reason": "cap sits on the parapet top; welding adds the overhang ring",
+   "extra_edges": 40,
+   "embed_depth_m": 0.01
+  },
+  {
+   "parts": [
+    "P12_ParapetCaps",
+    "P05_CW_Upper"
+   ],
+   "decision": "embed",
+   "reason": "as above over the CW",
+   "extra_edges": 30,
+   "embed_depth_m": 0.01
+  },
+  {
+   "parts": [
+    "P13_BaseFlashing",
+    "P03_Plinth"
+   ],
+   "decision": "embed",
+   "reason": "flashing on the plinth top",
+   "extra_edges": 20,
+   "embed_depth_m": 0.01
+  },
+  {
+   "parts": [
+    "P15_RoofEdge",
+    "P01_WoodVolume"
+   ],
+   "decision": "weld",
+   "reason": "parapet inner ring shares the parapet top edge",
+   "extra_edges": 0
+  },
+  {
+   "parts": [
+    "P15_RoofEdge",
+    "P05_CW_Upper"
+   ],
+   "decision": "weld",
+   "reason": "parapet inner ring shares the CW parapet top edge",
+   "extra_edges": 0
+  },
+  {
+   "parts": [
+    "P16_Windows",
+    "P02_MetalBase"
+   ],
+   "decision": "embed",
+   "reason": "library window in a body hole",
+   "extra_edges": 4,
+   "embed_depth_m": 0.01
+  },
+  {
+   "parts": [
+    "P17_MetalDoors_N",
+    "P02_MetalBase"
+   ],
+   "decision": "embed",
+   "reason": "library door in a body hole",
+   "extra_edges": 4,
+   "embed_depth_m": 0.01
+  },
+  {
+   "parts": [
+    "P18_SouthCanopy",
+    "P02_MetalBase"
+   ],
+   "decision": "embed",
+   "reason": "canopy slab enters the facade",
+   "extra_edges": 4,
+   "embed_depth_m": 0.015
+  },
+  {
+   "parts": [
+    "P19_SouthLamellas",
+    "P02_MetalBase"
+   ],
+   "decision": "embed",
+   "reason": "lamellas fixed to the facade, back face deleted",
+   "extra_edges": 56,
+   "embed_depth_m": 0.01
+  },
+  {
+   "parts": [
+    "P20_MainGlass",
+    "P05_CW_Upper"
+   ],
+   "decision": "embed",
+   "reason": "glass 15 mm behind the frame plane (35 mm behind the F50 cap face), edges run 10 mm under the caps (inset-glass-trim, docs/methods/windows-glazing/WHEN.md: 0 overlaps on KPP1)",
+   "extra_edges": 0,
+   "embed_depth_m": 0.015
+  },
+  {
+   "parts": [
+    "P20_MainGlass",
+    "P06_CW_Lower"
+   ],
+   "decision": "embed",
+   "reason": "glass 15 mm behind the frame plane (35 mm behind the F50 cap face), edges run 10 mm under the caps (inset-glass-trim, docs/methods/windows-glazing/WHEN.md: 0 overlaps on KPP1)",
+   "extra_edges": 0,
+   "embed_depth_m": 0.015
+  },
+  {
+   "parts": [
+    "P20_MainGlass",
+    "P07_EntranceNiche"
+   ],
+   "decision": "embed",
+   "reason": "glass 15 mm behind the frame plane (35 mm behind the F50 cap face), edges run 10 mm under the caps (inset-glass-trim, docs/methods/windows-glazing/WHEN.md: 0 overlaps on KPP1)",
+   "extra_edges": 0,
+   "embed_depth_m": 0.015
+  },
+  {
+   "parts": [
+    "P21_S_Facade",
+    "P02_MetalBase"
+   ],
+   "decision": "weld",
+   "reason": "returns J1 at x 41.88; plinth/flashing continue (pilot end caps removed)",
+   "extra_edges": 6
+  },
+  {
+   "parts": [
+    "P21_S_Facade",
+    "P01_WoodVolume"
+   ],
+   "decision": "weld",
+   "reason": "wood end face J2 at x 41.85",
+   "extra_edges": 3
+  },
+  {
+   "parts": [
+    "P24_N_Facade",
+    "P01_WoodVolume"
+   ],
+   "decision": "weld",
+   "reason": "wood end face J7 at x 59.40",
+   "extra_edges": 3
+  },
+  {
+   "parts": [
+    "P31_Parapets_New",
+    "P12_ParapetCaps"
+   ],
+   "decision": "weld",
+   "reason": "cap ends J4/J5/J8 at the joints",
+   "extra_edges": 6
+  },
+  {
+   "parts": [
+    "P32_Roof_Main",
+    "P15_RoofEdge"
+   ],
+   "decision": "weld",
+   "reason": "roof grid meets the pilot roof strip edge",
+   "extra_edges": 20
+  },
+  {
+   "parts": [
+    "P36_Superstructures",
+    "P15_RoofEdge"
+   ],
+   "decision": "weld",
+   "reason": "T1 east face at x 59.40 on the pilot roof edge",
+   "extra_edges": 4
+  },
+  {
+   "parts": [
+    "P26_Windows_New",
+    "P22_W_Facade"
+   ],
+   "decision": "embed",
+   "reason": "library window in a body hole",
+   "extra_edges": 4,
+   "embed_depth_m": 0.01
+  },
+  {
+   "parts": [
+    "P29_Canopies_New",
+    "P21_S_Facade"
+   ],
+   "decision": "embed",
+   "reason": "canopy slab enters the facade",
+   "extra_edges": 4,
+   "embed_depth_m": 0.01
+  },
+  {
+   "parts": [
+    "P30_Lamellas_New",
+    "P21_S_Facade"
+   ],
+   "decision": "embed",
+   "reason": "lamellas, back face deleted",
+   "extra_edges": 58,
+   "embed_depth_m": 0.01
+  },
+  {
+   "parts": [
+    "P34_Railings",
+    "P33_Terrace"
+   ],
+   "decision": "embed",
+   "reason": "posts stand on the deck, bottom faces deleted",
+   "extra_edges": 0,
+   "embed_depth_m": 0.01
+  },
+  {
+   "parts": [
+    "P38_FireLadders",
+    "P24_N_Facade"
+   ],
+   "decision": "embed",
+   "reason": "brackets enter the wall 10 mm",
+   "extra_edges": 16,
+   "embed_depth_m": 0.01
+  },
+  {
+   "parts": [
+    "P37_RoofBoxes",
+    "P32_Roof_Main"
+   ],
+   "decision": "embed",
+   "reason": "boxes stand on the roof, bottom faces deleted",
+   "extra_edges": 0,
+   "embed_depth_m": 0.01
+  }
+ ],
+ "questions": [
+  {
+   "audience": "user",
+   "text": "Gate 1 (parts list) user confirmation.",
+   "answer": "Confirmed by the user 2026-11-04 (TASK.md Gate 1)."
+  },
+  {
+   "audience": "user",
+   "text": "C35 / F50 mullions: geometry or texture? Measured: F50 caps protrude 20 mm beyond the glass face (profile x 78.76-79.05, glass 78.98-79.03; lower 76.09-76.38 vs 76.31-76.36). RECOMMENDATION: <= 5 cm -> texture (reg p.32 §7): the CW is a Main frame plane with one hole per panel, 50 mm strips carry the F50 cap texture (ID 12), glass is a flat MainGlass quad per panel inset 15 mm (WIN-01, WIN-11, D172). Parts > 5 cm stay geometry: ribs 430 mm (P10), sign frames 80 mm (P11), parapet caps 160 mm overhang (P12), base flashing 80 mm (P13). Cost: P05+P06+P07+P20 = 5 300 tris vs ~25 000 for modelled F50 profiles (2 200 source profile objects).",
+   "answer": "User 2026-11-04: GEOMETRY, not texture. F50 caps are simple boxes 50 mm wide, 20 mm proud of the frame plane, quads, welded into the CW relief without overlaps (P05/P06/P07); budgets raised accordingly."
+  },
+  {
+   "audience": "user",
+   "text": "The FBX has no underside under the 2.86 m cantilever (z 4.70, x 76.17-79.03, whole E facade incl. corners) and no ceiling over the entrance niche (x 73.10-76.00, z 4.65): a visible hole. RECOMMENDATION: build P04 as one soffit face, ID 19 canopy RAL 1001 per sheet 18 'козырек над входом, метал. панели с фактурой дерева' and sheet 19 'пространство с навесом' - over the full cantilever length, not only the entrance. Alternative: 1001 only over the niche, ID 2 RAL 7021 elsewhere.",
+   "answer": "Accepted as recommended: soffit under the cantilever +4.70 and the niche ceiling built as wood ID 19 RAL 1001."
+  },
+  {
+   "audience": "user",
+   "text": "Revolving door (D07): measured on sheet 25 at 1:200 (scale from axes 11-12 = 8.4 m): drum outer D 4.12 +-0.03 m, inner 3.74 m, centre x 73.08 / y -23.73 on the niche glass line; between the two niche doors (y -25.90..-21.58, 4.32 m clear). Height is not on any sheet. RECOMMENDATION: drum height 2.72 m (niche glass transom line z 2.72), flat canopy disc to 2.72, 4 wings, new library type revolving_door_D4120_H2720 before placement (TASK windows rule, D116).",
+   "answer": "Accepted as recommended: revolving door height 2.72 (niche transom line); library type ELV-17."
+  },
+  {
+   "audience": "user",
+   "text": "Base flashing under the upper CW is named 'RAL 5025' in the FBX while D13 says flashings over CW are RAL 5024. RECOMMENDATION: follow D13 (5024); it is flush (10 mm) and goes to the texture (P14).",
+   "answer": "Accepted as recommended: RAL 5024 (D13), flush, texture (P14)."
+  },
+  {
+   "audience": "user",
+   "text": "F50 frame colour for ID 12 is not printed on sheet 18 (only 'ALT F50'). RECOMMENDATION: RAL 7021 like the W72 windows and metal doors; renders as reference.",
+   "answer": "Accepted as recommended: F50 frames RAL 7021."
+  },
+  {
+   "audience": "user",
+   "text": "Pilot extent: S return to x 41.85 (34 m, the full south wood/metal volume) and N return to x 59.40 (16.5 m), as briefed 'to where the wood/metal volumes end'. RECOMMENDATION: keep; the S return brings the south canopy (P18), 28 lamellas (P19), 2 windows (P16) and 18 sign frames.",
+   "answer": "Accepted as recommended: the 34 m south return is in the pilot."
+  },
+  {
+   "audience": "user",
+   "text": "Sign frames stand 20 mm off the cassette face (frame back at 79.05, face 79.03), i.e. floating 60x60 rings. RECOMMENDATION: keep the 20 mm gap (within 5 mm-2 cm clearance, BODY-K) with the back face deleted; no brackets.",
+   "answer": "Accepted as recommended: sign frames 20 mm off the facade, no brackets."
+  },
+  {
+   "audience": "user",
+   "text": "Triangle budget: pilot parts total 24 700 (v002) VPM tris of the 40 000 pilot allocation (27 % of the 150 000 OKS target, D010/D161); source pilot = 94 911 tris. Reserve 24 100 for reveals/UCX-free detail. NPM budgets are 0: the job is VPM-only (TASK).",
+   "answer": "Budget raised for the F50 caps as geometry (P05 7000, P06 3000, P07 1500, P10 2500); pilot total 24 700 of 40 000."
+  },
+  {
+   "audience": "user",
+   "text": "Lights: none of the 6 Arktos objects is in the pilot zone; facade lighting from the booklet (emissive ERM) is not in this parts list. RECOMMENDATION: add it as a separate part after the lighting sheets are mapped.",
+   "answer": "Accepted: facade lighting is a separate part after the pilot."
+  },
+  {
+   "audience": "user",
+   "text": "Gate 1 for the new parts P21-P41 (whole building).",
+   "answer": "pending (pattern of accepted pilot)"
+  },
+  {
+   "audience": "user",
+   "text": "Railings and fire ladders: simple geometry (posts + top rail; stringers + rungs) or alpha planes?",
+   "answer": null
+  },
+  {
+   "audience": "user",
+   "text": "Gate 1 for P43_InteriorCapsules and P44_CoverStrips (build-v007).",
+   "answer": "pending"
+  }
+ ],
+ "history": [
+  "v002 2026-11-04: + P42_Lights, P27 single doors from library ELV-18/19/20",
+  "v003 2026-11-05: + P43_InteriorCapsules, P44_CoverStrips; doors No 1, 4, 11, 21, 25 -> ELV-21 (vision panel), west door No 30 ELV-08 added (build_full_v007.py)"
+ ]
+}

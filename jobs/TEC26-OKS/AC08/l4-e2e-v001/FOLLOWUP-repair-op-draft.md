@@ -4,9 +4,9 @@ Title: AC08 kernel: repair operation (flip back faces / close open borders) on t
 
 Labels: waits-artem, level:hard
 
-Context: [D197] (#968) judges the kernel invariants relative to the source. AC08's source keeps its pre-existing
+Context: [D201] (#968) judges the kernel invariants relative to the source. AC08's source keeps its pre-existing
 violators as a recorded baseline: 3107 back-face pixels (direction (-0.58, -0.58, 0.58)) and 20 open border edges not
-hidden (AC08_body 16, AC08_plate 4). D197 says a repair op is a separate later item and must not change the accepted
+hidden (AC08_body 16, AC08_plate 4). D201 says a repair op is a separate later item and must not change the accepted
 geometry now.
 
 Question for Artem before any code: may a repair op change the accepted AC08 geometry (pilot-v010), and which one -

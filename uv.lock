@@ -23,6 +23,8 @@ dependencies = [
 
 [package.optional-dependencies]
 agr-mcp = [
+    { name = "anyio" },
+    { name = "jsonschema" },
     { name = "mcp" },
 ]
 cad = [
@@ -34,7 +36,9 @@ pdf-review = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "anyio" },
     { name = "ezdxf" },
+    { name = "jsonschema" },
     { name = "mcp" },
     { name = "pyside6-essentials" },
     { name = "pytest" },
@@ -44,7 +48,9 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "anyio", marker = "extra == 'agr-mcp'", specifier = "==4.16.0" },
     { name = "ezdxf", marker = "extra == 'cad'", specifier = "==1.4.3" },
+    { name = "jsonschema", marker = "extra == 'agr-mcp'", specifier = "==4.26.0" },
     { name = "mcp", marker = "extra == 'agr-mcp'", specifier = "==1.30.0" },
     { name = "numpy", specifier = "==2.5.3" },
     { name = "pillow", specifier = "==12.3.0" },
@@ -58,7 +64,9 @@ provides-extras = ["pdf-review", "cad", "agr-mcp"]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "anyio", specifier = "==4.16.0" },
     { name = "ezdxf", specifier = "==1.4.3" },
+    { name = "jsonschema", specifier = "==4.26.0" },
     { name = "mcp", specifier = "==1.30.0" },
     { name = "pyside6-essentials", specifier = "==6.12.0" },
     { name = "pytest", specifier = "==9.1.1" },

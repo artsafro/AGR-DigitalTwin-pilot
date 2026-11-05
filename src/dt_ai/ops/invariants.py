@@ -21,7 +21,7 @@ synthetic scenes: the ray probe tests every ray against every triangle, so a who
 bpy kernel, later cards). The probe sees nothing smaller than one pixel (`2 * radius / resolution`).
 Not here yet: quad dominance and texel readiness [D129] (they need polygons, not triangles).
 
-Relative to the source [D197] (#968): with `Context(source=<scene>)` the checks of `check_operation` take a baseline
+Relative to the source [D201] (#968): with `Context(source=<scene>)` the checks of `check_operation` take a baseline
 from the source - per invariant the set of violators (open border edges not hidden, back-face pixels, close-overlap
 face pairs) - and an operation passes when it adds no NEW violator; what the source already violates is reported as
 `baseline` ("было до нас"), never as a failure. Each result then carries `baseline`, `after` and `count` = new
@@ -78,7 +78,7 @@ class Context:
     overlap_min_m: float = OVERLAP_MIN_M
     resolution: int = 48                               # rays per side of the probe
     lost_pixels_max: int = 0
-    source: dict | None = field(default=None, compare=False, hash=False)   # [D197] baseline scene, None = absolute
+    source: dict | None = field(default=None, compare=False, hash=False)   # [D201] baseline scene, None = absolute
 
 
 @dataclass(frozen=True)
@@ -88,8 +88,8 @@ class InvariantResult:
     count: int
     offenders: tuple = ()      # up to 5 short descriptions
     gating: bool = True        # False = report-only: shown, but does not fail the report (#370)
-    baseline: int | None = None   # [D197] violators already in the source; None = absolute check
-    after: int | None = None      # [D197] violators after the op (count = the NEW ones among them)
+    baseline: int | None = None   # [D201] violators already in the source; None = absolute check
+    after: int | None = None      # [D201] violators after the op (count = the NEW ones among them)
 
 
 @dataclass(frozen=True)
@@ -384,7 +384,7 @@ def _overlap_pairs(scene: Scene, parts, ctx: Context) -> list:
             if q["same_direction"] and (q["a"][0] in watch or q["b"][0] in watch)]
 
 
-# ---- relative to the source [D197] --------------------------------------------------------------------------------
+# ---- relative to the source [D201] --------------------------------------------------------------------------------
 
 def _point_segment_distance(points: np.ndarray, segments: np.ndarray) -> np.ndarray:
     """(P, S) distance of every point to every segment (S, 2, 3)."""
@@ -453,12 +453,12 @@ def _check_source(source) -> Scene:
 def check_operation(before: Scene | None, after: Scene, changed: Iterable[str], ctx: Context = Context()) -> InvariantReport:
     """All four invariants for an operation that changed the parts `changed`; `before` None skips the hole check.
 
-    `ctx.source` set: relative to that source [D197] - see the module docstring."""
+    `ctx.source` set: relative to that source [D201] - see the module docstring."""
     changed = list(changed)
     missing = [p for p in changed if p not in after]
     if missing:
         raise ValueError(f"changed parts not in the scene: {missing}")
-    if ctx.source is not None:                     # [D197] relative to the source: only new violators fail
+    if ctx.source is not None:                     # [D201] relative to the source: only new violators fail
         source = _check_source(ctx.source)
         results = [_relative_borders(source, after, changed, ctx)]
         if before is not None:

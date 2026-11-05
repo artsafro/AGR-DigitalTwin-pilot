@@ -1,13 +1,28 @@
 {
  "schema": 1,
  "button": "place.maf_checks",
- "tool": null,
+ "tool": "place.maf_checks",
  "version": "0.9",
- "shipped": false,
+ "shipped": true,
  "select": "named",
- "reason": "станция в работе, #979, ветка A",
+ "reason": "",
  "apply_status": null,
- "objects": [],
+ "objects": [
+  {
+   "name": "SM_FragA_MafOk_GroundEl",
+   "scene": "frag_a_maf",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_FragA_MafFly_GroundEl",
+   "scene": "frag_a_maf",
+   "expect": "fail",
+   "codes": [
+    "maf_flying"
+   ]
+  }
+ ],
  "base": "0.9",
  "station": "0.9.8",
  "stations": [

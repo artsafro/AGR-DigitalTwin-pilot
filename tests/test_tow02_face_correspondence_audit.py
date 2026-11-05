@@ -125,6 +125,7 @@ SRC_USER = Path("C:/Users/artsafro/Desktop/!3D viz/NTR/26_Vyatskoe/001 - Мод�
 
 
 @pytest.mark.skipif(not (SRC_V5.is_file() and SRC_USER.is_file()), reason="TOW02 real inputs not on this machine")
+@pytest.mark.job
 def test_real_tow02_inputs_reproduce_report(tmp_path):
     v5, user, out = tmp_path / "v5.fbx", tmp_path / "user.fbx", tmp_path / "audit.json"
     shutil.copyfile(SRC_V5, v5); shutil.copyfile(SRC_USER, user)

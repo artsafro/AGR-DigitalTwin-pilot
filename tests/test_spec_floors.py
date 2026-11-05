@@ -64,7 +64,7 @@ def test_different_storey_height_is_not_typical():
 
 
 def test_b01_box_is_written_as_in_the_plan():
-    # HARNESS_PLAN §3 example: {"level": "L1", "typical_of": "L0", "repeat_to": "L1"}
+    # archive/2026-11:docs/HARNESS_PLAN.md §3 example: {"level": "L1", "typical_of": "L0", "repeat_to": "L1"}
     spec, _ = extract_spec(box_building(), OBJECT)
     assert written(spec) == [("L0", None, None, True), ("L1", "L0", "L1", False)]
 

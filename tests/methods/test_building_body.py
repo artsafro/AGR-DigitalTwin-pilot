@@ -86,6 +86,7 @@ def test_budget_exactly_at_threshold(n, within):
     assert b["within_budget"] is within and b["budget_share"] == round(n / 150_000, 5)
 
 
+@pytest.mark.perf
 def test_grid_distance_matches_brute_force_on_random_soup():
     rng = np.random.default_rng(727)
     for _ in range(20):

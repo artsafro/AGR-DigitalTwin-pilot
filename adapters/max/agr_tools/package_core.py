@@ -12,6 +12,10 @@ preview hashes and never-overwrite paths come from edit_core.py (passed in as `e
   GroundGlass, GroundEl, GroundElGlass, Flora -> `{code4}_{Address}_Ground.fbx`; OKS `SM_{Address}_{NNN}_*` ->
   `{code4}_{Address}_{NN}.fbx`. The file name comes from the address field, never from the first selected object
   (GeoAGR.ms:66617-66622).
+0.9 rework (#979, branch E3): export.zip writes into a new run folder `Сборка_<time>` with ГОТОВО.txt / ОШИБКА.txt
+(AGR_Arxiv 1.5 contract, docs only: README.txt f16fca2a..., Инструкция.md 3399a62c...); unsafe member names are refused
+before any write (AGR Zipper v2.1 AGR_Zipper.zip 2bdd7ff2..., T06); qa.package compares the OKS and Ground passports
+(AGR Checker AGR_Checker.zip 0c1e5f74..., T04) and shows the per-defect codes of the validator.
 No GeoAGR or team-script code is reproduced (#853).
 """
 import json
@@ -74,8 +78,10 @@ def stage_table(validator_json):
     for s in rep['stages']:
         bad = ['{}: {}: {}'.format(f['status'], f['name'], f['observed']) for f in s.get('findings', [])
                if f.get('status') != 'pass']
+        codes = sorted({(f.get('data') or {}).get('code') for f in s.get('findings', [])
+                        if f.get('status') == 'fail'} - {None})
         stages.append({'id': s['id'], 'check': s['check'], 'gate': s['gate'], 'status': s['status'],
-                       'non_pass': bad[:8]})
+                       'non_pass': bad[:8], 'codes': codes})
     return {'target': rep.get('target'), 'profile': rep.get('profile'), 'exit_code': int(rep['exit_code']),
             'stages': stages, 'notes': list(rep.get('notes', []))[:20]}
 
@@ -93,7 +99,8 @@ def stage_findings(edit, table):
     out = []
     for s in table['stages']:
         if s['status'] == 'fail':
-            detail = s['check'] + ': ' + '; '.join(f for f in s['non_pass'] if f.startswith('fail'))
+            codes = ' [{}]'.format(', '.join(s['codes'])) if s.get('codes') else ''
+            detail = s['check'] + codes + ': ' + '; '.join(f for f in s['non_pass'] if f.startswith('fail'))
             out.append(edit.finding(s['id'], (), detail[:1000]))
     return out
 
@@ -125,17 +132,82 @@ def _file_state(paths):
     return out
 
 
+# Fields an OKS passport and its Ground passport must share (AGR Checker idea, T04/agr_checker: the pilot validator
+# checks one target at a time and never compared them).
+CROSS_KEYS = ('address', 'okrug', 'rajon', 'developer', 'designer', 'cadNum', 'ZU_area', 'h_relief', 'act_AGR')
+
+
+def zip_passport(path):
+    """(properties, None) of `SM_<a>[_Ground].geojson` inside `SM_<a>[_Ground].zip`, or (None, reason); never raises."""
+    stem = os.path.splitext(os.path.basename(path))[0]
+    try:
+        with zipfile.ZipFile(path) as z:
+            info = z.getinfo(stem + '.geojson')
+            if info.flag_bits & 0x1:
+                return None, 'encrypted GeoJSON'
+            doc = json.loads(z.read(info).decode('utf-8'))
+        props = doc['features'][0]['properties']
+        if not isinstance(props, dict):
+            raise TypeError('properties is not an object')
+        return props, None
+    except KeyError as exc:
+        return None, 'no {} in the archive ({})'.format(stem + '.geojson', exc)
+    except (zipfile.BadZipFile, OSError, RuntimeError, EOFError, ValueError, TypeError, IndexError) as exc:
+        return None, 'unreadable GeoJSON: {}'.format(exc)
+
+
+def cross_passports(paths):
+    """{zip basename: [(code, detail)]}: OKS `SM_<a>.zip` vs Ground `SM_<a>_Ground.zip` on CROSS_KEYS.
+
+    Only pairs present in `paths` are compared; an unreadable passport is a `geojson_cross_unread` finding."""
+    by_name = {os.path.basename(p): p for p in paths}
+    out = {}
+    for name, p in sorted(by_name.items()):
+        m = re.match(r'^(SM_' + ADDRESS + r')_Ground\.zip$', name)
+        if not m or m.group(1) + '.zip' not in by_name:
+            continue
+        oks_name = m.group(1) + '.zip'
+        oks, why_o = zip_passport(by_name[oks_name])
+        ground, why_g = zip_passport(p)
+        if oks is None or ground is None:
+            for n, why in ((oks_name, why_o), (name, why_g)):
+                if why:
+                    out.setdefault(n, []).append(('geojson_cross_unread', 'OKS/Ground passports not compared: ' + why))
+            continue
+        diff = [k for k in CROSS_KEYS if oks.get(k) != ground.get(k)]
+        if diff:
+            detail = '; '.join('{}: {!r} (OKS) != {!r} (Ground)'.format(k, oks.get(k), ground.get(k)) for k in diff)
+            for n in (oks_name, name):
+                out.setdefault(n, []).append(('geojson_cross', detail[:900]))
+    return out
+
+
+def _counterpart(path):
+    """The other archive of an OKS/Ground pair beside a single checked ZIP (read for the cross check only)."""
+    folder, name = os.path.split(os.path.abspath(path))
+    m = re.match(r'^(SM_' + ADDRESS + r')(_Ground)?\.zip$', name)
+    if not m:
+        return None
+    other = os.path.join(folder, m.group(1) + ('.zip' if m.group(2) else '_Ground.zip'))
+    return other if os.path.isfile(other) else None
+
+
 def qa_package(edit, path, runner, python, root, profile=None, scene=True, options=None):
-    """Read-only report: one object per checked file (handle = 1-based ordinal), findings = failed stages."""
+    """Read-only report: one object per checked file (handle = 1-based ordinal), findings = failed stages plus the
+    OKS <-> Ground passport cross check (`geojson_cross`)."""
     targets = qa_targets(path)
+    pair = [p for p in (_counterpart(targets[0]),) if p] if len(targets) == 1 else []
+    cross = cross_passports(targets + pair)
     tables, objects = [], []
     for i, t in enumerate(targets, 1):
         table = validate(t, runner, python, root, profile, scene)
         tables.append(table)
-        objects.append(edit.entry(i, os.path.basename(t), stage_findings(edit, table)))
-    state = {'path': os.path.abspath(os.fspath(path)), 'files': _file_state(targets)}
-    extra = {'options': dict(options or {}), 'scene': bool(scene), 'exit_code': worst_exit(tables),
-             'reports': tables}
+        more = [edit.finding(c, (), d) for c, d in cross.get(os.path.basename(t), [])]
+        objects.append(edit.entry(i, os.path.basename(t), stage_findings(edit, table) + more))
+    state = {'path': os.path.abspath(os.fspath(path)), 'files': _file_state(targets + pair)}
+    exit_code = 1 if any(cross.get(os.path.basename(t)) for t in targets) else worst_exit(tables)
+    extra = {'options': dict(options or {}), 'scene': bool(scene), 'exit_code': exit_code,
+             'reports': tables, 'cross_checked': sorted(os.path.basename(p) for p in pair)}
     return edit.report('qa.package', 'preview', objects=objects, done=[os.path.basename(t) for t in targets],
                        state_hash=edit.fingerprint(state), extra=extra)
 
@@ -216,16 +288,59 @@ def _member_rows(folder, names):
     return rows
 
 
+MEMBER_CODES = ('member_nul', 'member_absolute', 'member_traversal', 'member_nested', 'member_empty')
+RUN_PREFIX = 'Сборка_'  # AGR_Arxiv 1.5 contract (Инструкция.md «Как собрать проект»): each run a new folder
+MARK_OK, MARK_FAIL = 'ГОТОВО.txt', 'ОШИБКА.txt'  # ГОТОВО only after a successful run; ОШИБКА: never a result
+RUN_REPORT = 'report.json'
+
+
+def member_problem(name):
+    """(code, reason) why `name` cannot be a member of a flat delivery ZIP, or None.
+
+    AGR Zipper v2.1 (T06/agr_zipper_2506, measured) judged members by basename only: `../x`, `C:/abs`, a NUL name
+    (zipfile cuts it) and nested VPM folders all passed. Here such a name is refused before anything is written."""
+    if not isinstance(name, str) or not name.strip():
+        return 'member_empty', 'empty member name'
+    if any(ord(c) < 32 for c in name):
+        return 'member_nul', 'control character (NUL) in the name {!r}'.format(name)
+    if re.match(r'^[A-Za-z]:', name) or name.startswith(('/', '\\')) or os.path.isabs(name):
+        return 'member_absolute', 'absolute path {!r}'.format(name)
+    parts = re.split(r'[/\\]', name)
+    if '..' in parts or name in ('.', '..'):
+        return 'member_traversal', 'path escapes the archive {!r}'.format(name)
+    if len(parts) > 1:
+        return 'member_nested', 'member in a folder {!r}: delivery ZIPs are flat'.format(name)
+    return None
+
+
+def _listing(folder):
+    """(files, folders) directly in `folder`; nothing below it is ever read."""
+    files, dirs = [], []
+    for n in os.listdir(folder):
+        (dirs if os.path.isdir(os.path.join(folder, n)) else files).append(n)
+    return sorted(files), sorted(dirs)
+
+
 def zip_plan(folder, address=None, limits=None):
-    """Archives to write for one address, plus skipped items with reasons. No file is touched."""
+    """Archives to write for one address, plus skipped items with reasons. No file is touched.
+
+    Sub-folders (nested VPM sets, earlier `Сборка_*` runs) and unsafe names are reported, never packed."""
     folder = os.path.abspath(os.fspath(folder))
     if not os.path.isdir(folder):
         raise ValueError('export.zip: no such folder: ' + folder)
     limits = dict(LIMITS, **(limits or {}))
-    names = [n for n in os.listdir(folder) if os.path.isfile(os.path.join(folder, n))]
+    files, dirs = _listing(folder)
+    skipped = [(n, 'folder: never packed (delivery ZIPs are flat; nested VPM folders are refused)') for n in dirs]
+    names = []
+    for n in files:
+        bad = member_problem(n)
+        if bad:
+            skipped.append((n, bad[1]))
+        else:
+            names.append(n)
     cls = classify_folder(names)
     addr = delivery_address(cls, address)
-    archives, skipped = [], []
+    archives = []
 
     codes = sorted(c for (c, a) in cls['npm'] if a == addr)
     for (code, a), parts in sorted(cls['npm'].items()):
@@ -265,11 +380,7 @@ def zip_plan(folder, address=None, limits=None):
         if len(s['png']) < 3:
             problems.append('{} PNG T_{}_* (Diffuse, ERM, Normal needed)'.format(len(s['png']), stem))
         archives.append(_archive('SM_{}.zip'.format(stem), s['role'], folder, own, limits[s['role']], problems))
-    targets = {a['name'] for a in archives}
-    skipped += [(n, 'not in the delivery grammar of {}'.format(addr)) for n in cls['other'] if n not in targets]
-    for a in archives:
-        if os.path.exists(a['target']):
-            a['problems'].append('exists; refusing to overwrite (never update an archive)')
+    skipped += [(n, 'not in the delivery grammar of {}'.format(addr)) for n in cls['other']]
     return {'folder': folder, 'address': addr, 'archives': archives,
             'skipped': [{'item': n, 'reason': r} for n, r in sorted(skipped)]}
 
@@ -277,8 +388,8 @@ def zip_plan(folder, address=None, limits=None):
 def _archive(name, role, folder, members, limit, problems):
     rows = _member_rows(folder, members)
     total = sum(r['bytes'] for r in rows)
-    return {'name': name, 'role': role, 'target': os.path.join(folder, name), 'members': rows,
-            'bytes_in': total, 'limit': int(limit), 'problems': list(problems)}
+    return {'name': name, 'role': role, 'members': rows, 'bytes_in': total, 'limit': int(limit),
+            'problems': list(problems)}
 
 
 def size_status(n, limit):
@@ -291,8 +402,9 @@ def zip_preview(edit, folder, address=None, limits=None, options=None):
     objects = [edit.entry(i, a['name'], [edit.finding('archive', (), p) for p in a['problems']])
                for i, a in enumerate(plan['archives'], 1)]
     state = {'plan': plan}
+    out = (options or {}).get('out')
     extra = {'options': dict(options or {}), 'folder': plan['folder'], 'address': plan['address'],
-             'archives': plan['archives']}
+             'archives': plan['archives'], 'run_parent': os.path.abspath(out) if out else plan['folder']}
     done = [a['name'] for a in plan['archives'] if not a['problems']]
     skipped = [edit.skipped(a['name'], '; '.join(a['problems'])) for a in plan['archives'] if a['problems']]
     skipped += [edit.skipped(s['item'], s['reason']) for s in plan['skipped']]
@@ -300,9 +412,45 @@ def zip_preview(edit, folder, address=None, limits=None, options=None):
                        state_hash=edit.fingerprint(state), extra=extra)
 
 
-def _write_zip(folder, archive, edit):
-    """New ZIP via an exclusive `.partial` beside the target, then a no-clobber link; no temp file is left."""
-    target = edit.new_path(archive['target'])  # refuses an existing archive (never update)
+def check_members(archive):
+    """Every member name of one archive is flat and safe; ValueError before anything is written."""
+    for m in archive['members']:
+        bad = member_problem(m['name'])
+        if bad:
+            raise ValueError('{}: {}: {}'.format(archive['name'], bad[0], bad[1]))
+
+
+def run_folder(parent, stamp=None):
+    """A new `Сборка_<YYYYMMDD_HHMMSS>[_N]` folder in `parent` (exclusive mkdir: an existing one is never reused)."""
+    import datetime
+    parent = os.path.abspath(os.fspath(parent))
+    if not os.path.isdir(parent):
+        raise ValueError('export.zip: no such output folder: ' + parent)
+    stamp = stamp or datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+    for i in range(1, 1000):
+        path = os.path.join(parent, RUN_PREFIX + stamp + ('' if i == 1 else '_{}'.format(i)))
+        try:
+            os.mkdir(path)
+            return path
+        except FileExistsError:
+            continue
+    raise RuntimeError('export.zip: no free run folder name in ' + parent)
+
+
+def _marker(run, ok, lines):
+    """ГОТОВО.txt only when the run succeeded, else ОШИБКА.txt (AGR_Arxiv contract); exclusive create, UTF-8."""
+    name = MARK_OK if ok else MARK_FAIL
+    with open(os.path.join(run, name), 'x', encoding='utf-8') as fh:
+        fh.write('\n'.join(lines) + '\n')
+    return name
+
+
+def _write_zip(folder, archive, target):
+    """New ZIP via an exclusive `.partial` beside the target, then a no-clobber link; no temp file is left.
+    Member names are checked first: an unsafe one is refused before the `.partial` exists."""
+    check_members(archive)
+    if os.path.exists(target):
+        raise FileExistsError('refusing to overwrite: ' + target)
     partial = target + '.partial'
     try:
         with open(partial, 'xb') as fh:
@@ -324,34 +472,57 @@ def _write_zip(folder, archive, edit):
             os.unlink(partial)
 
 
-def zip_apply(edit, preview, validate_fn=None, limits=None):
-    """Write the archives of the unaltered, still current preview; run the validator on each one written."""
+def zip_apply(edit, preview, validate_fn=None, limits=None, stamp=None):
+    """Write the archives of the unaltered, still current preview into a NEW run folder `Сборка_<time>` (never into
+    the delivery folder, never over an existing ZIP) and run the validator on each one written. ГОТОВО.txt only when
+    every planned archive was written and no validator stage failed, else ОШИБКА.txt (AGR_Arxiv 1.5 contract)."""
     plan = preview['plan']
     current = zip_plan(plan['folder'], plan['options'].get('address'), limits)
     edit.require_current(preview, {'plan': current})
-    objects, done, skipped, reports = [], [], [], []
-    for i, a in enumerate(current['archives'], 1):
-        if a['problems']:
-            skipped.append(edit.skipped(a['name'], '; '.join(a['problems'])))
-            objects.append(edit.entry(i, a['name'], [edit.finding('archive', (), p) for p in a['problems']]))
-            continue
-        target, size = _write_zip(current['folder'], a, edit)
-        findings = []
-        if target is None:
-            findings.append(edit.finding('size', (), '{} B > {} B (binary limit, D015); not written'.format(
-                size, a['limit'])))
-            skipped.append(edit.skipped(a['name'], 'over the size limit; not written'))
-        else:
-            done.append(a['name'])
-            if validate_fn is not None:
-                table = validate_fn(target)
-                reports.append(table)
-                findings += stage_findings(edit, table)
-        objects.append(edit.entry(i, a['name'], findings))
-    skipped += [edit.skipped(s['item'], s['reason']) for s in current['skipped']]
-    extra = {'folder': current['folder'], 'address': current['address'], 'reports': reports,
-             'exit_code': worst_exit(reports) if reports else None}
-    return edit.report('export.zip', 'apply', objects=objects, done=done, skipped_=skipped, extra=extra)
+    for a in current['archives']:
+        check_members(a)  # refusal before anything is written
+    run = run_folder(plan['run_parent'], stamp)
+    objects, done, skipped, reports, failed = [], [], [], [], []
+    try:
+        for i, a in enumerate(current['archives'], 1):
+            if a['problems']:
+                skipped.append(edit.skipped(a['name'], '; '.join(a['problems'])))
+                objects.append(edit.entry(i, a['name'], [edit.finding('archive', (), p) for p in a['problems']]))
+                failed.append('{}: {}'.format(a['name'], '; '.join(a['problems'])))
+                continue
+            target, size = _write_zip(current['folder'], a, os.path.join(run, a['name']))
+            findings = []
+            if target is None:
+                findings.append(edit.finding('size', (), '{} B > {} B (binary limit, D015); not written'.format(
+                    size, a['limit'])))
+                skipped.append(edit.skipped(a['name'], 'over the size limit; not written'))
+                failed.append('{}: {} B over the limit {} B'.format(a['name'], size, a['limit']))
+            else:
+                done.append(a['name'])
+                if validate_fn is not None:
+                    table = validate_fn(target)
+                    reports.append(table)
+                    findings += stage_findings(edit, table)
+                    if table['exit_code'] == 1:
+                        failed.append('{}: validator exit 1 ({})'.format(
+                            a['name'], ', '.join(s['id'] for s in table['stages'] if s['status'] == 'fail')))
+            objects.append(edit.entry(i, a['name'], findings))
+        if not current['archives']:
+            failed.append('no archive in the plan')
+        skipped += [edit.skipped(s['item'], s['reason']) for s in current['skipped']]
+        ok = not failed
+        extra = {'folder': current['folder'], 'address': current['address'], 'reports': reports,
+                 'exit_code': worst_exit(reports) if reports else None, 'run_folder': run,
+                 'marker': MARK_OK if ok else MARK_FAIL}
+        rep = edit.report('export.zip', 'apply', objects=objects, done=done, skipped_=skipped, extra=extra)
+        with open(os.path.join(run, RUN_REPORT), 'x', encoding='utf-8') as fh:
+            json.dump(rep, fh, ensure_ascii=False, indent=1)
+    except Exception as exc:
+        _marker(run, False, ['export.zip: ОШИБКА', 'run stopped: {}'.format(exc)] + failed)
+        raise
+    _marker(run, ok, ['export.zip: ' + ('ГОТОВО' if ok else 'ОШИБКА'), 'address: ' + current['address']]
+            + ['written: ' + n for n in done] + failed)
+    return rep
 
 
 # ---- export.ground_fbx: NPM FBX split by the suffix grammar --------------------------------------------------

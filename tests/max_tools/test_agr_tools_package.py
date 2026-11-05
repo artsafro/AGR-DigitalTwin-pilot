@@ -22,6 +22,7 @@ ROOT = Path(__file__).resolve().parents[2]
 PKG = ROOT / 'adapters/max/agr_tools'
 sys.path.insert(0, str(ROOT / 'tests' / 'qa'))
 from test_validator import geojson as good_geojson  # noqa: E402
+from test_validator_corpus_979 import light_fbx  # noqa: E402
 
 sys.path.pop(0)
 
@@ -38,6 +39,8 @@ ec = _load(PKG / 'edit_core.py', 'agr_tools_edit_core_pkg')
 pc = _load(PKG / 'package_core.py', 'agr_tools_package_core_t')
 FBX = b'Kaydara FBX Binary  \x00\x1a\x00' + struct.pack('<I', 7400) + b'\x00' * 64
 PY, RUN = sys.executable, pc.subprocess_runner
+LIGHT = light_fbx()
+GROUND_LIGHT = light_fbx(root='SM_X_Ground_Root', lights=[('SM_X_Ground_Omni_001', 0)])
 
 
 def _png(colour):
@@ -55,8 +58,8 @@ def acceptance_folder(tmp_path):
     d = tmp_path / 'delivery'
     d.mkdir()
     files = {'0123_X_01.fbx': FBX, '0123_X_02.fbx': FBX, '0123_X_Ground.fbx': FBX,
-             'SM_X.fbx': FBX, 'SM_X_Light.fbx': FBX, 'SM_X.geojson': good_geojson(),
-             'SM_X_Ground.fbx': FBX, 'SM_X_Ground_Light.fbx': FBX, 'SM_X_Ground.geojson': good_geojson(),
+             'SM_X.fbx': FBX, 'SM_X_Light.fbx': LIGHT, 'SM_X.geojson': good_geojson(),
+             'SM_X_Ground.fbx': FBX, 'SM_X_Ground_Light.fbx': GROUND_LIGHT, 'SM_X_Ground.geojson': good_geojson(),
              'SM_X_0011.fbx': FBX, 'SM_X_0011.geojson': good_geojson(), 'T_X_0011_Diffuse_1.1001.png': _png((1, 2, 3)),
              '0123_Other_01.fbx': FBX, 'notes.txt': b'decoy'}
     for m, c in MAPS.items():
@@ -176,32 +179,35 @@ def test_export_zip_acceptance(tmp_path):
     assert '3 digits' in skipped['SM_X_0011.fbx'] and 'not the delivery address X' in skipped['0123_Other_01.fbx']
 
     ec.check_preview('export.zip', p)
-    r = pc.zip_apply(ec, p, _validate)
+    r = pc.zip_apply(ec, p, _validate, stamp='20261105_120000')
     assert r['status'] == 'pass', r['objects']
     assert r['plan']['done'] == ['0123_X.zip', 'SM_X.zip', 'SM_X_Ground.zip']
-    new = sorted(set(os.listdir(d)) - set(before))
-    assert new == ['0123_X.zip', 'SM_X.zip', 'SM_X_Ground.zip']  # exactly 3, no .partial left
-    with zipfile.ZipFile(d / 'SM_X.zip') as z:
+    run = Path(r['plan']['run_folder'])
+    assert run.parent == d and run.name == 'Сборка_20261105_120000' and r['plan']['marker'] == 'ГОТОВО.txt'
+    assert sorted(set(os.listdir(d)) - set(before)) == [run.name]  # the delivery folder gets only the run folder
+    assert sorted(os.listdir(run)) == ['0123_X.zip', 'SM_X.zip', 'SM_X_Ground.zip', 'report.json', 'ГОТОВО.txt']
+    assert json.loads((run / 'report.json').read_text(encoding='utf-8')) == r
+    with zipfile.ZipFile(run / 'SM_X.zip') as z:
         names = z.namelist()
     assert 'SM_X_Light.fbx' in names and not any('0011' in n for n in names)
-    with zipfile.ZipFile(d / 'SM_X_Ground.zip') as z:
+    with zipfile.ZipFile(run / 'SM_X_Ground.zip') as z:
         assert sorted(z.namelist()) == sorted(['SM_X_Ground.fbx', 'SM_X_Ground_Light.fbx', 'SM_X_Ground.geojson'] +
                                               ['T_X_Ground_{}_1.1001.png'.format(m) for m in MAPS])
-    with zipfile.ZipFile(d / '0123_X.zip') as z:
+    with zipfile.ZipFile(run / '0123_X.zip') as z:
         assert sorted(z.namelist()) == ['0123_X_01.fbx', '0123_X_02.fbx', '0123_X_Ground.fbx']
     assert {n: _sha(d / n) for n in before} == before  # decoys and sources untouched
     for table in r['plan']['reports']:
         assert _stage(table, 'V001')['status'] == 'pass', table
         assert _stage(table, 'V012')['status'] != 'fail', table  # VPM OKS name is review (conflict #20)
 
-    # a second run refuses to overwrite: nothing to do, the existing archives are named
+    # a second run never touches the first: a new run folder, the earlier one is reported as a folder, not packed
+    stamp = {p_.name: _sha(p_) for p_ in run.iterdir()}
     p2 = pc.zip_preview(ec, d)
-    assert p2['plan']['done'] == [] and p2['status'] == 'fail'
-    assert all('refusing to overwrite' in s['reason'] for s in p2['plan']['skipped'] if s['item'].endswith('.zip')
-               and s['item'] in ('0123_X.zip', 'SM_X.zip', 'SM_X_Ground.zip'))
-    stamp = {n: _sha(d / n) for n in new}
-    r2 = pc.zip_apply(ec, p2, _validate)
-    assert r2['plan']['done'] == [] and {n: _sha(d / n) for n in new} == stamp
+    assert p2['plan']['done'] == p['plan']['done']
+    assert any(s['item'] == run.name and 'never packed' in s['reason'] for s in p2['plan']['skipped'])
+    r2 = pc.zip_apply(ec, p2, _validate, stamp='20261105_120000')
+    assert Path(r2['plan']['run_folder']).name == 'Сборка_20261105_120000_2'
+    assert {p_.name: _sha(p_) for p_ in run.iterdir()} == stamp
 
 
 def test_stale_preview_writes_nothing(tmp_path):
@@ -210,11 +216,12 @@ def test_stale_preview_writes_nothing(tmp_path):
     (d / 'SM_X_Light.fbx').write_bytes(FBX + b'\x01')
     with pytest.raises(ec.StalePreview):
         pc.zip_apply(ec, p, _validate)
-    assert not list(d.glob('*.zip')) and not list(d.glob('*.partial'))
+    assert not list(d.rglob('*.zip')) and not list(d.rglob('*.partial')) and not list(d.glob('Сборка_*'))
 
 
 def test_over_limit_archives_are_flagged_and_not_written(tmp_path):
-    """500 MiB + 1 B OKS and 1 GiB + 1 B Ground: the limits are scaled down here, the comparison is the same."""
+    """500 MiB + 1 B OKS and 1 GiB + 1 B Ground: the limits are scaled down here, the comparison is the same.
+    The run folder then gets ОШИБКА.txt, never ГОТОВО.txt (AGR_Arxiv contract)."""
     d = acceptance_folder(tmp_path)
     limits = {'vpm_oks': 200, 'vpm_ground': 300}
     p = pc.zip_preview(ec, d, limits=limits)
@@ -222,7 +229,117 @@ def test_over_limit_archives_are_flagged_and_not_written(tmp_path):
     assert r['plan']['done'] == ['0123_X.zip'] and r['status'] == 'fail'
     flagged = {o['name']: o['findings'][0]['code'] for o in r['objects'] if o['findings']}
     assert flagged == {'SM_X.zip': 'size', 'SM_X_Ground.zip': 'size'}
-    assert sorted(x.name for x in d.glob('*.zip')) == ['0123_X.zip'] and not list(d.glob('*.partial'))
+    run = Path(r['plan']['run_folder'])
+    assert sorted(x.name for x in run.glob('*.zip')) == ['0123_X.zip'] and not list(d.rglob('*.partial'))
+    assert r['plan']['marker'] == 'ОШИБКА.txt' and (run / 'ОШИБКА.txt').is_file()
+    assert not (run / 'ГОТОВО.txt').exists()
+    assert 'SM_X.zip' in (run / 'ОШИБКА.txt').read_text(encoding='utf-8')
+
+
+# ---- export.zip rework (#979): AGR Zipper v2.1 / AGR_Arxiv 1.5 -------------------------------------------------
+DECOYS = ['../SM_X.geojson', 'C:/abs/SM_X_Light.fbx', 'SM_X.fbx\x00../escape', 'SM_X_sub/SM_X.fbx']
+
+
+def zipper_member_ok(name):
+    """AGR Zipper v2.1 (T06/agr_zipper_2506, measured): members judged by basename; zipfile cuts a NUL name."""
+    return bool(pc.VPM_FILE.match(os.path.basename(name.split('\x00')[0])))
+
+
+def core_member_ok(name):
+    return pc.member_problem(name) is None
+
+
+@pytest.mark.parametrize('impl', [pytest.param('zipper', marks=pytest.mark.xfail(
+    strict=True, reason='source behaviour (T06/agr_zipper_2506)')), 'core'])
+def test_unsafe_member_names_are_refused(impl):
+    """export.zip T06 defects: `../`, absolute names, NUL and nested VPM folders passed the Zipper."""
+    ok = zipper_member_ok if impl == 'zipper' else core_member_ok
+    assert not any(ok(n) for n in DECOYS)
+
+
+def test_each_unsafe_member_has_its_own_code():
+    assert [pc.member_problem(n)[0] for n in DECOYS] == ['member_traversal', 'member_absolute', 'member_nul',
+                                                         'member_nested']
+    assert pc.member_problem('SM_X.fbx') is None and pc.member_problem('')[0] == 'member_empty'
+
+
+def test_unsafe_members_refused_before_any_write(tmp_path, monkeypatch):
+    """A plan that still carries an unsafe member (any route) is refused before the run folder or a ZIP exists."""
+    d = acceptance_folder(tmp_path)
+    p = pc.zip_preview(ec, d)
+    real = pc.zip_plan
+
+    def poisoned(*a, **k):
+        plan = real(*a, **k)
+        plan['archives'][1]['members'].append({'name': '../SM_X.geojson', 'bytes': 1, 'mtime_ns': 0})
+        return plan
+    monkeypatch.setattr(pc, 'zip_plan', poisoned)
+    monkeypatch.setattr(ec, 'require_current', lambda preview, state: None)
+    with pytest.raises(ValueError, match='member_traversal'):
+        pc.zip_apply(ec, p, _validate)
+    assert not list(d.glob('Сборка_*')) and not list(d.rglob('*.zip'))
+
+
+def test_nested_vpm_folder_is_reported_not_packed(tmp_path):
+    d = acceptance_folder(tmp_path)
+    (d / 'SM_X_sub').mkdir()
+    (d / 'SM_X_sub' / 'SM_X.fbx').write_bytes(FBX)
+    p = pc.zip_preview(ec, d)
+    assert any(s['item'] == 'SM_X_sub' and 'nested VPM folders' in s['reason'] for s in p['plan']['skipped'])
+    r = pc.zip_apply(ec, p, _validate)
+    for z in Path(r['plan']['run_folder']).glob('*.zip'):
+        with zipfile.ZipFile(z) as f:
+            assert all('/' not in n and '\\' not in n for n in f.namelist())
+
+
+def test_existing_zip_in_the_delivery_folder_is_untouched(tmp_path):
+    d = acceptance_folder(tmp_path)
+    (d / 'SM_X.zip').write_bytes(b'old archive')
+    p = pc.zip_preview(ec, d)
+    assert any(s['item'] == 'SM_X.zip' for s in p['plan']['skipped'])
+    r = pc.zip_apply(ec, p, _validate, stamp='20261105_130000')
+    assert (d / 'SM_X.zip').read_bytes() == b'old archive'
+    assert (Path(r['plan']['run_folder']) / 'SM_X.zip').read_bytes() != b'old archive'
+
+
+def test_marker_is_error_when_a_run_stops(tmp_path, monkeypatch):
+    d = acceptance_folder(tmp_path)
+    p = pc.zip_preview(ec, d)
+
+    def boom(target):
+        raise RuntimeError('validator crashed')
+    with pytest.raises(RuntimeError, match='validator crashed'):
+        pc.zip_apply(ec, p, boom, stamp='20261105_140000')
+    run = d / 'Сборка_20261105_140000'
+    assert (run / 'ОШИБКА.txt').is_file() and not (run / 'ГОТОВО.txt').exists()
+    assert 'validator crashed' in (run / 'ОШИБКА.txt').read_text(encoding='utf-8')
+
+
+def test_run_folder_goes_to_options_out(tmp_path):
+    d = acceptance_folder(tmp_path)
+    out = tmp_path / 'out'
+    out.mkdir()
+    p = pc.zip_preview(ec, d, options={'out': str(out)})
+    r = pc.zip_apply(ec, p, _validate)
+    assert Path(r['plan']['run_folder']).parent == out and (Path(r['plan']['run_folder']) / 'ГОТОВО.txt').is_file()
+    with pytest.raises(ValueError, match='no such output folder'):
+        pc.zip_apply(ec, pc.zip_preview(ec, d, options={'out': str(tmp_path / 'nope')}), _validate)
+
+
+def test_npm_archive_holds_only_fbx_and_one_address(tmp_path):
+    """Zipper 25.06 rules: «в НПМ только FBX» and one Address across the files of an archive."""
+    d = acceptance_folder(tmp_path)
+    (d / '0123_X_preview.png').write_bytes(_png((1, 1, 1)))
+    p = pc.zip_preview(ec, d)
+    npm = next(a for a in p['plan']['archives'] if a['role'] == 'npm')
+    assert all(m['name'].endswith('.fbx') and '_X_' in m['name'] for m in npm['members'])
+    assert any(s['item'] == '0123_X_preview.png' for s in p['plan']['skipped'])
+
+
+def test_no_pickle_ipc_or_network_in_the_packer():
+    """Zipper defect: a localhost listener unpickled any bytes (code execution). The packer has no IPC at all."""
+    src = (PKG / 'package_core.py').read_text(encoding='utf-8')
+    assert 'pickle' not in src and 'socket' not in src
 
 
 def test_mixed_addresses_and_codes_are_refused(tmp_path):
@@ -298,6 +415,60 @@ def test_qa_package_folder_checks_every_zip(tmp_path):
     with pytest.raises(ValueError, match='no ZIP'):
         (tmp_path / 'empty').mkdir()
         pc.qa_package(ec, tmp_path / 'empty', RUN, PY, ROOT)
+
+
+def _vpm_zip(folder, stem, **props):
+    files = [(stem + '.fbx', FBX), (stem + '.geojson', good_geojson(**props))]
+    prefix = 'T_' + stem[3:]
+    files += [('{}_{}_1.1001.png'.format(prefix, m), _png(c)) for m, c in MAPS.items()]
+    return _npm_zip(folder, stem + '.zip', files)
+
+
+def pilot081_cross(paths):
+    """0.8.1 qa.package: each ZIP on its own, the OKS and Ground passports are never compared (T04/agr_checker)."""
+    return {}
+
+
+@pytest.mark.parametrize('impl', [pytest.param('pilot081', marks=pytest.mark.xfail(
+    strict=True, reason='0.8.1 behaviour: one target at a time')), 'core'])
+def test_oks_and_ground_passports_must_agree(tmp_path, impl):
+    oks = _vpm_zip(tmp_path, 'SM_X', developer='A', cadNum='77:01:1')
+    ground = _vpm_zip(tmp_path, 'SM_X_Ground', developer='B', cadNum='77:01:1')
+    got = (pilot081_cross if impl == 'pilot081' else pc.cross_passports)([oks, ground])
+    assert [c for c, _d in got.get('SM_X.zip', [])] == ['geojson_cross'] and 'developer' in got['SM_X_Ground.zip'][0][1]
+
+
+def test_cross_check_in_the_button_report(tmp_path):
+    _vpm_zip(tmp_path, 'SM_X', developer='A')
+    _vpm_zip(tmp_path, 'SM_X_Ground', developer='B')
+    r = pc.qa_package(ec, tmp_path, RUN, PY, ROOT, scene=False)
+    assert all('geojson_cross' in [f['code'] for f in o['findings']] for o in r['objects'])
+    assert r['plan']['exit_code'] == 1 and r['status'] == 'fail'
+    # a single OKS ZIP is still compared with the Ground archive beside it (read only)
+    one = pc.qa_package(ec, tmp_path / 'SM_X.zip', RUN, PY, ROOT, scene=False)
+    assert one['plan']['cross_checked'] == ['SM_X_Ground.zip']
+    assert 'geojson_cross' in [f['code'] for f in one['objects'][0]['findings']]
+    agree = tmp_path / 'agree'
+    agree.mkdir()
+    _vpm_zip(agree, 'SM_X')
+    _vpm_zip(agree, 'SM_X_Ground')
+    assert pc.cross_passports(sorted(agree.glob('*.zip'))) == {}
+
+
+def test_cross_check_never_crashes_on_a_broken_passport(tmp_path):
+    oks = _vpm_zip(tmp_path, 'SM_X')
+    bad = _npm_zip(tmp_path, 'SM_X_Ground.zip', [('SM_X_Ground.geojson', b'\xff not json')])
+    got = pc.cross_passports([oks, bad])
+    assert got['SM_X_Ground.zip'][0][0] == 'geojson_cross_unread'
+
+
+def test_corpus_codes_reach_the_button_report(tmp_path):
+    """qa.package acceptance: each corrupt case keeps its own code in the stage table and the finding detail."""
+    z = _npm_zip(tmp_path, 'SM_X.zip', [('../SM_X_Light.fbx', FBX), ('SM_X.fbx', FBX)])
+    r = pc.qa_package(ec, z, RUN, PY, ROOT, scene=False)
+    (table,) = r['plan']['reports']
+    assert _stage(table, 'V001')['codes'] == ['zip_traversal']
+    assert '[zip_traversal]' in r['objects'][0]['findings'][0]['detail']
 
 
 def test_validator_errors_are_named_not_a_pass(tmp_path):

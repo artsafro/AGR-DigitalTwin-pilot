@@ -24,9 +24,11 @@ REF = re.compile(r"\[(D\d{3}(?:, D\d{3})*)\]")
 MENTION = re.compile(
     r"(user|пользовател|decided|решен|прожарк).{0,40}2026-\d\d-\d\d"
     r"|2026-\d\d-\d\d.{0,25}(user|пользовател|decided|решен)", re.IGNORECASE)
+# Verbatim original rows of long log rows; part of the log, so out of scope like the log itself.
+LOG_DETAIL = "docs/decisions-detail.md"
 # Out of scope for Markdown: Russian originals (own index), research notes, job files, state and handoff.
 EXCLUDED = ("docs/agr/", "docs/research/", "jobs/", "technical_library/", "data/",
-            "docs/HANDOFF", "docs/PROJECT_STATE.md", LOG)
+            "docs/HANDOFF", "docs/PROJECT_STATE.md", LOG, LOG_DETAIL)
 # Python stays out of scope under these prefixes, plus this file (the checker's own examples).
 PY_EXCLUDED = ("jobs/", "technical_library/", "data/", "docs/agr/", "tests/fixtures/")
 # Frozen fixtures carry no id, for Markdown and Python alike.
@@ -197,8 +199,7 @@ def test_every_dated_decision_carries_its_id():
 
 def test_every_decision_is_anchored_where_it_applies():
     anchored = set()
-    names = list(dict.fromkeys([*scope_files(), "docs/prd/agent-ready-harness.md"]))
-    for name in names:
+    for name in scope_files():
         for group in REF.findall((ROOT / name).read_text(encoding="utf-8")):
             anchored.update(group.split(", "))
     assert [row[0] for row in log_rows() if row[0] not in anchored] == []
@@ -234,8 +235,9 @@ def test_scope_by_kind():
         "technical_library/x/y.py",
         "docs/research/a.md",
         "docs/agr/b.py",
+        "docs/decisions-detail.md",
         "",
-    ]] == [False] * 12
+    ]] == [False] * 13
 
 
 def test_frozen_fixtures_out_of_scope(tmp_path, monkeypatch):

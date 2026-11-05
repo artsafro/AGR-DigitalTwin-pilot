@@ -1,0 +1,64 @@
+{"schema": 1, "branch": "A", "issue": "#979", "stations": [
+ {"button": "place.flora_repair",
+  "objects": [
+   {"name": "SM_FragA_FloraOk_Flora", "role": "Flora", "scene": "frag_a_flora", "builder": "A_build",
+    "extra": {"kind": "box", "size": [1.0, 0.1, 2.0], "at": [0.0, 0.0, 0.0], "mesh": true}},
+   {"name": "SM_FragA_FloraRot_Flora", "role": "Flora", "scene": "frag_a_flora", "builder": "A_build",
+    "extra": {"kind": "box", "size": [1.0, 0.1, 2.0], "at": [3.0, 0.0, 0.0], "rot_z": 37.0, "mesh": true}}],
+  "expected": [
+   {"name": "SM_FragA_FloraOk_Flora", "scene": "frag_a_flora", "expect": "pass", "codes": []},
+   {"name": "SM_FragA_FloraRot_Flora", "scene": "frag_a_flora", "expect": "fail", "codes": ["rotated"]}],
+  "reason": ""},
+ {"button": "place.maf_checks",
+  "objects": [
+   {"name": "SM_FragA_Maf_Ground", "role": "Ground", "scene": "frag_a_maf", "builder": "A_build",
+    "extra": {"kind": "ground", "size": [20.0, 20.0], "slope_deg": 0.0, "at": [0.0, 0.0, 0.0]}},
+   {"name": "SM_FragA_MafOk_GroundEl", "role": "GroundEl", "scene": "frag_a_maf", "builder": "A_build",
+    "extra": {"kind": "box", "size": [1.0, 1.0, 1.0], "at": [0.0, 0.0, 0.0]}},
+   {"name": "SM_FragA_MafFly_GroundEl", "role": "GroundEl", "scene": "frag_a_maf", "builder": "A_build",
+    "extra": {"kind": "box", "size": [1.0, 1.0, 1.0], "at": [4.0, 0.0, 0.5]}}],
+  "expected": [
+   {"name": "SM_FragA_MafOk_GroundEl", "scene": "frag_a_maf", "expect": "pass", "codes": []},
+   {"name": "SM_FragA_MafFly_GroundEl", "scene": "frag_a_maf", "expect": "fail", "codes": ["maf_flying"]}],
+  "reason": ""},
+ {"button": "place.replace",
+  "objects": [
+   {"name": "SM_FragA_Master_GroundEl", "role": "GroundEl", "scene": "frag_a_replace", "builder": "A_build",
+    "extra": {"kind": "box", "size": [0.5, 0.5, 0.5], "at": [-5.0, 0.0, 0.0]}},
+   {"name": "SM_FragA_Target_GroundEl", "role": "GroundEl", "scene": "frag_a_replace", "builder": "A_build",
+    "extra": {"kind": "box", "size": [1.0, 2.0, 1.0], "at": [0.0, 0.0, 0.0], "rot_z": 30.0}}],
+  "expected": [
+   {"name": "SM_FragA_Target_GroundEl", "scene": "frag_a_replace", "expect": "pass", "codes": []},
+   {"name": "SM_FragA_Master_GroundEl", "scene": "frag_a_replace", "expect": "fail", "codes": ["is_master"]}],
+  "reason": "", "options": {"master": "SM_FragA_Master_GroundEl"}},
+ {"button": "place.schedule",
+  "objects": [
+   {"name": "SM_FragA_Sched_Ground", "role": "Ground", "scene": "frag_a_sched", "builder": "A_build",
+    "extra": {"kind": "ground", "size": [30.0, 30.0], "slope_deg": 0.0, "at": [0.0, 0.0, 0.0]}},
+   {"name": "SM_FragA_Sched_Main", "role": "Main", "scene": "frag_a_sched", "builder": "A_build",
+    "extra": {"kind": "box", "size": [6.0, 6.0, 10.0], "at": [8.0, 8.0, 0.0]}},
+   {"name": "SM_FragA_Bench_GroundEl", "role": "GroundEl", "scene": "frag_a_sched", "builder": "A_build",
+    "extra": {"kind": "box", "size": [1.8, 0.5, 0.8], "at": [-40.0, 0.0, 0.0]}},
+   {"name": "SM_FragA_Lamp_GroundEl", "role": "GroundEl", "scene": "frag_a_sched", "builder": "A_build",
+    "extra": {"kind": "box", "size": [0.3, 0.3, 4.0], "at": [-40.0, 5.0, 0.0]}}],
+  "expected": [
+   {"name": "SM_FragA_Bench_GroundEl", "scene": "frag_a_sched", "expect": "pass", "codes": []},
+   {"name": "SM_FragA_Lamp_GroundEl", "scene": "frag_a_sched", "expect": "fail", "codes": ["blocked_by_obstacle"]}],
+  "reason": "",
+  "options": {"rows": [
+   {"id": "P01", "model": "SM_FragA_Bench_GroundEl", "x": -5.0, "y": -5.0, "rotation_deg": 30.0},
+   {"id": "P02", "model": "SM_FragA_Lamp_GroundEl", "x": -5.0, "y": 5.0, "rotation_deg": 0.0},
+   {"id": "P03", "model": "SM_FragA_Lamp_GroundEl", "x": 8.0, "y": 8.0, "rotation_deg": 0.0}]}},
+ {"button": "place.drop_to_ground",
+  "objects": [
+   {"name": "SM_FragA_Drop_Ground", "role": "Ground", "scene": "frag_a_drop", "builder": "A_build",
+    "extra": {"kind": "ground", "size": [20.0, 20.0], "slope_deg": 15.0, "at": [0.0, 0.0, 0.0]}},
+   {"name": "SM_FragA_DropOk_GroundEl", "role": "GroundEl", "scene": "frag_a_drop", "builder": "A_build",
+    "extra": {"kind": "box", "size": [1.0, 1.0, 1.0], "at": [0.0, 0.0, 3.0], "rot_z": 20.0}},
+   {"name": "SM_FragA_DropMiss_GroundEl", "role": "GroundEl", "scene": "frag_a_drop", "builder": "A_build",
+    "extra": {"kind": "box", "size": [1.0, 1.0, 1.0], "at": [40.0, 0.0, 3.0]}}],
+  "expected": [
+   {"name": "SM_FragA_DropOk_GroundEl", "scene": "frag_a_drop", "expect": "pass", "codes": []},
+   {"name": "SM_FragA_DropMiss_GroundEl", "scene": "frag_a_drop", "expect": "fail", "codes": ["ground_miss"]}],
+  "reason": "", "options": {"offset_m": 0.1}}
+]}

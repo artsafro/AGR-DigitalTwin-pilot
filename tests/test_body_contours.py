@@ -9,7 +9,7 @@ pytest.importorskip('shapely')
 
 
 def load_tool(name):
-    path = Path(__file__).parents[1] / 'tools' / (name + '.py')
+    path = Path(__file__).parents[1] / 'jobs/OBR22-K02/scripts' / (name + '.py')
     spec = importlib.util.spec_from_file_location(name, path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)

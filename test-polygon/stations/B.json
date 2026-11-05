@@ -1,0 +1,58 @@
+{"schema": 1, "branch": "B", "issue": "#979", "stations": [
+ {"button": "tex.erm_normal_check",
+  "objects": [
+   {"name": "SM_BErmnOk_Main", "role": "Main", "builder": "B_build", "extra": {"kind": "ermn", "normal": "flat"}},
+   {"name": "SM_BErmnGl_Main", "role": "Main", "builder": "B_build", "extra": {"kind": "ermn", "normal": "gl"}}],
+  "expected": [
+   {"name": "SM_BErmnOk_Main", "scene": "polygon_all", "expect": "pass", "codes": []},
+   {"name": "SM_BErmnGl_Main", "scene": "polygon_all", "expect": "fail", "codes": ["normal_opengl"]}],
+  "reason": "Плоская нормаль (128,128,255) и ERM без свечения — PASS; купол в OpenGL (G вверх) — FAIL normal_opengl. Файлы пишет B_build.py в папку прогона."},
+ {"button": "tex.finish_map",
+  "objects": [
+   {"name": "SM_BFinishOk_001_Main", "role": "Main", "builder": "B_build", "extra": {"kind": "finish", "ids": [1, 2, 3, 4]}},
+   {"name": "SM_BFinishBad_001_Main", "role": "Main", "builder": "B_build", "extra": {"kind": "finish", "ids": [1, 2, 3, 7]}}],
+  "expected": [
+   {"name": "SM_BFinishOk_001_Main", "scene": "polygon_all", "expect": "pass", "codes": []},
+   {"name": "SM_BFinishBad_001_Main", "scene": "polygon_all", "expect": "fail", "codes": ["finish_id_unmapped"]}],
+  "options": {"legend": "textures/B/B_legend.json"},
+  "reason": "Легенда на 5 отделок, 4 ID (B_build.py пишет её рядом с текстурами прогона). ID 7 без строки легенды — FAIL finish_id_unmapped."},
+ {"button": "udim.matid_unwrap",
+  "objects": [
+   {"name": "SM_BMaf_Main", "role": "Main", "builder": "B_build", "extra": {"kind": "maf", "ids": [1, 2, 7, 12, 40]}},
+   {"name": "SM_BMafBad_Main", "role": "Main", "builder": "B_build", "extra": {"kind": "maf", "ids": [1, 2, 7, 12, 40], "bad": true}}],
+  "expected": [
+   {"name": "SM_BMaf_Main", "scene": "polygon_all", "expect": "pass", "codes": []},
+   {"name": "SM_BMafBad_Main", "scene": "polygon_all", "expect": "fail", "codes": ["id_out_of_range"]}],
+  "reason": "МАФ из L06 (MatID 1, 2, 7, 12, 40) — PASS; одна грань с ID 101 — FAIL id_out_of_range (тайла UDIM нет)."},
+ {"button": "udim.slots",
+  "objects": [
+   {"name": "SM_BSlotsOk_Main", "role": "Main", "builder": "B_build", "extra": {"kind": "slots", "files": [
+     "T_BSlotsOk_Diffuse_1.1001.png", "T_BSlotsOk_Diffuse_1.1002.png", "T_BSlotsOk_ERM_1.1001.png",
+     "T_BSlotsOk_ERM_1.1002.png", "T_BSlotsOk_Diffuse_2.1001.png"]}},
+   {"name": "SM_BSlotsGap_Main", "role": "Main", "builder": "B_build", "extra": {"kind": "slots", "files": [
+     "T_BSlotsGap_Diffuse_1.1001.png", "T_BSlotsGap_Diffuse_1.1002.png", "T_BSlotsGap_Diffuse_1.1004.png"]}}],
+  "expected": [
+   {"name": "SM_BSlotsOk_Main", "scene": "polygon_all", "expect": "pass", "codes": []},
+   {"name": "SM_BSlotsGap_Main", "scene": "polygon_all", "expect": "fail", "codes": ["udim_gap"]}],
+  "reason": "Тайлы 1001–1002 в слотах 1–2 — PASS; 1001, 1002, 1004 — FAIL udim_gap (нет 1003)."},
+ {"button": "atlas.flora",
+  "objects": [
+   {"name": "SM_BLeaf_Flora", "role": "Flora", "builder": "B_build", "extra": {"kind": "card", "tex": "leaf"}},
+   {"name": "SM_BLeafInst_Flora", "role": "Flora", "builder": "B_build", "extra": {"kind": "card", "instance_of": "SM_BLeaf_Flora"}},
+   {"name": "SM_BGrass_Flora", "role": "Flora", "builder": "B_build", "extra": {"kind": "card", "tex": "grass"}},
+   {"name": "SM_BTga_Flora", "role": "Flora", "builder": "B_build", "extra": {"kind": "card", "tex": "tga"}}],
+  "expected": [
+   {"name": "SM_BLeaf_Flora", "scene": "polygon_all", "expect": "pass", "codes": []},
+   {"name": "SM_BLeafInst_Flora", "scene": "polygon_all", "expect": "pass", "codes": []},
+   {"name": "SM_BGrass_Flora", "scene": "polygon_all", "expect": "pass", "codes": []},
+   {"name": "SM_BTga_Flora", "scene": "polygon_all", "expect": "fail", "codes": ["texture_unsupported"]}],
+  "reason": "Лист RGBA с инстансом и трава — PASS; карточка с TGA — FAIL texture_unsupported (атлас не строится, пока источник не PNG)."},
+ {"button": "atlas.groundel",
+  "objects": [
+   {"name": "SM_BGroundElOk_GroundEl", "role": "GroundEl", "builder": "B_build", "extra": {"kind": "card", "tex": "256", "aspect": 1.0, "segs": [1, 1]}},
+   {"name": "SM_BGroundElBig_GroundEl", "role": "GroundEl", "builder": "B_build", "extra": {"kind": "card", "tex": "1024", "aspect": 1.0, "segs": [1, 1]}}],
+  "expected": [
+   {"name": "SM_BGroundElOk_GroundEl", "scene": "polygon_all", "expect": "pass", "codes": []},
+   {"name": "SM_BGroundElBig_GroundEl", "scene": "polygon_all", "expect": "fail", "codes": ["groundel_size"]}],
+  "reason": "Карта 256² — PASS; карта 1024² — FAIL groundel_size (правило 512 из L06); атлас на копии собирает обе в один набор ≤ 512."}
+]}

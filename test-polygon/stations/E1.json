@@ -1,0 +1,79 @@
+{
+ "schema": 1,
+ "branch": "E1",
+ "issue": "#979",
+ "stations": [
+  {
+   "button": "tex.format_fix",
+   "objects": [
+    {"name": "SM_E1FmtOk_001_Main", "role": "Main", "builder": "E1_build", "mat_name": "M_E1FmtOk_001_Main_1",
+     "extra": {"e1": {"maps": {"diffuseMap": "T_E1FmtOk_001_Main_d_1.png"},
+                      "files": {"T_E1FmtOk_001_Main_d_1.png": "rgb16"}}}},
+    {"name": "SM_E1FmtBad_001_Main", "role": "Main", "builder": "E1_build", "mat_name": "M_E1FmtBad_001_Main_1",
+     "extra": {"e1": {"maps": {"diffuseMap": "T_E1FmtBad_001_Main_d_1.png"},
+                      "files": {"T_E1FmtBad_001_Main_d_1.png": "noise128"}}}}
+   ],
+   "expected": [
+    {"name": "SM_E1FmtOk_001_Main", "scene": "polygon_all", "expect": "pass", "codes": []},
+    {"name": "SM_E1FmtBad_001_Main", "scene": "polygon_all", "expect": "fail", "codes": ["tex_quality"]}
+   ],
+   "options": {"max_bytes": 20480},
+   "reason": "16-bit RGB -> 8-bit lossless (pass); 128^2 noise under 20 kB only as a dithered palette with RMSE 0.056 > max_rmse 0.03 -> tex_quality, not «готово» (T01)"
+  },
+  {
+   "button": "tex.placeholders",
+   "objects": [
+    {"name": "SM_E1PhOk_Main", "role": "Main", "builder": "E1_build", "extra": {"e1": {}}},
+    {"name": "SM_E1PhBad_Main", "role": "Main", "builder": "E1_build",
+     "extra": {"e1": {"outside": {"Maps/T_E1PhBad_Diffuse_1.1001.png": "foreign"}}}}
+   ],
+   "expected": [
+    {"name": "SM_E1PhOk_Main", "scene": "polygon_all", "expect": "pass", "codes": []},
+    {"name": "SM_E1PhBad_Main", "scene": "polygon_all", "expect": "fail", "codes": ["placeholder_exists"]}
+   ],
+   "reason": "one placeholder set per selected address in Maps/ beside the saved scene; an existing file is refused, never overwritten (GeoAGR overwrote silently)"
+  },
+  {
+   "button": "scene.missing_maps",
+   "objects": [
+    {"name": "SM_E1MmOk_Main", "role": "Main", "builder": "E1_build",
+     "extra": {"e1": {"maps": {"diffuseMap": "T_E1MmOk_d_1.png"}, "files": {"T_E1MmOk_d_1.png": "solid"}}}},
+    {"name": "SM_E1Mm_001_Main", "role": "Main", "builder": "E1_build",
+     "extra": {"e1": {"maps": {"diffuseMap": "old/src_diffuse.png"},
+                      "files": {"T_E1Mm_001_Main_d_1.png": "solid", "T_E1Mm_001_Main_d_1.jpg": "jpg"}}}}
+   ],
+   "expected": [
+    {"name": "SM_E1MmOk_Main", "scene": "polygon_all", "expect": "pass", "codes": []},
+    {"name": "SM_E1Mm_001_Main", "scene": "polygon_all", "expect": "fail", "codes": ["map_missing"]}
+   ],
+   "reason": "missing map with mask candidates T_E1Mm_001_Main_d_1.png and .jpg (rank 2, ambiguous) found without a search folder (T06 TexFinder)"
+  },
+  {
+   "button": "qa.names_fix",
+   "objects": [
+    {"name": "SM_E1Nf_001_Main", "role": "Main", "builder": "E1_build", "mat_name": "Old_Nf",
+     "extra": {"e1": {"maps": {"diffuseMap": "nf_src.png"}, "files": {"nf_src.png": "solid"}}}},
+    {"name": "SM_E1NfBad_001_Main", "role": "Main", "builder": "E1_build", "mat_name": "Old_NfBad",
+     "extra": {"e1": {"maps": {"diffuseMap": "nfbad_src.png"},
+                      "files": {"nfbad_src.png": "solid", "T_E1NfBad_001_Main_d_1.png": "foreign"}}}}
+   ],
+   "expected": [
+    {"name": "SM_E1Nf_001_Main", "scene": "polygon_all", "expect": "pass", "codes": []},
+    {"name": "SM_E1NfBad_001_Main", "scene": "polygon_all", "expect": "fail", "codes": ["name_fix_failed"]}
+   ],
+   "reason": "the mask file name is held by a file with other content: not overwritten and not linked (T06 renamer V13 / Asset Material Renamer)"
+  },
+  {
+   "button": "ucx.rename",
+   "objects": [
+    {"name": "UCX_SM_E1Ucx_Main_001", "role": "UCX", "mat": "none", "fbx": null},
+    {"name": "UCX_SM_E1Ucx_Main_7", "role": "UCX", "mat": "none", "fbx": null}
+   ],
+   "expected": [
+    {"name": "UCX_SM_E1Ucx_Main_001", "scene": "polygon_all", "expect": "pass", "codes": []},
+    {"name": "UCX_SM_E1Ucx_Main_7", "scene": "polygon_all", "expect": "fail", "codes": ["ucx_name"]}
+   ],
+   "reason": "preview: a piece whose name is not its planned mask name carries ucx_name (will be UCX_SM_E1Ucx_Main_002)"
+  }
+ ]
+}

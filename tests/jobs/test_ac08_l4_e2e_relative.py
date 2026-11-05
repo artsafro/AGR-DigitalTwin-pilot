@@ -1,4 +1,4 @@
-"""AC08 L4 rerun with kernel invariants relative to the source [D197] (#968): committed evidence, the UV/material
+"""AC08 L4 rerun with kernel invariants relative to the source [D201] (#968): committed evidence, the UV/material
 preservation verdict and kernel-output composition of alternative ops. Synthetic states are marked; no Blender.
 Pattern: new-case: AC08 L4 rerun evidence under relative invariants (#968).
 """
@@ -32,7 +32,7 @@ def test_committed_relative_evidence_is_current_and_every_refusal_has_a_reason()
     r = _load(EVIDENCE)
     assert (EVIDENCE / "e2e.md").read_text(encoding="utf-8") == e2e.markdown(r)
     assert r["gates"] == json.loads(json.dumps(e2e.gates(r)))
-    assert r["issue"] == 968 and r["invariants"] == "relative [D197]"
+    assert r["issue"] == 968 and r["invariants"] == "relative [D201]"
     assert sorted(r["inputs"].values()) == sorted(_load(BEFORE)["inputs"].values())   # same FBX, delivered, dump
     assert len(r["ops"]) == 19
     applied = [f"{o['op']}:{o['part']}" for o in r["ops"] if o["applied"]]
