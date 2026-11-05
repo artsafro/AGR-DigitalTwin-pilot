@@ -1783,6 +1783,11 @@ def stage_tools(dest, root=None):
     (folder / 'hygiene_core.py').write_bytes(mod.hygiene_slice())
     (folder / 'uv_nudge_core.py').write_bytes(mod.nudge_slice())
     (folder / 'ucx_audit_core.py').write_bytes(mod.audit_slice())
+    # package data (0.9, #979): data/procedural_classes.json, data/streets/*, byte for byte as the MZP ships them
+    for rel in mod.data_files(package):
+        target = folder / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes((package / rel).read_bytes())
     return folder
 
 
