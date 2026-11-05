@@ -149,6 +149,28 @@ Wood (all wood IDs) warm beige **#C1AE93** (sRGB 193/174/147, nearest RAL 7032 �
 readback, Blender xView 0/0, SINTEZ as v003. `outputs/delivery-v004/` (ZIP sha256 f9c714f1…0bceb) is the current
 delivery candidate; passed=false until FNO code/name and the УКЭП `.sig` arrive. Open items as listed above.
 
+## Working geometry not triangulated (user, 2026-11-05)
+
+> «я хочу геометрию получать не триангулированную, мне с триангулированной геометрией сложно работать, ее как-то править»
+
+The regulation requires Main / MainGlass triangulated in the delivery FBX (reg p.29 §3.17, V003, SINTEZ
+«triangulation»), and [D152] keeps quads in the master, triangles in the FBX. Rule:
+every delivery also gets a non-triangulated work FBX (quads / n-gons, same pivot, names, material IDs and UVs,
+exported before the triangulation step), next to the ZIP and not inside it.
+**Accepted («Да, делай») → [D197].** v004: `outputs/delivery-v004/work/SM_Elevatornaya_Vl_1_A_001_work_quads.fbx`
+(Main 19 540 quads / 438 n-gons / 423 tris; readback vs the delivered FBX: same vertices, materials, UV area).
+
+## Rework after the Max review of v004 (user, 2026-11-05, 4 screenshots)
+
+1. **Texture joints must meet everywhere** — first priority. Screenshot 1: the vertical joints of the upper row (under the
+   parapet flashing) do not continue the joints below. All joints on the model meet across face / part borders and
+   the texel is laid out neatly.
+2. **Cover strip continuous**: the joint cover strip (P44) is one unbroken mesh along the whole contour, selectable with
+   one click (now cut into pieces at lights / Arktos / joints).
+3. **Corner windows** (concave and convex): glass as a 6 mm shell — two opposite faces only; the top / bottom / side
+   edge faces of the shell deleted.
+4. SINTEZ need not be rerun for this round. Hand-off for acceptance: the non-triangulated work FBX [D197].
+
 ## Не трогать
 
 - Source files in `for_ai\` (work on byte-identical copies only).
