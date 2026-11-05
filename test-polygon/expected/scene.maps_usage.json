@@ -1,0 +1,16 @@
+{
+ "schema": 1,
+ "button": "scene.maps_usage",
+ "tool": null,
+ "version": "0.9",
+ "shipped": false,
+ "select": "named",
+ "reason": "станция в работе, #979, ветка D",
+ "apply_status": null,
+ "objects": [],
+ "base": "0.9",
+ "station": "0.9.17",
+ "stations": [
+  "0.9.17"
+ ]
+}

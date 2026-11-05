@@ -1,4 +1,4 @@
-"""elv-tc-vpm: non-triangulated WORK FBX next to delivery v004 [D197].
+"""elv-tc-vpm: non-triangulated WORK FBX next to delivery v004 [D198].
 
 Same master, pivot offset, object / material names, material slots and UVs as delivery_export_v004.py, but the
 faces stay as built (quads / n-gons) and no UCX: a file for the user to edit in 3ds Max. Not part of the package.

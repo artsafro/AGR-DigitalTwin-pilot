@@ -5,10 +5,12 @@
  "version": "0.9",
  "shipped": false,
  "select": "named",
- "reason": "Кнопки ещё нет в AGR Tools 0.7: в панели её нет, объекты полигона и эта запись появляются в том же изменении, что и сама кнопка.",
+ "reason": "станция в работе, #979, ветка B",
  "apply_status": null,
  "objects": [],
- "base": null,
- "station": null,
- "stations": []
+ "base": "0.9",
+ "station": "0.9.2",
+ "stations": [
+  "0.9.2"
+ ]
 }

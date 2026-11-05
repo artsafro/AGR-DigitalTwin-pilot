@@ -4,7 +4,10 @@ Runs outside 3ds Max (PySide6-Essentials + pytest-qt from the uv dev group, #897
 uv run pytest tests/max_tools/test_agr_tools_ui_qt.py
 QT_QPA_PLATFORM=offscreen is set by tests/max_tools/conftest.py before any PySide6 import.
 A missing Qt package FAILS this module when the rest of the dev group is installed; it is a skip
-only without the dev group (tests/max_tools/_qt_guard.py).
+only without the dev group (tests/max_tools/_qt_guard.py). Exception: with pytest-qt installed and
+PySide6 missing, the pytest-qt plugin aborts the whole session at startup (exit 4, "No module named
+'PySide6'") before this guard runs; that is loud, not a skip. When the guard says 'ok' the imports
+below are direct, so a broken install (for example a DLL error on Windows) fails instead of skipping.
 """
 import importlib.util
 import inspect
@@ -22,8 +25,12 @@ _gspec.loader.exec_module(_guard)
 _status, _reason = _guard.qt_status(ROOT / 'pyproject.toml')
 if _status == 'fail':
     pytest.fail('Qt panel tests: ' + _reason, pytrace=False)
-pytest.importorskip('PySide6')
-pytest.importorskip('pytestqt')
+if _status == 'ok':
+    import PySide6  # noqa: F401  # a broken install must fail, not skip
+    import pytestqt  # noqa: F401
+else:
+    pytest.importorskip('PySide6')
+    pytest.importorskip('pytestqt')
 
 PKG = ROOT / 'adapters/max/agr_tools'
 
@@ -347,7 +354,7 @@ def test_rail_has_path_and_ten_blocks_in_order_with_planned_greyed(main):
     assert items == ['Путь'] + ['{} {}'.format(b['number'], b['short_ru']) for b in suite['blocks']]
     assert p.pages.count() == 11 and p.rail.currentRow() == 0
     planned = [r for r in suite['rows'] if roadmap.vkey(r['version']) > roadmap.vkey(model.VERSION)]
-    assert set(p.planned) == {r['id'] for r in planned} and len(planned) == 52  # 0.9-1.x after 0.8.0
+    assert set(p.planned) == {r['id'] for r in planned} and len(planned) == 54  # 0.9-1.x: 19 + 18 + 17 (#973)
     for r in planned:
         b = p.planned[r['id']]
         assert not b.isEnabled() and b.text().endswith('в версии ' + r['version'])
@@ -364,7 +371,7 @@ def test_path_nodes_open_tabs_tooltips_and_cards(main, qtbot):
     btn = p.findChild(QtWidgets.QToolButton, 'agr_path_qa.glass')
     assert btn.isEnabled() and 'NPM-2.7-2' in btn.toolTip() and 'Когда:' in btn.toolTip()
     planned = p.findChild(QtWidgets.QToolButton, 'agr_path_light.check')
-    assert not planned.isEnabled() and 'в версии 1.0' in planned.text()
+    assert not planned.isEnabled() and 'в версии 0.9' in planned.text()  # moved from 1.0
     box = p.show_card('qa.glass')
     text = box.text()
     for part in ('Что делает:', 'Когда нужна:', 'Вход:', 'Результат:', 'Сцена: только чтение', 'Связанные кнопки:'):

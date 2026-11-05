@@ -1,8 +1,8 @@
 {
  "schema": 1,
- "button": "model.poly_actions",
+ "button": "udim.plugs",
  "tool": null,
- "version": "1.0",
+ "version": "1.x",
  "shipped": false,
  "select": "named",
  "reason": "Кнопки ещё нет в AGR Tools 0.7: в панели её нет, объекты полигона и эта запись появляются в том же изменении, что и сама кнопка.",

@@ -233,6 +233,14 @@
    ]
   },
   {
+   "name": "SM_Polygon_Layer_Main",
+   "scene": "polygon_all",
+   "expect": "fail",
+   "codes": [
+    "tex_missing"
+   ]
+  },
+  {
    "name": "SM_Polygon_NudgeOk_Main",
    "scene": "polygon_all",
    "expect": "fail",

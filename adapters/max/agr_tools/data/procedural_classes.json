@@ -1,0 +1,9 @@
+{
+ "schema": 1,
+ "issue": "#979",
+ "owner": "C",
+ "branch": "improve/issue-979-qa",
+ "button": "qa.procedural_objects",
+ "note": "Empty placeholder of branch 0. Branch C fills `classes` with class names only (no plugin code), source: team-audit T07 cards.",
+ "classes": []
+}

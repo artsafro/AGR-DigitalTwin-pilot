@@ -84,7 +84,7 @@ Intake per [D186], 2026-11-04. Profile: **VPM-OKS only** (no NPM). One OKS, so n
   from the address) confirmed.
 - Attachments stand off by 6 mm instead of the 10 mm embed; the 4 remaining self-intersections of the pilot niche frame
   are accepted (conflicts #44). UCX names keep the project form `UCX_SM_Elevatornaya_1A_Main_NNN` (#45). V007 DirectX
-  review on flat tiles accepted (#46) [D196].
+  review on flat tiles accepted (#46) [D197].
 - Next: renders of build-v006 (all sides, day and night), 3ds Max xView 5/2 mm after Mesh + Weld 0.002 in an own Max
   instance, then one acceptance pack: Gate 1 for P21–P42, library types ELV-01..20 [D140], visual acceptance.
 
@@ -157,7 +157,7 @@ The regulation requires Main / MainGlass triangulated in the delivery FBX (reg p
 «triangulation»), and [D152] keeps quads in the master, triangles in the FBX. Rule:
 every delivery also gets a non-triangulated work FBX (quads / n-gons, same pivot, names, material IDs and UVs,
 exported before the triangulation step), next to the ZIP and not inside it.
-**Accepted («Да, делай») → [D197].** v004: `outputs/delivery-v004/work/SM_Elevatornaya_Vl_1_A_001_work_quads.fbx`
+**Accepted («Да, делай») → [D198].** v004: `outputs/delivery-v004/work/SM_Elevatornaya_Vl_1_A_001_work_quads.fbx`
 (Main 19 540 quads / 438 n-gons / 423 tris; readback vs the delivered FBX: same vertices, materials, UV area).
 
 ## Rework after the Max review of v004 (user, 2026-11-05, 4 screenshots)
@@ -169,7 +169,7 @@ exported before the triangulation step), next to the ZIP and not inside it.
    one click (now cut into pieces at lights / Arktos / joints).
 3. **Corner windows** (concave and convex): glass as a 6 mm shell — two opposite faces only; the top / bottom / side
    edge faces of the shell deleted.
-4. SINTEZ need not be rerun for this round. Hand-off for acceptance: the non-triangulated work FBX [D197].
+4. SINTEZ need not be rerun for this round. Hand-off for acceptance: the non-triangulated work FBX [D198].
 
 ## Не трогать
 

@@ -72,7 +72,8 @@ never a clean result. Objects are identified by unique Max handles as well as na
   creates independent export-copy nodes/materials; it never cleans originals.
   Reports planned actions and re-inspected results. Nothing is saved/exported.
 - **MatID check**: face IDs >= **1001**, unassigned ID 0, missing materials,
-  unresolved or empty Multi/Sub slots; lists face IDs and selects offending nodes.
+  unresolved or empty Multi/Sub slots, and a face ID not listed in `materialIDList` even when the FBX
+  export would wrap it (`empty_slot`, #844); lists face IDs and selects offending nodes.
   Pilot #548 / D030. This is not the complete semantic 1–35 reading-scheme gate;
   no arbitrary ID remapping, empty-slot fallback or UDIM renumbering is done.
 - **UV integer-tile nudge**: dry-run reports channel-1 islands and integer period
@@ -178,7 +179,8 @@ items are listed in `plan.dropped` with a reason. Defects D1-D8 and the source l
 `CHANGELOG.md`.
 
 Review-level codes count as non-pass. Every review-level code in this package is
-`at_threshold`, `name_conflict` and `tex_overlap_review`. A report whose only finding is
+`at_threshold`, `tri_at_limit`, `name_conflict` and `tex_overlap_review`
+(`REVIEW_CODES` in `checks_core.py`). A report whose only finding is
 one of them has status `fail`, and a person reviews that finding. The schema stays
 `pass` or `fail`. A `review` status may come later only if the UI needs it.
 
@@ -197,7 +199,7 @@ one of them has status `fail`, and a person reviews that finding. The schema sta
 | NPM-2.5-4 | Textures check | checks (≥ 8 px between islands of one atlas, across the objects of one FBX) |
 | VPM-2.5-1.2, VPM-2.5-1.6, VPM-2.5-1.9, VPM-2.5-1.4.a | Textures check | checks (2048/4096 or 256 placeholder, alpha only in Diffuse, 8 bit, D+ERM+N per tile) |
 | VPM-2.5-1.5 | Textures check | checks (16 px at 2048, 32 px at 4096, per atlas and UDIM tile) |
-| — (3ds Max 2026.3 FBX export, measured #827) | Textures check, MatID check | resolves a face matID outside `materialIDList` as the export does: wraps by the highest listed ID, `(id - 1) mod n + 1`, then that ID must be listed; advisory `tex_matid_wrapped` (`matID 3 -> sub 1`) |
+| — (3ds Max 2026.3 FBX export, measured #827) | Textures check | resolves a face matID outside `materialIDList` as the export does: wraps by the highest listed ID, `(id - 1) mod n + 1`, then that ID must be listed; advisory `tex_matid_wrapped` (`matID 3 -> sub 1`). The MatID check and export `empty_slot` do not wrap: an unlisted ID blocks (#844) |
 | VPM-2.5-1.5 (repeating islands), VPM uv.repeating_islands_may_overlap | Textures check | review (`tex_overlap_review`: touching or overlapping VPM islands; padding applies only to islands with unique images) |
 | VPM-2.5-2.1.3.a | Textures check | checks (UDIM from 1001 without gaps) |
 | VPM-2.9-4.b, VPM-2.9-5 | Pivot check | checks (Z = 0 and one pivot per FBX, 1 mm) |

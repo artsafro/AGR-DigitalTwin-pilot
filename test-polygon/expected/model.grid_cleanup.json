@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "button": "model.tjunction_weld",
+ "button": "model.grid_cleanup",
  "tool": null,
  "version": "1.0",
  "shipped": false,

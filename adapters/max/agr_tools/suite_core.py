@@ -61,7 +61,7 @@ CODES = {
     'glass': {'glass_not_separate', 'glass_objects', 'glass_materials', 'glass_maps', 'glass_opacity',
               'glass_opaque_material'},
     'scene_hygiene': {'hyg_non_mesh', 'hyg_animation', 'hyg_hierarchy', 'hyg_group', 'hyg_empty',
-                      'hyg_modifier'},
+                      'hyg_modifier', 'hyg_layer'},
     'xform': {'xform_scale', 'xform_rotation', 'xform_mirror', 'xform_parent', 'xform_unmeasurable'},
     'zero_area': {'zero_area_face', 'zero_length_edge', 'isolated_vertex', 'zero_unmeasurable'},
 }
@@ -508,13 +508,21 @@ def glass(rows):
 
 
 # --- qa.scene_hygiene ---------------------------------------------------------------------------------
+DEFAULT_LAYER = '0'  # the Max default layer; exact name, no trimming
+LAYER_TEXT = ('объект на слое «{}», а должен быть на слое «0»: все объекты в одном слое по умолчанию, '
+              'других слоёв нет (reg p.28 §3.2)')
+
+
 def scene_hygiene(rows):
-    """Cameras/lights/bones/helpers/shapes, animation, hierarchy, groups, empty meshes, modifiers.
+    """Cameras/lights/bones/helpers/shapes, animation, hierarchy, groups, empty meshes, modifiers, layer.
 
     adapted from GeoAGR 13.64 (author Artem), GeoAGR.ms:9136 RulesCheck_lowpoly checkboxes (dead UI, D7);
     changes: the rules are the current standards (NPM no_hierarchy_or_groups; VPM
     no_empty_unrelated_animation_or_modifier_objects, conflict #14: any non-mesh object fails), and
     every rule is always on.
+    hyg_layer (owner decision 05.11.2026, #908): every object on the default layer "0" - reg p.28 §3.2,
+    VPM_STANDARD.yaml geometry.one_default_layer_or_collection. Idea from the team script
+    agr_max_check_37.ms check_Layers (sha256 ead3866924bf..., GeoAGR-private sources/team-scripts); no code taken.
     """
     rows = Rows(rows)
     found = {}
@@ -533,6 +541,9 @@ def scene_hygiene(rows):
         mods = _need(r, 'modifiers')
         if mods:
             _add(found, r['key'], 'hyg_modifier', ', '.join(map(str, mods)))
+        layer = str(_need(r, 'layer'))
+        if layer != DEFAULT_LAYER:
+            _add(found, r['key'], 'hyg_layer', LAYER_TEXT.format(layer))
     return found, [], {}
 
 

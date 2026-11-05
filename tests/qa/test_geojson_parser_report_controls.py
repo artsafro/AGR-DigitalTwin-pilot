@@ -65,7 +65,7 @@ def _jpeg_b64() -> str:
 
 def _clean_utf8() -> bytes:
     props = {key: "synthetic" for key in PROFILE["geojson"]["properties_keys"]}
-    props.update(address=ADDRESS, FNO_code="123 456", other="", act_AGR="", imageBase64=_jpeg_b64())
+    props.update(address=ADDRESS, FNO_code="010 004", FNO_name="Общежитие", other="", act_AGR="", imageBase64=_jpeg_b64())
     document = {
         "type": "FeatureCollection",
         "features": [{

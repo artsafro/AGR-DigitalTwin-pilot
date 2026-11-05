@@ -859,7 +859,7 @@ SCN = CAP.Scene(_mv + [tuple(v) for v in glass.verts], _mp + [[i + _gv0 for i in
 _bvh_m = BVHTree.FromPolygons([Vector(v) for v in _mv], _mp)
 ADD = {"strips": [], "strips_dropped": [], "capsules": [], "capsules_skipped": [], "glass_inside_capsule": []}
 
-# ---- 16a. 24 horizontal joint cover strips (Batten_FS-8P 165 x 22 mm), G = 6 mm off the facade [D196], ID20 7021
+# ---- 16a. 24 horizontal joint cover strips (Batten_FS-8P 165 x 22 mm), G = 6 mm off the facade [D197], ID20 7021
 STRIPS = json.load(open(os.path.join(JOB, "outputs", "build-v007", "strips_selected_v007.json"), encoding="utf-8"))
 T_STRIP, STEP = 0.022, 0.05
 FACADE_IDS = {1, 5}               # sandwich / TP annex paint: the receiving facades of the strips

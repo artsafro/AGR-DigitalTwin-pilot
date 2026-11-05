@@ -288,12 +288,15 @@ def test_two_press_ui_keeps_the_preview_per_selection(monkeypatch):
                         if filename == 'tex_max.py' else loaded(filename, module_name))
     assert rt.edit_ui('scene.missing_maps')['status'] == 'not_implemented'
     assert 'scene.missing_maps' not in rt._edits
-    assert "elif tool in EDITS_080:\n        report = edit_ui(tool)" in (PKG / 'runtime.py').read_text(encoding='utf-8')
+    assert "elif tool in EDITS_080 or tool in EDITS_090:\n        report = edit_ui(tool)" in (  # 0.9 base (#979)
+        PKG / 'runtime.py').read_text(encoding='utf-8')
 
 
 def test_panel_backend_routes_edit_tools_to_edits_080():
     src = (PKG / 'ui_max.py').read_text(encoding='utf-8')
-    assert 'if tool in self.agr.EDITS_080:' in src and 'self.agr.edit_ui(tool)' in src
+    # 0.9 base (#979): the same route also takes EDITS_090; `select` rows are selected by the backend itself
+    assert 'if tool in self.agr.EDITS_080 or tool in self.agr.EDITS_090:' in src
+    assert 'self.agr.edit_ui(tool, select=False)' in src
 
 
 # ---- UI: section, actions, macros, menu, icons ---------------------------------------------------------
@@ -376,7 +379,8 @@ def test_lab_verdict_wins_for_three_rows():
 
 def test_changelog_has_one_released_08_section_naming_all_13_rows():
     text = (PKG / 'CHANGELOG.md').read_text(encoding='utf-8')
-    assert 'в работе' not in text[:text.index('## 0.7.0')] and text.count('## 0.8.0') == 1
+    # 0.9 (#979) opens its own «в работе» section above; the released 0.8 sections stay closed
+    assert 'в работе' not in text[text.index('## 0.8.1'):text.index('## 0.7.0')] and text.count('## 0.8.0') == 1
     head = text[text.index('## 0.8.0 (#908)\n'):text.index('## 0.7.0')]
     assert not re.search(r'^### [ABCD] ', head, re.M)  # branch subsections merged by the release branch R
     subs = re.split(r'^### ', head, flags=re.M)[1:]

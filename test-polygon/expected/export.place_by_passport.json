@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "button": "model.concave_fix",
+ "button": "export.place_by_passport",
  "tool": null,
  "version": "1.x",
  "shipped": false,

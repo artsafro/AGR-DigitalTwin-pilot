@@ -52,8 +52,13 @@ def _select(names):
     return nodes
 
 
-def _press(runtime, tool, names):
+def _press(runtime, tool, names, options=None):
     from pymxs import runtime as rt
+    if tool in getattr(runtime, 'EDITS_090', ()) or tool in getattr(runtime, 'EDITS_080', ()):
+        # stations of the bases 0.8 / 0.9 (#979 fragments): the preview report of the row, never an apply
+        nodes = _select(names)
+        run = runtime.edits_090 if tool in getattr(runtime, 'EDITS_090', ()) else runtime.edits_080
+        return run(tool, 'preview', None, nodes or None, options)
     if tool == 'geojson':
         path = str(POLY / 'geojson' / names[0])
         return runtime.checks_050('geojson', None, path)
@@ -105,11 +110,11 @@ def main():
                 targets = [names]
             for picked in targets:
                 try:
-                    report = _press(runtime, tool, picked)
+                    report = _press(runtime, tool, picked, doc.get('options'))
                 except Exception as exc:  # noqa: BLE001
                     report = {'status': 'error', 'error': '{}: {}'.format(type(exc).__name__, exc)}
                 runs.append({'button': button, 'scene': scene, 'tool': tool, 'names': picked, 'report': report})
-            if doc.get('apply_status') and tool != 'geojson':
+            if doc.get('apply_status') and tool in ('nudge', 'atlas', 'ucx', 'cleanup'):
                 apply_tool = {'nudge': 'nudge_apply', 'atlas': 'atlas_apply', 'ucx': 'ucx_apply',
                               'cleanup': 'apply'}[tool]
                 try:
