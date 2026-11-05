@@ -51,11 +51,22 @@ def load_text(path: Path) -> str:
     return text
 
 
+# Right after the token only: optional ".md", closing quotes, a "§N" citation, then the marker.
+_TAIL = re.compile(
+    r"""^(?:\.md)?[`'")\]]*[\s,;:]*(?:§\s*[\d.]+[\s,;:]*)?(?:"""
+    + _MARKER.pattern
+    + r")",
+    re.IGNORECASE,
+)
+# Or the citation form "historical: docs/HARNESS_PLAN.md" with the marker directly before.
+_HEAD = re.compile(r"(?<!not )historical:\s*(?:`?docs/)?`?$", re.IGNORECASE)
+
+
 def mention_marks(text: str) -> list[bool]:
     """Each HARNESS_PLAN mention, including one split across two lines.
 
-    A line is joined with the next line before matching, so a token or its marker
-    may cross the break. A mention is marked only when that window has a strict marker.
+    The marker must follow the token directly (same citation, same line). A split
+    token may cross the break; a marker on another line or after other text does not count.
     """
     lines = text.splitlines()
     found: list[bool] = []
@@ -67,9 +78,12 @@ def mention_marks(text: str) -> list[bool]:
             idx = window.find(_TOKEN, start)
             if idx < 0:
                 break
+            end = idx + len(_TOKEN)
             if idx < len(line):
-                found.append(_MARKER.search(window) is not None)
-            start = idx + len(_TOKEN)
+                tail = line[end:] if end <= len(line) else window[end:]
+                head = line[:idx]
+                found.append(_TAIL.search(tail) is not None or _HEAD.search(head) is not None)
+            start = end
     return found
 
 
@@ -95,7 +109,12 @@ def test_not_historical_is_rejected_and_split_lines_are_seen():
     assert mention_marks("docs/HARNESS_PLAN.md, not historical:\n") == [False]
     assert mention_marks("see docs/HARNESS_\nPLAN.md §15\n") == [False]
     assert mention_marks("see docs/HARNESS_\nPLAN.md §15 (historical)\n") == [True]
-    assert mention_marks("see HARNESS_PLAN §15\nhistorical: docs/pipeline.md\n") == [True]
+    assert mention_marks("see HARNESS_PLAN §15\nhistorical: docs/pipeline.md\n") == [False]
+    assert mention_marks("HARNESS_PLAN §5 is the current rule; old notes (historical)\n") == [False]
+    assert mention_marks("see HARNESS_PLAN §4\nfloors (historical) see pipeline\n") == [False]
+    assert mention_marks("HARNESS_PLAN §4 and HARNESS_PLAN §5 (historical)\n") == [False, True]
+    assert mention_marks("`docs/HARNESS_PLAN.md` (historical)\n") == [True]
+    assert mention_marks("(historical: docs/HARNESS_PLAN.md §9)\n") == [True]
     assert mention_marks("docs/HARNESS_PLAN.md is historical.\n") == [True]
 
 
