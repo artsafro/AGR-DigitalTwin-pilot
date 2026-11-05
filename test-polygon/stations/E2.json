@@ -1,0 +1,59 @@
+{
+ "schema": 1,
+ "branch": "E2",
+ "issue": "#979",
+ "stations": [
+  {
+   "button": "model.triangulate",
+   "objects": [
+    {"name": "SM_E2_Ngon_Main", "role": "Main", "size": [2, 2, 2], "builder": "E2_build", "extra": {"kind": "ngon"}}
+   ],
+   "expected": [
+    {"name": "SM_E2_Ngon_Main", "scene": "polygon_all", "expect": "pass", "codes": []}
+   ],
+   "reason": "Объекта FAIL нет: preview model.triangulate (0.8, без доработки в 0.9) не даёт находок по объекту — n-гоны это работа кнопки, а вырожденный контур уходит в ambiguous без кода объекта. PASS — восьмигранная призма SM_E2_Ngon_Main (8-угольные крышки получают по 5 диагоналей на копии)."
+  },
+  {
+   "button": "ucx.triangulate",
+   "objects": [
+    {"name": "UCX_E2_Box", "role": "UCX", "size": [2, 2, 2], "builder": "E2_build", "extra": {"kind": "ucx_box"}},
+    {"name": "UCX_E2_Valley", "role": "UCX", "size": [2, 2, 3], "builder": "E2_build", "extra": {"kind": "ucx_valley"}},
+    {"name": "UCX_E2_Dart", "role": "UCX", "size": [3, 3, 2], "builder": "E2_build", "extra": {"kind": "ucx_dart"}}
+   ],
+   "expected": [
+    {"name": "UCX_E2_Box", "scene": "polygon_all", "expect": "pass", "codes": []},
+    {"name": "UCX_E2_Valley", "scene": "polygon_all", "expect": "fail", "codes": ["reflex_edge"]},
+    {"name": "UCX_E2_Dart", "scene": "polygon_all", "expect": "fail", "codes": ["not_convex"]}
+   ],
+   "reason": ""
+  },
+  {
+   "button": "udim.ids_to_udims",
+   "objects": [
+    {"name": "SM_E2_UdimKeep_Main", "role": "Main", "size": [2, 2, 1], "builder": "E2_build", "extra": {"kind": "udim", "ids": [1, 2, 7, 11]}},
+    {"name": "SM_E2_UdimId101_Main", "role": "Main", "size": [2, 2, 1], "builder": "E2_build", "extra": {"kind": "udim", "ids": [1, 2, 3, 101]}}
+   ],
+   "expected": [
+    {"name": "SM_E2_UdimKeep_Main", "scene": "polygon_all", "expect": "pass", "codes": []},
+    {"name": "SM_E2_UdimId101_Main", "scene": "polygon_all", "expect": "fail", "codes": ["udim_id_out_of_range"]}
+   ],
+   "reason": "",
+   "options": {"mode": "keep"}
+  },
+  {
+   "button": "export.pivot_place",
+   "objects": [
+    {"name": "SM_E2_Cell17_Main", "role": "Main", "size": [5, 3, 1], "builder": "E2_build", "extra": {"kind": "pivot_cell", "angle": 17}},
+    {"name": "SM_E2_CellSquare_Main", "role": "Main", "size": [2, 2, 1], "builder": "E2_build", "extra": {"kind": "pivot_cell", "angle": 30, "cell": [1.0, 1.0, 0.5]}},
+    {"name": "SM_E2_CellFar135_Main", "role": "Main", "scene": "frag_e2_far", "builder": "E2_build", "extra": {"kind": "pivot_cell", "angle": 135, "xy": [2345678.0, 1234567.0, 0.0]}}
+   ],
+   "expected": [
+    {"name": "SM_E2_Cell17_Main", "scene": "polygon_all", "expect": "pass", "codes": []},
+    {"name": "SM_E2_CellSquare_Main", "scene": "polygon_all", "expect": "fail", "codes": ["pivot_axis_undefined"]},
+    {"name": "SM_E2_CellFar135_Main", "scene": "frag_e2_far", "expect": "pass", "codes": []}
+   ],
+   "reason": "",
+   "options": {"orient": "long_side", "pivot_at": "bottom_centre", "target": "npm"}
+  }
+ ]
+}

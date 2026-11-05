@@ -1,4 +1,4 @@
-"""Engine from_spec (HARNESS_PLAN §9): spec -> model -> benchmark checkers, before the real B01 etalon.
+"""Engine from_spec (archive/2026-11:docs/HARNESS_PLAN.md §9): spec -> model -> benchmark checkers, before the real B01 etalon.
 
 The etalon here is the SYNTHETIC box of test_geometry_checks (not the user's etalon, issue #12);
 the spec is tests/fixtures/spec-b01-v0.3.json. Build inputs the spec does not carry (parapet

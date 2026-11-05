@@ -78,21 +78,22 @@ def test_profile_cli_preserves_ledger_scope_and_inner_timeout(monkeypatch, tmp_p
     import ast
     from types import SimpleNamespace
     from dt_ai.core import blender_runner
-    module = load_target('tools/run_profile_checks.py')
+    module = load_target('jobs/OBR22-K02/scripts/run_profile_checks.py')
     tree = ast.parse(Path(module.__file__).read_text())
     main = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == 'main')
     factory = next(n for n in main.body if isinstance(n, ast.FunctionDef) and n.name == 'blender')
     scope = dict(vars(module), args=SimpleNamespace(blender=tmp_path / 'override.exe', timeout=17))
     exec(compile(ast.Module(body=[factory], type_ignores=[]), module.__file__, 'exec'), scope)
-    for script, cfg in [('render_profile_comparison.py', 'render.json'), ('check_npm_vpm_scale.py', 'scale-folder'),
-                        ('check_profile_agr.py', 'agr.json'), ('reverse-check.py', 'reverse.json')]:
-        out = tmp_path / (script + '.json')
-        command = scope['blender'](ROOT / 'tools' / script, tmp_path / cfg, out)
+    for script, cfg in [('tools/render_profile_comparison.py', 'render.json'),
+                        ('jobs/OBR22-K02/scripts/check_npm_vpm_scale.py', 'scale-folder'),
+                        ('tools/check_profile_agr.py', 'agr.json'), ('tools/reverse-check.py', 'reverse.json')]:
+        out = tmp_path / (Path(script).name + '.json')
+        command = scope['blender'](ROOT / script, tmp_path / cfg, out)
         assert command[:2] == [sys.executable, str(Path(blender_runner.__file__).resolve())]
         def fake(cmd, **kw):
             assert cmd[0] == str((tmp_path / 'override.exe').resolve())
             assert cmd[cmd.index('--') + 1:] == [str(tmp_path / cfg)]
-            assert cmd[cmd.index('--python') + 1] == str(ROOT / 'tools' / script)
+            assert cmd[cmd.index('--python') + 1] == str(ROOT / script)
             assert '--factory-startup' in cmd and '--disable-autoexec' in cmd
             assert kw['timeout'] == 17
             out.write_text('{"synthetic":true}')

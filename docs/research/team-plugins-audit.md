@@ -4,7 +4,7 @@ This is a static reading of Artem's 3ds Max / Blender plugin and script folder (
 
 ## Inventory
 
-Full row-per-file data is in [`team-plugins-inventory.json`](team-plugins-inventory.json). 13290 rows = 6108 copied files plus 7182 skipped entries. Copied-file hashes were computed in this pass with SHA256. Skipped rows have `sha256: null` and were classified from the file name only.
+Full row-per-file data is in `archive/2026-11:docs/research/team-plugins-inventory.json`. 13290 rows = 6108 copied files plus 7182 skipped entries. Copied-file hashes were computed in this pass with SHA256. Skipped rows have `sha256: null` and were classified from the file name only.
 
 | Split | Count | What it is |
 |---|---|---|

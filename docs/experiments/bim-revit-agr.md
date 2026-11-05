@@ -67,7 +67,7 @@ Baseline, **before prototype implementation**: `Spec.model_validate_json(copied_
 
 Numerical errors are floating-point transport residuals, not real-world measurement accuracy. Full contour extraction, contour Hausdorff/area recovery and K01 checker results are **not measured**. Slab volume/bounds agreement is not a substitute for contour recovery.
 
-Raw samples, baseline hashes, counts and comparisons: [`experiments/bim-revit-agr/results.json`](../../experiments/bim-revit-agr/results.json). The downloadable `evidence-v002.zip` contains the six clean and eighteen negative IFCs, their independent ledgers and original run results. `delivery_passed=false` throughout. The report-only CLI returns a file path; process exit 0 alone is not a passing comparison.
+Raw samples, baseline hashes, counts and comparisons: `archive/2026-11:experiments/bim-revit-agr/results.json`. The downloadable `evidence-v002.zip` contains the six clean and eighteen negative IFCs, their independent ledgers and original run results. `delivery_passed=false` throughout. The report-only CLI returns a file path; process exit 0 alone is not a passing comparison.
 
 ## Failures discovered and corrected
 

@@ -1,19 +1,15 @@
 # Codex
 
-Role: code and project organization (see `ROLES.md`): `src/`, `technical_library/`,
-shared `tools/`, tests, CLI, harness files, skills, hooks, MCP configs, CI, branches and
-merges to `main`, `docs/PROJECT_STATE.md` and `docs/backlog.md`.
+Role and default ownership: `docs/agents/ROLES.md`.
 
 - Project config: `.codex/config.toml` (MCP routes, machine-specific absolute paths) and
-  `.codex/hooks.json` (PreToolUse → `.claude/hooks/guard.py`; status in `CAPABILITIES.md`).
+  `.codex/hooks.json` (PreToolUse → `.claude/hooks/guard.py`; status in `docs/agents/harness-inventory.md`).
 - User-level process skills `codex-work-route|loop|engineering|review`
   (`~/.agents/skills/`) apply on top of `docs/agents/WORKFLOW.md`; the project workflow wins
   where they differ.
-- A new worktree with a random branch (`codex/<words>-<hex6>` or `<word>-<word>-<hex6>`): propose a name by
-  `docs/agents/NAMING.md` in your first reply, rename after the user confirms, before the first commit
-  (`tools/git-hooks/pipeline_gate.py --staged` blocks the commit otherwise; `AGENTS.md`).
-- Environment: `uv sync`, then `uv run pytest -q`, `uv run dt profiles check`,
-  `uv run dt schemas --check`. DCC tests need `DT_BLENDER` or an installed Blender.
+- A new worktree with a random branch (`codex/<words>-<hex6>` or `<word>-<word>-<hex6>`): rename it before the
+  first commit by `docs/agents/NAMING.md`, "Branches" (propose the name in your first reply).
+- Environment and checks: `docs/agents/agents-reference.md`.
 - Before turning a job script into an adapter, read its accepted case and keep its checks
   as regression tests; Claude confirms on real DCC data.
 - Translating `docs/agr/` and Russian code comments to English is backlog work; do not mix

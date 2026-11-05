@@ -9,7 +9,8 @@ VERSION = "0.8.0"
 CODES = {'xview': {'overlap_vertices', 'overlap_faces'},
          'matid': {'udim_id', 'empty_id', 'empty_slot', 'missing_material'},
          'cleanup': {'remove_custom_attributes', 'clear_user_defined_lines',
-                     'delete_map_channels', 'rename_map_channel_1'},
+                     'delete_map_channels', 'rename_map_channel_1',
+                     'delete_vertex_channels', 'delete_animation_keys'},  # opt-in actions (#979 E3)
          'nudge': {'tile_move'},
          'atlas': {'atlas_cell'},
          'ucx': {'ucx_audit', 'ucx_unmeasurable', 'at_threshold'},
@@ -664,7 +665,8 @@ def cleanup_preview(nodes=None, options=None):
     repair_plan = core.repair_plan
     nodes = _targets(nodes)
     state = snapshot(nodes)
-    plan = repair_plan([o['hygiene'] for o in state])
+    facts = [_cleanup_facts(n) for n in nodes]
+    plan = export.cleanup_plan(repair_plan([o['hygiene'] for o in state]), facts, opts)
     channels = [export._cleanup_channels(item['actions'], opts) for item in plan['objects']]
     entries = []
     for n, item in zip(nodes, plan['objects']):
@@ -672,8 +674,55 @@ def cleanup_preview(nodes=None, options=None):
             raise ValueError(str(n.name) + ': ' + '; '.join(item['unrepairable']))
         entries.append(_entry(n, [_finding(a['action'], detail=json.dumps(a, sort_keys=True))
                                   for a in item['actions']]))
-    return {'state': state, 'plan': plan, 'options': opts, 'channels': channels,
+    return {'state': state, 'facts': facts, 'plan': plan, 'options': opts, 'channels': channels,
             'report': _report('cleanup', entries, nodes, select=False)}
+
+
+# Animation keys under an animatable (node, its stack, its material), counted or deleted (#979 export.cleanup keys).
+# Leaf controllers only, each once: Position XYZ repeats the keys of X/Y/Z, a material parameter can be reached by
+# two subAnim paths (jobs 20261105-144144-6b9bc700, 20261105-144414-41248262).
+_KEYS_FN = '''fn agrCleanupKeys a del seen = (
+    local n = 0
+    if a != undefined do (
+        for i = 1 to a.numSubs do (
+            local s = a[i]
+            if s != undefined do (
+                local c = s.controller
+                if c != undefined and isController c and c.numSubs == 0 do (  -- leaves only: no double count
+                    local h = getHandleByAnim c
+                    if findItem seen h == 0 do (
+                        append seen h
+                        local k = numKeys c
+                        if k > 0 do (n += k; if del do deleteKeys c #allKeys)
+                    )
+                )
+                n += agrCleanupKeys s del seen
+            )
+        )
+    )
+    n
+)'''
+
+
+def _cleanup_keys(n, delete=False):
+    rt = _rt()
+    fn = rt.execute(_KEYS_FN)
+    seen = rt.Array()  # a controller reached twice (material params) counts once
+    count = int(fn(n, delete, seen))
+    if n.material is not None:
+        count += int(fn(n.material, delete, seen))
+    return count
+
+
+def _cleanup_facts(n):
+    """Vertex channels 0/-1/-2 present on the node's mesh and its animation key count (export_core.cleanup_facts)."""
+    rt = _rt()
+    mesh = rt.snapshotAsMesh(n)
+    try:
+        chans = [ch for ch in (0, -1, -2) if rt.meshop.getMapSupport(mesh, ch)]
+    finally:
+        rt.delete(mesh)
+    return {'vertex_channels': chans, 'keys': _cleanup_keys(n)}
 
 
 def cleanup_apply(nodes, preview):
@@ -705,10 +754,17 @@ def cleanup_apply(nodes, preview):
                     api = rt.polyop if rt.classOf(c.baseObject) == rt.Editable_Poly else rt.meshop
                     api.setMapSupport(c.baseObject, ch, False)
             rt.setUserPropBuffer(c, item['cleaned']['user_props'])
+            export = _load_core('export_core.py', 'agr_tools_export')
+            for op in export.cleanup_scene_ops(item, current['options']):  # opt-in only (#979)
+                if op[0] == 'vertex_channel':
+                    api = rt.polyop if rt.classOf(c.baseObject) == rt.Editable_Poly else rt.meshop
+                    api.setMapSupport(c.baseObject, op[1], False)
+                elif op[0] == 'keys':
+                    _cleanup_keys(c, delete=True)
         after = cleanup_preview(copies, current['options'])['report']
         if after['status'] != 'pass':
             raise RuntimeError('cleanup verification failed: ' + json.dumps(after))
-        if snapshot(nodes) != current['state']:
+        if snapshot(nodes) != current['state'] or [_cleanup_facts(n) for n in nodes] != current['facts']:
             raise RuntimeError('originals changed during cleanup')
         rt.select(copies)
         return copies, after

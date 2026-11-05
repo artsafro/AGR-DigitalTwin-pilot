@@ -80,7 +80,11 @@ def ucx():
     before = {int(rt.getHandleByAnim(n)): str(n.name) for n in nodes}
     rt.select(nodes)
     prev = agr.edits_080('ucx.rename', 'preview')
-    assert prev['status'] == 'pass' and agr.parse_report(json.dumps(prev)) == prev, prev
+    # 0.9 (#979 E1): a piece to be renamed carries `ucx_name`; the canonical one in place passes
+    codes = {o['name']: [f['code'] for f in o['findings']] for o in prev['objects']}
+    assert prev['status'] == 'fail' and agr.parse_report(json.dumps(prev)) == prev, prev
+    assert codes == {'UCX_SM_Addr_Main_003': ['ucx_name'], 'UCX_SM_Addr_Main_001': [], 'ucx_SM_Addr_Main_7': ['ucx_name'],
+                     'UCX_SM_Addr_Ground_01': ['ucx_name']}, codes
     assert {s['item'] for s in prev['plan']['skipped']} == {'SM_Addr_Main', 'Point001'}, prev['plan']['skipped']
     applied = agr.edits_080('ucx.rename', 'apply', roundtrip(prev))
     names_after = {h: str(rt.getAnimByHandle(h).name) for h in before}
@@ -197,8 +201,13 @@ def names_fix():
         mfind = [f for f in checks.name_findings(str(m.name), 'M', 'npm') if f[0] not in ('name_case', 'name_digits')]
         assert mfind == [], (str(m.name), mfind)
     assert not broken, broken
+    # 0.9 (#979 V1): T_Test_003_Main_d_1.png exists with OTHER content: not overwritten AND not linked; the copy's
+    # map stays on the donor's file and the conflict is a failure in the report
+    kept = maps['SM_Test_003_Main.base_color_map']
+    assert os.path.basename(kept[0]) == 'T_Test_001_Main_d_1.png' and kept[1] == 'dmap', kept
+    assert 'other content' in fails, fails
     for key, (fn, tname) in maps.items():
-        if key.startswith('SM_Test_004_Main'):
+        if key.startswith('SM_Test_004_Main') or key == 'SM_Test_003_Main.base_color_map':
             continue
         stem = os.path.splitext(os.path.basename(fn))[0]
         assert stem == tname and checks.name_findings(stem + '.png', 'T', 'npm') == [], (key, fn, tname)
@@ -322,7 +331,79 @@ def udim():
             'per_id_a': prev['plan']['per_object'][0]['ids']}
 
 
-for name, fn in (('ucx_rename', ucx), ('names_fix', names_fix), ('ids_to_udims', udim)):
+# ---- 0.9 rework (#979 E1): T06 acceptance scene ---------------------------------------------------------------
+def names_fix_e1():
+    """Prefix collision, shared material (diffuse + specular level + reflection), foreign read-only target, odd
+    inputs, a name held by an unselected object; library profile with a separate copy folder. Foreign file md5
+    unchanged, `_m` from one slot, 0 duplicate node names after apply, homoglyph/translit order-free."""
+    import stat
+    reset()
+    tex = OUT / 'names_e1'
+    src_d = _png(tex / 'src_d.png', (10, 20, 30))
+    spec = _png(tex / 'spec.png', (40, 40, 40))
+    refl = _png(tex / 'refl.png', (50, 50, 50))
+    bench = _png(tex / 'bench.png', (60, 60, 60))
+    foreign = _png(tex / 'T_Bench_002_Main_d_1.png', (1, 1, 1))
+    os.chmod(foreign, stat.S_IREAD)
+    chair = _png(tex / 'chair.png', (70, 70, 70))
+    with pymxs.undo(False):
+        shared = rt.Standardmaterial(name='Shared')
+        shared.diffuseMap = _bitmap(src_d, 'dmap')
+        shared.specularLevelMap = _bitmap(spec, 'smap')
+        shared.reflectionMap = _bitmap(refl, 'rmap')
+        a = rt.Box(name='SM_Chair_001_Main')
+        b = rt.Box(name='XX_Chair_001_Main', pos=rt.Point3(3, 0, 0))
+        a.material = shared
+        b.material = shared
+        c = rt.Box(name='SM_Bench_002_Main', pos=rt.Point3(6, 0, 0))
+        c.material = rt.Standardmaterial(name='B', diffuseMap=_bitmap(bench, 'bmap'))
+        odd = rt.Box(name='Bench', pos=rt.Point3(9, 0, 0))
+        odd.material = rt.Standardmaterial(name='Odd')
+        held = rt.Box(name='SM_Held_001_Main', pos=rt.Point3(12, 0, 0))  # NOT selected
+        dup = rt.Box(name='sm_Held_1_main', pos=rt.Point3(15, 0, 0))
+        dup.material = rt.Standardmaterial(name='D')
+        lib = rt.Box(name='Acme_Сhair_A12_LOW', pos=rt.Point3(18, 0, 0))  # Cyrillic С homoglyph, LOW
+        lib.material = rt.Standardmaterial(name='L', diffuseMap=_bitmap(chair, 'lmap'))
+    files_before = {str(p.relative_to(tex)): md5(p) for p in tex.rglob('*') if p.is_file()}
+    rt.select([a, b, c, odd, dup])
+    prev = agr.edits_080('qa.names_fix', 'preview')
+    plan = prev['plan']
+    fails = ' | '.join(f['reason'] for f in plan['failures'])
+    assert 'other content' in fails and 'reflectionMap' in fails, fails
+    assert {s['item'] for s in plan['skipped']} == {'Bench'}, plan['skipped']
+    held_amb = [x for x in plan['ambiguous'] if x['item'] == 'SM_Held_001_Main']
+    assert held_amb and 'another scene object' in held_amb[0]['reason'], plan['ambiguous']
+    applied = agr.edits_080('qa.names_fix', 'apply', roundtrip(prev))
+    copies = [o for o in rt.objects if str(o.layer.name) == 'AGR_export_names']
+    names_all = [str(o.name) for o in rt.objects if str(o.layer.name) == 'AGR_export_names'] + ['SM_Held_001_Main']
+    assert sorted(str(x.name) for x in copies) == ['SM_Bench_002_Main', 'SM_Chair_001_Main', 'SM_XX_Chair_001_Main']
+    assert len(names_all) == len(set(names_all)), names_all
+    files_after = {str(p.relative_to(tex)): md5(p) for p in tex.rglob('*') if p.is_file()}
+    assert files_after['T_Bench_002_Main_d_1.png'] == files_before['T_Bench_002_Main_d_1.png'], 'foreign file changed'
+    m_files = sorted(k for k in files_after if k.endswith('_m_1.png'))
+    assert m_files == ['T_Chair_001_Main_m_1.png', 'T_XX_Chair_001_Main_m_1.png'], m_files
+    for k in m_files:
+        assert files_after[k] == files_before['spec.png'], (k, 'not from specularLevelMap')
+    by = {str(x.name): x for x in copies}
+    assert str(by['SM_Bench_002_Main'].material.diffuseMap.filename) == bench  # stays on its source
+    mats = sorted(str(x.material.name) for x in copies)
+    assert len(mats) == len(set(mats)), mats
+    # library profile: homoglyph + case fixed, map copied into a separate folder, source folder untouched
+    out_lib = OUT / 'names_e1_lib'
+    rt.select([lib])
+    lprev = agr.edits_080('qa.names_fix', 'preview', options={'profile': 'library', 'folder': str(out_lib)})
+    lapp = agr.edits_080('qa.names_fix', 'apply', roundtrip(lprev))
+    lcopy = [o for o in rt.objects if str(o.layer.name) == 'AGR_export_names' and str(o.name).startswith('Acme')]
+    assert [str(o.name) for o in lcopy] == ['Acme_Chair_A12_low'], [str(o.name) for o in lcopy]
+    assert sorted(p.name for p in out_lib.iterdir()) == ['T_Acme_Chair_A12_low_d.png']
+    assert str(lcopy[0].material.name) == 'M_Acme_Chair_A12_low'
+    os.chmod(foreign, stat.S_IREAD | stat.S_IWRITE)
+    return {'failures': plan['failures'], 'ambiguous': plan['ambiguous'], 'copies': sorted(by), 'm_files': m_files,
+            'status_apply': applied['status'], 'library_copy': str(lcopy[0].name), 'library_status': lapp['status']}
+
+
+for name, fn in (('ucx_rename', ucx), ('names_fix', names_fix), ('names_fix_e1', names_fix_e1),
+                 ('ids_to_udims', udim)):
     check(name, fn)
 summary['scene_saved'] = bool(str(rt.maxFileName))
 (OUT / 'summary.json').write_text(json.dumps(summary, ensure_ascii=False, indent=1), encoding='utf-8')

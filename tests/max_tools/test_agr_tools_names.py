@@ -291,7 +291,8 @@ def test_n4_never_repointed_to_a_missing_file():
 def test_n5_existing_destination_is_reused_not_overwritten():
     rows = {(f['key'], f['role']): f for f in _plan()['files']}
     r = rows[(3, 'diffuse')]
-    assert r['action'] == 'reuse existing file (not overwritten)' and r['same_content'] is False
+    # 0.9 (#979 V1): a destination with OTHER content is neither overwritten nor linked (0.8 linked it)
+    assert r['action'] == 'keep: target exists with other content' and r['same_content'] is False
     assert r['target_sha256'] == '3' * 64
     # the lab did not reproduce "Cloner overwrites": the source also keeps it (no RED here, invariant only)
     assert source_cloner(_scene(), 'SM_Test_001_Main')['files']['C:/proj/tex/T_Test_003_Main_d_1.png']['sha256'] == '3' * 64
@@ -380,3 +381,256 @@ def test_target_path_keeps_folder_and_separator():
 def test_glue_modules_load_without_pymxs():
     nm = _load('names_max.py', 'agr_tools_names_max_t')
     assert callable(nm.ucx_rename) and callable(nm.qa_names_fix)
+
+
+# =========================================================================================================
+# 0.9 rework (#979, branch E1): team-audit T06 cards (all measured in Max 2024). Each card defect is RED on a
+# behaviour model of the team script AS MEASURED by the card and GREEN on names_core. No team code (#853):
+# AlexYo_AGR_renamerV2.ms (V13) 2f49107c48f5d916..., AlexYo_AssetMaterialRenamer_v1i3.ms 7702230eb0611cd3...,
+# AlexYo_CheckAssetNames_v8.ms a3067e16bb825730..., A101AGRLP.ms 86c43d4d4cade95d....
+# =========================================================================================================
+class SourceRenamerV13:
+    """Renamer V13 as measured: base = object name minus its first 2 characters; M_<base>_1, T_<base>_<suf>_1;
+    specularLevelMap AND reflectionMap both `_m`; File.Copy overwrite=true; a shared material is renamed after the
+    LAST object (the first object's copy stays an orphan)."""
+    SUFFIX = {'diffuseMap': 'd', 'bumpMap': 'n', 'glossinessMap': 'r', 'specularLevelMap': 'm', 'reflectionMap': 'm'}
+
+    @staticmethod
+    def base(name):
+        return name[2:]
+
+    @classmethod
+    def run(cls, objects, disk):
+        """objects: [(name, material id, {slot: (path, content)})]; disk: {path: content} (mutated)."""
+        material_name, files = {}, {}
+        for name, mat, maps in objects:
+            base = cls.base(name)
+            material_name[mat] = 'M' + base + '_1'
+            for slot, (path, content) in maps.items():
+                dst = '{}/T{}_{}_1.png'.format(path.rsplit('/', 1)[0], base, cls.SUFFIX[slot])
+                disk[dst] = content  # overwrite
+                files.setdefault(mat, {})[slot] = dst
+        return material_name, files, disk
+
+
+class SourceAssetRenamer:
+    """Asset Material Renamer v1i3 as measured: T_<object name>_d.png per object (same-name objects share one
+    file, the second replaces the first); "skip existing" links the pre-existing file whatever its content;
+    `.001` junk kept."""
+
+    @staticmethod
+    def run(objects, disk, skip_existing=False):
+        links = {}
+        for key, name, content in objects:
+            dst = 'C:/lib/T_{}_d.png'.format(name)
+            if not (skip_existing and dst in disk):
+                disk[dst] = content
+            links[key] = dst
+        return links, disk
+
+
+class SourceCheckNames:
+    """CheckAssetNames v8 as measured: fixes case without looking for an existing node; homoglyph button (Latin
+    look-alikes) usable before transliteration; hyphens and digit-first segments pass; Й -> Y only."""
+    HOMO = dict(zip('СтулДеревоСТЛДРВ', 'CtylDepeboCTLDPB'))
+
+    @staticmethod
+    def fix(name):
+        parts = name.split('_')
+        return '_'.join([p[:1].upper() + p[1:] for p in parts[:-1]] + [parts[-1].lower()])
+
+    @classmethod
+    def homoglyph_first(cls, name):
+        return ''.join(cls.HOMO.get(c, c) for c in name)
+
+    @staticmethod
+    def flags(name):
+        return []  # hyphen / digit-first segment: no finding
+
+    @staticmethod
+    def spellings(text):
+        return [nc.transliterate(text)]
+
+
+def _std(name, maps):
+    return {'name': name, 'class': 'Standardmaterial', 'subs': None,
+            'maps': [{'key': k, 'role': r, 'path': p, 'name': 'map'} for k, r, p in maps]}
+
+
+def _obj(key, name, material, model='npm'):
+    return {'key': key, 'name': name, 'geometry': True, 'ucx': False, 'model': model, 'material': material}
+
+
+def test_V13_foreign_target_never_overwritten_nor_linked():
+    """V13 File.Copy overwrite (md5 91bc4b -> 576637) / AMR "skip existing" links an unrelated file."""
+    disk = {'C:/t/src_d.png': 'SRC', 'C:/t/T_Bench_001_Main_d_1.png': 'FOREIGN'}
+    _, _, after = SourceRenamerV13.run([('SM_Bench_001_Main', 1, {'diffuseMap': ('C:/t/src_d.png', 'SRC')})],
+                                       dict(disk))
+    state = {'objects': [_obj(1, 'SM_Bench_001_Main', _std('Old', [('diffuseMap', 'diffuse', 'C:/t/src_d.png')]))],
+             'files': {'C:/t/src_d.png': {'exists': True, 'sha256': 'a' * 64},
+                       'C:/t/T_Bench_001_Main_d_1.png': {'exists': True, 'sha256': 'f' * 64}}, 'export_names': []}
+    plan = nc.names_fix_plan(state, {})
+    row = plan['files'][0]
+    red_green(lambda d: d['C:/t/T_Bench_001_Main_d_1.png'] == 'FOREIGN', lambda: after,
+              lambda: dict(disk, **({row['target']: 'SRC'} if row['action'] == 'copy' else {})))
+    links, _ = SourceAssetRenamer.run([(1, 'Bench_001', 'SRC')], {'C:/lib/T_Bench_001_d.png': 'FOREIGN'}, True)
+    red_green(lambda linked: linked is None, lambda: links[1], lambda: None if row['action'].startswith('keep') else
+              row['target'])
+    assert 'other content' in plan['failures'][0]['reason']
+    same = dict(state, files=dict(state['files'], **{'C:/t/T_Bench_001_Main_d_1.png': {'exists': True,
+                                                                                         'sha256': 'a' * 64}}))
+    assert nc.names_fix_plan(same, {})['files'][0]['action'] == 'reuse existing file (not overwritten)'
+
+
+def test_V13_m_comes_from_one_slot_reflection_is_reported():
+    maps = {'specularLevelMap': ('C:/t/spec.png', 'S'), 'reflectionMap': ('C:/t/refl.png', 'R')}
+    _, files, disk = SourceRenamerV13.run([('SM_Bench_001_Main', 1, maps)], {})
+    state = {'objects': [_obj(1, 'SM_Bench_001_Main', _std('Old', [('specularLevelMap', 'metalness', 'C:/t/spec.png'),
+                                                                    ('reflectionMap', None, None)]))],
+             'files': {'C:/t/spec.png': {'exists': True, 'sha256': 's' * 64}}, 'export_names': []}
+    plan = nc.names_fix_plan(state, {})
+
+    def one_m(targets):
+        m = [t for t in targets if t.endswith('_m_1.png')]
+        return len(m) == len(set(m)) == 1
+    red_green(one_m, lambda: list(files[1].values()), lambda: [f['target'] for f in plan['files']])
+    assert any('reflectionMap' in f['reason'] and 'no NPM/VPM texture role' in f['reason'] for f in plan['failures'])
+    assert dict(nc.SLOT_TABLE['Standardmaterial'])['reflectionMap'] is None
+
+
+def test_V13_prefix_collision_and_two_character_cut():
+    pairs = [('SM_Chair_001_Main', 1, {}), ('XX_Chair_001_Main', 2, {})]
+    names, _, _ = SourceRenamerV13.run(pairs, {})
+    state = {'objects': [_obj(1, 'SM_Chair_001_Main', _std('a', [])), _obj(2, 'XX_Chair_001_Main', _std('b', []))],
+             'files': {}, 'export_names': []}
+    plan = nc.names_fix_plan(state, {})
+    mats = {m['key']: m['new'] for m in plan['materials']}
+    red_green(lambda m: len(set(m.values())) == len(m), lambda: names, lambda: mats)
+    cut = SourceRenamerV13.run([('Bench', 1, {})], {})[0][1]
+    one = nc.names_fix_plan({'objects': [_obj(1, 'Bench', _std('a', []), None)], 'files': {}, 'export_names': []}, {})
+    red_green(lambda produced: 'Mnch' not in str(produced), lambda: cut,
+              lambda: [m['new'] for m in one['materials']])
+    assert one['skipped'] and one['skipped'][0]['item'] == 'Bench'
+
+
+def test_AMR_same_name_objects_are_ambiguous_not_one_file():
+    links, disk = SourceAssetRenamer.run([(1, 'Dup_low', 'A'), (2, 'Dup_low', 'B')], {})
+    state = {'objects': [_obj(1, 'Dup_A1_Chair_low', _std('a', [('diffuseMap', 'diffuse', 'C:/l/a.png')])),
+                         _obj(2, 'Dup_A1_Chair_low', _std('b', [('diffuseMap', 'diffuse', 'C:/l/b.png')]))],
+             'files': {'C:/l/a.png': {'exists': True, 'sha256': '1' * 64},
+                       'C:/l/b.png': {'exists': True, 'sha256': '2' * 64}}, 'export_names': []}
+    plan = nc.names_fix_plan(state, {'profile': 'library'})
+    targets = [f['target'] for f in plan['files']]
+    red_green(lambda t: len(t) == len(set(t)), lambda: list(links.values()), lambda: targets)
+    assert plan['ambiguous'] and plan['ambiguous'][0]['keys'] == [1, 2]
+
+
+def test_AMR_separate_folder_and_trailing_junk():
+    links, _ = SourceAssetRenamer.run([(1, 'Wall_Low.001', 'A')], {})
+    got = nc.library_name('Wall_Low.001')
+    red_green(lambda produced: produced is None or '.001' not in produced, lambda: links[1],
+              lambda: got['name'] if isinstance(got, dict) else None)
+    assert 'duplicate suffix' in nc.library_name('Wall_Low.001')
+    state = {'objects': [_obj(1, 'Acme_Chair_A12_low', _std('x', [('diffuseMap', 'diffuse', 'C:/src/_001_/c.png')]))],
+             'files': {'C:/src/_001_/c.png': {'exists': True, 'sha256': 'c' * 64}}, 'export_names': []}
+    plan = nc.names_fix_plan(state, {'profile': 'library', 'folder': 'D:/out/lib'})
+    assert plan['files'][0]['target'] == 'D:/out/lib/T_Acme_Chair_A12_low_d.png'
+    assert [m['new'] for m in plan['materials']] == ['M_Acme_Chair_A12_low'] and nc.check_names(plan, cc) == []
+    with pytest.raises(ValueError, match='absolute'):
+        nc.names_fix_plan(state, {'folder': 'relative/dir'})
+
+
+def test_CN_fix_never_creates_a_duplicate_name():
+    existing = 'Brand_Chair_A123_high'
+    fixed = SourceCheckNames.fix('brand_chair_A123_High')
+    state = {'objects': [_obj(1, 'brand_chair_A123_High', _std('a', []))], 'files': {}, 'export_names': [],
+             'scene_names': [existing]}
+    plan = nc.names_fix_plan(state, {'profile': 'library'})
+    red_green(lambda produced: existing not in produced, lambda: [fixed],
+              lambda: [o['new'] for o in plan['objects']])
+    assert 'another scene object' in plan['ambiguous'][0]['reason']
+    assert nc.library_name('brand_chair_A123_High') == {'name': existing, 'changes': ['case fixed']}
+
+
+def test_CN_homoglyphs_and_transliteration_order_free():
+    raw = 'Стул_Дерево_A1_low'
+    red_green(lambda n: n.startswith('Stul_Derevo'), lambda: SourceCheckNames.homoglyph_first(raw),
+              lambda: nc.library_name(raw)['name'])
+    mixed = 'Bra\u043dd_Chair_A1_low'  # Cyrillic н is not a homoglyph: transliterated
+    assert nc.library_name('Br\u0430nd_Chair_A1_low')['name'] == 'Brand_Chair_A1_low'  # Cyrillic а in a Latin word
+    assert nc.library_name(mixed)['name'] == 'Brand_Chair_A1_low'
+    assert nc.clean_text(nc.clean_text(raw)[0])[0] == nc.clean_text(raw)[0]  # one pass, idempotent
+    assert nc.library_name(' Brand_Chair_A1\u200b_low\u00a0\t')['name'] == 'Brand_Chair_A1_low'
+
+
+def test_CN_hyphen_and_digit_first_segments_are_refused():
+    for bad, word in (('Brand_Chair-1_A1_low', 'hyphen'), ('Brand_Chair_123_low', 'digit'),
+                      ('Brand_Chair_A1_Main', 'high or low'), ('Brand__A1_low', 'empty'),
+                      ('Brand_high_A1_low', 'last segment'), ('Brand_A1_low', '4+')):
+        red_green(lambda r: isinstance(r, str), lambda: None if SourceCheckNames.flags(bad) == [] else 'flag',
+                  lambda: nc.library_name(bad))
+        assert word in nc.library_name(bad), (bad, nc.library_name(bad))
+
+
+def test_CN_translit_one_table_with_both_spellings_of_short_i():
+    red_green(lambda v: {'Yoshkar', 'Joshkar'} <= set(v), lambda: SourceCheckNames.spellings('Йошкар'),
+              lambda: nc.translit_variants('Йошкар'))
+    assert nc.transliterate('Йошкар') == nc.translit_variants('Йошкар')[0] == 'Yoshkar'
+    assert nc.TRANSLIT['й'] == 'y' and nc.transliterate('Стул') == 'Stul'
+
+
+def test_A101_seven_role_names_no_double_underscore():
+    """A101AGRLP.ms:388 wrote 'prefix_Address__Ground.fbx' (Ground rollout function)."""
+    def source(code, address):
+        return '{}_{}__Ground.fbx'.format(code, address)
+    names = nc.role_names('Test_Addr', 1, 1, '0123')
+    red_green(lambda n: '__' not in n, lambda: source('0123', 'Test_Addr'), lambda: names['Ground']['fbx'])
+    assert sorted(names) == sorted(nc.TYPES)
+    assert names['Main']['object'] == 'SM_Test_Addr_001_Main' and names['Main']['fbx'] == '0123_Test_Addr_01.fbx'
+    assert names['GroundElGlass']['object'] == 'SM_Test_Addr_GroundElGlass'
+    assert names['Main']['textures']['diffuse'] == 'T_Test_Addr_001_Main_d_1'
+    for t, n in names.items():
+        assert cc.fbx_kind(n['fbx']) == ('npm', 'oks' if t in ('Main', 'MainGlass') else 'ground')
+        for code, _ in cc.name_findings(n['object'], 'SM', 'npm'):
+            assert code in ('name_case', 'name_digits'), (t, code)
+    vpm = nc.role_names('Lenina_5', model='vpm')
+    assert sorted(vpm) == ['Ground', 'GroundGlass', 'Main', 'MainGlass']
+    assert vpm['Ground']['fbx'] == 'SM_Lenina_5_Ground.fbx' and vpm['Main']['textures']['diffuse'] == 'T_Lenina_5_Diffuse_1.1001'
+
+
+def test_names_fix_address_option_names_by_role():
+    state = {'objects': [_obj(1, 'Box_old_Main', _std('a', [])), _obj(2, 'Pole_GroundEl', _std('b', [])),
+                         _obj(3, 'Thing', _std('c', []))], 'files': {}, 'export_names': []}
+    plan = nc.names_fix_plan(state, {'address': 'Tverskaya_12', 'oks': 3})
+    assert {o['key']: o['new'] for o in plan['objects']} == {1: 'SM_Tverskaya_12_003_Main',
+                                                            2: 'SM_Tverskaya_12_GroundEl'}
+    assert plan['skipped'][0]['item'] == 'Thing' and 'role unknown' in plan['skipped'][0]['reason']
+    with pytest.raises(ValueError):
+        nc.names_fix_plan(state, {'oks': 3})
+
+
+def test_names_fix_acceptance_t06_scene():
+    """#979 acceptance on the T06 scene: prefix collision, shared material, read-only (foreign) target, odd
+    inputs. Foreign file untouched, `_m` from one slot, 0 duplicate names after the fix."""
+    shared = _std('Shared', [('diffuseMap', 'diffuse', 'C:/t/src_d.png'), ('specularLevelMap', 'metalness',
+                                                                           'C:/t/spec.png'),
+                             ('reflectionMap', None, None)])
+    state = {'objects': [_obj(1, 'SM_Chair_001_Main', shared), _obj(2, 'XX_Chair_001_Main', shared),
+                         _obj(3, 'SM_Bench_002_Main', _std('B', [('diffuseMap', 'diffuse', 'C:/t/bench.png')])),
+                         _obj(4, 'Bench', _std('Odd', [])), _obj(5, 'UCX_SM_Chair_001_Main_01', None)],
+             'files': {'C:/t/src_d.png': {'exists': True, 'sha256': 'd' * 64},
+                       'C:/t/spec.png': {'exists': True, 'sha256': 's' * 64},
+                       'C:/t/bench.png': {'exists': True, 'sha256': 'b' * 64},
+                       'C:/t/T_Bench_002_Main_d_1.png': {'exists': True, 'sha256': 'f' * 64}},
+             'export_names': [], 'scene_names': ['SM_Other_001_Main']}
+    state['objects'][4]['ucx'] = True
+    plan = nc.names_fix_plan(state, {})
+    news = [o['new'] for o in plan['objects']]
+    assert len(news) == len(set(news)) and not set(news) & set(state['scene_names'])
+    assert not any(f['target'] == 'C:/t/T_Bench_002_Main_d_1.png' and not f['action'].startswith('keep')
+                   for f in plan['files'])
+    m = [f['target'] for f in plan['files'] if f['target'].endswith('_m_1.png')]
+    assert len(m) == len(set(m)) == 2  # one `_m` per object, from specularLevelMap only
+    mats = [x['new'] for x in plan['materials'] if x.get('new')]
+    assert len(mats) == len(set(mats))
+    assert {s['item'] for s in plan['skipped']} == {'Bench'}

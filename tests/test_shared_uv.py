@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-spec=importlib.util.spec_from_file_location('shared_uv',Path(__file__).parents[1]/'tools/prepare_floor_shared_uv.py')
+spec=importlib.util.spec_from_file_location('shared_uv',Path(__file__).parents[1]/'jobs/OBR22-K02/scripts/prepare_floor_shared_uv.py')
 module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
 
 

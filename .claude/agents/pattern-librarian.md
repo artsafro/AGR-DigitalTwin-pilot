@@ -19,7 +19,7 @@ You find what the project already decided. You only read.
 Search the decision log `docs/decisions.md` first: a line there names the decision id, its date and the file
 where its full text lives (marked `[D<n>]`). Then, in this order: `docs/domain/patterns/` (and its `INDEX.md`),
 `docs/cases.md`, `docs/domain/conflicts.md`, `docs/domain/conflict-choices-*.md`, `docs/domain/*.md`,
-`jobs/*/questions.md`, `GLOSSARY.md`. Current rules stop at that list. `docs/HARNESS_PLAN.md` is historical. Open `docs/agr/` only through `docs/agr/INDEX.md`.
+`jobs/*/questions.md`, `GLOSSARY.md`. Current rules stop at that list; historical plans (`docs/ARCHIVE.md`) are not rules. Open `docs/agr/` only through `docs/agr/INDEX.md`.
 
 ## Answer format
 
