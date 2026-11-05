@@ -52,7 +52,7 @@ PREFLIGHT = ('material_type', 'perimeter_drop', 'ucx_audit', 'sets_count', 'fbx_
 CODES = {
     'census': {'missing_map'},
     'units': set(),
-    'perimeter_drop': {'drop_short', 'drop_unmeasurable', 'at_threshold', 'fbx_unmapped'},
+    'perimeter_drop': {'drop_short', 'drop_unmeasurable', 'at_threshold', 'fbx_unmapped', 'kind_unknown'},
     'material_type': {'mat_none', 'mat_class'},
     'ucx_audit': {'ucx_open', 'ucx_concave', 'ucx_material', 'ucx_name', 'ucx_intersect', 'ucx_unmeasurable',
                   'ucx_budget', 'ucx_orphan'},
@@ -204,6 +204,8 @@ def perimeter_drop(rows):
     `drop_unmeasurable`, never measured against 0. Exactly 1 m is `at_threshold` (review), as 0.5.0.
     Only the perimeter meshes (exact suffix Main / Ground, checks.mesh_kind) are measured: MainGlass,
     GroundEl, Flora etc. stand above ±0.000 by design and are listed in summary `not_applicable`.
+    A geometry mesh whose suffix is not one of those known kinds is `kind_unknown` (a finding, never a
+    skip): a misnamed perimeter mesh must not disappear into `not_applicable`.
     """
     rows = Rows(rows)
     found, dropped, skipped = {}, [], []
@@ -211,8 +213,12 @@ def perimeter_drop(rows):
         if checks.is_ucx(r['name']) or not _geo(r):
             continue
         mk = checks.mesh_kind(r['name'])
+        if mk is None:
+            _add(found, r['key'], 'kind_unknown',
+                 'суффикс не Main/MainGlass/Ground/GroundGlass/GroundEl/GroundElGlass/Flora: ' + repr(r.get('name')))
+            continue
         if mk not in ('Main', 'Ground'):
-            skipped.append({'name': r['name'], 'kind': mk or 'unknown suffix'})
+            skipped.append({'name': r['name'], 'kind': mk})
             continue
         if _kind(r) is None:
             _add(found, r['key'], 'fbx_unmapped', 'AGR_EXPORT_PATH не задан или не по маске: ' + repr(r.get('fbx')))

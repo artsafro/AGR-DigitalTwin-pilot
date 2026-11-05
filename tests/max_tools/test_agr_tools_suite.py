@@ -144,6 +144,99 @@ def test_perimeter_drop_only_main_and_ground():
     assert {k: codes(f, k) for k in range(1, 6)} == {1: ['drop_short'], 2: [], 3: ['at_threshold'], 4: [], 5: []}
 
 
+NON_PERIMETER = ('MainGlass', 'GroundGlass', 'GroundEl', 'GroundElGlass', 'Flora')
+
+
+def test_perimeter_drop_unknown_suffix_is_a_finding():
+    """#884: SM_Addr_001_Main_1 / SM_Addr_main are kind_unknown, not a silent skip."""
+    for name in ('SM_Addr_001_Main_1', 'SM_Addr_main'):
+        f, _, s = core.perimeter_drop([obj(1, name, zero_m=-0.2)])
+        assert codes(f, 1) == ['kind_unknown'], name
+        assert s['not_applicable'] == []
+        rep = report_of('perimeter_drop', [obj(1, name, zero_m=-0.2)])
+        assert rep['status'] == 'fail' and rep['objects'][0]['findings'][0]['code'] == 'kind_unknown'
+    rows = [obj(1, 'SM_Addr_001_Main_1', zero_m=-0.2), obj(2, 'SM_Addr_Ground', NPM_GROUND)]
+    pre = report_of('preflight', rows)
+    assert codes_of(pre, 'SM_Addr_001_Main_1') == ['kind_unknown']
+    assert pre['plan']['summary']['checks']['perimeter_drop'] == 'fail'
+    known = [obj(i + 1, 'SM_Addr_001_' + kind, zero_m=-0.2) for i, kind in enumerate(NON_PERIMETER)]
+    f, _, s = core.perimeter_drop(known)
+    assert {k: codes(f, k) for k in range(1, len(known) + 1)} == {k: [] for k in range(1, len(known) + 1)}
+    assert [n['kind'] for n in s['not_applicable']] == list(NON_PERIMETER)
+
+
+def codes_of(rep, name):
+    hit = next(o for o in rep['objects'] if o['name'] == name)
+    return sorted(f['code'] for f in hit['findings'])
+
+
+def test_unknown_suffix_probe_fail_closed():
+    """Every unknown-suffix mesh yields kind_unknown; known non-perimeter kinds never do.
+
+    Empty, partial, non-string, NaN/inf and exactly-1 m input fail or error, never pass.
+    """
+    rnd = random.Random(884)
+    names = [
+        'SM_Addr_001_Main_1', 'SM_Addr_main', 'SM_Addr_MAIN', 'SM_Addr_MainGlass_1',
+        '', ' ', '1', 'Main_1', 'ground', 'SM_Addr_001_Mai', None, 0, 1.5,
+        'SM_Addr_001_Main\t', '___',
+    ]
+    tokens = list(NON_PERIMETER) + ['Main', 'Ground', 'main', 'MAIN', '1', 'x', 'Glass', '']
+    for _ in range(240):
+        parts = [rnd.choice(('SM', 'XX', 'A', '')) for _ in range(rnd.randint(1, 4))]
+        parts.append(rnd.choice(tokens) + rnd.choice(('', '1', 'x', '_')))
+        name = '_'.join(parts)
+        if isinstance(name, str) and name.upper().startswith('UCX_'):
+            name = 'Z' + name
+        last = name.split('_')[-1] if name else ''
+        if last in checks.NPM_TYPES:
+            name += 'Z'
+        names.append(name)
+    zeros = (0.0, -0.2, -1.0, -1.5, None, float('nan'), float('inf'), float('-inf'))
+    rows, unknown_keys = [], []
+    for i, name in enumerate(names):
+        row = obj(i + 1, 'placeholder', zero_m=zeros[i % len(zeros)])
+        row['name'] = name
+        if i % 17 == 0:
+            row['mesh'] = {'verts': [], 'tris': []}
+        if i % 19 == 0:
+            row['mesh'] = {'verts': [(0, 0, float('nan'))], 'tris': []}
+        if i % 23 == 0:
+            row.pop('mesh')
+        rows.append(row)
+        unknown_keys.append(i + 1)
+    known_keys = []
+    for kind in NON_PERIMETER:
+        for z in zeros:
+            key = len(rows) + 1
+            rows.append(obj(key, 'SM_Addr_001_' + kind, zero_m=z))
+            known_keys.append(key)
+    ucx_key = len(rows) + 1
+    rows.append(obj(ucx_key, 'UCX_SM_Addr_Main_001', zero_m=float('nan')))
+    cam_key = ucx_key + 1
+    rows.append(obj(cam_key, 'NotAMesh', superclass='camera', cls='Freecamera', faces=0, materials=[],
+                    mesh={'verts': [], 'tris': []}, zero_m=None))
+    f, _, s = core.perimeter_drop(rows)
+    for key in unknown_keys:
+        assert codes(f, key) == ['kind_unknown'], (key, rows[key - 1]['name'])
+    for key in known_keys:
+        assert 'kind_unknown' not in codes(f, key) and codes(f, key) == []
+    assert codes(f, ucx_key) == [] and codes(f, cam_key) == []
+    assert [n['kind'] for n in s['not_applicable']] == [rows[k - 1]['name'].split('_')[-1] for k in known_keys]
+    assert 'unknown suffix' not in {n['kind'] for n in s['not_applicable']}
+    rep = report_of('perimeter_drop', [obj(1, 'SM_Addr_001_Main_1', zero_m=-1.0)])
+    assert rep['status'] == 'fail' and codes_of(rep, 'SM_Addr_001_Main_1') == ['kind_unknown']
+    with pytest.raises(ValueError):
+        core.perimeter_drop([])
+    with pytest.raises(ValueError):
+        core.perimeter_drop([obj(1), obj(1)])
+    partial = obj(1)
+    partial.pop('mesh')
+    with pytest.raises(ValueError):
+        core.perimeter_drop([partial])
+    assert len(unknown_keys) + len(known_keys) == 255 + 40
+
+
 def test_preflight_passes_valid_scene_with_every_kind():
     rep = report_of('preflight', _kinds_scene())
     assert rep['status'] == 'pass', [(o['name'], o['findings']) for o in rep['objects'] if o['findings']]
