@@ -1066,3 +1066,26 @@ def test_wrapped_message_prints_list_as_given():
     found, _ = core.textures_scene([_wrap_row([2, 1, 2, 5], [6], {2: None, 1: [_D1], 5: [_D2]})])
     w = [x[1] for x in found[1] if x[0] == 'tex_matid_wrapped']
     assert w and 'materialIDList [2, 1, 2, 5]' in w[0] and '[1, 2, 5]' not in w[0]
+
+
+def test_wrap_target_in_id_list_but_not_in_slots_is_unmeasurable():
+    """#855 RED: matID 3 on id_list [1, 2] wraps to 1, which has no slot: was a 'padding measured' wrap."""
+    found, _ = core.textures_scene([_wrap_row([1, 2], [3], {2: [_D2]})])
+    assert 'tex_matid_wrapped' not in codes(found[1])
+    unm = [x[1] for x in found[1] if x[0] == 'tex_unmeasurable']
+    assert len(unm) == 1 and 'matID 3' in unm[0] and 'matID 1' in unm[0] and 'no slot' in unm[0]
+
+
+def test_wrap_onto_duplicate_says_ambiguous_not_no_submaterial():
+    """#856 RED: the message said 'has no sub-material'."""
+    found, _ = core.textures_scene([_wrap_row([1, 1, 2], [3], {1: None, 2: [_D2]})])
+    unm = [x[1] for x in found[1] if x[0] == 'tex_unmeasurable' and 'face matID 3' in x[1]]
+    assert len(unm) == 1 and 'duplicated' in unm[0] and 'ambiguous' in unm[0] and 'no sub-material' not in unm[0]
+
+
+def test_wrap_probe_every_unresolved_matid_is_unmeasurable_never_wrapped():
+    """Brute force: id_list [1, 2], only slot 2 present: every odd matID 1..21 outside slots is unmeasurable."""
+    for mid in range(3, 22, 2):
+        found, _ = core.textures_scene([_wrap_row([1, 2], [mid], {2: [_D2]})])
+        assert 'tex_matid_wrapped' not in codes(found[1]), mid
+        assert any(x[0] == 'tex_unmeasurable' and f'matID {mid}' in x[1] for x in found[1]), mid
