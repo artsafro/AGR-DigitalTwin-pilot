@@ -4710,6 +4710,162 @@
     }
    },
    "same_as": null
+  },
+  {
+   "id": "ELV-18",
+   "name": "Дверь глухая однопольная 1050×2050",
+   "status": "unconfirmed",
+   "typed": true,
+   "role": "door",
+   "width_m": 1.05,
+   "height_m": 2.05,
+   "sections": 1,
+   "transoms": 0,
+   "sashes": null,
+   "handing": null,
+   "panes": null,
+   "panes_m": null,
+   "variant_of": null,
+   "source": {
+    "object": "elv-tc-vpm",
+    "file": "library/windows/sources/elv-tc-vpm-census-v001.json",
+    "census_key": "door-solid-1h-900x2050",
+    "fbx_type": "(DR)-1H_RD_Swing_Base (DR)In-1H(C_900x2050)L*",
+    "fbx_objects": [
+     "(DR)-1H_RD_Swing_Base (DR)In-1H(C_900x2050)L* 3 [11667072]"
+    ],
+    "booklet_sheets": [
+     19
+    ],
+    "occurrences": 1
+   },
+   "infill": "opaque_leaf",
+   "frame_finish": "RAL 7021",
+   "opaque_m": [
+    [
+     0.05,
+     0.01,
+     0.995,
+     1.99
+    ]
+   ],
+   "note": "проём створки 900, рама 1050 (в FBX рама 50 слева, 55 справа); запад, ось А-И, y -40.54; металлическая окраска RAL 7021 как у ELV-08",
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 1,
+     "reason": "one leaf island (945 mm) with a panic bar in the FBX family «(DR)-1H_RD_Swing_Base In-1H»; not confirmed by the user",
+     "source": "library/windows/sources/elv-tc-vpm-census-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "handing is per placement (the FBX has L and R instances)"
+    }
+   },
+   "same_as": null
+  },
+  {
+   "id": "ELV-19",
+   "name": "Дверь глухая однопольная 1250×2050",
+   "status": "unconfirmed",
+   "typed": true,
+   "role": "door",
+   "width_m": 1.25,
+   "height_m": 2.05,
+   "sections": 1,
+   "transoms": 0,
+   "sashes": null,
+   "handing": null,
+   "panes": null,
+   "panes_m": null,
+   "variant_of": "ELV-18",
+   "source": {
+    "object": "elv-tc-vpm",
+    "file": "library/windows/sources/elv-tc-vpm-census-v001.json",
+    "census_key": "door-solid-1h-1100x2050",
+    "fbx_type": "(DR)-1H_RD_Swing_Base (DR)In-1H(C_1100x2050)L*",
+    "fbx_objects": [
+     "(DR)-1H_RD_Swing_Base (DR)In-1H(C_1100x2050)L* [12594749]"
+    ],
+    "booklet_sheets": [
+     19
+    ],
+    "occurrences": 1
+   },
+   "infill": "opaque_leaf",
+   "frame_finish": "RAL 7021",
+   "opaque_m": [
+    [
+     0.05,
+     0.01,
+     1.195,
+     1.99
+    ]
+   ],
+   "note": "проём створки 1100, рама 1250; север, косая стена 6-1, x -2.04, низ на +0.30",
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 1,
+     "reason": "one leaf island (1145 mm) with a panic bar, the same family as the 900 type; not confirmed by the user",
+     "source": "library/windows/sources/elv-tc-vpm-census-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "handing is per placement (the FBX has L and R instances)"
+    }
+   },
+   "same_as": null
+  },
+  {
+   "id": "ELV-20",
+   "name": "Дверь глухая однопольная 1250×2250",
+   "status": "unconfirmed",
+   "typed": true,
+   "role": "door",
+   "width_m": 1.25,
+   "height_m": 2.25,
+   "sections": 1,
+   "transoms": 0,
+   "sashes": null,
+   "handing": null,
+   "panes": null,
+   "panes_m": null,
+   "variant_of": "ELV-18",
+   "source": {
+    "object": "elv-tc-vpm",
+    "file": "library/windows/sources/elv-tc-vpm-census-v001.json",
+    "census_key": "door-solid-1h-1100x2250",
+    "fbx_type": "(DR)-1H_RD_Swing_Base (DR)In-1H(C_1100x2050)L*",
+    "fbx_objects": [
+     "(DR)-1H_RD_Swing_Base (DR)In-1H(C_1100x2050)L* 2 [12546315]"
+    ],
+    "booklet_sheets": [
+     19
+    ],
+    "occurrences": 1
+   },
+   "infill": "opaque_leaf",
+   "frame_finish": "RAL 7021",
+   "opaque_m": [
+    [
+     0.05,
+     0.01,
+     1.195,
+     2.19
+    ]
+   ],
+   "note": "тип FBX номинально 1100×2050, но экземпляр выше: рама 2250, створка до 2190 (в FBX); пристройка ТП x -8.82, низ на +0.30",
+   "unconfirmed": {
+    "sashes": {
+     "candidate": 1,
+     "reason": "one leaf island (1145 mm) with a panic bar, the same family as the 900 type; not confirmed by the user",
+     "source": "library/windows/sources/elv-tc-vpm-census-v001.json"
+    },
+    "handing": {
+     "candidate": null,
+     "reason": "handing is per placement (the FBX has L and R instances)"
+    }
+   },
+   "same_as": null
   }
  ]
 }

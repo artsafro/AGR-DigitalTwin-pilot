@@ -325,6 +325,56 @@
    "occurrences": 1,
    "provenance": {"fbx_type": null, "fbx_objects": [], "booklet_sheets": [14, 18, 25, 37], "booklet_legend": "лист 18, поз. 2: «револьверные входные двери с остеклением нетонированным прозрачным, с устройством воздушно-тепловой завесы»"},
    "note": "нет в FBX (D07); Ø по плану (лист 25): наружный 4.12, внутренний 3.69 (±0.05); высота по фасаду (лист 18): створки 2.19, барабан-козырёк 2.19-2.71; листы 14 и 37 — рендеры, только ориентир"
+  },
+  {
+   "key": "door-solid-1h-900x2050",
+   "name": "Дверь глухая однопольная 1050×2050",
+   "role": "door",
+   "width_m": 1.05,
+   "height_m": 2.05,
+   "glass_m": [],
+   "opaque_m": [[0.05, 0.01, 0.995, 1.99]],
+   "infill": "opaque_leaf",
+   "frame_finish": "RAL 7021",
+   "sashes_candidate": 1,
+   "sashes_reason": "one leaf island (945 mm) with a panic bar in the FBX family «(DR)-1H_RD_Swing_Base In-1H»; not confirmed by the user",
+   "occurrences": 1,
+   "provenance": {"fbx_type": "(DR)-1H_RD_Swing_Base (DR)In-1H(C_900x2050)L*", "fbx_objects": ["(DR)-1H_RD_Swing_Base (DR)In-1H(C_900x2050)L* 3 [11667072]"], "booklet_sheets": [19]},
+   "note": "проём створки 900, рама 1050 (в FBX рама 50 слева, 55 справа); запад, ось А-И, y -40.54; металлическая окраска RAL 7021 как у ELV-08"
+  },
+  {
+   "key": "door-solid-1h-1100x2050",
+   "name": "Дверь глухая однопольная 1250×2050",
+   "role": "door",
+   "width_m": 1.25,
+   "height_m": 2.05,
+   "glass_m": [],
+   "opaque_m": [[0.05, 0.01, 1.195, 1.99]],
+   "infill": "opaque_leaf",
+   "frame_finish": "RAL 7021",
+   "sashes_candidate": 1,
+   "sashes_reason": "one leaf island (1145 mm) with a panic bar, the same family as the 900 type; not confirmed by the user",
+   "occurrences": 1,
+   "variant_of": "ELV-18",
+   "provenance": {"fbx_type": "(DR)-1H_RD_Swing_Base (DR)In-1H(C_1100x2050)L*", "fbx_objects": ["(DR)-1H_RD_Swing_Base (DR)In-1H(C_1100x2050)L* [12594749]"], "booklet_sheets": [19]},
+   "note": "проём створки 1100, рама 1250; север, косая стена 6-1, x -2.04, низ на +0.30"
+  },
+  {
+   "key": "door-solid-1h-1100x2250",
+   "name": "Дверь глухая однопольная 1250×2250",
+   "role": "door",
+   "width_m": 1.25,
+   "height_m": 2.25,
+   "glass_m": [],
+   "opaque_m": [[0.05, 0.01, 1.195, 2.19]],
+   "infill": "opaque_leaf",
+   "frame_finish": "RAL 7021",
+   "sashes_candidate": 1,
+   "sashes_reason": "one leaf island (1145 mm) with a panic bar, the same family as the 900 type; not confirmed by the user",
+   "occurrences": 1,
+   "variant_of": "ELV-18",
+   "provenance": {"fbx_type": "(DR)-1H_RD_Swing_Base (DR)In-1H(C_1100x2050)L*", "fbx_objects": ["(DR)-1H_RD_Swing_Base (DR)In-1H(C_1100x2050)L* 2 [12546315]"], "booklet_sheets": [19]},
+   "note": "тип FBX номинально 1100×2050, но экземпляр выше: рама 2250, створка до 2190 (в FBX); пристройка ТП x -8.82, низ на +0.30"
   }
  ]
 }

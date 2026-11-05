@@ -52,6 +52,42 @@ Intake per [D186], 2026-11-04. Profile: **VPM-OKS only** (no NPM). One OKS, so n
 - **Pilot И-А accepted by the user 2026-11-04** (build-v002: geometry + UDIM 1001–1015 + procedural textures,
   683 px/m, wood RAL 1001 light beige). Roll out the same scripts to the rest of the building.
 
+- Lighting layout `parts/lighting_layout_v001.json` (sheets 33–35, 498 fixtures). Claude's choices (minor, within
+  source tolerance): 2000K belt over metal / 2700K wood parapet per sheet 33 legend + render 38; plan (sheet 35)
+  for position along the facade, facade sheets for height; fixtures on R3.15 arcs placed by unrolled length;
+  the 6 FBX `Arktos` boxes are not booklet fixtures → kept as geometry ID27 without emission; housing sections
+  assumed (sheet 40 gives lengths only).
+
+- Railings (terrace) and fire ladders: **geometry** (simple posts/rails/stringers/rungs), not alpha (user, 2026-11-04).
+
+- **Railings (terrace) and fire ladders stay GEOMETRY** as built in v003, not alpha (user 2026-11-04); textured as
+  metal RAL 7021 (ID20 placeholder), no alpha maps.
+
+## Whole building v004 / tex-v002 (2026-11-05, technical QA only; user acceptance open)
+
+- Library first: single doors In-1H added as ELV-18 (900, frame 1050×2050), ELV-19 (1100, 1250×2050, variant of
+  ELV-18), ELV-20 (1100 with a 2250 frame at the TP annex, variant of ELV-18 — the FBX instance is 20 cm taller than
+  its nominal type, so by [D140] it is its own size). The 3 single doors are placed from them.
+- Lights: housings as Main geometry (part P42, ID27 RAL 7021), glow faces own IDs.
+- **Deviation — working IDs beyond the attachments range 26-30:** glow IDs ID28 purple, ID29 2700K, ID30 2000K,
+  ID31 4000K (LINE + DECO), ID32 RGB static warm white (FOCUS, PLAT-A4), ID33 3000K (TUBE M); colour in Diffuse,
+  ERM R = 1.0 only on these tiles. ID27 = housings + the 6 Arktos (no emission).
+- **Deviation — DECO over the 4 gates raised +0.32 m** (z 4.30 → 4.62) to clear the dock-shelter hoods (top +4.50).
+- Glow faces: lines and DECO / FOCUS / PLAT the front face, TUBE M top + bottom (assumed; sheet 40 gives no sections).
+- Base flashing 5024 continued on the new plinth flashing (P25); other new flashings 7021 [D13].
+- Sandwich horizontal joints from the FBX rows (+4.62, +10.37, +5.71), anchored per face (v lattice 3.2 m).
+
+## Delivery v002 decisions (user, 2026-11-05)
+
+- GeoJSON point: for now at the building centre in model coordinates (pivot 0,0,0), no MSK-77 binding; FNO code and
+  name empty. V011 stays open (TODO) until the customer gives the SPOZU DWG or an MSK-77 point. Okrug ЮАО (derived
+  from the address) confirmed.
+- Attachments stand off by 6 mm instead of the 10 mm embed; the 4 remaining self-intersections of the pilot niche frame
+  are accepted (conflicts #44). UCX names keep the project form `UCX_SM_Elevatornaya_1A_Main_NNN` (#45). V007 DirectX
+  review on flat tiles accepted (#46) [D196].
+- Next: renders of build-v006 (all sides, day and night), 3ds Max xView 5/2 mm after Mesh + Weld 0.002 in an own Max
+  instance, then one acceptance pack: Gate 1 for P21–P42, library types ELV-01..20 [D140], visual acceptance.
+
 ## Не трогать
 
 - Source files in `for_ai\` (work on byte-identical copies only).
