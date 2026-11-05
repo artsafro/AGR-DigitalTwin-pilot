@@ -22,11 +22,13 @@ mutex the caller re-reads the lock and deletes it only when that same inode is s
 is never renamed aside and never unlinked. The mutex is stale when its owner pid is dead, its until has
 passed, or its body does not prove a live owner — a crashed or wedged reclaimer cannot block the host.
 A live pid whose `until` is NaN or infinite has not proved expiry, so the mutex stays held. Taking a
-stale mutex deletes only the inode whose own bytes were stale (Windows: delete through that handle;
-elsewhere: rename to a unique name and keep the delete only when the inode still matches), never the
-name after a later replacement. The owner unlinks the mutex only while that same inode still carries
-its token. O_EXCL create of the lock then picks the single holder. Reclaim leaves no `*.reclaim-*` or
-`*.take-*` aside file.
+stale mutex deletes only a name whose own bytes are still stale at the unlink. It never renames that
+name aside: an empty name lets a second holder link. On POSIX the critical section takes fcntl.flock
+on a persistent sentinel `.<lock>.reclaim` that is never unlinked. `_flock` is injectable because
+Windows has no fcntl (the fallback is msvcrt.locking, and tests monkeypatch `_flock`). Windows deletes
+a stale file through the handle that read those bytes. A live holder's file is not deleted. The owner
+unlinks the mutex only while that same inode still carries its token. O_EXCL create of the lock then
+picks the single holder. Reclaim leaves no `*.reclaim-*` or `*.take-*` aside file.
 """
 from __future__ import annotations
 
@@ -242,51 +244,79 @@ def _drop_stale_inode(path: Path, token: str) -> bool:
     return _drop_stale_inode_posix(path, token)
 
 
-def _restore_displaced(unique: Path, path: Path) -> None:
-    """Put a displaced file back on `path`. Never delete it: it is not the inode we meant to drop."""
-    try:
-        os.rename(unique, path)
-    except (FileNotFoundError, OSError):
-        return
+# fcntl.LOCK_* values. Windows has no fcntl; `_flock` is what tests monkeypatch.
+try:
+    import fcntl as _fcntl
+    _LOCK_EX = _fcntl.LOCK_EX
+    _LOCK_NB = _fcntl.LOCK_NB
+    _LOCK_UN = _fcntl.LOCK_UN
+except ImportError:  # Windows: fcntl is absent
+    _LOCK_EX, _LOCK_NB, _LOCK_UN = 2, 4, 8
 
 
-def _displace_inode(path: Path, ident: tuple, *, directory: bool, pred) -> bool:
-    """Move `path` aside and delete it only when that inode is still `ident` and `pred` holds.
+def _flock(fd: int, operation: int) -> None:
+    """Exclusive-lock or unlock a reclaim sentinel fd.
 
-    A different inode is renamed back. True means this name no longer has a file.
+    POSIX uses fcntl.flock. Windows has no fcntl; tests monkeypatch this function,
+    and the body below uses msvcrt.locking so the POSIX routines still exclude each
+    other when they run on Windows.
     """
-    unique = path.with_name(f".{path.name}.take-{secrets.token_hex(8)}")
     try:
-        os.rename(path, unique)
-    except FileNotFoundError:
-        return True
-    except OSError:
-        return False
-    try:
+        import fcntl
+    except ImportError:
+        _flock_fallback(fd, operation)
+        return
+    fcntl.flock(fd, operation)
+
+
+def _flock_fallback(fd: int, operation: int) -> None:
+    import msvcrt
+    os.lseek(fd, 0, os.SEEK_SET)
+    if operation & _LOCK_UN:
         try:
-            moved = os.lstat(unique)
-        except FileNotFoundError:
-            return True
-        same = (moved.st_dev, moved.st_ino) == ident and stat.S_ISDIR(moved.st_mode) == directory
-        if not same:
-            _restore_displaced(unique, path)
-            return False
-        if directory:
-            os.rmdir(unique)
-            return True
-        raw = unique.read_bytes()
-        if pred is not None and not pred(raw):
-            _restore_displaced(unique, path)
-            return False
-        os.remove(unique)
-        return True
+            msvcrt.locking(fd, msvcrt.LK_UNLCK, 1)
+        except OSError:
+            pass
+        return
+    mode = msvcrt.LK_NBLCK if operation & _LOCK_NB else msvcrt.LK_LOCK
+    msvcrt.locking(fd, mode, 1)
+
+
+@contextmanager
+def _reclaim_exclusion(path: Path):
+    """Non-blocking critical section. The sentinel file is never unlinked."""
+    sentinel = path.with_name(f".{path.name}.reclaim")
+    fd = None
+    locked = False
+    try:
+        fd = os.open(os.fspath(sentinel), os.O_CREAT | os.O_RDWR, 0o600)
+        try:
+            if os.fstat(fd).st_size < 1:
+                os.lseek(fd, 0, os.SEEK_SET)
+                os.write(fd, b"\0")
+        except OSError:
+            pass
+        _flock(fd, _LOCK_EX | _LOCK_NB)
+        locked = True
     except OSError:
-        _restore_displaced(unique, path)
-        return False
+        locked = False
+    try:
+        yield locked
+    finally:
+        if fd is not None:
+            if locked:
+                try:
+                    _flock(fd, _LOCK_UN)
+                except OSError:
+                    pass
+            os.close(fd)
 
 
-def _consume_posix(path: Path, pred) -> str:
-    """'gone' | 'foreign' | 'failed'. Deletes only the inode whose bytes satisfy `pred`."""
+def _unlink_named_if(path: Path, pred) -> str:
+    """'gone' | 'foreign' | 'failed'. Unlink `path` only when its bytes still satisfy `pred`.
+
+    Never renames the name aside, so the name is not empty while another inode sits beside it.
+    """
     try:
         fd = os.open(os.fspath(path), os.O_RDONLY)
     except FileNotFoundError:
@@ -294,24 +324,53 @@ def _consume_posix(path: Path, pred) -> str:
     except OSError:
         return "failed"
     try:
-        raw = os.read(fd, 65536)
-        held = os.fstat(fd)
-    except OSError:
-        return "failed"
+        try:
+            raw = os.read(fd, 65536)
+            held = os.fstat(fd)
+        except OSError:
+            return "failed"
     finally:
         os.close(fd)
     if not pred(raw):
         return "foreign"
-    ident = (held.st_dev, held.st_ino)
-    if _displace_inode(path, ident, directory=False, pred=pred):
-        return "gone"
     try:
-        still = path.read_bytes()
+        # A hook (or a racer) may replace the file during this stat. The re-read below sees that.
+        os.stat(os.fspath(path))
     except FileNotFoundError:
         return "gone"
     except OSError:
         return "failed"
-    return "failed" if pred(still) else "foreign"
+    try:
+        again = path.read_bytes()
+    except FileNotFoundError:
+        return "gone"
+    except OSError:
+        return "failed"
+    if again != raw or not pred(again):
+        return "foreign"
+    try:
+        now = os.lstat(path)
+    except FileNotFoundError:
+        return "gone"
+    except OSError:
+        return "failed"
+    if (now.st_dev, now.st_ino) != (held.st_dev, held.st_ino) or stat.S_ISDIR(now.st_mode):
+        return "foreign"
+    try:
+        os.remove(path)
+    except FileNotFoundError:
+        return "gone"
+    except OSError:
+        return "failed"
+    return "gone"
+
+
+def _consume_posix(path: Path, pred) -> str:
+    """'gone' | 'foreign' | 'failed'. Deletes only the file whose bytes still satisfy `pred`."""
+    with _reclaim_exclusion(path) as held:
+        if not held:
+            return "failed"
+        return _unlink_named_if(path, pred)
 
 
 def _consume_if(path: Path, pred, *, allow_dir: bool) -> str:
@@ -324,8 +383,14 @@ def _consume_if(path: Path, pred, *, allow_dir: bool) -> str:
     if stat.S_ISDIR(info.st_mode):
         if not allow_dir:
             return "foreign"
-        ident = (info.st_dev, info.st_ino)
-        return "gone" if _displace_inode(path, ident, directory=True, pred=None) else "failed"
+        # rmdir this directory only. A file that took the name fails the rmdir and stays.
+        try:
+            os.rmdir(path)
+        except FileNotFoundError:
+            return "gone"
+        except OSError:
+            return "failed"
+        return "gone"
     if os.name == "nt":
         return _consume_handle(path, pred)
     return _consume_posix(path, pred)

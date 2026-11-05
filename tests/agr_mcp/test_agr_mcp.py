@@ -1163,6 +1163,7 @@ def test_probe_posix_inode_drop_seed_972(tmp_path, monkeypatch):
     mutex = path.with_name(f".{path.name}.mutex")
     real_rename = os.rename
     real_remove = os.remove
+    real_stat = os.stat
     seen = 0
     for trial in range(24):
         _clear_lock_dir(path)
@@ -1175,13 +1176,25 @@ def test_probe_posix_inode_drop_seed_972(tmp_path, monkeypatch):
         mode = rnd.choice(["swap-on-rename", "already-fresh", "stale-inode", "garbled"])
         swapped = {"done": False}
 
-        def rename(src, dst, swapped=swapped, fresh=fresh, mode=mode):
-            if mode == "swap-on-rename" and Path(src) == path and not swapped["done"]:
-                swapped["done"] = True
-                real_remove(path)
-                path.write_bytes(fresh)
+        def swap_fresh(swapped=swapped, fresh=fresh):
+            if swapped["done"]:
+                return
+            swapped["done"] = True
+            real_remove(path)
+            path.write_bytes(fresh)
+
+        def stat(target, *args, swapped=swapped, mode=mode, **kwargs):
+            result = real_stat(target, *args, **kwargs)
+            if mode == "swap-on-rename" and Path(target) == path:
+                swap_fresh()
+            return result
+
+        def rename(src, dst, swapped=swapped, mode=mode):
+            if mode == "swap-on-rename" and Path(src) == path:
+                swap_fresh()
             return real_rename(src, dst)
 
+        monkeypatch.setattr(os, "stat", stat)
         monkeypatch.setattr(os, "rename", rename)
         if mode == "already-fresh":
             path.write_bytes(fresh)
@@ -1203,6 +1216,316 @@ def test_probe_posix_inode_drop_seed_972(tmp_path, monkeypatch):
         seen += 1
     monkeypatch.setattr(os, "rename", real_rename)
     assert seen == 24
+
+
+def _force_posix_file_consume():
+    """Make file reclaim use the POSIX consume path (tests run on Windows too)."""
+    import os
+    import stat
+    real = locks._consume_if
+
+    def consume_if(path, pred, *, allow_dir):
+        try:
+            info = os.lstat(path)
+        except FileNotFoundError:
+            return "gone"
+        except OSError:
+            return "failed"
+        if stat.S_ISDIR(info.st_mode):
+            return real(path, pred, allow_dir=allow_dir)
+        return locks._consume_posix(path, pred)
+
+    return real, consume_if
+
+
+def _posix_gap_case(kind, plant, gap):
+    """One forced schedule.
+
+    `plant` is `on-close` (X has read the stale inode, then Y replaces it) or
+    `already` (a live file is in place before X acts). `gap` is where a second
+    holder tries O_EXCL / acquire: `rename`, `remove`, or `after`.
+    fcntl is absent on Windows; callers observe `locks._flock`.
+    Returns (max_inside, leftovers, flock_calls).
+    """
+    import os
+    import time
+    path = _lock_file()
+    _clear_lock_dir(path)
+    mutex = path.with_name(f".{path.name}.mutex")
+    token = "owner-token"
+    now = time.time()
+    path.write_text(json.dumps({"pid": 999999999, "card": "dead"}), encoding="utf-8")
+    if kind == "lock":
+        mutex.write_text(json.dumps({"pid": os.getpid(), "until": now + 30, "token": token}),
+                         encoding="utf-8")
+        target = path
+        live = json.dumps({"pid": os.getpid(), "until": now + 60, "card": "fresh", "token": "live"}).encode()
+    else:
+        mutex.write_text(json.dumps({"pid": 999999999, "until": now + 60, "token": "stale"}),
+                         encoding="utf-8")
+        target = mutex
+        live = json.dumps({"pid": os.getpid(), "until": now + 30, "token": "Y"}).encode()
+    state = {"current": 0, "max": 0}
+    guard = threading.Lock()
+    planted = {"done": False}
+    second = {"done": False}
+    flock_calls = []
+    opened = {}
+
+    def enter():
+        with guard:
+            state["current"] += 1
+            state["max"] = max(state["max"], state["current"])
+
+    def plant_live():
+        if planted["done"]:
+            return
+        planted["done"] = True
+        if target.exists():
+            real_remove(target)
+        target.write_bytes(live)
+        enter()
+
+    def second_holder():
+        if second["done"]:
+            return
+        second["done"] = True
+        if kind == "lock":
+            try:
+                fd = os.open(target, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            except FileExistsError:
+                return
+            os.write(fd, b'{"pid": 1, "token": "excl", "until": 9999999999}')
+            os.close(fd)
+            enter()
+            return
+        if locks._mutex_acquire(path, "Z"):
+            enter()
+
+    if plant == "already":
+        if target.exists():
+            os.remove(target)
+        target.write_bytes(live)
+        enter()
+        planted["done"] = True
+
+    real_open, real_close = os.open, os.close
+    real_rename, real_remove = os.rename, os.remove
+    real_consume = locks._consume_if
+    real_flock = getattr(locks, "_flock", None)
+    _, posix_consume = _force_posix_file_consume()
+
+    def open_(file, flags, *args, **kwargs):
+        fd = real_open(file, flags, *args, **kwargs)
+        try:
+            opened[fd] = Path(file)
+        except TypeError:
+            pass
+        return fd
+
+    def close(fd):
+        real_close(fd)
+        name = opened.pop(fd, None)
+        if plant == "on-close" and name == target:
+            plant_live()
+
+    def rename(src, dst):
+        src_p, dst_p = Path(src), Path(dst)
+        aside = src_p == target and ".take-" in dst_p.name
+        if aside and gap == "rename":
+            real_rename(src, dst)
+            second_holder()
+            return
+        return real_rename(src, dst)
+
+    def remove(file):
+        file_p = Path(file)
+        if file_p == target and gap == "remove":
+            real_remove(file)
+            second_holder()
+            return
+        return real_remove(file)
+
+    def flock(fd, operation):
+        flock_calls.append(operation)
+        if real_flock is None:
+            raise OSError("locks._flock is not installed")
+        return real_flock(fd, operation)
+
+    os.open, os.close = open_, close
+    os.rename, os.remove = rename, remove
+    locks._consume_if = posix_consume
+    if real_flock is not None:
+        locks._flock = flock
+    try:
+        if kind == "lock":
+            locks._drop_stale_inode_posix(path, token)
+        else:
+            locks._mutex_acquire(path, "X")
+        if gap == "after" or not second["done"]:
+            second_holder()
+    finally:
+        os.open, os.close = real_open, real_close
+        os.rename, os.remove = real_rename, real_remove
+        locks._consume_if = real_consume
+        if real_flock is not None:
+            locks._flock = real_flock
+    return state["max"], _leftover_names(path), flock_calls, planted["done"]
+
+
+def test_three_reclaimers_posix_window_at_most_one_inside(tmp_path, monkeypatch):
+    """#972: X reads a dead mutex, Y replaces it and enters, Z acquires if the name is emptied.
+
+    POSIX consume is forced. fcntl is absent on Windows, so exclusion is the injectable
+    `locks._flock` (monkeypatched below when the function exists). max_inside == 1, no `.take-*`.
+    """
+    max_inside, leftovers, flock_calls, planted = _posix_gap_case("mutex", "on-close", "rename")
+    problems = []
+    if not planted:
+        problems.append("Y never replaced the dead mutex")
+    if max_inside != 1:
+        problems.append(f"max_inside={max_inside}")
+    if leftovers:
+        problems.append(f"leftover={leftovers}")
+    if not flock_calls:
+        problems.append("POSIX reclaim did not take locks._flock")
+    assert problems == []
+
+
+def test_posix_lock_gap_o_excl_at_most_one_holder(tmp_path, monkeypatch):
+    """#972: a fresh lock is swapped in before POSIX takeover; a holder O_EXCLs if the name is empty.
+
+    At most one holder, and no `.take-*` leftover. `locks._flock` is injectable because Windows has no fcntl.
+    """
+    max_inside, leftovers, flock_calls, planted = _posix_gap_case("lock", "on-close", "rename")
+    problems = []
+    if not planted:
+        problems.append("fresh lock was not planted before takeover")
+    if max_inside != 1:
+        problems.append(f"holders={max_inside}")
+    if leftovers:
+        problems.append(f"leftover={leftovers}")
+    if not flock_calls:
+        problems.append("POSIX lock drop did not take locks._flock")
+    assert problems == []
+
+
+def _posix_gap_schedules(n, seed):
+    import random
+    rnd = random.Random(seed)
+    kinds = ["mutex", "lock"]
+    plants = ["on-close", "already"]
+    gaps = ["rename", "remove", "after"]
+    return [{"kind": rnd.choice(kinds), "plant": rnd.choice(plants), "gap": rnd.choice(gaps)}
+            for _ in range(n)]
+
+
+def test_probe_at_most_one_inside_posix_seed_972(tmp_path, monkeypatch):
+    """#972: generated POSIX interleavings. At most one inside / one holder, N/N."""
+    schedules = _posix_gap_schedules(16, 972)
+    ok = 0
+    for schedule in schedules:
+        max_inside, _leftovers, _flock, _planted = _posix_gap_case(**schedule)
+        if max_inside <= 1:
+            ok += 1
+    assert ok == len(schedules) == 16
+
+
+def test_probe_no_take_leftover_posix_seed_972(tmp_path, monkeypatch):
+    """#972: generated POSIX interleavings. No `.take-*` (or other aside) leftover, N/N."""
+    schedules = _posix_gap_schedules(16, 973)
+    ok = 0
+    for schedule in schedules:
+        _max_inside, leftovers, _flock, _planted = _posix_gap_case(**schedule)
+        if leftovers == []:
+            ok += 1
+    assert ok == len(schedules) == 16
+
+
+def _gap_racer_case(kind, monkeypatch, *, flock_works=True):
+    """#972 review P1: a second reclaimer runs between X's inode re-check and X's unlink.
+
+    kind="mutex": X takes over a dead mutex; in X's unlink gap W consumes the same dead inode and
+    Y links a fresh mutex. Without exclusion X then unlinks Y's live mutex and links its own.
+    kind="lock": X (mutex owner) drops a stale lock; in X's unlink gap X's mutex expires, W takes
+    the mutex over and drops the same stale lock, H O_EXCLs a fresh lock. Without exclusion X then
+    unlinks H's lock and K O_EXCLs a second one.
+    POSIX consume is forced (fcntl is absent on Windows: `locks._flock` is the injectable seam).
+    Returns (max_inside, leftovers).
+    """
+    import os
+    import time
+    path = _lock_file()
+    _clear_lock_dir(path)
+    mutex = path.with_name(f".{path.name}.mutex")
+    _, posix_consume = _force_posix_file_consume()
+    monkeypatch.setattr(locks, "_consume_if", posix_consume)
+    monkeypatch.setattr(locks, "_drop_stale_inode", locks._drop_stale_inode_posix)
+    monkeypatch.setattr(locks, "_sleep", lambda _s: None)
+    if not flock_works:
+        monkeypatch.setattr(locks, "_flock", lambda fd, op: None)
+    now = time.time()
+    inside = set()
+    target = mutex if kind == "mutex" else path
+    path.write_text(json.dumps({"pid": 999999999, "card": "dead", "token": "dead"}), encoding="utf-8")
+    if kind == "mutex":
+        mutex.write_text(json.dumps({"pid": 999999999, "until": now + 60, "token": "dead"}),
+                         encoding="utf-8")
+    else:
+        mutex.write_text(json.dumps({"pid": os.getpid(), "until": now + 30, "token": "X"}),
+                         encoding="utf-8")
+    real_remove = os.remove
+    fired = {"done": False}
+
+    def o_excl(name):
+        try:
+            fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except FileExistsError:
+            return
+        os.write(fd, json.dumps({"pid": os.getpid(), "until": now + 600, "token": name}).encode())
+        os.close(fd)
+        inside.add(name)
+
+    def racer():
+        if kind == "mutex":
+            locks._consume_stale_mutex(mutex)
+            if locks._mutex_acquire(path, "Y"):
+                inside.add("Y")
+            return
+        mutex.write_text(json.dumps({"pid": os.getpid(), "until": now - 1, "token": "X"}),
+                         encoding="utf-8")  # X stalled past _MUTEX_TTL_S
+        if locks._reclaim(path, "W"):
+            o_excl("H")
+
+    def remove(file):
+        if Path(file) == target and not fired["done"]:
+            fired["done"] = True
+            racer()
+        return real_remove(file)
+
+    monkeypatch.setattr(os, "remove", remove)
+    try:
+        if kind == "mutex":
+            if locks._mutex_acquire(path, "X"):
+                inside.add("X")
+        elif locks._drop_stale_inode_posix(path, "X"):
+            o_excl("K")
+    finally:
+        monkeypatch.setattr(os, "remove", real_remove)
+    assert fired["done"], "X never reached the unlink gap"
+    return len(inside), _leftover_names(path)
+
+
+@pytest.mark.parametrize("kind", ["mutex", "lock"])
+def test_second_reclaimer_in_unlink_gap_at_most_one_inside(kind, tmp_path, monkeypatch):
+    """#972 review P1: W runs inside X's re-check -> unlink gap. At most one inside / holder."""
+    assert _gap_racer_case(kind, monkeypatch) == (1, [])
+
+
+@pytest.mark.parametrize("kind", ["mutex", "lock"])
+def test_unlink_gap_witness_detects_missing_exclusion(kind, tmp_path, monkeypatch):
+    """The gap witness is not vacuous: with `_flock` a no-op the same schedule gives two inside."""
+    assert _gap_racer_case(kind, monkeypatch, flock_works=False)[0] == 2
 
 
 # ---- audit --------------------------------------------------------------------------------------------------
