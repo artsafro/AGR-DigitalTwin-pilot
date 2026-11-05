@@ -87,32 +87,41 @@ def refusals():
     return out
 
 
+def _macro_module():
+    """The runtime object the macroScripts call (`agr_tools_runtime` defined by bootstrap.py in __main__)."""
+    import __main__
+    mod = getattr(__main__, 'agr_tools_runtime', None)
+    summary['macro_runtime'] = 'bootstrap' if mod is not None else 'fallback: this script import'
+    return mod if mod is not None else agr
+
+
 def macros():
-    """Every new macroScript runs through runtime.ui -> edit_ui -> edits_080 twice on a synthetic box (first press
-    preview, second press apply of that preview for editing rows). Options-less runs may refuse (no folder, no
-    address): the refusal is recorded; a stub answer is a failure."""
+    """Every new macroScript is registered and routes to runtime.ui (one press on a synthetic box); then the two
+    panel presses (preview, apply of that preview) go through the SAME runtime object the macros use, so a refusal
+    keeps its text. Options-less presses may refuse (no folder, no address): recorded; a stub answer fails."""
+    mod = _macro_module()
     box = rt.Box(name='SM_Smoke_908_Main_001', length=2, width=2, height=2)
     out = {}
     for a in ACTS:
         res = []
+        rt.select(box)
+        path = Path(agr.reports_dir()) / (a.tool + '.json')
+        mtime = path.stat().st_mtime_ns if path.is_file() else None
+        ran = bool(rt.macros.run('AGR Tools', a.macro))
+        res.append('macro ran={} report={}'.format(ran, path.is_file() and path.stat().st_mtime_ns != mtime))
+        mod._edits.pop(a.tool, None)  # the presses below start from a fresh preview
         for press in (1, 2):
             if not rt.isValidNode(box):
                 box = rt.Box(name='SM_Smoke_908_Main_001', length=2, width=2, height=2)
             rt.select(box)
-            path = Path(agr.reports_dir()) / (a.tool + '.json')
-            mtime = path.stat().st_mtime_ns if path.is_file() else None
             try:
-                ok = bool(rt.macros.run('AGR Tools', a.macro))
-            except Exception as exc:  # noqa: BLE001 - a refusal propagates through the macro seam
-                res.append('refused: ' + (str(exc).splitlines() or [type(exc).__name__])[0][:120])
+                rep = mod.ui(a.tool)
+            except Exception as exc:  # noqa: BLE001 - the refusal text is the evidence
+                res.append('press{} refused: {}'.format(press, (str(exc).splitlines() or [type(exc).__name__])[0][:160]))
                 continue
-            if path.is_file() and path.stat().st_mtime_ns != mtime:
-                rep = json.loads(path.read_text(encoding='utf-8'))
-                assert rep['tool'] == a.tool and rep['status'] != 'not_implemented', (a.macro, rep['status'])
-                plan = rep.get('plan') if isinstance(rep.get('plan'), dict) else {}
-                res.append('{}:{}'.format(plan.get('mode', '?'), rep['status']))
-            else:
-                res.append('ran={} no new report'.format(ok))
+            assert rep['tool'] == a.tool and rep['status'] != 'not_implemented', (a.macro, rep['status'])
+            plan = rep.get('plan') if isinstance(rep.get('plan'), dict) else {}
+            res.append('press{} {}:{}'.format(press, plan.get('mode', '?'), rep['status']))
         out[a.macro] = res
     if rt.isValidNode(box):
         rt.delete(box)
