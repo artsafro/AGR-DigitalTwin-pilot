@@ -1,13 +1,202 @@
 {
  "schema": 1,
  "button": "light.check",
- "tool": null,
+ "tool": "light.check",
  "version": "0.9",
- "shipped": false,
+ "shipped": true,
  "select": "named",
- "reason": "станция в работе, #979, ветка D",
+ "reason": "",
  "apply_status": null,
- "objects": [],
+ "objects": [
+  {
+   "name": "Poly_Root",
+   "scene": "frag_d_light",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "Poly_Spot_001",
+   "scene": "frag_d_light",
+   "expect": "fail",
+   "codes": [
+    "light_spot_distance"
+   ]
+  },
+  {
+   "name": "Poly_Spot_002",
+   "scene": "frag_d_light",
+   "expect": "fail",
+   "codes": [
+    "light_spot_distance"
+   ]
+  },
+  {
+   "name": "Poly_Spot_003",
+   "scene": "frag_d_light",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "Poly_Spot_004",
+   "scene": "frag_d_light",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "Poly_Spot_005",
+   "scene": "frag_d_light",
+   "expect": "fail",
+   "codes": [
+    "light_spot_distance"
+   ]
+  },
+  {
+   "name": "Poly_Spot_006",
+   "scene": "frag_d_light",
+   "expect": "fail",
+   "codes": [
+    "light_spot_distance"
+   ]
+  },
+  {
+   "name": "Poly_Omni_001",
+   "scene": "frag_d_light",
+   "expect": "fail",
+   "codes": [
+    "light_omni_distance"
+   ]
+  },
+  {
+   "name": "Poly_Omni_002",
+   "scene": "frag_d_light",
+   "expect": "fail",
+   "codes": [
+    "light_omni_distance"
+   ]
+  },
+  {
+   "name": "Poly_Omni_003",
+   "scene": "frag_d_light",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "Poly_Omni_004",
+   "scene": "frag_d_light",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "Poly_Photo_001",
+   "scene": "frag_d_light",
+   "expect": "fail",
+   "codes": [
+    "light_type"
+   ]
+  },
+  {
+   "name": "Poly_Omni_005",
+   "scene": "frag_d_light",
+   "expect": "fail",
+   "codes": [
+    "light_no_root"
+   ]
+  },
+  {
+   "name": "Poly_Root",
+   "scene": "frag_d_lightcm",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "Poly_Spot_001",
+   "scene": "frag_d_lightcm",
+   "expect": "fail",
+   "codes": [
+    "light_spot_distance"
+   ]
+  },
+  {
+   "name": "Poly_Spot_002",
+   "scene": "frag_d_lightcm",
+   "expect": "fail",
+   "codes": [
+    "light_spot_distance"
+   ]
+  },
+  {
+   "name": "Poly_Spot_003",
+   "scene": "frag_d_lightcm",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "Poly_Spot_004",
+   "scene": "frag_d_lightcm",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "Poly_Spot_005",
+   "scene": "frag_d_lightcm",
+   "expect": "fail",
+   "codes": [
+    "light_spot_distance"
+   ]
+  },
+  {
+   "name": "Poly_Spot_006",
+   "scene": "frag_d_lightcm",
+   "expect": "fail",
+   "codes": [
+    "light_spot_distance"
+   ]
+  },
+  {
+   "name": "Poly_Omni_001",
+   "scene": "frag_d_lightcm",
+   "expect": "fail",
+   "codes": [
+    "light_omni_distance"
+   ]
+  },
+  {
+   "name": "Poly_Omni_002",
+   "scene": "frag_d_lightcm",
+   "expect": "fail",
+   "codes": [
+    "light_omni_distance"
+   ]
+  },
+  {
+   "name": "Poly_Omni_003",
+   "scene": "frag_d_lightcm",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "Poly_Omni_004",
+   "scene": "frag_d_lightcm",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "Poly_Photo_001",
+   "scene": "frag_d_lightcm",
+   "expect": "fail",
+   "codes": [
+    "light_type"
+   ]
+  },
+  {
+   "name": "Poly_Omni_005",
+   "scene": "frag_d_lightcm",
+   "expect": "fail",
+   "codes": [
+    "light_no_root"
+   ]
+  }
+ ],
  "base": "0.9",
  "station": "0.9.18",
  "stations": [
