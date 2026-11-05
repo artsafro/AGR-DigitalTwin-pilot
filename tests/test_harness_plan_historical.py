@@ -61,7 +61,7 @@ def load_text(path: Path) -> str:
 
 # Right after the token only: optional ".md", closing quotes, a "§N" citation, then the marker.
 _TAIL = re.compile(
-    r"""^(?:\.md)?[`'")\]]*[\s,;:]*(?:§\s*[\d.]+[\s,;:]*)?(?:"""
+    r"""^(?:\.md)?[`'")\]]*[\s,;:]*(?:§\s*[\d.]+(?:\s*[-–]\s*§?\s*[\d.]+)*[\s,;:]*)?(?:"""
     + _MARKER.pattern
     + r")",
     re.IGNORECASE,
