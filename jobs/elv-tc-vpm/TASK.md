@@ -183,6 +183,10 @@ Q1 one joint lattice per facade plane (continuity over exact irregular FBX joint
 convex corner. Still open: FNO code/name and УКЭП `.sig` (customer), address (R12), signage TZ, `_Light.fbx` (user),
 SINTEZ rerun on v005 before the hand-off, parts-file `history` key.
 
+**Job accepted by the user 2026-11-05** («Глобально работу я принимаю»). No more geometry changes in Max from Claude; the
+user finishes by hand: loops / rings that stop mid-run [D200] and decor that floats on the stand-off instead of a
+10-20 mm embed [D199] — both are rules for future jobs. Retro: `docs/retros/2026-11-05-elv-tc-vpm-claude.md`.
+
 ## Не трогать
 
 - Source files in `for_ai\` (work on byte-identical copies only).
