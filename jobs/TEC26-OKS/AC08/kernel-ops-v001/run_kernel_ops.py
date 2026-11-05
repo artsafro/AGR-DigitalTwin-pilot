@@ -243,16 +243,39 @@ def op_kernel(state, name, part, fn, ctx, params):
     return res, after
 
 
-def run_ops(source):
-    ctx = Context()
+def preservation(source, after):
+    """[D197] UV/material preservation of a candidate state against the source: faces that had UV and lost it,
+    merged material ids (0) and source material ids that vanished. Empty list = preserved."""
+    why = []
+    lost = sum(1 for p in after.values() for c in p["uv"] if c is None) - \
+        sum(1 for p in source.values() for c in p["uv"] if c is None)
+    if lost > 0:
+        parts = sorted(k for k, p in after.items() if any(c is None for c in p["uv"]))
+        why.append(f"UV lost on {lost} faces of {parts}")
+    merged = {k: p["mat"].count(0) for k, p in after.items() if 0 in p["mat"]}
+    if merged:
+        why.append(f"material ids merged on polygons {merged}")
+    gone = sorted({m for p in source.values() for m in p["mat"]} - {m for p in after.values() for m in p["mat"]})
+    if gone:
+        why.append(f"material ids {gone} vanished")
+    return why
+
+
+def run_ops(source, relative=False):
+    """The #752 op set. `relative` [D197, #968]: invariants judged against the source (no new violators) and an
+    op counts as applied only when it also preserves UV and material ids (`preservation`)."""
+    ctx = Context(source=tri_scene(source)) if relative else Context()
     rows = []
 
     def record(op, part, params, applied, after, report, question, extra=None):
         """after = the candidate state (None when the op refused before changing geometry); `applied` = the
         kernel verdict (False = rolled back or refused)."""
+        lost = preservation(source, after) if relative and after is not None else []
+        if applied and lost:
+            applied, question = False, f"{op} on {part}: invariants pass but not preserved: " + "; ".join(lost)
         rows.append({"op": op, "part": part, "params": params, "applied": bool(applied),
                      "refusal_or_rollback": question, "check_operation": None if report is None else report.to_dict(),
-                     "after_state": after, **(extra or {})})
+                     **({"preservation": lost} if relative else {}), "after_state": after, **(extra or {})})
 
     for part in PART_NAMES:
         s = copy_state(source)

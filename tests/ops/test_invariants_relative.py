@@ -107,7 +107,7 @@ def test_flipped_source_part_is_baseline_a_second_flipped_part_is_new():
 def test_moving_a_clean_part_keeps_the_baseline_and_passes():
     src = gnawed_source()
     after = {**src, "decor": box((3, 1, 0), (3.5, 1.5, 0.5))}
-    rep = check_operation(src, after, ["decor"], Context(source=src))
+    rep = check_operation(None, after, ["decor"], Context(source=src))   # the vacated spot is the hole check's job
     assert rep.passed, rep.to_dict()
 
 

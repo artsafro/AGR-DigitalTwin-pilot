@@ -68,3 +68,48 @@ uv run python jobs/TEC26-OKS/scripts/compare_facades.py jobs/TEC26-OKS/AC08/vpm_
     C:/x/tec26-oks/AC08/pilot-v010/readback/vpm.readback.json <new dir>
 blender --background --factory-startup --python-exit-code 1 --python jobs/TEC26-OKS/scripts/run_agr_checker.py -- <dir with both zips> <out.json>
 ```
+
+## Rerun with invariants relative to the source [D197] (#968)
+
+Same inputs (hashes equal to the #753 run). The kernel now judges every op against the source baseline: per
+invariant the source's violators (border edges not hidden, back-face pixels on one probe frame, close-overlap pairs)
+are the baseline, an op fails only on NEW violators, and it counts as applied only when it also keeps UV and material
+ids. Generated numbers: `evidence-d197/e2e.md` / `e2e.json`, `evidence-d197/album_compare.json`,
+`evidence-d197/sintez_summary.json`. Binaries (16 kernel-state FBX, silhouettes, album compare PNG, SINTEZ JSON + log):
+`G:/Мой диск/AGR-evidence/968-ac08-relative-invariants/` + `SHA256SUMS.txt` (28 files, `sha256sum -c` OK; copy
+`evidence-d197/DRIVE-SHA256SUMS.txt`). Technical QA only; `passed=true` is not claimed.
+
+| # | gate | #753 (absolute) | #968 (relative, D197) |
+|---|---|---|---|
+| 1 | source FBX = pinned dump | pass: 180/180, corner dev 5.7e-7 m | pass: same |
+| 2 | kernel invariants on the source | FAIL: back faces 3107 px, borders 16 + 4 | baseline recorded: 3107 px, borders 16 + 4 (20 edges), overlaps 0 |
+| 3 | kernel ops applied | FAIL 0/19 | 5/19 (keep x3, join body+plate, join knob+plate) |
+| 4 | export -> readback parity | FAIL 13/17 | FAIL 14/17 (S09 now accepted: bounds parity uses the vertex tolerance on main; S15 not exported, S16/S17 UV loss unchanged) |
+| 5 | kernel output vs delivered pilot-v010 | pass: 1.53e-5 m, area 97.5350, IoU top 0.99592 | pass: same numbers; output = keep x3 + join body+plate (geometry unchanged: 180 polygons) |
+| 6 | album slide 49 (`compare_facades.py`) | pass 4/4: 29/29/29, 29/29/29, 11/11/11, 11/11/11 | pass 4/4: identical facades block |
+| 7 | SINTEZ (VPM / NPM) | 62/4/54, 38/5/29 (verified/failed/undefined) | 62/4/54, 38/5/29; same failed ids (2.1.1, 2.2.1, 2.3.17, 2.10.4.1 / 2.1.1, 2.1.2, 2.1.6, 2.10.3.1, 4.1.4) |
+
+`join_parts:AC08_knob+AC08_plate` is applied but not composed into the kernel output: the ops are alternatives on one
+source and its footprint (part AC08_plate) is already owned by `join_parts:AC08_body+AC08_plate` (op order of the
+#752 table). Album and SINTEZ measure the delivered package; the kernel output equals it within 1.5e-5 m, so they
+stand for the kernel output too.
+
+### Ops still refused (14/19), with the reason
+
+| # | op | part | reason (baseline/after/+new) |
+|---|---|---|---|
+| 4, 5 | primitive_box | knob, plate | invariants pass (+0); UV lost on 12 faces (the box has no UV) |
+| 6, 7 | embed_into_neighbour | knob, plate | refused before any change: after sinking 15 mm no face lies inside AC08_body |
+| 8 | to_opacity_plane | plate | invariants pass (+0); UV lost on 2 faces |
+| 9 | to_opacity_plane | knob | back faces 3107/3108/+1 new pixel of AC08_body (direction +z) |
+| 10 | rebuild_by_contour | knob | refused before any change: the front contour repeats a vertex |
+| 11 | rebuild_by_contour | plate | invariants pass (+0); UV lost on 12 faces |
+| 14 | join_parts | body+knob | borders 20/32/+12: the knob's border edges, hidden inside AC08_body as a neighbour, are inside the same part after the join |
+| 15 | simplify_part | body | borders 20/45/+25 (the simplifier opens new borders) |
+| 16, 17 | simplify_part | knob, plate | borders 20/32/+12 (same as op 14: everything joins into one part) |
+| 18 | move_rigid | knob | borders 20/12/+12 and back faces +1: the 11 mm move pulls the knob out of the body |
+| 19 | move_rigid | plate | borders 20/4/+4: the plate's 4 open borders move off their source position |
+
+Kernel finding (ops 14, 16, 17): `open_borders_hidden` counts a border hidden only inside ANOTHER part, so a join
+exposes borders that are still physically inside the joined solid. The repair op and this rule are follow-ups
+(draft: `FOLLOWUP-repair-op-draft.md`), not part of #968.
