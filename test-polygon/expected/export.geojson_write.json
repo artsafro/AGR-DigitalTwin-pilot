@@ -1,13 +1,53 @@
 {
  "schema": 1,
  "button": "export.geojson_write",
- "tool": null,
+ "tool": "export.geojson_write",
  "version": "0.8",
- "shipped": false,
+ "shipped": true,
  "select": "named",
- "reason": "станция в работе, #979, ветка E3",
+ "reason": "",
  "apply_status": null,
- "objects": [],
+ "objects": [
+  {
+   "name": "SM_GjX_Main",
+   "scene": "polygon_all",
+   "expect": "fail",
+   "codes": [
+    "property"
+   ]
+  },
+  {
+   "name": "SM_GjX_MainGlass",
+   "scene": "polygon_all",
+   "expect": "pass",
+   "codes": []
+  }
+ ],
+ "options": {
+  "folder": "C:/x/test-polygon/e3/geojson",
+  "image": "C:/x/test-polygon/e3/geojson/preview.jpg",
+  "properties": {
+   "address": "synthetic",
+   "okrug": "synthetic",
+   "rajon": "synthetic",
+   "name": "synthetic",
+   "developer": "",
+   "designer": "synthetic",
+   "cadNum": "synthetic",
+   "FNO_code": "010004",
+   "FNO_name": "Общежитие",
+   "ZU_area": "synthetic",
+   "h_relief": "synthetic",
+   "h_otn": "synthetic",
+   "h_abs": "synthetic",
+   "s_obsh": "synthetic",
+   "s_naz": "synthetic",
+   "s_podz": "synthetic",
+   "spp_gns": "synthetic",
+   "act_AGR": "synthetic",
+   "other": "synthetic"
+  }
+ },
  "base": "0.8",
  "station": "0.8.10",
  "stations": [

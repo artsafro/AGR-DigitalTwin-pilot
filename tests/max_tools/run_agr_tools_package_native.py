@@ -1,4 +1,7 @@
 """new-case: #908 branch D native run of qa.package, export.zip, export.ground_fbx in locked batch Max (DISPOSABLE scene).
+#979 branch E3 rework: export.zip writes a new `Сборка_*` run folder with ГОТОВО.txt / ОШИБКА.txt (AGR_Arxiv 1.5
+contract); qa.package names each corrupt archive by its own code (no crash) and compares OKS/Ground passports;
+export.cleanup keeps vertex channels, keys and AGR_EXPORT_PATH by default and removes them only on the copy (opt-in).
 
 Run via the lab DCC runner; AGR_TEST_OUTPUT must name a NEW directory, AGR_TEST_PACKAGE the built MZP,
 AGR_TOOLS_REPO the pilot checkout (validator), AGR_PYTHON its interpreter. Installs the MZP into OUT (no user folders
@@ -52,9 +55,44 @@ def png(rgb, size=256):
             chunk(b'IDAT', zlib.compress(raw, 9)) + chunk(b'IEND', b''))
 
 
+def _p(v):
+    if isinstance(v, int) and v > 1000:
+        return b'L' + struct.pack('<q', v)
+    if isinstance(v, int):
+        return b'I' + struct.pack('<i', v)
+    raw = v.encode('latin-1')
+    return b'S' + struct.pack('<I', len(raw)) + raw
+
+
+def _node(name, props=(), children=(), at=0):
+    body = b''.join(_p(x) for x in props)
+    kids, pos = b'', at + 13 + len(name) + len(body)
+    for c in children:
+        blob = _node(*c, at=pos)
+        kids, pos = kids + blob, pos + len(blob)
+    if children:
+        kids += b'\x00' * 13
+    end = at + 13 + len(name) + len(body) + len(kids)
+    return struct.pack('<III', end, len(props), len(body)) + bytes([len(name)]) + name.encode() + body + kids
+
+
+def light_fbx(cipher):
+    """Binary FBX 7400: `<cipher>_Root` null with one `<cipher>_Omni_001` light parented (Light FBX rules, #979)."""
+    objects = [('Model', (5000, cipher + '_Root\x00\x01Model', 'Null'), ()),
+               ('Model', (6000, cipher + '_Omni_001\x00\x01Model', 'Light'), ()),
+               ('NodeAttribute', (7000, cipher + '_Omni_001\x00\x01NodeAttribute', 'Light'),
+                [('Properties70', (), [('P', ('LightType', 'enum', '', '', 0))])])]
+    links = [('C', ('OO', 5000, 0)), ('C', ('OO', 7000, 6000)), ('C', ('OO', 6000, 5000))]
+    out = FBX[:27]
+    for n in (('Objects', (), objects), ('Connections', (), links)):
+        out += _node(*n, at=len(out))
+    return out + b'\x00' * 13
+
+
 def geojson():
-    return json.dumps({'type': 'FeatureCollection', 'features': [{'type': 'Feature', 'properties': {'address': 'X'},
-                       'geometry': {'type': 'Point', 'coordinates': [12345.678, 6789.012]}}]}).encode()
+    """A complete VPM passport (the polygon's valid_oks.geojson, V011 pass): a stub would fail the validator, and
+    export.zip then rightly writes ОШИБКА.txt (#979)."""
+    return (Path(os.environ['AGR_TOOLS_REPO']) / 'test-polygon' / 'geojson' / 'valid_oks.geojson').read_bytes()
 
 
 def install():
@@ -102,8 +140,9 @@ def zip_folder():
     d = OUT / 'zip'
     d.mkdir()
     files = {'0123_X_01.fbx': FBX, '0123_X_02.fbx': FBX, '0123_X_Ground.fbx': FBX, 'SM_X.fbx': FBX,
-             'SM_X_Light.fbx': FBX, 'SM_X.geojson': geojson(), 'SM_X_Ground.fbx': FBX,
-             'SM_X_Ground_Light.fbx': FBX, 'SM_X_Ground.geojson': geojson(), 'SM_X_0011.fbx': FBX,
+             'SM_X_Light.fbx': light_fbx('SM_X'), 'SM_X.geojson': geojson(), 'SM_X_Ground.fbx': FBX,
+             'SM_X_Ground_Light.fbx': light_fbx('SM_X_Ground'), 'SM_X_Ground.geojson': geojson(),
+             'SM_X_0011.fbx': FBX,
              'SM_X_0011.geojson': geojson(), 'T_X_0011_Diffuse_1.1001.png': png((1, 2, 3)),
              '0123_Other_01.fbx': FBX, 'notes.txt': b'decoy'}
     for m, c in (('Diffuse', (120, 110, 100)), ('ERM', (0, 170, 0)), ('Normal', (128, 128, 255))):
@@ -121,22 +160,134 @@ def export_zip():
     assert p['plan']['done'] == ['0123_X.zip', 'SM_X.zip', 'SM_X_Ground.zip'], p['plan']
     r = agr.edits_080('export.zip', 'apply', p)
     assert r['plan']['done'] == p['plan']['done'], r['plan']
-    new = sorted(set(os.listdir(d)) - set(before))
+    run = Path(r['plan']['run_folder'])
+    assert run.parent == d and run.name.startswith('Сборка_') and r['plan']['marker'] == 'ГОТОВО.txt', r['plan']
+    assert sorted(set(os.listdir(d)) - set(before)) == [run.name], os.listdir(d)
+    new = sorted(n for n in os.listdir(run) if n.endswith('.zip'))
     assert new == ['0123_X.zip', 'SM_X.zip', 'SM_X_Ground.zip'], new
-    with zipfile.ZipFile(d / 'SM_X.zip') as z:
+    assert (run / 'ГОТОВО.txt').is_file() and not (run / 'ОШИБКА.txt').exists() and (run / 'report.json').is_file()
+    with zipfile.ZipFile(run / 'SM_X.zip') as z:
         names = z.namelist()
     assert 'SM_X_Light.fbx' in names and not any('0011' in n for n in names), names
     assert {n: sha(d / n) for n in before} == before
     v = {t['target'].replace('\\', '/').rsplit('/', 1)[-1]: {s: stage(t, s)['status'] for s in ('V001', 'V012')}
          for t in r['plan']['reports']}
     assert all(x['V001'] == 'pass' and x['V012'] != 'fail' for x in v.values()), v
-    stamp = {n: sha(d / n) for n in new}
+    stamp = {n: sha(run / n) for n in os.listdir(run)}
     p2 = agr.edits_080('export.zip', 'preview', options={'folder': str(d)})
     r2 = agr.edits_080('export.zip', 'apply', p2)
-    assert r2['plan']['done'] == [] and {n: sha(d / n) for n in new} == stamp
-    assert not list(d.glob('*.partial'))
-    return {'archives': new, 'validator': v, 'skipped': sorted(s['item'] for s in p['plan']['skipped']),
-            'second_run_done': r2['plan']['done'], 'status': r['status']}
+    run2 = Path(r2['plan']['run_folder'])
+    assert run2 != run and {n: sha(run / n) for n in os.listdir(run)} == stamp
+    assert not list(d.rglob('*.partial'))
+    return {'run_folder': run.name, 'second_run_folder': run2.name, 'archives': new, 'validator': v,
+            'marker': r['plan']['marker'], 'skipped': sorted(s['item'] for s in p['plan']['skipped']),
+            'status': r['status']}
+
+
+def _encrypt_geojson(z):
+    raw = bytearray(z.read_bytes())
+    at = 0
+    while True:
+        at = bytes(raw).find(b'PK', at)
+        if at < 0:
+            break
+        sig = bytes(raw[at:at + 4])
+        if sig == b'PK\x03\x04':
+            n = struct.unpack_from('<H', raw, at + 26)[0]
+            if bytes(raw[at + 30:at + 30 + n]).endswith(b'.geojson'):
+                raw[at + 6] |= 1
+        elif sig == b'PK\x01\x02':
+            n = struct.unpack_from('<H', raw, at + 28)[0]
+            if bytes(raw[at + 46:at + 46 + n]).endswith(b'.geojson'):
+                raw[at + 8] |= 1
+        at += 4
+    z.write_bytes(bytes(raw))
+
+
+def qa_package_corpus():
+    """#979: each corrupt case its own code, no crash; OKS vs Ground passports compared."""
+    d = OUT / 'corpus'
+    d.mkdir()
+    base = {'SM_X.fbx': FBX, 'SM_X.geojson': geojson()}
+    for m, c in (('Diffuse', (120, 110, 100)), ('ERM', (0, 170, 0)), ('Normal', (128, 128, 255))):
+        base['T_X_{}_1.1001.png'.format(m)] = png(c)
+    got = {}
+    for case, extra in (('traversal', {'../SM_X_Light.fbx': FBX}), ('nested', {'sub/SM_X_Light.fbx': FBX}),
+                        ('not_png', {'T_X_Diffuse_1.1001.png': b'not a png'}), ('encrypted', {})):
+        (d / case).mkdir()
+        z = d / case / 'SM_X.zip'
+        with zipfile.ZipFile(z, 'w') as f:
+            for n, data in dict(base, **extra).items():
+                f.writestr(n, data)
+        if case == 'encrypted':
+            _encrypt_geojson(z)
+        r = agr.edits_080('qa.package', 'preview', options={'path': str(z), 'scene': False})
+        (table,) = r['plan']['reports']
+        got[case] = sorted(c for s in table['stages'] for c in s.get('codes', []) if c.startswith(('zip', 'png')))
+    assert got == {'traversal': ['zip_traversal'], 'nested': ['zip_nested'], 'not_png': ['png_not_png'],
+                   'encrypted': ['zip_encrypted']}, got
+    pair = OUT / 'pair'
+    pair.mkdir()
+    for stem, dev in (('SM_X', 'A'), ('SM_X_Ground', 'B')):
+        with zipfile.ZipFile(pair / (stem + '.zip'), 'w') as f:
+            f.writestr(stem + '.fbx', FBX)
+            f.writestr(stem + '.geojson', json.dumps({'type': 'FeatureCollection', 'features': [
+                {'type': 'ObjectFeature', 'properties': {'address': 'X', 'developer': dev}}]}).encode())
+    r = agr.edits_080('qa.package', 'preview', options={'path': str(pair), 'scene': False})
+    cross = {o['name']: [f['code'] for f in o['findings'] if f['code'].startswith('geojson')] for o in r['objects']}
+    assert cross == {'SM_X.zip': ['geojson_cross'], 'SM_X_Ground.zip': ['geojson_cross']}, cross
+    return {'codes': got, 'cross': cross}
+
+
+CLEAN_UDP = 'AGR_EXPORT_PATH = C:/x/0101_A_01.fbx\r\nfoo = bar\r\nMapChannel:1 = UV\r\n'
+KEYS_FN = '''fn agrE3Keys b m = (
+    with animate on (
+        for t in #(0, 10, 20, 30, 40, 50, 60) do at time t (b.pos.x = 5000 + t; b.pos.y = 5000 - t)
+        at time 0 m.opacity = 100
+        at time 50 m.opacity = 80
+    )
+    ok
+)'''
+
+
+def cleanup_subject():
+    """Editable Poly with a base CA, UDP (AGR_EXPORT_PATH, foo), vertex colour and 14 node + 2 material keys."""
+    rt.units.SystemType = rt.Name('meters')
+    b = rt.Box(name='SM_A_001_Main', length=2, width=2, height=2, pos=rt.Point3(5000, 5000, 0), mapcoords=True)
+    rt.convertToPoly(b)
+    rt.polyop.setMapSupport(b, 0, True)
+    ca = rt.execute('attributes agrE3Data (parameters main (note type:#string default:"x"))')
+    rt.custAttributes.add(b.baseObject, ca)
+    m = rt.Standardmaterial(name='M_A_001_Main_1')
+    b.material = m
+    rt.setUserPropBuffer(b, CLEAN_UDP)
+    rt.execute(KEYS_FN)(b, m)
+    return b
+
+
+def export_cleanup():
+    b = cleanup_subject()
+    facts0 = agr._cleanup_facts(b)
+    assert 0 in facts0['vertex_channels'] and facts0['keys'] >= 16, facts0
+    before = (agr.snapshot([b]), facts0, str(rt.getUserPropBuffer(b)))
+    out = {'original_facts': facts0}
+    for label, opts in (('default', None), ('opt_in', {'channels': True, 'keys': True})):
+        p = agr.cleanup_preview([b], opts)
+        copies, after = agr.cleanup_apply([b], p)
+        (c,) = copies
+        facts = agr._cleanup_facts(c)
+        udp = str(rt.getUserPropBuffer(c))
+        out[label] = {'actions': sorted(a['action'] for a in p['plan']['objects'][0]['actions']),
+                      'copy_facts': facts, 'copy_udp': udp, 'after': after['status']}
+        assert 'AGR_EXPORT_PATH = C:/x/0101_A_01.fbx' in udp and 'foo' not in udp, udp
+        if label == 'default':
+            assert facts == facts0, (facts, facts0)
+        else:
+            assert facts == {'vertex_channels': [], 'keys': 0}, facts
+        rt.delete(c)
+        assert (agr.snapshot([b]), agr._cleanup_facts(b), str(rt.getUserPropBuffer(b))) == before, 'original changed'
+    rt.delete(b)
+    return out
 
 
 def ground_scene(tex):
@@ -266,7 +417,8 @@ def export_geojson_write():
         agr.edits_080 = real
 
 
-for name, fn in (('qa_package', qa_package), ('export_zip', export_zip), ('export_ground_fbx', export_ground_fbx),
+for name, fn in (('qa_package', qa_package), ('qa_package_corpus', qa_package_corpus), ('export_zip', export_zip),
+                 ('export_cleanup', export_cleanup), ('export_ground_fbx', export_ground_fbx),
                  ('export_geojson_write', export_geojson_write)):
     check(name, fn)
 summary['scene_saved'] = bool(str(rt.maxFileName))

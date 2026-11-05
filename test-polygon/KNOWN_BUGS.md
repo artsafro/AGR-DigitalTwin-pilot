@@ -5,10 +5,12 @@ The polygon is not changed to hide these. `expected/` still states the contract.
 the table prints `НЕ OK (известная ошибка #886)`, and `report.json` counts those rows in `known_bug`.
 The process exit code stays the mismatch count. Do not fix the tool in this folder.
 
-## census-usedmaps-drops-missing-file
+No open entries.
 
-- button: `scene.census` and `qa.preflight` (preflight includes the census finding)
-- object: `SM_Polygon_007_Main` in `polygon_all`
-- expected: `scene.census` fail `missing_map`; `qa.preflight` fail `fbx_objects`, `missing_map`
-- got: `scene.census` pass (no findings); `qa.preflight` fail `fbx_objects` only
-- evidence: Max 2024 and Max 2026 (`C:/x/test-polygon/run2024`, `run2026`), both mismatch count 0 only because this `known_bug` matches the live pass. The polygon assigned `Bitmaptexture fileName:"C:/x/test-polygon/missing/T_Polygon_007_Main_d_1.png"` (file absent). `tex.check` on the same node returned `tex_missing` / `material has no texture maps`, the empty `usedMaps` result (same witness as `tests/max_tools/run_agr_tools_checks_native.py`, defect D3). `scene.census` only flags paths `usedMaps` returns, so a bitmap Max will not list never becomes `missing_map`. `suite_max._materials` is the reader.
+## Closed
+
+- `census-usedmaps-drops-missing-file` (#886, closed in #979 branch E3): `scene.census` / `qa.preflight` on
+  `SM_Polygon_007_Main` (a `Bitmaptexture` whose file is absent) gave no `missing_map`, because `usedMaps` drops such a
+  bitmap. The census glue (`suite_max._shared_maps`) now also reads the shared bitmap enumerator of `tex_max`
+  (`_scene_maps`: materials of the nodes, scene materials, AssetManager), and `suite_max._bitmap_paths` (#886) walks
+  the texmap tree; the row is fail `missing_map` live (Max 2024 job of #979 E3), no `known_bug`.

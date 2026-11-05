@@ -14,7 +14,8 @@ Row contract (one dict per scene node, built by suite_max.py; distances in metre
   'system'|...), cls, faces, verts, materials [{name, cls, maps, missing, opacity}], parent, children,
   group, animated, modifiers [names], layer, scale (3), rotation (quaternion x,y,z,w), mirror,
   bbox ((x,y,z),(x,y,z)), instances, zero_m (AGR_ZERO_M or None), mesh {'verts', 'tris'} (lazy callable
-  allowed), poly_edges (optional).
+  allowed), poly_edges (optional); 0.9 (#979) optional: base_key (handle of the base object: instance groups),
+  extra_missing (missing map paths from the shared enumerator), materials[].sizes ({path: [w, h]} from headers).
 Scene dict for scene.units: unit_type, unit_scale, file_in_gamma, file_out_gamma, path.
 """
 import json
@@ -37,6 +38,13 @@ ALLOWED_MATERIALS = ('Standardmaterial', 'PhysicalMaterial', 'Multimaterial')  #
 XFORM_TOL = 1e-6                # scale/rotation counted as reset within this tolerance
 ZERO_EDGE_M = 1e-5              # an edge shorter than 0.01 mm is zero-length (float32 FBX noise level)
 ZERO_AREA_M2 = 1e-10            # a triangle below 1e-10 m2 has zero area
+SLIVER_ANGLE_DEG = None         # qa.zero_area sliver_face (advisory): optional smallest angle in DEGREES (#979);
+#                                 off by default: a 5 mm glass slab has 0.04 deg side triangles (polygon 0.7.3/0.7.8)
+SLIVER_HEIGHT_M = 0.0002        # ... or smallest altitude below 0.2 mm (team-scripts audit T04, advisory per #480)
+HEAVY_MESH_TRIS = 100000        # scene.census: meshes above this many triangles (Optimise_info idea, report only)
+LARGE_MAP_PX = 4096             # scene.census: maps with EITHER side above this (Optimise_info missed 6000x3000)
+FAR_FROM_ORIGIN_M = 10000.0     # scene.census: bbox centre farther than this from 0,0,0 (agr_inspect_max idea)
+CENSUS_TOP = 15                 # scene.census: heaviest objects listed
 SYSTEM_UNIT = 'meters'          # NPM/VPM units.linear
 FILE_GAMMA = 1.0                # GeoAGR btn_set_alpha GeoAGR.ms:12554 sets FileIn/FileOutGamma = 1.0
 
@@ -63,9 +71,11 @@ CODES = {
     'scene_hygiene': {'hyg_non_mesh', 'hyg_animation', 'hyg_hierarchy', 'hyg_group', 'hyg_empty',
                       'hyg_modifier', 'hyg_layer'},
     'xform': {'xform_scale', 'xform_rotation', 'xform_mirror', 'xform_parent', 'xform_unmeasurable'},
-    'zero_area': {'zero_area_face', 'zero_length_edge', 'isolated_vertex', 'zero_unmeasurable'},
+    'zero_area': {'zero_area_face', 'zero_length_edge', 'isolated_vertex', 'zero_unmeasurable', 'sliver_face'},
 }
-CODES['preflight'] = set().union(*(CODES[t] for t in PREFLIGHT))
+# Advisory codes: listed and selected by their own button, never a qa.preflight finding (#979, #480).
+ADVISORY = {'sliver_face'}
+CODES['preflight'] = set().union(*(CODES[t] for t in PREFLIGHT)) - ADVISORY
 SCENE_TOOLS = ('units',)  # report-level: objects [] + plan.findings, as the 0.5.0 GeoJSON report
 
 
@@ -166,17 +176,60 @@ def _map_field(m, field):
 
 
 # --- scene.census -------------------------------------------------------------------------------------
-def census(rows):
+_CYRILLIC = re.compile('[Ѐ-ӿ]')
+_PREFIX = re.compile(r'[_\s\[]')
+
+
+def image_size(head):
+    """(width, height) from the first bytes of a PNG, JPEG, BMP or TGA file, else None (never raises).
+    Sizes come from file headers, so a missing or unreadable map is a finding, not a crash (Optimise_info T04)."""
+    import struct
+    try:
+        if head[:8] == b'\x89PNG\r\n\x1a\n' and head[12:16] == b'IHDR':
+            return struct.unpack('>II', head[16:24])
+        if head[:2] == b'\xff\xd8':
+            i = 2
+            while i + 9 <= len(head):
+                if head[i] != 0xFF:
+                    return None
+                marker = head[i + 1]
+                if marker in (0xD8, 0x01) or 0xD0 <= marker <= 0xD7:
+                    i += 2
+                    continue
+                if 0xC0 <= marker <= 0xCF and marker not in (0xC4, 0xC8, 0xCC):
+                    h, w = struct.unpack('>HH', head[i + 5:i + 9])
+                    return w, h
+                i += 2 + struct.unpack('>H', head[i + 2:i + 4])[0]
+            return None
+        if head[:2] == b'BM' and len(head) >= 26:
+            w, h = struct.unpack('<ii', head[18:26])
+            return abs(w), abs(h)
+        if len(head) >= 18 and head[2] in (1, 2, 3, 9, 10, 11) and head[1] in (0, 1):
+            w, h = struct.unpack('<HH', head[12:16])
+            return (w, h) if w and h else None
+    except (struct.error, IndexError):
+        return None
+    return None
+
+
+def census(rows, scene=None):
     """Census of the scene: per class, materials, maps (missing files are findings), bbox, instances.
 
     New (plan row scene.census, TEC26 census scripts' idea); read-only. Only a missing bitmap file is a
     finding; everything else is the summary of the report.
+    0.9 (#979), read-only ideas of scene_load_report.ms (a9b76b4f...), Optimise_info.ms (b6725902...) and
+    agr_inspect_max.ms (ea79dfc0...), team-scripts audit T04: triangles (snapshot faces, never polygons) by layer
+    and by name prefix, the heaviest objects, meshes above HEAVY_MESH_TRIS, maps with either side above LARGE_MAP_PX
+    (sizes from file headers), Cyrillic names, objects far from the origin, renderer, instance GROUPS (one per
+    shared base object, not one per member). `extra_missing` on a row (the shared bitmap enumerator of tex_max,
+    #886) adds missing maps that usedMaps drops; `scene['scene_missing']` lists those without an owner node.
     """
     rows = Rows(rows)
     found, dropped = {}, []
     by_class, mats, maps, missing = {}, set(), set(), set()
     lo, hi = [math.inf] * 3, [-math.inf] * 3
-    instanced = 0
+    instanced, groups = 0, {}
+    by_layer, by_prefix, weights, large, cyrillic, far = {}, {}, [], {}, [], []
     for r in rows:
         sc = str(_need(r, 'superclass'))
         by_class[sc] = by_class.get(sc, 0) + 1
@@ -187,25 +240,71 @@ def census(rows):
             mats.add(m['name'])
             for p in paths:
                 maps.add(p)
+            for p, size in (m.get('sizes') or {}).items():
+                if isinstance(size, (list, tuple)) and len(size) == 2 and max(size) > LARGE_MAP_PX:
+                    large[p] = [int(size[0]), int(size[1])]
             for p in miss:
                 if p in seen_missing:
                     continue
                 seen_missing.add(p)
                 missing.add(p)
                 _add(found, r['key'], 'missing_map', 'нет файла: ' + p)
+        for p in r.get('extra_missing') or []:
+            if not isinstance(p, str) or not p.strip():
+                raise ValueError('unreadable map entry on {}: {!r}'.format(r['name'], p))
+            if p in seen_missing:
+                continue
+            seen_missing.add(p)
+            missing.add(p)
+            maps.add(p)
+            _add(found, r['key'], 'missing_map', 'нет файла: ' + p)
+        name = str(r['name'])
+        if _CYRILLIC.search(name):
+            cyrillic.append(name)
+        if sc == 'geometry':
+            tris = int(r.get('faces') or 0)
+            layer = str(r.get('layer'))
+            prefix = _PREFIX.split(name, 1)[0] or name
+            by_layer[layer] = by_layer.get(layer, 0) + tris
+            by_prefix[prefix] = by_prefix.get(prefix, 0) + tris
+            weights.append((tris, name))
         box = r.get('bbox')
         if box is not None:
             if not (len(box) == 2 and all(_finite(*c) for c in box)):
-                dropped.append({'name': str(r['name']), 'reason': 'bbox not finite'})
+                dropped.append({'name': name, 'reason': 'bbox not finite'})
             else:
                 lo = [min(a, b) for a, b in zip(lo, box[0])]
                 hi = [max(a, b) for a, b in zip(hi, box[1])]
+                centre = [(a + b) / 2.0 for a, b in zip(box[0], box[1])]
+                if math.sqrt(sum(c * c for c in centre)) > FAR_FROM_ORIGIN_M:
+                    far.append(name)
         if int(_need(r, 'instances')) > 1:
             instanced += 1
+            groups.setdefault(r.get('base_key', r['key']), []).append(name)
+    for p in (scene or {}).get('scene_missing') or []:
+        missing.add(p)
+    weights.sort(key=lambda x: (-x[0], x[1]))
     summary = {'objects': len(rows.rows), 'by_class': dict(sorted(by_class.items())), 'materials': len(mats),
                'maps': len(maps), 'missing_maps': sorted(missing), 'instanced_objects': instanced,
-               'bbox_m': [lo, hi] if all(math.isfinite(v) for v in lo + hi) else None}
+               'instance_groups': (sum(1 for g in groups.values() if len(g) > 1)
+                                   if all(r.get('base_key') is not None for r in rows
+                                          if int(r['instances']) > 1) else None),
+               'bbox_m': [lo, hi] if all(math.isfinite(v) for v in lo + hi) else None,
+               'triangles': sum(t for t, _n in weights),
+               'triangles_by_layer': dict(sorted(by_layer.items(), key=lambda x: (-x[1], x[0]))),
+               'triangles_by_prefix': dict(sorted(by_prefix.items(), key=lambda x: (-x[1], x[0]))),
+               'heaviest': [[n, t] for t, n in weights[:CENSUS_TOP]],
+               'heavy_meshes': [n for t, n in weights if t > HEAVY_MESH_TRIS],
+               'large_maps': [{'path': p, 'size': s} for p, s in sorted(large.items())],
+               'cyrillic_names': sorted(cyrillic), 'far_from_origin': sorted(far),
+               'renderer': (scene or {}).get('renderer'),
+               'missing_maps_scene': sorted((scene or {}).get('scene_missing') or [])}
     return found, dropped, summary
+
+
+def census_dump(report):
+    """The census report as UTF-8 JSON bytes (agr_inspect_max wrote ANSI: Cyrillic names became '?')."""
+    return json.dumps(report, ensure_ascii=False, indent=1, allow_nan=False).encode('utf-8')
 
 
 # --- scene.units --------------------------------------------------------------------------------------
@@ -582,12 +681,35 @@ def _area(a, b, c):
     return 0.5 * math.sqrt(sum(t * t for t in x))
 
 
-def zero_area(rows):
-    """Zero-area faces, zero-length edges, isolated vertices (ids are 1-based snapshot ids).
+def sliver(a, b, c, angle_deg=SLIVER_ANGLE_DEG, height_m=SLIVER_HEIGHT_M):
+    """(smallest angle in degrees, smallest altitude in metres, is_sliver) of a non-degenerate triangle.
+    The angle test runs only when `angle_deg` is given (the altitude test always does).
+
+    FindThinFacesEditMesh (T04/find_thin_faces, measured Max 2024) took MAXScript acos (degrees) against a threshold
+    converted to radians: 0.087 deg instead of 5 deg, so 1 and 3 deg were missed; acos is clamped here."""
+    la, lb, lc = math.dist(b, c), math.dist(a, c), math.dist(a, b)
+    area = _area(a, b, c)
+    longest = max(la, lb, lc)
+    height = 2.0 * area / longest if longest > 0 else 0.0
+    angles = []
+    for opp, s1, s2 in ((la, lb, lc), (lb, la, lc), (lc, la, lb)):
+        if s1 <= 0 or s2 <= 0:
+            angles.append(0.0)
+            continue
+        cos = max(-1.0, min(1.0, (s1 * s1 + s2 * s2 - opp * opp) / (2.0 * s1 * s2)))
+        angles.append(math.degrees(math.acos(cos)))
+    small = min(angles)
+    return small, height, (angle_deg is not None and small < angle_deg) or height < height_m
+
+
+def zero_area(rows, sliver_angle_deg=SLIVER_ANGLE_DEG, sliver_height_m=SLIVER_HEIGHT_M):
+    """Zero-area faces, zero-length edges, isolated vertices, sliver faces (ids are 1-based snapshot ids).
 
     adapted from GeoAGR 13.64 (author Artem), GeoAGR.ms:36036 Areas Poly ro_count_area (the finder is kept);
     changes: metres (VertexCleaner's weight is not metres), no removal (Remove Overlayed has probable
     errors). Non-finite coordinates -> zero_unmeasurable, never pass.
+    0.9 (#979): `sliver_face` (advisory) for a face that has area but an altitude below `sliver_height_m` or,
+    when given, a smallest angle below `sliver_angle_deg`; a zero-area face stays zero_area_face.
     """
     rows = Rows(rows)
     found = {}
@@ -602,13 +724,15 @@ def zero_area(rows):
         if broken:
             _add(found, r['key'], 'zero_unmeasurable', 'грани ссылаются вне вершин: {}'.format(broken[:5]))
             continue
-        used, bad_f, bad_e = set(), [], 0
+        used, bad_f, bad_e, thin = set(), [], 0, []
         seen_e = set()
         for i, t in enumerate(tris):
             used.update(t)
             a, b, c = (verts[k] for k in t)
             if _area(a, b, c) < ZERO_AREA_M2:
                 bad_f.append(i + 1)
+            elif sliver(a, b, c, sliver_angle_deg, sliver_height_m)[2]:
+                thin.append(i + 1)
             for p, q in ((t[0], t[1]), (t[1], t[2]), (t[2], t[0])):
                 e = (min(p, q), max(p, q))
                 if e in seen_e:
@@ -623,7 +747,28 @@ def zero_area(rows):
         iso = [k + 1 for k in range(len(verts)) if k not in used]
         if iso:
             _add(found, r['key'], 'isolated_vertex', '{} вершин'.format(len(iso)))
-    return found, [], {}
+        if thin:
+            rule = 'высота < {:g} мм'.format(sliver_height_m * 1000)
+            if sliver_angle_deg is not None:
+                rule = 'угол < {:g}° или '.format(sliver_angle_deg) + rule
+            _add(found, r['key'], 'sliver_face', '{} тонких граней ({}; рекомендация, не блокирует)'.format(
+                len(thin), rule), thin)
+    return found, [], {'sliver_angle_deg': sliver_angle_deg, 'sliver_height_m': sliver_height_m,
+                       'advisory': sorted(ADVISORY)}
+
+
+def fbx_rows(meshes):
+    """suite rows of the meshes read back from an exported FBX (export_core.fbx_meshes): the zero-area check after
+    export, without Max, by object name (fbx_polygon_count.py T04: geometries by index only, ASCII refused).
+    n-gons are fan-triangulated; ids then count those triangles."""
+    rows = []
+    for i, m in enumerate(meshes, 1):
+        tris = []
+        for poly in m['polygons']:
+            tris += [(poly[0], poly[k], poly[k + 1]) for k in range(1, len(poly) - 1)]
+        rows.append({'key': i, 'name': m['name'], 'superclass': 'geometry',
+                     'mesh': {'verts': [tuple(v) for v in m['verts']], 'tris': tris}})
+    return rows
 
 
 # --- qa.preflight -------------------------------------------------------------------------------------
@@ -641,6 +786,7 @@ def preflight(rows, audit, scene):
     found, dropped, status = {}, [], {}
     for tool in PREFLIGHT:
         f, d, _ = run(tool, rows, audit)
+        f = {k: [x for x in items if x[0] not in ADVISORY] for k, items in f.items()}
         status[tool] = 'fail' if any(f.values()) else 'pass'
         for key, items in f.items():
             for code, detail, ids in items:
@@ -652,9 +798,11 @@ def preflight(rows, audit, scene):
 
 def run(tool, rows, audit=None, scene=None):
     """scene: the scene.units dict; required by preflight (see preflight), ignored by object checks."""
-    fn = {'census': census, 'perimeter_drop': perimeter_drop, 'material_type': material_type,
+    fn = {'perimeter_drop': perimeter_drop, 'material_type': material_type,
           'sets_count': sets_count, 'fbx_split': fbx_split, 'glass': glass, 'scene_hygiene': scene_hygiene,
           'xform': xform, 'zero_area': zero_area}
+    if tool == 'census':
+        return census(rows, scene)
     if tool == 'ucx_audit':
         return ucx_audit(rows, audit)
     if tool == 'preflight':

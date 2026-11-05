@@ -46,7 +46,34 @@
 
 ### E3 — доработка: пакет и предсдача (`improve/issue-979-rework-package-suite`)
 
-- Заглушка ветки E3: доработки `export.zip`, `qa.package`, `export.cleanup`, `qa.zero_area`, `scene.census`.
+- **`export.zip`** — контракт AGR_Arxiv 1.5 (только документация, SHA256 в #979): каждый apply пишет новую папку
+  `Сборка_<дата_время>` (в папке поставки или в `options.out`), в ней ZIP, `report.json` и маркер `ГОТОВО.txt`
+  только при полном успехе, иначе `ОШИБКА.txt`; файлы поставки и прежние ZIP не трогаются. Имена с `../`,
+  абсолютным путём, NUL и вложенные папки (в т. ч. ВПМ) — отказ до записи, у каждого свой код
+  (`member_traversal`, `member_absolute`, `member_nul`, `member_nested`); подпапки попадают в `skipped` с причиной.
+  Правила AGR Zipper v2.1: в НПМ только FBX, единый Address. Без IPC (у Zipper — pickle по localhost).
+- **`qa.package`** — корпус испорченных архивов без падения, у каждого свой `data.code`: `zip_traversal`,
+  `zip_absolute`, `zip_nul_name` (раньше проходил), `zip_nested`, `zip_unreadable` (усечённый), `zip_encrypted`
+  (раньше — трейсбек), `png_not_png`, `png_alpha` (в т. ч. tRNS); коды видны в таблице стадий кнопки. Правила
+  Light FBX по идее AGR Checker: один `<a>[_Ground]_Root` со сброшенными трансформациями, все светильники под ним,
+  имена `<a>_[Spot|Omni]_NNN` 001–050, ≤ 250, тип в имени = тип света (V012, коды `light_*`). Кросс-проверка
+  паспортов ОКС ↔ Ground (`geojson_cross`: address, okrug, rajon, developer, designer, cadNum, ZU_area,
+  h_relief, act_AGR), в том числе для одиночного ZIP с парой рядом.
+- **`export.cleanup`** — по умолчанию вершинные каналы 0/−1/−2, ключи анимации и UDP конвейера
+  (`AGR_EXPORT_PATH`, `AGR_TEXEL_*`, …) остаются на копии; `options.channels` / `options.keys` (opt-in) удаляют
+  каналы и ключи (узел, стек, материал) только на копии; оригинал сверяется после apply
+  (`export_core.cleanup_plan`, `cleanup_scene_ops`; сцена — `runtime.cleanup_apply`, маленький PR).
+- **`qa.zero_area`** — код `sliver_face` (рекомендация, в `qa.preflight` не входит): высота < 0,2 мм, угол —
+  параметр в градусах (по умолчанию выключен: стекло 5 мм даёт треугольники 0,04°); грань с нулевым ребром
+  находится. Сверка после экспорта без Max: `tools/qa/fbx_zero_area.py <fbx>` (binary 7.4/7.5 и ASCII, по имени
+  объекта; `export_core.fbx_meshes`).
+- **`scene.census`** — `missing_map` и через общий перечислитель `tex_max._scene_maps` (снята известная ошибка
+  полигона `census-usedmaps-drops-missing-file`); сводка: треугольники (не полигоны) по слоям и префиксам,
+  самые тяжёлые объекты, меши > 100k, карты > 4096 по любой стороне (6000×3000; размеры из заголовков файлов,
+  пропавшая карта не роняет), кириллица в именах, далеко от нуля, рендерер, группы инстансов (пара = 1),
+  `suite_core.census_dump` в UTF-8. Сцена не меняется.
+- Полигон: станции `export.zip`, `qa.package`, `export.ground_fbx`, `export.geojson_write` (база 0.8, фрагмент
+  `stations/E3.json` + билдер `E3_build.py`).
 
 ## 0.8.1 (#908)
 
