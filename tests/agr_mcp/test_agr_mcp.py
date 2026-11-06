@@ -18,6 +18,11 @@ from mcp.shared.memory import create_connected_server_and_client_session as conn
 from agr_mcp import TOOL_SCHEMA_VERSION, audit, locks, max_pipe, server, tools
 from agr_mcp.max_side import max_bridge
 
+# Tools of the ops_d108 hook (branch U, #1024): not in tools.LISTED, tested by their owner. Empty with the stub.
+HOOK = tuple(s.name for s in __import__("agr_mcp.ops_d108", fromlist=["register"]).register({}))
+HOOK_EDITING = tuple(s.name for s in __import__("agr_mcp.ops_d108", fromlist=["register"]).register({})
+                     if not s.read_only)
+
 ROOT = Path(__file__).resolve().parents[2]
 PNG_1PX = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIAX8jx0gAAAABJRU5ErkJggg==")
 
@@ -167,11 +172,13 @@ def offline_cases(tmp_path):
 def test_tools_list_is_the_phase0_eight_without_code_argument():
     """#1024 branch 0 changes the catalogue fact: v1 (PHASE0) + the v2 tools generated from the plan (LISTED)."""
     listed, _ = run_calls([], list_only=True)
-    assert sorted(listed) == sorted(tools.LISTED) and set(tools.PHASE0) < set(listed)
+    assert sorted(listed) == sorted(tools.LISTED + HOOK) and set(tools.PHASE0) < set(listed)
     editing = {n for n, _row, _what, kind in tools.EDITS_080 if kind != "read"}  # 0.8 preview -> apply (#908)
     editing.add("agr_op_apply")  # v2: applies a held 0.8 preview
     for spec in tools.catalog().values():
         assert "code" not in json.dumps(spec.input), spec.name
+        if spec.name in HOOK:
+            continue
         assert spec.read_only == (spec.name not in editing), spec.name
         assert spec.destructive == (spec.name in ("agr_ucx_rename", "agr_op_apply")), spec.name  # in place
 
@@ -1578,7 +1585,7 @@ def test_unsafe_with_flag_is_listed_destructive_and_audited(tmp_path):
             res = await client.call_tool("agr_exec_unsafe", {"code": "1+1"})
             return listed, res
     listed, res = anyio.run(main)
-    assert set(listed) == set(tools.LISTED) | {"agr_exec_unsafe"}
+    assert set(listed) == set(tools.LISTED + HOOK) | {"agr_exec_unsafe"}
     assert listed["agr_exec_unsafe"].annotations.destructiveHint is True
     assert ok(res) == {"value": "2"} and sent == ["1+1"]
     line, = audit_lines(tmp_path)
@@ -1606,9 +1613,9 @@ def test_fresh_stdio_process_lists_tools(unsafe, tmp_path):
         sys.path.pop(0)
     t = anyio.run(transcript, unsafe, str(tmp_path / "stdio-audit.jsonl"))
     names = [x["name"] for x in t["tools"]]
-    assert sorted(names) == sorted(tools.LISTED + (("agr_exec_unsafe",) if unsafe else ()))
+    assert sorted(names) == sorted(tools.LISTED + HOOK + (("agr_exec_unsafe",) if unsafe else ()))
     assert t["serverInfo"]["name"] == "agr-mcp"
-    editing = {n for n, _row, _what, kind in tools.EDITS_080 if kind != "read"} | {"agr_op_apply"}
+    editing = {n for n, _row, _what, kind in tools.EDITS_080 if kind != "read"} | {"agr_op_apply"} | set(HOOK_EDITING)
     assert all(x["readOnlyHint"] for x in t["tools"] if x["name"] != "agr_exec_unsafe" and x["name"] not in editing)
     assert not any(x["readOnlyHint"] for x in t["tools"] if x["name"] in editing)
 
