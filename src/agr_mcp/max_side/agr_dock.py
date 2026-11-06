@@ -197,6 +197,8 @@ class AgentDock(QtWidgets.QDockWidget):
         for card in self.cards.values():
             if card.preview_id == pid:
                 st = ans.get('status')
+                if st in ('applied', 'rolled_back'):
+                    card.button.setVisible(False)
                 if st == 'applied':
                     card.body.setText('Применено: одна запись Undo «{}».'.format(ans.get('undo_label')))
                 elif st == 'rolled_back':

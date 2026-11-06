@@ -32,6 +32,7 @@ class MaxGateHost:
     def __init__(self, rt=None):
         self.rt = rt or _rt()
         self._saved = {}
+        self.nested = False
 
     # -- reading -----------------------------------------------------------------------------------------------------
     def doc(self):
@@ -180,8 +181,9 @@ class MaxGateHost:
 
     def begin(self):
         rt = self.rt
-        if rt.theHold.Holding():
-            raise RuntimeError('theHold is already holding: another operation is open')
+        # Hold.Begin nests (native job 20261106-045407-adb2a25d: batch Max already holds when the script runs);
+        # Cancel restores to this Begin, Accept closes this level. `nested` is recorded by the native run.
+        self.nested = bool(rt.theHold.Holding())
         self._saved = {}
         rt.theHold.Begin()
 

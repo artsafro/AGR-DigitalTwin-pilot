@@ -137,7 +137,7 @@ def gate_real():
     assert layer == ['BODY_Brick_001', 'OPEN_001'], layer
     assert [handle(n) for n in rt.selection] == [handle(body)], 'selection not restored'
     summary['one_undo_input'] = {'before': before, 'label': ok['undo_label']}
-    return {'rolled_back': bad['violations'], 'applied': ok['created'], 'undo_label': ok['undo_label'],
+    return {'theHold_nested': host.nested, 'rolled_back': bad['violations'], 'applied': ok['created'], 'undo_label': ok['undo_label'],
             'gate_s': ok['duration'], 'outside_checked': ok['outside_checked']}
 
 
@@ -378,6 +378,10 @@ def accept_reject():
 def polygon_u():
     sys.path.insert(0, str(ROOT / 'test-polygon' / 'build'))
     sys.path.insert(0, str(ROOT / 'test-polygon'))
+    import polygon_core
+    cat = OUT / 'catalog.json'  # the builder input with the station fragments, as run_polygon.py writes it
+    cat.write_text(json.dumps(polygon_core.load_catalog(), ensure_ascii=False), encoding='utf-8')
+    os.environ['AGR_POLYGON_CATALOG'] = str(cat)
     import build_scene
     rows = []
     for button in ('agent.request', 'agent.accept'):
