@@ -16,7 +16,8 @@
 
 - Диск: `G:\Мой диск\AGR-assets\materials\` (карты, три серые плитки).
 - Актуальная версия: указатель `library/materials/materials.json` с sha256 → `materials_vNNN.json`.
-- Появится в ветке L: каталога `library/materials/` пока нет.
+- Образцы текстур (решение владельца 06.11.2026, [D217]): `G:\Мой диск\AGR-assets\textures\samples\` — `tiles_dark_grey.png`, `tiles_light_grey.png`, `tiles_white.png`, `bricks.png`. Путь решён; наличие файлов на Диске при переносе не проверялось (аудит видел их только на рабочем столе владельца).
+- Аудит материалов по джобам и решения Q1–Q12: `library/materials/AUDIT-2026-11.md`.
 
 ## МАФ
 

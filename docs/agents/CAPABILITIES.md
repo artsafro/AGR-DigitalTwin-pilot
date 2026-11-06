@@ -301,7 +301,8 @@ Pipeline core:
   `tools/state/project_state_freshness.py` is an advisory read-only freshness check.
 - AGR Tools for 3ds Max 2024/2026, `adapters/max/agr_tools/` (build `tools/max/build_agr_tools.py`) — diagnostic
   and checked-export tool, not a delivery validator; version, install, native evidence: its `README.md`,
-  `CHANGELOG.md`; native runners in `tests/max_tools/`.
+  `CHANGELOG.md`; native runners in `tests/max_tools/`. Entry page for agents (1.0 conveyor, MCP v2, passport,
+  libraries, owner decisions): `docs/agr-tools/OVERVIEW.md`.
 
 Export:
 - `tools/export/export_mesh_blender.py`, `tools/export/export_modules_blender.py` — Blender scene + FBX writers of

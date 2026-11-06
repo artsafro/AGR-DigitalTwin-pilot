@@ -1,7 +1,7 @@
 # Библиотека материалов ОКС (#1024, ветка L)
 
 - `materials.json` — указатель: `current` → `materials_v001.json`, `version`, `sha256` файла.
-- `materials_v001.json` — 40 записей по аудиту материалов 06.11 (`GeoAGR-private research/materials-audit-1.0`).
+- `materials_v001.json` — 40 записей по аудиту материалов 06.11 (`library/materials/AUDIT-2026-11.md`, таблица `AUDIT-2026-11.csv`).
 
 ## Поля записи
 
@@ -23,6 +23,6 @@ ID стабильны. Правка = новый `materials_vNNN.json` + нов�
 
 Лежат на Google Диске `G:\Мой диск\AGR-assets\materials\`; читать только с копии (К5).
 
-## Открытые вопросы
+## Вопросы аудита
 
-Q1–Q12 в `GeoAGR-private research/materials-audit-1.0/REPORT.md` §5 ждут ответа Артёма. Значения (px/м 1024, модули, шов) — параметры, не константы.
+Q1–Q12 решены 06.11.2026: [`AUDIT-2026-11.md`](AUDIT-2026-11.md) §5а, `docs/decisions.md` [D206], [D214]–[D217]. Указатель `materials_v001.json` ещё несёт значения до решений (px/м 1024, кассета KPP, RAL 8023 без RGB); привести к решениям — новой версией `materials_v002.json` (задача 1.x, `docs/plans/agr-tools-1.x.md`). Значения (px/м, модули, шов) — параметры, не константы.
