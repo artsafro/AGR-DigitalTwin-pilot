@@ -36,6 +36,7 @@ BASE_MAPS = ('facade_600x1200', 'ground_100x300', 'crumb_1x1', 'tile_600x600', '
 RECORD_KEYS = {'library_id', 'key', 'name_ru', 'class', 'ral', 'rgb_srgb', 'rgb_note', 'roughness', 'metallic',
                'emissive', 'recipe', 'base_map', 'status', 'source', 'maf_v005_id'}
 OPTIONAL_KEYS = {'opacity', 'note', 'questions'}
+RIB_PARAMS = ('field_m', 'ribs')    # ribbed panel (AC08/AC09, audit Q5): pattern «N ribs per field», pitch = field / N
 BYTE_FIELDS = ('roughness', 'metallic', 'emissive')
 _KEY = re.compile(r'^[a-z][a-z0-9_]{1,63}$')
 _VERSION = re.compile(r'^v\d{3}$')
@@ -128,6 +129,10 @@ def validate_library(doc, ral=None):
                 raise ValueError(at + ': greyscale_mask needs base_map in {} (same as the record)'.format(BASE_MAPS))
         elif r['base_map'] is not None:
             raise ValueError(at + ': base_map only with recipe greyscale_mask')
+        if recipe.get('pattern') == 'ribs_per_field' and (
+                recipe['kind'] != 'metric_pattern' or recipe.get('params') != list(RIB_PARAMS) or 'rib_pitch_m' in recipe):
+            raise ValueError(at + ': ribs_per_field is a metric_pattern with params {} and no fixed rib_pitch_m'.format(
+                list(RIB_PARAMS)))
         if r['status'] not in STATUSES:
             raise ValueError(at + ': status must be one of {}'.format(STATUSES))
         if not isinstance(r['source'], dict):
@@ -139,6 +144,16 @@ def validate_library(doc, ral=None):
             if isinstance(op, bool) or not isinstance(op, (int, float)) or not 0 < op < 1:
                 raise ValueError(at + ': glass needs opacity 0..1')
     return recs
+
+
+def rib_pitch_m(field_m, ribs):
+    """Rib pitch of a ribbed panel (recipe pattern `ribs_per_field`, owner answer Q5 06.11): the field of the panel
+    divided by the number of ribs. Not a tile: the UV scale is set per facade field, never a library constant."""
+    if type(ribs) is not int or ribs < 1:
+        raise ValueError('ribs must be a positive integer: {!r}'.format(ribs))
+    if isinstance(field_m, bool) or not isinstance(field_m, (int, float)) or not 0 < field_m < float('inf'):
+        raise ValueError('field_m must be a positive finite number: {!r}'.format(field_m))
+    return field_m / ribs
 
 
 def hex_rgb(text):

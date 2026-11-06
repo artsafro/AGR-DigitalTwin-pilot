@@ -489,3 +489,25 @@ def test_q4_ral_8023_7024_9006_7035_are_marked_screen_approximations():
     probe = dict(lib['by_id'][17], ral='7035', rgb_srgb=ml.hex_rgb('#D7D7D7'))
     ml.validate_library({'schema': 1, 'version': 'v002', 'materials': [probe]}, ral)
     assert 'Q4' not in lib['by_id'][17].get('questions', [])
+
+
+def test_q5_ribbed_panel_is_a_pattern_of_n_ribs_per_field_not_a_tile():
+    """RED before Q5: record 11 carried a constant rib_pitch_m 0.19532 and the string ribs = per_facade."""
+    import copy
+    lib = ml.load_library(str(LIB))
+    r = lib['by_id'][11]
+    assert r['recipe'] == {'kind': 'metric_pattern', 'pattern': 'ribs_per_field', 'params': ['field_m', 'ribs']}
+    assert r['base_map'] is None and 'rib_pitch_m' not in r['recipe'] and 'Q5' not in r.get('questions', [])
+    assert ml.rib_pitch_m(5.86, 30) == pytest.approx(5.86 / 30) and ml.rib_pitch_m(2.4, 12) == pytest.approx(0.2)
+    for field, ribs in ((0, 5), (-1.0, 5), (2.4, 0), (2.4, 2.5), (2.4, True), (float('nan'), 3)):
+        with pytest.raises(ValueError):
+            ml.rib_pitch_m(field, ribs)
+    ral = ml.ral_table(str(ROOT / 'tools/materials/ral_classic.json'))
+    doc = {'schema': 1, 'version': 'v002', 'materials': [copy.deepcopy(r)]}
+    ml.validate_library(doc, ral)
+    doc['materials'][0]['recipe']['rib_pitch_m'] = 0.19532       # a constant pitch contradicts N ribs per field
+    with pytest.raises(ValueError, match='ribs_per_field'):
+        ml.validate_library(doc, ral)
+    doc['materials'][0]['recipe'] = {'kind': 'metric_pattern', 'pattern': 'ribs_per_field', 'params': ['field_m']}
+    with pytest.raises(ValueError, match='ribs_per_field'):
+        ml.validate_library(doc, ral)

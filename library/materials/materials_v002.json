@@ -294,7 +294,7 @@
   {
    "library_id": 11,
    "key": "panel_ribbed_ral5015",
-   "name_ru": "Ребристая панель RAL 5015 (рёбра по числу на лист фасада)",
+   "name_ru": "Ребристая панель RAL 5015 (N рёбер на поле)",
    "class": "panel",
    "ral": "5015",
    "rgb_srgb": [
@@ -308,8 +308,11 @@
    "emissive": 0,
    "recipe": {
     "kind": "metric_pattern",
-    "rib_pitch_m": 0.19532,
-    "ribs": "per_facade"
+    "pattern": "ribs_per_field",
+    "params": [
+     "field_m",
+     "ribs"
+    ]
    },
    "base_map": null,
    "status": "proposed",
@@ -319,10 +322,7 @@
     "evidence": "jobs/TEC26-OKS/AC08/MATERIALS.md:19-20; jobs/TEC26-OKS/STATE.md:44-47"
    },
    "maf_v005_id": null,
-   "note": "шаг = поле панели / число рёбер: UV-масштаб на фасад, не тайл",
-   "questions": [
-    "Q5"
-   ]
+   "note": "Q5 (06.11): параметрический паттерн «N рёбер на поле», не тайл; шаг = поле панели / N (matlib_core.rib_pitch_m); AC08: 30 и 12 рёбер, AC09: по слайду 53"
   },
   {
    "library_id": 12,
