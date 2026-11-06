@@ -511,3 +511,20 @@ def test_q5_ribbed_panel_is_a_pattern_of_n_ribs_per_field_not_a_tile():
     doc['materials'][0]['recipe'] = {'kind': 'metric_pattern', 'pattern': 'ribs_per_field', 'params': ['field_m']}
     with pytest.raises(ValueError, match='ribs_per_field'):
         ml.validate_library(doc, ral)
+
+
+def test_q6_lawn_rolled_and_lawn_reinforced_are_two_records():
+    """RED before Q6: the library had only lawn_reinforced (OKS-GRD-05 merged the pair of Vatutino recipes)."""
+    lib = ml.load_library(str(LIB))
+    by_key = {r['key']: r for r in lib['materials']}
+    rolled, reinforced = by_key['lawn_rolled'], by_key['lawn_reinforced']
+    assert rolled['library_id'] != reinforced['library_id'] and rolled['library_id'] == 41
+    assert rolled['class'] == reinforced['class'] == 'ground'
+    assert rolled['rgb_srgb'] != reinforced['rgb_srgb']
+    recipes = json.loads((ROOT / 'tools/materials/ground_recipes.json').read_text(encoding='utf-8'))['slots']
+    assert rolled['source']['ground_recipe'] == 'LawnRolled' and reinforced['source']['ground_recipe'] == 'LawnReinforced'
+    assert recipes['LawnRolled']['family'] == 'lawn' and recipes['LawnReinforced']['family'] == 'ecogrid'
+    assert rolled['source']['audit_id'] == reinforced['source']['audit_id'] == 'OKS-GRD-05'
+    assert 'Q6' not in rolled.get('questions', []) and 'Q6' not in reinforced.get('questions', [])
+    for r in (rolled, reinforced):
+        assert r['source']['ground_recipe'] in recipes

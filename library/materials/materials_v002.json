@@ -738,7 +738,7 @@
     120,
     60
    ],
-   "rgb_note": "project sample (sRGB), provisional",
+   "rgb_note": "project sample (sRGB), provisional: mean of LawnReinforced palette",
    "roughness": 240,
    "metallic": 0,
    "emissive": 0,
@@ -751,12 +751,11 @@
    "source": {
     "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
     "audit_id": "OKS-GRD-05",
-    "evidence": "tools/materials/ground_recipes.json:97"
+    "evidence": "tools/materials/ground_recipes.json:97",
+    "ground_recipe": "LawnReinforced"
    },
    "maf_v005_id": null,
-   "questions": [
-    "Q6"
-   ]
+   "note": "Q6 (06.11): газон рулонный и газон укреплённый - две разные текстуры (две записи, 41 = рулонный)"
   },
   {
    "library_id": 27,
@@ -1158,6 +1157,36 @@
     "evidence": "jobs/KPP1/materials.json Interior; jobs/TEC26-OKS/AC09/vpm_textures.json:41"
    },
    "maf_v005_id": null
+  },
+  {
+   "library_id": 41,
+   "key": "lawn_rolled",
+   "name_ru": "Газон рулонный",
+   "class": "ground",
+   "ral": null,
+   "rgb_srgb": [
+    77,
+    127,
+    52
+   ],
+   "rgb_note": "project sample (sRGB), provisional: mean of LawnRolled palette (ground_recipes.json)",
+   "roughness": 240,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "crumb_1x1"
+   },
+   "base_map": "crumb_1x1",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-GRD-05",
+    "evidence": "tools/materials/ground_recipes.json LawnRolled; planting schedule position 18 (docs/research/spozu-vatutino-inventory.md)",
+    "ground_recipe": "LawnRolled"
+   },
+   "maf_v005_id": null,
+   "note": "Q6 (06.11): газон рулонный и газон укреплённый - две разные текстуры (две записи, 26 = укреплённый)"
   }
  ]
 }
