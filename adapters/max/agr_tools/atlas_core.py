@@ -946,3 +946,10 @@ def publish_main(argv):
     except (AtlasError, OSError, ValueError, json.JSONDecodeError):
         return 2
     return 0
+
+
+def correspondence_table(atlas_report):
+    """1.0 (#1024, branch 0 signature; owner P): the VPM -> NPM correspondence table for the passport and the
+    reverse step npm.to_vpm (Q): [{'library_id', 'udim', 'region': [u0, v0, u1, v1], 'scale': [su, sv],
+    'shift': [du, dv]}] from an atlas report of npm.build."""
+    raise NotImplementedError('atlas_core.correspondence_table: branch P (#1024)')

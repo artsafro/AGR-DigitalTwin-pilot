@@ -12,9 +12,19 @@ import re
 FLOW_ARROW = ' → '
 MODE_RU = {'read': 'только чтение', 'select': 'только чтение, выделяет объекты',
            'copy': 'правит только копии', 'undo': 'правит сцену, отмена через Undo',
-           'file': 'пишет новые файлы, исходники не трогает'}
+           'file': 'пишет новые файлы, исходники не трогает',
+           'agent': 'запрос агенту и приём результата через шлюз'}
 STEP_RU = ('Проверить и выделить — сцена не меняется', 'Исправить — копии / undo / новые файлы')
-STEP_OF_MODE = {'read': 0, 'select': 0, 'copy': 1, 'undo': 1, 'file': 1}
+STEP_OF_MODE = {'read': 0, 'select': 0, 'copy': 1, 'undo': 1, 'file': 1, 'agent': 1}
+# 1.0 conveyor (#1024, branch 0): stages 0-9 + the agent, row fields `stage` / `fate` (null on rows released before
+# 1.0). fate: `stage` = a button of its stage, `step` = folded into the big button `step_of` (no own button),
+# `tail` = stays 1.x, `obsolete` = replaced (kept for history).
+STAGE_IDS = tuple(range(10)) + ('agent',)
+FATES = ('stage', 'step', 'tail', 'obsolete')
+STAGE_FIELDS = {'id', 'order', 'label_ru', 'big_button', 'icon', 'rows', 'steps', 'checks'}
+# Rows of the new 1.0 buttons may carry an id prefix that is not a block (they live on the stage rail; `block` gives
+# their colour). Block pages list only rows whose prefix is their block, so pages 0-9 stay as they were.
+STAGE_PREFIXES = ('project', 'source', 'body', 'win', 'mat', 'vpm', 'npm', 'pack', 'agent')
 BLOCK_FIELDS = {'id', 'number', 'title_ru', 'hue', 'added_because', 'short_ru', 'when_ru'}
 ROW_FIELDS = {'id', 'block', 'label_ru', 'does_ru', 'source', 'verdict', 'verdict_note', 'evidence', 'reqs',
               'mode', 'mcp', 'priority', 'version', 'icon'}
@@ -45,6 +55,29 @@ GEOAGR_BUTTONS = {
     'btn_Streets_List': 42460, 'btn_View_Normals': 47595, 'btn_pivot_get': 64763, 'btn_pivot_set': 64778,
     'btn_resetXForm': 64709, 'btn_combine_two_models': 64730, 'btn_make_tex_diffuse': 42227,
     'btn_open_tex_normal': 42333, 'btn_open_tex_erm': 42409, 'btn_UCX_connect': 62890,
+    # 1.0 (#1024, branch 0): the remaining buttons cited by the #1024 body and its «редакция 1» comment, each the
+    # `on btn_<name> pressed do` line of GeoAGR.ms 13.64 (checked 06.11.2026).
+    'btn_multimat_table': 41646, 'btn_Detriangulate': 48104, 'btn_MoveFaces': 49657, 'btn_TurboAttacher': 54814,
+    'btn_UCX_move': 61446, 'btn_export_highpoly': 66904,
+}
+# Non-button GeoAGR.ms 13.64 lines cited by #1024 (reference only, #853), checked 06.11.2026: line -> what is there.
+GEOAGR_LINES_1024 = {
+    5236: 'UDIM Slicer block (5236-5280): island cut by the UV grid line (K6 idea)',
+    16071: 'rollout uvDistortionViewer (udim.distortion source)',
+    20050: 'fn fit_all_to_udim (vpm.build: defect not to repeat)',
+    29390: 'on btn_unwrap_material_from_lowpoly (UnAtlas, npm.to_vpm: defect not to repeat)',
+    31390: 'fn wrap_island_to_first_udim (vpm.build: defect not to repeat)',
+    31473: 'fn process_and_align_island_universal (31473-31598, vpm.build: defect not to repeat)',
+    32515: 'tile placement branch (32515-32603)',
+    33785: 'clearUndoBuffer() (bricks unwrap: never repeat)',
+    41653: 'rollout Controls (multimat table)',
+    43960: 'rollout Tree «Lowpoly Tree maker» (place.tree_cards, tail)',
+    45538: 'random pick of a window item (author note: pick by size, not at random)',
+    54174: 'rollout ProjectScatterUI (place.scatter, tail)',
+    56468: 'rollout LightPlacerRollout (light.place, tail)',
+    56719: 'fn getPolyBorders (Geo Window Placer, win.place idea)',
+    56942: 'fn getBorderAlignmentData (56942-57025, Geo Window Placer)',
+    57117: 'local bestWin (57117-57124, window choice)',
 }
 # `btn_x GeoAGR.ms:123` and the short form `btn_x :123` used after a first GeoAGR.ms citation in the same source.
 GEOAGR_CITE_RE = re.compile(r'\b(btn_\w+)\s+(?:GeoAGR\.ms)?:(\d+)')
@@ -104,7 +137,7 @@ def load(text, requirements=None):
             isinstance(v, dict) and isinstance(v.get('version'), str) and isinstance(v.get('rows'), list)
             for v in versions):
         raise ValueError('agr-tools-suite.json: versions missing')
-    listed = {v['version']: set(v['rows']) for v in versions}
+    listed = {v['version']: set(v['rows']) | set(v.get('steps') or ()) for v in versions}
     if len(listed) != len(versions):
         raise ValueError('agr-tools-suite.json: duplicate version')
     ids = set()
@@ -118,6 +151,7 @@ def load(text, requirements=None):
     if [b['number'] for b in blocks] != list(range(len(blocks))):
         raise ValueError('blocks are not numbered 0..N in order')
     seen = set()
+    staged = {}
     for r in rows:
         missing = ROW_FIELDS - set(r)
         if missing:
@@ -136,8 +170,11 @@ def load(text, requirements=None):
             if not isinstance(r[field], str) or not r[field].strip():
                 raise ValueError('row {} has an empty {}'.format(r.get('id'), field))
         prefix, _, rest = r['id'].partition('.')
-        if prefix != r['block'] or not rest:
+        _stage_fields(r)
+        if not rest or (prefix != r['block'] and not (prefix in STAGE_PREFIXES and r['stage'] is not None)):
             raise ValueError('row {}: id prefix is not its block {}'.format(r['id'], r['block']))
+        if r['stage'] is not None:
+            staged[r['id']] = r
         vkey(r['version'])
         if r['version'] not in listed:
             raise ValueError('row {} has version {} not in versions[]'.format(r['id'], r['version']))
@@ -148,7 +185,76 @@ def load(text, requirements=None):
     stray = sorted(set().union(*listed.values()) - seen)
     if stray:
         raise ValueError('versions[] names rows that do not exist: ' + ', '.join(stray))
+    _stages(suite, staged, {r['id']: r for r in rows})
     return suite
+
+
+def _stage_fields(r):
+    if 'stage' not in r or 'fate' not in r:
+        raise ValueError('row {} lacks stage/fate (#1024)'.format(r['id']))
+    stage, fate = r['stage'], r['fate']
+    if stage is not None and stage not in STAGE_IDS:
+        raise ValueError('row {} has unknown stage {!r}'.format(r['id'], stage))
+    if fate is not None and fate not in FATES:
+        raise ValueError('row {} has unknown fate {!r}'.format(r['id'], fate))
+    if (stage is None) != (fate in (None, 'tail', 'obsolete')):
+        raise ValueError('row {}: stage {!r} does not fit fate {!r}'.format(r['id'], stage, fate))
+    if fate in ('stage', 'step') and r['version'] != '1.0':
+        raise ValueError('row {}: fate {} needs version 1.0'.format(r['id'], fate))
+    if fate in ('tail', 'obsolete') and r['version'] != '1.x':
+        raise ValueError('row {}: fate {} needs version 1.x'.format(r['id'], fate))
+    if fate is None and r['version'] in ('1.0', '1.x'):
+        raise ValueError('row {} of version {} has no fate'.format(r['id'], r['version']))
+    if (fate == 'step') != ('step_of' in r):
+        raise ValueError('row {}: step_of goes with fate step only'.format(r['id']))
+    if r['mode'] == 'agent' and stage != 'agent':
+        raise ValueError('row {}: mode agent only on the agent stage'.format(r['id']))
+
+
+def _stages(suite, staged, by_id):
+    stages = suite.get('stages')
+    if not isinstance(stages, list) or [s.get('id') for s in stages] != list(STAGE_IDS):
+        raise ValueError('agr-tools-suite.json: stages 0-9 + agent expected in order')
+    covered, steps = [], []
+    for i, s in enumerate(stages):
+        missing = STAGE_FIELDS - set(s)
+        if missing:
+            raise ValueError('stage {} lacks {}'.format(s['id'], sorted(missing)))
+        if s['order'] != i or not str(s['label_ru']).strip() or not str(s['icon']).strip():
+            raise ValueError('stage {}: order/label/icon'.format(s['id']))
+        if s['big_button'] not in s['rows']:
+            raise ValueError('stage {}: big button {} is not one of its rows'.format(s['id'], s['big_button']))
+        for rid in s['rows'] + s['steps']:
+            r = by_id.get(rid)
+            if r is None or r['stage'] != s['id']:
+                raise ValueError('stage {} lists {} of another stage'.format(s['id'], rid))
+            if (rid in s['steps']) != (r['fate'] == 'step'):
+                raise ValueError('stage {}: {} is listed as the wrong kind'.format(s['id'], rid))
+            if r['fate'] == 'step' and r['step_of'] not in s['rows']:
+                raise ValueError('row {}: step_of {} is not a button of its stage'.format(rid, r['step_of']))
+        for rid in s['checks']:
+            r = by_id.get(rid)
+            if r is None or r['version'] in ('1.0', '1.x'):
+                raise ValueError('stage {}: check {} must be a released row'.format(s['id'], rid))
+        covered += s['rows']
+        steps += s['steps']
+    if sorted(covered + steps) != sorted(staged) or len(set(covered)) != len(covered):
+        raise ValueError('stages do not cover the staged rows exactly once')
+    v10 = {v['version']: v for v in suite['versions']}.get('1.0')
+    if v10 is not None and (v10['rows'] != covered or sorted(v10.get('steps', [])) != sorted(steps)):
+        raise ValueError('versions[1.0].rows/steps differ from the stage buttons/steps')
+
+
+def stage_buttons(suite):
+    """The 1.0 buttons (fate stage) in station order 1.0.1..1.0.N: stage order, then the stage's row order."""
+    return [rid for s in suite['stages'] for rid in s['rows']]
+
+
+def stage_of(suite, stage_id):
+    for s in suite['stages']:
+        if s['id'] == stage_id:
+            return s
+    raise KeyError('unknown stage: ' + repr(stage_id))
 
 
 def load_file(path):
@@ -173,7 +279,7 @@ def row(suite, row_id):
 def block_rows(suite, block_id):
     """Rows of a block in work order: version, then table order."""
     order = {r['id']: i for i, r in enumerate(suite['rows'])}
-    mine = [r for r in suite['rows'] if r['block'] == block_id]
+    mine = [r for r in suite['rows'] if r['block'] == block_id and r['id'].partition('.')[0] == block_id]
     return sorted(mine, key=lambda r: (vkey(r['version']), order[r['id']]))
 
 

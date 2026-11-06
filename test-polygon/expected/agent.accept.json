@@ -1,0 +1,16 @@
+{
+ "schema": 1,
+ "button": "agent.accept",
+ "tool": null,
+ "version": "1.0",
+ "shipped": false,
+ "select": "named",
+ "reason": "станция в работе, #1024, ветка U",
+ "apply_status": null,
+ "objects": [],
+ "base": "1.0",
+ "station": "1.0.33",
+ "stations": [
+  "1.0.33"
+ ]
+}

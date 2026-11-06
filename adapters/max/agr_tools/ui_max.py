@@ -68,6 +68,12 @@ class MaxBackend:
             self._select_offenders(tool, report)  # after the user's selection is back, so Ctrl+Z returns to it
 
     def _run_tool(self, tool, select=True):
+        if tool in getattr(self.agr, 'EDITS_100', ()):
+            # 1.0 stage buttons (#1024): runtime.ui has no 1.0 branch, a press goes to edit_ui (preview -> apply,
+            # actor panel). The panel never calls this while the button is wip.
+            report = self.agr.edit_ui(tool, select=False)
+            self.log(report)
+            return report
         if tool in self.agr.EDITS_080 or tool in self.agr.EDITS_090:
             # 0.8 (#908) / 0.9 (#979): preview -> apply through runtime.edits_080 / edits_090; a `select` row
             # (SELECT_090) selects its offenders here, never in the core
@@ -144,6 +150,11 @@ class MaxBackend:
 
     def last_reports(self):
         return self.agr.last_reports()
+
+    def passport(self):
+        """Project passport dict (K1) for the stage statuses of the 1.0 stage rail (#1024). The reader is branch F
+        (passport_core); until it ships there is no passport and every stage shows «не начат»."""
+        return None
 
     def log_error(self, tool, exc):
         print('AGR_TOOLS_ERROR tool={} {}'.format(tool, ''.join(traceback.format_exception_only(type(exc), exc)).strip()))

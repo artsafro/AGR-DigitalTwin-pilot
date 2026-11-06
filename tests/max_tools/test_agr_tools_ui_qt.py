@@ -353,13 +353,74 @@ def test_rail_has_path_and_ten_blocks_in_order_with_planned_greyed(main):
     items = [p.rail.item(i).text() for i in range(p.rail.count())]
     assert items == ['Путь'] + ['{} {}'.format(b['number'], b['short_ru']) for b in suite['blocks']]
     assert p.pages.count() == 11 and p.rail.currentRow() == 0
-    planned = [r for r in suite['rows'] if roadmap.vkey(r['version']) > roadmap.vkey(model.VERSION)]
-    assert set(p.planned) == {r['id'] for r in planned} and len(planned) == 35  # 1.0-1.x: 18 + 17 after 0.9.0 (#979)
+    # block pages 0-9: rows whose id prefix is their block; the 15 new 1.0 rows (#1024) are stage buttons only
+    planned = [r for r in suite['rows'] if roadmap.vkey(r['version']) > roadmap.vkey(model.VERSION)
+               and r['id'].partition('.')[0] == r['block']]
+    # 1.0-1.x after 0.9.0 (#979): 18 old rows that are 1.0 stage buttons + 3 folded into a big button (fate step)
+    # + 16 tail/obsolete rows (#1024)
+    assert set(p.planned) == {r['id'] for r in planned} and len(planned) == 37
+    v10 = [r for r in planned if r['version'] == '1.0']
+    assert len([r for r in v10 if r['fate'] == 'stage']) == 18 and len([r for r in v10 if r['fate'] == 'step']) == 3
     for r in planned:
         b = p.planned[r['id']]
         assert not b.isEnabled() and b.text().endswith('в версии ' + r['version'])
+    stage_only = {r['id'] for r in suite['rows'] if r['id'].partition('.')[0] != r['block']}
+    assert len(stage_only) == 15 and not stage_only & set(p.planned)
+    assert not any(p.findChild(QtWidgets.QToolButton, 'agr_planned_' + rid) for rid in stage_only)
+    assert stage_only <= {model.BY_ID[aid].tool for aid in p.stage_buttons}
     rail_colours = {p.rail.item(i).foreground().color().name() for i in range(1, 11)}
     assert len(rail_colours) == 10
+
+
+def test_stage_rail_big_buttons_second_rows_wip_disabled(main, qtbot):
+    be = FakeBackend(5)
+    p = make(main, be)
+    suite = roadmap.load_file(SUITE)
+    assert p.findChild(QtWidgets.QLabel, 'agr_stage_title').text() == '<b>{}</b>'.format(model.MENU_100)
+    assert list(p.stages) == [s['id'] for s in suite['stages']]  # plan stage order, on the «Путь» page
+    assert p.pages.widget(0).isAncestorOf(p.findChild(QtWidgets.QScrollArea, 'agr_stage_rail'))
+    assert set(p.stage_buttons) == {a.id for a in model.ACTIONS_100} and len(p.stage_buttons) == 33
+    for s in suite['stages']:
+        big, status, small = p.stages[s['id']]
+        a = model.BY_TOOL[s['big_button']]
+        assert big is p.stage_buttons[a.id] and big.objectName() == 'agr_wip_' + a.tool
+        assert big.text() == s['label_ru'] and big.toolButtonStyle() == QtCore.Qt.ToolButtonTextUnderIcon
+        assert not big.icon().isNull() and status.text() == 'не начат'
+        assert [b.objectName() for b in small] == ['agr_wip_' + rid for rid in s['rows'] if rid != s['big_button']]
+        assert all(b.toolButtonStyle() == QtCore.Qt.ToolButtonIconOnly and b.iconSize().width() < big.iconSize().width()
+                   for b in small)
+        # second row sits under its big button, inside the same stage column
+        col = p.findChild(QtWidgets.QWidget, 'agr_stage_{}'.format(s['id']))
+        assert all(col.isAncestorOf(b) for b in [big] + small)
+        assert all(b.geometry().top() > big.geometry().bottom() for b in small)
+    stage_label = {s['big_button']: s['label_ru'] for s in suite['stages']}
+    for aid, b in p.stage_buttons.items():  # wip: visible, disabled, «в работе, #1024» + what the row does
+        a = model.BY_ID[aid]
+        assert a.wip and not b.isEnabled() and not b.isHidden()
+        assert b.text() == stage_label.get(a.tool, a.label)
+        assert b.toolTip().startswith('в работе, #1024') and 'Когда:' in b.toolTip() and not b.icon().isNull()
+    big = p.stage_buttons['project_passport']
+    qtbot.mouseClick(big, QtCore.Qt.LeftButton)  # a disabled button never runs
+    assert p.run('project_passport') is None and be.events == []
+    assert p.status.text() == 'Паспорт проекта: в работе, #1024'
+    p.run('census')  # after a run every stage button is still disabled
+    assert not any(b.isEnabled() for b in p.stage_buttons.values())
+
+
+def test_stage_status_comes_from_the_passport(main):
+    be = FakeBackend(5)
+    suite = roadmap.load_file(SUITE)
+    stages = [{'id': s['id'], 'status': 'todo'} for s in suite['stages']]
+    stages[1]['status'] = 'work'
+    stages[9]['status'] = 'done'
+    be.passport = lambda: {'stages': stages}
+    p = make(main, be)
+    assert p.stages[1][1].text() == 'в работе' and p.stages[9][1].text() == 'готов'
+    assert p.stages[0][1].text() == 'не начат'
+    stages[2]['status'] = 'lost'  # unreadable passport: said on every stage, never a guessed status
+    p.refresh_path()
+    assert {lab.text() for _, lab, _ in p.stages.values()} == {'паспорт: ошибка'}
+    assert 'lost' in p.stages[0][1].toolTip()
 
 
 def test_path_nodes_open_tabs_tooltips_and_cards(main, qtbot):

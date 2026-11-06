@@ -124,6 +124,172 @@ macroScript AGRToolsLightCheck category:"AGR Tools" buttonText:"Проверка
 (on execute do python.Execute "agr_tools_runtime.ui('light.check')")
 macroScript AGRToolsProceduralObjects category:"AGR Tools" buttonText:"Процедурные объекты" tooltip:"Несвёрнутые Forest Pack, RailClone, MultiScatter, Chaos Scatter, tyFlow, RayFire, Populate перед FBX (только чтение и выделение). Треб.: -" iconName:"AgrIcons/agr_procobj"
 (on execute do python.Execute "agr_tools_runtime.ui('qa.procedural_objects')")
+-- 1.0 conveyor (#1024): stage buttons call runtime.edit_ui; while wip the macro is disabled and only says so.
+macroScript AGRToolsProjectPassport category:"AGR Tools" buttonText:"Паспорт проекта" tooltip:"в работе, #1024 Треб.: -" iconName:"AgrIcons/agr_passport"
+(
+    on isEnabled return false
+    on execute do messageBox "Паспорт проекта (project.passport): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsSourceIntake category:"AGR Tools" buttonText:"Приём источника" tooltip:"в работе, #1024 Треб.: -" iconName:"AgrIcons/agr_intake"
+(
+    on isEnabled return false
+    on execute do messageBox "Приём источника (source.intake): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsSceneSourceClass category:"AGR Tools" buttonText:"Класс источника" tooltip:"в работе, #1024 Треб.: -" iconName:"AgrIcons/agr_source"
+(
+    on isEnabled return false
+    on execute do messageBox "Класс источника (scene.source_class): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsBodyPrepare category:"AGR Tools" buttonText:"Бадик для агента" tooltip:"в работе, #1024 Треб.: -" iconName:"AgrIcons/agr_body"
+(
+    on isEnabled return false
+    on execute do messageBox "Бадик для агента (body.prepare): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsModelAttachByMaterial category:"AGR Tools" buttonText:"Объединить по материалам" tooltip:"в работе, #1024 Треб.: -" iconName:"AgrIcons/agr_attachmat"
+(
+    on isEnabled return false
+    on execute do messageBox "Объединить по материалам (model.attach_by_material): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsModelMoveApart category:"AGR Tools" buttonText:"Раздвинуть задвойки" tooltip:"в работе, #1024 Треб.: NPM-2.3-9, VPM-2.3-13" iconName:"AgrIcons/agr_moveapart"
+(
+    on isEnabled return false
+    on execute do messageBox "Раздвинуть задвойки (model.move_apart): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsModelGridCleanup category:"AGR Tools" buttonText:"Чистка сетки фасада" tooltip:"в работе, #1024 Треб.: NPM-2.3-7.b, VPM-2.3-11.b" iconName:"AgrIcons/agr_gridclean"
+(
+    on isEnabled return false
+    on execute do messageBox "Чистка сетки фасада (model.grid_cleanup): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsSceneSmallParts category:"AGR Tools" buttonText:"Мелкие детали (метизы)" tooltip:"в работе, #1024 Треб.: -" iconName:"AgrIcons/agr_smallparts"
+(
+    on isEnabled return false
+    on execute do messageBox "Мелкие детали (метизы) (scene.small_parts): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsWinPlace category:"AGR Tools" buttonText:"Окна по проёмам" tooltip:"в работе, #1024 Треб.: -" iconName:"AgrIcons/agr_winplace"
+(
+    on isEnabled return false
+    on execute do messageBox "Окна по проёмам (win.place): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsWinGenerate category:"AGR Tools" buttonText:"Окна: генератор типов" tooltip:"в работе, #1024 Треб.: -" iconName:"AgrIcons/agr_wingen"
+(
+    on isEnabled return false
+    on execute do messageBox "Окна: генератор типов (win.generate): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsModelGlassPlanes category:"AGR Tools" buttonText:"Стекло плоскостями" tooltip:"в работе, #1024 Треб.: NPM-2.3-10, VPM-2.8-4" iconName:"AgrIcons/agr_glass"
+(
+    on isEnabled return false
+    on execute do messageBox "Стекло плоскостями (model.glass_planes): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsBodyCapsules category:"AGR Tools" buttonText:"Капсулы интерьера" tooltip:"в работе, #1024 Треб.: -" iconName:"AgrIcons/agr_capsule"
+(
+    on isEnabled return false
+    on execute do messageBox "Капсулы интерьера (body.capsules): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsBodyRoof category:"AGR Tools" buttonText:"Крыша по парапету" tooltip:"в работе, #1024 Треб.: -" iconName:"AgrIcons/agr_roof"
+(
+    on isEnabled return false
+    on execute do messageBox "Крыша по парапету (body.roof): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsMatTable category:"AGR Tools" buttonText:"Таблица материалов" tooltip:"в работе, #1024 Треб.: -" iconName:"AgrIcons/agr_mattable"
+(
+    on isEnabled return false
+    on execute do messageBox "Таблица материалов (mat.table): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsMatTiles category:"AGR Tools" buttonText:"Плитки: серые карты" tooltip:"в работе, #1024 Треб.: -" iconName:"AgrIcons/agr_mattiles"
+(
+    on isEnabled return false
+    on execute do messageBox "Плитки: серые карты (mat.tiles): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsTexPlugColour category:"AGR Tools" buttonText:"Цвет заглушки" tooltip:"в работе, #1024 Треб.: VPM-2.5-3.4" iconName:"AgrIcons/agr_plugcolour"
+(
+    on isEnabled return false
+    on execute do messageBox "Цвет заглушки (tex.plug_colour): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsVpmBuild category:"AGR Tools" buttonText:"Сборка ВПМ" tooltip:"в работе, #1024 Треб.: -" iconName:"AgrIcons/agr_vpm"
+(
+    on isEnabled return false
+    on execute do messageBox "Сборка ВПМ (vpm.build): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsUdimRescale category:"AGR Tools" buttonText:"Подгонка плотности" tooltip:"в работе, #1024 Треб.: VPM-2.6-2, NPM-2.6-1" iconName:"AgrIcons/agr_rescale"
+(
+    on isEnabled return false
+    on execute do messageBox "Подгонка плотности (udim.rescale): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsUdimDistortion category:"AGR Tools" buttonText:"Искажения UV" tooltip:"в работе, #1024 Треб.: VPM-2.6-2" iconName:"AgrIcons/agr_distort"
+(
+    on isEnabled return false
+    on execute do messageBox "Искажения UV (udim.distortion): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsTexDilate category:"AGR Tools" buttonText:"Отступы карт (dilate)" tooltip:"в работе, #1024 Треб.: NPM-2.5-4, VPM-2.5-1.5" iconName:"AgrIcons/agr_dilate"
+(
+    on isEnabled return false
+    on execute do messageBox "Отступы карт (dilate) (tex.dilate): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsUdimPlugs category:"AGR Tools" buttonText:"Острова-заглушки в UDIM" tooltip:"в работе, #1024 Треб.: -" iconName:"AgrIcons/agr_udimplug"
+(
+    on isEnabled return false
+    on execute do messageBox "Острова-заглушки в UDIM (udim.plugs): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsNpmBuild category:"AGR Tools" buttonText:"ВПМ → НПМ" tooltip:"в работе, #1024 Треб.: -" iconName:"AgrIcons/agr_npm"
+(
+    on isEnabled return false
+    on execute do messageBox "ВПМ → НПМ (npm.build): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsAtlasFacadeStrip category:"AGR Tools" buttonText:"Фасадный атлас run-strip" tooltip:"в работе, #1024 Треб.: NPM-2.5-11.a, NPM-2.5-4" iconName:"AgrIcons/agr_strip"
+(
+    on isEnabled return false
+    on execute do messageBox "Фасадный атлас run-strip (atlas.facade_strip): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsNpmToVpm category:"AGR Tools" buttonText:"НПМ → ВПМ" tooltip:"в работе, #1024 Треб.: -" iconName:"AgrIcons/agr_npm2vpm"
+(
+    on isEnabled return false
+    on execute do messageBox "НПМ → ВПМ (npm.to_vpm): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsUdimUdimsToIds category:"AGR Tools" buttonText:"UDIM → ID (просмотр)" tooltip:"в работе, #1024 Треб.: VPM-2.5-2.1.3.a" iconName:"AgrIcons/agr_udim2id"
+(
+    on isEnabled return false
+    on execute do messageBox "UDIM → ID (просмотр) (udim.udims_to_ids): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsPackDeliver category:"AGR Tools" buttonText:"Сдача пакета" tooltip:"в работе, #1024 Треб.: -" iconName:"AgrIcons/agr_deliver"
+(
+    on isEnabled return false
+    on execute do messageBox "Сдача пакета (pack.deliver): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsUcxGap category:"AGR Tools" buttonText:"UCX: нарезка и зазор" tooltip:"в работе, #1024 Треб.: VPM-2.13-4.a, VPM-2.13-4.b" iconName:"AgrIcons/agr_ucxgap"
+(
+    on isEnabled return false
+    on execute do messageBox "UCX: нарезка и зазор (ucx.gap): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsUcxStairs category:"AGR Tools" buttonText:"UCX лестниц" tooltip:"в работе, #1024 Треб.: VPM-2.13-5, VPM-2.13-6" iconName:"AgrIcons/agr_ucxstairs"
+(
+    on isEnabled return false
+    on execute do messageBox "UCX лестниц (ucx.stairs): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsLightExport category:"AGR Tools" buttonText:"FBX освещения _Light" tooltip:"в работе, #1024 Треб.: VPM-2.1-2.b, VPM-2.11-0.f, VPM-2.11-0.g, VPM-2.10-4.1.c, VPM-2.10-4.5" iconName:"AgrIcons/agr_lightfbx"
+(
+    on isEnabled return false
+    on execute do messageBox "FBX освещения _Light (light.export): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsQaOmkTe category:"AGR Tools" buttonText:"Код ОМК ТЭ" tooltip:"в работе, #1024 Треб.: NPM-2.10-3.1" iconName:"AgrIcons/agr_omk"
+(
+    on isEnabled return false
+    on execute do messageBox "Код ОМК ТЭ (qa.omk_te): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsExportPlaceByPassport category:"AGR Tools" buttonText:"Поставить по паспорту" tooltip:"в работе, #1024 Треб.: -" iconName:"AgrIcons/agr_passport"
+(
+    on isEnabled return false
+    on execute do messageBox "Поставить по паспорту (export.place_by_passport): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsAgentRequest category:"AGR Tools" buttonText:"Запрос агенту" tooltip:"в работе, #1024 Треб.: -" iconName:"AgrIcons/agr_agentreq"
+(
+    on isEnabled return false
+    on execute do messageBox "Запрос агенту (agent.request): в работе, #1024" title:"AGR Tools"
+)
+macroScript AGRToolsAgentAccept category:"AGR Tools" buttonText:"Приём от агента" tooltip:"в работе, #1024 Треб.: -" iconName:"AgrIcons/agr_agentok"
+(
+    on isEnabled return false
+    on execute do messageBox "Приём от агента (agent.accept): в работе, #1024" title:"AGR Tools"
+)
 macroScript AGRToolsClassic category:"AGR Tools" tooltip:"AGR Tools (classic rollout)" buttonText:"AGR Tools (classic)"
 (
     on execute do (
