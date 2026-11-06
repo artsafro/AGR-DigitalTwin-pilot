@@ -16,13 +16,23 @@ def _rt():
     return runtime
 
 
+def _selected(vals, count):
+    """Selected face numbers (1-based) from the items of a pymxs BitArray: native job 20261106-043605 showed that
+    iterating it yields one 0/1 value per element (an empty selection must stay empty), older builds yield the
+    1-based indices of the set bits; both shapes are read."""
+    if len(vals) == count and all(v in (0, 1, True, False) for v in vals):
+        return {i + 1 for i, v in enumerate(vals) if v}
+    return {int(v) for v in vals}
+
+
 def _faces(ctx, node):
     """[{face, matid, verts}] of the selected faces (all faces when none are selected) in metres (units.SystemScale)."""
     rt = _rt()
     k = ctx.host.m_per_unit()
-    sel = set(int(i) for i in rt.polyop.getFaceSelection(node))
+    count = int(rt.polyop.getNumFaces(node))
+    sel = _selected(list(rt.polyop.getFaceSelection(node)), count)
     out = []
-    for f in range(1, int(rt.polyop.getNumFaces(node)) + 1):
+    for f in range(1, count + 1):
         if sel and f not in sel:
             continue
         pts = [rt.polyop.getVert(node, int(v)) for v in rt.polyop.getFaceVerts(node, f)]

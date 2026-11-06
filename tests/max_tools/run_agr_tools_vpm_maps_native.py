@@ -201,7 +201,7 @@ def enumerator():
     for i, nm in ((1, 'T_E_Diffuse_1.1001.png'), (2, 'T_E_Diffuse_1.1002.png')):
         m = rt.Standardmaterial()
         m.name = 'M_NEnum_%d' % i
-        multi[i] = m
+        rt.setSubMtl(multi, i, m)
         p = str(DATA / 'enum' / nm).replace('\\', '/')
         (DATA / 'enum').mkdir(parents=True, exist_ok=True)
         (DATA / 'enum' / nm).write_bytes(nbuild.png('rgba_island'))

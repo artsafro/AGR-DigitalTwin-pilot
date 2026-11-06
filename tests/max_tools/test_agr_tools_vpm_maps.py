@@ -456,3 +456,10 @@ def test_station_fragment_has_pass_and_fail_per_button_agr():
     assert [s['button'] for s in frag['stations']] == ['tex.dilate', 'udim.plugs']
     for st in frag['stations']:
         assert {e['expect'] for e in st['expected']} == {'pass', 'fail'}
+
+
+def test_bitarray_items_shapes_agr():
+    um = _load(PKG / 'udimplug_max.py', 'agr_tools_udimplug_max_t')
+    assert um._selected([0, 0, 0, 0, 0, 0], 6) == set()                   # per-element 0/1: empty stays empty
+    assert um._selected([False, True, False, True, False, False], 6) == {2, 4}
+    assert um._selected([2, 4], 6) == {2, 4}                              # indices of the set bits
