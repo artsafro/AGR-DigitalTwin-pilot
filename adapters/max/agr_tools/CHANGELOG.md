@@ -178,8 +178,11 @@
   буквы выключены (Q05); фиксированный атлас 2048 и ручные полосы пилота заменены упаковкой по содержимому;
   `stack` (по умолчанию `true`, D156: все куски ID в одну полосу, `tex.check` НПМ видит перекрытие) / `false` (каждая
   плоская область своей ячейкой, `tex.check` проходит); свёртка устойчива к float32 вершин (м = см).
-- Регрессии RED→GREEN в `tests/max_tools/test_agr_tools_npm.py`; нативный прогон `run_agr_tools_npm_native.py`;
-  станции `test-polygon/stations/P.json` (+ `P_build.py`): PASS и FAIL на кнопку.
+- Регрессии RED→GREEN в `tests/max_tools/test_agr_tools_npm.py` (29 тестов); нативный прогон
+  `run_agr_tools_npm_native.py`, джоб `20261106-063500-05f91461` (Max 2024): м и см — тексель 39,0 px/м на всех
+  текстурных ID, таблица возвращает UV ВПМ до 2·10⁻⁷, пиксели атласа против UV ≤ 0,43 px, `tex.check` и
+  `atlas.sets_count` на НПМ — pass, одна отмена снимает прогон, повтор — новая папка; полосы м = см.
+- Станции `test-polygon/stations/P.json` (+ `P_build.py`): PASS и FAIL на кнопку.
 
 ### Q
 
