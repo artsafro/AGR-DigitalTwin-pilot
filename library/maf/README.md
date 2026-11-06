@@ -177,3 +177,20 @@ uv run python tools/library/maf_audit.py compare \
   --old library/maf/audit.json --new <OUT>/audit.json \
   --out <OUT>/audit_diff.json
 ```
+
+## Generated MAF entries (#1046)
+
+`catalogue.json` keys `generated` (one entry per distinct generated model, ids `MAF_GEN_NNNN`) and
+`generated_dropped` (every other build row with its reason), and the marked section at the end of `catalogue.md`,
+come from `tools/library/maf_gen_catalogue.py`, not from the scene scan. Only rows Artem accepted go in
+(`--approve`, `--decision`); every material must be a key of `library/materials/materials_v001.json`. The scan
+tools above do not carry these keys: after rebuilding `catalogue.json` from the scene, rerun
+
+```
+uv run python tools/library/maf_gen_catalogue.py --build-dir C:/x/vatutino-maf/gen-v001/rows-v006p-3 \
+  --approve 2-10 --decision D202 --materials library/materials/materials_v001.json \
+  --catalogue library/maf/catalogue.json --catalogue-md library/maf/catalogue.md \
+  --out-json <OUT>/catalogue.json --out-md <OUT>/catalogue.md
+```
+
+and copy both outputs back (outputs may not alias an input). Current: «Верона» rows 2-10 [D202], row 1 not approved.
