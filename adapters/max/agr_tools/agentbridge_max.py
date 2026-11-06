@@ -143,6 +143,9 @@ def agent_request(ctx, mode, nodes, preview):
     if mode == 'preview' and os.path.exists(folder):
         raise FileExistsError('refusing to overwrite: ' + folder)
     refs = host.refs(nodes)
+    names = {}
+    for n in rt.objects:
+        names[str(n.name)] = names.get(str(n.name), 0) + 1
     objects, entries = [], []
     for n, ref in zip(nodes, refs):
         findings = []
@@ -151,7 +154,7 @@ def agent_request(ctx, mode, nodes, preview):
         except ValueError as exc:
             role = None
             findings.append(edit.finding('role_unknown', (), str(exc)))
-        for code, detail in core.target_findings(str(n.layer.name)):
+        for code, detail in core.target_findings(str(n.layer.name), names.get(str(n.name), 1)):
             findings.append(edit.finding(code, (), detail))
         objects.append({'ref': ref, 'role': role, 'layer': str(n.layer.name)})
         entries.append(edit.entry(ref['handle'], ref['name'], findings))

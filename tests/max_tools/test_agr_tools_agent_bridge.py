@@ -554,6 +554,7 @@ def test_request_target_in_agent_layer_is_a_finding():
     assert core.target_findings("AGENT_r001")[0][0] == "in_agent_layer"
     assert core.target_findings("AGENT_r001_REJECTED")[0][0] == "in_agent_layer"
     assert core.target_findings("BODY_main") == [] and core.target_findings("0") == []
+    assert [c for c, _d in core.target_findings("0", 2)] == ["duplicate_name"]
 
 
 def test_request_md_and_command():

@@ -132,12 +132,16 @@ def options(opts):
     return out
 
 
-def target_findings(layer):
-    """[(code, detail)] of one request target by its layer: an object still in an AGENT_* layer (or its _REJECTED /
-    _SOURCE side layer) is unaccepted agent work - accept or reject it first, never feed it to a new request."""
+def target_findings(layer, same_name=1):
+    """[(code, detail)] of one request target: an object still in an AGENT_* layer (or its _REJECTED / _SOURCE side
+    layer) is unaccepted agent work - accept or reject it first; a name that `same_name` > 1 objects share makes the
+    ObjRef name hint and the match by name at accept / handoff ambiguous."""
+    out = []
     if str(layer).startswith('AGENT_'):
-        return [('in_agent_layer', 'layer {}: accept or reject that agent work first'.format(layer))]
-    return []
+        out.append(('in_agent_layer', 'layer {}: accept or reject that agent work first'.format(layer)))
+    if same_name > 1:
+        out.append(('duplicate_name', '{} objects share this name; rename them first'.format(same_name)))
+    return out
 
 
 def build_request(opt, request_id, project_id, objects, markers, snapshot_name, snapshot_sha, passport_excerpt,

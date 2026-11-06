@@ -4,10 +4,10 @@
    {"name": "SM_FragU_ReqOk_Main", "role": "Main", "scene": "frag_u_agent", "builder": "U_build",
     "extra": {"size": [4.0, 3.0, 6.0], "at": [0.0, 0.0, 0.0]}},
    {"name": "SM_FragU_ReqBad_Main", "role": "Main", "scene": "frag_u_agent", "builder": "U_build",
-    "own_layer": "AGENT_old", "extra": {"size": [2.0, 2.0, 2.0], "at": [8.0, 0.0, 0.0]}}],
+    "extra": {"size": [2.0, 2.0, 2.0], "at": [8.0, 0.0, 0.0], "twin": true}}],
   "expected": [
    {"name": "SM_FragU_ReqOk_Main", "scene": "frag_u_agent", "expect": "pass", "codes": []},
-   {"name": "SM_FragU_ReqBad_Main", "scene": "frag_u_agent", "expect": "fail", "codes": ["in_agent_layer"]}],
+   {"name": "SM_FragU_ReqBad_Main", "scene": "frag_u_agent", "expect": "fail", "codes": ["duplicate_name"]}],
   "options": {"task": "polygon 1.0.32: mark the openings of SM_FragU_ReqOk_Main",
               "job_dir": "C:/agr-polygon/jobs/FRAGU", "request_id": "poly-u", "project_id": "FRAGU"},
   "reason": ""},

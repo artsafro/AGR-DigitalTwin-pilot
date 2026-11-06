@@ -19,7 +19,7 @@
    "scene": "frag_u_agent",
    "expect": "fail",
    "codes": [
-    "in_agent_layer"
+    "duplicate_name"
    ]
   }
  ],
