@@ -42,6 +42,30 @@ def test_same_part_rim_embedded_at_least_embed_min_has_no_findings():
     assert result.passed and result.count == 0 and result.offenders == ()
 
 
+@pytest.mark.parametrize(("depth", "expected"), [(0.01, 0), (0.0099, 4)])
+def test_same_part_embed_exactly_at_threshold(depth, expected):
+    """Rim exactly embed_min (10 mm) inside the other shell is hidden; 9.9 mm names all 4 rim edges."""
+    wall, decor = _embedded_pair(depth)
+    result = open_borders_hidden({"joined": one_part(wall, decor)}, "joined", Context(embed_min_m=0.01))
+    assert result.count == expected
+    assert result.passed is (expected == 0)
+
+
+def _unwelded(mesh: Mesh) -> Mesh:
+    """Every triangle gets its own vertex copies: a seam-split shell, still one shell by position."""
+    tris = np.asarray(mesh.triangles, int)
+    verts = np.asarray(mesh.vertices, float)[tris.reshape(-1)]
+    return Mesh(verts, np.arange(len(verts)).reshape(-1, 3))
+
+
+def test_same_part_seam_split_hider_still_hides():
+    wall, decor = _embedded_pair(0.015)
+    result = open_borders_hidden(
+        {"joined": one_part(_unwelded(wall), decor)}, "joined", Context(embed_min_m=EMBED_MIN_M)
+    )
+    assert result.passed and result.count == 0
+
+
 def test_two_parts_with_the_same_embed_have_no_findings():
     wall, decor = _embedded_pair(0.015)
     result = open_borders_hidden({"wall": wall, "decor": decor}, "decor", Context(embed_min_m=EMBED_MIN_M))
