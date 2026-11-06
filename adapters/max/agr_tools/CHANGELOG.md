@@ -1,26 +1,25 @@
-# AGR Tools changelog
+## 1.0.0 (#1024)
 
-## 1.0.0 (#1024) — в работе
+Конвейер ОКС: паспорт проекта, этапы 0–9, кнопки плана 1.0 (31 из 33 выпущены, этап 8 «НПМ → ВПМ» — в 1.1.0), агентский мост.
+Ветка 0 дала основу, ветки F…U наполнили кнопки, ветка R собрала релиз. Подразделы ниже — по этапам; у каждого блока указаны ветка и PR.
 
-Конвейер ОКС: паспорт проекта, этапы 0–9, 33 кнопки плана 1.0, агентский мост. Ветка 0 даёт основу, ветки F…U
-наполняют кнопки. Каждая ветка пишет только в свой подзаголовок. Пока кнопки 1.0 отвечают `not_implemented`.
+### Основа и регистрация
 
-### 0 — основа
+**Ветка 0**
 
 - План: сущность `stages`, поля строк `stage` / `fate`, 15 новых строк, 1.0 → `in work`; валидатор в `roadmap.py`.
 - `contract_core.py` (роли `agr_role`, метки `OPEN_<nnn>`, `LEVEL_<name>`), `ObjRef` и интерфейс `HostAdapter`.
 - Хук журнала: каждый вызов диспетчера и MCP добавляет строку через `journal_core.append`.
 - `runtime.EDITS_100`: диспетчер с 33 строками-заглушками.
 - Схемы `ProjectPassport` и `AgentRequest`.
-- UI: рельса этапов и 33 кнопки `wip` («в работе, #1024»).
+- UI: рельса этапов и 33 кнопки плана 1.0 (до наполнения ветками — серые `wip`).
 - MCP: каталог v2 строится из плана.
 - Полигон: база 1.0.
 - `AGENTS.md` и `library/README.md`.
-- `VERSION` остаётся 0.9.0.
 
-### F
+### Этап 0 Паспорт
 
-Ветка `improve/issue-1024-passport`, контракт К1.
+**Ветка F (#1070), `improve/issue-1024-passport`, контракт К1**
 
 - `project.passport` (1.0.1, режим file): `passport_core.py` — паспорт `jobs/<ID>/passport.json` + `PASSPORT.md`; схема `schemas/ProjectPassport.schema.json` = `passport_core.SCHEMA` (пакет не везёт `schemas/`, тест держит их равными; добавлены поля `created`/`updated`/`scene`, `source.parts`/`largest_share`/`route`, `journal.lines`). Валидатор на stdlib: битый паспорт → `PassportError`.
 - Роли читаются из сцены обратно (`agr_role`, иначе слой `<ROLE>_*`); находки `role_missing` / `role_unknown` / `role_conflict`.
@@ -37,7 +36,9 @@
 - Регрессы RED→GREEN: TOW02 (панели в движок оболочки), порог D066 → `ambiguous`, T08 подстроки (Studio, Minute, Шпиль, М120, Стеклопакет), повторный счёт `optimize`, член группы.
 - Полигон: `test-polygon/stations/F.json` + `F_build.py`, станции 1.0.1 / 1.0.2 / 1.0.3 / 1.0.8 с PASS и FAIL; тесты `tests/max_tools/test_agr_tools_passport.py`, нативный `run_agr_tools_passport_native.py`.
 
-### Ветка G — бадик (body.prepare, model.attach_by_material, model.move_apart)
+### Этап 1 Бадик
+
+**Ветка G (#1072): body.prepare, model.attach_by_material, model.move_apart**
 
 - `body.prepare` (станция 1.0.4, undo):
   - роли `agr_role` по К1: геометрия → body, хелперы → helper; допустимая роль сохраняется, неизвестная — находка `role_unknown`;
@@ -61,17 +62,15 @@
 - Полигон: фрагмент `test-polygon/stations/G.json` + `G_build.py`, по PASS и FAIL на кнопку; крошечный PR #1059 (тест фрагментов 0.9 пускает ветки F–U).
 - Тесты: `tests/max_tools/test_agr_tools_body.py` (регресс RED на модели источника → GREEN), нативный `tests/max_tools/run_agr_tools_body_native.py`.
 
-### H
+**Ветка H (#1074): model.grid_cleanup**
 
 - `model.grid_cleanup` «Чистка сетки фасада» (станция 1.0.7, копии): `gridclean_core.py` (stdlib) + `gridclean_max.py`. Режимы `tjunctions` (`t_mode: cut` — T-вершина вставляется в ребро, все T на ребре; `weld` — сварка только внутри выделения вершин, без выделения — skipped), `detriangulate` (взаимно-длиннейшее ребро, только внутри одного MatID, SG и UV-острова, выпуклый квад), `loops` (петля растворяется только если все грани остаются выпуклыми квадами, без шва UV/MatID/SG; затем 2-рёберные вершины на прямой). Углы проёмов защищены, пороги в метрах (`units.SystemScale`), объект без канала 1 → skipped. Превью ничего не меняет; apply — одна копия на `AGR_export`, одна запись Undo, копия пересобирается из данных ядра (вершины, MatID, SG, канал 1) и читается обратно. Без MAXScript-глобалов и скрытых копий.
 - Исправлено относительно источников (RED → GREEN в `tests/max_tools/test_agr_tools_grid_glass.py`): BLC сливал острова UV; Detriangulator ставил SG 0 и падал без канала 1; GeoAGR Detriangulate молча ничего не делал без глобала `poly` (T08-05/06); VES резал одну T-вершину на ребро; Edges Weld варил весь объект (T08-04), Corners Weld без выделения — всё на 1 мм (T08-16); Target Weld бил сдвинутый индекс (T08-07); пороги в единицах сцены вместо метров; LC3 оставлял скрытые копии.
-- `model.glass_planes` «Стекло плоскостями» (станция 1.0.11, копии): `glass_core.py` + `glass_max.py`, порт своего `jobs/vyatskaya-tow02/scripts/clean_glass_blender.py`. Плоское окно → 1 квад, излом → квад на сегмент, угол 90° → два квада с общим ребром (щепка и «торчащая» плоскость сшиваются по пересечению), рама и боковины отбрасываются, пакет и дубль-плёнка сводятся в одну плоскость. Положение стекла: `place: keep` — середина пакета (у F100 это 80,4 мм от лица рамы), `place: frame` — `from_frame_m` 0,08 от лица рамы (ответ Артёма 06.11). Копия получает `agr_role = glass` (отдельный меш, свой UDIM с 1001); MatID и UV углов сохраняются; не-квад → ambiguous с именем узла.
-- Полигон: `stations/H.json`, `H_build.py`, `expected/model.grid_cleanup.json`, `expected/model.glass_planes.json` (PASS и FAIL на кнопку). Нативный прогон: `tests/max_tools/run_agr_tools_grid_glass_native.py`.
-- Найдено в Max 2024 (джобы `20261106-044607`…`20261106-051236-18fb70ad`): `Editable_Poly` не создаётся конструктором — копия пересобирается через `setMesh` + видимость рёбер + `convertTo Editable_Poly`; Max раздваивает вершины на концах T-щели — ядро склеивает точные дубли границы (≤ 1 мкм) до прохода (регресс на прочитанном из Max меше).
 
-### J
+### Этап 2 Окна
 
-- `windows`: `win.generate`, `win.place` — ядро и тесты; нативный прогон в PR.
+**Ветка J (#1071): win.generate, win.place**
+
 - `openings_core.find_openings` — одно распознавание проёмов по бордерам меша (метры). Внешние контуры отсеиваются (внутренность бордера покрыта мешем). Классы: rect, nonrect (арка), corner (Г-проём, две ветви по плоскостям стен), nonplanar. Нормаль кадра к улице берётся по откосу. Читают J, K (капсулы) и Q.
 - `library/windows/standard.json` — стандарт по семействам (ответы Артёма 06.11): F100 окна 57×100, импост 50×100; F73 двери; F58 отдельно; стекло 80 мм от лица рамы. Ось лица хранится для каждого типа (отчёт `quality.json`).
 - `windowgen_core` + `win.generate` (режим file, только новая папка): меш типа по стандарту — рама по полям `panes_m`/`opaque_m`, импосты, стекло плейном отдельной частью. Критерии качества K2 дают pass / quarantine / duplicate. WT-07 и WT-10 не сливаются; WT-02 в карантине («стандартный профиль неприменим», L10). Лист превью «было → стало» в PNG и OBJ типов. По 67 типам: 61 pass, 6 quarantine, 0 duplicate.
@@ -81,18 +80,26 @@
 - Полигон: `test-polygon/stations/J.json` + `J_build.py` (станции 1.0.9 и 1.0.10, PASS и FAIL).
 - Тесты: `tests/max_tools/test_agr_tools_windows.py` (дефекты L10: RED на модели источника, GREEN после правки); нативный `run_agr_tools_windows_native.py`.
 
-### K
+**Ветка H (#1074): model.glass_planes**
 
-- `capsules-roof`: `body.capsules`, `body.roof` — в работе (ветка `improve/issue-1024-capsules-roof`).
+- `model.glass_planes` «Стекло плоскостями» (станция 1.0.11, копии): `glass_core.py` + `glass_max.py`, порт своего `jobs/vyatskaya-tow02/scripts/clean_glass_blender.py`. Плоское окно → 1 квад, излом → квад на сегмент, угол 90° → два квада с общим ребром (щепка и «торчащая» плоскость сшиваются по пересечению), рама и боковины отбрасываются, пакет и дубль-плёнка сводятся в одну плоскость. Положение стекла: `place: keep` — середина пакета (у F100 это 80,4 мм от лица рамы), `place: frame` — `from_frame_m` 0,08 от лица рамы (ответ Артёма 06.11). Копия получает `agr_role = glass` (отдельный меш, свой UDIM с 1001); MatID и UV углов сохраняются; не-квад → ambiguous с именем узла.
+- Полигон: `stations/H.json`, `H_build.py`, `expected/model.grid_cleanup.json`, `expected/model.glass_planes.json` (PASS и FAIL на кнопку). Нативный прогон: `tests/max_tools/run_agr_tools_grid_glass_native.py`.
+- Найдено в Max 2024 (джобы `20261106-044607`…`20261106-051236-18fb70ad`): `Editable_Poly` не создаётся конструктором — копия пересобирается через `setMesh` + видимость рёбер + `convertTo Editable_Poly`; Max раздваивает вершины на концах T-щели — ядро склеивает точные дубли границы (≤ 1 мкм) до прохода (регресс на прочитанном из Max меше).
+
+### Этапы 3–4 Капсулы и крыша
+
+**Ветка K (#1069): body.capsules, body.roof**
+
 - `body.capsules` (1.0.12): своя экструзия в `capsule_core.py` вместо цепочки Max (лаборатория L10, `docs/experiments/body.capsules.md`): плоскость бордера по Ньюэллу, митровый outline 100 мм наружу в плоскости проёма, призма до 1,0 м интерьера за плоскостью бордера, открытая кромка на середине рамы (+50 мм к улице, половина глубины рамы F100, параметр `rim`), грани внутрь. Угловой проём — одна Г-капсула (две ветви, каждая параллельна своей стене, углы 90°).
 - `body.capsules`: отказы `ambiguous` с кодом вместо пустого объекта: `border_nonplanar` (> 5 мм), `border_not_in_wall`, `offset_invalid`, `reveal_too_shallow`, `corner_concave`, `corner_unsupported`, `capsules_overlap`, `frame_missing`.
 - `body.capsules`: новые объекты Editable_Poly, роль `capsule`, слой `CAPSULE_interior`, материал-заглушка `LIB_Interior_Stub`; один Undo, выделение восстанавливается; бадик не меняется. Проёмы — только из `openings_core.find_openings` (ветка J).
 - `body.roof` (1.0.13): `roof_core.py` — контур A = открытая нижняя петля внутренних граней парапета (грани смотрят в отверстие), плоскость по петле, подъём по нормали 5 мм (ответ Артёма 06.11), заход 20 мм митрой. Уклон > 10° → `roof_steep` + `plan.agent_requests` (К4, ветка U); проверки `roof_gap`, `roof_outside_parapet`, `roof_nonplanar`, `no_roof_loop`. Плита — один полигон, нормаль вверх, роль `roof`, слой `ROOF_slabs`.
 - Тесты: `tests/max_tools/test_agr_tools_capsules_roof.py` (регрессы RED на модели цепочки Max → GREEN), нативный `run_agr_tools_capsules_roof_native.py`; станции полигона `test-polygon/stations/K.json` + `K_build.py`.
 
-### L
+### Этап 5 Материалы
 
-- `materials`: `mat.table`, `mat.tiles`, `tex.plug_colour` — в работе.
+**Ветка L (#1076): mat.table, mat.tiles, tex.plug_colour**
+
 - `mat.table` (1.0.14, undo): проверяет библиотечные ID на мидполе (`id_not_in_library`, `udim_id_on_geometry` для ID ≥ 1001,
   `glass_not_on_glass` / `non_glass_on_glass`), строит один Multi/Sub `AGR_Library_v001` из Physical-материалов библиотеки
   (заменяет `tex.multimat`), пишет user props `agr_udim_table` / `agr_library`; таблица проекта (строки `materials[]` схемы
@@ -113,7 +120,9 @@
 - Полигон: `test-polygon/stations/L.json` + `L_build.py`, PASS+FAIL на каждую кнопку; тесты
   `tests/max_tools/test_agr_tools_materials.py`, нативный `run_agr_tools_materials_native.py`.
 
-### M — укладка ВПМ: vpm.build, udim.rescale, udim.distortion
+### Этап 6 ВПМ
+
+**Ветка M (#1075): vpm.build, udim.rescale, udim.distortion**
 
 - `vpm.build` (copy + file): К6 — UV панелей и кирпича проекцией от общего нуля сетки (локальные координаты и пивот
   в double, метры через `units.SystemScale`); развёртка по периметру (цепочка стен, единственный шов замыкания —
@@ -137,7 +146,7 @@
   19 756 граней (preview 5,1 с, apply 9,2 с).
 - Станции полигона `test-polygon/stations/M.json` (+ `M_build.py`): по PASS и FAIL на кнопку.
 
-### N
+**Ветка N (#1061): tex.dilate, udim.plugs, карты ВПМ**
 
 - `vpm-maps`: `tex.dilate` (1.0.20), `udim.plugs` (1.0.21), шаг карт D+ERM+N для `vpm.build` и перечислитель битмапов.
 - `tex.dilate` (`dilate_core.py`, режим `file`): паддинг карт в НОВУЮ папку по маске альфы, фона или покрытию UV; радиус в пикселях
@@ -151,7 +160,9 @@
 - `tex_core.material_bitmaps` / `tex_max.scene_bitmaps`: перечислитель битмапов по дереву материала с Multi/Sub ID, слотом и UDIM.
 - Полигон: станции 1.0.20 и 1.0.21 (PASS + FAIL на кнопку), тесты `test_agr_tools_vpm_maps.py` (9 дефектов RED→GREEN).
 
-### P — ВПМ → НПМ: npm.build, atlas.facade_strip
+### Этап 7 НПМ
+
+**Ветка P (#1083): npm.build, atlas.facade_strip**
 
 - `npm.build` (1.0.22, copy + file) по лаборатории L11 (вердикт `new`): атлас из диффузов ВПМ (тело и стекло
   `vpm.build`), группа библиотечного ID переносится жёстко (один масштаб, один сдвиг, дробное начало сохраняется —
@@ -184,13 +195,13 @@
   `atlas.sets_count` на НПМ — pass, одна отмена снимает прогон, повтор — новая папка; полосы м = см.
 - Станции `test-polygon/stations/P.json` (+ `P_build.py`): PASS и FAIL на кнопку.
 
-### Q
+### Этап 8 НПМ → ВПМ
 
-- `npm-to-vpm`: `npm.to_vpm`, `udim.udims_to_ids` — в работе.
+- Ветка Q (`npm.to_vpm`, `udim.udims_to_ids`, шаг `atlas.unatlas`) не слита в 1.0.0: кнопки остаются серыми `wip`, выход — 1.1.0. Строки плана несут `"deferred": "1.1"`.
 
-### S
+### Этап 9 Сдача
 
-Этап 9 «Сдача» (`improve/issue-1024-deliver`): `ucx.gap`, `light.export`, `pack.deliver`.
+**Ветка S (#1073): ucx.gap, light.export, pack.deliver**
 
 - `ucx.gap` (1.0.27, copy): зазор между соседними UCX в метрах, 2–10 мм, по умолчанию 4 мм; разделение по SAT
   (`ucx10_core.py`, `ucx10_max.py`), касание и перекрытие находятся; зазор только увеличивается, никогда не уменьшается;
@@ -208,14 +219,15 @@
   нативный прогон `tests/max_tools/run_agr_tools_deliver_native.py`, станции `test-polygon/stations/S.json` (+ `S_build.py`).
   Нативные прогоны и номера джобов: джобы: см. PR.
 
-### T
+**Ветка T (#1067): ucx.stairs, qa.omk_te, export.place_by_passport (станции 1.0.28, 1.0.30, 1.0.31)**
 
-- `deliver-small`: `ucx.stairs`, `qa.omk_te`, `export.place_by_passport` (станции 1.0.28, 1.0.30, 1.0.31).
   - `ucx.stairs` (чтение): одна выпуклая усечённая пирамида вместо UCX «ступенька за ступенькой»; допуск носков 10/30/100 см (по умолчанию 30); коды `ucx_missing`, `ucx_not_single`, `ucx_not_convex`, `ucx_not_closed`, `stairs_outside`, `ucx_too_high`.
   - `qa.omk_te` (чтение): таблица — параметр `table`, своей таблицы и копии CSV GeoAGR в пакете нет. Код берётся из отфильтрованной строки по её ключу, а не по индексу полной таблицы (дефект `GeoAGR.ms:66134`); `905` → `0905`; несколько кодов в ячейке — `ambiguous`; понятные ошибки по-русски.
   - `export.place_by_passport` (undo): паспорт читается как данные (строгий JSON и схема), без `execute` и без `Dummy`; FBX проверяется до импорта; один Undo; при ошибке импортированные узлы удаляются; ошибка одинарной точности Max для больших МСК-координат (> 1 мм) — в отчёте, без `accept_precision_loss` apply не идёт.
 
-### U
+### Агент
+
+**Ветка U (#1068): agent.request, agent.accept, мост agr-mcp; лот L12b (#1084)**
 
 - `agent.request` (1.0.32): новая папка `jobs/<ID>/agent/<req>/` — `request.json` по `AgentRequest`, `REQUEST.md`,
   команда CLI (Claude Code по умолчанию, Codex, Cursor), `baseline.json` (хеши сцены), FBX-снимок с sha256;
@@ -233,6 +245,45 @@
   в `dev`).
 - Claude-док в Max (`agent.dock`, регистрация кнопки — ветка 0 или R): `claude` CLI в stream-json, только
   инструменты `mcp__agr__*`, карточка «Применить», `--resume` после перезапуска Max.
+
+- Лот L12b (#1084): живой Max (2026, изолированный) подтвердил мост и шлюз `agent.accept`.
+
+### Релиз
+
+**Ветка R**
+
+- `VERSION 1.0.0` (`runtime.py`, `ui_model.py`, `install.ms` → `AGRTools-1.0.0`, `startup.ms`, заголовки macroScript/меню), MCP `RUNTIME_100 = "1.0.0"`.
+- 31 кнопка из 33 выпущена; `wip` остаётся только у ветки Q (`npm.to_vpm`, `udim.udims_to_ids`, `WIP_100` в `ui_model.py`).
+- План: версия 1.0 → `done`, у строк этапа 8 поле `deferred: "1.1"`; `roadmap` проверяет `deferred`.
+- Шаги (step) в плане показываются как «в кнопке <большая кнопка>».
+- Полигон: `catalog.json` / `bases.json` перегенерированы из фрагментов веток.
+- MZP 1.0.0: SHA256 — TODO(R)
+- Полигон Max 2024: TODO(R)
+
+### Известные ограничения
+
+- Q → 1.1.0: этап 8 «НПМ → ВПМ» не выпускается (`npm.to_vpm`, `udim.udims_to_ids`, шаг `atlas.unatlas`); правило обратного пересчёта `vpm_uv = (atlas_uv − shift) / scale` в таблице P лежит, потребителя нет. Файловый `agent.request` выпущен с веткой U.
+- F: уровень A/B/C не определён в #1024 — реализован параметром `LEVEL_RULE` (A оболочка, B панели, C неоднозначно); ждёт решения владельца.
+- F: источники zavod — только идея со ссылкой на SHA256, не скопированы.
+- G: приёмка #1024 называет `LEVEL_1`, но `mesh.py:27` требует букву после `LEVEL_`; по умолчанию `LEVEL_L1`, `LEVEL_L2`, `LEVEL_roof` (параметр `level_names`); ждёт подтверждения владельца.
+- G: `model.move_apart` пропускает объекты с модификаторами и примитивы (стек не схлопывается).
+- H: `model.glass_planes` — не-квад даёт `ambiguous` с именем узла; `model.grid_cleanup` без канала 1 — `skipped`; `weld` без выделения вершин — `skipped`.
+- J: `win.generate` — WT-02 в карантине (стандартный профиль неприменим, L10), 6 типов из 67 в карантине; арка, угловой и нестандартный проём в `win.place` дают `ambiguous`.
+- J: лист превью PNG в git не лежит (LFS, бюджет исчерпан); лист по 67 типам — в папке нативного джоба.
+- K: `body.capsules` — отказы `ambiguous` с кодом (`border_nonplanar`, `corner_concave`, `corner_unsupported`, `capsules_overlap` и др.) вместо капсулы; материал капсулы — заглушка `LIB_Interior_Stub`.
+- K: `body.roof` — уклон > 10° → `roof_steep` и запрос агенту, кровля не строится сама.
+- L: px/м плиток = 1024 параметром, вопрос аудита материалов Q1 открыт.
+- M: `texel_px_per_m` — параметр, вопрос «1000 или 1024» открыт; рёбра замыкания контура и трёхгранные углы откосов дают шов в отчёте (норма 0 только на внутренних и цепочечных рёбрах).
+- M: карты D+ERM+N шага 6 `vpm.build` пишутся только при заданном `library_path`; шаги 7–8 (`tex.dilate`, `udim.plugs`) — отдельные кнопки N, не часть прогона `vpm.build`.
+- M: время `vpm.build` на KPP1 не замерено (замер на KPP1 — TODO(R) ниже); нативный прогон — 19 756 граней (preview 5,1 с, apply 9,2 с).
+- P: раскладка `layout` (`islands` по умолчанию / `stack`) — вопрос владельцу, параметр; `stack` даёт `tex_padding` в `tex.check`; не влезло — отказ `atlas_overflow`, тексель не снижается; нет карты — `map_missing`.
+- S: `pack.deliver` — split и KPP1 не проверены на сквозном прогоне; запись паспорта `jobs/<ID>` за веткой F; номера нативных джобов — см. PR.
+- T: `export.place_by_passport` — без `accept_precision_loss` apply не идёт при ошибке одинарной точности Max (> 1 мм на больших МСК-координатах); `qa.omk_te` — своей таблицы нет, параметр `table`.
+- U: живой Max подтверждён лотом L12b (#1084, Max 2026, изолированный); на остальных версиях Max не прогонялось.
+- U: кнопка `agent.dock` (Claude-док) не зарегистрирована в панели; функция `agentbridge_max.agent_dock` есть.
+- U: операции `place_window`, `make_capsule`, `make_roof_plane` агента зависят от веток J и K; `agr_exec_unsafe` только в профиле `dev`.
+- Вопросы владельца в #1024 реализованы значениями по умолчанию / параметрами: имена уровней (`LEVEL_L1`, `LEVEL_L2`, `LEVEL_roof`), правило уровня A/B/C (`LEVEL_RULE`), допуск ±1 мм на больших координатах.
+- KPP1 сквозняком: TODO(R)
 
 ## 0.9.0 (#979)
 

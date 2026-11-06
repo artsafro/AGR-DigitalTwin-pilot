@@ -818,7 +818,7 @@ _CLASSIC = '''macroScript AGRToolsClassic category:"AGR Tools" tooltip:"AGR Tool
 '''
 
 
-MENU_100 = 'Конвейер 1.0 — в работе (#1024)'
+MENU_100 = 'Конвейер 1.0 (#1024)'  # released in 1.0.0 (R); was «— в работе»
 
 
 def macro_100(a):

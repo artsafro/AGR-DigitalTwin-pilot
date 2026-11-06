@@ -14,32 +14,32 @@
 <rect x="20" y="20" width="8" height="92" rx="3" fill="#615656"/>
 <text x="38" y="46" font-size="15" font-weight="bold" fill="#615656">0 Сцена</text>
 <text x="38" y="68" font-size="12" fill="#333333">Сцена и источник</text>
-<text x="38" y="90" font-size="12" fill="#333333">кнопок: 4 из 6</text>
+<text x="38" y="90" font-size="12" fill="#333333">кнопок: 6 из 6</text>
 <rect x="264" y="20" width="210" height="92" rx="8" fill="#ffffff" stroke="#255893" stroke-width="2.5"/>
 <rect x="264" y="20" width="8" height="92" rx="3" fill="#255893"/>
 <text x="282" y="46" font-size="15" font-weight="bold" fill="#255893">1 Модель</text>
 <text x="282" y="68" font-size="12" fill="#333333">Моделирование</text>
-<text x="282" y="90" font-size="12" fill="#333333">кнопок: 2 из 12</text>
+<text x="282" y="90" font-size="12" fill="#333333">кнопок: 7 из 12</text>
 <rect x="508" y="20" width="210" height="92" rx="8" fill="#ffffff" stroke="#672593" stroke-width="2.5"/>
 <rect x="508" y="20" width="8" height="92" rx="3" fill="#672593"/>
 <text x="526" y="46" font-size="15" font-weight="bold" fill="#672593">2 Текстуры</text>
 <text x="526" y="68" font-size="12" fill="#333333">Текстуры и материалы</text>
-<text x="526" y="90" font-size="12" fill="#333333">кнопок: 6 из 11</text>
+<text x="526" y="90" font-size="12" fill="#333333">кнопок: 9 из 11</text>
 <rect x="752" y="20" width="210" height="92" rx="8" fill="#ffffff" stroke="#259372" stroke-width="2.5"/>
 <rect x="752" y="20" width="8" height="92" rx="3" fill="#259372"/>
 <text x="770" y="46" font-size="15" font-weight="bold" fill="#259372">3 UCX</text>
 <text x="770" y="68" font-size="12" fill="#333333">Коллизии UCX</text>
-<text x="770" y="90" font-size="12" fill="#333333">кнопок: 4 из 7</text>
+<text x="770" y="90" font-size="12" fill="#333333">кнопок: 6 из 7</text>
 <rect x="996" y="20" width="210" height="92" rx="8" fill="#ffffff" stroke="#253093" stroke-width="2.5"/>
 <rect x="996" y="20" width="8" height="92" rx="3" fill="#253093"/>
 <text x="1014" y="46" font-size="15" font-weight="bold" fill="#253093">4 UDIM</text>
 <text x="1014" y="68" font-size="12" fill="#333333">UDIM и тексель</text>
-<text x="1014" y="90" font-size="12" fill="#333333">кнопок: 5 из 11</text>
+<text x="1014" y="90" font-size="12" fill="#333333">кнопок: 8 из 11</text>
 <rect x="996" y="146" width="210" height="92" rx="8" fill="#ffffff" stroke="#8f2593" stroke-width="2.5"/>
 <rect x="996" y="146" width="8" height="92" rx="3" fill="#8f2593"/>
 <text x="1014" y="172" font-size="15" font-weight="bold" fill="#8f2593">5 Атласы</text>
 <text x="1014" y="194" font-size="12" fill="#333333">Атласы / не-атласы</text>
-<text x="1014" y="216" font-size="12" fill="#333333">кнопок: 4 из 6</text>
+<text x="1014" y="216" font-size="12" fill="#333333">кнопок: 5 из 6</text>
 <rect x="752" y="146" width="210" height="92" rx="8" fill="#ffffff" stroke="#659325" stroke-width="2.5"/>
 <rect x="752" y="146" width="8" height="92" rx="3" fill="#659325"/>
 <text x="770" y="172" font-size="15" font-weight="bold" fill="#659325">6 Замены</text>
@@ -49,15 +49,15 @@
 <rect x="508" y="146" width="8" height="92" rx="3" fill="#258193"/>
 <text x="526" y="172" font-size="15" font-weight="bold" fill="#258193">7 Проверки</text>
 <text x="526" y="194" font-size="12" fill="#333333">Проверки и сдача</text>
-<text x="526" y="216" font-size="12" fill="#333333">кнопок: 19 из 21</text>
+<text x="526" y="216" font-size="12" fill="#333333">кнопок: 20 из 21</text>
 <rect x="264" y="146" width="210" height="92" rx="8" fill="#ffffff" stroke="#422593" stroke-width="2.5"/>
 <rect x="264" y="146" width="8" height="92" rx="3" fill="#422593"/>
 <text x="282" y="172" font-size="15" font-weight="bold" fill="#422593">8 Экспорт</text>
 <text x="282" y="194" font-size="12" fill="#333333">Экспорт и пакет</text>
-<text x="282" y="216" font-size="12" fill="#333333">кнопок: 7 из 9</text>
+<text x="282" y="216" font-size="12" fill="#333333">кнопок: 8 из 9</text>
 <rect x="20" y="146" width="210" height="92" rx="8" fill="#ffffff" stroke="#93256e" stroke-width="2.5"/>
 <rect x="20" y="146" width="8" height="92" rx="3" fill="#93256e"/>
 <text x="38" y="172" font-size="15" font-weight="bold" fill="#93256e">9 Свет</text>
 <text x="38" y="194" font-size="12" fill="#333333">Освещение ВПМ</text>
-<text x="38" y="216" font-size="12" fill="#333333">кнопок: 1 из 3</text>
+<text x="38" y="216" font-size="12" fill="#333333">кнопок: 2 из 3</text>
 </svg>

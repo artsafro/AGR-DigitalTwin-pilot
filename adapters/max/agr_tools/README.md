@@ -1,4 +1,4 @@
-# AGR Tools 0.9.0 — 3ds Max 2024 / 2026
+# AGR Tools 1.0.0 — 3ds Max 2024 / 2026
 
 Own implementations. The 0.5.0 diagnostics adapt GeoAGR 13.64 functions with the permission of
 their author (Artem). Only the logic in use is adapted (`checks_core.py`), not GeoAGR.ms; no team
@@ -7,8 +7,8 @@ This is a diagnostic/export-copy tool, not a delivery validator or production jo
 
 ## Build and install
 
-`python tools/max/build_agr_tools.py <new-path>/AGR-Tools-0.9.0.mzp` (MZP) or
-`python tools/max/build_agr_tools.py --bundle <new-path>/AGR-Tools-0.9.0.bundle.zip` (plugin package:
+`python tools/max/build_agr_tools.py <new-path>/AGR-Tools-1.0.0.mzp` (MZP) or
+`python tools/max/build_agr_tools.py --bundle <new-path>/AGR-Tools-1.0.0.bundle.zip` (plugin package:
 unzip into `%APPDATA%\Autodesk\ApplicationPlugins`; uninstall = delete `AGR-Tools.bundle` and the
 `[AGRTools]` section of `3dsMax.ini`). PNG icons are rendered from the SVG sources with PySide6
 (`uv run --with PySide6 ...`), or taken from `AGR_ICON_PNG_DIR`.
@@ -144,6 +144,31 @@ never a clean result. Objects are identified by unique Max handles as well as na
   VPM 512–1706 px/m and NPM 10–40 px/m. A zero area or a zero map size is
   `at_threshold` and is an error.
 
+## 1.0.0 конвейер ОКС: этапы 0–9, паспорт, окна, материалы, ВПМ/НПМ, сдача, агент (#1024)
+
+Рельса этапов лежит на «Путь». 31 кнопка из 33 плана 1.0 выпущена; каждая — `runtime.ui('<tool>')`, пункт меню и
+MCP-инструмент. Этап 8 «НПМ → ВПМ» (ветка Q) не выпущен и остаётся серым `wip`: перенесён в 1.1.0
+(строки плана `"deferred": "1.1"`). Что открыто и не проверено — `CHANGELOG.md`, «Известные ограничения».
+
+- Этап 0 Паспорт: `project.passport` (паспорт `jobs/<ID>/passport.json`), `source.intake` (единицы, ось, общий ноль),
+  `scene.source_class` (класс источника A/B/C).
+- Этап 1 Бадик: `body.prepare` (роли, имена, хелперы `LEVEL_*`), `model.attach_by_material` (объединить по
+  материалам), `model.move_apart` (раздвинуть задвойки), `model.grid_cleanup` (чистка сетки фасада),
+  `scene.small_parts` (мелкие детали в `optimize`).
+- Этап 2 Окна: `win.place` (окна по проёмам), `win.generate` (генератор типов по стандарту), `model.glass_planes`
+  (стекло плоскостями).
+- Этап 3 Капсулы: `body.capsules` (капсулы интерьера). Этап 4 Крыша: `body.roof` (плита по парапету).
+- Этап 5 Материалы: `mat.table` (таблица материалов, Multi/Sub), `mat.tiles` (серые карты плиток),
+  `tex.plug_colour` (цвет заглушки).
+- Этап 6 ВПМ: `vpm.build` (UV по сетке, UDIM), `udim.rescale` (плотность), `udim.distortion` (искажения UV),
+  `tex.dilate` (отступы карт), `udim.plugs` (острова-заглушки).
+- Этап 7 НПМ: `npm.build` (атлас из ВПМ), `atlas.facade_strip` (фасадный атлас run-strip).
+- Этап 8 НПМ → ВПМ: `npm.to_vpm`, `udim.udims_to_ids` — отложено до 1.1.0.
+- Этап 9 Сдача: `pack.deliver` (шаги сдачи одной кнопкой), `ucx.gap` (зазор UCX), `ucx.stairs` (UCX лестниц),
+  `light.export` (FBX света), `qa.omk_te` (код ОМК ТЭ), `export.place_by_passport` (поставить по паспорту).
+- Агент: `agent.request` (запрос агенту, папка `jobs/<ID>/agent/<req>/`), `agent.accept` (шлюз приёма слоя).
+  Кнопка Claude-дока `agent.dock` в панели не зарегистрирована.
+
 ## 0.9.0 placement, Flora/MAF, textures, checks, batch export and light (#979)
 
 Nineteen buttons of plan version 0.9, in the block tabs under «Проверить и выделить» (read / select) and
@@ -272,4 +297,5 @@ nudge, UDIM to NPM atlas, UCX collision, texel readout and checked export.
 0.7.0 adds 12 read-only pre-delivery checks, the block tab rail and «Путь».
 0.8.0 adds 13 delivery edits on export copies / new files with preview → apply.
 0.9.0 adds 19 buttons (placement, Flora/MAF, textures/UDIM/atlas, checks, batch export, light) and reworks 13.
+1.0.0 adds the OKS conveyor (#1024): 31 stage buttons (passport, body, windows, capsules/roof, materials, VPM, NPM, delivery, agent); stage 8 is deferred to 1.1.0.
 No licensing, obfuscation, GeoAGR.ms copy or decryption is included.
