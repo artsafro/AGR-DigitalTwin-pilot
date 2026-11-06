@@ -664,7 +664,8 @@ def verify(before, after, mesh, corners, opts):
     out = []
     t = t_vertices(mesh, opts['tol_m'])
     if t and 'tjunctions' in opts['modes'] and opts['t_mode'] == 'cut':
-        out.append(('t_left', '{} T-vertices left'.format(len(t))))
+        at = ['({:.4f}, {:.4f}, {:.4f})'.format(*mesh['verts'][v]) for _, _, v, _ in t[:4]]
+        out.append(('t_left', '{} T-vertices left at {}'.format(len(t), ', '.join(at))))
     if before['uv_islands'] != after['uv_islands']:
         out.append(('uv_islands', '{} -> {}'.format(before['uv_islands'], after['uv_islands'])))
     if before['mat_ids'] != after['mat_ids']:

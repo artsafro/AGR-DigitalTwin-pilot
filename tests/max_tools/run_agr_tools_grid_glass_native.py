@@ -119,6 +119,9 @@ def grid_apply():
     sel_before = [str(o.name) for o in rt.selection]
     hash0 = emax.snapshot([n])
     objs0, hidden0 = len(list(rt.objects)), hidden_count()
+    k = float(agr._load_core('host_max.py', 'agr_tools_host_max').MaxHost().m_per_unit())
+    read, _, _ = gmax.read_poly(n, k)
+    (OUT / 'dirty_read.json').write_text(json.dumps(read), encoding='utf-8')
     pre = agr.edits_100('model.grid_cleanup', 'preview')
     assert pre['status'] == 'fail' and pre['plan']['mode'] == 'preview', pre['status']
     codes = sorted(f['code'] for o in pre['objects'] for f in o['findings'])
