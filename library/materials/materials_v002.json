@@ -403,9 +403,7 @@
     "evidence": "docs/agr/decisions/OBR22_PROCEDURAL_TEXTURES_V010.md:6-8; OBR22_SHARED_UV_V011.md:21"
    },
    "maf_v005_id": null,
-   "questions": [
-    "Q11"
-   ]
+   "note": "Q11 (06.11): шов 5 мм для плитки 600x1200 утверждён"
   },
   {
    "library_id": 15,
@@ -866,6 +864,6 @@
  ],
  "ground_ref": {
   "file": "ground_v001.json",
-  "sha256": "bb0a25810938d46aa22efe539f25fc5ce0335b1856fe389858a05df9927661dc"
+  "sha256": "3b3d299618e2001414a00ddccccc1f40f3135d9ab6775f021c0bb718727c7162"
  }
 }

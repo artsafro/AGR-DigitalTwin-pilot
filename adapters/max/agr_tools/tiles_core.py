@@ -47,9 +47,9 @@ DEFAULTS = {
 # bond = offset of every second course in modules, v_joints/h_joints. noise: grain (cell) size.
 BASE_MAPS = {
     'facade_600x1200': {'kind': 'tiles', 'module': (0.6, 1.2), 'joint': 0.005, 'bond': 0.0,
-                        'source': 'K3: OBR22 facade panels 600x1200, joint 5 mm (OBR22_SHARED_UV_V011.md:12-24)'},
+                        'source': 'K3: OBR22 facade panels 600x1200, joint 5 mm (OBR22_SHARED_UV_V011.md:12-24); joint 5 mm approved by the owner (Q11 06.11)'},
     'ground_100x300': {'kind': 'tiles', 'module': (0.3, 0.1), 'joint': 0.005, 'bond': 0.5,
-                       'source': 'K3: Vatutino paving «Gotika» 100x300, joint 5 mm inside the module'},
+                       'source': 'K3: Vatutino paving «Gotika» 100x300, joint 5 mm inside the module; joint 5 mm approved by the owner (Q11 06.11)'},
     'crumb_1x1': {'kind': 'noise', 'grain': 0.004, 'period': 1.0, 'tone_var': 20,
                   'source': 'K3: rubber crumb, seamless 1x1 m'},
     'tile_600x600': {'kind': 'tiles', 'module': (0.6, 0.6), 'joint': 0.005, 'bond': 0.0,

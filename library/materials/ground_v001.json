@@ -36,9 +36,7 @@
     "evidence": "tools/materials/ground_recipes.json:278"
    },
    "maf_v005_id": null,
-   "questions": [
-    "Q11"
-   ]
+   "note": "Q11 (06.11): шов 5 мм для брусчатки 100x300 утверждён"
   },
   {
    "library_id": 19,

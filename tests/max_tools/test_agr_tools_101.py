@@ -588,3 +588,21 @@ def test_q9_library_rgb_is_ral_classic_unless_marked_as_a_project_override():
     probe['rgb_override'] = 'yes'
     with pytest.raises(ValueError, match='rgb_override'):
         ml.validate_library(doc, ral)
+
+
+def test_q11_joint_5_mm_is_approved_for_paving_100x300_and_tile_600x1200():
+    """RED before Q11: the 5 mm joint was recorded as provisional (tiles_core sources, ground recipes, records)."""
+    for name in ('facade_600x1200', 'ground_100x300'):
+        s, _ = tl.spec(name)
+        assert s['joint'] == 0.005 and 'approved' in s['source'] and 'Q11' in s['source'], name
+    recipes = json.loads((ROOT / 'tools/materials/ground_recipes.json').read_text(encoding='utf-8'))['slots']
+    paving = [n for n, b in recipes.items() if b.get('family') == 'tile']
+    assert paving == ['TileLight', 'TileRed', 'TileDark']
+    for n in paving:
+        body = recipes[n]
+        assert body['nominal_tile_mm'] == [100, 300] and body['joint_mm'] == 5
+        assert 'joint_mm' not in {f['field'] for f in body['provisional']}
+        assert [(a['field'], a['value']) for a in body['approved']] == [('joint_mm', 5)]
+    lib = ml.load_library(str(LIB))
+    for lid in (14, 18):
+        assert 'Q11' not in lib['by_id'][lid].get('questions', []) and 'Q11' in lib['by_id'][lid]['note']
