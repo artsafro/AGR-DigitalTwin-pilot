@@ -66,3 +66,52 @@ def tail(scene=None, n=20, folder=None):
         except ValueError:
             continue
     return out
+
+
+# ---- branch F: the copy into the project and the tail of the passport (K1) ------------------------------------
+def read_lines(path):
+    """(records, bad line numbers) of a journal file; a missing file is ([], [])."""
+    if not os.path.isfile(path):
+        return [], []
+    good, bad = [], []
+    with open(path, encoding='utf-8') as f:
+        for i, line in enumerate(f.read().splitlines(), 1):
+            if not line.strip():
+                continue
+            try:
+                rec = json.loads(line)
+            except ValueError:
+                bad.append(i)
+                continue
+            if isinstance(rec, dict) and all(k in rec for k in FIELDS):
+                good.append(rec)
+            else:
+                bad.append(i)
+    return good, bad
+
+
+def copy_to(scene, dest, folder=None):
+    """Copy the scene's journal into the project (jobs/<ID>/journal.jsonl) when the passport is saved.
+
+    The project copy only grows: its existing lines stay first and in order, the panel lines it does not hold yet
+    are appended in their order (a scene saved under a new name has a new panel journal; both end up in the
+    project). Written to `<dest>.partial`, then replaced. Returns {'path', 'lines', 'added', 'tail'}
+    (tail: the last 20 records for the passport)."""
+    src = journal_path(scene, folder)
+    new = []
+    if os.path.isfile(src):
+        with open(src, encoding='utf-8') as f:
+            new = [x for x in f.read().splitlines() if x.strip()]
+    old = []
+    if os.path.isfile(dest):
+        with open(dest, encoding='utf-8') as f:
+            old = [x for x in f.read().splitlines() if x.strip()]
+    have = set(old)
+    added = [x for x in new if x not in have]
+    os.makedirs(os.path.dirname(os.path.abspath(dest)), exist_ok=True)
+    tmp = dest + '.partial'
+    with open(tmp, 'w', encoding='utf-8', newline='\n') as f:
+        f.write(''.join(x + '\n' for x in old + added))
+    os.replace(tmp, dest)
+    records, _bad = read_lines(dest)
+    return {'path': dest, 'lines': len(records), 'added': len(added), 'tail': records[-20:]}

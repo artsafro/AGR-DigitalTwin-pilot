@@ -48,6 +48,7 @@ find the line for your question, then read that file. One line per tracked file.
 | `case_studies/GLB_AB_REFERENCE_AND_PLANES.md` | GLB towers A/B reference and window/basket simplification, v003–v006 additions | Simplifying windows/baskets from a SketchUp source |
 | `case_studies/GLB_A_MAIN_ATLAS.md` | GLB A_Main in 3ds Max: accepted view, single RGBA atlas, ID/UV | Building a Max atlas from SketchUp textures |
 | `case_studies/GLB_B_MAIN_ATLAS.md` | GLB B_Main: ID renumbering, UV per ID, white glass fix | Renumbering material IDs and atlas UV in Max |
+| `case_studies/SKUG26_K5_AC_SCREENS_VPM.md` | SKUG-26 K5 perforated AC screens: VPM 4K texture with alpha, v003 UV layout | Making perforated screen textures with alpha holes |
 | `case_studies/GROUND_CONTOURS_AND_NPM.md` | Ground: preserving contours, IDs and materials; mesh density not accepted; v008 iteration | Simplifying Ground terrain for NPM |
 | `case_studies/MASHI_LP_SCENE_AUDIT.md` | MASHI-LP scene organisation and audit v001; later master TRIAL, QA not passed | Organising/auditing a large Max scene |
 | `case_studies/SOSH1150_CONTINUOUS_WALL_UV_FBX.md` | SOSH1150 v006: continuous wall pattern UV and FBX package for Max | Continuous texture across walls or Blender→Max FBX handoff |
@@ -55,7 +56,7 @@ find the line for your question, then read that file. One line per tracked file.
 | `case_studies/KPP1_VPM_NPM_V005.md` | KPP1: VPM+NPM from Revit v005, ~90% accepted; GeoJSON etc. open | Producing VPM/NPM from Revit with quads ≤4 m |
 | `case_studies/PSU275_VPM_NPM_DELIVERY_V003.md` | PSU275 main building and OKS: VPM+NPM delivery-v003, mesh cleanup accepted | Cleaning/optimising quad masters for multi-OKS delivery |
 | `case_studies/VYATSKAYA_TOW02_MIDPOLY.md` | Vyatskaya TOW02 panelised curtain-wall tower: mid-poly master + OKS 013 atlas accepted as a base, finished by the user by hand | Mid-poly from a panelised (no-shell) curtain-wall source |
-| `case_studies/SKUG26_K5_AC_SCREENS_VPM.md` | SKUG-26 K5 perforated AC screens: VPM 4K texture with alpha, hole count and texel from the FBX source, v003 accepted in the Max viewport | Baking a perforated panel (holes) into a VPM alpha texture |
+| `case_studies/SKUG26_K5_AC_SCREENS_VPM.md` | SKUG-26 K5: perforated AC screens, 4K VPM texture with alpha, UDIM tile 1004, exact hole counts, 1300 px/m; texture and UV accepted in the viewport | Making a perforated-screen texture with alpha holes from source geometry |
 
 ## inventory
 

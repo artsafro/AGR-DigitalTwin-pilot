@@ -7953,6 +7953,5711 @@
    "fragment": "E3"
   },
   {
+   "name": "BODY_FPass_001",
+   "scene": "frag_f_passport",
+   "role": "Main",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "box",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "project.passport=pass",
+   "synthetic": true,
+   "fragment": "F",
+   "extra": {
+    "kind": "box",
+    "size": [
+     6,
+     4,
+     9
+    ],
+    "at": [
+     0,
+     0,
+     0
+    ]
+   },
+   "builder": "F_build"
+  },
+  {
+   "name": "SM_FPass_NoRole_Main",
+   "scene": "frag_f_passport",
+   "role": "Main",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "box",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "project.passport=role_missing",
+   "synthetic": true,
+   "fragment": "F",
+   "extra": {
+    "kind": "box",
+    "size": [
+     2,
+     2,
+     2
+    ],
+    "at": [
+     10,
+     0,
+     0
+    ]
+   },
+   "builder": "F_build"
+  },
+  {
+   "name": "SM_FIntake_Ok_Main",
+   "scene": "frag_f_intake_ok",
+   "role": "Main",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "box",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "source.intake=pass",
+   "synthetic": true,
+   "fragment": "F",
+   "extra": {
+    "kind": "box",
+    "size": [
+     20,
+     15,
+     30
+    ],
+    "at": [
+     5,
+     5,
+     0
+    ]
+   },
+   "builder": "F_build"
+  },
+  {
+   "name": "SM_FIntake_CmFar_Main",
+   "scene": "frag_f_intake_far",
+   "role": "Main",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "box",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "source.intake=far_coordinates,units_scale",
+   "synthetic": true,
+   "fragment": "F",
+   "extra": {
+    "kind": "box",
+    "size": [
+     2000,
+     1500,
+     3000
+    ],
+    "at": [
+     234567808,
+     0,
+     0
+    ]
+   },
+   "builder": "F_build"
+  },
+  {
+   "name": "SM_FClass_Shell_Main",
+   "scene": "frag_f_class",
+   "role": "Main",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "box",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "scene.source_class=pass",
+   "synthetic": true,
+   "fragment": "F",
+   "extra": {
+    "kind": "box",
+    "size": [
+     10,
+     8,
+     30
+    ],
+    "at": [
+     0,
+     0,
+     0
+    ]
+   },
+   "builder": "F_build"
+  },
+  {
+   "name": "SM_FClass_Panels_Main",
+   "scene": "frag_f_class",
+   "role": "Main",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "box",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "scene.source_class=panelised",
+   "synthetic": true,
+   "fragment": "F",
+   "extra": {
+    "kind": "panels",
+    "count": 40,
+    "size": [
+     1.2,
+     3.0
+    ],
+    "gap": 0.3,
+    "at": [
+     0,
+     20,
+     0
+    ]
+   },
+   "builder": "F_build"
+  },
+  {
+   "name": "Bolt_M12",
+   "scene": "frag_f_small",
+   "role": "Main",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "box",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "scene.small_parts=keyword,small_size",
+   "synthetic": true,
+   "fragment": "F",
+   "extra": {
+    "kind": "box",
+    "size": [
+     0.02,
+     0.02,
+     0.06
+    ],
+    "at": [
+     0,
+     0,
+     0
+    ]
+   },
+   "builder": "F_build"
+  },
+  {
+   "name": "Уголок_50",
+   "scene": "frag_f_small",
+   "role": "Main",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "box",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "scene.small_parts=keyword,small_size",
+   "synthetic": true,
+   "fragment": "F",
+   "extra": {
+    "kind": "box",
+    "size": [
+     0.05,
+     0.05,
+     0.1
+    ],
+    "at": [
+     2,
+     0,
+     0
+    ]
+   },
+   "builder": "F_build"
+  },
+  {
+   "name": "Studio_Main",
+   "scene": "frag_f_small",
+   "role": "Main",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "box",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "scene.small_parts=pass",
+   "synthetic": true,
+   "fragment": "F",
+   "extra": {
+    "kind": "box",
+    "size": [
+     1,
+     1,
+     1
+    ],
+    "at": [
+     4,
+     0,
+     0
+    ]
+   },
+   "builder": "F_build"
+  },
+  {
+   "name": "Minute_Hand",
+   "scene": "frag_f_small",
+   "role": "Main",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "box",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "scene.small_parts=pass",
+   "synthetic": true,
+   "fragment": "F",
+   "extra": {
+    "kind": "box",
+    "size": [
+     1,
+     0.2,
+     0.2
+    ],
+    "at": [
+     6,
+     0,
+     0
+    ]
+   },
+   "builder": "F_build"
+  },
+  {
+   "name": "Шпиль",
+   "scene": "frag_f_small",
+   "role": "Main",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "box",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "scene.small_parts=pass",
+   "synthetic": true,
+   "fragment": "F",
+   "extra": {
+    "kind": "box",
+    "size": [
+     0.5,
+     0.5,
+     4
+    ],
+    "at": [
+     8,
+     0,
+     0
+    ]
+   },
+   "builder": "F_build"
+  },
+  {
+   "name": "М120_Panel",
+   "scene": "frag_f_small",
+   "role": "Main",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "box",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "scene.small_parts=pass",
+   "synthetic": true,
+   "fragment": "F",
+   "extra": {
+    "kind": "box",
+    "size": [
+     1.2,
+     0.1,
+     3
+    ],
+    "at": [
+     10,
+     0,
+     0
+    ]
+   },
+   "builder": "F_build"
+  },
+  {
+   "name": "Стеклопакет_01",
+   "scene": "frag_f_small",
+   "role": "Main",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "box",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "scene.small_parts=pass",
+   "synthetic": true,
+   "fragment": "F",
+   "extra": {
+    "kind": "box",
+    "size": [
+     1.2,
+     0.04,
+     1.5
+    ],
+    "at": [
+     12,
+     0,
+     0
+    ]
+   },
+   "builder": "F_build"
+  },
+  {
+   "name": "SM_GBody_Ok_Main",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.4",
+   "mesh": "box",
+   "pos": [
+    956.5499999999995,
+    -84.90000000000002,
+    0
+   ],
+   "size": [
+    1,
+    1,
+    1
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.4;body.prepare=pass",
+   "synthetic": true,
+   "fragment": "G",
+   "extra": {
+    "kind": "box_mat",
+    "mat": "M_GBody_Brick"
+   },
+   "builder": "G_build"
+  },
+  {
+   "name": "LEVEL_GBad001",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.4",
+   "mesh": "box",
+   "pos": [
+    963.1499999999995,
+    -84.90000000000002,
+    0
+   ],
+   "size": [
+    1,
+    1,
+    1
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.4;body.prepare=level_name",
+   "synthetic": true,
+   "fragment": "G",
+   "extra": {
+    "kind": "level"
+   },
+   "builder": "G_build"
+  },
+  {
+   "name": "SM_GAttach_Ok_Main",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.5",
+   "mesh": "box",
+   "pos": [
+    984.0499999999995,
+    -60.00000000000001,
+    0
+   ],
+   "size": [
+    1,
+    1,
+    1
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.5;model.attach_by_material=pass",
+   "synthetic": true,
+   "fragment": "G",
+   "extra": {
+    "kind": "box_mat",
+    "mat": "M_GAttach_Ok"
+   },
+   "builder": "G_build"
+  },
+  {
+   "name": "SM_GAttach_NoMat_Main",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.5",
+   "mesh": "box",
+   "pos": [
+    991.0999999999995,
+    -60.00000000000001,
+    0
+   ],
+   "size": [
+    1,
+    1,
+    1
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.5;model.attach_by_material=no_material",
+   "synthetic": true,
+   "fragment": "G",
+   "extra": {
+    "kind": "box_mat"
+   },
+   "builder": "G_build"
+  },
+  {
+   "name": "SM_GAttach_SameA_Main",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.5",
+   "mesh": "box",
+   "pos": [
+    998.8249999999995,
+    -60.00000000000001,
+    0
+   ],
+   "size": [
+    1,
+    1,
+    1
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.5;model.attach_by_material=same_name_material",
+   "synthetic": true,
+   "fragment": "G",
+   "extra": {
+    "kind": "box_mat",
+    "mat": "M_GAttach_Same"
+   },
+   "builder": "G_build"
+  },
+  {
+   "name": "SM_GAttach_SameB_Main",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.5",
+   "mesh": "box",
+   "pos": [
+    1006.5499999999995,
+    -60.00000000000001,
+    0
+   ],
+   "size": [
+    1,
+    1,
+    1
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.5;model.attach_by_material=same_name_material",
+   "synthetic": true,
+   "fragment": "G",
+   "extra": {
+    "kind": "box_mat",
+    "mat": "M_GAttach_Same"
+   },
+   "builder": "G_build"
+  },
+  {
+   "name": "SM_GMove_Clean_Main",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.6",
+   "mesh": "box",
+   "pos": [
+    984.0499999999995,
+    -70.9,
+    0
+   ],
+   "size": [
+    1,
+    1,
+    1
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.6;model.move_apart=pass",
+   "synthetic": true,
+   "fragment": "G",
+   "extra": {
+    "kind": "box_mat",
+    "mat": "M_GMove"
+   },
+   "builder": "G_build"
+  },
+  {
+   "name": "SM_GMove_Double_Main",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.6",
+   "mesh": "box",
+   "pos": [
+    991.3249999999995,
+    -70.9,
+    0
+   ],
+   "size": [
+    1,
+    1,
+    1
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.6;model.move_apart=double_faces",
+   "synthetic": true,
+   "fragment": "G",
+   "extra": {
+    "kind": "double",
+    "gap_mm": 1.0
+   },
+   "builder": "G_build"
+  },
+  {
+   "name": "SM_GridClean_Ok_Main",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.7",
+   "mesh": "box",
+   "pos": [
+    989.5499999999995,
+    -80.45,
+    0
+   ],
+   "size": [
+    12,
+    1,
+    9
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.7;model.grid_cleanup=pass",
+   "synthetic": true,
+   "fragment": "H",
+   "extra": {
+    "kind": "facade_clean"
+   },
+   "builder": "H_build"
+  },
+  {
+   "name": "SM_GridClean_Dirty_Main",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.7",
+   "mesh": "box",
+   "pos": [
+    1004.5499999999995,
+    -80.45,
+    0
+   ],
+   "size": [
+    12,
+    1,
+    9
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.7;model.grid_cleanup=t_junction,triangles",
+   "synthetic": true,
+   "fragment": "H",
+   "extra": {
+    "kind": "facade_dirty"
+   },
+   "builder": "H_build"
+  },
+  {
+   "name": "SM_GlassOne_MainGlass",
+   "scene": "polygon_all",
+   "role": "MainGlass",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.11",
+   "mesh": "box",
+   "pos": [
+    1024.7749999999996,
+    -75.0,
+    0
+   ],
+   "size": [
+    2,
+    1,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.11;model.glass_planes=pass",
+   "synthetic": true,
+   "fragment": "H",
+   "extra": {
+    "kind": "glass_single"
+   },
+   "builder": "H_build"
+  },
+  {
+   "name": "SM_GlassGrid_MainGlass",
+   "scene": "polygon_all",
+   "role": "MainGlass",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.11",
+   "mesh": "box",
+   "pos": [
+    1032.9999999999995,
+    -75.0,
+    0
+   ],
+   "size": [
+    3,
+    1,
+    1
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.11;model.glass_planes=glass_merge",
+   "synthetic": true,
+   "fragment": "H",
+   "extra": {
+    "kind": "glass_flat_12"
+   },
+   "builder": "H_build"
+  },
+  {
+   "name": "SM_GlassFrame_MainGlass",
+   "scene": "polygon_all",
+   "role": "MainGlass",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.11",
+   "mesh": "box",
+   "pos": [
+    1040.4499999999996,
+    -75.0,
+    0
+   ],
+   "size": [
+    2,
+    1,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.11;model.glass_planes=glass_frame,glass_merge",
+   "synthetic": true,
+   "fragment": "H",
+   "extra": {
+    "kind": "glass_frame_5cm"
+   },
+   "builder": "H_build"
+  },
+  {
+   "name": "SM_WinPlace_Ok_Main",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.9",
+   "mesh": "box",
+   "pos": [
+    1026.2749999999996,
+    -55.6,
+    0
+   ],
+   "size": [
+    5,
+    0.3,
+    3.2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.9;win.place=pass",
+   "synthetic": true,
+   "fragment": "J",
+   "extra": {
+    "j": {
+     "kind": "facade",
+     "spec": {
+      "name": "SM_WinPlace_Ok_Main",
+      "points": [
+       [
+        0,
+        0
+       ],
+       [
+        5,
+        0
+       ]
+      ],
+      "height": 3.2,
+      "reveal": 0.25,
+      "corners": [],
+      "holes": [
+       {
+        "wall": 0,
+        "kind": "rect",
+        "u": 0.5,
+        "sill": 0.9,
+        "w": 1.18,
+        "h": 1.8,
+        "type": "KPP1-W01"
+       },
+       {
+        "wall": 0,
+        "kind": "rect",
+        "u": 2.4,
+        "sill": 0.9,
+        "w": 2.0,
+        "h": 1.8,
+        "type": "KPP1-W03"
+       }
+      ]
+     }
+    }
+   },
+   "builder": "J_build"
+  },
+  {
+   "name": "SM_WinPlace_Bad_Main",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.9",
+   "mesh": "box",
+   "pos": [
+    1034.2749999999996,
+    -55.6,
+    0
+   ],
+   "size": [
+    5,
+    0.3,
+    3.2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.9;win.place=no_type,opening_ambiguous",
+   "synthetic": true,
+   "fragment": "J",
+   "extra": {
+    "j": {
+     "kind": "facade",
+     "spec": {
+      "name": "SM_WinPlace_Bad_Main",
+      "points": [
+       [
+        0,
+        0
+       ],
+       [
+        5,
+        0
+       ]
+      ],
+      "height": 3.2,
+      "reveal": 0.25,
+      "corners": [],
+      "holes": [
+       {
+        "wall": 0,
+        "kind": "arch",
+        "u": 0.5,
+        "sill": 0.9,
+        "w": 1.18,
+        "h": 1.8,
+        "type": null
+       },
+       {
+        "wall": 0,
+        "kind": "rect",
+        "u": 2.6,
+        "sill": 0.9,
+        "w": 1.5,
+        "h": 1.5,
+        "type": null
+       }
+      ]
+     }
+    }
+   },
+   "builder": "J_build"
+  },
+  {
+   "name": "SM_WinGen_Ok_Main",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.10",
+   "mesh": "box",
+   "pos": [
+    1023.9249999999995,
+    -64.45,
+    0
+   ],
+   "size": [
+    0.3,
+    0.3,
+    0.3
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.10;win.generate=pass",
+   "synthetic": true,
+   "fragment": "J",
+   "extra": {
+    "j": {
+     "kind": "marker",
+     "type": "WT-11",
+     "w": 1.694,
+     "h": 2.614
+    }
+   },
+   "builder": "J_build"
+  },
+  {
+   "name": "SM_WinGen_Bad_Main",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.10",
+   "mesh": "box",
+   "pos": [
+    1030.7499999999995,
+    -64.45,
+    0
+   ],
+   "size": [
+    0.3,
+    0.3,
+    0.3
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.10;win.generate=quarantine",
+   "synthetic": true,
+   "fragment": "J",
+   "extra": {
+    "j": {
+     "kind": "marker",
+     "type": "WT-02",
+     "w": 3.287,
+     "h": 2.614
+    }
+   },
+   "builder": "J_build"
+  },
+  {
+   "name": "SM_WinGen_Seal_Main",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.10",
+   "mesh": "box",
+   "pos": [
+    1037.7999999999995,
+    -64.45,
+    0
+   ],
+   "size": [
+    0.3,
+    0.3,
+    0.3
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.10",
+   "synthetic": true,
+   "fragment": "J",
+   "extra": {
+    "j": {
+     "kind": "seal"
+    }
+   },
+   "builder": "J_build"
+  },
+  {
+   "name": "BODY_KCapsOk_001",
+   "scene": "frag_k_caps",
+   "role": "Main",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "box",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "body.capsules=pass",
+   "synthetic": true,
+   "fragment": "K",
+   "extra": {
+    "kind": "badik",
+    "size": [
+     8.0,
+     6.0,
+     7.0
+    ],
+    "reveal": 0.25,
+    "at": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "openings": [
+     {
+      "wall": 0,
+      "s": [
+       1.5,
+       2.7
+      ],
+      "z": [
+       0.9,
+       2.4
+      ]
+     },
+     {
+      "wall": 0,
+      "s": [
+       4.0,
+       5.2
+      ],
+      "z": [
+       0.9,
+       2.4
+      ]
+     },
+     {
+      "wall": 1,
+      "s": [
+       2.0,
+       3.2
+      ],
+      "z": [
+       0.9,
+       2.4
+      ]
+     },
+     {
+      "wall": 2,
+      "s": [
+       3.0,
+       4.0
+      ],
+      "z": [
+       0.15,
+       2.3
+      ]
+     },
+     {
+      "wall": 3,
+      "s": [
+       2.0,
+       3.2
+      ],
+      "z": [
+       0.9,
+       2.4
+      ]
+     },
+     {
+      "corner": 0,
+      "a": 1.5,
+      "b": 1.2,
+      "z": [
+       3.9,
+       5.4
+      ]
+     },
+     {
+      "corner": 2,
+      "a": 1.2,
+      "b": 1.5,
+      "z": [
+       3.9,
+       5.4
+      ]
+     },
+     {
+      "wall": 0,
+      "s": [
+       2.0,
+       3.2
+      ],
+      "z": [
+       3.9,
+       5.4
+      ]
+     }
+    ]
+   },
+   "builder": "K_build"
+  },
+  {
+   "name": "BODY_KCapsBump_001",
+   "scene": "frag_k_caps",
+   "role": "Main",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "box",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "body.capsules=border_nonplanar",
+   "synthetic": true,
+   "fragment": "K",
+   "extra": {
+    "kind": "badik",
+    "size": [
+     4.0,
+     4.0,
+     3.5
+    ],
+    "reveal": 0.25,
+    "at": [
+     14.0,
+     0.0,
+     0.0
+    ],
+    "openings": [
+     {
+      "wall": 0,
+      "s": [
+       1.4,
+       2.6
+      ],
+      "z": [
+       0.9,
+       2.4
+      ],
+      "bump": 0.05
+     }
+    ]
+   },
+   "builder": "K_build"
+  },
+  {
+   "name": "PARAPET_KRoofL_001",
+   "scene": "frag_k_roof",
+   "role": "Main",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "box",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "body.roof=pass",
+   "synthetic": true,
+   "fragment": "K",
+   "extra": {
+    "kind": "parapet",
+    "outline": [
+     [
+      0,
+      0
+     ],
+     [
+      20,
+      0
+     ],
+     [
+      20,
+      6
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      8,
+      12
+     ],
+     [
+      0,
+      12
+     ]
+    ],
+    "level": 9.0,
+    "height": 0.9,
+    "thickness": 0.3,
+    "at": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "builder": "K_build"
+  },
+  {
+   "name": "PARAPET_KRoofSteep_001",
+   "scene": "frag_k_roof",
+   "role": "Main",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "box",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "body.roof=roof_steep",
+   "synthetic": true,
+   "fragment": "K",
+   "extra": {
+    "kind": "parapet",
+    "outline": [
+     [
+      0,
+      0
+     ],
+     [
+      10,
+      0
+     ],
+     [
+      10,
+      8
+     ],
+     [
+      0,
+      8
+     ]
+    ],
+    "level": 9.0,
+    "height": 0.9,
+    "thickness": 0.3,
+    "slope_deg": 15.0,
+    "at": [
+     30.0,
+     0.0,
+     0.0
+    ]
+   },
+   "builder": "K_build"
+  },
+  {
+   "name": "BODY_FragLMid_001",
+   "scene": "frag_l_mat",
+   "role": "body",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "box",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "mat.table=pass",
+   "synthetic": true,
+   "fragment": "L",
+   "extra": {
+    "kind": "ids_box",
+    "ids": [
+     3,
+     7,
+     12,
+     31
+    ],
+    "agr_role": "body",
+    "size": [
+     4.0,
+     4.0,
+     3.0
+    ],
+    "at": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "builder": "L_build"
+  },
+  {
+   "name": "BODY_FragLUdim_001",
+   "scene": "frag_l_mat",
+   "role": "body",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "box",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "mat.table=udim_id_on_geometry",
+   "synthetic": true,
+   "fragment": "L",
+   "extra": {
+    "kind": "ids_box",
+    "ids": [
+     3,
+     1005
+    ],
+    "agr_role": "body",
+    "size": [
+     4.0,
+     4.0,
+     3.0
+    ],
+    "at": [
+     8.0,
+     0.0,
+     0.0
+    ]
+   },
+   "builder": "L_build"
+  },
+  {
+   "name": "BODY_FragLGlass_001",
+   "scene": "frag_l_mat",
+   "role": "body",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "box",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "mat.table=glass_not_on_glass",
+   "synthetic": true,
+   "fragment": "L",
+   "extra": {
+    "kind": "ids_box",
+    "ids": [
+     3,
+     39
+    ],
+    "agr_role": "body",
+    "size": [
+     4.0,
+     4.0,
+     3.0
+    ],
+    "at": [
+     16.0,
+     0.0,
+     0.0
+    ]
+   },
+   "builder": "L_build"
+  },
+  {
+   "name": "TILE_FragLK3_001",
+   "scene": "frag_l_tiles",
+   "role": "body",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "box",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "mat.tiles=pass",
+   "synthetic": true,
+   "fragment": "L",
+   "extra": {
+    "kind": "ids_box",
+    "ids": [
+     14,
+     18,
+     27
+    ],
+    "agr_role": "body",
+    "size": [
+     3.6,
+     3.6,
+     3.6
+    ],
+    "at": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "builder": "L_build"
+  },
+  {
+   "name": "TILE_FragLBrick_001",
+   "scene": "frag_l_tiles",
+   "role": "body",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "box",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "mat.tiles=module_stretched",
+   "synthetic": true,
+   "fragment": "L",
+   "extra": {
+    "kind": "ids_box",
+    "ids": [
+     17
+    ],
+    "agr_role": "body",
+    "size": [
+     3.6,
+     3.6,
+     3.6
+    ],
+    "at": [
+     8.0,
+     0.0,
+     0.0
+    ]
+   },
+   "builder": "L_build"
+  },
+  {
+   "name": "PLUG_FragLOk_001",
+   "scene": "frag_l_plug",
+   "role": "decor",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "box",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "tex.plug_colour=pass",
+   "synthetic": true,
+   "fragment": "L",
+   "extra": {
+    "kind": "plug_plane",
+    "texture": "plug_ok.png",
+    "pattern": "solid",
+    "rgb": [
+     200,
+     100,
+     50
+    ],
+    "at": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "builder": "L_build"
+  },
+  {
+   "name": "PLUG_FragLMix_001",
+   "scene": "frag_l_plug",
+   "role": "decor",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "box",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "tex.plug_colour=plug_spread",
+   "synthetic": true,
+   "fragment": "L",
+   "extra": {
+    "kind": "plug_plane",
+    "texture": "plug_mix.png",
+    "pattern": "first_blue_10",
+    "rgb": [
+     200,
+     100,
+     50
+    ],
+    "at": [
+     4.0,
+     0.0,
+     0.0
+    ]
+   },
+   "builder": "L_build"
+  },
+  {
+   "name": "SM_Vpm_Ok",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.17",
+   "mesh": "box",
+   "pos": [
+    1090.2749999999996,
+    -56.45,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.17;vpm.build=pass",
+   "synthetic": true,
+   "fragment": "M",
+   "extra": {
+    "kind": "facade"
+   },
+   "builder": "M_build"
+  },
+  {
+   "name": "SM_Vpm_IdBad",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.17",
+   "mesh": "box",
+   "pos": [
+    1095.2999999999997,
+    -56.45,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.17;vpm.build=id_range",
+   "synthetic": true,
+   "fragment": "M",
+   "extra": {
+    "kind": "facade_ids_bad"
+   },
+   "builder": "M_build"
+  },
+  {
+   "name": "SM_Rescale_Ok",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.18",
+   "mesh": "box",
+   "pos": [
+    1090.2749999999996,
+    -67.0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.18;udim.rescale=pass",
+   "synthetic": true,
+   "fragment": "M",
+   "extra": {
+    "kind": "plane16_clean"
+   },
+   "builder": "M_build"
+  },
+  {
+   "name": "SM_Rescale_NoUV",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.18",
+   "mesh": "box",
+   "pos": [
+    1096.1999999999996,
+    -67.0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.18;udim.rescale=no_uv",
+   "synthetic": true,
+   "fragment": "M",
+   "extra": {
+    "kind": "plane16_nouv"
+   },
+   "builder": "M_build"
+  },
+  {
+   "name": "SM_Dist_Ok",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.19",
+   "mesh": "box",
+   "pos": [
+    1090.2749999999996,
+    -77.55,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.19;udim.distortion=pass",
+   "synthetic": true,
+   "fragment": "M",
+   "extra": {
+    "kind": "plane16_clean"
+   },
+   "builder": "M_build"
+  },
+  {
+   "name": "SM_Dist_Bad",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.19",
+   "mesh": "box",
+   "pos": [
+    1095.5249999999996,
+    -77.55,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.19;udim.distortion=anisotropy,texel_scale",
+   "synthetic": true,
+   "fragment": "M",
+   "extra": {
+    "kind": "plane16"
+   },
+   "builder": "M_build"
+  },
+  {
+   "name": "SM_NDilOk_Main",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.20",
+   "mesh": "box",
+   "pos": [
+    1090.2749999999996,
+    -89.45,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.20;tex.dilate=pass",
+   "synthetic": true,
+   "fragment": "N",
+   "extra": {
+    "n": {
+     "png": {
+      "T_NDilOk_Diffuse_1.1001.png": "rgba_island"
+     }
+    }
+   },
+   "builder": "N_build"
+  },
+  {
+   "name": "SM_NDilBad_Main",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.20",
+   "mesh": "box",
+   "pos": [
+    1096.4249999999997,
+    -89.45,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.20;tex.dilate=dilate_no_mask",
+   "synthetic": true,
+   "fragment": "N",
+   "extra": {
+    "n": {
+     "png": {
+      "T_NDilBad_Diffuse_1.1001.png": "rgb_white_island"
+     }
+    }
+   },
+   "builder": "N_build"
+  },
+  {
+   "name": "SM_NPlugOk_Main",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.21",
+   "mesh": "box",
+   "pos": [
+    1120.7749999999996,
+    -57.800000000000004,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.21;udim.plugs=pass",
+   "synthetic": true,
+   "fragment": "N",
+   "extra": {
+    "n": {
+     "matid": 3
+    }
+   },
+   "builder": "N_build"
+  },
+  {
+   "name": "SM_NPlugBad_Main",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.21",
+   "mesh": "box",
+   "pos": [
+    1127.1499999999996,
+    -57.800000000000004,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.21;udim.plugs=plug_matid",
+   "synthetic": true,
+   "fragment": "N",
+   "extra": {
+    "n": {
+     "matid": 1005
+    }
+   },
+   "builder": "N_build"
+  },
+  {
+   "name": "SM_Npm_Ok",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.22",
+   "mesh": "box",
+   "pos": [
+    1120.7749999999996,
+    -68.35000000000001,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.22;npm.build=pass",
+   "synthetic": true,
+   "fragment": "P",
+   "extra": {
+    "kind": "npm_vpm"
+   },
+   "builder": "P_build"
+  },
+  {
+   "name": "SM_Npm_NoMap",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.22",
+   "mesh": "box",
+   "pos": [
+    1125.7999999999997,
+    -68.35000000000001,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.22;npm.build=map_missing",
+   "synthetic": true,
+   "fragment": "P",
+   "extra": {
+    "kind": "npm_vpm_nomap"
+   },
+   "builder": "P_build"
+  },
+  {
+   "name": "SM_Strip_Ok",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.23",
+   "mesh": "box",
+   "pos": [
+    1120.7749999999996,
+    -78.9,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.23;atlas.facade_strip=pass",
+   "synthetic": true,
+   "fragment": "P",
+   "extra": {
+    "kind": "strip"
+   },
+   "builder": "P_build"
+  },
+  {
+   "name": "SM_Strip_NoMap",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.23",
+   "mesh": "box",
+   "pos": [
+    1126.2499999999995,
+    -78.9,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.23;atlas.facade_strip=map_missing",
+   "synthetic": true,
+   "fragment": "P",
+   "extra": {
+    "kind": "strip_nomap"
+   },
+   "builder": "P_build"
+  },
+  {
+   "name": "SM_N2V_Ok",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.24",
+   "mesh": "box",
+   "pos": [
+    1120.7749999999996,
+    -89.45,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.24;npm.to_vpm=pass",
+   "synthetic": true,
+   "fragment": "Q",
+   "extra": {
+    "kind": "n2v_ok"
+   },
+   "builder": "Q_build"
+  },
+  {
+   "name": "SM_N2V_Fail",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.24",
+   "mesh": "box",
+   "pos": [
+    1125.7999999999997,
+    -89.45,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.24;npm.to_vpm=table_no_row,window_no_type",
+   "synthetic": true,
+   "fragment": "Q",
+   "extra": {
+    "kind": "n2v_fail"
+   },
+   "builder": "Q_build"
+  },
+  {
+   "name": "SM_UdimIds_Ok",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.25",
+   "mesh": "box",
+   "pos": [
+    1152.7749999999996,
+    -56.45,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.25;udim.udims_to_ids=pass",
+   "synthetic": true,
+   "fragment": "Q",
+   "extra": {
+    "kind": "udim_ok"
+   },
+   "builder": "Q_build"
+  },
+  {
+   "name": "SM_UdimIds_Bad",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.25",
+   "mesh": "box",
+   "pos": [
+    1158.6999999999996,
+    -56.45,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.25;udim.udims_to_ids=udim_ambiguous",
+   "synthetic": true,
+   "fragment": "Q",
+   "extra": {
+    "kind": "udim_bad"
+   },
+   "builder": "Q_build"
+  },
+  {
+   "name": "UCX_PolyDeliver_01",
+   "scene": "frag_s_deliver",
+   "role": "ucx",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "pack.deliver=ucx.gap/ucx_touch",
+   "synthetic": true,
+   "fragment": "S",
+   "extra": {
+    "kind": "box",
+    "min": [
+     0,
+     0,
+     0
+    ],
+    "max": [
+     1,
+     1,
+     1
+    ],
+    "units": "meters"
+   },
+   "builder": "S_build"
+  },
+  {
+   "name": "UCX_PolyDeliver_02",
+   "scene": "frag_s_deliver",
+   "role": "ucx",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "pack.deliver=ucx.gap/ucx_touch",
+   "synthetic": true,
+   "fragment": "S",
+   "extra": {
+    "kind": "box",
+    "min": [
+     1.0,
+     0,
+     0
+    ],
+    "max": [
+     2.0,
+     1,
+     1
+    ],
+    "units": "meters"
+   },
+   "builder": "S_build"
+  },
+  {
+   "name": "SM_PolyDeliver_Root",
+   "scene": "frag_s_deliver",
+   "role": "helper",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "helper",
+   "cls": "Dummy",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "pack.deliver=pass",
+   "synthetic": true,
+   "fragment": "S",
+   "extra": {
+    "kind": "dummy",
+    "units": "meters"
+   },
+   "builder": "S_build"
+  },
+  {
+   "name": "SM_PolyDeliver_Spot_001",
+   "scene": "frag_s_deliver",
+   "role": "light",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    0,
+    -4,
+    3
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "light",
+   "cls": "freeSpot",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": "SM_PolyDeliver_Root",
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "pack.deliver=pass",
+   "synthetic": true,
+   "fragment": "S",
+   "extra": {
+    "kind": "light",
+    "light": "freeSpot",
+    "units": "meters"
+   },
+   "builder": "S_build"
+  },
+  {
+   "name": "UCX_GapTouch_01",
+   "scene": "frag_s_ucx",
+   "role": "ucx",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "ucx.gap=ucx_touch",
+   "synthetic": true,
+   "fragment": "S",
+   "extra": {
+    "kind": "box",
+    "min": [
+     0,
+     0,
+     0
+    ],
+    "max": [
+     1,
+     1,
+     1
+    ],
+    "units": "meters"
+   },
+   "builder": "S_build"
+  },
+  {
+   "name": "UCX_GapTouch_02",
+   "scene": "frag_s_ucx",
+   "role": "ucx",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "ucx.gap=ucx_touch",
+   "synthetic": true,
+   "fragment": "S",
+   "extra": {
+    "kind": "box",
+    "min": [
+     1.0,
+     0,
+     0
+    ],
+    "max": [
+     2.0,
+     1,
+     1
+    ],
+    "units": "meters"
+   },
+   "builder": "S_build"
+  },
+  {
+   "name": "UCX_GapOver_01",
+   "scene": "frag_s_ucx",
+   "role": "ucx",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "ucx.gap=ucx_overlap",
+   "synthetic": true,
+   "fragment": "S",
+   "extra": {
+    "kind": "box",
+    "min": [
+     0,
+     3,
+     0
+    ],
+    "max": [
+     1,
+     4,
+     1
+    ],
+    "units": "meters"
+   },
+   "builder": "S_build"
+  },
+  {
+   "name": "UCX_GapOver_02",
+   "scene": "frag_s_ucx",
+   "role": "ucx",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "ucx.gap=ucx_overlap",
+   "synthetic": true,
+   "fragment": "S",
+   "extra": {
+    "kind": "box",
+    "min": [
+     0.998,
+     3,
+     0
+    ],
+    "max": [
+     1.998,
+     4,
+     1
+    ],
+    "units": "meters"
+   },
+   "builder": "S_build"
+  },
+  {
+   "name": "UCX_GapSmall_01",
+   "scene": "frag_s_ucx",
+   "role": "ucx",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "ucx.gap=ucx_gap_small",
+   "synthetic": true,
+   "fragment": "S",
+   "extra": {
+    "kind": "box",
+    "min": [
+     0,
+     6,
+     0
+    ],
+    "max": [
+     1,
+     7,
+     1
+    ],
+    "units": "meters"
+   },
+   "builder": "S_build"
+  },
+  {
+   "name": "UCX_GapSmall_02",
+   "scene": "frag_s_ucx",
+   "role": "ucx",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "ucx.gap=ucx_gap_small",
+   "synthetic": true,
+   "fragment": "S",
+   "extra": {
+    "kind": "box",
+    "min": [
+     1.001,
+     6,
+     0
+    ],
+    "max": [
+     2.001,
+     7,
+     1
+    ],
+    "units": "meters"
+   },
+   "builder": "S_build"
+  },
+  {
+   "name": "UCX_GapOk_01",
+   "scene": "frag_s_ucx",
+   "role": "ucx",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "ucx.gap=pass",
+   "synthetic": true,
+   "fragment": "S",
+   "extra": {
+    "kind": "box",
+    "min": [
+     0,
+     9,
+     0
+    ],
+    "max": [
+     1,
+     10,
+     1
+    ],
+    "units": "meters"
+   },
+   "builder": "S_build"
+  },
+  {
+   "name": "UCX_GapOk_02",
+   "scene": "frag_s_ucx",
+   "role": "ucx",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "ucx.gap=pass",
+   "synthetic": true,
+   "fragment": "S",
+   "extra": {
+    "kind": "box",
+    "min": [
+     1.01,
+     9,
+     0
+    ],
+    "max": [
+     2.01,
+     10,
+     1
+    ],
+    "units": "meters"
+   },
+   "builder": "S_build"
+  },
+  {
+   "name": "UCX_Other_001",
+   "scene": "frag_s_ucx",
+   "role": "ucx",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "ucx.gap=pass",
+   "synthetic": true,
+   "fragment": "S",
+   "extra": {
+    "kind": "box",
+    "min": [
+     0,
+     12,
+     0
+    ],
+    "max": [
+     1,
+     13,
+     1
+    ],
+    "units": "meters"
+   },
+   "builder": "S_build"
+  },
+  {
+   "name": "UCX_GapCm_01",
+   "scene": "frag_s_ucxcm",
+   "role": "ucx",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "ucx.gap=ucx_gap_small",
+   "synthetic": true,
+   "fragment": "S",
+   "extra": {
+    "kind": "box",
+    "min": [
+     0,
+     0,
+     0
+    ],
+    "max": [
+     1,
+     1,
+     1
+    ],
+    "units": "centimeters"
+   },
+   "builder": "S_build"
+  },
+  {
+   "name": "UCX_GapCm_02",
+   "scene": "frag_s_ucxcm",
+   "role": "ucx",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "ucx.gap=ucx_gap_small",
+   "synthetic": true,
+   "fragment": "S",
+   "extra": {
+    "kind": "box",
+    "min": [
+     1.001,
+     0,
+     0
+    ],
+    "max": [
+     2.001,
+     1,
+     1
+    ],
+    "units": "centimeters"
+   },
+   "builder": "S_build"
+  },
+  {
+   "name": "UCX_GapCmOk_01",
+   "scene": "frag_s_ucxcm",
+   "role": "ucx",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "ucx.gap=pass",
+   "synthetic": true,
+   "fragment": "S",
+   "extra": {
+    "kind": "box",
+    "min": [
+     0,
+     3,
+     0
+    ],
+    "max": [
+     1,
+     4,
+     1
+    ],
+    "units": "centimeters"
+   },
+   "builder": "S_build"
+  },
+  {
+   "name": "UCX_GapCmOk_02",
+   "scene": "frag_s_ucxcm",
+   "role": "ucx",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "ucx.gap=pass",
+   "synthetic": true,
+   "fragment": "S",
+   "extra": {
+    "kind": "box",
+    "min": [
+     1.01,
+     3,
+     0
+    ],
+    "max": [
+     2.01,
+     4,
+     1
+    ],
+    "units": "centimeters"
+   },
+   "builder": "S_build"
+  },
+  {
+   "name": "SM_PolyLight_Root",
+   "scene": "frag_s_light",
+   "role": "helper",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "helper",
+   "cls": "Dummy",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "light.export=pass",
+   "synthetic": true,
+   "fragment": "S",
+   "extra": {
+    "kind": "dummy",
+    "units": "meters"
+   },
+   "builder": "S_build"
+  },
+  {
+   "name": "SM_PolyLight_Spot_001",
+   "scene": "frag_s_light",
+   "role": "light",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    0,
+    0,
+    3
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "light",
+   "cls": "freeSpot",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": "SM_PolyLight_Root",
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "light.export=pass",
+   "synthetic": true,
+   "fragment": "S",
+   "extra": {
+    "kind": "light",
+    "light": "freeSpot",
+    "units": "meters"
+   },
+   "builder": "S_build"
+  },
+  {
+   "name": "SM_PolyLight_Omni_001",
+   "scene": "frag_s_light",
+   "role": "light",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    6,
+    0,
+    3
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "light",
+   "cls": "Omnilight",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": "SM_PolyLight_Root",
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "light.export=pass",
+   "synthetic": true,
+   "fragment": "S",
+   "extra": {
+    "kind": "light",
+    "light": "Omnilight",
+    "units": "meters"
+   },
+   "builder": "S_build"
+  },
+  {
+   "name": "SM_PolyLight_Spot_002",
+   "scene": "frag_s_light",
+   "role": "light",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    0,
+    6,
+    3
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "light",
+   "cls": "targetSpot",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": "SM_PolyLight_Root",
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "light.export=pass",
+   "synthetic": true,
+   "fragment": "S",
+   "extra": {
+    "kind": "light",
+    "light": "targetSpot",
+    "units": "meters",
+    "aim": [
+     2,
+     8,
+     0
+    ]
+   },
+   "builder": "S_build"
+  },
+  {
+   "name": "SM_PolyLight_Photo_001",
+   "scene": "frag_s_light",
+   "role": "light",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    12,
+    0,
+    3
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "light",
+   "cls": "Free_Light",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": "SM_PolyLight_Root",
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "light.export=light_type",
+   "synthetic": true,
+   "fragment": "S",
+   "extra": {
+    "kind": "light",
+    "light": "Free_Light",
+    "units": "meters"
+   },
+   "builder": "S_build"
+  },
+  {
+   "name": "SM_PolyLight_Omni_009",
+   "scene": "frag_s_light",
+   "role": "light",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    20,
+    0,
+    3
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "light",
+   "cls": "Omnilight",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "light.export=light_outside_root",
+   "synthetic": true,
+   "fragment": "S",
+   "extra": {
+    "kind": "light",
+    "light": "Omnilight",
+    "units": "meters"
+   },
+   "builder": "S_build"
+  },
+  {
+   "name": "Stair_Ok",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.28",
+   "mesh": "box",
+   "pos": [
+    1152.7749999999996,
+    -88.10000000000001,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.28;ucx.stairs=pass",
+   "synthetic": true,
+   "fragment": "T",
+   "extra": {
+    "kind": "stairs",
+    "variant": "ok"
+   },
+   "builder": "T_build"
+  },
+  {
+   "name": "Stair_NoUcx",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.28",
+   "mesh": "box",
+   "pos": [
+    1157.7749999999996,
+    -88.10000000000001,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.28;ucx.stairs=ucx_missing",
+   "synthetic": true,
+   "fragment": "T",
+   "extra": {
+    "kind": "stairs",
+    "variant": "no_ucx"
+   },
+   "builder": "T_build"
+  },
+  {
+   "name": "Stair_PerStep",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.28",
+   "mesh": "box",
+   "pos": [
+    1163.2499999999995,
+    -88.10000000000001,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.28;ucx.stairs=ucx_not_single",
+   "synthetic": true,
+   "fragment": "T",
+   "extra": {
+    "kind": "stairs",
+    "variant": "per_step"
+   },
+   "builder": "T_build"
+  },
+  {
+   "name": "Stair_High",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.28",
+   "mesh": "box",
+   "pos": [
+    1169.1749999999995,
+    -88.10000000000001,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.28;ucx.stairs=ucx_too_high",
+   "synthetic": true,
+   "fragment": "T",
+   "extra": {
+    "kind": "stairs",
+    "variant": "high"
+   },
+   "builder": "T_build"
+  },
+  {
+   "name": "OMK_TableMarker",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.30",
+   "mesh": "box",
+   "pos": [
+    1184.4249999999995,
+    -65.65,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.30",
+   "synthetic": true,
+   "fragment": "T",
+   "extra": {
+    "kind": "omk"
+   },
+   "builder": "T_build"
+  },
+  {
+   "name": "Place_Marker",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.31",
+   "mesh": "box",
+   "pos": [
+    1184.4249999999995,
+    -76.2,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.31",
+   "synthetic": true,
+   "fragment": "T",
+   "extra": {
+    "kind": "place"
+   },
+   "builder": "T_build"
+  },
+  {
+   "name": "SM_FragU_ReqOk_Main",
+   "scene": "frag_u_agent",
+   "role": "Main",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "box",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "agent.request=pass",
+   "synthetic": true,
+   "fragment": "U",
+   "extra": {
+    "size": [
+     4.0,
+     3.0,
+     6.0
+    ],
+    "at": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "builder": "U_build"
+  },
+  {
+   "name": "SM_FragU_ReqBad_Main",
+   "scene": "frag_u_agent",
+   "role": "Main",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "box",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "agent.request=duplicate_name",
+   "synthetic": true,
+   "fragment": "U",
+   "extra": {
+    "size": [
+     2.0,
+     2.0,
+     2.0
+    ],
+    "at": [
+     8.0,
+     0.0,
+     0.0
+    ],
+    "twin": true
+   },
+   "builder": "U_build"
+  },
+  {
+   "name": "SM_FragU_AccNoRequest_Main",
+   "scene": "frag_u_accept",
+   "role": "Main",
+   "layer": "0",
+   "zone": "fragment",
+   "base": "",
+   "station": "",
+   "mesh": "box",
+   "pos": [
+    0,
+    0,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "agent.accept=pass",
+   "synthetic": true,
+   "fragment": "U",
+   "extra": {
+    "size": [
+     2.0,
+     2.0,
+     2.0
+    ],
+    "at": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "builder": "U_build"
+  },
+  {
    "name": "_base_0_1",
    "scene": "polygon_all",
    "role": "base",
@@ -17229,13 +22934,13 @@
    "station": "",
    "mesh": "box",
    "pos": [
-    1084.7999999999995,
-    -43.85000000000001,
+    1092.7374999999995,
+    -47.225,
     -0.04
    ],
    "size": [
-    265.5,
-    87.70000000000002,
+    281.375,
+    94.45,
     0.04
    ],
    "fbx": null,
@@ -17333,8 +23038,8 @@
    "station": "",
    "mesh": "empty",
    "pos": [
-    1084.7999999999995,
-    -43.85000000000001,
+    1092.7374999999995,
+    -47.225,
     0.0
    ],
    "size": [
@@ -17372,8 +23077,8 @@
    "AGR_TEST": "fixture",
    "synthetic": true,
    "camera_span": [
-    265.5,
-    87.70000000000002
+    281.375,
+    94.45
    ]
   },
   {
@@ -17419,7 +23124,7 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.1: нажми «Паспорт проекта»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.1: нажми «Паспорт проекта»\nBODY_FPass_001 -> pass",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
@@ -17470,7 +23175,7 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.2: нажми «Приём источника»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.2: нажми «Приём источника»\nSM_FIntake_Ok_Main -> pass",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
@@ -17521,7 +23226,7 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.3: нажми «Класс источника»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.3: нажми «Класс источника»\nSM_FClass_Shell_Main -> pass",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
@@ -17572,12 +23277,114 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.4: нажми «Бадик для агента»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.4: нажми «Бадик для агента»\nSM_GBody_Ok_Main -> pass\nLEVEL_GBad001 -> fail level_name\nнет PASS или FAIL: причина в README",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
    "synthetic": true,
    "text_size": 1.0,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_GBody_Ok_Main",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    956.0499999999995,
+    -85.80000000000003,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_GBody_Ok_Main",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_LEVEL_GBad001",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    962.6499999999995,
+    -86.50000000000001,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "LEVEL_GBad001",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
    "anchor": "top_left"
   },
   {
@@ -17623,12 +23430,216 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.5: нажми «Объединить по материалам»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.5: нажми «Объединить по материалам»\nSM_GAttach_Ok_Main -> pass\nSM_GAttach_NoMat_Main -> fail no_material\nSM_GAttach_SameA_Main -> fail same_name_material\nSM_GAttach_SameB_Main -> fail same_name_material\nнет PASS или FAIL: причина в README",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
    "synthetic": true,
    "text_size": 1.0,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_GAttach_Ok_Main",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    983.5499999999995,
+    -60.900000000000006,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_GAttach_Ok_Main",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_GAttach_NoMat_Main",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    990.5999999999995,
+    -61.60000000000001,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_GAttach_NoMat_Main",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_GAttach_SameA_Main",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    998.3249999999995,
+    -60.900000000000006,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_GAttach_SameA_Main",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_GAttach_SameB_Main",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1006.0499999999995,
+    -61.60000000000001,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_GAttach_SameB_Main",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
    "anchor": "top_left"
   },
   {
@@ -17642,7 +23653,7 @@
    "mesh": "empty",
    "pos": [
     981.5499999999995,
-    -59.10000000000001,
+    -63.50000000000001,
     0.05
    ],
    "size": [
@@ -17674,12 +23685,114 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.6: нажми «Раздвинуть задвойки»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.6: нажми «Раздвинуть задвойки»\nSM_GMove_Clean_Main -> pass\nSM_GMove_Double_Main -> fail double_faces\nнет PASS или FAIL: причина в README",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
    "synthetic": true,
    "text_size": 1.0,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_GMove_Clean_Main",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    983.5499999999995,
+    -71.80000000000001,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_GMove_Clean_Main",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_GMove_Double_Main",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    990.8249999999995,
+    -72.5,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_GMove_Double_Main",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
    "anchor": "top_left"
   },
   {
@@ -17693,7 +23806,7 @@
    "mesh": "empty",
    "pos": [
     981.5499999999995,
-    -68.30000000000001,
+    -74.4,
     0.05
    ],
    "size": [
@@ -17725,12 +23838,114 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.7: нажми «Чистка сетки фасада»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.7: нажми «Чистка сетки фасада»\nSM_GridClean_Ok_Main -> pass\nSM_GridClean_Dirty_Main -> fail t_junction, triangles",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
    "synthetic": true,
    "text_size": 1.0,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_GridClean_Ok_Main",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    983.5499999999995,
+    -81.35000000000001,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_GridClean_Ok_Main",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_GridClean_Dirty_Main",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    998.5499999999995,
+    -82.05,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_GridClean_Dirty_Main",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
    "anchor": "top_left"
   },
   {
@@ -17744,7 +23959,7 @@
    "mesh": "empty",
    "pos": [
     981.5499999999995,
-    -77.50000000000001,
+    -83.95,
     0.05
    ],
    "size": [
@@ -17776,7 +23991,7 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.8: нажми «Мелкие детали (метизы)»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.8: нажми «Мелкие детали (метизы)»\nBolt_M12 -> fail keyword, small_size",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
@@ -17794,7 +24009,7 @@
    "station": "",
    "mesh": "empty",
    "pos": [
-    1013.0499999999995,
+    1021.7749999999995,
     -49.900000000000006,
     0.05
    ],
@@ -17827,12 +24042,114 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.9: нажми «Окна по проёмам»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.9: нажми «Окна по проёмам»\nSM_WinPlace_Ok_Main -> pass\nSM_WinPlace_Bad_Main -> fail no_type, opening_ambiguous",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
    "synthetic": true,
    "text_size": 1.0,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_WinPlace_Ok_Main",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1023.7749999999996,
+    -56.15,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_WinPlace_Ok_Main",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_WinPlace_Bad_Main",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1031.7749999999996,
+    -56.85,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_WinPlace_Bad_Main",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
    "anchor": "top_left"
   },
   {
@@ -17845,8 +24162,8 @@
    "station": "",
    "mesh": "empty",
    "pos": [
-    1013.0499999999995,
-    -59.10000000000001,
+    1021.7749999999995,
+    -58.75,
     0.05
    ],
    "size": [
@@ -17878,12 +24195,165 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.10: нажми «Окна: генератор типов»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.10: нажми «Окна: генератор типов»\nSM_WinGen_Ok_Main -> pass\nSM_WinGen_Bad_Main -> fail quarantine",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
    "synthetic": true,
    "text_size": 1.0,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_WinGen_Ok_Main",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1023.7749999999995,
+    -65.00000000000001,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_WinGen_Ok_Main",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_WinGen_Bad_Main",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1030.5999999999995,
+    -65.7,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_WinGen_Bad_Main",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_WinGen_Seal_Main",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1037.6499999999994,
+    -65.00000000000001,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_WinGen_Seal_Main",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
    "anchor": "top_left"
   },
   {
@@ -17896,8 +24366,8 @@
    "station": "",
    "mesh": "empty",
    "pos": [
-    1013.0499999999995,
-    -68.30000000000001,
+    1021.7749999999995,
+    -67.6,
     0.05
    ],
    "size": [
@@ -17929,12 +24399,165 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.11: нажми «Стекло плоскостями»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.11: нажми «Стекло плоскостями»\nSM_GlassOne_MainGlass -> pass\nSM_GlassGrid_MainGlass -> fail glass_merge\nSM_GlassFrame_MainGlass -> fail glass_frame, glass_merge",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
    "synthetic": true,
    "text_size": 1.0,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_GlassOne_MainGlass",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1023.7749999999996,
+    -75.9,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_GlassOne_MainGlass",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_GlassGrid_MainGlass",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1031.4999999999995,
+    -76.6,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_GlassGrid_MainGlass",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_GlassFrame_MainGlass",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1039.4499999999996,
+    -75.9,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_GlassFrame_MainGlass",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
    "anchor": "top_left"
   },
   {
@@ -17947,8 +24570,8 @@
    "station": "",
    "mesh": "empty",
    "pos": [
-    1013.0499999999995,
-    -77.50000000000001,
+    1021.7749999999995,
+    -78.5,
     0.05
    ],
    "size": [
@@ -17980,7 +24603,7 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.12: нажми «Капсулы интерьера»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.12: нажми «Капсулы интерьера»\nBODY_KCapsOk_001 -> pass",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
@@ -17998,7 +24621,7 @@
    "station": "",
    "mesh": "empty",
    "pos": [
-    1043.5499999999995,
+    1057.7749999999996,
     -49.900000000000006,
     0.05
    ],
@@ -18031,7 +24654,7 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.13: нажми «Крыша по парапету»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.13: нажми «Крыша по парапету»\nPARAPET_KRoofL_001 -> pass",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
@@ -18049,7 +24672,7 @@
    "station": "",
    "mesh": "empty",
    "pos": [
-    1043.5499999999995,
+    1057.7749999999996,
     -59.10000000000001,
     0.05
    ],
@@ -18082,7 +24705,7 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.14: нажми «Таблица материалов»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.14: нажми «Таблица материалов»\nBODY_FragLMid_001 -> pass",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
@@ -18100,7 +24723,7 @@
    "station": "",
    "mesh": "empty",
    "pos": [
-    1043.5499999999995,
+    1057.7749999999996,
     -68.30000000000001,
     0.05
    ],
@@ -18133,7 +24756,7 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.15: нажми «Плитки: серые карты»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.15: нажми «Плитки: серые карты»\nTILE_FragLK3_001 -> pass",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
@@ -18151,7 +24774,7 @@
    "station": "",
    "mesh": "empty",
    "pos": [
-    1043.5499999999995,
+    1057.7749999999996,
     -77.50000000000001,
     0.05
    ],
@@ -18184,7 +24807,7 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.16: нажми «Цвет заглушки»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.16: нажми «Цвет заглушки»\nPLUG_FragLOk_001 -> pass",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
@@ -18202,7 +24825,7 @@
    "station": "",
    "mesh": "empty",
    "pos": [
-    1073.0499999999995,
+    1087.2749999999996,
     -49.900000000000006,
     0.05
    ],
@@ -18235,12 +24858,114 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.17: нажми «Сборка ВПМ»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.17: нажми «Сборка ВПМ»\nSM_Vpm_Ok -> pass\nSM_Vpm_IdBad -> fail id_range",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
    "synthetic": true,
    "text_size": 1.0,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_Vpm_Ok",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1089.2749999999996,
+    -57.85,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_Vpm_Ok",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_Vpm_IdBad",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1094.2999999999997,
+    -58.550000000000004,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_Vpm_IdBad",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
    "anchor": "top_left"
   },
   {
@@ -18253,8 +24978,8 @@
    "station": "",
    "mesh": "empty",
    "pos": [
-    1073.0499999999995,
-    -59.10000000000001,
+    1087.2749999999996,
+    -60.45,
     0.05
    ],
    "size": [
@@ -18286,12 +25011,114 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.18: нажми «Подгонка плотности»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.18: нажми «Подгонка плотности»\nSM_Rescale_Ok -> pass\nSM_Rescale_NoUV -> fail no_uv",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
    "synthetic": true,
    "text_size": 1.0,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_Rescale_Ok",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1089.2749999999996,
+    -68.4,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_Rescale_Ok",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_Rescale_NoUV",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1095.1999999999996,
+    -69.1,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_Rescale_NoUV",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
    "anchor": "top_left"
   },
   {
@@ -18304,8 +25131,8 @@
    "station": "",
    "mesh": "empty",
    "pos": [
-    1073.0499999999995,
-    -68.30000000000001,
+    1087.2749999999996,
+    -71.0,
     0.05
    ],
    "size": [
@@ -18337,12 +25164,114 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.19: нажми «Искажения UV»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.19: нажми «Искажения UV»\nSM_Dist_Ok -> pass\nSM_Dist_Bad -> fail anisotropy, texel_scale",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
    "synthetic": true,
    "text_size": 1.0,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_Dist_Ok",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1089.2749999999996,
+    -78.95,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_Dist_Ok",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_Dist_Bad",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1094.5249999999996,
+    -79.64999999999999,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_Dist_Bad",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
    "anchor": "top_left"
   },
   {
@@ -18355,8 +25284,8 @@
    "station": "",
    "mesh": "empty",
    "pos": [
-    1073.0499999999995,
-    -77.50000000000001,
+    1087.2749999999996,
+    -81.55,
     0.05
    ],
    "size": [
@@ -18388,12 +25317,114 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.20: нажми «Отступы карт (dilate)»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.20: нажми «Отступы карт (dilate)»\nSM_NDilOk_Main -> pass\nSM_NDilBad_Main -> fail dilate_no_mask\nнет PASS или FAIL: причина в README",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
    "synthetic": true,
    "text_size": 1.0,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_NDilOk_Main",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1089.2749999999996,
+    -90.85000000000001,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_NDilOk_Main",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_NDilBad_Main",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1095.4249999999997,
+    -91.55,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_NDilBad_Main",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
    "anchor": "top_left"
   },
   {
@@ -18406,7 +25437,7 @@
    "station": "",
    "mesh": "empty",
    "pos": [
-    1103.5499999999995,
+    1117.7749999999996,
     -49.900000000000006,
     0.05
    ],
@@ -18439,12 +25470,114 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.21: нажми «Острова-заглушки в UDIM»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.21: нажми «Острова-заглушки в UDIM»\nSM_NPlugOk_Main -> pass\nSM_NPlugBad_Main -> fail plug_matid\nнет PASS или FAIL: причина в README",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
    "synthetic": true,
    "text_size": 1.0,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_NPlugOk_Main",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1119.7749999999996,
+    -59.2,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_NPlugOk_Main",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_NPlugBad_Main",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1126.1499999999996,
+    -59.900000000000006,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_NPlugBad_Main",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
    "anchor": "top_left"
   },
   {
@@ -18457,8 +25590,8 @@
    "station": "",
    "mesh": "empty",
    "pos": [
-    1103.5499999999995,
-    -59.10000000000001,
+    1117.7749999999996,
+    -61.800000000000004,
     0.05
    ],
    "size": [
@@ -18490,12 +25623,114 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.22: нажми «ВПМ → НПМ»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.22: нажми «ВПМ → НПМ»\nSM_Npm_Ok -> pass\nSM_Npm_NoMap -> fail map_missing",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
    "synthetic": true,
    "text_size": 1.0,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_Npm_Ok",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1119.7749999999996,
+    -69.75000000000001,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_Npm_Ok",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_Npm_NoMap",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1124.7999999999997,
+    -70.45,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_Npm_NoMap",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
    "anchor": "top_left"
   },
   {
@@ -18508,8 +25743,8 @@
    "station": "",
    "mesh": "empty",
    "pos": [
-    1103.5499999999995,
-    -68.30000000000001,
+    1117.7749999999996,
+    -72.35000000000001,
     0.05
    ],
    "size": [
@@ -18541,12 +25776,114 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.23: нажми «Фасадный атлас run-strip»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.23: нажми «Фасадный атлас run-strip»\nSM_Strip_Ok -> pass\nSM_Strip_NoMap -> fail map_missing",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
    "synthetic": true,
    "text_size": 1.0,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_Strip_Ok",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1119.7749999999996,
+    -80.30000000000001,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_Strip_Ok",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_Strip_NoMap",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1125.2499999999995,
+    -81.0,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_Strip_NoMap",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
    "anchor": "top_left"
   },
   {
@@ -18559,8 +25896,8 @@
    "station": "",
    "mesh": "empty",
    "pos": [
-    1103.5499999999995,
-    -77.50000000000001,
+    1117.7749999999996,
+    -82.9,
     0.05
    ],
    "size": [
@@ -18592,12 +25929,114 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.24: нажми «НПМ → ВПМ»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.24: нажми «НПМ → ВПМ»\nSM_N2V_Ok -> pass\nSM_N2V_Fail -> fail table_no_row, window_no_type",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
    "synthetic": true,
    "text_size": 1.0,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_N2V_Ok",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1119.7749999999996,
+    -90.85000000000001,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_N2V_Ok",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_N2V_Fail",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1124.7999999999997,
+    -91.55,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_N2V_Fail",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
    "anchor": "top_left"
   },
   {
@@ -18610,7 +26049,7 @@
    "station": "",
    "mesh": "empty",
    "pos": [
-    1135.5499999999995,
+    1149.7749999999996,
     -49.900000000000006,
     0.05
    ],
@@ -18643,7 +26082,7 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.25: нажми «UDIM → ID (просмотр)»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.25: нажми «UDIM → ID (просмотр)»\nSM_UdimIds_Ok -> pass\nSM_UdimIds_Bad -> fail udim_ambiguous",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
@@ -18652,7 +26091,7 @@
    "anchor": "top_left"
   },
   {
-   "name": "_label_1_0_26",
+   "name": "_label_obj_SM_UdimIds_Ok",
    "scene": "polygon_all",
    "role": "label",
    "layer": "_labels",
@@ -18661,8 +26100,8 @@
    "station": "",
    "mesh": "empty",
    "pos": [
-    1135.5499999999995,
-    -59.10000000000001,
+    1151.7749999999996,
+    -57.85,
     0.05
    ],
    "size": [
@@ -18694,7 +26133,109 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.26: нажми «Сдача пакета»\nнет PASS или FAIL: причина в README",
+   "text": "SM_UdimIds_Ok",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_UdimIds_Bad",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1157.6999999999996,
+    -58.550000000000004,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_UdimIds_Bad",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_1_0_26",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1149.7749999999996,
+    -60.45,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "Станция 1.0.26: нажми «Сдача пакета»\nUCX_PolyDeliver_01 -> fail ucx.gap/ucx_touch",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
@@ -18712,8 +26253,8 @@
    "station": "",
    "mesh": "empty",
    "pos": [
-    1135.5499999999995,
-    -68.30000000000001,
+    1149.7749999999996,
+    -69.65,
     0.05
    ],
    "size": [
@@ -18745,7 +26286,7 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.27: нажми «UCX: нарезка и зазор»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.27: нажми «UCX: нарезка и зазор»\nUCX_GapTouch_01 -> fail ucx_touch",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
@@ -18763,8 +26304,8 @@
    "station": "",
    "mesh": "empty",
    "pos": [
-    1135.5499999999995,
-    -77.50000000000001,
+    1149.7749999999996,
+    -78.85000000000001,
     0.05
    ],
    "size": [
@@ -18796,12 +26337,216 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.28: нажми «UCX лестниц»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.28: нажми «UCX лестниц»\nStair_Ok -> pass\nStair_NoUcx -> fail ucx_missing\nStair_PerStep -> fail ucx_not_single\nStair_High -> fail ucx_too_high",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
    "synthetic": true,
    "text_size": 1.0,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_Stair_Ok",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1151.7749999999996,
+    -89.50000000000001,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "Stair_Ok",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_Stair_NoUcx",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1156.7749999999996,
+    -90.2,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "Stair_NoUcx",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_Stair_PerStep",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1162.2499999999995,
+    -89.50000000000001,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "Stair_PerStep",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_Stair_High",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1168.1749999999995,
+    -90.2,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "Stair_High",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
    "anchor": "top_left"
   },
   {
@@ -18814,7 +26559,7 @@
    "station": "",
    "mesh": "empty",
    "pos": [
-    1165.5499999999995,
+    1181.4249999999995,
     -49.900000000000006,
     0.05
    ],
@@ -18847,7 +26592,7 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.29: нажми «FBX освещения _Light»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.29: нажми «FBX освещения _Light»\nSM_PolyLight_Root -> pass",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
@@ -18865,7 +26610,7 @@
    "station": "",
    "mesh": "empty",
    "pos": [
-    1165.5499999999995,
+    1181.4249999999995,
     -59.10000000000001,
     0.05
    ],
@@ -18898,12 +26643,63 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.30: нажми «Код ОМК ТЭ»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.30: нажми «Код ОМК ТЭ»\n__scene__ (на станции ?) -> pass\nнет PASS или FAIL: причина в README",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
    "synthetic": true,
    "text_size": 1.0,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_OMK_TableMarker",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1183.4249999999995,
+    -67.05000000000001,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "OMK_TableMarker",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
    "anchor": "top_left"
   },
   {
@@ -18916,8 +26712,8 @@
    "station": "",
    "mesh": "empty",
    "pos": [
-    1165.5499999999995,
-    -68.30000000000001,
+    1181.4249999999995,
+    -69.65,
     0.05
    ],
    "size": [
@@ -18949,12 +26745,63 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.31: нажми «Поставить по паспорту»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.31: нажми «Поставить по паспорту»\n__scene__ (на станции ?) -> pass\nнет PASS или FAIL: причина в README",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
    "synthetic": true,
    "text_size": 1.0,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_Place_Marker",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1183.4249999999995,
+    -77.60000000000001,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "Place_Marker",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
    "anchor": "top_left"
   },
   {
@@ -18967,8 +26814,8 @@
    "station": "",
    "mesh": "empty",
    "pos": [
-    1165.5499999999995,
-    -77.50000000000001,
+    1181.4249999999995,
+    -80.2,
     0.05
    ],
    "size": [
@@ -19000,7 +26847,7 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.32: нажми «Запрос агенту»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.32: нажми «Запрос агенту»\nSM_FragU_ReqOk_Main -> pass",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
@@ -19018,7 +26865,7 @@
    "station": "",
    "mesh": "empty",
    "pos": [
-    1196.0499999999995,
+    1211.9249999999995,
     -49.900000000000006,
     0.05
    ],
@@ -19051,7 +26898,7 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.33: нажми «Приём от агента»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.33: нажми «Приём от агента»\nSM_FragU_AccNoRequest_Main -> error\nнет PASS или FAIL: причина в README",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",

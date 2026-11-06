@@ -1,13 +1,31 @@
 {
  "schema": 1,
  "button": "mat.tiles",
- "tool": null,
+ "tool": "mat.tiles",
  "version": "1.0",
- "shipped": false,
+ "shipped": true,
  "select": "named",
- "reason": "станция в работе, #1024, ветка L",
+ "reason": "",
  "apply_status": null,
- "objects": [],
+ "objects": [
+  {
+   "name": "TILE_FragLK3_001",
+   "scene": "frag_l_tiles",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "TILE_FragLBrick_001",
+   "scene": "frag_l_tiles",
+   "expect": "fail",
+   "codes": [
+    "module_stretched"
+   ]
+  }
+ ],
+ "options": {
+  "max_stretch_pct": 1.0
+ },
  "base": "1.0",
  "station": "1.0.15",
  "stations": [

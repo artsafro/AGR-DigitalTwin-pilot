@@ -1,13 +1,29 @@
 {
  "schema": 1,
  "button": "win.generate",
- "tool": null,
+ "tool": "win.generate",
  "version": "1.0",
- "shipped": false,
+ "shipped": true,
  "select": "named",
- "reason": "станция в работе, #1024, ветка J",
+ "reason": "",
  "apply_status": null,
- "objects": [],
+ "objects": [
+  {
+   "name": "SM_WinGen_Ok_Main",
+   "scene": "polygon_all",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_WinGen_Bad_Main",
+   "scene": "polygon_all",
+   "expect": "fail",
+   "codes": [
+    "quarantine"
+   ]
+  }
+ ],
+ "options": {},
  "base": "1.0",
  "station": "1.0.10",
  "stations": [

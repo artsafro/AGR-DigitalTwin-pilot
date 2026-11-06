@@ -1,0 +1,56 @@
+{
+ "schema": 1,
+ "branch": "G",
+ "issue": "#1024",
+ "stations": [
+  {
+   "button": "body.prepare",
+   "objects": [
+    {"name": "SM_GBody_Ok_Main", "role": "Main", "size": [1, 1, 1], "builder": "G_build",
+     "extra": {"kind": "box_mat", "mat": "M_GBody_Brick"}},
+    {"name": "LEVEL_GBad001", "role": "Main", "size": [1, 1, 1], "builder": "G_build", "extra": {"kind": "level"}}
+   ],
+   "expected": [
+    {"name": "SM_GBody_Ok_Main", "scene": "polygon_all", "expect": "pass", "codes": []},
+    {"name": "LEVEL_GBad001", "scene": "polygon_all", "expect": "fail", "codes": ["level_name"]}
+   ],
+   "options": {"levels": [3.0, 6.0, 9.0]},
+   "reason": "body -> agr_role body, BODY_MGBodyBrick_001, LEVEL_L1/L2/roof planned (pass); a height helper with a Max copy counter (LEVEL_GBad001) breaks the extractor rule mesh.py:27-28 -> level_name"
+  },
+  {
+   "button": "model.attach_by_material",
+   "objects": [
+    {"name": "SM_GAttach_Ok_Main", "role": "Main", "size": [1, 1, 1], "builder": "G_build",
+     "extra": {"kind": "box_mat", "mat": "M_GAttach_Ok"}},
+    {"name": "SM_GAttach_NoMat_Main", "role": "Main", "size": [1, 1, 1], "builder": "G_build",
+     "extra": {"kind": "box_mat"}},
+    {"name": "SM_GAttach_SameA_Main", "role": "Main", "size": [1, 1, 1], "builder": "G_build",
+     "extra": {"kind": "box_mat", "mat": "M_GAttach_Same"}},
+    {"name": "SM_GAttach_SameB_Main", "role": "Main", "size": [1, 1, 1], "builder": "G_build",
+     "extra": {"kind": "box_mat", "mat": "M_GAttach_Same"}}
+   ],
+   "expected": [
+    {"name": "SM_GAttach_Ok_Main", "scene": "polygon_all", "expect": "pass", "codes": []},
+    {"name": "SM_GAttach_NoMat_Main", "scene": "polygon_all", "expect": "fail", "codes": ["no_material"]},
+    {"name": "SM_GAttach_SameA_Main", "scene": "polygon_all", "expect": "fail", "codes": ["same_name_material"]},
+    {"name": "SM_GAttach_SameB_Main", "scene": "polygon_all", "expect": "fail", "codes": ["same_name_material"]}
+   ],
+   "reason": "Keep split by material instance (L14): a unique material passes; geometry without a material is named BODY_NoMaterial_NNN (no neighbour's material, GeoAGR.ms:55021-55024); two different materials with one name stay apart and are reported"
+  },
+  {
+   "button": "model.move_apart",
+   "objects": [
+    {"name": "SM_GMove_Clean_Main", "role": "Main", "size": [1, 1, 1], "builder": "G_build",
+     "extra": {"kind": "box_mat", "mat": "M_GMove"}},
+    {"name": "SM_GMove_Double_Main", "role": "Main", "size": [1, 1, 1], "builder": "G_build",
+     "extra": {"kind": "double", "gap_mm": 1.0}}
+   ],
+   "expected": [
+    {"name": "SM_GMove_Clean_Main", "scene": "polygon_all", "expect": "pass", "codes": []},
+    {"name": "SM_GMove_Double_Main", "scene": "polygon_all", "expect": "fail", "codes": ["double_faces"]}
+   ],
+   "options": {"range": "main", "to_mm": 3},
+   "reason": "a 1 m box has no parallel faces closer than 2 mm (pass); two quads back to back 1 mm apart are a pair in [0, 2] mm -> double_faces, apply sets the final gap To = 3 mm (owner 06.11.2026)"
+  }
+ ]
+}

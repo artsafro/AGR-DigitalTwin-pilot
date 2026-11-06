@@ -3,6 +3,9 @@
     uv run python tools/library/build_window_types.py --type-map <type-map.json> \
         --library-v001 <curtain-types.json> --kpp1-twin <twin-data.json> --kpp1-spec <spec.json> \
         --output library/windows/window_types.json
+    # K2 quality report + preview sheet «было → стало» of the library by library/windows/standard.json (#1024 J):
+    uv run python tools/library/build_window_types.py --quality-of library/windows/window_types.json \
+        --quality library/windows/quality.json --sheet <new>.png
     # add or rebuild a job census without the user-project inputs (existing entries kept as built):
     uv run python tools/library/build_window_types.py --base library/windows/window_types.json \
         --census-source library/windows/sources/elv-tc-vpm-census-v001.json --output library/windows/window_types.json
@@ -278,13 +281,46 @@ def confirm(types, confirmations):
     return types
 
 
+def _windowgen():
+    """adapters/max/agr_tools/windowgen_core.py (stdlib), the generator of win.generate (#1024 K2)."""
+    import importlib.util
+    path = Path(__file__).resolve().parents[2] / "adapters" / "max" / "agr_tools" / "windowgen_core.py"
+    spec = importlib.util.spec_from_file_location("agr_tools_windowgen_core_lib", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def quality(types_path, quality_path=None, sheet_path=None, standard_path=None):
+    """K2: pass / quarantine / duplicate and the face axis of every type by the window standard; the quality file
+    and the preview sheet are written only when asked (never over an existing file: a new sheet is a new vNNN)."""
+    wg = _windowgen()
+    types_path = Path(types_path)
+    std_path = Path(standard_path) if standard_path else types_path.with_name("standard.json")
+    types = json.loads(types_path.read_text(encoding="utf-8"))["types"]
+    standard = wg.load_standard(json.loads(std_path.read_text(encoding="utf-8")))
+    report = wg.library_report(types, standard)
+    if quality_path:
+        Path(quality_path).parent.mkdir(parents=True, exist_ok=True)
+        Path(quality_path).write_text(wg.report_json(report), encoding="utf-8")
+    if sheet_path:
+        Path(sheet_path).parent.mkdir(parents=True, exist_ok=True)
+        with Path(sheet_path).open("xb") as f:
+            f.write(wg.sheet_png(types, standard, report))
+    return report
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("--quality-of", type=Path, help="window_types.json: write only the K2 quality report / sheet")
+    ap.add_argument("--quality", type=Path, help="with --quality-of: quality.json to write")
+    ap.add_argument("--sheet", type=Path, help="with --quality-of: preview sheet PNG to create (never overwritten)")
+    ap.add_argument("--standard", type=Path, help="with --quality-of: standard.json (default: next to the types)")
     ap.add_argument("--type-map", type=Path)
     ap.add_argument("--library-v001", type=Path)
     ap.add_argument("--kpp1-twin", type=Path)
     ap.add_argument("--kpp1-spec", type=Path)
-    ap.add_argument("--output", type=Path, required=True)
+    ap.add_argument("--output", type=Path)
     ap.add_argument("--max-source", type=Path, action="append", default=[],
                     help="a 3ds Max window source (library/windows/sources/*.json); repeatable")
     ap.add_argument("--census-source", type=Path, action="append", default=[],
@@ -294,6 +330,12 @@ def main(argv=None):
                          "are not on this machine); entries from the given census files are rebuilt")
     ap.add_argument("--confirmations", type=Path, default=Path(__file__).resolve().parents[2] / "library" / "windows" / "confirmations.json")
     args = ap.parse_args(argv)
+    if args.quality_of:
+        rep = quality(args.quality_of, args.quality, args.sheet, args.standard)
+        print("window quality: {} -> {}".format(rep["counts"], args.quality or "-"))
+        return
+    if not args.output:
+        raise SystemExit("--output is required (or --quality-of)")
     if not args.confirmations.exists():                 # never drop the user's decisions silently (PR #42 review 1)
         raise SystemExit(f"confirmations file not found: {args.confirmations}")
     if not args.base and not all((args.type_map, args.library_v001, args.kpp1_twin, args.kpp1_spec)):

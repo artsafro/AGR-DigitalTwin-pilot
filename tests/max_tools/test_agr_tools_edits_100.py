@@ -78,8 +78,11 @@ def test_stages_cover_the_33_buttons_in_station_order():
     assert len(ORDER) == 33 and len(set(ORDER)) == 33 and set(ORDER) == set(OWNER)
     assert [s['id'] for s in suite['stages']] == list(range(10)) + ['agent']
     v10 = next(v for v in suite['versions'] if v['version'] == '1.0')
-    assert v10['rows'] == ORDER and v10['status'] == 'in work' and v10['issue'] == '#1024'
+    assert v10['rows'] == ORDER and v10['status'] == 'done' and v10['issue'] == '#1024'
     assert sorted(v10['steps']) == ['atlas.unatlas', 'model.window_placer', 'tex.vpm_sets']
+    # release 1.0.0 (#1024 R): all 13 branches merged (Q #1085 last): no row is deferred, no button wip
+    assert not any(r.get('deferred') for r in ROWS.values()) and 'deferred' not in v10
+    assert set(_load(PKG / 'ui_model.py', 'agr_tools_ui_model_100').WIP_100) == set()
     for rid in ORDER:
         assert ROWS[rid]['version'] == '1.0' and ROWS[rid]['fate'] == 'stage' and ROWS[rid]['mcp'] == 'yes'
     for rid in NEW_15:
@@ -195,8 +198,19 @@ def test_every_stub_answers_not_implemented(tool):
         assert rt.edits_100(tool, 'apply', p) == ec.not_implemented(tool, 'apply', '#1024')
 
 
-def test_dispatcher_refusals_and_apply_only_from_the_panel():
+def _stub_roof_glue(rt, monkeypatch):
+    """`body.roof` is the sample stub row of the dispatcher / journal checks: its glue (branch K) is replaced by an
+    empty module, so these checks keep testing the base whatever a branch implements."""
+    real = rt._load_core
+
+    def fake(name, key):
+        return type(sys)('fake_empty_roof_max') if name == 'roof_max.py' else real(name, key)
+    monkeypatch.setattr(rt, '_load_core', fake)
+
+
+def test_dispatcher_refusals_and_apply_only_from_the_panel(monkeypatch):
     rt = runtime()
+    _stub_roof_glue(rt, monkeypatch)
     p = ec.report('body.roof', 'preview', objects=[ec.entry(5, 'Box')], done=['Box'], state_hash=ec.fingerprint((1,)))
     for args, word in ((('nope', 'preview'), 'unsupported edit tool'), (('place.replace', 'preview'), 'unsupported'),
                        (('body.roof', 'commit'), 'mode'), (('body.roof', 'apply'), 'needs the preview'),
@@ -363,6 +377,12 @@ def test_agent_request_schema_layer_and_ops():
 def test_one_call_one_journal_line_with_actor(tmp_path, monkeypatch):
     monkeypatch.setenv('AGR_JOURNAL_DIR', str(tmp_path))
     rt = runtime()
+    # the journal hook is under test, not the buttons: once a branch implements body.roof / udim.distortion their
+    # glue needs Max, so the dispatcher answers like a stub here (#1024 branch M found this)
+    real = rt._dispatch_edit
+    monkeypatch.setattr(rt, '_dispatch_edit', lambda table, read, glue, issue, tool, mode, *a: (
+        rt._edit_core().not_implemented(tool, mode, issue) if tool in table else real(table, read, glue, issue,
+                                                                                         tool, mode, *a)))
     rt.edits_100('body.roof', 'preview')
     rt.edits_100('udim.distortion', 'preview', actor='mcp')
     with pytest.raises(ValueError):
@@ -379,6 +399,7 @@ def test_journal_write_failure_never_hides_the_tool_result(tmp_path, monkeypatch
     blocker.write_text('x')
     monkeypatch.setenv('AGR_JOURNAL_DIR', str(blocker / 'sub'))
     rt = runtime()
+    _stub_roof_glue(rt, monkeypatch)
     assert rt.edits_100('body.roof', 'preview')['status'] == 'not_implemented'
     assert 'journal line not written' in capsys.readouterr().out
 

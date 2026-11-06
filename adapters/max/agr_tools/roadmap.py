@@ -209,6 +209,12 @@ def _stage_fields(r):
         raise ValueError('row {}: step_of goes with fate step only'.format(r['id']))
     if r['mode'] == 'agent' and stage != 'agent':
         raise ValueError('row {}: mode agent only on the agent stage'.format(r['id']))
+    # Release 1.0.0 (#1024 R): a 1.0 row whose branch was not merged when R started (branch Q) keeps version 1.0
+    # in the plan and is `deferred` to a later release; it is not shipped until then.
+    if 'deferred' in r and (stage is None or not isinstance(r['deferred'], str)
+                            or vkey(r['deferred']) <= vkey(r['version'])):
+        raise ValueError('row {}: deferred {!r} needs a stage row and a later version'.format(
+            r['id'], r.get('deferred')))
 
 
 def _stages(suite, staged, by_id):
@@ -284,10 +290,17 @@ def block_rows(suite, block_id):
 
 
 def state(r, package_version):
-    return 'done' if shipped(r['version'], package_version) else 'planned'
+    version = r.get('deferred') or r['version']
+    return 'done' if shipped(version, package_version) else 'planned'
 
 
 def planned_label(r):
+    """Grey text of a row that is not a button of this package: its version; a deferred 1.0 row names the release it
+    moved to; a step row (no own button, folded into a stage button) names its button."""
+    if r.get('deferred'):
+        return 'в версии {} (#1024)'.format(r['deferred'])
+    if r.get('fate') == 'step':
+        return 'в кнопке ' + str(r['step_of'])
     return 'в версии ' + str(r['version'])
 
 

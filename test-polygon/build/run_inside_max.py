@@ -52,6 +52,9 @@ def _select(names):
     return nodes
 
 
+PER_OBJECT_100 = polygon_core.PER_OBJECT_100
+
+
 def _press(runtime, tool, names, options=None):
     from pymxs import runtime as rt
     if (tool in getattr(runtime, 'EDITS_100', ()) or tool in getattr(runtime, 'EDITS_090', ())
@@ -110,8 +113,8 @@ def main():
                      if not o.get('produced') and o['name'] != '__scene__'
                      and not str(o['name']).endswith('.geojson')]
             tool = doc['tool']
-            if tool == 'geojson':
-                targets = [[o['name']] for o in mine]
+            if tool == 'geojson' or tool in PER_OBJECT_100:
+                targets = [[n] for n in names] if tool != 'geojson' else [[o['name']] for o in mine]
             else:
                 targets = [names]
             for picked in targets:

@@ -1,0 +1,30 @@
+{"schema": 1, "branch": "J", "issue": "#1024", "stations": [
+ {"button": "win.place",
+  "objects": [
+   {"name": "SM_WinPlace_Ok_Main", "role": "Main", "builder": "J_build", "size": [5, 0.3, 3.2],
+    "extra": {"j": {"kind": "facade", "spec": {"name": "SM_WinPlace_Ok_Main", "points": [[0, 0], [5, 0]],
+      "height": 3.2, "reveal": 0.25, "corners": [],
+      "holes": [{"wall": 0, "kind": "rect", "u": 0.5, "sill": 0.9, "w": 1.18, "h": 1.8, "type": "KPP1-W01"},
+                {"wall": 0, "kind": "rect", "u": 2.4, "sill": 0.9, "w": 2.0, "h": 1.8, "type": "KPP1-W03"}]}}}},
+   {"name": "SM_WinPlace_Bad_Main", "role": "Main", "builder": "J_build", "size": [5, 0.3, 3.2],
+    "extra": {"j": {"kind": "facade", "spec": {"name": "SM_WinPlace_Bad_Main", "points": [[0, 0], [5, 0]],
+      "height": 3.2, "reveal": 0.25, "corners": [],
+      "holes": [{"wall": 0, "kind": "arch", "u": 0.5, "sill": 0.9, "w": 1.18, "h": 1.8, "type": null},
+                {"wall": 0, "kind": "rect", "u": 2.6, "sill": 0.9, "w": 1.5, "h": 1.5, "type": null}]}}}}],
+  "expected": [
+   {"name": "SM_WinPlace_Ok_Main", "scene": "polygon_all", "expect": "pass", "codes": []},
+   {"name": "SM_WinPlace_Bad_Main", "scene": "polygon_all", "expect": "fail", "codes": ["no_type", "opening_ambiguous"]}],
+  "options": {}},
+ {"button": "win.generate",
+  "objects": [
+   {"name": "SM_WinGen_Ok_Main", "role": "Main", "builder": "J_build", "size": [0.3, 0.3, 0.3],
+    "extra": {"j": {"kind": "marker", "type": "WT-11", "w": 1.694, "h": 2.614}}},
+   {"name": "SM_WinGen_Bad_Main", "role": "Main", "builder": "J_build", "size": [0.3, 0.3, 0.3],
+    "extra": {"j": {"kind": "marker", "type": "WT-02", "w": 3.287, "h": 2.614}}},
+   {"name": "SM_WinGen_Seal_Main", "role": "Main", "builder": "J_build", "size": [0.3, 0.3, 0.3],
+    "extra": {"j": {"kind": "seal"}}}],
+  "expected": [
+   {"name": "SM_WinGen_Ok_Main", "scene": "polygon_all", "expect": "pass", "codes": []},
+   {"name": "SM_WinGen_Bad_Main", "scene": "polygon_all", "expect": "fail", "codes": ["quarantine"]}],
+  "options": {}}
+]}

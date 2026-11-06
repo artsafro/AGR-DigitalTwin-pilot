@@ -1,13 +1,34 @@
 {
  "schema": 1,
  "button": "agent.request",
- "tool": null,
+ "tool": "agent.request",
  "version": "1.0",
- "shipped": false,
+ "shipped": true,
  "select": "named",
- "reason": "станция в работе, #1024, ветка U",
+ "reason": "",
  "apply_status": null,
- "objects": [],
+ "objects": [
+  {
+   "name": "SM_FragU_ReqOk_Main",
+   "scene": "frag_u_agent",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_FragU_ReqBad_Main",
+   "scene": "frag_u_agent",
+   "expect": "fail",
+   "codes": [
+    "duplicate_name"
+   ]
+  }
+ ],
+ "options": {
+  "task": "polygon 1.0.32: mark the openings of SM_FragU_ReqOk_Main",
+  "job_dir": "C:/agr-polygon/jobs/FRAGU",
+  "request_id": "poly-u",
+  "project_id": "FRAGU"
+ },
  "base": "1.0",
  "station": "1.0.32",
  "stations": [

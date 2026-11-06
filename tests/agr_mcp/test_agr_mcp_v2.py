@@ -5,6 +5,7 @@ runtime on the real edit_core / journal_core contract, executed by an in-process
 adapters/max/agr_tools/runtime.py (1.0 stub rows).
 """
 import copy
+import importlib.util
 import json
 import os
 import re
@@ -74,7 +75,7 @@ def err(res, code):
 # ---- fake installed runtime on the real edit_core / journal_core contract -----------------------------------------
 FAKE_RUNTIME = '''
 import importlib.util, os, sys
-VERSION = "0.9.0"
+VERSION = "1.0.0"
 CALLS = []
 STATE = {"scene": "s1"}
 NOT_IMPLEMENTED = set()
@@ -141,7 +142,7 @@ class FakeNode:
 
 @pytest.fixture
 def fake_max(tmp_path, monkeypatch):
-    root = tmp_path / "AGRTools-0.9.0"
+    root = tmp_path / "AGRTools-1.0.0"
     root.mkdir()
     (root / "runtime.py").write_text("AGR = {!r}\n".format(str(AGR).replace("\\", "/")) + FAKE_RUNTIME,
                                      encoding="utf-8")
@@ -207,7 +208,8 @@ def test_catalogue_is_generated_from_the_plan():
     assert set(cat["agr_op_preview"].input["properties"]["op"]["enum"]) == ops
     assert set(catalog.apply_ids(PLAN)) == apply == set(max_bridge.APPLY_OVER_MCP)
     assert len(checks) == 38 and len(ops) == 32 and len(apply) == 11
-    assert set(tools.LISTED) == set(cat) and len(cat) == 52 + 15 + 3
+    hook = {x.name for x in ops_d108.register({})}  # branch U's tools (empty with the stub)
+    assert set(tools.LISTED) | hook == set(cat) and len(cat) == 52 + 15 + 3 + len(hook)
     for n in tools.PHASE0:
         assert "Deprecated" in cat[n].description, n
     assert not cat["agr_op_apply"].read_only and set(cat["agr_op_apply"].input["properties"]) == {
@@ -241,7 +243,8 @@ def test_plan_row_without_a_route_fails_the_build():
 def test_ops_d108_hook_adds_specs_without_editing_tools(monkeypatch):
     extra = spec_mod.Spec("agr_d108_keep", "D108 keep (branch U)", {"type": "object"}, {"type": "object"},
                           lambda a: {"ok": 1}, lambda a: "offline", schema=2)
-    assert ops_d108.register({}) == []
+    own = ops_d108.register({})  # [] with the stub; branch U's tools after it lands
+    assert all(isinstance(x, spec_mod.Spec) for x in own) and len({x.name for x in own}) == len(own)
     monkeypatch.setattr(ops_d108, "register", lambda cat: [extra])
     assert tools.catalog()["agr_d108_keep"] is extra
     monkeypatch.setattr(ops_d108, "register", lambda cat: [dataclass_copy(extra, "agr_check_run")])
@@ -319,7 +322,7 @@ def test_preview_id_is_bound_and_apply_takes_only_it(fake_max, tmp_path):
     pid = sc["preview_id"]
     assert pid == envelope.sha256(report) and sc["next_actions"] == ["agr_op_apply(preview_id='{}')".format(pid)]
     held = store.get(pid, {})
-    assert held.binding == {"host": "max-live", "instance": None, "doc": fake_max.doc, "runtime_version": "0.9.0",
+    assert held.binding == {"host": "max-live", "instance": None, "doc": fake_max.doc, "runtime_version": "1.0.0",
                             "state_hash": report["plan"]["state_hash"], "op": "model.triangulate"}
     assert held.targets == {"scene": "live", "handles": [1]}
     _, (app, again) = run_calls([("agr_op_apply", {"preview_id": pid}), ("agr_op_apply", {"preview_id": pid})],
@@ -328,7 +331,7 @@ def test_preview_id_is_bound_and_apply_takes_only_it(fake_max, tmp_path):
     assert out["result"]["plan"]["mode"] == "apply" and out["preview_id"] == pid
     assert ("080", "model.triangulate", "apply", [1], "mcp", None) in rtmod().CALLS
     assert fake_max.sent[-1][1]["preview"] == report and fake_max.sent[-1][1]["expect"] == {
-        "doc": fake_max.doc, "runtime_version": "0.9.0"}
+        "doc": fake_max.doc, "runtime_version": "1.0.0"}
     err(again, "stale_preview")
     with pytest.raises(jsonschema.ValidationError):  # apply takes only preview_id (+ idempotency_key)
         jsonschema.validate({"preview_id": pid, "preview": report}, tools.catalog()["agr_op_apply"].input)
@@ -369,7 +372,7 @@ def test_stale_preview_on_every_binding_change(fake_max, monkeypatch):
     rtmod().VERSION = "0.9.1"
     _, (res,) = run_calls([("agr_op_apply", {"preview_id": pid})], fake_max.transport, store)
     assert "runtime changed" in err(res, "stale_preview")["error"]
-    rtmod().VERSION = "0.9.0"
+    rtmod().VERSION = "1.0.0"
     # scene state changed (runtime edit_core.require_current -> StalePreview)
     pid = _held(fake_max, store)
     rtmod().STATE["scene"] = "s2"
@@ -440,12 +443,30 @@ def test_real_runtime_edits_100_stub_over_mcp(fake_max, monkeypatch, tmp_path):
     not_implemented and the runtime itself writes the one journal line with actor mcp."""
     monkeypatch.setenv("AGR_TOOLS_ROOT", str(AGR))
     monkeypatch.delitem(sys.modules, "runtime", raising=False)
-    _, (res,) = run_calls([("agr_project_passport", {"scene": "live", "handles": [1]})], fake_max.transport)
+    stub = _a_stage_stub()  # branches F..U fill their buttons; the check follows a button that is still a stub
+    if stub is None:
+        pytest.skip("every 1.0 stage button is implemented; the branches' native runs own the behaviour")
+    name = catalog.tool_name(stub)
+    _, (res,) = run_calls([(name, {"scene": "live", "handles": [1]})], fake_max.transport)
     sc = ok2(res)
-    assert sc["result"]["status"] == "not_implemented" and sc["result"]["tool"] == "project.passport"
+    assert sc["result"]["status"] == "not_implemented" and sc["result"]["tool"] == stub
     lines = journal_lines(tmp_path)
-    assert len(lines) == 1 and lines[0]["actor"] == "mcp" and lines[0]["tool"] == "project.passport"
+    assert len(lines) == 1 and lines[0]["actor"] == "mcp" and lines[0]["tool"] == stub
     assert lines[0]["doc"] == fake_max.doc
+
+
+def _a_stage_stub():
+    """The last stage tool (station order) whose glue function is still absent, or None."""
+    import ast
+    spec = importlib.util.spec_from_file_location("agr_runtime_stub_pick", AGR / "runtime.py")
+    rt = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(rt)
+    for row in reversed(catalog.stage_rows(PLAN)):
+        core, fn = rt.EDITS_100[row["id"]]
+        tree = ast.parse((AGR / rt.glue_file(core, rt.GLUE_100)).read_text(encoding="utf-8"))
+        if fn not in {n.name for n in tree.body if isinstance(n, ast.FunctionDef)}:
+            return row["id"]
+    return None
 
 
 # ---- 5. one journal --------------------------------------------------------------------------------------------------

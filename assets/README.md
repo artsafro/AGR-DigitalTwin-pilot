@@ -7,7 +7,10 @@ Only JSON, schema, documentation and code go into Git. Never add binaries to Git
 ## Inventory and provenance
 
 `manifest.json` covers MAF union/NPM sources and specification, Flora **v003**, Win_Typical
-**v001**, and Vatutino Ground **v014** (NPM, intermediate VPM and final VPM+UCX).
+**v001**, Vatutino Ground **v014** (NPM, intermediate VPM and final VPM+UCX), Vatutino Ground
+**v015** from PR #906 (NPM, VPM, VPM+UCX, textured NPM/VPM FBX and the delivered NPM/VPM `.max`),
+and the TEC26 AC08 triple (#1017): source FBX (#753), delivered pilot **v010** NPM/VPM packages
+(technical QA only, not acceptance), the album `ТЭЦ26 на РР (1).pptx` and DWG `22Е56-АР2-1002-АС.08`.
 Every SHA-256 and byte size was measured from the existing `recorded_path` on 2026-10-20;
 the six previously published digests matched. `recorded_path` is provenance, NOT an
 automatically trusted copy source. `source` cites repository metadata and is required and nonblank [D151].
@@ -21,7 +24,22 @@ arbitrary `recorded_path` values. Missing files or a different hash exit nonzero
 any backend writes; it will not silently repair a bad local copy. Checksum and positive
 integer byte size are mandatory, non-null verification evidence in both schema and runtime.
 A partial entry rejects the entire batch before backend/report writes, even alongside valid
-entries. The checked-in initial inventory has all eight checksums and sizes populated.
+entries. The checked-in inventory has every checksum and size populated.
+
+## Cold retrieval check
+
+`drive_folder` names the folder inside the Google Drive for desktop root (`G:/Мой диск`)
+that holds every `drive_path`. From the manifest alone:
+
+```bash
+uv run python tools/assets/cold_check.py                       # local store + detected Drive mount
+uv run python tools/assets/cold_check.py --root C:/x/empty     # Drive copies only (a cold machine)
+```
+
+Every existing copy (`<local_root>/<local_path>`, `<mount>/<drive_folder>/<drive_path>`) is hashed.
+An entry is `match` only when at least one copy exists and every copy has the declared SHA-256
+and size; otherwise `mismatch` or `missing`. Exit 0 only when all entries match; an invalid
+manifest exits 1 before hashing. It writes nothing (JSON to stdout).
 
 ## Offline first
 

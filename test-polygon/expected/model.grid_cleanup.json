@@ -1,13 +1,29 @@
 {
  "schema": 1,
  "button": "model.grid_cleanup",
- "tool": null,
+ "tool": "model.grid_cleanup",
  "version": "1.0",
- "shipped": false,
+ "shipped": true,
  "select": "named",
- "reason": "станция в работе, #1024, ветка H",
+ "reason": "",
  "apply_status": null,
- "objects": [],
+ "objects": [
+  {
+   "name": "SM_GridClean_Ok_Main",
+   "scene": "polygon_all",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_GridClean_Dirty_Main",
+   "scene": "polygon_all",
+   "expect": "fail",
+   "codes": [
+    "t_junction",
+    "triangles"
+   ]
+  }
+ ],
  "base": "1.0",
  "station": "1.0.7",
  "stations": [
