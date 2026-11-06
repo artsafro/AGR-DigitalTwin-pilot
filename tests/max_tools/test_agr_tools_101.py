@@ -217,3 +217,68 @@ def test_plugs_on_the_vpm_copy_editable_mesh(monkeypatch):
     tri = [copy_.map_verts[i - 1] for i in copy_.map_faces[0]]            # face 1 (id 12) -> tile 1004 centre
     assert all(3.0 < p.x < 4.0 and 0.0 < p.y < 1.0 for p in tri)
     assert [(p.x, p.y) for p in node.map_verts][:2] == [(3.1, 0.1), (3.2, 0.1)]   # the source is not touched
+
+
+# ---- stage 8: npm.to_vpm on the NPM of npm.build of the same run ---------------------------------------------------
+npc = _load('npm_core.py', 'agr_tools_npm_core')
+n2v = _load('npm2vpm_core.py', 'agr_tools_npm2vpm_core')
+
+
+def _f32(x):
+    return struct.unpack('f', struct.pack('f', x))[0]
+
+
+def _vpm_copy_kpp1_like(rows=40):
+    """A vpm.build body copy as KPP1: solid (plug) library ids, each in its dense tile of the table, the UV vertices
+    of the grid cut lying EXACTLY on the tile lines (u = 3.0 / 4.0, v = 0.0 / 1.0) - as vpm.build writes them."""
+    table = {12: 1004, 29: 1006, 3: 1002}
+    verts, tris, mats, uvs, uv_tris = [], [], [], [], []
+    for k, (lid, udim) in enumerate(sorted(table.items())):
+        u0, v0 = (udim - 1001) % 10, (udim - 1001) // 10
+        for row in range(rows):         # strips in the tile (one island each), the outer ones touch the tile lines
+            y0, y1 = row / float(rows), (row + 1) / float(rows)
+            base = len(verts)
+            verts += [[k * 4.0, 0.0, y0 * 3.6], [k * 4.0 + 3.6, 0.0, y0 * 3.6], [k * 4.0 + 3.6, 0.0, y1 * 3.6],
+                      [k * 4.0, 0.0, y1 * 3.6]]
+            ub = len(uvs)
+            uvs += [[u0 + 0.0, v0 + y0], [u0 + 1.0, v0 + y0], [u0 + 1.0, v0 + y1], [u0 + 0.0, v0 + y1]]
+            for t in ((0, 1, 2), (0, 2, 3)):
+                tris.append([base + i for i in t])
+                uv_tris.append([ub + i for i in t])
+                mats.append(lid)
+    mesh = {'verts': verts, 'tris': tris, 'mat_ids': mats, 'uvs': uvs, 'uv_tris': uv_tris, 'part': 'body',
+            'materials': {str(lid): {'name': 'L{:03d}'.format(lid), 'color': [100, 110, 120]} for lid in table}}
+    return mesh, {str(k): v for k, v in table.items()}
+
+
+def test_npm_round_trip_after_float32_storage():
+    """RED on 1.0.0: npm.to_vpm refused `udim_mismatch` on the NPM that npm.build wrote in the same KPP1 run. Max keeps
+    channel 1 in float32: an atlas UV of a plug cell (8 px of 512, scale 1/64) loses ~3e-8, (uv - shift) / scale
+    makes it ~2e-6 VPM-UV units - over the 1e-6 tile tolerance for vertices that sit on the tile lines."""
+    mesh, table = _vpm_copy_kpp1_like()
+    p = npc.plan([mesh], {'name': 'SM_Kpp_1_001_Main', 'udim_table': table, 'max_size': 512}, {})
+    assert not p['findings'] and {r['kind'] for r in p['table']} == {'plug'} and p['atlas']['size'] == 512   # as KPP1
+    stored = [[_f32(u), _f32(v)] for u, v in p['uvs']]                # NPM copy channel 1 as Max stores it
+    npm = {'verts': mesh['verts'], 'local': mesh['verts'], 'tris': mesh['tris'], 'mat_ids': mesh['mat_ids'],
+           'uvs': stored, 'uv_tris': p['uv_tris']}
+    res = n2v.plan_table(npm, n2v.table_rows({'table': p['table']}))
+    assert not [f for f in res['findings'] if f[0] == 'udim_mismatch'], res['findings']
+    back = res['parts']['body']
+    worst = 0.0
+    for k, f in enumerate(back['faces']):                              # restored VPM UV vs the vpm.build UV
+        for i, j in zip(back['uv_tris'][k], mesh['uv_tris'][f]):
+            worst = max(worst, abs(back['uvs'][i][0] - mesh['uvs'][j][0]), abs(back['uvs'][i][1] - mesh['uvs'][j][1]))
+    assert worst < 1e-5            # 1e-5 of a 4096 px tile = 0.04 px
+
+
+def test_npm_round_trip_still_refuses_a_real_tile_change():
+    """The tolerance follows the float32 storage of the atlas UV; a face moved into another tile is still refused."""
+    mesh, table = _vpm_copy_kpp1_like()
+    p = npc.plan([mesh], {'name': 'SM_Kpp_1_001_Main', 'udim_table': dict(table, **{'12': 1005}), 'max_size': 512},
+                 {})
+    stored = [[_f32(u), _f32(v)] for u, v in p['uvs']]
+    npm = {'verts': mesh['verts'], 'local': mesh['verts'], 'tris': mesh['tris'], 'mat_ids': mesh['mat_ids'],
+           'uvs': stored, 'uv_tris': p['uv_tris']}
+    res = n2v.plan_table(npm, n2v.table_rows({'table': p['table']}))
+    codes = {f[0] for f in res['findings']}
+    assert 'udim_mismatch' in codes
