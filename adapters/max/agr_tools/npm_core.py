@@ -233,7 +233,9 @@ def measure(back, p):
     cm, lay = p['combined'], p['atlas']
     size, target = lay['size'], lay['texel']
     if len(back['tris']) != len(cm['tris']) or back['mat_ids'] != cm['mat_ids']:
-        raise RuntimeError('NPM copy faces / material ids differ from the plan (attach order)')
+        diff = [f + 1 for f, (a, b) in enumerate(zip(back['mat_ids'], cm['mat_ids'])) if a != b][:10]
+        raise RuntimeError('NPM copy faces / material ids differ from the plan (attach order): {} vs {} faces, '
+                           'first differing faces {}'.format(len(back['tris']), len(cm['tris']), diff))
     findings, texel, rigid, outside = [], {}, 0.0, []
     kinds = {g['library_id']: g['kind'] for g in p['groups']}
     areas = {}

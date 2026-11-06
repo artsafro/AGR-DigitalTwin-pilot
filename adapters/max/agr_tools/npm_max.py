@@ -271,16 +271,28 @@ def run(ctx, mode, nodes, preview, tool, layer, attach, stem):
     def body():
         try:
             pairs = emax.export_copies(order, suffix='_NPM_' if attach else '_STRIP_', layer=layer)
-            for mi, (_src, c) in enumerate(pairs):
+            for _src, c in pairs:
                 copies.append(c)
                 rt.convertToMesh(c)
-                write_uv(c, *split_uv(p, mi))
             targets = copies[:1] if attach else list(copies)
             if attach:
+                # attach first (target faces, then each source's faces in order: the combined order of the plan),
+                # then the ids and channel 1 of the WHOLE object are written from the plan (attach may remap ids)
                 for c in copies[1:]:
-                    rt.meshop.attach(copies[0], c, attachMat=rt.name('neither'), deleteSourceNode=True)
+                    rt.meshop.attach(copies[0], c, attachMat=rt.name('neither'), condenseMat=False,
+                                     deleteSourceNode=True)
+                t = copies[0]
+                nf = int(t.mesh.numfaces)
+                if nf != len(p['combined']['tris']):
+                    raise RuntimeError('attached NPM has {} faces, the plan {}'.format(nf, len(p['combined']['tris'])))
+                for f, mid in enumerate(p['combined']['mat_ids'], 1):
+                    rt.setFaceMatID(t, f, mid)
+                write_uv(t, p['uvs'], p['uv_tris'])
                 if o.get('name'):
-                    copies[0].name = rt.uniqueName(o['name'])
+                    t.name = rt.uniqueName(o['name'])
+            else:
+                for mi, c in enumerate(copies):
+                    write_uv(c, *split_uv(p, mi))
             base = 0
             for c in targets:
                 bind(c, files, mname)
