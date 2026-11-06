@@ -532,7 +532,8 @@ def stage6(st):
         st['notes'].append('в ВПМ идёт только {}: тела не слились в один Main ({})'.format(S['main'].name,
                                                                                        names(parts)))
     pre, app = press(st, 'vpm.build', [S['main']], {'glass_ids': [ID_GLASS], 'out_dir': str(OUT / 'vpm'),
-                                                    'library_path': LIB, 'address': ADDRESS})
+                                                    'library_path': LIB, 'address': ADDRESS,
+                                                    'map_dir': str(OUT / 'tiles')})
     if app is None:
         # run 20261106-071804-147131cc: with library_path the apply refuses (step 6, maps); the build itself is
         # pressed again without the maps so the later stages work on a real VPM copy (recorded as its own row)
@@ -565,6 +566,8 @@ def stage6(st):
     press(st, 'udim.distortion', vb, None)
     if S['vpm_dmaps']:
         press(st, 'tex.dilate', None, {'files': S['vpm_dmaps'], 'out': str(OUT / 'dilate')})
+        st['notes'].append('tex.dilate: карты vpm.build заливают весь тайл (сплошной цвет или бесшовная маска) - '
+                           'фона для расширения нет, находка dilate_no_mask ожидаема')
     else:
         st['buttons'].append({'tool': 'tex.dilate', 'status': 'skipped', 'seconds': 0.0,
                               'note': 'vpm.build не записал диффузы (шаг 6 карт): нечего расширять'})
