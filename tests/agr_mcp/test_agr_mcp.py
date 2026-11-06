@@ -88,7 +88,8 @@ def fake_max(tmp_path, monkeypatch):
     nodes = {h: FakeNode(h) for h in (1, 2, 3)}
     rt = types.SimpleNamespace(
         maxFilePath="", maxFileName="", name=lambda s: s, getDir=lambda _n: str(tmp_path),
-        isValidNode=lambda n: n is not None, getHandleByAnim=lambda n: n.handle, selection=[nodes[2]],
+        isValidNode=lambda n: n is not None, selection=[nodes[2]],
+        getHandleByAnim=lambda n: n.handle + 1000, getAnimByHandle=lambda h: nodes.get(h - 1000),
         maxOps=types.SimpleNamespace(getNodeByHandle=lambda h: nodes.get(h)))
     rt.clearSelection = lambda: rt.selection.clear()
     rt.select = lambda ns: rt.selection.extend(n for n in ns if n not in rt.selection)

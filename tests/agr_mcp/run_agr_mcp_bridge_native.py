@@ -76,7 +76,7 @@ mat = rt.standardMaterial(name='M_Bridge_Syn')
 for n in (box, plane, glass):
     n.material = mat
 light = rt.Omnilight(name='L_Bridge_Omni', pos=rt.point3(0, 0, 3))
-H = {n.name: int(rt.getHandleByAnim(n)) for n in (box, plane, glass, light)}
+H = {n.name: int(n.inode.handle) for n in (box, plane, glass, light)}  # node handles (maxOps.getNodeByHandle)
 summary['handles'] = H
 MESH = [H['SM_Bridge_Main'], H['SM_Bridge_Ground'], H['SM_Bridge_Main_Glass']]
 USER_SELECTION = [H['SM_Bridge_Ground']]
@@ -88,7 +88,7 @@ def select_user():
 
 
 def selected():
-    return sorted(int(rt.getHandleByAnim(n)) for n in rt.selection)
+    return sorted(int(n.inode.handle) for n in rt.selection)
 
 
 def hexs(text):

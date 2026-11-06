@@ -186,6 +186,7 @@ def _selection(rt):
 
 
 def _handle(rt, node):
+    """Anim handle (getHandleByAnim, as runtime's selection hash); NOT the node handle of maxOps.getNodeByHandle."""
     return int(rt.getHandleByAnim(node))
 
 
@@ -215,8 +216,8 @@ def _targets(rt, args):
 
 
 def _restore_selection(rt, before):
-    """Put the selection back to `before` (list of handles); returns the handles selected afterwards."""
-    live = [rt.maxOps.getNodeByHandle(h) for h in before]
+    """Put the selection back to `before` (anim handles); returns the anim handles selected afterwards."""
+    live = [rt.getAnimByHandle(h) for h in before]
     live = [n for n in live if n is not None and rt.isValidNode(n)]
     rt.clearSelection()
     if live:
