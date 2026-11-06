@@ -272,5 +272,6 @@ def test_checked_in_state_names_the_merged_milestones():
     text = (ROOT / "docs" / "PROJECT_STATE.md").read_text(encoding="utf-8")
     section = text.split("Reached so far", 1)[1].split("\n## ", 1)[0]
     for needle in ("Ground v015", "#906", "D193", "AC08", "#891", "#968", "#1006",
-                   "0.8.0", "0.9", "#887"):
+                   "0.8.0", "0.9.0", "agr-tools-v0.9.0", "#1042", "#887"):
         assert needle in section, needle
+    assert "not tagged" not in section
