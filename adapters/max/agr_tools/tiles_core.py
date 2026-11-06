@@ -24,7 +24,8 @@ Defects of the recipes this replaces (regression tests in tests/max_tools/test_a
 * #1024 default 4096 px at 1024 px/m = 4.0 m: 4.0 / 0.6 = 6.67 modules -> a visible seam at every tile edge;
 * Ground recipe 100x300 with the joint OUTSIDE the module (pitch 105 x 305, tools/materials/ground_recipes.json:17):
   3.6 / 0.105 = 34.3 -> not periodic on the 3.6 m UDIM step;
-* brick 250x65 + 10 mm joint (pitch 260 mm): 3.6 / 0.26 = 13.85 -> fitted to 14 (-1.1 %, Q3 open).
+* brick 250x65 + 10 mm joint (pitch 260 mm): 3.6 / 0.26 = 13.85 -> fitted to 14 (-1.1 %, Q3 answered 06.11:
+  tolerance 1.5 % for bricks, per base map `max_stretch_pct`; the global default stays 1.2 %).
 """
 import hashlib
 import math
@@ -57,8 +58,10 @@ BASE_MAPS = {
                      'source': 'audit G4: plinth 300x300 (KPP1, PSU275), joint assumed 4 mm'},
     'slab_900x300': {'kind': 'tiles', 'module': (0.9, 0.3), 'joint': 0.005, 'bond': 0.5,
                      'source': 'audit G6: step slab 900x300 (Vatutino)'},
-    'brick_250x65': {'kind': 'tiles', 'module': (0.26, 0.075), 'joint': 0.010, 'bond': 0.5,
-                     'source': 'audit B1: brick 250x65, joint 10, half bond (OBR22, FACADES-ATLAS)'},
+    'brick_250x65': {'kind': 'tiles', 'module': (0.26, 0.075), 'joint': 0.010, 'bond': 0.5, 'max_stretch_pct': 1.5,
+                     'source': 'audit B1: brick 250x65, joint 10, half bond (OBR22, FACADES-ATLAS); '
+                               'Q3 06.11: 75 mm course step = 48 per 3.6 m, 14 bricks per tile (257.14 mm, -1.1 %), '
+                               'stretch tolerance 1.5 %'},
     'panel_v1200': {'kind': 'tiles', 'module': (1.2, None), 'joint': 0.005, 'bond': 0.0, 'h_joints': False,
                     'source': 'audit: sandwich panel, vertical joints 1.2 m (PSU275 1.19 -> 1.2)'},
     'panel_v600': {'kind': 'tiles', 'module': (0.6, None), 'joint': 0.005, 'bond': 0.0, 'h_joints': False,
@@ -88,7 +91,8 @@ def spec(name, overrides=None):
     ppm = _num(o.get('px_per_m', DEFAULTS['px_per_m']), 'px_per_m', 16, 8192)
     period = _num(o.get('period_m', base.get('period', DEFAULTS['period_m'])), 'period_m', 0.01, 100)
     fit = bool(o.get('fit', True))
-    max_stretch = _num(o.get('max_stretch_pct', DEFAULTS['max_stretch_pct']), 'max_stretch_pct', 0, 100)
+    max_stretch = _num(o.get('max_stretch_pct', base.get('max_stretch_pct', DEFAULTS['max_stretch_pct'])),
+                       'max_stretch_pct', 0, 100)
     size = o.get('size_px')
     size = int(round(period * ppm)) if size is None else int(_num(size, 'size_px', 1, 16384))
     findings = []

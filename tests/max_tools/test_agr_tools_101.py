@@ -453,3 +453,22 @@ def test_q2_typical_cassette_is_600x600_and_divides_the_udim_step():
     for r in lib['materials']:
         if r['base_map']:
             assert 0.55 not in tl.spec(r['base_map'])[0].get('module_in', [])
+
+
+def test_q3_brick_250x65_fits_14_by_48_with_a_1_5_percent_tolerance():
+    """RED before Q3: the default stretch tolerance 1.2 % applied to bricks too; the owner fixed 1.5 % for bricks."""
+    s, found = tl.spec('brick_250x65')
+    assert s['counts'] == [14, 48] and not found
+    assert 'Q3' not in ml.load_library(str(LIB))['by_id'][17].get('questions', [])
+    assert s['module_in'] == [0.26, 0.075]                  # 250 + 10 mm joint, 65 + 10 mm: step 75 mm exactly
+    assert s['module'][1] == pytest.approx(0.075) and s['stretch_pct'][1] == 0.0
+    assert s['module'][0] * 1000 == pytest.approx(257.142857, abs=1e-5) and s['stretch_pct'][0] == pytest.approx(-1.0989, abs=1e-3)
+    _, found = tl.spec('brick_250x65', {'max_stretch_pct': 1.5})
+    assert not found
+    # a 1.4 % stretch is inside the brick tolerance (RED with the 1.2 % default), 2 % is still a finding
+    _, found = tl.spec('brick_250x65', {'module': [0.25358, 0.075]})
+    assert not found
+    s2, found = tl.spec('brick_250x65', {'module': [0.2521, 0.075]})
+    assert s2['counts'][0] == 14 and s2['stretch_pct'][0] == pytest.approx(2.0, abs=0.01)
+    assert [c for c, _ in found] == ['module_stretched']
+    assert tl.DEFAULTS['max_stretch_pct'] == 1.2            # other base maps keep the 1.2 % default

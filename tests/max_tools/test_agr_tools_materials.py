@@ -227,7 +227,7 @@ def test_brick_fitted_to_period_reports_stretch():
     s, f = tc.spec('brick_250x65')
     assert s['counts'] == [14, 48] and s['stretch_pct'][0] == pytest.approx(-1.0989, abs=1e-3) and not f
     _, f = tc.spec('brick_250x65', {'max_stretch_pct': 1.0})
-    assert [c for c, _ in f] == ['module_stretched']  # Q3 open: the threshold is a parameter
+    assert [c for c, _ in f] == ['module_stretched']  # the threshold is a parameter (brick tolerance 1.5 %, Q3)
 
 
 def test_bond_with_odd_course_count_is_a_finding():
