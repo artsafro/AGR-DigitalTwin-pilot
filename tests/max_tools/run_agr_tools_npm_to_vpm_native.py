@@ -74,6 +74,14 @@ def install():
 
 
 agr = install()
+# The batch runner executes the whole script inside ONE outer undo hold, so every pymxs undo record of the file merges
+# into it and one `max undo` rolls back the set-up too (job 20261106-070529-76860bcb: vpm.build and npm.build objects
+# gone with the npm.to_vpm copies; branch G, job 20261106-044415-f3028608). Close it so each apply is its own record
+# (as in a GUI session) and re-open a hold at the end for the wrapper.
+OUTER_HOLD = bool(rt.theHold.Holding())
+if OUTER_HOLD:
+    rt.theHold.Accept('AGR branch Q native: set-up')
+summary['outer_hold_at_start'] = OUTER_HOLD
 MB = load(ROOT / 'test-polygon' / 'stations' / 'M_build.py', 'agr_polygon_M_build_native_q')
 QB = load(ROOT / 'test-polygon' / 'stations' / 'Q_build.py', 'agr_polygon_Q_build_native')
 TQ = agr._load_core('texqa_core.py', 'agr_tools_texqa_core')
@@ -343,7 +351,14 @@ def windows(units):
     assert int(src[0].mesh.numfaces) == sum(2 * p['split'] for p in planes)
     assert snap(n) == before, 'NPM changed'
     masters = sorted(str(x.name) for x in rt.objects if str(x.name).startswith('WINLIB_'))
-    return {'instances': got, 'masters': masters, 'untyped': codes,
+    made = sorted([w['instance'] for w in wins] + [str(x.name) for x in rt.objects if str(x.name).startswith(
+        ('GLASS_NPM_',))] + masters + [str(src[0].name)])
+    scene_before = sorted(str(x.name) for x in rt.objects)
+    rt.execute('max undo')
+    gone = sorted(set(scene_before) - set(str(x.name) for x in rt.objects))
+    assert gone == made, ('one undo did not remove exactly the run', gone, made)
+    assert rt.getNodeByName('SM_N2vWin_Main') is not None and snap(n) == before
+    return {'instances': got, 'masters': masters, 'untyped': codes, 'undo_removed': len(gone),
             'done': pre['plan']['done'][0]['windows']}
 
 
@@ -425,6 +440,8 @@ check('windows_metres', windows_m)
 check('windows_cm', windows_cm)
 check('udim_udims_to_ids', udim_view)
 check('polygon_rows_Q', polygon_rows)
+if OUTER_HOLD:
+    rt.theHold.Begin()
 (OUT / 'summary.json').write_text(json.dumps(summary, indent=1, ensure_ascii=False, default=str), encoding='utf-8')
 print('N2V_NATIVE checks', sorted(summary['checks']), 'errors', sorted(summary['errors']))
 assert not summary['errors'], 'native branch Q failed: see summary.json'
