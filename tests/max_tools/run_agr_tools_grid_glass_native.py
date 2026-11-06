@@ -252,8 +252,9 @@ def polygon_rows():
     sys.path.insert(0, str(ROOT / 'test-polygon' / 'build'))
     sys.path.insert(0, str(ROOT / 'test-polygon'))
     import polygon_core as core
-    cat = OUT / 'catalog.json'
-    cat.write_text(json.dumps(core.load_catalog(), ensure_ascii=False), encoding='utf-8')
+    # the catalog is generated outside Max (polygon_core needs src/dt_ai, not on Max's path: job 20261106-044607)
+    cat = Path(os.environ['AGR_H_CATALOG'])
+    assert cat.is_file(), cat
     os.environ['AGR_POLYGON_CATALOG'] = str(cat)
     import build_scene
     build_scene.build('polygon_all', texture_dir=str(OUT / 'textures'))

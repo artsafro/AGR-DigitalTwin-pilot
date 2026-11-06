@@ -201,8 +201,11 @@ def mesh_of(extra):
 # ---- Max ---------------------------------------------------------------------------------------------------------
 def build_poly(rt, name, mesh):
     """Editable Poly from the mesh (object space = the given coordinates, scene units), MatIDs, SGs, channel 1."""
-    node = rt.Editable_Poly()
-    node.name = name
+    # Editable_Poly has no constructor in Max 2024 (job 20261106-044607-93526f70): a box to poly, then emptied
+    node = rt.box(name=name, width=1, length=1, height=1)
+    rt.convertToPoly(node)
+    rt.polyop.deleteVerts(node, rt.execute('#{1..' + str(int(rt.polyop.getNumVerts(node))) + '}'))
+    rt.polyop.collapseDeadStructs(node)
     obj = node
     for p in mesh['verts']:
         rt.polyop.createVert(obj, rt.Point3(*p))
