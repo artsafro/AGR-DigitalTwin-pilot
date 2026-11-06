@@ -306,9 +306,9 @@ def _sys_per_m(rt):
 def mesh_node(rt, name, data, at=(0.0, 0.0, 0.0)):
     """Editable_Poly node from {'verts' (m), 'faces' (n-gons)}; positions in system units."""
     k = _sys_per_m(rt)
-    node = rt.Editable_Poly()
-    rt.convertTo(node, rt.Editable_Poly)
-    node.name = name
+    node = rt.box(name=name, width=1, length=1, height=1)  # Editable_Poly is not creatable (Max 2024/2026)
+    rt.convertToPoly(node)
+    rt.polyop.deleteFaces(node, rt.execute('#{1..6}'), delIsoVerts=True)
     for v in data['verts']:
         rt.polyop.createVert(node, rt.Point3((v[0] + at[0]) * k, (v[1] + at[1]) * k, (v[2] + at[2]) * k))
     for f in data['faces']:

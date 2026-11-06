@@ -271,10 +271,9 @@ def polygon_rows():
     """The K stations as the nightly polygon presses them (preview of the named objects, frag scenes)."""
     sys.path.insert(0, str(ROOT / 'test-polygon' / 'build'))
     sys.path.insert(0, str(ROOT / 'test-polygon'))
-    import polygon_core as core
-    cat = OUT / 'catalog.json'
-    cat.write_text(json.dumps(core.load_catalog(), ensure_ascii=False), encoding='utf-8')
-    os.environ['AGR_POLYGON_CATALOG'] = str(cat)
+    # the builder input with the K fragment, written outside Max (load_catalog needs dt_ai, as run_polygon.py does)
+    cat = Path(os.environ['AGR_POLYGON_CATALOG'])
+    assert any(o['name'] == 'BODY_KCapsOk_001' for o in json.loads(cat.read_text(encoding='utf-8'))['objects'])
     import build_scene
     rows = []
     for button in ('body.capsules', 'body.roof'):
