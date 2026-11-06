@@ -53,7 +53,7 @@ def test_queued_message_is_a_user_line(tmp_path):
 def test_since_scans_project_folders(tmp_path, monkeypatch, capsys):
     folder = tmp_path / "projects" / "C--Users-a--AGR-DigitalTwin-pilot--w"
     folder.mkdir(parents=True)
-    _write(folder, [_entry("user", "принято", ts="2026-11-05T10:00:00Z")])
+    _write(folder, [_entry("user", "принято", ts="2025-11-05T10:00:00Z")])
     (folder / "subagents").mkdir()
     monkeypatch.setenv("CLAUDE_CONFIG_DIR", str(tmp_path))
     assert ct.main(["--since", "2000-01-01", "--list"]) == 0
@@ -71,12 +71,12 @@ def test_signals():
 
 
 def test_range_filter_and_empty(tmp_path):
-    path = _write(tmp_path, [_entry("user", "старое", ts="2026-11-01T10:00:00Z"),
-                             _entry("user", "новое", ts="2026-11-05T10:00:00Z")])
-    since = datetime(2026, 11, 4, tzinfo=timezone.utc)
+    path = _write(tmp_path, [_entry("user", "старое", ts="2025-11-01T10:00:00Z"),
+                             _entry("user", "новое", ts="2025-11-05T10:00:00Z")])
+    since = datetime(2025, 11, 4, tzinfo=timezone.utc)
     text = ct.condense(path, since=since)
     assert "новое" in text and "старое" not in text
-    assert ct.condense(path, until=datetime(2026, 10, 1, tzinfo=timezone.utc)) == ""
+    assert ct.condense(path, until=datetime(2025, 10, 1, tzinfo=timezone.utc)) == ""
 
 
 def test_main_paths_and_missing(tmp_path, capsys):
