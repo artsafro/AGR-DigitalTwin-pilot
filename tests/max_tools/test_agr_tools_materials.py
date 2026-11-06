@@ -84,7 +84,7 @@ def test_library_base_maps_and_maf_cross_reference(lib):
 
 @pytest.mark.parametrize('mutate,match', [
     (lambda d: d['materials'].append(dict(d['materials'][0], key='dup_id')), 'duplicate library_id'),
-    (lambda d: d['materials'][0].update(ral='8023'), 'not in ral_classic'),
+    (lambda d: d['materials'][0].update(ral='8099'), 'not in ral_classic'),
     (lambda d: d['materials'][0].update(rgb_srgb=[1, 2, 3]), 'differs from ral_classic'),
     (lambda d: d['materials'][13].update(base_map='crumb_1x1'), 'greyscale_mask needs base_map'),
     (lambda d: d['materials'][0].update(library_id=1001), 'library_id must be an integer 1..1000'),

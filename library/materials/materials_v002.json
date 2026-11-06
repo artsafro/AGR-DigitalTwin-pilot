@@ -475,13 +475,13 @@
    "key": "brick_250x65",
    "name_ru": "Кирпич 250x65, шов 10, перевязка 1/2 (ряд 75 мм, 14 кирпичей на 3,6 м)",
    "class": "brick",
-   "ral": null,
+   "ral": "8023",
    "rgb_srgb": [
     166,
     94,
     46
    ],
-   "rgb_note": "project sample (sRGB), provisional",
+   "rgb_note": "ral_classic.json screen approximation (sRGB) of RAL 8023, not a measured RAL (Q4)",
    "roughness": 150,
    "metallic": 0,
    "emissive": 0,
@@ -497,10 +497,7 @@
     "evidence": "docs/agr/decisions/OBR22_PROCEDURAL_TEXTURES_V010.md:6-8; FACADES_ATLAS_PARTIAL_ACCEPTANCE.md:15-17"
    },
    "maf_v005_id": null,
-   "note": "RAL 8023 по PDF; в ral_classic.json кода 8023 нет, RGB - экранное приближение 8023 (ral = null); Q3 (06.11): шаг по высоте 75 мм (48 рядов), по длине 14 кирпичей, шаг 257,14 мм (растяжение 1,1 %), допуск 1,5 %",
-   "questions": [
-    "Q4"
-   ]
+   "note": "RAL 8023 по PDF; код добавлен в ral_classic.json экранным приближением (Q4, 06.11); Q3 (06.11): шаг по высоте 75 мм (48 рядов), по длине 14 кирпичей, шаг 257,14 мм (растяжение 1,1 %), допуск 1,5 %"
   },
   {
    "library_id": 18,

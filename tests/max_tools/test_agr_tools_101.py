@@ -4,6 +4,7 @@ Each blocker of the release run is a test that was RED on the 1.0.0 tree and is 
 fix). The modules belong to several branches (L, M, N, P, Q, S, 0.8 checks); a patch release touches them together.
 """
 import importlib.util
+import json
 import struct
 import sys
 from pathlib import Path
@@ -472,3 +473,19 @@ def test_q3_brick_250x65_fits_14_by_48_with_a_1_5_percent_tolerance():
     assert s2['counts'][0] == 14 and s2['stretch_pct'][0] == pytest.approx(2.0, abs=0.01)
     assert [c for c, _ in found] == ['module_stretched']
     assert tl.DEFAULTS['max_stretch_pct'] == 1.2            # other base maps keep the 1.2 % default
+
+
+def test_q4_ral_8023_7024_9006_7035_are_marked_screen_approximations():
+    """RED before Q4: RAL 8023 was missing (brick record 17 had ral = null)."""
+    doc = json.loads((ROOT / 'tools/materials/ral_classic.json').read_text(encoding='utf-8'))
+    want = {'8023': '#A65E2E', '7024': '#474A51', '9006': '#A5A5A5', '7035': '#D7D7D7'}
+    assert {c: doc['colors'][c] for c in want} == want
+    assert set(doc['approximate']['codes']) == set(want) and 'screen approximation' in doc['approximate']['note'].lower()
+    ral = ml.ral_table(str(ROOT / 'tools/materials/ral_classic.json'))
+    # records carrying these RAL validate against the table (id 17 brick = 8023, 7 and 14 = 7024, 35 = 9006)
+    lib = ml.load_library(str(LIB))
+    for lid, code in ((17, '8023'), (7, '7024'), (14, '7024'), (35, '9006')):
+        assert lib['by_id'][lid]['ral'] == code and lib['by_id'][lid]['rgb_srgb'] == ml.hex_rgb(want[code])
+    probe = dict(lib['by_id'][17], ral='7035', rgb_srgb=ml.hex_rgb('#D7D7D7'))
+    ml.validate_library({'schema': 1, 'version': 'v002', 'materials': [probe]}, ral)
+    assert 'Q4' not in lib['by_id'][17].get('questions', [])

@@ -13,7 +13,7 @@
 - `status` — `proposed` | `approved` | `conflict` | `quarantine`.
 - `source` — `audit`, `audit_id`, `evidence`; `maf_v005_id` — перекрёстная ссылка на МАФ v005; `questions` — номера вопросов аудита.
 
-Особые случаи: у кирпича (запись 17) `ral = null`, потому что RAL 8023 нет в `ral_classic.json` (Q4);
+Особые случаи: у кирпича (запись 17) в v001 `ral = null` (RAL 8023 не было в `ral_classic.json`); в v002 `ral = 8023`, код добавлен экранным приближением (Q4);
 у записей 4 и 32–34 (RAL 1021) взят `ral_classic` #F6B600, а не цвет КПП (238,201,0) (Q9).
 
 ## Правило версий
