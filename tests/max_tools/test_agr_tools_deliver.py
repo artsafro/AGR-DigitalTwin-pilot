@@ -235,8 +235,11 @@ def fbx_scene(models, version=7400):
     """models: [(id, name, kind 'Null'|'Light', parent id, light type int|None, rotation xyz deg)]."""
     objs, conns = [], []
     for mid, name, kind, parent, ltype, rot in models:
+        p70 = [_p('Lcl Rotation', *rot)]
+        if ltype is not None:  # Max writes the FBX light axis as PostRotation (-90, 0, 0) (job 20261106-044737)
+            p70.append(_p('PostRotation', -90.0, 0.0, 0.0))
         objs.append(_fbx_node('Model', (mid, name + '\x00\x01Model', kind),
-                              [_fbx_node('Properties70', (), [_p('Lcl Rotation', *rot)])]))
+                              [_fbx_node('Properties70', (), p70)]))
         conns.append(_fbx_node('C', ('OO', mid, parent)))
         if ltype is not None:
             aid = mid + 100000
@@ -307,6 +310,15 @@ def test_red_target_spot_loses_its_direction(tmp_path):
     assert {c for c, _ in found[25]} == {'light_direction'}
     found, _ = lc.readback_findings(plan, _scene_fbx(plan, extra_top=('SM_TestAddr_Spot_004.Target',)))
     assert {c for c, _ in found[10]} == {'light_readback_extra'}                # a target at the top: 2 roots
+
+
+def test_measured_max_target_spot_rotation_matches_its_aim():
+    # job 20261106-044737-6d28f847: Target Spot at (9, 9, 4) aimed at (11, 13, 0) -> Lcl (48.19, 0, -26.565), Post -90
+    m = {'r': [48.18968510422141, 0.0, -26.56505117707799], 'pre': [0, 0, 0], 'post': [-90.0, 0.0, 0.0]}
+    rot = lc.fbx_world_rotation(m)
+    aim = [-rot[i][2] for i in range(3)]                 # a Max light shines along its local -Z
+    n = math.sqrt(2.0 ** 2 + 4.0 ** 2 + 4.0 ** 2)
+    assert aim == pytest.approx([2.0 / n, 4.0 / n, -4.0 / n], abs=1e-9)
 
 
 def test_red_lost_omni_is_found_by_the_readback(tmp_path):

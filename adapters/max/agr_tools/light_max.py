@@ -174,6 +174,6 @@ def light_export(ctx, mode, nodes, preview):
     import hashlib
     extra = {'readback': summary, 'sha256': hashlib.sha256(data).hexdigest(), 'bytes': len(data),
              'wanted_sha_before': state['wanted_sha'], 'wanted_sha_after': _file_sha(plan['wanted'])}
-    if extra['wanted_sha_before'] != extra['wanted_sha_after']:
+    if extra['wanted_sha_before'] is not None and extra['wanted_sha_before'] != extra['wanted_sha_after']:
         raise RuntimeError('light.export: the existing file changed: ' + str(plan['wanted']))
     return core.export_report(edit, 'apply', rows, plan, opts, findings=found, done=[plan['target']], extra=extra)

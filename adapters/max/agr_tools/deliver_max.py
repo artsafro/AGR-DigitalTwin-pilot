@@ -213,17 +213,22 @@ def _pack_deliver(ctx, mode, nodes, preview):
     if not block:
         results = [r for r in results if r['id'] not in ('light.export', 'export.checked', 'export.zip')]
         # 1. light FBX into the run folder (its own preview there: the folder is new)
-        try:
-            lp = ctx.agr.edits_100('light.export', 'preview', options=_light_options(opts, run))
-            la = ctx.agr.edits_100('light.export', 'apply', preview=lp)
-            results.append(core.step_result('light.export', la))
-            reports.append(('light.export', la))
-            files.append(la['plan']['target'])
-            stem = stem or la['plan']['stem']
-        except Exception as exc:  # noqa: BLE001
-            results.append(core.step_result('light.export', error='{}: {}'.format(type(exc).__name__, exc)))
+        if 'light.export' in opts['skip']:
+            results.append(core.step_result('light.export', skipped=opts['skip']['light.export']))
+        else:
+            try:
+                lp = ctx.agr.edits_100('light.export', 'preview', options=_light_options(opts, run))
+                la = ctx.agr.edits_100('light.export', 'apply', preview=lp)
+                results.append(core.step_result('light.export', la))
+                reports.append(('light.export', la))
+                files.append(la['plan']['target'])
+                stem = stem or la['plan']['stem']
+            except Exception as exc:  # noqa: BLE001
+                results.append(core.step_result('light.export', error='{}: {}'.format(type(exc).__name__, exc)))
         # 2. checked model FBX
-        if stem:
+        if 'export.checked' in opts['skip']:
+            results.append(core.step_result('export.checked', skipped=opts['skip']['export.checked']))
+        elif stem:
             target = os.path.join(run, stem + '.fbx')
             try:
                 ep = ctx.agr.export_preview(nodes=model, target=target)
@@ -240,7 +245,7 @@ def _pack_deliver(ctx, mode, nodes, preview):
         # 3. archive + validator (qa.package) of the run folder
         if 'export.zip' in opts['skip']:
             results.append(core.step_result('export.zip', skipped=opts['skip']['export.zip']))
-        elif all(r['status'] == 'pass' for r in results if r['id'] in ('light.export', 'export.checked')):
+        elif all(r['status'] in ('pass', 'skipped') for r in results if r['id'] in ('light.export', 'export.checked')):
             try:
                 zo = dict(opts['step_options'].get('export.zip') or {})
                 zo['folder'] = run

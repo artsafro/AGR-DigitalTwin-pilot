@@ -1,13 +1,53 @@
 {
  "schema": 1,
  "button": "pack.deliver",
- "tool": null,
+ "tool": "pack.deliver",
  "version": "1.0",
- "shipped": false,
+ "shipped": true,
  "select": "named",
- "reason": "станция в работе, #1024, ветка S",
+ "reason": "",
  "apply_status": null,
- "objects": [],
+ "objects": [
+  {
+   "name": "UCX_PolyDeliver_01",
+   "scene": "frag_s_deliver",
+   "expect": "fail",
+   "codes": [
+    "ucx.gap/ucx_touch"
+   ]
+  },
+  {
+   "name": "UCX_PolyDeliver_02",
+   "scene": "frag_s_deliver",
+   "expect": "fail",
+   "codes": [
+    "ucx.gap/ucx_touch"
+   ]
+  },
+  {
+   "name": "SM_PolyDeliver_Root",
+   "scene": "frag_s_deliver",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_PolyDeliver_Spot_001",
+   "scene": "frag_s_deliver",
+   "expect": "pass",
+   "codes": []
+  }
+ ],
+ "options": {
+  "skip": {
+   "qa.preflight": "станция: шаги ветки S и light.check; проверки 0.5-0.8 и export.checked - в нативной приёмке",
+   "qa.names": "станция: шаги ветки S и light.check; проверки 0.5-0.8 и export.checked - в нативной приёмке",
+   "qa.tris": "станция: шаги ветки S и light.check; проверки 0.5-0.8 и export.checked - в нативной приёмке",
+   "ucx.audit": "станция: шаги ветки S и light.check; проверки 0.5-0.8 и export.checked - в нативной приёмке",
+   "qa.sintez": "нет таблицы SINTEZ на синтетике",
+   "qa.omk_te": "кнопка ветки T",
+   "export.checked": "станция: шаги ветки S и light.check; проверки 0.5-0.8 и export.checked - в нативной приёмке"
+  }
+ },
  "base": "1.0",
  "station": "1.0.26",
  "stations": [

@@ -522,10 +522,10 @@ def rotation_angle(ra, rb):
 
 
 def fbx_world_rotation(m):
-    """Rotation of an FBX model: PreRotation * LclRotation * PostRotation^-1 (FBX transform chain)."""
-    post = euler_matrix(m['post'])
-    post_t = [[post[j][i] for j in range(3)] for i in range(3)]
-    return _matmul(_matmul(euler_matrix(m['pre']), euler_matrix(m['r'])), post_t)
+    """Rotation of an FBX model node: PreRotation * LclRotation. The PostRotation is NOT the node: Max writes
+    (-90, 0, 0) on every light (measured, job 20261106-044737-6d28f847: the light axis -Z of Max -> -Y of FBX), so a
+    node rotation equal to the scene means the direction survived (Target Spot baked: Lcl 48.19/0/-26.565 = aim)."""
+    return _matmul(euler_matrix(m['pre']), euler_matrix(m['r']))
 
 
 def readback_findings(plan, back):

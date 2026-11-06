@@ -83,6 +83,13 @@ def fresh(units='meters'):
 
 
 def build(objs):
+    """Scene nodes made with undo OFF: the only undo records are those of the buttons."""
+    import pymxs
+    with pymxs.undo(False):
+        return _build(objs)
+
+
+def _build(objs):
     made = {}
     for o in objs:
         made[o['name']] = S_BUILD.make(o, rt)
@@ -210,7 +217,8 @@ def gap_acceptance():
         n_copies = len(copies)
         rt.execute('max undo')
         left = [c for c in copies.values() if rt.isValidNode(c)]
-        assert not left, 'copies after one undo: {}'.format(len(left))
+        gone = [str(k) for k, n in made.items() if not rt.isValidNode(n)]
+        assert not left and not gone, 'after one undo: copies left {}, originals gone {}'.format(len(left), gone)
         assert emax.snapshot(nodes) == before
         res[units] = {'gap_after_mm': gaps, 'copies': n_copies, 'status_apply': app['status'],
                       'pairs_fixed': prev['plan']['summary']['pairs_fixed'], 'undo_one_record': True,
@@ -273,7 +281,9 @@ def light_package():
     made = _light_scene(photometric=False)
     folder = OUT / 'vpm_set'
     folder.mkdir()
-    box = rt.Box(name='SM_TestAddr', length=4, width=4, height=3)
+    import pymxs
+    with pymxs.undo(False):
+        box = rt.Box(name='SM_TestAddr', length=4, width=4, height=3)
     rt.select([box])
     assert rt.exportFile(str(folder / 'SM_TestAddr.fbx'), rt.Name('noPrompt'), selectedOnly=True, using=rt.FBXEXP)
     prev = agr.edits_100('light.export', 'preview', options={'folder': str(folder)})
@@ -292,33 +302,64 @@ def light_package():
 
 
 # ---- pack.deliver -----------------------------------------------------------------------------------------------
-def deliver():
-    st = next(s for s in FRAG['stations'] if s['button'] == 'pack.deliver')
-    fresh('meters')
-    made = build(st['objects'])
-    save('deliver_accept')
-    folder = OUT / 'deliver_out'
-    folder.mkdir()
+def _passport_file(name):
     passport = {'schema': 1, 'project_id': 'PolyDeliver', 'source': {'path': 'x.max', 'level': 'C', 'class': 'max'},
                 'normalization': {'units': 'm', 'up_axis': 'Z', 'scale': 1.0, 'origin_m': [0, 0, 0]},
                 'stages': [{'id': i, 'status': 'done' if i < 9 else 'todo'} for i in range(10)]
                 + [{'id': 'agent', 'status': 'todo'}], 'parts': [], 'openings': [], 'materials': [],
                 'journal': {'path': 'journal.jsonl'}, 'agent_requests': [], 'questions': []}
-    ppath = OUT / 'passport.json'
+    ppath = OUT / name
     ppath.write_text(json.dumps(passport, ensure_ascii=False), encoding='utf-8')
-    opts = dict(st.get('options') or {}, folder=str(folder), passport=str(ppath))
+    return ppath
+
+
+def _deliver_run(label, objs, options):
+    fresh('meters')
+    build(objs)
+    save('deliver_' + label)
+    folder = OUT / ('deliver_' + label)
+    folder.mkdir()
+    ppath = _passport_file('passport_' + label + '.json')
+    opts = dict(options, folder=str(folder), passport=str(ppath))
     prev = agr.edits_100('pack.deliver', 'preview', None, None, opts)
     app = agr.edits_100('pack.deliver', 'apply', prev)
     run = Path(app['plan']['run_folder'])
     body = json.loads((run / 'deliver.json').read_text(encoding='utf-8'))
     pp = json.loads((run / 'passport.json').read_text(encoding='utf-8'))
-    assert pp['stages'][9]['status'] in ('done', 'blocked') and pp['stages'][9] == body['stage']
+    assert pp['stages'][9] == body['stage'] and body['stage']['status'] in ('done', 'blocked')
+    assert (body['stage']['status'] == 'blocked') == bool(body['blockers'])
     assert json.loads(ppath.read_text(encoding='utf-8'))['stages'][9]['status'] == 'todo', 'passport overwritten'
     return {'preview_status': prev['status'], 'preview_steps': {r['id']: r['status'] for r in prev['plan']['steps']},
-            'preview_blockers': prev['plan']['blockers'], 'apply_status': app['status'],
+            'preview_blockers': [b[:220] for b in prev['plan']['blockers']], 'apply_status': app['status'],
             'apply_steps': {r['id']: r['status'] for r in app['plan']['steps']},
+            'apply_errors': {r['id']: r.get('error') or r.get('top') for r in app['plan']['steps']
+                             if r['status'] in ('error', 'fail')},
             'stage': body['stage'], 'files': sorted(str(p.relative_to(run)) for p in run.rglob('*')),
             'run_folder': run.name}
+
+
+def deliver():
+    st = next(s for s in FRAG['stations'] if s['button'] == 'pack.deliver')
+    out = {}
+    # (a) the station: a touching UCX pair -> stage 9 blocked by ucx.gap, only deliver.json + passport copy
+    out['station'] = a = _deliver_run('station', st['objects'], st.get('options') or {})
+    assert a['stage']['status'] == 'blocked' and any(b.startswith('ucx.gap') for b in a['stage']['blockers'])
+    assert a['files'] == ['deliver.json', 'passport.json'], a['files']
+    # (b) every check on (only qa.omk_te of branch T and qa.sintez skipped): the full blocker list
+    full = {'skip': {'qa.omk_te': 'кнопка ветки T', 'qa.sintez': 'нет таблицы SINTEZ на синтетике'}}
+    out['full_checks'] = _deliver_run('full', st['objects'], full)
+    # (c) no blocker (UCX 10 mm apart): the files are written into the run folder
+    objs = []
+    for o in st['objects']:
+        o = json.loads(json.dumps(o))
+        if o['name'] == 'UCX_PolyDeliver_02':
+            o['extra']['min'][0] += 0.01
+            o['extra']['max'][0] += 0.01
+        objs.append(o)
+    out['files'] = c = _deliver_run('files', objs, st.get('options') or {})
+    assert c['preview_blockers'] == [], c['preview_blockers']
+    assert 'SM_PolyDeliver_Light.fbx' in c['files'], c['files']
+    return out
 
 
 def journal():

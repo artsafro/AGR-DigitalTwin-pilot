@@ -7,36 +7,6 @@
    "button": "pack.deliver",
    "objects": [
     {
-     "name": "SM_PolyDeliver",
-     "role": "ucx",
-     "scene": "frag_s_deliver",
-     "pos": [
-      0,
-      0,
-      0
-     ],
-     "mesh": "empty",
-     "fbx": null,
-     "mat": "none",
-     "superclass": "geometry",
-     "cls": "Editable_Poly",
-     "builder": "S_build",
-     "extra": {
-      "kind": "box",
-      "min": [
-       -3,
-       -3,
-       0
-      ],
-      "max": [
-       -1,
-       -1,
-       2
-      ],
-      "units": "meters"
-     }
-    },
-    {
      "name": "UCX_PolyDeliver_01",
      "role": "ucx",
      "scene": "frag_s_deliver",
@@ -139,12 +109,46 @@
      "parent": "SM_PolyDeliver_Root"
     }
    ],
-   "expected": [],
-   "reason": "станция в работе, #1024, ветка S",
+   "expected": [
+    {
+     "name": "UCX_PolyDeliver_01",
+     "scene": "frag_s_deliver",
+     "expect": "fail",
+     "codes": [
+      "ucx.gap/ucx_touch"
+     ]
+    },
+    {
+     "name": "UCX_PolyDeliver_02",
+     "scene": "frag_s_deliver",
+     "expect": "fail",
+     "codes": [
+      "ucx.gap/ucx_touch"
+     ]
+    },
+    {
+     "name": "SM_PolyDeliver_Root",
+     "scene": "frag_s_deliver",
+     "expect": "pass",
+     "codes": []
+    },
+    {
+     "name": "SM_PolyDeliver_Spot_001",
+     "scene": "frag_s_deliver",
+     "expect": "pass",
+     "codes": []
+    }
+   ],
+   "reason": "",
    "options": {
     "skip": {
+     "qa.preflight": "станция: шаги ветки S и light.check; проверки 0.5-0.8 и export.checked - в нативной приёмке",
+     "qa.names": "станция: шаги ветки S и light.check; проверки 0.5-0.8 и export.checked - в нативной приёмке",
+     "qa.tris": "станция: шаги ветки S и light.check; проверки 0.5-0.8 и export.checked - в нативной приёмке",
+     "ucx.audit": "станция: шаги ветки S и light.check; проверки 0.5-0.8 и export.checked - в нативной приёмке",
+     "qa.sintez": "нет таблицы SINTEZ на синтетике",
      "qa.omk_te": "кнопка ветки T",
-     "qa.sintez": "нет таблицы SINTEZ на синтетике"
+     "export.checked": "станция: шаги ветки S и light.check; проверки 0.5-0.8 и export.checked - в нативной приёмке"
     }
    }
   },
