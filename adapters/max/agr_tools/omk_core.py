@@ -1,4 +1,4 @@
-"""AGR Tools 1.0 (#1024) OMK TE code logic, stdlib only. Owned by branch T (improve/issue-1024-deliver-small).
+"""AGR Tools 1.0 (#1024) OMK TE code logic, stdlib only. owned by branch T (improve/issue-1024-deliver-small).
 
 Pure logic for `qa_omk_te` (qa.omk_te); no pymxs, no host objects. Plan mode `read`: the result is a report (and the
 clipboard text the Max glue copies); the scene is never changed.

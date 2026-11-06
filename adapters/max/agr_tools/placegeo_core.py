@@ -1,4 +1,4 @@
-"""AGR Tools 1.0 (#1024) placement by the passport logic, stdlib only. Owned by branch T (improve/issue-1024-deliver-small).
+"""AGR Tools 1.0 (#1024) placement by the passport logic, stdlib only. owned by branch T (improve/issue-1024-deliver-small).
 
 Pure logic for `export_place_by_passport` (export.place_by_passport, plan mode `undo`); no pymxs, no host objects.
 Idea ported from the team script new-telegram `Import_HP_from_coordinates.ms` (SHA256

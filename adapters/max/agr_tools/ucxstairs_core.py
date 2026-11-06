@@ -1,4 +1,4 @@
-"""AGR Tools 1.0 (#1024) UCX stairs logic, stdlib only. Owned by branch T (improve/issue-1024-deliver-small).
+"""AGR Tools 1.0 (#1024) UCX stairs logic, stdlib only. owned by branch T (improve/issue-1024-deliver-small).
 
 Pure logic for `ucx_stairs` (ucx.stairs, plan mode `read`); no pymxs, no host objects: the glue gives plain meshes in
 METRES (world space). New code, no GeoAGR source (GeoAGR gap #8, issue #1024 section 24; requirements VPM-2.13-5/-6).

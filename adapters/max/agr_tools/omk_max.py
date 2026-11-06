@@ -1,4 +1,4 @@
-"""AGR Tools 1.0 (#1024) OMK TE code, 3ds Max side. Owned by branch T (improve/issue-1024-deliver-small).
+"""AGR Tools 1.0 (#1024) OMK TE code, 3ds Max side. owned by branch T (improve/issue-1024-deliver-small).
 
 runtime.edits_100 calls `qa_omk_te(ctx, mode, nodes, preview)` (qa.omk_te, plan mode `read`: preview only).
 ctx: agr (runtime globals), core (omk_core), edit (edit_core), emax (edit_max), options (dict of the preview),
