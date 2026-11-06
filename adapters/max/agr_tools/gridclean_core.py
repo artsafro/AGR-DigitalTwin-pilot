@@ -254,6 +254,41 @@ def border_corners(mesh, line_m):
     return corners
 
 
+TWIN_M = 1e-6
+
+
+def merge_border_twins(mesh):
+    """Border vertices at the same point (<= 1 micrometre) become one. 3ds Max splits a vertex where the border
+    touches itself, e.g. both ends of a T-junction slit (Mesh -> Poly, native job 20261106-045957-1167cfc5); left
+    split, an opening corner's twin is not seen as a corner and a loop dissolves through it. Exact twins only, never
+    a threshold weld (that one runs only inside the selection). Returns the number merged."""
+    border = set()
+    for (a, b), uses in edges(mesh).items():
+        if len(uses) == 1:
+            border.update((a, b))
+    if not border:
+        return 0
+    verts = mesh['verts']
+    seen, remap = {}, {}
+    for v in sorted(border):
+        key = tuple(int(round(c / TWIN_M)) for c in verts[v])
+        hit = None
+        for dk in ((0, 0, 0),) + tuple((x, y, z) for x in (-1, 0, 1) for y in (-1, 0, 1) for z in (-1, 0, 1)):
+            w = seen.get((key[0] + dk[0], key[1] + dk[1], key[2] + dk[2]))
+            if w is not None and _len(_sub(verts[w], verts[v])) <= TWIN_M:
+                hit = w
+                break
+        if hit is None:
+            seen[key] = v
+        else:
+            remap[v] = hit
+    if not remap:
+        return 0
+    for f in mesh['faces']:
+        f['v'] = [remap.get(v, v) for v in f['v']]
+    return len(remap)
+
+
 # ---- T-junctions -----------------------------------------------------------------------------------------------
 def _grid(verts, cell):
     g = {}
@@ -624,10 +659,11 @@ def clean(mesh, opts, selected=None):
     loops, empty selection for weld)."""
     check_mesh(mesh)
     mesh = copy_mesh(mesh)
+    dups = merge_border_twins(mesh)
     before = stats(mesh)
     protect = border_corners(mesh, opts['line_m']) | set(opts.get('protect') or ())
     corners = {v: list(mesh['verts'][v]) for v in sorted(protect)}
-    counts = {'t_cut': 0, 'welded': 0, 'quads_made': 0, 'loops': 0, 'loop_edges': 0, 'line_verts': 0}
+    counts = {'twins': dups, 't_cut': 0, 'welded': 0, 'quads_made': 0, 'loops': 0, 'loop_edges': 0, 'line_verts': 0}
     needs_uv = {'detriangulate', 'loops'} & set(opts['modes'])
     if needs_uv and not mesh['uv']:
         return {'mesh': mesh, 'counts': counts, 'before': before, 'after': before, 'protected': corners,

@@ -450,3 +450,16 @@ def test_rebuild_script_fan_and_visibility():
     s = gm.mesh_script(7, v, m)
     assert 'getNodeByHandle 7' in s and 'global' not in s
     assert '#(3, 3, 3)' in s and '#(4, 4, 4)' in s and 'convertTo o Editable_Poly' in s
+
+
+def test_max_split_twins_at_t_slit_do_not_leak_a_t():
+    """Native job 20261106-045957-1167cfc5: Max 2024 Mesh -> Poly splits the 4 end points of the two T slits; the
+    loop pass then dissolved through an opening corner's twin and left 2 T-vertices (t_left). Fixture = the mesh
+    gridclean_max.read_poly read from that Max."""
+    m = json.loads((ROOT / 'tests/max_tools/fixtures_h/facade_dirty_max2024_read.json').read_text(encoding='utf-8'))
+    assert len(m['verts']) == len(hb.facade()['verts']) + 4
+    res = gc.clean(m, OPTS)
+    assert res['counts']['twins'] == 4 and res['findings'] == []
+    st = gc.stats(res['mesh'])
+    assert st['t_vertices'] == 0 and st['tris'] == 0 and st['uv_islands'] == 2
+    assert corners_in_place(res['mesh'], hb.opening_corners())
