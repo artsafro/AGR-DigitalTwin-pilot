@@ -396,10 +396,14 @@ def test_no_maxscript_globals_in_glue():
     global: every rt.execute string is a block expression `( ... )` without `global`."""
     for name in ('model10_max.py', 'body_max.py'):
         tree = ast.parse((PKG / name).read_text(encoding='utf-8'))
+        consts = {t.id: ''.join(c.value for c in ast.walk(n.value) if isinstance(c, ast.Constant)
+                                and isinstance(c.value, str))
+                  for n in tree.body if isinstance(n, ast.Assign) for t in n.targets if isinstance(t, ast.Name)}
         for node in ast.walk(tree):
             if isinstance(node, ast.Call) and getattr(node.func, 'attr', None) == 'execute':
-                text = ''.join(c.value for c in ast.walk(node.args[0]) if isinstance(c, ast.Constant)
-                               and isinstance(c.value, str))
+                arg = node.args[0]
+                text = consts.get(arg.id, '') if isinstance(arg, ast.Name) else \
+                    ''.join(c.value for c in ast.walk(arg) if isinstance(c, ast.Constant) and isinstance(c.value, str))
                 assert text.startswith('(') and 'global' not in text and '::' not in text, (name, text)
 
 

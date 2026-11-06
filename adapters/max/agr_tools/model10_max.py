@@ -9,7 +9,6 @@ Metres via units.SystemScale (host.m_per_unit). No MAXScript globals, no clearUn
 collapsed (attach works on copies and deletes the originals inside the same undo record).
 Import pymxs inside functions so this file loads under plain pytest.
 """
-import math
 
 ATTACH = 'model.attach_by_material'
 MOVE = 'model.move_apart'
@@ -69,28 +68,40 @@ def _material(n):
     return {'kind': 'single', 'key': _key(mat), 'name': str(mat.name)}
 
 
-def _tri_area(a, b, c):
-    ux, uy, uz = b[0] - a[0], b[1] - a[1], b[2] - a[2]
-    vx, vy, vz = c[0] - a[0], c[1] - a[1], c[2] - a[2]
-    x, y, z = uy * vz - uz * vy, uz * vx - ux * vz, ux * vy - uy * vx
-    return 0.5 * math.sqrt(x * x + y * y + z * z)
+# Block-local MAXScript functions (an expression `( fn ...; f )` returns the function, no global is declared).
+# One call per node array instead of one pymxs call per vertex/face: 2 000 boxes in <= 10 s (L14 acceptance).
+_MXS_FACES = ('(fn agrFaces nodes = (for n in nodes collect (local m = snapshotAsMesh n; '
+              'local nf = m.numfaces; local r = #((for i = 1 to nf collect getFaceMatID m i), '
+              '(for i = 1 to nf collect meshop.getFaceArea m i)); delete m; r)); agrFaces)')
+_MXS_ATTACH = ('(fn agrAttach base nodes olds news strip = (for k = 1 to nodes.count do ('
+               'local c = copy nodes[k]; c.parent = undefined; convertTo c Editable_Poly; '
+               'if strip do c.material = undefined; local o = olds[k]; local nw = news[k]; '
+               'if o.count > 0 do (local nf = polyop.getNumFaces c; '
+               'local fids = for f = 1 to nf collect polyop.getFaceMatID c f; '
+               'for f = 1 to nf do (local j = findItem o fids[f]; if j > 0 do polyop.setFaceMatID c f nw[j])); '
+               'if base == undefined then base = c else polyop.attach base c); base); agrAttach)')
 
 
-def _attach_object(host, n):
-    """Plain data of one node for model10_core.attach_plan (areas in m2 of the evaluated triangles)."""
+def _attach_objects(host, nodes):
+    """Plain data of the nodes for model10_core.attach_plan (face IDs and areas in m2 of the evaluated mesh)."""
     rt = _rt()
-    h = _handle(n)
-    geo = _is_geometry(n)
-    out = {'handle': h, 'name': str(n.name), 'geometry': geo, 'cls': str(rt.classOf(n)),
-           'material': _material(n) if geo else None, 'face_ids': [], 'face_areas': [],
-           'parent': None if n.parent is None else _handle(n.parent),
-           'children': [_handle(c) for c in n.children]}
-    if geo:
-        ref, = host.refs([n])
-        mesh = host.mesh(ref)
-        v = mesh['verts']
-        out['face_ids'] = list(mesh['mat_ids'])
-        out['face_areas'] = [_tri_area(v[a], v[b], v[c]) for a, b, c in mesh['faces']]
+    k2 = host.m_per_unit() ** 2
+    out, geo_nodes, geo_rows = [], [], []
+    for n in nodes:
+        geo = _is_geometry(n)
+        row = {'handle': _handle(n), 'name': str(n.name), 'geometry': geo, 'cls': str(rt.classOf(n)),
+               'material': _material(n) if geo else None, 'face_ids': [], 'face_areas': [],
+               'parent': None if n.parent is None else _handle(n.parent),
+               'children': [_handle(c) for c in n.children]}
+        out.append(row)
+        if geo:
+            geo_nodes.append(n)
+            geo_rows.append(row)
+    if geo_nodes:
+        got = rt.execute(_MXS_FACES)(geo_nodes)
+        for row, pair in zip(geo_rows, got):
+            row['face_ids'] = [int(i) for i in pair[0]]
+            row['face_areas'] = [float(a) * k2 for a in pair[1]]
     return out
 
 
@@ -114,7 +125,7 @@ def model_attach_by_material(ctx, mode, nodes, preview):
     edit, core, host = ctx.edit, ctx.core, ctx.host
     if mode == 'preview':
         nodes = _targets(nodes)
-        data = [_attach_object(host, n) for n in nodes]
+        data = _attach_objects(host, nodes)
         plan = core.attach_plan(data, ctx.options, _scene_names() - {o['name'] for o in data})
         objects = []
         for o in data:
@@ -142,7 +153,7 @@ def _attach_apply(ctx, preview):
     t0 = time.time()
     p = preview['plan']
     nodes = _by_handle(p['handles'])
-    data = [_attach_object(host, n) for n in nodes]
+    data = _attach_objects(host, nodes)
     edit.require_current(preview, _attach_state(edit, data))
     by = {o['handle']: o for o in data}
     node_of = {_handle(n): n for n in nodes}
@@ -159,7 +170,13 @@ def _attach_apply(ctx, preview):
                     if c is not None and rt.isValidNode(c):
                         c.parent = base
             rt.delete([node_of[h] for h in worked])
-    after_data = [_attach_object(host, base) for _g, base in results]
+    after_data = _attach_objects(host, [base for _g, base in results])
+    for (g, _b), od in zip(results, after_data):  # the new No_Material instance stands for «no material»
+        if g['kind'] == 'one' and od['material'] is not None:
+            empty = {s['id'] for s in g['slots'] if s['key'] is None}
+            for s in od['material'].get('slots') or ():
+                if s['id'] in empty:
+                    s['key'] = None
     after = core.material_areas(after_data)
     bad = core.compare_areas(before, after)
     names = {}
@@ -191,32 +208,23 @@ class _redraw_off:
         return False
 
 
-def _poly_copy(n, id_map=None):
-    """Editable_Poly copy of a node (the original is untouched); face IDs remapped through id_map."""
-    rt = _rt()
-    c = rt.copy(n)
-    c.parent = None
-    rt.convertTo(c, rt.Editable_Poly)
-    if id_map:
-        by_id = {}
-        for f in range(1, int(rt.polyop.getNumFaces(c)) + 1):
-            by_id.setdefault(int(rt.polyop.getFaceMatID(c, f)), []).append(f)
-        for old, faces in by_id.items():
-            new = id_map[str(old)]
-            if new != old:
-                rt.polyop.setFaceMatID(c, faces, new)
-    return c
-
-
 def _attach_group(ctx, g, node_of, by):
+    """Copies of the group's nodes -> one Editable_Poly (originals untouched here; deleted by the caller in the same
+    undo record). The copies lose their material BEFORE polyop.attach: attaching objects with different materials
+    makes Max merge the materials and renumber the face IDs (native job 20261106-044644-58f7ef2a: every face of the
+    «one» result showed Mat_B). Face IDs are remapped through the group's tables first (mode one)."""
     rt = _rt()
     one = g['kind'] == 'one'
     first = node_of[g['members'][0]]
-    base = _poly_copy(first, g['id_maps'][str(g['members'][0])] if one else None)
+    members = [node_of[h] for h in g['members']]
+    olds, news = [], []
+    for h in g['members']:
+        m = g['id_maps'].get(str(h), {}) if one else {}
+        pairs = sorted((int(a), int(b)) for a, b in m.items() if int(a) != int(b))
+        olds.append([a for a, _b in pairs])
+        news.append([b for _a, b in pairs])
+    base = rt.execute(_MXS_ATTACH)(None, members, olds, news, True)
     base.parent = first.parent if first.parent is not None and _handle(first.parent) not in node_of else None
-    for h in g['members'][1:]:
-        c = _poly_copy(node_of[h], g['id_maps'][str(h)] if one else None)
-        rt.polyop.attach(base, c)
     if one:
         base.material = _multi(g, node_of, by)
     elif g['kind'] == 'none':
@@ -225,7 +233,6 @@ def _attach_group(ctx, g, node_of, by):
         base.material = first.material
     base.name = g['name']
     return base
-
 
 def _multi(g, node_of, by):
     """Multi/Sub of the «one object» mode: slot i = the i-th shown material (same instance), No_Material a new grey
