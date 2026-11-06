@@ -433,3 +433,20 @@ def test_parse_dump_roundtrip():
         w = gm.to_world(p, tm, 0.01)
         back = gm.to_object(w, tm, inv, 0.01)
         assert all(abs(back[i] - p[i]) < 1e-12 for i in range(3))
+
+
+def test_rebuild_script_fan_and_visibility():
+    gm = _load('gridclean_max.py', 'agr_tools_gridclean_max_h2')
+    assert gm.fan(3) == [((0, 1, 2), (True, True, True))]
+    assert gm.fan(4) == [((0, 1, 2), (True, True, False)), ((0, 2, 3), (False, True, True))]
+    # pentagon with a collinear (T) point at index 2: the fan starts there, no zero-area triangle
+    v = [[0, 0, 0], [2, 0, 0], [2, 0, 1], [2, 0, 2], [0, 0, 2]]
+    ring = [1, 2, 3, 4, 0]  # a fan from corner 1 would give the zero-area triangle 1-2-3
+    s0 = gm.best_start(v, ring)
+    r = ring[s0:] + ring[:s0]
+    assert s0 != 0 and min(gm._tri_area(v[r[0]], v[r[i]], v[r[i + 1]]) for i in range(1, 4)) > 0
+    m = {'verts': v, 'faces': [{'v': [0, 1, 2, 3, 4], 'uv': [[0, 0], [1, 0], [1, .5], [1, 1], [0, 1]], 'mat': 3,
+                                'sg': 4}], 'uv': True}
+    s = gm.mesh_script(7, v, m)
+    assert 'getNodeByHandle 7' in s and 'global' not in s
+    assert '#(3, 3, 3)' in s and '#(4, 4, 4)' in s and 'convertTo o Editable_Poly' in s

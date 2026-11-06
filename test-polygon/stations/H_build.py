@@ -199,39 +199,25 @@ def mesh_of(extra):
 
 
 # ---- Max ---------------------------------------------------------------------------------------------------------
+def _glue():
+    """gridclean_max.py (rebuild through setMesh + edge visibility + convertTo Editable_Poly), loaded by path."""
+    import importlib.util
+    from pathlib import Path
+    path = Path(__file__).resolve().parents[2] / 'adapters' / 'max' / 'agr_tools' / 'gridclean_max.py'
+    spec = importlib.util.spec_from_file_location('agr_h_build_gridclean_max', str(path))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
 def build_poly(rt, name, mesh):
-    """Editable Poly from the mesh (object space = the given coordinates, scene units), MatIDs, SGs, channel 1."""
-    # Editable_Poly has no constructor in Max 2024 (job 20261106-044607-93526f70): a box to poly, then emptied
+    """Editable Poly from the mesh (object space = the given coordinates, scene units), MatIDs, SGs, channel 1.
+    Editable_Poly has no constructor in Max 2024 (job 20261106-044607-93526f70): a box at the origin is rebuilt."""
     node = rt.box(name=name, width=1, length=1, height=1)
-    rt.convertToPoly(node)
-    rt.polyop.deleteVerts(node, rt.execute('#{1..' + str(int(rt.polyop.getNumVerts(node))) + '}'))
-    rt.polyop.collapseDeadStructs(node)
-    obj = node
-    for p in mesh['verts']:
-        rt.polyop.createVert(obj, rt.Point3(*p))
-    for f in mesh['faces']:
-        fi = rt.polyop.createPolygon(obj, rt.Array(*[v + 1 for v in f['v']]))
-        rt.polyop.setFaceMatID(obj, fi, int(f['mat']))
-        rt.polyop.setFaceSmoothGroup(obj, fi, int(f['sg']))
-    if mesh['uv']:
-        uvs, keys, ids = [], {}, []
-        for f in mesh['faces']:
-            row = []
-            for t in f['uv']:
-                k = (round(t[0], 9), round(t[1], 9))
-                if k not in keys:
-                    keys[k] = len(uvs) + 1
-                    uvs.append(k)
-                row.append(keys[k])
-            ids.append(row)
-        rt.polyop.setMapSupport(obj, 1, True)
-        rt.polyop.setNumMapVerts(obj, 1, len(uvs))
-        for i, (u, v) in enumerate(uvs):
-            rt.polyop.setMapVert(obj, 1, i + 1, rt.Point3(u, v, 0))
-        for fi, row in enumerate(ids):
-            rt.polyop.setMapFace(obj, 1, fi + 1, rt.Array(*row))
-    else:
-        rt.polyop.setMapSupport(obj, 1, False)
+    gm = _glue()
+    missing = int(rt.execute(gm.mesh_script(int(node.inode.handle), mesh['verts'], mesh)))
+    if missing != len(mesh['faces']):
+        raise RuntimeError('{}: {} polygons built, {} wanted'.format(name, missing, len(mesh['faces'])))
     return node
 
 

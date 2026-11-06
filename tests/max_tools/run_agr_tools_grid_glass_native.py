@@ -40,7 +40,16 @@ sys.path.insert(0, str(ROOT / 'test-polygon' / 'stations'))
 import H_build as hb  # noqa: E402
 
 
+def step(msg):
+    with open(OUT / 'progress.txt', 'a', encoding='utf-8') as f:
+        f.write(msg + '
+')
+        f.flush()
+        os.fsync(f.fileno())
+
+
 def check(name, fn):
+    step('start ' + name)
     try:
         summary['checks'][name] = fn()
     except Exception:  # noqa: BLE001 - recorded; the run fails at the end
@@ -82,6 +91,7 @@ def reset(units='meters'):
 
 
 def build(name, mesh, pos=(0, 0, 0)):
+    step('build ' + name)
     n = hb.build_poly(rt, name, mesh)
     n.pos = rt.Point3(*pos)
     return n

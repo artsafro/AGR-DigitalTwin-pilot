@@ -51,35 +51,34 @@ ss as string
 
 _REBUILD = r'''(
 local o = maxOps.getNodeByHandle %(handle)d
-local b = o.baseObject
-local nv = polyop.getNumVerts b
-if nv > 0 do polyop.deleteVerts b #{1..nv}
-polyop.collapseDeadStructs b
+convertToMesh o
 local vs = #(%(verts)s)
-for p in vs do polyop.createVert b p
 local fs = #(%(faces)s)
 local ms = #(%(mats)s)
 local sg = #(%(sgs)s)
-local bad = 0
+local ev = #(%(vis)s)
+setMesh o vertices:vs faces:fs
 for i = 1 to fs.count do (
-    local f = polyop.createPolygon b fs[i]
-    if f == undefined then bad += 1 else (
-        polyop.setFaceMatID b f ms[i]
-        polyop.setFaceSmoothGroup b f sg[i]
-    )
+    setFaceMatID o i ms[i]
+    setFaceSmoothGroup o i sg[i]
+    setEdgeVis o i 1 ev[i][1]
+    setEdgeVis o i 2 ev[i][2]
+    setEdgeVis o i 3 ev[i][3]
 )
 if %(has_uv)s then (
     local uv = #(%(uvs)s)
-    local uf = #(%(uvfaces)s)
-    polyop.setMapSupport b 1 true
-    polyop.setNumMapVerts b 1 uv.count
-    for i = 1 to uv.count do polyop.setMapVert b 1 i uv[i]
-    for i = 1 to uf.count do polyop.setMapFace b 1 i uf[i]
+    local tf = #(%(uvfaces)s)
+    meshop.setMapSupport o 1 true
+    setNumTVerts o uv.count
+    for i = 1 to uv.count do setTVert o i uv[i]
+    buildTVFaces o
+    for i = 1 to tf.count do setTVFace o i tf[i]
 ) else (
-    if (polyop.getNumMaps b) > 1 do polyop.setMapSupport b 1 false
+    meshop.setMapSupport o 1 false
 )
 update o
-bad
+convertTo o Editable_Poly
+polyop.getNumFaces o
 )'''
 
 
@@ -214,15 +213,43 @@ def _g(x):
     return repr(float(x))
 
 
-def rebuild(c, mesh, k):
-    """Replace the polygons of the COPY c (Editable Poly) by mesh (world metres). Returns faces not created."""
-    rt = _rt()
-    tm = world_tm(c)
-    inv = inverse_rows(tm)
-    verts = [to_object(p, tm, inv, k) for p in mesh['verts']]
-    uvs, keys, uvfaces = [], {}, []
-    if mesh['uv']:
-        for f in mesh['faces']:
+def fan(n):
+    """Fan triangles of an n-gon (corner indices) and edge visibility: only the polygon border is visible, so
+    convertTo Editable_Poly gives the polygon back (the route of geom_max agr908_setMesh, measured in Max 2024)."""
+    out = []
+    for i in range(1, n - 1):
+        out.append(((0, i, i + 1), (i == 1, True, i == n - 2)))
+    return out
+
+
+def _tri_area(a, b, c):
+    u = [b[i] - a[i] for i in range(3)]
+    v = [c[i] - a[i] for i in range(3)]
+    x = [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]]
+    return math.sqrt(sum(t * t for t in x)) / 2.0
+
+
+def best_start(verts, ring):
+    """Fan start corner with the largest smallest triangle: a collinear (T) point of a polygon gives no
+    zero-area triangle when the fan starts at it."""
+    if len(ring) <= 3:
+        return 0
+    best, at = -1.0, 0
+    for s in range(len(ring)):
+        r = ring[s:] + ring[:s]
+        m = min(_tri_area(verts[r[0]], verts[r[i]], verts[r[i + 1]]) for i in range(1, len(r) - 1))
+        if m > best * (1 + 1e-9):
+            best, at = m, s
+    return at
+
+
+def mesh_script(handle, verts_obj, mesh):
+    """MAXScript block (locals only) that replaces the geometry of node `handle` (object-space vertices)."""
+    tris, mats, sgs, vis, uvfaces = [], [], [], [], []
+    uvs, keys = [], {}
+    for f in mesh['faces']:
+        row = None
+        if mesh['uv']:
             row = []
             for t in f['uv']:
                 key = (round(float(t[0]), 12), round(float(t[1]), 12))
@@ -230,17 +257,39 @@ def rebuild(c, mesh, k):
                     keys[key] = len(uvs) + 1
                     uvs.append(key)
                 row.append(keys[key])
-            uvfaces.append(row)
-    script = _REBUILD % {
-        'handle': inode_handle(c),
-        'verts': ', '.join('[{}, {}, {}]'.format(_g(p[0]), _g(p[1]), _g(p[2])) for p in verts),
-        'faces': ', '.join('#({})'.format(', '.join(str(v + 1) for v in f['v'])) for f in mesh['faces']),
-        'mats': ', '.join(str(int(f['mat'])) for f in mesh['faces']),
-        'sgs': ', '.join(str(int(f['sg'])) for f in mesh['faces']),
-        'has_uv': 'true' if mesh['uv'] else 'false',
+        s = best_start(verts_obj, f['v'])
+        ring = f['v'][s:] + f['v'][:s]
+        if row is not None:
+            row = row[s:] + row[:s]
+        for corners, ev in fan(len(ring)):
+            tris.append([ring[c] + 1 for c in corners])
+            mats.append(int(f['mat']))
+            sgs.append(int(f['sg']))
+            vis.append(ev)
+            if row is not None:
+                uvfaces.append([row[c] for c in corners])
+    b = lambda x: 'true' if x else 'false'  # noqa: E731
+    return _REBUILD % {
+        'handle': handle,
+        'verts': ', '.join('[{}, {}, {}]'.format(_g(p[0]), _g(p[1]), _g(p[2])) for p in verts_obj),
+        'faces': ', '.join('[{}, {}, {}]'.format(*t) for t in tris),
+        'mats': ', '.join(str(m) for m in mats),
+        'sgs': ', '.join(str(s) for s in sgs),
+        'vis': ', '.join('#({}, {}, {})'.format(*(b(x) for x in e)) for e in vis),
+        'has_uv': b(mesh['uv']),
         'uvs': ', '.join('[{}, {}, 0]'.format(_g(u), _g(v)) for u, v in uvs),
-        'uvfaces': ', '.join('#({})'.format(', '.join(str(i) for i in row)) for row in uvfaces)}
-    return int(rt.execute(script))
+        'uvfaces': ', '.join('[{}, {}, {}]'.format(*t) for t in uvfaces)}
+
+
+def rebuild(c, mesh, k):
+    """Replace the polygons of the COPY c by mesh (world metres). Returns the number of polygons missing after
+    the conversion back to Editable Poly (0 = every polygon came back)."""
+    rt = _rt()
+    tm = world_tm(c)
+    inv = inverse_rows(tm)
+    verts = [to_object(p, tm, inv, k) for p in mesh['verts']]
+    got = int(rt.execute(mesh_script(inode_handle(c), verts, mesh)))
+    return max(0, len(mesh['faces']) - got)
 
 
 def state(emax, nodes, opts):
