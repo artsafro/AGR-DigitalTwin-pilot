@@ -27,7 +27,7 @@ import sys
 KINDS = ('D', 'ERM', 'N')
 KIND_ROLE = {'D': 'diffuse', 'ERM': 'metalness', 'N': 'normal'}
 FLAT_NORMAL = (128, 128, 255)
-DEFAULT_SIZE = 1024          # VPM 4K tiles are 1024 px/m; a solid record needs no more than the placeholder size
+DEFAULT_SIZE = 1024          # placeholder ceiling (VPM tiles are 1000 px/m, 3600 px); a solid record needs no more
 SOLID_SIZE = 256             # solid colour: flat placeholder size (VPM flat_placeholder.size_px)
 
 

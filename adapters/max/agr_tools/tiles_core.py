@@ -8,8 +8,8 @@ UDIM step 3.6 m, a multiple of the 1.2 and 0.6 m modules):
 
 * A grey base map is a MASK PNG (RGB 8 bit): R = body grey (tone of each tile, lerp weight), G = joint coverage
   (0 body .. 255 joint, anti-aliased), B = 0. It is generated in METRES: module, joint, bond (1/2 offset of every
-  second course), period. The map holds exactly one period (default 3.6 m) at `px_per_m` (default 1024, #1024;
-  Q1 of the audit is open: 1000 or 1137.8 are parameters too), so the size is round(period * px_per_m) and the
+  second course), period. The map holds exactly one period (default 3.6 m) at `px_per_m` (default 1000, owner
+  answer 06.11 morning on audit Q1; 1024 or 1137.8 are parameters), so the size is round(period * px_per_m) and the
   effective density is size / period.
 * Seamless by construction only when the module divides the period; otherwise the module is fitted to the nearest
   integer count and the stretch is reported (> max_stretch_pct: finding). `seam_levels` measures the step across the
@@ -33,7 +33,7 @@ import zlib
 
 PNG_SIG = b'\x89PNG\r\n\x1a\n'
 DEFAULTS = {
-    'px_per_m': 1024.0,       # #1024 K3 (VPM 4K, 1024 px/m); audit Q1 open
+    'px_per_m': 1000.0,       # owner answer 06.11 morning (audit Q1): 3.6 m = 3600 px, modules whole; was 1024
     'period_m': 3.6,          # owner answer 06.11: UDIM step 3.6 m (crumb: its own 1 m period)
     'max_stretch_pct': 1.2,   # module fitted to the period: allowed stretch (audit Q3: brick -1.1 %)
     'seam_max_levels': 1.0,   # K3 acceptance: edge difference <= 1 level

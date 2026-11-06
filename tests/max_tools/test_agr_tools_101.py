@@ -282,3 +282,19 @@ def test_npm_round_trip_still_refuses_a_real_tile_change():
     res = n2v.plan_table(npm, n2v.table_rows({'table': p['table']}))
     codes = {f[0] for f in res['findings']}
     assert 'udim_mismatch' in codes
+
+
+# ---- density 1000 px/m (owner answer 06.11 morning, materials audit Q1): UDIM tile 3.6 m = 3600 px ----------------
+def test_density_default_1000_px_per_m_everywhere():
+    vpm = _load('vpm_core.py', 'agr_tools_vpm_core')
+    lay = _load('uvlayout_core.py', 'agr_tools_uvlayout_core')
+    u10 = _load('udim10_core.py', 'agr_tools_udim10_core')
+    tiles = _load('tiles_core.py', 'agr_tools_tiles_core')
+    o = vpm.options({})
+    assert o['texel_px_per_m'] == 1000.0 and o['tile_px'] == 3600 and lay.TILE_PX == 3600
+    assert vpm.px_per_step(o) == pytest.approx(3600.0) and vpm.texel_of(o, 12) == pytest.approx(1000.0)
+    assert u10.rescale_options({})['target_px_per_m'] == pytest.approx(1000.0)
+    assert tiles.DEFAULTS['px_per_m'] == 1000.0
+    # every module of the facade set lies whole in the 3.6 m period at 1000 px/m: 600 mm = 600 px, 1.2 m = 1200 px
+    for module_m in (0.6, 1.2, 0.3, 0.9, 3.6):
+        assert (module_m * 1000.0) == int(module_m * 1000.0 + 0.5) and (3.6 / module_m) == pytest.approx(round(3.6 / module_m))

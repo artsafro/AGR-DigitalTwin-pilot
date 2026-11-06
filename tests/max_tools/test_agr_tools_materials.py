@@ -185,13 +185,13 @@ def test_table_empty_input_and_no_faces(lib):
 # ==== mat.tiles (K3) ============================================================================================
 def test_tile_defaults_are_parameters():
     s, f = tc.spec('facade_600x1200')
-    assert (s['px_per_m'], s['period_m'], s['size_px'], s['counts']) == (1024.0, 3.6, 3686, [6, 3]) and not f
+    assert (s['px_per_m'], s['period_m'], s['size_px'], s['counts']) == (1000.0, 3.6, 3600, [6, 3]) and not f
     s, _ = tc.spec('facade_600x1200', {'px_per_m': 1000})
     assert s['size_px'] == 3600  # audit Q1: 1000 px/m -> 3600 px, every module integer
     s, _ = tc.spec('ground_100x300')
     assert s['counts'] == [12, 36] and s['bond'] == 0.5
     s, _ = tc.spec('crumb_1x1')
-    assert (s['size_px'], s['cells']) == (1024, 250)
+    assert (s['size_px'], s['cells']) == (1000, 250)   # 1 m at 1000 px/m
     with pytest.raises(ValueError):
         tc.spec('nope')
     with pytest.raises(ValueError):

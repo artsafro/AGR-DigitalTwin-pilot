@@ -86,9 +86,9 @@ def options(opts):
         if not str(k).isdigit() or int(k) <= 0:
             raise ValueError('options.period_by_id key must be a library id: {!r}'.format(k))
         out['period_by_id'][str(int(k))] = _num(v, 'options.period_by_id[{}]'.format(k))
-    tx = opts.get('texel_px_per_m')
-    # px/m is a parameter (owner question «1000 or 1024» open, GeoAGR-private research/materials-audit-1.0 Q1):
-    # given, it fixes the pixels of one UDIM step; default tile_px / step_m (4096 / 3.6 = 1137.8 px/m).
+    tx = opts.get('texel_px_per_m', lay.TEXEL_PX_PER_M)
+    # px/m: 1000 by default (owner answer 06.11 morning, materials audit Q1: the 3.6 m UDIM tile = 3600 px, every
+    # module lies whole); a parameter. null keeps the old rule tile_px / step_m.
     out['texel_px_per_m'] = _num(tx, 'options.texel_px_per_m') if tx is not None else None
     return out
 
