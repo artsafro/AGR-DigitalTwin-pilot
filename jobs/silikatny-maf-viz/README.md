@@ -10,7 +10,8 @@ Route: visualisation, not NPM/VPM [D189]. Binaries and builder scripts stay outs
 | `Downloads/Telegram Desktop/МАФ_и_свет_модели_фото (4).docx` | `577c5af4e36527b2` | task list: 32 MAF rows, red = not modelled (pos 4, 15) |
 | `Silikatniy_UVK/pravki/СИЛ13-УВК-ПД-ПЗУ_.dwg` | `b6f302d433a22c9b` | newest ПЗУ: MAF schedule, plan blocks, gate/fence elevations |
 | `Downloads/Telegram Desktop/Силикатный маф.zip` | `4ec932521c3c0800` | manufacturer photos (same DWG inside) |
-| `Задание на визы Силикатный/Альбом АГР_Силикатный_ корр. Гранель 08.04.25 (2).pdf` p31 | — | render of the shade canopy (pos 1) |
+| `Задание на визы Силикатный/Альбом АГР_Силикатный_ корр. Гранель 08.04.25 (2).pdf` p31 | — | render of the shade canopy (pos 1, v1, superseded) |
+| `Downloads/screenshot-2026-11-06-16-01-36.png` | `4a0e3feffc2d7188` | pos 1 v2 look: the schedule picture (table cell block «28»), sent by Artem 2026-11-06 |
 
 Manufacturer dimensions: `C:/x/silikatny-maf-viz/sources/maf_research.md`; DWG inspection
 `C:/x/silikatny-maf-viz/sources/individual_maf.md` (hashes before = after).
@@ -19,12 +20,14 @@ Manufacturer dimensions: `C:/x/silikatny-maf-viz/sources/maf_research.md`; DWG i
 
 | File | sha256 (16) |
 |---|---|
-| `C:/x/silikatny-maf-viz/blend/SIL_MAF_v003.blend` (collection `SIL_MAF`, 30 objects) | `638003f9483a5943` |
-| `C:/x/silikatny-maf-viz/fbx/SIL_MAF_v003.fbx` | `435304f5cc1acb2e` |
-| `C:/x/silikatny-maf-viz/scripts/` `maf_kit.py`, `maf_models.py`, `maf_models2.py`, `run_build.py` | `facabd41`, `263d3e89`, `1fbdfd7c`, `d6f19ab8` |
-| previews `C:/x/silikatny-maf-viz/preview/` | — |
+| `C:/x/silikatny-maf-viz/blend/SIL_MAF_v004.blend` (collection `SIL_MAF`, 30 objects; v003 + pos 1 v2) | `dfe4d1e13faa3fdf` |
+| `C:/x/silikatny-maf-viz/fbx/SIL_MAF_v004.fbx` | `f4e7ff1c59bee2b2` |
+| `C:/x/silikatny-maf-viz/max/SIL_MAF_v004_max2024.max` (3ds Max 2024, one Multi/Sub `SIL_MAF_multisub_33`) | — |
+| `C:/x/silikatny-maf-viz/scripts/` `maf_kit.py`, `maf_models.py`, `maf_models2.py`, `run_build.py` | `facabd41`, `263d3e89`, `948a7f7e`, `d6f19ab8` |
+| previews `C:/x/silikatny-maf-viz/preview/` (pos 1 v2: `p01_v2/`) | — |
 
-Rebuild in Blender 5.1: exec the four scripts in that order, then `build_all()`.
+v003 (`638003f9483a5943` / FBX `435304f5cc1acb2e`) stays as the previous version. Rebuild in Blender 5.1: exec the
+four scripts in that order, then `build_all()`; v004 = v003 with pos 1 replaced by `build_v004_p01.py`.
 
 ## Materials [D189]
 
@@ -34,12 +37,15 @@ Blender FBX readback: 30/30 objects keep 33 slots in order, same IDs, tris, dims
 3ds Max 2026.3 FBX import (defaults, metres): 30/30 Editable_Poly sharing one `MultiMat_0` with subs 1..33 in order;
 per-object face IDs equal the Blender IDs for all 30; one Multi/Sub assigned to all objects changes 0 faces.
 Evidence: `C:/x/silikatny-maf-viz/max_readback/` (`readback_report.txt`, `SIL_MAF_v003_shared_multisub.max`).
+v004: Blender FBX readback 30/30 objects with 33 slots in order and one UV layer; against v003 only pos 1 differs
+(`C:/x/silikatny-maf-viz/fbx/readback_v003.json`, `readback_v004.json`). 3ds Max 2024 batch import: 30 objects,
+one Multi/Sub of 33 subs in order, 0 faces changed material (`max/SIL_MAF_v004_max2024_log.txt`).
 
 ## Objects (dims L × W × H m; card = manufacturer page)
 
 | Pos | Object | Source | Card | Model | Tris |
 |---|---|---|---|---|---|
-| 1 | `MAF_P01_IND_NavesTenevoy` | plan 6.0 × 4.2 + album render | 6.0 × 4.2 × ~3.0 (est.) | 6.0 × 4.2 × 3.06 | 1200 |
+| 1 | `MAF_P01_IND_NavesTenevoy` (v2) | plan 6.0 × 4.2 (8 inserts) + schedule picture | S = 25.0 m², H not given | roof 6.0 × 4.2 × 2.87 (6.1 × 4.32 with gutter) | 2460 |
 | 3 | `MAF_P03_MDP-1007_Stolik` | Деткки | 1.156 × 1.154 × 0.53 | 1.16 × 1.16 × 0.53 | 896 |
 | 5 | `MAF_P05_BLR-2007_Balansir` | Деткки | 2.03 × 0.13 × 0.30 | same | 272 |
 | 6 | `MAF_P06_IPN-2012_Chasy` | Деткки | 0.948 × 0.089 × 1.256 | same | 704 |
@@ -74,7 +80,12 @@ Not modelled: pos 4, 15 (red in the task), lighting [D189]. Fences 29 and 33 are
 
 ## Verify lines (individual projects — each needs Artem's look)
 
-- Pos 1 shade canopy: heights, roof thickness, shell curve, post pitch estimated from one render; design sheet «Устройство теневого навеса» missing.
+- Pos 1 shade canopy v2 (2026-11-06): plan contour measured in the open ПЗУ DWG (block `A$Ca0fdae5c`, 6.0 × 4.2,
+  8 inserts at scale 1, rotations 53.2° ×6 and 117.9° ×2) = roof outline; look from the schedule picture: deck on
+  sleepers, black steel posts 100 (4 back, 2 front, 1 per end) and ring beam, vertical slats 45/90 mm on the back and
+  both ends with polycarbonate inside, bench 0.45 × 0.45 along the back wall, timber roof 0.20 falling 3 % to the
+  back, gutter + downpipe, 2-tube snow guard on 8 brackets. Estimated: heights (beam 2.60, top 2.87), post pitch,
+  slat pitch, slope, which long side is open (the plan symbol does not show it). Design sheet still missing.
 - Pos 29 fence PRO: section scale inferred from H 2.5; colour RAL 7016 assumed (not in the sources).
 - Pos 30 gates: elevation 1:1, opening set to 4.2 per the schedule (elevation shows 4.05).
 - Pos 31 perimeter wicket: no elevation; gate pattern used.
