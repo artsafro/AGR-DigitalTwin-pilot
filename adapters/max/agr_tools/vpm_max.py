@@ -53,6 +53,17 @@ def _renumber(ctx):
         return None, 'uvlayout_core (matlib_core.renumber_dense is a stub of branch L)'
 
 
+def _library(ctx, o):
+    """(library, '') for step 6 (maps D+ERM+N by vpmmaps_core.build_maps of branch N), else (None, reason)."""
+    if not o.get('library_path'):
+        return None, 'no options.library_path: maps D+ERM+N need the material library (K3)'
+    try:
+        ml = ctx.agr._load_core('matlib_core.py', 'agr_tools_matlib_core')
+        return ml.load_library(o['library_path']), ''
+    except NotImplementedError:
+        return None, 'matlib_core.load_library is a stub of branch L (#1024): no maps written'
+
+
 def _steps(maps_reason, file_reason):
     return [{'step': 1, 'name': 'UV: K6 projection, perimeter unroll', 'status': 'done'},
             {'step': 2, 'name': 'texel (udim.rescale rule)', 'status': 'done'},
@@ -117,7 +128,9 @@ def vpm_build(ctx, mode, nodes, preview):
         for p in obj['parts']:
             done.append(dict(p['summary'], source=obj['name']))
     out_dir, file_reason = _out_dir(ctx, o)
-    maps_reason = 'vpmmaps_core.build_maps is a stub of branch N (#1024): no maps written'
+    library, maps_reason = _library(ctx, o)
+    if not maps_reason and not out_dir:
+        maps_reason = file_reason
     extra = {'options': o, 'layer': LAYER, 'issue': ISSUE, 'unit_m': k, 'renumber': renumber_src,
              'out_dir': out_dir, 'steps': _steps(maps_reason, file_reason)}
     if mode == 'preview':
@@ -167,6 +180,12 @@ def vpm_build(ctx, mode, nodes, preview):
                               (edit.canonical(table) + '\n').encode('ascii'))
         files.append({'path': path, 'kind': 'udim_table'})
         extra['out_dir'] = folder
+        if library is not None:
+            vm = ctx.agr._load_core('vpmmaps_core.py', 'agr_tools_vpmmaps_core')
+            res = vm.build_maps(core.maps_table(plan), library, os.path.join(folder, 'maps'))
+            files.extend(dict(m, kind='map_' + m['kind']) for m in res['maps'])
+            skipped.extend(edit.skipped('map {} {} {}'.format(x.get('mesh'), x.get('udim'), x.get('kind')),
+                                        x.get('reason') or 'skipped by vpmmaps_core') for x in res['skipped'])
     extra = dict(extra, copies=[str(c.name) for c in copies], files=files)
     return edit.report(TOOL, 'apply', objects, applied, skipped, (), extra=extra)
 

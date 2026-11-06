@@ -23,7 +23,7 @@ import os
 
 TOOL = 'vpm.build'
 OPTION_KEYS = {'grid_zero_m', 'step_m', 'period_by_id', 'tile_px', 'texel_px_per_m', 'projected_ids', 'glass_ids',
-               'unroll', 'out_dir'}
+               'unroll', 'out_dir', 'library_path'}
 GLASS_SUFFIX = '_glass'
 
 
@@ -67,15 +67,17 @@ def options(opts):
            'tile_px': opts.get('tile_px', lay.TILE_PX),
            'projected_ids': _ids(opts.get('projected_ids', 'all'), 'options.projected_ids'),
            'glass_ids': _ids(opts.get('glass_ids', []), 'options.glass_ids'),
-           'unroll': opts.get('unroll', True), 'out_dir': opts.get('out_dir')}
+           'unroll': opts.get('unroll', True), 'out_dir': opts.get('out_dir'),
+           'library_path': opts.get('library_path')}
     if out['glass_ids'] == 'all':
         raise ValueError('options.glass_ids must be a list')
     if type(out['tile_px']) is not int or out['tile_px'] <= 0:
         raise ValueError('options.tile_px must be a positive integer')
     if not isinstance(out['unroll'], bool):
         raise ValueError('options.unroll must be true or false')
-    if out['out_dir'] is not None and (not isinstance(out['out_dir'], str) or not out['out_dir'].strip()):
-        raise ValueError('options.out_dir must be a folder path')
+    for key in ('out_dir', 'library_path'):
+        if out[key] is not None and (not isinstance(out[key], str) or not out[key].strip()):
+            raise ValueError('options.{} must be a path'.format(key))
     per = opts.get('period_by_id', {})
     if not isinstance(per, dict):
         raise ValueError('options.period_by_id must be {library id: metres}')
@@ -274,6 +276,12 @@ def build(meshes, opts, renumber=None):
                 parts.append({'name': name, 'summary': dict(summary, object=name), 'geometry': geo})
         out.append({'key': m['key'], 'name': m['name'], 'findings': findings, 'parts': parts})
     return {'options': o, 'objects': out}
+
+
+def maps_table(plan):
+    """udim_table of vpmmaps_core.build_maps (branch N): {output mesh name: {library_id: udim}}."""
+    return {p['name']: {int(k): v for k, v in p['summary']['udim_table'].items()}
+            for o in plan['objects'] if not o['findings'] for p in o['parts']}
 
 
 def table_json(plan, scene, version):
