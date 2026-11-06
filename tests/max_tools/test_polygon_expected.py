@@ -53,7 +53,7 @@ def test_catalog_has_the_required_kinds():
         assert role in roles, role
     for obj in catalog['objects']:
         assert 'AGR_TEST' in obj and obj['AGR_TEST']
-        assert obj['scene'] in ('polygon_all', 'cm_units', 'empty', 'vpm') or (
+        assert obj['scene'] in ('polygon_all', 'cm_units', 'empty', 'vpm', 'atlas_npm') or (  # atlas_npm: 0.9.0 R
             obj.get('fragment') and obj['scene'].startswith('frag_' + obj['fragment'].lower() + '_'))
 
 
@@ -69,7 +69,7 @@ def test_committed_catalog_is_the_snapshot_of_bases_01_to_07():
 
 
 def test_variant_scene_specs_exist():
-    for name in ('cm_units.json', 'empty.json', 'vpm.json'):
+    for name in ('cm_units.json', 'empty.json', 'vpm.json', 'atlas_npm.json'):
         doc = json.loads((POLY / 'scenes' / name).read_text(encoding='utf-8'))
         assert doc['scene'] == name[:-5]
         assert doc['synthetic'] is True
@@ -80,7 +80,7 @@ def test_bases_stations_and_button_versions():
     from test_polygon_support import bases, load_expected, stations, suite_rows
     built = bases()
     built_ids = [item['version'] for item in built]
-    assert built_ids == ['0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9']
+    assert built_ids == ['0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', '1.0']
     colours = [tuple(item['colour']) for item in built]
     assert len(colours) == len(set(colours))
     placed = stations()
@@ -184,3 +184,68 @@ def test_committed_expected_matches_the_engine_predictor():
     assert set(predicted) == {r['id'] for r in suite_rows()}
     for button, doc in predicted.items():
         assert load_expected(button) == doc
+
+
+def test_base_100_has_33_stations_in_stage_order_with_branch_reason():
+    """#1024 branch 0: base 1.0 = stations 1.0.1..1.0.33 in the order of the stages (roadmap.stage_buttons), camera
+    `_cam_База 1.0`; every button has expected/<id>.json with «станция в работе, #1024, ветка X» (X = owner of
+    SPLIT.md) until its branch ships a fragment stations/<letter>.json."""
+    import sys
+    from test_polygon_support import bases, load_expected, stations
+    core = sys.modules['agr_polygon_core']
+    sys.path.insert(0, str(ROOT / 'adapters' / 'max' / 'agr_tools'))
+    import roadmap
+    suite = json.loads((ROOT / 'docs' / 'plans' / 'agr-tools-suite.json').read_text(encoding='utf-8'))
+    order = roadmap.stage_buttons(suite)
+    assert len(order) == 33 and core.TOUR_LAST == '1.0'
+    base = [b for b in bases() if b['version'] == '1.0'][0]
+    assert sorted(base['buttons']) == sorted(order)
+    placed = [s for s in stations() if s['version'] == '1.0']
+    assert [s['id'] for s in placed] == ['1.0.{}'.format(i) for i in range(1, 34)]
+    assert [s['button'] for s in placed] == order
+    assert set(core.OWNER_100) == set(order) and set(core.OWNER_100.values()) == set(core.BRANCHES_100)
+    assert core.BRANCHES_100 == ('F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'S', 'T', 'U')
+    frags = core.load_fragments()
+    for spec in placed:
+        doc = load_expected(spec['button'])
+        letter = core.OWNER_100[spec['button']]
+        assert spec['branch'] == letter and doc['station'] == spec['id'] and doc['base'] == '1.0'
+        assert doc['version'] == '1.0'
+        if spec['button'] not in frags or not frags[spec['button']]['expected']:
+            assert doc['reason'] == 'станция в работе, #1024, ветка ' + letter, spec['button']
+    names = {o['name'] for o in _catalog()['objects']}
+    assert '_cam_База 1.0' in names and '_base_1_0' in names
+    tail = [r for r in suite['rows'] if r.get('fate') in ('tail', 'obsolete')]
+    assert tail
+    for row in tail:
+        doc = load_expected(row['id'])
+        assert doc['version'] == '1.x' and doc['base'] is None and doc['reason'].strip()
+        assert '#1024' not in doc['reason']
+
+
+def test_fragment_hook_loads_letters_f_to_u_with_issue_1024(tmp_path, monkeypatch):
+    """stations/<letter>.json of a #1024 branch loads like the 0.9 fragments; the issue must match the branch."""
+    import sys
+    import pytest
+    from test_polygon_support import load_fragments
+    core = sys.modules['agr_polygon_core']
+    monkeypatch.setattr(core, 'STATIONS_DIR', tmp_path)
+    assert load_fragments() == {}  # absent fragments are fine
+    doc = {'schema': 1, 'branch': 'F', 'issue': '#1024', 'stations': [
+        {'button': 'project.passport', 'objects': [{'name': 'SM_Passport_Main', 'role': 'Main'}]}]}
+    (tmp_path / 'F.json').write_text(json.dumps(doc), encoding='utf-8')
+    got = load_fragments()
+    assert list(got) == ['project.passport'] and got['project.passport']['branch'] == 'F'
+    doc['issue'] = '#979'
+    (tmp_path / 'F.json').write_text(json.dumps(doc, indent=1), encoding='utf-8')
+    with pytest.raises(RuntimeError):
+        load_fragments()
+    doc.update(issue='#1024', branch='F')
+    doc['stations'][0]['button'] = 'body.prepare'  # owned by G
+    (tmp_path / 'F.json').write_text(json.dumps(doc, indent=2), encoding='utf-8')
+    with pytest.raises(RuntimeError):
+        load_fragments()
+    (tmp_path / 'F.json').unlink()
+    (tmp_path / 'X.json').write_text('{}', encoding='utf-8')
+    with pytest.raises(RuntimeError):
+        load_fragments()

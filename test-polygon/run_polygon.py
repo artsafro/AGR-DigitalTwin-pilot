@@ -65,6 +65,30 @@ def _geojson_as_object(name, report):
         {'name': name, 'findings': [{'code': code, 'ids': [], 'detail': ''} for code in codes]}]}
 
 
+def apply_atlas_problem(check, report):
+    """0.9.0 (#979 R), station 0.2.2: the atlas.npm apply report on the npm profile. '' when it matches, else the
+    first difference: profile, texel of the textured material, PNG headers read back by the runtime."""
+    plan = report.get('plan') if isinstance(report, dict) else None
+    atlas = plan.get('atlas') if isinstance(plan, dict) else None
+    if not isinstance(atlas, dict):
+        return 'apply report has no plan.atlas (npm profile)'
+    if atlas.get('profile') != check['profile']:
+        return 'atlas profile {!r}, expected {!r}'.format(atlas.get('profile'), check['profile'])
+    texel = (atlas.get('texel_px_per_m') or {}).get(check['material'])
+    if not isinstance(texel, (int, float)) or abs(texel - check['texel_px_per_m']) > check['texel_tol']:
+        return 'texel {} px/m of {}, expected {} +- {}'.format(texel, check['material'], check['texel_px_per_m'],
+                                                              check['texel_tol'])
+    files = [f for f in atlas.get('files') or [] if f]
+    if not files:
+        return 'no atlas PNG was read back'
+    for slot, want in check['files'].items():
+        for f in files:
+            got = f.get(slot)
+            if not isinstance(got, dict) or any(got.get(k) != v for k, v in want.items()):
+                return 'atlas {} read back {}, expected {}'.format(slot, got, want)
+    return ''
+
+
 def compare_actual(actual):
     """actual: {'runs': [{button, scene, tool, report, ...}, ...]}. Unmapped button is an error."""
     if not isinstance(actual, dict) or not isinstance(actual.get('runs'), list):
@@ -103,6 +127,11 @@ def compare_actual(actual):
             if got != run['apply_expected']:
                 mismatches.append({'kind': 'apply', 'button': button, 'scene': scene, 'name': '',
                                    'detail': 'apply expected {} got {}'.format(run['apply_expected'], got)})
+            elif (doc.get('apply_atlas') or {}).get('scene') == scene:
+                detail = apply_atlas_problem(doc['apply_atlas'], run.get('report'))
+                if detail:
+                    mismatches.append({'kind': 'apply', 'button': button, 'scene': scene, 'name': '',
+                                       'detail': detail})
             continue
         expected = [o for o in doc['objects'] if o['scene'] == scene and not o.get('produced')]
         report = run.get('report')
@@ -111,6 +140,8 @@ def compare_actual(actual):
             if len(names) == 1:
                 expected = [o for o in expected if o['name'] == names[0]]
                 report = _geojson_as_object(names[0], report)
+        elif run.get('tool') in core.PER_OBJECT_100 and len(run.get('names') or []) == 1:
+            expected = [o for o in expected if o['name'] == run['names'][0]]  # one press per object (#1024 R)
         for item in core.compare_report(expected, report):
             item['button'] = button
             item['scene'] = scene

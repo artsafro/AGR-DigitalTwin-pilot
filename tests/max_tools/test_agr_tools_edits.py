@@ -160,7 +160,7 @@ def test_registry_matches_the_13_plan_rows_of_version_08():
         assert core_file == OWNER[rid] + '_core.py' and (PKG / core_file).is_file()
         assert (PKG / core_file.replace('_core.py', '_max.py')).is_file()
         assert fn == rid.replace('.', '_')
-    assert rt.VERSION == m.VERSION == '0.8.0'  # release branch R ships 0.8
+    assert rt.VERSION == m.VERSION == '1.0.0'  # 0.8 shipped in 0.8.0 (#908), 0.9 in 0.9.0 (#979); R of #1024 ships 1.0
 
 
 def _glue_functions(stem):
@@ -322,7 +322,7 @@ def test_rail_shows_08_actions_from_version_080_and_greys_them_before():
     done = {m.row_of(a.id) for _, d, _ in rail07 for a in d}
     planned = {r['id'] for _, _, p in rail07 for r in p}
     assert not done & set(ROWS_080) and set(ROWS_080) <= planned
-    rail = m.rail(suite['blocks'], suite['rows'])  # released: VERSION 0.8.0
+    rail = m.rail(suite['blocks'], suite['rows'])  # released: VERSION 0.8.0 and later
     assert set(ROWS_080) <= {m.row_of(a.id) for _, d, _ in rail for a in d}
 
 
@@ -379,7 +379,7 @@ def test_lab_verdict_wins_for_three_rows():
 
 def test_changelog_has_one_released_08_section_naming_all_13_rows():
     text = (PKG / 'CHANGELOG.md').read_text(encoding='utf-8')
-    # 0.9 (#979) opens its own «в работе» section above; the released 0.8 sections stay closed
+    # 0.9.0 (#979) is its own section above; the released 0.8 sections stay closed
     assert 'в работе' not in text[text.index('## 0.8.1'):text.index('## 0.7.0')] and text.count('## 0.8.0') == 1
     head = text[text.index('## 0.8.0 (#908)\n'):text.index('## 0.7.0')]
     assert not re.search(r'^### [ABCD] ', head, re.M)  # branch subsections merged by the release branch R

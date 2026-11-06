@@ -946,3 +946,218 @@ def publish_main(argv):
     except (AtlasError, OSError, ValueError, json.JSONDecodeError):
         return 2
     return 0
+
+
+# ---- 1.0 (#1024, branch P): rigid group atlas of npm.build and atlas.facade_strip ---------------------------
+# Lab L11 (docs/experiments/npm.build.md, verdict `new`): every group (library ID of the VPM, or a facade strip)
+# moves into its cell RIGIDLY: one uniform scale per axis and one shift, the group keeps its internal layout and its
+# fractional start ("scroll"), so the K6 seam stays 0. The cell is a viewport into the infinitely tiled FULL
+# resolution source map over the real UV extent of the group, box-filtered once to the target texel; the padding is
+# the same texture continued. Not repeated from GeoAGR Priority atlas: 256 px render tiles (GeoAGR.ms:27440), texel
+# by the root of the group area (:27531-27536), empty / edge-stretched islands over 1 UV (:27096, fit_map_new :1152),
+# fixed %TEMP% tile names (:27588), glass as a diffuse-colour cell (:27665), external commands without exit codes.
+NPM_SIZES = (256, 512, 1024, 2048)
+NPM_TEXEL_PX_M = 39.0
+GLASS_RGB = (255, 255, 255)
+PLUG_INNER_PX = 8
+KINDS = ('texture', 'plug', 'glass')
+
+
+def _ppu(group, texel):
+    """Atlas px per pattern-UV unit (x, y) of a group."""
+    if group['kind'] == 'texture':
+        mu, mv = group['m_per_uv']
+        return texel * mu, texel * mv
+    u0, v0, u1, v1 = group['uv_box']
+    ext = max(u1 - u0, v1 - v0)
+    k = PLUG_INNER_PX / ext if ext > 1e-12 else 1.0
+    return k, k
+
+
+def _inner(group, ppu):
+    u0, v0, u1, v1 = group['uv_box']
+    if group['kind'] != 'texture':
+        return PLUG_INNER_PX, PLUG_INNER_PX
+    return (max(1, int(math.ceil((u1 - u0) * ppu[0] - 1e-6))), max(1, int(math.ceil((v1 - v0) * ppu[1] - 1e-6))))
+
+
+def rigid_plan(groups, texel=NPM_TEXEL_PX_M, pad=PADDING_MIN_PX, max_size=2048, sizes=NPM_SIZES):
+    """Cells of the rigid group atlas, the smallest square of `sizes` <= max_size that holds them at `texel` px/m.
+
+    groups: [{'key': str, 'kind': 'texture'|'plug'|'glass', 'uv_box': [u0, v0, u1, v1] in pattern UV (one unit =
+    one repeat of the map), 'm_per_uv': [mu, mv] metres per pattern-UV unit (texture), 'color': [r, g, b] (plug)}].
+    Returns {'size', 'texel', 'pad', 'fill', 'cells': {key: {'outer': [x, y, w, h], 'inner': [x, y, w, h],
+    'ppu': [px, py], 'scale': [su, sv], 'shift': [du, dv], 'region': [u0, v0, u1, v1]}}} with
+    atlas_uv = scale * uv + shift (image rows from the top, V up). Never changes the texel to fit: a layout that
+    does not fit max_size raises AtlasFitError (`calc`)."""
+    if not isinstance(pad, int) or isinstance(pad, bool) or pad < PADDING_MIN_PX:
+        raise AtlasError(f"padding must be an integer >= {PADDING_MIN_PX} px, got {pad}")
+    if max_size not in sizes:
+        raise AtlasError(f"atlas size must be one of {sizes}, got {max_size}")
+    if isinstance(texel, bool) or not isinstance(texel, (int, float)) or not math.isfinite(texel) or texel <= 0:
+        raise AtlasError(f"texel must be a positive number of px/m, got {texel!r}")
+    if not groups:
+        raise AtlasError('no group to put in the atlas')
+    recs, seen = [], set()
+    for g in groups:
+        if g.get('kind') not in KINDS:
+            raise AtlasError(f"group {g.get('key')!r}: kind must be one of {KINDS}")
+        if g['key'] in seen:
+            raise AtlasError(f"duplicate group {g['key']!r}")
+        seen.add(g['key'])
+        box = [float(c) for c in g['uv_box']]
+        if not all(math.isfinite(c) for c in box) or box[2] < box[0] or box[3] < box[1]:
+            raise AtlasError(f"group {g['key']!r}: invalid UV box {g['uv_box']!r}")
+        if g['kind'] == 'texture':
+            mu, mv = g['m_per_uv']
+            if not (mu > 0 and mv > 0 and math.isfinite(mu) and math.isfinite(mv)):
+                raise AtlasError(f"group {g['key']!r}: no measurable texel (UV or geometry area 0)")
+        ppu = _ppu(g, texel)
+        iw, ih = _inner(g, ppu)
+        recs.append({'name': str(g['key']), 'dw': iw + 2 * pad, 'dh': ih + 2 * pad, 'iw': iw, 'ih': ih,
+                     'ppu': ppu, 'box': box})
+    size = None
+    for side in sorted(s for s in sizes if s <= max_size):
+        if _shelf(recs, side):
+            size = side
+            break
+    if size is None:
+        calc = {'atlas_px': max_size, 'atlas_area_px2': max_size * max_size, 'padding_px': pad,
+                'texel_px_per_m': texel, 'cells_area_px2': sum(r['dw'] * r['dh'] for r in recs),
+                'widest_cell_px': max(max(r['dw'], r['dh']) for r in recs),
+                'cells': [{'group': r['name'], 'cell_px': [r['dw'], r['dh']]} for r in recs]}
+        raise AtlasFitError(f"{len(recs)} cells at {texel} px/m do not fit one {max_size} atlas", calc)
+    cells, used = {}, 0
+    for r in recs:
+        ix, iy = r['cx'] + pad, r['cy'] + pad
+        (u0, v0, u1, v1), (px, py) = r['box'], r['ppu']
+        cells[r['name']] = {
+            'outer': [r['cx'], r['cy'], r['dw'], r['dh']], 'inner': [ix, iy, r['iw'], r['ih']], 'ppu': [px, py],
+            'scale': [px / size, py / size],
+            'shift': [(ix - u0 * px) / size, 1.0 - (iy + v1 * py) / size],
+            'region': [ix / size, 1.0 - (iy + r['ih']) / size, (ix + r['iw']) / size, 1.0 - iy / size]}
+        used += r['dw'] * r['dh']
+    return {'size': size, 'texel': float(texel), 'pad': pad, 'fill': round(used / float(size * size), 6),
+            'cells': cells}
+
+
+def to_atlas(cell, uv):
+    """Atlas UV of a pattern UV (rigid: scale and shift of the cell)."""
+    return (cell['scale'][0] * uv[0] + cell['shift'][0], cell['scale'][1] * uv[1] + cell['shift'][1])
+
+
+def from_atlas(row, uv):
+    """Source UV of an atlas UV by a correspondence row (the exact reverse of npm.to_vpm, lab L11)."""
+    return ((uv[0] - row['shift'][0]) / row['scale'][0], (uv[1] - row['shift'][1]) / row['scale'][1])
+
+
+def _wrap_integral(prefix, total, n, x):
+    """Integral of a periodic step function (period n, prefix sums) from 0 to x (x may be negative / > n)."""
+    q, rem = divmod(x, n)
+    i = int(rem)
+    if i >= n:  # float rounding of divmod
+        i, rem, q = 0, 0.0, q + 1
+    return q * total + prefix[i] + (rem - i) * (prefix[i + 1] - prefix[i])
+
+
+def periodic_cell(src, w, h, n, x0, y0, kx, ky, dw, dh):
+    """dw x dh x n bytes: the box-filtered viewport into the infinitely tiled source (w x h x n bytes, rows from
+    the top). Cell pixel (X, Y) covers the source rectangle [x0 + X/kx, x0 + (X+1)/kx) x [y0 + Y/ky, ...) exactly
+    (area average, separable, periodic prefix sums): a flat region keeps its value, no 256 px intermediate."""
+    from itertools import accumulate
+    if w <= 0 or h <= 0 or len(src) != w * h * n:
+        raise AtlasError('partial source bitmap')
+    bx = [x0 + X / kx for X in range(dw + 1)]
+    by = [y0 + Y / ky for Y in range(dh + 1)]
+    lo_row, hi_row = int(math.floor(by[0])), int(math.ceil(by[-1]))
+    rows = range(h) if hi_row - lo_row >= h else sorted({r % h for r in range(lo_row, hi_row)})
+    need = set(rows)
+    # horizontal pass: integral of each needed row over the column boundaries
+    horiz = [[None] * h for _ in range(n)]
+    for r in need:
+        base = r * w * n
+        for c in range(n):
+            vals = src[base + c:base + w * n:n]
+            pre = [0]
+            pre.extend(accumulate(vals))
+            tot = pre[-1]
+            acc = [_wrap_integral(pre, tot, w, b) for b in bx]
+            horiz[c][r] = [(acc[X + 1] - acc[X]) * kx for X in range(dw)]
+    out = bytearray(dw * dh * n)
+    for c in range(n):
+        hc = horiz[c]
+        for X in range(dw):
+            col = [hc[r][X] if hc[r] is not None else 0.0 for r in range(h)]
+            pre = [0.0]
+            pre.extend(accumulate(col))
+            tot = pre[-1]
+            acc = [_wrap_integral(pre, tot, h, b) for b in by]
+            for Y in range(dh):
+                v = (acc[Y + 1] - acc[Y]) * ky
+                out[(Y * dw + X) * n + c] = 0 if v < 0 else 255 if v > 254.5 else int(v + 0.5)
+    return bytes(out)
+
+
+def rigid_raster(plan, groups, maps, background=BACKGROUND):
+    """{'rgb': size*size*3 bytes (24-bit), 'alpha': size*size grey bytes or None, 'size', 'sources': {key: [w, h]}}.
+
+    maps: {group key | map path | library id: {'w', 'h', 'rgb': bytes w*h*3, 'alpha': bytes w*h | None}}, read from the
+    full-resolution source files (the journal records their size = the input of the cell). Pattern UV u, v sample
+    the map at px (u * w, -v * h) (one pattern unit = one repeat of the map). Plugs: their colour; glass: white."""
+    size, pad = plan['size'], plan['pad']
+    rgb = bytearray(bytes(background)) * (size * size)
+    alpha = bytearray(b'\xff' * (size * size))
+    any_alpha, sources = False, {}
+    for g in sorted(groups, key=lambda q: str(q['key'])):
+        cell = plan['cells'][str(g['key'])]
+        x, y, dw, dh = cell['outer']
+        if g['kind'] == 'texture':
+            m = next((maps[k] for k in (g['key'], g.get('map'), str(g.get('library_id'))) if k in maps), None)
+            if m is None:
+                raise AtlasError(f"group {g['key']!r}: no source map")
+            px, py = cell['ppu']
+            u0, _v0, _u1, v1 = g['uv_box']
+            kx, ky = px / m['w'], py / m['h']
+            sx0 = (u0 - pad / px) * m['w']
+            sy0 = -(v1 + pad / py) * m['h']
+            patch = periodic_cell(m['rgb'], m['w'], m['h'], 3, sx0, sy0, kx, ky, dw, dh)
+            for yy in range(dh):
+                o = ((y + yy) * size + x) * 3
+                rgb[o:o + dw * 3] = patch[yy * dw * 3:(yy + 1) * dw * 3]
+            if m.get('alpha') is not None and min(m['alpha']) < 255:
+                any_alpha = True
+                ap = periodic_cell(m['alpha'], m['w'], m['h'], 1, sx0, sy0, kx, ky, dw, dh)
+                for yy in range(dh):
+                    o = (y + yy) * size + x
+                    alpha[o:o + dw] = ap[yy * dw:(yy + 1) * dw]
+            sources[str(g['key'])] = [m['w'], m['h']]
+        else:
+            color = GLASS_RGB if g['kind'] == 'glass' else tuple(_byte(int(c), str(g['key'])) for c in g['color'])
+            span = bytes(color) * dw
+            for yy in range(dh):
+                o = ((y + yy) * size + x) * 3
+                rgb[o:o + dw * 3] = span
+    return {'rgb': bytes(rgb), 'alpha': bytes(alpha) if any_alpha else None, 'size': size, 'sources': sources}
+
+
+def correspondence_table(atlas_report):
+    """1.0 (#1024, branch 0 signature; owner P): the VPM -> NPM correspondence table for the passport and the
+    reverse step npm.to_vpm (Q): [{'library_id', 'udim', 'region': [u0, v0, u1, v1], 'scale': [su, sv],
+    'shift': [du, dv]}] from an atlas report of npm.build.
+
+    atlas_report: {'size', 'texel', 'cells' (rigid_plan), 'groups': [{'key', 'library_id', 'udim', 'udim_source',
+    'part', 'kind', 'material', 'map', 'source_texel_px_per_m'}]}. Rule (lab L11): atlas_uv = scale * vpm_uv + shift,
+    so vpm_uv = (atlas_uv - shift) / scale (from_atlas). Extra keys per row: part, kind, material, map, cell_px,
+    atlas_px, texel_px_per_m, source_texel_px_per_m, udim_source. The UDIM comes from the passport / VPM table,
+    not from the UV centre (L11: bbox centre gave 1019 instead of 1007)."""
+    size, cells = atlas_report['size'], atlas_report['cells']
+    rows = []
+    for g in atlas_report['groups']:
+        c = cells[str(g['key'])]
+        rows.append({'library_id': int(g['library_id']), 'udim': g.get('udim'), 'region': list(c['region']),
+                     'key': str(g['key']), 'island': g.get('island'), 'faces': g.get('faces'),
+                     'scale': list(c['scale']), 'shift': list(c['shift']), 'part': g.get('part'),
+                     'kind': g['kind'], 'material': g.get('material'), 'map': g.get('map'),
+                     'cell_px': list(c['inner']), 'atlas_px': size, 'texel_px_per_m': atlas_report['texel'],
+                     'source_texel_px_per_m': g.get('source_texel_px_per_m'), 'udim_source': g.get('udim_source')})
+    return sorted(rows, key=lambda r: (str(r['part']), r['library_id'], r['island'] or 0))

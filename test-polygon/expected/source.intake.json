@@ -1,0 +1,32 @@
+{
+ "schema": 1,
+ "button": "source.intake",
+ "tool": "source.intake",
+ "version": "1.0",
+ "shipped": true,
+ "select": "named",
+ "reason": "",
+ "apply_status": null,
+ "objects": [
+  {
+   "name": "SM_FIntake_Ok_Main",
+   "scene": "frag_f_intake_ok",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_FIntake_CmFar_Main",
+   "scene": "frag_f_intake_far",
+   "expect": "fail",
+   "codes": [
+    "far_coordinates",
+    "units_scale"
+   ]
+  }
+ ],
+ "base": "1.0",
+ "station": "1.0.2",
+ "stations": [
+  "1.0.2"
+ ]
+}

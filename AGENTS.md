@@ -72,3 +72,4 @@ gets a line in `docs/decisions.md` and its `[D<n>]` where it applies.
   in task branches report state changes in the final summary.
 - A new tool counts as shared only after it is listed in `docs/agents/CAPABILITIES.md` on `main`.
 - Four working principles (assumptions first, simplest fit, surgical changes, verified done): `docs/agents/working-principles.md`.
+- AGR Tools 1.0 (#1024) conveyor rules (the project passport `jobs/<ID>/passport.json`, `schemas/ProjectPassport.schema.json`, is mandatory, К1): `docs/agents/agr-tools-1.0-rules.md`.

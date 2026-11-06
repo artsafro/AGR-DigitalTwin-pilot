@@ -31,7 +31,21 @@ FILES = ('mzp.run', 'install.ms', 'startup.ms', 'agr_tools.mcr', 'menu.ms', 'run
          'uvtile_core.py', 'uvtile_max.py', 'flora_atlas_max.py', 'qa9_core.py', 'qa9_max.py', 'facade_core.py',
          'facade_max.py', 'batch_core.py', 'batch_max.py', 'mapsuse_core.py', 'mapsuse_max.py', 'light_core.py',
          'light_max.py',
-         'session_core.py')  # shared in_session / same (one copy instead of one per module)
+         'session_core.py',  # shared in_session / same (one copy instead of one per module)
+         # 1.0 (#1024): contract, journal, host adapter, stub modules of branches F-U (this list does not
+         # change in F-U; SPLIT.md «Ветка 0» p. 5)
+         'contract_core.py', 'journal_core.py', 'host_max.py', 'openings_core.py', 'uvlayout_core.py',
+         'vpmmaps_core.py', 'passport_core.py', 'passport_max.py', 'intake_core.py', 'intake_max.py',
+         'scene10_core.py', 'scene10_max.py', 'body_core.py', 'body_max.py', 'model10_core.py', 'model10_max.py',
+         'gridclean_core.py', 'gridclean_max.py', 'glass_core.py', 'glass_max.py', 'windowgen_core.py',
+         'windowgen_max.py', 'winplace_core.py', 'winplace_max.py', 'capsule_core.py', 'capsule_max.py',
+         'roof_core.py', 'roof_max.py', 'matlib_core.py', 'matlib_max.py', 'tiles_core.py', 'tiles_max.py',
+         'plugcolour_core.py', 'plugcolour_max.py', 'vpm_core.py', 'vpm_max.py', 'udim10_core.py', 'udim10_max.py',
+         'dilate_core.py', 'dilate_max.py', 'udimplug_core.py', 'udimplug_max.py', 'npm_core.py', 'npm_max.py',
+         'facadeatlas_core.py', 'facadeatlas_max.py', 'npm2vpm_core.py', 'npm2vpm_max.py', 'udimview_core.py',
+         'udimview_max.py', 'deliver_core.py', 'deliver_max.py', 'ucx10_core.py', 'ucx10_max.py',
+         'ucxstairs_core.py', 'ucxstairs_max.py', 'omk_core.py', 'omk_max.py', 'placegeo_core.py', 'placegeo_max.py',
+         'agentbridge_core.py', 'agentbridge_max.py')
 # 0.9 (#979): every file below adapters/max/agr_tools/data/ ships as agr_tools/data/<rel> (owner files of branch C:
 # procedural_classes.json, streets/). At most one sub-folder level: install.ms copies data/ and data/<dir>/.
 DATA_DIR = 'data'

@@ -113,7 +113,11 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.7",
-   "icon": "census"
+   "icon": "census",
+   "lab_report": null,
+   "lab_status": "reworked in 0.9.0 (#979 branch E3, PR #1001/#1007)",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "scene.units",
@@ -129,7 +133,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.7",
-   "icon": "units"
+   "icon": "units",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "scene.missing_maps",
@@ -147,7 +153,9 @@
    "version": "0.8",
    "icon": "missing",
    "lab_report": "docs/experiments/scene.missing_maps.md",
-   "lab_status": "done in 0.8.0 (#908 branch B, PR #923/#926); lab: source cannot list missing maps (usedMaps); take_fix: read-only list, candidates by base name"
+   "lab_status": "done in 0.8.0 (#908 branch B, PR #923/#926); lab: source cannot list missing maps (usedMaps); take_fix: read-only list, candidates by base name; reworked in 0.9.0 (#979 branch E1, PR #997)",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "scene.source_class",
@@ -163,7 +171,9 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "1.0",
-   "icon": "source"
+   "icon": "source",
+   "stage": 0,
+   "fate": "stage"
   },
   {
    "id": "scene.maps_usage",
@@ -179,7 +189,11 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "0.9",
-   "icon": "mapsuse"
+   "icon": "mapsuse",
+   "lab_report": null,
+   "lab_status": "done in 0.9.0 (#979 branch D, PR #990/#1003); lab: not checked in the lab (no source lot)",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "scene.small_parts",
@@ -195,7 +209,9 @@
    "mcp": "yes",
    "priority": "P3",
    "version": "1.0",
-   "icon": "smallparts"
+   "icon": "smallparts",
+   "stage": 1,
+   "fate": "stage"
   },
   {
    "id": "model.perimeter_drop",
@@ -211,7 +227,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.7",
-   "icon": "drop"
+   "icon": "drop",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "model.triangulate",
@@ -229,7 +247,9 @@
    "version": "0.8",
    "icon": "triangulate",
    "lab_report": "docs/experiments/model.triangulate.md",
-   "lab_status": "done in 0.8.0 (#908 branch A, PR #927); lab: works with defects (sub-mm faces stay n-gons, redundant pairs); take_fix (лаборатория #907; plan was: take)"
+   "lab_status": "done in 0.8.0 (#908 branch A, PR #927); lab: works with defects (sub-mm faces stay n-gons, redundant pairs); take_fix (лаборатория #907; plan was: take)",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "model.glass_planes",
@@ -245,7 +265,9 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "1.0",
-   "icon": "glass"
+   "icon": "glass",
+   "stage": 2,
+   "fate": "stage"
   },
   {
    "id": "model.ground_border",
@@ -260,8 +282,10 @@
    "mode": "undo",
    "mcp": "yes",
    "priority": "P2",
-   "version": "1.0",
-   "icon": "border"
+   "version": "1.x",
+   "icon": "border",
+   "stage": null,
+   "fate": "tail"
   },
   {
    "id": "model.ground_slice",
@@ -276,8 +300,10 @@
    "mode": "copy",
    "mcp": "yes",
    "priority": "P2",
-   "version": "1.0",
-   "icon": "slice"
+   "version": "1.x",
+   "icon": "slice",
+   "stage": null,
+   "fate": "tail"
   },
   {
    "id": "model.ground_surface",
@@ -292,15 +318,17 @@
    "mode": "copy",
    "mcp": "yes",
    "priority": "P2",
-   "version": "1.0",
-   "icon": "terrain"
+   "version": "1.x",
+   "icon": "terrain",
+   "stage": null,
+   "fate": "tail"
   },
   {
    "id": "model.move_apart",
    "block": "model",
    "label_ru": "Раздвинуть задвойки",
    "does_ru": "Раздвигает пары граней/вершин 0–2, 3–10, 10–20 мм до чистого xView",
-   "source": "GeoAGR: Move Faces GeoAGR.ms:49657, Move Verts :50241, Move Edges :48952",
+   "source": "GeoAGR: Move Faces GeoAGR.ms:49657, Move Verts :50241, Move Edges :48952; #1024 «редакция 1»: btn_MoveFaces GeoAGR.ms:49657",
    "verdict": "take_fix",
    "verdict_note": "T08-01/02: Move Faces test `d >= min and d <= min` never moves a pair inside the range",
    "evidence": "TOW02: xView 185 faces at 5 mm after own check said 0 (pr515 retro); KPP1 v005 overlaps (jobs/KPP1/STATE.md)",
@@ -309,7 +337,9 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "1.0",
-   "icon": "moveapart"
+   "icon": "moveapart",
+   "stage": 1,
+   "fate": "stage"
   },
   {
    "id": "model.three_pt_align",
@@ -325,7 +355,9 @@
    "mcp": "no",
    "priority": "P3",
    "version": "1.x",
-   "icon": "align3"
+   "icon": "align3",
+   "stage": null,
+   "fate": "tail"
   },
   {
    "id": "model.window_placer",
@@ -340,15 +372,18 @@
    "mode": "undo",
    "mcp": "no",
    "priority": "P3",
-   "version": "1.x",
-   "icon": "window"
+   "version": "1.0",
+   "icon": "window",
+   "stage": 2,
+   "fate": "step",
+   "step_of": "win.place"
   },
   {
    "id": "model.grid_cleanup",
    "block": "model",
    "label_ru": "Чистка сетки фасада",
    "does_ru": "Режимы: чистка лупов и 2-рёберных вершин; детриангуляция (убирает диагонали для правки в квадах); T-стыки окон и проёмов (резка рёбер в T-вершинах или сварка только в выделении, порог в метрах). Сохраняет углы проёмов, швы UV, SG и MatID; превью и применение на копии",
-   "source": "downloads-telegram: AGR_Loop_Cleaner_v3.ms (проверки UV/SG/MatID); Telegram: edge_tool.ms (Border Loop Cleaner 0.2, структура и скорость), IN_tools-detriangulator.mcr (взаимно-длиннейшее ребро), VertexEdgeSplit_UI_v2.ms; plugins: ShivaTools VertexCleaner (финальный шаг, только идея); SHA256: AGR_Loop_Cleaner_v3.ms bd82c16ce7e8ccc5946c7506c8308877a7f87be5c5ad509efa403ff804e4a866, edge_tool.ms eb76545e709e948561ed6a4117011f945a4b4d1dde289f01868d38a32f50d7cb, IN_tools-detriangulator.mcr 2c41bfdb51b0d316739ca4cb26e9d3c17e0c51c4a025a2077634012020dc2101, VertexEdgeSplit_UI_v2.ms d9288242608790a8c78046dd01938b0b5f407bcf63ac8a3b9833e3692d1e05f6; GeoAGR (из model.detriangulate): Detriangulate GeoAGR.ms:48104; GeoAGR (из model.tjunction_weld): Edges Weld btn_EdgeWeld GeoAGR.ms:51802, Corners Weld :51542",
+   "source": "downloads-telegram: AGR_Loop_Cleaner_v3.ms (проверки UV/SG/MatID); Telegram: edge_tool.ms (Border Loop Cleaner 0.2, структура и скорость), IN_tools-detriangulator.mcr (взаимно-длиннейшее ребро), VertexEdgeSplit_UI_v2.ms; plugins: ShivaTools VertexCleaner (финальный шаг, только идея); SHA256: AGR_Loop_Cleaner_v3.ms bd82c16ce7e8ccc5946c7506c8308877a7f87be5c5ad509efa403ff804e4a866, edge_tool.ms eb76545e709e948561ed6a4117011f945a4b4d1dde289f01868d38a32f50d7cb, IN_tools-detriangulator.mcr 2c41bfdb51b0d316739ca4cb26e9d3c17e0c51c4a025a2077634012020dc2101, VertexEdgeSplit_UI_v2.ms d9288242608790a8c78046dd01938b0b5f407bcf63ac8a3b9833e3692d1e05f6; GeoAGR (из model.detriangulate): Detriangulate GeoAGR.ms:48104; GeoAGR (из model.tjunction_weld): Edges Weld btn_EdgeWeld GeoAGR.ms:51802, Corners Weld :51542; #1024 «редакция 1»: btn_Detriangulate GeoAGR.ms:48104",
    "verdict": "merge",
    "verdict_note": "BLC сливает острова UV, LC3 оставляет скрытые копии (40 объектов), Detriangulator: SG 0 и ошибка без канала 1; допуски в метрах, не в мм сцены; решение Артёма 05.11.2026 (#973): model.detriangulate и model.tjunction_weld слиты сюда как режимы — GeoAGR Detriangulate без undo (режим только с undo/на копии); T08-04: LMB Edges Weld сваривает весь объект, не выделение; Corners Weld — в тот же режим",
    "evidence": "team-audit T03/agr_loop_cleaner3, T03/border_loop_cleaner, T03/vertex_cleaner, T03/detriangulator, T03/vertex_edge_split (measured Max 2026); team-audit T03/agr_loop_cleaner3, T03/border_loop_cleaner, T03/vertex_cleaner, T03/detriangulator, T03/vertex_edge_split, T03/clean_opening_grid (GeoAGR-private work/team-scripts-audit); TOW02: resolve_tjunctions moved into the engine (job-retro-vyatskaya-tow02-pr515.md §8)",
@@ -357,14 +392,16 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "1.0",
-   "icon": "gridclean"
+   "icon": "gridclean",
+   "stage": 1,
+   "fate": "stage"
   },
   {
    "id": "model.attach_by_material",
    "block": "model",
    "label_ru": "Объединить по материалам",
    "does_ru": "Аттачит выделенные объекты в один на материал (по имени материала), батчами, с уникальными именами и контролем Multi/Sub",
-   "source": "plugins: quickattach_v1.82.mcr (режимы poly/mesh, батч); zavod: attach_by_material_mesh.ms (Editable_Mesh, перепривязка детей); GeoAGR: Turbo Attacher GeoAGR.ms:54818 (бинарный attach); SHA256: quickattach_v1.82.mcr a5b18cf9e5e3548ce8a927c22c522ddcb0cfbc0b981a3d1ab0ad9cc5b433897c, attach_by_material_mesh.ms a364809c79aa3808ca20b56ef77169691bd5ecc416c38d0f6e078499aa0c1ed9",
+   "source": "plugins: quickattach_v1.82.mcr (режимы poly/mesh, батч); zavod: attach_by_material_mesh.ms (Editable_Mesh, перепривязка детей); GeoAGR: Turbo Attacher GeoAGR.ms:54818 (бинарный attach); SHA256: quickattach_v1.82.mcr a5b18cf9e5e3548ce8a927c22c522ddcb0cfbc0b981a3d1ab0ad9cc5b433897c, attach_by_material_mesh.ms a364809c79aa3808ca20b56ef77169691bd5ecc416c38d0f6e078499aa0c1ed9; #1024 «редакция 1»: btn_TurboAttacher GeoAGR.ms:54814",
    "verdict": "merge",
    "verdict_note": "своя реализация: безымянный Multimaterial (QuickAttach), дубли ATT_<mat>_part, без undo на всю сцену (zavod) — не повторять",
    "evidence": "team-audit T03/quickattach, T03/attach_by_material_mesh (measured Max 2026); team-audit T03/quickattach, T03/attach_by_material_mesh (GeoAGR-private work/team-scripts-audit)",
@@ -373,7 +410,9 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "1.0",
-   "icon": "attachmat"
+   "icon": "attachmat",
+   "stage": 1,
+   "fate": "stage"
   },
   {
    "id": "model.pipe_lo",
@@ -389,7 +428,9 @@
    "mcp": "yes",
    "priority": "P3",
    "version": "1.x",
-   "icon": "pipelo"
+   "icon": "pipelo",
+   "stage": null,
+   "fate": "tail"
   },
   {
    "id": "tex.check",
@@ -405,7 +446,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.5",
-   "icon": "textures"
+   "icon": "textures",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "tex.format_fix",
@@ -423,7 +466,9 @@
    "version": "0.8",
    "icon": "pngfix",
    "lab_report": "docs/experiments/tex.format_fix.md",
-   "lab_status": "done in 0.8.0 (#908 branch B, PR #923/#926); lab: overwrites in place, wrong format detection, Compress ignores target; take_fix"
+   "lab_status": "done in 0.8.0 (#908 branch B, PR #923/#926); lab: overwrites in place, wrong format detection, Compress ignores target; take_fix; reworked in 0.9.0 (#979 branch E1, PR #997)",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "tex.material_type",
@@ -439,7 +484,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.7",
-   "icon": "mattype"
+   "icon": "mattype",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "tex.dilate",
@@ -455,7 +502,9 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "1.0",
-   "icon": "dilate"
+   "icon": "dilate",
+   "stage": 6,
+   "fate": "stage"
   },
   {
    "id": "tex.erm_normal_check",
@@ -471,7 +520,11 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "0.9",
-   "icon": "ermn"
+   "icon": "ermn",
+   "lab_report": null,
+   "lab_status": "done in 0.9.0 (#979 branch B, PR #994); lab: not checked in the lab (no source lot)",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "tex.finish_map",
@@ -487,14 +540,18 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "0.9",
-   "icon": "finish"
+   "icon": "finish",
+   "lab_report": null,
+   "lab_status": "done in 0.9.0 (#979 branch B, PR #994); lab: not checked in the lab (no source lot)",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "tex.placeholders",
    "block": "tex",
    "label_ru": "Заглушки 256 / 128",
    "does_ru": "Создаёт однотонные заглушки Diffuse/ERM/Normal нужного размера и цвета",
-   "source": "GeoAGR: Make Diffuse/Normal/ERM GeoAGR.ms:42227, Set Normal/ERM :42333/:42409; Andrew_scripts: Texture_Zaglushki_Ground.ms; Telegram: index to rgb.py (заглушка по среднему цвету текстуры); Andrew_scripts: Texture_Zaglushki_Ground.ms (Texture Placeholder Creator: 24-бит писатель, «не перезаписывать»); owner-tools: AtlasBuilder maf v9 (заглушки ERM metal/non-metal, имена T_<Addr>_<Map>_<slot>.<UDIM>); SHA256: index to rgb.py 90070bbf04c7545b066e2506618655efb9d6c22d3859b048582da40bce2750dc, Texture_Zaglushki_Ground.ms 888eacc9f477b3de8353819d4920ba842bf9af89b322c26fd0ab9415c414867c, atlas_builder.py e6477f519fd2159dff8977589b3a4d6feabb71edcc6559c54a279a14f7a1380e",
+   "source": "GeoAGR: Make Diffuse/Normal/ERM btn_make_tex_diffuse GeoAGR.ms:42227, Set Normal/ERM btn_open_tex_normal :42333 / btn_open_tex_erm :42409; Andrew_scripts: Texture_Zaglushki_Ground.ms; Telegram: index to rgb.py (заглушка по среднему цвету текстуры); Andrew_scripts: Texture_Zaglushki_Ground.ms (Texture Placeholder Creator: 24-бит писатель, «не перезаписывать»); owner-tools: AtlasBuilder maf v9 (заглушки ERM metal/non-metal, имена T_<Addr>_<Map>_<slot>.<UDIM>); SHA256: index to rgb.py 90070bbf04c7545b066e2506618655efb9d6c22d3859b048582da40bce2750dc, Texture_Zaglushki_Ground.ms 888eacc9f477b3de8353819d4920ba842bf9af89b322c26fd0ab9415c414867c, atlas_builder.py e6477f519fd2159dff8977589b3a4d6feabb71edcc6559c54a279a14f7a1380e",
    "verdict": "merge",
    "verdict_note": "GeoAGR Set Normal/ERM crash before the overwrite question (T07-01..03); Andrew script writes 24-bit; team-audit: средний цвет по видимым пикселям, round, вывод RGB 24 бит; запрет перезаписи дубля UDIM (6 записей → 3 файла); цвета нормали/ERM — вопрос Q03; решение Артёма 05.11.2026 (#973): «Texture Placeholder Creator» = Texture_Zaglushki_Ground.ms — подтверждено",
    "evidence": "Vatutino Ground textures (jobs/VATUTINO-SITE/ground-textures.md); team-audit T01/index_to_rgb, T05/texture_zaglushki_ground, T02/atlas_builder_v9_maf (GeoAGR-private work/team-scripts-audit)",
@@ -505,7 +562,9 @@
    "version": "0.8",
    "icon": "plug",
    "lab_report": "docs/experiments/tex.placeholders.md",
-   "lab_status": "done in 0.8.0 (#908 branch B, PR #923/#926); lab: Make D/N/ERM works (exact colour, 8-bit RGB), Set Normal/ERM crash, no 128, silent overwrite; merge"
+   "lab_status": "done in 0.8.0 (#908 branch B, PR #923/#926); lab: Make D/N/ERM works (exact colour, 8-bit RGB), Set Normal/ERM crash, no 128, silent overwrite; merge; reworked in 0.9.0 (#979 branch E1, PR #997)",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "tex.vpm_sets",
@@ -521,14 +580,17 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "1.0",
-   "icon": "sets"
+   "icon": "sets",
+   "stage": 6,
+   "fate": "step",
+   "step_of": "vpm.build"
   },
   {
    "id": "tex.browser",
    "block": "tex",
    "label_ru": "Браузер текстур",
    "does_ru": "Показывает карты объекта и их размеры (только чтение)",
-   "source": "GeoAGR: Controls/Bitmaps GeoAGR.ms:41653, Browser Tex bnt_hi :41779",
+   "source": "GeoAGR: Controls/Bitmaps GeoAGR.ms:41653, Browser Tex bnt_hi :41779; #1024 «редакция 1»: btn_multimat_table GeoAGR.ms:41646",
    "verdict": "take_fix",
    "verdict_note": "drop «Only Highpoly» clean-up of UVs\\<obj>\\",
    "evidence": "-",
@@ -537,7 +599,9 @@
    "mcp": "no",
    "priority": "P3",
    "version": "1.x",
-   "icon": "browser"
+   "icon": "browser",
+   "stage": null,
+   "fate": "tail"
   },
   {
    "id": "tex.multimat",
@@ -546,14 +610,16 @@
    "does_ru": "Собирает Multi/Sub из найденных карт ВПМ по именам T_",
    "source": "GeoAGR: Multimat HP btn_multimat GeoAGR.ms:42706",
    "verdict": "take",
-   "verdict_note": "unverified: confirm on a disposable scene",
+   "verdict_note": "unverified: confirm on a disposable scene; #1024: устарела — Multi/Sub строит mat.table → vpm.build",
    "evidence": "-",
    "reqs": "VPM-2.4-3.b VPM-2.4-5",
    "mode": "undo",
    "mcp": "yes",
    "priority": "P3",
    "version": "1.x",
-   "icon": "multimat"
+   "icon": "multimat",
+   "stage": null,
+   "fate": "obsolete"
   },
   {
    "id": "tex.plug_colour",
@@ -568,8 +634,10 @@
    "mode": "read",
    "mcp": "yes",
    "priority": "P3",
-   "version": "1.x",
-   "icon": "plugcolour"
+   "version": "1.0",
+   "icon": "plugcolour",
+   "stage": 5,
+   "fate": "stage"
   },
   {
    "id": "ucx.audit",
@@ -585,7 +653,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.7",
-   "icon": "ucxaudit"
+   "icon": "ucxaudit",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "ucx.build",
@@ -601,14 +671,16 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.3",
-   "icon": "ucx"
+   "icon": "ucx",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "ucx.triangulate",
    "block": "ucx",
    "label_ru": "UCX: триангуляция",
    "does_ru": "Триангулирует UCX на копии и проверяет выпуклость после",
-   "source": "GeoAGR: UCX Triangulate GeoAGR.ms:62890; Telegram: AlexYo_ConcaveFixer.ms (Octopus «UCX_Concave», переворот вогнутой диагонали); Collizii_2.ms (flip диагонали с сохранением выпуклости); SHA256: AlexYo_ConcaveFixer.ms 1ff3ef251f3ffb2b631b158be803b34c1652419a4d338ffd117431d7bee7e40e, Collizii_2.ms 3f106e7c1378e2db3eb6befd0a9b510024c6cade86f16129c1f203152dbdc8cc, Collizii.ms a11bca545c5e46d66cc57cb20dd63fcf4a233d0bc2cee94fb380d66e2ea78c4d",
+   "source": "GeoAGR: UCX Triangulate btn_UCX_connect GeoAGR.ms:62890; Telegram: AlexYo_ConcaveFixer.ms (Octopus «UCX_Concave», переворот вогнутой диагонали); Collizii_2.ms (flip диагонали с сохранением выпуклости); SHA256: AlexYo_ConcaveFixer.ms 1ff3ef251f3ffb2b631b158be803b34c1652419a4d338ffd117431d7bee7e40e, Collizii_2.ms 3f106e7c1378e2db3eb6befd0a9b510024c6cade86f16129c1f203152dbdc8cc, Collizii.ms a11bca545c5e46d66cc57cb20dd63fcf4a233d0bc2cee94fb380d66e2ea78c4d",
    "verdict": "take_fix",
    "verdict_note": "лаборатория #907: convexity can break after triangulation, non-Poly skipped silently; fix both; run on copies; team-audit: переворачивать только выпуклый в плане квад, проверять новое ребро, epsilon, до неподвижной точки, пост-проверка выпуклости; без схлопывания стека",
    "evidence": "TEC26: SINTEZ 2.3.17 fails on UCX triangulation (job-retro-tec26-oks-pr574.md, open); team-audit T03/concavefixer_ms, T03/concavefixer_mcr, T04/collizii (GeoAGR-private work/team-scripts-audit)",
@@ -619,14 +691,16 @@
    "version": "0.8",
    "icon": "ucxtri",
    "lab_report": "docs/experiments/ucx.triangulate.md",
-   "lab_status": "done in 0.8.0 (#908 branch A, PR #927); lab: works with defects (convexity can break, skips non-Poly silently); take_fix (лаборатория #907; plan was: take)"
+   "lab_status": "done in 0.8.0 (#908 branch A, PR #927); lab: works with defects (convexity can break, skips non-Poly silently); take_fix (лаборатория #907; plan was: take); reworked in 0.9.0 (#979 branch E2, PR #998)",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "ucx.gap",
    "block": "ucx",
    "label_ru": "UCX: нарезка и зазор",
    "does_ru": "Режимы ucx.build: split — режет меш 3D-сеткой ячеек или по выделенным рёбрам на выпуклые куски; gap — зазор 2 мм – 1 см сдвигом плоскостей у соседей, проверка SAT",
-   "source": "zavod: collision_splitter_ucx.ms, ucx_edge_split.ms, ucx_inset_lib.ms; Telegram: UCX_N_29.09.ms (геометрия ячеек), Narezka_Ucx.ms, UCX_Razdv.ms (анти-пример); Andrew_scripts: UCX_Tools.ms Slice v2; GeoAGR: UCX Move/MultiPass GeoAGR.ms:61446/62416; SHA256: collision_splitter_ucx.ms 7f5261ef3682c21fef7363feb1d3dcaaecd6839a00f81940faae461d70d23453, ucx_edge_split.ms 2245d585f9053e3a8b3f383399c45d446c1e562c149b2f47468091ba840b86db, Narezka_Ucx.ms 9b48e62650d12c2d3c5cbc0cad07fe80f9af0612b3a336913364f2ac05a3d39a, ucx_gap_inset.ms c72c21d109fbe6cba6f1addb2d58f36f3336d1ba202a31f3a6cb16e8896a77ce, ucx_inset_lib.ms 7d3bffd2fb11866e45144854adcbedae81a89c49548a3c8e3041918fcf6138d9, UCX_Razdv.ms 64184337a8f76791e986be00f9aa275daf5eece681fdafe6a0acd89bc8a1ebed, UCX_N_29.09.ms 8ddb6eb2362b4fd792c1eb6a4ab54e61d2660a30810c99a76c8c4cb2e6e9bde7",
+   "source": "zavod: collision_splitter_ucx.ms, ucx_edge_split.ms, ucx_inset_lib.ms; Telegram: UCX_N_29.09.ms (геометрия ячеек), Narezka_Ucx.ms, UCX_Razdv.ms (анти-пример); Andrew_scripts: UCX_Tools.ms Slice v2; GeoAGR: UCX Move/MultiPass GeoAGR.ms:61446/62416; SHA256: collision_splitter_ucx.ms 7f5261ef3682c21fef7363feb1d3dcaaecd6839a00f81940faae461d70d23453, ucx_edge_split.ms 2245d585f9053e3a8b3f383399c45d446c1e562c149b2f47468091ba840b86db, Narezka_Ucx.ms 9b48e62650d12c2d3c5cbc0cad07fe80f9af0612b3a336913364f2ac05a3d39a, ucx_gap_inset.ms c72c21d109fbe6cba6f1addb2d58f36f3336d1ba202a31f3a6cb16e8896a77ce, ucx_inset_lib.ms 7d3bffd2fb11866e45144854adcbedae81a89c49548a3c8e3041918fcf6138d9, UCX_Razdv.ms 64184337a8f76791e986be00f9aa275daf5eece681fdafe6a0acd89bc8a1ebed, UCX_N_29.09.ms 8ddb6eb2362b4fd792c1eb6a4ab54e61d2660a30810c99a76c8c4cb2e6e9bde7; #1024 «редакция 1»: btn_UCX_move GeoAGR.ms:61446",
    "verdict": "merge",
    "verdict_note": "чужие UCX_* не удалять, зазор не удваивать, оболочка не по клипнутой поверхности (zavod 57–71 %), сдвиг вершин по нормали не брать (0,83 мм и пересечение), полузазор без decodeValue дробной строки; грани в плоскости разреза не в одну сторону",
    "evidence": "D098 (Artem: gap 2 mm – 1 cm); team-audit T04: UCX_N 100 % покрытия 0 невыпуклых; метод плоскостей 4,00 мм на всех сценах (measured Max 2024); team-audit T04/zavod_collision_splitter, T04/ucx_n_splitter, T04/ucx_tools_andrew, T04/ucx_edge_split, T04/ucx_gap_inset (GeoAGR-private work/team-scripts-audit)",
@@ -635,7 +709,9 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "1.0",
-   "icon": "ucxgap"
+   "icon": "ucxgap",
+   "stage": 9,
+   "fate": "stage"
   },
   {
    "id": "ucx.ground",
@@ -650,8 +726,10 @@
    "mode": "copy",
    "mcp": "yes",
    "priority": "P2",
-   "version": "1.0",
-   "icon": "ucxground"
+   "version": "1.x",
+   "icon": "ucxground",
+   "stage": null,
+   "fate": "tail"
   },
   {
    "id": "ucx.rename",
@@ -669,7 +747,9 @@
    "version": "0.8",
    "icon": "ucxname",
    "lab_report": "docs/experiments/ucx.rename.md",
-   "lab_status": "done in 0.8.0 (#908 branch C, PR #924); lab: renames anything selected, address damage, no undo; take_fix"
+   "lab_status": "done in 0.8.0 (#908 branch C, PR #924); lab: renames anything selected, address damage, no undo; take_fix",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "ucx.stairs",
@@ -684,8 +764,10 @@
    "mode": "read",
    "mcp": "yes",
    "priority": "P3",
-   "version": "1.x",
-   "icon": "ucxstairs"
+   "version": "1.0",
+   "icon": "ucxstairs",
+   "stage": 9,
+   "fate": "stage"
   },
   {
    "id": "udim.ids_to_udims",
@@ -703,7 +785,9 @@
    "version": "0.8",
    "icon": "id2udim",
    "lab_report": "docs/experiments/udim.ids_to_udims.md",
-   "lab_status": "done in 0.8.0 (#908 branch C, PR #924); lab: ID n -> 1000+n correct for 1..100; first object only, ID>100 skipped, NaN on zero extent; take_fix"
+   "lab_status": "done in 0.8.0 (#908 branch C, PR #924); lab: ID n -> 1000+n correct for 1..100; first object only, ID>100 skipped, NaN on zero extent; take_fix; reworked in 0.9.0 (#979 branch E2, PR #998)",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "udim.nudge",
@@ -719,7 +803,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.2",
-   "icon": "nudge"
+   "icon": "nudge",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "udim.texel",
@@ -735,7 +821,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.3",
-   "icon": "texel"
+   "icon": "texel",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "udim.matid_unwrap",
@@ -753,7 +841,9 @@
    "version": "0.9",
    "icon": "mafuv",
    "lab_report": "docs/experiments/udim.matid_unwrap.md",
-   "lab_status": "lab 0.9 L06: as documented; ID n -> 1000+n (holes for sparse IDs), no overlaps, TD same in m/cm; collapses primitive stacks, packer blind to Unwrap and crosses UDIM borders; take_fix"
+   "lab_status": "done in 0.9.0 (#979 branch B, PR #994); lab 0.9 L06: as documented; ID n -> 1000+n (holes for sparse IDs), no overlaps, TD same in m/cm; collapses primitive stacks, packer blind to Unwrap and crosses UDIM borders; take_fix",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "udim.rescale",
@@ -769,7 +859,9 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "1.0",
-   "icon": "rescale"
+   "icon": "rescale",
+   "stage": 6,
+   "fate": "stage"
   },
   {
    "id": "udim.slots",
@@ -785,7 +877,11 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "0.9",
-   "icon": "slots"
+   "icon": "slots",
+   "lab_report": null,
+   "lab_status": "done in 0.9.0 (#979 branch B, PR #994); lab: not checked in the lab (no source lot)",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "udim.unwrap_tiles",
@@ -794,14 +890,16 @@
    "does_ru": "Раскладывает плитки фасада по UDIM на копии",
    "source": "GeoAGR: Unwrap Tiles btn_bricks_unwrap GeoAGR.ms:33780",
    "verdict": "take_fix",
-   "verdict_note": "collapse + Undo Off clears history (clearUndoBuffer): only on copies",
+   "verdict_note": "collapse + Undo Off clears history (clearUndoBuffer): only on copies; #1024: устарела — заменена укладкой шов к шову vpm.build (у GeoAGR clearUndoBuffer)",
    "evidence": "KPP1 v003 tiles (jobs/KPP1/STATE.md)",
    "reqs": "VPM-2.5-2.1.3.a",
    "mode": "copy",
    "mcp": "yes",
    "priority": "P2",
-   "version": "1.0",
-   "icon": "tiles"
+   "version": "1.x",
+   "icon": "tiles",
+   "stage": null,
+   "fate": "obsolete"
   },
   {
    "id": "udim.distortion",
@@ -814,10 +912,12 @@
    "evidence": "-",
    "reqs": "VPM-2.6-2",
    "mode": "read",
-   "mcp": "no",
+   "mcp": "yes",
    "priority": "P3",
-   "version": "1.x",
-   "icon": "distort"
+   "version": "1.0",
+   "icon": "distort",
+   "stage": 6,
+   "fate": "stage"
   },
   {
    "id": "udim.udims_to_ids",
@@ -832,8 +932,10 @@
    "mode": "read",
    "mcp": "yes",
    "priority": "P3",
-   "version": "1.x",
-   "icon": "udim2id"
+   "version": "1.0",
+   "icon": "udim2id",
+   "stage": 8,
+   "fate": "stage"
   },
   {
    "id": "udim.viewer",
@@ -842,14 +944,16 @@
    "does_ru": "Показывает тайлы UDIM на объекте и карты из папки",
    "source": "Telegram: UDIM Viewer_V1.4.ms (вкладка просмотра, импорт папок модель+GeoJSON); UDIM Viewer_V1.2.ms (правило тайла, сканер имён); UDIM_Tool_new.mzp v9.2 (загрузчик карт); SHA256: UDIM Viewer_V1.4.ms 84a81d8506b6bcd3ca9ff0ce975a18c3205f2484be1aaf30b8c33b44fc68a0f7, UDIM Viewer_V1.2.ms 1f284bbd1b1bb438a603e4f3838b6c9bb68580cea94ab5ce66dcc128b62c2f95",
    "verdict": "merge",
-   "verdict_note": "правило тайла V1.2 (центроид, floor, UDIM-1000); не брать ID-ранги и Blend/MultiTile V1.4, схлопывание стека",
+   "verdict_note": "правило тайла V1.2 (центроид, floor, UDIM-1000); не брать ID-ранги и Blend/MultiTile V1.4, схлопывание стека; #1024: устарела — вне плана (Q09, использование неизвестно)",
    "evidence": "team daily (team-scripts-audit); team-audit T02/udim_viewer_v14, T02/udim_viewer_v12 (measured); team-audit T02/udim_viewer_v14, T02/udim_viewer_v12, T02/udim_tool_v92 (GeoAGR-private work/team-scripts-audit)",
    "reqs": "-",
    "mode": "read",
    "mcp": "no",
    "priority": "P3",
    "version": "1.x",
-   "icon": "udimview"
+   "icon": "udimview",
+   "stage": null,
+   "fate": "obsolete"
   },
   {
    "id": "udim.plugs",
@@ -864,8 +968,10 @@
    "mode": "copy",
    "mcp": "yes",
    "priority": "P3",
-   "version": "1.x",
-   "icon": "udimplug"
+   "version": "1.0",
+   "icon": "udimplug",
+   "stage": 6,
+   "fate": "stage"
   },
   {
    "id": "atlas.flora",
@@ -881,7 +987,11 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.9",
-   "icon": "flora"
+   "icon": "flora",
+   "lab_report": null,
+   "lab_status": "done in 0.9.0 (#979 branch B, PR #994); lab: not checked in the lab (no source lot)",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "atlas.npm",
@@ -897,7 +1007,11 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.2",
-   "icon": "atlas"
+   "icon": "atlas",
+   "lab_report": null,
+   "lab_status": "reworked in 0.9.0 (#979 branch B, PR #994): profile npm (crop to content at the same texel, Ground 35 px/m, 24-bit RGB + separate opacity)",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "atlas.sets_count",
@@ -913,7 +1027,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.7",
-   "icon": "setscount"
+   "icon": "setscount",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "atlas.facade_strip",
@@ -929,7 +1045,9 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "1.0",
-   "icon": "strip"
+   "icon": "strip",
+   "stage": 7,
+   "fate": "stage"
   },
   {
    "id": "atlas.groundel",
@@ -947,7 +1065,9 @@
    "version": "0.9",
    "icon": "groundel",
    "lab_report": "docs/experiments/atlas.groundel.md",
-   "lab_status": "lab 0.9 L06: broken; Find errors throws before GroundEl, 512 rule (square 128/256/512, any alpha = error) never runs; missing maps silent; merge"
+   "lab_status": "done in 0.9.0 (#979 branch B, PR #994); lab 0.9 L06: broken; Find errors throws before GroundEl, 512 rule (square 128/256/512, any alpha = error) never runs; missing maps silent; merge",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "atlas.unatlas",
@@ -962,8 +1082,11 @@
    "mode": "copy",
    "mcp": "yes",
    "priority": "P3",
-   "version": "1.x",
-   "icon": "unatlas"
+   "version": "1.0",
+   "icon": "unatlas",
+   "stage": 8,
+   "fate": "step",
+   "step_of": "npm.to_vpm"
   },
   {
    "id": "place.flora_repair",
@@ -979,7 +1102,11 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.9",
-   "icon": "florafix"
+   "icon": "florafix",
+   "lab_report": "docs/experiments/place.flora_repair.md",
+   "lab_status": "done in 0.9.0 (#979 branch A, PR #995); lab 0.9 L08: only shear breaks the FBX and only transform repair fixes it; isolation step deletes every non-derived node (8 of 8 originals), no undo block, tools bound to FLORA_Union/library ids; take_fix (plan: take)",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "place.maf_checks",
@@ -995,7 +1122,11 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.9",
-   "icon": "mafcheck"
+   "icon": "mafcheck",
+   "lab_report": null,
+   "lab_status": "done in 0.9.0 (#979 branch A, PR #995); lab: not checked in the lab (no source lot)",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "place.replace",
@@ -1011,7 +1142,11 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.9",
-   "icon": "replace"
+   "icon": "replace",
+   "lab_report": "docs/experiments/place.replace.md",
+   "lab_status": "done in 0.9.0 (#979 branch A, PR #995); lab 0.9 L07: Max 2024 = Max 2026 on every T03 defect (child unlinked, layer and user props lost, always a copy, stub X/Y swapped, lifted h/2, transform applied twice); new: non-uniformly scaled rotated parent shifts the result, mask catches master copies and earlier replacements; one undo; merge",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "place.schedule",
@@ -1027,7 +1162,11 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.9",
-   "icon": "schedule"
+   "icon": "schedule",
+   "lab_report": "docs/experiments/place.schedule.md",
+   "lab_status": "done in 0.9.0 (#979 branch A, PR #995); lab 0.9 L08: engine positions exact in Max (0 mismatches, pivot <= 0.00035 mm), 10 cm sinking; one point outside Ground stops the whole run (0 placed), building footprint ignored (P10 inside), rerun duplicates 8 objects, no report for a stopped run; new (report-first, idempotent by handle)",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "place.drop_to_ground",
@@ -1045,7 +1184,9 @@
    "version": "0.9",
    "icon": "ground",
    "lab_report": "docs/experiments/place.drop_to_ground.md",
-   "lab_status": "lab 0.9 L06: offset sign defect confirmed in Max 2024 (= 2026), no-align sinks on slopes, flips objects under closed ground; aligned path exact; take_fix"
+   "lab_status": "done in 0.9.0 (#979 branch A, PR #995); lab 0.9 L06: offset sign defect confirmed in Max 2024 (= 2026), no-align sinks on slopes, flips objects under closed ground; aligned path exact; take_fix",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "place.maf_generator",
@@ -1060,8 +1201,10 @@
    "mode": "copy",
    "mcp": "yes",
    "priority": "P2",
-   "version": "1.0",
-   "icon": "mafgen"
+   "version": "1.x",
+   "icon": "mafgen",
+   "stage": null,
+   "fate": "tail"
   },
   {
    "id": "place.scatter",
@@ -1077,7 +1220,9 @@
    "mcp": "no",
    "priority": "P3",
    "version": "1.x",
-   "icon": "scatter"
+   "icon": "scatter",
+   "stage": null,
+   "fate": "tail"
   },
   {
    "id": "place.tree_cards",
@@ -1093,7 +1238,9 @@
    "mcp": "no",
    "priority": "P3",
    "version": "1.x",
-   "icon": "tree"
+   "icon": "tree",
+   "stage": null,
+   "fate": "tail"
   },
   {
    "id": "qa.fbx_split",
@@ -1109,7 +1256,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.7",
-   "icon": "split"
+   "icon": "split",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "qa.geojson",
@@ -1125,7 +1274,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.5",
-   "icon": "geojson"
+   "icon": "geojson",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "qa.glass",
@@ -1141,7 +1292,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.7",
-   "icon": "glasscheck"
+   "icon": "glasscheck",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "qa.matid",
@@ -1157,7 +1310,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.1",
-   "icon": "matid"
+   "icon": "matid",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "qa.names",
@@ -1173,7 +1328,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.5",
-   "icon": "names"
+   "icon": "names",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "qa.names_fix",
@@ -1191,7 +1348,9 @@
    "version": "0.8",
    "icon": "namefix",
    "lab_report": "docs/experiments/qa.names_fix.md",
-   "lab_status": "done in 0.8.0 (#908 branch C, PR #924); lab: Material Cloner is not an object renamer; overwrite claim not reproduced; merge (one new renamer)"
+   "lab_status": "done in 0.8.0 (#908 branch C, PR #924); lab: Material Cloner is not an object renamer; overwrite claim not reproduced; merge (one new renamer); reworked in 0.9.0 (#979 branch E1, PR #997)",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "qa.package",
@@ -1209,7 +1368,9 @@
    "version": "0.8",
    "icon": "package",
    "lab_report": "docs/experiments/qa.package.md",
-   "lab_status": "done in 0.8.0 (#908 branch D, PR #925); lab: as documented; profile guess and vacuous V006 defects; merge"
+   "lab_status": "done in 0.8.0 (#908 branch D, PR #925); lab: as documented; profile guess and vacuous V006 defects; merge; reworked in 0.9.0 (#979 branch E3, PR #1001/#1007)",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "qa.pivot",
@@ -1225,7 +1386,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.5",
-   "icon": "pivot"
+   "icon": "pivot",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "qa.preflight",
@@ -1241,7 +1404,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.7",
-   "icon": "preflight"
+   "icon": "preflight",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "qa.scene_hygiene",
@@ -1257,7 +1422,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.7",
-   "icon": "hygiene"
+   "icon": "hygiene",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "qa.tris",
@@ -1273,7 +1440,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.5",
-   "icon": "tris"
+   "icon": "tris",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "qa.xform",
@@ -1289,7 +1458,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.7",
-   "icon": "xform"
+   "icon": "xform",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "qa.xview",
@@ -1305,7 +1476,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.1",
-   "icon": "xview"
+   "icon": "xview",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "qa.zero_area",
@@ -1321,14 +1494,18 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.7",
-   "icon": "zero"
+   "icon": "zero",
+   "lab_report": null,
+   "lab_status": "reworked in 0.9.0 (#979 branch E3, PR #1001/#1007)",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "qa.address",
    "block": "qa",
    "label_ru": "Адрес и улицы",
    "does_ru": "Проверка Address по справочнику улиц, составных частей и длины",
-   "source": "GeoAGR: Check Adress btn_check_names GeoAGR.ms:15355, Streets List :42460",
+   "source": "GeoAGR: Check Adress btn_check_names GeoAGR.ms:15355, Streets List btn_Streets_List :42460",
    "verdict": "take_fix",
    "verdict_note": "address filter and/or defect (P28–P30)",
    "evidence": "-",
@@ -1339,7 +1516,9 @@
    "version": "0.9",
    "icon": "address",
    "lab_report": "docs/experiments/qa.address.md",
-   "lab_status": "lab 0.9 L05: differs; only Street_House passes; house parts at token 2-3, extra \"_\", no length check, substring false fails, CP1251/missing CSV; take_fix"
+   "lab_status": "done in 0.9.0 (#979 branch C, PR #1000); lab 0.9 L05: differs; only Street_House passes; house parts at token 2-3, extra \"_\", no length check, substring false fails, CP1251/missing CSV; take_fix",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "qa.facade_compare",
@@ -1355,14 +1534,18 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "0.9",
-   "icon": "compare"
+   "icon": "compare",
+   "lab_report": null,
+   "lab_status": "done in 0.9.0 (#979 branch C, PR #1000); lab: not checked in the lab (no source lot)",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "qa.normals",
    "block": "qa",
    "label_ru": "Нормали и двойные грани",
    "does_ru": "Нормали к наблюдателю, двусторонние полигоны стекла/Flora, сглаживание",
-   "source": "GeoAGR: Double Faces btn_DoubleFaces GeoAGR.ms:49204, View Normals",
+   "source": "GeoAGR: Double Faces btn_DoubleFaces GeoAGR.ms:49204, View Normals btn_View_Normals GeoAGR.ms:47595",
    "verdict": "take",
    "verdict_note": "unverified: confirm on a disposable scene",
    "evidence": "-",
@@ -1373,7 +1556,9 @@
    "version": "0.9",
    "icon": "normals",
    "lab_report": "docs/experiments/qa.normals.md",
-   "lab_status": "lab 0.9 L05: differs; LMB thresholds in system units, one pair per face (order misses), RMB bbox-centre false inward, View Normals leaves viewport changed; take_fix (plan: take)"
+   "lab_status": "done in 0.9.0 (#979 branch C, PR #1000); lab 0.9 L05: differs; LMB thresholds in system units, one pair per face (order misses), RMB bbox-centre false inward, View Normals leaves viewport changed; take_fix (plan: take)",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "qa.sintez",
@@ -1389,7 +1574,11 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "0.9",
-   "icon": "sintez"
+   "icon": "sintez",
+   "lab_report": null,
+   "lab_status": "done in 0.9.0 (#979 branch C, PR #1000); lab: not checked in the lab (no source lot)",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "qa.procedural_objects",
@@ -1405,7 +1594,11 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "0.9",
-   "icon": "procobj"
+   "icon": "procobj",
+   "lab_report": "docs/experiments/qa.procedural_objects.md",
+   "lab_status": "done in 0.9.0 (#979 branch C, PR #1000); lab 0.9 L07: Chaos Scatter in batch exports an empty FBX reported ok (silent loss), ScatterGeometry 0 tris in Max vs 824 in FBX; classes measured on the laptop: ChaosScatter, CScatter, Flow, IdleAreaObj, Crowd, ScatterGeometry; Forest Pack/RailClone/MultiScatter/RayFire/tyFlow by T07 names only (plugins only on PC), Missing_* not measured; new",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "qa.omk_te",
@@ -1420,8 +1613,10 @@
    "mode": "read",
    "mcp": "yes",
    "priority": "P3",
-   "version": "1.x",
-   "icon": "omk"
+   "version": "1.0",
+   "icon": "omk",
+   "stage": 9,
+   "fate": "stage"
   },
   {
    "id": "export.checked",
@@ -1437,7 +1632,9 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.4",
-   "icon": "export"
+   "icon": "export",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "export.cleanup",
@@ -1453,7 +1650,11 @@
    "mcp": "yes",
    "priority": "P1",
    "version": "0.1",
-   "icon": "cleanup"
+   "icon": "cleanup",
+   "lab_report": null,
+   "lab_status": "reworked in 0.9.0 (#979 branch E3, PR #1001/#1007)",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "export.geojson_write",
@@ -1471,7 +1672,9 @@
    "version": "0.8",
    "icon": "geojsonw",
    "lab_report": null,
-   "lab_status": "done in 0.8.0 (#908 branch D, PR #925); lab: not checked in the lab"
+   "lab_status": "done in 0.8.0 (#908 branch D, PR #925); lab: not checked in the lab",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "export.ground_fbx",
@@ -1489,14 +1692,16 @@
    "version": "0.8",
    "icon": "groundfbx",
    "lab_report": "docs/experiments/export.ground_fbx.md",
-   "lab_status": "done in 0.8.0 (#908 branch D, PR #925); lab: differs: Flora not in _Ground, name from first selected, no triangulation; take_fix (лаборатория #907; plan was: merge)"
+   "lab_status": "done in 0.8.0 (#908 branch D, PR #925); lab: differs: Flora not in _Ground, name from first selected, no triangulation; take_fix (лаборатория #907; plan was: merge)",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "export.pivot_place",
    "block": "export",
    "label_ru": "Пивот и положение",
    "does_ru": "НПМ в МСК с высотами, ВПМ в ноль (чистый пол); пивот на копиях",
-   "source": "GeoAGR: Geojson Get/Set Pivot GeoAGR.ms:64763/64778, Reset Transforms :64709, Combine near zero :64730; codex-3ds-max: ac-pivot-align rotate_pivot_tool.ms (оси пивота, dry-run, откат); zavod: straighten_object.ms (ориентация по PCA), align_door_pivots.ms (пивот дверей); SHA256: rotate_pivot_tool.ms 6344571ffbe927de8a481462136d6dd84f9e0ff7d28d167198891b8fc5f41e20, straighten_object.ms 94005feffe55aff35a2a3201376e6c054d2627556555b661510d390fb5010221, align_door_pivots_to_bottom.ms e22ab117fb9741ce5afb9f8069bd63abe4ccab2d431a9b4609a12a4750611608",
+   "source": "GeoAGR: Geojson Get/Set Pivot btn_pivot_get GeoAGR.ms:64763, btn_pivot_set :64778, Reset Transforms btn_resetXForm :64709, Combine near zero btn_combine_two_models :64730; codex-3ds-max: ac-pivot-align rotate_pivot_tool.ms (оси пивота, dry-run, откат); zavod: straighten_object.ms (ориентация по PCA), align_door_pivots.ms (пивот дверей); SHA256: rotate_pivot_tool.ms 6344571ffbe927de8a481462136d6dd84f9e0ff7d28d167198891b8fc5f41e20, straighten_object.ms 94005feffe55aff35a2a3201376e6c054d2627556555b661510d390fb5010221, align_door_pivots_to_bottom.ms e22ab117fb9741ce5afb9f8069bd63abe4ccab2d431a9b4609a12a4750611608",
    "verdict": "take_fix",
    "verdict_note": "unverified; never move working objects; team-audit: пивот нативным setter, не сдвигом вершин (двери: меш уезжает на 491/1675); PCA пересчитывать после каждого поворота; сцены в см и далёкие координаты не проверены",
    "evidence": "TEC26 ±0.000 reference open (STATE.md); team-audit T06/ac_pivot_align, T08/straighten_object, T03/align_door_pivots (GeoAGR-private work/team-scripts-audit)",
@@ -1507,7 +1712,9 @@
    "version": "0.8",
    "icon": "place",
    "lab_report": "docs/experiments/export.pivot_place.md",
-   "lab_status": "done in 0.8.0 (#908 branch A, PR #927); lab: partly works (floor-face pivot, 0,0,0); precision loss, bbox fallback, no copy mode; take_fix"
+   "lab_status": "done in 0.8.0 (#908 branch A, PR #927); lab: partly works (floor-face pivot, 0,0,0); precision loss, bbox fallback, no copy mode; take_fix; reworked in 0.9.0 (#979 branch E2, PR #998); lab 0.9 L07: AC Pivot Align axis from float32 world coordinates, error up to 1.43 deg at 2.3e6 m (exact near zero, m and cm), O(n^3) fit refused above 512 vertices",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "export.zip",
@@ -1525,7 +1732,9 @@
    "version": "0.8",
    "icon": "zip",
    "lab_report": "docs/experiments/export.zip.md",
-   "lab_status": "done in 0.8.0 (#908 branch D, PR #925); lab: broken: bundled 7z creates nothing, _Light missing; merge (new archiver)"
+   "lab_status": "done in 0.8.0 (#908 branch D, PR #925); lab: broken: bundled 7z creates nothing, _Light missing; merge (new archiver); reworked in 0.9.0 (#979 branch E3, PR #1001/#1007)",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "export.batch",
@@ -1541,7 +1750,11 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "0.9",
-   "icon": "batch"
+   "icon": "batch",
+   "lab_report": null,
+   "lab_status": "done in 0.9.0 (#979 branch D, PR #990/#1003); lab: not checked in the lab (no source lot)",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "export.place_by_passport",
@@ -1556,8 +1769,10 @@
    "mode": "undo",
    "mcp": "yes",
    "priority": "P3",
-   "version": "1.x",
-   "icon": "passport"
+   "version": "1.0",
+   "icon": "passport",
+   "stage": 9,
+   "fate": "stage"
   },
   {
    "id": "light.check",
@@ -1575,14 +1790,16 @@
    "version": "0.9",
    "icon": "lightcheck",
    "lab_report": "docs/experiments/light.check.md",
-   "lab_status": "lab 0.9 L05: GeoAGR part differs; strict <, source positions, thresholds in system units (cm scene misses all), invalid types skip pairs, Add Selected cap 250; merge"
+   "lab_status": "done in 0.9.0 (#979 branch D, PR #990/#1003); lab 0.9 L05: GeoAGR part differs; strict <, source positions, thresholds in system units (cm scene misses all), invalid types skip pairs, Add Selected cap 250; merge",
+   "stage": null,
+   "fate": null
   },
   {
    "id": "light.export",
    "block": "light",
    "label_ru": "FBX освещения _Light",
    "does_ru": "Отдельный FBX света с корнем, Omni не теряются, в архив ВПМ",
-   "source": "GeoAGR: Export HighPoly :66904, ReSave Lights FBXs :65127",
+   "source": "GeoAGR: Export HighPoly :66904, ReSave Lights FBXs :65127; #1024 «редакция 1»: btn_export_highpoly GeoAGR.ms:66904",
    "verdict": "take_fix",
    "verdict_note": "Omni do not reach _Light.fbx (66915, 66977); _Light not archived (66307)",
    "evidence": "GeoAGR gap #7",
@@ -1591,7 +1808,9 @@
    "mcp": "yes",
    "priority": "P2",
    "version": "1.0",
-   "icon": "lightfbx"
+   "icon": "lightfbx",
+   "stage": 9,
+   "fate": "stage"
   },
   {
    "id": "light.place",
@@ -1607,7 +1826,349 @@
    "mcp": "no",
    "priority": "P3",
    "version": "1.x",
-   "icon": "lightplace"
+   "icon": "lightplace",
+   "stage": null,
+   "fate": "tail"
+  },
+  {
+   "id": "export.library_zip",
+   "block": "export",
+   "label_ru": "Архив библиотеки",
+   "does_ru": "Собирает архив библиотеки (окна, материалы, МАФ) с манифестом sha256 для передачи без Google Диска",
+   "source": "#1024 Q35 (owner questions); tail 1.x",
+   "verdict": "new",
+   "verdict_note": "",
+   "evidence": "#1024 layout table «Раскладка 35 строк плана»",
+   "reqs": "-",
+   "mode": "file",
+   "mcp": "yes",
+   "priority": "P3",
+   "version": "1.x",
+   "icon": "libzip",
+   "lab_report": null,
+   "lab_status": null,
+   "stage": null,
+   "fate": "tail"
+  },
+  {
+   "id": "qa.names_library",
+   "block": "qa",
+   "label_ru": "Имена библиотеки",
+   "does_ru": "Проверяет имена записей и файлов библиотек по грамматике names_core и K5",
+   "source": "#1024 Q35 (owner questions); tail 1.x",
+   "verdict": "new",
+   "verdict_note": "",
+   "evidence": "#1024 layout table «Раскладка 35 строк плана»",
+   "reqs": "-",
+   "mode": "read",
+   "mcp": "yes",
+   "priority": "P3",
+   "version": "1.x",
+   "icon": "namelib",
+   "lab_report": null,
+   "lab_status": null,
+   "stage": null,
+   "fate": "tail"
+  },
+  {
+   "id": "project.passport",
+   "block": "scene",
+   "label_ru": "Паспорт проекта",
+   "does_ru": "Создаёт или открывает паспорт проекта jobs/<ID>/passport.json, связывает его со сценой (file property agr_passport: путь и sha) и показывает статусы этапов 0–9",
+   "source": "#1024 issue body «Кнопки 1.0» and contract К1 (redaction 2, 06.11.2026); owner answers ANSWERS-2026-11-06",
+   "verdict": "new",
+   "verdict_note": "stage 0 big button (#1024)",
+   "evidence": "contract К1: schemas/ProjectPassport.schema.json; journal of panel actions",
+   "reqs": "-",
+   "mode": "file",
+   "mcp": "yes",
+   "priority": "P1",
+   "version": "1.0",
+   "icon": "passport",
+   "lab_report": null,
+   "lab_status": null,
+   "stage": 0,
+   "fate": "stage"
+  },
+  {
+   "id": "source.intake",
+   "block": "scene",
+   "label_ru": "Приём источника",
+   "does_ru": "Нормализует единицы (метры), оси (Z вверх), масштаб и далёкие координаты (общий ноль в паспорт), уровень источника A/B/C и класс (scene.source_class), разделение по материалам; всё пишет в паспорт",
+   "source": "#1024 issue body «Кнопки 1.0» and contract К1 (redaction 2, 06.11.2026); owner answers ANSWERS-2026-11-06",
+   "verdict": "new",
+   "verdict_note": "stage 0 big button (#1024)",
+   "evidence": "acceptance: FBX in cm, Y-up, at 2 345 678 m -> copy in m, Z-up, zero in the passport",
+   "reqs": "-",
+   "mode": "copy",
+   "mcp": "yes",
+   "priority": "P2",
+   "version": "1.0",
+   "icon": "intake",
+   "lab_report": null,
+   "lab_status": null,
+   "stage": 0,
+   "fate": "stage"
+  },
+  {
+   "id": "body.prepare",
+   "block": "model",
+   "label_ru": "Бадик для агента",
+   "does_ru": "Имена и роли по контракту К1 (BODY_<material>_NNN), хелперы высот LEVEL_* по кликам (в batch — по списку), проверки ролей, высот (1 мм) и имён; запись в паспорт; одна запись Undo",
+   "source": "#1024 issue body «Кнопки 1.0» and contract К1 (redaction 2, 06.11.2026); owner answers ANSWERS-2026-11-06",
+   "verdict": "new",
+   "verdict_note": "stage 1 big button (#1024)",
+   "evidence": "acceptance: body of 5 objects + 3 clicks -> roles, LEVEL_1, LEVEL_2, LEVEL_roof; repeated height refused",
+   "reqs": "-",
+   "mode": "undo",
+   "mcp": "yes",
+   "priority": "P1",
+   "version": "1.0",
+   "icon": "body",
+   "lab_report": null,
+   "lab_status": null,
+   "stage": 1,
+   "fate": "stage"
+  },
+  {
+   "id": "win.place",
+   "block": "model",
+   "label_ru": "Окна по проёмам",
+   "does_ru": "Распознаёт проёмы (openings), ставит метки OPEN_<nnn>, по меткам ставит инстансы окон стандарта; без меток — запрос агенту; проверка посадки; одна запись Undo. Идея — Geo Window Placer GeoAGR.ms:56719",
+   "source": "#1024 issue body «Кнопки 1.0» and contract К2 (redaction 2, 06.11.2026); owner answers ANSWERS-2026-11-06",
+   "verdict": "new",
+   "verdict_note": "stage 2 big button (#1024)",
+   "evidence": "lab L10; acceptance: KPP1-W01..W03 on the synthetic KPP1 body, centre <= 5 mm, normal <= 0.5 deg",
+   "reqs": "-",
+   "mode": "undo",
+   "mcp": "yes",
+   "priority": "P1",
+   "version": "1.0",
+   "icon": "winplace",
+   "lab_report": null,
+   "lab_status": null,
+   "stage": 2,
+   "fate": "stage"
+  },
+  {
+   "id": "win.generate",
+   "block": "model",
+   "label_ru": "Окна: генератор типов",
+   "does_ru": "Строит меш типа окна из записи library/windows/window_types.json по стандарту (рама, импосты, стёкла плейнами), отчёт прошёл / карантин / дубль и лист превью «было → стало»",
+   "source": "#1024 issue body «Кнопки 1.0» and contract К2 (redaction 2, 06.11.2026); owner answers ANSWERS-2026-11-06",
+   "verdict": "new",
+   "verdict_note": "stage 2 big button (#1024)",
+   "evidence": "lab L10; acceptance: 67 types -> report and PNG sheet; WT-07 and WT-10 stay separate (owner 06.11)",
+   "reqs": "-",
+   "mode": "file",
+   "mcp": "yes",
+   "priority": "P1",
+   "version": "1.0",
+   "icon": "wingen",
+   "lab_report": null,
+   "lab_status": null,
+   "stage": 2,
+   "fate": "stage"
+  },
+  {
+   "id": "body.capsules",
+   "block": "model",
+   "label_ru": "Капсулы интерьера",
+   "does_ru": "По бордерам проёмов: колпачок по контуру откоса, outline 100 мм наружу, кромка на середине рамы, глубина интерьера 1,0 м, угловые — одна Г-капсула; материал-заглушка «интерьер», роль capsule",
+   "source": "#1024 issue body «Кнопки 1.0» and contract К1 (redaction 2, 06.11.2026); owner answers ANSWERS-2026-11-06",
+   "verdict": "new",
+   "verdict_note": "stage 3 big button (#1024)",
+   "evidence": "lab L10; owner answer 06.11 (capsule logic); Interier_Box.ms (Q14), capsules_v007.py",
+   "reqs": "-",
+   "mode": "copy",
+   "mcp": "yes",
+   "priority": "P1",
+   "version": "1.0",
+   "icon": "capsule",
+   "lab_report": null,
+   "lab_status": null,
+   "stage": 3,
+   "fate": "stage"
+  },
+  {
+   "id": "body.roof",
+   "block": "model",
+   "label_ru": "Крыша по парапету",
+   "does_ru": "Плоскость по парапету: низ парапета + 5 мм (параметр, ответ 06.11), outline с заходом в парапеты; уклоны > 10° и террасы — запросом агенту; роль roof",
+   "source": "#1024 issue body «Кнопки 1.0» and contract К1 (redaction 2, 06.11.2026); owner answers ANSWERS-2026-11-06",
+   "verdict": "new",
+   "verdict_note": "stage 4 big button (#1024)",
+   "evidence": "lab L13; D024, D038/D039/D068 roof-inset-plane.md, parapet.md, D061/D065",
+   "reqs": "-",
+   "mode": "copy",
+   "mcp": "yes",
+   "priority": "P2",
+   "version": "1.0",
+   "icon": "roof",
+   "lab_report": null,
+   "lab_status": null,
+   "stage": 4,
+   "fate": "stage"
+  },
+  {
+   "id": "mat.table",
+   "block": "tex",
+   "label_ru": "Таблица материалов",
+   "does_ru": "Проверяет библиотечные ID на мидполе (ID есть в библиотеке, нет ID >= 1001, стекло на объекте glass), пишет таблицу проекта в паспорт и строит Multi/Sub по библиотеке (заменяет tex.multimat); одна запись Undo",
+   "source": "#1024 issue body «Кнопки 1.0» and contract К3 (redaction 2, 06.11.2026); owner answers ANSWERS-2026-11-06",
+   "verdict": "new",
+   "verdict_note": "stage 5 big button (#1024)",
+   "evidence": "materials audit 06.11 (research/materials-audit-1.0); library/materials/materials_vNNN.json",
+   "reqs": "-",
+   "mode": "undo",
+   "mcp": "yes",
+   "priority": "P1",
+   "version": "1.0",
+   "icon": "mattable",
+   "lab_report": null,
+   "lab_status": null,
+   "stage": 5,
+   "fate": "stage"
+  },
+  {
+   "id": "mat.tiles",
+   "block": "tex",
+   "label_ru": "Плитки: серые карты",
+   "does_ru": "Типовые процедурные серые карты (панели 600×1200, мощение 100×300, крошка 1×1 м и набор по аудиту материалов) и перекраска в RAL по маске; бесшовность проверяется; новые файлы",
+   "source": "#1024 issue body «Кнопки 1.0» and contract К3 (redaction 2, 06.11.2026); owner answers ANSWERS-2026-11-06",
+   "verdict": "new",
+   "verdict_note": "stage 5 big button (#1024)",
+   "evidence": "owner answer В12 06.11: tile set from the job materials audit",
+   "reqs": "-",
+   "mode": "file",
+   "mcp": "yes",
+   "priority": "P2",
+   "version": "1.0",
+   "icon": "mattiles",
+   "lab_report": null,
+   "lab_status": null,
+   "stage": 5,
+   "fate": "stage"
+  },
+  {
+   "id": "vpm.build",
+   "block": "udim",
+   "label_ru": "Сборка ВПМ",
+   "does_ru": "Развёртка К6, тексель, укладка в UDIM шов к шову, перенумерация библиотечных ID в UDIM подряд с 1001 в каждом меше, стекло отдельным мешем, карты D+ERM+N, паддинг, заглушки, проверки; копии и новые файлы",
+   "source": "#1024 issue body «Кнопки 1.0» and contract К3, К6 (redaction 2, 06.11.2026); owner answers ANSWERS-2026-11-06",
+   "verdict": "new",
+   "verdict_note": "stage 6 big button (#1024)",
+   "evidence": "labs L09, L15; owner answer В9 06.11: UDIM per mesh from 1001; UDIM step 3.6 m",
+   "reqs": "-",
+   "mode": "copy",
+   "mcp": "yes",
+   "priority": "P1",
+   "version": "1.0",
+   "icon": "vpm",
+   "lab_report": null,
+   "lab_status": null,
+   "stage": 6,
+   "fate": "stage"
+  },
+  {
+   "id": "npm.build",
+   "block": "atlas",
+   "label_ru": "ВПМ → НПМ",
+   "does_ru": "Атлас из диффузов ВПМ на atlas_core 0.9 (паддинг >= 8, 24 бит), стекло белым и приаттачено, таблица соответствия (ID, UDIM, масштаб, сдвиг) в паспорт для обратного хода; копии и новые файлы",
+   "source": "#1024 issue body «Кнопки 1.0» and contract К3 (redaction 2, 06.11.2026); owner answers ANSWERS-2026-11-06",
+   "verdict": "new",
+   "verdict_note": "stage 7 big button (#1024)",
+   "evidence": "lab L11; acceptance: KPP1 VPM -> NPM atlas <= 2048, table in the passport",
+   "reqs": "-",
+   "mode": "copy",
+   "mcp": "yes",
+   "priority": "P1",
+   "version": "1.0",
+   "icon": "npm",
+   "lab_report": null,
+   "lab_status": null,
+   "stage": 7,
+   "fate": "stage"
+  },
+  {
+   "id": "npm.to_vpm",
+   "block": "atlas",
+   "label_ru": "НПМ → ВПМ",
+   "does_ru": "Окна НПМ из плейнов → типы библиотеки по размеру; атлас обратно в UDIM-материалы по таблице из паспорта (без неё — по регионам UV, шаг atlas.unatlas); возвращаются материалы библиотеки",
+   "source": "#1024 issue body «Кнопки 1.0» and contract К2, К3 (redaction 2, 06.11.2026); owner answers ANSWERS-2026-11-06",
+   "verdict": "new",
+   "verdict_note": "stage 8 big button (#1024)",
+   "evidence": "lab L11 (mandatory); may move to 1.1",
+   "reqs": "-",
+   "mode": "copy",
+   "mcp": "yes",
+   "priority": "P2",
+   "version": "1.0",
+   "icon": "npm2vpm",
+   "lab_report": null,
+   "lab_status": null,
+   "stage": 8,
+   "fate": "stage"
+  },
+  {
+   "id": "pack.deliver",
+   "block": "export",
+   "label_ru": "Сдача пакета",
+   "does_ru": "Одной кнопкой: проверки 0.5–0.9, UCX (ucx.build + ucx.gap), свет (light.export), код ОМК ТЭ, экспорт и архив; сводка в паспорт: этап 9 done или список блокеров",
+   "source": "#1024 issue body «Кнопки 1.0» and contract К1 (redaction 2, 06.11.2026); owner answers ANSWERS-2026-11-06",
+   "verdict": "new",
+   "verdict_note": "stage 9 big button (#1024)",
+   "evidence": "lab L13; acceptance: KPP1 -> package passes qa.package and SINTEZ 0 errors or lists blockers",
+   "reqs": "-",
+   "mode": "file",
+   "mcp": "yes",
+   "priority": "P1",
+   "version": "1.0",
+   "icon": "deliver",
+   "lab_report": null,
+   "lab_status": null,
+   "stage": 9,
+   "fate": "stage"
+  },
+  {
+   "id": "agent.request",
+   "block": "qa",
+   "label_ru": "Запрос агенту",
+   "does_ru": "Папка jobs/<ID>/agent/<req>/: request.json по схеме AgentRequest (этап, выдержка паспорта, объекты с ролями, FBX-снимок, разрешённые операции D108, инварианты, слой AGENT_<req>), REQUEST.md и команда CLI",
+   "source": "#1024 issue body «Кнопки 1.0» and contract К4 (redaction 2, 06.11.2026); owner answers ANSWERS-2026-11-06",
+   "verdict": "new",
+   "verdict_note": "stage agent big button (#1024)",
+   "evidence": "contract К4; schemas/AgentRequest.schema.json",
+   "reqs": "-",
+   "mode": "agent",
+   "mcp": "yes",
+   "priority": "P1",
+   "version": "1.0",
+   "icon": "agentreq",
+   "lab_report": null,
+   "lab_status": null,
+   "stage": "agent",
+   "fate": "stage"
+  },
+  {
+   "id": "agent.accept",
+   "block": "qa",
+   "label_ru": "Приём от агента",
+   "does_ru": "Шлюз: инварианты до и после (объекты вне слоя AGENT_* не изменены — хеши, имена и роли, проверки этапа); нарушение — откат слоя и вопрос; успех — перенос из слоя, строка в журнале и паспорте; apply только кнопкой",
+   "source": "#1024 issue body «Кнопки 1.0» and contract К4 (redaction 2, 06.11.2026); owner answers ANSWERS-2026-11-06",
+   "verdict": "new",
+   "verdict_note": "stage agent big button (#1024)",
+   "evidence": "contract К4; owner answer 06.11: agent writes only to AGENT_*; apply confirmed only in the dock/UI",
+   "reqs": "-",
+   "mode": "agent",
+   "mcp": "yes",
+   "priority": "P1",
+   "version": "1.0",
+   "icon": "agentok",
+   "lab_report": null,
+   "lab_status": null,
+   "stage": "agent",
+   "fate": "stage"
   }
  ],
  "noise": [
@@ -1935,7 +2496,7 @@
   {
    "version": "0.9",
    "title_ru": "Замены и расстановка, Flora/МАФ, покраска по легенде, сравнение с фасадом",
-   "status": "in work",
+   "status": "done",
    "effort": "L+: ~4–5 дней (3 дня плановых строк + доработки готовых 0.8-кнопок)",
    "issue": "#979",
    "rows": [
@@ -1962,29 +2523,49 @@
   },
   {
    "version": "1.0",
-   "title_ru": "Моделирование, UDIM/UCX-инструменты, свет ВПМ (P2)",
-   "status": "planned",
-   "effort": "XL: ~5–6 дней; резать на 1.0a модель+рельеф+сетка и 1.0b UCX+UDIM",
-   "issue": "new",
+   "title_ru": "Конвейер ОКС: этапы 0–9, паспорт, окна, материалы, ВПМ/НПМ, сдача, агент",
+   "status": "done",
+   "effort": "XL: ветка 0 + 13 параллельных веток (SPLIT редакция 2)",
+   "issue": "#1024",
    "rows": [
+    "project.passport",
+    "source.intake",
     "scene.source_class",
-    "model.glass_planes",
-    "model.ground_border",
-    "model.ground_slice",
-    "model.ground_surface",
+    "body.prepare",
+    "model.attach_by_material",
     "model.move_apart",
-    "tex.dilate",
-    "tex.vpm_sets",
-    "ucx.gap",
-    "ucx.ground",
-    "udim.rescale",
-    "udim.unwrap_tiles",
-    "atlas.facade_strip",
-    "place.maf_generator",
-    "light.export",
-    "scene.small_parts",
     "model.grid_cleanup",
-    "model.attach_by_material"
+    "scene.small_parts",
+    "win.place",
+    "win.generate",
+    "model.glass_planes",
+    "body.capsules",
+    "body.roof",
+    "mat.table",
+    "mat.tiles",
+    "tex.plug_colour",
+    "vpm.build",
+    "udim.rescale",
+    "udim.distortion",
+    "tex.dilate",
+    "udim.plugs",
+    "npm.build",
+    "atlas.facade_strip",
+    "npm.to_vpm",
+    "udim.udims_to_ids",
+    "pack.deliver",
+    "ucx.gap",
+    "ucx.stairs",
+    "light.export",
+    "qa.omk_te",
+    "export.place_by_passport",
+    "agent.request",
+    "agent.accept"
+   ],
+   "steps": [
+    "model.window_placer",
+    "tex.vpm_sets",
+    "atlas.unatlas"
    ]
   },
   {
@@ -1994,39 +2575,38 @@
    "effort": "по одной кнопке, S",
    "issue": "-",
    "rows": [
+    "model.ground_border",
+    "model.ground_slice",
+    "model.ground_surface",
     "model.three_pt_align",
-    "model.window_placer",
+    "model.pipe_lo",
     "tex.browser",
     "tex.multimat",
-    "tex.plug_colour",
-    "ucx.stairs",
-    "udim.distortion",
-    "udim.udims_to_ids",
+    "ucx.ground",
+    "udim.unwrap_tiles",
     "udim.viewer",
-    "atlas.unatlas",
+    "place.maf_generator",
     "place.scatter",
     "place.tree_cards",
-    "qa.omk_te",
     "light.place",
-    "model.pipe_lo",
-    "udim.plugs",
-    "export.place_by_passport"
+    "export.library_zip",
+    "qa.names_library"
    ]
   }
  ],
  "stats": {
-  "rows": 92,
+  "rows": 109,
   "by_verdict": {
-   "done": 13,
-   "take": 10,
+   "new": 33,
    "take_fix": 32,
    "merge": 21,
-   "new": 16
+   "take": 10,
+   "done": 13
   },
   "by_priority": {
-   "P1": 41,
-   "P2": 33,
-   "P3": 18
+   "P1": 52,
+   "P2": 37,
+   "P3": 20
   },
   "by_version": {
    "0.1": 3,
@@ -2038,12 +2618,207 @@
    "0.7": 12,
    "0.8": 13,
    "0.9": 19,
-   "1.0": 18,
-   "1.x": 17
+   "1.0": 36,
+   "1.x": 16
   },
-  "mcp_yes": 84,
-  "read_only": 40,
+  "mcp_yes": 102,
+  "read_only": 41,
   "noise": 42,
-  "geoagr_line_citations_verified": 29
- }
+  "geoagr_line_citations_verified": 29,
+  "by_fate": {
+   "stage": 33,
+   "step": 3,
+   "tail": 13,
+   "obsolete": 3
+  }
+ },
+ "stages": [
+  {
+   "id": 0,
+   "order": 0,
+   "label_ru": "Паспорт",
+   "big_button": "project.passport",
+   "icon": "passport",
+   "rows": [
+    "project.passport",
+    "source.intake",
+    "scene.source_class"
+   ],
+   "steps": [],
+   "checks": [
+    "scene.census",
+    "scene.units"
+   ]
+  },
+  {
+   "id": 1,
+   "order": 1,
+   "label_ru": "Бадик",
+   "big_button": "body.prepare",
+   "icon": "body",
+   "rows": [
+    "body.prepare",
+    "model.attach_by_material",
+    "model.move_apart",
+    "model.grid_cleanup",
+    "scene.small_parts"
+   ],
+   "steps": [],
+   "checks": [
+    "qa.xform",
+    "qa.zero_area",
+    "qa.scene_hygiene"
+   ]
+  },
+  {
+   "id": 2,
+   "order": 2,
+   "label_ru": "Окна",
+   "big_button": "win.place",
+   "icon": "winplace",
+   "rows": [
+    "win.place",
+    "win.generate",
+    "model.glass_planes"
+   ],
+   "steps": [
+    "model.window_placer"
+   ],
+   "checks": [
+    "qa.glass"
+   ]
+  },
+  {
+   "id": 3,
+   "order": 3,
+   "label_ru": "Капсулы",
+   "big_button": "body.capsules",
+   "icon": "capsule",
+   "rows": [
+    "body.capsules"
+   ],
+   "steps": [],
+   "checks": []
+  },
+  {
+   "id": 4,
+   "order": 4,
+   "label_ru": "Крыша",
+   "big_button": "body.roof",
+   "icon": "roof",
+   "rows": [
+    "body.roof"
+   ],
+   "steps": [],
+   "checks": []
+  },
+  {
+   "id": 5,
+   "order": 5,
+   "label_ru": "Материалы",
+   "big_button": "mat.table",
+   "icon": "mattable",
+   "rows": [
+    "mat.table",
+    "mat.tiles",
+    "tex.plug_colour"
+   ],
+   "steps": [],
+   "checks": [
+    "tex.material_type",
+    "scene.missing_maps"
+   ]
+  },
+  {
+   "id": 6,
+   "order": 6,
+   "label_ru": "ВПМ",
+   "big_button": "vpm.build",
+   "icon": "vpm",
+   "rows": [
+    "vpm.build",
+    "udim.rescale",
+    "udim.distortion",
+    "tex.dilate",
+    "udim.plugs"
+   ],
+   "steps": [
+    "tex.vpm_sets"
+   ],
+   "checks": [
+    "udim.slots",
+    "tex.erm_normal_check",
+    "udim.texel"
+   ]
+  },
+  {
+   "id": 7,
+   "order": 7,
+   "label_ru": "НПМ",
+   "big_button": "npm.build",
+   "icon": "npm",
+   "rows": [
+    "npm.build",
+    "atlas.facade_strip"
+   ],
+   "steps": [],
+   "checks": [
+    "atlas.sets_count",
+    "tex.check"
+   ]
+  },
+  {
+   "id": 8,
+   "order": 8,
+   "label_ru": "НПМ → ВПМ",
+   "big_button": "npm.to_vpm",
+   "icon": "npm2vpm",
+   "rows": [
+    "npm.to_vpm",
+    "udim.udims_to_ids"
+   ],
+   "steps": [
+    "atlas.unatlas"
+   ],
+   "checks": []
+  },
+  {
+   "id": 9,
+   "order": 9,
+   "label_ru": "Сдача",
+   "big_button": "pack.deliver",
+   "icon": "deliver",
+   "rows": [
+    "pack.deliver",
+    "ucx.gap",
+    "ucx.stairs",
+    "light.export",
+    "qa.omk_te",
+    "export.place_by_passport"
+   ],
+   "steps": [],
+   "checks": [
+    "qa.preflight",
+    "qa.names",
+    "qa.tris",
+    "ucx.audit",
+    "light.check",
+    "qa.package",
+    "qa.fbx_split"
+   ]
+  },
+  {
+   "id": "agent",
+   "order": 10,
+   "label_ru": "Агент",
+   "big_button": "agent.request",
+   "icon": "agentreq",
+   "rows": [
+    "agent.request",
+    "agent.accept"
+   ],
+   "steps": [],
+   "checks": []
+  }
+ ]
 }
