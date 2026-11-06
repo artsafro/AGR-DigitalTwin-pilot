@@ -136,6 +136,7 @@ def grid_apply():
     cs = copies_of('SM_GridH_Dirty_Main', '_AGR_grid_')
     assert len(cs) == 1, [str(c.name) for c in cs]
     c = cs[0]
+    copy_name = str(c.name)
     assert str(c.layer.name) == 'AGR_export'
     assert len(list(rt.objects)) == objs0 + 1 and hidden_count() == hidden0, 'hidden or extra objects'
     m = world_points(c)
@@ -156,7 +157,7 @@ def grid_apply():
     # ONE python.ExecuteFile collapses into one step, so this undo also takes the setup (the original). The run is
     # fully undone by ONE step; isolation from earlier user actions is shown only in interactive Max (release R).
     assert steps[0]['copies'] == 0, ('one undo', steps)
-    return {'preview_codes': codes, 'apply_done': rep['plan']['done'], 'copy': str(c.name), 'stats': st,
+    return {'preview_codes': codes, 'apply_done': rep['plan']['done'], 'copy': copy_name, 'stats': st,
             'counts': pre['plan']['rows'][0]['counts'], 'objects_before_after': [objs0, objs0 + 1],
             'hidden_added': 0, 'undo_removes_copy': True, 'undo_steps': steps}
 
