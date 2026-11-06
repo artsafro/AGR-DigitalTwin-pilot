@@ -1,13 +1,31 @@
 {
  "schema": 1,
  "button": "project.passport",
- "tool": null,
+ "tool": "project.passport",
  "version": "1.0",
- "shipped": false,
+ "shipped": true,
  "select": "named",
- "reason": "станция в работе, #1024, ветка F",
+ "reason": "",
  "apply_status": null,
- "objects": [],
+ "objects": [
+  {
+   "name": "BODY_FPass_001",
+   "scene": "frag_f_passport",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_FPass_NoRole_Main",
+   "scene": "frag_f_passport",
+   "expect": "fail",
+   "codes": [
+    "role_missing"
+   ]
+  }
+ ],
+ "options": {
+  "project_id": "POLY_F"
+ },
  "base": "1.0",
  "station": "1.0.1",
  "stations": [
