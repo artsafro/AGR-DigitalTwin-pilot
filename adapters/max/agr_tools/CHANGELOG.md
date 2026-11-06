@@ -83,7 +83,12 @@
 
 ### K
 
-- `capsules-roof`: `body.capsules`, `body.roof` — в работе.
+- `capsules-roof`: `body.capsules`, `body.roof` — в работе (ветка `improve/issue-1024-capsules-roof`).
+- `body.capsules` (1.0.12): своя экструзия в `capsule_core.py` вместо цепочки Max (лаборатория L10, `docs/experiments/body.capsules.md`): плоскость бордера по Ньюэллу, митровый outline 100 мм наружу в плоскости проёма, призма до 1,0 м интерьера за плоскостью бордера, открытая кромка на середине рамы (+50 мм к улице, половина глубины рамы F100, параметр `rim`), грани внутрь. Угловой проём — одна Г-капсула (две ветви, каждая параллельна своей стене, углы 90°).
+- `body.capsules`: отказы `ambiguous` с кодом вместо пустого объекта: `border_nonplanar` (> 5 мм), `border_not_in_wall`, `offset_invalid`, `reveal_too_shallow`, `corner_concave`, `corner_unsupported`, `capsules_overlap`, `frame_missing`.
+- `body.capsules`: новые объекты Editable_Poly, роль `capsule`, слой `CAPSULE_interior`, материал-заглушка `LIB_Interior_Stub`; один Undo, выделение восстанавливается; бадик не меняется. Проёмы — только из `openings_core.find_openings` (ветка J).
+- `body.roof` (1.0.13): `roof_core.py` — контур A = открытая нижняя петля внутренних граней парапета (грани смотрят в отверстие), плоскость по петле, подъём по нормали 5 мм (ответ Артёма 06.11), заход 20 мм митрой. Уклон > 10° → `roof_steep` + `plan.agent_requests` (К4, ветка U); проверки `roof_gap`, `roof_outside_parapet`, `roof_nonplanar`, `no_roof_loop`. Плита — один полигон, нормаль вверх, роль `roof`, слой `ROOF_slabs`.
+- Тесты: `tests/max_tools/test_agr_tools_capsules_roof.py` (регрессы RED на модели цепочки Max → GREEN), нативный `run_agr_tools_capsules_roof_native.py`; станции полигона `test-polygon/stations/K.json` + `K_build.py`.
 
 ### L
 
