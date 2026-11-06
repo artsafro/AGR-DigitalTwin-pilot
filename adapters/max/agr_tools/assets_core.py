@@ -142,7 +142,7 @@ def _preview_names(root, previews_dir):
     return out
 
 
-def flora_records(lib, object_names, previews, fuzzy_cutoff=0.85):
+def flora_records(lib, object_names, previews, fuzzy_cutoff=0.85, generated=None):
     """Group library object names into species records. previews: {base: relative path}.
 
     Returns (records, report). A record needs a high or low mesh; Text_/IMG_ rows are helpers, CRP_ is a
@@ -196,6 +196,9 @@ def flora_records(lib, object_names, previews, fuzzy_cutoff=0.85):
             r['preview'], r['preview_match'] = previews[best[0]], 'fuzzy'
             r['warnings'].append('preview by similar name: ' + best[0])
             free.remove(best[0])
+        elif r['name'] in (generated or {}):
+            r['preview'], r['preview_match'] = generated[r['name']], 'generated'
+            r['warnings'].append('preview rendered by AGR Tools (no A101 preview)')
         else:
             r['preview_match'] = 'none'
             r['warnings'].append('no preview')
@@ -203,12 +206,14 @@ def flora_records(lib, object_names, previews, fuzzy_cutoff=0.85):
               'third_party_proxies': sorted(proxies), 'foreign_objects': sorted(foreign),
               'previews_unused': sorted(free),
               'preview_match': {k: sum(1 for r in records if r['preview_match'] == k)
-                                for k in ('exact', 'fuzzy', 'none')}}
+                                for k in ('exact', 'fuzzy', 'generated', 'none')}}
     return records, report
 
 
-def scan_flora(root, object_names, lib='flora', old_index=None, hash_source=True):
-    """Index a Flora library folder. object_names: names inside the .max (from Max, or the cached list)."""
+def scan_flora(root, object_names, lib='flora', old_index=None, hash_source=True, extra_preview_dirs=()):
+    """Index a Flora library folder. object_names: names inside the .max (from Max, or the cached list).
+    extra_preview_dirs: folders of generated <base>_PREVIEW.png (absolute paths), used only where the library
+    has neither an exact nor a similar-name preview."""
     lay = flora_layout(root)
     max_path = os.path.join(root, lay['max'])
     st = stat_of(max_path)
@@ -218,7 +223,11 @@ def scan_flora(root, object_names, lib='flora', old_index=None, hash_source=True
         sha = old_src.get('sha256')
     if sha is None and hash_source:
         sha = sha256_file(max_path)
-    records, report = flora_records(lib, object_names, _preview_names(root, lay['previews']))
+    generated = {}
+    for d in extra_preview_dirs:
+        for base, rel in _preview_names(os.path.dirname(d), os.path.basename(d)).items():
+            generated.setdefault(base, os.path.normpath(os.path.join(os.path.dirname(d), rel)))
+    records, report = flora_records(lib, object_names, _preview_names(root, lay['previews']), generated=generated)
     for r in records:
         r['source'] = {'path': lay['max'], 'sha256': sha}
     src = dict(st, sha256=sha, objects=sorted(str(n) for n in object_names))
@@ -340,6 +349,44 @@ def scan_maf(root, cache_dir, lib='maf', old_index=None, hash_sources=False, pro
     return new_index(lib, 'maf_zip', root, records, sources, report)
 
 
+def maf_member_filter(name, use_fbx, versions):
+    """Which archive members an import needs. MAX route: the .max and every texture (not the FBX, the preview
+    `<name>.png` or the sidecar). FBX route: only `<name>_<version>.fbx` of the chosen versions (media embedded)."""
+    n = name.lower()
+    fbx = {'{}_{}.fbx'.format(n, v) for v in versions}
+
+    def keep(base):
+        b = base.lower()
+        if use_fbx:
+            return b in fbx
+        return not b.endswith('.fbx') and b not in (n + '.png', n + '.json')
+    return keep
+
+
+def extract_members(zip_path, dest, keep):
+    """Extract members whose basename passes keep() into dest (flat: basenames only, no traversal). A file that
+    already exists with the same size is reused; a different one is replaced through a temporary file.
+    Returns {basename lower: path}."""
+    os.makedirs(dest, exist_ok=True)
+    out = {}
+    with zipfile.ZipFile(zip_path) as zf:
+        for info, name in _zip_names(zf):
+            base = name.replace('\\', '/').rsplit('/', 1)[-1]
+            if not base or base in ('.', '..') or not keep(base):
+                continue
+            target = os.path.join(dest, base)
+            if not (os.path.isfile(target) and os.path.getsize(target) == info.file_size):
+                with zf.open(info) as src, open(target + '.tmp', 'wb') as dst:
+                    while True:
+                        block = src.read(1 << 20)
+                        if not block:
+                            break
+                        dst.write(block)
+                os.replace(target + '.tmp', target)
+            out[base.lower()] = target
+    return out
+
+
 # ---- index --------------------------------------------------------------------------------------------------
 def new_index(lib, adapter, root, records, sources, report, **extra):
     idx = {'schema': INDEX_SCHEMA, 'lib': lib, 'adapter': adapter, 'root': root, 'scanned_at': now_iso(),
@@ -375,6 +422,8 @@ def save_index(cache_dir, idx):
 def preview_abspath(idx, rec, cache_dir):
     if not rec.get('preview'):
         return None
+    if os.path.isabs(rec['preview']):
+        return rec['preview']
     if idx['adapter'] == 'flora_max':
         return os.path.join(idx['root'], rec['preview'])
     return os.path.join(cache_dir, rec['preview'])
@@ -422,7 +471,7 @@ class Selection(object):
 
 DEFAULT_SETTINGS = {'libraries': {}, 'cache_dir': '', 'project_dir': '', 'versions': ['high', 'low'],
                     'materials': 'reuse', 'textures': 'project', 'fbx_scale': 1.0, 'source': 'max',
-                    'gap_m': 1.0, 'row_limit_m': 40.0, 'selection': []}
+                    'gap_m': 1.0, 'row_limit_m': 40.0, 'selection': [], 'preview_dirs': []}
 
 
 def merge_settings(saved):

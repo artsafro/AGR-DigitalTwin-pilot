@@ -1,0 +1,3604 @@
+{
+ "schema": "agr.assets.unified/1",
+ "kind": "flora",
+ "truth": "a101",
+ "records": [
+  {
+   "id": "flora_a101:alium_paporotnik_t1_h120",
+   "source": "a101",
+   "name": "alium_paporotnik_t1_h120",
+   "species_slug": "alium_paporotnik",
+   "variant": 1,
+   "height_cm": 120,
+   "objects": {
+    "high": [
+     "alium_paporotnik_t1_h120_high"
+    ],
+    "low": [
+     "alium_paporotnik_t1_h120_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/alium_paporotnik_t1_h120_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:barbaris_t1_h40",
+   "source": "a101",
+   "name": "barbaris_t1_h40",
+   "species_slug": "barbaris",
+   "variant": 1,
+   "height_cm": 40,
+   "objects": {
+    "high": [
+     "barbaris_t1_h40_high"
+    ],
+    "low": [
+     "barbaris_t1_h40_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/barbaris_t1_h40_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101",
+   "catalogue_candidates": {
+    "level": "genus",
+    "candidates": [
+     {
+      "material_id": 201,
+      "latin": "Berberis × ottawensis",
+      "russian": "Барбарис оттавский",
+      "type": "bush",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 226,
+      "latin": "Berberis thunbergii",
+      "russian": "Барбарис Тунберга",
+      "type": "bush",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "flora_a101:barbaris_t2_h80",
+   "source": "a101",
+   "name": "barbaris_t2_h80",
+   "species_slug": "barbaris",
+   "variant": 2,
+   "height_cm": 80,
+   "objects": {
+    "high": [
+     "barbaris_t2_h80_high"
+    ],
+    "low": [
+     "barbaris_t2_h80_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/barbaris_t2_h80_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101",
+   "catalogue_candidates": {
+    "level": "genus",
+    "candidates": [
+     {
+      "material_id": 201,
+      "latin": "Berberis × ottawensis",
+      "russian": "Барбарис оттавский",
+      "type": "bush",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 226,
+      "latin": "Berberis thunbergii",
+      "russian": "Барбарис Тунберга",
+      "type": "bush",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "flora_a101:beresklet_krilatiy_t1_h150",
+   "source": "a101",
+   "name": "beresklet_krilatiy_t1_h150",
+   "species_slug": "beresklet_krilatiy",
+   "variant": 1,
+   "height_cm": 150,
+   "objects": {
+    "high": [
+     "beresklet_krilatiy_t1_h150_high"
+    ],
+    "low": [
+     "beresklet_krilatiy_t1_h150_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/beresklet_krilatiy_t1_h150_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 214,
+    "latin": "Euonymus alatus",
+    "russian": "Бересклет крылатый",
+    "type": "bush",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "exact"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:bereza_t1_h450",
+   "source": "a101",
+   "name": "bereza_t1_h450",
+   "species_slug": "bereza",
+   "variant": 1,
+   "height_cm": 450,
+   "objects": {
+    "high": [
+     "bereza_t1_h450_high"
+    ],
+    "low": [
+     "bereza_t1_h450_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/bereza_t1_h450_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 102,
+    "latin": "Betula pendula",
+    "russian": "Берёза повислая",
+    "type": "tree",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "genus"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:boyarishnik_t1_h150",
+   "source": "a101",
+   "name": "boyarishnik_t1_h150",
+   "species_slug": "boyarishnik",
+   "variant": 1,
+   "height_cm": 150,
+   "objects": {
+    "high": [
+     "boyarishnik_t1_h150_high"
+    ],
+    "low": [
+     "boyarishnik_t1_h150_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "C:\\agr\\lab-exp\\assets\\previews-generated\\boyarishnik_t1_h150_PREVIEW.png",
+   "preview_match": "generated",
+   "catalogue": null,
+   "status": "a101",
+   "catalogue_candidates": {
+    "level": "genus",
+    "candidates": [
+     {
+      "material_id": 103,
+      "latin": "Crataegus mollis",
+      "russian": "Боярышник мягкий",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": true
+     },
+     {
+      "material_id": 202,
+      "latin": "Crataegus monogyna",
+      "russian": "Боярышник однопестичный",
+      "type": "bush",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "flora_a101:bush_t1_h120",
+   "source": "a101",
+   "name": "bush_t1_h120",
+   "species_slug": "bush",
+   "variant": 1,
+   "height_cm": 120,
+   "objects": {
+    "high": [
+     "bush_t1_h120_high"
+    ],
+    "low": [
+     "bush_t1_h120_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/bush_t1_h120_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:bush_t2_h60",
+   "source": "a101",
+   "name": "bush_t2_h60",
+   "species_slug": "bush",
+   "variant": 2,
+   "height_cm": 60,
+   "objects": {
+    "high": [
+     "bush_t2_h60_high"
+    ],
+    "low": [
+     "bush_t2_h60_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/bush_t2_h60_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:chbushnik_t1_h190",
+   "source": "a101",
+   "name": "chbushnik_t1_h190",
+   "species_slug": "chbushnik",
+   "variant": 1,
+   "height_cm": 190,
+   "objects": {
+    "high": [
+     "chbushnik_t1_h190_high"
+    ],
+    "low": [
+     "chbushnik_t1_h190_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/chbushnik_t1_h190_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 215,
+    "latin": "Philadelphus coronarius",
+    "russian": "Чубушник венечный",
+    "type": "bush",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "genus"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:chbushnik_t2_h150",
+   "source": "a101",
+   "name": "chbushnik_t2_h150",
+   "species_slug": "chbushnik",
+   "variant": 2,
+   "height_cm": 150,
+   "objects": {
+    "high": [
+     "chbushnik_t2_h150_high"
+    ],
+    "low": [
+     "chbushnik_t2_h150_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/chbushnik_t2_h150_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 215,
+    "latin": "Philadelphus coronarius",
+    "russian": "Чубушник венечный",
+    "type": "bush",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "genus"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:cheremuxa_t1_h450",
+   "source": "a101",
+   "name": "cheremuxa_t1_h450",
+   "species_slug": "cheremuxa",
+   "variant": 1,
+   "height_cm": 450,
+   "objects": {
+    "high": [
+     "cheremuxa_t1_h450_high"
+    ],
+    "low": [
+     "cheremuxa_t1_h450_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/cheremuxa_t1_h450_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101",
+   "catalogue_candidates": {
+    "level": "genus",
+    "candidates": [
+     {
+      "material_id": 104,
+      "latin": "Padus maackii",
+      "russian": "Черёмуха Маака",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 120,
+      "latin": "Prunus padus",
+      "russian": "Черёмуха обыкновенная",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "flora_a101:cheremuxa_t2_h250",
+   "source": "a101",
+   "name": "cheremuxa_t2_h250",
+   "species_slug": "cheremuxa",
+   "variant": 2,
+   "height_cm": 250,
+   "objects": {
+    "high": [
+     "cheremuxa_t2_h250_high"
+    ],
+    "low": [
+     "cheremuxa_t2_h250_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/cheremuxa_t2_h250_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101",
+   "catalogue_candidates": {
+    "level": "genus",
+    "candidates": [
+     {
+      "material_id": 104,
+      "latin": "Padus maackii",
+      "russian": "Черёмуха Маака",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 120,
+      "latin": "Prunus padus",
+      "russian": "Черёмуха обыкновенная",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "flora_a101:derbennik_ivolistniy_t1_h120",
+   "source": "a101",
+   "name": "derbennik_ivolistniy_t1_h120",
+   "species_slug": "derbennik_ivolistniy",
+   "variant": 1,
+   "height_cm": 120,
+   "objects": {
+    "high": [
+     "derbennik_ivolistniy_t1_h120_high"
+    ],
+    "low": [
+     "derbennik_ivolistniy_t1_h120_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/derbennik_ivolistniy_t1_h120_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:derbennik_ivolistniy_t1_h80",
+   "source": "a101",
+   "name": "derbennik_ivolistniy_t1_h80",
+   "species_slug": "derbennik_ivolistniy",
+   "variant": 1,
+   "height_cm": 80,
+   "objects": {
+    "high": [
+     "derbennik_ivolistniy_t1_h80_high"
+    ],
+    "low": [
+     "derbennik_ivolistniy_t1_h80_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "C:\\agr\\lab-exp\\assets\\previews-generated\\derbennik_ivolistniy_t1_h80_PREVIEW.png",
+   "preview_match": "generated",
+   "catalogue": null,
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:deren_t1_h120",
+   "source": "a101",
+   "name": "deren_t1_h120",
+   "species_slug": "deren",
+   "variant": 1,
+   "height_cm": 120,
+   "objects": {
+    "high": [
+     "deren_t1_h120_high"
+    ],
+    "low": [
+     "deren_t1_h120_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/deren_t1_h120_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101",
+   "catalogue_candidates": {
+    "level": "genus",
+    "candidates": [
+     {
+      "material_id": 203,
+      "latin": "Cornus alba",
+      "russian": "Дёрен белый",
+      "type": "bush",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 204,
+      "latin": "Cornus sericea",
+      "russian": "Дёрен отпрысковый",
+      "type": "bush",
+      "maps_review": "approved",
+      "agent_light_npm": true
+     },
+     {
+      "material_id": 227,
+      "latin": "Cornus alba 'Sibirica Variegata'",
+      "russian": "Дёрен белый Сибирика Вариегата",
+      "type": "bush",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "flora_a101:deren_t2_h150",
+   "source": "a101",
+   "name": "deren_t2_h150",
+   "species_slug": "deren",
+   "variant": 2,
+   "height_cm": 150,
+   "objects": {
+    "high": [
+     "deren_t2_h150_high"
+    ],
+    "low": [
+     "deren_t2_h150_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/deren_t2_h150_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101",
+   "catalogue_candidates": {
+    "level": "genus",
+    "candidates": [
+     {
+      "material_id": 203,
+      "latin": "Cornus alba",
+      "russian": "Дёрен белый",
+      "type": "bush",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 204,
+      "latin": "Cornus sericea",
+      "russian": "Дёрен отпрысковый",
+      "type": "bush",
+      "maps_review": "approved",
+      "agent_light_npm": true
+     },
+     {
+      "material_id": 227,
+      "latin": "Cornus alba 'Sibirica Variegata'",
+      "russian": "Дёрен белый Сибирика Вариегата",
+      "type": "bush",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "flora_a101:deren_t3_h100",
+   "source": "a101",
+   "name": "deren_t3_h100",
+   "species_slug": "deren",
+   "variant": 3,
+   "height_cm": 100,
+   "objects": {
+    "high": [
+     "deren_t3_h100_high"
+    ],
+    "low": [
+     "deren_t3_h100_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/deren_t3_h100_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101",
+   "catalogue_candidates": {
+    "level": "genus",
+    "candidates": [
+     {
+      "material_id": 203,
+      "latin": "Cornus alba",
+      "russian": "Дёрен белый",
+      "type": "bush",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 204,
+      "latin": "Cornus sericea",
+      "russian": "Дёрен отпрысковый",
+      "type": "bush",
+      "maps_review": "approved",
+      "agent_light_npm": true
+     },
+     {
+      "material_id": 227,
+      "latin": "Cornus alba 'Sibirica Variegata'",
+      "russian": "Дёрен белый Сибирика Вариегата",
+      "type": "bush",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "flora_a101:deren_t4_h120",
+   "source": "a101",
+   "name": "deren_t4_h120",
+   "species_slug": "deren",
+   "variant": 4,
+   "height_cm": 120,
+   "objects": {
+    "high": [
+     "deren_t4_h120_high"
+    ],
+    "low": [
+     "deren_t4_h120_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/deren_t4_h120_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101",
+   "catalogue_candidates": {
+    "level": "genus",
+    "candidates": [
+     {
+      "material_id": 203,
+      "latin": "Cornus alba",
+      "russian": "Дёрен белый",
+      "type": "bush",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 204,
+      "latin": "Cornus sericea",
+      "russian": "Дёрен отпрысковый",
+      "type": "bush",
+      "maps_review": "approved",
+      "agent_light_npm": true
+     },
+     {
+      "material_id": 227,
+      "latin": "Cornus alba 'Sibirica Variegata'",
+      "russian": "Дёрен белый Сибирика Вариегата",
+      "type": "bush",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "flora_a101:deren_t5_h100",
+   "source": "a101",
+   "name": "deren_t5_h100",
+   "species_slug": "deren",
+   "variant": 5,
+   "height_cm": 100,
+   "objects": {
+    "high": [
+     "deren_t5_h100_high"
+    ],
+    "low": [
+     "deren_t5_h100_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/deren_t5_h100_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101",
+   "catalogue_candidates": {
+    "level": "genus",
+    "candidates": [
+     {
+      "material_id": 203,
+      "latin": "Cornus alba",
+      "russian": "Дёрен белый",
+      "type": "bush",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 204,
+      "latin": "Cornus sericea",
+      "russian": "Дёрен отпрысковый",
+      "type": "bush",
+      "maps_review": "approved",
+      "agent_light_npm": true
+     },
+     {
+      "material_id": 227,
+      "latin": "Cornus alba 'Sibirica Variegata'",
+      "russian": "Дёрен белый Сибирика Вариегата",
+      "type": "bush",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "flora_a101:devichiy_vinograd_t1_h140",
+   "source": "a101",
+   "name": "devichiy_vinograd_t1_h140",
+   "species_slug": "devichiy_vinograd",
+   "variant": 1,
+   "height_cm": 140,
+   "objects": {
+    "high": [
+     "devichiy_vinograd_t1_h140_high"
+    ],
+    "low": [
+     "devichiy_vinograd_t1_h140_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/devichiy_vinograd_t1_h140_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 501,
+    "latin": "Parthenocissus quinquefolia",
+    "russian": "Девичий виноград пятилисточковый",
+    "type": "climber",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "species"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:diervela_ruchejnaya_t1_h120",
+   "source": "a101",
+   "name": "diervela_ruchejnaya_t1_h120",
+   "species_slug": "diervela_ruchejnaya",
+   "variant": 1,
+   "height_cm": 120,
+   "objects": {
+    "high": [
+     "diervela_ruchejnaya_t1_h120_high"
+    ],
+    "low": [
+     "diervela_ruchejnaya_t1_h120_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/diervela_ruchejnaya_t1_h120_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:el_nidiformis_t1_h60",
+   "source": "a101",
+   "name": "el_nidiformis_t1_h60",
+   "species_slug": "el_nidiformis",
+   "variant": 1,
+   "height_cm": 60,
+   "objects": {
+    "high": [
+     "el_nidiformis_t1_h60_high"
+    ],
+    "low": [
+     "el_nidiformis_t1_h60_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/el_nidiformis_t1_h60_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:elka_t1_h400",
+   "source": "a101",
+   "name": "elka_t1_h400",
+   "species_slug": "elka",
+   "variant": 1,
+   "height_cm": 400,
+   "objects": {
+    "high": [
+     "elka_t1_h400_high"
+    ],
+    "low": [
+     "elka_t1_h400_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/elka_t1_h400_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:elka_t2_h300",
+   "source": "a101",
+   "name": "elka_t2_h300",
+   "species_slug": "elka",
+   "variant": 2,
+   "height_cm": 300,
+   "objects": {
+    "high": [
+     "elka_t2_h300_high"
+    ],
+    "low": [
+     "elka_t2_h300_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/elka_t2_h300_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:exinaceya_purpurnaya_t1_h80",
+   "source": "a101",
+   "name": "exinaceya_purpurnaya_t1_h80",
+   "species_slug": "exinaceya_purpurnaya",
+   "variant": 1,
+   "height_cm": 80,
+   "objects": {
+    "high": [
+     "exinaceya_purpurnaya_t1_h80_high"
+    ],
+    "low": [
+     "exinaceya_purpurnaya_t1_h80_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "C:\\agr\\lab-exp\\assets\\previews-generated\\exinaceya_purpurnaya_t1_h80_PREVIEW.png",
+   "preview_match": "generated",
+   "catalogue": {
+    "material_id": 402,
+    "latin": "Echinacea purpurea",
+    "russian": "Эхинацея пурпурная",
+    "type": "flower",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "exact"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:gortenzia_drevovidnaya_t1_h120",
+   "source": "a101",
+   "name": "gortenzia_drevovidnaya_t1_h120",
+   "species_slug": "gortenzia_drevovidnaya",
+   "variant": 1,
+   "height_cm": 120,
+   "objects": {
+    "high": [
+     "gortenzia_drevovidnaya_t1_h120_high"
+    ],
+    "low": [
+     "gortenzia_drevovidnaya_t1_h120_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/gortenzia_drevovidnaya_t1_h120_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 207,
+    "latin": "Hydrangea arborescens",
+    "russian": "Гортензия древовидная",
+    "type": "bush",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "exact"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:gortenzia_drevovidnaya_t2_h100",
+   "source": "a101",
+   "name": "gortenzia_drevovidnaya_t2_h100",
+   "species_slug": "gortenzia_drevovidnaya",
+   "variant": 2,
+   "height_cm": 100,
+   "objects": {
+    "high": [
+     "gortenzia_drevovidnaya_t2_h100_high"
+    ],
+    "low": [
+     "gortenzia_drevovidnaya_t2_h100_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/gortenzia_drevovidnaya_t2_h100_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 207,
+    "latin": "Hydrangea arborescens",
+    "russian": "Гортензия древовидная",
+    "type": "bush",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "exact"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:gortenzia_drevovidnaya_t3_h100",
+   "source": "a101",
+   "name": "gortenzia_drevovidnaya_t3_h100",
+   "species_slug": "gortenzia_drevovidnaya",
+   "variant": 3,
+   "height_cm": 100,
+   "objects": {
+    "high": [
+     "gortenzia_drevovidnaya_t3_h100_high"
+    ],
+    "low": [
+     "gortenzia_drevovidnaya_t3_h100_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/gortenzia_drevovidnaya_t3_h100_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 207,
+    "latin": "Hydrangea arborescens",
+    "russian": "Гортензия древовидная",
+    "type": "bush",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "exact"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:gortenzia_metelchataya_t1_h100",
+   "source": "a101",
+   "name": "gortenzia_metelchataya_t1_h100",
+   "species_slug": "gortenzia_metelchataya",
+   "variant": 1,
+   "height_cm": 100,
+   "objects": {
+    "high": [
+     "gortenzia_metelchataya_t1_h100_high"
+    ],
+    "low": [
+     "gortenzia_metelchataya_t1_h100_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/gortenzia_metelchataya_t1_h100_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 206,
+    "latin": "Hydrangea paniculata",
+    "russian": "Гортензия метельчатая",
+    "type": "bush",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "exact"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:irga_lamarka_t1_h150",
+   "source": "a101",
+   "name": "irga_lamarka_t1_h150",
+   "species_slug": "irga_lamarka",
+   "variant": 1,
+   "height_cm": 150,
+   "objects": {
+    "high": [
+     "irga_lamarka_t1_h150_high"
+    ],
+    "low": [
+     "irga_lamarka_t1_h150_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/irga_lamarka_t1_h150_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 105,
+    "latin": "Amelanchier lamarckii",
+    "russian": "Ирга Ламарка",
+    "type": "tree",
+    "maps_review": "approved",
+    "agent_light_npm": true,
+    "level": "exact"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:irga_lamarka_t2_h150",
+   "source": "a101",
+   "name": "irga_lamarka_t2_h150",
+   "species_slug": "irga_lamarka",
+   "variant": 2,
+   "height_cm": 150,
+   "objects": {
+    "high": [
+     "irga_lamarka_t2_h150_high"
+    ],
+    "low": [
+     "irga_lamarka_t2_h150_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/irga_lamarka_t2_h150_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 105,
+    "latin": "Amelanchier lamarckii",
+    "russian": "Ирга Ламарка",
+    "type": "tree",
+    "maps_review": "approved",
+    "agent_light_npm": true,
+    "level": "exact"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:irga_lamarka_t3_h350",
+   "source": "a101",
+   "name": "irga_lamarka_t3_h350",
+   "species_slug": "irga_lamarka",
+   "variant": 3,
+   "height_cm": 350,
+   "objects": {
+    "high": [
+     "irga_lamarka_t3_h350_high"
+    ],
+    "low": [
+     "irga_lamarka_t3_h350_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/irga_lamarka_t3_h350_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 105,
+    "latin": "Amelanchier lamarckii",
+    "russian": "Ирга Ламарка",
+    "type": "tree",
+    "maps_review": "approved",
+    "agent_light_npm": true,
+    "level": "exact"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:irga_lamarka_t4_h150",
+   "source": "a101",
+   "name": "irga_lamarka_t4_h150",
+   "species_slug": "irga_lamarka",
+   "variant": 4,
+   "height_cm": 150,
+   "objects": {
+    "high": [
+     "irga_lamarka_t4_h150_high"
+    ],
+    "low": [
+     "irga_lamarka_t4_h150_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "C:\\agr\\lab-exp\\assets\\previews-generated\\irga_lamarka_t4_h150_PREVIEW.png",
+   "preview_match": "generated",
+   "catalogue": {
+    "material_id": 105,
+    "latin": "Amelanchier lamarckii",
+    "russian": "Ирга Ламарка",
+    "type": "tree",
+    "maps_review": "approved",
+    "agent_light_npm": true,
+    "level": "exact"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:iris_bolotniy_t1_h80",
+   "source": "a101",
+   "name": "iris_bolotniy_t1_h80",
+   "species_slug": "iris_bolotniy",
+   "variant": 1,
+   "height_cm": 80,
+   "objects": {
+    "high": [
+     "iris_bolotniy_t1_h80_high"
+    ],
+    "low": [
+     "iris_bolotniy_t1_h80_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "C:\\agr\\lab-exp\\assets\\previews-generated\\iris_bolotniy_t1_h80_PREVIEW.png",
+   "preview_match": "generated",
+   "catalogue": null,
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:ism_t1_h80",
+   "source": "a101",
+   "name": "ism_t1_h80",
+   "species_slug": "ism",
+   "variant": 1,
+   "height_cm": 80,
+   "objects": {
+    "high": [
+     "ism_t1_h80_high"
+    ],
+    "low": [
+     "ism_t1_h80_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/ism_t1_h80_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:ism_t2_h60",
+   "source": "a101",
+   "name": "ism_t2_h60",
+   "species_slug": "ism",
+   "variant": 2,
+   "height_cm": 60,
+   "objects": {
+    "high": [
+     "ism_t2_h60_high"
+    ],
+    "low": [
+     "ism_t2_h60_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/ism_t2_h60_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:iva_bush_t1_h150",
+   "source": "a101",
+   "name": "iva_bush_t1_h150",
+   "species_slug": "iva_bush",
+   "variant": 1,
+   "height_cm": 150,
+   "objects": {
+    "high": [
+     "iva_bush_t1_h150_high"
+    ],
+    "low": [
+     "iva_bush_t1_h150_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/iva_bush_t1_h150_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:iva_lomkaya_t1_h450",
+   "source": "a101",
+   "name": "iva_lomkaya_t1_h450",
+   "species_slug": "iva_lomkaya",
+   "variant": 1,
+   "height_cm": 450,
+   "objects": {
+    "high": [
+     "iva_lomkaya_t1_h450_high"
+    ],
+    "low": [
+     "iva_lomkaya_t1_h450_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/iva_lomkaya_t1_h450_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:iva_polzuchaya_t1_h40",
+   "source": "a101",
+   "name": "iva_polzuchaya_t1_h40",
+   "species_slug": "iva_polzuchaya",
+   "variant": 1,
+   "height_cm": 40,
+   "objects": {
+    "high": [
+     "iva_polzuchaya_t1_h40_high"
+    ],
+    "low": [
+     "iva_polzuchaya_t1_h40_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/iva_polzuchaya_t1_h40_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:jimolost_t1_h150",
+   "source": "a101",
+   "name": "jimolost_t1_h150",
+   "species_slug": "jimolost",
+   "variant": 1,
+   "height_cm": 150,
+   "objects": {
+    "high": [
+     "jimolost_t1_h150_high"
+    ],
+    "low": [
+     "jimolost_t1_h150_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/jimolost_t1_h150_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:kalina_t1_h190",
+   "source": "a101",
+   "name": "kalina_t1_h190",
+   "species_slug": "kalina",
+   "variant": 1,
+   "height_cm": 190,
+   "objects": {
+    "high": [
+     "kalina_t1_h190_high"
+    ],
+    "low": [
+     "kalina_t1_h190_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/kalina_t1_h190_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 218,
+    "latin": "Viburnum opulus 'Roseum'",
+    "russian": "Калина обыкновенная Бульдене",
+    "type": "bush",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "genus"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:kizilnik_barbaris_t1_h100",
+   "source": "a101",
+   "name": "kizilnik_barbaris_t1_h100",
+   "species_slug": "kizilnik_barbaris",
+   "variant": 1,
+   "height_cm": 100,
+   "objects": {
+    "high": [
+     "kizilnik_barbaris_t1_h100_high"
+    ],
+    "low": [
+     "kizilnik_barbaris_t1_h100_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/kizilnik_barbaris_t1_h100_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:kizilnik_barbaris_t2_h80",
+   "source": "a101",
+   "name": "kizilnik_barbaris_t2_h80",
+   "species_slug": "kizilnik_barbaris",
+   "variant": 2,
+   "height_cm": 80,
+   "objects": {
+    "high": [
+     "kizilnik_barbaris_t2_h80_high"
+    ],
+    "low": [
+     "kizilnik_barbaris_t2_h80_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/kizilnik_barbaris_t2_h80_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:kizilnik_barbaris_t3_h100",
+   "source": "a101",
+   "name": "kizilnik_barbaris_t3_h100",
+   "species_slug": "kizilnik_barbaris",
+   "variant": 3,
+   "height_cm": 100,
+   "objects": {
+    "high": [
+     "kizilnik_barbaris_t3_h100_high"
+    ],
+    "low": [
+     "kizilnik_barbaris_t3_h100_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/kizilnik_barbaris_t3_h100_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:klen_ginnala_t1_h150",
+   "source": "a101",
+   "name": "klen_ginnala_t1_h150",
+   "species_slug": "klen_ginnala",
+   "variant": 1,
+   "height_cm": 150,
+   "objects": {
+    "high": [
+     "klen_ginnala_t1_h150_high"
+    ],
+    "low": [
+     "klen_ginnala_t1_h150_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/klen_ginnala_t1_h150_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 106,
+    "latin": "Acer tataricum subsp. ginnala",
+    "russian": "Клён Гиннала",
+    "type": "tree",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "exact"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:klen_ginnala_t2_h150",
+   "source": "a101",
+   "name": "klen_ginnala_t2_h150",
+   "species_slug": "klen_ginnala",
+   "variant": 2,
+   "height_cm": 150,
+   "objects": {
+    "high": [
+     "klen_ginnala_t2_h150_high"
+    ],
+    "low": [
+     "klen_ginnala_t2_h150_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/klen_ginnala_t2_h150_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 106,
+    "latin": "Acer tataricum subsp. ginnala",
+    "russian": "Клён Гиннала",
+    "type": "tree",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "exact"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:klen_t1_h175",
+   "source": "a101",
+   "name": "klen_t1_h175",
+   "species_slug": "klen",
+   "variant": 1,
+   "height_cm": 175,
+   "objects": {
+    "high": [
+     "klen_t1_h175_high"
+    ],
+    "low": [
+     "klen_t1_h175_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/klen_t1_h175_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101",
+   "catalogue_candidates": {
+    "level": "genus",
+    "candidates": [
+     {
+      "material_id": 106,
+      "latin": "Acer tataricum subsp. ginnala",
+      "russian": "Клён Гиннала",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 107,
+      "latin": "Acer platanoides",
+      "russian": "Клён остролистный",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 109,
+      "latin": "Acer tataricum",
+      "russian": "Клён татарский",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "flora_a101:klen_t2_h175",
+   "source": "a101",
+   "name": "klen_t2_h175",
+   "species_slug": "klen",
+   "variant": 2,
+   "height_cm": 175,
+   "objects": {
+    "high": [
+     "klen_t2_h175_high"
+    ],
+    "low": [
+     "klen_t2_h175_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/klen_t2_h175_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101",
+   "catalogue_candidates": {
+    "level": "genus",
+    "candidates": [
+     {
+      "material_id": 106,
+      "latin": "Acer tataricum subsp. ginnala",
+      "russian": "Клён Гиннала",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 107,
+      "latin": "Acer platanoides",
+      "russian": "Клён остролистный",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 109,
+      "latin": "Acer tataricum",
+      "russian": "Клён татарский",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "flora_a101:klen_t3_h350",
+   "source": "a101",
+   "name": "klen_t3_h350",
+   "species_slug": "klen",
+   "variant": 3,
+   "height_cm": 350,
+   "objects": {
+    "high": [
+     "klen_t3_h350_high"
+    ],
+    "low": [
+     "klen_t3_h350_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/klen_t3_h350_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101",
+   "catalogue_candidates": {
+    "level": "genus",
+    "candidates": [
+     {
+      "material_id": 106,
+      "latin": "Acer tataricum subsp. ginnala",
+      "russian": "Клён Гиннала",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 107,
+      "latin": "Acer platanoides",
+      "russian": "Клён остролистный",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 109,
+      "latin": "Acer tataricum",
+      "russian": "Клён татарский",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "flora_a101:klen_t4_h350",
+   "source": "a101",
+   "name": "klen_t4_h350",
+   "species_slug": "klen",
+   "variant": 4,
+   "height_cm": 350,
+   "objects": {
+    "high": [
+     "klen_t4_h350_high"
+    ],
+    "low": [
+     "klen_t4_h350_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/klen_t4_h350_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101",
+   "catalogue_candidates": {
+    "level": "genus",
+    "candidates": [
+     {
+      "material_id": 106,
+      "latin": "Acer tataricum subsp. ginnala",
+      "russian": "Клён Гиннала",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 107,
+      "latin": "Acer platanoides",
+      "russian": "Клён остролистный",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 109,
+      "latin": "Acer tataricum",
+      "russian": "Клён татарский",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "flora_a101:klen_t5_h500",
+   "source": "a101",
+   "name": "klen_t5_h500",
+   "species_slug": "klen",
+   "variant": 5,
+   "height_cm": 500,
+   "objects": {
+    "high": [
+     "klen_t5_h500_high"
+    ],
+    "low": [
+     "klen_t5_h500_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/klen_t5_h500_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101",
+   "catalogue_candidates": {
+    "level": "genus",
+    "candidates": [
+     {
+      "material_id": 106,
+      "latin": "Acer tataricum subsp. ginnala",
+      "russian": "Клён Гиннала",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 107,
+      "latin": "Acer platanoides",
+      "russian": "Клён остролистный",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 109,
+      "latin": "Acer tataricum",
+      "russian": "Клён татарский",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "flora_a101:klen_t6_h500",
+   "source": "a101",
+   "name": "klen_t6_h500",
+   "species_slug": "klen",
+   "variant": 6,
+   "height_cm": 500,
+   "objects": {
+    "high": [
+     "klen_t6_h500_high"
+    ],
+    "low": [
+     "klen_t6_h500_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/klen_t6_h500_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101",
+   "catalogue_candidates": {
+    "level": "genus",
+    "candidates": [
+     {
+      "material_id": 106,
+      "latin": "Acer tataricum subsp. ginnala",
+      "russian": "Клён Гиннала",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 107,
+      "latin": "Acer platanoides",
+      "russian": "Клён остролистный",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 109,
+      "latin": "Acer tataricum",
+      "russian": "Клён татарский",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "flora_a101:klen_t7_h550",
+   "source": "a101",
+   "name": "klen_t7_h550",
+   "species_slug": "klen",
+   "variant": 7,
+   "height_cm": 550,
+   "objects": {
+    "high": [
+     "klen_t7_h550_high"
+    ],
+    "low": [
+     "klen_t7_h550_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/klen_t7_h550_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101",
+   "catalogue_candidates": {
+    "level": "genus",
+    "candidates": [
+     {
+      "material_id": 106,
+      "latin": "Acer tataricum subsp. ginnala",
+      "russian": "Клён Гиннала",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 107,
+      "latin": "Acer platanoides",
+      "russian": "Клён остролистный",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 109,
+      "latin": "Acer tataricum",
+      "russian": "Клён татарский",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "flora_a101:klen_t8_h700",
+   "source": "a101",
+   "name": "klen_t8_h700",
+   "species_slug": "klen",
+   "variant": 8,
+   "height_cm": 700,
+   "objects": {
+    "high": [
+     "klen_t8_h700_high"
+    ],
+    "low": [
+     "klen_t8_h700_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/klen_t8_h700_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101",
+   "catalogue_candidates": {
+    "level": "genus",
+    "candidates": [
+     {
+      "material_id": 106,
+      "latin": "Acer tataricum subsp. ginnala",
+      "russian": "Клён Гиннала",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 107,
+      "latin": "Acer platanoides",
+      "russian": "Клён остролистный",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 109,
+      "latin": "Acer tataricum",
+      "russian": "Клён татарский",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "flora_a101:lapchatka_kustarnikovaya_t1_h100",
+   "source": "a101",
+   "name": "lapchatka_kustarnikovaya_t1_h100",
+   "species_slug": "lapchatka_kustarnikovaya",
+   "variant": 1,
+   "height_cm": 100,
+   "objects": {
+    "high": [
+     "lapchatka_kustarnikovaya_t1_h100_high"
+    ],
+    "low": [
+     "lapchatka_kustarnikovaya_t1_h100_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/lapchatka_kustarnikovaya_t1_h100_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 230,
+    "latin": "Dasiphora fruticosa",
+    "russian": "Лапчатка кустарниковая",
+    "type": "bush",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "exact"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:lapchatka_kustarnikovaya_t2_h80",
+   "source": "a101",
+   "name": "lapchatka_kustarnikovaya_t2_h80",
+   "species_slug": "lapchatka_kustarnikovaya",
+   "variant": 2,
+   "height_cm": 80,
+   "objects": {
+    "high": [
+     "lapchatka_kustarnikovaya_t2_h80_high"
+    ],
+    "low": [
+     "lapchatka_kustarnikovaya_t2_h80_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/lapchatka_kustarnikovaya_t2_h80_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 230,
+    "latin": "Dasiphora fruticosa",
+    "russian": "Лапчатка кустарниковая",
+    "type": "bush",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "exact"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:lipa_t1_h550",
+   "source": "a101",
+   "name": "lipa_t1_h550",
+   "species_slug": "lipa",
+   "variant": 1,
+   "height_cm": 550,
+   "objects": {
+    "high": [
+     "lipa_t1_h550_high"
+    ],
+    "low": [
+     "lipa_t1_h550_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/lipa_t1_h550_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 101,
+    "latin": "Tilia cordata",
+    "russian": "Липа мелколистная",
+    "type": "tree",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "genus"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:mojevelnik_t1_h40",
+   "source": "a101",
+   "name": "mojevelnik_t1_h40",
+   "species_slug": "mojevelnik",
+   "variant": 1,
+   "height_cm": 40,
+   "objects": {
+    "high": [
+     "mojevelnik_t1_h40_high"
+    ],
+    "low": [
+     "mojevelnik_t1_h40_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/mojevelnik_t1_h40_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 210,
+    "latin": "Juniperus sabina",
+    "russian": "Можжевельник казацкий",
+    "type": "bush",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "genus"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:mojevelnik_t2_h400",
+   "source": "a101",
+   "name": "mojevelnik_t2_h400",
+   "species_slug": "mojevelnik",
+   "variant": 2,
+   "height_cm": 400,
+   "objects": {
+    "high": [
+     "mojevelnik_t2_h400_high"
+    ],
+    "low": [
+     "mojevelnik_t2_h400_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/mojevelnik_t2_h400_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 210,
+    "latin": "Juniperus sabina",
+    "russian": "Можжевельник казацкий",
+    "type": "bush",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "genus"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:osoka_palmolistnaya_t1_h80",
+   "source": "a101",
+   "name": "osoka_palmolistnaya_t1_h80",
+   "species_slug": "osoka_palmolistnaya",
+   "variant": 1,
+   "height_cm": 80,
+   "objects": {
+    "high": [
+     "osoka_palmolistnaya_t1_h80_high"
+    ],
+    "low": [
+     "osoka_palmolistnaya_t1_h80_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "C:\\agr\\lab-exp\\assets\\previews-generated\\osoka_palmolistnaya_t1_h80_PREVIEW.png",
+   "preview_match": "generated",
+   "catalogue": null,
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:paxizandra_t1_h40",
+   "source": "a101",
+   "name": "paxizandra_t1_h40",
+   "species_slug": "paxizandra",
+   "variant": 1,
+   "height_cm": 40,
+   "objects": {
+    "high": [
+     "paxizandra_t1_h40_high"
+    ],
+    "low": [
+     "paxizandra_t1_h40_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/paxizandra_t1_h40_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:puzyreplodnik_kalinolistnyj_t1_h150",
+   "source": "a101",
+   "name": "puzyreplodnik_kalinolistnyj_t1_h150",
+   "species_slug": "puzyreplodnik_kalinolistnyj",
+   "variant": 1,
+   "height_cm": 150,
+   "objects": {
+    "high": [
+     "puzyreplodnik_kalinolistnyj_t1_h150_high"
+    ],
+    "low": [
+     "puzyreplodnik_kalinolistnyj_t1_h150_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/puzyreplodnik_kalinolistnyj_t1_h150_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 211,
+    "latin": "Physocarpus opulifolius",
+    "russian": "Пузыреплодник калинолистный",
+    "type": "bush",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "exact"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:puzyreplodnik_kalinolistnyj_t2_h150",
+   "source": "a101",
+   "name": "puzyreplodnik_kalinolistnyj_t2_h150",
+   "species_slug": "puzyreplodnik_kalinolistnyj",
+   "variant": 2,
+   "height_cm": 150,
+   "objects": {
+    "high": [
+     "puzyreplodnik_kalinolistnyj_t2_h150_high"
+    ],
+    "low": [
+     "puzyreplodnik_kalinolistnyj_t2_h150_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "C:\\agr\\lab-exp\\assets\\previews-generated\\puzyreplodnik_kalinolistnyj_t2_h150_PREVIEW.png",
+   "preview_match": "generated",
+   "catalogue": {
+    "material_id": 211,
+    "latin": "Physocarpus opulifolius",
+    "russian": "Пузыреплодник калинолистный",
+    "type": "bush",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "exact"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:puzyreplodnik_kalinolistnyj_t3_h150",
+   "source": "a101",
+   "name": "puzyreplodnik_kalinolistnyj_t3_h150",
+   "species_slug": "puzyreplodnik_kalinolistnyj",
+   "variant": 3,
+   "height_cm": 150,
+   "objects": {
+    "high": [
+     "puzyreplodnik_kalinolistnyj_t3_h150_high"
+    ],
+    "low": [
+     "puzyreplodnik_kalinolistnyj_t3_h150_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/puzyreplodnik_kalinolistnyj_t3_h150_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 211,
+    "latin": "Physocarpus opulifolius",
+    "russian": "Пузыреплодник калинолистный",
+    "type": "bush",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "exact"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:puzyreplodnik_t1_h150",
+   "source": "a101",
+   "name": "puzyreplodnik_t1_h150",
+   "species_slug": "puzyreplodnik",
+   "variant": 1,
+   "height_cm": 150,
+   "objects": {
+    "high": [
+     "puzyreplodnik_t1_h150_high"
+    ],
+    "low": [
+     "puzyreplodnik_t1_h150_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "C:\\agr\\lab-exp\\assets\\previews-generated\\puzyreplodnik_t1_h150_PREVIEW.png",
+   "preview_match": "generated",
+   "catalogue": null,
+   "status": "a101",
+   "catalogue_candidates": {
+    "level": "genus",
+    "candidates": [
+     {
+      "material_id": 205,
+      "latin": "Physocarpus opulifolius 'Diabolo'",
+      "russian": "Пузыреплодник калинолистный Диабло",
+      "type": "bush",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 211,
+      "latin": "Physocarpus opulifolius",
+      "russian": "Пузыреплодник калинолистный",
+      "type": "bush",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 234,
+      "latin": "Physocarpus opulifolius 'Luteus'",
+      "russian": "Пузыреплодник калинолистный Лютеус",
+      "type": "bush",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "flora_a101:riabina_t1_h350",
+   "source": "a101",
+   "name": "riabina_t1_h350",
+   "species_slug": "riabina",
+   "variant": 1,
+   "height_cm": 350,
+   "objects": {
+    "high": [
+     "riabina_t1_h350_high"
+    ],
+    "low": [
+     "riabina_t1_h350_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/riabina_t1_h350_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101",
+   "catalogue_candidates": {
+    "level": "genus",
+    "candidates": [
+     {
+      "material_id": 108,
+      "latin": "Sorbus aucuparia",
+      "russian": "Рябина обыкновенная",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 110,
+      "latin": "Sorbus commixta 'Dodong'",
+      "russian": "Рябина Додонг",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 212,
+      "latin": "Sorbaria sorbifolia",
+      "russian": "Рябинник рябинолистный",
+      "type": "bush",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 219,
+      "latin": "Sorbaria sorbifolia 'Sem'",
+      "russian": "Рябинник рябинолистный Сэм",
+      "type": "bush",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "flora_a101:riabinnik_riabinolistniy_t1_h100",
+   "source": "a101",
+   "name": "riabinnik_riabinolistniy_t1_h100",
+   "species_slug": "riabinnik_riabinolistniy",
+   "variant": 1,
+   "height_cm": 100,
+   "objects": {
+    "high": [
+     "riabinnik_riabinolistniy_t1_h100_high"
+    ],
+    "low": [
+     "riabinnik_riabinolistniy_t1_h100_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/riabinnik_riabinolistniy_t1_h100_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 212,
+    "latin": "Sorbaria sorbifolia",
+    "russian": "Рябинник рябинолистный",
+    "type": "bush",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "exact"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:riabinnik_riabinolistniy_t2_h120",
+   "source": "a101",
+   "name": "riabinnik_riabinolistniy_t2_h120",
+   "species_slug": "riabinnik_riabinolistniy",
+   "variant": 2,
+   "height_cm": 120,
+   "objects": {
+    "high": [
+     "riabinnik_riabinolistniy_t2_h120_high"
+    ],
+    "low": [
+     "riabinnik_riabinolistniy_t2_h120_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/riabinnik_riabinolistniy_t2_h120_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 212,
+    "latin": "Sorbaria sorbifolia",
+    "russian": "Рябинник рябинолистный",
+    "type": "bush",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "exact"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:riabinnik_riabinolistniy_t3_h100",
+   "source": "a101",
+   "name": "riabinnik_riabinolistniy_t3_h100",
+   "species_slug": "riabinnik_riabinolistniy",
+   "variant": 3,
+   "height_cm": 100,
+   "objects": {
+    "high": [
+     "riabinnik_riabinolistniy_t3_h100_high"
+    ],
+    "low": [
+     "riabinnik_riabinolistniy_t3_h100_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/riabinnik_riabinolistniy_t3_h100_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 212,
+    "latin": "Sorbaria sorbifolia",
+    "russian": "Рябинник рябинолистный",
+    "type": "bush",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "exact"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:riabinnik_riabinolistniy_t4_h100",
+   "source": "a101",
+   "name": "riabinnik_riabinolistniy_t4_h100",
+   "species_slug": "riabinnik_riabinolistniy",
+   "variant": 4,
+   "height_cm": 100,
+   "objects": {
+    "high": [
+     "riabinnik_riabinolistniy_t4_h100_high"
+    ],
+    "low": [
+     "riabinnik_riabinolistniy_t4_h100_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/riabinnik_riabinolistniy_t4_h100_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 212,
+    "latin": "Sorbaria sorbifolia",
+    "russian": "Рябинник рябинолистный",
+    "type": "bush",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "exact"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:siren_t1_h160",
+   "source": "a101",
+   "name": "siren_t1_h160",
+   "species_slug": "siren",
+   "variant": 1,
+   "height_cm": 160,
+   "objects": {
+    "high": [
+     "siren_t1_h160_high"
+    ],
+    "low": [
+     "siren_t1_h160_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/siren_t1_h160_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101",
+   "catalogue_candidates": {
+    "level": "genus",
+    "candidates": [
+     {
+      "material_id": 111,
+      "latin": "Syringa vulgaris 'Krasavitsa Moskvy'",
+      "russian": "Сирень обыкновенная Красавица Москвы",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 112,
+      "latin": "Syringa vulgaris 'Andenken an Ludwig Späth'",
+      "russian": "Сирень обыкновенная Шпет",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 113,
+      "latin": "Syringa josikaea",
+      "russian": "Сирень венгерская",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 116,
+      "latin": "Syringa vulgaris",
+      "russian": "Сирень обыкновенная",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "flora_a101:siren_t2_h150",
+   "source": "a101",
+   "name": "siren_t2_h150",
+   "species_slug": "siren",
+   "variant": 2,
+   "height_cm": 150,
+   "objects": {
+    "high": [
+     "siren_t2_h150_high"
+    ],
+    "low": [
+     "siren_t2_h150_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/siren_t2_h150_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101",
+   "catalogue_candidates": {
+    "level": "genus",
+    "candidates": [
+     {
+      "material_id": 111,
+      "latin": "Syringa vulgaris 'Krasavitsa Moskvy'",
+      "russian": "Сирень обыкновенная Красавица Москвы",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 112,
+      "latin": "Syringa vulgaris 'Andenken an Ludwig Späth'",
+      "russian": "Сирень обыкновенная Шпет",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 113,
+      "latin": "Syringa josikaea",
+      "russian": "Сирень венгерская",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 116,
+      "latin": "Syringa vulgaris",
+      "russian": "Сирень обыкновенная",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "flora_a101:sosna_gornaya_t1_h60",
+   "source": "a101",
+   "name": "sosna_gornaya_t1_h60",
+   "species_slug": "sosna_gornaya",
+   "variant": 1,
+   "height_cm": 60,
+   "objects": {
+    "high": [
+     "sosna_gornaya_t1_h60_high"
+    ],
+    "low": [
+     "sosna_gornaya_t1_h60_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/sosna_gornaya_t1_h60_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 224,
+    "latin": "Pinus mugo",
+    "russian": "Сосна горная",
+    "type": "bush",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "exact"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:spireya_berezolistnaya_t1_h80",
+   "source": "a101",
+   "name": "spireya_berezolistnaya_t1_h80",
+   "species_slug": "spireya_berezolistnaya",
+   "variant": 1,
+   "height_cm": 80,
+   "objects": {
+    "high": [
+     "spireya_berezolistnaya_t1_h80_high"
+    ],
+    "low": [
+     "spireya_berezolistnaya_t1_h80_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/spireya_berezolistnaya_t1_h80_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 220,
+    "latin": "Spiraea betulifolia 'Tor'",
+    "russian": "Спирея берёзолистная Тор",
+    "type": "bush",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "species"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:spireya_bumalda_yaponskaya_t1_h80",
+   "source": "a101",
+   "name": "spireya_bumalda_yaponskaya_t1_h80",
+   "species_slug": "spireya_bumalda_yaponskaya",
+   "variant": 1,
+   "height_cm": 80,
+   "objects": {
+    "high": [
+     "spireya_bumalda_yaponskaya_t1_h80_high"
+    ],
+    "low": [
+     "spireya_bumalda_yaponskaya_t1_h80_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/spireya_bumalda_yaponskaya_t1_h80_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:spireya_seraya_t1_h100",
+   "source": "a101",
+   "name": "spireya_seraya_t1_h100",
+   "species_slug": "spireya_seraya",
+   "variant": 1,
+   "height_cm": 100,
+   "objects": {
+    "high": [
+     "spireya_seraya_t1_h100_high"
+    ],
+    "low": [
+     "spireya_seraya_t1_h100_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/spireya_seraya_t1_h100_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 221,
+    "latin": "Spiraea × cinerea 'Grefsheim'",
+    "russian": "Спирея серая Грефсхейм",
+    "type": "bush",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "species"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:spireya_yaponskaya_t1_h80",
+   "source": "a101",
+   "name": "spireya_yaponskaya_t1_h80",
+   "species_slug": "spireya_yaponskaya",
+   "variant": 1,
+   "height_cm": 80,
+   "objects": {
+    "high": [
+     "spireya_yaponskaya_t1_h80_high"
+    ],
+    "low": [
+     "spireya_yaponskaya_t1_h80_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/spireya_yaponskaya_t1_h80_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": {
+    "material_id": 225,
+    "latin": "Spiraea japonica",
+    "russian": "Спирея японская",
+    "type": "bush",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "exact"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:spireya_yaponskaya_t2_h80",
+   "source": "a101",
+   "name": "spireya_yaponskaya_t2_h80",
+   "species_slug": "spireya_yaponskaya",
+   "variant": 2,
+   "height_cm": 80,
+   "objects": {
+    "high": [
+     "spireya_yaponskaya_t2_h80_high"
+    ],
+    "low": [
+     "spireya_yaponskaya_t2_h80_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/spireya_spireya_yaponskaya_t2_h80_PREVIEW.png",
+   "preview_match": "fuzzy",
+   "catalogue": {
+    "material_id": 225,
+    "latin": "Spiraea japonica",
+    "russian": "Спирея японская",
+    "type": "bush",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "exact"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:spireya_yaponskaya_t3_h40",
+   "source": "a101",
+   "name": "spireya_yaponskaya_t3_h40",
+   "species_slug": "spireya_yaponskaya",
+   "variant": 3,
+   "height_cm": 40,
+   "objects": {
+    "high": [
+     "spireya_yaponskaya_t3_h40_high"
+    ],
+    "low": [
+     "spireya_yaponskaya_t3_h40_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/spireya_spireya_yaponskaya_t3_h40_PREVIEW.png",
+   "preview_match": "fuzzy",
+   "catalogue": {
+    "material_id": 225,
+    "latin": "Spiraea japonica",
+    "russian": "Спирея японская",
+    "type": "bush",
+    "maps_review": "approved",
+    "agent_light_npm": false,
+    "level": "exact"
+   },
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:tree_t1_h500",
+   "source": "a101",
+   "name": "tree_t1_h500",
+   "species_slug": "tree",
+   "variant": 1,
+   "height_cm": 500,
+   "objects": {
+    "high": [
+     "tree_t1_h500_high"
+    ],
+    "low": [
+     "tree_t1_h500_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/tree_t1_h500_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:tree_t2_h300",
+   "source": "a101",
+   "name": "tree_t2_h300",
+   "species_slug": "tree",
+   "variant": 2,
+   "height_cm": 300,
+   "objects": {
+    "high": [
+     "tree_t2_h300_high"
+    ],
+    "low": [
+     "tree_t2_h300_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/tree_t2_h300_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:vishnya_t1_h500",
+   "source": "a101",
+   "name": "vishnya_t1_h500",
+   "species_slug": "vishnya",
+   "variant": 1,
+   "height_cm": 500,
+   "objects": {
+    "high": [
+     "vishnya_t1_h500_high"
+    ],
+    "low": [
+     "vishnya_t1_h500_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/vishnya_t1_h500_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:yablonya_t1_h350",
+   "source": "a101",
+   "name": "yablonya_t1_h350",
+   "species_slug": "yablonya",
+   "variant": 1,
+   "height_cm": 350,
+   "objects": {
+    "high": [
+     "yablonya_t1_h350_high"
+    ],
+    "low": [
+     "yablonya_t1_h350_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/yablonya_t1_h350_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101",
+   "catalogue_candidates": {
+    "level": "genus",
+    "candidates": [
+     {
+      "material_id": 115,
+      "latin": "Malus niedzwetzkyana",
+      "russian": "Яблоня Недзвецкого",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 118,
+      "latin": "Malus 'Evereste'",
+      "russian": "Яблоня Эверест",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "flora_a101:yablonya_t2_h450",
+   "source": "a101",
+   "name": "yablonya_t2_h450",
+   "species_slug": "yablonya",
+   "variant": 2,
+   "height_cm": 450,
+   "objects": {
+    "high": [
+     "yablonya_t2_h450_high"
+    ],
+    "low": [
+     "yablonya_t2_h450_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/yablonya_t2_h450_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101",
+   "catalogue_candidates": {
+    "level": "genus",
+    "candidates": [
+     {
+      "material_id": 115,
+      "latin": "Malus niedzwetzkyana",
+      "russian": "Яблоня Недзвецкого",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     },
+     {
+      "material_id": 118,
+      "latin": "Malus 'Evereste'",
+      "russian": "Яблоня Эверест",
+      "type": "tree",
+      "maps_review": "approved",
+      "agent_light_npm": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "flora_a101:yasen_t1_h550",
+   "source": "a101",
+   "name": "yasen_t1_h550",
+   "species_slug": "yasen",
+   "variant": 1,
+   "height_cm": 550,
+   "objects": {
+    "high": [
+     "yasen_t1_h550_high"
+    ],
+    "low": [
+     "yasen_t1_h550_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/yasen_t1_h550_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101"
+  },
+  {
+   "id": "flora_a101:zlaki_t1_h150",
+   "source": "a101",
+   "name": "zlaki_t1_h150",
+   "species_slug": "zlaki",
+   "variant": 1,
+   "height_cm": 150,
+   "objects": {
+    "high": [
+     "zlaki_t1_h150_high"
+    ],
+    "low": [
+     "zlaki_t1_h150_low"
+    ]
+   },
+   "file": "FLORIO_221.max",
+   "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+   "preview": "PreviewFlora/zlaki_t1_h150_PREVIEW.png",
+   "preview_match": "exact",
+   "catalogue": null,
+   "status": "a101"
+  },
+  {
+   "id": "flora_v003:Pinus_nigra",
+   "source": "pilot_v003",
+   "latin": "Pinus nigra",
+   "russian": "Сосна чёрная",
+   "type": "tree",
+   "material_id": 114,
+   "objects": {
+    "NPM": "Pinus_nigra_NPM",
+    "VPM": "Pinus_nigra_VPM"
+   },
+   "file": "C:/x/flora-library/v003/flora-library-v003.max",
+   "vpm_status": "available",
+   "maps_review": "approved",
+   "agent_light_npm": false,
+   "status": "pilot_v003"
+  },
+  {
+   "id": "flora_v003:Picea_pungens",
+   "source": "pilot_v003",
+   "latin": "Picea pungens",
+   "russian": "Ель колючая (серебристая)",
+   "type": "tree",
+   "material_id": 117,
+   "objects": {
+    "NPM": "Picea_pungens_NPM",
+    "VPM": "Picea_pungens_VPM"
+   },
+   "file": "C:/x/flora-library/v003/flora-library-v003.max",
+   "vpm_status": "available",
+   "maps_review": "approved",
+   "agent_light_npm": false,
+   "status": "pilot_v003"
+  },
+  {
+   "id": "flora_v003:Thuja_occidentalis",
+   "source": "pilot_v003",
+   "latin": "Thuja occidentalis",
+   "russian": "Туя западная",
+   "type": "tree",
+   "material_id": 119,
+   "objects": {
+    "NPM": "Thuja_occidentalis_NPM",
+    "VPM": null
+   },
+   "file": "C:/x/flora-library/v003/flora-library-v003.max",
+   "vpm_status": "none",
+   "maps_review": "approved",
+   "agent_light_npm": false,
+   "status": "pilot_v003"
+  },
+  {
+   "id": "flora_v003:Salix_purpurea_Mayak",
+   "source": "pilot_v003",
+   "latin": "Salix purpurea 'Mayak'",
+   "russian": "Ива пурпурная Маяк",
+   "type": "bush",
+   "material_id": 208,
+   "objects": {
+    "NPM": "Salix_purpurea_Mayak_NPM",
+    "VPM": null
+   },
+   "file": "C:/x/flora-library/v003/flora-library-v003.max",
+   "vpm_status": "unconfirmed",
+   "maps_review": "approved",
+   "agent_light_npm": false,
+   "status": "pilot_v003"
+  },
+  {
+   "id": "flora_v003:Cotoneaster_lucidus",
+   "source": "pilot_v003",
+   "latin": "Cotoneaster lucidus",
+   "russian": "Кизильник блестящий",
+   "type": "bush",
+   "material_id": 209,
+   "objects": {
+    "NPM": "Cotoneaster_lucidus_NPM",
+    "VPM": "Cotoneaster_lucidus_VPM"
+   },
+   "file": "C:/x/flora-library/v003/flora-library-v003.max",
+   "vpm_status": "available",
+   "maps_review": "approved",
+   "agent_light_npm": false,
+   "status": "pilot_v003"
+  },
+  {
+   "id": "flora_v003:Dasiphora_fruticosa_Goldfinger",
+   "source": "pilot_v003",
+   "latin": "Dasiphora fruticosa 'Goldfinger'",
+   "russian": "Лапчатка кустарниковая Голдфингер",
+   "type": "bush",
+   "material_id": 213,
+   "objects": {
+    "NPM": "Dasiphora_fruticosa_Goldfinger_NPM",
+    "VPM": null
+   },
+   "file": "C:/x/flora-library/v003/flora-library-v003.max",
+   "vpm_status": "unconfirmed",
+   "maps_review": "approved",
+   "agent_light_npm": false,
+   "status": "pilot_v003"
+  },
+  {
+   "id": "flora_v003:Hydrangea_arborescens_Bounty",
+   "source": "pilot_v003",
+   "latin": "Hydrangea arborescens 'Bounty'",
+   "russian": "Гортензия древовидная Баунти",
+   "type": "bush",
+   "material_id": 216,
+   "objects": {
+    "NPM": "Hydrangea_arborescens_Bounty_NPM",
+    "VPM": null
+   },
+   "file": "C:/x/flora-library/v003/flora-library-v003.max",
+   "vpm_status": "unconfirmed",
+   "maps_review": "approved",
+   "agent_light_npm": false,
+   "status": "pilot_v003"
+  },
+  {
+   "id": "flora_v003:Hydrangea_paniculata_Limelight",
+   "source": "pilot_v003",
+   "latin": "Hydrangea paniculata 'Limelight'",
+   "russian": "Гортензия метельчатая Лаймлайт",
+   "type": "bush",
+   "material_id": 217,
+   "objects": {
+    "NPM": "Hydrangea_paniculata_Limelight_NPM",
+    "VPM": null
+   },
+   "file": "C:/x/flora-library/v003/flora-library-v003.max",
+   "vpm_status": "unconfirmed",
+   "maps_review": "approved",
+   "agent_light_npm": false,
+   "status": "pilot_v003"
+  },
+  {
+   "id": "flora_v003:Spiraea_japonica_Little_Princess",
+   "source": "pilot_v003",
+   "latin": "Spiraea japonica 'Little Princess'",
+   "russian": "Спирея японская Литл Принцесс",
+   "type": "bush",
+   "material_id": 222,
+   "objects": {
+    "NPM": "Spiraea_japonica_Little_Princess_NPM",
+    "VPM": "Spiraea_japonica_Little_Princess_VPM"
+   },
+   "file": "C:/x/flora-library/v003/flora-library-v003.max",
+   "vpm_status": "available",
+   "maps_review": "approved",
+   "agent_light_npm": false,
+   "status": "pilot_v003"
+  },
+  {
+   "id": "flora_v003:Stephanandra_incisa_Crispa",
+   "source": "pilot_v003",
+   "latin": "Stephanandra incisa 'Crispa'",
+   "russian": "Стефанандра надрезаннолистная Криспа",
+   "type": "bush",
+   "material_id": 223,
+   "objects": {
+    "NPM": "Stephanandra_incisa_Crispa_NPM",
+    "VPM": "Stephanandra_incisa_Crispa_VPM"
+   },
+   "file": "C:/x/flora-library/v003/flora-library-v003.max",
+   "vpm_status": "available",
+   "maps_review": "approved",
+   "agent_light_npm": false,
+   "status": "pilot_v003"
+  },
+  {
+   "id": "flora_v003:Spiraea_japonica_Firelight",
+   "source": "pilot_v003",
+   "latin": "Spiraea japonica 'Firelight'",
+   "russian": "Спирея японская Файрлайт",
+   "type": "bush",
+   "material_id": 238,
+   "objects": {
+    "NPM": "Spiraea_japonica_Firelight_NPM",
+    "VPM": "Spiraea_japonica_Firelight_VPM"
+   },
+   "file": "C:/x/flora-library/v003/flora-library-v003.max",
+   "vpm_status": "available",
+   "maps_review": "approved",
+   "agent_light_npm": false,
+   "status": "pilot_v003"
+  },
+  {
+   "id": "flora_v003:Spiraea_bumalda",
+   "source": "pilot_v003",
+   "latin": "Spiraea × bumalda",
+   "russian": "Спирея Бумальда",
+   "type": "bush",
+   "material_id": 239,
+   "objects": {
+    "NPM": "Spiraea_bumalda_NPM",
+    "VPM": "Spiraea_bumalda_VPM"
+   },
+   "file": "C:/x/flora-library/v003/flora-library-v003.max",
+   "vpm_status": "available",
+   "maps_review": "approved",
+   "agent_light_npm": false,
+   "status": "pilot_v003"
+  },
+  {
+   "id": "flora_v003:Symphyotrichum_novae_angliae",
+   "source": "pilot_v003",
+   "latin": "Symphyotrichum novae-angliae",
+   "russian": "Астра новоанглийская",
+   "type": "flower",
+   "material_id": 401,
+   "objects": {
+    "NPM": "Symphyotrichum_novae_angliae_NPM",
+    "VPM": "Symphyotrichum_novae_angliae_VPM"
+   },
+   "file": "C:/x/flora-library/v003/flora-library-v003.max",
+   "vpm_status": "available",
+   "maps_review": "approved",
+   "agent_light_npm": false,
+   "status": "pilot_v003"
+  },
+  {
+   "id": "flora_v003:Heuchera",
+   "source": "pilot_v003",
+   "latin": "Heuchera",
+   "russian": "Гейхера",
+   "type": "flower",
+   "material_id": 403,
+   "objects": {
+    "NPM": "Heuchera_NPM",
+    "VPM": null
+   },
+   "file": "C:/x/flora-library/v003/flora-library-v003.max",
+   "vpm_status": "unconfirmed",
+   "maps_review": "approved",
+   "agent_light_npm": false,
+   "status": "pilot_v003"
+  },
+  {
+   "id": "flora_v003:Actaea_simplex_Atropurpurea",
+   "source": "pilot_v003",
+   "latin": "Actaea simplex 'Atropurpurea'",
+   "russian": "Клопогон Атропурпуреа",
+   "type": "flower",
+   "material_id": 404,
+   "objects": {
+    "NPM": "Actaea_simplex_Atropurpurea_NPM",
+    "VPM": null
+   },
+   "file": "C:/x/flora-library/v003/flora-library-v003.max",
+   "vpm_status": "unconfirmed",
+   "maps_review": "approved",
+   "agent_light_npm": false,
+   "status": "pilot_v003"
+  },
+  {
+   "id": "flora_v003:Filipendula_ulmaria",
+   "source": "pilot_v003",
+   "latin": "Filipendula ulmaria",
+   "russian": "Лабазник вязолистный",
+   "type": "flower",
+   "material_id": 405,
+   "objects": {
+    "NPM": "Filipendula_ulmaria_NPM",
+    "VPM": null
+   },
+   "file": "C:/x/flora-library/v003/flora-library-v003.max",
+   "vpm_status": "unconfirmed",
+   "maps_review": "approved",
+   "agent_light_npm": false,
+   "status": "pilot_v003"
+  },
+  {
+   "id": "flora_v003:Miscanthus_sinensis",
+   "source": "pilot_v003",
+   "latin": "Miscanthus sinensis",
+   "russian": "Мискантус китайский",
+   "type": "flower",
+   "material_id": 406,
+   "objects": {
+    "NPM": "Miscanthus_sinensis_NPM",
+    "VPM": null
+   },
+   "file": "C:/x/flora-library/v003/flora-library-v003.max",
+   "vpm_status": "unconfirmed",
+   "maps_review": "approved",
+   "agent_light_npm": false,
+   "status": "pilot_v003"
+  },
+  {
+   "id": "flora_v003:Eutrochium_maculatum",
+   "source": "pilot_v003",
+   "latin": "Eutrochium maculatum",
+   "russian": "Посконник пятнистый",
+   "type": "flower",
+   "material_id": 407,
+   "objects": {
+    "NPM": "Eutrochium_maculatum_NPM",
+    "VPM": "Eutrochium_maculatum_VPM"
+   },
+   "file": "C:/x/flora-library/v003/flora-library-v003.max",
+   "vpm_status": "available",
+   "maps_review": "approved",
+   "agent_light_npm": false,
+   "status": "pilot_v003"
+  },
+  {
+   "id": "flora_v003:Calamagrostis_brachytricha",
+   "source": "pilot_v003",
+   "latin": "Calamagrostis brachytricha",
+   "russian": "Вейник остроцветковый",
+   "type": "flower",
+   "material_id": 408,
+   "objects": {
+    "NPM": "Calamagrostis_brachytricha_NPM",
+    "VPM": "Calamagrostis_brachytricha_VPM"
+   },
+   "file": "C:/x/flora-library/v003/flora-library-v003.max",
+   "vpm_status": "available",
+   "maps_review": "approved",
+   "agent_light_npm": false,
+   "status": "pilot_v003"
+  },
+  {
+   "id": "flora_v003:Calamagrostis_acutiflora_Karl_Foerster",
+   "source": "pilot_v003",
+   "latin": "Calamagrostis × acutiflora 'Karl Foerster'",
+   "russian": "Вейник остроцветковый Карл Форстер",
+   "type": "flower",
+   "material_id": 409,
+   "objects": {
+    "NPM": "Calamagrostis_acutiflora_Karl_Foerster_NPM",
+    "VPM": null
+   },
+   "file": "C:/x/flora-library/v003/flora-library-v003.max",
+   "vpm_status": "unconfirmed",
+   "maps_review": "approved",
+   "agent_light_npm": false,
+   "status": "pilot_v003"
+  }
+ ],
+ "review": [
+  {
+   "id": "flora_a101:alium_paporotnik_t1_h120",
+   "level": null,
+   "candidates": []
+  },
+  {
+   "id": "flora_a101:barbaris_t1_h40",
+   "level": "genus",
+   "candidates": [
+    "Berberis × ottawensis",
+    "Berberis thunbergii"
+   ]
+  },
+  {
+   "id": "flora_a101:barbaris_t2_h80",
+   "level": "genus",
+   "candidates": [
+    "Berberis × ottawensis",
+    "Berberis thunbergii"
+   ]
+  },
+  {
+   "id": "flora_a101:bereza_t1_h450",
+   "level": "genus",
+   "candidates": [
+    "Betula pendula"
+   ],
+   "linked": true
+  },
+  {
+   "id": "flora_a101:boyarishnik_t1_h150",
+   "level": "genus",
+   "candidates": [
+    "Crataegus mollis",
+    "Crataegus monogyna"
+   ]
+  },
+  {
+   "id": "flora_a101:bush_t1_h120",
+   "level": null,
+   "candidates": []
+  },
+  {
+   "id": "flora_a101:bush_t2_h60",
+   "level": null,
+   "candidates": []
+  },
+  {
+   "id": "flora_a101:chbushnik_t1_h190",
+   "level": "genus",
+   "candidates": [
+    "Philadelphus coronarius"
+   ],
+   "linked": true
+  },
+  {
+   "id": "flora_a101:chbushnik_t2_h150",
+   "level": "genus",
+   "candidates": [
+    "Philadelphus coronarius"
+   ],
+   "linked": true
+  },
+  {
+   "id": "flora_a101:cheremuxa_t1_h450",
+   "level": "genus",
+   "candidates": [
+    "Padus maackii",
+    "Prunus padus"
+   ]
+  },
+  {
+   "id": "flora_a101:cheremuxa_t2_h250",
+   "level": "genus",
+   "candidates": [
+    "Padus maackii",
+    "Prunus padus"
+   ]
+  },
+  {
+   "id": "flora_a101:derbennik_ivolistniy_t1_h120",
+   "level": null,
+   "candidates": []
+  },
+  {
+   "id": "flora_a101:derbennik_ivolistniy_t1_h80",
+   "level": null,
+   "candidates": []
+  },
+  {
+   "id": "flora_a101:deren_t1_h120",
+   "level": "genus",
+   "candidates": [
+    "Cornus alba",
+    "Cornus sericea",
+    "Cornus alba 'Sibirica Variegata'"
+   ]
+  },
+  {
+   "id": "flora_a101:deren_t2_h150",
+   "level": "genus",
+   "candidates": [
+    "Cornus alba",
+    "Cornus sericea",
+    "Cornus alba 'Sibirica Variegata'"
+   ]
+  },
+  {
+   "id": "flora_a101:deren_t3_h100",
+   "level": "genus",
+   "candidates": [
+    "Cornus alba",
+    "Cornus sericea",
+    "Cornus alba 'Sibirica Variegata'"
+   ]
+  },
+  {
+   "id": "flora_a101:deren_t4_h120",
+   "level": "genus",
+   "candidates": [
+    "Cornus alba",
+    "Cornus sericea",
+    "Cornus alba 'Sibirica Variegata'"
+   ]
+  },
+  {
+   "id": "flora_a101:deren_t5_h100",
+   "level": "genus",
+   "candidates": [
+    "Cornus alba",
+    "Cornus sericea",
+    "Cornus alba 'Sibirica Variegata'"
+   ]
+  },
+  {
+   "id": "flora_a101:diervela_ruchejnaya_t1_h120",
+   "level": null,
+   "candidates": []
+  },
+  {
+   "id": "flora_a101:el_nidiformis_t1_h60",
+   "level": null,
+   "candidates": []
+  },
+  {
+   "id": "flora_a101:elka_t1_h400",
+   "level": null,
+   "candidates": []
+  },
+  {
+   "id": "flora_a101:elka_t2_h300",
+   "level": null,
+   "candidates": []
+  },
+  {
+   "id": "flora_a101:iris_bolotniy_t1_h80",
+   "level": null,
+   "candidates": []
+  },
+  {
+   "id": "flora_a101:ism_t1_h80",
+   "level": null,
+   "candidates": []
+  },
+  {
+   "id": "flora_a101:ism_t2_h60",
+   "level": null,
+   "candidates": []
+  },
+  {
+   "id": "flora_a101:iva_bush_t1_h150",
+   "level": null,
+   "candidates": []
+  },
+  {
+   "id": "flora_a101:iva_lomkaya_t1_h450",
+   "level": null,
+   "candidates": []
+  },
+  {
+   "id": "flora_a101:iva_polzuchaya_t1_h40",
+   "level": null,
+   "candidates": []
+  },
+  {
+   "id": "flora_a101:jimolost_t1_h150",
+   "level": null,
+   "candidates": []
+  },
+  {
+   "id": "flora_a101:kalina_t1_h190",
+   "level": "genus",
+   "candidates": [
+    "Viburnum opulus 'Roseum'"
+   ],
+   "linked": true
+  },
+  {
+   "id": "flora_a101:kizilnik_barbaris_t1_h100",
+   "level": null,
+   "candidates": []
+  },
+  {
+   "id": "flora_a101:kizilnik_barbaris_t2_h80",
+   "level": null,
+   "candidates": []
+  },
+  {
+   "id": "flora_a101:kizilnik_barbaris_t3_h100",
+   "level": null,
+   "candidates": []
+  },
+  {
+   "id": "flora_a101:klen_t1_h175",
+   "level": "genus",
+   "candidates": [
+    "Acer tataricum subsp. ginnala",
+    "Acer platanoides",
+    "Acer tataricum"
+   ]
+  },
+  {
+   "id": "flora_a101:klen_t2_h175",
+   "level": "genus",
+   "candidates": [
+    "Acer tataricum subsp. ginnala",
+    "Acer platanoides",
+    "Acer tataricum"
+   ]
+  },
+  {
+   "id": "flora_a101:klen_t3_h350",
+   "level": "genus",
+   "candidates": [
+    "Acer tataricum subsp. ginnala",
+    "Acer platanoides",
+    "Acer tataricum"
+   ]
+  },
+  {
+   "id": "flora_a101:klen_t4_h350",
+   "level": "genus",
+   "candidates": [
+    "Acer tataricum subsp. ginnala",
+    "Acer platanoides",
+    "Acer tataricum"
+   ]
+  },
+  {
+   "id": "flora_a101:klen_t5_h500",
+   "level": "genus",
+   "candidates": [
+    "Acer tataricum subsp. ginnala",
+    "Acer platanoides",
+    "Acer tataricum"
+   ]
+  },
+  {
+   "id": "flora_a101:klen_t6_h500",
+   "level": "genus",
+   "candidates": [
+    "Acer tataricum subsp. ginnala",
+    "Acer platanoides",
+    "Acer tataricum"
+   ]
+  },
+  {
+   "id": "flora_a101:klen_t7_h550",
+   "level": "genus",
+   "candidates": [
+    "Acer tataricum subsp. ginnala",
+    "Acer platanoides",
+    "Acer tataricum"
+   ]
+  },
+  {
+   "id": "flora_a101:klen_t8_h700",
+   "level": "genus",
+   "candidates": [
+    "Acer tataricum subsp. ginnala",
+    "Acer platanoides",
+    "Acer tataricum"
+   ]
+  },
+  {
+   "id": "flora_a101:lipa_t1_h550",
+   "level": "genus",
+   "candidates": [
+    "Tilia cordata"
+   ],
+   "linked": true
+  },
+  {
+   "id": "flora_a101:mojevelnik_t1_h40",
+   "level": "genus",
+   "candidates": [
+    "Juniperus sabina"
+   ],
+   "linked": true
+  },
+  {
+   "id": "flora_a101:mojevelnik_t2_h400",
+   "level": "genus",
+   "candidates": [
+    "Juniperus sabina"
+   ],
+   "linked": true
+  },
+  {
+   "id": "flora_a101:osoka_palmolistnaya_t1_h80",
+   "level": null,
+   "candidates": []
+  },
+  {
+   "id": "flora_a101:paxizandra_t1_h40",
+   "level": null,
+   "candidates": []
+  },
+  {
+   "id": "flora_a101:puzyreplodnik_t1_h150",
+   "level": "genus",
+   "candidates": [
+    "Physocarpus opulifolius 'Diabolo'",
+    "Physocarpus opulifolius",
+    "Physocarpus opulifolius 'Luteus'"
+   ]
+  },
+  {
+   "id": "flora_a101:riabina_t1_h350",
+   "level": "genus",
+   "candidates": [
+    "Sorbus aucuparia",
+    "Sorbus commixta 'Dodong'",
+    "Sorbaria sorbifolia",
+    "Sorbaria sorbifolia 'Sem'"
+   ]
+  },
+  {
+   "id": "flora_a101:siren_t1_h160",
+   "level": "genus",
+   "candidates": [
+    "Syringa vulgaris 'Krasavitsa Moskvy'",
+    "Syringa vulgaris 'Andenken an Ludwig Späth'",
+    "Syringa josikaea",
+    "Syringa vulgaris"
+   ]
+  },
+  {
+   "id": "flora_a101:siren_t2_h150",
+   "level": "genus",
+   "candidates": [
+    "Syringa vulgaris 'Krasavitsa Moskvy'",
+    "Syringa vulgaris 'Andenken an Ludwig Späth'",
+    "Syringa josikaea",
+    "Syringa vulgaris"
+   ]
+  },
+  {
+   "id": "flora_a101:spireya_bumalda_yaponskaya_t1_h80",
+   "level": null,
+   "candidates": []
+  },
+  {
+   "id": "flora_a101:tree_t1_h500",
+   "level": null,
+   "candidates": []
+  },
+  {
+   "id": "flora_a101:tree_t2_h300",
+   "level": null,
+   "candidates": []
+  },
+  {
+   "id": "flora_a101:vishnya_t1_h500",
+   "level": null,
+   "candidates": []
+  },
+  {
+   "id": "flora_a101:yablonya_t1_h350",
+   "level": "genus",
+   "candidates": [
+    "Malus niedzwetzkyana",
+    "Malus 'Evereste'"
+   ]
+  },
+  {
+   "id": "flora_a101:yablonya_t2_h450",
+   "level": "genus",
+   "candidates": [
+    "Malus niedzwetzkyana",
+    "Malus 'Evereste'"
+   ]
+  },
+  {
+   "id": "flora_a101:yasen_t1_h550",
+   "level": null,
+   "candidates": []
+  },
+  {
+   "id": "flora_a101:zlaki_t1_h150",
+   "level": null,
+   "candidates": []
+  }
+ ],
+ "counts": {
+  "a101": 86,
+  "a101_linked_to_catalogue": 35,
+  "a101_needs_review": 58,
+  "a101_unlinked": 51,
+  "pilot_v003_added": 20,
+  "agent_light_npm": 3
+ },
+ "sources": {
+  "a101_root": "G:/Мой диск/AGR-assets/flora/a101",
+  "a101_files": {
+   "FLORIO_221.max": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b"
+  },
+  "catalogue": "library/flora/catalogue.json",
+  "npm_light": "library/flora/npm-light.json"
+ }
+}

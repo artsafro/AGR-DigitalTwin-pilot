@@ -382,7 +382,7 @@ class AssetsWindow(QtWidgets.QWidget):
         self.spn_fbx.setEnabled(self.cmb_src.currentData() == 'fbx')
 
     def _cfg(self):
-        return {'lib': self.lib(), 'root': self.ed_lib.text().strip()}
+        return {'lib': self.lib(), 'root': self.ed_lib.text().strip(), 'preview_dirs': list(self.s.get('preview_dirs') or [])}
 
     def load_current(self):
         idx = self.indexes.get(self.lib())
@@ -489,7 +489,7 @@ class AssetsWindow(QtWidgets.QWidget):
 
 
 class MaxBackend(object):
-    """Backend inside 3ds Max (assets_max.py). MAF import (FBX/MAX from zip) is the next step."""
+    """Backend inside 3ds Max (assets_max.py): Flora from the library .max, MAF from the archives."""
 
     def __init__(self):
         import importlib.util
@@ -507,7 +507,8 @@ class MaxBackend(object):
 
     def scan(self, cfg, cache_dir):
         if cfg['lib'] == 'flora':
-            return self.mx.scan_flora(cfg['root'], cache_dir, lib='flora')
+            return self.mx.scan_flora(cfg['root'], cache_dir, lib='flora',
+                                      extra_preview_dirs=cfg.get('preview_dirs') or ())
         idx = core.scan_maf(cfg['root'], cache_dir, lib='maf', old_index=core.load_index(cache_dir, 'maf'))
         core.save_index(cache_dir, idx)
         return idx
@@ -516,8 +517,6 @@ class MaxBackend(object):
         return self.mx.remove_imported(lib=lib)
 
     def import_assets(self, index, ids, settings, cache_dir):
-        if index['adapter'] != 'flora_max':
-            raise NotImplementedError('импорт МАФ — следующий шаг (#1024); индекс и превью уже работают')
         return self.mx.run_import(index, ids, settings, cache_dir)
 
 
