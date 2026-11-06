@@ -173,6 +173,49 @@ def write_uv(c, uvs, tris):
     rt.update(c)
 
 
+def write_combined(t, others, p):
+    """Replace the Editable_Mesh of copy `t` by the combined plan mesh: vertices of t and of every other copy (in
+    order, brought into t's object space), faces / ids / edge visibility of each copy, channel 1 = atlas UV."""
+    rt = _rt()
+    cm = p['combined']
+    inv = rt.inverse(t.objectTransform)
+    verts, faces, vis = [], [], []
+    for c in [t] + list(others):
+        m = c.mesh
+        tm = c.objectTransform
+        base = len(verts)
+        for i in range(1, int(m.numverts) + 1):
+            q = rt.getVert(m, i) if c == t else rt.getVert(m, i) * tm * inv
+            verts.append(q)
+        for f in range(1, int(m.numfaces) + 1):
+            g = rt.getFace(m, f)
+            faces.append((int(g.x) + base, int(g.y) + base, int(g.z) + base))
+            vis.append(tuple(bool(rt.getEdgeVis(m, f, e)) for e in (1, 2, 3)))
+    if len(verts) != len(cm['verts']) or len(faces) != len(cm['tris']):
+        raise RuntimeError('copies have {} verts / {} faces, the plan {} / {}'.format(
+            len(verts), len(faces), len(cm['verts']), len(cm['tris'])))
+    if [list(x) for x in faces] != [[i + 1 for i in tr] for tr in cm['tris']]:
+        raise RuntimeError('copy topology differs from the planned combined mesh')
+    m = rt.TriMesh()
+    rt.setNumVerts(m, len(verts))
+    rt.setNumFaces(m, len(faces))
+    for i, q in enumerate(verts, 1):
+        rt.setVert(m, i, q)
+    for f, (tri, mid, ev) in enumerate(zip(faces, cm['mat_ids'], vis), 1):
+        rt.setFace(m, f, tri[0], tri[1], tri[2])
+        rt.setFaceMatID(m, f, mid)
+        for e in range(3):
+            rt.setEdgeVis(m, f, e + 1, ev[e])
+    rt.meshop.setMapSupport(m, 1, True)
+    rt.meshop.setNumMapVerts(m, 1, len(p['uvs']))
+    for i, (u, v) in enumerate(p['uvs'], 1):
+        rt.meshop.setMapVert(m, 1, i, rt.point3(float(u), float(v), 0.0))
+    for f, tri in enumerate(p['uv_tris'], 1):
+        rt.meshop.setMapFace(m, 1, f, rt.point3(tri[0] + 1, tri[1] + 1, tri[2] + 1))
+    t.mesh = m
+    rt.update(t)
+
+
 def read_pixels(ctx, p):
     """{group key: {'w', 'h', 'rgb', 'alpha'}} from the FULL-resolution PNG files of the texture groups."""
     tq = _texqa(ctx)
@@ -276,18 +319,13 @@ def run(ctx, mode, nodes, preview, tool, layer, attach, stem):
                 rt.convertToMesh(c)
             targets = copies[:1] if attach else list(copies)
             if attach:
-                # attach first (target faces, then each source's faces in order: the combined order of the plan),
-                # then the ids and channel 1 of the WHOLE object are written from the plan (attach may remap ids)
-                for c in copies[1:]:
-                    rt.meshop.attach(copies[0], c, attachMat=rt.name('neither'), condenseMat=False,
-                                     deleteSourceNode=True)
+                # one NPM object: the combined mesh of the plan (body faces, then glass) is written into the first
+                # copy (other copies' vertices brought into its object space), the other copies are deleted - all in
+                # the same undo record. meshop.attach is not used: after it one undo did not remove the run
+                # (job 20261106-062347-9524f5c1).
                 t = copies[0]
-                nf = int(t.mesh.numfaces)
-                if nf != len(p['combined']['tris']):
-                    raise RuntimeError('attached NPM has {} faces, the plan {}'.format(nf, len(p['combined']['tris'])))
-                for f, mid in enumerate(p['combined']['mat_ids'], 1):
-                    rt.setFaceMatID(t, f, mid)
-                write_uv(t, p['uvs'], p['uv_tris'])
+                write_combined(t, copies[1:], p)
+                rt.delete(copies[1:])
                 if o.get('name'):
                     t.name = rt.uniqueName(o['name'])
             else:

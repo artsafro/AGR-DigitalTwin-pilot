@@ -238,7 +238,9 @@ def npm_build(units='meters', tag='m'):
                           nodes=copies)
     assert again['plan']['out_dir'] != app['plan']['out_dir'], 'second run overwrote the folder'
     rt.execute('max undo')
-    assert rt.getNodeByName(again['plan']['copies'][0]) is None, 'one undo did not remove the second run'
+    left = sorted(str(x.name) for x in rt.objects if '_NPM_' in str(x.name))
+    assert rt.getNodeByName(again['plan']['copies'][0]) is None, ('one undo did not remove the second run', left,
+                                                                    again['plan']['copies'])
     return {'seconds': round(dt, 2), 'atlas_px': w, 'texel': rb['texel_px_per_m'], 'rigid_max_uv': rb['rigid_max_uv'],
             'table_back_to_vpm_uv_max': worst_uv, 'atlas_px_vs_uv_worst': worst_px, 'samples': samples,
             'udim': {r['library_id']: [r['udim'], r['udim_source']] for r in rows}, 'checks': checks,
