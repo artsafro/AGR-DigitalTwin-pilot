@@ -1,4 +1,4 @@
-"""new-case: AGR Tools 1.0 (#1024) texel rescale / UV distortion check, 3ds Max side (branch M).
+"""new-case: AGR Tools 1.0 (#1024) texel rescale / UV distortion check, 3ds Max side; owned by branch M (improve/issue-1024-vpm-layout).
 
 runtime.edits_100 calls `udim_rescale(ctx, mode, nodes, preview)` (udim.rescale, copy) and
 `udim_distortion(ctx, mode, nodes, preview)` (udim.distortion, read). ctx: agr (runtime globals), core (udim10_core),

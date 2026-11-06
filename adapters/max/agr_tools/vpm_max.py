@@ -1,4 +1,4 @@
-"""new-case: AGR Tools 1.0 (#1024) VPM build (steps K6, K3), 3ds Max side (branch M, improve/issue-1024-vpm-layout).
+"""new-case: AGR Tools 1.0 (#1024) VPM build (steps K6, K3), 3ds Max side; owned by branch M (improve/issue-1024-vpm-layout).
 
 runtime.edits_100 calls `vpm_build(ctx, mode, nodes, preview)` for `vpm.build` (plan mode copy + file).
 ctx: agr (runtime globals), core (vpm_core), edit (edit_core), emax (edit_max), options (dict of the preview),

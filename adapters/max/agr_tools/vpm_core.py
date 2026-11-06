@@ -1,4 +1,4 @@
-"""new-case: AGR Tools 1.0 (#1024) VPM build (steps K6, K3) logic, stdlib only (branch M, improve/issue-1024-vpm-layout).
+"""new-case: AGR Tools 1.0 (#1024) VPM build (steps K6, K3) logic, stdlib only; owned by branch M (improve/issue-1024-vpm-layout).
 
 Pure logic for `vpm_build` (vpm.build, plan mode copy + file); no pymxs. The cores never take a host object.
 Steps of #1024 §1.0.17 done here (the glue writes the copy and the files):

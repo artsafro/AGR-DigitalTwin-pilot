@@ -1,4 +1,4 @@
-"""new-case: AGR Tools 1.0 (#1024) texel rescale / UV distortion check logic, stdlib only (branch M).
+"""new-case: AGR Tools 1.0 (#1024) texel rescale / UV distortion check logic, stdlib only; owned by branch M (improve/issue-1024-vpm-layout).
 
 Pure logic for `udim_rescale` (udim.rescale, copy) and `udim_distortion` (udim.distortion, read); no pymxs.
 Owned by branch M (improve/issue-1024-vpm-layout). Lab L09: docs/experiments/udim.rescale.md,
