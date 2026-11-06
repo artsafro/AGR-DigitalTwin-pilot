@@ -206,7 +206,14 @@ def npm_build(units='meters', tag='m'):
     gx, gy = glass['cell_px'][0] + 2, glass['cell_px'][1] + 2
     assert pic.rgb()[(gy * w + gx) * 3:(gy * w + gx) * 3 + 3] == bytes((255, 255, 255)), 'glass cell not white'
     # table returns the VPM UV: NPM faces = body faces then glass faces (attach order)
-    bymid = {r['library_id']: r for r in rows}
+    def row_of(mid, uvs):
+        """The table row of a face: its library id and the cell region holding its atlas UV centroid (layout
+        'islands' has one row per UV island; this is the lookup npm.to_vpm of branch Q can use)."""
+        cu, cv = sum(p[0] for p in uvs) / 3.0, sum(p[1] for p in uvs) / 3.0
+        hit = [r for r in rows if r['library_id'] == mid and r['region'][0] <= cu <= r['region'][2]
+               and r['region'][1] <= cv <= r['region'][3]]
+        assert len(hit) == 1, (mid, cu, cv, len(hit))
+        return hit[0]
     worst_uv = 0.0
     nm = npm.mesh
     off = 0
@@ -216,11 +223,12 @@ def npm_build(units='meters', tag='m'):
             mid = int(rt.getFaceMatID(cm, f))
             a = rt.meshop.getMapFace(nm, 1, f + off)
             s = rt.meshop.getMapFace(cm, 1, f)
-            for ai, si in ((a.x, s.x), (a.y, s.y), (a.z, s.z)):
-                pa = rt.meshop.getMapVert(nm, 1, int(ai))
+            pas = [rt.meshop.getMapVert(nm, 1, int(i)) for i in (a.x, a.y, a.z)]
+            row = row_of(mid, [(float(q.x), float(q.y)) for q in pas])
+            for pa, si in zip(pas, (s.x, s.y, s.z)):
                 ps = rt.meshop.getMapVert(cm, 1, int(si))
-                back = ((float(pa.x) - bymid[mid]['shift'][0]) / bymid[mid]['scale'][0],
-                        (float(pa.y) - bymid[mid]['shift'][1]) / bymid[mid]['scale'][1])
+                back = ((float(pa.x) - row['shift'][0]) / row['scale'][0],
+                        (float(pa.y) - row['shift'][1]) / row['scale'][1])
                 worst_uv = max(worst_uv, abs(back[0] - float(ps.x)), abs(back[1] - float(ps.y)))
         off += int(cm.numfaces)
     assert worst_uv <= 2e-4, worst_uv  # float32 storage of the atlas UV / scale (~0.27): ~1e-5 UV of the VPM
