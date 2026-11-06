@@ -2,13 +2,15 @@
  "schema": 1,
  "button": "export.place_by_passport",
  "tool": null,
- "version": "1.x",
+ "version": "1.0",
  "shipped": false,
  "select": "named",
- "reason": "Кнопки ещё нет в AGR Tools 0.7: в панели её нет, объекты полигона и эта запись появляются в том же изменении, что и сама кнопка.",
+ "reason": "станция в работе, #1024, ветка T",
  "apply_status": null,
  "objects": [],
- "base": null,
- "station": null,
- "stations": []
+ "base": "1.0",
+ "station": "1.0.31",
+ "stations": [
+  "1.0.31"
+ ]
 }

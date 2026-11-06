@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "tour_last": "0.9",
+ "tour_last": "1.0",
  "bases": [
   {
    "version": "0.1",
@@ -570,6 +570,283 @@
      "label_ru": "Процедурные объекты",
      "expected": "expected/qa.procedural_objects.json",
      "reason": ""
+    }
+   ]
+  },
+  {
+   "version": "1.0",
+   "title": "Конвейер ОКС: этапы 0–9, паспорт, окна, материалы, ВПМ/НПМ, сдача, агент",
+   "colour": [
+    96,
+    96,
+    176
+   ],
+   "buttons": [
+    "project.passport",
+    "source.intake",
+    "scene.source_class",
+    "body.prepare",
+    "model.attach_by_material",
+    "model.move_apart",
+    "model.grid_cleanup",
+    "scene.small_parts",
+    "win.place",
+    "win.generate",
+    "model.glass_planes",
+    "body.capsules",
+    "body.roof",
+    "mat.table",
+    "mat.tiles",
+    "tex.plug_colour",
+    "vpm.build",
+    "udim.rescale",
+    "udim.distortion",
+    "tex.dilate",
+    "udim.plugs",
+    "npm.build",
+    "atlas.facade_strip",
+    "npm.to_vpm",
+    "udim.udims_to_ids",
+    "pack.deliver",
+    "ucx.gap",
+    "ucx.stairs",
+    "light.export",
+    "qa.omk_te",
+    "export.place_by_passport",
+    "agent.request",
+    "agent.accept"
+   ],
+   "stations": [
+    {
+     "id": "1.0.1",
+     "button": "project.passport",
+     "label_ru": "Паспорт проекта",
+     "expected": "expected/project.passport.json",
+     "reason": "станция в работе, #1024, ветка F"
+    },
+    {
+     "id": "1.0.2",
+     "button": "source.intake",
+     "label_ru": "Приём источника",
+     "expected": "expected/source.intake.json",
+     "reason": "станция в работе, #1024, ветка F"
+    },
+    {
+     "id": "1.0.3",
+     "button": "scene.source_class",
+     "label_ru": "Класс источника",
+     "expected": "expected/scene.source_class.json",
+     "reason": "станция в работе, #1024, ветка F"
+    },
+    {
+     "id": "1.0.4",
+     "button": "body.prepare",
+     "label_ru": "Бадик для агента",
+     "expected": "expected/body.prepare.json",
+     "reason": "станция в работе, #1024, ветка G"
+    },
+    {
+     "id": "1.0.5",
+     "button": "model.attach_by_material",
+     "label_ru": "Объединить по материалам",
+     "expected": "expected/model.attach_by_material.json",
+     "reason": "станция в работе, #1024, ветка G"
+    },
+    {
+     "id": "1.0.6",
+     "button": "model.move_apart",
+     "label_ru": "Раздвинуть задвойки",
+     "expected": "expected/model.move_apart.json",
+     "reason": "станция в работе, #1024, ветка G"
+    },
+    {
+     "id": "1.0.7",
+     "button": "model.grid_cleanup",
+     "label_ru": "Чистка сетки фасада",
+     "expected": "expected/model.grid_cleanup.json",
+     "reason": "станция в работе, #1024, ветка H"
+    },
+    {
+     "id": "1.0.8",
+     "button": "scene.small_parts",
+     "label_ru": "Мелкие детали (метизы)",
+     "expected": "expected/scene.small_parts.json",
+     "reason": "станция в работе, #1024, ветка F"
+    },
+    {
+     "id": "1.0.9",
+     "button": "win.place",
+     "label_ru": "Окна по проёмам",
+     "expected": "expected/win.place.json",
+     "reason": "станция в работе, #1024, ветка J"
+    },
+    {
+     "id": "1.0.10",
+     "button": "win.generate",
+     "label_ru": "Окна: генератор типов",
+     "expected": "expected/win.generate.json",
+     "reason": "станция в работе, #1024, ветка J"
+    },
+    {
+     "id": "1.0.11",
+     "button": "model.glass_planes",
+     "label_ru": "Стекло плоскостями",
+     "expected": "expected/model.glass_planes.json",
+     "reason": "станция в работе, #1024, ветка H"
+    },
+    {
+     "id": "1.0.12",
+     "button": "body.capsules",
+     "label_ru": "Капсулы интерьера",
+     "expected": "expected/body.capsules.json",
+     "reason": "станция в работе, #1024, ветка K"
+    },
+    {
+     "id": "1.0.13",
+     "button": "body.roof",
+     "label_ru": "Крыша по парапету",
+     "expected": "expected/body.roof.json",
+     "reason": "станция в работе, #1024, ветка K"
+    },
+    {
+     "id": "1.0.14",
+     "button": "mat.table",
+     "label_ru": "Таблица материалов",
+     "expected": "expected/mat.table.json",
+     "reason": "станция в работе, #1024, ветка L"
+    },
+    {
+     "id": "1.0.15",
+     "button": "mat.tiles",
+     "label_ru": "Плитки: серые карты",
+     "expected": "expected/mat.tiles.json",
+     "reason": "станция в работе, #1024, ветка L"
+    },
+    {
+     "id": "1.0.16",
+     "button": "tex.plug_colour",
+     "label_ru": "Цвет заглушки",
+     "expected": "expected/tex.plug_colour.json",
+     "reason": "станция в работе, #1024, ветка L"
+    },
+    {
+     "id": "1.0.17",
+     "button": "vpm.build",
+     "label_ru": "Сборка ВПМ",
+     "expected": "expected/vpm.build.json",
+     "reason": "станция в работе, #1024, ветка M"
+    },
+    {
+     "id": "1.0.18",
+     "button": "udim.rescale",
+     "label_ru": "Подгонка плотности",
+     "expected": "expected/udim.rescale.json",
+     "reason": "станция в работе, #1024, ветка M"
+    },
+    {
+     "id": "1.0.19",
+     "button": "udim.distortion",
+     "label_ru": "Искажения UV",
+     "expected": "expected/udim.distortion.json",
+     "reason": "станция в работе, #1024, ветка M"
+    },
+    {
+     "id": "1.0.20",
+     "button": "tex.dilate",
+     "label_ru": "Отступы карт (dilate)",
+     "expected": "expected/tex.dilate.json",
+     "reason": "станция в работе, #1024, ветка N"
+    },
+    {
+     "id": "1.0.21",
+     "button": "udim.plugs",
+     "label_ru": "Острова-заглушки в UDIM",
+     "expected": "expected/udim.plugs.json",
+     "reason": "станция в работе, #1024, ветка N"
+    },
+    {
+     "id": "1.0.22",
+     "button": "npm.build",
+     "label_ru": "ВПМ → НПМ",
+     "expected": "expected/npm.build.json",
+     "reason": "станция в работе, #1024, ветка P"
+    },
+    {
+     "id": "1.0.23",
+     "button": "atlas.facade_strip",
+     "label_ru": "Фасадный атлас run-strip",
+     "expected": "expected/atlas.facade_strip.json",
+     "reason": "станция в работе, #1024, ветка P"
+    },
+    {
+     "id": "1.0.24",
+     "button": "npm.to_vpm",
+     "label_ru": "НПМ → ВПМ",
+     "expected": "expected/npm.to_vpm.json",
+     "reason": "станция в работе, #1024, ветка Q"
+    },
+    {
+     "id": "1.0.25",
+     "button": "udim.udims_to_ids",
+     "label_ru": "UDIM → ID (просмотр)",
+     "expected": "expected/udim.udims_to_ids.json",
+     "reason": "станция в работе, #1024, ветка Q"
+    },
+    {
+     "id": "1.0.26",
+     "button": "pack.deliver",
+     "label_ru": "Сдача пакета",
+     "expected": "expected/pack.deliver.json",
+     "reason": "станция в работе, #1024, ветка S"
+    },
+    {
+     "id": "1.0.27",
+     "button": "ucx.gap",
+     "label_ru": "UCX: нарезка и зазор",
+     "expected": "expected/ucx.gap.json",
+     "reason": "станция в работе, #1024, ветка S"
+    },
+    {
+     "id": "1.0.28",
+     "button": "ucx.stairs",
+     "label_ru": "UCX лестниц",
+     "expected": "expected/ucx.stairs.json",
+     "reason": "станция в работе, #1024, ветка T"
+    },
+    {
+     "id": "1.0.29",
+     "button": "light.export",
+     "label_ru": "FBX освещения _Light",
+     "expected": "expected/light.export.json",
+     "reason": "станция в работе, #1024, ветка S"
+    },
+    {
+     "id": "1.0.30",
+     "button": "qa.omk_te",
+     "label_ru": "Код ОМК ТЭ",
+     "expected": "expected/qa.omk_te.json",
+     "reason": "станция в работе, #1024, ветка T"
+    },
+    {
+     "id": "1.0.31",
+     "button": "export.place_by_passport",
+     "label_ru": "Поставить по паспорту",
+     "expected": "expected/export.place_by_passport.json",
+     "reason": "станция в работе, #1024, ветка T"
+    },
+    {
+     "id": "1.0.32",
+     "button": "agent.request",
+     "label_ru": "Запрос агенту",
+     "expected": "expected/agent.request.json",
+     "reason": "станция в работе, #1024, ветка U"
+    },
+    {
+     "id": "1.0.33",
+     "button": "agent.accept",
+     "label_ru": "Приём от агента",
+     "expected": "expected/agent.accept.json",
+     "reason": "станция в работе, #1024, ветка U"
     }
    ]
   }

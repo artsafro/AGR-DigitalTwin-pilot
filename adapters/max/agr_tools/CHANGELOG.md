@@ -1,5 +1,75 @@
 # AGR Tools changelog
 
+## 1.0.0 (#1024) — в работе
+
+Конвейер ОКС: паспорт проекта, этапы 0–9, 33 кнопки плана 1.0, агентский мост. Ветка 0 даёт основу, ветки F…U
+наполняют кнопки. Каждая ветка пишет только в свой подзаголовок. Пока кнопки 1.0 отвечают `not_implemented`.
+
+### 0 — основа
+
+- План: сущность `stages`, поля строк `stage` / `fate`, 15 новых строк, 1.0 → `in work`; валидатор в `roadmap.py`.
+- `contract_core.py` (роли `agr_role`, метки `OPEN_<nnn>`, `LEVEL_<name>`), `ObjRef` и интерфейс `HostAdapter`.
+- Хук журнала: каждый вызов диспетчера и MCP добавляет строку через `journal_core.append`.
+- `runtime.EDITS_100`: диспетчер с 33 строками-заглушками.
+- Схемы `ProjectPassport` и `AgentRequest`.
+- UI: рельса этапов и 33 кнопки `wip` («в работе, #1024»).
+- MCP: каталог v2 строится из плана.
+- Полигон: база 1.0.
+- `AGENTS.md` и `library/README.md`.
+- `VERSION` остаётся 0.9.0.
+
+### F
+
+- `passport`: `project.passport`, `source.intake`, `scene.source_class`, `scene.small_parts` — в работе.
+
+### G
+
+- `body`: `body.prepare`, `model.attach_by_material`, `model.move_apart` — в работе.
+
+### H
+
+- `grid-glass`: `model.grid_cleanup`, `model.glass_planes` — в работе.
+
+### J
+
+- `windows`: `win.generate`, `win.place` — в работе.
+
+### K
+
+- `capsules-roof`: `body.capsules`, `body.roof` — в работе.
+
+### L
+
+- `materials`: `mat.table`, `mat.tiles`, `tex.plug_colour` — в работе.
+
+### M
+
+- `vpm-layout`: `vpm.build`, `udim.rescale`, `udim.distortion` — в работе.
+
+### N
+
+- `vpm-maps`: `tex.dilate`, `udim.plugs` и шаг карт `vpm.build` — в работе.
+
+### P
+
+- `npm`: `npm.build`, `atlas.facade_strip` — в работе.
+
+### Q
+
+- `npm-to-vpm`: `npm.to_vpm`, `udim.udims_to_ids` — в работе.
+
+### S
+
+- `deliver`: `pack.deliver`, `ucx.gap`, `light.export` — в работе.
+
+### T
+
+- `deliver-small`: `ucx.stairs`, `qa.omk_te`, `export.place_by_passport` — в работе.
+
+### U
+
+- `agent-bridge`: `agent.request`, `agent.accept` — в работе.
+
 ## 0.9.0 (#979)
 
 Замены и расстановка, Flora/МАФ, текстуры и UDIM, проверки, пакетный экспорт и свет: 19 кнопок плана версии 0.9

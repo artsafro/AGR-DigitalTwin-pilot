@@ -1,0 +1,16 @@
+{
+ "schema": 1,
+ "button": "project.passport",
+ "tool": null,
+ "version": "1.0",
+ "shipped": false,
+ "select": "named",
+ "reason": "станция в работе, #1024, ветка F",
+ "apply_status": null,
+ "objects": [],
+ "base": "1.0",
+ "station": "1.0.1",
+ "stations": [
+  "1.0.1"
+ ]
+}

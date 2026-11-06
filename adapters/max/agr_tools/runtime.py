@@ -278,6 +278,8 @@ def parse_report(text):
         return _edit_core().validate_report(r, EDITS_080)
     if isinstance(r, dict) and isinstance(r.get('tool'), str) and r['tool'] in EDITS_090:
         return _edit_core().validate_report(r, EDITS_090)
+    if isinstance(r, dict) and isinstance(r.get('tool'), str) and r['tool'] in EDITS_100:
+        return _edit_core().validate_report(r, EDITS_100)
     if isinstance(r, dict) and r.get('tool') in CHECKS_070:
         return _suite_core().validate_report(r)
     checks = _checks_core() if isinstance(r, dict) and r.get('tool') in CHECKS_050 else None
