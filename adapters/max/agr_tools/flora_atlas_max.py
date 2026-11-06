@@ -24,7 +24,7 @@ TOOL_GROUNDEL = 'atlas.groundel'
 LAYER_FLORA = 'AGR_export_flora'
 LAYER_GROUNDEL = 'AGR_export_groundel'
 FLORA_KEYS = {'max_size', 'pad', 'out_dir'}
-GROUNDEL_KEYS = {'profile', 'size', 'out_dir'}
+GROUNDEL_KEYS = {'profile', 'size', 'out_dir', 'texel'}
 BLOCKING = {'map_missing', 'map_unreadable', 'groundel_alpha', 'atlas_overflow', 'atlas_refused', 'no_uv',
             'texture_unsupported', 'uv_tiling', 'opacity_mismatch'}
 
@@ -258,7 +258,14 @@ def _groundel_options(ctx, mode, preview):
     out_dir = opts.get('out_dir')
     if out_dir is not None and (not isinstance(out_dir, str) or not out_dir):
         raise ValueError('options.out_dir must be a folder path')
-    return {'profile': profile, 'size': size, 'out_dir': out_dir}
+    # #1024 (Artem 06.11): in NPM the texel matters only for Ground; MAF/Flora atlases keep their source pixels
+    # (uniform scale to the atlas size, flat colours as plug cells) -> atlas_core.pack mode 'oks'.
+    texel = opts.get('texel', 'ground')
+    if texel not in ('ground', 'none'):
+        raise ValueError("options.texel must be 'ground' or 'none'")
+    if texel == 'none' and profile != 'npm':
+        raise ValueError("options.texel 'none' needs profile 'npm' (GroundEl keeps the Ground texel)")
+    return {'profile': profile, 'size': size, 'out_dir': out_dir, 'texel': texel}
 
 
 def _groundel_scan(ctx, nodes, options):
@@ -347,7 +354,8 @@ def atlas_groundel(ctx, mode, nodes, preview):
             fmats += o['mats']
             owner += [o['key']] * len(m['faces'])
         try:
-            laid = core.pack(verts, uvs, faces, fuv, fmats, specs, mode='ground', size=options['size'], pad=8,
+            laid = core.pack(verts, uvs, faces, fuv, fmats, specs,
+                             mode='oks' if options.get('texel') == 'none' else 'ground', size=options['size'], pad=8,
                              unit_m=unit, profile=options['profile'], shrink=True)
         except core.AtlasFitError as exc:
             calc = exc.calc

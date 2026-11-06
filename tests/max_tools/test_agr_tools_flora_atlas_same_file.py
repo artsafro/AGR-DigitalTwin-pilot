@@ -35,3 +35,32 @@ def test_mismatch_branch_still_present_for_a_different_opacity_file():
     same = text.index("_same_file(oinfo['file'], info['file'])")
     both = text.index("'both diffuse alpha and an opacity map'")
     assert same < both  # the same-file case is decided first; any other file keeps the refusal
+
+
+def _core():
+    spec = importlib.util.spec_from_file_location('agr_tools_atlas_core_same', ROOT / 'adapters/max/agr_tools/atlas_core.py')
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = mod
+    spec.loader.exec_module(mod)
+    return mod
+
+
+class _Ctx(object):
+    def __init__(self, options):
+        self.options, self.core = options, _core()
+
+
+def test_groundel_texel_option_none_only_for_npm_profile():
+    import pytest
+    g = _glue()
+    assert g._groundel_options(_Ctx({'profile': 'npm'}), 'preview', None)['texel'] == 'ground'  # default unchanged
+    assert g._groundel_options(_Ctx({'profile': 'npm', 'texel': 'none'}), 'preview', None)['texel'] == 'none'
+    with pytest.raises(ValueError, match="needs profile 'npm'"):
+        g._groundel_options(_Ctx({'texel': 'none'}), 'preview', None)
+    with pytest.raises(ValueError, match="'ground' or 'none'"):
+        g._groundel_options(_Ctx({'profile': 'npm', 'texel': 35}), 'preview', None)
+
+
+def test_texel_none_routes_to_the_oks_mode_of_pack():
+    text = (ROOT / 'adapters/max/agr_tools/flora_atlas_max.py').read_text(encoding='utf-8')
+    assert "mode='oks' if options.get('texel') == 'none' else 'ground'" in text
