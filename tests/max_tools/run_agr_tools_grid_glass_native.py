@@ -127,6 +127,9 @@ def grid_apply():
     codes = sorted(f['code'] for o in pre['objects'] for f in o['findings'])
     assert codes == ['t_junction', 'triangles'], codes
     assert emax.snapshot([n]) == hash0 and len(list(rt.objects)) == objs0, 'preview changed the scene'
+    import pymxs
+    with pymxs.undo(True, 'H setup'):  # its own record, so the run's record is the one above it
+        rt.select(n)
     rep = agr.edits_100('model.grid_cleanup', 'apply', pre)
     assert rep['status'] == 'pass', json.dumps(rep)[:1500]
     assert emax.snapshot([n]) == hash0, 'the original changed'
@@ -143,8 +146,13 @@ def grid_apply():
     missing = [p for p in corners if not any(math.dist(p, q) < 1e-6 for q in m['verts'])]
     assert not missing, missing[:4]
     assert [str(o.name) for o in rt.selection] == sel_before, 'selection not restored'
-    rt.execute('max undo')  # ONE undo removes the whole run
-    assert not copies_of('SM_GridH_Dirty_Main', '_AGR_grid_') and len(list(rt.objects)) == objs0, 'one undo'
+    steps = []
+    for _ in range(4):  # measured: how many undo steps take the copy away
+        rt.execute('max undo')
+        steps.append({'copies': len(copies_of('SM_GridH_Dirty_Main', '_AGR_grid_')), 'objects': len(list(rt.objects)),
+                      'original_same': rt.isValidNode(n) and emax.snapshot([n]) == hash0})
+    summary['undo_steps'] = steps
+    assert steps[0]['copies'] == 0 and steps[0]['original_same'], ('one undo', steps)
     return {'preview_codes': codes, 'apply_done': rep['plan']['done'], 'copy': str(c.name), 'stats': st,
             'counts': pre['plan']['rows'][0]['counts'], 'objects_before_after': [objs0, objs0 + 1],
             'hidden_added': 0, 'undo_removes_copy': True}
@@ -299,6 +307,35 @@ check('grid_cm_scene', grid_cm_scene)
 check('glass_planes', glass_all)
 check('no_new_globals', no_new_globals)
 check('polygon_rows', polygon_rows)
+(OUT / 'summary.json').write_text(json.dumps(summary, indent=1, ensure_ascii=False, default=str), encoding='utf-8')
+
+
+def undo_variants():
+    """Measure which rebuild route one `max undo` takes back (control: copy only; A: setMesh block; E: the same
+    block inside MAXScript `undo on`)."""
+    import pymxs
+    out = {}
+    m = hb.glass('single')
+    for variant in ('control', 'A', 'E'):
+        reset()
+        b = rt.box(name='U_' + variant)
+        rt.convertTo(b, rt.Editable_Poly)
+        with pymxs.undo(True, 'setup'):
+            rt.select(b)
+        with pymxs.undo(True, 'run ' + variant):
+            c = rt.copy(b)
+            c.name = 'U_copy_' + variant
+            if variant != 'control':
+                s = gmax.mesh_script(int(c.inode.handle), m['verts'], m)
+                if variant == 'E':
+                    s = 'undo "rebuild" on ' + s
+                rt.execute(s)
+        rt.execute('max undo')
+        out[variant] = {'copy_left': rt.getNodeByName('U_copy_' + variant) is not None, 'objects': len(list(rt.objects))}
+    return out
+
+
+check('undo_variants', undo_variants)
 (OUT / 'summary.json').write_text(json.dumps(summary, indent=1, ensure_ascii=False, default=str), encoding='utf-8')
 print('GRID_GLASS_NATIVE checks', sorted(summary['checks']), 'errors', sorted(summary['errors']))
 assert not summary['errors'], 'native grid/glass failed: see summary.json'
