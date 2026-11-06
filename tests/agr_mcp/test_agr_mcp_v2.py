@@ -207,7 +207,8 @@ def test_catalogue_is_generated_from_the_plan():
     assert set(cat["agr_op_preview"].input["properties"]["op"]["enum"]) == ops
     assert set(catalog.apply_ids(PLAN)) == apply == set(max_bridge.APPLY_OVER_MCP)
     assert len(checks) == 38 and len(ops) == 32 and len(apply) == 11
-    assert set(tools.LISTED) == set(cat) and len(cat) == 52 + 15 + 3
+    hook = {x.name for x in ops_d108.register({})}  # branch U's tools (empty with the stub)
+    assert set(tools.LISTED) | hook == set(cat) and len(cat) == 52 + 15 + 3 + len(hook)
     for n in tools.PHASE0:
         assert "Deprecated" in cat[n].description, n
     assert not cat["agr_op_apply"].read_only and set(cat["agr_op_apply"].input["properties"]) == {
@@ -241,7 +242,8 @@ def test_plan_row_without_a_route_fails_the_build():
 def test_ops_d108_hook_adds_specs_without_editing_tools(monkeypatch):
     extra = spec_mod.Spec("agr_d108_keep", "D108 keep (branch U)", {"type": "object"}, {"type": "object"},
                           lambda a: {"ok": 1}, lambda a: "offline", schema=2)
-    assert ops_d108.register({}) == []
+    own = ops_d108.register({})  # [] with the stub; branch U's tools after it lands
+    assert all(isinstance(x, spec_mod.Spec) for x in own) and len({x.name for x in own}) == len(own)
     monkeypatch.setattr(ops_d108, "register", lambda cat: [extra])
     assert tools.catalog()["agr_d108_keep"] is extra
     monkeypatch.setattr(ops_d108, "register", lambda cat: [dataclass_copy(extra, "agr_check_run")])
