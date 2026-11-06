@@ -401,7 +401,7 @@ def _shift_uv(node, du, dv):
         rt.update(node)
 
 
-def vpm_udims(lib, kind, address, project_dir, mode='preview', version='high', slot=1, tile_limit=5,
+def vpm_udims(lib, kind, address, project_dir, mode='preview', version='high', slot=1, tile_limit=None,
               extra_used=None, obj_type='Ground', texel=1000.0):
     """VPM textures of the imported assets of one library: preview -> plan; apply -> maps copied under the VPM
     names into <project>/textures/vpm/, flat ERM/Normal placeholders, UVs moved by whole tiles, bitmaps repointed,

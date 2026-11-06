@@ -22,6 +22,9 @@ import re
 MAX_UDIM = 1100
 TILE_PX = 3600     # owner 06.11: project density 1000 px/m, a tile is 3.6 m = 3600 px
 TEXEL_PX_M = 1000.0
+# Owner 06.11 (accepted recommendations): Flora always one UDIM per species (packing crowns at 1000 px/m only
+# shrinks them); MAF one UDIM per texture set up to 5 sets, then packed tiles. ERM/Normal placeholders stay flat.
+DEFAULT_TILE_LIMIT = {'flora': None, 'maf': 5}
 PAD_PX = 16
 FLAT = {'erm': (0, 200, 0), 'normal': (128, 128, 255)}  # E=0, roughness 0.78, metal 0; flat tangent normal
 _ROLE_TAILS = (('diffuse', r'(_diffuse|_d|_basecolor|_albedo)'), ('normal', r'(_normal|_n)'),
@@ -103,7 +106,7 @@ def _inside_unit(bb, eps=1e-4):
     return bb is not None and bb[0][0] >= -eps and bb[0][1] >= -eps and bb[1][0] <= 1 + eps and bb[1][1] <= 1 + eps
 
 
-def vpm_plan(sets, used, address, texture_stem, kind, slot=1, tile_limit=5, obj_type='Ground', texel=TEXEL_PX_M,
+def vpm_plan(sets, used, address, texture_stem, kind, slot=1, tile_limit=None, obj_type='Ground', texel=TEXEL_PX_M,
              tile_px=TILE_PX):
     """Plan of the VPM textures of one kind ('flora' / 'maf').
 
@@ -115,7 +118,8 @@ def vpm_plan(sets, used, address, texture_stem, kind, slot=1, tile_limit=5, obj_
     if not sets:
         return {'kind': kind, 'mode': 'empty', 'rows': [], 'tiles': []}
     warnings = [] if used.get(slot) else ['no_ground_tiles' if obj_type.startswith('Ground') else 'no_used_tiles']
-    if len(sets) <= tile_limit:
+    limit = DEFAULT_TILE_LIMIT.get(kind, 5) if tile_limit is None else tile_limit
+    if limit is None or len(sets) <= limit:
         tiles = allocate(used, len(sets), slot)
         rows = []
         for s, (sl, udim) in zip(sets, tiles):

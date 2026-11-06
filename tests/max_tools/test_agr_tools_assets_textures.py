@@ -129,3 +129,11 @@ def test_a_set_bigger_than_a_tile_is_fitted_and_reported_not_raised():
     assert plan['texel_reduced'] == ['big'] and big['w'] <= 3600 - 32 and big['texel_px_per_m'] < 1000
     small = [r for r in plan['rows'] if r['material'] == 'small'][0]
     assert small['texel_px_per_m'] == 1000.0 and 'findings' not in small
+
+
+def test_default_limits_flora_always_tile_per_species_maf_five():
+    many = _sets(12)
+    flora = T.vpm_plan(many, {1: {1001}}, 'Addr', N.texture_stem, 'flora')
+    assert flora['mode'] == 'tile_per_set' and len(flora['tiles']) == 12 and flora['tiles'][0] == (1, 1002)
+    assert T.vpm_plan(_sets(5), {}, 'Addr', N.texture_stem, 'maf')['mode'] == 'tile_per_set'
+    assert T.vpm_plan(_sets(6), {}, 'Addr', N.texture_stem, 'maf')['mode'] == 'packed_4k'
