@@ -91,9 +91,26 @@ def _alive(pid: int) -> bool:
     return True
 
 
+def _read_bytes(path: Path) -> bytes:
+    """`path.read_bytes()`, retrying a Windows sharing violation.
+
+    A contender's `_consume_handle` holds the file with DELETE access for a moment; a plain open
+    then fails with PermissionError (EACCES, no winerror). Reading that as "not ours"/"not stale"
+    made every hammer thread give up. Other errors and the last attempt still raise.
+    """
+    for attempt in range(_RELEASE_ATTEMPTS):
+        try:
+            return path.read_bytes()
+        except PermissionError:
+            if os.name != "nt" or attempt + 1 >= _RELEASE_ATTEMPTS or path.is_dir():
+                raise
+        _sleep(_RELEASE_PAUSE_S)
+    raise AssertionError("unreachable")
+
+
 def _read_info(path: Path) -> dict | None:
     try:
-        info = json.loads(path.read_text(encoding="utf-8"))
+        info = json.loads(_read_bytes(path).decode("utf-8"))
     except (OSError, ValueError):
         return None
     return info if isinstance(info, dict) else None
@@ -150,7 +167,7 @@ def _mutex_token_ours(raw: bytes, token: str) -> bool:
 
 def _mutex_is_ours(mutex: Path, token: str) -> bool:
     try:
-        raw = mutex.read_bytes()
+        raw = _read_bytes(mutex)
     except OSError:
         return False
     return _mutex_token_ours(raw, token)
@@ -439,12 +456,21 @@ def _consume_handle(path: Path, pred) -> str:
     k = _kernel32()
     wintypes = _kernel32.wintypes
     # GENERIC_READ | DELETE, share read/write/delete, OPEN_EXISTING
-    handle = k.CreateFileW(os.fspath(path), 0x80000000 | 0x00010000, 0x1 | 0x2 | 0x4,
-                           None, 3, 0x80, None)
     invalid = ctypes.c_void_p(-1).value
-    if handle is None or ctypes.c_void_p(handle).value in (None, 0, invalid):
+    handle = None
+    for attempt in range(_RELEASE_ATTEMPTS):
+        handle = k.CreateFileW(os.fspath(path), 0x80000000 | 0x00010000, 0x1 | 0x2 | 0x4,
+                               None, 3, 0x80, None)
+        if handle is not None and ctypes.c_void_p(handle).value not in (None, 0, invalid):
+            break
         err = ctypes.get_last_error()
-        return "gone" if err in (2, 3) else "failed"
+        if err in (2, 3):
+            return "gone"
+        # 32 = sharing violation: another caller is reading this file with a plain open (no
+        # FILE_SHARE_DELETE). Transient; giving up here left every contender busy on a stale file.
+        if err != 32 or attempt + 1 >= _RELEASE_ATTEMPTS:
+            return "failed"
+        _sleep(_RELEASE_PAUSE_S)
     try:
         chunks = []
         buf = ctypes.create_string_buffer(4096)
