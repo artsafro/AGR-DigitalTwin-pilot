@@ -152,10 +152,13 @@ def grid_apply():
         steps.append({'copies': len(copies_of('SM_GridH_Dirty_Main', '_AGR_grid_')), 'objects': len(list(rt.objects)),
                       'original_same': rt.isValidNode(n) and emax.snapshot([n]) == hash0})
     summary['undo_steps'] = steps
-    assert steps[0]['copies'] == 0 and steps[0]['original_same'], ('one undo', steps)
+    # Measured (jobs 20261106-050515-f81e1ddd, 20261105-003249-e0800495): in 3dsmaxbatch every pymxs undo record of
+    # ONE python.ExecuteFile collapses into one step, so this undo also takes the setup (the original). The run is
+    # fully undone by ONE step; isolation from earlier user actions is shown only in interactive Max (release R).
+    assert steps[0]['copies'] == 0, ('one undo', steps)
     return {'preview_codes': codes, 'apply_done': rep['plan']['done'], 'copy': str(c.name), 'stats': st,
             'counts': pre['plan']['rows'][0]['counts'], 'objects_before_after': [objs0, objs0 + 1],
-            'hidden_added': 0, 'undo_removes_copy': True}
+            'hidden_added': 0, 'undo_removes_copy': True, 'undo_steps': steps}
 
 
 def grid_weld_and_skips():
@@ -310,32 +313,6 @@ check('polygon_rows', polygon_rows)
 (OUT / 'summary.json').write_text(json.dumps(summary, indent=1, ensure_ascii=False, default=str), encoding='utf-8')
 
 
-def undo_variants():
-    """Measure which rebuild route one `max undo` takes back (control: copy only; A: setMesh block; E: the same
-    block inside MAXScript `undo on`)."""
-    import pymxs
-    out = {}
-    m = hb.glass('single')
-    for variant in ('control', 'A', 'E'):
-        reset()
-        b = rt.box(name='U_' + variant)
-        rt.convertTo(b, rt.Editable_Poly)
-        with pymxs.undo(True, 'setup'):
-            rt.select(b)
-        with pymxs.undo(True, 'run ' + variant):
-            c = rt.copy(b)
-            c.name = 'U_copy_' + variant
-            if variant != 'control':
-                s = gmax.mesh_script(int(c.inode.handle), m['verts'], m)
-                if variant == 'E':
-                    s = 'undo "rebuild" on ' + s
-                rt.execute(s)
-        rt.execute('max undo')
-        out[variant] = {'copy_left': rt.getNodeByName('U_copy_' + variant) is not None, 'objects': len(list(rt.objects))}
-    return out
-
-
-check('undo_variants', undo_variants)
 (OUT / 'summary.json').write_text(json.dumps(summary, indent=1, ensure_ascii=False, default=str), encoding='utf-8')
 print('GRID_GLASS_NATIVE checks', sorted(summary['checks']), 'errors', sorted(summary['errors']))
 assert not summary['errors'], 'native grid/glass failed: see summary.json'
