@@ -367,8 +367,8 @@ def deliver():
     out['station'] = a = _deliver_run('station', st['objects'], st.get('options') or {})
     assert a['stage']['status'] == 'blocked' and any(b.startswith('ucx.gap') for b in a['stage']['blockers'])
     assert a['files'] == ['deliver.json', 'passport.json'], a['files']
-    # (b) every check on (only qa.omk_te of branch T and qa.sintez skipped): the full blocker list
-    full = {'skip': {'qa.omk_te': 'кнопка ветки T', 'qa.sintez': 'нет таблицы SINTEZ на синтетике'}}
+    # (b) every check on (only qa.sintez skipped: no SINTEZ table on a synthetic scene): the full blocker list
+    full = {'skip': {'qa.sintez': 'нет таблицы SINTEZ на синтетике'}}
     out['full_checks'] = _deliver_run('full', st['objects'], full)
     # (c) no blocker (UCX 10 mm apart): the files are written into the run folder
     objs = []

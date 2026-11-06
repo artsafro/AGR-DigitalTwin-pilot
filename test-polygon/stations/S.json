@@ -147,7 +147,7 @@
      "qa.tris": "станция: шаги ветки S и light.check; проверки 0.5-0.8 и export.checked - в нативной приёмке",
      "ucx.audit": "станция: шаги ветки S и light.check; проверки 0.5-0.8 и export.checked - в нативной приёмке",
      "qa.sintez": "нет таблицы SINTEZ на синтетике",
-     "qa.omk_te": "кнопка ветки T",
+     "qa.omk_te": "код ОМК ТЭ проверяет станция ветки T (1.0.30)",
      "export.checked": "станция: шаги ветки S и light.check; проверки 0.5-0.8 и export.checked - в нативной приёмке"
     }
    }
