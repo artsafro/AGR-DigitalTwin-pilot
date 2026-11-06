@@ -42,8 +42,7 @@ import H_build as hb  # noqa: E402
 
 def step(msg):
     with open(OUT / 'progress.txt', 'a', encoding='utf-8') as f:
-        f.write(msg + '
-')
+        f.write(msg + chr(10))
         f.flush()
         os.fsync(f.fileno())
 
