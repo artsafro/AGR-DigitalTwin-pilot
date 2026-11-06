@@ -295,9 +295,12 @@ def polygon_rows():
     """My stations of the live polygon: build polygon_all from load_catalog() and press every M row."""
     sys.path.insert(0, str(ROOT / 'test-polygon' / 'build'))
     sys.path.insert(0, str(ROOT / 'test-polygon'))
+    sys.path.insert(0, str(ROOT / 'src'))  # polygon_core.load_catalog reads dt_ai (uv_nudge)
     import polygon_core as core
     cat = OUT / 'catalog.json'
-    cat.write_text(json.dumps(core.load_catalog(), ensure_ascii=False), encoding='utf-8')
+    pre = os.environ.get('AGR_M_CATALOG')  # load_catalog() written by the uv env before the job (dt_ai deps)
+    text = Path(pre).read_text(encoding='utf-8') if pre else json.dumps(core.load_catalog(), ensure_ascii=False)
+    cat.write_text(text, encoding='utf-8')
     os.environ['AGR_POLYGON_CATALOG'] = str(cat)
     import build_scene
     fresh()

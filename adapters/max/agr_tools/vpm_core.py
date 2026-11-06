@@ -126,13 +126,13 @@ def weld(mesh, pieces):
     vkey, verts_w, ukey, uvs = {}, [], {}, []
     tris, uv_tris, mats, src = [], [], [], []
     for p in pieces:
-        src = mesh['tris'][p['tri']]
+        corners = mesh['tris'][p['tri']]
         vids, uids = [], []
         for w, uv in zip(p['w'], p['uv']):
             acc = {}
             for j in range(3):
                 if abs(w[j]) > 1e-12:
-                    acc[src[j]] = acc.get(src[j], 0.0) + w[j]
+                    acc[corners[j]] = acc.get(corners[j], 0.0) + w[j]
             key = tuple(sorted((vid, round(x, 9)) for vid, x in acc.items()))
             if key not in vkey:
                 vkey[key] = len(verts_w)

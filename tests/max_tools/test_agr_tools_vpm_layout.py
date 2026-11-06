@@ -379,6 +379,9 @@ def test_weld_output_is_closed_where_the_source_is():
             k = tuple(sorted((t[e], t[(e + 1) % 3])))
             count[k] = count.get(k, 0) + 1
     assert max(count.values()) <= 2
+    # every output triangle names its source triangle (the glue hides fan diagonals by it; native job
+    # 20261106-045048-249fe351 found the list overwritten)
+    assert len(geo['src_tri']) == len(geo['tris']) and all(isinstance(i, int) for i in geo['src_tri'])
     # boundary edges of the welded copy = boundary of the source (bottom, top and the 4-wall loop has none)
     src = core_mesh(MB.facade(openings=False, glass=False))
     sb = {}
