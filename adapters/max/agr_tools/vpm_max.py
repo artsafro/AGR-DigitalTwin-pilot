@@ -133,12 +133,31 @@ def vpm_build(ctx, mode, nodes, preview):
     library, maps_reason = _library(ctx, o)
     if not maps_reason and not out_dir:
         maps_reason = file_reason
+    maps_planned = maps_error = None
+    if library is not None and not maps_reason and done:
+        # 1.0.1 (KPP1 e2e 20261106-101005-9a657979): step 6 is planned here, so a map name / table error refuses
+        # in the preview and BEFORE the copies of apply (was: copies and vpm_table.json written, then a refusal)
+        vm = ctx.agr._load_core('vpmmaps_core.py', 'agr_tools_vpmmaps_core')
+        try:
+            mp = vm.plan_maps(core.maps_table(plan), library, os.path.join(out_dir, 'maps'))
+            maps_planned = {'maps': len(mp['maps']), 'skipped': len(mp['skipped']),
+                            'names': sorted(m['name'] for m in mp['maps'])[:6]}
+        except ValueError as exc:
+            maps_error = 'step 6 (maps D+ERM+N) cannot be planned: {} (options.address names the maps)'.format(exc)
     extra = {'options': o, 'layer': LAYER, 'issue': ISSUE, 'unit_m': k, 'renumber': renumber_src,
-             'out_dir': out_dir, 'steps': _steps(maps_reason, file_reason)}
+             'out_dir': out_dir, 'steps': _steps(maps_reason or maps_error, file_reason)}
+    if maps_error:
+        extra['steps'][5]['status'] = 'refused'
+    if maps_planned is not None:
+        extra['maps_planned'] = maps_planned
     if mode == 'preview':
+        if maps_error:
+            skipped.append(edit.skipped('maps D+ERM+N', maps_error))
         return edit.report(TOOL, 'preview', entries, done, skipped, (), state_hash=edit.fingerprint(state),
                            extra=extra)
     edit.require_current(preview, state)
+    if maps_error:
+        raise ValueError(maps_error + ': nothing built (fail-closed)')
     if edit.fingerprint(preview['plan']['done']) != edit.fingerprint(done):
         raise edit.StalePreview('the build differs from the preview; run preview again')
     work = [(by_key[obj['key']], p) for obj in plan['objects'] if not obj['findings'] for p in obj['parts']]

@@ -20,9 +20,10 @@ Input mesh: {'key': handle, 'name', 'verts': [[x, y, z]] metres world double, 't
 import importlib.util
 import math
 import os
+import re
 
 TOOL = 'vpm.build'
-OPTION_KEYS = {'grid_zero_m', 'step_m', 'period_by_id', 'tile_px', 'texel_px_per_m', 'projected_ids', 'glass_ids',
+OPTION_KEYS = {'address', 'grid_zero_m', 'step_m', 'period_by_id', 'tile_px', 'texel_px_per_m', 'projected_ids', 'glass_ids',
                'unroll', 'out_dir', 'library_path'}
 GLASS_SUFFIX = '_glass'
 
@@ -37,6 +38,9 @@ def _sibling(name, alias):
 
 lay = _sibling('uvlayout_core.py', 'agr_tools_uvlayout_core_vpm')
 u10 = _sibling('udim10_core.py', 'agr_tools_udim10_core_vpm')
+
+
+ADDRESS_RE = re.compile(r'[A-Za-z0-9]+(?:_[A-Za-z0-9]+)*')
 
 
 def _num(v, name, positive=True):
@@ -78,6 +82,13 @@ def options(opts):
     for key in ('out_dir', 'library_path'):
         if out[key] is not None and (not isinstance(out[key], str) or not out[key].strip()):
             raise ValueError('options.{} must be a path'.format(key))
+    # 1.0.1 (KPP1 e2e): the maps of step 6 are named T_<Address>_<map>_<slot>.<UDIM>.png (names_core); a working
+    # object name (BODY_..._001) has no address, so the address of the SM names is an option
+    addr = opts.get('address')
+    if addr is not None and (not isinstance(addr, str) or not ADDRESS_RE.fullmatch(addr)):
+        raise ValueError('options.address must be Latin letters, digits and single "_" (SM_<Address>_Main): {!r}'.format(
+            addr))
+    out['address'] = addr
     per = opts.get('period_by_id', {})
     if not isinstance(per, dict):
         raise ValueError('options.period_by_id must be {library id: metres}')
@@ -278,10 +289,19 @@ def build(meshes, opts, renumber=None):
     return {'options': o, 'objects': out}
 
 
+def map_mesh_name(o, part_name, part):
+    """Name under which vpmmaps_core names the maps of a part: SM_<Address>_Main / _MainGlass when options.address is
+    given (1.0.1), else the output mesh name (it must then be an SM object name already)."""
+    if o.get('address'):
+        return 'SM_{}_{}'.format(o['address'], 'MainGlass' if part == 'glass' else 'Main')
+    return part_name
+
+
 def maps_table(plan):
-    """udim_table of vpmmaps_core.build_maps (branch N): {output mesh name: {library_id: udim}}."""
-    return {p['name']: {int(k): v for k, v in p['summary']['udim_table'].items()}
-            for o in plan['objects'] if not o['findings'] for p in o['parts']}
+    """udim_table of vpmmaps_core.build_maps (branch N): {map mesh name: {library_id: udim}}."""
+    o = plan['options']
+    return {map_mesh_name(o, p['name'], p['summary']['part']): {int(k): v for k, v in p['summary']['udim_table'].items()}
+            for ob in plan['objects'] if not ob['findings'] for p in ob['parts']}
 
 
 def table_json(plan, scene, version):

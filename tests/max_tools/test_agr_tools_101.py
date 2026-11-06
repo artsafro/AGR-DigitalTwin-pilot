@@ -372,3 +372,29 @@ def test_ucx_piece_has_channel_1_named_uv(monkeypatch):
 def test_vpm_copy_names_its_channel_1():
     src = (PKG / 'vpm_max.py').read_text(encoding='utf-8')
     assert "rt.setUserProp(c, 'MapChannel:1', 'UV')" in src and "rt.setUserProp(c, UDIM_PROP," in src
+
+
+# ---- stage 6: maps of vpm.build named by the address, planned before the copies ----------------------------------
+def test_vpm_maps_named_by_the_address_of_the_working_body(tmp_path):
+    """RED on 1.0.1-pre (KPP1 e2e 20261106-101005-9a657979): with the roughness fixed, step 6 refused «mesh name
+    'BODY_AGRLibraryv001_001' is not an SM object name» AFTER the copies and vpm_table.json were written. The maps
+    take the SM name of options.address (T_<Address>_<map>_<slot>.<UDIM>.png)."""
+    vpm = _load('vpm_core.py', 'agr_tools_vpm_core')
+    lib = ml.load_library(str(LIB))
+    plan = {'options': vpm.options({'address': 'Kpp_1', 'glass_ids': [39]}),
+            'objects': [{'key': 1, 'name': 'BODY_AGRLibraryv001_001', 'findings': [], 'parts': [
+                {'name': 'BODY_AGRLibraryv001_001', 'summary': {'part': 'body', 'udim_table': {'3': 1001, '29': 1002}}},
+                {'name': 'BODY_AGRLibraryv001_001_glass', 'summary': {'part': 'glass', 'udim_table': {'39': 1001}}}]}]}
+    table = vpm.maps_table(plan)
+    assert table == {'SM_Kpp_1_Main': {3: 1001, 29: 1002}, 'SM_Kpp_1_MainGlass': {39: 1001}}
+    res = vc.plan_maps(table, lib, str(tmp_path), {'slot': {'SM_Kpp_1_MainGlass': 2}})
+    names = sorted(m['name'] for m in res['maps'])
+    assert 'T_Kpp_1_Diffuse_1.1001.png' in names and 'T_Kpp_1_ERM_1.1002.png' in names and not res['skipped']
+    with pytest.raises(ValueError):
+        vpm.options({'address': 'Kpp 1'})
+    # without the address the working name still refuses (now in the preview: vpm_max plans step 6 before copies)
+    bare = dict(plan, options=vpm.options({}))
+    with pytest.raises(ValueError):
+        vc.plan_maps(vpm.maps_table(bare), lib, str(tmp_path))
+    src = (PKG / 'vpm_max.py').read_text(encoding='utf-8')
+    assert src.index('if maps_error:\n        raise ValueError') < src.index('_session_core().in_session')
