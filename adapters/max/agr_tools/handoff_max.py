@@ -180,11 +180,21 @@ def _export_copies(rt, nodes):
     """Temporary Editable_Poly copies of `nodes` (names, world transforms, materials, user props, hierarchy inside
     the set) for the FBX: the originals are never converted, relinked or collapsed. The caller deletes them."""
     copies = {}
+    po = rt.polyop
     for n in nodes:
         c = rt.copy(n)
         rt.convertToPoly(c)
         c.name = n.name
         c.material = n.material
+        # bake the object offset (pivot moved off the geometry) into the copy's vertices, world positions unchanged:
+        # the Blender importer puts an FBX geometric transform into the OBJECT matrix and a child inherits it
+        # (GLASS_001 moved by the pivot offset of BODY_Brick_001, job 20261106-134044-fbdf80ba)
+        pts = [po.getVert(c, i) for i in range(1, int(po.getNumVerts(c)) + 1)]
+        c.objectOffsetPos = rt.Point3(0, 0, 0)
+        c.objectOffsetRot = rt.Quat(0, 0, 0, 1)
+        c.objectOffsetScale = rt.Point3(1, 1, 1)
+        for i, p in enumerate(pts, 1):
+            po.setVert(c, i, p)
         copies[int(n.inode.handle)] = c
     for n in nodes:
         c = copies[int(n.inode.handle)]

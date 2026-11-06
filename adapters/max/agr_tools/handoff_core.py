@@ -362,14 +362,44 @@ def _max_dev(a, b):
     return dev
 
 
-def _keys_close(a, b, tol):
-    """Sorted face keys [[cx,cy,cz,id,deg]] equal within tol in position, exactly in id/degree."""
+def multiset_close(a, b, tol, dims=3):
+    """Two point multisets equal: every point of `a` pairs with its own point of `b` within tol in the first `dims`
+    coordinates and exactly in the rest (matID, degree). Order-free (a sorted-list compare fails when 13.83 and
+    13.829999 swap places; measured on KPP1_Parapet, job 20261106-134538-40e13b6f)."""
     if len(a) != len(b):
         return False
-    for x, y in zip(a, b):
-        if x[3:] != y[3:] or any(abs(x[i] - y[i]) > tol for i in range(3)):
+    cell = max(tol * 2.0, 1e-9)
+    grid = {}
+
+    def key(p):
+        return tuple(int(math.floor(float(p[d]) / cell)) for d in range(dims))
+    for i, p in enumerate(b):
+        grid.setdefault(key(p), []).append(i)
+    used = set()
+    offsets = [()]
+    for _ in range(dims):
+        offsets = [o + (d,) for o in offsets for d in (-1, 0, 1)]
+    for p in a:
+        k = key(p)
+        found = None
+        for o in offsets:
+            for i in grid.get(tuple(k[d] + o[d] for d in range(dims)), ()):
+                q = b[i]
+                if i not in used and list(p[dims:]) == list(q[dims:]) and \
+                        all(abs(float(p[d]) - float(q[d])) <= tol for d in range(dims)):
+                    found = i
+                    break
+            if found is not None:
+                break
+        if found is None:
             return False
+        used.add(found)
     return True
+
+
+def _keys_close(a, b, tol):
+    """Face keys [[cx,cy,cz,id,deg]] equal as multisets: position within tol, id/degree exactly."""
+    return multiset_close(a, b, tol, 3)
 
 
 def compare(ref, got, rows=ROWS, check_roles=True):
@@ -410,13 +440,13 @@ def compare(ref, got, rows=ROWS, check_roles=True):
                 if len(ua['corners']) != len(ub['corners']):
                     out['uv_udim'].append((n, 'channel {} corners {} -> {}'.format(
                         ch, len(ua['corners']), len(ub['corners']))))
-                elif not _close_lists(ua['corners'], ub['corners'], TOL['uv']):
-                    out['uv_udim'].append((n, 'channel {} UV differs by {:.2e} (> {:.0e})'.format(
+                elif not multiset_close(ua['corners'], ub['corners'], TOL['uv'], 2):
+                    out['uv_udim'].append((n, 'channel {} UV differs (sorted max {:.2e} > {:.0e})'.format(
                         ch, _max_dev(ua['corners'], ub['corners']), TOL['uv'])))
         if 'normals' in out:
             if len(a['hard']) != len(b['hard']):
                 out['normals'].append((n, 'hard edges {} -> {}'.format(len(a['hard']), len(b['hard']))))
-            elif not _close_lists(a['hard'], b['hard'], TOL['pos_m']):
+            elif not multiset_close(a['hard'], b['hard'], TOL['pos_m'], 3):
                 out['normals'].append((n, 'hard edges moved'))
         if 'units' in out:
             if (a['bbox'] is None) != (b['bbox'] is None) or (

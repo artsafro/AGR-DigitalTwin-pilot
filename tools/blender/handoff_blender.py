@@ -91,10 +91,10 @@ def _matrix(rows):
 def normalise(manifest):
     """Object matrices = the Max node transforms of the manifest (pivots), scale 1, mesh data in metres.
 
-    Measured (lab job 20261106-134044-fbdf80ba): the importer folds the Max object offset (FBX geometric transform)
-    and the cm unit scale (0.01) into the OBJECT matrix, so a child inherits its parent's pivot offset (GLASS_001 moved
-    by the offset of BODY_Brick_001). For every object G = (P_cur @ L)^-1 @ M_cur (L = node local of the manifest)
-    goes into the mesh data and the object gets the manifest transform. Returns [problems]."""
+    Measured (lab job 20261106-134044-fbdf80ba): the importer puts the cm unit scale (0.01) into the OBJECT matrix
+    (mesh data in cm) and an FBX geometric transform (Max object offset) too, which a child then inherits; the Max
+    export bakes the object offsets of its copies, so the world positions are right and for every object
+    G = W_ref^-1 @ M_cur goes into the mesh data while the object gets the manifest transform. Returns [problems]."""
     from mathutils import Matrix
     ref = {o['name']: o for o in manifest['objects']}
     objs = [o for o in bpy.context.scene.objects if o.type == 'MESH' and o.name in ref]
@@ -103,9 +103,8 @@ def normalise(manifest):
     for obj in objs:
         r = ref[obj.name]
         p_ref = world[r['parent']] if r['parent'] in world and r['parent'] in bpy.data.objects else Matrix.Identity(4)
-        p_cur = obj.parent.matrix_world.copy() if obj.parent else Matrix.Identity(4)
         local[obj.name] = p_ref.inverted() @ world[obj.name]
-        geo[obj.name] = (p_cur @ local[obj.name]).inverted() @ obj.matrix_world
+        geo[obj.name] = world[obj.name].inverted() @ obj.matrix_world
     problems, done = [], {}
     for obj in objs:
         g = geo[obj.name]

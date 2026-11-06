@@ -116,6 +116,74 @@ def bitmap(name, path, **props):
 
 
 # ---- phase export --------------------------------------------------------------------------------------------------
+def add_channel2(c):
+    po = rt.polyop
+    po.setMapSupport(c, 2, True)
+    nmv = int(po.getNumMapVerts(c, 1))
+    po.setNumMapVerts(c, 2, nmv)
+    for i in range(1, nmv + 1):
+        p = po.getMapVert(c, 1, i)
+        po.setMapVert(c, 2, i, rt.Point3(float(p.x) + 1.0, float(p.y), 0.0))
+    nf = int(po.getNumFaces(c))
+    po.setNumMapFaces(c, 2, nf)
+    for f in range(1, nf + 1):
+        po.setMapFace(c, 2, f, po.getMapFace(c, 1, f))
+
+
+def diag_triangulation():
+    """Which property makes the Max 2024 FBX exporter write triangles (measured, parsed offline): one FBX per case."""
+    import pymxs
+    out = OUT / 'diag'
+    out.mkdir()
+    cases = {}
+    with pymxs.undo(False):
+        def cyl(name):
+            c = rt.Cylinder(radius=50, height=120, sides=8, heightsegs=1, capsegs=1, smooth=True, mapcoords=True)
+            c.name = name
+            rt.convertToPoly(c)
+            c.pos = rt.Point3(-1000, 0, 0)
+            return c
+        b = rt.Box(length=40, width=60, height=20, mapcoords=True)
+        b.name = 'D_box'
+        rt.convertToPoly(b)
+        cases['box'] = b
+        b2 = rt.Box(length=40, width=60, height=20, mapcoords=True)
+        b2.name = 'D_box_uv2'
+        rt.convertToPoly(b2)
+        add_channel2(b2)
+        cases['box_uv2'] = b2
+        cases['cyl'] = cyl('D_cyl')
+        c2 = cyl('D_cyl_pivot')
+        c2.pivot = c2.pos + rt.Point3(20, 10, -15)
+        cases['cyl_pivot'] = c2
+        c3 = cyl('D_cyl_uv2')
+        add_channel2(c3)
+        cases['cyl_uv2'] = c3
+        c4 = cyl('D_cyl_rot')
+        rt.rotate(c4, rt.EulerAngles(0, 0, 30))
+        cases['cyl_rot'] = c4
+    GLUE._fbx_params(rt, CORE.FBX_EXPORT_PARAMS)
+    done = {}
+    for key, n in cases.items():
+        copies = []
+        try:
+            with pymxs.undo(False):
+                copies = GLUE._export_copies(rt, [n])
+                rt.clearSelection()
+                rt.select(copies)
+                done[key] = bool(rt.exportFile(str(out / (key + '.fbx')), rt.name('noPrompt'), selectedOnly=True,
+                                               using=rt.FBXEXP))
+        finally:
+            with pymxs.undo(False):
+                for c in copies:
+                    rt.delete(c)
+    with pymxs.undo(False):
+        for n in cases.values():
+            rt.delete(n)
+    return done
+
+
+
 def build_synthetic():
     import pymxs
     maps = OUT / 'maps'
@@ -145,17 +213,7 @@ def build_synthetic():
         c = rt.Cylinder(radius=50, height=120, sides=8, heightsegs=1, capsegs=1, smooth=True, mapcoords=True)
         c.name = 'BODY_Brick_001'
         rt.convertToPoly(c)
-        po = rt.polyop
-        po.setMapSupport(c, 2, True)
-        nmv = int(po.getNumMapVerts(c, 1))
-        po.setNumMapVerts(c, 2, nmv)
-        for i in range(1, nmv + 1):
-            p = po.getMapVert(c, 1, i)
-            po.setMapVert(c, 2, i, rt.Point3(float(p.x) + 1.0, float(p.y), 0.0))
-        nf = int(po.getNumFaces(c))
-        po.setNumMapFaces(c, 2, nf)
-        for f in range(1, nf + 1):
-            po.setMapFace(c, 2, f, po.getMapFace(c, 1, f))
+        add_channel2(c)
         c.pos = rt.Point3(250, -130, 40)
         rt.rotate(c, rt.EulerAngles(0, 0, 30))
         c.pivot = c.pos + rt.Point3(20, 10, -15)
@@ -262,6 +320,7 @@ def phase_export():
     rt.units.SystemType = rt.name('centimeters')
     rt.units.SystemScale = 1.0
     sets = {}
+    check('diag_triangulation', diag_triangulation)
     check('build_synthetic', lambda: [str(n.name) for n in sets.setdefault('001', build_synthetic())])
     check('build_kpp1', lambda: [str(n.name) for n in sets.setdefault('002', build_kpp1())])
     scene = OUT / 'scene' / 'handoff_synth.max'

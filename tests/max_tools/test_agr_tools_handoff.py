@@ -388,3 +388,12 @@ def test_point_index_finds_the_nearest_within_tolerance_across_cells():
     assert idx.find([0.00095, 0.0, 0.0], 1e-4) == 'b'
     assert idx.find([0.0004, 0.0, 0.0], 1e-4) is None
     assert idx.find([-0.00005, 0.0, 0.0], 1e-4) == 'a'
+
+def test_compare_is_order_free_where_rounding_swaps_sorted_neighbours():
+    # KPP1_Parapet, job 20261106-134538-40e13b6f: 13.83 vs 13.829999 reorder the sorted keys -> false «differs»
+    ref = [[13.83, 0.0, 8.2225, 29, 4], [13.83, 0.15, 8.65, 35, 4], [13.83, 0.3, 8.3725, 29, 4]]
+    got = [[13.829999, 0.15, 8.65, 35, 4], [13.83, 0.0, 8.2225, 29, 4], [13.83, 0.3, 8.3725, 29, 4]]
+    assert not core._close_lists(sorted(ref), sorted(got), 1e-4)        # RED: the pairwise sorted compare
+    assert core.multiset_close(ref, got, 1e-4)                           # GREEN
+    assert not core.multiset_close(ref, [g[:3] + [9, 4] for g in got], 1e-4)
+    assert not core.multiset_close([[0.5, 0.5]], [[0.5, 0.500002]], 1e-6, 2)
