@@ -400,10 +400,12 @@ def edits_100(tool, mode, preview=None, nodes=None, options=None, actor='panel')
     An empty stub module answers `status: not_implemented` (issue #1024), so the base ships before F..U."""
     if actor not in ACTORS:
         raise ValueError('unknown actor: ' + repr(actor))
-    if mode == 'apply' and actor != 'panel' and tool in EDITS_100:
-        raise ValueError('needs_human: apply of ' + tool + ' is confirmed only by a button in the panel/dock')
-    return _journaled(tool, mode, actor, lambda: _dispatch_edit(EDITS_100, READ_100, GLUE_100, '#1024', tool, mode,
-                                                               preview, nodes, options))
+
+    def run():
+        if mode == 'apply' and actor != 'panel' and tool in EDITS_100:
+            raise ValueError('needs_human: apply of ' + tool + ' is confirmed only by a button in the panel/dock')
+        return _dispatch_edit(EDITS_100, READ_100, GLUE_100, '#1024', tool, mode, preview, nodes, options)
+    return _journaled(tool, mode, actor, run)  # a refused apply is journaled too (native job 20261106-040337)
 
 
 def _journal_core():

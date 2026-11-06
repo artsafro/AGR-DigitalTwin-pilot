@@ -392,3 +392,21 @@ def test_journal_core_record_and_path(tmp_path):
         jc.record('x', 'preview', 'pass', actor='robot')
     with pytest.raises(ValueError):
         jc.append({'tool': 'x'}, folder=str(tmp_path))
+
+
+def test_refused_apply_by_mcp_is_journaled_too(tmp_path, monkeypatch):
+    """Native job 20261106-040337-75e4eea7: needs_human was raised before the journal hook (60 lines of 114)."""
+    monkeypatch.setenv('AGR_JOURNAL_DIR', str(tmp_path))
+    rt = runtime()
+    p = ec.report('body.roof', 'preview', objects=[ec.entry(5, 'Box')], done=['Box'], state_hash=ec.fingerprint((1,)))
+    with pytest.raises(ValueError, match='^needs_human'):
+        rt.edits_100('body.roof', 'apply', p, actor='mcp')
+    line, = [json.loads(x) for x in (tmp_path / 'untitled.jsonl').read_text(encoding='utf-8').splitlines()]
+    assert (line['tool'], line['mode'], line['status'], line['actor']) == ('body.roof', 'apply', 'error', 'mcp')
+
+
+def test_max_host_is_a_host_adapter_with_roles():
+    """Native job 20261106-040337-75e4eea7: MaxHost had no role()/set_role()."""
+    host = _load(PKG / 'host_max.py', 'agr_host_max_100b')
+    assert issubclass(host.MaxHost, host._core().HostAdapter)
+    assert callable(host.MaxHost.role) and callable(host.MaxHost.set_role)

@@ -13,16 +13,25 @@ def _rt():
     return runtime
 
 
+_CONTRACT = None
+
+
 def _core():
+    """contract_core, loaded once (one HostAdapter class, so isinstance/issubclass hold)."""
+    global _CONTRACT
+    if _CONTRACT is not None:
+        return _CONTRACT
     import importlib.util
     here = os.path.dirname(os.path.abspath(__file__))
     spec = importlib.util.spec_from_file_location('agr_tools_contract_core', os.path.join(here, 'contract_core.py'))
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
+    _CONTRACT = mod
     return mod
 
 
-class MaxHost:
+class MaxHost(_core().HostAdapter):
+    """HostAdapter of 3ds Max (inherits role / set_role; native job 20261106-040337 found them missing)."""
     host = 'max'
 
     def __init__(self):

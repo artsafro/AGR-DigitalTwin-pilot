@@ -116,7 +116,7 @@ def host_adapter():
         assert abs(host.m_per_unit() - 0.01) < 1e-12
         with host.undo('AGR Tools 1.0 smoke: role'):
             host.set_role(ref, 'body')
-        assert host.role(ref) == 'body' and host.selection() == [] or True
+        assert host.role(ref) == 'body'
         try:
             host.set_role(ref, 'wall')
             raise AssertionError('unknown role accepted')
