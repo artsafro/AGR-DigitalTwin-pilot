@@ -1,13 +1,35 @@
 {
  "schema": 1,
  "button": "body.prepare",
- "tool": null,
+ "tool": "body.prepare",
  "version": "1.0",
- "shipped": false,
+ "shipped": true,
  "select": "named",
- "reason": "станция в работе, #1024, ветка G",
+ "reason": "body -> agr_role body, BODY_MGBodyBrick_001, LEVEL_L1/L2/roof planned (pass); a height helper with a Max copy counter (LEVEL_GBad001) breaks the extractor rule mesh.py:27-28 -> level_name",
  "apply_status": null,
- "objects": [],
+ "objects": [
+  {
+   "name": "SM_GBody_Ok_Main",
+   "scene": "polygon_all",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "LEVEL_GBad001",
+   "scene": "polygon_all",
+   "expect": "fail",
+   "codes": [
+    "level_name"
+   ]
+  }
+ ],
+ "options": {
+  "levels": [
+   3.0,
+   6.0,
+   9.0
+  ]
+ },
  "base": "1.0",
  "station": "1.0.4",
  "stations": [
