@@ -102,7 +102,7 @@
     182,
     0
    ],
-   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL",
+   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL; Q9 (06.11): эталон RGB - ral_classic.json (#F6B600 для 1021, #474A51 для 7024)",
    "roughness": 150,
    "metallic": 0,
    "emissive": 0,
@@ -117,10 +117,7 @@
     "evidence": "jobs/KPP1/materials.json Ladder_Alpha_RAL1021; jobs/TEC26-OKS/AC04/MATERIALS.md:88"
    },
    "maf_v005_id": null,
-   "note": "KPP/PSU/AC04 брали (238,201,0); здесь ral_classic #F6B600",
-   "questions": [
-    "Q9"
-   ]
+   "note": "KPP/PSU/AC04 брали (238,201,0) - это проектный override паспорта KPP, не библиотека"
   },
   {
    "library_id": 5,
@@ -187,7 +184,7 @@
     74,
     81
    ],
-   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL",
+   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL; Q9 (06.11): эталон RGB - ral_classic.json (#F6B600 для 1021, #474A51 для 7024)",
    "roughness": 150,
    "metallic": 0,
    "emissive": 0,
@@ -202,10 +199,7 @@
     "evidence": "docs/agr/decisions/OBR22_FACADE_PDF_UV_TRIAL.md:12-13,65"
    },
    "maf_v005_id": null,
-   "note": "в Revit-реестре рамы #45494E",
-   "questions": [
-    "Q9"
-   ]
+   "note": "Revit-реестр рамы #45494E и значения KPP - проектный override паспорта, не библиотека"
   },
   {
    "library_id": 8,
@@ -619,7 +613,7 @@
     182,
     0
    ],
-   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL",
+   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL; Q9 (06.11): эталон RGB - ral_classic.json (#F6B600 для 1021, #474A51 для 7024)",
    "roughness": 110,
    "metallic": 255,
    "emissive": 0,
@@ -639,9 +633,7 @@
     "evidence": "jobs/KPP1/scripts/vpm_textures.json:50-67"
    },
    "maf_v005_id": null,
-   "questions": [
-    "Q9"
-   ]
+   "note": "значения KPP - проектный override паспорта KPP"
   },
   {
    "library_id": 33,

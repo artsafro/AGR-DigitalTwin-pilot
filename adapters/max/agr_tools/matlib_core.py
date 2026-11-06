@@ -38,7 +38,7 @@ BASE_MAPS = ('facade_600x1200', 'ground_100x300', 'crumb_1x1', 'tile_600x600', '
              'brick_250x65', 'panel_v1200', 'panel_v600')
 RECORD_KEYS = {'library_id', 'key', 'name_ru', 'class', 'ral', 'rgb_srgb', 'rgb_note', 'roughness', 'metallic',
                'emissive', 'recipe', 'base_map', 'status', 'source', 'maf_v005_id'}
-OPTIONAL_KEYS = {'opacity', 'note', 'questions'}
+OPTIONAL_KEYS = {'opacity', 'note', 'questions', 'rgb_override'}   # rgb_override: project colour, not ral_classic (Q9)
 RIB_PARAMS = ('field_m', 'ribs')    # ribbed panel (AC08/AC09, audit Q5): pattern «N ribs per field», pitch = field / N
 BYTE_FIELDS = ('roughness', 'metallic', 'emissive')
 _KEY = re.compile(r'^[a-z][a-z0-9_]{1,63}$')
@@ -119,7 +119,10 @@ def validate_library(doc, ral=None):
         rgb = r['rgb_srgb']
         if not isinstance(rgb, list) or len(rgb) != 3 or not all(_is_byte(c) for c in rgb):
             raise ValueError(at + ': rgb_srgb must be [r, g, b] bytes')
-        if ral is not None and r['ral'] is not None and rgb != hex_rgb(ral[r['ral']]):
+        if 'rgb_override' in r and r['rgb_override'] is not True:
+            raise ValueError(at + ': rgb_override must be true when present')
+        if (ral is not None and r['ral'] is not None and not r.get('rgb_override')
+                and rgb != hex_rgb(ral[r['ral']])):
             raise ValueError(at + ': rgb_srgb differs from ral_classic.json {}'.format(r['ral']))
         for k in BYTE_FIELDS:
             if not _is_byte(r[k]):

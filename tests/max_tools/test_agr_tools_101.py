@@ -563,3 +563,28 @@ def test_q7_ground_coverings_live_in_a_separate_ground_table_referenced_by_the_o
     direct = ml.load_library
     with pytest.raises(ValueError, match='Ground table'):
         direct(str(tmp_path / 'materials_v002.json'))
+
+
+def test_q9_library_rgb_is_ral_classic_unless_marked_as_a_project_override():
+    """RED before Q9: no `rgb_override` marker existed and records 4, 7, 32 still listed Q9 as open."""
+    import copy
+    lib = ml.load_library(str(LIB))
+    ral = ml.ral_table(str(ROOT / 'tools/materials/ral_classic.json'))
+    assert ral['1021'] == '#F6B600' and ral['7024'] == '#474A51'
+    for r in lib['materials']:
+        if r['ral'] is not None and not r.get('rgb_override'):
+            assert r['rgb_srgb'] == ml.hex_rgb(ral[r['ral']]), r['key']
+    assert lib['by_id'][4]['rgb_srgb'] == [246, 182, 0] and lib['by_id'][7]['rgb_srgb'] == [71, 74, 81]
+    for lid in (4, 7, 32):
+        assert 'Q9' not in lib['by_id'][lid].get('questions', []) and 'Q9' in lib['by_id'][lid]['rgb_note']
+    # the KPP value (238, 201, 0) is a project override of the KPP passport: refused in the library unless marked
+    probe = copy.deepcopy(lib['by_id'][4])
+    probe['rgb_srgb'] = [238, 201, 0]
+    doc = {'schema': 1, 'version': 'v002', 'materials': [probe]}
+    with pytest.raises(ValueError, match='differs from ral_classic'):
+        ml.validate_library(doc, ral)
+    probe['rgb_override'] = True
+    ml.validate_library(doc, ral)
+    probe['rgb_override'] = 'yes'
+    with pytest.raises(ValueError, match='rgb_override'):
+        ml.validate_library(doc, ral)
