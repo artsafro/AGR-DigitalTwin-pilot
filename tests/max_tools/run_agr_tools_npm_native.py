@@ -35,6 +35,7 @@ summary = {'max_version': list(rt.maxVersion())[:3], 'package_sha256': hashlib.s
            'checks': {}, 'errors': {}}
 assert not rt.maxFileName, 'only an empty batch document is allowed'
 TEXEL = 39.0
+NPM_NAME = 'SM_Tverskaya_12_001_Main'
 
 
 def check(name, fn):
@@ -176,7 +177,7 @@ def npm_build(units='meters', tag='m'):
     copies, udim = make_vpm(units, tag)
     before = {str(c.name): (mesh_hash(c), uv_state(c)) for c in copies}
     maps_before = {p: md5(p) for p in (PANEL_MAP, BRICK_MAP)}
-    opts = {'udim_table': udim, 'out_dir': str(OUT / ('npm_' + tag))}
+    opts = {'udim_table': udim, 'out_dir': str(OUT / ('npm_' + tag)), 'name': NPM_NAME}
     t = time.time()
     pre = agr.edits_100('npm.build', 'preview', nodes=copies, options=opts)
     assert pre['status'] == 'pass', pre['objects']
@@ -226,14 +227,20 @@ def npm_build(units='meters', tag='m'):
     for c in copies:
         assert (mesh_hash(c), uv_state(c)) == before[str(c.name)], 'VPM copy changed'
     assert {p: md5(p) for p in maps_before} == maps_before, 'source maps changed'
+    # tex.check / atlas.sets_count need the export mapping of the NPM object (the export step sets it; here the
+    # test does, with the NPM name of the run): AGR_EXPORT_PATH of an NPM FBX
+    assert str(npm.name) == NPM_NAME, npm.name
+    rt.setUserProp(npm, 'AGR_EXPORT_PATH', 'C:/o/0001_Tverskaya_12_01.fbx')
     checks = {}
-    for tool in ('textures',):
-        rep = agr.checks_050(tool, [npm])
-        checks['tex.check'] = {'status': rep.get('status'), 'codes': sorted({f.get('code') for o in rep.get('objects', [])
-                                                                                for f in o.get('findings', [])})}
+    rep = agr.checks_050('textures', [npm])
+    checks['tex.check'] = {'status': rep.get('status'), 'codes': sorted({f.get('code') for o in rep.get('objects', [])
+                                                                            for f in o.get('findings', [])})}
     rep = agr.checks_070('sets_count', [npm], select=False)
     checks['atlas.sets_count'] = {'status': rep.get('status'), 'codes': sorted({
         f.get('code') for o in rep.get('objects', []) for f in o.get('findings', [])})}
+    # stacked K6 pieces of one ID share their cell by design (rigid transfer): only the review code may remain
+    assert set(checks['tex.check']['codes']) <= {'tex_overlap_review'}, checks
+    assert checks['atlas.sets_count']['codes'] == [], checks
     again = agr.edits_100('npm.build', 'apply', agr.edits_100('npm.build', 'preview', nodes=copies, options=opts),
                           nodes=copies)
     assert again['plan']['out_dir'] != app['plan']['out_dir'], 'second run overwrote the folder'

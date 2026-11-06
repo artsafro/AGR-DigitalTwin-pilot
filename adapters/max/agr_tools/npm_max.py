@@ -326,8 +326,8 @@ def run(ctx, mode, nodes, preview, tool, layer, attach, stem):
                 t = copies[0]
                 write_combined(t, copies[1:], p)
                 rt.delete(copies[1:])
-                if o.get('name'):
-                    t.name = rt.uniqueName(o['name'])
+                if o.get('name'):  # the NPM SM name as given; uniqueName (appends digits) only on a clash
+                    t.name = o['name'] if rt.getNodeByName(o['name']) is None else rt.uniqueName(o['name'] + '_')
             else:
                 for mi, c in enumerate(copies):
                     write_uv(c, *split_uv(p, mi))
