@@ -574,6 +574,7 @@ def stage7(st):
         rows = []
         for f in app['plan'].get('files') or ():
             if f.get('kind') == 'table':
+                S['npm_table_path'] = f['path']
                 try:
                     rows = json.loads(Path(f['path']).read_text(encoding='ascii'))['table']
                 except Exception as exc:  # noqa: BLE001
@@ -594,9 +595,16 @@ def stage7(st):
 
 
 def stage8(st):
-    press(st, 'npm.to_vpm', valid(S.get('npm')) or valid([S.get('vpm_body')]), None)
-    press(st, 'udim.udims_to_ids', valid([S.get('vpm_body')]) or valid([S.get('main')]), None)
-    st['notes'].append('этап 8 не выпущен (ветка Q → 1.1): кнопки отвечают not_implemented')
+    """Stage 8 (branch Q #1085, released in 1.0.0): the NPM of stage 7 back to a VPM by the npm.build table, then
+    UDIM -> ID (read) on the copies it made."""
+    opts = {'table': S['npm_table_path']} if S.get('npm_table_path') else None
+    if opts is None:
+        st['notes'].append('нет npm_table.json от npm.build: npm.to_vpm без таблицы (регионы атласа)')
+    pre, app = press(st, 'npm.to_vpm', valid(S.get('npm')) or valid([S.get('vpm_body')]), opts)
+    back = valid([rt.getNodeByName(c) for c in (app or {}).get('plan', {}).get('copies') or ()]) if app else []
+    if back:
+        st['notes'].append('ВПМ из НПМ: ' + ', '.join(names(back)))
+    press(st, 'udim.udims_to_ids', back or valid([S.get('vpm_body')]) or valid([S.get('main')]), None)
 
 
 def stage9(st):
