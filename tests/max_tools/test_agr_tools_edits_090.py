@@ -583,8 +583,8 @@ def test_unknown_fragment_file_and_branch_writer(tmp_path, monkeypatch):
 
 
 def test_committed_fragments_are_branch_fragments():
-    core, _ = _poly()  # branches A-E3 of #979 commit stations/<branch>.json (+ <branch>_build.py); nothing else
-    assert {p.stem for p in core.STATIONS_DIR.glob('*.json')} <= set(core.BRANCHES)
+    core, _ = _poly()  # branches A-E3 of #979 and F-U of #1024 commit stations/<branch>.json (+ <branch>_build.py)
+    assert {p.stem for p in core.STATIONS_DIR.glob('*.json')} <= set(core.ALL_BRANCHES)
     assert (core.STATIONS_DIR / 'README.md').is_file()
 
 
