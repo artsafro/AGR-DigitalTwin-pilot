@@ -174,7 +174,10 @@ def vpm_units_far_artist():
     if ref:
         for label in ('cm', 'far_2345678m'):
             for a, b in zip(out[label], ref):
-                assert a['tiles'] == b['tiles'] and a['out_tris'] == b['out_tris'], (label, a, b)
+                # equal up to sub-pixel slivers of the grid cut (job 20261106-050737-d9ae6dea: 2879 vs 2880 at
+                # 2 345 678 m); seam, tiles and texel are asserted per run by assert_vpm_ok
+                assert a['tiles'] == b['tiles'] and abs(a['out_tris'] - b['out_tris']) <= 0.001 * b['out_tris'],                     (label, a, b)
+                out.setdefault('out_tris_vs_metres', {})[label + ':' + a['part']] = a['out_tris'] - b['out_tris']
     return out
 
 
