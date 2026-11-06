@@ -626,7 +626,7 @@ def test_flow_tooltips_and_cards_from_json():
     nodes = roadmap.flow(suite, model.VERSION)
     assert [n['number'] for n in nodes] == list(range(10))
     assert sum(n['total'] for n in nodes) == len(suite['rows']) == 92  # 97 - 6 removed + 1 new (#973 decisions)
-    assert sum(n['done'] for n in nodes) == 13 + 12 + 13  # 0.1-0.5 + 0.7 + 0.8
+    assert sum(n['done'] for n in nodes) == 13 + 12 + 13 + 19  # 0.1-0.5 + 0.7 + 0.8 + 0.9
     for r in suite['rows']:
         tip = roadmap.tooltip(suite, r)
         assert r['does_ru'] in tip and r['reqs'] in tip and 'Когда:' in tip
@@ -641,7 +641,9 @@ def test_flow_tooltips_and_cards_from_json():
 def test_live_status_and_next_step_fail_closed():
     suite = roadmap.load_file(SUITE)
     status = roadmap.live_status(suite, {}, model.VERSION)
-    assert status['scene'] == 'not_run' and status['light'] == 'planned' and status['place'] == 'planned'
+    assert status['scene'] == 'not_run' and status['light'] == 'not_run' and status['place'] == 'not_run'
+    old = roadmap.live_status(suite, {}, '0.8.0')  # before 0.9 the light and place blocks had no button
+    assert old['light'] == 'planned' and old['place'] == 'planned'
     assert status['export'] == 'no_checks'  # cleanup/export ship as actions, not read-only checks
     assert roadmap.next_step(suite, status) == ('0 Сцена и источник: запустить проверки', 'scene')
     ok = {'schema': 1, 'status': 'pass'}

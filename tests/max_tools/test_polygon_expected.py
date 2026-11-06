@@ -53,7 +53,7 @@ def test_catalog_has_the_required_kinds():
         assert role in roles, role
     for obj in catalog['objects']:
         assert 'AGR_TEST' in obj and obj['AGR_TEST']
-        assert obj['scene'] in ('polygon_all', 'cm_units', 'empty', 'vpm') or (
+        assert obj['scene'] in ('polygon_all', 'cm_units', 'empty', 'vpm', 'atlas_npm') or (  # atlas_npm: 0.9.0 R
             obj.get('fragment') and obj['scene'].startswith('frag_' + obj['fragment'].lower() + '_'))
 
 
@@ -69,7 +69,7 @@ def test_committed_catalog_is_the_snapshot_of_bases_01_to_07():
 
 
 def test_variant_scene_specs_exist():
-    for name in ('cm_units.json', 'empty.json', 'vpm.json'):
+    for name in ('cm_units.json', 'empty.json', 'vpm.json', 'atlas_npm.json'):
         doc = json.loads((POLY / 'scenes' / name).read_text(encoding='utf-8'))
         assert doc['scene'] == name[:-5]
         assert doc['synthetic'] is True

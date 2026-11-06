@@ -37,7 +37,7 @@ EDITS_080 = {"agr_scene_missing_maps": "scene.missing_maps", "agr_model_triangul
 RUNTIME_080 = "0.8.0"
 # AGR Tools 0.9 rows (#979): runtime.edits_090(<plan row id>, "preview", None, nodes, options). Only preview: an
 # editing 0.9 row is never applied over MCP in the base, and a `select` row (light.check) selects nothing here.
-# Branches A-E3 build on package version 0.8.x with runtime.edits_090; the release branch R sets "0.9.0" here.
+# Released in package version 0.9.0 (release branch R, #979).
 EDITS_090 = {"agr_tex_erm_normal_check": "tex.erm_normal_check", "agr_tex_finish_map": "tex.finish_map",
              "agr_udim_matid_unwrap": "udim.matid_unwrap", "agr_udim_slots": "udim.slots",
              "agr_atlas_flora": "atlas.flora", "agr_atlas_groundel": "atlas.groundel",
@@ -48,7 +48,7 @@ EDITS_090 = {"agr_tex_erm_normal_check": "tex.erm_normal_check", "agr_tex_finish
              "agr_qa_sintez": "qa.sintez", "agr_export_batch": "export.batch",
              "agr_scene_maps_usage": "scene.maps_usage", "agr_light_check": "light.check",
              "agr_qa_procedural_objects": "qa.procedural_objects"}
-RUNTIME_090 = "0.8.0"
+RUNTIME_090 = "0.9.0"
 
 
 def _rt():

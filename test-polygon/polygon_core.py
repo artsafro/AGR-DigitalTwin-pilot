@@ -40,6 +40,13 @@ ACTION_ROW = {
     'preflight': 'qa.preflight',
 }
 APPLY_STATUS = {'udim.nudge': 'pass', 'atlas.npm': 'pass', 'ucx.build': 'pass', 'export.cleanup': 'pass'}
+# 0.9.0 (#979 R): atlas.npm apply on the npm profile of atlas_core. On the textured object of scene `atlas_npm` the
+# apply report (plan.atlas) must name the profile, read back a 24-bit RGB diffuse (PNG colour type 2) and a separate
+# 8-bit grey opacity (colour type 0) and give the Ground texel 35 +- 0.1 px/m; run_polygon.compare_actual checks it.
+APPLY_ATLAS = {'atlas.npm': {'scene': 'atlas_npm', 'profile': 'npm', 'material': 'M_Polygon_AtlasTex_Main_1',
+                             'texel_px_per_m': 35.0, 'texel_tol': 0.1,
+                             'files': {'diffuseMap': {'bit_depth': 8, 'color_type': 2},
+                                       'opacityMap': {'bit_depth': 8, 'color_type': 0}}}}
 PRIMARY = {}
 for _action, _row in ACTION_ROW.items():
     PRIMARY.setdefault(_row, _action)
@@ -84,7 +91,7 @@ STATION_SPECS = (
     {'id': '0.2.1', 'version': '0.2', 'button': 'udim.nudge',
      'homes': ('SM_Polygon_NudgeOk_Main', 'SM_Polygon_NudgeBad_Main')},
     {'id': '0.2.2', 'version': '0.2', 'button': 'atlas.npm',
-     'homes': ('SM_Polygon_AtlasOk_Main', 'SM_Polygon_AtlasBad_Main')},
+     'homes': ('SM_Polygon_AtlasOk_Main', 'SM_Polygon_AtlasBad_Main', 'SM_Polygon_AtlasTex_Main')},
     {'id': '0.3.1', 'version': '0.3', 'button': 'ucx.build', 'homes': ()},
     {'id': '0.3.2', 'version': '0.3', 'button': 'udim.texel',
      'homes': ('SM_Polygon_TexelOk_Main', 'SM_Polygon_TexelBad_Main')},
@@ -559,6 +566,10 @@ def scene_objects(captions=None):
                      fbx='SM_Verona_Ground.fbx', mat_name='M_Verona_Ground_1', pivot=[6, 0, 0.5]))
     rows.append(_obj('SM_VeronaBit_Main', 'Main', 'tex', (3, 0, 0), scene='vpm', fbx='SM_Verona.fbx',
                      mat_name='M_VeronaBit_Main_1', pivot=[3, 0, 0], tex='bit16'))
+    # 0.9.0 (#979 R): own scene, so the whole-scene checks of polygon_all / vpm do not see it. 2 x 2 m quad, the
+    # 256 px RGBA map over the full tile = 128 px/m, packed down to the Ground 35 px/m of the npm profile.
+    rows.append(_obj('SM_Polygon_AtlasTex_Main', 'Main', 'atlas', (208, 0, -2), (2, 2, 0), mesh='quad',
+                     scene='atlas_npm', mat_name='M_Polygon_AtlasTex_Main_1', atlas='ground', tex='atlas_rgba'))
     good = next(o for o in rows if o['name'] == 'SM_Polygon_001_Main' and o['scene'] == p)
     good['tex'] = 'ok256'
     rows.extend(fragment_objects({(o['scene'], o['name']) for o in rows}))
@@ -777,6 +788,19 @@ def _tool_docs(button, objects, reason=''):
     }
 
 
+def _png_atlas(size=256):
+    """RGBA map of the atlas.npm apply check: two-colour stripes (not a flat plug), the left quarter transparent."""
+    def chunk(kind, data):
+        return struct.pack('>I', len(data)) + kind + data + struct.pack('>I', zlib.crc32(kind + data) & 0xFFFFFFFF)
+    row = bytearray(b'\x00')
+    for x in range(size):
+        r, g, b = (200, 60, 40) if (x // 32) % 2 == 0 else (40, 90, 200)
+        row += bytes((r, g, b, 0 if x < size // 4 else 255))
+    raw = bytes(row) * size
+    ihdr = struct.pack('>IIBBBBB', size, size, 8, 6, 0, 0, 0)
+    return b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR', ihdr) + chunk(b'IDAT', zlib.compress(raw, 9)) + chunk(b'IEND', b'')
+
+
 def _png(width, height, depth=8, color_type=2):
     """Tiny synthetic PNG. color_type 2 = RGB, 6 = RGBA. No ancillary chunks."""
     samples = {2: 3, 6: 4}[color_type]
@@ -802,6 +826,7 @@ TEXTURES = {
     'bad_size': ('T_Polygon_018_Main_d_1.png', _png(100, 50)),
     'alpha': ('T_Polygon_019_Main_d_1.png', _png(256, 256, color_type=6)),
     'bit16': ('T_VeronaBit_Main_Diffuse_1.1001.png', _png(256, 256, depth=16)),
+    'atlas_rgba': ('T_Polygon_AtlasTex_Main_d_1.png', _png_atlas(256)),
 }
 
 
@@ -913,6 +938,16 @@ def predict_native():
         # pack returns a list; compare component-wise
         same = all(abs(a - b) < 1e-9 and abs(c - d) < 1e-9 for (a, c), (b, d) in zip(laid['uvs'], uv))
         atlas_objects.append(_entry(name, 'polygon_all', [] if same else ['atlas_cell']))
+    # npm profile (0.9.0): the full-tile island of the textured quad always moves into its cell
+    tex_uv = [(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)]
+    rgb = [[(200, 60, 40) if (x // 32) % 2 == 0 else (40, 90, 200) for x in range(256)] for _ in range(256)]
+    alpha = [[0 if x < 64 else 255 for x in range(256)] for _ in range(256)]
+    laid = atlas.pack([(0, 0, 0), (2, 0, 0), (2, 2, 0), (0, 2, 0)], tex_uv, [[0, 1, 2], [0, 2, 3]],
+                      [[0, 1, 2], [0, 2, 3]], ['M_Polygon_AtlasTex_Main_1'] * 2,
+                      {'M_Polygon_AtlasTex_Main_1': {'dissolve': 1.0, 'rgb': rgb, 'alpha': alpha}},
+                      mode='ground', size=2048, pad=8, unit_m=1.0, profile='npm', shrink=True)
+    same = all(abs(a - b) < 1e-9 and abs(c - d) < 1e-9 for (a, c), (b, d) in zip(laid['uvs'], tex_uv))
+    atlas_objects.append(_entry('SM_Polygon_AtlasTex_Main', 'atlas_npm', [] if same else ['atlas_cell']))
     out['atlas.npm'] = atlas_objects
 
     texel_objects = []
@@ -1053,6 +1088,8 @@ def predict_all():
         docs['ucx.build']['reason'] = NO_UCX_FAIL
     if not any(o['expect'] == 'pass' for o in docs['atlas.npm']['objects']):
         docs['atlas.npm']['reason'] = NO_ATLAS_PASS
+    for button, check in APPLY_ATLAS.items():
+        docs[button]['apply_atlas'] = check
 
     for doc in docs.values():
         passes = [o for o in doc['objects'] if o['expect'] == 'pass']
@@ -1307,6 +1344,10 @@ def scene_specs():
                      'note': 'Нельзя совместить со сценой в метрах. Ожидание scene.units: fail system_unit.'},
         'empty': {'schema': 1, 'scene': 'empty', 'synthetic': True, 'units': 'meters', 'objects': [],
                   'note': 'Пустая сцена. Проверки объектов дают ошибку empty target set, не pass.'},
+        'atlas_npm': {'schema': 1, 'scene': 'atlas_npm', 'synthetic': True, 'units': 'meters',
+                      'note': 'Станция 0.2.2 (0.9.0, #979): текстурный квад для apply атласа на профиле npm '
+                              '(24 бит + отдельная opacity, Ground 35 px/м). Отдельная сцена: общие проверки её '
+                              'не видят.'},
         'vpm': {'schema': 1, 'scene': 'vpm', 'synthetic': True, 'units': 'meters',
                 'note': 'Вариант ВПМ: пивот и лимит треугольников Ground без AGR_SITE_AREA_HA. Не NPM.'},
     }
