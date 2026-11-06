@@ -108,9 +108,29 @@
 - Полигон: `test-polygon/stations/L.json` + `L_build.py`, PASS+FAIL на каждую кнопку; тесты
   `tests/max_tools/test_agr_tools_materials.py`, нативный `run_agr_tools_materials_native.py`.
 
-### M
+### M — укладка ВПМ: vpm.build, udim.rescale, udim.distortion
 
-- `vpm-layout`: `vpm.build`, `udim.rescale`, `udim.distortion` — в работе.
+- `vpm.build` (copy + file): К6 — UV панелей и кирпича проекцией от общего нуля сетки (локальные координаты и пивот
+  в double, метры через `units.SystemScale`); развёртка по периметру (цепочка стен, единственный шов замыкания —
+  в начале корневой стены), откосы и подоконники продолжают соседнюю стену.
+- Резка граней по целым линиям UV, целые сдвиги в тайл материала; UDIM 1001.. в каждом меше отдельно
+  (тело и стекло — каждый с 1001, ответ В9); стекло — отдельный объект.
+- Шаг UDIM 3,6 м (ответ 06.11), px/м — параметр `texel_px_per_m` (вопрос «1000 или 1024» открыт).
+- Копии в слое `AGR_vpm`, `vpm_table.json` в новой папке; шаг 6 зовёт `vpmmaps_core.build_maps` (ветка N),
+  пока `matlib_core.load_library` (ветка L) заглушка — `skipped`; шаги 7–8 (`tex.dilate`, `udim.plugs`) — ветка N.
+- Метрика шва: внутренние и цепочечные рёбра — норма 0 (измерено в Max 2024 ≤ 0,002 px),
+  изломы (замыкание контура, трёхгранные углы откосов) — в отчёт.
+- `uvlayout_core.layout_seamless` по сигнатуре ветки 0 (читает ветка P) + `project_k6`, `cut_grid`,
+  `shift_into_tiles`, `seam_metric`.
+- `udim.rescale` (copy): плотность в метрах (см = м), масштаб вокруг общего нуля UV (0,0), UV-элемент масштабируется
+  целиком (без `breakSelected`), карты и материалы не трогаются; без UV — находка `no_uv`.
+- `udim.distortion` (read): якобиан на треугольник, тексель ±1 % против цели (по умолчанию медиана объекта),
+  анизотропия σ1/σ2 ≤ 1,02, зеркальность; любой класс объекта (вычисленный меш, `Unwrap_UVW` сверху),
+  полигоны `Editable_Poly`; выделение не меняется.
+- Регрессии RED→GREEN на дефекты L09 в `tests/max_tools/test_agr_tools_vpm_layout.py` (34 теста); нативный прогон
+  `run_agr_tools_vpm_layout_native.py`, джоб `20261106-051026-6f733b13` (Max 2024): м, см, 2 345 678 м, «artist»,
+  19 756 граней (preview 5,1 с, apply 9,2 с).
+- Станции полигона `test-polygon/stations/M.json` (+ `M_build.py`): по PASS и FAIL на кнопку.
 
 ### N
 
