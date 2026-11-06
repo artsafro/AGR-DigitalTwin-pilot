@@ -52,11 +52,7 @@ def _select(names):
     return nodes
 
 
-# Release 1.0.0 (#1024 R): rows whose button makes ONE result from the whole selection (npm.build attaches the
-# selected copies into one NPM; the facade strip packs one atlas; body.capsules reads every opening of the selection).
-# One press over a station's PASS and FAIL objects mixes their findings, so these are pressed one object at a time,
-# as the owner branches' natives press their polygon rows (K, P: nodes=[n]).
-PER_OBJECT_100 = ('npm.build', 'atlas.facade_strip', 'body.capsules')
+PER_OBJECT_100 = polygon_core.PER_OBJECT_100
 
 
 def _press(runtime, tool, names, options=None):

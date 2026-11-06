@@ -87,3 +87,21 @@ def test_rail_shows_released_old_rows_and_greys_branch_q():
     flow = rm.flow(copy.deepcopy(suite), m.VERSION)
     state = {x['id']: x['state'] for n in flow for s in n['steps'] for x in s['buttons']}
     assert state['udim.udims_to_ids'] == 'planned' and state['udim.rescale'] == 'done'
+
+
+@pytest.mark.parametrize('bump,verdict', [(0.05, 'border_nonplanar'), (0.02, 'border_nonplanar'), (0.003, None)])
+def test_capsules_on_the_real_openings_core_name_a_nonplanar_border(bump, verdict):
+    """K x J integration (polygon 1.0.12 BODY_KCapsBump_001 in the full release run b/c): branch K was tested on its
+    stand-in recogniser, which gave a non-planar border a frame. The real openings_core (J) returns it as kind
+    `nonplanar` without a frame, and capsule_core said `frame_missing` (RED on main) instead of `border_nonplanar`."""
+    kb = _load(ROOT / 'test-polygon/stations/K_build.py', 'agr_tools_k_build_r100')
+    oc = _load(PKG / 'openings_core.py', 'agr_tools_openings_core_r100')
+    cc = _load(PKG / 'capsule_core.py', 'agr_tools_capsule_core_r100')
+    b = kb.badik_mesh(8.0, 6.0, 7.0, 0.25, [{'wall': 0, 's': [1.5, 2.7], 'z': [0.9, 2.4], 'bump': bump}])
+    ops = oc.find_openings(b)
+    assert len(ops) == 1 and (ops[0]['kind'] == 'nonplanar') == bool(verdict), ops[0]['kind']
+    p = cc.plan([{'handle': 1, 'name': 'B', 'openings': ops}])
+    if verdict:
+        assert not p['rows'] and p['findings'][1][0][0] == verdict and p['ambiguous'], p['findings']
+    else:
+        assert len(p['rows']) == 1 and not p['ambiguous'], p['findings']

@@ -547,6 +547,12 @@ def corner_capsule(opening, opts):
 
 
 def capsule(opening, opts):
+    # Release 1.0.0 (#1024 R): openings_core (branch J) returns a non-planar border as kind `nonplanar` with no
+    # frame; before J merged the test stand-in gave it a frame, so planar_capsule measured border_nonplanar. With the
+    # real recognition the frame check came first and said `frame_missing`, hiding the cause.
+    if opening.get('kind') == 'nonplanar':
+        why = '; '.join(str(w) for w in opening.get('why') or ()) or 'border is not planar'
+        raise Ambiguous('border_nonplanar', 'opening {}: {}'.format(opening.get('id'), why))
     if opening.get('corner'):
         if opts['corner'] == 'skip':
             raise Ambiguous('corner_unsupported', 'corner opening {}: corner capsules switched off'.format(

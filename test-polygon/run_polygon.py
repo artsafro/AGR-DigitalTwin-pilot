@@ -140,6 +140,8 @@ def compare_actual(actual):
             if len(names) == 1:
                 expected = [o for o in expected if o['name'] == names[0]]
                 report = _geojson_as_object(names[0], report)
+        elif run.get('tool') in core.PER_OBJECT_100 and len(run.get('names') or []) == 1:
+            expected = [o for o in expected if o['name'] == run['names'][0]]  # one press per object (#1024 R)
         for item in core.compare_report(expected, report):
             item['button'] = button
             item['scene'] = scene

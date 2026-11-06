@@ -256,7 +256,13 @@
 - 31 кнопка из 33 выпущена; `wip` остаётся только у ветки Q (`npm.to_vpm`, `udim.udims_to_ids`, `WIP_100` в `ui_model.py`).
 - План: версия 1.0 → `done`, у строк этапа 8 поле `deferred: "1.1"`; `roadmap` проверяет `deferred`.
 - Шаги (step) в плане показываются как «в кнопке <большая кнопка>».
-- Полигон: `catalog.json` / `bases.json` перегенерированы из фрагментов веток.
+- Полигон: `catalog.json` / `bases.json` перегенерированы из фрагментов веток (10 баз, 90 станций; в базе 1.0
+  33 станции, 2 станции Q «в работе»). `npm.build`, `atlas.facade_strip`, `body.capsules` собирают один результат
+  из всего выделения, поэтому станции жмут их по одному объекту (`polygon_core.PER_OBJECT_100`), как нативные
+  прогоны веток; раньше одно нажатие на PASS- и FAIL-объект смешивало находки.
+- `body.capsules` на настоящем `openings_core` (ветка J): неплоский бордер приходит как `kind: nonplanar` без
+  `frame`, и капсула отвечала `frame_missing` вместо `border_nonplanar` (ветка K проверялась на тестовой подмене
+  распознавания). Теперь — `border_nonplanar` с причиной от J (`test_agr_tools_release_100.py`, станция 1.0.12).
 - MZP 1.0.0: SHA256 — TODO(R)
 - Полигон Max 2024: TODO(R)
 
@@ -283,6 +289,16 @@
 - U: кнопка `agent.dock` (Claude-док) не зарегистрирована в панели; функция `agentbridge_max.agent_dock` есть.
 - U: операции `place_window`, `make_capsule`, `make_roof_plane` агента зависят от веток J и K; `agr_exec_unsafe` только в профиле `dev`.
 - Вопросы владельца в #1024 реализованы значениями по умолчанию / параметрами: имена уровней (`LEVEL_L1`, `LEVEL_L2`, `LEVEL_roof`), правило уровня A/B/C (`LEVEL_RULE`), допуск ±1 мм на больших координатах.
+- Панель и macroScript передают кнопке 1.0 только выделение, без `options`. Релизный смоук (джоб
+  `20261106-070402-7d8eabac`, коробка в несохранённой сцене): 15 из 31 кнопки отказывают с понятным текстом —
+  нужны сохранённая сцена (`project.passport`, `pack.deliver`, `light.export`), Editable Poly/Mesh или окна/UCX/
+  лестницы в выделении (`model.move_apart`, `win.generate`, `udim.plugs`, `ucx.gap`, `ucx.stairs`, `mat.table`) или
+  параметр, которого в панели нет (`atlas.facade_strip` — `period_by_id`, `tex.dilate`/`tex.plug_colour` — файлы,
+  `export.place_by_passport` — `fbx`, `agent.request` — `task`, `agent.accept` — `request`). Эти параметры пока
+  задаются через MCP (`agr_op_preview`) или скрипт; форма параметров в панели — 1.1.
+- Корпус OBJ03 и школа (SOSH1150) не прогнаны: копий корпуса нет в разрешённых папках (Google Диск
+  `AGR-assets` без `corpus\`). Три сценарных eval агента в ночном Lab CI не включены (есть `evals/agent-sim-k4`;
+  конфиг Lab вне ветки).
 - KPP1 сквозняком: TODO(R)
 
 ## 0.9.0 (#979)
