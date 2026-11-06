@@ -50,7 +50,20 @@ def install():
 
 
 agr = install()
+# The batch runner executes this whole script inside ONE outer undo hold: `max undo` would then roll back the
+# scene set-up too (job 20261106-044415-f3028608: 201 -> 0 objects). Close it so each apply is its own record,
+# build the test scenes under undo(False), and re-open a hold at the end for the wrapper.
+OUTER_HOLD = bool(rt.theHold.Holding())
+if OUTER_HOLD:
+    rt.theHold.Accept('AGR branch G native: set-up')
+summary['outer_hold_at_start'] = OUTER_HOLD
 GLOBALS_BEFORE = set(str(x) for x in rt.execute('globalVars.gather()'))
+
+
+def no_undo(fn, *args):
+    import pymxs
+    with pymxs.undo(False):
+        return fn(*args)
 
 
 def reset(units='meters'):
@@ -127,7 +140,7 @@ def areas_of(report, key):
 
 def attach_case(units, mode):
     reset(units)
-    nodes, outside = mix_scene()
+    nodes, outside = no_undo(mix_scene)
     names_before = sorted(str(n.name) for n in rt.objects)
     opts = None if mode == 'split' else {'mode': 'one'}
     p = agr.edits_100('model.attach_by_material', 'preview', None, nodes, opts)
@@ -177,7 +190,7 @@ def attach():
 
 def attach_speed():
     reset()
-    nodes = plain_scene(2000)
+    nodes = no_undo(plain_scene, 2000)
     t0 = time.time()
     p = agr.edits_100('model.attach_by_material', 'preview', None, nodes, None)
     t1 = time.time()
@@ -228,8 +241,8 @@ def move_case(units, kind, rng):
     pairs = []
     for i, g in enumerate(GAPS_MM):
         x = i * 3.0
-        a = quad('lo_{}'.format(g), 0.0, kind == 'bi', x)
-        b = quad('hi_{}'.format(g), g / 1000.0, False, x)
+        a = no_undo(quad, 'lo_{}'.format(g), 0.0, kind == 'bi', x)
+        b = no_undo(quad, 'hi_{}'.format(g), g / 1000.0, False, x)
         pairs.append((g, a, b))
     nodes = [n for _g, a, b in pairs for n in (a, b)]
     before = {str(n.name): world_verts(n) for n in nodes}
@@ -254,8 +267,9 @@ def move_apart():
     cases = [move_case(u, kd, rg) for u in ('meters', 'centimeters') for kd in ('bi', 'co') for rg in sorted(RANGES)]
     # T08-02: 10 mm in [5, 20] (Move Faces never moved it) and the one-undo exact return; an Editable_Mesh pair
     reset()
-    a, b = quad('t08_lo', 0.0, True, 0.0), quad('t08_hi', 0.010, False, 0.0)
-    m1, m2 = quad('mesh_lo', 0.0, True, 5.0, mesh=True), quad('mesh_hi', 0.001, False, 5.0, mesh=True)
+    a, b = no_undo(quad, 't08_lo', 0.0, True, 0.0), no_undo(quad, 't08_hi', 0.010, False, 0.0)
+    m1 = no_undo(lambda: quad('mesh_lo', 0.0, True, 5.0, mesh=True))
+    m2 = no_undo(lambda: quad('mesh_hi', 0.001, False, 5.0, mesh=True))
     nodes = [a, b, m1, m2]
     before = {str(n.name): world_verts(n) for n in nodes}
     p = agr.edits_100('model.move_apart', 'preview', None, nodes, {'min_mm': 0, 'max_mm': 20, 'to_mm': 25})
@@ -279,19 +293,24 @@ def move_apart():
 
 
 # ---- body.prepare ----------------------------------------------------------------------------------------------
+def body_scene(mats, k):
+    nodes = []
+    for i, m in enumerate(mats):
+        n = rt.Box(name='Box{:03d}'.format(i + 1), length=10 / k, width=10 / k, height=10 / k,
+                   pos=rt.Point3(i * 12 / k, 0, 0))
+        if m:
+            n.material = rt.StandardMaterial(name=m)
+        nodes.append(n)
+    return nodes
+
+
 def body_prepare():
     out = {}
     for units in ('meters', 'centimeters'):
         reset(units)
         k = k_m()
         mats = ['Кирпич', 'Brick', 'Brick', None, 'Glass_01']
-        nodes = []
-        for i, m in enumerate(mats):
-            n = rt.Box(name='Box{:03d}'.format(i + 1), length=10 / k, width=10 / k, height=10 / k,
-                       pos=rt.Point3(i * 12 / k, 0, 0))
-            if m:
-                n.material = rt.StandardMaterial(name=m)
-            nodes.append(n)
+        nodes = no_undo(body_scene, mats, k)
         rt.select(nodes)
         p = agr.edits_100('body.prepare', 'preview', None, nodes, {'levels': [0.0, 3.3, 9.9]})
         assert p['status'] == 'pass', p
@@ -375,8 +394,10 @@ check('attach_by_material', attach)
 check('attach_speed_2000', attach_speed)
 check('move_apart', move_apart)
 check('body_prepare', body_prepare)
+check('globals_unchanged', globals_unchanged)  # before the polygon: its E2 builder declares agr979e2_poly
 check('polygon_rows_G', polygon)
-check('globals_unchanged', globals_unchanged)
+if OUTER_HOLD:
+    rt.theHold.Begin()
 (OUT / 'summary.json').write_text(json.dumps(summary, indent=1, ensure_ascii=False, default=str), encoding='utf-8')
 print('AGR_G_NATIVE checks', sorted(summary['checks']), 'errors', sorted(summary['errors']))
 assert not summary['errors'], 'native branch G failed: see summary.json'
