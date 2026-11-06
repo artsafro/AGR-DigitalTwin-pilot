@@ -5,8 +5,9 @@
   AGR_FLORA_IDS comma list of species bases; AGR_MAF_ZIPS ';' list of runner copies of MAF archives.
 Steps on one disposable scene (saved only into OUT):
   import Flora + MAF (High + Low) -> NPM: atlas.flora on the Flora Low objects, atlas.groundel profile npm on the
-  MAF Low objects (preview -> apply, existing buttons) -> VPM: project folder already holds T_ADDR_*_1.1001..1003
-  (the building); Flora sets go to the next free UDIMs, MAF after them; maps copied under VPM names, placeholders,
+  MAF Low objects (preview -> apply, existing buttons) -> VPM: project folder already holds the building maps
+  T_ADDR_*_1.1001..1006 and the Ground maps T_ADDR_Ground_*_1.1001..1003; owner 06.11: Flora sets go after the
+  Ground tiles (T_ADDR_Ground_*_1.1004..), MAF after them; maps copied under VPM names, placeholders,
   UVs moved by whole tiles, read back; packed 4K plan with tile_limit 1 (plan only).
 """
 import hashlib
@@ -117,9 +118,11 @@ def step_npm_maf():
 def step_vpm():
     folder = project / 'textures' / 'vpm'
     folder.mkdir(parents=True)
-    for i, role in enumerate(('Diffuse', 'ERM', 'Normal')):
-        for u in (1001, 1002, 1003):
+    for role in ('Diffuse', 'ERM', 'Normal'):  # building 1001..1006, Ground 1001..1003 (own sequence)
+        for u in range(1001, 1007):
             amx.write_flat_png(str(folder / 'T_{}_{}_1.{}.png'.format(ADDR, role, u)), (90, 90, 90), 16)
+        for u in (1001, 1002, 1003):
+            amx.write_flat_png(str(folder / 'T_{}_Ground_{}_1.{}.png'.format(ADDR, role, u)), (60, 90, 60), 16)
     packed = amx.vpm_udims('flora', 'flora', ADDR, str(project), mode='preview', tile_limit=1)
     pf = amx.vpm_udims('flora', 'flora', ADDR, str(project), mode='apply')
     assert pf['applied'] and [t[1] for t in pf['tiles']] == [1004, 1005, 1006, 1007, 1008], pf['tiles']
@@ -128,10 +131,13 @@ def step_vpm():
     for p in (pf, pm):
         for b in p['readback']:
             assert b['inside_tile'] and b['maps_exist'] and b['maps_udim'] == [b['udim']], b
+            assert all('_Ground_' in os.path.basename(m) for m in b['maps']), b['maps']
     rt.saveMaxFile(str(OUT / 'assets_textures.max'), quiet=True)
     files = sorted(os.listdir(folder))
-    return {'packed_plan': {k: packed[k] for k in ('mode', 'texel_px_per_m', 'tiles', 'fill')},
-            'packed_rows': [{k: r[k] for k in ('material', 'udim', 'x', 'y', 'w', 'h')} for r in packed['rows']],
+    return {'packed_plan': {k: packed[k] for k in ('mode', 'texel_px_per_m', 'tiles', 'fill', 'warnings',
+                                                         'texel_reduced')},
+            'packed_rows': [{k: r[k] for k in ('material', 'udim', 'x', 'y', 'w', 'h', 'texel_px_per_m')}
+                            for r in packed['rows']],
             'flora': {'tiles': pf['tiles'], 'readback': pf['readback'],
                       'rows': [{'material': r['material'], 'udim': r['udim'], 'copy': [c['stem'] for c in r['copy']],
                                 'placeholders': [c['stem'] for c in r['placeholders']]} for r in pf['rows']]},

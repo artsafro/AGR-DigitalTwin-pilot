@@ -55,7 +55,7 @@ def _sets(n, uv=((0.0, 0.0), (1.0, 1.0))):
 
 def test_tile_per_set_names_offsets_and_placeholders():
     sets = _sets(2)
-    plan = T.vpm_plan(sets, {1: {1001, 1002}}, 'Addr', N.texture_stem, 'maf')
+    plan = T.vpm_plan(sets, {1: {1001, 1002}}, 'Addr', N.texture_stem, 'maf', obj_type='Main')
     assert plan['mode'] == 'tile_per_set' and plan['tiles'] == [(1, 1003), (1, 1004)]
     r = plan['rows'][0]
     assert r['uv_offset'] == [2, 0]
@@ -81,11 +81,12 @@ def test_uv_outside_unit_square_blocks():
 
 def test_more_sets_than_limit_pack_into_4k_tiles_at_one_texel():
     sets = _sets(7, uv=((0.0, 0.0), (0.5, 0.5)))
-    plan = T.vpm_plan(sets, {1: {1001}}, 'Addr', N.texture_stem, 'maf', tile_limit=5)
+    plan = T.vpm_plan(sets, {1: {1001}}, 'Addr', N.texture_stem, 'maf', tile_limit=5, texel=None, tile_px=4096)
     assert plan['mode'] == 'packed_4k'
     assert plan['tiles'][0] == (1, 1002)
     assert plan['texel_px_per_m'] == round(min(2048 / (4 + i) ** 0.5 for i in range(7)), 2)
     rects = [(r['udim'], r['x'], r['y'], r['w'], r['h']) for r in plan['rows']]
+    assert plan['warnings'] == []
     for i, a in enumerate(rects):
         assert a[1] >= 0 and a[2] >= 0 and a[1] + a[3] <= 4096 and a[2] + a[4] <= 4096
         for b in rects[i + 1:]:
@@ -99,3 +100,32 @@ def test_npm_route():
                                                                    'version': 'high'},
             {'name': 'M_low', 'kind': 'maf', 'version': 'low'}]
     assert T.npm_route(objs) == {'atlas.flora': ['a_low'], 'atlas.npm': ['M_low']}
+
+
+def test_assets_go_after_the_ground_tiles_with_ground_names():
+    files = ['T_Addr_Diffuse_1.{}.png'.format(u) for u in range(1001, 1007)] + \
+            ['T_Addr_Ground_Diffuse_1.{}.png'.format(u) for u in (1001, 1002, 1003)]
+    ground = T.used_tiles(files, 'Addr', N.udim_of, ground=True)
+    assert ground == {1: {1001, 1002, 1003}}
+    assert T.used_tiles(files, 'Addr', N.udim_of, ground=False) == {1: set(range(1001, 1007))}
+    plan = T.vpm_plan(_sets(2), ground, 'Addr', N.texture_stem, 'flora')
+    assert plan['tiles'] == [(1, 1004), (1, 1005)] and plan['warnings'] == []
+    assert plan['rows'][0]['copy'][0]['stem'] == 'T_Addr_Ground_Diffuse_1.1004'
+    assert T.vpm_plan(_sets(1), {}, 'Addr', N.texture_stem, 'flora')['warnings'] == ['no_ground_tiles']
+
+
+def test_packed_defaults_are_the_project_density_and_tile():
+    plan = T.vpm_plan(_sets(7, uv=((0.0, 0.0), (0.25, 0.25))), {1: {1001}}, 'Addr', N.texture_stem, 'maf')
+    assert plan['mode'] == 'packed_4k' and plan['texel_px_per_m'] == 1000.0
+    assert all(r['x'] + r['w'] <= 3600 and r['y'] + r['h'] <= 3600 for r in plan['rows'])
+
+def test_a_set_bigger_than_a_tile_is_fitted_and_reported_not_raised():
+    rows = [{'asset': 'flora:big', 'version': 'high', 'material': 'big', 'maps': ['big_high.png'],
+             'uv_bbox': [[0, 0], [1, 1]], 'area3d_m2': 25.0, 'tex_px': [4096, 4096]},
+            {'asset': 'flora:small', 'version': 'high', 'material': 'small', 'maps': ['small_high.png'],
+             'uv_bbox': [[0, 0], [1, 1]], 'area3d_m2': 1.0, 'tex_px': [2048, 2048]}]
+    plan = T.vpm_plan(T.texture_sets(rows), {1: {1001}}, 'Addr', N.texture_stem, 'flora', tile_limit=1)
+    big = [r for r in plan['rows'] if r['material'] == 'big'][0]
+    assert plan['texel_reduced'] == ['big'] and big['w'] <= 3600 - 32 and big['texel_px_per_m'] < 1000
+    small = [r for r in plan['rows'] if r['material'] == 'small'][0]
+    assert small['texel_px_per_m'] == 1000.0 and 'findings' not in small

@@ -20,7 +20,8 @@ import math
 import re
 
 MAX_UDIM = 1100
-TILE_PX = 4096
+TILE_PX = 3600     # owner 06.11: project density 1000 px/m, a tile is 3.6 m = 3600 px
+TEXEL_PX_M = 1000.0
 PAD_PX = 16
 FLAT = {'erm': (0, 200, 0), 'normal': (128, 128, 255)}  # E=0, roughness 0.78, metal 0; flat tangent normal
 _ROLE_TAILS = (('diffuse', r'(_diffuse|_d|_basecolor|_albedo)'), ('normal', r'(_normal|_n)'),
@@ -45,9 +46,12 @@ def tile_uv(udim):
     return n % 10, n // 10
 
 
-def used_tiles(files, address, udim_of):
-    """{slot: set(udim)} of VPM maps of this address among file names (udim_of = names_core.udim_of)."""
-    pat = re.compile(r'^T_' + re.escape(address) + r'(?:_Ground)?_(?:Diffuse|ERM|Normal)_(?P<slot>[1-7])[._]',
+def used_tiles(files, address, udim_of, ground=None):
+    """{slot: set(udim)} of VPM maps of this address among file names (udim_of = names_core.udim_of).
+    ground=True: only T_<Address>_Ground_* maps (Ground has its own UDIM sequence), False: only building maps,
+    None: all."""
+    tag = {True: r'_Ground', False: r'', None: r'(?:_Ground)?'}[ground]
+    pat = re.compile(r'^T_' + re.escape(address) + tag + r'_(?:Diffuse|ERM|Normal)_(?P<slot>[1-7])[._]',
                      re.IGNORECASE)
     out = {}
     for f in files:
@@ -99,7 +103,8 @@ def _inside_unit(bb, eps=1e-4):
     return bb is not None and bb[0][0] >= -eps and bb[0][1] >= -eps and bb[1][0] <= 1 + eps and bb[1][1] <= 1 + eps
 
 
-def vpm_plan(sets, used, address, texture_stem, kind, slot=1, tile_limit=5, obj_type='Main', texel=None):
+def vpm_plan(sets, used, address, texture_stem, kind, slot=1, tile_limit=5, obj_type='Ground', texel=TEXEL_PX_M,
+             tile_px=TILE_PX):
     """Plan of the VPM textures of one kind ('flora' / 'maf').
 
     tile_per_set: one free UDIM per set, UVs moved by the whole tile (the set's UVs must lie in 0..1), maps copied
@@ -109,6 +114,7 @@ def vpm_plan(sets, used, address, texture_stem, kind, slot=1, tile_limit=5, obj_
     obj = {'address': address, 'oks': None, 'type': obj_type}
     if not sets:
         return {'kind': kind, 'mode': 'empty', 'rows': [], 'tiles': []}
+    warnings = [] if used.get(slot) else ['no_ground_tiles' if obj_type.startswith('Ground') else 'no_used_tiles']
     if len(sets) <= tile_limit:
         tiles = allocate(used, len(sets), slot)
         rows = []
@@ -126,13 +132,16 @@ def vpm_plan(sets, used, address, texture_stem, kind, slot=1, tile_limit=5, obj_
                 else:
                     row['placeholders'].append({'role': role, 'stem': stem, 'rgb': list(FLAT[role])})
             rows.append(row)
-        return {'kind': kind, 'mode': 'tile_per_set', 'rows': rows, 'tiles': tiles,
+        return {'kind': kind, 'mode': 'tile_per_set', 'rows': rows, 'tiles': tiles, 'warnings': warnings,
                 'blocking': sorted({f for r in rows for f in r['findings']})}
-    return packed_plan(sets, used, kind, slot, texel)
+    plan = packed_plan(sets, used, kind, slot, texel, tile_px)
+    plan['warnings'] = warnings
+    return plan
 
 
-def packed_plan(sets, used, kind, slot=1, texel=None, tile_px=TILE_PX, pad=PAD_PX):
-    """Cells = UV bounds of each set at one texel density; shelf-packed into tile_px tiles (largest first)."""
+def packed_plan(sets, used, kind, slot=1, texel=TEXEL_PX_M, tile_px=TILE_PX, pad=PAD_PX):
+    """Cells = UV bounds of each set at one texel density (default the project's 1000 px/m; None = the lowest
+    source texel, nothing upscaled); shelf-packed into tile_px tiles (largest first)."""
     cells = []
     for s in sets:
         bb, px = s.get('uv_bbox'), s.get('tex_px')
@@ -145,10 +154,13 @@ def packed_plan(sets, used, kind, slot=1, texel=None, tile_px=TILE_PX, pad=PAD_P
     target = texel or min(c['src_texel'] for c in cells)
     for c in cells:
         k = target / c['src_texel']
-        c['w'], c['h'] = max(1, int(math.ceil(c['src_w'] * k))), max(1, int(math.ceil(c['src_h'] * k)))
-        if c['w'] + 2 * pad > tile_px or c['h'] + 2 * pad > tile_px:
-            raise ValueError('set {!r} does not fit one {} px tile at {:.1f} px/m'.format(c['material'], tile_px,
-                                                                                         target))
+        room = float(tile_px - 2 * pad)
+        if max(c['src_w'], c['src_h']) * k > room:  # bigger than one tile at the target: fit the tile, report it
+            k = room / max(c['src_w'], c['src_h'])
+            c['findings'] = ['texel_reduced']
+        c['texel_px_per_m'] = round(c['src_texel'] * k, 2)
+        c['w'] = min(int(room), max(1, int(math.ceil(c['src_w'] * k))))
+        c['h'] = min(int(room), max(1, int(math.ceil(c['src_h'] * k))))
     tiles, shelves = [], []  # shelves: [tile index, y, height, x]
     for c in sorted(cells, key=lambda c: (-c['h'], -c['w'], c['material'])):
         w, h = c['w'] + 2 * pad, c['h'] + 2 * pad
@@ -171,6 +183,7 @@ def packed_plan(sets, used, kind, slot=1, texel=None, tile_px=TILE_PX, pad=PAD_P
     fill = sum(c['w'] * c['h'] for c in cells) / float(len(tiles) * tile_px * tile_px)
     return {'kind': kind, 'mode': 'packed_4k', 'texel_px_per_m': round(target, 2), 'tiles': alloc,
             'fill': round(fill, 3), 'rows': sorted(cells, key=lambda c: c['material']),
+            'texel_reduced': sorted(c['material'] for c in cells if c.get('findings')),
             'blocking': [], 'note': 'pixel cut/resample of the packed route is the next step'}
 
 

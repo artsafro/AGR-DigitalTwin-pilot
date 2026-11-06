@@ -402,7 +402,7 @@ def _shift_uv(node, du, dv):
 
 
 def vpm_udims(lib, kind, address, project_dir, mode='preview', version='high', slot=1, tile_limit=5,
-              extra_used=None, obj_type='Main'):
+              extra_used=None, obj_type='Ground', texel=1000.0):
     """VPM textures of the imported assets of one library: preview -> plan; apply -> maps copied under the VPM
     names into <project>/textures/vpm/, flat ERM/Normal placeholders, UVs moved by whole tiles, bitmaps repointed,
     read back. Only the tile-per-set route changes the scene; the packed route returns its plan."""
@@ -424,10 +424,10 @@ def vpm_udims(lib, kind, address, project_dir, mode='preview', version='high', s
     sets = tex.texture_sets(rows)
     folder = os.path.join(project_dir, 'textures', 'vpm')
     existing = os.listdir(folder) if os.path.isdir(folder) else []
-    used = tex.used_tiles(existing, address, names.udim_of)
+    used = tex.used_tiles(existing, address, names.udim_of, ground=obj_type.startswith('Ground'))
     for s_, tiles in (extra_used or {}).items():
         used.setdefault(int(s_), set()).update(tiles)
-    plan = tex.vpm_plan(sets, used, address, names.texture_stem, kind, slot, tile_limit, obj_type)
+    plan = tex.vpm_plan(sets, used, address, names.texture_stem, kind, slot, tile_limit, obj_type, texel)
     plan.update(used={str(s_): sorted(v) for s_, v in used.items()}, folder=folder, nodes=len(nodes))
     if mode != 'apply' or plan['mode'] != 'tile_per_set' or plan['blocking']:
         plan['applied'] = False
