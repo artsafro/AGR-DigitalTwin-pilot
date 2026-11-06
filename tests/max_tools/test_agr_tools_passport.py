@@ -554,11 +554,19 @@ def test_passport_with_a_broken_schema_is_an_error_and_not_replaced(monkeypatch,
         pm.project_passport(ctx, 'preview', None, None)
 
 
-def test_passport_needs_a_saved_scene_or_a_root(monkeypatch, tmp_path):
-    pm, ctx, store, host = _passport_glue(monkeypatch, tmp_path, _objs())
+def test_passport_on_an_empty_untitled_scene_needs_only_a_project_id(monkeypatch, tmp_path):
+    pm, ctx, store, host = _passport_glue(monkeypatch, tmp_path, {})
     host._doc = 'untitled'
-    with pytest.raises(ValueError, match='not saved'):
+    with pytest.raises(ValueError, match='project id'):
         pm.project_passport(ctx, 'preview', None, None)
+    monkeypatch.setenv('AGR_PROJECTS_ROOT', str(tmp_path / 'projects'))
+    ctx.options = {'project_id': 'NEW1'}
+    prev = pm.project_passport(ctx, 'preview', None, None)
+    assert prev['plan']['passport'] == str(tmp_path / 'projects/jobs/NEW1/passport.json')
+    assert prev['objects'] == [] and prev['status'] == 'pass'
+    ctx.options = {}
+    pm.project_passport(ctx, 'apply', None, prev)
+    jsonschema.validate(pc.read(prev['plan']['passport'])[0], _schema_file())
     ctx.options = {'nope': 1}
     with pytest.raises(ValueError, match='unknown option'):
         pm.project_passport(ctx, 'preview', None, None)

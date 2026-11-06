@@ -84,18 +84,24 @@ def role_items(ctx, nodes):
     return out
 
 
+def default_root():
+    """Folder holding jobs/ for an unsaved scene («завести проект» on an empty scene): AGR_PROJECTS_ROOT, else
+    %LOCALAPPDATA%\\AGRTools\\projects."""
+    return os.environ.get('AGR_PROJECTS_ROOT') or os.path.join(
+        os.environ.get('LOCALAPPDATA') or os.path.expanduser('~'), 'AGRTools', 'projects')
+
+
 def _target(ctx, core, opts, doc, link):
     """(action, passport path, project id, root) from the link or the options; ValueError when nothing names it."""
     if link is not None:
         path = os.path.normpath(link['path'])
         return 'open', path, os.path.basename(os.path.dirname(path)), os.path.dirname(os.path.dirname(
             os.path.dirname(path)))
-    root = opts.get('root') or (os.path.dirname(doc) if doc and doc != 'untitled' else None)
-    if not root:
-        raise ValueError('project.passport: the scene is not saved; save it or give options.root')
-    pid = opts.get('project_id') or core.project_id_from(doc)
+    saved = bool(doc) and doc != 'untitled'
+    pid = opts.get('project_id') or (core.project_id_from(doc) if saved else None)
     if not pid:
-        raise ValueError('project.passport: no project id; give options.project_id')
+        raise ValueError('project.passport: no project id; save the scene or give options.project_id')
+    root = opts.get('root') or (os.path.dirname(doc) if saved else default_root())
     path = os.path.join(core.project_dir(root, pid), core.PASSPORT_FILE)
     return ('open' if os.path.isfile(path) else 'create'), path, pid, root
 

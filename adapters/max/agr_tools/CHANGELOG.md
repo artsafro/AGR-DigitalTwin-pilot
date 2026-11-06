@@ -20,7 +20,22 @@
 
 ### F
 
-- `passport`: `project.passport`, `source.intake`, `scene.source_class`, `scene.small_parts` — в работе.
+Ветка `improve/issue-1024-passport`, контракт К1.
+
+- `project.passport` (1.0.1, режим file): `passport_core.py` — паспорт `jobs/<ID>/passport.json` + `PASSPORT.md`; схема `schemas/ProjectPassport.schema.json` = `passport_core.SCHEMA` (пакет не везёт `schemas/`, тест держит их равными; добавлены поля `created`/`updated`/`scene`, `source.parts`/`largest_share`/`route`, `journal.lines`). Валидатор на stdlib: битый паспорт → `PassportError`.
+- Роли читаются из сцены обратно (`agr_role`, иначе слой `<ROLE>_*`); находки `role_missing` / `role_unknown` / `role_conflict`.
+- `passport_max.py`: preview → create (новая папка, exclusive) или open (по ссылке `agr_passport` или существующему файлу). Apply пишет паспорт, `PASSPORT.md`, копию журнала и file property `agr_passport` = {path, sha256}.
+- При открытии прежний паспорт уходит в `history/passport_vNNN.json`; запись только при sha из preview; options `root` / `project_id` / `title` / `address` берутся из preview.
+- `journal_core.py`: `read_lines`, `copy_to` — копия журнала панели в `jobs/<ID>/journal.jsonl` только растёт (новые строки дописываются, старые не теряются, сцена под новым именем тоже попадает); хвост 20 строк идёт в паспорт.
+- `tools/project/new_project.py` — «завести проект» и `--check` паспорта.
+- `source.intake` (1.0.2, copy): `intake_core.py` — единицы (option `source_units`, auto по правдоподобному размеру здания 2–250 м), ось вверх (option `source_up_axis`, по умолчанию Z), общий ноль с округлением вниз до 1 м; находки `units_scale` / `up_axis` / `far_coordinates`.
+- `intake_max.py`: копии в слое `AGR_intake`; нормализация запекается в вершины копии в double (Matrix3 float32 на 2 345 678 м теряет ~0,25 м); один Undo; источник, нормализация и класс пишутся в связанный паспорт. Разделение по материалам — `model.attach_by_material` (ветка G), intake только перечисляет ID.
+- `scene.source_class` (1.0.3, read): `scene10_core.source_facts` — порт правила D066 пилота на stdlib (сварка `WELD_M` 1e-4, `PANEL_HINT_SHARE` 0,5, замкнутая оболочка); доля на пороге ±1e-9 → `ambiguous`. Находки `panelised` / `ambiguous_share`.
+- Уровень A/B/C — параметр `LEVEL_RULE` (A оболочка, B панели, C неоднозначно), так как в #1024 он не определён.
+- `scene.small_parts` (1.0.8, undo): ключи целыми словами (разделители `_ - .`, пробел, цифры), порог размера в метрах (0,15 м); уже лежащие в `optimize` и члены групп пропускаются; перенос в `optimize` одной записью Undo с `agr_source_layer`.
+- Источники zavod — только идея, со ссылкой на SHA256 (не копируются).
+- Регрессы RED→GREEN: TOW02 (панели в движок оболочки), порог D066 → `ambiguous`, T08 подстроки (Studio, Minute, Шпиль, М120, Стеклопакет), повторный счёт `optimize`, член группы.
+- Полигон: `test-polygon/stations/F.json` + `F_build.py`, станции 1.0.1 / 1.0.2 / 1.0.3 / 1.0.8 с PASS и FAIL; тесты `tests/max_tools/test_agr_tools_passport.py`, нативный `run_agr_tools_passport_native.py`.
 
 ### G
 
