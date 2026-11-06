@@ -13,7 +13,7 @@ import math
 import os
 from collections import namedtuple
 
-VERSION = '1.0.0'
+VERSION = '1.0.1'
 
 # wip=True (1.0 conveyor, #1024): the button is visible but disabled, tooltip «в работе, #1024», its macro never
 # runs an edit. Default False keeps every 0.x Action(...) call of nine fields valid.

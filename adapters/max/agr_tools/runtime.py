@@ -5,7 +5,7 @@ Native xView uses 0.002 m vertices and 0.005 m faces.
 import json
 import sys
 
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 # atlas.npm (0.2 button) on the npm profile of atlas_core (0.9, #979 branch B; wired by the release branch R)
 ATLAS_PROFILE = 'npm'
 ATLAS_TARGET_PX_M = 35.0
