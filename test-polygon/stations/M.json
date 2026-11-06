@@ -1,0 +1,26 @@
+{"schema": 1, "branch": "M", "issue": "#1024", "stations": [
+ {"button": "vpm.build",
+  "objects": [
+   {"name": "SM_Vpm_Ok", "role": "Main", "builder": "M_build", "extra": {"kind": "facade"}},
+   {"name": "SM_Vpm_IdBad", "role": "Main", "builder": "M_build", "extra": {"kind": "facade_ids_bad"}}],
+  "expected": [
+   {"name": "SM_Vpm_Ok", "scene": "polygon_all", "expect": "pass", "codes": []},
+   {"name": "SM_Vpm_IdBad", "scene": "polygon_all", "expect": "fail", "codes": ["id_range"]}],
+  "options": {"glass_ids": [31]}},
+ {"button": "udim.rescale",
+  "objects": [
+   {"name": "SM_Rescale_Ok", "role": "Main", "builder": "M_build", "extra": {"kind": "plane16_clean"}},
+   {"name": "SM_Rescale_NoUV", "role": "Main", "builder": "M_build", "extra": {"kind": "plane16_nouv"}}],
+  "expected": [
+   {"name": "SM_Rescale_Ok", "scene": "polygon_all", "expect": "pass", "codes": []},
+   {"name": "SM_Rescale_NoUV", "scene": "polygon_all", "expect": "fail", "codes": ["no_uv"]}],
+  "options": {"target_px_per_m": 512}},
+ {"button": "udim.distortion",
+  "objects": [
+   {"name": "SM_Dist_Ok", "role": "Main", "builder": "M_build", "extra": {"kind": "plane16_clean"}},
+   {"name": "SM_Dist_Bad", "role": "Main", "builder": "M_build", "extra": {"kind": "plane16"}}],
+  "expected": [
+   {"name": "SM_Dist_Ok", "scene": "polygon_all", "expect": "pass", "codes": []},
+   {"name": "SM_Dist_Bad", "scene": "polygon_all", "expect": "fail", "codes": ["anisotropy", "texel_scale"]}],
+  "options": {}}
+]}
