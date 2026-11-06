@@ -30,6 +30,7 @@ FLAT_NORMAL = (128, 128, 255)
 DEFAULT_SIZE = 1024          # placeholder ceiling (VPM tiles are 1000 px/m, 3600 px); a solid record needs no more
 SOLID_SIZE = 256             # solid colour: flat placeholder size (VPM flat_placeholder.size_px)
 MASK_SUFFIX = '_mask.png'    # grey mask file of mat.tiles (tiles_max): <base_map>_mask.png
+TILES_MANIFEST = 'tiles_manifest.json'   # mat.tiles (branch L): the D / normal it already built, by record and base map
 
 
 def _sibling(module_name, filename):
@@ -124,6 +125,17 @@ def _record_maps(record, size, opts, read):
     kind = recipe.get('kind') if isinstance(recipe, dict) else recipe
     base = record.get('base_map')
     if kind in ('metric_pattern', 'greyscale_mask') and base:
+        # 1.0.1 (KPP1 e2e 20261106-105708-f1bcec55: 442 s): mat.tiles already wrote the recoloured D of this record and
+        # the normal of its base map; they pass byte for byte (as a ready ERM / normal), no pure-Python re-render of a
+        # 3600 px mask. The mask path below stays for a map_dir without the manifest.
+        made = opts.get('tiles') or {}
+        d_name, n_name = made.get(('diffuse', base, record.get('library_id'))), made.get(('normal', base))
+        if d_name and n_name:
+            d_data = read(os.path.join(opts['map_dir'], d_name))
+            n_data = read(os.path.join(opts['map_dir'], n_name))
+            if d_data and n_data and d_data[:8] == tc.PNG_SIG and n_data[:8] == tc.PNG_SIG:
+                return {'D': (d_data, None), 'N': (n_data, None),
+                        'ERM': (tc.solid_png(size, erm_colour(record)), None)}
         data = None
         if opts.get('map_dir'):
             # 1.0.1 (KPP1 e2e 20261106-102522-ac59f4c6): mat.tiles (branch L, tiles_max) writes the grey mask as
@@ -149,6 +161,29 @@ def _record_maps(record, size, opts, read):
             out['D'] = (tc.solid_png(size, tuple(int(c) for c in rgb)), None)
         out['N'] = (tc.solid_png(size, FLAT_NORMAL), None)
     out['ERM'] = (tc.solid_png(size, erm_colour(record)), None)
+    return out
+
+
+def _tiles_made(map_dir, read):
+    """{('diffuse', base_map, library_id) | ('normal', base_map): file name} of the mat.tiles manifest in map_dir."""
+    if not map_dir:
+        return {}
+    raw = read(os.path.join(map_dir, TILES_MANIFEST))
+    if raw is None:
+        return {}
+    import json
+    try:
+        files = json.loads(raw.decode('utf-8')).get('files') or []
+    except (ValueError, AttributeError, UnicodeDecodeError):
+        return {}
+    out = {}
+    for f in files:
+        if not isinstance(f, dict) or not isinstance(f.get('name'), str) or os.path.basename(f['name']) != f['name']:
+            continue
+        if f.get('kind') == 'diffuse' and type(f.get('record')) is int:
+            out[('diffuse', f.get('base_map'), f['record'])] = f['name']
+        elif f.get('kind') == 'normal':
+            out[('normal', f.get('base_map'))] = f['name']
     return out
 
 
@@ -184,7 +219,8 @@ def plan_maps(udim_table, library, out_dir, options=None, read=_read_file, exist
     size = o.get('size', SOLID_SIZE)
     if size not in tc.PLACEHOLDER_SIZES:
         raise ValueError('size must be one of {}'.format(tc.PLACEHOLDER_SIZES))
-    opts = {'map_dir': o.get('map_dir'), 'normal_strength': float(o.get('normal_strength', 1.0))}
+    opts = {'map_dir': o.get('map_dir'), 'normal_strength': float(o.get('normal_strength', 1.0)),
+            'tiles': _tiles_made(o.get('map_dir'), read)}
     by_id = library.get('by_id', library) if isinstance(library, dict) else {m['library_id']: m for m in library}
     maps, skipped, seen = [], [], set()
     for mesh in sorted(udim_table):

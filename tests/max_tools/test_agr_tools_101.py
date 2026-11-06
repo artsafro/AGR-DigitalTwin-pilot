@@ -628,3 +628,26 @@ def test_vpm_maps_read_the_grey_masks_of_mat_tiles(tmp_path):
     assert sorted(m['kind'] for m in res['maps']) == ['D', 'ERM', 'N'] and not res['skipped']
     src = (PKG / 'vpm_max.py').read_text(encoding='utf-8')
     assert src.count(', _maps_options(o))') == 2          # plan_maps and build_maps both get map_dir
+
+
+def test_vpm_maps_take_the_ready_maps_of_mat_tiles(tmp_path):
+    """RED on 1.0.1-pre (KPP1 e2e 20261106-105708-f1bcec55: vpm.build 442 s): the D and normal of a mask recipe were
+    re-rendered in pure Python from the 3600 px mask although mat.tiles had written them; now they pass byte for byte
+    by the tiles_manifest.json (the mask path stays without a manifest)."""
+    import json as _json
+    lib = ml.load_library(str(LIB))
+    rec = lib['by_id'][12]
+    base = rec['base_map']
+    tiles = tmp_path / 'tiles'
+    tiles.mkdir()
+    d_bytes = tc.solid_png(256, (1, 2, 3))
+    n_bytes = tc.solid_png(256, (128, 128, 255))
+    d_name = 'L012_{}_{}_D.png'.format(rec['key'], base)
+    (tiles / d_name).write_bytes(d_bytes)
+    (tiles / (base + '_normal.png')).write_bytes(n_bytes)
+    (tiles / 'tiles_manifest.json').write_text(_json.dumps({'files': [
+        {'kind': 'diffuse', 'base_map': base, 'record': 12, 'name': d_name},
+        {'kind': 'normal', 'base_map': base, 'name': base + '_normal.png'}]}), encoding='utf-8')
+    res = vc.plan_maps({'SM_Kpp_1_Main': {12: 1001}}, lib, str(tmp_path / 'o'), {'map_dir': str(tiles)})
+    got = {m['kind']: m['data'] for m in res['maps']}
+    assert got['D'] == d_bytes and got['N'] == n_bytes and not res['skipped']
