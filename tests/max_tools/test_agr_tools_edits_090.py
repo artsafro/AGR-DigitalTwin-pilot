@@ -364,7 +364,7 @@ def test_rail_shows_09_actions_from_version_090_and_greys_them_before():
     rail08 = m.rail(suite['blocks'], suite['rows'], '0.8.1')  # what the branches A-E3 shipped on
     done = {m.row_of(a.id) for _, d, _ in rail08 for a in d}
     assert not done & set(ROWS_090)
-    assert m.VERSION == runtime().VERSION == '0.9.0'  # release branch R (#979)
+    assert m.VERSION == runtime().VERSION == '1.0.0'  # 0.9 shipped in 0.9.0 (#979); release branch R of #1024
     rail = m.rail(suite['blocks'], suite['rows'])
     assert set(ROWS_090) <= {m.row_of(a.id) for _, d, _ in rail for a in d}
     assert all(rm.shipped(r['version'], m.VERSION) for r in ROWS_090.values())
@@ -428,7 +428,7 @@ def test_mcp_has_19_preview_only_tools():
         assert name == 'agr_{}_{}'.format(block, rest) and bridge.EDITS_090[name] == row
         assert mode == ROWS_090[row]['mode']
     assert set(bridge.EDITS_090) == {n for n, *_ in tools.EDITS_090} and set(bridge.EDITS_090) <= set(tools.PHASE0)
-    assert bridge.RUNTIME_090 == runtime().VERSION
+    assert bridge.RUNTIME_090 == '0.9.0' and bridge.RUNTIME_100 == runtime().VERSION == '1.0.0'
     cat = tools.catalog()
     for name, *_ in tools.EDITS_090:
         spec = cat[name]

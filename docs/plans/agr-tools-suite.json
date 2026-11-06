@@ -935,7 +935,8 @@
    "version": "1.0",
    "icon": "udim2id",
    "stage": 8,
-   "fate": "stage"
+   "fate": "stage",
+   "deferred": "1.1"
   },
   {
    "id": "udim.viewer",
@@ -1086,7 +1087,8 @@
    "icon": "unatlas",
    "stage": 8,
    "fate": "step",
-   "step_of": "npm.to_vpm"
+   "step_of": "npm.to_vpm",
+   "deferred": "1.1"
   },
   {
    "id": "place.flora_repair",
@@ -2108,7 +2110,8 @@
    "lab_report": null,
    "lab_status": null,
    "stage": 8,
-   "fate": "stage"
+   "fate": "stage",
+   "deferred": "1.1"
   },
   {
    "id": "pack.deliver",
@@ -2524,7 +2527,7 @@
   {
    "version": "1.0",
    "title_ru": "Конвейер ОКС: этапы 0–9, паспорт, окна, материалы, ВПМ/НПМ, сдача, агент",
-   "status": "in work",
+   "status": "done",
    "effort": "XL: ветка 0 + 13 параллельных веток (SPLIT редакция 2)",
    "issue": "#1024",
    "rows": [
@@ -2566,7 +2569,13 @@
     "model.window_placer",
     "tex.vpm_sets",
     "atlas.unatlas"
-   ]
+   ],
+   "deferred": [
+    "npm.to_vpm",
+    "udim.udims_to_ids",
+    "atlas.unatlas"
+   ],
+   "deferred_note_ru": "этап 8 «НПМ → ВПМ» (ветка Q) не слит к релизу R: кнопки остаются «в работе», выпуск в 1.1.0"
   },
   {
    "version": "1.x",

@@ -13,7 +13,7 @@ import math
 import os
 from collections import namedtuple
 
-VERSION = '0.9.0'
+VERSION = '1.0.0'
 
 # wip=True (1.0 conveyor, #1024): the button is visible but disabled, tooltip «в работе, #1024», its macro never
 # runs an edit. Default False keeps every 0.x Action(...) call of nine fields valid.
@@ -278,10 +278,25 @@ _ROWS_100 = {  # plan row id -> (icon, label_ru, reqs)
 }
 
 
+# Release 1.0.0 (#1024 R): the rows of the merged branches F..P, S, T, U ship; branch Q (stage 8 НПМ → ВПМ) was not
+# merged when R started, so its two rows stay wip and move to 1.1.0 (SPLIT.md «Порядок слияния» 3).
+WIP_100 = frozenset(('npm.to_vpm', 'udim.udims_to_ids'))
+
+
+def stage_tip(tool):
+    """Tooltip head of a released 1.0 stage button: «1.0, этап <n> <stage>» (the agent stage has no number)."""
+    for sid, label, _icon, rows_ in STAGES_100:
+        if tool in rows_:
+            return '1.0, ' + ('этап «Агент»' if sid == 'agent' else 'этап {} «{}»'.format(sid, label))
+    raise KeyError('not a 1.0 stage row: ' + repr(tool))
+
+
 def _action_100(tool):
     icon, label, reqs = _ROWS_100[tool]
     macro = 'AGRTools' + ''.join(p.capitalize() for p in tool.replace('.', '_').split('_'))
-    return Action(tool.replace('.', '_'), tool, icon, None, label, WIP_TIP, tuple(reqs.split()), macro, False, True)
+    wip = tool in WIP_100
+    return Action(tool.replace('.', '_'), tool, icon, None, label, WIP_TIP if wip else stage_tip(tool),
+                  tuple(reqs.split()), macro, False, wip)
 
 
 ACTIONS_100 = tuple(_action_100(tool) for _sid, _label, _icon, rows_ in STAGES_100 for tool in rows_)

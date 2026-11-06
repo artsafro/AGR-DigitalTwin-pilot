@@ -75,7 +75,7 @@ def err(res, code):
 # ---- fake installed runtime on the real edit_core / journal_core contract -----------------------------------------
 FAKE_RUNTIME = '''
 import importlib.util, os, sys
-VERSION = "0.9.0"
+VERSION = "1.0.0"
 CALLS = []
 STATE = {"scene": "s1"}
 NOT_IMPLEMENTED = set()
@@ -142,7 +142,7 @@ class FakeNode:
 
 @pytest.fixture
 def fake_max(tmp_path, monkeypatch):
-    root = tmp_path / "AGRTools-0.9.0"
+    root = tmp_path / "AGRTools-1.0.0"
     root.mkdir()
     (root / "runtime.py").write_text("AGR = {!r}\n".format(str(AGR).replace("\\", "/")) + FAKE_RUNTIME,
                                      encoding="utf-8")
@@ -322,7 +322,7 @@ def test_preview_id_is_bound_and_apply_takes_only_it(fake_max, tmp_path):
     pid = sc["preview_id"]
     assert pid == envelope.sha256(report) and sc["next_actions"] == ["agr_op_apply(preview_id='{}')".format(pid)]
     held = store.get(pid, {})
-    assert held.binding == {"host": "max-live", "instance": None, "doc": fake_max.doc, "runtime_version": "0.9.0",
+    assert held.binding == {"host": "max-live", "instance": None, "doc": fake_max.doc, "runtime_version": "1.0.0",
                             "state_hash": report["plan"]["state_hash"], "op": "model.triangulate"}
     assert held.targets == {"scene": "live", "handles": [1]}
     _, (app, again) = run_calls([("agr_op_apply", {"preview_id": pid}), ("agr_op_apply", {"preview_id": pid})],
@@ -331,7 +331,7 @@ def test_preview_id_is_bound_and_apply_takes_only_it(fake_max, tmp_path):
     assert out["result"]["plan"]["mode"] == "apply" and out["preview_id"] == pid
     assert ("080", "model.triangulate", "apply", [1], "mcp", None) in rtmod().CALLS
     assert fake_max.sent[-1][1]["preview"] == report and fake_max.sent[-1][1]["expect"] == {
-        "doc": fake_max.doc, "runtime_version": "0.9.0"}
+        "doc": fake_max.doc, "runtime_version": "1.0.0"}
     err(again, "stale_preview")
     with pytest.raises(jsonschema.ValidationError):  # apply takes only preview_id (+ idempotency_key)
         jsonschema.validate({"preview_id": pid, "preview": report}, tools.catalog()["agr_op_apply"].input)
@@ -372,7 +372,7 @@ def test_stale_preview_on_every_binding_change(fake_max, monkeypatch):
     rtmod().VERSION = "0.9.1"
     _, (res,) = run_calls([("agr_op_apply", {"preview_id": pid})], fake_max.transport, store)
     assert "runtime changed" in err(res, "stale_preview")["error"]
-    rtmod().VERSION = "0.9.0"
+    rtmod().VERSION = "1.0.0"
     # scene state changed (runtime edit_core.require_current -> StalePreview)
     pid = _held(fake_max, store)
     rtmod().STATE["scene"] = "s2"

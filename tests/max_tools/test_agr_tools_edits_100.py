@@ -78,8 +78,14 @@ def test_stages_cover_the_33_buttons_in_station_order():
     assert len(ORDER) == 33 and len(set(ORDER)) == 33 and set(ORDER) == set(OWNER)
     assert [s['id'] for s in suite['stages']] == list(range(10)) + ['agent']
     v10 = next(v for v in suite['versions'] if v['version'] == '1.0')
-    assert v10['rows'] == ORDER and v10['status'] == 'in work' and v10['issue'] == '#1024'
+    assert v10['rows'] == ORDER and v10['status'] == 'done' and v10['issue'] == '#1024'
     assert sorted(v10['steps']) == ['atlas.unatlas', 'model.window_placer', 'tex.vpm_sets']
+    # release 1.0.0 (#1024 R): branch Q (stage 8) was not merged; its rows and step are deferred to 1.1, and the
+    # panel keeps exactly its two buttons wip
+    deferred = {rid for rid, r in ROWS.items() if r.get('deferred')}
+    assert deferred == set(v10['deferred']) == {'npm.to_vpm', 'udim.udims_to_ids', 'atlas.unatlas'}
+    assert all(ROWS[rid]['deferred'] == '1.1' and ROWS[rid]['stage'] == 8 for rid in deferred)
+    assert set(_load(PKG / 'ui_model.py', 'agr_tools_ui_model_100').WIP_100) == deferred & set(ORDER)
     for rid in ORDER:
         assert ROWS[rid]['version'] == '1.0' and ROWS[rid]['fate'] == 'stage' and ROWS[rid]['mcp'] == 'yes'
     for rid in NEW_15:

@@ -537,23 +537,27 @@ def test_every_action_has_a_macro_with_icon_and_menu_entry():
 
 def test_every_10_stage_action_has_a_disabled_macro_icon_and_menu_entry():
     mcr, menu = m.macros_ms(), m.menu_ms()
-    assert len(m.ACTIONS_100) == 33 and all(a.wip for a in m.ACTIONS_100)
+    # release 1.0.0 (#1024 R): 31 rows ship; branch Q (npm.to_vpm, udim.udims_to_ids) stays wip for 1.1.0
+    assert len(m.ACTIONS_100) == 33 and {a.tool for a in m.ACTIONS_100 if a.wip} == set(m.WIP_100) == {
+        'npm.to_vpm', 'udim.udims_to_ids'}
     blocks = mcr.split('\nmacroScript ')
     for a in m.ACTIONS_100:
         body = [b for b in blocks if b.startswith(a.macro + ' ')]
         assert len(body) == 1, a.macro
         body = body[0]
-        assert re.match(r'{} category:"AGR Tools" .* tooltip:"в работе, #1024 .* iconName:"AgrIcons/agr_{}"'.format(
-            a.macro, a.icon), body), a.macro
+        head = 'в работе, #1024' if a.wip else m.stage_tip(a.tool)
+        assert re.match(r'{} category:"AGR Tools" .* tooltip:"{} .* iconName:"AgrIcons/agr_{}"'.format(
+            a.macro, re.escape(head), a.icon), body), a.macro
         assert a.icon in icons.names() and icons.svg(a.icon, '#000000').startswith('<svg'), a.icon
-        # wip: greyed (isEnabled false) and execute only says so; it never reaches python / an edit
-        assert '\n    on isEnabled return false\n' in body and 'messageBox' in body and 'python.Execute' not in body
-        assert '{} ({}): в работе, #1024'.format(a.label, a.tool) in body
         assert 'b_{} '.format(a.id) not in mcr  # not in the classic rollout (0.x actions only)
         assert '"{}`AGR Tools"'.format(a.macro) in menu
-        # released (wip False): one press = runtime.edit_ui (preview, then apply on the same selection)
-        assert m.macro_100(a._replace(wip=False))[1] == \
-            '(on execute do python.Execute "agr_tools_runtime.edit_ui(\'{}\')")'.format(a.tool)
+        released = '(on execute do python.Execute "agr_tools_runtime.edit_ui(\'{}\')")'.format(a.tool)
+        if a.wip:  # greyed (isEnabled false) and execute only says so; it never reaches python / an edit
+            assert '\n    on isEnabled return false\n' in body and 'messageBox' in body and 'python.Execute' not in body
+            assert '{} ({}): в работе, #1024'.format(a.label, a.tool) in body
+        else:  # released: one press = runtime.edit_ui (preview, then apply on the same selection)
+            assert released in body and 'isEnabled' not in body and 'messageBox' not in body
+        assert m.macro_100(a._replace(wip=False))[1] == released
     sub = menu[menu.index(m.MENU_100):]
     order = [re.search(r'"(AGRTools\w+)`AGR Tools"', ln).group(1) for ln in sub.splitlines() if 'CreateAction' in ln]
     assert order == [a.macro for a in m.ACTIONS_100]  # station order 1.0.1..1.0.33, stage by stage
@@ -605,9 +609,9 @@ def test_icon_entries_svg_from_generator_and_png_from_dir(synthetic_icon_pngs):
 
 def test_package_contents_is_valid_and_complete():
     root = ET.fromstring(builder.package_contents())
-    assert root.tag == 'ApplicationPackage' and root.get('AppVersion') == '0.9.0'
+    assert root.tag == 'ApplicationPackage' and root.get('AppVersion') == '1.0.0'
     assert root.get('UpgradeCode') == '{BA2C2E6E-54F9-402E-8875-3D616C9030FD}'
-    assert root.get('ProductCode') == m.product_code('0.9.0') != m.product_code('0.8.0')
+    assert root.get('ProductCode') == m.product_code('1.0.0') != m.product_code('0.9.0')
     descs = {c.get('Description'): c.find('ComponentEntry').get('ModuleName') for c in root.iter('Components')}
     assert descs == {'macroscripts parts': './Contents/agr_tools/agr_tools.mcr',
                      'post-start-up scripts parts': './Contents/agr_tools/startup.ms',
