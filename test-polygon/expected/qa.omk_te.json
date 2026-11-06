@@ -1,13 +1,25 @@
 {
  "schema": 1,
  "button": "qa.omk_te",
- "tool": null,
+ "tool": "qa.omk_te",
  "version": "1.0",
- "shipped": false,
+ "shipped": true,
  "select": "named",
- "reason": "станция в работе, #1024, ветка T",
+ "reason": "FAIL-строка (нет таблицы, кракозябры, несколько кодов) проверяется unit-тестами и нативным джобом: у станции одна опция на прогон, а отчёт кнопки без объектов сцены один",
  "apply_status": null,
- "objects": [],
+ "objects": [
+  {
+   "name": "__scene__",
+   "scene": "polygon_all",
+   "expect": "pass",
+   "codes": []
+  }
+ ],
+ "options": {
+  "table": "C:/x/test-polygon/t/omk/OMK_synth.tsv",
+  "filter": "стена",
+  "pick": 2
+ },
  "base": "1.0",
  "station": "1.0.30",
  "stations": [
