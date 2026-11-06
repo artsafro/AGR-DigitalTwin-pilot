@@ -397,3 +397,23 @@ def test_compare_is_order_free_where_rounding_swaps_sorted_neighbours():
     assert core.multiset_close(ref, got, 1e-4)                           # GREEN
     assert not core.multiset_close(ref, [g[:3] + [9, 4] for g in got], 1e-4)
     assert not core.multiset_close([[0.5, 0.5]], [[0.5, 0.500002]], 1e-6, 2)
+
+
+def test_h9_exporter_triangulates_ngon_meshes_red_then_diagonals_dissolved_green():
+    import math
+    ring = [[math.cos(math.pi * i / 4), math.sin(math.pi * i / 4), 0.0] for i in range(8)]
+    octagon = [list(range(8))]
+    world = ID + [[0.0, 0.0, 0.0]]
+    mids = [[(ring[i][k] + ring[(i + 1) % 8][k]) / 2 for k in range(3)] for i in range(8)]
+    ref = core.finish_facts('CAP', world, ring, octagon, [1], 8, [], {}, edge_mids=mids)
+    assert ref['ngon_ref'] is not None and ref['degrees'] == {'8': 1}
+    fan = [[0, i, i + 1] for i in range(1, 7)]                                  # what the FBX brings back
+    got = core.finish_facts('CAP', world, ring, fan, [1] * 6, 13, [], {})
+    assert core.compare([ref], [got])['topology']                                # RED
+    interior = [(i, [(ring[0][k] + ring[i][k]) / 2 for k in range(3)], [ring[0], ring[i]]) for i in range(2, 7)]
+    border = [(100 + i, mids[i], [ring[i], ring[(i + 1) % 8]]) for i in range(8)]
+    new_vertex = [(200, [0.5, 0.0, 0.0], [ring[0], [0.0, 0.0, 0.0]])]         # an agent's cut to a new vertex
+    assert core.diagonals(ref['ngon_ref'], interior + border + new_vertex) == [2, 3, 4, 5, 6]   # GREEN
+    assert core.diagonals(None, interior) == []
+    quads = core.finish_facts('Q', world, ring[:4], [[0, 1, 2, 3]], [1], 4, [], {}, edge_mids=mids[:4])
+    assert quads['ngon_ref'] is None                                             # only n-gon meshes carry it

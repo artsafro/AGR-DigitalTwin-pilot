@@ -124,15 +124,17 @@ def poly_facts(rt, n, k, leader=None, core=None):
                 faces.append([int(v) - 1 for v in po.getFaceVerts(c, f)])
                 ids.append(int(po.getFaceMatID(c, f)))
                 sgs.append(int(po.getFaceSmoothGroup(c, f)) & 0xFFFFFFFF)
-            hard = []
+            hard, mids = [], []
             for e in range(1, ne + 1):
+                v1, v2 = [int(x) - 1 for x in po.getEdgeVerts(c, e)]
+                mid = [(verts[v1][i] + verts[v2][i]) / 2 for i in range(3)]
+                mids.append(mid)
                 ef = [int(x) for x in po.getEdgeFaces(c, e)]
                 if len(ef) != 2:
                     continue
                 a, b = sgs[ef[0] - 1], sgs[ef[1] - 1]
                 if a & b == 0:
-                    v1, v2 = [int(x) - 1 for x in po.getEdgeVerts(c, e)]
-                    hard.append([(verts[v1][i] + verts[v2][i]) / 2 for i in range(3)])
+                    hard.append(mid)
             uv = {}
             nmaps = int(po.getNumMaps(c))
             for ch in range(1, nmaps):
@@ -150,7 +152,7 @@ def poly_facts(rt, n, k, leader=None, core=None):
             rt.delete(c)
     parent = None if n.parent is None else str(n.parent.name)
     facts = core.finish_facts(str(n.name), _world_rows(n, k), verts, faces, ids, ne, hard, uv, role=_role(rt, n),
-                              parent=parent, scale=_scale(n), instance_group=leader)
+                              parent=parent, scale=_scale(n), instance_group=leader, edge_mids=mids)
     tiles_by_id = {}
     for f, mid in enumerate(ids):
         corners = uv.get(1, [[]] * nf)[f] if 1 in uv else []
@@ -577,6 +579,59 @@ def _face_centres(rt, n, k):
     return out
 
 
+def _depth(n):
+    d = 0
+    while n.parent is not None:
+        n = n.parent
+        d += 1
+    return d
+
+
+def _set_transforms(rt, meshes, k):
+    """Node transforms = the manifest (pivots), scale 1; world vertex positions kept (object offset baked).
+
+    Measured (lab job 20261106-134859-c0574780): the FBX import puts the m -> cm conversion into the NODE scale (100)
+    while the vertices are right in world space. All world positions are read first, parents are set before children
+    (a parent's change moves its children; each child is set again afterwards)."""
+    po = rt.polyop
+    pts = {}
+    for n, _o in meshes:
+        pts[int(n.inode.handle)] = [po.getVert(n, i) for i in range(1, int(po.getNumVerts(n)) + 1)]
+    changed = []
+    for n, o in sorted(meshes, key=lambda no: _depth(no[0])):
+        w = o['world']
+        tm = rt.Matrix3(rt.Point3(*w[0]), rt.Point3(*w[1]), rt.Point3(*w[2]),
+                        rt.Point3(w[3][0] / k, w[3][1] / k, w[3][2] / k))
+        n.transform = tm
+        n.objectOffsetPos = rt.Point3(0, 0, 0)
+        n.objectOffsetRot = rt.Quat(0, 0, 0, 1)
+        n.objectOffsetScale = rt.Point3(1, 1, 1)
+        for i, p in enumerate(pts[int(n.inode.handle)], 1):
+            po.setVert(n, i, p)
+        changed.append(o['name'])
+    return changed
+
+
+def _dissolve_diagonals(rt, core, n, ngon_ref, k):
+    """Remove the triangulation diagonals of an n-gon mesh (handoff_core.diagonals); returns how many."""
+    if not ngon_ref:
+        return 0
+    po = rt.polyop
+    edges = []
+    for e in range(1, int(po.getNumEdges(n)) + 1):
+        if len(list(po.getEdgeFaces(n, e))) != 2:
+            continue
+        a, b = (po.getVert(n, int(v)) for v in po.getEdgeVerts(n, e))
+        p1 = [float(a.x) * k, float(a.y) * k, float(a.z) * k]
+        p2 = [float(b.x) * k, float(b.y) * k, float(b.z) * k]
+        edges.append((e, [(p1[i] + p2[i]) / 2 for i in range(3)], [p1, p2]))
+    ids = core.diagonals(ngon_ref, edges)
+    if ids:
+        rt.execute('(fn f n edges = (polyop.setEdgeSelection n (edges as bitarray); '
+                   'n.EditablePoly.Remove selLevel:#Edge; ok); f)')(n, ids)
+    return len(ids)
+
+
 def _remap_matids(rt, core, n, slots, ref_keys=None, k=1.0):
     """Face matIDs of a returned (Editable Poly) node back to the original IDs: by the reference face at the same
     centre (readback_max face keys), else by the sub-material name of the slot table."""
@@ -686,8 +741,20 @@ def handoff_import(ctx, mode, nodes, preview):  # noqa: ARG001 - the input is th
         for n, o in meshes:
             if str(rt.classOf(n)) != 'Editable_Poly':
                 rt.convertToPoly(n)
+        live = {str(n.name): n for n, _o in meshes}
+        for n, o in meshes:
+            if o['parent'] and o['parent'] in live and (n.parent is None or str(n.parent.name) != o['parent']):
+                n.parent = live[o['parent']]
+                done.append('{}: parent {}'.format(o['name'], o['parent']))
         refs = {f['name']: f for f in _read_json(os.path.join(bundle, 'readback_max.json'))['objects']}
         k = host.m_per_unit()
+        _set_transforms(rt, meshes, k)
+        for n, o in meshes:
+            ref = refs.get(o['name'])
+            if o['instance_of'] is None and ref and ref.get('ngon_ref'):
+                cnt = _dissolve_diagonals(rt, core, n, ref['ngon_ref'], k)
+                if cnt:
+                    done.append('{}: {} triangulation diagonals removed (n-gons back)'.format(o['name'], cnt))
         for n, o in meshes:
             if o['instance_of'] is None:
                 ref = refs.get(o['name'])
@@ -695,7 +762,6 @@ def handoff_import(ctx, mode, nodes, preview):  # noqa: ARG001 - the input is th
                 ambiguous.extend('{}: {}'.format(o['name'], a) for a in amb)
                 if changed:
                     done.append('{}: {} faces back to their matIDs'.format(o['name'], len(changed)))
-        live = {str(n.name): n for n, _o in meshes}
         for n, o in meshes:
             lead = live.get(o['instance_of']) if o['instance_of'] else None
             if lead is None:
@@ -703,10 +769,6 @@ def handoff_import(ctx, mode, nodes, preview):  # noqa: ARG001 - the input is th
             if not rt.areNodesInstances(n, lead):
                 rt.instanceReplace(n, lead)
                 done.append('{}: instance of {} again'.format(o['name'], o['instance_of']))
-        for n, o in meshes:
-            if o['parent'] and o['parent'] in live and (n.parent is None or str(n.parent.name) != o['parent']):
-                n.parent = live[o['parent']]
-                done.append('{}: parent {}'.format(o['name'], o['parent']))
     os.makedirs(agent_dir)
     objects = []
     for n in new:

@@ -162,6 +162,20 @@ def diag_triangulation():
         c4 = cyl('D_cyl_rot')
         rt.rotate(c4, rt.EulerAngles(0, 0, 30))
         cases['cyl_rot'] = c4
+        KB = load(ROOT / 'test-polygon' / 'stations' / 'K_build.py', 'K_build')
+        import math
+        ring = [[0.5 * math.cos(math.pi * i / 4), 0.5 * math.sin(math.pi * i / 4)] for i in range(8)]
+        verts = [[x, y, 0.0] for x, y in ring] + [[x, y, 1.2] for x, y in ring]
+        faces = [list(range(7, -1, -1)), list(range(8, 16))] + \
+            [[i, (i + 1) % 8, 8 + (i + 1) % 8, 8 + i] for i in range(8)]
+        cases['ngon_prism'] = KB.mesh_node(rt, 'D_ngon_prism', {'verts': verts, 'faces': faces})
+        pent = KB.mesh_node(rt, 'D_pentagon', {'verts': [[0, 0, 0], [1, 0, 0], [1.3, 0.8, 0], [0.5, 1.4, 0],
+                                                         [-0.3, 0.8, 0]], 'faces': [[0, 1, 2, 3, 4]]})
+        cases['pentagon'] = pent
+        c5 = rt.Cylinder(radius=50, height=120, sides=4, heightsegs=1, capsegs=1, smooth=True, mapcoords=True)
+        c5.name = 'D_cyl4'
+        rt.convertToPoly(c5)
+        cases['cyl4'] = c5
     GLUE._fbx_params(rt, CORE.FBX_EXPORT_PARAMS)
     done = {}
     for key, n in cases.items():

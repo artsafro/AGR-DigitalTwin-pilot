@@ -209,8 +209,27 @@ def _r(x, nd=6):
     return 0.0 if v == 0 else v
 
 
+def diagonals(ngon_ref, edges, tol=TOL['pos_m']):
+    """Edges to dissolve so a triangulated n-gon mesh gets its polygons back.
+
+    The Max 2024 FBX exporter writes TRIANGLES for a mesh with n-gons (> 4 sides) next to other faces (lab job
+    20261106-134859-6511047e: an 8-gon prism and a converted cylinder come out as triangles, one pentagon alone does
+    not). ngon_ref: {'edges': [midpoints], 'verts': [positions]} of the original mesh (world metres); edges:
+    [(edge id, midpoint, [p1, p2])] of the interior edges (two faces) of the returned mesh. An edge is a
+    triangulation diagonal when it is not an original edge but both its ends are original vertices."""
+    if not ngon_ref:
+        return []
+    eidx = PointIndex(ngon_ref['edges'])
+    vidx = PointIndex(ngon_ref['verts'])
+    out = []
+    for eid, mid, ends in edges:
+        if eidx.find(mid, tol) is None and all(vidx.find(p, tol) is not None for p in ends):
+            out.append(eid)
+    return out
+
+
 def finish_facts(name, world, verts_world, faces, mat_ids, edges, hard_mids, uv_corners, role=None, parent=None,
-                 scale=None, instance_group=None):
+                 scale=None, instance_group=None, edge_mids=None):
     """Host-neutral facts of one mesh object from raw host data.
 
     world: rows [row1..row4] (metres); verts_world: [[x,y,z]] metres; faces: [[vertex index...]]; mat_ids: per face;
@@ -251,7 +270,11 @@ def finish_facts(name, world, verts_world, faces, mat_ids, edges, hard_mids, uv_
             'mat_hist': dict(sorted(mat_hist.items(), key=lambda kv: int(kv[0]))),
             'face_keys': sorted(keys), 'uv': uv, 'hard': sorted([_r(x) for x in p] for p in hard_mids),
             'bbox': [[_r(x) for x in lo], [_r(x) for x in hi]] if verts_world else None,
-            'instance_group': instance_group}
+            'instance_group': instance_group,
+            # n-gon meshes only: the original edges and vertices, to undo the exporter's triangulation (diagonals)
+            'ngon_ref': {'edges': sorted([_r(x) for x in p] for p in edge_mids),
+                         'verts': sorted([_r(x) for x in p] for p in verts_world)}
+            if edge_mids is not None and any(len(f) > 4 for f in faces) else None}
 
 
 class PointIndex:

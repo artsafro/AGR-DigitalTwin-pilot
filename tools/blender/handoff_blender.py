@@ -152,6 +152,38 @@ def relink_instances(manifest):
     return linked
 
 
+def dissolve_diagonals(ref_facts):
+    """n-gon meshes: dissolve the triangulation diagonals of the Max FBX export (handoff_core.diagonals) so the
+    polygons are the original quads / n-gons again. Returns {object: dissolved edges}."""
+    import bmesh
+    by = {f['name']: f for f in ref_facts}
+    out, seen = {}, set()
+    for obj in bpy.context.scene.objects:
+        ref = by.get(obj.name)
+        if obj.type != 'MESH' or not ref or not ref.get('ngon_ref') or obj.data.name in seen:
+            continue
+        seen.add(obj.data.name)
+        mw = obj.matrix_world
+        bm = bmesh.new()
+        bm.from_mesh(obj.data)
+        bm.edges.ensure_lookup_table()
+        cand = []
+        for e in bm.edges:
+            if len(e.link_faces) != 2:
+                continue
+            a, b = (list(mw @ v.co) for v in e.verts)
+            cand.append((e.index, [(a[k] + b[k]) / 2 for k in range(3)], [a, b]))
+        ids = set(core.diagonals(ref['ngon_ref'], cand))
+        if ids:
+            bmesh.ops.dissolve_edges(bm, edges=[e for e in bm.edges if e.index in ids], use_verts=False,
+                                     use_face_split=False)
+            bm.to_mesh(obj.data)
+            obj.data.update()
+        bm.free()
+        out[obj.name] = len(ids)
+    return out
+
+
 def mark_sharp_from_reference(ref_facts):
     """Sharp edges = the hard edges of readback_max (edge midpoints, world metres); objects without a reference fall
     back to the corner normals. Returns {object: marked}."""
@@ -190,6 +222,7 @@ def import_bundle(bundle):
     notes = {'importer_options_missing': import_fbx(bundle / manifest['fbx']['file'])}
     notes['renamed'] = restore_names(manifest)
     notes['normalise'] = normalise(manifest)
+    notes['diagonals_dissolved'] = dissolve_diagonals(ref)
     notes['instances_linked'] = relink_instances(manifest)
     notes['sharp'] = mark_sharp_from_reference(ref)
     return manifest, notes
@@ -316,6 +349,7 @@ def roundtrip(bundle, out):
     fresh()
     import_fbx(ret)
     restore_names(manifest)
+    dissolve_diagonals(ref)
     sharp = mark_sharp_from_reference(ref)
     back = facts(manifest, ref)
     res2 = core.compare(ref, back, check_roles=False)
