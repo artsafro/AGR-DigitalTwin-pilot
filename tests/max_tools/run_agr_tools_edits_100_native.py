@@ -70,6 +70,13 @@ def journal_lines():
     return [json.loads(x) for x in p.read_text(encoding='utf-8').splitlines()] if p.is_file() else []
 
 
+def implemented(tool):
+    import ast
+    core, fn = agr.EDITS_100[tool]
+    glue = OUT / 'installed' / agr.glue_file(core, agr.GLUE_100)
+    return fn in {n.name for n in ast.parse(glue.read_text(encoding='utf-8')).body if isinstance(n, ast.FunctionDef)}
+
+
 def registry():
     assert list(agr.EDITS_100) == ORDER and len(ORDER) == 33, ORDER
     ec = agr._edit_core()
@@ -77,7 +84,8 @@ def registry():
     rt.clearSelection()
     box = rt.Box(name='SM_Smoke_1024_Main_001', length=2, width=2, height=2)
     rt.select(box)
-    for tool in ORDER:
+    stubs = [t for t in ORDER if not implemented(t)]  # branches F..U fill buttons; their own natives own them
+    for tool in stubs:
         r = agr.edits_100(tool, 'preview')
         assert r['status'] == 'not_implemented' and r['plan']['issue'] == '#1024', (tool, r['status'])
         agr.parse_report(json.dumps(r))
@@ -93,7 +101,7 @@ def registry():
         out[tool] = r['status']
     rt.delete(box)
     lines = journal_lines()[before:]
-    calls = len(ORDER) + 3 * sum(t not in agr.READ_100 for t in ORDER)
+    calls = len(stubs) + 3 * sum(t not in agr.READ_100 for t in stubs)
     assert len(lines) == calls, (len(lines), calls)  # every call, refused ones too, is one line
     assert {x['actor'] for x in lines} == {'panel', 'mcp', 'agent'}
     return {'stubs': len(out), 'journal_lines': len(lines), 'journal_file': 'journal/untitled.jsonl'}

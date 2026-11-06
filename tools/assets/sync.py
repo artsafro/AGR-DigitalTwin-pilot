@@ -96,9 +96,13 @@ def validate_document(document: object) -> list[str]:
     if not isinstance(document, dict) or not document:
         return ["empty"]
     errors: list[str] = []
-    allowed = {"schema", "local_root", "login", "drive", "rejected_backends", "provenance_gaps", "assets"}
+    allowed = {"schema", "local_root", "login", "drive", "rejected_backends", "provenance_gaps", "assets", "drive_folder"}
     if set(document) - allowed:
         errors.append("unsupported_manifest_field")
+    if "drive_folder" in document:
+        folder = document["drive_folder"]
+        if not isinstance(folder, str) or not folder.strip() or folder.startswith(("/", "\\")) or _path_escapes(folder):
+            errors.append("partial: drive_folder")
     if document.get("login") not in {"pending", "rclone", "drive-desktop"}:
         errors.append("partial: login")
     if document.get("drive") != "google-drive" or document.get("rejected_backends") != ["dropbox"]:
