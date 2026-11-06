@@ -289,6 +289,16 @@ VERTEX_CHANNELS = (0, -1, -2)  # vertex colour, illumination, alpha
 # Tool instructions of the AGR pipeline (runtime._HELD_OFF holds the same keys off the export hygiene gate).
 PIPELINE_UDP = frozenset({'AGR_EXPORT_PATH', 'AGR_TEXEL_PROFILE', 'AGR_TEXEL_MAP', 'AGR_UV_PERIODS',
                           'AGR_UV_TARGET', 'AGR_ATLAS_MODE', 'AGR_ATLAS_SIZE', 'AGR_UCX_KIND'})
+# 1.0.1 (KPP1 e2e 20261106-075555-c179f5f0): the lower-case working keys of the 1.0 buttons (contract_core К1
+# `agr_role`, `agr_window_type`, `agr_face_axis`, `agr_udim_table`, `agr_npm_source`, `agr_intake_source`, ...) are
+# pipeline data as well: held off the hygiene gate and off the delivered copy, never a `clear_user_defined_lines`.
+PIPELINE_UDP_PREFIX = 'agr_'
+
+
+def pipeline_key(key):
+    """True for a user-prop key of the AGR pipeline (kept on the working object, not delivered)."""
+    key = str(key).strip()
+    return key in PIPELINE_UDP or key.startswith(PIPELINE_UDP_PREFIX)
 CLEANUP_FACT_KEYS = ('vertex_channels', 'keys')
 
 
@@ -331,8 +341,8 @@ def cleanup_plan(plan, facts, options=None):
         actions, kept = [], []
         for action in item['actions']:
             if action.get('action') == 'clear_user_defined_lines':
-                kept += [line for line in action['lines'] if udp_key(line) in PIPELINE_UDP]
-                lines = [line for line in action['lines'] if udp_key(line) not in PIPELINE_UDP]
+                kept += [line for line in action['lines'] if pipeline_key(udp_key(line))]
+                lines = [line for line in action['lines'] if not pipeline_key(udp_key(line))]
                 if lines:
                     actions.append(dict(action, lines=lines))
                 continue

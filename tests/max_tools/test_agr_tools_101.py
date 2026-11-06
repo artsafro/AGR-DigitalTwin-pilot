@@ -313,3 +313,31 @@ def test_ucx_rename_reads_builder_pieces():
     assert nc.parse_ucx('UCX_SM_Kpp_1_Main_AGR_ucx__07') == {'address': 'Kpp_1', 'kind': 'Main', 'number': 7,
                                                              'canonical': False}
     assert isinstance(nc.parse_ucx('UCX_SM_Kpp_1_Roof_AGR_ucx__01'), str)    # still needs _Main / _Ground
+
+
+# ---- stage 9: the working keys of the 1.0 buttons are pipeline props, not delivered lines ------------------------
+KPP1_MAIN_UDP = ('agr_role = body\r\nagr_udim_table = {"12": 1004}\r\nagr_library = v001\r\n'
+                 'AGR_EXPORT_PATH = C:/d/SM_Kpp_1.fbx\r\nMapChannel:1 = UV\r\n')
+
+
+def test_agr_working_keys_held_off_the_cleanup_gate_and_the_delivery():
+    """RED on 1.0.0: export.checked gate cleanup failed on the VPM Main (clear_user_defined_lines agr_role, ...): the
+    KPP1 run removed the lines by hand before pack.deliver B."""
+    sys.path.insert(0, str(ROOT / 'src'))
+    try:
+        from twinqa.export_hygiene import repair_plan
+    finally:
+        sys.path.pop(0)
+    ex = _load('export_core.py', 'agr_tools_export_core_101')
+    rtm = _load('runtime.py', 'agr_runtime_101')
+    dump = {'name': 'SM_Kpp_1_Main', 'custom_attributes': {'base': [], 'node': [], 'modifiers': [], 'materials': []},
+            'user_props': rtm._delivery_props(KPP1_MAIN_UDP), 'map_channels': [1]}
+    assert dump['user_props'] == 'MapChannel:1 = UV\r\n'               # what the gate and the FBX copy see
+    (item,) = repair_plan([dump])['objects']
+    assert item['actions'] == [] and item['unrepairable'] == []
+    # export.cleanup on a copy keeps them as pipeline data, never as a line to clear
+    raw = dict(dump, user_props=KPP1_MAIN_UDP)
+    (kept,) = ex.cleanup_plan(repair_plan([raw]), [{'vertex_channels': [], 'keys': 0}])['objects']
+    assert kept['actions'] == [] and len(kept['kept_udp']) == 4
+    assert ex.pipeline_key('agr_role') and ex.pipeline_key('AGR_EXPORT_PATH') and not ex.pipeline_key('foo')
+    assert not ex.pipeline_key('AGR_role')                          # only the two exact families

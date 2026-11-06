@@ -1975,7 +1975,7 @@ def _delivery_props(buffer):
         if not line.strip():
             continue
         key = line.split('=', 1)[0].strip()
-        if key in _HELD_OFF:
+        if key in _HELD_OFF or key.startswith('agr_'):   # 1.0.1: working keys of the 1.0 buttons (export_core)
             continue
         kept.append(line)
     return ''.join(line + '\r\n' for line in kept)
