@@ -195,8 +195,19 @@ def test_every_stub_answers_not_implemented(tool):
         assert rt.edits_100(tool, 'apply', p) == ec.not_implemented(tool, 'apply', '#1024')
 
 
-def test_dispatcher_refusals_and_apply_only_from_the_panel():
+def _stub_roof_glue(rt, monkeypatch):
+    """`body.roof` is the sample stub row of the dispatcher / journal checks: its glue (branch K) is replaced by an
+    empty module, so these checks keep testing the base whatever a branch implements."""
+    real = rt._load_core
+
+    def fake(name, key):
+        return type(sys)('fake_empty_roof_max') if name == 'roof_max.py' else real(name, key)
+    monkeypatch.setattr(rt, '_load_core', fake)
+
+
+def test_dispatcher_refusals_and_apply_only_from_the_panel(monkeypatch):
     rt = runtime()
+    _stub_roof_glue(rt, monkeypatch)
     p = ec.report('body.roof', 'preview', objects=[ec.entry(5, 'Box')], done=['Box'], state_hash=ec.fingerprint((1,)))
     for args, word in ((('nope', 'preview'), 'unsupported edit tool'), (('place.replace', 'preview'), 'unsupported'),
                        (('body.roof', 'commit'), 'mode'), (('body.roof', 'apply'), 'needs the preview'),
@@ -385,6 +396,7 @@ def test_journal_write_failure_never_hides_the_tool_result(tmp_path, monkeypatch
     blocker.write_text('x')
     monkeypatch.setenv('AGR_JOURNAL_DIR', str(blocker / 'sub'))
     rt = runtime()
+    _stub_roof_glue(rt, monkeypatch)
     assert rt.edits_100('body.roof', 'preview')['status'] == 'not_implemented'
     assert 'journal line not written' in capsys.readouterr().out
 
