@@ -528,3 +528,38 @@ def test_q6_lawn_rolled_and_lawn_reinforced_are_two_records():
     assert 'Q6' not in rolled.get('questions', []) and 'Q6' not in reinforced.get('questions', [])
     for r in (rolled, reinforced):
         assert r['source']['ground_recipe'] in recipes
+
+
+def test_q7_ground_coverings_live_in_a_separate_ground_table_referenced_by_the_oks_table(tmp_path):
+    """RED before Q7: the GRD/PAV records (paving + ground classes) were inside materials_v002.json."""
+    import shutil
+    folder = ROOT / 'library/materials'
+    oks = json.loads((folder / 'materials_v002.json').read_text(encoding='utf-8'))
+    ground = json.loads((folder / 'ground_v001.json').read_text(encoding='utf-8'))
+    assert {r['class'] for r in ground['materials']} == {'ground', 'paving'}
+    assert not {r['class'] for r in oks['materials']} & {'ground', 'paving'}
+    assert oks['ground_ref']['file'] == 'ground_v001.json'
+    lib = ml.load_library(str(LIB))
+    assert lib['ground']['version'] == 'v001' and lib['ground']['sha256'] == oks['ground_ref']['sha256']
+    gids = {r['library_id'] for r in ground['materials']}
+    assert gids == {18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 41}                     # ids are stable, none renumbered
+    assert gids <= set(lib['by_id']) and not gids & {r['library_id'] for r in oks['materials']}
+    assert sorted(lib['by_id']) == list(lib['by_id']) and len(lib['materials']) == 41
+    assert lib['by_id'][26]['key'] == 'lawn_reinforced' and lib['by_id'][18]['class'] == 'paving'
+    # a changed ground table is refused (the OKS table pins its sha256), a missing one too
+    for k in ('materials.json', 'materials_v002.json'):
+        shutil.copy(folder / k, tmp_path / k)
+    (tmp_path / 'ground_v001.json').write_bytes((folder / 'ground_v001.json').read_bytes().replace(b'"v001"', b'"v001" ', 1))
+    with pytest.raises(ValueError, match='ground'):
+        ml.load_library(str(tmp_path / 'materials.json'))
+    (tmp_path / 'ground_v001.json').unlink()
+    with pytest.raises(FileNotFoundError):
+        ml.load_library(str(tmp_path / 'materials.json'))
+    # a ground/paving class record inside the OKS table is a defect once the Ground table is referenced
+    moved = json.loads(json.dumps(oks))
+    moved['materials'].append(dict(ground['materials'][0], library_id=900, key='stray_paving'))
+    (tmp_path / 'materials_v002.json').write_text(json.dumps(moved), encoding='utf-8')
+    (tmp_path / 'ground_v001.json').write_bytes((folder / 'ground_v001.json').read_bytes())
+    direct = ml.load_library
+    with pytest.raises(ValueError, match='Ground table'):
+        direct(str(tmp_path / 'materials_v002.json'))

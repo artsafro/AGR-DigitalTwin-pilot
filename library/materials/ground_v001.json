@@ -1,0 +1,330 @@
+{
+ "schema": 1,
+ "version": "v001",
+ "date": "2026-11-06",
+ "issue": "#1024 K3, 1.0.1 patch (materials audit Q7)",
+ "kind": "ground",
+ "colour_space": "sRGB 8 bit; ral_classic.json screen approximations, not measured RAL",
+ "byte_fields": "roughness/metallic/emissive 0..255 (MaterialRegistry); opacity 0..1",
+ "maps_drive": "G:\\Мой диск\\AGR-assets\\materials\\ (read only from a copy, K5)",
+ "note": "Ground table (GRD + PAV of the audit): separate from the OKS table, referenced by it via ground_ref (owner answer Q7 06.11, like the shared RAL with MAF, V10). Library ids are shared with materials_vNNN.json and unique across both.",
+ "materials": [
+  {
+   "library_id": 18,
+   "key": "paving_100x300_dark",
+   "name_ru": "Брусчатка «Готика» 100x300 тёмная (Bronze 25)",
+   "class": "paving",
+   "ral": null,
+   "rgb_srgb": [
+    118,
+    116,
+    114
+   ],
+   "rgb_note": "project sample (sRGB), provisional",
+   "roughness": 150,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "ground_100x300"
+   },
+   "base_map": "ground_100x300",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-PAV-01",
+    "evidence": "tools/materials/ground_recipes.json:278"
+   },
+   "maf_v005_id": null,
+   "questions": [
+    "Q11"
+   ]
+  },
+  {
+   "library_id": 19,
+   "key": "paving_100x300_light",
+   "name_ru": "Брусчатка «Готика» 100x300 светлая (Gold 22 / Profi 8)",
+   "class": "paving",
+   "ral": null,
+   "rgb_srgb": [
+    214,
+    208,
+    196
+   ],
+   "rgb_note": "project sample (sRGB), provisional",
+   "roughness": 150,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "ground_100x300"
+   },
+   "base_map": "ground_100x300",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-PAV-02",
+    "evidence": "tools/materials/ground_recipes.json:17"
+   },
+   "maf_v005_id": null
+  },
+  {
+   "library_id": 20,
+   "key": "paving_100x300_red",
+   "name_ru": "Брусчатка «Готика» 100x300 красная (Silver 9)",
+   "class": "paving",
+   "ral": null,
+   "rgb_srgb": [
+    148,
+    74,
+    48
+   ],
+   "rgb_note": "project sample (sRGB), provisional",
+   "roughness": 150,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "ground_100x300"
+   },
+   "base_map": "ground_100x300",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-PAV-03",
+    "evidence": "tools/materials/ground_recipes.json:139"
+   },
+   "maf_v005_id": null
+  },
+  {
+   "library_id": 21,
+   "key": "slab_900x300",
+   "name_ru": "Плита шаговая 900x300",
+   "class": "paving",
+   "ral": null,
+   "rgb_srgb": [
+    166,
+    151,
+    153
+   ],
+   "rgb_note": "project sample (sRGB), provisional",
+   "roughness": 150,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "slab_900x300"
+   },
+   "base_map": "slab_900x300",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-PAV-04",
+    "evidence": "docs/research/spozu-vatutino-inventory.md:147"
+   },
+   "maf_v005_id": null,
+   "note": "цвет не задан: бетон MAF ID 24"
+  },
+  {
+   "library_id": 22,
+   "key": "asphalt",
+   "name_ru": "Асфальт",
+   "class": "ground",
+   "ral": null,
+   "rgb_srgb": [
+    62,
+    62,
+    64
+   ],
+   "rgb_note": "project sample (sRGB), provisional",
+   "roughness": 230,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "crumb_1x1"
+   },
+   "base_map": "crumb_1x1",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-GRD-01",
+    "evidence": "jobs/KPP1/scripts/vpm_textures.json:29-47"
+   },
+   "maf_v005_id": null
+  },
+  {
+   "library_id": 23,
+   "key": "gravel_2_8",
+   "name_ru": "Гравийный отсев 2-8 мм",
+   "class": "ground",
+   "ral": null,
+   "rgb_srgb": [
+    150,
+    146,
+    140
+   ],
+   "rgb_note": "project sample (sRGB), provisional",
+   "roughness": 240,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "crumb_1x1"
+   },
+   "base_map": "crumb_1x1",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-GRD-02",
+    "evidence": "tools/materials/ground_recipes.json:181"
+   },
+   "maf_v005_id": null
+  },
+  {
+   "library_id": 24,
+   "key": "pebbles",
+   "name_ru": "Галька",
+   "class": "ground",
+   "ral": null,
+   "rgb_srgb": [
+    160,
+    155,
+    148
+   ],
+   "rgb_note": "project sample (sRGB), provisional",
+   "roughness": 200,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "crumb_1x1"
+   },
+   "base_map": "crumb_1x1",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-GRD-03",
+    "evidence": "tools/materials/ground_recipes.json:240"
+   },
+   "maf_v005_id": null
+  },
+  {
+   "library_id": 25,
+   "key": "mulch",
+   "name_ru": "Мульча",
+   "class": "ground",
+   "ral": null,
+   "rgb_srgb": [
+    95,
+    70,
+    50
+   ],
+   "rgb_note": "project sample (sRGB), provisional",
+   "roughness": 245,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "crumb_1x1"
+   },
+   "base_map": "crumb_1x1",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-GRD-04",
+    "evidence": "tools/materials/ground_recipes.json:59"
+   },
+   "maf_v005_id": null
+  },
+  {
+   "library_id": 26,
+   "key": "lawn_reinforced",
+   "name_ru": "Газон укреплённый (экорешётка)",
+   "class": "ground",
+   "ral": null,
+   "rgb_srgb": [
+    88,
+    120,
+    60
+   ],
+   "rgb_note": "project sample (sRGB), provisional: mean of LawnReinforced palette",
+   "roughness": 240,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "crumb_1x1"
+   },
+   "base_map": "crumb_1x1",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-GRD-05",
+    "evidence": "tools/materials/ground_recipes.json:97",
+    "ground_recipe": "LawnReinforced"
+   },
+   "maf_v005_id": null,
+   "note": "Q6 (06.11): газон рулонный и газон укреплённый - две разные текстуры (две записи, 41 = рулонный)"
+  },
+  {
+   "library_id": 27,
+   "key": "rubber_crumb",
+   "name_ru": "Резиновое покрытие (бесшовная крошка 1x1 м)",
+   "class": "ground",
+   "ral": "3000",
+   "rgb_srgb": [
+    175,
+    43,
+    30
+   ],
+   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL",
+   "roughness": 235,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "crumb_1x1"
+   },
+   "base_map": "crumb_1x1",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": null,
+    "evidence": "#1024 K3: резиновое покрытие 1x1 м"
+   },
+   "maf_v005_id": null,
+   "note": "в аудите джобов не встречалось; цвет - предложение"
+  },
+  {
+   "library_id": 41,
+   "key": "lawn_rolled",
+   "name_ru": "Газон рулонный",
+   "class": "ground",
+   "ral": null,
+   "rgb_srgb": [
+    77,
+    127,
+    52
+   ],
+   "rgb_note": "project sample (sRGB), provisional: mean of LawnRolled palette (ground_recipes.json)",
+   "roughness": 240,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "crumb_1x1"
+   },
+   "base_map": "crumb_1x1",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-GRD-05",
+    "evidence": "tools/materials/ground_recipes.json LawnRolled; planting schedule position 18 (docs/research/spozu-vatutino-inventory.md)",
+    "ground_recipe": "LawnRolled"
+   },
+   "maf_v005_id": null,
+   "note": "Q6 (06.11): газон рулонный и газон укреплённый - две разные текстуры (две записи, 26 = укреплённый)"
+  }
+ ]
+}

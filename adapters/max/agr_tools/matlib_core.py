@@ -10,6 +10,8 @@ contract_core.py (the glue reads them through host_max.MaxHost); the core never 
   geometry, glass ids only on `glass` objects (and nothing else on them).
 * `renumber_dense`: the ids used by ONE mesh -> UDIM 1001.. without gaps, ascending library id. UDIM numbering is per
   mesh (owner answer V9 06.11.2026): the OKS body starts at 1001 and the windows/glass mesh starts at 1001 too.
+* Ground table (owner answer Q7 06.11): `ground_ref` {file, sha256} of the OKS table names `ground_vNNN.json` beside it
+  (GRD + PAV records, same schema, ids shared and unique across both); `load_library` merges both into `by_id`.
 * The project table rows follow `schemas/ProjectPassport.schema.json` `materials[]` (library_id, delivery_id, mesh,
   udim, npm_region).
 
@@ -26,6 +28,7 @@ SCHEMA = 1
 LIB_ID_MAX = 1000
 UDIM_START = 1001
 UDIM_MAX_PER_MESH = 100          # VPM: Main is one slot of up to 100 UDIM (docs/domain/materials.md:14-17)
+GROUND_CLASSES = ('ground', 'paving')   # GRD / PAV of the audit: the separate Ground table (owner answer Q7 06.11)
 CLASSES = ('paint', 'panel', 'tile', 'brick', 'paving', 'ground', 'mineral', 'roof', 'metal', 'wood', 'plastic',
            'glass', 'interior')
 STATUSES = ('proposed', 'approved', 'conflict', 'quarantine')
@@ -213,9 +216,36 @@ def load_library(path):
     ral_path = _ral_beside(folder)  # signature fixed by branch 0: (path) only
     ral = ral_table(ral_path) if ral_path else None
     recs = validate_library(lib, ral)
+    ground = None
+    if 'ground_ref' in lib:
+        ground, grecs = _load_ground(os.path.dirname(path), lib['ground_ref'], ral)
+        stray = [r['library_id'] for r in recs if r['class'] in GROUND_CLASSES]
+        dup = {r['library_id'] for r in recs} & {r['library_id'] for r in grecs}
+        if stray or dup:
+            raise ValueError('library: ids {} belong to the Ground table / are in both tables'.format(
+                sorted(set(stray) | dup)))
+        recs = sorted(recs + grecs, key=lambda r: r['library_id'])
     return {'version': lib['version'], 'sha256': sha, 'materials': recs,
             'by_id': {r['library_id']: r for r in recs}, 'path': path, 'pointer': pointer,
-            'ral_checked': ral is not None}
+            'ral_checked': ral is not None, 'ground': ground}
+
+
+def _load_ground(folder, ref, ral):
+    """Ground table (GRD + PAV, owner answer Q7 06.11) referenced by the OKS table: `ground_ref` = {file, sha256}.
+    Same record schema; library ids are shared with the OKS table (unique across both). Returns (info, records)."""
+    if not isinstance(ref, dict) or set(ref) != {'file', 'sha256'} or not re.match(r'^ground_v\d{3}\.json$', str(ref['file'])):
+        raise ValueError('library ground_ref: {file: ground_vNNN.json, sha256} expected')
+    gpath = os.path.join(folder, ref['file'])
+    text = _read_text(gpath)
+    sha = hashlib.sha256(text).hexdigest()
+    if sha != ref['sha256']:
+        raise ValueError('ground table {} sha256 {} differs from ground_ref {}'.format(ref['file'], sha, ref['sha256']))
+    gdoc = parse(text.decode('utf-8'))
+    grecs = validate_library(gdoc, ral)
+    bad = [r['library_id'] for r in grecs if r['class'] not in GROUND_CLASSES]
+    if bad:
+        raise ValueError('Ground table: ids {} are not ground/paving class'.format(bad))
+    return {'version': gdoc['version'], 'sha256': sha, 'path': gpath}, grecs
 
 
 # ---- UDIM renumbering ------------------------------------------------------------------------------------------

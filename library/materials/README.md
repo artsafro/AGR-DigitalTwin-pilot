@@ -3,6 +3,7 @@
 - `materials.json` — указатель: `current` → `materials_v002.json`, `version`, `sha256` файла.
 - `materials_v001.json` — 40 записей по аудиту материалов 06.11 (`GeoAGR-private research/materials-audit-1.0`); как выпущен в 1.0.0, не меняется.
 - `materials_v002.json` — патч 1.0.1: решения владельца по Q2–Q11 (утро 06.11), одна правка = один коммит.
+- `ground_v001.json` — таблица Ground (GRD + PAV: брусчатка, плиты, щебень, газон и т.д., 11 записей); отдельная таблица (Q7), на неё ссылается `materials_v002.json` полем `ground_ref` {file, sha256}. `library_id` общие и уникальные в обеих таблицах; `load_library` сливает их. Копировать в scratch обе таблицы вместе.
 
 ## Поля записи
 
