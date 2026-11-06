@@ -2,7 +2,7 @@
 owned by branch S (improve/issue-1024-deliver).
 
 Pure logic for `pack_deliver` (pack.deliver); no pymxs. The glue (deliver_max.py) runs the steps through the
-runtime dispatchers (checks_050 / checks_070 / edits_090 / edits_100 / export_preview / export_commit) and hands
+runtime dispatchers (checks_050 / checks_070 / edits_080 / edits_090 / edits_100 / export_preview / export_commit) and hands
 this module plain step results; the core never takes a host object.
 
 Contract (#1024 1.0.26, plan mode `read + file`): one press runs the checks 0.5-0.9 (qa.preflight, qa.names, qa.tris,
@@ -38,7 +38,7 @@ STEPS = (
     ('qa.omk_te', 'preview', 'edit100'),
     ('light.export', 'file', 'edit100'),
     ('export.checked', 'file', 'export'),
-    ('export.zip', 'file', 'edit090'),
+    ('export.zip', 'file', 'edit080'),
 )
 STEP_IDS = tuple(s[0] for s in STEPS)
 OPTION_KEYS = {'folder', 'stem', 'address', 'skip', 'passport', 'step_options'}

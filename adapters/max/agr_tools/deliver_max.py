@@ -251,8 +251,8 @@ def _pack_deliver(ctx, mode, nodes, preview):
                 zo['folder'] = run
                 if opts.get('address'):
                     zo['address'] = opts['address']
-                zp = ctx.agr.edits_090('export.zip', 'preview', options=zo)
-                za = ctx.agr.edits_090('export.zip', 'apply', preview=zp)
+                zp = ctx.agr.edits_080('export.zip', 'preview', options=zo)  # 0.8 row (#908)
+                za = ctx.agr.edits_080('export.zip', 'apply', preview=zp)
                 results.append(core.step_result('export.zip', za))
                 files.append(za['plan'].get('run_folder'))
             except Exception as exc:  # noqa: BLE001

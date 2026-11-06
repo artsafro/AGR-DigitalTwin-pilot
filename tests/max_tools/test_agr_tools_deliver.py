@@ -559,3 +559,15 @@ def test_cores_are_stdlib_only(name):
     mods = {a.name.split('.')[0] for n in ast.walk(tree) if isinstance(n, ast.Import) for a in n.names}
     mods |= {n.module.split('.')[0] for n in ast.walk(tree) if isinstance(n, ast.ImportFrom) and n.module}
     assert 'pymxs' not in mods and mods <= set(sys.stdlib_module_names)
+
+
+def test_every_step_is_registered_in_its_dispatcher():
+    """Native job 20261106-045201-57241d42: export.zip was sent to edits_090 (it is a 0.8 row of edits_080)."""
+    rt = _load(PKG / 'runtime.py', 'agr_runtime_deliver_t')
+    table = {'edit080': rt.EDITS_080, 'edit090': rt.EDITS_090, 'edit100': rt.EDITS_100}
+    for step, _phase, kind in dc.STEPS:
+        if kind in table:
+            assert step in table[kind], (step, kind)
+    assert 'pack.deliver' in rt.EDITS_100 and 'pack.deliver' not in rt.READ_100
+    src = (PKG / 'deliver_max.py').read_text(encoding='utf-8')
+    assert "edits_080('export.zip'" in src and "edits_090('export.zip'" not in src

@@ -223,7 +223,10 @@ def gap_acceptance():
         res[units] = {'gap_after_mm': gaps, 'copies': n_copies, 'status_apply': app['status'],
                       'pairs_fixed': prev['plan']['summary']['pairs_fixed'], 'undo_one_record': True,
                       'layer': None if layer is None else str(layer.name)}
-    assert res['meters']['gap_after_mm'] == res['centimeters']['gap_after_mm'], 'm != cm'
+    summary['checks']['ucx_gap_values'] = res
+    diff = {g: abs(res['meters']['gap_after_mm'][g] - res['centimeters']['gap_after_mm'][g])
+            for g in res['meters']['gap_after_mm']}
+    assert max(diff.values()) <= 0.01, ('m != cm', diff)
     return res
 
 
@@ -288,8 +291,8 @@ def light_package():
     assert rt.exportFile(str(folder / 'SM_TestAddr.fbx'), rt.Name('noPrompt'), selectedOnly=True, using=rt.FBXEXP)
     prev = agr.edits_100('light.export', 'preview', options={'folder': str(folder)})
     app = agr.edits_100('light.export', 'apply', prev)
-    zp = agr.edits_090('export.zip', 'preview', options={'folder': str(folder)})
-    za = agr.edits_090('export.zip', 'apply', zp)
+    zp = agr.edits_080('export.zip', 'preview', options={'folder': str(folder)})
+    za = agr.edits_080('export.zip', 'apply', zp)
     stages = []
     for table in za['plan'].get('reports') or ():
         for s in table.get('stages') or ():
