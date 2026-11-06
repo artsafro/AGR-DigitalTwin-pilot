@@ -14,6 +14,8 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+from dt_ai.core.max_env import max_child_env  # noqa: E402
 
 MAPS_ROOT = "C:/x/flora-library/v001/maps"
 LIBRARY_V003 = "C:/x/flora-library/v003/flora-library-v003.max"
@@ -518,7 +520,7 @@ def execute(catalogue_path: str, source: str, output: str, report: str) -> dict:
     job = {"output": os.path.abspath(output), "report": os.path.abspath(report), "protected": protected, "bindings": plan}
     with open(job_path, "w", encoding="utf-8") as handle:
         json.dump(job, handle)
-    env = os.environ.copy()
+    env = max_child_env()
     env["FLORA_REBIND_IN_MAX"] = "1"
     env["FLORA_REBIND_JOB"] = job_path
     command = [

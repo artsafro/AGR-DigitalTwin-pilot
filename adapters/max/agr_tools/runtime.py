@@ -5,7 +5,7 @@ Native xView uses 0.002 m vertices and 0.005 m faces.
 import json
 import sys
 
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 # atlas.npm (0.2 button) on the npm profile of atlas_core (0.9, #979 branch B; wired by the release branch R)
 ATLAS_PROFILE = 'npm'
 ATLAS_TARGET_PX_M = 35.0
@@ -1812,6 +1812,11 @@ def _make_ucx_mesh(name, verts_m, tris):
     faces = [rt.point3(a + 1, b + 1, c + 1) for a, b, c in tris]
     node = rt.mesh(name=name, vertices=vertices, faces=faces)
     rt.convertToPoly(node)
+    # 1.0.1 (KPP1 e2e 20261106-075555-c179f5f0): every delivered node has map channel 1 named `UV`
+    # (docs/domain/export-import.md); a piece without it was `unrepairable` in the export.checked cleanup gate
+    rt.polyop.setMapSupport(node, 1, True)
+    rt.polyop.defaultMapFaces(node, 1)
+    rt.setUserProp(node, 'MapChannel:1', 'UV')
     try:
         node.material = None
     except Exception:
@@ -1965,7 +1970,7 @@ def _tri_mesh(n):
 
 # Tool instructions, not delivery user-defined properties. They stay on the
 # working node and are held off the export copy the hygiene gate reads.
-_HELD_OFF = {'AGR_EXPORT_PATH', 'AGR_TEXEL_PROFILE', 'AGR_TEXEL_MAP', 'AGR_UV_PERIODS',
+_HELD_OFF = {'AGR_EXPORT_PATH', 'AGR_ZERO_M', 'AGR_TEXEL_PROFILE', 'AGR_TEXEL_MAP', 'AGR_UV_PERIODS',
              'AGR_UV_TARGET', 'AGR_ATLAS_MODE', 'AGR_ATLAS_SIZE', 'AGR_UCX_KIND'}
 
 
@@ -1975,7 +1980,7 @@ def _delivery_props(buffer):
         if not line.strip():
             continue
         key = line.split('=', 1)[0].strip()
-        if key in _HELD_OFF:
+        if key in _HELD_OFF or key.startswith('agr_'):   # 1.0.1: working keys of the 1.0 buttons (export_core)
             continue
         kept.append(line)
     return ''.join(line + '\r\n' for line in kept)

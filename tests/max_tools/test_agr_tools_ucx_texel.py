@@ -108,12 +108,12 @@ def test_version_macros_and_ucx_texel_readme():
     readme = (PACKAGE / 'README.md').read_text(encoding='utf-8')
     startup = (PACKAGE / 'startup.ms').read_text(encoding='utf-8')
     install = (PACKAGE / 'install.ms').read_text(encoding='utf-8')
-    assert 'VERSION = "1.0.0"' in runtime
+    assert 'VERSION = "1.0.1"' in runtime
     assert '0.002' in runtime and '0.005' in runtime
     for name in ('AGRToolsUcx', 'AGRToolsUcxApply', 'AGRToolsTexel'):
         assert name in mcr
-    assert '1.0.0' in startup and 'Ucx' in startup and 'Texel' in startup
-    assert 'AGRTools-1.0.0' in install
+    assert '1.0.1' in startup and 'Ucx' in startup and 'Texel' in startup
+    assert 'AGRTools-1.0.1' in install
     assert 'UCX collision' in readme and 'Texel readout' in readme
     assert 'UCX_name_control_AGR_ucx__01' in readme
     assert 'checked export' in readme.lower()
@@ -692,6 +692,7 @@ class _Runtime:
         self.Editable_Poly = _Kind('Editable_Poly')
         self.Editable_Mesh = _Kind('Editable_Mesh')
         self.objects = []
+        self.calls = []
         self.selection = []
         self._handles = 10
         self.units = self
@@ -749,6 +750,16 @@ class _Runtime:
 
     def convertToPoly(self, node):
         return node
+
+    def setMapSupport(self, node, channel, flag):
+        self.calls.append(('setMapSupport', node.name, channel, flag))
+
+    def defaultMapFaces(self, node, channel):
+        self.calls.append(('defaultMapFaces', node.name, channel))
+
+    def setUserProp(self, node, key, value):
+        self.calls.append(('setUserProp', node.name, key, value))
+        node.props[key] = value
 
     def copy(self, node):
         self._handles += 1

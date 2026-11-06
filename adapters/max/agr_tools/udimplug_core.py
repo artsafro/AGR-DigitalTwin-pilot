@@ -15,7 +15,11 @@ a square of 0.05 centred at (0.5, 0.5) of the tile 1000+matID, a fixed tile mode
   mesh and an occupied tile centre (a real island already there) as ambiguous.
 
 Tile numbering is per mesh (owner answer V9 06.11.2026): the body starts at 1001 and the windows/glass mesh starts at
-1001 too, so `tile(matid) = 1000 + matid` holds inside ONE mesh whose IDs were renumbered dense by vpm.build.
+1001 too. A vpm.build copy keeps the LIBRARY ids on its faces and puts each id into the dense tile of its own table
+(KPP1 e2e 1.0.0: id 12 -> 1004, not 1012), so the tile of a face is read from the UDIM table of the mesh
+(`udim_table` {library id: UDIM}: options, else the `agr_udim_table` user prop that vpm.build writes on its copy);
+only a mesh without a table keeps `tile(matid) = 1000 + matid` (IDs already dense, GridUVLayout22 rule). An id that is
+not in the table is refused (`plug_matid`), never guessed (1.0.1).
 Faces: {'face': int, 'matid': int, 'verts': [(x, y, z), ...]} in metres (units.SystemScale applied by the glue).
 """
 import math
@@ -26,12 +30,18 @@ TILES_PER_ROW = 10
 MAX_TILE_ID = 100
 
 
-def tile_for(matid, fixed=None):
-    """UDIM number of a face: `fixed` (a tile number 1001..1100) for every face, else 1000 + matID."""
+def tile_for(matid, fixed=None, table=None):
+    """UDIM number of a face: `fixed` (a tile number 1001..1100) for every face, else the UDIM of the mesh table
+    {library id: UDIM} (vpm.build copy), else 1000 + matID."""
     if fixed is not None:
         if type(fixed) is not int or not 1001 <= fixed <= 1000 + MAX_TILE_ID:
             raise ValueError('fixed UDIM must be 1001..1100: ' + repr(fixed))
         return fixed
+    if table is not None:
+        if matid not in table:
+            raise ValueError('material ID {} is not in the UDIM table of the mesh {} (vpm.build copy): no tile'.format(
+                matid, sorted(table)))
+        return table[matid]
     if type(matid) is not int or not 1 <= matid <= MAX_TILE_ID:
         raise ValueError('material ID {} cannot be a UDIM tile (1..{}; IDs >= 1001 are work IDs, K3)'.format(
             matid, MAX_TILE_ID))
@@ -111,9 +121,30 @@ def plug_uv(verts, udim, size=PLUG_SIZE, centre=PLUG_CENTRE):
     return [((p[0] - cu) * k + centre[0] + du, (p[1] - cv) * k + centre[1] + dv) for p in flat]
 
 
+def udim_table(value):
+    """{library id: UDIM} of a mesh from options / the `agr_udim_table` user prop (JSON object, string keys allowed);
+    UDIM 1001..1100, one tile per id. None stays None."""
+    if value is None:
+        return None
+    if not isinstance(value, dict) or not value:
+        raise ValueError('udim_table must be a non-empty object {library id: UDIM}')
+    out = {}
+    for k, v in value.items():
+        try:
+            lid = int(k)
+        except (TypeError, ValueError):
+            raise ValueError('udim_table key must be a library id: {!r}'.format(k))
+        if lid <= 0 or str(lid) != str(k).strip() or type(v) is not int or not 1001 <= v <= 1000 + MAX_TILE_ID:
+            raise ValueError('udim_table row {!r}: {!r} must be library id -> UDIM 1001..1100'.format(k, v))
+        out[lid] = v
+    if len(set(out.values())) != len(out):
+        raise ValueError('udim_table gives one UDIM to two ids: {}'.format(out))
+    return out
+
+
 def plug_options(options):
     o = dict(options or {})
-    known = {'size', 'fixed_udim', 'matids', 'occupied', 'centre'}
+    known = {'size', 'fixed_udim', 'matids', 'occupied', 'centre', 'udim_table'}
     extra = sorted(set(o) - known)
     if extra:
         raise ValueError('unknown options: ' + ', '.join(extra))
@@ -130,6 +161,7 @@ def plug_options(options):
         tile_for(1, o['fixed_udim'])
     return {'size': float(size), 'centre': [float(c) for c in centre], 'fixed_udim': o.get('fixed_udim'),
             'matids': None if matids is None else sorted(set(matids)),
+            'udim_table': udim_table(o.get('udim_table')),
             'occupied': {int(k): bool(v) for k, v in (o.get('occupied') or {}).items()}}
 
 
@@ -145,7 +177,7 @@ def plug_plan(faces, opts):
         if opts['matids'] is not None and mid not in opts['matids']:
             continue
         try:
-            udim = tile_for(mid, opts['fixed_udim'])
+            udim = tile_for(mid, opts['fixed_udim'], opts.get('udim_table'))
         except ValueError as exc:
             skipped.append({'face': f['face'], 'code': 'plug_matid', 'reason': str(exc)})
             continue

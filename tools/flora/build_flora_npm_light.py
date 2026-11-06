@@ -13,6 +13,8 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+from dt_ai.core.max_env import max_child_env  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = Path('C:/x/flora-library/v003/flora-library-v003.max')
@@ -143,7 +145,7 @@ def execute(work, sources):
     before = {str(p):sha(p) for p in protected}
     save(work/"source-hashes-before.json",before)
     copy = work/'library-copy.max'; shutil.copy2(SOURCE,copy)
-    env = os.environ.copy(); env['FLORA_LIGHT_JOB'] = str(work/'job.json')
+    env = max_child_env(); env['FLORA_LIGHT_JOB'] = str(work/'job.json')
     job = {'copy':str(copy).replace('\\','/'), 'species':rows, 'stage':str(stage)}
     for action in ('extract','build'):
         job.update(action=action,result=str(work/(action+'.json')))

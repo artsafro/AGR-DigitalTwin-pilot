@@ -32,7 +32,7 @@ vc = _load(PKG / 'vpm_core.py', 'agr_tools_vpm_core_t')
 u10 = _load(PKG / 'udim10_core.py', 'agr_tools_udim10_core_t')
 ec = _load(PKG / 'edit_core.py', 'agr_tools_edit_core_vpm_t')
 MB = _load(ROOT / 'test-polygon/stations/M_build.py', 'agr_polygon_M_build_t')
-TILE = 4096
+TILE = 3600   # 3.6 m at 1000 px/m (1.0.1 default; was 4096)
 STEP = 3.6
 
 
@@ -352,7 +352,7 @@ def test_kept_ids_without_uv_fail_closed_and_with_uv_are_rescaled_to_the_texel()
 def test_options_period_texel_parameter_and_validation():
     o = vc.options({'period_by_id': {'7': 3.9}, 'texel_px_per_m': 1024})
     assert vc.texel_of(o, 3) == pytest.approx(1024.0) and vc.texel_of(o, 7) == pytest.approx(1024 * 3.6 / 3.9)
-    assert vc.options({})['step_m'] == 3.6 and vc.options({})['tile_px'] == 4096
+    assert vc.options({})['step_m'] == 3.6 and vc.options({})['tile_px'] == 3600
     for bad in ({'nope': 1}, {'step_m': 0}, {'glass_ids': 'all'}, {'grid_zero_m': [0, 0]}, {'unroll': 1},
                 {'period_by_id': {'x': 3}}, {'texel_px_per_m': -1}):
         with pytest.raises(ValueError):

@@ -2033,16 +2033,16 @@ def test_runtime_090_serves_every_max_group(fake_max, monkeypatch):
 
 def test_every_max_tool_of_the_catalogue_needs_at_most_runtime_090():
     """v1 Max tools (47) by tool name; the v2 tools by plan row (ROUTES), all served by an installed 0.9.0, except
-    the 1.0 conveyor rows (edits_100), which need the released 1.0.0 (#1024 R)."""
+    the 1.0 conveyor rows (edits_100), which need the 1.0 runtime (RUNTIME_100 = package 1.0.1)."""
     names = [n for n, s in tools.catalog().items() if s.host({}) == "max-live" and n in tools.PHASE0]
     assert len(names) == 47
     for n in names:
         minimum, function = max_bridge.requirement(n)
         assert max_bridge.version_key(minimum) <= (0, 9, 0) and function, n
     for row, (group, _key, minimum, function) in max_bridge.ROUTES.items():
-        top = (1, 0, 0) if group == "e100" else (0, 9, 0)
+        top = (1, 0, 1) if group == "e100" else (0, 9, 0)
         assert max_bridge.version_key(minimum) <= top and function, row
-    assert {r for r, v in max_bridge.ROUTES.items() if v[2] == "1.0.0"} == set(max_bridge.ROWS_100)
+    assert {r for r, v in max_bridge.ROUTES.items() if v[2] == max_bridge.RUNTIME_100} == set(max_bridge.ROWS_100)
 
 
 def test_default_root_is_the_newest_install_not_a_folder_per_group(fake_max, monkeypatch):

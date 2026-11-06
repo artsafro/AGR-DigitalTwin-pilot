@@ -41,6 +41,11 @@ SRC_LAYER = '_npm_src'
 LAYER = 'AGR_vpm'
 TABLE_FILE = 'npm_table.json'
 UV_TOL = 1e-6           # restored UV inside its UDIM tile
+# 1.0.1 (KPP1 e2e 20261106-075555-c179f5f0): Max keeps channel 1 of the NPM copy in float32. An atlas UV in [0, 1]
+# carries up to one float32 ulp there (2**-24); (atlas_uv - shift) / scale multiplies it by 1 / scale, ~64 for a plug
+# cell of 8 px in a 512 atlas -> ~2e-6 VPM-UV units on the vertices that lie ON a tile line after the grid cut of
+# vpm.build. The tile test allows that storage error per row (still far below a texel: 2e-6 of a 4096 px tile).
+F32_ULP_UNIT = 2.0 ** -24
 REGION_TOL_PX = 0.5     # atlas UV inside the cell of its row (half an atlas pixel)
 PLANAR_TOL_M = 0.01     # a window plane deviating more is not a plane
 TIE_M = 0.001           # two types closer than this are equally good -> ambiguous
@@ -177,6 +182,17 @@ def in_tile(pts, udim, tol=UV_TOL):
     return all(u0 - tol <= u <= u0 + 1 + tol and v0 - tol <= v <= v0 + 1 + tol for u, v in pts)
 
 
+def tile_excess(pts, udim):
+    """Largest distance (VPM-UV units) of the points outside the tile `udim`, 0.0 inside."""
+    u0, v0 = tile_origin(udim)
+    return max([0.0] + [max(u0 - u, u - u0 - 1, v0 - v, v - v0 - 1, 0.0) for u, v in pts])
+
+
+def row_tol(row):
+    """Tile tolerance of a correspondence row: UV_TOL + one float32 ulp of the atlas UV mapped back by 1 / scale."""
+    return UV_TOL + F32_ULP_UNIT / min(abs(row['scale'][0]), abs(row['scale'][1]))
+
+
 def _row_of(rows_by_id, mid, pts, size):
     """(row, None) of a face by its library id and the cell region holding its atlas UV centroid, else (None, why)."""
     cand = rows_by_id.get(mid)
@@ -205,7 +221,7 @@ def plan_table(mesh, rows, skip=()):
     for r in rows:
         by_id.setdefault(r['library_id'], []).append(r)
     skip = set(skip)
-    no_row, outside, wrong_udim = {}, [], {}
+    no_row, outside, wrong_udim, excess = {}, [], {}, {}
     face_row = {}
     for f, mid in enumerate(mesh['mat_ids']):
         if f in skip:
@@ -244,16 +260,17 @@ def plan_table(mesh, rows, skip=()):
                 part['uvs'].append(list(fa(row, mesh['uvs'][ti])))
             utri.append(part['umap'][k])
             back.append(part['uvs'][part['umap'][k]])
-        if row['udim'] is not None and not in_tile(back, row['udim']):
+        if row['udim'] is not None and not in_tile(back, row['udim'], row_tol(row)):
             wrong_udim.setdefault(row['library_id'], []).append(f)
+            excess[row['library_id']] = max(excess.get(row['library_id'], 0.0), tile_excess(back, row['udim']))
         part['faces'].append(f)
         part['tris'].append(tri)
         part['uv_tris'].append(utri)
         part['mat_ids'].append(mesh['mat_ids'][f])
         part['rows'].setdefault(row['library_id'], row)
     for mid, faces in sorted(wrong_udim.items()):
-        findings.append(('udim_mismatch', faces, 'library id {}: the restored UV leaves UDIM {} of the table'.format(
-            mid, by_id[mid][0]['udim'])))
+        findings.append(('udim_mismatch', faces, 'library id {}: the restored UV leaves UDIM {} of the table by up to '
+                                                 '{:.3g} UV'.format(mid, by_id[mid][0]['udim'], excess[mid])))
     for p in parts.values():
         del p['vmap'], p['umap']
     return {'findings': findings, 'parts': parts}

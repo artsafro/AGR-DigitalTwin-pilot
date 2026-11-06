@@ -4,7 +4,7 @@ scenes (lab DCC runner, script_in_place). AGR_TEST_OUTPUT names a NEW directory,
 Installs the MZP into OUT (no user folders touched), then in the real Max Python through runtime.edits_100:
 * mat.table: mid-poly ids {3, 7, 12, 31} on a body + glass id 39 on a glass object -> pass, UDIM 1001..1004 and 1001
   per mesh (V9); ids {3, 1005} -> fail udim_id_on_geometry; glass id on a body -> glass_not_on_glass. Apply: one
-  Multi/Sub AGR_Library_v001 (slot = library id; used slots 3, 7, 12, 31, 39), user props, sidecar materials_table.json beside a disposable
+  Multi/Sub AGR_Library_v002 (slot = library id; used slots 3, 7, 12, 31, 39), user props, sidecar materials_table.json beside a disposable
   passport, ONE undo record (pymxs.undo spy, theHold active; batch max undo only observed), selection restored, no new global; apply by mcp
   refused; a stale preview refused.
 * mat.tiles: preview by face ids (facade/ground/crumb, pass) and by agr_tile 4.0 m (fail); apply of the three K3
@@ -141,7 +141,7 @@ def mat_table():
     assert records == [('AGR Tools: mat.table', True)], records  # ONE undo record, theHold active
     assert a['status'] == 'pass' and sorted(a['plan']['done']) == ['BODY_Mid_001', 'GLASS_Mid_001'], a['plan']
     mm = body.material
-    assert str(mm.name) == 'AGR_Library_v001' and glass.material == mm
+    assert str(mm.name) == 'AGR_Library_v002' and glass.material == mm
     slot_ids = [int(x) for x in mm.materialIDList]
     assert slot_ids == list(range(1, 40)), slot_ids  # slot k is library id k (no id writes, see matlib_max)
     used = [k for k in slot_ids if rt.getSubMtl(mm, k) is not None]
@@ -153,7 +153,7 @@ def mat_table():
     assert json.loads(str(rt.getUserProp(glass, 'agr_udim_table'))) == {'39': 1001}
     sidecar = Path(a['plan']['written'])
     doc = json.loads(sidecar.read_text(encoding='utf-8'))
-    assert sidecar.parent == jobs and doc['materials'][0]['udim'] == 1001 and doc['library']['version'] == 'v001'
+    assert sidecar.parent == jobs and doc['materials'][0]['udim'] == 1001 and doc['library']['version'] == 'v002'
     sel = [str(n.name) for n in rt.selection]
     assert sel == ['BODY_Mid_001'], sel
     assert not bool(rt.globalVars.isGlobal(rt.name('agrMultiSub'))) and not before_globals
@@ -215,7 +215,7 @@ def mat_tiles():
     m = next(n for n in files if n == 'facade_600x1200_mask.png')
     img, _ = tex.decode_png((OUT / 'tiles' / d).read_bytes())
     msk, _ = tex.decode_png((OUT / 'tiles' / m).read_bytes())
-    assert (img.w, img.h) == (3686, 3686), (img.w, img.h)
+    assert (img.w, img.h) == (3600, 3600), (img.w, img.h)   # 3.6 m at 1000 px/m (1.0.1; was 1024 -> 3686)
     acc, n = [0, 0, 0], 0
     for y in range(0, img.h, 7):
         for x in range(0, img.w, 7):
