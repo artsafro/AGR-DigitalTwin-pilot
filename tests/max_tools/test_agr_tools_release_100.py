@@ -1,8 +1,10 @@
-"""new-case: release branch R of AGR Tools 1.0.0 (#1024): 31 stage buttons ship, branch Q (stage 8) is deferred to 1.1.
+"""new-case: release branch R of AGR Tools 1.0.0 (#1024): the 33 stage buttons of plan 1.0 ship.
 
 RED on main 5cb7d37d: every 1.0 action was wip; a 1.0 row of a shipped version was always «done» on the path page
-(roadmap.state looked at `version` only), the plan had no way to say «not in this release», a step row (no own
-button) was labelled «в версии 1.0» even inside 1.0.0, and roadmap.load accepted any `deferred` value.
+(roadmap.state looked at `version` only), the plan had no way to say «not in this release» for a branch that misses
+the release (SPLIT.md «Порядок слияния» 3), a step row (no own button) was labelled «в версии 1.0» even inside 1.0.0,
+and roadmap.load accepted any `deferred` value. Branch Q merged before R (#1085), so nothing is deferred in 1.0.0;
+the `deferred` path stays tested on a copy of the plan.
 """
 import copy
 import importlib.util
@@ -33,12 +35,13 @@ ROWS = {r['id']: r for r in suite['rows']}
 Q = ('npm.to_vpm', 'udim.udims_to_ids')
 
 
-def test_version_is_100_and_only_branch_q_stays_wip():
+def test_version_is_100_and_every_stage_button_ships():
     assert m.VERSION == '1.0.0'
-    assert set(m.WIP_100) == set(Q) and len(m.ACTIONS_100) == 33
+    assert set(m.WIP_100) == set() and len(m.ACTIONS_100) == 33
     for a in m.ACTIONS_100:
-        assert a.wip == (a.tool in Q), a.tool
-        assert (m.macro_100(a)[1] == '(' ) == a.wip  # wip: a disabled block; released: one python.Execute line
+        assert not a.wip and a.tip == m.stage_tip(a.tool), a.tool
+        assert m.macro_100(a)[1].startswith('(on execute do python.Execute "agr_tools_runtime.edit_ui(')
+        assert m.macro_100(a._replace(wip=True))[1] == '('  # a wip button would be a disabled block
 
 
 def test_stage_tip_names_the_stage():
@@ -49,15 +52,28 @@ def test_stage_tip_names_the_stage():
         m.stage_tip('qa.xview')
 
 
-def test_deferred_rows_are_not_shipped_in_100():
+def _deferred_suite():
+    """The plan as it would be if branch Q had missed the release: its rows and step deferred to 1.1."""
+    d = json.loads(TEXT)
+    for r in d['rows']:
+        if r['id'] in Q + ('atlas.unatlas',):
+            r['deferred'] = '1.1'
+    return rm.load(json.dumps(d, ensure_ascii=False))
+
+
+def test_nothing_is_deferred_in_100_and_a_deferred_row_is_not_shipped():
+    assert not any(r.get('deferred') for r in suite['rows'])
+    v10 = next(v for v in suite['versions'] if v['version'] == '1.0')
+    assert v10['status'] == 'done' and 'deferred' not in v10
     for rid in Q + ('atlas.unatlas',):
-        r = ROWS[rid]
-        assert r['version'] == '1.0' and r['deferred'] == '1.1' and r['stage'] == 8
+        assert rm.state(ROWS[rid], '1.0.0') == 'done'
+    rows = {r['id']: r for r in _deferred_suite()['rows']}
+    for rid in Q + ('atlas.unatlas',):
+        r = rows[rid]
+        assert r['version'] == '1.0' and r['stage'] == 8
         assert rm.state(r, '1.0.0') == 'planned' and rm.state(r, '1.1.0') == 'done'
         assert rm.planned_label(r) == 'в версии 1.1 (#1024)'
     assert rm.state(ROWS['vpm.build'], '1.0.0') == 'done' and rm.state(ROWS['vpm.build'], '0.9.0') == 'planned'
-    v10 = next(v for v in suite['versions'] if v['version'] == '1.0')
-    assert v10['status'] == 'done' and sorted(v10['deferred']) == sorted(Q + ('atlas.unatlas',))
 
 
 def test_step_rows_name_their_big_button():
@@ -79,13 +95,15 @@ def test_roadmap_rejects_a_bad_deferred(rid, value):
         rm.load(json.dumps(broken, ensure_ascii=False))
 
 
-def test_rail_shows_released_old_rows_and_greys_branch_q():
+def test_rail_shows_released_old_rows_and_a_deferred_row_greyed():
     rail = m.rail(suite['blocks'], suite['rows'])
     done = {m.row_of(a.id) for _, d, _ in rail for a in d}
-    planned = {r['id'] for _, _, p in rail for r in p}
-    assert 'udim.rescale' in done and 'light.export' in done and 'udim.udims_to_ids' in planned
-    flow = rm.flow(copy.deepcopy(suite), m.VERSION)
-    state = {x['id']: x['state'] for n in flow for s in n['steps'] for x in s['buttons']}
+    assert {'udim.rescale', 'light.export', 'udim.udims_to_ids'} <= done
+    state = {x['id']: x['state'] for n in rm.flow(copy.deepcopy(suite), m.VERSION) for s in n['steps']
+             for x in s['buttons']}
+    assert state['udim.udims_to_ids'] == 'done' and state['udim.rescale'] == 'done'
+    state = {x['id']: x['state'] for n in rm.flow(_deferred_suite(), m.VERSION) for s in n['steps']
+             for x in s['buttons']}
     assert state['udim.udims_to_ids'] == 'planned' and state['udim.rescale'] == 'done'
 
 

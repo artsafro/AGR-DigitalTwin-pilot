@@ -537,9 +537,10 @@ def test_every_action_has_a_macro_with_icon_and_menu_entry():
 
 def test_every_10_stage_action_has_a_disabled_macro_icon_and_menu_entry():
     mcr, menu = m.macros_ms(), m.menu_ms()
-    # release 1.0.0 (#1024 R): 31 rows ship; branch Q (npm.to_vpm, udim.udims_to_ids) stays wip for 1.1.0
-    assert len(m.ACTIONS_100) == 33 and {a.tool for a in m.ACTIONS_100 if a.wip} == set(m.WIP_100) == {
-        'npm.to_vpm', 'udim.udims_to_ids'}
+    # release 1.0.0 (#1024 R): all 33 rows ship (Q #1085 merged before R); the wip branch below stays tested
+    assert len(m.ACTIONS_100) == 33 and {a.tool for a in m.ACTIONS_100 if a.wip} == set(m.WIP_100) == set()
+    wip_body = '\n'.join(m.macro_100(m.ACTIONS_100[0]._replace(wip=True, tip=m.WIP_TIP)))
+    assert '\n    on isEnabled return false\n' in wip_body and 'python.Execute' not in wip_body
     blocks = mcr.split('\nmacroScript ')
     for a in m.ACTIONS_100:
         body = [b for b in blocks if b.startswith(a.macro + ' ')]

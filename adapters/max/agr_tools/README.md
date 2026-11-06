@@ -146,9 +146,9 @@ never a clean result. Objects are identified by unique Max handles as well as na
 
 ## 1.0.0 конвейер ОКС: этапы 0–9, паспорт, окна, материалы, ВПМ/НПМ, сдача, агент (#1024)
 
-Рельса этапов лежит на «Путь». 31 кнопка из 33 плана 1.0 выпущена; каждая — `runtime.ui('<tool>')`, пункт меню и
-MCP-инструмент. Этап 8 «НПМ → ВПМ» (ветка Q) не выпущен и остаётся серым `wip`: перенесён в 1.1.0
-(строки плана `"deferred": "1.1"`). Что открыто и не проверено — `CHANGELOG.md`, «Известные ограничения».
+Рельса этапов лежит на «Путь». Выпущены все 33 кнопки плана 1.0 (13 веток F…U); каждая — `runtime.edit_ui('<tool>')`
+(первое нажатие — preview, второе на том же выделении — apply), macroScript, пункт меню и MCP-инструмент (по MCP —
+только preview). Что открыто и не проверено — `CHANGELOG.md`, «Известные ограничения».
 
 - Этап 0 Паспорт: `project.passport` (паспорт `jobs/<ID>/passport.json`), `source.intake` (единицы, ось, общий ноль),
   `scene.source_class` (класс источника A/B/C).
@@ -163,7 +163,8 @@ MCP-инструмент. Этап 8 «НПМ → ВПМ» (ветка Q) не �
 - Этап 6 ВПМ: `vpm.build` (UV по сетке, UDIM), `udim.rescale` (плотность), `udim.distortion` (искажения UV),
   `tex.dilate` (отступы карт), `udim.plugs` (острова-заглушки).
 - Этап 7 НПМ: `npm.build` (атлас из ВПМ), `atlas.facade_strip` (фасадный атлас run-strip).
-- Этап 8 НПМ → ВПМ: `npm.to_vpm`, `udim.udims_to_ids` — отложено до 1.1.0.
+- Этап 8 НПМ → ВПМ: `npm.to_vpm` (ВПМ из НПМ по таблице соответствия или по регионам атласа), `udim.udims_to_ids`
+  (UDIM → ID, просмотр).
 - Этап 9 Сдача: `pack.deliver` (шаги сдачи одной кнопкой), `ucx.gap` (зазор UCX), `ucx.stairs` (UCX лестниц),
   `light.export` (FBX света), `qa.omk_te` (код ОМК ТЭ), `export.place_by_passport` (поставить по паспорту).
 - Агент: `agent.request` (запрос агенту, папка `jobs/<ID>/agent/<req>/`), `agent.accept` (шлюз приёма слоя).
@@ -297,5 +298,5 @@ nudge, UDIM to NPM atlas, UCX collision, texel readout and checked export.
 0.7.0 adds 12 read-only pre-delivery checks, the block tab rail and «Путь».
 0.8.0 adds 13 delivery edits on export copies / new files with preview → apply.
 0.9.0 adds 19 buttons (placement, Flora/MAF, textures/UDIM/atlas, checks, batch export, light) and reworks 13.
-1.0.0 adds the OKS conveyor (#1024): 31 stage buttons (passport, body, windows, capsules/roof, materials, VPM, NPM, delivery, agent); stage 8 is deferred to 1.1.0.
+1.0.0 adds the OKS conveyor (#1024): 33 stage buttons (passport, body, windows, capsules/roof, materials, VPM, NPM, NPM to VPM, delivery, agent).
 No licensing, obfuscation, GeoAGR.ms copy or decryption is included.

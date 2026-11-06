@@ -783,14 +783,14 @@
      "button": "npm.to_vpm",
      "label_ru": "НПМ → ВПМ",
      "expected": "expected/npm.to_vpm.json",
-     "reason": "станция в работе, #1024, ветка Q"
+     "reason": ""
     },
     {
      "id": "1.0.25",
      "button": "udim.udims_to_ids",
      "label_ru": "UDIM → ID (просмотр)",
      "expected": "expected/udim.udims_to_ids.json",
-     "reason": "станция в работе, #1024, ветка Q"
+     "reason": ""
     },
     {
      "id": "1.0.26",

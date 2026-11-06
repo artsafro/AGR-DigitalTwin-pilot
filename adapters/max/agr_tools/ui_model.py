@@ -278,9 +278,9 @@ _ROWS_100 = {  # plan row id -> (icon, label_ru, reqs)
 }
 
 
-# Release 1.0.0 (#1024 R): the rows of the merged branches F..P, S, T, U ship; branch Q (stage 8 НПМ → ВПМ) was not
-# merged when R started, so its two rows stay wip and move to 1.1.0 (SPLIT.md «Порядок слияния» 3).
-WIP_100 = frozenset(('npm.to_vpm', 'udim.udims_to_ids'))
+# Release 1.0.0 (#1024 R): all 13 branches F..U are merged (Q #1085 last), so no 1.0 row is wip. A row of a later
+# branch would be listed here (SPLIT.md «Порядок слияния» 3: an unmerged branch keeps wip and moves to 1.1.0).
+WIP_100 = frozenset()
 
 
 def stage_tip(tool):

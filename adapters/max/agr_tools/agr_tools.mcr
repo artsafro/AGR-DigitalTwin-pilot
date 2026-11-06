@@ -171,16 +171,10 @@ macroScript AGRToolsNpmBuild category:"AGR Tools" buttonText:"ВПМ → НПМ"
 (on execute do python.Execute "agr_tools_runtime.edit_ui('npm.build')")
 macroScript AGRToolsAtlasFacadeStrip category:"AGR Tools" buttonText:"Фасадный атлас run-strip" tooltip:"1.0, этап 7 «НПМ» Треб.: NPM-2.5-11.a, NPM-2.5-4" iconName:"AgrIcons/agr_strip"
 (on execute do python.Execute "agr_tools_runtime.edit_ui('atlas.facade_strip')")
-macroScript AGRToolsNpmToVpm category:"AGR Tools" buttonText:"НПМ → ВПМ" tooltip:"в работе, #1024 Треб.: -" iconName:"AgrIcons/agr_npm2vpm"
-(
-    on isEnabled return false
-    on execute do messageBox "НПМ → ВПМ (npm.to_vpm): в работе, #1024" title:"AGR Tools"
-)
-macroScript AGRToolsUdimUdimsToIds category:"AGR Tools" buttonText:"UDIM → ID (просмотр)" tooltip:"в работе, #1024 Треб.: VPM-2.5-2.1.3.a" iconName:"AgrIcons/agr_udim2id"
-(
-    on isEnabled return false
-    on execute do messageBox "UDIM → ID (просмотр) (udim.udims_to_ids): в работе, #1024" title:"AGR Tools"
-)
+macroScript AGRToolsNpmToVpm category:"AGR Tools" buttonText:"НПМ → ВПМ" tooltip:"1.0, этап 8 «НПМ → ВПМ» Треб.: -" iconName:"AgrIcons/agr_npm2vpm"
+(on execute do python.Execute "agr_tools_runtime.edit_ui('npm.to_vpm')")
+macroScript AGRToolsUdimUdimsToIds category:"AGR Tools" buttonText:"UDIM → ID (просмотр)" tooltip:"1.0, этап 8 «НПМ → ВПМ» Треб.: VPM-2.5-2.1.3.a" iconName:"AgrIcons/agr_udim2id"
+(on execute do python.Execute "agr_tools_runtime.edit_ui('udim.udims_to_ids')")
 macroScript AGRToolsPackDeliver category:"AGR Tools" buttonText:"Сдача пакета" tooltip:"1.0, этап 9 «Сдача» Треб.: -" iconName:"AgrIcons/agr_deliver"
 (on execute do python.Execute "agr_tools_runtime.edit_ui('pack.deliver')")
 macroScript AGRToolsUcxGap category:"AGR Tools" buttonText:"UCX: нарезка и зазор" tooltip:"1.0, этап 9 «Сдача» Треб.: VPM-2.13-4.a, VPM-2.13-4.b" iconName:"AgrIcons/agr_ucxgap"

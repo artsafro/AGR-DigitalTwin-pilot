@@ -935,8 +935,7 @@
    "version": "1.0",
    "icon": "udim2id",
    "stage": 8,
-   "fate": "stage",
-   "deferred": "1.1"
+   "fate": "stage"
   },
   {
    "id": "udim.viewer",
@@ -1087,8 +1086,7 @@
    "icon": "unatlas",
    "stage": 8,
    "fate": "step",
-   "step_of": "npm.to_vpm",
-   "deferred": "1.1"
+   "step_of": "npm.to_vpm"
   },
   {
    "id": "place.flora_repair",
@@ -2110,8 +2108,7 @@
    "lab_report": null,
    "lab_status": null,
    "stage": 8,
-   "fate": "stage",
-   "deferred": "1.1"
+   "fate": "stage"
   },
   {
    "id": "pack.deliver",
@@ -2569,13 +2566,7 @@
     "model.window_placer",
     "tex.vpm_sets",
     "atlas.unatlas"
-   ],
-   "deferred": [
-    "npm.to_vpm",
-    "udim.udims_to_ids",
-    "atlas.unatlas"
-   ],
-   "deferred_note_ru": "этап 8 «НПМ → ВПМ» (ветка Q) не слит к релизу R: кнопки остаются «в работе», выпуск в 1.1.0"
+   ]
   },
   {
    "version": "1.x",

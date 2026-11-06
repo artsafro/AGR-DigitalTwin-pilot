@@ -632,8 +632,8 @@ def test_flow_tooltips_and_cards_from_json():
     assert sum(n['total'] for n in nodes) == len(on_pages) == 94 and len(suite['rows']) == 109
     assert sorted(r['id'] for r in stage_only) == sorted(STAGE_ONLY_100)
     assert all(r['stage'] is not None and r['fate'] == 'stage' for r in stage_only)
-    # 0.1-0.5 + 0.7 + 0.8 + 0.9 + 1.0 on pages (17 old stage rows + 2 steps; branch Q's row and step -> 1.1)
-    assert sum(n['done'] for n in nodes) == 13 + 12 + 13 + 19 + 17 + 2
+    # 0.1-0.5 + 0.7 + 0.8 + 0.9 + 1.0 on pages (18 old stage rows + 3 steps folded into big buttons)
+    assert sum(n['done'] for n in nodes) == 13 + 12 + 13 + 19 + 18 + 3
     for r in suite['rows']:
         tip = roadmap.tooltip(suite, r)
         assert r['does_ru'] in tip and r['reqs'] in tip and 'Когда:' in tip
@@ -685,10 +685,10 @@ def test_rail_maps_every_action_to_a_plan_row_and_greys_the_rest():
     assert {r['id'] for r in planned if r['version'] == '1.0'} == wip & on_pages | {
         r['id'] for r in suite['rows'] if r['fate'] == 'step'}
     old_10 = {a.tool for a in model.ACTIONS_100} & on_pages
-    assert len(old_10) == 18 and wip & on_pages == {'udim.udims_to_ids'}  # branch Q -> 1.1.0 (#1024 R)
+    assert len(old_10) == 18 and not wip  # release 1.0.0 (#1024 R): all 13 branches merged, nothing wip
     rail10 = model.rail(suite['blocks'], suite['rows'], '1.0.0')
     done10 = {model.row_of(a.id) for _, done, _ in rail10 for a in done}
-    assert old_10 - wip <= done10 and not wip & done10  # released 1.0.0: the 17 old rows are done on their pages
+    assert old_10 <= done10  # released 1.0.0: the 18 old rows are done on their pages
     rail09 = model.rail(suite['blocks'], suite['rows'], '0.9.0')
     assert not {a.id for _, done, _ in rail09 for a in done} & {a.id for a in model.ACTIONS_100}
     assert old_10 <= {r['id'] for _, _, p in rail09 for r in p}
@@ -710,12 +710,10 @@ def test_each_10_stage_button_has_one_wip_action_from_its_plan_row():
         r = roadmap.row(suite, a.tool)
         assert (a.icon, a.label, ' '.join(a.reqs)) == (r['icon'], r['label_ru'], r['reqs']), a.tool
         assert a.section is None and not a.batch and model.row_of(a.id) == a.tool
-        if a.tool in ('npm.to_vpm', 'udim.udims_to_ids'):  # branch Q not merged at R: wip, 1.1.0
-            assert a.wip and a.tip == model.WIP_TIP == 'в работе, #1024'
-            assert model.tooltip(a).startswith('в работе, #1024')
-        else:  # released in 1.0.0 (#1024 R)
-            stage = [s for s in suite['stages'] if a.tool in s['rows']][0]
-            assert not a.wip and a.tip == model.stage_tip(a.tool) and stage['label_ru'] in a.tip, a.tool
+        # released in 1.0.0 (#1024 R): every row; a still-wip row would carry «в работе, #1024»
+        stage = [s for s in suite['stages'] if a.tool in s['rows']][0]
+        assert not a.wip and a.tip == model.stage_tip(a.tool) and stage['label_ru'] in a.tip, a.tool
+        assert model._action_100(a.tool) == a and model.WIP_TIP == 'в работе, #1024'
         assert model.action(a.id) is a and model.action(a.tool) is a
     assert not any(a.wip for a in model.ACTIONS) and len(model.ACTIONS) == 61  # the 0.x panel is unchanged
     assert len({a.id for a in model.ALL_ACTIONS}) == len({a.macro for a in model.ALL_ACTIONS}) == 94
@@ -731,8 +729,8 @@ def test_stage_rail_order_big_buttons_and_second_rows_follow_the_plan():
     for st, s in zip(rail, suite['stages']):
         assert (st.label, st.icon, st.big.tool) == (s['label_ru'], s['icon'], s['big_button'])
         assert [a.tool for a in st.small] == [rid for rid in s['rows'] if rid != s['big_button']]
-        assert st.big.wip == (st.id == 8) and st.status == 'todo'  # stage 8 (branch Q) -> 1.1.0
-        assert all(a.wip == (a.tool in model.WIP_100) for a in st.small)
+        assert not st.big.wip and st.status == 'todo'  # release 1.0.0: every stage button ships
+        assert not any(a.wip for a in st.small)
         assert st.icon == st.big.icon  # the stage icon is its big button's icon
     assert [st.id for st in rail if not st.small] == [3, 4]  # Капсулы, Крыша: no second row
     broken = json.loads(SUITE.read_text(encoding='utf-8'))

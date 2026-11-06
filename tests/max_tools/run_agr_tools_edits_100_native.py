@@ -3,14 +3,14 @@ Max 2024 on DISPOSABLE scenes.
 
 Run via the lab DCC runner (script_in_place); AGR_TEST_OUTPUT names a NEW directory, AGR_TEST_PACKAGE the built MZP.
 Installs the MZP into OUT (no user folders touched), then checks in the real Max Python:
-runtime and panel model say 1.0.0; runtime.EDITS_100 = the 33 plan buttons in station order; 31 have their glue and
-only branch Q (npm.to_vpm, udim.udims_to_ids, deferred to 1.1) still answers `not_implemented` (preview, and apply of
-a synthetic preview); actor mcp/agent cannot apply; every call journals one line (journal under OUT);
+runtime and panel model say 1.0.0; runtime.EDITS_100 = the 33 plan buttons in station order, all 33 have their glue
+(branch Q #1085 merged before R; a stub row would still answer `not_implemented` and refuse apply by mcp/agent);
+every call journals one line (journal under OUT);
 host_max.MaxHost on a centimetre scene: ObjRef, mesh in metres, role prop round trip, one undo record;
-the 33 macroScripts are registered: the 2 wip ones run no edit, each of the 31 released ones reaches runtime.edit_ui
-(one macro press + two panel presses on a synthetic box; refusals without options are recorded, a stub answer
-fails); the panel model has the stage rail (only stage 8 wip); the agr-mcp bridge previews a released 1.0 big button
-and a Q stub, apply is refused; the polygon builder builds base 1.0 (33 stations).
+the 33 macroScripts are registered and each reaches runtime.edit_ui (one macro press + two panel presses on a
+synthetic box; refusals without options are recorded, a stub answer fails); the panel model has the stage rail with
+no wip stage; the agr-mcp bridge previews released 1.0 big buttons (body.roof, npm.to_vpm), apply is refused; the
+polygon builder builds base 1.0 (33 stations).
 Nothing is saved; the scenes are never written.
 """
 import hashlib
@@ -91,8 +91,8 @@ def registry():
     rt.clearSelection()
     box = rt.Box(name='SM_Smoke_1024_Main_001', length=2, width=2, height=2)
     rt.select(box)
-    stubs = [t for t in ORDER if not implemented(t)]  # release 1.0.0: only branch Q is still a stub (1.1)
-    assert set(stubs) == WIP == {'npm.to_vpm', 'udim.udims_to_ids'}, stubs
+    stubs = [t for t in ORDER if not implemented(t)]  # release 1.0.0: all 13 branches merged, no stub
+    assert set(stubs) == WIP == set(), stubs
     for tool in stubs:
         r = agr.edits_100(tool, 'preview')
         assert r['status'] == 'not_implemented' and r['plan']['issue'] == '#1024', (tool, r['status'])
@@ -107,12 +107,29 @@ def registry():
                 except ValueError as exc:
                     assert str(exc).startswith('needs_human'), exc
         out[tool] = r['status']
+    # released rows: apply by mcp/agent is refused before the glue (needs_human), and journalled like a panel preview
+    for tool in ('body.roof', 'npm.to_vpm'):
+        try:
+            r = agr.edits_100(tool, 'preview')
+            assert r['status'] != 'not_implemented', (tool, r['status'])
+            got = r['status']
+        except ValueError as exc:  # an options-less refusal of the released glue is an answer, not a stub
+            got = 'refused: ' + str(exc)[:100]
+        p = ec.report(tool, 'preview', objects=[ec.entry(5, 'Box')], done=['Box'], state_hash=ec.fingerprint((1,)))
+        for actor in ('mcp', 'agent'):
+            try:
+                agr.edits_100(tool, 'apply', p, actor=actor)
+                raise AssertionError(tool + ': apply by ' + actor + ' was not refused')
+            except ValueError as exc:
+                assert str(exc).startswith('needs_human'), exc
+        out[tool] = got
     rt.delete(box)
     lines = journal_lines()[before:]
-    calls = len(stubs) + 3 * sum(t not in agr.READ_100 for t in stubs)
+    calls = len(stubs) + 3 * sum(t not in agr.READ_100 for t in stubs) + 2 * 3
     assert len(lines) == calls, (len(lines), calls)  # every call, refused ones too, is one line
     assert {x['actor'] for x in lines} == {'panel', 'mcp', 'agent'}
-    return {'implemented': len(ORDER) - len(out), 'stubs': sorted(out), 'journal_lines': len(lines),
+    return {'implemented': len(ORDER) - len(stubs), 'stubs': sorted(stubs), 'released_checked': out,
+            'journal_lines': len(lines),
             'journal_file': 'journal/untitled.jsonl'}
 
 
@@ -192,10 +209,10 @@ def _box():
 
 
 def macros_and_rail():
-    """The 2 wip macroScripts run no edit; each of the 31 released ones reaches runtime.edit_ui: a macro press, then
+    """A wip macroScript runs no edit; each released one (all 33 in 1.0.0) reaches runtime.edit_ui: a macro press, then
     two panel presses through the SAME runtime object the macros use (preview, then apply of that preview for an
     editing row). Options-less presses may refuse (no passport, no library, no folder): recorded. A stub answer
-    fails. The panel model gives the stage rail with only stage 8 wip."""
+    fails. The panel model gives the stage rail with no wip stage."""
     model = MODEL
     acts = model.ACTIONS_100
     assert [a.tool for a in acts] == ORDER and {a.tool for a in acts if a.wip} == WIP
@@ -228,10 +245,10 @@ def macros_and_rail():
             res.append('press{} {}:{} journal+{}'.format(press, plan.get('mode', '?'), rep['status'],
                                                          len(journal_lines()) - before))
         released[a.macro] = res
-    assert len(released) == 31 and len(wip) == 2
+    assert len(released) == 33 and not wip
     rail = model.stage_rail(suite, None)
     assert len(rail) == 11, rail
-    assert [st.id for st in rail if st.big.wip] == [8], [st.id for st in rail if st.big.wip]
+    assert not [st.id for st in rail if st.big.wip], [st.id for st in rail if st.big.wip]
     done = {model.row_of(a.id) for _, d, _ in model.rail(suite['blocks'], suite['rows']) for a in d}
     old_10 = {a.tool for a in acts if a.tool.partition('.')[0] == roadmap.row(suite, a.tool)['block']}
     assert old_10 - WIP <= done and not WIP & done, sorted(old_10 - done)
@@ -256,13 +273,14 @@ def mcp_bridge():
     bad = json.loads(bridge.call('agr_op_apply', root, json.dumps(dict(args, preview=got['result'])).encode().hex()))
     assert not bad['ok'] and 'needs_human' in bad['error'], bad
     stub = json.loads(bridge.call('agr_op_preview', root, json.dumps(dict(args, op='npm.to_vpm')).encode().hex()))
-    assert stub['ok'] and stub['result']['status'] == 'not_implemented', stub
+    assert stub['ok'] or 'needs_human' not in stub.get('error', ''), stub  # released Q row: a preview, or its refusal
+    assert not stub['ok'] or stub['result']['status'] != 'not_implemented', stub
     empty = json.loads(bridge.call('agr_op_preview', root, json.dumps({'scene': 'live', 'op': 'body.roof'})
                                    .encode().hex()))
     assert not empty['ok'] and 'handles_required' in empty['error'], empty
     tool, names = 'agr_op_preview(body.roof)', bridge.ROWS_100
     return {'tool': tool, 'preview': got['result']['status'], 'apply_refused': bad['error'][:120],
-            'q_stub': stub['result']['status'],
+            'npm_to_vpm': stub['result']['status'] if stub['ok'] else stub['error'][:120],
             'bridge_tools_100': len(names)}
 
 

@@ -11498,6 +11498,222 @@
    "builder": "P_build"
   },
   {
+   "name": "SM_N2V_Ok",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.24",
+   "mesh": "box",
+   "pos": [
+    1120.7749999999996,
+    -89.45,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.24;npm.to_vpm=pass",
+   "synthetic": true,
+   "fragment": "Q",
+   "extra": {
+    "kind": "n2v_ok"
+   },
+   "builder": "Q_build"
+  },
+  {
+   "name": "SM_N2V_Fail",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.24",
+   "mesh": "box",
+   "pos": [
+    1125.7999999999997,
+    -89.45,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.24;npm.to_vpm=table_no_row,window_no_type",
+   "synthetic": true,
+   "fragment": "Q",
+   "extra": {
+    "kind": "n2v_fail"
+   },
+   "builder": "Q_build"
+  },
+  {
+   "name": "SM_UdimIds_Ok",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.25",
+   "mesh": "box",
+   "pos": [
+    1152.7749999999996,
+    -56.45,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.25;udim.udims_to_ids=pass",
+   "synthetic": true,
+   "fragment": "Q",
+   "extra": {
+    "kind": "udim_ok"
+   },
+   "builder": "Q_build"
+  },
+  {
+   "name": "SM_UdimIds_Bad",
+   "scene": "polygon_all",
+   "role": "Main",
+   "layer": "0",
+   "zone": "1.0",
+   "base": "1.0",
+   "station": "1.0.25",
+   "mesh": "box",
+   "pos": [
+    1158.6999999999996,
+    -56.45,
+    0
+   ],
+   "size": [
+    2,
+    2,
+    2
+   ],
+   "fbx": "0101_Polygon_01.fbx",
+   "mat": "std",
+   "mat_name": null,
+   "superclass": "geometry",
+   "cls": "Editable_Poly",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": null,
+   "colour": null,
+   "zero": 0.0,
+   "AGR_TEST": "station=1.0.25;udim.udims_to_ids=udim_ambiguous",
+   "synthetic": true,
+   "fragment": "Q",
+   "extra": {
+    "kind": "udim_bad"
+   },
+   "builder": "Q_build"
+  },
+  {
    "name": "UCX_PolyDeliver_01",
    "scene": "frag_s_deliver",
    "role": "ucx",
@@ -12934,7 +13150,7 @@
    "mesh": "box",
    "pos": [
     1152.7749999999996,
-    -86.75000000000001,
+    -88.10000000000001,
     0
    ],
    "size": [
@@ -12989,7 +13205,7 @@
    "mesh": "box",
    "pos": [
     1157.7749999999996,
-    -86.75000000000001,
+    -88.10000000000001,
     0
    ],
    "size": [
@@ -13044,7 +13260,7 @@
    "mesh": "box",
    "pos": [
     1163.2499999999995,
-    -86.75000000000001,
+    -88.10000000000001,
     0
    ],
    "size": [
@@ -13099,7 +13315,7 @@
    "mesh": "box",
    "pos": [
     1169.1749999999995,
-    -86.75000000000001,
+    -88.10000000000001,
     0
    ],
    "size": [
@@ -25713,12 +25929,114 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.24: нажми «НПМ → ВПМ»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.24: нажми «НПМ → ВПМ»\nSM_N2V_Ok -> pass\nSM_N2V_Fail -> fail table_no_row, window_no_type",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
    "synthetic": true,
    "text_size": 1.0,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_N2V_Ok",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1119.7749999999996,
+    -90.85000000000001,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_N2V_Ok",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_N2V_Fail",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1124.7999999999997,
+    -91.55,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_N2V_Fail",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
    "anchor": "top_left"
   },
   {
@@ -25764,12 +26082,114 @@
    "texel_px": null,
    "extra_channel": false,
    "pivot": null,
-   "text": "Станция 1.0.25: нажми «UDIM → ID (просмотр)»\nнет PASS или FAIL: причина в README",
+   "text": "Станция 1.0.25: нажми «UDIM → ID (просмотр)»\nSM_UdimIds_Ok -> pass\nSM_UdimIds_Bad -> fail udim_ambiguous",
    "zero": 0.0,
    "colour": null,
    "AGR_TEST": "fixture",
    "synthetic": true,
    "text_size": 1.0,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_UdimIds_Ok",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1151.7749999999996,
+    -57.85,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_UdimIds_Ok",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
+   "anchor": "top_left"
+  },
+  {
+   "name": "_label_obj_SM_UdimIds_Bad",
+   "scene": "polygon_all",
+   "role": "label",
+   "layer": "_labels",
+   "zone": "_labels",
+   "base": "1.0",
+   "station": "",
+   "mesh": "empty",
+   "pos": [
+    1157.6999999999996,
+    -58.550000000000004,
+    0.05
+   ],
+   "size": [
+    1,
+    1,
+    0
+   ],
+   "fbx": null,
+   "mat": "none",
+   "mat_name": null,
+   "superclass": "shape",
+   "cls": "Text",
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "parent": null,
+   "children": 0,
+   "animated": false,
+   "modifiers": [],
+   "opacity": 1.0,
+   "tex": null,
+   "map_path": null,
+   "matid": null,
+   "uv_periods": null,
+   "uv_shift": null,
+   "atlas": null,
+   "texel_px": null,
+   "extra_channel": false,
+   "pivot": null,
+   "text": "SM_UdimIds_Bad",
+   "zero": 0.0,
+   "colour": null,
+   "AGR_TEST": "fixture",
+   "synthetic": true,
+   "text_size": 0.45,
    "anchor": "top_left"
   },
   {
@@ -25783,7 +26203,7 @@
    "mesh": "empty",
    "pos": [
     1149.7749999999996,
-    -59.10000000000001,
+    -60.45,
     0.05
    ],
    "size": [
@@ -25834,7 +26254,7 @@
    "mesh": "empty",
    "pos": [
     1149.7749999999996,
-    -68.30000000000001,
+    -69.65,
     0.05
    ],
    "size": [
@@ -25885,7 +26305,7 @@
    "mesh": "empty",
    "pos": [
     1149.7749999999996,
-    -77.50000000000001,
+    -78.85000000000001,
     0.05
    ],
    "size": [
@@ -25936,7 +26356,7 @@
    "mesh": "empty",
    "pos": [
     1151.7749999999996,
-    -88.15000000000002,
+    -89.50000000000001,
     0.05
    ],
    "size": [
@@ -25987,7 +26407,7 @@
    "mesh": "empty",
    "pos": [
     1156.7749999999996,
-    -88.85000000000001,
+    -90.2,
     0.05
    ],
    "size": [
@@ -26038,7 +26458,7 @@
    "mesh": "empty",
    "pos": [
     1162.2499999999995,
-    -88.15000000000002,
+    -89.50000000000001,
     0.05
    ],
    "size": [
@@ -26089,7 +26509,7 @@
    "mesh": "empty",
    "pos": [
     1168.1749999999995,
-    -88.85000000000001,
+    -90.2,
     0.05
    ],
    "size": [
