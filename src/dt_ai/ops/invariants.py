@@ -431,15 +431,27 @@ def _relative_back_faces(source: Scene, after: Scene, ctx: Context) -> Invariant
                            after=after_n)
 
 
+def _baseline_faces_of(tri: np.ndarray, faces: list, union: Mesh) -> frozenset:
+    """Baseline overlap faces an after-face lies on: its corners on the baseline union, its centroid on each face."""
+    if not len(faces) or (distance_to_surface(tri, union) > WELD_M).any():
+        return frozenset()
+    centroid = tri.mean(axis=0)
+    return frozenset(k for k, t in faces if distance_to_surface(centroid, Mesh(t, np.array([(0, 1, 2)])))[0] <= WELD_M)
+
+
 def _relative_overlap(source: Scene, after: Scene, changed, ctx: Context) -> InvariantResult:
+    """A pair is pre-existing only when face A lies on baseline face X, face B on baseline face Y and (X, Y) is a
+    baseline pair - a copy of a baseline face paired with its original is a new pair (review round 1, PR #1006)."""
     base = _overlap_pairs(source, None, ctx)
-    tri = np.array([source[o].corners()[i] for q in base for o, i in (q["a"], q["b"])]).reshape(-1, 3, 3)
-    base_mesh = Mesh(tri.reshape(-1, 3), np.arange(len(tri) * 3).reshape(-1, 3))
+    keys = {tuple(f) for q in base for f in (q["a"], q["b"])}
+    faces = [(k, source[k[0]].corners()[k[1]]) for k in sorted(keys)]
+    union = Mesh(np.array([t for _, t in faces]).reshape(-1, 3), np.arange(len(faces) * 3).reshape(-1, 3))
+    base_pairs = {frozenset((tuple(q["a"]), tuple(q["b"]))) for q in base}
     pairs = _overlap_pairs(after, changed, ctx)
     new = []
     for q in pairs:
-        pts = np.concatenate([after[o].corners()[i] for o, i in (q["a"], q["b"])])
-        if not len(tri) or (distance_to_surface(pts, base_mesh) > WELD_M).any():
+        sx, sy = (_baseline_faces_of(after[o].corners()[i], faces, union) for o, i in (q["a"], q["b"]))
+        if not any(frozenset((x, y)) in base_pairs for x in sx for y in sy if x != y):
             new.append(_pair_name(q))
     return InvariantResult("no_close_overlap", not new, len(new), tuple(new[:5]), baseline=len(base), after=len(pairs))
 
