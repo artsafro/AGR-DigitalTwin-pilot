@@ -1,4 +1,4 @@
-"""new-case: AGR Tools 1.0 (#1024) roof plane by parapet logic, stdlib only. Owned by branch K (improve/issue-1024-capsules-roof).
+"""new-case: AGR Tools 1.0 (#1024) roof plane by parapet logic, stdlib only; owned by branch K (improve/issue-1024-capsules-roof).
 
 Pure logic for `body_roof` (body.roof, station 1.0.13); no pymxs. Rule: patterns `roof-inset-plane` (D038/D039/D068)
 and `parapet` (D024), owner answers 06.11.2026: the roof slab lies on the bottom loop of the parapet rim (contour

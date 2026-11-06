@@ -1,4 +1,4 @@
-"""new-case: AGR Tools 1.0 (#1024) roof plane by parapet, 3ds Max side. Owned by branch K (improve/issue-1024-capsules-roof).
+"""new-case: AGR Tools 1.0 (#1024) roof plane by parapet, 3ds Max side; owned by branch K (improve/issue-1024-capsules-roof).
 
 runtime.edits_100 calls `body_roof(ctx, mode, nodes, preview)` for `body.roof` (station 1.0.13, plan mode `copy`:
 the parapet / body objects are only read, the slab is a NEW object). ctx: agr, core (roof_core), edit (edit_core),

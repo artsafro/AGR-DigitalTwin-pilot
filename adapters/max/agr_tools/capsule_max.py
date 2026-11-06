@@ -1,4 +1,4 @@
-"""new-case: AGR Tools 1.0 (#1024) interior capsules, 3ds Max side. Owned by branch K (improve/issue-1024-capsules-roof).
+"""new-case: AGR Tools 1.0 (#1024) interior capsules, 3ds Max side; owned by branch K (improve/issue-1024-capsules-roof).
 
 runtime.edits_100 calls `body_capsules(ctx, mode, nodes, preview)` for `body.capsules` (station 1.0.12, plan mode
 `copy`: the bodies are only read, the capsules are NEW objects). ctx: agr, core (capsule_core), edit (edit_core),

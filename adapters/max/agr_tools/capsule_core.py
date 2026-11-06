@@ -1,4 +1,4 @@
-"""new-case: AGR Tools 1.0 (#1024) interior capsules logic, stdlib only. Owned by branch K (improve/issue-1024-capsules-roof).
+"""new-case: AGR Tools 1.0 (#1024) interior capsules logic, stdlib only; owned by branch K (improve/issue-1024-capsules-roof).
 
 Pure logic for `body_capsules` (body.capsules, station 1.0.12); no pymxs. The glue (capsule_max.py) reads the
 openings through the ONE recognition `openings_core.find_openings` (branch J) and creates the meshes; reports,
