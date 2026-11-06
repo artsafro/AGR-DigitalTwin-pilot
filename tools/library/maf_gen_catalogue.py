@@ -22,6 +22,7 @@ import json
 import math
 import os
 import sys
+import tempfile
 from pathlib import Path
 
 MD_BEGIN = "<!-- generated-maf:begin (tools/library/maf_gen_catalogue.py) -->"
@@ -253,10 +254,23 @@ def main(argv: list[str] | None = None) -> int:
     except (ValueError, KeyError, OSError, json.JSONDecodeError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
-    for path, text in ((a.out_json, dump_catalogue_json(catalogue)), (a.out_md, md)):
-        path.with_name(path.name + ".partial").write_text(text, encoding="utf-8", newline="\n")
-    for path in (a.out_json, a.out_md):
-        os.replace(path.with_name(path.name + ".partial"), path)
+    # Temp files are created exclusively under unique names (never `<out>.partial`), so an input or an unrelated
+    # file that happens to carry that name is never clobbered or renamed onto an output (PR #1093 review P1-1).
+    temps: list[tuple[str, Path]] = []
+    try:
+        for path, text in ((a.out_json, dump_catalogue_json(catalogue)), (a.out_md, md)):
+            fd, tmp = tempfile.mkstemp(prefix=f".{path.name}.", suffix=".tmp", dir=path.parent)
+            temps.append((tmp, path))
+            with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as fh:
+                fh.write(text)
+        for tmp, path in temps:
+            os.replace(tmp, path)
+    except OSError as exc:
+        for tmp, _ in temps:
+            if os.path.exists(tmp):
+                os.unlink(tmp)
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
     print(f"generated {len(gen['generated'])} entries, dropped rows {[d['row'] for d in gen['generated_dropped']]}")
     return 0
 
