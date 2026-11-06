@@ -374,7 +374,12 @@ def test_agent_request_schema_layer_and_ops():
 def test_one_call_one_journal_line_with_actor(tmp_path, monkeypatch):
     monkeypatch.setenv('AGR_JOURNAL_DIR', str(tmp_path))
     rt = runtime()
-    _stub_roof_glue(rt, monkeypatch)
+    # the journal hook is under test, not the buttons: once a branch implements body.roof / udim.distortion their
+    # glue needs Max, so the dispatcher answers like a stub here (#1024 branch M found this)
+    real = rt._dispatch_edit
+    monkeypatch.setattr(rt, '_dispatch_edit', lambda table, read, glue, issue, tool, mode, *a: (
+        rt._edit_core().not_implemented(tool, mode, issue) if tool in table else real(table, read, glue, issue,
+                                                                                         tool, mode, *a)))
     rt.edits_100('body.roof', 'preview')
     rt.edits_100('udim.distortion', 'preview', actor='mcp')
     with pytest.raises(ValueError):
