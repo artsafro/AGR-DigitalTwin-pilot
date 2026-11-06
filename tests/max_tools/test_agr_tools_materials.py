@@ -53,7 +53,9 @@ def test_library_pointer_schema_and_ral(lib):
     ptr = json.loads(LIB.read_text(encoding='utf-8'))
     assert ptr['current'] == 'materials_v002.json' and lib['version'] == 'v002' == ptr['version']
     assert lib['sha256'] == ptr['sha256'] and lib['ral_checked']
-    assert 30 <= len(lib['materials']) <= 45
+    # 30..40 records come from the materials audit; later records carry a user decision instead ([D202])
+    assert 30 <= len([r for r in lib['materials'] if r['source'].get('audit')]) <= 45
+    assert all(r['source'].get('audit') or r['source'].get('decision') for r in lib['materials'])
     ids = [r['library_id'] for r in lib['materials']]
     assert len(ids) == len(set(ids)) and {3, 7, 12, 31} <= set(ids)
     ral = json.loads((ROOT / 'tools/materials/ral_classic.json').read_text(encoding='utf-8'))['colors']

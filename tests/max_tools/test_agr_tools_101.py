@@ -518,7 +518,7 @@ def test_q6_lawn_rolled_and_lawn_reinforced_are_two_records():
     lib = ml.load_library(str(LIB))
     by_key = {r['key']: r for r in lib['materials']}
     rolled, reinforced = by_key['lawn_rolled'], by_key['lawn_reinforced']
-    assert rolled['library_id'] != reinforced['library_id'] and rolled['library_id'] == 41
+    assert rolled['library_id'] != reinforced['library_id'] and rolled['library_id'] == 42   # 41 is larch [D202]
     assert rolled['class'] == reinforced['class'] == 'ground'
     assert rolled['rgb_srgb'] != reinforced['rgb_srgb']
     recipes = json.loads((ROOT / 'tools/materials/ground_recipes.json').read_text(encoding='utf-8'))['slots']
@@ -542,9 +542,9 @@ def test_q7_ground_coverings_live_in_a_separate_ground_table_referenced_by_the_o
     lib = ml.load_library(str(LIB))
     assert lib['ground']['version'] == 'v001' and lib['ground']['sha256'] == oks['ground_ref']['sha256']
     gids = {r['library_id'] for r in ground['materials']}
-    assert gids == {18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 41}                     # ids are stable, none renumbered
+    assert gids == {18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 42}                     # ids are stable, none renumbered
     assert gids <= set(lib['by_id']) and not gids & {r['library_id'] for r in oks['materials']}
-    assert sorted(lib['by_id']) == list(lib['by_id']) and len(lib['materials']) == 41
+    assert sorted(lib['by_id']) == list(lib['by_id']) and len(lib['materials']) == 42
     assert lib['by_id'][26]['key'] == 'lawn_reinforced' and lib['by_id'][18]['class'] == 'paving'
     # a changed ground table is refused (the OKS table pins its sha256), a missing one too
     for k in ('materials.json', 'materials_v002.json'):

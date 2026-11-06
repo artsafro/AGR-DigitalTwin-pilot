@@ -860,10 +860,47 @@
     "evidence": "jobs/KPP1/materials.json Interior; jobs/TEC26-OKS/AC09/vpm_textures.json:41"
    },
    "maf_v005_id": null
+  },
+  {
+   "library_id": 41,
+   "key": "larch_light_oak_boards",
+   "name_ru": "Доски лиственница «светлый дуб», 11 досок со швами (скамья «Верона», МАФ)",
+   "class": "wood",
+   "ral": null,
+   "rgb_srgb": [
+    196,
+    154,
+    108
+   ],
+   "rgb_note": "project sample (sRGB) = MAF v005 larch_light_oak #C49A6C; board texture SYNTHETIC (make_boards.py)",
+   "roughness": 180,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "metric_pattern",
+    "boards": 11,
+    "texture": "verona_boards_11.png",
+    "seam_srgb": [
+     90,
+     64,
+     38
+    ],
+    "cell_px": 256
+   },
+   "base_map": null,
+   "status": "approved",
+   "source": {
+    "audit": null,
+    "audit_id": null,
+    "decision": "D202",
+    "evidence": "issue #1046 comment 2026-11-06 (Artem «да»); jobs/VATUTINO-SITE/maf/verona-material-ids-v006-proposal.json; C:/x/vatutino-maf/gen-v001/atlas-v006-2/verona_boards_11.png sha256 bd3bf55ae3604695cb2600584aa5fc957207a5afc15c9703ab9e0aa5ff554b12"
+   },
+   "maf_v005_id": null,
+   "note": "новый ID v006 [D202] (D152: один ID на текстуру); каркас скамьи - существующий paint_ral7016 (library_id 8)"
   }
  ],
  "ground_ref": {
   "file": "ground_v001.json",
-  "sha256": "3b3d299618e2001414a00ddccccc1f40f3135d9ab6775f021c0bb718727c7162"
+  "sha256": "416af36dedaf295fdd8dba6333599e480c90efefa4d17a4ee9fc5f72306c6e7f"
  }
 }
