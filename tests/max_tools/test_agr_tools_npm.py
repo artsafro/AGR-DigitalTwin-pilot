@@ -405,6 +405,22 @@ def test_facade_phase_continuous_across_neighbour_walls():
             assert abs((a[1] - vals[0][1]) - round(a[1] - vals[0][1])) < 1e-9
 
 
+def test_facade_float32_vertices_fold_like_exact_ones():
+    """Native job 20261106-062347-9524f5c1: in metres Max stores 3.6 as 3.5999999 (float32); folding with a 1e-9
+    tolerance moved such a piece by one period (strip one period taller, fill 0.507 in m vs 0.441 in cm)."""
+    import struct
+    mesh = PB.strip_facade()
+    f32 = dict(mesh, verts=[[struct.unpack('f', struct.pack('f', c))[0] for c in v] for v in mesh['verts']])
+    maps = {**{'s%d.png' % i: {'w': 48, 'h': 32} for i in range(4)}, 'u1.png': {'w': 64, 'h': 64},
+            'u2.png': {'w': 64, 'h': 64}}
+    exact = fac.plan([mesh], {'period_by_id': PB.PERIODS}, maps)
+    noisy = fac.plan([f32], {'period_by_id': PB.PERIODS}, maps)
+    lo = [math.floor(3.5999999 / 1.2 + 1e-9), math.floor(3.5999999 / 1.2 + fac.FOLD_EPS)]
+    assert lo == [2, 3]  # RED with the old tolerance, GREEN with FOLD_EPS
+    assert {k: c['inner'][2:] for k, c in noisy['atlas']['cells'].items()} == {
+        k: c['inner'][2:] for k, c in exact['atlas']['cells'].items()}
+
+
 def test_facade_options_labels_off_and_period_required():
     with pytest.raises(ValueError):
         fac.options({'period_by_id': {'101': 1.2}, 'labels': True})

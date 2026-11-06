@@ -21,6 +21,7 @@ import os
 TOOL = 'atlas.facade_strip'
 OPTION_KEYS = {'texel_px_per_m', 'max_size', 'pad', 'period_by_id', 'grid_zero_m', 'labels', 'out_dir', 'name'}
 TEXEL_TOL = 0.01
+FOLD_EPS = 1e-5  # periods: float32 storage noise of a vertex (~1e-7 relative) never moves a piece by a period
 
 
 def _sibling(name, alias):
@@ -152,7 +153,9 @@ def strip_uv(mesh, faces, zero, period):
         local = {i: [_dot(_sub(mesh['verts'][i], zero), t) / period[0],
                      _dot(_sub(mesh['verts'][i], zero), v) / period[1]] for i in vids}
         lo = [min(p[0] for p in local.values()), min(p[1] for p in local.values())]
-        shift = [math.floor(lo[0] + 1e-9), math.floor(lo[1] + 1e-9)]
+        # float32 vertices (Max): 3.6 m reads 3.5999999 -> 2.9999999 periods; a 1e-9 tolerance folded one period too
+        # few and grew the strip by a whole period in metres but not in cm (job 20261106-062347-9524f5c1)
+        shift = [math.floor(lo[0] + FOLD_EPS), math.floor(lo[1] + FOLD_EPS)]
         for i in vids:
             local[i] = [local[i][0] - shift[0], local[i][1] - shift[1]]
         for f in reg:

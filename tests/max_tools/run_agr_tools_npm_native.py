@@ -313,6 +313,8 @@ def facade_strip():
         out[units] = {'atlas_px': w, 'texel': rb['texel_px_per_m'], 'strips': app['plan'].get('strips'),
                       'unique_ids': done['unique_ids'], 'fill': done['fill'], 'pad_px': done['pad_px']}
     assert out['meters']['texel'] == out['centimeters']['texel'], out
+    assert out['meters']['atlas_px'] == out['centimeters']['atlas_px'] and \
+        abs(out['meters']['fill'] - out['centimeters']['fill']) < 1e-6, out  # same layout in m and cm
     return out
 
 
