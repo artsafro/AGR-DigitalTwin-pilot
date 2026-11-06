@@ -19,7 +19,8 @@ import math
 import os
 
 TOOL = 'atlas.facade_strip'
-OPTION_KEYS = {'texel_px_per_m', 'max_size', 'pad', 'period_by_id', 'grid_zero_m', 'labels', 'out_dir', 'name'}
+OPTION_KEYS = {'texel_px_per_m', 'max_size', 'pad', 'period_by_id', 'grid_zero_m', 'labels', 'out_dir', 'name',
+               'stack'}
 TEXEL_TOL = 0.01
 FOLD_EPS = 1e-5  # periods: float32 storage noise of a vertex (~1e-7 relative) never moves a piece by a period
 
@@ -47,6 +48,12 @@ def options(opts):
     if opts.get('labels', False) is not False:
         raise ValueError('options.labels: letters in the facade atlas are off (Q05); not supported')
     out['labels'] = False
+    # stack (owner question, a parameter): True = D156 as accepted, every region of a strip ID folded into ONE strip
+    # (compact; tex.check of an NPM reports the overlap as tex_padding); False = every planar region / UV island its
+    # own cell, same texel and phase, no overlap (passes the NPM padding rule)
+    out['stack'] = opts.get('stack', True)
+    if not isinstance(out['stack'], bool):
+        raise ValueError('options.stack must be true or false')
     zero = opts.get('grid_zero_m', [0.0, 0.0, 0.0])
     if not isinstance(zero, list) or len(zero) != 3 or any(
             isinstance(c, bool) or not isinstance(c, (int, float)) or not math.isfinite(c) for c in zero):
@@ -161,7 +168,7 @@ def strip_uv(mesh, faces, zero, period):
         for f in reg:
             for c, i in enumerate(mesh['tris'][f]):
                 uv[(f, c)] = local[i]
-        recs.append({'faces': len(reg), 'shift_periods': shift, 'tangent': [round(x, 9) for x in t],
+        recs.append({'face_ids': reg, 'faces': len(reg), 'shift_periods': shift, 'tangent': [round(x, 9) for x in t],
                      'extent_periods': [round(max(p[0] for p in local.values()), 6),
                                         round(max(p[1] for p in local.values()), 6)], 'verts': len(pts)})
     return uv, recs
@@ -184,6 +191,7 @@ def plan(meshes, opts, maps):
             mats[int(k)] = spec
     corner_uv = {}
     unique = {}
+    face_key = [None] * len(cm['tris'])
     for mid in sorted(by_id):
         faces = by_id[mid]
         spec = mats.get(mid) or {}
@@ -226,7 +234,21 @@ def plan(meshes, opts, maps):
                 continue
             g['map_px'] = [info['w'], info['h']]
             g['source_texel_px_per_m'] = round(info['w'] / g['m_per_uv'][0], 4)
-        groups.append(g)
+        if o['stack']:
+            parts_of = [faces]
+        elif g['mode'] == 'strip':
+            parts_of = [r['face_ids'] for r in strips[str(mid)]]
+        else:
+            parts_of = npm.uv_islands(cm, faces)
+        for k, fs in enumerate(parts_of, 1):
+            pts = [corner_uv[(f, c)] for f in fs for c in range(3)]
+            key = str(mid) if o['stack'] else '{}.{}'.format(mid, k)
+            box = [min(p[0] for p in pts), min(p[1] for p in pts), max(p[0] for p in pts), max(p[1] for p in pts)]
+            if g['mode'] == 'strip' and o['stack']:
+                box = [0.0, 0.0, box[2], box[3]]  # one strip from the period origin (pilot bands)
+            groups.append(dict(g, key=key, island=None if o['stack'] else k, faces=len(fs), uv_box=box))
+            for f in fs:
+                face_key[f] = key
     lay = None
     if not findings:
         try:
@@ -234,17 +256,19 @@ def plan(meshes, opts, maps):
         except atlas.AtlasFitError as exc:
             findings.append(('atlas_overflow', [], '{}: {}'.format(exc, exc.calc)))
     out = {'options': o, 'findings': findings, 'groups': groups, 'atlas': lay, 'combined': cm, 'strips': strips,
+           'face_key': face_key,
            'pattern_uv': None, 'uvs': None, 'uv_tris': None, 'table': None, 'summary': None}
     if lay is None:
         return out
     new_uv, new_tris, key, pattern = [], [], {}, []
     for f in range(len(cm['tris'])):
         mid = cm['mat_ids'][f]
-        cell = lay['cells'][str(mid)]
+        cell = lay['cells'][face_key[f]]
         ids, pat = [], []
         for c in range(3):
             src = corner_uv[(f, c)]
-            k = (mid, 'u', unique[(f, c)]) if (f, c) in unique else (mid, 'v', cm['tris'][f][c], tuple(src))
+            k = (face_key[f], 'u', unique[(f, c)]) if (f, c) in unique else (face_key[f], 'v', cm['tris'][f][c],
+                                                                                tuple(src))
             if k not in key:
                 key[k] = len(new_uv)
                 new_uv.append(list(atlas.to_atlas(cell, src)))
@@ -259,7 +283,8 @@ def plan(meshes, opts, maps):
                       'pad_px': lay['pad'], 'faces': len(cm['tris']),
                       'strip_ids': sorted(int(k) for k in strips), 'unique_ids': sorted(
                           g['library_id'] for g in groups if g['mode'] == 'unique'),
-                      'regions': {k: len(v) for k, v in sorted(strips.items())}, 'labels': False}
+                      'regions': {k: len(v) for k, v in sorted(strips.items())}, 'labels': False,
+                      'stack': o['stack'], 'cells': len(groups)}
     return out
 
 
@@ -273,7 +298,7 @@ def measure(back, p):
     kinds = {g['library_id']: g['kind'] for g in p['groups']}
     areas, rigid, outside = {}, 0.0, set()
     for f, mid in enumerate(back['mat_ids']):
-        cell = lay['cells'][str(mid)]
+        cell = lay['cells'][p['face_key'][f]]
         q = [back['uvs'][i] for i in back['uv_tris'][f]]
         for a, s in zip(q, p['pattern_uv'][f]):
             w = atlas.to_atlas(cell, s)
@@ -304,4 +329,5 @@ def table_json(p, scene, version, files):
     return {'schema': 1, 'tool': TOOL, 'issue': '#1024', 'scene': scene, 'core': version, 'options': p['options'],
             'method': 'D156 run-strip (pilot tools/remap_facades_atlas.py, tag archive/2026-11)',
             'atlas_px': p['atlas']['size'], 'texel_px_per_m': p['atlas']['texel'], 'files': files,
-            'strips': p['strips'], 'table': p['table']}
+            'strips': {k: [{x: y for x, y in r.items() if x != 'face_ids'} for r in v] for k, v in p['strips'].items()},
+            'table': p['table']}

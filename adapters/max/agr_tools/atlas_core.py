@@ -1101,7 +1101,7 @@ def periodic_cell(src, w, h, n, x0, y0, kx, ky, dw, dh):
 def rigid_raster(plan, groups, maps, background=BACKGROUND):
     """{'rgb': size*size*3 bytes (24-bit), 'alpha': size*size grey bytes or None, 'size', 'sources': {key: [w, h]}}.
 
-    maps: {key: {'w', 'h', 'rgb': bytes w*h*3, 'alpha': bytes w*h | None}} of the texture groups, read from the
+    maps: {group key | map path | library id: {'w', 'h', 'rgb': bytes w*h*3, 'alpha': bytes w*h | None}}, read from the
     full-resolution source files (the journal records their size = the input of the cell). Pattern UV u, v sample
     the map at px (u * w, -v * h) (one pattern unit = one repeat of the map). Plugs: their colour; glass: white."""
     size, pad = plan['size'], plan['pad']
@@ -1112,7 +1112,7 @@ def rigid_raster(plan, groups, maps, background=BACKGROUND):
         cell = plan['cells'][str(g['key'])]
         x, y, dw, dh = cell['outer']
         if g['kind'] == 'texture':
-            m = maps.get(g['key'])
+            m = next((maps[k] for k in (g['key'], g.get('map'), str(g.get('library_id'))) if k in maps), None)
             if m is None:
                 raise AtlasError(f"group {g['key']!r}: no source map")
             px, py = cell['ppu']
@@ -1155,8 +1155,9 @@ def correspondence_table(atlas_report):
     for g in atlas_report['groups']:
         c = cells[str(g['key'])]
         rows.append({'library_id': int(g['library_id']), 'udim': g.get('udim'), 'region': list(c['region']),
+                     'key': str(g['key']), 'island': g.get('island'), 'faces': g.get('faces'),
                      'scale': list(c['scale']), 'shift': list(c['shift']), 'part': g.get('part'),
                      'kind': g['kind'], 'material': g.get('material'), 'map': g.get('map'),
                      'cell_px': list(c['inner']), 'atlas_px': size, 'texel_px_per_m': atlas_report['texel'],
                      'source_texel_px_per_m': g.get('source_texel_px_per_m'), 'udim_source': g.get('udim_source')})
-    return sorted(rows, key=lambda r: (str(r['part']), r['library_id']))
+    return sorted(rows, key=lambda r: (str(r['part']), r['library_id'], r['island'] or 0))

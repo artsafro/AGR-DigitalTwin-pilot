@@ -111,7 +111,7 @@ def test_plan_on_vpm_of_branch_m_passes_and_table_is_complete():
     p = npm.plan(vpm_meshes(), OPTS, HEADERS)
     assert p['findings'] == []
     assert p['summary']['atlas_px'] <= 2048 and p['summary']['texel_px_per_m'] == 39.0
-    rows = {r['library_id']: r for r in p['table']}
+    rows = {r['library_id']: r for r in p['table']}  # one row per island; the last island of each ID
     assert sorted(rows) == [PANEL, BRICK, GLASS]
     assert rows[PANEL]['udim'] == 1001 and rows[BRICK]['udim'] == 1002 and rows[PANEL]['udim_source'] == 'vpm_table'
     assert rows[GLASS]['kind'] == 'glass' and rows[GLASS]['part'] == 'glass' and rows[GLASS]['udim'] == 1001
@@ -119,6 +119,20 @@ def test_plan_on_vpm_of_branch_m_passes_and_table_is_complete():
         assert set(r) >= {'library_id', 'udim', 'region', 'scale', 'shift', 'material', 'map', 'cell_px',
                           'atlas_px', 'texel_px_per_m'}
         assert r['scale'][0] == pytest.approx(r['scale'][1])
+
+
+def test_npm_islands_pass_the_npm_padding_rule_stack_does_not():
+    """tex.check of an NPM (checks_core.padding_findings, 8 px, overlap is tex_padding outside the VPM): the
+    default layout 'islands' gives no finding; the L11 prototype layout 'stack' keeps the K6 pieces stacked in
+    one cell and fails it - the conflict lab L11 / acceptance 1.0.22 is a parameter (owner question)."""
+    ck = load(TOOLS / 'checks_core.py', 'p_checks_core')
+    for layout, want in (('islands', set()), ('stack', {'tex_padding'})):
+        p = npm.plan(vpm_meshes(), dict(OPTS, layout=layout), HEADERS)
+        faces = [(f + 1, t) for f, t in enumerate(p['uv_tris'])]
+        got = ck.padding_findings([tuple(u) for u in p['uvs']], faces, p['atlas']['size'], 8)
+        assert {g[0] for g in got} == want, (layout, got[:2])
+        _f, m = npm.measure(back_of(p), p)
+        assert all(abs(t / 39.0 - 1) <= 0.01 for t in m['texel_px_per_m'].values()) and m['rigid_max_uv'] < 1e-12
 
 
 def test_defect_texel_by_group_area_red_green():
@@ -203,7 +217,8 @@ def test_defect_glass_diffuse_cell_red_green():
     glass = [g for g in p['groups'] if g['library_id'] == GLASS][0]
     assert glass['color'] == [70, 90, 110]  # RED: the source colour GeoAGR would paint
     img = ac.rigid_raster(p['atlas'], p['groups'], {'3': coord_map(64, 64), '7': coord_map(64, 64)})
-    x, y, w, h = p['atlas']['cells'][str(GLASS)]['outer']
+    gf = p['combined']['mat_ids'].index(GLASS)
+    x, y, w, h = p['atlas']['cells'][p['face_key'][gf]]['outer']
     o = (y * img['size'] + x) * 3
     assert img['rgb'][o:o + 3] == bytes(ac.GLASS_RGB)  # GREEN
     assert p['summary']['kinds']['glass'] == 1
@@ -226,7 +241,7 @@ def test_defect_plug_path_red_green():
     p = npm.plan(meshes, OPTS, {})
     assert p['findings'] == [] and p['summary']['kinds'] == {'texture': 0, 'plug': 2, 'glass': 1}
     img = ac.rigid_raster(p['atlas'], p['groups'], {})
-    x, y, _w, _h = p['atlas']['cells'][str(PANEL)]['outer']
+    x, y, _w, _h = p['atlas']['cells'][p['face_key'][p['combined']['mat_ids'].index(PANEL)]]['outer']
     assert img['rgb'][(y * img['size'] + x) * 3:(y * img['size'] + x) * 3 + 3] == bytes((1, 2, 3))
 
 
@@ -249,12 +264,12 @@ def test_rigid_transfer_keeps_k6_seam_and_table_returns_vpm_uv():
     """K6 seam 0: one scale + one shift per ID, so every UV difference inside a group scales uniformly; the
     table returns the VPM UV exactly (npm.to_vpm, lab L11: <= 3e-6)."""
     p = npm.plan(vpm_meshes(), OPTS, HEADERS)
-    rows = {r['library_id']: r for r in p['table']}
+    rows = {r['key']: r for r in p['table']}
     cm = p['combined']
     worst = 0.0
     for f, mid in enumerate(cm['mat_ids']):
         for a, s in zip(p['uv_tris'][f], cm['uv_tris'][f]):
-            back = ac.from_atlas(rows[mid], p['uvs'][a])
+            back = ac.from_atlas(rows[p['face_key'][f]], p['uvs'][a])
             worst = max(worst, abs(back[0] - cm['uvs'][s][0]), abs(back[1] - cm['uvs'][s][1]))
     assert worst <= 1e-9
     _f, measured = npm.measure(back_of(p), p)
@@ -346,7 +361,7 @@ def test_write_files_in_a_new_folder(tmp_path):
     files, mname = nm.write_files(ctx, p, img, str(folder), 'SM_Test_Main', npm)
     assert [f['kind'] for f in files] == ['diffuse', 'table'] and mname == 'M_SM_Test_Main_1'
     table = json.loads(Path(files[1]['path']).read_text(encoding='ascii'))
-    assert table['atlas_px'] == p['atlas']['size'] and len(table['table']) == 3
+    assert table['atlas_px'] == p['atlas']['size'] and len(table['table']) == len(p['groups'])
     with pytest.raises(FileExistsError):
         nm.write_files(ctx, p, img, str(folder), 'SM_Test_Main', npm)
 
@@ -403,6 +418,29 @@ def test_facade_phase_continuous_across_neighbour_walls():
         for a in vals[1:]:
             assert abs((a[0] - vals[0][0]) - round(a[0] - vals[0][0])) < 1e-9
             assert abs((a[1] - vals[0][1]) - round(a[1] - vals[0][1])) < 1e-9
+
+
+def test_facade_stack_parameter_and_npm_padding_rule():
+    """D156 stacks every region of a strip ID into one strip: tex.check of an NPM reports the overlap
+    (`tex_padding`); stack=False gives every planar region / island its own cell, no finding, same texel."""
+    ck = load(TOOLS / 'checks_core.py', 'p_checks_core_f')
+    maps = {**{'s%d.png' % i: {'w': 48, 'h': 32} for i in range(4)}, 'u1.png': {'w': 64, 'h': 64},
+            'u2.png': {'w': 64, 'h': 64}}
+    for stack, want in ((True, {'tex_padding'}), (False, set())):
+        p = fac.plan([PB.strip_facade()], {'period_by_id': PB.PERIODS, 'stack': stack}, maps)
+        got = ck.padding_findings([tuple(u) for u in p['uvs']], [(f + 1, t) for f, t in enumerate(p['uv_tris'])],
+                                  p['atlas']['size'], 8)
+        assert {g[0] for g in got} == want, (stack, got[:2])
+        findings, m = fac.measure(back_of(p), p)
+        assert findings == [] and all(abs(t / 39.0 - 1) <= 0.01 for t in m['texel_px_per_m'].values())
+    nm = load(TOOLS / 'npm_max.py', 'p_npm_max_slice')
+    two = fac.plan([PB.strip_facade('SM_A_Main'), PB.strip_facade('SM_B_Main')],
+                   {'period_by_id': PB.PERIODS, 'stack': False}, maps)
+    n = len(two['combined']['tris']) // 2
+    sub = nm._slice(two, n, n)
+    back = {'verts': two['combined']['verts'], 'tris': two['combined']['tris'][n:], 'mat_ids': two['combined']['mat_ids'][n:],
+            'uvs': two['uvs'], 'uv_tris': two['uv_tris'][n:]}
+    assert fac.measure(back, sub)[0] == []  # the per-copy readback of the 2nd object uses its own cells
 
 
 def test_facade_float32_vertices_fold_like_exact_ones():

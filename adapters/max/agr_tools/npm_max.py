@@ -217,18 +217,18 @@ def write_combined(t, others, p):
 
 
 def read_pixels(ctx, p):
-    """{group key: {'w', 'h', 'rgb', 'alpha'}} from the FULL-resolution PNG files of the texture groups."""
+    """{map path: {'w', 'h', 'rgb', 'alpha'}} from the FULL-resolution PNG files of the texture groups (each read once)."""
     tq = _texqa(ctx)
     out = {}
     for g in p['groups']:
-        if g['kind'] != 'texture':
+        if g['kind'] != 'texture' or g['map'] in out:
             continue
         with open(g['map'], 'rb') as f:
             pic = tq.read_png(f.read())
         rgb = pic.rgb()
         if len(rgb) != pic.w * pic.h * 3:
             raise ValueError('map {} decoded to a partial image'.format(g['map']))
-        out[g['key']] = {'w': pic.w, 'h': pic.h, 'rgb': rgb, 'alpha': pic.alpha()}
+        out[g['map']] = {'w': pic.w, 'h': pic.h, 'rgb': rgb, 'alpha': pic.alpha()}
     return out
 
 
@@ -368,7 +368,7 @@ def _slice(p, base, n):
     cm = p['combined']
     sub_cm = {'tris': [[i for i in t] for t in cm['tris'][base:base + n]], 'mat_ids': cm['mat_ids'][base:base + n],
               'uvs': cm['uvs'], 'uv_tris': cm['uv_tris'][base:base + n], 'verts': cm['verts']}
-    out = dict(p, combined=sub_cm)
+    out = dict(p, combined=sub_cm, face_key=p['face_key'][base:base + n])
     if p.get('pattern_uv') is not None:
         out['pattern_uv'] = p['pattern_uv'][base:base + n]
     return out

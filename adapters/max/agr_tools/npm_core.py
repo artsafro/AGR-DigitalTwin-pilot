@@ -24,8 +24,14 @@ import math
 import os
 
 TOOL = 'npm.build'
-OPTION_KEYS = {'texel_px_per_m', 'max_size', 'pad', 'glass_ids', 'udim_table', 'out_dir', 'name'}
+OPTION_KEYS = {'texel_px_per_m', 'max_size', 'pad', 'glass_ids', 'udim_table', 'out_dir', 'name', 'layout'}
 TEXEL_TOL = 0.01
+# layout (owner question, #1024 is never blocked - a parameter): 'islands' (default) gives every UV island of an ID
+# its own cell at the same scale (the texture is sampled at the island's real UV, so the K6 phase between islands is
+# kept) and no two islands overlap - tex.check of an NPM fails overlapping islands (`tex_padding`, checks_core
+# padding_findings: overlap is allowed only in the VPM, 2.5.1.5); 'stack' is the L11 prototype: one rigid cell per ID
+# with the K6 pieces stacked as in the VPM tile (smaller atlas, tex.check reports the overlap).
+LAYOUTS = ('islands', 'stack')
 
 
 def _sibling(name, alias):
@@ -53,7 +59,9 @@ def options(opts):
         raise ValueError('unknown npm.build options: ' + ', '.join(sorted(unknown)))
     out = {'texel_px_per_m': _num(opts.get('texel_px_per_m', atlas.NPM_TEXEL_PX_M), 'options.texel_px_per_m'),
            'max_size': opts.get('max_size', 2048), 'pad': opts.get('pad', atlas.PADDING_MIN_PX),
-           'out_dir': opts.get('out_dir'), 'name': opts.get('name')}
+           'out_dir': opts.get('out_dir'), 'name': opts.get('name'), 'layout': opts.get('layout', 'islands')}
+    if out['layout'] not in LAYOUTS:
+        raise ValueError('options.layout must be one of {}'.format(list(LAYOUTS)))
     if out['max_size'] not in atlas.NPM_SIZES:
         raise ValueError('options.max_size must be one of {}'.format(list(atlas.NPM_SIZES)))
     if type(out['pad']) is not int or out['pad'] < atlas.PADDING_MIN_PX:
@@ -118,6 +126,26 @@ def combine(meshes):
             out['src'].append((mi, f))
     return out
 
+def uv_islands(cm, faces):
+    """UV islands of the faces (connected through shared UV vertices), each sorted, in order of the first face."""
+    parent = {}
+
+    def find(x):
+        while parent.setdefault(x, x) != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+    for f in faces:
+        t = cm['uv_tris'][f]
+        for i in t[1:]:
+            a, b = find(t[0]), find(i)
+            if a != b:
+                parent[a] = b
+    out = {}
+    for f in faces:
+        out.setdefault(find(cm['uv_tris'][f][0]), []).append(f)
+    return sorted(out.values(), key=lambda fs: fs[0])
+
 
 def plan(meshes, opts, maps):
     """Plan of npm.build: {'options', 'findings': [(code, faces 0-based of the combined mesh, detail)], 'groups',
@@ -148,7 +176,7 @@ def plan(meshes, opts, maps):
     parts = {}
     for f, mid in enumerate(cm['mat_ids']):
         parts.setdefault(mid, set()).add(cm['part'][f])
-    groups = []
+    groups, face_key = [], [None] * len(cm['tris'])
     for mid in sorted(by_id):
         faces = by_id[mid]
         if mid <= 0 or any(cm['uv_tris'][f] is None for f in faces):
@@ -157,9 +185,6 @@ def plan(meshes, opts, maps):
             findings.append(('id_conflict', faces, 'library id {} on body and glass'.format(mid)))
         spec = mats.get(mid) or {}
         kind = 'glass' if mid in glass_ids else ('texture' if spec.get('map') else 'plug')
-        idx = sorted({t for f in faces for t in cm['uv_tris'][f]})
-        us = [cm['uvs'][t][0] for t in idx]
-        vs = [cm['uvs'][t][1] for t in idx]
         uv_a = geo_a = 0.0
         tile_area = {}
         for f in faces:
@@ -170,29 +195,37 @@ def plan(meshes, opts, maps):
             geo_a += a3
             c = tile_of(sum(x[0] for x in q) / 3.0, sum(x[1] for x in q) / 3.0)
             tile_area[c] = tile_area.get(c, 0.0) + a3
-        g = {'key': str(mid), 'library_id': mid, 'kind': kind, 'part': sorted(parts[mid])[0],
-             'uv_box': [min(us), min(vs), max(us), max(vs)], 'faces': len(faces), 'material': spec.get('name'),
-             'map': spec.get('map') if kind == 'texture' else None,
-             'color': list(spec.get('color') or [128, 128, 128])}
+        base = {'library_id': mid, 'kind': kind, 'part': sorted(parts[mid])[0], 'material': spec.get('name'),
+                'map': spec.get('map') if kind == 'texture' else None,
+                'color': list(spec.get('color') or [128, 128, 128])}
         if str(mid) in o['udim_table']:
-            g['udim'], g['udim_source'] = o['udim_table'][str(mid)], 'vpm_table'
+            base['udim'], base['udim_source'] = o['udim_table'][str(mid)], 'vpm_table'
         else:
-            g['udim'] = max(tile_area.items(), key=lambda kv: (kv[1], -kv[0]))[0] if tile_area else None
-            g['udim_source'] = 'uv_area_majority'
+            base['udim'] = max(tile_area.items(), key=lambda kv: (kv[1], -kv[0]))[0] if tile_area else None
+            base['udim_source'] = 'uv_area_majority'
         if kind == 'texture':
             if uv_a <= 1e-15 or geo_a <= 1e-12:
                 findings.append(('no_uv', faces, 'ID {}: no UV or geometry area, texel not measurable'.format(mid)))
                 continue
-            mpu = math.sqrt(geo_a / uv_a)  # metres per UV unit (K6: isotropic)
-            g['m_per_uv'] = [mpu, mpu]
-            info = maps.get(g['map']) or {'error': 'not read'}
+            mpu = math.sqrt(geo_a / uv_a)  # metres per UV unit (K6: isotropic), one scale for the whole ID
+            base['m_per_uv'] = [mpu, mpu]
+            info = maps.get(base['map']) or {'error': 'not read'}
             if info.get('error'):
                 findings.append(('map_missing', faces, 'ID {}: map {} {} - no atlas is written'.format(
-                    mid, g['map'], info['error'])))
+                    mid, base['map'], info['error'])))
                 continue
-            g['map_px'] = [info['w'], info['h']]
-            g['source_texel_px_per_m'] = round(info['w'] / mpu, 4)
-        groups.append(g)
+            base['map_px'] = [info['w'], info['h']]
+            base['source_texel_px_per_m'] = round(info['w'] / mpu, 4)
+        parts_of = [faces] if o['layout'] == 'stack' else uv_islands(cm, faces)
+        for k, fs in enumerate(parts_of, 1):
+            idx = sorted({t for f in fs for t in cm['uv_tris'][f]})
+            us = [cm['uvs'][t][0] for t in idx]
+            vs = [cm['uvs'][t][1] for t in idx]
+            key = str(mid) if o['layout'] == 'stack' else '{}.{}'.format(mid, k)
+            groups.append(dict(base, key=key, island=None if o['layout'] == 'stack' else k, faces=len(fs),
+                               uv_box=[min(us), min(vs), max(us), max(vs)]))
+            for f in fs:
+                face_key[f] = key
     lay = None
     if not findings:
         try:
@@ -201,13 +234,13 @@ def plan(meshes, opts, maps):
             findings.append(('atlas_overflow', [], '{}: {}'.format(exc, exc.calc)))
         except atlas.AtlasError as exc:
             findings.append(('atlas', [], str(exc)))
-    out = {'options': o, 'findings': findings, 'groups': groups, 'atlas': lay, 'combined': cm}
+    out = {'options': o, 'findings': findings, 'groups': groups, 'atlas': lay, 'combined': cm, 'face_key': face_key}
     if lay is None:
         out.update(uvs=None, uv_tris=None, table=None, summary=None)
         return out
     new_uv, new_tris, key = [], [], {}
     for f, t in enumerate(cm['uv_tris']):
-        cell = lay['cells'][str(cm['mat_ids'][f])]
+        cell = lay['cells'][face_key[f]]
         ids = []
         for i in t:
             k = (cm['mat_ids'][f], i)
@@ -220,10 +253,9 @@ def plan(meshes, opts, maps):
     out.update(uvs=new_uv, uv_tris=new_tris, table=atlas.correspondence_table(report))
     out['summary'] = {
         'atlas_px': lay['size'], 'fill': lay['fill'], 'texel_px_per_m': lay['texel'], 'pad_px': lay['pad'],
-        'faces': len(cm['tris']), 'groups': len(groups),
-        'kinds': {k: sum(1 for g in groups if g['kind'] == k) for k in atlas.KINDS},
-        'glass_faces': sum(1 for p in cm['part'] if p == 'glass') + sum(
-            1 for f, mid in enumerate(cm['mat_ids']) if mid in glass_ids and cm['part'][f] != 'glass')}
+        'faces': len(cm['tris']), 'layout': o['layout'], 'cells': len(groups),
+        'kinds': {k: len({g['library_id'] for g in groups if g['kind'] == k}) for k in atlas.KINDS},
+        'glass_faces': sum(1 for mid in cm['mat_ids'] if mid in glass_ids)}
     return out
 
 
@@ -240,7 +272,7 @@ def measure(back, p):
     kinds = {g['library_id']: g['kind'] for g in p['groups']}
     areas = {}
     for f, mid in enumerate(back['mat_ids']):
-        cell = lay['cells'][str(mid)]
+        cell = lay['cells'][p['face_key'][f]]
         q = [back['uvs'][i] for i in back['uv_tris'][f]]
         src = [cm['uvs'][i] for i in cm['uv_tris'][f]]
         for a, s in zip(q, src):

@@ -238,8 +238,8 @@ def npm_build(units='meters', tag='m'):
     rep = agr.checks_070('sets_count', [npm], select=False)
     checks['atlas.sets_count'] = {'status': rep.get('status'), 'codes': sorted({
         f.get('code') for o in rep.get('objects', []) for f in o.get('findings', [])})}
-    # stacked K6 pieces of one ID share their cell by design (rigid transfer): only the review code may remain
-    assert set(checks['tex.check']['codes']) <= {'tex_overlap_review'}, checks
+    # layout 'islands' (default): no two islands overlap, the NPM padding rule of tex.check holds
+    assert checks['tex.check']['codes'] == [], checks
     assert checks['atlas.sets_count']['codes'] == [], checks
     again = agr.edits_100('npm.build', 'apply', agr.edits_100('npm.build', 'preview', nodes=copies, options=opts),
                           nodes=copies)
@@ -317,7 +317,17 @@ def facade_strip():
             Path(files['diffuse']).read_bytes())
         assert w == h and w <= 2048 and (depth, ctype) == (8, 2)
         done = app['plan']['done'][0]
-        out[units] = {'atlas_px': w, 'texel': rb['texel_px_per_m'], 'strips': app['plan'].get('strips'),
+        tex = {}
+        for stack in (True, False):  # D156 stack (default) vs one cell per region: tex.check of the NPM copy
+            o2 = dict(opts, stack=stack, out_dir=str(OUT / ('strip_tex_{}_{}'.format(units, stack))))
+            a2 = agr.edits_100('atlas.facade_strip', 'apply', agr.edits_100('atlas.facade_strip', 'preview', nodes=[node],
+                                                                           options=o2), nodes=[node])
+            c2 = rt.getNodeByName(a2['plan']['copies'][0])
+            rt.setUserProp(c2, 'AGR_EXPORT_PATH', 'C:/o/0001_Tverskaya_12_01.fbx')
+            rep = agr.checks_050('textures', [c2])
+            tex[str(stack)] = sorted({x.get('code') for ob in rep.get('objects', []) for x in ob.get('findings', [])})
+        assert tex['False'] == [] and set(tex['True']) <= {'tex_padding'}, tex
+        out[units] = {'tex_check_codes_by_stack': tex, 'atlas_px': w, 'texel': rb['texel_px_per_m'], 'strips': app['plan'].get('strips'),
                       'unique_ids': done['unique_ids'], 'fill': done['fill'], 'pad_px': done['pad_px']}
     assert out['meters']['texel'] == out['centimeters']['texel'], out
     assert out['meters']['atlas_px'] == out['centimeters']['atlas_px'] and \
