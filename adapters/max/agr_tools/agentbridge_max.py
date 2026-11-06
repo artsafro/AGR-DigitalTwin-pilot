@@ -151,6 +151,8 @@ def agent_request(ctx, mode, nodes, preview):
         except ValueError as exc:
             role = None
             findings.append(edit.finding('role_unknown', (), str(exc)))
+        for code, detail in core.target_findings(str(n.layer.name)):
+            findings.append(edit.finding(code, (), detail))
         objects.append({'ref': ref, 'role': role, 'layer': str(n.layer.name)})
         entries.append(edit.entry(ref['handle'], ref['name'], findings))
     markers = sorted(str(n.name) for n in rt.objects

@@ -132,6 +132,14 @@ def options(opts):
     return out
 
 
+def target_findings(layer):
+    """[(code, detail)] of one request target by its layer: an object still in an AGENT_* layer (or its _REJECTED /
+    _SOURCE side layer) is unaccepted agent work - accept or reject it first, never feed it to a new request."""
+    if str(layer).startswith('AGENT_'):
+        return [('in_agent_layer', 'layer {}: accept or reject that agent work first'.format(layer))]
+    return []
+
+
 def build_request(opt, request_id, project_id, objects, markers, snapshot_name, snapshot_sha, passport_excerpt,
                   journal_tail, command):
     req = {'schema': 1, 'request_id': request_id, 'project_id': project_id, 'stage': opt['stage'],

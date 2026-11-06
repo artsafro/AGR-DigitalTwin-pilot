@@ -550,6 +550,12 @@ def test_request_core_matches_the_schema():
         core.options({"task": "t", "evil": 1})
 
 
+def test_request_target_in_agent_layer_is_a_finding():
+    assert core.target_findings("AGENT_r001")[0][0] == "in_agent_layer"
+    assert core.target_findings("AGENT_r001_REJECTED")[0][0] == "in_agent_layer"
+    assert core.target_findings("BODY_main") == [] and core.target_findings("0") == []
+
+
 def test_request_md_and_command():
     req = _req()
     md = core.request_md(req, "C:/jobs/KPP1/agent/r001/request.json")
