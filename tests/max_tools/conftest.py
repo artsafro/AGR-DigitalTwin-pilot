@@ -43,3 +43,15 @@ def synthetic_icon_pngs(tmp_path_factory):
     os.environ['AGR_ICON_PNG_DIR'] = str(root)
     yield str(root)
     del os.environ['AGR_ICON_PNG_DIR']
+
+
+@pytest.fixture(scope='session', autouse=True)
+def isolated_journal(tmp_path_factory):
+    """#1024 branch 0: every edits_080/090/100 call journals a line; tests never write the user's journal."""
+    old = os.environ.get('AGR_JOURNAL_DIR')
+    os.environ['AGR_JOURNAL_DIR'] = str(tmp_path_factory.mktemp('agr_journal'))
+    yield os.environ['AGR_JOURNAL_DIR']
+    if old is None:
+        os.environ.pop('AGR_JOURNAL_DIR', None)
+    else:
+        os.environ['AGR_JOURNAL_DIR'] = old

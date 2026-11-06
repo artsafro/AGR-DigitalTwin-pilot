@@ -1,14 +1,111 @@
 {
  "schema": 1,
  "button": "ucx.gap",
- "tool": null,
+ "tool": "ucx.gap",
  "version": "1.0",
- "shipped": false,
+ "shipped": true,
  "select": "named",
- "reason": "Кнопки ещё нет в AGR Tools 0.7: в панели её нет, объекты полигона и эта запись появляются в том же изменении, что и сама кнопка.",
+ "reason": "",
  "apply_status": null,
- "objects": [],
- "base": null,
- "station": null,
- "stations": []
+ "objects": [
+  {
+   "name": "UCX_GapTouch_01",
+   "scene": "frag_s_ucx",
+   "expect": "fail",
+   "codes": [
+    "ucx_touch"
+   ]
+  },
+  {
+   "name": "UCX_GapTouch_02",
+   "scene": "frag_s_ucx",
+   "expect": "fail",
+   "codes": [
+    "ucx_touch"
+   ]
+  },
+  {
+   "name": "UCX_GapOver_01",
+   "scene": "frag_s_ucx",
+   "expect": "fail",
+   "codes": [
+    "ucx_overlap"
+   ]
+  },
+  {
+   "name": "UCX_GapOver_02",
+   "scene": "frag_s_ucx",
+   "expect": "fail",
+   "codes": [
+    "ucx_overlap"
+   ]
+  },
+  {
+   "name": "UCX_GapSmall_01",
+   "scene": "frag_s_ucx",
+   "expect": "fail",
+   "codes": [
+    "ucx_gap_small"
+   ]
+  },
+  {
+   "name": "UCX_GapSmall_02",
+   "scene": "frag_s_ucx",
+   "expect": "fail",
+   "codes": [
+    "ucx_gap_small"
+   ]
+  },
+  {
+   "name": "UCX_GapOk_01",
+   "scene": "frag_s_ucx",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "UCX_GapOk_02",
+   "scene": "frag_s_ucx",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "UCX_Other_001",
+   "scene": "frag_s_ucx",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "UCX_GapCm_01",
+   "scene": "frag_s_ucxcm",
+   "expect": "fail",
+   "codes": [
+    "ucx_gap_small"
+   ]
+  },
+  {
+   "name": "UCX_GapCm_02",
+   "scene": "frag_s_ucxcm",
+   "expect": "fail",
+   "codes": [
+    "ucx_gap_small"
+   ]
+  },
+  {
+   "name": "UCX_GapCmOk_01",
+   "scene": "frag_s_ucxcm",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "UCX_GapCmOk_02",
+   "scene": "frag_s_ucxcm",
+   "expect": "pass",
+   "codes": []
+  }
+ ],
+ "base": "1.0",
+ "station": "1.0.27",
+ "stations": [
+  "1.0.27"
+ ]
 }

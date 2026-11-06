@@ -91,6 +91,33 @@ substitute ad-hoc scripting.
 - Use: 3ds Max 2026 (2024 is forced to run as administrator and may not connect from a
   non-elevated client). Skill: `3dsmax-mcp-dev`.
 
+### AGR checkers and AGR Tools rows — `agr-mcp`
+- What: our own stdio MCP server (`src/agr_mcp`, `uv run --directory <pilot> agr-mcp`) over the AGR
+  checkers and the AGR Tools plan rows; it reaches the pinned open 3ds Max through the `3dsmax-mcp`
+  pipe above and calls only the installed AGR Tools `runtime.*`. Plan: `docs/plans/agr-mcp.md`;
+  usage: `src/agr_mcp/README.md`. Registered in `.agents/mcp_config.json` (directory
+  `C:\agr\AGR-DigitalTwin-pilot`); set `AGR_MCP_MAX_PID` to the pid of the open Max per session —
+  without it every Max tool answers `host_unavailable`, it never picks a Max by itself.
+- Status: CONFIGURED, tool_schema_version 2 (#1024 branch 0, 2026-11-06). Unit-tested on a fake pymxs;
+  the v2 tools have not been run against a live Max yet (L12 checks latency, one Undo record,
+  selection restore, slot isolation).
+- Catalogue (generated from `docs/plans/agr-tools-suite.json`): 15 stage tools of 1.0
+  (`agr_project_passport` … `agr_agent_accept`), `agr_check_run` (38 read rows), `agr_op_preview`
+  (32 editing rows), `agr_op_apply`; plus the 52 v1 tools, deprecated. Profiles
+  (`observer` / `operator` / `modeller` / `dev`) do not exist yet — branch U; today every tool is listed.
+- Preview-only rule: editing rows answer a preview held by the server (`preview_id`, bound to host,
+  Max pid, document, runtime version and scene state hash; TTL 30 min). `agr_op_apply` applies only
+  the 0.8 rows (export copies, new files, UCX rename in one undo record); every 0.9 / 1.0 row answers
+  `needs_human` — apply is the user's button in the AGR Tools panel/dock (owner answers 06.11.2026).
+- Journal: one journal for panel and MCP (`journal_core.py`, `%LOCALAPPDATA%\AGRTools\journal`),
+  one line per call with actor `mcp`; plus the transport audit `%LOCALAPPDATA%\agr-mcp\audit.jsonl`.
+- Errors carry `structuredContent.error_code`: `busy`, `stale_preview`, `scene_mismatch`,
+  `version_mismatch`, `needs_human`, `host_unavailable`, `handles_required`, `target_conflict`,
+  `unknown_handle`, `selection_changed`, `runtime_missing`, `invalid_input`, … (`instance_ambiguous`,
+  `invariant_broken` reserved for branch U / D108).
+- `agr_exec_unsafe` exists only with `AGR_MCP_UNSAFE=1` (destructive, audited).
+- Owner: Claude (main) · scope: repo (`.agents/mcp_config.json`)
+
 ### Revit — `revit-bridge` (the live route)
 - Status: CONFIGURED (Codex, 2026-10-06: `revit_status` answered from the running Revit 2025;
   a Revit API version query over the pipe timed out — needs a fresh read-only check)
@@ -181,6 +208,9 @@ that those tools have been tested. No generic MCP sandbox is implemented by guar
 |---|---|---|
 | 3dsmax-mcp | `get_selected_max_instance`; `query_scene` with `action` `overview` or `selection` only; `get_object_properties` by `name`/`handle`; `geometry_qa` (scene untouched; the server writes and deletes its own temp snapshot file) — source-inspected at `bcd4e4c6`, used in the 2026-11-03 live cycle | read-only |
 | 3dsmax-mcp | All other tools and operations, including `query_scene` `class`/`property`/`filter`/`delta` (caller strings reach MAXScript `execute` or unquoted code on the TCP path; `delta` resets a baseline), `select_max_instance` (rebinds the session), `manage_scene`, viewport tools and script execution; inspect schema before use | destructive |
+| agr-mcp | `agr_check_run`, `agr_op_preview`, the 15 stage tools (preview only), v1 checks and every v1 `mode=preview` / read tool; the selection is restored after each call | read-only |
+| agr-mcp | v1 `mode=apply` of the 0.8 copy/file rows (export copies and new files, never overwrites) | versioned-write |
+| agr-mcp | `agr_op_apply` (its 0.8 rows include `ucx.rename`, an in-place rename in one undo record), v1 `agr_ucx_rename` apply, `agr_exec_unsafe` (only with `AGR_MCP_UNSAFE=1`) and anything not listed | destructive |
 | revit-bridge | `revit_status` | read-only |
 | revit-bridge | `export_fbx*`, `agr_export_fbx` to new versioned destinations | versioned-write |
 | revit-bridge | All other tools, including `open_document`, link load/unload/reload/repath | destructive |

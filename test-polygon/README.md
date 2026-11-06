@@ -8,7 +8,7 @@
    одна текстура отсутствует нарочно (станция 0.7.1).
 2. **Открой панель.** Главное меню → **AGR Tools → AGR Tools**. Панель встаёт справа (скриншот `GUIDE/01`, `02`).
 3. **Перейди на базу.** Клик по названию вида в левом верхнем углу вьюпорта → **Cameras → `_cam_База 0.1`**
-   (так же `_cam_База 0.2` … `0.7`). Режим отображения — Default Shading (цвет баз виден).
+   (так же `_cam_База 0.2` … `1.0`). Режим отображения — Default Shading (цвет баз виден).
 4. **Прочитай станцию.** Над объектами — подпись «Станция 0.1.1: нажми «MatID»», ниже по строке на объект:
    `SM_Polygon_010_Main -> fail udim_id`. Под каждым объектом — его имя.
 5. **Нажми.** Выдели объекты станции (рамкой или по имени, H), в панели нажми кнопку из подписи.
@@ -22,7 +22,7 @@
 
 ---
 
-Синтетическая сцена, чтобы нажимать кнопки AGR Tools 0.2–0.7 и видеть, на каком объекте PASS, а на каком FAIL.
+Синтетическая сцена, чтобы нажимать кнопки AGR Tools 0.1–0.9 и видеть, на каком объекте PASS, а на каком FAIL.
 Это не модель заказчика. Скамья «Верона» здесь — ящик с именем GroundEl, не актив #790.
 
 Сборка идёт скриптом. Файл `.max` — результат, формат Max 2024 (открывается и в 2026). В git его нет.
@@ -31,7 +31,7 @@
 
 1. Собрать сцену (ниже) или открыть уже собранный `polygon_all.max` из папки результата.
 2. Поставить системные единицы в метры. Исключение — отдельный файл `cm_units.max`: он специально в сантиметрах.
-3. Пройти базы слева направо: База 0.1, База 0.2, … База 0.7. У каждой базы свой цвет на плоскости земли
+3. Пройти базы слева направо: База 0.1, База 0.2, … База 0.9. У каждой базы свой цвет на плоскости земли
    (вид сверху) и подпись в углу: «База 0.x — что добавила версия, какие кнопки».
    Следующая версия AGR Tools добавляет свою базу в конец ряда (`TOUR_LAST` в `polygon_core.py`).
 4. Внутри базы — станции, сверху вниз, по четыре в колонке. Подпись станции (многострочная, 1 м):
@@ -53,7 +53,8 @@
 
 | Файл | Зачем |
 |---|---|
-| `polygon_all.max` | Базы 0.1–0.7 в метрах, профиль НПМ |
+| `polygon_all.max` | Базы 0.1–0.9 в метрах, профиль НПМ |
+| `frag_<ветка>_*.max` | Свои сцены станций 0.8/0.9, которым нужна отдельная сцена (метры или см), из фрагментов `stations/` |
 | `cm_units.max` | Единицы — сантиметры. Кнопка «Единицы и гамма» должна дать `system_unit` |
 | `empty.max` | Пусто. Проверки объектов дают ошибку `empty target set`, это не pass |
 | `vpm.max` | Профиль ВПМ: пивот и лимит треугольников Ground без площади участка |
@@ -67,9 +68,10 @@
 | `fbx/` | Текстовый эталон `reference_box.fbx` и обрубок `broken_truncated.fbx` для readback. `make_fbx.py` копирует их в результат. Двоичный FBX не коммитится |
 | `geojson/` | `valid_oks.geojson` проходит twinqa. `broken_syntax.geojson` не JSON. `broken_schema.geojson` — JSON, но не FeatureCollection |
 | `expected/` | Один JSON на id кнопки. Внутри: база → станция → кнопка → объекты и коды. Версия кнопки берётся из `docs/plans/agr-tools-suite.json` |
-| `bases.json` | Ряд баз: версия, подпись, цвет, станции, файл ожидания |
+| `bases.json` | Ряд баз: версия, подпись, цвет, станции, файл ожидания. Генерируется `polygon_core.py` |
+| `stations/` | Фрагменты баз 0.8, 0.9 (#979) и 1.0 (#1024): `<ветка>.json` — объекты и ожидания станций ветки, `<ветка>_build.py` — их узлы |
 | `scenes/` | Спеки вариантов `cm_units`, `empty`, `vpm` |
-| `catalog.json` | Объекты станций и площадки: слой, `station`, `AGR_TEST` |
+| `catalog.json` | Объекты станций и площадки: слой, `station`, `AGR_TEST`. Генерируется `polygon_core.py` (база + фрагменты) |
 | `polygon_core.py` | Предсказание кодов теми же ядрами, что и кнопки, и сравнение отчёта |
 | `run_polygon.py` | Сборка в пустом Max через общий замок DCC, нажатие кнопок, таблица |
 
@@ -121,6 +123,17 @@ python test-polygon/run_polygon.py --out C:/x/test-polygon --version 2024
 Если есть `G:/Мой диск/`, без `--out` результат идёт в `G:/Мой диск/AGR-evidence/test-polygon/`.
 Иначе в `C:/x/test-polygon/`.
 
+**Ноутбук (Max 2024, релиз 0.9.0).** `run_polygon.py` без `--actual` запускает Max через планировщик DCC (Hermes);
+на ноутбуке так не делают. Сборка и нажатия идут джобом AGR Lab runner (`build/run_inside_max.py` в одноразовой
+сцене слота), затем сравнение без Max:
+
+```
+cd C:\agr\agr-lab; py -3.11 -m agr_lab submit <job.json> --wait 900
+python test-polygon/run_polygon.py --out <новая папка> --actual <папка джоба>/out/actual.json
+```
+
+**ПК (Max 2026).** `run_max_batch.ps1` (слоты + охрана UI), тот же `run_inside_max.py`, затем то же `--actual`.
+
 Раннер отказывается писать, если выход, отчёт или временный путь совпадает с исходниками или друг с другом,
 и в этом случае ничего не создаёт. Исходники он не удаляет. Max запускается через
 `C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.py` (общий замок сессии), в пустой сцене.
@@ -152,8 +165,11 @@ python test-polygon/run_polygon.py --out C:/x/test-polygon-report --actual C:/x/
 
 ## База → станция → кнопка → ожидание
 
-Полный список — `bases.json`. Кнопки версий после 0.7 в ряде ещё без площадки: в их JSON `base` пустой,
-`stations` пустой, и записан `reason`. Когда версия входит в тур, у неё появляется база и хотя бы одна станция.
+Полный список — `bases.json`. Тур идёт до `TOUR_LAST = '1.0'`: 10 баз, 90 станций (0.6 — без станций; база 1.0 — 33 станции в порядке этапов).
+Базы 0.8 и 0.9 стоят в `polygon_core.py`, а их объекты и ожидания — во фрагментах `stations/<ветка>.json` веток #979
+(владелец кнопки — `polygon_core.OWNER`). `catalog.json` и `bases.json` перегенерирует релизная ветка R командой
+`python test-polygon/polygon_core.py`; ветка только добавляет свой фрагмент и `expected/<id>.json`.
+Станции базы 1.0 (#1024, ветки F…U, `polygon_core.OWNER_100`) до фрагмента ветки — «станция в работе, #1024, ветка X». Хвост (1.x) и `step`-строки 1.0 без площадки: в их JSON `base` пустой, `stations` пустой, и записан `reason`.
 
 | База | Станция | Кнопка | Ожидание |
 |---|---|---|---|
@@ -172,6 +188,38 @@ python test-polygon/run_polygon.py --out C:/x/test-polygon-report --actual C:/x/
 | 0.5 | 0.5.5 | `qa.tris` | `expected/qa.tris.json` |
 | 0.6 | — | кнопок нет | Qt-панель, станций нет |
 | 0.7 | 0.7.1 … 0.7.12 | кнопки предсдачи | `expected/<id>.json`, id станции в `bases.json` |
+| 0.8 | 0.8.1 | `scene.missing_maps` | `expected/scene.missing_maps.json` |
+| 0.8 | 0.8.2 | `model.triangulate` | `expected/model.triangulate.json` |
+| 0.8 | 0.8.3 | `tex.format_fix` | `expected/tex.format_fix.json` |
+| 0.8 | 0.8.4 | `tex.placeholders` | `expected/tex.placeholders.json` |
+| 0.8 | 0.8.5 | `ucx.triangulate` | `expected/ucx.triangulate.json` |
+| 0.8 | 0.8.6 | `ucx.rename` | `expected/ucx.rename.json` |
+| 0.8 | 0.8.7 | `udim.ids_to_udims` | `expected/udim.ids_to_udims.json` |
+| 0.8 | 0.8.8 | `qa.names_fix` | `expected/qa.names_fix.json` |
+| 0.8 | 0.8.9 | `qa.package` | `expected/qa.package.json` |
+| 0.8 | 0.8.10 | `export.geojson_write` | `expected/export.geojson_write.json` |
+| 0.8 | 0.8.11 | `export.ground_fbx` | `expected/export.ground_fbx.json` |
+| 0.8 | 0.8.12 | `export.pivot_place` | `expected/export.pivot_place.json` |
+| 0.8 | 0.8.13 | `export.zip` | `expected/export.zip.json` |
+| 0.9 | 0.9.1 | `tex.erm_normal_check` | `expected/tex.erm_normal_check.json` |
+| 0.9 | 0.9.2 | `tex.finish_map` | `expected/tex.finish_map.json` |
+| 0.9 | 0.9.3 | `udim.matid_unwrap` | `expected/udim.matid_unwrap.json` |
+| 0.9 | 0.9.4 | `udim.slots` | `expected/udim.slots.json` |
+| 0.9 | 0.9.5 | `atlas.flora` | `expected/atlas.flora.json` |
+| 0.9 | 0.9.6 | `atlas.groundel` | `expected/atlas.groundel.json` |
+| 0.9 | 0.9.7 | `place.flora_repair` | `expected/place.flora_repair.json` |
+| 0.9 | 0.9.8 | `place.maf_checks` | `expected/place.maf_checks.json` |
+| 0.9 | 0.9.9 | `place.replace` | `expected/place.replace.json` |
+| 0.9 | 0.9.10 | `place.schedule` | `expected/place.schedule.json` |
+| 0.9 | 0.9.11 | `place.drop_to_ground` | `expected/place.drop_to_ground.json` |
+| 0.9 | 0.9.12 | `qa.address` | `expected/qa.address.json` |
+| 0.9 | 0.9.13 | `qa.facade_compare` | `expected/qa.facade_compare.json` |
+| 0.9 | 0.9.14 | `qa.normals` | `expected/qa.normals.json` |
+| 0.9 | 0.9.15 | `qa.sintez` | `expected/qa.sintez.json` |
+| 0.9 | 0.9.16 | `export.batch` | `expected/export.batch.json` |
+| 0.9 | 0.9.17 | `scene.maps_usage` | `expected/scene.maps_usage.json` |
+| 0.9 | 0.9.18 | `light.check` | `expected/light.check.json` |
+| 0.9 | 0.9.19 | `qa.procedural_objects` | `expected/qa.procedural_objects.json` |
 
 ## Правило на следующую кнопку
 

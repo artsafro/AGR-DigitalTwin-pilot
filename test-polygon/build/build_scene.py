@@ -11,6 +11,7 @@ select named specimens only.
 """
 import json
 import math
+import os
 import sys
 from pathlib import Path
 
@@ -141,7 +142,10 @@ def _props(node, obj):
     mat = obj.get('mat_name')
     if obj.get('uv_periods') and mat:
         lines.append('AGR_UV_PERIODS={}={}'.format(mat, obj['uv_periods']))
-    if obj.get('atlas'):
+    if obj.get('atlas') == 'ground':  # 0.9.0 npm profile station: Ground mode, largest atlas 2048 (shrinks)
+        lines.append('AGR_ATLAS_MODE=ground')
+        lines.append('AGR_ATLAS_SIZE=2048')
+    elif obj.get('atlas'):
         lines.append('AGR_ATLAS_MODE=oks')
         lines.append('AGR_ATLAS_SIZE=1024')
     if obj.get('texel_px') and mat:
@@ -333,4 +337,11 @@ def _start_view(made):
 def save(path):
     """Write a 2024-format .max. The path must already be a new output, not a source."""
     target = str(Path(path).resolve()).replace('\\', '/')
-    _rt().execute('saveMaxFile "{}" saveAsVersion:2024 quiet:true'.format(target))
+    rt = _rt()
+    rt.execute('saveMaxFile "{}" saveAsVersion:2024 quiet:true'.format(target))
+    # Max 2024 makes the saved file current. Max 2025+ treats saveAsVersion:2024 as "save a copy": the open scene
+    # stays untitled and buttons that need a saved scene (tex.finish_map, tex.placeholders) refuse. Reopen the
+    # written 2024 file so every Max version presses buttons in the same saved scene (PR #1042, Max 2026 run).
+    current = (str(rt.maxFilePath) + str(rt.maxFileName)).replace('\\', '/')
+    if os.path.normcase(os.path.normpath(current)) != os.path.normcase(os.path.normpath(target)):
+        rt.execute('loadMaxFile "{}" quiet:true'.format(target))

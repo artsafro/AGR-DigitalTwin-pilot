@@ -42,11 +42,57 @@ _BLOCK_ICON = {'scene': 'census', 'model': 'drop', 'tex': 'textures', 'ucx': 'uc
 
 
 
+def grey_button(parent, name, text, tip, style=QtCore.Qt.ToolButtonTextOnly):
+    """A visible, disabled button: planned rows «в версии 1.x» (0.7, #860) and wip stage buttons «в работе, #1024».
+    The tooltip still says what the row does; a disabled button never runs anything."""
+    btn = QtWidgets.QToolButton(parent)
+    btn.setObjectName(name)
+    btn.setText(text)
+    btn.setToolTip(tip)
+    btn.setToolButtonStyle(style)
+    btn.setEnabled(False)
+    return btn
+
+
 def _action_step(suite, a):
     """0 = check (scene unchanged), 1 = fix (copies/undo/files). *_apply and export always fix."""
     if a.id.endswith('_apply') or a.id == 'export':
         return 1
     return roadmap.STEP_OF_MODE[roadmap.row(suite, model.row_of(a.id))['mode']]
+
+
+class RowScroll(QtWidgets.QScrollArea):
+    """One row that scrolls sideways when the dock is narrow; its height always fits the whole row (big buttons,
+    status, second row) plus the scroll bar, measured when the layout asks (after fonts and icons are set)."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWidgetResizable(True)
+        self.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+
+    def setWidget(self, widget):
+        super().setWidget(widget)
+        widget.installEventFilter(self)  # icons/theme set later grow the row: follow its layout requests
+        self.updateGeometry()
+
+    def eventFilter(self, obj, event):
+        if obj is self.widget() and event.type() == QtCore.QEvent.LayoutRequest:
+            self.updateGeometry()
+        return super().eventFilter(obj, event)
+
+    def sizeHint(self):
+        hint = super().sizeHint()
+        inner = self.widget()
+        if inner is not None:
+            hint.setHeight(inner.sizeHint().height() + self.horizontalScrollBar().sizeHint().height())
+        return hint
+
+    def minimumSizeHint(self):
+        hint = super().minimumSizeHint()
+        hint.setHeight(self.sizeHint().height())
+        return hint
 
 
 class Section(QtWidgets.QWidget):
@@ -176,6 +222,7 @@ class AgrPanel(QtWidgets.QDockWidget):
         self.section_blocks = []
         self.section_actions = []
         self.planned = {}
+        self.stage_buttons = {}  # 1.0 stage buttons (#1024): action id -> button (big and small), disabled while wip
         layout_rail = model.rail(self.suite['blocks'], self.suite['rows'])
         self.blocks = [b for b, _, _ in layout_rail]
         self._build_path_page()
@@ -225,7 +272,7 @@ class AgrPanel(QtWidgets.QDockWidget):
         foot.addStretch()
         lay.addLayout(foot)
         self.setWidget(body)
-        self._icons = {a.id: self.backend.icon(a.icon) for a in model.ACTIONS}
+        self._icons = {a.id: self.backend.icon(a.icon) for a in model.ALL_ACTIONS}
         self.apply_theme()
         self.refresh_path()
 
@@ -246,6 +293,7 @@ class AgrPanel(QtWidgets.QDockWidget):
         hl.setContentsMargins(0, 0, 0, 0)
         hl.setSpacing(2)
         self.nodes = {}
+        self._build_stage_rail(holder, hl)
         for i, n in enumerate(roadmap.flow(self.suite, model.VERSION)):
             if i:
                 arrow = QtWidgets.QLabel('↓', holder)
@@ -291,6 +339,75 @@ class AgrPanel(QtWidgets.QDockWidget):
         hl.addStretch()
         self.pages.addWidget(self._scroll(holder))
 
+    def _stage_button(self, parent, a, big):
+        """A 1.0 stage button (#1024): disabled while wip, tooltip «в работе, #1024» + what the plan row does."""
+        tip = model.tooltip(a) + '\n' + roadmap.tooltip(self.suite, roadmap.row(self.suite, a.tool))
+        btn = grey_button(parent, 'agr_wip_' + a.tool, a.label, tip,
+                          QtCore.Qt.ToolButtonTextUnderIcon if big else QtCore.Qt.ToolButtonIconOnly)
+        btn.setIconSize(QtCore.QSize(36, 36) if big else QtCore.QSize(20, 20))
+        btn.setAutoRaise(not big)
+        btn.setEnabled(not a.wip)
+        btn.clicked.connect(lambda _=False, key=a.id: self.run(key))
+        self.stage_buttons[a.id] = btn
+        return btn
+
+    def _build_stage_rail(self, holder, hl):
+        """1.0 conveyor (#1024): a row of big stage buttons (icon, label, stage status from the passport), under each
+        a second row with the stage's small buttons (plan stages[].rows minus big_button)."""
+        title = QtWidgets.QLabel('<b>{}</b>'.format(model.MENU_100), holder)
+        title.setObjectName('agr_stage_title')
+        hl.addWidget(title)
+        row_w = QtWidgets.QWidget()
+        row = QtWidgets.QHBoxLayout(row_w)
+        row.setContentsMargins(0, 0, 0, 0)
+        row.setSpacing(6)
+        self.stages = {}
+        for st in model.stage_rail(self.suite):
+            col = QtWidgets.QWidget(row_w)
+            col.setObjectName('agr_stage_{}'.format(st.id))
+            cl = QtWidgets.QVBoxLayout(col)
+            cl.setContentsMargins(0, 0, 0, 0)
+            cl.setSpacing(1)
+            big = self._stage_button(col, st.big, True)
+            big.setText(st.label)
+            cl.addWidget(big, 0, QtCore.Qt.AlignHCenter)
+            status = QtWidgets.QLabel('', col)
+            status.setObjectName('agr_stage_status_{}'.format(st.id))
+            status.setAlignment(QtCore.Qt.AlignHCenter)
+            cl.addWidget(status)
+            second = QtWidgets.QHBoxLayout()
+            second.setSpacing(1)
+            second.addStretch()
+            small = [self._stage_button(col, a, False) for a in st.small]
+            for b in small:
+                second.addWidget(b)
+            second.addStretch()
+            cl.addLayout(second)
+            cl.addStretch()
+            row.addWidget(col)
+            self.stages[st.id] = (big, status, small)
+        row.addStretch()
+        scroll = RowScroll(holder)
+        scroll.setObjectName('agr_stage_rail')
+        scroll.setWidget(row_w)
+        hl.addWidget(scroll)
+
+    def refresh_stages(self):
+        """Stage status under each big button from the project passport (reader: branch F; none = «не начат»).
+        A passport that cannot be read is said so on every stage, never shown as a guessed status."""
+        passport = self.backend.passport() if hasattr(self.backend, 'passport') else None
+        try:
+            status = {st.id: model.STAGE_STATUS_RU[st.status] for st in model.stage_rail(self.suite, passport)}
+            error = ''
+        except ValueError as exc:
+            status = {sid: 'паспорт: ошибка' for sid in self.stages}
+            error = str(exc)
+        for sid, (_big, label, _small) in self.stages.items():
+            label.setText(status[sid])
+            label.setToolTip(error)
+        self.stage_status = status
+        return status
+
     def _build_block_page(self, b, done, planned):
         item = QtWidgets.QListWidgetItem('{} {}'.format(b['number'], b['short_ru']))
         item.setToolTip('{}\nКогда: {}'.format(b['title_ru'], b['when_ru']))
@@ -320,13 +437,9 @@ class AgrPanel(QtWidgets.QDockWidget):
                 sec.add(btn)
                 self.buttons[a.id] = btn
             for r in rows_:
-                btn = QtWidgets.QToolButton(sec.body)
-                btn.setObjectName('agr_planned_' + r['id'])
-                btn.setText('{} · {}'.format(r['label_ru'], roadmap.planned_label(r)))
-                btn.setToolTip(roadmap.tooltip(self.suite, r))
-                btn.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
+                btn = grey_button(sec.body, 'agr_planned_' + r['id'],
+                                  '{} · {}'.format(r['label_ru'], roadmap.planned_label(r)), roadmap.tooltip(self.suite, r))
                 btn.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
-                btn.setEnabled(False)
                 sec.add(btn)
                 self.planned[r['id']] = btn
             hl.addWidget(sec)
@@ -360,7 +473,8 @@ class AgrPanel(QtWidgets.QDockWidget):
         return roadmap.live_status(self.suite, reports, model.VERSION)
 
     def refresh_path(self):
-        """Live status on the diagram + «Следующий шаг» from the last reports of this scene."""
+        """Live status on the diagram + «Следующий шаг» from the last reports of this scene; stage statuses."""
+        self.refresh_stages()
         status = self.live_status()
         acc = self.accents()
         for bid, (_sec, label) in self.nodes.items():
@@ -401,6 +515,8 @@ class AgrPanel(QtWidgets.QDockWidget):
             item.setForeground(QtGui.QBrush(colors[b['id']]))
             item.setIcon(tint(self.backend.icon(_BLOCK_ICON[b['id']]), colors[b['id']]))
             self.nodes[b['id']][0].set_color(colors[b['id']])
+        for aid, btn in self.stage_buttons.items():  # stage buttons in the colour of their plan row's block
+            btn.setIcon(tint(self._icons[aid], colors[roadmap.row(self.suite, model.BY_ID[aid].tool)['block']]))
         self.rail.item(0).setIcon(tint(self.backend.icon('roadmap'), QtGui.QColor(*text)))
         self.logo.setPixmap(tint(self.backend.icon('tools'), QtGui.QColor(*text), (36,)).pixmap(36, 36))
         self._theme_key = (base, text)
@@ -425,6 +541,8 @@ class AgrPanel(QtWidgets.QDockWidget):
         self._running = busy
         for b in self.buttons.values():
             b.setEnabled(not busy)
+        for aid, b in self.stage_buttons.items():  # a wip stage button stays disabled after a run too
+            b.setEnabled(not busy and not model.BY_ID[aid].wip)
         self.rail.setEnabled(not busy)
         self.scope.setEnabled(not busy)
         self.select_btn.setEnabled(not busy)
@@ -470,6 +588,9 @@ class AgrPanel(QtWidgets.QDockWidget):
         if self._running:
             return None
         a = model.action(key)
+        if a.wip:  # 1.0 stage button still in work (#1024): never runs, says so
+            self.status.setText('{}: {}'.format(a.label, model.WIP_TIP))
+            return None
         self._cancel = False
         self.set_busy(True)
         self.backend.progress_start(a.label)

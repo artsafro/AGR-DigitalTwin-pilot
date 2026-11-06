@@ -1,0 +1,37 @@
+{
+ "schema": 1,
+ "button": "npm.build",
+ "tool": "npm.build",
+ "version": "1.0",
+ "shipped": true,
+ "select": "named",
+ "reason": "",
+ "apply_status": null,
+ "objects": [
+  {
+   "name": "SM_Npm_Ok",
+   "scene": "polygon_all",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_Npm_NoMap",
+   "scene": "polygon_all",
+   "expect": "fail",
+   "codes": [
+    "map_missing"
+   ]
+  }
+ ],
+ "options": {
+  "udim_table": {
+   "3": 1001,
+   "7": 1002
+  }
+ },
+ "base": "1.0",
+ "station": "1.0.22",
+ "stations": [
+  "1.0.22"
+ ]
+}

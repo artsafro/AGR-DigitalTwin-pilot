@@ -18,6 +18,11 @@ from mcp.shared.memory import create_connected_server_and_client_session as conn
 from agr_mcp import TOOL_SCHEMA_VERSION, audit, locks, max_pipe, server, tools
 from agr_mcp.max_side import max_bridge
 
+# Tools of the ops_d108 hook (branch U, #1024): not in tools.LISTED, tested by their owner. Empty with the stub.
+HOOK = tuple(s.name for s in __import__("agr_mcp.ops_d108", fromlist=["register"]).register({}))
+HOOK_EDITING = tuple(s.name for s in __import__("agr_mcp.ops_d108", fromlist=["register"]).register({})
+                     if not s.read_only)
+
 ROOT = Path(__file__).resolve().parents[2]
 PNG_1PX = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIAX8jx0gAAAABJRU5ErkJggg==")
 
@@ -27,6 +32,8 @@ def isolated(tmp_path, monkeypatch):
     monkeypatch.setenv("AGR_MCP_LOCK_DIR", str(tmp_path / "locks"))
     monkeypatch.setenv("AGR_MCP_AUDIT", str(tmp_path / "audit.jsonl"))
     monkeypatch.setenv("AGR_MCP_CARD", "test-841")
+    monkeypatch.setenv("AGR_JOURNAL_DIR", str(tmp_path / "journal"))  # v2: every call journals (never the user's)
+    monkeypatch.setenv("AGR_MCP_DATA_DIR", str(tmp_path / "data"))  # v2: report_uri store
     monkeypatch.delenv("AGR_MCP_UNSAFE", raising=False)
     for k in ("AGR_MCP_MAX_PID", "MCP_MAX_PID", "MCP_MAX_PIPE"):  # unit tests never reach a real Max
         monkeypatch.delenv(k, raising=False)
@@ -88,8 +95,11 @@ def fake_max(tmp_path, monkeypatch):
     nodes = {h: FakeNode(h) for h in (1, 2, 3)}
     rt = types.SimpleNamespace(
         maxFilePath="", maxFileName="", name=lambda s: s, getDir=lambda _n: str(tmp_path),
-        isValidNode=lambda n: n is not None,
+        isValidNode=lambda n: n is not None, selection=[nodes[2]],
+        getHandleByAnim=lambda n: n.handle + 1000, getAnimByHandle=lambda h: nodes.get(h - 1000),
         maxOps=types.SimpleNamespace(getNodeByHandle=lambda h: nodes.get(h)))
+    rt.clearSelection = lambda: rt.selection.clear()
+    rt.select = lambda ns: rt.selection.extend(n for n in ns if n not in rt.selection)
     monkeypatch.setitem(sys.modules, "pymxs", types.SimpleNamespace(runtime=rt))
     monkeypatch.delitem(sys.modules, "runtime", raising=False)
     monkeypatch.setenv("AGR_TOOLS_ROOT", str(root))
@@ -100,8 +110,8 @@ def fake_max(tmp_path, monkeypatch):
         m = re.search(r'b\.call "(\w+)" "([0-9a-f]*)" "([0-9a-f]*)"', code)
         assert m, code
         return max_bridge.call(*m.groups())
-    yield types.SimpleNamespace(root=root, nodes=nodes, transport=transport, sent=sent)
-    sys.path[:] = [p for p in sys.path if Path(p) != root]
+    yield types.SimpleNamespace(root=root, nodes=nodes, transport=transport, sent=sent, rt=rt)
+    sys.path[:] = [p for p in sys.path if not (p and Path(p).is_relative_to(tmp_path))]
 
 
 def direct_runtime(fake, fn, handles):
@@ -160,13 +170,17 @@ def offline_cases(tmp_path):
 
 # ---- exit test ----------------------------------------------------------------------------------------------
 def test_tools_list_is_the_phase0_eight_without_code_argument():
+    """#1024 branch 0 changes the catalogue fact: v1 (PHASE0) + the v2 tools generated from the plan (LISTED)."""
     listed, _ = run_calls([], list_only=True)
-    assert sorted(listed) == sorted(tools.PHASE0)
+    assert sorted(listed) == sorted(tools.LISTED + HOOK) and set(tools.PHASE0) < set(listed)
     editing = {n for n, _row, _what, kind in tools.EDITS_080 if kind != "read"}  # 0.8 preview -> apply (#908)
+    editing.add("agr_op_apply")  # v2: applies a held 0.8 preview
     for spec in tools.catalog().values():
         assert "code" not in json.dumps(spec.input), spec.name
+        if spec.name in HOOK:
+            continue
         assert spec.read_only == (spec.name not in editing), spec.name
-        assert spec.destructive == (spec.name == "agr_ucx_rename"), spec.name  # renames in place (one undo)
+        assert spec.destructive == (spec.name in ("agr_ucx_rename", "agr_op_apply")), spec.name  # in place
 
 
 def test_exit_offline_tools_equal_direct_call(tmp_path):
@@ -185,13 +199,13 @@ def test_exit_offline_tools_equal_direct_call(tmp_path):
 
 @pytest.mark.parametrize("tool,fn", [("agr_xview_check", "xview"), ("agr_matid_check", "matid"),
                                      ("agr_texel_readout", "texel_preview")])
-@pytest.mark.parametrize("handles", [[1, 2], [3], []])
+@pytest.mark.parametrize("handles", [[1, 2], [3]])
 def test_exit_max_tools_equal_direct_runtime_call(fake_max, tmp_path, tool, fn, handles):
     _, (res,) = run_calls([(tool, {"scene": "live", "handles": handles})], transport=fake_max.transport)
     got = ok(res)
     assert got == direct_runtime(fake_max, fn, handles)
     calls = sys.modules["runtime"].CALLS
-    assert calls[0] == calls[1] == (got["tool"], handles or None), "wrapper changed the node set"
+    assert calls[0] == calls[1] == (got["tool"], handles), "wrapper changed the node set"
     assert "select" not in fake_max.sent[0]
     line, = audit_lines(tmp_path)
     assert line["host"] == "max-live" and line["status"] == "ok" and line["lock"].endswith("agr-3dsmax-live.lock")
@@ -199,7 +213,7 @@ def test_exit_max_tools_equal_direct_runtime_call(fake_max, tmp_path, tool, fn, 
 
 @pytest.mark.parametrize("args,needle", [
     ({"scene": "live", "handles": [9]}, "unknown node handle 9"),
-    ({"scene": "C:/other.max"}, "scene mismatch"),
+    ({"scene": "C:/other.max", "handles": [1]}, "scene_mismatch"),
 ])
 def test_max_unknown_handle_or_scene_is_an_error_naming_it(fake_max, args, needle):
     _, (res,) = run_calls([("agr_xview_check", args)], transport=fake_max.transport)
@@ -208,14 +222,14 @@ def test_max_unknown_handle_or_scene_is_an_error_naming_it(fake_max, args, needl
 
 def test_max_wrong_runtime_version_is_an_error(fake_max):
     (fake_max.root / "runtime.py").write_text(FAKE_RUNTIME.replace('"0.5.0"', '"0.4.0"'), encoding="utf-8")
-    _, (res,) = run_calls([("agr_matid_check", {"scene": "live"})], transport=fake_max.transport)
-    assert res.isError and "0.4.0" in res.content[0].text
+    _, (res,) = run_calls([("agr_matid_check", {"scene": "live", "handles": [1]})], transport=fake_max.transport)
+    assert res.isError and "0.4.0" in res.content[0].text and "version_mismatch" in res.content[0].text
 
 
 def test_max_without_pinned_pid_is_refused(monkeypatch):
     for k in ("AGR_MCP_MAX_PID", "MCP_MAX_PID", "MCP_MAX_PIPE"):
         monkeypatch.delenv(k, raising=False)
-    _, (res,) = run_calls([("agr_xview_check", {"scene": "live"})])
+    _, (res,) = run_calls([("agr_xview_check", {"scene": "live", "handles": [1]})])
     assert res.isError and "no Max target pinned" in res.content[0].text
 
 
@@ -315,7 +329,7 @@ def test_foreign_live_lock_refuses_and_is_not_stolen(fake_max, tmp_path):
     lock.parent.mkdir()
     body = json.dumps({"card": "max_exec-other", "pid": os.getpid(), "until": time.time() + 600})
     lock.write_text(body, encoding="utf-8")
-    _, (res,) = run_calls([("agr_texel_readout", {"scene": "live"})], transport=fake_max.transport)
+    _, (res,) = run_calls([("agr_texel_readout", {"scene": "live", "handles": [1]})], transport=fake_max.transport)
     assert res.isError and "busy" in res.content[0].text
     assert lock.read_text(encoding="utf-8") == body
     assert fake_max.sent == []
@@ -326,7 +340,7 @@ def test_stale_lock_is_reclaimed(fake_max, tmp_path, info):
     lock = tmp_path / "locks" / "agr-3dsmax-live.lock"
     lock.parent.mkdir()
     lock.write_text(json.dumps(info), encoding="utf-8")
-    _, (res,) = run_calls([("agr_xview_check", {"scene": "live"})], transport=fake_max.transport)
+    _, (res,) = run_calls([("agr_xview_check", {"scene": "live", "handles": [1]})], transport=fake_max.transport)
     ok(res)
     assert not lock.exists()
 
@@ -809,6 +823,725 @@ def test_probe_reclaim_leaves_no_aside_files_seed_896(tmp_path):
     assert seen == rounds * len(kinds) == 48
 
 
+def test_stale_mutex_unlink_by_name_cannot_admit_two(tmp_path, monkeypatch):
+    """#972: X reads a stale reclaim mutex, pauses; Y links a fresh one; X resumes.
+
+    At most one caller may be inside the mutex. Unlinking the mutex by name deletes Y's live file.
+    """
+    import time
+    path = _lock_file()
+    path.write_text(json.dumps({"pid": 999999999, "card": "dead"}), encoding="utf-8")
+    mutex = path.with_name(f".{path.name}.mutex")
+    mutex.write_text(json.dumps({"pid": 999999999, "until": time.time() + 60, "token": "stale"}),
+                     encoding="utf-8")
+    real_stale = locks._mutex_stale
+    real_acquire = locks._mutex_acquire
+    real_release = locks._mutex_release
+    real_drop = locks._drop_stale_inode
+    x_paused = threading.Event()
+    y_inside = threading.Event()
+    x_finished = threading.Event()
+    guard = threading.Lock()
+    state = {"current": 0, "max": 0}
+    errors = []
+    paused = {"x": False}
+
+    def enter():
+        with guard:
+            state["current"] += 1
+            state["max"] = max(state["max"], state["current"])
+
+    def leave():
+        with guard:
+            state["current"] -= 1
+
+    def mutex_stale(target):
+        verdict = real_stale(target)
+        if threading.current_thread().name == "X" and verdict and not paused["x"]:
+            paused["x"] = True
+            x_paused.set()
+            if not y_inside.wait(5):
+                errors.append("Y did not enter while X held the stale verdict")
+        return verdict
+
+    def acquire(lock, token):
+        if threading.current_thread().name == "Y" and not x_paused.wait(5):
+            errors.append("X did not observe the stale mutex")
+        ok = real_acquire(lock, token)
+        if ok:
+            enter()
+        if threading.current_thread().name == "X":
+            x_finished.set()
+        return ok
+
+    def release(lock, token):
+        try:
+            real_release(lock, token)
+        finally:
+            leave()
+
+    def drop(lock, token):
+        if threading.current_thread().name == "Y":
+            try:
+                snapshot = mutex.read_bytes()
+            except OSError as exc:
+                errors.append(f"Y mutex missing before resume: {exc!r}")
+                snapshot = None
+            y_inside.set()
+            if not x_finished.wait(5):
+                errors.append("X did not finish acquire while Y was inside")
+            try:
+                after = mutex.read_bytes()
+            except OSError as exc:
+                errors.append(f"Y mutex missing after X resumed: {exc!r}")
+            else:
+                if snapshot is not None and after != snapshot:
+                    errors.append("X unlinked or rewrote Y's live mutex")
+        return real_drop(lock, token)
+
+    monkeypatch.setattr(locks, "_mutex_stale", mutex_stale)
+    monkeypatch.setattr(locks, "_mutex_acquire", acquire)
+    monkeypatch.setattr(locks, "_mutex_release", release)
+    monkeypatch.setattr(locks, "_drop_stale_inode", drop)
+
+    def run(name):
+        try:
+            with locks.hold("blender-batch", name, 30):
+                pass
+        except locks.LockBusy:
+            pass
+        except Exception as exc:  # noqa: BLE001 — reported to the main thread
+            errors.append(f"{name}: {exc!r}")
+
+    threads = [threading.Thread(target=run, args=(name,), name=name, daemon=True) for name in ("X", "Y")]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join(15)
+        if thread.is_alive():
+            errors.append(f"{thread.name} still running")
+    x_finished.set()
+    assert errors == []
+    assert paused["x"] and y_inside.is_set()
+    assert state["max"] == 1
+    assert state["current"] == 0
+    assert [p.name for p in path.parent.iterdir()] == []
+
+
+def _clear_lock_dir(path):
+    for child in list(path.parent.iterdir()):
+        if child.is_dir():
+            child.rmdir()
+        else:
+            child.unlink()
+
+
+def _plant_mutex(path, kind, clock):
+    import os
+    mutex = path.with_name(f".{path.name}.mutex")
+    if kind == "dead":
+        body = {"pid": 999999999, "until": clock + 30, "token": "d"}
+    elif kind == "expired-live":
+        body = {"pid": os.getpid(), "until": clock - 1, "token": "e"}
+    elif kind == "exact-until":
+        body = {"pid": os.getpid(), "until": clock, "token": "x"}
+    elif kind == "empty":
+        mutex.write_bytes(b"")
+        return mutex
+    elif kind == "partial":
+        mutex.write_text("{", encoding="utf-8")
+        return mutex
+    elif kind == "garbled":
+        mutex.write_text("not-json", encoding="utf-8")
+        return mutex
+    elif kind == "dir":
+        mutex.mkdir()
+        return mutex
+    elif kind == "nan":
+        body = {"pid": os.getpid(), "until": float("nan"), "token": "n"}
+    elif kind == "inf":
+        body = {"pid": os.getpid(), "until": float("inf"), "token": "i"}
+    elif kind == "future":
+        body = {"pid": os.getpid(), "until": clock + 60, "token": "f"}
+    else:
+        raise AssertionError(kind)
+    mutex.write_text(json.dumps(body), encoding="utf-8")
+    return mutex
+
+
+def _leftover_names(path):
+    bad = []
+    for child in path.parent.iterdir():
+        name = child.name
+        if ".take-" in name or ".partial" in name or ".mutex-" in name or ".reclaim-" in name:
+            bad.append(name)
+    return bad
+
+
+def test_probe_mutex_exclusivity_seed_972(tmp_path, monkeypatch):
+    """#972: seeded interleavings and N-thread hammers. At most one caller inside the mutex."""
+    import os
+    import random
+    clock = [1_000_000.0]
+    monkeypatch.setattr(locks, "time", types.SimpleNamespace(time=lambda: clock[0]))
+    path = _lock_file()
+    real_stale = locks._mutex_stale
+    real_acquire = locks._mutex_acquire
+    real_release = locks._mutex_release
+    real_drop = locks._drop_stale_inode
+    guard = threading.Lock()
+    state = {"current": 0, "max": 0}
+    plan = {"pause": False}
+
+    def enter():
+        with guard:
+            state["current"] += 1
+            state["max"] = max(state["max"], state["current"])
+
+    def mutex_stale(target):
+        verdict = real_stale(target)
+        if (plan["pause"] and verdict and threading.current_thread().name == "X"
+                and not plan["did"]):
+            plan["did"] = True
+            plan["x_paused"].set()
+            if not plan["y_inside"].wait(5):
+                plan["errors"].append("Y did not enter")
+        return verdict
+
+    def acquire(lock, token):
+        if plan["pause"] and threading.current_thread().name == "Y":
+            if not plan["x_paused"].wait(5):
+                plan["errors"].append("X did not observe the stale mutex")
+        ok = real_acquire(lock, token)
+        if ok:
+            enter()
+        if plan["pause"] and threading.current_thread().name == "X":
+            plan["x_finished"].set()
+        return ok
+
+    def release(lock, token):
+        try:
+            real_release(lock, token)
+        finally:
+            with guard:
+                state["current"] -= 1
+
+    def drop(lock, token):
+        if plan["pause"] and threading.current_thread().name == "Y":
+            try:
+                snapshot = plan["mutex"].read_bytes()
+            except OSError as exc:
+                plan["errors"].append(repr(exc))
+                snapshot = None
+            plan["y_inside"].set()
+            if not plan["x_finished"].wait(5):
+                plan["errors"].append("X did not finish")
+            try:
+                after = plan["mutex"].read_bytes()
+            except OSError as exc:
+                plan["errors"].append(repr(exc))
+            else:
+                if snapshot is not None and after != snapshot:
+                    plan["errors"].append("live mutex changed")
+        return real_drop(lock, token)
+
+    monkeypatch.setattr(locks, "_mutex_stale", mutex_stale)
+    monkeypatch.setattr(locks, "_mutex_acquire", acquire)
+    monkeypatch.setattr(locks, "_mutex_release", release)
+    monkeypatch.setattr(locks, "_drop_stale_inode", drop)
+
+    stale_kinds = ["dead", "expired-live", "exact-until", "empty", "partial", "garbled", "dir"]
+    closed_kinds = ["nan", "inf", "future"]
+    rnd = random.Random(972)
+    seen = 0
+
+    def run_hold(name, results, started, tried):
+        if started is not None:
+            started.wait(10)
+        try:
+            with locks.hold("blender-batch", name, 30):
+                if tried is not None:
+                    tried.wait(10)
+                results.append("held")
+        except locks.LockBusy:
+            if tried is not None:
+                tried.wait(10)
+            results.append("busy")
+        except Exception as exc:  # noqa: BLE001
+            plan["errors"].append(f"{name}: {exc!r}")
+
+    def one(kind, pause, n_threads):
+        nonlocal seen
+        _clear_lock_dir(path)
+        path.write_text(json.dumps({"pid": 999999999, "card": "dead"}), encoding="utf-8")
+        mutex = _plant_mutex(path, kind, clock[0])
+        state["current"] = 0
+        state["max"] = 0
+        plan["pause"] = pause
+        plan["did"] = False
+        plan["errors"] = []
+        plan["mutex"] = mutex
+        plan["x_paused"] = threading.Event()
+        plan["y_inside"] = threading.Event()
+        plan["x_finished"] = threading.Event()
+        results = []
+        if pause:
+            names = ["X", "Y"]
+            started = tried = None
+        else:
+            names = [f"t{i}" for i in range(n_threads)]
+            started = threading.Barrier(n_threads)
+            tried = threading.Barrier(n_threads)
+        threads = [threading.Thread(target=run_hold, args=(name, results, started, tried), name=name, daemon=True)
+                   for name in names]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join(15)
+            if thread.is_alive():
+                plan["errors"].append(f"{thread.name} still running")
+        plan["x_finished"].set()
+        expect = 0 if kind in closed_kinds else 1
+        assert plan["errors"] == [], (kind, pause, plan["errors"])
+        assert state["max"] == expect, (kind, pause, state["max"], results)
+        assert state["current"] == 0
+        assert results.count("held") == expect, (kind, pause, results)
+        assert _leftover_names(path) == []
+        if expect == 0:
+            assert mutex.exists()
+        seen += 1
+
+    for _round in range(4):
+        order = stale_kinds[:]
+        rnd.shuffle(order)
+        for kind in order:
+            one(kind, pause=True, n_threads=2)
+    for _round in range(4):
+        order = stale_kinds + closed_kinds
+        rnd.shuffle(order)
+        for kind in order:
+            one(kind, pause=False, n_threads=4)
+    assert seen == 4 * len(stale_kinds) + 4 * (len(stale_kinds) + len(closed_kinds)) == 68
+
+
+def test_posix_drop_keeps_a_lock_replaced_before_unlink(tmp_path, monkeypatch):
+    """#972: POSIX stat/rename-then-remove must not delete a fresh lock swapped in at that window."""
+    import os
+    import time
+    path = _lock_file()
+    token = "owner-token"
+    mutex = path.with_name(f".{path.name}.mutex")
+    mutex.write_text(json.dumps({"pid": os.getpid(), "until": time.time() + 30, "token": token}),
+                     encoding="utf-8")
+    path.write_text(json.dumps({"pid": 999999999, "card": "dead"}), encoding="utf-8")
+    fresh = json.dumps({"pid": os.getpid(), "until": time.time() + 60, "card": "fresh", "token": "live"}).encode()
+    real_stat = os.stat
+    real_rename = os.rename
+    real_remove = os.remove
+    swapped = {"done": False}
+
+    def swap():
+        if swapped["done"] or not path.exists():
+            return
+        swapped["done"] = True
+        real_remove(path)
+        path.write_bytes(fresh)
+
+    def stat(target, *args, **kwargs):
+        result = real_stat(target, *args, **kwargs)
+        if Path(target) == path:
+            swap()
+        return result
+
+    def rename(src, dst):
+        if Path(src) == path:
+            swap()
+        return real_rename(src, dst)
+
+    monkeypatch.setattr(os, "stat", stat)
+    monkeypatch.setattr(os, "rename", rename)
+    assert locks._drop_stale_inode_posix(path, token) is False
+    assert path.read_bytes() == fresh
+    assert _leftover_names(path) == []
+    assert mutex.exists()
+
+
+def test_probe_posix_inode_drop_seed_972(tmp_path, monkeypatch):
+    """#972: seeded POSIX drop windows. A replaced lock survives; a stale inode is the only one removed."""
+    import os
+    import random
+    import time
+    rnd = random.Random(972)
+    path = _lock_file()
+    token = "owner-token"
+    mutex = path.with_name(f".{path.name}.mutex")
+    real_rename = os.rename
+    real_remove = os.remove
+    real_stat = os.stat
+    seen = 0
+    for trial in range(24):
+        _clear_lock_dir(path)
+        mutex.write_text(json.dumps({"pid": os.getpid(), "until": time.time() + 30, "token": token}),
+                         encoding="utf-8")
+        stale = json.dumps({"pid": 999999999, "card": f"dead-{trial}"}).encode()
+        fresh = json.dumps({"pid": os.getpid(), "until": time.time() + 60, "card": f"fresh-{trial}",
+                            "token": "live"}).encode()
+        path.write_bytes(stale)
+        mode = rnd.choice(["swap-on-rename", "already-fresh", "stale-inode", "garbled"])
+        swapped = {"done": False}
+
+        def swap_fresh(swapped=swapped, fresh=fresh):
+            if swapped["done"]:
+                return
+            swapped["done"] = True
+            real_remove(path)
+            path.write_bytes(fresh)
+
+        def stat(target, *args, swapped=swapped, mode=mode, **kwargs):
+            result = real_stat(target, *args, **kwargs)
+            if mode == "swap-on-rename" and Path(target) == path:
+                swap_fresh()
+            return result
+
+        def rename(src, dst, swapped=swapped, mode=mode):
+            if mode == "swap-on-rename" and Path(src) == path:
+                swap_fresh()
+            return real_rename(src, dst)
+
+        monkeypatch.setattr(os, "stat", stat)
+        monkeypatch.setattr(os, "rename", rename)
+        if mode == "already-fresh":
+            path.write_bytes(fresh)
+            assert locks._drop_stale_inode_posix(path, token) is False
+            assert path.read_bytes() == fresh
+        elif mode == "garbled":
+            path.write_bytes(b"{")
+            assert locks._drop_stale_inode_posix(path, token) is False
+            assert path.read_bytes() == b"{"
+        elif mode == "stale-inode":
+            assert locks._drop_stale_inode_posix(path, token) is True
+            assert not path.exists()
+        else:
+            assert locks._drop_stale_inode_posix(path, token) is False
+            assert path.read_bytes() == fresh
+            assert swapped["done"]
+        assert _leftover_names(path) == []
+        assert mutex.read_text(encoding="utf-8").startswith("{")
+        seen += 1
+    monkeypatch.setattr(os, "rename", real_rename)
+    assert seen == 24
+
+
+def _force_posix_file_consume():
+    """Make file reclaim use the POSIX consume path (tests run on Windows too)."""
+    import os
+    import stat
+    real = locks._consume_if
+
+    def consume_if(path, pred, *, allow_dir):
+        try:
+            info = os.lstat(path)
+        except FileNotFoundError:
+            return "gone"
+        except OSError:
+            return "failed"
+        if stat.S_ISDIR(info.st_mode):
+            return real(path, pred, allow_dir=allow_dir)
+        return locks._consume_posix(path, pred)
+
+    return real, consume_if
+
+
+def _posix_gap_case(kind, plant, gap):
+    """One forced schedule.
+
+    `plant` is `on-close` (X has read the stale inode, then Y replaces it) or
+    `already` (a live file is in place before X acts). `gap` is where a second
+    holder tries O_EXCL / acquire: `rename`, `remove`, or `after`.
+    fcntl is absent on Windows; callers observe `locks._flock`.
+    Returns (max_inside, leftovers, flock_calls).
+    """
+    import os
+    import time
+    path = _lock_file()
+    _clear_lock_dir(path)
+    mutex = path.with_name(f".{path.name}.mutex")
+    token = "owner-token"
+    now = time.time()
+    path.write_text(json.dumps({"pid": 999999999, "card": "dead"}), encoding="utf-8")
+    if kind == "lock":
+        mutex.write_text(json.dumps({"pid": os.getpid(), "until": now + 30, "token": token}),
+                         encoding="utf-8")
+        target = path
+        live = json.dumps({"pid": os.getpid(), "until": now + 60, "card": "fresh", "token": "live"}).encode()
+    else:
+        mutex.write_text(json.dumps({"pid": 999999999, "until": now + 60, "token": "stale"}),
+                         encoding="utf-8")
+        target = mutex
+        live = json.dumps({"pid": os.getpid(), "until": now + 30, "token": "Y"}).encode()
+    state = {"current": 0, "max": 0}
+    guard = threading.Lock()
+    planted = {"done": False}
+    second = {"done": False}
+    flock_calls = []
+    opened = {}
+
+    def enter():
+        with guard:
+            state["current"] += 1
+            state["max"] = max(state["max"], state["current"])
+
+    def plant_live():
+        if planted["done"]:
+            return
+        planted["done"] = True
+        if target.exists():
+            real_remove(target)
+        target.write_bytes(live)
+        enter()
+
+    def second_holder():
+        if second["done"]:
+            return
+        second["done"] = True
+        if kind == "lock":
+            try:
+                fd = os.open(target, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            except FileExistsError:
+                return
+            os.write(fd, b'{"pid": 1, "token": "excl", "until": 9999999999}')
+            os.close(fd)
+            enter()
+            return
+        if locks._mutex_acquire(path, "Z"):
+            enter()
+
+    if plant == "already":
+        if target.exists():
+            os.remove(target)
+        target.write_bytes(live)
+        enter()
+        planted["done"] = True
+
+    real_open, real_close = os.open, os.close
+    real_rename, real_remove = os.rename, os.remove
+    real_consume = locks._consume_if
+    real_flock = getattr(locks, "_flock", None)
+    _, posix_consume = _force_posix_file_consume()
+
+    def open_(file, flags, *args, **kwargs):
+        fd = real_open(file, flags, *args, **kwargs)
+        try:
+            opened[fd] = Path(file)
+        except TypeError:
+            pass
+        return fd
+
+    def close(fd):
+        real_close(fd)
+        name = opened.pop(fd, None)
+        if plant == "on-close" and name == target:
+            plant_live()
+
+    def rename(src, dst):
+        src_p, dst_p = Path(src), Path(dst)
+        aside = src_p == target and ".take-" in dst_p.name
+        if aside and gap == "rename":
+            real_rename(src, dst)
+            second_holder()
+            return
+        return real_rename(src, dst)
+
+    def remove(file):
+        file_p = Path(file)
+        if file_p == target and gap == "remove":
+            real_remove(file)
+            second_holder()
+            return
+        return real_remove(file)
+
+    def flock(fd, operation):
+        flock_calls.append(operation)
+        if real_flock is None:
+            raise OSError("locks._flock is not installed")
+        return real_flock(fd, operation)
+
+    os.open, os.close = open_, close
+    os.rename, os.remove = rename, remove
+    locks._consume_if = posix_consume
+    if real_flock is not None:
+        locks._flock = flock
+    try:
+        if kind == "lock":
+            locks._drop_stale_inode_posix(path, token)
+        else:
+            locks._mutex_acquire(path, "X")
+        if gap == "after" or not second["done"]:
+            second_holder()
+    finally:
+        os.open, os.close = real_open, real_close
+        os.rename, os.remove = real_rename, real_remove
+        locks._consume_if = real_consume
+        if real_flock is not None:
+            locks._flock = real_flock
+    return state["max"], _leftover_names(path), flock_calls, planted["done"]
+
+
+def test_three_reclaimers_posix_window_at_most_one_inside(tmp_path, monkeypatch):
+    """#972: X reads a dead mutex, Y replaces it and enters, Z acquires if the name is emptied.
+
+    POSIX consume is forced. fcntl is absent on Windows, so exclusion is the injectable
+    `locks._flock` (monkeypatched below when the function exists). max_inside == 1, no `.take-*`.
+    """
+    max_inside, leftovers, flock_calls, planted = _posix_gap_case("mutex", "on-close", "rename")
+    problems = []
+    if not planted:
+        problems.append("Y never replaced the dead mutex")
+    if max_inside != 1:
+        problems.append(f"max_inside={max_inside}")
+    if leftovers:
+        problems.append(f"leftover={leftovers}")
+    if not flock_calls:
+        problems.append("POSIX reclaim did not take locks._flock")
+    assert problems == []
+
+
+def test_posix_lock_gap_o_excl_at_most_one_holder(tmp_path, monkeypatch):
+    """#972: a fresh lock is swapped in before POSIX takeover; a holder O_EXCLs if the name is empty.
+
+    At most one holder, and no `.take-*` leftover. `locks._flock` is injectable because Windows has no fcntl.
+    """
+    max_inside, leftovers, flock_calls, planted = _posix_gap_case("lock", "on-close", "rename")
+    problems = []
+    if not planted:
+        problems.append("fresh lock was not planted before takeover")
+    if max_inside != 1:
+        problems.append(f"holders={max_inside}")
+    if leftovers:
+        problems.append(f"leftover={leftovers}")
+    if not flock_calls:
+        problems.append("POSIX lock drop did not take locks._flock")
+    assert problems == []
+
+
+def _posix_gap_schedules(n, seed):
+    import random
+    rnd = random.Random(seed)
+    kinds = ["mutex", "lock"]
+    plants = ["on-close", "already"]
+    gaps = ["rename", "remove", "after"]
+    return [{"kind": rnd.choice(kinds), "plant": rnd.choice(plants), "gap": rnd.choice(gaps)}
+            for _ in range(n)]
+
+
+def test_probe_at_most_one_inside_posix_seed_972(tmp_path, monkeypatch):
+    """#972: generated POSIX interleavings. At most one inside / one holder, N/N."""
+    schedules = _posix_gap_schedules(16, 972)
+    ok = 0
+    for schedule in schedules:
+        max_inside, _leftovers, _flock, _planted = _posix_gap_case(**schedule)
+        if max_inside <= 1:
+            ok += 1
+    assert ok == len(schedules) == 16
+
+
+def test_probe_no_take_leftover_posix_seed_972(tmp_path, monkeypatch):
+    """#972: generated POSIX interleavings. No `.take-*` (or other aside) leftover, N/N."""
+    schedules = _posix_gap_schedules(16, 973)
+    ok = 0
+    for schedule in schedules:
+        _max_inside, leftovers, _flock, _planted = _posix_gap_case(**schedule)
+        if leftovers == []:
+            ok += 1
+    assert ok == len(schedules) == 16
+
+
+def _gap_racer_case(kind, monkeypatch, *, flock_works=True):
+    """#972 review P1: a second reclaimer runs between X's inode re-check and X's unlink.
+
+    kind="mutex": X takes over a dead mutex; in X's unlink gap W consumes the same dead inode and
+    Y links a fresh mutex. Without exclusion X then unlinks Y's live mutex and links its own.
+    kind="lock": X (mutex owner) drops a stale lock; in X's unlink gap X's mutex expires, W takes
+    the mutex over and drops the same stale lock, H O_EXCLs a fresh lock. Without exclusion X then
+    unlinks H's lock and K O_EXCLs a second one.
+    POSIX consume is forced (fcntl is absent on Windows: `locks._flock` is the injectable seam).
+    Returns (max_inside, leftovers).
+    """
+    import os
+    import time
+    path = _lock_file()
+    _clear_lock_dir(path)
+    mutex = path.with_name(f".{path.name}.mutex")
+    _, posix_consume = _force_posix_file_consume()
+    monkeypatch.setattr(locks, "_consume_if", posix_consume)
+    monkeypatch.setattr(locks, "_drop_stale_inode", locks._drop_stale_inode_posix)
+    monkeypatch.setattr(locks, "_sleep", lambda _s: None)
+    if not flock_works:
+        monkeypatch.setattr(locks, "_flock", lambda fd, op: None)
+    now = time.time()
+    inside = set()
+    target = mutex if kind == "mutex" else path
+    path.write_text(json.dumps({"pid": 999999999, "card": "dead", "token": "dead"}), encoding="utf-8")
+    if kind == "mutex":
+        mutex.write_text(json.dumps({"pid": 999999999, "until": now + 60, "token": "dead"}),
+                         encoding="utf-8")
+    else:
+        mutex.write_text(json.dumps({"pid": os.getpid(), "until": now + 30, "token": "X"}),
+                         encoding="utf-8")
+    real_remove = os.remove
+    fired = {"done": False}
+
+    def o_excl(name):
+        try:
+            fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except FileExistsError:
+            return
+        os.write(fd, json.dumps({"pid": os.getpid(), "until": now + 600, "token": name}).encode())
+        os.close(fd)
+        inside.add(name)
+
+    def racer():
+        if kind == "mutex":
+            locks._consume_stale_mutex(mutex)
+            if locks._mutex_acquire(path, "Y"):
+                inside.add("Y")
+            return
+        mutex.write_text(json.dumps({"pid": os.getpid(), "until": now - 1, "token": "X"}),
+                         encoding="utf-8")  # X stalled past _MUTEX_TTL_S
+        if locks._reclaim(path, "W"):
+            o_excl("H")
+
+    def remove(file):
+        if Path(file) == target and not fired["done"]:
+            fired["done"] = True
+            racer()
+        return real_remove(file)
+
+    monkeypatch.setattr(os, "remove", remove)
+    try:
+        if kind == "mutex":
+            if locks._mutex_acquire(path, "X"):
+                inside.add("X")
+        elif locks._drop_stale_inode_posix(path, "X"):
+            o_excl("K")
+    finally:
+        monkeypatch.setattr(os, "remove", real_remove)
+    assert fired["done"], "X never reached the unlink gap"
+    return len(inside), _leftover_names(path)
+
+
+@pytest.mark.parametrize("kind", ["mutex", "lock"])
+def test_second_reclaimer_in_unlink_gap_at_most_one_inside(kind, tmp_path, monkeypatch):
+    """#972 review P1: W runs inside X's re-check -> unlink gap. At most one inside / holder."""
+    assert _gap_racer_case(kind, monkeypatch) == (1, [])
+
+
+@pytest.mark.parametrize("kind", ["mutex", "lock"])
+def test_unlink_gap_witness_detects_missing_exclusion(kind, tmp_path, monkeypatch):
+    """The gap witness is not vacuous: with `_flock` a no-op the same schedule gives two inside."""
+    assert _gap_racer_case(kind, monkeypatch, flock_works=False)[0] == 2
+
+
 # ---- audit --------------------------------------------------------------------------------------------------
 def test_audit_lines_equal_calls_and_carry_plan_fields(tmp_path):
     calls = [("agr_mesh_names", MESH_ARGS)] * 3 + [("agr_xview_parity", {"dump": {}})] + [("nope", {})]
@@ -852,7 +1585,7 @@ def test_unsafe_with_flag_is_listed_destructive_and_audited(tmp_path):
             res = await client.call_tool("agr_exec_unsafe", {"code": "1+1"})
             return listed, res
     listed, res = anyio.run(main)
-    assert set(listed) == set(tools.PHASE0) | {"agr_exec_unsafe"}
+    assert set(listed) == set(tools.LISTED + HOOK) | {"agr_exec_unsafe"}
     assert listed["agr_exec_unsafe"].annotations.destructiveHint is True
     assert ok(res) == {"value": "2"} and sent == ["1+1"]
     line, = audit_lines(tmp_path)
@@ -865,7 +1598,7 @@ def test_maxscript_error_marker_is_an_error_not_a_value(raw, tmp_path):
     """3dsmax-mcp returns a MAXScript exception as success=true with this marker (seen natively, #841)."""
     with pytest.raises(max_pipe.MaxError, match="MAXScript error"):
         max_pipe.decode_value(raw)
-    _, (res,) = run_calls([("agr_matid_check", {"scene": "live"})], transport=lambda c, t: raw)
+    _, (res,) = run_calls([("agr_matid_check", {"scene": "live", "handles": [1]})], transport=lambda c, t: raw)
     assert res.isError and "MAXScript error" in res.content[0].text
     assert audit_lines(tmp_path)[0]["status"] == "error"
 
@@ -880,9 +1613,9 @@ def test_fresh_stdio_process_lists_tools(unsafe, tmp_path):
         sys.path.pop(0)
     t = anyio.run(transcript, unsafe, str(tmp_path / "stdio-audit.jsonl"))
     names = [x["name"] for x in t["tools"]]
-    assert sorted(names) == sorted(tools.PHASE0 + (("agr_exec_unsafe",) if unsafe else ()))
+    assert sorted(names) == sorted(tools.LISTED + HOOK + (("agr_exec_unsafe",) if unsafe else ()))
     assert t["serverInfo"]["name"] == "agr-mcp"
-    editing = {n for n, _row, _what, kind in tools.EDITS_080 if kind != "read"}
+    editing = {n for n, _row, _what, kind in tools.EDITS_080 if kind != "read"} | {"agr_op_apply"} | set(HOOK_EDITING)
     assert all(x["readOnlyHint"] for x in t["tools"] if x["name"] != "agr_exec_unsafe" and x["name"] not in editing)
     assert not any(x["readOnlyHint"] for x in t["tools"] if x["name"] in editing)
 
@@ -1200,3 +1933,124 @@ def test_probe_audit_lines_equal_calls_seed_841(tmp_path):
     assert len(lines) == len(calls)
     assert [x["tool"] for x in lines] == [c[0] for c in calls]
     assert all(set(audit.FIELDS) <= set(x) for x in lines)
+
+
+# ---- #1024 PR A: runtime pin is a minimum + selection contract (mcp-review §2.4.1-2.4.2) -------------------------
+RUNTIME_090_FAKE = FAKE_RUNTIME.replace('"0.5.0"', '"0.9.0"') + '''
+from pymxs import runtime as _rt
+def _plan(tool, row, nodes):
+    CALLS.append((tool, row, [n.handle for n in nodes]))
+    return {"schema": 1, "tool": row, "status": "pass", "objects": [],
+            "plan": {"mode": "preview", "done": [], "skipped": [], "ambiguous": []}}
+def checks_070(tool, nodes=None, select=True):
+    CALLS.append(("checks_070", tool, [n.handle for n in nodes], select))
+    if select:
+        _rt.clearSelection(); _rt.select(nodes)
+    return {"schema": 1, "tool": tool, "status": "pass", "objects": []}
+def edits_080(tool, mode, preview=None, nodes=None, options=None): return _plan("edits_080", tool, nodes)
+def edits_090(tool, mode, preview=None, nodes=None, options=None):
+    _rt.clearSelection(); _rt.select(nodes)  # a `select` row (light.check) selecting in the UI glue
+    return _plan("edits_090", tool, nodes)
+'''
+
+
+def install(fake, version, text):
+    root = fake.root.parent / ("AGRTools-" + version)
+    root.mkdir(exist_ok=True)
+    (root / "runtime.py").write_text(text, encoding="utf-8")
+    return root
+
+
+ONE_PER_GROUP = ["agr_xview_check", "agr_matid_check", "agr_texel_readout", "agr_scene_census", "agr_qa_preflight",
+                 "agr_scene_missing_maps", "agr_qa_package", "agr_udim_slots", "agr_light_check"]
+
+
+def test_runtime_090_serves_every_max_group(fake_max, monkeypatch):
+    """RED on the exact pin: with only 0.9.0 installed, 0.5/0.7/0.8 tools answered `version != expected`."""
+    root = install(fake_max, "0.9.0", RUNTIME_090_FAKE)
+    monkeypatch.setenv("AGR_TOOLS_ROOT", str(root))
+    _, results = run_calls([(n, {"scene": "live", "handles": [1]}) for n in ONE_PER_GROUP],
+                           transport=fake_max.transport)
+    for name, res in zip(ONE_PER_GROUP, results):
+        ok(res)
+    assert sys.modules["runtime"].VERSION == "0.9.0"
+
+
+def test_every_max_tool_of_the_catalogue_needs_at_most_runtime_090():
+    """v1 Max tools (47) by tool name; the v2 tools by plan row (ROUTES), all served by an installed 0.9.0, except
+    the 1.0 conveyor rows (edits_100), which need the released 1.0.0 (#1024 R)."""
+    names = [n for n, s in tools.catalog().items() if s.host({}) == "max-live" and n in tools.PHASE0]
+    assert len(names) == 47
+    for n in names:
+        minimum, function = max_bridge.requirement(n)
+        assert max_bridge.version_key(minimum) <= (0, 9, 0) and function, n
+    for row, (group, _key, minimum, function) in max_bridge.ROUTES.items():
+        top = (1, 0, 0) if group == "e100" else (0, 9, 0)
+        assert max_bridge.version_key(minimum) <= top and function, row
+    assert {r for r, v in max_bridge.ROUTES.items() if v[2] == "1.0.0"} == set(max_bridge.ROWS_100)
+
+
+def test_default_root_is_the_newest_install_not_a_folder_per_group(fake_max, monkeypatch):
+    """RED: the old default was userScripts/AGRTools-<group version>, i.e. AGRTools-0.7.0 for checks_070."""
+    install(fake_max, "0.9.0", RUNTIME_090_FAKE)
+    (fake_max.root.parent / "AGRTools-0.10.0").mkdir()  # newer folder without runtime.py is skipped
+    monkeypatch.delenv("AGR_TOOLS_ROOT", raising=False)
+    _, (res,) = run_calls([("agr_scene_census", {"scene": "live", "handles": [1]})], transport=fake_max.transport)
+    ok(res)
+    assert Path(sys.modules["runtime"].__file__).parent.name == "AGRTools-0.9.0"
+    assert max_bridge.default_root(str(fake_max.root.parent), "0.9.1") is None
+
+
+@pytest.mark.parametrize("version,body,needle", [
+    ("0.6.9", "", "< minimum 0.7.0"),
+    ("0.9.0", "", "has no checks_070"),
+    ("0.9", "", "< minimum 0.7.0"),
+])
+def test_runtime_below_minimum_or_without_entry_is_version_mismatch(fake_max, monkeypatch, version, body, needle):
+    root = install(fake_max, "x", 'VERSION = "{}"\n{}'.format(version, body))
+    monkeypatch.setenv("AGR_TOOLS_ROOT", str(root))
+    _, (res,) = run_calls([("agr_scene_census", {"scene": "live", "handles": [1]})], transport=fake_max.transport)
+    assert res.isError and "version_mismatch" in res.content[0].text and needle in res.content[0].text
+
+
+@pytest.mark.parametrize("tool", ["agr_xview_check", "agr_scene_census", "agr_qa_package", "agr_udim_slots"])
+@pytest.mark.parametrize("args", [{"scene": "live"}, {"scene": "live", "handles": []}])
+def test_empty_handles_is_handles_required_and_max_is_not_called(fake_max, tmp_path, tool, args):
+    """RED: empty handles went to runtime as nodes=None = the user's selection or all geometry (§2.4.2)."""
+    _, (res,) = run_calls([(tool, args)], transport=fake_max.transport)
+    assert res.isError and "handles_required" in res.content[0].text
+    assert fake_max.sent == []
+    with pytest.raises(max_bridge.BridgeError, match="handles_required"):
+        max_bridge.run(tool, str(fake_max.root), args)
+
+
+def test_scope_selection_takes_the_selection_explicitly_and_conflicts_with_handles(fake_max):
+    _, (res, bad) = run_calls([("agr_xview_check", {"scene": "live", "scope": "selection"}),
+                               ("agr_xview_check", {"scene": "live", "scope": "selection", "handles": [1]})],
+                              transport=fake_max.transport)
+    assert ok(res)["objects"][0]["handle"] == 2  # fixture selection = node 2, passed as a list, never None
+    assert sys.modules["runtime"].CALLS[-1] == ("xview", [2])
+    assert bad.isError and "target_conflict" in bad.content[0].text
+
+
+def test_checks_070_get_select_false_and_selection_is_restored(fake_max, monkeypatch):
+    """RED: checks_070 ran with the runtime default select=True and selected the nodes with findings."""
+    root = install(fake_max, "0.9.0", RUNTIME_090_FAKE)
+    monkeypatch.setenv("AGR_TOOLS_ROOT", str(root))
+    _, (census, light) = run_calls([("agr_scene_census", {"scene": "live", "handles": [1, 3]}),
+                                    ("agr_light_check", {"scene": "live", "handles": [1, 3]})],
+                                   transport=fake_max.transport)
+    ok(census), ok(light)
+    assert ("checks_070", "census", [1, 3], False) in sys.modules["runtime"].CALLS
+    assert [n.handle for n in fake_max.rt.selection] == [2], "selection before the call must survive"
+    out = json.loads(max_bridge.call("agr_light_check", str(root).encode().hex(),
+                                     json.dumps({"scene": "live", "handles": [1]}).encode().hex()))
+    assert out["ok"] and out["selection"] == {"before_count": 1, "restored": True, "scope": "handles"}
+
+
+def test_selection_that_cannot_be_restored_is_selection_changed(fake_max, monkeypatch):
+    root = install(fake_max, "0.9.0", RUNTIME_090_FAKE)
+    monkeypatch.setenv("AGR_TOOLS_ROOT", str(root))
+    fake_max.rt.select = lambda ns: None  # Max refuses to reselect
+    _, (res,) = run_calls([("agr_light_check", {"scene": "live", "handles": [1]})], transport=fake_max.transport)
+    assert res.isError and "selection_changed" in res.content[0].text
