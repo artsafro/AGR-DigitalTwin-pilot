@@ -266,7 +266,8 @@ def apply(host, plan, pid=None):
     host.restore_selection(selection)
     forget(pid)
     answer.update({'preview_id': pid, 'op': plan['op'], 'layer': layer, 'undo_label': label if not violations else None,
-                   'outside_checked': len(outside_before), 'duration': round(time.time() - t0, 3)})
+                   'outside_checked': len(outside_before), 'duration': round(time.time() - t0, 3),
+                   'nested_hold': bool(getattr(host, 'nested', False))})
     return answer
 
 

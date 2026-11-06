@@ -31,7 +31,7 @@ class MaxGateHost:
 
     def __init__(self, rt=None):
         self.rt = rt or _rt()
-        self._saved = {}
+        self._saved, self._created, self._faces = {}, [], {}
         self.nested = False
 
     # -- reading -----------------------------------------------------------------------------------------------------
@@ -142,7 +142,9 @@ class MaxGateHost:
         self.ensure_layer(layer).addNode(node)
         for key, value in sorted((props or {}).items()):
             self.rt.setUserProp(node, key, str(value))
-        return int(node.inode.handle)
+        h = int(node.inode.handle)
+        self._created.append(h)
+        return h
 
     def create_mesh(self, layer, name, verts_m, tris, props):
         rt = self.rt
@@ -169,7 +171,9 @@ class MaxGateHost:
         n = self.node(handle)
         if not rt.isKindOf(n, rt.Editable_Mesh):
             raise ValueError('set_face_ids needs an Editable_Mesh in the agent layer: ' + str(n.name))
+        old = self._faces.setdefault(int(handle), {})
         for f in faces:
+            old.setdefault(int(f), int(rt.getFaceMatID(n, int(f) + 1)))
             rt.setFaceMatID(n, int(f) + 1, int(mat_id))
         rt.update(n)
 
@@ -180,26 +184,42 @@ class MaxGateHost:
         self.node(handle).isHidden = True
 
     def begin(self):
+        """Open the transaction. Not holding (GUI Max between commands): theHold.Begin -> Accept(label) is ONE undo
+        record, Cancel restores. Already holding (batch Max runs the script inside a hold, native job
+        20261106-045917-c65df697): theHold.Cancel would also restore the caller's earlier work (it moved and
+        un-created objects of the script), so a nested transaction never calls Begin/Cancel: its rollback is the
+        explicit compensation below and its changes merge into the open hold. The gate proves either way."""
         rt = self.rt
-        # Hold.Begin nests (native job 20261106-045407-adb2a25d: batch Max already holds when the script runs);
-        # Cancel restores to this Begin, Accept closes this level. `nested` is recorded by the native run.
         self.nested = bool(rt.theHold.Holding())
-        self._saved = {}
-        rt.theHold.Begin()
+        self._saved, self._created, self._faces = {}, [], {}
+        if not self.nested:
+            rt.theHold.Begin()
 
     def accept(self, label):
-        self.rt.theHold.Accept(label)
+        if not self.nested:
+            self.rt.theHold.Accept(label)
 
     def cancel(self):
-        """theHold.Cancel, then put back the user property buffers this transaction changed (in case a property
-        change is not held); the gate proves the result with the hashes either way."""
+        """theHold.Cancel (not nested), then the explicit compensation of this transaction's own actions: created
+        nodes deleted, user property buffers and face material IDs put back."""
         rt = self.rt
-        rt.theHold.Cancel()
+        if not self.nested:
+            rt.theHold.Cancel()
+        for h in reversed(self._created):
+            n = rt.maxOps.getNodeByHandle(h)
+            if n is not None and rt.isValidNode(n):
+                rt.delete(n)
         for h, buf in sorted(self._saved.items()):
             n = rt.maxOps.getNodeByHandle(h)
             if n is not None and rt.isValidNode(n) and str(rt.getUserPropBuffer(n)) != buf:
                 rt.setUserPropBuffer(n, buf)
-        self._saved = {}
+        for h, ids in sorted(self._faces.items()):
+            n = rt.maxOps.getNodeByHandle(h)
+            if n is not None and rt.isValidNode(n):
+                for f, mid in sorted(ids.items()):
+                    rt.setFaceMatID(n, f + 1, mid)
+                rt.update(n)
+        self._saved, self._created, self._faces = {}, [], {}
 
 
 def dumps(value):

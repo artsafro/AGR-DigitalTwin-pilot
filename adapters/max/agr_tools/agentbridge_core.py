@@ -1,4 +1,4 @@
-"""new-case: AGR Tools 1.0 (#1024) agent request (K4) / agent accept gate (K4) logic, stdlib only. Owned by branch U (improve/issue-1024-agent-bridge).
+"""new-case: AGR Tools 1.0 (#1024) agent request (K4) / agent accept gate (K4) logic, stdlib only. owned by branch U (improve/issue-1024-agent-bridge).
 
 Pure logic for `agent_request` (agent.request, 1.0.32) and `agent_accept` (agent.accept, 1.0.33); no pymxs. Reports and
 preview hashes by edit_core.py, roles / markers / ObjRef by contract_core.py (the core never takes a host object).

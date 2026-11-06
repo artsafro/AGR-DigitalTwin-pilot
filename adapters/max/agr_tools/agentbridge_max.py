@@ -1,4 +1,4 @@
-"""new-case: AGR Tools 1.0 (#1024) agent request (K4) / agent accept gate (K4), 3ds Max side. Owned by branch U (improve/issue-1024-agent-bridge).
+"""new-case: AGR Tools 1.0 (#1024) agent request (K4) / agent accept gate (K4), 3ds Max side. owned by branch U (improve/issue-1024-agent-bridge).
 
 runtime.edits_100 calls `<function>(ctx, mode, nodes, preview)` for `agent_request` (agent.request), `agent_accept`
 (agent.accept). ctx: agr (runtime globals), core (agentbridge_core), edit (edit_core), emax (edit_max), options

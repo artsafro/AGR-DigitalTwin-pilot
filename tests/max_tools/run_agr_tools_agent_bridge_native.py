@@ -76,6 +76,15 @@ def install():
 
 agr = install()
 summary['runtime_version'] = agr.VERSION
+# Batch Max runs this script inside an open hold (native job 20261106-045917-c65df697). The dock runs between
+# commands in GUI Max, where nothing is held: close the batch hold so the gate runs as it does there; the nested
+# path is probed on its own (nested_probe).
+summary['hold_at_start'] = bool(rt.theHold.Holding())
+_closed = 0
+while rt.theHold.Holding() and _closed < 10:
+    rt.theHold.Accept('agr native: close the batch hold')
+    _closed += 1
+summary['hold_closed_levels'] = _closed
 
 
 def fresh(units='meters'):
@@ -139,6 +148,33 @@ def gate_real():
     summary['one_undo_input'] = {'before': before, 'label': ok['undo_label']}
     return {'theHold_nested': host.nested, 'rolled_back': bad['violations'], 'applied': ok['created'], 'undo_label': ok['undo_label'],
             'gate_s': ok['duration'], 'outside_checked': ok['outside_checked']}
+
+
+def nested_probe():
+    fresh()
+    body = box('BODY_Brick_003', 4, 3, 6, (0, 0, 0), 'body')
+    out = box('SM_Decor3_Main', 1, 1, 1, (20, 0, 0), 'decor', 'DECOR_main')
+    host = agr_maxhost.MaxGateHost()
+    rt.theHold.Begin()  # a caller's open hold, as in batch Max
+    try:
+        moved = out.pos = rt.Point3(22, 0, 0)  # caller's own work inside that hold, must survive our rollback
+        all0 = agr_gate.hashes(host.objects())
+        p = plan(host, [{'do': 'create_point', 'layer': 'AGENT_r001', 'name': 'OPEN_001', 'pos': [1.0, 0.0, 1.5],
+                         'props': {'agr_role': 'opening', 'agr_opening': OPENING}},
+                        {'do': 'set_prop', 'handle': handle(out), 'key': 'agr_role', 'value': 'glass'}])
+        agr_gate.confirm(agr_gate.plan_id(p))
+        bad = agr_gate.apply(host, p)
+        assert bad['status'] == 'rolled_back' and bad['rollback_proved'] is True and bad['nested_hold'], bad
+        assert agr_gate.hashes(host.objects()) == all0 and float(out.pos.x) == 22.0
+        p2 = plan(host, [{'do': 'create_point', 'layer': 'AGENT_r001', 'name': 'OPEN_001', 'pos': [1.0, 0.0, 1.5],
+                          'props': {'agr_role': 'opening', 'agr_opening': OPENING}}], op='mark_opening')
+        agr_gate.confirm(agr_gate.plan_id(p2))
+        ok = agr_gate.apply(host, p2)
+        assert ok['status'] == 'applied' and ok['nested_hold'], ok
+    finally:
+        rt.theHold.Accept('agr native: caller hold')
+    assert moved is not None and rt.getNodeByName('OPEN_001') is not None and str(body.name) == 'BODY_Brick_003'
+    return {'rolled_back_proved': bad['rollback_proved'], 'caller_move_kept': True, 'applied': ok['created']}
 
 
 def one_undo_record():
@@ -378,9 +414,12 @@ def accept_reject():
 def polygon_u():
     sys.path.insert(0, str(ROOT / 'test-polygon' / 'build'))
     sys.path.insert(0, str(ROOT / 'test-polygon'))
-    import polygon_core
     cat = OUT / 'catalog.json'  # the builder input with the station fragments, as run_polygon.py writes it
-    cat.write_text(json.dumps(polygon_core.load_catalog(), ensure_ascii=False), encoding='utf-8')
+    code = ('import json,sys;sys.path.insert(0,sys.argv[1]);import polygon_core;'
+            'open(sys.argv[2],"w",encoding="utf-8").write(json.dumps(polygon_core.load_catalog(),ensure_ascii=False))')
+    r = subprocess.run([PY, '-c', code, str(ROOT / 'test-polygon'), str(cat)], capture_output=True, text=True,
+                       timeout=600, env=dict(os.environ, PYTHONPATH=str(ROOT / 'src')))
+    assert cat.is_file(), r.stderr[-1500:]
     os.environ['AGR_POLYGON_CATALOG'] = str(cat)
     import build_scene
     rows = []
@@ -413,6 +452,7 @@ def polygon_u():
 check('gate_real', gate_real)
 if 'gate_real' in summary['checks']:
     check('one_undo_record', one_undo_record)
+check('nested_probe', nested_probe)
 check('units_cm', units_cm)
 check('listener_queue', listener_queue)
 check('request_scenario', request_scenario)
