@@ -76,6 +76,53 @@ SELECT_090 = ('light.check',)
 # core file -> glue file where it is not <stem>_max.py: atlas_core.py is shared with atlas.npm (0.2), and the
 # 0.9 atlas glue of branch B is flora_atlas_max.py (Flora + GroundEl).
 GLUE_090 = {'atlas_core.py': 'flora_atlas_max.py'}
+# 1.0 conveyor (#1024, branch 0): the 33 buttons of the stages in station order 1.0.1..1.0.33 (plan `stages`),
+# id -> (core file, function of its glue `<stem>_max.py`). Stub modules answer `status: not_implemented` until the
+# owner branch (F..U, SPLIT.md) adds the function; the FILES list of the builder does not change after branch 0.
+EDITS_100 = {
+    'project.passport': ('passport_core.py', 'project_passport'),
+    'source.intake': ('intake_core.py', 'source_intake'),
+    'scene.source_class': ('scene10_core.py', 'scene_source_class'),
+    'body.prepare': ('body_core.py', 'body_prepare'),
+    'model.attach_by_material': ('model10_core.py', 'model_attach_by_material'),
+    'model.move_apart': ('model10_core.py', 'model_move_apart'),
+    'model.grid_cleanup': ('gridclean_core.py', 'model_grid_cleanup'),
+    'scene.small_parts': ('scene10_core.py', 'scene_small_parts'),
+    'win.place': ('winplace_core.py', 'win_place'),
+    'win.generate': ('windowgen_core.py', 'win_generate'),
+    'model.glass_planes': ('glass_core.py', 'model_glass_planes'),
+    'body.capsules': ('capsule_core.py', 'body_capsules'),
+    'body.roof': ('roof_core.py', 'body_roof'),
+    'mat.table': ('matlib_core.py', 'mat_table'),
+    'mat.tiles': ('tiles_core.py', 'mat_tiles'),
+    'tex.plug_colour': ('plugcolour_core.py', 'tex_plug_colour'),
+    'vpm.build': ('vpm_core.py', 'vpm_build'),
+    'udim.rescale': ('udim10_core.py', 'udim_rescale'),
+    'udim.distortion': ('udim10_core.py', 'udim_distortion'),
+    'tex.dilate': ('dilate_core.py', 'tex_dilate'),
+    'udim.plugs': ('udimplug_core.py', 'udim_plugs'),
+    'npm.build': ('npm_core.py', 'npm_build'),
+    'atlas.facade_strip': ('facadeatlas_core.py', 'atlas_facade_strip'),
+    'npm.to_vpm': ('npm2vpm_core.py', 'npm_to_vpm'),
+    'udim.udims_to_ids': ('udimview_core.py', 'udim_udims_to_ids'),
+    'pack.deliver': ('deliver_core.py', 'pack_deliver'),
+    'ucx.gap': ('ucx10_core.py', 'ucx_gap'),
+    'ucx.stairs': ('ucxstairs_core.py', 'ucx_stairs'),
+    'light.export': ('light_core.py', 'light_export'),
+    'qa.omk_te': ('omk_core.py', 'qa_omk_te'),
+    'export.place_by_passport': ('placegeo_core.py', 'export_place_by_passport'),
+    'agent.request': ('agentbridge_core.py', 'agent_request'),
+    'agent.accept': ('agentbridge_core.py', 'agent_accept'),
+}
+# plan mode `read`: preview only, there is no apply (READ_100). Plan mode `agent` (AGENT_100): request + accept
+# through the functions of branch U; until then their stub answers not_implemented.
+READ_100 = ('scene.source_class', 'tex.plug_colour', 'udim.distortion', 'udim.udims_to_ids', 'ucx.stairs',
+            'qa.omk_te')
+AGENT_100 = ('agent.request', 'agent.accept')
+GLUE_100 = {}
+# Who runs a dispatcher call (journal `actor`). Apply of a 1.0 row is confirmed only by a button in the panel/dock
+# (owner answers 06.11.2026): actor mcp/agent may preview, never apply.
+ACTORS = ('panel', 'mcp', 'agent')
 EXPORT_PLAN = {'target', 'report', 'units', 'axis', 'unit_scale_factor', 'object_count',
                'triangle_count', 'material_count', 'object_names', 'triangles_by_name',
                'gates', 'dropped', 'texel', 'readback', 'stopped', 'digest'}
@@ -320,7 +367,7 @@ def _edit_core():
     return _edit
 
 
-def edits_080(tool, mode, preview=None, nodes=None, options=None):
+def edits_080(tool, mode, preview=None, nodes=None, options=None, actor='panel'):
     """0.8 delivery edits (#908): preview -> apply through the glue of EDITS_080, contract of edit_core.py.
 
     apply accepts only the unaltered preview report of the last answer for the same tool (hash checked here;
@@ -328,16 +375,79 @@ def edits_080(tool, mode, preview=None, nodes=None, options=None):
     `options` (JSON object: paths, profile) belong to the preview; the glue records them in the preview plan,
     so apply takes none. An empty stub module answers `status: not_implemented`, so the base ships before A–D.
     Glue call: `<function>(ctx, mode, nodes, preview)`, ctx = agr, core, edit, emax, options."""
-    return _dispatch_edit(EDITS_080, READ_080, {}, '#908', tool, mode, preview, nodes, options)
+    return _journaled(tool, mode, actor, lambda: _dispatch_edit(EDITS_080, READ_080, {}, '#908', tool, mode,
+                                                               preview, nodes, options))
 
 
-def edits_090(tool, mode, preview=None, nodes=None, options=None):
+def edits_090(tool, mode, preview=None, nodes=None, options=None, actor='panel'):
     """0.9 rows (#979) on the contract of edits_080 / edit_core.py: preview -> apply through the glue of EDITS_090.
 
     Read rows (READ_090, plan modes `read` and `select`) answer only a preview; `light.check` (`select`) lists the
     offenders in the report and the UI glue selects them. An empty stub module answers `status: not_implemented`
     (issue #979), so the base ships before branches A–D. Glue call and ctx exactly as in edits_080."""
-    return _dispatch_edit(EDITS_090, READ_090, GLUE_090, '#979', tool, mode, preview, nodes, options)
+    return _journaled(tool, mode, actor, lambda: _dispatch_edit(EDITS_090, READ_090, GLUE_090, '#979', tool, mode,
+                                                               preview, nodes, options))
+
+
+def edits_100(tool, mode, preview=None, nodes=None, options=None, actor='panel'):
+    """1.0 conveyor rows (#1024) on the contract of edits_080 / edit_core.py, glue of EDITS_100.
+
+    Read rows (READ_100) answer only a preview. Apply is a panel/dock press only: actor `mcp` / `agent` gets
+    `needs_human` (owner answers 06.11.2026). Agent rows (AGENT_100): request + accept by branch U's glue.
+    ctx of the glue as in edits_080 plus `host` (host_max.MaxHost: ObjRef, user props, one undo record).
+    An empty stub module answers `status: not_implemented` (issue #1024), so the base ships before F..U."""
+    if actor not in ACTORS:
+        raise ValueError('unknown actor: ' + repr(actor))
+    if mode == 'apply' and actor != 'panel' and tool in EDITS_100:
+        raise ValueError('needs_human: apply of ' + tool + ' is confirmed only by a button in the panel/dock')
+    return _journaled(tool, mode, actor, lambda: _dispatch_edit(EDITS_100, READ_100, GLUE_100, '#1024', tool, mode,
+                                                               preview, nodes, options))
+
+
+def _journal_core():
+    return _load_core('journal_core.py', 'agr_tools_journal_core')
+
+
+def _scene_doc():
+    try:
+        import os
+        rt = _rt()
+        return os.path.join(str(rt.maxFilePath), str(rt.maxFileName)) if str(rt.maxFileName) else 'untitled'
+    except Exception:  # noqa: BLE001 - no Max (unit tests): the journal still gets a line
+        return 'untitled'
+
+
+def journal_counts(report):
+    """Counts of a journal line from an edit report (pure)."""
+    if not isinstance(report, dict):
+        return {}
+    plan = report.get('plan') or {}
+    return {'objects': len(report.get('objects') or ()),
+            'findings': sum(len(o.get('findings') or ()) for o in report.get('objects') or ()),
+            'done': len(plan.get('done') or ()), 'skipped': len(plan.get('skipped') or ()),
+            'ambiguous': len(plan.get('ambiguous') or ())}
+
+
+def _journaled(tool, mode, actor, run):
+    """Journal hook of branch 0 (#1024, K1): every dispatcher call of edits_080/090/100 (panel, MCP or agent)
+    appends ONE line through journal_core.append, also when it fails. A journal write error never hides the tool's
+    own result or error; it is printed and the call goes on."""
+    import time
+    t0 = time.time()
+    report, status = None, 'error'
+    try:
+        report = run()
+        status = report.get('status', 'error') if isinstance(report, dict) else 'error'
+        return report
+    finally:
+        try:
+            jc = _journal_core()
+            doc = _scene_doc()
+            plan = (report or {}).get('plan') or {} if isinstance(report, dict) else {}
+            jc.append(jc.record(tool, mode, status, journal_counts(report), plan.get('hash'),
+                                time.time() - t0, actor, doc), doc)
+        except Exception as exc:  # noqa: BLE001
+            print('AGR Tools: journal line not written: ' + str(exc)[:200])
 
 
 def glue_file(core_file, glue=None):
@@ -378,6 +488,8 @@ def _dispatch_edit(table, read, glue_map, issue, tool, mode, preview, nodes, opt
     ctx = types.SimpleNamespace(agr=types.SimpleNamespace(**globals()), edit=edit,
                                 core=_load_core(core_file, 'agr_tools_' + stem + '_core'),
                                 emax=_load_core('edit_max.py', 'agr_tools_edit_max'), options=dict(options or {}))
+    if table is EDITS_100:
+        ctx.host = _load_core('host_max.py', 'agr_tools_host_max').MaxHost()
     report = fn(ctx, mode, nodes, preview)
     edit.validate_report(report, table)
     if report['tool'] != tool or (report['status'] != 'not_implemented' and report['plan']['mode'] != mode):
@@ -2160,6 +2272,8 @@ def edit_ui(tool, select=True):
         run, read = edits_080, READ_080
     elif isinstance(tool, str) and tool in EDITS_090:
         run, read = edits_090, READ_090
+    elif isinstance(tool, str) and tool in EDITS_100:
+        run, read = edits_100, READ_100
     else:
         raise ValueError('unsupported edit tool: ' + repr(tool))
     key = _selection_key()
