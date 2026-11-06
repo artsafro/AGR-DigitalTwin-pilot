@@ -627,4 +627,4 @@ def test_vpm_maps_read_the_grey_masks_of_mat_tiles(tmp_path):
     res = vc.plan_maps({'SM_Kpp_1_Main': {12: 1001}}, lib, str(tmp_path / 'o'), {'map_dir': o['map_dir']})
     assert sorted(m['kind'] for m in res['maps']) == ['D', 'ERM', 'N'] and not res['skipped']
     src = (PKG / 'vpm_max.py').read_text(encoding='utf-8')
-    assert src.count('_maps_options(o)') == 2
+    assert src.count(', _maps_options(o))') == 2          # plan_maps and build_maps both get map_dir
