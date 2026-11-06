@@ -59,7 +59,7 @@ def object_names(max_path):
     return [str(n) for n in rt.getMAXFileObjectNames(str(max_path), quiet=True)]
 
 
-def scan_flora(root, cache_dir, lib='flora'):
+def scan_flora(root, cache_dir, lib='flora', extra_preview_dirs=()):
     """Scan a Flora library folder and save the index. Reads .max object names only when the file changed."""
     old = core.load_index(cache_dir, lib)
     if core.flora_needs_names(root, old):
@@ -67,7 +67,7 @@ def scan_flora(root, cache_dir, lib='flora'):
         names = object_names(os.path.join(root, lay['max']))
     else:
         names = old['sources'][core.flora_layout(root)['max']]['objects']
-    idx = core.scan_flora(root, names, lib=lib, old_index=old)
+    idx = core.scan_flora(root, names, lib=lib, old_index=old, extra_preview_dirs=extra_preview_dirs)
     core.save_index(cache_dir, idx)
     return idx
 
@@ -145,6 +145,79 @@ def _box(nodes, k):
     return lo, hi, [float(p.x) * k, float(p.y) * k, float(p.z) * k]
 
 
+def _bring(index, rec, rows, s, cache_dir, flag_mtl, report):
+    """Bring one asset's versions into the scene. Returns ({version: [nodes]}, source sha256, texture dirs).
+
+    flora_max: merge from the verified copy of the library .max.
+    maf_zip:   extract the archive members into <project>/assets/<lib>/<name>/ (the zip on the Drive is only read),
+               then merge from the extracted <name>.max, or import <name>_<ver>.fbx (source fbx, or no .max)."""
+    names = [o for r in rows for o in r['objects']]
+    if index['adapter'] == 'flora_max':
+        src, sha = source_copy(index, rec, cache_dir)
+        return _merge(src, names, flag_mtl), sha, []
+    zpath = os.path.join(index['root'], rec['source']['path'])
+    sha = rec['source'].get('sha256') or core.sha256_file(zpath)
+    rec['source']['sha256'] = sha
+    for r in rows:
+        r['props'][core.PROP_SHA] = sha
+    dest = os.path.join(s['project_dir'] or os.path.join(cache_dir, 'extract'), 'assets', index['lib'], rec['name'])
+    has_max = any(v.get('max') for v in rec['versions'].values())
+    use_fbx = s['source'] == 'fbx' or not has_max
+    vers = [r['version'] for r in rows]
+    keep = core.maf_member_filter(rec['name'], use_fbx, vers)
+    files = core.extract_members(zpath, dest, keep)
+    report.setdefault('extracted', {})[rec['id']] = {'dir': dest, 'files': len(files), 'route': 'fbx' if use_fbx
+                                                     else 'max'}
+    if not use_fbx:
+        src = files.get((rec['name'] + '.max').lower())
+        if not src:
+            raise ValueError('no .max extracted from ' + zpath)
+        return _merge(src, names, flag_mtl), sha, [dest]
+    by_ver = {}
+    for v in vers:
+        f = files.get((rec['name'] + '_' + v + '.fbx').lower())
+        if not f:
+            report['errors'].append('{} [{}]: no fbx in the archive'.format(rec['id'], v))
+            continue
+        by_ver[v] = _import_fbx(f, float(s['fbx_scale']))
+    return by_ver, sha, [dest]
+
+
+def _merge(src, names, flag_mtl):
+    before = _handles()
+    rt.mergeMAXFile(src, rt.Array(*names), rt.Name('autoRenameDups'), flag_mtl, rt.Name('neverReparent'), quiet=True)
+    by_ver = {}
+    for n in _new_nodes(before):
+        by_ver.setdefault(core.version_of(n.name) or 'high', []).append(n)
+    return by_ver
+
+
+FBX_UNIT = {'millimeters': 'mm', 'centimeters': 'cm', 'meters': 'm', 'kilometers': 'km', 'inches': 'in',
+            'feet': 'ft', 'miles': 'mi'}
+
+
+def _import_fbx(path, scale=1.0):
+    """FBX into the scene: convert to the scene's system unit (Scale Factor 1), Z up, no cameras/lights/animation;
+    scale is an extra multiplier about the origin (pivots of the A101 assets are at the origin)."""
+    rt.pluginManager.loadClass(rt.FbxImporter)
+    unit = FBX_UNIT.get(str(rt.units.SystemType).lstrip('#').lower(), 'm')
+    for key, val in (('Mode', rt.Name('create')), ('Animation', False), ('Cameras', False), ('Lights', False),
+                     ('ConvertUnit', rt.Name(unit)), ('ScaleConversion', True), ('UpAxis', rt.Name('Z')),
+                     ('GenerateLog', False)):
+        rt.FBXImporterSetParam(rt.Name(key), val)
+    before = _handles()
+    rt.importFile(path, rt.Name('noPrompt'), using=rt.FbxImporter)
+    nodes = [n for n in _new_nodes(before) if rt.superclassof(n) == rt.GeometryClass]
+    extra = [n for n in _new_nodes(before) if rt.superclassof(n) != rt.GeometryClass]
+    for n in extra:
+        rt.delete(n)
+    if abs(scale - 1.0) > 1e-9:
+        for n in nodes:
+            rt.scale(n, rt.Point3(scale, scale, scale))
+            n.pos = n.pos * scale
+    return nodes
+
+
 # ---- import -----------------------------------------------------------------------------------------------
 def run_import(index, ids, settings, cache_dir, scene_label=None, localappdata=None, passport=None,
                texture_dirs=()):
@@ -166,7 +239,7 @@ def run_import(index, ids, settings, cache_dir, scene_label=None, localappdata=N
         tex_dirs = [os.path.join(index['root'], d) for d in (lay.get('textures'), lay.get('viz_textures')) if d]
     tex_dirs += [d for d in texture_dirs if d]
     project_tex = None
-    if s['textures'] == 'project' and s['project_dir']:
+    if s['textures'] == 'project' and s['project_dir'] and index['adapter'] == 'flora_max':
         project_tex = os.path.join(s['project_dir'], 'assets', index['lib'], 'textures')
     groups, new_by_id = [], {}
     with pymxs.undo(True, 'AGR assets import'):
@@ -181,16 +254,14 @@ def run_import(index, ids, settings, cache_dir, scene_label=None, localappdata=N
                 rec = by_id[aid]
                 before = _handles()
                 try:
-                    src, sha = source_copy(index, rec, cache_dir)
-                    names = [o for r in rows for o in r['objects']]
-                    rt.mergeMAXFile(src, rt.Array(*names), rt.Name('autoRenameDups'), flag_mtl,
-                                    rt.Name('neverReparent'), quiet=True)
-                    nodes = _new_nodes(before)
+                    by_ver, sha, extra_tex = _bring(index, rec, rows, s, cache_dir, flag_mtl, report)
+                    tex_dirs += [d for d in extra_tex if d not in tex_dirs]
+                    nodes = [n for ns in by_ver.values() for n in ns]
                     if not nodes:
-                        raise ValueError('nothing merged for ' + ', '.join(names))
+                        raise ValueError('nothing merged for ' + ', '.join(o for r in rows for o in r['objects']))
                     boxes = {}
                     for r in rows:
-                        vn = [n for n in nodes if core.version_of(n.name) == r['version']]
+                        vn = by_ver.get(r['version'], [])
                         if not vn:
                             report['errors'].append('{} [{}]: object not merged'.format(aid, r['version']))
                             continue
@@ -206,7 +277,7 @@ def run_import(index, ids, settings, cache_dir, scene_label=None, localappdata=N
                         report['imported'].append({'id': aid, 'version': r['version'],
                                                    'nodes': [str(n.name) for n in vn]})
                     new_by_id[aid] = nodes
-                    groups.append({'id': aid, 'boxes': boxes})
+                    groups.append({'id': aid, 'boxes': boxes, 'nodes': by_ver})
                 except Exception as exc:  # noqa: BLE001 - one asset must not stop the others
                     report['errors'].append('{}: {}: {}'.format(aid, type(exc).__name__, exc))
                     for n in _new_nodes(before):
@@ -225,13 +296,13 @@ def run_import(index, ids, settings, cache_dir, scene_label=None, localappdata=N
                     report['textures']['repathed'] += 1
             report['textures'].update(copied=len(tp['copy']), missing=tp['missing'], conflicts=tp['conflicts'])
             # layout
-            moves = core.layout_rows(groups, s['gap_m'], s['row_limit_m'])
+            moves = core.layout_rows([{'id': g['id'], 'boxes': g['boxes']} for g in groups], s['gap_m'],
+                                     s['row_limit_m'])
             for g in groups:
                 for ver, (dx, dy, dz) in moves.get(g['id'], {}).items():
                     d = rt.Point3(dx / k, dy / k, dz / k)
-                    for n in new_by_id[g['id']]:
-                        if core.version_of(n.name) == ver:
-                            n.pos = n.pos + d
+                    for n in g['nodes'][ver]:
+                        n.pos = n.pos + d
             report['moves'] = {i: {v: list(m) for v, m in mv.items()} for i, mv in moves.items()}
         finally:
             rt.enableSceneRedraw()

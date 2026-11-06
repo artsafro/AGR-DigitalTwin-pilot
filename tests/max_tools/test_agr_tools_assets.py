@@ -113,7 +113,7 @@ def test_flora_records_groups_helpers_proxies_and_previews(tmp_path):
     assert rep['third_party_proxies'] == ['CRP_gamma_vine_t1_h140_VIZ_PROXY']
     assert rep['foreign_objects'] == ['P100', 'READY']
     assert rep['previews_unused'] == ['omega_t9_h10']
-    assert rep['preview_match'] == {'exact': 3, 'fuzzy': 1, 'none': 0}
+    assert rep['preview_match'] == {'exact': 3, 'fuzzy': 1, 'generated': 0, 'none': 0}
 
 
 def test_fuzzy_preview_needs_the_same_type_and_height(tmp_path):
@@ -371,7 +371,47 @@ def test_passport_patch_does_not_mutate():
     assert q['assets']['imports'] == [{'a': 1}, {'b': 2}]
 
 
+def test_maf_extract_routes_and_reuse(tmp_path):
+    z = tmp_path / 'Adx_Stol_1.zip'
+    make_maf_zip(z, 'Adx_Stol_1')
+    dest = tmp_path / 'proj' / 'Adx_Stol_1'
+    got = core.extract_members(str(z), str(dest), core.maf_member_filter('Adx_Stol_1', False, ['high', 'low']))
+    assert sorted(got) == ['adx_stol_1.max', 't_adx_stol_1_high_diffuse.png', 't_adx_stol_1_low_diffuse.png']
+    mtime = os.path.getmtime(got['adx_stol_1.max'])
+    again = core.extract_members(str(z), str(dest), core.maf_member_filter('Adx_Stol_1', False, ['high']))
+    assert os.path.getmtime(again['adx_stol_1.max']) == mtime  # same size: reused, not rewritten
+    fbx = core.extract_members(str(z), str(tmp_path / 'f'), core.maf_member_filter('Adx_Stol_1', True, ['low']))
+    assert sorted(fbx) == ['adx_stol_1_low.fbx']
+
+
+def test_extract_members_flattens_traversal(tmp_path):
+    z = tmp_path / 'evil.zip'
+    with zipfile.ZipFile(z, 'w') as zz:
+        zz.writestr('../../outside.max', b'x')
+        zz.writestr('sub/dir/inner.png', b'y')
+    got = core.extract_members(str(z), str(tmp_path / 'd'), lambda b: True)
+    assert sorted(got) == ['inner.png', 'outside.max']
+    assert not (tmp_path / 'outside.max').exists() and (tmp_path / 'd' / 'outside.max').exists()
+
+
 def test_copy_material_names_replace_generic_max_names():
     assert core.is_generic_material_name('Material #25') and not core.is_generic_material_name('lipa_high')
     assert core.copy_material_name('a_high', set()) == 'a_high_copy'
     assert core.copy_material_name('a_high', {'a_high_copy', 'a_high_copy2'}) == 'a_high_copy3'
+
+
+def test_generated_previews_fill_only_real_gaps(tmp_path):
+    root = make_flora(tmp_path)
+    gen = tmp_path / 'gen'
+    gen.mkdir()
+    for b in ('alpha_tree_t1_h500', 'zeta_shrub_t3_h40', 'gamma_vine_t1_h140', 'new_one_t1_h10'):
+        (gen / (b + '_PREVIEW.png')).write_bytes(b'png')
+    names = FLORA_NAMES + ['eta_herb_t1_h20_high']
+    (gen / 'eta_herb_t1_h20_PREVIEW.png').write_bytes(b'png')
+    idx = core.scan_flora(str(root), names, lib='f', extra_preview_dirs=[str(gen)])
+    by = {r['name']: r for r in idx['assets']}
+    assert by['alpha_tree_t1_h500']['preview_match'] == 'exact'      # the library's own image wins
+    assert by['zeta_shrub_t3_h40']['preview_match'] == 'fuzzy'       # a similar-name original beats a render
+    assert by['eta_herb_t1_h20']['preview_match'] == 'generated'
+    assert core.preview_abspath(idx, by['eta_herb_t1_h20'], 'x') == str(gen / 'eta_herb_t1_h20_PREVIEW.png')
+    assert idx['report']['preview_match'] == {'exact': 3, 'fuzzy': 1, 'generated': 1, 'none': 0}
