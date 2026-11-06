@@ -29,11 +29,6 @@ BLOCKING = {'map_missing', 'map_unreadable', 'groundel_alpha', 'atlas_overflow',
             'texture_unsupported', 'uv_tiling', 'opacity_mismatch'}
 
 
-def _same_file(a, b):
-    """Same path after normalisation (case, separators, relative parts)."""
-    return os.path.normcase(os.path.abspath(str(a))) == os.path.normcase(os.path.abspath(str(b)))
-
-
 def _rt():
     from pymxs import runtime
     return runtime
@@ -512,8 +507,6 @@ def atlas_flora(ctx, mode, nodes, preview):
                         if op is None or (op.w, op.h) != (pic.w, pic.h):
                             o['findings'].append(('opacity_mismatch', 'opacity {} must be a PNG of the diffuse size'
                                                   .format(opacity)))
-                        elif alpha is not None and _same_file(oinfo['file'], info['file']):
-                            pass  # #1024: A101 Flora points the opacity slot at the diffuse PNG itself: its own alpha
                         elif alpha is not None:
                             o['findings'].append(('opacity_mismatch', 'both diffuse alpha and an opacity map'))
                         else:
