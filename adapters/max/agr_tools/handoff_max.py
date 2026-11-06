@@ -103,12 +103,11 @@ def _instance_leaders(rt, nodes):
     return out
 
 
-def poly_facts(rt, n, k, leader=None, core=None):
+def poly_facts(rt, n, k, leader, core):
     """(facts, extra) of one mesh node from a temporary Editable Poly copy (the node is never changed).
 
     extra: {'face_ids': [...], 'tiles_by_id': {id: [UDIM]} (channel 1), 'hard': count, 'sg': {group bits: faces}}."""
     import pymxs
-    core = core or _load('handoff_core.py')
     po = rt.polyop
     with pymxs.undo(False):
         c = rt.copy(n)
