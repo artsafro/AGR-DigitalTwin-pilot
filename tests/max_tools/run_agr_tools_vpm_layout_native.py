@@ -37,7 +37,7 @@ os.environ['AGR_NO_PROMPT'] = '1'
 summary = {'max_version': list(rt.maxVersion())[:3], 'package_sha256': hashlib.sha256(PACKAGE.read_bytes()).hexdigest(),
            'checks': {}, 'errors': {}}
 assert not rt.maxFileName, 'only an empty batch document is allowed'
-TILE, STEP = 4096, 3.6
+TILE, STEP = 3600, 3.6   # 1000 px/m default (1.0.1)
 TEXEL = TILE / STEP
 
 

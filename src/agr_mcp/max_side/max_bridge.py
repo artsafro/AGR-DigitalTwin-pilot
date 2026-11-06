@@ -91,7 +91,7 @@ READ_100 = ("scene.source_class", "tex.plug_colour", "udim.distortion", "udim.ud
             "qa.omk_te")
 # Released in package version 1.0.0 (release branch R, #1024); the entry function is the real gate
 # (check_runtime), the minimum refuses older installs.
-RUNTIME_100 = "1.0.0"
+RUNTIME_100 = "1.0.1"
 # row -> (group, key, minimum runtime, entry function)
 ROUTES = {}
 ROUTES.update({r: ("fn", k, EXPECTED_RUNTIME, k) for r, k in ROWS_FN.items()})

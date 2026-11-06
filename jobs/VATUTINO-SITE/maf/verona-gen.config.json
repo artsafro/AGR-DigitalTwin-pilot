@@ -1,5 +1,5 @@
 {
- "version": "gen-v001-A4.1 (passport box, seams by texture, proposed v006 IDs)",
+ "version": "gen-v001-A4.2 (passport box, seams by texture, v006 IDs; frame = library paint_ral7016 [D202])",
  "issue": 790,
  "form": "clad_box",
  "smoothing_deg": 40,
@@ -35,11 +35,11 @@
  },
  "materials": {
   "seat": "larch_light_oak_boards",
-  "frame": "steel_ral7016"
+  "frame": "paint_ral7016"
  },
  "material_sources": {
-  "seat": "proposed v006 ID larch_light_oak_boards (Artem 2026-11-03: new ID, D152 one material ID per texture); 256 px patterned cell, SYNTHETIC board texture make_boards.py, base colour = v005 larch_light_oak #C49A6C, 11 boards, seam #5A4026",
-  "frame": "proposed v006 ID steel_ral7016 #383E42 (Artem 2026-11-03: new ID per the passport RAL 7016, replaces the temporary steel_ral7047); colour = library v005 id 2 paint_ral7016 target"
+  "seat": "library material larch_light_oak_boards (materials_v001 library_id 41; Artem 2026-11-03: new ID, D152 one material ID per texture; accepted 2026-11-06 [D202]); 256 px patterned cell, SYNTHETIC board texture make_boards.py, base colour = v005 larch_light_oak #C49A6C, 11 boards, seam #5A4026",
+  "frame": "library material paint_ral7016 #383E42 (materials_v001 library_id 8 = MAF v005 id 2); Artem 2026-11-06 [D202]: reuse the existing id, no new steel id; the 2026-11-03 proposal name is retired (A4.1 -> A4.2)"
  },
  "rows": [
   {

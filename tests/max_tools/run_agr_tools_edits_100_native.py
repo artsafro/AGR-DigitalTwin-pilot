@@ -68,7 +68,7 @@ suite = roadmap.load_file(str(OUT / 'installed' / 'agr-tools-suite.json'))
 ORDER = roadmap.stage_buttons(suite)
 summary['runtime_version'] = agr.VERSION
 MODEL = agr._load_core('ui_model.py', 'agr_tools_ui_model')
-assert agr.VERSION == MODEL.VERSION == '1.0.0', (agr.VERSION, MODEL.VERSION)  # release 1.0.0 (#1024 R)
+assert agr.VERSION == MODEL.VERSION == '1.0.1', (agr.VERSION, MODEL.VERSION)  # patch 1.0.1 (release 1.0.0, #1024 R)
 WIP = set(MODEL.WIP_100)
 
 
@@ -269,7 +269,7 @@ def mcp_bridge():
     args = {'scene': 'live', 'handles': [h], 'op': 'body.roof'}
     got = json.loads(bridge.call('agr_op_preview', root, json.dumps(args).encode().hex()))
     assert got['ok'] and got['result']['status'] != 'not_implemented', got
-    assert bridge.RUNTIME_100 == '1.0.0'
+    assert bridge.RUNTIME_100 == '1.0.1'
     bad = json.loads(bridge.call('agr_op_apply', root, json.dumps(dict(args, preview=got['result'])).encode().hex()))
     assert not bad['ok'] and 'needs_human' in bad['error'], bad
     stub = json.loads(bridge.call('agr_op_preview', root, json.dumps(dict(args, op='npm.to_vpm')).encode().hex()))

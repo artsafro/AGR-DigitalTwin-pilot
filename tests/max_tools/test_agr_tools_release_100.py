@@ -36,7 +36,7 @@ Q = ('npm.to_vpm', 'udim.udims_to_ids')
 
 
 def test_version_is_100_and_every_stage_button_ships():
-    assert m.VERSION == '1.0.0'
+    assert m.VERSION == '1.0.1'
     assert set(m.WIP_100) == set() and len(m.ACTIONS_100) == 33
     for a in m.ACTIONS_100:
         assert not a.wip and a.tip == m.stage_tip(a.tool), a.tool

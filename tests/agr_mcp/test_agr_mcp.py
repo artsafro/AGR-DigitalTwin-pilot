@@ -875,10 +875,8 @@ def test_stale_mutex_unlink_by_name_cannot_admit_two(tmp_path, monkeypatch):
         return ok
 
     def release(lock, token):
-        try:
-            real_release(lock, token)
-        finally:
-            leave()
+        leave()  # still ours here: after the unlink the next caller may enter first
+        real_release(lock, token)
 
     def drop(lock, token):
         if threading.current_thread().name == "Y":
@@ -1020,11 +1018,12 @@ def test_probe_mutex_exclusivity_seed_972(tmp_path, monkeypatch):
         return ok
 
     def release(lock, token):
-        try:
-            real_release(lock, token)
-        finally:
-            with guard:
-                state["current"] -= 1
+        # Leave the section while the mutex is still ours: once real_release unlinks it, the next
+        # caller may link and enter before this thread runs again. Counting the exit after the unlink
+        # reported that ordinary hand-over as two callers inside under a loaded host.
+        with guard:
+            state["current"] -= 1
+        real_release(lock, token)
 
     def drop(lock, token):
         if plan["pause"] and threading.current_thread().name == "Y":
@@ -1122,6 +1121,62 @@ def test_probe_mutex_exclusivity_seed_972(tmp_path, monkeypatch):
         for kind in order:
             one(kind, pause=False, n_threads=4)
     assert seen == 4 * len(stale_kinds) + 4 * (len(stale_kinds) + len(closed_kinds)) == 68
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="Windows share modes: a plain reader blocks DELETE access")
+def test_stale_mutex_consume_retries_while_a_reader_has_it_open(tmp_path, monkeypatch):
+    """Red main 82feaa86: seed_972 hammers saw four callers all busy on a stale mutex.
+
+    Every caller reads the stale mutex with a plain open (no FILE_SHARE_DELETE), so each
+    consumer's DELETE open hit a sharing violation and gave up: nobody reclaimed it.
+    A sharing violation is transient and must be retried; the stale inode is still removed.
+    """
+    path = _lock_file()
+    mutex = _plant_mutex(path, "dead", 1_000_000.0)
+    reader = open(mutex, "rb")  # noqa: SIM115 — another caller's _mutex_stale read, still open
+    pauses = []
+
+    def pause(seconds):
+        pauses.append(seconds)
+        if not reader.closed:
+            reader.close()  # the other reader finishes during our pause
+
+    monkeypatch.setattr(locks, "_sleep", pause)
+    try:
+        assert locks._consume_stale_mutex(mutex) is True
+    finally:
+        reader.close()
+    assert pauses, "the sharing violation was not retried"
+    assert not mutex.exists()
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="Windows share modes: a DELETE handle blocks a plain reader")
+def test_mutex_owner_check_retries_while_a_consumer_has_it_open(tmp_path, monkeypatch):
+    """Red main 82feaa86: the caller that linked the mutex read it back while a contender's
+    consume handle (DELETE access) had it open, took the failed read as "not ours" and gave the
+    mutex up, so all four hammer threads were busy. The owner check must retry that read.
+    """
+    import os
+    path = _lock_file()
+    mutex = path.with_name(f".{path.name}.mutex")
+    mutex.write_text(json.dumps({"pid": os.getpid(), "until": 2e9, "token": "mine"}), encoding="utf-8")
+    k = locks._kernel32()
+    handle = k.CreateFileW(str(mutex), 0x80000000 | 0x00010000, 0x1 | 0x2 | 0x4, None, 3, 0x80, None)
+    open_handle = [handle]
+    pauses = []
+
+    def pause(seconds):
+        pauses.append(seconds)
+        if open_handle:
+            k.CloseHandle(open_handle.pop())  # the contender finishes its check during our pause
+
+    monkeypatch.setattr(locks, "_sleep", pause)
+    try:
+        assert locks._mutex_is_ours(mutex, "mine") is True
+    finally:
+        if open_handle:
+            k.CloseHandle(open_handle.pop())
+    assert pauses, "the blocked read was not retried"
 
 
 def test_posix_drop_keeps_a_lock_replaced_before_unlink(tmp_path, monkeypatch):
@@ -1978,16 +2033,16 @@ def test_runtime_090_serves_every_max_group(fake_max, monkeypatch):
 
 def test_every_max_tool_of_the_catalogue_needs_at_most_runtime_090():
     """v1 Max tools (47) by tool name; the v2 tools by plan row (ROUTES), all served by an installed 0.9.0, except
-    the 1.0 conveyor rows (edits_100), which need the released 1.0.0 (#1024 R)."""
+    the 1.0 conveyor rows (edits_100), which need the 1.0 runtime (RUNTIME_100 = package 1.0.1)."""
     names = [n for n, s in tools.catalog().items() if s.host({}) == "max-live" and n in tools.PHASE0]
     assert len(names) == 47
     for n in names:
         minimum, function = max_bridge.requirement(n)
         assert max_bridge.version_key(minimum) <= (0, 9, 0) and function, n
     for row, (group, _key, minimum, function) in max_bridge.ROUTES.items():
-        top = (1, 0, 0) if group == "e100" else (0, 9, 0)
+        top = (1, 0, 1) if group == "e100" else (0, 9, 0)
         assert max_bridge.version_key(minimum) <= top and function, row
-    assert {r for r, v in max_bridge.ROUTES.items() if v[2] == "1.0.0"} == set(max_bridge.ROWS_100)
+    assert {r for r, v in max_bridge.ROUTES.items() if v[2] == max_bridge.RUNTIME_100} == set(max_bridge.ROWS_100)
 
 
 def test_default_root_is_the_newest_install_not_a_folder_per_group(fake_max, monkeypatch):
