@@ -186,9 +186,12 @@ def place():
     (base / 'ok').mkdir()
     fbx, prev = place_case(base / 'ok', 12345.678, -6789.012, '152,3', 'model')
     assert prev['status'] == 'pass', prev['plan']
+    from pymxs import undo as mx_undo
+    with mx_undo(True, 'T marker'):
+        rt.Box(name='UndoMarker', length=1, width=1, height=1)
     n0 = len(list(rt.objects))
     rep = agr.edits_100('export.place_by_passport', 'apply', prev, None, None)
-    new = [n for n in rt.objects if str(n.name) != 'Existing']
+    new = [n for n in rt.objects if str(n.name) not in ('Existing', 'UndoMarker')]
     assert len(new) >= 1
     root = new[0]
     err = [abs(float(root.pos.x) - 12345.678), abs(float(root.pos.y) + 6789.012), abs(float(root.pos.z) - 152.3)]
@@ -197,9 +200,12 @@ def place():
                  'nodes_after': len(list(rt.objects))}
     assert max(err) <= 0.001, err
     # one Undo record removes the placement
+    # one Undo record: the marker (its own earlier record) stays, everything the placement made is gone
     try:
         rt.execute('max undo')
-        out['ok']['after_one_undo'] = sorted(str(n.name) for n in rt.objects)
+        left = sorted(str(n.name) for n in rt.objects)
+        out['ok']['after_one_undo'] = left
+        out['ok']['undo_is_one_record'] = left == ['Existing', 'UndoMarker']
     except Exception as exc:  # noqa: BLE001
         out['ok']['after_one_undo'] = 'undo unavailable in batch: {}'.format(str(exc)[:80])
     # 2. bait in a text field is data
