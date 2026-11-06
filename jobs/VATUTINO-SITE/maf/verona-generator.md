@@ -187,7 +187,7 @@ NPM MAF share [D097]: v005 set 57 628 + row 1 160 = 57 788; + all ten rows 1 520
 NPM = VPM, no light version needed [D164]. Open for Artem: row 1 «да»; the board cell as a new material ID or a
 pattern of `larch_light_oak` (v005 list unchanged until he decides); RAL 7016 steel ID (plates still `steel_ral7047`).
 
-## Rows 1-10 with the proposed v006 IDs (`C:/x/vatutino-maf/gen-v001/rows-v006p-2`), current
+## Rows 1-10 with the proposed v006 IDs (`C:/x/vatutino-maf/gen-v001/rows-v006p-2`) - superseded by A4.2 below (frame renamed)
 
 Artem 2026-11-03 (card t_96a3cc8a): «Row 1 (render row1_a4_vs_photo_v004, simple box 160 tris, seams in texture)
 ACCEPTED - build rows 2-10 with the same script. Board texture = NEW material ID `larch_light_oak_boards` (D152: one
@@ -260,3 +260,20 @@ and whether the library entry uses the proposed names or library id 2 `paint_ral
 
 Originals unchanged before/after: `main.dwg` copy `64e22677…46e4`, MAF_0326 FBX `f3f9653c…2edc`, site atlas v005
 `5099d135…` / `5aaf8b55…`, `material_ids_v005.json` `21a605c7…`.
+
+## Rows 1-10, A4.2: frame = library `paint_ral7016` [D202] (`C:/x/vatutino-maf/gen-v001/rows-v006p-3`), current
+
+Artem 2026-11-06 [D202] (issue #1046): rows 2-10 accepted; boards = new library ID `larch_light_oak_boards`
+(materials_v001 library_id 41), steel frame = existing `paint_ral7016` (library_id 8 = MAF v005 id 2), no new steel
+ID. Config `verona-gen.config.json` = `gen-v001-A4.2`: only the frame material name changed from A4.1; the v006
+proposal list renames the frame slot the same way.
+
+- Atlas copy `gen-v001/atlas-v006-2/` (`tools/materials/atlas_maf.py` on the renamed material list): PNG byte-identical
+  to `atlas-v006` (`0e3c2b1b…`), UV rects identical, only the slot name differs.
+- Rebuild (same Blender 5.1.2 commands as above, `<rows-v006p-3>` and the `atlas-v006-2` files): build exit 0,
+  20/20 readbacks exit 0, `maf_gen_bench_checks.py` verdict pass 10/10 rows, 20/20 xView passed.
+  Readback vs `rows-v006p-2` with the name substituted: face geometry, UV, bounds and materials identical 20/20;
+  materials used: `larch_light_oak_boards`, `paint_ral7016` only.
+- Library: `tools/library/maf_gen_catalogue.py --approve 2-10 --decision D202` wrote `library/maf/catalogue.json`
+  `generated` (8 entries `MAF_GEN_0001..0008`; rows 9 and 10 are one model) and `generated_dropped` (row 1: not
+  approved), and the matching section of `catalogue.md`. Row 1 waits for Artem's «да».
