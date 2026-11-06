@@ -2,6 +2,8 @@
 
 Moved verbatim from `AGENTS.md` (context diet); the rules remain binding for every agent.
 
+Точка входа в AGR Tools — `docs/agr-tools/OVERVIEW.md`; работа с ветками, раннером и полигоном — `docs/agents/agr-tools-impl-rules.md`.
+
 Правила волны 1.0. Контракты К1–К5 — в `issue_body.md` волны. Решения Артёма 06.11.2026 приоритетнее.
 
 - **Паспорт проекта обязателен (К1).**
