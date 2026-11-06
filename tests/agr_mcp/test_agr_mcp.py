@@ -27,6 +27,8 @@ def isolated(tmp_path, monkeypatch):
     monkeypatch.setenv("AGR_MCP_LOCK_DIR", str(tmp_path / "locks"))
     monkeypatch.setenv("AGR_MCP_AUDIT", str(tmp_path / "audit.jsonl"))
     monkeypatch.setenv("AGR_MCP_CARD", "test-841")
+    monkeypatch.setenv("AGR_JOURNAL_DIR", str(tmp_path / "journal"))  # v2: every call journals (never the user's)
+    monkeypatch.setenv("AGR_MCP_DATA_DIR", str(tmp_path / "data"))  # v2: report_uri store
     monkeypatch.delenv("AGR_MCP_UNSAFE", raising=False)
     for k in ("AGR_MCP_MAX_PID", "MCP_MAX_PID", "MCP_MAX_PIPE"):  # unit tests never reach a real Max
         monkeypatch.delenv(k, raising=False)
@@ -163,13 +165,15 @@ def offline_cases(tmp_path):
 
 # ---- exit test ----------------------------------------------------------------------------------------------
 def test_tools_list_is_the_phase0_eight_without_code_argument():
+    """#1024 branch 0 changes the catalogue fact: v1 (PHASE0) + the v2 tools generated from the plan (LISTED)."""
     listed, _ = run_calls([], list_only=True)
-    assert sorted(listed) == sorted(tools.PHASE0)
+    assert sorted(listed) == sorted(tools.LISTED) and set(tools.PHASE0) < set(listed)
     editing = {n for n, _row, _what, kind in tools.EDITS_080 if kind != "read"}  # 0.8 preview -> apply (#908)
+    editing.add("agr_op_apply")  # v2: applies a held 0.8 preview
     for spec in tools.catalog().values():
         assert "code" not in json.dumps(spec.input), spec.name
         assert spec.read_only == (spec.name not in editing), spec.name
-        assert spec.destructive == (spec.name == "agr_ucx_rename"), spec.name  # renames in place (one undo)
+        assert spec.destructive == (spec.name in ("agr_ucx_rename", "agr_op_apply")), spec.name  # in place
 
 
 def test_exit_offline_tools_equal_direct_call(tmp_path):
@@ -1574,7 +1578,7 @@ def test_unsafe_with_flag_is_listed_destructive_and_audited(tmp_path):
             res = await client.call_tool("agr_exec_unsafe", {"code": "1+1"})
             return listed, res
     listed, res = anyio.run(main)
-    assert set(listed) == set(tools.PHASE0) | {"agr_exec_unsafe"}
+    assert set(listed) == set(tools.LISTED) | {"agr_exec_unsafe"}
     assert listed["agr_exec_unsafe"].annotations.destructiveHint is True
     assert ok(res) == {"value": "2"} and sent == ["1+1"]
     line, = audit_lines(tmp_path)
@@ -1602,9 +1606,9 @@ def test_fresh_stdio_process_lists_tools(unsafe, tmp_path):
         sys.path.pop(0)
     t = anyio.run(transcript, unsafe, str(tmp_path / "stdio-audit.jsonl"))
     names = [x["name"] for x in t["tools"]]
-    assert sorted(names) == sorted(tools.PHASE0 + (("agr_exec_unsafe",) if unsafe else ()))
+    assert sorted(names) == sorted(tools.LISTED + (("agr_exec_unsafe",) if unsafe else ()))
     assert t["serverInfo"]["name"] == "agr-mcp"
-    editing = {n for n, _row, _what, kind in tools.EDITS_080 if kind != "read"}
+    editing = {n for n, _row, _what, kind in tools.EDITS_080 if kind != "read"} | {"agr_op_apply"}
     assert all(x["readOnlyHint"] for x in t["tools"] if x["name"] != "agr_exec_unsafe" and x["name"] not in editing)
     assert not any(x["readOnlyHint"] for x in t["tools"] if x["name"] in editing)
 
@@ -1966,11 +1970,14 @@ def test_runtime_090_serves_every_max_group(fake_max, monkeypatch):
 
 
 def test_every_max_tool_of_the_catalogue_needs_at_most_runtime_090():
-    names = [n for n, s in tools.catalog().items() if s.host({}) == "max-live"]
+    """v1 Max tools (47) by tool name; the v2 tools by plan row (ROUTES), all served by an installed 0.9.0."""
+    names = [n for n, s in tools.catalog().items() if s.host({}) == "max-live" and n in tools.PHASE0]
     assert len(names) == 47
     for n in names:
         minimum, function = max_bridge.requirement(n)
         assert max_bridge.version_key(minimum) <= (0, 9, 0) and function, n
+    for row, (_group, _key, minimum, function) in max_bridge.ROUTES.items():
+        assert max_bridge.version_key(minimum) <= (0, 9, 0) and function, row
 
 
 def test_default_root_is_the_newest_install_not_a_folder_per_group(fake_max, monkeypatch):

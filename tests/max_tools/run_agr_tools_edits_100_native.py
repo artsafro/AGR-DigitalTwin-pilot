@@ -158,3 +158,50 @@ def polygon():
     text = str(rt.getNodeByName('_label_1_0_1').text)
     return {'stations_1_0': len(new), 'nodes_built': len(made), 'catalog_polygon_all': len(want),
             'label_1_0_1': text.replace('\r\n', ' | ')[:160]}
+
+
+def macros_and_rail():
+    """33 wip macroScripts are registered, disabled and run no edit; the panel model gives the stage rail."""
+    model = agr._load_core('ui_model.py', 'agr_tools_ui_model')
+    acts = model.ACTIONS_100
+    assert [a.tool for a in acts] == ORDER and all(a.wip for a in acts)
+    before = len(journal_lines())
+    out = {}
+    for a in acts:
+        ran = bool(rt.macros.run('AGR Tools', a.macro))
+        out[a.macro] = ran
+    assert len(journal_lines()) == before, 'a wip macro reached the runtime'
+    rail = model.stage_rail(suite, None)
+    assert len(rail) == 11, rail
+    icons = sorted(p.name for p in (OUT / 'installed').rglob('agr_passport*.png'))
+    return {'macros': len(out), 'ran_flags': sorted(set(out.values())), 'stages': len(rail),
+            'passport_icons': len(icons)}
+
+
+def mcp_bridge():
+    """agr-mcp bridge inside this Max: a 1.0 big button previews (stub -> not_implemented), apply is refused."""
+    bridge = load(ROOT / 'src/agr_mcp/max_side/max_bridge.py', 'max_bridge')
+    rt.resetMaxFile(rt.name('noPrompt'))
+    b = rt.Box(name='BODY_Brick_001')
+    h = int(b.inode.handle)
+    root = (str(OUT / 'installed')).encode().hex()
+    assert 'body.roof' in bridge.ROWS_100 and 'body.roof' in bridge.EDIT_ROWS
+    args = {'scene': 'live', 'handles': [h], 'op': 'body.roof'}
+    got = json.loads(bridge.call('agr_op_preview', root, json.dumps(args).encode().hex()))
+    assert got['ok'] and got['result']['status'] == 'not_implemented', got
+    bad = json.loads(bridge.call('agr_op_apply', root, json.dumps(dict(args, preview=got['result'])).encode().hex()))
+    assert not bad['ok'] and 'needs_human' in bad['error'], bad
+    empty = json.loads(bridge.call('agr_op_preview', root, json.dumps({'scene': 'live', 'op': 'body.roof'})
+                                   .encode().hex()))
+    assert not empty['ok'] and 'handles_required' in empty['error'], empty
+    tool, names = 'agr_op_preview(body.roof)', bridge.ROWS_100
+    return {'tool': tool, 'preview': got['result']['status'], 'apply_refused': bad['error'][:120],
+            'bridge_tools_100': len(names)}
+
+
+check('macros_and_rail', macros_and_rail)
+check('mcp_bridge_100', mcp_bridge)
+check('polygon_base_1_0', polygon)
+(OUT / 'summary.json').write_text(json.dumps(summary, indent=1, ensure_ascii=False, default=str), encoding='utf-8')
+print('EDITS_100_NATIVE checks', sorted(summary['checks']), 'errors', sorted(summary['errors']))
+assert not summary['errors'], 'native 1.0 base failed: see summary.json'

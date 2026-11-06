@@ -16,11 +16,18 @@ Selection contract (docs/plans/agr-mcp.md "Контракт выделения")
 `scope: "selection"` takes the current selection explicitly; `checks_070` runs with select=False; the selection
 before the call is restored after it, and a selection that still differs is the error `selection_changed`.
 Errors start with a machine code: handles_required, target_conflict, unknown_handle, scene_mismatch,
-version_mismatch, runtime_missing, unsupported_tool, selection_changed.
-Returns a JSON string: {"ok": true, "result": ..., "runtime_version": ..., "runtime_file": ..., "selection": ...}
-or {"ok": false, "error": "..."}.
+version_mismatch, runtime_missing, unsupported_tool, selection_changed, stale_preview, needs_human.
+
+v2 (#1024 branch 0): plan rows are routed by id (ROUTES) for three bridge tools of the v2 catalogue:
+`agr_check_run` (read/select rows, one Max call for many checks), `agr_op_preview` (an editing row, mode=preview;
+the 1.0 stage buttons too) and `agr_op_apply` (apply of a server-held preview; only the 0.8 rows in APPLY_OVER_MCP,
+anything else is `needs_human`). Every runtime.edits_080/090/100 call passes actor='mcp' when the installed runtime
+accepts `actor` (then the runtime journals the call and the answer says `journaled: true`).
+Returns a JSON string: {"ok": true, "result": ..., "runtime_version": ..., "runtime_file": ..., "selection": ...,
+"doc": ..., "journaled": ...} or {"ok": false, "error": "...", "journaled": ...}.
 """
 import importlib
+import inspect
 import json
 import os
 import sys
@@ -58,6 +65,48 @@ EDITS_090 = {"agr_tex_erm_normal_check": "tex.erm_normal_check", "agr_tex_finish
              "agr_scene_maps_usage": "scene.maps_usage", "agr_light_check": "light.check",
              "agr_qa_procedural_objects": "qa.procedural_objects"}
 RUNTIME_090 = "0.9.0"
+# 0.5.0 diagnostics: runtime.checks_050(<key>, nodes, path) (plan rows of version 0.5, all read).
+ROWS_050 = {"qa.names": "names", "qa.tris": "tris", "tex.check": "textures", "qa.pivot": "pivot",
+            "qa.geojson": "geojson"}
+RUNTIME_050 = "0.5.0"
+# 0.1 / 0.3 read rows served by one runtime function each (FUNCTIONS above).
+ROWS_FN = {"qa.xview": "xview", "qa.matid": "matid", "udim.texel": "texel_preview"}
+ROWS_070 = {"scene.census": "census", "scene.units": "units", "model.perimeter_drop": "perimeter_drop",
+            "tex.material_type": "material_type", "ucx.audit": "ucx_audit", "atlas.sets_count": "sets_count",
+            "qa.fbx_split": "fbx_split", "qa.glass": "glass", "qa.preflight": "preflight",
+            "qa.scene_hygiene": "scene_hygiene", "qa.xform": "xform", "qa.zero_area": "zero_area"}
+READ_080 = ("scene.missing_maps", "qa.package")
+READ_090 = ("tex.erm_normal_check", "udim.slots", "place.maf_checks", "qa.address", "qa.facade_compare",
+            "qa.normals", "qa.sintez", "scene.maps_usage", "light.check", "qa.procedural_objects")
+# AGR Tools 1.0 conveyor (#1024): runtime.edits_100(<row>, "preview", None, nodes, options, actor="mcp").
+# The same 33 ids as runtime.EDITS_100 (a test pins the equality). Over MCP only preview; apply of a 1.0 row is a
+# panel/dock press (owner answers 06.11.2026), so agr_op_apply answers needs_human for them.
+ROWS_100 = ("project.passport", "source.intake", "scene.source_class", "body.prepare", "model.attach_by_material",
+            "model.move_apart", "model.grid_cleanup", "scene.small_parts", "win.place", "win.generate",
+            "model.glass_planes", "body.capsules", "body.roof", "mat.table", "mat.tiles", "tex.plug_colour",
+            "vpm.build", "udim.rescale", "udim.distortion", "tex.dilate", "udim.plugs", "npm.build",
+            "atlas.facade_strip", "npm.to_vpm", "udim.udims_to_ids", "pack.deliver", "ucx.gap", "ucx.stairs",
+            "light.export", "qa.omk_te", "export.place_by_passport", "agent.request", "agent.accept")
+READ_100 = ("scene.source_class", "tex.plug_colour", "udim.distortion", "udim.udims_to_ids", "ucx.stairs",
+            "qa.omk_te")
+# The installed runtime of the base still says VERSION 0.9.0 and already has edits_100; the entry function is the
+# real gate (check_runtime), the minimum only refuses older installs.
+RUNTIME_100 = "0.9.0"
+# row -> (group, key, minimum runtime, entry function)
+ROUTES = {}
+ROUTES.update({r: ("fn", k, EXPECTED_RUNTIME, k) for r, k in ROWS_FN.items()})
+ROUTES.update({r: ("c050", k, RUNTIME_050, "checks_050") for r, k in ROWS_050.items()})
+ROUTES.update({r: ("c070", k, RUNTIME_070, "checks_070") for r, k in ROWS_070.items()})
+ROUTES.update({r: ("e080", r, RUNTIME_080, "edits_080") for r in EDITS_080.values()})
+ROUTES.update({r: ("e090", r, RUNTIME_090, "edits_090") for r in EDITS_090.values()})
+ROUTES.update({r: ("e100", r, RUNTIME_100, "edits_100") for r in ROWS_100})
+READ_ROWS = frozenset(ROWS_FN) | frozenset(ROWS_050) | frozenset(ROWS_070) | frozenset(READ_080) \
+    | frozenset(READ_090) | frozenset(READ_100)
+EDIT_ROWS = frozenset(ROUTES) - READ_ROWS
+# apply allowed over MCP today: the 0.8 additive / rename rows (export copies, new files, one undo record).
+APPLY_OVER_MCP = frozenset(r for r in EDITS_080.values() if r not in READ_080)
+V2_TOOLS = ("agr_check_run", "agr_op_preview", "agr_op_apply")
+_STATE = {"journaled": []}
 
 
 class BridgeError(Exception):
@@ -225,7 +274,45 @@ def _restore_selection(rt, before):
     return sorted(_handle(rt, n) for n in _selection(rt))
 
 
+def _doc(rt):
+    """The open document: full path, or 'untitled' (ObjRef doc, journal doc, preview binding)."""
+    return os.path.join(str(rt.maxFilePath), str(rt.maxFileName)) if str(rt.maxFileName) else "untitled"
+
+
+def accepts_actor(fn):
+    """True when a runtime dispatcher takes `actor` (runtime >= the #1024 base); old runtimes are called without."""
+    try:
+        return "actor" in inspect.signature(fn).parameters
+    except (TypeError, ValueError):
+        return False
+
+
+def _edit(mod, function, row, mode, preview, nodes, options):
+    fn = getattr(mod, function)
+    if accepts_actor(fn):
+        _STATE["journaled"].append(row)  # the runtime journals in a finally, also when it raises
+        return fn(row, mode, preview, nodes, options, actor="mcp")
+    return fn(row, mode, preview, nodes, options)
+
+
+def _guarded(rt, args, body):
+    """Run body() and keep the user's selection: restore it, or fail selection_changed."""
+    before = sorted(_handle(rt, n) for n in _selection(rt))
+    result = body()
+    after = sorted(_handle(rt, n) for n in _selection(rt))
+    restored = False
+    if after != before:
+        after = _restore_selection(rt, before)
+        restored = True
+        if after != before:
+            raise BridgeError("selection_changed", "selection before " + str(before) + ", after restore "
+                              + str(after))
+    return result, {"before_count": len(before), "restored": restored, "scope": args.get("scope") or "handles"}
+
+
 def run(tool, root, args):
+    if tool in V2_TOOLS:
+        return run_v2(tool, root, args)
     minimum, function = requirement(tool)
     if tool in EDITS_090 and (args.get("mode", "preview") != "preview" or args.get("preview") is not None):
         raise ValueError(tool + ": 0.9 rows take only mode=preview over MCP (#979)")
@@ -236,37 +323,97 @@ def run(tool, root, args):
     _check_scene(rt, scene)
     nodes = _targets(rt, args)
     mod = _load_runtime(_resolve_root(rt, root, minimum), minimum, function)
-    before = sorted(_handle(rt, n) for n in _selection(rt))
-    if tool in EDITS_080:
-        result = mod.edits_080(EDITS_080[tool], args.get("mode", "preview"), args.get("preview"), nodes,
-                               args.get("options"))
-    elif tool in EDITS_090:
-        result = mod.edits_090(EDITS_090[tool], "preview", None, nodes, args.get("options"))
-    elif tool in CHECKS_070:
-        result = mod.checks_070(CHECKS_070[tool], nodes, select=False)
+
+    def body():
+        if tool in EDITS_080:
+            return _edit(mod, "edits_080", EDITS_080[tool], args.get("mode", "preview"), args.get("preview"), nodes,
+                         args.get("options"))
+        if tool in EDITS_090:
+            return _edit(mod, "edits_090", EDITS_090[tool], "preview", None, nodes, args.get("options"))
+        if tool in CHECKS_070:
+            return mod.checks_070(CHECKS_070[tool], nodes, select=False)
+        return getattr(mod, function)(nodes)
+    result, selection = _guarded(rt, args, body)
+    return result, {"runtime_version": mod.VERSION, "runtime_file": mod.__file__, "selection": selection,
+                    "doc": _doc(rt)}
+
+
+def _row(row, allowed, what):
+    if not isinstance(row, str) or row not in ROUTES:
+        raise BridgeError("unsupported_tool", "unknown plan row " + repr(row))
+    if row not in allowed:
+        raise BridgeError("unsupported_tool", repr(row) + " is not " + what)
+    return ROUTES[row]
+
+
+def _call_row(mod, row, mode, preview, nodes, options):
+    group, key, _minimum, function = ROUTES[row]
+    if group == "fn":
+        return getattr(mod, key)(nodes)
+    if group == "c050":
+        return mod.checks_050(key, nodes, path=(options or {}).get("path"))
+    if group == "c070":
+        return mod.checks_070(key, nodes, select=False)
+    return _edit(mod, function, row, mode, preview, nodes, options)
+
+
+def run_v2(tool, root, args):
+    """agr_check_run / agr_op_preview / agr_op_apply: plan rows by id (ROUTES), one Max call."""
+    if tool == "agr_check_run":
+        rows = list(args.get("check_ids") or ())
+        if not rows:
+            raise ValueError("check_ids is empty")
+        routes = [_row(r, READ_ROWS, "a read/select row (agr_check_run)") for r in rows]
+        mode = "preview"
     else:
-        result = getattr(mod, function)(nodes)
-    after = sorted(_handle(rt, n) for n in _selection(rt))
-    restored = False
-    if after != before:
-        after = _restore_selection(rt, before)
-        restored = True
-        if after != before:
-            raise BridgeError("selection_changed", "selection before " + str(before) + ", after restore "
-                              + str(after))
-    return result, {"runtime_version": mod.VERSION, "runtime_file": mod.__file__,
-                    "selection": {"before_count": len(before), "restored": restored,
-                                  "scope": args.get("scope") or "handles"}}
+        rows = [args.get("op")]
+        routes = [_row(rows[0], EDIT_ROWS, "an editing row (agr_op_preview/agr_op_apply)")]
+        mode = "apply" if tool == "agr_op_apply" else "preview"
+        if mode == "apply" and rows[0] not in APPLY_OVER_MCP:
+            raise BridgeError("needs_human", "apply of " + rows[0] + " is confirmed only by a button in the "
+                              "AGR Tools panel/dock")
+        if mode == "apply" and not isinstance(args.get("preview"), dict):
+            raise BridgeError("stale_preview", "apply needs the server-held preview report")
+    rt = _rt()
+    scene = args.get("scene")
+    if not isinstance(scene, str) or not scene:
+        raise ValueError("scene is required")
+    _check_scene(rt, scene)
+    expect = args.get("expect") or {}
+    if expect.get("doc") is not None and expect["doc"] != _doc(rt):
+        raise BridgeError("stale_preview", "document changed since the preview: " + str(expect["doc"]) + " -> "
+                          + _doc(rt))
+    nodes = _targets(rt, args)
+    minimum = max((r[2] for r in routes), key=version_key)
+    mod = _load_runtime(_resolve_root(rt, root, minimum), minimum, None)
+    for _group, _key, row_min, function in routes:
+        check_runtime(mod, row_min, function)
+    if expect.get("runtime_version") is not None and expect["runtime_version"] != mod.VERSION:
+        raise BridgeError("stale_preview", "AGR Tools runtime changed since the preview: "
+                          + str(expect["runtime_version"]) + " -> " + str(mod.VERSION))
+    options = args.get("options")
+
+    def body():
+        if tool == "agr_check_run":
+            return {"checks": {r: _call_row(mod, r, "preview", None, nodes, options) for r in rows}}
+        return _call_row(mod, rows[0], mode, args.get("preview") if mode == "apply" else None, nodes,
+                         None if mode == "apply" else options)
+    result, selection = _guarded(rt, args, body)
+    return result, {"runtime_version": mod.VERSION, "runtime_file": mod.__file__, "selection": selection,
+                    "doc": _doc(rt)}
 
 
 def call(tool, root_hex, args_hex):
+    _STATE["journaled"] = []
     try:
         _dedupe_own_path()
         root = bytes.fromhex(str(root_hex)).decode("utf-8")
         args = json.loads(bytes.fromhex(str(args_hex)).decode("utf-8"))
         result, info = run(str(tool), root, args)
-        out = {"ok": True, "result": result}
+        out = {"ok": True, "result": result, "journaled": bool(_STATE["journaled"]),
+               "journaled_rows": list(_STATE["journaled"])}
         out.update(info)
         return json.dumps(out, allow_nan=False)
     except Exception as exc:  # noqa: BLE001 - every failure goes back to the client as a named error
-        return json.dumps({"ok": False, "error": type(exc).__name__ + ": " + str(exc)})
+        return json.dumps({"ok": False, "error": type(exc).__name__ + ": " + str(exc),
+                           "journaled": bool(_STATE["journaled"]), "journaled_rows": list(_STATE["journaled"])})
