@@ -11,8 +11,8 @@
     },
     {
       "path": "docs/PROJECT_STATE.md",
-      "chars": 4518,
-      "tokens": 1315
+      "chars": 4675,
+      "tokens": 1402
     },
     {
       "path": "docs/domain/areas/derivation.md",
@@ -25,5 +25,5 @@
       "tokens": 2355
     }
   ],
-  "total_tokens": 9723
+  "total_tokens": 9810
 }

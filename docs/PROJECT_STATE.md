@@ -9,12 +9,17 @@ NPM and VPM deliveries for buildings, Ground, MAF, Flora and UCX, plus the Unrea
 Reached so far (curated in `docs/PROJECT_STATE.milestones.md`; each line cites its PR or issue):
 - Ground v015 Vatutino NPM + VPM accepted by Artem 2026-11-04 (route A, texel exception D193); merged #906, issue #371.
 - AC08 (TEC26) L4 end to end through the kernel merged #891; absolute invariants refused every op, so relative invariants are in work: issue #968, PR #1006 open.
-- AGR Tools 0.8.0 released 2026-11-05 (tag `agr-tools-v0.8.0`); 0.9 merged on main, not tagged (#979 closed, last #1007).
+- AGR Tools 0.8.0 released 2026-11-05 (tag `agr-tools-v0.8.0`); 0.9.0 released and tagged (`agr-tools-v0.9.0`, #1042; issue #979).
 - AGR Tools test polygon (bases/stations scene, self-test runner) merged #887.
 
 ## In production
 
 PR merges do not imply delivery acceptance. Per-object gates stay in `jobs/<ID>/STATE.md`. Merged pull requests, newest first:
+- `82feaa8` Merge pull request #1025 from artsafro/improve/issue-986-dcc-tests-skip-not-fail-when-the-max-ses
+- `556f655` Merge pull request #1005 from artsafro/improve/issue-972-agr-mcp-locks-stale-reclaim-mutex-unlink
+- `8a401eb` Merge pull request #1008 from artsafro/job/skug26-k5-ac-vpm-texture
+- `fb201de` Merge pull request #1047 from artsafro/improve/issue-1024-lab-l09-l13
+- `9cc8773` Merge pull request #1045 from artsafro/improve/issue-1024-lab-l10-l14
 - `a875254` Merge pull request #1022 from artsafro/feature/library-window-preview
 - `979b973` Merge pull request #805 from artsafro/improve/issue-790-maf-generator-parametric-step-3-tool-fir
 - `1c303f9` Merge pull request #917 from artsafro/improve/issue-817-maf-gen-bench-checks-exit-1-on-any-fail
@@ -22,11 +27,6 @@ PR merges do not imply delivery acceptance. Per-object gates stay in `jobs/<ID>/
 - `933bc9b` Merge pull request #1013 from artsafro/harness/repo-hygiene-code-layout
 - `16be0a8` Merge pull request #1012 from artsafro/docs/state-after-pr1011
 - `52b587c` Merge pull request #1011 from artsafro/harness/repo-hygiene-docs
-- `8866c9a` Merge pull request #1010 from artsafro/harness/repo-hygiene-archive
-- `9576440` Merge pull request #1009 from artsafro/harness/repo-hygiene-cleanup
-- `cb1ad1d` Merge pull request #1007: AGR Tools 0.9 branch E3: rework package/suite (#979)
-- `556ed58` Merge pull request #1001: E3 shared hooks: export.cleanup options in runtime, close census known bug (#979)
-- `81ccace` Merge pull request #1003: branch D follow-up, export.batch on the real qa.procedural_objects (#979)
 
 ## Harness
 
@@ -34,18 +34,18 @@ Capability A (`capability-b01`, codex): benchmark 1 passed / 0 failed / 0 not me
 Capability B (`capability-ticket`, codex): local_pr 0 passed / 1 failed / 0 not measured; procedural 0 passed / 0 failed / 10 not measured; not ready; repository + user skills. Reference: `evals/capability-ticket/reference.json`.
 
 Open pull requests:
-- #982 test: mesh.py acceptance row runs the checker (#965) [improve/issue-965-p3-mesh-py-acceptance-row-test-asserts-a]
-- #989 Methods / building-body: kpp1 on the real АС.03 drawings (#967) [improve/issue-967-methods-building-body-kpp1-on-the-real-0]
-- #991 MAF showcase: colour zones with material IDs for the 13 Vatutino positions (#889) [improve/issue-889-maf-showcase-split-the-13-vatutino-posit]
-- #999 Research: Research: which #979 base-test assertions will still break when branches B/C/E commit their fragments? [docs/research-agr-tools-090-base-tests-fragment-brittleness]
-- #1005 fix: agr-mcp stale reclaim mutex exclusive in every interleaving (#972) [improve/issue-972-agr-mcp-locks-stale-reclaim-mutex-unlink]
-- #1006 AC08 kernel: invariants relative to the source [D197], rerun 19 ops + L4 gates (#968) [improve/issue-968-ac08-kernel-invariants-relative-to-the-s]
-- #1008 job(skug26-k5-ac): VPM 4K conditioner texture, UDIM 1004 — accepted case [job/skug26-k5-ac-vpm-texture]
-- #1023 Improve: DCC tests: stop passing a hard-coded done card id to dcc_batch --card [improve/dcc-tests-no-hardcoded-card-id]
-- #1025 DCC tests: skip when the Max session lock is busy (#986) [improve/issue-986-dcc-tests-skip-not-fail-when-the-max-ses]
-- #1041 test: pick real-delivery archive by pinned hash (#1002) [improve/issue-1002-real-delivery-tests-pick-the-archive-by]
-- #1042 Closes part of #979: AGR Tools 0.9.0 release [improve/issue-979-release] draft
-- #1044 AGR Tools assets: Flora browser, index and import; MAF index (#1024) [improve/issue-1024-assets-flora] draft
+- #1044 AGR Tools assets: Flora + MAF browser/import, unified agent library (#1024) [improve/issue-1024-assets-flora] draft
+- #1048 Improve: agr_tools: test that every by-path sibling module is shipped by the MZP and required by install.ms [improve/agr-tools-sibling-modules-shipped-and-required]
+- #1049 Readiness area 1: cold entry <=10k tokens on a real handoff, PROJECT_STATE milestones (#1015) [improve/issue-1015-readiness-area-1-cold-entry-10k-tokens-o]
+- #1050 Improve: Report (and optionally remove) clean worktrees of done cards that block branch reuse [improve/stale-done-card-worktrees-report]
+- #1051 Improve: dt_ai invariant open_borders_hidden: count borders buried inside another shell of the SAME part as hidden [improve/open-borders-hidden-same-part-shells]
+- #1052 agr-mcp: runtime pin as minimum + selection contract (#1024) [improve/issue-1024-mcp-runtime-pin] draft
+- #1053 Research: Job retro: skug26-k5-ac (PR #1008) [docs/research-job-retro-skug26-k5-ac-pr1008]
+- #1054 maf_gen_bench: remove the rejected forms (slab variant B, seams as geometry) (#819) [improve/issue-819-maf-gen-bench-remove-or-justify-the-reje]
+- #1055 Readiness area 9: Vatutino Ground v015 + AC08 triple in assets/manifest.json, cold retrieval check (#1017) [improve/issue-1017-readiness-area-9-add-vatutino-ground-v01]
+- #1056 Readiness area 6: ucx.triangulate on AC08 v010 copy, SINTEZ rerun, one-sided UCX case (#1016) [improve/issue-1016-readiness-area-6-ucx-triangulate-on-the]
+- #1057 lab 1.0: L11, L15, L12 reports in Max 2026 (Part of #1024) [improve/issue-1024-lab-l11-l15-l12] draft
+- #1058 AGR Tools 1.0 base: stages, contracts, journal, EDITS_100, stage rail, MCP v2, polygon 1.0 (#1024) [improve/issue-1024-agr-tools-1-0-base] draft
 
 ## Next step
 
