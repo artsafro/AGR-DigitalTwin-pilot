@@ -133,8 +133,9 @@ def blockers(results):
 
 
 def merge_objects(reports):
-    """Scene objects of the step reports, one entry per handle, codes prefixed with the step: `<step>/<code>`."""
-    entries = {}
+    """Scene objects of the step reports, one entry per object NAME (the steps use anim or node handles: the
+    first handle seen is kept, a second object with that handle is never made), codes prefixed `<step>/<code>`."""
+    entries, used = {}, set()
     for step, rep in reports:
         if not isinstance(rep, dict):
             continue
@@ -142,11 +143,16 @@ def merge_objects(reports):
             h = o.get('handle')
             if not isinstance(h, int) or isinstance(h, bool) or h <= 0:
                 continue
-            e = entries.setdefault(h, {'handle': h, 'name': str(o.get('name') or h), 'findings': []})
+            name = str(o.get('name') or h)
+            if name not in entries:
+                if h in used:
+                    continue
+                used.add(h)
+                entries[name] = {'handle': h, 'name': name, 'findings': []}
             for f in o.get('findings') or ():
-                e['findings'].append({'code': '{}/{}'.format(step, f.get('code')), 'ids': [],
-                                      'detail': str(f.get('detail', ''))[:300]})
-    return [entries[h] for h in sorted(entries)]
+                entries[name]['findings'].append({'code': '{}/{}'.format(step, f.get('code')), 'ids': [],
+                                                  'detail': str(f.get('detail', ''))[:300]})
+    return sorted(entries.values(), key=lambda e: e['handle'])
 
 
 def run_folder(parent, stamp=None):

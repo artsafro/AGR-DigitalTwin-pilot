@@ -60,7 +60,23 @@
 
 ### S
 
-- `deliver`: `pack.deliver`, `ucx.gap`, `light.export` — в работе.
+Этап 9 «Сдача» (`improve/issue-1024-deliver`): `ucx.gap`, `light.export`, `pack.deliver`.
+
+- `ucx.gap` (1.0.27, copy): зазор между соседними UCX в метрах, 2–10 мм, по умолчанию 4 мм; разделение по SAT
+  (`ucx10_core.py`, `ucx10_max.py`), касание и перекрытие находятся; зазор только увеличивается, никогда не уменьшается;
+  сцена в метрах и в сантиметрах даёт один результат (м = см); пишется на экспортных копиях (слой `AGR_export`),
+  оригиналы и чужие `UCX_*` не меняются. Исправлены дефекты L13 1–5.
+- `light.export` (1.0.29, file): FBX света `<stem>_Light.fbx` (`light_core.py`, раздел «light.export», `light_max.py`);
+  все источники под корнем по иерархии, Omni и Photometric не теряются, поворот Target Spot проверяется readback;
+  FBX 7.4; существующий файл не перезаписывается: новый `_vNNN` или отказ; не зависит от UCX. Исправлены дефекты L13 1–6.
+- `pack.deliver` (1.0.26, read + file): одна кнопка гонит шаги (qa.preflight … qa.sintez, `ucx.gap`, `qa.omk_te`,
+  `light.export`, `export.checked`, `export.zip` → `qa.package`) (`deliver_core.py`, `deliver_max.py`); превью показывает
+  шаги и блокеры; применение пишет только новые файлы в папку `Сдача_<время>`: `deliver.json` и этап 9 в копию паспорта
+  (`passport.json`). При блокерах пишутся только `deliver.json` и копия паспорта (этап 9 `blocked`). Запись паспорта
+  `jobs/<ID>` — за веткой F.
+- Тесты: `tests/max_tools/test_agr_tools_deliver.py` (каждый дефект: RED на модели источника, GREEN на ядрах S);
+  нативный прогон `tests/max_tools/run_agr_tools_deliver_native.py`, станции `test-polygon/stations/S.json` (+ `S_build.py`).
+  Нативные прогоны и номера джобов: джобы: см. PR.
 
 ### T
 

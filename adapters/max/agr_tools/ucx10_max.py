@@ -22,7 +22,8 @@ def _rt():
 
 
 def _handle(n):
-    return int(_rt().getHandleByAnim(n))
+    """Node handle of maxOps.getNodeByHandle (the apply resolves the preview's handles with it)."""
+    return int(n.inode.handle)
 
 
 def _scope(core, nodes):

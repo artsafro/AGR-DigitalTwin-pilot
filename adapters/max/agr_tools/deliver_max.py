@@ -31,11 +31,13 @@ def _handle(n):
 
 
 def _model_nodes(nodes):
+    """Model of export.checked and of the object checks: visible geometry named `SM_*` / `UCX_*` outside layer
+    AGR_export - of the given nodes, else of the scene. Lights and helpers are judged scene-wide by light.check /
+    light.export."""
     rt = _rt()
-    if nodes is not None:
-        return [n for n in nodes if rt.isValidNode(n)]
+    pool = list(rt.objects) if nodes is None else [n for n in nodes if rt.isValidNode(n)]
     out = []
-    for n in rt.objects:
+    for n in pool:
         name = str(n.name)
         if not (name.startswith('SM_') or name.upper().startswith('UCX_')):
             continue

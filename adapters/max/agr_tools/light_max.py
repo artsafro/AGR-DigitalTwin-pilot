@@ -100,7 +100,7 @@ def _rotation(n):
 def _export_rows():
     rt = _rt()
     lights = [n for n in rt.objects if rt.isValidNode(n) and _is_light(n)]
-    rows, helpers, seen = [], [], set()
+    rows, helpers, seen, helper_nodes = [], [], set(), []
     for n in lights:
         row = _row(n)
         row['rot'] = _rotation(n)
@@ -114,8 +114,9 @@ def _export_rows():
         while p is not None and _handle(p) not in seen:
             seen.add(_handle(p))
             helpers.append(_row(p))
+            helper_nodes.append(p)
             p = p.parent
-    return lights, rows, helpers
+    return list(lights) + helper_nodes, rows, helpers
 
 
 def _export_options(ctx, opts):
@@ -148,9 +149,9 @@ def light_export(ctx, mode, nodes, preview):
     rt = _rt()
     opts = core.export_options(ctx.options if mode == 'preview' else preview['plan']['options'])
     opts = _export_options(ctx, opts)
-    lights, rows, helpers = _export_rows()
+    scene_nodes, rows, helpers = _export_rows()
     plan = core.export_plan(rows, helpers, opts)
-    by_handle = {_handle(n): n for n in list(lights) + [rt.maxOps.getNodeByHandle(h['handle']) for h in helpers]}
+    by_handle = {_handle(n): n for n in scene_nodes}  # anim handles, as in the rows (_row)
     export_nodes = [by_handle[h] for h in plan['export']]
     state = _export_state(ctx, export_nodes, plan, opts)
     if mode == 'preview':
