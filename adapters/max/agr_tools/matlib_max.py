@@ -124,17 +124,38 @@ def _physical(spec):
 
 
 def _multisub(name, subs):
+    """One Multi/Sub where slot k IS library id k (slots 1..max id; slots of unused ids stay empty).
+
+    Native jobs 20261106-044745-a019ac0d, -045136-6234cfee, -045542-9027fdbf, -050032-8bd24ced (Max 2024): writing
+    materialIDList (per element or as a whole array) inserts slots or is undone later - after the assignment the list
+    read [3, 7, 12, 31, 39, 1, 2, 4, 5] - and .numsubs reads the highest id. So no id is ever written: the default ids
+    1..N of `multimaterial numsubs:N` are kept and only the sub-materials of the used ids are set."""
     rt = _rt()
-    mm = rt.MultiMaterial(numsubs=len(subs), name=name)
-    set_id = rt.execute('(fn agrSetId m i v = (m.materialIDList[i] = v))')  # local fn: no new global
-    for k, spec in enumerate(subs):
-        set_id(mm, k + 1, int(spec['id']))
-        rt.setSubMtl(mm, k + 1, _physical(spec))
-    got = [int(x) for x in mm.materialIDList]
-    if got != [int(s['id']) for s in subs]:
-        raise RuntimeError('Multi/Sub ids readback {} != {}'.format(got, [s['id'] for s in subs]))
+    ids = [int(s['id']) for s in subs]
+    top = max(ids)
+    mm = rt.MultiMaterial(name=name, numsubs=top)
+    for k in range(1, top + 1):
+        rt.setSubMtl(mm, k, None)
+    for spec in subs:
+        rt.setSubMtl(mm, int(spec['id']), _physical(spec))
+    _check_multisub(mm, subs)
     return mm
 
+
+def _check_multisub(mm, subs):
+    """Readback: ids 1..max, the used slots carry their library materials, the other slots are empty."""
+    rt = _rt()
+    want = {int(s['id']): s['name'] for s in subs}
+    got_ids = [int(x) for x in mm.materialIDList]
+    if got_ids != list(range(1, max(want) + 1)):
+        raise RuntimeError('Multi/Sub ids readback {}'.format(got_ids))
+    used = {}
+    for k in got_ids:
+        sub = rt.getSubMtl(mm, k)
+        if sub is not None and sub != rt.undefined:
+            used[k] = str(sub.name)
+    if used != want:
+        raise RuntimeError('Multi/Sub slots readback {} != {}'.format(used, want))
 
 def mat_table(ctx, mode, nodes, preview):
     core, edit = ctx.core, ctx.edit
@@ -162,10 +183,11 @@ def mat_table(ctx, mode, nodes, preview):
                 rt.setUserProp(n, UDIM_PROP, json.dumps({str(k): v for k, v in sorted(tables[i['name']].items())}))
                 rt.setUserProp(n, LIBRARY_PROP, library['version'])
                 done.append(i['name'])
-        for name in done:  # readback
+        for name in done:  # readback after the assignment (job 20261106-050032-8bd24ced: ids changed after it)
             n = rt.getNodeByName(name)
             if n is None or n.material is None or str(n.material.name) != core.multisub_name(library):
                 raise RuntimeError('mat.table readback: material of {} not assigned'.format(name))
+            _check_multisub(n.material, multisub)
     if passport and table:
         folder = os.path.dirname(passport['path'])
         target = edit.new_path(os.path.join(folder, 'materials_table.json'), version=True)

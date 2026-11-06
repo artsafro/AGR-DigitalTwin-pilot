@@ -313,7 +313,8 @@ def udim_tables(table):
 def report(edit, mode, entries, table, multisub, skipped, library, state_hash=None, done=(), extra=None):
     plan = {'library': {'version': library['version'], 'sha256': library['sha256'],
                         'ral_checked': library['ral_checked']},
-            'table': table, 'multisub': {'name': multisub_name(library), 'ids': [m['id'] for m in multisub]}}
+            'table': table, 'multisub': {'name': multisub_name(library), 'ids': [m['id'] for m in multisub],
+                                         'slots': max([m['id'] for m in multisub] or [0])}}
     plan.update(extra or {})
     if not done:
         done = sorted({row['mesh'] for row in table})

@@ -6,7 +6,7 @@ host (host_max.MaxHost). Import pymxs inside functions so this file loads under 
 
 Which maps: per selected object its user prop `agr_tile` (JSON {base_map, overrides...}) or else the library records
 (recipe greyscale_mask) of its face material IDs; without objects options.maps / options.records, default the whole
-library. Options: library, out_dir, maps, records, px_per_m, period_m, write_normals (default true).
+library. Options: library, out_dir, maps, records, px_per_m, period_m, max_stretch_pct, write_normals (default true).
 preview: checks every base map (module fit, seam, CIEDE2000 of the recoloured mean body for its records' RALs) and
 lists the files apply would write. apply (unaltered preview): a NEW folder (never an existing one), mask/normal per
 base map, D per record (recoloured mask; solid records a 256 px plug), ERM plug per record, PNG readback (raw sha256)
@@ -17,7 +17,7 @@ import os
 import tempfile
 
 TILE_PROP = 'agr_tile'
-GLOBAL = ('px_per_m', 'period_m')
+GLOBAL = ('px_per_m', 'period_m', 'max_stretch_pct')
 
 
 def _rt():

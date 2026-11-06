@@ -16,13 +16,12 @@
   "objects": [
    {"name": "TILE_FragLK3_001", "role": "body", "scene": "frag_l_tiles", "builder": "L_build",
     "extra": {"kind": "ids_box", "ids": [14, 18, 27], "agr_role": "body", "size": [3.6, 3.6, 3.6], "at": [0.0, 0.0, 0.0]}},
-   {"name": "TILE_FragL4m_001", "role": "body", "scene": "frag_l_tiles", "builder": "L_build",
-    "extra": {"kind": "ids_box", "ids": [14], "agr_role": "body", "size": [4.0, 4.0, 4.0], "at": [8.0, 0.0, 0.0],
-              "agr_tile": {"base_map": "facade_600x1200", "period_m": 4.0, "fit": false}}}],
+   {"name": "TILE_FragLBrick_001", "role": "body", "scene": "frag_l_tiles", "builder": "L_build",
+    "extra": {"kind": "ids_box", "ids": [17], "agr_role": "body", "size": [3.6, 3.6, 3.6], "at": [8.0, 0.0, 0.0]}}],
   "expected": [
    {"name": "TILE_FragLK3_001", "scene": "frag_l_tiles", "expect": "pass", "codes": []},
-   {"name": "TILE_FragL4m_001", "scene": "frag_l_tiles", "expect": "fail", "codes": ["module_not_dividing", "not_seamless"]}],
-  "reason": ""},
+   {"name": "TILE_FragLBrick_001", "scene": "frag_l_tiles", "expect": "fail", "codes": ["module_stretched"]}],
+  "reason": "", "options": {"max_stretch_pct": 1.0}},
  {"button": "tex.plug_colour",
   "objects": [
    {"name": "PLUG_FragLOk_001", "role": "decor", "scene": "frag_l_plug", "builder": "L_build",

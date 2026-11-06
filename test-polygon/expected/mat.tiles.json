@@ -15,15 +15,17 @@
    "codes": []
   },
   {
-   "name": "TILE_FragL4m_001",
+   "name": "TILE_FragLBrick_001",
    "scene": "frag_l_tiles",
    "expect": "fail",
    "codes": [
-    "module_not_dividing",
-    "not_seamless"
+    "module_stretched"
    ]
   }
  ],
+ "options": {
+  "max_stretch_pct": 1.0
+ },
  "base": "1.0",
  "station": "1.0.15",
  "stations": [

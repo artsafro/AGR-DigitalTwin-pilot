@@ -4,7 +4,9 @@ build_scene.py calls make(obj, rt) -> node for every L.json object with `"builde
 the station scenes frag_l_* are in metres):
 * {"kind": "ids_box", "ids": [...], "agr_role": role, "size": [w, l, h], "at": [x, y, z], "agr_tile": {...}} - an
   Editable_Mesh box whose 12 faces carry the library ids cyclically (mid-poly ids), user prop agr_role (contract K1)
-  and optionally agr_tile (JSON overrides of mat.tiles);
+  and optionally agr_tile (JSON overrides of mat.tiles). NOTE: build_scene._props (shared) then REPLACES the user prop
+  buffer of every fragment node (native job 20261106-045136-6234cfee: agr_tile/agr_role lost), so the stations use face
+  ids and station options only; agr_tile is covered by run_agr_tools_materials_native.py directly;
 * {"kind": "plug_plane", "texture": file, "pattern": "solid" | "first_blue_10", "rgb": [r, g, b], "at": [x, y, z]} -
   a Plane with a Standard material whose diffuse bitmap is a synthetic 64x64 PNG written beside the polygon output
   (AGR_POLYGON_OUT/l_textures, else a temp folder): `first_blue_10` puts 10 % blue first in scan order (lab L14).
