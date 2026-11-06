@@ -1,13 +1,28 @@
 {
  "schema": 1,
  "button": "tex.plug_colour",
- "tool": null,
+ "tool": "tex.plug_colour",
  "version": "1.0",
- "shipped": false,
+ "shipped": true,
  "select": "named",
- "reason": "станция в работе, #1024, ветка L",
+ "reason": "",
  "apply_status": null,
- "objects": [],
+ "objects": [
+  {
+   "name": "PLUG_FragLOk_001",
+   "scene": "frag_l_plug",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "PLUG_FragLMix_001",
+   "scene": "frag_l_plug",
+   "expect": "fail",
+   "codes": [
+    "plug_spread"
+   ]
+  }
+ ],
  "base": "1.0",
  "station": "1.0.16",
  "stations": [

@@ -88,6 +88,25 @@
 ### L
 
 - `materials`: `mat.table`, `mat.tiles`, `tex.plug_colour` — в работе.
+- `mat.table` (1.0.14, undo): проверяет библиотечные ID на мидполе (`id_not_in_library`, `udim_id_on_geometry` для ID ≥ 1001,
+  `glass_not_on_glass` / `non_glass_on_glass`), строит один Multi/Sub `AGR_Library_v001` из Physical-материалов библиотеки
+  (заменяет `tex.multimat`), пишет user props `agr_udim_table` / `agr_library`; таблица проекта (строки `materials[]` схемы
+  паспорта) — новый файл `materials_table.json` рядом с паспортом (`agr_passport`); UDIM подряд с 1001 в каждом меше
+  (ответ В9); одна запись Undo.
+- `matlib_core.load_library(path)` / `renumber_dense(used_ids, start=1001)` — сигнатуры ветки 0 сохранены.
+- `mat.tiles` (1.0.15, file): 9 серых карт-масок в метрах — 3 из К3 (фасад 600×1200 шов 5, мощение 100×300 шов 5 с
+  перевязкой ½, крошка 1×1 м) и 6 по аудиту материалов (ответ В12: 600×600, 300×300, 900×300, кирпич 250×65 шов 10, сэндвич
+  1,2 м и кассета 0,6 м с вертикальными швами); период = шаг UDIM 3,6 м, px/м = 1024 параметром (Q1 аудита открыт);
+  перекраска lerp(тёмный RAL, RAL, серое) по маске (R тело, G шов), ΔE2000 средней тела ≤ 2; ERM из полей записи, нормаль
+  DirectX из маски; новая папка, PNG readback, `tiles_manifest.json`.
+- `tex.plug_colour` (1.0.16, read): по лаборатории L14 — мода полной гистограммы с весом альфы вместо «первого найденного»,
+  строка 0 читается, ничья — в отчёт, байты файла без гаммы 2,2, PNG/TGA ядром, JPG/BMP/TIF через .NET, исходники не
+  трогаются; поля отчёта по вердикту L14.
+- Библиотека `library/materials/materials_v001.json` (40 записей по аудиту материалов 06.11, указатель `materials.json` с
+  sha256), все RAL — из `tools/materials/ral_classic.json`, кросс-ссылки `maf_v005_id`.
+- `technical_library/texture_tiles/cli.py`: рецепт `greyscale_mask` (тот же генератор `tiles_core`, без второй копии).
+- Полигон: `test-polygon/stations/L.json` + `L_build.py`, PASS+FAIL на каждую кнопку; тесты
+  `tests/max_tools/test_agr_tools_materials.py`, нативный `run_agr_tools_materials_native.py`.
 
 ### M
 
