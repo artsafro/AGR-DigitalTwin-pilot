@@ -1,7 +1,8 @@
 # Библиотека материалов ОКС (#1024, ветка L)
 
-- `materials.json` — указатель: `current` → `materials_v001.json`, `version`, `sha256` файла.
-- `materials_v001.json` — 40 записей по аудиту материалов 06.11 (`GeoAGR-private research/materials-audit-1.0`).
+- `materials.json` — указатель: `current` → `materials_v002.json`, `version`, `sha256` файла.
+- `materials_v001.json` — 40 записей по аудиту материалов 06.11 (`GeoAGR-private research/materials-audit-1.0`); как выпущен в 1.0.0, не меняется.
+- `materials_v002.json` — патч 1.0.1: решения владельца по Q2–Q11 (утро 06.11), одна правка = один коммит.
 
 ## Поля записи
 

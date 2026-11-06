@@ -429,3 +429,27 @@ def test_export_copy_keeps_the_user_prop_buffer(monkeypatch):
     src = N('Kpp_1_VPM_Main', 'agr_udim_table = {"12": 1004}\r\nMapChannel:1 = UV\r\n')
     ((orig, c),) = em.export_copies([src], suffix='_AGR_export_names_')
     assert orig is src and c.name == 'Kpp_1_VPM_Main_AGR_export_names_01' and c.buf == src.buf
+
+
+# ---- materials audit Q2-Q11 (owner answers 06.11 morning) ----------------------------------------------------------
+# Library data of the 1.0.1 patch: materials_v002.json (v001 stays as released), one commit per audit question.
+tl = _load('tiles_core.py', 'agr_tools_tiles_core')
+UDIM_STEP_M = 3.6
+
+
+def test_q2_typical_cassette_is_600x600_and_divides_the_udim_step():
+    """RED before Q2: record 12 used panel_v600 (module 0.6 x the whole 3.6 m, no horizontal joints)."""
+    lib = ml.load_library(str(LIB))
+    rec = next(r for r in lib['materials'] if r['class'] == 'panel' and r['ral'] == '7047' and 'cassette' in r['key'])
+    assert rec['library_id'] == 12 and rec['base_map'] == 'tile_600x600' and 'Q2' not in rec.get('questions', [])
+    s, found = tl.spec(rec['base_map'])
+    assert s['module'] == [0.6, 0.6] and s['counts'] == [6, 6] and s['stretch_pct'] == [0.0, 0.0] and not found
+    for m in s['module']:
+        px = m * s['px_per_m']
+        assert px == round(px) == 600                       # whole pixels at 1000 px/m
+        assert UDIM_STEP_M / m == pytest.approx(6)
+    assert s['size_px'] == 3600
+    # the KPP1 cassette 0.6 x 0.55 is a project texture of KPP: no library base map carries a 0.55 module
+    for r in lib['materials']:
+        if r['base_map']:
+            assert 0.55 not in tl.spec(r['base_map'])[0].get('module_in', [])

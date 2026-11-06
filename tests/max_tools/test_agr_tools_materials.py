@@ -51,7 +51,7 @@ def lib():
 # ==== library (K3) ===============================================================================================
 def test_library_pointer_schema_and_ral(lib):
     ptr = json.loads(LIB.read_text(encoding='utf-8'))
-    assert ptr['current'] == 'materials_v001.json' and lib['version'] == 'v001' == ptr['version']
+    assert ptr['current'] == 'materials_v002.json' and lib['version'] == 'v002' == ptr['version']
     assert lib['sha256'] == ptr['sha256'] and lib['ral_checked']
     assert 30 <= len(lib['materials']) <= 40
     ids = [r['library_id'] for r in lib['materials']]
@@ -91,7 +91,7 @@ def test_library_base_maps_and_maf_cross_reference(lib):
     (lambda d: d['materials'][0].update(roughness=0.5), 'byte 0..255'),
 ])
 def test_library_rejects(mutate, match):
-    doc = json.loads((ROOT / 'library/materials/materials_v001.json').read_text(encoding='utf-8'))
+    doc = json.loads((ROOT / 'library/materials/materials_v002.json').read_text(encoding='utf-8'))
     ral = ml.ral_table(ROOT / 'tools/materials/ral_classic.json')
     mutate(doc)
     with pytest.raises(ValueError, match=match):
@@ -99,8 +99,8 @@ def test_library_rejects(mutate, match):
 
 
 def test_library_pointer_hash_mismatch(tmp_path):
-    src = ROOT / 'library/materials/materials_v001.json'
-    (tmp_path / 'materials_v001.json').write_bytes(src.read_bytes().replace(b'"v001"', b'"v001" ', 1))
+    src = ROOT / 'library/materials/materials_v002.json'
+    (tmp_path / 'materials_v002.json').write_bytes(src.read_bytes().replace(b'"v002"', b'"v002" ', 1))
     (tmp_path / 'materials.json').write_text(LIB.read_text(encoding='utf-8'), encoding='utf-8')
     with pytest.raises(ValueError, match='sha256'):
         ml.load_library(tmp_path / 'materials.json')
@@ -152,7 +152,7 @@ def test_table_midpoly_ids_dense_and_report(lib):
     glass = next(m for m in multisub if m['id'] == 39)
     assert glass['opacity'] == 0.5 and glass['name'] == 'L039_glass_01'
     rep = ml.report(ec, 'preview', entries, table, multisub, skipped, lib, state_hash='s')
-    assert rep['status'] == 'pass' and rep['plan']['multisub']['name'] == 'AGR_Library_v001'
+    assert rep['status'] == 'pass' and rep['plan']['multisub']['name'] == 'AGR_Library_v002'
     assert ec.check_preview('mat.table', rep) is rep
     assert ml.udim_tables(table) == {'BODY_Mid_001': {3: 1001, 7: 1002, 12: 1003, 31: 1004}, 'GLASS_Mid_001': {39: 1001}}
     # passport schema rows
