@@ -610,9 +610,9 @@ def test_icon_entries_svg_from_generator_and_png_from_dir(synthetic_icon_pngs):
 
 def test_package_contents_is_valid_and_complete():
     root = ET.fromstring(builder.package_contents())
-    assert root.tag == 'ApplicationPackage' and root.get('AppVersion') == '1.0.0'
+    assert root.tag == 'ApplicationPackage' and root.get('AppVersion') == '1.0.1'
     assert root.get('UpgradeCode') == '{BA2C2E6E-54F9-402E-8875-3D616C9030FD}'
-    assert root.get('ProductCode') == m.product_code('1.0.0') != m.product_code('0.9.0')
+    assert root.get('ProductCode') == m.product_code('1.0.1') != m.product_code('1.0.0')
     descs = {c.get('Description'): c.find('ComponentEntry').get('ModuleName') for c in root.iter('Components')}
     assert descs == {'macroscripts parts': './Contents/agr_tools/agr_tools.mcr',
                      'post-start-up scripts parts': './Contents/agr_tools/startup.ms',
