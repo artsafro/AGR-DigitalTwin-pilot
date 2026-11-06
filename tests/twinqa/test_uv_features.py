@@ -104,3 +104,29 @@ def test_label_threshold_and_connectivity():
     c = label_features(a, 128)
     assert len(c) == 4
     assert any(np.allclose(p, (1.5, 1.5)) for p in c)
+
+
+def _opaque_with_hole(tmp_path, rows, cols):
+    alpha = np.full((SIZE, SIZE), 255, np.uint8)
+    alpha[rows[0]:rows[1], cols[0]:cols[1]] = 0
+    path = tmp_path / "hole.png"
+    Image.fromarray(np.dstack([np.full((SIZE, SIZE, 3), 128, np.uint8), alpha]), "RGBA").save(path)
+    return path
+
+
+def test_boundary_centroid_is_assigned_once_by_tie_rule(tmp_path):
+    # review P1(1): hole centred at px (128,128) lies on the shared diagonal of Q,0 and Q,1
+    tex = _opaque_with_hole(tmp_path, (124, 132), (124, 132))
+    rows = [_row("Q", 0, 1, [(0.25, 0.25), (0.75, 0.25), (0.75, 0.75)]),
+            _row("Q", 1, 1, [(0.25, 0.25), (0.75, 0.75), (0.25, 0.75)])]
+    for ordered in (rows, list(reversed(rows))):  # tie rule does not depend on row order
+        out = count_features_per_face(ordered, tex, expected={"Q": 0})
+        assert [(f.name, f.data["face"], f.data["count"]) for f in out] == [("uv_features.mismatch", 0, 1)]
+
+
+def test_feature_outside_every_face_is_unassigned_finding(tmp_path):
+    # review P1(2): hole at rows 10..14, cols 200..204 is outside face A (UV square 0..0.5)
+    tex = _opaque_with_hole(tmp_path, (10, 15), (200, 205))
+    out = count_features_per_face([_row("A", 0, 1, _square(0, 0, 0.5, 0.5))], tex, expected={"A": 0}, tile=1001)
+    assert [(f.name, f.status) for f in out] == [("uv_features.unassigned", "fail")]
+    assert out[0].data["count"] == 1 and out[0].data["centroids_px"] == [(202.5, 12.5)]
