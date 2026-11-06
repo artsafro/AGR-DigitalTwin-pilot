@@ -223,11 +223,17 @@ def table_round_trip(units, tag):
     assert rb['materials']['body'] == {'3': 'scene', '7': 'scene'}, rb['materials']
     assert (snap(npm), md5(files['diffuse']), md5(files['table'])) == before, 'NPM / atlas / table changed'
     assert [str(x.name) for x in rt.selection] == [str(npm.name)], 'selection not restored'
+    npm_name = str(npm.name)
+    scene_before = sorted(str(x.name) for x in rt.objects)
     rt.execute('max undo')
+    scene_after = sorted(str(x.name) for x in rt.objects)
+    gone = sorted(set(scene_before) - set(scene_after))
     assert rt.getNodeByName(names['body']) is None and rt.getNodeByName(names['glass']) is None, 'undo kept copies'
-    assert rt.isValidNode(npm)
+    # one undo removes exactly the npm.to_vpm run: the NPM of npm.build and the VPM objects stay
+    assert gone == sorted(names.values()), ('one undo removed more than the run', gone)
+    assert rt.getNodeByName(npm_name) is not None, 'NPM gone after one undo'
     return {'seconds': round(dt, 2), 'uv_max_diff_vs_vpm': worst, 'tris': {k: len(v) for k, v in src.items()},
-            'udim': done['udim'], 'texel_back_vs_vpm': tex, 'copies': names}
+            'udim': done['udim'], 'texel_back_vs_vpm': tex, 'copies': names, 'undo_removed': gone}
 
 
 def table_metres():
