@@ -5,6 +5,7 @@ runtime on the real edit_core / journal_core contract, executed by an in-process
 adapters/max/agr_tools/runtime.py (1.0 stub rows).
 """
 import copy
+import importlib.util
 import json
 import os
 import re
@@ -442,12 +443,30 @@ def test_real_runtime_edits_100_stub_over_mcp(fake_max, monkeypatch, tmp_path):
     not_implemented and the runtime itself writes the one journal line with actor mcp."""
     monkeypatch.setenv("AGR_TOOLS_ROOT", str(AGR))
     monkeypatch.delitem(sys.modules, "runtime", raising=False)
-    _, (res,) = run_calls([("agr_project_passport", {"scene": "live", "handles": [1]})], fake_max.transport)
+    stub = _a_stage_stub()  # branches F..U fill their buttons; the check follows a button that is still a stub
+    if stub is None:
+        pytest.skip("every 1.0 stage button is implemented; the branches' native runs own the behaviour")
+    name = catalog.tool_name(stub)
+    _, (res,) = run_calls([(name, {"scene": "live", "handles": [1]})], fake_max.transport)
     sc = ok2(res)
-    assert sc["result"]["status"] == "not_implemented" and sc["result"]["tool"] == "project.passport"
+    assert sc["result"]["status"] == "not_implemented" and sc["result"]["tool"] == stub
     lines = journal_lines(tmp_path)
-    assert len(lines) == 1 and lines[0]["actor"] == "mcp" and lines[0]["tool"] == "project.passport"
+    assert len(lines) == 1 and lines[0]["actor"] == "mcp" and lines[0]["tool"] == stub
     assert lines[0]["doc"] == fake_max.doc
+
+
+def _a_stage_stub():
+    """The last stage tool (station order) whose glue function is still absent, or None."""
+    import ast
+    spec = importlib.util.spec_from_file_location("agr_runtime_stub_pick", AGR / "runtime.py")
+    rt = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(rt)
+    for row in reversed(catalog.stage_rows(PLAN)):
+        core, fn = rt.EDITS_100[row["id"]]
+        tree = ast.parse((AGR / rt.glue_file(core, rt.GLUE_100)).read_text(encoding="utf-8"))
+        if fn not in {n.name for n in tree.body if isinstance(n, ast.FunctionDef)}:
+            return row["id"]
+    return None
 
 
 # ---- 5. one journal --------------------------------------------------------------------------------------------------
