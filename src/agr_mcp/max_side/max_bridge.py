@@ -2,13 +2,22 @@
 
 The server sends one MAXScript expression that puts this file's folder on sys.path, imports this module and
 calls `call(tool, root_hex, args_hex)`. Arguments travel hex-encoded so no MAXScript string escaping is needed.
-`call` imports the INSTALLED AGR Tools `runtime.py` from `root` (default: userScripts/AGRTools-0.5.0),
-resolves `handles` to nodes and calls exactly one `runtime.*` function: read-only, or a 0.8 edit
+`call` imports the INSTALLED AGR Tools `runtime.py` from `root` (default: the newest userScripts/AGRTools-<x.y.z>
+with a runtime.py), resolves `handles` to nodes and calls exactly one `runtime.*` function: read-only, or a 0.8 edit
 (`edits_080`: preview, or apply of that preview on export copies / new files, #908), or a 0.9 row preview
-(`edits_090`, #979: mode=preview only, changes nothing). Apart from new files
-written by a 0.8 apply, it never opens, saves,
-imports or exports a file and never passes `select=` (plan section 2: the runtime default is kept).
-Returns a JSON string: {"ok": true, "result": ..., "runtime_version": ..., "runtime_file": ...}
+(`edits_090`, #979: mode=preview only, changes nothing). Apart from new files written by a 0.8 apply, it never
+opens, saves, imports or exports a file.
+
+Runtime pin (#1024, mcp-review §2.4.1): a tool group needs a MINIMUM runtime version and its entry function, not
+an exact version, so one installed runtime (0.9.0 and later) serves every group of the catalogue.
+
+Selection contract (docs/plans/agr-mcp.md "Контракт выделения"): empty `handles` without `scope` is the error
+`handles_required` (the runtime is never handed nodes=None, which would mean the user's selection or all geometry);
+`scope: "selection"` takes the current selection explicitly; `checks_070` runs with select=False; the selection
+before the call is restored after it, and a selection that still differs is the error `selection_changed`.
+Errors start with a machine code: handles_required, target_conflict, unknown_handle, scene_mismatch,
+version_mismatch, runtime_missing, unsupported_tool, selection_changed.
+Returns a JSON string: {"ok": true, "result": ..., "runtime_version": ..., "runtime_file": ..., "selection": ...}
 or {"ok": false, "error": "..."}.
 """
 import importlib
@@ -17,7 +26,7 @@ import os
 import sys
 
 FUNCTIONS = {"agr_xview_check": "xview", "agr_matid_check": "matid", "agr_texel_readout": "texel_preview"}
-EXPECTED_RUNTIME = "0.5.0"
+EXPECTED_RUNTIME = "0.5.0"  # minimum runtime of FUNCTIONS (the group pins below are minimums too)
 # AGR Tools 0.7.0 pre-delivery checks (#860): runtime.checks_070(<check>, nodes), read-only, need runtime 0.7.0
 CHECKS_070 = {"agr_scene_census": "census", "agr_scene_units": "units", "agr_model_perimeter_drop": "perimeter_drop",
               "agr_tex_material_type": "material_type", "agr_ucx_audit": "ucx_audit",
@@ -51,6 +60,66 @@ EDITS_090 = {"agr_tex_erm_normal_check": "tex.erm_normal_check", "agr_tex_finish
 RUNTIME_090 = "0.9.0"
 
 
+class BridgeError(Exception):
+    """An error with a machine code: str(exc) == '<code>: <text>'."""
+
+    def __init__(self, code, text):
+        super().__init__(code + ": " + text)
+        self.code = code
+
+
+def requirement(tool):
+    """(minimum runtime version, entry function) a tool needs from the installed runtime."""
+    if tool in CHECKS_070:
+        return RUNTIME_070, "checks_070"
+    if tool in EDITS_080:
+        return RUNTIME_080, "edits_080"
+    if tool in EDITS_090:
+        return RUNTIME_090, "edits_090"
+    if tool in FUNCTIONS:
+        return EXPECTED_RUNTIME, FUNCTIONS[tool]
+    raise BridgeError("unsupported_tool", repr(tool))
+
+
+def version_key(text):
+    """'0.9.0' -> (0, 9, 0); anything else -> None (never compared as a string)."""
+    parts = str(text).split(".")
+    if len(parts) != 3 or not all(p.isdigit() for p in parts):
+        return None
+    return tuple(int(p) for p in parts)
+
+
+def check_runtime(mod, minimum, function):
+    """The loaded runtime is at least `minimum` and has `function`; else version_mismatch."""
+    found = getattr(mod, "VERSION", None)
+    key = version_key(found)
+    if key is None or key < version_key(minimum):
+        raise BridgeError("version_mismatch", "AGR Tools runtime version " + str(found) + " < minimum " + minimum
+                          + " (" + str(getattr(mod, "__file__", None)) + ")")
+    if function and not callable(getattr(mod, function, None)):
+        raise BridgeError("version_mismatch", "AGR Tools runtime " + str(found) + " at "
+                          + str(getattr(mod, "__file__", None)) + " has no " + function)
+
+
+def default_root(scripts_dir, minimum):
+    """Newest <scripts_dir>/AGRTools-<x.y.z> holding a runtime.py with a version >= minimum, else None."""
+    best = None
+    try:
+        names = os.listdir(scripts_dir)
+    except OSError:
+        return None
+    for name in names:
+        if not name.startswith("AGRTools-"):
+            continue
+        key = version_key(name[len("AGRTools-"):])
+        path = os.path.join(scripts_dir, name)
+        if key is None or key < version_key(minimum) or not os.path.isfile(os.path.join(path, "runtime.py")):
+            continue
+        if best is None or key > best[0]:
+            best = (key, path)
+    return best[1] if best else None
+
+
 def _rt():
     from pymxs import runtime
     return runtime
@@ -70,24 +139,38 @@ def _dedupe_own_path():
             seen = True
 
 
-def _load_runtime(root, expected=EXPECTED_RUNTIME):
+def _load_runtime(root, minimum=EXPECTED_RUNTIME, function=None):
     target = os.path.join(root, "runtime.py")
     if not os.path.isfile(target):
-        raise FileNotFoundError("AGR Tools runtime.py not installed at " + target)
+        raise BridgeError("runtime_missing", "AGR Tools runtime.py not installed at " + target)
     mod = sys.modules.get("runtime")
     if mod is not None and _norm(getattr(mod, "__file__", "") or "") != _norm(target):
-        raise RuntimeError("another module named runtime is loaded from " + str(getattr(mod, "__file__", None))
-                           + "; restart Max or point AGR_TOOLS_ROOT at it")
+        raise BridgeError("version_mismatch", "another module named runtime is loaded from "
+                          + str(getattr(mod, "__file__", None)) + "; restart Max or point AGR_TOOLS_ROOT at it")
     if mod is None:
         if not any(p and _norm(p) == _norm(root) for p in sys.path):
             sys.path.insert(0, root)
         mod = importlib.import_module("runtime")
         if _norm(mod.__file__) != _norm(target):
-            raise RuntimeError("imported runtime from " + str(mod.__file__) + ", expected " + target)
-    if getattr(mod, "VERSION", None) != expected:
-        raise RuntimeError("AGR Tools runtime version " + str(getattr(mod, "VERSION", None))
-                           + " != " + expected)
+            raise BridgeError("version_mismatch", "imported runtime from " + str(mod.__file__) + ", expected " + target)
+    check_runtime(mod, minimum, function)
     return mod
+
+
+def _resolve_root(rt, root, minimum):
+    """AGR_TOOLS_ROOT when given; else the folder of an already loaded AGR Tools runtime; else the newest install."""
+    if root:
+        return root
+    mod = sys.modules.get("runtime")
+    loaded = os.path.dirname(getattr(mod, "__file__", "") or "") if mod is not None else ""
+    if loaded and os.path.basename(loaded).startswith("AGRTools-"):
+        return loaded
+    scripts = str(rt.getDir(rt.name("userScripts")))
+    found = default_root(scripts, minimum)
+    if not found:
+        raise BridgeError("runtime_missing", "no AGR Tools >= " + minimum + " installed under " + scripts
+                          + " (AGRTools-<x.y.z>/runtime.py); set AGR_TOOLS_ROOT")
+    return found
 
 
 def _check_scene(rt, scene):
@@ -95,51 +178,84 @@ def _check_scene(rt, scene):
         return
     current = os.path.join(str(rt.maxFilePath), str(rt.maxFileName)) if str(rt.maxFileName) else ""
     if not current or _norm(scene) != _norm(current):
-        raise ValueError("scene mismatch: requested " + scene + ", open document is " + (current or "<untitled>"))
+        raise BridgeError("scene_mismatch", "requested " + scene + ", open document is " + (current or "<untitled>"))
 
 
-def _nodes(rt, handles):
+def _selection(rt):
+    return [n for n in rt.selection]
+
+
+def _handle(rt, node):
+    return int(rt.getHandleByAnim(node))
+
+
+def _targets(rt, args):
+    """Explicit node list for the runtime, never None (plan: Контракт выделения)."""
+    handles = list(args.get("handles") or [])
+    scope = args.get("scope")
+    if handles and scope:
+        raise BridgeError("target_conflict", "handles and scope=" + str(scope) + " are two target sources")
+    if scope == "selection":
+        nodes = _selection(rt)
+        if not nodes:
+            raise BridgeError("handles_required", "scope=selection but nothing is selected")
+        return nodes
+    if scope is not None:
+        raise BridgeError("target_conflict", "unknown scope " + repr(scope))
     if not handles:
-        return None
+        raise BridgeError("handles_required", "pass node handles (or scope=selection); an empty target set "
+                          "would take the user's selection or all geometry")
     nodes = []
     for h in handles:
         n = rt.maxOps.getNodeByHandle(int(h))
         if n is None or not rt.isValidNode(n):
-            raise ValueError("unknown node handle " + str(h))
+            raise BridgeError("unknown_handle", "unknown node handle " + str(h))
         nodes.append(n)
     return nodes
 
 
+def _restore_selection(rt, before):
+    """Put the selection back to `before` (list of handles); returns the handles selected afterwards."""
+    live = [rt.maxOps.getNodeByHandle(h) for h in before]
+    live = [n for n in live if n is not None and rt.isValidNode(n)]
+    rt.clearSelection()
+    if live:
+        rt.select(live)
+    return sorted(_handle(rt, n) for n in _selection(rt))
+
+
 def run(tool, root, args):
-    if tool not in FUNCTIONS and tool not in CHECKS_070 and tool not in EDITS_080 and tool not in EDITS_090:
-        raise ValueError("unsupported tool " + repr(tool))
+    minimum, function = requirement(tool)
     if tool in EDITS_090 and (args.get("mode", "preview") != "preview" or args.get("preview") is not None):
         raise ValueError(tool + ": 0.9 rows take only mode=preview over MCP (#979)")
-    expected = (RUNTIME_070 if tool in CHECKS_070 else RUNTIME_080 if tool in EDITS_080
-                else RUNTIME_090 if tool in EDITS_090 else EXPECTED_RUNTIME)
     rt = _rt()
     scene = args.get("scene")
     if not isinstance(scene, str) or not scene:
         raise ValueError("scene is required")
     _check_scene(rt, scene)
-    if not root:
-        root = os.path.join(str(rt.getDir(rt.name("userScripts"))), "AGRTools-" + expected)
-    mod = _load_runtime(root, expected)
+    nodes = _targets(rt, args)
+    mod = _load_runtime(_resolve_root(rt, root, minimum), minimum, function)
+    before = sorted(_handle(rt, n) for n in _selection(rt))
     if tool in EDITS_080:
-        if not hasattr(mod, "edits_080"):
-            raise RuntimeError("AGR Tools runtime at " + str(mod.__file__) + " has no edits_080 (0.8 base, #908)")
-        result = mod.edits_080(EDITS_080[tool], args.get("mode", "preview"), args.get("preview"),
-                               _nodes(rt, args.get("handles") or []), args.get("options"))
-    elif tool in EDITS_090:
-        if not hasattr(mod, "edits_090"):
-            raise RuntimeError("AGR Tools runtime at " + str(mod.__file__) + " has no edits_090 (0.9 base, #979)")
-        result = mod.edits_090(EDITS_090[tool], "preview", None, _nodes(rt, args.get("handles") or []),
+        result = mod.edits_080(EDITS_080[tool], args.get("mode", "preview"), args.get("preview"), nodes,
                                args.get("options"))
+    elif tool in EDITS_090:
+        result = mod.edits_090(EDITS_090[tool], "preview", None, nodes, args.get("options"))
     elif tool in CHECKS_070:
-        result = mod.checks_070(CHECKS_070[tool], _nodes(rt, args.get("handles") or []))
+        result = mod.checks_070(CHECKS_070[tool], nodes, select=False)
     else:
-        result = getattr(mod, FUNCTIONS[tool])(_nodes(rt, args.get("handles") or []))
-    return result, {"runtime_version": mod.VERSION, "runtime_file": mod.__file__}
+        result = getattr(mod, function)(nodes)
+    after = sorted(_handle(rt, n) for n in _selection(rt))
+    restored = False
+    if after != before:
+        after = _restore_selection(rt, before)
+        restored = True
+        if after != before:
+            raise BridgeError("selection_changed", "selection before " + str(before) + ", after restore "
+                              + str(after))
+    return result, {"runtime_version": mod.VERSION, "runtime_file": mod.__file__,
+                    "selection": {"before_count": len(before), "restored": restored,
+                                  "scope": args.get("scope") or "handles"}}
 
 
 def call(tool, root_hex, args_hex):
