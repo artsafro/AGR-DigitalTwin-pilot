@@ -151,8 +151,11 @@ def vpm_metres():
     rt.execute('max undo')
     gone = [c for c in again['plan']['copies'] if rt.getNodeByName(c) is not None]
     assert not gone, 'one undo did not remove the run: ' + repr(gone)
-    assert rt.isValidNode(n) and mesh_hash(n) == before
-    return {'rows': vpm_rows(app), 'seconds': round(dt, 2), 'steps': app['plan']['steps'],
+    # 3dsmaxbatch merges every undo record of one python.ExecuteFile (job 20261105-003249-e0800495, #908), so this
+    # undo also takes the setup (convertToPoly, modifier) away: recorded, not asserted; the source was checked
+    # unchanged after apply above, and isolation from earlier user steps is the interactive smoke of branch R.
+    source_after_undo = 'valid' if rt.isValidNode(n) else 'removed with the merged setup record'
+    return {'source_after_undo': source_after_undo,'rows': vpm_rows(app), 'seconds': round(dt, 2), 'steps': app['plan']['steps'],
             'out_dir': app['plan']['out_dir'], 'second_out_dir': again['plan']['out_dir'], 'stack_kept': st,
             'renumber': app['plan']['renumber'], 'fold_max_px': parts['body']['readback']['seam_fold_max_px']}
 
