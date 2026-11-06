@@ -9,7 +9,9 @@ alpha < ``alpha_threshold``; it belongs to a face when its centroid (pixel centr
 face's UV polygon mapped into the face's own UDIM tile. Only problems are findings, all ``fail``:
 empty input, unreadable texture or no alpha channel, invalid/duplicated rows, faces outside the
 expected tile, a count different from ``expected``, a face with no expected key and an expected key
-that matched no face. Zero findings means every face was checked and matched.
+that matched no face, and features covered by no face (``uv_features.unassigned``, with centroids).
+A feature whose centroid lies only on face boundaries counts once, for the covering face with the
+smallest (name, face). Zero findings means every face was checked and matched.
 
 Texel density is not computed here: a UV dump has no 3D positions; use
 ``dt_ai.ops.texel_density_readout`` for that.
@@ -111,6 +113,34 @@ def _load_alpha(texture_path):
         return np.asarray(img.getchannel("A"))
 
 
+def assign_features(centroids, polys):
+    """Per-polygon feature counts and the centroids no polygon covers.
+
+    polys: [(name, face, shapely polygon in pixel space)]. A centroid strictly inside polygons counts
+    for every polygon containing it (stacked UVs share texture features, as in uvverify.py). A centroid
+    only on boundaries (shared edge or vertex) counts once, for the covering face with the smallest
+    (name, face): the deterministic tie rule. A centroid covered by no polygon is returned as an
+    (x, y) pixel pair in the unassigned list, never dropped.
+    """
+    counts = [0] * len(polys)
+    unassigned = []
+    if not len(centroids):
+        return counts, unassigned
+    xs, ys = centroids[:, 0], centroids[:, 1]
+    inside = [shapely.contains_xy(p, xs, ys) for _, _, p in polys]
+    covers = [shapely.intersects_xy(p, xs, ys) for _, _, p in polys]  # point-in-or-on-boundary
+    order = sorted(range(len(polys)), key=lambda i: (polys[i][0], polys[i][1]))
+    for j in range(len(centroids)):
+        hits = [i for i in range(len(polys)) if inside[i][j]]
+        if not hits:
+            hits = [i for i in order if covers[i][j]][:1]
+        if not hits:
+            unassigned.append((round(float(xs[j]), 3), round(float(ys[j]), 3)))
+        for i in hits:
+            counts[i] += 1
+    return counts, unassigned
+
+
 def count_features_per_face(uv_rows, texture_path, *, alpha_threshold=128, expected=None, tile=None):
     """Findings for a UV dump against a texture; [] means all faces checked and matched.
 
@@ -150,7 +180,7 @@ def count_features_per_face(uv_rows, texture_path, *, alpha_threshold=128, expec
             continue
         seen.add((f.name, f.face))
         faces.append(f)
-    used_keys = set()
+    placed = []  # (face, ident, polygon in pixel space)
     for f in faces:
         ident = {"name": f.name, "face": f.face, "material": f.material}
         own = udim_of(f.uv)
@@ -165,8 +195,14 @@ def count_features_per_face(uv_rows, texture_path, *, alpha_threshold=128, expec
         if not all(tu - EPS <= u <= tu + 1 + EPS and tv - EPS <= v <= tv + 1 + EPS for u, v in f.uv):
             findings.append(_fail("uv_features.cross_tile", f"{f.name} face {f.face}: vertex leaves tile {own}",
                                   f"all vertices in tile {own}", {**ident, "tile": own}, UDIM_PAGES))
-        poly = shapely.Polygon([((u - tu) * w, (1 - (v - tv)) * h) for u, v in f.uv])
-        count = int(shapely.contains_xy(poly, centroids[:, 0], centroids[:, 1]).sum()) if len(centroids) else 0
+        placed.append((f, ident, shapely.Polygon([((u - tu) * w, (1 - (v - tv)) * h) for u, v in f.uv])))
+    counts, unassigned = assign_features(centroids, [(f.name, f.face, poly) for f, _, poly in placed])
+    if unassigned:
+        findings.append(_fail("uv_features.unassigned", f"{len(unassigned)} feature(s) inside no face polygon",
+                              "every feature inside or on the boundary of a face",
+                              {"count": len(unassigned), "centroids_px": unassigned}))
+    used_keys = set()
+    for (f, ident, _), count in zip(placed, counts):
         if not expected:
             continue
         key = f.name if f.name in expected else f.material if f.material in expected else None

@@ -77,7 +77,8 @@ def test_fail_closed_inputs(tmp_path, csv):
         "uv_features.texture"]
     nan = _row("A", 0, 1, A_UV).replace("0.050000", "nan", 1)
     out = count_features_per_face([nan, _row("A", 0, 1, A_UV), _row("A", 0, 1, A_UV)], tex)
-    assert [f.name for f in out] == ["uv_features.invalid_row", "uv_features.duplicate_face"]
+    assert [f.name for f in out] == ["uv_features.invalid_row", "uv_features.duplicate_face",
+                                     "uv_features.unassigned"]  # island B holes: no B face given
     # unmapped face and unused expected key are errors naming them, never a default
     out = count_features_per_face(read_uv_csv(csv), tex, expected={"A": 3, "Z": 1})
     assert sorted(f.name for f in out) == ["uv_features.expected_unused", "uv_features.unmapped"]
@@ -91,7 +92,7 @@ def test_fail_closed_inputs(tmp_path, csv):
 def test_cross_tile_vertex(tmp_path):
     rows = [_row("A", 0, 1, [(0.5, 0.5), (1.2, 0.5), (0.5, 0.9)])]
     out = count_features_per_face(rows, _texture(tmp_path), tile=1001)
-    assert [f.name for f in out] == ["uv_features.cross_tile"]
+    assert [f.name for f in out] == ["uv_features.cross_tile", "uv_features.unassigned"]
 
 
 def test_label_threshold_and_connectivity():
