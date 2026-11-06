@@ -298,3 +298,18 @@ def test_density_default_1000_px_per_m_everywhere():
     # every module of the facade set lies whole in the 3.6 m period at 1000 px/m: 600 mm = 600 px, 1.2 m = 1200 px
     for module_m in (0.6, 1.2, 0.3, 0.9, 3.6):
         assert (module_m * 1000.0) == int(module_m * 1000.0 + 0.5) and (3.6 / module_m) == pytest.approx(round(3.6 / module_m))
+
+
+# ---- stage 9: ucx.rename reads the pieces of the UCX builder --------------------------------------------------------
+def test_ucx_rename_reads_builder_pieces():
+    """RED on 1.0.0: «UCX name without _Main/_Ground: UCX_SM_Kpp_1_Main_AGR_ucx__01» - 98 of 98 KPP1 pieces skipped."""
+    nc = _load('names_core.py', 'agr_tools_names_core')
+    uc = _load('ucx_core.py', 'agr_tools_ucx_core')
+    _export, pieces = uc.ucx_export_names('SM_Kpp_1_Main', 12)
+    assert pieces[0] == 'UCX_SM_Kpp_1_Main_AGR_ucx__01'
+    plan = nc.ucx_plan([{'key': i, 'name': n, 'geometry': True} for i, n in enumerate(pieces)])
+    assert not plan['skipped'] and not plan['errors']
+    assert [r['new'] for r in plan['rename']] == ['UCX_SM_Kpp_1_Main_{:03d}'.format(i) for i in range(1, 13)]
+    assert nc.parse_ucx('UCX_SM_Kpp_1_Main_AGR_ucx__07') == {'address': 'Kpp_1', 'kind': 'Main', 'number': 7,
+                                                             'canonical': False}
+    assert isinstance(nc.parse_ucx('UCX_SM_Kpp_1_Roof_AGR_ucx__01'), str)    # still needs _Main / _Ground
