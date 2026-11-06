@@ -8,6 +8,8 @@ import sys
 from pathlib import Path
 
 import max_job
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+from dt_ai.core.max_env import max_child_env  # noqa: E402
 
 SCRIPTS = Path(os.environ.get("AGR_KANBAN_SCRIPTS", "C:/Users/artsafro/hermes_kanban/scripts"))
 
@@ -22,7 +24,7 @@ def max_batch_path():
 
 def _call(args):
     return subprocess.run([sys.executable, *map(str, args)], capture_output=True, text=True,
-                          encoding="utf-8", errors="replace", check=False, timeout=750)
+                          encoding="utf-8", errors="replace", check=False, timeout=750, env=max_child_env())
 
 
 class BatchAdapter:
