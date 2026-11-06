@@ -80,7 +80,10 @@ MAX_IN = {"type": "object", "required": ["scene"], "additionalProperties": False
                                    "description": "'live' (the pinned open Max document) or its exact path"},
                          "handles": {"type": "array", "uniqueItems": True,
                                      "items": {"type": "integer", "minimum": 1},
-                                     "description": "node handles; empty = runtime._targets (selection or all geometry)"}}}
+                                     "description": "node handles to check; required unless scope=selection "
+                                                    "(empty without scope is the error handles_required)"},
+                         "scope": {"enum": ["selection"],
+                                   "description": "take the current Max selection as targets; never with handles"}}}
 MAX_OUT = {"type": "object", "required": ["schema", "tool", "status", "objects"],
            "properties": {"schema": {"const": 1}, "tool": {"type": "string"}, "status": {"enum": ["pass", "fail"]},
                           "objects": {"type": "array", "items": {
@@ -164,8 +167,18 @@ def _max_timeout(_args: dict) -> float:
 
 
 # ---- handlers -------------------------------------------------------------------------------------------
+def check_targets(args: dict) -> None:
+    """Selection contract (docs/plans/agr-mcp.md): refuse before Max is called."""
+    if args.get("handles") and args.get("scope"):
+        raise ValueError("target_conflict: handles and scope are two target sources")
+    if not args.get("handles") and args.get("scope") != "selection":
+        raise ValueError("handles_required: pass node handles or scope=selection; an empty target set would take "
+                         "the user's selection or all geometry")
+
+
 def _max_tool(tool: str, transport=None):
     def handler(args: dict):
+        check_targets(args)
         payload = max_pipe.call_bridge(tool, args, MAX_TIMEOUT, transport=transport)
         return payload["result"]
     return handler
@@ -252,7 +265,7 @@ EDITS_080 = (
     ("agr_export_pivot_place", "export.pivot_place", "pivot and placement on export copies", "additive"),
     ("agr_export_zip", "export.zip", "write a new NPM/VPM ZIP with size limits, checked before and after", "additive"),
 )
-_LOCATE = {"scene": MAX_IN["properties"]["scene"], "handles": MAX_IN["properties"]["handles"]}
+_LOCATE = {k: MAX_IN["properties"][k] for k in ("scene", "handles", "scope")}
 _OPTIONS = {"type": "object", "description": "tool options (paths, profile); recorded in the preview"}
 READ_080_IN = {"type": "object", "required": ["scene"], "additionalProperties": False,
                "properties": dict(_LOCATE, options=_OPTIONS)}
@@ -300,12 +313,12 @@ EDIT_090_IN = {"type": "object", "required": ["scene"], "additionalProperties": 
 
 def catalog(unsafe: bool = False, max_transport=None) -> dict[str, Spec]:
     specs = [
-        Spec("agr_xview_check", "AGR Tools runtime.xview in the pinned open 3ds Max (selection-modifying: the "
-             "runtime selects nodes with findings; geometry and files untouched).",
+        Spec("agr_xview_check", "AGR Tools runtime.xview in the pinned open 3ds Max (read-only: the selection "
+             "before the call is restored; geometry and files untouched).",
              MAX_IN, MAX_OUT, _max_tool("agr_xview_check", max_transport), _const("max-live"),
              timeout=_max_timeout),
-        Spec("agr_matid_check", "AGR Tools runtime.matid in the pinned open 3ds Max (selection-modifying, "
-             "as agr_xview_check).", MAX_IN, MAX_OUT, _max_tool("agr_matid_check", max_transport),
+        Spec("agr_matid_check", "AGR Tools runtime.matid in the pinned open 3ds Max (read-only, selection "
+             "restored as agr_xview_check).", MAX_IN, MAX_OUT, _max_tool("agr_matid_check", max_transport),
              _const("max-live"), timeout=_max_timeout),
         Spec("agr_texel_readout", "AGR Tools runtime.texel_preview in the pinned open 3ds Max (read-only).",
              MAX_IN, TEXEL_OUT, _max_tool("agr_texel_readout", max_transport), _const("max-live"),
@@ -344,7 +357,7 @@ def catalog(unsafe: bool = False, max_transport=None) -> dict[str, Spec]:
     ]
     for name, what in CHECKS_070:
         specs.append(Spec(name, "AGR Tools 0.7.0 runtime.checks_070 '{}' in the pinned open 3ds Max: {} (read-only; "
-                          "selects nodes with findings, geometry and files untouched; needs runtime 0.7.0)."
+                          "select=False, selection unchanged, geometry and files untouched; needs runtime >= 0.7.0)."
                           .format(name.split("_", 2)[2] if name != "agr_ucx_audit" else "ucx_audit", what),
                           MAX_IN, MAX_OUT, _max_tool(name, max_transport), _const("max-live"),
                           timeout=_max_timeout))
