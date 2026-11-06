@@ -1,7 +1,7 @@
 # Библиотека материалов ОКС (#1024, ветка L)
 
 - `materials.json` — указатель: `current` → `materials_v001.json`, `version`, `sha256` файла.
-- `materials_v001.json` — 40 записей по аудиту материалов 06.11 (`GeoAGR-private research/materials-audit-1.0`).
+- `materials_v001.json` — 41 запись: 40 по аудиту материалов 06.11 (`GeoAGR-private research/materials-audit-1.0`) + 41 `larch_light_oak_boards` [D202].
 
 ## Поля записи
 
