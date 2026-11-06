@@ -24,7 +24,7 @@ import re
 
 TOOL = 'vpm.build'
 OPTION_KEYS = {'address', 'grid_zero_m', 'step_m', 'period_by_id', 'tile_px', 'texel_px_per_m', 'projected_ids', 'glass_ids',
-               'unroll', 'out_dir', 'library_path'}
+               'unroll', 'out_dir', 'library_path', 'map_dir'}
 GLASS_SUFFIX = '_glass'
 
 
@@ -79,7 +79,8 @@ def options(opts):
         raise ValueError('options.tile_px must be a positive integer')
     if not isinstance(out['unroll'], bool):
         raise ValueError('options.unroll must be true or false')
-    for key in ('out_dir', 'library_path'):
+    out['map_dir'] = opts.get('map_dir')
+    for key in ('out_dir', 'library_path', 'map_dir'):
         if out[key] is not None and (not isinstance(out[key], str) or not out[key].strip()):
             raise ValueError('options.{} must be a path'.format(key))
     # 1.0.1 (KPP1 e2e): the maps of step 6 are named T_<Address>_<map>_<slot>.<UDIM>.png (names_core); a working

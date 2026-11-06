@@ -29,6 +29,7 @@ KIND_ROLE = {'D': 'diffuse', 'ERM': 'metalness', 'N': 'normal'}
 FLAT_NORMAL = (128, 128, 255)
 DEFAULT_SIZE = 1024          # placeholder ceiling (VPM tiles are 1000 px/m, 3600 px); a solid record needs no more
 SOLID_SIZE = 256             # solid colour: flat placeholder size (VPM flat_placeholder.size_px)
+MASK_SUFFIX = '_mask.png'    # grey mask file of mat.tiles (tiles_max): <base_map>_mask.png
 
 
 def _sibling(module_name, filename):
@@ -123,8 +124,14 @@ def _record_maps(record, size, opts, read):
     kind = recipe.get('kind') if isinstance(recipe, dict) else recipe
     base = record.get('base_map')
     if kind in ('metric_pattern', 'greyscale_mask') and base:
-        path = os.path.join(opts['map_dir'], base) if opts.get('map_dir') else None
-        data = read(path) if path else None
+        data = None
+        if opts.get('map_dir'):
+            # 1.0.1 (KPP1 e2e 20261106-102522-ac59f4c6): mat.tiles (branch L, tiles_max) writes the grey mask as
+            # <base>_mask.png; the bare name and <base>.png are read as well
+            for name in (base + MASK_SUFFIX, base, base + '.png'):
+                data = read(os.path.join(opts['map_dir'], name))
+                if data is not None:
+                    break
         if data is None or data[:8] != tc.PNG_SIG:
             reason = 'base map {!r} of {} not found as PNG in map_dir: Diffuse/Normal skipped, nothing guessed'.format(
                 base, record.get('key'))

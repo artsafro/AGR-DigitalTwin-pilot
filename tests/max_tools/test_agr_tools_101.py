@@ -606,3 +606,25 @@ def test_q11_joint_5_mm_is_approved_for_paving_100x300_and_tile_600x1200():
     lib = ml.load_library(str(LIB))
     for lid in (14, 18):
         assert 'Q11' not in lib['by_id'][lid].get('questions', []) and 'Q11' in lib['by_id'][lid]['note']
+
+
+def test_vpm_maps_read_the_grey_masks_of_mat_tiles(tmp_path):
+    """RED on 1.0.1-pre (KPP1 e2e 20261106-102522-ac59f4c6): D and N of the mask recipes (panels, cassette, tile)
+    were skipped «base map 'panel_v600' ... not found as PNG in map_dir» - mat.tiles writes <base>_mask.png and
+    vpm.build did not pass a map_dir at all."""
+    vpm = _load('vpm_core.py', 'agr_tools_vpm_core')
+    lib = ml.load_library(str(LIB))
+    masks = tmp_path / 'tiles'
+    masks.mkdir()
+    grey = bytearray()
+    for y in range(8):
+        for x in range(8):
+            grey += bytes([255 if x % 4 else 0] * 3)
+    base = lib['by_id'][12]['base_map']                                                      # the cassette mask
+    (masks / (base + '_mask.png')).write_bytes(tc.encode_png(tc.Image(8, 8, 3, grey)))     # name as tiles_max
+    o = vpm.options({'address': 'Kpp_1', 'map_dir': str(masks)})
+    assert o['map_dir'] == str(masks)
+    res = vc.plan_maps({'SM_Kpp_1_Main': {12: 1001}}, lib, str(tmp_path / 'o'), {'map_dir': o['map_dir']})
+    assert sorted(m['kind'] for m in res['maps']) == ['D', 'ERM', 'N'] and not res['skipped']
+    src = (PKG / 'vpm_max.py').read_text(encoding='utf-8')
+    assert src.count('_maps_options(o)') == 2

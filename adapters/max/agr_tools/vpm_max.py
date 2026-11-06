@@ -66,6 +66,11 @@ def _library(ctx, o):
         return None, 'matlib_core.load_library is a stub of branch L (#1024): no maps written'
 
 
+def _maps_options(o):
+    """Options of vpmmaps_core for step 6: the folder of the grey masks of mat.tiles (options.map_dir), else none."""
+    return {'map_dir': o['map_dir']} if o.get('map_dir') else None
+
+
 def _steps(maps_reason, file_reason):
     return [{'step': 1, 'name': 'UV: K6 projection, perimeter unroll', 'status': 'done'},
             {'step': 2, 'name': 'texel (udim.rescale rule)', 'status': 'done'},
@@ -139,7 +144,7 @@ def vpm_build(ctx, mode, nodes, preview):
         # in the preview and BEFORE the copies of apply (was: copies and vpm_table.json written, then a refusal)
         vm = ctx.agr._load_core('vpmmaps_core.py', 'agr_tools_vpmmaps_core')
         try:
-            mp = vm.plan_maps(core.maps_table(plan), library, os.path.join(out_dir, 'maps'))
+            mp = vm.plan_maps(core.maps_table(plan), library, os.path.join(out_dir, 'maps'), _maps_options(o))
             maps_planned = {'maps': len(mp['maps']), 'skipped': len(mp['skipped']),
                             'names': sorted(m['name'] for m in mp['maps'])[:6]}
         except ValueError as exc:
@@ -207,7 +212,7 @@ def vpm_build(ctx, mode, nodes, preview):
         extra['out_dir'] = folder
         if library is not None:
             vm = ctx.agr._load_core('vpmmaps_core.py', 'agr_tools_vpmmaps_core')
-            res = vm.build_maps(core.maps_table(plan), library, os.path.join(folder, 'maps'))
+            res = vm.build_maps(core.maps_table(plan), library, os.path.join(folder, 'maps'), _maps_options(o))
             files.extend(dict(m, kind='map_' + m['kind']) for m in res['maps'])
             skipped.extend(edit.skipped('map {} {} {}'.format(x.get('mesh'), x.get('udim'), x.get('kind')),
                                         x.get('reason') or 'skipped by vpmmaps_core') for x in res['skipped'])
