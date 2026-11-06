@@ -1348,3 +1348,35 @@ def missing_report(edit, rows, state_hash, nodes, extra=None):
     plan.update(extra or {})
     return edit.report('scene.missing_maps', 'preview', objects, [], [], ambiguous, state_hash=state_hash,
                        extra=plan)
+
+
+# ---- bitmap enumerator of a material tree (1.0, branch N: owner of the enumerator; used by tex.dilate / vpm.build) --
+def material_bitmaps(tree, _top=None, _matid=None, _slot=None):
+    """Flat rows of every bitmap below a material tree dict (no pymxs; the glue builds the dict).
+
+    tree: {'name', 'subs': [{'id': int, 'material': tree}], 'maps': [{'slot': str, 'name', 'file': str|None,
+    'children': [tree...]}]}. Rows: {'material' (top), 'owner' (sub-material), 'matid' (the Multi/Sub ID the bitmap
+    sits under, else None), 'slot', 'role' (role_of_slot), 'map', 'path', 'udim' (names_core.udim_of or None)}.
+    A texmap tree nested in a texmap (Mix, Composite, Output) keeps the slot of the outermost material slot."""
+    names = names_core()
+    rows = []
+    top = _top or tree.get('name')
+    for sub in tree.get('subs') or ():
+        rows += material_bitmaps(sub['material'], top, sub.get('id'), _slot)
+    for tm in tree.get('maps') or ():
+        slot = _slot if _slot is not None else tm.get('slot')
+        if tm.get('file'):
+            rows.append({'material': top, 'owner': tree.get('name'), 'matid': _matid, 'slot': slot,
+                         'role': role_of_slot(slot), 'map': tm.get('name'), 'path': tm['file'],
+                         'udim': names.udim_of(tm['file'])})
+        for child in tm.get('children') or ():
+            rows += material_bitmaps(child, top, _matid, slot)
+    return rows
+
+
+def bitmaps_by_id(rows):
+    """{matid: [rows]} of material_bitmaps rows; maps outside a Multi/Sub are under key None."""
+    out = {}
+    for r in rows:
+        out.setdefault(r['matid'], []).append(r)
+    return out
