@@ -625,7 +625,13 @@ def test_flow_tooltips_and_cards_from_json():
     suite = roadmap.load_file(SUITE)
     nodes = roadmap.flow(suite, model.VERSION)
     assert [n['number'] for n in nodes] == list(range(10))
-    assert sum(n['total'] for n in nodes) == len(suite['rows']) == 92  # 97 - 6 removed + 1 new (#973 decisions)
+    # block pages: every row whose id prefix is its block; the 15 new 1.0 rows (#1024) with a stage prefix
+    # (project., body., win., ...) live only on the stage rail. 92 (#973) + 2 Q35 tail rows (#1024) = 94.
+    on_pages = [r for r in suite['rows'] if r['id'].partition('.')[0] == r['block']]
+    stage_only = [r for r in suite['rows'] if r['id'].partition('.')[0] != r['block']]
+    assert sum(n['total'] for n in nodes) == len(on_pages) == 94 and len(suite['rows']) == 109
+    assert sorted(r['id'] for r in stage_only) == sorted(STAGE_ONLY_100)
+    assert all(r['stage'] is not None and r['fate'] == 'stage' for r in stage_only)
     assert sum(n['done'] for n in nodes) == 13 + 12 + 13 + 19  # 0.1-0.5 + 0.7 + 0.8 + 0.9
     for r in suite['rows']:
         tip = roadmap.tooltip(suite, r)
@@ -665,10 +671,79 @@ def test_rail_maps_every_action_to_a_plan_row_and_greys_the_rest():
     assert [b['id'] for b, _, _ in rail] == [b['id'] for b in suite['blocks']]
     done_rows = {model.row_of(a.id) for _, done, _ in rail for a in done}
     planned = [r for _, _, p in rail for r in p]
-    assert len(done_rows) + len(planned) == 92
+    on_pages = {r['id'] for r in suite['rows'] if r['id'].partition('.')[0] == r['block']}
+    assert len(done_rows) + len(planned) == len(on_pages) == 94
+    assert done_rows | {r['id'] for r in planned} == on_pages and not set(STAGE_ONLY_100) & on_pages
     assert all(roadmap.vkey(r['version']) > roadmap.vkey(model.VERSION) for r in planned)
+    # a wip action is never done, even when VERSION ships its row (1.0.0): it stays greyed on its block page
+    rail10 = model.rail(suite['blocks'], suite['rows'], '1.0.0')
+    assert not {a.id for _, done, _ in rail10 for a in done} & {a.id for a in model.ACTIONS_100}
+    old_10 = {a.tool for a in model.ACTIONS_100} & on_pages
+    assert len(old_10) == 18 and old_10 <= {r['id'] for _, _, p in rail10 for r in p}
     with pytest.raises(KeyError):
         model.row_of('nope')
+
+
+STAGE_ONLY_100 = ('project.passport', 'source.intake', 'body.prepare', 'win.place', 'win.generate', 'body.capsules',
+                  'body.roof', 'mat.table', 'mat.tiles', 'vpm.build', 'npm.build', 'npm.to_vpm', 'pack.deliver',
+                  'agent.request', 'agent.accept')  # the 15 new rows of #1024
+
+
+def test_each_10_stage_button_has_one_wip_action_from_its_plan_row():
+    suite = roadmap.load_file(SUITE)
+    buttons = roadmap.stage_buttons(suite)
+    assert [a.tool for a in model.ACTIONS_100] == buttons and len(buttons) == 33  # station order 1.0.1..1.0.33
+    assert set(buttons) == set(runtime.EDITS_100)
+    for a in model.ACTIONS_100:
+        r = roadmap.row(suite, a.tool)
+        assert (a.icon, a.label, ' '.join(a.reqs)) == (r['icon'], r['label_ru'], r['reqs']), a.tool
+        assert a.wip and a.section is None and not a.batch and a.tip == model.WIP_TIP == 'в работе, #1024'
+        assert model.tooltip(a).startswith('в работе, #1024') and model.row_of(a.id) == a.tool
+        assert model.action(a.id) is a and model.action(a.tool) is a
+    assert not any(a.wip for a in model.ACTIONS) and len(model.ACTIONS) == 61  # the 0.x panel is unchanged
+    assert len({a.id for a in model.ALL_ACTIONS}) == len({a.macro for a in model.ALL_ACTIONS}) == 94
+    assert model.Action('x', 'x', 'x', 0, 'x', 'x', ('-',), 'X', False).wip is False  # 9-field calls stay valid
+
+
+def test_stage_rail_order_big_buttons_and_second_rows_follow_the_plan():
+    suite = roadmap.load_file(SUITE)
+    rail = model.stage_rail(suite)
+    assert [st.id for st in rail] == [s['id'] for s in sorted(suite['stages'], key=lambda s: s['order'])]
+    assert [(sid, label, icon, rows) for sid, label, icon, rows in model.STAGES_100] == [
+        (s['id'], s['label_ru'], s['icon'], tuple(s['rows'])) for s in suite['stages']]
+    for st, s in zip(rail, suite['stages']):
+        assert (st.label, st.icon, st.big.tool) == (s['label_ru'], s['icon'], s['big_button'])
+        assert [a.tool for a in st.small] == [rid for rid in s['rows'] if rid != s['big_button']]
+        assert st.big.wip and all(a.wip for a in st.small) and st.status == 'todo'
+        assert st.icon == st.big.icon  # the stage icon is its big button's icon
+    assert [st.id for st in rail if not st.small] == [3, 4]  # Капсулы, Крыша: no second row
+    broken = json.loads(SUITE.read_text(encoding='utf-8'))
+    broken['stages'][0]['rows'].append('qa.xview')  # a stage row without a 1.0 action
+    with pytest.raises(KeyError, match='qa.xview'):
+        model.stage_rail(broken)
+
+
+def test_stage_status_from_passport_is_fail_closed():
+    suite = roadmap.load_file(SUITE)
+    ids = [s['id'] for s in suite['stages']]
+    assert model.stage_statuses(ids) == {sid: 'todo' for sid in ids}  # no passport yet (reader: branch F)
+    passport = {'stages': [{'id': sid, 'status': 'todo'} for sid in ids]}
+    passport['stages'][0]['status'] = 'done'
+    passport['stages'][2]['status'] = 'blocked'
+    passport['stages'][10]['status'] = 'work'
+    got = {st.id: st.status for st in model.stage_rail(suite, passport)}
+    assert got[0] == 'done' and got[2] == 'blocked' and got['agent'] == 'work' and got[5] == 'todo'
+    assert set(model.STAGE_STATUS) == set(model.STAGE_STATUS_RU)
+    schema = json.loads((ROOT / 'schemas/ProjectPassport.schema.json').read_text(encoding='utf-8'))
+    assert list(model.STAGE_STATUS) == schema['properties']['stages']['items']['properties']['status']['enum']
+    for bad in ({}, {'stages': 'x'}, 'passport',
+                {'stages': passport['stages'][:-1]},
+                {'stages': passport['stages'] + [{'id': 0, 'status': 'done'}]},
+                {'stages': [dict(e, status='ok') if e['id'] == 1 else e for e in passport['stages']]},
+                {'stages': [dict(e, id=True) if e['id'] == 1 else e for e in passport['stages']]},
+                {'stages': [dict(e, id='10') if e['id'] == 1 else e for e in passport['stages']]}):
+        with pytest.raises(ValueError):
+            model.stage_statuses(ids, bad)
 
 
 @pytest.mark.parametrize('theme,window,base,text', [
@@ -693,6 +768,12 @@ def test_guide_regeneration_gives_no_diff():
     proc = subprocess.run([sys.executable, str(ROOT / 'tools/max/build_agr_guide.py'), '--check'],
                           capture_output=True, text=True)
     assert proc.returncode == 0, proc.stdout + proc.stderr
+    guide = (ROOT / 'docs/agr-tools/GUIDE.md').read_text(encoding='utf-8')
+    tail = guide[guide.index('## ' + model.MENU_100):]
+    suite = roadmap.load_file(SUITE)
+    for i, rid in enumerate(roadmap.stage_buttons(suite), 1):  # the stage rail with stations 1.0.1..1.0.33
+        assert '(`{}`, 1.0.{})'.format(rid, i) in tail, rid
+    assert tail.count('\n| ') == 1 + len(suite['stages'])
 
 
 def test_report_memory_roundtrip(tmp_path):

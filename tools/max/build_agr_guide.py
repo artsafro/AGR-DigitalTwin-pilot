@@ -35,8 +35,26 @@ def render():
     def colour(node):
         return '#{:02x}{:02x}{:02x}'.format(*model.block_accent(node['hue'], *LIGHT))
 
-    return {'GUIDE.md': roadmap.guide_md(suite, model.VERSION),
+    return {'GUIDE.md': roadmap.guide_md(suite, model.VERSION) + stages_md(suite, roadmap, model),
             'flow.svg': roadmap.flow_svg(suite, model.VERSION, colour)}
+
+
+def stages_md(suite, roadmap, model):
+    """The 1.0 stage rail of «Путь» (#1024) as the panel draws it (ui_model.stage_rail): big button, second row."""
+    station = {rid: '1.0.{}'.format(i) for i, rid in enumerate(roadmap.stage_buttons(suite), 1)}
+    out = ['', '## ' + model.MENU_100, '',
+           'На вкладке «Путь» над блоками — ряд больших кнопок этапов (иконка, подпись, статус этапа из паспорта '
+           'проекта); под каждой — вторая строка с мелкими кнопками этапа. Пока кнопка в работе, она видна, но '
+           'неактивна: «{}». Страницы блоков 0–9 не меняются.'.format(model.WIP_TIP), '',
+           '| Этап | Большая кнопка | Мелкие кнопки (вторая строка) |', '|---|---|---|']
+
+    def name(a):
+        return '{} (`{}`, {})'.format(a.label, a.tool, station[a.tool])
+
+    for st in model.stage_rail(suite):
+        out.append('| {} | {} | {} |'.format(model.stage_title(st.id, st.label), name(st.big),
+                                                '; '.join(name(a) for a in st.small) or '—'))
+    return '\n'.join(out) + '\n'
 
 
 def main(argv=None):

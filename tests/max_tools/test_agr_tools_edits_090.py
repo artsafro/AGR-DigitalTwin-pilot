@@ -357,7 +357,7 @@ def test_icons_are_new_and_distinct():
     for name in (r['icon'] for r in ROWS_090.values()):
         assert sum(1 for b in bodies.values() if b == bodies[name]) == 1, name
         assert re.fullmatch(r'[a-z]+', name)
-    assert len(icons.names()) == 68
+    assert len(icons.names()) == 100  # +32 icons of the 1.0 rows (#1024 branch 0)
 
 
 def test_rail_shows_09_actions_from_version_090_and_greys_them_before():

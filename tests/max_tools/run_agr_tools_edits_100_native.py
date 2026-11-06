@@ -131,3 +131,30 @@ def host_adapter():
 
 check('registry_stubs_journal', registry)
 check('host_adapter_cm', host_adapter)
+
+
+def polygon():
+    """The builder builds the committed catalog with base 1.0: 33 stations 1.0.1..1.0.33, its base and camera."""
+    sys.path.insert(0, str(ROOT / 'test-polygon' / 'build'))
+    sys.path.insert(0, str(ROOT / 'test-polygon'))
+    import polygon_core as core
+    import build_scene
+    rt.resetMaxFile(rt.name('noPrompt'))
+    rt.units.SystemType = rt.name('meters')
+    catalog = build_scene.catalog_objects()
+    made = build_scene.build('polygon_all', texture_dir=str(OUT / 'textures'))
+    names = {str(n.name) for n in rt.objects}
+    want = [o['name'] for o in catalog if o['scene'] == 'polygon_all']
+    missing = sorted(set(want) - names)
+    assert not missing, missing[:10]
+    new = [s for s in core.stations() if s['version'] == '1.0']
+    assert [s['button'] for s in new] == ORDER, [s['button'] for s in new][:5]
+    labels = ['_label_' + s['id'].replace('.', '_') for s in new]
+    absent = [x for x in labels if rt.getNodeByName(x) is None]
+    assert len(new) == 33 and not absent, absent
+    for x in ('_base_1_0', '_cam_База 1.0'):
+        assert rt.getNodeByName(x) is not None, x
+    assert core.TOUR_LAST == '1.0'
+    text = str(rt.getNodeByName('_label_1_0_1').text)
+    return {'stations_1_0': len(new), 'nodes_built': len(made), 'catalog_polygon_all': len(want),
+            'label_1_0_1': text.replace('\r\n', ' | ')[:160]}

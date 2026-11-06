@@ -18,7 +18,7 @@
     local themes = #("Dark", "Light")
     for theme in themes do (
         local icons = getFiles (source + "agr_tools/icons/" + theme + "/AgrIcons/*.png")
-        if icons.count < 272 do throw ("AGR Tools archive missing icons " + theme)
+        if icons.count < 400 do throw ("AGR Tools archive missing icons " + theme)
     )
     -- 0.9 (#979): data/ (owner files of branch C) is a tree of at most one sub-folder level
     local dataSrc = source + "agr_tools/data/"

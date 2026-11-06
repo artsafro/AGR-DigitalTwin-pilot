@@ -49,12 +49,12 @@
 <rect x="508" y="146" width="8" height="92" rx="3" fill="#258193"/>
 <text x="526" y="172" font-size="15" font-weight="bold" fill="#258193">7 Проверки</text>
 <text x="526" y="194" font-size="12" fill="#333333">Проверки и сдача</text>
-<text x="526" y="216" font-size="12" fill="#333333">кнопок: 19 из 20</text>
+<text x="526" y="216" font-size="12" fill="#333333">кнопок: 19 из 21</text>
 <rect x="264" y="146" width="210" height="92" rx="8" fill="#ffffff" stroke="#422593" stroke-width="2.5"/>
 <rect x="264" y="146" width="8" height="92" rx="3" fill="#422593"/>
 <text x="282" y="172" font-size="15" font-weight="bold" fill="#422593">8 Экспорт</text>
 <text x="282" y="194" font-size="12" fill="#333333">Экспорт и пакет</text>
-<text x="282" y="216" font-size="12" fill="#333333">кнопок: 7 из 8</text>
+<text x="282" y="216" font-size="12" fill="#333333">кнопок: 7 из 9</text>
 <rect x="20" y="146" width="210" height="92" rx="8" fill="#ffffff" stroke="#93256e" stroke-width="2.5"/>
 <rect x="20" y="146" width="8" height="92" rx="3" fill="#93256e"/>
 <text x="38" y="172" font-size="15" font-weight="bold" fill="#93256e">9 Свет</text>
