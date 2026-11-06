@@ -18,7 +18,7 @@ from mcp.types import LATEST_PROTOCOL_VERSION
 
 from . import SERVER_NAME, SERVER_VERSION, TOOL_SCHEMA_VERSION, audit, locks, tools
 
-INSTRUCTIONS = (f"AGR checkers over MCP, phase 0, read-only. tool_schema_version={TOOL_SCHEMA_VERSION}; "
+INSTRUCTIONS = (f"AGR checkers over MCP: phase 0 read-only tools; phase 2 (#1021) preview -> apply on copies. tool_schema_version={TOOL_SCHEMA_VERSION}; "
                 f"protocol {LATEST_PROTOCOL_VERSION} (mcp SDK 1.30.0). Max tools need AGR_MCP_MAX_PID.")
 
 
@@ -64,6 +64,7 @@ def build_server(env=None, max_transport=None, lock_timeout: float = 900) -> Ser
                   "pid": os.getpid(), "lock": None, "host": None,
                   "scene": arguments.get("scene"),
                   "target": arguments.get("target") or arguments.get("fbx_path") or arguments.get("path"),
+                  "scope": arguments.get("scope"),
                   "args_sha256": audit.args_sha256(arguments), "status": None, "error": None}
         if name == "agr_exec_unsafe":
             code = str(arguments.get("code", "")).encode("utf-8")
@@ -76,6 +77,8 @@ def build_server(env=None, max_transport=None, lock_timeout: float = 900) -> Ser
             try:
                 jsonschema.validate(arguments, spec.input)
                 tools._check_finite(arguments, "arguments")
+                if spec.check:
+                    spec.check(arguments)
             except (jsonschema.ValidationError, ValueError) as exc:
                 record["status"] = "invalid"
                 raise ValueError(f"invalid input: {getattr(exc, 'message', exc)}") from None
@@ -86,6 +89,9 @@ def build_server(env=None, max_transport=None, lock_timeout: float = 900) -> Ser
                 with locks.hold(host, record["card"] or "agr-mcp", call_timeout) as lock:
                     record["lock"] = str(lock) if lock else None
                     result = await anyio.to_thread.run_sync(spec.handler, arguments)
+                if isinstance(result, tools.Audited):
+                    record.update(result.audit)
+                    result = result.result
             except locks.LockBusy as exc:
                 record["status"] = "busy"
                 record["lock"] = str(locks.lock_path(host))

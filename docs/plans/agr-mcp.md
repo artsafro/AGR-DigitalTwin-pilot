@@ -313,6 +313,17 @@ Cursor (как уже было; записи `mcp-registrations.json`: `config` 
 
 Фаза 1 — мутации на копиях: `agr_cleanup_apply`, `agr_ucx_apply`, `agr_export_commit`, затем `nudge_apply` и `atlas_apply` теми же именами. Выходной тест: исходный `.max` по хешу не изменился, новый FBX читается `agr_fbx_readback`, повторный commit в тот же путь — отказ. Сборщики `build_flat` / `maf_findings` / `flora_findings` остаются в пилоте; в MCP их поднимаем только если агенту иначе приходится тащить их через произвольный `bpy`.
 
+Реализация этой фазы — issue #1021 (в issue она названа «phase 2», фаза 0 здесь = «phase 1» там). Десять инструментов, все `max-live`, runtime 0.9.0: `agr_cleanup_preview` / `agr_cleanup_apply`, `agr_uv_nudge_preview` / `agr_uv_nudge_apply`, `agr_atlas_preview` / `agr_atlas_apply`, `agr_ucx_preview` / `agr_ucx_apply`, `agr_export_preview` / `agr_export_commit`. Решения, зафиксированные кодом и тестами (`tests/agr_mcp/test_agr_mcp_phase2.py`):
+
+- Цели только явные (контракт выделения §2, #851): непустой `handles` или `scope: "selection"`; оба или ни одного — ошибка `handles_required` / «two target sources» до вызова Max. `runtime._targets(None)` не достигается.
+- Выделение сохраняется до вызова и восстанавливается после у всех десяти; расхождение после восстановления — `selection_changed`. `select_findings` в этой фазе не вводится.
+- `preview` хранит мост в Max (по sha256 канонического JSON, 8 на семейство); apply получает родной объект runtime, только неизменённый и только один раз. Байты в preview (PNG атласа) клиент видит как `{"bytes", "sha256"}`.
+- Новые узлы после apply = ровно отчётные копии; удалённый исходный узел — ошибка с его handle; preview, оставивший узел, — ошибка.
+- `target` экспорта — новый абсолютный `.fbx` в существующей папке; `.report.json` и `.partial` рядом тоже новые; ни один из них не файл сцены. Проверка на сервере, до Max.
+- Lock: каждый инструмент держит `agr-3dsmax-live.lock` на весь вызов (таймаут `AGR_MCP_MAX_TIMEOUT`); журнал — одна строка на вызов, у фазы плюс `scope`, `handles`, `written`.
+- Люк произвольного кода не меняется: `agr_exec_unsafe` регистрируется только при `AGR_MCP_UNSAFE` ровно `1` (вопрос 4 §6, Артём 2026-11-04); у инструментов фазы нет поля `code`.
+- Нативная сверка: `tests/agr_mcp/run_agr_mcp_phase2_native.py` в `3dsmaxbatch` на сцене полигона `polygon_all` выполняет тот же MAXScript, что сервер шлёт в pipe, и сравнивает с прямым вызовом runtime (Max 2026.3 и 2024.2.5: 10/10).
+
 Фаза 2 — замена чужого MCP в skills и в разделе `3ds Max — 3dsmax-mcp` файла CAPABILITIES. Выходной тест: skill Ground/MAF/Flora вызывает `agr_*` и `dcc_batch` там, где batch ещё нужен; сценарий карточки больше не требует `execute_maxscript` / `execute_blender_code`. Регистрацию `3dsmax-mcp` и Blender Lab из конфигов убираем отдельным решением, когда фаза 2 зелёная. До того обе регистрации живут рядом.
 
 ## 6. Вопросы

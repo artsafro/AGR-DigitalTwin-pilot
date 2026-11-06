@@ -5,8 +5,9 @@ calls `call(tool, root_hex, args_hex)`. Arguments travel hex-encoded so no MAXSc
 `call` imports the INSTALLED AGR Tools `runtime.py` from `root` (default: userScripts/AGRTools-0.5.0),
 resolves `handles` to nodes and calls exactly one `runtime.*` function: read-only, or a 0.8 edit
 (`edits_080`: preview, or apply of that preview on export copies / new files, #908), or a 0.9 row preview
-(`edits_090`, #979: mode=preview only, changes nothing). Apart from new files
-written by a 0.8 apply, it never opens, saves,
+(`edits_090`, #979: mode=preview only, changes nothing), or a phase-2 edit on copies (`PHASE2`, #1021: explicit
+targets, selection restored, preview kept here, new nodes checked against the reported copies). Apart from new
+files written by a 0.8 apply or a phase-2 apply/commit, it never opens, saves,
 imports or exports a file and never passes `select=` (plan section 2: the runtime default is kept).
 Returns a JSON string: {"ok": true, "result": ..., "runtime_version": ..., "runtime_file": ...}
 or {"ok": false, "error": "..."}.
@@ -49,6 +50,25 @@ EDITS_090 = {"agr_tex_erm_normal_check": "tex.erm_normal_check", "agr_tex_finish
              "agr_scene_maps_usage": "scene.maps_usage", "agr_light_check": "light.check",
              "agr_qa_procedural_objects": "qa.procedural_objects"}
 RUNTIME_090 = "0.9.0"
+# AGR MCP phase 2 (#1021, plan section 5 "mutations on copies"): preview -> apply on new export copies / one new
+# FBX. tool -> (runtime function, preview family, kind). Targets are explicit: handles, or scope="selection"
+# resolved here into a node list; runtime._targets(None) is never reached. The selection is saved before and
+# restored after every call; a different selection afterwards is the error selection_changed.
+PHASE2 = {"agr_cleanup_preview": ("cleanup_preview", "cleanup", "preview"),
+          "agr_cleanup_apply": ("cleanup_apply", "cleanup", "apply"),
+          "agr_uv_nudge_preview": ("nudge_preview", "nudge", "preview"),
+          "agr_uv_nudge_apply": ("nudge_apply", "nudge", "apply"),
+          "agr_atlas_preview": ("atlas_preview", "atlas", "preview"),
+          "agr_atlas_apply": ("atlas_apply", "atlas", "apply"),
+          "agr_ucx_preview": ("ucx_preview", "ucx", "preview"),
+          "agr_ucx_apply": ("ucx_apply", "ucx", "apply"),
+          "agr_export_preview": ("export_preview", "export", "preview"),
+          "agr_export_commit": ("export_commit", "export", "apply")}
+RUNTIME_PHASE2 = "0.9.0"
+PREVIEW_KEEP = 8  # previews kept per family; older ones must be re-run
+# family -> {sha256 of the canonical JSON: native preview}. Kept across the importlib.reload the pipe script does,
+# so apply gets the runtime's own object back (tuples stay tuples), and only a preview this bridge produced.
+_PREVIEWS = globals().get("_PREVIEWS", {})
 
 
 def _rt():
@@ -110,13 +130,129 @@ def _nodes(rt, handles):
     return nodes
 
 
+def _handle(n):
+    return int(n.handle)
+
+
+def _json_default(o):
+    """bytes (atlas preview images) -> length + sha256; the native bytes stay in the stored preview."""
+    if isinstance(o, (bytes, bytearray)):
+        import hashlib
+        return {"bytes": len(o), "sha256": hashlib.sha256(bytes(o)).hexdigest()}
+    raise TypeError("not JSON-serializable: " + type(o).__name__)
+
+
+def _canonical(value):
+    """The JSON form a client sees, and the sha256 of its canonical text (sorted keys, no NaN)."""
+    text = json.dumps(value, allow_nan=False, sort_keys=True, default=_json_default)
+    import hashlib
+    return json.loads(text), hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def _phase2_targets(rt, args):
+    """Selection contract (plan section 2): non-empty handles XOR scope='selection'; never None."""
+    handles = args.get("handles") or []
+    scope = args.get("scope")
+    if handles and scope is not None:
+        raise ValueError("two target sources: handles and scope=" + repr(scope))
+    if scope is not None and scope != "selection":
+        raise ValueError("unsupported scope " + repr(scope))
+    if not handles and scope is None:
+        raise ValueError("handles_required: give non-empty handles or scope='selection'")
+    if scope == "selection":
+        nodes = list(rt.selection)
+        if not nodes:
+            raise ValueError("scope=selection but the selection is empty")
+        return nodes, [_handle(n) for n in nodes]
+    if len(set(int(h) for h in handles)) != len(handles):
+        raise ValueError("duplicate handle in " + repr(handles))
+    return _nodes(rt, handles), [int(h) for h in handles]
+
+
+def _restore_selection(rt, saved):
+    rt.clearSelection()
+    alive = [n for n in saved if rt.isValidNode(n)]
+    if alive:
+        rt.select(alive)
+
+
+def _store_preview(family, preview):
+    shown, sha = _canonical(preview)
+    store = _PREVIEWS.setdefault(family, {})
+    store.pop(sha, None)
+    store[sha] = preview
+    while len(store) > PREVIEW_KEEP:
+        store.pop(next(iter(store)))
+    return shown
+
+
+def _take_preview(family, preview):
+    if not isinstance(preview, dict):
+        raise ValueError("preview must be the object returned by the preview tool")
+    _shown, sha = _canonical(preview)
+    native = _PREVIEWS.get(family, {}).pop(sha, None)  # single use, as the panel drops it after any apply
+    if native is None:
+        raise ValueError("unknown or altered " + family + " preview (sha256 " + sha[:12]
+                         + "); run the preview tool again")
+    return native
+
+
+def _copies(rt, nodes):
+    return [{"handle": _handle(n), "name": str(n.name)} for n in nodes if rt.isValidNode(n)]
+
+
+def run_phase2(tool, mod, rt, args):
+    fn_name, family, kind = PHASE2[tool]
+    nodes, handles = _phase2_targets(rt, args)
+    fn = getattr(mod, fn_name, None)
+    if fn is None:
+        raise RuntimeError("AGR Tools runtime at " + str(mod.__file__) + " has no " + fn_name)
+    saved = list(rt.selection)
+    before_sel = sorted(_handle(n) for n in saved)
+    before = set(_handle(n) for n in rt.objects)
+    try:
+        if family == "cleanup" and kind == "preview":
+            raw = fn(nodes, args.get("options"))
+        elif family == "export" and kind == "preview":
+            raw = fn(nodes, args["target"])
+        elif family == "export":
+            raw = fn(nodes, _take_preview(family, args.get("preview")), args["target"])
+        elif kind == "apply":
+            raw = fn(nodes, _take_preview(family, args.get("preview")))
+        else:
+            raw = fn(nodes)
+    finally:
+        _restore_selection(rt, saved)
+    after_sel = sorted(_handle(n) for n in rt.selection)
+    if after_sel != before_sel:
+        raise RuntimeError("selection_changed: before " + repr(before_sel) + ", after " + repr(after_sel))
+    after = set(_handle(n) for n in rt.objects)
+    removed = sorted(before - after)
+    if removed:
+        raise RuntimeError("source nodes deleted: " + repr(removed))
+    created = sorted(after - before)
+    if kind == "preview" or family == "export":
+        if created:
+            raise RuntimeError(tool + " left new nodes " + repr(created))
+        result = _store_preview(family, raw) if kind == "preview" else _canonical(raw)[0]
+    else:
+        copies, report = raw
+        out = _copies(rt, copies)
+        if sorted(c["handle"] for c in out) != created:
+            raise RuntimeError("new nodes " + repr(created) + " != reported copies "
+                               + repr([c["handle"] for c in out]))
+        result = {"copies": out, "report": _canonical(report)[0]}
+    return result, {"handles": handles, "scope": args.get("scope")}
+
+
 def run(tool, root, args):
-    if tool not in FUNCTIONS and tool not in CHECKS_070 and tool not in EDITS_080 and tool not in EDITS_090:
+    if tool not in FUNCTIONS and tool not in CHECKS_070 and tool not in EDITS_080 and tool not in EDITS_090 \
+            and tool not in PHASE2:
         raise ValueError("unsupported tool " + repr(tool))
     if tool in EDITS_090 and (args.get("mode", "preview") != "preview" or args.get("preview") is not None):
         raise ValueError(tool + ": 0.9 rows take only mode=preview over MCP (#979)")
     expected = (RUNTIME_070 if tool in CHECKS_070 else RUNTIME_080 if tool in EDITS_080
-                else RUNTIME_090 if tool in EDITS_090 else EXPECTED_RUNTIME)
+                else RUNTIME_090 if tool in EDITS_090 else RUNTIME_PHASE2 if tool in PHASE2 else EXPECTED_RUNTIME)
     rt = _rt()
     scene = args.get("scene")
     if not isinstance(scene, str) or not scene:
@@ -124,7 +260,13 @@ def run(tool, root, args):
     _check_scene(rt, scene)
     if not root:
         root = os.path.join(str(rt.getDir(rt.name("userScripts"))), "AGRTools-" + expected)
+    if tool in PHASE2:
+        _phase2_targets(rt, args)  # contract errors before the runtime is even imported
     mod = _load_runtime(root, expected)
+    if tool in PHASE2:
+        result, info = run_phase2(tool, mod, rt, args)
+        info.update(runtime_version=mod.VERSION, runtime_file=mod.__file__)
+        return result, info
     if tool in EDITS_080:
         if not hasattr(mod, "edits_080"):
             raise RuntimeError("AGR Tools runtime at " + str(mod.__file__) + " has no edits_080 (0.8 base, #908)")

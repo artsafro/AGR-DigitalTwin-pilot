@@ -3,6 +3,8 @@
 Every handler wraps exactly one existing function and returns its output made JSON-safe (dataclasses ->
 dicts, a JSON round trip with allow_nan=False). No handler takes a `code` argument; the only tool that does,
 `agr_exec_unsafe`, is added by `catalog(unsafe=True)` and the server registers it only with AGR_MCP_UNSAFE=1.
+Phase 2 (#1021, `PHASE2_TOOLS`): preview -> apply edits on new export copies / one new FBX, explicit targets
+(non-empty handles or scope='selection'), new-path checks before Max is called.
 """
 from __future__ import annotations
 
@@ -100,6 +102,14 @@ class Spec:
     read_only: bool = True
     destructive: bool = False
     timeout: Callable[[dict], float] | None = None  # the wrapped call's own timeout; sizes the host lock (#871)
+    check: Callable[[dict], None] | None = None  # extra input rule run with the schema; failure = invalid, no host call
+
+
+@dataclass(frozen=True)
+class Audited:
+    """A handler result plus fields for the audit line only (never sent to the client)."""
+    result: Any
+    audit: dict
 
 
 def _const(host: str) -> Callable[[dict], str]:
@@ -298,8 +308,123 @@ EDIT_090_IN = {"type": "object", "required": ["scene"], "additionalProperties": 
                "properties": dict(_LOCATE, mode={"const": "preview"}, options=_OPTIONS)}
 
 
+def _same_path(a: Path, b: Path) -> bool:
+    try:
+        if a.exists() and b.exists():
+            return os.path.samefile(a, b)
+    except OSError:
+        pass
+    return os.path.normcase(str(a.resolve(strict=False))) == os.path.normcase(str(b.resolve(strict=False)))
+
+
+def check_new_target(target: str, scene: str | None) -> None:
+    """A phase-2 FBX target is a NEW absolute .fbx path; its report and .partial are new too; none is the scene."""
+    p = Path(target)
+    if not p.is_absolute():
+        raise ValueError(f"target must be an absolute path: {target}")
+    if p.suffix.lower() != ".fbx":
+        raise ValueError(f"target must be a .fbx path: {target}")
+    if not p.parent.is_dir():
+        raise ValueError(f"target folder does not exist: {p.parent}")
+    roles = (("target", p), ("report", p.with_suffix(".report.json")), ("partial", Path(str(p) + ".partial")))
+    for role, q in roles:
+        if q.exists() or q.is_symlink():
+            raise ValueError(f"{role} path exists, a new path is required: {q}")
+    if scene and scene != "live":
+        for role, q in roles:
+            if _same_path(q, Path(scene)):
+                raise ValueError(f"{role} path is the scene file: {q}")
+
+
+def check_phase2(args: dict) -> None:
+    """Selection contract (plan section 2, #851): non-empty handles XOR scope='selection'."""
+    handles, scope = args.get("handles") or [], args.get("scope")
+    if handles and scope is not None:
+        raise ValueError("two target sources: handles and scope=" + repr(scope))
+    if not handles and scope is None:
+        raise ValueError("handles_required: give non-empty handles or scope='selection'")
+    if "target" in args:
+        check_new_target(args["target"], args.get("scene"))
+
+
+# AGR MCP phase 2 (#1021): edits on copies. (name, runtime function, kind, what). Every tool needs runtime 0.9.0;
+# apply takes only a preview the bridge itself produced (single use).
+PHASE2_TOOLS = (
+    ("agr_cleanup_preview", "cleanup_preview", "preview", "export cleanup plan (channels, user props, opt-in keys)"),
+    ("agr_cleanup_apply", "cleanup_apply", "apply", "cleanup on new deep copies *_AGR_export_"),
+    ("agr_uv_nudge_preview", "nudge_preview", "preview", "whole-tile UV nudge plan"),
+    ("agr_uv_nudge_apply", "nudge_apply", "apply", "UV nudge on new copies *_AGR_nudge_"),
+    ("agr_atlas_preview", "atlas_preview", "preview", "UDIM -> NPM atlas plan"),
+    ("agr_atlas_apply", "atlas_apply", "apply", "atlas UVs on new copies *_AGR_atlas_ and new atlas PNG files"),
+    ("agr_ucx_preview", "ucx_preview", "preview", "UCX pieces, budget and audit verdict"),
+    ("agr_ucx_apply", "ucx_apply", "apply", "UCX on a new export copy and new UCX_* nodes"),
+    ("agr_export_preview", "export_preview", "preview", "checked-export gates for a new FBX path (no file)"),
+    ("agr_export_commit", "export_commit", "apply", "one new FBX and its .report.json, read back"),
+)
+_SCOPE = {"const": "selection", "description": "targets = the current selection (instead of handles)"}
+_P2_HANDLES = {"type": "array", "uniqueItems": True, "items": {"type": "integer", "minimum": 1},
+               "description": "node handles; empty only together with scope='selection'"}
+_PREVIEW = {"type": "object", "description": "the unaltered result of the matching *_preview call"}
+_TARGET = {"type": "string", "minLength": 1, "description": "new absolute .fbx path (never an existing file)"}
+
+
+def _p2_input(name: str) -> dict:
+    props = {"scene": MAX_IN["properties"]["scene"], "handles": _P2_HANDLES, "scope": _SCOPE}
+    required = ["scene"]
+    if name == "agr_cleanup_preview":
+        props["options"] = _OPTIONS
+    if name.endswith("_apply") or name == "agr_export_commit":
+        props["preview"], required = _PREVIEW, required + ["preview"]
+    if name.startswith("agr_export_"):
+        props["target"], required = _TARGET, required + ["target"]
+    return {"type": "object", "required": required, "additionalProperties": False, "properties": props}
+
+
+def _p2_result(name: str) -> dict:
+    if name.startswith("agr_export_"):
+        return {"type": "object", "required": ["status"]}
+    if name.endswith("_apply"):
+        return {"type": "object", "required": ["copies", "report"],
+                "properties": {"copies": {"type": "array", "items": {"type": "object", "required": ["handle", "name"]}},
+                               "report": MAX_OUT}}
+    return {"type": "object", "required": ["report"]}
+
+
+def _written(name: str, result: Any, args: dict) -> list:
+    if name == "agr_export_commit":
+        p = Path(args["target"])
+        return [str(p), str(p.with_suffix(".report.json"))]
+    if name.endswith("_apply") and isinstance(result, dict):
+        return [c.get("name") for c in result.get("copies", [])]
+    return []
+
+
+def _phase2_tool(tool: str, transport=None):
+    def handler(args: dict):
+        payload = max_pipe.call_bridge(tool, args, MAX_TIMEOUT, transport=transport)
+        return Audited(payload["result"], {"handles": payload.get("handles"), "scope": payload.get("scope"),
+                                           "written": _written(tool, payload["result"], args)})
+    return handler
+
+
+def phase2_specs(max_transport=None) -> list[Spec]:
+    out = []
+    for name, fn, kind, what in PHASE2_TOOLS:
+        if kind == "preview":
+            text = f"AGR Tools runtime.{fn} in the pinned open 3ds Max: {what}. Read-only; the selection is restored."
+        else:
+            text = (f"AGR Tools runtime.{fn} in the pinned open 3ds Max: {what}. Takes only the unaltered preview "
+                    "of the matching *_preview call (single use); sources, scene file and existing files untouched; "
+                    "the selection is restored.")
+        out.append(Spec(name, text + " Targets: non-empty handles or scope='selection'. Needs runtime 0.9.0 (#1021).",
+                        _p2_input(name), _p2_result(name), _phase2_tool(name, max_transport), _const("max-live"),
+                        read_only=kind == "preview", destructive=False, timeout=_max_timeout, check=check_phase2))
+    return out
+
+
 def catalog(unsafe: bool = False, max_transport=None) -> dict[str, Spec]:
-    specs = [
+    specs = phase2_specs(max_transport)
+    specs += [
         Spec("agr_xview_check", "AGR Tools runtime.xview in the pinned open 3ds Max (selection-modifying: the "
              "runtime selects nodes with findings; geometry and files untouched).",
              MAX_IN, MAX_OUT, _max_tool("agr_xview_check", max_transport), _const("max-live"),
@@ -382,3 +507,4 @@ def catalog(unsafe: bool = False, max_transport=None) -> dict[str, Spec]:
 
 PHASE0 = tuple(n for n, _ in CHECKS_070) + tuple(n for n, *_ in EDITS_080) + tuple(n for n, *_ in EDITS_090) + ("agr_xview_check", "agr_matid_check", "agr_texel_readout", "agr_fbx_readback", "agr_package_validate",
           "agr_mesh_names", "agr_geojson_check", "agr_xview_parity")
+PHASE2 = tuple(n for n, *_ in PHASE2_TOOLS)

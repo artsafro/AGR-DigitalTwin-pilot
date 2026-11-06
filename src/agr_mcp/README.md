@@ -21,6 +21,22 @@ is in every result and in the audit.
 | `agr_geojson_check` | `twinqa.geojson.geojson_findings` (VPM profile) | offline |
 | `agr_xview_parity` | `tools/qa/xview_parity.compare` | offline |
 
+Phase 2 (#1021, plan section 5 "Фаза 1"): edits on copies, runtime 0.9.0, host max-live:
+
+| tool | wraps | writes |
+|---|---|---|
+| `agr_cleanup_preview` / `agr_cleanup_apply` | `runtime.cleanup_preview` / `cleanup_apply` | new nodes `*_AGR_export_` |
+| `agr_uv_nudge_preview` / `agr_uv_nudge_apply` | `nudge_preview` / `nudge_apply` | new nodes `*_AGR_nudge_` |
+| `agr_atlas_preview` / `agr_atlas_apply` | `atlas_preview` / `atlas_apply` | new nodes `*_AGR_atlas_`, new atlas PNGs |
+| `agr_ucx_preview` / `agr_ucx_apply` | `ucx_preview` / `ucx_apply` | new export copy + new `UCX_*` nodes |
+| `agr_export_preview` / `agr_export_commit` | `export_preview` / `export_commit` | one new FBX + `.report.json` |
+
+Targets are explicit: non-empty `handles` or `scope: "selection"` (never both, never neither). The selection is
+restored after every phase-2 call (`selection_changed` otherwise). `preview` is the unaltered object returned by
+the matching `*_preview` call; the bridge keeps the native one and accepts it once. `target` is a new absolute
+`.fbx` whose report and `.partial` do not exist and are not the scene file. Audit lines add `scope`, `handles`,
+`written`.
+
 `agr_xview_check` and `agr_matid_check` keep the runtime default `select=True`: with findings they change
 the selection of the pinned Max (plan section 2). No tool writes geometry or files.
 
@@ -45,7 +61,7 @@ MCP error result (`isError`), never a pass.
 
 `<pilot>` = a checkout of this repository after `uv sync`. Tested: `tests/agr_mcp/list_tools_stdio.py --uv`
 runs exactly the `uv run --directory <pilot> agr-mcp` command below through the MCP SDK stdio client and
-lists the 8 tools. The client-specific files below were not edited on this machine.
+lists the tools. The client-specific files below were not edited on this machine.
 
 Claude Code (user scope):
 

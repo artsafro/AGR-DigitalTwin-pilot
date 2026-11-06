@@ -161,10 +161,11 @@ def offline_cases(tmp_path):
 # ---- exit test ----------------------------------------------------------------------------------------------
 def test_tools_list_is_the_phase0_eight_without_code_argument():
     listed, _ = run_calls([], list_only=True)
-    assert sorted(listed) == sorted(tools.PHASE0)
+    assert sorted(listed) == sorted(tools.PHASE0 + tools.PHASE2)  # phase 2 (#1021) adds 10 edit tools on copies
     editing = {n for n, _row, _what, kind in tools.EDITS_080 if kind != "read"}  # 0.8 preview -> apply (#908)
     for spec in tools.catalog().values():
         assert "code" not in json.dumps(spec.input), spec.name
+        editing |= {n for n in tools.PHASE2 if not n.endswith("_preview")}
         assert spec.read_only == (spec.name not in editing), spec.name
         assert spec.destructive == (spec.name == "agr_ucx_rename"), spec.name  # renames in place (one undo)
 
@@ -1571,7 +1572,7 @@ def test_unsafe_with_flag_is_listed_destructive_and_audited(tmp_path):
             res = await client.call_tool("agr_exec_unsafe", {"code": "1+1"})
             return listed, res
     listed, res = anyio.run(main)
-    assert set(listed) == set(tools.PHASE0) | {"agr_exec_unsafe"}
+    assert set(listed) == set(tools.PHASE0) | set(tools.PHASE2) | {"agr_exec_unsafe"}
     assert listed["agr_exec_unsafe"].annotations.destructiveHint is True
     assert ok(res) == {"value": "2"} and sent == ["1+1"]
     line, = audit_lines(tmp_path)
@@ -1599,9 +1600,10 @@ def test_fresh_stdio_process_lists_tools(unsafe, tmp_path):
         sys.path.pop(0)
     t = anyio.run(transcript, unsafe, str(tmp_path / "stdio-audit.jsonl"))
     names = [x["name"] for x in t["tools"]]
-    assert sorted(names) == sorted(tools.PHASE0 + (("agr_exec_unsafe",) if unsafe else ()))
+    assert sorted(names) == sorted(tools.PHASE0 + tools.PHASE2 + (("agr_exec_unsafe",) if unsafe else ()))
     assert t["serverInfo"]["name"] == "agr-mcp"
     editing = {n for n, _row, _what, kind in tools.EDITS_080 if kind != "read"}
+    editing |= {n for n in tools.PHASE2 if not n.endswith("_preview")}  # phase-2 apply/commit (#1021)
     assert all(x["readOnlyHint"] for x in t["tools"] if x["name"] != "agr_exec_unsafe" and x["name"] not in editing)
     assert not any(x["readOnlyHint"] for x in t["tools"] if x["name"] in editing)
 
