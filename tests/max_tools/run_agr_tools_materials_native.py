@@ -215,7 +215,7 @@ def mat_tiles():
     m = next(n for n in files if n == 'facade_600x1200_mask.png')
     img, _ = tex.decode_png((OUT / 'tiles' / d).read_bytes())
     msk, _ = tex.decode_png((OUT / 'tiles' / m).read_bytes())
-    assert (img.w, img.h) == (3686, 3686), (img.w, img.h)
+    assert (img.w, img.h) == (3600, 3600), (img.w, img.h)   # 3.6 m at 1000 px/m (1.0.1; was 1024 -> 3686)
     acc, n = [0, 0, 0], 0
     for y in range(0, img.h, 7):
         for x in range(0, img.w, 7):
