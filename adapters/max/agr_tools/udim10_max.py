@@ -129,11 +129,13 @@ def selected_tris(n, mesh):
     rt = _rt()
     if int(n.modifiers.count) != 0:
         return None
+    as_array = rt.execute('(fn agrBitsAsArray b = (b as array))')  # local fn value: no new global
+    nf = len(mesh['tris'])
     if rt.classOf(n.baseObject) == rt.Editable_Mesh:
-        sel = [int(i) for i in rt.getFaceSelection(n)]
-        return sorted(sel) or None
+        sel = sorted({int(i) for i in as_array(rt.getFaceSelection(n)) if 1 <= int(i) <= nf})
+        return sel if sel and len(sel) < nf else None
     if rt.classOf(n.baseObject) == rt.Editable_Poly and mesh['kind'] == 'poly':
-        sel = [int(i) for i in rt.polyop.getFaceSelection(n)]
+        sel = [int(i) for i in as_array(rt.polyop.getFaceSelection(n))]
         out = sorted(t + 1 for p in sel for t in mesh['poly_groups'][p - 1])
         return out or None
     return None

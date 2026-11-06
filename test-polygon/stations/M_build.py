@@ -160,8 +160,8 @@ def make(obj, rt):
         mesh = dict(plane16(), uvs=None, face_uvs=None)
     else:
         small = [(0.0, 0.0), (3.6, 0.0), (3.6, 3.6), (0.0, 3.6)]
-        mesh = facade(height=6.0, footprint=small, openings=False, glass=False) if kind == 'facade_small' else \
-            facade(height=6.0, footprint=small)
+        mesh = facade(height=6.0, footprint=small, brick_from=3.0, openings=False, glass=False) \
+            if kind == 'facade_small' else facade(height=6.0, footprint=small, brick_from=3.0)
         if kind == 'facade_ids_bad':
             mesh['mat_ids'] = [1005 if i == BRICK else i for i in mesh['mat_ids']]
         if extra.get('artist'):

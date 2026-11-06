@@ -228,8 +228,13 @@ def measure(core, lay, o, back, geo):
     if bad:
         edit_findings.append(('seam', sorted({f + 1 for b in bad for f in b['faces']}),
                               'readback seam up to {:.4f} px'.format(max(b['px'] for b in bad))))
-    texel, tex_bad = {}, []
+    texel, tex_bad, tiny = {}, [], 0
+    px = core.px_per_step(o)
     for f, p in enumerate(pieces):
+        (u0, v0), (u1, v1), (u2, v2) = p['uv']
+        if abs((u1 - u0) * (v2 - v0) - (u2 - u0) * (v1 - v0)) * 0.5 * px * px < 1.0:
+            tiny += 1  # a sliver of the grid cut under 1 px²: float32 UV noise, not a texel (job 20261106-045430)
+            continue
         jac = core.u10.jacobian([back['verts'][i] for i in back['tris'][f]], p['uv'])
         if jac is None or jac[1] <= 1e-15:
             continue
@@ -247,6 +252,7 @@ def measure(core, lay, o, back, geo):
     from_ed = [_finding(c, ids, d) for c, ids, d in edit_findings]
     return from_ed, {'seam_internal_max_px': seam['internal_max'], 'seam_chain_max_px': seam['chain_max'],
                      'seam_fold_max_px': seam['fold_max'], 'tiles': tiles, 'crossing': len(crossing),
+                     'texel_skipped_slivers': tiny,
                      'texel_px_per_m': {str(m): [round(a, 3), round(b, 3)] for m, (a, b) in sorted(texel.items())}}
 
 
