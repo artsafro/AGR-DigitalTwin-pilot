@@ -352,7 +352,7 @@ def windows(units):
     assert snap(n) == before, 'NPM changed'
     masters = sorted(str(x.name) for x in rt.objects if str(x.name).startswith('WINLIB_'))
     made = sorted([w['instance'] for w in wins] + [str(x.name) for x in rt.objects if str(x.name).startswith(
-        ('GLASS_NPM_',))] + masters + [str(src[0].name)])
+        ('GLASS_NPM_',))] + masters + [str(src[0].name)] + [c['copy'] for c in rb['copies']])
     scene_before = sorted(str(x.name) for x in rt.objects)
     rt.execute('max undo')
     gone = sorted(set(scene_before) - set(str(x.name) for x in rt.objects))
