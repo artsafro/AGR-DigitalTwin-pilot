@@ -292,3 +292,53 @@ def test_cli_error_exits_nonzero_and_writes_nothing(tmp_path):
              "--catalogue-md", md, "--out-json", out_j, "--out-md", out_m)
     assert r.returncode != 0 and "steel_ral7016" in r.stderr
     assert not out_j.exists() and not out_m.exists()
+
+
+@pytest.mark.parametrize("which", ["catalogue", "catalogue_md", "materials"])
+def test_cli_input_named_like_out_partial_is_untouched(tmp_path, which):
+    """P1-1 (PR #1093 review): an input at <out>.partial survives; temp names are unique, never <out>.partial."""
+    d = _build(tmp_path, [2.0, 6.0, 2.0])
+    cat, md, mats = _inputs(tmp_path)
+    out_j, out_m = tmp_path / "o.json", tmp_path / "o.md"
+    target = {"catalogue": out_j, "catalogue_md": out_m, "materials": out_j}[which]
+    src = {"catalogue": cat, "catalogue_md": md, "materials": mats}[which]
+    moved = target.with_name(target.name + ".partial")
+    src.replace(moved)
+    cat, md, mats = (moved if p == src else p for p in (cat, md, mats))
+    # an unrelated pre-existing <out>.partial of the other output must not be clobbered either
+    other = out_m if target == out_j else out_j
+    other_partial = other.with_name(other.name + ".partial")
+    other_partial.write_bytes(b"unrelated")
+    watched = (cat, md, mats, other_partial)
+    before = {p: p.read_bytes() for p in watched}
+    r = _cli("--build-dir", d, "--approve", "2-3", "--decision", "D202", "--materials", mats, "--catalogue", cat,
+             "--catalogue-md", md, "--out-json", out_j, "--out-md", out_m)
+    assert r.returncode == 0, r.stderr
+    assert {p: p.read_bytes() for p in watched} == before
+    assert [e["schedule_rows"] for e in json.loads(out_j.read_text(encoding="utf-8"))["generated"]] == [[2], [3]]
+    left = {p.name for p in tmp_path.iterdir() if p.is_file()} - {p.name for p in (*watched, out_j, out_m)}
+    assert not left, f"temp files left behind: {left}"
+
+
+@pytest.mark.parametrize("which", ["json", "md", "json_md_same", "alias"])
+def test_cli_alias_with_input_named_like_out_partial(tmp_path, which):
+    """P1-1 combined with the earlier alias fixes: the alias is still rejected, the .partial-named input untouched."""
+    d = _build(tmp_path, [2.0])
+    cat, md, mats = _inputs(tmp_path)
+    out_j, out_m = tmp_path / "o.json", tmp_path / "o.md"
+    cat.replace(tmp_path / "o.json.partial")
+    cat = tmp_path / "o.json.partial"
+    if which == "json":
+        out_j = cat
+    elif which == "md":
+        out_m = md
+    elif which == "json_md_same":
+        out_m = out_j
+    else:
+        out_j = tmp_path / "sub" / ".." / "o.json.partial"
+    before = {p: p.read_bytes() for p in (cat, md, mats)}
+    r = _cli("--build-dir", d, "--approve", "1", "--decision", "D202", "--materials", mats, "--catalogue", cat,
+             "--catalogue-md", md, "--out-json", out_j, "--out-md", out_m)
+    assert r.returncode != 0
+    assert {p: p.read_bytes() for p in (cat, md, mats)} == before
+    assert not (tmp_path / "o.json").exists() and not (tmp_path / "o.md").exists()
