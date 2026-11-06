@@ -332,6 +332,154 @@ def run_import(index, ids, settings, cache_dir, scene_label=None, localappdata=N
     return report
 
 
+# ---- VPM UDIM tiles of placed assets (assets_textures) ------------------------------------------------------
+def _sibling(name):
+    import importlib.util
+    import sys
+    key = 'agr_tools_' + name
+    if key not in sys.modules:
+        spec = importlib.util.spec_from_file_location(key, Path(__file__).with_name(name + '.py'))
+        mod = importlib.util.module_from_spec(spec)
+        sys.modules[key] = mod
+        spec.loader.exec_module(mod)
+    return sys.modules[key]
+
+
+def png_size(path):
+    import struct
+    try:
+        with open(path, 'rb') as f:
+            head = f.read(24)
+    except OSError:
+        return None
+    if head[:8] != b'\x89PNG\r\n\x1a\n':
+        return None
+    return list(struct.unpack('>II', head[16:24]))
+
+
+def write_flat_png(path, rgb, size=256):
+    """Flat 8-bit RGB PNG (colour type 2), exclusive create (never overwrites)."""
+    import struct
+    import zlib
+
+    def chunk(tag, data):
+        return struct.pack('>I', len(data)) + tag + data + struct.pack('>I', zlib.crc32(tag + data) & 0xffffffff)
+    row = b'\x00' + bytes(rgb) * size
+    data = (b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR', struct.pack('>IIBBBBB', size, size, 8, 2, 0, 0, 0)) +
+            chunk(b'IDAT', zlib.compress(row * size, 9)) + chunk(b'IEND', b''))
+    with open(path, 'xb') as f:
+        f.write(data)
+
+
+def _uv_stats(node, k):
+    mesh = rt.snapshotAsMesh(node)
+    if not rt.meshop.getMapSupport(mesh, 1):
+        return None, 0.0
+    n = int(rt.meshop.getNumMapVerts(mesh, 1))
+    us, vs = [], []
+    for i in range(1, n + 1):
+        p = rt.meshop.getMapVert(mesh, 1, i)
+        us.append(float(p.x))
+        vs.append(float(p.y))
+    area = sum(float(rt.meshop.getFaceArea(mesh, f)) for f in range(1, int(mesh.numfaces) + 1)) * k * k
+    return [[min(us), min(vs)], [max(us), max(vs)]], area
+
+
+def _shift_uv(node, du, dv):
+    """Move channel 1 by a whole tile on the node's base object (instances follow)."""
+    cls = str(rt.classof(node.baseObject))
+    if cls == 'Editable_Poly':
+        get, put, cnt = rt.polyop.getMapVert, rt.polyop.setMapVert, rt.polyop.getNumMapVerts
+    elif cls == 'Editable_mesh':
+        get, put, cnt = rt.meshop.getMapVert, rt.meshop.setMapVert, rt.meshop.getNumMapVerts
+    else:
+        raise ValueError('{}: base object {} (Editable_Poly/Mesh expected)'.format(node.name, cls))
+    d = rt.Point3(du, dv, 0)
+    for i in range(1, int(cnt(node.baseObject, 1)) + 1):
+        put(node.baseObject, 1, i, get(node.baseObject, 1, i) + d)
+    if cls == 'Editable_mesh':
+        rt.update(node)
+
+
+def vpm_udims(lib, kind, address, project_dir, mode='preview', version='high', slot=1, tile_limit=5,
+              extra_used=None, obj_type='Main'):
+    """VPM textures of the imported assets of one library: preview -> plan; apply -> maps copied under the VPM
+    names into <project>/textures/vpm/, flat ERM/Normal placeholders, UVs moved by whole tiles, bitmaps repointed,
+    read back. Only the tile-per-set route changes the scene; the packed route returns its plan."""
+    tex = _sibling('assets_textures')
+    names = _sibling('names_core')
+    k = m_per_unit()
+    nodes = [o for o in rt.objects if str(rt.getUserProp(o, core.PROP_LIB)) == lib and
+             str(rt.getUserProp(o, core.PROP_VER)) == version]
+    rows = []
+    for n in nodes:
+        if n.material is None:
+            continue
+        maps = [str(m.filename) for m in node_bitmaps([n])]
+        bb, area = _uv_stats(n, k)
+        diffuse = [p for p in maps if tex.role_of(p) == 'diffuse']
+        rows.append({'asset': str(rt.getUserProp(n, core.PROP_ID)), 'version': version, 'material': str(n.material.name),
+                     'maps': maps, 'uv_bbox': bb, 'area3d_m2': area,
+                     'tex_px': png_size(diffuse[0]) if diffuse else None, 'node': str(n.name)})
+    sets = tex.texture_sets(rows)
+    folder = os.path.join(project_dir, 'textures', 'vpm')
+    existing = os.listdir(folder) if os.path.isdir(folder) else []
+    used = tex.used_tiles(existing, address, names.udim_of)
+    for s_, tiles in (extra_used or {}).items():
+        used.setdefault(int(s_), set()).update(tiles)
+    plan = tex.vpm_plan(sets, used, address, names.texture_stem, kind, slot, tile_limit, obj_type)
+    plan.update(used={str(s_): sorted(v) for s_, v in used.items()}, folder=folder, nodes=len(nodes))
+    if mode != 'apply' or plan['mode'] != 'tile_per_set' or plan['blocking']:
+        plan['applied'] = False
+        return plan
+    os.makedirs(folder, exist_ok=True)
+    written = []
+    for r in plan['rows']:
+        for c in r['copy']:
+            ext = os.path.splitext(c['src'])[1] or '.png'
+            dst = os.path.join(folder, c['stem'] + ext)
+            if os.path.exists(dst):
+                raise ValueError('exists, not overwritten: ' + dst)
+            shutil.copyfile(c['src'], dst)
+            c['dst'] = dst
+            written.append(dst)
+        for p in r['placeholders']:
+            dst = os.path.join(folder, p['stem'] + '.png')
+            write_flat_png(dst, p['rgb'])
+            p['dst'] = dst
+            written.append(dst)
+    done_base = set()
+    for r in plan['rows']:
+        du, dv = r['uv_offset']
+        new_by_old = {c['src']: c['dst'] for c in r['copy']}
+        for n in nodes:
+            if n.material is None or str(n.material.name) != r['material']:
+                continue
+            h = _handle(n.baseObject)
+            if h not in done_base:
+                _shift_uv(n, du, dv)
+                done_base.add(h)
+            for m in node_bitmaps([n]):
+                if str(m.filename) in new_by_old:
+                    m.filename = new_by_old[str(m.filename)]
+    rt.freeSceneBitmaps()
+    back = []
+    for r in plan['rows']:
+        u0, v0 = r['uv_offset']
+        for n in nodes:
+            if n.material is None or str(n.material.name) != r['material']:
+                continue
+            bb, _ = _uv_stats(n, k)
+            maps = [str(m.filename) for m in node_bitmaps([n])]
+            back.append({'node': str(n.name), 'udim': r['udim'], 'uv_bbox': bb,
+                         'inside_tile': bb is not None and bb[0][0] >= u0 - 1e-4 and bb[0][1] >= v0 - 1e-4 and
+                         bb[1][0] <= u0 + 1 + 1e-4 and bb[1][1] <= v0 + 1 + 1e-4,
+                         'maps': maps, 'maps_exist': all(os.path.isfile(p) for p in maps),
+                         'maps_udim': sorted({names.udim_of(p) for p in maps})})
+    plan.update(applied=True, written=written, readback=back)
+    return plan
+
+
 def _material_names():
     return {str(m.name) for m in rt.sceneMaterials}
 
