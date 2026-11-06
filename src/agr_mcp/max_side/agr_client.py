@@ -75,6 +75,7 @@ class ListenerClient:
             raise HostError("host_unavailable: listener of Max pid {} unreachable: {}".format(self.pid, exc)) \
                 from None
         started = time.time()
+        idle_polls = 0
         try:
             while True:
                 try:
@@ -91,8 +92,13 @@ class ListenerClient:
                 except (OSError, ValueError, HostError):
                     st = {"busy": True, "current": job}
                 if st.get("current") != job and not st.get("busy"):
-                    s.settimeout(self.poll_s)  # finished: the answer is in flight
+                    idle_polls += 1  # finished: the answer is in flight; a lost answer ends the wait
+                    if idle_polls > 3:
+                        raise HostError("host_unavailable: Max is idle but the answer of job {} was lost; check the "
+                                        "scene before repeating the call".format(job))
+                    s.settimeout(self.poll_s)
                     continue
+                idle_polls = 0
                 if time.time() - started > self.hard_cap_s:
                     raise HostError("busy: Max pid {} still runs job {} after {:.0f} s; the lease stays held until "
                                     "it reports idle".format(self.pid, job, time.time() - started),

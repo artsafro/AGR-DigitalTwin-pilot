@@ -31,6 +31,7 @@ class MaxGateHost:
 
     def __init__(self, rt=None):
         self.rt = rt or _rt()
+        self._saved = {}
 
     # -- reading -----------------------------------------------------------------------------------------------------
     def doc(self):
@@ -145,16 +146,9 @@ class MaxGateHost:
     def create_mesh(self, layer, name, verts_m, tris, props):
         rt = self.rt
         k = self.m_per_unit()
-        node = rt.Editable_Mesh()
-        node.name = name
-        rt.setMesh(node, numverts=len(verts_m), numfaces=len(tris))
-        for i, v in enumerate(verts_m, 1):
-            rt.setVert(node, i, rt.Point3(v[0] / k, v[1] / k, v[2] / k))
-        for i, t in enumerate(tris, 1):
-            rt.setFace(node, i, int(t[0]) + 1, int(t[1]) + 1, int(t[2]) + 1)
-            rt.setEdgeVis(node, i, 1, True)
-            rt.setEdgeVis(node, i, 2, True)
-            rt.setEdgeVis(node, i, 3, True)
+        verts = rt.Array(*[rt.Point3(v[0] / k, v[1] / k, v[2] / k) for v in verts_m])
+        faces = rt.Array(*[rt.Point3(int(t[0]) + 1, int(t[1]) + 1, int(t[2]) + 1) for t in tris])
+        node = rt.mesh(name=name, vertices=verts, faces=faces)
         rt.update(node)
         return self._put(node, layer, props)
 
@@ -165,7 +159,9 @@ class MaxGateHost:
         return self._put(node, layer, props)
 
     def set_prop(self, handle, key, value):
-        self.rt.setUserProp(self.node(handle), key, str(value))
+        n = self.node(handle)
+        self._saved.setdefault(int(handle), str(self.rt.getUserPropBuffer(n)))  # compensation for cancel()
+        self.rt.setUserProp(n, key, str(value))
 
     def set_face_ids(self, handle, faces, mat_id):
         rt = self.rt
@@ -186,13 +182,22 @@ class MaxGateHost:
         rt = self.rt
         if rt.theHold.Holding():
             raise RuntimeError('theHold is already holding: another operation is open')
+        self._saved = {}
         rt.theHold.Begin()
 
     def accept(self, label):
         self.rt.theHold.Accept(label)
 
     def cancel(self):
-        self.rt.theHold.Cancel()
+        """theHold.Cancel, then put back the user property buffers this transaction changed (in case a property
+        change is not held); the gate proves the result with the hashes either way."""
+        rt = self.rt
+        rt.theHold.Cancel()
+        for h, buf in sorted(self._saved.items()):
+            n = rt.maxOps.getNodeByHandle(h)
+            if n is not None and rt.isValidNode(n) and str(rt.getUserPropBuffer(n)) != buf:
+                rt.setUserPropBuffer(n, buf)
+        self._saved = {}
 
 
 def dumps(value):

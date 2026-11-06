@@ -670,3 +670,36 @@ def test_dock_widget_cards_apply_and_screens(qtbot, tmp_path, monkeypatch):
         dock.show()
         qtbot.wait(50)
         assert dock.grab().save(str(out / "dock-{}.png".format(name)))
+
+
+def test_lost_answer_while_idle_ends_the_wait():
+    """A listener that is idle but never answers the job must not hold the daemon forever."""
+    srv = socket.socket()
+    srv.bind(("127.0.0.1", 0))
+    srv.listen(4)
+    port = srv.getsockname()[1]
+    stop = threading.Event()
+    held = []
+
+    def serve():
+        srv.settimeout(0.1)
+        while not stop.is_set():
+            try:
+                c, _ = srv.accept()
+            except socket.timeout:
+                continue
+            req = json.loads(c.recv(65536).split(b"\n")[0])
+            if req["kind"] == "status":
+                c.sendall(b'{"ok": true, "busy": false, "current": null}\n')
+                c.close()
+            else:
+                held.append(c)  # any other job: swallowed (no answer, connection left open)
+    t = threading.Thread(target=serve, daemon=True)
+    t.start()
+    try:
+        cl = agr_client.ListenerClient({"pid": os.getpid(), "port": port, "token": "t"}, poll_s=0.05)
+        with pytest.raises(agr_client.HostError, match="^host_unavailable: Max is idle but the answer"):
+            cl.call("gate_read", {}, 0.05)
+    finally:
+        stop.set()
+        srv.close()

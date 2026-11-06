@@ -68,7 +68,22 @@
 
 ### U
 
-- `agent-bridge`: `agent.request`, `agent.accept` — в работе.
+- `agent.request` (1.0.32): новая папка `jobs/<ID>/agent/<req>/` — `request.json` по `AgentRequest`, `REQUEST.md`,
+  команда CLI (Claude Code по умолчанию, Codex, Cursor), `baseline.json` (хеши сцены), FBX-снимок с sha256;
+  слой `AGENT_<req>`.
+- `agent.accept` (1.0.33): шлюз всего слоя — объекты вне `AGENT_<req>` не изменены (хеши против baseline), имена и
+  роли по контракту; нарушение → слой в скрытый `AGENT_<req>_REJECTED` и вопрос в `questions.md`; успех → перенос в
+  слои ролей, заменённые оригиналы скрыты в `AGENT_<req>_SOURCE`, `accepted.json`.
+- Операции D108 для агента в agr-mcp: `agr_agent_context`, `agr_agent_op_preview` (`dt_ai.ops.run_operation`,
+  инварианты D115 до/после на сервере), `agr_agent_op_apply` (только после кнопки «Применить»: одна запись Undo,
+  хеши вне слоя, откат с доказательством и вопрос, строка журнала `agent`). `place_window`, `make_capsule`,
+  `make_roof_plane` — после веток J и K.
+- Свой listener в Max вместо 3dsmax-mcp (очередь главного потока, токен, только вызов моста как данные), реестр
+  экземпляров (`instance_ambiguous`), один демон agr-mcp на хост (Streamable HTTP), аренда хоста не снимается по
+  таймауту клиента, пока Max не idle; профили `observer` / `operator` / `modeller` / `dev` (`agr_exec_unsafe` только
+  в `dev`).
+- Claude-док в Max (`agent.dock`, регистрация кнопки — ветка 0 или R): `claude` CLI в stream-json, только
+  инструменты `mcp__agr__*`, карточка «Применить», `--resume` после перезапуска Max.
 
 ## 0.9.0 (#979)
 
