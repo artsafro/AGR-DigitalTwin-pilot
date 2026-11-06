@@ -52,6 +52,13 @@ def _select(names):
     return nodes
 
 
+# Release 1.0.0 (#1024 R): rows whose button makes ONE result from the whole selection (npm.build attaches the
+# selected copies into one NPM; the facade strip packs one atlas; body.capsules reads every opening of the selection).
+# One press over a station's PASS and FAIL objects mixes their findings, so these are pressed one object at a time,
+# as the owner branches' natives press their polygon rows (K, P: nodes=[n]).
+PER_OBJECT_100 = ('npm.build', 'atlas.facade_strip', 'body.capsules')
+
+
 def _press(runtime, tool, names, options=None):
     from pymxs import runtime as rt
     if (tool in getattr(runtime, 'EDITS_100', ()) or tool in getattr(runtime, 'EDITS_090', ())
@@ -110,8 +117,8 @@ def main():
                      if not o.get('produced') and o['name'] != '__scene__'
                      and not str(o['name']).endswith('.geojson')]
             tool = doc['tool']
-            if tool == 'geojson':
-                targets = [[o['name']] for o in mine]
+            if tool == 'geojson' or tool in PER_OBJECT_100:
+                targets = [[n] for n in names] if tool != 'geojson' else [[o['name']] for o in mine]
             else:
                 targets = [names]
             for picked in targets:
