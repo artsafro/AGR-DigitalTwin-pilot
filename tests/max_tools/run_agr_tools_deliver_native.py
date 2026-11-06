@@ -291,6 +291,27 @@ def light_package():
     assert rt.exportFile(str(folder / 'SM_TestAddr.fbx'), rt.Name('noPrompt'), selectedOnly=True, using=rt.FBXEXP)
     prev = agr.edits_100('light.export', 'preview', options={'folder': str(folder)})
     app = agr.edits_100('light.export', 'apply', prev)
+    # the rest of a VPM set (export.zip refuses a set without GeoJSON / PNG): placeholders, judged by the validator
+    import struct
+    import zlib
+
+    def png(path):
+        raw = bytes([0, 128, 128, 128])
+        chunk = lambda t, d: struct.pack('>I', len(d)) + t + d + struct.pack('>I', zlib.crc32(t + d) & 0xffffffff)
+        sig = bytes([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A])
+        path.write_bytes(sig + chunk(b'IHDR', struct.pack('>IIBBBBB', 1, 1, 8, 2, 0, 0, 0))
+                         + chunk(b'IDAT', zlib.compress(raw)) + chunk(b'IEND', b''))
+    for kind in ('Diffuse', 'ERM', 'Normal'):
+        png(folder / 'T_TestAddr_{}_1.1001.png'.format(kind))
+    (folder / 'SM_TestAddr.geojson').write_text('{"type": "FeatureCollection", "features": []}', encoding='utf-8')
+    direct = None
+    try:  # the qa.package light rules themselves (tools/qa/validate_package.py light_findings) on the written file
+        sys.path[:0] = [str(ROOT / 'src'), str(ROOT / 'tools' / 'qa')]
+        import validate_package as vp
+        direct = [(f.status, f.observed[:200], (f.data or {}).get('code')) for f in vp.light_findings(
+            'SM_TestAddr_Light.fbx', Path(app['plan']['target']).read_bytes(), 'SM_TestAddr', [])]
+    except Exception as exc:  # noqa: BLE001 - recorded
+        direct = 'error: {}: {}'.format(type(exc).__name__, exc)
     zp = agr.edits_080('export.zip', 'preview', options={'folder': str(folder)})
     za = agr.edits_080('export.zip', 'apply', zp)
     stages = []
@@ -298,7 +319,11 @@ def light_package():
         for s in table.get('stages') or ():
             stages.append({'id': s['id'], 'status': s['status'], 'non_pass': (s.get('non_pass') or [])[:4]})
     light_lines = [s for s in stages if any('light' in str(x).lower() for x in s['non_pass'])]
-    return {'light_apply': app['status'], 'light_codes': codes_of(app), 'zip_status': za['status'],
+    assert isinstance(direct, list) and [d[0] for d in direct] == ['pass'], direct
+    assert 'SM_TestAddr_Light.fbx' in [m['name'] for a in zp['plan']['archives'] for m in a['members']]
+    assert za['plan'].get('reports'), 'validator did not run on the archive'
+    assert not light_lines, light_lines
+    return {'qa_package_light_rules': direct, 'light_apply': app['status'], 'light_codes': codes_of(app), 'zip_status': za['status'],
             'archives': za['plan'].get('archives') and [a['name'] for a in zp['plan']['archives']],
             'members': [m['name'] for a in zp['plan']['archives'] for m in a['members']],
             'marker': za['plan'].get('marker'), 'stages': stages, 'light_problems': light_lines}
