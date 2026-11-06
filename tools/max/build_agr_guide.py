@@ -39,13 +39,22 @@ def render():
             'flow.svg': roadmap.flow_svg(suite, model.VERSION, colour)}
 
 
+def wip_note(model):
+    """Release 1.0.0 (#1024 R): which stage buttons are still wip (branch Q, deferred to 1.1.0)."""
+    wip = [a for a in model.ACTIONS_100 if a.wip]
+    if not wip:
+        return ''
+    return ' — в 1.0.0 это только {} (ветка Q, выпуск в 1.1.0)'.format(
+        ', '.join('`{}`'.format(a.tool) for a in wip))
+
+
 def stages_md(suite, roadmap, model):
     """The 1.0 stage rail of «Путь» (#1024) as the panel draws it (ui_model.stage_rail): big button, second row."""
     station = {rid: '1.0.{}'.format(i) for i, rid in enumerate(roadmap.stage_buttons(suite), 1)}
     out = ['', '## ' + model.MENU_100, '',
            'На вкладке «Путь» над блоками — ряд больших кнопок этапов (иконка, подпись, статус этапа из паспорта '
-           'проекта); под каждой — вторая строка с мелкими кнопками этапа. Пока кнопка в работе, она видна, но '
-           'неактивна: «{}». Страницы блоков 0–9 не меняются.'.format(model.WIP_TIP), '',
+           'проекта); под каждой — вторая строка с мелкими кнопками этапа. Кнопка в работе видна, но неактивна: '
+           '«{}»{}. Страницы блоков 0–9 не меняются.'.format(model.WIP_TIP, wip_note(model)), '',
            '| Этап | Большая кнопка | Мелкие кнопки (вторая строка) |', '|---|---|---|']
 
     def name(a):

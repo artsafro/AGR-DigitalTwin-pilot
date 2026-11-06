@@ -13,7 +13,7 @@ import math
 import os
 from collections import namedtuple
 
-VERSION = '0.9.0'
+VERSION = '1.0.0'
 
 # wip=True (1.0 conveyor, #1024): the button is visible but disabled, tooltip «в работе, #1024», its macro never
 # runs an edit. Default False keeps every 0.x Action(...) call of nine fields valid.
@@ -278,10 +278,25 @@ _ROWS_100 = {  # plan row id -> (icon, label_ru, reqs)
 }
 
 
+# Release 1.0.0 (#1024 R): all 13 branches F..U are merged (Q #1085 last), so no 1.0 row is wip. A row of a later
+# branch would be listed here (SPLIT.md «Порядок слияния» 3: an unmerged branch keeps wip and moves to 1.1.0).
+WIP_100 = frozenset()
+
+
+def stage_tip(tool):
+    """Tooltip head of a released 1.0 stage button: «1.0, этап <n> <stage>» (the agent stage has no number)."""
+    for sid, label, _icon, rows_ in STAGES_100:
+        if tool in rows_:
+            return '1.0, ' + ('этап «Агент»' if sid == 'agent' else 'этап {} «{}»'.format(sid, label))
+    raise KeyError('not a 1.0 stage row: ' + repr(tool))
+
+
 def _action_100(tool):
     icon, label, reqs = _ROWS_100[tool]
     macro = 'AGRTools' + ''.join(p.capitalize() for p in tool.replace('.', '_').split('_'))
-    return Action(tool.replace('.', '_'), tool, icon, None, label, WIP_TIP, tuple(reqs.split()), macro, False, True)
+    wip = tool in WIP_100
+    return Action(tool.replace('.', '_'), tool, icon, None, label, WIP_TIP if wip else stage_tip(tool),
+                  tuple(reqs.split()), macro, False, wip)
 
 
 ACTIONS_100 = tuple(_action_100(tool) for _sid, _label, _icon, rows_ in STAGES_100 for tool in rows_)
@@ -803,7 +818,7 @@ _CLASSIC = '''macroScript AGRToolsClassic category:"AGR Tools" tooltip:"AGR Tool
 '''
 
 
-MENU_100 = 'Конвейер 1.0 — в работе (#1024)'
+MENU_100 = 'Конвейер 1.0 (#1024)'  # released in 1.0.0 (R); was «— в работе»
 
 
 def macro_100(a):

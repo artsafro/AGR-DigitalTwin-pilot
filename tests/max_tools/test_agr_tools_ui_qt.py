@@ -162,6 +162,11 @@ def test_layout_has_all_sections_and_actions(main):
     suite = roadmap.load_file(SUITE)
     shipped = [a for a in model.ACTIONS
                if roadmap.shipped(roadmap.row(suite, model.row_of(a.id))['version'], model.VERSION)]
+    # release 1.0.0 (#1024 R): the 18 released 1.0 stage buttons of old rows are on their block pages too
+    shipped_10 = [a for a in model.ACTIONS_100 if not a.wip and a.tool.partition('.')[0] == roadmap.row(
+        suite, a.tool)['block']]
+    assert len(shipped_10) == 18 and 'udim_udims_to_ids' in {a.id for a in shipped_10}
+    shipped += shipped_10
     assert set(p.buttons) == {a.id for a in shipped}  # 0.8 actions stay greyed until VERSION 0.8.0 (#908)
     for a in shipped:
         b = p.buttons[a.id]
@@ -354,16 +359,17 @@ def test_rail_has_path_and_ten_blocks_in_order_with_planned_greyed(main):
     assert items == ['Путь'] + ['{} {}'.format(b['number'], b['short_ru']) for b in suite['blocks']]
     assert p.pages.count() == 11 and p.rail.currentRow() == 0
     # block pages 0-9: rows whose id prefix is their block; the 15 new 1.0 rows (#1024) are stage buttons only
-    planned = [r for r in suite['rows'] if roadmap.vkey(r['version']) > roadmap.vkey(model.VERSION)
-               and r['id'].partition('.')[0] == r['block']]
-    # 1.0-1.x after 0.9.0 (#979): 18 old rows that are 1.0 stage buttons + 3 folded into a big button (fate step)
-    # + 16 tail/obsolete rows (#1024)
-    assert set(p.planned) == {r['id'] for r in planned} and len(planned) == 37
+    planned = [r for r in suite['rows'] if r['id'].partition('.')[0] == r['block'] and (
+        roadmap.vkey(r['version']) > roadmap.vkey(model.VERSION) or r.get('deferred') or r['fate'] == 'step')]
+    # release 1.0.0 (#1024 R): 16 tail/obsolete rows (1.x) + 3 rows folded into a big button (fate step)
+    assert set(p.planned) == {r['id'] for r in planned} and len(planned) == 19
     v10 = [r for r in planned if r['version'] == '1.0']
-    assert len([r for r in v10 if r['fate'] == 'stage']) == 18 and len([r for r in v10 if r['fate'] == 'step']) == 3
+    assert not [r for r in v10 if r['fate'] == 'stage'] and len([r for r in v10 if r['fate'] == 'step']) == 3
     for r in planned:
         b = p.planned[r['id']]
-        assert not b.isEnabled() and b.text().endswith('в версии ' + r['version'])
+        assert not b.isEnabled() and b.text().endswith(roadmap.planned_label(r))
+    assert p.planned['tex.vpm_sets'].text().endswith('в кнопке vpm.build')
+    assert p.planned['tex.browser'].text().endswith('в версии 1.x')
     stage_only = {r['id'] for r in suite['rows'] if r['id'].partition('.')[0] != r['block']}
     assert len(stage_only) == 15 and not stage_only & set(p.planned)
     assert not any(p.findChild(QtWidgets.QToolButton, 'agr_planned_' + rid) for rid in stage_only)
@@ -372,7 +378,7 @@ def test_rail_has_path_and_ten_blocks_in_order_with_planned_greyed(main):
     assert len(rail_colours) == 10
 
 
-def test_stage_rail_big_buttons_second_rows_wip_disabled(main, qtbot):
+def test_stage_rail_big_buttons_second_rows_wip_disabled(main, qtbot, monkeypatch):
     be = FakeBackend(5)
     p = make(main, be)
     suite = roadmap.load_file(SUITE)
@@ -394,17 +400,19 @@ def test_stage_rail_big_buttons_second_rows_wip_disabled(main, qtbot):
         assert all(col.isAncestorOf(b) for b in [big] + small)
         assert all(b.geometry().top() > big.geometry().bottom() for b in small)
     stage_label = {s['big_button']: s['label_ru'] for s in suite['stages']}
-    for aid, b in p.stage_buttons.items():  # wip: visible, disabled, «в работе, #1024» + what the row does
+    for aid, b in p.stage_buttons.items():  # release 1.0.0 (#1024 R): every stage button visible and enabled
         a = model.BY_ID[aid]
-        assert a.wip and not b.isEnabled() and not b.isHidden()
+        assert b.isEnabled() and not a.wip and not b.isHidden()
         assert b.text() == stage_label.get(a.tool, a.label)
-        assert b.toolTip().startswith('в работе, #1024') and 'Когда:' in b.toolTip() and not b.icon().isNull()
-    big = p.stage_buttons['project_passport']
-    qtbot.mouseClick(big, QtCore.Qt.LeftButton)  # a disabled button never runs
-    assert p.run('project_passport') is None and be.events == []
-    assert p.status.text() == 'Паспорт проекта: в работе, #1024'
-    p.run('census')  # after a run every stage button is still disabled
-    assert not any(b.isEnabled() for b in p.stage_buttons.values())
+        assert b.toolTip().startswith(model.stage_tip(a.tool)) and 'Когда:' in b.toolTip() and not b.icon().isNull()
+    p.run('census')  # after a run the stage buttons are enabled again
+    assert all(b.isEnabled() for b in p.stage_buttons.values())
+    # a wip stage button (a branch not merged at R) never runs and says so
+    wip = model.BY_ID['npm_to_vpm']._replace(wip=True, tip=model.WIP_TIP)
+    monkeypatch.setitem(model.BY_ID, 'npm_to_vpm', wip)
+    before = list(be.events)
+    assert p.run('npm_to_vpm') is None and be.events == before
+    assert p.status.text() == 'НПМ → ВПМ: в работе, #1024'
 
 
 def test_stage_status_comes_from_the_passport(main):
@@ -433,8 +441,10 @@ def test_path_nodes_open_tabs_tooltips_and_cards(main, qtbot):
     assert btn.isEnabled() and 'NPM-2.7-2' in btn.toolTip() and 'Когда:' in btn.toolTip()
     shipped = p.findChild(QtWidgets.QToolButton, 'agr_path_light.check')
     assert shipped.isEnabled() and 'в версии' not in shipped.text()  # shipped in 0.9.0 (#979)
-    planned = p.findChild(QtWidgets.QToolButton, 'agr_path_light.export')
-    assert not planned.isEnabled() and 'в версии 1.0' in planned.text()
+    released = p.findChild(QtWidgets.QToolButton, 'agr_path_light.export')
+    assert released.isEnabled() and 'в версии' not in released.text()  # shipped in 1.0.0 (#1024 R)
+    planned = p.findChild(QtWidgets.QToolButton, 'agr_path_tex.browser')  # a 1.x tail row
+    assert not planned.isEnabled() and 'в версии 1.x' in planned.text()
     box = p.show_card('qa.glass')
     text = box.text()
     for part in ('Что делает:', 'Когда нужна:', 'Вход:', 'Результат:', 'Сцена: только чтение', 'Связанные кнопки:'):

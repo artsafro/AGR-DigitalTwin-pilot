@@ -89,9 +89,9 @@ ROWS_100 = ("project.passport", "source.intake", "scene.source_class", "body.pre
             "light.export", "qa.omk_te", "export.place_by_passport", "agent.request", "agent.accept")
 READ_100 = ("scene.source_class", "tex.plug_colour", "udim.distortion", "udim.udims_to_ids", "ucx.stairs",
             "qa.omk_te")
-# The installed runtime of the base still says VERSION 0.9.0 and already has edits_100; the entry function is the
-# real gate (check_runtime), the minimum only refuses older installs.
-RUNTIME_100 = "0.9.0"
+# Released in package version 1.0.0 (release branch R, #1024); the entry function is the real gate
+# (check_runtime), the minimum refuses older installs.
+RUNTIME_100 = "1.0.0"
 # row -> (group, key, minimum runtime, entry function)
 ROUTES = {}
 ROUTES.update({r: ("fn", k, EXPECTED_RUNTIME, k) for r, k in ROWS_FN.items()})

@@ -78,8 +78,11 @@ def test_stages_cover_the_33_buttons_in_station_order():
     assert len(ORDER) == 33 and len(set(ORDER)) == 33 and set(ORDER) == set(OWNER)
     assert [s['id'] for s in suite['stages']] == list(range(10)) + ['agent']
     v10 = next(v for v in suite['versions'] if v['version'] == '1.0')
-    assert v10['rows'] == ORDER and v10['status'] == 'in work' and v10['issue'] == '#1024'
+    assert v10['rows'] == ORDER and v10['status'] == 'done' and v10['issue'] == '#1024'
     assert sorted(v10['steps']) == ['atlas.unatlas', 'model.window_placer', 'tex.vpm_sets']
+    # release 1.0.0 (#1024 R): all 13 branches merged (Q #1085 last): no row is deferred, no button wip
+    assert not any(r.get('deferred') for r in ROWS.values()) and 'deferred' not in v10
+    assert set(_load(PKG / 'ui_model.py', 'agr_tools_ui_model_100').WIP_100) == set()
     for rid in ORDER:
         assert ROWS[rid]['version'] == '1.0' and ROWS[rid]['fate'] == 'stage' and ROWS[rid]['mcp'] == 'yes'
     for rid in NEW_15:

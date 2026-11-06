@@ -174,6 +174,11 @@ OWNER_100 = {  # plan row of base 1.0 -> branch of #1024 that owns its station
     'agent.request': 'U', 'agent.accept': 'U',
 }
 WORK_REASON_100 = 'станция в работе, #1024, ветка {}'
+# Release 1.0.0 (#1024 R): rows whose button makes ONE result from the whole selection (npm.build attaches the
+# selected copies into one NPM; the facade strip packs one atlas). One press over a station's PASS and FAIL objects
+# mixes their findings, so build/run_inside_max.py presses these one object at a time (as the owner natives of P
+# press their rows, nodes=[n]) and run_polygon.py compares each press with its own object.
+PER_OBJECT_100 = ('npm.build', 'atlas.facade_strip', 'body.capsules')
 ALL_BRANCHES = BRANCHES + BRANCHES_100
 ISSUE_OF = dict([(b, '#979') for b in BRANCHES] + [(b, '#1024') for b in BRANCHES_100])
 OWNER_ALL = dict(OWNER, **OWNER_100)
