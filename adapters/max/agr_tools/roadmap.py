@@ -38,8 +38,16 @@ GEOAGR_BUTTONS = {
     'btn_bricks_unwrap': 33780, 'btn_ids_as_udims': 41355, 'btn_unwrap_material_from_lowpoly': 29390,
     'btn_check_names': 15355, 'btn_DoubleFaces': 49204, 'btn_omkte': 66030, 'btn_archivate': 66229,
     'btn_Lights': 56146,
+    # Release 0.9.0 (#979 R): buttons the plan cites in the short form `btn_<name> :<line>`, and the buttons of the
+    # 0.9 rows and 0.9 reworks (qa.address, qa.normals, export.pivot_place, tex.placeholders, ucx.triangulate).
+    # Each line is the `on btn_<name> pressed do` handler of GeoAGR.ms 13.64 (checked 06.11.2026).
+    'btn_set_alpha': 12554, 'btn_conv': 14191, 'btn_remove': 14196, 'btn_snap': 57196, 'btn_process': 56535,
+    'btn_Streets_List': 42460, 'btn_View_Normals': 47595, 'btn_pivot_get': 64763, 'btn_pivot_set': 64778,
+    'btn_resetXForm': 64709, 'btn_combine_two_models': 64730, 'btn_make_tex_diffuse': 42227,
+    'btn_open_tex_normal': 42333, 'btn_open_tex_erm': 42409, 'btn_UCX_connect': 62890,
 }
-GEOAGR_CITE_RE = re.compile(r'\b(btn_\w+)\s+GeoAGR\.ms:(\d+)')
+# `btn_x GeoAGR.ms:123` and the short form `btn_x :123` used after a first GeoAGR.ms citation in the same source.
+GEOAGR_CITE_RE = re.compile(r'\b(btn_\w+)\s+(?:GeoAGR\.ms)?:(\d+)')
 STATUS_RU = {'ok': 'ок', 'errors': 'ошибки', 'not_run': 'не запускалось', 'planned': 'кнопок ещё нет',
              'no_checks': 'проверок нет, только действия'}
 

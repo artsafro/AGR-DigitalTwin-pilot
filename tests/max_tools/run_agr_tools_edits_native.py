@@ -58,7 +58,8 @@ ACTS = [a for a in model.ACTIONS if a.section == model.SECTIONS.index('Сдач�
 
 def registry():
     """Released: every row has its glue function; with nothing selected a preview reports or refuses, never stubs."""
-    assert agr.VERSION == '0.8.0' and model.VERSION == '0.8.0'
+    # shipped in 0.8.0 (#908) and in every later release (0.9.0, #979 R)
+    assert agr.VERSION == model.VERSION and tuple(int(x) for x in agr.VERSION.split('.')) >= (0, 8, 0)
     assert len(agr.EDITS_080) == 13 and len(ACTS) == 13 and {a.tool for a in ACTS} == set(agr.EDITS_080)
     rt.clearSelection()
     out = {}

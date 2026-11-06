@@ -354,7 +354,7 @@ def test_rail_has_path_and_ten_blocks_in_order_with_planned_greyed(main):
     assert items == ['Путь'] + ['{} {}'.format(b['number'], b['short_ru']) for b in suite['blocks']]
     assert p.pages.count() == 11 and p.rail.currentRow() == 0
     planned = [r for r in suite['rows'] if roadmap.vkey(r['version']) > roadmap.vkey(model.VERSION)]
-    assert set(p.planned) == {r['id'] for r in planned} and len(planned) == 54  # 0.9-1.x: 19 + 18 + 17 (#973)
+    assert set(p.planned) == {r['id'] for r in planned} and len(planned) == 35  # 1.0-1.x: 18 + 17 after 0.9.0 (#979)
     for r in planned:
         b = p.planned[r['id']]
         assert not b.isEnabled() and b.text().endswith('в версии ' + r['version'])
@@ -370,8 +370,10 @@ def test_path_nodes_open_tabs_tooltips_and_cards(main, qtbot):
     assert p.rail.currentRow() == 8 and p.pages.currentIndex() == 8
     btn = p.findChild(QtWidgets.QToolButton, 'agr_path_qa.glass')
     assert btn.isEnabled() and 'NPM-2.7-2' in btn.toolTip() and 'Когда:' in btn.toolTip()
-    planned = p.findChild(QtWidgets.QToolButton, 'agr_path_light.check')
-    assert not planned.isEnabled() and 'в версии 0.9' in planned.text()  # moved from 1.0
+    shipped = p.findChild(QtWidgets.QToolButton, 'agr_path_light.check')
+    assert shipped.isEnabled() and 'в версии' not in shipped.text()  # shipped in 0.9.0 (#979)
+    planned = p.findChild(QtWidgets.QToolButton, 'agr_path_light.export')
+    assert not planned.isEnabled() and 'в версии 1.0' in planned.text()
     box = p.show_card('qa.glass')
     text = box.text()
     for part in ('Что делает:', 'Когда нужна:', 'Вход:', 'Результат:', 'Сцена: только чтение', 'Связанные кнопки:'):
