@@ -341,3 +341,34 @@ def test_agr_working_keys_held_off_the_cleanup_gate_and_the_delivery():
     assert kept['actions'] == [] and len(kept['kept_udp']) == 4
     assert ex.pipeline_key('agr_role') and ex.pipeline_key('AGR_EXPORT_PATH') and not ex.pipeline_key('foo')
     assert not ex.pipeline_key('AGR_role')                          # only the two exact families
+
+
+def test_ucx_piece_has_channel_1_named_uv(monkeypatch):
+    """RED on 1.0.0: export.checked cleanup «map channel 1 missing: no UV to rename» on all 98 KPP1 UCX pieces."""
+    import types
+    calls = []
+
+    class Node:
+        material = 'x'
+
+    class PO:
+        def setMapSupport(self, n, ch, on):
+            calls.append(('support', ch, on))
+
+        def defaultMapFaces(self, n, ch):
+            calls.append(('default', ch))
+
+    fake = types.SimpleNamespace(point3=lambda *a: a, mesh=lambda **k: Node(), convertToPoly=lambda n: None,
+                                 polyop=PO(), setUserProp=lambda n, k, v: calls.append(('prop', k, v)),
+                                 units=types.SimpleNamespace(SystemType='meters', SystemScale=1.0))
+    monkeypatch.setitem(sys.modules, 'pymxs', types.SimpleNamespace(runtime=fake))
+    rtm = _load('runtime.py', 'agr_runtime_101')
+    monkeypatch.setattr(rtm, '_unit_m', lambda: 1.0)
+    rtm._make_ucx_mesh('UCX_SM_Kpp_1_Main_001', [[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]],
+                       [[0, 1, 2], [0, 1, 3], [0, 2, 3], [1, 2, 3]])
+    assert ('support', 1, True) in calls and ('default', 1) in calls and ('prop', 'MapChannel:1', 'UV') in calls
+
+
+def test_vpm_copy_names_its_channel_1():
+    src = (PKG / 'vpm_max.py').read_text(encoding='utf-8')
+    assert "rt.setUserProp(c, 'MapChannel:1', 'UV')" in src and "rt.setUserProp(c, UDIM_PROP," in src

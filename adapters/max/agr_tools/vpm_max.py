@@ -160,6 +160,7 @@ def vpm_build(ctx, mode, nodes, preview):
                 # 1.0.1: the copy carries its own dense table (the inherited prop of the source may be stale, e.g.
                 # after attach): udim.plugs / npm.build read the tile of a library id from it (KPP1 e2e)
                 rt.setUserProp(c, UDIM_PROP, json.dumps(part['summary']['udim_table'], sort_keys=True))
+                rt.setUserProp(c, 'MapChannel:1', 'UV')   # the UDIM layout IS the delivered UV (export hygiene)
                 back = rd.read_tri(c, k)
                 findings, measured = measure(core, lay, o, back, geo)
                 objects.append(edit.entry(rd.handle(c), str(c.name), findings))

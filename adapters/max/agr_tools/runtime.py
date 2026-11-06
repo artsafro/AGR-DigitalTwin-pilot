@@ -1812,6 +1812,11 @@ def _make_ucx_mesh(name, verts_m, tris):
     faces = [rt.point3(a + 1, b + 1, c + 1) for a, b, c in tris]
     node = rt.mesh(name=name, vertices=vertices, faces=faces)
     rt.convertToPoly(node)
+    # 1.0.1 (KPP1 e2e 20261106-075555-c179f5f0): every delivered node has map channel 1 named `UV`
+    # (docs/domain/export-import.md); a piece without it was `unrepairable` in the export.checked cleanup gate
+    rt.polyop.setMapSupport(node, 1, True)
+    rt.polyop.defaultMapFaces(node, 1)
+    rt.setUserProp(node, 'MapChannel:1', 'UV')
     try:
         node.material = None
     except Exception:
