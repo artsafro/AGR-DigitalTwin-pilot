@@ -73,10 +73,10 @@ def _material(n):
 _MXS_FACES = ('(fn agrFaces nodes = (for n in nodes collect (local m = snapshotAsMesh n; '
               'local nf = m.numfaces; local r = #((for i = 1 to nf collect getFaceMatID m i), '
               '(for i = 1 to nf collect meshop.getFaceArea m i)); delete m; r)); agrFaces)')
-_MXS_ATTACH = ('(fn agrAttach base nodes oflat nflat counts strip = (local at = 0; for k = 1 to nodes.count do ('
+_MXS_ATTACH = ('(fn agrAttach base nodes oflat nflat counts strip = (local pos0 = 0; for k = 1 to nodes.count do ('
                'local c = copy nodes[k]; c.parent = undefined; convertTo c Editable_Poly; '
                'if strip do c.material = undefined; local nc = counts[k]; '
-               'local o = for i = 1 to nc collect oflat[at + i]; local nw = for i = 1 to nc collect nflat[at + i]; at += nc; '
+               'local o = for i = 1 to nc collect oflat[pos0 + i]; local nw = for i = 1 to nc collect nflat[pos0 + i]; pos0 += nc; '
                'if nc > 0 do (local nf = polyop.getNumFaces c; '
                'local fids = for f = 1 to nf collect polyop.getFaceMatID c f; '
                'for f = 1 to nf do (local j = findItem o fids[f]; if j > 0 do polyop.setFaceMatID c f nw[j])); '
