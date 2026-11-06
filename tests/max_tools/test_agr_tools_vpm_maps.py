@@ -437,3 +437,22 @@ def test_dilate_report_names_owner_nodes_agr(tmp_path):
     opts2, _ = _opts(tmp_path, img=island_white(), mask='alpha', owners={'T_A_Diffuse_1.1001.png': [[11, 'SM_A_Main']]})
     rep2 = dc.dilate_report(ec, 'preview', opts2, dc.dilate_plan(opts2, lambda q: Path(q).read_bytes()), 'h')
     assert rep2['status'] == 'fail' and rep2['objects'][0]['findings'][0]['code'] == 'dilate_no_mask'
+
+
+# ======================= polygon fragment / native script (a syntax error cost one runner job) ===============
+def test_station_builder_and_native_script_compile_agr():
+    import ast
+    for rel in ('test-polygon/stations/N_build.py', 'tests/max_tools/run_agr_tools_vpm_maps_native.py'):
+        ast.parse((ROOT / rel).read_text(encoding='utf-8'), rel)
+    nb = _load(ROOT / 'test-polygon/stations/N_build.py', 'n_build_t')
+    ok, white = tc.decode_png(nb.png('rgba_island'))[0], tc.decode_png(nb.png('rgb_white_island'))[0]
+    assert ok.n == 4 and white.n == 3 and dc.mask_from_alpha(ok).count(1) == 64
+    assert dc.mask_from_background(white, (255, 255, 255)).count(1) == 64
+
+
+def test_station_fragment_has_pass_and_fail_per_button_agr():
+    import json
+    frag = json.loads((ROOT / 'test-polygon/stations/N.json').read_text(encoding='utf-8'))
+    assert [s['button'] for s in frag['stations']] == ['tex.dilate', 'udim.plugs']
+    for st in frag['stations']:
+        assert {e['expect'] for e in st['expected']} == {'pass', 'fail'}

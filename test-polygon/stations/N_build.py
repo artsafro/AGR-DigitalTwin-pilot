@@ -51,7 +51,7 @@ def make(obj, rt):
         node.material = mat
         safe = str(obj['name']).replace('"', '')
         name = sorted(files)[0]
-        path = str(folder / name).replace('\', '/').replace('"', '')
+        path = str(folder / name).replace(chr(92), '/').replace('"', '')
         rt.execute('(getNodeByName "{0}").material.diffuseMap = Bitmaptexture fileName:"{1}"'.format(safe, path))
     if spec.get('matid') is not None:
         rt.convertToPoly(node)
