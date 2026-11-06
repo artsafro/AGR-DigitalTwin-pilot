@@ -622,161 +622,161 @@
      "button": "project.passport",
      "label_ru": "Паспорт проекта",
      "expected": "expected/project.passport.json",
-     "reason": "станция в работе, #1024, ветка F"
+     "reason": ""
     },
     {
      "id": "1.0.2",
      "button": "source.intake",
      "label_ru": "Приём источника",
      "expected": "expected/source.intake.json",
-     "reason": "станция в работе, #1024, ветка F"
+     "reason": ""
     },
     {
      "id": "1.0.3",
      "button": "scene.source_class",
      "label_ru": "Класс источника",
      "expected": "expected/scene.source_class.json",
-     "reason": "станция в работе, #1024, ветка F"
+     "reason": ""
     },
     {
      "id": "1.0.4",
      "button": "body.prepare",
      "label_ru": "Бадик для агента",
      "expected": "expected/body.prepare.json",
-     "reason": "станция в работе, #1024, ветка G"
+     "reason": "body -> agr_role body, BODY_MGBodyBrick_001, LEVEL_L1/L2/roof planned (pass); a height helper with a Max copy counter (LEVEL_GBad001) breaks the extractor rule mesh.py:27-28 -> level_name"
     },
     {
      "id": "1.0.5",
      "button": "model.attach_by_material",
      "label_ru": "Объединить по материалам",
      "expected": "expected/model.attach_by_material.json",
-     "reason": "станция в работе, #1024, ветка G"
+     "reason": "Keep split by material instance (L14): a unique material passes; geometry without a material is named BODY_NoMaterial_NNN (no neighbour's material, GeoAGR.ms:55021-55024); two different materials with one name stay apart and are reported"
     },
     {
      "id": "1.0.6",
      "button": "model.move_apart",
      "label_ru": "Раздвинуть задвойки",
      "expected": "expected/model.move_apart.json",
-     "reason": "станция в работе, #1024, ветка G"
+     "reason": "a 1 m box has no parallel faces closer than 2 mm (pass); two quads back to back 1 mm apart are a pair in [0, 2] mm -> double_faces, apply sets the final gap To = 3 mm (owner 06.11.2026)"
     },
     {
      "id": "1.0.7",
      "button": "model.grid_cleanup",
      "label_ru": "Чистка сетки фасада",
      "expected": "expected/model.grid_cleanup.json",
-     "reason": "станция в работе, #1024, ветка H"
+     "reason": ""
     },
     {
      "id": "1.0.8",
      "button": "scene.small_parts",
      "label_ru": "Мелкие детали (метизы)",
      "expected": "expected/scene.small_parts.json",
-     "reason": "станция в работе, #1024, ветка F"
+     "reason": ""
     },
     {
      "id": "1.0.9",
      "button": "win.place",
      "label_ru": "Окна по проёмам",
      "expected": "expected/win.place.json",
-     "reason": "станция в работе, #1024, ветка J"
+     "reason": ""
     },
     {
      "id": "1.0.10",
      "button": "win.generate",
      "label_ru": "Окна: генератор типов",
      "expected": "expected/win.generate.json",
-     "reason": "станция в работе, #1024, ветка J"
+     "reason": ""
     },
     {
      "id": "1.0.11",
      "button": "model.glass_planes",
      "label_ru": "Стекло плоскостями",
      "expected": "expected/model.glass_planes.json",
-     "reason": "станция в работе, #1024, ветка H"
+     "reason": ""
     },
     {
      "id": "1.0.12",
      "button": "body.capsules",
      "label_ru": "Капсулы интерьера",
      "expected": "expected/body.capsules.json",
-     "reason": "станция в работе, #1024, ветка K"
+     "reason": ""
     },
     {
      "id": "1.0.13",
      "button": "body.roof",
      "label_ru": "Крыша по парапету",
      "expected": "expected/body.roof.json",
-     "reason": "станция в работе, #1024, ветка K"
+     "reason": ""
     },
     {
      "id": "1.0.14",
      "button": "mat.table",
      "label_ru": "Таблица материалов",
      "expected": "expected/mat.table.json",
-     "reason": "станция в работе, #1024, ветка L"
+     "reason": ""
     },
     {
      "id": "1.0.15",
      "button": "mat.tiles",
      "label_ru": "Плитки: серые карты",
      "expected": "expected/mat.tiles.json",
-     "reason": "станция в работе, #1024, ветка L"
+     "reason": ""
     },
     {
      "id": "1.0.16",
      "button": "tex.plug_colour",
      "label_ru": "Цвет заглушки",
      "expected": "expected/tex.plug_colour.json",
-     "reason": "станция в работе, #1024, ветка L"
+     "reason": ""
     },
     {
      "id": "1.0.17",
      "button": "vpm.build",
      "label_ru": "Сборка ВПМ",
      "expected": "expected/vpm.build.json",
-     "reason": "станция в работе, #1024, ветка M"
+     "reason": ""
     },
     {
      "id": "1.0.18",
      "button": "udim.rescale",
      "label_ru": "Подгонка плотности",
      "expected": "expected/udim.rescale.json",
-     "reason": "станция в работе, #1024, ветка M"
+     "reason": ""
     },
     {
      "id": "1.0.19",
      "button": "udim.distortion",
      "label_ru": "Искажения UV",
      "expected": "expected/udim.distortion.json",
-     "reason": "станция в работе, #1024, ветка M"
+     "reason": ""
     },
     {
      "id": "1.0.20",
      "button": "tex.dilate",
      "label_ru": "Отступы карт (dilate)",
      "expected": "expected/tex.dilate.json",
-     "reason": "станция в работе, #1024, ветка N"
+     "reason": "padded PNG copies go to a new folder next to the map; a map without alpha (mask=alpha) is refused with a reason - GeoAGR gave no padding on a white background and no word about it"
     },
     {
      "id": "1.0.21",
      "button": "udim.plugs",
      "label_ru": "Острова-заглушки в UDIM",
      "expected": "expected/udim.plugs.json",
-     "reason": "станция в работе, #1024, ветка N"
+     "reason": "plug islands (0.05 square, tile centre) on a copy; a work ID >= 1001 is refused (K3) - GridUVLayout22 took 1000+ID without a range check"
     },
     {
      "id": "1.0.22",
      "button": "npm.build",
      "label_ru": "ВПМ → НПМ",
      "expected": "expected/npm.build.json",
-     "reason": "станция в работе, #1024, ветка P"
+     "reason": ""
     },
     {
      "id": "1.0.23",
      "button": "atlas.facade_strip",
      "label_ru": "Фасадный атлас run-strip",
      "expected": "expected/atlas.facade_strip.json",
-     "reason": "станция в работе, #1024, ветка P"
+     "reason": ""
     },
     {
      "id": "1.0.24",
@@ -797,56 +797,56 @@
      "button": "pack.deliver",
      "label_ru": "Сдача пакета",
      "expected": "expected/pack.deliver.json",
-     "reason": "станция в работе, #1024, ветка S"
+     "reason": ""
     },
     {
      "id": "1.0.27",
      "button": "ucx.gap",
      "label_ru": "UCX: нарезка и зазор",
      "expected": "expected/ucx.gap.json",
-     "reason": "станция в работе, #1024, ветка S"
+     "reason": ""
     },
     {
      "id": "1.0.28",
      "button": "ucx.stairs",
      "label_ru": "UCX лестниц",
      "expected": "expected/ucx.stairs.json",
-     "reason": "станция в работе, #1024, ветка T"
+     "reason": ""
     },
     {
      "id": "1.0.29",
      "button": "light.export",
      "label_ru": "FBX освещения _Light",
      "expected": "expected/light.export.json",
-     "reason": "станция в работе, #1024, ветка S"
+     "reason": ""
     },
     {
      "id": "1.0.30",
      "button": "qa.omk_te",
      "label_ru": "Код ОМК ТЭ",
      "expected": "expected/qa.omk_te.json",
-     "reason": "станция в работе, #1024, ветка T"
+     "reason": "FAIL-строка (нет таблицы, кракозябры, несколько кодов) проверяется unit-тестами и нативным джобом: у станции одна опция на прогон, а отчёт кнопки без объектов сцены один"
     },
     {
      "id": "1.0.31",
      "button": "export.place_by_passport",
      "label_ru": "Поставить по паспорту",
      "expected": "expected/export.place_by_passport.json",
-     "reason": "станция в работе, #1024, ветка T"
+     "reason": "FAIL-строка (битый JSON, приманка, нет паспорта, не FBX) проверяется unit-тестами и нативным джобом: опции станции общие на прогон; станция только preview (apply в живом полигоне не нажимается)"
     },
     {
      "id": "1.0.32",
      "button": "agent.request",
      "label_ru": "Запрос агенту",
      "expected": "expected/agent.request.json",
-     "reason": "станция в работе, #1024, ветка U"
+     "reason": ""
     },
     {
      "id": "1.0.33",
      "button": "agent.accept",
      "label_ru": "Приём от агента",
      "expected": "expected/agent.accept.json",
-     "reason": "станция в работе, #1024, ветка U"
+     "reason": "Объекта PASS нет: приём читает папку запроса jobs/<ID>/agent/<req>/ (request.json, baseline.json со снимком хешей сцены), а станция полигона статична. PASS и FAIL приёма (перенос в слои ролей; откат в AGENT_<req>_REJECTED с вопросом) проверяет нативный джоб ветки U на запросе, который делает agent.request в том же прогоне (tests/max_tools/run_agr_tools_agent_bridge_native.py)."
     }
    ]
   }
