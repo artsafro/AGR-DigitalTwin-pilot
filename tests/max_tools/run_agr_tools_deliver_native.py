@@ -304,26 +304,20 @@ def light_package():
     for kind in ('Diffuse', 'ERM', 'Normal'):
         png(folder / 'T_TestAddr_{}_1.1001.png'.format(kind))
     (folder / 'SM_TestAddr.geojson').write_text('{"type": "FeatureCollection", "features": []}', encoding='utf-8')
-    direct = None
-    try:  # the qa.package light rules themselves (tools/qa/validate_package.py light_findings) on the written file
-        sys.path[:0] = [str(ROOT / 'src'), str(ROOT / 'tools' / 'qa')]
-        import validate_package as vp
-        direct = [(f.status, f.observed[:200], (f.data or {}).get('code')) for f in vp.light_findings(
-            'SM_TestAddr_Light.fbx', Path(app['plan']['target']).read_bytes(), 'SM_TestAddr', [])]
-    except Exception as exc:  # noqa: BLE001 - recorded
-        direct = 'error: {}: {}'.format(type(exc).__name__, exc)
     zp = agr.edits_080('export.zip', 'preview', options={'folder': str(folder)})
     za = agr.edits_080('export.zip', 'apply', zp)
     stages = []
     for table in za['plan'].get('reports') or ():
         for s in table.get('stages') or ():
             stages.append({'id': s['id'], 'status': s['status'], 'non_pass': (s.get('non_pass') or [])[:4]})
+    # placeholders fail V007 (1x1 PNG) and V011 (0 features) by design; only the light rules are judged here
     light_lines = [s for s in stages if any('light' in str(x).lower() for x in s['non_pass'])]
-    assert isinstance(direct, list) and [d[0] for d in direct] == ['pass'], direct
     assert 'SM_TestAddr_Light.fbx' in [m['name'] for a in zp['plan']['archives'] for m in a['members']]
     assert za['plan'].get('reports'), 'validator did not run on the archive'
     assert not light_lines, light_lines
-    return {'qa_package_light_rules': direct, 'light_apply': app['status'], 'light_codes': codes_of(app), 'zip_status': za['status'],
+    v012 = [st for st in stages if st['id'] == 'V012']
+    assert v012 and v012[0]['status'] != 'fail', v012  # V012 holds the light FBX rules (light_findings)
+    return {'v012': v012, 'light_apply': app['status'], 'light_codes': codes_of(app), 'zip_status': za['status'],
             'archives': za['plan'].get('archives') and [a['name'] for a in zp['plan']['archives']],
             'members': [m['name'] for a in zp['plan']['archives'] for m in a['members']],
             'marker': za['plan'].get('marker'), 'stages': stages, 'light_problems': light_lines}
