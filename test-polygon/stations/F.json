@@ -6,7 +6,7 @@
   {
    "button": "project.passport",
    "objects": [
-    {"name": "BODY_FPass_001", "role": "Main", "scene": "frag_f_passport", "builder": "F_build", "own_layer": "BODY_main",
+    {"name": "BODY_FPass_001", "role": "Main", "scene": "frag_f_passport", "builder": "F_build",
      "extra": {"kind": "box", "size": [6, 4, 9], "at": [0, 0, 0]}},
     {"name": "SM_FPass_NoRole_Main", "role": "Main", "scene": "frag_f_passport", "builder": "F_build",
      "extra": {"kind": "box", "size": [2, 2, 2], "at": [10, 0, 0]}}

@@ -417,11 +417,14 @@ def test_stage_moves_and_roles_read_back():
         {'name': 'Glass_1', 'prop': None, 'layer': 'GLASS_main'},
         {'name': 'Wall_1', 'prop': 'wall', 'layer': '0'},
         {'name': 'Roof_1', 'prop': 'roof', 'layer': 'BODY_x'},
-        {'name': 'Thing', 'prop': '', 'layer': '0'}])
-    assert parts == [{'name': 'BODY_Brick_001', 'role': 'body'}, {'name': 'Glass_1', 'role': 'glass'},
-                     {'name': 'Roof_1', 'role': 'roof'}]
+        {'name': 'Thing', 'prop': '', 'layer': '0'},
+        {'name': 'BODY_Concrete_002', 'prop': None, 'layer': '0'}, {'name': 'OPEN_007', 'prop': None, 'layer': '0'},
+        {'name': 'LEVEL_roof', 'prop': None, 'layer': '0'}, {'name': 'BODY_Concrete_2', 'prop': None, 'layer': '0'}])
+    assert parts == [{'name': 'BODY_Brick_001', 'role': 'body'}, {'name': 'BODY_Concrete_002', 'role': 'body'},
+                     {'name': 'OPEN_007', 'role': 'opening'}, {'name': 'Glass_1', 'role': 'glass'},
+                     {'name': 'Roof_1', 'role': 'roof'}, {'name': 'LEVEL_roof', 'role': 'helper'}]
     assert {k: v[0] for k, v in problems.items()} == {'Wall_1': 'role_unknown', 'Roof_1': 'role_conflict',
-                                                      'Thing': 'role_missing'}
+                                                      'Thing': 'role_missing', 'BODY_Concrete_2': 'role_missing'}
     p = pc.with_parts(pc.new_passport('KPP1'), [{'name': 'BODY_Brick_001', 'role': 'body', 'levels': ['LEVEL_1']}])
     assert pc.with_parts(p, parts)['parts'][0]['levels'] == ['LEVEL_1']  # body.prepare's levels survive a refresh
 

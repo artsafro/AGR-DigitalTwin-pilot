@@ -438,16 +438,25 @@ def stage_table(passport):
     return [{'id': s['id'], 'status': s['status'], 'seconds': s.get('seconds')} for s in passport['stages']]
 
 
-def role_of(prop, layer):
-    """(role, source, problem) of one node: the agr_role user property wins; else a `<ROLE>_*` layer.
+NAME_ROLES = ((re.compile(r'^BODY_[A-Za-z0-9]+_\d{3}$'), 'body'), (re.compile(r'^OPEN_\d{3}$'), 'opening'),
+              (re.compile(r'^LEVEL_[A-Za-z0-9]+$'), 'helper'))  # contract K1 names (contract_core BODY_RE, ...)
+
+
+def role_of(prop, layer, name=None):
+    """(role, source, problem) of one node: the agr_role user property wins; else a `<ROLE>_*` layer; else a
+    contract name (`BODY_<material>_NNN` body, `OPEN_<nnn>` opening, `LEVEL_<name>` helper).
 
     problem: None | role_unknown (prop is not a contract role) | role_conflict (prop and layer disagree) |
-    role_missing (neither)."""
+    role_missing (none of them)."""
     layer_role = None
     for r in ROLES:
         if str(layer or '').upper().startswith(r.upper() + '_'):
             layer_role = r
             break
+    if layer_role is None and prop in (None, ''):
+        for rx, r in NAME_ROLES:
+            if rx.match(str(name or '')):
+                return r, 'name', None
     if prop not in (None, ''):
         if prop not in ROLES:
             return None, 'prop', 'role_unknown'
@@ -463,7 +472,7 @@ def parts_from_roles(items):
     """items [{'name', 'prop', 'layer'}] -> (parts for the passport, {name: (code, detail)} problems)."""
     parts, problems = [], {}
     for it in items:
-        role, src, problem = role_of(it.get('prop'), it.get('layer'))
+        role, src, problem = role_of(it.get('prop'), it.get('layer'), it.get('name'))
         if problem == 'role_unknown':
             problems[it['name']] = ('role_unknown', 'agr_role {!r} is not one of {}'.format(it.get('prop'),
                                                                                          ', '.join(ROLES)))
