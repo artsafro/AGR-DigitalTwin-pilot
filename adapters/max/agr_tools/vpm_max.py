@@ -11,17 +11,19 @@ texel / tile checks. Nothing changes.
 apply: re-reads and compares (edit_core.require_current + the planned rows), then in ONE undo record (selection
 restored) makes export copies on layer `AGR_vpm` (`<name>_VPM_NNN`, glass `<name>_glass_VPM_NNN`), writes the new
 geometry (Editable_Mesh, local coordinates interpolated from the source vertices, fan diagonals hidden), material
-ids and channel 1 into the COPY, reads it back and measures the seam and texel on the real Max data; the working
+ids, channel 1 and the user prop `agr_udim_table` (its own {library id: UDIM}, 1.0.1) into the COPY, reads it back and measures the seam and texel on the real Max data; the working
 objects are compared before/after (mesh, transform, UV, stack). Objects with findings are not built (fail-closed).
 Then the file step writes into a NEW folder (edit_core.new_path, never overwrite): `vpm_table.json` (UDIM table per
 mesh, K3; the passport write belongs to branch F) and the maps of step 6 through vpmmaps_core.build_maps (branch
 N; `skipped` while it is a stub). No clearUndoBuffer (GeoAGR `:33785`), no stack collapse of an original
 (GeoAGR `:32214`), no new MAXScript globals.
 """
+import json
 import os
 
 TOOL = 'vpm.build'
 LAYER = 'AGR_vpm'
+UDIM_PROP = 'agr_udim_table'   # same prop as mat.table (matlib_max.UDIM_PROP): {library id: UDIM} of THIS mesh
 ISSUE = '#1024'
 
 
@@ -155,6 +157,9 @@ def vpm_build(ctx, mode, nodes, preview):
                 rt.convertToMesh(c)
                 geo = part['geometry']
                 write_mesh(c, mesh['local'], geo)
+                # 1.0.1: the copy carries its own dense table (the inherited prop of the source may be stale, e.g.
+                # after attach): udim.plugs / npm.build read the tile of a library id from it (KPP1 e2e)
+                rt.setUserProp(c, UDIM_PROP, json.dumps(part['summary']['udim_table'], sort_keys=True))
                 back = rd.read_tri(c, k)
                 findings, measured = measure(core, lay, o, back, geo)
                 objects.append(edit.entry(rd.handle(c), str(c.name), findings))
