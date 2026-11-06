@@ -532,7 +532,7 @@ def stage6(st):
         st['notes'].append('в ВПМ идёт только {}: тела не слились в один Main ({})'.format(S['main'].name,
                                                                                        names(parts)))
     pre, app = press(st, 'vpm.build', [S['main']], {'glass_ids': [ID_GLASS], 'out_dir': str(OUT / 'vpm'),
-                                                    'library_path': LIB})
+                                                    'library_path': LIB, 'address': ADDRESS})
     if app is None:
         # run 20261106-071804-147131cc: with library_path the apply refuses (step 6, maps); the build itself is
         # pressed again without the maps so the later stages work on a real VPM copy (recorded as its own row)
@@ -549,7 +549,7 @@ def stage6(st):
         for f in app['plan'].get('files') or ():
             if f.get('kind') == 'udim_table':
                 S['vpm_table'] = f['path']
-            elif 'diffuse' in str(f.get('kind', '')).lower():
+            elif f.get('kind') == 'map_D' or 'diffuse' in str(f.get('kind', '')).lower():
                 S['vpm_dmaps'].append(f['path'])
         st['vpm'] = {'copies': names(copies), 'maps': len(app['plan'].get('files') or ()) - 1,
                      'diffuse_maps': len(S['vpm_dmaps']), 'out_dir': app['plan'].get('out_dir'),
@@ -576,7 +576,10 @@ def stage6(st):
         table = json.loads(str(rt.getUserProp(vb[0], 'agr_udim_table') or '{}'))
     except ValueError:
         pass
-    solid = sorted(int(k) for k in table if (lib['by_id'].get(int(k)) or {}).get('recipe') == 'solid')
+    def kind(rec):
+        r = (rec or {}).get('recipe')
+        return r.get('kind') if isinstance(r, dict) else r
+    solid = sorted(int(k) for k in table if kind(lib['by_id'].get(int(k))) == 'solid')
     st['plug_ids'] = {'udim_table': table, 'solid': solid}
     if solid:
         pre, app = press(st, 'udim.plugs', vb, {'matids': solid})
@@ -631,7 +634,11 @@ def stage8(st):
     if opts is None:
         st['notes'].append('нет npm_table.json от npm.build: npm.to_vpm без таблицы (регионы атласа)')
     pre, app = press(st, 'npm.to_vpm', valid(S.get('npm')) or valid([S.get('vpm_body')]), opts)
-    back = valid([rt.getNodeByName(c) for c in (app or {}).get('plan', {}).get('copies') or ()]) if app else []
+    copies = []
+    for c in ((app or {}).get('plan', {}).get('copies') or ()):   # [[{copy, part, ...}]] per source object
+        for x in (c if isinstance(c, list) else [c]):
+            copies.append(x.get('copy') if isinstance(x, dict) else x)
+    back = valid([rt.getNodeByName(c) for c in copies if c]) if app else []
     if back:
         st['notes'].append('ВПМ из НПМ: ' + ', '.join(names(back)))
     press(st, 'udim.udims_to_ids', back or valid([S.get('vpm_body')]) or valid([S.get('main')]), None)
