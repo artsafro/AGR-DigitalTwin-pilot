@@ -1,5 +1,6 @@
 """Library entries for generated «Верона» benches (#1046, [D202]) and the steel_ral7016 -> paint_ral7016 rename.
 
+Pattern: new-case (tests of tools/library/maf_gen_catalogue.py, generated MAF rows into the MAF catalogue).
 Synthetic build folders (marked SYNTHETIC in the build report) drive the fail-closed cases; the committed
 library files are checked as they are.
 """
