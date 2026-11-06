@@ -49,7 +49,7 @@ def _write_plugs(node, planned):
     if not po.getMapSupport(node, 1):
         po.setMapSupport(node, 1, True)
     base = int(po.getNumMapVerts(node, 1))
-    po.setNumMapVerts(node, 1, base + sum(len(p['uv']) for p in planned), True)
+    po.setNumMapVerts(node, 1, base + sum(len(p["uv"]) for p in planned), keep=True)
     nxt = base + 1
     for p in planned:
         idx = []
