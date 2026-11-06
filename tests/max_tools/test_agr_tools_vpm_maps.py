@@ -269,14 +269,14 @@ def test_plug_fixed_tile_and_occupied_agr():
 
 
 # ======================= vpmmaps =========================================================================
-LIB = {3: {'library_id': 3, 'key': 'ral_9003', 'rgb_srgb': [240, 240, 240], 'roughness': 0.5, 'metallic': 0.0,
-           'emissive': 0.0, 'recipe': 'solid'},
-       7: {'library_id': 7, 'key': 'metal_grey', 'rgb_srgb': [120, 125, 130], 'roughness': 0.3, 'metallic': 1.0,
-           'emissive': 0.0, 'recipe': 'solid'},
-       12: {'library_id': 12, 'key': 'ral_7016', 'rgb_srgb': [56, 62, 66], 'roughness': 0.7, 'metallic': 0.0,
-            'emissive': 0.1, 'recipe': 'solid'},
-       31: {'library_id': 31, 'key': 'glass', 'rgb_srgb': [90, 110, 120], 'roughness': 0.05, 'metallic': 0.2,
-            'emissive': 0.0, 'recipe': 'solid'}}
+LIB = {3: {'library_id': 3, 'key': 'ral_9003', 'rgb_srgb': [240, 240, 240], 'roughness': 128, 'metallic': 0,
+           'emissive': 0, 'recipe': 'solid'},
+       7: {'library_id': 7, 'key': 'metal_grey', 'rgb_srgb': [120, 125, 130], 'roughness': 77, 'metallic': 255,
+           'emissive': 0, 'recipe': 'solid'},
+       12: {'library_id': 12, 'key': 'ral_7016', 'rgb_srgb': [56, 62, 66], 'roughness': 179, 'metallic': 0,
+            'emissive': 26, 'recipe': 'solid'},
+       31: {'library_id': 31, 'key': 'glass', 'rgb_srgb': [90, 110, 120], 'roughness': 13, 'metallic': 51,
+            'emissive': 0, 'recipe': 'solid'}}
 TABLE = {'SM_Addr_Main': {3: 1001, 7: 1002, 12: 1003, 31: 1004}}
 
 
@@ -322,8 +322,7 @@ def test_erm_channels_from_record_agr(tmp_path):
     r = vc.build_maps(TABLE, LIB, str(tmp_path))
     erm = next(m for m in r['maps'] if m['kind'] == 'ERM' and m['udim'] == 1002)
     img = tc.decode_png(Path(erm['path']).read_bytes())[0]
-    assert tuple(img.px[0:3]) == (0, 77, 255)                 # emissive 0, roughness 0.3, metallic 1: metal not lost
-    assert abs(img.px[0] - 0) <= 1 and abs(img.px[1] - 0.3 * 255) <= 1 and abs(img.px[2] - 255) <= 1
+    assert tuple(img.px[0:3]) == (0, 77, 255)                 # levels of the record (0..255): metal not lost
 
 
 def test_diffuse_is_record_colour_agr(tmp_path):
@@ -380,8 +379,8 @@ def test_deterministic_and_no_overwrite_agr(tmp_path):
 
 
 def test_missing_base_map_is_skipped_not_empty_agr(tmp_path):
-    lib = {5: {'library_id': 5, 'key': 'panel_grey', 'rgb_srgb': [200, 200, 200], 'roughness': 0.6, 'metallic': 0.0,
-               'emissive': 0.0, 'recipe': 'greyscale_mask', 'base_map': 'panels.png'}}
+    lib = {5: {'library_id': 5, 'key': 'panel_grey', 'rgb_srgb': [200, 200, 200], 'roughness': 153, 'metallic': 0,
+               'emissive': 0, 'recipe': 'greyscale_mask', 'base_map': 'panels.png'}}
     r = vc.build_maps({'SM_Addr_Main': {5: 1001}}, lib, str(tmp_path / 'o'), {'map_dir': str(tmp_path / 'none')})
     assert {s['kind'] for s in r['skipped']} == {'D', 'N'} and [m['kind'] for m in r['maps']] == ['ERM']
     assert all('nothing guessed' in s['reason'] for s in r['skipped'])
@@ -391,8 +390,8 @@ def test_mask_recipe_builds_relief_normal_agr(tmp_path):
     mask = tc.encode_png(img_rgb(8, 8, lambda x, y: (255, 255, 255) if x >= 4 else (0, 0, 0)))
     (tmp_path / 'm').mkdir()
     (tmp_path / 'm' / 'panels.png').write_bytes(mask)
-    lib = {5: {'library_id': 5, 'key': 'panel_grey', 'rgb_srgb': [200, 200, 200], 'roughness': 0.6, 'metallic': 0.0,
-               'emissive': 0.0, 'recipe': 'greyscale_mask', 'base_map': 'panels.png'}}
+    lib = {5: {'library_id': 5, 'key': 'panel_grey', 'rgb_srgb': [200, 200, 200], 'roughness': 153, 'metallic': 0,
+               'emissive': 0, 'recipe': 'greyscale_mask', 'base_map': 'panels.png'}}
     r = vc.build_maps({'SM_Addr_Main': {5: 1001}}, lib, str(tmp_path / 'o'), {'map_dir': str(tmp_path / 'm'), 'size': 256})
     n = next(m for m in r['maps'] if m['kind'] == 'N')
     img = tc.decode_png(Path(n['path']).read_bytes())[0]
