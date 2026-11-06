@@ -103,10 +103,18 @@ def step_npm_flora():
     return res
 
 
+def step_npm_maf_ground_texel():
+    """The previous route (35 px/m Ground texel) kept for comparison, preview only."""
+    rep = agr.edits_090('atlas.groundel', 'preview', None, low('maf'), {'profile': 'npm', 'size': 2048})
+    return {'status': rep['status'],
+            'atlas': {k: v for k, v in (rep.get('plan') or {}).get('atlas', {}).items() if k != 'cells'}}
+
+
 def step_npm_maf():
+    """Owner 06.11: in NPM the texel matters only for Ground -> MAF atlas with texel 'none' (pack mode 'oks')."""
     nodes = low('maf')
     rep = agr.edits_090('atlas.groundel', 'preview', None, nodes,
-                        {'profile': 'npm', 'size': 2048, 'out_dir': str(OUT / 'npm_maf')})
+                        {'profile': 'npm', 'size': 2048, 'texel': 'none', 'out_dir': str(OUT / 'npm_maf')})
     res = {'status': rep['status'], 'report': {k: v for k, v in rep.items() if k != 'plan'},
            'atlas': {k: v for k, v in (rep.get('plan') or {}).get('atlas', {}).items() if k != 'cells'}}
     if rep['status'] == 'pass':
@@ -150,6 +158,7 @@ def step_vpm():
 check('import', step_import)
 if 'import' in summary['checks']:
     check('npm_flora', step_npm_flora)
+    check('npm_maf_ground_texel', step_npm_maf_ground_texel)
     check('npm_maf', step_npm_maf)
     check('vpm', step_vpm)
 (OUT / 'summary.json').write_text(json.dumps(summary, ensure_ascii=False, indent=1, default=str), encoding='utf-8')
