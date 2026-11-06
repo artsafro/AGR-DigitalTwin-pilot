@@ -94,7 +94,10 @@
 
 ### T
 
-- `deliver-small`: `ucx.stairs`, `qa.omk_te`, `export.place_by_passport` — в работе.
+- `deliver-small`: `ucx.stairs`, `qa.omk_te`, `export.place_by_passport` (станции 1.0.28, 1.0.30, 1.0.31).
+  - `ucx.stairs` (чтение): одна выпуклая усечённая пирамида вместо UCX «ступенька за ступенькой»; допуск носков 10/30/100 см (по умолчанию 30); коды `ucx_missing`, `ucx_not_single`, `ucx_not_convex`, `ucx_not_closed`, `stairs_outside`, `ucx_too_high`.
+  - `qa.omk_te` (чтение): таблица — параметр `table`, своей таблицы и копии CSV GeoAGR в пакете нет. Код берётся из отфильтрованной строки по её ключу, а не по индексу полной таблицы (дефект `GeoAGR.ms:66134`); `905` → `0905`; несколько кодов в ячейке — `ambiguous`; понятные ошибки по-русски.
+  - `export.place_by_passport` (undo): паспорт читается как данные (строгий JSON и схема), без `execute` и без `Dummy`; FBX проверяется до импорта; один Undo; при ошибке импортированные узлы удаляются; ошибка одинарной точности Max для больших МСК-координат (> 1 мм) — в отчёте, без `accept_precision_loss` apply не идёт.
 
 ### U
 
