@@ -287,7 +287,7 @@ def _cleanup_channels(actions, options=None):
 # originals. Here: vertex channels and keys only as opt-in actions on the export copy; pipeline UDP stays.
 VERTEX_CHANNELS = (0, -1, -2)  # vertex colour, illumination, alpha
 # Tool instructions of the AGR pipeline (runtime._HELD_OFF holds the same keys off the export hygiene gate).
-PIPELINE_UDP = frozenset({'AGR_EXPORT_PATH', 'AGR_TEXEL_PROFILE', 'AGR_TEXEL_MAP', 'AGR_UV_PERIODS',
+PIPELINE_UDP = frozenset({'AGR_EXPORT_PATH', 'AGR_ZERO_M', 'AGR_TEXEL_PROFILE', 'AGR_TEXEL_MAP', 'AGR_UV_PERIODS',
                           'AGR_UV_TARGET', 'AGR_ATLAS_MODE', 'AGR_ATLAS_SIZE', 'AGR_UCX_KIND'})
 # 1.0.1 (KPP1 e2e 20261106-075555-c179f5f0): the lower-case working keys of the 1.0 buttons (contract_core К1
 # `agr_role`, `agr_window_type`, `agr_face_axis`, `agr_udim_table`, `agr_npm_source`, `agr_intake_source`, ...) are

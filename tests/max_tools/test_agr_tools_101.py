@@ -398,3 +398,12 @@ def test_vpm_maps_named_by_the_address_of_the_working_body(tmp_path):
         vc.plan_maps(vpm.maps_table(bare), lib, str(tmp_path))
     src = (PKG / 'vpm_max.py').read_text(encoding='utf-8')
     assert src.index('if maps_error:\n        raise ValueError') < src.index('_session_core().in_session')
+
+
+def test_agr_zero_m_is_a_pipeline_key():
+    """RED on 1.0.1-pre (KPP1 e2e 20261106-101005-9a657979): the +-0.000 of the building (AGR_ZERO_M, read by
+    model.perimeter_drop / qa.preflight, suite_max) was a `clear_user_defined_lines` line of the cleanup gate."""
+    ex = _load('export_core.py', 'agr_tools_export_core_101')
+    rtm = _load('runtime.py', 'agr_runtime_101')
+    assert ex.pipeline_key('AGR_ZERO_M') and 'AGR_ZERO_M' in rtm._HELD_OFF
+    assert rtm._delivery_props('AGR_ZERO_M = 0.0\r\nMapChannel:1 = UV\r\n') == 'MapChannel:1 = UV\r\n'

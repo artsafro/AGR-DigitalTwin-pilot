@@ -1970,7 +1970,7 @@ def _tri_mesh(n):
 
 # Tool instructions, not delivery user-defined properties. They stay on the
 # working node and are held off the export copy the hygiene gate reads.
-_HELD_OFF = {'AGR_EXPORT_PATH', 'AGR_TEXEL_PROFILE', 'AGR_TEXEL_MAP', 'AGR_UV_PERIODS',
+_HELD_OFF = {'AGR_EXPORT_PATH', 'AGR_ZERO_M', 'AGR_TEXEL_PROFILE', 'AGR_TEXEL_MAP', 'AGR_UV_PERIODS',
              'AGR_UV_TARGET', 'AGR_ATLAS_MODE', 'AGR_ATLAS_SIZE', 'AGR_UCX_KIND'}
 
 
