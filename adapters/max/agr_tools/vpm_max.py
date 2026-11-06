@@ -228,13 +228,14 @@ def measure(core, lay, o, back, geo):
     if bad:
         edit_findings.append(('seam', sorted({f + 1 for b in bad for f in b['faces']}),
                               'readback seam up to {:.4f} px'.format(max(b['px'] for b in bad))))
-    texel, tex_bad, tiny = {}, [], 0
+    texel, tex_bad, tiny, solid = {}, [], 0, []
     px = core.px_per_step(o)
     for f, p in enumerate(pieces):
         (u0, v0), (u1, v1), (u2, v2) = p['uv']
         if abs((u1 - u0) * (v2 - v0) - (u2 - u0) * (v1 - v0)) * 0.5 * px * px < 1.0:
             tiny += 1  # a sliver of the grid cut under 1 px²: float32 UV noise, not a texel (job 20261106-045430)
             continue
+        solid.append(p)
         jac = core.u10.jacobian([back['verts'][i] for i in back['tris'][f]], p['uv'])
         if jac is None or jac[1] <= 1e-15:
             continue
@@ -248,7 +249,9 @@ def measure(core, lay, o, back, geo):
     crossing = lay.crossing_pieces(pieces)
     if crossing:
         edit_findings.append(('crossing', [f + 1 for f in crossing], 'triangles across a tile line'))
-    tiles = sorted({lay.udim_of_cell(*[int(c) for c in lay._cell(p['uv'])]) or 0 for p in pieces})
+    # tiles of the triangles with area; a sliver lying on a tile line (float32) has its centroid ON the line
+    # (job 20261106-045952-58a7ded5: «1003»), it is checked by the crossing test above instead
+    tiles = sorted({lay.udim_of_cell(*[int(c) for c in lay._cell(p['uv'])]) or 0 for p in solid})
     from_ed = [_finding(c, ids, d) for c, ids, d in edit_findings]
     return from_ed, {'seam_internal_max_px': seam['internal_max'], 'seam_chain_max_px': seam['chain_max'],
                      'seam_fold_max_px': seam['fold_max'], 'tiles': tiles, 'crossing': len(crossing),
