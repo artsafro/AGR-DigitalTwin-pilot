@@ -407,3 +407,25 @@ def test_agr_zero_m_is_a_pipeline_key():
     rtm = _load('runtime.py', 'agr_runtime_101')
     assert ex.pipeline_key('AGR_ZERO_M') and 'AGR_ZERO_M' in rtm._HELD_OFF
     assert rtm._delivery_props('AGR_ZERO_M = 0.0\r\nMapChannel:1 = UV\r\n') == 'MapChannel:1 = UV\r\n'
+
+
+def test_export_copy_keeps_the_user_prop_buffer(monkeypatch):
+    """RED on 1.0.1-pre (diag job 20261106-102248-4ac77ac1, final scene of KPP1 e2e 20261106-101005-9a657979): the
+    qa.names_fix copy SM_Kpp_1_Main had no `MapChannel:1 = UV` / agr_udim_table - Max `copy` drops the buffer."""
+    import types
+
+    class N:
+        def __init__(self, name, buf=''):
+            self.name, self.buf, self.material = name, buf, None
+
+    def copy(n):                                     # as Max: the buffer is not copied
+        return N(n.name)
+
+    rt = types.SimpleNamespace(copy=copy, uniqueName=lambda s: s + '01', isValidNode=lambda n: True,
+                               delete=lambda x: None, getUserPropBuffer=lambda n: n.buf,
+                               setUserPropBuffer=lambda n, b: setattr(n, 'buf', b))
+    monkeypatch.setitem(sys.modules, 'pymxs', types.SimpleNamespace(runtime=rt))
+    em = _load('edit_max.py', 'agr_tools_edit_max_101')
+    src = N('Kpp_1_VPM_Main', 'agr_udim_table = {"12": 1004}\r\nMapChannel:1 = UV\r\n')
+    ((orig, c),) = em.export_copies([src], suffix='_AGR_export_names_')
+    assert orig is src and c.name == 'Kpp_1_VPM_Main_AGR_export_names_01' and c.buf == src.buf
