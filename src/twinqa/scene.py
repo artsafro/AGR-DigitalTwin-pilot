@@ -3,13 +3,15 @@
 Fills the scene stages the header-only validator leaves not_run: V002 (units and scale;
 units come from a pure-Python GlobalSettings read), V003 (triangulation,
 triangle limits, object types), V004 (applied transforms, co-directional overlap clearance, regulatory topology defect count, MAF smoothing/flipped normals/dimensions (GroundEl)), V006 (NPM embedded images),
-V008 (one UV channel, mirrored islands, glass tile, texel density when the readback has UV and one diffuse size), V010 (UCX presence, no material slots, triangle budget, intersections, intersection coverage, advisory gap, piece shape closed/convex; coverage and offsets stay not_run),
+V008 (one UV channel, mirrored islands, glass tile), V009 (texel density from UV and the diffuse side per tile),
+V012 (VPM OKS MainGlass object and glass material names), V010 (UCX presence, no material slots, triangle budget, intersections, intersection coverage, advisory gap, piece shape closed/convex; coverage and offsets stay not_run),
 V013 (origin, geometric-centre pivot, shared pivot). Triangle limits follow the 2026-10-07 decisions on conflicts #1 and #3.
 Ground FBX: Flora checks from twinqa.flora (V015 dimensions, V005 maps, V003 Flora share; #191).
 """
 import itertools
 import math
 import os
+import re
 import tempfile
 import uuid
 from fractions import Fraction
@@ -26,7 +28,7 @@ from twinqa.geometry.ucx_audit import (
 from twinqa.clearance import BAND_EDGE_TOL_M, co_directional_distribution, co_directional_pairs
 from twinqa.report import Finding, signed_margin
 from twinqa.naming import mesh_name_findings
-from twinqa.uv import DENSITY_MAX_PX_PER_M, DENSITY_MIN_PX_PER_M, _density_finding, edge_densities
+from twinqa.uv import DENSITY_MAX_PX_PER_M, DENSITY_MIN_PX_PER_M, _density_finding, edge_densities, udim_of
 
 READBACK = Path(__file__).resolve().parents[2] / "tools" / "blender" / "fbx_readback.py"
 ANGLE_TOL_DEG, SCALE_TOL = 1e-3, 1e-4
@@ -595,11 +597,34 @@ def _density_bounds(src: str, status: str, reason: str) -> list[Finding]:
     ]
 
 
-def _texel_density_findings(rb: dict, meshes: list[dict], ucx: list[dict], src: str) -> list[Finding]:
-    """Min 512 px/m and max 1706 px/m for non-UCX meshes. Missing UV or texture size is not_run."""
-    geometry = [mesh for mesh in meshes if mesh not in ucx]
+GLASS_SUFFIXES = ("MainGlass", "GroundGlass", "GroundElGlass")
+_SLOT = re.compile(r"_(\d+)$")
+
+
+def _tile_side(diffuse_px: dict, tile, material) -> int | None:
+    """Diffuse side of one UDIM tile from the archive PNGs ({(slot, udim): side}).
+
+    One side for the tile across all slots is used as is; otherwise the slot is read from the
+    trailing `_N` of the material name (`M_{Address}_Main_N`, reg p.34 §10.4.4). None = unknown."""
+    sides = {side for (_slot, udim), side in diffuse_px.items() if udim == tile}
+    if len(sides) == 1:
+        return next(iter(sides))
+    hit = _SLOT.search(material or "")
+    return diffuse_px.get((int(hit.group(1)), tile)) if hit else None
+
+
+def _texel_density_findings(rb: dict, meshes: list[dict], ucx: list[dict], src: str,
+                            diffuse_px: dict | None = None, placeholder_px: int | None = None) -> list[Finding]:
+    """V009: min 512 px/m and max 1706 px/m for non-UCX meshes. Missing UV or texture size is not_run.
+
+    diffuse_px ({(slot, udim): side} from the archive Diffuse PNGs) gives each polygon the side of its
+    own tile; without it one diffuse size must come from the readback. Exempt (reg p.31-32 §6.1-6.2,
+    2.6.2): placeholder tiles (placeholder_px) and glass meshes (*Glass: no texture maps, reg 2.4.2)."""
+    geometry = [mesh for mesh in meshes if mesh not in ucx and not mesh["name"].endswith(GLASS_SUFFIXES)]
     if not geometry:
-        return _density_bounds(src, "not_run", "no render mesh")
+        return _density_bounds(src, "not_run", "no textured render mesh")
+    if diffuse_px:
+        return _tile_density_findings(geometry, src, diffuse_px, placeholder_px)
     side = _texture_side_px(rb)
     missing = [mesh["name"] for mesh in geometry if "uv" not in mesh.get("face_geometry", {})]
     if side is None or missing:
@@ -647,6 +672,60 @@ def _texel_density_findings(rb: dict, meshes: list[dict], ucx: list[dict], src: 
         _density_finding("texel density", low, DENSITY_MIN_PX_PER_M, "min", f"{src}: min {low:.6g} px/m", src),
         _density_finding("texel density upper", high, DENSITY_MAX_PX_PER_M, "max", f"{src}: max {high:.6g} px/m", src),
     ]
+
+
+def _tile_density_findings(geometry: list[dict], src: str, diffuse_px: dict,
+                           placeholder_px: int | None) -> list[Finding]:
+    """Per-polygon edge densities with the diffuse side of the polygon's own UDIM tile."""
+    low = high = None
+    low_at = high_at = ""
+    exempt, unknown = 0, {}
+    try:
+        for mesh in geometry:
+            shape = mesh.get("face_geometry") or {}
+            vertices, polygons = shape.get("vertices"), shape.get("polygons")
+            polygon_uvs = shape.get("polygon_uv")
+            materials = shape.get("polygon_material") or []
+            if not isinstance(polygons, list) or not isinstance(polygon_uvs, list) \
+                    or len(polygon_uvs) != len(polygons):
+                raise ValueError(f"partial UV geometry on {mesh['name']}: no polygon_uv per polygon")
+            for index, (polygon, poly_uv) in enumerate(zip(polygons, polygon_uvs)):
+                try:
+                    poly_xyz = [vertices[i] for i in polygon]
+                except (IndexError, TypeError) as exc:
+                    raise ValueError(f"partial UV geometry on {mesh['name']}: polygon index") from exc
+                if len(poly_xyz) < 2:
+                    continue
+                tile = udim_of(poly_uv)
+                material = materials[index] if index < len(materials) else None
+                side = _tile_side(diffuse_px, tile, material)
+                if side is None:
+                    unknown.setdefault(mesh["name"], set()).add(tile)
+                    continue
+                if placeholder_px is not None and side == placeholder_px:
+                    exempt += 1
+                    continue
+                values = edge_densities(poly_xyz, poly_uv, side)
+                if values and (low is None or min(values) < low):
+                    low, low_at = min(values), f"{mesh['name']} polygon {index}, tile {tile}"
+                if values and (high is None or max(values) > high):
+                    high, high_at = max(values), f"{mesh['name']} polygon {index}, tile {tile}"
+    except ValueError as exc:
+        return _density_bounds(src, "fail", str(exc))
+    note = f"; {exempt} placeholder polygon(s) exempt" if exempt else ""
+    if low is None and exempt and not unknown:
+        return _density_bounds(src, "pass", f"all {exempt} polygon(s) on placeholder tiles (exempt)")
+    out = [
+        _density_finding("texel density", low, DENSITY_MIN_PX_PER_M, "min",
+                         f"{src}: min {low:.6g} px/m at {low_at}{note}" if low is not None else f"{src}: no edges", src),
+        _density_finding("texel density upper", high, DENSITY_MAX_PX_PER_M, "max",
+                         f"{src}: max {high:.6g} px/m at {high_at}" if high is not None else f"{src}: no edges", src),
+    ]
+    if unknown:
+        shown = {name: sorted(t for t in tiles if t is not None) or ["outside grid"] for name, tiles in unknown.items()}
+        out.append(_f("not_run", "texel density coverage", f"{src}: no Diffuse PNG for tiles {shown}",
+                      "a Diffuse map for every textured tile", [31, 32], src))
+    return out
 
 
 def _m2_text(value: float) -> str:
@@ -869,20 +948,51 @@ def _ground_footprint_findings(meshes: list[dict], ucx: list[dict], src: str, gr
     ]
 
 
+def main_glass_findings(meshes: list[dict], stem: str, src: str) -> list[Finding]:
+    """VPM OKS main FBX: the glass object and its materials (#1029; DER-18/19; reg p.33 §10.4.2, p.34 §10.4.4).
+
+    Glass is mandatory where the building has glazing (reg 2.8, 2.8.1: one glass object), so a Main without
+    `SM_{Address}_MainGlass` is `review` (a building without glazing is valid), never a silent pass. Glass
+    materials are `M_{Address}_MainGlass_N`, N 1..7 (reg 2.8.2: at most 7); names absent from the readback: review."""
+    if not stem.startswith("SM_") or stem.endswith(("_Light", "_Ground")):
+        return []
+    address = stem[3:]
+    main, glass = f"SM_{address}_Main", f"SM_{address}_MainGlass"
+    names = {m["name"]: m for m in meshes}
+    out = []
+    if glass not in names:
+        status = "review" if main in names else "not_run"
+        out.append(_f(status, "MainGlass object", f"{src}: no {glass}" + ("" if main in names else f" and no {main}"),
+                      f"{glass} when the building has glazing (one glass object)", [33], src))
+        return out
+    out.append(_f("pass", "MainGlass object", f"{src}: {glass}", f"{glass}", [33], src))
+    mats = names[glass].get("materials")
+    if mats is None:
+        out.append(_f("review", "MainGlass materials", f"{src}: material names not in the readback",
+                      f"M_{address}_MainGlass_1..7", [34], src))
+        return out
+    pattern = re.compile(rf"^M_{re.escape(address)}_MainGlass_([1-7])$")
+    bad = [m for m in mats if not (m and pattern.match(m))]
+    out.append(_f("fail" if bad or not mats else "pass", "MainGlass materials",
+                  f"{src}: {bad or mats or 'no material'}", f"M_{address}_MainGlass_1..7", [34], src))
+    return out
+
+
 def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule: dict | None = None,
                    flora_share: int = FLORA_SHARE, *, maf_sizes=None, smoothing_angle_deg=None,
-                   ground_area_m2=None, footprint_holes=None) -> dict[str, list[Finding]]:
+                   ground_area_m2=None, footprint_holes=None, diffuse_px=None) -> dict[str, list[Finding]]:
     """role: 'oks' | 'ground' | 'light'. Returns {stage_id: findings}. Ground FBX: Flora checks
     (twinqa.flora; flora_schedule = {mesh name: {"height_m", "crown_m"}}, flora_share default 70 000).
     ground_area_m2: VPM Ground area basis = site minus OKS footprint, m2; selects the reg p.29 band for the
     Ground triangle count (None keeps it at 'review'; a non-finite or non-positive value raises ValueError)
     and is the expected top-down area of the footprint-coverage finding (missing -> not_run, never pass).
     footprint_holes: optional list of XY rings, one polygon per OKS footprint hole. Ground coverage
-    inside that region is a separate finding; None leaves it not_run and never a pass of the hole claim."""
+    inside that region is a separate finding; None leaves it not_run and never a pass of the hole claim.
+    diffuse_px: VPM {(slot, udim): side px} of the archive Diffuse PNGs for V009 texel density."""
     if ground_area_m2 is not None:
         check_ground_area(ground_area_m2)
     src = Path(rb["source"]).name
-    out = {"V003": [], "V004": [], "V008": [], "V010": [], "V013": [], "V006": [], "V002": []}
+    out = {"V003": [], "V004": [], "V008": [], "V009": [], "V010": [], "V013": [], "V006": [], "V002": []}
     if not rb.get("readback_ok"):
         out["V003"].append(_f("fail", "FBX readback", rb.get("error", "no meshes"), "importable FBX with meshes", [4, 24], src))
         return out
@@ -985,9 +1095,11 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
         out["V008"].append(_f("fail" if mirrored else "pass", "mirrored islands", f"{src}: {mirrored or 'none'}", "no mirrored UV", [31], src))
         if glass:
             out["V008"].append(_f("fail", "glass tile", f"{src}: {glass}", "glass only in UDIM 1001", [31, 32], src))
-        # Texel density is the same 512..1706 px/m band as twinqa.uv (reg p.32). It does not
-        # change the channel / mirror / glass verdicts above.
-        out["V008"].extend(_texel_density_findings(rb, meshes, ucx, src))
+        # V009: texel density 512..1706 px/m (reg p.31-32 §6, [D160]); diffuse side per tile from the archive
+        placeholder = profile.get("textures", {}).get("flat_placeholder", {}).get("size_px")
+        out["V009"].extend(_texel_density_findings(rb, meshes, ucx, src, diffuse_px, placeholder))
+        if role == "oks":
+            out.setdefault("V012", []).extend(main_glass_findings(meshes, Path(rb["source"]).stem, src))
         # V013 (reg p.32-33 §9.3-9.5; conflict #19 decided 2026-10-07 [D018] as the checker)
         out["V013"].extend(_pivot_findings(meshes, ucx, src))
         out["V013"].append(_f("not_run", "MSK-77 point", "GeoJSON point vs survey coordinates and project zero",
@@ -1004,6 +1116,6 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
             out.setdefault(stage_id, []).extend(findings)
 
     # V012: internal mesh names and UCX index grammar (reg p.11-12 §3.3, p.33-34 §4.2) -> twinqa.naming
-    out["V012"] = mesh_name_findings([m["name"] for m in meshes], kind, role, Path(rb["source"]).stem,
+    out["V012"] = out.get("V012", []) + mesh_name_findings([m["name"] for m in meshes], kind, role, Path(rb["source"]).stem,
                                      profile["naming"]["max_characters"], src)
     return out
