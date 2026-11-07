@@ -295,3 +295,12 @@ def test_scan_maf_picks_sibling_fixed_and_meta_by_convention(tmp_path):
     idx = _mk.scan_maf(str(lib_dir), str(tmp_path / 'c'), lib='maf')
     a = idx['assets'][0]
     assert a['source']['path'] == '../a101_fixed/Adx_Stol_1.zip' and a['meta']['title'] == 'Стол'
+
+
+def test_maf_category_sport_and_waste_from_intake_buhv12():
+    cat = C.maf_category
+    assert cat('BasketbolnyySchitSKoltsom') == 'Спортивное оборудование'
+    assert cat('StoykiVoleybolnyeTeleskopicheskieTonus') == 'Спортивное оборудование'
+    assert cat('SetkaVoleybolnayaTrenirovochnayaD30Mm') == 'Спортивное оборудование'
+    assert cat('Evrokonteyner') == 'Контейнерная площадка'
+    assert cat('KonteynernayaPloschadkaDlyaTboMaf6') == 'Контейнерная площадка'
