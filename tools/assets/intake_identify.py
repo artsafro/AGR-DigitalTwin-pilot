@@ -167,6 +167,8 @@ def scene_candidates(row, kinds, kind_filter):
     for k in kinds:
         if kind_filter and k.get('kind') not in kind_filter:
             continue
+        if ((_kind_size(k) or {}).get('z') or 0) < 50:
+            continue  # flat plan symbols (Revit/DWG planting circles) are points, not models
         label = ' '.join(filter(None, [k.get('example_name'), k.get('name'), k.get('layer'),
                                        ' '.join(k.get('materials') or [])]))
         kt = lib.name_tokens(label)
@@ -180,6 +182,11 @@ def scene_candidates(row, kinds, kind_filter):
             out.append((score, k))
     out.sort(key=lambda p: -p[0])
     return out
+
+
+def _kid(k):
+    """Kind id unique across scenes: '<scene>:<kind_id>'."""
+    return '{}:{}'.format(k.get('scene'), k.get('kind_id') or k.get('id') or k.get('key'))
 
 
 def _kind_size(k):
@@ -228,23 +235,45 @@ def identify(project, maf_rows, flora_rows, kinds, scene_map, maf_unified, flora
         if rec['kind'] == 'groundel':
             continue
         kf = {'maf'} if rec['kind'] == 'maf' else {'flora', 'tree', 'shrub'}
-        if scene_map and rec['key'] in scene_map:
-            ids = set(scene_map[rec['key']])
-            chosen = [k for k in kinds if k.get('id') in ids]
+        entry = (scene_map or {}).get(rec['key'])
+        if entry is not None:
+            # reviewed join: a list of kind ids, or {high: [...], low: [...], status, why, note}
+            if isinstance(entry, list):
+                entry = {'high': entry}
+            versions = {v: [k for k in kinds if _kid(k) in set(entry.get(v) or [])] for v in ('high', 'low')}
+            chosen = versions['high'] + versions['low']
+            rec['scene_versions'] = {v: [_kid(k) for k in ks] for v, ks in versions.items() if ks}
             rec['scene_join'] = 'map'
+            rec['review_note'] = entry.get('note')
         else:
             cands = scene_candidates(r, kinds, kf)
             top = [k for s, k in cands if s >= cands[0][0] - 1e-9] if cands else []
             chosen = top
             rec['scene_join'] = 'auto' if len(top) == 1 else ('ambiguous' if top else 'none')
-            rec['scene_candidates'] = [{'id': k.get('id'), 'name': k.get('example_name'), 'score': round(s, 2)}
+            rec['scene_candidates'] = [{'id': _kid(k), 'name': k.get('example_name'), 'score': round(s, 2)}
                                        for s, k in cands[:5]]
-        rec['scene'] = [{'id': k.get('id'), 'name': k.get('example_name'), 'count': k.get('count'),
+            if not top and any((rec.get('dims_mm') or [None, None])[:2]):
+                # collapsed deliveries carry no names: rank kinds by size alone, for the reviewer only
+                sized = []
+                for k in kinds:
+                    if kf and k.get('kind') not in kf:
+                        continue
+                    dc = dims_check(rec['dims_mm'], _kind_size(k), tol=0.15)
+                    if dc and dc['worst'] <= 0.25:
+                        sized.append((dc['worst'], k))
+                sized.sort(key=lambda p: p[0])
+                rec['size_candidates'] = [{'id': _kid(k), 'count': k.get('count'), 'size_mm': _kind_size(k),
+                                           'worst': w} for w, k in sized[:4]]
+        rec['scene'] = [{'id': _kid(k), 'name': k.get('example_name'), 'count': k.get('count'),
                          'size_mm': _kind_size(k), 'tris': k.get('tris'), 'scene': k.get('scene'),
                          'dims': dims_check(rec.get('dims_mm') or [None, None, None], _kind_size(k))}
                         for k in chosen]
-        rec['scene_count'] = sum(k.get('count') or 0 for k in chosen) if chosen else None
+        counted = [k for k in chosen if _kid(k) in (rec.get('scene_versions') or {}).get('high', [])] or chosen
+        rec['scene_count'] = sum(k.get('count') or 0 for k in counted) if chosen else None
         rec['status'], rec['why'] = _status(rec)
+        if entry is not None and entry.get('status'):
+            rec['status'], rec['why'] = entry['status'], entry.get('why') or 'reviewed'
+            rec['library'] = entry.get('library') or rec.get('library')
     out = [rec for rec, _ in rows]
     counts = {}
     for rec in out:
@@ -271,6 +300,10 @@ def _status(rec):
     # genus only = another species: build it, the nearest library genus is a hint for Artem
     near = ' (nearest genus: {})'.format(', '.join(rec['library'][:3])) if rec.get('library_level') == 'genus' else ''
     if rec.get('scene_join') in ('auto', 'map') and rec['scene']:
+        bad = [s for s in rec['scene'] if s.get('dims') and not s['dims']['ok']]
+        if bad and len(bad) == len([s for s in rec['scene'] if s.get('dims')]):
+            return 'variant', 'scene model off the schedule size by {:.0f} % (not rescaled): {}'.format(
+                100 * min(s['dims']['worst'] for s in bad), ', '.join(s['id'] for s in bad))
         return 'new_model', 'scene kind ' + ', '.join(str(s['id']) for s in rec['scene']) + near
     if rec.get('scene_join') == 'ambiguous':
         return 'not_identified', 'several scene kinds fit' + near
