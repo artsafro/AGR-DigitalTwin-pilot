@@ -21,8 +21,13 @@ bundle pass is an accepted delivery; all mandatory checks and manual gates below
 - V009 VPM: diffuse density 512..1706 px/m except allowed exceptions. reg p.31-32.
 - V010 VPM: UCX per main FBX; convex closed non-intersecting, no slots, triangle limit. reg p.34, 36-37.
 - V011 VPM: GeoJSON UTF-8, exact keys/types/values, imageBase64, Glasses, glass material names match. reg p.26-27, 51-55.
+  Producing the file [D220]: the customer's GeoJSON is collected first and is the reference; our own tool or skill is
+  built from it later, and until then AGR Tools `export.geojson_write` output is not delivery-ready. `FNO_code` comes
+  from SINTEZ after the object is placed by the customer's DWG (not from the customer); the УКЭП signature is the
+  customer's [D163]. V011 checks a file; it does not make one.
 - V012 both: archive/FBX/mesh/material/texture names and continuous numbering. reg NPM p.11-13, VPM p.33-36.
 - V013 VPM: local origin 0/0/0, shared pivot, rotation 0; GeoJSON MSK-77 matches insertion point. reg p.32-33, 55.
+  Placing the object in MSK-77 by the customer's DWG is our work [D220].
 - V014 NPM: geometry in Moscow project coords/heights; angles match plan. reg p.10.
 - V015 both (manual): silhouette, floors, facades, materials, window types, ground floor, roof, landscaping match approved project. reg p.4, 7-8, 24, 28-29.
 - V016 VPM (manual): passages/arches/courtyards free; collision offsets per height zone. reg p.36-37.

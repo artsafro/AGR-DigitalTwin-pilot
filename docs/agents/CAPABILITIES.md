@@ -296,13 +296,45 @@ Pipeline core:
   for a visual check; not a production asset.
 - Operation library `technical_library/` — WORKING per package README.
 - Album page reader `src/dt_ai/album/` (#317) — on `main`, synthetic PDFs only.
-- Placement engine `src/dt_ai/placement/engine.py` (#316) — on `main`, synthetic tests only.
 - Project state `tools/state/project_state.py` — WORKING; rule `docs/agents/WORKFLOW.md`, "Project state";
-  `tools/state/project_state_freshness.py` is an advisory read-only freshness check.
+  `tools/state/project_state_freshness.py` is an advisory read-only freshness check; `tools/state/after_merge.py`
+  (2026-11-07, offline tests only) regenerates and commits it on local `main` after a merge (PostToolUse hook on
+  `gh pr merge`), no push.
 - AGR Tools for 3ds Max 2024/2026, `adapters/max/agr_tools/` (build `tools/max/build_agr_tools.py`) — diagnostic
   and checked-export tool, not a delivery validator; version, install, native evidence: its `README.md`,
   `CHANGELOG.md`; native runners in `tests/max_tools/`. Entry page for agents (1.0 conveyor, MCP v2, passport,
   libraries, owner decisions): `docs/agr-tools/OVERVIEW.md`.
+
+Territory (Ground, MAF, Flora, placement; verified 2026-11-07 against job reports and PRs):
+- Ground layered cake `src/dt_ai/geometry/ground_cake.py` (#295, PR #308) — WORKING: library driven by
+  `jobs/VATUTINO-SITE/build_ground.py` / `build_ground_v015.py`, FBX via `tools/blender/ground_json_to_fbx.py`; built
+  Vatutino v005–v015, v015 accepted by the user 2026-11-04 [D193] (PR #906); COD-20207 v016 trial not passed;
+  tests `tests/test_ground_cake.py`, `tests/test_ground_*.py`.
+- Ground quads `src/dt_ai/geometry/ground_quads.py` — WORKING on one object: paired-fan quads of Vatutino v015
+  (accepted, PR #906, [D157]); docstring still says "checkpoint only"; tests `tests/test_ground_quads.py`,
+  `test_ground_pairing.py`, `test_ground_v015_producer.py`.
+- MAF atlas `tools/materials/atlas_maf.py` (PR #196) — TOOL ONLY: one 512 atlas + UV map from a material list; used
+  for the Vatutino MAF set v005 (PR #320) and «Верона» atlas-v006; no separate acceptance; tests
+  `tests/test_atlas_maf*.py`.
+- MAF bench generator `tools/library/maf_gen_bench.py` + `maf_gen_bench_checks.py`, Blender build
+  `tools/blender/maf_gen_bench_build.py` (PR #805) — WORKING: «Верона» rows 2-10 accepted for the library [D202]
+  (PR #1093), row 1 pending; tests `tests/test_maf_gen_bench*.py`.
+- MAF site set `tools/library/maf_site_set.py` + `tools/blender/maf_site_set_build.py` (PR #320) — TOOL ONLY: 13
+  Vatutino positions built, geometry accepted 2026-11-04 (issue #889), the set report stays `passed=false`, colour
+  zones open (PR #991); tests `tests/test_maf_site_set.py`.
+- MAF showcase `tools/review/maf_showcase.py` (PR #493) — WORKING as a review aid (display-only 3ds Max scene of
+  NPM/VPM pairs, headless 3dsmaxbatch); not a delivery tool; tests `tests/test_maf_showcase.py`.
+- Flora textures `python -m dt_ai.materials.flora plan|library` (`src/dt_ai/materials/flora.py`, PR #220) — WORKING
+  for texture handoff and approval: three-species test list approved 2026-10-15 (#190); no object delivery;
+  tests `tests/test_flora_textures.py`.
+- Flora atlas `tools/library/flora_atlas_from_scene.py` (PR #310) — TOOL ONLY: one 2048 Flora atlas from a placed
+  scene; synthetic run only (3 species); tests `tests/test_flora_atlas_from_scene.py`.
+- Placement engine `python -m dt_ai.placement.engine` (`src/dt_ai/placement/engine.py`, #316, PR #323) — TOOL ONLY:
+  ran on real data, Vatutino run v006 (PR #344): NPM 3,289/3,289 placed, 0 failed, sinking 0.0998–0.1001 m; user
+  geometry acceptance open, `passed=false`; tests `tests/test_placement_engine.py`, `tests/placement/`.
+- Site placement `tools/placement_site.py` + `tools/blender/placement_instance.py` (PR #344) — TOOL ONLY: SPOZU points
+  -> engine -> Blender instancing -> scene readback gate (0 mismatches on Vatutino v006); acceptance open; tests
+  `tests/placement/test_site_*.py`.
 
 Export:
 - `tools/export/export_mesh_blender.py`, `tools/export/export_modules_blender.py` — Blender scene + FBX writers of

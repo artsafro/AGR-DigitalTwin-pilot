@@ -63,7 +63,10 @@ partial rows above keep their unchecked part manual.
 - **V008** (VPM, UV and UDIM): UV area, no sheet yet.
 - **V009** (VPM, texel density): UV area; unimplemented.
 - **V010** (VPM, UCX): [UCX sheet](ucx.md) R05-R15.
-- **V011** (VPM, GeoJSON): PKG-19 to PKG-25.
+- **V011** (VPM, GeoJSON): PKG-19 to PKG-25. Who supplies what [D220]: MSK-77 placement by the customer's DWG is
+  ours (PKG-24); `FNO_code` / `FNO_name` (PKG-21) come from SINTEZ after that placement, never invented or asked of
+  the customer; the УКЭП signature is the customer's [D163]. The customer's GeoJSON is the reference until our own
+  tool or skill is built from it; AGR Tools `export.geojson_write` output is not delivery-ready until then.
 - **V012** (both, names): PKG-08, PKG-13; light names PKG-14 not checked; mesh and material names in the geometry sheets.
 - **V013** (VPM, pivot and MSK-77): PKG-24 position `not_run`; pivot in [UCX R17](ucx.md) and the geometry sheets; lighting root pivot PKG-18 not checked.
 - **V014** (NPM, Moscow coordinates, reg p.10): placement area, no sheet yet; unimplemented.
