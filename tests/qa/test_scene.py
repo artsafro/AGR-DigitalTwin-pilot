@@ -70,8 +70,8 @@ def test_v008_uv_contract_excludes_collision_only(uv, expected):
     found = scene_findings(rb(mesh(name="SM_Test_Ground", uv=uv),
                               mesh(name="UCX_SM_Test_Ground_001", uv=0)), "vpm", "ground", PROFILES.vpm)
     assert statuses(found, "V008")["one UV channel"] == expected
-    assert statuses(found, "V008")["texel density"] == "not_run"
-    assert statuses(found, "V008")["texel density upper"] == "not_run"
+    assert statuses(found, "V009")["texel density"] == "not_run"
+    assert statuses(found, "V009")["texel density upper"] == "not_run"
     assert statuses(found, "V010")["UCX present"] == "pass"
     assert statuses(found, "V010")["UCX triangle budget"] == "pass"
 
@@ -80,12 +80,8 @@ def test_clean_vpm_mesh_passes_scene_stages():
     found = scene_findings(rb(mesh()), "vpm", "oks", PROFILES.vpm)
     assert set(statuses(found, "V003").values()) == {"pass"}
     assert statuses(found, "V004") == {"applied transforms": "pass", "topology defects": "pass", "co-directional clearance": "not_run"}
-    assert statuses(found, "V008") == {
-        "one UV channel": "pass",
-        "mirrored islands": "pass",
-        "texel density": "not_run",
-        "texel density upper": "not_run",
-    }
+    assert statuses(found, "V008") == {"one UV channel": "pass", "mirrored islands": "pass"}
+    assert statuses(found, "V009") == {"texel density": "not_run", "texel density upper": "not_run"}
 
 
 @pytest.mark.parametrize("tris, status", [(150_000, "pass"), (150_001, "review"), (1_000_000, "review"),
@@ -565,14 +561,15 @@ def test_blender_roundtrip_through_validator(tmp_path, variant):
     if variant == "good":
         assert st["V002"].findings[0].status == "pass"  # Blender writes binary FBX 7400
         assert st["V002"].status == "pass"
-        assert {st[k].status for k in ("V003", "V004")} == {"pass"}
+        assert st["V004"].status == "pass"
+        # No --master: the quad master part of V003 stays not_run (DER-03); the export part passes.
+        v003 = {item.name: item.status for item in st["V003"].findings}
+        assert v003.pop("master quads") == "not_run" and set(v003.values()) == {"pass"}
         v008 = {item.name: item.status for item in st["V008"].findings}
         assert v008["one UV channel"] == "pass"
         assert v008["mirrored islands"] == "pass"
-        # The cube FBX has no diffuse size, so density stays not_run and the stage cannot pass.
-        assert v008["texel density"] == "not_run"
-        assert v008["texel density upper"] == "not_run"
-        assert st["V008"].status == "not_run"
+        # V009 now measures with the archive Diffuse side of each tile (texel density moved out of V008).
+        assert {"texel density", "texel density upper"} <= {item.name for item in st["V009"].findings}
     else:
         assert st["V003"].status == "fail" and st["V008"].status == "fail"
         assert st["V002"].status == "fail"
