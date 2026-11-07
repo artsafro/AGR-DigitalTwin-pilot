@@ -329,6 +329,11 @@ def scan_maf(root, cache_dir, lib='maf', old_index=None, hash_sources=False, pro
         for f in files:
             if f.lower().endswith('.zip'):
                 zips.append(os.path.relpath(os.path.join(dirpath, f), root).replace('\\', '/'))
+    base_root = os.path.normpath(root)
+    if override_dir is None and os.path.isdir(base_root + '_fixed'):  # convention: <library>_fixed next to it
+        override_dir = base_root + '_fixed'
+    if meta_dir is None and os.path.isdir(base_root + '_meta'):  # and <library>_meta (template JSON)
+        meta_dir = base_root + '_meta'
     if override_dir and os.path.isdir(override_dir):
         fixed = {f.lower(): f for f in os.listdir(override_dir) if f.lower().endswith('.zip')}
         zips = [os.path.relpath(os.path.join(override_dir, fixed[os.path.basename(z).lower()]), root).replace('\\', '/')

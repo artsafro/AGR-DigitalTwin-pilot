@@ -278,3 +278,20 @@ def test_propose_maf_name_q28():
     assert L.propose_maf_name(None, 'Качалка балансир / Артикул: ИО 0410-2', 'ИО 0410-2') == \
         'NoName_KachalkaBalansir_IO0410-2'
     assert C.parse_maf(L.propose_maf_name('Города', 'Урна «Арго»', '19648')) is not None
+
+
+def test_scan_maf_picks_sibling_fixed_and_meta_by_convention(tmp_path):
+    import json as _json
+    _mk = sys.modules['agr_tools_assets_core_lib_test']
+    lib_dir = tmp_path / 'a101'
+    lib_dir.mkdir()
+    with zipfile.ZipFile(lib_dir / 'Adx_Stol_1.zip', 'w') as z:
+        z.writestr('Adx_Stol_1_high.fbx', b'old')
+    (tmp_path / 'a101_fixed').mkdir()
+    with zipfile.ZipFile(tmp_path / 'a101_fixed' / 'Adx_Stol_1.zip', 'w') as z:
+        z.writestr('Adx_Stol_1_high.fbx', b'new')
+    (tmp_path / 'a101_meta').mkdir()
+    (tmp_path / 'a101_meta' / 'Adx_Stol_1.json').write_text(_json.dumps({'title': 'Стол'}), encoding='utf-8')
+    idx = _mk.scan_maf(str(lib_dir), str(tmp_path / 'c'), lib='maf')
+    a = idx['assets'][0]
+    assert a['source']['path'] == '../a101_fixed/Adx_Stol_1.zip' and a['meta']['title'] == 'Стол'

@@ -108,13 +108,12 @@
 
 ### Проверка библиотеки МАФ по контракту
 
-Чистых: 96 из 108. Замечания: foreign_material 2, foreign_texture 3, low_not_reduced 11, measured 8, no_category 6, no_smoothing 14, pivot_height 8, pivot_offset_xy 12, tris_review 2.
+Чистых: 105 из 108. Замечания: low_not_reduced 11, no_smoothing 14, pivot_height 6, shared_material 1, shared_texture 3, tris_review 2.
 
-Категории: Спортивное оборудование 14, Игровое оборудование 13, Пергола 11, Скамья 11, Игровой комплекс 7, — 6, Стол 6, Качели 6, Качалка 5, Кресло 4, Навес 3, Карусель 3, Урна 3, Амфитеатр 3, Горка 2, Гамак 2, Велопарковка 2, Информационный стенд 2, Приствольная решётка 1, Контейнерная площадка 1, Парковый лежак 1, Парклет 1, Песочница 1.
+Категории: Игровое оборудование 14, Скамья 12, Пергола 12, Спортивное оборудование 10, Стол 7, Игровой комплекс 7, Качалка 7, Качели 6, Кресло 4, Карусель 4, Контейнерная площадка 3, Урна 3, Амфитеатр 3, Горка 2, Гамак 2, Велопарковка 2, Информационный стенд 2, Прочее 2, Навес 1, Приствольная решётка 1, Парковый лежак 1, Парклет 1, Песочница 1, Вазон 1.
 
 | МАФ | Категория | Ошибки | Предупреждения |
 |---|---|---|---|
-| `Adanat_Anapa_10779.1a` | — |  | no_category (category not recognised from the title) |
 | `Adanat_NavesLiana_40184.1` | Навес |  | no_smoothing (high); no_smoothing (low) |
 | `AdanatGroup_PergolaAndromeda_401462-2` | Пергола |  | no_smoothing (high); no_smoothing (low) |
 | `AdanatGroup_PergolaAndromeda_401462-3` | Пергола |  | no_smoothing (high) |
@@ -122,29 +121,18 @@
 | `AdanatGroup_PergolaAndromeda_401462-5` | Пергола |  | no_smoothing (high); no_smoothing (low) |
 | `AdanatGroup_PergolaAndromeda_401462-6` | Пергола |  | no_smoothing (high); no_smoothing (low) |
 | `AlphaGorod_PergolaKoltsa_PR-0008-5` | Пергола | pivot_height (high: 412 mm above the base); pivot_height (low: 412 mm above the base) |  |
-| `DeloDesign_StolYO_0000` | Стол | pivot_height (high: 956 mm above the base); pivot_height (low: 956 mm above the base) |  |
 | `Ecomaf_TBO_0101` | Контейнерная площадка |  | no_smoothing (high) |
-| `Feniks_ElementPolosyPrepyatstviyNature_207420` | Спортивное оборудование |  | low_not_reduced (low = high = 912 tris) |
-| `Fenix_DvuhmestniiBalancir_127060` | Спортивное оборудование |  | low_not_reduced (low = high = 1118 tris) |
-| `Hobbika_UkorochenniNavesPodPloshadkySimpl4156_56740` | Навес | pivot_offset_xy (high: 53 mm); pivot_offset_xy (low: 54 mm) |  |
-| `Hobbika_VeloparkovkaVozduh_15617` | Велопарковка | pivot_offset_xy (high: 87 mm); pivot_offset_xy (low: 52 mm) |  |
+| `Feniks_ElementPolosyPrepyatstviyNature_207420` | Игровое оборудование |  | low_not_reduced (low = high = 912 tris) |
+| `Fenix_DvuhmestniiBalancir_127060` | Качалка |  | low_not_reduced (low = high = 1118 tris) |
 | `Igrateks_SkamyaRadiusnaya_SRRS` | Скамья |  | low_not_reduced (low = high = 1244 tris) |
 | `Igratex_StolikSPechenkami_1005T-1` | Игровое оборудование |  | low_not_reduced (low = high = 504 tris) |
-| `Individ_Amfiteatr1_Individ` | Амфитеатр | pivot_offset_xy (high: 437 mm); pivot_offset_xy (low: 680 mm) |  |
-| `Mesto_IgrovoyKompleks_118030` | Игровой комплекс | foreign_material (low: M_Mesto_IgrovoyKompleks_18030_low) | tris_review (high: 26188); tris_review (low: 18937) |
+| `Mesto_IgrovoyKompleks_118030` | Игровой комплекс |  | tris_review (high: 26188); tris_review (low: 18937) |
 | `Mesto_Kachalka_161100` | Качалка |  | low_not_reduced (low = high = 2842 tris) |
-| `Mesto_Kachalka_170100` | Качалка | foreign_material (high: M_Mesto_IgrovoyKompleks_118030_high); foreign_texture (high: Mesto_IgrovoyKompleks_118030_high_Diffuse.png); foreign_texture (high: Mesto_IgrovoyKompleks_118030_high_ERM.png); foreign_texture (high: Mesto_IgrovoyKompleks_118030_high_Normal.png) | low_not_reduced (low = high = 2264 tris) |
+| `Mesto_Kachalka_170100` | Качалка |  | shared_texture (high: Mesto_IgrovoyKompleks_118030_high_Diffuse.png); shared_texture (high: Mesto_IgrovoyKompleks_118030_high_ERM.png); shared_texture (high: Mesto_IgrovoyKompleks_118030_high_Normal.png); shared_material (high: M_Mesto_IgrovoyKompleks_118030_high); low_not_reduced (low = high = 2264 tris) |
 | `MetaforaLab_IgrovoyKompleksDzhakarKhust_SDM-019` | Игровой комплекс |  | low_not_reduced (low = high = 2016 tris) |
-| `NoName1234_Pesochica_0000` | Песочница | pivot_offset_xy (high: 124 mm); pivot_offset_xy (low: 125 mm) |  |
-| `NoName3153_NoName3415_0000` | — |  | no_category (category not recognised from the title) |
-| `NoName4156_NoName5612_0000` | — |  | no_category (category not recognised from the title) |
-| `NoName5162_NoName7123_0000` | — |  | no_category (category not recognised from the title) |
-| `NoName6121_NoName8542_0000` | — |  | no_category (category not recognised from the title) |
-| `NoName6731_NoName3783_0000` | — |  | no_category (category not recognised from the title); low_not_reduced (low = high = 630 tris) |
+| `NoName6731_NoName3783_0000` | Прочее |  | low_not_reduced (low = high = 630 tris) |
 | `NoName_BarnayaStoika_0101` | Стол |  | no_smoothing (high); no_smoothing (low) |
 | `NoName_Skameya_0101-5` | Скамья | pivot_height (high: 482 mm above the base); pivot_height (low: 482 mm above the base) |  |
-| `Shelby_Domik_SHLG-08.03` | Игровой комплекс | pivot_offset_xy (high: 368 mm); pivot_offset_xy (low: 360 mm) |  |
-| `Shelby_IgrovoyElement_SHLG-06-10` | Игровое оборудование | pivot_offset_xy (high: 726 mm); pivot_offset_xy (low: 764 mm) |  |
 | `Shelby_IgrovoyKompleks_SHLG-03-02` | Игровой комплекс |  | low_not_reduced (low = high = 1436 tris) |
 | `Shelby_KachalkaNaPruzhinakh_SHLG-03-06` | Качалка |  | low_not_reduced (low = high = 1084 tris) |
 | `Shelby_KacheliGnezdo_SHLG-01-01` | Качели |  | low_not_reduced (low = high = 2144 tris) |
