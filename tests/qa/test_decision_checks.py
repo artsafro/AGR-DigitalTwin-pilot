@@ -1,4 +1,4 @@
-"""Checks for user decisions that only the user's eye enforced before (audit 2026-11-07).
+"""Validator checks for decided rules that had no automatic check before ([D160], [D021], [D198], [D221]).
 
 V009 texel density per UDIM tile with the archive Diffuse side [D160], PNG count 3..2100 per VPM ZIP
 (TEX-04, reg p.26 §1.2), quad master <= 4 m (DER-03, [D021], twinqa.master) and the VPM OKS MainGlass
@@ -272,3 +272,12 @@ def test_glass_check_reaches_v012_for_vpm_oks_only():
     assert statuses(oks, "V012")["MainGlass object"] == "review"
     ground = scene_findings(rb(mesh(name="SM_Test_K_1_Ground")), "vpm", "ground", PROFILES.vpm)
     assert "MainGlass object" not in statuses(ground, "V012")
+
+
+# --- V008 glass tile [D221]: all glass UVs in 1001 whatever the number of glass materials (conflict #47) ---------
+
+def test_glass_with_two_materials_on_1002_fails_v008():
+    glass = mesh(name="SM_Test_K_1_MainGlass", tiles=(1001, 1002),
+                 materials=("M_Test_K_1_MainGlass_1", "M_Test_K_1_MainGlass_2"))
+    found = scene_findings(rb(mesh(), glass), "vpm", "oks", PROFILES.vpm)
+    assert statuses(found, "V008")["glass tile"] == "fail"
