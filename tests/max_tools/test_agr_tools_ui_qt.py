@@ -370,8 +370,8 @@ def test_rail_has_path_and_ten_blocks_in_order_with_planned_greyed(main):
         assert not b.isEnabled() and b.text().endswith(roadmap.planned_label(r))
     assert p.planned['tex.vpm_sets'].text().endswith('в кнопке vpm.build')
     assert p.planned['tex.browser'].text().endswith('в версии 1.x')
-    stage_only = {r['id'] for r in suite['rows'] if r['id'].partition('.')[0] != r['block']}
-    assert len(stage_only) == 15 and not stage_only & set(p.planned)
+    stage_only = {r['id'] for r in suite['rows'] if r['id'].partition('.')[0] != r['block']}  # 15 new rows of 1.0 + 4 handoff rows of 1.1
+    assert len(stage_only) == 15 + 4 and not stage_only & set(p.planned)
     assert not any(p.findChild(QtWidgets.QToolButton, 'agr_planned_' + rid) for rid in stage_only)
     assert stage_only <= {model.BY_ID[aid].tool for aid in p.stage_buttons}
     rail_colours = {p.rail.item(i).foreground().color().name() for i in range(1, 11)}
@@ -385,7 +385,7 @@ def test_stage_rail_big_buttons_second_rows_wip_disabled(main, qtbot, monkeypatc
     assert p.findChild(QtWidgets.QLabel, 'agr_stage_title').text() == '<b>{}</b>'.format(model.MENU_100)
     assert list(p.stages) == [s['id'] for s in suite['stages']]  # plan stage order, on the «Путь» page
     assert p.pages.widget(0).isAncestorOf(p.findChild(QtWidgets.QScrollArea, 'agr_stage_rail'))
-    assert set(p.stage_buttons) == {a.id for a in model.ACTIONS_100} and len(p.stage_buttons) == 33
+    assert set(p.stage_buttons) == {a.id for a in model.ACTIONS_100} and len(p.stage_buttons) == 33 + 4
     for s in suite['stages']:
         big, status, small = p.stages[s['id']]
         a = model.BY_TOOL[s['big_button']]

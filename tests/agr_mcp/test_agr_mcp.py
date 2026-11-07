@@ -175,6 +175,7 @@ def test_tools_list_is_the_phase0_eight_without_code_argument():
     assert sorted(listed) == sorted(tools.LISTED + HOOK) and set(tools.PHASE0) < set(listed)
     editing = {n for n, _row, _what, kind in tools.EDITS_080 if kind != "read"}  # 0.8 preview -> apply (#908)
     editing.add("agr_op_apply")  # v2: applies a held 0.8 preview
+    editing |= {"agr_handoff_export", "agr_handoff_import"}  # 1.1: preview -> apply by preview_id (verify stays read)
     for spec in tools.catalog().values():
         assert "code" not in json.dumps(spec.input), spec.name
         if spec.name in HOOK:
@@ -1670,7 +1671,7 @@ def test_fresh_stdio_process_lists_tools(unsafe, tmp_path):
     names = [x["name"] for x in t["tools"]]
     assert sorted(names) == sorted(tools.LISTED + HOOK + (("agr_exec_unsafe",) if unsafe else ()))
     assert t["serverInfo"]["name"] == "agr-mcp"
-    editing = {n for n, _row, _what, kind in tools.EDITS_080 if kind != "read"} | {"agr_op_apply"} | set(HOOK_EDITING)
+    editing = {n for n, _row, _what, kind in tools.EDITS_080 if kind != "read"} | {"agr_op_apply"} | set(HOOK_EDITING)         | {"agr_handoff_export", "agr_handoff_import"}  # 1.1 handoff tools that apply; agr_handoff_verify is read
     assert all(x["readOnlyHint"] for x in t["tools"] if x["name"] != "agr_exec_unsafe" and x["name"] not in editing)
     assert not any(x["readOnlyHint"] for x in t["tools"] if x["name"] in editing)
 
@@ -2033,16 +2034,18 @@ def test_runtime_090_serves_every_max_group(fake_max, monkeypatch):
 
 def test_every_max_tool_of_the_catalogue_needs_at_most_runtime_090():
     """v1 Max tools (47) by tool name; the v2 tools by plan row (ROUTES), all served by an installed 0.9.0, except
-    the 1.0 conveyor rows (edits_100), which need the 1.0 runtime (RUNTIME_100 = package 1.0.1)."""
+    the 1.0 conveyor rows (edits_100), which need the 1.0 runtime (RUNTIME_100 = package 1.0.1), and the 4 handoff
+    rows of 1.1 (RUNTIME_110 = package 1.1.0)."""
     names = [n for n, s in tools.catalog().items() if s.host({}) == "max-live" and n in tools.PHASE0]
     assert len(names) == 47
     for n in names:
         minimum, function = max_bridge.requirement(n)
         assert max_bridge.version_key(minimum) <= (0, 9, 0) and function, n
     for row, (group, _key, minimum, function) in max_bridge.ROUTES.items():
-        top = (1, 0, 1) if group == "e100" else (0, 9, 0)
+        top = (1, 1, 0) if row in max_bridge.ROWS_110 else (1, 0, 1) if group == "e100" else (0, 9, 0)
         assert max_bridge.version_key(minimum) <= top and function, row
-    assert {r for r, v in max_bridge.ROUTES.items() if v[2] == max_bridge.RUNTIME_100} == set(max_bridge.ROWS_100)
+    assert {r for r, v in max_bridge.ROUTES.items() if v[2] == max_bridge.RUNTIME_100} ==         set(max_bridge.ROWS_100) - set(max_bridge.ROWS_110)
+    assert {r for r, v in max_bridge.ROUTES.items() if v[2] == max_bridge.RUNTIME_110} == set(max_bridge.ROWS_110)
 
 
 def test_default_root_is_the_newest_install_not_a_folder_per_group(fake_max, monkeypatch):

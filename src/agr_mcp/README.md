@@ -17,6 +17,7 @@ is in every result and in the audit.
 | `agr_check_run(check_ids[], scene, handles\|scope\|refs)` | 38 read/select rows (released 0.1-0.9 + 1.0 read rows), one Max call | read-only, selection restored |
 | `agr_op_preview(op, scene, handles\|scope\|refs, options)` | 32 editing rows (0.8, 0.9, 1.0 small rows) | preview; server holds it, answers `preview_id` |
 | `agr_op_apply(preview_id, idempotency_key?)` | apply of a held preview | only the 11 rows of 0.8; others `needs_human` |
+| 3 handoff tools (1.1.0): `agr_handoff_export` (class `file`, operator+), `agr_handoff_import` (class `markup`, operator+), `agr_handoff_verify` (read, observer+) | rows `handoff.*` of plan version 1.1 (`catalog.py`, `max_side/max_bridge.py`, `max_side/agr_profiles.py`) | export/import: no `preview_id` = preview, with `preview_id` = apply of the held preview (new bundle folder, layer `AGENT_<req>`); import and verify take no selection; `handoff.restore_materials` only via `agr_op_preview`, apply by button (`needs_human`) |
 | `ops_d108.register(catalog)` | branch U's D108 operations (empty stub now) | appended without editing `tools.py` |
 
 Previews (`preview_store.py`): `preview_id = sha256(canonical(report))`; bound to host, Max pid

@@ -10,7 +10,13 @@ Rules (the plan is the source; a row without a bridge route fails the catalogue 
 * `agr_op_preview(op, scene, handles|scope|refs, options)`: op = editing rows (copy/undo/file/agent) with mcp yes of
   the edit-contract versions 0.8 / 0.9 and the 1.0 stage rows that are not stage tools; returns preview_id;
 * `agr_op_apply(preview_id, idempotency_key?)`: only rows of APPLY (0.8 editing rows: export copies, new files, the
-  one-undo UCX rename). Any other row answers `needs_human` (owner answers 06.11.2026: apply only by a button).
+  one-undo UCX rename; 1.1: handoff.export / handoff.import). Any other row answers `needs_human` (owner answers
+  06.11.2026: apply only by a button).
+* 1.1 handoff Max <-> Blender (mcp-review 3.2 / 3.12): `agr_handoff_export` (file class: a NEW bundle folder),
+  `agr_handoff_import` (markup class: only the layer AGENT_<req>; agent.accept stays the button) - both
+  preview -> apply in two calls of the same tool (the second with preview_id) - and `agr_handoff_verify` (read).
+  «Восстановить материалы» (handoff.restore_materials, undo in place) is an op of agr_op_preview; its apply is the
+  panel/dock button (profile modeller, confirmed by a person).
 Editing rows of 0.1-0.4 (udim.nudge, atlas.npm, ucx.build, export.checked, export.cleanup) predate the edit contract
 and have no bridge route; they are not in the op enum (gap named in docs/plans/agr-mcp.md).
 ObjRef ({host, doc, handle, name}, adapters/max/agr_tools/contract_core.py) is accepted as `refs` and returned as
@@ -35,6 +41,11 @@ CONTRACT = ROOT / "adapters" / "max" / "agr_tools" / "contract_core.py"
 EDIT_MODES = ("copy", "undo", "file", "agent")
 READ_MODES = ("read", "select")
 EDIT_CONTRACT_VERSIONS = ("0.8", "0.9")
+STAGE_VERSIONS = ("1.0", "1.1")  # versions with rows on the stage rail (roadmap.STAGE_VERSIONS)
+HANDOFF_TOOLS = ("agr_handoff_export", "agr_handoff_import", "agr_handoff_verify")
+HANDOFF_ROWS = {"agr_handoff_export": "handoff.export", "agr_handoff_import": "handoff.import",
+                "agr_handoff_verify": "handoff.verify"}
+MCP_APPLY_STAGE = ("handoff.export", "handoff.import")  # runtime.MCP_APPLY_100
 MAX_TIMEOUT = float(os.environ.get("AGR_MCP_MAX_TIMEOUT", "600"))
 
 
@@ -69,7 +80,7 @@ def stage_rows(plan: dict) -> list[dict]:
 def check_ids(plan: dict) -> list[str]:
     rel = released(plan)
     return [r["id"] for r in _rows(plan) if r["mcp"] == "yes" and r["mode"] in READ_MODES
-            and (r["version"] in rel or (r["version"] == "1.0" and r["fate"] == "stage"))]
+            and (r["version"] in rel or (r["version"] in STAGE_VERSIONS and r["fate"] == "stage"))]
 
 
 def op_ids(plan: dict) -> list[str]:
@@ -77,11 +88,12 @@ def op_ids(plan: dict) -> list[str]:
     stage = {r["id"] for r in stage_rows(plan)}
     return [r["id"] for r in _rows(plan) if r["mcp"] == "yes" and r["mode"] in EDIT_MODES and r["id"] not in stage
             and ((r["version"] in rel and r["version"] in EDIT_CONTRACT_VERSIONS)
-                 or (r["version"] == "1.0" and r["fate"] == "stage"))]
+                 or (r["version"] in STAGE_VERSIONS and r["fate"] == "stage"))]
 
 
 def apply_ids(plan: dict) -> list[str]:
-    return [r["id"] for r in _rows(plan) if r["mcp"] == "yes" and r["mode"] in EDIT_MODES and r["version"] == "0.8"]
+    return [r["id"] for r in _rows(plan) if r["mcp"] == "yes" and r["mode"] in EDIT_MODES
+            and (r["version"] == "0.8" or r["id"] in MCP_APPLY_STAGE)]
 
 
 def check_routes(plan: dict) -> None:
@@ -205,7 +217,10 @@ class Catalogue:
             keep = {k: bargs[k] for k in ("scene", "handles", "scope") if k in bargs}
             pid = self.store.put(report, binding, keep)
             meta["preview_id"] = pid
-            if row in self.apply:
+            if row in HANDOFF_ROWS.values():
+                meta["next_actions"] = ["{}(scene, preview_id='{}') applies it".format(
+                    {v: k for k, v in HANDOFF_ROWS.items()}[row], pid)]
+            elif row in self.apply:
                 meta["next_actions"] = ["agr_op_apply(preview_id='{}')".format(pid)]
             else:
                 meta["next_actions"] = ["needs_human: ask the user to apply '{}' ({}) with its button in the AGR "
@@ -214,6 +229,67 @@ class Catalogue:
 
     def op_preview(self, args: dict) -> Outcome:
         return self.preview(args["op"], args)
+
+    def handoff(self, tool: str, args: dict) -> Outcome:
+        """agr_handoff_export / agr_handoff_import: without preview_id a preview (nothing written; the answer holds
+        preview_id), with preview_id the apply of that held preview. agr_handoff_verify: read only."""
+        row = HANDOFF_ROWS[tool]
+        if args.get("preview_id"):
+            if tool == "agr_handoff_verify":
+                raise ValueError("invalid input: agr_handoff_verify is read-only, it takes no preview_id")
+            held = self.store.get(args["preview_id"], {})
+            if held.binding.get("op") != row:
+                raise ValueError("stale_preview: preview {} is of {}, not {}".format(
+                    args["preview_id"], held.binding.get("op"), row))
+            out = self.op_apply({"preview_id": args["preview_id"], "idempotency_key": args.get("idempotency_key")})
+            if row == "handoff.import":
+                out.meta["next_actions"] = ["needs_human: the user accepts the layer with the button agent.accept "
+                                            "(Приём от агента) and options.request = plan.request of this answer"]
+            return out
+        opts = {k: args[k] for k in HANDOFF_OPTIONS[tool] if args.get(k) is not None}
+        opts.update(args.get("options") or {})
+        call = dict(args, options=opts or None)
+        if not any(call.get(k) for k in ("handles", "scope", "refs")):
+            if tool == "agr_handoff_export":
+                raise ValueError("handles_required: agr_handoff_export sends the given objects; pass handles, refs "
+                                 "or scope=selection")
+            bargs = {"scene": call["scene"], "op": row}
+            if call.get("options"):
+                bargs["options"] = call["options"]
+            return self._preview_with(row, bargs, call)
+        return self.preview(row, call) if tool != "agr_handoff_verify" else self.check_one(row, call)
+
+    def _preview_with(self, row: str, bargs: dict, args: dict) -> Outcome:
+        if row == "handoff.verify":
+            bargs = dict(bargs, check_ids=[row])
+            bargs.pop("op", None)
+            payload = self.bridge("agr_check_run", bargs)
+            return Outcome(payload["result"]["checks"][row], _meta(payload, row=row, mode="check"))
+        payload = self.bridge("agr_op_preview", bargs)
+        return self._held(row, payload, bargs)
+
+    def check_one(self, row: str, args: dict) -> Outcome:
+        bargs = targets(args)
+        bargs["check_ids"] = [row]
+        if args.get("options") is not None:
+            bargs["options"] = args["options"]
+        payload = self.bridge("agr_check_run", bargs)
+        return Outcome(payload["result"]["checks"][row], _meta(payload, row=row, mode="check"))
+
+    def _held(self, row: str, payload: dict, bargs: dict) -> Outcome:
+        report = payload["result"]
+        meta = _meta(payload, row=row, mode="preview")
+        plan = report.get("plan") if isinstance(report, dict) else None
+        if isinstance(plan, dict) and plan.get("hash"):
+            binding = {"host": "max-live", "instance": current_instance(), "doc": payload.get("doc"),
+                       "runtime_version": payload.get("runtime_version"), "state_hash": plan.get("state_hash"),
+                       "op": row}
+            keep = {k: bargs[k] for k in ("scene", "handles", "scope") if k in bargs}
+            pid = self.store.put(report, binding, keep)
+            meta["preview_id"] = pid
+            meta["next_actions"] = ["{}(scene, preview_id='{}') applies it".format(
+                {v: k for k, v in HANDOFF_ROWS.items()}[row], pid)]
+        return Outcome(report, meta)
 
     def check_run(self, args: dict) -> Outcome:
         bargs = targets(args)
@@ -241,6 +317,31 @@ class Catalogue:
         out = Outcome(payload["result"], _meta(payload, row=row, mode="apply", preview_id=pid))
         self.store.remember(key, pid, out)
         return out
+
+
+HANDOFF_OPTIONS = {"agr_handoff_export": ("job_dir", "seq"),
+                   "agr_handoff_import": ("bundle", "fbx", "request_id"),
+                   "agr_handoff_verify": ("bundle", "layer", "blender_readback")}
+_HANDOFF_FIELDS = {"job_dir": {"type": "string", "minLength": 1, "description": "project folder jobs/<ID>; default: "
+                                                                                 "the folder of the scene passport"},
+                   "seq": {"type": "string", "pattern": "^[0-9]{3}$", "description": "bundle number; default next"},
+                   "bundle": {"type": "string", "minLength": 1, "description": "bundle folder handoff/<seq>"},
+                   "fbx": {"type": "string", "minLength": 1, "description": "FBX from Blender; default model.fbx"},
+                   "request_id": {"type": "string", "pattern": "^[A-Za-z0-9-]{1,64}$",
+                                  "description": "agent layer AGENT_<request_id>; default bh<seq>"},
+                   "layer": {"type": "string", "minLength": 1, "description": "layer to verify (AGENT_<req>)"},
+                   "blender_readback": {"type": "string", "minLength": 1,
+                                        "description": "readback JSON of the Blender side (optional)"},
+                   "preview_id": {"type": "string", "pattern": "^[0-9a-f]{64}$",
+                                  "description": "apply the held preview of this tool"},
+                   "idempotency_key": {"type": "string", "minLength": 1, "maxLength": 200}}
+
+
+def _handoff_input(tool: str) -> dict:
+    extra = {k: _HANDOFF_FIELDS[k] for k in HANDOFF_OPTIONS[tool]}
+    if tool != "agr_handoff_verify":
+        extra.update(preview_id=_HANDOFF_FIELDS["preview_id"], idempotency_key=_HANDOFF_FIELDS["idempotency_key"])
+    return _input(extra, [])
 
 
 def _max(_args: dict) -> str:
@@ -288,4 +389,24 @@ def specs(plan: dict | None = None, store: PreviewStore | None = None, transport
          "properties": {"preview_id": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
                         "idempotency_key": {"type": "string", "minLength": 1, "maxLength": 200}}},
         REPORT, cat.op_apply, _max, read_only=False, destructive=True, timeout=_timeout, schema=2))
+    out.append(Spec(
+        "agr_handoff_export", "AGR Tools 1.1 handoff Max -> Blender (handoff.export): the given objects -> a NEW "
+        "bundle folder jobs/<ID>/handoff/<seq>/ (model.fbx with quads/n-gons, metres, Z up; manifest, sidecar with "
+        "roles and OPEN_*/LEVEL_* markers, materials.json, readback_max.json). Without preview_id: preview, nothing "
+        "is written, the answer holds preview_id; with preview_id: writes that bundle (never overwrites).",
+        _handoff_input("agr_handoff_export"), REPORT, (lambda a: cat.handoff("agr_handoff_export", a)), _max,
+        read_only=False, destructive=False, timeout=_timeout, schema=2, row="handoff.export"))
+    out.append(Spec(
+        "agr_handoff_import", "AGR Tools 1.1 handoff Blender -> Max (handoff.import): the FBX of a bundle -> new "
+        "objects ONLY in the layer AGENT_<request_id> (names, user props, matIDs and instances from the manifest) plus "
+        "request.json + baseline.json for the gate. Without preview_id: preview; with preview_id: the import. The "
+        "transfer to the role layers is the button agent.accept (Приём от агента) in the panel/dock [D213].",
+        _handoff_input("agr_handoff_import"), REPORT, (lambda a: cat.handoff("agr_handoff_import", a)), _max,
+        read_only=False, destructive=False, timeout=_timeout, schema=2, row="handoff.import"))
+    out.append(Spec(
+        "agr_handoff_verify", "AGR Tools 1.1 handoff round-trip check (handoff.verify, read-only): objects of a layer "
+        "or the given handles vs readback_max.json of the bundle by the table of mcp-review 3.12 (names and roles, "
+        "matID <-> slots, UV/UDIM, normals, units, transforms, topology, instances); discrepancies are findings.",
+        _handoff_input("agr_handoff_verify"), REPORT, (lambda a: cat.handoff("agr_handoff_verify", a)), _max,
+        timeout=_timeout, schema=2, row="handoff.verify"))
     return out

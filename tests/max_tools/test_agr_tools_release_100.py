@@ -36,11 +36,15 @@ Q = ('npm.to_vpm', 'udim.udims_to_ids')
 
 
 def test_version_is_100_and_every_stage_button_ships():
-    assert m.VERSION == '1.0.1'
-    assert set(m.WIP_100) == set() and len(m.ACTIONS_100) == 33
+    assert m.VERSION == '1.1.0'
+    assert set(m.WIP_100) == set() and len(m.ACTIONS_100) == 33 + 4  # 33 buttons of 1.0 + 4 handoff buttons of 1.1
+    assert [a.tool for a in m.ACTIONS_100][33:] == ['handoff.export', 'handoff.import', 'handoff.verify',
+                                                    'handoff.restore_materials']
     for a in m.ACTIONS_100:
         assert not a.wip and a.tip == m.stage_tip(a.tool), a.tool
-        assert m.macro_100(a)[1].startswith('(on execute do python.Execute "agr_tools_runtime.edit_ui(')
+        # 1.1: the buttons with a parameter form (FORM_100) press into form_ui, the others straight into edit_ui
+        entry = 'form_ui' if a.tool in m.FORM_100 else 'edit_ui'
+        assert m.macro_100(a)[1].startswith('(on execute do python.Execute "agr_tools_runtime.{}('.format(entry)), a.tool
         assert m.macro_100(a._replace(wip=True))[1] == '('  # a wip button would be a disabled block
 
 
@@ -52,12 +56,12 @@ def test_stage_tip_names_the_stage():
         m.stage_tip('qa.xview')
 
 
-def _deferred_suite():
-    """The plan as it would be if branch Q had missed the release: its rows and step deferred to 1.1."""
+def _deferred_suite(to='1.1'):
+    """The plan as it would be if branch Q had missed the release: its rows and step deferred to 1.1 (or later)."""
     d = json.loads(TEXT)
     for r in d['rows']:
         if r['id'] in Q + ('atlas.unatlas',):
-            r['deferred'] = '1.1'
+            r['deferred'] = to
     return rm.load(json.dumps(d, ensure_ascii=False))
 
 
@@ -102,7 +106,8 @@ def test_rail_shows_released_old_rows_and_a_deferred_row_greyed():
     state = {x['id']: x['state'] for n in rm.flow(copy.deepcopy(suite), m.VERSION) for s in n['steps']
              for x in s['buttons']}
     assert state['udim.udims_to_ids'] == 'done' and state['udim.rescale'] == 'done'
-    state = {x['id']: x['state'] for n in rm.flow(_deferred_suite(), m.VERSION) for s in n['steps']
+    # the package is 1.1.0 now: a row deferred to 1.1 ships with it, so the greyed row is deferred past 1.1
+    state = {x['id']: x['state'] for n in rm.flow(_deferred_suite('1.2'), m.VERSION) for s in n['steps']
              for x in s['buttons']}
     assert state['udim.udims_to_ids'] == 'planned' and state['udim.rescale'] == 'done'
 

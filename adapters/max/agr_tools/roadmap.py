@@ -24,7 +24,10 @@ FATES = ('stage', 'step', 'tail', 'obsolete')
 STAGE_FIELDS = {'id', 'order', 'label_ru', 'big_button', 'icon', 'rows', 'steps', 'checks'}
 # Rows of the new 1.0 buttons may carry an id prefix that is not a block (they live on the stage rail; `block` gives
 # their colour). Block pages list only rows whose prefix is their block, so pages 0-9 stay as they were.
-STAGE_PREFIXES = ('project', 'source', 'body', 'win', 'mat', 'vpm', 'npm', 'pack', 'agent')
+STAGE_PREFIXES = ('project', 'source', 'body', 'win', 'mat', 'vpm', 'npm', 'pack', 'agent', 'handoff')
+# Versions whose rows may sit on the stage rail (fate stage/step): the 1.0 conveyor and the 1.1 rows added to its
+# stages (Max <-> Blender handoff on the agent stage). Stations are numbered per version: 1.0.1..1.0.33, 1.1.1..
+STAGE_VERSIONS = ('1.0', '1.1')
 BLOCK_FIELDS = {'id', 'number', 'title_ru', 'hue', 'added_because', 'short_ru', 'when_ru'}
 ROW_FIELDS = {'id', 'block', 'label_ru', 'does_ru', 'source', 'verdict', 'verdict_note', 'evidence', 'reqs',
               'mode', 'mcp', 'priority', 'version', 'icon'}
@@ -199,11 +202,11 @@ def _stage_fields(r):
         raise ValueError('row {} has unknown fate {!r}'.format(r['id'], fate))
     if (stage is None) != (fate in (None, 'tail', 'obsolete')):
         raise ValueError('row {}: stage {!r} does not fit fate {!r}'.format(r['id'], stage, fate))
-    if fate in ('stage', 'step') and r['version'] != '1.0':
-        raise ValueError('row {}: fate {} needs version 1.0'.format(r['id'], fate))
+    if fate in ('stage', 'step') and r['version'] not in STAGE_VERSIONS:
+        raise ValueError('row {}: fate {} needs version {}'.format(r['id'], fate, ' or '.join(STAGE_VERSIONS)))
     if fate in ('tail', 'obsolete') and r['version'] != '1.x':
         raise ValueError('row {}: fate {} needs version 1.x'.format(r['id'], fate))
-    if fate is None and r['version'] in ('1.0', '1.x'):
+    if fate is None and r['version'] in STAGE_VERSIONS + ('1.x',):
         raise ValueError('row {} of version {} has no fate'.format(r['id'], r['version']))
     if (fate == 'step') != ('step_of' in r):
         raise ValueError('row {}: step_of goes with fate step only'.format(r['id']))
@@ -240,20 +243,34 @@ def _stages(suite, staged, by_id):
                 raise ValueError('row {}: step_of {} is not a button of its stage'.format(rid, r['step_of']))
         for rid in s['checks']:
             r = by_id.get(rid)
-            if r is None or r['version'] in ('1.0', '1.x'):
+            if r is None or r['version'] in STAGE_VERSIONS + ('1.x',):
                 raise ValueError('stage {}: check {} must be a released row'.format(s['id'], rid))
         covered += s['rows']
         steps += s['steps']
     if sorted(covered + steps) != sorted(staged) or len(set(covered)) != len(covered):
         raise ValueError('stages do not cover the staged rows exactly once')
-    v10 = {v['version']: v for v in suite['versions']}.get('1.0')
-    if v10 is not None and (v10['rows'] != covered or sorted(v10.get('steps', [])) != sorted(steps)):
-        raise ValueError('versions[1.0].rows/steps differ from the stage buttons/steps')
+    by_version = {v['version']: v for v in suite['versions']}
+    for ver in STAGE_VERSIONS:
+        v = by_version.get(ver)
+        mine = [rid for rid in covered if by_id[rid]['version'] == ver]
+        mine_steps = [rid for rid in steps if by_id[rid]['version'] == ver]
+        if v is not None and (v['rows'] != mine or sorted(v.get('steps', [])) != sorted(mine_steps)):
+            raise ValueError('versions[{}].rows/steps differ from the stage buttons/steps'.format(ver))
 
 
-def stage_buttons(suite):
-    """The 1.0 buttons (fate stage) in station order 1.0.1..1.0.N: stage order, then the stage's row order."""
-    return [rid for s in suite['stages'] for rid in s['rows']]
+def stage_buttons(suite, version='1.0'):
+    """Stage buttons (fate stage) of one plan version in station order <version>.1..<version>.N: stage order, then
+    the stage's row order. version=None: every stage button of every version (the rail and the 1.x registry)."""
+    rows = {r['id']: r for r in suite['rows']}
+    return [rid for s in suite['stages'] for rid in s['rows'] if version is None or rows[rid]['version'] == version]
+
+
+def stations(suite):
+    """{row id: station '<version>.<n>'} of every stage button (1.0.1..1.0.33, then 1.1.1..)."""
+    out = {}
+    for ver in STAGE_VERSIONS:
+        out.update({rid: '{}.{}'.format(ver, i) for i, rid in enumerate(stage_buttons(suite, ver), 1)})
+    return out
 
 
 def stage_of(suite, stage_id):

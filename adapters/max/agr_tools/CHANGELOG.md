@@ -1,3 +1,104 @@
+## 1.1.0 (#1024)
+
+Минорный релиз поверх 1.0.1: хендофф Max ↔ Blender в панели и MCP, форма параметров в панели, Claude-док.
+Источник фактов — дифф ветки `improve/agr-tools-1-1` против `origin/main` и чтение кода [стат.]; что запускалось — в «Проверено».
+
+### Хендофф Max ↔ Blender в панели и MCP
+
+- Четыре строки плана версии `1.1` на этапе «Агент» (stage `agent`, после `agent.request` и `agent.accept`; станции 1.1.1–1.1.4):
+  `handoff.export` «Хендофф: выгрузить в Blender» (mode file), `handoff.import` «Хендофф: принять из Blender» (undo,
+  только слой `AGENT_<req>`), `handoff.verify` «Хендофф: сверка круга» (read), `handoff.restore_materials`
+  «Восстановить материалы» (undo).
+- Код ветки BH (`handoff_core.py`, `handoff_max.py`, отчёт `docs/experiments/blender-handoff.md`) зарегистрирован в
+  `runtime.py`: `EDITS_100` (+4), `READ_100` (+verify), `MCP_APPLY_100 = (handoff.export, handoff.import)`: MCP-клиент
+  может применить только их (новая папка бандла; слой `AGENT_<req>`). Перенос в слои ролей остаётся кнопкой
+  `agent.accept` [D213]. Минимальная версия рантайма для строк 1.1 — `1.1.0` (`RUNTIME_110`).
+- `ui_model.py`: действия, подсказка «1.1, этап «Агент»», макросы `AGRToolsHandoffExport` и др. (`agr_tools.mcr`), пункты в
+  подменю этапа «Агент» (`menu.ms`), 4 новые иконки (`tools/max/agr_icons.py`). MZP (`tools/max/build_agr_tools.py`)
+  везёт `handoff_core.py`, `handoff_max.py`, `params_core.py`.
+- `roadmap.py`: `STAGE_VERSIONS = ('1.0', '1.1')`, станции нумеруются по версии (`roadmap.stations`).
+- Почему этап «Агент», а не новый блок «Blender» (решение ветки, в `docs/decisions.md` НЕ записано, на утверждение владельца):
+  импорт кладёт модель в `AGENT_<req>` и принимается тем же шлюзом `agent.accept` (`docs/plans/agr-mcp-target.md` §3.12);
+  паспорт K1 хранит ровно 11 этапов (0–9 + agent: `schemas/ProjectPassport.schema.json`, `passport_core.STAGE_IDS`),
+  новый этап сломал бы схему и паспорта проектов; «Агент» и так без номера, сбоку конвейера; Blender-панель паритета (B3) будет
+  своей N-панелью, не этапом Max.
+- MCP (`src/agr_mcp/catalog.py`, `max_side/max_bridge.py`, `max_side/agr_profiles.py`): инструменты `agr_handoff_export`
+  (класс `file`, профиль operator+), `agr_handoff_import` (класс `markup`, operator+), `agr_handoff_verify` (read,
+  observer+). Export и import — два вызова одного инструмента: без `preview_id` предпросмотр, с `preview_id` применение
+  удержанного предпросмотра. Импорт и сверка идут без выделения (вход — бандл, `NO_TARGET_ROWS`).
+  «Восстановить материалы» — op `agr_op_preview`, применение только кнопкой в панели или доке (`needs_human`; профиль
+  modeller с подтверждением человека).
+
+### Форма параметров в панели
+
+- `params_core.py` (stdlib): поля 10 кнопок — `atlas.facade_strip` (`period_by_id`), `tex.dilate` (files / folder / out /
+  profile), `tex.plug_colour` (paths / folder), `export.place_by_passport` (fbx / passport / `accept_precision_loss`),
+  `agent.request` (task / request_id / job_dir), `agent.accept` (request / job_dir / request_id) и четыре кнопки хендоффа.
+  Значения по умолчанию берутся из паспорта сцены (папка проекта, путь паспорта, последний бандл, последний
+  `request.json`) и из прошлого запуска.
+- `ui_panel.py`: компактная форма под рельсом этапов «Путь»; «Выполнить» = предпросмотр, повторное «Выполнить» с теми же
+  значениями = применение. Пустое обязательное поле или плохое значение (не JSON и т. п.) называется в подсказке и
+  статусе, ничего не запускается.
+- `runtime.edit_ui(tool, select, options)`: отказ `needs_params: <tool>: заполните …` до клея, не молча; удержанный
+  предпросмотр применяется только при той же выборке И тех же параметрах. Макросы этих 10 кнопок вызывают
+  `runtime.form_ui('<tool>')`, то есть открывают панель с формой.
+- Закрывает пункт «Панель» ограничений 1.0.1 (15 из 31 кнопки отказывали без параметров).
+
+### Claude-док (`agent.dock`)
+
+- Макрос `AGRToolsAgentDock` «Claude-док», пункт в подменю этапа «Агент», кнопка «Claude-док» рядом с заголовком рельса
+  этапов. `runtime.agent_dock()` вызывает `agentbridge_max.agent_dock(profile='modeller')` (listener, демон, док).
+- Строкой плана не стал: у дока нет отчёта и preview/apply.
+
+### Полигон
+
+- База 1.1; фрагмент BH (`test-polygon/stations/BH.json`, `BH_build.py`).
+- Станция 1.1.1 `handoff.export`: PASS (уникальное имя) и FAIL (`duplicate_name`). Станции 1.1.2–1.1.4: ожидание `error` с
+  причиной (нужен бандл на диске); круг проверяет нативный джоб BH `tests/max_tools/run_agr_tools_handoff_native.py`.
+
+### Проверено
+
+- Тесты RED → GREEN: `tests/max_tools/test_agr_tools_110_handoff.py` (H1–H5), `test_agr_tools_110_params.py` (P1–P4 и
+  док), `test_agr_tools_110_panel.py` (F1–F4, pytest-qt), хвост `tests/agr_mcp/test_agr_mcp_v2.py` (3 теста хендоффа).
+  Результат набора: полный `uv run pytest -q -n 4` — 19281 passed, 116 skipped, 49 xfailed, 0 failed (до правки H6);
+  после H6 `tests/max_tools tests/agr_mcp tests/qa` — 6631 passed, 0 failed; тесты документов 629 passed.
+- Полигон Max 2024 (AGR Lab runner, ноутбук): базы 0.1–1.1, **0 расхождений, known_bug 0**, джоб `20261107-115940-bfd3d18d`
+  (станции 1.1.1 PASS/FAIL `duplicate_name`, 1.1.2–1.1.4 `error` без бандла — как ожидалось). Первый прогон
+  `20261107-115551-cad46f8c` дал 15 расхождений `tex_missing`/`missing_map`: папка вывода не была заранее заполнена
+  `polygon_core.generate_outputs` (ошибка постановки джоба, не кнопок).
+- Нативный смоук релиза `tests/max_tools/run_agr_tools_110_native.py` (Max 2024, установленный MZP, маршрут панели
+  `edit_ui` с параметрами): джоб `20261107-115847-47245976` зелёный — export preview/apply пишет бандл, verify исходной
+  сцены 0 находок, import в `AGENT_bh001` (3 объекта), verify слоя 0 находок, «Восстановить материалы» apply pass,
+  мост MCP: импорт без выделения, apply экспорта по MCP, apply восстановления — `needs_human`. `agent.accept` того же
+  запроса перенёс объекты в `BODY_bh001`/`GLASS_bh001`, но ответил `fail` без находок (неоднозначные пункты плана;
+  не разбиралось, см. ограничения).
+- Дефект, пойманный нативно (`20261107-115551-786c85c6`): панель передаёт `nodes=None`, клей хендоффа считал это пустым
+  входом — «Хендофф: выгрузить в Blender» из панели всегда отказывал. Исправлено (`handoff_max._given`), тест H6.
+- MZP 1.1.0 собирается побайтно одинаково (две сборки); SHA256 итоговой сборки — в PR (MZP содержит этот CHANGELOG).
+
+### Известные ограничения
+
+- `agent.accept` после `handoff.import` в нативном смоуке: объекты перенесены в слои ролей, статус `fail` без находок —
+  причина (пункты `ambiguous` плана приёма) не разобрана.
+
+- Живой Max: форма и Claude-док проверены только pytest-qt и юнит-тестами; в живом Max GUI не прогонялись (batch-раннер
+  без GUI). Max 2026 — прогон оркестратора на ПК.
+- Станции полигона import / verify / restore_materials — `error` без бандла на диске. Полный круг Max → Blender → Max в
+  этом релизе нативно не повторялся; данные круга — ветка BH, 06.11 (`docs/experiments/blender-handoff.md`).
+- Форма не запоминает значения между сессиями Max, только внутри сессии.
+- Остальное из 1.0.1, не закрытое 1.1: этап 9 на KPP1 — гейт `export.checked` → `xview` (две склеенные оболочки без
+  сварки), `export.zip` и `qa.package` не запускались; входы, которых нет у синтетики (Ground FBX, свет, таблица ОМК ТЭ,
+  отчёт SINTEZ, лестницы; `AGR_EXPORT_PATH`, `AGR_ZERO_M`, слой «0» — шаги художника); `tex.dilate` на картах `vpm.build` —
+  `dilate_no_mask`; корпус KPP1, OBJ03 и SOSH1150 не прогнаны.
+- Ветки: G (`model.move_apart` пропускает модификаторы и примитивы), H (`model.glass_planes` не-квад — `ambiguous`;
+  `model.grid_cleanup` без канала 1 — `skipped`), J (6 из 67 типов окон в карантине; арка, угловой и нестандартный проём
+  — `ambiguous`; лист превью не в git), K (отказы `ambiguous` вместо капсулы; материал капсулы — заглушка
+  `LIB_Interior_Stub`; `body.roof` при уклоне > 10° — `roof_steep`), M (швы на рёбрах замыкания контура и трёхгранных
+  углах откосов), P (раскладка `layout` — вопрос владельцу), T (без `accept_precision_loss` apply не идёт при ошибке
+  одинарной точности > 1 мм).
+- Операции агента `place_window`, `make_capsule`, `make_roof_plane` зависят от J и K; три сценарных eval агента в ночной
+  Lab CI не включены.
+
 ## 1.0.x — в работе (#1024)
 
 ### BH — хендофф Max ↔ Blender с материалами
@@ -10,7 +111,7 @@
 - Сравнение больше не зависит от порядка соседей (13.83 против 13.829999, `20261106-134538-40e13b6f`): `multiset_close`.
 - Тесты: `tests/max_tools/test_agr_tools_handoff.py`, дефекты H1–H9 RED → GREEN на модели простого круга FBX.
 - Нативные прогоны: экспорт Max `20261106-135137-44de5679`, Blender 5.1.2 `20261106-135159-664da499` (0 расхождений), возврат Max `20261106-135201-2d9ea983`; отчёт `docs/experiments/blender-handoff.md`.
-- Регистрация кнопок и MCP-инструментов (`runtime.py`, `ui_model.py`, `agr_tools.mcr`, `build_agr_tools.py`, `src/agr_mcp/tools.py`) не входит: отдельный небольшой PR в стиле ветки 0.
+- Регистрация кнопок и MCP-инструментов (`runtime.py`, `ui_model.py`, `agr_tools.mcr`, `build_agr_tools.py`, `src/agr_mcp/tools.py`) в ветку BH не входила: исполнена в 1.1.0 (см. раздел 1.1.0 выше).
 
 ## 1.0.1 (#1024)
 

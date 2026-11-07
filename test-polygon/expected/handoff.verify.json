@@ -1,0 +1,26 @@
+{
+ "schema": 1,
+ "button": "handoff.verify",
+ "tool": "handoff.verify",
+ "version": "1.1",
+ "shipped": true,
+ "select": "named",
+ "reason": "Объекта PASS нет: сверка читает readback_max.json из папки бандла handoff/<seq>, а станция полигона статична; без бандла кнопка отвечает ошибкой options.bundle. PASS и FAIL круга проверяет нативный джоб ветки BH tests/max_tools/run_agr_tools_handoff_native.py (джобы 20261106-135137-44de5679, 20261106-135159-664da499, 20261106-135201-2d9ea983).",
+ "apply_status": null,
+ "objects": [
+  {
+   "name": "SM_FragBH_VerNoBundle_Main",
+   "scene": "frag_bh_verify",
+   "expect": "error",
+   "codes": []
+  }
+ ],
+ "options": {
+  "bundle": "C:/agr-polygon/jobs/FRAGBH/handoff/missing"
+ },
+ "base": "1.1",
+ "station": "1.1.3",
+ "stations": [
+  "1.1.3"
+ ]
+}

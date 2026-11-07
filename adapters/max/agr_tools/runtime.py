@@ -5,7 +5,7 @@ Native xView uses 0.002 m vertices and 0.005 m faces.
 import json
 import sys
 
-VERSION = "1.0.1"
+VERSION = "1.1.0"
 # atlas.npm (0.2 button) on the npm profile of atlas_core (0.9, #979 branch B; wired by the release branch R)
 ATLAS_PROFILE = 'npm'
 ATLAS_TARGET_PX_M = 35.0
@@ -113,16 +113,26 @@ EDITS_100 = {
     'export.place_by_passport': ('placegeo_core.py', 'export_place_by_passport'),
     'agent.request': ('agentbridge_core.py', 'agent_request'),
     'agent.accept': ('agentbridge_core.py', 'agent_accept'),
+    # 1.1 (agent stage, after the 1.0 rows; stations 1.1.1..1.1.4): Max <-> Blender handoff of branch BH
+    # (docs/experiments/blender-handoff.md), glue handoff_max.py
+    'handoff.export': ('handoff_core.py', 'handoff_export'),
+    'handoff.import': ('handoff_core.py', 'handoff_import'),
+    'handoff.verify': ('handoff_core.py', 'handoff_verify'),
+    'handoff.restore_materials': ('handoff_core.py', 'handoff_restore_materials'),
 }
 # plan mode `read`: preview only, there is no apply (READ_100). Plan mode `agent` (AGENT_100): request + accept
 # through the functions of branch U; until then their stub answers not_implemented.
 READ_100 = ('scene.source_class', 'tex.plug_colour', 'udim.distortion', 'udim.udims_to_ids', 'ucx.stairs',
-            'qa.omk_te')
+            'qa.omk_te', 'handoff.verify')
 AGENT_100 = ('agent.request', 'agent.accept')
 GLUE_100 = {}
 # Who runs a dispatcher call (journal `actor`). Apply of a 1.0 row is confirmed only by a button in the panel/dock
 # (owner answers 06.11.2026): actor mcp/agent may preview, never apply.
 ACTORS = ('panel', 'mcp', 'agent')
+# 1.1: rows whose apply an MCP client may run itself (profile operator, mcp-review 3.8): handoff.export writes only a
+# NEW bundle folder (file class, refuses to overwrite) and handoff.import writes only into the layer AGENT_<req>; the
+# transfer to the role layers stays the button agent.accept [D213]. Every other 1.0/1.1 apply is a panel/dock press.
+MCP_APPLY_100 = ('handoff.export', 'handoff.import')
 EXPORT_PLAN = {'target', 'report', 'units', 'axis', 'unit_scale_factor', 'object_count',
                'triangle_count', 'material_count', 'object_names', 'triangles_by_name',
                'gates', 'dropped', 'texel', 'readback', 'stopped', 'digest'}
@@ -402,7 +412,8 @@ def edits_100(tool, mode, preview=None, nodes=None, options=None, actor='panel')
         raise ValueError('unknown actor: ' + repr(actor))
 
     def run():
-        if mode == 'apply' and actor != 'panel' and tool in EDITS_100:
+        if mode == 'apply' and actor != 'panel' and tool in EDITS_100 and not (actor == 'mcp' and
+                                                                                 tool in MCP_APPLY_100):
             raise ValueError('needs_human: apply of ' + tool + ' is confirmed only by a button in the panel/dock')
         return _dispatch_edit(EDITS_100, READ_100, GLUE_100, '#1024', tool, mode, preview, nodes, options)
     return _journaled(tool, mode, actor, run)  # a refused apply is journaled too (native job 20261106-040337)
@@ -2272,11 +2283,22 @@ def _selection_key():
     return tuple(sorted(int(rt.getHandleByAnim(n)) for n in rt.selection))
 
 
-def edit_ui(tool, select=True):
+def _params_core():
+    return _load_core('params_core.py', 'agr_tools_params_core')
+
+
+def _options_key(options):
+    return json.dumps(options or {}, sort_keys=True, ensure_ascii=True, allow_nan=False)
+
+
+def edit_ui(tool, select=True, options=None):
     """Panel/macro press of a 0.8/0.9 edit: first press = preview; the next press on the same selection applies
     that preview. Read-only rows always preview; a `select` row (SELECT_090) then selects its offenders unless
     `select=False` (the panel selects them itself after putting its scope selection back).
-    The stored preview is dropped after any apply attempt."""
+    The stored preview is dropped after any apply attempt.
+    1.1: `options` (the panel parameter form, params_core) go to the preview; the next press applies the held preview
+    only when the selection AND the options are the same. A row with a form whose required field is empty is
+    refused with `needs_params: ...` naming the fields (never a silent refusal, never a guessed value)."""
     if isinstance(tool, str) and tool in EDITS_080:
         run, read = edits_080, READ_080
     elif isinstance(tool, str) and tool in EDITS_090:
@@ -2285,11 +2307,15 @@ def edit_ui(tool, select=True):
         run, read = edits_100, READ_100
     else:
         raise ValueError('unsupported edit tool: ' + repr(tool))
-    key = _selection_key()
+    key = (_selection_key(), _options_key(options))
     held = _edits.pop(tool, None)
     if tool not in read and held is not None and held[0] == key:
         return run(tool, 'apply', held[1])
-    report = run(tool, 'preview')
+    if run is edits_100:
+        gap = _params_core().needs_params_text(tool, options)
+        if gap:
+            raise ValueError(gap)
+    report = run(tool, 'preview', options=options) if options is not None else run(tool, 'preview')
     if tool not in read and report['status'] != 'not_implemented':
         _edits[tool] = (key, report)
     if select and tool in SELECT_090 and report['status'] != 'not_implemented':
@@ -2397,6 +2423,22 @@ def ui(tool):
 _panel = None
 
 
+def form_ui(tool):
+    """Macro of a stage button with a parameter form (params_core.FIELDS): opens the panel and its form for `tool`
+    filled from the passport and the last values; the run itself is the form's «Выполнить» (preview, then apply)."""
+    if not _params_core().has_form(tool):
+        raise ValueError('no parameter form for ' + repr(tool))
+    p = panel()
+    p.open_form(tool)
+    return p
+
+
+def agent_dock(profile='modeller'):
+    """«Claude-док» (1.1, agent stage): the agent dock of branch U (agentbridge_max.agent_dock: own listener, one
+    daemon per host, profile modeller by default, apply only by its «Применить» button [D213])."""
+    return _load_core('agentbridge_max.py', 'agr_tools_agentbridge_max').agent_dock(profile=profile)
+
+
 def panel():
     """0.6.0 dockable Qt panel (one per session). Every action stays callable through ui(tool)."""
     global _panel
@@ -2412,6 +2454,7 @@ def panel():
     _load_core('ui_qt.py', 'agr_tools_ui_qt')
     _load_core('ui_model.py', 'agr_tools_ui_model')
     _load_core('roadmap.py', 'agr_tools_roadmap')
+    _params_core()  # agr_tools_params_core: the parameter form of the stage buttons (1.1)
     ui_panel = _load_core('ui_panel.py', 'agr_tools_ui_panel')
     ui_max = _load_core('ui_max.py', 'agr_tools_ui_max')
     icon_root = str(Path(__file__).resolve().parent / 'icons')

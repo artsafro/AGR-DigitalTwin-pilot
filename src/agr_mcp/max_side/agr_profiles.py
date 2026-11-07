@@ -4,6 +4,7 @@
 |------------|--------------------------------------------------------------------------------------------|-----|
 | `observer` | read: context and checks                                                                   | review, Antigravity |
 | `operator` | + previews (stage tools, agr_op_preview, 0.9 previews) + agent markup in AGENT_* (D108)    | swarm, default dock |
+|            |   + file: agr_handoff_export (new bundle folder); markup: agr_handoff_import (AGENT_<req>)  |     |
 | `modeller` | + apply (agr_op_apply, 0.8 apply-capable tools); D108 apply still needs the dock button    | Artem's dock |
 | `dev`      | + agr_exec_unsafe (arbitrary MAXScript; never in the dock, never in the bridge)            | debugging only |
 
@@ -18,10 +19,13 @@ import os
 
 PROFILES = ("observer", "operator", "modeller", "dev")
 DEFAULT = "operator"
-CLASSES = {"observer": ("read",), "operator": ("read", "preview", "markup"),
-           "modeller": ("read", "preview", "markup", "apply"),
-           "dev": ("read", "preview", "markup", "apply", "unsafe")}
-MARKUP = ("agr_agent_op_preview", "agr_agent_op_apply")
+CLASSES = {"observer": ("read",), "operator": ("read", "preview", "markup", "file"),
+           "modeller": ("read", "preview", "markup", "file", "apply"),
+           "dev": ("read", "preview", "markup", "file", "apply", "unsafe")}
+# 1.1 (mcp-review 3.8: operator = markup in the agent layer + copy/file): the handoff import writes only AGENT_<req>,
+# the handoff export only a NEW bundle folder. Restore materials is undo-in-place: agr_op_preview, apply in the dock.
+MARKUP = ("agr_agent_op_preview", "agr_agent_op_apply", "agr_handoff_import")
+FILE = ("agr_handoff_export",)
 DOCK_PROFILES = ("observer", "operator", "modeller")
 
 
@@ -34,16 +38,20 @@ def profile_of(env=None, value=None) -> str:
 
 
 def tool_class(spec) -> str:
-    """read | preview | markup | apply | unsafe of one catalogue Spec."""
+    """read | preview | markup | file | apply | unsafe of one catalogue Spec."""
     from .. import tools
     name = spec.name
     if name == "agr_exec_unsafe":
         return "unsafe"
     if name in MARKUP:
         return "markup"
+    if name in FILE:
+        return "file"
     if name == "agr_op_apply" or not spec.read_only:
         return "apply"
-    stage = set(tools.v2_names()) - {"agr_check_run", "agr_op_preview", "agr_op_apply"}
+    from .. import catalog
+    # agr_handoff_verify is read; export (file) and import (markup) are classed above
+    stage = set(tools.v2_names()) - {"agr_check_run", "agr_op_preview", "agr_op_apply"} - set(catalog.HANDOFF_TOOLS)
     if name == "agr_op_preview" or name in stage or name in {n for n, *_ in tools.EDITS_090}:
         return "preview"
     return "read"

@@ -106,12 +106,12 @@ def test_version_macro_and_completed_rollout():
     readme = (PACKAGE / 'README.md').read_text(encoding='utf-8')
     startup = (PACKAGE / 'startup.ms').read_text(encoding='utf-8')
     install = (PACKAGE / 'install.ms').read_text(encoding='utf-8')
-    assert 'VERSION = "1.0.1"' in runtime
+    assert 'VERSION = "1.1.0"' in runtime
     assert '0.002' in runtime and '0.005' in runtime
     assert 'AGRToolsExport' in mcr
     assert 'Экспорт с проверкой' in mcr
-    assert '1.0.1' in startup and 'Export' in startup
-    assert 'AGRTools-1.0.1' in install
+    assert '1.1.0' in startup and 'Export' in startup
+    assert 'AGRTools-1.1.0' in install
     assert 'export_core.py' in install
     assert 'Checked export' in readme
     assert 'first rollout complete' in readme.lower()

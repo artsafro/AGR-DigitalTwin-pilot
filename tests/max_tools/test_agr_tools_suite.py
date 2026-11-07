@@ -629,8 +629,9 @@ def test_flow_tooltips_and_cards_from_json():
     # (project., body., win., ...) live only on the stage rail. 92 (#973) + 2 Q35 tail rows (#1024) = 94.
     on_pages = [r for r in suite['rows'] if r['id'].partition('.')[0] == r['block']]
     stage_only = [r for r in suite['rows'] if r['id'].partition('.')[0] != r['block']]
-    assert sum(n['total'] for n in nodes) == len(on_pages) == 94 and len(suite['rows']) == 109
-    assert sorted(r['id'] for r in stage_only) == sorted(STAGE_ONLY_100)
+    assert sum(n['total'] for n in nodes) == len(on_pages) == 94 and len(suite['rows']) == 113
+    # the 4 handoff rows of 1.1 (prefix `handoff.` differs from their blocks export/qa/tex) are stage-only as well
+    assert sorted(r['id'] for r in stage_only) == sorted(STAGE_ONLY_100 + HANDOFF_110)
     assert all(r['stage'] is not None and r['fate'] == 'stage' for r in stage_only)
     # 0.1-0.5 + 0.7 + 0.8 + 0.9 + 1.0 on pages (18 old stage rows + 3 steps folded into big buttons)
     assert sum(n['done'] for n in nodes) == 13 + 12 + 13 + 19 + 18 + 3
@@ -699,13 +700,17 @@ def test_rail_maps_every_action_to_a_plan_row_and_greys_the_rest():
 STAGE_ONLY_100 = ('project.passport', 'source.intake', 'body.prepare', 'win.place', 'win.generate', 'body.capsules',
                   'body.roof', 'mat.table', 'mat.tiles', 'vpm.build', 'npm.build', 'npm.to_vpm', 'pack.deliver',
                   'agent.request', 'agent.accept')  # the 15 new rows of #1024
+HANDOFF_110 = ('handoff.export', 'handoff.import', 'handoff.verify', 'handoff.restore_materials')  # 1.1 rows
 
 
 def test_each_10_stage_button_has_one_wip_action_from_its_plan_row():
     suite = roadmap.load_file(SUITE)
     buttons = roadmap.stage_buttons(suite)
-    assert [a.tool for a in model.ACTIONS_100] == buttons and len(buttons) == 33  # station order 1.0.1..1.0.33
-    assert set(buttons) == set(runtime.EDITS_100)
+    assert len(buttons) == 33  # station order 1.0.1..1.0.33 (default version='1.0')
+    everything = roadmap.stage_buttons(suite, version=None)
+    assert everything[:33] == buttons and len(everything) == 37 and everything[33:] == list(HANDOFF_110)  # 1.1.1..1.1.4
+    assert [a.tool for a in model.ACTIONS_100] == everything
+    assert set(everything) == set(runtime.EDITS_100)
     for a in model.ACTIONS_100:
         r = roadmap.row(suite, a.tool)
         assert (a.icon, a.label, ' '.join(a.reqs)) == (r['icon'], r['label_ru'], r['reqs']), a.tool
@@ -716,7 +721,7 @@ def test_each_10_stage_button_has_one_wip_action_from_its_plan_row():
         assert model._action_100(a.tool) == a and model.WIP_TIP == 'в работе, #1024'
         assert model.action(a.id) is a and model.action(a.tool) is a
     assert not any(a.wip for a in model.ACTIONS) and len(model.ACTIONS) == 61  # the 0.x panel is unchanged
-    assert len({a.id for a in model.ALL_ACTIONS}) == len({a.macro for a in model.ALL_ACTIONS}) == 94
+    assert len({a.id for a in model.ALL_ACTIONS}) == len({a.macro for a in model.ALL_ACTIONS}) == 98  # 94 of 1.0 + 4 handoff rows of 1.1 (the Claude dock macro is no plan row)
     assert model.Action('x', 'x', 'x', 0, 'x', 'x', ('-',), 'X', False).wip is False  # 9-field calls stay valid
 
 

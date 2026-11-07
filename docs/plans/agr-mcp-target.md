@@ -18,7 +18,7 @@
 | Регистрация `agr-mcp` для агентов (§2.4.8) | запись в `.agents/mcp_config.json` есть | `.agents/mcp_config.json`, `CAPABILITIES.md` |
 | Операции агента `place_window`, `make_capsule`, `make_roof_plane` | зависят от веток J и K, в 1.0.0 — в известных ограничениях | CHANGELOG, «Известные ограничения» |
 | Сценарные eval агента (§3.11 п. 3) | есть `evals/agent-sim-k4`; три сценарных eval в ночном Lab CI не включены | CHANGELOG, «Известные ограничения» |
-| Контракт хендоффа Max↔Blender (§3.12) | **не начат**, карточка BH — после 1.0.1 | `docs/plans/agr-tools-1.x.md` |
+| Контракт хендоффа Max↔Blender (§3.12) | сделано в 1.1.0: `agr_handoff_export` (класс `file`, профиль operator+), `agr_handoff_import` (класс `markup`, operator+), `agr_handoff_verify` (read, observer+); «Восстановить материалы» — `agr_op_preview`, apply кнопкой; сторона Blender в Lab CI и круг на KPP1-копии не сделаны | `src/agr_mcp/catalog.py`, `adapters/max/agr_tools/CHANGELOG.md` (1.1.0), `docs/plans/agr-tools-1.x.md` |
 | Паритет Blender (§4.5) | **не начат**, только после чекпоинта MVP | `docs/plans/agr-tools-1.x.md` |
 
 Решения владельца по разделу 5 записаны: [D211] (один сервер на хост, отказ от 3dsmax-mcp после проверки своего listener), [D212] (финальный экспорт из Max или Blender, предпочтительно Max), [D213] (агент пишет только в `AGENT_*`, apply только кнопкой), [D214] (материалы при возврате из Blender).
@@ -209,7 +209,7 @@
 | Проверки | `agr_check_run(check_ids[], target)`, `agr_stage_gate(stage)`, `agr_package_validate`, `agr_fbx_readback` | `check_ids` — enum из `agr-tools-suite.json` (`mcp: yes`) |
 | Разметка (агентский слой) | `agr_mark_role`, `agr_mark_opening`, `agr_set_library_id`, `agr_place_window`, `agr_make_capsule`, `agr_make_roof_plane` | операции К4 (#1024); пишут только в `AGENT_<req>` |
 | Операции (preview/apply) | `agr_op_preview(op, target, params)` → `preview_id`; `agr_op_apply(preview_id)`; `agr_op_rollback(txn_id)` | `op` — строки 1.0 и меню D108 (`keep`, `primitive_box`, `rebuild_by_contour`, `embed_into_neighbour`, `to_opacity_plane`) |
-| Хендофф Max↔Blender | `agr_handoff_export(target, profile)`, `agr_handoff_import(bundle, mode=agent_layer)`, `agr_handoff_verify(bundle_a, bundle_b)` | §3.12 |
+| Хендофф Max↔Blender | `agr_handoff_export(target, profile)`, `agr_handoff_import(bundle, mode=agent_layer)`, `agr_handoff_verify(bundle_a, bundle_b)` | §3.12; сделано в 1.1.0 (классы `file` / `markup` / `read`, профили operator+ / operator+ / observer+) |
 | Джобы | `agr_job_submit(kind, inputs)`, `agr_job_status`, `agr_job_result`, `agr_job_cancel` | batch Max и Blender через agr-lab |
 | Визуал | `agr_render_views(target, views, mode=shaded\|face_orientation\|matid\|album_overlay)` | картинки плюс числа (§3.10) |
 | Эскалация | `agr_question_add`, `agr_request_create`, `agr_request_accept` | вопросы в паспорт и `questions.md` |

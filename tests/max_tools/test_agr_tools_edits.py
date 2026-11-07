@@ -160,7 +160,7 @@ def test_registry_matches_the_13_plan_rows_of_version_08():
         assert core_file == OWNER[rid] + '_core.py' and (PKG / core_file).is_file()
         assert (PKG / core_file.replace('_core.py', '_max.py')).is_file()
         assert fn == rid.replace('.', '_')
-    assert rt.VERSION == m.VERSION == '1.0.1'  # 0.8 shipped in 0.8.0 (#908), 0.9 in 0.9.0 (#979); R of #1024 ships 1.0
+    assert rt.VERSION == m.VERSION == '1.1.0'  # 0.8 shipped in 0.8.0 (#908), 0.9 in 0.9.0 (#979), 1.0 in #1024; 1.1 = handoff
 
 
 def _glue_functions(stem):

@@ -1,0 +1,174 @@
+{
+ "schema": 1,
+ "branch": "BH",
+ "issue": "#1024",
+ "stations": [
+  {
+   "button": "handoff.export",
+   "objects": [
+    {
+     "name": "SM_FragBH_ExpOk_Main",
+     "role": "Main",
+     "scene": "frag_bh_export",
+     "builder": "BH_build",
+     "extra": {
+      "size": [
+       4.0,
+       3.0,
+       6.0
+      ],
+      "at": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    },
+    {
+     "name": "SM_FragBH_ExpBad_Main",
+     "role": "Main",
+     "scene": "frag_bh_export",
+     "builder": "BH_build",
+     "extra": {
+      "size": [
+       2.0,
+       2.0,
+       2.0
+      ],
+      "at": [
+       8.0,
+       0.0,
+       0.0
+      ],
+      "twin": true
+     }
+    }
+   ],
+   "expected": [
+    {
+     "name": "SM_FragBH_ExpOk_Main",
+     "scene": "frag_bh_export",
+     "expect": "pass",
+     "codes": []
+    },
+    {
+     "name": "SM_FragBH_ExpBad_Main",
+     "scene": "frag_bh_export",
+     "expect": "fail",
+     "codes": [
+      "duplicate_name"
+     ]
+    }
+   ],
+   "options": {
+    "job_dir": "C:/agr-polygon/jobs/FRAGBH"
+   },
+   "reason": ""
+  },
+  {
+   "button": "handoff.import",
+   "objects": [
+    {
+     "name": "SM_FragBH_ImpNoBundle_Main",
+     "role": "Main",
+     "scene": "frag_bh_import",
+     "builder": "BH_build",
+     "extra": {
+      "size": [
+       2.0,
+       2.0,
+       2.0
+      ],
+      "at": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    }
+   ],
+   "expected": [
+    {
+     "name": "SM_FragBH_ImpNoBundle_Main",
+     "scene": "frag_bh_import",
+     "expect": "error",
+     "codes": []
+    }
+   ],
+   "options": {
+    "bundle": "C:/agr-polygon/jobs/FRAGBH/handoff/missing"
+   },
+   "reason": "Объекта PASS нет: импорт читает папку бандла handoff/<seq> (manifest.json, sidecar.json, materials.json, return/model.fbx из Blender), а станция полигона статична; без бандла кнопка отвечает ошибкой options.bundle. PASS и FAIL круга проверяет нативный джоб ветки BH tests/max_tools/run_agr_tools_handoff_native.py (джобы 20261106-135137-44de5679, 20261106-135159-664da499, 20261106-135201-2d9ea983)."
+  },
+  {
+   "button": "handoff.verify",
+   "objects": [
+    {
+     "name": "SM_FragBH_VerNoBundle_Main",
+     "role": "Main",
+     "scene": "frag_bh_verify",
+     "builder": "BH_build",
+     "extra": {
+      "size": [
+       2.0,
+       2.0,
+       2.0
+      ],
+      "at": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    }
+   ],
+   "expected": [
+    {
+     "name": "SM_FragBH_VerNoBundle_Main",
+     "scene": "frag_bh_verify",
+     "expect": "error",
+     "codes": []
+    }
+   ],
+   "options": {
+    "bundle": "C:/agr-polygon/jobs/FRAGBH/handoff/missing"
+   },
+   "reason": "Объекта PASS нет: сверка читает readback_max.json из папки бандла handoff/<seq>, а станция полигона статична; без бандла кнопка отвечает ошибкой options.bundle. PASS и FAIL круга проверяет нативный джоб ветки BH tests/max_tools/run_agr_tools_handoff_native.py (джобы 20261106-135137-44de5679, 20261106-135159-664da499, 20261106-135201-2d9ea983)."
+  },
+  {
+   "button": "handoff.restore_materials",
+   "objects": [
+    {
+     "name": "SM_FragBH_ResNoBundle_Main",
+     "role": "Main",
+     "scene": "frag_bh_restore",
+     "builder": "BH_build",
+     "extra": {
+      "size": [
+       2.0,
+       2.0,
+       2.0
+      ],
+      "at": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    }
+   ],
+   "expected": [
+    {
+     "name": "SM_FragBH_ResNoBundle_Main",
+     "scene": "frag_bh_restore",
+     "expect": "error",
+     "codes": []
+    }
+   ],
+   "options": {
+    "bundle": "C:/agr-polygon/jobs/FRAGBH/handoff/missing"
+   },
+   "reason": "Объекта PASS нет: восстановление материалов читает materials.json бандла, а станция полигона статична; без файла кнопка отвечает ошибкой options.materials / options.bundle. PASS и FAIL круга проверяет нативный джоб ветки BH tests/max_tools/run_agr_tools_handoff_native.py (джобы 20261106-135137-44de5679, 20261106-135159-664da499, 20261106-135201-2d9ea983)."
+  }
+ ]
+}
