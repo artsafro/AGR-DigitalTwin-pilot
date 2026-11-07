@@ -15,18 +15,18 @@ Reached so far (curated in `docs/PROJECT_STATE.milestones.md`; each line cites i
 ## In production
 
 PR merges do not imply delivery acceptance. Per-object gates stay in `jobs/<ID>/STATE.md`. Merged pull requests, newest first:
-- `82feaa8` Merge pull request #1025 from artsafro/improve/issue-986-dcc-tests-skip-not-fail-when-the-max-ses
-- `556f655` Merge pull request #1005 from artsafro/improve/issue-972-agr-mcp-locks-stale-reclaim-mutex-unlink
-- `8a401eb` Merge pull request #1008 from artsafro/job/skug26-k5-ac-vpm-texture
-- `fb201de` Merge pull request #1047 from artsafro/improve/issue-1024-lab-l09-l13
-- `9cc8773` Merge pull request #1045 from artsafro/improve/issue-1024-lab-l10-l14
-- `a875254` Merge pull request #1022 from artsafro/feature/library-window-preview
-- `979b973` Merge pull request #805 from artsafro/improve/issue-790-maf-generator-parametric-step-3-tool-fir
-- `1c303f9` Merge pull request #917 from artsafro/improve/issue-817-maf-gen-bench-checks-exit-1-on-any-fail
-- `43f9cb7` Merge pull request #1014 from artsafro/docs/state-after-pr1013
-- `933bc9b` Merge pull request #1013 from artsafro/harness/repo-hygiene-code-layout
-- `16be0a8` Merge pull request #1012 from artsafro/docs/state-after-pr1011
-- `52b587c` Merge pull request #1011 from artsafro/harness/repo-hygiene-docs
+- `195fa29` Merge pull request #1100 from artsafro/feature/qa-decision-checks
+- `d886be0` Merge pull request #1101 from artsafro/harness/status-layer-truth
+- `1f7bd63` Merge pull request #1099 from artsafro/docs/decision-d220-delivery-external-data
+- `c89a172` Merge pull request #1096 from artsafro/improve/issue-1024-blender-handoff
+- `3464218` Merge pull request #1091 from artsafro/harness/retro-session-loop
+- `857873e` Merge pull request #1095 from artsafro/docs/agr-tools-knowledge-for-agents
+- `792dc6e` Merge pull request #1093 from artsafro/improve/issue-1046-maf-rows-1-10-library-entries-after-arte
+- `7473cb3` Merge pull request #1081 from artsafro/fix/red-main-20261106
+- `8e618bd` Merge pull request #1006 from artsafro/improve/issue-968-ac08-kernel-invariants-relative-to-the-s
+- `63d2cf6` Merge pull request #1079 from artsafro/improve/dcc-session-busy-skip-exit3-only
+- `b33bc6a` Merge pull request #1082 from artsafro/improve/issue-1060-main-red-tests-test-agr-index-py-docs-ag
+- `80b5734` Merge pull request #1085 from artsafro/improve/issue-1024-npm-to-vpm
 
 ## Harness
 
@@ -34,18 +34,18 @@ Capability A (`capability-b01`, codex): benchmark 1 passed / 0 failed / 0 not me
 Capability B (`capability-ticket`, codex): local_pr 0 passed / 1 failed / 0 not measured; procedural 0 passed / 0 failed / 10 not measured; not ready; repository + user skills. Reference: `evals/capability-ticket/reference.json`.
 
 Open pull requests:
+- #991 MAF showcase: colour zones with material IDs for the 13 Vatutino positions (#889) [improve/issue-889-maf-showcase-split-the-13-vatutino-posit]
+- #1023 Improve: DCC tests: stop passing a hard-coded done card id to dcc_batch --card [improve/dcc-tests-no-hardcoded-card-id]
 - #1044 AGR Tools assets: Flora + MAF browser/import, unified agent library (#1024) [improve/issue-1024-assets-flora] draft
-- #1048 Improve: agr_tools: test that every by-path sibling module is shipped by the MZP and required by install.ms [improve/agr-tools-sibling-modules-shipped-and-required]
-- #1049 Readiness area 1: cold entry <=10k tokens on a real handoff, PROJECT_STATE milestones (#1015) [improve/issue-1015-readiness-area-1-cold-entry-10k-tokens-o]
-- #1050 Improve: Report (and optionally remove) clean worktrees of done cards that block branch reuse [improve/stale-done-card-worktrees-report]
 - #1051 Improve: dt_ai invariant open_borders_hidden: count borders buried inside another shell of the SAME part as hidden [improve/open-borders-hidden-same-part-shells]
-- #1052 agr-mcp: runtime pin as minimum + selection contract (#1024) [improve/issue-1024-mcp-runtime-pin] draft
-- #1053 Research: Job retro: skug26-k5-ac (PR #1008) [docs/research-job-retro-skug26-k5-ac-pr1008]
 - #1054 maf_gen_bench: remove the rejected forms (slab variant B, seams as geometry) (#819) [improve/issue-819-maf-gen-bench-remove-or-justify-the-reje]
-- #1055 Readiness area 9: Vatutino Ground v015 + AC08 triple in assets/manifest.json, cold retrieval check (#1017) [improve/issue-1017-readiness-area-9-add-vatutino-ground-v01]
 - #1056 Readiness area 6: ucx.triangulate on AC08 v010 copy, SINTEZ rerun, one-sided UCX case (#1016) [improve/issue-1016-readiness-area-6-ucx-triangulate-on-the]
-- #1057 lab 1.0: L11, L15, L12 reports in Max 2026 (Part of #1024) [improve/issue-1024-lab-l11-l15-l12] draft
-- #1058 AGR Tools 1.0 base: stages, contracts, journal, EDITS_100, stage rail, MCP v2, polygon 1.0 (#1024) [improve/issue-1024-agr-tools-1-0-base] draft
+- #1077 Improve: twinqa: generic 'features per UV face' check from a UV CSV + texture (replaces job script uvverify.py) [improve/twinqa-uv-features-per-face-check]
+- #1080 AGR MCP phase 2: edit tools on copies (cleanup/nudge/atlas/ucx apply, checked export) (#1021) [improve/issue-1021-agr-mcp-phase-2-edit-tools-on-copies-cle]
+- #1090 atlas.flora same-file opacity + atlas.groundel texel none for NPM MAF (#1024) [improve/issue-1024-flora-atlas-same-file-opacity] draft
+- #1092 docs: decisions D202-D204 (#1088) [improve/issue-1088-decisions-d202-d204-verona-rows-2-10-v00]
+- #1098 Asset intake: delivered 3DVis projects -> A101 candidates (Part of #1024) [improve/issue-1024-asset-intake] draft
+- #1102 AGR Tools: VPM glass in UDIM 1001 only, no glass maps (D221) [fix/agr-tools-glass-udim-1001]
 
 ## Next step
 
