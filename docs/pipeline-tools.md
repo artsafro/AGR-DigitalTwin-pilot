@@ -230,7 +230,8 @@ Environment and test commands: `docs/agents/agents-reference.md`.
 
 ### Placement engine — `src/dt_ai/placement/engine.py` (#316)
 - Status: on `main` (from `improve/issue-316-placement-engine-pure-flora-maf-placemen`, Hermes dt-worker, 2026-10-19);
-  synthetic tests only (`tests/test_placement_engine.py`), not yet run on a real Ground or SPOZU table (#296).
+  tests `tests/test_placement_engine.py`; first real run Vatutino run v006 via `tools/placement_site.py` (PR #344,
+  `jobs/VATUTINO-SITE/placement-report.md`): technical QA, user geometry acceptance open, `passed=false`.
 - Use: `place(points, ground_vertices, ground_triangles, library, seed=<int>, label_map=None)` -> report dict;
   `report_json(report)` for byte-stable JSON; CLI `uv run python -m dt_ai.placement.engine --input in.json
   --output out.json` (exit 0 pass / 3 review / 1 fail / 2 bad invocation).
