@@ -187,6 +187,19 @@ SINTEZ rerun on v005 before the hand-off, parts-file `history` key.
 user finishes by hand: loops / rings that stop mid-run [D200] and decor that floats on the stand-off instead of a
 10-20 mm embed [D199] — both are rules for future jobs. Retro: `docs/retros/2026-11-05-elv-tc-vpm-claude.md`.
 
+## Delivery to passed=true (intake 2026-11-07, branch `job/elv-tc-vpm-passed`) [D220]
+
+Goal: the first package that passes end to end. User answers (2026-11-07, all recommendations accepted except placement):
+- Base: the **user's hand-finished model** (D199 / D200 fixes after the 2026-11-05 acceptance). Claude does not touch
+  geometry: export, package, checks only. Path: to be given by the user.
+- GeoJSON: the **customer's file as is** (`customer_2026-11-05\SM_Elevatornaya_Vl_1_A_001.zip` → `.geojson`); only
+  `FNO_code` / `FNO_name` are filled once SINTEZ issues them. Our v004 GeoJSON differed: point 9676.419 / −7136.278 vs
+  customer 9676.355 / −7135.700 (Δ ≈ 0.58 m), `ZU_area` 1.0386 (ha, wrong) vs 10386, `okrug` long form vs «ЮАО»,
+  `designer` filled vs empty, `Glasses` 237/246/249 · 0.30 · 1.50 · 0.05 vs 255/255/255 · 0.38 · 1.13 · 0.06.
+- Placement: **no customer DWG** — place by the customer's GeoJSON point (9676.355 / −7135.700).
+- passed=true scope: model + textures + GeoJSON with FNO + clean SINTEZ check. Signage «СРЕDА» is a separate rework
+  (TZ). `_Light.fbx` goes in if the user has it ready. УКЭП `.sig` is the customer's after us [D163].
+
 ## Не трогать
 
 - Source files in `for_ai\` (work on byte-identical copies only).
