@@ -97,3 +97,4 @@ itself (Ватутино, Прокшино) are a separate source and are not pa
 | Date | Projects | Result |
 |---|---|---|
 | 2026-11-07 | BUHV12 (1-я Бухвостова вл.12 к.11, школа), PPT4 (ППТ-4 Рязановское) | BUHV12: 21 rows in scope -> 14 new_model, 5 variant, 1 exists, 1 not_identified; pilot `Aira_VeloparkovkaVelobox_VP043` (audit 0 findings) and `klen_tatarskiy_t1_h350` (contract 12/13, Low texel) in `_inbox/BUHV12`. PPT4: no candidates (NPM collapse, no qty, MAF xrefs missing). Tables: `library/assets/intake/` |
+| 2026-11-07 | BUHV12, after Artem's «да» for the pilot | all `new_model` built: 11 MAF archives (`audit_maf` 0 findings each, sidecar and Max re-measure) and 3 plants (contract 11–12 of 12–13, texel only) in `_inbox/BUHV12`; questions in its `review.md` |
