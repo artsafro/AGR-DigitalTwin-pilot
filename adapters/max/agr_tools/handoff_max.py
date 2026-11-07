@@ -381,9 +381,16 @@ def _material_root_matches(rt, core, doc, key, candidate):
 
 
 # ---- export --------------------------------------------------------------------------------------------------------
+def _given(rt, nodes):
+    """Nodes of a press: the panel / macro (runtime.edit_ui) passes None = the current selection; the MCP bridge
+    passes an explicit list ([] for the bundle rows). Release 1.1 native job 20261107-115551-786c85c6: None was taken
+    as an empty input, so handoff.export from the panel always refused."""
+    return list(rt.selection) if nodes is None else list(nodes)
+
+
 def _export_targets(ctx, nodes):
     rt = _rt()
-    nodes = [n for n in (nodes or []) if rt.isValidNode(n)]
+    nodes = [n for n in _given(rt, nodes) if rt.isValidNode(n)]
     contract = ctx.host.contract
     meshes = [n for n in nodes if _is_mesh(rt, n) and not _is_marker(contract, n)]
     if not meshes:
@@ -813,7 +820,7 @@ def handoff_verify(ctx, mode, nodes, preview):  # noqa: ARG001 - read row: previ
     if opt.get('layer'):
         targets = _layer_meshes(rt, opt['layer'])
     else:
-        targets = [n for n in (nodes or []) if rt.isValidNode(n) and _is_mesh(rt, n)]
+        targets = [n for n in _given(rt, nodes) if rt.isValidNode(n) and _is_mesh(rt, n)]
     if not targets:
         raise ValueError('handoff.verify: empty input - select the returned objects or name options.layer')
     k = host.m_per_unit()
@@ -852,7 +859,7 @@ def _restore_targets(rt, ctx, opt, nodes, preview):
         return out
     if opt.get('layer'):
         return [n for n in rt.objects if str(n.layer.name) == opt['layer']]
-    return [n for n in (nodes or []) if rt.isValidNode(n)]
+    return [n for n in _given(rt, nodes) if rt.isValidNode(n)]
 
 
 def handoff_restore_materials(ctx, mode, nodes, preview):

@@ -190,3 +190,21 @@ def test_h5_bridge_takes_the_bundle_rows_without_a_selection():
         max_bridge._targets(Rt(), {'scene': 'live'}, ['handoff.export'])
     with pytest.raises(max_bridge.BridgeError, match='handles_required'):
         max_bridge._targets(Rt(), {'scene': 'live'}, ['handoff.verify', 'qa.xview'])
+
+
+def test_h6_panel_press_without_nodes_takes_the_selection(monkeypatch):
+    """Native job 20261107-115551-786c85c6 (RED): edit_ui passes nodes=None; the handoff glue took it as an empty
+    input, so «Хендофф: выгрузить в Blender» from the panel always refused. None = selection; [] stays empty (MCP)."""
+    import types
+    hm = _load(PKG / 'handoff_max.py', 'agr_tools_handoff_max_110h6')
+    a, b = object(), object()
+    fake = types.SimpleNamespace(selection=[a, b], isValidNode=lambda n: True)
+    monkeypatch.setattr(hm, '_rt', lambda: fake)
+    assert hm._given(fake, None) == [a, b] and hm._given(fake, []) == [] and hm._given(fake, [b]) == [b]
+    monkeypatch.setattr(hm, '_is_mesh', lambda rt, n: True)
+    monkeypatch.setattr(hm, '_is_marker', lambda c, n: False)
+    ctx = types.SimpleNamespace(host=types.SimpleNamespace(contract=None))
+    assert hm._export_targets(ctx, None) == [a, b]
+    with pytest.raises(ValueError, match='empty input'):
+        hm._export_targets(ctx, [])
+    assert hm._restore_targets(fake, ctx, {}, None, None) == [a, b]
