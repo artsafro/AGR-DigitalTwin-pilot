@@ -15,6 +15,7 @@ Reached so far (curated in `docs/PROJECT_STATE.milestones.md`; each line cites i
 ## In production
 
 PR merges do not imply delivery acceptance. Per-object gates stay in `jobs/<ID>/STATE.md`. Merged pull requests, newest first:
+- `939e556` Merge pull request #1103 from artsafro/harness/scenario-router
 - `195fa29` Merge pull request #1100 from artsafro/feature/qa-decision-checks
 - `d886be0` Merge pull request #1101 from artsafro/harness/status-layer-truth
 - `1f7bd63` Merge pull request #1099 from artsafro/docs/decision-d220-delivery-external-data
@@ -26,7 +27,6 @@ PR merges do not imply delivery acceptance. Per-object gates stay in `jobs/<ID>/
 - `8e618bd` Merge pull request #1006 from artsafro/improve/issue-968-ac08-kernel-invariants-relative-to-the-s
 - `63d2cf6` Merge pull request #1079 from artsafro/improve/dcc-session-busy-skip-exit3-only
 - `b33bc6a` Merge pull request #1082 from artsafro/improve/issue-1060-main-red-tests-test-agr-index-py-docs-ag
-- `80b5734` Merge pull request #1085 from artsafro/improve/issue-1024-npm-to-vpm
 
 ## Harness
 
