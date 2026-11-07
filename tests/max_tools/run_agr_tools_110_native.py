@@ -173,7 +173,7 @@ def handoff():
     res['bundle_files'] = files
     STATE['bundle'] = str(bundle)
     _p, _a, res['verify_source'] = _press('handoff.verify', {'bundle': str(bundle)}, nodes)
-    pre, app, res['import'] = _press('handoff.import', {'bundle': str(bundle)})
+    pre, app, res['import'] = _press('handoff.import', {'bundle': str(bundle), 'fbx': str(bundle / 'model.fbx')})
     layer = app['plan'].get('layer') or pre['plan'].get('layer')
     req = app['plan'].get('request')
     assert layer and layer.startswith('AGENT_') and req and os.path.isfile(req), (layer, req)
@@ -198,8 +198,8 @@ def mcp_bridge():
     def call(tool, args):
         return json.loads(bridge.call(tool, root, json.dumps(args).encode().hex()))
     out = {}
-    imp = call('agr_op_preview', {'scene': 'live', 'op': 'handoff.import', 'options': {'bundle': STATE['bundle'],
-                                                                                         'request_id': 'mcp11'}})
+    imp = call('agr_op_preview', {'scene': 'live', 'op': 'handoff.import', 'options': {'bundle': STATE['bundle'], 'request_id': 'mcp11',
+                                                                                         'fbx': STATE['bundle'] + '/model.fbx'}})
     assert imp['ok'] and imp['result']['plan']['mode'] == 'preview', imp
     out['import_preview_without_handles'] = imp['result']['status']
     h = [int(n.inode.handle) for n in nodes]

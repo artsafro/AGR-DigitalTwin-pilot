@@ -63,7 +63,7 @@ FIELDS = {
     ),
     'handoff.import': (
         _f('bundle', 'Бандл handoff/<seq>', 'folder', 'по умолчанию — последний бандл проекта'),
-        _f('fbx', 'FBX из Blender', 'file', 'пусто — model.fbx бандла'),
+        _f('fbx', 'FBX из Blender', 'file', 'пусто — return/model.fbx бандла (возврат Blender)'),
         _f('request_id', 'Id запроса (слой AGENT_<id>)', 'text', 'пусто — bh<seq>'),
     ),
     'handoff.verify': (
