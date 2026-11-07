@@ -7,6 +7,8 @@
 Triggers are lower-case word prefixes («впм» matches «ВПМ», «озелен» matches «озеленение»). A prompt with both a
 profile and an object class names a cell; a prompt with only one of them gets a question instead of a guess. A cell is
 announced once per session (state next to the transcript, like context_watch.py); a question repeats. Advisory only.
+A pasted report or log stays silent: a prompt over MAX_PROMPT characters, one with a `<pasted_content` block, or one
+that names more than MAX_CELLS cells is a status text, not a task statement.
 """
 import json
 import re
@@ -20,6 +22,8 @@ _WORD = re.compile(r"[0-9a-zа-яё][0-9a-zа-яё_-]*")
 PROFILE_ASK = "Ask the user which profile: НПМ, НПМ упрощённый или ВПМ?"
 OBJECT_ASK = "Ask the user which object class: ОКС, Ground, МАФ или Флора?"
 UCX_ASK = "UCX is VPM only. Ask the user: коллизии для ОКС или для Ground?"
+MAX_PROMPT = 1200
+MAX_CELLS = 2
 
 
 def load(path=TABLE):
@@ -102,11 +106,11 @@ def hint(result, table=None, seen=()):
 
 def check(payload):
     prompt = payload.get("prompt") or ""
-    if prompt.lstrip().startswith("/"):
+    if prompt.lstrip().startswith("/") or len(prompt) > MAX_PROMPT or "<pasted_content" in prompt:
         return {}
     table = load()
     result = route(prompt, table)
-    if not result["cells"] and not result["ask"]:
+    if (not result["cells"] and not result["ask"]) or len(result["cells"]) > MAX_CELLS:
         return {}
     transcript = payload.get("transcript_path")
     state_path = Path(f"{transcript}.scenario-router.json") if transcript else None
