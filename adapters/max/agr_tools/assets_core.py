@@ -116,7 +116,7 @@ def search_text(rec):
              't{}'.format(rec['variant']) if rec.get('variant') is not None else None,
              'h{}'.format(rec['height_cm']) if rec.get('height_cm') is not None else None]
     meta = rec.get('meta') or {}
-    parts += [meta.get('title'), meta.get('category')]
+    parts += [meta.get('title'), meta.get('category'), rec.get('category')]
     return fold(' '.join(str(p) for p in parts if p))
 
 
@@ -259,6 +259,41 @@ def _zip_names(zf):
     return out
 
 
+# MAF category from the A101 object title (CamelCase transliteration). Order matters: specific keys first.
+# Vocabulary follows the album specification types (maf_spec_vedomost_3.xlsx); the sheet itself is inconsistent
+# (a pergola and a carousel are typed «Качели» there), so the title decides and the sheet type is kept apart.
+MAF_CATEGORIES = (
+    ('pesochnyystolik', 'Игровое оборудование'), ('stoliks', 'Игровое оборудование'),
+    ('pesochica', 'Песочница'), ('pesochnica', 'Песочница'),
+    ('kreslo', 'Кресло'), ('stul', 'Кресло'),
+    ('divan', 'Скамья'), ('skame', 'Скамья'), ('skamy', 'Скамья'),
+    ('lezhak', 'Парковый лежак'), ('stol', 'Стол'), ('barnaya', 'Стол'),
+    ('urna', 'Урна'), ('tbo', 'Контейнерная площадка'),
+    ('naves', 'Навес'), ('pergola', 'Пергола'),
+    ('kachalka', 'Качалка'), ('kacheligamak', 'Гамак'), ('gamak', 'Гамак'), ('kacheli', 'Качели'),
+    ('karusel', 'Карусель'), ('gorka', 'Горка'),
+    ('igrovoykompleks', 'Игровой комплекс'), ('detskayaploshadka', 'Игровой комплекс'), ('domik', 'Игровой комплекс'),
+    ('sportivnoe', 'Спортивное оборудование'), ('oborydovanieworkout', 'Спортивное оборудование'),
+    ('turnik', 'Спортивное оборудование'), ('brevn', 'Спортивное оборудование'),
+    ('balans', 'Спортивное оборудование'), ('balancir', 'Спортивное оборудование'),
+    ('polosyprepyatstviy', 'Спортивное оборудование'),
+    ('igrovaya', 'Игровое оборудование'), ('igrovoyelement', 'Игровое оборудование'),
+    ('ostrovok', 'Игровое оборудование'), ('vertushka', 'Игровое оборудование'), ('penek', 'Игровое оборудование'),
+    ('piramida', 'Игровое оборудование'), ('raskopki', 'Игровое оборудование'), ('igrapeskom', 'Игровое оборудование'),
+    ('veloparkovka', 'Велопарковка'), ('amfiteatr', 'Амфитеатр'), ('amphiteather', 'Амфитеатр'),
+    ('parklet', 'Парклет'), ('inform', 'Информационный стенд'), ('pristvolnaya', 'Приствольная решётка'),
+)
+
+
+def maf_category(title):
+    """Category of a MAF from its object title, or None (NoName… and unknown words are left to a human)."""
+    t = re.sub(r'[^a-z]', '', str(title or '').lower())
+    for key, cat in MAF_CATEGORIES:
+        if t.startswith(key) or (len(key) >= 5 and key in t):
+            return cat
+    return None
+
+
 def inspect_maf_zip(path, base):
     """Versions, preview member and sidecar of one MAF zip, central directory only (plus the small json)."""
     want = {'max': base + '.max', 'preview': base + '.png', 'json': base + '.json',
@@ -301,6 +336,8 @@ def scan_maf(root, cache_dir, lib='maf', old_index=None, hash_sources=False, pro
             prev = old_src.get(rel)
             if prev and prev.get('size') == st['size'] and prev.get('mtime') == st['mtime'] and rel in old:
                 rec = old[rel]
+                if rec.get('title') and 'category' not in rec:  # index written before categories
+                    rec['category'] = maf_category(rec['title'])
                 if not rec.get('preview') or os.path.isfile(os.path.join(cache_dir, rec['preview'])):
                     records.append(rec)
                     sources[rel] = prev
@@ -309,7 +346,8 @@ def scan_maf(root, cache_dir, lib='maf', old_index=None, hash_sources=False, pro
             p = parse_maf(base)
             rec = make_record(lib, 'maf', base, versions={}, meta=meta)
             if p:
-                rec.update(manufacturer=p['manufacturer'], title=p['title'], article=p['article'])
+                rec.update(manufacturer=p['manufacturer'], title=p['title'], article=p['article'],
+                           category=maf_category(p['title']))
             else:
                 rec['warnings'].append('name is not Manufacturer_Object_Article (Q28)')
             ident = (meta or {}).get('identity') or {}

@@ -131,6 +131,124 @@ def unify_flora(a101_index, catalogue, npm_light=None):
             'counts': counts}
 
 
+# ---- MAF library contract (measured on 100 A101 sidecars, 07.11.2026) -------------------------------------------
+MAF_CONTRACT = {
+    'units': 'mm', 'up_axis': 'Z', 'objects_per_version': 1, 'materials_per_version': 1,
+    'pivot_offset_xy_mm': 50.0,            # 80/100 at 0 mm, the rest <= 26 mm
+    'pivot_above_base_mm': (0.0, 400.0),   # 200..350 mm measured: pivot at ground level, footing below it
+    'textures': {'high': {'base_color': 4096, 'bump': 4096, 'metalness': 4096}, 'low': {'base_color': 512}},
+    'review_tris': {'high': 11400, 'low': 7500},  # observed maxima rounded up to 100; review, not a limit
+}
+
+
+def _g(m, *path):
+    for p in path:
+        m = m.get(p) if isinstance(m, dict) else None
+    return m
+
+
+def attach_measured(index, measured):
+    """Copy of the index where archives WITHOUT a sidecar get the Max measurement as `meta` (measured: true).
+    A sidecar always wins; a measurement for an unknown name is ignored and reported."""
+    import json
+    idx = json.loads(json.dumps(index))
+    names = {a['name'] for a in idx['assets']}
+    for a in idx['assets']:
+        if not a.get('meta') and a['name'] in measured:
+            a['meta'] = dict(measured[a['name']], measured=True)
+    return idx, sorted(set(measured) - names)
+
+
+def audit_maf(index, contract=MAF_CONTRACT):
+    """Check every MAF record against the library contract. Uses the sidecar (`meta`) or, for archives without
+    one, the Max measurement (`meta` with `measured: true`). Returns {'rows', 'counts', 'stats'}."""
+    rows, codes = [], {}
+    for a in index['assets']:
+        m = a.get('meta') or {}
+        f, w = [], []
+        if not m:
+            f.append(('no_metadata', 'no sidecar and no measurement'))
+        elif m.get('measured'):
+            w.append(('measured', 'no sidecar: values measured in Max'))
+        if not a.get('manufacturer'):
+            f.append(('name_q28', 'name is not Manufacturer_Object_Article'))
+        if 'sidecar identity differs from the file name' in a.get('warnings', []):
+            f.append(('identity_mismatch', 'sidecar identity differs from the file name'))
+        if not a.get('category'):
+            w.append(('no_category', 'category not recognised from the title'))
+        if m:
+            if m.get('units') and m.get('units') != contract['units']:
+                w.append(('units', m.get('units')))
+            if m.get('up_axis') and m.get('up_axis') != contract['up_axis']:
+                f.append(('up_axis', m.get('up_axis')))
+            for v in ('high', 'low'):
+                geo = _g(m, 'geometry', v)
+                if not geo:
+                    f.append(('missing_version', v))
+                    continue
+                if geo.get('object_count') != contract['objects_per_version']:
+                    f.append(('object_count', '{}: {}'.format(v, geo.get('object_count'))))
+                if geo.get('object_names') and geo['object_names'] != [a['name'] + '_' + v]:
+                    f.append(('object_names', '{}: {}'.format(v, geo['object_names'])))
+                tr = geo.get('transform') or {}
+                if tr.get('has_negative_scale') or any(abs(s - 1) > 1e-3 for s in tr.get('scale') or [1, 1, 1]) or \
+                        any(abs(r) > 1e-3 for r in tr.get('rotation_deg') or [0, 0, 0]):
+                    f.append(('transform', '{}: {}'.format(v, tr)))
+                pv = geo.get('pivot') or {}
+                if pv.get('inside_bbox') is False:
+                    f.append(('pivot_outside', v))
+                off = max(abs(pv.get('offset_x_mm') or 0), abs(pv.get('offset_y_mm') or 0))
+                if off > contract['pivot_offset_xy_mm']:
+                    f.append(('pivot_offset_xy', '{}: {:.0f} mm'.format(v, off)))
+                up = pv.get('above_bbox_base_mm')
+                lo, hi = contract['pivot_above_base_mm']
+                if up is not None and not lo <= up <= hi:
+                    f.append(('pivot_height', '{}: {:.0f} mm above the base'.format(v, up)))
+                if geo.get('smoothing_groups_present') is False:
+                    w.append(('no_smoothing', v))
+                if (geo.get('tris') or 0) > contract['review_tris'][v]:
+                    w.append(('tris_review', '{}: {}'.format(v, geo.get('tris'))))
+                mats = _g(m, 'materials', v) or []
+                if len(mats) != contract['materials_per_version']:
+                    f.append(('material_count', '{}: {}'.format(v, len(mats))))
+                for mt in mats:  # the material and its maps must belong to this asset (packing copy errors)
+                    if mt.get('name') and mt['name'].lower() != 'm_{}_{}'.format(a['name'], v).lower():
+                        f.append(('foreign_material', '{}: {}'.format(v, mt['name'])))
+                for t in _g(m, 'textures', v) or []:
+                    if t.get('file') and a['name'].lower() not in t['file'].lower():
+                        f.append(('foreign_texture', '{}: {}'.format(v, t['file'])))
+                tex = {t.get('slot'): t for t in (_g(m, 'textures', v) or [])}
+                for slot, res in contract['textures'][v].items():
+                    t = tex.get(slot)
+                    if t is None:
+                        f.append(('texture_missing', '{} {}'.format(v, slot)))
+                    elif t.get('resolution') and max(t['resolution']) != res:
+                        w.append(('texture_res', '{} {}: {}'.format(v, slot, t['resolution'])))
+            th, tl = _g(m, 'geometry', 'high', 'tris'), _g(m, 'geometry', 'low', 'tris')
+            if th and tl and tl > th:
+                f.append(('low_over_high', '{} > {}'.format(tl, th)))
+            elif th and tl and tl == th and th > 200:
+                w.append(('low_not_reduced', 'low = high = {} tris'.format(th)))
+        for c, _d in f + w:
+            codes[c] = codes.get(c, 0) + 1
+        rows.append({'id': a['id'], 'name': a['name'], 'category': a.get('category'),
+                     'findings': [{'code': c, 'detail': d} for c, d in f],
+                     'warnings': [{'code': c, 'detail': d} for c, d in w]})
+    stats = {}
+    for v in ('high', 'low'):
+        tris = sorted(_g(a.get('meta'), 'geometry', v, 'tris') for a in index['assets']
+                      if _g(a.get('meta'), 'geometry', v, 'tris') is not None)
+        if tris:
+            stats[v + '_tris'] = {'n': len(tris), 'min': tris[0], 'median': tris[len(tris) // 2],
+                                  'p90': tris[int(len(tris) * 0.9)], 'max': tris[-1]}
+    cats = {}
+    for a in index['assets']:
+        cats[a.get('category') or '—'] = cats.get(a.get('category') or '—', 0) + 1
+    return {'rows': rows, 'counts': dict(sorted(codes.items())), 'stats': stats,
+            'categories': dict(sorted(cats.items(), key=lambda kv: -kv[1])),
+            'clean': sum(1 for r in rows if not r['findings'])}
+
+
 # ---- MAF ----------------------------------------------------------------------------------------------------------
 def _base(name):
     return re.sub(r'_(high|low)$', '', str(name), flags=re.IGNORECASE)
@@ -181,6 +299,9 @@ def unify_maf(a101_index, legacy_catalogue):
                         'tris': {v: geo[v].get('tris') for v in geo},
                         'bbox_mm': {v: geo[v].get('bbox') for v in geo},
                         'spec': spec_by_asset.get(a['name'], []), 'preview': a.get('preview'),
+                        'category': a.get('category') or (spec_by_asset.get(a['name']) or [{}])[0].get('type'),
+                        'title_ru': (spec_by_asset.get(a['name']) or [{}])[0].get('spec_name'),
+                        'measured': bool(meta.get('measured')),
                         'warnings': a.get('warnings', []), 'status': 'a101'})
     for e in legacy_catalogue.get('entries', []):
         cat = re.sub(r'[\d_.]+$', '', e.get('source_object') or '') or 'unnamed'

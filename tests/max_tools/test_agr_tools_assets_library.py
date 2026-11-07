@@ -133,3 +133,56 @@ def test_committed_unified_files_are_current_schema(name):
     assert data['schema'] == L.UNIFIED_SCHEMA and data['truth'] == 'a101'
     ids = [r['id'] for r in data['records']]
     assert len(ids) == len(set(ids))
+
+
+def test_maf_category_from_title():
+    cat = C.maf_category
+    assert cat('KacheliGamak') == 'Гамак' and cat('Kacheli') == 'Качели' and cat('KachalkaBalansir') == 'Качалка'
+    assert cat('StolikSPechenkami') == 'Игровое оборудование' and cat('StolLion') == 'Стол'
+    assert cat('UkorochenniNavesPodPloshadkySimpl4156') == 'Навес'
+    assert cat('ElementPolosyPrepyatstviyNature') == 'Спортивное оборудование'
+    assert cat('NoName3415') is None and cat('Anapa') is None
+
+
+def _sidecar(name, **over):
+    geo = lambda v, tris: {'object_names': [name + '_' + v], 'object_count': 1, 'tris': tris,  # noqa: E731
+                           'bbox': {'x': 1000, 'y': 500, 'z': 900},
+                           'pivot': {'above_bbox_base_mm': 200, 'offset_x_mm': 0, 'offset_y_mm': 0,
+                                     'inside_bbox': True},
+                           'transform': {'scale': [1, 1, 1], 'rotation_deg': [0, 0, 0], 'has_negative_scale': False},
+                           'smoothing_groups_present': True}
+    m = {'units': 'mm', 'up_axis': 'Z', 'geometry': {'high': geo('high', 900), 'low': geo('low', 300)},
+         'materials': {v: [{'name': 'M_{}_{}'.format(name, v), 'class': 'Standardmaterial'}] for v in ('high', 'low')},
+         'textures': {'high': [{'file': 'T_{}_high_{}.png'.format(name, s), 'slot': k, 'resolution': [4096, 4096]}
+                               for s, k in (('Diffuse', 'base_color'), ('Normal', 'bump'), ('ERM', 'metalness'))],
+                      'low': [{'file': 'T_{}_low_d.png'.format(name), 'slot': 'base_color', 'resolution': [512, 512]}]}}
+    for k, v in over.items():
+        m[k] = v
+    return m
+
+
+def test_audit_maf_contract_findings_and_measured_attach():
+    names = ['Adx_Skameya_1', 'Adx_Kacheli_2', 'Adx_Urna_3', 'Adx_Stol_4']
+    good = _sidecar(names[0])
+    bad = _sidecar(names[1])
+    bad['geometry']['high']['pivot'] = {'above_bbox_base_mm': 956, 'offset_x_mm': 400, 'offset_y_mm': 0,
+                                        'inside_bbox': True}
+    bad['geometry']['low']['tris'] = 900
+    bad['materials']['high'] = [{'name': 'M_Other_Thing_9_high', 'class': 'Standardmaterial'}]
+    bad['textures']['high'][0]['file'] = 'Other_Thing_9_high_Diffuse.png'
+    idx = _maf_index(names, meta={names[0]: good, names[1]: bad})
+    for r in idx['assets']:
+        r['category'] = C.maf_category(r['title'])
+    measured = {names[2]: _sidecar(names[2]), 'Ghost_X_1': {}}
+    idx2, unknown = L.attach_measured(idx, measured)
+    assert unknown == ['Ghost_X_1'] and idx['assets'][2].get('meta') is None  # input untouched
+    rep = L.audit_maf(idx2)
+    by = {r['name']: r for r in rep['rows']}
+    assert by[names[0]]['findings'] == [] and by[names[0]]['warnings'] == []
+    codes = [f['code'] for f in by[names[1]]['findings']]
+    assert {'pivot_height', 'pivot_offset_xy', 'foreign_material', 'foreign_texture'} <= set(codes)
+    assert [w['code'] for w in by[names[1]]['warnings']] == ['low_not_reduced']
+    assert [w['code'] for w in by[names[2]]['warnings']] == ['measured'] and not by[names[2]]['findings']
+    assert [f['code'] for f in by[names[3]]['findings']] == ['no_metadata']
+    assert rep['clean'] == 2 and rep['stats']['high_tris']['n'] == 3
+    assert rep['categories'] == {'Скамья': 1, 'Качели': 1, 'Урна': 1, 'Стол': 1}

@@ -187,7 +187,8 @@ class CardDelegate(QtWidgets.QStyledItemDelegate):
         f.setBold(False)
         p.setFont(f)
         if r['kind'] == 'maf' and r.get('manufacturer'):
-            lines = [r['manufacturer'], r.get('title') or '', r.get('article') or '']
+            lines = [r.get('category') or '—', r.get('title') or '',
+                     '{} · {}'.format(r['manufacturer'], r.get('article') or '')]
         else:
             lines = [(r.get('title') or r['name']), 'тип {}  ·  h {} см'.format(r.get('variant'), r.get('height_cm'))
                      if r.get('variant') is not None else '', 'превью по похожему имени' if r.get('preview_match') == 'fuzzy' else '']
@@ -399,8 +400,13 @@ class AssetsWindow(QtWidgets.QWidget):
         idx = self.indexes.get(self.lib())
         self.model.set_index(idx, self.ed_cache.text().strip(), self.search.text())
         if idx:
-            self.model.selection.keep_only(r['id'] for i in self.indexes.values() for r in i['assets'])
-            pm = idx['report'].get('preview_match') or {}
+            loaded = {i['lib'] for i in self.indexes.values()}  # prune only libraries whose index is loaded
+            known = {r['id'] for i in self.indexes.values() for r in i['assets']}
+            self.model.selection.keep_only(x for x in self.model.selection.ids
+                                           if x in known or x.split(':', 1)[0] not in loaded)
+            pm = {}
+            for r in idx['assets']:
+                pm[r.get('preview_match') or 'none'] = pm.get(r.get('preview_match') or 'none', 0) + 1
             self.status.setText('{}: {} из {} · превью: точно {}, похоже {}, нет {}'.format(
                 dict(self.LIBS)[self.lib()], len(self.model.records), len(idx['assets']),
                 pm.get('exact', '—'), pm.get('fuzzy', '—'), pm.get('none', '—')))

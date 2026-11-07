@@ -79,3 +79,12 @@ def test_window_search_select_import_and_settings(ui, tmp_path, monkeypatch):
     assert w2.sel.count() == 0 and not w2.cmb_src.isEnabled()  # Flora: MAX only
     pix = w2.grab()
     assert pix.width() > 0
+
+
+def test_selection_of_an_unloaded_library_survives(ui, tmp_path):
+    mod, app = ui
+    be = FakeBackend(mod.core, tmp_path)
+    w = mod.AssetsWindow(be, settings={'cache_dir': str(tmp_path / 'c'), 'libraries': {'flora': 'x'},
+                                       'selection': ['maf:Adx_Stol_1', 'flora:alpha_tree_t1_h500', 'flora:gone']})
+    assert w.model.selection.ids == ['maf:Adx_Stol_1', 'flora:alpha_tree_t1_h500']
+    assert 'нет 3' in w.status.text()  # counted from the records (the fake library has no previews)

@@ -60,6 +60,26 @@ def summary_md(fl, mf, fl_idx, mf_idx):
         out += ['- строка {spec_row}: в ведомости `{spec_name_in_sheet}`, в A101 `{a101}` — {note}'.format(**n)
                 for n in mf['notes']]
         out.append('')
+    au = mf['audit']
+    out += ['### Проверка библиотеки МАФ по контракту', '',
+            'Чистых: {} из {}. Замечания: {}.'.format(au['clean'], len(au['rows']), ', '.join(
+                '{} {}'.format(k, v) for k, v in au['counts'].items()) or 'нет'), '',
+            'Категории: ' + ', '.join('{} {}'.format(k, v) for k, v in au['categories'].items()) + '.', '',
+            '| МАФ | Категория | Ошибки | Предупреждения |', '|---|---|---|---|']
+    for r in au['rows']:
+        warn = [w for w in r['warnings'] if w['code'] != 'measured']
+        if r['findings'] or warn:
+            out.append('| `{}` | {} | {} | {} |'.format(r['name'], r['category'] or '—', '; '.join(
+                '{} ({})'.format(x['code'], x['detail']) for x in r['findings']) or '', '; '.join(
+                '{} ({})'.format(x['code'], x['detail']) for x in warn)))
+    out += ['', '### Ведомость: позиции без модели A101 (добавить в библиотеку)', '',
+            '| Строка | Позиция | Тип | Габарит, м | Кандидаты из Union |', '|---|---|---|---|---|']
+    for s in mf['spec_without_a101_model']:
+        d = s.get('spec_dims') or {}
+        dims = ' × '.join('{:g}'.format(d[k]) for k in ('l_m', 'w_m', 'h_m') if d.get(k) is not None)
+        out.append('| {} | {} | {} | {} | {} |'.format(s['spec_row'], s.get('spec_name') or '', s.get('type') or '',
+                                                    dims, ', '.join(s['legacy_candidates'][:3])))
+    out.append('')
     out += ['### На подтверждение', '', '- Написание производителей: ' + '; '.join(
         ' / '.join(v) for v in mf['review']['manufacturer_spellings']),
         '- Один артикул у разных объектов: ' + '; '.join(
@@ -74,16 +94,23 @@ def main(argv=None):
     ap.add_argument('--flora-catalogue', default=str(ROOT / 'library/flora/catalogue.json'))
     ap.add_argument('--npm-light', default=str(ROOT / 'library/flora/npm-light.json'))
     ap.add_argument('--maf-catalogue', default=str(ROOT / 'library/maf/catalogue.json'))
+    ap.add_argument('--maf-measured', default=str(ROOT / 'library/assets/maf_measured.json'))
     ap.add_argument('--out', required=True)
     ap.add_argument('--replace', action='store_true')
     a = ap.parse_args(argv)
     lib = _load('assets_library')
     fl_idx, mf_idx = read(a.flora_index), read(a.maf_index)
+    unknown = []
+    if a.maf_measured and Path(a.maf_measured).is_file():
+        mf_idx, unknown = lib.attach_measured(mf_idx, read(a.maf_measured)['measured'])
+    audit = lib.audit_maf(mf_idx)
     fl = lib.unify_flora(fl_idx, read(a.flora_catalogue), read(a.npm_light))
     mf = lib.unify_maf(mf_idx, read(a.maf_catalogue))
     fl['sources'] = {'a101_root': fl_idx['root'], 'a101_files': {k: v.get('sha256') for k, v in fl_idx['sources'].items()},
                      'catalogue': 'library/flora/catalogue.json', 'npm_light': 'library/flora/npm-light.json'}
-    mf['sources'] = {'a101_root': mf_idx['root'], 'catalogue': 'library/maf/catalogue.json'}
+    mf['sources'] = {'a101_root': mf_idx['root'], 'catalogue': 'library/maf/catalogue.json',
+                     'measured': 'library/assets/maf_measured.json', 'measured_unknown': unknown}
+    mf['audit'] = audit
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
     files = {'flora_unified.json': fl, 'maf_unified.json': mf}
