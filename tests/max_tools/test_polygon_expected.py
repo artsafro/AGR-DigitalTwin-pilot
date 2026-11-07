@@ -80,7 +80,7 @@ def test_bases_stations_and_button_versions():
     from test_polygon_support import bases, load_expected, stations, suite_rows
     built = bases()
     built_ids = [item['version'] for item in built]
-    assert built_ids == ['0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', '1.0']
+    assert built_ids == ['0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', '1.0', '1.1']
     colours = [tuple(item['colour']) for item in built]
     assert len(colours) == len(set(colours))
     placed = stations()
@@ -197,7 +197,7 @@ def test_base_100_has_33_stations_in_stage_order_with_branch_reason():
     import roadmap
     suite = json.loads((ROOT / 'docs' / 'plans' / 'agr-tools-suite.json').read_text(encoding='utf-8'))
     order = roadmap.stage_buttons(suite)
-    assert len(order) == 33 and core.TOUR_LAST == '1.0'
+    assert len(order) == 33 and core.TOUR_LAST == '1.1'
     base = [b for b in bases() if b['version'] == '1.0'][0]
     assert sorted(base['buttons']) == sorted(order)
     placed = [s for s in stations() if s['version'] == '1.0']
@@ -249,3 +249,39 @@ def test_fragment_hook_loads_letters_f_to_u_with_issue_1024(tmp_path, monkeypatc
     (tmp_path / 'X.json').write_text('{}', encoding='utf-8')
     with pytest.raises(RuntimeError):
         load_fragments()
+
+
+def test_base_110_has_4_handoff_stations_in_stage_order():
+    """Release 1.1 (#1024, branch BH): base 1.1 = stations 1.1.1..1.1.4 for the handoff rows in the order of
+    roadmap.stage_buttons(suite, '1.1'); the stations of base 1.0 keep their numbers."""
+    import sys
+    from test_polygon_support import bases, load_expected, stations
+    core = sys.modules['agr_polygon_core']
+    sys.path.insert(0, str(ROOT / 'adapters' / 'max' / 'agr_tools'))
+    import roadmap
+    suite = json.loads((ROOT / 'docs' / 'plans' / 'agr-tools-suite.json').read_text(encoding='utf-8'))
+    order = roadmap.stage_buttons(suite, '1.1')
+    assert order == ['handoff.export', 'handoff.import', 'handoff.verify', 'handoff.restore_materials']
+    assert roadmap.stations(suite)['handoff.restore_materials'] == '1.1.4'
+    base = [b for b in bases() if b['version'] == '1.1'][0]
+    assert base['buttons'] == order
+    placed = [s for s in stations() if s['version'] == '1.1']
+    assert [s['id'] for s in placed] == ['1.1.{}'.format(i) for i in range(1, 5)]
+    assert [s['button'] for s in placed] == order
+    assert set(core.OWNER_110) == set(order) and set(core.OWNER_110.values()) == set(core.BRANCHES_110) == {'BH'}
+    assert [s['id'] for s in stations() if s['version'] == '1.0'] == ['1.0.{}'.format(i) for i in range(1, 34)]
+    for spec in placed:
+        doc = load_expected(spec['button'])
+        assert doc['station'] == spec['id'] and doc['base'] == '1.1' and doc['version'] == '1.1'
+        assert spec['branch'] == 'BH'
+        passes = [o for o in doc['objects'] if o['expect'] == 'pass']
+        fails = [o for o in doc['objects'] if o['expect'] == 'fail']
+        assert (passes and fails) or doc['reason'].strip(), spec['button']
+    export = load_expected('handoff.export')
+    assert {(o['name'], o['expect'], tuple(o['codes'])) for o in export['objects']} == {
+        ('SM_FragBH_ExpOk_Main', 'pass', ()), ('SM_FragBH_ExpBad_Main', 'fail', ('duplicate_name',))}
+    for button in order[1:]:
+        doc = load_expected(button)
+        assert [o['expect'] for o in doc['objects']] == ['error'] and 'run_agr_tools_handoff_native' in doc['reason']
+    names = {o['name'] for o in _catalog()['objects']}
+    assert '_cam_База 1.1' in names and '_base_1_1' in names

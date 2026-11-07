@@ -414,7 +414,7 @@ def v2_names(plan=None) -> tuple[str, ...]:
     from . import catalog as v2
     plan = plan or v2.load_plan()
     return tuple(v2.tool_name(r["id"]) for r in v2.stage_rows(plan)) + ("agr_check_run", "agr_op_preview",
-                                                                       "agr_op_apply")
+                                                                       "agr_op_apply") + v2.HANDOFF_TOOLS
 
 
 LISTED = PHASE0 + v2_names()  # tools/list without AGR_MCP_UNSAFE (plus whatever ops_d108 registers)

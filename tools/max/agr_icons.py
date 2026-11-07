@@ -314,6 +314,22 @@ BASE: dict[str, tuple[str, str]] = {
                  f'<circle {_F} cx="12" cy="13" r="0.9"/>'),
     "agentok": ("Приём от агента",
                 f'<path {_S} d="M4 4h16v11H11l-5 4.5V15H4Z"/><path {_S} d="M8.5 9.5l2.5 2.5 4.5-5"/>'),
+    # 1.1: Max <-> Blender handoff on the agent stage and the Claude dock
+    "handoffout": ("Хендофф: выгрузить в Blender",
+                   f'<path {_S} d="M3 8l6-3.5L15 8v7l-6 3.5L3 15Z"/><path {_S} d="M3 8l6 3.5L15 8M9 11.5v7"/>'
+                   f'<path {_S} d="M15.5 12h6M19 9.5l2.5 2.5-2.5 2.5"/>'),
+    "handoffin": ("Хендофф: принять из Blender",
+                  f'<path {_S} d="M9 8l6-3.5L21 8v7l-6 3.5L9 15Z"/><path {_S} d="M9 8l6 3.5L21 8M15 11.5v7"/>'
+                  f'<path {_S} d="M2.5 12h6M6 9.5l2.5 2.5L6 14.5"/>'),
+    "handoffcheck": ("Хендофф: сверка круга",
+                     f'<path {_S} d="M4 9a8 8 0 0 1 14-3.5M20 15a8 8 0 0 1-14 3.5"/><path {_S} d="M18 2.5v3.5h-3.5'
+                     f'M6 21.5V18h3.5"/><path {_S} d="M8.5 12l2.5 2.5 4.5-5"/>'),
+    "matrestore": ("Восстановить материалы",
+                   f'<circle {_S} cx="10" cy="10" r="6.5"/><path {_S} d="M6 8.5a4.5 4.5 0 0 1 6-2.5"/>'
+                   f'<path {_S} d="M13 20a6 6 0 1 0 1-9"/><path {_S} d="M13.5 15.5V20h4.5"/>'),
+    "agentdock": ("Claude-док",
+                  f'<rect {_S} x="3" y="3" width="18" height="18" rx="1.5"/><path {_S} d="M14 3v18"/>'
+                  f'<path {_S} d="M16.5 7.5h2M16.5 10.5h2M16.5 13.5h2"/><path {_S} d="M6 9l3 3-3 3"/>'),
     # status / control icons for the result table and the progress row
     "ok": ("Статус: ок",
            f'<circle {_S} cx="12" cy="12" r="9"/><path {_S} d="M7.5 12.5l3 3 6-6.5"/>'),

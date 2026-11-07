@@ -45,7 +45,9 @@ FILES = ('mzp.run', 'install.ms', 'startup.ms', 'agr_tools.mcr', 'menu.ms', 'run
          'facadeatlas_core.py', 'facadeatlas_max.py', 'npm2vpm_core.py', 'npm2vpm_max.py', 'udimview_core.py',
          'udimview_max.py', 'deliver_core.py', 'deliver_max.py', 'ucx10_core.py', 'ucx10_max.py',
          'ucxstairs_core.py', 'ucxstairs_max.py', 'omk_core.py', 'omk_max.py', 'placegeo_core.py', 'placegeo_max.py',
-         'agentbridge_core.py', 'agentbridge_max.py')
+         'agentbridge_core.py', 'agentbridge_max.py',
+         # 1.1: Max <-> Blender handoff (branch BH) and the parameter form of the stage buttons
+         'handoff_core.py', 'handoff_max.py', 'params_core.py')
 # 0.9 (#979): every file below adapters/max/agr_tools/data/ ships as agr_tools/data/<rel> (owner files of branch C:
 # procedural_classes.json, streets/). At most one sub-folder level: install.ms copies data/ and data/<dir>/.
 DATA_DIR = 'data'
