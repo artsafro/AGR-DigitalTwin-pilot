@@ -75,8 +75,25 @@ itself (Ватутино, Прокшино) are a separate source and are not pa
    Nothing goes into `maf/a101`, `a101_fixed` or `flora/a101`.
 7. **Report.** Counts per status, what was staged, open questions. Artem's decisions go to `docs/decisions.md`.
 
+## What the first run taught (2026-11-07)
+
+- Delivered scenes are often **collapsed**: MAF/Flora live inside one `_GroundEl` / `_Flora` mesh on the project
+  atlas. Split the mesh into elements and cluster them by nested XY bboxes; the kinds are then reconstructions
+  (`source: "elements"`) without names. Join them to schedule rows by size (`size_candidates`) and by eye on a grey
+  contact sheet, and record the join in `scene-map.json`.
+- An NPM-only collapse (PPT4) has no High source: no candidate, say so.
+- Look for the High source next to the NPM scene: `*_hp*.max`, the VPM scene, plant files with `FLORA_HP` /
+  `FLORA_LP` layers (`Школа_flora.max`: a High/Low pair per plant, counts = schedule).
+- Revit/DWG planting symbols come in as flat (H = 0) objects: points for counts, not models.
+- Fence and gate schedules are GroundEl, not the MAF library (`out_of_scope`).
+- Texture paths in delivered scenes point at other machines (`A:\Работа\…`, `C:\Users\Terminator\…`). Search by
+  basename across `Desktop/!3D viz` and the backup `B:\Backup\Desktop\!3D viz`, and check the content: the same
+  UDIM tile name exists in several projects with different pictures.
+- Maker spelling: take it from existing A101 archives (`Aira`, not `propose_maf_name`'s `Ayra`).
+- A bench's schedule H may be the seat height: flag, never rescale.
+
 ## Run log
 
 | Date | Projects | Result |
 |---|---|---|
-| 2026-11-07 | BUHV12 (1-я Бухвостова вл.12 к.11, школа), PPT4 (ППТ-4 Рязановское) | first run, see PR |
+| 2026-11-07 | BUHV12 (1-я Бухвостова вл.12 к.11, школа), PPT4 (ППТ-4 Рязановское) | BUHV12: 21 rows in scope -> 14 new_model, 5 variant, 1 exists, 1 not_identified; pilot `Aira_VeloparkovkaVelobox_VP043` (audit 0 findings) and `klen_tatarskiy_t1_h350` (contract 12/13, Low texel) in `_inbox/BUHV12`. PPT4: no candidates (NPM collapse, no qty, MAF xrefs missing). Tables: `library/assets/intake/` |
