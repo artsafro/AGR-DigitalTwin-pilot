@@ -316,9 +316,12 @@ def inspect_maf_zip(path, base):
     return found, members, meta
 
 
-def scan_maf(root, cache_dir, lib='maf', old_index=None, hash_sources=False, progress=None):
+def scan_maf(root, cache_dir, lib='maf', old_index=None, hash_sources=False, progress=None, override_dir=None,
+             meta_dir=None):
     """Index a MAF folder (recursive). Unchanged zips (size+mtime) reuse their record; previews are extracted once
-    into <cache>/previews/. Unreadable / partially synced zips go to `problems`, never stop the scan."""
+    into <cache>/previews/. Unreadable / partially synced zips go to `problems`, never stop the scan.
+    override_dir: corrected archives (same file name) used INSTEAD of the originals (originals stay untouched);
+    meta_dir: library-template JSON files <name>.json that replace the archive sidecar as `meta`."""
     old = {r['source']['path']: r for r in (old_index or {}).get('assets', []) if r.get('source')}
     old_src = (old_index or {}).get('sources', {})
     zips = []
@@ -326,7 +329,11 @@ def scan_maf(root, cache_dir, lib='maf', old_index=None, hash_sources=False, pro
         for f in files:
             if f.lower().endswith('.zip'):
                 zips.append(os.path.relpath(os.path.join(dirpath, f), root).replace('\\', '/'))
-    zips.sort(key=str.lower)
+    if override_dir and os.path.isdir(override_dir):
+        fixed = {f.lower(): f for f in os.listdir(override_dir) if f.lower().endswith('.zip')}
+        zips = [os.path.relpath(os.path.join(override_dir, fixed[os.path.basename(z).lower()]), root).replace('\\', '/')
+                if os.path.basename(z).lower() in fixed else z for z in zips]
+    zips.sort(key=lambda z: os.path.basename(z).lower())
     records, sources, problems = [], {}, []
     for i, rel in enumerate(zips):
         path = os.path.join(root, rel)
@@ -382,8 +389,19 @@ def scan_maf(root, cache_dir, lib='maf', old_index=None, hash_sources=False, pro
             problems.append({'path': rel, 'error': '{}: {}'.format(type(exc).__name__, exc)})
         if progress:
             progress(i + 1, len(zips), rel)
+    templated = 0
+    if meta_dir and os.path.isdir(meta_dir):
+        for rec in records:
+            p = os.path.join(meta_dir, rec['name'] + '.json')
+            if os.path.isfile(p):
+                with open(p, encoding='utf-8') as f:
+                    rec['meta'] = json.load(f)
+                rec['meta_source'] = 'template'
+                rec['category'] = rec['meta'].get('category') or rec.get('category')
+                templated += 1
     report = {'archives': len(zips), 'indexed': len(records), 'problems': problems,
-              'with_sidecar': sum(1 for r in records if r.get('meta'))}
+              'with_sidecar': sum(1 for r in records if r.get('meta')), 'templated': templated,
+              'overridden': sum(1 for z in zips if z.startswith('..'))}
     return new_index(lib, 'maf_zip', root, records, sources, report)
 
 
@@ -509,7 +527,8 @@ class Selection(object):
 
 DEFAULT_SETTINGS = {'libraries': {}, 'cache_dir': '', 'project_dir': '', 'versions': ['high', 'low'],
                     'materials': 'reuse', 'textures': 'project', 'fbx_scale': 1.0, 'source': 'max',
-                    'gap_m': 1.0, 'row_limit_m': 40.0, 'selection': [], 'preview_dirs': []}
+                    'gap_m': 1.0, 'row_limit_m': 40.0, 'selection': [], 'preview_dirs': [],
+                    'allow_flagged': False, 'maf_measured': ''}
 
 
 def merge_settings(saved):
@@ -568,6 +587,27 @@ def copy_material_name(node_name, taken):
         i += 1
         name = '{}{}'.format(base, i)
     return name
+
+
+IMPORT_BLOCKING = ('foreign_material', 'foreign_texture', 'missing_version', 'object_count')  # no sidecar is not one
+
+
+def gate_plan(plan, audit_rows, allow_flagged=False, blocking=IMPORT_BLOCKING):
+    """Library audit as an import gate (decision 07.11): an asset with a packing error (foreign material/textures,
+    missing version, ...) is not merged unless allow_flagged; pivot and other contract findings travel with the
+    row as `audit` warnings. Returns a new plan."""
+    by = {r['id']: r for r in audit_rows}
+    out = []
+    for row in plan:
+        row = dict(row)
+        a = by.get(row['id'])
+        if a and a['findings']:
+            codes = sorted({f['code'] for f in a['findings']})
+            row['audit'] = codes
+            if row.get('status') == 'merge' and not allow_flagged and set(codes) & set(blocking):
+                row['status'] = 'blocked_by_audit'
+        out.append(row)
+    return out
 
 
 def plan_hash(rows):

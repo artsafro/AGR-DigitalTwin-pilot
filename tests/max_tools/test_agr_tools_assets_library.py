@@ -4,6 +4,7 @@ import importlib.util
 import json
 import subprocess
 import sys
+import zipfile
 from pathlib import Path
 
 import pytest
@@ -170,6 +171,7 @@ def test_audit_maf_contract_findings_and_measured_attach():
     bad['geometry']['low']['tris'] = 900
     bad['materials']['high'] = [{'name': 'M_Other_Thing_9_high', 'class': 'Standardmaterial'}]
     bad['textures']['high'][0]['file'] = 'Other_Thing_9_high_Diffuse.png'
+    bad['textures']['high'][0]['resolution'] = None  # not in the archive -> packing error
     idx = _maf_index(names, meta={names[0]: good, names[1]: bad})
     for r in idx['assets']:
         r['category'] = C.maf_category(r['title'])
@@ -180,9 +182,99 @@ def test_audit_maf_contract_findings_and_measured_attach():
     by = {r['name']: r for r in rep['rows']}
     assert by[names[0]]['findings'] == [] and by[names[0]]['warnings'] == []
     codes = [f['code'] for f in by[names[1]]['findings']]
-    assert {'pivot_height', 'pivot_offset_xy', 'foreign_material', 'foreign_texture'} <= set(codes)
-    assert [w['code'] for w in by[names[1]]['warnings']] == ['low_not_reduced']
+    assert {'pivot_height', 'pivot_offset_xy', 'foreign_texture'} <= set(codes)
+    assert [w['code'] for w in by[names[1]]['warnings']] == ['material_name', 'low_not_reduced']
     assert [w['code'] for w in by[names[2]]['warnings']] == ['measured'] and not by[names[2]]['findings']
     assert [f['code'] for f in by[names[3]]['findings']] == ['no_metadata']
     assert rep['clean'] == 2 and rep['stats']['high_tris']['n'] == 3
     assert rep['categories'] == {'Скамья': 1, 'Качели': 1, 'Урна': 1, 'Стол': 1}
+
+
+def test_shared_family_atlas_is_a_warning_not_an_error():
+    name = 'Mst_Kachalka_170100'
+    m = _sidecar(name)
+    m['materials']['high'] = [{'name': 'M_Mst_Kompleks_118030_high', 'class': 'Standardmaterial'}]
+    for t in m['textures']['high']:
+        t['file'] = t['file'].replace(name, 'Mst_Kompleks_118030')  # present in the archive: resolution read
+    rep = L.audit_maf(_maf_index([name], meta={name: m}))
+    row = rep['rows'][0]
+    assert row['findings'] == []
+    assert {w['code'] for w in row['warnings']} - {'no_category'} == {'shared_material', 'shared_texture'}
+
+def test_maf_template_fills_fields_with_provenance_and_fixes():
+    name = 'Adx_Skameya_1'
+    asset = C.make_record('maf', 'maf', name, manufacturer='Adx', title='Skameya', article='1', category='Скамья')
+    meta = _sidecar(name)
+    research = {'title_ru': 'Скамья «Тест»', 'category': 'Скамья', 'description_ru': 'Скамья из стали.',
+                'tags': ['скамья'], 'manufacturer_url': 'https://adx.example', 'product_url': None,
+                'dimensions_text': '1000×500×700', 'materials': ['сталь'], 'confidence': 'found', 'sources': []}
+    enrich = {'product_url': 'https://shop.example/p', 'materials_text': 'Сталь', 'schedule_names': ['Скамья X']}
+    fix = {'fixes': ['high: pivot XY -> bbox centre'], 'after': {'high': {'above_base_mm': 200.0,
+                                                                         'offset_xy_mm': [0.0, 0.0],
+                                                                         'material': 'M_Adx_Skameya_1_high'}}}
+    t = L.maf_template(asset, meta, research, enrich, {'findings': [], 'warnings': []}, fix)
+    assert t['schema'] == 3 and t['title'] == 'Скамья «Тест»' and t['category'] == 'Скамья'
+    assert t['download_url'] == 'https://shop.example/p' and t['agr']['provenance']['download_url'] == 'project_schedule'
+    assert t['agr']['provenance']['title'] == 'web' and t['agr']['template'] == L.MAF_TEMPLATE
+    assert t['geometry']['high']['pivot']['offset_x_mm'] == 0.0 and t['agr']['fixes'] == fix['fixes']
+    assert meta['geometry']['high']['pivot']['offset_x_mm'] == 0  # input untouched
+    bare = L.maf_template(asset, None)
+    assert bare['title'] is None and bare['category'] == 'Скамья' and bare['agr']['provenance']['category'] == 'title'
+
+
+def test_scan_maf_override_dir_and_template_meta(tmp_path):
+    import json as _json
+    lib_dir = tmp_path / 'maf' / 'a101'
+    _mk = sys.modules['agr_tools_assets_core_lib_test']
+    for n in ('Adx_Stol_1', 'Adx_Stul_2'):
+        p = lib_dir / (n + '.zip')
+        p.parent.mkdir(parents=True, exist_ok=True)
+        with zipfile.ZipFile(p, 'w') as z:
+            z.writestr(n + '_high.fbx', b'old')
+            z.writestr(n + '.png', b'png')
+    fixed = tmp_path / 'maf' / 'a101_fixed'
+    fixed.mkdir()
+    with zipfile.ZipFile(fixed / 'Adx_Stol_1.zip', 'w') as z:
+        z.writestr('Adx_Stol_1_high.fbx', b'new')
+        z.writestr('Adx_Stol_1.png', b'png')
+    meta = tmp_path / 'maf' / 'a101_meta'
+    meta.mkdir()
+    (meta / 'Adx_Stul_2.json').write_text(_json.dumps({'schema': 3, 'category': 'Кресло', 'title': 'Стул'}),
+                                          encoding='utf-8')
+    idx = _mk.scan_maf(str(lib_dir), str(tmp_path / 'c'), lib='maf', override_dir=str(fixed), meta_dir=str(meta))
+    by = {r['name']: r for r in idx['assets']}
+    assert by['Adx_Stol_1']['source']['path'] == '../a101_fixed/Adx_Stol_1.zip'
+    assert by['Adx_Stul_2']['meta']['title'] == 'Стул' and by['Adx_Stul_2']['category'] == 'Кресло'
+    assert idx['report']['overridden'] == 1 and idx['report']['templated'] == 1
+
+
+def test_repack_keeps_members_replaces_fixed_and_sidecar(tmp_path):
+    spec = importlib.util.spec_from_file_location('build_maf_template_t', ROOT / 'tools/assets/build_maf_template.py')
+    b = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(b)
+    src = tmp_path / 'A_B_1.zip'
+    with zipfile.ZipFile(src, 'w') as z:
+        for n, d in (('A_B_1.max', b'oldmax'), ('A_B_1.png', b'png'), ('A_B_1_high.fbx', b'oldfbx'),
+                     ('A_B_1.json', b'{}'), ('T_A_B_1_high_Diffuse.png', b'tex')):
+            z.writestr(n, d)
+    fx = tmp_path / 'fixed'
+    (fx / 'A_B_1.fbm').mkdir(parents=True)
+    (fx / 'A_B_1.max').write_bytes(b'newmax')
+    (fx / 'A_B_1_high.fbx').write_bytes(b'newfbx')
+    (fx / 'A_B_1.fbm' / 'junk.png').write_bytes(b'x')
+    dst = tmp_path / 'out.zip'
+    b.repack(str(src), str(fx), {'name': 'A_B_1', 'title': 'Т'}, dst)
+    with zipfile.ZipFile(dst) as z:
+        assert sorted(z.namelist()) == sorted(['A_B_1.max', 'A_B_1.png', 'A_B_1_high.fbx', 'T_A_B_1_high_Diffuse.png',
+                                               'A_B_1.json'])
+        assert z.read('A_B_1.max') == b'newmax' and z.read('A_B_1.png') == b'png'
+        assert json.loads(z.read('A_B_1.json').decode('utf-8'))['title'] == 'Т'
+
+
+def test_propose_maf_name_q28():
+    assert L.propose_maf_name('Города или аналог', 'Скамейка стальная «Андромеда» / Артикул: 14122', '14122') == \
+        'Goroda_SkameykaStalnayaAndromeda_14122'
+    assert L.propose_maf_name('Города', 'Стул на ножке "Бар"', None) == 'Goroda_StulNaNozhkeBar_0000'
+    assert L.propose_maf_name(None, 'Качалка балансир / Артикул: ИО 0410-2', 'ИО 0410-2') == \
+        'NoName_KachalkaBalansir_IO0410-2'
+    assert C.parse_maf(L.propose_maf_name('Города', 'Урна «Арго»', '19648')) is not None

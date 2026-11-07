@@ -227,6 +227,15 @@ def run_import(index, ids, settings, cache_dir, scene_label=None, localappdata=N
     s = core.merge_settings(settings)
     existing = scene_assets()
     plan = core.import_plan(index, ids, s['versions'], existing.keys())
+    if index['adapter'] == 'maf_zip':  # decision 07.11: packing errors block the import unless allow_flagged
+        alib = _sibling('assets_library')
+        audit_index = index
+        mpath = s.get('maf_measured') or str(Path(__file__).resolve().parents[3] / 'library/assets/maf_measured.json')
+        if os.path.isfile(mpath):  # archives without a sidecar are judged by their Max measurement
+            import json
+            with open(mpath, encoding='utf-8') as f:
+                audit_index, _unknown = alib.attach_measured(index, json.load(f)['measured'])
+        plan = core.gate_plan(plan, alib.audit_maf(audit_index)['rows'], s['allow_flagged'])
     by_id = {r['id']: r for r in index['assets']}
     k = m_per_unit()
     report = {'plan': plan, 'plan_sha256': core.plan_hash(plan), 'imported': [], 'errors': [],
@@ -308,7 +317,8 @@ def run_import(index, ids, settings, cache_dir, scene_label=None, localappdata=N
             rt.enableSceneRedraw()
     rt.freeSceneBitmaps()
     counts = {'merged': len(report['imported']),
-              'skipped': sum(1 for r in plan if r['status'] != 'merge'), 'errors': len(report['errors'])}
+              'skipped': sum(1 for r in plan if r['status'] != 'merge'), 'errors': len(report['errors']),
+              'blocked_by_audit': sum(1 for r in plan if r['status'] == 'blocked_by_audit')}
     report['counts'] = counts
     report['duration_s'] = round(time.perf_counter() - t0, 3)
     status = 'done' if not report['errors'] else ('partial' if report['imported'] else 'failed')

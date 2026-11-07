@@ -147,6 +147,160 @@ def _g(m, *path):
     return m
 
 
+MAF_TEMPLATE = 'agr.maf/1'
+RESEARCH_KEYS = ('title_ru', 'category', 'description_ru', 'tags', 'manufacturer_full', 'manufacturer_url',
+                 'product_url', 'dimensions_text', 'dims_mm', 'materials', 'dims_check', 'confidence', 'sources',
+                 'notes')
+
+
+def height_check(meta, research):
+    """Model height vs the manufacturer height (web research). `visible` = bbox z minus pivot height (pivot taken
+    as ground level). no_footing_suspected: the FULL model height matches the catalogue (|z - h| <= 80 mm) while
+    the pivot sits >= 150 mm above the bottom: placed on Ground by its pivot the object would float."""
+    d = (research or {}).get('dims_mm') or {}
+    g = ((meta or {}).get('geometry') or {}).get('high') or {}
+    bb, pv = g.get('bbox'), (g.get('pivot') or {}).get('above_bbox_base_mm')
+    if not d.get('h') or not bb or pv is None:
+        return None
+    h = float(d['h'])
+    h = h * 1000 if h < 50 else h  # some sites give metres
+    z = float(bb['z'])
+    return {'catalogue_h_mm': round(h), 'model_z_mm': round(z), 'pivot_above_base_mm': pv,
+            'visible_matches': abs((z - pv) - h) <= 80, 'no_footing_suspected': abs(z - h) <= 80 and pv >= 150}
+
+
+def maf_template(asset, meta, research=None, enrich=None, audit_row=None, fix=None):
+    """One MAF in the library template (owner 07.11: "bring every MAF to one template").
+
+    The A101 sidecar (schema 3) shape is kept so existing readers work; its empty descriptive fields are filled
+    (title, category, description, tags, manufacturer_url, download_url = product page, dimensions_text) from the
+    web research, the project schedules (enrich) and, when nothing is known, inference (marked). An `agr` block
+    records provenance: where every value came from, the audit state, the fixes applied and the measurement."""
+    import json
+    t = json.loads(json.dumps(meta or {}))
+    r = research or {}
+    e = enrich or {}
+    t['schema'] = t.get('schema') if t.get('schema') == 3 else 3
+    t['name'] = asset['name']
+    t['identity'] = {'manufacturer': asset.get('manufacturer'), 'object_name': asset.get('title'),
+                     'article': asset.get('article')}
+    title = r.get('title_ru') or (e.get('schedule_names') or [None])[0]
+    t['title'] = title
+    t['category'] = r.get('category') or asset.get('category')
+    t['description'] = r.get('description_ru') or t.get('description')
+    t['tags'] = r.get('tags') or t.get('tags') or []
+    t['manufacturer_url'] = r.get('manufacturer_url') or t.get('manufacturer_url')
+    t['download_url'] = r.get('product_url') or e.get('product_url') or t.get('download_url')
+    t['dimensions_text'] = r.get('dimensions_text') or t.get('dimensions_text')
+    if fix:  # geometry/material corrections measured on the fixed archive
+        for v, after in (fix.get('after') or {}).items():
+            g = (t.setdefault('geometry', {})).setdefault(v, {})
+            piv = g.setdefault('pivot', {})
+            piv.update(above_bbox_base_mm=after['above_base_mm'], offset_x_mm=after['offset_xy_mm'][0],
+                       offset_y_mm=after['offset_xy_mm'][1], inside_bbox=True)
+            if after.get('material'):
+                t.setdefault('materials', {})[v] = [{'name': after['material'],
+                                                     'class': ((t.get('materials') or {}).get(v) or
+                                                               [{'class': None}])[0].get('class')}]
+    t.pop('measured', None)
+    t_height = height_check(t, r)
+    t['agr'] = {
+        'height_check': t_height,
+        'template': MAF_TEMPLATE,
+        'source': {'sidecar': bool(meta) and not (meta or {}).get('measured'),
+                   'measured': bool((meta or {}).get('measured')), 'fixed_archive': bool(fix)},
+        'research': {k: r.get(k) for k in RESEARCH_KEYS if k in r} if r else None,
+        'provenance': {'title': 'web' if r.get('title_ru') and r.get('confidence') in ('found', 'partial') else
+                       ('inferred' if r.get('title_ru') else ('project_schedule' if title else None)),
+                       'category': 'web' if r.get('category') else ('title' if asset.get('category') else None),
+                       'download_url': 'web' if r.get('product_url') else
+                       ('project_schedule' if e.get('product_url') else None)},
+        'materials_text': ', '.join(r.get('materials') or []) or e.get('materials_text'),
+        'project_schedule_names': e.get('schedule_names') or [],
+        'fixes': (fix or {}).get('fixes', []),
+        'audit': {'findings': [f['code'] for f in (audit_row or {}).get('findings', [])],
+                  'warnings': [w['code'] for w in (audit_row or {}).get('warnings', [])]},
+    }
+    return t
+
+
+_MAKERS = {'города': 'Goroda', 'хоббика': 'Hobbyka', 'игратекс': 'Igrateks', 'место': 'Mesto'}
+
+
+def propose_maf_name(maker, name, article):
+    """Q28 name for a project MAF: Manufacturer_Object_Article in CamelCase transliteration.
+    'Города или аналог' / 'Скамейка стальная «Андромеда» / Артикул: 14122' / '14122' ->
+    'Goroda_SkameykaStalnayaAndromeda_14122'. Missing article -> '0000' (A101 convention)."""
+    mk = str(maker or '').lower().split(' или ')[0].split('/')[0].strip()
+    m = _MAKERS.get(mk) or ''.join(w.capitalize() for w in re.findall(r'[a-z0-9]+', translit(mk))) or 'NoName'
+    head = re.split(r'\s*/\s*|\s*артикул', str(name or ''), flags=re.IGNORECASE)[0]
+    words = re.findall(r'[a-z0-9]+', translit(head.lower()))
+    obj = ''.join(w.capitalize() for w in words)[:60] or 'Object'
+    art = ''.join(translit(ch.lower()).upper() if ch.isupper() else translit(ch) for ch in str(article or ''))
+    art = re.sub(r'[^0-9A-Za-z.\-]', '', art) or '0000'
+    return '{}_{}_{}'.format(m, obj, art)
+
+
+def _article_key(a):
+    """Article key: transliterated (ИО 1005Т-11 = IO1005T11), lower case, letters and digits only."""
+    return re.sub(r'[^0-9a-z]', '', translit(str(a or '').lower()))
+
+
+def project_maf(project, schedule, site_set, a101_index):
+    """MAF of a project made through Kanban cards (e.g. VATUTINO-SITE #313: site-schedule.json from the SPOZU
+    tables + site-maf-set.json, the built set) joined to the A101 library by article.
+
+    Each schedule row -> status 'a101' (an A101 archive with the same article: the library already has it; the
+    row's link/material enrich that archive), 'project_built' (a set position built in the project: files on the
+    project machine, v005 material IDs, 512 atlas) or 'missing' (no model anywhere)."""
+    by_art = {}
+    for a in a101_index['assets']:
+        base = _article_key(re.sub(r'-\d+$', '', a.get('article') or ''))  # 18694-1 / -2 are variants of 18694
+        for k in {_article_key(a.get('article')), base}:
+            if k:
+                by_art.setdefault(k, []).append(a['name'])
+    built = {}
+    for p in (site_set or {}).get('positions', []):
+        m = re.match(r'\*?(T\d+)/(\d+)$', str(p.get('schedule') or ''))
+        if m:
+            built[(m.group(1), int(m.group(2)))] = p
+    rows = []
+    for r in schedule.get('rows', []):
+        key = (str(r.get('table')).lstrip('*'), int(r.get('row') or 0))
+        art = _article_key(r.get('article'))
+        if not art or len(art) < 4:  # article only inside the name ("Тренажер ... 217100")
+            m2 = re.search(r'(\d{5,})', str(r.get('name') or ''))
+            art = m2.group(1) if m2 else art
+        rec = {'project': project, 'table': r.get('table'), 'row': r.get('row'), 'name': r.get('name'),
+               'article': r.get('article'), 'maker': r.get('maker'), 'qty': r.get('qty'),
+               'dims_mm': [r.get('L_mm'), r.get('W_mm'), r.get('H_mm')], 'material': r.get('material'),
+               'link': r.get('link'), 'block': r.get('block'), 'a101': [], 'built': None,
+               'custom': 'индивидуал' in str(r.get('name') or '').lower()}
+        if art and len(art) >= 4 and art in by_art:
+            rec['a101'] = sorted(by_art[art])
+        if key in built:
+            p = built[key]
+            rec['built'] = {'set_id': p.get('set_id'), 'source': p.get('catalogue_id'),
+                            'npm_fbx': (p.get('npm') or {}).get('fbx'), 'vpm_fbx': (p.get('vpm') or {}).get('fbx'),
+                            'tris_npm': (p.get('npm') or {}).get('triangles'),
+                            'tris_vpm': (p.get('vpm') or {}).get('triangles'),
+                            'materials': sorted(set((p.get('material_map') or {}).values())),
+                            'verdict': ((p.get('npm') or {}).get('dimension') or {}).get('verdict')}
+        rec['status'] = 'a101' if rec['a101'] else ('project_built' if rec['built'] else 'missing')
+        rows.append(rec)
+    counts = {}
+    for r in rows:
+        counts[r['status']] = counts.get(r['status'], 0) + 1
+    enrich = {}
+    for r in rows:
+        for n in r['a101']:
+            e = enrich.setdefault(n, {'product_url': None, 'materials_text': None, 'schedule_names': []})
+            e['product_url'] = e['product_url'] or r.get('link')
+            e['materials_text'] = e['materials_text'] or r.get('material')
+            e['schedule_names'].append(r.get('name'))
+    return {'project': project, 'rows': rows, 'counts': counts, 'a101_enrich': enrich}
+
+
 def attach_measured(index, measured):
     """Copy of the index where archives WITHOUT a sidecar get the Max measurement as `meta` (measured: true).
     A sidecar always wins; a measurement for an unknown name is ignored and reported."""
@@ -211,12 +365,22 @@ def audit_maf(index, contract=MAF_CONTRACT):
                 mats = _g(m, 'materials', v) or []
                 if len(mats) != contract['materials_per_version']:
                     f.append(('material_count', '{}: {}'.format(v, len(mats))))
-                for mt in mats:  # the material and its maps must belong to this asset (packing copy errors)
-                    if mt.get('name') and mt['name'].lower() != 'm_{}_{}'.format(a['name'], v).lower():
-                        f.append(('foreign_material', '{}: {}'.format(v, mt['name'])))
-                for t in _g(m, 'textures', v) or []:
-                    if t.get('file') and a['name'].lower() not in t['file'].lower():
+                # The material and maps should carry this asset's name. A map of another asset that IS inside the
+                # archive (resolution read) is a shared atlas of a product family (Mesto: measured, byte-identical
+                # files in both archives): a warning. A map that is not there is a packing error.
+                shared = [t for t in (_g(m, 'textures', v) or []) if t.get('file') and
+                          a['name'].lower() not in t['file'].lower()]
+                for t in shared:
+                    if t.get('resolution'):
+                        w.append(('shared_texture', '{}: {}'.format(v, t['file'])))
+                    else:
                         f.append(('foreign_texture', '{}: {}'.format(v, t['file'])))
+                for mt in mats:
+                    if mt.get('name') and mt['name'].lower() != 'm_{}_{}'.format(a['name'], v).lower():
+                        if shared and all(t.get('resolution') for t in shared):
+                            w.append(('shared_material', '{}: {}'.format(v, mt['name'])))
+                        else:
+                            w.append(('material_name', '{}: {}'.format(v, mt['name'])))
                 tex = {t.get('slot'): t for t in (_g(m, 'textures', v) or [])}
                 for slot, res in contract['textures'][v].items():
                     t = tex.get(slot)

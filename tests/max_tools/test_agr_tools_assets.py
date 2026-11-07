@@ -415,3 +415,19 @@ def test_generated_previews_fill_only_real_gaps(tmp_path):
     assert by['eta_herb_t1_h20']['preview_match'] == 'generated'
     assert core.preview_abspath(idx, by['eta_herb_t1_h20'], 'x') == str(gen / 'eta_herb_t1_h20_PREVIEW.png')
     assert idx['report']['preview_match'] == {'exact': 3, 'fuzzy': 1, 'generated': 1, 'none': 0}
+
+
+def test_gate_plan_blocks_packing_errors_and_carries_warnings():
+    plan = [{'id': 'maf:A', 'version': 'high', 'status': 'merge'}, {'id': 'maf:A', 'version': 'low', 'status': 'merge'},
+            {'id': 'maf:B', 'version': 'high', 'status': 'merge'}, {'id': 'maf:C', 'version': 'high', 'status': 'merge'},
+            {'id': 'maf:D', 'version': 'high', 'status': 'already_in_scene'}]
+    rows = [{'id': 'maf:A', 'findings': [{'code': 'foreign_texture'}, {'code': 'pivot_height'}]},
+            {'id': 'maf:B', 'findings': [{'code': 'pivot_offset_xy'}]}, {'id': 'maf:C', 'findings': []},
+            {'id': 'maf:D', 'findings': [{'code': 'foreign_material'}]}]
+    out = core.gate_plan(plan, rows)
+    assert [r['status'] for r in out] == ['blocked_by_audit', 'blocked_by_audit', 'merge', 'merge',
+                                         'already_in_scene']
+    assert out[0]['audit'] == ['foreign_texture', 'pivot_height'] and out[2]['audit'] == ['pivot_offset_xy']
+    assert 'audit' not in out[3] and plan[0]['status'] == 'merge'  # input untouched
+    assert [r['status'] for r in core.gate_plan(plan, rows, allow_flagged=True)][:2] == ['merge', 'merge']
+    assert core.gate_plan(plan, [{'id': 'maf:C', 'findings': [{'code': 'no_metadata'}]}])[3]['status'] == 'merge'
