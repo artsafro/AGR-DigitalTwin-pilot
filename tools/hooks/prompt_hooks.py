@@ -1,10 +1,10 @@
-"""UserPromptSubmit dispatcher for Claude Code: context_watch.py, `usage_log.py prompt` and the acceptance
-nudge in one process.
+"""UserPromptSubmit dispatcher for Claude Code: context_watch.py, `usage_log.py prompt`, the scenario router
+(scenario_router.py, docs/scenarios/) and the acceptance nudge in one process.
 
   py -3 tools/hooks/prompt_hooks.py      hook input JSON on stdin (registered in .claude/settings.json)
 
-Reads stdin once, logs a /command with usage_log.write() and prints the additional context of context_watch.check()
-and of accept_nudge() (a prompt that accepts a result: «принято», «все норм», ... - the acceptance pattern of
+Reads stdin once, logs a /command with usage_log.write() and prints the additional context of context_watch.check(),
+of scenario_router.check() (the production cell named by the prompt) and of accept_nudge() (a prompt that accepts a result: «принято», «все норм», ... - the acceptance pattern of
 tools/retro/condense_transcript.py, #1036; docs/agents/WORKFLOW.md, "Session retro"). All parts stay advisory:
 any failure of one part is silent and never hides the others. The scripts keep working on their own (usage_log.py
 also has post / stats / backfill and is imported by skill_gate.py).
@@ -50,9 +50,15 @@ def main():
         nudge = accept_nudge(payload)
     except Exception:                                # advisory
         nudge = ""
-    if nudge:
-        spec = out.setdefault("hookSpecificOutput", {"hookEventName": "UserPromptSubmit"})
-        spec["additionalContext"] = "\n\n".join(t for t in (spec.get("additionalContext"), nudge) if t)
+    try:
+        import scenario_router
+        scenario = scenario_router.check(payload).get("hookSpecificOutput", {}).get("additionalContext", "")
+    except Exception:                                # advisory
+        scenario = ""
+    for extra in (scenario, nudge):
+        if extra:
+            spec = out.setdefault("hookSpecificOutput", {"hookEventName": "UserPromptSubmit"})
+            spec["additionalContext"] = "\n\n".join(t for t in (spec.get("additionalContext"), extra) if t)
     if out:
         print(json.dumps(out))
     return 0
