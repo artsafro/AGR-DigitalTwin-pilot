@@ -87,6 +87,20 @@ def test_slash_command_is_ignored():
     assert router.check({"prompt": "/handover ВПМ ОКС"}) == {}
 
 
+@pytest.mark.parametrize("prompt", [
+    "<pasted_content id=\"x\">ВПМ ОКС</pasted_content>",
+    "Отчёт доски: ВПМ ОКС. " + "Задача заведена, ждёт ответа. " * 60,
+    "Статус: НПМ и ВПМ, ОКС и Ground, флора и МАФ — всё по плану",
+])
+def test_pasted_reports_stay_silent(prompt):
+    assert router.check({"prompt": prompt}) == {}
+
+
+def test_two_cells_still_route():
+    out = router.check({"prompt": "ВПМ: ОКС и благоустройство"})
+    assert "oks-vpm" in out["hookSpecificOutput"]["additionalContext"]
+
+
 def test_prompt_dispatcher_carries_the_scenario(tmp_path):
     env = {k: v for k, v in os.environ.items() if not k.startswith("CLAUDE_CODE_")}
     env |= {"AGR_USAGE_LOG": str(tmp_path / "u.jsonl"), "CLAUDE_PROJECT_DIR": str(ROOT)}
