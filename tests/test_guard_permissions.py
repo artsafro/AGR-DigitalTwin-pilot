@@ -127,6 +127,66 @@ def test_guard_repo_and_branch_rules_generated_probe_1027():
     assert wrong_allow == [] and wrong_ask == []
 
 
+# #1027 review round 1: force delete in any order/position and short-flag clusters;
+# quoted `repo` subcommand tokens. Safe deletes (-d, --delete, -dr) stay allowed.
+@pytest.mark.parametrize("protocol", ["claude", "antigravity"])
+@pytest.mark.parametrize("command", [
+    "git branch -f -d X",
+    "git branch -d X -f",
+    "git branch -d X --force",
+    "git branch --force --delete X",
+    "git branch --delete X --force",
+    "git branch -df X",
+    "git branch -fd X",
+    "git branch -qD X",
+    "git branch -Dq X",
+    "git branch X -D",
+    "gh 'repo' edit --visibility public",
+    "gh \"repo\" archive o/n",
+    "gh --repo o/n 'repo' view",
+    "gh '--repo' o/n repo view",
+    "'gh' repo delete x",
+])
+def test_guard_round1_force_delete_and_quoted_repo_ask_1027(command, protocol):
+    assert guard(command, protocol) == "ask"
+
+
+@pytest.mark.parametrize("protocol", ["claude", "antigravity"])
+@pytest.mark.parametrize("command", [
+    "git branch -d x",
+    "git branch --delete x",
+    "git branch -dr origin/x",
+    "git branch -d feature/fix-x",
+    "git branch -d x --format=%(refname)",
+    "gh pr view 1 --repo 'o/repo'",
+    "gh pr create --title 'repo cleanup' --head harness/repo-x",
+])
+def test_guard_round1_safe_forms_allowed_1027(command, protocol):
+    assert guard(command, protocol) == "allow"
+
+
+def test_guard_force_delete_any_order_generated_probe_1027():
+    """Probe: every permutation of a delete flag and a force flag around the branch name asks;
+    a delete flag alone (any cluster without f) never asks for the force rule."""
+    import itertools
+    shell_reason = _load_guard().shell_reason
+    deletes, forces = ["-d", "--delete"], ["-f", "--force"]
+    names = ["x", "repo-hygiene", "feature/fix-f", "a-d"]
+    asked, allowed = [], []
+    for d, f, name in itertools.product(deletes, forces, names):
+        for order in itertools.permutations([d, f, name]):
+            asked.append("git branch " + " ".join(order))
+    for cluster in ("-D", "-df", "-fd", "-qD", "-Dq", "-rD", "-dqf", "-Dr"):
+        for name in names:
+            asked += [f"git branch {cluster} {name}", f"git branch {name} {cluster}"]
+    for d, name in itertools.product(deletes + ["-dr", "-dq", "-qd", "-rd"], names):
+        allowed += [f"git branch {d} {name}", f"git branch {name} {d}"]
+    wrong_ask = [c for c in asked if shell_reason(c) != "force branch delete"]
+    wrong_allow = [c for c in allowed if shell_reason(c) is not None]
+    assert len(asked) == 160 and len(allowed) == 48
+    assert wrong_ask == [] and wrong_allow == []
+
+
 def test_guard_shell_reason_fail_closed_inputs_1027():
     shell_reason = _load_guard().shell_reason
     assert shell_reason("") is None
