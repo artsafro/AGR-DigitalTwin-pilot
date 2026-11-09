@@ -40,7 +40,8 @@ def test_port_check_comes_before_any_question_to_the_user():
 
 def test_own_instance_on_hashed_versioned_copy_documented():
     own = section(SKILL.read_text(encoding="utf-8"), "Agent-owned Blender on a copy")
-    for token in ("5.1.2", "--online-mode", "9877", "sha256sum", "_v", "copy"):
+    for token in ("5.1.2", "--online-mode", "9877", "sha256sum", "_v", "copy",
+                  "test ! -e"):  # fail-closed copy: cp -n skips with exit 0
         assert token in own, token
     assert "never" in own.lower() and "toggle" in own.lower()
 

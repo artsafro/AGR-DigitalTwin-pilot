@@ -58,8 +58,10 @@ bridge in his instance; never touch his instance or its preferences.
 
 1. Port 9877 must be free (step 0). If a Blender the agent did not start holds
    it, that is the user's: inspect it read-only or use `blender -b` on a copy.
-2. Copy the scene to a new versioned path (`<name>_agent_v001.blend`, never
-   overwrite; `cp -n`), then `sha256sum <source> <copy> > SHA256SUMS.txt`.
+2. Copy the scene to a new versioned path (`<name>_agent_v001.blend`) with
+   `test ! -e <copy> && cp <source> <copy>`: an existing target or a copy path
+   equal to the source stops with exit 1 (`cp -n` would skip silently with exit
+   0). Then `sha256sum <source> <copy> > SHA256SUMS.txt`.
 3. Launch: `"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe"
    --online-mode <copy>` (terminal `background=true`). `--online-mode` enables
    Online Access for this session only; the add-on's Auto Start opens the bridge
