@@ -133,8 +133,27 @@ def _point_distance(a, b) -> float:
     return math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2 + (a[2] - b[2]) ** 2)
 
 
+def _edge_cell_size(vertices, edge_polys) -> float:
+    """Spatial-hash cell size = the median edge length (at least 1 um), so each edge spans ~1 cell."""
+    lengths = []
+    for (a, b) in edge_polys:
+        lengths.append(_point_distance(vertices[a], vertices[b]))
+    if not lengths:
+        return 1.0
+    lengths.sort()
+    return max(lengths[len(lengths) // 2], 1e-6)
+
+
 def _t_junction_count(vertices, polygons, tol: float) -> int:
-    """Number of vertices lying strictly on an edge of a *different* polygon (T-junctions)."""
+    """Number of vertices lying strictly on an edge of a *different* polygon (T-junctions).
+
+    O(V + E) via a uniform spatial hash: each edge is bucketed into the grid cells its
+    (tol-expanded) bounding box overlaps, and a vertex queries only its own cell. A vertex within
+    ``tol`` of an edge is guaranteed to share a cell with it, so no candidate is missed. The cell
+    size is the median edge length, so each edge lands in a handful of cells and each vertex tests
+    a few edges instead of every edge in the mesh (the previous O(V*E) scan took ~115 s on a clean
+    60x60 grid and would stall ``--master`` on a real work FBX).
+    """
     edge_polys = {}   # (a, b) -> set of polygon indices containing that edge
     vert_polys = {}   # vertex -> set of polygon indices containing that vertex
     for pi, poly in enumerate(polygons):
@@ -145,14 +164,29 @@ def _t_junction_count(vertices, polygons, tol: float) -> int:
             edge_polys.setdefault((min(a, b), max(a, b)), set()).add(pi)
         for v in poly:
             vert_polys.setdefault(v, set()).add(pi)
+
+    cell = _edge_cell_size(vertices, edge_polys)
+    grid = {}
+    for (a, b) in edge_polys:
+        va, vb = vertices[a], vertices[b]
+        lo = [min(va[i], vb[i]) - tol for i in range(3)]
+        hi = [max(va[i], vb[i]) + tol for i in range(3)]
+        k0 = (int(math.floor(lo[0] / cell)), int(math.floor(lo[1] / cell)), int(math.floor(lo[2] / cell)))
+        k1 = (int(math.floor(hi[0] / cell)), int(math.floor(hi[1] / cell)), int(math.floor(hi[2] / cell)))
+        for ix in range(k0[0], k1[0] + 1):
+            for iy in range(k0[1], k1[1] + 1):
+                for iz in range(k0[2], k1[2] + 1):
+                    grid.setdefault((ix, iy, iz), []).append((a, b))
+
     count = 0
     for v_idx, p in enumerate(vertices):
         if not (isinstance(p, (list, tuple)) and len(p) >= 3) or v_idx not in vert_polys:
             continue
-        for (a, b), polys_of_edge in edge_polys.items():
+        key = (int(math.floor(p[0] / cell)), int(math.floor(p[1] / cell)), int(math.floor(p[2] / cell)))
+        for (a, b) in grid.get(key, ()):
             if v_idx == a or v_idx == b:
                 continue
-            if vert_polys[v_idx] & polys_of_edge:
+            if vert_polys[v_idx] & edge_polys[(a, b)]:
                 continue  # same polygon: a collinear corner, not a T-junction
             va, vb = vertices[a], vertices[b]
             if _point_distance(p, va) < tol or _point_distance(p, vb) < tol:

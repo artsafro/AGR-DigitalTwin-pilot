@@ -13,6 +13,7 @@ import validate_package as vp
 from test_scene import mesh, rb, statuses
 from test_validator import PROFILES, STEM, good_files, png
 from twinqa.master import master_findings
+from twinqa.look import edge_loop_findings
 from twinqa.scene import main_glass_findings, scene_findings
 
 # --- SYNTHETIC geometry helpers --------------------------------------------------------------------------------
@@ -451,3 +452,86 @@ def test_ucx_maf_flora_never_fails_when_ucx_strictly_below():
         assert _ucx_maf_status((0, 0, -1 - dz), (1, 1, -dz), (0, 0, 0), (1, 1, 1)) == "pass"
         cases += 1
     assert cases == 5
+
+
+# --- Reviewer round-1 P1 regressions ---------------------------------------------------------------
+
+
+def test_ucx_seated_maf_sunk_10cm_passes_flo15():
+    # UCX top flush with the ground surface; _GroundEl sunk 10 cm per [D095] -> the sunk band is
+    # exempt from coverage, so this must not fail.
+    assert _ucx_maf_status((0, 0, -1), (1, 1, 0), (0.2, 0.2, -0.1), (0.8, 0.8, 1)) == "pass"
+
+
+def test_ucx_seated_flora_sunk_10cm_passes_flo15():
+    # Same seating, _Flora sunk 10 cm per [D100].
+    assert _ucx_maf_status((0, 0, -1), (1, 1, 0), (0.2, 0.2, -0.1), (0.8, 0.8, 1),
+                           name="SM_Test_Flora") == "pass"
+
+
+def test_ucx_thin_slab_through_maf_fails_flo15():
+    # A thin UCX slab crossing the MAF interior has no MAF vertex inside it, but it intersects the
+    # MAF mesh; the hull-triangle SAT test must catch it.
+    assert _ucx_maf_status((0.4, -1, 0.4), (0.6, 2, 0.6), (0, 0, 0), (1, 1, 1)) == "fail"
+
+
+def test_ucx_maf_without_face_geometry_is_not_run_names_mesh_flo15():
+    ground = mesh(name="SM_Test_Ground", materials=["M_Ground"])
+    bare = mesh(name="SM_Test_GroundEl")  # no face_geometry
+    found = scene_findings(rb(ground, _ucx_box("UCX_SM_Test_Ground_001", (0, 0, 0), (1, 1, 1)), bare),
+                           "vpm", "ground", PROFILES.vpm)
+    f = next(f for f in found["V010"] if f.name == "UCX vs MAF/Flora intersection")
+    assert f.status == "not_run"
+    assert "SM_Test_GroundEl" in f.observed
+
+
+def test_ucx_maf_empty_vertices_is_not_run_flo15():
+    ground = mesh(name="SM_Test_Ground", materials=["M_Ground"])
+    empty = mesh(name="SM_Test_GroundEl")
+    empty["face_geometry"] = {"vertices": [], "polygons": [[0, 1, 2]]}
+    found = scene_findings(rb(ground, _ucx_box("UCX_SM_Test_Ground_001", (0, 0, 0), (1, 1, 1)), empty),
+                           "vpm", "ground", PROFILES.vpm)
+    f = next(f for f in found["V010"] if f.name == "UCX vs MAF/Flora intersection")
+    assert f.status == "not_run"
+
+
+def test_ucx_maf_non_finite_vertices_is_not_run_flo15():
+    ground = mesh(name="SM_Test_Ground", materials=["M_Ground"])
+    bad = mesh(name="SM_Test_GroundEl")
+    bad["face_geometry"] = {"vertices": [[0, 0, float("nan")], [1, 0, 0], [1, 1, 0]], "polygons": [[0, 1, 2]]}
+    found = scene_findings(rb(ground, _ucx_box("UCX_SM_Test_Ground_001", (0, 0, 0), (1, 1, 1)), bad),
+                           "vpm", "ground", PROFILES.vpm)
+    f = next(f for f in found["V010"] if f.name == "UCX vs MAF/Flora intersection")
+    assert f.status == "not_run"
+
+
+def test_ground_skirt_sloped_quad_without_skirt_fails_gnd03():
+    # 2 m of relief but no perimeter extrusion: the old total-Z-extent measure passed this; the
+    # perimeter-drop measure must fail it (GND-03).
+    verts = [[0, 0, 0], [10, 0, 0], [10, 10, 2], [0, 10, 2]]
+    polys = [[0, 1, 2], [0, 2, 3]]
+    assert _skirt_finding(verts, polys).status == "fail"
+
+
+def test_ground_skirt_sloped_surface_with_skirt_passes_gnd03():
+    # A sloped surface WITH a 1 m vertical skirt passes: the drop is measured at the perimeter
+    # corners, not the whole Z-extent (surface z 2..4 -> skirt bottom z 1..3 -> drop 1 m).
+    verts = [[0, 0, 2], [10, 0, 2], [10, 10, 4], [0, 10, 4],
+             [0, 0, 1], [10, 0, 1], [10, 10, 3], [0, 10, 3]]
+    f = _skirt_finding(verts, SKIRT_POLYS)
+    assert f.status == "pass" and f.measured == pytest.approx(1.0)
+
+
+def test_edge_loop_100x100_grid_runtime_bounded_d200():
+    import time
+
+    n = 100
+    verts = [[x, y, 0.0] for y in range(n + 1) for x in range(n + 1)]
+    polys = [[y * (n + 1) + x, y * (n + 1) + x + 1, (y + 1) * (n + 1) + x + 1, (y + 1) * (n + 1) + x]
+             for y in range(n) for x in range(n)]
+    mesh_ = _face_mesh("SM_Test_K_1_Main", verts, polys)
+    start = time.perf_counter()
+    got = edge_loop_findings([mesh_], "grid.fbx")
+    elapsed = time.perf_counter() - start
+    assert got[0].status == "pass"
+    assert elapsed < 5.0

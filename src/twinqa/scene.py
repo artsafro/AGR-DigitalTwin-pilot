@@ -22,7 +22,7 @@ from twinqa.fbx_header import fbx_application, fbx_units
 from twinqa.maf_checks import SMOOTHING_ANGLE_DEG, maf_findings
 from twinqa.flora import FLORA_SHARE, flora_findings
 from twinqa.geometry.ucx_audit import (
-    BAND_TOL_M, GAP_BAND_M, NEIGHBOUR_M, bbox_gap, bounds, inside_convex, is_closed, is_convex,
+    BAND_TOL_M, GAP_BAND_M, NEIGHBOUR_M, bbox_gap, bounds, is_closed, is_convex,
     sat_separation, surface_distance, weld,
 )
 from twinqa.clearance import BAND_EDGE_TOL_M, co_directional_distribution, co_directional_pairs
@@ -949,35 +949,78 @@ def _ground_footprint_findings(meshes: list[dict], ucx: list[dict], src: str, gr
 
 
 SKIRT_MIN_M = 1.0  # GND-03: Ground perimeter polygons extruded down by at least 1 m (reg p.7 §3.4, p.28 §3.7)
+PERIMETER_XY_TOL_M = 1e-3  # same-XY tolerance pairing the surface edge with the skirt bottom (GND-03)
 
 
-def _skirt_z_extent(mesh: dict) -> tuple[str, float] | None:
-    """``(status, depth)`` of the Ground surface Z-extent, or ``None`` when it is not measurable.
+def _convex_hull_xy(points: list) -> list[int]:
+    """Indices of ``points`` (xy pairs) on the 2D convex hull, CCW (Andrew monotone chain).
+
+    Collinear points on a hull edge are dropped, so the result is the strict outline. Fewer than
+    three indices mean a degenerate (collinear / coincident) outline.
+    """
+    if len(points) < 3:
+        return list(range(len(points)))
+
+    def turn(o: int, a: int, b: int) -> float:
+        return (points[a][0] - points[o][0]) * (points[b][1] - points[o][1]) \
+             - (points[a][1] - points[o][1]) * (points[b][0] - points[o][0])
+
+    idx = sorted(range(len(points)), key=lambda i: (points[i][0], points[i][1]))
+    lower = []
+    for i in idx:
+        while len(lower) >= 2 and turn(lower[-2], lower[-1], i) <= 0:
+            lower.pop()
+        lower.append(i)
+    upper = []
+    for i in reversed(idx):
+        while len(upper) >= 2 and turn(upper[-2], upper[-1], i) <= 0:
+            upper.pop()
+        upper.append(i)
+    return lower[:-1] + upper[:-1]
+
+
+def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float] | None:
+    """``(status, depth)`` of the Ground perimeter skirt (GND-03), or ``None`` when unmeasurable.
 
     ``status`` is ``"fail"`` for broken (empty/partial/non-finite) face data and ``"ok"`` when the
-    Z-extent was measured. The perimeter skirt extrudes the Ground surface down 1 m, so a complete
-    Ground surface mesh spans at least 1 m in Z.
+    perimeter drop was measured. The skirt extrudes the perimeter of the Ground surface straight
+    down, so at each corner of the surface's XY outline the mesh holds the surface-edge vertex
+    above the skirt-bottom vertex at (nearly) the same XY. The drop at a corner is ``max Z - min Z``
+    among the vertices projecting onto it; the measured depth is the smallest drop over all corners.
+    A single open surface (no skirt) carries one Z per corner -> drop 0 -> fail, and a sloped
+    surface with 2 m of relief but no skirt fails too (its corners each carry a single Z): the total
+    Z-extent is deliberately NOT the measure (it passes relief that has no perimeter extrusion).
     """
     shape = mesh.get("face_geometry")
     if not isinstance(shape, dict):
         return None
     verts = shape.get("vertices")
-    if not isinstance(verts, list):
+    if not isinstance(verts, list) or not verts:
         return "fail", 0.0
-    if not verts:
-        return "fail", 0.0
-    zs = []
+    xy = []
     for v in verts:
         if isinstance(v, bool) or not isinstance(v, (list, tuple)) or len(v) < 3:
             return "fail", 0.0
         if any(isinstance(c, bool) or not isinstance(c, (int, float)) or not math.isfinite(c) for c in v[:3]):
             return "fail", 0.0
-        zs.append(float(v[2]))
-    return "ok", max(zs) - min(zs)
+        xy.append((float(v[0]), float(v[1])))
+    hull = _convex_hull_xy(xy)
+    if len(hull) < 3:
+        return "fail", 0.0  # degenerate XY outline: no measurable perimeter
+    best = math.inf
+    for i in hull:
+        cx, cy = xy[i]
+        zs = [float(v[2]) for v in verts
+              if math.hypot(float(v[0]) - cx, float(v[1]) - cy) <= PERIMETER_XY_TOL_M]
+        if zs:
+            best = min(best, max(zs) - min(zs))
+    if not math.isfinite(best):
+        return "fail", 0.0
+    return "ok", best
 
 
 def _ground_skirt_finding(meshes: list[dict], ucx: list[dict], src: str) -> Finding:
-    """GND-03: the Ground surface mesh is extruded down >= 1 m (reg p.7 §3.4, p.28 §3.7)."""
+    """GND-03: the Ground perimeter is extruded down >= 1 m (reg p.7 §3.4, p.28 §3.7)."""
     name = "ground skirt depth"
     expected = f"perimeter polygons extruded down >= {SKIRT_MIN_M:g} m [GND-03] (reg p.7 §3.4, p.28 §3.7)"
     pages = [7, 28]
@@ -986,7 +1029,7 @@ def _ground_skirt_finding(meshes: list[dict], ucx: list[dict], src: str) -> Find
     if not ground:
         return _f("not_run", name, f"{src}: no Ground surface mesh", expected, pages, src)
     for mesh in ground:
-        probe = _skirt_z_extent(mesh)
+        probe = _skirt_perimeter_drop(mesh)
         if probe is None:
             continue
         status, depth = probe
@@ -994,63 +1037,134 @@ def _ground_skirt_finding(meshes: list[dict], ucx: list[dict], src: str) -> Find
             return _f("fail", name, f"{src}: {mesh['name']} broken face geometry", expected, pages, src)
         good = depth >= SKIRT_MIN_M
         return _f("pass" if good else "fail", name,
-                  f"{src}: {mesh['name']} Z-extent {depth:.3f} m", expected, pages, src,
+                  f"{src}: {mesh['name']} perimeter drop {depth:.3f} m", expected, pages, src,
                   measured=depth, threshold=SKIRT_MIN_M, margin=signed_margin(depth, SKIRT_MIN_M, "min"))
     return _f("not_run", name, f"{src}: no face geometry for the Ground surface", expected, pages, src)
 
 
 _MAF_FLORA_SUFFIXES = ("_GroundEl", "_GroundElGlass", "_Flora")
+MAF_FLORA_SINK_M = 0.1  # [D095]/[D100]: MAF and Flora sink 10 cm into the Ground; that band is exempt
 
 
-def _bbox_volume_overlap(lo_a, hi_a, lo_b, hi_b, eps: float = OVERLAP_EPS_M) -> bool:
-    return all(max(lo_a[i], lo_b[i]) + eps < min(hi_a[i], hi_b[i]) for i in range(3))
+def _maf_flora_triangles(mesh: dict) -> tuple[list, list] | tuple[None, str]:
+    """``(verts, tris)`` of a MAF/Flora mesh fan-triangulated from ``face_geometry``.
+
+    Returns ``(None, reason)`` when the mesh has no measurable face geometry, so the caller can
+    report ``not_run`` naming the mesh instead of silently skipping it.
+    """
+    shape = mesh.get("face_geometry")
+    if not isinstance(shape, dict):
+        return None, "no face_geometry"
+    verts = shape.get("vertices")
+    polys = shape.get("polygons")
+    if not isinstance(verts, list) or not verts:
+        return None, "no vertices"
+    if not isinstance(polys, list) or not polys:
+        return None, "no polygons"
+    for v in verts:
+        if isinstance(v, bool) or not isinstance(v, (list, tuple)) or len(v) < 3:
+            return None, "malformed vertices"
+        if any(isinstance(c, bool) or not isinstance(c, (int, float)) or not math.isfinite(c) for c in v[:3]):
+            return None, "non-finite vertices"
+    tris = []
+    for poly in polys:
+        if not isinstance(poly, (list, tuple)) or len(poly) < 3:
+            return None, "malformed polygons"
+        for idx in poly:
+            if isinstance(idx, bool) or not isinstance(idx, int) or idx < 0 or idx >= len(verts):
+                return None, "invalid polygon indices"
+        for k in range(1, len(poly) - 1):
+            tris.append((poly[0], poly[k], poly[k + 1]))
+    if not tris:
+        return None, "no triangles"
+    return [tuple(float(c) for c in v[:3]) for v in verts], tris
+
+
+def _clip_tri_above(tri: list, band_z: float) -> list[list]:
+    """Part of triangle ``tri`` (three xyz) at or above ``band_z``, as 0..2 triangles."""
+    above = [i for i in range(3) if tri[i][2] >= band_z]
+    if len(above) == 3:
+        return [list(tri)]
+    if not above:
+        return []
+
+    def cross(i, j):
+        a, b = tri[i], tri[j]
+        t = (band_z - a[2]) / (b[2] - a[2])
+        return (a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1]), band_z)
+
+    if len(above) == 1:
+        i = above[0]
+        others = [j for j in range(3) if j != i]
+        return [[tri[i], cross(i, others[0]), cross(i, others[1])]]
+    below = [j for j in range(3) if j not in above][0]
+    a, b = [j for j in range(3) if j != below]
+    return [[tri[a], cross(a, below), cross(b, below)], [tri[a], cross(b, below), tri[b]]]
+
+
+def _hull_intersects_mesh_above(hull, verts: list, tris: list, band_z: float) -> bool:
+    """True if the convex ``hull`` (verts, tris) overlaps any mesh triangle at or above ``band_z``.
+
+    Each triangle is clipped to the half-space ``z >= band_z`` (the sunk band [D095]/[D100] is not
+    coverage) and tested against the hull with the SAT separation already used by the UCX pair
+    checks; a real penetration (< -OVERLAP_EPS_M) is an intersection, mere touching is not.
+    """
+    hv, ht = hull
+    for tri in tris:
+        for ctri in _clip_tri_above([verts[i] for i in tri], band_z):
+            if sat_separation((hv, ht), (ctri, [(0, 1, 2)])) < -OVERLAP_EPS_M:
+                return True
+    return False
 
 
 def _ucx_maf_flora_finding(ucx: list[dict], meshes: list[dict], src: str) -> list[Finding]:
-    """FLO-15 / MAF-22: the Ground UCX does not cover (contain a vertex of) a MAF or Flora element.
+    """FLO-15 / MAF-22: the Ground UCX must not intersect a MAF or Flora element.
 
-    MAF (``_GroundEl``) and Flora (``_Flora``) are excluded from Ground collision, so a UCX piece
-    whose convex hull contains a MAF/Flora vertex covers it and is a defect (blocking, reg p.36 §13.2).
-    Only closed convex UCX hulls are evaluated; an unsupported piece keeps the finding not_run and
-    never hides a proven coverage.
+    MAF (``_GroundEl``) and Flora (``_Flora``) are excluded from Ground collision (reg p.36 §13.2),
+    and both sink 10 cm into the Ground [D095]/[D100], so only the part of a MAF/Flora element
+    *above* its 10 cm sunk band is judged. Each supported (closed, convex, non-degenerate) UCX
+    piece is tested against that part of every MAF/Flora mesh with a real hull-triangle SAT
+    intersection test; a proven overlap is a blocking fail. A MAF/Flora mesh without measurable
+    face geometry is ``not_run`` naming the mesh, never a silent pass; an unsupported UCX piece is
+    ``not_run`` too and never hides a proven intersection.
     """
     name = "UCX vs MAF/Flora intersection"
-    expected = "Ground UCX does not cover MAF or Flora (reg p.36 §13.2) [FLO-15, MAF-22]"
+    expected = ("Ground UCX does not intersect MAF or Flora above the 10 cm sunk band "
+                "[D095]/[D100] (reg p.36 §13.2) [FLO-15, MAF-22]")
     pages = [36]
     maf_flora = [m for m in meshes if m["name"].endswith(_MAF_FLORA_SUFFIXES)]
     if not maf_flora:
         return []
+    unmeasurable, measurable = [], []
+    for m in maf_flora:
+        geom = _maf_flora_triangles(m)
+        if geom[0] is None:
+            unmeasurable.append((m["name"], geom[1]))
+        else:
+            measurable.append((m, geom[0], geom[1]))
     pieces = [_ucx_piece(mesh) for mesh in ucx]
     supported = [p for p in pieces if p["reason"] is None and p["hull"] is not None]
     unresolved = [p["name"] for p in pieces if p["reason"] is not None]
     offenders = []
     for p in supported:
-        verts, tris = p["hull"]
-        uc_lo, uc_hi = bounds(verts)
-        for m in maf_flora:
-            shape = m.get("face_geometry")
-            if not isinstance(shape, dict):
-                continue
-            mverts = shape.get("vertices")
-            if not isinstance(mverts, list) or not mverts:
-                continue
-            m_lo, m_hi = bounds(mverts)
-            if not _bbox_volume_overlap(uc_lo, uc_hi, m_lo, m_hi):
-                continue
-            for v in mverts:
-                if isinstance(v, bool) or not isinstance(v, (list, tuple)) or len(v) < 3:
-                    continue
-                if inside_convex(v, verts, tris):
-                    offenders.append((p["name"], m["name"]))
-                    break
+        for m, mverts, mtris in measurable:
+            band_z = min(v[2] for v in mverts) + MAF_FLORA_SINK_M
+            if _hull_intersects_mesh_above(p["hull"], mverts, mtris, band_z):
+                offenders.append((p["name"], m["name"]))
+                break
     if offenders:
-        shown = ", ".join(f"{a} covers {b}" for a, b in offenders[:5])
-        return [_f("fail", name, f"{src}: {len(offenders)} UCX piece(s) cover a MAF/Flora element: {shown}",
+        shown = ", ".join(f"{a} intersects {b}" for a, b in offenders[:5])
+        return [_f("fail", name, f"{src}: {len(offenders)} UCX piece(s) intersect a MAF/Flora element: {shown}",
                    expected, pages, src)]
-    if unresolved:
-        return [_f("not_run", name, f"{src}: {len(unresolved)} unsupported UCX piece(s): {unresolved[:5]}",
-                   expected, pages, src)]
-    return [_f("pass", name, f"{src}: no UCX piece covers a MAF/Flora element", expected, pages, src)]
+    if unmeasurable or unresolved:
+        notes = []
+        if unmeasurable:
+            notes.append(f"{len(unmeasurable)} MAF/Flora without measurable geometry: "
+                         f"{', '.join(f'{n} ({r})' for n, r in unmeasurable[:5])}")
+        if unresolved:
+            notes.append(f"{len(unresolved)} unsupported UCX piece(s): {unresolved[:5]}")
+        return [_f("not_run", name, f"{src}: {'; '.join(notes)}", expected, pages, src)]
+    return [_f("pass", name, f"{src}: no UCX piece intersects a MAF/Flora element", expected, pages, src)]
 
 
 def main_glass_findings(meshes: list[dict], stem: str, src: str) -> list[Finding]:
