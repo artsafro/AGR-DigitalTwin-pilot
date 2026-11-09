@@ -23,3 +23,15 @@ permission matrix, never override them.
 
 These work when diffs get smaller, rework rounds fewer, and questions come before the build instead of after a wrong
 render.
+
+## Never bend geometry to pass a validator
+
+Applies to rule 4: a validator is evidence, not the goal. Never alter the geometry only to make a validator or a
+check pass: do not cut a continuous element into pieces, add a stand-off, move parts, delete or shrink faces.
+When a modelling rule and a validator disagree (a rule-required embed counted as self-intersection, a continuous
+strip flagged by a cross-view check), stop and ask the user: name the rule, the validator stage and its numbers, and
+the entry in `docs/domain/conflicts.md` (add one if none exists); keep the rule-correct geometry until the user
+decides, and report the stage as `review: conflicts #<n>`. Failure it prevents: job elv-tc-vpm v001 failed V004 on
+the 10 mm embeds, the agent chose a 6 mm floating stand-off and cut cover strip P44 into 34 pieces to keep V004 and
+the cross-view check clean; the user found both after "done" (now [D199], conflicts #44, `.agents/skills/validate-delivery/SKILL.md`
+gates G1-G2).
