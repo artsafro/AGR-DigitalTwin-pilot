@@ -33,7 +33,7 @@ project are the `oks-npm` cell. Router table: [scenarios.json](scenarios.json); 
 | Stage | Route today | Status |
 |---|---|---|
 | SPOZU DWG intake | `tools/source/inspect_ground_dxf.py` (AutoCAD core console → DXF → `ezdxf`) | automated and tested |
-| Ground surface | `src/dt_ai/geometry/ground_cake.py`, `ground_quads.py`; builder `jobs/VATUTINO-SITE/build_ground_v015.py` | library tested; builder job-local, no `dt ground` yet |
+| Ground surface | `src/dt_ai/geometry/ground_cake.py`, `ground_quads.py`; builder `dt ground v015` (`tools/ground/build_ground_v015.py`, #1106) | library tested; v015 replay byte-identical to the accepted masters |
 | MAF | `library/maf/catalogue.json`, `tools/library/maf_gen_bench.py`, `tools/materials/atlas_maf.py` | library + atlas automated; NPM light version and UV remap have no tool |
 | Flora | `library/flora/catalogue.json`, `dt_ai.materials.flora`, `tools/flora/` | textures only accepted; no NPM star builder |
 | Placement | `src/dt_ai/placement/engine.py` (MAF sinking, Flora points) | ran on Vatutino v014, `passed=false`; re-placement on v015 open (#298) |
@@ -63,6 +63,6 @@ project are the `oks-npm` cell. Router table: [scenarios.json](scenarios.json); 
 
 ## Known gaps (do not assume a tool exists)
 
-No shared `dt ground` command and no Ground benchmark; 7 of 12 GND rows and 14 of 24 MAF rows have no automatic
+`dt ground v015` (#1106) replays only the Vatutino v015 producer, no generic Ground command and no Ground benchmark; 7 of 12 GND rows and 14 of 24 MAF rows have no automatic
 check; no NPM light-version tool for MAF and no star builder for Flora; the full Vatutino site (Ground + MAF + Flora,
 #298) was never assembled and its real triangle count is not measured.
