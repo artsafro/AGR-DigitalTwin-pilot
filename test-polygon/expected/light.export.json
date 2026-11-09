@@ -1,0 +1,57 @@
+{
+ "schema": 1,
+ "button": "light.export",
+ "tool": "light.export",
+ "version": "1.0",
+ "shipped": true,
+ "select": "named",
+ "reason": "",
+ "apply_status": null,
+ "objects": [
+  {
+   "name": "SM_PolyLight_Root",
+   "scene": "frag_s_light",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_PolyLight_Spot_001",
+   "scene": "frag_s_light",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_PolyLight_Omni_001",
+   "scene": "frag_s_light",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_PolyLight_Spot_002",
+   "scene": "frag_s_light",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_PolyLight_Photo_001",
+   "scene": "frag_s_light",
+   "expect": "fail",
+   "codes": [
+    "light_type"
+   ]
+  },
+  {
+   "name": "SM_PolyLight_Omni_009",
+   "scene": "frag_s_light",
+   "expect": "fail",
+   "codes": [
+    "light_outside_root"
+   ]
+  }
+ ],
+ "base": "1.0",
+ "station": "1.0.29",
+ "stations": [
+  "1.0.29"
+ ]
+}

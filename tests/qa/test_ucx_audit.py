@@ -156,3 +156,147 @@ def test_face_signature():
     v, t = box((0, 0, 0), (2, 2, 1))
     frustum = [(x * 0.5 + 0.5, y * 0.5 + 0.5, z) if z == 1 else (x, y, z) for x, y, z in v]
     assert ua.face_signature(frustum, t) == (1, 0, 4)  # truncated pyramid: tilted sides (reg p.36 §13.6)
+
+
+# --- issue #460: a degenerate (zero-area / sliver) triangle must never pass closed/convex ---
+
+DEGENERATE_TETRA_VERTS = [(0, 0, 0), (1, 0, 0), (0, 1, 0), (0.5, 0, 0)]
+# The sliver (0,1,3) is collinear (D is the midpoint of AB); its three edges are each used
+# twice, so is_closed sees a "closed" shell although the sliver closes the hole only in the
+# edge count, not geometrically.
+DEGENERATE_TETRA_TRIS = [(0, 1, 2), (0, 1, 3), (0, 2, 3), (1, 2, 3)]
+
+
+def test_degenerate_triangles_detects_sliver_and_repeated_index():
+    assert ua.degenerate_triangles(DEGENERATE_TETRA_VERTS, DEGENERATE_TETRA_TRIS) == [1]
+    assert ua.degenerate_triangles(*box((0, 0, 0), (1, 1, 1))) == []
+    v, t = box((0, 0, 0), (1, 1, 1))
+    t = t[:-1] + [(0, 0, 1)]  # repeated vertex index
+    assert ua.degenerate_triangles(v, t) == [11]
+
+
+def test_sliver_closed_hole_is_review_not_closed():
+    """(a) open box whose hole is "closed" by a zero-area triangle -> review, never closed."""
+    assert ua.is_closed(DEGENERATE_TETRA_TRIS) is True  # the false pass the fix removes
+    result = ua.classify(DEGENERATE_TETRA_VERTS, DEGENERATE_TETRA_TRIS)
+    assert result["status"] == "review"
+    assert result["closed"] is None and result["convex"] is None
+    assert result["degenerate_triangles"] == {"count": 1, "triangles": [1]}
+
+
+def test_convex_box_plus_sliver_is_review_not_convex():
+    """(b) convex box plus one on-face sliver -> review, never convex."""
+    v, t = box((0, 0, 0), (1, 1, 1))
+    v = list(v) + [(0.5, 0, 0)]  # collinear with (0,0,0) and (1,0,0): a zero-area sliver
+    t = list(t) + [(0, 8, 4)]
+    assert ua.is_convex(v, t) is True  # the false pass the fix removes (sliver plane is None)
+    result = ua.classify(v, t)
+    assert result["status"] == "review"
+    assert result["closed"] is None and result["convex"] is None
+    assert result["degenerate_triangles"] == {"count": 1, "triangles": [12]}
+
+
+def test_clean_box_verdict_unchanged():
+    """(c) clean closed convex box keeps its current verdict bit-for-bit."""
+    assert ua.classify(*box((0, 0, 0), (1, 2, 3))) == {
+        "kind": "box_aabb", "closed": True, "convex": True, "verts": 8, "tris": 12}
+
+
+def test_repeated_index_triangle_is_review():
+    """(d) a repeated vertex index is a degenerate triangle -> review, never pass."""
+    v, t = box((0, 0, 0), (1, 1, 1))
+    t = t[:-1] + [(0, 0, 1)]
+    result = ua.classify(v, t)
+    assert result["status"] == "review"
+    assert result["closed"] is None and result["convex"] is None
+    assert result["degenerate_triangles"] == {"count": 1, "triangles": [11]}
+
+
+def test_many_degenerates_report_count_and_first_five():
+    """observed = count + first 5 indices: more than 5 slivers report the full count, first 5."""
+    v, t = box((0, 0, 0), (1, 1, 1))
+    t = list(t) + [(0, 0, 1)] * 7
+    result = ua.classify(v, t)
+    assert result["status"] == "review"
+    assert result["degenerate_triangles"] == {"count": 7, "triangles": [12, 13, 14, 15, 16]}
+
+
+def test_area_threshold_is_named_and_inclusive():
+    """The degenerate-area constant is named, default 1e-10 m2, and a below-threshold area counts."""
+    assert ua.DEGENERATE_AREA_M2 == 1e-10
+    below = [(0, 0, 0), (2e-6, 0, 0), (0, 1e-6, 0)]  # area 1e-12 << 1e-10
+    assert ua.degenerate_triangles(below, [(0, 1, 2)]) == [0]
+    above = [(0, 0, 0), (2e-4, 0, 0), (0, 1e-4, 0)]  # area 1e-8 >> 1e-10
+    assert ua.degenerate_triangles(above, [(0, 1, 2)]) == []
+
+
+@pytest.mark.parametrize("seed", range(30))
+def test_generated_degenerate_mesh_never_passes(seed):
+    """invariant: a mesh with >= 1 degenerate triangle is review, closed/convex None. N/N."""
+    rng = random.Random(7000 + seed)
+    v, t = box((0, 0, 0), (rng.uniform(1, 4), rng.uniform(1, 4), rng.uniform(1, 4)))
+    v, t = list(v), list(t)
+    if seed % 2 == 0:
+        # three collinear points on the front (y=0) face: a zero-area sliver
+        a = rng.uniform(0.0, 1.0)
+        b = a + rng.uniform(0.05, 0.5)
+        c = b + rng.uniform(0.05, 0.5)
+        v += [(a, 0, 0), (b, 0, 0), (c, 0, 0)]
+        t += [(len(v) - 3, len(v) - 2, len(v) - 1)]
+    else:
+        t += [(0, 0, 1)]  # repeated vertex index
+    result = ua.classify(v, t)
+    assert result["status"] == "review"
+    assert result["closed"] is None and result["convex"] is None
+    assert result["degenerate_triangles"]["count"] >= 1
+
+
+# --- issue #460 round 1 P1: a non-finite area from overflow must fail closed, never pass ---
+
+
+def _overflow_tris(base):
+    """The four triangles over four collinear points, indexed from `base`."""
+    return [(base, base + 1, base + 2), (base, base + 1, base + 3),
+            (base, base + 2, base + 3), (base + 1, base + 2, base + 3)]
+
+
+def _collinear_diagonal(s):
+    """Four finite collinear points on x=y=z; at large `s` the cross product overflows to NaN."""
+    return [(i * s, i * s, i * s) for i in range(4)], _overflow_tris(0)
+
+
+@pytest.mark.parametrize("s", [1e160, 1e200])
+def test_overflow_collinear_is_review_not_closed(s):
+    """Regression (round 1 P1): finite collinear verts whose cross product overflows to NaN
+    must be review with count 4, never closed=True/convex=True."""
+    verts, tris = _collinear_diagonal(s)
+    assert ua.is_closed(tris) is True  # the edge count still "closes" the shell
+    result = ua.classify(verts, tris)
+    assert result["status"] == "review"
+    assert result["closed"] is None and result["convex"] is None
+    assert result["degenerate_triangles"] == {"count": 4, "triangles": [0, 1, 2, 3]}
+
+
+def test_collinear_ordinary_scale_is_review():
+    """Ordinary-scale control: the same collinear diagonal at s=1 has area exactly 0 and is
+    still review with count 4 (the fail-closed branch does not change the ordinary verdict)."""
+    verts, tris = _collinear_diagonal(1.0)
+    assert ua.degenerate_triangles(verts, tris) == [0, 1, 2, 3]
+    assert ua.classify(verts, tris)["status"] == "review"
+
+
+def test_non_degenerate_ordinary_triangle_not_flagged():
+    """Ordinary-scale control: a non-degenerate finite triangle is measured, never flagged."""
+    verts = [(0.0, 0.0, 0.0), (2.0, 0.0, 0.0), (0.0, 3.0, 0.0)]
+    assert ua.degenerate_triangles(verts, [(0, 1, 2)]) == []
+
+
+def test_overflow_and_ordinary_degenerate_combined():
+    """Combined: one ordinary repeated-index degenerate + four overflow collinear -> review,
+    count = sum, indices reported in triangle order."""
+    verts = [(0, 0, 0), (1, 0, 0), (0, 1, 0)] + [(i * 1e160, i * 1e160, i * 1e160) for i in range(4)]
+    tris = [(0, 1, 2)] + _overflow_tris(3) + [(0, 0, 1)]
+    result = ua.classify(verts, tris)
+    assert result["status"] == "review"
+    assert result["closed"] is None and result["convex"] is None
+    assert result["degenerate_triangles"] == {"count": 5, "triangles": [1, 2, 3, 4, 5]}

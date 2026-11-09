@@ -1,0 +1,68 @@
+{
+ "tow02_v005": {
+  "contact_pairs": 164,
+  "fast_pairs": 164,
+  "pairs_equal": true,
+  "vertex_pairs_equal": true
+ },
+ "tow02_user05": {
+  "contact_pairs": 0,
+  "fast_pairs": 0,
+  "pairs_equal": true,
+  "vertex_pairs_equal": true
+ },
+ "ground_v014_npm": {
+  "contact_pairs": 155,
+  "fast_pairs": 155,
+  "pairs_equal": true,
+  "vertex_pairs_equal": true
+ },
+ "ground_v014_npm_poly": {
+  "contact_pairs": 361,
+  "fast_pairs": 361,
+  "pairs_equal": true,
+  "vertex_pairs_equal": true
+ },
+ "syn_boundary_contact": {
+  "contact_pairs": 1,
+  "fast_pairs": 1,
+  "pairs_equal": true,
+  "vertex_pairs_equal": true
+ },
+ "syn_normal_0.810deg": {
+  "contact_pairs": 1,
+  "fast_pairs": 1,
+  "pairs_equal": true,
+  "vertex_pairs_equal": true
+ },
+ "syn_normal_0.815deg": {
+  "contact_pairs": 0,
+  "fast_pairs": 0,
+  "pairs_equal": true,
+  "vertex_pairs_equal": true
+ },
+ "syn_face_5.000mm": {
+  "contact_pairs": 1,
+  "fast_pairs": 1,
+  "pairs_equal": true,
+  "vertex_pairs_equal": true
+ },
+ "syn_face_5.100mm": {
+  "contact_pairs": 0,
+  "fast_pairs": 0,
+  "pairs_equal": true,
+  "vertex_pairs_equal": true
+ },
+ "syn_vertex_2.000mm": {
+  "contact_pairs": 0,
+  "fast_pairs": 0,
+  "pairs_equal": true,
+  "vertex_pairs_equal": true
+ },
+ "syn_vertex_2.100mm": {
+  "contact_pairs": 0,
+  "fast_pairs": 0,
+  "pairs_equal": true,
+  "vertex_pairs_equal": true
+ }
+}

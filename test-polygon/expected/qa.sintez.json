@@ -1,0 +1,34 @@
+{
+ "schema": 1,
+ "button": "qa.sintez",
+ "tool": "qa.sintez",
+ "version": "0.9",
+ "shipped": true,
+ "select": "named",
+ "reason": "",
+ "apply_status": null,
+ "objects": [
+  {
+   "name": "SM_SintezOk_Main",
+   "scene": "polygon_all",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_SintezScaled_Main",
+   "scene": "polygon_all",
+   "expect": "fail",
+   "codes": [
+    "sintez_mismatch"
+   ]
+  }
+ ],
+ "options": {
+  "sintez": "tests/max_tools/fixtures_qa9/sintez_hp_all_verified.json"
+ },
+ "base": "0.9",
+ "station": "0.9.15",
+ "stations": [
+  "0.9.15"
+ ]
+}

@@ -1,5 +1,9 @@
 {
   "note": "Values are screen approximations of RAL Classic (sRGB), for display only, not spectrophotometric matches.",
+  "approximate": {
+    "codes": ["7024", "7035", "8023", "9006"],
+    "note": "Owner answer 06.11.2026 (materials audit Q4): RAL 8023, 7024, 9006, 7035 are SCREEN APPROXIMATIONS (standard published sRGB values), not RAL measurements; the same holds for every code of this file."
+  },
   "colors": {
     "1013": "#E3D9C6",
     "1015": "#E6D690",
@@ -27,6 +31,7 @@
     "7047": "#D0D0D0",
     "8014": "#4A3526",
     "8017": "#45322E",
+    "8023": "#A65E2E",
     "9001": "#E9E0D2",
     "9003": "#F4F4F4",
     "9005": "#0A0A0A",

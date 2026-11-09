@@ -1,0 +1,27 @@
+{
+  "issue": 487,
+  "set": "jobs/VATUTINO-SITE/maf/site-maf-set.json",
+  "note": "Display-only grouping (Artem Q7, 2026-10-21: sport, kids, landscaping elements, benches, lighting). Agent's reading of the schedule names; Artem may move a position. Tables (27, 31) are read as landscaping elements.",
+  "groups": {
+    "VAT_MAF_T3510_26": "sport",
+    "VAT_MAF_T3510_11": "kids",
+    "VAT_MAF_T3510_12": "kids",
+    "VAT_MAF_T3510_16": "kids",
+    "VAT_MAF_T3510_28": "kids",
+    "VAT_MAF_T3510_02": "landscaping",
+    "VAT_MAF_T3510_27": "landscaping",
+    "VAT_MAF_T3510_31": "landscaping",
+    "VAT_MAF_T3510_32": "landscaping",
+    "VAT_MAF_T3510_01": "benches",
+    "VAT_MAF_T3510_07": "benches",
+    "VAT_MAF_T3510_09": "benches",
+    "VAT_MAF_T3510_29": "benches"
+  },
+  "user_exceptions": {
+    "VAT_MAF_T3510_28": [
+      "исключение пользователя: размер вне допуска D094 (<= 10 см)",
+      "Q8 Артём 2026-10-19: 1.09 м = диаметр сиденья, модель с рамой",
+      "вопрос архитектору D112"
+    ]
+  }
+}

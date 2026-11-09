@@ -20,6 +20,15 @@ Pure numpy on triangle meshes in metres (the 2-4 checks reuse `twinqa.clearance`
 synthetic scenes: the ray probe tests every ray against every triangle, so a whole building needs a BVH (the
 bpy kernel, later cards). The probe sees nothing smaller than one pixel (`2 * radius / resolution`).
 Not here yet: quad dominance and texel readiness [D129] (they need polygons, not triangles).
+
+Relative to the source [D201] (#968): with `Context(source=<scene>)` the checks of `check_operation` take a baseline
+from the source - per invariant the set of violators (open border edges not hidden, back-face pixels, close-overlap
+face pairs) - and an operation passes when it adds no NEW violator; what the source already violates is reported as
+`baseline` ("было до нас"), never as a failure. Each result then carries `baseline`, `after` and `count` = new
+violators, whose offenders name the new elements. Identity: a border edge is pre-existing when both its ends lie
+within `WELD_M` of ONE baseline edge (a split border stays the same border); a back-face pixel by (direction, pixel)
+on one probe frame spanning source and after; an overlap pair when all corners of both faces lie within `WELD_M` of
+the baseline overlap faces. The hole check is already relative (before vs after). An empty source = no baseline.
 Pattern: none - kernel foundation (grilling log card C3).
 """
 from dataclasses import dataclass, field
@@ -69,6 +78,7 @@ class Context:
     overlap_min_m: float = OVERLAP_MIN_M
     resolution: int = 48                               # rays per side of the probe
     lost_pixels_max: int = 0
+    source: dict | None = field(default=None, compare=False, hash=False)   # [D201] baseline scene, None = absolute
 
 
 @dataclass(frozen=True)
@@ -78,6 +88,8 @@ class InvariantResult:
     count: int
     offenders: tuple = ()      # up to 5 short descriptions
     gating: bool = True        # False = report-only: shown, but does not fail the report (#370)
+    baseline: int | None = None   # [D201] violators already in the source; None = absolute check
+    after: int | None = None      # [D201] violators after the op (count = the NEW ones among them)
 
 
 @dataclass(frozen=True)
@@ -95,7 +107,9 @@ class InvariantReport:
     def to_dict(self) -> dict:
         return {"passed": self.passed,
                 "results": [{"name": r.name, "passed": r.passed, "count": r.count, "offenders": list(r.offenders),
-                             "gating": r.gating}
+                             "gating": r.gating,
+                             **({} if r.baseline is None else {"baseline": r.baseline, "after": r.after,
+                                                               "new": r.count})}
                             for r in self.results]}
 
 
@@ -238,12 +252,20 @@ def _frame(*scenes: Scene):
 
 def open_borders_hidden(scene: Scene, part: str, ctx: Context = Context()) -> InvariantResult:
     """(1) Every open border edge of `part` lies inside a neighbour (>= embed_min_m deep) or at / below the Ground."""
-    name = "open_borders_hidden"
+    return _result("open_borders_hidden", [_edge_name(part, e) for e in _unhidden_edges(scene, part, ctx)])
+
+
+def _edge_name(part, e):
+    return f"{part}: edge {np.round(e[0], 4).tolist()} -> {np.round(e[1], 4).tolist()}"
+
+
+def _unhidden_edges(scene: Scene, part: str, ctx: Context) -> np.ndarray:
+    """(k, 2, 3) open border edges of `part` that are neither embedded in a neighbour nor at / below the Ground."""
     if part in ctx.opacity_parts:
-        return _result(name, [])
+        return np.zeros((0, 2, 3))
     edges = border_edges(scene[part])
     if not len(edges):
-        return _result(name, [])
+        return edges
     samples = np.concatenate([edges[:, 0], edges[:, 1], edges.mean(axis=1)])        # ends and middle of every edge
     hidden = np.zeros(len(samples), dtype=bool)
     if ctx.ground_z is not None:
@@ -256,9 +278,7 @@ def open_borders_hidden(scene: Scene, part: str, ctx: Context = Context()) -> In
         deep = distance_to_surface(samples[todo[inside]], mesh) >= ctx.embed_min_m - 1e-9
         hidden[todo[inside][deep]] = True
     k = len(edges)
-    bad = np.flatnonzero(~(hidden[:k] & hidden[k:2 * k] & hidden[2 * k:]))
-    return _result(name, [f"{part}: edge {np.round(edges[i, 0], 4).tolist()} -> {np.round(edges[i, 1], 4).tolist()}"
-                          for i in bad])
+    return edges[~(hidden[:k] & hidden[k:2 * k] & hidden[2 * k:])]
 
 
 def _is_source_opacity_quad(source: Mesh, plane: Mesh) -> bool:
@@ -326,42 +346,137 @@ def no_see_through_hole(before: Scene, after: Scene, ctx: Context = Context()) -
 
 def no_visible_back_faces(scene: Scene, ctx: Context = Context()) -> InvariantResult:
     """(3) The first surface a viewer meets is never a back face, except on opacity / glass parts. count = pixels."""
-    name = "no_visible_back_faces"
+    count, notes = 0, []
+    for d, seen, names in _back_face_pixels(scene, ctx, *_frame(scene)):
+        n = int(seen.sum())
+        count += n
+        if n:
+            notes.append(f"direction {np.round(d, 2).tolist()}: {n} pixels of {names(seen)}")
+    return InvariantResult("no_visible_back_faces", count == 0, count, tuple(notes[:5]))
+
+
+def _back_face_pixels(scene: Scene, ctx: Context, center, radius):
+    """Per probe direction: (d, mask of pixels whose first hit is a non-exempt back face, part names of a mask)."""
     parts, corners, owner = _stack(scene)
     exempt = np.array([p in ctx.opacity_parts for p in parts], dtype=bool)
-    center, radius = _frame(scene)
-    count, notes = 0, []
     for d in _directions():
         origins = _grid(center, radius, d, ctx.resolution)
         hit, back = _first_hits(origins, d, corners)
         seen = back & (hit >= 0)
         seen[seen] = ~exempt[owner[hit[seen]]]
-        n = int(seen.sum())
-        count += n
-        if n:
-            names = sorted({parts[i] for i in owner[hit[seen]]})
-            notes.append(f"direction {np.round(d, 2).tolist()}: {n} pixels of {names}")
-    return InvariantResult(name, count == 0, count, tuple(notes[:5]))
+        yield d, seen, (lambda m, h=hit: sorted({parts[i] for i in owner[h[m]]}))
 
 
 def no_close_overlap(scene: Scene, parts: Iterable[str] | None = None, ctx: Context = Context()) -> InvariantResult:
     """(4) No co-directional overlapping faces closer than overlap_min_m (z-fighting); a pair must touch `parts`."""
-    name = "no_close_overlap"
+    return _result("no_close_overlap", [_pair_name(q) for q in _overlap_pairs(scene, parts, ctx)])
+
+
+def _pair_name(q):
+    return f"{q['a'][0]}#{q['a'][1]} / {q['b'][0]}#{q['b'][1]}: {q['distance_m'] * 1000:.1f} mm"
+
+
+def _overlap_pairs(scene: Scene, parts, ctx: Context) -> list:
     faces = [{"object": p, "index": i, "points": tri.tolist()}
              for p, mesh in scene.items() for i, tri in enumerate(mesh.corners())]
     watch = set(scene if parts is None else parts)
-    pairs = [q for q in near_parallel_overlaps(faces, ctx.overlap_min_m)
-             if q["same_direction"] and (q["a"][0] in watch or q["b"][0] in watch)]
-    return _result(name, [f"{q['a'][0]}#{q['a'][1]} / {q['b'][0]}#{q['b'][1]}: {q['distance_m'] * 1000:.1f} mm"
-                          for q in pairs])
+    return [q for q in near_parallel_overlaps(faces, ctx.overlap_min_m)
+            if q["same_direction"] and (q["a"][0] in watch or q["b"][0] in watch)]
+
+
+# ---- relative to the source [D201] --------------------------------------------------------------------------------
+
+def _point_segment_distance(points: np.ndarray, segments: np.ndarray) -> np.ndarray:
+    """(P, S) distance of every point to every segment (S, 2, 3)."""
+    a, b = segments[:, 0][None], segments[:, 1][None]
+    p = points[:, None, :]
+    ab = b - a
+    t = np.clip(((p - a) * ab).sum(2) / np.maximum((ab * ab).sum(2), 1e-30), 0.0, 1.0)
+    return np.linalg.norm(p - (a + t[..., None] * ab), axis=2)
+
+
+def _new_edges(edges: np.ndarray, base: np.ndarray) -> np.ndarray:
+    """Mask of edges NOT lying on one baseline edge (both ends within WELD_M of the same baseline segment)."""
+    if not len(edges):
+        return np.zeros(0, dtype=bool)
+    if not len(base):
+        return np.ones(len(edges), dtype=bool)
+    on = (_point_segment_distance(edges[:, 0], base) <= WELD_M) & (_point_segment_distance(edges[:, 1], base) <= WELD_M)
+    return ~on.any(axis=1)
+
+
+def _relative_borders(source: Scene, after: Scene, changed, ctx: Context) -> InvariantResult:
+    base = [_unhidden_edges(source, p, ctx) for p in source]
+    base = np.concatenate(base) if base else np.zeros((0, 2, 3))
+    total, new = 0, []
+    for p in changed:
+        edges = _unhidden_edges(after, p, ctx)
+        total += len(edges)
+        new += [_edge_name(p, e) for e in edges[_new_edges(edges, base)]]
+    return InvariantResult("open_borders_hidden", not new, len(new), tuple(new[:5]), baseline=len(base), after=total)
+
+
+def _relative_back_faces(source: Scene, after: Scene, ctx: Context) -> InvariantResult:
+    frame = _frame(source, after)                      # one probe frame: pixel (direction, index) is comparable
+    base_n = after_n = new_n = 0
+    notes = []
+    for (d, was, _), (_, now, names) in zip(_back_face_pixels(source, ctx, *frame),
+                                            _back_face_pixels(after, ctx, *frame)):
+        new = now & ~was
+        base_n, after_n, n = base_n + int(was.sum()), after_n + int(now.sum()), int(new.sum())
+        new_n += n
+        if n:
+            notes.append(f"direction {np.round(d, 2).tolist()}: {n} new pixels of {names(new)}")
+    return InvariantResult("no_visible_back_faces", new_n == 0, new_n, tuple(notes[:5]), baseline=base_n,
+                           after=after_n)
+
+
+def _baseline_faces_of(tri: np.ndarray, faces: list, union: Mesh) -> frozenset:
+    """Baseline overlap faces an after-face lies on: its corners on the baseline union, its centroid on each face."""
+    if not len(faces) or (distance_to_surface(tri, union) > WELD_M).any():
+        return frozenset()
+    centroid = tri.mean(axis=0)
+    return frozenset(k for k, t in faces if distance_to_surface(centroid, Mesh(t, np.array([(0, 1, 2)])))[0] <= WELD_M)
+
+
+def _relative_overlap(source: Scene, after: Scene, changed, ctx: Context) -> InvariantResult:
+    """A pair is pre-existing only when face A lies on baseline face X, face B on baseline face Y and (X, Y) is a
+    baseline pair - a copy of a baseline face paired with its original is a new pair (review round 1, PR #1006)."""
+    base = _overlap_pairs(source, None, ctx)
+    keys = {tuple(f) for q in base for f in (q["a"], q["b"])}
+    faces = [(k, source[k[0]].corners()[k[1]]) for k in sorted(keys)]
+    union = Mesh(np.array([t for _, t in faces]).reshape(-1, 3), np.arange(len(faces) * 3).reshape(-1, 3))
+    base_pairs = {frozenset((tuple(q["a"]), tuple(q["b"]))) for q in base}
+    pairs = _overlap_pairs(after, changed, ctx)
+    new = []
+    for q in pairs:
+        sx, sy = (_baseline_faces_of(after[o].corners()[i], faces, union) for o, i in (q["a"], q["b"]))
+        if not any(frozenset((x, y)) in base_pairs for x in sx for y in sy if x != y):
+            new.append(_pair_name(q))
+    return InvariantResult("no_close_overlap", not new, len(new), tuple(new[:5]), baseline=len(base), after=len(pairs))
+
+
+def _check_source(source) -> Scene:
+    if not isinstance(source, dict) or not all(isinstance(m, Mesh) for m in source.values()):
+        raise TypeError("ctx.source must be a scene: part id -> Mesh")
+    return source
 
 
 def check_operation(before: Scene | None, after: Scene, changed: Iterable[str], ctx: Context = Context()) -> InvariantReport:
-    """All four invariants for an operation that changed the parts `changed`; `before` None skips the hole check."""
+    """All four invariants for an operation that changed the parts `changed`; `before` None skips the hole check.
+
+    `ctx.source` set: relative to that source [D201] - see the module docstring."""
     changed = list(changed)
     missing = [p for p in changed if p not in after]
     if missing:
         raise ValueError(f"changed parts not in the scene: {missing}")
+    if ctx.source is not None:                     # [D201] relative to the source: only new violators fail
+        source = _check_source(ctx.source)
+        results = [_relative_borders(source, after, changed, ctx)]
+        if before is not None:
+            results.append(no_see_through_hole(before, after, ctx))
+        results += [_relative_back_faces(source, after, ctx), _relative_overlap(source, after, changed, ctx)]
+        return InvariantReport(tuple(results))
     results = [_merge("open_borders_hidden", [open_borders_hidden(after, p, ctx) for p in changed])]
     if before is not None:
         results.append(no_see_through_hole(before, after, ctx))

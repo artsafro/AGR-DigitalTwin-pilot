@@ -8,6 +8,8 @@ uses the method-C top datum + 6 mm (18 mm above VP; covering stack is at most 12
 from __future__ import annotations
 
 import math
+from collections.abc import Mapping
+from datetime import datetime
 import numpy as np
 import shapely
 from shapely.geometry import LineString, MultiPolygon, Polygon, shape
@@ -34,6 +36,10 @@ def combine(meshes):
 
 def triangle_uv(verts, faces, repeat=4.):
     """Metric, non-mirrored local projection for placeholder solids; tile-contained or fail closed."""
+    if not len(verts) or not len(faces):
+        raise ValueError('nonempty detail geometry required')
+    if not np.isfinite(verts).all() or not math.isfinite(repeat) or repeat <= 0:
+        raise ValueError('finite detail coordinates and positive finite repeat required')
     p=verts[faces]; a=p[:,1]-p[:,0]; b=p[:,2]-p[:,0]
     # Orient each placeholder island along the edge that minimises its square extent.
     candidates=[]
@@ -52,8 +58,9 @@ def triangle_uv(verts, faces, repeat=4.):
     local=candidates[choice,np.arange(len(p))]
     extent=local.max(axis=(1,2))
     scale=np.maximum(repeat,extent)
-    if repeat==4. and np.any(4096/scale<520):
-        raise ValueError('detail triangle exceeds a tile at 520 px/m; subdivide the source contour')
+    # [D160]: inclusive VPM lower bound supersedes D097.
+    if repeat==4. and np.any(4096/scale<512):
+        raise ValueError('detail triangle exceeds a tile at 512 px/m; subdivide the source contour')
     return local/scale[:,None,None]
 
 
@@ -77,6 +84,102 @@ def _curb_solid(geom, sampler, height, slot):
             a,b=uses[0];faces.extend([[b,a,a+n],[b,a+n,b+n]])
     faces=np.array(faces,int)
     return gc.Mesh(v,faces,[slot]*len(faces),np.full(len(faces),-2),np.zeros((len(faces),3,2)),4.)
+
+
+def fit_curb_bottom(mesh: gc.Mesh, support: gc.Mesh, gap_m: float = .006,
+                    max_trim_m: float = .01) -> gc.Mesh:
+    """Trim ONLY the curb underside to clear the actual raised cake along its normal.
+
+    Opt-in construction step, not a changed datum/section policy: the visible top,
+    footprint, indices and texture identity stay fixed. For each bottom triangle,
+    bound the required lift over every intersecting support triangle (affine-plane
+    extrema lie at overlay vertices). Lift all three corners by at least that bound;
+    shared corners take the maximum, keeping the solid closed. Refuse an unsupported
+    bottom, a trim reaching the relief tolerance, or a collapsed section. No input
+    is mutated and no face is dropped. This is not a final xView/coverage receipt.
+    """
+    from dt_ai.ops.inv_quads import PolyMesh
+
+    for name, value in (("gap_m", gap_m), ("max_trim_m", max_trim_m)):
+        if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:
+            raise ValueError(f"{name} must be positive finite")
+    if gap_m <= .005 or max_trim_m > .01:
+        raise ValueError("curb fit requires gap_m > 0.005 and max_trim_m <= 0.01 m")
+    for name, m in (("curb", mesh), ("support", support)):
+        checked = PolyMesh(m.verts, tuple(map(tuple, m.faces)))
+        if not checked.faces or any(len(f) != 3 for f in checked.faces):
+            raise ValueError(f"{name}: nonempty triangular mesh required")
+        if len(m.slot) != len(m.faces) or any(not isinstance(s, str) or not s.strip() for s in m.slot):
+            raise ValueError(f"{name}: every face requires a nonblank slot")
+        if np.shape(m.level) != (len(m.faces),):
+            raise ValueError(f"{name}: missing face metadata")
+        if not np.isfinite(m.level).all():
+            raise ValueError(f"{name}: nonfinite levels")
+        if np.shape(m.uv) != (len(m.faces), 3, 2) or not np.isfinite(m.uv).all():
+            raise ValueError(f"{name}: finite corner UV required")
+    unknown = sorted(set(mesh.slot) - {s[2] for s in SECTIONS.values()})
+    if unknown:
+        raise ValueError(f"unsupported curb slots: {unknown}")
+    if np.any(mesh.level != -2) or np.any(support.level < 0):
+        raise ValueError("curb detail and surface-only support required")
+    p = mesh.verts[mesh.faces]
+    normals = np.cross(p[:, 1]-p[:, 0], p[:, 2]-p[:, 0])
+    bottoms = np.flatnonzero(normals[:, 2] < -1e-12)
+    tops = np.flatnonzero(normals[:, 2] > 1e-12)
+    if not len(bottoms) or not len(tops) or np.any(np.linalg.norm(normals, axis=1) <= 2e-12):
+        raise ValueError("curb requires nondegenerate top and bottom faces")
+    sp = support.verts[support.faces]
+    sn = np.cross(sp[:, 1]-sp[:, 0], sp[:, 2]-sp[:, 0])
+    lengths = np.linalg.norm(sn, axis=1)
+    if np.any(sn[:, 2] <= 1e-12) or not np.isfinite(lengths).all():
+        raise ValueError("support must be an upward nondegenerate heightfield")
+    sn /= lengths[:, None]
+    polygons = [Polygon(t[:, :2]) for t in sp]
+    tree = shapely.STRtree(polygons)
+    lift = np.zeros(len(mesh.verts))
+    rows = []
+    for fi in bottoms:
+        poly = Polygon(p[fi, :, :2])
+        ids = sorted(tree.query(poly, predicate='intersects').tolist())
+        pieces = []
+        delta = 0.
+        for si in ids:
+            overlap = poly.intersection(polygons[si])
+            if overlap.area <= 1e-14:
+                continue
+            pieces.append(overlap)
+            xy = shapely.get_coordinates(overlap)
+            # Local coordinates avoid cancellation at real-site world offsets.
+            s0 = sp[si, 0]
+            sz = s0[2] - ((xy-s0[:2]) @ sn[si, :2])/sn[si, 2]
+            b0 = p[fi, 0]
+            bz = b0[2] - ((xy-b0[:2]) @ normals[fi, :2])/normals[fi, 2]
+            delta = max(delta, float(np.max(sz + gap_m/sn[si, 2] - bz)))
+        # Union the original shared-edge faces BEFORE clipping. Independently
+        # rounded intersection rings can otherwise invent a micron-wide hole.
+        if not pieces or poly.difference(unary_union([polygons[si] for si in ids])).area > 1e-10:
+            raise ValueError(f"curb bottom face {fi}: incomplete surface support")
+        if delta >= max_trim_m:
+            raise ValueError(f"curb bottom face {fi}: trim {delta:.12g} m reaches {max_trim_m} m limit")
+        lift[mesh.faces[fi]] = np.maximum(lift[mesh.faces[fi]], delta)
+        rows.append(dict(face=int(fi), lift_m=delta, support_faces=ids))
+    top_ids = np.unique(mesh.faces[tops])
+    if np.any(lift[top_ids] > 0):
+        raise ValueError("curb bottom/top vertex identity is ambiguous")
+    v = mesh.verts.copy()
+    v[:, 2] += lift
+    columns = {}
+    for i, xyz in enumerate(mesh.verts):
+        columns.setdefault(tuple(xyz[:2]), []).append(i)
+    for ids in columns.values():
+        if len(ids) != 2 or np.ptp(v[ids, 2]) <= .002 or np.argmin(v[ids, 2]) != np.argmin(mesh.verts[ids, 2]):
+            raise ValueError(f"curb fit collapses or cannot prove paired top/bottom column {ids}")
+    report = dict(mesh.report)
+    report['curb_support_fit'] = dict(gap_m=gap_m, max_trim_m=max_trim_m,
+                                    measured_trim_m=float(lift.max()), bottom_faces=rows,
+                                    dropped_faces=[])
+    return gc.Mesh(v, mesh.faces.copy(), list(mesh.slot), mesh.level.copy(),
+                   mesh.uv.copy(), mesh.cell, report)
 
 
 def _stairs_solid(outline, cells, heights, sampler):
@@ -110,15 +213,80 @@ def _stairs_solid(outline, cells, heights, sampler):
             if abs(h-h2)<1e-6:continue
             if h<h2:a,b,h=uses[1]
             low=min(h,uses[0][2],uses[1][2])
-        ai,bi,al,bl=vid(*a,h),vid(*b,h),vid(*a,low),vid(*b,low)
-        f.extend([[bi,ai,al],[bi,al,bl]])
+        # Every wall uses the same horizontal cuts. Adjacent treads otherwise
+        # terminate midway along the taller side wall's vertical edge (a T-junction
+        # which Editable Poly/xView reports as overlapping faces).
+        cuts=sorted({float(low),float(h),*(float(z) for z in heights if low<z<h)})
+        for lo,hi in zip(cuts,cuts[1:]):
+            ai,bi,al,bl=vid(*a,hi),vid(*b,hi),vid(*a,lo),vid(*b,lo)
+            f.extend([[bi,ai,al],[bi,al,bl]])
 
     f=np.array(f,int)
     return gc.Mesh(np.array(v),f,['Stairs']*len(f),np.full(len(f),-2),np.zeros((len(f),3,2)),4.)
 
 
-def build_details(elements, boundary, sampler):
-    """Return solid mesh and one disposition per adapter entity (including group INSERTs)."""
+APPROVAL_KEYS = ('approved_by', 'approved_at', 'decision_id')
+
+
+class CurbJointApprovalError(ValueError):
+    """``separate_curbs`` opt-in without a complete project approval record (#512)."""
+
+
+def approval_record(separate_curbs, approval):
+    """Validate and copy the approval record for the taller-curb joint policy."""
+    if not separate_curbs:
+        if approval is not None:
+            raise CurbJointApprovalError('approval record given but separate_curbs is not enabled')
+        return None
+    if not isinstance(approval, Mapping):
+        raise CurbJointApprovalError(
+            'separate_curbs=True requires approval={approved_by, approved_at, decision_id}; got '
+            + type(approval).__name__)
+    unknown = sorted(map(str, set(approval) - set(APPROVAL_KEYS)))
+    if unknown:
+        raise CurbJointApprovalError(f'unknown approval keys: {unknown}')
+    record = {}
+    for key in APPROVAL_KEYS:
+        value = approval.get(key)
+        if not isinstance(value, str) or not value.strip():
+            raise CurbJointApprovalError(f'approval record needs a non-empty {key}; got {value!r}')
+        record[key] = value.strip()
+    try:
+        datetime.fromisoformat(record['approved_at'])
+    except ValueError as exc:
+        raise CurbJointApprovalError(
+            f"approved_at must be an ISO 8601 date/time; got {record['approved_at']!r}") from exc
+    return record
+
+
+def build_details(elements, boundary, sampler, separate_curbs=False, approval=None, stair_clearance_m=0.):
+    """Return ``(mesh, report, joints)``.
+
+    ``report`` holds one disposition per adapter entity (including group INSERTs). With
+    ``separate_curbs`` every modeled curb row also carries its own ``retained_m2``,
+    ``stair_trim_m2`` and ``joint_trim_m2`` (``footprint_m2`` reconciles to their sum), and
+    a fully covered entity is reported ``status='trimmed'`` with a truthful reason: the
+    taller-curb joint policy only when that policy actually removed the geometry, the stair
+    footprint when stairs occluded it, and a combined reason when both applied. ``joints``
+    holds the role-union joint trim totals once, at their own scope, so no entity row
+    inherits another role's union trim.
+
+    ``separate_curbs`` is an explicit model-policy opt-in: continue the taller section
+    through mixed-section junctions and end the shorter one with a 6 mm joint.
+    The opt-in requires ``approval`` = ``{approved_by, approved_at, decision_id}`` (non-empty
+    strings, ``approved_at`` ISO 8601); otherwise :class:`CurbJointApprovalError` is raised.
+    The record is copied onto every ``joints`` entry and every curb row that carries
+    ``joint_trim_m2``, so an approved build is distinguishable from an unapproved one.
+    Default/legacy builds never enable it and must not pass ``approval``.
+
+    ``stair_clearance_m`` is independently opt-in (zero preserves legacy geometry
+    and recognition/dispositions). Positive clearance uses analytic mitred cuts,
+    not densely sampled circular buffer arcs that can collapse during welding.
+    Each curb reports retained area and the actual stair-clearance trim.
+    """
+    if isinstance(stair_clearance_m, bool) or not isinstance(stair_clearance_m, (int, float)) or not math.isfinite(stair_clearance_m) or not 0 <= stair_clearance_m <= .02:
+        raise ValueError('stair_clearance_m must be finite in [0, 0.02] m')
+    approval = approval_record(separate_curbs, approval)
     if boundary.is_empty or not boundary.is_valid:
         raise ValueError('valid nonempty boundary required')
     meshes=[];report=[]; curbs={};stair_groups={}
@@ -142,7 +310,7 @@ def build_details(elements, boundary, sampler):
         area=path.buffer(width/2,cap_style='flat',join_style='mitre').intersection(boundary)
         if area.is_empty:
             row['reason']='empty clipped curb footprint';continue
-        curbs.setdefault(role,[]).append(area)
+        curbs.setdefault(role,[]).append((area,row))
         row.update(status='modeled',reason='approved section; polyline is the width centreline',width_m=width,height_m=height,
                    length_m=path.length,footprint_m2=area.area,bottom_above_vp_m=DATUM)
     stair_footprints=[]
@@ -188,12 +356,59 @@ def build_details(elements, boundary, sampler):
                 else:reason='DWG tread lines do not partition the stair footprint'
             else:reason='stair footprint outside Ground or unsupported holes/multiple parts'
         for e,r in group:r['reason']=reason
-    for role,gs in curbs.items():
+    occupied = Polygon()
+    roles = sorted(curbs, key=lambda r: -SECTIONS[r][1]) if separate_curbs else curbs
+    joints = []
+    stair_union = unary_union(stair_footprints)
+    if stair_clearance_m:
+        # Analytic mitred cuts avoid sub-mm round-buffer segments collapsing
+        # under the regulatory weld and bridging back across a stair corner.
+        stair_union = stair_union.buffer(stair_clearance_m, join_style='mitre')
+    for role in roles:
         width,height,slot=SECTIONS[role]
-        footprint=unary_union(gs).difference(unary_union(stair_footprints))
+        footprint=unary_union([a for a,_ in curbs[role]]).difference(stair_union)
+        if stair_clearance_m:
+            for area, row in curbs[role]:
+                retained = area.difference(stair_union).area
+                row.update(stair_clearance_m=stair_clearance_m,
+                           stair_trim_m2=max(0., area.area-retained), retained_m2=retained)
+                if retained <= 1e-9:
+                    row.update(status='trimmed', reason='occluded by stair footprint and explicit clearance')
+        if separate_curbs:
+            # Taller section continues through the joint; shorter section ends with
+            # a method-C-sized 6 mm clearance, not a coplanar duplicate bottom.
+            union_pre = footprint
+            before = union_pre.area
+            footprint = union_pre.difference(occupied.buffer(.006, join_style='mitre'))
+            union_trim = max(0.0, before - footprint.area)
+            for area,row in curbs[role]:
+                after_stair = area.difference(stair_union)
+                stair_trim = max(0.0, area.area - after_stair.area)
+                retained = area.intersection(footprint).area
+                joint_trim = max(0.0, after_stair.area - retained)
+                row['retained_m2'] = retained
+                row['stair_trim_m2'] = stair_trim
+                row['joint_trim_m2'] = joint_trim
+                row.update(approval)
+                if joint_trim > 0:
+                    row['joint_gap_m'] = .006
+                    row['joint_rule'] = 'taller section continuous'
+                if retained <= 1e-9:
+                    row['status'] = 'trimmed'
+                    if stair_trim > 0 and joint_trim > 0:
+                        row['reason'] = 'occluded by stair footprint and taller curb section'
+                    elif stair_trim > 0:
+                        row['reason'] = 'occluded by stair footprint'
+                    else:
+                        row['reason'] = 'joint policy: fully covered by taller curb section'
+            if union_trim > 0:
+                joints.append(dict(role=role, scope='role union', union_trim_m2=union_trim,
+                                   union_retained_m2=footprint.area, gap_m=.006,
+                                   rule='taller section continuous', **approval))
+            occupied = unary_union([occupied, footprint])
         if not footprint.is_empty:meshes.append(_curb_solid(footprint,sampler,height,slot))
     mesh=combine(meshes)
     if len(mesh.faces):
         # Detail UV is derived after cleanup. No loose edges or near-duplicate solid vertices are retained.
         mesh=gc.clean_topology(mesh)
-    return mesh,report
+    return mesh, report, joints

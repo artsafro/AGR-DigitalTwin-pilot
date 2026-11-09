@@ -1,0 +1,66 @@
+{
+ "extension": "sintez_agr_checker (synthetic fixture, #979 branch C)",
+ "address_detected": "Synthetic",
+ "has_hp": true,
+ "has_lp": false,
+ "error": null,
+ "messages": [],
+ "hp": [
+  {
+   "category": "synthetic",
+   "req_num": "2.3.18",
+   "name": "Трансформации применены",
+   "state": "verified",
+   "auto": true,
+   "errors_count": 0,
+   "errors": "",
+   "recommendations_count": 0,
+   "recommendations": ""
+  },
+  {
+   "category": "synthetic",
+   "req_num": "2.3.11",
+   "name": "Дубли и висячие элементы",
+   "state": "verified",
+   "auto": true,
+   "errors_count": 0,
+   "errors": "",
+   "recommendations_count": 0,
+   "recommendations": ""
+  },
+  {
+   "category": "synthetic",
+   "req_num": "2.3.8",
+   "name": "Нет иерархических связей",
+   "state": "verified",
+   "auto": true,
+   "errors_count": 0,
+   "errors": "",
+   "recommendations_count": 0,
+   "recommendations": ""
+  },
+  {
+   "category": "synthetic",
+   "req_num": "2.3.17",
+   "name": "Триангуляция",
+   "state": "verified",
+   "auto": true,
+   "errors_count": 0,
+   "errors": "",
+   "recommendations_count": 0,
+   "recommendations": ""
+  },
+  {
+   "category": "synthetic",
+   "req_num": "2.10.1",
+   "name": "Не длиннее 254",
+   "state": "verified",
+   "auto": true,
+   "errors_count": 0,
+   "errors": "",
+   "recommendations_count": 0,
+   "recommendations": ""
+  }
+ ],
+ "lp": []
+}

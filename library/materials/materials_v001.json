@@ -1,0 +1,1207 @@
+{
+ "schema": 1,
+ "version": "v001",
+ "date": "2026-11-06",
+ "issue": "#1024 K3",
+ "colour_space": "sRGB 8 bit; ral_classic.json screen approximations, not measured RAL",
+ "byte_fields": "roughness/metallic/emissive 0..255 (MaterialRegistry); opacity 0..1",
+ "maps_drive": "G:\\Мой диск\\AGR-assets\\materials\\ (read only from a copy, K5)",
+ "open_questions": "materials-audit-1.0 REPORT.md §5 Q1-Q12 (no owner answer yet)",
+ "materials": [
+  {
+   "library_id": 1,
+   "key": "paint_ral5015",
+   "name_ru": "Краска RAL 5015 синяя (сэндвич, кассета, каркас)",
+   "class": "paint",
+   "ral": "5015",
+   "rgb_srgb": [
+    34,
+    113,
+    179
+   ],
+   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL",
+   "roughness": 150,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "solid"
+   },
+   "base_map": null,
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-PNT-01",
+    "evidence": "jobs/KPP1/scripts/vpm_textures.json:145; jobs/TEC26-OKS/AC08/MATERIALS.md:19-21"
+   },
+   "maf_v005_id": 11
+  },
+  {
+   "library_id": 2,
+   "key": "paint_ral7004",
+   "name_ru": "Краска RAL 7004 серая (двери, цоколь, кровля, решётки)",
+   "class": "paint",
+   "ral": "7004",
+   "rgb_srgb": [
+    150,
+    153,
+    146
+   ],
+   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL",
+   "roughness": 150,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "solid"
+   },
+   "base_map": null,
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-PNT-02",
+    "evidence": "jobs/KPP1/scripts/vpm_textures.json:8; jobs/TEC26-OKS/AC04/MATERIALS.md:87,96"
+   },
+   "maf_v005_id": 3,
+   "note": "MAF v005 ID 3 сливает 7040/7004"
+  },
+  {
+   "library_id": 3,
+   "key": "paint_ral9016",
+   "name_ru": "Краска RAL 9016 белая (рамы, откосы, баки)",
+   "class": "paint",
+   "ral": "9016",
+   "rgb_srgb": [
+    246,
+    246,
+    246
+   ],
+   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL",
+   "roughness": 150,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "solid"
+   },
+   "base_map": null,
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-PNT-03",
+    "evidence": "jobs/KPP1/scripts/vpm_textures.json Frame_RAL9016; jobs/TEC26-OKS/AC09/MATERIALS.md:91,93"
+   },
+   "maf_v005_id": 5,
+   "note": "MAF v005 ID 5 = 9003/9002, точного 9016 нет"
+  },
+  {
+   "library_id": 4,
+   "key": "paint_ral1021",
+   "name_ru": "Краска RAL 1021 жёлтая (ограждения, лестницы)",
+   "class": "paint",
+   "ral": "1021",
+   "rgb_srgb": [
+    246,
+    182,
+    0
+   ],
+   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL",
+   "roughness": 150,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "solid"
+   },
+   "base_map": null,
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-PNT-04",
+    "evidence": "jobs/KPP1/materials.json Ladder_Alpha_RAL1021; jobs/TEC26-OKS/AC04/MATERIALS.md:88"
+   },
+   "maf_v005_id": null,
+   "note": "KPP/PSU/AC04 брали (238,201,0); здесь ral_classic #F6B600",
+   "questions": [
+    "Q9"
+   ]
+  },
+  {
+   "library_id": 5,
+   "key": "paint_ral7047",
+   "name_ru": "Краска RAL 7047 телегрей (сэндвич, оборудование)",
+   "class": "paint",
+   "ral": "7047",
+   "rgb_srgb": [
+    208,
+    208,
+    208
+   ],
+   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL",
+   "roughness": 150,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "solid"
+   },
+   "base_map": null,
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-PNT-05",
+    "evidence": "jobs/KPP1/scripts/vpm_textures.json Cassette_RAL7047; jobs/PSU275/vpm_textures.json:32"
+   },
+   "maf_v005_id": 4
+  },
+  {
+   "library_id": 6,
+   "key": "paint_ral3020",
+   "name_ru": "Краска RAL 3020 красная (труба)",
+   "class": "paint",
+   "ral": "3020",
+   "rgb_srgb": [
+    204,
+    6,
+    5
+   ],
+   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL",
+   "roughness": 150,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "solid"
+   },
+   "base_map": null,
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-PNT-06",
+    "evidence": "jobs/PSU275/oks/chimney/vpm_textures.json Paint_RAL3020"
+   },
+   "maf_v005_id": 7
+  },
+  {
+   "library_id": 7,
+   "key": "paint_ral7024",
+   "name_ru": "Краска RAL 7024 графит (рамы ПВХ/алюминий)",
+   "class": "paint",
+   "ral": "7024",
+   "rgb_srgb": [
+    71,
+    74,
+    81
+   ],
+   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL",
+   "roughness": 150,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "solid"
+   },
+   "base_map": null,
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-PNT-07",
+    "evidence": "docs/agr/decisions/OBR22_FACADE_PDF_UV_TRIAL.md:12-13,65"
+   },
+   "maf_v005_id": null,
+   "note": "в Revit-реестре рамы #45494E",
+   "questions": [
+    "Q9"
+   ]
+  },
+  {
+   "library_id": 8,
+   "key": "paint_ral7016",
+   "name_ru": "Краска RAL 7016 антрацит (оконные профили)",
+   "class": "paint",
+   "ral": "7016",
+   "rgb_srgb": [
+    56,
+    62,
+    66
+   ],
+   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL",
+   "roughness": 150,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "solid"
+   },
+   "base_map": null,
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-PNT-08",
+    "evidence": "jobs/REVIT-OPENINGS/STATE.md:74; jobs/WINDOW-FRAMES/STATE.md:5"
+   },
+   "maf_v005_id": 2
+  },
+  {
+   "library_id": 9,
+   "key": "panel_v1200_ral5015",
+   "name_ru": "Сэндвич-панель RAL 5015, вертикальные швы 1,2 м",
+   "class": "panel",
+   "ral": "5015",
+   "rgb_srgb": [
+    34,
+    113,
+    179
+   ],
+   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL",
+   "roughness": 150,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "panel_v1200"
+   },
+   "base_map": "panel_v1200",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-PAN-01",
+    "evidence": "jobs/PSU275/vpm_textures.json:32-58; jobs/TEC26-OKS/AC04/MATERIALS.md:131-134"
+   },
+   "maf_v005_id": null,
+   "note": "PSU275 1,19 м -> 1,2 м (+0,8 %), горизонтальных швов нет"
+  },
+  {
+   "library_id": 10,
+   "key": "panel_v1200_ral7047",
+   "name_ru": "Сэндвич-панель RAL 7047, вертикальные швы 1,2 м",
+   "class": "panel",
+   "ral": "7047",
+   "rgb_srgb": [
+    208,
+    208,
+    208
+   ],
+   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL",
+   "roughness": 150,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "panel_v1200"
+   },
+   "base_map": "panel_v1200",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-PAN-01",
+    "evidence": "jobs/PSU275/vpm_textures.json:32-58; jobs/PSU275/oks/ducts/vpm_textures.json"
+   },
+   "maf_v005_id": null
+  },
+  {
+   "library_id": 11,
+   "key": "panel_ribbed_ral5015",
+   "name_ru": "Ребристая панель RAL 5015 (рёбра по числу на лист фасада)",
+   "class": "panel",
+   "ral": "5015",
+   "rgb_srgb": [
+    34,
+    113,
+    179
+   ],
+   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL",
+   "roughness": 150,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "metric_pattern",
+    "rib_pitch_m": 0.19532,
+    "ribs": "per_facade"
+   },
+   "base_map": null,
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-PAN-02",
+    "evidence": "jobs/TEC26-OKS/AC08/MATERIALS.md:19-20; jobs/TEC26-OKS/STATE.md:44-47"
+   },
+   "maf_v005_id": null,
+   "note": "шаг = поле панели / число рёбер: UV-масштаб на фасад, не тайл",
+   "questions": [
+    "Q5"
+   ]
+  },
+  {
+   "library_id": 12,
+   "key": "cassette_v600_ral7047",
+   "name_ru": "Кассета RAL 7047, вертикальные швы 0,6 м",
+   "class": "panel",
+   "ral": "7047",
+   "rgb_srgb": [
+    208,
+    208,
+    208
+   ],
+   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL",
+   "roughness": 150,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "panel_v600"
+   },
+   "base_map": "panel_v600",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-PAN-04",
+    "evidence": "jobs/KPP1/scripts/vpm_textures.json Cassette_RAL7047 (P=[0.6,1.0])"
+   },
+   "maf_v005_id": null,
+   "note": "Y = 1,0 м не делит 3,6 м: горизонтальные швы сняты",
+   "questions": [
+    "Q2"
+   ]
+  },
+  {
+   "library_id": 13,
+   "key": "cassette_600_ral9016",
+   "name_ru": "Кассета перфорированная RAL 9016 600x600",
+   "class": "panel",
+   "ral": "9016",
+   "rgb_srgb": [
+    246,
+    246,
+    246
+   ],
+   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL",
+   "roughness": 150,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "tile_600x600"
+   },
+   "base_map": "tile_600x600",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-PAN-05",
+    "evidence": "jobs/KPP1/scripts/vpm_textures.json:171-178"
+   },
+   "maf_v005_id": null,
+   "note": "перфорация (opacity) не входит в серую карту"
+  },
+  {
+   "library_id": 14,
+   "key": "tile_600x1200_ral7024",
+   "name_ru": "Керамогранит 600x1200 тёмно-серый (вертикально)",
+   "class": "tile",
+   "ral": "7024",
+   "rgb_srgb": [
+    71,
+    74,
+    81
+   ],
+   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL",
+   "roughness": 150,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "facade_600x1200"
+   },
+   "base_map": "facade_600x1200",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-TIL-01",
+    "evidence": "docs/agr/decisions/OBR22_PROCEDURAL_TEXTURES_V010.md:6-8; OBR22_SHARED_UV_V011.md:21"
+   },
+   "maf_v005_id": null,
+   "questions": [
+    "Q11"
+   ]
+  },
+  {
+   "library_id": 15,
+   "key": "tile_600x1200_ral7040",
+   "name_ru": "Керамогранит 600x1200 светло-серый (вертикально)",
+   "class": "tile",
+   "ral": "7040",
+   "rgb_srgb": [
+    152,
+    158,
+    161
+   ],
+   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL",
+   "roughness": 150,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "facade_600x1200"
+   },
+   "base_map": "facade_600x1200",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-TIL-02",
+    "evidence": "docs/agr/decisions/OBR22_FACADE_PDF_UV_TRIAL.md:12"
+   },
+   "maf_v005_id": 3
+  },
+  {
+   "library_id": 16,
+   "key": "tile_300x300_ral7004",
+   "name_ru": "Цокольная плитка 300x300 RAL 7004",
+   "class": "tile",
+   "ral": "7004",
+   "rgb_srgb": [
+    150,
+    153,
+    146
+   ],
+   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL",
+   "roughness": 150,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "tile_300x300"
+   },
+   "base_map": "tile_300x300",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-TIL-03",
+    "evidence": "jobs/KPP1/scripts/vpm_textures.json:8-20 (P=[0.3,0.3])"
+   },
+   "maf_v005_id": null,
+   "note": "шов 4 мм - допущение"
+  },
+  {
+   "library_id": 17,
+   "key": "brick_250x65",
+   "name_ru": "Кирпич 250x65, шов 10, перевязка 1/2",
+   "class": "brick",
+   "ral": null,
+   "rgb_srgb": [
+    166,
+    94,
+    46
+   ],
+   "rgb_note": "project sample (sRGB), provisional",
+   "roughness": 150,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "brick_250x65"
+   },
+   "base_map": "brick_250x65",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-BRK-01",
+    "evidence": "docs/agr/decisions/OBR22_PROCEDURAL_TEXTURES_V010.md:6-8; FACADES_ATLAS_PARTIAL_ACCEPTANCE.md:15-17"
+   },
+   "maf_v005_id": null,
+   "note": "RAL 8023 по PDF; в ral_classic.json кода 8023 нет, RGB - экранное приближение 8023 (ral = null)",
+   "questions": [
+    "Q3",
+    "Q4"
+   ]
+  },
+  {
+   "library_id": 18,
+   "key": "paving_100x300_dark",
+   "name_ru": "Брусчатка «Готика» 100x300 тёмная (Bronze 25)",
+   "class": "paving",
+   "ral": null,
+   "rgb_srgb": [
+    118,
+    116,
+    114
+   ],
+   "rgb_note": "project sample (sRGB), provisional",
+   "roughness": 150,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "ground_100x300"
+   },
+   "base_map": "ground_100x300",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-PAV-01",
+    "evidence": "tools/materials/ground_recipes.json:278"
+   },
+   "maf_v005_id": null,
+   "questions": [
+    "Q11"
+   ]
+  },
+  {
+   "library_id": 19,
+   "key": "paving_100x300_light",
+   "name_ru": "Брусчатка «Готика» 100x300 светлая (Gold 22 / Profi 8)",
+   "class": "paving",
+   "ral": null,
+   "rgb_srgb": [
+    214,
+    208,
+    196
+   ],
+   "rgb_note": "project sample (sRGB), provisional",
+   "roughness": 150,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "ground_100x300"
+   },
+   "base_map": "ground_100x300",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-PAV-02",
+    "evidence": "tools/materials/ground_recipes.json:17"
+   },
+   "maf_v005_id": null
+  },
+  {
+   "library_id": 20,
+   "key": "paving_100x300_red",
+   "name_ru": "Брусчатка «Готика» 100x300 красная (Silver 9)",
+   "class": "paving",
+   "ral": null,
+   "rgb_srgb": [
+    148,
+    74,
+    48
+   ],
+   "rgb_note": "project sample (sRGB), provisional",
+   "roughness": 150,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "ground_100x300"
+   },
+   "base_map": "ground_100x300",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-PAV-03",
+    "evidence": "tools/materials/ground_recipes.json:139"
+   },
+   "maf_v005_id": null
+  },
+  {
+   "library_id": 21,
+   "key": "slab_900x300",
+   "name_ru": "Плита шаговая 900x300",
+   "class": "paving",
+   "ral": null,
+   "rgb_srgb": [
+    166,
+    151,
+    153
+   ],
+   "rgb_note": "project sample (sRGB), provisional",
+   "roughness": 150,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "slab_900x300"
+   },
+   "base_map": "slab_900x300",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-PAV-04",
+    "evidence": "docs/research/spozu-vatutino-inventory.md:147"
+   },
+   "maf_v005_id": null,
+   "note": "цвет не задан: бетон MAF ID 24"
+  },
+  {
+   "library_id": 22,
+   "key": "asphalt",
+   "name_ru": "Асфальт",
+   "class": "ground",
+   "ral": null,
+   "rgb_srgb": [
+    62,
+    62,
+    64
+   ],
+   "rgb_note": "project sample (sRGB), provisional",
+   "roughness": 230,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "crumb_1x1"
+   },
+   "base_map": "crumb_1x1",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-GRD-01",
+    "evidence": "jobs/KPP1/scripts/vpm_textures.json:29-47"
+   },
+   "maf_v005_id": null
+  },
+  {
+   "library_id": 23,
+   "key": "gravel_2_8",
+   "name_ru": "Гравийный отсев 2-8 мм",
+   "class": "ground",
+   "ral": null,
+   "rgb_srgb": [
+    150,
+    146,
+    140
+   ],
+   "rgb_note": "project sample (sRGB), provisional",
+   "roughness": 240,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "crumb_1x1"
+   },
+   "base_map": "crumb_1x1",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-GRD-02",
+    "evidence": "tools/materials/ground_recipes.json:181"
+   },
+   "maf_v005_id": null
+  },
+  {
+   "library_id": 24,
+   "key": "pebbles",
+   "name_ru": "Галька",
+   "class": "ground",
+   "ral": null,
+   "rgb_srgb": [
+    160,
+    155,
+    148
+   ],
+   "rgb_note": "project sample (sRGB), provisional",
+   "roughness": 200,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "crumb_1x1"
+   },
+   "base_map": "crumb_1x1",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-GRD-03",
+    "evidence": "tools/materials/ground_recipes.json:240"
+   },
+   "maf_v005_id": null
+  },
+  {
+   "library_id": 25,
+   "key": "mulch",
+   "name_ru": "Мульча",
+   "class": "ground",
+   "ral": null,
+   "rgb_srgb": [
+    95,
+    70,
+    50
+   ],
+   "rgb_note": "project sample (sRGB), provisional",
+   "roughness": 245,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "crumb_1x1"
+   },
+   "base_map": "crumb_1x1",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-GRD-04",
+    "evidence": "tools/materials/ground_recipes.json:59"
+   },
+   "maf_v005_id": null
+  },
+  {
+   "library_id": 26,
+   "key": "lawn_reinforced",
+   "name_ru": "Газон укреплённый (экорешётка)",
+   "class": "ground",
+   "ral": null,
+   "rgb_srgb": [
+    88,
+    120,
+    60
+   ],
+   "rgb_note": "project sample (sRGB), provisional",
+   "roughness": 240,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "crumb_1x1"
+   },
+   "base_map": "crumb_1x1",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-GRD-05",
+    "evidence": "tools/materials/ground_recipes.json:97"
+   },
+   "maf_v005_id": null,
+   "questions": [
+    "Q6"
+   ]
+  },
+  {
+   "library_id": 27,
+   "key": "rubber_crumb",
+   "name_ru": "Резиновое покрытие (бесшовная крошка 1x1 м)",
+   "class": "ground",
+   "ral": "3000",
+   "rgb_srgb": [
+    175,
+    43,
+    30
+   ],
+   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL",
+   "roughness": 235,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "greyscale_mask",
+    "base_map": "crumb_1x1"
+   },
+   "base_map": "crumb_1x1",
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": null,
+    "evidence": "#1024 K3: резиновое покрытие 1x1 м"
+   },
+   "maf_v005_id": null,
+   "note": "в аудите джобов не встречалось; цвет - предложение"
+  },
+  {
+   "library_id": 28,
+   "key": "concrete_arch",
+   "name_ru": "Бетон архитектурный (бордюр, ступени)",
+   "class": "mineral",
+   "ral": null,
+   "rgb_srgb": [
+    166,
+    151,
+    153
+   ],
+   "rgb_note": "project sample (sRGB), provisional",
+   "roughness": 220,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "solid"
+   },
+   "base_map": null,
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-GRD-06",
+    "evidence": "tools/materials/ground_recipes.json:412; library/maf/material_ids_v005.md:32"
+   },
+   "maf_v005_id": 24
+  },
+  {
+   "library_id": 29,
+   "key": "roof_logicroof",
+   "name_ru": "Кровельная мембрана Logicroof",
+   "class": "roof",
+   "ral": null,
+   "rgb_srgb": [
+    140,
+    143,
+    145
+   ],
+   "rgb_note": "project sample (sRGB), provisional",
+   "roughness": 200,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "solid"
+   },
+   "base_map": null,
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-ROF-01",
+    "evidence": "jobs/KPP1/scripts/vpm_textures.json:229"
+   },
+   "maf_v005_id": null
+  },
+  {
+   "library_id": 30,
+   "key": "roof_solo",
+   "name_ru": "Кровельная мембрана Solo (тёмная)",
+   "class": "roof",
+   "ral": null,
+   "rgb_srgb": [
+    45,
+    45,
+    48
+   ],
+   "rgb_note": "project sample (sRGB), provisional",
+   "roughness": 200,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "solid"
+   },
+   "base_map": null,
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-ROF-02",
+    "evidence": "jobs/KPP1/scripts/vpm_textures.json Membrane_Solo"
+   },
+   "maf_v005_id": null
+  },
+  {
+   "library_id": 31,
+   "key": "roof_profiled_sheet",
+   "name_ru": "Профнастил / кровельный лист",
+   "class": "roof",
+   "ral": null,
+   "rgb_srgb": [
+    112,
+    112,
+    112
+   ],
+   "rgb_note": "project sample (sRGB), provisional",
+   "roughness": 120,
+   "metallic": 200,
+   "emissive": 0,
+   "recipe": {
+    "kind": "solid"
+   },
+   "base_map": null,
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-ROF-03",
+    "evidence": "library/maf/material_ids_v005.md:38"
+   },
+   "maf_v005_id": 30,
+   "note": "предложение из MAF v005: шаг волны не задан"
+  },
+  {
+   "library_id": 32,
+   "key": "railing_alpha_ral1021",
+   "name_ru": "Ограждение кровли/лестниц RAL 1021 (alpha)",
+   "class": "metal",
+   "ral": "1021",
+   "rgb_srgb": [
+    246,
+    182,
+    0
+   ],
+   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL",
+   "roughness": 110,
+   "metallic": 255,
+   "emissive": 0,
+   "recipe": {
+    "kind": "metric_pattern",
+    "period_m": [
+     0.9,
+     4.096
+    ],
+    "opacity": true
+   },
+   "base_map": null,
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-MET-01",
+    "evidence": "jobs/KPP1/scripts/vpm_textures.json:50-67"
+   },
+   "maf_v005_id": null,
+   "questions": [
+    "Q9"
+   ]
+  },
+  {
+   "library_id": 33,
+   "key": "ladder_alpha_ral1021",
+   "name_ru": "Стремянка RAL 1021 (alpha)",
+   "class": "metal",
+   "ral": "1021",
+   "rgb_srgb": [
+    246,
+    182,
+    0
+   ],
+   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL",
+   "roughness": 110,
+   "metallic": 255,
+   "emissive": 0,
+   "recipe": {
+    "kind": "metric_pattern",
+    "period_m": [
+     4.096,
+     0.372
+    ],
+    "opacity": true
+   },
+   "base_map": null,
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-MET-02",
+    "evidence": "jobs/KPP1/scripts/vpm_textures.json Ladder_Alpha_RAL1021"
+   },
+   "maf_v005_id": null
+  },
+  {
+   "library_id": 34,
+   "key": "cage_alpha_ral1021",
+   "name_ru": "Страховочная клетка RAL 1021 (alpha)",
+   "class": "metal",
+   "ral": "1021",
+   "rgb_srgb": [
+    246,
+    182,
+    0
+   ],
+   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL",
+   "roughness": 110,
+   "metallic": 255,
+   "emissive": 0,
+   "recipe": {
+    "kind": "metric_pattern",
+    "period_m": [
+     0.46,
+     0.833
+    ],
+    "opacity": true
+   },
+   "base_map": null,
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-MET-03",
+    "evidence": "jobs/KPP1/scripts/vpm_textures.json:98-115"
+   },
+   "maf_v005_id": null
+  },
+  {
+   "library_id": 35,
+   "key": "metal_ral9006",
+   "name_ru": "Металл RAL 9006 (газоходы)",
+   "class": "metal",
+   "ral": "9006",
+   "rgb_srgb": [
+    165,
+    165,
+    165
+   ],
+   "rgb_note": "ral_classic.json screen approximation (sRGB), not a measured RAL",
+   "roughness": 90,
+   "metallic": 255,
+   "emissive": 0,
+   "recipe": {
+    "kind": "solid"
+   },
+   "base_map": null,
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": null,
+    "evidence": "jobs/PSU275/oks/ducts/vpm_textures.json Duct_RAL9006 (REPORT §1.1)"
+   },
+   "maf_v005_id": null
+  },
+  {
+   "library_id": 36,
+   "key": "steel_stainless",
+   "name_ru": "Сталь нержавеющая",
+   "class": "metal",
+   "ral": null,
+   "rgb_srgb": [
+    195,
+    200,
+    206
+   ],
+   "rgb_note": "project sample (sRGB), provisional",
+   "roughness": 60,
+   "metallic": 255,
+   "emissive": 0,
+   "recipe": {
+    "kind": "solid"
+   },
+   "base_map": null,
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-MET-04",
+    "evidence": "library/maf/material_ids_v005.md:28"
+   },
+   "maf_v005_id": 20
+  },
+  {
+   "library_id": 37,
+   "key": "wood_light",
+   "name_ru": "Дерево светлое (лиственница «светлый дуб»)",
+   "class": "wood",
+   "ral": null,
+   "rgb_srgb": [
+    190,
+    165,
+    129
+   ],
+   "rgb_note": "project sample (sRGB), provisional",
+   "roughness": 180,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "solid"
+   },
+   "base_map": null,
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-WOD-01",
+    "evidence": "jobs/VATUTINO-SITE/maf/site-maf-set.md:48-55; library/maf/material_ids_v005.md:22"
+   },
+   "maf_v005_id": 14
+  },
+  {
+   "library_id": 38,
+   "key": "plastic_black",
+   "name_ru": "Пластик чёрный матовый",
+   "class": "plastic",
+   "ral": null,
+   "rgb_srgb": [
+    48,
+    48,
+    48
+   ],
+   "rgb_note": "project sample (sRGB), provisional",
+   "roughness": 170,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "solid"
+   },
+   "base_map": null,
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-PLA-01",
+    "evidence": "jobs/KPP1/scripts/vpm_textures.json Plastic_Black; library/maf/material_ids_v005.md:30"
+   },
+   "maf_v005_id": 22
+  },
+  {
+   "library_id": 39,
+   "key": "glass_01",
+   "name_ru": "Стекло M_Glass_01 (alpha 0,5)",
+   "class": "glass",
+   "ral": null,
+   "rgb_srgb": [
+    200,
+    215,
+    220
+   ],
+   "rgb_note": "project sample (sRGB), provisional",
+   "roughness": 10,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "solid"
+   },
+   "base_map": null,
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-GLS-01",
+    "evidence": "docs/domain/materials.md:8-9; jobs/TEC26-OKS/AC04/MATERIALS.md:86"
+   },
+   "maf_v005_id": null,
+   "opacity": 0.5,
+   "note": "только на объектах роли glass (отдельный меш, UDIM с 1001, ответ В9)"
+  },
+  {
+   "library_id": 40,
+   "key": "interior",
+   "name_ru": "Интерьер (тёмная заглушка)",
+   "class": "interior",
+   "ral": null,
+   "rgb_srgb": [
+    25,
+    25,
+    28
+   ],
+   "rgb_note": "project sample (sRGB), provisional",
+   "roughness": 230,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "solid"
+   },
+   "base_map": null,
+   "status": "proposed",
+   "source": {
+    "audit": "GeoAGR-private:research/materials-audit-1.0/materials_table.csv@ab429293",
+    "audit_id": "OKS-INT-01",
+    "evidence": "jobs/KPP1/materials.json Interior; jobs/TEC26-OKS/AC09/vpm_textures.json:41"
+   },
+   "maf_v005_id": null
+  },
+  {
+   "library_id": 41,
+   "key": "larch_light_oak_boards",
+   "name_ru": "Доски лиственница «светлый дуб», 11 досок со швами (скамья «Верона», МАФ)",
+   "class": "wood",
+   "ral": null,
+   "rgb_srgb": [
+    196,
+    154,
+    108
+   ],
+   "rgb_note": "project sample (sRGB) = MAF v005 larch_light_oak #C49A6C; board texture SYNTHETIC (make_boards.py)",
+   "roughness": 180,
+   "metallic": 0,
+   "emissive": 0,
+   "recipe": {
+    "kind": "metric_pattern",
+    "boards": 11,
+    "texture": "verona_boards_11.png",
+    "seam_srgb": [
+     90,
+     64,
+     38
+    ],
+    "cell_px": 256
+   },
+   "base_map": null,
+   "status": "approved",
+   "source": {
+    "audit": null,
+    "audit_id": null,
+    "decision": "D202",
+    "evidence": "issue #1046 comment 2026-11-06 (Artem «да»); jobs/VATUTINO-SITE/maf/verona-material-ids-v006-proposal.json; C:/x/vatutino-maf/gen-v001/atlas-v006-2/verona_boards_11.png sha256 bd3bf55ae3604695cb2600584aa5fc957207a5afc15c9703ab9e0aa5ff554b12"
+   },
+   "maf_v005_id": null,
+   "note": "новый ID v006 [D202] (D152: один ID на текстуру); каркас скамьи - существующий paint_ral7016 (library_id 8)"
+  }
+ ]
+}

@@ -3,6 +3,14 @@
 Provenance keys: `reg p.N` = regulation `Rasporyajenies19012026trebovaniya(2).pdf` (Moscow DIT + Moskomarkhitektura order 19.04.2023 No 64-16-192/23/769, 56 pp., SHA-256 933f6b70...4222), PDF page index from 1, text read via OCR layer (pdftotext -enc UTF-8); pages 32 and 40 also checked as rendered images. `local:` paths are relative to the repo root (AGR `docs/` lives in `docs/agr/`).
 Appendix map: App.1 NPM = pp.1-19, App.2 VPM = pp.20-50, App.3 GeoJSON = pp.51-56 (reg p.1, 20, 51; local: docs/agr/DIGITAL_TWIN_AI_PROJECT_BRIEF.md#1).
 
+## 2026 requirement tables and project decisions
+
+Full LP/HP rows, vendor auto flags and V4 editorial markers: [2026 requirements](requirements-2026.md).
+Check coverage and its limitations: [validation](validation.md#sintez-161-check-group-mapping).
+[D160] VPM density = 512-1706 px/m (NPM Ground 10-40 unchanged); [D161] confirms the
+150,000 project OKS target versus the 1,000,000 regulation ceiling. [D162] retains both
+UCX gap checks; [D163] leaves UKEP verification to the applicant (missing file: info only).
+
 ## Terms
 - NPM = low-poly model; VPM = high-poly model; OKS = designed/reconstructed building with facade (buildings, underground-parking entrances, stylobate). Existing non-reconstructed buildings inside the site are NOT modeled. reg p.2, 21, 26.
 - Usable roof (эксплуатируемая кровля) and greenery on roof/stylobate belong to the OKS, not to Ground. reg p.2, 7, 21.

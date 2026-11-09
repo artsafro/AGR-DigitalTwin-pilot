@@ -1,0 +1,298 @@
+{
+  "passed": true,
+  "failed": [],
+  "not_measured": [],
+  "checks": [
+    {
+      "id": "bbox",
+      "status": "pass",
+      "value": 0.0,
+      "limit": 0.05,
+      "details": {
+        "model": [
+          [
+            0.0,
+            0.0,
+            -0.0
+          ],
+          [
+            10.0,
+            10.0,
+            7.2
+          ]
+        ],
+        "etalon": [
+          [
+            0.0,
+            0.0,
+            -0.0
+          ],
+          [
+            10.0,
+            10.0,
+            7.2
+          ]
+        ]
+      }
+    },
+    {
+      "id": "levels",
+      "status": "pass",
+      "value": 0.0,
+      "limit": 0.03,
+      "details": {
+        "diff_m": {
+          "L0": 0.0,
+          "L1": 0.0,
+          "roof": 0.0
+        },
+        "missing_in_model": []
+      }
+    },
+    {
+      "id": "floor_areas",
+      "status": "pass",
+      "value": 0.0,
+      "limit": 0.02,
+      "details": {
+        "floors": {
+          "L0": [
+            {
+              "z": 0.33,
+              "model_m2": 100.0,
+              "etalon_m2": 100.0,
+              "rel": 0.0
+            },
+            {
+              "z": 0.99,
+              "model_m2": 99.7,
+              "etalon_m2": 99.7,
+              "rel": 0.0
+            },
+            {
+              "z": 1.65,
+              "model_m2": 99.7,
+              "etalon_m2": 99.7,
+              "rel": 0.0
+            },
+            {
+              "z": 2.31,
+              "model_m2": 99.7,
+              "etalon_m2": 99.7,
+              "rel": 0.0
+            },
+            {
+              "z": 2.97,
+              "model_m2": 100.0,
+              "etalon_m2": 100.0,
+              "rel": 0.0
+            }
+          ],
+          "L1": [
+            {
+              "z": 3.63,
+              "model_m2": 100.0,
+              "etalon_m2": 100.0,
+              "rel": 0.0
+            },
+            {
+              "z": 4.29,
+              "model_m2": 99.7,
+              "etalon_m2": 99.7,
+              "rel": 0.0
+            },
+            {
+              "z": 4.95,
+              "model_m2": 99.7,
+              "etalon_m2": 99.7,
+              "rel": 0.0
+            },
+            {
+              "z": 5.61,
+              "model_m2": 99.7,
+              "etalon_m2": 99.7,
+              "rel": 0.0
+            },
+            {
+              "z": 6.27,
+              "model_m2": 100.0,
+              "etalon_m2": 100.0,
+              "rel": 0.0
+            }
+          ]
+        },
+        "no_closed_section": [],
+        "closed_on_one_side": [],
+        "open_on_both_sides": [],
+        "basis": "etalon"
+      }
+    },
+    {
+      "id": "silhouettes",
+      "status": "pass",
+      "value": 1.0,
+      "limit": 0.97,
+      "details": {
+        "iou": {
+          "x": 1.0,
+          "y": 1.0,
+          "top": 1.0
+        }
+      }
+    },
+    {
+      "id": "mesh",
+      "status": "pass",
+      "value": {
+        "non_manifold": 0,
+        "non_manifold_vertices": 0,
+        "boundary": 28,
+        "open_loops_not_allowed": 0,
+        "slabs_not_inset": 0,
+        "overlaps": 0,
+        "ngons": 0
+      },
+      "limit": null,
+      "details": {
+        "non_manifold_edges": 0,
+        "non_manifold_vertices": 0,
+        "non_manifold_vertex_points": [],
+        "boundary_edges": 28,
+        "open_loops": [
+          {
+            "kind": "bottom",
+            "level": null,
+            "edges": 16,
+            "z": -0.0,
+            "closed": true,
+            "allowed": true
+          },
+          {
+            "kind": "roof-foot",
+            "level": "roof",
+            "edges": 8,
+            "z": 6.6,
+            "closed": true,
+            "allowed": true
+          },
+          {
+            "kind": "roof-plane",
+            "level": "roof",
+            "edges": 4,
+            "z": 6.605,
+            "closed": true,
+            "embed_m": 0.02,
+            "allowed": true,
+            "gap_m": 0.005
+          }
+        ],
+        "slabs": [
+          "roof"
+        ],
+        "slabs_not_inset": [],
+        "solid_slab_m2": {},
+        "plates_off_spec": [],
+        "open_parts_allowed": 0,
+        "ngons": 0,
+        "collision_meshes_left_out": 0,
+        "triangles_in_polygons": 0,
+        "overlap_pairs": 0,
+        "overlaps": [],
+        "decor_triangles_left_out": 0
+      }
+    },
+    {
+      "id": "triangle_budget",
+      "status": "pass",
+      "value": 282,
+      "limit": 150000,
+      "details": {}
+    },
+    {
+      "id": "opening_planes",
+      "status": "pass",
+      "value": 1.0,
+      "limit": 0.95,
+      "details": {
+        "openings": [
+          {
+            "level": "L0",
+            "opening": 0,
+            "wall": 0,
+            "kind": null,
+            "cover": 1.0,
+            "material_ids": [
+              11
+            ],
+            "expected_id": 11
+          },
+          {
+            "level": "L1",
+            "opening": 0,
+            "wall": 0,
+            "kind": null,
+            "cover": 1.0,
+            "material_ids": [
+              11
+            ],
+            "expected_id": 11
+          }
+        ]
+      }
+    },
+    {
+      "id": "material_ids",
+      "status": "pass",
+      "value": {
+        "out_of_range": [],
+        "unassigned_triangles": 0
+      },
+      "limit": 0,
+      "details": {
+        "groups": {
+          "facade": [
+            1
+          ],
+          "reveal": [
+            6
+          ],
+          "opening": [
+            11
+          ],
+          "roof": [
+            21
+          ]
+        }
+      }
+    },
+    {
+      "id": "decor",
+      "status": "pass",
+      "value": 0,
+      "limit": 0,
+      "details": {
+        "elements": []
+      }
+    },
+    {
+      "id": "orientation",
+      "status": "pass",
+      "value": 0,
+      "limit": 0,
+      "details": {
+        "meshes": [
+          {
+            "name": "body",
+            "winding_bad_edges": 0,
+            "outside_back_faces": 0,
+            "judged_faces": 278
+          }
+        ],
+        "rays": 61820,
+        "directions": 49,
+        "unjudged_meshes": [],
+        "note": "rays from below are not cast (open body bottom); faces not visible from outside are not judged; horizontal downward caps at global minimum Z are outward and exempt from back-hit failures"
+      }
+    }
+  ]
+}

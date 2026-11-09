@@ -131,3 +131,12 @@ Sources: sha256 before = after = copy for 13/13 (full values in the JSON). Produ
 - VAT_MAF_T3510_29: NPM `4850474bc24a565c200b945cdfb8fa58167d1cfd40806df5d325519ffc0b4ad0`, VPM `8fce0255153b13a803ec86c4a7f9b80b2680255b303d56464383c532e029c96e`
 - VAT_MAF_T3510_31: NPM `805c25844f1d671e3cbc0facf6c83431bda9cb6b9b9f7ca1dc89b2c23c842bf6`, VPM `084480b9e85d827b0c9e1700c9cd858ab139845a7b54b5c65af5c12df4b28761`
 - VAT_MAF_T3510_32: NPM `4529dc5ef08666020ac75b26dfcf484b0a11b8c81aa135c7ec5578e51f6664b2`, VPM `0e51b957e24f873bd38059beb0b8cb470bfc6f62451e30de326c483693acd00c`
+
+## Showcase for Artem's marks (#487, display only)
+
+Built by `tools/review/maf_showcase.py` (grouping `site-maf-showcase.config.json`), headless 3ds Max 2026 (build 28000); no remodelling, no atlas change, no UCX.
+
+- Scene: `C:/x/vatutino-maf/showcase-487/v002/maf-showcase.max`, sha256 `38eb1cf6ab9c4e9aa8553100d246bd1c5617485505501ec61096d9c7c3e10c54`.
+- Fresh-process readback: 26 meshes (13 NPM + 13 VPM, triangles and size ±2 mm as in this report, 38 442 tris), 13 `TXT_<set id>` texts equal to the plan, 5 `ROW_<group>` labels (sport 1, kids 4, landscaping 4, benches 4, lighting 0). `!! REVIEW` in the text of 28 (user exception, D094/Q8/D112) and 32 (flipped normals not_run).
+- Published: `C:/x/review/2026-10-21/487-maf-vatutino-showcase-v002/487-maf-vatutino-showcase-v002.max` (sha256 `43671402dd11f6d41582c7d3d7061ac368b695089a40cef7825b8bcdc84ad8a0`), `pending.json`: 13 lines `#487` with `item` = set id. Mark: `uv run python tools/review/verdict.py --task 487 --item VAT_MAF_T3510_01 --status ok|changes --note "..."`.
+- Renders (18) + SHA256SUMS: `G:/Мой диск/AGR-evidence/487-maf-showcase/`.

@@ -1,0 +1,20 @@
+{
+  "slots": {
+    "asphalt": "Asphalt",
+    "tile": "Tile",
+    "tile_reinforced": "Tile",
+    "geogrid": "Geogrid",
+    "geogrid_reinforced": "Geogrid",
+    "type6": "Tile",
+    "lawn": "Lawn"
+  },
+  "flat_datum_m": 0.0,
+  "uncovered_covering": "lawn",
+  "separate_curbs": true,
+  "curb_joint_approval": {
+    "approved_by": "Artem",
+    "approved_at": "2026-10-21T01:20",
+    "decision_id": "jobs/COD-20207/ground-build-v008.md#approved-curb-policy-and-build"
+  },
+  "covering_priority": [["Tile", "Geogrid"]]
+}

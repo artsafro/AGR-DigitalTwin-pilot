@@ -1,0 +1,56 @@
+{
+  "selector": {
+    "suite": null,
+    "task": "capability-ticket",
+    "references": false
+  },
+  "evidence_overrides": {},
+  "main_checkout": "C:\\x\\capability-evals\\t_dad8c227-reference-v001",
+  "branch": "capability",
+  "created": "2026-10-20T23:57:45",
+  "passed": 0,
+  "failed": 1,
+  "not_measured": 0,
+  "exit_code": 1,
+  "checks": [
+    {
+      "task": "capability-ticket",
+      "check": "ticket local PR evidence",
+      "expected": "4/4",
+      "measured": "3/4",
+      "passed": false,
+      "details": [
+        {
+          "check": "Agent trace block in the PR body",
+          "expected": "present, 10 fields",
+          "measured": "present, 10 fields",
+          "passed": true,
+          "details": []
+        },
+        {
+          "check": "new numeric literals in the engine / checker without a reference",
+          "expected": 0,
+          "measured": 0,
+          "passed": true,
+          "details": [],
+          "scanned_files": [
+            "src/twinqa/geometry/component_volume.py"
+          ]
+        },
+        {
+          "check": "named branch and nonempty local diff",
+          "passed": true
+        },
+        {
+          "check": "author receipt fields present (lexical only)",
+          "passed": false
+        }
+      ],
+      "evidence": [
+        "C:\\x\\capability-evals\\t_dad8c227-reference-v001\\pr-body.md",
+        "C:\\x\\capability-evals\\t_dad8c227-reference-v001\\local.diff",
+        "C:\\x\\capability-evals\\t_dad8c227-reference-v001\\branch.txt"
+      ]
+    }
+  ]
+}

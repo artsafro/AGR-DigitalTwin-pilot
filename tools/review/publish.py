@@ -16,6 +16,8 @@ def main(argv=None) -> int:
     parser.add_argument("--fbx", required=True, help="FBX to merge, or an existing .max to open")
     parser.add_argument("--png", action="append", default=[], help="preview PNG copied into the review folder")
     parser.add_argument("--what", required=True, help="one Russian line: what to look at")
+    parser.add_argument("--item", action="append", default=None,
+                        help="one pending.json verdict line per item id (repeat; #487)")
     args = parser.parse_args(argv)
     try:
         adapter = max_adapter.default_adapter()
@@ -28,6 +30,7 @@ def main(argv=None) -> int:
             review_root=common.REVIEW_ROOT,
             adapter=adapter,
             today=date.today(),
+            items=args.item,
         )
     except (common.ReviewError, RuntimeError) as exc:
         print(str(exc), file=sys.stderr)

@@ -477,7 +477,7 @@ def _blocked(causes):
 
 
 def _stop_record(ev):
-    """A saved stop: `pipeline/state.json` written with its `stops` (HARNESS_PLAN §12)."""
+    """A saved stop: `pipeline/state.json` written with its `stops` (archive/2026-11:docs/HARNESS_PLAN.md §12)."""
     if ev["name"] not in EDIT_TOOLS or not STATE_FILE.search(str(ev["input"].get("file_path") or "")):
         return False
     edits = ev["input"].get("edits") if isinstance(ev["input"].get("edits"), list) else []
@@ -770,3 +770,8 @@ GRADERS = {"no_hook_denial": (no_hook_denial, ("transcript",)),
 
 from twinqa.evals.pr_graders import PR_GRADERS  # noqa: E402  (#125; pr_graders imports EvidenceError from here)
 GRADERS.update(PR_GRADERS)
+
+from twinqa.evals.capability import capability_b01  # noqa: E402
+GRADERS['capability_b01'] = (capability_b01, ('benchmark', 'self_check'))
+from twinqa.evals.capability import capability_ticket  # noqa: E402
+GRADERS['capability_ticket'] = (capability_ticket, ('body', 'diff', 'branch'))

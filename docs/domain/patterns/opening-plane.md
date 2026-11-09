@@ -1,6 +1,6 @@
 # Opening plane with window ID (`opening-plane`)
 
-Status: draft. Source: `docs/HARNESS_PLAN.md` §3, §6, §7; `docs/domain/geometry.md` (window rules);
+Status: draft. Source: historical `archive/2026-11:docs/HARNESS_PLAN.md` §3, §6, §7; `docs/domain/geometry.md` (window rules);
 spec v0.3 (#36); window library `library/windows/window_types.json` (#4).
 
 ## Signs in the spec
@@ -40,3 +40,4 @@ spec v0.3 (#36); window library `library/windows/window_types.json` (#4).
 - A long plane must not cross a belt or another window row.
 - `window_type` is the library type, not the ID; no guessed ID under `plane_conflict`; a grille gets no plane.
 - Window instance front goes to the opening's outward normal; a blanket 180° flip was an error.
+- Flat glass with no bend is one quad (4 points); a bend keeps its segments; a 90 deg corner is one element with 6 points, two quads sharing an edge [D172].

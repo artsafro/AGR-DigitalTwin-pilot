@@ -1,0 +1,8 @@
+{
+ "schema": 1,
+ "scene": "empty",
+ "synthetic": true,
+ "units": "meters",
+ "objects": [],
+ "note": "Пустая сцена. Проверки объектов дают ошибку empty target set, не pass."
+}

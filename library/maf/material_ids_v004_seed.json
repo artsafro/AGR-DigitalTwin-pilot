@@ -1,0 +1,493 @@
+{
+ "schema": "library-maf-material-ids-seed",
+ "version": "v004",
+ "status": "proposed",
+ "note": "Agent-designed MAF material ID list (#524), for Artem's one-time approval [D168]. Each id is checked by tools/library/maf_atlas_ids.py against (a) the atlas cells (library-bound atlases + Artem's atlas_01..04), (b) the MAF specification rows (Vatutino site-schedule material column), (c) library material names. 'target' is the colour the cell match is measured against: a RAL screen approximation (tools/materials/ral_classic.json or the hex given here, display only) or a tone for textured ids. Nothing is reassigned in the library. 'also' lists further atlas-observed colours of the same material; match=false marks an id the specification needs but whose colour/appearance is unknown or not texture-based (it is never auto-matched to a cell).",
+ "kinds": {
+  "paint": "flat powder-coat / paint colour, small solid cell (64-128 px in a 512 set)",
+  "wood": "wood grain texture, large patterned cell (dominant material gets most area)",
+  "metal": "metal finish, solid or brushed cell",
+  "plastic": "plastic / HPL / polyamide caps",
+  "rubber": "rubber, EPDM, tyre",
+  "mineral": "concrete, terrazzo, stone, sand",
+  "opacity": "pattern with an opacity mask (mesh, perforation, stripes, rope net)",
+  "sheet": "profiled / corrugated sheet metal",
+  "translucent": "polycarbonate / glass - GroundElGlass, no texture set (MAF-06)"
+ },
+ "ids": [
+  {
+   "id": 1,
+   "key": "paint_ral7047",
+   "name_ru": "краска RAL 7047 телегрей",
+   "kind": "paint",
+   "ral": "7047",
+   "spec": "RAL\\s*7047",
+   "library": "^(серый|СЕРЫЕ ЗАКЛАДНЫЕ)",
+   "also": [
+    "#D5D5D5",
+    "#DCDCDC"
+   ]
+  },
+  {
+   "id": 2,
+   "key": "paint_ral9005",
+   "name_ru": "краска RAL 9005 чёрная",
+   "kind": "paint",
+   "ral": "9005",
+   "spec": "RAL\\s*9005",
+   "library": "RAL 9005|^Osn$|^_auto_1$"
+  },
+  {
+   "id": 3,
+   "key": "paint_ral7016",
+   "name_ru": "краска RAL 7016 антрацит",
+   "kind": "paint",
+   "ral": "7016",
+   "also": [
+    "#373737",
+    "#3C3C3C",
+    "#444444"
+   ],
+   "spec": "RAL\\s*7016",
+   "library": null
+  },
+  {
+   "id": 4,
+   "key": "paint_ral7004",
+   "name_ru": "краска RAL 7004 сигнальный серый",
+   "kind": "paint",
+   "ral": "7004",
+   "also": [
+    "#959595",
+    "#868686"
+   ],
+   "spec": "RAL\\s*7004",
+   "library": null
+  },
+  {
+   "id": 5,
+   "key": "paint_ral7040",
+   "name_ru": "краска RAL 7040 серое окно",
+   "kind": "paint",
+   "ral": "7040",
+   "also": [
+    "#A5ABB2",
+    "#919EA2"
+   ],
+   "spec": "RAL\\s*7040",
+   "library": null
+  },
+  {
+   "id": 6,
+   "key": "paint_ral9003",
+   "name_ru": "краска белая RAL 9003/9002",
+   "kind": "paint",
+   "ral": "9003",
+   "spec": "RAL\\s*900[23]",
+   "library": null
+  },
+  {
+   "id": 7,
+   "key": "paint_beige",
+   "name_ru": "краска бежевая (RAL 1013 ближ.)",
+   "kind": "paint",
+   "hex": "#CBBCA7",
+   "also": [],
+   "spec": "RAL\\s*1013|беж",
+   "library": null
+  },
+  {
+   "id": 8,
+   "key": "paint_yellow",
+   "name_ru": "краска жёлтая (RAL 1021 ближ.)",
+   "kind": "paint",
+   "ral": "1021",
+   "also": [
+    "#F9CF2B"
+   ],
+   "spec": "ж[её]лт",
+   "library": null
+  },
+  {
+   "id": 9,
+   "key": "paint_orange",
+   "name_ru": "краска оранжевая (RAL 2004 ближ.)",
+   "kind": "paint",
+   "ral": "2004",
+   "also": [
+    "#EC8E4F",
+    "#CE8F3E",
+    "#D2553F"
+   ],
+   "spec": "оранж",
+   "library": null
+  },
+  {
+   "id": 10,
+   "key": "paint_red",
+   "name_ru": "краска красная (RAL 3020 ближ.)",
+   "kind": "paint",
+   "ral": "3020",
+   "also": [
+    "#AF2B1E",
+    "#B32B2B",
+    "#A43B26",
+    "#FF0000",
+    "#B70000",
+    "#D8242C",
+    "#CB2525"
+   ],
+   "spec": "красн",
+   "library": null
+  },
+  {
+   "id": 11,
+   "key": "paint_wine",
+   "name_ru": "краска винно-красная (RAL 3005 ближ.)",
+   "kind": "paint",
+   "ral": "3005",
+   "also": [
+    "#622022"
+   ],
+   "spec": "RAL\\s*3005|бордо",
+   "library": null
+  },
+  {
+   "id": 12,
+   "key": "paint_green_light",
+   "name_ru": "краска салатовая (RAL 6018 ближ.)",
+   "kind": "paint",
+   "ral": "6018",
+   "also": [
+    "#A6CE23",
+    "#C6DC7A"
+   ],
+   "spec": "салат",
+   "library": null
+  },
+  {
+   "id": 13,
+   "key": "paint_olive",
+   "name_ru": "краска оливковая",
+   "kind": "paint",
+   "hex": "#ADA124",
+   "spec": "олив",
+   "library": null
+  },
+  {
+   "id": 14,
+   "key": "paint_green",
+   "name_ru": "краска зелёная (RAL 6029 ближ.)",
+   "kind": "paint",
+   "ral": "6029",
+   "also": [
+    "#008C44",
+    "#1BB563"
+   ],
+   "spec": "зел[её]н",
+   "library": null
+  },
+  {
+   "id": 15,
+   "key": "paint_green_reseda",
+   "name_ru": "краска резеда-зелёная (RAL 6011 ближ.)",
+   "kind": "paint",
+   "hex": "#567F56",
+   "also": [
+    "#618656"
+   ],
+   "spec": "RAL\\s*6011",
+   "library": null
+  },
+  {
+   "id": 16,
+   "key": "paint_green_dark",
+   "name_ru": "краска тёмно-зелёная (RAL 6009/6005 ближ.)",
+   "kind": "paint",
+   "ral": "6009",
+   "also": [
+    "#2E3D2A",
+    "#363F2F"
+   ],
+   "spec": "RAL\\s*600[59]",
+   "library": "^Hamut$"
+  },
+  {
+   "id": 17,
+   "key": "paint_blue",
+   "name_ru": "краска голубая (RAL 5015 ближ.)",
+   "kind": "paint",
+   "ral": "5015",
+   "also": [
+    "#2EA3D3",
+    "#63A2D0"
+   ],
+   "spec": "\\bсин(ий|яя|его|ей)\\b|голуб",
+   "library": null
+  },
+  {
+   "id": 18,
+   "key": "paint_blue_dark",
+   "name_ru": "краска тёмно-синяя (RAL 5002 ближ.)",
+   "kind": "paint",
+   "ral": "5002",
+   "also": [
+    "#001B78"
+   ],
+   "spec": "RAL\\s*500[25]",
+   "library": null
+  },
+  {
+   "id": 19,
+   "key": "paint_blue_grey",
+   "name_ru": "краска серо-синяя (RAL 7031 ближ.)",
+   "kind": "paint",
+   "hex": "#526374",
+   "also": [
+    "#526267"
+   ],
+   "spec": "RAL\\s*7031",
+   "library": null
+  },
+  {
+   "id": 20,
+   "key": "paint_brown_dark",
+   "name_ru": "краска тёмно-коричневая (RAL 8017 ближ.)",
+   "kind": "paint",
+   "ral": "8017",
+   "also": [
+    "#402618",
+    "#54493F",
+    "#402E0D"
+   ],
+   "spec": "RAL\\s*801[47]|коричн",
+   "library": null
+  },
+  {
+   "id": 21,
+   "key": "wood_light",
+   "name_ru": "WOOD светлая: лиственница, пропитка «светлый дуб»",
+   "kind": "wood",
+   "hex": "#BEA581",
+   "spec": "лиственниц|светлый дуб",
+   "library": "NATURE ДЕРЕВО|Oak Matt|Balki-wood"
+  },
+  {
+   "id": 22,
+   "key": "wood_pine",
+   "name_ru": "WOOD тёплая: сосна, медовый тон",
+   "kind": "wood",
+   "hex": "#B68358",
+   "spec": "сосн",
+   "library": null
+  },
+  {
+   "id": 23,
+   "key": "wood_medium",
+   "name_ru": "WOOD средняя: дуб усреднённый тон",
+   "kind": "wood",
+   "hex": "#967356",
+   "spec": "(?<!светлый )дуб",
+   "library": null
+  },
+  {
+   "id": 24,
+   "key": "wood_dark",
+   "name_ru": "WOOD тёмная: орех/тёмный дуб",
+   "kind": "wood",
+   "hex": "#7F583D",
+   "also": [
+    "#845B3F"
+   ],
+   "spec": "орех|т[её]мн\\w* дуб",
+   "library": null
+  },
+  {
+   "id": 25,
+   "key": "wood_larch_black",
+   "name_ru": "WOOD лиственница тёмная (чёрная)",
+   "kind": "wood",
+   "hex": "#553025",
+   "spec": "т[её]мн\\w* лиственниц",
+   "library": "Лиственница \\(Тёмная\\)"
+  },
+  {
+   "id": 26,
+   "key": "wood_grey_washed",
+   "name_ru": "WOOD серая/беленая",
+   "kind": "wood",
+   "hex": "#8F785C",
+   "spec": "бел[её]н\\w* дерев|сер\\w* дерев",
+   "library": null
+  },
+  {
+   "id": 27,
+   "key": "wood_log_end",
+   "name_ru": "WOOD спил бревна (торец)",
+   "kind": "wood",
+   "hex": "#C8A27A",
+   "spec": "Торцы всех бревен|спил",
+   "library": null
+  },
+  {
+   "id": 28,
+   "key": "plywood",
+   "name_ru": "фанера",
+   "kind": "wood",
+   "hex": "#D9B38F",
+   "spec": "фанер",
+   "library": "^фанера$",
+   "cells": [
+    "solid",
+    "patterned"
+   ]
+  },
+  {
+   "id": 29,
+   "key": "steel_stainless",
+   "name_ru": "сталь нержавеющая глянец",
+   "kind": "metal",
+   "hex": "#C3C8CE",
+   "also": [
+    "#C5C5C5",
+    "#BCBCBC",
+    "#B9BDC0"
+   ],
+   "spec": "нержавеющ",
+   "library": "^нержа$"
+  },
+  {
+   "id": 30,
+   "key": "metal_bronze_brushed",
+   "name_ru": "бронза шлифованная",
+   "kind": "metal",
+   "hex": "#8C6A3F",
+   "spec": "бронз",
+   "library": "Bronze"
+  },
+  {
+   "id": 31,
+   "key": "cap_black",
+   "name_ru": "пластик чёрный матовый (заглушки, колпаки, полиамид)",
+   "kind": "plastic",
+   "hex": "#303030",
+   "also": [
+    "#2E3034",
+    "#2B3034"
+   ],
+   "spec": "полиамид|заглушк",
+   "library": "Plastic_Black_Matte|черный мат|^Kolpak$",
+   "cells": [
+    "solid"
+   ]
+  },
+  {
+   "id": 32,
+   "key": "plastic_hdpe",
+   "name_ru": "полиэтилен HDPE (контейнер ТБО), цвет в спецификации не указан",
+   "kind": "plastic",
+   "hex": "#4C5B4C",
+   "spec": "HDPE|[Пп]олиэтилен",
+   "library": null,
+   "match": false
+  },
+  {
+   "id": 33,
+   "key": "hpl_satin_wood",
+   "name_ru": "HPL «Атласное дерево» (теннисный стол)",
+   "kind": "plastic",
+   "hex": "#B68358",
+   "spec": "HPL",
+   "library": null,
+   "match": false
+  },
+  {
+   "id": 34,
+   "key": "rubber_black",
+   "name_ru": "резина чёрная (шина, EPDM)",
+   "kind": "rubber",
+   "hex": "#2B2B2B",
+   "spec": "резин|\\bшин|EPDM",
+   "library": null
+  },
+  {
+   "id": 35,
+   "key": "concrete_arch",
+   "name_ru": "бетон архитектурный",
+   "kind": "mineral",
+   "hex": "#A69799",
+   "spec": "бетон",
+   "library": null
+  },
+  {
+   "id": 36,
+   "key": "terrazzo",
+   "name_ru": "терраццо / гранит крапчатый",
+   "kind": "mineral",
+   "hex": "#C7C7C7",
+   "spec": "терраццо|гранит",
+   "library": null
+  },
+  {
+   "id": 37,
+   "key": "sand",
+   "name_ru": "песок / пробка",
+   "kind": "mineral",
+   "hex": "#C3A37E",
+   "spec": "песок|пробк",
+   "library": null
+  },
+  {
+   "id": 38,
+   "key": "mesh_chainlink",
+   "name_ru": "сетка рабица (opacity)",
+   "kind": "opacity",
+   "hex": "#3A3A3A",
+   "also": [
+    "#3F4749",
+    "#555555"
+   ],
+   "spec": "рабиц|[Сс]етка(?! внутри)",
+   "library": "Сетка"
+  },
+  {
+   "id": 39,
+   "key": "perforation",
+   "name_ru": "перфорация / полосы (opacity)",
+   "kind": "opacity",
+   "hex": "#3F4749",
+   "spec": "перфор",
+   "library": null,
+   "match": false
+  },
+  {
+   "id": 40,
+   "key": "rope_pp",
+   "name_ru": "канат полипропиленовый армированный",
+   "kind": "opacity",
+   "hex": "#5A5A5A",
+   "spec": "канат",
+   "library": null,
+   "match": false
+  },
+  {
+   "id": 41,
+   "key": "sheet_profiled",
+   "name_ru": "профнастил",
+   "kind": "sheet",
+   "hex": "#707070",
+   "spec": "профнастил|профлист",
+   "library": null
+  },
+  {
+   "id": 42,
+   "key": "polycarbonate",
+   "name_ru": "поликарбонат (GroundElGlass, без текстуры, MAF-06)",
+   "kind": "translucent",
+   "hex": "#DCE6EA",
+   "spec": "поликарбонат",
+   "library": null,
+   "match": false
+  }
+ ]
+}

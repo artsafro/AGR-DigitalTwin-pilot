@@ -1,0 +1,39 @@
+{
+ "schema": 1,
+ "button": "export.batch",
+ "tool": "export.batch",
+ "version": "0.9",
+ "shipped": true,
+ "select": "named",
+ "reason": "",
+ "apply_status": null,
+ "objects": [
+  {
+   "name": "SM_BatchA_Main",
+   "scene": "frag_d_batch",
+   "expect": "fail",
+   "codes": [
+    "cleanup"
+   ]
+  },
+  {
+   "name": "SM_BatchDirty_Main",
+   "scene": "frag_d_batch",
+   "expect": "fail",
+   "codes": [
+    "cleanup"
+   ]
+  },
+  {
+   "name": "SM_BatchNoPath_Main",
+   "scene": "frag_d_batch",
+   "expect": "pass",
+   "codes": []
+  }
+ ],
+ "base": "0.9",
+ "station": "0.9.16",
+ "stations": [
+  "0.9.16"
+ ]
+}

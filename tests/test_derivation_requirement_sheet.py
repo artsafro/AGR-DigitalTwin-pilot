@@ -44,7 +44,7 @@ PROFILE_BOUNDS = {
 }
 
 QUOTE_ANCHORS = ((1, 7), (3, 29), (6, 4), (9, 33), (10, 30), (15, 36), (18, 12))
-GAP_IDS = {"DER-02", "DER-08", "DER-12", "DER-18", "DER-20"}
+GAP_IDS = {"DER-02", "DER-08", "DER-12", "DER-20"}
 BOUND_ROWS = {"DER-01", "DER-10", "DER-11", "DER-20"}
 
 
@@ -144,7 +144,7 @@ def test_derivation_decided_rotation_conflict_and_v004_documentation():
     assert html_anchor in conflict39, f"Conflict 39 paragraph must contain HTML anchor '{html_anchor}'"
 
     for phrase in (
-        "Decided 2026-10-16",
+        "Decided 2026-10-16",  # [D135]
         "[D135]",
         "reg p.10",
         "reg p.32",

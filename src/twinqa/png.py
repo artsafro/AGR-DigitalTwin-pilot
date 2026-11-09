@@ -125,19 +125,35 @@ def vpm_texture_findings(pngs: dict[str, bytes], profile: dict, prefix: str | No
             out.append(_f("fail", "no alpha in ERM/Normal", f"{name}: alpha present", "RGB without alpha", [30], name))
         if facts.width == placeholder:
             # Flat placeholder: one averaged colour, no alpha (reg p.22, p.31 §3.1-3.5)
-            px = pixels(data)
+            try:
+                px = pixels(data)
+            except OSError as exc:
+                out.append(_f("fail", "PNG readable", f"{name}: {exc}", "valid PNG", [30], name))
+                sets[(int(m["slot"]), udim)].pop(kind)
+                continue
             if facts.has_alpha or (px != px[0, 0]).any():
                 out.append(_f("fail", "flat placeholder", f"{name}: alpha or more than one colour",
                               "256x256, one colour, no alpha", [22, 31], name, [5]))
         elif kind == "ERM":
             # R = Emissive, G = Roughness, B = Metallic; R black when nothing glows (reg p.23, p.37 §14)
-            px = pixels(data)
+            try:
+                px = pixels(data)
+            except OSError as exc:
+                out.append(_f("fail", "PNG readable", f"{name}: {exc}", "valid PNG", [30], name))
+                sets[(int(m["slot"]), udim)].pop(kind)
+                continue
             lit = float((px[..., 0] > 0).mean())
             if lit >= 0.95:
                 out.append(_f("review", "ERM channel order", f"{name}: R (emissive) non-zero on {lit:.0%} of pixels",
                               "R=Emissive (black where nothing glows), G=Roughness, B=Metallic", [23, 37], name))
         elif kind == "Normal":
-            convention, corr = normal_convention(pixels(data))
+            try:
+                px = pixels(data)
+            except OSError as exc:
+                out.append(_f("fail", "PNG readable", f"{name}: {exc}", "valid PNG", [30], name))
+                sets[(int(m["slot"]), udim)].pop(kind)
+                continue
+            convention, corr = normal_convention(px)
             if convention == "opengl":
                 out.append(_f("fail", "DirectX normal", f"{name}: green channel is OpenGL (+Y), curl correlation {corr:.2f}",
                               "DirectX (Y +1..-1 -> G 0..255)", [23, 30], name, [6]))
@@ -174,7 +190,11 @@ def npm_texture_findings(images: dict[str, bytes], profile: dict):
             continue
         if facts.width == facts.height == NPM_PLACEHOLDER_PX:
             # One-colour Metallic/Roughness placeholder 128x128 (reg p.3-4; conflict #5 decided as the checker)
-            px = pixels(data)
+            try:
+                px = pixels(data)
+            except OSError as exc:
+                out.append(_f("fail", "PNG readable", f"{name}: {exc}", "PNG atlas", [9], name))
+                continue
             if facts.has_alpha or (px != px[0, 0]).any():
                 out.append(_f("fail", "flat placeholder", f"{name}: alpha or more than one colour",
                               "128x128, one colour, no alpha", [3, 4], name))
@@ -185,7 +205,7 @@ def npm_texture_findings(images: dict[str, bytes], profile: dict):
         if status != "pass":
             out.append(_f(status, "atlas file size", f"{name}: {observed}", "<= 3 MiB", [9], name))
         if facts.has_alpha:
-            # reg p.9 §5.5; conflict #21 decided 2026-10-07 as the checker: RGB only, opacity as a separate _o_ map
+            # reg p.9 §5.5; conflict #21 decided 2026-10-07 [D020] as the checker: RGB only, opacity as a separate _o_ map
             out.append(_f("fail", "no alpha", f"{name}: alpha channel present", "RGB only; opacity as a separate _o_ map",
                           [9], name))
         if facts.bit_depth != 8:

@@ -1,0 +1,26 @@
+{
+ "schema": 1,
+ "button": "agent.accept",
+ "tool": "agent.accept",
+ "version": "1.0",
+ "shipped": true,
+ "select": "named",
+ "reason": "Объекта PASS нет: приём читает папку запроса jobs/<ID>/agent/<req>/ (request.json, baseline.json со снимком хешей сцены), а станция полигона статична. PASS и FAIL приёма (перенос в слои ролей; откат в AGENT_<req>_REJECTED с вопросом) проверяет нативный джоб ветки U на запросе, который делает agent.request в том же прогоне (tests/max_tools/run_agr_tools_agent_bridge_native.py).",
+ "apply_status": null,
+ "objects": [
+  {
+   "name": "SM_FragU_AccNoRequest_Main",
+   "scene": "frag_u_accept",
+   "expect": "error",
+   "codes": []
+  }
+ ],
+ "options": {
+  "request": "C:/agr-polygon/jobs/FRAGU/agent/missing/request.json"
+ },
+ "base": "1.0",
+ "station": "1.0.33",
+ "stations": [
+  "1.0.33"
+ ]
+}

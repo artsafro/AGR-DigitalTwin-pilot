@@ -1,0 +1,332 @@
+{
+  "attachment_parts_ignored": 3731,
+  "body_area_m2": 23192.946,
+  "body_triangles": 5076,
+  "floors": {
+    "L01": {
+      "area_m2": 518.386,
+      "attachment_pieces_left_out": 26,
+      "contour_rule": "panels at 7.253 m (rule 2)",
+      "contour_vertices": 38,
+      "envelope_vertices": 2919,
+      "facade_offset_m": 0.5,
+      "facade_offset_range_m": [
+        0.497,
+        0.787
+      ],
+      "measured_by": "panels",
+      "slab_area_m2": 466.598,
+      "slab_inside_facade_share": 1.0,
+      "terrace_not_checked": "the storey below stopped"
+    },
+    "L02": {
+      "area_m2": 513.116,
+      "attachment_pieces_left_out": 25,
+      "contour_rule": "panels at 9.300 m (rule 2)",
+      "contour_vertices": 120,
+      "envelope_vertices": 6136,
+      "facade_offset_m": 0.38,
+      "facade_offset_range_m": [
+        -0.061,
+        0.772
+      ],
+      "measured_by": "panels",
+      "slab_area_m2": 478.935,
+      "slab_inside_facade_share": 1.0
+    },
+    "L03": {
+      "area_m2": 527.373,
+      "attachment_pieces_left_out": 22,
+      "contour_rule": "panels at 12.700 m (rule 2)",
+      "contour_vertices": 142,
+      "envelope_vertices": 6693,
+      "facade_offset_m": 0.38,
+      "facade_offset_range_m": [
+        -0.174,
+        0.789
+      ],
+      "measured_by": "panels",
+      "slab_area_m2": 497.581,
+      "slab_inside_facade_share": 0.996
+    },
+    "L04": {
+      "area_m2": 547.792,
+      "attachment_pieces_left_out": 23,
+      "contour_rule": "panels at 16.100 m (rule 2)",
+      "contour_vertices": 137,
+      "envelope_vertices": 6802,
+      "facade_offset_m": 0.38,
+      "facade_offset_range_m": [
+        -0.17,
+        0.769
+      ],
+      "measured_by": "panels",
+      "slab_area_m2": 515.295,
+      "slab_inside_facade_share": 0.997
+    },
+    "L05": {
+      "area_m2": 566.907,
+      "attachment_pieces_left_out": 23,
+      "contour_rule": "panels at 19.500 m (rule 2)",
+      "contour_vertices": 149,
+      "envelope_vertices": 6834,
+      "facade_offset_m": 0.38,
+      "facade_offset_range_m": [
+        -0.14,
+        0.747
+      ],
+      "measured_by": "panels",
+      "slab_area_m2": 533.211,
+      "slab_inside_facade_share": 0.997
+    },
+    "L06": {
+      "area_m2": 586.918,
+      "attachment_pieces_left_out": 22,
+      "contour_rule": "panels at 22.900 m (rule 2)",
+      "contour_vertices": 137,
+      "envelope_vertices": 7041,
+      "facade_offset_m": 0.38,
+      "facade_offset_range_m": [
+        -0.163,
+        0.785
+      ],
+      "measured_by": "panels",
+      "slab_area_m2": 551.695,
+      "slab_inside_facade_share": 0.996
+    },
+    "L07": {
+      "area_m2": 606.479,
+      "attachment_pieces_left_out": 23,
+      "contour_rule": "panels at 26.300 m (rule 2)",
+      "contour_vertices": 133,
+      "envelope_vertices": 6991,
+      "facade_offset_m": 0.38,
+      "facade_offset_range_m": [
+        -0.115,
+        0.758
+      ],
+      "measured_by": "panels",
+      "slab_area_m2": 567.691,
+      "slab_inside_facade_share": 0.998
+    },
+    "L08": {
+      "area_m2": 623.01,
+      "attachment_pieces_left_out": 28,
+      "contour_rule": "panels at 29.700 m (rule 2)",
+      "contour_vertices": 113,
+      "envelope_vertices": 6532,
+      "facade_offset_m": 0.38,
+      "facade_offset_range_m": [
+        0.11,
+        0.795
+      ],
+      "measured_by": "panels",
+      "slab_area_m2": 575.745,
+      "slab_inside_facade_share": 1.0
+    },
+    "L09": {
+      "area_m2": 631.884,
+      "attachment_pieces_left_out": 28,
+      "contour_rule": "panels at 33.100 m (rule 2)",
+      "contour_vertices": 84,
+      "envelope_vertices": 5945,
+      "facade_offset_m": 0.413,
+      "facade_offset_range_m": [
+        0.319,
+        0.707
+      ],
+      "measured_by": "panels",
+      "slab_area_m2": 575.745,
+      "slab_inside_facade_share": 1.0
+    },
+    "L10": {
+      "area_m2": 631.747,
+      "attachment_pieces_left_out": 27,
+      "contour_rule": "panels at 36.500 m (rule 2)",
+      "contour_vertices": 90,
+      "envelope_vertices": 5970,
+      "facade_offset_m": 0.4,
+      "facade_offset_range_m": [
+        0.23,
+        0.778
+      ],
+      "measured_by": "panels",
+      "slab_area_m2": 578.163,
+      "slab_inside_facade_share": 1.0
+    },
+    "L11": {
+      "area_m2": 634.106,
+      "attachment_pieces_left_out": 27,
+      "contour_rule": "panels at 39.900 m (rule 2)",
+      "contour_vertices": 89,
+      "envelope_vertices": 6021,
+      "facade_offset_m": 0.404,
+      "facade_offset_range_m": [
+        0.319,
+        0.707
+      ],
+      "measured_by": "panels",
+      "slab_area_m2": 578.163,
+      "slab_inside_facade_share": 1.0
+    },
+    "L12": {
+      "area_m2": 633.732,
+      "attachment_pieces_left_out": 27,
+      "contour_rule": "panels at 43.300 m (rule 2)",
+      "contour_vertices": 92,
+      "envelope_vertices": 5929,
+      "facade_offset_m": 0.404,
+      "facade_offset_range_m": [
+        0.319,
+        0.707
+      ],
+      "measured_by": "panels",
+      "slab_area_m2": 578.163,
+      "slab_inside_facade_share": 1.0
+    },
+    "L13": {
+      "area_m2": 634.121,
+      "attachment_pieces_left_out": 27,
+      "contour_rule": "panels at 46.700 m (rule 2)",
+      "contour_vertices": 92,
+      "envelope_vertices": 5980,
+      "facade_offset_m": 0.404,
+      "facade_offset_range_m": [
+        0.319,
+        0.707
+      ],
+      "measured_by": "panels",
+      "slab_area_m2": 578.163,
+      "slab_inside_facade_share": 1.0
+    },
+    "L14": {
+      "area_m2": 633.996,
+      "attachment_pieces_left_out": 27,
+      "contour_rule": "panels at 50.100 m (rule 2)",
+      "contour_vertices": 96,
+      "envelope_vertices": 5997,
+      "facade_offset_m": 0.405,
+      "facade_offset_range_m": [
+        0.319,
+        0.707
+      ],
+      "measured_by": "panels",
+      "slab_area_m2": 578.163,
+      "slab_inside_facade_share": 1.0
+    },
+    "L15": {
+      "area_m2": 633.921,
+      "attachment_pieces_left_out": 28,
+      "contour_rule": "panels at 53.500 m (rule 2)",
+      "contour_vertices": 100,
+      "envelope_vertices": 5907,
+      "facade_offset_m": 0.403,
+      "facade_offset_range_m": [
+        0.319,
+        0.707
+      ],
+      "measured_by": "panels",
+      "slab_area_m2": 578.163,
+      "slab_inside_facade_share": 1.0
+    },
+    "L16": {
+      "area_m2": 634.006,
+      "attachment_pieces_left_out": 27,
+      "contour_rule": "panels at 56.900 m (rule 2)",
+      "contour_vertices": 92,
+      "envelope_vertices": 5899,
+      "facade_offset_m": 0.404,
+      "facade_offset_range_m": [
+        0.319,
+        0.707
+      ],
+      "measured_by": "panels",
+      "slab_area_m2": 578.163,
+      "slab_inside_facade_share": 1.0
+    },
+    "L17": {
+      "area_m2": 634.065,
+      "attachment_pieces_left_out": 28,
+      "contour_rule": "panels at 60.300 m (rule 2)",
+      "contour_vertices": 92,
+      "envelope_vertices": 5826,
+      "facade_offset_m": 0.404,
+      "facade_offset_range_m": [
+        0.319,
+        0.707
+      ],
+      "measured_by": "panels",
+      "slab_area_m2": 578.163,
+      "slab_inside_facade_share": 1.0
+    },
+    "L18": {
+      "area_m2": 633.685,
+      "attachment_pieces_left_out": 27,
+      "contour_rule": "panels at 63.700 m (rule 2)",
+      "contour_vertices": 93,
+      "envelope_vertices": 5902,
+      "facade_offset_m": 0.404,
+      "facade_offset_range_m": [
+        0.319,
+        0.707
+      ],
+      "measured_by": "panels",
+      "slab_area_m2": 578.163,
+      "slab_inside_facade_share": 1.0
+    },
+    "L19": {
+      "area_m2": 611.47,
+      "attachment_pieces_left_out": 14,
+      "contour_rule": "panels at 67.425 m (rule 2)",
+      "contour_vertices": 76,
+      "envelope_vertices": 4647,
+      "measured_by": "panels",
+      "slab": "no ceiling slab at 69.45 m",
+      "terrace": {
+        "ledge_m2": 22.069,
+        "parapet_h_m": 3.41,
+        "rule": "panels on the ledge edge (rule 2)",
+        "walkable_m2": 0.048
+      }
+    },
+    "L20": {
+      "area_m2": 385.732,
+      "attachment_pieces_left_out": 18,
+      "contour_rule": "panels at 70.825 m (rule 2)",
+      "contour_vertices": 46,
+      "envelope_vertices": 3115,
+      "facade_offset_m": 0.5,
+      "facade_offset_range_m": [
+        0.319,
+        0.707
+      ],
+      "measured_by": "panels",
+      "slab_area_m2": 343.952,
+      "slab_inside_facade_share": 1.0
+    },
+    "L21": {
+      "area_m2": 338.413,
+      "attachment_pieces_left_out": 0,
+      "contour_rule": "panels at 74.225 m (rule 2)",
+      "contour_vertices": 23,
+      "envelope_vertices": 1594,
+      "facade_offset_m": 0.13,
+      "facade_offset_range_m": [
+        0.078,
+        0.347
+      ],
+      "measured_by": "panels",
+      "slab_area_m2": 322.118,
+      "slab_inside_facade_share": 1.0
+    }
+  },
+  "level_helpers": [],
+  "parts": 3732,
+  "stops": [
+    {
+      "level": "L00",
+      "message": "level L00: the facade parts at 3.473 m do not close round the building with joints up to 0.10 m; the contour is not invented (rule 2). it does not close even with joints up to 0.8 m; 0 part(s) with pieces left out as standing further than 0.8 m off the slabs",
+      "stage": "contour"
+    }
+  ]
+}

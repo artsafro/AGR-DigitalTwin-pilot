@@ -1,0 +1,27 @@
+{
+ "schema": 1,
+ "synthetic": true,
+ "cases": {
+  "ok256": {
+   "file": "T_Polygon_001_Main_d_1.png",
+   "bytes": 762
+  },
+  "bad_size": {
+   "file": "T_Polygon_018_Main_d_1.png",
+   "bytes": 165
+  },
+  "alpha": {
+   "file": "T_Polygon_019_Main_d_1.png",
+   "bytes": 858
+  },
+  "bit16": {
+   "file": "T_VeronaBit_Main_Diffuse_1.1001.png",
+   "bytes": 1306
+  },
+  "atlas_rgba": {
+   "file": "T_Polygon_AtlasTex_Main_d_1.png",
+   "bytes": 1470
+  }
+ },
+ "note": "PNG bytes are written by generate.py into the output folder, not into git."
+}

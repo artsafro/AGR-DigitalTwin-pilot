@@ -183,10 +183,12 @@ def write(stage: Path, state, src: Path, secs):
 
 def export(src: Path):
     """Run the TwinPack export once into the new folder src, under the Revit lock of revit_exec.py."""
-    sys.path.insert(0, "C:/Users/artsafro/hermes_kanban/scripts")
-    import revit_exec as rx
+    # Refuse before touching the machine-local Revit lock helper: the refusal needs no Revit and must
+    # hold on machines (lab CI) where hermes_kanban/scripts is absent.
     if src.exists():
         raise SystemExit(f"refused: {src} exists; the export writes only into a new folder")
+    sys.path.insert(0, "C:/Users/artsafro/hermes_kanban/scripts")
+    import revit_exec as rx
     if not rx._lock(CARD, 3600):
         raise SystemExit("Revit busy (lock held by another card)")
     try:

@@ -24,6 +24,30 @@
       "Bash(python tools/:*)",
       "Bash(py -3 tools/:*)",
       "Bash(py -3 .claude/hooks/:*)",
+      "PowerShell(Get-ChildItem *)",
+      "PowerShell(Get-Content *)",
+      "PowerShell(Select-String *)",
+      "PowerShell(Test-Path *)",
+      "PowerShell(Get-FileHash *)",
+      "mcp__3dsmax-mcp__list_max_instances",
+      "mcp__3dsmax-mcp__get_bridge_status",
+      "mcp__3dsmax-mcp__capture_viewport",
+      "mcp__3dsmax-mcp__query_scene",
+      "mcp__blender__get_blendfile_summary_path_info",
+      "mcp__blender__get_objects_summary",
+      "mcp__blender__get_object_detail_summary",
+      "mcp__revit-http-2025__revit_ping",
+      "mcp__revit-http-2025__revit_get_document_info",
+      "mcp__revit-http-2025__revit_get_view_image",
+      "mcp__revit-http-2025__revit_list_elements",
+      "mcp__revit-http-2025__revit_list_levels",
+      "mcp__revit-http-2025__revit_get_element_info",
+      "mcp__revit-http-2025__revit_get_element_geometry",
+      "mcp__revit-http-2025__revit_query_where",
+      "mcp__Claude_Browser__read_console_messages",
+      "mcp__Claude_Browser__read_network_requests",
+      "mcp__Claude_Browser__read_page",
+      "mcp__Claude_Browser__find",
       "WebSearch",
       "WebFetch(domain:dev.epicgames.com)",
       "WebFetch(domain:docs.blender.org)",
@@ -62,12 +86,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "py -3 \"$CLAUDE_PROJECT_DIR/tools/hooks/context_watch.py\"",
-            "timeout": 10
-          },
-          {
-            "type": "command",
-            "command": "py -3 \"$CLAUDE_PROJECT_DIR/tools/hooks/usage_log.py\" prompt",
+            "command": "py -3 \"$CLAUDE_PROJECT_DIR/tools/hooks/prompt_hooks.py\"",
             "timeout": 10
           }
         ]
@@ -91,17 +110,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "py -3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard.py\"",
-            "timeout": 10
-          }
-        ]
-      },
-      {
-        "matcher": "Bash|PowerShell|Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "py -3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/pipeline_gate.py\"",
+            "command": "py -3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/pretool.py\"",
             "timeout": 10
           }
         ]
@@ -149,6 +158,16 @@
             "type": "command",
             "command": "py -3 \"$CLAUDE_PROJECT_DIR/tools/hooks/usage_log.py\" post",
             "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "^(Bash|PowerShell)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "py -3 \"$CLAUDE_PROJECT_DIR/tools/state/after_merge.py\" hook",
+            "timeout": 180
           }
         ]
       }

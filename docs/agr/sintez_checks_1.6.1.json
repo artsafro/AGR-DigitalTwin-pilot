@@ -1,0 +1,759 @@
+{
+  "schema": "sintez-agr-checker-1.6.1",
+  "generated_at": "2026-10-20T23:13:03",
+  "note": "Read-only dissection of the third-party Blender extension. Short excerpts only; no SINTEZ source is committed. Requirement req_nums are from the 2026 tables (VPM/NPM).",
+  "source": {
+    "root": "C:/x/sintez/v1.6.1",
+    "version": "1.6.1",
+    "python_files": 46,
+    "total_lines": 29838,
+    "comparison_version": "C:/x/sintez/v1.5.0"
+  },
+  "requirement_tables": {
+    "lp_2026": {
+      "file": "documents/lp_requirements_2026.csv",
+      "rows": 80,
+      "auto": 44
+    },
+    "hp_2026": {
+      "file": "documents/hp_requirements_2026.csv",
+      "rows": 154,
+      "auto": 67,
+      "recommendation": 34
+    },
+    "fno_codes": "documents/fno_codes_utf8.csv",
+    "address_abbrev": "documents/address_abbreviations_171n.csv"
+  },
+  "thresholds": {
+    "fbx_version": 7400,
+    "archive_max_bytes": {
+      "lp_or_ground": 1073741824,
+      "other_hp": 524288000,
+      "note": "1024 MiB vs 500 MiB (binary units, D015)"
+    },
+    "fbx_count_range": [
+      2,
+      21
+    ],
+    "png_count_range": [
+      3,
+      2100
+    ],
+    "npm_polycount": 150000,
+    "vpm_polycount": 1000000,
+    "ground_polycount_limits_ha": [
+      [
+        0.05,
+        300000
+      ],
+      [
+        0.1,
+        705000
+      ],
+      [
+        0.25,
+        1125000
+      ],
+      [
+        0.5,
+        1650000
+      ],
+      [
+        0.75,
+        1950000
+      ],
+      [
+        1.0,
+        2625000
+      ],
+      [
+        1.5,
+        3150000
+      ],
+      [
+        null,
+        4500000
+      ]
+    ],
+    "ucx_polycount": {
+      "small_model": 50000,
+      "small_limit": 15000,
+      "share": 0.05,
+      "absolute": 100000
+    },
+    "doubles_distance_m": 0.002,
+    "texel_px_per_m": {
+      "npm": [
+        10,
+        40
+      ],
+      "vpm": [
+        512,
+        1706
+      ]
+    },
+    "udim_margin_uv": 0.00390625,
+    "udim_tiles": "1001+",
+    "placeholder_texture_px": {
+      "npm": 128,
+      "vpm": 256
+    },
+    "npm_texture_resolutions": [
+      128,
+      256,
+      512,
+      1024,
+      2048
+    ],
+    "vpm_texture_resolutions": [
+      2048,
+      4096
+    ],
+    "groundel_texture_max_px": 512,
+    "moscow_elevation_m": [
+      110.0,
+      250.0
+    ],
+    "transforms": {
+      "location_m": 0.0001,
+      "rotation_rad": 0.001,
+      "scale": "== 1 (1,1,1)"
+    },
+    "ucx_collision": {
+      "closure_tolerance_m": 0.0002,
+      "convex_angle_deg": 0.1
+    },
+    "light_max_sources": 250,
+    "png_compress_threshold_mb": 3,
+    "cadastral_number_re": "\\d{2}:\\d{2}:\\d{6,7}(:\\d{1,5})?$"
+  },
+  "checks": [
+    {
+      "id": "lp_fbx_format",
+      "side": "lp",
+      "req_nums": [
+        "1.1.1",
+        "2.3.13",
+        "2.9.1"
+      ],
+      "name": "FBX 7.4 binary, units",
+      "measures": "FBX header version 7400, unit scale in (1.0,100.0)",
+      "file": "autochecks/check_utils.py",
+      "function": "check_fbx_format / fbx_header.read_fbx_info",
+      "our_equiv": "src/twinqa/fbx_header.py check_fbx_header",
+      "status": "same"
+    },
+    {
+      "id": "lp_files",
+      "side": "lp",
+      "req_nums": [
+        "2.1.1",
+        "2.1.2",
+        "2.10.1",
+        "2.10.2"
+      ],
+      "name": "Files: format, archive size, naming symbols/length",
+      "measures": "archive <=1GB(LP)/500MB, fbx 2..21, png 3..2100, invalid chars, name length",
+      "file": "autochecks/check_utils.py",
+      "function": "check_files",
+      "our_equiv": "missing (no archive/file-count check in src/twinqa)",
+      "status": "missing"
+    },
+    {
+      "id": "lp_archive_structure",
+      "side": "lp",
+      "req_nums": [
+        "2.1.1"
+      ],
+      "name": "Archive structure / unsupported archive",
+      "measures": "ZIP only; .rar/.7z/.tar rejected; broken entries",
+      "file": "autochecks/check_utils.py + archive_preflight.py",
+      "function": "check_archive_structure / archive_preflight.run",
+      "our_equiv": "missing",
+      "status": "missing"
+    },
+    {
+      "id": "lp_signatures",
+      "side": "lp",
+      "req_nums": [
+        "2.1.1"
+      ],
+      "name": "Digital signature (UKEP)",
+      "measures": "ZIP detached signature digest/subject/dates",
+      "file": "autochecks/check_utils.py",
+      "function": "check_signatures",
+      "our_equiv": "missing",
+      "status": "missing"
+    },
+    {
+      "id": "lp_naming_masks",
+      "side": "lp",
+      "req_nums": [
+        "2.10.3.1",
+        "2.10.3.2",
+        "2.10.3.3",
+        "2.10.3.4",
+        "2.10.3.5"
+      ],
+      "name": "Naming masks (SM_/M_/T_/UCX_)",
+      "measures": "file/mesh/material/texture names vs address masks, slot sequences",
+      "file": "autochecks/lp_checks.py",
+      "function": "_check_naming_masks",
+      "our_equiv": "src/twinqa/naming.py mesh_name_violation",
+      "status": "same"
+    },
+    {
+      "id": "lp_transforms",
+      "side": "lp",
+      "req_nums": [
+        "2.3.14"
+      ],
+      "name": "Transforms applied",
+      "measures": "loc~0, rot~0, scale==1",
+      "file": "autochecks/lp_checks.py",
+      "function": "_check_transforms",
+      "our_equiv": "src/twinqa/scene.py _v002_scale_bad",
+      "status": "same"
+    },
+    {
+      "id": "lp_pivot",
+      "side": "lp",
+      "req_nums": [
+        "4.1.5"
+      ],
+      "name": "Origin XY",
+      "measures": "origin at 0,0 (XY)",
+      "file": "autochecks/lp_checks.py",
+      "function": "_check_pivot",
+      "our_equiv": "src/twinqa/scene.py _pivot_findings",
+      "status": "same"
+    },
+    {
+      "id": "lp_polycount",
+      "side": "lp",
+      "req_nums": [
+        "2.3.6",
+        "2.3.11"
+      ],
+      "name": "Polycount <= 150k + triangulation",
+      "measures": "NPM triangle budget 150000; quads triangulated",
+      "file": "autochecks/lp_checks.py",
+      "function": "_check_polycount",
+      "our_equiv": "src/twinqa/scene.py PROJECT_TRIANGLE_TARGET",
+      "status": "same"
+    },
+    {
+      "id": "lp_duplicates",
+      "side": "lp",
+      "req_nums": [
+        "2.3.7"
+      ],
+      "name": "Doubles / loose vertices",
+      "measures": "merge distance 0.002 m (2 mm)",
+      "file": "autochecks/lp_checks.py",
+      "function": "_check_duplicates",
+      "our_equiv": "src/twinqa/geometry/topology.py",
+      "status": "same"
+    },
+    {
+      "id": "lp_texel",
+      "side": "lp",
+      "req_nums": [
+        "2.6.1"
+      ],
+      "name": "Texel density 10-40 px/m",
+      "measures": "NPM 10..40 px/m at 2K",
+      "file": "autochecks/lp_checks.py + check_utils.check_texel",
+      "function": "_check_texel_dencity",
+      "our_equiv": "missing (D097 has values, no checker)",
+      "status": "missing"
+    },
+    {
+      "id": "lp_fbx_objects",
+      "side": "lp",
+      "req_nums": [
+        "2.1.2",
+        "2.1.3a",
+        "2.1.4",
+        "2.1.5",
+        "2.1.6",
+        "2.3.5"
+      ],
+      "name": "FBX object composition",
+      "measures": "Ground required, Main/Glass together, no empty/foreign objects",
+      "file": "autochecks/lp_checks.py",
+      "function": "_check_fbx_objects",
+      "our_equiv": "partial (src/twinqa/scene.py)",
+      "status": "partial"
+    },
+    {
+      "id": "lp_materials",
+      "side": "lp",
+      "req_nums": [
+        "2.1.5",
+        "2.4.2",
+        "2.4.3",
+        "2.4.6",
+        "2.5.11",
+        "2.5.12",
+        "2.5.13"
+      ],
+      "name": "Materials (glass, alpha, GroundEl/Flora)",
+      "measures": "glass color in material, alpha rules, GroundEl <=512px, Flora diffuse",
+      "file": "autochecks/lp_checks.py",
+      "function": "_check_materials",
+      "our_equiv": "partial (src/twinqa/geometry/checks.py check_material_ids)",
+      "status": "partial"
+    },
+    {
+      "id": "lp_texture_sets",
+      "side": "lp",
+      "req_nums": [
+        "2.4.5"
+      ],
+      "name": "Texture sets (1 OKS = 1 set)",
+      "measures": "texture set keys d/m/r/o/n per slot",
+      "file": "autochecks/lp_checks.py",
+      "function": "_check_texture_sets",
+      "our_equiv": "partial (src/twinqa/png.py npm_texture_findings)",
+      "status": "partial"
+    },
+    {
+      "id": "lp_uv",
+      "side": "lp",
+      "req_nums": [
+        "4.1.3"
+      ],
+      "name": "Unwrapped polygons (zero UV area)",
+      "measures": "UV area > 0",
+      "file": "autochecks/lp_checks.py + check_utils.check_uv_faces",
+      "function": "_check_uv",
+      "our_equiv": "src/twinqa/uv.py face_issue",
+      "status": "same"
+    },
+    {
+      "id": "lp_district_code",
+      "side": "lp",
+      "req_nums": [
+        "2.10.3.1"
+      ],
+      "name": "District code vs coordinates",
+      "measures": "district code in name matches model XY (even-odd point-in-polygon)",
+      "file": "autochecks/lp_checks.py + core_utils/geo_utils.py",
+      "function": "_check_district_code",
+      "our_equiv": "missing (geo_utils.find_district has no twinqa equivalent)",
+      "status": "missing"
+    },
+    {
+      "id": "lp_height",
+      "side": "lp",
+      "req_nums": [
+        "4.1.4"
+      ],
+      "name": "Elevation 110-250 m",
+      "measures": "model Z within Moscow elevation range",
+      "file": "autochecks/lp_checks.py",
+      "function": "_check_height",
+      "our_equiv": "missing",
+      "status": "missing"
+    },
+    {
+      "id": "lp_color_attributes",
+      "side": "lp",
+      "req_nums": [
+        "4.1.1"
+      ],
+      "name": "Color attributes",
+      "measures": "vertex color attributes present",
+      "file": "autochecks/check_utils.py",
+      "function": "check_color_attributes",
+      "our_equiv": "missing",
+      "status": "missing"
+    },
+    {
+      "id": "hp_images",
+      "side": "hp",
+      "req_nums": [
+        "2.5.1.1"
+      ],
+      "name": "Embedded images",
+      "measures": "no embedded textures (paths only)",
+      "file": "autochecks/hp_checks.py",
+      "function": "_check_images",
+      "our_equiv": "missing",
+      "status": "missing"
+    },
+    {
+      "id": "hp_udim_numbers",
+      "side": "hp",
+      "req_nums": [
+        "2.5.1.2",
+        "2.5.1.3",
+        "2.5.2.1.3"
+      ],
+      "name": "UDIM resolutions + ERM/Normal<=Diffuse + no gaps",
+      "measures": "2048/4096 only; ERM/Normal res <= Diffuse; sequential tiles",
+      "file": "autochecks/hp_checks.py",
+      "function": "_udim_numbers_check",
+      "our_equiv": "partial (src/twinqa/uv.py sequential_tiles)",
+      "status": "partial"
+    },
+    {
+      "id": "hp_meshes_transforms",
+      "side": "hp",
+      "req_nums": [
+        "2.3.18",
+        "2.9.3"
+      ],
+      "name": "Transforms applied",
+      "measures": "loc/rot/scale as LP",
+      "file": "autochecks/hp_checks.py",
+      "function": "_check_meshes_transforms",
+      "our_equiv": "src/twinqa/scene.py",
+      "status": "same"
+    },
+    {
+      "id": "hp_polycount",
+      "side": "hp",
+      "req_nums": [
+        "2.13.7",
+        "2.3.17",
+        "2.3.9"
+      ],
+      "name": "Polycount <= 1M + triangulation",
+      "measures": "VPM <= 1 000 000; OKS <= 1M; triangulation",
+      "file": "autochecks/hp_checks.py",
+      "function": "_check_polycount",
+      "our_equiv": "stricter (D010 target 150k)",
+      "status": "stricter"
+    },
+    {
+      "id": "hp_duplicates",
+      "side": "hp",
+      "req_nums": [
+        "2.3.11"
+      ],
+      "name": "Doubles / loose",
+      "measures": "2 mm merge",
+      "file": "autochecks/hp_checks.py",
+      "function": "_check_duplicates",
+      "our_equiv": "src/twinqa/geometry/topology.py",
+      "status": "same"
+    },
+    {
+      "id": "hp_texel",
+      "side": "hp",
+      "req_nums": [
+        "2.5.1.4",
+        "2.5.1.8",
+        "2.5.2.1.2",
+        "2.5.2.1.5",
+        "2.6.2"
+      ],
+      "name": "Texel 512-1706 px/m + UDIM margin",
+      "measures": "VPM 512..1706 px/m; UV within tile; margin 1/256",
+      "file": "autochecks/hp_checks.py + check_utils.check_texel",
+      "function": "_check_texel_dencity",
+      "our_equiv": "missing (D097 says 520, SINTEZ 512)",
+      "status": "conflict"
+    },
+    {
+      "id": "hp_naming_symbols",
+      "side": "hp",
+      "req_nums": [
+        "2.10.1",
+        "2.10.2"
+      ],
+      "name": "Invalid symbols + length",
+      "measures": "symbol whitelist, name length",
+      "file": "autochecks/hp_checks.py",
+      "function": "_check_naming_symbols",
+      "our_equiv": "src/twinqa/naming.py",
+      "status": "same"
+    },
+    {
+      "id": "hp_naming_masks",
+      "side": "hp",
+      "req_nums": [
+        "1.3.6",
+        "1.3.7",
+        "2.10.4.1",
+        "2.10.4.2",
+        "2.10.4.3",
+        "2.10.4.4",
+        "2.10.4.5",
+        "2.10.4.6"
+      ],
+      "name": "Naming masks",
+      "measures": "SM_/M_/UCX_ masks, cadastral number, Light.fbx",
+      "file": "autochecks/hp_checks.py",
+      "function": "_check_naming_masks",
+      "our_equiv": "src/twinqa/naming.py",
+      "status": "same"
+    },
+    {
+      "id": "hp_fbx_objects",
+      "side": "hp",
+      "req_nums": [
+        "2.13.3",
+        "2.3.1a",
+        "2.3.2",
+        "2.3.8",
+        "2.8.1"
+      ],
+      "name": "FBX objects / hierarchy",
+      "measures": "single collection, no hierarchy, no foreign objects",
+      "file": "autochecks/hp_checks.py",
+      "function": "_check_fbx_objects",
+      "our_equiv": "partial (src/twinqa/scene.py)",
+      "status": "partial"
+    },
+    {
+      "id": "hp_glasses_uv",
+      "side": "hp",
+      "req_nums": [
+        "2.5.2.2.1a"
+      ],
+      "name": "Glass UV fill",
+      "measures": "glass UV occupies tile",
+      "file": "autochecks/hp_checks.py",
+      "function": "_check_glasses_uv",
+      "our_equiv": "missing",
+      "status": "missing"
+    },
+    {
+      "id": "hp_materials",
+      "side": "hp",
+      "req_nums": [
+        "2.13.1",
+        "2.4.3",
+        "2.4.5",
+        "2.5.2.1.1",
+        "2.5.2.2.2",
+        "2.8.2"
+      ],
+      "name": "Materials / shaders / UDIM count",
+      "measures": "<=100 textures, <=7 materials, one UV channel",
+      "file": "autochecks/hp_checks.py",
+      "function": "_check_materials",
+      "our_equiv": "partial (src/twinqa/geometry/checks.py)",
+      "status": "partial"
+    },
+    {
+      "id": "hp_material_links",
+      "side": "hp",
+      "req_nums": [
+        "2.4.2"
+      ],
+      "name": "Material-texture links",
+      "measures": "no texture paths in material graph",
+      "file": "autochecks/hp_checks.py",
+      "function": "_check_material_links",
+      "our_equiv": "missing",
+      "status": "missing"
+    },
+    {
+      "id": "hp_lights",
+      "side": "hp",
+      "req_nums": [
+        "2.15.2",
+        "2.15.4",
+        "2.15.5",
+        "2.15.8",
+        "2.15.9"
+      ],
+      "name": "Lights",
+      "measures": "<=250 sources; point/spot; distance between sources; rooted",
+      "file": "autochecks/hp_checks.py",
+      "function": "_check_lights",
+      "our_equiv": "partial (D017 lights only in Light.fbx)",
+      "status": "partial"
+    },
+    {
+      "id": "hp_collision",
+      "side": "hp",
+      "req_nums": [
+        "2.10.4.2",
+        "2.13.1",
+        "2.13.4"
+      ],
+      "name": "UCX collision (closure/convex/intersect/nested/gap)",
+      "measures": "unclosed/nonmanifold/nonconvex/intersect/nested/gap<0.2mm",
+      "file": "autochecks/hp_checks.py + check_utils.compute_ucx_collision_errors",
+      "function": "_check_collision",
+      "our_equiv": "src/twinqa/geometry/ucx_audit.py",
+      "status": "conflict"
+    },
+    {
+      "id": "hp_uv",
+      "side": "hp",
+      "req_nums": [
+        "2.5.2.1.4",
+        "2.5.2.1.4b",
+        "4.1.3"
+      ],
+      "name": "Flipped UV / flipped opacity / unwrapped",
+      "measures": "mirrored islands, opacity-tile mirrors, zero-area UV",
+      "file": "autochecks/hp_checks.py + check_utils.check_uv_faces",
+      "function": "_check_uv",
+      "our_equiv": "src/twinqa/uv.py",
+      "status": "partial"
+    },
+    {
+      "id": "hp_height",
+      "side": "hp",
+      "req_nums": [
+        "4.1.4"
+      ],
+      "name": "Elevation from geojson",
+      "measures": "h_relief within 110-250 m",
+      "file": "autochecks/hp_checks.py",
+      "function": "_check_height",
+      "our_equiv": "missing",
+      "status": "missing"
+    },
+    {
+      "id": "hp_json_properties",
+      "side": "hp",
+      "req_nums": [
+        "2.2.1",
+        "2.2.3",
+        "2.2.5",
+        "2.2.6",
+        "2.2.7",
+        "1.3.6"
+      ],
+      "name": "GeoJSON properties",
+      "measures": "cadNum format, cross-file equality, field types/decimals",
+      "file": "autochecks/hp_checks.py",
+      "function": "_check_json_properties",
+      "our_equiv": "src/twinqa/geojson.py geojson_findings",
+      "status": "same"
+    },
+    {
+      "id": "hp_pivot",
+      "side": "hp",
+      "req_nums": [
+        "2.9.4a",
+        "2.9.5"
+      ],
+      "name": "Pivot",
+      "measures": "origin 0,0,0; bbox centre within 10%",
+      "file": "autochecks/hp_checks.py",
+      "function": "_check_pivot",
+      "our_equiv": "src/twinqa/scene.py _pivot_findings",
+      "status": "same"
+    },
+    {
+      "id": "hp_png",
+      "side": "hp",
+      "req_nums": [
+        "2.5.1.6",
+        "2.5.1.9",
+        "2.5.3.1",
+        "2.5.3.3",
+        "2.5.3.4",
+        "4.1.2"
+      ],
+      "name": "PNG (alpha, placeholders, one-color, mode)",
+      "measures": "alpha presence, 256px placeholders, one-color, image mode",
+      "file": "autochecks/hp_checks.py",
+      "function": "_check_png",
+      "our_equiv": "src/twinqa/png.py vpm_texture_findings",
+      "status": "same"
+    }
+  ],
+  "fixers": [
+    {
+      "id": "fix_operators",
+      "file": "scripts/fix_operators.py",
+      "automates": "triangulate, glass alpha/textures, origin XY, pivot Z, one-color plugs, alpha, doubles/loose, color attributes, image mode, texture-node naming, UV-map name, extra UV maps, plug resize, UCX convex/gap",
+      "our_manual": "per-job tools/*_blender.py and jobs/KPP1/scripts/*.py do these one-off"
+    },
+    {
+      "id": "name_fixer",
+      "file": "scripts/name_fixer/name_fixer.py + naming_core.py",
+      "automates": "bulk rename of files/meshes/materials/textures/UCX to masks; plan + apply",
+      "our_manual": "none (agents rename by hand per object)"
+    },
+    {
+      "id": "png_compressor",
+      "file": "scripts/png_compressor/*",
+      "automates": "find >3MB textures, compress, re-pack NPM",
+      "our_manual": "manual texture optimization in jobs"
+    },
+    {
+      "id": "fbx_material_sync",
+      "file": "scripts/fbx_material_sync.py",
+      "automates": "sync material links between FBX and scene",
+      "our_manual": "manual"
+    },
+    {
+      "id": "model_exporter",
+      "file": "scripts/model_exporter/export_models.py",
+      "automates": "export FBX, pack ZIP",
+      "our_manual": "jobs/*/export_*.py"
+    },
+    {
+      "id": "hash_compare",
+      "file": "scripts/hash_compare/*",
+      "automates": "MD5 compare of files/archives",
+      "our_manual": "tools/check_profile_agr.py sha256"
+    },
+    {
+      "id": "ghost_compare",
+      "file": "scripts/ghost_compare/*",
+      "automates": "phantom A/B overlay + deviation map (NPM vs VPM visual diff)",
+      "our_manual": "manual visual compare (D104)"
+    },
+    {
+      "id": "geojson_editor",
+      "file": "scripts/geojson_editor/geojson_editor.py",
+      "automates": "edit/validate/replace geojson in zip, linked fields",
+      "our_manual": "src/twinqa/geojson.py (read-only); manual edits"
+    },
+    {
+      "id": "collision_select",
+      "file": "scripts/collision_select/collision_select.py",
+      "automates": "select UCX bad edges/nonconvex/intersect/gaps",
+      "our_manual": "src/twinqa/geometry/ucx_audit.py reports only"
+    },
+    {
+      "id": "texel_density",
+      "file": "scripts/texel_density/texel_density.py",
+      "automates": "select texel out-of-range faces",
+      "our_manual": "none"
+    }
+  ],
+  "v4_to_2026": {
+    "lp_changed_rows": 36,
+    "lp_note": "Renumbering 2.3.x/2.5.x shifted; new 2.5.13; 'доп'=added, 'изм'=changed, 'перенесли X'=moved from old X. See report.",
+    "hp_changed_rows": 88,
+    "hp_note": "Full renumber of 2.3.x/2.13.x/2.15.x; resolutions 2048/4096 (256 dropped); UDIM<=100 textures; <=250 lights; ground polycount 300k-4.5M; UKEP signatures new in 2.1.1."
+  },
+  "v150_to_161": {
+    "new_files": [
+      "autochecks/refresh_registry.py",
+      "core_utils/cms.py",
+      "core_utils/path_utils.py",
+      "fbx_material_sync.py",
+      "ghost_compare/*",
+      "hash_compare/*",
+      "hp_scene_state.py",
+      "install_state.py",
+      "name_fixer/*"
+    ],
+    "new_checks": [
+      "2.5.2.1.4b flipped UV on opacity tiles",
+      "ground polycount limits (VPM 3.10)",
+      "digital signature checks",
+      "UCX collision: nested/intersect/gap"
+    ],
+    "expanded": {
+      "check_utils.py": "1655->2469",
+      "fix_operators.py": "305->1161",
+      "fbx_header.py": "239->584",
+      "archive_preflight.py": "427->640"
+    }
+  }
+}

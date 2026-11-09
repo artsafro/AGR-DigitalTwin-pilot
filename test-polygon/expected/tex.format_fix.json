@@ -1,0 +1,34 @@
+{
+ "schema": 1,
+ "button": "tex.format_fix",
+ "tool": "tex.format_fix",
+ "version": "0.8",
+ "shipped": true,
+ "select": "named",
+ "reason": "16-bit RGB -> 8-bit lossless (pass); 128^2 noise under 20 kB only as a dithered palette with RMSE 0.056 > max_rmse 0.03 -> tex_quality, not «готово» (T01)",
+ "apply_status": null,
+ "objects": [
+  {
+   "name": "SM_E1FmtOk_001_Main",
+   "scene": "polygon_all",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_E1FmtBad_001_Main",
+   "scene": "polygon_all",
+   "expect": "fail",
+   "codes": [
+    "tex_quality"
+   ]
+  }
+ ],
+ "options": {
+  "max_bytes": 20480
+ },
+ "base": "0.8",
+ "station": "0.8.3",
+ "stations": [
+  "0.8.3"
+ ]
+}

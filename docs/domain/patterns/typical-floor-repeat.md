@@ -1,6 +1,6 @@
 # Typical floor — build once, repeat (`typical-floor-repeat`)
 
-Status: draft. Source: `docs/HARNESS_PLAN.md` §4, §7; issue #8 (PR #25); `src/dt_ai/spec/floors.py`;
+Status: draft. Source: historical `archive/2026-11:docs/HARNESS_PLAN.md` §4, §7; issue #8 (PR #25); `src/dt_ai/spec/floors.py`;
 `docs/domain/geometry.md` (repeated floors).
 
 ## Signs in the spec

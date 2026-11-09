@@ -1,0 +1,95 @@
+{
+  "schema": 1,
+  "agent": "codex",
+  "model": "gpt-6.1-sol",
+  "commit": "fab1fdd74a07b30f2caccf88135938f2338ab0a0",
+  "ref": "fab1fdd74a07b30f2caccf88135938f2338ab0a0",
+  "agent_version": "codex-cli 0.160.1",
+  "command": [
+    "codex",
+    "--no-daemon",
+    "exec",
+    "--ephemeral",
+    "--json",
+    "--enable",
+    "skip_host_skill_discovery",
+    "--disable",
+    "memories",
+    "--disable",
+    "plugins",
+    "--model",
+    "gpt-6.1-sol",
+    "Fresh closed-ticket replay #111: Component volume: document new-case and author evidence boundary\n## P3 — bounded diagnostic traceability/evidence completion\nReview round 1: https://github.com/artsafro/AGR-DigitalTwin-pilot/pull/109#issuecomment-6193798660\nHead: d872fbfe8ac73af4df119a96094f2ed562fa3abe. Nonblocking documentation/evidence follow-up; no wrong numeric result observed.\n\nThe new `src/twinqa/geometry/component_volume.py` references Card #93 but neither a registered pattern nor explicit `new-case`. No matching pattern exists in the inspected registry. PR #109 reproduces the frozen 24-case matrix but does not provide a reproducible author beyond-matrix counterexample probe (or applicability explanation), nor regression-eval report/counts or explicit not-measured reason, as requested by docs/agents/REVIEW_CHECKLIST.md.\n\nFollow-up: mark this optional diagnostic `new-case` with bounded scope; add an author-owned reproducible synthetic invariant probe with command, seed/bounds and evidence path; record regression-eval passed/failed/not-measured counts with report path, or explicit missing-transcript/environment reasons. Do not fabricate telemetry or count not-measured checks as pass. Reviewer independently exercised 800 seeded checks and the matrix; these are not author-session telemetry.\n\nDuplicate search found #99 for the separate CAD proxy; it does not cover this module.\n\nStart with root files and follow repository instructions. No prior chat context. Your pre-approved branch is harness/capability-ticket-111-cb5ef7cd5110; do not rename it. Produce a committed PR-ready solution and write the PR body to C:/x/capability-evals/t_dad8c227-reference-v001/pr-body.md. The body must follow the review checklist, Author receipts and all ten Agent trace fields. Do not push, open a real PR, call GitHub, run the full test suite, modify benchmark/, jobs/, standards/, hooks, evaluation code or policy documents. Focused tests are allowed. Record unavailable telemetry as not measured. This historical ticket is intentionally closed; solve it against this checkout without looking up its known answer. Publication is forbidden, not an approval question. Do not use another checkout or its venv. Stop honestly on failures."
+  ],
+  "etalon_sha256": null,
+  "passed": false,
+  "cleanup": true,
+  "isolation": "repository + user skills; no OS sandbox; D159",
+  "session_exit": 0,
+  "changed_evaluation_inputs": [],
+  "protected_inputs_unchanged": true,
+  "head_unchanged": false,
+  "branch": "harness/capability-ticket-111-cb5ef7cd5110",
+  "ticket": 111,
+  "solution_commit": "187a27fe16e55052e02757502f717f446b6984d8",
+  "committed": true,
+  "procedural": {
+    "passed": 0,
+    "failed": 0,
+    "not_measured": 10
+  },
+  "procedural_reason": "no Claude transcript; native CLI stdout retained, unsupported by procedural graders",
+  "local_pr": {
+    "passed": 0,
+    "failed": 1,
+    "not_measured": 0
+  },
+  "elapsed_seconds": 161.512,
+  "context": "repository + user skills",
+  "decision": "D159",
+  "known_answer": "pilot PR #146, commit f3fa7d450804e55f1158eaccbd17381eb4b165ea",
+  "external_skills": {
+    "loaded": [
+      "codex-work-review",
+      "codex-work-route"
+    ],
+    "named_only": [
+      "codex-work-engineering",
+      "codex-work-loop"
+    ],
+    "evidence": "Route frontmatter is present in Get-Content output despite the combined command later exiting 1 on denied gh lookup; review read exits 0.",
+    "scope": "native parent transcript only; nested context not separately captured"
+  },
+  "threshold": {
+    "selected_after_reference": true,
+    "local_checks": 4,
+    "procedural_failed": 0,
+    "procedural_not_measured": 0,
+    "session_exit": 0,
+    "committed_clean_solution": true,
+    "protected_inputs_unchanged": true,
+    "cleanup": true,
+    "latency_or_tokens": null
+  },
+  "committed_evidence": {
+    "reference/launch.json": "d86792b60206ee648550c4f1eeb1e9ff0650597243dc7ffc342c1b62eeff2e33",
+    "reference/local-pr-report.json": "a2b2cf13885ed873f260f4a645f2bfe100da195b1944887332627ebb07f7ba1b",
+    "reference/procedural-report.json": "fe5797573dc4144fbc05e27e5c622481c409dcde579aab7c2c174b29b277a630",
+    "reference/pr-body.md": "eb1afe737a73d34e9eca75d08b2d653290a47e708ae82ed123e2be4585c204ff",
+    "reference/local.diff": "ed3b5d66d2ccba6fe1c2722732634420c9e1124ac8dc9ae6a5e80bae6788a7f1",
+    "reference/branch.txt": "e0552d5abc21a3ee58e742220e2286fcf4254aaca372a34ac6890cf8b43b991e",
+    "reference/ticket.json": "cd5b37fe82d99ede997edf1fc329a9cd8927cf613505a5c4495c86b375b368f9"
+  },
+  "raw_evidence": {
+    "transcript.jsonl": "15337773797d4ca6cba30eb59dfd5694bd5716baa291db1526a060d02c4b54f7",
+    "stderr.log": "1aa26269eb1cc57f86b235a03cda53c004edb5b1e9fc99d4da4f00843293d721",
+    "prompt.txt": "85536de7150d81be4a8564fb0541412e8d7c654f91cd21ad44e643c641a257ad"
+  },
+  "limitations": [
+    "Native Codex procedural/review telemetry unsupported; not measured, not pass.",
+    "Local receipt check is lexical only, not correctness validation.",
+    "No OS sandbox: publication restrictions defend against accidents, not hostile bypass.",
+    "Initial guard checked original protected path set; later hardening also detects newly added protected paths."
+  ],
+  "observation": "Local PR 3/4: trace, numeric references, named branch/diff pass; receipt field literals missing. Valid first negative reference; not a successful capability/readiness claim."
+}

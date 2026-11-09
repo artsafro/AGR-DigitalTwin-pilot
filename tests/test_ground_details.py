@@ -23,7 +23,7 @@ def test_detail_uv_diagonal_four_m_cell_is_contained_in_band():
 
 def test_curbs_follow_tin_with_approved_cross_sections_closed_and_in_boundary():
     e=element('curb_garden',[(1,2,0),(9,2,0)])
-    m,report=gd.build_details([e],box(0,0,10,10),sampler())
+    m,report,_=gd.build_details([e],box(0,0,10,10),sampler())
     assert report[0]['status']=='modeled' and report[0]['width_m']==.08 and report[0]['height_m']==.05
     assert np.ptp(m.verts[:,1])==pytest.approx(.08,abs=.002)
     z,hit=sampler().sample(m.verts[:,:2]); delta=m.verts[:,2]-z
@@ -42,7 +42,7 @@ def test_stair_footprint_is_reported_and_excluded_from_curbs():
         [(1,1,0),(3,1,0),(3,4,0),(1,4,0),(1,1,0)], [(1,2,0),(3,2,0)],[(1,3,0),(3,3,0)]])]
     es.append(element('curb_garden',[(0,2.5,0),(5,2.5,0)]))
     sp=gc.ReliefSampler(gc.build_tin([(x,y,100+.2*y) for x in (-10,20) for y in (-10,20)]))
-    m,r=gd.build_details(es,box(0,0,10,10),sp)
+    m,r,_=gd.build_details(es,box(0,0,10,10),sp)
     assert r[0].get('footprint') is not None
     for p,s in zip(gc.face_polys(m),m.slot):
         if s=='CurbGarden':assert p.intersection(box(1,1,3,4)).area<1e-10
@@ -50,7 +50,7 @@ def test_stair_footprint_is_reported_and_excluded_from_curbs():
 
 def test_unknown_cross_section_and_unsupported_are_explicit_dispositions():
     e=element('curb_wood',[(1,2,0),(9,2,0)])
-    m,r=gd.build_details([e],box(0,0,10,10),sampler())
+    m,r,_=gd.build_details([e],box(0,0,10,10),sampler())
     assert len(m.faces)==0 and r[0]['status']=='skipped' and 'height' in r[0]['reason']
 
 
@@ -61,7 +61,7 @@ def test_stair_treads_from_plan_and_vp_are_horizontal_with_risers(closure_gap):
         [(1,1,0),(3,1,0),(3,4,0),(1,4,0),(1,1,0)], [(1,2,0),(3,2,0)],[(1,3,0),(3,3,0)]])]
     es[1]['geometry']['coordinates'][-1]=(1+closure_gap,1,0)
     sp=gc.ReliefSampler(gc.build_tin([(x,y,100+.2*y) for x in (-10,20) for y in (-10,20)]))
-    m,r=gd.build_details(es,box(0,0,10,10),sp)
+    m,r,_=gd.build_details(es,box(0,0,10,10),sp)
     assert r[0]['status']=='modeled' and r[0]['treads']==3
     pts=m.verts[m.faces]; n=np.cross(pts[:,1]-pts[:,0],pts[:,2]-pts[:,0]); tops=n[:,2]>1e-9
     assert tops.any() and np.all(np.ptp(pts[tops,:,2],axis=1)<1e-8)

@@ -1,4 +1,4 @@
-"""Build path by source modules (dt_ai.geometry.from_source, user 2026-10-13/14) and the checker rules it needs:
+"""Build path by source modules (dt_ai.geometry.from_source, user 2026-10-13/14 [D066, D068, D085]) and the checker rules it needs:
 seated loops, the decor mesh left out of the topology checks, slab boxes, overlaps past the weld, spec-based storey
 areas for a panelised source."""
 
@@ -226,7 +226,7 @@ def test_the_decor_mesh_is_left_out_of_the_topology_checks():
 
 @pytest.mark.parametrize("gap, overlap", [(0.002, True), (0.005, False)])
 def test_an_overlap_is_a_crossing_deeper_than_the_weld(gap, overlap):
-    """User 2026-10-14: faces within weld_m (3 mm) overlap; a plate 5 mm off a face (plate_gap_m) does not."""
+    """User 2026-10-14 [D148]: faces within weld_m (3 mm) overlap; a plate 5 mm off a face (plate_gap_m) does not."""
     lo = _quad_box("slabs", (0, 0, 0), (4, 4, 1), 21)
     hi = _quad_box("terraces", (0, 0, 1 + gap), (4, 4, 2), 22)
     res = checks.check_mesh(from_dump(_dump(lo, hi)), TOL, checks.load_ranges(), build="from_source")
@@ -263,7 +263,7 @@ def _prism(section_xy, z0, z1):
 
 
 def test_a_pier_keeps_its_own_section_per_storey():
-    """User 2026-10-14: a pier is its real plan section extruded, per storey (sections differ), not a box."""
+    """User 2026-10-14 [D085]: a pier is its real plan section extruded, per storey (sections differ), not a box."""
     step = [[0, 0], [0.6, 0], [0.6, 0.15], [0.4, 0.15], [0.4, 0.3], [0, 0.3]]        # stepped, storey 1
     plain = [[0, 0], [0.6, 0], [0.6, 0.3], [0, 0.3]]                                 # storey 2
     v1, t1 = _prism(step, 0.0, 3.0)
@@ -281,7 +281,7 @@ def test_a_pier_keeps_its_own_section_per_storey():
 
 
 def test_a_balcony_is_extruded_along_the_wall_with_its_sloped_section():
-    """User 2026-10-14: a small balcony is a truncated trapezoid (its sloped underside), not a box."""
+    """User 2026-10-14 [D085]: a small balcony is a truncated trapezoid (its sloped underside), not a box."""
     m = _Mesh()
     trap = shapely.geometry.polygon.orient(Polygon([[0, 0.3], [0, 1.0], [0.8, 1.0], [0.8, 0.6]]), 1.0)   # (d, z)
     fs.extrude(m, ("s", np.array([1.0, 0.0]), np.array([0.0, -1.0]), trap, 0.0, 2.0), 26)
@@ -308,7 +308,7 @@ def test_an_enclosure_with_no_top_leaves_an_allowed_open_ring_at_its_top():
 
 
 def test_glass_off_the_wall_is_a_balcony_railing_of_closed_plates():
-    """User 2026-10-14: glass standing off its storey's wall line (a small balcony) is one closed 20 mm plate per
+    """User 2026-10-14 [D087]: glass standing off its storey's wall line (a small balcony) is one closed 20 mm plate per
     free side (pattern terrace, glass railings), 4 mm off its foot; it makes no opening."""
     dump, modules = _source()
     g = dump["meshes"][1]
@@ -330,7 +330,7 @@ def test_glass_off_the_wall_is_a_balcony_railing_of_closed_plates():
 
 
 def test_a_pier_runs_through_storeys_as_one_element():
-    """User 2026-10-14: no seams (texture) - a pier split at 3 m is one element."""
+    """User 2026-10-14 [D085]: no seams (texture) - a pier split at 3 m is one element."""
     sq = [[0, 0], [0.4, 0], [0.4, 0.3], [0, 0.3]]
     v1, t1 = _prism(sq, 0.0, 3.0)
     v2, t2 = _prism(sq, 3.01, 6.0)
@@ -358,7 +358,7 @@ def test_a_dark_insert_is_a_box_set_into_the_wall_with_no_back_and_off_the_openi
 # ------------------------------------------------------------------------------------------- primitive-first
 
 def test_a_section_loses_its_small_steps_and_keeps_a_big_one():
-    """Pattern primitive-first: steps under PF_STEP_M go, a 0.10 m step stays (user 2026-10-14: 7-10 cm kept)."""
+    """Pattern primitive-first: steps under PF_STEP_M go, a 0.10 m step stays (user 2026-10-14 [D081]: 7-10 cm kept)."""
     small = Polygon([[0, 0], [0.4, 0], [0.4, 0.3], [0.37, 0.3], [0.37, 0.33], [0, 0.33]])     # a 3 cm step
     c = fs.clean_section(small)
     assert len(c.exterior.coords) - 1 == 4

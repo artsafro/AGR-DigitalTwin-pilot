@@ -37,7 +37,7 @@ def test_belt_embedded_on_the_south_wall():
 
 @pytest.mark.parametrize("gap, elements, pieces", [(0.0, 1, 1), (0.02, 1, 2), (0.06, 1, 2), (0.07, 2, 1)])
 def test_split_pilaster_merges_up_to_the_seam(gap, elements, pieces):
-    """User 2026-10-12: seams up to plate_gap_m x 12 (0.06 m) join pieces of one cross-section on one axis.
+    """User 2026-10-12 [D054]: seams up to plate_gap_m x 12 (0.06 m) join pieces of one cross-section on one axis.
     Touching pieces (gap 0) share vertices and are one part already."""
     _, report, decor = decor_of(with_meshes(("P1", (10.0, 4.5, 0.0), (10.12, 5.0, 3.3 - gap)),
                                             ("P2", (10.0, 4.5, 3.3), (10.12, 5.0, 6.6))))
@@ -94,7 +94,7 @@ def test_deep_wall_pieces_are_a_question():
 
 
 def test_a_column_off_the_levels_is_a_question():
-    """User 2026-10-12: a column's bottom is on a level; one starting mid-storey is a question, not a column."""
+    """User 2026-10-12 [D056]: a column's bottom is on a level; one starting mid-storey is a question, not a column."""
     spec, report, _ = decor_of(with_meshes(("Cage", (5.8, -1.6, 1.0), (6.6, -0.8, 3.5))))
     assert spec.decor == [] and [q["kind"] for q in report["questions"] if q["kind"].startswith("decor")] == ["decor-column"]
 
@@ -322,7 +322,7 @@ def test_a_group_over_the_cross_section_tolerance_is_asked():
 
 
 def test_merge_questions_of_one_type_are_one_question_with_their_places():
-    """User 2026-10-12: one question per type (kind + cross-section), its positions listed."""
+    """User 2026-10-12 [D058]: one question per type (kind + cross-section), its positions listed."""
     def l_at(x):
         return [box((x, -0.15, 1.0), (x + 0.5, 0, 1.5)), box((x + 0.52, -0.15, 1.0), (x + 1.02, 0, 1.5)),
                 box((x, -0.15, 1.52), (x + 0.5, 0, 2.02))]
@@ -377,7 +377,7 @@ def test_the_texture_boundary_is_exact():
     assert d["projection_m"] == 0.100000001 and d["texture"] is False
 
 
-# --- user decisions 2026-10-12 ------------------------------------------------------------------------
+# --- user decisions 2026-10-12 [D057, D058] ------------------------------------------------------------------------
 
 def test_deep_pieces_are_attachment_candidates_one_question_per_type():
     """Over 0.8 m: an attachment candidate (EG2), not decor; one question per cross-section, with the count."""

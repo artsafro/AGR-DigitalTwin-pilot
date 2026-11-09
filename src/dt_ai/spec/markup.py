@@ -1,4 +1,4 @@
-"""Level helpers generated from a Revit model (pattern markup-helpers, MH2, user decisions 2026-10-10).
+"""Level helpers generated from a Revit model (pattern markup-helpers, MH2, user decisions 2026-10-10 [D045]).
 
 Revit levels are not placed by hand: `tools/source/measure_spec_revit_twin.mjs` reads the document's Levels
 and Roofs into twin-data.json (`revit_levels`, `revit_roofs`), and object.json maps them to spec names:

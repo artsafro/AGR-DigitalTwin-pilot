@@ -1,0 +1,27 @@
+{
+  "source": "C:\\x\\t_d94665f2\\ground_v014\\npm\\SM_Vatutino_Ground.fbx",
+  "sha256": "94357c5f048ba3343035dfa44c9d0d89d83b3d6697dcfd9cc81c54739a6dc2ef",
+  "objects": [
+    "SM_Vatutino_Ground"
+  ],
+  "vertices": 27281,
+  "bounds": [
+    [
+      -106.74150085449219,
+      -99.37799835205078,
+      142.49510192871094
+    ],
+    [
+      106.74150085449219,
+      99.37799835205078,
+      154.5
+    ]
+  ],
+  "camera_convention": "tools/blender/ground_json_to_fbx.py:render",
+  "resolution": [
+    256,
+    256
+  ],
+  "engine": "BLENDER_WORKBENCH",
+  "limits": "Numerical framing only; not material, aesthetics or delivery acceptance"
+}

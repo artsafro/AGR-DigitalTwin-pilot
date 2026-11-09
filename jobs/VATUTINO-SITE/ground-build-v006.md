@@ -5,9 +5,13 @@ Outputs (local, never committed): `C:/x/t_d94665f2/ground_v006/` — `ground_mas
 `ground_report.json`, `SM_Vatutino_Ground_{npm,vpm}_v006.fbx` (sha256 `1b5ac7ea8e2a1fe6…` / `6e0d3f0ae15939ac…`),
 `readback_*.json`, `render_*.json`, `validate_*.json`; renders `C:/x/vatutino-ground/v006/{npm,vpm}/`.
 
-    uv run python jobs/VATUTINO-SITE/build_ground.py C:/x/t_d94665f2/paving_ground_inputs_v2.json --out C:/x/t_d94665f2/ground_v006
-    blender --background --factory-startup --python tools/blender/ground_json_to_fbx.py -- build|readback|render ...
-    uv run python tools/qa/validate_package.py <fbx> --profile npm|vpm --scene --json
+Command (historical record — run before `--python-exit-code` became mandatory):
+
+```text
+uv run python jobs/VATUTINO-SITE/build_ground.py C:/x/t_d94665f2/paving_ground_inputs_v2.json --out C:/x/t_d94665f2/ground_v006
+blender --background --factory-startup --python tools/blender/ground_json_to_fbx.py -- build|readback|render ...
+uv run python tools/qa/validate_package.py <fbx> --profile npm|vpm --scene --json
+```
 
 ## Review round 1 table (failing input -> expected -> v006 measured)
 

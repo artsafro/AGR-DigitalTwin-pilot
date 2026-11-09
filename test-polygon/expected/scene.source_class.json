@@ -1,0 +1,31 @@
+{
+ "schema": 1,
+ "button": "scene.source_class",
+ "tool": "scene.source_class",
+ "version": "1.0",
+ "shipped": true,
+ "select": "named",
+ "reason": "",
+ "apply_status": null,
+ "objects": [
+  {
+   "name": "SM_FClass_Shell_Main",
+   "scene": "frag_f_class",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_FClass_Panels_Main",
+   "scene": "frag_f_class",
+   "expect": "fail",
+   "codes": [
+    "panelised"
+   ]
+  }
+ ],
+ "base": "1.0",
+ "station": "1.0.3",
+ "stations": [
+  "1.0.3"
+ ]
+}

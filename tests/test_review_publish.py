@@ -12,6 +12,8 @@ from pathlib import Path
 
 import pytest
 
+from tests.dcc_session import skip_if_dcc_session_busy
+
 
 ROOT = Path(__file__).resolve().parents[1]
 REVIEW = ROOT / "tools" / "review"
@@ -523,13 +525,18 @@ def test_brute_force_escapes_and_protected_names(review, tmp_path):
     assert len(deleted) == len(deletable)
 
 
+@pytest.mark.max
 def test_max_dependent_merge_skips_when_max_absent(review, tmp_path):
     adapter_mod = _load("max_adapter")
     if adapter_mod.max_batch_path() is None:
         pytest.skip("3ds Max is not installed")
     out = tmp_path / "scene.max"
     preview = tmp_path / "preview.png"
-    result = adapter_mod.default_adapter().selftest(tmp_path / "work", out, preview)
+    try:
+        result = adapter_mod.default_adapter().selftest(tmp_path / "work", out, preview)
+    except RuntimeError as exc:
+        skip_if_dcc_session_busy(getattr(exc, "returncode", 1), str(exc))
+        raise
     assert result["cameras"] >= 1
     assert result["materials"] >= 1
     assert out.is_file() and out.stat().st_size > 0

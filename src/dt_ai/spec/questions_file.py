@@ -16,7 +16,7 @@ COLUMNS = ["ID", "Status", "First", "Last", "Priority", "Kind", "Levels", "Wall"
            "Facade share", "Heights m", "At (x, y)", "Answer"]
 INTRO = """Merged by `dt spec merge-questions` from the versioned `<spec>.report.json` files. Each row is
 geometry that is not over the full storey height, so it does not change the level contour, or a
-wall break that is not a facade opening (user decisions 2026-10-08). Write the answer in the last
+wall break that is not a facade opening (user decisions 2026-10-08 [D023]). Write the answer in the last
 column (`\\|` for a pipe); ids are stable across spec versions. Status: open, answered, or
 `gone <version>` when a newer spec no longer raises it (answers kept)."""
 HEIGHT_TOL_M = 0.02     # the same question when heights move less than this ...

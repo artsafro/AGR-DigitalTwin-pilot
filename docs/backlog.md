@@ -35,7 +35,48 @@ items out of this file in the same merge. `C<N>` = conflict N in `docs/domain/co
   T-free quads), `drop_step_bottom_rims.py` (shell post-step). Move into `src/dt_ai/geometry/`
   with tests; keep the PSU275 outputs as regression.
 
-## Engine gaps — mixed mode (user decision 2026-10-11 [D050], `docs/HARNESS_PLAN.md` §16)
+- **P13** (Codex) Findings of `jobs/vyatskaya-tow02` (2026-10-20, first panelised curtain-wall tower; modelling
+  accepted by the user as "4+", too slow). Details and numbers: `jobs/vyatskaya-tow02/STATE.md` (Build log, Lessons).
+  Engine and harness problems:
+  - Speed: `dt spec extract` took 20 min on 690 k triangles (pure Python); `run_benchmark` extracts again before
+    building, and the engine build ran 64 min with no progress output or timeout before it was stopped.
+  - Panelised source (3ds Max curtain wall, RC_TOW_02: 5 561 parts, no shell): 889 ribbon openings unsized (no
+    reveal on panels), 0 decor (fins missed), terrace parapets 3.41 / 2.75 m, roof parapet read off a glass
+    railing, roof boxes absent, contour edges skewed up to ±3° after simplification.
+  - Engine: BuildError "2D plan weld moves 0.0036 m, beyond weld_m 0.003"; the spec forbids weld_m >= plate_gap_m
+    (0.005), so the spec cannot be built at all.
+  - Dumper `tools/source/measure_spec_blender.py` writes faces of meshes with a mirrored world matrix (negative
+    scale, typical for 3ds Max FBX) inward; some slabs inward as well.
+  - Level helpers: the user's empties (`Empty`…`Empty.007`) are not read, only `LEVEL_*`; levels went to
+    object.json by hand. A rename/markup step or reading any empty named in object.json would remove the detour.
+  - Not built by the engine (EG6): rounded corners, ribbon glazing around a corner, decor along a curve (S-curve
+    fins), glass railings in `from_spec`, mid `roof_structures` (BuildError).
+  - Harness: `pipeline_gate` only admits engine-gap build scripts in `jobs/<JOB>/scripts/`, so read-only
+    `measure_*`/`inspect_*` tools ended in `outputs/` (untracked); subagents may not write report `.md` files, so
+    their reports lived only in chat. Proposal: admit read-only tools (no bpy writes) or a `jobs/<JOB>/tools/`.
+  New job code to generalise (all `Engine gap: EG6`, `jobs/vyatskaya-tow02/scripts/`):
+  - `build_body_blender.py` — ring-stack body: one outline per storey with vertex correspondence; shared columns on
+    fixed edges (union over storeys), own columns on moving edges; step soffits between differing storeys cut into
+    strips per chain so walls and soffits share vertices (no T-junctions); collapsed-jog handling; fixed-line snap;
+    1 cm weld; mitred reveals; mid-reveal glass planes; `seal_leftovers` for quad holes / T-junctions.
+  - `build_fins.py` — decor loft along a measured 3D path with linear profile morph, cut at the body with
+    >= 10 mm embed (ray sampling), ring spacing by chord error, cap lift over coplanar roof faces.
+  - `build_top_blender.py` — zones with z-patterns (solid / opening / glass_face), quad cap fill with holes,
+    single-section coping sweep, railing planes, roof boxes; bottom row equal to the body seam vertex for vertex.
+  - `build_decor_blender.py` — AC baskets (one-sided planes + floor), railings, louvre blades as boxes with
+    ray-cast end embed, colonnade soffit that closes the body's open loop.
+  - Measurement method: building-local frame by min-area rectangle of a slab; orthographic elevations/sections
+    from numpy arrays instead of viewport captures; storey outlines with vertex correspondence
+    (`outputs/measure-v002/bend_rings/`), builder-ready top parts schema (`outputs/measure-v002/top_parts/`).
+
+- **P14** (Codex) Generalise the MAF generator (#790, model-maf step 3): `tools/library/maf_gen_bench.py` (pure plan
+  run + sections -> quad mesh, form `clad_box` only since #819, board-pattern face UV), writer
+  `tools/blender/maf_gen_bench_build.py`, checks `tools/library/maf_gen_bench_checks.py`; first family «Верона»
+  (Vatutino `*T3508/1-10`, `jobs/VATUTINO-SITE/maf/verona-generator.md`). Move into a family registry (one form per
+  MAF family: canopy, pergola, workout frame, bar counter …) with the synthetic straight / L / U tests kept as
+  regression; keep the ten Vatutino rows as the acceptance set.
+
+## Engine gaps — mixed mode (user decision 2026-10-11 [D050]; historical `archive/2026-11:docs/HARNESS_PLAN.md` §16)
 
 The engine builds what it can (body, openings, floor steps, terraces, inset slabs). Job scripts do only
 the gaps listed here; a job script names its gap in its header (`Engine gap: EG<n>`, checked by
@@ -56,10 +97,23 @@ the engine covers it.
   90/180 degrees is a type of its own (OBJ03 v009: 1 328 piers -> 798 types); add rotation to the type key and the
   modules export; (b) regenerate `npm/` from an edited `modules/modules.blend` (now both come from one build).
   Owner Codex.
+- **EG6** Curtain-wall tower parts the engine does not build (2026-10-20, job `vyatskaya-tow02`, hybrid
+  route: body by the engine): rounded corners and ribbon glazing that wraps a corner (BuildError "corner openings
+  are not built yet"); fins that follow a curve over floors (decor is a straight extrusion per wall); glass
+  railings on `from_spec` terraces and roofs (only `from_source.terrace_railings` builds them).
+  Extended 2026-10-20 ("да"): the whole body of a panelised curtain-wall source built from measurements. This
+  3ds Max source has no shell (RC_TOW_02: 5 561 parts, the largest 11 % of its area); run as `source_class:
+  panelised` (slabs as body, contours from panels) the extractor took 20 min, sized none of 889 ribbon openings
+  (no reveal to measure on a panel facade), found 0 decor, and the engine stopped at BuildError "2D plan weld
+  moves ... 0.0036 m, beyond weld_m 0.003" (`jobs/vyatskaya-tow02/pipeline/spec-v002.*`, `outputs/spec-v001/`).
+  Also seen there: the dumper writes mirrored-matrix meshes (negative scale) with inward faces.
+- **EG7** Legacy job scripts moved from `tools/` root (repo hygiene phase 4, 2026-11-05): written before the gate;
+  they fill no engine gap and are kept only as the job's recorded workflow (`jobs/OBR22-K02/scripts/`,
+  `jobs/ORCH-OBR22-NPM/scripts/`).
 
 ## Markup helpers (after the terrace; owner Claude, code parts Codex)
 
-Plan: `docs/HARNESS_PLAN.md` §14 (user decision 2026-10-10 [D044]). One PR each, in this order, each with
+Plan: historical `archive/2026-11:docs/HARNESS_PLAN.md` §14 (user decision 2026-10-10 [D044]). One PR each, in this order, each with
 the pattern `markup-helpers` (written or extended) and its test.
 
 - **MH1b** (MH1 done: Blender route closed on the Blender B01 etalon, pattern `markup-helpers`) — later:
@@ -70,7 +124,7 @@ the pattern `markup-helpers` (written or extended) and its test.
 
 ## Intake — "study the sources" (after the plan is approved; owner Claude, code parts Codex)
 
-Plan: `docs/HARNESS_PLAN.md` §15 (user decision 2026-10-11 [D049]). One PR each, extending the skill
+Plan: historical `archive/2026-11:docs/HARNESS_PLAN.md` §15 (user decision 2026-10-11 [D049]). One PR each, extending the skill
 `analyze-architectural-source` (no parallel skill); intake reads only, never changes or exports sources.
 
 - **IN2** Intake on the existing adapters (FBX mesh dump, Revit twin): inventory, picture, contradictions,
@@ -100,6 +154,10 @@ Plan: `docs/HARNESS_PLAN.md` §15 (user decision 2026-10-11 [D049]). One PR each
   alpha-plane offset 0.003-0.01 m; Light FBX rules (point/spot, `_Omni`/`_Spot`, numbering).
 - **Q7** Convert accepted GLB RGBA NPM atlases to RGB + `_o_` opacity (conflict #21); fix the 3ds Max
   placeholder tool to write 128x128 for NPM (conflict #5). Owner: Claude (DCC), Codex (tool).
+- **Q8** NPM texture rules for validation need refinement [D185]: the texture findings on the TOW02 hand finish
+  (a shared set of mirrored twin OKS named after the twin, 014 vs 013 [D156]; own-colour padding under 8 px) were
+  not accepted; settle the rule with Artem before the validator fails on it
+  (`docs/deliveries/vyatskaya-tow02-npm-user-v05-2026-10-21.md`) [D185]. Owner: Claude (rules), Codex (validator).
 
 ## Unreal and IFC
 
@@ -147,11 +205,52 @@ effort <S/M/L>`. The user or the owner turns one into a task or drops it.
 - **R10** proposal 2026-10-19, feature/kernel-op-primitive - CLI command: the local CI receipt text for a PR
   (commit, commands, counts, known environment failures from R9) for the body and for the billing-lock comment
   of R6; seen 8 times (5 PR bodies, 3 comments, same shape); effort S
+- **R11** proposal 2026-10-20, job/vyatskaya-tow02-midpoly - CLI command: orthographic elevations (4 sides, local
+  frame) of source vs built objects from numpy triangle dumps, stacked into one PNG — a screenshot-free visual
+  check; seen 6 times; effort S
+- **R12** proposal 2026-10-20, job/vyatskaya-tow02-midpoly - src/ module (checker): BVH nearest distance of built
+  faces to source faces filtered by material and z range (median / p95 / max, faces over a limit by z); seen 4
+  times; effort S
+- **R13** proposal 2026-10-20, job/vyatskaya-tow02-midpoly - src/ module (checker): classify open edges (expected:
+  stack seam rows, reveal backs, glass borders; unexpected listed with coordinates) and find T-junction vertices;
+  seen 3 times; effort S
+- **R14** proposal 2026-10-20, job/vyatskaya-tow02-midpoly - skill step: save the open Blender scene as the next
+  `outputs/build-vNNN/` version (new folder, never over an existing one) and log it in STATE; seen 6 times; effort S
+- **R15** proposal 2026-10-21, job/vyatskaya-tow02-midpoly - CLI command: headless Blender side-by-side renders of
+  the source vs our model from identical orthographic cameras (per facade normal + top + close-ups, source glass
+  overridden white), composed into left/right sheets; seen 6 times; effort S
+- **R16** proposal 2026-10-21, job/vyatskaya-tow02-midpoly - src/ module (checker): xView-equivalent mesh QA with
+  explicit tolerances - overlapping vertices (distinct verts within d), overlapping faces (parallel within 5°, planes
+  within d, overlap area > 0), mismatched winding edges, bowtie vertices that 3ds Max splits on import, outward
+  orientation by ray test; grouped by source part; seen 5 times; effort M. Overlapping vertices / faces and bow-tie
+  vertices: `dt qa xview` (#527); winding edges and outward orientation still open.
+  Review #514 (2026-10-21): `dt_ai.ops.inv_xview` reproduces xView 185/185 on TOW02 export-v005 and 0/0 on the
+  user's model (`jobs/vyatskaya-tow02/REVIEW-514.md`); the "area > 0" rule above is what missed them.
+- **R17** proposal 2026-10-21, job/vyatskaya-tow02-midpoly - CLI command: run 3ds Max xView checks on an FBX in a
+  separate Max instance via a startup script (`jobs/vyatskaya-tow02/scripts/xview_check.ms`; xView does not compute
+  through the MCP bridge) with the "Disable xView" dialog answered, one JSONL line per checker; seen 3 times; effort S.
+  Shared runner is `tools/qa/xview_dump.ms` (#528): `.max` and `.fbx`, weld / weldpoly, full flagged face lists.
+  The job twins point at it. The all-checker JSONL sweep in `xview_check.ms` is still the historical script.
+- **R18** proposal 2026-10-21, review #514 - Artem's Blender add-on `xview_overlapping_faces_improved.py`
+  (viewport overlay, 16 s on 35k faces vs xView 107 s) as an interactive helper: it finds 40 of 185 xView faces with
+  0 false hits; to match xView it needs boundary contact counted (zero-area contact rule), a fixed 0.81 deg normal
+  limit and a per-vertex plane test - or call `inv_xview` from it; evidence `outputs/review-v002/xcheck/XCHECK.md`
+  (local); seen 1 time; effort S. Waits for the user's decision whether the add-on goes into the repository.
+- **R19** proposal 2026-10-22, job/vyatskaya-tow02-review - pattern: root cause of one overlap defect of a built
+  model: `inv_xview` pair -> part and z -> builder function and line -> the arithmetic that lands inside the 5 mm /
+  0.81 deg window -> the user's hand fix in numbers -> a placement rule + a unit case; seen 4 times (railings,
+  AC glass, louvre, band/glass, `jobs/vyatskaya-tow02/REVIEW-514.md` §7); effort S
+- **R20** proposal 2026-10-22, job/vyatskaya-tow02-review - skill: review of a user's hand finish against our
+  export (per-part BVH diff in a shared local frame, xView and `inv_xview` on both, checker parity, cause class
+  per defect, time from transcripts, follow-up issues through the ready gate); seen 2 times (#424 retro, #514);
+  effort M
 
 ## Harness and organization (default owner Codex)
 
+The harness spec upstream#118 tail (freeze `archive/2026-11:docs/HARNESS_PLAN.md` as history, `archive/2026-11:docs/prd/agent-ready-harness.md` story 38) is closed by this freeze.
+
 - **H1** Validate the Codex PreToolUse hook (`.codex/hooks.json` → guard.py): payload
-  fields, "ask" support. Record the result in `CAPABILITIES.md`.
+  fields, "ask" support. Record the result in `docs/agents/harness-inventory.md` (Guard hook status).
 - **H2** SketchUp MCP route: own venv for `adapters/sketchup/` (the old one stayed in the
   former AGR folder) and re-verify.
 - **H3** `revit-twin` MCP: its source was on unmerged DT branch `feature/revit-workflow`

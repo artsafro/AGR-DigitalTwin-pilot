@@ -1,0 +1,12 @@
+{
+  "centimetres": "fail",
+  "raised_terrain": "pass",
+  "behind_camera": "fail",
+  "union_coverage": "pass",
+  "missing_camera": "error, no writes",
+  "missing_object": "error, no writes",
+  "missing_terrain": "error, no writes",
+  "empty_mesh": "error, no writes",
+  "state_changed": "error, no stale pass",
+  "hardlink_collision": "error, input unchanged"
+}

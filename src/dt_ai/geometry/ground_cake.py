@@ -57,7 +57,8 @@ class Plan:
 
 
 def plan_layers(boundary: Polygon, coverings: dict[str, list[Polygon]], base: str, slots: dict[str, str],
-                footprint_min_area: float = 1000.0, step: float = 0.006) -> Plan:
+                footprint_min_area: float = 1000.0, step: float = 0.006,
+                normalize_clips: bool = False) -> Plan:
     """Layer plan of method C. ``slots`` maps covering type -> material slot (several types may share one).
 
     Footprints: parts of the boundary not covered by any covering with area >= ``footprint_min_area`` become
@@ -69,7 +70,48 @@ def plan_layers(boundary: Polygon, coverings: dict[str, list[Polygon]], base: st
         raise ValueError(f"base covering {base!r} not in coverings")
     if not math.isfinite(step) or step <= 0:
         raise ValueError("step must be a positive finite number")
-    unions = {t: unary_union([p.intersection(boundary) for p in ps]) for t, ps in coverings.items() if ps}
+    dispositions = []
+
+    def polygonal(g, covering, stage):
+        # Opt-in preserves the accepted legacy plan/mesh bytes, including ring order.
+        if not normalize_clips:
+            return g
+        kept = []
+
+        def collect(part):
+            if part.is_empty:
+                dispositions.append(dict(covering=covering, stage=stage, reason="empty", area_m2=0.0))
+            elif part.geom_type == "Polygon":
+                if part.area < 1e-6:
+                    dispositions.append(dict(covering=covering, stage=stage, reason="below_area_threshold",
+                                             area_m2=float(part.area)))
+                else:
+                    kept.append(part)
+            elif hasattr(part, "geoms"):
+                for child in part.geoms:
+                    collect(child)
+            else:
+                dispositions.append(dict(covering=covering, stage=stage, reason="non_polygonal",
+                                         geometry_type=part.geom_type, area_m2=0.0))
+
+        collect(shapely.make_valid(g))
+        snapped_parts = []
+        for part in kept:
+            snapped = shapely.set_precision(part, GRID)
+            polygons = _polys(snapped)
+            if not polygons:
+                dispositions.append(dict(covering=covering, stage=stage, reason="precision_collapse",
+                                         area_m2=float(part.area)))
+            for polygon in polygons:
+                if polygon.area < 1e-6:
+                    dispositions.append(dict(covering=covering, stage=stage, reason="snapped_below_area_threshold",
+                                             area_m2=float(polygon.area)))
+                else:
+                    snapped_parts.append(polygon)
+        return MultiPolygon(_polys(unary_union(snapped_parts)))
+
+    unions = {t: polygonal(unary_union([polygonal(p.intersection(boundary), t, "clip") for p in ps]),
+                           t, "union") for t, ps in coverings.items() if ps}
     allcov = unary_union(list(unions.values())) if unions else Polygon()
     uncovered = _polys(boundary.difference(allcov))
     holes = sorted((p for p in uncovered if p.area >= footprint_min_area), key=lambda p: -p.area)
@@ -81,7 +123,8 @@ def plan_layers(boundary: Polygon, coverings: dict[str, list[Polygon]], base: st
     for t in unions:
         if t != base:
             by_slot.setdefault(slots[t], []).append(t)
-    slot_geom = {s: unary_union([unions[t] for t in ts]).intersection(surface) for s, ts in by_slot.items()}
+    slot_geom = {s: polygonal(unary_union([unions[t] for t in ts]).intersection(surface),
+                               "+".join(sorted(ts)), "surface_clip") for s, ts in by_slot.items()}
     order = sorted((s for s in slot_geom if not slot_geom[s].is_empty), key=lambda s: -slot_geom[s].area)
     below = Polygon()
     overlaps = {}
@@ -100,6 +143,8 @@ def plan_layers(boundary: Polygon, coverings: dict[str, list[Polygon]], base: st
            "slivers_on_base": len(uncovered) - len(holes),
            "slivers_m2": round(sum(p.area for p in uncovered) - sum(h.area for h in holes), 3),
            "level2_m2": overlaps}
+    if normalize_clips:
+        rep["clip_dispositions"] = dispositions
     return Plan(surface, holes, layers, step, rep)
 
 
@@ -192,7 +237,7 @@ def build_flat(plan: Plan, cell: float = 4.0, chord: float = 0.02, origin: tuple
     relief; adjacent faces share edges (no T-junction). Upper layers are clipped to the surface and made disjoint
     per level (chord simplification must not create same-level overlaps = z-fighting).
 
-    With ``sampler`` (relief refinement, user decision 2026-10-19): faces whose triangles deviate from the relief
+    With ``sampler`` (relief refinement, user decision 2026-10-19 [D153]): faces whose triangles deviate from the relief
     by more than ``tol`` (exact maximum, ``ReliefSampler.max_error``) get the TIN edges inside them added to the
     linework and the partition is rebuilt; the relief is planar inside each resulting face there, so the error is
     0. Faces elsewhere keep the plain 4 m cut (they only gain the vertices where a TIN edge ends on their border).
@@ -710,7 +755,7 @@ def _point_gaps(verts: np.ndarray, faces: np.ndarray, level: np.ndarray, *, iden
 def raise_steep_layers(mesh: Mesh, step: float, gap_min: float = 0.0055, gap_max: float = 0.02,
                        max_rounds: int = 10) -> tuple[Mesh, np.ndarray, dict]:
     """Raise upper-layer vertices locally (Z only) so the gap to the base along the face normal is in
-    [gap_min, gap_max] (user decision 2026-10-19: V004 band 5-20 mm on steep relief; nominal step on flat ground).
+    [gap_min, gap_max] (user decision 2026-10-19 [D154]: V004 band 5-20 mm on steep relief; nominal step on flat ground).
 
     A vertical step ``s`` over a face with unit-normal z component ``nz`` gives a normal gap ``s * nz``; at
     ``nz < gap_min / step`` the nominal step is too small. Per vertex ``s_v = max(step, gap_min / nz_f)`` over its
@@ -917,6 +962,393 @@ def clean_topology(mesh: Mesh, weld_m: float = 0.0021) -> Mesh:
     return Mesh(np.array(v)[used], remap[faces], slots, np.array(levels), tex, mesh.cell, report)
 
 
+def weld_base_boundary(mesh: Mesh, weld_m: float = .0041,
+                       displacement_limit_m: float = .0021, *,
+                       accepted_boundary=None, retained_midpoints=()) -> Mesh:
+    """Opt-in midpoint closure of tiny base-outline seams before curtain extrusion.
+
+    Only open-edge base vertices may participate. Unlike whole-outline projection,
+    cluster centroids bound displacement by the existing 2.2 mm coverage tolerance.
+    Reject a chained cluster reaching the tighter 2.1 mm movement bound. Close
+    seams at their midpoint, but widen implicated short face edges within the same
+    bound so their long tongues do not disappear during degenerate-face cleanup.
+    Never split/displace disconnected fans. Recheck all geometry gates after
+    cleanup; neither bounded vertex motion nor this primitive is delivery acceptance.
+    """
+    from twinqa.geometry.topology import _cluster_ids
+    from dt_ai.ops.inv_quads import PolyMesh
+    from shapely.geometry import LineString
+
+    if accepted_boundary is not None:
+        if (not isinstance(accepted_boundary, (Polygon, MultiPolygon)) or accepted_boundary.is_empty
+                or not accepted_boundary.is_valid or not np.isfinite(accepted_boundary.bounds).all()):
+            raise ValueError('valid finite nonempty accepted boundary required')
+        permitted = accepted_boundary.buffer(.00219)
+    else:
+        permitted = None
+    protected = np.asarray(retained_midpoints, dtype=float)
+    if protected.size and (protected.ndim != 2 or protected.shape[1] != 2 or not np.isfinite(protected).all()):
+        raise ValueError('finite XY retained midpoints required')
+
+    for name, value in (("weld_m", weld_m), ("displacement_limit_m", displacement_limit_m)):
+        if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:
+            raise ValueError(f"{name} must be positive finite")
+    if weld_m > .0041 or displacement_limit_m > .0021:
+        raise ValueError("boundary weld cannot exceed 4.1 mm search / 2.1 mm displacement")
+    checked = PolyMesh(mesh.verts, tuple(map(tuple, mesh.faces)))
+    if not checked.faces or any(len(f) != 3 for f in checked.faces):
+        raise ValueError("boundary weld requires nonempty triangles")
+    if np.shape(mesh.level) != (len(mesh.faces),) or not np.isfinite(mesh.level).all() or np.any(mesh.level < 0):
+        raise ValueError("boundary weld requires finite surface-only levels")
+    if len(mesh.slot) != len(mesh.faces) or any(not isinstance(s, str) or not s.strip() for s in mesh.slot) or np.shape(mesh.uv) != (len(mesh.faces), 3, 2) or not np.isfinite(mesh.uv).all():
+        raise ValueError("complete nonblank slots and finite corner UV required")
+    if not math.isfinite(mesh.cell) or mesh.cell <= 0:
+        raise ValueError("positive finite cell required")
+    base = np.flatnonzero(mesh.level == 0)
+    if not len(base):
+        raise ValueError("base surface required")
+    edges = {}
+    for fi in base:
+        for a, b in zip(mesh.faces[fi], np.roll(mesh.faces[fi], -1)):
+            edges.setdefault(tuple(sorted((int(a), int(b)))), []).append(int(fi))
+    if any(len(ids) > 2 for ids in edges.values()):
+        raise ValueError("nonmanifold base edge before boundary weld")
+    boundary = np.array(sorted({v for edge, ids in edges.items() if len(ids) == 1 for v in edge}), int)
+    if not len(boundary):
+        raise ValueError("open base boundary required")
+    neighbours = {}
+    for (a, b), uses in edges.items():
+        if len(uses) == 1:
+            neighbours.setdefault(a, []).append(b)
+            neighbours.setdefault(b, []).append(a)
+    corners = []
+    for i in boundary:
+        adjacent = neighbours[int(i)]
+        if len(adjacent) == 2:
+            a, b = mesh.verts[adjacent, :2]-mesh.verts[i, :2]
+            # Exact straight-line samples are tessellation, not a width defect.
+            cross = a[0]*b[1]-a[1]*b[0]
+            if abs(cross) <= 1e-12*np.linalg.norm(a)*np.linalg.norm(b) and np.dot(a, b) < 0:
+                continue
+        corners.append(int(i))
+    # Third construction route: target measured curtain defects, not every pair
+    # of nearby contour samples. A valid tiny source corner must remain unchanged.
+    from dt_ai.ops.inv_xview import part_report, XviewTolerance
+    curtain = add_skirt(mesh)
+    walls = curtain.faces[len(mesh.faces):]
+    quads = tuple((int(a[0]), int(a[1]), int(a[2]), int(b[2]))
+                  for a, b in zip(walls[::2], walls[1::2]))
+    before = part_report('base_curtains', PolyMesh(curtain.verts, quads), XviewTolerance())
+    implicated = {v for fi in before.faces for v in quads[fi-1] if v < len(mesh.verts)}
+    boundary = np.array(sorted(set(corners) & implicated), int)
+    clusters = _cluster_ids(mesh.verts[boundary], weld_m) if len(boundary) else np.empty(0, int)
+    v = mesh.verts.copy()
+    groups = []
+    retained = []
+    for cluster in np.unique(clusters):
+        ids = boundary[clusters == cluster]
+        if len(ids) == 1:
+            continue
+        centre = mesh.verts[ids].mean(axis=0)
+        displacement = np.linalg.norm(mesh.verts[ids]-centre, axis=1)
+        if displacement.max() >= displacement_limit_m:
+            raise ValueError(f"boundary cluster {ids.tolist()}: displacement {displacement.max()} m reaches {displacement_limit_m} m")
+        target = centre
+        strategy = 'midpoint_seam'
+        preserve_midpoint = protected.size and np.any(np.linalg.norm(protected-centre[:2],axis=1)<1e-7)
+        if len(ids) == 2 and not preserve_midpoint and (permitted is not None or any(set(ids).issubset(face) for face in mesh.faces)):
+            # Preserve a narrow tongue; vertex-motion bounds alone do not bound
+            # the surface lost when a short edge is collapsed.
+            direction = mesh.verts[ids[1]] - mesh.verts[ids[0]]
+            length = np.linalg.norm(direction)
+            direction /= length
+            width = .0059  # construction width, not a changed xView tolerance
+            target = np.array([centre-direction*width/2, centre+direction*width/2])
+            if permitted is not None:
+                budget = displacement_limit_m-abs(width-length)/2-1e-8
+                if budget <= 0 or np.dot(direction[:2],direction[:2]) <= 0:
+                    raise ValueError('no bounded retained-edge translation')
+                intervals = [(-budget,budget)]
+                for point in target:
+                    line = LineString([point[:2]-direction[:2]*budget,point[:2]+direction[:2]*budget])
+                    clipped = line.intersection(permitted)
+                    pieces = list(clipped.geoms) if hasattr(clipped,'geoms') else [clipped]
+                    available = []
+                    for piece in pieces:
+                        if piece.geom_type != 'LineString' or piece.is_empty:continue
+                        values = [(np.asarray(p)-point[:2])@direction[:2]/np.dot(direction[:2],direction[:2]) for p in piece.coords]
+                        available.append((min(values),max(values)))
+                    intervals = [(max(a,c),min(b,d)) for a,b in intervals for c,d in available if max(a,c)<=min(b,d)]
+                if not intervals:raise ValueError('retained edge cannot fit the unchanged outline/movement bounds')
+                retained.append(dict(group=len(groups),ids=ids,direction=direction.copy(),target=target.copy(),intervals=intervals))
+                shift = min((min(max(0.,a),b) for a,b in intervals),key=abs)
+                target += direction*shift
+            strategy = 'retained_short_edge'
+            actual_displacement = np.linalg.norm(mesh.verts[ids]-target, axis=1)
+            if actual_displacement.max() >= displacement_limit_m:
+                raise ValueError(f"retained boundary edge {ids.tolist()}: displacement reaches {displacement_limit_m} m")
+        v[ids] = target
+        groups.append(dict(vertices=ids.tolist(), before=mesh.verts[ids].tolist(), after=target.tolist(), strategy=strategy))
+    # Connected ends of the same narrow strip must use one translation. Merely
+    # clipping endpoints independently can leave the connecting edge outside a
+    # concave outline even when every endpoint is inside the buffered polygon.
+    pending = set(range(len(retained)))
+    incidence = [{i for i,f in enumerate(mesh.faces) if set(r['ids']) & set(f)} for r in retained]
+    while pending:
+        component = {pending.pop()}
+        while True:
+            extra = {j for j in pending if any(incidence[i]&incidence[j] and abs(np.dot(retained[i]['direction'],retained[j]['direction']))>.999 for i in component)}
+            if not extra:break
+            component.update(extra);pending.difference_update(extra)
+        ref = retained[min(component)]['direction']
+        choices = [(-displacement_limit_m,displacement_limit_m)]
+        for i in sorted(component):
+            r = retained[i];sign = 1 if np.dot(r['direction'],ref)>0 else -1
+            available = r['intervals'] if sign==1 else [(-b,-a) for a,b in r['intervals']]
+            choices = [(max(a,c),min(b,d)) for a,b in choices for c,d in available if max(a,c)<=min(b,d)]
+        if not choices:raise ValueError('connected retained edges cannot fit the unchanged bounds')
+        shift = min((min(max(0.,a),b) for a,b in choices),key=abs)
+        for i in component:
+            r = retained[i];sign = 1 if np.dot(r['direction'],ref)>0 else -1
+            target = r['target']+r['direction']*(sign*shift)
+            if np.linalg.norm(target-mesh.verts[r['ids']],axis=1).max()>=displacement_limit_m:
+                raise ValueError('connected retained edge reaches movement bound')
+            v[r['ids']] = target;groups[r['group']]['after'] = target.tolist()
+    delta = np.linalg.norm(v-mesh.verts, axis=1)
+    moved = np.flatnonzero(delta > 1e-12)
+    if np.intersect1d(moved, mesh.faces[mesh.level > 0]).size:
+        raise ValueError("base boundary shares moved vertices with upper sheets")
+    uv = mesh.uv.copy() + (v[mesh.faces, :2]-mesh.verts[mesh.faces, :2])/mesh.cell
+    result = clean_topology(Mesh(v, mesh.faces.copy(), list(mesh.slot), mesh.level.copy(), uv, mesh.cell, dict(mesh.report)))
+    result.report['boundary_weld'] = dict(weld_m=weld_m, displacement_limit_m=displacement_limit_m,
+        max_displacement_m=float(delta.max()), groups=groups,
+        before_curtains=before.to_dict(), cleanup=result.report['cleanup'])
+    return result
+
+
+def close_base_notch(mesh: Mesh, triangle_xy, *, approval_reference: str) -> Mesh:
+    """Add one explicitly approved boundary triangle without moving existing geometry.
+
+    This construction primitive is not an approval validator: the job must bind the
+    exact coordinates and source hash to the user's decision. Two sides must already
+    be oppositely oriented open base edges with one unambiguous material. No generic
+    tolerance waiver, fan displacement or automatic hole filling is performed.
+    """
+    from dt_ai.ops.inv_quads import PolyMesh
+
+    PolyMesh(mesh.verts, tuple(map(tuple, mesh.faces)))
+    n = len(mesh.faces)
+    if not n or np.shape(mesh.faces) != (n, 3):
+        raise ValueError("notch closure requires nonempty triangles")
+    if np.shape(mesh.level) != (n,) or not np.isfinite(mesh.level).all() or np.any(mesh.level < 0):
+        raise ValueError("notch closure requires finite surface-only levels")
+    if len(mesh.slot) != n or any(not isinstance(s, str) or not s.strip() for s in mesh.slot):
+        raise ValueError("complete nonblank slots required")
+    if np.shape(mesh.uv) != (n, 3, 2) or not np.isfinite(mesh.uv).all() or not math.isfinite(mesh.cell) or mesh.cell <= 0:
+        raise ValueError("finite UV and positive cell required")
+    if not isinstance(approval_reference, str) or not approval_reference.strip():
+        raise ValueError("explicit approval_reference required")
+    xy = np.asarray(triangle_xy, dtype=float)
+    if xy.shape != (3, 2) or not np.isfinite(xy).all():
+        raise ValueError("three finite approved XY coordinates required")
+    patch = Polygon(xy)
+    if not patch.is_valid or patch.area <= 0:
+        raise ValueError("approved triangle must have positive area")
+    ids = []
+    base = np.flatnonzero(mesh.level == 0)
+    used = np.unique(mesh.faces[base])
+    for point in xy:
+        found = used[np.all(mesh.verts[used, :2] == point, axis=1)]
+        if len(found) != 1:
+            raise ValueError(f"approved point {point.tolist()} needs exactly one base vertex")
+        ids.append(int(found[0]))
+    p = mesh.verts[ids]
+    if np.cross(p[1]-p[0], p[2]-p[0])[2] < 0:
+        ids.reverse()
+    edges = {}
+    for fi in base:
+        for a, b in zip(mesh.faces[fi], np.roll(mesh.faces[fi], -1)):
+            edges.setdefault(tuple(sorted((int(a), int(b)))), []).append((int(a), int(b), int(fi)))
+    owners = []
+    for a, b in zip(ids, ids[1:]+ids[:1]):
+        uses = edges.get(tuple(sorted((a, b))), [])
+        if uses:
+            if len(uses) != 1 or uses[0][:2] != (b, a):
+                raise ValueError("approved triangle must oppose open boundary edges")
+            owners.append(uses[0][2])
+    if len(owners) != 2:
+        raise ValueError("exactly two existing boundary sides required")
+    slots = {mesh.slot[i] for i in owners}
+    if len(slots) != 1:
+        raise ValueError(f"ambiguous notch material slots: {sorted(slots)}")
+    # Reject another base triangle occupying any positive patch area. Upper layers
+    # stay separate by method C; the job must remeasure their normal gaps.
+    triangles = shapely.polygons(mesh.verts[mesh.faces[base], :2])
+    tree = STRtree(triangles)
+    for i in tree.query(patch):
+        if triangles[i].intersection(patch).area > 0:
+            raise ValueError(f"approved notch overlaps base face {int(base[i])}")
+    report = dict(mesh.report)
+    report['approved_notch'] = dict(approval_reference=approval_reference,
+        triangle_xy=xy.tolist(), area_m2=float(patch.area), added_face=n,
+        boundary_owner_faces=owners, slot=next(iter(slots)))
+    return Mesh(mesh.verts.copy(), np.vstack([mesh.faces, ids]),
+                list(mesh.slot)+[next(iter(slots))], np.append(mesh.level, 0),
+                np.concatenate([mesh.uv, mesh.verts[ids, :2][None, :, :]/mesh.cell]),
+                mesh.cell, report)
+
+
+def dissolve_base_vertex(mesh: Mesh, vertex: int) -> Mesh:
+    """Dissolve one single-slot interior construction sample; recheck relief after.
+
+    Does not move boundary vertices, split fans, approve source changes or certify
+    the altered triangulation. Unsupported/ambiguous ownership is refused.
+    """
+    from dt_ai.geometry.ground_quads import _validate_seed
+    _validate_seed(mesh)
+    if (isinstance(vertex, (bool, np.bool_)) or not isinstance(vertex, (int, np.integer))
+            or not 0 <= vertex < len(mesh.verts)):
+        raise ValueError('base dissolve requires a valid vertex index')
+    incident = np.flatnonzero(np.any(mesh.faces == vertex, axis=1))
+    if (len(incident) < 3 or np.any(mesh.level[incident] != 0)
+            or len({mesh.slot[i] for i in incident}) != 1):
+        raise ValueError('base dissolve requires one interior base slot')
+    triangles = mesh.verts[mesh.faces[incident]]
+    normals = np.cross(triangles[:,1]-triangles[:,0],triangles[:,2]-triangles[:,0])
+    if np.any(normals[:,2] <= 0):
+        raise ValueError('base dissolve requires upward source winding')
+    region = unary_union(face_polys(mesh, np.isin(np.arange(len(mesh.faces)), incident)))
+    point = shapely.Point(mesh.verts[vertex, :2])
+    if not isinstance(region, Polygon) or region.interiors or not region.contains_properly(point):
+        raise ValueError('base dissolve requires one interior disk, not a boundary or split fan')
+    lookup, uv = {}, {}
+    for i in incident:
+        for vi, tex in zip(mesh.faces[i], mesh.uv[i]):
+            key = tuple(mesh.verts[vi, :2])
+            if key in lookup and lookup[key] != vi:
+                raise ValueError('base dissolve has ambiguous source vertex positions')
+            if vi in uv and not np.allclose(uv[vi],tex,rtol=0,atol=1e-10):
+                raise ValueError('base dissolve crosses a UV seam')
+            lookup[key] = int(vi); uv[int(vi)] = tex
+    replacement = [[lookup[tuple(xy)] for xy in tri] for tri in _tri_piece(region)]
+    if vertex in {i for f in replacement for i in f} or not replacement:
+        raise ValueError('base dissolve failed to remove interior vertex')
+    keep = np.ones(len(mesh.faces),bool);keep[incident] = False
+    faces = np.vstack([mesh.faces[keep],np.asarray(replacement)])
+    slots = np.asarray(mesh.slot)[keep].tolist()+[mesh.slot[incident[0]]]*len(replacement)
+    levels = np.concatenate([mesh.level[keep],np.zeros(len(replacement),int)])
+    tex = np.concatenate([mesh.uv[keep],np.asarray([[uv[i] for i in f] for f in replacement])])
+    used = np.unique(faces);remap = np.full(len(mesh.verts),-1);remap[used] = np.arange(len(used))
+    report = dict(mesh.report)
+    report['base_vertex_dissolve'] = {'removed_vertex':int(vertex), 'source_faces':incident.tolist(),
+        'reason':'interior construction sample; caller must remeasure relief'}
+    return Mesh(mesh.verts[used].copy(),remap[faces],slots,levels,tex,mesh.cell,report)
+
+
+def cut_base_void(mesh: Mesh, void: Polygon, depth: float = 1.0) -> Mesh:
+    """Cut an explicitly supplied interior source void and add its perimeter skirt.
+
+    Caller must certify the void against the source outline; this is not authority
+    to invent holes. Original triangle planes, corner UVs, slots and source IDs
+    survive clipping. Only the new void gets a skirt, not existing boundaries.
+    """
+    from dt_ai.geometry.ground_quads import _validate_seed
+    from shapely.geometry import LineString
+    _validate_seed(mesh)
+    if (not isinstance(void, Polygon) or void.is_empty or not void.is_valid
+            or void.interiors or not np.isfinite(shapely.get_coordinates(void)).all()
+            or not math.isfinite(depth) or depth < 1.):
+        raise ValueError('finite simple source void and skirt depth >= 1 m required')
+    base = mesh.level == 0
+    base_region = unary_union(face_polys(mesh, base))
+    if not base_region.contains_properly(void):
+        raise ValueError('source void must lie strictly inside the base')
+    if any(p.intersection(void).area > 0 for p in face_polys(mesh, mesh.level > 0)):
+        raise ValueError('source void intersects a raised covering')
+    vertices = mesh.verts.tolist()
+    lookup = {tuple(np.round(mesh.verts[i, :2], 9)): int(i) for i in np.unique(mesh.faces[base])}
+    faces, slots, levels, uvs, sources, trimmed = [], [], [], [], [], []
+    overlay_cleanup_area = 0.
+    for i, face in enumerate(mesh.faces):
+        pts = mesh.verts[face]
+        poly = Polygon(pts[:, :2]) if base[i] else None
+        if poly is None or poly.intersection(void).area == 0:
+            faces.append(face.tolist()); slots.append(mesh.slot[i]); levels.append(mesh.level[i])
+            uvs.append(mesh.uv[i]); sources.append(i)
+            continue
+        trimmed.append(i)
+        raw_region = poly.difference(void)
+        region = shapely.remove_repeated_points(raw_region, 1e-9)
+        overlay_cleanup_area += raw_region.symmetric_difference(region).area
+        pieces = [xy for p in _polys(region) for xy in _tri_piece(p)]
+        if abs(sum(Polygon(xy).area for xy in pieces) - region.area) > 1e-12:
+            raise ValueError(f'source void clipping lost area of face {i}')
+        for xy in pieces:
+            xy = np.asarray(xy)
+            weights = np.linalg.solve((pts[1:, :2]-pts[0, :2]).T, (xy-pts[0, :2]).T).T
+            xyz = np.column_stack((xy, pts[0, 2]+weights @ (pts[1:, 2]-pts[0, 2])))
+            ids = []
+            for point in xyz:
+                key = tuple(np.round(point[:2], 9))
+                if key not in lookup:
+                    lookup[key] = len(vertices); vertices.append(point.tolist())
+                ids.append(lookup[key])
+            faces.append(ids); slots.append(mesh.slot[i]); levels.append(0)
+            uvs.append(mesh.uv[i, 0]+weights @ (mesh.uv[i, 1:]-mesh.uv[i, 0])); sources.append(i)
+    # Clipping can put a void corner on an untrimmed neighbour's edge.
+    # Node these existing points on BOTH sides before creating the curtain.
+    for vi in range(len(mesh.verts), len(vertices)):
+        point = np.asarray(vertices[vi])
+        for fi in range(len(faces)):
+            face = faces[fi]
+            if levels[fi] != 0 or vi in face:
+                continue
+            for j, (a,b) in enumerate(zip(face,face[1:]+face[:1])):
+                pa, pb = np.asarray(vertices[a]), np.asarray(vertices[b])
+                edge = pb[:2]-pa[:2]
+                t = np.dot(point[:2]-pa[:2], edge)/np.dot(edge,edge)
+                if not 1e-9 < t < 1-1e-9 or np.linalg.norm(pa[:2]+t*edge-point[:2]) > 1e-9:
+                    continue
+                if abs(pa[2]+t*(pb[2]-pa[2])-point[2]) > 1e-8:
+                    raise ValueError('source void point has ambiguous base height')
+                c = face[(j+2)%3]
+                tex = uvs[fi]; ta,tb,tc = tex[j],tex[(j+1)%3],tex[(j+2)%3]
+                uvpoint = ta+t*(tb-ta)
+                faces[fi] = [a,vi,c]; uvs[fi] = np.asarray([ta,uvpoint,tc])
+                faces.append([vi,b,c]); uvs.append(np.asarray([uvpoint,tb,tc]))
+                slots.append(slots[fi]); levels.append(0); sources.append(sources[fi])
+                break
+    edges = {}
+    for face, level in zip(faces, levels):
+        if level == 0:
+            for a, b in zip(face, face[1:]+face[:1]):
+                edges.setdefault(tuple(sorted((a,b))), []).append((a,b))
+    low = {}
+    for uses in edges.values():
+        if len(uses) != 1:
+            continue
+        a, b = uses[0]
+        line = LineString([vertices[a][:2], vertices[b][:2]])
+        if line.difference(void.boundary.buffer(1e-8)).length > 1e-8:
+            continue
+        for v in (a,b):
+            if v not in low:
+                low[v] = len(vertices)
+                vertices.append((np.asarray(vertices[v])-[0,0,depth]).tolist())
+        faces.extend([[b,a,low[a]], [b,low[a],low[b]]])
+        slots.extend(['Skirt']*2); levels.extend([-1]*2); sources.extend([-1]*2)
+        uvs.extend([np.full((3,2),.5)]*2)
+    if not low:
+        raise ValueError('source void produced no perimeter')
+    used = np.unique(faces); remap = np.full(len(vertices),-1); remap[used] = np.arange(len(used))
+    result = Mesh(np.asarray(vertices)[used], remap[np.asarray(faces)], slots, np.asarray(levels),
+                  np.asarray(uvs), mesh.cell, dict(mesh.report))
+    result.report['base_void'] = {'trimmed_source_faces': trimmed, 'source_faces': sources,
+                                  'removed_area_m2': void.area, 'skirt_depth_m': depth,
+                                  'overlay_vertex_merge_m': 1e-9, 'overlay_cleanup_area_m2': overlay_cleanup_area}
+    return result
+
+
 def add_skirt(mesh: Mesh, depth: float = 1.0, slot: str = "Skirt") -> Mesh:
     """Vertical skirt down ``depth`` m along every open (single-face) edge of the base layer."""
     if not math.isfinite(depth) or depth < 1.0:
@@ -1026,10 +1458,16 @@ def measure_relief_error(mesh: Mesh, sampler: ReliefSampler, step: float, tol: f
             "faces_over_tol": int((err > tol).sum()), "tol_mm": tol * 1000}
 
 
-def measure_stack_gaps(mesh: Mesh, step: float, offsets=None, band: tuple[float, float] = (0.005, 0.02)) -> dict:
+def measure_stack_gaps(mesh: Mesh, step: float, offsets=None, band: tuple[float, float] = (0.005, 0.02),
+                       *, include_under_band_samples: bool = False) -> dict:
     """At the centroid of every upper-layer face: Z gap to the face below it of every lower level against the
     expected offset difference (level difference * step, or the per-vertex ``offsets``); the same-level top-down
     overlap area; and the gap along the lower face's normal at the upper face's centroid and at its vertices."""
+    if not isinstance(include_under_band_samples, bool):
+        raise ValueError('include_under_band_samples must be bool')
+    if include_under_band_samples:
+        from dt_ai.geometry.ground_quads import _validate_seed
+        _validate_seed(mesh)
     surf = np.nonzero(mesh.level >= 0)[0]
     polys = shapely.polygons(mesh.verts[mesh.faces[surf], :2])
     P = mesh.verts[mesh.faces[surf]]
@@ -1068,7 +1506,7 @@ def measure_stack_gaps(mesh: Mesh, step: float, offsets=None, band: tuple[float,
     k = (i < j) & (lev[i] == lev[j])
     inter = shapely.area(shapely.intersection(polys[i[k]], polys[j[k]])) if k.any() else np.zeros(0)
     mm = (lambda x, f: float(f(x) * 1000) if len(x) else None)
-    return {"checked": int(len(err)), "max_gap_error_mm": float(err.max() * 1000) if len(err) else 0.0,
+    result = {"checked": int(len(err)), "max_gap_error_mm": float(err.max() * 1000) if len(err) else 0.0,
             "min_gap_mm": float((c[:, 2] - zb).min() * 1000) if len(err) else None,
             "normal_gap_centroid_min_mm": mm(gc_, np.min), "normal_gap_centroid_max_mm": mm(gc_, np.max),
             "normal_gap_vertex_min_mm": mm(gv, np.min), "normal_gap_vertex_max_mm": mm(gv, np.max),
@@ -1080,6 +1518,16 @@ def measure_stack_gaps(mesh: Mesh, step: float, offsets=None, band: tuple[float,
             "normal_gap_faces_above": sorted({int(surf[x]) for x in up[qi[k0]][gc_ > band[1] + 1e-5]})[:50],
             "normal_gap_over_band_samples": over_samples,
             "same_level_overlap_m2": float(inter.sum())}
+    if include_under_band_samples:
+        under = [{"kind":"centroid", "upper_face":int(surf[x]), "lower_face":int(surf[y]),
+                  "vertex":None, "gap_mm":float(gap*1000)}
+                 for x,y,gap in zip(a,b,gc_) if gap < band[0]-1e-5]
+        under += [{"kind":"corner", "upper_face":int(x), "lower_face":int(y),
+                   "vertex":int(v), "gap_mm":float(gap*1000)}
+                  for x,y,v,gap in zip(upper_faces,lower_faces,vids,gv) if gap < band[0]-1e-5]
+        under.sort(key=lambda s:(s['kind'],s['upper_face'],s['lower_face'],s['vertex'] or -1))
+        result['normal_gap_under_band_samples'] = under
+    return result
 
 
 def measure_codirectional(mesh: Mesh, band_min: float = 0.005, parallel_cos: float = PARALLEL_COS_MARGIN) -> dict:

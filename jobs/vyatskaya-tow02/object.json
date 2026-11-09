@@ -1,0 +1,143 @@
+{
+ "id": "vyatskaya-tow02",
+ "note": "Tower TOW02 (ul. Vyatskaya vl. 47-49), mid-poly master of the curtain-wall tower (STATE.md). Source: work copy outputs/build-v001/tow02_master_work.blend (meshes RC_TOW_02 facade, RC_TOW_Lapatki_02 fins, SLAB_TOW_02 slabs under parent Group001; empties Empty..Empty.007 are the user's zone helpers, not LEVEL_*). Extraction dump: pipeline/dump-v002-materials.json (pipeline/dump-v001.json + materials.json ids + winding of the mirrored meshes and of 3 inward slabs restored; outputs/spec-v001/tools/prepare_dump_v002.py).",
+ "frame": {
+  "to_object": [
+   [
+    0.469471562786,
+    0.882947592859,
+    0.0,
+    0.0
+   ],
+   [
+    -0.882947592859,
+    0.469471562786,
+    0.0,
+    0.0
+   ],
+   [
+    0.0,
+    0.0,
+    1.0,
+    0.0
+   ],
+   [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  ],
+  "derived_from": "rotation -62.0 deg about Z (column vectors), no translation, z = world z (metres). = the measurement frame of scripts/inspect_sections.py (co_world @ R(56.7), i.e. rotZ(-56.7)) turned a further -5.3 deg: the area-weighted normals of RC_TOW_02 vertical faces peak at -28.0 deg mod 90 in world (78% of wall area; -84.7/5.3 in the 56.7 frame, as typical_floor.json), so the main walls are axis-parallel within 0.1 deg; a second wall family (16%, world -34.0 deg) stays 6.0 deg off the axes - a real kink over 5 deg (outputs/spec-v001/tools/check_dump.py)."
+ },
+ "levels": [
+  {
+   "name": "L01",
+   "elev_m": 6.906
+  },
+  {
+   "name": "L02",
+   "elev_m": 7.6
+  },
+  {
+   "name": "L03",
+   "elev_m": 11.0
+  },
+  {
+   "name": "L04",
+   "elev_m": 14.4
+  },
+  {
+   "name": "L05",
+   "elev_m": 17.8
+  },
+  {
+   "name": "L06",
+   "elev_m": 21.2
+  },
+  {
+   "name": "L07",
+   "elev_m": 24.6
+  },
+  {
+   "name": "L08",
+   "elev_m": 28.0
+  },
+  {
+   "name": "L09",
+   "elev_m": 31.4
+  },
+  {
+   "name": "L10",
+   "elev_m": 34.8
+  },
+  {
+   "name": "L11",
+   "elev_m": 38.2
+  },
+  {
+   "name": "L12",
+   "elev_m": 41.6
+  },
+  {
+   "name": "L13",
+   "elev_m": 45.0
+  },
+  {
+   "name": "L14",
+   "elev_m": 48.4
+  },
+  {
+   "name": "L15",
+   "elev_m": 51.8
+  },
+  {
+   "name": "L16",
+   "elev_m": 55.2
+  },
+  {
+   "name": "L17",
+   "elev_m": 58.6
+  },
+  {
+   "name": "L18",
+   "elev_m": 62.0
+  },
+  {
+   "name": "L19",
+   "elev_m": 65.4
+  },
+  {
+   "name": "L20",
+   "elev_m": 69.45
+  },
+  {
+   "name": "L21",
+   "elev_m": 72.2
+  },
+  {
+   "name": "roof",
+   "elev_m": 76.25
+  }
+ ],
+ "levels_derived_from": "Storey levels = slab tops of SLAB_TOW_02 (up faces 7.6 ... 65.4 every 3.4, 69.45 over the NW parapet storey = its roof terrace deck, 72.2, 76.25), plus the user's zone helpers that lie on no slab: Empty 0.04 (bottom of the colonnade, L00) and Empty.001 6.906 (underside of the soffit band ring, L01). Helpers on slabs agree with the slab tops within 6 mm (65.405, 69.456, 72.201, 76.25) and the slab value is used; Empty.002 31.367 (bend/typical boundary) is 3.3 cm under the slab top 31.4, which is used. roof = 76.25 (roof slab top of superstructure 1 upper volume; the glass railing 76.25-77.63 stands on it). Not levels: 68.8 (a slab inside superstructure 1, the NW part runs on to 69.45), the box roofs 78.75 and Empty.007 79.237 (top of the 0.5 m upstand of the two roof boxes 76.25-79.25, superstructure 2: roof boxes, not a storey of the tower contour). Run 2 (2026-10-20): L00 0.04 left out - run 1 stopped there (the storey 0.04-6.906 holds only the 26 fins, no facade: an open colonnade under the soffit; the body starts at the soffit 6.906). The colonnade fins 0-6.9 go with the fins (EG6/decor); user to confirm. Run 1 object: outputs/spec-v001/object-v001.json.",
+ "opening_depth_default_m": 0.12,
+ "opening_depth_default_note": "user decision 2026-10-20 (STATE.md): reveal 0.12 m measured (typical_floor.json / bend.json: band and piers stand 0.12 m out of the glass line), not the 0.4 default",
+ "materials": "jobs/vyatskaya-tow02/materials.json",
+ "source_class": "panelised",
+ "source_class_note": "RC_TOW_02 is 5561 connected parts, the largest 11% of its area (z 37.5-71.5): no shell; contours by panels on the slabs (rules 1-2, HARNESS_PLAN §4)",
+ "slabs": [
+  "SLAB_TOW_02"
+ ],
+ "build": {
+  "parapet_thickness_m": null,
+  "ids": {
+   "facade": 1,
+   "reveal": 6,
+   "roof": 21,
+   "opening": 11,
+   "decor": 28
+  }
+ },
+ "task": "NPM OKS 013 from the master = the user's for_placement/0213_Vyatskaya_Vl_47_49_05.fbx (accepted base, 2026-10-21); engine route dropped for this source 2026-10-20 (STATE.md)"
+}

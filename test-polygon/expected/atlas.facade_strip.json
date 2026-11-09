@@ -1,0 +1,51 @@
+{
+ "schema": 1,
+ "button": "atlas.facade_strip",
+ "tool": "atlas.facade_strip",
+ "version": "1.0",
+ "shipped": true,
+ "select": "named",
+ "reason": "",
+ "apply_status": null,
+ "objects": [
+  {
+   "name": "SM_Strip_Ok",
+   "scene": "polygon_all",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_Strip_NoMap",
+   "scene": "polygon_all",
+   "expect": "fail",
+   "codes": [
+    "map_missing"
+   ]
+  }
+ ],
+ "options": {
+  "period_by_id": {
+   "101": [
+    1.2,
+    0.6
+   ],
+   "102": [
+    0.6,
+    1.2
+   ],
+   "103": [
+    0.6,
+    1.2
+   ],
+   "104": [
+    1.2,
+    1.2
+   ]
+  }
+ },
+ "base": "1.0",
+ "station": "1.0.23",
+ "stations": [
+  "1.0.23"
+ ]
+}

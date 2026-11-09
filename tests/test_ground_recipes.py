@@ -217,11 +217,11 @@ def test_empty_partial_and_unsupported_recipes_error(recipes, recipe):
     [
         ("npm", 10),
         ("npm", 40),
-        ("vpm", 520),
+        ("vpm", 512),
         ("vpm", 1706),
     ],
 )
-def test_density_endpoints_inside_d097_are_accepted(recipes, profile, value):
+def test_density_endpoints_inside_d160_are_accepted(recipes, profile, value):
     recipes.require_px_per_m(profile, value)
 
 
@@ -230,7 +230,7 @@ def test_density_endpoints_inside_d097_are_accepted(recipes, profile, value):
     [
         ("npm", 10 - 1e-9),
         ("npm", 40 + 1e-9),
-        ("vpm", 520 - 1e-9),
+        ("vpm", 512 - 1e-9),
         ("vpm", 1706 + 1e-9),
         ("npm", float("nan")),
         ("vpm", float("inf")),

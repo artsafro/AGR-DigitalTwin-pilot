@@ -1,0 +1,34 @@
+{
+ "schema": 1,
+ "button": "tex.finish_map",
+ "tool": "tex.finish_map",
+ "version": "0.9",
+ "shipped": true,
+ "select": "named",
+ "reason": "Легенда на 5 отделок, 4 ID (B_build.py пишет её рядом с текстурами прогона). ID 7 без строки легенды — FAIL finish_id_unmapped.",
+ "apply_status": null,
+ "objects": [
+  {
+   "name": "SM_BFinishOk_001_Main",
+   "scene": "polygon_all",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_BFinishBad_001_Main",
+   "scene": "polygon_all",
+   "expect": "fail",
+   "codes": [
+    "finish_id_unmapped"
+   ]
+  }
+ ],
+ "options": {
+  "legend": "textures/B/B_legend.json"
+ },
+ "base": "0.9",
+ "station": "0.9.2",
+ "stations": [
+  "0.9.2"
+ ]
+}

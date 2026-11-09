@@ -1,0 +1,34 @@
+{
+ "schema": 1,
+ "button": "udim.ids_to_udims",
+ "tool": "udim.ids_to_udims",
+ "version": "0.8",
+ "shipped": true,
+ "select": "named",
+ "reason": "",
+ "apply_status": null,
+ "objects": [
+  {
+   "name": "SM_E2_UdimKeep_Main",
+   "scene": "polygon_all",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_E2_UdimId101_Main",
+   "scene": "polygon_all",
+   "expect": "fail",
+   "codes": [
+    "udim_id_out_of_range"
+   ]
+  }
+ ],
+ "options": {
+  "mode": "keep"
+ },
+ "base": "0.8",
+ "station": "0.8.7",
+ "stations": [
+  "0.8.7"
+ ]
+}

@@ -1,0 +1,26 @@
+{
+ "schema": 1,
+ "button": "export.place_by_passport",
+ "tool": "export.place_by_passport",
+ "version": "1.0",
+ "shipped": true,
+ "select": "named",
+ "reason": "FAIL-строка (битый JSON, приманка, нет паспорта, не FBX) проверяется unit-тестами и нативным джобом: опции станции общие на прогон; станция только preview (apply в живом полигоне не нажимается)",
+ "apply_status": null,
+ "objects": [
+  {
+   "name": "__scene__",
+   "scene": "polygon_all",
+   "expect": "pass",
+   "codes": []
+  }
+ ],
+ "options": {
+  "fbx": "C:/x/test-polygon/t/place/model.fbx"
+ },
+ "base": "1.0",
+ "station": "1.0.31",
+ "stations": [
+  "1.0.31"
+ ]
+}

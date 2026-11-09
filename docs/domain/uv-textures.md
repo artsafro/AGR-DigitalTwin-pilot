@@ -43,6 +43,7 @@ Keys: `reg p.N` = `Rasporyajenies19012026trebovaniya(2).pdf` page N. `local:` re
 - Main and Ground: UDIM only, single UV set on one channel. reg p.31 §2.1.1.
 - Geometry larger than one tile (at required density) must be split; repeating/similar islands placed by overlap. reg p.31 §2.1.2.
 - Tiles filled from 1001 strictly sequential, no gaps, 10x10 grid (1001-1100), numbered left->right, bottom->top. reg p.23, p.31 §2.1.3, p.39. UDIM = 1001 + U + 10*V. local: docs/agr/decisions/ADR-0002-source-discrepancies.md#5.
+- Those tile numbers are export UDIMs, not working-mesh material IDs. A face material ID >= 1001 on the working mesh is an error [D030]: the team script `UDIM-MultiSub_Universal(max22-26).ms` stores `1001+floor(U)+10*floor(V)` in the face ID (`getUDIMFromUV` returns `1001 + udimU + (udimV * 10)`, lines 1 and 5; the script is not in this repo). The reading scheme is 1-35 (`standards/material_id_ranges.yaml`). Export may still emit tiles 1001-1100. Checked on the working mesh by `check_material_ids`. local: docs/domain/materials.md; local: docs/adr/0001-material-ids-are-a-reading-scheme.md (project decision).
 - Mirrored islands forbidden; rotating islands not recommended. reg p.31 §2.1.4.
 - Keep margin from tile borders. reg p.31 §2.1.5.
 - Avoid visible seams/shifts/pattern mismatch between maps. reg p.31 §2.1.6.
@@ -73,11 +74,12 @@ Keys: `reg p.N` = `Rasporyajenies19012026trebovaniya(2).pdf` page N. `local:` re
 - Tooling caveats: `density.ms` assumes 4096 and scene units without meters conversion; Andrew importer accepts UDIM 1001-1999 (wider than norm). local: docs/agr/research/max-workbench/REVIEW.md; local: docs/agr/decisions/ADR-0004-reuse-installed-toolchains.md (lesson).
 
 ## Job-level UV/texture lessons
-- Continuous facade pattern: project world coords onto shared facade directions (not per-face normals - small normal differences broke phase); shift polygons by whole modules; UV = (band_origin + px_per_m*(proj - shift)) / atlas_size; horizontal faces use long-edge direction. Phase check tolerance 0.01 mm on shared verts. local: jobs/FACADES-ATLAS/STATE.md (lesson).
-- Fixed-scale rigid unwrap cannot close complex corner loops; local horizontal scale deformation (0.84-1.05) only after user permits a density range. local: jobs/UV-CONTINUOUS/STATE.md (lesson).
-- Out-of-band texel density caused by twisted/complex geometry: fix geometry, not UV scale. local: jobs/MASHI-LP/MASTER_TRIAL_REPORT.md (lesson).
-- 0 px tile margin produced 12 196 AGR Checker margin failures. local: jobs/UV-CONTINUOUS/STATE.md (lesson).
-- Facade atlas bands: 5 finish bands per 2048 atlas with 16 px guard margins; raster 80 px/m chosen (not a norm). local: jobs/FACADES-ATLAS/STATE.md (project decision).
+- Continuous facade pattern: project world coords onto shared facade directions (not per-face normals - small normal differences broke phase); shift polygons by whole modules; UV = (band_origin + px_per_m*(proj - shift)) / atlas_size; horizontal faces use long-edge direction. Phase check tolerance 0.01 mm on shared verts. local: archive/2026-11:jobs/FACADES-ATLAS/STATE.md (lesson).
+- Fixed-scale rigid unwrap cannot close complex corner loops; local horizontal scale deformation (0.84-1.05) only after user permits a density range. local: archive/2026-11:jobs/UV-CONTINUOUS/STATE.md (lesson).
+- Out-of-band texel density caused by twisted/complex geometry: fix geometry, not UV scale. local: archive/2026-11:jobs/MASHI-LP/MASTER_TRIAL_REPORT.md (lesson).
+- 0 px tile margin produced 12 196 AGR Checker margin failures. local: archive/2026-11:jobs/UV-CONTINUOUS/STATE.md (lesson).
+- Facade atlas bands: 5 finish bands per 2048 atlas with 16 px guard margins; raster 80 px/m chosen (not a norm). local: archive/2026-11:jobs/FACADES-ATLAS/STATE.md (project decision).
 - Map policy (one project): patterned finishes 4096, flat-color IDs as 256 placeholders; Diffuse = base color sRGB, no baked light; do not invent ERM/Normal without sources; legend colors are not exact RAL/NCS. local: jobs/REVIT-OPENINGS/outputs/diffuse-v001/README.md (project decision).
-- Periodic textures: build with native procedural generator; AI image generators changed line counts/periodicity and output size (1254 instead of 2048 - keep true size, never upscale); check opposite edges pixel-equal and a 2x2 repeat; lines must continue across cassette joints. local: jobs/UV-CONTINUOUS/STATE.md; local: jobs/WINDOW-ATLAS/STATE.md; local: jobs/REVIT-OPENINGS/STATE.md (lesson).
-- Having a UV channel does not prove the unwrap is finished. local: jobs/MASHI-LP/AUDIT_AND_PLAN.md (lesson).
+- Periodic textures: build with native procedural generator; AI image generators changed line counts/periodicity and output size (1254 instead of 2048 - keep true size, never upscale); check opposite edges pixel-equal and a 2x2 repeat; lines must continue across cassette joints. local: archive/2026-11:jobs/UV-CONTINUOUS/STATE.md; local: archive/2026-11:jobs/WINDOW-ATLAS/STATE.md; local: archive/2026-11:jobs/REVIT-OPENINGS/STATE.md (lesson).
+- Having a UV channel does not prove the unwrap is finished. local: archive/2026-11:jobs/MASHI-LP/AUDIT_AND_PLAN.md (lesson).
+- Team-script defaults are not delivery rules [D180]: A101 bitmap ladder 128-2048 with the 8-bit warning, Flora Atlas padding 2 px and size 8192 do not override 24-bit PNG, padding >= 8 px and VPM 2048/4096.

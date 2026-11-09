@@ -1,7 +1,7 @@
 # Markup helpers (`markup-helpers`)
 
 Status: draft (MH1: the Blender route proven on `bench-b01-box`; MH2: the Revit route proven on KPP1). Source: user decisions 2026-10-10 [D044]
-(HARNESS_PLAN §14, backlog MH1-MH3); pattern `roof-inset-plane` (technological elements set no level).
+(historical archive/2026-11:docs/HARNESS_PLAN.md §14, backlog MH1-MH3); pattern `roof-inset-plane` (technological elements set no level).
 
 ## Signs in the source
 

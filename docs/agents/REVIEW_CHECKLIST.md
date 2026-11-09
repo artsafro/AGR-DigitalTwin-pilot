@@ -1,7 +1,7 @@
 # Review checklist
 
 Reviewer: any agent that is not the author (now Codex). The reviewer checks evidence, not
-confidence. Source: `docs/HARNESS_PLAN.md` §8. Post the answer as a PR comment: verdict
+confidence. Current checklist: this file. Historical source: `archive/2026-11:docs/HARNESS_PLAN.md` §8. Post the answer as a PR comment: verdict
 (clean / changes needed), the three answers with numbers, findings by severity (P1/P2/P3).
 
 1. **Pattern / scope.** Does each NEW module refer to a pattern in `docs/domain/patterns/INDEX.md`,
@@ -18,6 +18,9 @@ confidence. Source: `docs/HARNESS_PLAN.md` §8. Post the answer as a PR comment:
    100 % for measured checks: a failed check blocks the merge, and a check that is not
    measured is named with its reason (no transcript, a torn line, an unclassified question),
    never counted as a pass. The tasks and what fails each: `evals/README.md`, "Regression tasks".
+   Does the author's handoff evidence check (`--check-handoff` on the PR body and head) exit 0
+   ([WORKFLOW.md#handoff-evidence-check-584](WORKFLOW.md#handoff-evidence-check-584))? A missing full suite,
+   RED/GREEN or sample output is a finding, not a pass. The reviewer does not run the full suite for the author.
 
 ## Counterexamples
 

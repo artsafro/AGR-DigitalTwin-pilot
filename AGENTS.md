@@ -30,13 +30,15 @@ Read on demand, one line each. Read the domain file that matches the task before
 - Open conflicts between sources: `docs/domain/conflicts.md`.
 - Pipeline stages and their status: `docs/pipeline.md`.
 - Unsolved work: `docs/backlog.md`.
+- Removed closed jobs, experiments and orphan docs (tag `archive/2026-11`): `docs/ARCHIVE.md`.
 - Accepted cases and lessons: `docs/cases.md`.
 - Terms: `GLOSSARY.md`.
 - Names for scripts, tools, jobs, outputs, branches and tags; object ids: `docs/agents/NAMING.md`, `jobs/REGISTRY.md`.
-- Harness plan, benchmark etalons, pattern registry: `docs/HARNESS_PLAN.md`, `benchmark/`, `docs/domain/patterns/INDEX.md`.
+- Benchmark etalons and pattern registry: `benchmark/`, `docs/domain/patterns/INDEX.md`. Removed historical files: `docs/ARCHIVE.md`.
 - Machine-readable rules: `standards/` (locked; change procedure in `standards/README.md`).
 - AGR knowledge base (Russian originals, read-only): `docs/agr/INDEX.md` only, then the file it names.
 - Code map, checks and plugin configuration: `docs/agents/agents-reference.md`.
+- Production task (NPM / VPM, OKS / Ground / MAF / Flora / UCX): name its cell in `docs/scenarios/scenarios.json` and follow the `scenario` skill.
 - Modelling or reducing a model: read `docs/procedure/TASK_TO_MODEL.md` (fixed gates, free path, evidence checklist).
 - Task skills: load the matching `.agents/skills/*/SKILL.md` and follow it step by step (details: `docs/agents/agents-reference.md#skills`).
 
@@ -47,6 +49,9 @@ gets a line in `docs/decisions.md` and its `[D<n>]` where it applies.
 
 ## Rules for every task
 
+- A new task from Artem: task intake BEFORE code, issues or cards (sources first, one batch of <= 5 questions
+  with recommendations, «Не трогать» + numbers, first piece accepted, then the rest). A card worker runs the
+  preflight and asks all open questions once at the start: `docs/agents/task-intake.md` [D186].
 - One task = one branch = one worktree = one writing agent. Branch names, prefixes and tags:
   `docs/agents/NAMING.md`. `main` stays clean; work reaches it by reviewed merge.
   A second agent in someone else's worktree only reads, researches or reviews.
@@ -64,6 +69,9 @@ gets a line in `docs/decisions.md` and its `[D<n>]` where it applies.
 - Apply the [Permission matrix](docs/agents/WORKFLOW.md#permission-matrix) for action
   permissions and its named guard rules/gates; it is the single policy for all agents.
 - Update `docs/PROJECT_STATE.md` only on `main` after a merge, by regenerating it
-  (`python tools/state/project_state.py`; ≤ 80 lines, fixed sections; `docs/agents/WORKFLOW.md`);
+  (`python tools/state/after_merge.py --pr <N>` right after the merge; Claude's hook runs it on `gh pr merge`;
+  ≤ 80 lines, fixed sections; `docs/agents/WORKFLOW.md`);
   in task branches report state changes in the final summary.
 - A new tool counts as shared only after it is listed in `docs/agents/CAPABILITIES.md` on `main`.
+- Four working principles (assumptions first, simplest fit, surgical changes, verified done): `docs/agents/working-principles.md`.
+- AGR Tools (3ds Max panel, `agr-mcp`, OKS conveyor 1.0): start at `docs/agr-tools/OVERVIEW.md`; binding rules (the project passport `jobs/<ID>/passport.json`, `schemas/ProjectPassport.schema.json`, is mandatory, К1): `docs/agents/agr-tools-1.0-rules.md`.

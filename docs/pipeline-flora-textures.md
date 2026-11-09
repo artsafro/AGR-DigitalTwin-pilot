@@ -166,5 +166,5 @@ also checks all 256 grayscale PNG transparency keys through cut-out and PNG
 readback, plus a 2K `prepare` regression with a transparent RGB PNG source.
 Verified RED/GREEN and full-suite counts are recorded in the task state below.
 
-See [task state](../jobs/flora-textures/STATE.md) and
-[three-species pending review](../jobs/flora-textures/review-pending.md).
+See task state (`archive/2026-11:jobs/flora-textures/STATE.md`) and
+three-species pending review (`archive/2026-11:jobs/flora-textures/review-pending.md`).

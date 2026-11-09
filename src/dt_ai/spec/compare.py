@@ -1,11 +1,11 @@
-"""Compare two specs of one object in the object system (issue #11, HARNESS_PLAN §4).
+"""Compare two specs of one object in the object system (issue #11, archive/2026-11:docs/HARNESS_PLAN.md §4).
 
 Pattern: none — benchmark check code (REVIEW_CHECKLIST Q1: new-case).
 
 Every threshold comes from the benchmark's tolerances.json; nothing is hard-coded here. Each row
 gives both measured values, the difference, the threshold and whether it is within. Which side is
 the reference for a quantity, and whether a match / no-match verdict is given at all, are also
-read from tolerances.json (user decision 2026-10-08: no Rhino verdict until Revit walls come from
+read from tolerances.json (user decision 2026-10-08 [D138]: no Rhino verdict until Revit walls come from
 location lines, #29). Regions where the contours differ are listed with their side, area, bounds
 and how far each reaches out of the other contour, so a cause can be named for each. Measured
 values are compared raw and rounded only for display (PR #32 review 1).
@@ -104,7 +104,7 @@ def compare_specs(spec_a, spec_b, report_a, report_b, tolerances, names=("a", "b
     rows.append(_row("level count", len(sa.levels), len(sb.levels), None, "equal", ref.get("levels")))
     out = {"sides": dict(zip(("a", "b"), names)), "rows": rows, "contour_differences": regions}
     verdict = tolerances.get("verdict", {})
-    if len(sa.levels) != len(sb.levels):        # HARNESS_PLAN §4: the other criteria are not counted
+    if len(sa.levels) != len(sb.levels):        # archive/2026-11:docs/HARNESS_PLAN.md §4: the other criteria are not counted
         out["failing"] = ["level count"]
         out["verdict"] = "no match" if verdict.get("enabled") else "deferred"
         if not verdict.get("enabled"):

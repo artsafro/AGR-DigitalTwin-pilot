@@ -1,0 +1,77 @@
+{
+ "status": "NOT_DELIVERY",
+ "decision": "Artem 2026-10-22 option (b), stop -> option (c) park #371, #298 stays on v014",
+ "base": "49ef72d",
+ "input": {
+  "master_vpm_sha256_prefix": "59310ac9ffc2a932",
+  "faces": 28167,
+  "quads": 18312,
+  "tris": 9855
+ },
+ "gates": {
+  "texel_aspect_max": 8,
+  "vpm_edge_max_m": 4.0,
+  "surface_max": 50000,
+  "npm_tri_eq_max": 180000,
+  "tri_share_max": 0.35,
+  "ov_m": 0.002,
+  "of_m": 0.005,
+  "contour_m": 0.0022,
+  "relief_m": 0.01
+ },
+ "runs": {
+  "gmsh_v002": {
+   "patches": 18557,
+   "faces": 64626,
+   "quads": 38496,
+   "tris": 26130,
+   "tri_share": 0.4043,
+   "tri_equivalent": 103122,
+   "texel_offenders": 13991,
+   "ov_pairs_2mm": 109,
+   "boundary_m": 9776.587,
+   "source_boundary_m": 9776.587,
+   "nonmanifold_edges": 3,
+   "mesh_seconds": 244.9
+  },
+  "gmsh_v004": {
+   "patches": 18557,
+   "faces": 158148,
+   "quads": 114444,
+   "tris": 43704,
+   "tri_share": 0.2763,
+   "tri_equivalent": 272592,
+   "texel_offenders": 15777,
+   "ov_pairs_2mm": 987,
+   "nonmanifold_edges": 0,
+   "mesh_seconds": 501.8
+  },
+  "gmsh_v003_relief_merged_4mm": {
+   "patches": 4637,
+   "result": "not finished in 1800 s (timeout)"
+  },
+  "quadriflow_v001": {
+   "faces": 22770,
+   "quads": 22770,
+   "quad_aspect_gt8": 196,
+   "slots_contour_over_2_2mm": 10,
+   "max_contour_deviation_m": 125.012,
+   "conforming_between_slots": false
+  }
+ },
+ "gmsh_v002_offender_corner_classes": {
+  "quad_2_source": 6272,
+  "tri_1_source": 4634,
+  "tri_2_source": 1831,
+  "tri_3_source": 635,
+  "quad_4_source": 583,
+  "quad_1_source": 33,
+  "quad_3_source": 3
+ },
+ "evidence": {
+  "local": "C:/x/ev_t_eb1c51ca/external-mesher-v001/",
+  "drive": "G:/Мой диск/AGR-evidence/371-ground-v015-external-mesher-20261022/",
+  "SHA256SUMS_sha256": "b84676fb4218410d17c095a90765ed801aff09fdac8d6fec739621ff5f0e1fb4",
+  "files": 11
+ }
+}

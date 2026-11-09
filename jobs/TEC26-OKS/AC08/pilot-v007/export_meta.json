@@ -1,0 +1,27 @@
+{
+ "address": "Nku_1",
+ "fbx": "C:/x/tec26-oks/AC08/pilot-v007/package-vpm/SM_Nku_1\\SM_Nku_1.fbx",
+ "pivot_revit_internal_m": [
+  33.9534,
+  0.1134,
+  0.0
+ ],
+ "bbox_after_pivot": [
+  [
+   -3.029,
+   -1.219,
+   -2.047
+  ],
+  [
+   3.029,
+   1.219,
+   2.55
+  ]
+ ],
+ "h_otn_model_max_z_m": 2.55,
+ "main_tris": 386,
+ "glass_tris": 0,
+ "ucx": 1,
+ "ucx_tris": 12,
+ "thumbnail": "C:\\x\\tec26-oks\\AC08\\pilot-v007\\package-vpm\\thumbnail_256.jpg"
+}

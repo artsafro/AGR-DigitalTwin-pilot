@@ -16,7 +16,8 @@ from twinqa.evals.graders import (GRADERS, branch_name, dcc_skill_loaded, engine
 ROOT = Path(__file__).resolve().parents[1]
 EVALS = ROOT / "evals"
 TORN = '{"type": "user", "message": {"role": "user", "content": [{"type": "tool_res'
-REGRESSION = sorted(p.parent.name for p in EVALS.glob("*/task.json"))
+REGRESSION = sorted(p.parent.name for p in EVALS.glob("*/task.json")
+                    if json.loads(p.read_text(encoding="utf-8"))["suite"] == "regression")
 
 
 def spec_of(task_id):

@@ -436,7 +436,7 @@ def test_a_relief_over_a_real_ledge_is_no_ledge_structure():
     assert report["questions"] == [] and report["floors"]["L1"]["relief_parts"] == 1
 
 
-# --- rule 3 (user 2026-10-12): mid-storey section; a change only in the 0.3 m under the next level is the
+# --- rule 3 (user 2026-10-12 [D060]): mid-storey section; a change only in the 0.3 m under the next level is the
 # slab edge, not the contour; contour_at_m only when the section changes in the wall band itself
 
 @pytest.mark.parametrize("z0", [3.0, 3.05])
@@ -495,7 +495,7 @@ def test_open_slab_edge_keeps_the_contour_and_is_asked():
     assert [(x["levels"], x["heights_m"]) for x in q] == [(["L0"], [3.0, 3.3])]
 
 
-# --- rules 1-2 (user 2026-10-13): a panel facade without a shell - contours by the panels' outer faces
+# --- rules 1-2 (user 2026-10-13 [D066]): a panel facade without a shell - contours by the panels' outer faces
 
 def _panel(name, a, b, z0, z1, out=0.1):
     """A panel `out` thick standing outward of the CCW wall a -> b; it covers the outer corner at its start and
@@ -540,6 +540,29 @@ OUTER10 = [[-0.1, -0.1], [10.1, -0.1], [10.1, 10.1], [-0.1, 10.1]]
 def test_panel_facade_without_a_shell_is_hinted_with_slab_candidates():
     with pytest.raises(SpecError, match=r"panel facade without a shell.*source_class.*Slabs \(2 levels\)"):
         extract_spec(panelised(), OBJECT)
+
+
+@pytest.mark.parametrize("shaft_spans", [None, [(4.85, 5.05), (6.0, 6.2)], [(3.3, 6.6)]])
+def test_panel_roof_setback_strip_is_not_an_enclosed_shaft(shaft_spans):
+    """#37: preserve panel/slab perimeter data without exempting real internal shaft gaps."""
+    dump = panelised()
+    if shaft_spans is not None:
+        slabs = next(m for m in dump["meshes"] if m["name"] == "Slabs")
+        slabs["triangles"] = [tr for tr in slabs["triangles"]
+                              if max(slabs["vertices"][i][2] for i in tr) < 6.5]
+        roof = Mesh("HoledRoof")
+        hole = [[2, 2], [3, 2], [3, 3], [2, 3]]
+        flat(roof, Polygon(SQUARE10, [hole]), 6.6)
+        for z0, z1 in shaft_spans:
+            walls(roof, hole[::-1], z0, z1)
+        dump["meshes"].append(roof.dump())
+    if shaft_spans is not None and len(shaft_spans) > 1:
+        with pytest.raises(SpecError, match=r"opening of 1.00 m2.*not a shaft"):
+            extract_spec(dump, PANEL_OBJECT)
+    else:
+        spec, report = extract_spec(dump, PANEL_OBJECT)
+        assert report["roof"]["closed_share"] >= 0.95
+        assert all(close(f.contour, OUTER10, tol=0.03) for f in spec.expanded_floors())
 
 
 def test_contour_is_the_panels_outer_face_and_the_slab_is_data():
@@ -601,7 +624,7 @@ def test_contours_by_panels_need_the_slabs_named():
 
 
 def test_a_small_roof_hole_is_no_opening_and_is_listed():
-    """User 2026-10-13 (pattern roof-inset-plane): a slab opening with both sizes under 0.7 m that is no shaft
+    """User 2026-10-13 [D069] (pattern roof-inset-plane): a slab opening with both sizes under 0.7 m that is no shaft
     is no body opening - left out and listed (OBJ03: 0.04 m2 at 96.55 m); a larger one still asks."""
     def roofed(hole):
         b = Mesh("Body")
@@ -616,7 +639,7 @@ def test_a_small_roof_hole_is_no_opening_and_is_listed():
 
 
 def test_the_id_ranges_cache_follows_the_file(tmp_path, monkeypatch):
-    """User 2026-10-13: the cache of standards/material_id_ranges.yaml follows the file - another path, or the
+    """User 2026-10-13 [D144]: the cache of standards/material_id_ranges.yaml follows the file - another path, or the
     same path rewritten, is read again (review 2 of #83: the test must fail on a per-group cache)."""
     import os
     from dt_ai.spec import mesh as M
@@ -851,7 +874,7 @@ def test_a_parapet_on_the_slab_edge_inside_the_facade_line_is_found():
 
 
 def test_a_fin_welded_to_a_facade_panel_is_cut_off_and_the_panel_stays():
-    """#87 (user 2026-10-13): a part is classified segment by segment - a fin 0.85 m out welded to the south
+    """#87 (user 2026-10-13 [D066]): a part is classified segment by segment - a fin 0.85 m out welded to the south
     panel is an attachment candidate, the panel stays facade (OBJ03 L16-L28 dropped whole facade parts)."""
     dump = panelised()
     south = next(m for m in dump["meshes"] if m["name"] == "Panel_0_0")
@@ -866,7 +889,7 @@ def test_a_fin_welded_to_a_facade_panel_is_cut_off_and_the_panel_stays():
 
 
 def test_a_storey_under_a_terrace_deck_keeps_its_floor_slab_as_reference():
-    """#88 (user 2026-10-13): at a terrace level the slab is the deck (the walkable top); the storey under it
+    """#88 (user 2026-10-13 [D066]): at a terrace level the slab is the deck (the walkable top); the storey under it
     takes its own floor slab too, so a narrow deck does not leave its facade out."""
     levels = (("L0", 0.0), ("L1", 3.3), ("L2", 6.6), ("roof", 9.9))
     upper = [[0, 0], [8, 0], [8, 10], [0, 10]]
@@ -1174,7 +1197,7 @@ def test_slab_data_follow_the_ceiling_not_the_reference():
 
 
 def test_contour_points_within_the_weld_are_one():
-    """User 2026-10-13: contour points closer than weld_m (3 mm, inclusive) are one point."""
+    """User 2026-10-13 [D068]: contour points closer than weld_m (3 mm, inclusive) are one point."""
     from dt_ai.spec.mesh import _contour_points
     poly = Polygon([[0, 0], [5, 0], [5, 0.002], [10, 0.002], [10, 10], [0, 10]])   # a 2 mm step
     pts = _contour_points(poly, 0.003)

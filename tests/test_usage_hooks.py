@@ -56,7 +56,8 @@ def test_hooks_are_wired():
     post = hooks["PostToolUse"][0]
     assert all(re.search(post["matcher"], t) for t in ("Agent", "Task", "Skill")) and not re.search(post["matcher"], "Bash")
     assert post["hooks"][0]["command"].endswith('usage_log.py" post')
-    assert any(h["command"].endswith('usage_log.py" prompt') for h in hooks["UserPromptSubmit"][0]["hooks"])
+    assert any(h["command"].endswith('prompt_hooks.py"') for h in hooks["UserPromptSubmit"][0]["hooks"])
+    assert "usage_log.write(payload)" in (ROOT / "tools/hooks/prompt_hooks.py").read_text(encoding="utf-8")
     gate = next(e for e in hooks["PreToolUse"] if "skill_gate.py" in e["hooks"][0]["command"])
     for tool in ("mcp__3dsmax-mcp__inspect_mesh", "mcp__blender__get_objects_summary", "mcp__revit-http-2025__revit_ping",
                  "mcp__revit-twin__x"):

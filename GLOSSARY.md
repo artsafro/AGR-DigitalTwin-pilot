@@ -33,7 +33,7 @@ then Shell inward 0.4 m, then windows. Kept as a logical group separate from
 windows and roof.
 In a source mesh read by the spec extractor, the body (корпус) is the largest connected
 part; attachments (canopies, porches, stairs, roof equipment) are the other parts.
-Decided 2026-10-08 [D028] (`docs/HARNESS_PLAN.md` §4).
+Decided 2026-10-08 [D028] (historical `archive/2026-11:docs/HARNESS_PLAN.md` §4; decision log `docs/decisions.md`).
 
 ## AGR
 
@@ -63,8 +63,8 @@ TODO: define.
 
 `spec.json` — the normalized description of one building's exterior that every modelling
 run starts from: levels, a level contour per floor, openings, roof, attachments and a
-mandatory `frame` to the object's coordinate system. Written only by an extractor, never
-by hand. Contract: `docs/HARNESS_PLAN.md` §3.
+mandatory `frame` to the object's coordinate system [D031]. Written only by an extractor, never
+by hand. Contract: this entry. Historical contract text: `archive/2026-11:docs/HARNESS_PLAN.md` §3.
 _Avoid_: Master Building (the older quad-list schema), brief.
 
 ## Level contour

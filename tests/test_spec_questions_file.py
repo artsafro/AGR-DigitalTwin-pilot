@@ -1,4 +1,4 @@
-"""One questions file per object, merged from versioned spec reports (issue #7, user request 2026-10-08)."""
+"""One questions file per object, merged from versioned spec reports (issue #7, user request 2026-10-08 [D139])."""
 import json
 
 from dt_ai.cli.main import main

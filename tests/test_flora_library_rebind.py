@@ -462,6 +462,7 @@ def test_production_missing_synthetic_maps_fail_closed(monkeypatch, synthetic_li
 
 
 @pytest.mark.dcc
+@pytest.mark.max
 def test_published_library_readback(tmp_path):
     """Opt-in native Max readback on a copy; never rebind or save the published scene."""
     import shutil

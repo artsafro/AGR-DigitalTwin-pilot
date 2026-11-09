@@ -165,7 +165,7 @@ def test_texel_density_matches_uv_scale():
     assert math.isnan(gc.texel_density(verts, faces, deg, 2048)[0])
 
 
-# ---------------------------------------------------------------- relief refinement (user decision 2026-10-19)
+# ---------------------------------------------------------------- relief refinement (user decision 2026-10-19 [D153])
 
 
 def ridge_tin():
@@ -291,7 +291,7 @@ def steep_site():
 
 
 def test_raise_steep_layers_clears_v004_and_keeps_flat_nominal():
-    """User decision 2026-10-19: on steep relief raise a layer locally so the normal gap is >= 5 mm (V004 band
+    """User decision 2026-10-19 [D154]: on steep relief raise a layer locally so the normal gap is >= 5 mm (V004 band
     5-20 mm); flat ground keeps +6 / +12 mm. Failing input: the nominal stack on the 6:1 slope (pairs < 5 mm)."""
     proj, s = steep_site()
     assert gc.measure_codirectional(proj)["pairs_below"] > 0  # the defect exists on the nominal stack

@@ -2,7 +2,7 @@
 
 new-case: engine 1D axis weld — fixed-anchor priority and non-transitive free groups
 
-The engine welds one plan axis at a time (spec `weld_m`, user 2026-10-13 "how the user welds by
+The engine welds one plan axis at a time (spec `weld_m`, user 2026-10-13 [D068] "how the user welds by
 hand"): a value within the weld (inclusive) of a fixed anchor becomes that anchor; other values
 within the weld of a group's smallest value join that group at the smallest; a value off every
 group stays where it is; fixed values (an earlier weld's results) never move. This file pins that

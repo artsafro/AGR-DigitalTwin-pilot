@@ -1,4 +1,11 @@
-"""Read-only inspection of a file-bound run; never an execution or delivery gate."""
+"""Read-only inspection of a file-bound run; never an execution or delivery gate.
+
+new-case: classify a recorded 'running' stage as late_confirmed / confirmed_failed /
+still_unknown from pid liveness and declared outputs, without rewriting the ledger.
+"""
+import ctypes
+import math
+import os
 from pathlib import Path
 import re
 
@@ -38,6 +45,121 @@ def _facts(value, label, root=None):
             raise ValueError(f"{label}:{key} has invalid size/hash")
         result[key] = {"path": str(path), "bytes": size, "sha256": sha}
     return result
+
+
+def _paths(value, label, root=None):
+    paths = _object(value, label)
+    result = {}
+    for key, item in paths.items():
+        if not isinstance(key, str) or not key:
+            raise ValueError(f"{label} has an invalid key")
+        result[key] = _path(item, label + ":" + key, root)
+    return result
+
+
+def _same_file_as_any(path, candidates):
+    """True when ``path`` is the same file (same inode) as any candidate.
+
+    Pathname equality is a fast path; ``samefile`` catches hard-link and
+    symlink aliases that differ by name. A missing ``path`` is not an alias
+    (output freshness, not identity, decides that case).
+    """
+    for candidate in candidates:
+        if path == candidate:
+            return True
+        try:
+            if path.samefile(candidate):
+                return True
+        except OSError:
+            continue
+    return False
+
+
+def _pid_alive_windows(pid):
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    kernel32.OpenProcess.restype = ctypes.c_void_p
+    kernel32.OpenProcess.argtypes = [ctypes.c_uint32, ctypes.c_bool, ctypes.c_uint32]
+    kernel32.GetExitCodeProcess.restype = ctypes.c_int
+    kernel32.GetExitCodeProcess.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_ulong)]
+    kernel32.CloseHandle.restype = ctypes.c_int
+    kernel32.CloseHandle.argtypes = [ctypes.c_void_p]
+    handle = kernel32.OpenProcess(0x1000, False, pid)
+    if not handle:
+        return False if ctypes.get_last_error() == 87 else None
+    try:
+        exit_code = ctypes.c_ulong()
+        if not kernel32.GetExitCodeProcess(handle, ctypes.byref(exit_code)):
+            return None
+        return exit_code.value == 259
+    finally:
+        kernel32.CloseHandle(handle)
+
+
+def _pid_alive(pid):
+    """Best-effort process liveness probe; never spawns a subprocess.
+
+    True when a live process holds the pid, False when the pid is confirmed
+    dead, and None when liveness cannot be determined (invalid pid, unknown
+    error, or a Windows pid already recycled into an unrelated process). A
+    recycled pid reads alive and is reported still_unknown, never failed.
+    """
+    if type(pid) is not int or pid <= 0:
+        return None
+    if os.name == "nt":
+        if pid > 0xFFFFFFFF:
+            return None
+        return _pid_alive_windows(pid)
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    except (OSError, OverflowError):
+        return None
+    return True
+
+
+def _output_freshness(declared_outputs, started_at):
+    """Classify a dead stage's declared outputs by freshness, never by existence alone.
+
+    ``fresh`` when every declared output exists, is nonempty and is at least as
+    new as the stage start; ``absent`` when an output is missing or empty with a
+    known start; ``stale`` when an output predates the stage start (it cannot be
+    this stage's work); ``unknown`` when the stage start is missing or unusable,
+    so freshness cannot be established. Absent and stale both mean the stage
+    produced no fresh evidence; unknown refuses to judge either way.
+    """
+    if not declared_outputs:
+        return "absent"
+    if (isinstance(started_at, bool) or not isinstance(started_at, (int, float))
+            or not math.isfinite(started_at) or started_at < 0):
+        return "unknown"
+    stale = False
+    for path in declared_outputs.values():
+        try:
+            stat = path.stat()
+        except OSError:
+            return "absent"
+        if stat.st_size == 0:
+            return "absent"
+        if stat.st_mtime < started_at:
+            stale = True
+    return "stale" if stale else "fresh"
+
+
+def _classify_running(stage, declared_outputs):
+    pid = stage.get("spawned_pid")
+    if type(pid) is not int or pid <= 0:
+        return "still_unknown"
+    if _pid_alive(pid) is not False:
+        return "still_unknown"
+    freshness = _output_freshness(declared_outputs, stage.get("started_at"))
+    if freshness == "fresh":
+        return "late_confirmed"
+    if freshness == "unknown":
+        return "still_unknown"
+    return "confirmed_failed"
 
 
 def inspect_run(run_directory, manifest_path, report_path=None, required_checks=()):
@@ -95,7 +217,14 @@ def inspect_run(run_directory, manifest_path, report_path=None, required_checks=
         if not current_inputs:
             errors.append("Inputs changed during inspection")
     if "source_copy" in manifest:
-        compare(_facts(manifest["source_copy"], "source_copy", root), "source_copy")
+        source_copy = _facts(manifest["source_copy"], "source_copy", root)
+    else:
+        source_copy = {}
+    if source_copy:
+        compare(source_copy, "source_copy")
+    protected = [root / "run.json", manifest_path,
+                 *(Path(fact["path"]) for fact in inputs.values()),
+                 *(Path(fact["path"]) for fact in source_copy.values())]
     attempts = ledger.get("attempts")
     if not isinstance(attempts, list):
         raise ValueError("Attempts must be a list")
@@ -114,12 +243,16 @@ def inspect_run(run_directory, manifest_path, report_path=None, required_checks=
             if not isinstance(stage.get("status"), str) or stage["status"] not in {"running", "produced", "verified", "failed", "interrupted"}:
                 raise ValueError("Invalid stage state")
             outputs = _facts(stage.get("outputs"), "stage outputs", root)
+            declared_outputs = _paths(stage.get("declared_outputs", {}), "stage declared_outputs", root)
+            for key, path in declared_outputs.items():
+                if _same_file_as_any(path, protected):
+                    raise ValueError(f"stage:{name} declared_output:{key} aliases the ledger, manifest, or an input")
             for log in ("stdout", "stderr"):
                 if log in stage:
                     _path(stage[log], log, root)
-            latest[name] = (number, stage, outputs)
+            latest[name] = (number, stage, outputs, declared_outputs)
     stages = []
-    for name, (number, stage, outputs) in sorted(latest.items()):
+    for name, (number, stage, outputs, declared_outputs) in sorted(latest.items()):
         state = stage["status"]
         integrity = "not_checked"
         if state in {"produced", "verified"}:
@@ -136,9 +269,15 @@ def inspect_run(run_directory, manifest_path, report_path=None, required_checks=
                 errors.append(f"stage:{name}: signature/input binding changed")
             intact = compare(outputs, "stage:" + name)
             integrity = "intact" if intact and bound and current_inputs else "failed"
-        stages.append({"stage": name, "attempt": number, "state": "uncertain" if state == "running" else state,
+        classified = _classify_running(stage, declared_outputs) if state == "running" else state
+        stages.append({"stage": name, "attempt": number, "state": classified,
                        "recorded_state": state, "evidence_integrity": integrity,
-                       "output_paths": {key: fact["path"] for key, fact in outputs.items()}})
+                       "output_paths": {key: fact["path"] for key, fact in outputs.items()},
+                       "declared_output_paths": {key: str(path) for key, path in declared_outputs.items()}})
+    running_classification = {"late_confirmed": 0, "confirmed_failed": 0, "still_unknown": 0}
+    for stage in stages:
+        if stage["state"] in running_classification:
+            running_classification[stage["state"]] += 1
     gates = []
     report_info = {"form": "not_supplied", "evidence_claims_verified": False}
     paths = {"run": str(root), "ledger": str(root / "run.json"), "manifest": str(manifest_path)}
@@ -211,11 +350,11 @@ def inspect_run(run_directory, manifest_path, report_path=None, required_checks=
         action = "investigate_stop_preserve_evidence"
     elif errors:
         action = "investigate_changed_or_missing_evidence_use_fresh_outputs"
-    elif any(s["state"] == "uncertain" for s in stages):
+    elif any(s["state"] == "still_unknown" for s in stages):
         action = "confirm_process_and_artifacts_before_retry"
-    elif any(s["state"] in {"failed", "interrupted"} for s in stages):
+    elif any(s["state"] in {"confirmed_failed", "failed", "interrupted"} for s in stages):
         action = "classify_failure_before_new_attempt"
-    elif any(s["state"] == "produced" for s in stages):
+    elif any(s["state"] in {"late_confirmed", "produced"} for s in stages):
         action = "verify_saved_outputs_without_repeating_execution"
     elif gates:
         action = "review_required_evidence_and_pending_decisions"
@@ -228,8 +367,9 @@ def inspect_run(run_directory, manifest_path, report_path=None, required_checks=
             "current_inputs": "intact" if current_inputs else "failed",
             "evidence_integrity": "failed" if errors else ("intact" if stages and all(
                 stage["evidence_integrity"] == "intact" for stage in stages) else "incomplete"), "stages": stages,
+            "running_classification": running_classification,
             "report": report_info, "unresolved_gates": gates, "next_action": action, "paths": paths,
             "errors_total": len(errors), "errors": errors[:5], "delivery_passed": False,
             "limits": ["Consistency of supplied files is not authenticated provenance",
                        "Recorded verification is scoped; native and visual claims require independent review",
-                       "No process liveness or DCC scene recovery checked"]}
+                       "Process liveness is best-effort (a recycled pid reads alive, never failed); no DCC scene recovery checked"]}

@@ -39,6 +39,12 @@
         "const": "dropbox"
       }
     },
+    "drive_folder": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[^/\\:]+(/[^/\\:]+)*$",
+      "description": "Folder inside the Google Drive for desktop root (e.g. G:/Мой диск) that holds drive_path; lets a cold agent resolve every entry from the manifest alone."
+    },
     "provenance_gaps": {
       "type": "array",
       "items": {
@@ -93,6 +99,10 @@
           "drive_link": {
             "type": "string",
             "pattern": "^(pending|https://(drive|docs)\\.google\\.com/\\S+)$"
+          },
+          "drive_path": {
+            "type": "string",
+            "minLength": 1
           },
           "licence": {
             "type": [

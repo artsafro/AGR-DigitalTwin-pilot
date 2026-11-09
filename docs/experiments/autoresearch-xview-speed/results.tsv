@@ -1,0 +1,9 @@
+exp	idea	cpu_s	wall_s	parity	status
+0	baseline inv_xview.part_report	40.0	40.36	PASS(11/11)	baseline
+1	per-(triangle,vertex) search order: vertex grid + plane-distance prefilter + barycentric on hits, vectorised convex-quad fan	1.016	1.021	PASS(11/11)	kept
+2	vertex grid cell 0.25 x median box (finer cells)	0.625/0.969	-	PASS(11/11)	discarded (A/B 15 rounds: +11.5% TOW02, +21% user05)
+3	one query box per polygon (union of live triangles), own-vertex test before expanding to triangles	0.688/0.625	0.688/0.623	PASS(11/11)	kept (A/B 11 rounds: -38.2% TOW02, +5.7% user05)
+4	sorted keys instead of np.unique hash (own-vertex membership, polygon groups)	0.438/0.453	0.443/0.458	PASS(11/11)	kept (A/B 11: -15.6% TOW02, -19.6% user05)
+5	vertex grid cell 0.5 x median polygon box (2.0 tried: +62%; 0.35: -23% TOW02 / 0% user05)	0.359 (HEAD 0.438)	0.366	PASS(11/11)	kept (bench A/B 3 alternating runs median: -18%)
+6	dense cell->(first,count) lookup table instead of 2x searchsorted	-	-	PASS(A/B asserts)	discarded (A/B 11: 0.0% TOW02, -2.2% user05)
+7	int32 indices in candidate generation	0.422 (HEAD 0.406)	0.424	PASS(11/11)	discarded (A/B 11: -11% TOW02; bench A/B 3 runs: +4%, below the 5% keep rule)

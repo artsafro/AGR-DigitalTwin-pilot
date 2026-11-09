@@ -1,0 +1,39 @@
+INFO scheduled
+INFO max [28000, 68, 0, 28, 3, 0, 30732, 2026, '.3']
+INFO python 3.11.12 PySide6 6.5.3
+PASS empty_scene objects=0
+PASS bundle_loaded c:\users\artsafro\appdata\roaming\autodesk\applicationplugins\agr-tools.bundle\contents\agr_tools\
+PASS globals_only_documented agr globals: ['agrtoolsdialog', 'agrtoolsregistered', 'agrtoolsregistermenus', 'agrtoolsroot']
+PASS globals_reload_zero_new before=7129 after=7129
+PASS menu_present_after_start
+INFO menu_config current=C:/Users/artsafro/Autodesk/3ds Max 2026/User Settings/2026.mnx default=C:/Program Files/Autodesk/3ds Max 2026/UI_LN/CUI/3dsmaxMenus.mnx
+PASS menu_survives_preset_change LoadConfiguration(default)=True
+PASS menu_present_after_restore
+PASS menu_in_main_bar ['File', 'Edit', 'Tools', 'Group', 'Views', 'Create', 'Modifiers', 'Rendering', 'Customize', 'Scripting', 'UV Tools', 'SiNi Tools', 'AGR Tools', 'Octopus']
+INFO color_theme dark icon folder C:\Program Files\Autodesk\3ds Max 2026\UI_ln\IconsDark
+PASS icon_resolves_dark_tools sizes=[24, 30, 36, 48]
+PASS icon_resolves_dark_xview sizes=[24, 30, 36, 48]
+PASS icon_resolves_dark_ucx_apply sizes=[24, 30, 36, 48]
+PASS icon_resolves_dark_geojson sizes=[24, 30, 36, 48]
+INFO icon_resolved_path
+PASS panel_opened_by_macro
+PASS panel_parent_is_max_main
+PASS panel_docked area=DockWidgetArea.RightDockWidgetArea
+PASS accelerators_disabled
+PASS all_17_actions
+PASS panel_icons_from_max_loader {'cancel': 'max', 'select': 'max', 'xview': 'max', 'matid': 'max', 'names': 'max', 'tris': 'max', 'textures': 'max', 'pivot': 'max', 'nudge': 'max', 'nudge_apply': 'max', 'atlas': 'max', 'atlas_apply': 'max', 'texel': 'max', 'ucx': 'max', 'ucx_apply': 'max', 'cleanup': 'max', 'cleanup_apply': 'max', 'export': 'max', 'geojson': 'max', 'tools': 'max'}
+INFO dock_ini_after_close {"area": 1, "floating": false, "geometry": "", "visible": true}
+PASS closed_panel_deleted
+PASS single_panel_after_reopen count=1
+PASS dock_position_restored area=DockWidgetArea.LeftDockWidgetArea
+PASS boxes_1000
+PASS progress_1000_complete objects=1000 seconds=7.9 status=pass
+PASS ui_responsive_during_run max_gap_s=0.236 ticks=48
+PASS buttons_disabled_while_running samples=32
+PASS buttons_enabled_after
+PASS row_click_selects_object ['SM_Synthetic_0000_Main']
+INFO screenshot dark
+PASS cancel_stops_early objects=350 seconds=3.3 summary=Ошибок 0 · ОК 350 · Отменено: cancelled at 350 / 1000
+PASS ui_responsive_during_cancel_run max_gap_s=0.275
+INFO summary {"pass": 29, "fail": 0, "error": 0}
+INFO AGR_UI_DONE

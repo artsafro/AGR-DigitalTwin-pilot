@@ -1,0 +1,31 @@
+{
+ "schema": 1,
+ "button": "qa.names_fix",
+ "tool": "qa.names_fix",
+ "version": "0.8",
+ "shipped": true,
+ "select": "named",
+ "reason": "the mask file name is held by a file with other content: not overwritten and not linked (T06 renamer V13 / Asset Material Renamer)",
+ "apply_status": null,
+ "objects": [
+  {
+   "name": "SM_E1Nf_001_Main",
+   "scene": "polygon_all",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_E1NfBad_001_Main",
+   "scene": "polygon_all",
+   "expect": "fail",
+   "codes": [
+    "name_fix_failed"
+   ]
+  }
+ ],
+ "base": "0.8",
+ "station": "0.8.8",
+ "stations": [
+  "0.8.8"
+ ]
+}

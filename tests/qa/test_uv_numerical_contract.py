@@ -1,5 +1,7 @@
 """Independent synthetic UV math characterization, before any consolidation.
 
+new-case: independent numerical characterization of UV edge densities and signed area.
+
 Existing test_uv.py covers UDIM/margins and square profile density limits, not
 these numerical contracts. Expectations below come from scalar lengths/areas,
 never from the generator's UV helpers. This is not delivery approval. Malformed

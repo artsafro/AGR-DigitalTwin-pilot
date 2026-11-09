@@ -1,5 +1,5 @@
 # Material ID group ranges of the working model (project decision, not a regulation rule).
-# Decided 2026-10-08: docs/HARNESS_PLAN.md §6, docs/adr/0001-material-ids-are-a-reading-scheme.md.
+# Decided 2026-10-08 [D030]: docs/HARNESS_PLAN.md §6, docs/adr/0001-material-ids-are-a-reading-scheme.md.
 # Not in source/source-lock.json: that lock covers the regulation profiles only.
 #
 # IDs are a reading scheme for agents and people. Export renumbers them into dense UDIM tiles /

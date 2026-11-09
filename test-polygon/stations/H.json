@@ -1,0 +1,20 @@
+{"schema": 1, "branch": "H", "issue": "#1024", "stations": [
+ {"button": "model.grid_cleanup",
+  "objects": [
+   {"name": "SM_GridClean_Ok_Main", "role": "Main", "size": [12, 1, 9], "builder": "H_build", "extra": {"kind": "facade_clean"}},
+   {"name": "SM_GridClean_Dirty_Main", "role": "Main", "size": [12, 1, 9], "builder": "H_build", "extra": {"kind": "facade_dirty"}}],
+  "expected": [
+   {"name": "SM_GridClean_Ok_Main", "scene": "polygon_all", "expect": "pass", "codes": []},
+   {"name": "SM_GridClean_Dirty_Main", "scene": "polygon_all", "expect": "fail", "codes": ["t_junction", "triangles"]}],
+  "reason": ""},
+ {"button": "model.glass_planes",
+  "objects": [
+   {"name": "SM_GlassOne_MainGlass", "role": "MainGlass", "size": [2, 1, 2], "builder": "H_build", "extra": {"kind": "glass_single"}},
+   {"name": "SM_GlassGrid_MainGlass", "role": "MainGlass", "size": [3, 1, 1], "builder": "H_build", "extra": {"kind": "glass_flat_12"}},
+   {"name": "SM_GlassFrame_MainGlass", "role": "MainGlass", "size": [2, 1, 2], "builder": "H_build", "extra": {"kind": "glass_frame_5cm"}}],
+  "expected": [
+   {"name": "SM_GlassOne_MainGlass", "scene": "polygon_all", "expect": "pass", "codes": []},
+   {"name": "SM_GlassGrid_MainGlass", "scene": "polygon_all", "expect": "fail", "codes": ["glass_merge"]},
+   {"name": "SM_GlassFrame_MainGlass", "scene": "polygon_all", "expect": "fail", "codes": ["glass_frame", "glass_merge"]}],
+  "reason": ""}
+]}

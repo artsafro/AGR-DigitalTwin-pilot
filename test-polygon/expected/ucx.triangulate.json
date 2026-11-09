@@ -1,0 +1,39 @@
+{
+ "schema": 1,
+ "button": "ucx.triangulate",
+ "tool": "ucx.triangulate",
+ "version": "0.8",
+ "shipped": true,
+ "select": "named",
+ "reason": "",
+ "apply_status": null,
+ "objects": [
+  {
+   "name": "UCX_E2_Box",
+   "scene": "polygon_all",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "UCX_E2_Valley",
+   "scene": "polygon_all",
+   "expect": "fail",
+   "codes": [
+    "reflex_edge"
+   ]
+  },
+  {
+   "name": "UCX_E2_Dart",
+   "scene": "polygon_all",
+   "expect": "fail",
+   "codes": [
+    "not_convex"
+   ]
+  }
+ ],
+ "base": "0.8",
+ "station": "0.8.5",
+ "stations": [
+  "0.8.5"
+ ]
+}

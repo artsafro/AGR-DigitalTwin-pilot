@@ -1,0 +1,206 @@
+diff --git a/docs/qa/component-volume.md b/docs/qa/component-volume.md
+index f71a878..5e83181 100644
+--- a/docs/qa/component-volume.md
++++ b/docs/qa/component-volume.md
+@@ -5,6 +5,11 @@ change `check_orientation`, `checks.run`, hidden-mesh handling or pass/fail sema
+ It never repairs geometry or sets delivery status. Synthetic evidence remains
+ `delivery_passed=false`; this helper is not delivery certification.
+ 
++Traceability: **new-case** (Card #93, evidence follow-up #111). No matching
++registered pattern was identified in `docs/domain/patterns/INDEX.md`. This label
++covers only component partitioning, eligibility and signed-volume measurement;
++it does not establish a general architectural modeling or validation rule.
++
+ ## API
+ 
+ ```python
+@@ -69,3 +74,42 @@ These are synthetic observations, not arbitrary imported-model guarantees or a
+ speed claim. Production regression tests reproduce the matrix with ≤1e-6 relative
+ error, three identical repeats, unchanged baseline results and the corrected
+ boundary-edge reason. See `tests/qa/test_component_volume.py`.
++
++## Author evidence boundary
++
++The historical reviewer 800 checks are not author-session telemetry. The frozen
++24-case matrix above and the reviewer's independent probe must not be relabeled
++as this author's beyond-matrix run. Author results are recorded separately in
++[the replay receipt](evidence/component-volume-111/README.md).
++
++The existing author probe is `tests/qa/test_component_volume_evidence.py`. All
++inputs are synthetic: 100 independent `random.Random(seed)` seeds, integers
++0 through 99 inclusive; box side lengths sampled uniformly from [0.2, 20.0],
++Z rotation from [-pi, pi], and each translation coordinate from [-1e6, 1e6].
++Each seed also shuffles triangle order and chooses a triangle to remove/reverse.
++These boxes extend the frozen matrix with varied aspect ratios and transforms.
++
++Four parametrized tests per seed check analytic product volume and its reversed
++sign (relative tolerance 1e-6); index-connected membership for coincident and
++separate meshes; abstention on an open face or inconsistent winding; and
++determinism, sorted IDs, input immutability and empty inputs. That is 400 pytest
++cases, not 400 meshes or the historical reviewer's 800 checks. The documentation
++regression is one additional case. Reproduce the probe and matrix together:
++
++```powershell
++uv sync
++uv run pytest -q -p no:cacheprovider --basetemp=C:/x/t111-green tests/qa/test_component_volume_evidence.py tests/qa/test_component_volume.py
++```
++
++This bounded probe does not establish arbitrary-magnitude stability,
++self-intersection freedom, cavity semantics or correctness on real imported
++models. No numeric algorithm or baseline orientation behavior is changed.
++
++Regression-eval passed/failed counts are **not measured** for this replay:
++no supported author-session transcript or classified question evidence is
++available. There is no regression-eval report, and no unavailable check counts
++as a pass. The focused pytest evidence is a different measurement. A future
++merge still requires the checklist's branch-evidence regression-eval report
++with passed / failed / not-measured counts; reference-fixture success would
++not substitute for missing session evidence. Independent review and delivery
++acceptance remain separate open gates.
+diff --git a/docs/qa/evidence/component-volume-111/README.md b/docs/qa/evidence/component-volume-111/README.md
+new file mode 100644
+index 0000000..18d91da
+--- /dev/null
++++ b/docs/qa/evidence/component-volume-111/README.md
+@@ -0,0 +1,70 @@
++# Component volume #111 author receipt
++
++Fresh replay against `fab1fdd` on branch
++`harness/capability-ticket-111-cb5ef7cd5110`. Author: Codex in this worktree;
++Windows PowerShell, CPython 3.14.7, pytest 9.1.1, NumPy 2.5.3, local `.venv`
++created with `uv sync`. No other checkout or environment was used.
++Saved output uses UTF-8 and normalized line endings/trailing whitespace.
++
++## RED / GREEN
++
++Before editing, at `fab1fdd`:
++
++```powershell
++uv run pytest -q -p no:cacheprovider --basetemp=C:/x/t111-red tests/qa/test_component_volume_evidence.py::test_diagnostic_documentation_regression
++```
++
++Result: **1 failed**, exit 1, expected assertion that the module docstring lacks
++`new-case`. Raw author output: [red.txt](red.txt).
++
++After editing only the module docstring and `docs/qa/component-volume.md`, with
++unchanged tests from `fab1fdd`:
++
++```powershell
++uv run pytest -q -p no:cacheprovider --basetemp=C:/x/t111-green tests/qa/test_component_volume_evidence.py tests/qa/test_component_volume.py
++```
++
++Result: **449 passed, 0 failed, 0 skipped**, exit 0. Raw author output:
++[green.txt](green.txt). This includes the same documentation regression (GREEN),
++400 seeded synthetic probe cases, and 48 existing diagnostic tests, including
++the frozen 24-case matrix and baseline blind-spot controls. The code/doc snapshot
++is the commit introducing this receipt; the receipt and raw logs do not affect
++the tests. No implementation statements or test assertions changed.
++
++## Author counterexamples
++
++Invariant -> probe -> result (all inputs synthetic):
++
++- Signed analytic volume and reversal -> 100 seeds -> 100/100 pytest cases.
++- Coincident index-disjoint components and separate meshes retain exact IDs ->
++  100 seeds -> 100/100 cases.
++- Open and inconsistent components abstain -> 100 seeds -> 100/100 cases.
++- Determinism, mesh order, sorted IDs, input immutability and empties ->
++  100 seeds -> 100/100 cases.
++
++Generator and assertions: `tests/qa/test_component_volume_evidence.py`.
++Seeds: integers 0..99, each with its own Python `random.Random` instance.
++Bounds: side lengths [0.2, 20.0], Z angle [-pi, pi], XYZ translation
++[-1e6, 1e6]; shuffled triangles, randomly selected missing/reversed triangle.
++Reproduction command and raw evidence are above. Counts describe parametrized
++pytest cases, not the number of internal assertions or meshes. These are new
++author executions of an existing probe, not newly authored test code.
++
++The historical reviewer 800 checks are not author-session telemetry. They
++provide independent historical context only, not evidence of this author's run.
++
++## Unmeasured checks and open gates
++
++- Regression evals: passed **not measured**, failed **not measured**,
++  not-measured task count **not measured** (no evaluation run/report).
++  No supported author-session transcript or classified-question evidence was
++  supplied. No report path exists; unavailable telemetry is not a pass.
++- Full suite: not measured; prohibited by the replay scope. Benchmarks: not
++  measured; this replay uses the focused diagnostic tests only.
++- CI: not measured; GitHub access/publication is prohibited for this replay.
++- Independent review: pending; this is author evidence, not a reviewer verdict.
++- Delivery acceptance: not performed; synthetic diagnostics certify no object.
++
++Before a future merge, provide branch-evidence regression evals per
++`docs/agents/REVIEW_CHECKLIST.md`, required broader checks and independent review,
++then obtain the user's merge command. This replay publishes nothing.
+diff --git a/docs/qa/evidence/component-volume-111/green.txt b/docs/qa/evidence/component-volume-111/green.txt
+new file mode 100644
+index 0000000..506a5a5
+--- /dev/null
++++ b/docs/qa/evidence/component-volume-111/green.txt
+@@ -0,0 +1,8 @@
++........................................................................ [ 16%]
++........................................................................ [ 32%]
++........................................................................ [ 48%]
++........................................................................ [ 64%]
++........................................................................ [ 80%]
++........................................................................ [ 96%]
++.................                                                        [100%]
++449 passed in 2.15s
+diff --git a/docs/qa/evidence/component-volume-111/red.txt b/docs/qa/evidence/component-volume-111/red.txt
+new file mode 100644
+index 0000000..31bd9a9
+--- /dev/null
++++ b/docs/qa/evidence/component-volume-111/red.txt
+@@ -0,0 +1,33 @@
++F                                                                        [100%]
++================================== FAILURES ===================================
++__________________ test_diagnostic_documentation_regression ___________________
++
++    def test_diagnostic_documentation_regression() -> None:
++        """Regression test verifying docstring and documentation requirements (Task #111).
++
++        Checks:
++        1. twinqa.geometry.component_volume.__doc__ explicitly contains 'new-case'.
++        2. docs/qa/component-volume.md contains 'new-case'.
++        3. docs/qa/component-volume.md contains a section titled 'Author evidence boundary'.
++        4. docs/qa/component-volume.md contains the reproducible probe test path
++           ('tests/qa/test_component_volume_evidence.py').
++        5. docs/qa/component-volume.md contains an explicit statement that reviewer 800
++           checks are not author-session telemetry.
++
++        Expected to fail in Round 1 before documentation and module docstring updates.
++        """
++        import twinqa.geometry.component_volume as cv_mod
++
++        # 1. Module docstring contains new-case
++        assert cv_mod.__doc__ is not None, "component_volume module missing docstring"
++>       assert "new-case" in cv_mod.__doc__, (
++            "twinqa.geometry.component_volume.__doc__ must explicitly contain 'new-case'"
++        )
++E       AssertionError: twinqa.geometry.component_volume.__doc__ must explicitly contain 'new-case'
++E       assert 'new-case' in 'Closed-component signed-volume diagnostic helper (Card #93).\n\nAdvisory report-only diagnostic helper that identifie...meshes, checks closed-manifold eligibility, and computes\nhigh-precision signed volumes using compensated summation.\n'
++E        +  where 'Closed-component signed-volume diagnostic helper (Card #93).\n\nAdvisory report-only diagnostic helper that identifie...meshes, checks closed-manifold eligibility, and computes\nhigh-precision signed volumes using compensated summation.\n' = <module 'twinqa.geometry.component_volume' from 'C:\\x\\capability-evals\\t_dad8c227-reference-v001\\worktree\\src\\twinqa\\geometry\\component_volume.py'>.__doc__
++
++tests\qa\test_component_volume_evidence.py:96: AssertionError
++=========================== short test summary info ===========================
++FAILED tests/qa/test_component_volume_evidence.py::test_diagnostic_documentation_regression
++1 failed in 0.18s
+diff --git a/src/twinqa/geometry/component_volume.py b/src/twinqa/geometry/component_volume.py
+index b679f8e..4f78cb8 100644
+--- a/src/twinqa/geometry/component_volume.py
++++ b/src/twinqa/geometry/component_volume.py
+@@ -1,8 +1,12 @@
+-"""Closed-component signed-volume diagnostic helper (Card #93).
++"""Closed-component signed-volume diagnostic helper (Card #93; new-case).
+ 
+ Advisory report-only diagnostic helper that identifies edge-connected components
+ within individual meshes, checks closed-manifold eligibility, and computes
+ high-precision signed volumes using compensated summation.
++
++Scope: optional component-local measurement, not an outwardness or delivery gate.
++No registered pattern is claimed. Synthetic bounds and author evidence boundary:
++docs/qa/component-volume.md.
+ """
+ 
+ from __future__ import annotations

@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "agent": "codex",
+  "model": "gpt-6.1-sol",
+  "commit": "fab1fdd74a07b30f2caccf88135938f2338ab0a0",
+  "ref": "fab1fdd74a07b30f2caccf88135938f2338ab0a0",
+  "agent_version": "codex-cli 0.160.1",
+  "command": [
+    "codex",
+    "--no-daemon",
+    "exec",
+    "--ephemeral",
+    "--json",
+    "--enable",
+    "skip_host_skill_discovery",
+    "--disable",
+    "memories",
+    "--disable",
+    "plugins",
+    "--model",
+    "gpt-6.1-sol",
+    "Fresh closed-ticket replay #111: Component volume: document new-case and author evidence boundary\n## P3 \u2014 bounded diagnostic traceability/evidence completion\nReview round 1: https://github.com/artsafro/AGR-DigitalTwin-pilot/pull/109#issuecomment-6193798660\nHead: d872fbfe8ac73af4df119a96094f2ed562fa3abe. Nonblocking documentation/evidence follow-up; no wrong numeric result observed.\n\nThe new `src/twinqa/geometry/component_volume.py` references Card #93 but neither a registered pattern nor explicit `new-case`. No matching pattern exists in the inspected registry. PR #109 reproduces the frozen 24-case matrix but does not provide a reproducible author beyond-matrix counterexample probe (or applicability explanation), nor regression-eval report/counts or explicit not-measured reason, as requested by docs/agents/REVIEW_CHECKLIST.md.\n\nFollow-up: mark this optional diagnostic `new-case` with bounded scope; add an author-owned reproducible synthetic invariant probe with command, seed/bounds and evidence path; record regression-eval passed/failed/not-measured counts with report path, or explicit missing-transcript/environment reasons. Do not fabricate telemetry or count not-measured checks as pass. Reviewer independently exercised 800 seeded checks and the matrix; these are not author-session telemetry.\n\nDuplicate search found #99 for the separate CAD proxy; it does not cover this module.\n\nStart with root files and follow repository instructions. No prior chat context. Your pre-approved branch is harness/capability-ticket-111-cb5ef7cd5110; do not rename it. Produce a committed PR-ready solution and write the PR body to C:/x/capability-evals/t_dad8c227-reference-v001/pr-body.md. The body must follow the review checklist, Author receipts and all ten Agent trace fields. Do not push, open a real PR, call GitHub, run the full test suite, modify benchmark/, jobs/, standards/, hooks, evaluation code or policy documents. Focused tests are allowed. Record unavailable telemetry as not measured. This historical ticket is intentionally closed; solve it against this checkout without looking up its known answer. Publication is forbidden, not an approval question. Do not use another checkout or its venv. Stop honestly on failures."
+  ],
+  "etalon_sha256": null,
+  "passed": false,
+  "cleanup": true,
+  "isolation": "repository + user skills; no OS sandbox; D159",
+  "session_exit": 0,
+  "changed_evaluation_inputs": [],
+  "protected_inputs_unchanged": true,
+  "head_unchanged": false,
+  "branch": "harness/capability-ticket-111-cb5ef7cd5110",
+  "ticket": 111,
+  "solution_commit": "187a27fe16e55052e02757502f717f446b6984d8",
+  "committed": true,
+  "procedural": {
+    "passed": 0,
+    "failed": 0,
+    "not_measured": 10
+  },
+  "procedural_reason": "no Claude transcript; native CLI stdout retained, unsupported by procedural graders",
+  "local_pr": {
+    "passed": 0,
+    "failed": 1,
+    "not_measured": 0
+  },
+  "elapsed_seconds": 161.512
+}

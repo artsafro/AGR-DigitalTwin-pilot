@@ -1,36 +1,32 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+# Light non-DCC test run per PR on a self-hosted Windows runner [D222] (revises D122).
 
-name: Python application
+name: Tests (self-hosted)
 
 on:
+  pull_request:
+    types: [opened, synchronize, reopened]
   workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: ci-tests
+  cancel-in-progress: false
+
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
+  test:
+    # A self-hosted runner must never run untrusted code: skip PRs from forks.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, windows, agr]
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python 3.10
-      uses: actions/setup-python@v3
+    - uses: astral-sh/setup-uv@v6
       with:
-        python-version: "3.10"
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install flake8 pytest
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Lint with flake8
-      run: |
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Test with pytest
-      run: |
-        pytest
+        python-version: "3.13"
+    - name: Install locked dependencies
+      run: uv sync --frozen
+    - name: Test with pytest (non-DCC suite)
+      # A command-line -m replaces the pyproject addopts -m (which lacks `not native_max`);
+      # the explicit list below is the same 8-marker exclusion the merge gate uses.
+      run: uv run pytest -q -m "not blender and not dcc and not acad and not perf and not job and not max and not panel_texture and not native_max"

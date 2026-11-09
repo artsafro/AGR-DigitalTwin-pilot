@@ -1,0 +1,22 @@
+# COD 20207, real project, Gate 1 approved in card t_3e9518e5 (2026-10-20).
+# Flat common datum; method-C offsets retained. No Civil relief, no D150.
+# Type 6 stays separate until etalon comparison; authorized fallback is type-2 tile.
+# Unhatched region = lawn except source/etalon footprint holes.
+# Material identities and explicit holes must be supplied to the build separately.
+project: cod-20207
+units: null
+boundary:
+  layer: ГП_Граница участка
+  handle: '69002'
+coverings:
+  - {type: asphalt, label: Asphalt type 1, layers: [ГП_Благо_ТИП_1]}
+  - {type: tile, label: Tile type 2, layers: [ГП_Благо_ТИП_2]}
+  - {type: tile_reinforced, label: Reinforced tile type 3, layers: [ГП_Благо_ТИП_3], repair: make_valid}
+  - {type: geogrid, label: Geogrid type 4, layers: [ГП_Благо_ТИП_4]}
+  - {type: geogrid_reinforced, label: Reinforced geogrid type 5, layers: [ГП_Благо_ТИП_5]}
+  - {type: type6, label: Type 6 pending etalon identification, layers: [ГП_Благо_ТИП_6]}
+ground_elements:
+  curb_drive: [ГП_БР дорожный]
+  curb_garden: [ГП_БР сад]
+# All other layers remain inventoried as findings, not silently ignored.
+ignore_layers: []

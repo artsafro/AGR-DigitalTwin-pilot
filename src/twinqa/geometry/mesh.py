@@ -147,7 +147,7 @@ def parts(triangles: np.ndarray, ids: np.ndarray) -> np.ndarray:
 
 def assign_material_ids(dump: dict, table: dict) -> dict:
     """A copy of a dump whose material ids come from an object's materials table (jobs/<object>/materials.json,
-    K01, user 2026-10-11): a mesh named in table["meshes"] takes that id; otherwise every triangle takes the id
+    K01, user 2026-10-11 [D053]): a mesh named in table["meshes"] takes that id; otherwise every triangle takes the id
     of its UDIM tile (`udim_tiles` of the dump; finishes as tiles, not slots); a tile the table does not name is
     0, unassigned. A source whose finishes are material slots (3ds Max sub-material ids) uses table["slots"]
     {slot: id} instead (an unlisted slot is 0), and table["glass_slots"] [slot, ...] moves the triangles of those

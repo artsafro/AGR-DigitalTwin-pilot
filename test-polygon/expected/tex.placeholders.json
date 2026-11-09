@@ -1,0 +1,31 @@
+{
+ "schema": 1,
+ "button": "tex.placeholders",
+ "tool": "tex.placeholders",
+ "version": "0.8",
+ "shipped": true,
+ "select": "named",
+ "reason": "one placeholder set per selected address in Maps/ beside the saved scene; an existing file is refused, never overwritten (GeoAGR overwrote silently)",
+ "apply_status": null,
+ "objects": [
+  {
+   "name": "SM_E1PhOk_Main",
+   "scene": "polygon_all",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_E1PhBad_Main",
+   "scene": "polygon_all",
+   "expect": "fail",
+   "codes": [
+    "placeholder_exists"
+   ]
+  }
+ ],
+ "base": "0.8",
+ "station": "0.8.4",
+ "stations": [
+  "0.8.4"
+ ]
+}

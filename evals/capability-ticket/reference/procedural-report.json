@@ -1,0 +1,127 @@
+{
+  "selector": {
+    "suite": "regression",
+    "task": null,
+    "references": false
+  },
+  "evidence_overrides": {},
+  "main_checkout": "C:\\x\\capability-evals\\t_dad8c227-reference-v001",
+  "branch": "capability",
+  "created": "2026-10-20T23:57:45",
+  "passed": 0,
+  "failed": 0,
+  "not_measured": 10,
+  "exit_code": 2,
+  "checks": [
+    {
+      "task": "branch-name",
+      "check": "branch names off NAMING.md",
+      "expected": 0,
+      "measured": "not measured",
+      "passed": null,
+      "details": [],
+      "error": "incomplete evidence: C:\\x\\capability-evals\\t_dad8c227-reference-v001\\logs\\transcripts\\capability-prnone-e678f367-e417-4791-9c96-47ee49025c1f.jsonl: no user or assistant record; C:\\x\\capability-evals\\t_dad8c227-reference-v001\\logs\\transcripts\\capability-prnone-e678f367-e417-4791-9c96-47ee49025c1f.jsonl: no commit record and no gitBranch",
+      "evidence": [
+        "C:\\x\\capability-evals\\t_dad8c227-reference-v001\\logs\\transcripts\\capability-prnone-e678f367-e417-4791-9c96-47ee49025c1f.jsonl"
+      ]
+    },
+    {
+      "task": "dcc-skill-loaded",
+      "check": "DCC calls before their skill",
+      "expected": 0,
+      "measured": "not measured",
+      "passed": null,
+      "details": [],
+      "error": "incomplete evidence: C:\\x\\capability-evals\\t_dad8c227-reference-v001\\logs\\transcripts\\capability-prnone-e678f367-e417-4791-9c96-47ee49025c1f.jsonl: no user or assistant record",
+      "evidence": [
+        "C:\\x\\capability-evals\\t_dad8c227-reference-v001\\logs\\transcripts\\capability-prnone-e678f367-e417-4791-9c96-47ee49025c1f.jsonl"
+      ]
+    },
+    {
+      "task": "engine-checked",
+      "check": "engine runs without an independent-checker",
+      "expected": 0,
+      "measured": "not measured",
+      "passed": null,
+      "details": [],
+      "error": "incomplete evidence: C:\\x\\capability-evals\\t_dad8c227-reference-v001\\logs\\transcripts\\capability-prnone-e678f367-e417-4791-9c96-47ee49025c1f.jsonl: no user or assistant record",
+      "evidence": [
+        "C:\\x\\capability-evals\\t_dad8c227-reference-v001\\logs\\transcripts\\capability-prnone-e678f367-e417-4791-9c96-47ee49025c1f.jsonl"
+      ]
+    },
+    {
+      "task": "failure-stop",
+      "check": "attempts after a blocked check",
+      "expected": 0,
+      "measured": "not measured",
+      "passed": null,
+      "details": [],
+      "error": "incomplete evidence: C:\\x\\capability-evals\\t_dad8c227-reference-v001\\logs\\transcripts\\capability-prnone-e678f367-e417-4791-9c96-47ee49025c1f.jsonl: no user or assistant record",
+      "evidence": [
+        "C:\\x\\capability-evals\\t_dad8c227-reference-v001\\logs\\transcripts\\capability-prnone-e678f367-e417-4791-9c96-47ee49025c1f.jsonl"
+      ]
+    },
+    {
+      "task": "no-hook-denial",
+      "check": "hook denials in the transcript",
+      "expected": 0,
+      "measured": "not measured",
+      "passed": null,
+      "details": [],
+      "error": "incomplete evidence: C:\\x\\capability-evals\\t_dad8c227-reference-v001\\logs\\transcripts\\capability-prnone-e678f367-e417-4791-9c96-47ee49025c1f.jsonl: no user or assistant record",
+      "evidence": [
+        "C:\\x\\capability-evals\\t_dad8c227-reference-v001\\logs\\transcripts\\capability-prnone-e678f367-e417-4791-9c96-47ee49025c1f.jsonl"
+      ]
+    },
+    {
+      "task": "pr-agent-trace",
+      "check": "pr_agent_trace",
+      "expected": null,
+      "measured": "not measured",
+      "passed": null,
+      "evidence": [],
+      "error": "no evidence: C:\\x\\capability-evals\\t_dad8c227-reference-v001\\logs\\pr\\capability\\view.json; produce it with: gh pr view capability --json body,comments"
+    },
+    {
+      "task": "pr-numeric-literals",
+      "check": "pr_numeric_literals",
+      "expected": null,
+      "measured": "not measured",
+      "passed": null,
+      "evidence": [],
+      "error": "no evidence: C:\\x\\capability-evals\\t_dad8c227-reference-v001\\logs\\pr\\capability\\view.json; produce it with: gh pr view capability --json body,comments"
+    },
+    {
+      "task": "pr-review-rounds",
+      "check": "pr_review_rounds",
+      "expected": null,
+      "measured": "not measured",
+      "passed": null,
+      "evidence": [],
+      "error": "no evidence: C:\\x\\capability-evals\\t_dad8c227-reference-v001\\logs\\pr\\capability\\view.json; produce it with: gh pr view capability --json body,comments"
+    },
+    {
+      "task": "routine-question",
+      "check": "routine_question",
+      "expected": null,
+      "measured": "not measured",
+      "passed": null,
+      "evidence": [
+        "C:\\x\\capability-evals\\t_dad8c227-reference-v001\\logs\\transcripts\\capability-prnone-e678f367-e417-4791-9c96-47ee49025c1f.jsonl"
+      ],
+      "error": "no evidence: C:\\x\\capability-evals\\t_dad8c227-reference-v001\\docs\\decisions.md"
+    },
+    {
+      "task": "source-inspected",
+      "check": "sources used without source-inspector",
+      "expected": 0,
+      "measured": "not measured",
+      "passed": null,
+      "details": [],
+      "error": "incomplete evidence: C:\\x\\capability-evals\\t_dad8c227-reference-v001\\logs\\transcripts\\capability-prnone-e678f367-e417-4791-9c96-47ee49025c1f.jsonl: no user or assistant record",
+      "evidence": [
+        "C:\\x\\capability-evals\\t_dad8c227-reference-v001\\logs\\transcripts\\capability-prnone-e678f367-e417-4791-9c96-47ee49025c1f.jsonl"
+      ]
+    }
+  ]
+}

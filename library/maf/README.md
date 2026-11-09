@@ -7,6 +7,7 @@ preview repairs in `preview-v002`, and contact sheet
 This folder holds only text: `catalogue.json` (every entry, paths to its files), `catalogue.md` (table),
 `contact_sheet.html` (local image grid linking external previews/assets), and `audit.json` (verification evidence).
 Status: technical audit only, not identification (T-MAF-1) and not user acceptance.
+The active material ID list is v005 (`material_ids.json` points at `material_ids_v005.json`), approved as the first working version [D181]. Nothing in the library scenes is reassigned.
 
 ## Inputs (read only, worked on copies)
 
@@ -65,7 +66,7 @@ dimension-only (tolerance 10 cm, user grilling Q8) — candidates, not identific
 ```bash
 # Fresh-process independent FBX readback (AGR_MAF_READBACK must be a NEW report path)
 AGR_MAF_LIB=C:/x/t_3e6ff1b3/library AGR_MAF_READBACK=C:/x/t_3e6ff1b3/fbx_readback_v004.json \
-  "C:/Program Files/Blender Foundation/Blender 5.1/blender.exe" --background --factory-startup \
+  "C:/Program Files/Blender Foundation/Blender 5.1/blender.exe" --background --factory-startup --python-exit-code 1 \
   --python tools/library/maf_blender_readback.py
 # Repair only confirmed blank IDs; refuses to overwrite preview-v002 / its manifest
 python C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.py max \
@@ -107,7 +108,7 @@ An override `id` that is not in the base is an error — an override never creat
 ```bash
 # 1. Blender inventory of the NPM .blend copy (read-only; does not save the .blend)
 AGR_MAF_BLEND_INVENTORY=<OUT>/blend_inventory.json \
-  blender --background <EVIDENCE>/src.blend --factory-startup \
+  blender --background <EVIDENCE>/src.blend --factory-startup --python-exit-code 1 \
   --python tools/library/maf_blender_inventory.py
 
 # 2. plan (unchanged)
@@ -139,7 +140,7 @@ uv run python tools/library/maf_audit.py preview-check \
 
 # 7. independent FBX readback (existing script). A missing report stays "not measured".
 AGR_MAF_LIB=<LIB> AGR_MAF_READBACK=<OUT>/fbx_readback.json \
-  blender --background --factory-startup --python tools/library/maf_blender_readback.py
+  blender --background --factory-startup --python-exit-code 1 --python tools/library/maf_blender_readback.py
 
 # 8. finalize catalogue JSON, contact_sheet.html and fbx_readback_* fields
 uv run python tools/library/maf_audit.py finalize \
@@ -176,3 +177,20 @@ uv run python tools/library/maf_audit.py compare \
   --old library/maf/audit.json --new <OUT>/audit.json \
   --out <OUT>/audit_diff.json
 ```
+
+## Generated MAF entries (#1046)
+
+`catalogue.json` keys `generated` (one entry per distinct generated model, ids `MAF_GEN_NNNN`) and
+`generated_dropped` (every other build row with its reason), and the marked section at the end of `catalogue.md`,
+come from `tools/library/maf_gen_catalogue.py`, not from the scene scan. Only rows Artem accepted go in
+(`--approve`, `--decision`); every material must be a key of `library/materials/materials_v001.json`. The scan
+tools above do not carry these keys: after rebuilding `catalogue.json` from the scene, rerun
+
+```
+uv run python tools/library/maf_gen_catalogue.py --build-dir C:/x/vatutino-maf/gen-v001/rows-v006p-3 \
+  --approve 2-10 --decision D202 --materials library/materials/materials_v001.json \
+  --catalogue library/maf/catalogue.json --catalogue-md library/maf/catalogue.md \
+  --out-json <OUT>/catalogue.json --out-md <OUT>/catalogue.md
+```
+
+and copy both outputs back (outputs may not alias an input). Current: «Верона» rows 2-10 [D202], row 1 not approved.
