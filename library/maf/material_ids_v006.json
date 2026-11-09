@@ -7,7 +7,7 @@
   "quote": "да",
   "by": "Artem",
   "source": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/993",
-  "decision": "D201",
+  "decision": "D223",
   "previous": {
    "date": "2026-10-22",
    "quote": "Ну более-менее норм, по ID как первый вариант норм, потом будем тестить на проектах и корректировать",
@@ -2283,7 +2283,7 @@
    "review": [],
    "prev_id": null,
    "picked_patch": null,
-   "status": "approved-v1 (D201): solid colour, no library atlas cell; colour assumed"
+   "status": "approved-v1 (D223): solid colour, no library atlas cell; colour assumed"
   }
  ],
  "inventory": {
@@ -7857,7 +7857,7 @@
   ]
  },
  "changelog": [
-  "v006 (2026-11-05, D201, #993): HPL satin wood (*T3510#26, tennis table) gets its own ID 32 `wood_hpl_satin` #B4825A; ID 14 `wood_light` keeps larch / light oak; the v005 merge hpl_satin_wood -> wood_light is undone. Nothing else changes."
+  "v006 (2026-11-05, D223, #993): HPL satin wood (*T3510#26, tennis table) gets its own ID 32 `wood_hpl_satin` #B4825A; ID 14 `wood_light` keeps larch / light oak; the v005 merge hpl_satin_wood -> wood_light is undone. Nothing else changes."
  ],
  "derived_from": {
   "path": "library/maf/material_ids_v005.json",

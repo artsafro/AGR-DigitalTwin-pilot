@@ -255,6 +255,31 @@ def build_row(*, rb: dict, extra: dict | None, output: Path, bench: dict, cls: s
     return row
 
 
+def append_not_measured(results: Path, *, benchmark: str, variant: str, reason, drawing_reason: str,
+                        cls: str = "building-body") -> int:
+    """Append a drawing row with null metrics. A reason that does not name the cause writes nothing.
+
+    The cause has to start with ``not measured:`` and have text after the colon. This never deletes
+    ``results`` or any other file; a bad reason raises before ``append_row``.
+    """
+    if (not isinstance(reason, str) or not reason.startswith("not measured:")
+            or not reason[len("not measured:"):].strip()):
+        raise ValueError(f"not measured reason must start with 'not measured:' and name the cause, got {reason!r}")
+    if not isinstance(drawing_reason, str) or not drawing_reason.strip():
+        raise ValueError("drawing_reason is empty")
+    if not isinstance(benchmark, str) or not benchmark.strip() or not isinstance(variant, str) or not variant.strip():
+        raise ValueError(f"benchmark and variant must be named, got {benchmark!r} / {variant!r}")
+    why = reason.strip()
+    row = {
+        "schema": metrics.SCHEMA, "class": cls, "variant": variant.strip(), "benchmark": benchmark.strip(),
+        "synthetic": False, "drawing_reason": drawing_reason.strip(), "not_measured": why,
+        "triangles": {"model": None, "ucx": None}, "wall_time_s": None, "wall_time_reason": why,
+        "class_metrics": {"body": {"deviation_max_m": None, "deviation_p95_m": None,
+                                   "closed_components": None, "components": None, "deviation_reason": why}},
+    }
+    return append_row(results, row)
+
+
 def append_row(results: Path, row: dict) -> int:
     """Append by publishing old + row through an exclusive unique temp (safe_write.publish_text); returns the
     1-based row number (= RESULTS.md row id). A pre-existing file of any other name is never touched."""
@@ -286,8 +311,9 @@ def main(argv=None) -> int:
     ap.add_argument("--source-readback", type=Path,
                     help="reuse a fbx_readback.py JSON of the benchmark source (building-body deviation; tests)")
     ap.add_argument("--synthetic", metavar="REASON",
-                    help="mark the row synthetic with this reason (required for building-body: no drawing-backed "
-                         "input exists yet, user decision 2026-11-02 [D187])")
+                    help="mark the row synthetic with this reason (building-body mesh contours, [D187])")
+    ap.add_argument("--drawing", metavar="REASON",
+                    help="mark the row drawing-backed (synthetic false) with this reason")
     a = ap.parse_args(argv)
     try:
         if not a.output.is_file():
@@ -311,11 +337,15 @@ def main(argv=None) -> int:
         built_from = variant_input(a.variant_report)
         methods_only = methods_only_block(a.variant_report, a.variant)
         synthetic = None if a.synthetic is None else a.synthetic.strip()
+        drawing = None if a.drawing is None else a.drawing.strip()
         if a.synthetic is not None and not synthetic:
             raise Refused("--synthetic needs a non-blank reason")
-        if a.cls == "building-body" and not synthetic:
-            raise Refused("building-body rows must be marked --synthetic REASON: the body inputs are measured from "
-                          "the source mesh, no drawing-backed input exists yet [D187]")
+        if a.drawing is not None and not drawing:
+            raise Refused("--drawing needs a non-blank reason")
+        if synthetic and drawing:
+            raise Refused("a row cannot be both --synthetic and --drawing")
+        if a.cls == "building-body" and not synthetic and not drawing:
+            raise Refused("building-body rows must be marked --synthetic REASON or --drawing REASON")
     except (Refused, OSError, KeyError, json.JSONDecodeError) as exc:
         print(f"RUN_VARIANT refused: {exc}", file=sys.stderr)
         return 4
@@ -351,6 +381,8 @@ def main(argv=None) -> int:
         row["git_commit"] = git_head()
         if synthetic:
             row["synthetic"], row["synthetic_reason"] = True, synthetic
+        elif drawing:
+            row["synthetic"], row["drawing_reason"] = False, drawing
         n = append_row(results, row)
     except (metrics.MetricError, OSError, RuntimeError, ValueError, KeyError, zipfile.BadZipFile) as exc:
         print(f"RUN_VARIANT error: {type(exc).__name__}: {exc}", file=sys.stderr)

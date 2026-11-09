@@ -100,7 +100,7 @@ def test_pointer_hash_matches_committed_lf_and_crlf_working_copy():
 
 
 def test_material_ids_pointer_is_v006():
-    # v006 = v005 + ID 32 (D201, #993); v005 itself stays unchanged.
+    # v006 = v005 + ID 32 (D223, #993); v005 itself stays unchanged.
     pointer = json.loads(POINTER.read_text(encoding="utf-8"))
     assert pointer["active"] == "v006"
     assert pointer["path"].replace("\\", "/") == "library/maf/material_ids_v006.json"

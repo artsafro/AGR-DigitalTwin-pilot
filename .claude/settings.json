@@ -160,6 +160,16 @@
             "timeout": 10
           }
         ]
+      },
+      {
+        "matcher": "^(Bash|PowerShell)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "py -3 \"$CLAUDE_PROJECT_DIR/tools/state/after_merge.py\" hook",
+            "timeout": 180
+          }
+        ]
       }
     ]
   }

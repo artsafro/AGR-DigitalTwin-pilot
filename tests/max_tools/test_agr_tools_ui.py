@@ -530,7 +530,46 @@ def test_every_action_has_a_macro_with_icon_and_menu_entry():
     assert 'agr_tools_runtime.panel()' in mcr and 'AGRToolsClassic' in mcr
     assert '#cuiRegisterMenus' in menu and 'id:#agrTools' in menu and 'removeScripts id:#agrTools' in menu
     ids = re.findall(r'"([0-9a-f]{8}-[0-9a-f-]{27})"', menu)
-    assert len(set(ids)) == 1 + 1 + 8 * 2 + 61 and ids.count(m.MENU_ID) == 2  # create + presence check
+    # menu, open, 8 sections (separator + submenu), 61 actions; 1.0 (#1024): separator + submenu, 11 stage
+    # submenus, 33 stage actions; 1.1: +4 handoff stage actions and the «Claude-док» entry in the agent submenu
+    assert len(set(ids)) == 1 + 1 + 8 * 2 + 61 + 2 + 11 + 33 + 4 + 1 and ids.count(m.MENU_ID) == 2  # create + presence
+
+
+def test_every_10_stage_action_has_a_disabled_macro_icon_and_menu_entry():
+    mcr, menu = m.macros_ms(), m.menu_ms()
+    # release 1.0.0 (#1024 R): all 33 rows ship (Q #1085 merged before R); the wip branch below stays tested
+    assert len(m.ACTIONS_100) == 33 + 4 and {a.tool for a in m.ACTIONS_100 if a.wip} == set(m.WIP_100) == set()
+    wip_body = '\n'.join(m.macro_100(m.ACTIONS_100[0]._replace(wip=True, tip=m.WIP_TIP)))
+    assert '\n    on isEnabled return false\n' in wip_body and 'python.Execute' not in wip_body
+    blocks = mcr.split('\nmacroScript ')
+    for a in m.ACTIONS_100:
+        body = [b for b in blocks if b.startswith(a.macro + ' ')]
+        assert len(body) == 1, a.macro
+        body = body[0]
+        head = 'в работе, #1024' if a.wip else m.stage_tip(a.tool)
+        assert re.match(r'{} category:"AGR Tools" .* tooltip:"{} .* iconName:"AgrIcons/agr_{}"'.format(
+            a.macro, re.escape(head), a.icon), body), a.macro
+        assert a.icon in icons.names() and icons.svg(a.icon, '#000000').startswith('<svg'), a.icon
+        assert 'b_{} '.format(a.id) not in mcr  # not in the classic rollout (0.x actions only)
+        assert '"{}`AGR Tools"'.format(a.macro) in menu
+        entry = 'form_ui' if a.tool in m.FORM_100 else 'edit_ui'  # 1.1: parameter-form buttons open the form first
+        released = '(on execute do python.Execute "agr_tools_runtime.{}(\'{}\')")'.format(entry, a.tool)
+        if a.wip:  # greyed (isEnabled false) and execute only says so; it never reaches python / an edit
+            assert '\n    on isEnabled return false\n' in body and 'messageBox' in body and 'python.Execute' not in body
+            assert '{} ({}): в работе, #1024'.format(a.label, a.tool) in body
+        else:  # released: one press = runtime.edit_ui (preview, then apply on the same selection)
+            assert released in body and 'isEnabled' not in body and 'messageBox' not in body
+        assert m.macro_100(a._replace(wip=False))[1] == released
+    sub = menu[menu.index(m.MENU_100):]
+    order = [re.search(r'"(AGRTools\w+)`AGR Tools"', ln).group(1) for ln in sub.splitlines() if 'CreateAction' in ln]
+    # station order 1.0.1..1.0.33, then 1.1.1..1.1.4, stage by stage; the «Claude-док» entry (no plan row) closes the
+    # agent submenu, which is the last stage
+    assert order == [a.macro for a in m.ACTIONS_100] + [m.DOCK_MACRO]
+    assert m.DOCK_ICON in icons.names() and 'macroScript {} category:"AGR Tools"'.format(m.DOCK_MACRO) in mcr
+    for i, (sid, label, _icon, rows) in enumerate(m.STAGES_100):
+        assert '    local t{} = c100.CreateSubMenu'.format(i) in sub and '"{}"'.format(m.stage_title(sid, label)) in sub
+        for rid in rows:
+            assert '    t{}.CreateAction'.format(i) in sub and m.BY_TOOL[rid].macro in sub
 
 
 MS_FILES = ('agr_tools.mcr', 'menu.ms', 'startup.ms', 'install.ms')
@@ -564,7 +603,7 @@ def test_maxscript_pitfalls_no_tooltip_reads_and_no_undeclared_assignments():
 # ---- bundle -------------------------------------------------------------------------------------------
 def test_icon_entries_svg_from_generator_and_png_from_dir(synthetic_icon_pngs):
     got = builder.icon_entries()
-    assert set(got) == set(builder.icon_files()) and len(got) == 2 * 68 * 5
+    assert set(got) == set(builder.icon_files()) and len(got) == 2 * len(icons.names()) * 5 == 2 * 105 * 5
     for rel, data in got.items():
         theme, _, fname = rel.split('/')
         if rel.endswith('.svg'):
@@ -575,9 +614,9 @@ def test_icon_entries_svg_from_generator_and_png_from_dir(synthetic_icon_pngs):
 
 def test_package_contents_is_valid_and_complete():
     root = ET.fromstring(builder.package_contents())
-    assert root.tag == 'ApplicationPackage' and root.get('AppVersion') == '0.8.0'
+    assert root.tag == 'ApplicationPackage' and root.get('AppVersion') == '1.1.0'
     assert root.get('UpgradeCode') == '{BA2C2E6E-54F9-402E-8875-3D616C9030FD}'
-    assert root.get('ProductCode') == m.product_code('0.8.0') != m.product_code('0.7.0')
+    assert root.get('ProductCode') == m.product_code('1.1.0') != m.product_code('1.0.0')
     descs = {c.get('Description'): c.find('ComponentEntry').get('ModuleName') for c in root.iter('Components')}
     assert descs == {'macroscripts parts': './Contents/agr_tools/agr_tools.mcr',
                      'post-start-up scripts parts': './Contents/agr_tools/startup.ms',

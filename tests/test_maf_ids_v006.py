@@ -1,4 +1,4 @@
-"""v006 = v005 + ID 32 `wood_hpl_satin` (D201, #993); derived by tools/library/maf_ids_version.py."""
+"""v006 = v005 + ID 32 `wood_hpl_satin` (D223, #993); derived by tools/library/maf_ids_version.py."""
 import copy
 import importlib.util
 import json
@@ -29,7 +29,7 @@ def test_v006_is_v005_plus_id_32_and_reproducible():
     assert (by[32]["key"], by[32]["target"], by[32]["spec_rows"]) == ("wood_hpl_satin", "#B4825A", ["*T3510#26"])
     assert "*T3510#26" not in by[14]["spec_rows"] and "HPL" not in by[14]["name_ru"]
     assert all(m["from_key"] != "hpl_satin_wood" for m in v6["merges"])
-    assert v6["approval"]["decision"] == "D201" and v6["approval"]["quote"] == "да"
+    assert v6["approval"]["decision"] == "D223" and v6["approval"]["quote"] == "да"
     rebuilt = t.apply_change(v5, change)
     for key in ("ids", "merges", "spec_requirements", "version", "approval", "changelog"):
         assert rebuilt[key] == v6[key], key
@@ -59,4 +59,4 @@ def test_site_512_set_has_one_cell_for_id_32():
 
 def test_d201_is_logged_once():
     text = (ROOT / "docs" / "decisions.md").read_text(encoding="utf-8")
-    assert sum(1 for line in text.splitlines() if line.startswith("| D201 |")) == 1
+    assert sum(1 for line in text.splitlines() if line.startswith("| D223 |")) == 1

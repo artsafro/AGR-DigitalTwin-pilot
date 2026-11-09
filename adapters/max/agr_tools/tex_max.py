@@ -457,3 +457,75 @@ def scene_missing_maps(ctx, mode, nodes, preview):
     state = {'tool': 'scene.missing_maps', 'maps': rows}
     return core.missing_report(edit, rows, edit.fingerprint(state), owners,
                                extra={'notes': notes, 'search': {'folders': flat, 'recursive': deep}})
+
+
+# ---- bitmap enumerator (1.0, branch N) -----------------------------------------------------------------
+def _tree(mat, seen=None):
+    """Material/texmap tree dict for tex_core.material_bitmaps from a pymxs material or texmap."""
+    rt = _rt()
+    seen = set() if seen is None else seen
+    if _undef(mat):
+        return {'name': None, 'subs': [], 'maps': []}
+    key = _handle(mat)
+    if key in seen:                       # a loop or a shared map is walked once per branch
+        return {'name': str(mat.name), 'subs': [], 'maps': []}
+    seen = seen | {key}
+    node = {'name': str(mat.name), 'subs': [], 'maps': []}
+    if rt.superClassOf(mat) == rt.textureMap:
+        return node
+    ids = []
+    try:
+        ids = [int(i) for i in mat.materialIDList]
+    except Exception:  # noqa: BLE001 - not a Multi/Sub
+        pass
+    try:
+        for i in range(int(rt.getNumSubMtls(mat))):
+            sub = rt.getSubMtl(mat, i + 1)
+            if not _undef(sub):
+                node['subs'].append({'id': ids[i] if i < len(ids) else i + 1, 'material': _tree(sub, seen)})
+    except Exception:  # noqa: BLE001
+        pass
+    try:
+        for i in range(int(rt.getNumSubTexmaps(mat))):
+            tm = rt.getSubTexmap(mat, i + 1)
+            if _undef(tm):
+                continue
+            entry = {'slot': str(rt.getSubTexmapSlotName(mat, i + 1)), 'name': str(tm.name), 'file': _map_file(tm),
+                     'children': []}
+            child = _tree_texmap(tm, seen)
+            entry['children'] = child
+            node['maps'].append(entry)
+    except Exception:  # noqa: BLE001
+        pass
+    return node
+
+
+def _tree_texmap(tm, seen):
+    rt = _rt()
+    out = []
+    try:
+        for i in range(int(rt.getNumSubTexmaps(tm))):
+            sub = rt.getSubTexmap(tm, i + 1)
+            if _undef(sub) or _handle(sub) in seen:
+                continue
+            seen = seen | {_handle(sub)}
+            out.append({'name': str(sub.name), 'subs': [], 'maps': [
+                {'slot': str(rt.getSubTexmapSlotName(tm, i + 1)), 'name': str(sub.name), 'file': _map_file(sub),
+                 'children': _tree_texmap(sub, seen)}]})
+    except Exception:  # noqa: BLE001
+        pass
+    return out
+
+
+def scene_bitmaps(core, nodes):
+    """[{node, handle, rows}] bitmap rows (tex_core.material_bitmaps) of the materials of `nodes`, one entry per node;
+    resolved paths. Nodes without a material have an empty list (reported by the caller, not dropped silently)."""
+    out = []
+    for n in nodes:
+        rows = []
+        if not _undef(n.material):
+            rows = core.material_bitmaps(_tree(n.material))
+            for r in rows:
+                r['path'] = _resolve(r['path'])
+        out.append({'node': str(n.name), 'handle': _handle(n), 'rows': rows})
+    return out

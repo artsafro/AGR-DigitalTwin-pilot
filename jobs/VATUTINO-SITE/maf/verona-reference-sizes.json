@@ -1,0 +1,100 @@
+{
+ "issue": "#817",
+ "purpose": "Per-row reference size for tools/library/maf_gen_bench_checks.py --reference [D094]: rows 1-6 the schedule, rows 7-10 the recorded DWG outline; size_m in the readback axis order [x, y, z].",
+ "derived_from": [
+  "jobs/VATUTINO-SITE/maf/verona-plan-shapes.json",
+  "jobs/VATUTINO-SITE/maf/verona-generator.md (table «Rows 1-10»)"
+ ],
+ "rows": {
+  "1": {
+   "size_m": [
+    3.9,
+    2.5,
+    0.45
+   ],
+   "basis": "schedule",
+   "source": "schedule T3508 row 1: 2500x3900x600 mm, plan values in the readback axis order (larger value on the longer plan axis); height 0.45 m: module passport Hobbyka «Верона» art. 18694 (the schedule's third value 600 is the seat depth, Artem)"
+  },
+  "2": {
+   "size_m": [
+    6.7,
+    2.5,
+    0.45
+   ],
+   "basis": "schedule",
+   "source": "schedule T3508 row 2: 2500x6700x600 mm, plan values in the readback axis order (larger value on the longer plan axis); height 0.45 m: module passport Hobbyka «Верона» art. 18694 (the schedule's third value 600 is the seat depth, Artem)"
+  },
+  "3": {
+   "size_m": [
+    6.25,
+    0.6,
+    0.45
+   ],
+   "basis": "schedule",
+   "source": "schedule T3508 row 3: 6250x600x— mm, plan values in the readback axis order (larger value on the longer plan axis); height 0.45 m: module passport Hobbyka «Верона» art. 18694 (the schedule's third value 600 is the seat depth, Artem)"
+  },
+  "4": {
+   "size_m": [
+    5.8,
+    2.9,
+    0.45
+   ],
+   "basis": "schedule",
+   "source": "schedule T3508 row 4: 5800x2900x600 mm, plan values in the readback axis order (larger value on the longer plan axis); height 0.45 m: module passport Hobbyka «Верона» art. 18694 (the schedule's third value 600 is the seat depth, Artem)"
+  },
+  "5": {
+   "size_m": [
+    6.08,
+    0.6,
+    0.45
+   ],
+   "basis": "schedule",
+   "source": "schedule T3508 row 5: 6080x600x— mm, plan values in the readback axis order (larger value on the longer plan axis); height 0.45 m: module passport Hobbyka «Верона» art. 18694 (the schedule's third value 600 is the seat depth, Artem)"
+  },
+  "6": {
+   "size_m": [
+    4.96,
+    5.53,
+    0.45
+   ],
+   "basis": "schedule",
+   "source": "schedule T3508 row 6: 4960x5530x600 mm, plan values in the readback axis order (larger value on the longer plan axis); height 0.45 m: module passport Hobbyka «Верона» art. 18694 (the schedule's third value 600 is the seat depth, Artem)"
+  },
+  "7": {
+   "size_m": [
+    4.921,
+    0.6,
+    0.45
+   ],
+   "basis": "dwg_outline",
+   "source": "DWG outline: block «Скамья Индивид лестн 2», polyline 198ADA, plan size of the strip on its centreline (verona-plan-shapes.json plan_dims_m); the schedule size 4960x5530 does not fit this block, row-to-block mapping Artem 2026-11-03; height 0.45 m: module passport Hobbyka «Верона» art. 18694 (the schedule's third value 600 is the seat depth, Artem)"
+  },
+  "8": {
+   "size_m": [
+    4.249,
+    0.6,
+    0.45
+   ],
+   "basis": "dwg_outline",
+   "source": "DWG outline: block «Скамья Индивид лестн 2.1», polyline 198C88, plan size of the strip on its centreline (verona-plan-shapes.json plan_dims_m); the schedule size 4960x5530 does not fit this block, row-to-block mapping Artem 2026-11-03; height 0.45 m: module passport Hobbyka «Верона» art. 18694 (the schedule's third value 600 is the seat depth, Artem)"
+  },
+  "9": {
+   "size_m": [
+    2.0,
+    0.6,
+    0.45
+   ],
+   "basis": "dwg_outline",
+   "source": "DWG outline: block «Скамья индивид лестн 1», polyline 19865C, plan size of the strip on its centreline (verona-plan-shapes.json plan_dims_m); the schedule size 4960x5530 does not fit this block, row-to-block mapping Artem 2026-11-03; height 0.45 m: module passport Hobbyka «Верона» art. 18694 (the schedule's third value 600 is the seat depth, Artem)"
+  },
+  "10": {
+   "size_m": [
+    2.0,
+    0.6,
+    0.45
+   ],
+   "basis": "dwg_outline",
+   "source": "DWG outline: block «Скамья индивид лестн 1», polyline 19865C, plan size of the strip on its centreline (verona-plan-shapes.json plan_dims_m); the schedule size 4960x5530 does not fit this block, row-to-block mapping Artem 2026-11-03; height 0.45 m: module passport Hobbyka «Верона» art. 18694 (the schedule's third value 600 is the seat depth, Artem)"
+  }
+ }
+}

@@ -53,7 +53,7 @@ python C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.py acad --file C:/x/t_2
 # -> accoreconsole.exe /i C:/x/t_27ae0dd8/main.dwg /s C:\x\t_27ae0dd8\main.scr /l en-US   (status ok, 5.8 s)
 ```
 
-`main.scr`:
+`main.scr` (historical recipe; it leaves `FILEDIA` at 0 in the user registry, see the note below):
 
 ```
 (setvar "FILEDIA" 0)
@@ -62,6 +62,13 @@ python C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.py acad --file C:/x/t_2
 (princ (strcat "\nAGR EXTMIN=" (vl-princ-to-string (getvar "EXTMIN")) " EXTMAX=" (vl-princ-to-string (getvar "EXTMAX"))))
 (command "_.DXFOUT" "C:/x/t_27ae0dd8/main.dxf" "_V" "2018" "16")
 ```
+
+Note (#1026): `FILEDIA` is a user registry setting (`FixedProfile\General Configuration\FileDialog`) shared
+with the interactive AutoCAD. The core console starts with `FILEDIA=0` whatever the registry holds and writes
+its session value back on exit, so the user's SAVE/SAVEAS then asks on the command line instead of opening
+the file dialog. Do not reuse this script as is: generate it with `adapters.cad.dwg.dxfout_script(dxf,
+filedia=user_filedia())` (or wrap your body in `filedia_guarded(body, user_filedia())`), which restores the
+user's value at the end and in an `*error*` handler.
 
 Console output: `INSUNITS=6 LUNITS=2 MEASUREMENT=1 ACADVER=25.0`. The console also printed
 "Custom object(s) encountered": AEC objects are present, and the AEC enablers load in the core console. Fonts

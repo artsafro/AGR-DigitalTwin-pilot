@@ -52,7 +52,7 @@ FINISH = {
                           "candidates_sheet.jpg are library viewport colours, not a finish measurement; "
                           "colour assumed; atlas slot larch_light_oak #C49A6C"),
     },
-    # D201 (#993): HPL has its own ID 32; ID 14 stays larch / light oak.
+    # D223 (#993): HPL has its own ID 32; ID 14 stays larch / light oak.
     "hpl_satin_wood": {
         "id_key": "wood_hpl_satin", "zone": "hpl", "colour": "#B4825A",
         "colour_source": ("schedule HPL satin wood; no RAL; vendor images are library viewport colours, "
