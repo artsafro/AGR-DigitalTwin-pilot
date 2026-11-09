@@ -1,0 +1,64 @@
+{
+  "purpose": "User-approved placement exceptions bound to one Ground master (#296) AND to the exact adapter point (handle, label, x, y, z, rotation, library id). A repaired Ground (other sha256) makes the entry stale and the point is placed again; a changed point (coordinates, label, library id) or a non-finite point stops the run. This file binds the #298 option-A run to Ground v015 (textured masters of t_e35c49dd); the v014 file stays as the #296 record.",
+  "ground": "C:/x/t_e35c49dd/ground-v015-dcc-v001/textured/",
+  "exceptions": [
+    {
+      "handle": "15E288",
+      "label": "VAT_MAF_T3510_02",
+      "reason": "Урна ~1 cm outside the edge of the Ground cut-out; still outside on Ground v015 (GroundIndex.height None, placement-compatibility-v001.json of t_e35c49dd). Exclusion extended from v014 to v015 [D231].",
+      "ground_master_sha256": {
+        "npm": "965463e75c6924f81418bd9280a89968df29dff99c733a86811689dfd9294942",
+        "vpm": "92d31d7f55dddf2756fd0d6bbaf82bedfd1da149660fff7763c9795ac8eefd48"
+      },
+      "approved": {
+        "by": "Artem",
+        "date": "2026-11-09",
+        "decision": "D231",
+        "quote": "urns 15E288/15E289 stay out on Ground v015 too (v014 exception extended)",
+        "previous": {
+          "by": "Artem",
+          "date": "2026-10-20",
+          "quote": "option a: the 2 urns 15E288/15E289 (VAT_MAF_T3510_02), ~1 cm outside the Ground v014 cut-out edge, are NOT placed for this run; list them in the placement report with the reason and the Ground v014 sha256. The exclusion is bound to Ground v014 only: a corrected Ground places them again."
+        }
+      },
+      "point": {
+        "handle": "15E288",
+        "label": "Урна",
+        "x": -7675.904729374311,
+        "y": -15341.19687206188,
+        "z": 0.0,
+        "rotation": 269.6311338790634,
+        "library_id": "VAT_MAF_T3510_02"
+      }
+    },
+    {
+      "handle": "15E289",
+      "label": "VAT_MAF_T3510_02",
+      "reason": "Урна ~1 cm outside the edge of the Ground cut-out; still outside on Ground v015 (GroundIndex.height None, placement-compatibility-v001.json of t_e35c49dd). Exclusion extended from v014 to v015 [D231].",
+      "ground_master_sha256": {
+        "npm": "965463e75c6924f81418bd9280a89968df29dff99c733a86811689dfd9294942",
+        "vpm": "92d31d7f55dddf2756fd0d6bbaf82bedfd1da149660fff7763c9795ac8eefd48"
+      },
+      "approved": {
+        "by": "Artem",
+        "date": "2026-11-09",
+        "decision": "D231",
+        "quote": "urns 15E288/15E289 stay out on Ground v015 too (v014 exception extended)",
+        "previous": {
+          "by": "Artem",
+          "date": "2026-10-20",
+          "quote": "option a: the 2 urns 15E288/15E289 (VAT_MAF_T3510_02), ~1 cm outside the Ground v014 cut-out edge, are NOT placed for this run; list them in the placement report with the reason and the Ground v014 sha256. The exclusion is bound to Ground v014 only: a corrected Ground places them again."
+        }
+      },
+      "point": {
+        "handle": "15E289",
+        "label": "Урна",
+        "x": -7675.886786038562,
+        "y": -15346.55449148379,
+        "z": 0.0,
+        "rotation": 269.6311338790634,
+        "library_id": "VAT_MAF_T3510_02"
+      }
+    }
+  ]
+}
