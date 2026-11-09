@@ -166,10 +166,19 @@ def _git(cwd, *args):
 
 
 def cwd_repo(cwd):
-    """The one repository every remote of the git checkout at cwd points to, else None.
+    """The repository a bare `gh pr merge` at cwd targets, else None.
 
-    gh picks its base repository among the remotes, so a checkout whose remotes disagree (fork +
-    upstream) or that has none gives None and the merge asks."""
+    gh's own default (`gh repo set-default`: the one remote with `gh-resolved = base`) wins; without
+    it every remote must point to the same repository, because gh otherwise picks among them (fork +
+    upstream). No remote, no checkout or an ambiguous default gives None and the merge asks."""
+    marks = _git(cwd, "config", "--get-regexp", r"^remote\..*\.gh-resolved$") or ""
+    based = [line.split()[0][len("remote."):-len(".gh-resolved")] for line in marks.splitlines()
+             if len(line.split()) == 2 and line.split()[1] == "base"]
+    if len(based) > 1 or (marks.strip() and not based):          # ambiguous or legacy gh-resolved value
+        return None
+    if based:
+        out = _git(cwd, "remote", "get-url", based[0])
+        return normalize_repo(out.strip()) if out else None
     out = _git(cwd, "remote", "-v")
     if not out:
         return None

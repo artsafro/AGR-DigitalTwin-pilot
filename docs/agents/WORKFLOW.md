@@ -462,8 +462,10 @@ first, from the checkout whose `origin` is the PR's repository: `py -3 .claude/h
 allows exactly one plain `gh pr merge N` within 10 minutes without a second prompt [D234]. Never
 write a token for a command without the number («вперед», «мержи»): ask which PR, or let the guard
 prompt be the confirmation. The token covers no other PR, no `--delete-branch`/`--admin` and no
-chained command, and no other repository (the `-R`/`--repo` value, else `GH_REPO`, else every
-remote of the hook's cwd must name the token's repository; otherwise the guard asks and keeps the token).
+chained command, and no other repository (the `-R`/`--repo` value, else `GH_REPO`, else the
+`gh repo set-default` remote, else every remote of the hook's cwd must name the token's repository;
+otherwise the guard asks and keeps the token). In the pilot clone (`origin` = pilot, `upstream` =
+AGR-DigitalTwin) run `gh pr merge N -R <owner>/<repo>`.
 
 ### Gate standards procedure
 

@@ -222,6 +222,23 @@ def test_cwd_of_another_repo_asks_and_keeps_token(ctx, remotes):
     assert tokens_left(ctx.tokens) == ["pr-1149.json"]
 
 
+@pytest.mark.parametrize("marks, expected", [
+    ({"origin": "base"}, "allow"),                     # `gh repo set-default` chose origin: gh merges there
+    ({"upstream": "base"}, "ask"),                     # gh would merge in the other repository
+    ({"origin": "base", "upstream": "base"}, "ask"),   # ambiguous
+    ({"origin": "artsafro/AGR-DigitalTwin-pilot"}, "ask"),  # legacy value: not trusted
+    ({}, "ask"),                                       # no default: gh picks among disagreeing remotes
+])
+def test_fork_checkout_follows_gh_default(ctx, marks, expected):
+    """The pilot clone has origin=pilot and upstream=AGR-DigitalTwin; only gh's own default decides."""
+    cwd = make_repo(ctx.root / "fork", ("origin", ORIGIN), ("upstream", "https://github.com/artsafro/AGR-DigitalTwin.git"))
+    for remote, value in marks.items():
+        subprocess.run(["git", "-C", str(cwd), "config", f"remote.{remote}.gh-resolved", value], check=True)
+    put_token(ctx.tokens, 1149)
+    assert run_guard("gh pr merge 1149 --merge", ctx, cwd=cwd)[0] == expected
+    assert tokens_left(ctx.tokens) == ([] if expected == "allow" else ["pr-1149.json"])
+
+
 def test_hook_cwd_wins_over_process_cwd(ctx):
     """Claude Code sends the session cwd in the payload; the guard checks that one."""
     foreign = make_repo(ctx.root / "foreign", ("origin", "https://github.com/other/x.git"))
