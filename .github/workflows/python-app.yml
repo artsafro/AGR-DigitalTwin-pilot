@@ -1,16 +1,24 @@
-# Manual-only test run [D122]: no automatic CI; the merge gate is the local CI receipt in the PR.
+# Light non-DCC test run per PR on a self-hosted Windows runner [D222] (revises D122).
 
-name: Tests (manual)
+name: Tests (self-hosted)
 
 on:
+  pull_request:
+    types: [opened, synchronize, reopened]
   workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: ci-tests
+  cancel-in-progress: false
+
 jobs:
   test:
-    runs-on: ubuntu-latest
+    # A self-hosted runner must never run untrusted code: skip PRs from forks.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, windows, agr]
     steps:
     - uses: actions/checkout@v4
     - uses: astral-sh/setup-uv@v6
@@ -18,7 +26,7 @@ jobs:
         python-version: "3.13"
     - name: Install locked dependencies
       run: uv sync --frozen
-    - name: Test with pytest
-      # no -m here: a command-line -m replaces the pyproject addopts one, which already deselects
-      # perf, job and the DCC lanes (blender, dcc, acad, max, panel_texture)
-      run: uv run pytest -q
+    - name: Test with pytest (non-DCC suite)
+      # A command-line -m replaces the pyproject addopts -m (which lacks `not native_max`);
+      # the explicit list below is the same 8-marker exclusion the merge gate uses.
+      run: uv run pytest -q -m "not blender and not dcc and not acad and not perf and not job and not max and not panel_texture and not native_max"
