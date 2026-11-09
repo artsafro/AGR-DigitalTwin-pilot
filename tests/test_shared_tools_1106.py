@@ -1,4 +1,7 @@
-"""#1106: `dt derive` / `dt ground` route to one shared tool each; parity with the job scripts; fail-closed inputs."""
+"""#1106: `dt derive` / `dt ground` route to one shared tool each; parity with the job scripts; fail-closed inputs.
+
+Pattern: n/a | new-case: parity and fail-closed tests of the #1106 shared tools.
+"""
 import base64
 import json
 import os
