@@ -61,3 +61,29 @@ def test_pivot_coordinates_rounds_to_3_decimals():
     coords, floor = pc.pivot_coordinates(report)
     assert coords == [9676.355, -7135.701]       # 3 decimals, MSK-77
     assert floor == '0.000'
+
+
+def test_writer_never_converts_units_or_okrug():
+    """Counterexample beyond the ELV example: the writer is pass-through — it neither converts m²↔ha nor
+    abbreviates/expands okrug, so a caller-supplied hectare value or full okrug name stays byte-identical."""
+    import json
+    pc = _load(PKG / 'package_core.py', 'agr_tools_package_core_d220c')
+    props = {'ZU_area': 1.0386, 'okrug': 'Южный административный округ'}  # the OLD (pre-#1107) values
+    data = pc.geojson_document(props, image_b64='', coordinates=[0.0, 0.0], glasses=[], ground=False)
+    feat = json.loads(data.decode('utf-8'))['features'][0]['properties']
+    assert feat['ZU_area'] == 1.0386                            # NOT 10386.0: no ha→m² conversion
+    assert feat['okrug'] == 'Южный административный округ'      # NOT «ЮАО»: no abbreviation
+
+
+def test_geojson_document_rejects_nonfinite_zu_area():
+    """Fail-closed: NaN/inf ZU_area must raise, never serialize to a null/Infinity JSON value."""
+    import json
+    pc = _load(PKG / 'package_core.py', 'agr_tools_package_core_d220d')
+    for bad in (float('nan'), float('inf'), float('-inf')):
+        props = {'ZU_area': bad}
+        try:
+            pc.geojson_document(props, image_b64='', coordinates=[0.0, 0.0], glasses=[], ground=False)
+        except (ValueError, TypeError):
+            pass
+        else:
+            raise AssertionError('non-finite ZU_area must raise (allow_nan=False), got a document')
