@@ -1,4 +1,7 @@
-"""Live 3ds Max / Blender safety pitfalls are in the repo skills, each dated (#1032)."""
+"""Live 3ds Max / Blender safety pitfalls are in the repo skills, each dated (#1032).
+
+new-case: doc-content regression test for DCC skill pitfalls.
+"""
 import re
 from pathlib import Path
 
