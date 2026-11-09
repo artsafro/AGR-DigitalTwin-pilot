@@ -29,12 +29,6 @@ def _dcc_module():
     return module
 
 
-def _pyproject_addopts():
-    with open(PYPROJECT, "rb") as fh:
-        data = tomllib.load(fh)
-    return data["tool"]["pytest"]["ini_options"]["addopts"]
-
-
 def test_addopts_with_m_returns_expression():
     assert _markexpr.markexpr_from_addopts("-m 'not blender and not job'") == "not blender and not job"
 
@@ -44,16 +38,48 @@ def test_addopts_without_m_returns_empty():
     assert _markexpr.markexpr_from_addopts("") == ""
 
 
+def test_glued_m_forms_return_expression():
+    assert _markexpr.markexpr_from_addopts("-mnot job") == "not job"
+    assert _markexpr.markexpr_from_addopts("-m=not job") == "not job"
+
+
+def test_last_m_wins():
+    assert _markexpr.markexpr_from_addopts("-m a -m b") == "b"
+
+
 def test_trailing_m_raises_value_error():
     with pytest.raises(ValueError):
         _markexpr.markexpr_from_addopts("-q -m")
+    with pytest.raises(ValueError):
+        _markexpr.markexpr_from_addopts("-m")
 
 
-def test_helper_equals_pyproject_addopts():
-    assert _markexpr.markexpr_from_pyproject(PYPROJECT) == _markexpr.markexpr_from_addopts(_pyproject_addopts())
+def test_pyproject_list_addopts(tmp_path):
+    pyproject = tmp_path / "pyproject.toml"
+    pyproject.write_text(
+        '[tool.pytest.ini_options]\naddopts = ["-q", "-m", "not job"]\n',
+        encoding="utf-8",
+    )
+    assert _markexpr.markexpr_from_pyproject(pyproject) == "not job"
 
 
-def test_pyproject_markexpr_contains_not_job():
+def test_pyproject_non_str_non_list_addopts_raises(tmp_path):
+    pyproject = tmp_path / "pyproject.toml"
+    pyproject.write_text('[tool.pytest.ini_options]\naddopts = 5\n', encoding="utf-8")
+    with pytest.raises(ValueError):
+        _markexpr.markexpr_from_pyproject(pyproject)
+
+
+def test_pyproject_real_addopts_contains_not_job():
+    """Parse the real pyproject.toml and check the expr carries 'not job'.
+
+    Replaces the near-tautological helper-vs-helper comparison: read the actual
+    ``[tool.pytest.ini_options].addopts`` with tomllib and assert the helper's
+    returned expression contains ``not job``.
+    """
+    with open(PYPROJECT, "rb") as fh:
+        addopts = tomllib.load(fh)["tool"]["pytest"]["ini_options"]["addopts"]
+    assert "not job" in str(addopts)
     assert "not job" in _markexpr.markexpr_from_pyproject(PYPROJECT)
 
 
