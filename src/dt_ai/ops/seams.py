@@ -240,9 +240,11 @@ def simplify_part(parts, part, *, line_m=0.002, face_labels=None):
     else:
         labels = tuple(face_labels[part])
     vertex_labels = defaultdict(set)     # a vertex used by faces of two labels is a label border
+    vertex_faces = defaultdict(list)
     for fi, f in enumerate(faces):
         for i in f:
             vertex_labels[i].add(labels[fi])
+            vertex_faces[i].append(fi)
     planes = [_plane(v, f) for f in faces]
     edge_faces = defaultdict(list)
     for fi, f in enumerate(faces):
@@ -297,9 +299,13 @@ def simplify_part(parts, part, *, line_m=0.002, face_labels=None):
         # Each candidate chord is checked against EVERY original boundary point
         # it replaces, preventing a chain of individually small cumulative errors.
         paths = [[i] for i in ring]
-        # A point shared with a differently labelled face of this part stays: removing it
-        # would leave that face's edge as a T-junction inside the part (#1144).
-        pinned = {i for i in ring if len(vertex_labels[i]) > 1}
+        # A point shared with a differently labelled face IN THIS PLANE stays: removing it would leave
+        # that face's edge as a T-junction inside the part (#1144). Out-of-plane neighbours are restored
+        # by the join below, as without labels.
+        pinned = {i for i in ring if len(vertex_labels[i]) > 1 and any(
+            labels[o] != labels[seed] and np.dot(normal, planes[o][0]) >= _COS
+            and np.max(np.abs((v[list(faces[o])] - anchor) @ normal)) <= line_m + 1e-12
+            for o in vertex_faces[i])}
         changed = True
         while changed and len(ring) > 3:
             changed = False
