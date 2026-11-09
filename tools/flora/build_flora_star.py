@@ -192,7 +192,8 @@ def sha(path):
 
 
 def _blender(script_args):
-    cmd = [BLENDER, "--background", "--factory-startup", "--python", str(Path(__file__).resolve()), "--"] + script_args
+    cmd = [BLENDER, "--background", "--factory-startup", "--python-exit-code", "1",
+           "--python", str(Path(__file__).resolve()), "--"] + script_args
     run = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=900)
     if run.returncode != 0:
         raise StarError(f"Blender failed ({run.returncode}): {run.stderr[-2000:] or run.stdout[-2000:]}")
