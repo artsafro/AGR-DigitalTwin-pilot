@@ -6,10 +6,11 @@
 
 Pattern: new-case: generated MAF export - tools/library/maf_gen_bench.py builds one welded quad mesh per row
 (plan centreline from verona-plan-shapes.json + section parameters from the config); this script only writes it:
-`form` picks the builder (slab_on_posts | clad_box); atlas materials (approved list, 512 slots), box UV inside each slot
-(or the generator's board-pattern `face_uv` when `params.seams` = texture), triangulation (MAF-18), hard edges by
+`form` must be `clad_box` (the only form left after #819); atlas materials (approved list, 512 slots), the
+generator's board-pattern `face_uv` on the timber faces, box UV inside each slot elsewhere, triangulation (MAF-18), hard edges by
 angle, NPM + VPM FBX (same mesh: no light version unless the budget needs it [D164]) and a build report.
-Refuses to overwrite an FBX (exit 2) and refuses a material outside the atlas (exit 3).
+Refuses to overwrite an FBX (exit 2), a material outside the atlas (exit 3) and any `form` other than `clad_box`
+(exit 4, nothing written).
 """
 import hashlib
 import importlib.util
@@ -40,6 +41,9 @@ atlas = json.loads(Path(args[2]).read_text(encoding="utf-8"))
 atlas_png = Path(args[3])
 out_dir = Path(args[4])
 only = set(args[5:])
+if cfg.get("form") != "clad_box":
+    print(f"form {cfg.get('form')!r} is not supported: only 'clad_box' (#819)", file=sys.stderr)
+    sys.exit(4)
 rects = {name: m["uv"] for name, m in atlas["materials"].items()}
 order = list(rects)
 
@@ -123,13 +127,12 @@ for row in rows:
         if f.exists():
             print("refusing to overwrite", f, file=sys.stderr)
             sys.exit(2)
-report = {"blender": bpy.app.version_string, "config": cfg.get("version"), "form": cfg.get("form", "slab_on_posts"), "smoothing_deg": cfg["smoothing_deg"],
+report = {"blender": bpy.app.version_string, "config": cfg.get("version"), "form": cfg["form"], "smoothing_deg": cfg["smoothing_deg"],
           "atlas_png_sha256": sha256(atlas_png),
           "atlas_uv_json": str(Path(args[2])).replace("\\", "/"), "rows": []}
 for row in rows:
     spec, shape = row_spec(row)
-    builder = {"slab_on_posts": gen.build_bench, "clad_box": gen.build_clad_box}[cfg.get("form", "slab_on_posts")]
-    mesh_data = builder(spec)
+    mesh_data = gen.build_clad_box(spec)
     facts = gen.mesh_facts(mesh_data)
     entry = {"row": row["row"], "set_id": row["set_id"], "block": shape["block"], "plan_rotation_deg":
              mesh_data["plan_rotation_deg"], "generator_facts": facts}
