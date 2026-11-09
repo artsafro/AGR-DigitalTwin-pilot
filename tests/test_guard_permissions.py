@@ -48,6 +48,92 @@ def test_readonly_github_queries_are_allowed(command, protocol):
     assert guard(command, protocol) == "allow"
 
 
+# #1027: false positives seen in the 2026-11-04/05 sessions (retro problem 4) must not ask.
+@pytest.mark.parametrize("protocol", ["claude", "antigravity"])
+@pytest.mark.parametrize("command", [
+    "gh pr view 1013 --repo artsafro/AGR-DigitalTwin",
+    "gh pr view 1013 --repo=artsafro/AGR-DigitalTwin",
+    "gh pr list -R artsafro/AGR-DigitalTwin --state open",
+    "gh pr create --head harness/repo-hygiene-code-layout --base main --title x --body-file b.md",
+    "gh pr create --repo artsafro/AGR-DigitalTwin-pilot --base main --head improve/repo --title t",
+    "gh issue list --search repo",
+    "git branch -d feature/x",
+    "git branch -d repo-hygiene",
+    "git branch --delete feature/x",
+])
+def test_guard_false_positives_1027_are_allowed(command, protocol):
+    assert guard(command, protocol) == "allow"
+
+
+# #1027: true positives keep asking. `gh --repo o/n repo view` asks: `repo` is the
+# subcommand there, and every `gh repo <subcommand>` asks (like `gh repo view` above).
+@pytest.mark.parametrize("protocol", ["claude", "antigravity"])
+@pytest.mark.parametrize("command", [
+    "gh repo delete x",
+    "gh repo edit --visibility public",
+    "gh --repo o/n repo view",
+    "gh -R o/n repo view",
+    "gh --repo=o/n repo view",
+    "gh repo",
+    "gh.exe repo clone o/n",
+    "\"C:/Program Files/GitHub CLI/gh.exe\" repo view",
+    "git status && gh repo delete x --yes",
+    "git branch -D x",
+    "git branch --delete --force x",
+    "git branch -d -f x",
+    "git -C C:/repo branch -D x",
+    "GIT branch -D x",
+])
+def test_guard_true_positives_1027_still_ask(command, protocol):
+    assert guard(command, protocol) == "ask"
+
+
+def _load_guard():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("agr_guard_1027", GUARD)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_guard_repo_and_branch_rules_generated_probe_1027():
+    """Probe: `repo` inside a flag value / branch name never asks; `gh [opts] repo <sub>` always asks;
+    `git branch -d` never asks for the force rule, `-D` always does."""
+    shell_reason = _load_guard().shell_reason
+    names = ["repo", "repo-hygiene", "harness/repo-hygiene-code-layout", "a/repo", "my.repo", "repo_x",
+             "REPO", "x-repo-y", "o/repo"]
+    owners = ["artsafro/AGR-DigitalTwin", "o/repo", "repo/repo"]
+    allowed, asked = [], []
+    for name in names:
+        for owner in owners:
+            for sub in ("pr view 1", "pr create --title t", "pr list", "issue list", "run list"):
+                for flag in (f"--repo {owner}", f"--repo={owner}", f"-R {owner}"):
+                    allowed.append(f"gh {sub} {flag} --head {name}")
+                    allowed.append(f"gh {sub} --head {name} {flag}")
+            allowed.append(f"git branch -d {name}")
+            allowed.append(f"git branch --delete {name}")
+    for owner in owners:
+        for sub in ("view", "delete x", "edit --visibility public", "clone o/n", "create n", "rename n",
+                    "archive", "fork", "list", "sync"):
+            for prefix in ("gh", "gh.exe", f"gh --repo {owner}", f"gh -R {owner}", f"gh --repo={owner}"):
+                asked.append(f"{prefix} repo {sub}")
+    for name in names:
+        asked.append(f"git branch -D {name}")
+        asked.append(f"git branch --delete --force {name}")
+        asked.append(f"git branch -d -f {name}")
+    wrong_allow = [c for c in allowed if shell_reason(c) is not None]
+    wrong_ask = [c for c in asked if shell_reason(c) is None]
+    assert len(allowed) > 400 and len(asked) > 150
+    assert wrong_allow == [] and wrong_ask == []
+
+
+def test_guard_shell_reason_fail_closed_inputs_1027():
+    shell_reason = _load_guard().shell_reason
+    assert shell_reason("") is None
+    assert shell_reason("gh repo delete x").startswith("gh")
+    assert shell_reason("git branch -D x") == "force branch delete"
+
+
 def test_dcc_risks_and_skills_reference_single_register():
     capabilities = (ROOT / "docs/agents/CAPABILITIES.md").read_text(encoding="utf-8")
     assert "### DCC tool risk classes" in capabilities
