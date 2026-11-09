@@ -175,3 +175,36 @@ def test_release_of_our_lock_deletes_it_and_takes_the_sentinel(monkeypatch):
     locks._release(path, "O")
     assert not path.exists()
     assert ops and ops[0] & locks._LOCK_EX, ops
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows handle-delete path only (#1117)")
+def test_windows_release_deletes_by_handle_not_name(monkeypatch):
+    """#1117: O releasing by name after X handle-deletes O's stale inode drops H's fresh lock.
+
+    X's Windows reclaim (`_drop_stale_inode_win` -> `_consume_handle`) deletes through a handle with
+    POSIX semantics (frees the name) and never takes the `.<lock>.reclaim` sentinel, so the by-name
+    `os.remove` at the tail of `_unlink_named_if` is not excluded: O's release deletes H's fresh lock
+    and a third caller K acquires (`holders == ['H', 'K']` on the #1116 head). Deleting through a
+    handle on the inode whose own bytes still carry O's token leaves H's file alone (`holders == ['H']`).
+    """
+    path = _lock_file()
+    now = time.time()
+    path.write_text(json.dumps({"card": "o", "pid": os.getpid(), "until": now - 1, "token": "O"}),
+                    encoding="utf-8")
+    holders: list[str] = []
+    fired = {"value": False}
+    real_consume = locks._consume_handle
+
+    def consume_handle(target, pred):
+        if target == path and not fired["value"]:
+            fired["value"] = True
+            assert locks._reclaim(path, "X")  # X handle-deletes O's stale inode (frees the name)
+            _o_excl(path, "H", holders, now)  # H O_EXCLs a fresh lock
+        return real_consume(target, pred)
+
+    monkeypatch.setattr(locks, "_consume_handle", consume_handle)
+    locks._release(path, "O")
+    _o_excl(path, "K", holders, now)
+    assert fired["value"], "O's release never reached the handle delete"
+    assert holders == ["H"]
+    assert json.loads(path.read_text(encoding="utf-8"))["token"] == "H"

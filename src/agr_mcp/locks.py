@@ -29,8 +29,10 @@ Windows has no fcntl (the fallback is msvcrt.locking, and tests monkeypatch `_fl
 a stale file through the handle that read those bytes. A live holder's file is not deleted. The owner
 unlinks the mutex only while that same inode still carries its token. O_EXCL create of the lock then
 picks the single holder. Reclaim leaves no `*.reclaim-*` or `*.take-*` aside file.
-Release (#1043): the owner deletes its lock under the same sentinel (bounded wait) and through the
-same byte + inode re-check, so a reclaimer never unlinks by name a fresh lock O_EXCL'd after release.
+Release (#1043, #1117): the owner deletes its lock under the same sentinel (bounded wait) and through
+the same byte + inode re-check, so a reclaimer never unlinks by name a fresh lock O_EXCL'd after
+release. On Windows the reclaimer deletes through a handle and skips the sentinel, so the owner also
+deletes through a handle on the inode whose own bytes still carry its token.
 """
 from __future__ import annotations
 
@@ -553,6 +555,11 @@ def _release(path: Path, token: str) -> None:
     #1043: the delete runs under the same `.<lock>.reclaim` sentinel as a POSIX reclaimer and
     through the same byte + inode re-check (`_unlink_named_if`). Otherwise a reclaimer that had
     checked our stale inode could unlink, by name, a fresh lock O_EXCL'd after our release.
+    #1117: on Windows the reclaimer (`_consume_handle`) deletes through a handle and never takes
+    that sentinel, so the by-name `os.remove` at the tail of `_unlink_named_if` is not excluded by
+    it and can drop a fresh holder's lock. Windows deletes through a handle on the inode whose own
+    bytes still carry our token (`_consume_handle`), so a reclaimer that freed the name and a new
+    holder that O_EXCL'd a fresh lock cannot lose its file.
     The sentinel wait is bounded; on timeout the lock stays (it expires at `until`) and is reported.
     """
     with _reclaim_exclusion(path, wait_s=_RELEASE_WAIT_S) as held:
@@ -560,8 +567,12 @@ def _release(path: Path, token: str) -> None:
             last = f"reclaim sentinel busy for {_RELEASE_WAIT_S} s"
         else:
             last = "failed"
+            pred = lambda raw, token=token: _lock_token_ours(raw, token)
             for attempt in range(_RELEASE_ATTEMPTS):
-                outcome = _unlink_named_if(path, lambda raw, token=token: _lock_token_ours(raw, token))
+                if os.name == "nt":
+                    outcome = _consume_handle(path, pred)
+                else:
+                    outcome = _unlink_named_if(path, pred)
                 if outcome in ("gone", "foreign"):
                     return
                 if attempt + 1 < _RELEASE_ATTEMPTS:
