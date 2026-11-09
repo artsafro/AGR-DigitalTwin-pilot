@@ -1,7 +1,7 @@
 """new-case: GeoJSON per D220 (#1107) — the customer's ELV file is the reference for the «округ» field format
 (the standard Moscow administrative-okrug abbreviation «ЮАО», not the full name) and the anchor point (MSK-77,
-3 decimals). `ZU_area` units are an open source conflict (reg p.53 = ha vs the customer's ELV file = m² vs the
-PSU275 file = ha), recorded in docs/domain/conflicts.md; the ELV job keeps 1.0386 ha until Artem decides.
+3 decimals). `ZU_area` is written in hectares per [D223] (Artem 2026-11-09; reg p.53 = ha, PSU275 file = ha; the
+customer's ELV file = m² is an outlier), conflict #48 in docs/domain/conflicts.md is resolved; the ELV job keeps 1.0386 ha.
 
 Customer ELV file (read-only, not committed):
   `C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\3_sreda\\customer_2026-11-05\\SM_Elevatornaya_Vl_1_A_001.geojson`
@@ -56,6 +56,22 @@ def test_zu_area_conflict_recorded_with_three_sources():
     assert 'га' in text                                                              # the reg unit is named
 
 
+def test_zu_area_hectares_decision_recorded_and_cited():
+    """Artem 2026-11-09 chose ha (reg p.53): D223 is in decisions.md, conflict #48 is resolved, the docs cite it."""
+    decisions = (ROOT / 'docs/decisions.md').read_text(encoding='utf-8')
+    rows = [line for line in decisions.splitlines() if line.startswith('| D223 |')]
+    assert len(rows) == 1 and 'ZU_area' in rows[0] and 'hectares' in rows[0] and '#48' in rows[0]
+    conflict = next(line for line in (ROOT / 'docs/domain/conflicts.md').read_text(encoding='utf-8').splitlines()
+                    if line.startswith('48. '))
+    assert '[D223]' in conflict and 'No side chosen' not in conflict
+    assert 'ZU_area (ha, <=4 decimals; [D223])' in (ROOT / 'docs/domain/npm-vpm.md').read_text(encoding='utf-8')
+    for rel in ('jobs/elv-tc-vpm/scripts/package_vpm_v006.py', 'adapters/max/agr_tools/package_core.py',
+                'docs/research/geojson-d220-customer-files.md'):
+        text = (ROOT / rel).read_text(encoding='utf-8')
+        assert 'until Artem decides' not in text, rel
+        assert 'open source conflict' not in text, rel
+
+
 def test_v006_uses_okrug_abbreviation():
     """The okrug fix lands in the NEW package_vpm_v006.py, not the delivered v005."""
     v006 = V006.read_text(encoding='utf-8')
@@ -64,7 +80,7 @@ def test_v006_uses_okrug_abbreviation():
 
 
 def test_v006_keeps_zu_area_in_hectares():
-    """ZU_area stays 1.0386 ha (reg) until Artem decides; the customer's m² value is not applied."""
+    """ZU_area stays 1.0386 ha per [D223]; the customer's m² value is not applied."""
     v006 = V006.read_text(encoding='utf-8')
     assert '"ZU_area": 1.0386' in v006
     assert '"ZU_area": 10386' not in v006
