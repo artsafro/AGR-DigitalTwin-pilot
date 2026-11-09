@@ -55,3 +55,59 @@ Report exact calls, results, evidence paths and unverified gates separately.
   pinned process window before capturing.
 - Max 2026 starts with a `polyunwrapper_autoload.mse` .NET error dialog: acknowledge
   it once, do not edit the plugin or startup scripts.
+
+## Live-instance pitfalls (user's open Max)
+
+Sources: retro `docs/retros/2026-11-05-sessions-retro-04-05.md` (problem 3); sessions
+«VPM текстура кондиционеров 4К», «Ворота Object 001 переделка размеров», «Kasatkino
+ground mesh preparation». Never put the user's scene at risk to finish faster.
+
+- No `resetMaxFile` / `loadMaxFile` over MCP on the user's instance: it crashed Max;
+  `max undo` over MCP did not revert a scripted edit. Ask the user to reopen the file
+  (2026-11-05, «VPM текстура кондиционеров 4К», K3 «макс упал»).
+- No `freeSceneBitmaps()`: it unloads every scene bitmap (25), the whole building went
+  black. Reload only the agent's own maps, by their nodes/paths (2026-11-05, «VPM
+  текстура кондиционеров 4К», K5).
+- No long per-vertex/per-face loops on large meshes (4.3 M faces) on the main thread:
+  a `polyop.getFacesUsingVert` loop hung Max until it died. Use bulk APIs
+  (`polyop.getVerts`, one element query), estimate cost first, or run a separate
+  batch process (2026-11-05, «VPM текстура кондиционеров 4К», K1).
+- Never put work only into the user's unsaved live scene: versions imported as layers
+  were lost when Max closed. Write each result to a new versioned file (2026-11-05,
+  «Kasatkino ground mesh preparation», incident 11).
+- `saveMaxFile <copy> useNewFile:false` clears the dirty flag (`getSaveRequired`) of the
+  open scene: the user's scene on disk may be older than it looks. Record the dirty
+  state before the save and tell the user (2026-11-05, «Ворота Object 001 переделка
+  размеров», 3.12).
+- `meshop.attach` reset material IDs of the attached and the receiving mesh (whole
+  Ground set to ID 1). Read IDs back after every attach and restore them (2026-11-05,
+  «Ворота Object 001 переделка размеров», 3.11).
+- `polyop.attach` merges the two multi-subs and condenses IDs: set IDs after attach;
+  attached faces are the tail of the face list (2026-11-07, K5 NPM).
+- `polyop.detachFaces ... delete:true` renumbers faces: never reuse a face bitarray
+  computed before it; re-query (e.g. by mat ID) (2026-11-05, «VPM текстура
+  кондиционеров 4К», K3).
+- Max launched by the agent with `Start-Process` closed within a minute. Give the
+  user the full absolute path to open instead (2026-11-05, «Ворота Object 001
+  переделка размеров», 3.7).
+
+Mesh edits through MAXScript (Max 2024; mirrored from the user memory
+`max-mesh-edit-pitfalls.md` so every agent sees them):
+
+- `format "%" p.x` prints ~6 significant digits (~5 cm lost at 16 km): export with
+  `formattedPrint v format:".7f"` and work in object space (2026-11-05, «Ворота Object
+  001 переделка размеров»).
+- With modifiers on the stack `o.mesh` is a temp copy of the evaluated result and edits
+  do nothing: check `o.modifiers.count` before every edit (2026-11-05, «Ворота Object
+  001 переделка размеров»).
+- Topology edits of `o.baseobject.mesh` under a modifier stack: Max closed during such
+  an edit, crash cause unverified (the user said he closed it himself). Edit a
+  modifier-free copy or ask before collapsing (2026-11-05, «Ворота Object 001 переделка
+  размеров»).
+- New faces need explicit `setEdgeVis` (quad diagonals hidden, outer edges visible),
+  or Convert to Editable Poly drops the part (2026-11-05, «Ворота Object 001 переделка
+  размеров»).
+- `mesh vertices:... faces:...` creates `Object00N`; delete temp nodes by handle,
+  never `delete $Mesh*` (2026-11-05, «Ворота Object 001 переделка размеров»).
+- `on`/`off` are reserved (`off = ...` fails); put multi-statement scripts in a `.ms`
+  file run by `fileIn` with a dry-run flag first (2026-11-07, K5 railing posts).
