@@ -64,5 +64,7 @@ holds. GND-06: S_ter 25,854.04 - S_pz 9,110.08 = 16,743.96 m² (> 1.5 ha) -> 4,5
 
 Option A; build without OKS (V001 stays a recorded fail, `not passed`); urns 15E288/15E289 stay out on Ground v015
 (`ground-exceptions-v015.json`, bound to the v015 textured masters `965463e7…` / `92d31d7f…`); address token
-`Vatutino`, territorial code still pending (placeholder, V012 a recorded fail). «Верона» row 1 is placed under this
+`Vatutino`. Territorial code (Artem 2026-11-09 19:01): SINTEZ issues it when he uploads the archive (like the FNO,
+[D220]); the NPM ZIP is built as `0000_Vatutino.zip`, V012 is `pending SINTEZ code` (not a defect), and the rename
+is one command: `uv run python jobs/VATUTINO-SITE/npm_code.py <0000_Vatutino.zip> <code4> <out_dir>`. «Верона» row 1 is placed under this
 decision (D202 approved rows 2-10 for the library; the site build places rows 1-10 as option A says).
