@@ -94,6 +94,64 @@ def test_copied_sha256_covers_exact_files():
     assert len(match.COPIED_SHA256) == 11
 
 
+def test_pos9_variants_described_per_variant_with_measured_colour():
+    by = {r["pos"]: r for r in match.records()}
+    v = by[9]["a101_variants"]
+    assert [(x["file"], x["label"]) for x in v] == [
+        ("puzyreplodnik_kalinolistnyj_t1_h150_high.png", "yellow"),
+        ("puzyreplodnik_kalinolistnyj_t2_h150_high.png", "dark red"),
+        ("puzyreplodnik_kalinolistnyj_t3_h150_high.png", "yellow-green"),
+    ]
+    for x in v:
+        assert x["mean_rgb"] == match.COLOURS[x["file"]]["mean_rgb"]
+        assert x["label"] == match.COLOURS[x["file"]]["label"]
+    # t2 is the exact-species red candidate for 'Lady in Red' (replaces the 'Diabolo' proxy)
+    assert "'Lady in Red'" in by[9]["reason"]
+    assert "red" in by[9]["reason"].lower()
+    # generic puzyreplodnik_t1 is listed as a candidate
+    assert "puzyreplodnik_t1_h150_high.png" in by[9]["a101_candidates"]
+    assert "puzyreplodnik_t1_h150_low.png" in by[9]["a101_candidates"]
+
+
+def test_colour_labels_match_recorded_measurement_and_sha256():
+    # the colour label of every pos-9 variant is a recorded table bound to the copied file's sha256
+    for fname, c in match.COLOURS.items():
+        assert fname in match.COPIED_SHA256, f"{fname} colour is not bound to a copied sha256"
+        assert c["label"] == match.label_from_rgb(c["mean_rgb"], c["red_gt_green"]), fname
+    g = match.GENERIC_PUZYREPLODNIK_COLOUR
+    assert g["label"] == match.label_from_rgb(g["mean_rgb"], g["red_gt_green"])
+
+
+def _measure_opaque_rgb(path):
+    from PIL import Image
+    import warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")  # getdata() deprecation (removed in Pillow 14)
+        im = Image.open(path).convert("RGBA")
+        data = list(im.getdata())
+    rs = gs = bs = n = rgt = 0
+    for r, g, b, a in data:
+        if a >= 128:
+            rs += r; gs += g; bs += b; n += 1
+            if r > g:
+                rgt += 1
+    return [round(rs / n), round(gs / n), round(bs / n)], round(rgt / n, 2)
+
+
+def test_colour_measurement_reproduces_from_copied_pngs():
+    import hashlib
+    copies = Path("G:/Мой диск/AGR-evidence/1146-flora-star/a101-matched/")
+    if not copies.exists():
+        pytest.skip("A101 copy dir not mounted")
+    for fname, c in match.COLOURS.items():
+        p = copies / fname
+        assert p.exists(), fname
+        assert hashlib.sha256(p.read_bytes()).hexdigest() == match.COPIED_SHA256[fname], fname
+        rgb, rgt = _measure_opaque_rgb(p)
+        assert rgb == [int(x) for x in c["mean_rgb"]], f"{fname}: {rgb} != {c['mean_rgb']}"
+        assert abs(rgt - c["red_gt_green"]) <= 0.01, f"{fname}: {rgt} != {c['red_gt_green']}"
+
+
 def test_validate_rejects_missing_hash(monkeypatch):
     bad = dict(match.COPIED_SHA256)
     del bad["el_nidiformis_t1_h60_high.png"]

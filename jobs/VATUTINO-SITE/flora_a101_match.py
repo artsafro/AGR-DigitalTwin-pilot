@@ -126,6 +126,46 @@ COPIED_SHA256 = {
 }
 
 
+def label_from_rgb(mean_rgb, red_gt_green):
+    """Deterministic colour label from a mean-RGB measurement (opaque pixels, alpha >= 128).
+
+    Matches the reviewer's classification of the pos-9 A101 variants: t1 yellow (139/123/6),
+    t2 dark red (97/67/65), t3 yellow-green (170/180/68); generic puzyreplodnik_t1 green (109/126/47).
+    """
+    r, g, b = int(mean_rgb[0]), int(mean_rgb[1]), int(mean_rgb[2])
+    if r > g and red_gt_green >= 0.9:
+        return "dark red" if r < 130 else "red"
+    if r > g and b < 40:
+        return "yellow"
+    if g >= r and r > 130:
+        return "yellow-green"
+    return "green"
+
+
+# Measured colour of the pos-9 exact-species A101 variants (mean RGB of opaque pixels, alpha >= 128;
+# computed with PIL 12.3.0 from the copied PNGs bound to COPIED_SHA256 above, 2026-11-09). The label is
+# derived by label_from_rgb() and asserted equal to the pixel measurement in the tests. Bound to sha256:
+# COLOURS keys are a subset of COPIED_SHA256, so a stale copy or a re-labelled file fails the colour test.
+COLOURS = {
+    "puzyreplodnik_kalinolistnyj_t1_h150_high.png": {"mean_rgb": [139, 123, 6], "red_gt_green": 0.82, "label": "yellow"},
+    "puzyreplodnik_kalinolistnyj_t2_h150_high.png": {"mean_rgb": [97, 67, 65], "red_gt_green": 1.00, "label": "dark red"},
+    "puzyreplodnik_kalinolistnyj_t3_h150_high.png": {"mean_rgb": [170, 180, 68], "red_gt_green": 0.30, "label": "yellow-green"},
+}
+
+# Measured colour of the generic puzyreplodnik_t1 candidate (not copied; name-only candidate, same as the
+# other generic-genus candidates). Recorded here so the note can state its colour factually.
+GENERIC_PUZYREPLODNIK_COLOUR = {"mean_rgb": [109, 126, 47], "red_gt_green": 0.19, "label": "green"}
+
+
+def _variants(m):
+    out = []
+    for v in m.get("variants", []):
+        c = COLOURS.get(v["file"])
+        out.append({"file": v["file"], "mean_rgb": c["mean_rgb"] if c else None,
+                    "red_gt_green": c["red_gt_green"] if c else None, "label": v["label"]})
+    return out
+
+
 # pos -> A101 resolution. "match" in {"exact", "exact-species", "no-match"}.
 # exact / exact-species carry "files" (diffuse-only PNGs; opacity is cut out later in step 2) and "previews".
 # no-match carries "reason" and optional "candidates" (closest A101 names, for Artem).
@@ -139,10 +179,21 @@ MATCHES = {
     7:  {"match": "no-match", "reason": "generic genus Crataegus (боярышник) only, no species",
          "candidates": ["boyarishnik_t1_h150_high.png"]},
     8:  {"match": "no-match", "reason": "no Elaeagnus (лох) in A101", "candidates": []},
-    9:  {"match": "exact-species", "reason": "exact species Physocarpus opulifolius (пузыреплодник калинолистный), but the plain green form — NOT 'Lady in Red' (red); the red 'Diabolo' proxy is visually closer",
+    9:  {"match": "exact-species",
+         "reason": ("exact species Physocarpus opulifolius (пузыреплодник калинолистный), three colour variants "
+                    "(mean RGB, opaque pixels alpha ≥ 128): t1 yellow (139/123/6), t2 dark red (97/67/65), "
+                    "t3 yellow-green (170/180/68). t2 is the red-leaved form — an exact-species red candidate for "
+                    "'Lady in Red' (replaces the 'Diabolo' proxy). Generic puzyreplodnik_t1 (green 109/126/47) "
+                    "is also listed as a candidate."),
          "files": ["puzyreplodnik_kalinolistnyj_t1_h150_high.png", "puzyreplodnik_kalinolistnyj_t1_h150_low.png",
                    "puzyreplodnik_kalinolistnyj_t2_h150_high.png", "puzyreplodnik_kalinolistnyj_t2_h150_low.png",
                    "puzyreplodnik_kalinolistnyj_t3_h150_high.png", "puzyreplodnik_kalinolistnyj_t3_h150_low.png"],
+         "variants": [
+             {"file": "puzyreplodnik_kalinolistnyj_t1_h150_high.png", "label": "yellow"},
+             {"file": "puzyreplodnik_kalinolistnyj_t2_h150_high.png", "label": "dark red"},
+             {"file": "puzyreplodnik_kalinolistnyj_t3_h150_high.png", "label": "yellow-green"},
+         ],
+         "candidates": ["puzyreplodnik_t1_h150_high.png", "puzyreplodnik_t1_h150_low.png"],
          "previews": ["puzyreplodnik_kalinolistnyj_t1_h150_PREVIEW.png", "puzyreplodnik_kalinolistnyj_t3_h150_PREVIEW.png"]},
     10: {"match": "no-match", "reason": "generic genus Cornus (дёрен) only, no species",
          "candidates": ["deren_t1_h120_high.png", "deren_t2_h150_high.png", "deren_t3_h100_high.png",
@@ -185,6 +236,27 @@ def validate():
         for c in m.get("candidates", []):
             if c not in A101_TEXTURES:
                 raise ValueError(f"pos {pos}: unknown candidate {c!r}")
+        for v in m.get("variants", []):
+            if v["file"] not in A101_TEXTURES:
+                raise ValueError(f"pos {pos}: unknown A101 variant {v['file']!r}")
+            if v["file"] not in COLOURS:
+                raise ValueError(f"pos {pos}: variant {v['file']!r} has no colour measurement")
+            if v["file"] not in COPIED_SHA256:
+                raise ValueError(f"pos {pos}: variant {v['file']!r} is not in COPIED_SHA256")
+            if v["label"] != COLOURS[v["file"]]["label"]:
+                raise ValueError(f"pos {pos}: variant {v['file']!r} label {v['label']!r} != measured "
+                                 f"{COLOURS[v['file']]['label']!r}")
+    # colour table self-consistency: each measured label is derived from the recorded mean RGB, and every
+    # measured colour is bound to a copied (sha256-listed) file
+    for fname, c in COLOURS.items():
+        if fname not in COPIED_SHA256:
+            raise ValueError(f"COLOURS {fname!r} is not in COPIED_SHA256 (colour not bound to a copy)")
+        want = label_from_rgb(c["mean_rgb"], c["red_gt_green"])
+        if c["label"] != want:
+            raise ValueError(f"COLOURS {fname!r} label {c['label']!r} != label_from_rgb {want!r}")
+    if GENERIC_PUZYREPLODNIK_COLOUR["label"] != label_from_rgb(GENERIC_PUZYREPLODNIK_COLOUR["mean_rgb"],
+                                                                GENERIC_PUZYREPLODNIK_COLOUR["red_gt_green"]):
+        raise ValueError("GENERIC_PUZYREPLODNIK_COLOUR label does not match its mean RGB")
     # every exact/exact-species file + preview is copied and hashed; the hash list covers exactly those files
     exact_files = sorted({f for m in MATCHES.values() if m["match"] in ("exact", "exact-species")
                           for f in m.get("files", []) + m.get("previews", [])})
@@ -202,14 +274,14 @@ def records():
         out.append({"pos": pos, "russian": ru, "exact_latin": exact, "status": status,
                     "a101_match": m["match"], "reason": m["reason"],
                     "a101_files": m.get("files", []), "a101_previews": m.get("previews", []),
-                    "a101_candidates": m.get("candidates", [])})
+                    "a101_candidates": m.get("candidates", []), "a101_variants": _variants(m)})
     if "Ива" in MATCHES:
         pos, ru, sched, exact, kind, lo, hi, n, key, status, mid = by_pos["Ива"]
         m = MATCHES["Ива"]
         out.append({"pos": "Ива", "russian": ru, "exact_latin": exact, "status": status,
                     "a101_match": m["match"], "reason": m["reason"],
                     "a101_files": m.get("files", []), "a101_previews": m.get("previews", []),
-                    "a101_candidates": m.get("candidates", [])})
+                    "a101_candidates": m.get("candidates", []), "a101_variants": _variants(m)})
     return out
 
 

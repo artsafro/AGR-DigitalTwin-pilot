@@ -16,6 +16,10 @@ Job-local preferences and lessons (not D-rows).
   in transliterated Russian (e.g. `el_nidiformis` = Picea abies 'Nidiformis', `puzyreplodnik_kalinolistnyj` =
   Physocarpus opulifolius). Match by Latin genus/species, exact species only; a generic genus file (яблоня/дёрен/
   боярышник) is not an exact match. Copy read-only + sha256, never edit the Drive originals. (#1146)
+- A species match is not enough: measure the map's colour before labelling it. `puzyreplodnik_kalinolistnyj`
+  `t1/t2/t3` are three colour forms of the exact species (t1 yellow 139/123/6, t2 dark red 97/67/65, t3 yellow-green
+  170/180/68), not "the plain green form" — t2 is the red-leaved form for 'Lady in Red'. Record the mean RGB of opaque
+  pixels (alpha ≥ 128) per variant, bound to the copied file's sha256, and assert the label against the measurement. (#1146)
 - Ground v015 VPM is a single UDIM tile 1001 (D209 numbers each mesh from 1001; `ground-build-v006.md` readback
   `tiles [1001]`), so Flora/MAF VPM start at 1002 [D210]. Small bushes cannot hit VPM texel 520–1706 px/m on their
   own 2K map; measure texel in the final atlas, no upscaling (Artem «мерить»). (#1146)

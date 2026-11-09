@@ -27,7 +27,8 @@
       "reason": "no Alnus (ольха) in A101",
       "a101_files": [],
       "a101_previews": [],
-      "a101_candidates": []
+      "a101_candidates": [],
+      "a101_variants": []
     },
     {
       "pos": 4,
@@ -41,7 +42,8 @@
       "a101_candidates": [
         "yablonya_t1_h350_high.png",
         "yablonya_t2_h450_high.png"
-      ]
+      ],
+      "a101_variants": []
     },
     {
       "pos": 5,
@@ -52,7 +54,8 @@
       "reason": "no Larix (лиственница) in A101",
       "a101_files": [],
       "a101_previews": [],
-      "a101_candidates": []
+      "a101_candidates": [],
+      "a101_variants": []
     },
     {
       "pos": 6,
@@ -68,7 +71,8 @@
         "irga_lamarka_t2_h150_high.png",
         "irga_lamarka_t3_h350_high.png",
         "irga_lamarka_t4_h150_high.png"
-      ]
+      ],
+      "a101_variants": []
     },
     {
       "pos": 7,
@@ -81,7 +85,8 @@
       "a101_previews": [],
       "a101_candidates": [
         "boyarishnik_t1_h150_high.png"
-      ]
+      ],
+      "a101_variants": []
     },
     {
       "pos": 8,
@@ -92,7 +97,8 @@
       "reason": "no Elaeagnus (лох) in A101",
       "a101_files": [],
       "a101_previews": [],
-      "a101_candidates": []
+      "a101_candidates": [],
+      "a101_variants": []
     },
     {
       "pos": 9,
@@ -100,7 +106,7 @@
       "exact_latin": "Physocarpus opulifolius 'Lady in Red'",
       "status": "proxy",
       "a101_match": "exact-species",
-      "reason": "exact species Physocarpus opulifolius (пузыреплодник калинолистный), but the plain green form — NOT 'Lady in Red' (red); the red 'Diabolo' proxy is visually closer",
+      "reason": "exact species Physocarpus opulifolius (пузыреплодник калинолистный), three colour variants (mean RGB, opaque pixels alpha ≥ 128): t1 yellow (139/123/6), t2 dark red (97/67/65), t3 yellow-green (170/180/68). t2 is the red-leaved form — an exact-species red candidate for 'Lady in Red' (replaces the 'Diabolo' proxy). Generic puzyreplodnik_t1 (green 109/126/47) is also listed as a candidate.",
       "a101_files": [
         "puzyreplodnik_kalinolistnyj_t1_h150_high.png",
         "puzyreplodnik_kalinolistnyj_t1_h150_low.png",
@@ -113,7 +119,42 @@
         "puzyreplodnik_kalinolistnyj_t1_h150_PREVIEW.png",
         "puzyreplodnik_kalinolistnyj_t3_h150_PREVIEW.png"
       ],
-      "a101_candidates": []
+      "a101_candidates": [
+        "puzyreplodnik_t1_h150_high.png",
+        "puzyreplodnik_t1_h150_low.png"
+      ],
+      "a101_variants": [
+        {
+          "file": "puzyreplodnik_kalinolistnyj_t1_h150_high.png",
+          "mean_rgb": [
+            139,
+            123,
+            6
+          ],
+          "red_gt_green": 0.82,
+          "label": "yellow"
+        },
+        {
+          "file": "puzyreplodnik_kalinolistnyj_t2_h150_high.png",
+          "mean_rgb": [
+            97,
+            67,
+            65
+          ],
+          "red_gt_green": 1.0,
+          "label": "dark red"
+        },
+        {
+          "file": "puzyreplodnik_kalinolistnyj_t3_h150_high.png",
+          "mean_rgb": [
+            170,
+            180,
+            68
+          ],
+          "red_gt_green": 0.3,
+          "label": "yellow-green"
+        }
+      ]
     },
     {
       "pos": 10,
@@ -131,7 +172,8 @@
         "deren_t4_h120_high.png",
         "deren_t5_h100_high.png",
         "deren_t6_h80_high.png"
-      ]
+      ],
+      "a101_variants": []
     },
     {
       "pos": 13,
@@ -142,7 +184,8 @@
       "reason": "no Hippophae (облепиха) in A101",
       "a101_files": [],
       "a101_previews": [],
-      "a101_candidates": []
+      "a101_candidates": [],
+      "a101_variants": []
     },
     {
       "pos": 16,
@@ -158,7 +201,8 @@
       "a101_previews": [
         "el_nidiformis_t1_h60_PREVIEW.png"
       ],
-      "a101_candidates": []
+      "a101_candidates": [],
+      "a101_variants": []
     },
     {
       "pos": "Ива",
@@ -174,7 +218,8 @@
         "iva_bush_t1_h150_high.png",
         "iva_bush_t2_h50_high.png",
         "iva_lomkaya_t1_h450_high.png"
-      ]
+      ],
+      "a101_variants": []
     }
   ],
   "summary": {
