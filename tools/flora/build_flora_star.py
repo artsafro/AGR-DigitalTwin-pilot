@@ -22,6 +22,7 @@ import json
 import math
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 
@@ -32,10 +33,16 @@ SINK = 0.10
 MARGIN = 0.015
 THICKNESS = 0.005
 TEXEL_VPM = (520.0, 1706.0)
+KEY_PATTERN = re.compile(r"^[A-Za-z0-9_.-]+$")
 
 
 class StarError(ValueError):
     pass
+
+
+def valid_key(key):
+    """Return True if `key` is a path-safe species name (no path separators, no '..' escape)."""
+    return isinstance(key, str) and KEY_PATTERN.fullmatch(key) is not None and ".." not in key
 
 
 def plant_bbox(opacity_path):
@@ -215,6 +222,11 @@ def main(argv=None):
     items = spec.get("species") or []
     if not items:
         raise SystemExit("spec has no species")
+    for item in items:
+        if not valid_key(item.get("key")):
+            print(f"invalid species key {item.get('key')!r}: must match ^[A-Za-z0-9_.-]+$ and not contain '..'",
+                  file=sys.stderr)
+            return 2
     keys = [i.get("key") for i in items]
     if len(set(keys)) != len(keys):
         raise SystemExit(f"duplicate species keys: {sorted(k for k in set(keys) if keys.count(k) > 1)}")

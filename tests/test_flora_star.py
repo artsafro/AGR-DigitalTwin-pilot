@@ -188,6 +188,40 @@ def test_cli_fresh_process_rejects_existing_out(tmp_path):
     assert run.returncode != 0 and "refusing" in run.stderr
 
 
+@pytest.mark.parametrize("key,ok", [
+    ("pos03_birch", True), ("a_b-c.d", True), ("tree.01", True),
+    ("../escaped", False), ("a/b", False), ("a\\b", False), ("..", False), ("a..b", False),
+    ("", False), (None, False), (7, False), ("a b", False), ("кириллица", False),
+])
+def test_valid_key(key, ok):
+    assert star.valid_key(key) is ok
+
+
+def _raw_item(df, op, key):
+    return {"key": key, "latin": "Synthetica", "kind": "bush", "height_m": 1.0, "band_m": [0.8, 1.2],
+            "diffuse": str(df), "opacity": str(op), "material_id": 299}
+
+
+@pytest.mark.parametrize("key", ["../escaped", "a/b"])
+def test_cli_rejects_path_escaping_key(tmp_path, key):
+    df, op = _maps(tmp_path, "safe")  # real maps inside tmp, key never used to name a file
+    spec = _spec(tmp_path, [_raw_item(df, op, key)])
+    out = tmp_path / "out"
+    before = sorted(p.name for p in tmp_path.iterdir())
+    run = subprocess.run([sys.executable, str(ROOT / "tools/flora/build_flora_star.py"), "--spec", str(spec),
+                          "--out", str(out)], capture_output=True, text=True)
+    assert run.returncode == 2
+    assert key in run.stderr
+    assert not out.exists()
+    assert sorted(p.name for p in tmp_path.iterdir()) == before  # nothing written inside or outside --out
+
+
+def test_cli_accepts_safe_key(tmp_path):
+    out = tmp_path / "out"
+    assert star.main(["--spec", str(_spec(tmp_path, [_item(tmp_path, "pos03_birch")])), "--out", str(out)]) == 0
+    assert (out / "report.json").exists()
+
+
 def test_species_sheet_numbers_and_fresh():
     recs = sheet.records()
     s = sheet.summary(recs)
