@@ -44,7 +44,7 @@ back before reporting success. Inspection and live-mutation coverage are separat
 4. If the user's own instance is disconnected, inspect Preferences > Add-ons >
    MCP: enabled, Host localhost, Port 9877, Auto Start checked. Online Access
    must be enabled in System preferences; changing preferences in the user's
-   own instance requires his authorization [D223]; an agent-owned instance
+   own instance requires his authorization [D231]; an agent-owned instance
    needs none (next section).
    Click Start MCP Bridge Server and confirm Server is running. Explicitly
    Save Preferences after setup. Changing client config requires Codex reload
@@ -53,7 +53,7 @@ back before reporting success. Inspection and live-mutation coverage are separat
 ## Agent-owned Blender on a copy
 
 The agent may start its own Blender 5.1.2+ with Online Access and the bridge
-on 9877 without asking each time [D223]. Never ask the user to toggle the
+on 9877 without asking each time [D231]. Never ask the user to toggle the
 bridge in his instance; never touch his instance or its preferences.
 
 1. Port 9877 must be free (step 0). If a Blender the agent did not start holds
@@ -61,7 +61,8 @@ bridge in his instance; never touch his instance or its preferences.
 2. Copy the scene to a new versioned path (`<name>_agent_v001.blend`) with
    `test ! -e <copy> && cp <source> <copy>`: an existing target or a copy path
    equal to the source stops with exit 1 (`cp -n` would skip silently with exit
-   0). Then `sha256sum <source> <copy> > SHA256SUMS.txt`.
+   0). Then hash the source alone beside the copy:
+   `sha256sum <source> > <copy dir>/SHA256SUMS.txt` (the copy is edited later).
 3. Launch: `"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe"
    --online-mode <copy>` (terminal `background=true`). `--online-mode` enables
    Online Access for this session only; the add-on's Auto Start opens the bridge
@@ -72,7 +73,7 @@ bridge in his instance; never touch his instance or its preferences.
    Then identify the scene through MCP (step 2 above).
 5. Close only its own instance: `taskkill /PID <own pid>`, never by image name
    and never a PID it did not start; after closing, port 9877 is free and
-   `sha256sum -c SHA256SUMS.txt` still passes for the source.
+   `sha256sum -c <copy dir>/SHA256SUMS.txt` (source line only) still passes.
 
 ## Inspection tools
 
