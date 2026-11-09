@@ -332,6 +332,17 @@ Each kind of fact lives in one place; the others point to it.
 
 A rule question is looked up in the order of `AGENTS.md` ("Where things are"): decision log first.
 
+### Decision ids on parallel branches (#1037)
+
+A new `D<n>` is the output of `python tools/git-hooks/decision_ids.py next --fetch`: the next free id over
+`origin/main`, this branch and every open PR head (`gh pr list`). The pre-commit hook runs `check --staged
+--fetch` whenever `docs/decisions.md` is staged and blocks a commit whose new id (absent at the merge-base with
+`origin/main`) is already used by `origin/main` or by an open PR with a different row, or appears twice; exit 2
+(no base, no `gh`, unreadable PR head) blocks too. Offline, `git config twin.decisionIds main-only` checks
+`origin/main` only. Two branches that allocate before either PR is open are caught by the later one's next
+commit or check: the later branch renumbers (`next`, then every `[D<n>]` reference), never the merged one. Run
+`check` once more after merging `origin/main` and before asking for review.
+
 ## Harness inventory (#129)
 
 Every hook, permission list, guard rule set, command, subagent and git hook, the evidence for it and the rules

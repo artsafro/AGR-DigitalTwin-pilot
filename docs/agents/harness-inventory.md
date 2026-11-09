@@ -67,10 +67,11 @@ or an eval id is no task.
 | `.claude/agents/bench-runner.md` | subagent, read only | raw benchmark and test logs in the main context | none (precaution, [D071]) | 2026-10-13 live (PR #86, B01 9/9) | none |
 | `.claude/agents/independent-checker.md` | subagent, read only | "done" reported from the engine's own output | #117 | 2026-10-13 live (PR #86, B01 model) | `engine-checked` |
 | `.claude/agents/mesh-reader.md` | subagent, read only | a mesh dump read into the main context | none (precaution, [D071]) | never (not test-called) | none |
-| `tools/git-hooks/pre-commit` | git pre-commit (every agent) | a commit that skips linking or the pipeline gate; fail-open when the root or the gate is missing | case alina-bld (the gate it runs); fail-open versions were found in review of PR #79, not in use | 2026-10-13 live (manual blocked commit) | none |
+| `tools/git-hooks/pre-commit` | git pre-commit (every agent) | a commit that skips linking, the pipeline gate or the decision-id check (#1037); fail-open when the root or the gate is missing | case alina-bld (the gate it runs); fail-open versions were found in review of PR #79, not in use | 2026-10-13 live (manual blocked commit) | none |
 | `tools/git-hooks/link_large_files.py` | git pre-commit step | a new file over 50 MB committed into history | none recorded | 2026-10-06 live (60 MB file) | none |
 | `tools/git-hooks/pipeline_gate.py` | git pre-commit step, delivery gate | as `.claude/hooks/pipeline_gate.py`, for every agent; a commit on an auto-named branch; a `.pyc` without its `.py` at delivery | case alina-bld | 2026-10-15 pytest (`tests/test_pipeline_gate.py`) | `branch-name` |
 | `tools/git-hooks/branch_names.py` | rule module of the gate and the SessionStart hook | a commit on an auto-generated worktree branch | `claude/npm-models-school-kpp-ec9ced` (`evals/branch-name/task.md`), [D078] | 2026-10-15 pytest (`tests/test_branch_names.py`) | `branch-name` |
+| `tools/git-hooks/decision_ids.py` | git pre-commit step (staged `docs/decisions.md`), `next` id allocator | a branch reusing a `D<n>` of `origin/main` or of an open PR (#1037) | `job/garibaldi-vpm` D198 vs main's D198; PR #803 D189/D190 conflicts (`docs/retros/2026-11-05-sessions-retro-04-05.md` problem 7) | 2026-11-09 pytest (`tests/test_decision_ids.py`) | none |
 
 **Indirect procedural signals** (not component behavior coverage):
 - `no-hook-denial`: `.claude/hooks/guard.py`, `SHELL_RULES`, `PRODUCTION_EXT`, `ALLOWED_WRITE_ROOTS`,
