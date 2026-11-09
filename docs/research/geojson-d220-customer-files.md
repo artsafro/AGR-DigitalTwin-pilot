@@ -29,7 +29,7 @@ primary example.
 | `cadNum` | `77:05:0010002:6` | same | ✅ | |
 | `FNO_code` | `` | `` | ✅ | empty by user decision (SINTEZ issues it later, D220) |
 | `FNO_name` | `` | `` | ✅ | |
-| `ZU_area` | `10386.0000` (**m²**) | `1.0386` (**ha**) | ⚠️ | **ZU_area units** — the customer writes m², the reg says ha; kept as ha until Artem decides (docs/domain/conflicts.md) |
+| `ZU_area` | `10386.0000` (**m²**) | `1.0386` (**ha**) | ⚠️ | **ZU_area units** — the customer writes m², the reg says ha; ha per [D223] (docs/domain/conflicts.md) |
 | `h_relief` | `167.65` | same | ✅ | |
 | `h_otn` | `16.22` | same | ✅ | |
 | `h_abs` | `183.87` | same | ✅ | |
@@ -45,11 +45,11 @@ primary example.
 
 ## The three named discrepancies (acceptance)
 
-1. **`ZU_area` units — open source conflict, no side chosen.** The ELV customer writes `10386.0000` (m²), but the
+1. **`ZU_area` units — decided [D223]: hectares per the reg.** The ELV customer writes `10386.0000` (m²), but the
    regulation p.53 table 1 row 10 says «ZU_area — Площадь участка, га» (example `0.5191`, <=4 decimals), and the
    PSU275 customer file writes `6.4882` (ha) — agreeing with the reg. Our writer keeps `1.0386` (ha, per the reg)
-   until Artem decides; the three sources are recorded in `docs/domain/conflicts.md` (#48). The issue's
-   acceptance («ZU_area units (not hectares)») is therefore *not applied* pending that decision.
+   per [D223] (Artem, 2026-11-09); the three sources are recorded in `docs/domain/conflicts.md` (#48, resolved).
+   The ELV file's m² value is an outlier; the issue's acceptance was updated to «hectares per reg p.53».
 
 2. **«округ» field format.** Both customer files write the abbreviation `ЮАО` (and the reg's own example is
    «СВАО»); our ELV writer wrote the full name `Южный административный округ`. The field carries the standard

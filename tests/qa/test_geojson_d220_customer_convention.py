@@ -42,7 +42,7 @@ def _load(path, name):
 def test_zu_area_documented_in_hectares_with_reg_citation():
     """docs/domain/npm-vpm.md documents ZU_area in ha (reg p.53 table 1 row 10 «га»), not m²."""
     text = (ROOT / 'docs/domain/npm-vpm.md').read_text(encoding='utf-8')
-    assert 'ZU_area (ha, <=4 decimals)' in text
+    assert 'ZU_area (ha, <=4 decimals' in text
     assert 'ZU_area (m2,' not in text
 
 

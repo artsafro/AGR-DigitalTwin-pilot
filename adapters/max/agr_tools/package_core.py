@@ -627,7 +627,7 @@ def ground_report(edit, mode, plan, nodes, state=None, done=(), extra_findings=N
 # (e.g. «ЮАО»; the regulation's own example is «СВАО»), not the full name. Both fields pass through from
 # `options.properties`; the writer never converts units, never abbreviates/expands a value and never invents one.
 # `ZU_area` unit is hectares (reg p.53 table 1 row 10 «Площадь участка, га», <=4 decimals); the customer's ELV
-# file writes 10386.0000 (m²) in the same field — an open source conflict, see docs/domain/conflicts.md.
+# file writes 10386.0000 (m²) in the same field — an outlier; ha per [D223] (docs/domain/conflicts.md #48).
 PROPERTY_KEYS = ('address', 'okrug', 'rajon', 'name', 'developer', 'designer', 'cadNum', 'FNO_code', 'FNO_name',
                  'ZU_area', 'h_relief', 'h_otn', 'h_abs', 's_obsh', 's_naz', 's_podz', 'spp_gns', 'act_AGR',
                  'imageBase64', 'other')  # standards/VPM_STANDARD.yaml geojson.properties_keys

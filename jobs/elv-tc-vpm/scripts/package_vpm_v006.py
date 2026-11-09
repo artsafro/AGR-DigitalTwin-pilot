@@ -3,8 +3,8 @@ elv-tc-vpm delivery v006 = package_vpm_v005.py with (issue #1107 / D220):
 - okrug as the customer's abbreviation «ЮАО» (not the full name): the customer's ELV and PSU275 files write the
   standard Moscow administrative-okrug abbreviation, and the regulation's own example is «СВАО»;
 - ZU_area unchanged at 1.0386 (ha, reg p.53 table 1 row 10 «Площадь участка, га», <=4 decimals): the customer's
-  ELV file writes 10386.0000 (m²) in the same field — an open source conflict (docs/domain/conflicts.md), kept as
-  ha until Artem decides.
+  ELV file writes 10386.0000 (m²) in the same field — an outlier; ha per [D223]
+  (docs/domain/conflicts.md #48, resolved).
 v005 header follows.
 elv-tc-vpm delivery v005 = package_vpm_v004.py with the tex-v006 set and the delivery-v005 FBX / thumbnail;
 only change: report name package_report_v005.json. All GeoJSON values as v004.
@@ -102,7 +102,7 @@ props = {
     "FNO_code": "",  # user decision 2026-11-04: empty for now, never invented
     "FNO_name": "",  # depends on FNO_code: TODO
     "ZU_area": 1.0386,  # hectares (reg p.53 table 1 row 10): sheet 42 item 1 = 10386 m2; the customer's ELV file
-    # has 10386.0000 (m²) in the same field — open source conflict (docs/domain/conflicts.md), kept as ha
+    # has 10386.0000 (m²) in the same field — an outlier; ha per [D223] (conflicts.md #48), kept as ha
     "h_relief": 167.65,  # +-0.000 = 167.65 (sheets 10, 18, 19)
     "h_otn": 16.22,  # sheet 42 items 7-8
     "h_abs": 183.87,  # sheet 42 items 9-10
