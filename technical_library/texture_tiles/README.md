@@ -30,3 +30,5 @@ pixel centre не обязаны совпадать у метрически пе
 
 Provenance: [SOURCE.json](SOURCE.json). Здесь нет копий v001/v002 каждого объекта;
 новый набор карт добавлять данными или новой ответственностью, не вторым builder.
+
+Рецепт `greyscale_mask` — серая маска `adapters/max/agr_tools/tiles_core.py` (#1024 К3), перекрашенная в RGB записи библиотеки; поля `base_map` и `overrides`; размер = round(период × px/м), проверка шва и модуля — в validate.

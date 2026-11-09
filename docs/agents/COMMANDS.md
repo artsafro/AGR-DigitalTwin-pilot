@@ -20,7 +20,7 @@ HANDOFF пишется по просьбе в чате.
 
 | Команда | Когда | Что даёт |
 |---|---|---|
-| `/grill-me` | Есть идея, нет плана | Агент задаёт вопросы, пока не вытащит цель, границы, решения. Выход — план (исторический `docs/HARNESS_PLAN.md` родился так; текущие документы — в `AGENTS.md`) |
+| `/grill-me` | Есть идея, нет плана | Агент задаёт вопросы, пока не вытащит цель, границы, решения. Выход — план (historical `archive/2026-11:docs/HARNESS_PLAN.md` родился так; current docs are listed in `AGENTS.md`) |
 | `/grill-with-docs` | План уже есть, новый чат | Сверяет понимание плана агентом с твоим; находит дыры |
 | `/to-tickets` | План утверждён | Режет план на тикеты с критерием «готово» → доска / issues |
 | Шаблон задачи `.github/ISSUE_TEMPLATE/task.md` | Новая задача руками (GitHub → New issue → Task) | Три раздела: Requirement (твои слова дословно), Specification (критерии галочками, входы и версии, что не входит, какие доказательства в PR), Context (что прочитать сначала). Метка `ready-for-agent` — только если `py -3 tools/check_ready_gate.py --issue <N>` проходит; иначе `needs-info` |
@@ -59,6 +59,7 @@ HANDOFF пишется по просьбе в чате.
 |---|---|---|
 | `uv run dt evals --suite regression` | Перед мержем ветки | Грейдеры по транскриптам ветки (`logs/transcripts/`): например, ни одного отказа хука. Отчёт `logs/evals/runs/<время>-.../report.json`; код 0 — всё прошло, 1 — грейдер упал, 2 — нет улик |
 | `uv run dt evals --task <id> --evidence transcript=<файл>` | Проверить одну сессию | То же по одному транскрипту |
+| `/retro` / `/retro --since <дата>` | Ты поправлял агента; конец дня | Твои исправления и сбои агента → `docs/retros/`, issues с метками `needs-triage` + `retro` (без дублей). Закрываются только с регрессионной проверкой (eval или pytest). `/handover` запускает её сам, если были исправления |
 | `uv run dt evals --suite regression --references` | Изменили грейдер | Грейдеры против эталонных фикстур с известным вердиктом |
 
 ### Раз в неделю
@@ -91,12 +92,5 @@ Worktree = папка на диске с выписанной веткой. Га
 
 ## Где что лежит (для `/takeover` и для себя)
 
-| Нужно | Файл |
-|---|---|
-| Где мы, что в работе, следующий шаг | `docs/HANDOFF.md`, `docs/PROJECT_STATE.md` |
-| Незакрытое с номерами | `docs/backlog.md`, доска |
-| Правила моделирования | `docs/domain/patterns/`, `docs/domain/conflicts.md` |
-| Принятые кейсы и уроки | `docs/cases.md` |
-| Имена веток, скриптов, тегов | `docs/agents/NAMING.md` |
-| Ревью: раунды, P1/P2 | `docs/agents/REVIEW_CHECKLIST.md` |
-| Инструменты и их статус | `docs/agents/CAPABILITIES.md` |
+Карта документов — `AGENTS.md`, «Where things are»; какой факт в каком файле — `docs/agents/WORKFLOW.md`,
+«Memory map». Сессия: `docs/HANDOFF.md`, `docs/PROJECT_STATE.md`.

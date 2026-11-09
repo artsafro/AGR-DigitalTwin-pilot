@@ -1,0 +1,89 @@
+{
+ "schema": "vatutino-maf-material-ids-proposal",
+ "version": "v006-proposed",
+ "status": "proposed (not active; v005 lists unchanged)",
+ "issue": 790,
+ "approval": "Artem 2026-11-03 (card t_96a3cc8a): 'Board texture = NEW material ID larch_light_oak_boards (D152: one material ID per texture), added to the atlas copy and the ID list as a proposed v006 entry. Supports = NEW ID steel_ral7016 per the passport, replacing the temporary steel_ral7047.'",
+ "base": "site set atlas v005 (C:/x/vatutino-maf/v005-set/atlas/vatutino_maf_atlas_512.json sha256 5099d135...82b8, unchanged)",
+ "atlas_copy": {
+  "json": "C:/x/vatutino-maf/gen-v001/atlas-v006-2/vatutino_maf_atlas_512_v006p2.json",
+  "png": "C:/x/vatutino-maf/gen-v001/atlas-v006-2/vatutino_maf_atlas_512_v006p2.png",
+  "superseded": "C:/x/vatutino-maf/gen-v001/atlas-v006/ (frame slot named by the retired proposal name; kept read-only)",
+  "built_by": "tools/materials/atlas_maf.py from material-list.json"
+ },
+ "added": [
+  {
+   "name": "larch_light_oak_boards",
+   "kind": "patterned",
+   "texture": "verona_boards_11.png (SYNTHETIC, make_boards.py: 11 boards, base #C49A6C, seam #5A4026)",
+   "cell_px": 256,
+   "slot_px": [
+    0,
+    0,
+    256,
+    256
+   ]
+  },
+  {
+   "name": "paint_ral7016",
+   "kind": "solid",
+   "color": "#383E42",
+   "cell_px": 64,
+   "slot_px": [
+    320,
+    0,
+    64,
+    64
+   ],
+   "note": "Artem 2026-11-06 [D202]: reuse library id 2 paint_ral7016 (materials_v001 library_id 8, #383E42); the 2026-11-03 proposal name is retired"
+  }
+ ],
+ "unchanged": [
+  "steel_ral7047",
+  "larch_light_oak",
+  "hpl_satin_wood",
+  "rope_pp"
+ ],
+ "material_list": {
+  "atlas_size": 512,
+  "padding_px": 8,
+  "materials": [
+   {
+    "name": "steel_ral7047",
+    "kind": "solid",
+    "color": "#D0D0D0",
+    "size": 64
+   },
+   {
+    "name": "paint_ral7016",
+    "kind": "solid",
+    "color": "#383E42",
+    "size": 64
+   },
+   {
+    "name": "larch_light_oak",
+    "kind": "solid",
+    "color": "#C49A6C",
+    "size": 64
+   },
+   {
+    "name": "hpl_satin_wood",
+    "kind": "solid",
+    "color": "#B4825A",
+    "size": 64
+   },
+   {
+    "name": "rope_pp",
+    "kind": "solid",
+    "color": "#7A7A7A",
+    "size": 64
+   },
+   {
+    "name": "larch_light_oak_boards",
+    "kind": "patterned",
+    "texture": "verona_boards_11.png",
+    "size": 256
+   }
+  ]
+ }
+}

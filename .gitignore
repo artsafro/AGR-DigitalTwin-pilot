@@ -11,6 +11,9 @@
 !/jobs/**/*.yaml
 !/jobs/**/*.ms
 !/jobs/**/*.rb
+!/jobs/**/*.sh
+!/jobs/**/*.mjs
+!/jobs/**/*.txt
 /jobs/*/outputs/
 /jobs/*/pipeline/dump-*.json
 /jobs/*/runs/
@@ -88,5 +91,5 @@ desktop.ini
 /logs/
 /autoresearch-results/
 
-# Stray dir from the mangled User PYTEST_ADDOPTS basetemp (docs/research/mangled-pytest-basetemp-in-worktrees-source.md)
+# Stray dir from the mangled User PYTEST_ADDOPTS basetemp (archive/2026-11:docs/research/mangled-pytest-basetemp-in-worktrees-source.md)
 Users*pytest_tmp/

@@ -13,11 +13,14 @@ import math
 import os
 from collections import namedtuple
 
-VERSION = '0.8.0'
+VERSION = '1.1.0'
 
-Action = namedtuple('Action', 'id tool icon section label tip reqs macro batch')
+# wip=True (1.0 conveyor, #1024): the button is visible but disabled, tooltip «в работе, #1024», its macro never
+# runs an edit. Default False keeps every 0.x Action(...) call of nine fields valid.
+Action = namedtuple('Action', 'id tool icon section label tip reqs macro batch wip', defaults=(False,))
 
-SECTIONS = ('Проверки', 'UV и атласы', 'Коллизии UCX', 'Экспорт', 'GeoJSON', 'Сдача (копии)')
+SECTIONS = ('Проверки', 'UV и атласы', 'Коллизии UCX', 'Экспорт', 'GeoJSON', 'Сдача (копии)',
+            'Проверить и выделить', 'Исправить — копии / undo / новые файлы')  # 6, 7: 0.9 rows by mode (#979)
 
 # id == icon name in tools/max/agr_icons.py; tool == runtime.ui() argument; macro == macroScript name.
 # batch=True only for tools whose report is a per-object independent list (merge is exact).
@@ -153,9 +156,174 @@ ACTIONS = (
     Action('zip', 'export.zip', 'zip', 5, 'Архив пакета → новый ZIP',
            'Пробно, затем пишет новый ZIP НПМ/ВПМ с лимитами 500 МБ / 1 ГБ, проверка до и после.',
            ('NPM-2.1-1.a', 'VPM-2.1-1.a', 'VPM-2.1-1.b', 'VPM-2.1-2.b'), 'AGRToolsZip', False),
+    # 0.9 rows (#979): one Action per plan row of version 0.9, plan order; tool == plan row id, routed to
+    # runtime.edits_090. The section names the mode: 6 = read/select (scene unchanged), 7 = copies / undo / new files.
+    # Logic is written by branches A–D; until then every press answers status not_implemented.
+    Action('erm_normal_check', 'tex.erm_normal_check', 'ermn', 6, 'ERM и нормали DirectX',
+           'Проверяет каналы ERM (R только свечение) и ориентацию нормалей DirectX (только чтение).',
+           ('VPM-2.5-1.7', 'VPM-2.14-1', 'VPM-2.14-2', 'VPM-2.14-3'), 'AGRToolsErmNormalCheck', False),
+    Action('finish_map', 'tex.finish_map', 'finish', 7, 'Покраска по легенде → копии',
+           'Пробно, затем на копиях: ID → отделка по листу цветового решения, легенда, кольца швов, проверка.',
+           ('NPM-2.4-4', 'VPM-2.4-1.a'), 'AGRToolsFinishMap', False),
+    Action('matid_unwrap', 'udim.matid_unwrap', 'mafuv', 7, 'MatID → UDIM (МАФ) → копии',
+           'Пробно, затем на копиях: развёртка по MatID в тайлы с плотностью и упаковкой.',
+           ('VPM-2.6-2', 'VPM-2.5-2.1.3.a'), 'AGRToolsMatidUnwrap', False),
+    Action('udim_slots', 'udim.slots', 'slots', 6, 'UDIM: тайлы и слоты',
+           '1001… без пропусков, ≤100 карт на материал, SlotNumber 1…7 подряд (только чтение).',
+           ('VPM-2.4-3.a', 'VPM-2.4-3.b', 'VPM-2.5-2.1.3.a', 'VPM-2.11-0.b'), 'AGRToolsUdimSlots', False),
+    Action('atlas_flora', 'atlas.flora', 'flora', 7, 'Атлас Flora → новые файлы',
+           'Пробно, затем пишет новые атласы: диффуз флоры + прозрачность, кроп по UV, тайл на текстуру.',
+           ('NPM-2.5-13.a', 'NPM-2.5-13.b', 'NPM-2.5-4'), 'AGRToolsAtlasFlora', False),
+    Action('atlas_groundel', 'atlas.groundel', 'groundel', 7, 'Атлас GroundEl ≤512 → копии',
+           'Пробно, затем на копиях: один набор элементов благоустройства, ≤512 px.',
+           ('NPM-2.5-12', 'NPM-2.1-5.b'), 'AGRToolsAtlasGroundel', False),
+    Action('flora_repair', 'place.flora_repair', 'florafix', 7, 'Flora: ремонт → копии',
+           'Пробно, затем на копиях чинит трансформы и треугольники Flora и проверяет набор.',
+           ('NPM-2.5-13.a', 'NPM-2.3-14'), 'AGRToolsFloraRepair', False),
+    Action('maf_checks', 'place.maf_checks', 'mafcheck', 6, 'Проверки МАФ',
+           'Летающие и утопленные МАФ: AABB-предфильтр, лучи вниз к Ground с допуском; пересечения (только чтение).',
+           ('NPM-2.3-6.b', 'NPM-2.5-12'), 'AGRToolsMafChecks', False),
+    Action('replace', 'place.replace', 'replace', 7, 'Замена объектов (Undo)',
+           'Пробно, затем заменяет объекты по маске или выделению на эталон одной записью Undo; отчёт со списками.',
+           ('NPM-2.3-5', 'VPM-2.3-8'), 'AGRToolsReplace', False),
+    Action('schedule', 'place.schedule', 'schedule', 7, 'Расстановка по ведомости → копии',
+           'Пробно, затем ставит МАФ по ведомости; отчёт: поставлено / нет эталона / нет места.',
+           ('NPM-2.1-5.a',), 'AGRToolsSchedule', False),
+    Action('drop_to_ground', 'place.drop_to_ground', 'ground', 7, 'Посадить на рельеф (Undo)',
+           'Пробно, затем опускает выделенные объекты на Ground лучом вниз одной записью Undo.',
+           ('-',), 'AGRToolsDropToGround', False),
+    Action('address', 'qa.address', 'address', 6, 'Адрес и улицы',
+           'Проверка Address по справочнику улиц, составных частей и длины (только чтение).',
+           ('NPM-1.3-2.a', 'NPM-1.3-3.a', 'VPM-1.3-2.a', 'VPM-1.3-3.a'), 'AGRToolsAddress', False),
+    Action('facade_compare', 'qa.facade_compare', 'compare', 6, 'Сравнение с листом фасада',
+           'Картинка «лист | ВПМ | НПМ» в одном масштабе и счёт швов (только чтение).',
+           ('-',), 'AGRToolsFacadeCompare', False),
+    Action('normals', 'qa.normals', 'normals', 6, 'Нормали и двойные грани',
+           'Нормали к наблюдателю, двусторонние полигоны стекла/Flora, сглаживание (только чтение).',
+           ('NPM-2.3-8.a', 'NPM-2.3-15', 'VPM-2.3-14', 'VPM-2.3-15.a', 'VPM-2.12-3'), 'AGRToolsNormals', False),
+    Action('sintez', 'qa.sintez', 'sintez', 6, 'Сверка с SINTEZ',
+           'Сравнивает наши находки с отчётом SINTEZ по тем же правилам (только чтение).',
+           ('VPM-2.3-17',), 'AGRToolsSintez', False),
+    Action('batch', 'export.batch', 'batch', 7, 'Пакетный экспорт → новые FBX',
+           'Пробно, затем пишет все FBX сцены по AGR_EXPORT_PATH одним запуском с одним отчётом.',
+           ('NPM-2.1-2',), 'AGRToolsBatch', False),
+    Action('maps_usage', 'scene.maps_usage', 'mapsuse', 6, 'Карты: использованные / лишние',
+           'Какие файлы карт используются геометрией, какие лишние в папке maps, какие пропали (только чтение).',
+           ('-',), 'AGRToolsMapsUsage', False),
+    Action('light_check', 'light.check', 'lightcheck', 6, 'Проверка света',
+           '≤250 источников, только Omni/Spot, Omni ≥5 м, Spot ≥1.5 м, корень и пивот (только чтение, выделяет нарушителей).',
+           ('VPM-2.15-2', 'VPM-2.15-4', 'VPM-2.15-5.a', 'VPM-2.15-5.b', 'VPM-2.15-6', 'VPM-2.15-8', 'VPM-2.15-9.b'),
+           'AGRToolsLightCheck', False),
+    Action('procedural_objects', 'qa.procedural_objects', 'procobj', 6, 'Процедурные объекты',
+           'Несвёрнутые Forest Pack, RailClone, MultiScatter, Chaos Scatter, tyFlow, RayFire, Populate перед FBX '
+           '(только чтение и выделение).', ('-',), 'AGRToolsProceduralObjects', False),
 )
-BY_ID = {a.id: a for a in ACTIONS}
-BY_TOOL = {a.tool: a for a in ACTIONS}
+
+# ---- 1.0 conveyor (#1024, branch 0): the 33 stage buttons in station order 1.0.1..1.0.33 ----------------------
+# One Action per plan row with fate `stage` (roadmap.stage_buttons); tool == plan row id (runtime.EDITS_100),
+# icon / label / reqs == the plan row. They live on the stage rail of «Путь», not in SECTIONS (section None) and not
+# in ACTIONS (the 0.x panel, 61 actions). wip=True until the owner branch (F..U) ships the logic.
+# A test checks every field and the stage grouping against docs/plans/agr-tools-suite.json.
+WIP_TIP = 'в работе, #1024'
+STAGES_100 = (  # (stage id, label_ru, icon, (rows; the first is the big button)) == plan `stages`
+    (0, 'Паспорт', 'passport', ('project.passport', 'source.intake', 'scene.source_class')),
+    (1, 'Бадик', 'body', ('body.prepare', 'model.attach_by_material', 'model.move_apart', 'model.grid_cleanup',
+                          'scene.small_parts')),
+    (2, 'Окна', 'winplace', ('win.place', 'win.generate', 'model.glass_planes')),
+    (3, 'Капсулы', 'capsule', ('body.capsules',)),
+    (4, 'Крыша', 'roof', ('body.roof',)),
+    (5, 'Материалы', 'mattable', ('mat.table', 'mat.tiles', 'tex.plug_colour')),
+    (6, 'ВПМ', 'vpm', ('vpm.build', 'udim.rescale', 'udim.distortion', 'tex.dilate', 'udim.plugs')),
+    (7, 'НПМ', 'npm', ('npm.build', 'atlas.facade_strip')),
+    (8, 'НПМ → ВПМ', 'npm2vpm', ('npm.to_vpm', 'udim.udims_to_ids')),
+    (9, 'Сдача', 'deliver', ('pack.deliver', 'ucx.gap', 'ucx.stairs', 'light.export', 'qa.omk_te',
+                             'export.place_by_passport')),
+    ('agent', 'Агент', 'agentreq', ('agent.request', 'agent.accept', 'handoff.export', 'handoff.import',
+                                    'handoff.verify', 'handoff.restore_materials')),
+)
+_ROWS_100 = {  # plan row id -> (icon, label_ru, reqs)
+    'project.passport': ('passport', 'Паспорт проекта', '-'),
+    'source.intake': ('intake', 'Приём источника', '-'),
+    'scene.source_class': ('source', 'Класс источника', '-'),
+    'body.prepare': ('body', 'Бадик для агента', '-'),
+    'model.attach_by_material': ('attachmat', 'Объединить по материалам', '-'),
+    'model.move_apart': ('moveapart', 'Раздвинуть задвойки', 'NPM-2.3-9 VPM-2.3-13'),
+    'model.grid_cleanup': ('gridclean', 'Чистка сетки фасада', 'NPM-2.3-7.b VPM-2.3-11.b'),
+    'scene.small_parts': ('smallparts', 'Мелкие детали (метизы)', '-'),
+    'win.place': ('winplace', 'Окна по проёмам', '-'),
+    'win.generate': ('wingen', 'Окна: генератор типов', '-'),
+    'model.glass_planes': ('glass', 'Стекло плоскостями', 'NPM-2.3-10 VPM-2.8-4'),
+    'body.capsules': ('capsule', 'Капсулы интерьера', '-'),
+    'body.roof': ('roof', 'Крыша по парапету', '-'),
+    'mat.table': ('mattable', 'Таблица материалов', '-'),
+    'mat.tiles': ('mattiles', 'Плитки: серые карты', '-'),
+    'tex.plug_colour': ('plugcolour', 'Цвет заглушки', 'VPM-2.5-3.4'),
+    'vpm.build': ('vpm', 'Сборка ВПМ', '-'),
+    'udim.rescale': ('rescale', 'Подгонка плотности', 'VPM-2.6-2 NPM-2.6-1'),
+    'udim.distortion': ('distort', 'Искажения UV', 'VPM-2.6-2'),
+    'tex.dilate': ('dilate', 'Отступы карт (dilate)', 'NPM-2.5-4 VPM-2.5-1.5'),
+    'udim.plugs': ('udimplug', 'Острова-заглушки в UDIM', '-'),
+    'npm.build': ('npm', 'ВПМ → НПМ', '-'),
+    'atlas.facade_strip': ('strip', 'Фасадный атлас run-strip', 'NPM-2.5-11.a NPM-2.5-4'),
+    'npm.to_vpm': ('npm2vpm', 'НПМ → ВПМ', '-'),
+    'udim.udims_to_ids': ('udim2id', 'UDIM → ID (просмотр)', 'VPM-2.5-2.1.3.a'),
+    'pack.deliver': ('deliver', 'Сдача пакета', '-'),
+    'ucx.gap': ('ucxgap', 'UCX: нарезка и зазор', 'VPM-2.13-4.a VPM-2.13-4.b'),
+    'ucx.stairs': ('ucxstairs', 'UCX лестниц', 'VPM-2.13-5 VPM-2.13-6'),
+    'light.export': ('lightfbx', 'FBX освещения _Light',
+                     'VPM-2.1-2.b VPM-2.11-0.f VPM-2.11-0.g VPM-2.10-4.1.c VPM-2.10-4.5'),
+    'qa.omk_te': ('omk', 'Код ОМК ТЭ', 'NPM-2.10-3.1'),
+    'export.place_by_passport': ('passport', 'Поставить по паспорту', '-'),
+    'agent.request': ('agentreq', 'Запрос агенту', '-'),
+    'agent.accept': ('agentok', 'Приём от агента', '-'),
+    # 1.1: Max <-> Blender handoff on the agent stage (stations 1.1.1..1.1.4)
+    'handoff.export': ('handoffout', 'Хендофф: выгрузить в Blender', '-'),
+    'handoff.import': ('handoffin', 'Хендофф: принять из Blender', '-'),
+    'handoff.verify': ('handoffcheck', 'Хендофф: сверка круга', '-'),
+    'handoff.restore_materials': ('matrestore', 'Восстановить материалы', '-'),
+}
+# plan version of a stage row that is not 1.0 (its tooltip says «1.1, этап ...»)
+ROW_VERSION_100 = {'handoff.export': '1.1', 'handoff.import': '1.1', 'handoff.verify': '1.1',
+                   'handoff.restore_materials': '1.1'}
+# 1.1: stage rows with a parameter form in the dock (== params_core.TOOLS, a test pins it). Their macro opens the
+# panel form (runtime.form_ui) instead of pressing without options.
+FORM_100 = ('atlas.facade_strip', 'tex.dilate', 'tex.plug_colour', 'export.place_by_passport', 'agent.request',
+            'agent.accept', 'handoff.export', 'handoff.import', 'handoff.verify', 'handoff.restore_materials')
+# 1.1: «Claude-док» (agentbridge_max.agent_dock through runtime.agent_dock): a panel/menu action outside the plan
+# rows (no report, no preview/apply), like the open-panel macro.
+DOCK_MACRO = 'AGRToolsAgentDock'
+DOCK_LABEL = 'Claude-док'
+DOCK_TIP = '1.1, этап «Агент»: док агента Claude (свой listener, профиль modeller, «Применить» только в доке)'
+DOCK_ICON = 'agentdock'
+
+
+# Release 1.0.0 (#1024 R): all 13 branches F..U are merged (Q #1085 last), so no 1.0 row is wip. A row of a later
+# branch would be listed here (SPLIT.md «Порядок слияния» 3: an unmerged branch keeps wip and moves to 1.1.0).
+WIP_100 = frozenset()
+
+
+def stage_tip(tool):
+    """Tooltip head of a released stage button: «<plan version>, этап <n> <stage>» (the agent stage has no number):
+    «1.0, этап 2 «Окна»», «1.1, этап «Агент»»."""
+    for sid, label, _icon, rows_ in STAGES_100:
+        if tool in rows_:
+            return ROW_VERSION_100.get(tool, '1.0') + ', ' + (
+                'этап «Агент»' if sid == 'agent' else 'этап {} «{}»'.format(sid, label))
+    raise KeyError('not a 1.0 stage row: ' + repr(tool))
+
+
+def _action_100(tool):
+    icon, label, reqs = _ROWS_100[tool]
+    macro = 'AGRTools' + ''.join(p.capitalize() for p in tool.replace('.', '_').split('_'))
+    wip = tool in WIP_100
+    return Action(tool.replace('.', '_'), tool, icon, None, label, WIP_TIP if wip else stage_tip(tool),
+                  tuple(reqs.split()), macro, False, wip)
+
+
+ACTIONS_100 = tuple(_action_100(tool) for _sid, _label, _icon, rows_ in STAGES_100 for tool in rows_)
+ALL_ACTIONS = ACTIONS + ACTIONS_100
+BY_ID = {a.id: a for a in ALL_ACTIONS}
+BY_TOOL = {a.tool: a for a in ALL_ACTIONS}
 OPEN_MACRO = 'AGRToolsOpen'
 CATEGORY = 'AGR Tools'
 ICON_PREFIX = 'AgrIcons/agr_'
@@ -195,8 +363,10 @@ def rows(report):
         raise ValueError('not an AGR Tools report')
     check = report['tool']
     status = report.get('status')
-    if status == 'not_implemented':  # 0.8 stub module (#908): one error row, never a pass
-        return [Row(None, '—', check, False, 'not_implemented', 'в работе (#908): модуль ещё пуст', ())]
+    if status == 'not_implemented':  # 0.8/0.9 stub module (#908/#979): one error row, never a pass
+        plan = report.get('plan') if isinstance(report.get('plan'), dict) else {}
+        issue = plan.get('issue') if isinstance(plan.get('issue'), str) else '#908'
+        return [Row(None, '—', check, False, 'not_implemented', 'в работе ({}): модуль ещё пуст'.format(issue), ())]
     if status not in ('pass', 'fail'):
         raise ValueError('report without pass/fail status: ' + repr(status))
     objects = report.get('objects')
@@ -450,7 +620,8 @@ def contrast(a, b):
 _HUES = {'error': 0.0, 'ok': 1.0 / 3.0, 'warn': 1.0 / 7.0}
 # Section accents (Artem 2026-11-04: «разбавить цветовыми оттенками»): hue per work step, chosen
 # >= 30 degrees away from the status hues red 0 and green 120 so a section never reads as a status.
-SECTION_HUES = (210.0, 275.0, 35.0, 185.0, 320.0, 245.0)  # Проверки, UV, UCX, Экспорт, GeoJSON, Сдача (deg)
+SECTION_HUES = (210.0, 275.0, 35.0, 185.0, 320.0, 245.0,  # Проверки, UV, UCX, Экспорт, GeoJSON, Сдача (deg)
+                60.0, 155.0)  # 0.9 (#979): Проверить и выделить, Исправить
 STATUS_HUES_DEG = (0.0, 120.0)
 
 
@@ -506,6 +677,8 @@ ROW = {'xview': 'qa.xview', 'matid': 'qa.matid', 'names': 'qa.names', 'tris': 'q
        'preflight': 'qa.preflight', 'scene_hygiene': 'qa.scene_hygiene', 'xform': 'qa.xform',
        'zero_area': 'qa.zero_area'}
 ROW.update({a.id: a.tool for a in ACTIONS if a.section == SECTIONS.index('Сдача (копии)')})  # 0.8: tool == row id
+ROW.update({a.id: a.tool for a in ACTIONS if a.section in (6, 7)})  # 0.9 (#979): tool == row id
+ROW.update({a.id: a.tool for a in ACTIONS_100})  # 1.0 (#1024): tool == row id
 NEUTRAL_SAT = 0.06   # block 0 «Сцена» is a service block: almost grey (plan §7)
 BLOCK_SAT = 0.6
 
@@ -546,10 +719,13 @@ def _vkey(version):
 def rail(suite_blocks, suite_rows, version=None):
     """[(block, [done actions], [planned rows])] in the plan's block order (Artem's order, 0..9).
     Done = a panel action exists for the row AND the row's version is shipped by this package version
-    (0.8 actions exist from the base branch on, but stay greyed «в версии 0.8» until VERSION is 0.8.0)."""
+    (the actions of a version exist from its base branch on, but stay greyed «в версии 0.x» until VERSION ships it:
+    0.8 in 0.8.0, 0.9 in 0.9.0). A wip action (1.0, #1024) is never done here: it lives on the stage rail.
+    Block pages list only rows whose id prefix is their block (roadmap.block_rows): the new 1.0 rows with a stage
+    prefix (project., body., win., ...) are stage buttons only, so pages 0-9 stay as they were."""
     version = version or VERSION
     have = {}
-    for a in ACTIONS:
+    for a in ALL_ACTIONS:
         have.setdefault(row_of(a.id), []).append(a)
     by_id = {r['id']: r for r in suite_rows}
     for rid in have:
@@ -559,13 +735,68 @@ def rail(suite_blocks, suite_rows, version=None):
     for b in suite_blocks:
         done, planned = [], []
         for r in suite_rows:
-            if r['block'] != b['id']:
+            if r['block'] != b['id'] or r['id'].partition('.')[0] != b['id']:
+                continue
+            if any(a.wip for a in have.get(r['id'], ())):
+                planned.append(r)
                 continue
             if r['id'] in have and _vkey(r['version']) <= _vkey(version):
                 done += have[r['id']]
             else:
                 planned.append(r)
         out.append((b, done, planned))
+    return out
+
+
+# ---- 1.0 stage rail of «Путь» (#1024): big stage buttons, a second row of small buttons under each --------------
+STAGE_STATUS = ('todo', 'work', 'done', 'blocked')  # == ProjectPassport.schema.json stages[].status
+STAGE_STATUS_RU = {'todo': 'не начат', 'work': 'в работе', 'done': 'готов', 'blocked': 'заблокирован'}
+Stage = namedtuple('Stage', 'id label icon big small status')
+
+
+def stage_title(stage_id, label):
+    """'0 Паспорт' .. '9 Сдача'; the agent stage (all stages) has no number: 'Агент'."""
+    return label if stage_id == 'agent' else '{} {}'.format(stage_id, label)
+
+
+def stage_statuses(stage_ids, passport=None):
+    """{stage id: todo|work|done|blocked} from the project passport (contract K1). The passport reader is branch F;
+    without a passport (None) every stage is `todo`. A passport is read fail-closed: no `stages` list, an unknown
+    stage id or status, a stage twice or a stage missing is a ValueError naming it, never a guessed status."""
+    stage_ids = list(stage_ids)
+    if passport is None:
+        return {sid: 'todo' for sid in stage_ids}
+    stages = passport.get('stages') if isinstance(passport, dict) else None
+    if not isinstance(stages, list):
+        raise ValueError('passport without a stages list')
+    out = {}
+    for e in stages:
+        sid = e.get('id') if isinstance(e, dict) else None
+        if isinstance(sid, bool) or sid not in stage_ids:
+            raise ValueError('passport names an unknown stage: ' + repr(sid))
+        if sid in out:
+            raise ValueError('passport lists stage {!r} twice'.format(sid))
+        if e.get('status') not in STAGE_STATUS:
+            raise ValueError('passport stage {!r} has an unknown status {!r}'.format(sid, e.get('status')))
+        out[sid] = e['status']
+    missing = [sid for sid in stage_ids if sid not in out]
+    if missing:
+        raise ValueError('passport lacks stages ' + repr(missing))
+    return out
+
+
+def stage_rail(suite, passport=None):
+    """[Stage] in the plan's stage order: big = Action of the stage's big_button; small = Actions of the stage's
+    rows minus the big button (plan order); status from stage_statuses(). Every stage row needs its Action."""
+    stages = suite['stages']
+    status = stage_statuses([s['id'] for s in stages], passport)
+    out = []
+    for s in stages:
+        for rid in s['rows']:
+            if rid not in BY_TOOL:
+                raise KeyError('stage {!r} row without a panel action: {}'.format(s['id'], rid))
+        small = tuple(BY_TOOL[rid] for rid in s['rows'] if rid != s['big_button'])
+        out.append(Stage(s['id'], s['label_ru'], s['icon'], BY_TOOL[s['big_button']], small, status[s['id']]))
     return out
 
 
@@ -608,6 +839,25 @@ _CLASSIC = '''macroScript AGRToolsClassic category:"AGR Tools" tooltip:"AGR Tool
 '''
 
 
+MENU_100 = 'Конвейер 1.0 (#1024)'  # released in 1.0.0 (R); was «— в работе»
+
+
+def macro_100(a):
+    """macroScript lines of a 1.0 stage button. Released: one press = runtime.edit_ui (preview, then apply on the
+    same selection). wip: isEnabled false (greyed on toolbars/menus/quads) and execute only shows «в работе, #1024»
+    (macros.run cannot reach an edit either)."""
+    head = 'macroScript {} category:"{}" buttonText:"{}" tooltip:"{}" iconName:"{}"'.format(
+        a.macro, CATEGORY, _ms(a.label), _ms(tooltip(a)), icon_name(a))
+    if not a.wip and a.tool in FORM_100:  # 1.1: the press opens the parameter form of the panel
+        return [head, '(on execute do python.Execute "agr_tools_runtime.form_ui(\'{}\')")'.format(a.tool)]
+    if not a.wip:
+        return [head, '(on execute do python.Execute "agr_tools_runtime.edit_ui(\'{}\')")'.format(a.tool)]
+    return [head, '(', '    on isEnabled return false',
+            '    on execute do messageBox "{}" title:"AGR Tools"'.format(_ms('{} ({}): {}'.format(a.label, a.tool,
+                                                                                               WIP_TIP))),
+            ')']
+
+
 def macros_ms():
     lines = ['-- Generated by ui_model.macros_ms() (AGR Tools {}). Own implementation.'.format(VERSION),
              '-- Every action is a macroScript (toolbar/menu/hotkey) calling the Python runtime.']
@@ -616,10 +866,17 @@ def macros_ms():
     lines.append('(on execute do (try (python.Execute "agr_tools_runtime.panel()") catch ('
                  'format "AGR_TOOLS_PANEL_FALLBACK %\\n" (getCurrentException()); '
                  'macros.run "{}" "{}")))'.format(CATEGORY, CLASSIC_MACRO))
+    lines.append('macroScript {} category:"{}" buttonText:"{}" tooltip:"{}" iconName:"{}{}"'.format(
+        DOCK_MACRO, CATEGORY, _ms(DOCK_LABEL), _ms(DOCK_TIP), ICON_PREFIX, DOCK_ICON))
+    lines.append('(on execute do python.Execute "agr_tools_runtime.agent_dock()")')
     for a in ACTIONS:
         lines.append('macroScript {} category:"{}" buttonText:"{}" tooltip:"{}" iconName:"{}"'.format(
             a.macro, CATEGORY, _ms(a.label), _ms(tooltip(a)), icon_name(a)))
         lines.append('(on execute do python.Execute "agr_tools_runtime.ui(\'{}\')")'.format(a.tool))
+    lines.append('-- 1.0 conveyor (#1024): stage buttons call runtime.edit_ui; while wip the macro is disabled and only '
+                 'says so.')
+    for a in ACTIONS_100:
+        lines += macro_100(a)
     buttons = '\n'.join('            button b_{} "{}" width:340'.format(a.id, _ms(a.label)) for a in ACTIONS)
     handlers = '\n'.join('            on b_{} pressed do python.Execute "agr_tools_runtime.ui(\'{}\')"'.format(
         a.id, a.tool) for a in ACTIONS)
@@ -641,6 +898,19 @@ def menu_ms():
         for a in actions:
             out.append('    s{}.CreateAction "{}" {} "{}`{}"'.format(i, stable_id(a.macro), MACRO_TABLE, a.macro,
                                                                      CATEGORY))
+    # 1.0 conveyor (#1024): one submenu, a sub-submenu per stage in plan order (wip macros show greyed)
+    out.append('    sub.CreateSeparator "{}"'.format(stable_id('sep100')))
+    out.append('    local c100 = sub.CreateSubMenu "{}" "{}"'.format(stable_id('section100'), _ms(MENU_100)))
+    for i, (sid, label, _icon, rows_) in enumerate(STAGES_100):
+        out.append('    local t{} = c100.CreateSubMenu "{}" "{}"'.format(i, stable_id('stage100_' + str(sid)),
+                                                                      _ms(stage_title(sid, label))))
+        for tool in rows_:
+            a = BY_TOOL[tool]
+            out.append('    t{}.CreateAction "{}" {} "{}`{}"'.format(i, stable_id(a.macro), MACRO_TABLE, a.macro,
+                                                                     CATEGORY))
+        if sid == 'agent':  # 1.1: the Claude dock next to the agent stage buttons
+            out.append('    t{}.CreateAction "{}" {} "{}`{}"'.format(i, stable_id(DOCK_MACRO), MACRO_TABLE,
+                                                                     DOCK_MACRO, CATEGORY))
     out += ['    ok',
             ')',
             'if (maxVersion())[1] >= 27000 do (',

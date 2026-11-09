@@ -20,10 +20,24 @@ PADDING_MIN_PX = 8
 GROUND_MIN, GROUND_MAX = 10.0, 40.0
 BACKGROUND = (90, 90, 90)
 EPS = 1e-6
+# 0.9 (#979, branch B). Profiles of pack(): 'npm' (the 0.2 sizes) and 'groundel' (one set <= 512, A101AGRLP.ms
+# :1374 `BitmapCorrectTest 512`, sha256 86c43d4d…6926, measured in lab L06). shrink=True takes the smallest
+# square of the profile that holds the same cells at the same texel (VPM_to_NPM.ms sha256 613925939568…10e8, T06:
+# the atlas was not reduced to its content, 6.6 % fill).
+PROFILE_SIZES = {'npm': (256, 512, 1024, 2048), 'groundel': (128, 256, 512)}
+GROUNDEL_MAX = 512
 
 
 class AtlasError(ValueError):
     """Input the packer refuses, naming the element."""
+
+
+class AtlasFitError(AtlasError):
+    """The cells do not fit the largest allowed atlas at the lowest allowed texel; `calc` holds the numbers."""
+
+    def __init__(self, message, calc):
+        super().__init__(message)
+        self.calc = calc
 
 
 def _sub(a, b):
@@ -445,13 +459,38 @@ def _bounds(rec):
     return mean[(len(mean) - 1) // 2], lo, GROUND_MAX * 0.97 / smax
 
 
+def _fit_calc(built, tex, size, pad, mode):
+    """Numbers of a layout that does not fit: cells at the lowest allowed texel against the atlas area."""
+    rows = []
+    for rec in built:
+        if mode == 'ground' and not rec['plug']:
+            med, lo, hi = _bounds(rec)
+            k = max(lo, min(hi, GROUND_MIN * 1.05 / med))
+            _cell(rec, pad, k)
+            texel = round(med * k, 3)
+        else:
+            texel = None
+        rows.append({'material': rec['name'], 'cell_px': [rec['dw'], rec['dh']], 'texel_px_per_m': texel})
+    need = sum(r['cell_px'][0] * r['cell_px'][1] for r in rows)
+    return {'atlas_px': size, 'atlas_area_px2': size * size, 'cells_area_px2': need, 'padding_px': pad,
+            'lowest_texel_px_per_m': GROUND_MIN * 1.05 if mode == 'ground' else None,
+            'widest_cell_px': max(max(r['cell_px']) for r in rows) if rows else 0, 'cells': rows}
+
+
 def pack(vertices, uvs, faces, face_uvs, face_materials, materials, *, mode='ground', size=2048,
-         pad=PADDING_MIN_PX, target=35.0, plug_px_m=12.5, plug_cell=16, unit_m=1.0):
-    """Return remapped UVs, UDIM tiles and cell boxes. Raises AtlasError; never edits inputs."""
+         pad=PADDING_MIN_PX, target=35.0, plug_px_m=12.5, plug_cell=16, unit_m=1.0, profile=None, shrink=False):
+    """Return remapped UVs, UDIM tiles and cell boxes. Raises AtlasError; never edits inputs.
+
+    profile None keeps the 0.2 contract (sizes 1024/2048, no shrink). profile 'npm' / 'groundel' (0.9) allows the
+    sizes of PROFILE_SIZES; shrink=True then returns the smallest of them that holds the same cells at the same
+    texel. A layout that does not fit raises AtlasFitError with the calculation (`calc`)."""
     if mode not in ('ground', 'oks'):
         raise AtlasError(f"mode must be ground or oks, got {mode!r}")
-    if size not in ATLAS_SIZES:
-        raise AtlasError(f"atlas size must be one of {ATLAS_SIZES}, got {size}")
+    if profile is not None and profile not in PROFILE_SIZES:
+        raise AtlasError(f"profile must be one of {sorted(PROFILE_SIZES)}, got {profile!r}")
+    allowed = ATLAS_SIZES if profile is None else PROFILE_SIZES[profile]
+    if size not in allowed:
+        raise AtlasError(f"atlas size must be one of {allowed}, got {size}")
     if not isinstance(pad, int) or isinstance(pad, bool) or pad < PADDING_MIN_PX:
         raise AtlasError(f"padding must be an integer >= {PADDING_MIN_PX} px, got {pad}")
     for value, what in ((target, 'target'), (plug_px_m, 'plug texel'), (unit_m, 'unit_m')):
@@ -569,7 +608,16 @@ def pack(vertices, uvs, faces, face_uvs, face_materials, materials, *, mode='gro
             fits(lo)
             used = lo
     if used is None:
-        raise AtlasError(f"materials {[rec['name'] for rec in built]} do not fit one {size} atlas")
+        calc = _fit_calc(built, tex, size, pad, mode)
+        raise AtlasFitError(f"materials {[rec['name'] for rec in built]} do not fit one {size} atlas", calc)
+    if shrink and profile is not None:
+        final = size
+        for smaller in sorted((s for s in allowed if s < size), reverse=True):
+            if not _shelf(built, smaller):
+                break
+            final = smaller
+        _shelf(built, final)
+        size = final
     byname = {rec['name']: rec for rec in built}
     new_uv, new_fuv, shared = [], [], {}
     for f, m in enumerate(face_materials):
@@ -607,7 +655,251 @@ def pack(vertices, uvs, faces, face_uvs, face_materials, materials, *, mode='gro
         'rgb': image['rgb'],
         'alpha': image['alpha'],
         'size': size,
+        'texel_px_per_m': {rec['name']: round(_bounds(rec)[0] * rec['k'], 4)
+                           for rec in built if not rec['plug'] and rec['dens']},
     }
+
+
+# ---- 0.9 (#979, branch B): GroundEl map rule, Flora atlas, 24-bit output --------------------------------------
+def _sibling(filename, alias):
+    import importlib.util
+    import sys
+    mod = sys.modules.get(alias)
+    if mod is not None and getattr(mod, '__file__', None):
+        return mod
+    spec = importlib.util.spec_from_file_location(alias, Path(__file__).with_name(filename))
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[alias] = mod
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def texqa():
+    """Stdlib PNG reader/writer of branch B (texqa_core.py)."""
+    return _sibling('texqa_core.py', 'agr_tools_texqa_core')
+
+
+GROUNDEL_CODES = ('map_missing', 'map_unreadable', 'groundel_not_square', 'groundel_size', 'groundel_alpha',
+                  'atlas_overflow')
+
+
+def groundel_map_rule(info, limit=GROUNDEL_MAX):
+    """Findings [(code, detail)] and warnings [text] of one GroundEl map against the 512 rule (lab L06).
+
+    info: None (no map / no file) or {'file', 'format', 'w', 'h', 'depth', 'alpha_min'(int|None)}.
+    Square, power of two 128..limit; alpha by the pixels (a fully opaque alpha channel is not an error, it is
+    dropped: the output is 24-bit RGB); depth != 8 is a warning. A missing or unspecified map is an error
+    (source defect 2: skipped silently)."""
+    if info is None:
+        return [('map_missing', 'no diffuse map file (unspecified or not found)')], []
+    if info.get('error'):
+        return [('map_unreadable', '{}: {}'.format(info['file'], info['error']))], []
+    out, warn = [], []
+    w, h = info['w'], info['h']
+    if w != h:
+        out.append(('groundel_not_square', '{}: {}x{} is not square'.format(info['file'], w, h)))
+    side = max(w, h)
+    if side > limit or min(w, h) < 128 or (w & (w - 1)) or (h & (h - 1)):
+        out.append(('groundel_size', '{}: {}x{}; GroundEl maps are squares 128, 256 or {} px'.format(
+            info['file'], w, h, limit)))
+    if info.get('alpha_min') is not None and info['alpha_min'] < 255:
+        out.append(('groundel_alpha', '{}: transparent pixels (min alpha {}); NPM maps carry no alpha'.format(
+            info['file'], info['alpha_min'])))
+    if info.get('depth') not in (None, 8):
+        warn.append('{}: {} bits per channel, expected 8'.format(info['file'], info['depth']))
+    return out, warn
+
+
+def rows_rgb(pic):
+    """pack() bitmap rows [[(r, g, b)]] and alpha rows [[a]] (None without alpha) from a texqa Picture."""
+    rgb = pic.rgb()
+    alpha = pic.alpha()
+    rows, arows = [], []
+    for y in range(pic.h):
+        o = y * pic.w * 3
+        rows.append([tuple(rgb[o + 3 * x:o + 3 * x + 3]) for x in range(pic.w)])
+        if alpha is not None:
+            arows.append(list(alpha[y * pic.w:(y + 1) * pic.w]))
+    return rows, (arows if alpha is not None else None)
+
+
+def atlas_png(laid):
+    """(diffuse PNG bytes, 24-bit RGB colour type 2; opacity PNG bytes, 8-bit grey, or None) of a pack() result."""
+    tq = texqa()
+    size = laid['size']
+    diffuse = tq.write_png(size, size, laid['rgb'], 3)
+    opacity = tq.write_png(size, size, laid['alpha'], 1) if laid['alpha'] is not None else None
+    return diffuse, opacity
+
+
+# ---- Flora atlas ------------------------------------------------------------------------------------------
+# Team sources read for the idea only (#853): FloraAtlas.ms sha256 0160f807…1093, Flora Atlas V1.2.mcr sha256
+# a6bae6da…6be29 (the old Flora Atlas.mcr c343563c…6d5d is dropped). Measured defects (T05, Max 2024/2026) fixed:
+# A1 C# helper (fails to compile in Max 2026, opacity lost) -> stdlib only, no C# at runtime;
+# A2 one tile per object (5 tiles for 3 textures, 8 % fill) -> one tile per unique texture file;
+# A3 an instance remapped twice (8/32 faces right) -> the glue remaps one mesh per instance group;
+# A4 padding 2 px without bleed -> padding >= 8 px, edge pixels bled into it;
+# A5 small tiles upscaled up to x3 -> scale <= 1, never above the source pixels;
+# A6 diffuse written as RGBA (colour type 6) -> diffuse 24-bit RGB (colour type 2), opacity a separate grey atlas;
+# A7 a primitive with modifiers loses the remap after writing / Collect collapses stacks outside undo -> the
+#    evaluated mesh is read, only export copies are written (glue, one undo record).
+FLORA_SIZES = (256, 512, 1024, 2048)
+
+
+def uv_crop(w, h, uv_box):
+    """Pixel crop (x0, y0, x1, y1) of a texture for the UV bbox (u0, v0, u1, v1); UV outside 0..1 -> AtlasError."""
+    u0, v0, u1, v1 = uv_box
+    if u0 < -EPS or v0 < -EPS or u1 > 1 + EPS or v1 > 1 + EPS:
+        raise AtlasError('UV outside 0..1 (tiling) cannot be cropped into an atlas cell: '
+                         '{:.4f}..{:.4f} x {:.4f}..{:.4f}'.format(u0, u1, v0, v1))
+    x0 = max(0, int(math.floor(u0 * w + EPS)))
+    x1 = min(w, int(math.ceil(u1 * w - EPS)))
+    y0 = max(0, int(math.floor((1.0 - v1) * h + EPS)))
+    y1 = min(h, int(math.ceil((1.0 - v0) * h - EPS)))
+    return x0, y0, max(x1, x0 + 1), max(y1, y0 + 1)
+
+
+def flora_layout(crops, max_size=2048, pad=PADDING_MIN_PX, sizes=FLORA_SIZES):
+    """crops: {key: (x0, y0, x1, y1)} -> {'size', 'scale', 'cells': {key: [x, y, w, h]} (inner, without pad)}.
+
+    The smallest square of `sizes` <= max_size that holds every crop at scale 1 (no upscale), else max_size with
+    one uniform scale < 1 for every tile (largest that fits)."""
+    if not isinstance(pad, int) or isinstance(pad, bool) or pad < PADDING_MIN_PX:
+        raise AtlasError(f"padding must be an integer >= {PADDING_MIN_PX} px, got {pad}")
+    if max_size not in sizes:
+        raise AtlasError(f"atlas size must be one of {sizes}, got {max_size}")
+    if not crops:
+        raise AtlasError('no texture to put in the atlas')
+
+    def place(side, scale):
+        recs = []
+        for key in sorted(crops):
+            x0, y0, x1, y1 = crops[key]
+            iw = max(1, int(math.ceil((x1 - x0) * scale - 1e-9)))
+            ih = max(1, int(math.ceil((y1 - y0) * scale - 1e-9)))
+            recs.append({'name': key, 'dw': iw + 2 * pad, 'dh': ih + 2 * pad, 'iw': iw, 'ih': ih})
+        if not _shelf(recs, side):
+            return None
+        return {r['name']: [r['cx'] + pad, r['cy'] + pad, r['iw'], r['ih']] for r in recs}
+
+    for side in sorted(s for s in sizes if s <= max_size):
+        cells = place(side, 1.0)
+        if cells is not None:
+            return {'size': side, 'scale': 1.0, 'cells': cells}
+    lo, hi = 0.0, 1.0
+    for _ in range(30):
+        mid = (lo + hi) / 2.0
+        if place(max_size, mid) is not None:
+            lo = mid
+        else:
+            hi = mid
+    if lo <= 0.0 or place(max_size, lo) is None:
+        raise AtlasError('textures do not fit one {} atlas'.format(max_size))
+    scale = math.floor(lo * 10000) / 10000.0
+    return {'size': max_size, 'scale': scale, 'cells': place(max_size, scale)}
+
+
+def _resample(plane, w, n, crop, iw, ih):
+    """Box-filter the crop (x0, y0, x1, y1) of an n-channel plane (width w) to iw x ih. Scale 1 is a copy."""
+    x0, y0, x1, y1 = crop
+    cw, ch = x1 - x0, y1 - y0
+    out = bytearray(iw * ih * n)
+    if cw == iw and ch == ih:
+        for y in range(ih):
+            s = ((y0 + y) * w + x0) * n
+            out[y * iw * n:(y + 1) * iw * n] = plane[s:s + iw * n]
+        return bytes(out)
+    fx, fy = cw / float(iw), ch / float(ih)
+    for y in range(ih):
+        sy0 = y0 + int(math.floor(y * fy))
+        sy1 = max(sy0 + 1, y0 + int(math.ceil((y + 1) * fy - 1e-9)))
+        for x in range(iw):
+            sx0 = x0 + int(math.floor(x * fx))
+            sx1 = max(sx0 + 1, x0 + int(math.ceil((x + 1) * fx - 1e-9)))
+            acc = [0] * n
+            cnt = 0
+            for yy in range(sy0, min(sy1, y0 + ch)):
+                base = yy * w
+                for xx in range(sx0, min(sx1, x0 + cw)):
+                    o = (base + xx) * n
+                    for c in range(n):
+                        acc[c] += plane[o + c]
+                    cnt += 1
+            o = (y * iw + x) * n
+            for c in range(n):
+                out[o + c] = (acc[c] + cnt // 2) // cnt
+    return bytes(out)
+
+
+def _paste_bleed(dst, size, n, cell, patch, pad):
+    """Paste an iw x ih patch at cell (x, y) and bleed its edge pixels `pad` px into the padding ring."""
+    x, y, iw, ih = cell
+    for yy in range(-pad, ih + pad):
+        sy = min(max(yy, 0), ih - 1)
+        ty = y + yy
+        if not 0 <= ty < size:
+            continue
+        row = patch[sy * iw * n:(sy + 1) * iw * n]
+        left = row[:n] * pad
+        right = row[-n:] * pad
+        line = left + row + right
+        tx = x - pad
+        cut0 = max(0, -tx)
+        cut1 = max(0, tx + iw + 2 * pad - size)
+        seg = line[cut0 * n:len(line) - cut1 * n]
+        o = (ty * size + tx + cut0) * n
+        dst[o:o + len(seg)] = seg
+
+
+def flora_raster(textures, layout, pad=PADDING_MIN_PX):
+    """textures: {key: {'w', 'h', 'rgb' (bytes w*h*3), 'alpha' (bytes w*h or None), 'crop'}} ->
+    {'rgb': bytes size*size*3, 'alpha': bytes size*size or None, 'size'}. Background black RGB, opaque white
+    opacity outside the cells; cells bled into their padding."""
+    size = layout['size']
+    rgb = bytearray(size * size * 3)
+    alpha = bytearray(b'\xff' * (size * size))
+    any_alpha = False
+    for key, cell in sorted(layout['cells'].items()):
+        t = textures[key]
+        _x, _y, iw, ih = cell
+        _paste_bleed(rgb, size, 3, cell, _resample(t['rgb'], t['w'], 3, t['crop'], iw, ih), pad)
+        if t.get('alpha') is not None:
+            any_alpha = True
+            _paste_bleed(alpha, size, 1, cell, _resample(t['alpha'], t['w'], 1, t['crop'], iw, ih), pad)
+    return {'rgb': bytes(rgb), 'alpha': bytes(alpha) if any_alpha else None, 'size': size}
+
+
+def flora_uv(u, v, tex_w, tex_h, crop, cell, size, scale):
+    """Atlas UV of a source UV (affine: crop offset, scale, cell offset; V up)."""
+    x0, y0 = crop[0], crop[1]
+    cx, cy = cell[0], cell[1]
+    px = cx + (u * tex_w - x0) * scale
+    py = cy + ((1.0 - v) * tex_h - y0) * scale
+    return (px / size, 1.0 - py / size)
+
+
+def flora_plan(textures, uses, max_size=2048, pad=PADDING_MIN_PX):
+    """textures: {key: {'w', 'h'}}; uses: {key: [(u, v), ...] every UV corner that samples it}.
+    -> {'layout', 'crops', 'tiles': [{texture, crop, cell, scale, fill}], 'fill'}; AtlasError on tiling UVs."""
+    crops = {}
+    for key, pts in uses.items():
+        if not pts:
+            continue
+        us = [p[0] for p in pts]
+        vs = [p[1] for p in pts]
+        t = textures[key]
+        crops[key] = uv_crop(t['w'], t['h'], (min(us), min(vs), max(us), max(vs)))
+    layout = flora_layout(crops, max_size, pad)
+    size = layout['size']
+    tiles, used = [], 0
+    for key in sorted(crops):
+        x0, y0, x1, y1 = crops[key]
+        cell = layout['cells'][key]
+        used += cell[2] * cell[3]
+        tiles.append({'texture': key, 'crop_px': [x0, y0, x1, y1], 'cell_px': cell, 'scale': layout['scale'],
+                      'source_px': [textures[key]['w'], textures[key]['h']]})
+    return {'layout': layout, 'crops': crops, 'tiles': tiles, 'size': size,
+            'fill': round(used / float(size * size), 6)}
 
 
 def publish_report(path, payload, inputs):
@@ -654,3 +946,218 @@ def publish_main(argv):
     except (AtlasError, OSError, ValueError, json.JSONDecodeError):
         return 2
     return 0
+
+
+# ---- 1.0 (#1024, branch P): rigid group atlas of npm.build and atlas.facade_strip ---------------------------
+# Lab L11 (docs/experiments/npm.build.md, verdict `new`): every group (library ID of the VPM, or a facade strip)
+# moves into its cell RIGIDLY: one uniform scale per axis and one shift, the group keeps its internal layout and its
+# fractional start ("scroll"), so the K6 seam stays 0. The cell is a viewport into the infinitely tiled FULL
+# resolution source map over the real UV extent of the group, box-filtered once to the target texel; the padding is
+# the same texture continued. Not repeated from GeoAGR Priority atlas: 256 px render tiles (GeoAGR.ms:27440), texel
+# by the root of the group area (:27531-27536), empty / edge-stretched islands over 1 UV (:27096, fit_map_new :1152),
+# fixed %TEMP% tile names (:27588), glass as a diffuse-colour cell (:27665), external commands without exit codes.
+NPM_SIZES = (256, 512, 1024, 2048)
+NPM_TEXEL_PX_M = 39.0
+GLASS_RGB = (255, 255, 255)
+PLUG_INNER_PX = 8
+KINDS = ('texture', 'plug', 'glass')
+
+
+def _ppu(group, texel):
+    """Atlas px per pattern-UV unit (x, y) of a group."""
+    if group['kind'] == 'texture':
+        mu, mv = group['m_per_uv']
+        return texel * mu, texel * mv
+    u0, v0, u1, v1 = group['uv_box']
+    ext = max(u1 - u0, v1 - v0)
+    k = PLUG_INNER_PX / ext if ext > 1e-12 else 1.0
+    return k, k
+
+
+def _inner(group, ppu):
+    u0, v0, u1, v1 = group['uv_box']
+    if group['kind'] != 'texture':
+        return PLUG_INNER_PX, PLUG_INNER_PX
+    return (max(1, int(math.ceil((u1 - u0) * ppu[0] - 1e-6))), max(1, int(math.ceil((v1 - v0) * ppu[1] - 1e-6))))
+
+
+def rigid_plan(groups, texel=NPM_TEXEL_PX_M, pad=PADDING_MIN_PX, max_size=2048, sizes=NPM_SIZES):
+    """Cells of the rigid group atlas, the smallest square of `sizes` <= max_size that holds them at `texel` px/m.
+
+    groups: [{'key': str, 'kind': 'texture'|'plug'|'glass', 'uv_box': [u0, v0, u1, v1] in pattern UV (one unit =
+    one repeat of the map), 'm_per_uv': [mu, mv] metres per pattern-UV unit (texture), 'color': [r, g, b] (plug)}].
+    Returns {'size', 'texel', 'pad', 'fill', 'cells': {key: {'outer': [x, y, w, h], 'inner': [x, y, w, h],
+    'ppu': [px, py], 'scale': [su, sv], 'shift': [du, dv], 'region': [u0, v0, u1, v1]}}} with
+    atlas_uv = scale * uv + shift (image rows from the top, V up). Never changes the texel to fit: a layout that
+    does not fit max_size raises AtlasFitError (`calc`)."""
+    if not isinstance(pad, int) or isinstance(pad, bool) or pad < PADDING_MIN_PX:
+        raise AtlasError(f"padding must be an integer >= {PADDING_MIN_PX} px, got {pad}")
+    if max_size not in sizes:
+        raise AtlasError(f"atlas size must be one of {sizes}, got {max_size}")
+    if isinstance(texel, bool) or not isinstance(texel, (int, float)) or not math.isfinite(texel) or texel <= 0:
+        raise AtlasError(f"texel must be a positive number of px/m, got {texel!r}")
+    if not groups:
+        raise AtlasError('no group to put in the atlas')
+    recs, seen = [], set()
+    for g in groups:
+        if g.get('kind') not in KINDS:
+            raise AtlasError(f"group {g.get('key')!r}: kind must be one of {KINDS}")
+        if g['key'] in seen:
+            raise AtlasError(f"duplicate group {g['key']!r}")
+        seen.add(g['key'])
+        box = [float(c) for c in g['uv_box']]
+        if not all(math.isfinite(c) for c in box) or box[2] < box[0] or box[3] < box[1]:
+            raise AtlasError(f"group {g['key']!r}: invalid UV box {g['uv_box']!r}")
+        if g['kind'] == 'texture':
+            mu, mv = g['m_per_uv']
+            if not (mu > 0 and mv > 0 and math.isfinite(mu) and math.isfinite(mv)):
+                raise AtlasError(f"group {g['key']!r}: no measurable texel (UV or geometry area 0)")
+        ppu = _ppu(g, texel)
+        iw, ih = _inner(g, ppu)
+        recs.append({'name': str(g['key']), 'dw': iw + 2 * pad, 'dh': ih + 2 * pad, 'iw': iw, 'ih': ih,
+                     'ppu': ppu, 'box': box})
+    size = None
+    for side in sorted(s for s in sizes if s <= max_size):
+        if _shelf(recs, side):
+            size = side
+            break
+    if size is None:
+        calc = {'atlas_px': max_size, 'atlas_area_px2': max_size * max_size, 'padding_px': pad,
+                'texel_px_per_m': texel, 'cells_area_px2': sum(r['dw'] * r['dh'] for r in recs),
+                'widest_cell_px': max(max(r['dw'], r['dh']) for r in recs),
+                'cells': [{'group': r['name'], 'cell_px': [r['dw'], r['dh']]} for r in recs]}
+        raise AtlasFitError(f"{len(recs)} cells at {texel} px/m do not fit one {max_size} atlas", calc)
+    cells, used = {}, 0
+    for r in recs:
+        ix, iy = r['cx'] + pad, r['cy'] + pad
+        (u0, v0, u1, v1), (px, py) = r['box'], r['ppu']
+        cells[r['name']] = {
+            'outer': [r['cx'], r['cy'], r['dw'], r['dh']], 'inner': [ix, iy, r['iw'], r['ih']], 'ppu': [px, py],
+            'scale': [px / size, py / size],
+            'shift': [(ix - u0 * px) / size, 1.0 - (iy + v1 * py) / size],
+            'region': [ix / size, 1.0 - (iy + r['ih']) / size, (ix + r['iw']) / size, 1.0 - iy / size]}
+        used += r['dw'] * r['dh']
+    return {'size': size, 'texel': float(texel), 'pad': pad, 'fill': round(used / float(size * size), 6),
+            'cells': cells}
+
+
+def to_atlas(cell, uv):
+    """Atlas UV of a pattern UV (rigid: scale and shift of the cell)."""
+    return (cell['scale'][0] * uv[0] + cell['shift'][0], cell['scale'][1] * uv[1] + cell['shift'][1])
+
+
+def from_atlas(row, uv):
+    """Source UV of an atlas UV by a correspondence row (the exact reverse of npm.to_vpm, lab L11)."""
+    return ((uv[0] - row['shift'][0]) / row['scale'][0], (uv[1] - row['shift'][1]) / row['scale'][1])
+
+
+def _wrap_integral(prefix, total, n, x):
+    """Integral of a periodic step function (period n, prefix sums) from 0 to x (x may be negative / > n)."""
+    q, rem = divmod(x, n)
+    i = int(rem)
+    if i >= n:  # float rounding of divmod
+        i, rem, q = 0, 0.0, q + 1
+    return q * total + prefix[i] + (rem - i) * (prefix[i + 1] - prefix[i])
+
+
+def periodic_cell(src, w, h, n, x0, y0, kx, ky, dw, dh):
+    """dw x dh x n bytes: the box-filtered viewport into the infinitely tiled source (w x h x n bytes, rows from
+    the top). Cell pixel (X, Y) covers the source rectangle [x0 + X/kx, x0 + (X+1)/kx) x [y0 + Y/ky, ...) exactly
+    (area average, separable, periodic prefix sums): a flat region keeps its value, no 256 px intermediate."""
+    from itertools import accumulate
+    if w <= 0 or h <= 0 or len(src) != w * h * n:
+        raise AtlasError('partial source bitmap')
+    bx = [x0 + X / kx for X in range(dw + 1)]
+    by = [y0 + Y / ky for Y in range(dh + 1)]
+    lo_row, hi_row = int(math.floor(by[0])), int(math.ceil(by[-1]))
+    rows = range(h) if hi_row - lo_row >= h else sorted({r % h for r in range(lo_row, hi_row)})
+    need = set(rows)
+    # horizontal pass: integral of each needed row over the column boundaries
+    horiz = [[None] * h for _ in range(n)]
+    for r in need:
+        base = r * w * n
+        for c in range(n):
+            vals = src[base + c:base + w * n:n]
+            pre = [0]
+            pre.extend(accumulate(vals))
+            tot = pre[-1]
+            acc = [_wrap_integral(pre, tot, w, b) for b in bx]
+            horiz[c][r] = [(acc[X + 1] - acc[X]) * kx for X in range(dw)]
+    out = bytearray(dw * dh * n)
+    for c in range(n):
+        hc = horiz[c]
+        for X in range(dw):
+            col = [hc[r][X] if hc[r] is not None else 0.0 for r in range(h)]
+            pre = [0.0]
+            pre.extend(accumulate(col))
+            tot = pre[-1]
+            acc = [_wrap_integral(pre, tot, h, b) for b in by]
+            for Y in range(dh):
+                v = (acc[Y + 1] - acc[Y]) * ky
+                out[(Y * dw + X) * n + c] = 0 if v < 0 else 255 if v > 254.5 else int(v + 0.5)
+    return bytes(out)
+
+
+def rigid_raster(plan, groups, maps, background=BACKGROUND):
+    """{'rgb': size*size*3 bytes (24-bit), 'alpha': size*size grey bytes or None, 'size', 'sources': {key: [w, h]}}.
+
+    maps: {group key | map path | library id: {'w', 'h', 'rgb': bytes w*h*3, 'alpha': bytes w*h | None}}, read from the
+    full-resolution source files (the journal records their size = the input of the cell). Pattern UV u, v sample
+    the map at px (u * w, -v * h) (one pattern unit = one repeat of the map). Plugs: their colour; glass: white."""
+    size, pad = plan['size'], plan['pad']
+    rgb = bytearray(bytes(background)) * (size * size)
+    alpha = bytearray(b'\xff' * (size * size))
+    any_alpha, sources = False, {}
+    for g in sorted(groups, key=lambda q: str(q['key'])):
+        cell = plan['cells'][str(g['key'])]
+        x, y, dw, dh = cell['outer']
+        if g['kind'] == 'texture':
+            m = next((maps[k] for k in (g['key'], g.get('map'), str(g.get('library_id'))) if k in maps), None)
+            if m is None:
+                raise AtlasError(f"group {g['key']!r}: no source map")
+            px, py = cell['ppu']
+            u0, _v0, _u1, v1 = g['uv_box']
+            kx, ky = px / m['w'], py / m['h']
+            sx0 = (u0 - pad / px) * m['w']
+            sy0 = -(v1 + pad / py) * m['h']
+            patch = periodic_cell(m['rgb'], m['w'], m['h'], 3, sx0, sy0, kx, ky, dw, dh)
+            for yy in range(dh):
+                o = ((y + yy) * size + x) * 3
+                rgb[o:o + dw * 3] = patch[yy * dw * 3:(yy + 1) * dw * 3]
+            if m.get('alpha') is not None and min(m['alpha']) < 255:
+                any_alpha = True
+                ap = periodic_cell(m['alpha'], m['w'], m['h'], 1, sx0, sy0, kx, ky, dw, dh)
+                for yy in range(dh):
+                    o = (y + yy) * size + x
+                    alpha[o:o + dw] = ap[yy * dw:(yy + 1) * dw]
+            sources[str(g['key'])] = [m['w'], m['h']]
+        else:
+            color = GLASS_RGB if g['kind'] == 'glass' else tuple(_byte(int(c), str(g['key'])) for c in g['color'])
+            span = bytes(color) * dw
+            for yy in range(dh):
+                o = ((y + yy) * size + x) * 3
+                rgb[o:o + dw * 3] = span
+    return {'rgb': bytes(rgb), 'alpha': bytes(alpha) if any_alpha else None, 'size': size, 'sources': sources}
+
+
+def correspondence_table(atlas_report):
+    """1.0 (#1024, branch 0 signature; owner P): the VPM -> NPM correspondence table for the passport and the
+    reverse step npm.to_vpm (Q): [{'library_id', 'udim', 'region': [u0, v0, u1, v1], 'scale': [su, sv],
+    'shift': [du, dv]}] from an atlas report of npm.build.
+
+    atlas_report: {'size', 'texel', 'cells' (rigid_plan), 'groups': [{'key', 'library_id', 'udim', 'udim_source',
+    'part', 'kind', 'material', 'map', 'source_texel_px_per_m'}]}. Rule (lab L11): atlas_uv = scale * vpm_uv + shift,
+    so vpm_uv = (atlas_uv - shift) / scale (from_atlas). Extra keys per row: part, kind, material, map, cell_px,
+    atlas_px, texel_px_per_m, source_texel_px_per_m, udim_source. The UDIM comes from the passport / VPM table,
+    not from the UV centre (L11: bbox centre gave 1019 instead of 1007)."""
+    size, cells = atlas_report['size'], atlas_report['cells']
+    rows = []
+    for g in atlas_report['groups']:
+        c = cells[str(g['key'])]
+        rows.append({'library_id': int(g['library_id']), 'udim': g.get('udim'), 'region': list(c['region']),
+                     'key': str(g['key']), 'island': g.get('island'), 'faces': g.get('faces'),
+                     'scale': list(c['scale']), 'shift': list(c['shift']), 'part': g.get('part'),
+                     'kind': g['kind'], 'material': g.get('material'), 'map': g.get('map'),
+                     'cell_px': list(c['inner']), 'atlas_px': size, 'texel_px_per_m': atlas_report['texel'],
+                     'source_texel_px_per_m': g.get('source_texel_px_per_m'), 'udim_source': g.get('udim_source')})
+    return sorted(rows, key=lambda r: (str(r['part']), r['library_id'], r['island'] or 0))

@@ -6,7 +6,7 @@ np=pytest.importorskip('numpy')
 
 
 def tool(name):
-    spec=importlib.util.spec_from_file_location(name,Path(__file__).parents[1]/'tools'/f'{name}.py')
+    spec=importlib.util.spec_from_file_location(name,Path(__file__).parents[1]/'jobs/OBR22-K02/scripts'/f'{name}.py')
     module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
     return module
 

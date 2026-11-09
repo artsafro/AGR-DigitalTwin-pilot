@@ -12,6 +12,21 @@ import agr_tools_ui_model as model  # registered in sys.modules by runtime._load
 from agr_tools_ui_qt import QtCore, QtGui, QtWidgets, disable_accelerators
 
 OBJECT_NAME = 'AgrToolsPanel'
+
+
+def _params():
+    """params_core (1.1 parameter form): the module runtime.panel() registered, else the sibling file."""
+    import importlib.util
+    import os
+    import sys
+    key = 'agr_tools_params_core'
+    if key not in sys.modules:
+        spec = importlib.util.spec_from_file_location(
+            key, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'params_core.py'))
+        mod = importlib.util.module_from_spec(spec)
+        sys.modules[key] = mod
+        spec.loader.exec_module(mod)
+    return sys.modules[key]
 CHUNK = 25
 COLUMNS = ('Объект', 'Проверка', 'Результат', 'Треб.')
 
@@ -42,11 +57,57 @@ _BLOCK_ICON = {'scene': 'census', 'model': 'drop', 'tex': 'textures', 'ucx': 'uc
 
 
 
+def grey_button(parent, name, text, tip, style=QtCore.Qt.ToolButtonTextOnly):
+    """A visible, disabled button: planned rows «в версии 1.x» (0.7, #860) and wip stage buttons «в работе, #1024».
+    The tooltip still says what the row does; a disabled button never runs anything."""
+    btn = QtWidgets.QToolButton(parent)
+    btn.setObjectName(name)
+    btn.setText(text)
+    btn.setToolTip(tip)
+    btn.setToolButtonStyle(style)
+    btn.setEnabled(False)
+    return btn
+
+
 def _action_step(suite, a):
     """0 = check (scene unchanged), 1 = fix (copies/undo/files). *_apply and export always fix."""
     if a.id.endswith('_apply') or a.id == 'export':
         return 1
     return roadmap.STEP_OF_MODE[roadmap.row(suite, model.row_of(a.id))['mode']]
+
+
+class RowScroll(QtWidgets.QScrollArea):
+    """One row that scrolls sideways when the dock is narrow; its height always fits the whole row (big buttons,
+    status, second row) plus the scroll bar, measured when the layout asks (after fonts and icons are set)."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWidgetResizable(True)
+        self.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+
+    def setWidget(self, widget):
+        super().setWidget(widget)
+        widget.installEventFilter(self)  # icons/theme set later grow the row: follow its layout requests
+        self.updateGeometry()
+
+    def eventFilter(self, obj, event):
+        if obj is self.widget() and event.type() == QtCore.QEvent.LayoutRequest:
+            self.updateGeometry()
+        return super().eventFilter(obj, event)
+
+    def sizeHint(self):
+        hint = super().sizeHint()
+        inner = self.widget()
+        if inner is not None:
+            hint.setHeight(inner.sizeHint().height() + self.horizontalScrollBar().sizeHint().height())
+        return hint
+
+    def minimumSizeHint(self):
+        hint = super().minimumSizeHint()
+        hint.setHeight(self.sizeHint().height())
+        return hint
 
 
 class Section(QtWidgets.QWidget):
@@ -125,6 +186,9 @@ class AgrPanel(QtWidgets.QDockWidget):
         self.report = None
         self.row_data = []
         self.buttons = {}
+        self.form_tool = None  # 1.1: stage row whose parameter form is open (params_core.FIELDS)
+        self.form_widgets = {}
+        self.form_last = {}  # tool -> the values of its last run (this session)
         self._build()
         self.dockLocationChanged.connect(self.save_state)
         self.topLevelChanged.connect(self.save_state)
@@ -176,6 +240,7 @@ class AgrPanel(QtWidgets.QDockWidget):
         self.section_blocks = []
         self.section_actions = []
         self.planned = {}
+        self.stage_buttons = {}  # 1.0 stage buttons (#1024): action id -> button (big and small), disabled while wip
         layout_rail = model.rail(self.suite['blocks'], self.suite['rows'])
         self.blocks = [b for b, _, _ in layout_rail]
         self._build_path_page()
@@ -225,7 +290,7 @@ class AgrPanel(QtWidgets.QDockWidget):
         foot.addStretch()
         lay.addLayout(foot)
         self.setWidget(body)
-        self._icons = {a.id: self.backend.icon(a.icon) for a in model.ACTIONS}
+        self._icons = {a.id: self.backend.icon(a.icon) for a in model.ALL_ACTIONS}
         self.apply_theme()
         self.refresh_path()
 
@@ -246,6 +311,8 @@ class AgrPanel(QtWidgets.QDockWidget):
         hl.setContentsMargins(0, 0, 0, 0)
         hl.setSpacing(2)
         self.nodes = {}
+        self._build_stage_rail(holder, hl)
+        self._build_form(holder, hl)
         for i, n in enumerate(roadmap.flow(self.suite, model.VERSION)):
             if i:
                 arrow = QtWidgets.QLabel('↓', holder)
@@ -291,6 +358,208 @@ class AgrPanel(QtWidgets.QDockWidget):
         hl.addStretch()
         self.pages.addWidget(self._scroll(holder))
 
+    def _stage_button(self, parent, a, big):
+        """A 1.0 stage button (#1024): disabled while wip, tooltip «в работе, #1024» + what the plan row does."""
+        tip = model.tooltip(a) + '\n' + roadmap.tooltip(self.suite, roadmap.row(self.suite, a.tool))
+        btn = grey_button(parent, 'agr_wip_' + a.tool, a.label, tip,
+                          QtCore.Qt.ToolButtonTextUnderIcon if big else QtCore.Qt.ToolButtonIconOnly)
+        btn.setIconSize(QtCore.QSize(36, 36) if big else QtCore.QSize(20, 20))
+        btn.setAutoRaise(not big)
+        btn.setEnabled(not a.wip)
+        btn.clicked.connect(lambda _=False, key=a.id: self.run(key))
+        self.stage_buttons[a.id] = btn
+        return btn
+
+    def _build_stage_rail(self, holder, hl):
+        """1.0 conveyor (#1024): a row of big stage buttons (icon, label, stage status from the passport), under each
+        a second row with the stage's small buttons (plan stages[].rows minus big_button)."""
+        head = QtWidgets.QHBoxLayout()
+        title = QtWidgets.QLabel('<b>{}</b>'.format(model.MENU_100), holder)
+        title.setObjectName('agr_stage_title')
+        head.addWidget(title)
+        head.addStretch()
+        dock = QtWidgets.QToolButton(holder)  # 1.1: «Claude-док» of the agent stage (agentbridge_max.agent_dock)
+        dock.setObjectName('agr_agent_dock')
+        dock.setText(model.DOCK_LABEL)
+        dock.setToolTip(model.DOCK_TIP)
+        dock.setIcon(self.backend.icon(model.DOCK_ICON))
+        dock.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
+        dock.setAutoRaise(True)
+        dock.setEnabled(hasattr(self.backend, 'agent_dock'))
+        dock.clicked.connect(self.open_agent_dock)
+        self.dock_btn = dock
+        head.addWidget(dock)
+        hl.addLayout(head)
+        row_w = QtWidgets.QWidget()
+        row = QtWidgets.QHBoxLayout(row_w)
+        row.setContentsMargins(0, 0, 0, 0)
+        row.setSpacing(6)
+        self.stages = {}
+        for st in model.stage_rail(self.suite):
+            col = QtWidgets.QWidget(row_w)
+            col.setObjectName('agr_stage_{}'.format(st.id))
+            cl = QtWidgets.QVBoxLayout(col)
+            cl.setContentsMargins(0, 0, 0, 0)
+            cl.setSpacing(1)
+            big = self._stage_button(col, st.big, True)
+            big.setText(st.label)
+            cl.addWidget(big, 0, QtCore.Qt.AlignHCenter)
+            status = QtWidgets.QLabel('', col)
+            status.setObjectName('agr_stage_status_{}'.format(st.id))
+            status.setAlignment(QtCore.Qt.AlignHCenter)
+            cl.addWidget(status)
+            second = QtWidgets.QHBoxLayout()
+            second.setSpacing(1)
+            second.addStretch()
+            small = [self._stage_button(col, a, False) for a in st.small]
+            for b in small:
+                second.addWidget(b)
+            second.addStretch()
+            cl.addLayout(second)
+            cl.addStretch()
+            row.addWidget(col)
+            self.stages[st.id] = (big, status, small)
+        row.addStretch()
+        scroll = RowScroll(holder)
+        scroll.setObjectName('agr_stage_rail')
+        scroll.setWidget(row_w)
+        hl.addWidget(scroll)
+
+    # ---- 1.1 parameter form of the stage buttons ------------------------------------------------------------
+    def _build_form(self, holder, hl):
+        """A compact form under the stage rail: the options of one stage row (params_core.FIELDS), defaults from
+        the passport and the last run; «Выполнить» = preview, the next «Выполнить» with the same values = apply."""
+        box = QtWidgets.QGroupBox('', holder)
+        box.setObjectName('agr_form')
+        lay = QtWidgets.QVBoxLayout(box)
+        lay.setContentsMargins(6, 4, 6, 4)
+        self.form_hint = QtWidgets.QLabel('', box)
+        self.form_hint.setObjectName('agr_form_hint')
+        self.form_hint.setWordWrap(True)
+        lay.addWidget(self.form_hint)
+        self.form_grid = QtWidgets.QFormLayout()
+        self.form_grid.setFieldGrowthPolicy(QtWidgets.QFormLayout.AllNonFixedFieldsGrow)
+        lay.addLayout(self.form_grid)
+        row = QtWidgets.QHBoxLayout()
+        self.form_run = QtWidgets.QPushButton('Выполнить', box)
+        self.form_run.setObjectName('agr_form_run')
+        self.form_run.clicked.connect(self.run_form)
+        self.form_close = QtWidgets.QPushButton('Скрыть', box)
+        self.form_close.setObjectName('agr_form_close')
+        self.form_close.clicked.connect(self.close_form)
+        row.addStretch()
+        row.addWidget(self.form_run)
+        row.addWidget(self.form_close)
+        lay.addLayout(row)
+        box.setVisible(False)
+        self.form_box = box
+        hl.addWidget(box)
+
+    def _form_context(self, tool):
+        ctx = self.backend.form_context(tool) if hasattr(self.backend, 'form_context') else {}
+        ctx = dict(ctx or {})
+        ctx['last'] = dict(self.form_last.get(tool) or {})
+        return ctx
+
+    def open_form(self, key):
+        """Show the parameter form of a stage row filled with its defaults (passport, last run)."""
+        a = model.action(key)
+        params = _params()
+        fields = params.fields(a.tool)
+        values = params.defaults(a.tool, self._form_context(a.tool))
+        while self.form_grid.rowCount():
+            self.form_grid.removeRow(0)
+        self.form_widgets = {}
+        for f in fields:
+            if f.kind == 'bool':
+                w = QtWidgets.QCheckBox(self.form_box)
+                w.setChecked(bool(values.get(f.key)))
+            elif f.kind == 'choice':
+                w = QtWidgets.QComboBox(self.form_box)
+                w.addItems(list(f.choices))
+                v = values.get(f.key)
+                if v in f.choices:
+                    w.setCurrentIndex(list(f.choices).index(v))
+            else:
+                w = QtWidgets.QLineEdit(self.form_box)
+                w.setText(params.text_of(f, values.get(f.key)))
+                w.setPlaceholderText(f.hint)
+            w.setObjectName('agr_form_' + f.key)
+            w.setToolTip(f.hint)
+            self.form_grid.addRow(f.label, w)
+            self.form_widgets[f.key] = (f, w)
+        self.form_tool = a.tool
+        self.form_box.setTitle('Параметры: {} ({})'.format(a.label, a.tool))
+        gap = params.missing(a.tool, params.parse(a.tool, self.form_values()))
+        self.form_hint.setText('Заполните: ' + '; '.join(gap) if gap else
+                               'Проверьте значения и нажмите «Выполнить»: сначала предпросмотр, '
+                               'повторное «Выполнить» с теми же значениями применяет его.')
+        self.form_box.setVisible(True)
+        self.rail.setCurrentRow(0)  # the form lives on «Путь» under the stage rail (a macro may open it from any page)
+        self.status.setText('{}: заполните параметры и нажмите «Выполнить»'.format(a.label))
+        return self.form_box
+
+    def form_values(self):
+        out = {}
+        for key, (f, w) in self.form_widgets.items():
+            if f.kind == 'bool':
+                out[key] = w.isChecked()
+            elif f.kind == 'choice':
+                out[key] = w.currentText()
+            else:
+                out[key] = w.text()
+        return out
+
+    def close_form(self):
+        self.form_box.setVisible(False)
+        self.form_tool = None
+
+    def run_form(self):
+        """«Выполнить»: options from the form; an empty required field or a bad value is said, never run."""
+        if self.form_tool is None:
+            return None
+        params = _params()
+        tool = self.form_tool
+        try:
+            options = params.parse(tool, self.form_values())
+        except ValueError as exc:
+            self.form_hint.setText(str(exc))
+            self.status.setText('{}: {}'.format(model.action(tool).label, exc))
+            return None
+        gap = params.missing(tool, options)
+        if gap:
+            self.form_hint.setText('Заполните: ' + '; '.join(gap))
+            self.status.setText('{}: заполните {}'.format(model.action(tool).label, '; '.join(gap)))
+            return None
+        self.form_last[tool] = options
+        return self.run(model.action(tool).id, options=options)
+
+    def open_agent_dock(self):
+        """«Claude-док» (1.1): the dock of branch U through the backend; an error is shown, never swallowed."""
+        try:
+            self.backend.agent_dock()
+            self.status.setText('{}: открыт'.format(model.DOCK_LABEL))
+        except Exception as exc:  # noqa: BLE001 - shown in the panel and in Listener by the backend
+            self.status.setText('{}: {}: {}'.format(model.DOCK_LABEL, type(exc).__name__, exc))
+            if hasattr(self.backend, 'log_error'):
+                self.backend.log_error('agent.dock', exc)
+
+    def refresh_stages(self):
+        """Stage status under each big button from the project passport (reader: branch F; none = «не начат»).
+        A passport that cannot be read is said so on every stage, never shown as a guessed status."""
+        passport = self.backend.passport() if hasattr(self.backend, 'passport') else None
+        try:
+            status = {st.id: model.STAGE_STATUS_RU[st.status] for st in model.stage_rail(self.suite, passport)}
+            error = ''
+        except ValueError as exc:
+            status = {sid: 'паспорт: ошибка' for sid in self.stages}
+            error = str(exc)
+        for sid, (_big, label, _small) in self.stages.items():
+            label.setText(status[sid])
+            label.setToolTip(error)
+        self.stage_status = status
+        return status
+
     def _build_block_page(self, b, done, planned):
         item = QtWidgets.QListWidgetItem('{} {}'.format(b['number'], b['short_ru']))
         item.setToolTip('{}\nКогда: {}'.format(b['title_ru'], b['when_ru']))
@@ -320,13 +589,9 @@ class AgrPanel(QtWidgets.QDockWidget):
                 sec.add(btn)
                 self.buttons[a.id] = btn
             for r in rows_:
-                btn = QtWidgets.QToolButton(sec.body)
-                btn.setObjectName('agr_planned_' + r['id'])
-                btn.setText('{} · {}'.format(r['label_ru'], roadmap.planned_label(r)))
-                btn.setToolTip(roadmap.tooltip(self.suite, r))
-                btn.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
+                btn = grey_button(sec.body, 'agr_planned_' + r['id'],
+                                  '{} · {}'.format(r['label_ru'], roadmap.planned_label(r)), roadmap.tooltip(self.suite, r))
                 btn.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
-                btn.setEnabled(False)
                 sec.add(btn)
                 self.planned[r['id']] = btn
             hl.addWidget(sec)
@@ -360,7 +625,8 @@ class AgrPanel(QtWidgets.QDockWidget):
         return roadmap.live_status(self.suite, reports, model.VERSION)
 
     def refresh_path(self):
-        """Live status on the diagram + «Следующий шаг» from the last reports of this scene."""
+        """Live status on the diagram + «Следующий шаг» from the last reports of this scene; stage statuses."""
+        self.refresh_stages()
         status = self.live_status()
         acc = self.accents()
         for bid, (_sec, label) in self.nodes.items():
@@ -401,6 +667,8 @@ class AgrPanel(QtWidgets.QDockWidget):
             item.setForeground(QtGui.QBrush(colors[b['id']]))
             item.setIcon(tint(self.backend.icon(_BLOCK_ICON[b['id']]), colors[b['id']]))
             self.nodes[b['id']][0].set_color(colors[b['id']])
+        for aid, btn in self.stage_buttons.items():  # stage buttons in the colour of their plan row's block
+            btn.setIcon(tint(self._icons[aid], colors[roadmap.row(self.suite, model.BY_ID[aid].tool)['block']]))
         self.rail.item(0).setIcon(tint(self.backend.icon('roadmap'), QtGui.QColor(*text)))
         self.logo.setPixmap(tint(self.backend.icon('tools'), QtGui.QColor(*text), (36,)).pixmap(36, 36))
         self._theme_key = (base, text)
@@ -425,6 +693,8 @@ class AgrPanel(QtWidgets.QDockWidget):
         self._running = busy
         for b in self.buttons.values():
             b.setEnabled(not busy)
+        for aid, b in self.stage_buttons.items():  # a wip stage button stays disabled after a run too
+            b.setEnabled(not busy and not model.BY_ID[aid].wip)
         self.rail.setEnabled(not busy)
         self.scope.setEnabled(not busy)
         self.select_btn.setEnabled(not busy)
@@ -465,11 +735,19 @@ class AgrPanel(QtWidgets.QDockWidget):
             QtWidgets.QApplication.processEvents()
             self._mark = self._clock()
 
-    def run(self, key):
-        """Panel entry for every action. Re-entry while running is refused (processEvents)."""
+    def run(self, key, options=None):
+        """Panel entry for every action. Re-entry while running is refused (processEvents).
+        1.1: a stage row with a parameter form (params_core) pressed without options opens its form instead of
+        running without parameters (the 1.0 panel passed only the selection and the row refused)."""
         if self._running:
             return None
         a = model.action(key)
+        if a.wip:  # 1.0 stage button still in work (#1024): never runs, says so
+            self.status.setText('{}: {}'.format(a.label, model.WIP_TIP))
+            return None
+        if options is None and _params().has_form(a.tool):
+            self.open_form(a.id)
+            return None
         self._cancel = False
         self.set_busy(True)
         self.backend.progress_start(a.label)
@@ -491,7 +769,8 @@ class AgrPanel(QtWidgets.QDockWidget):
             else:
                 self.bar.setRange(0, 0)  # busy: one indivisible runtime call
                 QtWidgets.QApplication.processEvents()
-                report = self.backend.run_tool(a.tool, scope_all)
+                report = (self.backend.run_tool(a.tool, scope_all) if options is None else
+                          self.backend.run_tool(a.tool, scope_all, options))
         except model.Cancelled as exc:
             error = 'Отменено: {}'.format(exc)
             report = exc.partial

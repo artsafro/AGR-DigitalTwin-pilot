@@ -42,7 +42,13 @@ lists; they do not define a production step.
    test / contract), fix the cause, rerun the affected checks. A failed mandatory check is
    never turned into a pass by rewording. After two failures with the same cause, stop that
    path, save the state and propose the next step. The limit is recorded in
-   `jobs/<JOB>/pipeline/state.json` and enforced by the pipeline gate (`tools/git-hooks/pipeline_gate.py`). Historical record: `docs/HARNESS_PLAN.md` §8.
+   `jobs/<JOB>/pipeline/state.json` and enforced by the pipeline gate (`tools/git-hooks/pipeline_gate.py`). Historical record: `archive/2026-11:docs/HARNESS_PLAN.md` §8.
+   A build report counter of skipped or failed elements (`*_fail`, `skipped`, `miss`, `dropped`, ...)
+   above 0 is a failing gate, not a note (#1031): the build is not shown or reported as done until
+   every such count is 0 or the user accepts the listed exceptions (counter, exact count, quote and date).
+   Build scripts pass their report dict to `dt_ai.validate.build_counters.enforce` (or run
+   `uv run python -m dt_ai.validate.build_counters --report <report.json> --counter <name>`;
+   exit 1 = fail, also as a `RunRecord` stage); a declared counter that is missing also fails.
 7. **Hand off.** Compare the result with the Requirement (the user's wording, profile and
    acceptance in the contract), item by item: met, not met, or changed by a later user decision
    (with its date or `D<n>`); report what is done, what was checked (commands, evidence paths)
@@ -110,7 +116,7 @@ line below exactly once (`.github/pull_request_template.md`, "Evidence"), and th
 ```bash
 uv run dt evals --check-handoff <pr-body.md> --sha <full HEAD sha> --output <worktree>/tmp/evals
 ```
-- `Full suite:` run through `suite_slot.py` on the head sha, `N passed`, `0 failed` (a failure only
+- `Full suite:` run through `suite_slot.py` (`C:\Users\artsafro\hermes_kanban\scripts\`) on the head sha, `N passed`, `0 failed` (a failure only
   with its `known #<issue>` owner). After a rework (rule 49) it may name an ancestor of the head, and then an
   `Affected tests:` line on the head with `0 failed` is required.
 - `Regression evals:` as above. It is verified with `check_receipt`, and the all-not-measured `no Claude transcript` receipt is valid.
@@ -137,7 +143,7 @@ Permission matrix row for question escalation (all agents; complements the actio
 
 ## Escalation (#131)
 
-Source: `docs/prd/agent-ready-harness.md`, Process, stories 33–34 (approved [D088–D092]);
+Source: `archive/2026-11:docs/prd/agent-ready-harness.md`, Process, stories 33–34 (approved [D088, D089, D090, D091, D092]);
 review routing also follows [D073].
 
 ### (a) Apply a found rule
@@ -224,15 +230,10 @@ Context: <files and rules read first: docs/domain/<file>, patterns/<id>, [D<n>],
 ## Subagents (Claude Code, user 2026-10-13 [D071])
 
 The main agent keeps dumps, MaxScript output, benchmark runs and the pattern catalogue out of its own
-context. It delegates them to the read-only subagents in `.claude/agents/`:
-
-| Need | Subagent |
-|---|---|
-| Read a source scene or file: inventory, units, layers, sections at given heights, screenshots, slab and helper candidates | `source-inspector` |
-| Is there a rule? (pattern, case, conflict, answered question) | `pattern-librarian` |
-| Run benchmarks or tests and get a pass/fail table | `bench-runner` |
-| Check a built model independently | `independent-checker` |
-| A numeric question about an FBX or a dump (open edges, ids, heights, section areas) | `mesh-reader` |
+context. It delegates them to the read-only subagents in `.claude/agents/` (`source-inspector`,
+`pattern-librarian`, `bench-runner`, `independent-checker`, `mesh-reader`); each file's description says when to
+call it, "Triggers" below says when it is mandatory, their hooks and verification status are in
+`docs/agents/harness-inventory.md`.
 
 Rules:
 - Only the main agent writes code, commits and decides. No subagent may write to `src/`, `docs/` or `jobs/`,
@@ -260,17 +261,17 @@ An event makes a skill or subagent mandatory, not optional:
 | "Is there a rule for …?" (pattern, case, conflict) | subagent `pattern-librarian` |
 | Benchmarks or the test suite must run | subagent `bench-runner` |
 | A numeric question about an FBX or a dump | subagent `mesh-reader` |
-| The user accepts a result | skill `experience-transfer` |
+| The user accepts a result | skill `experience-transfer` (Claude Code: the UserPromptSubmit hook reminds) |
+| The user corrected or rejected the agent in a session, at `/handover` | `/retro` for the session ([Session retro](#session-retro)) |
 
 A background agent that polls a long run has a timeout and reports progress. Default: stop at 6 polls or
 30 minutes, whichever comes first. Every poll writes one progress line: elapsed time, the last output line,
 and how many polls remain. When the timeout is reached the agent reports that the run is still open and stops
 polling. A poll that adds no output leaves the run open.
 
-Hooks (Claude Code): `tools/hooks/skill_gate.py` (PreToolUse) denies a DCC MCP call in the main session until its
-skill is loaded; `tools/hooks/usage_log.py` writes every subagent call, skill load and /command to
-`logs/agent-usage.jsonl` (local, main checkout). `/takeover` ends with the 7-day counts, so what is never called
-shows up. `py -3 tools/hooks/usage_log.py backfill --days N` fills the log from past transcripts (#109).
+Hooks (Claude Code): `tools/hooks/skill_gate.py` denies a DCC MCP call in the main session until its skill is
+loaded; `tools/hooks/usage_log.py` logs every subagent call, skill load and /command (details:
+`docs/agents/harness-inventory.md`, "Context rotation hooks").
 
 ## Rule of three (user 2026-10-14 [D075])
 
@@ -307,9 +308,8 @@ A long session loses detail when it is compacted. Rotate instead, in the same wo
    a proposal; it waits for «да». The names avoid the built-ins `/checkpoint` (alias of `/rewind`) and
    `/resume` (session picker), and the `handoff` skills.
 
-Agent trace (#124): `/handover` generates the `## Agent trace` block with `tools/hooks/agent_trace.py` from the
-usage log and the transcript, and writes it into the handoff and the PR body. Fixed fields: Sessions, Written by,
-Subagents, Skills, Commands, Hook denials, Retries, Context at handover, Duration, Commits. Never written by hand.
+`/handover` also writes the generated `## Agent trace` block (#124; never by hand). Hooks behind these steps:
+`docs/agents/harness-inventory.md`, "Context rotation hooks".
 
 Compaction: a manual `/compact` with a stale handoff is blocked (`/compact force` passes). An automatic one is
 never blocked (that can fail the request); after it the hook tells the agent to run the handover procedure
@@ -326,7 +326,7 @@ Each kind of fact lives in one place; the others point to it.
 | Fact | File |
 |---|---|
 | A dated user decision | `docs/decisions.md` (one line, `D<n>`), the full text where it applies |
-| A modelling rule | `docs/domain/patterns/<id>.md` (index `patterns/INDEX.md`); regulation rules `docs/domain/*.md`, `standards/` |
+| A modelling rule | `docs/domain/patterns/<id>.md` (index `docs/domain/patterns/INDEX.md`); regulation rules `docs/domain/*.md`, `standards/` |
 | An accepted result or a lesson | `docs/cases.md` |
 | Project state (goal, in production, harness, next step) | `docs/PROJECT_STATE.md` |
 | An open question to the user | `jobs/<ID>/questions.md` (object); `docs/domain/conflicts.md` (source conflict); `docs/backlog.md` "Decisions for the user" |
@@ -338,21 +338,22 @@ Each kind of fact lives in one place; the others point to it.
 
 A rule question is looked up in the order of `AGENTS.md` ("Where things are"): decision log first.
 
+### Decision ids on parallel branches (#1037)
+
+A new `D<n>` is the output of `python tools/git-hooks/decision_ids.py next --fetch`: the next free id over
+`origin/main`, this branch and every open PR head (`gh pr list`). The pre-commit hook runs `check --staged
+--fetch` whenever `docs/decisions.md` is staged and blocks a commit whose new id (absent at the merge-base with
+`origin/main`) is already used by `origin/main` or by an open PR with a different row, or appears twice; exit 2
+(no base, no `gh`, unreadable PR head) blocks too. Offline, `git config twin.decisionIds main-only` checks
+`origin/main` only. Two branches that allocate before either PR is open are caught by the later one's next
+commit or check: the later branch renumbers (`next`, then every `[D<n>]` reference), never the merged one. Run
+`check` once more after merging `origin/main` and before asking for review.
+
 ## Harness inventory (#129)
 
-`docs/agents/CAPABILITIES.md`, "Harness inventory", lists every hook, permission list, guard rule set, command,
-subagent and git hook with the failure it prevents, the evidence that the failure happened, the date it was last
-verified and the eval that covers it (`tests/test_harness_inventory.py`).
-
-- Re-examine the whole inventory at a model change (a new model or a new major version of the agent app), and the
-  new row when a component is added: its row lands in the same PR as the component. Not on a calendar; the weekly
-  run belongs to the capability evals.
-- At a re-examination: refresh "Last verified" from a live run or the component's tests, and check whether the
-  failure still happens with the new model (the covering eval, the usage log).
-- A component with no evidence and no eval is proposed to the user for removal in the PR or the handoff; it is
-  removed only on the user's word.
-- Re-measure the rule-layer size (`CAPABILITIES.md`, "Rule-layer size", same command) at a model change. Retrieval
-  tooling (an index, a vector store) is reconsidered only when the size passes the 200k-token threshold.
+Every hook, permission list, guard rule set, command, subagent and git hook, the evidence for it and the rules
+for re-examining the inventory (at a model change; a new component's row lands in its PR; removal only on the
+user's word): `docs/agents/harness-inventory.md`.
 
 ## Project state (#119)
 
@@ -361,8 +362,14 @@ verified and the eval that covers it (`tests/test_harness_inventory.py`).
 The header names that command. Regeneration is idempotent; do not edit the file by hand. At most 80 lines,
 and a file of exactly 80 lines is refused. Exactly the sections Goal, In production, Harness, Next step, Links
 (`tests/test_project_state.py`). Regenerate it only on `main` after a merge. Per-object gates stay in
-`jobs/<ID>/STATE.md`. In a task branch state changes go into the handoff. An optional hand-written next step
-lives in `docs/PROJECT_STATE.next.md` (plain lines, no headings); the generator refuses to write its output
+`jobs/<ID>/STATE.md`. In a task branch state changes go into the handoff.
+After every merge the state is regenerated by `python tools/state/after_merge.py --pr <N>`: it checks that #N is
+MERGED, fast-forwards the `main` checkout (refused when dirty), runs the generator and commits the file on local
+`main` without pushing (`git push origin main` stays an approval). Claude Code runs it automatically through the
+PostToolUse hook on `gh pr merge <N>`; other agents run it right after their merge command. `after_merge.py check`
+fails when a PR listed as open is merged or closed (`--states-json` injects states offline,
+`tests/test_state_after_merge.py`). An optional hand-written next step
+lives in `docs/PROJECT_STATE.next.md` when present (plain lines, no headings); the generator refuses to write its output
 onto that file, onto `.git`, or onto any other input.
 
 ## Reports
@@ -378,6 +385,22 @@ stage ends with the `experience-transfer` skill: exact acceptance scope, inputs/
 hashes, code used, checks actually run, failures and fixes, reuse candidates. Add it to
 `docs/cases.md`. Praise does not replace QA. A procedure becomes a general tool or skill
 only after it works on a second representative object.
+
+## Session retro
+
+Acceptance teaches what worked; the user's corrections teach what to stop doing. A session in which the user
+corrected the agent, rejected a result or interrupted it ends with a retro (`.claude/commands/retro.md`; step 7a of
+`/handover`); `/retro --since <date>` reviews several sessions at once. The loop:
+
+1. `tools/retro/condense_transcript.py` reduces transcripts to the conversation (user `!` correction / `+`
+   acceptance signals, tool errors, interrupts).
+2. Each incident gets one cause and is checked against the rules; the result is `docs/retros/<date>-<slug>.md`.
+3. Actionable items become deduplicated issues labelled `needs-triage` + `retro` (template `task.md`), never
+   `ready-for-agent`; triage or the user makes them ready, then the Kanban worker takes them like any issue.
+4. A retro issue whose mistake is visible in a transcript or an output closes only with a regression check that
+   reproduces it: an `evals/` grader (run before every merge) or a pytest. Evals only re-check known mistakes;
+   the retro is how new ones reach them.
+5. A preference or a rule only the user can set goes into one triage issue; the agent never writes the D-line.
 
 ## Permission matrix
 
@@ -413,7 +436,7 @@ ledger. Its lexical shell rules can over-ask and do not interpret aliases, `gh a
 scripts or arbitrary MCP code. A guard confirmation cannot waive a `never` row. Named manual
 gates below cover these semantic cases before execution and at review; do not claim they are
 automatic enforcement. Claude Code hooks are working; Codex/Antigravity runtime enforcement
-remains unvalidated (H1 in `CAPABILITIES.md`). The same policy applies even without hooks.
+remains unvalidated (backlog H1; `docs/agents/harness-inventory.md`, "Guard hook status"). The same policy applies even without hooks.
 The PreCompact gate is Claude Code only; elsewhere follow the context-rotation procedure.
 Automatic compaction and `/compact force` retain the exceptions in Context rotation.
 `tests/test_guard_permissions.py` parses this table, exercises named shell probes and checks
@@ -464,20 +487,6 @@ Worktree ownership first; reject prohibited operations even with authorization. 
 to new versioned paths and read back geometry, UV, materials and transforms. Unknown or
 arbitrary-code operations are destructive until their behavior is inspected. This is a
 manual DCC skill/reviewer gate, not a generic MCP sandbox.
-
-## Performance lane (#361)
-
-Wall-clock / CPU-time budgets are opt-in: marked `perf` and excluded from the default `addopts`.
-Run the lane through the suite-slot limiter — `uv run pytest -m perf -p no:cacheprovider` (via
-`scripts/suite_slot.py`) — it is not part of a card's full-suite receipt.
-
-## Real 3ds Max lane (#518)
-
-A test that launches real 3ds Max (`max_adapter.default_adapter()` without a mocked `_call`, or any
-`dcc_batch.py` call) is marked `max` and excluded from the default `addopts` in `pyproject.toml`
-(the single place of the default lane expression). Run it on purpose, through the suite-slot limiter:
-`uv run pytest -m max -p no:cacheprovider`. It takes the shared cross-card Max lock and may report
-`busy`. `tests/test_max_marker_contract.py` fails any unmarked real-Max test.
 
 ## Git
 

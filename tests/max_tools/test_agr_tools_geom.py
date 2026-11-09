@@ -257,16 +257,27 @@ def test_acceptance_pieces_triangulate_convex_closed(piece):
     assert chk['ok'] and chk['closed'] and not chk['zero_area'], chk
 
 
-def test_non_convex_piece_falls_back_to_its_convex_hull():
+def l_prism():
     pts = [(0, 0, 0), (2, 0, 0), (2, 1, 0), (1, 1, 0), (1, 2, 0), (0, 2, 0)]
     pts = [tuple(float(c) for c in p) for p in pts] + [(float(x), float(y), 1.0) for x, y, _ in pts]
     n = 6
     polys = [list(range(n - 1, -1, -1)), list(range(n, 2 * n))]
     polys += [[i, (i + 1) % n, n + (i + 1) % n, n + i] for i in range(n)]
+    return pts, polys
+
+
+def test_non_convex_piece_is_reported_and_hull_only_on_request():
+    """#979: a piece that no turn makes convex is reported (not silently replaced); the 0.8 hull is opt-in."""
+    pts, polys = l_prism()
     plan = g.ucx_plan(pts, polys, 1e-4)
+    assert plan['action'] == 'diagonals' and not plan['convex'] and 'still not convex' in plan['reason']
+    assert plan['refused'] and all(t for t in plan['tris'])
+    plan = g.ucx_plan(pts, polys, 1e-4, nonconvex='hull')
     assert plan['action'] == 'hull' and 'not convex' in plan['reason']
     chk = ucx.convexity(plan['hull']['verts'], [tuple(t) for t in plan['hull']['tris']])
     assert chk['ok'], chk
+    with pytest.raises(ValueError):
+        g.ucx_plan(pts, polys, 1e-4, nonconvex='drop')
 
 
 def test_triangles_only_piece_needs_nothing():
@@ -414,7 +425,7 @@ def test_glue_has_the_three_functions_and_loads_without_pymxs():
     core_tree = ast.parse((PKG / 'geom_core.py').read_text(encoding='utf-8'))
     imported = {a.name.split('.')[0] for n in ast.walk(core_tree) if isinstance(n, (ast.Import, ast.ImportFrom))
                 for a in n.names}
-    assert imported <= {'math', 're', 'importlib', 'os', 'sys'}  # stdlib only
+    assert imported <= {'math', 're', 'importlib', 'os', 'sys', 'struct'}  # stdlib only
 
 
 def test_dispatcher_reaches_the_geom_glue():
@@ -422,3 +433,296 @@ def test_dispatcher_reaches_the_geom_glue():
     for tool in ('model.triangulate', 'ucx.triangulate', 'export.pivot_place'):
         core_file, fn = rt.EDITS_080[tool]
         assert core_file == 'geom_core.py' and fn == g.TOOLS[tool]
+
+
+# ==== #979 rework (branch E2) ==============================================================================
+# Team scripts are read for ideas only (#853), named by file and SHA256:
+#   AlexYo_ConcaveFixer.ms 1ff3ef251f3ffb2b631b158be803b34c1652419a4d338ffd117431d7bee7e40e (T03 card)
+#   rotate_pivot_tool.ms (AC Pivot Align) 6344571ffbe927de8a481462136d6dd84f9e0ff7d28d167198891b8fc5f41e20 (T06, L07)
+#   straighten_object.ms 94005feffe55aff35a2a3201376e6c054d2627556555b661510d390fb5010221 (T08 card)
+#   align_door_pivots_to_bottom.ms e22ab117fb9741ce5afb9f8069bd63abe4ccab2d431a9b4609a12a4750611608 (T03 card)
+# The source_* models below are written from the measured card findings, not from the code.
+
+# ---- ucx.triangulate: turning reflex diagonals ---------------------------------------------------------------
+def source_concavefixer(points, tris, sign=1.0):
+    """T03: every edge with the far vertex in front of the plane by more than 0 is «concave» (1e-6 noise too) and
+    is turned without a plan-convexity check; the run says «Fixed: n»."""
+    tris = [tuple(t) for t in tris]
+    fixed = 0
+    for row in g.concave_edges(points, tris, 0.0, sign):
+        _, a, b, ti, tj, c, d = row
+        tris[ti], tris[tj] = (c, a, d), (d, b, c)
+        fixed += 1
+        break
+    return tris, fixed
+
+
+def valley_box(diag_valley=True, dz=0.6):
+    """2 m UCX box whose top corner 6 is raised; the top quad 4-5-6-7 split by one of its two diagonals."""
+    pts, quads = box(raise_corner=6, dz=dz)
+    tris = []
+    for q in quads[:1] + quads[2:]:
+        a, b, c, d = q
+        tris += [[a, b, c], [a, c, d]]
+    a, b, c, d = quads[1]  # top [4, 5, 6, 7]
+    tris += [[a, b, d], [b, c, d]] if diag_valley else [[a, b, c], [a, c, d]]
+    return pts, tris
+
+
+def test_e2_ucx_valley_diagonal_becomes_convex_in_one_turn():
+    pts, tris = valley_box(True)
+    assert not ucx.convexity(pts, [tuple(t) for t in tris])['convex']  # RED: the piece as triangulated
+    plan = g.ucx_plan(pts, tris, 1e-4)
+    assert plan['action'] == 'mesh' and len(plan['flips']) == 1 and plan['convex'] and not plan['refused']
+    chk = ucx.convexity(pts, [tuple(t) for t in plan['tris']])
+    assert chk['ok'] and chk['closed'] and not chk['zero_area']
+    assert len(plan['tris']) == len(tris) and max(max(t) for t in plan['tris']) == len(pts) - 1
+    pts2, tris2 = valley_box(False)  # the ridge diagonal is already right: nothing to turn
+    assert g.ucx_plan(pts2, tris2, 1e-4)['action'] == 'none'
+
+
+def dart():
+    """Two triangles of a lid seen from above: a=(2,2) b=(0,0) c=(2,0) and d=(2.5,3) lifted by 0.5 —
+    edge a-b is reflex, but the quad a-d-b-c is an arrowhead («dart») in plan."""
+    pts = [(2.0, 2.0, 0.0), (0.0, 0.0, 0.0), (2.0, 0.0, 0.0), (2.5, 3.0, 0.5)]
+    return pts, [(0, 1, 2), (1, 0, 3)]
+
+
+def test_e2_ucx_dart_is_not_turned_and_is_reported():
+    pts, tris = dart()
+    src, fixed = source_concavefixer(pts, tris)
+    normals = [g._tri_normal(pts, t, 1.0)[2] for t in src]
+    assert fixed == 1 and min(normals) < 0  # RED: «Fixed: 1» and a triangle turned face-down (T03: z -0.82)
+    got, flips, refused = g.flip_concave(pts, tris, 1e-4)
+    assert flips == [] and got == list(tris)
+    assert refused and refused[0]['reason'] == 'dart' and refused[0]['edge'] == [0, 1]
+    assert 'dart' in g.REFUSE_TEXT['dart']
+    # the same lid on a closed prism with quad walls: the lid edge is a dart, the wall corners are creases
+    plan_xy = [(0.0, 0.0), (2.0, 0.0), (2.0, 2.0), (2.5, 3.0)]
+    pts = [(x, y, 0.0) for x, y in plan_xy] + [(x, y, z) for (x, y), z in zip(plan_xy, (1.0, 1.0, 1.0, 1.5))]
+    polys = [[6, 4, 5], [4, 6, 7], [2, 1, 0], [0, 3, 2]] + [[i, (i + 1) % 4, 4 + (i + 1) % 4, 4 + i] for i in range(4)]
+    plan = g.ucx_plan(pts, polys, 1e-4)
+    assert plan['flips'] == [] and not plan['convex']
+    assert {tuple(r['edge']): r['reason'] for r in plan['refused']} == {(4, 6): 'dart', (2, 6): 'crease'}
+
+
+def test_e2_ucx_fold_of_1e6_is_not_concave():
+    pts, tris = valley_box(True, dz=1e-6)
+    src, fixed = source_concavefixer(pts, tris)
+    assert fixed == 1  # RED: the source turns a 1e-6 fold
+    plan = g.ucx_plan(pts, tris, 1e-4)
+    assert plan['action'] == 'none' and plan['flips'] == [] and plan['convex']
+
+
+def noisy_lid(n=12, noise=0.02, seed=3):
+    """Closed piece: a flat base and a lid grid of n x n quads with noisy heights (T03 «noisy mesh»)."""
+    import random
+    rnd = random.Random(seed)
+    top = [(i / n * 4.0, j / n * 2.0, 1.0 + rnd.uniform(-noise, noise)) for j in range(n + 1) for i in range(n + 1)]
+    base = [(x, y, 0.0) for x, y, _ in top]
+    pts = top + base
+    m = n + 1
+    off = len(top)
+    polys = []
+    for j in range(n):
+        for i in range(n):
+            a, b, c, d = j * m + i, j * m + i + 1, (j + 1) * m + i + 1, (j + 1) * m + i
+            polys.append([a, b, c, d])
+            polys.append([off + a, off + d, off + c, off + b])
+    rim = [j for j in range(m)] + [m * k + n for k in range(1, m)] + \
+          [n * m + i for i in range(n - 1, -1, -1)] + [m * k for k in range(n - 1, 0, -1)]
+    for k in range(len(rim)):
+        a, b = rim[k], rim[(k + 1) % len(rim)]
+        polys.append([b, a, off + a, off + b])
+    return pts, polys
+
+
+def test_e2_ucx_noisy_grid_reaches_a_fixed_point_with_zero_quads():
+    pts, polys = noisy_lid()
+    t0 = time.time()
+    plan = g.ucx_plan(pts, polys, 1e-4)
+    assert time.time() - t0 < 10.0
+    assert all(len(t) == 3 for t in plan['tris'])  # T03: 85 quads were left after refused createEdge calls
+    assert len(plan['tris']) == sum(len(p) - 2 for p in polys)
+    fan = [tuple(t) for p in polys for t in source_ucx_triangles(p)]
+    after = len(g.concave_edges(pts, [tuple(t) for t in plan['tris']], 1e-4))
+    assert len(plan['refused']) == after and plan['flips']
+    # every turn of a reflex edge inside a convex-in-plan quad adds a tetrahedron: the piece only gets fuller
+    assert g._signed_volume(pts, [tuple(t) for t in plan['tris']]) > g._signed_volume(pts, fan)
+    locked = {(min(p[i], p[(i + 1) % 4]), max(p[i], p[(i + 1) % 4])) for p in polys for i in range(4)}
+    sign = 1.0 if g._signed_volume(pts, fan) >= 0 else -1.0
+    _, again, _ = g.flip_concave(pts, plan['tris'], 1e-4, sign, locked)
+    assert again == []  # fixed point: the same pass on its own result turns nothing
+    assert {r['reason'] for r in plan['refused']} <= {'crease', 'dart', 'still_concave', 'folded', 'sharp',
+                                                      'edge_exists', 'cycle', 'degenerate'}
+    if after:
+        assert not plan['convex'] and 'still not convex' in plan['reason']
+
+
+def test_e2_ucx_refused_edges_name_their_reason():
+    pts, polys = l_prism()
+    plan = g.ucx_plan(pts, polys, 1e-4)
+    assert {r['reason'] for r in plan['refused']} <= set(g.REFUSE_TEXT)
+    assert all(set(r) == {'edge', 'reason', 'depth'} for r in plan['refused'])
+
+
+# ---- export.pivot_place: axes ------------------------------------------------------------------------------
+def cell(angle, size=(4.0, 1.0, 0.5), unit=1.0, steps=(8, 2, 1)):
+    """L07 cell 4 x 1 x 0.5 m (scaled by `unit`, 100 for cm) turned by `angle` about Z, baked into the mesh,
+    in object space around the pivot (the node itself carries the far X/Y)."""
+    a = math.radians(angle)
+    sx, sy, sz = (s * unit for s in size)
+    out = []
+    for i in range(steps[0] + 1):
+        for j in range(steps[1] + 1):
+            for k in range(steps[2] + 1):
+                x, y, z = -sx / 2 + sx * i / steps[0], -sy / 2 + sy * j / steps[1], sz * k / steps[2]
+                out.append((x * math.cos(a) - y * math.sin(a), x * math.sin(a) + y * math.cos(a), z))
+    return out
+
+
+IDENT = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+SCENES = {'m_zero': (1.0, (0.0, 0.0)), 'cm': (100.0, (234567800.0, 123456700.0)),
+          'm_far': (1.0, (2345678.0, 1234567.0))}
+
+
+def source_ac_axis(points_obj, node_xy):
+    """L07: the axis is fitted on WORLD float32 vertices (rounding at 2.3e6 m is 0.25 m), then the long side."""
+    world = [(g.f32(p[0] + node_xy[0]), g.f32(p[1] + node_xy[1])) for p in points_obj]
+    cx, cy = world[0]
+    return g.min_area_rect([(x - cx, y - cy) for x, y in world])['angle']
+
+
+@pytest.mark.parametrize('scene', sorted(SCENES))
+@pytest.mark.parametrize('angle', [17, 45, 89, 135])
+def test_e2_pivot_axis_within_0_01_deg_in_m_cm_and_far_from_zero(scene, angle):
+    unit, xy = SCENES[scene]
+    pts = [tuple(g.f32(c) for c in p) for p in cell(angle, unit=unit)]  # Max stores object vertices as float32
+    ax = g.axes_long_side(pts, IDENT)
+    assert g.axis_error_deg(ax['rows'], angle) <= g.ANGLE_TOL_DEG
+    assert ax['rows'][2] == [0.0, 0.0, 1.0] and ax['uncertainty'] < g.ANGLE_TOL_DEG
+    assert abs(ax['angle'] - angle) <= g.ANGLE_TOL_DEG  # the sign rule: [0, 180), 135° stays 135°
+
+
+def test_e2_pivot_far_from_zero_source_model_is_off_by_more_than_0_01_deg():
+    """RED: L07 measured 1.43° (17°) and 1.0° (89°) at 2 345 678 m; the world-float32 model shows the same class."""
+    errs = [abs(source_ac_axis(cell(a), SCENES['m_far'][1]) - a) for a in (17, 89)]
+    errs = [min(e, 180 - e) for e in errs]
+    assert max(errs) > 0.01
+    errs_cm = [abs(source_ac_axis(cell(a, unit=100.0), SCENES['cm'][1]) - a) for a in (17, 89)]
+    assert max(min(e, 180 - e) for e in errs_cm) > 0.01
+
+
+def test_e2_pivot_sign_rule_135_is_not_minus_45():
+    ax = g.axes_long_side(cell(135), IDENT)
+    source = ax['angle'] - 180.0  # T06: the source put X at -45° for the 135° cell
+    assert source == -45.0
+    assert abs(ax['angle'] - 135.0) < 1e-9 and ax['rows'][0][0] < 0 < ax['rows'][0][1]
+    assert g.canonical_angle(-45) == 135.0 and g.canonical_angle(180) == 0.0 and g.canonical_angle(359.9999999999) == 0.0
+
+
+def source_pairs_limit(n):
+    return 3 <= n <= 512  # L07: «Requires 3..512 vertices», O(n³) (512 vertices 56.8 s)
+
+
+def test_e2_pivot_5000_vertices_under_2_s_no_vertex_limit():
+    pts = cell(17, steps=(49, 9, 9))
+    assert len(pts) == 5000 and not source_pairs_limit(len(pts))  # RED: refused by the source
+    t0 = time.time()
+    ax = g.axes_long_side(pts, IDENT)
+    assert time.time() - t0 < 2.0 and g.axis_error_deg(ax['rows'], 17) <= g.ANGLE_TOL_DEG
+
+
+def test_e2_pivot_calipers_match_brute_force():
+    import random
+    rnd = random.Random(11)
+    for _ in range(150):
+        pts = [(rnd.uniform(-5, 5), rnd.uniform(-2, 2)) for _ in range(rnd.randint(3, 60))]
+        hull = g.hull2d(pts)
+        best = None
+        for i in range(len(hull)):
+            p, q = hull[i], hull[(i + 1) % len(hull)]
+            a = math.atan2(q[1] - p[1], q[0] - p[0])
+            al = [h[0] * math.cos(a) + h[1] * math.sin(a) for h in hull]
+            ac = [-h[0] * math.sin(a) + h[1] * math.cos(a) for h in hull]
+            area = (max(al) - min(al)) * (max(ac) - min(ac))
+            best = area if best is None else min(best, area)
+        r = g.min_area_rect(pts)
+        assert math.isclose(r['long'] * r['short'], best, rel_tol=1e-9)
+
+
+def test_e2_pivot_square_and_too_far_vertices_refuse_with_the_exact_reason():
+    with pytest.raises(ValueError, match='square or degenerate footprint'):
+        g.axes_long_side(cell(30, size=(1.0, 1.0, 0.5)), IDENT)
+    far = [(p[0] + 2345678.0, p[1], p[2]) for p in cell(17)]  # pivot at the origin: vertices stored far away
+    with pytest.raises(ValueError, match='axis uncertainty'):
+        g.axes_long_side([tuple(g.f32(c) for c in p) for p in far], IDENT)
+
+
+def rot_rows(axis, deg):
+    c, s = math.cos(math.radians(deg)), math.sin(math.radians(deg))
+    return {'x': [[1, 0, 0], [0, c, s], [0, -s, c]], 'y': [[c, 0, -s], [0, 1, 0], [s, 0, c]],
+            'z': [[c, s, 0], [-s, c, 0], [0, 0, 1]]}[axis]
+
+
+def test_e2_pivot_pca_straightens_a_turned_slab():
+    """T08: straighten_object ran PCA before the rotation and straightened nothing (row3 not +Z)."""
+    slab = cell(0, size=(120.0, 40.0, 10.0), steps=(12, 4, 2))
+    turn = g.mat3_mul(rot_rows('x', 20), rot_rows('z', 30))
+    source_rows = IDENT  # RED model: the node frame is left as it was
+    ax = g.axes_pca(slab, turn)
+    assert ax['rows'][2][2] > 0 and source_rows[2] == [0.0, 0.0, 1.0]
+    for got, want in zip(ax['rows'], turn):
+        assert abs(abs(g._dot(tuple(got), tuple(want))) - 1.0) < 1e-9
+    with pytest.raises(ValueError, match='principal axes undefined'):
+        g.axes_pca(cell(0, size=(1.0, 1.0, 1.0), steps=(2, 2, 2)), IDENT)
+
+
+def test_e2_pivot_offset_keeps_the_mesh_in_place_far_from_zero():
+    """T03 doors: the pivot moved in world axes and the mesh slid 491 / 1675 units. Here the node frame and the
+    objectOffset are recomputed in double: world vertices do not move (<= 1e-6 m at 2 345 678 m)."""
+    pts = [tuple(g.f32(c) for c in p) for p in cell(30, size=(0.9, 0.05, 2.1))]
+    node = [[g.f32(c) for c in r] for r in rot_rows('z', 30)] + [[g.f32(2345678.912), g.f32(1234567.891), 150.0]]
+    off = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0], [0.25, -0.5, 0.0]]
+    before = g.world_points(pts, off, node)
+    obj_rot = g.mat3_mul([r[:] for r in off[:3]], [r[:] for r in node[:3]])
+    ax = g.axes_long_side(pts, obj_rot)
+    lo, hi = g.frame_bounds(pts, obj_rot, ax['rows'])
+    local = [(lo[0] + hi[0]) / 2, (lo[1] + hi[1]) / 2, lo[2]]
+    po_r = g.vec_mat(off[3], node[:3])
+    pivot = [po_r[i] + node[3][i] + g.frame_point(local, ax['rows'])[i] for i in range(3)]
+    pos32 = [g.f32(v) for v in pivot]
+    mo, po = g.new_offset(node, off, ax['rows'], pos32)
+    after = g.world_points(pts, [*mo, po], [*ax['rows'], pos32])
+    assert max(math.dist(a, b) for a, b in zip(before, after)) <= 1e-6
+    source = g.world_points(pts, off, [*ax['rows'], pos32])  # RED: node moved/turned, offset not compensated
+    assert max(math.dist(a, b) for a, b in zip(before, source)) > 0.1
+    assert abs(pivot[2] - min(p[2] for p in before)) < 1e-6  # bottom of the door in its own frame
+    assert g.axis_error_deg(ax['rows'], 60) <= g.ANGLE_TOL_DEG  # baked 30° + node 30°
+
+
+def test_e2_pivot_unit_scale_and_options():
+    assert g.check_unit_scale([[1, 0, 0], [0, 1, 0], [0, 0, 1], [5, 5, 5]]) == ''
+    assert 'Reset XForm' in g.check_unit_scale([[2, 0, 0], [0, 1, 0], [0, 0, 1], [0, 0, 0]])
+    assert g.check_options(None) == {'target': 'both', 'vpm_rotate_z': 0.0}  # 0.8 shape unchanged
+    o = g.check_options({'orient': 'long_side', 'pivot_at': 'bottom_centre', 'target': 'npm'})
+    assert o['orient'] == 'long_side' and o['pivot_at'] == 'bottom_centre'
+    for bad in ({'orient': 'x'}, {'pivot_at': 'top'}, {'pivot_at': 'centre', 'floor_z': 150}):
+        with pytest.raises(ValueError):
+            g.check_options(bad)
+
+
+def test_e2_pivot_refusals_have_codes_for_the_report():
+    for words, code in (('square or degenerate footprint: x', 'pivot_axis_undefined'),
+                        ('axis uncertainty 0.2° > 0.01°', 'pivot_axis_uncertain'),
+                        ('node scale is 2, 1, 1 not 1', 'pivot_node_scale'), ('other', 'pivot_refused')):
+        assert g.refusal_code(words) == code
+
+
+def test_e2_glue_keeps_editable_mesh_and_uses_native_setters():
+    """T03 doors: Editable_Mesh was skipped silently. The glue takes any TriMesh-convertible node, reads the
+    evaluated object (`n.mesh`) and sets the frame through node transform + objectOffset (no vertex edit)."""
+    text = (PKG / 'geom_max.py').read_text(encoding='utf-8')
+    assert 'canConvertTo(n, rt.TriMeshGeometry)' in text and 'local m = n.mesh' in text
+    assert 'n.objectOffsetPos = opos' in text and 'n.objectOffsetRot' in text
+    assert 'k[1].transform = k[2]' in text  # children keep their world transform

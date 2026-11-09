@@ -73,7 +73,7 @@ Limits:
 ## Adoption scope (if the user chooses it; separate card)
 Adopted (issue #89 adoption card): the three prototype scripts moved to `experiments/bpy-benchmark-parity/`
 (`build_dumps.py`, `run_matrix.py --wheel`, `compare.py` over `parity_lib.py`); the commands above now run from there.
-Evidence stays in `experiments/hyp-89/evidence/`.
+Evidence stays in `archive/2026-11:experiments/hyp-89/evidence/`.
 
 - `experiments/bpy-benchmark-parity/`: move `build_dumps.py`, `run_matrix.py` and `compare.py` there as an
   optional, reproducible harness with a parameterised wheel interpreter.
@@ -81,5 +81,5 @@ Evidence stays in `experiments/hyp-89/evidence/`.
   are present. It asserts the four rows above for B01/B02/B02t, plus a UV-bearing fixture to cover `udim_tiles`.
 - blender.exe stays the default. Do not change `src/twinqa/scene.py`, dependencies, CAPABILITIES policy or CI.
 
-Raw evidence: `experiments/hyp-89/evidence/{runs.json,compare.json,input-hashes.json}`. The per-call logs and FBX
+Raw evidence: `archive/2026-11:experiments/hyp-89/evidence/{runs.json,compare.json,input-hashes.json}`. The per-call logs and FBX
 files are in `%TEMP%\agr-blender-t_f79d84bd\rep{1,2}\` (local, not committed).

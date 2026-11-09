@@ -98,7 +98,7 @@ assert findings(report) == {'overlap_vertices': [1,2,3,4,5,6], 'overlap_faces': 
 assert list(rt.selection) == [bad]
 results['defective']['xview'] = report
 report = agr.matid([bad])
-assert findings(report) == {'udim_id': [1], 'empty_slot': [2]}, report  # matID 1001 wraps to sub 1 like the Max FBX export (#827)
+assert findings(report) == {'udim_id': [1], 'empty_slot': [1,2]}, report  # matID 1001 is outside #(1,2): blocking even though the FBX export wraps it (#844)
 results['defective']['matid'] = report
 before = agr.snapshot([bad])
 preview = agr.cleanup_preview([bad])
@@ -413,12 +413,25 @@ assert grid_rgb[0][1] == grid[1][:3] and grid_alpha[0][1] == grid[1][3]
 results['bitmap_rows'] = {'wide_span': len(span), 'row': len(one_row), 'height': len(grid_rgb),
                            'corner': list(grid_rgb[7][7])}
 
-RED_BLUE_UV = (
+RED_BLUE_UV = (  # measured on the 0.2 contract: the 2048 atlas
     (0.00439453125, 0.995361328125),
     (0.00712890625, 0.995361328125),
     (0.00712890625, 0.99560546875),
     (0.00439453125, 0.99560546875),
 )
+
+
+def atlas_uv(size):
+    """0.9.0 (#979 R): the npm profile shrinks the atlas to its content; the cell keeps its pixel box, so the UVs
+    of the 2048 atlas scale by 2048/size (V counted from the top)."""
+    k = 2048.0 / size
+    return tuple((u * k, 1.0 - (1.0 - v) * k) for u, v in RED_BLUE_UV)
+
+
+def png_header(tex):
+    """(w, h, bit depth, colour type, alpha) of the file bound on a Bitmaptexture (checks_core.png_info)."""
+    with open(str(tex.filename), 'rb') as f:
+        return tuple(agr._checks_core().png_info(f.read()))
 
 
 def atlas_quad(name, tex):
@@ -440,17 +453,21 @@ red_count = len(list(rt.objects))
 red_preview = agr.atlas_preview([red_node])
 assert red_preview['report']['plan']['cells'] == {'Wall': [0, 0, 24, 19]}, red_preview['report']['plan']['cells']
 assert map_uvs(red_node) == red_uv_before
-red_copies, _red_after = agr.atlas_apply([red_node], red_preview)
+red_size = red_preview['images'][0]['size']
+assert red_preview['report']['plan']['atlas']['profile'] == 'npm' and red_size < 2048, red_preview['report']['plan']
+red_copies, red_after = agr.atlas_apply([red_node], red_preview)
 assert map_uvs(red_node) == red_uv_before
 assert bitmap_pixel(red_node.material.diffuseMap, 0, 0) == red_before[0]
 assert bitmap_pixel(red_node.material.diffuseMap, 7, 0) == red_before[1]
 assert int(texture_bitmap(red_node.material.diffuseMap).width) == 8
 assert red_copies[0] != red_node
 copy_uv = map_uvs(red_copies[0])
-for got, exp in zip(copy_uv, RED_BLUE_UV):
+for got, exp in zip(copy_uv, atlas_uv(red_size)):
     agr.assert_uv_close(got, exp)
 copy_tex = red_copies[0].material.diffuseMap
-assert int(texture_bitmap(copy_tex).width) == 2048 and int(texture_bitmap(copy_tex).height) == 2048
+assert int(texture_bitmap(copy_tex).width) == red_size and int(texture_bitmap(copy_tex).height) == red_size
+assert png_header(copy_tex) == (red_size, red_size, 8, 2, False), png_header(copy_tex)  # 24-bit RGB, no alpha
+assert red_after['plan']['atlas']['files'] == [{'diffuseMap': {'size': red_size, 'bit_depth': 8, 'color_type': 2}}]
 assert copy_tex != red_node.material.diffuseMap
 red_sample = sample_uv(copy_tex, copy_uv[0][0], copy_uv[0][1])
 blue_sample = sample_uv(copy_tex, copy_uv[1][0], copy_uv[1][1])
@@ -463,6 +480,8 @@ results['atlas_redblue'] = {
     'atlas_red': list(red_sample),
     'atlas_blue': list(blue_sample),
     'objects_before': red_count,
+    'size': red_size,
+    'png': list(png_header(copy_tex)),
 }
 
 alpha_pixels = [(255, 255, 255, a) for a in (0, 0, 0, 0, 255, 255, 255, 255)]
@@ -478,9 +497,12 @@ assert map_uvs(alpha_node) == alpha_uv_before
 assert bitmap_pixel(alpha_node.material.diffuseMap, 0, 0) == alpha_before[0]
 assert bitmap_pixel(alpha_node.material.diffuseMap, 7, 0) == alpha_before[1]
 alpha_uv = map_uvs(alpha_copies[0])
-for got, exp in zip(alpha_uv, RED_BLUE_UV):
+alpha_size = alpha_preview['images'][0]['size']
+for got, exp in zip(alpha_uv, atlas_uv(alpha_size)):
     agr.assert_uv_close(got, exp)
 assert alpha_copies[0].material.opacityMap is not None
+assert png_header(alpha_copies[0].material.diffuseMap) == (alpha_size, alpha_size, 8, 2, False)
+assert png_header(alpha_copies[0].material.opacityMap) == (alpha_size, alpha_size, 8, 0, False)  # separate grey
 opaque = sample_uv(alpha_copies[0].material.opacityMap, alpha_uv[1][0], alpha_uv[1][1])
 clear = sample_uv(alpha_copies[0].material.opacityMap, alpha_uv[0][0], alpha_uv[0][1])
 assert clear[0] == 0, clear
@@ -492,6 +514,9 @@ results['atlas_alpha'] = {
     'clear': list(clear),
     'opaque': list(opaque),
     'source_alpha': [alpha_before[0][3], alpha_before[1][3]],
+    'size': alpha_size,
+    'png': [list(png_header(alpha_copies[0].material.diffuseMap)),
+            list(png_header(alpha_copies[0].material.opacityMap))],
 }
 
 opacity_only = make_uv_quad('synthetic_atlas_opacity_only', [(0.1, 0.2), (0.8, 0.2), (0.8, 0.7), (0.1, 0.7)],

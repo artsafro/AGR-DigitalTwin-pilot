@@ -88,8 +88,8 @@ with no depth (no reveal, a back polygon flush with the facade, glass only) take
 
 ## C25 — Infill recess behind the frame (`mid`)
 
-- Window library pilot: infill 30 mm behind the frame face (`jobs/REVIT-OPENINGS`, not accepted).
-- Another project: 35 mm, with a 10 mm glass-edge grip, 40 mm frame face, 80 mm depth (`jobs/MASHI-LP`).
+- Window library pilot: infill 30 mm behind the frame face (`archive/2026-11:jobs/REVIT-OPENINGS`, not accepted).
+- Another project: 35 mm, with a 10 mm glass-edge grip, 40 mm frame face, 80 mm depth (`archive/2026-11:jobs/MASHI-LP`).
 
 Only `mid` windows use it. `npm_min` has a plane only.
 

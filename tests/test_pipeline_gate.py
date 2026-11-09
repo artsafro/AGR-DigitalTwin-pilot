@@ -1,4 +1,4 @@
-"""pipeline_gate: a job status above draft needs spec + extractor report + checker report (HARNESS_PLAN §16)."""
+"""pipeline_gate: a job status above draft needs spec + extractor report + checker report (docs/agents/WORKFLOW.md)."""
 import importlib.util
 import json
 import os
@@ -955,6 +955,8 @@ def test_dt_build_refuses_to_start_inside_a_locked_job(tmp_path, monkeypatch):
 
 def test_settings_register_the_gate_for_runs_and_writes():
     entries = json.loads((ROOT / ".claude/settings.json").read_text(encoding="utf-8"))["hooks"]["PreToolUse"]
-    matchers = [e["matcher"] for e in entries if any("pipeline_gate.py" in h["command"] for h in e["hooks"])]
-    assert len(matchers) == 1, matchers
+    matchers = [e["matcher"] for e in entries if any("pretool.py" in h["command"] for h in e["hooks"])]
+    assert len(matchers) == 1, matchers                 # the dispatcher runs pipeline_gate.py in-process
     assert {"Bash", "PowerShell", "Write", "Edit"} <= set(matchers[0].split("|"))
+    pretool = (ROOT / ".claude/hooks/pretool.py").read_text(encoding="utf-8")
+    assert '("pipeline_gate.py", {"Bash", "PowerShell", "Write", "Edit"})' in pretool

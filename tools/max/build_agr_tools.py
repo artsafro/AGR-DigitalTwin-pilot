@@ -25,7 +25,32 @@ FILES = ('mzp.run', 'install.ms', 'startup.ms', 'agr_tools.mcr', 'menu.ms', 'run
          'suite_core.py', 'suite_max.py', 'roadmap.py',
          # 0.8 (#908): edit contract + stub modules of branches A-D (this list does not change in A-D)
          'edit_core.py', 'edit_max.py', 'geom_core.py', 'geom_max.py', 'tex_core.py', 'tex_max.py',
-         'names_core.py', 'names_max.py', 'udim_core.py', 'udim_max.py', 'package_core.py', 'package_max.py')
+         'names_core.py', 'names_max.py', 'udim_core.py', 'udim_max.py', 'package_core.py', 'package_max.py',
+         # 0.9 (#979): stub modules of branches A-D (this list does not change in A-E3; data/ is collected below)
+         'place_core.py', 'place_max.py', 'texqa_core.py', 'texqa_max.py', 'finish_core.py', 'finish_max.py',
+         'uvtile_core.py', 'uvtile_max.py', 'flora_atlas_max.py', 'qa9_core.py', 'qa9_max.py', 'facade_core.py',
+         'facade_max.py', 'batch_core.py', 'batch_max.py', 'mapsuse_core.py', 'mapsuse_max.py', 'light_core.py',
+         'light_max.py',
+         'session_core.py',  # shared in_session / same (one copy instead of one per module)
+         # 1.0 (#1024): contract, journal, host adapter, stub modules of branches F-U (this list does not
+         # change in F-U; SPLIT.md «Ветка 0» p. 5)
+         'contract_core.py', 'journal_core.py', 'host_max.py', 'openings_core.py', 'uvlayout_core.py',
+         'vpmmaps_core.py', 'passport_core.py', 'passport_max.py', 'intake_core.py', 'intake_max.py',
+         'scene10_core.py', 'scene10_max.py', 'body_core.py', 'body_max.py', 'model10_core.py', 'model10_max.py',
+         'gridclean_core.py', 'gridclean_max.py', 'glass_core.py', 'glass_max.py', 'windowgen_core.py',
+         'windowgen_max.py', 'winplace_core.py', 'winplace_max.py', 'capsule_core.py', 'capsule_max.py',
+         'roof_core.py', 'roof_max.py', 'matlib_core.py', 'matlib_max.py', 'tiles_core.py', 'tiles_max.py',
+         'plugcolour_core.py', 'plugcolour_max.py', 'vpm_core.py', 'vpm_max.py', 'udim10_core.py', 'udim10_max.py',
+         'dilate_core.py', 'dilate_max.py', 'udimplug_core.py', 'udimplug_max.py', 'npm_core.py', 'npm_max.py',
+         'facadeatlas_core.py', 'facadeatlas_max.py', 'npm2vpm_core.py', 'npm2vpm_max.py', 'udimview_core.py',
+         'udimview_max.py', 'deliver_core.py', 'deliver_max.py', 'ucx10_core.py', 'ucx10_max.py',
+         'ucxstairs_core.py', 'ucxstairs_max.py', 'omk_core.py', 'omk_max.py', 'placegeo_core.py', 'placegeo_max.py',
+         'agentbridge_core.py', 'agentbridge_max.py',
+         # 1.1: Max <-> Blender handoff (branch BH) and the parameter form of the stage buttons
+         'handoff_core.py', 'handoff_max.py', 'params_core.py')
+# 0.9 (#979): every file below adapters/max/agr_tools/data/ ships as agr_tools/data/<rel> (owner files of branch C:
+# procedural_classes.json, streets/). At most one sub-folder level: install.ms copies data/ and data/<dir>/.
+DATA_DIR = 'data'
 SUITE_JSON = ROOT / 'docs/plans/agr-tools-suite.json'  # «Путь» source of truth, shipped as agr-tools-suite.json
 BUNDLE = 'AGR-Tools.bundle'
 ICONS = ROOT / 'tools/max/agr_icons.py'
@@ -41,6 +66,24 @@ def _load(path, name):
 
 def _model():
     return _load(PACKAGE / 'ui_model.py', 'agr_build_ui_model')
+
+
+def data_files(package=None):
+    """Sorted 'data/<rel>' of every file below <package>/data (at most data/<dir>/<file>; deeper is an error)."""
+    root = Path(package or PACKAGE) / DATA_DIR
+    if not root.is_dir():
+        raise ValueError('package data folder missing: ' + str(root))
+    out = []
+    for p in sorted(root.rglob('*')):
+        if p.is_dir():
+            continue
+        rel = p.relative_to(root.parent).as_posix()
+        if rel.count('/') > 2:
+            raise ValueError('data file nested deeper than one sub-folder: ' + rel)
+        if p.name.startswith('.') or p.suffix in ('.pyc', '.tmp'):
+            raise ValueError('stray file in package data: ' + rel)
+        out.append(rel)
+    return out
 
 
 def icon_files():
@@ -133,6 +176,10 @@ def _collect():
         p = PACKAGE / name
         inputs[p] = p.read_bytes()
         entries[name] = inputs[p].replace(b'\r\n', b'\n')
+    for rel in data_files():
+        p = PACKAGE / rel
+        inputs[p] = p.read_bytes()
+        entries[rel] = inputs[p].replace(b'\r\n', b'\n') if p.suffix in ('.json', '.md', '.txt', '.csv') else inputs[p]
     inputs[HYGIENE] = HYGIENE.read_bytes()
     inputs[NUDGE] = NUDGE.read_bytes()
     inputs[TILES] = TILES.read_bytes()

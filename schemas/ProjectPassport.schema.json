@@ -1,0 +1,398 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ProjectPassport.schema.json",
+  "title": "ProjectPassport",
+  "description": "AGR Tools 1.0 project passport jobs/<ID>/passport.json (contract K1, #1024). Owner branch F. Mandatory for every project; the scene keeps its path and sha256 in the file property agr_passport. passport_core.SCHEMA is the same document (the package does not ship schemas/).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "project_id",
+    "source",
+    "normalization",
+    "stages",
+    "parts",
+    "openings",
+    "materials",
+    "journal",
+    "agent_requests",
+    "questions"
+  ],
+  "properties": {
+    "schema": {
+      "const": 1
+    },
+    "project_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$"
+    },
+    "title": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "created": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "scene": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "level",
+        "class"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "level": {
+          "enum": [
+            "A",
+            "B",
+            "C"
+          ]
+        },
+        "class": {
+          "type": "string",
+          "minLength": 1
+        },
+        "parts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "largest_share": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "route": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    "normalization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "units",
+        "up_axis",
+        "scale",
+        "origin_m"
+      ],
+      "properties": {
+        "units": {
+          "const": "m"
+        },
+        "source_units": {
+          "type": "string"
+        },
+        "up_axis": {
+          "const": "Z"
+        },
+        "source_up_axis": {
+          "enum": [
+            "X",
+            "Y",
+            "Z"
+          ]
+        },
+        "scale": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "origin_m": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "grid_zero_m": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        }
+      }
+    },
+    "stages": {
+      "type": "array",
+      "minItems": 11,
+      "maxItems": 11,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9
+              },
+              {
+                "const": "agent"
+              }
+            ]
+          },
+          "status": {
+            "enum": [
+              "todo",
+              "work",
+              "done",
+              "blocked"
+            ]
+          },
+          "started": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "finished": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "seconds": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "parts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "role"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "role": {
+            "enum": [
+              "body",
+              "opening",
+              "window",
+              "glass",
+              "capsule",
+              "roof",
+              "parapet",
+              "equipment",
+              "decor",
+              "helper"
+            ]
+          },
+          "levels": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^LEVEL_[A-Za-z0-9]+$"
+            }
+          }
+        }
+      }
+    },
+    "openings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "marker",
+          "window_type"
+        ],
+        "properties": {
+          "marker": {
+            "type": "string",
+            "pattern": "^OPEN_[0-9]{3}$"
+          },
+          "window_type": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "enum": [
+              "placed",
+              "ambiguous",
+              "draft",
+              "agent"
+            ]
+          }
+        }
+      }
+    },
+    "materials": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "library_id"
+        ],
+        "properties": {
+          "library_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "delivery_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1
+          },
+          "mesh": {
+            "type": "string"
+          },
+          "udim": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1001,
+            "maximum": 1999
+          },
+          "npm_region": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "number"
+            },
+            "minItems": 4,
+            "maxItems": 4
+          }
+        }
+      }
+    },
+    "journal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lines": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tail": {
+          "type": "array",
+          "maxItems": 50,
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "agent_requests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "stage",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9-]{0,63}$"
+          },
+          "stage": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9
+              },
+              {
+                "const": "agent"
+              }
+            ]
+          },
+          "status": {
+            "enum": [
+              "open",
+              "answered",
+              "accepted",
+              "rolled_back"
+            ]
+          },
+          "path": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Known gaps, e.g. the spec still says window_type: int while the marker stores a string id (#1024 K2)."
+    }
+  }
+}

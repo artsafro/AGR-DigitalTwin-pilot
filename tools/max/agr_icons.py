@@ -23,6 +23,14 @@ THEMES = {"Dark": "#dcdcdc", "Light": "#383838"}
 
 _S = 'fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"'
 _F = 'fill="currentColor" stroke="none"'
+# shared parts of the 0.9 bodies (mock-up sheet #853): a badge sits in the lower-right quarter
+_B_CHECK = f'<circle {_S} cx="18" cy="18" r="4.6"/><path {_S} d="M16 18l1.4 1.4 2.6-2.8"/>'
+_B_EYE = f'<circle {_S} cx="17" cy="17" r="3.4"/><path {_S} d="M19.5 19.5L22.5 22.5"/>'
+_B_FIX = f'<path {_S} d="M14 22.5l4.6-4.6"/><circle {_S} cx="20.2" cy="16.3" r="2.6"/>'
+_B_OUT = f'<path {_S} d="M14 18h8M19 15l3 3-3 3"/>'
+_BENCH = f'<path {_S} d="M3 11h18M5 11v7M19 11v7M4 7h16M3 14h18"/>'
+_TREE = f'<circle {_S} cx="12" cy="9" r="6"/><path {_S} d="M12 15v6M9 21h6"/>'
+_BULB = f'<path {_S} d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9V16h7v-2.1A6 6 0 0 0 12 3Z"/>'
 
 # name -> (Russian label, SVG body on a 24x24 grid using currentColor)
 BASE: dict[str, tuple[str, str]] = {
@@ -157,6 +165,171 @@ BASE: dict[str, tuple[str, str]] = {
     "zip": ("Архив пакета",
             f'<rect {_S} x="4" y="3" width="16" height="18" rx="1.5"/>'
             f'<path {_S} d="M11 3v2h2v2h-2v2h2v2h-2"/><rect {_S} x="10" y="13" width="4" height="4" rx="0.8"/>'),
+    # 0.9 rows (#979): names = `icon` of the plan rows of version 0.9 (agr-tools-suite.json). Bodies from the #853
+    # mock-up sheet (make_mockup.py, team-scripts agent-jobs/agr-tools-suite, SHA256 4a1be887...be54; SYNTHESIS §4
+    # «не строки плана»), the 0.6 sheet style; `mapsuse` and `procobj` are new rows (SYNTHESIS §4) drawn here.
+    "ermn": ("ERM и нормали DirectX",
+             f'<circle {_S} cx="9" cy="9" r="5"/><circle {_S} cx="15" cy="9" r="5"/><circle {_S} cx="12" cy="14.5" r="5"/>'),
+    "finish": ("Покраска по легенде",
+               f'<rect {_S} x="3" y="3" width="14" height="6" rx="1"/><path {_S} d="M17 6h3v5h-8v3"/>'
+               f'<rect {_F} x="10" y="14" width="4" height="7" rx="1"/>'),
+    "mafuv": ("MatID → UDIM (МАФ)",
+              f'<g transform="scale(0.68)">{_BENCH}</g><path {_S} d="M14 14h8v8h-8ZM18 14v8M14 18h8"/>'),
+    "slots": ("UDIM: тайлы и слоты",
+              f'<rect {_S} x="2.5" y="6" width="5" height="12" rx="1"/><rect {_S} x="9.5" y="6" width="5" height="12" rx="1"/>'
+              f'<rect {_F} x="16.5" y="6" width="5" height="12" rx="1" opacity="0.55"/>'),
+    "flora": ("Атлас Flora", _TREE),
+    "groundel": ("Атлас GroundEl", _BENCH),
+    "florafix": ("Flora: ремонт и проверка", f'<g transform="scale(0.68)">{_TREE}</g>{_B_FIX}'),
+    "mafcheck": ("Проверки МАФ", f'<g transform="scale(0.68)">{_BENCH}</g>{_B_CHECK}'),
+    "replace": ("Замена объектов",
+                f'<rect {_S} x="3" y="3" width="8" height="8" rx="1"/><circle {_S} cx="17" cy="17" r="4"/>'
+                f'<path {_S} d="M14 6h6M18 4l2 2-2 2M10 18H4M6 16l-2 2 2 2"/>'),
+    "schedule": ("Расстановка по ведомости",
+                 f'<rect {_S} x="3" y="3" width="11" height="17" rx="1"/><path {_S} d="M6 8h5M6 12h5M6 16h3"/>'
+                 f'<path {_S} d="M18.5 21s-3.5-3.4-3.5-6a3.5 3.5 0 0 1 7 0c0 2.6-3.5 6-3.5 6Z"/>'),
+    "ground": ("Посадить на рельеф",
+               f'<rect {_S} x="8" y="3" width="8" height="6" rx="1"/>'
+               f'<path {_S} d="M12 10.5v6M9.5 14L12 16.5l2.5-2.5M3 20c4-2 14-2 18 0"/>'),
+    "address": ("Адрес и улицы",
+                f'<path {_S} d="M12 21.5s-7-6.5-7-11.5a7 7 0 0 1 14 0c0 5-7 11.5-7 11.5Z"/>'
+                f'<circle {_S} cx="12" cy="10" r="2.5"/>'),
+    "compare": ("Сравнение с листом фасада",
+                f'<rect {_S} x="2" y="5" width="6" height="14" rx="1"/><rect {_S} x="9" y="5" width="6" height="14" rx="1"/>'
+                f'<rect {_S} x="16" y="5" width="6" height="14" rx="1"/><path {_S} d="M4 9h2M11 9h2M18 9h2"/>'),
+    "normals": ("Нормали и двойные грани",
+                f'<path {_S} d="M3 18h18M7 18V9M12 18V6M17 18V9M5.5 10.5L7 9l1.5 1.5M10.5 7.5L12 6l1.5 1.5'
+                f'M15.5 10.5L17 9l1.5 1.5"/>'),
+    "sintez": ("Сверка с SINTEZ",
+               f'<rect {_S} x="3" y="3" width="9" height="12" rx="1"/><rect {_S} x="12" y="9" width="9" height="12" rx="1"/>'
+               f'<path {_S} d="M14.5 14h4M14.5 17h4"/>'),
+    "batch": ("Пакетный экспорт",
+              f'<rect {_S} x="3" y="3" width="12" height="9" rx="1"/><rect {_S} x="3" y="13" width="12" height="8" rx="1"/>'
+              f'{_B_OUT}'),
+    "mapsuse": ("Карты: использованные / лишние",
+                '<g transform="scale(0.68)">'
+                f'<rect {_S} x="3" y="4" width="18" height="16" rx="1.5"/><path {_S} d="M3 16l5-5 4 4 3-3 6 6"/></g>'
+                f'<path {_S} d="M14 15h8M14 18h8M14 21h5"/>'),
+    "lightcheck": ("Проверка света", f'<g transform="scale(0.68)">{_BULB}</g>{_B_CHECK}'),
+    "procobj": ("Процедурные объекты",
+                '<g transform="scale(0.68)">'
+                + "".join(f'<circle {_F} cx="{x}" cy="{y}" r="1.6"/>' for x, y in
+                          [(5, 6), (11, 4), (18, 7), (7, 12), (14, 11), (20, 14), (4, 18), (11, 18), (17, 20)])
+                + f'</g>{_B_EYE}'),
+    # 1.0 conveyor (#1024, branch 0): icons of the 33 stage buttons (plan row `icon`; export.place_by_passport
+    # shares `passport`). Big stage buttons: passport, body, winplace, capsule, roof, mattable, vpm, npm, npm2vpm,
+    # deliver, agentreq (plan stages[].icon).
+    "passport": ("Паспорт проекта",
+                 f'<rect {_S} x="4" y="2.5" width="16" height="19" rx="1.5"/><circle {_S} cx="12" cy="9" r="2.6"/>'
+                 f'<path {_S} d="M8 15h8M8 18h5"/>'),
+    "intake": ("Приём источника",
+               f'<path {_S} d="M3 14v5.5h18V14"/><path {_S} d="M12 3v11M8 10l4 4 4-4"/>'),
+    "source": ("Класс источника",
+               '<g transform="scale(0.68)">'
+               f'<path {_S} d="M12 3l8 4.5v9L12 21l-8-4.5v-9Z"/><path {_S} d="M4 7.5l8 4.5 8-4.5M12 12v9"/></g>'
+               f'{_B_EYE}'),
+    "body": ("Бадик",
+             f'<path {_S} d="M3 8l7-4 11 4v10l-11 4-7-4Z"/><path {_S} d="M3 8l11 4 7-4M14 12v10"/>'),
+    "attachmat": ("Объединить по материалам",
+                  f'<rect {_S} x="3" y="3" width="8" height="8" rx="1"/><rect {_F} x="13" y="3" width="8" height="8" '
+                  f'rx="1" opacity="0.55"/><rect {_S} x="7" y="14" width="10" height="7" rx="1"/>'
+                  f'<path {_S} d="M7 11l3 3M17 11l-3 3"/>'),
+    "moveapart": ("Раздвинуть задвойки",
+                  f'<path {_S} d="M9 4v16M15 4v16"/><path {_S} d="M6.5 12H2M4 10l-2 2 2 2M17.5 12H22M20 10l2 2-2 2"/>'),
+    "gridclean": ("Чистка сетки фасада",
+                  '<g transform="scale(0.68)">'
+                  f'<rect {_S} x="3" y="3" width="18" height="18" rx="1"/><path {_S} d="M3 12h18M12 3v18M3 3l9 9"/>'
+                  f'</g>{_B_CHECK}'),
+    "smallparts": ("Мелкие детали",
+                   f'<path {_S} d="M7 3h6l3 5.2-3 5.2H7L4 8.2Z"/><circle {_S} cx="10" cy="8.2" r="2"/>'
+                   f'<path {_S} d="M16 15l5 5M14.5 19.5l5-5"/>'),
+    "winplace": ("Окна по проёмам",
+                 f'<rect {_S} x="3" y="3" width="18" height="18" rx="1"/><rect {_S} x="6" y="6" width="5" height="6"/>'
+                 f'<rect {_S} x="13" y="6" width="5" height="6"/><path {_S} d="M8.5 6v6M15.5 6v6M8.5 15v4M6.5 17l2 2 '
+                 f'2-2"/>'),
+    "wingen": ("Генератор типов окон",
+               f'<rect {_S} x="3" y="3" width="11" height="14" rx="0.5"/><path {_S} d="M8.5 3v14M3 10h11"/>'
+               f'<circle {_S} cx="18" cy="18" r="2.2"/><path {_S} d="M18 13.5v2M18 20.5v2M13.5 18h2M20.5 18h2"/>'),
+    "glass": ("Стекло плоскостями",
+              f'<path {_S} d="M4 20L8 4h12l-4 16Z"/><path {_S} d="M10 15l4-6M13 16l2-3"/>'),
+    "capsule": ("Капсулы интерьера",
+                f'<rect {_S} x="3" y="3" width="18" height="18" rx="1"/><rect {_S} x="7" y="7" width="10" height="10" '
+                f'rx="4"/><rect {_F} x="9.5" y="9.5" width="5" height="5" rx="2" opacity="0.55"/>'),
+    "roof": ("Крыша по парапету",
+             f'<path {_S} d="M3 9h18M3 9v12M21 9v12M3 9V6h2v3M19 9V6h2v3"/><path {_S} d="M5 11.5h14" '
+             f'stroke-dasharray="2 1.6"/><path {_S} d="M7 21v-5h4v5"/>'),
+    "mattable": ("Таблица материалов",
+                 f'<rect {_S} x="3" y="3" width="18" height="18" rx="1"/><path {_S} d="M3 9h18M3 15h18M9 3v18"/>'
+                 f'<rect {_F} x="4.5" y="10.5" width="3" height="3"/><path {_S} d="M12 6h6M12 12h6M12 18h4"/>'),
+    "mattiles": ("Плитки: серые карты",
+                 f'<rect {_S} x="3" y="3" width="18" height="18" rx="1"/>'
+                 f'<path {_S} d="M3 9h18M3 15h18M9 3v6M15 9v6M9 15v6M17 3v6M7 9v6"/>'),
+    "plugcolour": ("Цвет заглушки",
+                   f'<rect {_F} x="3" y="3" width="11" height="11" rx="1" opacity="0.55"/>'
+                   f'<rect {_S} x="3" y="3" width="11" height="11" rx="1"/>'
+                   f'<path {_S} d="M21 3l-3 3M15.5 8.5l5 5M13 13l-5 5-2 .5.5-2 5-5M17 7l3 3"/>'),
+    "vpm": ("Сборка ВПМ",
+            f'<rect {_S} x="3" y="3" width="8" height="8" rx="0.5"/><rect {_S} x="13" y="3" width="8" height="8" '
+            f'rx="0.5"/><rect {_S} x="3" y="13" width="8" height="8" rx="0.5"/><rect {_S} x="13" y="13" width="8" '
+            f'height="8" rx="0.5"/><path {_S} d="M5 9V6l2-1.5L9 6v3M15 9V5h4v4"/>'),
+    "rescale": ("Подгонка плотности",
+                f'<rect {_S} x="3" y="13" width="8" height="8" rx="0.5"/><path {_S} d="M3 9V3h6M21 15v6h-6"/>'
+                f'<path {_S} d="M11 13l9-9M15 4h5v5"/>'),
+    "distort": ("Искажения UV",
+                f'<path {_S} d="M3 4c6 2 12-2 18 0M3 12c6 3 12-3 18 0M3 20c6 2 12-2 18 0"/>'
+                f'<path {_S} d="M3 4v16M12 3.5c1 5-1 11 0 17M21 4v16"/>'),
+    "dilate": ("Отступы карт (dilate)",
+               f'<path {_F} d="M8 8h6l2 4-2 4H8Z" opacity="0.55"/><path {_S} d="M6 5h9.5l3.5 7-3.5 7H6Z" '
+               f'stroke-dasharray="2 1.6"/><path {_S} d="M2 12h3M22 12h-2"/>'),
+    "udimplug": ("Острова-заглушки в UDIM",
+                 f'<rect {_S} x="3" y="3" width="18" height="18" rx="0.5"/><path {_S} d="M12 3v18M3 12h18"/>'
+                 f'<rect {_F} x="5.5" y="5.5" width="4" height="4"/><rect {_F} x="14.5" y="14.5" width="4" '
+                 f'height="4"/>'),
+    "npm": ("ВПМ → НПМ",
+            f'<rect {_S} x="3" y="3" width="18" height="18" rx="1"/><path {_S} d="M3 15h18M9 15v6M15 15v6"/>'
+            f'<path {_S} d="M7 12V7l5-2.5L17 7v5"/>'),
+    "strip": ("Фасадный атлас run-strip",
+              f'<rect {_S} x="3" y="3" width="18" height="18" rx="1"/><path {_S} d="M3 8h18M3 13h18M3 17.5h18"/>'
+              f'<path {_S} d="M7 3v5M13 8v5M17 13v4.5"/>'),
+    "npm2vpm": ("НПМ → ВПМ",
+                f'<rect {_S} x="2.5" y="7" width="8" height="10" rx="1"/><rect {_S} x="13.5" y="3" width="8" '
+                f'height="8" rx="0.5"/><rect {_S} x="13.5" y="13" width="8" height="8" rx="0.5"/>'
+                f'<path {_S} d="M10.5 9.5l3-2.5M10.5 14.5l3 2.5"/>'),
+    "udim2id": ("UDIM → ID",
+                f'<rect {_S} x="3" y="3" width="8" height="8" rx="0.5"/><rect {_S} x="3" y="13" width="8" height="8" '
+                f'rx="0.5"/><path {_S} d="M13 12h3M14.5 10l2 2-2 2"/><path {_S} d="M19 8v8M17.5 9.5L19 8"/>'),
+    "deliver": ("Сдача пакета",
+                f'<path {_S} d="M3 8l9-5 9 5v9l-9 5-9-5Z"/><path {_S} d="M3 8l9 5 9-5M12 13v9M7.5 5.5l9 5"/>'),
+    "ucxgap": ("UCX: нарезка и зазор",
+               f'<path {_S} d="M10.5 3H4v18h6.5" stroke-dasharray="2.4 1.8"/><path {_S} d="M13.5 3H20v18h-6.5" '
+               f'stroke-dasharray="2.4 1.8"/><path {_S} d="M12 2v20"/>'),
+    "ucxstairs": ("UCX лестниц",
+                  f'<path {_S} d="M3 21h4v-4h4v-4h4V9h4V5"/><path {_S} d="M3 21L19 5h2v16Z" '
+                  f'stroke-dasharray="2.4 1.8"/>'),
+    "lightfbx": ("FBX освещения", f'<g transform="scale(0.68)">{_BULB}</g>{_B_OUT}'),
+    "omk": ("Код ОМК ТЭ",
+            f'<path {_S} d="M3 6h18v12H3Z"/><path {_S} d="M6 9v6M8.5 9v6M10 9v6M13 9v6M15.5 9v6M18 9v6"/>'),
+    "agentreq": ("Запрос агенту",
+                 f'<path {_S} d="M4 4h16v11H11l-5 4.5V15H4Z"/><path {_S} d="M10 8a2 2 0 1 1 3 1.7c-.7.4-1 .9-1 1.6"/>'
+                 f'<circle {_F} cx="12" cy="13" r="0.9"/>'),
+    "agentok": ("Приём от агента",
+                f'<path {_S} d="M4 4h16v11H11l-5 4.5V15H4Z"/><path {_S} d="M8.5 9.5l2.5 2.5 4.5-5"/>'),
+    # 1.1: Max <-> Blender handoff on the agent stage and the Claude dock
+    "handoffout": ("Хендофф: выгрузить в Blender",
+                   f'<path {_S} d="M3 8l6-3.5L15 8v7l-6 3.5L3 15Z"/><path {_S} d="M3 8l6 3.5L15 8M9 11.5v7"/>'
+                   f'<path {_S} d="M15.5 12h6M19 9.5l2.5 2.5-2.5 2.5"/>'),
+    "handoffin": ("Хендофф: принять из Blender",
+                  f'<path {_S} d="M9 8l6-3.5L21 8v7l-6 3.5L9 15Z"/><path {_S} d="M9 8l6 3.5L21 8M15 11.5v7"/>'
+                  f'<path {_S} d="M2.5 12h6M6 9.5l2.5 2.5L6 14.5"/>'),
+    "handoffcheck": ("Хендофф: сверка круга",
+                     f'<path {_S} d="M4 9a8 8 0 0 1 14-3.5M20 15a8 8 0 0 1-14 3.5"/><path {_S} d="M18 2.5v3.5h-3.5'
+                     f'M6 21.5V18h3.5"/><path {_S} d="M8.5 12l2.5 2.5 4.5-5"/>'),
+    "matrestore": ("Восстановить материалы",
+                   f'<circle {_S} cx="10" cy="10" r="6.5"/><path {_S} d="M6 8.5a4.5 4.5 0 0 1 6-2.5"/>'
+                   f'<path {_S} d="M13 20a6 6 0 1 0 1-9"/><path {_S} d="M13.5 15.5V20h4.5"/>'),
+    "agentdock": ("Claude-док",
+                  f'<rect {_S} x="3" y="3" width="18" height="18" rx="1.5"/><path {_S} d="M14 3v18"/>'
+                  f'<path {_S} d="M16.5 7.5h2M16.5 10.5h2M16.5 13.5h2"/><path {_S} d="M6 9l3 3-3 3"/>'),
     # status / control icons for the result table and the progress row
     "ok": ("Статус: ок",
            f'<circle {_S} cx="12" cy="12" r="9"/><path {_S} d="M7.5 12.5l3 3 6-6.5"/>'),

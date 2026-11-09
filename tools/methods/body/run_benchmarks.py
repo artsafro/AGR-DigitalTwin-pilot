@@ -37,6 +37,7 @@ sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(HERE.parent))
 sys.path.insert(0, str(HERE))
 
+from dt_ai.core.max_env import max_child_env  # noqa: E402
 import contours as body_contours  # noqa: E402
 import results_md  # noqa: E402
 import run_variant  # noqa: E402
@@ -119,7 +120,7 @@ def _max(src: Path, out: Path, rep: Path) -> tuple[int, str, float]:
                    f"encoding='utf-8').read())\n", encoding="utf-8")
     t0 = time.perf_counter()
     proc = subprocess.run([sys.executable, str(DCC_BATCH), "max", "--file", str(job), "--timeout", "1800"],
-                          capture_output=True, text=True, timeout=3600)
+                          capture_output=True, text=True, timeout=3600, env=max_child_env())
     line = (proc.stdout.strip().splitlines() or ["{}"])[-1]
     try:
         res = json.loads(line)

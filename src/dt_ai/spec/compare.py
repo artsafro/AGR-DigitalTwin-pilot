@@ -1,4 +1,4 @@
-"""Compare two specs of one object in the object system (issue #11, HARNESS_PLAN §4 (historical)).
+"""Compare two specs of one object in the object system (issue #11, archive/2026-11:docs/HARNESS_PLAN.md §4 (historical)).
 
 Pattern: none — benchmark check code (REVIEW_CHECKLIST Q1: new-case).
 
@@ -104,7 +104,7 @@ def compare_specs(spec_a, spec_b, report_a, report_b, tolerances, names=("a", "b
     rows.append(_row("level count", len(sa.levels), len(sb.levels), None, "equal", ref.get("levels")))
     out = {"sides": dict(zip(("a", "b"), names)), "rows": rows, "contour_differences": regions}
     verdict = tolerances.get("verdict", {})
-    if len(sa.levels) != len(sb.levels):        # HARNESS_PLAN §4 (historical): the other criteria are not counted
+    if len(sa.levels) != len(sb.levels):        # archive/2026-11:docs/HARNESS_PLAN.md §4 (historical): the other criteria are not counted
         out["failing"] = ["level count"]
         out["verdict"] = "no match" if verdict.get("enabled") else "deferred"
         if not verdict.get("enabled"):

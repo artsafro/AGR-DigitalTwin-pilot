@@ -1,14 +1,26 @@
 {
  "schema": 1,
  "button": "export.place_by_passport",
- "tool": null,
- "version": "1.x",
- "shipped": false,
+ "tool": "export.place_by_passport",
+ "version": "1.0",
+ "shipped": true,
  "select": "named",
- "reason": "Кнопки ещё нет в AGR Tools 0.7: в панели её нет, объекты полигона и эта запись появляются в том же изменении, что и сама кнопка.",
+ "reason": "FAIL-строка (битый JSON, приманка, нет паспорта, не FBX) проверяется unit-тестами и нативным джобом: опции станции общие на прогон; станция только preview (apply в живом полигоне не нажимается)",
  "apply_status": null,
- "objects": [],
- "base": null,
- "station": null,
- "stations": []
+ "objects": [
+  {
+   "name": "__scene__",
+   "scene": "polygon_all",
+   "expect": "pass",
+   "codes": []
+  }
+ ],
+ "options": {
+  "fbx": "C:/x/test-polygon/t/place/model.fbx"
+ },
+ "base": "1.0",
+ "station": "1.0.31",
+ "stations": [
+  "1.0.31"
+ ]
 }

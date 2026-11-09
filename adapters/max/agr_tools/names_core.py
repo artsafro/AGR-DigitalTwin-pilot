@@ -24,6 +24,24 @@ names_fix   N1 export copies only (glue); N2 objects, materials and map files ar
             report, not a silent repoint; N5 an existing destination file is never overwritten (reused, its hash
             reported); N6 a target's own material is not replaced unless `replace_material` is set, and either
             way it is reported; N7 every failure is in the report (no Listener-only messages).
+
+0.9 rework (#979, branch E1; team-audit T06 cards, all measured in Max 2024; team scripts read for ideas, no code):
+V1  a destination file that exists with OTHER content is never overwritten AND never linked (renamer V13
+    `File.Copy overwrite`, Asset Material Renamer "skip existing" relinked a foreign file): the map stays on its
+    source, the conflict is a failure; identical content is reused.
+V2  slot table (V13): one role per slot; reflectionMap has no NPM/VPM role (V13 gave `_m` to specular AND
+    reflection, one copy overwrote the other) and is reported, never renamed to `_m`.
+V3  names come from the grammar, never by cutting characters (V13 "Bench" -> "Mnch"; prefix collision
+    SM_Chair/XX_Chair -> one M_Chair_1); two targets with one name are ambiguous.
+V4  `folder`: map copies into a separate folder (Asset Material Renamer), mask in the FILE name only.
+V5  library profile `Brand_Name_Article_high|low` (CheckAssetNames v8): invisible characters, homoglyphs and
+    transliteration in one pass (order cannot matter: "Стул_Дерево" -> "Stul_Derevo", never "Ctyl_Depevo");
+    hyphens, digit-first segments and Max `.001` suffixes are refused with a reason, not passed.
+V6  0 duplicate names: a produced name held by another scene object (not selected, not an export copy) is
+    ambiguous (CheckNames fixed into an existing name; Max allows duplicates).
+V7  names of the 7 roles from Address + OKS number + slot (A101LP), FBX names included, never `__` (A101 :388).
+Transliteration: one table (`TRANSLIT`, `transliterate`) shared with qa.address (branch C). Й -> "y" here; GeoAGR
+writes "j" (`GeoAGR.ms:194`): `translit_variants` gives both spellings for comparisons.
 """
 import posixpath
 import re
@@ -37,6 +55,10 @@ UCX_MASK = re.compile(r'^UCX_SM_(?P<address>[A-Za-z0-9_]+)_(?P<kind>Main|Ground)
 _UCX_READ = re.compile(r'^(?:ucx_)+(?:(?P<sm>sm)_)?(?P<address>.+?)_(?P<kind>main|ground)(?:_(?P<num>\d+))?$',
                        re.IGNORECASE)
 _ADDRESS = re.compile(r'[A-Za-z0-9]+(?:_[A-Za-z0-9]+)*')
+# 1.0.1 (KPP1 e2e 20261106-075555-c179f5f0): the 0.8 UCX builder names its pieces after the export copy
+# (ucx_core.ucx_export_names: `UCX_<mesh>_AGR_ucx__NN`), so `_Main` / `_Ground` is no longer the end of the name and
+# ucx.rename skipped all 98 pieces. The working marker `_AGR_ucx_` is read as the piece number of the family <mesh>.
+_UCX_BUILDER = re.compile(r'_AGR_ucx__(?P<num>\d+)$', re.IGNORECASE)
 
 NPM_MAP = {'diffuse': 'd', 'normal': 'n', 'opacity': 'o', 'metalness': 'm', 'roughness': 'r'}
 VPM_MAP = {'diffuse': 'Diffuse', 'normal': 'Normal', 'opacity': None, 'metalness': 'ERM', 'roughness': 'ERM',
@@ -53,6 +75,22 @@ _TRANSLIT = {'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', '
              'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't',
              'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ъ': '', 'ы': 'y',
              'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya'}
+TRANSLIT = dict(_TRANSLIT)  # public read-only view (qa.address, udim.slots)
+_TRANSLIT_ALT = {'й': ('y', 'j')}  # GeoAGR.ms:194 writes j
+
+# Material slot -> map role (V13 slot table). None: the slot has no NPM/VPM texture role; a bitmap there is
+# reported and left as is (reflection is NOT metalness: V13 named both `_m`).
+SLOT_TABLE = {
+    'PhysicalMaterial': (('base_color_map', 'diffuse'), ('bump_map', 'normal'), ('roughness_map', 'roughness'),
+                         ('metalness_map', 'metalness'), ('cutout_map', 'opacity'), ('transparency_map', 'opacity'),
+                         ('emission_map', 'emission'), ('reflectivity_map', None)),
+    'Standardmaterial': (('diffuseMap', 'diffuse'), ('bumpMap', 'normal'), ('opacityMap', 'opacity'),
+                         ('glossinessMap', 'roughness'), ('specularLevelMap', 'metalness'), ('reflectionMap', None),
+                         ('specularMap', None)),
+}
+PROFILES = ('project', 'library')
+LIBRARY_LODS = ('high', 'low')
+_LIB_DUP = re.compile(r'\.\d{3}$')
 
 
 # ---- UCX grammar ----------------------------------------------------------------------------------------
@@ -79,7 +117,7 @@ def parse_ucx(name):
     Never trims digits or underscores off the address (U3); `UCX_` in any case and repeated is one prefix (U4)."""
     if not is_ucx_like(name):
         return 'not a UCX name'
-    m = _UCX_READ.fullmatch(name.strip())
+    m = _UCX_READ.fullmatch(_UCX_BUILDER.sub(lambda b: '_' + b.group('num'), name.strip()))
     if not m:
         return 'UCX name without _Main/_Ground: ' + name
     address = m.group('address')
@@ -175,6 +213,105 @@ def clean_text(name):
     return collapsed, sorted(set(changes))
 
 
+def transliterate(text):
+    """Cyrillic -> Latin by TRANSLIT (case kept on the first letter); other characters unchanged."""
+    out = []
+    for c in str(text):
+        t = _TRANSLIT.get(c.lower())
+        out.append(c if t is None else (t.capitalize() if c.isupper() else t))
+    return ''.join(out)
+
+
+def translit_variants(text):
+    """Every accepted Latin spelling of a Cyrillic text (Й -> y or j, GeoAGR.ms:194), sorted; `transliterate`
+    first."""
+    variants = ['']
+    for c in str(text):
+        alts = _TRANSLIT_ALT.get(c.lower())
+        if alts is None:
+            t = transliterate(c)
+            variants = [v + t for v in variants]
+        else:
+            variants = [v + (a.capitalize() if c.isupper() else a) for v in variants for a in alts]
+    main = transliterate(text)
+    return [main] + sorted(set(variants) - {main})
+
+
+def library_name(name):
+    """Library asset name `Brand_Name[_Name...]_Article_high|low` (CheckAssetNames v8 profile, V5).
+
+    Returns {'name', 'changes'} or a reason string. Fixed: invisible characters, edge blanks, spaces -> `_`,
+    homoglyphs/transliteration (one pass, order-free), Brand/Name first letter upper case, LOD lower case.
+    Refused: hyphens, Max duplicate suffix `.NNN`, empty or digit-first segments, LOD not high/low, < 4 segments."""
+    raw = str(name)
+    if _LIB_DUP.search(raw.strip()):
+        return 'Max duplicate suffix {}: rename by hand (two objects share the base name)'.format(raw.strip()[-4:])
+    if '-' in raw:
+        return 'hyphen in the name: segments are joined by "_" only'
+    text = re.sub(r'\s+', '_', ''.join(c for c in raw if unicodedata.category(c) not in ('Cf', 'Cc')).strip())
+    cleaned, changes = clean_text(text)
+    if text != raw:
+        changes = sorted(set(changes) | {'invisible characters or blanks fixed'})
+    if '__' in text or text.startswith('_') or text.endswith('_'):
+        return 'empty segment in ' + text
+    if re.fullmatch(r'[A-Za-z0-9_]+', cleaned) is None:
+        return 'characters other than A-Z a-z 0-9 _ remain: ' + cleaned
+    parts = cleaned.split('_')
+    if len(parts) < 4:
+        return 'expected Brand_Name_Article_high|low (4+ segments): ' + cleaned
+    lod = parts[-1].lower()
+    if lod not in LIBRARY_LODS:
+        return 'last segment must be high or low: ' + parts[-1]
+    if any(p.lower() in LIBRARY_LODS for p in parts[:-1]):
+        return 'high/low only as the last segment: ' + cleaned
+    for p in parts[:-1]:
+        if p[0].isdigit():
+            return 'segment starts with a digit: {} in {}'.format(p, cleaned)
+    fixed = [p[0].upper() + p[1:] for p in parts[:-2]] + [parts[-2], lod]
+    out = '_'.join(fixed)
+    if out != cleaned:
+        changes = sorted(set(changes) | {'case fixed'})
+    return {'name': out, 'changes': changes}
+
+
+def role_names(address, oks=None, slot=1, code=None, model='npm'):
+    """Names of the 7 roles (A101LP idea, V7): {type: {object, material, textures{role: stem}, fbx}}.
+
+    NPM: SM_<Address>_<NNN>_Main|MainGlass (OKS 1..20), SM_<Address>_<Type> for Ground roles and Flora; FBX
+    `<code>_<Address>_<NN>.fbx` / `<code>_<Address>_Ground.fbx` (code: 4 digits). VPM: Main/MainGlass/Ground/
+    GroundGlass only, FBX SM_<Address>.fbx / SM_<Address>_Ground.fbx. Never a doubled `_` (A101AGRLP.ms:388)."""
+    if not _ADDRESS.fullmatch(str(address)):
+        raise ValueError('address must be Latin letters, digits and single "_": ' + repr(address))
+    if model not in ('npm', 'vpm'):
+        raise ValueError('model must be npm or vpm')
+    if model == 'npm':
+        if type(oks) is not int or not 1 <= oks <= 20:
+            raise ValueError('NPM OKS number must be 1..20: ' + repr(oks))
+        if code is not None and not re.fullmatch(r'\d{4}', str(code)):
+            raise ValueError('FBX code must be 4 digits: ' + repr(code))
+    types = TYPES if model == 'npm' else ('Main', 'MainGlass', 'Ground', 'GroundGlass')
+    out = {}
+    for t in types:
+        building = t in ('Main', 'MainGlass')
+        obj = {'address': address, 'oks': '{:03d}'.format(oks) if model == 'npm' and building else None, 'type': t}
+        textures = {}
+        for role in ROLES:
+            stem = texture_stem(obj, model, role, slot)
+            if stem:
+                textures[role] = stem
+        if model == 'npm':
+            fbx = None if code is None else ('{}_{}_{:02d}.fbx'.format(code, address, oks) if building
+                                              else '{}_{}_Ground.fbx'.format(code, address))
+        else:
+            fbx = 'SM_{}.fbx'.format(address) if building else 'SM_{}_Ground.fbx'.format(address)
+        names = {'object': '_'.join(['SM', address] + ([obj['oks']] if obj['oks'] else []) + [t]),
+                 'material': material_name(obj, slot), 'textures': textures, 'fbx': fbx}
+        for v in [names['object'], names['material'], names['fbx'] or ''] + list(textures.values()):
+            assert '__' not in v, v
+        out[t] = names
+    return out
+
+
 def parse_object(name, model):
     """{'address', 'oks'(str|None), 'type', 'name'} for an SM object name of `model` ('npm'|'vpm'), or a reason.
 
@@ -254,14 +391,18 @@ def udim_of(path):
     return int(m.group('udim')) if m else None
 
 
-def target_path(source, stem):
-    """Same folder as the source, new file name `<stem><ext>`: the mask never touches folder names (N3)."""
+def target_path(source, stem, folder=None):
+    """New file name `<stem><ext>` in the source folder, or in `folder` (V4, Asset Material Renamer: copies into a
+    separate folder). The mask never touches folder names (N3)."""
     src = str(source)
-    sep = '\\' if '\\' in src and '/' not in src else '/'
+    base_folder = src if folder is None else str(folder).rstrip('\\/') + '/x'
+    sep = '\\' if '\\' in base_folder and '/' not in base_folder else '/'
     norm = src.replace('\\', '/')
-    folder, base = posixpath.split(norm)
+    dirname, base = posixpath.split(norm)
+    if folder is not None:
+        dirname = str(folder).replace('\\', '/').rstrip('/')
     ext = posixpath.splitext(base)[1].lower()
-    out = (folder + '/' if folder else '') + stem + ext
+    out = (dirname + '/' if dirname else '') + stem + ext
     return out.replace('/', sep) if sep == '\\' else out
 
 
@@ -282,7 +423,10 @@ def names_fix_plan(state, options):
              'files': {path: {'exists': bool, 'sha256': str|None}}, 'export_names': [names on the export layer]}
     material = {key, name, class, subs: None | [{id, used, key, name, class, maps}], maps: [{key, role, path,
                 name}]} — maps of a sub-material sit in its own dict.
-    options: model ('npm'|'vpm'|None = per object), donor (object name|None), replace_material (bool).
+    options: model ('npm'|'vpm'|None = per object), donor (object name|None), replace_material (bool);
+    0.9: profile ('project'|'library'), folder (absolute folder for the map copies, V4), address + oks (names
+    of the role from the type token of each object, V7). state may hold 'scene_names': names of the other scene
+    objects (not selected, not export copies) that a produced name must not repeat (V6).
     """
     model_opt = options.get('model')
     if model_opt not in (None, 'npm', 'vpm'):
@@ -290,6 +434,22 @@ def names_fix_plan(state, options):
     replace = bool(options.get('replace_material', False))
     if not isinstance(options.get('replace_material', False), bool):
         raise ValueError('options.replace_material must be true/false')
+    profile = options.get('profile') or 'project'
+    if profile not in PROFILES:
+        raise ValueError('options.profile must be project or library')
+    folder = options.get('folder')
+    if folder is not None and (not isinstance(folder, str) or not re.match(r'^(?:[A-Za-z]:[\\/]|[\\/]{2}|/)', folder)):
+        raise ValueError('options.folder must be an absolute folder path')
+    address_opt, oks_opt = options.get('address'), options.get('oks')
+    if address_opt is not None and not _ADDRESS.fullmatch(str(address_opt)):
+        raise ValueError('options.address must be Latin letters, digits and single "_"')
+    if oks_opt is not None and (type(oks_opt) is not int or not 1 <= oks_opt <= 20):
+        raise ValueError('options.oks must be 1..20')
+    if oks_opt is not None and address_opt is None:
+        raise ValueError('options.oks needs options.address')
+    if profile == 'library' and (address_opt is not None or model_opt is not None):
+        raise ValueError('library profile takes no address/oks/model')
+    scene_names = set(state.get('scene_names', ()))
     donor_name = options.get('donor')
     objects = state['objects']
     files = state['files']
@@ -306,6 +466,11 @@ def names_fix_plan(state, options):
     ucx = ucx_plan(ucx_items)  # copies live on the export layer: working names are not "occupied"
     export_names = set(state.get('export_names', ()))
     for r in ucx['rename'] + [{'key': u['key'], 'old': u['name'], 'new': u['name']} for u in ucx['unchanged']]:
+        if r['new'] in scene_names:
+            plan['ambiguous'].append({'keys': [r['key']], 'item': r['new'],
+                                      'reason': 'another scene object already has this name (Max allows duplicates; '
+                                                'a fix must not make one)'})
+            continue
         if r['new'] in export_names:
             plan['ambiguous'].append({'keys': [r['key']], 'item': r['new'],
                                       'reason': 'an export copy with this name already exists (repeat run): '
@@ -323,19 +488,29 @@ def names_fix_plan(state, options):
         if not o['geometry']:
             plan['skipped'].append({'key': o['key'], 'item': o['name'], 'reason': 'not geometry'})
             continue
-        model = model_opt or o.get('model')
-        if model is None:
-            guess = parse_object(o['name'], 'npm')
-            if isinstance(guess, dict) and guess['oks']:
-                model = 'npm'
-            elif isinstance(guess, str) and 'OKS' not in guess:
-                plan['skipped'].append({'key': o['key'], 'item': o['name'], 'reason': guess})
+        if profile == 'library':
+            model = 'library'
+            parsed = library_name(o['name'])
+            if isinstance(parsed, dict):
+                parsed = {'address': parsed['name'], 'oks': None, 'type': None, 'name': parsed['name'],
+                          'library': True, 'changes': parsed['changes']}
+        else:
+            model = model_opt or o.get('model')
+            if model is None and address_opt is not None:
+                model = 'npm' if oks_opt is not None else None
+            if model is None:
+                guess = parse_object(o['name'], 'npm')
+                if isinstance(guess, dict) and guess['oks']:
+                    model = 'npm'
+                elif isinstance(guess, str) and 'OKS' not in guess:
+                    plan['skipped'].append({'key': o['key'], 'item': o['name'], 'reason': guess})
+                    continue
+            if model is None:
+                plan['skipped'].append({'key': o['key'], 'item': o['name'],
+                                        'reason': 'model unknown (NPM or VPM): set options.model or AGR_EXPORT_PATH'})
                 continue
-        if model is None:
-            plan['skipped'].append({'key': o['key'], 'item': o['name'],
-                                    'reason': 'model unknown (NPM or VPM): set options.model or AGR_EXPORT_PATH'})
-            continue
-        parsed = parse_object(o['name'], model)
+            parsed = (parse_object(o['name'], model) if address_opt is None
+                      else _role_object(o['name'], model, address_opt, oks_opt))
         if isinstance(parsed, str):
             plan['skipped'].append({'key': o['key'], 'item': o['name'], 'reason': parsed})
             continue
@@ -348,6 +523,11 @@ def names_fix_plan(state, options):
             plan['ambiguous'].append({'keys': [o['key']], 'item': new,
                                       'reason': 'an export copy with this name already exists (repeat run): '
                                                 'delete or rename it first, nothing is overwritten'})
+            continue
+        if new in scene_names:
+            plan['ambiguous'].append({'keys': [o['key']], 'item': new,
+                                      'reason': 'another scene object already has this name (Max allows duplicates; '
+                                                'a fix must not make one)'})
             continue
         seen_targets[new] = o['key']
         entry = {'key': o['key'], 'old': o['name'], 'new': new, 'kind': 'sm', 'model': model}
@@ -367,15 +547,46 @@ def names_fix_plan(state, options):
         if material is None:
             plan['failures'].append({'key': o['key'], 'item': o['name'], 'reason': 'no material: nothing to name'})
             continue
-        _plan_material(plan, o['key'], parsed, model, material, files)
+        _plan_material(plan, o['key'], parsed, model, material, files, folder)
     for k in ('objects', 'skipped', 'files', 'materials', 'failures'):
         plan[k].sort(key=lambda r: (r['key'], str(r.get('slot', '')), str(r.get('role', '')), str(r.get('item', ''))))
     plan['ambiguous'].sort(key=lambda r: r['keys'])
     return plan
 
 
-def _plan_material(plan, key, obj, model, material, files):
+def _role_object(name, model, address, oks):
+    """V7: the object takes the name of its role (type token of the current name) under the given address/OKS."""
+    text, _ = clean_text(name)
+    kind = {t.lower(): t for t in TYPES}.get((text.split('_') or [''])[-1].lower())
+    if kind is None:
+        return 'role unknown: the name does not end with {}'.format('/'.join(TYPES))
+    if model == 'npm' and kind in ('Main', 'MainGlass') and not oks:
+        return 'options.oks is needed for NPM {}'.format(kind)
+    if model == 'vpm' and kind not in ('Main', 'MainGlass', 'Ground', 'GroundGlass'):
+        return 'VPM has no {} objects'.format(kind)
+    names = role_names(address, oks, 1, None, model) if model == 'vpm' or oks else None
+    if names is None:  # NPM Ground roles without an OKS number: same grammar, no number
+        return {'address': address, 'oks': None, 'type': kind, 'name': 'SM_{}_{}'.format(address, kind)}
+    oks_text = '{:03d}'.format(oks) if model == 'npm' and kind in ('Main', 'MainGlass') else None
+    return {'address': address, 'oks': oks_text, 'type': kind, 'name': names[kind]['object']}
+
+
+def _library_material(obj, slot):
+    return 'M_' + obj['name'] + ('' if slot == 1 else '_{}'.format(slot))
+
+
+def _library_stem(obj, role):
+    suffix = NPM_MAP.get(role)
+    return None if suffix is None else 'T_{}_{}'.format(obj['name'], suffix)
+
+
+def _plan_material(plan, key, obj, model, material, files, folder=None):
     slots = _material_slots(material)
+    library = bool(obj.get('library'))
+    if library and material.get('subs') is not None:
+        plan['failures'].append({'key': key, 'item': material['name'],
+                                 'reason': 'library profile: one material per asset, Multi/Sub is not renamed'})
+        return
     if len(slots) > MAX_SLOTS:
         plan['failures'].append({'key': key, 'item': material['name'],
                                  'reason': '{} used sub-materials > SlotNumber 7'.format(len(slots))})
@@ -385,7 +596,8 @@ def _plan_material(plan, key, obj, model, material, files):
         plan['materials'].append({'key': key, 'path': [], 'old': material['name'], 'new': multi, 'action': 'rename'})
     for slot, sub in slots:
         path = [] if material.get('subs') is None else [sub['id']]
-        plan['materials'].append({'key': key, 'path': path, 'old': sub['name'], 'new': material_name(obj, slot),
+        plan['materials'].append({'key': key, 'path': path, 'old': sub['name'],
+                                  'new': _library_material(obj, slot) if library else material_name(obj, slot),
                                   'action': 'rename', 'slot': slot})
         by_stem = {}
         if sub.get('unsupported'):
@@ -394,11 +606,19 @@ def _plan_material(plan, key, obj, model, material, files):
                                          sub.get('class'))})
         for mp in sub.get('maps') or ():
             role, src = mp['role'], mp['path']
-            item = '{} {}'.format(sub['name'], role)
+            item = '{} {}'.format(sub['name'], role if role is not None else mp['key'])
+            if role is None:  # V2: slot without a texture role (reflection is not `_m`)
+                plan['failures'].append({'key': key, 'item': item,
+                                         'reason': '{}: slot has no NPM/VPM texture role; map left as is'.format(
+                                             mp['key'])})
+                continue
             if role not in ROLES:
                 plan['failures'].append({'key': key, 'item': item, 'reason': 'map slot role unknown: ' + str(role)})
                 continue
-            stem = texture_stem(obj, model, role, slot, udim_of(src) if model == 'vpm' else None)
+            if library:
+                stem = _library_stem(obj, role)
+            else:
+                stem = texture_stem(obj, model, role, slot, udim_of(src) if model == 'vpm' else None)
             if stem is None:
                 plan['failures'].append({'key': key, 'item': item,
                                          'reason': '{} map has no {} texture mask; left as is'.format(role, model.upper())})
@@ -407,13 +627,22 @@ def _plan_material(plan, key, obj, model, material, files):
                 plan['failures'].append({'key': key, 'item': item, 'reason': 'two different files map to ' + stem})
                 continue
             by_stem[stem] = src
-            dst = target_path(src, stem) if src else None
+            dst = target_path(src, stem, folder) if src else None
             info_src = files.get(src) or {'exists': False, 'sha256': None}
             info_dst = files.get(dst) or {'exists': False, 'sha256': None}
             row = {'key': key, 'slot': slot, 'role': role, 'map': mp['key'], 'name': stem, 'source': src, 'target': dst,
                    'sub': path}
             if dst is not None and dst == src and info_src['exists']:
                 row['action'] = 'rename map only (file already named)'
+            elif info_dst['exists'] and info_src['exists'] and info_src['sha256'] != info_dst['sha256']:
+                # V1: another file already holds the mask name: never overwritten, never linked
+                row['action'] = 'keep: target exists with other content'
+                row['same_content'] = False
+                row['target_sha256'] = info_dst['sha256']
+                plan['failures'].append({'key': key, 'item': item,
+                                         'reason': '{} exists with other content (sha256 {}…): not overwritten and not '
+                                                   'linked; the map stays on {}'.format(
+                                                       dst, str(info_dst['sha256'])[:12], src)})
             elif info_dst['exists']:
                 row['action'] = 'reuse existing file (not overwritten)'
                 row['same_content'] = info_src['exists'] and info_src['sha256'] == info_dst['sha256']
@@ -435,19 +664,27 @@ def check_names(plan, checks_core):
     Address style findings (name_case, name_digits) are left to the names check: the address is never rewritten."""
     bad = []
     style = ('name_case', 'name_digits')
+
+    def findings(name, role, model):
+        if model != 'library':
+            return [(c, d) for c, d in checks_core.name_findings(name, role, model) if c not in style]
+        if role == 'SM':
+            got = library_name(name)
+            return [] if isinstance(got, dict) and got['name'] == name else [('name_library', str(got))]
+        stem = name[:-4] if name.endswith('.png') else name
+        ok = re.fullmatch(r'{}_[A-Za-z0-9_]+'.format(role), stem) and '__' not in stem
+        return [] if ok else [('name_library', '{} name outside {}_<asset>: {}'.format(role, role, stem))]
+
     for o in plan['objects']:
         model = 'vpm' if o['kind'] == 'ucx' else o['model']
-        for code, detail in checks_core.name_findings(o['new'], 'SM', model):
-            if code not in style:
-                bad.append((o['key'], o['new'], code, detail))
+        for code, detail in findings(o['new'], 'SM', model):
+            bad.append((o['key'], o['new'], code, detail))
     models = {o['key']: o.get('model') for o in plan['objects']}
     for m in plan['materials']:
         if m.get('action') == 'rename' and 'slot' in m:
-            for code, detail in checks_core.name_findings(m['new'], 'M', models[m['key']]):
-                if code not in style:
-                    bad.append((m['key'], m['new'], code, detail))
+            for code, detail in findings(m['new'], 'M', models[m['key']]):
+                bad.append((m['key'], m['new'], code, detail))
     for f in plan['files']:
-        for code, detail in checks_core.name_findings(f['name'] + '.png', 'T', models[f['key']]):
-            if code not in style:
-                bad.append((f['key'], f['name'], code, detail))
+        for code, detail in findings(f['name'] + '.png', 'T', models[f['key']]):
+            bad.append((f['key'], f['name'], code, detail))
     return bad

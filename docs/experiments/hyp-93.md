@@ -16,9 +16,9 @@ positive-determinant rigid transforms and mesh packing, and abstains on open or 
 
 - Base: `main` @ `3cf7c9358591a12813ec5bcbcb8e082ddf5fe342`, branch `experiment/hyp-93`.
 - Python 3.14.7 (repo venv), NumPy 2.5.3. No DCC, no data/, no production code changed.
-- Command: `uv run python experiments/hyp-93/driver.py` (3 repeats inside one run; 24 cases per repeat).
-- Prototype: `experiments/hyp-93/component_volume.py` (report-only). Driver: `experiments/hyp-93/driver.py`.
-  Raw evidence: `experiments/hyp-93/results.json` (every field of every case of repeat 1, per-repeat hashes,
+- Command: `uv run python archive/2026-11:experiments/hyp-93/driver.py` (3 repeats inside one run; 24 cases per repeat).
+- Prototype: `archive/2026-11:experiments/hyp-93/component_volume.py` (report-only). Driver: `archive/2026-11:experiments/hyp-93/driver.py`.
+  Raw evidence: `archive/2026-11:experiments/hyp-93/results.json` (every field of every case of repeat 1, per-repeat hashes,
   median runtimes).
 - Code written by Cursor CLI (model `grok-4.7-medium`, 1 round); driven, re-run and checked by the Hermes worker.
 
@@ -45,8 +45,8 @@ positive-determinant rigid transforms and mesh packing, and abstains on open or 
 | tests/qa/test_orientation.py | c84c55f9cadeeb558563e607b4f12dc04f4e7027a76100d524fa1b12dafe82e1 |
 | src/twinqa/geometry/checks.py | f89313eba22a0dcff59f4582db03fd06e26dcefa7fb25df17c9604a050419d8b |
 | src/twinqa/geometry/mesh.py | 409353aa5ce5e952857c351b65f47274a93ca5d0024b0a3c5521c66021ecf25d |
-| experiments/hyp-93/driver.py | 15ba3bd90dc4d622251c38d732ed51635f2530830b2918e56422462e493f4019 |
-| experiments/hyp-93/component_volume.py | 22d8a4d77487b2a21fc492f2219cb0279ed727e798040e51aff80a04132f4477 |
+| archive/2026-11:experiments/hyp-93/driver.py | 15ba3bd90dc4d622251c38d732ed51635f2530830b2918e56422462e493f4019 |
+| archive/2026-11:experiments/hyp-93/component_volume.py | 22d8a4d77487b2a21fc492f2219cb0279ed727e798040e51aff80a04132f4477 |
 | results without runtime, repeats 1/2/3 | 209f96ce09d3d9966452dda2a9fcf966c7d8517880fd88ab6abfe3afbc407a00 (all three identical) |
 
 ## Prediction table (frozen from the issue before execution)

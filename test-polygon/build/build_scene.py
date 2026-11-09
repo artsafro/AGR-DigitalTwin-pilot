@@ -11,6 +11,7 @@ select named specimens only.
 """
 import json
 import math
+import os
 import sys
 from pathlib import Path
 
@@ -141,7 +142,10 @@ def _props(node, obj):
     mat = obj.get('mat_name')
     if obj.get('uv_periods') and mat:
         lines.append('AGR_UV_PERIODS={}={}'.format(mat, obj['uv_periods']))
-    if obj.get('atlas'):
+    if obj.get('atlas') == 'ground':  # 0.9.0 npm profile station: Ground mode, largest atlas 2048 (shrinks)
+        lines.append('AGR_ATLAS_MODE=ground')
+        lines.append('AGR_ATLAS_SIZE=2048')
+    elif obj.get('atlas'):
         lines.append('AGR_ATLAS_MODE=oks')
         lines.append('AGR_ATLAS_SIZE=1024')
     if obj.get('texel_px') and mat:
@@ -150,9 +154,38 @@ def _props(node, obj):
     rt.setUserPropBuffer(node, '\r\n'.join(lines) + '\r\n')
 
 
+def _fragment_builder(name):
+    """test-polygon/stations/<branch>_build.py of a #979 branch: make(obj, rt) -> node for a node kind this
+    builder does not know (lights, scatters, ...). The fragment loader allows only `<branch>_build`."""
+    import importlib.util
+    path = core.STATIONS_DIR / (name + '.py')
+    if not path.is_file():
+        raise RuntimeError('fragment builder missing: ' + str(path))
+    spec = importlib.util.spec_from_file_location('agr_polygon_' + name, path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def catalog_objects():
+    """The builder input: AGR_POLYGON_CATALOG (written by run_polygon.py from polygon_core.load_catalog(), the
+    polygon plus the #979 station fragments), else the committed catalog.json snapshot."""
+    import os
+    path = os.environ.get('AGR_POLYGON_CATALOG')
+    source = Path(path) if path else POLY / 'catalog.json'
+    return json.loads(source.read_text(encoding='utf-8'))['objects']
+
+
 def _make(obj):
     rt = _rt()
     kind = obj['superclass']
+    if obj.get('builder'):
+        node = _fragment_builder(obj['builder']).make(obj, rt)
+        if node is None or not rt.isValidNode(node):
+            raise RuntimeError('fragment builder made no node for ' + obj['name'])
+        _props(node, obj)
+        _layer(obj['layer']).addNode(node)
+        return node
     if kind == 'camera' and obj.get('camera_span'):
         node = _base_camera(obj)
     elif kind == 'camera':
@@ -260,7 +293,7 @@ def build(scene, texture_dir=''):
     rt = _rt()
     rt.resetMaxFile(rt.Name('noPrompt'))
     _units(scene)
-    catalog = json.loads((POLY / 'catalog.json').read_text(encoding='utf-8'))
+    catalog = {'objects': catalog_objects()}
     made = {}
     if scene == 'empty':
         return made
@@ -304,4 +337,11 @@ def _start_view(made):
 def save(path):
     """Write a 2024-format .max. The path must already be a new output, not a source."""
     target = str(Path(path).resolve()).replace('\\', '/')
-    _rt().execute('saveMaxFile "{}" saveAsVersion:2024 quiet:true'.format(target))
+    rt = _rt()
+    rt.execute('saveMaxFile "{}" saveAsVersion:2024 quiet:true'.format(target))
+    # Max 2024 makes the saved file current. Max 2025+ treats saveAsVersion:2024 as "save a copy": the open scene
+    # stays untitled and buttons that need a saved scene (tex.finish_map, tex.placeholders) refuse. Reopen the
+    # written 2024 file so every Max version presses buttons in the same saved scene (PR #1042, Max 2026 run).
+    current = (str(rt.maxFilePath) + str(rt.maxFileName)).replace('\\', '/')
+    if os.path.normcase(os.path.normpath(current)) != os.path.normcase(os.path.normpath(target)):
+        rt.execute('loadMaxFile "{}" quiet:true'.format(target))

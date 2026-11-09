@@ -5,7 +5,7 @@ height: the body section shape found at both storey ends; cuts are made once per
 vertex heights, so every element is seen with its exact height. Cuts through openings (open rings)
 decide nothing, and a storey with no closed section is an error, not a guess. Anything not over
 the full height becomes a question. Levels are input (LEVEL_<name> helpers or the object's levels from Revit), never guessed;
-the roof plane must lie at the top input level. Decisions: docs/HARNESS_PLAN.md §3-§4 (historical) (2026-10-08).
+the roof plane must lie at the top input level. Decisions: archive/2026-11:docs/HARNESS_PLAN.md §3-§4 (historical) (2026-10-08).
 """
 import functools
 import re
@@ -29,12 +29,12 @@ LEVEL_PREFIX = "LEVEL_"
 # no DCC copy suffix (".001", a trailing 3-digit counter as Max's Point001), no spaces, each name once
 LEVEL_NAME = re.compile(r"^LEVEL_[A-Za-z][A-Za-z0-9_]*$")
 LEVEL_COUNTER = re.compile(r"\d{3}$")
-LEVEL_AGREE_M = 0.03      # generated Revit level helpers and object.json levels agree within this (HARNESS_PLAN §4 (historical))
+LEVEL_AGREE_M = 0.03      # generated Revit level helpers and object.json levels agree within this (archive/2026-11:docs/HARNESS_PLAN.md §4 (historical))
 LEVEL_SAME_M = 0.001      # two level helpers closer than this in height are one level given twice
 SAME_CONTOUR_M = 0.005    # sections closer than this (Hausdorff) are one contour; < the 1 cm acceptance
 WELD_M = 1e-4             # vertices closer than WELD_M / 2 on every axis are always welded
 SIMPLIFY_M = 0.0005       # numeric noise only; kinks and arcs are decided by angle below
-KINK_DEG = 5.0            # a facade kink is a turn over 5 degrees (HARNESS_PLAN §3 (historical))
+KINK_DEG = 5.0            # a facade kink is a turn over 5 degrees (archive/2026-11:docs/HARNESS_PLAN.md §3 (historical))
 ARC_TURN_MAX_DEG = 22.0   # arc tessellation turns at most this per vertex (a quarter in >= 5 chords);
                           # the circle fit and wall tangency below decide, not this gate
 ARC_MIN_VERTICES = 3
@@ -91,7 +91,7 @@ def _matrix(obj_cfg, source=None):
         frame = obj_cfg.get("frame")
     if not frame or "to_object" not in frame:
         raise SpecError(f"object {obj_cfg.get('id', '?')}: object.json has no frame.to_object; "
-                        "every spec needs a frame (HARNESS_PLAN §3 (historical))")
+                        "every spec needs a frame (archive/2026-11:docs/HARNESS_PLAN.md §3 (historical))")
     m = np.asarray(frame["to_object"], dtype=float)
     if m.shape != (4, 4):
         raise SpecError("frame.to_object must be 4x4")
@@ -1158,7 +1158,7 @@ def _level_contour(v, tris, z0, z1, name, at_m=None, below=None, extra=None):
             closed.append((a, b, poly))
     if not closed:
         raise SpecError(f"level {name}: none of {len(spans)} body sections between {z0} and {z1} m "
-                        "closes; the contour is not invented (ask the user, HARNESS_PLAN §7 (historical) gray zone)")
+                        "closes; the contour is not invented (ask the user, archive/2026-11:docs/HARNESS_PLAN.md §7 (historical) gray zone)")
     groups = []
     for a, b, poly in closed:
         for g in groups:
@@ -1193,7 +1193,7 @@ def _level_contour(v, tris, z0, z1, name, at_m=None, below=None, extra=None):
                                   f"last {closed[-1][1]:.3f} m)"
         raise SpecError(f"level {name}: no section shape is both at the two storey ends and the tallest, so the "
                         f"wall over the full height is unclear{ends}. {shapes}. Set contour_at_m.{name} in "
-                        "object.json to a height of the wall shape (HARNESS_PLAN §4 (historical))")
+                        "object.json to a height of the wall shape (archive/2026-11:docs/HARNESS_PLAN.md §4 (historical))")
     report = {"sections": len(spans), "closed_sections": len(closed), "contour_rule": rule,
               "contour_height_share": round(base["height"] / (z1 - z0), 3), "other_contours": len(groups) - 1}
     if rule.startswith("mid storey"):                # the slab edge stays in the report, closed or not, with its
@@ -1307,7 +1307,7 @@ def _source_questions(dump, levels):
 
 
 def questions_markdown(spec_id, questions):
-    """The object's questions file: everything not over the full storey height (HARNESS_PLAN §4 (historical))."""
+    """The object's questions file: everything not over the full storey height (archive/2026-11:docs/HARNESS_PLAN.md §4 (historical))."""
     lines = [f"# Questions — {spec_id}", "",
              "Written by the spec extractor. Each row is geometry that is not over the full storey height,",
              "so it does not change the level contour (user decision 2026-10-08 [D023]). Priority high = through",
