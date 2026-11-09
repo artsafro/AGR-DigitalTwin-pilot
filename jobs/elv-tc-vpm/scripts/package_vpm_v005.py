@@ -1,5 +1,7 @@
 """elv-tc-vpm delivery v005 = package_vpm_v004.py with the tex-v006 set and the delivery-v005 FBX / thumbnail;
 only change: report name package_report_v005.json. All GeoJSON values as v004.
+Issue #1107 / D220 (2026-11): ZU_area in m² (10386.0, not 1.0386 ha) and okrug as the customer's abbreviation
+«ЮАО» (not the full name) — the customer's GeoJSON is the reference.
 v004 header follows.
 elv-tc-vpm delivery v004 = package_vpm_v003.py with the tex-v005 set (warm-beige wood) and the delivery-v004 thumbnail;
 only change: report name package_report_v004.json. All GeoJSON values as v003.
@@ -8,8 +10,8 @@ elv-tc-vpm delivery v003: package SM_Elevatornaya_Vl_1_A_001.zip = package_vpm_v
 - stem SM_Elevatornaya_Vl_1_A_001 (customer stem), textures T_Elevatornaya_Vl_1_A_001_* (tex-v004);
 - address as in the customer's GeoJSON (with «; вл. 1А, стр. 1, 2, 3»; the TZ itself doubts it, R12 -> flagged);
 - MSK-77 point re-derived for OUR pivot (see MSK below and delivery_report_v003.md);
-- ZU_area stays 1.0386: the regulation unit is hectares (reg p.53-55, docs/domain/npm-vpm.md; SINTEZ constants: float,
-  4 decimals) = 10 386 m2 (booklet sheet 42 item 1); the customer's 10386.0000 is the m2 value in the ha field;
+- ZU_area in m² (issue #1107 / D220: the customer's ELV file has 10386.0000 m²; the unit is m², not hectares —
+  10 386 m2 = booklet sheet 42 item 1);
 - FNO_code / FNO_name empty (never invented); other fields as v002.
 v002 header follows.
 elv-tc-vpm: assemble the VPM OKS package SM_Elevatornaya_1A.zip (flat: FBX + GeoJSON + PNG). v002 = v001 +
@@ -85,7 +87,7 @@ props = {
     # customer GeoJSON 2026-11-05 (booklet title page wording); the TZ (R12, img_011) doubts the doubled «вл. 1А»
     "address": "г. Москва, внутригородское муниципальное образование Бирюлёво Восточное, ул. Элеваторная, вл. 1А; "
                "вл. 1А, стр. 1, 2, 3",
-    "okrug": "Южный административный округ",  # derived from the address (district Бирюлёво Восточное -> ЮАО)
+    "okrug": "ЮАО",  # the customer's abbreviation (Южный административный округ, derived from the address)
     "rajon": "Бирюлёво Восточное",
     "name": "Торговый центр",
     "developer": "ООО 'ЛОГИСТИК-СЕРВИС'",  # booklet sheet 2: ЗАСТРОЙЩИК; v003: typewriter apostrophe (reg p.53-55, SINTEZ)
@@ -93,7 +95,7 @@ props = {
     "cadNum": "77:05:0010002:6",
     "FNO_code": "",  # user decision 2026-11-04: empty for now, never invented
     "FNO_name": "",  # depends on FNO_code: TODO
-    "ZU_area": 1.0386,  # hectares (reg p.53-55): sheet 42 item 1 = 10386 m2; customer wrote 10386.0000 (m2)
+    "ZU_area": 10386.0,  # m² (issue #1107 / D220): sheet 42 item 1 = 10386 m2; the customer's file has 10386.0000
     "h_relief": 167.65,  # +-0.000 = 167.65 (sheets 10, 18, 19)
     "h_otn": 16.22,  # sheet 42 items 7-8
     "h_abs": 183.87,  # sheet 42 items 9-10
@@ -116,6 +118,8 @@ assert gtxt.count('"spp_gns": 8384.6,') == 1
 gtxt = gtxt.replace('"spp_gns": 8384.6,', '"spp_gns": 8384.60,')
 assert gtxt.count('"s_podz": 0,') == 1
 gtxt = gtxt.replace('"s_podz": 0,', '"s_podz": 0.00,')
+assert gtxt.count('"ZU_area": 10386.0,') == 1
+gtxt = gtxt.replace('"ZU_area": 10386.0,', '"ZU_area": 10386.0000,')   # m², 4 decimals as the customer file
 gpath.write_text(gtxt, encoding="utf-8")
 
 files = sorted(p for p in pkg.iterdir() if p.is_file())
@@ -141,14 +145,14 @@ report = {
                          "FNO_name - user decision: empty"],
     "geojson_sources": {"developer": "booklet sheet 2 (raster title page): ЗАСТРОЙЩИК - Генеральный директор "
                                      "ООО \"ЛОГИСТИК-СЕРВИС\" (sheet 3 text layer: Заказчик, same company)",
-                        "okrug": "derived from the address (district Бирюлёво Восточное -> Южный административный "
-                                 "округ of Moscow); not stated in the booklet"},
+                        "okrug": "the customer's abbreviation «ЮАО» (Южный административный округ, derived from the "
+                                 "address); not stated in the booklet"},
     "geojson_proposals": ["Glasses values from the MainGlass material (D11 clear)"],
     "msk77": {"customer_point": list(MSK_THEIRS), "fit_t_theirs_to_ours_m": list(T_FIT), "ours": list(MSK),
               "rule": "ours = customer - t (their origin sits at their MSK point; p_ours = p_theirs + t)",
               "axes": "coordinates[0] = Blender X = MSK y (east), [1] = Blender Y = MSK x (north), as the customer file"},
     "flags": ["address taken from the customer GeoJSON; the TZ (R12) questions it (Yandex: Элеваторная ул., 1)",
-              "ZU_area in ha per the regulation (1.0386); the customer file has 10386.0000 in the same field"],
+              "ZU_area in m² (10386.0) per issue #1107 / D220; the customer file has 10386.0000 (m²)"],
 }
 rep_path.write_text(json.dumps(report, ensure_ascii=False, indent=1), encoding="utf-8")
 print(json.dumps({k: v for k, v in report.items() if k != "files"}, ensure_ascii=False, indent=1))

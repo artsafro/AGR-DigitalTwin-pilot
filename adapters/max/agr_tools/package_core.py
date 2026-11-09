@@ -623,6 +623,10 @@ def ground_report(edit, mode, plan, nodes, state=None, done=(), extra_findings=N
 
 # ---- export.geojson_write: the VPM GeoJSON passport -----------------------------------------------------------
 # GeoAGR Create/Save/Load (GeoAGR.ms:64642-64644) are disabled buttons without any handler: nothing to port.
+# Value convention (issue #1107 / D220, the customer's GeoJSON is the reference): `ZU_area` is in square metres
+# (m²), NOT hectares (the customer's ELV file has 10386.0000 m²; our earlier docs/scripts used ha = m²/10 000);
+# `okrug` is the standard Moscow administrative-okrug abbreviation (e.g. «ЮАО»), not the full name. Both pass
+# through from `options.properties`; the writer never converts units and never invents a value.
 PROPERTY_KEYS = ('address', 'okrug', 'rajon', 'name', 'developer', 'designer', 'cadNum', 'FNO_code', 'FNO_name',
                  'ZU_area', 'h_relief', 'h_otn', 'h_abs', 's_obsh', 's_naz', 's_podz', 'spp_gns', 'act_AGR',
                  'imageBase64', 'other')  # standards/VPM_STANDARD.yaml geojson.properties_keys
