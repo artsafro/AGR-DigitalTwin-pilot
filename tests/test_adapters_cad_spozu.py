@@ -378,6 +378,90 @@ def test_vatutino_copy_counts(tmp_path_factory):
     assert sum(p.inside for p in res.planting) > 4000
 
 
+# ---------------------------------------------------------------- FILEDIA restore (#1026)
+
+FILEDIA_OFF = '(setvar "FILEDIA" 0)'
+FILEDIA_SAVE = '(setq agr-filedia (getvar "FILEDIA"))'
+
+
+def assert_filedia_restored(script: str) -> None:
+    """A script that sets FILEDIA 0 saves the user value first and restores it after every command,
+    in the normal path and in its *error* handler (FILEDIA is a user registry setting shared with
+    the interactive AutoCAD)."""
+    lines = script.splitlines()
+    if FILEDIA_OFF not in lines:
+        return
+    off = lines.index(FILEDIA_OFF)
+    assert FILEDIA_SAVE in lines and lines.index(FILEDIA_SAVE) < off, "user FILEDIA not saved before FILEDIA 0"
+    handler = [i for i, ln in enumerate(lines) if ln.startswith("(defun *error*")]
+    assert handler and handler[0] < off, "no *error* handler installed before FILEDIA 0"
+    assert "(agr-restore-filedia)" in lines[handler[0]], "*error* handler does not restore FILEDIA"
+    restore_def = [ln for ln in lines if ln.startswith("(defun agr-restore-filedia")]
+    assert restore_def and '(setvar "FILEDIA" agr-filedia)' in restore_def[0]
+    commands = [i for i, ln in enumerate(lines) if "(command " in ln and "defun" not in ln]
+    assert commands, "no command in the script"
+    restores = [i for i, ln in enumerate(lines) if ln == "(agr-restore-filedia)"]
+    assert restores and restores[-1] > max(commands), "FILEDIA not restored after the last command"
+    assert '(setvar "FILEDIA" 1)' not in script, "restore must use the saved value, not a literal 1"
+
+
+def _captured_scripts(tmp_path, monkeypatch):
+    """Run both adapter entry points with subprocess stubbed; return the .scr texts they wrote."""
+    from adapters.cad import dwg as dwgmod
+
+    batch = tmp_path / "dcc_batch.py"
+    batch.write_text("", encoding="utf-8")
+    monkeypatch.setenv("DT_DCC_BATCH", str(batch))
+    scripts = []
+
+    class Proc:
+        returncode = 0
+        stdout = ""
+
+    def fake_run(cmd, **kw):
+        scr = Path(cmd[cmd.index("--file") + 1])
+        scripts.append(scr.read_text(encoding="utf-8"))
+        out = Path(cmd[cmd.index("--out") + 1])
+        out.write_text(json.dumps({"status": "ok", "seconds": 0.1}), encoding="utf-8")
+        for ln in scripts[-1].splitlines():
+            m = re.search(r'"_\.(?:DXFOUT|SAVEAS)" (?:"2018" )?"([^"]+)"', ln)
+            if m:
+                Path(m.group(1)).write_text("x", encoding="utf-8")
+        return Proc()
+
+    monkeypatch.setattr(dwgmod.subprocess, "run", fake_run)
+    src = tmp_path / "a.dwg"
+    src.write_bytes(b"dwg")
+    dwgmod.dwg_to_dxf(src, tmp_path / "conv")
+    dwgmod.make_dwg_from_dxf(tmp_path / "in.dxf", tmp_path / "out.dwg")
+    return scripts
+
+
+def test_generated_scripts_restore_filedia(tmp_path, monkeypatch):
+    """#1026: every .scr the adapter writes that sets FILEDIA 0 restores the saved value."""
+    scripts = _captured_scripts(tmp_path, monkeypatch)
+    assert len(scripts) == 2
+    for text in scripts:
+        assert FILEDIA_OFF in text
+        assert_filedia_restored(text)
+
+
+@pytest.mark.parametrize("version,precision", [("2018", 16), ("2013", 8), ("2000", 0)])
+def test_dxfout_script_restores_filedia_for_any_args(tmp_path, version, precision):
+    from adapters.cad.dwg import dxfout_script
+
+    text = dxfout_script(tmp_path / "x y" / "out.dxf", version, precision)
+    assert_filedia_restored(text)
+    assert f'"_V" "{version}" "{precision}"' in text
+
+
+def test_filedia_checker_rejects_unrestored_script():
+    """Control: the checker fails on the pre-#1026 shape (FILEDIA 0, no restore)."""
+    bad = '(setvar "FILEDIA" 0)\n(command "_.DXFOUT" "C:/x/a.dxf" "_V" "2018" "16")\n'
+    with pytest.raises(AssertionError):
+        assert_filedia_restored(bad)
+
+
 # ---------------------------------------------------------------- review round 1 regressions (P1-1..3)
 
 
