@@ -949,78 +949,129 @@ def _ground_footprint_findings(meshes: list[dict], ucx: list[dict], src: str, gr
 
 
 SKIRT_MIN_M = 1.0  # GND-03: Ground perimeter polygons extruded down by at least 1 m (reg p.7 §3.4, p.28 §3.7)
-PERIMETER_XY_TOL_M = 1e-3  # same-XY tolerance pairing the surface edge with the skirt bottom (GND-03)
+_SKIRT_XY_ROUND = 4  # XY rounding (0.1 mm) pairing a surface perimeter edge with its skirt-bottom copy (GND-03)
 
 
-def _convex_hull_xy(points: list) -> list[int]:
-    """Indices of ``points`` (xy pairs) on the 2D convex hull, CCW (Andrew monotone chain).
-
-    Collinear points on a hull edge are dropped, so the result is the strict outline. Fewer than
-    three indices mean a degenerate (collinear / coincident) outline.
-    """
-    if len(points) < 3:
-        return list(range(len(points)))
-
-    def turn(o: int, a: int, b: int) -> float:
-        return (points[a][0] - points[o][0]) * (points[b][1] - points[o][1]) \
-             - (points[a][1] - points[o][1]) * (points[b][0] - points[o][0])
-
-    idx = sorted(range(len(points)), key=lambda i: (points[i][0], points[i][1]))
-    lower = []
-    for i in idx:
-        while len(lower) >= 2 and turn(lower[-2], lower[-1], i) <= 0:
-            lower.pop()
-        lower.append(i)
-    upper = []
-    for i in reversed(idx):
-        while len(upper) >= 2 and turn(upper[-2], upper[-1], i) <= 0:
-            upper.pop()
-        upper.append(i)
-    return lower[:-1] + upper[:-1]
+def _polygon_normal(verts: list, poly) -> tuple[float, float, float]:
+    """Newell normal (unnormalised) of a polygon; ``(0, 0, 0)`` for a degenerate polygon."""
+    nx = ny = nz = 0.0
+    n = len(poly)
+    for k in range(n):
+        a = verts[poly[k]]
+        b = verts[poly[(k + 1) % n]]
+        nx += (a[1] - b[1]) * (a[2] + b[2])
+        ny += (a[2] - b[2]) * (a[0] + b[0])
+        nz += (a[0] - b[0]) * (a[1] + b[1])
+    return nx, ny, nz
 
 
-def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float] | None:
+def _xy_key(x, y) -> tuple[float, float]:
+    return round(float(x), _SKIRT_XY_ROUND), round(float(y), _SKIRT_XY_ROUND)
+
+
+def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
     """``(status, depth)`` of the Ground perimeter skirt (GND-03), or ``None`` when unmeasurable.
 
-    ``status`` is ``"fail"`` for broken (empty/partial/non-finite) face data and ``"ok"`` when the
-    perimeter drop was measured. The skirt extrudes the perimeter of the Ground surface straight
-    down, so at each corner of the surface's XY outline the mesh holds the surface-edge vertex
-    above the skirt-bottom vertex at (nearly) the same XY. The drop at a corner is ``max Z - min Z``
-    among the vertices projecting onto it; the measured depth is the smallest drop over all corners.
-    A single open surface (no skirt) carries one Z per corner -> drop 0 -> fail, and a sloped
-    surface with 2 m of relief but no skirt fails too (its corners each carry a single Z): the total
-    Z-extent is deliberately NOT the measure (it passes relief that has no perimeter extrusion).
+    ``status`` is ``"fail"`` for broken (empty/partial/non-finite) face data, ``"unmeasurable"``
+    when the mesh has no upward-facing surface or no surface perimeter to measure, and ``"ok"``
+    when the perimeter drop was measured. The skirt extrudes the Ground surface's perimeter
+    straight down, so for every perimeter edge of the upward-facing surface the mesh must carry
+    the same XY edge at least ``SKIRT_MIN_M`` lower. The drop is measured per perimeter edge
+    (top Z vs the lowest Z at the same XY), never at the convex-hull corners alone: a skirt on
+    two sides of a quad leaves the two other perimeter edges uncovered, which a corner-only
+    measure cannot see. The measured depth is the smallest drop over all perimeter edges; a
+    sloped surface with relief but no skirt fails (each perimeter edge has no lower copy -> drop
+    0), and the total Z-extent is deliberately NOT the measure (it passes relief with no skirt).
     """
     shape = mesh.get("face_geometry")
     if not isinstance(shape, dict):
         return None
     verts = shape.get("vertices")
+    polys = shape.get("polygons")
     if not isinstance(verts, list) or not verts:
         return "fail", 0.0
-    xy = []
+    if not isinstance(polys, list) or not polys:
+        return "fail", 0.0
     for v in verts:
         if isinstance(v, bool) or not isinstance(v, (list, tuple)) or len(v) < 3:
             return "fail", 0.0
         if any(isinstance(c, bool) or not isinstance(c, (int, float)) or not math.isfinite(c) for c in v[:3]):
             return "fail", 0.0
-        xy.append((float(v[0]), float(v[1])))
-    hull = _convex_hull_xy(xy)
-    if len(hull) < 3:
-        return "fail", 0.0  # degenerate XY outline: no measurable perimeter
+    for poly in polys:
+        if not isinstance(poly, (list, tuple)) or len(poly) < 3:
+            return "fail", 0.0
+        for idx in poly:
+            if isinstance(idx, bool) or not isinstance(idx, int) or idx < 0 or idx >= len(verts):
+                return "fail", 0.0
+
+    # upward-facing surface polygons: the Ground top whose perimeter the skirt must extrude
+    top = []
+    for p in polys:
+        nx, ny, nz = _polygon_normal(verts, p)
+        if nz > 0.0 and abs(nz) >= abs(nx) and abs(nz) >= abs(ny):
+            top.append(p)
+    if not top:
+        return "unmeasurable", None
+
+    # perimeter edges of the surface: an edge used by exactly one surface polygon
+    edge_count: dict[tuple[int, int], int] = {}
+    for p in top:
+        n = len(p)
+        for k in range(n):
+            a, b = p[k], p[(k + 1) % n]
+            key = (a, b) if a < b else (b, a)
+            edge_count[key] = edge_count.get(key, 0) + 1
+    perimeter = [e for e, c in edge_count.items() if c == 1]
+    if not perimeter:
+        return "unmeasurable", None
+
+    # lowest Z at each XY edge over the whole mesh (the skirt bottom copies the perimeter XY)
+    lowest: dict[tuple[tuple[float, float], tuple[float, float]], list[float]] = {}
+    for p in polys:
+        n = len(p)
+        for k in range(n):
+            a, b = p[k], p[(k + 1) % n]
+            va, vb = verts[a], verts[b]
+            ka, kb = _xy_key(va[0], va[1]), _xy_key(vb[0], vb[1])
+            if ka == kb:
+                continue  # vertical edge: zero XY length, not a perimeter copy
+            if ka <= kb:
+                key, z0, z1 = (ka, kb), float(va[2]), float(vb[2])
+            else:
+                key, z0, z1 = (kb, ka), float(vb[2]), float(va[2])
+            cur = lowest.get(key)
+            if cur is None:
+                lowest[key] = [z0, z1]
+            else:
+                if z0 < cur[0]:
+                    cur[0] = z0
+                if z1 < cur[1]:
+                    cur[1] = z1
+
     best = math.inf
-    for i in hull:
-        cx, cy = xy[i]
-        zs = [float(v[2]) for v in verts
-              if math.hypot(float(v[0]) - cx, float(v[1]) - cy) <= PERIMETER_XY_TOL_M]
-        if zs:
-            best = min(best, max(zs) - min(zs))
+    for i, j in perimeter:
+        vi, vj = verts[i], verts[j]
+        ki, kj = _xy_key(vi[0], vi[1]), _xy_key(vj[0], vj[1])
+        if ki == kj:
+            drop = 0.0  # degenerate perimeter edge: no downward skirt
+        else:
+            if ki <= kj:
+                key, z_top = (ki, kj), (float(vi[2]), float(vj[2]))
+            else:
+                key, z_top = (kj, ki), (float(vj[2]), float(vi[2]))
+            bot = lowest.get(key)
+            drop = min(z_top[0] - bot[0], z_top[1] - bot[1]) if bot is not None else 0.0
+        if drop < 0.0:
+            drop = 0.0
+        if drop < best:
+            best = drop
     if not math.isfinite(best):
         return "fail", 0.0
     return "ok", best
 
 
 def _ground_skirt_finding(meshes: list[dict], ucx: list[dict], src: str) -> Finding:
-    """GND-03: the Ground perimeter is extruded down >= 1 m (reg p.7 §3.4, p.28 §3.7)."""
+    """GND-03: every Ground surface's perimeter is extruded down >= 1 m (reg p.7 §3.4, p.28 §3.7)."""
     name = "ground skirt depth"
     expected = f"perimeter polygons extruded down >= {SKIRT_MIN_M:g} m [GND-03] (reg p.7 §3.4, p.28 §3.7)"
     pages = [7, 28]
@@ -1028,18 +1079,41 @@ def _ground_skirt_finding(meshes: list[dict], ucx: list[dict], src: str) -> Find
     ground = [m for m in geometry if m["name"].endswith("_Ground")]
     if not ground:
         return _f("not_run", name, f"{src}: no Ground surface mesh", expected, pages, src)
+    broken: list[str] = []
+    unmeasurable: list[str] = []
+    ok: list[tuple[str, float]] = []
     for mesh in ground:
         probe = _skirt_perimeter_drop(mesh)
         if probe is None:
-            continue
-        status, depth = probe
-        if status == "fail":
-            return _f("fail", name, f"{src}: {mesh['name']} broken face geometry", expected, pages, src)
-        good = depth >= SKIRT_MIN_M
-        return _f("pass" if good else "fail", name,
-                  f"{src}: {mesh['name']} perimeter drop {depth:.3f} m", expected, pages, src,
-                  measured=depth, threshold=SKIRT_MIN_M, margin=signed_margin(depth, SKIRT_MIN_M, "min"))
-    return _f("not_run", name, f"{src}: no face geometry for the Ground surface", expected, pages, src)
+            unmeasurable.append(mesh["name"])
+        elif probe[0] == "fail":
+            broken.append(mesh["name"])
+        elif probe[0] == "unmeasurable":
+            unmeasurable.append(mesh["name"])
+        else:
+            depth = probe[1]
+            assert depth is not None, "ok status must carry a numeric depth"
+            ok.append((mesh["name"], depth))
+    if broken:
+        shown = ", ".join(broken[:5])
+        return _f("fail", name, f"{src}: broken face geometry: {shown}", expected, pages, src)
+    failing = sorted((n, d) for n, d in ok if d < SKIRT_MIN_M)
+    if failing:
+        worst_n, worst_d = failing[0]
+        tail = f" (and {len(failing) - 1} more)" if len(failing) > 1 else ""
+        return _f("fail", name, f"{src}: {worst_n} perimeter drop {worst_d:.3f} m{tail}",
+                  expected, pages, src, measured=worst_d, threshold=SKIRT_MIN_M,
+                  margin=signed_margin(worst_d, SKIRT_MIN_M, "min"))
+    if unmeasurable:
+        shown = ", ".join(unmeasurable[:5])
+        tail = f" (and {len(unmeasurable) - 1} more)" if len(unmeasurable) > 1 else ""
+        return _f("not_run", name,
+                  f"{src}: Ground mesh(es) without measurable face geometry: {shown}{tail}",
+                  expected, pages, src)
+    best = min(d for _, d in ok)
+    return _f("pass", name, f"{src}: perimeter drop >= {SKIRT_MIN_M:g} m (min {best:.3f} m)",
+              expected, pages, src, measured=best, threshold=SKIRT_MIN_M,
+              margin=signed_margin(best, SKIRT_MIN_M, "min"))
 
 
 _MAF_FLORA_SUFFIXES = ("_GroundEl", "_GroundElGlass", "_Flora")

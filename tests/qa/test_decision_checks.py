@@ -522,6 +522,31 @@ def test_ground_skirt_sloped_surface_with_skirt_passes_gnd03():
     assert f.status == "pass" and f.measured == pytest.approx(1.0)
 
 
+def test_ground_skirt_partial_skirt_fails_gnd03():
+    # Round-2 P1: a skirt on two sides (y=0, y=10) leaves the x=0 and x=10 perimeter edges
+    # uncovered, yet every convex-hull corner still carries a 1 m drop. The per-edge measure
+    # must see the two bare perimeter edges and fail.
+    verts = [[0, 0, 0], [10, 0, 0], [10, 10, 0], [0, 10, 0],
+             [0, 0, -1], [10, 0, -1], [10, 10, -1], [0, 10, -1]]
+    polys = [[0, 1, 2], [0, 2, 3],            # top surface
+             [0, 4, 5], [0, 5, 1],            # y=0 skirt
+             [2, 6, 7], [2, 7, 3]]            # y=10 skirt
+    f = _skirt_finding(verts, polys)
+    assert f.status == "fail" and f.measured == pytest.approx(0.0)
+
+
+def test_ground_skirt_judges_every_ground_mesh_names_worst():
+    # Round-2 P1: S_Ground has a full 1 m skirt, T_Ground is a bare flat quad. The check must
+    # judge BOTH Ground meshes and fail naming T_Ground (the worst), never stop at the first.
+    s = _ground_face_mesh("SM_Test_S_Ground", SKIRT, SKIRT_POLYS)
+    t = _ground_face_mesh("SM_Test_T_Ground", [[20, 0, 0], [30, 0, 0], [30, 10, 0], [20, 10, 0]],
+                          [[0, 1, 2], [0, 2, 3]])
+    found = scene_findings(rb(s, t), "npm", "ground", PROFILES.npm)
+    f = next(f for f in found["V003"] if f.name == "ground skirt depth")
+    assert f.status == "fail"
+    assert "T_Ground" in f.observed
+
+
 def test_edge_loop_100x100_grid_runtime_bounded_d200():
     import time
 
