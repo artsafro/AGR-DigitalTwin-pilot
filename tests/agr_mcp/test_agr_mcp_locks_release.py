@@ -1,4 +1,6 @@
-"""#1043: the owner's release and a POSIX reclaimer never both unlink by name -> at most one holder.
+"""new-case: #1043 release-vs-reclaim unlink gap; at most one holder.
+
+The owner's release and a POSIX reclaimer never both unlink by name -> at most one holder.
 
 A reclaimer X inside `_unlink_named_if` has checked bytes + inode of a stale lock (owner O alive,
 past `until`). If O releases and a new holder H O_EXCLs a fresh lock between X's checks and X's
