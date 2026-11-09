@@ -1,14 +1,12 @@
-"""Parametric MAF generator, first family: slab bench on square-tube posts along a plan run (#790).
+"""Parametric MAF generator, first family: closed timber box bench («Верона», variant A) along a plan run (#790).
 
 Pattern: new-case: model-maf step 3 tool - spec row + plan run + section parameters -> one welded mid-poly
-quad mesh («lego» [D165]: posts are let into the seat as inserts, one closed manifold, no fasteners).
+quad mesh («lego» [D165]: steel foot plates are let into the body as inserts, one closed manifold, no fasteners).
 Pure Python (no bpy), so tests run without Blender; tools/blender/maf_gen_bench_build.py writes the FBX.
 
-Geometry: the plan run is a centreline polyline in metres (straight, L or U); the seat is a strip of
-`depth` mitred at every corner, `seat_thickness` thick, top at `seat_top`. Leg rows stand across the
-strip at <= `max_leg_span` spacing, `end_overhang` from a free end and `depth/2 + post` from a corner; each
-row has two square posts `post` wide, `post_inset` from the strip sides. Every face is a quad; the seat
-top/bottom/walls share one (s, t) grid per segment so no T-junction appears where a post is let in.
+Geometry: the plan run is a centreline polyline in metres (straight, L or U); the body is a strip of `depth`
+mitred at every corner. Board seams are texture, not geometry (Artem 2026-11-03); the slab-on-posts variant B and
+the modelled seams were rejected the same day and removed in #819 (git history keeps them).
 Pivot (exported): horizontal bbox centre at XY 0, lowest point at Z 0; the longest segment lies on +X and
 `plan_rotation_deg` records the plan rotation applied (placement restores it, model-maf step 8).
 Every invalid input raises ValueError naming the problem; nothing is defaulted silently.
@@ -18,8 +16,6 @@ from __future__ import annotations
 
 import math
 
-REQUIRED = ("path", "depth", "seat_top", "seat_thickness", "post", "post_inset", "end_overhang",
-            "max_leg_span", "materials")
 OPTIONAL = ("synthetic", "name", "source", "notes", "align")
 MATERIAL_ROLES = ("seat", "frame")
 MAX_TURN_DEG = 135.0
@@ -45,45 +41,6 @@ def _points(raw, what="path"):
             raise ValueError(f"{what}: point {p!r} is not finite")
         pts.append((float(x), float(y)))
     return pts
-
-
-def _validate(spec):
-    if not isinstance(spec, dict):
-        raise ValueError("spec must be a dict")
-    unknown = sorted(set(spec) - set(REQUIRED) - set(OPTIONAL))
-    if unknown:
-        raise ValueError(f"unknown spec keys: {unknown}")
-    missing = [k for k in REQUIRED if k not in spec]
-    if missing:
-        raise ValueError(f"missing spec keys: {missing}")
-    p: dict = {k: _finite_pos(spec, k) for k in ("depth", "seat_top", "seat_thickness", "post", "end_overhang",
-                                            "max_leg_span")}
-    inset = spec["post_inset"]
-    if isinstance(inset, bool) or not isinstance(inset, (int, float)) or not math.isfinite(inset) or inset <= 0:
-        raise ValueError(f"post_inset must be a finite number > 0, got {inset!r}")
-    p["post_inset"] = float(inset)
-    if p["seat_thickness"] >= p["seat_top"]:
-        raise ValueError("seat_thickness must be below seat_top (posts need a height)")
-    if p["post_inset"] + p["post"] >= p["depth"] / 2:
-        raise ValueError("post_inset + post must stay inside half the seat depth (two posts per row)")
-    if p["max_leg_span"] <= p["post"]:
-        raise ValueError("max_leg_span must exceed the post size")
-    mats = spec["materials"]
-    if not isinstance(mats, dict) or set(mats) != set(MATERIAL_ROLES):
-        raise ValueError(f"materials must map exactly {list(MATERIAL_ROLES)}, got {mats!r}")
-    for role, mid in mats.items():
-        if isinstance(mid, bool) or not isinstance(mid, int) or mid < 1:
-            raise ValueError(f"material id for {role!r} must be a positive int, got {mid!r}")
-    p["materials"] = dict(mats)
-    pts = _points(spec["path"])
-    if len(pts) < 2:
-        raise ValueError("path needs at least two points")
-    for a, b in zip(pts, pts[1:]):
-        if math.dist(a, b) < 1e-3:
-            raise ValueError(f"path has a zero-length segment at {a}")
-    p["path"] = pts
-    p["align"] = bool(spec.get("align", True))
-    return p
 
 
 def _sub(a, b):
@@ -147,128 +104,9 @@ def _rotate(pts, deg):
     return [(x * c - y * s, x * s + y * c) for x, y in pts]
 
 
-def build_bench(spec):
-    """Spec dict -> {"verts": [[x,y,z]], "faces": [[i,j,k,l]], "face_mat": [id], "plan_rotation_deg": float}."""
-    p = _validate(spec)
-    pts = p["path"]
-    rot = 0.0
-    if p["align"]:
-        lens = [math.dist(a, b) for a, b in zip(pts, pts[1:])]
-        i = lens.index(max(lens))
-        rot = -math.degrees(math.atan2(pts[i + 1][1] - pts[i][1], pts[i + 1][0] - pts[i][0]))
-        pts = _rotate(pts, rot)
-    depth, h = p["depth"], p["depth"] / 2
-    for i in range(len(pts) - 1):
-        for j in range(i + 2, len(pts) - 1):
-            if _seg_dist(pts[i], pts[i + 1], pts[j], pts[j + 1]) < depth:
-                raise ValueError(f"segments {i} and {j} come closer than the seat depth: strips overlap")
-    left, right, _dirs = _offsets(pts, h)
-    zt, zb = p["seat_top"], p["seat_top"] - p["seat_thickness"]
-    post = p["post"]
-    ta0, ta1 = p["post_inset"] / depth, (p["post_inset"] + post) / depth
-    T = [0.0, ta0, ta1, 1.0 - ta1, 1.0 - ta0, 1.0]
-    post_t = {1, 3}  # t-interval indices holding a post
-    nseg = len(pts) - 1
-
-    seg_s, seg_post_s = [], []
-    for k in range(nseg):
-        L = math.dist(pts[k], pts[k + 1])
-        e0 = p["end_overhang"] if k == 0 else h + post
-        e1 = p["end_overhang"] if k == nseg - 1 else h + post
-        span = L - e0 - e1
-        if span < 2 * post:
-            raise ValueError(f"segment {k} ({L:.3f} m) is too short for two leg rows")
-        n = math.ceil(span / p["max_leg_span"]) + 1
-        centres = [e0 + span * r / (n - 1) for r in range(n)]
-        cuts = [0.0, 1.0]
-        posts = set()
-        for c in centres:
-            a, b = (c - post / 2) / L, (c + post / 2) / L
-            cuts += [a, b]
-        cuts = sorted(set(cuts))
-        for c in centres:
-            a = (c - post / 2) / L
-            posts.add(cuts.index(a))
-        seg_s.append(cuts)
-        seg_post_s.append(posts)
-
-    verts, index = [], {}
-
-    def vid(xy, z):
-        key = (round(xy[0], 9), round(xy[1], 9), round(z, 9))
-        if key not in index:
-            index[key] = len(verts)
-            verts.append([xy[0], xy[1], z])
-        return index[key]
-
-    def P(k, s, t):
-        a = left[k] if s == 0 else left[k + 1] if s == 1 else (
-            left[k][0] * (1 - s) + left[k + 1][0] * s, left[k][1] * (1 - s) + left[k + 1][1] * s)
-        b = right[k] if s == 0 else right[k + 1] if s == 1 else (
-            right[k][0] * (1 - s) + right[k + 1][0] * s, right[k][1] * (1 - s) + right[k + 1][1] * s)
-        if t == 0:
-            return a
-        if t == 1:
-            return b
-        return (a[0] * (1 - t) + b[0] * t, a[1] * (1 - t) + b[1] * t)
-
-    faces, fmat = [], []
-
-    def add(corners, ref, mat):
-        ids = [vid(xy, z) for xy, z in corners]
-        q = [verts[i] for i in ids]
-        n = [0.0, 0.0, 0.0]
-        for a, b in zip(q, q[1:] + q[:1]):
-            n[0] += (a[1] - b[1]) * (a[2] + b[2])
-            n[1] += (a[2] - b[2]) * (a[0] + b[0])
-            n[2] += (a[0] - b[0]) * (a[1] + b[1])
-        if n[0] * ref[0] + n[1] * ref[1] + n[2] * ref[2] < 0:
-            ids.reverse()
-        faces.append(ids)
-        fmat.append(mat)
-
-    seat, frame = p["materials"]["seat"], p["materials"]["frame"]
-    for k in range(nseg):
-        S = seg_s[k]
-        for j in range(len(S) - 1):
-            s0, s1 = S[j], S[j + 1]
-            for m in range(len(T) - 1):
-                t0, t1 = T[m], T[m + 1]
-                cell = [P(k, s0, t0), P(k, s1, t0), P(k, s1, t1), P(k, s0, t1)]
-                add([(c, zt) for c in cell], (0, 0, 1), seat)
-                if not (j in seg_post_s[k] and m in post_t):
-                    add([(c, zb) for c in cell], (0, 0, -1), seat)
-            for t, ref_t in ((0.0, 0.5), (1.0, 0.5)):
-                a, b = P(k, s0, t), P(k, s1, t)
-                mid, inner = ((a[0] + b[0]) / 2, (a[1] + b[1]) / 2), P(k, (s0 + s1) / 2, ref_t)
-                add([(a, zb), (b, zb), (b, zt), (a, zt)], (mid[0] - inner[0], mid[1] - inner[1], 0), seat)
-        for j in seg_post_s[k]:
-            s0, s1 = S[j], S[j + 1]
-            for m in post_t:
-                t0, t1 = T[m], T[m + 1]
-                ring = [P(k, s0, t0), P(k, s1, t0), P(k, s1, t1), P(k, s0, t1)]
-                cx, cy = sum(c[0] for c in ring) / 4, sum(c[1] for c in ring) / 4
-                for a, b in zip(ring, ring[1:] + ring[:1]):
-                    add([(a, zb), (b, zb), (b, 0.0), (a, 0.0)], ((a[0] + b[0]) / 2 - cx, (a[1] + b[1]) / 2 - cy, 0),
-                        frame)
-                add([(c, 0.0) for c in ring], (0, 0, -1), frame)
-    for k, s, inward in ((0, 0.0, 1e-3), (nseg - 1, 1.0, 1 - 1e-3)):
-        for m in range(len(T) - 1):
-            a, b = P(k, s, T[m]), P(k, s, T[m + 1])
-            mid, inner = ((a[0] + b[0]) / 2, (a[1] + b[1]) / 2), P(k, inward, (T[m] + T[m + 1]) / 2)
-            add([(a, zb), (b, zb), (b, zt), (a, zt)], (mid[0] - inner[0], mid[1] - inner[1], 0), seat)
-
-    xs, ys = [v[0] for v in verts], [v[1] for v in verts]
-    cx, cy = (min(xs) + max(xs)) / 2, (min(ys) + max(ys)) / 2
-    for v in verts:
-        v[0] -= cx
-        v[1] -= cy
-    return {"verts": verts, "faces": faces, "face_mat": fmat, "plan_rotation_deg": rot}
-
-
 CLAD_REQUIRED = ("path", "depth", "height", "foot_height", "courses", "seam_width", "seam_depth", "frame_width",
                  "top_boards", "foot_length", "foot_inset", "end_overhang", "max_foot_span", "materials")
-SEAM_MODES = ("geometry", "texture")
+SEAM_MODES = ("texture",)  # modelled seams were rejected (Artem 2026-11-03, #819)
 
 
 def _validate_clad(spec):
@@ -317,7 +155,7 @@ def _validate_clad(spec):
             raise ValueError(f"path has a zero-length segment at {a}")
     p["path"] = pts
     p["align"] = bool(spec.get("align", True))
-    p["seams"] = spec.get("seams", "geometry")
+    p["seams"] = spec.get("seams", "texture")
     if p["seams"] not in SEAM_MODES:
         raise ValueError(f"seams must be one of {SEAM_MODES}, got {p['seams']!r}")
     return p
@@ -340,22 +178,19 @@ def _check_strips_apart(pts, depth):
 
 
 def build_clad_box(spec):
-    """Closed timber box bench («Верона» form) along a plan run -> one welded quad mesh with modelled seams.
+    """Closed timber box bench («Верона» form, variant A) along a plan run -> one welded quad mesh.
 
-    Body from `foot_height` to `height`: `courses` horizontal boards on every side, separated by ring seams
-    (`seam_width` high, `seam_depth` deep) that wrap the whole outline; the top is a frame `frame_width` wide around
-    `top_boards` lengthwise boards with seams between them (and against the frame) that stop at the end frames and
-    turn mitred through the corners. Steel foot plates (`foot_length` along the run, depth − 2·`foot_inset` across,
-    `foot_height` high) are let into the bottom at the free ends (`end_overhang` to the plate centre), at
-    <= `max_foot_span` spacing and `depth/2 + foot_length` from every corner. Planar bands whose two edges carry a
-    different vertex count are filled by a 3-to-1 quad reduction with interior points only, so no T-junction.
-
-    `seams="texture"` (Artem 2026-11-03 correction): no board gaps in the geometry; the top is one quad per segment
-    and the sides one ring from `foot_height` to `height`. The board layout lives in the UV instead: `face_uv`
-    (per face, per vertex (s, t) in 0..1 of a board pattern of `top_boards + 2` equal boards along t, or None for
-    faces that show no boards) puts the top across the whole pattern (t = lateral / depth, mitred so the boards turn
-    the corners) and the sides over `courses` boards of the same pattern, so every seam line of the texture falls on
-    a board joint. `uv_pattern` names the pattern the texture cell must carry.
+    Body from `foot_height` to `height`: the top is one quad per segment, mitred through the corners, and the sides
+    one ring around the whole outline. Board seams are texture, not geometry (Artem 2026-11-03): `face_uv` (per face,
+    per vertex (s, t) in 0..1 of a board pattern of `top_boards + 2` equal boards along t, or None for faces that show
+    no boards) puts the top across the whole pattern (t = lateral / depth, mitred so the boards turn the corners) and
+    the sides over `courses` boards of the same pattern, so every seam line of the texture falls on a board joint.
+    `uv_pattern` names the pattern the texture cell must carry. `seam_width`, `seam_depth` and `frame_width` are
+    validated only. Steel foot plates (`foot_length` along the run, depth - 2*`foot_inset` across, `foot_height`
+    high) are let into the bottom at the free ends (`end_overhang` to the plate centre), at <= `max_foot_span`
+    spacing and `depth/2 + foot_length` from every corner. The bottom bands between the plates and the outline carry
+    a different vertex count on their two edges and are filled by a 3-to-1 quad reduction with interior points only,
+    so no T-junction.
     """
     p = _validate_clad(spec)
     pts, rot = _align(p["path"], p["align"])
@@ -389,7 +224,6 @@ def build_clad_box(spec):
     def along(k, xy):
         return (xy[0] - pts[k][0]) * dirs[k][0] + (xy[1] - pts[k][1]) * dirs[k][1]
 
-    tex = p["seams"] == "texture"
     nb = p["top_boards"] + 2
     verts, index, faces, fmat, fuv = [], {}, [], [], []
 
@@ -469,87 +303,37 @@ def build_clad_box(spec):
         quad(*chain)
 
     wood, steel = p["materials"]["seat"], p["materials"]["frame"]
-    zt, zf, g, sd, f = p["height"], p["foot_height"], p["seam_width"], p["seam_depth"], p["frame_width"]
-    hf = h - f
+    zt, zf = p["height"], p["foot_height"]
     kl = nseg - 1
-    if tex:
-        def top_uv(k):
-            # s over the quad's own along-extent: a mitre at a corner wider than 90 deg reaches past lens + h
-            ext = [along(k, c) for c in (start(k, h, 0), end(k, h, 0), end(k, -h, 0), start(k, -h, 0))]
-            a0, a1 = min(ext), max(ext)
 
-            def uvf(v):
-                xy = (v[0], v[1])
-                lat = (xy[0] - pts[k][0]) * norms[k][0] + (xy[1] - pts[k][1]) * norms[k][1]
-                return (min(1.0, max(0.0, (along(k, xy) - a0) / (a1 - a0))), min(1.0, max(0.0, (lat + h) / depth)))
-            return uvf
+    def top_uv(k):
+        # s over the quad's own along-extent: a mitre at a corner wider than 90 deg reaches past lens + h
+        ext = [along(k, c) for c in (start(k, h, 0), end(k, h, 0), end(k, -h, 0), start(k, -h, 0))]
+        a0, a1 = min(ext), max(ext)
 
-        for k in range(nseg):
-            add([(start(k, h, 0), zt), (end(k, h, 0), zt), (end(k, -h, 0), zt), (start(k, -h, 0), zt)], (0, 0, 1),
-                wood, top_uv(k))
-        prof = [(zf, 0.0), (zt, 0.0)]
-    else:
-        prof = None
-    # --- top: frame bands, boards, seam pockets ---------------------------------------------------------------
-    us = [hf]
-    for _ in range(p["top_boards"] if not tex else 0):
-        us += [us[-1] - g, us[-1] - g - p["board_w"]]
-    if not tex:
-        us += [-hf]
-    for k in range(nseg if not tex else 0):
-        for j in range(len(us) - 1):
-            u0, u1 = us[j], us[j + 1]
-            cell = [start(k, u0, f), end(k, u0, f), end(k, u1, f), start(k, u1, f)]
-            if j % 2:
-                add([(c, zt) for c in cell], (0, 0, 1), wood)
-                continue
-            zs = zt - sd
-            add([(c, zs) for c in cell], (0, 0, 1), wood)
-            for u, sgn in ((u0, -1), (u1, 1)):
-                a, b = start(k, u, f), end(k, u, f)
-                add([(a, zs), (b, zs), (b, zt), (a, zt)], (norms[k][0] * sgn, norms[k][1] * sgn, 0), wood)
-            if k == 0:
-                a, b = start(0, u0, f), start(0, u1, f)
-                add([(a, zs), (b, zs), (b, zt), (a, zt)], (dirs[0][0], dirs[0][1], 0), wood)
-            if k == nseg - 1:
-                a, b = end(k, u0, f), end(k, u1, f)
-                add([(a, zs), (b, zs), (b, zt), (a, zt)], (-dirs[k][0], -dirs[k][1], 0), wood)
-        for side in (1, -1):
-            add([(start(k, side * h, 0), zt), (end(k, side * h, 0), zt), (end(k, side * hf, f), zt),
-                 (start(k, side * hf, f), zt)], (0, 0, 1), wood)
-    if not tex:
-        band([Q(0, f, u) for u in us], Q(0, 0, h), Q(0, 0, -h), zt, (0, 0, 1), wood)
-        band([Q(kl, lens[kl] - f, u) for u in us], Q(kl, lens[kl], h), Q(kl, lens[kl], -h), zt, (0, 0, 1), wood)
-    # --- sides: courses and ring seams around the whole outline -----------------------------------------------
-    def loop(w):
-        left = [start(k, h - w, w) for k in range(nseg)] + [end(kl, h - w, w)]
-        right = [start(k, w - h, w) for k in range(nseg)] + [end(kl, w - h, w)]
-        return left + right[::-1]
+        def uvf(v):
+            xy = (v[0], v[1])
+            lat = (xy[0] - pts[k][0]) * norms[k][0] + (xy[1] - pts[k][1]) * norms[k][1]
+            return (min(1.0, max(0.0, (along(k, xy) - a0) / (a1 - a0))), min(1.0, max(0.0, (lat + h) / depth)))
+        return uvf
 
-    ch = p["course_h"]
-    if prof is None:
-        prof = [(zf, 0.0)]
-    for c in range(p["courses"] - 1 if not tex else 0):
-        top = zf + (c + 1) * ch + c * g
-        prof += [(top, 0.0), (top, sd), (top + g, sd), (top + g, 0.0)]
-    if not tex:
-        prof.append((zt, 0.0))
-    loops = {w: loop(w) for w in (0.0, sd)}
-    nl = len(loops[0.0])
-    for (z0, w0), (z1, w1) in zip(prof, prof[1:]):
-        l0, l1 = loops[w0], loops[w1]
-        for i in range(nl):
-            j = (i + 1) % nl
-            d = _sub(loops[0.0][j], loops[0.0][i])
-            out = _unit((-d[1], d[0]))
-            ref = (out[0] * (z1 - z0), out[1] * (z1 - z0), w1 - w0)
-            uvf = None
-            if tex:
-                a, el = loops[0.0][i], math.dist(loops[0.0][i], loops[0.0][j])
+    # --- top: one quad per segment, board pattern in the UV ---------------------------------------------------
+    for k in range(nseg):
+        add([(start(k, h, 0), zt), (end(k, h, 0), zt), (end(k, -h, 0), zt), (start(k, -h, 0), zt)], (0, 0, 1),
+            wood, top_uv(k))
+    # --- sides: one ring around the whole outline, `courses` boards of the pattern in the UV ------------------
+    ring = [start(k, h, 0) for k in range(nseg)] + [end(kl, h, 0)]
+    ring += ([start(k, -h, 0) for k in range(nseg)] + [end(kl, -h, 0)])[::-1]
+    nl = len(ring)
+    for i in range(nl):
+        j = (i + 1) % nl
+        d = _sub(ring[j], ring[i])
+        out = _unit((-d[1], d[0]))
+        a, el = ring[i], math.dist(ring[i], ring[j])
 
-                def uvf(v, a=a, el=el):
-                    return (math.dist(a, (v[0], v[1])) / el, (v[2] - zf) / (zt - zf) * p["courses"] / nb)
-            add([(l0[i], z0), (l0[j], z0), (l1[j], z1), (l1[i], z1)], ref, wood, uvf)
+        def uvf(v, a=a, el=el):
+            return (math.dist(a, (v[0], v[1])) / el, (v[2] - zf) / (zt - zf) * p["courses"] / nb)
+        add([(ring[i], zf), (ring[j], zf), (ring[j], zt), (ring[i], zt)], (out[0], out[1], 0), wood, uvf)
     # --- bottom: steel plates let in, bands filled without touching the outline -------------------------------
     fl, fi = p["foot_length"], p["foot_inset"]
     ui = h - fi
@@ -590,11 +374,8 @@ def build_clad_box(spec):
     for v in verts:
         v[0] -= cx
         v[1] -= cy
-    out = {"verts": verts, "faces": faces, "face_mat": fmat, "plan_rotation_deg": rot}
-    if tex:
-        out["face_uv"] = fuv
-        out["uv_pattern"] = {"boards": nb, "axis": "t"}
-    return out
+    return {"verts": verts, "faces": faces, "face_mat": fmat, "plan_rotation_deg": rot, "face_uv": fuv,
+            "uv_pattern": {"boards": nb, "axis": "t"}}
 
 
 def signed_volume(mesh):

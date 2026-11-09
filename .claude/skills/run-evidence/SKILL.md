@@ -30,6 +30,11 @@ description: 'Inspect a saved RunRecord after an interruption or before acceptin
      output paths for the next allowed attempt.
    - `reported_pass_unverified` — read the real evidence of that gate. A valid AdapterReport
      with a path in it is not native QA.
+4. Read the build report's own counters of skipped or failed elements (`*_fail`, `skipped`,
+   `miss`, `dropped`, ...): any count above 0 is a failing gate, not a note (#1031). Run
+   `uv run python -m dt_ai.validate.build_counters --report <report.json> --counter <name>`
+   (exit 1 = fail; a declared counter that is missing also fails). The stage stays open until the
+   count is 0 or the user accepts the listed exceptions (`--accepted`: counter, exact count, source).
 
 Return: run_id/stage, integrity, open checks, paths to full evidence, the justified next
 step. Never declare the model delivered.

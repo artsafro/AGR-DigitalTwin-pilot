@@ -10,6 +10,7 @@ Generalises the quad and quad-size part of the job-local `jobs/KPP1/scripts/qa_m
 NPM has no size gate (inv_texel NPM-OKS is report-only); only the quad rule applies.
 Findings go to stage V003 (DER-03 is listed there). Pure Python + numpy, no Blender.
 """
+from twinqa.look import decor_embed_findings, edge_loop_findings
 from twinqa.report import Finding, signed_margin
 
 PAGES = [8, 29]
@@ -41,6 +42,8 @@ def master_findings(rb: dict, kind: str) -> list[Finding]:
     out = [_f("fail" if non_quads else "pass", "master quads",
               f"{src}: {dict(list(non_quads.items())[:5]) or 'all quads'}", "every master polygon is a quad", src,
               {"non_quads": non_quads})]
+    out.extend(decor_embed_findings(meshes, src))
+    out.extend(edge_loop_findings(meshes, src))
     if kind != "vpm":
         return out
     hard, soft = VPM.hard_side_m, VPM.review_side_m

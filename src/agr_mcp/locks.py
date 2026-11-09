@@ -29,6 +29,10 @@ Windows has no fcntl (the fallback is msvcrt.locking, and tests monkeypatch `_fl
 a stale file through the handle that read those bytes. A live holder's file is not deleted. The owner
 unlinks the mutex only while that same inode still carries its token. O_EXCL create of the lock then
 picks the single holder. Reclaim leaves no `*.reclaim-*` or `*.take-*` aside file.
+Release (#1043, #1117): the owner deletes its lock under the same sentinel (bounded wait) and through
+the same byte + inode re-check, so a reclaimer never unlinks by name a fresh lock O_EXCL'd after
+release. On Windows the reclaimer deletes through a handle and skips the sentinel, so the owner also
+deletes through a handle on the inode whose own bytes still carry its token.
 """
 from __future__ import annotations
 
@@ -42,6 +46,7 @@ import tempfile
 import time
 from contextlib import contextmanager
 from pathlib import Path
+from time import monotonic as _monotonic
 from time import sleep as _sleep
 
 LOCK_NAMES = {"max-live": "agr-3dsmax-live.lock", "blender-batch": "agr-blender-batch.lock"}
@@ -50,6 +55,8 @@ _RELEASE_ATTEMPTS = 4
 _RELEASE_PAUSE_S = 0.05
 # A reclaimer that dies is stale at once (dead pid). A live reclaimer that stops is stale past this ttl.
 _MUTEX_TTL_S = 5.0
+# Release waits at most this long for a reclaimer's sentinel critical section (#1043).
+_RELEASE_WAIT_S = _MUTEX_TTL_S
 
 
 class LockBusy(RuntimeError):
@@ -300,8 +307,11 @@ def _flock_fallback(fd: int, operation: int) -> None:
 
 
 @contextmanager
-def _reclaim_exclusion(path: Path):
-    """Non-blocking critical section. The sentinel file is never unlinked."""
+def _reclaim_exclusion(path: Path, wait_s: float = 0.0):
+    """Critical section on the sentinel, polled for up to `wait_s` (0 = one non-blocking try).
+
+    The sentinel file is never unlinked.
+    """
     sentinel = path.with_name(f".{path.name}.reclaim")
     fd = None
     locked = False
@@ -313,8 +323,17 @@ def _reclaim_exclusion(path: Path):
                 os.write(fd, b"\0")
         except OSError:
             pass
-        _flock(fd, _LOCK_EX | _LOCK_NB)
-        locked = True
+        deadline = _monotonic() + wait_s
+        while True:
+            try:
+                _flock(fd, _LOCK_EX | _LOCK_NB)
+            except OSError:
+                if _monotonic() >= deadline:
+                    raise
+                _sleep(_RELEASE_PAUSE_S)
+                continue
+            locked = True
+            break
     except OSError:
         locked = False
     try:
@@ -522,33 +541,42 @@ def _reclaim(path: Path, token: str) -> bool:
         _mutex_release(path, token)
 
 
+def _lock_token_ours(raw: bytes, token: str) -> bool:
+    try:
+        info = json.loads(raw.decode("utf-8"))
+    except (UnicodeError, ValueError):
+        return False  # not a lock we can prove is ours: fail closed, do not delete
+    return isinstance(info, dict) and info.get("token") == token
+
+
 def _release(path: Path, token: str) -> None:
-    """Remove our lock. Retry a sharing violation, then report it. Never raise."""
-    last: BaseException | None = None
-    for attempt in range(_RELEASE_ATTEMPTS):
-        try:
-            raw = path.read_text(encoding="utf-8")
-        except FileNotFoundError:
-            return
-        except OSError as exc:
-            last = exc
+    """Remove our lock. Retry a sharing violation, then report it. Never raise.
+
+    #1043: the delete runs under the same `.<lock>.reclaim` sentinel as a POSIX reclaimer and
+    through the same byte + inode re-check (`_unlink_named_if`). Otherwise a reclaimer that had
+    checked our stale inode could unlink, by name, a fresh lock O_EXCL'd after our release.
+    #1117: on Windows the reclaimer (`_consume_handle`) deletes through a handle and never takes
+    that sentinel, so the by-name `os.remove` at the tail of `_unlink_named_if` is not excluded by
+    it and can drop a fresh holder's lock. Windows deletes through a handle on the inode whose own
+    bytes still carry our token (`_consume_handle`), so a reclaimer that freed the name and a new
+    holder that O_EXCL'd a fresh lock cannot lose its file.
+    The sentinel wait is bounded; on timeout the lock stays (it expires at `until`) and is reported.
+    """
+    with _reclaim_exclusion(path, wait_s=_RELEASE_WAIT_S) as held:
+        if not held:
+            last = f"reclaim sentinel busy for {_RELEASE_WAIT_S} s"
         else:
-            try:
-                info = json.loads(raw)
-            except ValueError:
-                return  # not a lock we can prove is ours: fail closed, do not delete
-            if not isinstance(info, dict) or info.get("token") != token:
-                return
-            try:
-                os.remove(path)
-            except FileNotFoundError:
-                return
-            except OSError as exc:
-                last = exc
-            else:
-                return
-        if attempt + 1 < _RELEASE_ATTEMPTS:
-            _sleep(_RELEASE_PAUSE_S)
+            last = "failed"
+            pred = lambda raw, token=token: _lock_token_ours(raw, token)
+            for attempt in range(_RELEASE_ATTEMPTS):
+                if os.name == "nt":
+                    outcome = _consume_handle(path, pred)
+                else:
+                    outcome = _unlink_named_if(path, pred)
+                if outcome in ("gone", "foreign"):
+                    return
+                if attempt + 1 < _RELEASE_ATTEMPTS:
+                    _sleep(_RELEASE_PAUSE_S)
     sys.stderr.write(
         f"agr-mcp lock release failed after {_RELEASE_ATTEMPTS} attempts: {path}: {last}\n")
     sys.stderr.flush()

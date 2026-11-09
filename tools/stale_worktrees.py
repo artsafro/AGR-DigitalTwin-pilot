@@ -4,10 +4,14 @@ new-case: kanban worktree hygiene tool
 
 The default run is a report and exits 0. ``--apply`` removes a worktree only
 when classify() returns ``removable``, and the git command never includes
-``--force``. A missing board database exits nonzero and removes nothing.
+``--force``. A ``removable`` worktree with gitignored content is kept with the
+reason ``ignored files`` unless ``--include-ignored`` is given. Any failed
+removal makes the exit code 1. A missing board database exits nonzero and
+removes nothing.
 """
 import argparse
 import os
+import re
 import sqlite3
 import subprocess
 import sys
@@ -17,6 +21,7 @@ from pathlib import Path
 DEFAULT_BOARD = "agr-pilot"
 DEFAULT_REPO = "C:/Users/artsafro/agr-pilot/AGR-DigitalTwin"
 FINISHED = ("done", "archived")
+_BOUNDARY = r"[\s`'\"(),:;]"
 
 
 class GitError(RuntimeError):
@@ -40,6 +45,9 @@ def classify(status, dirty, unpushed):
 def wanted_by(branch, own_id, cards):
     if not branch:
         return []
+    pattern = re.compile(
+        r"(?:^|" + _BOUNDARY + r")" + re.escape(branch) + r"(?:$|" + _BOUNDARY + r")"
+    )
     found = []
     for card in cards:
         card_id = card.get("id")
@@ -52,7 +60,7 @@ def wanted_by(branch, own_id, cards):
             body = body.decode("utf-8", "replace")
         else:
             body = str(body)
-        if branch in body:
+        if pattern.search(body):
             found.append(card_id)
     return found
 
@@ -181,6 +189,13 @@ def worktree_unpushed(wt):
         raise GitError(f"unpushed count: {text}") from exc
 
 
+def worktree_ignored_count(wt):
+    proc = run_git(["git", "-C", wt, "status", "--porcelain", "--ignored"])
+    if proc.returncode != 0:
+        _git_failure(proc, "git status --ignored failed")
+    return sum(1 for line in proc.stdout.splitlines() if line.startswith("!!"))
+
+
 def inspect_worktree(entry, cards):
     by_id = {card.get("id"): card for card in cards}
     card = by_id.get(entry["id"])
@@ -189,6 +204,7 @@ def inspect_worktree(entry, cards):
     try:
         dirty = worktree_dirty(entry["path"])
         unpushed = worktree_unpushed(entry["path"])
+        ignored = worktree_ignored_count(entry["path"])
     except GitError as exc:
         return {
             "id": entry["id"],
@@ -196,6 +212,7 @@ def inspect_worktree(entry, cards):
             "branch": branch,
             "dirty": None,
             "unpushed": None,
+            "ignored": None,
             "wanted_by": [],
             "verdict": f"keep: {exc}",
         }
@@ -205,6 +222,7 @@ def inspect_worktree(entry, cards):
         "branch": branch,
         "dirty": dirty,
         "unpushed": unpushed,
+        "ignored": ignored,
         "wanted_by": wanted_by(branch, entry["id"], cards),
         "verdict": classify(status, dirty, unpushed),
     }
@@ -229,9 +247,10 @@ def format_row(row):
     status = row["status"] if row["status"] is not None else "none"
     branch = row["branch"] or "-"
     unpushed = "-" if row["unpushed"] is None else row["unpushed"]
+    ignored = "-" if row.get("ignored") is None else row["ignored"]
     text = (
         f"{row['id']} status={status} branch={branch} "
-        f"{cleanliness} unpushed={unpushed} {row['verdict']}"
+        f"{cleanliness} unpushed={unpushed} ignored={ignored} {row['verdict']}"
     )
     if row["wanted_by"]:
         text += " WANTED-BY " + " ".join(row["wanted_by"])
@@ -263,6 +282,7 @@ def parse_args(argv):
     parser.add_argument("--repo", default=DEFAULT_REPO)
     parser.add_argument("--db")
     parser.add_argument("--apply", action="store_true")
+    parser.add_argument("--include-ignored", action="store_true")
     return parser.parse_args(argv)
 
 
@@ -273,6 +293,7 @@ def _kept_row(entry, reason):
         "branch": entry.get("branch"),
         "dirty": None,
         "unpushed": None,
+        "ignored": None,
         "wanted_by": [],
         "verdict": f"keep: {reason}",
     }
@@ -300,21 +321,26 @@ def main(argv=None):
         return 1
 
     rows = []
+    failed = False
     for entry in entries:
         try:
             row = inspect_worktree(entry, cards)
         except (OSError, sqlite3.Error, GitError, ValueError) as exc:
             row = _kept_row(entry, exc)
         if args.apply and row["verdict"] == "removable":
-            try:
-                remove_worktree(args.repo, entry["path"])
-            except GitError as exc:
-                row = _kept_row(entry, exc)
-                row["status"] = None
+            if row.get("ignored") and not args.include_ignored:
+                row["verdict"] = "keep: ignored files"
+            else:
+                try:
+                    remove_worktree(args.repo, entry["path"])
+                except GitError as exc:
+                    row = _kept_row(entry, exc)
+                    row["status"] = None
+                    failed = True
         rows.append(row)
         print(format_row(row))
     print(format_totals(rows))
-    return 0
+    return 1 if failed else 0
 
 
 if __name__ == "__main__":

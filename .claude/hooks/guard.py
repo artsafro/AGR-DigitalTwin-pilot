@@ -20,14 +20,30 @@ PRODUCTION_EXT = r"\.(fbx|blend|max|uasset|umap|obj|abc|usd[az]?|glb|gltf|rvt|sk
 # Conservative lexical checks, not a shell sandbox (aliases/arbitrary code need review).
 # Global gh options may precede the subcommand; never cross a shell command boundary.
 GH_PREFIX = r"\bgh(?:\.exe)?\b[^|;&\n]*?"
+# `repo` only as the gh subcommand (#1027): after gh, only `-R/--repo OWNER/NAME` or bare
+# flags may precede it, so `--repo o/n`, `-R o/n` and branch names like `harness/repo-x`
+# do not ask. `gh --repo o/n repo view` still asks: every `gh repo <subcommand>` asks.
+# Tokens may be shell-quoted ('repo', "--repo", 'gh').
+_Q = r"['\"]?"
+GH_REPO_SUBCOMMAND = (r"\bgh(?:\.exe)?\b" + _Q +
+                      r"(?:\s+" + _Q + r"(?:(?:-R|--repo)" + _Q + r"(?:\s+|=)[^\s|;&]+|--?[A-Za-z][\w-]*" + _Q + r"))*"
+                      r"\s+(['\"]?)repo\1(?=\s|$)")
+# Force branch delete (#1027): a delete flag (-d/--delete or a short cluster with d) and a force
+# flag (-f/--force or a cluster with f) in any order/position, or -D in any cluster. Flags are
+# case-sensitive (?-i:): `-d` alone is a safe delete. Long-option prefixes git accepts are covered.
+_BRANCH = r"\bgit\b[^|;&]*\bbranch\b"
+_FORCE_BRANCH_DELETE = (
+    _BRANCH + r"(?=[^|;&]*(?-i:\s" + _Q + r"-[A-Za-z]*D))"
+    r"|" + _BRANCH + r"(?=[^|;&]*(?-i:\s" + _Q + r"(?:--d(?:e(?:l(?:e(?:t(?:e)?)?)?)?)?(?=[\s='\"]|$)|-[A-Za-z]*d)))"
+    r"(?=[^|;&]*(?-i:\s" + _Q + r"(?:--forc(?:e)?(?=[\s='\"]|$)|-[A-Za-z]*f)))")
 SHELL_RULES = [
     (GH_PREFIX + r"\bpr\s+merge\b", "gh pr merge requires the user's merge command"),
     (GH_PREFIX + r"\bdelete\b", "gh delete changes remote data"),
-    (GH_PREFIX + r"\brepo\b", "gh repo operations require explicit authorization"),
+    (GH_REPO_SUBCOMMAND, "gh repo operations require explicit authorization"),
     (r"\bgit\b[^|;&]*\bpush\b", "git push publishes to a remote"),
     (r"\bgit\b[^|;&]*\breset\b[^|;&]*--hard", "git reset --hard discards work"),
     (r"\bgit\b[^|;&]*\bclean\b", "git clean deletes untracked files"),
-    (r"\bgit\b[^|;&]*\bbranch\b[^|;&]*(\s-D\b|--delete\s+--force|-d\s+-f)", "force branch delete"),
+    (_FORCE_BRANCH_DELETE, "force branch delete"),
     (r"\bgit\b[^|;&]*\b(checkout|restore)\b[^|;&]*\s(--\s+)?\.(\s|$)", "discards working-tree changes"),
     (r"\bgit\b[^|;&]*\b(filter-branch|filter-repo|rebase|update-ref\s+-d)\b", "rewrites history/refs"),
     (r"\bgit\s+lfs\s+migrate\b", "rewrites history (LFS migrate)"),
@@ -72,6 +88,14 @@ def allow(is_antigravity: bool) -> None:
     sys.exit(0)
 
 
+def shell_reason(cmd: str):
+    """Reason of the first SHELL_RULES match for a shell command, else None."""
+    for pattern, reason in SHELL_RULES:
+        if re.search(pattern, cmd or "", re.IGNORECASE):
+            return reason
+    return None
+
+
 def inside(path: Path, root: Path) -> bool:
     try:
         path.resolve().relative_to(root.resolve())
@@ -105,9 +129,9 @@ def main() -> None:
 
     # 1. Shell commands
     if tool in ("Bash", "PowerShell", "run_command", "shell", "exec_command", "local_shell"):
-        for pattern, reason in SHELL_RULES:
-            if re.search(pattern, cmd, re.IGNORECASE):
-                ask(reason, is_antigravity)
+        reason = shell_reason(cmd)
+        if reason:
+            ask(reason, is_antigravity)
 
     # 2. File write/edit commands
     elif tool in ("Write", "Edit", "NotebookEdit", "write_to_file", "replace_file_content"):
