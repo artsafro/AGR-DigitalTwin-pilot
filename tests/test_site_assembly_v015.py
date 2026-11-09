@@ -79,3 +79,46 @@ def test_verona_points_relabel_adapter_inserts_and_add_missing_ones():
     assert by['B']['label'] == 'S2' and by['B']['z'] == 0.0 and by['B']['y'] == pytest.approx(7.0)
     assert by['Z']['label'] == 'Other'
     assert {r['handle']: r['source'] for r in log} == {'A': 'adapter insert relabelled', 'B': 'plan-shapes insert added'}
+
+
+def test_flora_tile_remap_equals_the_reviewed_217_remap_uv():
+    # Blender's Python has no Pillow, so the assembly cannot import tools/library/flora_atlas_from_scene.py.
+    from tools.library.flora_atlas_from_scene import remap_uv
+    tile = [0.25, 0.5, 0.5, 0.75]
+    for uv in ([0.0, 0.0], [1.0, 1.0], [0.3, 0.9], [0.5, 0.125]):
+        assert rules.flora_tile_uv(uv, tile) == pytest.approx(list(remap_uv(uv, tile)), abs=1e-12)
+    with pytest.raises(ValueError):
+        rules.flora_tile_uv([1.2, 0.5], tile)
+
+
+npm_code = _load('site_npm_code', 'jobs/VATUTINO-SITE/npm_code.py')
+
+
+def _zip(path, entries):
+    import zipfile
+    with zipfile.ZipFile(path, 'w') as z:
+        for name, data in entries.items():
+            z.writestr(name, data)
+
+
+def test_npm_code_rename_keeps_bytes_and_renames_every_part(tmp_path):
+    import zipfile
+    src = tmp_path / '0000_Vatutino.zip'
+    _zip(src, {'0000_Vatutino_Ground.fbx': b'ground', '0000_Vatutino_01.fbx': b'oks'})
+    dest, names, sha = npm_code.rename_npm_zip(src, '1234', tmp_path / 'out')
+    assert dest.name == '1234_Vatutino.zip' and len(sha) == 64
+    with zipfile.ZipFile(dest) as z:
+        assert {n: z.read(n) for n in z.namelist()} == {'1234_Vatutino_Ground.fbx': b'ground', '1234_Vatutino_01.fbx': b'oks'}
+    with pytest.raises(FileExistsError):
+        npm_code.rename_npm_zip(src, '1234', tmp_path / 'out')
+
+
+@pytest.mark.parametrize('code,entries', [('12a4', {'0000_Vatutino_Ground.fbx': b''}),
+                                          ('1234', {'Other_Ground.fbx': b''}),
+                                          ('1234', {'0000_Vatutino_Ground.fbx': b'', 'T_x.png': b''})])
+def test_npm_code_rename_refuses_bad_code_or_foreign_entries(tmp_path, code, entries):
+    src = tmp_path / '0000_Vatutino.zip'
+    _zip(src, entries)
+    with pytest.raises(ValueError):
+        npm_code.rename_npm_zip(src, code, tmp_path / 'out')
+    assert not (tmp_path / 'out' / f'{code}_Vatutino.zip').exists()

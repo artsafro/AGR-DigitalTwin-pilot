@@ -77,3 +77,8 @@ def verona_points(shapes, build_report, adapter_maf, depth):
             log.append({'handle': h, 'set_id': q['label'], 'old_label': None, 'source': 'plan-shapes insert added',
                         'x': q['x'], 'y': q['y'], 'rotation': q['rotation']})
     return out, log
+
+
+def flora_tile_uv(uv, tile):
+    """#217 `remap_uv` (0..1 species UV -> its atlas tile), Pillow-free for Blender; equality is tested."""
+    return remap_rect(uv, [0.0, 0.0, 1.0, 1.0], tile, eps=0.0)

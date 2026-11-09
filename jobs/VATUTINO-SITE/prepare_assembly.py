@@ -28,7 +28,11 @@ def load_library(lib):
         bpy.data.objects.remove(other, do_unlink=True)
     return ob
 
-source, outdir, profile = sys.argv[sys.argv.index('--') + 1:]
+args = sys.argv[sys.argv.index('--') + 1:]
+source, outdir, profile = args[:3]
+# Site MAF material list: v005 set list (v001-v003 runs) or, for the option-A run [D231], the A4.2 list
+# (v005 + paint_ral7016 + larch_light_oak_boards) that also carries the «Верона» rows; one 512 set (MAF-09).
+MAF_LIST = Path(args[3]) if len(args) > 3 else Path('C:/x/vatutino-maf/v005-set/atlas/material-list.json')
 from assembly_rules import new_output
 out = new_output(source, outdir)
 if profile not in ('npm', 'vpm'):
@@ -83,7 +87,7 @@ for ob in instances:
         for m in me.materials:
             if m.name in materials:
                 continue
-            source_materials = json.loads(Path('C:/x/vatutino-maf/v005-set/atlas/material-list.json').read_text())['materials']
+            source_materials = json.loads(MAF_LIST.read_text())['materials']
             key = re.sub(r'\.\d+$', '', m.name).removeprefix('MAF_')
             item = next((x for x in source_materials if x['name'] == key), None)
             if item is None:
@@ -91,7 +95,12 @@ for ob in instances:
             materials[m.name] = item
 record['maf_materials'] = {name: item['name'] for name, item in materials.items()}
 (out / 'flora-placed.json').write_text(json.dumps({'schema': 'flora-placed-v1', 'objects': flora}), encoding='utf-8')
-(out / 'maf-materials.json').write_text(Path('C:/x/vatutino-maf/v005-set/atlas/material-list.json').read_text(), encoding='utf-8')
+site_list = json.loads(MAF_LIST.read_text())
+for item in site_list['materials']:
+    if item.get('texture'):
+        item['texture'] = str((MAF_LIST.parent / item['texture']).resolve())
+record['maf_list'] = str(MAF_LIST)
+(out / 'maf-materials.json').write_text(json.dumps(site_list, indent=1), encoding='utf-8')
 (out / 'prepare.json').write_text(json.dumps(record, indent=1), encoding='utf-8')
 bpy.ops.wm.save_as_mainfile(filepath=str(copy))
 print('PREPARED', profile, len(instances), 'instances;', len(materials), 'MAF materials;', record['replaced'])
