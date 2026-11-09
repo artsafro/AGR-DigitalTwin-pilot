@@ -32,8 +32,10 @@ def test_port_check_comes_before_any_question_to_the_user():
     step0 = connect.split("\n1.")[0]
     for token in ("9877", "9876", "SketchUp", "netstat -ano", "tasklist"):
         assert token in step0, token
-    # the check comes before the step that may ask the user
-    assert connect.index("netstat -ano") < connect.index("user")
+    # the check is step 0, before step 4 (the only step that may ask the user)
+    assert "before asking the user" in step0
+    assert connect.index("netstat -ano") < connect.index("\n4.")
+    assert "authorization" not in step0
 
 
 def test_own_instance_on_hashed_versioned_copy_documented():

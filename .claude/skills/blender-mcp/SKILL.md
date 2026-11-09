@@ -20,6 +20,16 @@ back before reporting success. Inspection and live-mutation coverage are separat
 
 ## Connect and identify
 
+0. Port check first, before asking the user anything. Session «Garibaldi
+   NPM→VPM», 2026-11-05: ~30 min were lost on bridge toggling. Run
+   `netstat -ano | grep LISTENING | grep -E ':(9876|9877) '`, then
+   `tasklist /FI "PID eq <pid>"` for each owner. 9877 owned by `blender.exe` =
+   a Blender bridge is up; 9876 = SketchUp, never Blender data; nothing on 9877
+   = no bridge. Tell 9877 from a stray listener with a no-code probe: send
+   `{"type":"ping"}` + NUL to 127.0.0.1:9877; the Blender bridge answers
+   `Unknown request type: 'ping'`. If 9877 is free or the task needs no live
+   user scene, go to "Agent-owned Blender on a copy" instead of asking the
+   user to open, start or restart anything.
 1. Use `blender`, the installed Blender Lab MCP 1.0.3 route. Project client
    configs set `BLENDER_MCP_HOST=127.0.0.1`, `BLENDER_MCP_PORT=9877`.
    Port 9876 belongs to SketchUp. CLI `--host`/`--port` bind the HTTP transport;
@@ -31,12 +41,36 @@ back before reporting success. Inspection and live-mutation coverage are separat
    before relying on the connection. A blank path means an unsaved scene.
 3. Require outer MCP success and inner JSON `status="ok"`. Connection failure
    or a protocol response from SketchUp is not usable Blender data.
-4. If disconnected, inspect Preferences > Add-ons > MCP: enabled, Host
-   localhost, Port 9877, Auto Start checked. Online Access must be enabled in
-   System preferences; changing that preference requires user authorization.
+4. If the user's own instance is disconnected, inspect Preferences > Add-ons >
+   MCP: enabled, Host localhost, Port 9877, Auto Start checked. Online Access
+   must be enabled in System preferences; changing preferences in the user's
+   own instance requires his authorization [D223]; an agent-owned instance
+   needs none (next section).
    Click Start MCP Bridge Server and confirm Server is running. Explicitly
    Save Preferences after setup. Changing client config requires Codex reload
    and a fresh actual Codex tool call, even if a separate stdio probe passes.
+
+## Agent-owned Blender on a copy
+
+The agent may start its own Blender 5.1.2+ with Online Access and the bridge
+on 9877 without asking each time [D223]. Never ask the user to toggle the
+bridge in his instance; never touch his instance or its preferences.
+
+1. Port 9877 must be free (step 0). If a Blender the agent did not start holds
+   it, that is the user's: inspect it read-only or use `blender -b` on a copy.
+2. Copy the scene to a new versioned path (`<name>_agent_v001.blend`, never
+   overwrite; `cp -n`), then `sha256sum <source> <copy> > SHA256SUMS.txt`.
+3. Launch: `"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe"
+   --online-mode <copy>` (terminal `background=true`). `--online-mode` enables
+   Online Access for this session only; the add-on's Auto Start opens the bridge
+   on the saved port 9877 (the add-on default 9876 would collide with SketchUp).
+4. Record the agent's own PID and file: re-run step 0 after launch; the new
+   9877 owner PID's `powershell -NoProfile -Command "(Get-CimInstance
+   Win32_Process -Filter 'ProcessId=<pid>').CommandLine"` must name the copy.
+   Then identify the scene through MCP (step 2 above).
+5. Close only its own instance: `taskkill /PID <own pid>`, never by image name
+   and never a PID it did not start; after closing, port 9877 is free and
+   `sha256sum -c SHA256SUMS.txt` still passes for the source.
 
 ## Inspection tools
 
