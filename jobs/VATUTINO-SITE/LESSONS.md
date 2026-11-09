@@ -11,3 +11,11 @@ Job-local preferences and lessons (not D-rows).
   wrong row count fails instead of silently changing the placement. (#1146)
 - Image generation is an external handoff (`dt_ai.materials.flora plan`); a worker without the tool stops
   at the step-2 gate with the plan file and the review sheet, it never fills gaps with proxies on its own. (#1146)
+- A second map source exists besides the generated 54 approved pairs: the A101 Flora library on the Drive
+  (`G:/Мой диск/AGR-assets/flora/a101/`), 180 cut-out RGBA 2048² PNGs named `<species>_t<N>_h<cm>_{high,low}.png`
+  in transliterated Russian (e.g. `el_nidiformis` = Picea abies 'Nidiformis', `puzyreplodnik_kalinolistnyj` =
+  Physocarpus opulifolius). Match by Latin genus/species, exact species only; a generic genus file (яблоня/дёрен/
+  боярышник) is not an exact match. Copy read-only + sha256, never edit the Drive originals. (#1146)
+- Ground v015 VPM is a single UDIM tile 1001 (D209 numbers each mesh from 1001; `ground-build-v006.md` readback
+  `tiles [1001]`), so Flora/MAF VPM start at 1002 [D210]. Small bushes cannot hit VPM texel 520–1706 px/m on their
+  own 2K map; measure texel in the final atlas, no upscaling (Artem «мерить»). (#1146)

@@ -1,0 +1,194 @@
+{
+  "schema": 1,
+  "source_library": "G:/Мой диск/AGR-assets/flora/a101/",
+  "copies": "G:/Мой диск/AGR-evidence/1146-flora-star/a101-matched/",
+  "udim_tile": 1002,
+  "texel_policy": "measure in final atlas, no upscale",
+  "copied_sha256": {
+    "el_nidiformis_t1_h60_high.png": "7bfe86a2bc147ac875b7c267eaeb98313d14b76e6127a880a12c47ed024f7578",
+    "el_nidiformis_t1_h60_low.png": "f2f348ad3434b8157a4935199a613da88c9a36b0f94c5dd1aa1da8a72008bcb5",
+    "el_nidiformis_t1_h60_PREVIEW.png": "2e3a9a115bbd18bf5afc59f1702a99b4e140e222cefd98ce3a4f90ff52dd02f1",
+    "puzyreplodnik_kalinolistnyj_t1_h150_high.png": "9af7c5682b032ab8c505265bc600fc9d14b51b2506800f66514e2d4d11ad00c8",
+    "puzyreplodnik_kalinolistnyj_t1_h150_low.png": "a671588be5fd368b77420bae521ab93234568e65d0b9aae206182b095a64a8e1",
+    "puzyreplodnik_kalinolistnyj_t1_h150_PREVIEW.png": "8c653d2019654d6ca1a46a8677d0235b6a94498645fc8049361b852d1a6828e6",
+    "puzyreplodnik_kalinolistnyj_t2_h150_high.png": "46cdf92163b6fd565ca2258581aef74ba4221ce6d3dbda6ca2a8f11fd13484b4",
+    "puzyreplodnik_kalinolistnyj_t2_h150_low.png": "6662e60fa193208351f9d99759b5e7492c7ff2b704c8b669979d802b36cad155",
+    "puzyreplodnik_kalinolistnyj_t3_h150_high.png": "6293cea6f3f1e750270b357ed224a9709e46901c7063a09da86b9887b07e6365",
+    "puzyreplodnik_kalinolistnyj_t3_h150_low.png": "c7b49cd8e314796fd20672d9809e9927ed351543265f8fe1a4f4de76ee7338e8",
+    "puzyreplodnik_kalinolistnyj_t3_h150_PREVIEW.png": "e54b663320e496c3f29a531358c4a7a9d8d16903f463ad6c30f152728a8bc4c9"
+  },
+  "rows": [
+    {
+      "pos": 2,
+      "russian": "Ольха серая",
+      "exact_latin": "Alnus glutinosa 'Laciniata' (RU name = Alnus incana, F5)",
+      "status": "missing",
+      "a101_match": "no-match",
+      "reason": "no Alnus (ольха) in A101",
+      "a101_files": [],
+      "a101_previews": [],
+      "a101_candidates": []
+    },
+    {
+      "pos": 4,
+      "russian": "Яблоня Маковецкого",
+      "exact_latin": "Malus × purpurea 'Makowieckiana'",
+      "status": "proxy",
+      "a101_match": "no-match",
+      "reason": "generic genus Malus (яблоня) only, no species/cultivar",
+      "a101_files": [],
+      "a101_previews": [],
+      "a101_candidates": [
+        "yablonya_t1_h350_high.png",
+        "yablonya_t2_h450_high.png"
+      ]
+    },
+    {
+      "pos": 5,
+      "russian": "Лиственница обыкновенная",
+      "exact_latin": "Larix decidua 'Pendula'",
+      "status": "missing",
+      "a101_match": "no-match",
+      "reason": "no Larix (лиственница) in A101",
+      "a101_files": [],
+      "a101_previews": [],
+      "a101_candidates": []
+    },
+    {
+      "pos": 6,
+      "russian": "Ирга колосистая",
+      "exact_latin": "Amelanchier spicata",
+      "status": "proxy",
+      "a101_match": "no-match",
+      "reason": "A101 = Amelanchier lamarckii (Ирга Ламарка), a different species; it is the current approved proxy",
+      "a101_files": [],
+      "a101_previews": [],
+      "a101_candidates": [
+        "irga_lamarka_t1_h150_high.png",
+        "irga_lamarka_t2_h150_high.png",
+        "irga_lamarka_t3_h350_high.png",
+        "irga_lamarka_t4_h150_high.png"
+      ]
+    },
+    {
+      "pos": 7,
+      "russian": "Боярышник обыкновенный",
+      "exact_latin": "Crataegus laevigata 'Paul's Scarlet'",
+      "status": "proxy",
+      "a101_match": "no-match",
+      "reason": "generic genus Crataegus (боярышник) only, no species",
+      "a101_files": [],
+      "a101_previews": [],
+      "a101_candidates": [
+        "boyarishnik_t1_h150_high.png"
+      ]
+    },
+    {
+      "pos": 8,
+      "russian": "Лох узколистный",
+      "exact_latin": "Elaeagnus angustifolia",
+      "status": "missing",
+      "a101_match": "no-match",
+      "reason": "no Elaeagnus (лох) in A101",
+      "a101_files": [],
+      "a101_previews": [],
+      "a101_candidates": []
+    },
+    {
+      "pos": 9,
+      "russian": "Пузыреплодник калинолистный",
+      "exact_latin": "Physocarpus opulifolius 'Lady in Red'",
+      "status": "proxy",
+      "a101_match": "exact-species",
+      "reason": "exact species Physocarpus opulifolius (пузыреплодник калинолистный), but the plain green form — NOT 'Lady in Red' (red); the red 'Diabolo' proxy is visually closer",
+      "a101_files": [
+        "puzyreplodnik_kalinolistnyj_t1_h150_high.png",
+        "puzyreplodnik_kalinolistnyj_t1_h150_low.png",
+        "puzyreplodnik_kalinolistnyj_t2_h150_high.png",
+        "puzyreplodnik_kalinolistnyj_t2_h150_low.png",
+        "puzyreplodnik_kalinolistnyj_t3_h150_high.png",
+        "puzyreplodnik_kalinolistnyj_t3_h150_low.png"
+      ],
+      "a101_previews": [
+        "puzyreplodnik_kalinolistnyj_t1_h150_PREVIEW.png",
+        "puzyreplodnik_kalinolistnyj_t3_h150_PREVIEW.png"
+      ],
+      "a101_candidates": []
+    },
+    {
+      "pos": 10,
+      "russian": "Дерен кроваво-красный",
+      "exact_latin": "Cornus sanguinea 'Anny's Winter Orange'",
+      "status": "missing",
+      "a101_match": "no-match",
+      "reason": "generic genus Cornus (дёрен) only, no species",
+      "a101_files": [],
+      "a101_previews": [],
+      "a101_candidates": [
+        "deren_t1_h120_high.png",
+        "deren_t2_h150_high.png",
+        "deren_t3_h100_high.png",
+        "deren_t4_h120_high.png",
+        "deren_t5_h100_high.png",
+        "deren_t6_h80_high.png"
+      ]
+    },
+    {
+      "pos": 13,
+      "russian": "Облепиха крушиновидная",
+      "exact_latin": "Hippophae rhamnoides 'Hikul'",
+      "status": "missing",
+      "a101_match": "no-match",
+      "reason": "no Hippophae (облепиха) in A101",
+      "a101_files": [],
+      "a101_previews": [],
+      "a101_candidates": []
+    },
+    {
+      "pos": 16,
+      "russian": "Ель нидиформис",
+      "exact_latin": "Picea abies 'Nidiformis'",
+      "status": "missing",
+      "a101_match": "exact",
+      "reason": "exact species + cultivar Picea abies 'Nidiformis' (ель нидиформис)",
+      "a101_files": [
+        "el_nidiformis_t1_h60_high.png",
+        "el_nidiformis_t1_h60_low.png"
+      ],
+      "a101_previews": [
+        "el_nidiformis_t1_h60_PREVIEW.png"
+      ],
+      "a101_candidates": []
+    },
+    {
+      "pos": "Ива",
+      "russian": "Ива швейцарская (block only, not in *T3509)",
+      "exact_latin": "Salix helvetica",
+      "status": "missing",
+      "a101_match": "no-match",
+      "reason": "Salix genus present (ива), no Salix helvetica (ива швейцарская)",
+      "a101_files": [],
+      "a101_previews": [],
+      "a101_candidates": [
+        "iva_polzuchaya_t1_h40_high.png",
+        "iva_bush_t1_h150_high.png",
+        "iva_bush_t2_h50_high.png",
+        "iva_lomkaya_t1_h450_high.png"
+      ]
+    }
+  ],
+  "summary": {
+    "rows": 11,
+    "exact": 1,
+    "exact_species": 1,
+    "no_match": 9,
+    "no_candidates": 4,
+    "gap_positions": [
+      "2",
+      "5",
+      "8",
+      "13"
+    ],
+    "udim_tile": 1002
+  }
+}
