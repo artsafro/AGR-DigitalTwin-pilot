@@ -1,11 +1,13 @@
-"""new-case: #1043 release-vs-reclaim unlink gap; at most one holder.
+"""new-case: release-vs-reclaim unlink gap; at most one holder (#1043 POSIX, #1117 Windows).
 
-The owner's release and a POSIX reclaimer never both unlink by name -> at most one holder.
+The owner's release and a reclaimer never both unlink by name -> at most one holder.
 
 A reclaimer X inside `_unlink_named_if` has checked bytes + inode of a stale lock (owner O alive,
 past `until`). If O releases and a new holder H O_EXCLs a fresh lock between X's checks and X's
 `os.remove`, X used to remove H's lock and a third caller K acquired too. POSIX consume is forced
 (fcntl is absent on Windows: `locks._flock` falls back to msvcrt.locking, and is the injectable seam).
+On Windows (#1117) the reclaimer deletes through a handle and skips the sentinel, so the owner's
+release deletes by handle too, not by name.
 """
 from __future__ import annotations
 
