@@ -71,6 +71,10 @@ coverage. Inspect fresh tool schemas before using other tools.
   Select a real `bpy.context.window_manager.windows` entry and use
   `bpy.context.temp_override(window=window, scene=scene, view_layer=...)`
   for operators. Reidentify the loaded file before continuing after a failure.
+- Heavy passes (UDIM bake) block the Blender main thread and MCP calls time out;
+  sleeping/polling does not help. Run them in a separate background Blender
+  (`blender -b`) on a versioned copy and read the result back (2026-11-05,
+  «Garibaldi NPM to VPM conversion», G5; retro problem 3).
 
 Connection evidence and pending Codex reload are recorded in
 `tools/mcp/README.md` and `tools/mcp/verification.txt`.

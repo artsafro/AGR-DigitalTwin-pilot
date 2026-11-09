@@ -43,7 +43,7 @@ scratch dir `tmp/issue139/`. A smoke run is not delivery validation (`passed=tru
 | ezdxf | 1.4.3 | `uv run --offline --extra cad python tmp/issue139/cad.py` ([run 4](../research/toolchain-smoke-2026-10-15.md#run-4-cad_extra_fallback)) | works: 1 LINE written to DXF and read back. The issue's `--group cad` fails: `error: Group 'cad' is not defined in the project's 'dependency-groups' table` (it is an optional extra) | 2026-10-15 |
 | CheckToolBox | v1.5 add-on (no version in bl_info) on Blender 4.4.0 | `blender 4.4 --background --factory-startup --python-exit-code 1 --python jobs/KPP1/scripts/qa_checktoolbox.py -- <out.json> <synthetic_cube.fbx>` ([run 14](../research/toolchain-smoke-2026-10-15.md#run-14-blender_44_qa_checktoolbox_run)) | works on Blender 4.4 (the KPP1 host): faces 6, doubles 0, intersect_faces 0. Fails on Blender 5.1.2: `ModuleNotFoundError: No module named 'CheckToolBox_v1_5'` (add-on not installed there; Blender exits 0 unless `--python-exit-code` is set) | 2026-10-15 |
 | speedtree-mcp | mcp 1.30.0; SpeedTree Modeler v10.0.1 install | `python tmp/issue139/speedtree.py` (stdio client in the BlenderLab103 venv) ([run 5](../research/toolchain-smoke-2026-10-15.md#run-5-speedtree_mcp_client)) | works: server starts, 6 tools listed, `installation_info` installed=True. No `.spm` sample is tracked, so no inspect or export | 2026-10-15 |
-| AutoCAD core console | AutoCAD 2025, ACADVER 25.0 | `python hermes_kanban/scripts/dcc_batch.py acad --ping` ([run 10](../research/toolchain-smoke-2026-10-15.md#run-10-acad_dcc_batch_ping)) | works: `AGR_PING acad=25.0`, exit code 0, 4.0 s | 2026-10-15 |
+| AutoCAD core console | AutoCAD 2025, ACADVER 25.0 | `python hermes_kanban/scripts/dcc_batch.py acad --ping` ([run 10](../research/toolchain-smoke-2026-10-15.md#run-10-acad_dcc_batch_ping)) | works: `AGR_PING acad=25.0`, exit code 0, 4.0 s; `FILEDIA` is a user registry setting shared with the interactive AutoCAD, the console starts at 0 and writes its value back on exit, so scripts restore the user's value (`adapters.cad.dwg.filedia_guarded`, #1026) | 2026-10-15 |
 | 3ds Max batch | 3ds Max 2026.3 (28.3.0.30732) | `python hermes_kanban/scripts/dcc_batch.py max --ping` ([run 11](../research/toolchain-smoke-2026-10-15.md#run-11-max_dcc_batch_ping)) | works with an error: `AGR_PING max=28000` printed, wrapper status ok, but native exit 4294967166 and `MAXScript Auto-load Script Error Exception ... polyunwrapper_autoload.mse` (a startup script in the user profile; the whole batch run took 119.9 s) | 2026-10-15 |
 | Blender | 5.1.2 (hash ec6e62d40fa9) | `blender 5.1 --background --factory-startup --version` ([run 6](../research/toolchain-smoke-2026-10-15.md#run-6-blender_version)) | works: version printed, exit 0; the synthetic test FBX was also exported headless ([run 7](../research/toolchain-smoke-2026-10-15.md#run-7-blender_synthetic_cube_fbx)) | 2026-10-15 |
 | autocad-mcp | multiCAD (`tools/mcp/multicad_stdio.py`) | none | not checked: needs AutoCAD open (user); the MCP server drives a live AutoCAD session, which a headless smoke check does not start | 2026-10-15 |
@@ -296,12 +296,45 @@ Pipeline core:
   for a visual check; not a production asset.
 - Operation library `technical_library/` — WORKING per package README.
 - Album page reader `src/dt_ai/album/` (#317) — on `main`, synthetic PDFs only.
-- Placement engine `src/dt_ai/placement/engine.py` (#316) — on `main`, synthetic tests only.
 - Project state `tools/state/project_state.py` — WORKING; rule `docs/agents/WORKFLOW.md`, "Project state";
-  `tools/state/project_state_freshness.py` is an advisory read-only freshness check.
+  `tools/state/project_state_freshness.py` is an advisory read-only freshness check; `tools/state/after_merge.py`
+  (2026-11-07, offline tests only) regenerates and commits it on local `main` after a merge (PostToolUse hook on
+  `gh pr merge`), no push.
 - AGR Tools for 3ds Max 2024/2026, `adapters/max/agr_tools/` (build `tools/max/build_agr_tools.py`) — diagnostic
   and checked-export tool, not a delivery validator; version, install, native evidence: its `README.md`,
-  `CHANGELOG.md`; native runners in `tests/max_tools/`.
+  `CHANGELOG.md`; native runners in `tests/max_tools/`. Entry page for agents (1.0 conveyor, MCP v2, passport,
+  libraries, owner decisions): `docs/agr-tools/OVERVIEW.md`.
+
+Territory (Ground, MAF, Flora, placement; verified 2026-11-07 against job reports and PRs):
+- Ground layered cake `src/dt_ai/geometry/ground_cake.py` (#295, PR #308) — WORKING: library driven by
+  `jobs/VATUTINO-SITE/build_ground.py` / `build_ground_v015.py`, FBX via `tools/blender/ground_json_to_fbx.py`; built
+  Vatutino v005–v015, v015 accepted by the user 2026-11-04 [D193] (PR #906); COD-20207 v016 trial not passed;
+  tests `tests/test_ground_cake.py`, `tests/test_ground_*.py`.
+- Ground quads `src/dt_ai/geometry/ground_quads.py` — WORKING on one object: paired-fan quads of Vatutino v015
+  (accepted, PR #906, [D157]); docstring still says "checkpoint only"; tests `tests/test_ground_quads.py`,
+  `test_ground_pairing.py`, `test_ground_v015_producer.py`.
+- MAF atlas `tools/materials/atlas_maf.py` (PR #196) — TOOL ONLY: one 512 atlas + UV map from a material list; used
+  for the Vatutino MAF set v005 (PR #320) and «Верона» atlas-v006; no separate acceptance; tests
+  `tests/test_atlas_maf*.py`.
+- MAF bench generator `tools/library/maf_gen_bench.py` + `maf_gen_bench_checks.py`, Blender build
+  `tools/blender/maf_gen_bench_build.py` (PR #805) — WORKING: «Верона» rows 2-10 accepted for the library [D202]
+  (PR #1093), row 1 pending; tests `tests/test_maf_gen_bench*.py`.
+- MAF site set `tools/library/maf_site_set.py` + `tools/blender/maf_site_set_build.py` (PR #320) — TOOL ONLY: 13
+  Vatutino positions built, geometry accepted 2026-11-04 (issue #889), the set report stays `passed=false`, colour
+  zones open (PR #991); tests `tests/test_maf_site_set.py`.
+- MAF showcase `tools/review/maf_showcase.py` (PR #493) — WORKING as a review aid (display-only 3ds Max scene of
+  NPM/VPM pairs, headless 3dsmaxbatch); not a delivery tool; tests `tests/test_maf_showcase.py`.
+- Flora textures `python -m dt_ai.materials.flora plan|library` (`src/dt_ai/materials/flora.py`, PR #220) — WORKING
+  for texture handoff and approval: three-species test list approved 2026-10-15 (#190); no object delivery;
+  tests `tests/test_flora_textures.py`.
+- Flora atlas `tools/library/flora_atlas_from_scene.py` (PR #310) — TOOL ONLY: one 2048 Flora atlas from a placed
+  scene; synthetic run only (3 species); tests `tests/test_flora_atlas_from_scene.py`.
+- Placement engine `python -m dt_ai.placement.engine` (`src/dt_ai/placement/engine.py`, #316, PR #323) — TOOL ONLY:
+  ran on real data, Vatutino run v006 (PR #344): NPM 3,289/3,289 placed, 0 failed, sinking 0.0998–0.1001 m; user
+  geometry acceptance open, `passed=false`; tests `tests/test_placement_engine.py`, `tests/placement/`.
+- Site placement `tools/placement_site.py` + `tools/blender/placement_instance.py` (PR #344) — TOOL ONLY: SPOZU points
+  -> engine -> Blender instancing -> scene readback gate (0 mismatches on Vatutino v006); acceptance open; tests
+  `tests/placement/test_site_*.py`.
 
 Export:
 - `tools/export/export_mesh_blender.py`, `tools/export/export_modules_blender.py` — Blender scene + FBX writers of

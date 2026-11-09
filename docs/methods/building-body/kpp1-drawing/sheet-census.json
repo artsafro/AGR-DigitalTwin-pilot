@@ -1,0 +1,436 @@
+{
+ "ezdxf": "1.4.3",
+ "oda": null,
+ "acad": "AutoCAD 2025 accoreconsole V.72.0.0, DXFOUT 2018",
+ "insunits": 4,
+ "insunits_meaning": "millimetres",
+ "pilot_main_sha": "7529d338cab58572aff2400a788e6ca74828aef4",
+ "sheets": [
+  {
+   "sheet": "L01",
+   "source_dwg": "22Е56-АР2-1002-АС.03-R1_L01_без подписей.dwg",
+   "source_sha256": "cb74ba142142e9181dfc14e235f94aed7eabec597e746760e5a972427f0f3648",
+   "dxf": "C:\\x\\methods\\building-body\\kpp1\\readback\\ascii\\L01\\L01.dxf",
+   "layouts": [
+    "Layout1",
+    "Layout2",
+    "Model"
+   ],
+   "title_lines": [
+    {
+     "y": 262.0,
+     "text": "Фасад 1-4 Фасад А - В"
+    },
+    {
+     "y": 82.0,
+     "text": "Фасад 4-1 Фасад В - А"
+    },
+    {
+     "y": -51.0,
+     "text": "22 Е 56- АР 2-1002- АС .03"
+    },
+    {
+     "y": -62.0,
+     "text": "Строительство паросилового энергоблока мощностью 275 МВт как независимого"
+    },
+    {
+     "y": -64.0,
+     "text": "1 - Зам 700-26 07.08.26"
+    },
+    {
+     "y": -66.0,
+     "text": "предприятия на территории промзоны ТЭЦ -26 - филиала ПАО \" Мосэнерго \""
+    },
+    {
+     "y": -74.0,
+     "text": "07.08.26"
+    },
+    {
+     "y": -78.0,
+     "text": "07.08.26"
+    },
+    {
+     "y": -79.0,
+     "text": "Центральная проходная"
+    },
+    {
+     "y": -81.0,
+     "text": "П 1 7"
+    },
+    {
+     "y": -88.0,
+     "text": "07.08.26"
+    },
+    {
+     "y": -94.0,
+     "text": "07.08.26 Фасад 1-4. Фасад 4-1. Фасад А - В . Фасад В - А"
+    },
+    {
+     "y": -98.0,
+     "text": "07.08.26"
+    }
+   ],
+   "viewports": [
+    {
+     "layout": "Layout1",
+     "id": 2,
+     "paper_height": 133.621,
+     "view_height": 13362.13,
+     "scale": 100,
+     "status": -1
+    },
+    {
+     "layout": "Layout1",
+     "id": 1,
+     "paper_height": 12.0,
+     "view_height": 12.0,
+     "scale": null,
+     "status": 1
+    },
+    {
+     "layout": "Layout1",
+     "id": 3,
+     "paper_height": 133.795,
+     "view_height": 13379.499,
+     "scale": 100,
+     "status": 2
+    },
+    {
+     "layout": "Layout1",
+     "id": 4,
+     "paper_height": 131.262,
+     "view_height": 13126.15,
+     "scale": 100,
+     "status": -1
+    },
+    {
+     "layout": "Layout1",
+     "id": 5,
+     "paper_height": 132.393,
+     "view_height": 13239.255,
+     "scale": 100,
+     "status": -1
+    },
+    {
+     "layout": "Layout1",
+     "id": 6,
+     "paper_height": 42.478,
+     "view_height": 2123.887,
+     "scale": 50,
+     "status": -1
+    }
+   ],
+   "model_entities": 2610,
+   "model_layers": {
+    "A-DOOR-____-OTLN": 64,
+    "A-WALL-____-PATT": 114,
+    "A-DETL-____-OTLN": 300,
+    "M-EQPM-____-OTLN": 57,
+    "A-GLAZ-CURT-OTLN": 188,
+    "A-GLAZ-____-OTLN": 128,
+    "A-GLAZ-CWMG-OTLN": 244,
+    "Q-SPCQ-____-OTLN": 554,
+    "M-HVAC-CDFF-OTLN": 8,
+    "A-FLOR-____-OTLN": 12,
+    "S-STRS-____-OTLN": 238,
+    "Поручни": 6,
+    "Верхние поручни": 6,
+    "A-DETL-GENF-OTLN": 7,
+    "A-DETL-____-THIN": 16,
+    "S-GRID-____-IDEN": 16,
+    "S-GRID-____-OTLN": 8,
+    "A-____-NOTE-TEXT": 73,
+    "G-____-____-DIMS": 452,
+    "A-WALL-____-IDEN": 40,
+    "A-DOOR-____-IDEN": 36,
+    "G-____-____-TEXT": 43
+   }
+  },
+  {
+   "sheet": "L02",
+   "source_dwg": "22Е56-АР2-1002-АС.03-R1_L02_без подписей.dwg",
+   "source_sha256": "428426002f2642d29e97a8db34053546dc1e427bdff8aeef9ad1c81005b73cb2",
+   "dxf": "C:\\x\\methods\\building-body\\kpp1\\readback\\ascii\\L02\\L02.dxf",
+   "layouts": [
+    "Layout1",
+    "Layout2",
+    "Model"
+   ],
+   "title_lines": [
+    {
+     "y": 274.0,
+     "text": "Фасад 1-4. Цветовое решение Фасад А - В . Цветовое решение"
+    },
+    {
+     "y": 107.0,
+     "text": "Фасад 4-1. Цветовое решение Фасад В - А . Цветовое решение"
+    },
+    {
+     "y": -51.0,
+     "text": "22 Е 56- АР 2-1002- АС .03"
+    },
+    {
+     "y": -62.0,
+     "text": "Строительство паросилового энергоблока мощностью 275 МВт как независимого"
+    },
+    {
+     "y": -64.0,
+     "text": "1 - Зам 700-26 07.08.26"
+    },
+    {
+     "y": -66.0,
+     "text": "предприятия на территории промзоны ТЭЦ -26 - филиала ПАО \" Мосэнерго \""
+    },
+    {
+     "y": -74.0,
+     "text": "07.08.26"
+    },
+    {
+     "y": -78.0,
+     "text": "07.08.26"
+    },
+    {
+     "y": -79.0,
+     "text": "Центральная проходная"
+    },
+    {
+     "y": -81.0,
+     "text": "П 2"
+    },
+    {
+     "y": -88.0,
+     "text": "07.08.26"
+    },
+    {
+     "y": -92.0,
+     "text": "Фасад 1-4. Фасад 4-1. Фасад А - В . Фасад В - А ."
+    },
+    {
+     "y": -94.0,
+     "text": "07.08.26"
+    },
+    {
+     "y": -96.0,
+     "text": "Цветовые решения"
+    }
+   ],
+   "viewports": [
+    {
+     "layout": "Layout1",
+     "id": 2,
+     "paper_height": 104.0,
+     "view_height": 5200.0,
+     "scale": 50,
+     "status": -1
+    },
+    {
+     "layout": "Layout1",
+     "id": 1,
+     "paper_height": 12.0,
+     "view_height": 12.0,
+     "scale": null,
+     "status": 1
+    },
+    {
+     "layout": "Layout1",
+     "id": 3,
+     "paper_height": 133.621,
+     "view_height": 13362.13,
+     "scale": 100,
+     "status": -1
+    },
+    {
+     "layout": "Layout1",
+     "id": 4,
+     "paper_height": 133.807,
+     "view_height": 13380.75,
+     "scale": 100,
+     "status": 2
+    },
+    {
+     "layout": "Layout1",
+     "id": 5,
+     "paper_height": 131.451,
+     "view_height": 13145.069,
+     "scale": 100,
+     "status": -1
+    },
+    {
+     "layout": "Layout1",
+     "id": 6,
+     "paper_height": 131.262,
+     "view_height": 13126.15,
+     "scale": 100,
+     "status": -1
+    }
+   ],
+   "model_entities": 2419,
+   "model_layers": {
+    "A-DETL-GENF-OTLN": 14,
+    "A-DETL-____-THIN": 36,
+    "I-WALL-____-OTLN": 12,
+    "A-FLOR-____-OTLN": 49,
+    "S-STRS-____-OTLN": 238,
+    "A-DOOR-____-OTLN": 22,
+    "A-WALL-____-PATT": 57,
+    "A-DETL-____-OTLN": 250,
+    "M-EQPM-____-OTLN": 57,
+    "A-GLAZ-CURT-OTLN": 188,
+    "A-GLAZ-____-OTLN": 128,
+    "A-GLAZ-CWMG-OTLN": 244,
+    "Q-SPCQ-____-OTLN": 554,
+    "A-GENM-____-OTLN": 4,
+    "M-HVAC-CDFF-OTLN": 8,
+    "Поручни": 6,
+    "Верхние поручни": 6,
+    "S-GRID-____-IDEN": 16,
+    "S-GRID-____-OTLN": 8,
+    "A-____-NOTE-TEXT": 74,
+    "G-____-____-DIMS": 448
+   }
+  },
+  {
+   "sheet": "L03",
+   "source_dwg": "22Е56-АР2-1002-АС.03-R1_L03_без подписей.dwg",
+   "source_sha256": "ad1de2b203bd4394bd3604642cd41bd8f3b2427ec23b900413bd396612624469",
+   "dxf": "C:\\x\\methods\\building-body\\kpp1\\readback\\ascii\\L03\\L03.dxf",
+   "layouts": [
+    "Layout1",
+    "Layout2",
+    "Model"
+   ],
+   "title_lines": [
+    {
+     "y": 463.0,
+     "text": "План на отметке 0,000"
+    },
+    {
+     "y": -51.0,
+     "text": "22 Е 56- АР 2-1002- АС .03"
+    },
+    {
+     "y": -62.0,
+     "text": "Строительство паросилового энергоблока мощностью 275 МВт как независимого"
+    },
+    {
+     "y": -64.0,
+     "text": "1 - Зам 700-26 07.08.26"
+    },
+    {
+     "y": -66.0,
+     "text": "предприятия на территории промзоны ТЭЦ -26 - филиала ПАО \" Мосэнерго \""
+    },
+    {
+     "y": -74.0,
+     "text": "07.08.26"
+    },
+    {
+     "y": -78.0,
+     "text": "07.08.26"
+    },
+    {
+     "y": -79.0,
+     "text": "Центральная проходная"
+    },
+    {
+     "y": -81.0,
+     "text": "П 3"
+    },
+    {
+     "y": -88.0,
+     "text": "07.08.26"
+    },
+    {
+     "y": -94.0,
+     "text": "07.08.26 План на отм . 0,000"
+    }
+   ],
+   "viewports": [
+    {
+     "layout": "Layout1",
+     "id": 2,
+     "paper_height": 100.496,
+     "view_height": 5024.821,
+     "scale": 50,
+     "status": -1
+    },
+    {
+     "layout": "Layout1",
+     "id": 1,
+     "paper_height": 12.0,
+     "view_height": 12.0,
+     "scale": null,
+     "status": 1
+    },
+    {
+     "layout": "Layout1",
+     "id": 3,
+     "paper_height": 52.31,
+     "view_height": 1046.199,
+     "scale": 20,
+     "status": -1
+    },
+    {
+     "layout": "Layout1",
+     "id": 4,
+     "paper_height": 32.59,
+     "view_height": 651.798,
+     "scale": 20,
+     "status": -1
+    },
+    {
+     "layout": "Layout1",
+     "id": 5,
+     "paper_height": 32.59,
+     "view_height": 651.798,
+     "scale": 20,
+     "status": -1
+    },
+    {
+     "layout": "Layout1",
+     "id": 6,
+     "paper_height": 266.324,
+     "view_height": 26632.403,
+     "scale": 100,
+     "status": -1
+    }
+   ],
+   "model_entities": 2005,
+   "model_layers": {
+    "A-DETL-____-THIN": 25,
+    "A-DETL-GENF-OTLN": 26,
+    "A-DETL-____-OTLN": 98,
+    "A-____-NOTE-TEXT": 185,
+    "A-WALL-____-PATT": 68,
+    "I-WALL-____-MCUT": 263,
+    "A-WALL-____-MCUT": 262,
+    "I-WALL-____-OTLN": 118,
+    "A-DOOR-____-OTLN": 30,
+    "A-FLOR-____-OTLN": 77,
+    "A-GLAZ-CWMG-OTLN": 87,
+    "S-STRS-____-OTLN": 73,
+    "S-STRS-____-MBND": 6,
+    "A-GLAZ-____-OTLN": 11,
+    "P-SANR-FIXT-OTLN": 14,
+    "I-FURN-____-OTLN": 2,
+    "A-DETL-____-MBND": 1,
+    "A-WALL-____-OTLN": 10,
+    "A-GENM-____-OTLN": 9,
+    "G-____-____-TEXT": 204,
+    "S-GRID-____-IDEN": 14,
+    "S-GRID-____-OTLN": 7,
+    "G-____-____-SYMB": 12,
+    "A-____-____-DIMS": 82,
+    "A-AREA-____-IDEN": 50,
+    "G-____-____-DIMS": 126,
+    "A-DOOR-____-IDEN": 91,
+    "A-WALL-____-IDEN": 54
+   }
+  }
+ ],
+ "pln": {
+  "file": "22Е56-АР2-1002-АС.03-R1_L02_без подписей.pln",
+  "sha256": "8b7b4253e8de5723d493368a9b76bb0eb02fd54747f34f8b425ad39ccf22d124",
+  "role": "plot file, not a sheet; not read as geometry"
+ }
+}

@@ -2,6 +2,8 @@
 
 Moved verbatim from `AGENTS.md` (context diet); the rules remain binding for every agent.
 
+Точка входа в AGR Tools — `docs/agr-tools/OVERVIEW.md`; работа с ветками, раннером и полигоном — `docs/agents/agr-tools-impl-rules.md`.
+
 Правила волны 1.0. Контракты К1–К5 — в `issue_body.md` волны. Решения Артёма 06.11.2026 приоритетнее.
 
 - **Паспорт проекта обязателен (К1).**
@@ -28,4 +30,4 @@ Moved verbatim from `AGENTS.md` (context diet); the rules remain binding for eve
   - `agr_exec_unsafe` в мосте агента запрещён.
 - **Механика роя — Sonnet.** Лабораторные отчёты, обновление `expected`, `CHANGELOG`, документы и слияния делает Sonnet. Геометрию, архитектуру и контракты ведёт основная модель.
 
-- **Первое реальное здание через стадии 1-9 — AC08 (TEC26-OKS)**, а не здание эталонного корпуса [D204].
+- **Первое реальное здание через стадии 1-9 — AC08 (TEC26-OKS)**, а не здание эталонного корпуса [D228].

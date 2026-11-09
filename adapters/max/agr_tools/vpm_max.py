@@ -11,17 +11,19 @@ texel / tile checks. Nothing changes.
 apply: re-reads and compares (edit_core.require_current + the planned rows), then in ONE undo record (selection
 restored) makes export copies on layer `AGR_vpm` (`<name>_VPM_NNN`, glass `<name>_glass_VPM_NNN`), writes the new
 geometry (Editable_Mesh, local coordinates interpolated from the source vertices, fan diagonals hidden), material
-ids and channel 1 into the COPY, reads it back and measures the seam and texel on the real Max data; the working
+ids, channel 1 and the user prop `agr_udim_table` (its own {library id: UDIM}, 1.0.1) into the COPY, reads it back and measures the seam and texel on the real Max data; the working
 objects are compared before/after (mesh, transform, UV, stack). Objects with findings are not built (fail-closed).
 Then the file step writes into a NEW folder (edit_core.new_path, never overwrite): `vpm_table.json` (UDIM table per
 mesh, K3; the passport write belongs to branch F) and the maps of step 6 through vpmmaps_core.build_maps (branch
 N; `skipped` while it is a stub). No clearUndoBuffer (GeoAGR `:33785`), no stack collapse of an original
 (GeoAGR `:32214`), no new MAXScript globals.
 """
+import json
 import os
 
 TOOL = 'vpm.build'
 LAYER = 'AGR_vpm'
+UDIM_PROP = 'agr_udim_table'   # same prop as mat.table (matlib_max.UDIM_PROP): {library id: UDIM} of THIS mesh
 ISSUE = '#1024'
 
 
@@ -62,6 +64,11 @@ def _library(ctx, o):
         return ml.load_library(o['library_path']), ''
     except NotImplementedError:
         return None, 'matlib_core.load_library is a stub of branch L (#1024): no maps written'
+
+
+def _maps_options(o):
+    """Options of vpmmaps_core for step 6: the folder of the grey masks of mat.tiles (options.map_dir), else none."""
+    return {'map_dir': o['map_dir']} if o.get('map_dir') else None
 
 
 def _steps(maps_reason, file_reason):
@@ -131,12 +138,31 @@ def vpm_build(ctx, mode, nodes, preview):
     library, maps_reason = _library(ctx, o)
     if not maps_reason and not out_dir:
         maps_reason = file_reason
+    maps_planned = maps_error = None
+    if library is not None and not maps_reason and done:
+        # 1.0.1 (KPP1 e2e 20261106-101005-9a657979): step 6 is planned here, so a map name / table error refuses
+        # in the preview and BEFORE the copies of apply (was: copies and vpm_table.json written, then a refusal)
+        vm = ctx.agr._load_core('vpmmaps_core.py', 'agr_tools_vpmmaps_core')
+        try:
+            mp = vm.plan_maps(core.maps_table(plan), library, os.path.join(out_dir, 'maps'), _maps_options(o))
+            maps_planned = {'maps': len(mp['maps']), 'skipped': len(mp['skipped']),
+                            'names': sorted(m['name'] for m in mp['maps'])[:6]}
+        except ValueError as exc:
+            maps_error = 'step 6 (maps D+ERM+N) cannot be planned: {} (options.address names the maps)'.format(exc)
     extra = {'options': o, 'layer': LAYER, 'issue': ISSUE, 'unit_m': k, 'renumber': renumber_src,
-             'out_dir': out_dir, 'steps': _steps(maps_reason, file_reason)}
+             'out_dir': out_dir, 'steps': _steps(maps_reason or maps_error, file_reason)}
+    if maps_error:
+        extra['steps'][5]['status'] = 'refused'
+    if maps_planned is not None:
+        extra['maps_planned'] = maps_planned
     if mode == 'preview':
+        if maps_error:
+            skipped.append(edit.skipped('maps D+ERM+N', maps_error))
         return edit.report(TOOL, 'preview', entries, done, skipped, (), state_hash=edit.fingerprint(state),
                            extra=extra)
     edit.require_current(preview, state)
+    if maps_error:
+        raise ValueError(maps_error + ': nothing built (fail-closed)')
     if edit.fingerprint(preview['plan']['done']) != edit.fingerprint(done):
         raise edit.StalePreview('the build differs from the preview; run preview again')
     work = [(by_key[obj['key']], p) for obj in plan['objects'] if not obj['findings'] for p in obj['parts']]
@@ -155,6 +181,10 @@ def vpm_build(ctx, mode, nodes, preview):
                 rt.convertToMesh(c)
                 geo = part['geometry']
                 write_mesh(c, mesh['local'], geo)
+                # 1.0.1: the copy carries its own dense table (the inherited prop of the source may be stale, e.g.
+                # after attach): udim.plugs / npm.build read the tile of a library id from it (KPP1 e2e)
+                rt.setUserProp(c, UDIM_PROP, json.dumps(part['summary']['udim_table'], sort_keys=True))
+                rt.setUserProp(c, 'MapChannel:1', 'UV')   # the UDIM layout IS the delivered UV (export hygiene)
                 back = rd.read_tri(c, k)
                 findings, measured = measure(core, lay, o, back, geo)
                 objects.append(edit.entry(rd.handle(c), str(c.name), findings))
@@ -182,7 +212,7 @@ def vpm_build(ctx, mode, nodes, preview):
         extra['out_dir'] = folder
         if library is not None:
             vm = ctx.agr._load_core('vpmmaps_core.py', 'agr_tools_vpmmaps_core')
-            res = vm.build_maps(core.maps_table(plan), library, os.path.join(folder, 'maps'))
+            res = vm.build_maps(core.maps_table(plan), library, os.path.join(folder, 'maps'), _maps_options(o))
             files.extend(dict(m, kind='map_' + m['kind']) for m in res['maps'])
             skipped.extend(edit.skipped('map {} {} {}'.format(x.get('mesh'), x.get('udim'), x.get('kind')),
                                         x.get('reason') or 'skipped by vpmmaps_core') for x in res['skipped'])

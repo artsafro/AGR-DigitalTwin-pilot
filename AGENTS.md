@@ -38,6 +38,7 @@ Read on demand, one line each. Read the domain file that matches the task before
 - Machine-readable rules: `standards/` (locked; change procedure in `standards/README.md`).
 - AGR knowledge base (Russian originals, read-only): `docs/agr/INDEX.md` only, then the file it names.
 - Code map, checks and plugin configuration: `docs/agents/agents-reference.md`.
+- Production task (NPM / VPM, OKS / Ground / MAF / Flora / UCX): name its cell in `docs/scenarios/scenarios.json` and follow the `scenario` skill.
 - Modelling or reducing a model: read `docs/procedure/TASK_TO_MODEL.md` (fixed gates, free path, evidence checklist).
 - Task skills: load the matching `.agents/skills/*/SKILL.md` and follow it step by step (details: `docs/agents/agents-reference.md#skills`).
 
@@ -68,8 +69,9 @@ gets a line in `docs/decisions.md` and its `[D<n>]` where it applies.
 - Apply the [Permission matrix](docs/agents/WORKFLOW.md#permission-matrix) for action
   permissions and its named guard rules/gates; it is the single policy for all agents.
 - Update `docs/PROJECT_STATE.md` only on `main` after a merge, by regenerating it
-  (`python tools/state/project_state.py`; ≤ 80 lines, fixed sections; `docs/agents/WORKFLOW.md`);
+  (`python tools/state/after_merge.py --pr <N>` right after the merge; Claude's hook runs it on `gh pr merge`;
+  ≤ 80 lines, fixed sections; `docs/agents/WORKFLOW.md`);
   in task branches report state changes in the final summary.
 - A new tool counts as shared only after it is listed in `docs/agents/CAPABILITIES.md` on `main`.
 - Four working principles (assumptions first, simplest fit, surgical changes, verified done): `docs/agents/working-principles.md`.
-- AGR Tools 1.0 (#1024) conveyor rules (the project passport `jobs/<ID>/passport.json`, `schemas/ProjectPassport.schema.json`, is mandatory, К1): `docs/agents/agr-tools-1.0-rules.md`.
+- AGR Tools (3ds Max panel, `agr-mcp`, OKS conveyor 1.0): start at `docs/agr-tools/OVERVIEW.md`; binding rules (the project passport `jobs/<ID>/passport.json`, `schemas/ProjectPassport.schema.json`, is mandatory, К1): `docs/agents/agr-tools-1.0-rules.md`.

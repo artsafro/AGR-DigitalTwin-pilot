@@ -160,4 +160,4 @@ pytest counts were produced. Final runner line: `Command timed out after 400 sec
 The full suite is therefore **incomplete, not GREEN**. Calibration-format/user and docs review
 also remain open.
 
-- MAF «Верона» Vatutino: ряды 2-10 приняты; материалы v006: доски `larch_light_oak_boards`, стальная рама `paint_ral7016` [D202].
+- MAF «Верона» Vatutino: ряды 2-10 приняты; материалы v006: доски `larch_light_oak_boards`, стальная рама `paint_ral7016` [D226].

@@ -49,7 +49,8 @@ cc = _load(PKG / 'contract_core.py', 'agr_tools_contract_core_100')
 jc = _load(PKG / 'journal_core.py', 'agr_tools_journal_core_100')
 TEXT = SUITE.read_text(encoding='utf-8')
 suite = rm.load(TEXT)
-ORDER = rm.stage_buttons(suite)
+ORDER = rm.stage_buttons(suite)  # default version='1.0': the 33 stage buttons of 1.0
+HANDOFF_110 = ('handoff.export', 'handoff.import', 'handoff.verify', 'handoff.restore_materials')  # 1.1 rows
 ROWS = {r['id']: r for r in suite['rows']}
 
 
@@ -101,10 +102,12 @@ def test_layout_of_the_35_old_rows_follows_the_1024_table():
                            'qa.names_library'])
     assert {ROWS[k]['step_of'] for k in ('model.window_placer', 'tex.vpm_sets', 'atlas.unatlas')} == \
         {'win.place', 'vpm.build', 'npm.to_vpm'}
-    old = {r['id'] for r in suite['rows'] if r['fate']} - set(NEW_15) - {'export.library_zip', 'qa.names_library'}
+    old = {r['id'] for r in suite['rows'] if r['fate']} - set(NEW_15) - {'export.library_zip', 'qa.names_library'} - set(HANDOFF_110)
     assert len(old) == 35  # the 35 rows of 1.0 / 1.x before #1024: 18 stage + 3 step + 11 tail + 3 obsolete
     for r in suite['rows']:
-        if r['version'] not in ('1.0', '1.x'):
+        if r['id'] in HANDOFF_110:  # version 1.1: four stage buttons on the agent stage, after the 33 of 1.0
+            assert r['version'] == '1.1' and r['stage'] == 'agent' and r['fate'] == 'stage', r['id']
+        elif r['version'] not in ('1.0', '1.x'):
             assert r['stage'] is None and r['fate'] is None, r['id']
 
 
@@ -157,8 +160,10 @@ def test_geoagr_lines_of_1024_are_pinned_and_checked_when_the_source_is_here():
 # ---- registry and dispatcher ------------------------------------------------------------------------------
 def test_registry_is_the_33_buttons_with_one_glue_each():
     rt = runtime()
-    assert list(rt.EDITS_100) == ORDER
-    assert set(rt.READ_100) == {k for k in ORDER if ROWS[k]['mode'] in ('read', 'select')}
+    everything = rm.stage_buttons(suite, version=None)  # 1.0 rows in station order, then the 1.1 handoff rows
+    assert everything == list(ORDER) + list(HANDOFF_110)
+    assert list(rt.EDITS_100) == everything
+    assert set(rt.READ_100) == {k for k in everything if ROWS[k]['mode'] in ('read', 'select')}
     assert set(rt.AGENT_100) == {k for k in ORDER if ROWS[k]['mode'] == 'agent'}
     builder = _load(ROOT / 'tools/max/build_agr_tools.py', 'agr_builder_100')
     for tool, (core, fn) in rt.EDITS_100.items():
@@ -178,6 +183,8 @@ def test_registry_is_the_33_buttons_with_one_glue_each():
 def test_stub_docstrings_name_the_owner_branch():
     rt = runtime()
     for tool, (core, _) in rt.EDITS_100.items():
+        if tool in HANDOFF_110:
+            continue  # 1.1 handoff rows are filled modules (handoff_core/handoff_max), not 1.0 stubs
         if core == 'light_core.py':
             continue  # 0.9 module of branch D; light_export arrives with branch S
         for name in (core, rt.glue_file(core, rt.GLUE_100)):

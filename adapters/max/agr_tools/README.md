@@ -144,6 +144,12 @@ never a clean result. Objects are identified by unique Max handles as well as na
   VPM 512–1706 px/m and NPM 10–40 px/m. A zero area or a zero map size is
   `at_threshold` and is an error.
 
+## 1.1.0 хендофф Max↔Blender, форма параметров, Claude-док (#1024)
+
+- Этап «Агент»: `handoff.export` / `handoff.import` / `handoff.verify` / `handoff.restore_materials` (`handoff_core.py`, `handoff_max.py`); `runtime.agent_dock()` — Claude-док (макрос `AGRToolsAgentDock`).
+- `params_core.py` (stdlib) — поля и значения по умолчанию 10 кнопок; `ui_panel.py` — форма под рельсой, `runtime.form_ui('<tool>')` её открывает, `runtime.edit_ui` без обязательного поля отвечает `needs_params`.
+- MZP везёт `handoff_core.py`, `handoff_max.py`, `params_core.py`. Подробности и ограничения — `CHANGELOG.md`, 1.1.0.
+
 ## 1.0.0 конвейер ОКС: этапы 0–9, паспорт, окна, материалы, ВПМ/НПМ, сдача, агент (#1024)
 
 Рельса этапов лежит на «Путь». Выпущены все 33 кнопки плана 1.0 (13 веток F…U); каждая — `runtime.edit_ui('<tool>')`
@@ -299,4 +305,5 @@ nudge, UDIM to NPM atlas, UCX collision, texel readout and checked export.
 0.8.0 adds 13 delivery edits on export copies / new files with preview → apply.
 0.9.0 adds 19 buttons (placement, Flora/MAF, textures/UDIM/atlas, checks, batch export, light) and reworks 13.
 1.0.0 adds the OKS conveyor (#1024): 33 stage buttons (passport, body, windows, capsules/roof, materials, VPM, NPM, NPM to VPM, delivery, agent).
+1.1.0 adds 4 handoff rows (Max<->Blender, stage «Агент»), a parameter form for 10 buttons and the Claude dock macro.
 No licensing, obfuscation, GeoAGR.ms copy or decryption is included.

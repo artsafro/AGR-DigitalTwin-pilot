@@ -38,7 +38,7 @@ os.environ['AGR_NO_PROMPT'] = '1'
 os.environ['AGR_TOOLS_REPO'] = str(ROOT)
 REPORTS = OUT / 'reports'
 REPORTS.mkdir()
-summary = {'case': 'KPP1 e2e 1.0 (#1024 R)', 'model': 'SYNTHETIC KPP1-like (not the corpus)',
+summary = {'case': 'KPP1 e2e 1.0.1 (#1024)', 'model': 'SYNTHETIC KPP1-like (not the corpus)',
            'max_version': list(rt.maxVersion())[:3], 'package_sha256': hashlib.sha256(PACKAGE.read_bytes()).hexdigest(),
            'stages': [], 'harness_errors': [], 'harness_steps': []}
 assert not rt.maxFileName, 'only an empty batch document is allowed'
@@ -79,7 +79,7 @@ def install():
 
 agr = install()
 summary['runtime_version'] = agr.VERSION
-assert agr.VERSION == '1.0.0', agr.VERSION
+assert agr.VERSION == os.environ.get('AGR_EXPECT_VERSION', '1.0.1'), agr.VERSION
 JB = load(ROOT / 'test-polygon' / 'stations' / 'J_build.py', 'kpp1_e2e_J_build')
 KB = load(ROOT / 'test-polygon' / 'stations' / 'K_build.py', 'kpp1_e2e_K_build')
 NC = agr._load_core('npm_core.py', 'agr_tools_npm_core_kpp1')
@@ -249,6 +249,18 @@ def press(st, tool, nodes=None, options=None, apply=True, why=None, label=None, 
     st['buttons'].append(row)
     print('KPP1_E2E', st['id'], row['tool'], row['status'], row['seconds'], 's')
     return pre, app
+
+
+def names_of_materials(node):
+    m = node.material
+    if m is None:
+        return []
+    out = [str(m.name)]
+    try:
+        out += [str(x.name) for x in m.materialList if x is not None]
+    except Exception:  # noqa: BLE001 - not a Multi/Sub
+        pass
+    return out
 
 
 def harness_step(st, text):
@@ -520,7 +532,8 @@ def stage6(st):
         st['notes'].append('в ВПМ идёт только {}: тела не слились в один Main ({})'.format(S['main'].name,
                                                                                        names(parts)))
     pre, app = press(st, 'vpm.build', [S['main']], {'glass_ids': [ID_GLASS], 'out_dir': str(OUT / 'vpm'),
-                                                    'library_path': LIB})
+                                                    'library_path': LIB, 'address': ADDRESS,
+                                                    'map_dir': str(OUT / 'tiles')})
     if app is None:
         # run 20261106-071804-147131cc: with library_path the apply refuses (step 6, maps); the build itself is
         # pressed again without the maps so the later stages work on a real VPM copy (recorded as its own row)
@@ -537,7 +550,7 @@ def stage6(st):
         for f in app['plan'].get('files') or ():
             if f.get('kind') == 'udim_table':
                 S['vpm_table'] = f['path']
-            elif 'diffuse' in str(f.get('kind', '')).lower():
+            elif f.get('kind') == 'map_D' or 'diffuse' in str(f.get('kind', '')).lower():
                 S['vpm_dmaps'].append(f['path'])
         st['vpm'] = {'copies': names(copies), 'maps': len(app['plan'].get('files') or ()) - 1,
                      'diffuse_maps': len(S['vpm_dmaps']), 'out_dir': app['plan'].get('out_dir'),
@@ -553,10 +566,33 @@ def stage6(st):
     press(st, 'udim.distortion', vb, None)
     if S['vpm_dmaps']:
         press(st, 'tex.dilate', None, {'files': S['vpm_dmaps'], 'out': str(OUT / 'dilate')})
+        st['notes'].append('tex.dilate: карты vpm.build заливают весь тайл (сплошной цвет или бесшовная маска) - '
+                           'фона для расширения нет, находка dilate_no_mask ожидаема')
     else:
         st['buttons'].append({'tool': 'tex.dilate', 'status': 'skipped', 'seconds': 0.0,
                               'note': 'vpm.build не записал диффузы (шаг 6 карт): нечего расширять'})
-    press(st, 'udim.plugs', vb, None)
+    # udim.plugs: only the placeholder materials (library recipe `solid`) get a plug island; the tile of each id is
+    # the dense tile of the copy (agr_udim_table written by vpm.build, 1.0.1)
+    lib = agr._load_core('matlib_core.py', 'agr_tools_matlib_core_kpp1').load_library(LIB)
+    table = {}
+    try:
+        table = json.loads(str(rt.getUserProp(vb[0], 'agr_udim_table') or '{}'))
+    except ValueError:
+        pass
+    def kind(rec):
+        r = (rec or {}).get('recipe')
+        return r.get('kind') if isinstance(r, dict) else r
+    solid = sorted(int(k) for k in table if kind(lib['by_id'].get(int(k))) == 'solid')
+    st['plug_ids'] = {'udim_table': table, 'solid': solid}
+    if solid:
+        pre, app = press(st, 'udim.plugs', vb, {'matids': solid})
+        plugged = valid([rt.getNodeByName(c) for c in (app or {}).get('plan', {}).get('copies') or ()])
+        if plugged:
+            S['vpm_plugged'] = plugged[0]
+            st['notes'].append('udim.plugs: копия с заглушками {} (id {})'.format(plugged[0].name, solid))
+    else:
+        st['buttons'].append({'tool': 'udim.plugs', 'status': 'skipped', 'seconds': 0.0,
+                              'note': 'на копии ВПМ нет id с рецептом solid (заглушки не нужны): {}'.format(table)})
 
 
 def stage7(st):
@@ -601,21 +637,36 @@ def stage8(st):
     if opts is None:
         st['notes'].append('нет npm_table.json от npm.build: npm.to_vpm без таблицы (регионы атласа)')
     pre, app = press(st, 'npm.to_vpm', valid(S.get('npm')) or valid([S.get('vpm_body')]), opts)
-    back = valid([rt.getNodeByName(c) for c in (app or {}).get('plan', {}).get('copies') or ()]) if app else []
+    copies = []
+    for c in ((app or {}).get('plan', {}).get('copies') or ()):   # [[{copy, part, ...}]] per source object
+        for x in (c if isinstance(c, list) else [c]):
+            copies.append(x.get('copy') if isinstance(x, dict) else x)
+    back = valid([rt.getNodeByName(c) for c in copies if c]) if app else []
     if back:
         st['notes'].append('ВПМ из НПМ: ' + ', '.join(names(back)))
     press(st, 'udim.udims_to_ids', back or valid([S.get('vpm_body')]) or valid([S.get('main')]), None)
 
 
 def stage9(st):
-    main = (valid([S.get('vpm_body')]) or valid([S.get('main')]))[0]
+    work = (valid([S.get('vpm_plugged')]) or valid([S.get('vpm_body')]) or valid([S.get('main')]))[0]
     target = STEM + '_Main'
-    if rt.getNodeByName(target) is None:
-        old = str(main.name)
+    # qa.names_fix (0.8) names a copy by the ROLE token of the working name (V7): the vpm.build copy is called
+    # <source>_VPM_NNN (no role token), so the artist gives it a working name ending in _Main first
+    old = str(work.name)
+    work.name = ADDRESS + '_VPM_Main'
+    harness_step(st, 'рабочее имя копии ВПМ {} -> {} (токен роли Main для qa.names_fix: vpm.build называет копию '
+                     '<источник>_VPM_NNN)'.format(old, work.name))
+    press(st, 'qa.names_fix', [work], {'model': 'vpm', 'address': ADDRESS}, api='080')
+    named = valid([rt.getNodeByName(target)])
+    main = named[0] if named else work
+    if not named:
         main.name = target
-        harness_step(st, 'ручное переименование {} -> {} (имя ВПМ OKS для сдачи; кнопки переименования в '
-                         'этапах 1.0 нет)'.format(old, target))
+        harness_step(st, 'qa.names_fix не дал {}: ручное переименование {} -> {}'.format(target, work.name, target))
+    else:
+        work.isHidden = True
+        harness_step(st, 'рабочая копия ВПМ {} скрыта: сдаётся копия qa.names_fix {}'.format(work.name, target))
     S['deliver_main'] = main
+    st['materials'] = names_of_materials(main)
     # UCX: the 0.8 builder (runtime.ucx_preview / ucx_apply) - pack.deliver has no ucx.build step
     ucx_row = {'tool': 'ucx (0.8 runtime.ucx_preview/ucx_apply)', 'nodes': [str(main.name)]}
     t0 = time.perf_counter()
@@ -636,7 +687,7 @@ def stage9(st):
     st['ucx_pieces'] = len(ucx)
     if ucx:
         # 0.8 ucx.rename: the builder names pieces after its export copy (UCX_<name>_AGR_ucx__NN), the VPM mask is
-        # UCX_SM_<Address>_Main_NNN
+        # UCX_SM_<Address>_Main_NNN (1.0.1: ucx.rename reads the builder pieces)
         press(st, 'ucx.rename', ucx, None, api='080')
         import re
         mask = re.compile(r'^UCX_' + re.escape(STEM) + r'_Main_\d{3}$')
@@ -647,6 +698,7 @@ def stage9(st):
             harness_step(st, 'ручное переименование {} UCX {}.. -> UCX_{}_Main_NNN (ucx.rename их не '
                              'переименовал)'.format(len(old), old[0], STEM))
     S['ucx'] = ucx
+    st['ucx_names_first'] = names(ucx)[:3]
     if ucx:
         press(st, 'ucx.gap', ucx, None)
         press(st, 'ucx.stairs', ucx, None)
@@ -660,30 +712,26 @@ def stage9(st):
     common = {'stem': STEM}
     if S.get('passport'):
         common['passport'] = S['passport']
+    # artist inputs that no 1.0 button sets (project data, not geometry): the FBX path of the delivery
+    # (AGR_EXPORT_PATH, read by every 0.5-0.9 check), the +-0.000 of the building (AGR_ZERO_M, no default) and the
+    # delivered nodes on layer 0 (qa.scene_hygiene; vpm.build / qa.names_fix make copies on their own layers)
+    fbx_path = str(OUT / 'deliver_B' / (STEM + '.fbx')).replace(chr(92), '/')
+    for n in model:
+        rt.setUserProp(n, 'AGR_EXPORT_PATH', fbx_path)
+    rt.setUserProp(main, 'AGR_ZERO_M', '0.0')
+    layer0 = rt.LayerManager.getLayer(0)
+    moved = [str(n.name) for n in model if str(n.layer.name) != '0']
+    for n in model:
+        layer0.addNode(n)
+    harness_step(st, 'вход художника: AGR_EXPORT_PATH={} на {} узлах, AGR_ZERO_M=0.0 на {} (ни одна кнопка 1.0 их не '
+                     'задаёт)'.format(fbx_path, len(model), main.name))
+    harness_step(st, 'вход художника: {} узлов перенесены на слой «0» (qa.scene_hygiene hyg_layer)'.format(len(moved)))
     # A: honest full run, nothing skipped
     rt.select(model)
     (OUT / 'deliver_A').mkdir()
     pa, aa = press(st, 'pack.deliver', model, dict(common, folder=str(OUT / 'deliver_A')),
                    label='pack.deliver')
-    # B: the steps without an input of this synthetic model skipped with the reason (never a pass), and the two
-    # manual preparations no 1.0 button does (run 20261106-071804-147131cc, A blocked by them): AGR_EXPORT_PATH on
-    # the delivered nodes and the agr_* user-prop lines of the 1.0 buttons removed (export.checked cleanup gate)
-    fbx_path = str(OUT / 'deliver_B' / (STEM + '.fbx')).replace('\\', '/')
-    removed = {}
-    for n in model:
-        lines = [x for x in str(rt.getUserPropBuffer(n)).splitlines() if x.strip()]
-        keep = [x for x in lines if not x.split('=', 1)[0].strip().startswith('agr_')]
-        removed[str(n.name)] = sorted({x.split('=', 1)[0].strip() for x in lines if x not in keep})
-        rt.setUserPropBuffer(n, ''.join(x + '\r\n' for x in keep))
-        rt.setUserProp(n, 'AGR_EXPORT_PATH', fbx_path)
-    layer0 = rt.LayerManager.getLayer(0)
-    moved = [str(n.name) for n in model if str(n.layer.name) != '0']
-    for n in model:
-        layer0.addNode(n)
-    harness_step(st, 'перед pack.deliver B: AGR_EXPORT_PATH={} на {} узлах (кнопки этапов 1.0 его не задают)'.format(
-        fbx_path, len(model)))
-    harness_step(st, 'перед pack.deliver B: {} узлов перенесены на слой «0» (qa.scene_hygiene hyg_layer; vpm.build '
-                     'кладёт копию на AGR_vpm)'.format(len(moved)))
+    # B: the steps without an input of this synthetic model skipped with the reason (never a pass)
     # diagnostic (not a button): the gates of export.checked on the model, to name the cleanup finding
     try:
         ep = agr.export_preview(nodes=model, target=fbx_path)
@@ -695,11 +743,12 @@ def stage9(st):
                                                         for o in (ep.get('objects') or ())[:2]]}
     except Exception as exc:  # noqa: BLE001
         st['export_checked_diag'] = {'error': first_line(exc)}
-    harness_step(st, 'перед pack.deliver B: удалены строки user props agr_* ({}) - их пишут кнопки 1.0, а гейт '
-                     'cleanup export.checked держит только AGR_*'.format(
-                         ', '.join(sorted({k for v in removed.values() for k in v}))[:300]))
     skip = {'qa.sintez': 'нет отчёта SINTEZ AGR Checker для синтетики (Blender-расширение не запускается)',
             'qa.omk_te': 'нет таблицы ОМК ТЭ объекта KPP1 (options.table)'}
+    pre_a = (aa or pa or {}).get('plan', {}).get('steps') or ()
+    if any(r.get('id') == 'qa.preflight' and r.get('status') != 'pass' for r in pre_a):
+        skip['qa.preflight'] = ('синтетика без Ground FBX и без опуска фасада на 1 м ниже +-0.000 '
+                                '(fbx_ground_missing, perimeter_drop): находки qa.preflight - в прогоне A')
     if not light_ok:
         skip['light.export'] = 'в KPP1-like нет источников света: light.export не дал файла'
         skip['light.check'] = 'в KPP1-like нет источников света: пустой набор - ошибка light.check'

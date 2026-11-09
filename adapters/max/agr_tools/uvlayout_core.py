@@ -30,7 +30,8 @@ triangle corners, 'uv': [[u, v]...], 'mat': id}; the host interpolates its own c
 import math
 
 STEP_M = 3.6          # UDIM step (owner answer 06.11.2026, ANSWERS-2026-11-06.md «Шаг UDIM»)
-TILE_PX = 4096        # pixels of one UDIM tile (VPM 4K)
+TILE_PX = 3600        # pixels of one UDIM tile: 3.6 m at 1000 px/m (owner answer 06.11 morning, audit Q1; was 4096)
+TEXEL_PX_PER_M = 1000.0  # VPM texel density px/m (owner answer 06.11 morning: every module 0.3/0.6/1.2 m lies whole)
 FIRST_UDIM = 1001
 SEAM_TOL_PX = 0.01    # L09 acceptance: seam 0 px (mod 1, <= 0.01 px)
 VERTICAL_NZ = 0.5     # |n.z| below: a wall (vertical projection); above: horizontal projection

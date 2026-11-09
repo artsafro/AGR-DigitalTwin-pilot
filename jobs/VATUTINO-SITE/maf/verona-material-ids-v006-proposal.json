@@ -6,8 +6,9 @@
  "approval": "Artem 2026-11-03 (card t_96a3cc8a): 'Board texture = NEW material ID larch_light_oak_boards (D152: one material ID per texture), added to the atlas copy and the ID list as a proposed v006 entry. Supports = NEW ID steel_ral7016 per the passport, replacing the temporary steel_ral7047.'",
  "base": "site set atlas v005 (C:/x/vatutino-maf/v005-set/atlas/vatutino_maf_atlas_512.json sha256 5099d135...82b8, unchanged)",
  "atlas_copy": {
-  "json": "C:/x/vatutino-maf/gen-v001/atlas-v006/vatutino_maf_atlas_512_v006p.json",
-  "png": "C:/x/vatutino-maf/gen-v001/atlas-v006/vatutino_maf_atlas_512_v006p.png",
+  "json": "C:/x/vatutino-maf/gen-v001/atlas-v006-2/vatutino_maf_atlas_512_v006p2.json",
+  "png": "C:/x/vatutino-maf/gen-v001/atlas-v006-2/vatutino_maf_atlas_512_v006p2.png",
+  "superseded": "C:/x/vatutino-maf/gen-v001/atlas-v006/ (frame slot named by the retired proposal name; kept read-only)",
   "built_by": "tools/materials/atlas_maf.py from material-list.json"
  },
  "added": [
@@ -24,7 +25,7 @@
    ]
   },
   {
-   "name": "steel_ral7016",
+   "name": "paint_ral7016",
    "kind": "solid",
    "color": "#383E42",
    "cell_px": 64,
@@ -34,7 +35,7 @@
     64,
     64
    ],
-   "note": "same RAL as library material_ids_v005 id 2 paint_ral7016 (target #383E42); open question for Artem: keep a separate site-set name or reuse library id 2 when the library entry is made"
+   "note": "Artem 2026-11-06 [D202]: reuse library id 2 paint_ral7016 (materials_v001 library_id 8, #383E42); the 2026-11-03 proposal name is retired"
   }
  ],
  "unchanged": [
@@ -54,7 +55,7 @@
     "size": 64
    },
    {
-    "name": "steel_ral7016",
+    "name": "paint_ral7016",
     "kind": "solid",
     "color": "#383E42",
     "size": 64

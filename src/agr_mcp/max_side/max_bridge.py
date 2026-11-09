@@ -86,12 +86,22 @@ ROWS_100 = ("project.passport", "source.intake", "scene.source_class", "body.pre
             "model.glass_planes", "body.capsules", "body.roof", "mat.table", "mat.tiles", "tex.plug_colour",
             "vpm.build", "udim.rescale", "udim.distortion", "tex.dilate", "udim.plugs", "npm.build",
             "atlas.facade_strip", "npm.to_vpm", "udim.udims_to_ids", "pack.deliver", "ucx.gap", "ucx.stairs",
-            "light.export", "qa.omk_te", "export.place_by_passport", "agent.request", "agent.accept")
+            "light.export", "qa.omk_te", "export.place_by_passport", "agent.request", "agent.accept",
+            "handoff.export", "handoff.import", "handoff.verify", "handoff.restore_materials")
 READ_100 = ("scene.source_class", "tex.plug_colour", "udim.distortion", "udim.udims_to_ids", "ucx.stairs",
-            "qa.omk_te")
+            "qa.omk_te", "handoff.verify")
+# 1.1 rows of the stages (Max <-> Blender handoff, agent stage): routed like the 1.0 rows, minimum runtime 1.1.0.
+ROWS_110 = ("handoff.export", "handoff.import", "handoff.verify", "handoff.restore_materials")
+RUNTIME_110 = "1.1.0"
+# Rows whose input is the bundle, not the selection: without handles/scope the runtime gets an empty node list
+# (handoff.import reads the FBX of the bundle; verify / restore take options.layer or the given handles).
+NO_TARGET_ROWS = ("handoff.import", "handoff.verify", "handoff.restore_materials")
+# Apply over MCP of the 1.1 rows (runtime.MCP_APPLY_100): handoff.export writes only a new bundle folder,
+# handoff.import only the layer AGENT_<req>; the transfer to the role layers stays the button agent.accept [D213].
+MCP_APPLY_110 = ("handoff.export", "handoff.import")
 # Released in package version 1.0.0 (release branch R, #1024); the entry function is the real gate
 # (check_runtime), the minimum refuses older installs.
-RUNTIME_100 = "1.0.0"
+RUNTIME_100 = "1.0.1"
 # row -> (group, key, minimum runtime, entry function)
 ROUTES = {}
 ROUTES.update({r: ("fn", k, EXPECTED_RUNTIME, k) for r, k in ROWS_FN.items()})
@@ -99,12 +109,12 @@ ROUTES.update({r: ("c050", k, RUNTIME_050, "checks_050") for r, k in ROWS_050.it
 ROUTES.update({r: ("c070", k, RUNTIME_070, "checks_070") for r, k in ROWS_070.items()})
 ROUTES.update({r: ("e080", r, RUNTIME_080, "edits_080") for r in EDITS_080.values()})
 ROUTES.update({r: ("e090", r, RUNTIME_090, "edits_090") for r in EDITS_090.values()})
-ROUTES.update({r: ("e100", r, RUNTIME_100, "edits_100") for r in ROWS_100})
+ROUTES.update({r: ("e100", r, RUNTIME_110 if r in ROWS_110 else RUNTIME_100, "edits_100") for r in ROWS_100})
 READ_ROWS = frozenset(ROWS_FN) | frozenset(ROWS_050) | frozenset(ROWS_070) | frozenset(READ_080) \
     | frozenset(READ_090) | frozenset(READ_100)
 EDIT_ROWS = frozenset(ROUTES) - READ_ROWS
 # apply allowed over MCP today: the 0.8 additive / rename rows (export copies, new files, one undo record).
-APPLY_OVER_MCP = frozenset(r for r in EDITS_080.values() if r not in READ_080)
+APPLY_OVER_MCP = frozenset(r for r in EDITS_080.values() if r not in READ_080) | frozenset(MCP_APPLY_110)
 V2_TOOLS = ("agr_check_run", "agr_op_preview", "agr_op_apply")
 _STATE = {"journaled": []}
 
@@ -239,10 +249,13 @@ def _handle(rt, node):
     return int(rt.getHandleByAnim(node))
 
 
-def _targets(rt, args):
-    """Explicit node list for the runtime, never None (plan: Контракт выделения)."""
+def _targets(rt, args, rows=()):
+    """Explicit node list for the runtime, never None (plan: Контракт выделения). Rows of NO_TARGET_ROWS may go
+    without handles/scope: their input is the bundle (an empty list, never the user's selection)."""
     handles = list(args.get("handles") or [])
     scope = args.get("scope")
+    if rows and all(r in NO_TARGET_ROWS for r in rows) and not handles and scope is None:
+        return []
     if handles and scope:
         raise BridgeError("target_conflict", "handles and scope=" + str(scope) + " are two target sources")
     if scope == "selection":
@@ -383,7 +396,7 @@ def run_v2(tool, root, args):
     if expect.get("doc") is not None and expect["doc"] != _doc(rt):
         raise BridgeError("stale_preview", "document changed since the preview: " + str(expect["doc"]) + " -> "
                           + _doc(rt))
-    nodes = _targets(rt, args)
+    nodes = _targets(rt, args, rows)
     minimum = max((r[2] for r in routes), key=version_key)
     mod = _load_runtime(_resolve_root(rt, root, minimum), minimum, None)
     for _group, _key, row_min, function in routes:
