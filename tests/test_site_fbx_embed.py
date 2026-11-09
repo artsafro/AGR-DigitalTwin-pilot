@@ -101,7 +101,7 @@ def test_repro_fbx_png_blob_count(tmp_path, profile, expected_png):
     script.write_text(REPRO, encoding="utf-8")
     kw = export_kwargs(profile)
     kw["object_types"] = sorted(kw["object_types"])
-    run = subprocess.run([blender, "--background", "--factory-startup", "--python", str(script), "--",
+    run = subprocess.run([blender, "--background", "--factory-startup", "--python-exit-code", "1", "--python", str(script), "--",
                           str(SCRIPT), str(png), str(fbx), json.dumps(kw)],
                          capture_output=True, text=True, timeout=300, encoding="utf-8", errors="replace")
     assert run.returncode == 0 and fbx.is_file(), run.stderr[-2000:] or run.stdout[-2000:]
