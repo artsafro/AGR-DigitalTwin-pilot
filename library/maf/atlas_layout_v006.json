@@ -6,11 +6,11 @@
  "inputs": {
   "ids": {
    "path": "library/maf/material_ids_v006.json",
-   "sha256": "69c2c0367b76abb756e1b38174e41efd9abeab18b57129adb64a459292f06be7"
+   "sha256": "6b4f969f7509d9b9b5a2d68f6278dc770a084bd21a647d8c8157d867402c349f"
   },
   "spec": {
    "path": "library/maf/atlas_layout_v006_spec.json",
-   "sha256": "8901f917f8946e9647a17f0402632b504f39d5bf4c9c575d15c92e70d4fe5c04"
+   "sha256": "9e4ea153f199a30d48deeeed4c896f0c138b95baa8ef787197f72bee2df2f52f"
   }
  },
  "rule_id_corner": "ID number small in the bottom-right corner of every cell (id_corner_px); UV islands stay inside content_px and outside id_corner_px (Artem 2026-10-21)",

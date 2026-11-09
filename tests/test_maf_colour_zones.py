@@ -1,6 +1,6 @@
 """new-case: MAF colour zones for the 13 Vatutino showcase positions (#889).
 
-Material IDs come from the approved v006 list (v005 + ID 32 HPL, D223). A face ID >= 1001 is an error.
+Material IDs come from the approved v006 list (v005 + ID 32 HPL, D229). A face ID >= 1001 is an error.
 Geometry counts are unchanged by the assignment. Unmapped positions, zones and
 materials are errors that name the missing key. Empty, partial, non-finite and
 exactly-at-threshold input fail. An output path that is an input writes nothing.
@@ -18,7 +18,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 SET = ROOT / "jobs" / "VATUTINO-SITE" / "maf" / "site-maf-set.json"
 COUNTS = ROOT / "jobs" / "VATUTINO-SITE" / "maf" / "site-maf-zone-counts.json"
-IDS = ROOT / "library" / "maf" / "material_ids_v006.json"  # v006 = v005 + ID 32 (D223)
+IDS = ROOT / "library" / "maf" / "material_ids_v006.json"  # v006 = v005 + ID 32 (D229)
 SHOW = ("VAT_MAF_T3510_01", "VAT_MAF_T3510_02", "VAT_MAF_T3510_07", "VAT_MAF_T3510_09",
         "VAT_MAF_T3510_11", "VAT_MAF_T3510_12", "VAT_MAF_T3510_16", "VAT_MAF_T3510_26",
         "VAT_MAF_T3510_27", "VAT_MAF_T3510_28", "VAT_MAF_T3510_29", "VAT_MAF_T3510_31",
