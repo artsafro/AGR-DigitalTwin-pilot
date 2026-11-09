@@ -38,7 +38,9 @@ FAIL_TOKENS = frozenset({
 
 def is_fail_counter_name(name):
     """True when a key names a skipped/failed counter (token match, not substring)."""
-    split = re.sub(r"(?<=[a-z])(?=[A-Z])|(?<=[A-Za-z])(?=\d)", "_", str(name))
+    split = re.sub(
+        r"(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|(?<=[A-Za-z])(?=\d)|(?<=\d)(?=[A-Za-z])",
+        "_", str(name))
     return any(token in FAIL_TOKENS for token in re.split(r"[^a-z0-9]+", split.lower()))
 
 
