@@ -1,0 +1,116 @@
+"""new-case: repair.flip_close kernel op controls and probes (#1144)."""
+import numpy as np
+import pytest
+
+from dt_ai.ops.inv_quads import PolyMesh
+from dt_ai.ops.repair import flip_close
+
+V = [(x, y, z) for z in (0, 1) for y in (0, 1) for x in (0, 1)]
+BOX = ((0, 2, 3, 1), (4, 5, 7, 6), (0, 1, 5, 4), (2, 6, 7, 3), (0, 4, 6, 2), (1, 3, 7, 5))   # outward, bottom first
+
+
+def _directed(faces):
+    return [(f[k], f[(k + 1) % len(f)]) for f in faces for k in range(len(f))]
+
+
+def _volume(v, faces):
+    v = np.asarray(v, float)
+    return sum(np.dot(v[f[0]], np.cross(v[f[k]], v[f[k + 1]])) for f in faces for k in range(1, len(f) - 1)) / 6
+
+
+def _closed_consistent(faces):
+    d = _directed(faces)
+    return len(d) == len(set(d)) and all((b, a) in set(d) for a, b in d)
+
+
+def test_open_bottom_is_capped_outward_and_every_face_is_kept():
+    r = flip_close(PolyMesh(V, BOX[1:]))
+    assert r.flipped == () and len(r.caps) == 1 and r.skipped == ()
+    assert sorted(i for i in r.face_sources if i is not None) == list(range(5)) and r.face_sources[-1] is None
+    assert _closed_consistent(r.mesh.faces) and _volume(V, r.mesh.faces) == pytest.approx(1.0)
+    assert sorted(r.caps[0][1]) == [0, 1, 2, 3]
+
+
+def test_reversed_face_is_flipped_back_and_named():
+    faces = list(BOX)
+    faces[3] = faces[3][::-1]
+    r = flip_close(PolyMesh(V, tuple(faces)))
+    assert r.flipped == (3,) and r.caps == () and _closed_consistent(r.mesh.faces)
+    assert set(r.mesh.faces[3]) == set(BOX[3])
+
+
+def test_inside_out_majority_is_flipped_as_a_whole_component_minority():
+    faces = [f[::-1] for f in BOX]
+    faces[0] = BOX[0]          # 5 inverted + 1 right: the single right one is the minority and is flipped
+    r = flip_close(PolyMesh(V, tuple(faces)))
+    assert r.flipped == (0,) and _closed_consistent(r.mesh.faces)
+
+
+@pytest.mark.parametrize("dz,capped", [(0.04, False), (0.0079, True), (0.0081, False)])
+def test_nonplanar_loop_is_skipped_at_threshold(dz, capped):
+    v = [list(p) for p in V]
+    v[0][2] -= dz      # one of 4 bottom corners pulled down: every corner is dz/4 off the best-fit plane
+    r = flip_close(PolyMesh(v, BOX[1:]))      # plane_m 0.002 = dz/4 at dz 0.008
+    if capped:
+        assert len(r.caps) == 1
+    else:
+        assert r.caps == () and "nonplanar" in r.skipped[0][1]
+
+
+def test_non_convex_loop_is_skipped():
+    v = [(0, 0, 0), (2, 0, 0), (2, 1, 0), (1, 1, 0), (1, 2, 0), (0, 2, 0)]
+    v += [(x, y, 1) for x, y, _ in v]
+    n = 6
+    walls = tuple((i, (i + 1) % n, n + (i + 1) % n, n + i) for i in range(n))
+    top = tuple(range(n, 2 * n))
+    r = flip_close(PolyMesh(v, walls + (top,)))
+    assert r.caps == () and r.skipped and r.skipped[0][1] == "not a convex loop"
+
+
+def test_close_selection_skips_unselected_loops():
+    r = flip_close(PolyMesh(V, BOX[1:]), close=set())
+    assert r.caps == () and r.skipped[0][1] == "not selected"
+    sel = {frozenset(e) for e in ((0, 1), (1, 3), (3, 2), (2, 0))}
+    assert len(flip_close(PolyMesh(V, BOX[1:]), close=sel).caps) == 1
+
+
+@pytest.mark.parametrize("bad", [0.0, -1.0, float("nan"), float("inf"), True, 0.0021])
+def test_plane_tolerance_fail_closed(bad):
+    with pytest.raises(ValueError, match="plane_m"):
+        flip_close(PolyMesh(V, BOX), plane_m=bad)
+
+
+def test_empty_and_unsupported_fail_closed():
+    with pytest.raises(ValueError, match="empty"):
+        flip_close(PolyMesh(V, ()))
+    with pytest.raises(ValueError, match="unsupported"):
+        flip_close({"v": V})
+
+
+def test_input_is_not_mutated():
+    m = PolyMesh(V, BOX[1:])
+    before = (m.vertices.copy(), m.faces)
+    flip_close(m)
+    assert np.array_equal(m.vertices, before[0]) and m.faces == before[1]
+
+
+def test_probe_random_rigid_open_boxes_with_random_flips():
+    """Probe: 300 random rotations/translations, random flipped minority, random removed face -> closed,
+    consistently wound, positive volume, every input face exactly once, flipped == the flipped set."""
+    rng = np.random.default_rng(1144)
+    ok = 0
+    for _ in range(300):
+        q, _ = np.linalg.qr(rng.normal(size=(3, 3)))
+        q *= np.sign(np.linalg.det(q))
+        v = (np.asarray(V, float) - 0.5) @ q.T * rng.uniform(0.1, 30) + rng.uniform(-50, 50, 3)
+        drop = int(rng.integers(6))
+        faces = [f for i, f in enumerate(BOX) if i != drop]
+        flipped = set(rng.choice(5, size=int(rng.integers(0, 3)), replace=False).tolist())
+        faces = [f[::-1] if i in flipped else f for i, f in enumerate(faces)]
+        r = flip_close(PolyMesh(v, tuple(faces)))
+        assert set(r.flipped) == flipped
+        assert sorted(i for i in r.face_sources if i is not None) == list(range(5))
+        assert len(r.caps) == 1 and _closed_consistent(r.mesh.faces)
+        assert _volume(v, r.mesh.faces) > 0
+        ok += 1
+    assert ok == 300

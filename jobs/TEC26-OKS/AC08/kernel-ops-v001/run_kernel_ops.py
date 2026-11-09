@@ -338,6 +338,87 @@ def run_ops(source, relative=False):
     return rows
 
 
+def _cap_uv(v, ring):
+    """Generated planar UV of a cap, normalised to its own bounding box in [0, 1] (recorded as generated)."""
+    p = np.asarray(v, float)[list(ring)]
+    n = np.cross(p[1] - p[0], p[-1] - p[0])
+    for k in range(len(p)):           # first non-collinear corner gives the plane normal
+        n = np.cross(p[(k + 1) % len(p)] - p[k], p[k - 1] - p[k])
+        if np.linalg.norm(n) > 1e-12:
+            break
+    n /= np.linalg.norm(n)
+    u = p[1] - p[0]
+    u /= np.linalg.norm(u)
+    w = np.cross(n, u)
+    q = np.stack([(p - p[0]) @ u, (p - p[0]) @ w], 1)
+    lo, span = q.min(0), np.maximum(q.max(0) - q.min(0), 1e-12)
+    return [tuple(float(x) for x in c) for c in (q - lo) / span]
+
+
+def repair_flip_close(source):
+    """`repair.flip_close` (#1144) on every part: flip polygons against their component's winding, cap the open
+    border loops whose edges are ALL unhidden violators (open_borders_hidden, absolute). Flipped polygons keep their
+    material id and their UV corners (permuted with the winding); a cap takes the one material id of the polygons
+    on its loop (two ids on one loop = InputError naming the part and the ids, never a default) and a generated
+    planar UV normalised to its bounding box. Returns (repaired state, record). The record holds the absolute
+    violators before/after (the new [D201] baseline), the relative check against the source and `applied`:
+    no new violators, UV and material ids of every source polygon kept, back-face px AND unhidden borders reduced."""
+    from dt_ai.ops.invariants import _unhidden_edges
+    from dt_ai.ops.repair import flip_close
+    abs_ctx, tri = Context(), tri_scene(source)
+    after, flipped, caps, skipped = copy_state(source), {}, {}, {}
+    for k, p in source.items():
+        unhidden = {tuple(sorted((tuple(np.round(e[0], 9)), tuple(np.round(e[1], 9)))))
+                    for e in _unhidden_edges(tri, k, abs_ctx)}
+        sel = {frozenset((a, b)) for f in p["faces"] for a, b in zip(f, f[1:] + f[:1])
+               if tuple(sorted((tuple(np.round(p["v"][a], 9)), tuple(np.round(p["v"][b], 9))))) in unhidden}
+        res = flip_close(PolyMesh(p["v"], tuple(p["faces"])), close=sel)
+        flip = set(res.flipped)
+        uv, mat = [], []
+        for f, src in zip(res.mesh.faces, res.face_sources):
+            if src is not None:
+                c = p["uv"][src]
+                uv.append(c if c is None or src not in flip else [c[0]] + list(c[1:])[::-1])
+                mat.append(p["mat"][src])
+                continue
+            ring = {frozenset((f[j], f[(j + 1) % len(f)])) for j in range(len(f))}
+            ids = sorted({p["mat"][i] for i, g in enumerate(p["faces"])
+                          if ring & {frozenset((g[j], g[(j + 1) % len(g)])) for j in range(len(g))}})
+            if len(ids) != 1:
+                raise InputError(f"repair.flip_close {k}: cap loop of {len(f)} points borders material ids {ids}")
+            uv.append(_cap_uv(p["v"], f))
+            mat.append(ids[0])
+        after[k] = {**after[k], "faces": tuple(map(tuple, res.mesh.faces)), "uv": uv, "mat": mat}
+        flipped[k] = list(res.flipped)
+        caps[k] = [{"points": len(ring), "material": after[k]["mat"][i],
+                    "area_m2": float(_area(p["v"], ring))} for i, ring in res.caps]
+        skipped[k] = [{"points": len(ring), "reason": why} for ring, why in res.skipped]
+    vis_before, vis_after = visibility(source, abs_ctx), visibility(after, abs_ctx)
+
+    def borders(vis):
+        return sum(x["count"] for n, x in vis.items() if n.startswith("open_borders_hidden"))
+    report = check_operation(tri, tri_scene(after), list(after), Context(source=tri))
+    kept = preservation(source, after)
+    for k, p in source.items():       # every source polygon: same material, same UV corners (flip-permuted)
+        for i, f in enumerate(p["faces"]):
+            g, c = after[k]["faces"][i], after[k]["uv"][i]
+            if after[k]["mat"][i] != p["mat"][i] or set(g) != set(f) or \
+                    (p["uv"][i] is not None and sorted(map(tuple, c)) != sorted(map(tuple, p["uv"][i]))):
+                kept.append(f"{k} polygon {i}: material/UV/corners not kept")
+    bf = (vis_before["no_visible_back_faces"]["count"], vis_after["no_visible_back_faces"]["count"])
+    ob = (borders(vis_before), borders(vis_after))
+    why = [] if report.passed else ["check_operation: " + "; ".join(r.name for r in report.broken)]
+    why += kept
+    if not (bf[1] < bf[0] and ob[1] < ob[0]):
+        why.append(f"not reduced: back-face px {bf[0]}->{bf[1]}, unhidden borders {ob[0]}->{ob[1]}")
+    record = {"op": "repair.flip_close", "applied": not why, "refusal_or_rollback": "; ".join(why) or None,
+              "flipped": flipped, "caps": caps, "skipped": skipped, "back_face_px": list(bf),
+              "open_borders_unhidden": list(ob), "visibility_before": vis_before, "visibility_after": vis_after,
+              "cap_area_m2": float(sum(c["area_m2"] for cs in caps.values() for c in cs)),
+              "check_operation": report.to_dict(), "cap_uv": "generated planar, normalised to the cap bbox"}
+    return after, record
+
+
 def uv_islands(p):
     """Per-face island id (#1144): faces joined across a shared edge only when both end corners carry the same UV
     (within UV_AGREE) in both faces; a face without UV is its own island. Used as a simplify barrier with the
