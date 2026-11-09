@@ -73,6 +73,45 @@ def test_single_open_sheet_is_not_capped_with_a_duplicate(faces):
     assert len(r.skipped) == 1 and r.skipped[0][1] == "loop bounds the whole open sheet"
 
 
+def _volume_rel(v, faces):
+    v = np.asarray(v, float)
+    return _volume(v - v.mean(0), faces)     # translation-invariant for a closed mesh, exact far from the origin
+
+
+@pytest.mark.parametrize("off", [0.0, 1e5, 1e6])     # 0.0 = origin control (#1158 review P1-1)
+@pytest.mark.parametrize("s", [0.1, 1.0])
+def test_closed_cube_far_from_origin_gets_positive_volume(off, s):
+    v = [tuple(s * c + off for c in p) for p in V]
+    faces = [f[::-1] if i in (0, 1, 2, 3) else f for i, f in enumerate(BOX)]
+    r = flip_close(PolyMesh(v, tuple(faces)), close=None)
+    assert r.flipped == (0, 1, 2, 3) and r.caps == () and _closed_consistent(r.mesh.faces)
+    assert _volume_rel(v, r.mesh.faces) == pytest.approx(s ** 3, rel=1e-6)
+
+
+GV = [(x, y, 0) for y in range(3) for x in range(3)]        # 3x3 planar grid, vertex 4 interior
+GRID = ((0, 1, 4, 3), (1, 2, 5, 4), (3, 4, 7, 6), (4, 5, 8, 7))
+
+
+def test_planar_grid_sheet_with_interior_vertex_is_not_capped():
+    r = flip_close(PolyMesh(GV, GRID), close=None)
+    assert r.mesh.faces == GRID and r.caps == () and r.flipped == ()
+    assert len(r.skipped) == 1 and r.skipped[0][1] == "loop bounds the whole open sheet"
+
+
+def test_planar_annulus_hole_is_capped_outer_border_is_not():
+    v = [(x, y, 0) for y in range(4) for x in range(4)]      # 4x4 grid without the centre quad (5, 6, 10, 9)
+    q = tuple((y * 4 + x, y * 4 + x + 1, y * 4 + x + 5, y * 4 + x + 4)
+              for y in range(3) for x in range(3) if (x, y) != (1, 1))
+    r = flip_close(PolyMesh(v, q), close=None)
+    assert len(r.caps) == 1 and sorted(r.caps[0][1]) == [5, 6, 9, 10]
+    assert [w for _, w in r.skipped] == ["loop bounds the whole open sheet"]
+
+
+def test_open_box_control_keeps_its_cap():
+    r = flip_close(PolyMesh(V, BOX[1:]), close=None)
+    assert len(r.caps) == 1 and r.skipped == ()
+
+
 @pytest.mark.parametrize("dz,capped", [(0.04, False), (0.0079, True), (0.0081, False)])
 def test_nonplanar_loop_is_skipped_at_threshold(dz, capped):
     v = [list(p) for p in V]
