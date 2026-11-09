@@ -108,6 +108,36 @@ def test_undeclared_zero_and_unrelated_keys_pass():
     assert check_build_counters(report, ["a"])["status"] == "pass"
 
 
+@pytest.mark.parametrize("extra,reasons", [
+    ({"faceCreateFail": 1}, {("faceCreateFail", "undeclared_nonzero")}),
+    ({"skippedFaces": 2}, {("skippedFaces", "undeclared_nonzero")}),
+    ({"fail2": 1}, {("fail2", "undeclared_nonzero")}),
+])
+def test_undeclared_camelcase_and_digit_suffixed_fail_counters(extra, reasons):
+    report = {"face_create_fail": 0, **extra}
+    result = check_build_counters(report, ["face_create_fail"])
+    assert result["status"] == "fail"
+    assert _reasons(result) == reasons
+
+
+@pytest.mark.parametrize("extra", [{"failsafe": 1}, {"mission": 3}])
+def test_undeclared_control_keys_still_pass(extra):
+    report = {"face_create_fail": 0, **extra}
+    assert check_build_counters(report, ["face_create_fail"])["status"] == "pass"
+
+
+def test_undeclared_camelcase_zero_passes():
+    report = {"face_create_fail": 0, "faceCreateFail": 0}
+    assert check_build_counters(report, ["face_create_fail"])["status"] == "pass"
+
+
+def test_undeclared_fail_key_in_list_of_dicts_still_fails():
+    report = {"face_create_fail": 0, "layers": [{"uv_skip": 1}]}
+    result = check_build_counters(report, ["face_create_fail"])
+    assert result["status"] == "fail"
+    assert _reasons(result) == {("layers[0].uv_skip", "undeclared_nonzero")}
+
+
 def test_accepted_exception_needs_exact_count_and_source():
     report = {"face_create_fail": 1}
     ok = check_build_counters(report, ["face_create_fail"],
