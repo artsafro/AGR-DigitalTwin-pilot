@@ -27,4 +27,22 @@ else
         exit 1
     fi
 fi
+# 3. Decision ids (#1037): a staged docs/decisions.md must not reuse a D<n> of origin/main or of an open PR.
+#    `git config twin.decisionIds main-only` skips the open-PR comparison (offline); it never skips main.
+ids="$top/tools/git-hooks/decision_ids.py"
+staged_log="$(git diff --cached --name-only -- docs/decisions.md)" || {
+    echo "pre-commit: cannot read the index; blocked" >&2
+    exit 1
+}
+if [ -n "$staged_log" ]; then
+    if [ ! -f "$ids" ]; then
+        echo "pre-commit: tools/git-hooks/decision_ids.py is missing and docs/decisions.md is staged; blocked" >&2
+        exit 1
+    fi
+    if [ "$(git config twin.decisionIds)" = "main-only" ]; then
+        py -3 "$ids" check --staged --fetch --no-open-prs --repo-dir "$top" || exit 1
+    else
+        py -3 "$ids" check --staged --fetch --repo-dir "$top" || exit 1
+    fi
+fi
 exit 0
