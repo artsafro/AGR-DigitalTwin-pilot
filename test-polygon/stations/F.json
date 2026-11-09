@@ -1,0 +1,80 @@
+{
+ "schema": 1,
+ "branch": "F",
+ "issue": "#1024",
+ "stations": [
+  {
+   "button": "project.passport",
+   "objects": [
+    {"name": "BODY_FPass_001", "role": "Main", "scene": "frag_f_passport", "builder": "F_build",
+     "extra": {"kind": "box", "size": [6, 4, 9], "at": [0, 0, 0]}},
+    {"name": "SM_FPass_NoRole_Main", "role": "Main", "scene": "frag_f_passport", "builder": "F_build",
+     "extra": {"kind": "box", "size": [2, 2, 2], "at": [10, 0, 0]}}
+   ],
+   "expected": [
+    {"name": "BODY_FPass_001", "scene": "frag_f_passport", "expect": "pass", "codes": []},
+    {"name": "SM_FPass_NoRole_Main", "scene": "frag_f_passport", "expect": "fail", "codes": ["role_missing"]}
+   ],
+   "reason": "",
+   "options": {"project_id": "POLY_F"}
+  },
+  {
+   "button": "source.intake",
+   "objects": [
+    {"name": "SM_FIntake_Ok_Main", "role": "Main", "scene": "frag_f_intake_ok", "builder": "F_build",
+     "extra": {"kind": "box", "size": [20, 15, 30], "at": [5, 5, 0]}},
+    {"name": "SM_FIntake_CmFar_Main", "role": "Main", "scene": "frag_f_intake_far", "builder": "F_build",
+     "extra": {"kind": "box", "size": [2000, 1500, 3000], "at": [234567808, 0, 0]}}
+   ],
+   "expected": [
+    {"name": "SM_FIntake_Ok_Main", "scene": "frag_f_intake_ok", "expect": "pass", "codes": []},
+    {"name": "SM_FIntake_CmFar_Main", "scene": "frag_f_intake_far", "expect": "fail",
+     "codes": ["far_coordinates", "units_scale"]}
+   ],
+   "reason": ""
+  },
+  {
+   "button": "scene.source_class",
+   "objects": [
+    {"name": "SM_FClass_Shell_Main", "role": "Main", "scene": "frag_f_class", "builder": "F_build",
+     "extra": {"kind": "box", "size": [10, 8, 30], "at": [0, 0, 0]}},
+    {"name": "SM_FClass_Panels_Main", "role": "Main", "scene": "frag_f_class", "builder": "F_build",
+     "extra": {"kind": "panels", "count": 40, "size": [1.2, 3.0], "gap": 0.3, "at": [0, 20, 0]}}
+   ],
+   "expected": [
+    {"name": "SM_FClass_Shell_Main", "scene": "frag_f_class", "expect": "pass", "codes": []},
+    {"name": "SM_FClass_Panels_Main", "scene": "frag_f_class", "expect": "fail", "codes": ["panelised"]}
+   ],
+   "reason": ""
+  },
+  {
+   "button": "scene.small_parts",
+   "objects": [
+    {"name": "Bolt_M12", "role": "Main", "scene": "frag_f_small", "builder": "F_build",
+     "extra": {"kind": "box", "size": [0.02, 0.02, 0.06], "at": [0, 0, 0]}},
+    {"name": "Уголок_50", "role": "Main", "scene": "frag_f_small", "builder": "F_build",
+     "extra": {"kind": "box", "size": [0.05, 0.05, 0.1], "at": [2, 0, 0]}},
+    {"name": "Studio_Main", "role": "Main", "scene": "frag_f_small", "builder": "F_build",
+     "extra": {"kind": "box", "size": [1, 1, 1], "at": [4, 0, 0]}},
+    {"name": "Minute_Hand", "role": "Main", "scene": "frag_f_small", "builder": "F_build",
+     "extra": {"kind": "box", "size": [1, 0.2, 0.2], "at": [6, 0, 0]}},
+    {"name": "Шпиль", "role": "Main", "scene": "frag_f_small", "builder": "F_build",
+     "extra": {"kind": "box", "size": [0.5, 0.5, 4], "at": [8, 0, 0]}},
+    {"name": "М120_Panel", "role": "Main", "scene": "frag_f_small", "builder": "F_build",
+     "extra": {"kind": "box", "size": [1.2, 0.1, 3], "at": [10, 0, 0]}},
+    {"name": "Стеклопакет_01", "role": "Main", "scene": "frag_f_small", "builder": "F_build",
+     "extra": {"kind": "box", "size": [1.2, 0.04, 1.5], "at": [12, 0, 0]}}
+   ],
+   "expected": [
+    {"name": "Bolt_M12", "scene": "frag_f_small", "expect": "fail", "codes": ["keyword", "small_size"]},
+    {"name": "Уголок_50", "scene": "frag_f_small", "expect": "fail", "codes": ["keyword", "small_size"]},
+    {"name": "Studio_Main", "scene": "frag_f_small", "expect": "pass", "codes": []},
+    {"name": "Minute_Hand", "scene": "frag_f_small", "expect": "pass", "codes": []},
+    {"name": "Шпиль", "scene": "frag_f_small", "expect": "pass", "codes": []},
+    {"name": "М120_Panel", "scene": "frag_f_small", "expect": "pass", "codes": []},
+    {"name": "Стеклопакет_01", "scene": "frag_f_small", "expect": "pass", "codes": []}
+   ],
+   "reason": ""
+  }
+ ]
+}

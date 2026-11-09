@@ -18,6 +18,11 @@ from mcp.shared.memory import create_connected_server_and_client_session as conn
 from agr_mcp import TOOL_SCHEMA_VERSION, audit, locks, max_pipe, server, tools
 from agr_mcp.max_side import max_bridge
 
+# Tools of the ops_d108 hook (branch U, #1024): not in tools.LISTED, tested by their owner. Empty with the stub.
+HOOK = tuple(s.name for s in __import__("agr_mcp.ops_d108", fromlist=["register"]).register({}))
+HOOK_EDITING = tuple(s.name for s in __import__("agr_mcp.ops_d108", fromlist=["register"]).register({})
+                     if not s.read_only)
+
 ROOT = Path(__file__).resolve().parents[2]
 PNG_1PX = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIAX8jx0gAAAABJRU5ErkJggg==")
 
@@ -27,6 +32,8 @@ def isolated(tmp_path, monkeypatch):
     monkeypatch.setenv("AGR_MCP_LOCK_DIR", str(tmp_path / "locks"))
     monkeypatch.setenv("AGR_MCP_AUDIT", str(tmp_path / "audit.jsonl"))
     monkeypatch.setenv("AGR_MCP_CARD", "test-841")
+    monkeypatch.setenv("AGR_JOURNAL_DIR", str(tmp_path / "journal"))  # v2: every call journals (never the user's)
+    monkeypatch.setenv("AGR_MCP_DATA_DIR", str(tmp_path / "data"))  # v2: report_uri store
     monkeypatch.delenv("AGR_MCP_UNSAFE", raising=False)
     for k in ("AGR_MCP_MAX_PID", "MCP_MAX_PID", "MCP_MAX_PIPE"):  # unit tests never reach a real Max
         monkeypatch.delenv(k, raising=False)
@@ -88,8 +95,11 @@ def fake_max(tmp_path, monkeypatch):
     nodes = {h: FakeNode(h) for h in (1, 2, 3)}
     rt = types.SimpleNamespace(
         maxFilePath="", maxFileName="", name=lambda s: s, getDir=lambda _n: str(tmp_path),
-        isValidNode=lambda n: n is not None,
+        isValidNode=lambda n: n is not None, selection=[nodes[2]],
+        getHandleByAnim=lambda n: n.handle + 1000, getAnimByHandle=lambda h: nodes.get(h - 1000),
         maxOps=types.SimpleNamespace(getNodeByHandle=lambda h: nodes.get(h)))
+    rt.clearSelection = lambda: rt.selection.clear()
+    rt.select = lambda ns: rt.selection.extend(n for n in ns if n not in rt.selection)
     monkeypatch.setitem(sys.modules, "pymxs", types.SimpleNamespace(runtime=rt))
     monkeypatch.delitem(sys.modules, "runtime", raising=False)
     monkeypatch.setenv("AGR_TOOLS_ROOT", str(root))
@@ -100,8 +110,8 @@ def fake_max(tmp_path, monkeypatch):
         m = re.search(r'b\.call "(\w+)" "([0-9a-f]*)" "([0-9a-f]*)"', code)
         assert m, code
         return max_bridge.call(*m.groups())
-    yield types.SimpleNamespace(root=root, nodes=nodes, transport=transport, sent=sent)
-    sys.path[:] = [p for p in sys.path if Path(p) != root]
+    yield types.SimpleNamespace(root=root, nodes=nodes, transport=transport, sent=sent, rt=rt)
+    sys.path[:] = [p for p in sys.path if not (p and Path(p).is_relative_to(tmp_path))]
 
 
 def direct_runtime(fake, fn, handles):
@@ -160,13 +170,18 @@ def offline_cases(tmp_path):
 
 # ---- exit test ----------------------------------------------------------------------------------------------
 def test_tools_list_is_the_phase0_eight_without_code_argument():
+    """#1024 branch 0 changes the catalogue fact: v1 (PHASE0) + the v2 tools generated from the plan (LISTED)."""
     listed, _ = run_calls([], list_only=True)
-    assert sorted(listed) == sorted(tools.PHASE0)
+    assert sorted(listed) == sorted(tools.LISTED + HOOK) and set(tools.PHASE0) < set(listed)
     editing = {n for n, _row, _what, kind in tools.EDITS_080 if kind != "read"}  # 0.8 preview -> apply (#908)
+    editing.add("agr_op_apply")  # v2: applies a held 0.8 preview
+    editing |= {"agr_handoff_export", "agr_handoff_import"}  # 1.1: preview -> apply by preview_id (verify stays read)
     for spec in tools.catalog().values():
         assert "code" not in json.dumps(spec.input), spec.name
+        if spec.name in HOOK:
+            continue
         assert spec.read_only == (spec.name not in editing), spec.name
-        assert spec.destructive == (spec.name == "agr_ucx_rename"), spec.name  # renames in place (one undo)
+        assert spec.destructive == (spec.name in ("agr_ucx_rename", "agr_op_apply")), spec.name  # in place
 
 
 def test_exit_offline_tools_equal_direct_call(tmp_path):
@@ -185,13 +200,13 @@ def test_exit_offline_tools_equal_direct_call(tmp_path):
 
 @pytest.mark.parametrize("tool,fn", [("agr_xview_check", "xview"), ("agr_matid_check", "matid"),
                                      ("agr_texel_readout", "texel_preview")])
-@pytest.mark.parametrize("handles", [[1, 2], [3], []])
+@pytest.mark.parametrize("handles", [[1, 2], [3]])
 def test_exit_max_tools_equal_direct_runtime_call(fake_max, tmp_path, tool, fn, handles):
     _, (res,) = run_calls([(tool, {"scene": "live", "handles": handles})], transport=fake_max.transport)
     got = ok(res)
     assert got == direct_runtime(fake_max, fn, handles)
     calls = sys.modules["runtime"].CALLS
-    assert calls[0] == calls[1] == (got["tool"], handles or None), "wrapper changed the node set"
+    assert calls[0] == calls[1] == (got["tool"], handles), "wrapper changed the node set"
     assert "select" not in fake_max.sent[0]
     line, = audit_lines(tmp_path)
     assert line["host"] == "max-live" and line["status"] == "ok" and line["lock"].endswith("agr-3dsmax-live.lock")
@@ -199,7 +214,7 @@ def test_exit_max_tools_equal_direct_runtime_call(fake_max, tmp_path, tool, fn, 
 
 @pytest.mark.parametrize("args,needle", [
     ({"scene": "live", "handles": [9]}, "unknown node handle 9"),
-    ({"scene": "C:/other.max"}, "scene mismatch"),
+    ({"scene": "C:/other.max", "handles": [1]}, "scene_mismatch"),
 ])
 def test_max_unknown_handle_or_scene_is_an_error_naming_it(fake_max, args, needle):
     _, (res,) = run_calls([("agr_xview_check", args)], transport=fake_max.transport)
@@ -208,14 +223,14 @@ def test_max_unknown_handle_or_scene_is_an_error_naming_it(fake_max, args, needl
 
 def test_max_wrong_runtime_version_is_an_error(fake_max):
     (fake_max.root / "runtime.py").write_text(FAKE_RUNTIME.replace('"0.5.0"', '"0.4.0"'), encoding="utf-8")
-    _, (res,) = run_calls([("agr_matid_check", {"scene": "live"})], transport=fake_max.transport)
-    assert res.isError and "0.4.0" in res.content[0].text
+    _, (res,) = run_calls([("agr_matid_check", {"scene": "live", "handles": [1]})], transport=fake_max.transport)
+    assert res.isError and "0.4.0" in res.content[0].text and "version_mismatch" in res.content[0].text
 
 
 def test_max_without_pinned_pid_is_refused(monkeypatch):
     for k in ("AGR_MCP_MAX_PID", "MCP_MAX_PID", "MCP_MAX_PIPE"):
         monkeypatch.delenv(k, raising=False)
-    _, (res,) = run_calls([("agr_xview_check", {"scene": "live"})])
+    _, (res,) = run_calls([("agr_xview_check", {"scene": "live", "handles": [1]})])
     assert res.isError and "no Max target pinned" in res.content[0].text
 
 
@@ -315,7 +330,7 @@ def test_foreign_live_lock_refuses_and_is_not_stolen(fake_max, tmp_path):
     lock.parent.mkdir()
     body = json.dumps({"card": "max_exec-other", "pid": os.getpid(), "until": time.time() + 600})
     lock.write_text(body, encoding="utf-8")
-    _, (res,) = run_calls([("agr_texel_readout", {"scene": "live"})], transport=fake_max.transport)
+    _, (res,) = run_calls([("agr_texel_readout", {"scene": "live", "handles": [1]})], transport=fake_max.transport)
     assert res.isError and "busy" in res.content[0].text
     assert lock.read_text(encoding="utf-8") == body
     assert fake_max.sent == []
@@ -326,7 +341,7 @@ def test_stale_lock_is_reclaimed(fake_max, tmp_path, info):
     lock = tmp_path / "locks" / "agr-3dsmax-live.lock"
     lock.parent.mkdir()
     lock.write_text(json.dumps(info), encoding="utf-8")
-    _, (res,) = run_calls([("agr_xview_check", {"scene": "live"})], transport=fake_max.transport)
+    _, (res,) = run_calls([("agr_xview_check", {"scene": "live", "handles": [1]})], transport=fake_max.transport)
     ok(res)
     assert not lock.exists()
 
@@ -389,7 +404,12 @@ def test_leaked_live_agr_mcp_lock_is_acquired_an_hour_past_until(tmp_path, monke
     def sharing_violation(path):
         raise PermissionError(32, "The process cannot access the file because it is being used by another process")
 
-    monkeypatch.setattr(os, "remove", sharing_violation)
+    if os.name == "nt":
+        # #1117: on Windows the release deletes through a handle (`_consume_handle`), not `os.remove`.
+        real_consume = locks._consume_handle
+        monkeypatch.setattr(locks, "_consume_handle", lambda path, pred: "failed")
+    else:
+        monkeypatch.setattr(os, "remove", sharing_violation)
     with locks.hold("blender-batch", "a", 900) as path:
         assert path is not None
         body = path.read_text(encoding="utf-8")
@@ -398,7 +418,10 @@ def test_leaked_live_agr_mcp_lock_is_acquired_an_hour_past_until(tmp_path, monke
     until = info["until"]
     assert info["owner"] == "agr-mcp" and info["pid"] == os.getpid() and locks._alive(info["pid"])
     assert until == 1_000_000.0 + 900 + 120
-    monkeypatch.setattr(os, "remove", real_remove)
+    if os.name == "nt":
+        monkeypatch.setattr(locks, "_consume_handle", real_consume)
+    else:
+        monkeypatch.setattr(os, "remove", real_remove)
     clock[0] = until - 1  # live agr-mcp pid, still inside the lease: not stolen
     with pytest.raises(locks.LockBusy):
         with locks.hold("blender-batch", "early", 60):
@@ -483,7 +506,7 @@ def test_two_concurrent_reclaimers_of_one_stale_lock_exactly_one_wins(tmp_path, 
             t.join(20)
         assert sorted(results) == ["acquired", "busy"]
         assert not lock.exists()
-        assert sorted(p.name for p in lock.parent.iterdir()) == [], "reclaim left a temp file"
+        assert sorted(p.name for p in lock.parent.iterdir() if p.name != f".{lock.name}.reclaim") == [], "reclaim left a temp file"
 
 
 def test_restore_rename_race_cannot_give_two_holders(tmp_path, monkeypatch):
@@ -861,10 +884,8 @@ def test_stale_mutex_unlink_by_name_cannot_admit_two(tmp_path, monkeypatch):
         return ok
 
     def release(lock, token):
-        try:
-            real_release(lock, token)
-        finally:
-            leave()
+        leave()  # still ours here: after the unlink the next caller may enter first
+        real_release(lock, token)
 
     def drop(lock, token):
         if threading.current_thread().name == "Y":
@@ -911,7 +932,7 @@ def test_stale_mutex_unlink_by_name_cannot_admit_two(tmp_path, monkeypatch):
     assert paused["x"] and y_inside.is_set()
     assert state["max"] == 1
     assert state["current"] == 0
-    assert [p.name for p in path.parent.iterdir()] == []
+    assert [p.name for p in path.parent.iterdir() if p.name != f".{path.name}.reclaim"] == []
 
 
 def _clear_lock_dir(path):
@@ -1006,11 +1027,12 @@ def test_probe_mutex_exclusivity_seed_972(tmp_path, monkeypatch):
         return ok
 
     def release(lock, token):
-        try:
-            real_release(lock, token)
-        finally:
-            with guard:
-                state["current"] -= 1
+        # Leave the section while the mutex is still ours: once real_release unlinks it, the next
+        # caller may link and enter before this thread runs again. Counting the exit after the unlink
+        # reported that ordinary hand-over as two callers inside under a loaded host.
+        with guard:
+            state["current"] -= 1
+        real_release(lock, token)
 
     def drop(lock, token):
         if plan["pause"] and threading.current_thread().name == "Y":
@@ -1108,6 +1130,62 @@ def test_probe_mutex_exclusivity_seed_972(tmp_path, monkeypatch):
         for kind in order:
             one(kind, pause=False, n_threads=4)
     assert seen == 4 * len(stale_kinds) + 4 * (len(stale_kinds) + len(closed_kinds)) == 68
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="Windows share modes: a plain reader blocks DELETE access")
+def test_stale_mutex_consume_retries_while_a_reader_has_it_open(tmp_path, monkeypatch):
+    """Red main 82feaa86: seed_972 hammers saw four callers all busy on a stale mutex.
+
+    Every caller reads the stale mutex with a plain open (no FILE_SHARE_DELETE), so each
+    consumer's DELETE open hit a sharing violation and gave up: nobody reclaimed it.
+    A sharing violation is transient and must be retried; the stale inode is still removed.
+    """
+    path = _lock_file()
+    mutex = _plant_mutex(path, "dead", 1_000_000.0)
+    reader = open(mutex, "rb")  # noqa: SIM115 — another caller's _mutex_stale read, still open
+    pauses = []
+
+    def pause(seconds):
+        pauses.append(seconds)
+        if not reader.closed:
+            reader.close()  # the other reader finishes during our pause
+
+    monkeypatch.setattr(locks, "_sleep", pause)
+    try:
+        assert locks._consume_stale_mutex(mutex) is True
+    finally:
+        reader.close()
+    assert pauses, "the sharing violation was not retried"
+    assert not mutex.exists()
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="Windows share modes: a DELETE handle blocks a plain reader")
+def test_mutex_owner_check_retries_while_a_consumer_has_it_open(tmp_path, monkeypatch):
+    """Red main 82feaa86: the caller that linked the mutex read it back while a contender's
+    consume handle (DELETE access) had it open, took the failed read as "not ours" and gave the
+    mutex up, so all four hammer threads were busy. The owner check must retry that read.
+    """
+    import os
+    path = _lock_file()
+    mutex = path.with_name(f".{path.name}.mutex")
+    mutex.write_text(json.dumps({"pid": os.getpid(), "until": 2e9, "token": "mine"}), encoding="utf-8")
+    k = locks._kernel32()
+    handle = k.CreateFileW(str(mutex), 0x80000000 | 0x00010000, 0x1 | 0x2 | 0x4, None, 3, 0x80, None)
+    open_handle = [handle]
+    pauses = []
+
+    def pause(seconds):
+        pauses.append(seconds)
+        if open_handle:
+            k.CloseHandle(open_handle.pop())  # the contender finishes its check during our pause
+
+    monkeypatch.setattr(locks, "_sleep", pause)
+    try:
+        assert locks._mutex_is_ours(mutex, "mine") is True
+    finally:
+        if open_handle:
+            k.CloseHandle(open_handle.pop())
+    assert pauses, "the blocked read was not retried"
 
 
 def test_posix_drop_keeps_a_lock_replaced_before_unlink(tmp_path, monkeypatch):
@@ -1571,7 +1649,7 @@ def test_unsafe_with_flag_is_listed_destructive_and_audited(tmp_path):
             res = await client.call_tool("agr_exec_unsafe", {"code": "1+1"})
             return listed, res
     listed, res = anyio.run(main)
-    assert set(listed) == set(tools.PHASE0) | {"agr_exec_unsafe"}
+    assert set(listed) == set(tools.LISTED + HOOK) | {"agr_exec_unsafe"}
     assert listed["agr_exec_unsafe"].annotations.destructiveHint is True
     assert ok(res) == {"value": "2"} and sent == ["1+1"]
     line, = audit_lines(tmp_path)
@@ -1584,7 +1662,7 @@ def test_maxscript_error_marker_is_an_error_not_a_value(raw, tmp_path):
     """3dsmax-mcp returns a MAXScript exception as success=true with this marker (seen natively, #841)."""
     with pytest.raises(max_pipe.MaxError, match="MAXScript error"):
         max_pipe.decode_value(raw)
-    _, (res,) = run_calls([("agr_matid_check", {"scene": "live"})], transport=lambda c, t: raw)
+    _, (res,) = run_calls([("agr_matid_check", {"scene": "live", "handles": [1]})], transport=lambda c, t: raw)
     assert res.isError and "MAXScript error" in res.content[0].text
     assert audit_lines(tmp_path)[0]["status"] == "error"
 
@@ -1599,9 +1677,9 @@ def test_fresh_stdio_process_lists_tools(unsafe, tmp_path):
         sys.path.pop(0)
     t = anyio.run(transcript, unsafe, str(tmp_path / "stdio-audit.jsonl"))
     names = [x["name"] for x in t["tools"]]
-    assert sorted(names) == sorted(tools.PHASE0 + (("agr_exec_unsafe",) if unsafe else ()))
+    assert sorted(names) == sorted(tools.LISTED + HOOK + (("agr_exec_unsafe",) if unsafe else ()))
     assert t["serverInfo"]["name"] == "agr-mcp"
-    editing = {n for n, _row, _what, kind in tools.EDITS_080 if kind != "read"}
+    editing = {n for n, _row, _what, kind in tools.EDITS_080 if kind != "read"} | {"agr_op_apply"} | set(HOOK_EDITING)         | {"agr_handoff_export", "agr_handoff_import"}  # 1.1 handoff tools that apply; agr_handoff_verify is read
     assert all(x["readOnlyHint"] for x in t["tools"] if x["name"] != "agr_exec_unsafe" and x["name"] not in editing)
     assert not any(x["readOnlyHint"] for x in t["tools"] if x["name"] in editing)
 
@@ -1628,21 +1706,30 @@ def test_probe_lock_refuses_every_second_holder_seed_841():
 
 
 def test_failed_release_is_retried_then_reported(tmp_path, monkeypatch, capsys):
-    """#895: a sharing violation on os.remove is retried a few times, then written to stderr."""
+    """#895: a sharing violation on the delete is retried a few times, then written to stderr."""
     import os
     pauses = []
     calls = []
     monkeypatch.setattr(locks, "_sleep", lambda delay: pauses.append(delay), raising=False)
 
-    def sharing_violation(path):
-        calls.append(path)
-        raise PermissionError(32, "sharing violation")
+    if os.name == "nt":
+        # #1117: Windows deletes through a handle; "failed" is the sharing-violation outcome.
+        def handle_delete_fails(path, pred, calls=calls):
+            calls.append(path)
+            return "failed"
 
-    monkeypatch.setattr(os, "remove", sharing_violation)
+        monkeypatch.setattr(locks, "_consume_handle", handle_delete_fails)
+    else:
+
+        def sharing_violation(path):
+            calls.append(path)
+            raise PermissionError(32, "sharing violation")
+
+        monkeypatch.setattr(os, "remove", sharing_violation)
     with locks.hold("blender-batch", "a", 900) as path:
         pass
     assert path.exists()
-    assert len(calls) >= 3, f"release tried os.remove {len(calls)} time(s) and swallowed the error"
+    assert len(calls) >= 3, f"release tried to delete {len(calls)} time(s) and swallowed the error"
     assert pauses == [locks._RELEASE_PAUSE_S] * (len(calls) - 1)
     assert 0 < locks._RELEASE_PAUSE_S <= 0.25
     assert len(calls) == locks._RELEASE_ATTEMPTS
@@ -1719,6 +1806,7 @@ def test_probe_release_failures_are_retried_then_reported(tmp_path, monkeypatch,
     pause = locks._RELEASE_PAUSE_S
     assert 0 < pause <= 0.25
     real_remove = os.remove
+    real_consume = locks._consume_handle  # Windows handle-delete seam (#1117)
     errors = [PermissionError(32, "sharing violation"), OSError(13, "permission denied"),
               BlockingIOError(11, "resource busy"), TimeoutError("file locked")]
     fail_counts = list(range(0, attempts + 3))
@@ -1729,14 +1817,25 @@ def test_probe_release_failures_are_retried_then_reported(tmp_path, monkeypatch,
             pauses = []
             left = {"n": fail_count}
 
-            def boom(path, error=error, calls=calls, left=left):
-                calls.append(path)
-                if left["n"] > 0:
-                    left["n"] -= 1
-                    raise error
-                return real_remove(path)
+            if os.name == "nt":
+                def boom(path, pred, error=error, calls=calls, left=left):
+                    calls.append(path)
+                    if left["n"] > 0:
+                        left["n"] -= 1
+                        return "failed"
+                    return real_consume(path, pred)
 
-            monkeypatch.setattr(os, "remove", boom)
+                monkeypatch.setattr(locks, "_consume_handle", boom)
+            else:
+
+                def boom(path, error=error, calls=calls, left=left):
+                    calls.append(path)
+                    if left["n"] > 0:
+                        left["n"] -= 1
+                        raise error
+                    return real_remove(path)
+
+                monkeypatch.setattr(os, "remove", boom)
             monkeypatch.setattr(locks, "_sleep", lambda delay, pauses=pauses: pauses.append(delay), raising=False)
             with locks.hold("max-live", "a", 30) as path:
                 pass
@@ -1919,3 +2018,126 @@ def test_probe_audit_lines_equal_calls_seed_841(tmp_path):
     assert len(lines) == len(calls)
     assert [x["tool"] for x in lines] == [c[0] for c in calls]
     assert all(set(audit.FIELDS) <= set(x) for x in lines)
+
+
+# ---- #1024 PR A: runtime pin is a minimum + selection contract (mcp-review §2.4.1-2.4.2) -------------------------
+RUNTIME_090_FAKE = FAKE_RUNTIME.replace('"0.5.0"', '"0.9.0"') + '''
+from pymxs import runtime as _rt
+def _plan(tool, row, nodes):
+    CALLS.append((tool, row, [n.handle for n in nodes]))
+    return {"schema": 1, "tool": row, "status": "pass", "objects": [],
+            "plan": {"mode": "preview", "done": [], "skipped": [], "ambiguous": []}}
+def checks_070(tool, nodes=None, select=True):
+    CALLS.append(("checks_070", tool, [n.handle for n in nodes], select))
+    if select:
+        _rt.clearSelection(); _rt.select(nodes)
+    return {"schema": 1, "tool": tool, "status": "pass", "objects": []}
+def edits_080(tool, mode, preview=None, nodes=None, options=None): return _plan("edits_080", tool, nodes)
+def edits_090(tool, mode, preview=None, nodes=None, options=None):
+    _rt.clearSelection(); _rt.select(nodes)  # a `select` row (light.check) selecting in the UI glue
+    return _plan("edits_090", tool, nodes)
+'''
+
+
+def install(fake, version, text):
+    root = fake.root.parent / ("AGRTools-" + version)
+    root.mkdir(exist_ok=True)
+    (root / "runtime.py").write_text(text, encoding="utf-8")
+    return root
+
+
+ONE_PER_GROUP = ["agr_xview_check", "agr_matid_check", "agr_texel_readout", "agr_scene_census", "agr_qa_preflight",
+                 "agr_scene_missing_maps", "agr_qa_package", "agr_udim_slots", "agr_light_check"]
+
+
+def test_runtime_090_serves_every_max_group(fake_max, monkeypatch):
+    """RED on the exact pin: with only 0.9.0 installed, 0.5/0.7/0.8 tools answered `version != expected`."""
+    root = install(fake_max, "0.9.0", RUNTIME_090_FAKE)
+    monkeypatch.setenv("AGR_TOOLS_ROOT", str(root))
+    _, results = run_calls([(n, {"scene": "live", "handles": [1]}) for n in ONE_PER_GROUP],
+                           transport=fake_max.transport)
+    for name, res in zip(ONE_PER_GROUP, results):
+        ok(res)
+    assert sys.modules["runtime"].VERSION == "0.9.0"
+
+
+def test_every_max_tool_of_the_catalogue_needs_at_most_runtime_090():
+    """v1 Max tools (47) by tool name; the v2 tools by plan row (ROUTES), all served by an installed 0.9.0, except
+    the 1.0 conveyor rows (edits_100), which need the 1.0 runtime (RUNTIME_100 = package 1.0.1), and the 4 handoff
+    rows of 1.1 (RUNTIME_110 = package 1.1.0)."""
+    names = [n for n, s in tools.catalog().items() if s.host({}) == "max-live" and n in tools.PHASE0]
+    assert len(names) == 47
+    for n in names:
+        minimum, function = max_bridge.requirement(n)
+        assert max_bridge.version_key(minimum) <= (0, 9, 0) and function, n
+    for row, (group, _key, minimum, function) in max_bridge.ROUTES.items():
+        top = (1, 1, 0) if row in max_bridge.ROWS_110 else (1, 0, 1) if group == "e100" else (0, 9, 0)
+        assert max_bridge.version_key(minimum) <= top and function, row
+    assert {r for r, v in max_bridge.ROUTES.items() if v[2] == max_bridge.RUNTIME_100} ==         set(max_bridge.ROWS_100) - set(max_bridge.ROWS_110)
+    assert {r for r, v in max_bridge.ROUTES.items() if v[2] == max_bridge.RUNTIME_110} == set(max_bridge.ROWS_110)
+
+
+def test_default_root_is_the_newest_install_not_a_folder_per_group(fake_max, monkeypatch):
+    """RED: the old default was userScripts/AGRTools-<group version>, i.e. AGRTools-0.7.0 for checks_070."""
+    install(fake_max, "0.9.0", RUNTIME_090_FAKE)
+    (fake_max.root.parent / "AGRTools-0.10.0").mkdir()  # newer folder without runtime.py is skipped
+    monkeypatch.delenv("AGR_TOOLS_ROOT", raising=False)
+    _, (res,) = run_calls([("agr_scene_census", {"scene": "live", "handles": [1]})], transport=fake_max.transport)
+    ok(res)
+    assert Path(sys.modules["runtime"].__file__).parent.name == "AGRTools-0.9.0"
+    assert max_bridge.default_root(str(fake_max.root.parent), "0.9.1") is None
+
+
+@pytest.mark.parametrize("version,body,needle", [
+    ("0.6.9", "", "< minimum 0.7.0"),
+    ("0.9.0", "", "has no checks_070"),
+    ("0.9", "", "< minimum 0.7.0"),
+])
+def test_runtime_below_minimum_or_without_entry_is_version_mismatch(fake_max, monkeypatch, version, body, needle):
+    root = install(fake_max, "x", 'VERSION = "{}"\n{}'.format(version, body))
+    monkeypatch.setenv("AGR_TOOLS_ROOT", str(root))
+    _, (res,) = run_calls([("agr_scene_census", {"scene": "live", "handles": [1]})], transport=fake_max.transport)
+    assert res.isError and "version_mismatch" in res.content[0].text and needle in res.content[0].text
+
+
+@pytest.mark.parametrize("tool", ["agr_xview_check", "agr_scene_census", "agr_qa_package", "agr_udim_slots"])
+@pytest.mark.parametrize("args", [{"scene": "live"}, {"scene": "live", "handles": []}])
+def test_empty_handles_is_handles_required_and_max_is_not_called(fake_max, tmp_path, tool, args):
+    """RED: empty handles went to runtime as nodes=None = the user's selection or all geometry (§2.4.2)."""
+    _, (res,) = run_calls([(tool, args)], transport=fake_max.transport)
+    assert res.isError and "handles_required" in res.content[0].text
+    assert fake_max.sent == []
+    with pytest.raises(max_bridge.BridgeError, match="handles_required"):
+        max_bridge.run(tool, str(fake_max.root), args)
+
+
+def test_scope_selection_takes_the_selection_explicitly_and_conflicts_with_handles(fake_max):
+    _, (res, bad) = run_calls([("agr_xview_check", {"scene": "live", "scope": "selection"}),
+                               ("agr_xview_check", {"scene": "live", "scope": "selection", "handles": [1]})],
+                              transport=fake_max.transport)
+    assert ok(res)["objects"][0]["handle"] == 2  # fixture selection = node 2, passed as a list, never None
+    assert sys.modules["runtime"].CALLS[-1] == ("xview", [2])
+    assert bad.isError and "target_conflict" in bad.content[0].text
+
+
+def test_checks_070_get_select_false_and_selection_is_restored(fake_max, monkeypatch):
+    """RED: checks_070 ran with the runtime default select=True and selected the nodes with findings."""
+    root = install(fake_max, "0.9.0", RUNTIME_090_FAKE)
+    monkeypatch.setenv("AGR_TOOLS_ROOT", str(root))
+    _, (census, light) = run_calls([("agr_scene_census", {"scene": "live", "handles": [1, 3]}),
+                                    ("agr_light_check", {"scene": "live", "handles": [1, 3]})],
+                                   transport=fake_max.transport)
+    ok(census), ok(light)
+    assert ("checks_070", "census", [1, 3], False) in sys.modules["runtime"].CALLS
+    assert [n.handle for n in fake_max.rt.selection] == [2], "selection before the call must survive"
+    out = json.loads(max_bridge.call("agr_light_check", str(root).encode().hex(),
+                                     json.dumps({"scene": "live", "handles": [1]}).encode().hex()))
+    assert out["ok"] and out["selection"] == {"before_count": 1, "restored": True, "scope": "handles"}
+
+
+def test_selection_that_cannot_be_restored_is_selection_changed(fake_max, monkeypatch):
+    root = install(fake_max, "0.9.0", RUNTIME_090_FAKE)
+    monkeypatch.setenv("AGR_TOOLS_ROOT", str(root))
+    fake_max.rt.select = lambda ns: None  # Max refuses to reselect
+    _, (res,) = run_calls([("agr_light_check", {"scene": "live", "handles": [1]})], transport=fake_max.transport)
+    assert res.isError and "selection_changed" in res.content[0].text

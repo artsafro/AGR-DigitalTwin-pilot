@@ -12,6 +12,8 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+from dt_ai.core.max_env import max_child_env  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 DCC = Path('C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.py')
@@ -36,7 +38,7 @@ def main():
             (a.out / 'MaxStartUI.clrx.backup').write_bytes(backup)
             clrx.write_bytes((Path('C:/Program Files/Autodesk') / ('3ds Max ' + a.version) / 'en-US' / 'UI'
                               / 'ame-light.clrx').read_bytes())
-        env = dict(os.environ, AGR_860_PKG=a.pkg, AGR_860_OUT=str(a.out / 'smoke'))
+        env = dict(max_child_env(), AGR_860_PKG=a.pkg, AGR_860_OUT=str(a.out / 'smoke'))
         proc = subprocess.run([sys.executable, str(DCC), 'max', '--file',
                                str(ROOT / 'tests/max_tools/run_agr_tools_suite_native.py'), '--version', a.version,
                                '--out', str(a.out / 'max.log')], env=env, capture_output=True, timeout=1500)

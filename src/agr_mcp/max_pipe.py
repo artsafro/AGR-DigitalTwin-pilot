@@ -32,7 +32,14 @@ MS_ERROR = "__MCP_MS_ERR__"
 
 
 class MaxError(RuntimeError):
-    """Max was unreachable, the script failed, or the bridge reported an error."""
+    """Max was unreachable, the script failed, or the bridge reported an error.
+
+    `payload`: the bridge's error answer when there was one (its `journaled` says whether the runtime already
+    wrote the journal line of this call)."""
+
+    def __init__(self, message, payload=None):
+        super().__init__(message)
+        self.payload = payload if isinstance(payload, dict) else {}
 
 
 def bridge_script(tool: str, tools_root: str, args: dict) -> str:
@@ -104,5 +111,5 @@ def call_bridge(tool: str, args: dict, timeout: float, transport=None, tools_roo
     except ValueError:
         raise MaxError("bridge returned non-JSON: " + str(raw)[:500]) from None
     if not isinstance(payload, dict) or payload.get("ok") is not True:
-        raise MaxError(str(payload.get("error") if isinstance(payload, dict) else payload))
+        raise MaxError(str(payload.get("error") if isinstance(payload, dict) else payload), payload)
     return payload

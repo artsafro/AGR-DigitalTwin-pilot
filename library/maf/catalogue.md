@@ -1022,3 +1022,26 @@
 - 196 | Велопарковка «Воздух» | 0.130 0.410 0.780 | MAF_0455, MAF_0163
 - 203 | Урна для раздельного сбора мусора «Солидум» | 0.450 0.550 1.187 | MAF_0598
 - 206 | Спортивное оборудование AIRA FIT (Айра фит) УТ 029 | 1.000 0.480 1.140 | MAF_0631, MAF_0118, MAF_0410, MAF_0633, MAF_0642
+
+<!-- generated-maf:begin (tools/library/maf_gen_catalogue.py) -->
+
+## Generated MAF (one entry per distinct model)
+
+| id | schedule rows | set ids | dims m | tris | materials (library_id) | NPM sha256 | approval |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| MAF_GEN_0001 | 2 | VAT_MAF_T3508_02 | 6.699 2.500 0.450 | 184 | larch_light_oak_boards (41), paint_ral7016 (8) | `c6c8bf7a7ca3…` | [D202] |
+| MAF_GEN_0002 | 3 | VAT_MAF_T3508_03 | 6.250 0.600 0.450 | 124 | larch_light_oak_boards (41), paint_ral7016 (8) | `c2bab4d20f8a…` | [D202] |
+| MAF_GEN_0003 | 4 | VAT_MAF_T3508_04 | 5.800 2.896 0.450 | 220 | larch_light_oak_boards (41), paint_ral7016 (8) | `a7877b6f1c92…` | [D202] |
+| MAF_GEN_0004 | 5 | VAT_MAF_T3508_05 | 6.085 0.600 0.450 | 124 | larch_light_oak_boards (41), paint_ral7016 (8) | `d2c832c704cb…` | [D202] |
+| MAF_GEN_0005 | 6 | VAT_MAF_T3508_06 | 4.957 5.526 0.450 | 372 | larch_light_oak_boards (41), paint_ral7016 (8) | `e9c417d2fc94…` | [D202] |
+| MAF_GEN_0006 | 7 | VAT_MAF_T3508_07 | 4.921 0.600 0.450 | 100 | larch_light_oak_boards (41), paint_ral7016 (8) | `86385d293478…` | [D202] |
+| MAF_GEN_0007 | 8 | VAT_MAF_T3508_08 | 4.249 0.600 0.450 | 100 | larch_light_oak_boards (41), paint_ral7016 (8) | `d7be6807a91c…` | [D202] |
+| MAF_GEN_0008 | 9, 10 | VAT_MAF_T3508_09, VAT_MAF_T3508_10 | 2.000 0.600 0.450 | 68 | larch_light_oak_boards (41), paint_ral7016 (8) | `040c152766b5…` | [D202] |
+
+Build folder: `C:/x/vatutino-maf/gen-v001/rows-v006p-3` (FBX not in the repo; paths and sha256 in catalogue.json).
+
+Dropped build rows:
+
+- row 1 `VAT_MAF_T3508_01`: not approved: no «да» recorded for this row (D202 covers rows 2-10)
+
+<!-- generated-maf:end -->

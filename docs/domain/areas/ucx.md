@@ -5,8 +5,8 @@ In scope: OKS Main and Ground surface collision, including target exclusions, hu
 clearances, names and budget. Out of scope: render geometry, textures, lighting design,
 Unreal integration and customer-specific additions to NPM.
 
-Readiness today: OKS **L2-partial**, Ground UCX **L0**, per the
-[roadmap §4 and §7.6](../../research/capability-roadmap.md#4-coverage-matrix-upstream-main-ea7ecce).
+Readiness today: OKS **L2-partial**, Ground UCX **L1 with one real case** (Vatutino Ground v015, below); the
+[roadmap §4 and §7.6](../../research/capability-roadmap.md#4-coverage-matrix-upstream-main-ea7ecce) snapshot still says L0.
 This sheet adds the L1 requirement index, not a skill, pattern, benchmark or L3 acceptance.
 Rows are navigation/check keys, not replacement rule text. `none` means no automatic
 check for the complete row today; a manual gate does not count as L2 coverage.
@@ -16,7 +16,7 @@ shared delivery validation. [Image verification and PR acceptance evidence](ucx-
 | Requirement | reg page | NPM | VPM | How it is checked | L2 coverage | Detail in |
 |---|---|---|---|---|---|---|
 | R01 OKS target | reg p.36 §13.2 | n/a | Main: every OKS; existing OKS inside site if present; preserve arches, courtyards and major projections | V016 manual overlay and walkthrough; check target inventory | none | [Collision targets](../geometry.md#collision--ucx-vpm-only-npm-has-none-unless-customer-spec) |
-| R02 Ground target | reg p.36 §13.2 | n/a | Ground surface, especially perimeter | Compare collision to approved site surface; Ground has no built case | none | [Collision targets](../geometry.md#collision--ucx-vpm-only-npm-has-none-unless-customer-spec) |
+| R02 Ground target | reg p.36 §13.2 | n/a | Ground surface, especially perimeter | Compare collision to approved site surface; one real case: Vatutino Ground v015 (coverage not measured) | none | [Collision targets](../geometry.md#collision--ucx-vpm-only-npm-has-none-unless-customer-spec) |
 | R03 Excluded targets | reg p.36 §13.2-13.3 | n/a | MAF, lighting, vegetation: none; lighting FBX exempt | Inspect target inventory and lighting FBX separately | none | [Targets](../geometry.md#collision--ucx-vpm-only-npm-has-none-unless-customer-spec), [lighting](../npm-vpm.md#vpm-lighting-fbx-architectural-light-design) |
 | R04 Thin-element exception | reg p.36 §13.2 | n/a | Canopies, fences, railings <= 5 cm thick: no UCX | Measure source thickness before applying exception | none | [Collision exceptions](../geometry.md#collision--ucx-vpm-only-npm-has-none-unless-customer-spec) |
 | R05 Per-file collision | reg p.36 §13.3 | n/a | Own UCX in each non-lighting geometry FBX | V010 `UCX present` on the scene readback of each VPM FBX except `_Light`; target completeness stays R01-R03 | V010; tests/qa/test_scene.py::test_vpm_geometry_fbx_without_ucx_fails_r05 | [V010 implementation limits](../validation.md#implementation-status-inventory-static-audit), [implementation](../../../src/twinqa/scene.py) |
@@ -41,7 +41,7 @@ or preservation of arches, courtyards and functional voids.
 
 ## Current limitations
 
-[Pipeline stage #10](../../pipeline.md) is "tool only": the shared builder
+[Pipeline stage #10](../../pipeline.md) is "partial" (UCX shipped inside accepted KPP1, PSU275, ELV TC and Vatutino Ground v015 models; no package passed): the shared builder
 [`ucx_build.py`](../../../src/dt_ai/geometry/ucx_build.py) (Blender driver `tools/blender/ucx_build.py`,
 #166) builds Main and Ground UCX from an accepted mesh; its Main output was measured on four etalon meshes
 (PR evidence), Ground only on synthetic surfaces. The builder's own deviation figures are construction
@@ -49,7 +49,17 @@ self-measurements, not an L2 check of an arbitrary delivery, so R11-R13 coverage
 [KPP1](../../../jobs/KPP1/scripts/vpm_ucx.py) and [PSU275](../../../jobs/PSU275/scripts/vpm_ucx.py)
 keep their job-local scripts (not re-delivered). PSU275 explicitly omits
 stair collision and fills parapet wells: script existence is not blanket compliance.
-V010 checks UCX presence per non-lighting VPM FBX, material slots, triangle budget and mutual intersections; convexity and coverage stay not_run. No benchmark or Ground UCX case exists in the roadmap snapshot.
+V010 checks UCX presence per non-lighting VPM FBX, material slots, triangle budget and mutual intersections; convexity and coverage stay not_run. No UCX benchmark exists.
+
+## Ground UCX case: Vatutino Ground v015
+
+VPM Ground v015 was accepted by the user with its UCX on 2026-11-04 [D193] (PR #906; `docs/cases.md`). Blender audit of
+the delivered VPM: 727 pieces, 8,904 triangles (R15 limit 15,000 for 46,479 model triangles), 0 mutual overlaps (R09),
+minimum gap 3.99 mm (inside the R10 band) — `jobs/VATUTINO-SITE/ground-v015-route-a-session-20261104.md`, "UCX, placement,
+review render". v014 UCX came from the shared `tools/blender/ucx_build.py` + `ucx_audit.py` (715 pieces,
+`ground-build-v014.md`); the v015 session report does not name its builder run. Not measured on v015: R02 coverage and
+R11 model -> UCX deviation (<= 10 cm), so their L2 coverage stays `none`. The acceptance is a review acceptance, not
+a SINTEZ pass.
 C3 is decided by the user [D012]; C15 is decided by the user [D098]: 2 mm - 1 cm
 inclusive is the project gap rule. V010 reports the gap as advisory review (never fail);
 neighbours are pieces within 10 cm.
@@ -60,7 +70,7 @@ These are follow-up L2 ticket inputs, not newly filed issues. Job-local partial 
 in R06 still needs shared readback and an etalon benchmark (T-UCX-2 / T-UCX-3).
 
 - R01: Target completeness, arches/courtyards and passage preservation.
-- R02: Ground surface target generation and coverage; real case T-UCX-4 waits for surface review.
+- R02: Ground surface target generation and coverage; real case Vatutino Ground v015 exists (accepted 2026-11-04), coverage not measured.
 - R03: Exclusion audit for MAF, vegetation and lighting.
 - R04: Thickness-based exception classification.
 - R11: Ground maximum deviation and perimeter coverage.

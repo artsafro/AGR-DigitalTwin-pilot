@@ -1,0 +1,28 @@
+{"schema": 1, "branch": "T", "issue": "#1024", "stations": [
+ {"button": "ucx.stairs",
+  "objects": [
+   {"name": "Stair_Ok", "role": "Main", "builder": "T_build", "extra": {"kind": "stairs", "variant": "ok"}},
+   {"name": "Stair_NoUcx", "role": "Main", "builder": "T_build", "extra": {"kind": "stairs", "variant": "no_ucx"}},
+   {"name": "Stair_PerStep", "role": "Main", "builder": "T_build", "extra": {"kind": "stairs", "variant": "per_step"}},
+   {"name": "Stair_High", "role": "Main", "builder": "T_build", "extra": {"kind": "stairs", "variant": "high"}}],
+  "expected": [
+   {"name": "Stair_Ok", "scene": "polygon_all", "expect": "pass", "codes": []},
+   {"name": "Stair_NoUcx", "scene": "polygon_all", "expect": "fail", "codes": ["ucx_missing"]},
+   {"name": "Stair_PerStep", "scene": "polygon_all", "expect": "fail", "codes": ["ucx_not_single"]},
+   {"name": "Stair_High", "scene": "polygon_all", "expect": "fail", "codes": ["ucx_too_high"]}],
+  "options": {"tolerance_cm": 30}},
+ {"button": "qa.omk_te",
+  "objects": [
+   {"name": "OMK_TableMarker", "role": "Main", "builder": "T_build", "extra": {"kind": "omk"}}],
+  "expected": [
+   {"name": "__scene__", "scene": "polygon_all", "expect": "pass", "codes": []}],
+  "reason": "FAIL-строка (нет таблицы, кракозябры, несколько кодов) проверяется unit-тестами и нативным джобом: у станции одна опция на прогон, а отчёт кнопки без объектов сцены один",
+  "options": {"table": "C:/x/test-polygon/t/omk/OMK_synth.tsv", "filter": "стена", "pick": 2}},
+ {"button": "export.place_by_passport",
+  "objects": [
+   {"name": "Place_Marker", "role": "Main", "builder": "T_build", "extra": {"kind": "place"}}],
+  "expected": [
+   {"name": "__scene__", "scene": "polygon_all", "expect": "pass", "codes": []}],
+  "reason": "FAIL-строка (битый JSON, приманка, нет паспорта, не FBX) проверяется unit-тестами и нативным джобом: опции станции общие на прогон; станция только preview (apply в живом полигоне не нажимается)",
+  "options": {"fbx": "C:/x/test-polygon/t/place/model.fbx"}}
+]}

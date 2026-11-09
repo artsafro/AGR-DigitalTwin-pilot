@@ -13,6 +13,16 @@ from technical_library.texture_tiles.panels import kpp_panels
 from tools.facades_texture_pattern import raster
 
 
+def _tiles_core():
+    """AGR Tools 1.0 tiles_core (stdlib): the one generator of the grey masks of #1024 K3 (no second copy)."""
+    import importlib.util
+    path = Path(__file__).resolve().parents[2] / 'adapters' / 'max' / 'agr_tools' / 'tiles_core.py'
+    spec = importlib.util.spec_from_file_location('agr_tools_tiles_core', path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
 def validate(config):
     tiles = config['tiles']
     if not tiles:
@@ -29,7 +39,7 @@ def validate(config):
             raise ValueError('Invalid RGB')
         if len(tile['size']) != 2 or any(type(n) is not int or not 1 <= n <= 8192 for n in tile['size']):
             raise ValueError('Invalid size')
-        if tile['kind'] not in ('solid', 'kpp_panels', 'metric_pattern'):
+        if tile['kind'] not in ('solid', 'kpp_panels', 'metric_pattern', 'greyscale_mask'):
             raise ValueError('Unknown tile recipe')
         if tile['kind'] == 'kpp_panels' and tile['size'] != [4096, 4096]:
             raise ValueError('Historical KPP panel recipe requires 4096 square')
@@ -38,6 +48,13 @@ def validate(config):
                 raise ValueError('Unknown metric pattern ID')
             if len(tile.get('extent_m', [])) != 2 or any(not np.isfinite(n) or n <= 0 for n in tile['extent_m']):
                 raise ValueError('Metric recipe requires positive physical extent')
+        if tile['kind'] == 'greyscale_mask':
+            tc = _tiles_core()
+            spec, findings = tc.spec(tile.get('base_map', ''), tile.get('overrides'))
+            if findings:
+                raise ValueError('greyscale_mask {}: {}'.format(tile['base_map'], findings))
+            if tile['size'] != [spec['size_px'], spec['size_px']]:
+                raise ValueError('greyscale_mask size must be {0}x{0} (period x px_per_m)'.format(spec['size_px']))
     return tiles
 
 
@@ -47,6 +64,14 @@ def draw(tile):
         return Image.new('RGB', (width, height), tuple(tile['rgb']))
     if tile['kind'] == 'kpp_panels':
         return Image.fromarray(kpp_panels(tile['rgb']), 'RGB')
+    if tile['kind'] == 'greyscale_mask':
+        # grey mask of tiles_core recoloured to the record RGB: body lerp(dark, RAL, grey), joint channel separate
+        tc = _tiles_core()
+        spec, _ = tc.spec(tile['base_map'], tile.get('overrides'))
+        grey = tc.Grey(spec)
+        luts, joint = tc.recolour_luts(tile['rgb'], tc.grey_ref(tc.body_histogram(grey)))
+        rows = b''.join(tc.colour_rows(grey, luts, joint))
+        return Image.frombytes('RGB', (width, height), rows)
     pixels = raster(tile['pattern_id'], width, height, tile['extent_m'], np.asarray(tile['rgb']) / 255,
                     joint=tile.get('joint_m', .005), offset=tuple(tile.get('offset_m', [0, 0])),
                     panel_dimensions=tile.get('panel_dimensions_m'))
@@ -70,7 +95,7 @@ def build(config, output, reference=None):
             if tile['kind'] == 'solid' and not solid:
                 raise ValueError('Solid color differs')
             edges = bool(np.array_equal(pixels[0], pixels[-1]) and np.array_equal(pixels[:, 0], pixels[:, -1]))
-            if tile['kind'] != 'metric_pattern' and not edges:
+            if tile['kind'] not in ('metric_pattern', 'greyscale_mask') and not edges:
                 raise ValueError('Historical seamless edge invariant differs')
             row = {'id': tile['id'], 'udim': tile['udim'], 'size': tile['size'], 'solid': solid,
                    'opposite_edges_equal': edges, 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()}

@@ -1,0 +1,37 @@
+{
+ "schema": 1,
+ "button": "agent.request",
+ "tool": "agent.request",
+ "version": "1.0",
+ "shipped": true,
+ "select": "named",
+ "reason": "",
+ "apply_status": null,
+ "objects": [
+  {
+   "name": "SM_FragU_ReqOk_Main",
+   "scene": "frag_u_agent",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_FragU_ReqBad_Main",
+   "scene": "frag_u_agent",
+   "expect": "fail",
+   "codes": [
+    "duplicate_name"
+   ]
+  }
+ ],
+ "options": {
+  "task": "polygon 1.0.32: mark the openings of SM_FragU_ReqOk_Main",
+  "job_dir": "C:/agr-polygon/jobs/FRAGU",
+  "request_id": "poly-u",
+  "project_id": "FRAGU"
+ },
+ "base": "1.0",
+ "station": "1.0.32",
+ "stations": [
+  "1.0.32"
+ ]
+}

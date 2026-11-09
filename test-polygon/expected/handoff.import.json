@@ -1,0 +1,26 @@
+{
+ "schema": 1,
+ "button": "handoff.import",
+ "tool": "handoff.import",
+ "version": "1.1",
+ "shipped": true,
+ "select": "named",
+ "reason": "Объекта PASS нет: импорт читает папку бандла handoff/<seq> (manifest.json, sidecar.json, materials.json, return/model.fbx из Blender), а станция полигона статична; без бандла кнопка отвечает ошибкой options.bundle. PASS и FAIL круга проверяет нативный джоб ветки BH tests/max_tools/run_agr_tools_handoff_native.py (джобы 20261106-135137-44de5679, 20261106-135159-664da499, 20261106-135201-2d9ea983).",
+ "apply_status": null,
+ "objects": [
+  {
+   "name": "SM_FragBH_ImpNoBundle_Main",
+   "scene": "frag_bh_import",
+   "expect": "error",
+   "codes": []
+  }
+ ],
+ "options": {
+  "bundle": "C:/agr-polygon/jobs/FRAGBH/handoff/missing"
+ },
+ "base": "1.1",
+ "station": "1.1.2",
+ "stations": [
+  "1.1.2"
+ ]
+}

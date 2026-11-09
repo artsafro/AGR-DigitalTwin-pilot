@@ -1,0 +1,58 @@
+{
+  "_comment": "Scenario router table: which cell (profile x object class) a task belongs to and where its card is. Read by tools/hooks/scenario_router.py and the `scenario` skill; tested by tests/test_scenario_router.py. Cell ids match NTR_AI roadmap/pipeline.json. Triggers are lower-case word prefixes. Keep pointers here, rules in the cards and docs/domain.",
+  "version": 1,
+  "profiles": {
+    "npm-lite": ["npm-lite", "npm lite", "нпм упрощ", "упрощённ", "упрощенн"],
+    "npm": ["npm", "нпм", "low-poly", "лоуполи"],
+    "vpm": ["vpm", "впм", "high-poly", "хайполи"]
+  },
+  "objects": {
+    "oks": ["oks", "окс", "укс", "uks", "здани", "корпус", "фасад"],
+    "ground": ["ground", "граунд", "благоустр", "земл", "спозу", "spozu"],
+    "maf": ["maf", "маф", "groundel"],
+    "flora": ["flora", "флор", "озелен", "деревь", "кустарн"],
+    "ucx": ["ucx", "коллизи", "collision"]
+  },
+  "object_cell": {
+    "oks": "oks",
+    "ground": "ground",
+    "maf": "ground",
+    "flora": "ground",
+    "ucx": null
+  },
+  "cells": [
+    {
+      "id": "oks-vpm",
+      "title": "OKS building, VPM",
+      "status": "ready",
+      "card": "docs/scenarios/oks-vpm.md"
+    },
+    {
+      "id": "ground-npm",
+      "title": "Ground + MAF + Flora, NPM",
+      "status": "ready",
+      "card": "docs/scenarios/ground-npm.md"
+    },
+    {
+      "id": "oks-npm",
+      "title": "OKS building, NPM",
+      "status": "todo",
+      "card": null,
+      "reads": ["docs/domain/requirements-2026.md", "docs/domain/npm-vpm.md", "docs/domain/areas/body.md", "docs/domain/areas/windows.md", "docs/domain/areas/derivation.md", "docs/domain/areas/uv-atlas.md", "docs/procedure/TASK_TO_MODEL.md"]
+    },
+    {
+      "id": "oks-npm-lite",
+      "title": "OKS building, simplified NPM",
+      "status": "todo",
+      "card": null,
+      "reads": ["docs/domain/requirements-2026.md", "docs/domain/npm-vpm.md", "docs/domain/areas/body.md", "docs/domain/areas/uv-atlas.md", "docs/procedure/TASK_TO_MODEL.md"]
+    },
+    {
+      "id": "ground-vpm",
+      "title": "Ground + MAF + Flora + UCX, VPM",
+      "status": "todo",
+      "card": null,
+      "reads": ["docs/domain/requirements-2026.md", "docs/domain/areas/ground-surface.md", "docs/domain/areas/groundel-maf.md", "docs/domain/areas/flora.md", "docs/domain/areas/ucx.md", ".agents/skills/model-ground/SKILL.md"]
+    }
+  ]
+}

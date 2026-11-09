@@ -15,6 +15,8 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+from dt_ai.core.max_env import max_child_env  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
 LIVE_LOCK = Path(os.environ.get('LOCALAPPDATA', '')) / 'Temp' / 'agr-3dsmax-live.lock'
@@ -51,7 +53,7 @@ def main(argv=None):
                                      'until': time.time() + a.timeout + 300, 'pid': os.getpid()}))
     try:
         exe = Path(r'C:\Program Files\Autodesk\3ds Max {}\3dsmax.exe'.format(a.version))
-        env = dict(os.environ, AGR_GUIDE_SCENE=str(copy), AGR_GUIDE_OUT=str(out))
+        env = dict(max_child_env(), AGR_GUIDE_SCENE=str(copy), AGR_GUIDE_OUT=str(out))
         t0 = time.time()
         try:
             proc = subprocess.run([str(exe), '-silent', '-U', 'PythonHost', str(HERE / 'guide_inside.py')],

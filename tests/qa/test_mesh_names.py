@@ -24,7 +24,8 @@ def rb_from(source, *names):
 
 def v012(source, kind, role, *names):
     found = scene_findings(rb_from(source, *names), kind, role, PROFILES.profile(kind))
-    return found.get("V012", [])
+    # MainGlass object/material findings (#1029) are pinned in tests/qa/test_decision_checks.py
+    return [f for f in found.get("V012", []) if not f.name.startswith("MainGlass")]
 
 
 def v012_status(source, kind, role, *names):

@@ -23,8 +23,33 @@
    "codes": [
     "atlas_cell"
    ]
+  },
+  {
+   "name": "SM_Polygon_AtlasTex_Main",
+   "scene": "atlas_npm",
+   "expect": "fail",
+   "codes": [
+    "atlas_cell"
+   ]
   }
  ],
+ "apply_atlas": {
+  "scene": "atlas_npm",
+  "profile": "npm",
+  "material": "M_Polygon_AtlasTex_Main_1",
+  "texel_px_per_m": 35.0,
+  "texel_tol": 0.1,
+  "files": {
+   "diffuseMap": {
+    "bit_depth": 8,
+    "color_type": 2
+   },
+   "opacityMap": {
+    "bit_depth": 8,
+    "color_type": 0
+   }
+  }
+ },
  "base": "0.2",
  "station": "0.2.2",
  "stations": [
