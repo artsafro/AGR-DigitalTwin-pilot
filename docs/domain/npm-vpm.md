@@ -61,7 +61,7 @@ UCX gap checks; [D163] leaves UKEP verification to the applicant (missing file: 
 ## GeoJSON (VPM only; App.3)
 - Exact structure/syntax/names/values per App.3; UTF-8; only values may change - no renamed/duplicated/miswritten keys. reg p.26 §2.1, p.27 §2.5, p.28 §2.7.
 - `{"type":"FeatureCollection","features":[{"type":"ObjectFeature","properties":{...},"geometry":{"type":"Point","coordinates":[x,y]},"Glasses":...}]}` - note literal `ObjectFeature`, not standard `Feature`. reg p.51-53.
-- Properties: address, okrug (<=50 ch), rajon (<=50), name, developer (<=255), designer (<=255), cadNum, FNO_code, FNO_name (<=255), ZU_area (m2, <=4 decimals), h_relief (zero elevation m, <=2 dec), h_otn (max relative height, <=2 dec), h_abs (max absolute height, <=2 dec), s_obsh, s_naz, s_podz, spp_gns (m2, <=2 dec), act_AGR, imageBase64, other. reg p.53-55.
+- Properties: address, okrug (<=50 ch), rajon (<=50), name, developer (<=255), designer (<=255), cadNum, FNO_code, FNO_name (<=255), ZU_area (ha, <=4 decimals), h_relief (zero elevation m, <=2 dec), h_otn (max relative height, <=2 dec), h_abs (max absolute height, <=2 dec), s_obsh, s_naz, s_podz, spp_gns (m2, <=2 dec), act_AGR, imageBase64, other. reg p.53-55.
 - cadNum mask `AA:BB:VVVVVVV:GG` (plot) or `AA:BB:VVVVVVV` (quarter); FNO_code mask `XXX XXX XXX` / `XXX XXX` / `XXX` per 306-PP. reg p.53.
 - Multiple values allowed only in okrug, rajon, developer, designer, cadNum: comma-separated inside one string. reg p.27 §2.4.
 - Org names quoted with typewriter apostrophe inside string: `"OOO 'Buro ...'"`. reg p.27 §2.3.

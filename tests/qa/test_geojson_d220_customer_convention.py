@@ -1,58 +1,90 @@
-"""new-case: GeoJSON per D220 (#1107) — the customer's ELV file is the reference for ZU_area units (m², not
-hectares), the «округ» field format (abbreviation, not the full name) and the anchor point (MSK-77, 3 decimals).
+"""new-case: GeoJSON per D220 (#1107) — the customer's ELV file is the reference for the «округ» field format
+(the standard Moscow administrative-okrug abbreviation «ЮАО», not the full name) and the anchor point (MSK-77,
+3 decimals). `ZU_area` units are an open source conflict (reg p.53 = ha vs the customer's ELV file = m² vs the
+PSU275 file = ha), recorded in docs/domain/conflicts.md; the ELV job keeps 1.0386 ha until Artem decides.
 
 Customer ELV file (read-only, not committed):
   `C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\3_sreda\\customer_2026-11-05\\SM_Elevatornaya_Vl_1_A_001.geojson`
   sha256 6f6285f0be20b12a14c4d474febd31ca076205c8070e972a3afe2d9ab00a7446
   (zip SM_Elevatornaya_Vl_1_A_001.zip sha256 3051e465046c926738d17f83b07ee86d09e64c9a0f2e89f192c9a2a870da813f)
-  key values: ZU_area = 10386.0000 m², okrug = "ЮАО", coordinates = [9676.355, -7135.700].
+  key values: okrug = "ЮАО", ZU_area = 10386.0000 (m²), coordinates = [9676.355, -7135.700].
 
-The doc test (test_zu_area_documented_in_m2) is RED on the commit that documented hectares and GREEN after the
-fix; the writer tests pin the convention so a future regression that reintroduces ha / the full name is caught.
+The doc/conflict/script tests are RED on the commit that documented m² and wrote the full okrug name, and GREEN
+after the rework; the writer tests pin pass-through, the anchor format and fail-closed handling so a future
+regression is caught.
 """
 import importlib.util
+import json
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 PKG = ROOT / 'adapters/max/agr_tools'
+V005 = ROOT / 'jobs/elv-tc-vpm/scripts/package_vpm_v005.py'
+V006 = ROOT / 'jobs/elv-tc-vpm/scripts/package_vpm_v006.py'
 
 # The customer's ELV reference values (the RED test is written from this file first).
 CUSTOMER_ELV = {
-    'ZU_area': 10386.0,           # m² (sheet 42 item 1 = 10 386 m2), NOT 1.0386 ha
-    'okrug': 'ЮАО',               # abbreviation, NOT "Южный административный округ"
-    'coordinates': [9676.355, -7135.700],   # MSK-77, 3 decimals
+    'okrug': 'ЮАО',                      # abbreviation, NOT "Южный административный округ"
+    'coordinates': [9676.355, -7135.700],  # MSK-77, 3 decimals
 }
+CUSTOMER_ELV_ZU_AREA_M2 = 10386.0   # the customer writes m²; the reg says ha (open conflict)
 
 
 def _load(path, name):
     spec = importlib.util.spec_from_file_location(name, path)
     mod = importlib.util.module_from_spec(spec)
-    import sys
     sys.modules[name] = mod
     spec.loader.exec_module(mod)
     return mod
 
 
-def test_zu_area_documented_in_m2_not_hectares():
-    """docs/domain/npm-vpm.md documents ZU_area in m² — the reg/our doc said 'ha' before #1107."""
+def test_zu_area_documented_in_hectares_with_reg_citation():
+    """docs/domain/npm-vpm.md documents ZU_area in ha (reg p.53 table 1 row 10 «га»), not m²."""
     text = (ROOT / 'docs/domain/npm-vpm.md').read_text(encoding='utf-8')
-    assert 'ZU_area (m2, <=4 decimals)' in text
-    assert 'ZU_area (ha,' not in text
+    assert 'ZU_area (ha, <=4 decimals)' in text
+    assert 'ZU_area (m2,' not in text
 
 
-def test_geojson_document_writes_customer_zu_area_and_okrug():
+def test_zu_area_conflict_recorded_with_three_sources():
+    """docs/domain/conflicts.md names the reg (ha) and both customer files (ELV m², PSU275 ha)."""
+    text = (ROOT / 'docs/domain/conflicts.md').read_text(encoding='utf-8')
+    assert '6f6285f0be20b12a14c4d474febd31ca076205c8070e972a3afe2d9ab00a7446' in text   # ELV
+    assert 'ae65d6196f787b81234986e9e98571860b5c55cc47b356f998ad85dfdb218622' in text  # PSU275
+    assert '10386.0000' in text
+    assert '6.4882' in text
+    assert 'га' in text                                                              # the reg unit is named
+
+
+def test_v006_uses_okrug_abbreviation():
+    """The okrug fix lands in the NEW package_vpm_v006.py, not the delivered v005."""
+    v006 = V006.read_text(encoding='utf-8')
+    assert '"okrug": "ЮАО"' in v006
+    assert '"okrug": "Южный административный округ"' not in v006
+
+
+def test_v006_keeps_zu_area_in_hectares():
+    """ZU_area stays 1.0386 ha (reg) until Artem decides; the customer's m² value is not applied."""
+    v006 = V006.read_text(encoding='utf-8')
+    assert '"ZU_area": 1.0386' in v006
+    assert '"ZU_area": 10386' not in v006
+
+
+def test_v005_is_the_delivered_script_unchanged():
+    """The delivered v005 keeps the full okrug name and ha — the rework must not edit it."""
+    v005 = V005.read_text(encoding='utf-8')
+    assert '"okrug": "Южный административный округ"' in v005
+    assert '"ZU_area": 1.0386' in v005
+
+
+def test_geojson_document_is_pass_through_for_okrug_and_zu_area():
+    """The writer neither abbreviates/expands okrug nor converts ha<->m²: caller values stay byte-identical."""
     pc = _load(PKG / 'package_core.py', 'agr_tools_package_core_d220')
-    import json
-    props = {'ZU_area': CUSTOMER_ELV['ZU_area'], 'okrug': CUSTOMER_ELV['okrug']}
-    data = pc.geojson_document(props, image_b64='', coordinates=CUSTOMER_ELV['coordinates'],
-                               glasses=[], ground=False)
-    doc = json.loads(data.decode('utf-8'))
-    feat = doc['features'][0]
-    # ZU_area stays m² (a number, ~10 386, not ~1.04 hectares) and okrug stays the abbreviation.
-    assert feat['properties']['ZU_area'] == 10386.0
-    assert abs(feat['properties']['ZU_area'] - 10386.0) < 1.0          # m², not 1.0386
-    assert feat['properties']['okrug'] == 'ЮАО'
-    assert feat['geometry']['coordinates'] == CUSTOMER_ELV['coordinates']
+    props = {'ZU_area': 1.0386, 'okrug': 'Южный административный округ'}  # caller supplies ha + full name
+    data = pc.geojson_document(props, image_b64='', coordinates=[0.0, 0.0], glasses=[], ground=False)
+    feat = json.loads(data.decode('utf-8'))['features'][0]['properties']
+    assert feat['ZU_area'] == 1.0386
+    assert feat['okrug'] == 'Южный административный округ'
 
 
 def test_pivot_coordinates_rounds_to_3_decimals():
@@ -63,22 +95,9 @@ def test_pivot_coordinates_rounds_to_3_decimals():
     assert floor == '0.000'
 
 
-def test_writer_never_converts_units_or_okrug():
-    """Counterexample beyond the ELV example: the writer is pass-through — it neither converts m²↔ha nor
-    abbreviates/expands okrug, so a caller-supplied hectare value or full okrug name stays byte-identical."""
-    import json
-    pc = _load(PKG / 'package_core.py', 'agr_tools_package_core_d220c')
-    props = {'ZU_area': 1.0386, 'okrug': 'Южный административный округ'}  # the OLD (pre-#1107) values
-    data = pc.geojson_document(props, image_b64='', coordinates=[0.0, 0.0], glasses=[], ground=False)
-    feat = json.loads(data.decode('utf-8'))['features'][0]['properties']
-    assert feat['ZU_area'] == 1.0386                            # NOT 10386.0: no ha→m² conversion
-    assert feat['okrug'] == 'Южный административный округ'      # NOT «ЮАО»: no abbreviation
-
-
 def test_geojson_document_rejects_nonfinite_zu_area():
     """Fail-closed: NaN/inf ZU_area must raise, never serialize to a null/Infinity JSON value."""
-    import json
-    pc = _load(PKG / 'package_core.py', 'agr_tools_package_core_d220d')
+    pc = _load(PKG / 'package_core.py', 'agr_tools_package_core_d220c')
     for bad in (float('nan'), float('inf'), float('-inf')):
         props = {'ZU_area': bad}
         try:
