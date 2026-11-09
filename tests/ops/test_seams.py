@@ -303,3 +303,18 @@ def test_simplification_face_labels_fail_closed(labels):
     source, strip = _panels()
     with pytest.raises(ValueError, match='face_labels'):
         simplify_part({'glass': source, 'band': strip}, 'glass', face_labels=labels)
+
+
+@pytest.mark.parametrize('labels,top_corners', [((1, 1, 2, 2), 5), ((1, 1, 1, 1), None)])
+def test_simplification_keeps_a_point_shared_with_a_differently_labelled_face(labels, top_corners):
+    """#1144: a straight-run point of one label group that a face of another label uses stays (no T-junction)."""
+    from dt_ai.ops.seams import simplify_part
+    v = [(0, 0, 0), (1, 0, 0), (2, 0, 0), (0, 0, 1), (1, 0, 1), (2, 0, 1), (0, 0, 2), (1, 0, 2), (2, 0, 2)]
+    faces = ((0, 1, 4, 3), (1, 2, 5, 4), (3, 4, 7, 6), (4, 5, 8, 7))
+    result = simplify_part({'w': PolyMesh(v, faces)}, 'w', face_labels={'w': labels})
+    if top_corners is None:
+        assert len(result.mesh.faces) == 1
+        return
+    top = [f for f, s in zip(result.mesh.faces, result.face_sources) if s == (('w', 2), ('w', 3))]
+    assert len(top) == 1 and len(top[0]) == top_corners
+    assert len(result.mesh.faces) == 2

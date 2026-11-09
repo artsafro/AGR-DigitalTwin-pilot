@@ -52,6 +52,7 @@ SOURCE_SHA256 = "f1fc27dc77d5d194ae25aebe8aeb23e71993ab0890cb08def97279bac3e4522
 PROFILE = "VPM-OKS"
 PART_NAMES = ("AC08_body", "AC08_knob", "AC08_plate")   # connected components by descending face count
 ZERO_AREA_M2 = ix.AREA_EPS_M2
+UV_AGREE = 1e-5                 # #1144: source corners at one vertex carry one UV only when they agree this close
 READBACK_ROUND_M = 1e-6          # fbx_readback rounds world coordinates to 6 decimals
 EXPORT = HERE / "export_states_blender.py"
 READBACK = ROOT / "tools" / "blender" / "fbx_readback.py"
@@ -337,13 +338,40 @@ def run_ops(source, relative=False):
     return rows
 
 
+def uv_islands(p):
+    """Per-face island id (#1144): faces joined across a shared edge only when both end corners carry the same UV
+    (within UV_AGREE) in both faces; a face without UV is its own island. Used as a simplify barrier with the
+    material id, so a dissolved polygon never spans a UV seam."""
+    parent = list(range(len(p["faces"])))
+
+    def find(a):
+        while parent[a] != a:
+            parent[a] = parent[parent[a]]
+            a = parent[a]
+        return a
+    edge = defaultdict(list)
+    for fi, (f, c) in enumerate(zip(p["faces"], p["uv"])):
+        if c is None:
+            continue
+        for k in range(len(f)):
+            a, b = f[k], f[(k + 1) % len(f)]
+            edge[tuple(sorted((a, b)))].append((fi, {a: c[k], b: c[(k + 1) % len(f)]}))
+    for items in edge.values():
+        for (fa, ua), (fb, ub) in zip(items, items[1:]):
+            if all(max(abs(float(x) - float(y)) for x, y in zip(ua[vi], ub[vi])) <= UV_AGREE for vi in ua):
+                parent[find(fb)] = find(fa)
+    return [find(i) for i in range(len(parent))]
+
+
 def seam_op(source, op, parts, ctx, record):
     s = copy_state(source)
     try:
         if op == "join_parts":
             res = join_parts({k: PolyMesh(s[k]["v"], tuple(s[k]["faces"])) for k in parts})
-        else:   # every part goes in: simplify conforms the neighbours' seams too
-            res = simplify_part(poly_scene(s), parts[0])
+        else:   # every part goes in: simplify conforms the neighbours' seams too; a dissolved polygon keeps one
+            p = s[parts[0]]   # material id and one UV island (#1144)
+            labels = tuple(zip(p["mat"], uv_islands(p)))
+            res = simplify_part(poly_scene(s), parts[0], face_labels={parts[0]: labels})
     except (OperationRefused, ValueError) as why:
         record(op, "+".join(parts), {}, False, None, None, f"{op} on {'+'.join(parts)}: {type(why).__name__}: {why}")
         return
@@ -357,26 +385,31 @@ def seam_op(source, op, parts, ctx, record):
 
 def carry_seam(state, res, consumed, op):
     """SeamResult -> state. join: the consumed parts become one part "a+b"; simplify: the result replaces all
-    parts as one mesh named "simplified". UV/material carried per corner only from a single-source polygon whose
-    source corner has the same output vertex; anything else is reported as unmapped, never defaulted."""
+    parts as one mesh named "simplified". UV/material carried per corner from the source polygon(s) of the output
+    polygon (#1144): a corner takes the source UV of its vertex when EVERY source polygon of the group that has that
+    vertex as a corner has UV there and all of them agree within UV_AGREE. A corner with no source corner, a source
+    polygon without UV or disagreeing UVs (a UV seam inside a merged group) leaves the whole polygon without UV and
+    all its corners are counted as unmapped: reported, never defaulted, never interpolated."""
     vsrc = res.vertex_sources
-    corner_uv, unmapped, uv, mats = {}, 0, [], []
+    unmapped, uv, mats = 0, [], []
     for f, srcs in zip(res.mesh.faces, res.face_sources):
         srcs = tuple(srcs)
-        part, fi = srcs[0]
         m = {state[p]["mat"][i] for p, i in srcs}
         mats.append(m.pop() if len(m) == 1 else 0)   # 0 = merged ids: reported, never defaulted
-        if len(srcs) != 1:
-            uv.append(None)
-            unmapped += len(f)
-            continue
-        src_face, src_uv = state[part]["faces"][fi], state[part]["uv"][fi]
         corners = []
         for vi in f:
-            hit = [k for k, sv in enumerate(src_face) if (part, sv) in set(map(tuple, vsrc[vi]))]
-            corners.append(None if not hit or src_uv is None else src_uv[hit[0]])
+            origin = set(map(tuple, vsrc[vi]))
+            found, missing = [], False
+            for part, fi in srcs:
+                src_face, src_uv = state[part]["faces"][fi], state[part]["uv"][fi]
+                hit = [k for k, sv in enumerate(src_face) if (part, sv) in origin]
+                missing |= bool(hit) and src_uv is None
+                found += [tuple(map(float, src_uv[k])) for k in hit if src_uv is not None]
+            agree = bool(found) and not missing and all(
+                max(abs(a - b) for a, b in zip(c, found[0])) <= UV_AGREE for c in found)
+            corners.append(found[0] if agree else None)
         if any(c is None for c in corners):
-            unmapped += sum(c is None for c in corners)
+            unmapped += len(f)
             uv.append(None)
         else:
             uv.append(corners)
