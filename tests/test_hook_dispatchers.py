@@ -116,6 +116,87 @@ def test_non_dict_input_errors_like_the_guard():
     assert got.returncode == 1 and got.stdout == "" and "AttributeError" in got.stderr
 
 
+# --- Bare python / python3 advisory (#1034) ------------------------------------------------------------------
+
+BLENDER_PY = '"C:/Program Files/Blender Foundation/Blender 4.4/4.4/python/bin/python.exe" x.py'
+BARE = ["python x.py", 'python3 -c "print(1)"', "cd a && python b.py", "ls; python3 b.py", "echo x | python -",
+        "FOO=1 python x.py", "python.exe x.py", "Python x.py", "(python x.py)", "echo $(python -c 1)",
+        "echo `python -c 1`", "time python x.py", "a || python3 b.py", "git status\npython b.py",
+        "if true; then python x.py; fi", "for f in a; do python3 $f; done", "  python", "x & python y.py",
+        "env python x.py", "PYTHONPATH=src python3 -m pytest", r'echo \"; python x.py']
+NOT_BARE = ["py -3 x.py", "uv run python x.py", ".venv/Scripts/python.exe -m pytest", BLENDER_PY,
+            "rg python", 'echo "python x.py"', "git commit -m 'python x.py'", "ls python_tools/", "cat python.txt",
+            "./python x.py", "pythonw x.py", "python3.13 x.py", "pytest -q", "mypython x.py", "",
+            'py -3 -c "import os; python = 1"', "cat <<EOF\npython x.py\nEOF", "cat <<'END' >f\npython3 b\nEND",
+            "# python x.py", "echo a # ; python x", r"echo \; python x", "uv run --with x python -m y",
+            "grep -n 'a;python' f", "sed -n '1,2p' python3"]
+
+
+@pytest.mark.parametrize("command", BARE)
+def test_bare_python_is_flagged(command):
+    assert _load_pretool().bare_python(command, "Bash")
+
+
+@pytest.mark.parametrize("command", NOT_BARE)
+def test_not_bare_python_is_not_flagged(command):
+    assert not _load_pretool().bare_python(command, "Bash")
+
+
+@pytest.mark.parametrize("command,flagged", [("& python x.py", True), ("python x.py; Get-Date", True),
+                                             ("& 'C:/Python313/python.exe' x.py", False),
+                                             ("Write-Host `\"python x`\"", False), ("py -3 x.py", False)])
+def test_powershell_spellings(command, flagged):
+    assert _load_pretool().bare_python(command, "PowerShell") is flagged
+
+
+@pytest.mark.parametrize("value", [None, 7, ["python"], {"a": 1}])
+def test_non_string_command_is_not_flagged(value):
+    assert not _load_pretool().bare_python(value, "Bash")
+
+
+def test_bare_python_gets_an_advisory_not_a_decision():
+    got = call(PRETOOL, {"tool_name": "Bash", "tool_input": {"command": "python x.py"}, "cwd": str(ROOT)})
+    out = decision(got)
+    assert "permissionDecision" not in out                                # advisory only: never blocks or asks
+    assert out["hookEventName"] == "PreToolUse"
+    assert "py -3" in out["additionalContext"] and "docs/agents/CAPABILITIES.md" in out["additionalContext"]
+    assert "py -3" in json.loads(got.stdout)["systemMessage"]
+
+
+def test_powershell_bare_python_gets_the_advisory():
+    got = call(PRETOOL, {"tool_name": "PowerShell", "tool_input": {"command": "python x.py"}, "cwd": str(ROOT)})
+    assert "py -3" in decision(got)["additionalContext"]
+
+
+def test_bare_python_with_a_guard_ask_keeps_the_ask_and_adds_the_advisory():
+    payload = {"tool_name": "Bash", "tool_input": {"command": "python x.py && git push origin main"}, "cwd": str(ROOT)}
+    out = decision(call(PRETOOL, payload))
+    guard_out = decision(call(GUARD, payload))
+    assert out["permissionDecision"] == "ask"
+    assert out["permissionDecisionReason"] == guard_out["permissionDecisionReason"]
+    assert "py -3" in out["additionalContext"]
+
+
+@pytest.mark.parametrize("tool,tin", [("Bash", {"command": "py -3 x.py"}), ("Bash", {"command": "rg python"}),
+                                      ("Write", {"file_path": str(ROOT / "a.md"), "content": "python x.py"}),
+                                      ("Bash", {})])
+def test_no_advisory_for_other_calls(tool, tin):
+    got = call(PRETOOL, {"tool_name": tool, "tool_input": tin, "cwd": str(ROOT)})
+    assert got.returncode == 0 and got.stdout == "", got.stdout
+
+
+def test_repeated_bare_python_calls_warn_every_time():
+    payload = {"tool_name": "Bash", "tool_input": {"command": "python x.py"}, "cwd": str(ROOT)}
+    first, second = (call(PRETOOL, payload).stdout for _ in range(2))
+    assert first and first == second
+
+
+def test_shared_guard_stays_silent_on_bare_python():
+    """Codex and the Pi adapter call guard.py directly and parse its decision strictly: it must not change."""
+    got = call(GUARD, {"tool_name": "Bash", "tool_input": {"command": "python x.py"}, "cwd": str(ROOT)})
+    assert got.returncode == 0 and got.stdout == ""
+
+
 # --- UserPromptSubmit ---------------------------------------------------------------------------------------
 
 def _response(tokens):
