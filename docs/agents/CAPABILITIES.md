@@ -353,8 +353,9 @@ Shared derivation `dt derive` (NPM<->VPM, #1106; one implementation per step ins
   by Blender's per-run UIDs). KPP1 / PSU275 masters are not on this PC: their variants are covered by options, not
   replayed. Tests `tests/test_shared_tools_1106.py`.
 
-Duplicate implementations (#1106 inventory; the canonical side for UCX / atlas / placement waits on #1105, AGR Tools 1.0
-as the primary AC08 route [D204]):
+Duplicate implementations (#1106 inventory; the canonical side for UCX / atlas / placement is the AGR Tools Max
+cores, keeping the Max side per the AC08 route [D204]; routing the Blender/Python versions to them is deferred to
+#1141, starts after #1105 [D223]):
 
 | Function | Blender / Python | 3ds Max (AGR Tools) | Job copies |
 |---|---|---|---|
