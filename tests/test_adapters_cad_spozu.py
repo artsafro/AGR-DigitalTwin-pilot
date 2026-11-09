@@ -381,7 +381,7 @@ def test_vatutino_copy_counts(tmp_path_factory):
 # ---------------------------------------------------------------- FILEDIA restore (#1026)
 
 FILEDIA_OFF = '(setvar "FILEDIA" 0)'
-FILEDIA_SAVE = '(setq agr-filedia (getvar "FILEDIA"))'
+FILEDIA_SAVE = re.compile(r'^\(setq agr-filedia (?:\(getvar "FILEDIA"\)|[01])\)$')
 
 
 def assert_filedia_restored(script: str) -> None:
@@ -392,7 +392,8 @@ def assert_filedia_restored(script: str) -> None:
     if FILEDIA_OFF not in lines:
         return
     off = lines.index(FILEDIA_OFF)
-    assert FILEDIA_SAVE in lines and lines.index(FILEDIA_SAVE) < off, "user FILEDIA not saved before FILEDIA 0"
+    saves = [i for i, ln in enumerate(lines) if FILEDIA_SAVE.match(ln)]
+    assert saves and saves[0] < off, "user FILEDIA not saved before FILEDIA 0"
     handler = [i for i, ln in enumerate(lines) if ln.startswith("(defun *error*")]
     assert handler and handler[0] < off, "no *error* handler installed before FILEDIA 0"
     assert "(agr-restore-filedia)" in lines[handler[0]], "*error* handler does not restore FILEDIA"
@@ -444,6 +445,38 @@ def test_generated_scripts_restore_filedia(tmp_path, monkeypatch):
     for text in scripts:
         assert FILEDIA_OFF in text
         assert_filedia_restored(text)
+
+
+@pytest.mark.parametrize("user_value", [0, 1])
+def test_adapter_restores_registry_value_not_session_value(tmp_path, monkeypatch, user_value):
+    """#1026: the core console starts with FILEDIA=0 whatever the registry says, so the value to
+    restore is read from the user's registry before the run and written into both scripts."""
+    from adapters.cad import dwg as dwgmod
+
+    monkeypatch.setattr(dwgmod, "user_filedia", lambda: user_value)
+    scripts = _captured_scripts(tmp_path, monkeypatch)
+    assert len(scripts) == 2
+    for text in scripts:
+        assert text.splitlines()[0] == f"(setq agr-filedia {user_value})"
+        assert_filedia_restored(text)
+
+
+@pytest.mark.parametrize("bad", [2, -1, True, "1", 1.0])
+def test_filedia_guarded_rejects_non_binary_value(bad):
+    from adapters.cad.dwg import filedia_guarded
+
+    with pytest.raises(ValueError, match="FILEDIA"):
+        filedia_guarded('(command "_.DXFOUT" "a.dxf")\n', bad)
+
+
+def test_user_filedia_missing_key_is_none(monkeypatch):
+    from adapters.cad import dwg as dwgmod
+
+    monkeypatch.setattr(dwgmod, "ACAD_REG_ROOT", r"Software\AGR-DigitalTwin-test\no-such-key")
+    assert dwgmod.user_filedia() is None
+    text = dwgmod.dxfout_script(Path("C:/x/a.dxf"), filedia=dwgmod.user_filedia())
+    assert text.splitlines()[0] == '(setq agr-filedia (getvar "FILEDIA"))'
+    assert_filedia_restored(text)
 
 
 @pytest.mark.parametrize("version,precision", [("2018", 16), ("2013", 8), ("2000", 0)])
