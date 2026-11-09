@@ -79,7 +79,11 @@ def _run_max(script: Path, card: str) -> None:
     proc = adapter._call([adapter.SCRIPTS / 'dcc_batch.py', 'max', '--file', script, '--card', card,
                           '--timeout', '600', '--wait', '120', '--version', version])
     skip_if_dcc_session_busy(proc.returncode, proc.stdout, proc.stderr)
-    assert proc.returncode == 0, (proc.stdout + proc.stderr)[-2000:]
+    # dcc_batch exits non-zero for the user's Max startup auto-load scripts
+    # (polyunwrapper_autoload.mse, _maxUsd USD import) even though the job script ran;
+    # the caller asserts on the job's own output below. Fail here only on a real job error.
+    if proc.returncode != 0 and not adapter.startup_script_error(proc):
+        pytest.fail((proc.stdout + proc.stderr)[-2000:])
 
 
 @pytest.mark.max
