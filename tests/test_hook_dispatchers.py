@@ -5,6 +5,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 import pytest
@@ -152,6 +153,17 @@ def test_powershell_spellings(command, flagged):
 @pytest.mark.parametrize("value", [None, 7, ["python"], {"a": 1}])
 def test_non_string_command_is_not_flagged(value):
     assert not _load_pretool().bare_python(value, "Bash")
+
+
+@pytest.mark.parametrize("command,tool", [("$" * 1_000_000, "Bash"), ("\\" * 1_000_000, "PowerShell"),
+                                          ("a" * 1_000_000, "Bash"), ("'" * 1_000_000, "Bash")],
+                         ids=["dollars", "ps-backslashes", "one-word", "quotes"])
+def test_huge_command_is_scanned_in_linear_time(command, tool):
+    """The hook timeout is 10 s; a quadratic scan took ~0.5 s at 200 KB, i.e. ~12 s at 1 MB."""
+    pretool = _load_pretool()
+    start = time.perf_counter()
+    assert not pretool.bare_python(command, tool)
+    assert time.perf_counter() - start < 3
 
 
 def test_bare_python_gets_an_advisory_not_a_decision():
