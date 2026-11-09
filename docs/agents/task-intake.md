@@ -56,9 +56,10 @@ Harness / hygiene / tooling tasks (issues touching `docs/agents/`, hooks, guards
 - Before/after metric: ONE measurable number the change must move, agreed at intake. Examples: cold-entry
   tokens (`tools/state/entry_budget.py --check`, as in #1015), subagent / skill / command calls
   (`tools/hooks/usage_log.py stats --days N`), turns or wall time on a reference card, failing tests. Guard
-  prompts per session are not measured today: `guard.py` only prints an ask/allow decision to the hook's
-  stdout, nothing records the asks/denials. Say how and when it is measured (on `origin/main`
-  before, on the branch after; which command, which card / seed).
+  prompts per session: hook denials are counted by `tools/hooks/agent_trace.py --transcript <session.jsonl>`
+  (the `Hook denials` field, from `permissionDecision` deny/reject in the transcript); guard asks are not
+  measured today. Say how and when it is measured (on `origin/main` before, on the branch after; which
+  command, which card / seed).
 - Reuse an existing measure where one exists — the readiness evaluator `kpi/readiness/…json` (hermes_kanban),
   `tools/hooks/usage_log.py stats` (subagent / skill / command counts), the context-diet test
   `tests/test_context_diet.py` — rather than adding tooling.
