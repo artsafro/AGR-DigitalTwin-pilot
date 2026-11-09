@@ -44,7 +44,7 @@ back before reporting success. Inspection and live-mutation coverage are separat
 4. If the user's own instance is disconnected, inspect Preferences > Add-ons >
    MCP: enabled, Host localhost, Port 9877, Auto Start checked. Online Access
    must be enabled in System preferences; changing preferences in the user's
-   own instance requires his authorization [D231]; an agent-owned instance
+   own instance requires his authorization [D233]; an agent-owned instance
    needs none (next section).
    Click Start MCP Bridge Server and confirm Server is running. Explicitly
    Save Preferences after setup. Changing client config requires Codex reload
@@ -53,7 +53,7 @@ back before reporting success. Inspection and live-mutation coverage are separat
 ## Agent-owned Blender on a copy
 
 The agent may start its own Blender 5.1.2+ with Online Access and the bridge
-on 9877 without asking each time [D231]. Never ask the user to toggle the
+on 9877 without asking each time [D233]. Never ask the user to toggle the
 bridge in his instance; never touch his instance or its preferences.
 
 1. Port 9877 must be free (step 0). If a Blender the agent did not start holds
