@@ -2,23 +2,40 @@
 
 The server sends one MAXScript expression that puts this file's folder on sys.path, imports this module and
 calls `call(tool, root_hex, args_hex)`. Arguments travel hex-encoded so no MAXScript string escaping is needed.
-`call` imports the INSTALLED AGR Tools `runtime.py` from `root` (default: userScripts/AGRTools-0.5.0),
-resolves `handles` to nodes and calls exactly one `runtime.*` function: read-only, or a 0.8 edit
+`call` imports the INSTALLED AGR Tools `runtime.py` from `root` (default: the newest userScripts/AGRTools-<x.y.z>
+with a runtime.py), resolves `handles` to nodes and calls exactly one `runtime.*` function: read-only, or a 0.8 edit
 (`edits_080`: preview, or apply of that preview on export copies / new files, #908), or a 0.9 row preview
-(`edits_090`, #979: mode=preview only, changes nothing), or a phase-2 edit on copies (`PHASE2`, #1021: explicit
-targets, selection restored, preview kept here, new nodes checked against the reported copies). Apart from new
-files written by a 0.8 apply or a phase-2 apply/commit, it never opens, saves,
-imports or exports a file and never passes `select=` (plan section 2: the runtime default is kept).
-Returns a JSON string: {"ok": true, "result": ..., "runtime_version": ..., "runtime_file": ...}
-or {"ok": false, "error": "..."}.
+(`edits_090`, #979: mode=preview only, changes nothing), or a phase-2 preview of the 0.9.0 copy families
+(`PHASE2_PREVIEW`, #1021: cleanup, UV nudge, atlas, UCX, checked export; no node left or deleted). Their apply /
+commit (`PHASE2_APPLY`) is the error `needs_human` here too [D231]. Apart from new files written by a 0.8 apply, it
+never opens, saves, imports or exports a file.
+
+Runtime pin (#1024, mcp-review §2.4.1): a tool group needs a MINIMUM runtime version and its entry function, not
+an exact version, so one installed runtime (0.9.0 and later) serves every group of the catalogue.
+
+Selection contract (docs/plans/agr-mcp.md "Контракт выделения"): empty `handles` without `scope` is the error
+`handles_required` (the runtime is never handed nodes=None, which would mean the user's selection or all geometry);
+`scope: "selection"` takes the current selection explicitly; `checks_070` runs with select=False; the selection
+before the call is restored after it, and a selection that still differs is the error `selection_changed`.
+Errors start with a machine code: handles_required, target_conflict, unknown_handle, scene_mismatch,
+version_mismatch, runtime_missing, unsupported_tool, selection_changed, stale_preview, needs_human.
+
+v2 (#1024 branch 0): plan rows are routed by id (ROUTES) for three bridge tools of the v2 catalogue:
+`agr_check_run` (read/select rows, one Max call for many checks), `agr_op_preview` (an editing row, mode=preview;
+the 1.0 stage buttons too) and `agr_op_apply` (apply of a server-held preview; only the 0.8 rows in APPLY_OVER_MCP,
+anything else is `needs_human`). Every runtime.edits_080/090/100 call passes actor='mcp' when the installed runtime
+accepts `actor` (then the runtime journals the call and the answer says `journaled: true`).
+Returns a JSON string: {"ok": true, "result": ..., "runtime_version": ..., "runtime_file": ..., "selection": ...,
+"doc": ..., "journaled": ...} or {"ok": false, "error": "...", "journaled": ...}.
 """
 import importlib
+import inspect
 import json
 import os
 import sys
 
 FUNCTIONS = {"agr_xview_check": "xview", "agr_matid_check": "matid", "agr_texel_readout": "texel_preview"}
-EXPECTED_RUNTIME = "0.5.0"
+EXPECTED_RUNTIME = "0.5.0"  # minimum runtime of FUNCTIONS (the group pins below are minimums too)
 # AGR Tools 0.7.0 pre-delivery checks (#860): runtime.checks_070(<check>, nodes), read-only, need runtime 0.7.0
 CHECKS_070 = {"agr_scene_census": "census", "agr_scene_units": "units", "agr_model_perimeter_drop": "perimeter_drop",
               "agr_tex_material_type": "material_type", "agr_ucx_audit": "ucx_audit",
@@ -50,25 +67,129 @@ EDITS_090 = {"agr_tex_erm_normal_check": "tex.erm_normal_check", "agr_tex_finish
              "agr_scene_maps_usage": "scene.maps_usage", "agr_light_check": "light.check",
              "agr_qa_procedural_objects": "qa.procedural_objects"}
 RUNTIME_090 = "0.9.0"
-# AGR MCP phase 2 (#1021, plan section 5 "mutations on copies"): preview -> apply on new export copies / one new
-# FBX. tool -> (runtime function, preview family, kind). Targets are explicit: handles, or scope="selection"
-# resolved here into a node list; runtime._targets(None) is never reached. The selection is saved before and
-# restored after every call; a different selection afterwards is the error selection_changed.
-PHASE2 = {"agr_cleanup_preview": ("cleanup_preview", "cleanup", "preview"),
-          "agr_cleanup_apply": ("cleanup_apply", "cleanup", "apply"),
-          "agr_uv_nudge_preview": ("nudge_preview", "nudge", "preview"),
-          "agr_uv_nudge_apply": ("nudge_apply", "nudge", "apply"),
-          "agr_atlas_preview": ("atlas_preview", "atlas", "preview"),
-          "agr_atlas_apply": ("atlas_apply", "atlas", "apply"),
-          "agr_ucx_preview": ("ucx_preview", "ucx", "preview"),
-          "agr_ucx_apply": ("ucx_apply", "ucx", "apply"),
-          "agr_export_preview": ("export_preview", "export", "preview"),
-          "agr_export_commit": ("export_commit", "export", "apply")}
+# 0.5.0 diagnostics: runtime.checks_050(<key>, nodes, path) (plan rows of version 0.5, all read).
+ROWS_050 = {"qa.names": "names", "qa.tris": "tris", "tex.check": "textures", "qa.pivot": "pivot",
+            "qa.geojson": "geojson"}
+RUNTIME_050 = "0.5.0"
+# 0.1 / 0.3 read rows served by one runtime function each (FUNCTIONS above).
+ROWS_FN = {"qa.xview": "xview", "qa.matid": "matid", "udim.texel": "texel_preview"}
+ROWS_070 = {"scene.census": "census", "scene.units": "units", "model.perimeter_drop": "perimeter_drop",
+            "tex.material_type": "material_type", "ucx.audit": "ucx_audit", "atlas.sets_count": "sets_count",
+            "qa.fbx_split": "fbx_split", "qa.glass": "glass", "qa.preflight": "preflight",
+            "qa.scene_hygiene": "scene_hygiene", "qa.xform": "xform", "qa.zero_area": "zero_area"}
+READ_080 = ("scene.missing_maps", "qa.package")
+READ_090 = ("tex.erm_normal_check", "udim.slots", "place.maf_checks", "qa.address", "qa.facade_compare",
+            "qa.normals", "qa.sintez", "scene.maps_usage", "light.check", "qa.procedural_objects")
+# AGR Tools 1.0 conveyor (#1024): runtime.edits_100(<row>, "preview", None, nodes, options, actor="mcp").
+# The same 33 ids as runtime.EDITS_100 (a test pins the equality). Over MCP only preview; apply of a 1.0 row is a
+# panel/dock press (owner answers 06.11.2026), so agr_op_apply answers needs_human for them.
+ROWS_100 = ("project.passport", "source.intake", "scene.source_class", "body.prepare", "model.attach_by_material",
+            "model.move_apart", "model.grid_cleanup", "scene.small_parts", "win.place", "win.generate",
+            "model.glass_planes", "body.capsules", "body.roof", "mat.table", "mat.tiles", "tex.plug_colour",
+            "vpm.build", "udim.rescale", "udim.distortion", "tex.dilate", "udim.plugs", "npm.build",
+            "atlas.facade_strip", "npm.to_vpm", "udim.udims_to_ids", "pack.deliver", "ucx.gap", "ucx.stairs",
+            "light.export", "qa.omk_te", "export.place_by_passport", "agent.request", "agent.accept",
+            "handoff.export", "handoff.import", "handoff.verify", "handoff.restore_materials")
+READ_100 = ("scene.source_class", "tex.plug_colour", "udim.distortion", "udim.udims_to_ids", "ucx.stairs",
+            "qa.omk_te", "handoff.verify")
+# 1.1 rows of the stages (Max <-> Blender handoff, agent stage): routed like the 1.0 rows, minimum runtime 1.1.0.
+ROWS_110 = ("handoff.export", "handoff.import", "handoff.verify", "handoff.restore_materials")
+RUNTIME_110 = "1.1.0"
+# Rows whose input is the bundle, not the selection: without handles/scope the runtime gets an empty node list
+# (handoff.import reads the FBX of the bundle; verify / restore take options.layer or the given handles).
+NO_TARGET_ROWS = ("handoff.import", "handoff.verify", "handoff.restore_materials")
+# Apply over MCP of the 1.1 rows (runtime.MCP_APPLY_100): handoff.export writes only a new bundle folder,
+# handoff.import only the layer AGENT_<req>; the transfer to the role layers stays the button agent.accept [D213].
+MCP_APPLY_110 = ("handoff.export", "handoff.import")
+# Released in package version 1.0.0 (release branch R, #1024); the entry function is the real gate
+# (check_runtime), the minimum refuses older installs.
+RUNTIME_100 = "1.0.1"
+# row -> (group, key, minimum runtime, entry function)
+ROUTES = {}
+ROUTES.update({r: ("fn", k, EXPECTED_RUNTIME, k) for r, k in ROWS_FN.items()})
+ROUTES.update({r: ("c050", k, RUNTIME_050, "checks_050") for r, k in ROWS_050.items()})
+ROUTES.update({r: ("c070", k, RUNTIME_070, "checks_070") for r, k in ROWS_070.items()})
+ROUTES.update({r: ("e080", r, RUNTIME_080, "edits_080") for r in EDITS_080.values()})
+ROUTES.update({r: ("e090", r, RUNTIME_090, "edits_090") for r in EDITS_090.values()})
+ROUTES.update({r: ("e100", r, RUNTIME_110 if r in ROWS_110 else RUNTIME_100, "edits_100") for r in ROWS_100})
+READ_ROWS = frozenset(ROWS_FN) | frozenset(ROWS_050) | frozenset(ROWS_070) | frozenset(READ_080) \
+    | frozenset(READ_090) | frozenset(READ_100)
+EDIT_ROWS = frozenset(ROUTES) - READ_ROWS
+# apply allowed over MCP today: the 0.8 additive / rename rows (export copies, new files, one undo record).
+APPLY_OVER_MCP = frozenset(r for r in EDITS_080.values() if r not in READ_080) | frozenset(MCP_APPLY_110)
+V2_TOOLS = ("agr_check_run", "agr_op_preview", "agr_op_apply")
+# AGR MCP phase 2 (#1021, plan section 5 "mutations on copies"): over MCP only the preview of the runtime 0.9.0 copy
+# families; the matching apply/commit stays the panel/dock button (owner answers 06.11.2026, [D231]).
+PHASE2_PREVIEW = {"agr_cleanup_preview": "cleanup_preview", "agr_uv_nudge_preview": "nudge_preview",
+                  "agr_atlas_preview": "atlas_preview", "agr_ucx_preview": "ucx_preview",
+                  "agr_export_preview": "export_preview"}
+PHASE2_APPLY = ("agr_cleanup_apply", "agr_uv_nudge_apply", "agr_atlas_apply", "agr_ucx_apply", "agr_export_commit")
 RUNTIME_PHASE2 = "0.9.0"
-PREVIEW_KEEP = 8  # previews kept per family; older ones must be re-run
-# family -> {sha256 of the canonical JSON: native preview}. Kept across the importlib.reload the pipe script does,
-# so apply gets the runtime's own object back (tuples stay tuples), and only a preview this bridge produced.
-_PREVIEWS = globals().get("_PREVIEWS", {})
+_STATE = {"journaled": []}
+
+
+class BridgeError(Exception):
+    """An error with a machine code: str(exc) == '<code>: <text>'."""
+
+    def __init__(self, code, text):
+        super().__init__(code + ": " + text)
+        self.code = code
+
+
+def requirement(tool):
+    """(minimum runtime version, entry function) a tool needs from the installed runtime."""
+    if tool in CHECKS_070:
+        return RUNTIME_070, "checks_070"
+    if tool in EDITS_080:
+        return RUNTIME_080, "edits_080"
+    if tool in EDITS_090:
+        return RUNTIME_090, "edits_090"
+    if tool in FUNCTIONS:
+        return EXPECTED_RUNTIME, FUNCTIONS[tool]
+    if tool in PHASE2_PREVIEW:
+        return RUNTIME_PHASE2, PHASE2_PREVIEW[tool]
+    if tool in PHASE2_APPLY:
+        raise BridgeError("needs_human", tool + " is confirmed only by a button in the AGR Tools panel/dock [D231]")
+    raise BridgeError("unsupported_tool", repr(tool))
+
+
+def version_key(text):
+    """'0.9.0' -> (0, 9, 0); anything else -> None (never compared as a string)."""
+    parts = str(text).split(".")
+    if len(parts) != 3 or not all(p.isdigit() for p in parts):
+        return None
+    return tuple(int(p) for p in parts)
+
+
+def check_runtime(mod, minimum, function):
+    """The loaded runtime is at least `minimum` and has `function`; else version_mismatch."""
+    found = getattr(mod, "VERSION", None)
+    key = version_key(found)
+    if key is None or key < version_key(minimum):
+        raise BridgeError("version_mismatch", "AGR Tools runtime version " + str(found) + " < minimum " + minimum
+                          + " (" + str(getattr(mod, "__file__", None)) + ")")
+    if function and not callable(getattr(mod, function, None)):
+        raise BridgeError("version_mismatch", "AGR Tools runtime " + str(found) + " at "
+                          + str(getattr(mod, "__file__", None)) + " has no " + function)
+
+
+def default_root(scripts_dir, minimum):
+    """Newest <scripts_dir>/AGRTools-<x.y.z> holding a runtime.py with a version >= minimum, else None."""
+    best = None
+    try:
+        names = os.listdir(scripts_dir)
+    except OSError:
+        return None
+    for name in names:
+        if not name.startswith("AGRTools-"):
+            continue
+        key = version_key(name[len("AGRTools-"):])
+        path = os.path.join(scripts_dir, name)
+        if key is None or key < version_key(minimum) or not os.path.isfile(os.path.join(path, "runtime.py")):
+            continue
+        if best is None or key > best[0]:
+            best = (key, path)
+    return best[1] if best else None
 
 
 def _rt():
@@ -90,24 +211,38 @@ def _dedupe_own_path():
             seen = True
 
 
-def _load_runtime(root, expected=EXPECTED_RUNTIME):
+def _load_runtime(root, minimum=EXPECTED_RUNTIME, function=None):
     target = os.path.join(root, "runtime.py")
     if not os.path.isfile(target):
-        raise FileNotFoundError("AGR Tools runtime.py not installed at " + target)
+        raise BridgeError("runtime_missing", "AGR Tools runtime.py not installed at " + target)
     mod = sys.modules.get("runtime")
     if mod is not None and _norm(getattr(mod, "__file__", "") or "") != _norm(target):
-        raise RuntimeError("another module named runtime is loaded from " + str(getattr(mod, "__file__", None))
-                           + "; restart Max or point AGR_TOOLS_ROOT at it")
+        raise BridgeError("version_mismatch", "another module named runtime is loaded from "
+                          + str(getattr(mod, "__file__", None)) + "; restart Max or point AGR_TOOLS_ROOT at it")
     if mod is None:
         if not any(p and _norm(p) == _norm(root) for p in sys.path):
             sys.path.insert(0, root)
         mod = importlib.import_module("runtime")
         if _norm(mod.__file__) != _norm(target):
-            raise RuntimeError("imported runtime from " + str(mod.__file__) + ", expected " + target)
-    if getattr(mod, "VERSION", None) != expected:
-        raise RuntimeError("AGR Tools runtime version " + str(getattr(mod, "VERSION", None))
-                           + " != " + expected)
+            raise BridgeError("version_mismatch", "imported runtime from " + str(mod.__file__) + ", expected " + target)
+    check_runtime(mod, minimum, function)
     return mod
+
+
+def _resolve_root(rt, root, minimum):
+    """AGR_TOOLS_ROOT when given; else the folder of an already loaded AGR Tools runtime; else the newest install."""
+    if root:
+        return root
+    mod = sys.modules.get("runtime")
+    loaded = os.path.dirname(getattr(mod, "__file__", "") or "") if mod is not None else ""
+    if loaded and os.path.basename(loaded).startswith("AGRTools-"):
+        return loaded
+    scripts = str(rt.getDir(rt.name("userScripts")))
+    found = default_root(scripts, minimum)
+    if not found:
+        raise BridgeError("runtime_missing", "no AGR Tools >= " + minimum + " installed under " + scripts
+                          + " (AGRTools-<x.y.z>/runtime.py); set AGR_TOOLS_ROOT")
+    return found
 
 
 def _check_scene(rt, scene):
@@ -115,183 +250,224 @@ def _check_scene(rt, scene):
         return
     current = os.path.join(str(rt.maxFilePath), str(rt.maxFileName)) if str(rt.maxFileName) else ""
     if not current or _norm(scene) != _norm(current):
-        raise ValueError("scene mismatch: requested " + scene + ", open document is " + (current or "<untitled>"))
+        raise BridgeError("scene_mismatch", "requested " + scene + ", open document is " + (current or "<untitled>"))
 
 
-def _nodes(rt, handles):
+def _selection(rt):
+    return [n for n in rt.selection]
+
+
+def _handle(rt, node):
+    """Anim handle (getHandleByAnim, as runtime's selection hash); NOT the node handle of maxOps.getNodeByHandle."""
+    return int(rt.getHandleByAnim(node))
+
+
+def _targets(rt, args, rows=()):
+    """Explicit node list for the runtime, never None (plan: Контракт выделения). Rows of NO_TARGET_ROWS may go
+    without handles/scope: their input is the bundle (an empty list, never the user's selection)."""
+    handles = list(args.get("handles") or [])
+    scope = args.get("scope")
+    if rows and all(r in NO_TARGET_ROWS for r in rows) and not handles and scope is None:
+        return []
+    if handles and scope:
+        raise BridgeError("target_conflict", "handles and scope=" + str(scope) + " are two target sources")
+    if scope == "selection":
+        nodes = _selection(rt)
+        if not nodes:
+            raise BridgeError("handles_required", "scope=selection but nothing is selected")
+        return nodes
+    if scope is not None:
+        raise BridgeError("target_conflict", "unknown scope " + repr(scope))
     if not handles:
-        return None
+        raise BridgeError("handles_required", "pass node handles (or scope=selection); an empty target set "
+                          "would take the user's selection or all geometry")
     nodes = []
     for h in handles:
         n = rt.maxOps.getNodeByHandle(int(h))
         if n is None or not rt.isValidNode(n):
-            raise ValueError("unknown node handle " + str(h))
+            raise BridgeError("unknown_handle", "unknown node handle " + str(h))
         nodes.append(n)
     return nodes
 
 
-def _handle(n):
-    return int(n.handle)
+def _restore_selection(rt, before):
+    """Put the selection back to `before` (anim handles); returns the anim handles selected afterwards."""
+    live = [rt.getAnimByHandle(h) for h in before]
+    live = [n for n in live if n is not None and rt.isValidNode(n)]
+    rt.clearSelection()
+    if live:
+        rt.select(live)
+    return sorted(_handle(rt, n) for n in _selection(rt))
+
+
+def _doc(rt):
+    """The open document: full path, or 'untitled' (ObjRef doc, journal doc, preview binding)."""
+    return os.path.join(str(rt.maxFilePath), str(rt.maxFileName)) if str(rt.maxFileName) else "untitled"
+
+
+def accepts_actor(fn):
+    """True when a runtime dispatcher takes `actor` (runtime >= the #1024 base); old runtimes are called without."""
+    try:
+        return "actor" in inspect.signature(fn).parameters
+    except (TypeError, ValueError):
+        return False
+
+
+def _edit(mod, function, row, mode, preview, nodes, options):
+    fn = getattr(mod, function)
+    if accepts_actor(fn):
+        _STATE["journaled"].append(row)  # the runtime journals in a finally, also when it raises
+        return fn(row, mode, preview, nodes, options, actor="mcp")
+    return fn(row, mode, preview, nodes, options)
+
+
+def _guarded(rt, args, body):
+    """Run body() and keep the user's selection: restore it, or fail selection_changed."""
+    before = sorted(_handle(rt, n) for n in _selection(rt))
+    result = body()
+    after = sorted(_handle(rt, n) for n in _selection(rt))
+    restored = False
+    if after != before:
+        after = _restore_selection(rt, before)
+        restored = True
+        if after != before:
+            raise BridgeError("selection_changed", "selection before " + str(before) + ", after restore "
+                              + str(after))
+    return result, {"before_count": len(before), "restored": restored, "scope": args.get("scope") or "handles"}
 
 
 def _json_default(o):
-    """bytes (atlas preview images) -> length + sha256; the native bytes stay in the stored preview."""
+    """bytes (atlas preview PNGs) -> length + sha256: the pipe answer is JSON (native run finding, #1021)."""
     if isinstance(o, (bytes, bytearray)):
         import hashlib
         return {"bytes": len(o), "sha256": hashlib.sha256(bytes(o)).hexdigest()}
     raise TypeError("not JSON-serializable: " + type(o).__name__)
 
 
-def _canonical(value):
-    """The JSON form a client sees, and the sha256 of its canonical text (sorted keys, no NaN)."""
-    text = json.dumps(value, allow_nan=False, sort_keys=True, default=_json_default)
-    import hashlib
-    return json.loads(text), hashlib.sha256(text.encode("utf-8")).hexdigest()
-
-
-def _phase2_targets(rt, args):
-    """Selection contract (plan section 2): non-empty handles XOR scope='selection'; never None."""
-    handles = args.get("handles") or []
-    scope = args.get("scope")
-    if handles and scope is not None:
-        raise ValueError("two target sources: handles and scope=" + repr(scope))
-    if scope is not None and scope != "selection":
-        raise ValueError("unsupported scope " + repr(scope))
-    if not handles and scope is None:
-        raise ValueError("handles_required: give non-empty handles or scope='selection'")
-    if scope == "selection":
-        nodes = list(rt.selection)
-        if not nodes:
-            raise ValueError("scope=selection but the selection is empty")
-        return nodes, [_handle(n) for n in nodes]
-    if len(set(int(h) for h in handles)) != len(handles):
-        raise ValueError("duplicate handle in " + repr(handles))
-    return _nodes(rt, handles), [int(h) for h in handles]
-
-
-def _restore_selection(rt, saved):
-    rt.clearSelection()
-    alive = [n for n in saved if rt.isValidNode(n)]
-    if alive:
-        rt.select(alive)
-
-
-def _store_preview(family, preview):
-    shown, sha = _canonical(preview)
-    store = _PREVIEWS.setdefault(family, {})
-    store.pop(sha, None)
-    store[sha] = preview
-    while len(store) > PREVIEW_KEEP:
-        store.pop(next(iter(store)))
-    return shown
-
-
-def _take_preview(family, preview):
-    if not isinstance(preview, dict):
-        raise ValueError("preview must be the object returned by the preview tool")
-    _shown, sha = _canonical(preview)
-    native = _PREVIEWS.get(family, {}).pop(sha, None)  # single use, as the panel drops it after any apply
-    if native is None:
-        raise ValueError("unknown or altered " + family + " preview (sha256 " + sha[:12]
-                         + "); run the preview tool again")
-    return native
-
-
-def _copies(rt, nodes):
-    return [{"handle": _handle(n), "name": str(n.name)} for n in nodes if rt.isValidNode(n)]
-
-
-def run_phase2(tool, mod, rt, args):
-    fn_name, family, kind = PHASE2[tool]
-    nodes, handles = _phase2_targets(rt, args)
-    fn = getattr(mod, fn_name, None)
-    if fn is None:
-        raise RuntimeError("AGR Tools runtime at " + str(mod.__file__) + " has no " + fn_name)
-    saved = list(rt.selection)
-    before_sel = sorted(_handle(n) for n in saved)
-    before = set(_handle(n) for n in rt.objects)
-    try:
-        if family == "cleanup" and kind == "preview":
-            raw = fn(nodes, args.get("options"))
-        elif family == "export" and kind == "preview":
-            raw = fn(nodes, args["target"])
-        elif family == "export":
-            raw = fn(nodes, _take_preview(family, args.get("preview")), args["target"])
-        elif kind == "apply":
-            raw = fn(nodes, _take_preview(family, args.get("preview")))
-        else:
-            raw = fn(nodes)
-    finally:
-        _restore_selection(rt, saved)
-    after_sel = sorted(_handle(n) for n in rt.selection)
-    if after_sel != before_sel:
-        raise RuntimeError("selection_changed: before " + repr(before_sel) + ", after " + repr(after_sel))
-    after = set(_handle(n) for n in rt.objects)
-    removed = sorted(before - after)
-    if removed:
-        raise RuntimeError("source nodes deleted: " + repr(removed))
-    created = sorted(after - before)
-    if kind == "preview" or family == "export":
-        if created:
-            raise RuntimeError(tool + " left new nodes " + repr(created))
-        result = _store_preview(family, raw) if kind == "preview" else _canonical(raw)[0]
+def _phase2_preview(rt, mod, tool, nodes, args):
+    """One runtime.<family>_preview call (#1021); it may not leave or delete a node."""
+    fn = getattr(mod, PHASE2_PREVIEW[tool])
+    before = set(_handle(rt, n) for n in rt.objects)
+    if tool == "agr_cleanup_preview":
+        raw = fn(nodes, args.get("options"))
+    elif tool == "agr_export_preview":
+        raw = fn(nodes, args["target"])
     else:
-        copies, report = raw
-        out = _copies(rt, copies)
-        if sorted(c["handle"] for c in out) != created:
-            raise RuntimeError("new nodes " + repr(created) + " != reported copies "
-                               + repr([c["handle"] for c in out]))
-        result = {"copies": out, "report": _canonical(report)[0]}
-    return result, {"handles": handles, "scope": args.get("scope")}
+        raw = fn(nodes)
+    after = set(_handle(rt, n) for n in rt.objects)
+    if before - after:
+        raise RuntimeError(tool + " deleted nodes " + repr(sorted(before - after)))
+    if after - before:
+        raise RuntimeError(tool + " left new nodes " + repr(sorted(after - before)))
+    return json.loads(json.dumps(raw, allow_nan=False, sort_keys=True, default=_json_default))
 
 
 def run(tool, root, args):
-    if tool not in FUNCTIONS and tool not in CHECKS_070 and tool not in EDITS_080 and tool not in EDITS_090 \
-            and tool not in PHASE2:
-        raise ValueError("unsupported tool " + repr(tool))
+    if tool in V2_TOOLS:
+        return run_v2(tool, root, args)
+    minimum, function = requirement(tool)
     if tool in EDITS_090 and (args.get("mode", "preview") != "preview" or args.get("preview") is not None):
         raise ValueError(tool + ": 0.9 rows take only mode=preview over MCP (#979)")
-    expected = (RUNTIME_070 if tool in CHECKS_070 else RUNTIME_080 if tool in EDITS_080
-                else RUNTIME_090 if tool in EDITS_090 else RUNTIME_PHASE2 if tool in PHASE2 else EXPECTED_RUNTIME)
     rt = _rt()
     scene = args.get("scene")
     if not isinstance(scene, str) or not scene:
         raise ValueError("scene is required")
     _check_scene(rt, scene)
-    if not root:
-        root = os.path.join(str(rt.getDir(rt.name("userScripts"))), "AGRTools-" + expected)
-    if tool in PHASE2:
-        _phase2_targets(rt, args)  # contract errors before the runtime is even imported
-    mod = _load_runtime(root, expected)
-    if tool in PHASE2:
-        result, info = run_phase2(tool, mod, rt, args)
-        info.update(runtime_version=mod.VERSION, runtime_file=mod.__file__)
-        return result, info
-    if tool in EDITS_080:
-        if not hasattr(mod, "edits_080"):
-            raise RuntimeError("AGR Tools runtime at " + str(mod.__file__) + " has no edits_080 (0.8 base, #908)")
-        result = mod.edits_080(EDITS_080[tool], args.get("mode", "preview"), args.get("preview"),
-                               _nodes(rt, args.get("handles") or []), args.get("options"))
-    elif tool in EDITS_090:
-        if not hasattr(mod, "edits_090"):
-            raise RuntimeError("AGR Tools runtime at " + str(mod.__file__) + " has no edits_090 (0.9 base, #979)")
-        result = mod.edits_090(EDITS_090[tool], "preview", None, _nodes(rt, args.get("handles") or []),
-                               args.get("options"))
-    elif tool in CHECKS_070:
-        result = mod.checks_070(CHECKS_070[tool], _nodes(rt, args.get("handles") or []))
+    nodes = _targets(rt, args)
+    mod = _load_runtime(_resolve_root(rt, root, minimum), minimum, function)
+
+    def body():
+        if tool in EDITS_080:
+            return _edit(mod, "edits_080", EDITS_080[tool], args.get("mode", "preview"), args.get("preview"), nodes,
+                         args.get("options"))
+        if tool in EDITS_090:
+            return _edit(mod, "edits_090", EDITS_090[tool], "preview", None, nodes, args.get("options"))
+        if tool in CHECKS_070:
+            return mod.checks_070(CHECKS_070[tool], nodes, select=False)
+        if tool in PHASE2_PREVIEW:
+            return _phase2_preview(rt, mod, tool, nodes, args)
+        return getattr(mod, function)(nodes)
+    result, selection = _guarded(rt, args, body)
+    return result, {"runtime_version": mod.VERSION, "runtime_file": mod.__file__, "selection": selection,
+                    "doc": _doc(rt)}
+
+
+def _row(row, allowed, what):
+    if not isinstance(row, str) or row not in ROUTES:
+        raise BridgeError("unsupported_tool", "unknown plan row " + repr(row))
+    if row not in allowed:
+        raise BridgeError("unsupported_tool", repr(row) + " is not " + what)
+    return ROUTES[row]
+
+
+def _call_row(mod, row, mode, preview, nodes, options):
+    group, key, _minimum, function = ROUTES[row]
+    if group == "fn":
+        return getattr(mod, key)(nodes)
+    if group == "c050":
+        return mod.checks_050(key, nodes, path=(options or {}).get("path"))
+    if group == "c070":
+        return mod.checks_070(key, nodes, select=False)
+    return _edit(mod, function, row, mode, preview, nodes, options)
+
+
+def run_v2(tool, root, args):
+    """agr_check_run / agr_op_preview / agr_op_apply: plan rows by id (ROUTES), one Max call."""
+    if tool == "agr_check_run":
+        rows = list(args.get("check_ids") or ())
+        if not rows:
+            raise ValueError("check_ids is empty")
+        routes = [_row(r, READ_ROWS, "a read/select row (agr_check_run)") for r in rows]
+        mode = "preview"
     else:
-        result = getattr(mod, FUNCTIONS[tool])(_nodes(rt, args.get("handles") or []))
-    return result, {"runtime_version": mod.VERSION, "runtime_file": mod.__file__}
+        rows = [args.get("op")]
+        routes = [_row(rows[0], EDIT_ROWS, "an editing row (agr_op_preview/agr_op_apply)")]
+        mode = "apply" if tool == "agr_op_apply" else "preview"
+        if mode == "apply" and rows[0] not in APPLY_OVER_MCP:
+            raise BridgeError("needs_human", "apply of " + rows[0] + " is confirmed only by a button in the "
+                              "AGR Tools panel/dock")
+        if mode == "apply" and not isinstance(args.get("preview"), dict):
+            raise BridgeError("stale_preview", "apply needs the server-held preview report")
+    rt = _rt()
+    scene = args.get("scene")
+    if not isinstance(scene, str) or not scene:
+        raise ValueError("scene is required")
+    _check_scene(rt, scene)
+    expect = args.get("expect") or {}
+    if expect.get("doc") is not None and expect["doc"] != _doc(rt):
+        raise BridgeError("stale_preview", "document changed since the preview: " + str(expect["doc"]) + " -> "
+                          + _doc(rt))
+    nodes = _targets(rt, args, rows)
+    minimum = max((r[2] for r in routes), key=version_key)
+    mod = _load_runtime(_resolve_root(rt, root, minimum), minimum, None)
+    for _group, _key, row_min, function in routes:
+        check_runtime(mod, row_min, function)
+    if expect.get("runtime_version") is not None and expect["runtime_version"] != mod.VERSION:
+        raise BridgeError("stale_preview", "AGR Tools runtime changed since the preview: "
+                          + str(expect["runtime_version"]) + " -> " + str(mod.VERSION))
+    options = args.get("options")
+
+    def body():
+        if tool == "agr_check_run":
+            return {"checks": {r: _call_row(mod, r, "preview", None, nodes, options) for r in rows}}
+        return _call_row(mod, rows[0], mode, args.get("preview") if mode == "apply" else None, nodes,
+                         None if mode == "apply" else options)
+    result, selection = _guarded(rt, args, body)
+    return result, {"runtime_version": mod.VERSION, "runtime_file": mod.__file__, "selection": selection,
+                    "doc": _doc(rt)}
 
 
 def call(tool, root_hex, args_hex):
+    _STATE["journaled"] = []
     try:
         _dedupe_own_path()
         root = bytes.fromhex(str(root_hex)).decode("utf-8")
         args = json.loads(bytes.fromhex(str(args_hex)).decode("utf-8"))
         result, info = run(str(tool), root, args)
-        out = {"ok": True, "result": result}
+        out = {"ok": True, "result": result, "journaled": bool(_STATE["journaled"]),
+               "journaled_rows": list(_STATE["journaled"])}
         out.update(info)
         return json.dumps(out, allow_nan=False)
     except Exception as exc:  # noqa: BLE001 - every failure goes back to the client as a named error
-        return json.dumps({"ok": False, "error": type(exc).__name__ + ": " + str(exc)})
+        return json.dumps({"ok": False, "error": type(exc).__name__ + ": " + str(exc),
+                           "journaled": bool(_STATE["journaled"]), "journaled_rows": list(_STATE["journaled"])})

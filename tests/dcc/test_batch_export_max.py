@@ -8,6 +8,8 @@ import tempfile
 from pathlib import Path
 
 import pytest
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+from dt_ai.core.max_env import max_child_env  # noqa: E402
 
 
 @pytest.fixture
@@ -33,7 +35,7 @@ JOB = ROOT / "tools" / "export" / "benchmark_export_max.py"
 )
 def test_benchmark_one_pass_and_fbx(tmp_path):
     out = tmp_path / "bench-v001"
-    env = os.environ.copy()
+    env = max_child_env()
     env["AGR_BENCH_OUT"] = str(out)
     env["AGR_BENCH_SIZES"] = "4"
     env["AGR_BENCH_ROUTES"] = "c_one_pass,b_fbx"
@@ -68,7 +70,7 @@ def test_benchmark_one_pass_and_fbx(tmp_path):
 )
 def test_export_safety_probe(tmp_path):
     out = tmp_path / "safety"
-    env = os.environ.copy()
+    env = max_child_env()
     env["AGR_SAFETY_OUT"] = str(out)
     env.pop("AGR_BATCH_EXPORT_REQUEST", None)
     probe = ROOT / "tools" / "export" / "export_safety_probe_max.py"

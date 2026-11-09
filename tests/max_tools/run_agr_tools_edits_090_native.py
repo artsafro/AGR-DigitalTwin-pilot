@@ -59,7 +59,8 @@ ACTS = [a for a in model.ACTIONS if a.tool in agr.EDITS_090]
 
 
 def package():
-    assert agr.VERSION == '0.9.0' and model.VERSION == agr.VERSION, agr.VERSION
+    # shipped in 0.9.0 (#979) and in every later release (1.0.0, #1024 R)
+    assert agr.VERSION == model.VERSION and tuple(int(x) for x in agr.VERSION.split('.')) >= (0, 9, 0), agr.VERSION
     data = OUT / 'installed' / 'data'
     got = sorted(p.relative_to(data).as_posix() for p in data.rglob('*') if p.is_file())
     assert {'procedural_classes.json', 'streets/PROVENANCE.md'} <= set(got), got

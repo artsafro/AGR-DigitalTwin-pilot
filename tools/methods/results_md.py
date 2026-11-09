@@ -86,6 +86,8 @@ def _row(r: dict) -> str:
     size = None if r.get("file_size_bytes") is None else round(r["file_size_bytes"] / 1024)
     out_share = fit.get("ucx_outside_share")
     variant = r["variant"]
+    if r.get("synthetic") is False:
+        variant += " drawing"
     if r.get("methods_only") is not None:
         if (r["methods_only"] or {}).get("delivery") is not False:
             raise ValueError(f"{r['row']}: a methods_only row must say delivery=false, got {r['methods_only']!r}")
@@ -149,6 +151,13 @@ def render(rows: list[dict], cls: str) -> str:
     if synthetic:
         lines += ["", "Synthetic inputs and why:", ""]
         lines += [f"- {k} ({', '.join(v)})" for k, v in sorted(synthetic.items())]
+    drawing = {}
+    for r in rows:
+        if r.get("synthetic") is False and r.get("drawing_reason"):
+            drawing.setdefault(r["drawing_reason"], []).append(r["row"])
+    if drawing:
+        lines += ["", "Drawing inputs and why:", ""]
+        lines += [f"- {k} ({', '.join(v)})" for k, v in sorted(drawing.items())]
     if body:
         lines += _comparison(rows)
     return "\n".join(lines) + "\n"
@@ -156,6 +165,18 @@ def render(rows: list[dict], cls: str) -> str:
 
 CMP_HEAD = ("| Object | Variant | Rows synthetic / drawing | Model tris | Deviation max m | Deviation p95 m "
             "| Closed shells | Drawing |")
+
+
+def _drawing_status(drw: dict) -> str:
+    """``measured`` only when the drawing row does not carry a not-measured reason."""
+    reason = drw.get("not_measured")
+    if reason is None:
+        return "measured"
+    if (not isinstance(reason, str) or not reason.startswith("not measured:")
+            or not reason[len("not measured:"):].strip()):
+        raise ValueError(f"{drw.get('row')}: not_measured must start with 'not measured:' and name the cause, "
+                         f"got {reason!r}")
+    return reason.strip()
 
 
 def _synthetic_flag(r: dict) -> bool:
@@ -194,7 +215,7 @@ def _comparison(rows: list[dict]) -> list[str]:
         def both(f):
             return f"{f(syn)} / {f(drw)}"
 
-        status = ("measured" if syn and drw else "not measured: no drawing row in results.jsonl" if syn
+        status = (_drawing_status(drw) if syn and drw else "not measured: no drawing row in results.jsonl" if syn
                   else "no synthetic row")
         lines.append("| " + " | ".join([
             bench, variant, both(lambda r: "-" if r is None else r["row"]),

@@ -28,6 +28,8 @@ ROOT = POLY.parent
 sys.path.insert(0, str(POLY))
 
 import polygon_core as core
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+from dt_ai.core.max_env import max_child_env  # noqa: E402
 
 DCC = Path('C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.py')
 
@@ -140,6 +142,8 @@ def compare_actual(actual):
             if len(names) == 1:
                 expected = [o for o in expected if o['name'] == names[0]]
                 report = _geojson_as_object(names[0], report)
+        elif run.get('tool') in core.PER_OBJECT_100 and len(run.get('names') or []) == 1:
+            expected = [o for o in expected if o['name'] == run['names'][0]]  # one press per object (#1024 R)
         for item in core.compare_report(expected, report):
             item['button'] = button
             item['scene'] = scene
@@ -215,7 +219,7 @@ def main(argv=None):
         catalog_path = out / 'catalog.json'
         catalog_path.write_text(json.dumps(core.load_catalog(), ensure_ascii=False, indent=1) + '\n',
                                 encoding='utf-8')
-        env = dict(os.environ, AGR_POLYGON_OUT=str(out), AGR_POLYGON_ROOT=str(ROOT),
+        env = dict(max_child_env(), AGR_POLYGON_OUT=str(out), AGR_POLYGON_ROOT=str(ROOT),
                    AGR_POLYGON_CATALOG=str(catalog_path))
         proc = subprocess.run([sys.executable, str(DCC), 'max', '--file',
                                str(POLY / 'build' / 'run_inside_max.py'), '--version', args.version,

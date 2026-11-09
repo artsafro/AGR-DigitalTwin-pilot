@@ -55,6 +55,10 @@ UCX_MASK = re.compile(r'^UCX_SM_(?P<address>[A-Za-z0-9_]+)_(?P<kind>Main|Ground)
 _UCX_READ = re.compile(r'^(?:ucx_)+(?:(?P<sm>sm)_)?(?P<address>.+?)_(?P<kind>main|ground)(?:_(?P<num>\d+))?$',
                        re.IGNORECASE)
 _ADDRESS = re.compile(r'[A-Za-z0-9]+(?:_[A-Za-z0-9]+)*')
+# 1.0.1 (KPP1 e2e 20261106-075555-c179f5f0): the 0.8 UCX builder names its pieces after the export copy
+# (ucx_core.ucx_export_names: `UCX_<mesh>_AGR_ucx__NN`), so `_Main` / `_Ground` is no longer the end of the name and
+# ucx.rename skipped all 98 pieces. The working marker `_AGR_ucx_` is read as the piece number of the family <mesh>.
+_UCX_BUILDER = re.compile(r'_AGR_ucx__(?P<num>\d+)$', re.IGNORECASE)
 
 NPM_MAP = {'diffuse': 'd', 'normal': 'n', 'opacity': 'o', 'metalness': 'm', 'roughness': 'r'}
 VPM_MAP = {'diffuse': 'Diffuse', 'normal': 'Normal', 'opacity': None, 'metalness': 'ERM', 'roughness': 'ERM',
@@ -113,7 +117,7 @@ def parse_ucx(name):
     Never trims digits or underscores off the address (U3); `UCX_` in any case and repeated is one prefix (U4)."""
     if not is_ucx_like(name):
         return 'not a UCX name'
-    m = _UCX_READ.fullmatch(name.strip())
+    m = _UCX_READ.fullmatch(_UCX_BUILDER.sub(lambda b: '_' + b.group('num'), name.strip()))
     if not m:
         return 'UCX name without _Main/_Ground: ' + name
     address = m.group('address')

@@ -357,14 +357,14 @@ def test_icons_are_new_and_distinct():
     for name in (r['icon'] for r in ROWS_090.values()):
         assert sum(1 for b in bodies.values() if b == bodies[name]) == 1, name
         assert re.fullmatch(r'[a-z]+', name)
-    assert len(icons.names()) == 68
+    assert len(icons.names()) == 105  # +32 icons of the 1.0 rows (#1024 branch 0), +5 of 1.1 (4 handoff rows + the dock)
 
 
 def test_rail_shows_09_actions_from_version_090_and_greys_them_before():
     rail08 = m.rail(suite['blocks'], suite['rows'], '0.8.1')  # what the branches A-E3 shipped on
     done = {m.row_of(a.id) for _, d, _ in rail08 for a in d}
     assert not done & set(ROWS_090)
-    assert m.VERSION == runtime().VERSION == '0.9.0'  # release branch R (#979)
+    assert m.VERSION == runtime().VERSION == '1.1.0'  # 0.9 shipped in 0.9.0 (#979); release branch R of #1024
     rail = m.rail(suite['blocks'], suite['rows'])
     assert set(ROWS_090) <= {m.row_of(a.id) for _, d, _ in rail for a in d}
     assert all(rm.shipped(r['version'], m.VERSION) for r in ROWS_090.values())
@@ -428,7 +428,7 @@ def test_mcp_has_19_preview_only_tools():
         assert name == 'agr_{}_{}'.format(block, rest) and bridge.EDITS_090[name] == row
         assert mode == ROWS_090[row]['mode']
     assert set(bridge.EDITS_090) == {n for n, *_ in tools.EDITS_090} and set(bridge.EDITS_090) <= set(tools.PHASE0)
-    assert bridge.RUNTIME_090 == runtime().VERSION
+    assert bridge.RUNTIME_090 == '0.9.0' and bridge.RUNTIME_100 == '1.0.1' and bridge.RUNTIME_110 == runtime().VERSION == '1.1.0'
     cat = tools.catalog()
     for name, *_ in tools.EDITS_090:
         spec = cat[name]
@@ -449,7 +449,8 @@ def test_mcp_has_19_preview_only_tools():
 def test_changelog_has_one_released_09_section_naming_all_19_rows():
     """Release branch R (#979): the branch subsections (0, A-D, E1-E3) are merged into one `0.9.0 (#979)` section."""
     text = (PKG / 'CHANGELOG.md').read_text(encoding='utf-8')
-    assert 'в работе' not in text[:text.index('## 0.8.1')] and text.count('## 0.9.0') == 1
+    # 1.0 (#1024): the section '## 1.0.0 (#1024) — в работе' sits above; the released 0.9.0 section stays clean
+    assert 'в работе' not in text[text.index('## 0.9.0 (#979)'):text.index('## 0.8.1')] and text.count('## 0.9.0') == 1
     head = text[text.index('## 0.9.0 (#979)\n'):text.index('## 0.8.1')]
     assert not re.search(r'^### (?:[ABCD]|E[123]) ', head, re.M) and '(ветка 0)' not in head
     subs = re.split(r'^### ', head, flags=re.M)[1:]
@@ -473,7 +474,8 @@ def _poly():
 
 def test_polygon_has_32_new_stations_each_with_expected_and_reason():
     core, support = _poly()
-    assert core.TOUR_LAST == '0.9' and [b['version'] for b in core.bases()][-2:] == ['0.8', '0.9']
+    # #1024 branch 0: base 1.0 follows 0.9 and the tour ends there
+    assert core.TOUR_LAST == '1.1' and [b['version'] for b in core.bases()][-4:] == ['0.8', '0.9', '1.0', '1.1']
     new = [s for s in core.stations() if s['version'] in ('0.8', '0.9')]
     assert len(new) == 32
     assert [s['id'] for s in new] == ['0.8.{}'.format(i) for i in range(1, 14)] + [
@@ -577,12 +579,12 @@ def test_unknown_fragment_file_and_branch_writer(tmp_path, monkeypatch):
     assert sorted(p.stem for p in out.glob('*.json')) == sorted(b for b, o in core.OWNER.items() if o == 'A')
     assert json.loads((out / 'place.replace.json').read_text(encoding='utf-8'))['shipped'] is True
     with pytest.raises(SystemExit):
-        core.write_branch('Q')
+        core.write_branch('Z')  # Q is a branch of #1024 since branch 0 of 1.0
 
 
 def test_committed_fragments_are_branch_fragments():
-    core, _ = _poly()  # branches A-E3 of #979 commit stations/<branch>.json (+ <branch>_build.py); nothing else
-    assert {p.stem for p in core.STATIONS_DIR.glob('*.json')} <= set(core.BRANCHES)
+    core, _ = _poly()  # branches A-E3 of #979 and F-U of #1024 commit stations/<branch>.json (+ <branch>_build.py); nothing else
+    assert {p.stem for p in core.STATIONS_DIR.glob('*.json')} <= set(core.ALL_BRANCHES)
     assert (core.STATIONS_DIR / 'README.md').is_file()
 
 

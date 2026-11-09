@@ -162,6 +162,11 @@ def test_layout_has_all_sections_and_actions(main):
     suite = roadmap.load_file(SUITE)
     shipped = [a for a in model.ACTIONS
                if roadmap.shipped(roadmap.row(suite, model.row_of(a.id))['version'], model.VERSION)]
+    # release 1.0.0 (#1024 R): the 18 released 1.0 stage buttons of old rows are on their block pages too
+    shipped_10 = [a for a in model.ACTIONS_100 if not a.wip and a.tool.partition('.')[0] == roadmap.row(
+        suite, a.tool)['block']]
+    assert len(shipped_10) == 18 and 'udim_udims_to_ids' in {a.id for a in shipped_10}
+    shipped += shipped_10
     assert set(p.buttons) == {a.id for a in shipped}  # 0.8 actions stay greyed until VERSION 0.8.0 (#908)
     for a in shipped:
         b = p.buttons[a.id]
@@ -353,13 +358,77 @@ def test_rail_has_path_and_ten_blocks_in_order_with_planned_greyed(main):
     items = [p.rail.item(i).text() for i in range(p.rail.count())]
     assert items == ['Путь'] + ['{} {}'.format(b['number'], b['short_ru']) for b in suite['blocks']]
     assert p.pages.count() == 11 and p.rail.currentRow() == 0
-    planned = [r for r in suite['rows'] if roadmap.vkey(r['version']) > roadmap.vkey(model.VERSION)]
-    assert set(p.planned) == {r['id'] for r in planned} and len(planned) == 35  # 1.0-1.x: 18 + 17 after 0.9.0 (#979)
+    # block pages 0-9: rows whose id prefix is their block; the 15 new 1.0 rows (#1024) are stage buttons only
+    planned = [r for r in suite['rows'] if r['id'].partition('.')[0] == r['block'] and (
+        roadmap.vkey(r['version']) > roadmap.vkey(model.VERSION) or r.get('deferred') or r['fate'] == 'step')]
+    # release 1.0.0 (#1024 R): 16 tail/obsolete rows (1.x) + 3 rows folded into a big button (fate step)
+    assert set(p.planned) == {r['id'] for r in planned} and len(planned) == 19
+    v10 = [r for r in planned if r['version'] == '1.0']
+    assert not [r for r in v10 if r['fate'] == 'stage'] and len([r for r in v10 if r['fate'] == 'step']) == 3
     for r in planned:
         b = p.planned[r['id']]
-        assert not b.isEnabled() and b.text().endswith('в версии ' + r['version'])
+        assert not b.isEnabled() and b.text().endswith(roadmap.planned_label(r))
+    assert p.planned['tex.vpm_sets'].text().endswith('в кнопке vpm.build')
+    assert p.planned['tex.browser'].text().endswith('в версии 1.x')
+    stage_only = {r['id'] for r in suite['rows'] if r['id'].partition('.')[0] != r['block']}  # 15 new rows of 1.0 + 4 handoff rows of 1.1
+    assert len(stage_only) == 15 + 4 and not stage_only & set(p.planned)
+    assert not any(p.findChild(QtWidgets.QToolButton, 'agr_planned_' + rid) for rid in stage_only)
+    assert stage_only <= {model.BY_ID[aid].tool for aid in p.stage_buttons}
     rail_colours = {p.rail.item(i).foreground().color().name() for i in range(1, 11)}
     assert len(rail_colours) == 10
+
+
+def test_stage_rail_big_buttons_second_rows_wip_disabled(main, qtbot, monkeypatch):
+    be = FakeBackend(5)
+    p = make(main, be)
+    suite = roadmap.load_file(SUITE)
+    assert p.findChild(QtWidgets.QLabel, 'agr_stage_title').text() == '<b>{}</b>'.format(model.MENU_100)
+    assert list(p.stages) == [s['id'] for s in suite['stages']]  # plan stage order, on the «Путь» page
+    assert p.pages.widget(0).isAncestorOf(p.findChild(QtWidgets.QScrollArea, 'agr_stage_rail'))
+    assert set(p.stage_buttons) == {a.id for a in model.ACTIONS_100} and len(p.stage_buttons) == 33 + 4
+    for s in suite['stages']:
+        big, status, small = p.stages[s['id']]
+        a = model.BY_TOOL[s['big_button']]
+        assert big is p.stage_buttons[a.id] and big.objectName() == 'agr_wip_' + a.tool
+        assert big.text() == s['label_ru'] and big.toolButtonStyle() == QtCore.Qt.ToolButtonTextUnderIcon
+        assert not big.icon().isNull() and status.text() == 'не начат'
+        assert [b.objectName() for b in small] == ['agr_wip_' + rid for rid in s['rows'] if rid != s['big_button']]
+        assert all(b.toolButtonStyle() == QtCore.Qt.ToolButtonIconOnly and b.iconSize().width() < big.iconSize().width()
+                   for b in small)
+        # second row sits under its big button, inside the same stage column
+        col = p.findChild(QtWidgets.QWidget, 'agr_stage_{}'.format(s['id']))
+        assert all(col.isAncestorOf(b) for b in [big] + small)
+        assert all(b.geometry().top() > big.geometry().bottom() for b in small)
+    stage_label = {s['big_button']: s['label_ru'] for s in suite['stages']}
+    for aid, b in p.stage_buttons.items():  # release 1.0.0 (#1024 R): every stage button visible and enabled
+        a = model.BY_ID[aid]
+        assert b.isEnabled() and not a.wip and not b.isHidden()
+        assert b.text() == stage_label.get(a.tool, a.label)
+        assert b.toolTip().startswith(model.stage_tip(a.tool)) and 'Когда:' in b.toolTip() and not b.icon().isNull()
+    p.run('census')  # after a run the stage buttons are enabled again
+    assert all(b.isEnabled() for b in p.stage_buttons.values())
+    # a wip stage button (a branch not merged at R) never runs and says so
+    wip = model.BY_ID['npm_to_vpm']._replace(wip=True, tip=model.WIP_TIP)
+    monkeypatch.setitem(model.BY_ID, 'npm_to_vpm', wip)
+    before = list(be.events)
+    assert p.run('npm_to_vpm') is None and be.events == before
+    assert p.status.text() == 'НПМ → ВПМ: в работе, #1024'
+
+
+def test_stage_status_comes_from_the_passport(main):
+    be = FakeBackend(5)
+    suite = roadmap.load_file(SUITE)
+    stages = [{'id': s['id'], 'status': 'todo'} for s in suite['stages']]
+    stages[1]['status'] = 'work'
+    stages[9]['status'] = 'done'
+    be.passport = lambda: {'stages': stages}
+    p = make(main, be)
+    assert p.stages[1][1].text() == 'в работе' and p.stages[9][1].text() == 'готов'
+    assert p.stages[0][1].text() == 'не начат'
+    stages[2]['status'] = 'lost'  # unreadable passport: said on every stage, never a guessed status
+    p.refresh_path()
+    assert {lab.text() for _, lab, _ in p.stages.values()} == {'паспорт: ошибка'}
+    assert 'lost' in p.stages[0][1].toolTip()
 
 
 def test_path_nodes_open_tabs_tooltips_and_cards(main, qtbot):
@@ -372,8 +441,10 @@ def test_path_nodes_open_tabs_tooltips_and_cards(main, qtbot):
     assert btn.isEnabled() and 'NPM-2.7-2' in btn.toolTip() and 'Когда:' in btn.toolTip()
     shipped = p.findChild(QtWidgets.QToolButton, 'agr_path_light.check')
     assert shipped.isEnabled() and 'в версии' not in shipped.text()  # shipped in 0.9.0 (#979)
-    planned = p.findChild(QtWidgets.QToolButton, 'agr_path_light.export')
-    assert not planned.isEnabled() and 'в версии 1.0' in planned.text()
+    released = p.findChild(QtWidgets.QToolButton, 'agr_path_light.export')
+    assert released.isEnabled() and 'в версии' not in released.text()  # shipped in 1.0.0 (#1024 R)
+    planned = p.findChild(QtWidgets.QToolButton, 'agr_path_tex.browser')  # a 1.x tail row
+    assert not planned.isEnabled() and 'в версии 1.x' in planned.text()
     box = p.show_card('qa.glass')
     text = box.text()
     for part in ('Что делает:', 'Когда нужна:', 'Вход:', 'Результат:', 'Сцена: только чтение', 'Связанные кнопки:'):

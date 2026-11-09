@@ -1,6 +1,6 @@
 # План: свой MCP `agr-mcp` для 3ds Max и Blender
 
-Карточка: issue #807. Это только план. Кода сервера здесь нет.
+Карточка: issue #807. Исходно это был только план; сервер с тех пор написан (`src/agr_mcp`, фаза 0 #841, каталог v2 #1024 — см. §2a). Разделы 1–7 ниже — исторический план v1.
 
 Ветка issue в тексте карточки — `plan/agr-mcp`. Этот worktree уже на `improve/issue-807-plan-our-own-agr-mcp-server-for-3ds-max`; план лежит здесь, переименование не делалось.
 
@@ -185,6 +185,33 @@ rg -n -F -- "max_exec.py" C:/Users/artsafro/hermes_kanban/scripts
 
 Finding офлайн-чекеров — это `twinqa.report.Finding`, не словарь `_report`. Сервер сериализует поля, которые у Finding уже есть; новые ключи не выдумывает.
 
+## 2a. Каталог v2 (#1024, ветка 0; `tool_schema_version = 2`)
+
+Источник: `BRANCH0-U-L12-ADDENDUM.md` «Ветка 0», `SPLIT.md` п. 7, `mcp-review/REPORT.md` §3.2, §3.3, §3.7, §3.9, ответы владельца 06.11.2026. Код: `src/agr_mcp/catalog.py`, `envelope.py`, `preview_store.py`, `journal.py`, `ops_d108.py`, `max_side/max_bridge.py`.
+
+**Каталог генерируется из `docs/plans/agr-tools-suite.json`** (`catalog.py`), ручных кортежей для v2 нет:
+
+| Инструмент | Правило отбора строк плана | Сейчас |
+|---|---|---|
+| `agr_<префикс>_<имя>` — кнопки этапов | `version 1.0`, `fate stage`, `mcp yes`, префикс id не из десяти блоков плана | 15: `agr_project_passport` … `agr_agent_accept` |
+| `agr_check_run(check_ids[], scene, handles\|scope\|refs)` | `mcp yes`, `mode read/select`, версия выпущена (`versions[].status = done`) или 1.0 `fate stage` | 38 строк |
+| `agr_op_preview(op, …)` → `preview_id` | `mcp yes`, `mode copy/undo/file/agent`, версии 0.8 / 0.9 и 1.0 `fate stage`, кроме кнопок этапов | 32 строки |
+| `agr_op_apply(preview_id, idempotency_key?)` | только строки 0.8 с правкой | 11 строк; остальное — `needs_human` |
+
+Строка плана без маршрута в мосту (`max_bridge.ROUTES`) валит сборку каталога (`RuntimeError`), молчаливого пропуска нет. Правящие строки 0.1–0.4 (`udim.nudge`, `atlas.npm`, `ucx.build`, `export.checked`, `export.cleanup`) старше контракта `edit_core` и маршрута не имеют — в `op` не входят (разрыв, отдельная задача). 52 инструмента v1 остаются (`tools.PHASE0`), в описании помечены `Deprecated`. Хук ветки U: `ops_d108.register(catalog) -> [Spec]` (сейчас пустой), `tools.catalog()` добавляет его спеки без правки `tools.py`; дубль имени — ошибка сборки.
+
+**Мост.** Три новых имени моста: `agr_check_run` (много строк за один вызов Max), `agr_op_preview`, `agr_op_apply`. Строка → группа: `fn` (xview/matid/texel_preview), `c050` (`checks_050`), `c070` (`checks_070`, `select=False`), `e080`/`e090`/`e100` (`edits_*`). Минимум рантайма для `edits_100` — 0.9.0 плюс наличие функции `edits_100` (база ветки 0 ещё пишет `VERSION = "0.9.0"`; настоящий фильтр — функция). Во все `edits_*` мост передаёт `actor="mcp"`, если рантайм принимает `actor` (`inspect.signature`); старый рантайм без `actor` вызывается как раньше. Apply строки не из 0.8 мост отвергает сам (`needs_human`), второй рубеж после сервера; рантайм 1.0 отвергает его третьим (`edits_100`, actor ≠ panel).
+
+**Конверт v2** (`envelope.py`): `tool_schema_version`, `server_version`, `tool`, `status`, `summary` (≤ 10 строк), `counts`, `findings_top` (≤ 20, у каждой находки `ref` = ObjRef), `truncated`, `report_uri` (`agr://report/<sha256>`, файл `<data>/reports/<sha256>.json`, data = `AGR_MCP_DATA_DIR` или `%LOCALAPPDATA%\agr-mcp`), `next_actions`, по случаю `preview_id`, `runtime_version`, `doc`, и `result`. Совместимость: у v1-инструментов `result` всегда целиком, а текстовый content — JSON конверта (как раньше); у v2 текст — `summary`, `result` убирается выше `AGR_MCP_INLINE_MAX` (64 КиБ), тогда `truncated: true` и `report_uri`. Ошибка — `isError` с `structuredContent {status: "error", error_code, error, summary, next_actions}`; текст ошибки прежний. Код берётся из ведущего `code:` моста/рантайма/сервера (`envelope.error_code`); коды: `busy`, `stale_preview`, `scene_mismatch`, `version_mismatch`, `instance_ambiguous` (резерв, ветка U), `invariant_broken` (резерв, D108), `needs_human`, `host_unavailable`, `handles_required`, `target_conflict`, `unknown_handle`, `selection_changed`, `not_implemented`, `runtime_missing`, `unsupported_tool`, `idempotency_conflict`, `invalid_input`, `unknown_tool`, `maxscript_error`, `error`.
+
+**Preview у сервера** (`preview_store.py`): `preview_id = sha256(canonical(report))` (канон как `edit_core.canonical`). Привязка: `host`, `instance` (`AGR_MCP_MAX_PID`), `doc` (документ, который назвал мост), `runtime_version`, `state_hash` (`plan.state_hash`), `op`, цели (`scene` + `handles`/`scope`). TTL `AGR_MCP_PREVIEW_TTL` (1800 с). `agr_op_apply` берёт только `preview_id` (+ `idempotency_key`): неизвестный, просроченный, уже применённый или с другим pid Max → `stale_preview`; мост сверяет документ и версию рантайма → `stale_preview`; glue рантайма сверяет `plan.hash` и свежий `state_hash` (`edit_core.check_preview` / `require_current` → `StalePreview` → `stale_preview`). Повтор с тем же `idempotency_key` отдаёт сохранённый ответ без второго apply; тот же ключ для другого preview — `idempotency_conflict`. Хранение — память процесса; `AGR_MCP_PREVIEW_STORE=file` дополнительно пишет `<data>/previews/<id>.json` (переживает перезапуск сервера в пределах TTL). Preview с `status: not_implemented` не хранится. Preview строки 0.9/1.0 тоже хранится (id в ответе), но применить его можно только кнопкой в панели/доке.
+
+**ObjRef.** Вход v2 принимает `refs: [{host, doc, handle, name}]` (`contract_core.check_ref`): ровно один источник целей из `handles` / `refs` / `scope` (иначе `target_conflict`); `host` только `max` (иначе `target_conflict`); все refs одного документа; при `scene: "live"` документ refs становится `scene`, и мост отвергает другой открытый документ (`scene_mismatch`). Схемы v1 не менялись.
+
+**Один журнал** (`journal.py`, §3.9): журнал панели `adapters/max/agr_tools/journal_core.py` (`%LOCALAPPDATA%\AGRTools\journal\<sha1(doc)>.jsonl`, `AGR_JOURNAL_DIR`). На каждый вызов MCP одна строка с `actor: mcp`: строки `edits_*` пишет сам рантайм внутри Max (мост отвечает `journaled: true`), всё остальное — сервер (офлайн-инструменты, `checks_070`, старый рантайм без `actor`, ошибки до Max) с полями `mcp_tool`, `host`, `instance`, `error_code`, `preview_id`, `client`, `card`, `server_version`. `agr_check_run` с частью строк, записанных рантаймом, даёт серверную строку только по остальным (`rows`). Аудит транспорта (`audit.jsonl`) остаётся журналом безопасности.
+
+**Чего ещё нет:** профили `observer`/`operator`/`modeller`/`dev` (ветка U; сейчас `tools/list` отдаёт всё), демон на хост и lease вместо файлового замка (ветка U), операции D108 (`ops_d108.py`, ветка U), ресурсы паспорта/снимка, `HostAdapter` для `*_max.py` (интерфейс уже в `contract_core.py`, реализация — владельцы веток), прогон v2 против живого Max (лот L12).
+
 ## 3. Архитектура
 
 Рекомендация: один процесс stdio на клиента, Python-пакет `agr-mcp`, протокол MCP. Транспорт stdio, как у `blender` в `.agents/mcp_config.json` (`--transport stdio`) и у `3dsmax-mcp` (`uv run --directory ... 3dsmax-mcp`). Локальный HTTP не нужен, пока один агент держит один stdio-сеанс, а общую сцену держит файловый lock. HTTP понадобится, только если несколько клиентов должны делить один процесс сервера; это не фаза 0.
@@ -313,16 +340,15 @@ Cursor (как уже было; записи `mcp-registrations.json`: `config` 
 
 Фаза 1 — мутации на копиях: `agr_cleanup_apply`, `agr_ucx_apply`, `agr_export_commit`, затем `nudge_apply` и `atlas_apply` теми же именами. Выходной тест: исходный `.max` по хешу не изменился, новый FBX читается `agr_fbx_readback`, повторный commit в тот же путь — отказ. Сборщики `build_flat` / `maf_findings` / `flora_findings` остаются в пилоте; в MCP их поднимаем только если агенту иначе приходится тащить их через произвольный `bpy`.
 
-Реализация этой фазы — issue #1021 (в issue она названа «phase 2», фаза 0 здесь = «phase 1» там). Десять инструментов, все `max-live`, runtime 0.9.0: `agr_cleanup_preview` / `agr_cleanup_apply`, `agr_uv_nudge_preview` / `agr_uv_nudge_apply`, `agr_atlas_preview` / `agr_atlas_apply`, `agr_ucx_preview` / `agr_ucx_apply`, `agr_export_preview` / `agr_export_commit`. Решения, зафиксированные кодом и тестами (`tests/agr_mcp/test_agr_mcp_phase2.py`):
+Реализация этой фазы — issue #1021 (в issue она названа «phase 2», фаза 0 здесь = «phase 1» там), сужена решением [D231]: по MCP только preview. Пять инструментов `max-live`, runtime 0.9.0, только чтение: `agr_cleanup_preview`, `agr_uv_nudge_preview`, `agr_atlas_preview`, `agr_ucx_preview`, `agr_export_preview`. Их пары `agr_cleanup_apply`, `agr_uv_nudge_apply`, `agr_atlas_apply`, `agr_ucx_apply`, `agr_export_commit` остаются в списке и всегда отвечают `needs_human` без вызова Max (host `offline`); мост в Max отвечает так же (вторая линия). Apply — кнопка панели/дока (ответы владельца 06.11.2026). Решения, зафиксированные кодом и тестами (`tests/agr_mcp/test_agr_mcp_phase2.py`):
 
-- Цели только явные (контракт выделения §2, #851): непустой `handles` или `scope: "selection"`; оба или ни одного — ошибка `handles_required` / «two target sources» до вызова Max. `runtime._targets(None)` не достигается.
-- Выделение сохраняется до вызова и восстанавливается после у всех десяти; расхождение после восстановления — `selection_changed`. `select_findings` в этой фазе не вводится.
-- `preview` хранит мост в Max (по sha256 канонического JSON, 8 на семейство); apply получает родной объект runtime, только неизменённый и только один раз. Байты в preview (PNG атласа) клиент видит как `{"bytes", "sha256"}`.
-- Новые узлы после apply = ровно отчётные копии; удалённый исходный узел — ошибка с его handle; preview, оставивший узел, — ошибка.
-- `target` экспорта — новый абсолютный `.fbx` в существующей папке; `.report.json` и `.partial` рядом тоже новые; ни один из них не файл сцены. Проверка на сервере, до Max.
-- Lock: каждый инструмент держит `agr-3dsmax-live.lock` на весь вызов (таймаут `AGR_MCP_MAX_TIMEOUT`); журнал — одна строка на вызов, у фазы плюс `scope`, `handles`, `written`.
+- Цели только явные (контракт выделения §2, #851): непустой `handles` или `scope: "selection"`; оба или ни одного — ошибка `target_conflict` / `handles_required` до вызова Max.
+- Выделение восстанавливается после каждого preview (`_guarded` моста); не восстановилось — `selection_changed`.
+- Preview не может оставить или удалить узел (ошибка с handle). Байты в preview (PNG атласа) клиент видит как `{"bytes", "sha256"}`.
+- `target` экспорта — новый абсолютный `.fbx` в существующей папке; `.report.json` и `.partial` рядом тоже новые; ни один из них не файл сцены. Проверка на сервере, до Max (`invalid_target`).
+- Lock: каждый preview держит `agr-3dsmax-live.lock` на весь вызов (таймаут `AGR_MCP_MAX_TIMEOUT`); журнал и аудит — одна строка на вызов.
 - Люк произвольного кода не меняется: `agr_exec_unsafe` регистрируется только при `AGR_MCP_UNSAFE` ровно `1` (вопрос 4 §6, Артём 2026-11-04); у инструментов фазы нет поля `code`.
-- Нативная сверка: `tests/agr_mcp/run_agr_mcp_phase2_native.py` в `3dsmaxbatch` на сцене полигона `polygon_all` выполняет тот же MAXScript, что сервер шлёт в pipe, и сравнивает с прямым вызовом runtime (Max 2026.3 и 2024.2.5: 10/10).
+- Нативная сверка: `tests/agr_mcp/run_agr_mcp_phase2_native.py` в `3dsmaxbatch` на сцене полигона `polygon_all` сравнивает MCP preview с прямым вызовом runtime и проверяет отказ `needs_human` у apply/commit (прежний прогон 10/10 на Max 2026.3 и 2024.2.5 был до [D231] и покрывал apply; после сужения не перезапускался).
 
 Фаза 2 — замена чужого MCP в skills и в разделе `3ds Max — 3dsmax-mcp` файла CAPABILITIES. Выходной тест: skill Ground/MAF/Flora вызывает `agr_*` и `dcc_batch` там, где batch ещё нужен; сценарий карточки больше не требует `execute_maxscript` / `execute_blender_code`. Регистрацию `3dsmax-mcp` и Blender Lab из конфигов убираем отдельным решением, когда фаза 2 зелёная. До того обе регистрации живут рядом.
 

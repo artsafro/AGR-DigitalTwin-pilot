@@ -2,16 +2,44 @@
 
 Real PNGs are rendered from the SVG sources with PySide6 at release build time (tools/max/agr_icons.py);
 they are never committed (*.png is LFS-tracked, LFS is not used).
-QT_QPA_PLATFORM=offscreen is set here, before any PySide6 import in this directory (#897).
+QT_QPA_PLATFORM=offscreen (#897) is applied only by the session fixture `offscreen_qt`, which is requested by the
+test modules that mention PySide6 and is rolled back at session end. It is never set at import: a 3ds Max started
+from this process must not inherit it ("no Qt platform plugin could be initialized", #1024 1.0.1).
 """
 import os
+import struct
+import zlib
+from pathlib import Path
 
-os.environ.setdefault('QT_QPA_PLATFORM', 'offscreen')
+import pytest
 
-import struct  # noqa: E402
-import zlib  # noqa: E402
+_QT_MODULES = {}
 
-import pytest  # noqa: E402
+
+def _needs_qt(path):
+    key = str(path)
+    if key not in _QT_MODULES:
+        try:
+            _QT_MODULES[key] = 'PySide6' in Path(key).read_text(encoding='utf-8', errors='replace')
+        except OSError:
+            _QT_MODULES[key] = False
+    return _QT_MODULES[key]
+
+
+@pytest.fixture(scope='session')
+def offscreen_qt():
+    """Offscreen Qt for the PySide6 tests only; the previous value is restored at session end."""
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setenv('QT_QPA_PLATFORM', 'offscreen')
+        yield
+
+
+def pytest_collection_modifyitems(items):
+    here = Path(__file__).resolve().parent
+    for item in items:
+        path = Path(str(item.fspath)).resolve()
+        if here in path.parents and path.name != Path(__file__).name and _needs_qt(path):
+            item.fixturenames.insert(0, 'offscreen_qt')
 
 
 def _png(size):
@@ -43,3 +71,15 @@ def synthetic_icon_pngs(tmp_path_factory):
     os.environ['AGR_ICON_PNG_DIR'] = str(root)
     yield str(root)
     del os.environ['AGR_ICON_PNG_DIR']
+
+
+@pytest.fixture(scope='session', autouse=True)
+def isolated_journal(tmp_path_factory):
+    """#1024 branch 0: every edits_080/090/100 call journals a line; tests never write the user's journal."""
+    old = os.environ.get('AGR_JOURNAL_DIR')
+    os.environ['AGR_JOURNAL_DIR'] = str(tmp_path_factory.mktemp('agr_journal'))
+    yield os.environ['AGR_JOURNAL_DIR']
+    if old is None:
+        os.environ.pop('AGR_JOURNAL_DIR', None)
+    else:
+        os.environ['AGR_JOURNAL_DIR'] = old

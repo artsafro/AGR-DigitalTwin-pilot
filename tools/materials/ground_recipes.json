@@ -42,10 +42,6 @@
           "reason": "The SPOZU states the paver, not the joint colour"
         },
         {
-          "field": "joint_mm",
-          "reason": "provisional, user review: no joint width in SPOZU; default 5 mm, same physical grid in both profiles"
-        },
-        {
           "field": "npm_joint_px",
           "reason": "No sourced NPM pixel joint. The width is provisional joint_mm rasterized at 30 px/m, not an independent measurement"
         },
@@ -54,7 +50,14 @@
           "reason": "No sourced VPM pixel joint. The width is provisional joint_mm rasterized at 1024 px/m, not an independent measurement"
         }
       ],
-      "joint_mm": 5
+      "joint_mm": 5,
+      "approved": [
+        {
+          "field": "joint_mm",
+          "value": 5,
+          "reason": "Joint 5 mm approved by the owner 2026-11-06 (materials audit Q11); was provisional, no joint width in SPOZU"
+        }
+      ]
     },
     "Mulch": {
       "family": "particles",
@@ -164,10 +167,6 @@
           "reason": "The SPOZU states the paver, not the joint colour"
         },
         {
-          "field": "joint_mm",
-          "reason": "provisional, user review: no joint width in SPOZU; default 5 mm, same physical grid in both profiles"
-        },
-        {
           "field": "npm_joint_px",
           "reason": "No sourced NPM pixel joint for TileRed. The width is provisional joint_mm rasterized at 30 px/m"
         },
@@ -176,7 +175,14 @@
           "reason": "No sourced VPM pixel joint for TileRed. The width is provisional joint_mm rasterized at 1024 px/m"
         }
       ],
-      "joint_mm": 5
+      "joint_mm": 5,
+      "approved": [
+        {
+          "field": "joint_mm",
+          "value": 5,
+          "reason": "Joint 5 mm approved by the owner 2026-11-06 (materials audit Q11); was provisional, no joint width in SPOZU"
+        }
+      ]
     },
     "Gravel": {
       "family": "particles",
@@ -303,10 +309,6 @@
           "reason": "The SPOZU states the paver, not the joint colour"
         },
         {
-          "field": "joint_mm",
-          "reason": "provisional, user review: no joint width in SPOZU; default 5 mm, same physical grid in both profiles"
-        },
-        {
           "field": "npm_joint_px",
           "reason": "No sourced NPM pixel joint for TileDark. The width is provisional joint_mm rasterized at 30 px/m"
         },
@@ -315,7 +317,14 @@
           "reason": "No sourced VPM pixel joint for TileDark. The width is provisional joint_mm rasterized at 1024 px/m"
         }
       ],
-      "joint_mm": 5
+      "joint_mm": 5,
+      "approved": [
+        {
+          "field": "joint_mm",
+          "value": 5,
+          "reason": "Joint 5 mm approved by the owner 2026-11-06 (materials audit Q11); was provisional, no joint width in SPOZU"
+        }
+      ]
     },
     "FlowerBed": {
       "family": "foliage",
