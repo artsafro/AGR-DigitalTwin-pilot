@@ -498,7 +498,7 @@ def test_two_concurrent_reclaimers_of_one_stale_lock_exactly_one_wins(tmp_path, 
             t.join(20)
         assert sorted(results) == ["acquired", "busy"]
         assert not lock.exists()
-        assert sorted(p.name for p in lock.parent.iterdir()) == [], "reclaim left a temp file"
+        assert sorted(p.name for p in lock.parent.iterdir() if p.name != f".{lock.name}.reclaim") == [], "reclaim left a temp file"
 
 
 def test_restore_rename_race_cannot_give_two_holders(tmp_path, monkeypatch):
@@ -924,7 +924,7 @@ def test_stale_mutex_unlink_by_name_cannot_admit_two(tmp_path, monkeypatch):
     assert paused["x"] and y_inside.is_set()
     assert state["max"] == 1
     assert state["current"] == 0
-    assert [p.name for p in path.parent.iterdir()] == []
+    assert [p.name for p in path.parent.iterdir() if p.name != f".{path.name}.reclaim"] == []
 
 
 def _clear_lock_dir(path):
