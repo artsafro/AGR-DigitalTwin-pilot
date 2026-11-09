@@ -41,6 +41,34 @@ def readback(path):
         len(d.get('images', [])), [o if isinstance(o, str) else o.get('name') for o in d.get('other_objects', [])][:5]
 
 
+def counts(place_dir):
+    """Placed instances per library (engine report) vs the SPOZU count inside 568BF and the schedule quantity."""
+    here = Path(__file__).resolve().parent
+    res = json.loads((Path(place_dir) / 'results.json').read_text(encoding='utf-8'))
+    parts = {f['block']: f for f in json.loads((here / 'site-parts.json').read_text(encoding='utf-8'))['flora']}
+    maf = {m['set_id']: m for m in json.loads((here / 'maf/site-maf-set.json').read_text(encoding='utf-8'))['positions']}
+    rows = {}
+    for var in ('npm', 'vpm'):
+        v = res['variants'][var]
+        for lid, c in v['counts'].items():
+            m = v['meta'].get(lid, {})
+            key = m.get('block', lid) if m.get('kind') == 'flora' else lid
+            row = rows.setdefault(key, {'kind': m.get('kind')})
+            row[f'{var}_library'] = lid
+            row[f'{var}_placed'] = c['placed']
+            if m.get('kind') == 'flora' and key in parts:
+                row.update(schedule_qty=parts[key]['qty'], spozu_in=parts[key]['spozu_in'], pos=parts[key]['pos'])
+            elif lid in maf:
+                row.update(schedule=maf[lid]['schedule'], spozu_in=maf[lid]['spozu_count_568BF'])
+            elif lid.startswith('VAT_MAF_T3508'):
+                row.update(schedule=f"*T3508/{int(lid[-2:])}", spozu_in=1)
+        row_excl = {}
+        for e in v['excluded']:
+            row_excl[e['reason']] = row_excl.get(e['reason'], 0) + 1
+        rows[f'_excluded_{var}'] = row_excl
+    return rows
+
+
 def main():
     root = Path(sys.argv[1])
     out = {'run': str(root), 'hashes': json.loads((root / 'hashes.json').read_text()),
@@ -53,7 +81,10 @@ def main():
                   'validate_scene': stages(root / f'validate-scene-{p}.stdout'), 'sintez': sintez(root / f'sintez-{p}.json'),
                   'vpm_slots': len(a.get('vpm_slots', []))}
     for extra in sys.argv[2:]:
-        out.setdefault('sintez_extra', {})[extra] = sintez(extra)
+        if extra.startswith('--place='):
+            out['counts'] = counts(extra.split('=', 1)[1])
+        else:
+            out.setdefault('sintez_extra', {})[extra] = sintez(extra)
     print(json.dumps(out, ensure_ascii=False, indent=1))
 
 

@@ -14,7 +14,9 @@ from shapely.ops import unary_union
 folder = Path(sys.argv[1])
 evidence = json.loads((folder / 'evidence.json').read_text())
 adapter = json.loads(Path('C:/x/t_d94665f2/paving_ground_inputs_v4.json').read_text(encoding='utf-8'))
-offset = json.loads(Path('C:/x/t_d94665f2/ground_v014/readback_npm.json').read_text())['placement_offset']
+# Ground origin offset: optional 2nd argument (v015: textured/readback_npm.json); default the v014 run.
+offset_file = sys.argv[2] if len(sys.argv) > 2 else 'C:/x/t_d94665f2/ground_v014/readback_npm.json'
+offset = json.loads(Path(offset_file).read_text())['placement_offset']
 cam = evidence['views']['top']
 scale = 768 / cam['ortho_scale']
 
