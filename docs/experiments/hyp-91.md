@@ -30,7 +30,7 @@ Branch: `experiment/hyp-91`; initially clean worktree.
 HEAD: `3cf7c9358591a12813ec5bcbcb8e082ddf5fe342`.  
 Interpreter: CPython 3.14.7, Windows; full environment is in result provenance.
 
-`experiments/hyp-91/freeze.py` exclusively created `frozen.json` and `frozen.sha256`
+`archive/2026-11:experiments/hyp-91/freeze.py` exclusively created `frozen.json` and `frozen.sha256`
 before the first baseline call. It made **no** `inspect_mesh` calls. The JSON contains
 all 188 explicit indexed-vertex/face meshes, labels, per-case baseline predictions,
 transform metadata and the acceptance table with measurements unset. It has not been
@@ -85,7 +85,7 @@ count-based acceptance was checked on **every case in every repetition**, not ju
 
 ## Prototype method
 
-`experiments/hyp-91/candidate.py` scans **all unordered vertex triples**, selects the
+`archive/2026-11:experiments/hyp-91/candidate.py` scans **all unordered vertex triples**, selects the
 nonzero cross product with largest squared magnitude, drops its dominant coordinate,
 and projects to the other two coordinates. It does not rely on the first triple or a
 Newell normal (which cancels for Crossed A). It enumerates unordered non-adjacent
@@ -101,7 +101,7 @@ production report implementation was tested.
 
 ## Actual results (no failures aggregated away)
 
-Raw evidence: `experiments/hyp-91/red.json` retains all 188 initial baseline reports
+Raw evidence: `archive/2026-11:experiments/hyp-91/red.json` retains all 188 initial baseline reports
 and every failed label; `results.json` retains each of 188 cases separately for each
 of three runs, including full baseline reports, per-face counts, confusion and timings.
 
@@ -204,13 +204,13 @@ stdlib experiment runner as pytest tests. No pipeline or DCC was run.
 |---|---|
 | `technical_library/mesh_audit/core.py` | `e8e0c762152895d65fb6d910199bb8d2fd9324539559bb51374eb0adeae9949b` |
 | `tests/test_shared_library.py` | `2a456a80f328a677000de3bb48e66b969efde9884d28722488c2f35ef77d47ad` |
-| `experiments/hyp-91/freeze.py` | `5b0bcb7a44ecf1c2efa677a36b4dfdaeacfc005f4467002067caf273fb55bbc2` |
-| `experiments/hyp-91/candidate.py` | `66c4ef6cb1b55fe9e344a68aad3e8dea706a33133d1241321495352190fa712f` |
-| `experiments/hyp-91/run.py` | `aae5ccc91829e9037fc6e6600a79af51c4a1804310b6467f2b94f35ab6664107` |
-| `experiments/hyp-91/frozen.json` | `fcf04fcc056975b36a3d6d1bffb74fee6be5352633da6be8dbbbd99dbfbd4f88` |
-| `experiments/hyp-91/frozen.sha256` | `8831062dda82d77c0f666adcc05d52d4fdda731d4bdfd8d39bb2105e8e0cb556` |
-| `experiments/hyp-91/red.json` | `bb1ec17ab7c0871a286383639db8c5a99bafaae1ed8e6f96c8f273901305a50a` |
-| `experiments/hyp-91/results.json` | `b9dcc22bb8e1ecfe415fcec8df08b9873ee20fc32e269bba6e28725531ff7775` |
+| `archive/2026-11:experiments/hyp-91/freeze.py` | `5b0bcb7a44ecf1c2efa677a36b4dfdaeacfc005f4467002067caf273fb55bbc2` |
+| `archive/2026-11:experiments/hyp-91/candidate.py` | `66c4ef6cb1b55fe9e344a68aad3e8dea706a33133d1241321495352190fa712f` |
+| `archive/2026-11:experiments/hyp-91/run.py` | `aae5ccc91829e9037fc6e6600a79af51c4a1804310b6467f2b94f35ab6664107` |
+| `archive/2026-11:experiments/hyp-91/frozen.json` | `fcf04fcc056975b36a3d6d1bffb74fee6be5352633da6be8dbbbd99dbfbd4f88` |
+| `archive/2026-11:experiments/hyp-91/frozen.sha256` | `8831062dda82d77c0f666adcc05d52d4fdda731d4bdfd8d39bb2105e8e0cb556` |
+| `archive/2026-11:experiments/hyp-91/red.json` | `bb1ec17ab7c0871a286383639db8c5a99bafaae1ed8e6f96c8f273901305a50a` |
+| `archive/2026-11:experiments/hyp-91/results.json` | `b9dcc22bb8e1ecfe415fcec8df08b9873ee20fc32e269bba6e28725531ff7775` |
 
 ## Remaining work and limits
 

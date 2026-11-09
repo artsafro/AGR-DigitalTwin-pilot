@@ -14,6 +14,8 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+pytestmark = pytest.mark.job  # TEC26 AC08 job data; opt-in with -m job
+
 ROOT = Path(__file__).resolve().parents[2]
 JOB = ROOT / "jobs" / "TEC26-OKS" / "AC08" / "kernel-ops-v001"
 EVIDENCE = JOB / "evidence" / "kernel_ops.json"

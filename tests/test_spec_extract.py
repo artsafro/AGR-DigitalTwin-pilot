@@ -117,7 +117,7 @@ def test_attachments_and_collision_are_not_body():
     without, _ = extract_spec(box_building(canopy=False), OBJECT)
     assert rep["attachment_parts_ignored"] == 1
     assert with_canopy.floors == without.floors
-    # attachments are deferred (HARNESS_PLAN §4: first step without them): no spec entry yet
+    # attachments are deferred (archive/2026-11:docs/HARNESS_PLAN.md §4: first step without them): no spec entry yet
     assert with_canopy.attachments == [] and with_canopy == without
 
 

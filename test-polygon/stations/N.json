@@ -1,0 +1,99 @@
+{
+ "schema": 1,
+ "branch": "N",
+ "issue": "#1024",
+ "stations": [
+  {
+   "button": "tex.dilate",
+   "options": {
+    "mask": "alpha",
+    "padding": 4
+   },
+   "objects": [
+    {
+     "name": "SM_NDilOk_Main",
+     "role": "Main",
+     "builder": "N_build",
+     "extra": {
+      "n": {
+       "png": {
+        "T_NDilOk_Diffuse_1.1001.png": "rgba_island"
+       }
+      }
+     }
+    },
+    {
+     "name": "SM_NDilBad_Main",
+     "role": "Main",
+     "builder": "N_build",
+     "extra": {
+      "n": {
+       "png": {
+        "T_NDilBad_Diffuse_1.1001.png": "rgb_white_island"
+       }
+      }
+     }
+    }
+   ],
+   "expected": [
+    {
+     "name": "SM_NDilOk_Main",
+     "scene": "polygon_all",
+     "expect": "pass",
+     "codes": []
+    },
+    {
+     "name": "SM_NDilBad_Main",
+     "scene": "polygon_all",
+     "expect": "fail",
+     "codes": [
+      "dilate_no_mask"
+     ]
+    }
+   ],
+   "reason": "padded PNG copies go to a new folder next to the map; a map without alpha (mask=alpha) is refused with a reason - GeoAGR gave no padding on a white background and no word about it"
+  },
+  {
+   "button": "udim.plugs",
+   "objects": [
+    {
+     "name": "SM_NPlugOk_Main",
+     "role": "Main",
+     "builder": "N_build",
+     "extra": {
+      "n": {
+       "matid": 3
+      }
+     }
+    },
+    {
+     "name": "SM_NPlugBad_Main",
+     "role": "Main",
+     "builder": "N_build",
+     "extra": {
+      "n": {
+       "matid": 1005
+      }
+     }
+    }
+   ],
+   "expected": [
+    {
+     "name": "SM_NPlugOk_Main",
+     "scene": "polygon_all",
+     "expect": "pass",
+     "codes": []
+    },
+    {
+     "name": "SM_NPlugBad_Main",
+     "scene": "polygon_all",
+     "expect": "fail",
+     "codes": [
+      "plug_matid"
+     ]
+    }
+   ],
+   "reason": "plug islands (0.05 square, tile centre) on a copy; a work ID >= 1001 is refused (K3) - GridUVLayout22 took 1000+ID without a range check"
+  }
+ ]
+}

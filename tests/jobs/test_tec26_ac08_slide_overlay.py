@@ -15,6 +15,8 @@ sys.path.insert(0, str(SCRIPTS))
 
 import slide_overlay as so  # noqa: E402
 
+pytestmark = pytest.mark.job  # TEC26 AC08 job data; opt-in with -m job
+
 AC08 = ROOT / "jobs/TEC26-OKS/AC08"
 SPEC_P, SHEET_P = AC08 / "vpm_textures.json", AC08 / "sheet-facades.json"
 SPEC = json.loads(SPEC_P.read_text(encoding="utf-8"))

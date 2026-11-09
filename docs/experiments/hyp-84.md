@@ -10,7 +10,7 @@ This confirms serialization accuracy for synthetic straight-entity benchmark pla
 
 Source: pilot issue #84 and `docs/experiments/acad-coreconsole-agr-plans.md`. Base: `3cf7c9358591a12813ec5bcbcb8e082ddf5fe342`. Methods: existing ezdxf plan encoder/reader and AutoCAD core-console encoder/native readers. No geometry precision workaround or recentering.
 
-Copied `spec.json`, `object.json`, `etalon.json`, `tolerances.json` from tracked `benchmark/bench-b01-box`, `bench-b02-corner-niche`, `bench-b02t-terrace` to `C:/Users/artsafro/.hermes/profiles/dt-experimenter-cursor/cache/scratch/agr-autocad-t_5071f110/inputs/` before measurement. All 12 source and copy SHA256 values matched before/after (tracked `experiments/hyp-84/evidence/input-hashes.json`). No binary etalon was opened. `etalon.json` contains provenance, not vertices; these spec-derived references are not independent native architectural etalons. B02t terrace parapets are excluded.
+Copied `spec.json`, `object.json`, `etalon.json`, `tolerances.json` from tracked `benchmark/bench-b01-box`, `bench-b02-corner-niche`, `bench-b02t-terrace` to `C:/Users/artsafro/.hermes/profiles/dt-experimenter-cursor/cache/scratch/agr-autocad-t_5071f110/inputs/` before measurement. All 12 source and copy SHA256 values matched before/after (tracked `archive/2026-11:experiments/hyp-84/evidence/input-hashes.json`). No binary etalon was opened. `etalon.json` contains provenance, not vertices; these spec-derived references are not independent native architectural etalons. B02t terrace parapets are excluded.
 
 Transforms are applied in **metres**, then converted to drawing mm:
 
@@ -76,7 +76,7 @@ Maxima across three repetitions, mm. `offline` = ezdxf own DXF; `read_dwg` = nat
 
 ## Automation cost
 
-Seconds, median of three; all raw samples in `experiments/hyp-84/evidence/measurements.json`. Offline write+read excludes imports, oracle, audit, uv startup and dependency installation. Native timings include wrapper and fresh process startup. Not equivalent-work throughput comparisons; machine load varied.
+Seconds, median of three; all raw samples in `archive/2026-11:experiments/hyp-84/evidence/measurements.json`. Offline write+read excludes imports, oracle, audit, uv startup and dependency installation. Native timings include wrapper and fresh process startup. Not equivalent-work throughput comparisons; machine load varied.
 
 | Transform | Offline write+read | Native create/save/export | DWG reopen | ezdxf native DXF read | Native offline DXF read | Native own DXF read | Paired write+DWG reopen |
 |---|---:|---:|---:|---:|---:|---:|---:|

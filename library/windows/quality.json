@@ -1,0 +1,942 @@
+{
+ "schema": "window-quality/1",
+ "standard": "59a44f670b392caffd4a09a7082376afe94322da3c2939de77eabda27987a777",
+ "counts": {
+  "pass": 61,
+  "quarantine": 6,
+  "duplicate": 0
+ },
+ "types": [
+  {
+   "id": "W01",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "поля сдвигаются на 63.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 63.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "W02",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "поля сдвигаются на 63.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 63.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "W03",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "поля сдвигаются на 75.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 75.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "W04",
+   "role": "curtain",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "поля сдвигаются на 43.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 43.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "W05",
+   "role": "curtain",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "поля сдвигаются на 68.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 68.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "W06",
+   "role": "curtain",
+   "verdict": "pass",
+   "why": [],
+   "notes": [],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 18.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "W07",
+   "role": "curtain",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "поля сдвигаются на 43.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 43.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "D01",
+   "role": "door",
+   "verdict": "pass",
+   "why": [],
+   "notes": [],
+   "same_as": null,
+   "family": "F73",
+   "face_axis": "-y",
+   "deviation_mm": 0.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "D02",
+   "role": "door",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "поля сдвигаются на 73.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F73",
+   "face_axis": "-y",
+   "deviation_mm": 73.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "D03",
+   "role": "door_system",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "поля сдвигаются на 78.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F73",
+   "face_axis": "-y",
+   "deviation_mm": 78.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "D04",
+   "role": "door",
+   "verdict": "quarantine",
+   "why": [
+    "тип не типизирован (typed: false)"
+   ],
+   "notes": [],
+   "same_as": null,
+   "family": "F73",
+   "face_axis": "-y",
+   "deviation_mm": null,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "W01_H",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "поля сдвигаются на 63.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 63.0,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "W02_H",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "поля сдвигаются на 63.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 63.0,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "W03_H",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "поля сдвигаются на 75.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 75.0,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "W01_N",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "поля сдвигаются на 63.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 63.0,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "W04_N",
+   "role": "curtain",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "поля сдвигаются на 43.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 43.0,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "D03_W",
+   "role": "door_system",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "поля сдвигаются на 78.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F73",
+   "face_axis": "-y",
+   "deviation_mm": 78.0,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "CW_021",
+   "role": "curtain",
+   "verdict": "quarantine",
+   "why": [
+    "тип не типизирован (typed: false)",
+    "нет разбивки: panes_m и opaque_m пусты"
+   ],
+   "notes": [],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": null,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "CW_022",
+   "role": "curtain",
+   "verdict": "quarantine",
+   "why": [
+    "тип не типизирован (typed: false)",
+    "нет разбивки: panes_m и opaque_m пусты"
+   ],
+   "notes": [],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": null,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "KPP1-W01",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 7.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "KPP1-W02",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 7.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "KPP1-W03",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 7.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "WT-01",
+   "role": "balcony_block",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "occurrences не посчитаны (библиотечный источник)",
+    "поля сдвигаются на 58.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F58",
+   "face_axis": "-y",
+   "deviation_mm": 58.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "WT-02",
+   "role": "window",
+   "verdict": "quarantine",
+   "why": [
+    "стандартный профиль неприменим: нет задней плоскости рамы и стекла, геометрия до 957 мм в глубину, лицо 57/143 мм (L10)"
+   ],
+   "notes": [
+    "occurrences не посчитаны (библиотечный источник)"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": null,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "WT-03",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "occurrences не посчитаны (библиотечный источник)"
+   ],
+   "same_as": null,
+   "family": "F58",
+   "face_axis": "-y",
+   "deviation_mm": 14.5,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "WT-04",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "occurrences не посчитаны (библиотечный источник)",
+    "поля сдвигаются на 58.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F58",
+   "face_axis": "-y",
+   "deviation_mm": 58.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "WT-05",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "occurrences не посчитаны (библиотечный источник)",
+    "поля сдвигаются на 58.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F58",
+   "face_axis": "-y",
+   "deviation_mm": 58.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "WT-06",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "occurrences не посчитаны (библиотечный источник)",
+    "поля сдвигаются на 60.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 60.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "WT-07",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "occurrences не посчитаны (библиотечный источник)",
+    "поля сдвигаются на 60.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 60.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "WT-08",
+   "role": "balcony_block",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "occurrences не посчитаны (библиотечный источник)",
+    "поля сдвигаются на 58.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F58",
+   "face_axis": "-y",
+   "deviation_mm": 58.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "WT-09",
+   "role": "door",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "occurrences не посчитаны (библиотечный источник)",
+    "поля сдвигаются на 58.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F58",
+   "face_axis": "-y",
+   "deviation_mm": 58.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "WT-10",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "occurrences не посчитаны (библиотечный источник)"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 0.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "WT-11",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "occurrences не посчитаны (библиотечный источник)"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 0.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "WT-12",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "occurrences не посчитаны (библиотечный источник)"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 0.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "WT-13",
+   "role": "door",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "occurrences не посчитаны (библиотечный источник)",
+    "поля сдвигаются на 69.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F73",
+   "face_axis": "-y",
+   "deviation_mm": 69.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "WT-14",
+   "role": "door",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "occurrences не посчитаны (библиотечный источник)",
+    "поля сдвигаются на 69.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F73",
+   "face_axis": "-y",
+   "deviation_mm": 69.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "WT-15",
+   "role": "door",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "occurrences не посчитаны (библиотечный источник)",
+    "поля сдвигаются на 69.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F73",
+   "face_axis": "-y",
+   "deviation_mm": 69.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "WT-16",
+   "role": "door",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "occurrences не посчитаны (библиотечный источник)",
+    "поля сдвигаются на 69.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F73",
+   "face_axis": "-y",
+   "deviation_mm": 69.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "WT-17",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "occurrences не посчитаны (библиотечный источник)"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 7.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "WT-18",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "occurrences не посчитаны (библиотечный источник)"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 7.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "WT-19",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "occurrences не посчитаны (библиотечный источник)"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 7.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "WT-20",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "occurrences не посчитаны (библиотечный источник)",
+    "поля сдвигаются на 58.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F58",
+   "face_axis": "-y",
+   "deviation_mm": 58.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "WT-21",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "occurrences не посчитаны (библиотечный источник)"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 0.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "WT-22",
+   "role": "door",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "occurrences не посчитаны (библиотечный источник)",
+    "поля сдвигаются на 69.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F73",
+   "face_axis": "-y",
+   "deviation_mm": 69.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "WT-23",
+   "role": "door",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "occurrences не посчитаны (библиотечный источник)",
+    "поля сдвигаются на 69.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F73",
+   "face_axis": "-y",
+   "deviation_mm": 69.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "WT-24",
+   "role": "door",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "occurrences не посчитаны (библиотечный источник)",
+    "поля сдвигаются на 69.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F73",
+   "face_axis": "-y",
+   "deviation_mm": 69.0,
+   "library_status": "confirmed"
+  },
+  {
+   "id": "ELV-01",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 13.0,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "ELV-02",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "поля сдвигаются на 62.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 62.0,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "ELV-03",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "поля сдвигаются на 62.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 62.0,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "ELV-04",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "поля сдвигаются на 95.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 95.0,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "ELV-05",
+   "role": "window",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "поля сдвигаются на 63.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 63.0,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "ELV-06",
+   "role": "door",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "поля сдвигаются на 46.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F73",
+   "face_axis": "-y",
+   "deviation_mm": 46.0,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "ELV-07",
+   "role": "door",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "поля сдвигаются на 46.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F73",
+   "face_axis": "-y",
+   "deviation_mm": 46.0,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "ELV-08",
+   "role": "door",
+   "verdict": "pass",
+   "why": [],
+   "notes": [],
+   "same_as": null,
+   "family": "F73",
+   "face_axis": "-y",
+   "deviation_mm": 27.0,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "ELV-09",
+   "role": "door",
+   "verdict": "pass",
+   "why": [],
+   "notes": [],
+   "same_as": null,
+   "family": "F73",
+   "face_axis": "-y",
+   "deviation_mm": 27.0,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "ELV-10",
+   "role": "door",
+   "verdict": "pass",
+   "why": [],
+   "notes": [],
+   "same_as": null,
+   "family": "F73",
+   "face_axis": "-y",
+   "deviation_mm": 24.5,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "ELV-11",
+   "role": "door",
+   "verdict": "pass",
+   "why": [],
+   "notes": [],
+   "same_as": null,
+   "family": "F73",
+   "face_axis": "-y",
+   "deviation_mm": 25.5,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "ELV-12",
+   "role": "gate",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "поля сдвигаются на 54.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F73",
+   "face_axis": "-y",
+   "deviation_mm": 54.0,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "ELV-13",
+   "role": "gate",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "поля сдвигаются на 54.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F73",
+   "face_axis": "-y",
+   "deviation_mm": 54.0,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "ELV-14",
+   "role": "curtain",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "поля сдвигаются на 57.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 57.0,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "ELV-15",
+   "role": "curtain",
+   "verdict": "pass",
+   "why": [],
+   "notes": [
+    "поля сдвигаются на 32.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 32.0,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "ELV-16",
+   "role": "curtain",
+   "verdict": "quarantine",
+   "why": [
+    "вырожденное стекло по стандарту (сторона < 0.1 м)"
+   ],
+   "notes": [
+    "поля сдвигаются на 57.0 мм — смотреть на листе «было → стало»"
+   ],
+   "same_as": null,
+   "family": "F100",
+   "face_axis": "-y",
+   "deviation_mm": 57.0,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "ELV-17",
+   "role": "revolving_door",
+   "verdict": "quarantine",
+   "why": [
+    "нет разбивки: panes_m и opaque_m пусты"
+   ],
+   "notes": [],
+   "same_as": null,
+   "family": "F73",
+   "face_axis": "-y",
+   "deviation_mm": null,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "ELV-18",
+   "role": "door",
+   "verdict": "pass",
+   "why": [],
+   "notes": [],
+   "same_as": null,
+   "family": "F73",
+   "face_axis": "-y",
+   "deviation_mm": 6.0,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "ELV-19",
+   "role": "door",
+   "verdict": "pass",
+   "why": [],
+   "notes": [],
+   "same_as": null,
+   "family": "F73",
+   "face_axis": "-y",
+   "deviation_mm": 6.0,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "ELV-20",
+   "role": "door",
+   "verdict": "pass",
+   "why": [],
+   "notes": [],
+   "same_as": null,
+   "family": "F73",
+   "face_axis": "-y",
+   "deviation_mm": 6.0,
+   "library_status": "unconfirmed"
+  },
+  {
+   "id": "ELV-21",
+   "role": "door",
+   "verdict": "pass",
+   "why": [],
+   "notes": [],
+   "same_as": null,
+   "family": "F73",
+   "face_axis": "-y",
+   "deviation_mm": 27.0,
+   "library_status": "unconfirmed"
+  }
+ ]
+}

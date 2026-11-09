@@ -1,6 +1,7 @@
 """NPM/VPM delivery validator: findings per stage V001-V017 (standards/DELIVERY_VALIDATOR.yaml).
 
     py -3 tools/qa/validate_package.py <package.zip | model.fbx | model.geojson> [--profile npm|vpm] [--json] [--scene]
+        [--master work.fbx]
 
 Without --profile the profile comes from the name grammar ({code4}_{Address} NPM, SM_{Address} VPM); only a name
 that matches neither falls back to the content (lab L04, #908).
@@ -9,6 +10,8 @@ Exit code: 0 passed (every blocking machine stage ran and passed), 1 any fail,
 UV islands, UCX, coordinates) are not_run unless --scene runs the Blender readback
 (tools/blender/fbx_readback.py) on every FBX.
 Manual stages (V015-V017) always need a signed review.
+--master reads the quad work FBX back (DER-03, [D021], [D198]): V003 "master quads" / "master quad size";
+with --scene and no --master that part of V003 stays not_run.
 
     py -3 tools/qa/validate_package.py --recheck old_report.json --output new_report.json [--standards DIR] [--json]
 
@@ -31,6 +34,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 from twinqa.bundle import BundleError, read_bundle, size_status  # noqa: E402
 from twinqa.fbx_header import check_fbx_header  # noqa: E402
 from twinqa.geojson import geojson_findings  # noqa: E402
+from twinqa.master import master_findings  # noqa: E402
 from twinqa.io import digest, json_bytes  # noqa: E402
 from twinqa.png import npm_texture_findings, vpm_texture_findings  # noqa: E402
 from twinqa.profiles import (DEFAULT_STANDARDS, expected_stages, load_profiles, read_snapshot,  # noqa: E402
@@ -68,6 +72,173 @@ def _no_texture_findings(found: dict, role: str, name: str, rb: dict):
     found["V006"] = v6
 
 
+# ---- ZIP corpus codes (#979 qa.package rework; T06/agr_zipper_2506: the Zipper crashed or let these pass) ------
+ZIP_CODES = ("zip_unreadable", "zip_encrypted", "zip_nul_name", "zip_unsupported_method", "zip_traversal",
+             "zip_absolute", "zip_backslash", "zip_duplicate", "zip_bad_member", "zip_bad_utf8", "zip_too_large",
+             "zip_nested")
+ZIP_METHODS = (0, 8, 12, 14)  # stored, deflate, bzip2, lzma: the methods zipfile reads
+CHECKER = "AGR_Checker.zip sha256 0c1e5f7454bf9aa5183e5e9d1893f6b801b3f0123638278cbb97651748693e4d (rule idea only)"
+
+
+def zip_precheck(target: Path) -> tuple[str, str] | None:
+    """(code, observed) for an archive the bundle reader must not open, else None.
+
+    zipfile cuts a member name at NUL (`SM_X.fbx\\x00../escape` reads as `SM_X.fbx`), raises RuntimeError on an
+    encrypted member and NotImplementedError on an unsupported method: all are named here, before any member is read
+    (the Zipper crashed or passed, T06; the PR #675 witnesses recorded the escapes). The raw tail after a NUL is never
+    echoed."""
+    import zipfile
+    try:
+        with zipfile.ZipFile(target) as z:
+            infos = z.infolist()
+    except UnicodeDecodeError:
+        return None  # the bundle reader names the member (bad UTF-8)
+    except (zipfile.BadZipFile, OSError, EOFError, ValueError) as exc:
+        return "zip_unreadable", f"not a readable ZIP (broken or truncated): {exc}"
+    for info in infos:
+        if "\x00" in info.orig_filename:
+            return "zip_nul_name", f"member name with NUL (read as {info.filename!r})"
+    enc = [i.filename for i in infos if i.flag_bits & 0x1]
+    if enc:
+        return "zip_encrypted", f"encrypted member(s): {', '.join(enc[:5])}"
+    odd = [f"{i.filename} (method {i.compress_type})" for i in infos if i.compress_type not in ZIP_METHODS]
+    if odd:
+        return "zip_unsupported_method", f"unsupported compression: {', '.join(odd[:5])}"
+    return None
+
+
+def bundle_code(exc) -> str:
+    text = str(exc)
+    if isinstance(exc.__cause__, UnicodeDecodeError):
+        return "zip_bad_utf8"
+    if text.startswith("Unsafe ZIP path"):
+        name = text.split(": ", 1)[-1]
+        p = PurePosixPath(name)
+        if ".." in p.parts:
+            return "zip_traversal"
+        if p.is_absolute() or ":" in name:
+            return "zip_absolute"
+        return "zip_backslash"
+    if text.startswith("Duplicate"):
+        return "zip_duplicate"
+    if text.startswith("Uncompressed"):
+        return "zip_too_large"
+    if text.startswith("Broken ZIP member"):
+        return "zip_bad_member"
+    return "zip_unreadable"
+
+
+# ---- Light FBX (rule idea of AGR Checker: one Root, lights parented, <a>_[Spot|Omni]_NNN) -------------------------
+LIGHT_MAX = 250
+LIGHT_NUMBER_MAX = 50
+LIGHT_TYPES = {0: "Omni", 1: "Directional", 2: "Spot", 3: "Area", 4: "Volume"}
+
+
+def _fbx_props(data: bytes, node: dict) -> list:
+    from twinqa.fbx_header import _parse_props
+    return [v for _code, v in _parse_props(data, node["props_at"], node["props_end"], node["num_props"])]
+
+
+def _fbx_children(data: bytes, node: dict, version: int) -> list[dict]:
+    from twinqa.fbx_header import _iter_nodes
+    return list(_iter_nodes(data, node["props_end"], node["end_offset"], version))
+
+
+def _p70(data: bytes, node: dict, version: int) -> dict:
+    out = {}
+    for child in _fbx_children(data, node, version):
+        if child["name"] != "Properties70":
+            continue
+        for p in _fbx_children(data, child, version):
+            if p["name"] == "P":
+                vals = _fbx_props(data, p)
+                if vals and isinstance(vals[0], str):
+                    out[vals[0]] = vals[4:]
+    return out
+
+
+def light_scene(data: bytes) -> dict:
+    """Models of a binary FBX: {id: {name, kind, parent, light, t, r, s}} (stdlib walk; ValueError if unreadable)."""
+    from twinqa.fbx_header import _FbxError, _iter_nodes, fbx_header
+    kind, version = fbx_header(data)
+    if kind != "binary":
+        raise ValueError("not a binary FBX")
+    try:
+        top = {n["name"]: n for n in _iter_nodes(data, 27, len(data), version)}
+        models, attrs, links = {}, {}, []
+        for node in _fbx_children(data, top["Objects"], version) if "Objects" in top else []:
+            vals = _fbx_props(data, node)
+            if node["name"] == "Model" and len(vals) >= 3:
+                p = _p70(data, node, version)
+                models[vals[0]] = {"name": str(vals[1]).split("\x00", 1)[0], "kind": vals[2], "parent": 0,
+                                   "light": None, "t": tuple(p.get("Lcl Translation", (0.0, 0.0, 0.0))),
+                                   "r": tuple(p.get("Lcl Rotation", (0.0, 0.0, 0.0))),
+                                   "s": tuple(p.get("Lcl Scaling", (1.0, 1.0, 1.0)))}
+            elif node["name"] == "NodeAttribute" and len(vals) >= 3 and vals[2] == "Light":
+                lt = _p70(data, node, version).get("LightType", [0])
+                attrs[vals[0]] = LIGHT_TYPES.get(int(lt[0]) if lt else 0, "Other")
+        for node in _fbx_children(data, top["Connections"], version) if "Connections" in top else []:
+            vals = _fbx_props(data, node)
+            if len(vals) >= 3 and vals[0] == "OO":
+                links.append((vals[1], vals[2]))
+    except (_FbxError, KeyError, IndexError, TypeError, ValueError) as exc:
+        raise ValueError(f"unreadable FBX scene: {exc}") from exc
+    for child, parent in links:
+        if child in attrs and parent in models:
+            models[parent]["light"] = attrs[child]
+        elif child in models:
+            models[child]["parent"] = parent
+    return models
+
+
+def light_findings(name: str, data: bytes, cipher: str, pages) -> list:
+    """Light FBX of a VPM set (`SM_<a>[_Ground]_Light.fbx`): exactly one `<cipher>_Root` (`_Ground_Root` for Ground)
+    with reset transforms, every light parented to it, names `<cipher>_[Spot|Omni]_NNN` 001..050, <= 250 lights,
+    the name type equal to the light type. Idea of AGR Checker (T04, measured); no checker code is reproduced."""
+    try:
+        models = light_scene(data)
+    except ValueError as exc:
+        return [finding("fail", "light FBX scene", f"{name}: {exc}", "binary FBX with a Root and lights", pages,
+                        CHECKER, data={"code": "light_unreadable"})]
+    out = []
+    lights = [m for m in models.values() if m["light"] is not None]
+    roots = [(k, m) for k, m in models.items() if m["light"] is None and m["parent"] == 0]
+    want_root = f"{cipher}_Root"
+
+    def bad(code, observed, expected):
+        out.append(finding("fail", "light FBX", f"{name}: {observed}", expected, pages, CHECKER, data={"code": code}))
+    if len(roots) != 1:
+        bad("light_root", f"{len(roots)} root objects {[m['name'] for _k, m in roots][:5]}", f"exactly one {want_root}")
+    else:
+        rid, root = roots[0]
+        if root["name"] != want_root:
+            bad("light_root", f"root {root['name']!r}", want_root)
+        reset = (all(abs(float(v)) < 1e-6 for v in root["t"] + root["r"])
+                 and all(abs(float(v) - 1.0) < 1e-6 for v in root["s"]))
+        if not reset:
+            bad("light_root_transform", f"root t={root['t']} r={root['r']} s={root['s']}", "reset transforms")
+        orphans = sorted(m["name"] for m in lights if m["parent"] != rid)
+        if orphans:
+            bad("light_parent", f"not under the root: {orphans[:5]}", f"every light parented to {want_root}")
+    if len(lights) > LIGHT_MAX:
+        bad("light_count", f"{len(lights)} lights", f"<= {LIGHT_MAX}")
+    pat = re.compile(rf"^{re.escape(cipher)}_(Spot|Omni)_(\d{{3}})$")
+    for m in sorted(lights, key=lambda x: x["name"]):
+        hit = pat.match(m["name"])
+        if not hit:
+            bad("light_name", f"{m['name']!r}", f"{cipher}_[Spot|Omni]_NNN")
+            continue
+        if not 1 <= int(hit.group(2)) <= LIGHT_NUMBER_MAX:
+            bad("light_number", f"{m['name']}", f"number 001..{LIGHT_NUMBER_MAX:03d}")
+        actual = "Spot" if m["light"] == "Spot" else "Omni" if m["light"] == "Omni" else m["light"]
+        if hit.group(1) != actual:
+            bad("light_type", f"{m['name']} is a {m['light']} light", f"name type {hit.group(1)} = light type")
+    if not out:
+        out.append(finding("pass", "light FBX", f"{name}: root {want_root}, {len(lights)} light(s)",
+                           "one Root, lights parented, <a>_[Spot|Omni]_NNN", pages, CHECKER))
+    return out
+
+
 def finding(status, name, observed, expected, pages, evidence="", conflicts=(), data=None):
     return Finding(name, status, observed, expected, list(pages), evidence, list(conflicts),
                    data={} if data is None else data)
@@ -94,7 +265,8 @@ def check_fbx_headers(stage: Stage, fbx: dict[str, bytes]):
                                   "1 unit = 1 m, scale 1:1", stage.source_pdf_pages, SCENE_NOTE))
 
 
-def validate_vpm_zip(stem: str, files: dict[str, bytes], profile: dict, st: dict[str, Stage]):
+def validate_vpm_zip(stem: str, files: dict[str, bytes], profile: dict, st: dict[str, Stage]) -> dict:
+    """Archive-level VPM checks; returns {(slot, udim): Diffuse side px} for the V009 scene density."""
     ground = stem.endswith("_Ground")
     address = stem[3:-len("_Ground")] if ground else stem[3:]
     fbx = {n: d for n, d in files.items() if n.lower().endswith(".fbx")}
@@ -105,7 +277,8 @@ def validate_vpm_zip(stem: str, files: dict[str, bytes], profile: dict, st: dict
     v1, pages = st["V001"], st["V001"].source_pdf_pages
     nested = [n for n in files if len(PurePosixPath(n).parts) > 1]
     if nested:
-        v1.findings.append(finding("fail", "flat archive", f"{len(nested)} file(s) in folders, e.g. {nested[0]}", "files in the ZIP root", pages))
+        v1.findings.append(finding("fail", "flat archive", f"{len(nested)} file(s) in folders, e.g. {nested[0]}",
+                                   "files in the ZIP root", pages, data={"code": "zip_nested"}))
     if other:
         v1.findings.append(finding("fail", "foreign files", ", ".join(other[:5]), "FBX, optional Light FBX, GeoJSON, PNG only", pages))
     main, light = f"{stem}.fbx", f"{stem}_Light.fbx"
@@ -132,6 +305,8 @@ def validate_vpm_zip(stem: str, files: dict[str, bytes], profile: dict, st: dict
 
     if main in fbx:
         check_fbx_headers(st["V002"], {k: v for k, v in fbx.items() if k in (main, light)})
+    if light in fbx:
+        v12.findings.extend(light_findings(light, fbx[light], stem, npages))
     prefix = f"T_{address}_Ground" if ground else f"T_{address}"
     findings, sets = vpm_texture_findings(pngs, profile, prefix)
     st["V007"].findings.extend(findings)
@@ -148,10 +323,17 @@ def validate_vpm_zip(stem: str, files: dict[str, bytes], profile: dict, st: dict
     if f"{stem}.geojson" in geo:
         st["V011"].findings.extend(geojson_findings(
             geo[f"{stem}.geojson"], profile, ground, source_name=f"{stem}.geojson"))
+    st["V009"].findings.append(finding("not_run", "texel density", "UV and polygon lengths not read from the scene",
+                                       "512..1706 px/m Diffuse [D160]", st["V009"].source_pdf_pages, SCENE_NOTE))
+    return {key: maps["Diffuse"].width for key, maps in sets.items() if "Diffuse" in maps}
 
 
 def validate_npm_zip(stem: str, files: dict[str, bytes], profile: dict, st: dict[str, Stage]):
     v1, pages = st["V001"], st["V001"].source_pdf_pages
+    nested = [n for n in files if len(PurePosixPath(n).parts) > 1]
+    if nested:
+        v1.findings.append(finding("fail", "flat archive", f"{len(nested)} file(s) in folders, e.g. {nested[0]}",
+                                   "files in the ZIP root", pages, data={"code": "zip_nested"}))
     fbx = {n: d for n, d in files.items() if n.lower().endswith(".fbx")}
     other = sorted(set(files) - set(fbx))
     if other:
@@ -182,11 +364,12 @@ def fbx_role(name: str) -> str:
 
 
 def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, bytes], notes: list[str],
-              ground_area_m2: float | None = None, footprint_holes=None):
+              ground_area_m2: float | None = None, footprint_holes=None, diffuse_px: dict | None = None):
     """Blender readback of each FBX; replaces the scene not_run placeholders it covers.
     ground_area_m2 (site minus OKS footprint) selects the VPM Ground triangle band (reg p.29)
     and is the expected top-down area for the Ground footprint-coverage finding.
-    footprint_holes is an optional list of XY rings for the footprint-hole coverage finding."""
+    footprint_holes is an optional list of XY rings for the footprint-hole coverage finding.
+    diffuse_px {(slot, udim): side px} from the archive Diffuse PNGs feeds the VPM V009 texel density."""
     import tempfile
     with tempfile.TemporaryDirectory() as tmp:
         for name, data in sorted(fbx.items()):
@@ -199,24 +382,45 @@ def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, byt
                 notes.append(f"scene readback skipped for {name}: {exc}")
                 continue
             found = scene_findings(rb, kind, fbx_role(name), profile, ground_area_m2=ground_area_m2,
-                                   footprint_holes=footprint_holes)
+                                   footprint_holes=footprint_holes, diffuse_px=diffuse_px)
             if kind == "npm":
                 _no_texture_findings(found, fbx_role(name), name, rb)
             for stage_id, findings in found.items():
                 if stage_id in st:
                     st[stage_id].findings.extend(findings)
             notes.append(f"scene readback: {name} in Blender {rb.get('blender')}")
-    covered = {"V008": "UV channel and islands", "V006": "embedded atlases"}
+    covered = {"V008": "UV channel and islands", "V006": "embedded atlases", "V009": "texel density"}
     for stage_id, placeholder in covered.items():
         if stage_id in st and len(st[stage_id].findings) > 1:
-            st[stage_id].findings = [f for f in st[stage_id].findings if f.name != placeholder]
+            st[stage_id].findings = [f for f in st[stage_id].findings
+                                     if not (f.name == placeholder and f.evidence == SCENE_NOTE)]
     v002 = st.get("V002")
     if v002 is not None and any(f.name == "system units" for f in v002.findings):
         v002.findings = [f for f in v002.findings if f.name != "units and scale"]
 
 
+def add_master(st: dict[str, Stage], kind: str, master: Path | None, notes: list[str]):
+    """DER-03 quad master: read the work FBX back, or leave V003 'master quads' not_run ([D021], [D198])."""
+    if "V003" not in st:
+        return
+    if master is None:
+        st["V003"].findings.append(finding("not_run", "master quads", "quad work FBX not given (--master)",
+                                           "quad master; VPM faces <= 4 m [D021]", [8, 29], "DER-03"))
+        return
+    try:
+        rb = readback(master)
+    except (OSError, RuntimeError) as exc:
+        notes.append(f"master readback skipped for {master.name}: {exc}")
+        st["V003"].findings.append(finding("not_run", "master quads", f"{master.name}: readback failed",
+                                           "quad master; VPM faces <= 4 m [D021]", [8, 29], "DER-03"))
+        return
+    st["V003"].findings.extend(master_findings(rb, kind))
+    notes.append(f"master readback: {master.name} in Blender {rb.get('blender')}")
+
+
 def validate(target: Path, kind: str | None, profiles, scene: bool = False,
-             ground_area_m2: float | None = None, footprint_holes=None) -> ValidationReport:
+             ground_area_m2: float | None = None, footprint_holes=None,
+             master: Path | None = None) -> ValidationReport:
     if ground_area_m2 is not None:
         check_ground_area(ground_area_m2)
     data = target.read_bytes()
@@ -231,6 +435,13 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
     if kind is None and suffix in (".fbx", ".png"):
         kind = "npm"
     if suffix == ".zip":
+        early = zip_precheck(target)
+        if early is not None:
+            kind = kind or "vpm"
+            st = build_stages(profiles, kind)
+            st["V001"].findings.append(finding("fail", "ZIP", f"{target.name}: {early[1]}", "readable ZIP, safe paths",
+                                               st["V001"].source_pdf_pages, data={"code": early[0]}))
+            return report(target, data, kind, profiles, st, notes)
         try:
             files = read_bundle(target, max_uncompressed=4 * 10**9)
         except BundleError as exc:
@@ -238,17 +449,17 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
             st = build_stages(profiles, kind)
             cause = exc.__cause__
             observed = str(exc)
-            extra = None
+            extra = {"code": bundle_code(exc)}
             if isinstance(cause, UnicodeDecodeError):
                 member = exc.member if isinstance(getattr(exc, "member", None), str) else ""
                 observed = f"V001 {target.name}: {exc}"
-                extra = {
+                extra.update({
                     "rule_id": "V001",
                     "file": target.name,
                     "member": member,
                     "exception_class": type(cause).__name__,
                     "message": str(cause),
-                }
+                })
             st["V001"].findings.append(finding(
                 "fail", "ZIP", observed, "readable ZIP, safe paths", st["V001"].source_pdf_pages, data=extra))
             return report(target, data, kind, profiles, st, notes)
@@ -265,10 +476,10 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
         status, observed = size_status(len(data), limit)
         st["V001"].findings.append(finding(status, "archive size", observed, f"<= {limit} B",
                                            st["V001"].source_pdf_pages, conflicts=[]))
-        (validate_vpm_zip if kind == "vpm" else validate_npm_zip)(target.stem, files, profile, st)
+        diffuse_px = (validate_vpm_zip if kind == "vpm" else validate_npm_zip)(target.stem, files, profile, st)
         if scene:
             add_scene(st, kind, profile, {n: d for n, d in files.items() if n.lower().endswith(".fbx")}, notes,
-                      ground_area_m2, footprint_holes)
+                      ground_area_m2, footprint_holes, diffuse_px)
     elif suffix == ".fbx":
         check_fbx_headers(st["V002"], {target.name: data})
         if scene:
@@ -286,6 +497,10 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
     # A scene readback of an FBX/ZIP consumes the area: VPM selects the triangle band, and both
     # profiles check Ground footprint coverage. Anywhere else the value is unused.
     scene_readback = bool(scene and kind in ("vpm", "npm") and suffix in (".zip", ".fbx"))
+    if scene_readback:
+        add_master(st, kind, master, notes)
+    elif master is not None:
+        notes.append(f"master {master.name} unused: the master check runs with --scene on a ZIP or FBX")
     if ground_area_m2 is not None and not scene_readback:
         notes.append(f"ground_area_m2 {ground_area_m2} unused: the VPM Ground band applies only to a VPM --scene readback")
     if footprint_holes is not None and not scene_readback:
@@ -311,7 +526,17 @@ def _area_arg(text: str) -> float:
         raise argparse.ArgumentTypeError(str(exc)) from None
 
 
+FINDING_CODES = {"PNG readable": "png_not_png", "no alpha in ERM/Normal": "png_alpha", "no alpha": "png_alpha",
+                 "8-bit RGB/RGBA": "png_format", "flat placeholder": "png_placeholder",
+                 "foreign files": "foreign_files", "flat archive": "zip_nested"}
+
+
 def report(target, data, kind, profiles, stages, notes) -> ValidationReport:
+    """Every failed finding of a known kind carries data.code (qa.package corpus: one code per defect, #979)."""
+    for stage in stages.values():
+        for f in stage.findings:
+            if f.status == "fail" and "code" not in f.data and f.name in FINDING_CODES:
+                f.data["code"] = FINDING_CODES[f.name]
     return ValidationReport(kind, str(target), digest(data), profiles.pdf_sha256, profiles.pdf_verified,
                             list(stages.values()), notes, profiles.standards_sha256, code_commit())
 
@@ -360,12 +585,14 @@ def main(argv=None) -> int:
     ap.add_argument("--output", type=Path, help="new file for the recheck result (never an existing file)")
     ap.add_argument("--ground-area-m2", type=_area_arg, metavar="M2",
                     help="VPM Ground area = site minus OKS footprint, m2 (reg p.29 triangle band; without it: review)")
+    ap.add_argument("--master", type=Path, metavar="WORK_FBX",
+                    help="quad work FBX of this delivery (DER-03, [D198]); read back with --scene")
     ap.add_argument("--footprint-holes", type=_holes_arg, default=None, metavar="JSON",
                     help="JSON list of OKS footprint-hole rings [[[x,y],...], ...]; hole coverage is not_run without it")
     args = ap.parse_args(argv)
     if args.recheck is not None:
         if (args.target is not None or args.output is None or args.profile or args.scene
-                or args.ground_area_m2 is not None or args.footprint_holes is not None):
+                or args.ground_area_m2 is not None or args.footprint_holes is not None or args.master is not None):
             ap.error("--recheck takes only --output, --standards and --json")
         return run_recheck(args.recheck, args.output, args.standards or DEFAULT_STANDARDS, args.json)
     if args.output is not None:
@@ -376,8 +603,11 @@ def main(argv=None) -> int:
         print(f"Error: {args.target} does not exist", file=sys.stderr)
         return 1
     profiles = load_profiles(args.standards) if args.standards else load_profiles()
+    if args.master is not None and not args.master.is_file():
+        print(f"Error: {args.master} does not exist", file=sys.stderr)
+        return 1
     result = validate(args.target, args.profile, profiles, args.scene, args.ground_area_m2,
-                      args.footprint_holes)
+                      args.footprint_holes, args.master)
     sys.stdout.reconfigure(encoding="utf-8")
     print(json.dumps(result.to_dict(), ensure_ascii=False, indent=2) if args.json else result.summary())
     return result.exit_code

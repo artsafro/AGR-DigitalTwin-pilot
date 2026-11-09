@@ -1,6 +1,6 @@
 # Niche in the contour (`contour-niche`)
 
-Status: draft. Source: historical `docs/HARNESS_PLAN.md` §3–§4, §7 (grey zone); user decisions 2026-10-08 [D023, D025]
+Status: draft. Source: historical `archive/2026-11:docs/HARNESS_PLAN.md` §3–§4, §7 (grey zone); user decisions 2026-10-08 [D023, D025]
 (#6, #31); `GLOSSARY.md` (Level contour). Benchmark: B02.
 
 ## Signs in the spec

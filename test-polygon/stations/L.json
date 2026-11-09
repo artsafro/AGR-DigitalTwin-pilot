@@ -1,0 +1,35 @@
+{"schema": 1, "branch": "L", "issue": "#1024", "stations": [
+ {"button": "mat.table",
+  "objects": [
+   {"name": "BODY_FragLMid_001", "role": "body", "scene": "frag_l_mat", "builder": "L_build",
+    "extra": {"kind": "ids_box", "ids": [3, 7, 12, 31], "agr_role": "body", "size": [4.0, 4.0, 3.0], "at": [0.0, 0.0, 0.0]}},
+   {"name": "BODY_FragLUdim_001", "role": "body", "scene": "frag_l_mat", "builder": "L_build",
+    "extra": {"kind": "ids_box", "ids": [3, 1005], "agr_role": "body", "size": [4.0, 4.0, 3.0], "at": [8.0, 0.0, 0.0]}},
+   {"name": "BODY_FragLGlass_001", "role": "body", "scene": "frag_l_mat", "builder": "L_build",
+    "extra": {"kind": "ids_box", "ids": [3, 39], "agr_role": "body", "size": [4.0, 4.0, 3.0], "at": [16.0, 0.0, 0.0]}}],
+  "expected": [
+   {"name": "BODY_FragLMid_001", "scene": "frag_l_mat", "expect": "pass", "codes": []},
+   {"name": "BODY_FragLUdim_001", "scene": "frag_l_mat", "expect": "fail", "codes": ["udim_id_on_geometry"]},
+   {"name": "BODY_FragLGlass_001", "scene": "frag_l_mat", "expect": "fail", "codes": ["glass_not_on_glass"]}],
+  "reason": ""},
+ {"button": "mat.tiles",
+  "objects": [
+   {"name": "TILE_FragLK3_001", "role": "body", "scene": "frag_l_tiles", "builder": "L_build",
+    "extra": {"kind": "ids_box", "ids": [14, 18, 27], "agr_role": "body", "size": [3.6, 3.6, 3.6], "at": [0.0, 0.0, 0.0]}},
+   {"name": "TILE_FragLBrick_001", "role": "body", "scene": "frag_l_tiles", "builder": "L_build",
+    "extra": {"kind": "ids_box", "ids": [17], "agr_role": "body", "size": [3.6, 3.6, 3.6], "at": [8.0, 0.0, 0.0]}}],
+  "expected": [
+   {"name": "TILE_FragLK3_001", "scene": "frag_l_tiles", "expect": "pass", "codes": []},
+   {"name": "TILE_FragLBrick_001", "scene": "frag_l_tiles", "expect": "fail", "codes": ["module_stretched"]}],
+  "reason": "", "options": {"max_stretch_pct": 1.0}},
+ {"button": "tex.plug_colour",
+  "objects": [
+   {"name": "PLUG_FragLOk_001", "role": "decor", "scene": "frag_l_plug", "builder": "L_build",
+    "extra": {"kind": "plug_plane", "texture": "plug_ok.png", "pattern": "solid", "rgb": [200, 100, 50], "at": [0.0, 0.0, 0.0]}},
+   {"name": "PLUG_FragLMix_001", "role": "decor", "scene": "frag_l_plug", "builder": "L_build",
+    "extra": {"kind": "plug_plane", "texture": "plug_mix.png", "pattern": "first_blue_10", "rgb": [200, 100, 50], "at": [4.0, 0.0, 0.0]}}],
+  "expected": [
+   {"name": "PLUG_FragLOk_001", "scene": "frag_l_plug", "expect": "pass", "codes": []},
+   {"name": "PLUG_FragLMix_001", "scene": "frag_l_plug", "expect": "fail", "codes": ["plug_spread"]}],
+  "reason": ""}
+]}

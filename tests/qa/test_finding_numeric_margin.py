@@ -471,18 +471,18 @@ def test_scene_texel_density_530_reaches_report_json():
     """530 px/m (texture 512, world edge 512/530, unit UV) through scene_findings into report JSON."""
     data = _density_scene(512, 512 / 530)
     found = scene_findings(data, "vpm", "oks", PROFILES.vpm)
-    lower = next(item for item in found["V008"] if item.name == "texel density")
+    lower = next(item for item in found["V009"] if item.name == "texel density")
     assert lower.measured == pytest.approx(530)
     assert lower.threshold == 512
     assert lower.margin == pytest.approx((530 - 512) / 512)
     assert lower.margin > 0
     assert lower.status == "pass"
-    upper = next(item for item in found["V008"] if item.name == "texel density upper")
+    upper = next(item for item in found["V009"] if item.name == "texel density upper")
     assert upper.measured == pytest.approx(530)
     assert upper.threshold == 1706
     assert upper.status == "pass"
-    report = _report(found["V008"])
-    report.stages[0].id = "V008"
+    report = _report(found["V009"])
+    report.stages[0].id = "V009"
     payload = json.loads(json.dumps(report.to_dict()))
     finding = next(item for item in payload["stages"][0]["findings"] if item["name"] == "texel density")
     assert {"measured", "threshold", "margin"} <= set(finding)
@@ -510,7 +510,7 @@ def test_density_report_json_keeps_old_shape_and_adds_measures(tmp_path):
     assert loaded.measured is None and loaded.threshold is None and loaded.margin is None
     data = _density_scene(512, 512 / 530)
     found = scene_findings(data, "vpm", "oks", PROFILES.vpm)
-    report = _report([item for item in found["V008"] if item.name == "texel density"])
+    report = _report([item for item in found["V009"] if item.name == "texel density"])
     after = json.loads(json.dumps(report.to_dict()))["stages"][0]["findings"][0]
     assert set(before) <= set(after)
     assert after["measured"] == pytest.approx(530)
@@ -525,7 +525,7 @@ def test_density_report_json_keeps_old_shape_and_adds_measures(tmp_path):
 
 def test_mesh_without_uv_geometry_density_is_not_run():
     found = scene_findings(rb(mesh()), "vpm", "oks", PROFILES.vpm)
-    statuses = {item.name: item.status for item in found["V008"]}
+    statuses = {item.name: item.status for item in found["V008"] + found["V009"]}
     assert statuses["one UV channel"] == "pass"
     assert statuses["mirrored islands"] == "pass"
     assert statuses["texel density"] == "not_run"
@@ -610,13 +610,13 @@ def test_probe_scene_density_never_passes_without_evidence():
     seen = 0
     for data in cases:
         found = scene_findings(data, "vpm", "oks", PROFILES.vpm)
-        for item in found["V008"]:
+        for item in found["V009"]:
             if item.name in ("texel density", "texel density upper"):
                 assert item.status in ("fail", "not_run")
                 assert item.status != "pass"
                 seen += 1
     good = scene_findings(_density_scene(512, side), "vpm", "oks", PROFILES.vpm)
-    lower = next(item for item in good["V008"] if item.name == "texel density")
+    lower = next(item for item in good["V009"] if item.name == "texel density")
     assert lower.status == "pass" and lower.measured == pytest.approx(530)
     assert seen == 10
 
@@ -654,8 +654,8 @@ def _corner_density_scene(corners, polygons):
 
 def _density_pair(data):
     found = scene_findings(data, "vpm", "oks", PROFILES.vpm)
-    lower = next(item for item in found["V008"] if item.name == "texel density")
-    upper = next(item for item in found["V008"] if item.name == "texel density upper")
+    lower = next(item for item in found["V009"] if item.name == "texel density")
+    upper = next(item for item in found["V009"] if item.name == "texel density upper")
     return lower, upper
 
 
@@ -696,7 +696,7 @@ def test_seam_density_independent_of_polygon_order():
 
 
 def statuses_of(found):
-    return {item.name: item.status for item in found["V008"]}
+    return {item.name: item.status for item in found["V008"] + found["V009"]}
 
 
 def _probe_disposition(margin, measured, threshold, bound):

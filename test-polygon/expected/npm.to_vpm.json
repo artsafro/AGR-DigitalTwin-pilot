@@ -1,0 +1,151 @@
+{
+ "schema": 1,
+ "button": "npm.to_vpm",
+ "tool": "npm.to_vpm",
+ "version": "1.0",
+ "shipped": true,
+ "select": "named",
+ "reason": "",
+ "apply_status": null,
+ "objects": [
+  {
+   "name": "SM_N2V_Ok",
+   "scene": "polygon_all",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_N2V_Fail",
+   "scene": "polygon_all",
+   "expect": "fail",
+   "codes": [
+    "table_no_row",
+    "window_no_type"
+   ]
+  }
+ ],
+ "options": {
+  "table": {
+   "table": [
+    {
+     "library_id": 3,
+     "udim": 1001,
+     "region": [
+      0.03125,
+      0.9375,
+      0.0625,
+      0.96875
+     ],
+     "key": "3",
+     "island": null,
+     "faces": 16,
+     "scale": [
+      0.03125,
+      0.03125
+     ],
+     "shift": [
+      0.03125,
+      0.9427083333333334
+     ],
+     "part": "body",
+     "kind": "plug",
+     "material": "M_lib_3",
+     "map": null,
+     "cell_px": [
+      8,
+      8,
+      8,
+      8
+     ],
+     "atlas_px": 256,
+     "texel_px_per_m": 39.0,
+     "source_texel_px_per_m": null,
+     "udim_source": "vpm_table"
+    },
+    {
+     "library_id": 7,
+     "udim": 1002,
+     "region": [
+      0.21875,
+      0.9375,
+      0.25,
+      0.96875
+     ],
+     "key": "7",
+     "island": null,
+     "faces": 152,
+     "scale": [
+      0.031249999999999972,
+      0.031249999999999972
+     ],
+     "shift": [
+      0.18750000000000003,
+      0.9375
+     ],
+     "part": "body",
+     "kind": "plug",
+     "material": "M_lib_7",
+     "map": null,
+     "cell_px": [
+      56,
+      8,
+      8,
+      8
+     ],
+     "atlas_px": 256,
+     "texel_px_per_m": 39.0,
+     "source_texel_px_per_m": null,
+     "udim_source": "vpm_table"
+    },
+    {
+     "library_id": 31,
+     "udim": 1001,
+     "region": [
+      0.125,
+      0.9375,
+      0.15625,
+      0.96875
+     ],
+     "key": "31",
+     "island": null,
+     "faces": 24,
+     "scale": [
+      0.03125,
+      0.03125
+     ],
+     "shift": [
+      0.12239583333333334,
+      0.9375
+     ],
+     "part": "glass",
+     "kind": "glass",
+     "material": "M_lib_31",
+     "map": null,
+     "cell_px": [
+      32,
+      8,
+      8,
+      8
+     ],
+     "atlas_px": 256,
+     "texel_px_per_m": 39.0,
+     "source_texel_px_per_m": null,
+     "udim_source": "vpm_table"
+    }
+   ]
+  },
+  "window_ids": [
+   50
+  ],
+  "window_types": [
+   "KPP1-W01",
+   "KPP1-W02",
+   "KPP1-W03"
+  ]
+ },
+ "base": "1.0",
+ "station": "1.0.24",
+ "stations": [
+  "1.0.24"
+ ]
+}

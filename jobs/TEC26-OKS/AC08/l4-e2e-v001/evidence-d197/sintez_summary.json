@@ -1,0 +1,31 @@
+{
+ "checker": "bl_ext.user_default.sintez_agr_checker",
+ "error": null,
+ "zips": {
+  "vpm": "SM_Nku_1.zip sha256 2fe983791566477e297aeefa09f04a1b7d176312c3fce1a8c9f1cf26138013bb",
+  "npm": "0000_Nku_1.zip sha256 8f0cb8b7e922850eab15198d0bd40cf2ca1e2bfed12e9c4912173b4aef565ab3"
+ },
+ "hp": {
+  "verified": 62,
+  "undefined": 54,
+  "failed": 4
+ },
+ "hp_failed": [
+  "2.1.1",
+  "2.2.1",
+  "2.3.17",
+  "2.10.4.1"
+ ],
+ "lp": {
+  "verified": 38,
+  "undefined": 29,
+  "failed": 5
+ },
+ "lp_failed": [
+  "2.1.1",
+  "2.1.2",
+  "2.1.6",
+  "2.10.3.1",
+  "4.1.4"
+ ]
+}

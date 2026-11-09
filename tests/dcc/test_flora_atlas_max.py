@@ -13,6 +13,8 @@ from pathlib import Path
 
 import pytest
 from PIL import Image
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+from dt_ai.core.max_env import max_child_env  # noqa: E402
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -605,7 +607,7 @@ def test_synth_scene_one_flora_atlas(tmp_path):
     scene = tmp_path / "placed.max"
     scene_out = tmp_path / "placed-flora-atlas.max"
     result = tmp_path / "result.json"
-    env = os.environ.copy()
+    env = max_child_env()
     env.update({
         "AGR_FLORA_SCENE": str(scene),
         "AGR_FLORA_SCENE_OUT": str(scene_out),

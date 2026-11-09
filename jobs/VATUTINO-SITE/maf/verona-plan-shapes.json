@@ -1,0 +1,1076 @@
+{
+ "issue": 790,
+ "purpose": "Plan shape per «Верона» bench row (*T3508 rows 1-10) for the MAF generator (model-maf step 3).",
+ "source": {
+  "dwg": "main.dwg = ППТ8_1_Дом2_Детализированная концепция.dwg; copy C:/x/vatutino-maf/v001/src/main.dwg (the original was not opened)",
+  "dwg_sha256": "64e22677454affce7071a823123b13742c8d68cd39c1ec0ee761c4cfa3b546e4",
+  "dxf": "C:/x/vatutino-maf/v001/src/main.dxf",
+  "dxf_sha256": "88ff8730c5309ef258d7a99c9d6c4338487a8311c1a8bcc3c94600722be40ed9",
+  "reader": "C:/x/vatutino-maf/gen-v001/probe/p3.py (sha256 43ebbebf4c8c7efbde9a29b91f619d1356167ac98cb4b252af3f1097171b6575), ezdxf, model-space INSERTs of the bench blocks on layer !_А101_маф; one LWPOLYLINE + one HATCH per block; inside = insert point inside closed LWPOLYLINE 568BF",
+  "units": "metres ($INSUNITS=6)"
+ },
+ "method": "Row -> block by plan size: centreline = outer (longer) side of the drawn strip outline offset inward by depth/2 = 0.3 m (tools/library/maf_gen_bench.py centreline_from_outline); plan_dims_m = bbox of the generated bench with the longest segment on +X; deviation against the schedule L/W (swap allowed, model-maf step 4).",
+ "depth_m": 0.6,
+ "rows": {
+  "1": {
+   "status": "found",
+   "block": "Скамья индивид общ отд 2",
+   "layer": "!_А101_маф",
+   "polyline_handle": "18AA77",
+   "inserts_in_568BF": [
+    {
+     "handle": "18AA78",
+     "insert_m": [
+      -7578.1787,
+      -15323.1952
+     ],
+     "rotation_deg": 0,
+     "outline_world_m": [
+      [
+       -7578.1787,
+       -15323.1952
+      ],
+      [
+       -7578.5611,
+       -15322.7328
+      ],
+      [
+       -7580.4882,
+       -15324.3249
+      ],
+      [
+       -7578.0025,
+       -15327.3473
+      ],
+      [
+       -7577.4483,
+       -15327.0878
+      ],
+      [
+       -7579.6445,
+       -15324.4062
+      ],
+      [
+       -7578.1787,
+       -15323.1952
+      ]
+     ]
+    }
+   ],
+   "inserts_outside_568BF": [
+    "195DF1"
+   ],
+   "outline_block_m": [
+    [
+     0.0,
+     0.0
+    ],
+    [
+     -0.3824,
+     0.4624
+    ],
+    [
+     -2.3095,
+     -1.1297
+    ],
+    [
+     0.1762,
+     -4.1521
+    ],
+    [
+     0.7304,
+     -3.8926
+    ],
+    [
+     -1.4658,
+     -1.211
+    ],
+    [
+     0.0,
+     0.0
+    ]
+   ],
+   "centreline_block_m": [
+    [
+     -0.1913,
+     0.2311
+    ],
+    [
+     -1.8877,
+     -1.1703
+    ],
+    [
+     0.4079,
+     -3.9615
+    ]
+   ],
+   "centreline_segments_m": [
+    2.2,
+    3.614
+   ],
+   "plan_dims_m": [
+    3.919,
+    2.501
+   ],
+   "plan_rotation_deg": 50.565,
+   "schedule_LxWxH_mm": [
+    2500,
+    3900,
+    600
+   ],
+   "plan_deviation_m": [
+    0.019,
+    0.001
+   ],
+   "height": "0.45 m from the module passport (Hobbyka «Верона» art. 18694, H 0.45), review: the schedule's third value 600 is the seat depth"
+  },
+  "2": {
+   "status": "found",
+   "block": "Скамья индивид общ отд 1",
+   "layer": "!_А101_маф",
+   "polyline_handle": "18AA67",
+   "inserts_in_568BF": [
+    {
+     "handle": "18AA68",
+     "insert_m": [
+      -7572.2409,
+      -15318.273
+     ],
+     "rotation_deg": 0,
+     "outline_world_m": [
+      [
+       -7570.6862,
+       -15316.227
+      ],
+      [
+       -7572.618,
+       -15317.814
+      ],
+      [
+       -7572.2409,
+       -15318.273
+      ],
+      [
+       -7570.7725,
+       -15317.0667
+      ],
+      [
+       -7566.9012,
+       -15321.7878
+      ],
+      [
+       -7566.4378,
+       -15321.4067
+      ],
+      [
+       -7570.6862,
+       -15316.227
+      ]
+     ]
+    }
+   ],
+   "inserts_outside_568BF": [
+    "195DF0"
+   ],
+   "outline_block_m": [
+    [
+     1.5547,
+     2.046
+    ],
+    [
+     -0.3771,
+     0.459
+    ],
+    [
+     0.0,
+     0.0
+    ],
+    [
+     1.4684,
+     1.2063
+    ],
+    [
+     5.3397,
+     -3.5148
+    ],
+    [
+     5.8031,
+     -3.1337
+    ],
+    [
+     1.5547,
+     2.046
+    ]
+   ],
+   "centreline_block_m": [
+    [
+     5.5711,
+     -3.324
+    ],
+    [
+     1.5131,
+     1.6236
+    ],
+    [
+     -0.1867,
+     0.2272
+    ]
+   ],
+   "centreline_segments_m": [
+    6.399,
+    2.2
+   ],
+   "plan_dims_m": [
+    6.699,
+    2.5
+   ],
+   "plan_rotation_deg": -129.359,
+   "schedule_LxWxH_mm": [
+    2500,
+    6700,
+    600
+   ],
+   "plan_deviation_m": [
+    0.001,
+    0.0
+   ],
+   "height": "0.45 m from the module passport (Hobbyka «Верона» art. 18694, H 0.45), review: the schedule's third value 600 is the seat depth"
+  },
+  "3": {
+   "status": "found",
+   "block": "Скамья верона",
+   "layer": "!_А101_маф",
+   "polyline_handle": "132D23",
+   "inserts_in_568BF": [
+    {
+     "handle": "132D24",
+     "insert_m": [
+      -7618.3387,
+      -15295.049
+     ],
+     "rotation_deg": 0,
+     "outline_world_m": [
+      [
+       -7615.6862,
+       -15297.3707
+      ],
+      [
+       -7616.1522,
+       -15297.7536
+      ],
+      [
+       -7620.0815,
+       -15292.8932
+      ],
+      [
+       -7619.6151,
+       -15292.5158
+      ],
+      [
+       -7615.6865,
+       -15297.371
+      ]
+     ]
+    }
+   ],
+   "inserts_outside_568BF": [
+    "195DF2"
+   ],
+   "outline_block_m": [
+    [
+     2.6525,
+     -2.3217
+    ],
+    [
+     2.1865,
+     -2.7046
+    ],
+    [
+     -1.7428,
+     2.1558
+    ],
+    [
+     -1.2764,
+     2.5332
+    ],
+    [
+     2.6522,
+     -2.322
+    ]
+   ],
+   "centreline_block_m": [
+    [
+     2.4198,
+     -2.516
+    ],
+    [
+     -1.5095,
+     2.3444
+    ]
+   ],
+   "centreline_segments_m": [
+    6.25
+   ],
+   "plan_dims_m": [
+    6.25,
+    0.6
+   ],
+   "plan_rotation_deg": -128.953,
+   "schedule_LxWxH_mm": [
+    6250,
+    600,
+    null
+   ],
+   "plan_deviation_m": [
+    0.0,
+    0.0
+   ],
+   "height": "0.45 m from the module passport (Hobbyka «Верона» art. 18694, H 0.45), review: the schedule's third value 600 is the seat depth"
+  },
+  "4": {
+   "status": "found",
+   "block": "скамья индивид под андромедой",
+   "layer": "!_А101_маф",
+   "polyline_handle": "195E19",
+   "inserts_in_568BF": [
+    {
+     "handle": "195E1A",
+     "insert_m": [
+      -7620.2286,
+      -15256.4059
+     ],
+     "rotation_deg": 0,
+     "outline_world_m": [
+      [
+       -7616.1569,
+       -15256.741
+      ],
+      [
+       -7616.612,
+       -15257.1321
+      ],
+      [
+       -7618.0818,
+       -15255.385
+      ],
+      [
+       -7621.6025,
+       -15258.3459
+      ],
+      [
+       -7620.1254,
+       -15260.1032
+      ],
+      [
+       -7620.5836,
+       -15260.4887
+      ],
+      [
+       -7622.4477,
+       -15258.2728
+      ],
+      [
+       -7618.0089,
+       -15254.5396
+      ]
+     ]
+    }
+   ],
+   "inserts_outside_568BF": [
+    "195E1B"
+   ],
+   "outline_block_m": [
+    [
+     4.0717,
+     -0.3351
+    ],
+    [
+     3.6166,
+     -0.7262
+    ],
+    [
+     2.1468,
+     1.0209
+    ],
+    [
+     -1.3739,
+     -1.94
+    ],
+    [
+     0.1032,
+     -3.6973
+    ],
+    [
+     -0.355,
+     -4.0828
+    ],
+    [
+     -2.2191,
+     -1.8669
+    ],
+    [
+     2.2197,
+     1.8663
+    ]
+   ],
+   "centreline_block_m": [
+    [
+     -0.1254,
+     -3.8897
+    ],
+    [
+     -1.7964,
+     -1.9034
+    ],
+    [
+     2.1832,
+     1.4436
+    ],
+    [
+     3.8421,
+     -0.5282
+    ]
+   ],
+   "centreline_segments_m": [
+    2.596,
+    5.2,
+    2.577
+   ],
+   "plan_dims_m": [
+    5.8,
+    2.896
+   ],
+   "plan_rotation_deg": -40.065,
+   "schedule_LxWxH_mm": [
+    5800,
+    2900,
+    600
+   ],
+   "plan_deviation_m": [
+    0.0,
+    0.004
+   ],
+   "height": "0.45 m from the module passport (Hobbyka «Верона» art. 18694, H 0.45), review: the schedule's third value 600 is the seat depth"
+  },
+  "5": {
+   "status": "found",
+   "block": "Скамья верона 2",
+   "layer": "!_А101_маф",
+   "polyline_handle": "132D31",
+   "inserts_in_568BF": [
+    {
+     "handle": "132D32",
+     "insert_m": [
+      -7591.0443,
+      -15296.2822
+     ],
+     "rotation_deg": 0,
+     "outline_world_m": [
+      [
+       -7596.1344,
+       -15299.6709
+      ],
+      [
+       -7595.7304,
+       -15300.1273
+      ],
+      [
+       -7591.0443,
+       -15296.2822
+      ],
+      [
+       -7591.4247,
+       -15295.8182
+      ],
+      [
+       -7596.1301,
+       -15299.6758
+      ]
+     ]
+    }
+   ],
+   "inserts_outside_568BF": [
+    "195DF3"
+   ],
+   "outline_block_m": [
+    [
+     -5.0901,
+     -3.3887
+    ],
+    [
+     -4.6861,
+     -3.8451
+    ],
+    [
+     0.0,
+     -0.0
+    ],
+    [
+     -0.3804,
+     0.464
+    ],
+    [
+     -5.0858,
+     -3.3936
+    ]
+   ],
+   "centreline_block_m": [
+    [
+     -0.1904,
+     0.2318
+    ],
+    [
+     -4.9001,
+     -3.6209
+    ]
+   ],
+   "centreline_segments_m": [
+    6.085
+   ],
+   "plan_dims_m": [
+    6.085,
+    0.6
+   ],
+   "plan_rotation_deg": 140.716,
+   "schedule_LxWxH_mm": [
+    6080,
+    600,
+    null
+   ],
+   "plan_deviation_m": [
+    0.005,
+    0.0
+   ],
+   "height": "0.45 m from the module passport (Hobbyka «Верона» art. 18694, H 0.45), review: the schedule's third value 600 is the seat depth"
+  },
+  "6": {
+   "status": "found",
+   "block": "Скамья индивид пл. дети1-3лет",
+   "layer": "!_А101_маф",
+   "polyline_handle": "18AA60",
+   "inserts_in_568BF": [
+    {
+     "handle": "18AA61",
+     "insert_m": [
+      -7603.7688,
+      -15332.9886
+     ],
+     "rotation_deg": 0,
+     "outline_world_m": [
+      [
+       -7608.588,
+       -15330.5341
+      ],
+      [
+       -7606.4509,
+       -15333.1328
+      ],
+      [
+       -7605.0295,
+       -15333.2485
+      ],
+      [
+       -7603.2703,
+       -15331.8019
+      ],
+      [
+       -7603.1093,
+       -15330.3849
+      ],
+      [
+       -7605.2464,
+       -15327.7861
+      ],
+      [
+       -7604.783,
+       -15327.405
+      ],
+      [
+       -7602.4844,
+       -15330.2001
+      ],
+      [
+       -7602.7016,
+       -15332.111
+      ],
+      [
+       -7604.836,
+       -15333.8662
+      ],
+      [
+       -7606.7529,
+       -15333.7102
+      ],
+      [
+       -7609.0514,
+       -15330.9151
+      ]
+     ]
+    }
+   ],
+   "inserts_outside_568BF": [
+    "195ECD"
+   ],
+   "outline_block_m": [
+    [
+     -4.8192,
+     2.4545
+    ],
+    [
+     -2.6821,
+     -0.1442
+    ],
+    [
+     -1.2607,
+     -0.2599
+    ],
+    [
+     0.4985,
+     1.1867
+    ],
+    [
+     0.6595,
+     2.6037
+    ],
+    [
+     -1.4776,
+     5.2025
+    ],
+    [
+     -1.0142,
+     5.5836
+    ],
+    [
+     1.2844,
+     2.7885
+    ],
+    [
+     1.0672,
+     0.8776
+    ],
+    [
+     -1.0672,
+     -0.8776
+    ],
+    [
+     -2.9841,
+     -0.7216
+    ],
+    [
+     -5.2826,
+     2.0735
+    ]
+   ],
+   "centreline_block_m": [
+    [
+     -1.2459,
+     5.393
+    ],
+    [
+     0.972,
+     2.6961
+    ],
+    [
+     0.7828,
+     1.0322
+    ],
+    [
+     -1.1639,
+     -0.5687
+    ],
+    [
+     -2.8331,
+     -0.4329
+    ],
+    [
+     -5.0509,
+     2.264
+    ]
+   ],
+   "centreline_segments_m": [
+    3.492,
+    1.675,
+    2.52,
+    1.675,
+    3.492
+   ],
+   "plan_dims_m": [
+    4.957,
+    5.526
+   ],
+   "plan_rotation_deg": 50.567,
+   "schedule_LxWxH_mm": [
+    4960,
+    5530,
+    600
+   ],
+   "plan_deviation_m": [
+    0.004,
+    0.003
+   ],
+   "mapping": "Artem 2026-11-03 (card t_96a3cc8a comment): 6 = пл. дети1-3лет, 7 = лестн 2, 8 = лестн 2.1, 9 and 10 = лестн 1",
+   "height": "0.45 m from the module passport (Hobbyka «Верона» art. 18694, H 0.45), review: the schedule's third value 600 is the seat depth"
+  },
+  "7": {
+   "status": "found",
+   "block": "Скамья Индивид лестн 2",
+   "layer": "!_А101_маф",
+   "polyline_handle": "198ADA",
+   "inserts_in_568BF": [
+    {
+     "handle": "198ADB",
+     "insert_m": [
+      -7548.1956,
+      -15346.2533
+     ],
+     "rotation_deg": 0,
+     "outline_world_m": [
+      [
+       -7547.6534,
+       -15345.9964
+      ],
+      [
+       -7548.1956,
+       -15346.2533
+      ],
+      [
+       -7550.3025,
+       -15341.8062
+      ],
+      [
+       -7549.7603,
+       -15341.5493
+      ]
+     ]
+    }
+   ],
+   "inserts_outside_568BF": [
+    "198C9A"
+   ],
+   "outline_block_m": [
+    [
+     0.5422,
+     0.2569
+    ],
+    [
+     0.0,
+     0.0
+    ],
+    [
+     -2.1069,
+     4.4471
+    ],
+    [
+     -1.5647,
+     4.704
+    ]
+   ],
+   "centreline_block_m": [
+    [
+     0.2711,
+     0.1284
+    ],
+    [
+     -1.8358,
+     4.5755
+    ]
+   ],
+   "centreline_segments_m": [
+    4.921
+   ],
+   "plan_dims_m": [
+    4.921,
+    0.6
+   ],
+   "plan_rotation_deg": -115.35,
+   "schedule_LxWxH_mm": [
+    4960,
+    5530,
+    600
+   ],
+   "plan_deviation_m": [
+    0.609,
+    4.36
+   ],
+   "mapping": "Artem 2026-11-03 (card t_96a3cc8a comment): 6 = пл. дети1-3лет, 7 = лестн 2, 8 = лестн 2.1, 9 and 10 = лестн 1",
+   "height": "0.45 m from the module passport (Hobbyka «Верона» art. 18694, H 0.45), review: the schedule's third value 600 is the seat depth",
+   "size_basis": "DWG outline (the schedule size 4960x5530 does not fit this block; the row-to-block mapping is Artem's)"
+  },
+  "8": {
+   "status": "found",
+   "block": "Скамья Индивид лестн 2.1",
+   "layer": "!_А101_маф",
+   "polyline_handle": "198C88",
+   "inserts_in_568BF": [
+    {
+     "handle": "198BAC",
+     "insert_m": [
+      -7531.4274,
+      -15333.7498
+     ],
+     "rotation_deg": 0,
+     "outline_world_m": [
+      [
+       -7531.7009,
+       -15333.216
+      ],
+      [
+       -7527.9959,
+       -15331.4666
+      ],
+      [
+       -7527.6026,
+       -15331.9443
+      ],
+      [
+       -7531.4444,
+       -15333.7584
+      ]
+     ]
+    }
+   ],
+   "inserts_outside_568BF": [
+    "198C9B"
+   ],
+   "outline_block_m": [
+    [
+     -0.2735,
+     0.5338
+    ],
+    [
+     3.4315,
+     2.2832
+    ],
+    [
+     3.8248,
+     1.8055
+    ],
+    [
+     -0.017,
+     -0.0086
+    ]
+   ],
+   "centreline_block_m": [
+    [
+     3.6967,
+     2.0768
+    ],
+    [
+     -0.1451,
+     0.2627
+    ]
+   ],
+   "centreline_segments_m": [
+    4.249
+   ],
+   "plan_dims_m": [
+    4.249,
+    0.6
+   ],
+   "plan_rotation_deg": 154.723,
+   "schedule_LxWxH_mm": [
+    4960,
+    5530,
+    600
+   ],
+   "plan_deviation_m": [
+    1.281,
+    4.36
+   ],
+   "mapping": "Artem 2026-11-03 (card t_96a3cc8a comment): 6 = пл. дети1-3лет, 7 = лестн 2, 8 = лестн 2.1, 9 and 10 = лестн 1",
+   "height": "0.45 m from the module passport (Hobbyka «Верона» art. 18694, H 0.45), review: the schedule's third value 600 is the seat depth",
+   "size_basis": "DWG outline (the schedule size 4960x5530 does not fit this block; the row-to-block mapping is Artem's)"
+  },
+  "9": {
+   "status": "found",
+   "block": "Скамья индивид лестн 1",
+   "layer": "!_А101_маф",
+   "polyline_handle": "19865C",
+   "inserts_in_568BF": [
+    {
+     "handle": "19865D",
+     "insert_m": [
+      -7652.4447,
+      -15369.9092
+     ],
+     "rotation_deg": 5.3135,
+     "outline_world_m": [
+      [
+       -7650.4535,
+       -15369.7211
+      ],
+      [
+       -7652.4447,
+       -15369.9092
+      ],
+      [
+       -7652.3891,
+       -15370.5066
+      ],
+      [
+       -7650.3977,
+       -15370.3214
+      ],
+      [
+       -7650.4535,
+       -15369.7211
+      ]
+     ]
+    }
+   ],
+   "inserts_outside_568BF": [
+    "19886A",
+    "198C98",
+    "198C99"
+   ],
+   "outline_block_m": [
+    [
+     2.0,
+     0.0029
+    ],
+    [
+     0.0,
+     0.0
+    ],
+    [
+     -0.0,
+     -0.6
+    ],
+    [
+     2.0,
+     -0.6
+    ],
+    [
+     2.0,
+     0.0029
+    ]
+   ],
+   "centreline_block_m": [
+    [
+     2.0004,
+     -0.2971
+    ],
+    [
+     0.0004,
+     -0.3
+    ]
+   ],
+   "centreline_segments_m": [
+    2.0
+   ],
+   "plan_dims_m": [
+    2.0,
+    0.6
+   ],
+   "plan_rotation_deg": 179.917,
+   "schedule_LxWxH_mm": [
+    4960,
+    5530,
+    600
+   ],
+   "plan_deviation_m": [
+    3.53,
+    4.36
+   ],
+   "mapping": "Artem 2026-11-03 (card t_96a3cc8a comment): 6 = пл. дети1-3лет, 7 = лестн 2, 8 = лестн 2.1, 9 and 10 = лестн 1",
+   "height": "0.45 m from the module passport (Hobbyka «Верона» art. 18694, H 0.45), review: the schedule's third value 600 is the seat depth",
+   "size_basis": "DWG outline (the schedule size 4960x5530 does not fit this block; the row-to-block mapping is Artem's)"
+  },
+  "10": {
+   "status": "found",
+   "block": "Скамья индивид лестн 1",
+   "layer": "!_А101_маф",
+   "polyline_handle": "19865C",
+   "inserts_in_568BF": [
+    {
+     "handle": "19865E",
+     "insert_m": [
+      -7652.3891,
+      -15373.1417
+     ],
+     "rotation_deg": 354.6052,
+     "outline_world_m": [
+      [
+       -7650.3977,
+       -15373.3269
+      ],
+      [
+       -7652.3891,
+       -15373.1417
+      ],
+      [
+       -7652.4455,
+       -15373.739
+      ],
+      [
+       -7650.4544,
+       -15373.9271
+      ],
+      [
+       -7650.3977,
+       -15373.3269
+      ]
+     ]
+    }
+   ],
+   "inserts_outside_568BF": [
+    "19886A",
+    "198C98",
+    "198C99"
+   ],
+   "outline_block_m": [
+    [
+     2.0,
+     0.0029
+    ],
+    [
+     0.0,
+     0.0
+    ],
+    [
+     -0.0,
+     -0.6
+    ],
+    [
+     2.0,
+     -0.6
+    ],
+    [
+     2.0,
+     0.0029
+    ]
+   ],
+   "centreline_block_m": [
+    [
+     2.0004,
+     -0.2971
+    ],
+    [
+     0.0004,
+     -0.3
+    ]
+   ],
+   "centreline_segments_m": [
+    2.0
+   ],
+   "plan_dims_m": [
+    2.0,
+    0.6
+   ],
+   "plan_rotation_deg": 179.917,
+   "schedule_LxWxH_mm": [
+    4960,
+    5530,
+    600
+   ],
+   "plan_deviation_m": [
+    3.53,
+    4.36
+   ],
+   "mapping": "Artem 2026-11-03 (card t_96a3cc8a comment): 6 = пл. дети1-3лет, 7 = лестн 2, 8 = лестн 2.1, 9 and 10 = лестн 1",
+   "height": "0.45 m from the module passport (Hobbyka «Верона» art. 18694, H 0.45), review: the schedule's third value 600 is the seat depth",
+   "size_basis": "DWG outline (the schedule size 4960x5530 does not fit this block; the row-to-block mapping is Artem's)"
+  }
+ },
+ "candidates_rows_6_10_resolved": "moved into rows 6-10 by Artem's mapping 2026-11-03"
+}

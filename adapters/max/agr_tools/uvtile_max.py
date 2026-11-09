@@ -31,16 +31,17 @@ def _helpers(ctx):
     return ctx.agr._load_core('texqa_max.py', 'agr_tools_texqa_max')
 
 
-def _in_session(emax, label, fn):
-    box = {}
-    with emax.session(label):
-        try:
-            box['value'] = fn()
-        except BaseException as exc:  # noqa: BLE001 - re-raised below, outside the undo context
-            box['error'] = exc
-    if 'error' in box:
-        raise box['error']
-    return box['value']
+def _session_core():
+    """Shared helpers (session_core.py next to this file), loaded by path like the other sibling cores."""
+    import importlib.util
+    from pathlib import Path
+    spec = importlib.util.spec_from_file_location('agr_tools_session_core', Path(__file__).with_name('session_core.py'))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+_in_session = _session_core().in_session
 
 
 # ---- udim.slots ---------------------------------------------------------------------------------------------

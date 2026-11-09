@@ -214,6 +214,7 @@ def test_cli_readable_controls_emit_json(zips, key):
     assert "ZIP" not in names and {"foreign files", "FBX count"} <= names
 
 
+@pytest.mark.perf
 def test_every_one_byte_name_is_a_report_never_a_crash(tmp_path):
     """Every lead byte is either read or a V001 ZIP fail. None escapes, none passes."""
     invalid = 0

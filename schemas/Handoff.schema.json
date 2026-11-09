@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/artsafro/AGR-DigitalTwin-pilot/schemas/Handoff.schema.json",
+  "title": "AGR Max <-> Blender handoff bundle v1 (#1024, branch BH)",
+  "description": "Files of handoff/<job>/<seq>/: manifest.json, sidecar.json, materials.json, readback_*.json (model.fbx is the working FBX: not triangulated, metres, Z up). Mirror: adapters/max/agr_tools/handoff_core.py validate_*; mcp-review REPORT.md 3.12.",
+  "oneOf": [
+    {"$ref": "#/$defs/manifest"},
+    {"$ref": "#/$defs/sidecar"},
+    {"$ref": "#/$defs/materials"},
+    {"$ref": "#/$defs/readback"}
+  ],
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "fileRef": {
+      "type": "object", "required": ["file", "sha256"],
+      "properties": {"file": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/sha256"}}
+    },
+    "source": {
+      "type": "object", "required": ["host", "doc", "app"],
+      "properties": {"host": {"enum": ["max", "blender"]}, "doc": {"type": "string"}, "app": {"type": "string"}}
+    },
+    "rows": {
+      "type": "array", "minItems": 4, "maxItems": 4,
+      "items": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}}
+    },
+    "role": {"enum": [null, "body", "opening", "window", "glass", "capsule", "roof", "parapet", "equipment", "decor", "helper"]},
+    "slot": {
+      "type": "object", "required": ["slot_index", "mat_id", "material", "library_id", "udim"],
+      "properties": {
+        "slot_index": {"type": "integer", "minimum": 0},
+        "mat_id": {"type": "integer"},
+        "material": {"type": ["string", "null"]},
+        "library_id": {"type": ["integer", "null"]},
+        "udim": {"type": "array", "items": {"type": "integer", "minimum": 1001}}
+      }
+    },
+    "manifest": {
+      "type": "object",
+      "required": ["schema", "kind", "source", "units", "fbx", "materials", "objects"],
+      "properties": {
+        "schema": {"const": 1},
+        "kind": {"const": "agr.handoff.manifest"},
+        "source": {"$ref": "#/$defs/source"},
+        "units": {
+          "type": "object", "required": ["system", "m_per_unit", "system_scale", "export", "axis"],
+          "properties": {
+            "system": {"type": "string"}, "m_per_unit": {"type": "number", "exclusiveMinimum": 0},
+            "system_scale": {"type": "number"}, "export": {"const": "m"}, "axis": {"const": "Z-up"}
+          }
+        },
+        "fbx": {
+          "allOf": [{"$ref": "#/$defs/fileRef"}],
+          "required": ["triangulated"],
+          "properties": {"triangulated": {"const": false}, "ucx": {"const": false}}
+        },
+        "materials": {"$ref": "#/$defs/fileRef"},
+        "objects": {
+          "type": "array", "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["name", "agr_role", "layer", "parent", "world", "instance_of", "geometry_hash", "handle", "slots", "uv_channels"],
+            "properties": {
+              "name": {"type": "string", "minLength": 1},
+              "agr_role": {"$ref": "#/$defs/role"},
+              "layer": {"type": "string"},
+              "parent": {"type": ["string", "null"]},
+              "world": {"$ref": "#/$defs/rows"},
+              "instance_of": {"type": ["string", "null"]},
+              "geometry_hash": {"$ref": "#/$defs/sha256"},
+              "handle": {"type": "integer", "minimum": 1},
+              "slots": {"type": "array", "items": {"$ref": "#/$defs/slot"}},
+              "uv_channels": {
+                "type": "array",
+                "items": {
+                  "type": "object", "required": ["channel", "purpose", "tiles"],
+                  "properties": {"channel": {"type": "integer", "minimum": 1}, "purpose": {"type": "string"},
+                                 "tiles": {"type": "array", "items": {"type": "integer", "minimum": 1001}}}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "sidecar": {
+      "type": "object",
+      "required": ["schema", "kind", "source", "objects", "markers", "passport"],
+      "properties": {
+        "schema": {"const": 1},
+        "kind": {"const": "agr.handoff.sidecar"},
+        "source": {"$ref": "#/$defs/source"},
+        "objects": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object", "required": ["user_props", "props", "hard_edges", "smoothing"],
+            "properties": {"user_props": {"type": "string"}, "props": {"type": "object", "additionalProperties": {"type": "string"}},
+                           "hard_edges": {"type": "integer", "minimum": 0}, "smoothing": {"type": "object"}}
+          }
+        },
+        "markers": {
+          "type": "array",
+          "items": {
+            "type": "object", "required": ["name", "kind", "world", "props"],
+            "properties": {"name": {"type": "string", "pattern": "^(OPEN_[0-9]{3}|LEVEL_[A-Za-z0-9]+)$"},
+                           "kind": {"enum": ["opening", "level"]}, "world": {"$ref": "#/$defs/rows"},
+                           "props": {"type": "object"}}
+          }
+        },
+        "passport": {"oneOf": [{"type": "null"}, {"type": "object", "required": ["path", "sha256"]}]}
+      }
+    },
+    "value": {
+      "oneOf": [
+        {"type": ["null", "boolean", "number", "string"]},
+        {"type": "object", "required": ["$"], "properties": {"$": {"enum": ["color", "point2", "point3", "point4", "name", "array", "ref", "sub", "skip"]}}}
+      ]
+    },
+    "materials": {
+      "type": "object",
+      "required": ["schema", "kind", "source", "objects", "nodes", "maps"],
+      "properties": {
+        "schema": {"const": 1},
+        "kind": {"const": "agr.handoff.materials"},
+        "source": {"$ref": "#/$defs/source"},
+        "objects": {
+          "type": "array",
+          "items": {
+            "type": "object", "required": ["name", "role", "handle", "material", "mat_ids"],
+            "properties": {"name": {"type": "string"}, "role": {"$ref": "#/$defs/role"}, "handle": {"type": "integer"},
+                           "material": {"type": ["string", "null"]}, "mat_ids": {"type": "array", "items": {"type": "integer"}}}
+          }
+        },
+        "nodes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object", "required": ["name", "class", "superclass", "props"],
+            "properties": {"name": {"type": "string"}, "class": {"type": "string", "minLength": 1},
+                           "superclass": {"type": "string"},
+                           "props": {"type": "object", "additionalProperties": {"$ref": "#/$defs/value"}}}
+          }
+        },
+        "maps": {
+          "type": "array",
+          "items": {"type": "object", "required": ["node", "key", "class", "path", "used_by"]}
+        }
+      }
+    },
+    "readback": {
+      "type": "object",
+      "required": ["schema", "kind", "host", "app", "objects"],
+      "properties": {
+        "schema": {"const": 1},
+        "kind": {"const": "agr.handoff.readback"},
+        "host": {"enum": ["max", "blender"]},
+        "app": {"type": "string"},
+        "objects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "role", "parent", "world", "scale", "verts", "faces", "edges", "degrees", "mat_hist", "face_keys", "uv", "hard", "bbox", "instance_group"]
+          }
+        }
+      }
+    }
+  }
+}

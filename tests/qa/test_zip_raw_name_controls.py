@@ -201,6 +201,19 @@ def validate_npm(path: Path):
     return validate_package.validate(path, "npm", PROFILES, scene=False)
 
 
+def assert_nul_refused(report) -> None:
+    """Since #979 the validator refuses a raw member name with NUL before reading (V001 `zip_nul_name`); the raw
+    tail after the NUL is never echoed. The official reader's truncation above stays a measured characterization."""
+    assert report.passed is False
+    assert report.exit_code == 1
+    stage = v001(report)
+    rows = [item for item in stage.findings if item.name == "ZIP"]
+    assert len(rows) == 1 and rows[0].status == "fail" and rows[0].data["code"] == "zip_nul_name"
+    text = "\n".join(f"{item.name} {item.observed}" for item in stage.findings)
+    assert "../escape" not in text
+    assert "\x00" not in text
+
+
 def assert_composition(report, foreign_observed: str) -> None:
     """V001 failed on archive content. A synthetic composition failure is not delivery compliance."""
     assert report.passed is False
@@ -241,7 +254,7 @@ def test_matching_nul_suffix_official_returns_truncated_name(tmp_path):
     )
     assert official_bundle.read_bundle(path, MAX_UNCOMPRESSED) == {"a.bin": PAYLOAD_SUFFIX}
     assert_development_rejects_unsafe(path)
-    assert_composition(validate_npm(path), "a.bin")
+    assert_nul_refused(validate_npm(path))
     assert_archive_untouched(path, blob, digest)
 
 
@@ -251,7 +264,7 @@ def test_leading_nul_official_returns_empty_string_key(tmp_path):
     )
     assert official_bundle.read_bundle(path, MAX_UNCOMPRESSED) == {"": PAYLOAD_LEAD}
     assert_development_rejects_unsafe(path)
-    assert_composition(validate_npm(path), "")
+    assert_nul_refused(validate_npm(path))
     assert_archive_untouched(path, blob, digest)
 
 
@@ -320,7 +333,7 @@ def test_backslash_normalization_follows_os_sep(tmp_path):
     assert_archive_untouched(path, blob, digest)
 
 
-def test_nul_suffix_cli_json_is_a_composition_failure(tmp_path):
+def test_nul_suffix_cli_json_is_a_v001_nul_finding(tmp_path):
     path, blob, digest = materialize(
         tmp_path, "nul-suffix-cli.zip", [(NAME_NUL_SUFFIX, NAME_NUL_SUFFIX, PAYLOAD_SUFFIX)],
     )
@@ -353,11 +366,7 @@ def test_nul_suffix_cli_json_is_a_composition_failure(tmp_path):
     assert report["profile"] == "npm"
     stage = next(item for item in report["stages"] if item["id"] == "V001")
     failed = [item for item in stage["findings"] if item["status"] == "fail"]
-    assert "ZIP" not in [item["name"] for item in stage["findings"]]
-    foreign = next(item for item in failed if item["name"] == "foreign files")
-    count = next(item for item in failed if item["name"] == "FBX count")
-    assert foreign["observed"] == "a.bin"
-    assert count["observed"] == "0"
+    assert [item["data"]["code"] for item in failed if item["name"] == "ZIP"] == ["zip_nul_name"]  # #979
     assert_archive_untouched(path, blob, digest)
 
 

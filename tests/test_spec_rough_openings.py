@@ -161,14 +161,25 @@ def test_grille_and_window_above_it_stay_two_openings():
     assert kinds == [["grille"], ["window"]]
 
 
-def test_b01_example_is_spec_v03_and_matches_harness_plan():
-    # the spec example of HARNESS_PLAN §3 and its fixture are the same document and valid v0.3
+def test_b01_example_fixture_is_spec_v03():
+    # the fixture is the live copy of the spec example of archive/2026-11:docs/HARNESS_PLAN.md §3 (historical)
     fixture = json.loads((ROOT / "tests" / "fixtures" / "spec-b01-v0.3.json").read_text(encoding="utf-8"))
-    plan = (ROOT / "docs" / "HARNESS_PLAN.md").read_text(encoding="utf-8")
-    block = plan[plan.index("```json", plan.index("## 3.")) + 7:]
-    assert json.loads(block[:block.index("```")]) == fixture
     spec = Spec.model_validate(fixture)
     assert spec.spec_version == "0.3" and spec.floors[0].openings[0].glass_w is not None
+
+
+def test_b01_example_fixture_matches_the_archived_plan():
+    # the plan left the tree (docs/ARCHIVE.md); its frozen §3 example is read from the archive tag
+    import subprocess
+
+    shown = subprocess.run(["git", "show", "archive/2026-11:docs/HARNESS_PLAN.md"], cwd=ROOT,
+                           capture_output=True, text=True, encoding="utf-8")
+    if shown.returncode != 0:
+        pytest.skip("tag archive/2026-11 is not fetched (git fetch origin tag archive/2026-11)")
+    plan = shown.stdout
+    fixture = json.loads((ROOT / "tests" / "fixtures" / "spec-b01-v0.3.json").read_text(encoding="utf-8"))
+    block = plan[plan.index("```json", plan.index("## 3.")) + 7:]
+    assert json.loads(block[:block.index("```")]) == fixture
 
 
 def test_v02_spec_still_needs_its_depth():

@@ -477,7 +477,7 @@ def _blocked(causes):
 
 
 def _stop_record(ev):
-    """A saved stop: `pipeline/state.json` written with its `stops` (HARNESS_PLAN §12 (historical))."""
+    """A saved stop: `pipeline/state.json` written with its `stops` (archive/2026-11:docs/HARNESS_PLAN.md §12 (historical))."""
     if ev["name"] not in EDIT_TOOLS or not STATE_FILE.search(str(ev["input"].get("file_path") or "")):
         return False
     edits = ev["input"].get("edits") if isinstance(ev["input"].get("edits"), list) else []

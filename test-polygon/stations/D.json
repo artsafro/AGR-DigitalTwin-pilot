@@ -50,7 +50,7 @@
      "scene": "frag_d_batch",
      "expect": "fail",
      "codes": [
-      "procedural_unchecked"
+      "cleanup"
      ]
     },
     {
@@ -58,7 +58,7 @@
      "scene": "frag_d_batch",
      "expect": "fail",
      "codes": [
-      "procedural_unchecked"
+      "cleanup"
      ]
     },
     {

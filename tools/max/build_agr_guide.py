@@ -35,8 +35,35 @@ def render():
     def colour(node):
         return '#{:02x}{:02x}{:02x}'.format(*model.block_accent(node['hue'], *LIGHT))
 
-    return {'GUIDE.md': roadmap.guide_md(suite, model.VERSION),
+    return {'GUIDE.md': roadmap.guide_md(suite, model.VERSION) + stages_md(suite, roadmap, model),
             'flow.svg': roadmap.flow_svg(suite, model.VERSION, colour)}
+
+
+def wip_note(model):
+    """Release 1.0.0 (#1024 R): which stage buttons are still wip (branch Q, deferred to 1.1.0)."""
+    wip = [a for a in model.ACTIONS_100 if a.wip]
+    if not wip:
+        return ''
+    return ' — в 1.0.0 это только {} (ветка Q, выпуск в 1.1.0)'.format(
+        ', '.join('`{}`'.format(a.tool) for a in wip))
+
+
+def stages_md(suite, roadmap, model):
+    """The 1.0 stage rail of «Путь» (#1024) as the panel draws it (ui_model.stage_rail): big button, second row."""
+    station = roadmap.stations(suite)  # 1.0.1..1.0.33, then the 1.1 rows of the stages (1.1.1..)
+    out = ['', '## ' + model.MENU_100, '',
+           'На вкладке «Путь» над блоками — ряд больших кнопок этапов (иконка, подпись, статус этапа из паспорта '
+           'проекта); под каждой — вторая строка с мелкими кнопками этапа. Кнопка в работе видна, но неактивна: '
+           '«{}»{}. Страницы блоков 0–9 не меняются.'.format(model.WIP_TIP, wip_note(model)), '',
+           '| Этап | Большая кнопка | Мелкие кнопки (вторая строка) |', '|---|---|---|']
+
+    def name(a):
+        return '{} (`{}`, {})'.format(a.label, a.tool, station[a.tool])
+
+    for st in model.stage_rail(suite):
+        out.append('| {} | {} | {} |'.format(model.stage_title(st.id, st.label), name(st.big),
+                                                '; '.join(name(a) for a in st.small) or '—'))
+    return '\n'.join(out) + '\n'
 
 
 def main(argv=None):

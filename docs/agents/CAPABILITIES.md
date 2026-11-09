@@ -19,8 +19,8 @@ Status:
 
 ## Machine and repository
 
-- Local: `C:\Users\artsafro\AGR-DigitalTwin` (branch `main`); GitHub `artsafro/AGR-DigitalTwin`
-  (private, `origin`). Task worktrees: the agent's own worktree folder or
+- Local: `C:\Users\artsafro\.AGR-DigitalTwin_pilot` (branch `main`); GitHub `artsafro/AGR-DigitalTwin-pilot`
+  (private, `origin`). The upstream `artsafro/AGR-DigitalTwin` (`C:\Users\artsafro\AGR-DigitalTwin`) is a separate repo. Task worktrees: the agent's own worktree folder or
   `C:\Users\artsafro\HerdrWorktrees\AGR-DigitalTwin\<name>` (Herdr).
 - Applications: Blender 4.4 and 5.1.2, Unreal Engine 5.5 and 5.7, 3ds Max 2024 and 2026, Revit 2025,
   AutoCAD 2025, SketchUp 2026, SpeedTree Modeler 10.0.1, RizomUV 2024.1, Python 3.13 (`py -3`), uv,
@@ -43,7 +43,7 @@ scratch dir `tmp/issue139/`. A smoke run is not delivery validation (`passed=tru
 | ezdxf | 1.4.3 | `uv run --offline --extra cad python tmp/issue139/cad.py` ([run 4](../research/toolchain-smoke-2026-10-15.md#run-4-cad_extra_fallback)) | works: 1 LINE written to DXF and read back. The issue's `--group cad` fails: `error: Group 'cad' is not defined in the project's 'dependency-groups' table` (it is an optional extra) | 2026-10-15 |
 | CheckToolBox | v1.5 add-on (no version in bl_info) on Blender 4.4.0 | `blender 4.4 --background --factory-startup --python-exit-code 1 --python jobs/KPP1/scripts/qa_checktoolbox.py -- <out.json> <synthetic_cube.fbx>` ([run 14](../research/toolchain-smoke-2026-10-15.md#run-14-blender_44_qa_checktoolbox_run)) | works on Blender 4.4 (the KPP1 host): faces 6, doubles 0, intersect_faces 0. Fails on Blender 5.1.2: `ModuleNotFoundError: No module named 'CheckToolBox_v1_5'` (add-on not installed there; Blender exits 0 unless `--python-exit-code` is set) | 2026-10-15 |
 | speedtree-mcp | mcp 1.30.0; SpeedTree Modeler v10.0.1 install | `python tmp/issue139/speedtree.py` (stdio client in the BlenderLab103 venv) ([run 5](../research/toolchain-smoke-2026-10-15.md#run-5-speedtree_mcp_client)) | works: server starts, 6 tools listed, `installation_info` installed=True. No `.spm` sample is tracked, so no inspect or export | 2026-10-15 |
-| AutoCAD core console | AutoCAD 2025, ACADVER 25.0 | `python hermes_kanban/scripts/dcc_batch.py acad --ping` ([run 10](../research/toolchain-smoke-2026-10-15.md#run-10-acad_dcc_batch_ping)) | works: `AGR_PING acad=25.0`, exit code 0, 4.0 s | 2026-10-15 |
+| AutoCAD core console | AutoCAD 2025, ACADVER 25.0 | `python hermes_kanban/scripts/dcc_batch.py acad --ping` ([run 10](../research/toolchain-smoke-2026-10-15.md#run-10-acad_dcc_batch_ping)) | works: `AGR_PING acad=25.0`, exit code 0, 4.0 s; `FILEDIA` is a user registry setting shared with the interactive AutoCAD, the console starts at 0 and writes its value back on exit, so scripts restore the user's value (`adapters.cad.dwg.filedia_guarded`, #1026) | 2026-10-15 |
 | 3ds Max batch | 3ds Max 2026.3 (28.3.0.30732) | `python hermes_kanban/scripts/dcc_batch.py max --ping` ([run 11](../research/toolchain-smoke-2026-10-15.md#run-11-max_dcc_batch_ping)) | works with an error: `AGR_PING max=28000` printed, wrapper status ok, but native exit 4294967166 and `MAXScript Auto-load Script Error Exception ... polyunwrapper_autoload.mse` (a startup script in the user profile; the whole batch run took 119.9 s) | 2026-10-15 |
 | Blender | 5.1.2 (hash ec6e62d40fa9) | `blender 5.1 --background --factory-startup --version` ([run 6](../research/toolchain-smoke-2026-10-15.md#run-6-blender_version)) | works: version printed, exit 0; the synthetic test FBX was also exported headless ([run 7](../research/toolchain-smoke-2026-10-15.md#run-7-blender_synthetic_cube_fbx)) | 2026-10-15 |
 | autocad-mcp | multiCAD (`tools/mcp/multicad_stdio.py`) | none | not checked: needs AutoCAD open (user); the MCP server drives a live AutoCAD session, which a headless smoke check does not start | 2026-10-15 |
@@ -91,6 +91,33 @@ substitute ad-hoc scripting.
 - Use: 3ds Max 2026 (2024 is forced to run as administrator and may not connect from a
   non-elevated client). Skill: `3dsmax-mcp-dev`.
 
+### AGR checkers and AGR Tools rows — `agr-mcp`
+- What: our own stdio MCP server (`src/agr_mcp`, `uv run --directory <pilot> agr-mcp`) over the AGR
+  checkers and the AGR Tools plan rows; it reaches the pinned open 3ds Max through the `3dsmax-mcp`
+  pipe above and calls only the installed AGR Tools `runtime.*`. Plan: `docs/plans/agr-mcp.md`;
+  usage: `src/agr_mcp/README.md`. Registered in `.agents/mcp_config.json` (directory
+  `C:\agr\AGR-DigitalTwin-pilot`); set `AGR_MCP_MAX_PID` to the pid of the open Max per session —
+  without it every Max tool answers `host_unavailable`, it never picks a Max by itself.
+- Status: CONFIGURED, tool_schema_version 2 (#1024 branch 0, 2026-11-06). Unit-tested on a fake pymxs;
+  the v2 tools have not been run against a live Max yet (L12 checks latency, one Undo record,
+  selection restore, slot isolation).
+- Catalogue (generated from `docs/plans/agr-tools-suite.json`): 15 stage tools of 1.0
+  (`agr_project_passport` … `agr_agent_accept`), `agr_check_run` (38 read rows), `agr_op_preview`
+  (32 editing rows), `agr_op_apply`; plus the 52 v1 tools, deprecated. Profiles
+  (`observer` / `operator` / `modeller` / `dev`) do not exist yet — branch U; today every tool is listed.
+- Preview-only rule: editing rows answer a preview held by the server (`preview_id`, bound to host,
+  Max pid, document, runtime version and scene state hash; TTL 30 min). `agr_op_apply` applies only
+  the 0.8 rows (export copies, new files, UCX rename in one undo record); every 0.9 / 1.0 row answers
+  `needs_human` — apply is the user's button in the AGR Tools panel/dock (owner answers 06.11.2026).
+- Journal: one journal for panel and MCP (`journal_core.py`, `%LOCALAPPDATA%\AGRTools\journal`),
+  one line per call with actor `mcp`; plus the transport audit `%LOCALAPPDATA%\agr-mcp\audit.jsonl`.
+- Errors carry `structuredContent.error_code`: `busy`, `stale_preview`, `scene_mismatch`,
+  `version_mismatch`, `needs_human`, `host_unavailable`, `handles_required`, `target_conflict`,
+  `unknown_handle`, `selection_changed`, `runtime_missing`, `invalid_input`, … (`instance_ambiguous`,
+  `invariant_broken` reserved for branch U / D108).
+- `agr_exec_unsafe` exists only with `AGR_MCP_UNSAFE=1` (destructive, audited).
+- Owner: Claude (main) · scope: repo (`.agents/mcp_config.json`)
+
 ### Revit — `revit-bridge` (the live route)
 - Status: CONFIGURED (Codex, 2026-10-06: `revit_status` answered from the running Revit 2025;
   a Revit API version query over the pipe timed out — needs a fresh read-only check)
@@ -116,7 +143,7 @@ substitute ad-hoc scripting.
   `feature/revit-workflow` (archive bundle); the Claude user registration points at that
   worktree. Not part of this repo — backlog H3.
 - 2026-10-08 (Claude): still fails to connect (CONNECTION_CLOSED). The Revit spec extractor
-  uses `revit-http-2025` instead (historical `docs/HARNESS_PLAN.md` §4; current route is this section).
+  uses `revit-http-2025` instead (`docs/pipeline-tools.md`, "Spec extractor").
 
 ### AutoCAD — `multiCAD`
 - Status: WORKING (Codex, 2026-10-06, AutoCAD 2025): inspection on `flora.dwg`; on a fixture, seven
@@ -150,7 +177,8 @@ substitute ad-hoc scripting.
   the former AGR folder's venv. Scripts are now in `adapters/sketchup/`; the venv was not moved
   — create one and re-verify before use (backlog H2).
 
-Adapters and evidence log: `tools/mcp/README.md`, `tools/mcp/verification.txt`. All routes are
+Offline DCC preparation and the native-run handoff runbook (not a verified adapter):
+`docs/agents/dcc-offline-workflows.md`. Adapters and evidence log: `tools/mcp/README.md`, `tools/mcp/verification.txt`. All routes are
 registered for Codex and Antigravity; Claude uses only its own user-scope registrations.
 Project sessions load only the DCC servers [D130]: `.claude/settings.json` sets `disableClaudeAiConnectors`
 (claude.ai connectors such as Gmail, Zoom, Drive stay out of terminal, VS Code and JetBrains sessions;
@@ -180,6 +208,9 @@ that those tools have been tested. No generic MCP sandbox is implemented by guar
 |---|---|---|
 | 3dsmax-mcp | `get_selected_max_instance`; `query_scene` with `action` `overview` or `selection` only; `get_object_properties` by `name`/`handle`; `geometry_qa` (scene untouched; the server writes and deletes its own temp snapshot file) — source-inspected at `bcd4e4c6`, used in the 2026-11-03 live cycle | read-only |
 | 3dsmax-mcp | All other tools and operations, including `query_scene` `class`/`property`/`filter`/`delta` (caller strings reach MAXScript `execute` or unquoted code on the TCP path; `delta` resets a baseline), `select_max_instance` (rebinds the session), `manage_scene`, viewport tools and script execution; inspect schema before use | destructive |
+| agr-mcp | `agr_check_run`, `agr_op_preview`, the 15 stage tools (preview only), v1 checks and every v1 `mode=preview` / read tool; the selection is restored after each call | read-only |
+| agr-mcp | v1 `mode=apply` of the 0.8 copy/file rows (export copies and new files, never overwrites) | versioned-write |
+| agr-mcp | `agr_op_apply` (its 0.8 rows include `ucx.rename`, an in-place rename in one undo record), v1 `agr_ucx_rename` apply, `agr_exec_unsafe` (only with `AGR_MCP_UNSAFE=1`) and anything not listed | destructive |
 | revit-bridge | `revit_status` | read-only |
 | revit-bridge | `export_fbx*`, `agr_export_fbx` to new versioned destinations | versioned-write |
 | revit-bridge | All other tools, including `open_document`, link load/unload/reload/repath | destructive |
@@ -203,130 +234,21 @@ that those tools have been tested. No generic MCP sandbox is implemented by guar
 
 ## Harness
 
-### Harness inventory
-One row per component (#129): every hook command in `.claude/settings.json` and in the subagents' frontmatter, every
-permission list, guard rule set, command, subagent and git hook. **Evidence** is a case, PR or issue where the failure
-really happened; `none` = a precaution only (the decision that made it is named). **Last verified** = the last date it
-was seen working: `live` (a real session, named) or `pytest` (its suite green on that date). **Eval** = tasks under
-`evals/` that would catch the stated failure, or `none`; for protection rows, a task must test the component's
-rejection behavior to count. Indirect procedural signals are listed separately below, not as covering evals.
-Rules for re-examining it: `docs/agents/WORKFLOW.md`,
-"Harness inventory". `tests/test_harness_inventory.py` fails when a hook, command, subagent or git hook has no row
-or an eval id is no task.
-
-| Component | Kind | Failure it prevents | Evidence it happened | Last verified | Eval |
-|---|---|---|---|---|---|
-| `.claude/hooks/guard.py` | PreToolUse hook (Bash, PowerShell, Write, Edit, NotebookEdit), "ask" | a destructive, outward or asset-corrupting action without the user's word | PR #142: the app isolation hook refused a Write into another worktree (real handover transcript); not component-specific evidence for project guard | never (project-guard verification unknown; component-specific run required) | none |
-| `.pi/extensions/agr-guard.ts` + `tools/hooks/pi_guard_adapter.py` | Pi `tool_call` bridge (bash, powershell, write, edit), fail closed | Pi skips Claude hooks; headless ask/deny and hook failures must block | #58: Windows third-party hook adapter passed an unexpanded project path | 2026-10-15 live via `pi-run.sh` + nested smoke driver (`tests/fixtures/pi_guard_smoke.ts`): status allowed, reset blocked; pytest `tests/test_pi_guard_adapter.py` + `tests/test_pi_guard_contract.py` (installed-Pi parity); exact `edits[]` preview; special Pi paths and fuzzy-only edits block (use native/relative paths and exact text); opt in with `PI_EXTENSIONS=.pi/extensions/agr-guard.ts`, wrapper wiring deferred | none |
-| guard rule set `SHELL_RULES` | guard rule set | push, `reset --hard`, `clean`, forced branch delete, discarded changes, history rewrite, LFS migrate, deletes of sources or production assets, recursive delete, installs, system changes | none (precaution, carried over from DigitalTwinProject) | never (no test) | none |
-| guard rule set `PRODUCTION_EXT` | guard rule set (Write, Edit) | a text write over a production asset (`.fbx`, `.max`, `.blend`, `.png`, ...) | none (precaution) | never (no test) | none |
-| guard rule set `ALLOWED_WRITE_ROOTS` | guard rule set (Write, Edit) | a write outside the project and the allowed folders, e.g. into another worktree | PR #142: the app isolation hook refused the foreign-worktree Write; not component-specific evidence for this rule set | never (rule-set verification unknown; component-specific run required) | none |
-| `permissions.allow` | `.claude/settings.json` list | a routine read-only git, test or `dt` call stops the session for a confirmation | none (convenience) | never (no test) | none |
-| `permissions.ask` | `.claude/settings.json` list | push, `reset --hard`, `clean`, `branch -D` without the user's word (duplicates `SHELL_RULES`) | none (precaution) | never (no test) | none |
-| `permissions.deny` | `.claude/settings.json` list | secrets in `.env` read into the context | none (precaution) | never (no test) | none |
-| `.claude/hooks/pipeline_gate.py` | PreToolUse hook (Write, Edit), deny | a job status above draft without spec, extractor report and checker report; a job script without an engine gap | case alina-bld (`docs/cases.md`): no spec, no checker report, build script left only as `.pyc` | 2026-10-15 pytest (`tests/test_pipeline_gate.py`) | none |
-| `tools/hooks/skill_gate.py` | PreToolUse hook (DCC MCP), deny | a 3ds Max / Blender / Revit MCP call before its skill is loaded | none (precaution, [D074], PR #107) | 2026-10-15 pytest (`tests/test_usage_hooks.py`) | none |
-| `tools/hooks/session_context.py start` | SessionStart hook | a session after `/clear` or compaction starts without branch, state and handoff, or on a stale / foreign handoff | none (precaution, [D076], PR #107) | 2026-10-15 pytest (`tests/test_session_context.py`); live 2026-10-14 in `claude -p` | none |
-| `tools/hooks/session_context.py precompact` | PreCompact hook | a manual `/compact` over a stale handoff loses the session state | none (precaution, [D076]) | 2026-10-15 pytest (`tests/test_session_context.py`) | none |
-| `tools/hooks/context_watch.py` | UserPromptSubmit hook | the session runs into auto-compaction without a handover (45 % / 65 % notes) | none (precaution, [D076]) | 2026-10-15 pytest (`tests/test_context_watch.py`) | none |
-| `tools/hooks/usage_log.py prompt` | UserPromptSubmit hook | an unused `/command` stays invisible (no 7-day counts at `/takeover`) | none (precaution, [D074]) | 2026-10-15 pytest (`tests/test_usage_hooks.py`) | none |
-| `tools/hooks/usage_log.py post` | PostToolUse hook (Agent, Task, Skill) | an unused subagent or skill stays invisible; the usage-log evidence for evals | none (precaution, [D074]) | 2026-10-15 pytest (`tests/test_usage_hooks.py`) | none |
-| `.claude/hooks/subagents.py start` | SubagentStart hook | a subagent forgets it is read-only; no `git status` snapshot for the stop check | none (precaution, [D071]) | 2026-10-15 pytest (`tests/test_subagents.py`) | none |
-| `.claude/hooks/subagents.py stop` | SubagentStop hook | tracked files changed by a subagent go unnamed; `independent-checker` ends without a verdict table | none (precaution, [D071]) | 2026-10-15 pytest (`tests/test_subagents.py`) | none |
-| `.claude/hooks/subagents.py guard` | PreToolUse hook in all five subagents, deny | a plain Bash write from a read-only subagent | none (precaution, [D071]) | 2026-10-15 pytest (`tests/test_subagents.py`) | none |
-| `.claude/hooks/subagents.py deny-geometry` | PreToolUse hook in `independent-checker`, deny | the checker reads how the model was built and confirms it instead of checking | #117: the engine's own "11/11 checks passed" on a wrong model | 2026-10-15 pytest (`tests/test_subagents.py`); live 2026-10-13 (PR #86) | none |
-| `tools/hooks/save_transcript.py` | script of `/handover` | the session transcript is lost at `/clear`, so evals have no evidence | #121 (no transcripts kept before it) | 2026-10-15 live (PR #140, by nonce); pytest (`tests/test_save_transcript.py`) | none |
-| `.claude/commands/handover.md` | command `/handover` | session state lost at a context rotation | none (precaution, [D076]) | 2026-10-14 live in `claude -p` (PR #107) | none |
-| `.claude/commands/takeover.md` | command `/takeover` | a new session starts from a handoff that disagrees with git and GitHub | none (precaution, [D076]) | 2026-10-14 live in `claude -p` (PR #107) | none |
-| `.claude/commands/reuse-scan.md` | command `/reuse-scan` | repeated procedures never become code, a skill or a pattern | none (precaution, [D075]) | 2026-10-15 pytest of `tools/reuse_candidates.py` (`tests/test_usage_hooks.py`) | none |
-| `.claude/agents/source-inspector.md` | subagent, read only | work on an uninspected source (scale, levels, dropped parts); a scene dump in the main context | none recorded | 2026-10-13 live (PR #86, B01 `etalon.max`) | `source-inspected` |
-| `.claude/agents/pattern-librarian.md` | subagent, read only | a rule question asked again or a new rule invented where one exists | none recorded | 2026-10-13 live (PR #86) | `routine-question` |
-| `.claude/agents/bench-runner.md` | subagent, read only | raw benchmark and test logs in the main context | none (precaution, [D071]) | 2026-10-13 live (PR #86, B01 9/9) | none |
-| `.claude/agents/independent-checker.md` | subagent, read only | "done" reported from the engine's own output | #117 | 2026-10-13 live (PR #86, B01 model) | `engine-checked` |
-| `.claude/agents/mesh-reader.md` | subagent, read only | a mesh dump read into the main context | none (precaution, [D071]) | never (not test-called) | none |
-| `tools/git-hooks/pre-commit` | git pre-commit (every agent) | a commit that skips linking or the pipeline gate; fail-open when the root or the gate is missing | case alina-bld (the gate it runs); fail-open versions were found in review of PR #79, not in use | 2026-10-13 live (manual blocked commit) | none |
-| `tools/git-hooks/link_large_files.py` | git pre-commit step | a new file over 50 MB committed into history | none recorded | 2026-10-06 live (60 MB file) | none |
-| `tools/git-hooks/pipeline_gate.py` | git pre-commit step, delivery gate | as `.claude/hooks/pipeline_gate.py`, for every agent; a commit on an auto-named branch; a `.pyc` without its `.py` at delivery | case alina-bld | 2026-10-15 pytest (`tests/test_pipeline_gate.py`) | `branch-name` |
-| `tools/git-hooks/branch_names.py` | rule module of the gate and the SessionStart hook | a commit on an auto-generated worktree branch | `claude/npm-models-school-kpp-ec9ced` (`evals/branch-name/task.md`), [D078] | 2026-10-15 pytest (`tests/test_branch_names.py`) | `branch-name` |
-
-**Indirect procedural signals** (not component behavior coverage):
-- `no-hook-denial`: `.claude/hooks/guard.py`, `SHELL_RULES`, `PRODUCTION_EXT`, `ALLOWED_WRITE_ROOTS`,
-  `permissions.ask`, `tools/hooks/skill_gate.py`, `.claude/hooks/subagents.py guard`,
-  `.claude/hooks/subagents.py deny-geometry`. It detects agent attempts refused by hooks, not whether
-  unauthorized actions are rejected. Its [task definition](../../evals/no-hook-denial/task.md) excludes
-  accepted calls and non-blocking hook failures: a fail-open guard can pass.
-- `dcc-skill-loaded`: `tools/hooks/skill_gate.py`; checks skill ordering in the transcript, not the gate's
-  rejection behavior. See its [task definition](../../evals/dcc-skill-loaded/task.md).
-
-These mappings must not be used alone as proof that a protection is tested in removal decisions.
-`Eval = none` records missing behavior-specific eval coverage, not absence of the dated pytest runs above.
-No guard deletion is authorized; hooks, permissions and rule sets remain unchanged. The candidates below
-are not expanded by this coverage correction; re-examination requires component-specific evidence and user approval.
-
-Removal candidates by the rule (no evidence, no eval): `permissions.allow`, `permissions.deny`, the hooks
-`session_context.py`, `context_watch.py`, `usage_log.py`, `subagents.py start` / `stop`, the three commands,
-`bench-runner`, `mesh-reader`, `link_large_files.py`. They are proposed to the user, not removed.
-
-### Rule-layer size
-- Measured 2026-10-15 at commit 32813c6: **141k tokens** (564 970 characters / 4; an estimate, not a tokenizer
-  count). Scope as in the spec: Markdown, YAML and JSON at the root (top level only), `docs/agents`, `docs/domain`,
-  `docs/adr`, `.agents/skills`, `standards/` and the plan / state files (`PROJECT_STATE`, historical `HARNESS_PLAN`, `backlog`,
-  `cases`, `pipeline`, `HANDOFF`, `decisions`). Out of it: `docs/agr`, `jobs`, `technical_library`.
-- Command (Git Bash, from the repository root; divide by four):
-  `{ find . -maxdepth 1 -type f \( -name '*.md' -o -name '*.yaml' -o -name '*.json' \); find docs/agents docs/domain docs/adr .agents/skills standards -type f \( -name '*.md' -o -name '*.yaml' -o -name '*.json' \); ls docs/PROJECT_STATE.md docs/HARNESS_PLAN.md docs/backlog.md docs/cases.md docs/pipeline.md docs/HANDOFF.md docs/decisions.md; } | tr '\n' '\0' | xargs -0 cat | wc -c`  # historical docs/HARNESS_PLAN.md stays in this 2026-10-15 measurement
-  The command is the 2026-10-15 measurement and still names `docs/HARNESS_PLAN.md`; that file is historical.
-- Threshold: **200k tokens**. Below it the agent loads the relevant file whole; no semantic index, no vector store,
-  no BM25. Retrieval tooling is reconsidered only when a measurement passes 200k.
-
-### Guard hook — `.claude/hooks/guard.py`
-- Claude Code: CONFIGURED (PreToolUse in `.claude/settings.json`); project-guard live verification
-  unknown. PR #142's foreign-worktree Write was refused by the app isolation hook, not proven to be
-  refused by this project hook. A component-specific run is required; the hook and rules remain enabled.
-- Antigravity: CONFIGURED (`.agents/hooks.json` → `guard.cmd`; Antigravity-side run not validated).
-- Codex: CONFIGURED (`.codex/hooks.json`; payload and "ask" support not validated — backlog H1).
+Hooks, permission lists, guard rule sets, commands, subagents and git hooks — inventory, evidence, status of the
+guard, context-rotation hooks, subagents and pipeline gate, re-examination rules and the rule-layer size:
+`docs/agents/harness-inventory.md`. The guard is CONFIGURED for Claude Code, Antigravity and Codex; Codex payload
+and "ask" support are not validated (backlog H1).
 
 ### Kanban board — GitHub Projects `artsafro/projects/1`
-- Status: WORKING (2026-10-14): Status and Agent fields, 30 open issues on the board; `gh` needs the
-  `project` token scope. Rules: `docs/agents/KANBAN.md`.
-- Vibe Kanban: REJECTED (2026-10-14 trial, 0.1.44), reasons in the same file.
+- Status: WORKING (2026-10-14): Status and Agent fields; `gh` needs the `project` token scope. Rules:
+  `docs/agents/KANBAN.md`. Vibe Kanban: REJECTED (2026-10-14 trial, 0.1.44), reasons in the same file.
 
-### Context rotation, triggers, reuse (Claude Code, PR #107; `docs/agents/WORKFLOW.md`)
-- Status: WORKING (2026-10-14, live in `claude -p`; desktop and interactive CLI not checked).
-- `tools/hooks/session_context.py`: SessionStart (`startup|clear|compact`) passes branch, status, last commits,
-  open PRs and `docs/HANDOFF.md` (warnings when stale / foreign / old format); PreCompact blocks a manual
-  `/compact` with a stale handoff (`/compact force` passes), logs auto ones to `<git dir>/agr-compactions.log`.
-- `tools/hooks/context_watch.py`: UserPromptSubmit, context share from the transcript's last `usage`; tells the
-  agent once per session at 45 % and 65 %. Context % on screen: the user-level status line (`ctx N%`).
-- `tools/hooks/skill_gate.py`: PreToolUse on DCC MCP tools (3ds Max, Blender, Revit) denies the call in the
-  main session until `3dsmax-mcp-dev` / `blender-mcp` / `revit-mcp` is loaded.
-- `tools/hooks/usage_log.py`: PostToolUse on Agent / Skill and UserPromptSubmit `/commands` ->
-  `logs/agent-usage.jsonl` in the main checkout (git-ignored); `stats --days N`; `backfill --days N` (#109) adds
-  past usage from the transcripts of this repository and its registered worktrees (idempotent; skips calls the hooks logged).
-- `tools/hooks/save_transcript.py` (#121): `/handover` copies the session transcript to `logs/transcripts/
-  <branch>-pr<N>-<session>.jsonl` in the main checkout (git-ignored), never over an existing copy; the handoff's
-  `Transcript:` line names it and `session_context.py` prints it. The session is proven by a nonce: the agent's Bash call
-  is in its own transcript before it runs, so the one transcript holding the nonce is the caller's; never file times.
-  Status: WORKING (2026-10-15, PR #140): found the live desktop session by its nonce; not yet run inside a real
-  /handover.
-- Commands: `/handover`, `/takeover` (ends with 7-day usage), `/reuse-scan` (+ `tools/reuse_candidates.py`).
-- Tests: `tests/test_session_context.py`, `tests/test_context_watch.py`, `tests/test_usage_hooks.py`,
-  `tests/test_save_transcript.py`.
-
-### Evals runner — `dt evals` (Claude Code, #122; `evals/README.md`)
-- Status: WORKING (2026-10-15, PR #142): `uv run dt evals --suite regression|capability` or
-  `--task <id>` runs `evals/<task>/task.json`; graders in `src/twinqa/evals/graders.py` (pure Python, no LLM);
-  report `<main checkout>/logs/evals/runs/<time>-<selector>/report.json` (git-ignored), exit 0 / 1 grader fails /
-  2 evidence missing or task stopped, as the benchmark runner. Evidence by rule (main checkout or task folder,
-  `{branch_slug}`), `--evidence name=path` for one task, `--references` checks graders against known verdicts.
-- Tasks: `no-hook-denial` (regression): every transcript of the branch, a hook denial = `permissionDecision`
-  `{source: hook, decision: reject}` (or a `PreToolUse:<tool> hook error:` tool_result); synthetic references.
-  Run on this branch's real handover transcript: 1 denial found (a Write into another worktree).
-- Tests: `tests/test_evals.py`.
-- Handoff evidence check (#584): `uv run dt evals --check-handoff <pr-body.md> [--sha <full head>] --output
-  <evals dir>` (read-only, `src/twinqa/evals/handoff.py`). It exits 0 only when the body has the Full suite
-  (`suite_slot.py`, exact head), Regression evals (`check_receipt`), RED, GREEN and Sample output lines and
-  does not hand the full suite to the reviewer. Rules: `docs/agents/WORKFLOW.md#handoff-evidence-check-584`.
-  Tests: `tests/test_evals_handoff.py`.
+### Evals runner — `dt evals` (#122)
+- Status: WORKING (2026-10-15, PR #142): `uv run dt evals --suite regression|capability` or `--task <id>`;
+  graders in `src/twinqa/evals/graders.py` (pure Python, no LLM); exit 0 / 1 grader fails / 2 evidence missing.
+  Tasks, evidence rules and reports: `evals/README.md`. Receipt and handoff checks (`--check-receipt`,
+  `--check-handoff`, `src/twinqa/evals/handoff.py`): `docs/agents/WORKFLOW.md#before-requesting-review-author`.
+  Tests: `tests/test_evals.py`, `tests/test_evals_handoff.py`.
 
 ### Skills sync — `tools/sync_skills.py`
 - Status: WORKING (2026-10-06): `.agents/skills/` is canonical; the script regenerates
@@ -334,286 +256,114 @@ Removal candidates by the rule (no evidence, no eval): `permissions.allow`, `per
   copies). `tests/test_skills_sync.py` fails when the copies drift.
 
 ### Herdr workspace tooling
-- Status: CONFIGURED (moved from DigitalTwinProject; paths re-pointed, not re-run — backlog H6)
-- `tools/herdr/` (layout repair, HUD, TOOLS/LOGS feeds for Claude and Codex, full refresh,
-  pane swap, screenshot paste, cheat sheet); details in `docs/HERDR.md`.
-- Herdr runs these from the main folder, so `main` must stay checked out there.
-- Keys: Ctrl+B Shift+L layout · Shift+U refresh · I screenshot · Shift+H cheat sheet.
+- Status: CONFIGURED (moved from DigitalTwinProject; paths re-pointed, not re-run — backlog H6).
+  `tools/herdr/`; details, keys and rules in `docs/HERDR.md`. Herdr runs from the main folder, so `main` must
+  stay checked out there.
 
 ### Large files as links
 - Status: WORKING (2026-10-06, Claude main; tested with a 60 MB file)
 - `tools/git-hooks/link_large_files.py` via `.git/hooks/pre-commit`: new files over
-  50 MB are committed as entries in `docs/sources/linked-files.json`. Toggle: Ctrl+B Shift+K.
-
-### Subagents — `.claude/agents/` (Claude Code, read only; `docs/agents/WORKFLOW.md`)
-Hooks: `.claude/hooks/subagents.py` (SubagentStart reminder and a `git status` snapshot for all five;
-SubagentStop blocks until changed tracked files are named, and for `independent-checker` without a verdict table;
-PreToolUse `guard` denies plain Bash writes in all five, `deny-geometry` denies `src/dt_ai/geometry/` to the
-checker). Note: the desktop app did not load project subagents from this worktree; `claude -p` in it did. Tests: `tests/test_subagents.py`.
-- `source-inspector` — VERIFIED (2026-10-13, PR #86): B01 `etalon.max` inventory, 4 objects (B01_ETALON + 3 LEVEL_), read from the file header without opening it over another scene.
-- `pattern-librarian` — VERIFIED (2026-10-13, PR #86): "plane flush with the facade" -> C24 / `opening-plane` (and OD1); tools Read, Grep, Glob only.
-- `bench-runner` — VERIFIED (2026-10-13, PR #86): B01 9/9 etalon self and model, a per-check table, the spec diff.
-- `independent-checker` — VERIFIED (2026-10-13, PR #86): B01 model, a check / expected / measured / pass-fail table; reading `src/dt_ai/geometry/` denied by its hook.
-- `mesh-reader` — CONFIGURED (PR #86); not yet test-called.
-
-### Pipeline gate
-- Status: WORKING (2026-10-13): installed in `.git/hooks/pre-commit` on this machine (#79 version); a commit
-  of `Pipeline status: built` without `pipeline/` is blocked (manual test).
-- `tools/git-hooks/pipeline_gate.py --staged` (pre-commit, every agent) and `--job jobs/<JOB>` (delivery):
-  `Pipeline status` above draft needs `pipeline/spec.json` + `spec.report.json` + `check.json`; new job
-  scripts name an engine gap `EG<n>`; delivery needs a committed `.py` for every `.pyc`;
-  attempts limit (pipeline/state.json, #128) (historical `docs/HARNESS_PLAN.md` §16; current rule: `docs/agents/WORKFLOW.md`). Claude Code also blocks such writes at PreToolUse
-  (`.claude/hooks/pipeline_gate.py`, permission "deny"), and runs of a locked job (Bash/PowerShell runner
-  commands; `dt` itself refuses with exit 2). Run interception is partial (known bypasses: #144); the
-  guaranteed part is the write/status/commit gate.
-- Limit (user 2026-10-12 [D064], #79): a compromised environment is not covered, for example a fake `py` on PATH.
+  50 MB are committed as entries in `docs/sources/linked-files.json` (created on first use). Toggle: Ctrl+B Shift+K.
 
 ### Lab CI — `lab-ci.toml` (lab laptop DESKTOP-IHMQLNS, `artsafro/agr-lab`)
-- Status: IN BRANCH `harness/lab-ci-dcc-tests` (2026-11-04, Claude Code). Not yet run on this repo on the laptop.
-- The lab laptop runs this repo's tests on every new commit of `main`, `harness/*`, `fix/*`, `feature/*` and once a
-  night: a checkout of the commit (shared clone, own `.git`, LFS files are pointers) → `uv sync --frozen --python 3.13`
-  → build `AGR-Tools.mzp` → jobs in agr-lab runner slots:
-  - `blender`: `pytest -m "blender or dcc"` (180 tests), `DT_BLENDER` = the slot's Blender 5.1.2;
-  - `unit`: default suite with `-n 8` (16 917 tests; cloud dry run 4 workers 10.4 min) — nightly/first/manual only;
-  - `agr-tools-max2024`, `agr-tools-checks-max2024`: `tests/max_tools/run_agr_tools_native.py` and
-    `run_agr_tools_checks_native.py` in batch 3ds Max 2024 (isolated slot profile, synthetic scenes).
-- Per-test results (JUnit) are compared with the previous run of the branch (a new branch with `main`); verdict
-  GREEN / CHANGED / RED goes to Telegram, the report to `C:\agr\lab-data\ci\reports\ci-pilot-<sha8>-*.md`.
-- Limits: `pytest -m max` tests are not run (they need 3ds Max 2026 and `dcc_batch.py`); a branch without
-  `lab-ci.toml` is skipped. Change the pipeline here, not in agr-lab.
+- Status: CONFIGURED (`lab-ci.toml` on `main` since 2026-11-05); a run of this repo on the laptop is not recorded here.
+- The laptop runs this repo's tests on every new commit of `main`, `harness/*`, `fix/*`, `feature/*` and nightly:
+  checkout → `uv sync --frozen --python 3.13` → build `AGR-Tools.mzp` → slots `blender` (`pytest -m "blender or dcc"`,
+  `DT_BLENDER` = Blender 5.1.2), `unit` (default suite `-n 8`; nightly/first/manual only), `agr-tools-max2024`,
+  `agr-tools-checks-max2024` (`tests/max_tools/run_agr_tools_native.py`, `run_agr_tools_checks_native.py`, batch
+  3ds Max 2024, synthetic scenes). JUnit results are compared with the branch's previous run; verdict GREEN /
+  CHANGED / RED to Telegram, report `C:\agr\lab-data\ci\reports\ci-pilot-<sha8>-*.md`.
+- Limits: `pytest -m max` is not run (needs 3ds Max 2026 and `dcc_batch.py`); a branch without `lab-ci.toml` is
+  skipped. Change the pipeline in `lab-ci.toml`, not in agr-lab.
 
-## Pipeline core (src/dt_ai, technical_library, tools)
+## Shared tools
 
-Environment: `uv sync`; tests `uv run pytest -q` — 284 passed, 1 skipped on 2026-10-06
-(AGR + DT suites merged, incl. real Blender roundtrips).
+One line per shared tool, grouped. Commands, exit codes, limits and evidence: `docs/pipeline-tools.md` (section
+named after the tool); production stages: `docs/pipeline.md`; environment and test commands:
+`docs/agents/agents-reference.md`. Status words as above, plus TOOL ONLY (no real-object acceptance) and
+EXPERIMENTAL.
 
-### `dt` CLI — `src/dt_ai/`
-- Status: WORKING on the synthetic job (`jobs/SYNTH-001`): `dt profiles check`, `dt schemas --check`,
-  `dt build`, `dt validate`, `dt index-pdf`, `dt registry merge`. Real-object use goes through the
-  accepted-case tools below. `passed` is always false in this version.
-- Geometry adapters (Exterior, Shell, Connect) with `AdapterReport` and Blender readback:
-  proven on Obr22 (`docs/cases.md`). RunRecord inspection: `tools/harness_status.py`
-  (skill `run-evidence`).
+Pipeline core:
+- `dt` CLI, `src/dt_ai/` — WORKING on the synthetic job `jobs/SYNTH-001`; `passed` is always false; RunRecord
+  inspection `tools/harness_status.py` (skill `run-evidence`).
+- Spec extractor `tools/source/measure_spec_blender.py`, Revit path `tools/source/measure_spec_revit_twin.mjs`,
+  `dt spec extract|merge-questions|compare`, `dt intake check` — WORKING on synthetic data; first real run KPP1.
+- Engine `src/dt_ai/geometry/from_spec.py` — WORKING on synthetic specs only.
+- Build by source modules `src/dt_ai/geometry/from_source.py`, `tools/qa/run_from_source.py` — EXPERIMENTAL [D079].
+- Window type list `library/windows/window_types.json` (`tools/library/build_window_types.py`) — WORKING, 67 entries.
+- Window library preview `tools/library/window_library_preview.py` (Blender, headless) — WORKING (2026-11-05): every
+  type laid out flat by role (frame, `panes_m` glass, `opaque_m` leaves, label, red = unconfirmed) into a new `.blend`
+  for a visual check; not a production asset.
+- Operation library `technical_library/` — WORKING per package README.
+- Album page reader `src/dt_ai/album/` (#317) — on `main`, synthetic PDFs only.
+- Project state `tools/state/project_state.py` — WORKING; rule `docs/agents/WORKFLOW.md`, "Project state";
+  `tools/state/project_state_freshness.py` is an advisory read-only freshness check; `tools/state/after_merge.py`
+  (2026-11-07, offline tests only) regenerates and commits it on local `main` after a merge (PostToolUse hook on
+  `gh pr merge`), no push.
+- AGR Tools for 3ds Max 2024/2026, `adapters/max/agr_tools/` (build `tools/max/build_agr_tools.py`) — diagnostic
+  and checked-export tool, not a delivery validator; version, install, native evidence: its `README.md`,
+  `CHANGELOG.md`; native runners in `tests/max_tools/`. Entry page for agents (1.0 conveyor, MCP v2, passport,
+  libraries, owner decisions): `docs/agr-tools/OVERVIEW.md`.
 
-### Spec extractor — `tools/source/measure_spec_blender.py` + `dt spec extract` / `dt spec merge-questions`
-- Status: WORKING on synthetic data (Claude, 2026-10-08; issues #5, #16, #6, #7): Blender 5.1 dumps
-  triangles and `LEVEL_<name>` helpers; `dt spec extract --dump --object --output` writes spec v0.1
-  (`schemas/Spec.schema.json`), a report and `<spec>.questions.md`. Levels are input; roof confirmed at
-  the top input level; strict full-height level contour (`contour_at_m` in object.json when it asks);
-  kinks, rounded corners; typical floors written once (`typical_of` / `repeat_to`, `Spec.expanded_floors()`); openings from holes in the body or glass panes (`source`); door recesses from the floor are openings (`kind` door, or window when glass fills the height), relief <= 10 cm is no kink, panes of one frame are one opening with `panes`, an opening across a level is one record with `level_from` / `level_to` (spec v0.2, #31). Spec v0.3 (#36): opening = hole with frame (mesh: the reveal; Revit: frame or curtain wall, else the family box), glass as `glass_w` / `glass_h`, `depth_m` only as an exception. Vent grilles are openings of kind `grille` (Revit: window elements without a transparent material). `dt spec extract --tolerances` reads the `spec_extract` thresholds.
-  `dt spec merge-questions --report --version --into jobs/<object>/questions.md` keeps one questions
-  list per object with stable ids and kept answers.
-- Limits: `window_type` is always null (no material ids in the dump; window library #4); no
-  attachments; roofs: drainage slopes up to 10° are one roof
-  (area-weighted height, ±10 cm), separate roof parts and caps are read (#9); steeper roofs are a question.
-  First real run: KPP1 v005 spec v001 (`jobs/KPP1/STATE.md`). `object.json` may give `frames` per source. Pattern: `docs/domain/patterns/wall-from-contour.md`.
-- Revit path, wall lines (Claude, 2026-10-08, #29; the bounding-box route of #10 was removed after it):
-  `node tools/source/measure_spec_revit_twin.mjs <new-folder>` calls the TwinPack commands of the
-  revit-http add-in (`twin_floor_manifest`, `twin_export_floor` with every wall function; not in the MCP
-  tool list, called through `revitClient.callRevit`), writes `floor.json` + `reference.obj` per band and
-  `twin-data.json` (with the document's Levels and Roofs since MH2: `list_levels`, `list_elements` OST_Roofs,
-  `get_element_info`; object.json `revit_levels` turns them into LEVEL_ helpers, `src/dt_ai/spec/markup.py`); `dt spec extract --dump <twin-data.json>` reads it (`dt_ai.spec.revit_twin`): walls as
-  prisms on their location lines (any angle; curved walls from their real geometry), glass by material
-  transparency, doors from records, attachments by the main-walls hull rule (user decision 2026-10-08 [D027]). The
-  document is not modified (flag checked before and after); files go only to the new folder.
-  KPP1: contours equal to the mesh path (0.0 mm), `jobs/KPP1/spec-compare-v002.md`.
-- Intake check (Claude, 2026-10-11, IN1, historical HARNESS_PLAN §15): `dt intake check --dir jobs/<JOB>/intake` validates
-  `sources.json` / `spec-draft.json` (schemas `IntakeSources`, `IntakeSpecDraft`), `picture.md` (Facts and
-  Contradictions tables) and `questions.md`: sources and confidence of every fact, null = unknown, images at
-  most estimated, the primary source by priority, the scale anchor; reports `buildable`. Procedure: skill
-  `analyze-architectural-source`, intake mode. Adapters per format: IN2-IN7.
-- Spec comparison (Claude, 2026-10-08, #11): `dt spec compare --a <spec> --b <spec> --tolerances
-  benchmark/<id>/tolerances.json --output <cmp.json>` (+ `.md`): rows per criterion of historical HARNESS_PLAN §4
-  with both values, threshold and reference side, contour difference regions; thresholds, reference
-  sides and whether a verdict is given come from tolerances.json. KPP1: `jobs/KPP1/spec-compare-v001.md`.
+Territory (Ground, MAF, Flora, placement; verified 2026-11-07 against job reports and PRs):
+- Ground layered cake `src/dt_ai/geometry/ground_cake.py` (#295, PR #308) — WORKING: library driven by
+  `jobs/VATUTINO-SITE/build_ground.py` / `build_ground_v015.py`, FBX via `tools/blender/ground_json_to_fbx.py`; built
+  Vatutino v005–v015, v015 accepted by the user 2026-11-04 [D193] (PR #906); COD-20207 v016 trial not passed;
+  tests `tests/test_ground_cake.py`, `tests/test_ground_*.py`.
+- Ground quads `src/dt_ai/geometry/ground_quads.py` — WORKING on one object: paired-fan quads of Vatutino v015
+  (accepted, PR #906, [D157]); docstring still says "checkpoint only"; tests `tests/test_ground_quads.py`,
+  `test_ground_pairing.py`, `test_ground_v015_producer.py`.
+- MAF atlas `tools/materials/atlas_maf.py` (PR #196) — TOOL ONLY: one 512 atlas + UV map from a material list; used
+  for the Vatutino MAF set v005 (PR #320) and «Верона» atlas-v006; no separate acceptance; tests
+  `tests/test_atlas_maf*.py`.
+- MAF bench generator `tools/library/maf_gen_bench.py` + `maf_gen_bench_checks.py`, Blender build
+  `tools/blender/maf_gen_bench_build.py` (PR #805) — WORKING: «Верона» rows 2-10 accepted for the library [D202]
+  (PR #1093), row 1 pending; tests `tests/test_maf_gen_bench*.py`.
+- MAF site set `tools/library/maf_site_set.py` + `tools/blender/maf_site_set_build.py` (PR #320) — TOOL ONLY: 13
+  Vatutino positions built, geometry accepted 2026-11-04 (issue #889), the set report stays `passed=false`, colour
+  zones open (PR #991); tests `tests/test_maf_site_set.py`.
+- MAF showcase `tools/review/maf_showcase.py` (PR #493) — WORKING as a review aid (display-only 3ds Max scene of
+  NPM/VPM pairs, headless 3dsmaxbatch); not a delivery tool; tests `tests/test_maf_showcase.py`.
+- Flora textures `python -m dt_ai.materials.flora plan|library` (`src/dt_ai/materials/flora.py`, PR #220) — WORKING
+  for texture handoff and approval: three-species test list approved 2026-10-15 (#190); no object delivery;
+  tests `tests/test_flora_textures.py`.
+- Flora atlas `tools/library/flora_atlas_from_scene.py` (PR #310) — TOOL ONLY: one 2048 Flora atlas from a placed
+  scene; synthetic run only (3 species); tests `tests/test_flora_atlas_from_scene.py`.
+- Placement engine `python -m dt_ai.placement.engine` (`src/dt_ai/placement/engine.py`, #316, PR #323) — TOOL ONLY:
+  ran on real data, Vatutino run v006 (PR #344): NPM 3,289/3,289 placed, 0 failed, sinking 0.0998–0.1001 m; user
+  geometry acceptance open, `passed=false`; tests `tests/test_placement_engine.py`, `tests/placement/`.
+- Site placement `tools/placement_site.py` + `tools/blender/placement_instance.py` (PR #344) — TOOL ONLY: SPOZU points
+  -> engine -> Blender instancing -> scene readback gate (0 mismatches on Vatutino v006); acceptance open; tests
+  `tests/placement/test_site_*.py`.
 
-### Window type list — `library/windows/window_types.json` (#4)
-- Status: WORKING (Claude, 2026-10-09): 46 entries; 37 confirmed and named by the user (W01–W07, D01–D03, KPP1-W01–W03,
-  WT-01–WT-24; `library/windows/confirmations.json`), the rest `unconfirmed`; 24 from `Win_Typical.max` (WT-01–WT-24, read from 3ds Max
-  without changes into `library/windows/sources/win-typical-max-v001.json`; duplicates by subdivision + size ±2 cm get
-  `same_as`) — SOSH1150
-  typology v003 (11 types, 6 size variants; CW_021, CW_022, D04 kept as not typed) and 3 KPP1 candidates from the
-  Revit spec. Rebuilt by `tools/library/build_window_types.py` from the user's library files (read only); handing
-  null, sashes not in the sources. The spec's `window_type` index waits for confirmed entries.
+Export:
+- `tools/export/export_mesh_blender.py`, `tools/export/export_modules_blender.py` — Blender scene + FBX writers of
+  the benchmark and from-source runs.
+- `tools/export/batch_export_max.py` + `batch_export_plan.py` (#224) — resumable per-object MAX/FBX export from one
+  headless Max session via `dcc_batch.py`; synthetic probes `export_safety_probe_max.py`,
+  `benchmark_export_max.py`, `report_export_benchmark.py`; tests `tests/test_batch_export_plan.py`.
 
-### Operation library — `technical_library/`
-- Status: WORKING per package README (Russian): `glb_atlas`, `uv_continuous` (UV v006),
-  `window_atlas`, `texture_tiles`, `mesh_audit`. Scope of each = its accepted case.
+Delivery QA:
+- Standards layer `standards/` + loader `twinqa.profiles` — WORKING.
+- Package validator `tools/qa/validate_package.py` — WORKING for V001, V002 header, V007, V008, V011, V012
+  (`--scene` adds V003/V004/V006/V008/V013); the rest `not_run` or manual.
+- FBX readback `tools/blender/fbx_readback.py` — WORKING (Blender 4.4 and 5.1).
+- FBX structure facts `tools/blender/fbx_structure.py` (#339) — parts-list facts in a factory Blender process
+  [D110, D111]; tests `tests/parts/`.
+- Zero-area check `tools/qa/fbx_zero_area.py` (#979) — zero-area faces, zero-length edges, slivers of an FBX without
+  Max; exit 0 pass / 1 findings / 2 unreadable.
+- UCX builder `src/dt_ai/geometry/ucx_build.py`, `tools/blender/ucx_build.py`; audit `tools/blender/ucx_audit.py` —
+  TOOL ONLY (#166).
+- Overlap gate `dt qa xview` (`src/dt_ai/ops/inv_xview.py`, `xview_gate.py`, #527) — WORKING; 3ds Max xView runner
+  `tools/qa/xview_dump.ms` (#528), parity `tools/qa/xview_parity.py`, frozen benchmark `tools/qa/xview_bench.py`.
+- Face overlap check `tools/qa/check_clearance.py` — WORKING.
+- Benchmark run `tools/qa/run_benchmark.py`, geometry checks `tools/qa/check_geometry.py` — WORKING on synthetic
+  etalons only.
+- Methods catalog runner `tools/methods/run_variant.py`, `tools/methods/ucx/run_benchmarks.py` (#706) — WORKING.
+- Preview QA `tools/qa/render_qa.py` (numerical, not acceptance; limits in `tools/qa/render_qa.md`) and the advisory
+  VLM checklist `tools/qa/vlm_checklist.py` (#768, research) — advisory only.
+- Capability session launcher `tools/qa/capability_b01.py` — harness eval support (`tests/test_capability_b01.py`).
+- 3ds Max production scripts (external) — CONFIGURED, inventory only: `docs/tools/max-scripts.md`.
 
-### Album page reader — `src/dt_ai/album/` (#317, kernel C5; D127)
-- Status: IN BRANCH `improve/issue-317-kernel-c5-vector-pdf-album-reader-axes-d` (Hermes dt-worker, 2026-10-19),
-  validated on SYNTHETIC PDFs generated at test time only (`dt_ai.album.synthetic`), no real album yet.
-- Use: `uv run --extra pdf-review python -c "from dt_ai.album import read_page, reading_to_json; print(reading_to_json(read_page('sheet.pdf', 1)))"`.
-  One vector page -> paths, segments, text runs, axes, horizontal dimensions, level marks, legend (swatch RGB + label),
-  scale from one axis dimension (`scale_axes=("1","2")` or the left-most), `dimension_mismatch` / `level_mismatch`
-  findings; deterministic JSON with sha256, page number and PyMuPDF version.
-- Limits: fail-closed statuses `not_vector` / `no_text_layer` / `empty`, scale `unknown` without an axis dimension;
-  vertical dimension chains, OCR, PDFIMPORT fallback and multi-page indexing are not covered.
-
-## Delivery QA (tools/qa, src/twinqa, standards/)
-
-### Standards layer — `standards/`
-- Status: WORKING (2026-10-06; loader tests). One loader for both packages: `twinqa.profiles`.
-- NPM/VPM profiles, validator spec V001-V017, 232-rule traceability, SHA-256 lock, regulation PDF
-  (plain Git blob). Fields touched by `docs/domain/conflicts.md` carry `conflicts:` entries; checks
-  report them as review. Machine-readable twin of `docs/domain/`.
-
-### Package validator — `tools/qa/validate_package.py`
-- Status: WORKING for archive composition, names, FBX header, VPM maps, UDIM sequence, GeoJSON
-  (V001, V002 header, V007, V008 sequence, V011, V012); `--scene` adds V003/V004/V006/V008/V013 via
-  Blender. Everything else is `not_run`; V015-V017 are manual.
-- `py -3 tools/qa/validate_package.py <zip|fbx|geojson> [--profile npm|vpm] [--json] [--scene]`;
-  exit 0 passed / 1 fail / 2 review or not_run left.
-- Not yet: NPM embedded-atlas pixel rules (PNG bytes inside FBX), units, UCX (V010), texel density
-  (V009), coordinates vs MSK-77 (V013/V014).
-
-### FBX readback — `tools/blender/fbx_readback.py`
-- Status: WORKING (2026-10-06; Blender 4.4 and 5.1 background, cube roundtrip tests)
-- Triangles, polygon degrees, UV channels, UDIM tiles, mirrored UV, transforms, embedded images.
-
-### UCX builder — `src/dt_ai/geometry/ucx_build.py`, `tools/blender/ucx_build.py`
-- Status: TOOL ONLY (2026-10-19, #166): Main measured on 4 etalon meshes (KPP1, PSU275, Skolkovo, Mashi),
-  Ground on synthetic surfaces only (`tests/test_ucx_build.py`); no real-object delivery acceptance.
-- `blender --background --factory-startup --python-exit-code 1 --python tools/blender/ucx_build.py --
-  <model.fbx|.blend> <out.fbx> <Main|Ground> [cell= gap= with=<obj,...>]`; exit 0 built / 3 Ground over
-  `tol` (one-sided vertical deviation or uncovered strip; reverse footprint overhang is diagnostic [D134]) / 2 failed (incl. a missing `with=` name, a UCX
-  that names no model object) / 4 refused (output aliases input). Replaces only the UCX of the input
-  objects; other targets' UCX are kept and their triangles are reserved from the whole-file [D012]
-  budget (kept + new over the limit -> exit 2, no FBX). Job scripts: `build_into_scene(...)`, pass
-  `reserved_triangles=` for UCX already in the file.
-- Facade-oriented 8-vertex boxes (Main) or quadtree hexahedra (Ground), 4 mm gap, [D012] budget; check
-  the output with `tools/blender/ucx_audit.py` and the validator scene checks.
-
-### Methods catalog runner — `tools/methods/run_variant.py`, `tools/methods/ucx/run_benchmarks.py` (#706)
-- Status: WORKING (dt-worker, 2026-10-25): 18 measured ucx-collisions rows on KPP1 / AC08 / TOW02
-  (`docs/methods/ucx-collisions/results.jsonl`); tests `tests/methods/test_methods_catalog.py` (+1 `-m blender`).
-- `uv run python tools/methods/run_variant.py <out.fbx|.zip> --bench <id> --class <class> --variant <name>
-  [--variant-report <out>.variant.json] [--render view=png ...]`: one JSON row (wall time, triangles, objects,
-  xView 2 mm / 5 mm, UCX V010 + V012, texel min / median, file size, MatID slots, SSIM or null, class metrics);
-  exit 0 appended / 2 measurement error / 4 refused. RESULTS.md: `tools/methods/results_md.py`.
-- Benchmark set: `benchmark/methods/benchmarks.json` (private sources by sha256 under `C:/x/methods/src`).
-  Catalog: `docs/methods/README.md`.
-
-### Overlap gate (xView parity) — `dt qa xview`, `src/dt_ai/ops/inv_xview.py`, `src/dt_ai/ops/xview_gate.py` (#527)
-- Status: WORKING (dt-worker, 2026-10-21; #370 / #380 kernel, #527 CLI). `inv_xview` reproduces 3ds Max xView
-  Overlapping Vertices (2 mm) / Overlapping Faces (5 mm, contact rule) without Max; the `area` rule adds pairs xView misses.
-- `uv run dt qa xview <file.fbx|.blend|.npz> --out <new report.json> [--parts NAME ...] [--profile NPM|VPM]
-  [--coords local|inplace|as-stored] [--blender <exe>]`. FBX / .blend go through headless Blender 5.1.2
-  (`tools/blender/xview_dump.py`, evaluated meshes, float64); default `local` = object location subtracted. Report per
-  object: Overlapping Vertices / Faces counts and ids, vertex pairs (`double` / `bowtie`), face pairs with partner,
-  kind (contact / area / area+contact), separation and centres, bow-tie (non-manifold) vertices, dropped non-mesh
-  objects, input SHA-256, units. Blender units become metres via `scene.unit_settings.scale_length` (a missing,
-  non-positive or non-finite scale, or system NONE with scale != 1, is an error). Report and `<report>.blender.log`
-  are published no-clobber: a file created at either name by another writer is kept and the run exits 2.
-  Exit 0 pass, 1 overlaps, 2 error (no verdict).
-- Measured on vyatskaya-tow02 (review #514): ours export-v005 185 faces (= xView ids 1:1, centres <= 0.50 mm) and
-  0 vertices, ~35 s; user FBX `_05` object 013: 0 faces, 10 vertices = 5 coincident pairs, all `bowtie`, local and
-  in place. Postcondition of every build / fix step: `docs/procedure/TASK_TO_MODEL.md`.
-- Limits: pairs only within one object (a joined mesh is one object, as in xView); FBX / .blend need Blender.
-
-### 3ds Max xView runner — `tools/qa/xview_dump.ms` (#528)
-- Status: contract-tested and native-measured on Max 2024 (2026-10-24) via the supported batch route `dcc_batch.py max --version 2024 --file tools/qa/xview_dump.ms` (3dsmaxbatch, shared lock, run on copies); this is the only launcher evidenced by the retained `SUMMARY.md` and the four JSON (the JSON carry no launcher identity). The startup invocation `3dsmax.exe -U MAXScript tools/qa/xview_dump.ms` below is documented but has no retained native measurement.
-  `3dsmax.exe -U MAXScript tools/qa/xview_dump.ms` with `XVIEW_OUT` (alias `TOW02_XV_OUT`) a directory that
-  already contains `jobs.txt`. The receipt line is `#nonce:<id>`; each model is exactly six fields
-  `label|path|node|mode|material|slot`. Path is `.fbx` (import into a reset scene) or `.max`
-  (`loadMaxFile` quiet, `useFileUnits`, never saved). Empty node = the largest mesh by polygon count; a name
-  that is not in the scene is an error naming it. Modes: `plain`, `weld` (Editable Mesh, weld all vertices at
-  `units.decodeValue "2mm"`, checks stay on the mesh), `weldpoly` (same weld, then Editable Poly). Face tolerance
-  `units.decodeValue "5mm"`. A non-ASCII path is copied to `XVIEW_TEMP` under an ASCII name; the copy's SHA-256
-  must equal the source. The opened file is hashed before and after; a change is an error.
-  `xv_preflight` runs before any `createFile`, `deleteFile` or stage copy. It rejects duplicate labels,
-  `|` and control characters, a wrong field count, a non-canonical slot token, and same-file identity
-  (normalized path and `GetFileInformationByHandle`) across inputs, `<label>.json`, `jobs.txt`, `report.jsonl`,
-  `done.txt`, `failed.txt` and the ASCII staging copy. A preflight failure exits before any write.
-  `prepare_run` writes a fresh nonce into `jobs.txt` and is mirrored by `preflight_jobs_txt` for a hand-written
-  file; it does not have to be running for the script to refuse an alias. It removes this run's `done.txt` and
-  `<label>.json` only after that check, including when preparation itself fails, and never when the path is an input.
-  Field 6 is the slot (`count >= 6`). An unknown slot or material is an error naming it.
-  The script copies the nonce into `done.txt` and each result, and writes `done.txt` only when every job succeeds.
-  `quitMax` does not set a process exit code (`System.Environment.Exit 1` is attempted on failure). `check_run`
-  requires the jobs.txt nonce in `done.txt` and in every result, a complete dump (the keys the script writes),
-  no `error` key and no `failed.txt`. `{}`, null, a mismatched label, a partial schema or a done receipt from
-  another nonce exits 2.
-  JSON: nonce, scene inventory, dropped nodes, counts, every flagged face (Max face id, material id, area, centre)
-  and every flagged vertex (id, position). Job twin `jobs/vyatskaya-tow02/scripts/xview_review.ms` points here.
-  One Max owner; lock `%LOCALAPPDATA%\Temp\agr-3dsmax-session.lock`.
-  Vyatskaya evidence (measured 2026-10-24): [SUMMARY.md](../../jobs/vyatskaya-tow02/evidence/xview-528/SUMMARY.md),
-  [ACCEPTANCE.md](../../jobs/vyatskaya-tow02/evidence/xview-528/ACCEPTANCE.md),
-  [v005_plain.json](../../jobs/vyatskaya-tow02/evidence/xview-528/v005_plain.json) (185 faces / 0 vertices),
-  [013_plain.json](../../jobs/vyatskaya-tow02/evidence/xview-528/013_plain.json) (0 faces / 10 vertices),
-  [013_weld.json](../../jobs/vyatskaya-tow02/evidence/xview-528/013_weld.json) (0 faces / 0 vertices),
-  [013_weldpoly.json](../../jobs/vyatskaya-tow02/evidence/xview-528/013_weldpoly.json) (0 faces / 10 vertices),
-  [hashes_before.txt](../../jobs/vyatskaya-tow02/evidence/xview-528/hashes_before.txt),
-  [hashes_after_src.txt](../../jobs/vyatskaya-tow02/evidence/xview-528/hashes_after_src.txt),
-  [hashes_after_copies.txt](../../jobs/vyatskaya-tow02/evidence/xview-528/hashes_after_copies.txt).
-
-### Face overlap check — `tools/qa/check_clearance.py`
-- Status: WORKING (2026-10-06; AGR boundary cases + FBX planes 3 mm apart)
-- Near-parallel faces closer than 5 mm (profile), on faces JSON or FBX via
-  `tools/blender/export_faces.py`. Hits need classifying (embed vs defect).
-
-### Engine — `src/dt_ai/geometry/from_spec.py`
-- Status: WORKING on synthetic specs only (2026-10-09, `tests/qa/test_from_spec.py`): the B01 fixture
-  spec builds a model that passes all benchmark checks against the synthetic box; no real etalon yet.
-- `build(spec, BuildInputs)` -> mesh dump (format of `measure_spec_blender.py`): walls by contour,
-  holes with reveals and planes, roof, parapet; quads, welded, no T-junctions, no Shell (C23);
-  plane seat by profile (C24 final, user 2026-10-10 [D037]: `npm_min` full opening depth, `mid` half).
-  Build inputs not in the spec (parapet thickness, material IDs) are required arguments.
-- Floor steps (pattern floor-step, 2026-10-10): a contour per floor, ledge (roof ID) / soffit (facade ID).
-- Oblique walls (pattern non-90-corner, 2026-10-10): trapezoid strips for horizontal faces; B02 green end to end.
-- Terraces (pattern terrace, spec v0.4 `terraces`, 2026-10-10): a parapet on a floor-step ledge (outer / inner
-  face, cap, walkable part); the extractor does not read them yet.
-- Not yet: rounded corners, an x-extreme sharp corner (triangle), terraces as walkable roofs, attachments, corner, touching or
-  roof-level openings, cross-level openings in a typical template, writing a Blender
-  scene / FBX (errors, never guesses).
-
-### Benchmark run — `tools/qa/run_benchmark.py`
-- Status: WORKING on a synthetic etalon FBX (2026-10-10, `tests/qa/test_from_spec.py`, Blender 5.1):
-  etalon FBX -> spec -> engine model -> `tools/export/export_mesh_blender.py` (.blend + FBX, slot
-  index + 1 = material id, LEVEL_ empties) -> FBX readback -> etalon self-check and model report.
-- `uv run python tools/qa/run_benchmark.py --etalon <fbx> --object <object.json> --tolerances <t.json> --output <new folder>`;
-  exit 0 both pass / 1 a check fails / 2 a step stops or a check is not measured.
-
-### Build by source modules — `src/dt_ai/geometry/from_source.py`, `tools/qa/run_from_source.py`
-- Status: EXPERIMENTAL (user, 2026-10-14 [D079]): on OBJ03 it did not give an acceptable model - open polygons,
-  flipped normals, excess mesh, while the own checks passed (blind spots: normals, decor topology; issue #117).
-  Tests pass on synthetic sources (`tests/qa/test_from_source.py`). What it does: the model rebuilt
-  module by module from the source (`jobs/<OBJ>/modules/modules.json`, `build_as` per group) - walls per storey
-  (quads), slab and deck boxes (quad fill clipped by the outline, CDT fallback counted), decor one box per
-  element, planes for the roof enclosure, glass railings per ledge side - and its spec measured by the same
-  modules; the same checkers as the spec path. Beside `from_spec`, not instead of it.
-- `uv run dt from-source --dump <source dump> --modules <modules.json> --object <object.json> --output <new folder>`
-  (model dump, spec, report); `uv run python tools/qa/run_from_source.py ... --tolerances <t.json> --output <new folder>`
-  adds the FBX export, readback and checks (etalon = the source without `skip` modules).
-- Pattern primitive-first (2026-10-14): two deliveries in the output folder - `modules/` (`modules-scene.json`,
-  `modules.blend`: collections per group, instances share a type mesh) and `npm/` (`model.blend`, `model.fbx`); the
-  blocking `complexity` check (`src/twinqa/geometry/complexity.py`) when the tolerances have a `complexity` block.
-
-### Benchmark geometry checks — `tools/qa/check_geometry.py`
-- Status: WORKING on synthetic boxes only (2026-10-09, `tests/qa/test_geometry_checks.py`); no
-  real etalon yet (B01, issue #12). Logic in `src/twinqa/geometry/`.
-- Model vs etalon mesh dumps (`tools/source/measure_spec_blender.py`, now with `polygon_sizes`):
-  bbox, levels, storey areas, silhouettes, mesh (manifold, open edges, n-gons, overlaps), triangle
-  budget, opening planes, material ID ranges; thresholds from `benchmark/<id>/tolerances.json`.
-- `uv run python tools/qa/check_geometry.py <model-dump> <etalon-dump> --spec <spec.json> --tolerances <t.json> --output <report.json>`;
-  exit 0 pass / 1 fail / 2 not measured or bad input.
-
-### 3ds Max production scripts (external)
-- Status: CONFIGURED (inventory only, not run) — see `docs/tools/max-scripts.md` for which
-  script serves Flora, Ground, MAF, UCX, lights, and their rule mismatches.
-
-## Project workflows
-
-### `analyze-architectural-source`, `validate-delivery` (project skills)
-- Status: CONFIGURED (written against `docs/domain/`; not yet run on a real source)
-
-### Placement engine — `src/dt_ai/placement/engine.py` (#316)
-- Status: IN BRANCH `improve/issue-316-placement-engine-pure-flora-maf-placemen` (Hermes dt-worker, 2026-10-19);
-  synthetic tests only (`tests/test_placement_engine.py`), not yet run on a real Ground or SPOZU table (#296).
-- Use: `place(points, ground_vertices, ground_triangles, library, seed=<int>, label_map=None)` -> report dict;
-  `report_json(report)` for byte-stable JSON; CLI `uv run python -m dt_ai.placement.engine --input in.json
-  --output out.json` (exit 0 pass / 3 review / 1 fail / 2 bad invocation).
-- Does: Flora [D100] and MAF [D095] seating 0.10 m below the topmost Ground, seeded rotation/scale (Flora),
-  DXF INSERT rotation (MAF), bottom-face delete/review [D096], fail-closed findings per point [D108].
-- Limits: pure numpy/shapely, no DCC instancing; MAF dimensions [D094] only reported; nested-block rotation is
-  whatever `PointItem.rotation` carries.
+Project skills `analyze-architectural-source`, `validate-delivery` — CONFIGURED (written against `docs/domain/`;
+not yet run on a real source).

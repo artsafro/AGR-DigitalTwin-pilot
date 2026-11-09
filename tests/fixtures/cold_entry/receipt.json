@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "tokenizer": "tiktoken o200k_base",
+  "budget": 10000,
+  "card": "t_9e27c5ff (#968 AC08 kernel: invariants relative to the source)",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "chars": 5479,
+      "tokens": 1384
+    },
+    {
+      "path": "docs/PROJECT_STATE.md",
+      "chars": 4675,
+      "tokens": 1402
+    },
+    {
+      "path": "docs/domain/areas/derivation.md",
+      "chars": 14938,
+      "tokens": 4669
+    },
+    {
+      "path": "tests/fixtures/cold_entry/card-t_9e27c5ff.md",
+      "chars": 8967,
+      "tokens": 2355
+    }
+  ],
+  "total_tokens": 9810
+}

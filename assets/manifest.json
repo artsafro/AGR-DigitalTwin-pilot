@@ -9,9 +9,11 @@
   "provenance_gaps": [
     "Source is required and nonblank [D151]. Licence is optional and unknown (null); provenance is not permission to redistribute.",
     "MAF source records contain no vNNN token; version=null means unversioned, not a fabricated release.",
-    "Google Drive for desktop is mounted at G: (localized 'Мой диск'); the 8 assets are mirrored to the read-only shared folder G:/Мой диск/AGR-assets; each drive_link is the shared folder URL and drive_path is the in-folder relative path.",
-    "SHA-256 and sizes measured from recorded_path files on 2026-10-20; pre-existing repository digests matched. Sources read only."
+    "Google Drive for desktop is mounted at G: (localized 'Мой диск'); the assets are mirrored to the read-only shared folder G:/Мой диск/AGR-assets; each drive_link is the shared folder URL and drive_path is the in-folder relative path.",
+    "SHA-256 and sizes measured from recorded_path files on 2026-10-20; pre-existing repository digests matched. Sources read only.",
+    "#1017 (2026-11-06): 12 entries added (Vatutino Ground v015 from PR #906, AC08 source FBX, pilot-v010 NPM/VPM, TEC26 album, AC08 DWG). Hashes measured on the source files and on the C:/x/assets copies; all equal the recorded digests. drive_folder names the Drive-for-desktop folder; tools/assets/cold_check.py resolves and hashes each entry from this manifest alone. AC08 pilot-v010 is technical QA only, not acceptance."
   ],
+  "drive_folder": "AGR-assets",
   "assets": [
     {
       "id": "maf-union-max",
@@ -108,6 +110,150 @@
       "licence": null,
       "source": "jobs/VATUTINO-SITE/ground-build-v014.md final VPM with UCX SHA-256",
       "recorded_path": "C:/x/t_d94665f2/ground_v014/vpm_ucx/SM_Vatutino_Ground.fbx"
+    },
+    {
+      "id": "ground-vatutino-v015-npm",
+      "version": "v015",
+      "local_path": "ground/v015/npm/SM_Vatutino_Ground.fbx",
+      "sha256": "a2d1b20bb21ee3bf6fa6cc9c595d05d348c936e0611684a582a9476b46e175e0",
+      "size": 1293452,
+      "drive_link": "https://drive.google.com/drive/folders/1zKszwxFRWH0DnrXYiFR7SN3bH9Iph2d6?usp=sharing",
+      "drive_path": "ground/v015/npm/SM_Vatutino_Ground.fbx",
+      "licence": null,
+      "source": "PR #906 (#371) NPM FBX; G:/Мой диск/AGR-evidence/371-ground-v015-route-a-20261104/session-v001.zip (SHA-256 7441764b…52bb) member artefacts/ground-v015-dcc-v001/npm/SM_Vatutino_Ground.fbx; jobs/VATUTINO-SITE/ground-v015-route-a-session-20261104.md",
+      "recorded_path": "C:/x/t_e35c49dd/ground-v015-dcc-v001/npm/SM_Vatutino_Ground.fbx"
+    },
+    {
+      "id": "ground-vatutino-v015-vpm",
+      "version": "v015",
+      "local_path": "ground/v015/vpm/SM_Vatutino_Ground.fbx",
+      "sha256": "1ced46c362fd4c9cbfcd521d8e4392985980fafb5b2d78e6fe91b0f801ca4e28",
+      "size": 1336940,
+      "drive_link": "https://drive.google.com/drive/folders/1zKszwxFRWH0DnrXYiFR7SN3bH9Iph2d6?usp=sharing",
+      "drive_path": "ground/v015/vpm/SM_Vatutino_Ground.fbx",
+      "licence": null,
+      "source": "PR #906 (#371) VPM FBX before UCX (intermediate); G:/Мой диск/AGR-evidence/371-ground-v015-route-a-20261104/session-v001.zip (SHA-256 7441764b…52bb) member artefacts/ground-v015-dcc-v001/vpm/SM_Vatutino_Ground.fbx",
+      "recorded_path": "C:/x/t_e35c49dd/ground-v015-dcc-v001/vpm/SM_Vatutino_Ground.fbx"
+    },
+    {
+      "id": "ground-vatutino-v015-vpm-ucx",
+      "version": "v015",
+      "local_path": "ground/v015/vpm_ucx/SM_Vatutino_Ground.fbx",
+      "sha256": "f6256077ebabc3be7ca943d03bb7091bc10a0381951ab672ee6309930d7733c2",
+      "size": 2785308,
+      "drive_link": "https://drive.google.com/drive/folders/1zKszwxFRWH0DnrXYiFR7SN3bH9Iph2d6?usp=sharing",
+      "drive_path": "ground/v015/vpm_ucx/SM_Vatutino_Ground.fbx",
+      "licence": null,
+      "source": "PR #906 (#371) final VPM FBX with UCX (727 pieces); G:/Мой диск/AGR-evidence/371-ground-v015-route-a-20261104/session-v001.zip (SHA-256 7441764b…52bb) member artefacts/ground-v015-dcc-v001/vpm_ucx/SM_Vatutino_Ground.fbx",
+      "recorded_path": "C:/x/t_e35c49dd/ground-v015-dcc-v001/vpm_ucx/SM_Vatutino_Ground.fbx"
+    },
+    {
+      "id": "ground-vatutino-v015-npm-textured",
+      "version": "v015",
+      "local_path": "ground/v015/textured_npm/SM_Vatutino_Ground.fbx",
+      "sha256": "17e1ad24557599ec53be2ab77f2906d840f03fd706efcc3fb93c08458749a36b",
+      "size": 20860540,
+      "drive_link": "https://drive.google.com/drive/folders/1zKszwxFRWH0DnrXYiFR7SN3bH9Iph2d6?usp=sharing",
+      "drive_path": "ground/v015/textured_npm/SM_Vatutino_Ground.fbx",
+      "licence": null,
+      "source": "PR #906 (#371) textured NPM FBX (12 embedded bitmaps); G:/Мой диск/AGR-evidence/371-ground-v015-route-a-20261104/session-v001.zip (SHA-256 7441764b…52bb) member artefacts/ground-v015-dcc-v001/textured/npm/SM_Vatutino_Ground.fbx",
+      "recorded_path": "C:/x/t_e35c49dd/ground-v015-dcc-v001/textured/npm/SM_Vatutino_Ground.fbx"
+    },
+    {
+      "id": "ground-vatutino-v015-vpm-textured",
+      "version": "v015",
+      "local_path": "ground/v015/textured_vpm/SM_Vatutino_Ground.fbx",
+      "sha256": "39a45ab7004be8a1cf47a0c85b2d22f83d0e7b9a639c1c324344f5b914d3b188",
+      "size": 2802220,
+      "drive_link": "https://drive.google.com/drive/folders/1zKszwxFRWH0DnrXYiFR7SN3bH9Iph2d6?usp=sharing",
+      "drive_path": "ground/v015/textured_vpm/SM_Vatutino_Ground.fbx",
+      "licence": null,
+      "source": "PR #906 (#371) textured VPM FBX; G:/Мой диск/AGR-evidence/371-ground-v015-route-a-20261104/session-v001.zip (SHA-256 7441764b…52bb) member artefacts/ground-v015-dcc-v001/textured/vpm/SM_Vatutino_Ground.fbx",
+      "recorded_path": "C:/x/t_e35c49dd/ground-v015-dcc-v001/textured/vpm/SM_Vatutino_Ground.fbx"
+    },
+    {
+      "id": "ground-vatutino-v015-npm-max",
+      "version": "v015",
+      "local_path": "ground/v015/max_npm/SM_Vatutino_Ground.max",
+      "sha256": "5771b16fe4e31890baf081d9bcb0eeec5efb5917e62ba0720b23a088d836273b",
+      "size": 2469888,
+      "drive_link": "https://drive.google.com/drive/folders/1zKszwxFRWH0DnrXYiFR7SN3bH9Iph2d6?usp=sharing",
+      "drive_path": "ground/v015/max_npm/SM_Vatutino_Ground.max",
+      "licence": null,
+      "source": "PR #906 (#371) delivered NPM .max (fresh-process xView 0/0); G:/Мой диск/AGR-evidence/371-ground-v015-route-a-20261104/session-v001.zip (SHA-256 7441764b…52bb) member artefacts/ground-v015-native-v001/npm/SM_Vatutino_Ground.max",
+      "recorded_path": "C:/x/t_e35c49dd/ground-v015-native-v001/npm/SM_Vatutino_Ground.max"
+    },
+    {
+      "id": "ground-vatutino-v015-vpm-max",
+      "version": "v015",
+      "local_path": "ground/v015/max_vpm/SM_Vatutino_Ground.max",
+      "sha256": "d8ab646f3b071bc49dc3e9e95e6f65b6371a62e48bad75401e32a407c6e2c70f",
+      "size": 2744320,
+      "drive_link": "https://drive.google.com/drive/folders/1zKszwxFRWH0DnrXYiFR7SN3bH9Iph2d6?usp=sharing",
+      "drive_path": "ground/v015/max_vpm/SM_Vatutino_Ground.max",
+      "licence": null,
+      "source": "PR #906 (#371) delivered VPM .max (fresh-process xView 0/0); G:/Мой диск/AGR-evidence/371-ground-v015-route-a-20261104/session-v001.zip (SHA-256 7441764b…52bb) member artefacts/ground-v015-native-v001/vpm/SM_Vatutino_Ground.max",
+      "recorded_path": "C:/x/t_e35c49dd/ground-v015-native-v001/vpm/SM_Vatutino_Ground.max"
+    },
+    {
+      "id": "tec26-ac08-source-fbx",
+      "version": null,
+      "local_path": "tec26/ac08/source/AC08_source_geomfinal.fbx",
+      "sha256": "9cae468e714118c501dfffa77531aabecd88662c4e34d0be57274d446bb3e5fd",
+      "size": 39792,
+      "drive_link": "https://drive.google.com/drive/folders/1zKszwxFRWH0DnrXYiFR7SN3bH9Iph2d6?usp=sharing",
+      "drive_path": "tec26/ac08/source/AC08_source_geomfinal.fbx",
+      "licence": null,
+      "source": "AC08 source FBX: nodes АС.08 + Colizii_044 exported from a copy of '04-09 Geometry Final.max' (#753); jobs/TEC26-OKS/AC08/l4-e2e-v001/REPORT.md; G:/Мой диск/AGR-evidence/753-ac08-l4-e2e/SHA256SUMS.txt",
+      "recorded_path": "G:/Мой диск/AGR-evidence/753-ac08-l4-e2e/source/AC08_source_geomfinal.fbx"
+    },
+    {
+      "id": "tec26-ac08-npm",
+      "version": "v010",
+      "local_path": "tec26/ac08/v010/0000_Nku_1.zip",
+      "sha256": "8f0cb8b7e922850eab15198d0bd40cf2ca1e2bfed12e9c4912173b4aef565ab3",
+      "size": 224960,
+      "drive_link": "https://drive.google.com/drive/folders/1zKszwxFRWH0DnrXYiFR7SN3bH9Iph2d6?usp=sharing",
+      "drive_path": "tec26/ac08/v010/0000_Nku_1.zip",
+      "licence": null,
+      "source": "AC08 delivered NPM package pilot-v010 (#559, technical QA only, not acceptance); jobs/TEC26-OKS/AC08/PILOT_REPORT.md; G:/Мой диск/AGR-evidence/559-tec26-oks-ac08-pilot-v010/SHA256SUMS.txt",
+      "recorded_path": "G:/Мой диск/AGR-evidence/559-tec26-oks-ac08-pilot-v010/0000_Nku_1.zip"
+    },
+    {
+      "id": "tec26-ac08-vpm",
+      "version": "v010",
+      "local_path": "tec26/ac08/v010/SM_Nku_1.zip",
+      "sha256": "2fe983791566477e297aeefa09f04a1b7d176312c3fce1a8c9f1cf26138013bb",
+      "size": 654430,
+      "drive_link": "https://drive.google.com/drive/folders/1zKszwxFRWH0DnrXYiFR7SN3bH9Iph2d6?usp=sharing",
+      "drive_path": "tec26/ac08/v010/SM_Nku_1.zip",
+      "licence": null,
+      "source": "AC08 delivered VPM package pilot-v010 (#559, technical QA only, not acceptance); benchmark/methods/benchmarks.json ac08 source.sha256; G:/Мой диск/AGR-evidence/559-tec26-oks-ac08-pilot-v010/SHA256SUMS.txt",
+      "recorded_path": "G:/Мой диск/AGR-evidence/559-tec26-oks-ac08-pilot-v010/SM_Nku_1.zip"
+    },
+    {
+      "id": "tec26-album-pptx",
+      "version": null,
+      "local_path": "tec26/album/TEC26_na_RR_1.pptx",
+      "sha256": "74e50277df5e2dfde3ba7ab945eb6bab45a8fa8c0207d7aca3a136d9656b78ac",
+      "size": 87990058,
+      "drive_link": "https://drive.google.com/drive/folders/1zKszwxFRWH0DnrXYiFR7SN3bH9Iph2d6?usp=sharing",
+      "drive_path": "tec26/album/TEC26_na_RR_1.pptx",
+      "licence": null,
+      "source": "TEC26 album 'ТЭЦ26 на РР (1).pptx', slide 49 = AC08 facades [D171]; jobs/TEC26-OKS/census/sources.json (Vlad_OKS copy; the ИД/'ТЭЦ26 на РР.pptx' copy has a different SHA-256 and is not listed)",
+      "recorded_path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/Vlad_OKS/ТЭЦ26 на РР (1).pptx"
+    },
+    {
+      "id": "tec26-ac08-dwg",
+      "version": null,
+      "local_path": "tec26/ac08/source/22E56-AR2-1002-AC08.dwg",
+      "sha256": "cb90ed375df4fd708b7a69c6d018600347953245f0f6bde396f394bee3e1fa52",
+      "size": 679359,
+      "drive_link": "https://drive.google.com/drive/folders/1zKszwxFRWH0DnrXYiFR7SN3bH9Iph2d6?usp=sharing",
+      "drive_path": "tec26/ac08/source/22E56-AR2-1002-AC08.dwg",
+      "licence": null,
+      "source": "AC08 drawing 22Е56-АР2-1002-АС.08.dwg; jobs/TEC26-OKS/census/sources.json",
+      "recorded_path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/2_kotelnya/ИД/ТЭЦ-26 для передачи АГР/Актуальная ПД/Графическая часть/22Е56-АР2-1002-АС.08/22Е56-АР2-1002-АС.08.dwg"
     }
   ]
 }

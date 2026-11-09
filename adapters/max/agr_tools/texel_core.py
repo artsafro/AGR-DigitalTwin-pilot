@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import json
 import math
-import os
 from pathlib import Path
 
 # Locked standards: VPM uv.diffuse_density_px_per_m (D160) and NPM
@@ -209,19 +208,16 @@ def summarize(payload):
     }
 
 
-def _same(a, b):
-    a, b = Path(a), Path(b)
-    try:
-        if os.path.normcase(str(a.resolve())) == os.path.normcase(str(b.resolve())):
-            return True
-    except OSError as exc:
-        raise ValueError(f'cannot resolve paths: {exc}') from exc
-    if a.exists() and b.exists():
-        try:
-            return os.path.samefile(a, b)
-        except OSError as exc:
-            raise ValueError(f'cannot compare input and output identity: {exc}') from exc
-    return False
+def _session_core():
+    """Shared helpers (session_core.py next to this file), loaded by path like the other sibling cores."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('agr_tools_session_core', Path(__file__).with_name('session_core.py'))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+_same = _session_core().same
 
 
 def publish(source, dest, payload, report=None):

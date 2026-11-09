@@ -86,12 +86,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "py -3 \"$CLAUDE_PROJECT_DIR/tools/hooks/context_watch.py\"",
-            "timeout": 10
-          },
-          {
-            "type": "command",
-            "command": "py -3 \"$CLAUDE_PROJECT_DIR/tools/hooks/usage_log.py\" prompt",
+            "command": "py -3 \"$CLAUDE_PROJECT_DIR/tools/hooks/prompt_hooks.py\"",
             "timeout": 10
           }
         ]
@@ -115,17 +110,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "py -3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard.py\"",
-            "timeout": 10
-          }
-        ]
-      },
-      {
-        "matcher": "Bash|PowerShell|Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "py -3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/pipeline_gate.py\"",
+            "command": "py -3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/pretool.py\"",
             "timeout": 10
           }
         ]
@@ -173,6 +158,16 @@
             "type": "command",
             "command": "py -3 \"$CLAUDE_PROJECT_DIR/tools/hooks/usage_log.py\" post",
             "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "^(Bash|PowerShell)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "py -3 \"$CLAUDE_PROJECT_DIR/tools/state/after_merge.py\" hook",
+            "timeout": 180
           }
         ]
       }
