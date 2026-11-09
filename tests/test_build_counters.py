@@ -171,6 +171,30 @@ def test_cli_exit_codes(tmp_path, capsys):
                  "--source-count", "412", "--output-count", "412"]) == 0
 
 
+def test_cli_count_parity_alone_catches_silent_skip(capsys):
+    assert main(["--source-count", "412", "--output-count", "411"]) == 1
+    printed = json.loads(capsys.readouterr().out.strip().splitlines()[-1])
+    assert printed["count_parity"]["missing"] == 1 and printed["counters"] is None
+    assert main(["--source-count", "412", "--output-count", "412"]) == 0
+    assert main(["--source-count", "-1", "--output-count", "-1"]) == 1
+    assert main(["--source-count", "nan", "--output-count", "1"]) == 2
+    assert main([]) == 2
+    assert main(["--counter", "face_create_fail", "--source-count", "1", "--output-count", "1"]) == 2
+
+
+def test_rule_is_written_in_workflow_skills_and_checker():
+    flat = lambda rel: " ".join((ROOT / rel).read_text(encoding="utf-8").split())
+    for rel in ("docs/agents/WORKFLOW.md", ".agents/skills/run-evidence/SKILL.md",
+                ".agents/skills/validate-delivery/SKILL.md", ".claude/skills/run-evidence/SKILL.md",
+                ".claude/skills/validate-delivery/SKILL.md", ".claude/agents/independent-checker.md"):
+        text = flat(rel)
+        assert "#1031" in text and "dt_ai.validate.build_counters" in text, rel
+    loop = flat("docs/agents/WORKFLOW.md").split("## Loop", 1)[1].split("## Before requesting review", 1)[0]
+    assert "is a failing gate, not a note" in loop
+    assert "the user accepts the listed exceptions" in loop
+    assert "source_count" in flat(".claude/agents/independent-checker.md")
+
+
 def test_cli_unusable_input_exits_2_and_writes_nothing(tmp_path):
     report = _write(tmp_path / "r.json", G3_V008)
     broken = tmp_path / "broken.json"

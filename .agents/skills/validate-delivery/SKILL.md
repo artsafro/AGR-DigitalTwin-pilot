@@ -36,6 +36,12 @@ Run in priority order from `CLAUDE.md`. Each check ends as `pass`, `fail`,
 
 ## Decision points
 
+- A build report counter of skipped or failed elements (`*_fail`, `skipped`, `miss`, `dropped`, ...)
+  above 0 is a `fail`, not a note (#1031): run `uv run python -m dt_ai.validate.build_counters
+  --report <report.json> --counter <name>` (exit 1 = fail, a missing declared counter fails). The
+  delivery is not passed until the count is 0 or the user accepts the listed exceptions (counter,
+  exact count, quote and date). Where the spec gives a source face/plan count, compare it with the
+  read-back output (`--source-count N --output-count M`); a difference is a `fail`.
 - A check touching an entry in `docs/domain/conflicts.md` ends as `review` with that
   entry number; do not pick a side.
 - Output of an external checker (SINTEZ AGR Checker, CheckToolBox, ucx_check) is
