@@ -96,6 +96,8 @@ def parser():
                     help="local = object location subtracted, float64 (default)")
     qa.add_argument("--blender", default=os.environ.get("DT_BLENDER"), help="Blender executable for FBX / .blend")
     qa.add_argument("--timeout", type=float, default=3600, help="Blender dump timeout, seconds")
+    from dt_ai.cli import shared_tools
+    shared_tools.add_parsers(sub)
     for name in ("build", "validate"):
         item = sub.add_parser(name, help="Build/check a labelled development bundle; never certify delivery")
         item.add_argument("--job" if name == "build" else "--archive", type=Path, required=True)
@@ -287,6 +289,9 @@ def main(argv=None):
             print("\n".join(xview_gate.summary_lines(rep)))
             print(f"Report: {args.out}")
             return 0 if rep["passed"] else 1
+        elif args.command in ("derive", "ground"):
+            from dt_ai.cli import shared_tools
+            return shared_tools.run(root, args)
         elif args.command == "registry":
             current = MaterialRegistry.model_validate(read_json(args.current.read_bytes()))
             proposal = MaterialRegistry.model_validate(read_json(args.proposal.read_bytes()))
