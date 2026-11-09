@@ -39,11 +39,38 @@ def test_reversed_face_is_flipped_back_and_named():
     assert set(r.mesh.faces[3]) == set(BOX[3])
 
 
-def test_inside_out_majority_is_flipped_as_a_whole_component_minority():
+def test_closed_inside_out_majority_is_oriented_by_signed_volume():
     faces = [f[::-1] for f in BOX]
-    faces[0] = BOX[0]          # 5 inverted + 1 right: the single right one is the minority and is flipped
+    faces[0] = BOX[0]          # 5 inverted + 1 right: closed, so the volume sign wins, not the majority (#1152)
     r = flip_close(PolyMesh(V, tuple(faces)))
-    assert r.flipped == (0,) and _closed_consistent(r.mesh.faces)
+    assert r.flipped == (1, 2, 3, 4, 5) and _closed_consistent(r.mesh.faces)
+    assert _volume(V, r.mesh.faces) == pytest.approx(1.0)
+
+
+def test_closed_cube_four_of_six_inward_gets_positive_volume():
+    faces = [f[::-1] if i in (0, 1, 2, 3) else f for i, f in enumerate(BOX)]
+    r = flip_close(PolyMesh(V, tuple(faces)), close=None)
+    assert r.flipped == (0, 1, 2, 3) and r.caps == () and _closed_consistent(r.mesh.faces)
+    assert _volume(V, r.mesh.faces) == pytest.approx(1.0)
+    assert all(set(r.mesh.faces[i]) == set(BOX[i]) and _volume(V, [r.mesh.faces[i]]) == pytest.approx(
+        _volume(V, [BOX[i]])) for i in range(6))     # every face wound as the outward reference
+
+
+def test_closed_cube_all_inward_is_flipped_whole():
+    r = flip_close(PolyMesh(V, tuple(f[::-1] for f in BOX)))
+    assert r.flipped == tuple(range(6)) and _volume(V, r.mesh.faces) == pytest.approx(1.0)
+
+
+def test_correct_cube_is_unchanged():
+    r = flip_close(PolyMesh(V, BOX))
+    assert r.flipped == () and r.caps == () and r.skipped == () and r.mesh.faces == BOX
+
+
+@pytest.mark.parametrize("faces", [((0, 1, 3, 2),), ((0, 1, 5, 4), (1, 3, 7, 5))])
+def test_single_open_sheet_is_not_capped_with_a_duplicate(faces):
+    r = flip_close(PolyMesh(V, faces), close=None)
+    assert r.mesh.faces == faces and r.caps == () and r.flipped == ()
+    assert len(r.skipped) == 1 and r.skipped[0][1] == "loop bounds the whole open sheet"
 
 
 @pytest.mark.parametrize("dz,capped", [(0.04, False), (0.0079, True), (0.0081, False)])
