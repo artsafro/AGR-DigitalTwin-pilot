@@ -1,4 +1,5 @@
-"""elv-tc-vpm delivery v006 = package_vpm_v005.py with (issue #1107 / D220):
+"""new-case: okrug «ЮАО» abbreviation per D220 (#1107).
+elv-tc-vpm delivery v006 = package_vpm_v005.py with (issue #1107 / D220):
 - okrug as the customer's abbreviation «ЮАО» (not the full name): the customer's ELV and PSU275 files write the
   standard Moscow administrative-okrug abbreviation, and the regulation's own example is «СВАО»;
 - ZU_area unchanged at 1.0386 (ha, reg p.53 table 1 row 10 «Площадь участка, га», <=4 decimals): the customer's
