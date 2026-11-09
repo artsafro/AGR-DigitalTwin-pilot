@@ -1,7 +1,7 @@
 """new-case: TEC26 copy of jobs/KPP1/scripts/package_vpm.py (KPP1 recipe, card #559). Assemble a TEC26 VPM OKS package (TEC26 copy of jobs/KPP1/scripts/package_vpm.py; spec not needed, TEC26 values): FBX + external PNG set + GeoJSON -> SM_<Address>.zip.
 
 Usage: py -3 package_vpm.py <package_dir> <textures_dir> [--no-geojson]
---no-geojson: user decision 2026-10-07 [D222] (GeoJSON, coordinates and district code deferred) -> ZIP holds
+--no-geojson: user decision 2026-10-07 [D224] (GeoJSON, coordinates and district code deferred) -> ZIP holds
 FBX + PNG only; the GeoJSON checks are reported as excluded, not passed.
 <package_dir> holds SM_<Address>.fbx (export_vpm.py); its parent holds export_meta.json and
 thumbnail_256.jpg. GeoJSON follows reg App.3 (p.51-55): literal ObjectFeature, exact key order.
@@ -52,7 +52,7 @@ with zipfile.ZipFile(zpath, "w", zipfile.ZIP_DEFLATED) as z:
         z.write(os.path.join(pkg, f), f)
 
 blockers = ([k for k, v in props.items() if v == "" and k != "other"] + ["geometry.coordinates (MSK-77)"]
-            if not NO_GEOJSON else ["GeoJSON deferred by the user (2026-10-07, KPP; TEC26 card #559 out of scope) [D222]"])
+            if not NO_GEOJSON else ["GeoJSON deferred by the user (2026-10-07, KPP; TEC26 card #559 out of scope) [D224]"])
 report = {"zip": os.path.abspath(zpath), "zip_bytes": os.path.getsize(zpath),
           "files": sorted(os.listdir(pkg)), "geojson_blockers_unknown_in_source": blockers,
           "geojson_proposals": ["Glasses values (colour/transparency/refraction/roughness/metallicity)"],

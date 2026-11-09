@@ -404,7 +404,12 @@ def test_leaked_live_agr_mcp_lock_is_acquired_an_hour_past_until(tmp_path, monke
     def sharing_violation(path):
         raise PermissionError(32, "The process cannot access the file because it is being used by another process")
 
-    monkeypatch.setattr(os, "remove", sharing_violation)
+    if os.name == "nt":
+        # #1117: on Windows the release deletes through a handle (`_consume_handle`), not `os.remove`.
+        real_consume = locks._consume_handle
+        monkeypatch.setattr(locks, "_consume_handle", lambda path, pred: "failed")
+    else:
+        monkeypatch.setattr(os, "remove", sharing_violation)
     with locks.hold("blender-batch", "a", 900) as path:
         assert path is not None
         body = path.read_text(encoding="utf-8")
@@ -413,7 +418,10 @@ def test_leaked_live_agr_mcp_lock_is_acquired_an_hour_past_until(tmp_path, monke
     until = info["until"]
     assert info["owner"] == "agr-mcp" and info["pid"] == os.getpid() and locks._alive(info["pid"])
     assert until == 1_000_000.0 + 900 + 120
-    monkeypatch.setattr(os, "remove", real_remove)
+    if os.name == "nt":
+        monkeypatch.setattr(locks, "_consume_handle", real_consume)
+    else:
+        monkeypatch.setattr(os, "remove", real_remove)
     clock[0] = until - 1  # live agr-mcp pid, still inside the lease: not stolen
     with pytest.raises(locks.LockBusy):
         with locks.hold("blender-batch", "early", 60):
@@ -498,7 +506,7 @@ def test_two_concurrent_reclaimers_of_one_stale_lock_exactly_one_wins(tmp_path, 
             t.join(20)
         assert sorted(results) == ["acquired", "busy"]
         assert not lock.exists()
-        assert sorted(p.name for p in lock.parent.iterdir()) == [], "reclaim left a temp file"
+        assert sorted(p.name for p in lock.parent.iterdir() if p.name != f".{lock.name}.reclaim") == [], "reclaim left a temp file"
 
 
 def test_restore_rename_race_cannot_give_two_holders(tmp_path, monkeypatch):
@@ -924,7 +932,7 @@ def test_stale_mutex_unlink_by_name_cannot_admit_two(tmp_path, monkeypatch):
     assert paused["x"] and y_inside.is_set()
     assert state["max"] == 1
     assert state["current"] == 0
-    assert [p.name for p in path.parent.iterdir()] == []
+    assert [p.name for p in path.parent.iterdir() if p.name != f".{path.name}.reclaim"] == []
 
 
 def _clear_lock_dir(path):
@@ -1698,21 +1706,30 @@ def test_probe_lock_refuses_every_second_holder_seed_841():
 
 
 def test_failed_release_is_retried_then_reported(tmp_path, monkeypatch, capsys):
-    """#895: a sharing violation on os.remove is retried a few times, then written to stderr."""
+    """#895: a sharing violation on the delete is retried a few times, then written to stderr."""
     import os
     pauses = []
     calls = []
     monkeypatch.setattr(locks, "_sleep", lambda delay: pauses.append(delay), raising=False)
 
-    def sharing_violation(path):
-        calls.append(path)
-        raise PermissionError(32, "sharing violation")
+    if os.name == "nt":
+        # #1117: Windows deletes through a handle; "failed" is the sharing-violation outcome.
+        def handle_delete_fails(path, pred, calls=calls):
+            calls.append(path)
+            return "failed"
 
-    monkeypatch.setattr(os, "remove", sharing_violation)
+        monkeypatch.setattr(locks, "_consume_handle", handle_delete_fails)
+    else:
+
+        def sharing_violation(path):
+            calls.append(path)
+            raise PermissionError(32, "sharing violation")
+
+        monkeypatch.setattr(os, "remove", sharing_violation)
     with locks.hold("blender-batch", "a", 900) as path:
         pass
     assert path.exists()
-    assert len(calls) >= 3, f"release tried os.remove {len(calls)} time(s) and swallowed the error"
+    assert len(calls) >= 3, f"release tried to delete {len(calls)} time(s) and swallowed the error"
     assert pauses == [locks._RELEASE_PAUSE_S] * (len(calls) - 1)
     assert 0 < locks._RELEASE_PAUSE_S <= 0.25
     assert len(calls) == locks._RELEASE_ATTEMPTS
@@ -1789,6 +1806,7 @@ def test_probe_release_failures_are_retried_then_reported(tmp_path, monkeypatch,
     pause = locks._RELEASE_PAUSE_S
     assert 0 < pause <= 0.25
     real_remove = os.remove
+    real_consume = locks._consume_handle  # Windows handle-delete seam (#1117)
     errors = [PermissionError(32, "sharing violation"), OSError(13, "permission denied"),
               BlockingIOError(11, "resource busy"), TimeoutError("file locked")]
     fail_counts = list(range(0, attempts + 3))
@@ -1799,14 +1817,25 @@ def test_probe_release_failures_are_retried_then_reported(tmp_path, monkeypatch,
             pauses = []
             left = {"n": fail_count}
 
-            def boom(path, error=error, calls=calls, left=left):
-                calls.append(path)
-                if left["n"] > 0:
-                    left["n"] -= 1
-                    raise error
-                return real_remove(path)
+            if os.name == "nt":
+                def boom(path, pred, error=error, calls=calls, left=left):
+                    calls.append(path)
+                    if left["n"] > 0:
+                        left["n"] -= 1
+                        return "failed"
+                    return real_consume(path, pred)
 
-            monkeypatch.setattr(os, "remove", boom)
+                monkeypatch.setattr(locks, "_consume_handle", boom)
+            else:
+
+                def boom(path, error=error, calls=calls, left=left):
+                    calls.append(path)
+                    if left["n"] > 0:
+                        left["n"] -= 1
+                        raise error
+                    return real_remove(path)
+
+                monkeypatch.setattr(os, "remove", boom)
             monkeypatch.setattr(locks, "_sleep", lambda delay, pauses=pauses: pauses.append(delay), raising=False)
             with locks.hold("max-live", "a", 30) as path:
                 pass

@@ -9,7 +9,7 @@ Usage: python tools/derive/package_vpm.py <package_dir> <textures_dir> [--object
 <package_dir> holds SM_<Address>.fbx (export_vpm); its parent holds export_meta.json (address,
 h_otn_model_max_z_m, thumbnail). GeoJSON follows reg App.3 (p.51-55): literal ObjectFeature, exact key order;
 unknown OKS values stay "" / null and are listed as blockers in package_report.json, never invented
-(conflicts #2). --no-geojson (user decision 2026-10-07 [D222]): ZIP holds FBX + PNG only; --object is then optional.
+(conflicts #2). --no-geojson (user decision 2026-10-07 [D224]): ZIP holds FBX + PNG only; --object is then optional.
 object.json: {"name": str, "h_relief": number, "glasses": {material: {...}} (optional, default: the KPP1
 clear-glass proposal)}. The ZIP and package_report.json must not exist yet (new version, no overwrite).
 """
@@ -22,7 +22,7 @@ import shutil
 import sys
 import zipfile
 
-DEFAULT_NOTE = "GeoJSON deferred by the user (2026-10-07) [D222]"
+DEFAULT_NOTE = "GeoJSON deferred by the user (2026-10-07) [D224]"
 
 
 def default_glasses(address):

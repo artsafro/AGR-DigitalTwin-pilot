@@ -43,6 +43,12 @@ lists; they do not define a production step.
    never turned into a pass by rewording. After two failures with the same cause, stop that
    path, save the state and propose the next step. The limit is recorded in
    `jobs/<JOB>/pipeline/state.json` and enforced by the pipeline gate (`tools/git-hooks/pipeline_gate.py`). Historical record: `archive/2026-11:docs/HARNESS_PLAN.md` §8.
+   A build report counter of skipped or failed elements (`*_fail`, `skipped`, `miss`, `dropped`, ...)
+   above 0 is a failing gate, not a note (#1031): the build is not shown or reported as done until
+   every such count is 0 or the user accepts the listed exceptions (counter, exact count, quote and date).
+   Build scripts pass their report dict to `dt_ai.validate.build_counters.enforce` (or run
+   `uv run python -m dt_ai.validate.build_counters --report <report.json> --counter <name>`;
+   exit 1 = fail, also as a `RunRecord` stage); a declared counter that is missing also fails.
 7. **Hand off.** Compare the result with the Requirement (the user's wording, profile and
    acceptance in the contract), item by item: met, not met, or changed by a later user decision
    (with its date or `D<n>`); report what is done, what was checked (commands, evidence paths)
@@ -331,6 +337,17 @@ Each kind of fact lives in one place; the others point to it.
 | Unsolved work | `docs/backlog.md`, GitHub issues |
 
 A rule question is looked up in the order of `AGENTS.md` ("Where things are"): decision log first.
+
+### Decision ids on parallel branches (#1037)
+
+A new `D<n>` is the output of `python tools/git-hooks/decision_ids.py next --fetch`: the next free id over
+`origin/main`, this branch and every open PR head (`gh pr list`). The pre-commit hook runs `check --staged
+--fetch` whenever `docs/decisions.md` is staged and blocks a commit whose new id (absent at the merge-base with
+`origin/main`) is already used by `origin/main` or by an open PR with a different row, or appears twice; exit 2
+(no base, no `gh`, unreadable PR head) blocks too. Offline, `git config twin.decisionIds main-only` checks
+`origin/main` only. Two branches that allocate before either PR is open are caught by the later one's next
+commit or check: the later branch renumbers (`next`, then every `[D<n>]` reference), never the merged one. Run
+`check` once more after merging `origin/main` and before asking for review.
 
 ## Harness inventory (#129)
 

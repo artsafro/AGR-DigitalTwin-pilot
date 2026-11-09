@@ -19,7 +19,7 @@ from dt_ai.cli.main import parser  # noqa: E402
 
 PKG_TOOL = ROOT / "tools/derive/package_vpm.py"
 ATLAS_TOOL = ROOT / "tools/derive/npm_atlas.py"
-TEC26_NOTE = "GeoJSON deferred by the user (2026-10-07, KPP; TEC26 card #559 out of scope) [D222]"
+TEC26_NOTE = "GeoJSON deferred by the user (2026-10-07, KPP; TEC26 card #559 out of scope) [D224]"
 
 
 def run(cmd, **kw):
