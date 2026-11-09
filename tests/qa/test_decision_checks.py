@@ -172,13 +172,13 @@ def master_status(kind, *meshes):
 
 def test_master_all_quads_under_4m_pass():
     verts, polys = quads(3.9, 1.0)
-    assert master_status("vpm", poly_mesh("SM_Test_K_1_Main", polys, verts)) == {
-        "master quads": "pass", "master quad size": "pass"}
+    got = master_status("vpm", poly_mesh("SM_Test_K_1_Main", polys, verts))
+    assert got["master quads"] == "pass" and got["master quad size"] == "pass"
 
 
 def test_master_triangle_fails_quads():
     verts = [[0, 0, 0], [1, 0, 0], [0, 1, 0]]
-    assert master_status("npm", poly_mesh("SM_Test_K_1_Main", [[0, 1, 2]], verts)) == {"master quads": "fail"}
+    assert master_status("npm", poly_mesh("SM_Test_K_1_Main", [[0, 1, 2]], verts))["master quads"] == "fail"
 
 
 def test_master_quad_over_4m_fails_and_padded_band_is_review():
@@ -190,14 +190,14 @@ def test_master_quad_over_4m_fails_and_padded_band_is_review():
 
 def test_master_npm_has_no_size_gate():
     verts, polys = quads(10.0)
-    assert master_status("npm", poly_mesh("A", polys, verts)) == {"master quads": "pass"}
+    assert master_status("npm", poly_mesh("A", polys, verts))["master quads"] == "pass"
 
 
 def test_master_ucx_ignored_and_degenerate_fails():
     ucx = poly_mesh("UCX_SM_Test_K_1_Main_001", [[0, 1, 2]], [[0, 0, 0], [9, 0, 0], [0, 9, 0]])
     flat = poly_mesh("A", [[0, 1, 2, 3]], [[0, 0, 0], [1, 0, 0], [2, 0, 0], [3, 0, 0]])
     got = master_status("vpm", flat, ucx)
-    assert got == {"master quads": "pass", "master quad size": "fail"}
+    assert got["master quads"] == "pass" and got["master quad size"] == "fail"
 
 
 def test_master_unreadable_fails():
@@ -281,3 +281,173 @@ def test_glass_with_two_materials_on_1002_fails_v008():
                  materials=("M_Test_K_1_MainGlass_1", "M_Test_K_1_MainGlass_2"))
     found = scene_findings(rb(mesh(), glass), "vpm", "oks", PROFILES.vpm)
     assert statuses(found, "V008")["glass tile"] == "fail"
+
+
+# --- Look-finished checks: decor embed [D199] and edge-loop continuity [D200] (report-only) -------------------
+
+def _face_mesh(name, verts, polys):
+    degrees = {}
+    for p in polys:
+        degrees[str(len(p))] = degrees.get(str(len(p)), 0) + 1
+    return {"name": name, "polygon_degrees": degrees, "face_geometry": {"vertices": verts, "polygons": polys}}
+
+
+def look_status(*meshes, kind="vpm"):
+    return {f.name: f.status for f in master_findings(master_rb(*meshes), kind)}
+
+
+FACADE = [[0, 0, 0], [4, 0, 0], [4, 4, 0], [0, 4, 0]]
+
+
+def test_decor_touching_facade_passes_d199():
+    main = _face_mesh("SM_Test_K_1_Main", FACADE, [[0, 1, 2, 3]])
+    arch = _face_mesh("SM_Test_K_1_Arch", [[1, 1, 0], [2, 1, 0], [2, 2, 0], [1, 2, 0]], [[0, 1, 2, 3]])
+    assert look_status(main, arch)["decor embed"] == "pass"
+
+
+def test_decor_floating_standoff_is_review_never_fail_d199():
+    main = _face_mesh("SM_Test_K_1_Main", FACADE, [[0, 1, 2, 3]])
+    arch = _face_mesh("SM_Test_K_1_Arch", [[1, 1, 0.006], [2, 1, 0.006], [2, 2, 0.006], [1, 2, 0.006]],
+                      [[0, 1, 2, 3]])
+    assert look_status(main, arch)["decor embed"] == "review"
+
+
+def test_decor_without_face_geometry_is_not_run_never_pass_d199():
+    main = _face_mesh("SM_Test_K_1_Main", FACADE, [[0, 1, 2, 3]])
+    bare = {"name": "SM_Test_K_1_Arch", "polygon_degrees": {"4": 1}}
+    assert look_status(main, bare)["decor embed"] == "not_run"
+
+
+def test_edge_loop_clean_grid_passes_d200():
+    verts = [[x, y, 0.0] for y in range(3) for x in range(3)]
+    polys = [[0, 1, 4, 3], [1, 2, 5, 4], [3, 4, 7, 6], [4, 5, 8, 7]]
+    assert look_status(_face_mesh("SM_Test_K_1_Main", verts, polys))["edge loop continuity"] == "pass"
+
+
+def test_edge_loop_t_junction_is_review_never_fail_d200():
+    verts = [[0, 0, 0], [4, 0, 0], [4, 4, 0], [0, 4, 0], [2, 0, 0], [2, 2, 0], [0, 2, 0]]
+    polys = [[0, 1, 2, 3], [0, 4, 5, 6]]
+    assert look_status(_face_mesh("SM_Test_K_1_Main", verts, polys))["edge loop continuity"] == "review"
+
+
+# --- Ground skirt >= 1 m [GND-03] (blocking) ----------------------------------------------------------------
+
+def _ground_face_mesh(name, verts, polys):
+    m = mesh(name=name, tris=len(polys), degrees={"3": len(polys)})
+    m["face_geometry"] = {"vertices": verts, "polygons": polys}
+    return m
+
+
+def _skirt_finding(verts, polys, kind="npm"):
+    found = scene_findings(rb(_ground_face_mesh("SM_Test_Ground", verts, polys)), kind, "ground",
+                           PROFILES.npm if kind == "npm" else PROFILES.vpm)
+    return next(f for f in found["V003"] if f.name == "ground skirt depth")
+
+
+FLAT = [[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0]]
+FLAT_POLYS = [[0, 1, 2], [0, 2, 3]]
+SKIRT = FLAT + [[0, 0, -1], [1, 0, -1], [1, 1, -1], [0, 1, -1]]
+SKIRT_POLYS = [[0, 1, 2], [0, 2, 3], [0, 4, 5], [0, 5, 1], [1, 5, 6], [1, 6, 2],
+               [2, 6, 7], [2, 7, 3], [3, 7, 4], [3, 4, 0]]
+
+
+def test_ground_skirt_flat_no_skirt_fails_gnd03():
+    assert _skirt_finding(FLAT, FLAT_POLYS).status == "fail"
+
+
+def test_ground_skirt_exactly_one_metre_passes_gnd03():
+    f = _skirt_finding(SKIRT, SKIRT_POLYS)
+    assert f.status == "pass" and f.measured == pytest.approx(1.0)
+
+
+def test_ground_skirt_just_under_one_metre_fails_gnd03():
+    verts = FLAT + [[0, 0, -0.999], [1, 0, -0.999], [1, 1, -0.999], [0, 1, -0.999]]
+    assert _skirt_finding(verts, SKIRT_POLYS).status == "fail"
+
+
+def test_ground_skirt_non_finite_coord_fails_gnd03():
+    verts = [v[:] for v in SKIRT]
+    verts[4][2] = float("nan")
+    assert _skirt_finding(verts, SKIRT_POLYS).status == "fail"
+
+
+def test_ground_skirt_without_face_data_is_not_run_gnd03():
+    found = scene_findings(rb(mesh(name="SM_Test_Ground")), "npm", "ground", PROFILES.npm)
+    assert next(f for f in found["V003"] if f.name == "ground skirt depth").status == "not_run"
+
+
+def test_ground_skirt_vpm_ground_also_checked():
+    found = scene_findings(rb(_ground_face_mesh("SM_Test_Ground", SKIRT, SKIRT_POLYS)), "vpm", "ground",
+                           PROFILES.vpm)
+    assert next(f for f in found["V003"] if f.name == "ground skirt depth").status == "pass"
+
+
+def test_ground_skirt_absent_for_oks():
+    found = scene_findings(rb(_ground_face_mesh("SM_Test_K_1_Main", FLAT, FLAT_POLYS)), "npm", "oks",
+                           PROFILES.npm)
+    assert "ground skirt depth" not in {f.name for f in found["V003"]}
+
+
+# --- UCX vs MAF/Flora intersection [FLO-15, MAF-22] (blocking) --------------------------------------------
+
+BOX_TRIS = [(0, 1, 3), (0, 3, 2), (4, 6, 7), (4, 7, 5), (0, 4, 5), (0, 5, 1),
+            (2, 3, 7), (2, 7, 6), (0, 2, 6), (0, 6, 4), (1, 5, 7), (1, 7, 3)]
+
+
+def _box_verts(lo, hi):
+    return [[hi[0] if i & 4 else lo[0], hi[1] if i & 2 else lo[1], hi[2] if i & 1 else lo[2]] for i in range(8)]
+
+
+def _ucx_box(name, lo, hi):
+    m = mesh(name=name, tris=12)
+    m["hull"] = {"verts": _box_verts(lo, hi), "tris": [list(t) for t in BOX_TRIS]}
+    return m
+
+
+def _maf_mesh(name, lo, hi):
+    m = mesh(name=name, tris=12)
+    m["face_geometry"] = {"vertices": _box_verts(lo, hi), "polygons": [list(t) for t in BOX_TRIS]}
+    return m
+
+
+def _ucx_maf_status(ucx_lo, ucx_hi, maf_lo, maf_hi, name="SM_Test_GroundEl"):
+    ground = mesh(name="SM_Test_Ground", materials=["M_Ground"])
+    found = scene_findings(rb(ground, _ucx_box("UCX_SM_Test_Ground_001", ucx_lo, ucx_hi),
+                              _maf_mesh(name, maf_lo, maf_hi)), "vpm", "ground", PROFILES.vpm)
+    return next(f.status for f in found["V010"] if f.name == "UCX vs MAF/Flora intersection")
+
+
+def test_ucx_covering_maf_fails_flo15():
+    assert _ucx_maf_status((0, 0, 0), (1, 1, 1), (0.2, 0.2, 0.5), (0.8, 0.8, 1.5)) == "fail"
+
+
+def test_ucx_below_maf_passes_flo15():
+    assert _ucx_maf_status((0, 0, -1), (1, 1, -0.001), (0, 0, 0), (1, 1, 1)) == "pass"
+
+
+def test_ucx_covering_flora_fails_flo15():
+    assert _ucx_maf_status((0, 0, 0), (1, 1, 1), (0.2, 0.2, 0.5), (0.8, 0.8, 1.5),
+                           name="SM_Test_Flora") == "fail"
+
+
+def test_ucx_maf_flora_absent_for_oks():
+    found = scene_findings(rb(mesh(), _ucx_box("UCX_SM_Test_K_1_Main_001", (0, 0, 0), (1, 1, 1))),
+                           "vpm", "oks", PROFILES.vpm)
+    assert "UCX vs MAF/Flora intersection" not in {f.name for f in found["V010"]}
+
+
+def test_ucx_maf_flora_unsupported_hull_is_not_run_never_pass():
+    ground = mesh(name="SM_Test_Ground", materials=["M_Ground"])
+    bare_ucx = mesh(name="UCX_SM_Test_Ground_001")  # no hull -> not_run, never pass
+    found = scene_findings(rb(ground, bare_ucx, _maf_mesh("SM_Test_GroundEl", (0, 0, 0), (1, 1, 1))),
+                           "vpm", "ground", PROFILES.vpm)
+    assert next(f for f in found["V010"] if f.name == "UCX vs MAF/Flora intersection").status == "not_run"
+
+
+def test_ucx_maf_flora_never_fails_when_ucx_strictly_below():
+    """Invariant probe: a UCX piece strictly below the MAF/Flora bbox never fails the check."""
+    cases = 0
+    for dz in (0.001, 0.01, 0.1, 0.5, 1.0):
+        assert _ucx_maf_status((0, 0, -1 - dz), (1, 1, -dz), (0, 0, 0), (1, 1, 1)) == "pass"
+        cases += 1
+    assert cases == 5

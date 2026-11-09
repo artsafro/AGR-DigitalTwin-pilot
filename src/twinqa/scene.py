@@ -22,7 +22,7 @@ from twinqa.fbx_header import fbx_application, fbx_units
 from twinqa.maf_checks import SMOOTHING_ANGLE_DEG, maf_findings
 from twinqa.flora import FLORA_SHARE, flora_findings
 from twinqa.geometry.ucx_audit import (
-    BAND_TOL_M, GAP_BAND_M, NEIGHBOUR_M, bbox_gap, bounds, is_closed, is_convex,
+    BAND_TOL_M, GAP_BAND_M, NEIGHBOUR_M, bbox_gap, bounds, inside_convex, is_closed, is_convex,
     sat_separation, surface_distance, weld,
 )
 from twinqa.clearance import BAND_EDGE_TOL_M, co_directional_distribution, co_directional_pairs
@@ -948,6 +948,111 @@ def _ground_footprint_findings(meshes: list[dict], ucx: list[dict], src: str, gr
     ]
 
 
+SKIRT_MIN_M = 1.0  # GND-03: Ground perimeter polygons extruded down by at least 1 m (reg p.7 §3.4, p.28 §3.7)
+
+
+def _skirt_z_extent(mesh: dict) -> tuple[str, float] | None:
+    """``(status, depth)`` of the Ground surface Z-extent, or ``None`` when it is not measurable.
+
+    ``status`` is ``"fail"`` for broken (empty/partial/non-finite) face data and ``"ok"`` when the
+    Z-extent was measured. The perimeter skirt extrudes the Ground surface down 1 m, so a complete
+    Ground surface mesh spans at least 1 m in Z.
+    """
+    shape = mesh.get("face_geometry")
+    if not isinstance(shape, dict):
+        return None
+    verts = shape.get("vertices")
+    if not isinstance(verts, list):
+        return "fail", 0.0
+    if not verts:
+        return "fail", 0.0
+    zs = []
+    for v in verts:
+        if isinstance(v, bool) or not isinstance(v, (list, tuple)) or len(v) < 3:
+            return "fail", 0.0
+        if any(isinstance(c, bool) or not isinstance(c, (int, float)) or not math.isfinite(c) for c in v[:3]):
+            return "fail", 0.0
+        zs.append(float(v[2]))
+    return "ok", max(zs) - min(zs)
+
+
+def _ground_skirt_finding(meshes: list[dict], ucx: list[dict], src: str) -> Finding:
+    """GND-03: the Ground surface mesh is extruded down >= 1 m (reg p.7 §3.4, p.28 §3.7)."""
+    name = "ground skirt depth"
+    expected = f"perimeter polygons extruded down >= {SKIRT_MIN_M:g} m [GND-03] (reg p.7 §3.4, p.28 §3.7)"
+    pages = [7, 28]
+    geometry = [mesh for mesh in meshes if mesh not in ucx]
+    ground = [m for m in geometry if m["name"].endswith("_Ground")]
+    if not ground:
+        return _f("not_run", name, f"{src}: no Ground surface mesh", expected, pages, src)
+    for mesh in ground:
+        probe = _skirt_z_extent(mesh)
+        if probe is None:
+            continue
+        status, depth = probe
+        if status == "fail":
+            return _f("fail", name, f"{src}: {mesh['name']} broken face geometry", expected, pages, src)
+        good = depth >= SKIRT_MIN_M
+        return _f("pass" if good else "fail", name,
+                  f"{src}: {mesh['name']} Z-extent {depth:.3f} m", expected, pages, src,
+                  measured=depth, threshold=SKIRT_MIN_M, margin=signed_margin(depth, SKIRT_MIN_M, "min"))
+    return _f("not_run", name, f"{src}: no face geometry for the Ground surface", expected, pages, src)
+
+
+_MAF_FLORA_SUFFIXES = ("_GroundEl", "_GroundElGlass", "_Flora")
+
+
+def _bbox_volume_overlap(lo_a, hi_a, lo_b, hi_b, eps: float = OVERLAP_EPS_M) -> bool:
+    return all(max(lo_a[i], lo_b[i]) + eps < min(hi_a[i], hi_b[i]) for i in range(3))
+
+
+def _ucx_maf_flora_finding(ucx: list[dict], meshes: list[dict], src: str) -> list[Finding]:
+    """FLO-15 / MAF-22: the Ground UCX does not cover (contain a vertex of) a MAF or Flora element.
+
+    MAF (``_GroundEl``) and Flora (``_Flora``) are excluded from Ground collision, so a UCX piece
+    whose convex hull contains a MAF/Flora vertex covers it and is a defect (blocking, reg p.36 §13.2).
+    Only closed convex UCX hulls are evaluated; an unsupported piece keeps the finding not_run and
+    never hides a proven coverage.
+    """
+    name = "UCX vs MAF/Flora intersection"
+    expected = "Ground UCX does not cover MAF or Flora (reg p.36 §13.2) [FLO-15, MAF-22]"
+    pages = [36]
+    maf_flora = [m for m in meshes if m["name"].endswith(_MAF_FLORA_SUFFIXES)]
+    if not maf_flora:
+        return []
+    pieces = [_ucx_piece(mesh) for mesh in ucx]
+    supported = [p for p in pieces if p["reason"] is None and p["hull"] is not None]
+    unresolved = [p["name"] for p in pieces if p["reason"] is not None]
+    offenders = []
+    for p in supported:
+        verts, tris = p["hull"]
+        uc_lo, uc_hi = bounds(verts)
+        for m in maf_flora:
+            shape = m.get("face_geometry")
+            if not isinstance(shape, dict):
+                continue
+            mverts = shape.get("vertices")
+            if not isinstance(mverts, list) or not mverts:
+                continue
+            m_lo, m_hi = bounds(mverts)
+            if not _bbox_volume_overlap(uc_lo, uc_hi, m_lo, m_hi):
+                continue
+            for v in mverts:
+                if isinstance(v, bool) or not isinstance(v, (list, tuple)) or len(v) < 3:
+                    continue
+                if inside_convex(v, verts, tris):
+                    offenders.append((p["name"], m["name"]))
+                    break
+    if offenders:
+        shown = ", ".join(f"{a} covers {b}" for a, b in offenders[:5])
+        return [_f("fail", name, f"{src}: {len(offenders)} UCX piece(s) cover a MAF/Flora element: {shown}",
+                   expected, pages, src)]
+    if unresolved:
+        return [_f("not_run", name, f"{src}: {len(unresolved)} unsupported UCX piece(s): {unresolved[:5]}",
+                   expected, pages, src)]
+    return [_f("pass", name, f"{src}: no UCX piece covers a MAF/Flora element", expected, pages, src)]
+
+
 def main_glass_findings(meshes: list[dict], stem: str, src: str) -> list[Finding]:
     """VPM OKS main FBX: the glass object and its materials (#1029; DER-18/19; reg p.33 §10.4.2, p.34 §10.4.4).
 
@@ -1039,6 +1144,7 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
                               measured=measured, threshold=threshold_n, margin=margin))
         if role == "ground":
             out["V003"].extend(_ground_footprint_findings(meshes, ucx, src, ground_area_m2, footprint_holes))
+            out["V003"].append(_ground_skirt_finding(meshes, ucx, src))
     foreign = [o for o in rb["other_objects"] if not (role == "light" and o["type"] in ("LIGHT", "EMPTY"))]
     if foreign:
         # Any non-mesh object, lights included, fails (conflict #14 decided 2026-10-07 [D017] as the checker)
@@ -1085,6 +1191,8 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
                                   f"{src}: {ucx_tris} UCX for {tris} model triangles", f"<= {budget}", [36, 37], src))
             out["V010"].extend(_ucx_pair_findings(ucx, src))
             out["V010"].append(_ucx_shape_finding(ucx, src))
+            if role == "ground":
+                out["V010"].extend(_ucx_maf_flora_finding(ucx, meshes, src))
             out["V010"].append(_f("not_run", "UCX coverage and offsets", "coverage of the model, offsets",
                                   "reg p.34-37", [34, 37], src))
         # V008: one UV channel, no mirrored islands, glass only in 1001 (reg p.31-32, 39)
