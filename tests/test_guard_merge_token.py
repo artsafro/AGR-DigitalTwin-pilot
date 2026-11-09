@@ -269,7 +269,7 @@ def _raw(**body):
     {"command": "Мерджи #11028"},
     {"command": ""},
     {"command": 1028},
-    {"created_at": time.time() + 120},           # from the future
+    {"future_s": 120},                           # created_at from the future (computed at run time)
     {"created_at": "now"},
     {"created_at": True},
     {"raw": '{"pr": 1028, "repo": "%s", "command": "Мерджи #1028", "created_at": NaN}' % REPO},
@@ -281,6 +281,8 @@ def _raw(**body):
 ])
 def test_invalid_token_asks(ctx, token):
     pr = token.pop("pr", 1028)
+    if "future_s" in token:
+        token = {"created_at": time.time() + token["future_s"]}
     put_token(ctx.tokens, pr, **token)
     assert run_guard(f"gh pr merge {pr}", ctx)[0] == "ask"
 
