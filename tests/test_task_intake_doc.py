@@ -51,6 +51,16 @@ def test_harness_tasks_require_a_before_after_metric():
         assert needle in checklist, needle
 
 
+def test_guard_prompt_metric_not_paired_with_usage_log():
+    # The 'guard prompts per session' metric names no counting command: guard asks/denials are not recorded
+    # (guard.py prints an ask/allow decision to the hook stdout and nothing logs it). It must say so, and
+    # `usage_log.py stats` must stay next to subagent/skill/command counts only.
+    checklist = _text()[_text().index("## Checklist"):]
+    assert "guard" in checklist.lower()
+    assert "not measured today" in checklist.lower()
+    assert "guard prompts per session" not in checklist
+
+
 def test_pr_template_asks_for_the_before_after_numbers():
     template = (ROOT / ".github" / "pull_request_template.md").read_text(encoding="utf-8")
     assert "before/after metric" in template.lower()
