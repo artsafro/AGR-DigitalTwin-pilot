@@ -77,7 +77,7 @@ ground mesh preparation». Never put the user's scene at risk to finish faster.
   «Kasatkino ground mesh preparation», incident 11).
 - `saveMaxFile <copy> useNewFile:false` clears the dirty flag (`getSaveRequired`) of the
   open scene: the user's scene on disk may be older than it looks. Record the dirty
-  state before the save and tell the user (2026-11-05, «Ворота Object 001 переделка
+  state before the save and report it (2026-11-05, «Ворота Object 001 переделка
   размеров», 3.12).
 - `meshop.attach` reset material IDs of the attached and the receiving mesh (whole
   Ground set to ID 1). Read IDs back after every attach and restore them (2026-11-05,
