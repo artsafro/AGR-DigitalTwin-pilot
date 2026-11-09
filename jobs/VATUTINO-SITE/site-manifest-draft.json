@@ -1,0 +1,28 @@
+{
+  "status": "draft, not approved; unknown fields are null and are never invented",
+  "issue": 298,
+  "date": "2026-11-09",
+  "synthetic": false,
+  "address_token": {"value": "Vatutino", "state": "used since ground-build-v005; confirmation asked"},
+  "territorial_code": {"value": null, "state": "needed from Artem (PKG-13, reg p.11 10.1)"},
+  "npm": {
+    "zip": "{territorial_code}_Vatutino.zip",
+    "ground_fbx": "SM_Vatutino_Ground.fbx",
+    "oks_fbx": [],
+    "oks_state": "no OKS models; PKG-03 requires 1..20 OKS FBX next to the Ground FBX"
+  },
+  "vpm": {
+    "zip": "SM_Vatutino_Ground.zip",
+    "fbx": "SM_Vatutino_Ground.fbx",
+    "geojson": {"value": null, "state": "not delivered in this slice [D126]"},
+    "light_fbx": {"value": null, "state": "not delivered in this slice [D126]"}
+  },
+  "oks_candidates": {
+    "count": 4,
+    "area_m2": 9110.08,
+    "source": "four large uncovered parts used as S_pz in ground-build-v011.md",
+    "numbering": null,
+    "state": "confirm they are the OKS footprints; numbering _01.._04 only then"
+  },
+  "gnd06": {"s_ter_m2": 25854.04, "s_pz_m2": 9110.08, "limit_tris": 4500000}
+}
