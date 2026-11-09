@@ -1,8 +1,10 @@
-# Block #426 Flora — route, 2026-11 (one page, waits for Artem's choice)
+# Block #426 Flora — route, 2026-11 (route A chosen, recorded [D232])
 
-Artem 2026-11-09 «давай блоки продолжим». This page is a plan: nothing is built until Artem picks a
-route (PR body, choices A–D). The MAF gaps from the 2026-11-07 audit (no NPM-light, no UV transfer to the atlas,
-site package not accepted) belong to block #425 and are only a dependency here (step 8).
+Artem 2026-11-09 «давай блоки продолжим». Route **A is chosen** (Artem 2026-11-09 «принимаю рекомендации»,
+recorded [D232]): new NPM "star" objects [D102] from approved / new map pairs for the 17 Vatutino positions + Ива,
+VPM = shell of the star, one 2048 site atlas, placement v007, all 4,915 plants (~30k tris). The implementation goes
+to the follow-up issue the orchestrator opens, not here. The MAF gaps from the 2026-11-07 audit (no NPM-light, no UV
+transfer to the atlas, site package not accepted) belong to block #425 and are only a dependency here (step 8).
 
 ## Where Flora stands (numbers from the repo)
 
@@ -18,7 +20,7 @@ site package not accepted) belong to block #425 and are only a dependency here (
 | Flora atlas tool (one 2048 per site) | exists, tested on synthetic data only | `tools/library/flora_atlas_from_scene.py` (#217) |
 | Accepted Flora model | **none** (placement v006 = technical QA only) | `docs/pipeline.md` |
 
-## Route (recommended A; steps marked † are skipped or changed in B/C)
+## Route (A chosen [D232]; steps marked † are skipped or changed in B/C)
 
 | # | Step | Input | Tool | Done when (measurable) | Max? | Artem |
 |---|---|---|---|---|---|---|
@@ -35,9 +37,9 @@ site package not accepted) belong to block #425 and are only a dependency here (
 
 Steps 1–7, 9, 10 run without Max. Only step 8 waits for a free Max.
 
-## Variants (detail in the PR body)
+## Variants (A chosen [D232]; detail in the PR body)
 
-- **A (recommended)** — the route above: new star objects for the Vatutino 17 + Ива; the broken v003 library is not repaired now.
+- **A (chosen)** — the route above: new star objects for the Vatutino 17 + Ива; the broken v003 library is not repaired now.
 - **B** — repair the v003 library first per #377 (99 objects, 38 VPM restore/bake in Max), then Vatutino: steps 2–3 become the #377 routes; needs Max for ~38 objects.
 - **C** — the fastest slice: keep the 11 current picks with the 3 NPM-light variants (64,454 tris), leave 1,745 plants unplaced; only steps 5–9.
 - **D** — like A, but the 6 missing positions + Ива get named stand-ins from the approved 54 maps instead of new maps (no step-2 review round).
