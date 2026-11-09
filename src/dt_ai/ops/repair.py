@@ -1,7 +1,8 @@
 """Explicit repair op `repair.flip_close` on one polygon part (#1144, follow-up of [D201] #968).
 
-new-case: source-baseline repair op - flip faces against their component's majority winding, cap planar convex
-open border loops. Pure numpy on inv_quads.PolyMesh; no DCC or files.
+new-case: source-baseline repair op - orient closed components to positive signed volume, open ones to their majority
+winding (#1152), cap planar convex open border loops that are not the whole sheet. Pure numpy on inv_quads.PolyMesh;
+no DCC or files.
 
 [D201] judges every op relative to the source. This op is the one that CHANGES the source baseline: the caller
 records the before/after violators and uses the repaired part as the new baseline. Every input polygon ends in the
@@ -32,14 +33,20 @@ def _edges(f):
     return [(f[k], f[(k + 1) % len(f)]) for k in range(len(f))]
 
 
-def _orient(faces):
-    """Per face True = flip, so that every manifold edge is used once in each direction. Per connected component
-    the smaller set is flipped (majority winding wins; a tie keeps the lowest face index as is)."""
+def _face_volume(v, f):
+    """Signed volume of the cone from the origin over polygon f (fan triangulation), times 6."""
+    return sum(float(np.dot(v[f[0]], np.cross(v[f[k]], v[f[k + 1]]))) for k in range(1, len(f) - 1))
+
+
+def _orient(faces, v):
+    """Per face True = flip, so that every manifold edge is used once in each direction, and the component id per
+    face. A closed component (every edge used by exactly 2 faces) is oriented so its signed volume is positive
+    (#1152); an open or zero-volume component keeps the majority winding (a tie keeps the lowest face index)."""
     by_edge = defaultdict(list)
     for fi, f in enumerate(faces):
         for a, b in _edges(f):
             by_edge[frozenset((a, b))].append((fi, (a, b)))
-    flip = [None] * len(faces)
+    flip, comp_of = [None] * len(faces), [None] * len(faces)
     for seed in range(len(faces)):
         if flip[seed] is not None:
             continue
@@ -61,10 +68,20 @@ def _orient(faces):
                     queue.append(g)
                 elif flip[g] != want:
                     raise ValueError(f"face {g}: non-orientable component (edge {a}-{b})")
-        if 2 * sum(flip[i] for i in comp) > len(comp):
+        for i in comp:
+            comp_of[i] = seed
+        vol = 0.0
+        if all(len(by_edge[frozenset(e)]) == 2 for i in comp for e in _edges(faces[i])):
+            vol = sum(-_face_volume(v, faces[i]) if flip[i] else _face_volume(v, faces[i]) for i in comp) / 6
+        size = float(np.ptp(v[[j for i in comp for j in faces[i]]], 0).max())
+        if abs(vol) > 1e-9 * max(size, 1e-12) ** 3:
+            turn = vol < 0
+        else:
+            turn = 2 * sum(flip[i] for i in comp) > len(comp)
+        if turn:
             for i in comp:
                 flip[i] = not flip[i]
-    return flip
+    return flip, comp_of
 
 
 def _loops(faces):
@@ -117,11 +134,12 @@ def _cap_reason(v, ring, plane_m):
 
 
 def flip_close(mesh: PolyMesh, *, close=None, plane_m: float = PLANE_M) -> RepairResult:
-    """Flip faces against their component's majority winding, then cap open border loops.
+    """Orient faces (closed component: positive signed volume; open: majority winding), then cap open border loops.
 
     `close`: None = cap every open loop; else a set of frozenset({a, b}) border edges - a loop is capped only
     when ALL its edges are in it (the others are `skipped`, reason "not selected"). A loop that is not closed,
-    branches, is nonplanar beyond `plane_m` or not convex is `skipped` with that reason, never forced."""
+    branches, bounds every vertex of its component (a whole open sheet: the cap would duplicate it reversed), is
+    nonplanar beyond `plane_m` or not convex is `skipped` with that reason, never forced."""
     if not isinstance(mesh, PolyMesh):
         raise ValueError(f"unsupported mesh {type(mesh).__name__}")
     if isinstance(plane_m, bool) or not np.isfinite(plane_m) or not 0 < plane_m <= PLANE_M:
@@ -129,14 +147,20 @@ def flip_close(mesh: PolyMesh, *, close=None, plane_m: float = PLANE_M) -> Repai
     if not mesh.faces:
         raise ValueError("empty mesh")
     v = np.asarray(mesh.vertices, float)
-    flip = _orient(mesh.faces)
+    flip, comp_of = _orient(mesh.faces, v)
     faces = [tuple(f[:1] + f[1:][::-1]) if fl else tuple(f) for f, fl in zip(mesh.faces, flip)]
     sources = list(range(len(faces)))
+    comp_verts, edge_comp = defaultdict(set), {}
+    for f, c in zip(faces, comp_of):
+        comp_verts[c].update(f)
+        edge_comp.update((e, c) for e in _edges(f))
     caps, skipped = [], []
     for ring, closed in _loops(faces):
         edges = {frozenset((ring[k], ring[(k + 1) % len(ring)])) for k in range(len(ring))}
         if not closed:
             why = "open or branching border chain"
+        elif comp_verts[edge_comp[(ring[1], ring[0])]] <= set(ring):
+            why = "loop bounds the whole open sheet"     # its cap would duplicate the sheet reversed (#1152)
         elif close is not None and not edges <= set(close):
             why = "not selected"
         else:

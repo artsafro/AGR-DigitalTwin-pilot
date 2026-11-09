@@ -141,3 +141,21 @@ def test_probe_random_rigid_open_boxes_with_random_flips():
         assert _volume(v, r.mesh.faces) > 0
         ok += 1
     assert ok == 300
+
+
+def test_probe_random_rigid_closed_boxes_with_any_flips_get_positive_volume():
+    """Probe (#1152): 300 random rigid transforms, random flipped subset of all 6 faces (majority allowed) ->
+    closed, consistently wound, volume == +scale^3, no caps, flipped == the flipped set."""
+    rng = np.random.default_rng(1152)
+    ok = 0
+    for _ in range(300):
+        q, _ = np.linalg.qr(rng.normal(size=(3, 3)))
+        q *= np.sign(np.linalg.det(q))
+        s = rng.uniform(0.1, 30)
+        v = (np.asarray(V, float) - 0.5) @ q.T * s + rng.uniform(-50, 50, 3)
+        flipped = set(rng.choice(6, size=int(rng.integers(0, 7)), replace=False).tolist())
+        r = flip_close(PolyMesh(v, tuple(f[::-1] if i in flipped else f for i, f in enumerate(BOX))))
+        assert set(r.flipped) == flipped and r.caps == () and _closed_consistent(r.mesh.faces)
+        assert _volume(v, r.mesh.faces) == pytest.approx(s ** 3, rel=1e-6)
+        ok += 1
+    assert ok == 300
