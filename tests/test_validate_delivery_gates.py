@@ -39,7 +39,7 @@ def gate_findings(skill: str, checklist: str, principles: str) -> list[str]:
     out = []
     for gate, phrases in GATES.items():
         for name, text in (("skill", skill), ("checklist", checklist)):
-            para = gate_paragraph(text, gate).lower()
+            para = " ".join(gate_paragraph(text, gate).lower().split())
             if not para:
                 out.append(f"{name}: gate {gate} missing")
                 continue
@@ -55,7 +55,7 @@ def gate_findings(skill: str, checklist: str, principles: str) -> list[str]:
     if len(section) < 2:
         out.append("principles: heading missing")
     else:
-        body = section[1].split("\n## ", 1)[0].lower()
+        body = " ".join(section[1].split("\n## ", 1)[0].lower().split())
         out += [f"principles: lacks {p!r}" for p in PRINCIPLE_PHRASES if p not in body]
     return out
 

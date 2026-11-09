@@ -34,6 +34,33 @@ Run in priority order from `CLAUDE.md`. Each check ends as `pass`, `fail`,
 5. **Visual fidelity.** Screenshots from fixed cameras (front and angled), compared
    with the approved reference or previous accepted version.
 
+## Modelling gates (every modelling job, #1030)
+
+Manual gates on the delivered geometry, on top of the checks above and V001-V017. Each starts as
+`not checked`, ends as `pass` only with its measurement and the user's sign-off, and the same item is in the
+checklist `docs/domain/validation.md`, "Modelling gates". No validator stage covers them, so a clean validator
+run does not close them.
+
+- **G1 Texture-joint continuity.** Starts `not checked`. Joint and pattern lines continue across every face border
+  and cassette joints, and the joint phase is kept on each facade plane (`docs/domain/uv-textures.md`, "Project UV
+  rules": keep joint phase; "Job-level UV/texture lessons": lines must continue across cassette joints). Measure:
+  when the job has a texture spec and UV layout, run a lattice-crossing check (reference implementation, job-local:
+  `jobs/elv-tc-vpm/scripts/joint_continuity_v008.py`, Blender); any unmatched crossing or a plane with more than one
+  phase is `fail`. Otherwise, or in addition: front and angled renders of every joint-bearing face border, joint
+  lines visible, compared by the user. A continuous element (cover strip, plank, cornice) cut into pieces is `fail`.
+- **G2 Decor embed.** Starts `not checked`. Decor and attachments (arches, light fixtures, frames and similar)
+  embed 10-20 mm into their facade, no floating stand-off ([D199], `docs/domain/geometry.md`: constructive embed
+  >= 10 mm). Measure per decor object the depth of its contact face into the receiving surface: gap > 0 (floating)
+  or a stand-off is `fail`, depth < 10 mm or > 20 mm is `fail`. A job exception exists only as a dated user decision
+  (elv-tc-vpm keeps its 6 mm stand-off by [D197]). The V004 self-intersections these embeds create are planned per
+  job and reported as `review: conflicts #44`, never removed by moving the decor.
+- **G3 Edge loops.** Starts `not checked`. Edge loops and rings continue through the mesh; a loop that starts and
+  stops mid-run is a defect even when the mesh is closed ([D200], `docs/domain/geometry.md`). Listed here as a gate;
+  checked visually on the wireframe with the user.
+
+Never change the geometry only to make a validator or one of these gates pass: read
+[`docs/agents/working-principles.md#never-bend-geometry-to-pass-a-validator`](../../../docs/agents/working-principles.md#never-bend-geometry-to-pass-a-validator).
+
 ## Decision points
 
 - A check touching an entry in `docs/domain/conflicts.md` ends as `review` with that
@@ -54,5 +81,5 @@ branch, in the section itself only on `main` after the merge (`docs/agents/WORKF
 ## Completion
 
 The verdict is `passed` only when every check is `pass` and every manual check is
-signed. Any `fail`, `review` or `not checked` makes it `not passed`, listed with what
-remains.
+signed, including the modelling gates G1-G3 of a modelling job. Any `fail`, `review`
+or `not checked` makes it `not passed`, listed with what remains.

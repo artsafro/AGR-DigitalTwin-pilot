@@ -83,6 +83,22 @@ These other report-loss paths stay as pinned. They are outside #751:
 | GeoJSON integer coordinate (`OverflowError` in `_decimals`) | #699, `tests/qa/test_geojson_integer_legacy_controls.py` | Out of scope. A 309-zero integer still escapes before a report. |
 | GeoJSON `1e400` / `1e309` float overflow | #694–#700, `tests/qa/test_geojson_overflow_legacy_controls.py` | Out of scope. A report is written; the legacy schema pass is a separate finiteness decision. |
 
+## Modelling gates (#1030)
+
+Manual gates of every modelling job, outside V001-V017 (no validator stage covers them); the procedure is in
+`.agents/skills/validate-delivery/SKILL.md`, "Modelling gates". Each stays open (`not checked`, delivery
+`not passed`) until measured and signed by the user.
+
+- **G1 Texture-joint continuity.** Joint and pattern lines continue across face borders and cassette joints, joint
+  phase kept per facade plane (`docs/domain/uv-textures.md`: "keep ... joint phase", "lines must continue across
+  cassette joints"). Measured with a lattice-crossing check where a texture spec exists (job-local reference:
+  `jobs/elv-tc-vpm/scripts/joint_continuity_v008.py`; any unmatched crossing = fail) and with renders of the joints.
+  A continuous element cut into pieces = fail.
+- **G2 Decor embed.** Decor and attachments embed 10-20 mm into the facade ([D199], `docs/domain/geometry.md`
+  constructive embed >= 10 mm); gap > 0 (floating) or a stand-off = fail; job exceptions only by a dated user
+  decision ([D197]); the resulting V004 count is `review` per conflicts #44.
+- **G3 Edge loops.** Loops and rings continue through the mesh, no loop stopping mid-run ([D200]).
+
 ## SINTEZ 1.6.1 check-group mapping
 
 [2026 requirements](requirements-2026.md) contains all LP 80 / HP 154 rows and the
