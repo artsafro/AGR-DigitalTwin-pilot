@@ -35,7 +35,7 @@ CFG = {"adapter": Path("C:/x/t_d94665f2/paving_ground_inputs_v4.json"),
        "maf_set": ROOT / "jobs/VATUTINO-SITE/maf/site-maf-set.json",
        "exceptions": ROOT / "jobs/VATUTINO-SITE/ground-exceptions.json",
        "flora_library": "C:/x/flora-library/v003/flora-library-v003.max"}
-# #298 option A [D231]: Ground v015 (accepted [D193]) + MAF v005 + «Верона» rows 1-10 (A4.2) + Flora; urns excluded
+# #298 option A [D235]: Ground v015 (accepted [D193]) + MAF v005 + «Верона» rows 1-10 (A4.2) + Flora; urns excluded
 CFG_V015 = dict(CFG, ground=Path("C:/x/t_e35c49dd/ground-v015-dcc-v001/textured"),
                 exceptions=ROOT / "jobs/VATUTINO-SITE/ground-exceptions-v015.json",
                 verona={"shapes": ROOT / "jobs/VATUTINO-SITE/maf/verona-plan-shapes.json",

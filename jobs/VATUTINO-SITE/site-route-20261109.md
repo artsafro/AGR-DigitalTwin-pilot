@@ -60,7 +60,7 @@ holds. GND-06: S_ter 25,854.04 - S_pz 9,110.08 = 16,743.96 m² (> 1.5 ha) -> 4,5
 4. Urns 15E288/15E289: keep them out on Ground v015 too (extend the v014 exception), or send the cut-out edge
    back to the Ground line (option C)?
 
-## Decision (Artem 2026-11-09, «принимаю рекомендации») [D231]
+## Decision (Artem 2026-11-09, «принимаю рекомендации») [D235]
 
 Option A; build without OKS (V001 stays a recorded fail, `not passed`); urns 15E288/15E289 stay out on Ground v015
 (`ground-exceptions-v015.json`, bound to the v015 textured masters `965463e7…` / `92d31d7f…`); address token

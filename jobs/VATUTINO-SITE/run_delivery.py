@@ -12,6 +12,7 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+GROUND_AREA_M2 = 16743.96  # VPM GND-06 basis: S_ter 25,854.04 - S_pz 9,110.08 (build_ground report)
 sys.path.insert(0, str(ROOT / 'src'))
 sys.path.insert(0, str(ROOT))
 from twinqa.scene import find_blender
@@ -73,7 +74,8 @@ def main():
             z.extractall(extracted)
         dcc(f'readback-{profile}', 'tools/blender/fbx_readback.py', extracted / arcname, out / f'readback-{profile}.json')
         run(f'validate-{profile}', [sys.executable, 'tools/qa/validate_package.py', archive, '--profile', profile, '--json'], allowed=(0, 1, 2))
-        run(f'validate-scene-{profile}', [sys.executable, 'tools/qa/validate_package.py', archive, '--profile', profile, '--scene', '--json'], allowed=(0, 1, 2))
+        area = ['--ground-area-m2', str(GROUND_AREA_M2)] if profile == 'vpm' else []  # S_ter - S_pz, GND-06
+        run(f'validate-scene-{profile}', [sys.executable, 'tools/qa/validate_package.py', archive, '--profile', profile, '--scene', '--json', *area], allowed=(0, 1, 2))
         run(f'sintez-{profile}', [blender, '--background', '--factory-startup', '--python-exit-code', '1', '--python', 'jobs/KPP1/scripts/run_agr_checker.py', '--', folder, out / f'sintez-{profile}.json'], allowed=(0, 1))
     (out / 'hashes.json').write_text(json.dumps(hashes, indent=1), encoding='utf-8')
     print(json.dumps(hashes, indent=1))

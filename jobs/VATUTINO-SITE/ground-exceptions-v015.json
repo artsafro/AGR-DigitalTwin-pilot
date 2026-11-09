@@ -5,7 +5,7 @@
     {
       "handle": "15E288",
       "label": "VAT_MAF_T3510_02",
-      "reason": "Урна ~1 cm outside the edge of the Ground cut-out; still outside on Ground v015 (GroundIndex.height None, placement-compatibility-v001.json of t_e35c49dd). Exclusion extended from v014 to v015 [D231].",
+      "reason": "Урна ~1 cm outside the edge of the Ground cut-out; still outside on Ground v015 (GroundIndex.height None, placement-compatibility-v001.json of t_e35c49dd). Exclusion extended from v014 to v015 [D235].",
       "ground_master_sha256": {
         "npm": "965463e75c6924f81418bd9280a89968df29dff99c733a86811689dfd9294942",
         "vpm": "92d31d7f55dddf2756fd0d6bbaf82bedfd1da149660fff7763c9795ac8eefd48"
@@ -13,7 +13,7 @@
       "approved": {
         "by": "Artem",
         "date": "2026-11-09",
-        "decision": "D231",
+        "decision": "D235",
         "quote": "urns 15E288/15E289 stay out on Ground v015 too (v014 exception extended)",
         "previous": {
           "by": "Artem",
@@ -34,7 +34,7 @@
     {
       "handle": "15E289",
       "label": "VAT_MAF_T3510_02",
-      "reason": "Урна ~1 cm outside the edge of the Ground cut-out; still outside on Ground v015 (GroundIndex.height None, placement-compatibility-v001.json of t_e35c49dd). Exclusion extended from v014 to v015 [D231].",
+      "reason": "Урна ~1 cm outside the edge of the Ground cut-out; still outside on Ground v015 (GroundIndex.height None, placement-compatibility-v001.json of t_e35c49dd). Exclusion extended from v014 to v015 [D235].",
       "ground_master_sha256": {
         "npm": "965463e75c6924f81418bd9280a89968df29dff99c733a86811689dfd9294942",
         "vpm": "92d31d7f55dddf2756fd0d6bbaf82bedfd1da149660fff7763c9795ac8eefd48"
@@ -42,7 +42,7 @@
       "approved": {
         "by": "Artem",
         "date": "2026-11-09",
-        "decision": "D231",
+        "decision": "D235",
         "quote": "urns 15E288/15E289 stay out on Ground v015 too (v014 exception extended)",
         "previous": {
           "by": "Artem",

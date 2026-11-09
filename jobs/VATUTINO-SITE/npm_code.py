@@ -1,4 +1,4 @@
-"""Rename the NPM site ZIP to the territorial code SINTEZ issues [D231]; one command, then validate.
+"""Rename the NPM site ZIP to the territorial code SINTEZ issues [D235]; one command, then validate.
 
 new-case: job-local; the code is a single parameter. The placeholder `0000` marks a package built before SINTEZ
 issued the code (Artem 2026-11-09: the code comes from the SINTEZ upload, like the FNO in [D220]).

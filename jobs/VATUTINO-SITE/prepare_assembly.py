@@ -30,7 +30,7 @@ def load_library(lib):
 
 args = sys.argv[sys.argv.index('--') + 1:]
 source, outdir, profile = args[:3]
-# Site MAF material list: v005 set list (v001-v003 runs) or, for the option-A run [D231], the A4.2 list
+# Site MAF material list: v005 set list (v001-v003 runs) or, for the option-A run [D235], the A4.2 list
 # (v005 + paint_ral7016 + larch_light_oak_boards) that also carries the «Верона» rows; one 512 set (MAF-09).
 MAF_LIST = Path(args[3]) if len(args) > 3 else Path('C:/x/vatutino-maf/v005-set/atlas/material-list.json')
 from assembly_rules import new_output
