@@ -10,6 +10,16 @@
       ],
       "env": {}
     },
+    "agr-mcp": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "C:\\agr\\AGR-DigitalTwin-pilot",
+        "agr-mcp"
+      ],
+      "env": {}
+    },
     "multiCAD": {
       "command": "C:\\Users\\artsafro\\AppData\\Local\\CodexMCP\\MultiCAD\\venv\\Scripts\\python.exe",
       "args": [

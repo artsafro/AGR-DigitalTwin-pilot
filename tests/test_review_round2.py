@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 
 from test_review_publish import _load, review  # noqa: F401  (fixture: tools/review on sys.path)
+from tests.dcc_session import skip_if_dcc_session_busy
 
 
 def _junction(alias: Path, target: Path) -> None:
@@ -77,6 +78,7 @@ def _run_max(script: Path, card: str) -> None:
     version = executable.parent.name.rsplit(' ', 1)[-1]
     proc = adapter._call([adapter.SCRIPTS / 'dcc_batch.py', 'max', '--file', script, '--card', card,
                           '--timeout', '600', '--wait', '120', '--version', version])
+    skip_if_dcc_session_busy(proc.returncode, proc.stdout, proc.stderr)
     assert proc.returncode == 0, (proc.stdout + proc.stderr)[-2000:]
 
 

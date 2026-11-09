@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "AgentRequest.schema.json",
+  "title": "AgentRequest",
+  "description": "AGR Tools 1.0 agent request jobs/<ID>/agent/<req-id>/request.json (contract K4, #1024). Skeleton of branch 0; owner branch U. The agent writes only into result_layer AGENT_<req-id> through the D108 operations; apply is confirmed only by a button in the dock/UI (owner answers 06.11.2026); the answer is result.json by AdapterReport.schema.json.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "request_id", "project_id", "stage", "task", "passport_excerpt", "journal_tail", "objects", "allowed_ops", "invariants", "result_layer", "snapshot"],
+  "properties": {
+    "schema": {"const": 1},
+    "request_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9-]{0,63}$"},
+    "project_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$"},
+    "stage": {"oneOf": [{"type": "integer", "minimum": 0, "maximum": 9}, {"const": "agent"}]},
+    "task": {"type": "string", "minLength": 1},
+    "passport_excerpt": {"type": "object"},
+    "journal_tail": {"type": "array", "maxItems": 50, "items": {"type": "object"}},
+    "objects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ref", "role"],
+        "properties": {
+          "ref": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["host", "doc", "handle", "name"],
+            "properties": {
+              "host": {"enum": ["max", "blender", "offline"]},
+              "doc": {"type": "string", "minLength": 1},
+              "handle": {"type": "integer", "minimum": 1},
+              "name": {"type": "string"}
+            }
+          },
+          "role": {"enum": ["body", "opening", "window", "glass", "capsule", "roof", "parapet", "equipment", "decor", "helper", null]},
+          "layer": {"type": "string"}
+        }
+      }
+    },
+    "markers": {"type": "array", "items": {"type": "string", "pattern": "^(OPEN_[0-9]{3}|LEVEL_[A-Za-z0-9]+)$"}},
+    "snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fbx", "sha256"],
+      "properties": {
+        "fbx": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "allowed_ops": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"enum": ["set_role", "mark_opening", "place_window", "set_library_id", "make_capsule", "make_roof_plane", "keep", "primitive_box", "rebuild_by_contour", "embed_into_neighbour", "to_opacity_plane"]}
+    },
+    "invariants": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "result_layer": {"type": "string", "pattern": "^AGENT_[A-Za-z0-9][A-Za-z0-9-]{0,63}$"},
+    "cli": {"enum": ["claude", "codex", "cursor"], "default": "claude"},
+    "command": {"type": "string"}
+  }
+}

@@ -1,0 +1,86 @@
+{
+ "version": "gen-v001-A4.2 (passport box, seams by texture, v006 IDs; frame = library paint_ral7016 [D202])",
+ "issue": 790,
+ "form": "clad_box",
+ "smoothing_deg": 40,
+ "params": {
+  "depth": 0.6,
+  "height": 0.45,
+  "foot_height": 0.02,
+  "courses": 4,
+  "seam_width": 0.01,
+  "seam_depth": 0.02,
+  "frame_width": 0.045,
+  "top_boards": 9,
+  "foot_length": 0.1,
+  "foot_inset": 0.03,
+  "end_overhang": 0.15,
+  "max_foot_span": 2.67,
+  "seams": "texture"
+ },
+ "param_sources": {
+  "depth": "DWG outlines 0.600 (all ten) = passport B 0.6",
+  "height": "passport H 0.45 (Hobbyka «Верона» art. 18694, verona.pdf p.1); Artem 2026-11-03: variant A",
+  "foot_height": "passport end view: plate 4-5 px at 0.0041 m/px -> 0.02",
+  "courses": "passport elevation + end view + Artem's photo: 4 horizontal boards on every side",
+  "seam_width": "passport end view: course 24 px (0.098 m), gap 2-3 px -> 0.010 m (0.0041 m/px, H 0.45 = 110 px); seams=texture: no geometry, texture seam line 6 px of 512 (= 0.0071 m on a 0.0545 m top board, 0.014 m on a 0.1075 m side course)",
+  "seam_depth": "seams=texture: unused by the geometry (validated only)",
+  "frame_width": "top frame = side board thickness; set equal to the slat width (0.045) so the top reads as 11 equal boards; review",
+  "top_boards": "Artem «~11» across the top = 2 frame boards + 9 slats; passport render shows 5-6 seams near the end (low resolution); review",
+  "foot_length": "passport elevation: plates ~6 px wide (broken-length drawing, ~0.1 m); review",
+  "foot_inset": "passport end view: plate line 656..788 px vs body 649..795 -> 0.03 per side",
+  "end_overhang": "passport elevation: end plates ~0.15 m from the ends (plate centre); review",
+  "max_foot_span": "passport: 3 sections in L 8.0 -> plates at section joints, 2.67 m",
+  "seams": "Artem 2026-11-03 correction: wood seams are texture, not geometry; box stays simple, board layout in the UV (11 top boards = top_boards 9 + 2 frame boards, 4 courses on every side)"
+ },
+ "materials": {
+  "seat": "larch_light_oak_boards",
+  "frame": "paint_ral7016"
+ },
+ "material_sources": {
+  "seat": "library material larch_light_oak_boards (materials_v001 library_id 41; Artem 2026-11-03: new ID, D152 one material ID per texture; accepted 2026-11-06 [D202]); 256 px patterned cell, SYNTHETIC board texture make_boards.py, base colour = v005 larch_light_oak #C49A6C, 11 boards, seam #5A4026",
+  "frame": "library material paint_ral7016 #383E42 (materials_v001 library_id 8 = MAF v005 id 2); Artem 2026-11-06 [D202]: reuse the existing id, no new steel id; the 2026-11-03 proposal name is retired (A4.1 -> A4.2)"
+ },
+ "rows": [
+  {
+   "row": 1,
+   "set_id": "VAT_MAF_T3508_01"
+  },
+  {
+   "row": 2,
+   "set_id": "VAT_MAF_T3508_02"
+  },
+  {
+   "row": 3,
+   "set_id": "VAT_MAF_T3508_03"
+  },
+  {
+   "row": 4,
+   "set_id": "VAT_MAF_T3508_04"
+  },
+  {
+   "row": 5,
+   "set_id": "VAT_MAF_T3508_05"
+  },
+  {
+   "row": 6,
+   "set_id": "VAT_MAF_T3508_06"
+  },
+  {
+   "row": 7,
+   "set_id": "VAT_MAF_T3508_07"
+  },
+  {
+   "row": 8,
+   "set_id": "VAT_MAF_T3508_08"
+  },
+  {
+   "row": 9,
+   "set_id": "VAT_MAF_T3508_09"
+  },
+  {
+   "row": 10,
+   "set_id": "VAT_MAF_T3508_10"
+  }
+ ]
+}

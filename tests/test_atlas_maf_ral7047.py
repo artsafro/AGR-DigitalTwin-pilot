@@ -163,7 +163,8 @@ def test_table_records_7047_and_keeps_every_existing_entry():
     assert "screen approximations of RAL Classic" in payload["note"]
     colors = payload["colors"]
     assert colors["7047"] == "#D0D0D0"
-    assert set(colors) == set(PRESERVED) | {"7047"}
+    assert set(colors) == set(PRESERVED) | {"7047", "8023"}   # 8023: materials audit Q4 (1.0.1 patch)
+    assert colors["8023"] == "#A65E2E"
     for code, hex_value in PRESERVED.items():
         assert colors[code] == hex_value
 

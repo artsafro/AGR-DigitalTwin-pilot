@@ -8,6 +8,8 @@ import sys
 from pathlib import Path
 
 import max_job
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+from dt_ai.core.max_env import max_child_env  # noqa: E402
 
 SCRIPTS = Path(os.environ.get("AGR_KANBAN_SCRIPTS", "C:/Users/artsafro/hermes_kanban/scripts"))
 
@@ -22,7 +24,16 @@ def max_batch_path():
 
 def _call(args):
     return subprocess.run([sys.executable, *map(str, args)], capture_output=True, text=True,
-                          encoding="utf-8", errors="replace", check=False, timeout=750)
+                          encoding="utf-8", errors="replace", check=False, timeout=750, env=max_child_env())
+
+
+class MaxAdapterError(RuntimeError):
+    """A failed Max batch/live call; ``returncode`` 3 is the busy lock (dcc_batch.py)."""
+
+    def __init__(self, returncode: int, output: str):
+        # The output starts on its own line so a busy JSON answer stays a whole line.
+        super().__init__(f"Max adapter failed (exit {returncode}):\n{output}")
+        self.returncode = returncode
 
 
 class BatchAdapter:
@@ -59,7 +70,7 @@ class BatchAdapter:
                     "--timeout", "600", "--wait", "60", "--version", version]
         proc = _call(args)
         if proc.returncode != 0 or not result.is_file():
-            raise RuntimeError("Max adapter failed: " + (proc.stdout + proc.stderr)[-2000:])
+            raise MaxAdapterError(proc.returncode, (proc.stdout + proc.stderr)[-2000:])
         info = json.loads(result.read_text(encoding="utf-8-sig"))
         if not info.get("ok"):
             raise RuntimeError(info.get("error") or "Max review job failed")

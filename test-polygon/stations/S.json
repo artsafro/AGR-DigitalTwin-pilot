@@ -1,0 +1,830 @@
+{
+ "schema": 1,
+ "branch": "S",
+ "issue": "#1024",
+ "stations": [
+  {
+   "button": "pack.deliver",
+   "objects": [
+    {
+     "name": "UCX_PolyDeliver_01",
+     "role": "ucx",
+     "scene": "frag_s_deliver",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "geometry",
+     "cls": "Editable_Poly",
+     "builder": "S_build",
+     "extra": {
+      "kind": "box",
+      "min": [
+       0,
+       0,
+       0
+      ],
+      "max": [
+       1,
+       1,
+       1
+      ],
+      "units": "meters"
+     }
+    },
+    {
+     "name": "UCX_PolyDeliver_02",
+     "role": "ucx",
+     "scene": "frag_s_deliver",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "geometry",
+     "cls": "Editable_Poly",
+     "builder": "S_build",
+     "extra": {
+      "kind": "box",
+      "min": [
+       1.0,
+       0,
+       0
+      ],
+      "max": [
+       2.0,
+       1,
+       1
+      ],
+      "units": "meters"
+     }
+    },
+    {
+     "name": "SM_PolyDeliver_Root",
+     "role": "helper",
+     "scene": "frag_s_deliver",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "helper",
+     "cls": "Dummy",
+     "builder": "S_build",
+     "extra": {
+      "kind": "dummy",
+      "units": "meters"
+     }
+    },
+    {
+     "name": "SM_PolyDeliver_Spot_001",
+     "role": "light",
+     "scene": "frag_s_deliver",
+     "pos": [
+      0,
+      -4,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "freeSpot",
+     "builder": "S_build",
+     "extra": {
+      "kind": "light",
+      "light": "freeSpot",
+      "units": "meters"
+     },
+     "parent": "SM_PolyDeliver_Root"
+    }
+   ],
+   "expected": [
+    {
+     "name": "UCX_PolyDeliver_01",
+     "scene": "frag_s_deliver",
+     "expect": "fail",
+     "codes": [
+      "ucx.gap/ucx_touch"
+     ]
+    },
+    {
+     "name": "UCX_PolyDeliver_02",
+     "scene": "frag_s_deliver",
+     "expect": "fail",
+     "codes": [
+      "ucx.gap/ucx_touch"
+     ]
+    },
+    {
+     "name": "SM_PolyDeliver_Root",
+     "scene": "frag_s_deliver",
+     "expect": "pass",
+     "codes": []
+    },
+    {
+     "name": "SM_PolyDeliver_Spot_001",
+     "scene": "frag_s_deliver",
+     "expect": "pass",
+     "codes": []
+    }
+   ],
+   "reason": "",
+   "options": {
+    "skip": {
+     "qa.preflight": "станция: шаги ветки S и light.check; проверки 0.5-0.8 и export.checked - в нативной приёмке",
+     "qa.names": "станция: шаги ветки S и light.check; проверки 0.5-0.8 и export.checked - в нативной приёмке",
+     "qa.tris": "станция: шаги ветки S и light.check; проверки 0.5-0.8 и export.checked - в нативной приёмке",
+     "ucx.audit": "станция: шаги ветки S и light.check; проверки 0.5-0.8 и export.checked - в нативной приёмке",
+     "qa.sintez": "нет таблицы SINTEZ на синтетике",
+     "qa.omk_te": "код ОМК ТЭ проверяет станция ветки T (1.0.30)",
+     "export.checked": "станция: шаги ветки S и light.check; проверки 0.5-0.8 и export.checked - в нативной приёмке"
+    }
+   }
+  },
+  {
+   "button": "ucx.gap",
+   "objects": [
+    {
+     "name": "UCX_GapTouch_01",
+     "role": "ucx",
+     "scene": "frag_s_ucx",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "geometry",
+     "cls": "Editable_Poly",
+     "builder": "S_build",
+     "extra": {
+      "kind": "box",
+      "min": [
+       0,
+       0,
+       0
+      ],
+      "max": [
+       1,
+       1,
+       1
+      ],
+      "units": "meters"
+     }
+    },
+    {
+     "name": "UCX_GapTouch_02",
+     "role": "ucx",
+     "scene": "frag_s_ucx",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "geometry",
+     "cls": "Editable_Poly",
+     "builder": "S_build",
+     "extra": {
+      "kind": "box",
+      "min": [
+       1.0,
+       0,
+       0
+      ],
+      "max": [
+       2.0,
+       1,
+       1
+      ],
+      "units": "meters"
+     }
+    },
+    {
+     "name": "UCX_GapOver_01",
+     "role": "ucx",
+     "scene": "frag_s_ucx",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "geometry",
+     "cls": "Editable_Poly",
+     "builder": "S_build",
+     "extra": {
+      "kind": "box",
+      "min": [
+       0,
+       3,
+       0
+      ],
+      "max": [
+       1,
+       4,
+       1
+      ],
+      "units": "meters"
+     }
+    },
+    {
+     "name": "UCX_GapOver_02",
+     "role": "ucx",
+     "scene": "frag_s_ucx",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "geometry",
+     "cls": "Editable_Poly",
+     "builder": "S_build",
+     "extra": {
+      "kind": "box",
+      "min": [
+       0.998,
+       3,
+       0
+      ],
+      "max": [
+       1.998,
+       4,
+       1
+      ],
+      "units": "meters"
+     }
+    },
+    {
+     "name": "UCX_GapSmall_01",
+     "role": "ucx",
+     "scene": "frag_s_ucx",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "geometry",
+     "cls": "Editable_Poly",
+     "builder": "S_build",
+     "extra": {
+      "kind": "box",
+      "min": [
+       0,
+       6,
+       0
+      ],
+      "max": [
+       1,
+       7,
+       1
+      ],
+      "units": "meters"
+     }
+    },
+    {
+     "name": "UCX_GapSmall_02",
+     "role": "ucx",
+     "scene": "frag_s_ucx",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "geometry",
+     "cls": "Editable_Poly",
+     "builder": "S_build",
+     "extra": {
+      "kind": "box",
+      "min": [
+       1.001,
+       6,
+       0
+      ],
+      "max": [
+       2.001,
+       7,
+       1
+      ],
+      "units": "meters"
+     }
+    },
+    {
+     "name": "UCX_GapOk_01",
+     "role": "ucx",
+     "scene": "frag_s_ucx",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "geometry",
+     "cls": "Editable_Poly",
+     "builder": "S_build",
+     "extra": {
+      "kind": "box",
+      "min": [
+       0,
+       9,
+       0
+      ],
+      "max": [
+       1,
+       10,
+       1
+      ],
+      "units": "meters"
+     }
+    },
+    {
+     "name": "UCX_GapOk_02",
+     "role": "ucx",
+     "scene": "frag_s_ucx",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "geometry",
+     "cls": "Editable_Poly",
+     "builder": "S_build",
+     "extra": {
+      "kind": "box",
+      "min": [
+       1.01,
+       9,
+       0
+      ],
+      "max": [
+       2.01,
+       10,
+       1
+      ],
+      "units": "meters"
+     }
+    },
+    {
+     "name": "UCX_Other_001",
+     "role": "ucx",
+     "scene": "frag_s_ucx",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "geometry",
+     "cls": "Editable_Poly",
+     "builder": "S_build",
+     "extra": {
+      "kind": "box",
+      "min": [
+       0,
+       12,
+       0
+      ],
+      "max": [
+       1,
+       13,
+       1
+      ],
+      "units": "meters"
+     }
+    },
+    {
+     "name": "UCX_GapCm_01",
+     "role": "ucx",
+     "scene": "frag_s_ucxcm",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "geometry",
+     "cls": "Editable_Poly",
+     "builder": "S_build",
+     "extra": {
+      "kind": "box",
+      "min": [
+       0,
+       0,
+       0
+      ],
+      "max": [
+       1,
+       1,
+       1
+      ],
+      "units": "centimeters"
+     }
+    },
+    {
+     "name": "UCX_GapCm_02",
+     "role": "ucx",
+     "scene": "frag_s_ucxcm",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "geometry",
+     "cls": "Editable_Poly",
+     "builder": "S_build",
+     "extra": {
+      "kind": "box",
+      "min": [
+       1.001,
+       0,
+       0
+      ],
+      "max": [
+       2.001,
+       1,
+       1
+      ],
+      "units": "centimeters"
+     }
+    },
+    {
+     "name": "UCX_GapCmOk_01",
+     "role": "ucx",
+     "scene": "frag_s_ucxcm",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "geometry",
+     "cls": "Editable_Poly",
+     "builder": "S_build",
+     "extra": {
+      "kind": "box",
+      "min": [
+       0,
+       3,
+       0
+      ],
+      "max": [
+       1,
+       4,
+       1
+      ],
+      "units": "centimeters"
+     }
+    },
+    {
+     "name": "UCX_GapCmOk_02",
+     "role": "ucx",
+     "scene": "frag_s_ucxcm",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "geometry",
+     "cls": "Editable_Poly",
+     "builder": "S_build",
+     "extra": {
+      "kind": "box",
+      "min": [
+       1.01,
+       3,
+       0
+      ],
+      "max": [
+       2.01,
+       4,
+       1
+      ],
+      "units": "centimeters"
+     }
+    }
+   ],
+   "expected": [
+    {
+     "name": "UCX_GapTouch_01",
+     "scene": "frag_s_ucx",
+     "expect": "fail",
+     "codes": [
+      "ucx_touch"
+     ]
+    },
+    {
+     "name": "UCX_GapTouch_02",
+     "scene": "frag_s_ucx",
+     "expect": "fail",
+     "codes": [
+      "ucx_touch"
+     ]
+    },
+    {
+     "name": "UCX_GapOver_01",
+     "scene": "frag_s_ucx",
+     "expect": "fail",
+     "codes": [
+      "ucx_overlap"
+     ]
+    },
+    {
+     "name": "UCX_GapOver_02",
+     "scene": "frag_s_ucx",
+     "expect": "fail",
+     "codes": [
+      "ucx_overlap"
+     ]
+    },
+    {
+     "name": "UCX_GapSmall_01",
+     "scene": "frag_s_ucx",
+     "expect": "fail",
+     "codes": [
+      "ucx_gap_small"
+     ]
+    },
+    {
+     "name": "UCX_GapSmall_02",
+     "scene": "frag_s_ucx",
+     "expect": "fail",
+     "codes": [
+      "ucx_gap_small"
+     ]
+    },
+    {
+     "name": "UCX_GapOk_01",
+     "scene": "frag_s_ucx",
+     "expect": "pass",
+     "codes": []
+    },
+    {
+     "name": "UCX_GapOk_02",
+     "scene": "frag_s_ucx",
+     "expect": "pass",
+     "codes": []
+    },
+    {
+     "name": "UCX_Other_001",
+     "scene": "frag_s_ucx",
+     "expect": "pass",
+     "codes": []
+    },
+    {
+     "name": "UCX_GapCm_01",
+     "scene": "frag_s_ucxcm",
+     "expect": "fail",
+     "codes": [
+      "ucx_gap_small"
+     ]
+    },
+    {
+     "name": "UCX_GapCm_02",
+     "scene": "frag_s_ucxcm",
+     "expect": "fail",
+     "codes": [
+      "ucx_gap_small"
+     ]
+    },
+    {
+     "name": "UCX_GapCmOk_01",
+     "scene": "frag_s_ucxcm",
+     "expect": "pass",
+     "codes": []
+    },
+    {
+     "name": "UCX_GapCmOk_02",
+     "scene": "frag_s_ucxcm",
+     "expect": "pass",
+     "codes": []
+    }
+   ],
+   "reason": ""
+  },
+  {
+   "button": "light.export",
+   "objects": [
+    {
+     "name": "SM_PolyLight_Root",
+     "role": "helper",
+     "scene": "frag_s_light",
+     "pos": [
+      0,
+      0,
+      0
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "helper",
+     "cls": "Dummy",
+     "builder": "S_build",
+     "extra": {
+      "kind": "dummy",
+      "units": "meters"
+     }
+    },
+    {
+     "name": "SM_PolyLight_Spot_001",
+     "role": "light",
+     "scene": "frag_s_light",
+     "pos": [
+      0,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "freeSpot",
+     "builder": "S_build",
+     "extra": {
+      "kind": "light",
+      "light": "freeSpot",
+      "units": "meters"
+     },
+     "parent": "SM_PolyLight_Root"
+    },
+    {
+     "name": "SM_PolyLight_Omni_001",
+     "role": "light",
+     "scene": "frag_s_light",
+     "pos": [
+      6,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "Omnilight",
+     "builder": "S_build",
+     "extra": {
+      "kind": "light",
+      "light": "Omnilight",
+      "units": "meters"
+     },
+     "parent": "SM_PolyLight_Root"
+    },
+    {
+     "name": "SM_PolyLight_Spot_002",
+     "role": "light",
+     "scene": "frag_s_light",
+     "pos": [
+      0,
+      6,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "targetSpot",
+     "builder": "S_build",
+     "extra": {
+      "kind": "light",
+      "light": "targetSpot",
+      "units": "meters",
+      "aim": [
+       2,
+       8,
+       0
+      ]
+     },
+     "parent": "SM_PolyLight_Root"
+    },
+    {
+     "name": "SM_PolyLight_Photo_001",
+     "role": "light",
+     "scene": "frag_s_light",
+     "pos": [
+      12,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "Free_Light",
+     "builder": "S_build",
+     "extra": {
+      "kind": "light",
+      "light": "Free_Light",
+      "units": "meters"
+     },
+     "parent": "SM_PolyLight_Root"
+    },
+    {
+     "name": "SM_PolyLight_Omni_009",
+     "role": "light",
+     "scene": "frag_s_light",
+     "pos": [
+      20,
+      0,
+      3
+     ],
+     "mesh": "empty",
+     "fbx": null,
+     "mat": "none",
+     "superclass": "light",
+     "cls": "Omnilight",
+     "builder": "S_build",
+     "extra": {
+      "kind": "light",
+      "light": "Omnilight",
+      "units": "meters"
+     }
+    }
+   ],
+   "expected": [
+    {
+     "name": "SM_PolyLight_Root",
+     "scene": "frag_s_light",
+     "expect": "pass",
+     "codes": []
+    },
+    {
+     "name": "SM_PolyLight_Spot_001",
+     "scene": "frag_s_light",
+     "expect": "pass",
+     "codes": []
+    },
+    {
+     "name": "SM_PolyLight_Omni_001",
+     "scene": "frag_s_light",
+     "expect": "pass",
+     "codes": []
+    },
+    {
+     "name": "SM_PolyLight_Spot_002",
+     "scene": "frag_s_light",
+     "expect": "pass",
+     "codes": []
+    },
+    {
+     "name": "SM_PolyLight_Photo_001",
+     "scene": "frag_s_light",
+     "expect": "fail",
+     "codes": [
+      "light_type"
+     ]
+    },
+    {
+     "name": "SM_PolyLight_Omni_009",
+     "scene": "frag_s_light",
+     "expect": "fail",
+     "codes": [
+      "light_outside_root"
+     ]
+    }
+   ],
+   "reason": ""
+  }
+ ]
+}
