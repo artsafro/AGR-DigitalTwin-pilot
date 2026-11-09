@@ -40,3 +40,18 @@ def test_agents_md_links_the_doc_with_d186():
 def test_d186_is_a_single_decision_row():
     rows = re.findall(r"^\| D186 \|", (ROOT / "docs" / "decisions.md").read_text(encoding="utf-8"), re.M)
     assert len(rows) == 1
+
+
+def test_harness_tasks_require_a_before_after_metric():
+    checklist = _text()[_text().index("## Checklist"):]
+    assert "before/after metric" in checklist.lower()
+    assert "how and when it is measured" in checklist
+    # Reuse the existing measures, never add tooling for the metric.
+    for needle in ("tools/hooks/usage_log.py stats", "context-diet", "entry_budget.py", "kpi/readiness"):
+        assert needle in checklist, needle
+
+
+def test_pr_template_asks_for_the_before_after_numbers():
+    template = (ROOT / ".github" / "pull_request_template.md").read_text(encoding="utf-8")
+    assert "before/after metric" in template.lower()
+    assert "not measured" in template

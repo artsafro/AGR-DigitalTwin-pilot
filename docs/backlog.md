@@ -70,7 +70,7 @@ items out of this file in the same merge. `C<N>` = conflict N in `docs/domain/co
     (`outputs/measure-v002/bend_rings/`), builder-ready top parts schema (`outputs/measure-v002/top_parts/`).
 
 - **P14** (Codex) Generalise the MAF generator (#790, model-maf step 3): `tools/library/maf_gen_bench.py` (pure plan
-  run + sections -> quad mesh, forms `slab_on_posts` and `clad_box`, board-pattern face UV), writer
+  run + sections -> quad mesh, form `clad_box` only since #819, board-pattern face UV), writer
   `tools/blender/maf_gen_bench_build.py`, checks `tools/library/maf_gen_bench_checks.py`; first family «Верона»
   (Vatutino `*T3508/1-10`, `jobs/VATUTINO-SITE/maf/verona-generator.md`). Move into a family registry (one form per
   MAF family: canopy, pergola, workout frame, bar counter …) with the synthetic straight / L / U tests kept as

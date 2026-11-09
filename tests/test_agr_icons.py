@@ -15,9 +15,29 @@ ACTIONS = {"xview", "cleanup", "cleanup_apply", "matid", "nudge", "nudge_apply",
            "ucx", "ucx_apply", "texel", "export", "names", "tris", "textures", "pivot", "geojson"}
 
 
+# 1.0 conveyor (#1024, branch 0): the 15 new stage-button icons and the icons of the 18 old rows that became
+# 1.0 stage buttons (plan row `icon`; export.place_by_passport shares `passport`)
+NEW_100 = {"passport", "intake", "body", "winplace", "wingen", "capsule", "roof", "mattable", "mattiles", "vpm", "npm",
+           "npm2vpm", "deliver", "agentreq", "agentok"}
+NEW_110 = {"handoffout", "handoffin", "handoffcheck", "matrestore", "agentdock"}  # 4 handoff rows + the Claude dock
+OLD_ROWS_100 = {"source", "attachmat", "moveapart", "gridclean", "smallparts", "glass", "plugcolour", "rescale",
+                "distort", "dilate", "udimplug", "strip", "udim2id", "ucxgap", "ucxstairs", "lightfbx", "omk"}
+
+
 def test_every_action_has_an_icon():
     assert ACTIONS <= set(agr_icons.names())
     assert len(agr_icons.names()) == len(set(agr_icons.names()))
+
+
+def test_every_10_stage_button_has_its_own_icon():
+    assert NEW_100 | OLD_ROWS_100 <= set(agr_icons.names()) and len(NEW_100 | OLD_ROWS_100) == 32
+    bodies = {n: agr_icons.icon_body(n) for n in agr_icons.names()}
+    for name in NEW_100 | OLD_ROWS_100:  # drawn for its row, not a copy of another icon
+        assert sum(1 for b in bodies.values() if b == bodies[name]) == 1, name
+    assert NEW_110 <= set(agr_icons.names())
+    for name in NEW_110:  # 1.1 icons are distinct as well
+        assert sum(1 for b in bodies.values() if b == bodies[name]) == 1, name
+    assert len(agr_icons.names()) == 100 + len(NEW_110)
 
 
 @pytest.mark.parametrize("theme,color", list(agr_icons.THEMES.items()))

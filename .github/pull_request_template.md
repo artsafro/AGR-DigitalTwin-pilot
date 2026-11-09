@@ -14,6 +14,7 @@ must exit 0 before review_requested (#584). The author owns the full suite: neve
 - Sample output: <the output the acceptance asks for (path or inline); or n/a: <reason>>
 - Counterexamples: <invariant -> generated/brute-force probe -> N/N; seed/bounds and evidence path, or not applicable with reason; label synthetic inputs>
 - Review fixes: <combined probe with previous fixes, or not applicable>
+- Harness before/after metric: <for harness/hygiene/tooling tasks: the metric agreed at intake, the before value on origin/main, the after value on the branch, how and when measured; or "not measured": <reason>>
 
 ## Verification boundary
 

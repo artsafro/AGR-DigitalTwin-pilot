@@ -1,14 +1,65 @@
 {
  "schema": 1,
  "button": "scene.small_parts",
- "tool": null,
+ "tool": "scene.small_parts",
  "version": "1.0",
- "shipped": false,
+ "shipped": true,
  "select": "named",
- "reason": "Кнопки ещё нет в AGR Tools 0.7: в панели её нет, объекты полигона и эта запись появляются в том же изменении, что и сама кнопка.",
+ "reason": "",
  "apply_status": null,
- "objects": [],
- "base": null,
- "station": null,
- "stations": []
+ "objects": [
+  {
+   "name": "Bolt_M12",
+   "scene": "frag_f_small",
+   "expect": "fail",
+   "codes": [
+    "keyword",
+    "small_size"
+   ]
+  },
+  {
+   "name": "Уголок_50",
+   "scene": "frag_f_small",
+   "expect": "fail",
+   "codes": [
+    "keyword",
+    "small_size"
+   ]
+  },
+  {
+   "name": "Studio_Main",
+   "scene": "frag_f_small",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "Minute_Hand",
+   "scene": "frag_f_small",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "Шпиль",
+   "scene": "frag_f_small",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "М120_Panel",
+   "scene": "frag_f_small",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "Стеклопакет_01",
+   "scene": "frag_f_small",
+   "expect": "pass",
+   "codes": []
+  }
+ ],
+ "base": "1.0",
+ "station": "1.0.8",
+ "stations": [
+  "1.0.8"
+ ]
 }

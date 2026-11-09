@@ -44,7 +44,7 @@ PROFILE_BOUNDS = {
 }
 
 QUOTE_ANCHORS = ((1, 7), (3, 29), (6, 4), (9, 33), (10, 30), (15, 36), (18, 12))
-GAP_IDS = {"DER-02", "DER-08", "DER-12", "DER-18", "DER-20"}
+GAP_IDS = {"DER-02", "DER-08", "DER-12", "DER-20"}
 BOUND_ROWS = {"DER-01", "DER-10", "DER-11", "DER-20"}
 
 

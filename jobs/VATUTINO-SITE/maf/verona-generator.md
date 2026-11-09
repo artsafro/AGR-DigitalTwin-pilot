@@ -73,25 +73,25 @@ row 1 is built in both forms and Artem chooses.
 
 ## Generator
 
-`tools/library/maf_gen_bench.py` (pure, no bpy), two forms selected by the config key `form`:
-- `slab_on_posts` (`build_bench`): plan run + sections -> slab with square posts let in (variant B, MAF_0326).
-- `clad_box` (`build_clad_box`, Artem 2026-11-03: «Верона» = variant A, seams are geometry): closed timber box,
-  `courses` side boards with ring seams wrapping the whole outline, a top frame around `top_boards` lengthwise slats
-  with seams that stop at the end frames and turn mitred through the corners, steel foot plates let into the bottom.
-  One welded quad mesh: no T-junction (bands whose edges carry different vertex counts get a 3-to-1 quad reduction
-  with interior points only), convex quads, closed manifold, pivot bbox centre / Z 0, longest segment on +X.
+`tools/library/maf_gen_bench.py` (pure, no bpy), one form, config key `form` = `clad_box` (`build_clad_box`,
+Artem 2026-11-03: «Верона» = variant A, board seams by texture): closed timber box, one top quad per segment mitred
+through the corners, one side ring, the board layout (`top_boards` + 2 frame boards across the top, `courses` on the
+sides) in the generator's `face_uv`, steel foot plates let into the bottom. One welded quad mesh: no T-junction (bottom
+bands whose edges carry different vertex counts get a 3-to-1 quad reduction with interior points only), convex quads,
+closed manifold, pivot bbox centre / Z 0, longest segment on +X. The rejected forms (slab on posts, variant B
+`build_bench` + `verona-gen-b.config.json`; seams as geometry, `seams: geometry`) were removed in #819; git history
+keeps them, and the A3 / B results below are history. The writer exits 4 on any other `form`.
 `centreline_from_outline` turns a DWG strip outline into the run. Writer `tools/blender/maf_gen_bench_build.py`
 (atlas v005 materials, box UV inside the 512 slots, triangulated FBX per MAF-18, hard edges by angle 40°, NPM + VPM,
 refuses overwrite); checks `tools/library/maf_gen_bench_checks.py` (readback -> `maf_findings`, dimensions within
 0.10 m [D094] of the per-row reference `verona-reference-sizes.json` given with `--reference` (rows 1-6 schedule,
 7-10 DWG outline; without it only the generator's own dims), atlas-slot count; exit 0 only when every row/role
 passes, 1 on any fail, 2 on an input error, #817); overlap gate `dt qa xview`. Tests: `tests/test_maf_gen_bench.py` (synthetic straight /
-L / U / skewed / random runs for both forms), 81 passed.
+L / U / skewed / random runs, clad box with seams by texture).
 
 | Config | Form | Parameters (source) |
 |---|---|---|
-| `verona-gen.config.json` (A3, current) | `clad_box` | every value with its source in `param_sources`; summary below |
-| `verona-gen-b.config.json` (B, not chosen) | `slab_on_posts` | the MAF_0326 section table above, height 0.466 |
+| `verona-gen.config.json` (A4.1, current) | `clad_box` | every value with its source in `param_sources`; summary below |
 
 A3 parameters (passport `verona.pdf` p.1 at 0.0041 m/px in the end view, Artem's photo
 `C:/x/vatutino-maf/ref/verona_hobbyka_photo_artem.jpg`): H 0.45, depth 0.6, 4 courses of 0.100 + 3 ring seams
@@ -187,7 +187,7 @@ NPM MAF share [D097]: v005 set 57 628 + row 1 160 = 57 788; + all ten rows 1 520
 NPM = VPM, no light version needed [D164]. Open for Artem: row 1 «да»; the board cell as a new material ID or a
 pattern of `larch_light_oak` (v005 list unchanged until he decides); RAL 7016 steel ID (plates still `steel_ral7047`).
 
-## Rows 1-10 with the proposed v006 IDs (`C:/x/vatutino-maf/gen-v001/rows-v006p-2`), current
+## Rows 1-10 with the proposed v006 IDs (`C:/x/vatutino-maf/gen-v001/rows-v006p-2`) - superseded by A4.2 below (frame renamed)
 
 Artem 2026-11-03 (card t_96a3cc8a): «Row 1 (render row1_a4_vs_photo_v004, simple box 160 tris, seams in texture)
 ACCEPTED - build rows 2-10 with the same script. Board texture = NEW material ID `larch_light_oak_boards` (D152: one
@@ -260,3 +260,20 @@ and whether the library entry uses the proposed names or library id 2 `paint_ral
 
 Originals unchanged before/after: `main.dwg` copy `64e22677…46e4`, MAF_0326 FBX `f3f9653c…2edc`, site atlas v005
 `5099d135…` / `5aaf8b55…`, `material_ids_v005.json` `21a605c7…`.
+
+## Rows 1-10, A4.2: frame = library `paint_ral7016` [D202] (`C:/x/vatutino-maf/gen-v001/rows-v006p-3`), current
+
+Artem 2026-11-06 [D202] (issue #1046): rows 2-10 accepted; boards = new library ID `larch_light_oak_boards`
+(materials_v001 library_id 41), steel frame = existing `paint_ral7016` (library_id 8 = MAF v005 id 2), no new steel
+ID. Config `verona-gen.config.json` = `gen-v001-A4.2`: only the frame material name changed from A4.1; the v006
+proposal list renames the frame slot the same way.
+
+- Atlas copy `gen-v001/atlas-v006-2/` (`tools/materials/atlas_maf.py` on the renamed material list): PNG byte-identical
+  to `atlas-v006` (`0e3c2b1b…`), UV rects identical, only the slot name differs.
+- Rebuild (same Blender 5.1.2 commands as above, `<rows-v006p-3>` and the `atlas-v006-2` files): build exit 0,
+  20/20 readbacks exit 0, `maf_gen_bench_checks.py` verdict pass 10/10 rows, 20/20 xView passed.
+  Readback vs `rows-v006p-2` with the name substituted: face geometry, UV, bounds and materials identical 20/20;
+  materials used: `larch_light_oak_boards`, `paint_ral7016` only.
+- Library: `tools/library/maf_gen_catalogue.py --approve 2-10 --decision D202` wrote `library/maf/catalogue.json`
+  `generated` (8 entries `MAF_GEN_0001..0008`; rows 9 and 10 are one model) and `generated_dropped` (row 1: not
+  approved), and the matching section of `catalogue.md`. Row 1 waits for Artem's «да».

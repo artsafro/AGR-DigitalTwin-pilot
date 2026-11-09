@@ -15,6 +15,8 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+from dt_ai.core.max_env import max_child_env  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 LOCK = Path(os.environ['LOCALAPPDATA']) / 'Temp' / 'agr-3dsmax-live.lock'
@@ -74,7 +76,7 @@ def main():
             raise FileExistsError('--no-bundle but installed: ' + str(plugins / b.BUNDLE))
         log['installed'] = 0 if a.no_bundle else len(b.install_bundle(a.bundle, plugins))
         exe = Path(r'C:\Program Files\Autodesk\3ds Max {}\3dsmax.exe'.format(a.version))
-        env = dict(os.environ, AGR_UI_OUT=str(a.out), AGR_UI_LEAVE_AREA=a.leave_area,
+        env = dict(max_child_env(), AGR_UI_OUT=str(a.out), AGR_UI_LEAVE_AREA=a.leave_area,
                    AGR_UI_EXPECT_AREA=a.expect_area)
         if a.steps is not None:
             env['AGR_UI_STEPS'] = a.steps

@@ -26,7 +26,10 @@ S14 = "b1177ac2079f388dad1283a87c201b39353db7a4263d0f294e3f587fc07b24a9"
 S00_JSON = "fbf6eb6c94d506a3d627f3c152755136fdb720c09c88a6858de35f451ecb589f"
 S12_JSON = "363c2465fa5c12704242f5f264155c7a2409a7520fb168eae3f6bee9be9f1882"
 S14_JSON = "a1f5de678cb2ade9fd4a78a6568d953a21ac6dd0c8f3156447d3408463cc2b60"
-DEFAULT_MARKEXPR = "not blender and not dcc and not acad and not perf and not max and not panel_texture"
+_MARKEXPR_SPEC = importlib.util.spec_from_file_location("_markexpr", ROOT / "tests" / "_markexpr.py")
+_markexpr = importlib.util.module_from_spec(_MARKEXPR_SPEC)
+_MARKEXPR_SPEC.loader.exec_module(_markexpr)
+DEFAULT_MARKEXPR = _markexpr.markexpr_from_pyproject(ROOT / "pyproject.toml")
 
 
 @pytest.fixture

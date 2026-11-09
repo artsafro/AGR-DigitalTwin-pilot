@@ -5,7 +5,10 @@ Native xView uses 0.002 m vertices and 0.005 m faces.
 import json
 import sys
 
-VERSION = "0.8.0"
+VERSION = "1.1.0"
+# atlas.npm (0.2 button) on the npm profile of atlas_core (0.9, #979 branch B; wired by the release branch R)
+ATLAS_PROFILE = 'npm'
+ATLAS_TARGET_PX_M = 35.0
 CODES = {'xview': {'overlap_vertices', 'overlap_faces'},
          'matid': {'udim_id', 'empty_id', 'empty_slot', 'missing_material'},
          'cleanup': {'remove_custom_attributes', 'clear_user_defined_lines',
@@ -73,6 +76,63 @@ SELECT_090 = ('light.check',)
 # core file -> glue file where it is not <stem>_max.py: atlas_core.py is shared with atlas.npm (0.2), and the
 # 0.9 atlas glue of branch B is flora_atlas_max.py (Flora + GroundEl).
 GLUE_090 = {'atlas_core.py': 'flora_atlas_max.py'}
+# 1.0 conveyor (#1024, branch 0): the 33 buttons of the stages in station order 1.0.1..1.0.33 (plan `stages`),
+# id -> (core file, function of its glue `<stem>_max.py`). Stub modules answer `status: not_implemented` until the
+# owner branch (F..U, SPLIT.md) adds the function; the FILES list of the builder does not change after branch 0.
+EDITS_100 = {
+    'project.passport': ('passport_core.py', 'project_passport'),
+    'source.intake': ('intake_core.py', 'source_intake'),
+    'scene.source_class': ('scene10_core.py', 'scene_source_class'),
+    'body.prepare': ('body_core.py', 'body_prepare'),
+    'model.attach_by_material': ('model10_core.py', 'model_attach_by_material'),
+    'model.move_apart': ('model10_core.py', 'model_move_apart'),
+    'model.grid_cleanup': ('gridclean_core.py', 'model_grid_cleanup'),
+    'scene.small_parts': ('scene10_core.py', 'scene_small_parts'),
+    'win.place': ('winplace_core.py', 'win_place'),
+    'win.generate': ('windowgen_core.py', 'win_generate'),
+    'model.glass_planes': ('glass_core.py', 'model_glass_planes'),
+    'body.capsules': ('capsule_core.py', 'body_capsules'),
+    'body.roof': ('roof_core.py', 'body_roof'),
+    'mat.table': ('matlib_core.py', 'mat_table'),
+    'mat.tiles': ('tiles_core.py', 'mat_tiles'),
+    'tex.plug_colour': ('plugcolour_core.py', 'tex_plug_colour'),
+    'vpm.build': ('vpm_core.py', 'vpm_build'),
+    'udim.rescale': ('udim10_core.py', 'udim_rescale'),
+    'udim.distortion': ('udim10_core.py', 'udim_distortion'),
+    'tex.dilate': ('dilate_core.py', 'tex_dilate'),
+    'udim.plugs': ('udimplug_core.py', 'udim_plugs'),
+    'npm.build': ('npm_core.py', 'npm_build'),
+    'atlas.facade_strip': ('facadeatlas_core.py', 'atlas_facade_strip'),
+    'npm.to_vpm': ('npm2vpm_core.py', 'npm_to_vpm'),
+    'udim.udims_to_ids': ('udimview_core.py', 'udim_udims_to_ids'),
+    'pack.deliver': ('deliver_core.py', 'pack_deliver'),
+    'ucx.gap': ('ucx10_core.py', 'ucx_gap'),
+    'ucx.stairs': ('ucxstairs_core.py', 'ucx_stairs'),
+    'light.export': ('light_core.py', 'light_export'),
+    'qa.omk_te': ('omk_core.py', 'qa_omk_te'),
+    'export.place_by_passport': ('placegeo_core.py', 'export_place_by_passport'),
+    'agent.request': ('agentbridge_core.py', 'agent_request'),
+    'agent.accept': ('agentbridge_core.py', 'agent_accept'),
+    # 1.1 (agent stage, after the 1.0 rows; stations 1.1.1..1.1.4): Max <-> Blender handoff of branch BH
+    # (docs/experiments/blender-handoff.md), glue handoff_max.py
+    'handoff.export': ('handoff_core.py', 'handoff_export'),
+    'handoff.import': ('handoff_core.py', 'handoff_import'),
+    'handoff.verify': ('handoff_core.py', 'handoff_verify'),
+    'handoff.restore_materials': ('handoff_core.py', 'handoff_restore_materials'),
+}
+# plan mode `read`: preview only, there is no apply (READ_100). Plan mode `agent` (AGENT_100): request + accept
+# through the functions of branch U; until then their stub answers not_implemented.
+READ_100 = ('scene.source_class', 'tex.plug_colour', 'udim.distortion', 'udim.udims_to_ids', 'ucx.stairs',
+            'qa.omk_te', 'handoff.verify')
+AGENT_100 = ('agent.request', 'agent.accept')
+GLUE_100 = {}
+# Who runs a dispatcher call (journal `actor`). Apply of a 1.0 row is confirmed only by a button in the panel/dock
+# (owner answers 06.11.2026): actor mcp/agent may preview, never apply.
+ACTORS = ('panel', 'mcp', 'agent')
+# 1.1: rows whose apply an MCP client may run itself (profile operator, mcp-review 3.8): handoff.export writes only a
+# NEW bundle folder (file class, refuses to overwrite) and handoff.import writes only into the layer AGENT_<req>; the
+# transfer to the role layers stays the button agent.accept [D213]. Every other 1.0/1.1 apply is a panel/dock press.
+MCP_APPLY_100 = ('handoff.export', 'handoff.import')
 EXPORT_PLAN = {'target', 'report', 'units', 'axis', 'unit_scale_factor', 'object_count',
                'triangle_count', 'material_count', 'object_names', 'triangles_by_name',
                'gates', 'dropped', 'texel', 'readback', 'stopped', 'digest'}
@@ -130,9 +190,17 @@ def _validate_plan(tool, plan):
             if island['reason'] not in ('repeating', 'non-repeating'):
                 raise ValueError('unmapped island reason: ' + str(island['reason']))
     elif tool == 'atlas':
-        if set(plan) != {'tiles', 'cells', 'dropped'}:
+        if set(plan) != {'tiles', 'cells', 'dropped', 'atlas'}:
             raise ValueError('incomplete plan')
         if not isinstance(plan['tiles'], list) or not isinstance(plan['cells'], dict) or not isinstance(plan['dropped'], list):
+            raise ValueError('incomplete plan')
+        # 0.9.0 (#979 R): npm profile facts; `files` (PNG header readback) only in the apply report
+        atlas = plan['atlas']
+        if not isinstance(atlas, dict) or not {'profile', 'sizes', 'texel_px_per_m'} <= set(atlas) \
+                or not set(atlas) <= {'profile', 'sizes', 'texel_px_per_m', 'files'}:
+            raise ValueError('incomplete plan')
+        if atlas['profile'] != ATLAS_PROFILE or not isinstance(atlas['sizes'], list) \
+                or not isinstance(atlas['texel_px_per_m'], dict):
             raise ValueError('incomplete plan')
     elif tool == 'ucx':
         if set(plan) != {'variant', 'kind', 'pieces', 'triangles', 'limit', 'names', 'audit', 'dropped'}:
@@ -220,6 +288,8 @@ def parse_report(text):
         return _edit_core().validate_report(r, EDITS_080)
     if isinstance(r, dict) and isinstance(r.get('tool'), str) and r['tool'] in EDITS_090:
         return _edit_core().validate_report(r, EDITS_090)
+    if isinstance(r, dict) and isinstance(r.get('tool'), str) and r['tool'] in EDITS_100:
+        return _edit_core().validate_report(r, EDITS_100)
     if isinstance(r, dict) and r.get('tool') in CHECKS_070:
         return _suite_core().validate_report(r)
     checks = _checks_core() if isinstance(r, dict) and r.get('tool') in CHECKS_050 else None
@@ -309,7 +379,7 @@ def _edit_core():
     return _edit
 
 
-def edits_080(tool, mode, preview=None, nodes=None, options=None):
+def edits_080(tool, mode, preview=None, nodes=None, options=None, actor='panel'):
     """0.8 delivery edits (#908): preview -> apply through the glue of EDITS_080, contract of edit_core.py.
 
     apply accepts only the unaltered preview report of the last answer for the same tool (hash checked here;
@@ -317,16 +387,82 @@ def edits_080(tool, mode, preview=None, nodes=None, options=None):
     `options` (JSON object: paths, profile) belong to the preview; the glue records them in the preview plan,
     so apply takes none. An empty stub module answers `status: not_implemented`, so the base ships before A–D.
     Glue call: `<function>(ctx, mode, nodes, preview)`, ctx = agr, core, edit, emax, options."""
-    return _dispatch_edit(EDITS_080, READ_080, {}, '#908', tool, mode, preview, nodes, options)
+    return _journaled(tool, mode, actor, lambda: _dispatch_edit(EDITS_080, READ_080, {}, '#908', tool, mode,
+                                                               preview, nodes, options))
 
 
-def edits_090(tool, mode, preview=None, nodes=None, options=None):
+def edits_090(tool, mode, preview=None, nodes=None, options=None, actor='panel'):
     """0.9 rows (#979) on the contract of edits_080 / edit_core.py: preview -> apply through the glue of EDITS_090.
 
     Read rows (READ_090, plan modes `read` and `select`) answer only a preview; `light.check` (`select`) lists the
     offenders in the report and the UI glue selects them. An empty stub module answers `status: not_implemented`
     (issue #979), so the base ships before branches A–D. Glue call and ctx exactly as in edits_080."""
-    return _dispatch_edit(EDITS_090, READ_090, GLUE_090, '#979', tool, mode, preview, nodes, options)
+    return _journaled(tool, mode, actor, lambda: _dispatch_edit(EDITS_090, READ_090, GLUE_090, '#979', tool, mode,
+                                                               preview, nodes, options))
+
+
+def edits_100(tool, mode, preview=None, nodes=None, options=None, actor='panel'):
+    """1.0 conveyor rows (#1024) on the contract of edits_080 / edit_core.py, glue of EDITS_100.
+
+    Read rows (READ_100) answer only a preview. Apply is a panel/dock press only: actor `mcp` / `agent` gets
+    `needs_human` (owner answers 06.11.2026). Agent rows (AGENT_100): request + accept by branch U's glue.
+    ctx of the glue as in edits_080 plus `host` (host_max.MaxHost: ObjRef, user props, one undo record).
+    An empty stub module answers `status: not_implemented` (issue #1024), so the base ships before F..U."""
+    if actor not in ACTORS:
+        raise ValueError('unknown actor: ' + repr(actor))
+
+    def run():
+        if mode == 'apply' and actor != 'panel' and tool in EDITS_100 and not (actor == 'mcp' and
+                                                                                 tool in MCP_APPLY_100):
+            raise ValueError('needs_human: apply of ' + tool + ' is confirmed only by a button in the panel/dock')
+        return _dispatch_edit(EDITS_100, READ_100, GLUE_100, '#1024', tool, mode, preview, nodes, options)
+    return _journaled(tool, mode, actor, run)  # a refused apply is journaled too (native job 20261106-040337)
+
+
+def _journal_core():
+    return _load_core('journal_core.py', 'agr_tools_journal_core')
+
+
+def _scene_doc():
+    try:
+        import os
+        rt = _rt()
+        return os.path.join(str(rt.maxFilePath), str(rt.maxFileName)) if str(rt.maxFileName) else 'untitled'
+    except Exception:  # noqa: BLE001 - no Max (unit tests): the journal still gets a line
+        return 'untitled'
+
+
+def journal_counts(report):
+    """Counts of a journal line from an edit report (pure)."""
+    if not isinstance(report, dict):
+        return {}
+    plan = report.get('plan') or {}
+    return {'objects': len(report.get('objects') or ()),
+            'findings': sum(len(o.get('findings') or ()) for o in report.get('objects') or ()),
+            'done': len(plan.get('done') or ()), 'skipped': len(plan.get('skipped') or ()),
+            'ambiguous': len(plan.get('ambiguous') or ())}
+
+
+def _journaled(tool, mode, actor, run):
+    """Journal hook of branch 0 (#1024, K1): every dispatcher call of edits_080/090/100 (panel, MCP or agent)
+    appends ONE line through journal_core.append, also when it fails. A journal write error never hides the tool's
+    own result or error; it is printed and the call goes on."""
+    import time
+    t0 = time.time()
+    report, status = None, 'error'
+    try:
+        report = run()
+        status = report.get('status', 'error') if isinstance(report, dict) else 'error'
+        return report
+    finally:
+        try:
+            jc = _journal_core()
+            doc = _scene_doc()
+            plan = (report or {}).get('plan') or {} if isinstance(report, dict) else {}
+            jc.append(jc.record(tool, mode, status, journal_counts(report), plan.get('hash'),
+                                time.time() - t0, actor, doc), doc)
+        except Exception as exc:  # noqa: BLE001
+            print('AGR Tools: journal line not written: ' + str(exc)[:200])
 
 
 def glue_file(core_file, glue=None):
@@ -367,6 +503,8 @@ def _dispatch_edit(table, read, glue_map, issue, tool, mode, preview, nodes, opt
     ctx = types.SimpleNamespace(agr=types.SimpleNamespace(**globals()), edit=edit,
                                 core=_load_core(core_file, 'agr_tools_' + stem + '_core'),
                                 emax=_load_core('edit_max.py', 'agr_tools_edit_max'), options=dict(options or {}))
+    if table is EDITS_100:
+        ctx.host = _load_core('host_max.py', 'agr_tools_host_max').MaxHost()
     report = fn(ctx, mode, nodes, preview)
     edit.validate_report(report, table)
     if report['tool'] != tool or (report['status'] != 'not_implemented' and report['plan']['mode'] != mode):
@@ -1325,15 +1463,18 @@ def atlas_preview(nodes=None):
     core = _load_core('atlas_core.py', 'agr_tools_atlas')
     nodes = _targets(nodes)
     state, plans, entries, images = [], [], [], []
-    tiles, cells = [], {}
+    tiles, cells, sizes, texel = [], {}, [], {}
     for n in nodes:
         mesh = _read_channel(n)
         names = _material_names(n, mesh['ids'])
         mode, size = _atlas_settings(n)
         specs = _atlas_materials(n)
         try:
+            # 0.9.0 (#979 R): profile 'npm' of branch B. AGR_ATLAS_SIZE is the largest atlas; shrink returns the
+            # smallest npm square (256..2048) that holds the same cells at the same texel (Ground 35 px/m).
             laid = core.pack(mesh['vertices'], mesh['uvs'], mesh['faces'], mesh['face_uvs'], names,
-                             specs, mode=mode, size=size, pad=8, unit_m=_unit_m())
+                             specs, mode=mode, size=size, pad=8, unit_m=_unit_m(), target=ATLAS_TARGET_PX_M,
+                             profile=ATLAS_PROFILE, shrink=True)
         except core.AtlasError as exc:
             raise ValueError(str(exc)) from exc
         if laid['dropped']:
@@ -1358,7 +1499,9 @@ def atlas_preview(nodes=None):
             {'tiles': laid['tiles'], 'cells': laid['cells']}, sort_keys=True))] if changed else []
         state.append(mesh)
         plans.append({'uvs': laid['uvs'], 'face_uvs': laid['face_uvs'], 'tiles': laid['tiles'],
-                      'cells': laid['cells']})
+                      'cells': laid['cells'], 'size': laid['size']})
+        sizes.append(laid['size'])
+        texel.update(laid['texel_px_per_m'])
         images.append({'rgb': laid['rgb'], 'alpha': laid['alpha'], 'size': laid['size'],
                        'cells': laid['cells'], 'kinds': laid['kinds'], 'materials': specs})
         tiles.extend(laid['tiles'])
@@ -1368,17 +1511,9 @@ def atlas_preview(nodes=None):
             cells[name] = box
         entries.append(_entry(n, findings))
     report = _report('atlas', entries, nodes, select=False, extra={
-        'plan': {'tiles': sorted(set(tiles)), 'cells': cells, 'dropped': []}})
+        'plan': {'tiles': sorted(set(tiles)), 'cells': cells, 'dropped': [],
+                 'atlas': {'profile': ATLAS_PROFILE, 'sizes': sizes, 'texel_px_per_m': texel}}})
     return {'state': state, 'plans': plans, 'report': report, 'images': images}
-
-
-def _write_bitmap(size, fill, rows):
-    """rows(y) -> sequence of colors for one full scanline. The bitmap stays in memory."""
-    rt = _rt()
-    bm = rt.bitmap(size, size, color=fill)
-    for y, colors in rows:
-        rt.setPixels(bm, rt.point2(0, y), colors)
-    return bm
 
 
 def save_bitmap(bm):
@@ -1397,8 +1532,11 @@ def save_bitmap(bm):
         rt.execute('pngio.setAlpha ' + ('true' if previous_alpha else 'false'))
 
 
-def _publish_bitmap(bm, label):
-    """Save a new PNG, then bind it. Max refuses an unsaved bitmap on Bitmaptexture."""
+def _publish_png(data, label):
+    """Write a NEW PNG file (exclusive create, never overwrite), then bind it on a Bitmaptexture.
+
+    0.9.0 (#979 R): the bytes come from atlas_core.atlas_png (stdlib writer of branch B), not from a Max bitmap
+    save: the diffuse is 24-bit RGB (colour type 2) in every Max version, the opacity a separate 8-bit grey PNG."""
     import os
     import uuid
     from pathlib import Path
@@ -1410,12 +1548,8 @@ def _publish_bitmap(bm, label):
         folder = Path(str(rt.getDir(rt.name('temp')))) / 'agr-tools-atlases'
     folder.mkdir(parents=True, exist_ok=True)
     dest = folder / f'{label}-{uuid.uuid4().hex}.png'
-    if dest.exists():
-        raise RuntimeError('atlas bitmap already exists: ' + str(dest))
-    bm.filename = str(dest)
-    save_bitmap(bm)
-    if not dest.is_file():
-        raise RuntimeError('atlas bitmap was not saved: ' + str(dest))
+    with open(dest, 'xb') as f:
+        f.write(data)
     tex = rt.Bitmaptexture()
     tex.name = label
     tex.filename = str(dest)
@@ -1438,35 +1572,10 @@ def _bind_atlas(node, image):
             _require_neutral_bitmap_coordinates(name, 'diffuse', diffuse_map)
         if _bitmap_texture(opacity_map):
             _require_neutral_bitmap_coordinates(name, 'opacity', opacity_map)
-    size = image['size']
-    rgb, alpha = image['rgb'], image['alpha']
-    dirty = set()
-    for box in image['cells'].values():
-        y, h = box[1], box[3]
-        dirty.update(range(y, y + h))
-
-    def diffuse_rows():
-        for y in sorted(dirty):
-            base = y * size * 3
-            colors = []
-            for x in range(size):
-                o = base + x * 3
-                colors.append(rt.color(int(rgb[o]), int(rgb[o + 1]), int(rgb[o + 2])))
-            yield y, colors
-
-    diffuse = _publish_bitmap(_write_bitmap(size, rt.color(90, 90, 90), diffuse_rows()), 'AGR_atlas_diffuse')
-    opacity = None
-    if alpha is not None:
-        def opacity_rows():
-            for y in sorted(dirty):
-                base = y * size
-                colors = []
-                for x in range(size):
-                    v = int(alpha[base + x])
-                    colors.append(rt.color(v, v, v))
-                yield y, colors
-
-        opacity = _publish_bitmap(_write_bitmap(size, rt.color(255, 255, 255), opacity_rows()), 'AGR_atlas_opacity')
+    core = _load_core('atlas_core.py', 'agr_tools_atlas')
+    diffuse_png, opacity_png = core.atlas_png(image)
+    diffuse = _publish_png(diffuse_png, 'AGR_atlas_diffuse')
+    opacity = _publish_png(opacity_png, 'AGR_atlas_opacity') if opacity_png is not None else None
     for name, mat in _submaterials(node).items():
         if name not in specs or 'rgb' not in specs[name]:
             continue
@@ -1477,10 +1586,38 @@ def _bind_atlas(node, image):
             mat.opacityMap = opacity
 
 
+def _atlas_file_readback(copy, image):
+    """Headers of the PNG files bound on the copy: the diffuse must be 24-bit RGB (colour type 2, 8 bit) and the
+    opacity, when there is one, 8-bit grey (colour type 0), both of the planned size. Fail closed (#979 R)."""
+    files = {}
+    want = {'diffuseMap': 2, 'opacityMap': 0}
+    for name, mat in _submaterials(copy).items():
+        spec = image['materials'].get(name)
+        if not spec or 'rgb' not in spec:
+            continue
+        for slot, ctype in want.items():
+            if slot == 'opacityMap' and image['alpha'] is None:
+                continue
+            tex = getattr(mat, slot, None) if hasattr(mat, slot) else None
+            if not _bitmap_texture(tex):
+                raise RuntimeError('atlas {} of {} is not bound'.format(slot, name))
+            path = str(tex.filename)
+            with open(path, 'rb') as f:
+                data = f.read()
+            w, h, depth, got, has_alpha = _checks_core().png_info(data)
+            if (w, h, depth, got, has_alpha) != (image['size'], image['size'], 8, ctype, False):
+                raise RuntimeError('atlas {} {} is {}x{} {}-bit colour type {} alpha {}; expected {}x{} 8-bit '
+                                   'colour type {}'.format(slot, path, w, h, depth, got, has_alpha,
+                                                           image['size'], image['size'], ctype))
+            files[slot] = {'size': w, 'bit_depth': depth, 'color_type': got}
+    return files
+
+
 def _applied_atlas_report(copies, current):
-    """Read back the written UVs. Flat Kd copies are previewed again; a bound atlas is not repacked."""
+    """Read back the written UVs. Flat Kd copies are previewed again; a bound atlas is not repacked, its PNG
+    headers are read back (24-bit diffuse, separate grey opacity)."""
     entries = []
-    tiles, cells = [], {}
+    tiles, cells, files = [], {}, []
     for copy, plan, image in zip(copies, current['plans'], current['images']):
         written = _read_channel(copy)
         for got, exp in zip(written['uvs'], plan['uvs']):
@@ -1489,6 +1626,7 @@ def _applied_atlas_report(copies, current):
             raise RuntimeError('atlas face UVs do not match the preview')
         bound = any('rgb' in spec for spec in image['materials'].values())
         if bound:
+            files.append(_atlas_file_readback(copy, image))
             entries.append(_entry(copy, []))
         else:
             again = atlas_preview([copy])
@@ -1501,7 +1639,8 @@ def _applied_atlas_report(copies, current):
                 raise ValueError('duplicate material name: ' + name)
             cells[name] = box
     return _report('atlas', entries, copies, select=False, extra={
-        'plan': {'tiles': sorted(set(tiles)), 'cells': cells, 'dropped': []}})
+        'plan': {'tiles': sorted(set(tiles)), 'cells': cells, 'dropped': [],
+                 'atlas': dict(current['report']['plan']['atlas'], files=files)}})
 
 
 def atlas_apply(nodes, preview):
@@ -1684,6 +1823,11 @@ def _make_ucx_mesh(name, verts_m, tris):
     faces = [rt.point3(a + 1, b + 1, c + 1) for a, b, c in tris]
     node = rt.mesh(name=name, vertices=vertices, faces=faces)
     rt.convertToPoly(node)
+    # 1.0.1 (KPP1 e2e 20261106-075555-c179f5f0): every delivered node has map channel 1 named `UV`
+    # (docs/domain/export-import.md); a piece without it was `unrepairable` in the export.checked cleanup gate
+    rt.polyop.setMapSupport(node, 1, True)
+    rt.polyop.defaultMapFaces(node, 1)
+    rt.setUserProp(node, 'MapChannel:1', 'UV')
     try:
         node.material = None
     except Exception:
@@ -1837,7 +1981,7 @@ def _tri_mesh(n):
 
 # Tool instructions, not delivery user-defined properties. They stay on the
 # working node and are held off the export copy the hygiene gate reads.
-_HELD_OFF = {'AGR_EXPORT_PATH', 'AGR_TEXEL_PROFILE', 'AGR_TEXEL_MAP', 'AGR_UV_PERIODS',
+_HELD_OFF = {'AGR_EXPORT_PATH', 'AGR_ZERO_M', 'AGR_TEXEL_PROFILE', 'AGR_TEXEL_MAP', 'AGR_UV_PERIODS',
              'AGR_UV_TARGET', 'AGR_ATLAS_MODE', 'AGR_ATLAS_SIZE', 'AGR_UCX_KIND'}
 
 
@@ -1847,7 +1991,7 @@ def _delivery_props(buffer):
         if not line.strip():
             continue
         key = line.split('=', 1)[0].strip()
-        if key in _HELD_OFF:
+        if key in _HELD_OFF or key.startswith('agr_'):   # 1.0.1: working keys of the 1.0 buttons (export_core)
             continue
         kept.append(line)
     return ''.join(line + '\r\n' for line in kept)
@@ -2139,22 +2283,39 @@ def _selection_key():
     return tuple(sorted(int(rt.getHandleByAnim(n)) for n in rt.selection))
 
 
-def edit_ui(tool, select=True):
+def _params_core():
+    return _load_core('params_core.py', 'agr_tools_params_core')
+
+
+def _options_key(options):
+    return json.dumps(options or {}, sort_keys=True, ensure_ascii=True, allow_nan=False)
+
+
+def edit_ui(tool, select=True, options=None):
     """Panel/macro press of a 0.8/0.9 edit: first press = preview; the next press on the same selection applies
     that preview. Read-only rows always preview; a `select` row (SELECT_090) then selects its offenders unless
     `select=False` (the panel selects them itself after putting its scope selection back).
-    The stored preview is dropped after any apply attempt."""
+    The stored preview is dropped after any apply attempt.
+    1.1: `options` (the panel parameter form, params_core) go to the preview; the next press applies the held preview
+    only when the selection AND the options are the same. A row with a form whose required field is empty is
+    refused with `needs_params: ...` naming the fields (never a silent refusal, never a guessed value)."""
     if isinstance(tool, str) and tool in EDITS_080:
         run, read = edits_080, READ_080
     elif isinstance(tool, str) and tool in EDITS_090:
         run, read = edits_090, READ_090
+    elif isinstance(tool, str) and tool in EDITS_100:
+        run, read = edits_100, READ_100
     else:
         raise ValueError('unsupported edit tool: ' + repr(tool))
-    key = _selection_key()
+    key = (_selection_key(), _options_key(options))
     held = _edits.pop(tool, None)
     if tool not in read and held is not None and held[0] == key:
         return run(tool, 'apply', held[1])
-    report = run(tool, 'preview')
+    if run is edits_100:
+        gap = _params_core().needs_params_text(tool, options)
+        if gap:
+            raise ValueError(gap)
+    report = run(tool, 'preview', options=options) if options is not None else run(tool, 'preview')
     if tool not in read and report['status'] != 'not_implemented':
         _edits[tool] = (key, report)
     if select and tool in SELECT_090 and report['status'] != 'not_implemented':
@@ -2262,6 +2423,22 @@ def ui(tool):
 _panel = None
 
 
+def form_ui(tool):
+    """Macro of a stage button with a parameter form (params_core.FIELDS): opens the panel and its form for `tool`
+    filled from the passport and the last values; the run itself is the form's «Выполнить» (preview, then apply)."""
+    if not _params_core().has_form(tool):
+        raise ValueError('no parameter form for ' + repr(tool))
+    p = panel()
+    p.open_form(tool)
+    return p
+
+
+def agent_dock(profile='modeller'):
+    """«Claude-док» (1.1, agent stage): the agent dock of branch U (agentbridge_max.agent_dock: own listener, one
+    daemon per host, profile modeller by default, apply only by its «Применить» button [D213])."""
+    return _load_core('agentbridge_max.py', 'agr_tools_agentbridge_max').agent_dock(profile=profile)
+
+
 def panel():
     """0.6.0 dockable Qt panel (one per session). Every action stays callable through ui(tool)."""
     global _panel
@@ -2277,6 +2454,7 @@ def panel():
     _load_core('ui_qt.py', 'agr_tools_ui_qt')
     _load_core('ui_model.py', 'agr_tools_ui_model')
     _load_core('roadmap.py', 'agr_tools_roadmap')
+    _params_core()  # agr_tools_params_core: the parameter form of the stage buttons (1.1)
     ui_panel = _load_core('ui_panel.py', 'agr_tools_ui_panel')
     ui_max = _load_core('ui_max.py', 'agr_tools_ui_max')
     icon_root = str(Path(__file__).resolve().parent / 'icons')

@@ -1,0 +1,36 @@
+{
+ "schema": 1,
+ "button": "vpm.build",
+ "tool": "vpm.build",
+ "version": "1.0",
+ "shipped": true,
+ "select": "named",
+ "reason": "",
+ "apply_status": null,
+ "objects": [
+  {
+   "name": "SM_Vpm_Ok",
+   "scene": "polygon_all",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_Vpm_IdBad",
+   "scene": "polygon_all",
+   "expect": "fail",
+   "codes": [
+    "id_range"
+   ]
+  }
+ ],
+ "options": {
+  "glass_ids": [
+   31
+  ]
+ },
+ "base": "1.0",
+ "station": "1.0.17",
+ "stations": [
+  "1.0.17"
+ ]
+}

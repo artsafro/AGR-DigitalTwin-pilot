@@ -131,6 +131,35 @@ def test_close_overlap_in_the_source_is_baseline_a_new_pair_fails():
     assert all("c#" in o for o in ov.offenders)
 
 
+def test_duplicate_of_a_baseline_overlap_face_is_a_new_pair():
+    """Review round 1 (PR #1006): a copy of a face from a baseline pair must not hide behind that pair."""
+    a = Mesh(np.array([(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)], float), np.array([(0, 1, 2), (0, 2, 3)]))
+    b = Mesh(a.vertices + [0, 0, 0.002], a.triangles)
+    src = {"a": a, "b": b}
+    ctx = Context(source=src, opacity_parts=frozenset({"a", "b", "a_dup"}))
+    after = {**src, "a_dup": Mesh(a.vertices.copy(), a.triangles)}
+    ov = _by_name(check_operation(src, after, ["a_dup"], ctx))["no_close_overlap"]
+    assert not ov.passed and ov.count >= 2, ov
+    assert ov.after > ov.baseline == 2
+    assert any("a_dup#0" in o for o in ov.offenders) and any("a_dup#1" in o for o in ov.offenders)
+    # controls: keep still passes; the duplicated pair is new even when the duplicate is of the upper plate
+    assert _by_name(check_operation(src, dict(src), ["a"], ctx))["no_close_overlap"].passed
+    after_b = {**src, "a_dup": Mesh(b.vertices.copy(), b.triangles)}
+    ov_b = _by_name(check_operation(src, after_b, ["a_dup"], ctx))["no_close_overlap"]
+    assert not ov_b.passed and all("a_dup#" in o for o in ov_b.offenders)
+
+
+def test_overlap_pair_moved_together_with_its_baseline_partner_is_not_new():
+    """Retriangulating one face of a baseline pair (same plane, same footprint) keeps the pair pre-existing."""
+    a = Mesh(np.array([(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)], float), np.array([(0, 1, 2), (0, 2, 3)]))
+    b = Mesh(a.vertices + [0, 0, 0.002], a.triangles)
+    src = {"a": a, "b": b}
+    ctx = Context(source=src, opacity_parts=frozenset({"a", "b"}))
+    after = {**src, "a": Mesh(a.vertices, np.array([(0, 1, 3), (1, 2, 3)]))}
+    ov = _by_name(check_operation(src, after, ["a"], ctx))["no_close_overlap"]
+    assert ov.passed and ov.count == 0, ov
+
+
 def test_empty_source_baseline_is_absolute():
     src = gnawed_source()
     rep = check_operation(src, dict(src), ["body"], Context(source={}))
