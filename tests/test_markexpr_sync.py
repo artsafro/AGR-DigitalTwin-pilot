@@ -54,6 +54,22 @@ def test_trailing_m_raises_value_error():
         _markexpr.markexpr_from_addopts("-m")
 
 
+def test_space_m_takes_exactly_next_token():
+    # pytest store semantics: `-m` takes one value, the rest are positionals.
+    assert _markexpr.markexpr_from_addopts("-m 'not job' tests") == "not job"
+    assert _markexpr.markexpr_from_addopts("-m slow tests/x") == "slow"
+
+
+def test_m_followed_by_option_raises():
+    with pytest.raises(ValueError):
+        _markexpr.markexpr_from_addopts("-m -q")
+
+
+def test_empty_glued_m_equals_raises():
+    with pytest.raises(ValueError):
+        _markexpr.markexpr_from_addopts("-m=")
+
+
 def test_pyproject_list_addopts(tmp_path):
     pyproject = tmp_path / "pyproject.toml"
     pyproject.write_text(
@@ -61,6 +77,22 @@ def test_pyproject_list_addopts(tmp_path):
         encoding="utf-8",
     )
     assert _markexpr.markexpr_from_pyproject(pyproject) == "not job"
+
+
+def test_pyproject_list_m_takes_exactly_next_token(tmp_path):
+    pyproject = tmp_path / "pyproject.toml"
+    pyproject.write_text(
+        '[tool.pytest.ini_options]\naddopts = ["-m", "not job", "tests"]\n',
+        encoding="utf-8",
+    )
+    assert _markexpr.markexpr_from_pyproject(pyproject) == "not job"
+
+
+def test_pyproject_list_non_string_item_raises(tmp_path):
+    pyproject = tmp_path / "pyproject.toml"
+    pyproject.write_text('[tool.pytest.ini_options]\naddopts = ["-m", 5]\n', encoding="utf-8")
+    with pytest.raises(ValueError):
+        _markexpr.markexpr_from_pyproject(pyproject)
 
 
 def test_pyproject_non_str_non_list_addopts_raises(tmp_path):
