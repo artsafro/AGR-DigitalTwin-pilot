@@ -2,10 +2,11 @@
 
 Forces a user confirmation for destructive, outward, or asset-corrupting actions.
 Never blocks outright; returns permission decision "ask" so the user decides.
-One exception to "ask" [D223]: a one-shot merge token (written by `guard.py merge-token N "<the
+One exception to "ask" [D234]: a one-shot merge token (written by `guard.py merge-token N "<the
 user's literal command>"` after the user's chat command names PR N) lets exactly one plain
-`gh pr merge N` through with an explicit "allow"; the token is consumed by that call and expires
-after MERGE_TOKEN_TTL_S. Any other PR number, shape, a second call or no/expired token: "ask".
+`gh pr merge N` through with an explicit "allow"; the token is bound to the GitHub repository of
+the writer's `origin`, is consumed by that call and expires after MERGE_TOKEN_TTL_S. Any other PR
+number, shape or repository, a second call or no/expired token: "ask".
 Dual-protocol support:
 - Antigravity: inputs 'toolCall', outputs {"decision": "ask"|"allow", "reason": ...}
 - Claude Code: inputs 'tool_name', outputs {"hookSpecificOutput": ...} or exit 0
@@ -14,6 +15,7 @@ import json
 import math
 import os
 import re
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -90,7 +92,7 @@ def ask(reason: str, is_antigravity: bool) -> None:
 
 
 def allow_explicit(reason: str, is_antigravity: bool) -> None:
-    """Explicit allow (skips the permission prompt); used only for a valid merge token [D223]."""
+    """Explicit allow (skips the permission prompt); used only for a valid merge token [D234]."""
     if is_antigravity:
         print(json.dumps({"decision": "allow", "reason": f"guard.py: {reason}"}))
     else:
@@ -116,7 +118,7 @@ def shell_reason(cmd: str):
     return None
 
 
-# One-shot merge token [D223] (#1028). The token covers one plain merge and nothing else: no shell
+# One-shot merge token [D234] (#1028). The token covers one plain merge and nothing else: no shell
 # metacharacters, no second command, no branch deletion (--delete-branch/-d), no --admin bypass.
 MERGE_TOKEN_TTL_S = 600
 _MERGE_FLAGS = {"--merge", "-m", "--squash", "-s", "--rebase", "-r", "--auto", "--disable-auto"}
@@ -134,8 +136,55 @@ def _names_pr(command, n: int) -> bool:
     return isinstance(command, str) and re.search(rf"(?<!\d){n}(?!\d)", command) is not None
 
 
-def _take_flags(toks, i, allowed_bare):
-    """Skip flags from toks[i]; return the next index, or None on an unknown flag or missing value."""
+def normalize_repo(spec):
+    """`host/owner/name` (lowercase, host defaults to github.com) of a repo spec or git URL, else None."""
+    if not isinstance(spec, str):
+        return None
+    s = spec.strip()
+    bare = re.sub(r"^[a-z][a-z0-9+.-]*://", "", s, flags=re.IGNORECASE)  # https://, ssh://, git://
+    bare = re.sub(r"^[^@/:]+@", "", bare)                                  # user@ / git@
+    s, hosted = bare, bare != s or ":" in bare                             # a URL names its host
+    s = re.sub(r"^([^/:]+):\d+/", r"\1/", s)                               # host:port/
+    s = re.sub(r"^([^/:]+):", r"\1/", s)                                   # scp form host:owner/name
+    s = s.rstrip("/")
+    s = s[:-4] if s.lower().endswith(".git") else s
+    parts = s.split("/")
+    if len(parts) == 2 and not hosted:
+        parts = ["github.com", *parts]
+    if len(parts) != 3 or not all(re.fullmatch(r"[A-Za-z0-9_.-]+", x) and x.strip(".") for x in parts):
+        return None
+    return "/".join(parts).lower()
+
+
+def _git(cwd, *args):
+    try:
+        result = subprocess.run(["git", "-C", str(cwd), *args], capture_output=True, text=True,
+                                encoding="utf-8", errors="replace", timeout=10)
+    except (OSError, ValueError, subprocess.SubprocessError):
+        return None
+    return result.stdout if result.returncode == 0 else None
+
+
+def cwd_repo(cwd):
+    """The one repository every remote of the git checkout at cwd points to, else None.
+
+    gh picks its base repository among the remotes, so a checkout whose remotes disagree (fork +
+    upstream) or that has none gives None and the merge asks."""
+    out = _git(cwd, "remote", "-v")
+    if not out:
+        return None
+    repos = {normalize_repo(line.split()[1]) if len(line.split()) >= 2 else None
+             for line in out.splitlines() if line.strip()}
+    return repos.pop() if len(repos) == 1 and None not in repos else None
+
+
+def origin_repo(cwd):
+    out = _git(cwd, "remote", "get-url", "origin")
+    return normalize_repo(out.strip()) if out else None
+
+
+def _take_flags(toks, i, allowed_bare, values):
+    """Skip flags from toks[i] (value flags go to values); next index, or None on an unknown flag/missing value."""
     while i < len(toks) and toks[i].startswith("-"):
         tok = toks[i]
         name, eq, value = tok.partition("=")
@@ -145,9 +194,11 @@ def _take_flags(toks, i, allowed_bare):
                     return None
                 i += 1
             elif i + 1 < len(toks) and not toks[i + 1].startswith("-"):
+                value = toks[i + 1]
                 i += 2
             else:
                 return None
+            values.append((name, value))
         elif tok in allowed_bare:
             i += 1
         else:
@@ -156,19 +207,20 @@ def _take_flags(toks, i, allowed_bare):
 
 
 def plain_merge_pr(cmd):
-    """PR number of one plain `gh [-R o/n] pr merge N [flags]` command, else None."""
+    """(PR number, -R/--repo value or None) of one plain `gh [-R o/n] pr merge N [flags]` command, else None."""
     if not isinstance(cmd, str) or _SHELL_META.search(cmd):
         return None
     toks = cmd.split()
     if not toks or toks[0].lower() not in ("gh", "gh.exe"):
         return None
-    i = _take_flags(toks, 1, set())
+    values = []
+    i = _take_flags(toks, 1, set(), values)
     if i is None or toks[i:i + 2] != ["pr", "merge"]:
         return None
     i += 2
     number = None
     while i < len(toks):
-        j = _take_flags(toks, i, _MERGE_FLAGS)
+        j = _take_flags(toks, i, _MERGE_FLAGS, values)
         if j is None:
             return None
         if j == len(toks):
@@ -177,33 +229,54 @@ def plain_merge_pr(cmd):
             return None
         number = int(toks[j].lstrip("#"))
         i = j + 1
-    return number if number else None
+    repos = [v for name, v in values if name in ("-R", "--repo")]
+    if not number or len(set(repos)) > 1 or (repos and normalize_repo(repos[0]) is None):
+        return None
+    return number, (repos[0] if repos else None)
 
 
-def merge_token_allows(cmd):
+def _read_token(path):
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    return data if isinstance(data, dict) else None
+
+
+def merge_token_allows(cmd, cwd=None):
     """Consume the token for the PR of a plain merge command; return the allow reason or None.
 
-    The token file is claimed by an atomic rename before it is read, so two calls never both use
-    it; an invalid or expired token is consumed as well and the call asks."""
-    n = plain_merge_pr(cmd)
-    if n is None:
+    The target repository is the -R/--repo value, else GH_REPO, else the one repository all remotes
+    of the git checkout at cwd (the hook's cwd) point to. When it is unknown or differs from the
+    token's repo the call asks and the token stays. A matching token is claimed by an atomic rename
+    before it is validated, so two calls never both use it; an invalid or expired token is consumed
+    as well and the call asks."""
+    parsed = plain_merge_pr(cmd)
+    if parsed is None:
         return None
+    n, repo_flag = parsed
+    repo_flag = repo_flag or os.environ.get("GH_REPO") or None
     path = merge_token_dir() / f"pr-{n}.json"
+    if not path.is_file():
+        return None
+    peek = _read_token(path)
+    if peek is not None:
+        target = normalize_repo(repo_flag) if repo_flag else cwd_repo(cwd or os.getcwd())
+        if target is None or target != normalize_repo(peek.get("repo")):
+            return None                                     # other or unknown repository: keep the token
     claim = path.with_name(f"{path.name}.claimed-{os.getpid()}-{time.time_ns()}")
     try:
         os.replace(path, claim)
     except OSError:
         return None
     try:
-        data = json.loads(claim.read_text(encoding="utf-8"))
-    except (OSError, ValueError):
-        return None
+        data = _read_token(claim)
     finally:
         try:
             claim.unlink()
         except OSError:
             pass
-    if not isinstance(data, dict):
+    if data is None or data != peek:                        # unreadable, or rewritten since the repo check
         return None
     pr, command, created = data.get("pr"), data.get("command"), data.get("created_at")
     if type(pr) is not int or pr != n or not _names_pr(command, n):
@@ -212,11 +285,12 @@ def merge_token_allows(cmd):
         return None
     if not 0 <= time.time() - created < MERGE_TOKEN_TTL_S:
         return None
-    return f"one-shot merge token for PR #{n} [D223], user command: {command}"
+    return f"one-shot merge token for PR #{n} in {normalize_repo(data['repo'])} [D234], user command: {command}"
 
 
 def write_merge_token(argv) -> int:
-    """`guard.py merge-token N "<the user's literal command>"`: write the one-shot token for PR N."""
+    """`guard.py merge-token N "<the user's literal command>"`: write the one-shot token for PR N of
+    the repository the cwd's `origin` remote points to; refuses without such a remote."""
     if len(argv) != 2 or not re.fullmatch(r"\d+", argv[0]) or int(argv[0]) <= 0:
         print('usage: guard.py merge-token <PR number> "<the user\'s literal merge command>"', file=sys.stderr)
         return 2
@@ -224,14 +298,18 @@ def write_merge_token(argv) -> int:
     if not _names_pr(command, n):
         print(f"refused: the user's command does not name PR {n}", file=sys.stderr)
         return 2
+    repo = origin_repo(os.getcwd())
+    if repo is None:
+        print("refused: no `origin` remote in the current directory to bind the token to", file=sys.stderr)
+        return 2
     folder = merge_token_dir()
     folder.mkdir(parents=True, exist_ok=True)
     target = folder / f"pr-{n}.json"
     tmp = folder / f"pr-{n}.json.partial-{os.getpid()}"
-    tmp.write_text(json.dumps({"pr": n, "command": command, "created_at": time.time()}, ensure_ascii=False),
-                   encoding="utf-8")
+    tmp.write_text(json.dumps({"pr": n, "repo": repo, "command": command, "created_at": time.time()},
+                              ensure_ascii=False), encoding="utf-8")
     os.replace(tmp, target)
-    print(f"merge token for PR {n}: {target} (TTL {MERGE_TOKEN_TTL_S} s, one use)")
+    print(f"merge token for PR {n} in {repo}: {target} (TTL {MERGE_TOKEN_TTL_S} s, one use)")
     return 0
 
 
@@ -271,7 +349,8 @@ def main() -> None:
         reason = shell_reason(cmd)
         if reason == MERGE_REASON and not any(
                 re.search(pattern, cmd, re.IGNORECASE) for pattern, why in SHELL_RULES if why != MERGE_REASON):
-            granted = merge_token_allows(cmd)
+            hook_cwd = None if is_antigravity else data.get("cwd")
+            granted = merge_token_allows(cmd, hook_cwd if isinstance(hook_cwd, str) and hook_cwd else None)
             if granted:
                 allow_explicit(granted, is_antigravity)
         if reason:
