@@ -410,7 +410,7 @@ def _captured_scripts(tmp_path, monkeypatch):
     """Run both adapter entry points with subprocess stubbed; return the .scr texts they wrote."""
     from adapters.cad import dwg as dwgmod
 
-    batch = tmp_path / "dcc_batch.py"
+    batch = tmp_path / "stub_wrapper.py"  # never executed: subprocess.run is stubbed below
     batch.write_text("", encoding="utf-8")
     monkeypatch.setenv("DT_DCC_BATCH", str(batch))
     scripts = []
