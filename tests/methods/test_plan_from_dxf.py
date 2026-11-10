@@ -422,3 +422,99 @@ def test_wall_line_status_uses_its_true_midpoint_and_a_zero_length_line_is_dropp
     assert status[long_line.dxf.handle] == ("dropped", "wall line outside the kept hatch contour")
     assert status[inside.dxf.handle] == ("used", "wall")
     assert status[dot.dxf.handle] == ("dropped", "zero-length wall entity")
+
+
+# --- #1004: the footprint may not go beyond what the closed hatch outlines account for ---
+
+_L_OUT = [(0, 0), (10, 0), (10, 5), (5, 5), (5, 10), (0, 10)]
+_L_IN = [(0.3, 0.3), (9.7, 0.3), (9.7, 4.7), (4.7, 4.7), (4.7, 9.7), (0.3, 9.7)]
+
+
+def _l_ring():
+    from shapely.geometry import Polygon
+    return Polygon(_L_OUT, [_L_IN])
+
+
+def test_over_closed_notch_fails_and_the_plain_l_passes_witness():
+    from shapely.geometry import Polygon, box
+    hatch = _l_ring()
+    over = pf.coverage_check([box(0, 0, 10, 10)], hatch)
+    assert over["covered_share"] == 1.0 and over["bbox_delta_m"] == 0.0  # the old gate alone passed this
+    assert over["status"] == "fail"
+    assert over["unaccounted_m2"] == pytest.approx(25.0, abs=0.2)
+    assert over["accounted_area_m2"] == pytest.approx(75.0, abs=0.2)
+    assert over["max_unaccounted_m2"] == pf.MAX_UNACCOUNTED_M2
+    x0, y0, x1, y1 = over["unaccounted_bbox_m"]
+    assert (x0, y0, x1, y1) == pytest.approx((5.0, 5.0, 10.0, 10.0), abs=0.6)
+    plain = pf.coverage_check([Polygon(_L_OUT)], hatch)
+    assert plain["status"] == "pass" and plain["unaccounted_m2"] == 0.0
+
+
+def _l_doc(outline):
+    """Wall lines trace ``outline`` (metres); the hatch is the 0.3 m L-shaped wall ring."""
+    doc = _doc()
+    doc.layers.add("PATT")
+    msp = doc.modelspace()
+    pts = [(x * 1000, y * 1000) for x, y in outline]
+    for a, b in zip(pts, pts[1:] + pts[:1]):
+        msp.add_line(a, b, dxfattribs={"layer": "WALL"})
+    h = msp.add_hatch(dxfattribs={"layer": "PATT"})
+    h.paths.add_polyline_path([(x * 1000, y * 1000) for x, y in _L_OUT], is_closed=True)
+    h.paths.add_polyline_path([(x * 1000, y * 1000) for x, y in _L_IN], is_closed=True)
+    return doc
+
+
+def test_lines_closing_over_the_notch_are_refused_by_extract():
+    roles = {"WALL": "wall", "NOTE": "drop:note", "PATT": "hatch"}
+    with pytest.raises(ValueError, match="unaccounted"):
+        pf.extract_plan(_l_doc([(0, 0), (10, 0), (10, 10), (0, 10)]), roles, z0=0.0, z1=3.0)
+    out = pf.extract_plan(_l_doc(_L_OUT), roles, z0=0.0, z1=3.0)
+    assert out["coverage"]["status"] == "pass" and out["coverage"]["unaccounted_m2"] == 0.0
+    hatch_out = pf.extract_plan(_l_doc(_L_OUT), roles, z0=0.0, z1=3.0, contour_source="hatch")
+    assert hatch_out["coverage"]["status"] == "pass"
+
+
+def test_ring_with_a_door_gap_is_accounted_by_the_bridge_strip():
+    # the 1.0 m door gap is bridged at gap_close 0.75, so the room behind it counts as enclosed
+    from shapely.geometry import box
+    from shapely.ops import unary_union
+    hatch = unary_union([box(0, 0, 2.5, 0.3), box(3.5, 0, 6, 0.3), box(0, 3.7, 6, 4),
+                         box(0, 0.3, 0.3, 3.7), box(5.7, 0.3, 6, 3.7)])
+    cov = pf.coverage_check([box(0, 0, 6, 4)], hatch)
+    assert cov["status"] == "pass" and cov["unaccounted_m2"] < 0.01
+    # a 2.0 m opening is wider than 2 * gap_close: the room is not enclosed, the footprint is refused
+    wide = unary_union([box(0, 0, 2, 0.3), box(4, 0, 6, 0.3), box(0, 3.7, 6, 4),
+                        box(0, 0.3, 0.3, 3.7), box(5.7, 0.3, 6, 3.7)])
+    assert pf.coverage_check([box(0, 0, 6, 4)], wide)["status"] == "fail"
+
+
+def test_unaccounted_area_exactly_at_the_limit_fails_and_bad_gap_close_is_an_error():
+    from shapely.geometry import Polygon, box
+    from shapely.ops import unary_union
+    hatch = _l_ring()
+    lim = pf.MAX_UNACCOUNTED_M2
+    at = pf.coverage_check([unary_union([Polygon(_L_OUT), box(10 - lim, 9, 10, 10)])], hatch)
+    assert at["unaccounted_m2"] == pytest.approx(lim, abs=1e-9) and at["status"] == "fail"
+    under = pf.coverage_check([unary_union([Polygon(_L_OUT), box(10 - 0.9 * lim, 9, 10, 10)])], hatch)
+    assert under["status"] == "pass"
+    for bad in (0.0, -1.0, float("nan"), float("inf"), True, "0.75", None):
+        with pytest.raises(ValueError, match="gap_close_m"):
+            pf.coverage_check([Polygon(_L_OUT)], hatch, gap_close_m=bad)
+
+
+def test_unaccounted_gate_brute_force_against_the_notch_area():
+    """Generated: a footprint that adds an extra box in the notch fails iff the box is >= the limit."""
+    import random
+    from shapely.geometry import Polygon, box
+    from shapely.ops import unary_union
+    rng = random.Random(1004)
+    hatch, base = _l_ring(), Polygon(_L_OUT)
+    checked = 0
+    for _ in range(200):
+        w, h = rng.uniform(0.05, 4.0), rng.uniform(0.05, 4.0)
+        extra = box(10 - w, 10 - h, 10, 10)  # the notch corner, away from the filleted reflex corner
+        cov = pf.coverage_check([unary_union([base, extra])], hatch)
+        assert cov["unaccounted_m2"] == pytest.approx(w * h, abs=1e-6)
+        assert (cov["status"] == "fail") == (w * h >= pf.MAX_UNACCOUNTED_M2), (w, h, cov)
+        checked += 1
+    assert checked == 200
