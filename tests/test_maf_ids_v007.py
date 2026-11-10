@@ -67,6 +67,13 @@ def test_atlas_512_v007_record():
         assert 0 <= x and 0 <= y and x + w <= 512 and y + h <= 512
         for x2, y2, w2, h2 in boxes[i + 1:]:
             assert x + w <= x2 or x2 + w2 <= x or y + h <= y2 or y2 + h2 <= y
+    # r2 (review of PR #1187): the log end is a 256 cell from the label-cleaned 53407 log disc; r1 stays recorded
+    assert rec["revision"] == "r2" and rec["atlas"]["path"].endswith("_r2.png")
+    assert [p["revision"] for p in rec["previous"]] == ["r1"]
+    assert rec["previous"][0]["atlas"]["sha256"] == "55e654a2e04ce2e828cd1f7a1f585d54263a01050f00cb60d5d3bab4f6d0cf6d"
+    log = next(c for c in cells if c["id"] == 18)
+    assert log["slot_px"][2] == 256
+    assert {s["slot"]: s for s in slots}[15]["clean"]["method"] == "ring_clone"
     for c in cells:
         cx, cy, cw, ch = c["content_px"]
         x, y, w, h = c["slot_px"]
