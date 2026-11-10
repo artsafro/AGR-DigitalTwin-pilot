@@ -35,9 +35,12 @@ def test_after():
 """
 
 
-def _run_inner(tmp_path: Path, *plugin_args: str) -> subprocess.CompletedProcess:
+def _run_inner(tmp_path: Path, *plugin_args: str, module: str = HARD_EXIT_MODULE,
+               conftest: str | None = None) -> subprocess.CompletedProcess:
     (tmp_path / "pytest.ini").write_text("[pytest]\n", encoding="utf-8")
-    (tmp_path / "test_inner.py").write_text(HARD_EXIT_MODULE, encoding="utf-8")
+    (tmp_path / "test_inner.py").write_text(module, encoding="utf-8")
+    if conftest is not None:
+        (tmp_path / "conftest.py").write_text(conftest, encoding="utf-8")
     env = dict(os.environ, PYTHONPATH=os.pathsep.join([str(TESTS), os.environ.get("PYTHONPATH", "")]))
     env.pop("PYTEST_ADDOPTS", None)
     return subprocess.run(
@@ -72,3 +75,114 @@ def test_suite_runs_under_the_guard():
 def test_guard_refuses_windows_kill_zero():
     with pytest.raises(RuntimeError, match="os.kill"):
         os.kill(os.getpid(), 0)
+
+
+TEARDOWN_EXIT_MODULE = """\
+import os
+
+import pytest
+
+
+@pytest.fixture
+def exits_on_teardown():
+    yield
+    os._exit(0)
+
+
+def test_teardown_exit(exits_on_teardown):
+    pass
+
+
+def test_after():
+    pass
+"""
+
+NONZERO_EXIT_MODULE = """\
+import os
+
+
+def test_exit_five():
+    os._exit(5)
+"""
+
+THREAD_EXIT_MODULE = """\
+import os
+import threading
+
+
+def test_thread_exit():
+    t = threading.Thread(target=os._exit, args=(0,))
+    t.start()
+    t.join(30)
+"""
+
+CHILD_EXIT_MODULE = """\
+import multiprocessing
+import os
+import subprocess
+import sys
+
+
+def _child():
+    os._exit(0)
+
+
+def test_children_exit_zero():
+    ctx = multiprocessing.get_context("spawn")
+    p = ctx.Process(target=_child)
+    p.start()
+    p.join(60)
+    assert p.exitcode == 0
+    # a process that loads the guard but is not the guarded pytest process keeps its own exit code
+    code = "import exit_guard, os; exit_guard._state['pid'] = -1; exit_guard._exit(0)"
+    assert subprocess.run([sys.executable, "-c", code], timeout=60).returncode == 0
+"""
+
+SESSIONFINISH_CONFTEST = """\
+import os
+
+
+def pytest_sessionfinish(session, exitstatus):
+    os._exit(0)
+"""
+
+PASSING_MODULE = """\
+def test_ok():
+    pass
+"""
+
+
+def test_guard_catches_exit_in_fixture_teardown(tmp_path):
+    proc = _run_inner(tmp_path, "-p", "exit_guard", module=TEARDOWN_EXIT_MODULE)
+    out = proc.stdout + proc.stderr
+    assert proc.returncode == 3, out
+    assert "test_inner.py::test_teardown_exit" in proc.stderr, out
+
+
+def test_guard_keeps_a_nonzero_exit_code(tmp_path):
+    proc = _run_inner(tmp_path, "-p", "exit_guard", module=NONZERO_EXIT_MODULE)
+    out = proc.stdout + proc.stderr
+    assert proc.returncode == 5, out
+    assert "os._exit(5)" in proc.stderr, out
+
+
+def test_guard_catches_exit_from_a_worker_thread(tmp_path):
+    proc = _run_inner(tmp_path, "-p", "exit_guard", module=THREAD_EXIT_MODULE)
+    out = proc.stdout + proc.stderr
+    assert proc.returncode == 3, out
+    assert "test_inner.py::test_thread_exit" in proc.stderr, out
+
+
+def test_guard_leaves_child_processes_alone(tmp_path):
+    proc = _run_inner(tmp_path, "-p", "exit_guard", module=CHILD_EXIT_MODULE)
+    out = proc.stdout + proc.stderr
+    assert proc.returncode == 0, out
+    assert "1 passed" in proc.stdout, out
+    assert "exit_guard:" not in out, out
+
+
+def test_guard_catches_exit_in_sessionfinish(tmp_path):
+    proc = _run_inner(tmp_path, "-p", "exit_guard", module=PASSING_MODULE, conftest=SESSIONFINISH_CONFTEST)
+    out = proc.stdout + proc.stderr
+    assert proc.returncode == 3, out
+    assert "<no test running>" in proc.stderr, out
