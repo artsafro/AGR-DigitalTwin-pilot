@@ -521,3 +521,60 @@ def test_unaccounted_gate_brute_force_against_the_notch_area():
         assert (cov["status"] == "fail") == (w * h >= pf.MAX_UNACCOUNTED_M2), (w, h, cov)
         checked += 1
     assert checked == 200
+
+
+# --- #1004 round 1: the reference radius is fixed, not the run's gap_close_m ---
+
+def _open_ring():
+    """10x10 m wall ring, 0.3 m thick, with a 2.5 m opening in the top wall (wider than 2 * 0.75)."""
+    from shapely.geometry import box
+    return box(0, 0, 10, 10).difference(box(0.3, 0.3, 9.7, 9.7)).difference(box(3.75, 9.0, 6.25, 10.0))
+
+
+def _open_ring_doc():
+    doc = _doc()
+    doc.layers.add("PATT")
+    msp = doc.modelspace()
+    pts = [(x * 1000, y * 1000) for x, y in list(_open_ring().exterior.coords)[:-1]]
+    for a, b in zip(pts, pts[1:] + pts[:1]):
+        msp.add_line(a, b, dxfattribs={"layer": "WALL"})
+    h = msp.add_hatch(dxfattribs={"layer": "PATT"})
+    h.paths.add_polyline_path(pts, is_closed=True)
+    return doc
+
+
+def test_hatch_source_wide_gap_close_is_measured_at_the_fixed_reference_witness():
+    import re
+    roles = {"WALL": "wall", "NOTE": "drop:note", "PATT": "hatch"}
+    assert pf.COVERAGE_REF_GAP_CLOSE_M == 0.75
+    # at gap_close 1.5 the 2.5 m opening is bridged and the room filled: ~87 m2 the 0.75 closing does not account for
+    with pytest.raises(ValueError, match="unaccounted") as err:
+        pf.extract_plan(_open_ring_doc(), roles, z0=0.0, z1=3.0, gap_close_m=1.5, contour_source="hatch")
+    m = re.search(r"([0-9.]+) m2 unaccounted", str(err.value))
+    assert m and float(m.group(1)) == pytest.approx(87.0, abs=1.5)
+    kept, _ = pf._fill_pieces([_open_ring()], 1.5)
+    cov = pf.coverage_check(kept, _open_ring(), gap_close_m=1.5)
+    assert cov["status"] == "fail" and cov["unaccounted_m2"] == pytest.approx(87.0, abs=1.5)
+    assert cov["ref_gap_close_m"] == 0.75 and cov["gap_close_m"] == 1.5
+    ok = pf.extract_plan(_open_ring_doc(), roles, z0=0.0, z1=3.0, gap_close_m=0.75, contour_source="hatch")
+    assert ok["coverage"]["status"] == "pass" and ok["coverage"]["unaccounted_m2"] == 0.0
+
+
+def test_gap_close_sweep_in_hatch_mode_fails_once_it_bridges_beyond_the_reference():
+    """Generated: hatch-source footprints over gap_close 0.2..2.5 m. At or under the 0.75 m reference the
+    footprint is fully accounted; once the 2.5 m opening is bridged (2 * g > 2.5) the room fails as named
+    area; in between the unaccounted area (corner fillets beyond the reference) never decreases."""
+    hatch = _open_ring()
+    checked, prev = 0, 0.0
+    for g in [round(0.05 * k, 2) for k in range(4, 51)]:
+        kept, _ = pf._fill_pieces([hatch], g)
+        cov = pf.coverage_check(kept, hatch, gap_close_m=g)
+        u = cov["unaccounted_m2"]
+        if g <= pf.COVERAGE_REF_GAP_CLOSE_M:
+            assert cov["status"] == "pass" and u == pytest.approx(0.0, abs=1e-6), (g, cov)
+        if 2 * g > 2.5 + 1e-3:
+            assert cov["status"] == "fail" and u > 80.0, (g, cov)
+        assert u >= prev - 1e-6, (g, u, prev)
+        prev = u
+        checked += 1
+    assert checked == 47

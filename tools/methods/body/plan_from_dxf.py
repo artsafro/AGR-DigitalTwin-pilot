@@ -22,8 +22,10 @@ Guarantees (each has a test):
   (0.1 m) of the hatch bbox. Otherwise the extract is an error naming the coverage: no contour that lost
   the drawn wall is written. Exactly 0.9 or exactly 0.1 m fails. With no hatch layer the coverage is
   ``not measured`` with the reason.
-- Overshoot (#1004): ``unaccounted_m2`` is the kept footprint minus the hatch closed at the run's
-  ``gap_close_m`` (outlines plus the strips bridging gaps strictly under ``2 * gap_close_m``, filled).
+- Overshoot (#1004): ``unaccounted_m2`` is the kept footprint minus the hatch closed at the fixed
+  reference COVERAGE_REF_GAP_CLOSE_M (0.75 m = GAP_CLOSE_M; outlines plus the strips bridging gaps strictly
+  under 1.5 m, filled). It does not follow the run's ``gap_close_m``: a wider run closing that bridges an
+  opening the reference leaves open fails.
   It must be strictly under MAX_UNACCOUNTED_M2 (0.5 m2, the smallest kept piece); exactly 0.5 fails and
   the error names the area and its bbox. A footprint that closes over a notch the hatch leaves open fails.
   A ``gap_close_m`` that is not a finite number above 0.1 mm is an error naming it.
@@ -67,8 +69,10 @@ from contours import GAP_CLOSE_M, MIN_PIECE_M2  # noqa: E402
 
 COVERAGE_MIN_SHARE = 0.9  # covered share of the wall hatch must be strictly above this
 COVERAGE_BBOX_M = 0.1  # every bbox side strictly within this of the hatch bbox
-# footprint area outside the hatch closed at gap_close_m must stay strictly under the smallest kept piece (#1004)
+# footprint area outside the hatch closed at the reference radius must stay strictly under the smallest
+# kept piece (#1004). The reference is fixed (the default GAP_CLOSE_M), never the run's gap_close_m.
 MAX_UNACCOUNTED_M2 = MIN_PIECE_M2
+COVERAGE_REF_GAP_CLOSE_M = GAP_CLOSE_M
 CONTOUR_SOURCES = ("lines", "hatch")
 FACE_LIMIT_M = 1.0  # a host-wall face is strictly closer than this; exactly 1.0 m is not used
 # L03 of АС.03. Only A-WALL-____-MCUT is the exterior cut. I-WALL stays out (accepted Q1).
@@ -224,8 +228,9 @@ def _fill_pieces(areas: list, gap_close_m: float) -> tuple[list[Polygon], list[P
 def coverage_check(keep: list, hatch, gap_close_m: float = GAP_CLOSE_M) -> dict:
     """Hatch share under the kept pieces, bbox offset and footprint area the hatch does not account for.
 
-    ``unaccounted_m2`` is the kept footprint minus the hatch closed at ``gap_close_m`` (``_close_fill``:
-    outlines plus bridged gap strips, filled). It must stay strictly under MAX_UNACCOUNTED_M2. Fail-closed.
+    ``unaccounted_m2`` is the kept footprint minus the hatch closed at the fixed COVERAGE_REF_GAP_CLOSE_M
+    (``_close_fill``: outlines plus bridged gap strips, filled), whatever the run's ``gap_close_m`` is; the
+    run's value is validated and reported only. It must stay strictly under MAX_UNACCOUNTED_M2. Fail-closed.
     """
     if hatch is None or hatch.is_empty or not hatch.area > 0:
         raise ValueError("coverage: the hatch reference has no area")
@@ -243,7 +248,8 @@ def coverage_check(keep: list, hatch, gap_close_m: float = GAP_CLOSE_M) -> dict:
     # the hatch's own closed outlines count exactly; the closing adds the bridged strips and what they enclose
     own = [Polygon(g.exterior) for g in (hatch.geoms if hasattr(hatch, "geoms") else [hatch])
            if g.geom_type == "Polygon"]
-    accounted = unary_union([_close_fill([hatch], gap_close_m), *own])
+    # fixed reference radius, never the run's gap_close_m: a wider run closing must not account for itself
+    accounted = unary_union([_close_fill([hatch], COVERAGE_REF_GAP_CLOSE_M), *own])
     extra = kept.difference(accounted) if not accounted.is_empty else kept
     unaccounted = round(float(extra.area), 9)
     ok = (math.isfinite(share) and math.isfinite(delta) and math.isfinite(unaccounted)
@@ -253,7 +259,8 @@ def coverage_check(keep: list, hatch, gap_close_m: float = GAP_CLOSE_M) -> dict:
             "hatch_bbox_m": [round(v, 4) for v in hatch.bounds], "kept_bbox_m": [round(v, 4) for v in kept.bounds],
             "accounted_area_m2": round(float(accounted.area), 4), "unaccounted_m2": unaccounted,
             "unaccounted_bbox_m": [round(v, 4) for v in extra.bounds] if not extra.is_empty else None,
-            "gap_close_m": gap_close_m, "min_share": COVERAGE_MIN_SHARE, "max_bbox_delta_m": COVERAGE_BBOX_M,
+            "gap_close_m": gap_close_m, "ref_gap_close_m": COVERAGE_REF_GAP_CLOSE_M,
+            "min_share": COVERAGE_MIN_SHARE, "max_bbox_delta_m": COVERAGE_BBOX_M,
             "max_unaccounted_m2": MAX_UNACCOUNTED_M2}
 
 
