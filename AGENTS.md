@@ -34,7 +34,7 @@ Read on demand, one line each. Read the domain file that matches the task before
 - Accepted cases and lessons: `docs/cases.md`.
 - Terms: `GLOSSARY.md`.
 - Names for scripts, tools, jobs, outputs, branches and tags; object ids: `docs/agents/NAMING.md`, `jobs/REGISTRY.md`.
-- Benchmark etalons and pattern registry: `benchmark/`, `docs/domain/patterns/INDEX.md`. Removed historical files: `docs/ARCHIVE.md`.
+- Benchmark etalons and pattern registry: `benchmark/`, `docs/domain/patterns/INDEX.md`.
 - Machine-readable rules: `standards/` (locked; change procedure in `standards/README.md`).
 - AGR knowledge base (Russian originals, read-only): `docs/agr/INDEX.md` only, then the file it names.
 - Code map, checks and plugin configuration: `docs/agents/agents-reference.md`.
@@ -73,5 +73,6 @@ gets a line in `docs/decisions.md` and its `[D<n>]` where it applies.
   ≤ 80 lines, fixed sections; `docs/agents/WORKFLOW.md`);
   in task branches report state changes in the final summary.
 - A new tool counts as shared only after it is listed in `docs/agents/CAPABILITIES.md` on `main`.
+- Log worked-around snags: `docs/papercuts/`.
 - Four working principles (assumptions first, simplest fit, surgical changes, verified done): `docs/agents/working-principles.md`.
 - AGR Tools (3ds Max panel, `agr-mcp`, OKS conveyor 1.0): start at `docs/agr-tools/OVERVIEW.md`; binding rules (the project passport `jobs/<ID>/passport.json`, `schemas/ProjectPassport.schema.json`, is mandatory, К1): `docs/agents/agr-tools-1.0-rules.md`.
