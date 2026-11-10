@@ -1,8 +1,8 @@
 """Derive the next MAF material ID list version from the previous one plus one reviewed change file.
 
 new-case: versioned edit of an approved ID list (D181: each change is a new version with a changelog line).
-v006 = v005 + ID 32 `wood_hpl_satin` (D229, #993); v007 = v006 + ID 33 `wood_pine` (plan step 2.3,
-2026-11-10). The previous list, its Markdown twin and its tiles are read-only inputs; outputs refuse to overwrite. The new
+v006 = v005 + ID 32 `wood_hpl_satin` (D229, #993); v007 = v006 + ID 33 `wood_pine` (D240, plan
+step 2.3). The previous list, its Markdown twin and its tiles are read-only inputs; outputs refuse to overwrite. The new
 tile is a flat swatch of the stated colour, or a Lanczos crop of a hash-checked source image (`tile.crop`).
 
 Usage:

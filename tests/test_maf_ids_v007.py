@@ -1,4 +1,4 @@
-"""v007 = v006 + ID 33 `wood_pine` (WOOD2, plan step 2.3, 2026-11-10) and the 512 atlas baked from 53407."""
+"""v007 = v006 + ID 33 `wood_pine` (WOOD2, [D240], plan step 2.3) and the 512 atlas baked from 53407."""
 import importlib.util
 import json
 import re
@@ -46,6 +46,12 @@ def test_v007_adds_wood2_pine_and_nothing_else():
     for key in ("ids", "merges", "spec_requirements", "version", "changelog"):
         assert rebuilt[key] == v7[key], key
     assert any(tile["key"] == "wood_pine" for tile in v7["evidence"]["tiles"])
+    assert v7["approval"]["decision"] == "D240"
+
+
+def test_pine_decision_is_logged_once():
+    text = (ROOT / "docs" / "decisions.md").read_text(encoding="utf-8")
+    assert sum(1 for line in text.splitlines() if line.startswith("| D240 |")) == 1
 
 
 def test_atlas_512_v007_record():

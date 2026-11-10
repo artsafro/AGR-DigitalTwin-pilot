@@ -2,7 +2,7 @@
  "schema": "library-maf-atlas-512",
  "version": "v007",
  "revision": "r2",
- "status": "accepted visually 2026-11-10 (r2); merge pending D id",
+ "status": "accepted visually 2026-11-10 (r2) [D240]",
  "acceptance": {
   "date": "2026-11-10",
   "by": "Artem",
@@ -14,7 +14,7 @@
   ],
   "source": "PR #1187 review via the coordinator; visual only, no UV/model readback"
  },
- "decision": "pine as its own WOOD2 id 33: user 2026-11-10 (plan step 2.3); D id to be assigned at merge",
+ "decision": "D240: pine as its own WOOD2 id 33; atlas 512 v007 r2 accepted visually (2026-11-10, plan step 2.3)",
  "generated_by": "jobs/maf-atlas-512/scripts/atlas_maf_from_source.py",
  "inputs": {
   "source": {
@@ -34,7 +34,7 @@
   },
   "ids": {
    "path": "library/maf/material_ids_v007.json",
-   "sha256": "897a16702c5e1bcefc40cb944e32da448737edd6e3bc2450066df5c3c35f5466"
+   "sha256": "78e48f6c75c44a01eda6d0e2a21650fd8f5878092118076ae84c8fcb74986db2"
   }
  },
  "atlas": {

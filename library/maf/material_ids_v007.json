@@ -7,7 +7,7 @@
   "quote": null,
   "by": "Artem",
   "source": "chat 2026-11-10 to the lead agent: pine becomes its own WOOD2 slot (docs/plans/telegram-findings-rollout.md step 2.3); verbatim quote not relayed",
-  "decision": "user 2026-11-10 (plan step 2.3); D id to be assigned at merge",
+  "decision": "D240",
   "previous": {
    "date": "2026-11-05",
    "quote": "да",
@@ -55,7 +55,7 @@
   },
   "change": {
    "path": "library/maf/material_ids_v007_change.json",
-   "sha256": "9f108830136841cbc5cfb0f7aee3cee27d4da4c3b1362c770238fbeaa51592d4"
+   "sha256": "f9a298e5ff49636c5025173bcfde3df7e49f507784b1c6e08ebcd9c5538671b5"
   }
  },
  "maps_dirs": [
@@ -2307,7 +2307,7 @@
    "review": [],
    "prev_id": null,
    "picked_patch": null,
-   "status": "approved-v1 (plan step 2.3, 2026-11-10; D id at merge): WOOD2 pine from the team atlas 53407"
+   "status": "approved-v1 (D240): WOOD2 pine from the team atlas 53407"
   }
  ],
  "inventory": {
@@ -7882,7 +7882,7 @@
  },
  "changelog": [
   "v006 (2026-11-05, D229, #993): HPL satin wood (*T3510#26, tennis table) gets its own ID 32 `wood_hpl_satin` #B4825A; ID 14 `wood_light` keeps larch / light oak; the v005 merge hpl_satin_wood -> wood_light is undone. Nothing else changes.",
-  "v007 (2026-11-10, plan step 2.3, D id at merge): pine gets its own ID 33 `wood_pine` (WOOD2 of the team MAF atlas, Telegram «Материалы» 53407/53408) #82543D; ID 14 `wood_light` keeps larch / light oak; the v005 merge wood_pine -> wood_light is undone. Nothing else changes."
+  "v007 (2026-11-10, D240, plan step 2.3): pine gets its own ID 33 `wood_pine` (WOOD2 of the team MAF atlas, Telegram «Материалы» 53407/53408) #82543D; ID 14 `wood_light` keeps larch / light oak; the v005 merge wood_pine -> wood_light is undone. Nothing else changes."
  ],
  "derived_from": {
   "path": "library/maf/material_ids_v006.json",

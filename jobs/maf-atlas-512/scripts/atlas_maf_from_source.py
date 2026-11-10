@@ -164,7 +164,7 @@ def bake(spec: dict, out_dir: Path, rev: str = "") -> dict:
         "version": "v007",
         "revision": rev or "r1",
         "status": "technical QA only; visual acceptance by the user open",
-        "decision": "pine as its own WOOD2 id 33: user 2026-11-10 (plan step 2.3); D id to be assigned at merge",
+        "decision": "D240: pine as its own WOOD2 id 33; atlas 512 v007 r2 accepted visually (2026-11-10, plan step 2.3)",
         "generated_by": "jobs/maf-atlas-512/scripts/atlas_maf_from_source.py",
         "inputs": {
             "source": {k: spec["source"][k] for k in ("path", "sha256", "size")},
