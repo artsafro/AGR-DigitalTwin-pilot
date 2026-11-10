@@ -54,4 +54,4 @@ One step = one branch / PR unless marked "batch". Status: `done`, `next`, `later
 
 Max Ultra MCP, opencode, rea, DragShift, allesimfluss, UV Unfoldr, new requirements PDF / IFC post / window atlas
 rule / SintezAgrChecker / AlexYo_AssetImporter from «АГР - Holding» (user 2026-11-10 [D237]), the DLSS exe from
-@neuroviza (untrusted binary), the inventory of the Yandex «ALL textures» folder (69813, former step 2.6; user 2026-11-10 [D240]).
+@neuroviza (untrusted binary), the inventory of the Yandex «ALL textures» folder (69813, former step 2.6; user 2026-11-10 [D241]).
