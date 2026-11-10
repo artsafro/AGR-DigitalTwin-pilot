@@ -421,6 +421,12 @@ def _ucx_maf_status(ucx_lo, ucx_hi, maf_lo, maf_hi, name="SM_Test_GroundEl"):
     return next(f.status for f in found["V010"] if f.name == "UCX vs MAF/Flora intersection")
 
 
+@pytest.mark.parametrize("suffix", ["GroundEl", "GroundElGlass", "Flora"])
+def test_ucx_wholly_inside_element_fails_1129(suffix):
+    assert _ucx_maf_status((0.3, 0.3, 0.3), (0.7, 0.7, 0.7),
+                           (0, 0, 0), (1, 1, 1), name=f"SM_Test_{suffix}") == "fail"
+
+
 def test_ucx_covering_maf_fails_flo15():
     assert _ucx_maf_status((0, 0, 0), (1, 1, 1), (0.2, 0.2, 0.5), (0.8, 0.8, 1.5)) == "fail"
 
