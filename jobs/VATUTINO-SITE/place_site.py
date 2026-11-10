@@ -35,6 +35,12 @@ CFG = {"adapter": Path("C:/x/t_d94665f2/paving_ground_inputs_v4.json"),
        "maf_set": ROOT / "jobs/VATUTINO-SITE/maf/site-maf-set.json",
        "exceptions": ROOT / "jobs/VATUTINO-SITE/ground-exceptions.json",
        "flora_library": "C:/x/flora-library/v003/flora-library-v003.max"}
+# #298 option A [D235]: Ground v015 (accepted [D193]) + MAF v005 + «Верона» rows 1-10 (A4.2) + Flora; urns excluded
+CFG_V015 = dict(CFG, ground=Path("C:/x/t_e35c49dd/ground-v015-dcc-v001/textured"),
+                exceptions=ROOT / "jobs/VATUTINO-SITE/ground-exceptions-v015.json",
+                verona={"shapes": ROOT / "jobs/VATUTINO-SITE/maf/verona-plan-shapes.json",
+                        "build_report": Path("C:/x/vatutino-maf/gen-v001/rows-v006p-3/build-report.json"),
+                        "depth": 0.6})
 SCRIPT = ROOT / "tools/blender/placement_instance.py"
 # gate-1 F2 (accepted 2026-10-20): schedule position -> library catalogue id
 FLORA_PICKS = {1: 101, 3: 120, 4: 115, 6: 105, 7: 103, 9: 205, 11: 212, 12: 204, 14: 230, 15: 223, 17: 224}
@@ -78,6 +84,17 @@ def run(cfg: dict, out: Path, seed: int, dcc=blender) -> int:
     adapter = json.loads(cfg["adapter"].read_text(encoding="utf-8"))
     parts = json.loads(cfg["site_parts"].read_text(encoding="utf-8"))
     mafset = json.loads(cfg["maf_set"].read_text(encoding="utf-8"))["positions"]
+    verona_rows, verona_log = [], []
+    if cfg.get("verona"):
+        import importlib.util
+        spec_r = importlib.util.spec_from_file_location("site_assembly_rules", ROOT / "jobs/VATUTINO-SITE/assembly_rules.py")
+        rules = importlib.util.module_from_spec(spec_r)
+        spec_r.loader.exec_module(rules)
+        vcfg = cfg["verona"]
+        shapes = json.loads(Path(vcfg["shapes"]).read_text(encoding="utf-8"))
+        vreport = json.loads(Path(vcfg["build_report"]).read_text(encoding="utf-8"))
+        adapter["maf"], verona_log = rules.verona_points(shapes, vreport, adapter["maf"], vcfg["depth"])
+        verona_rows = vreport["rows"]
     exc_path = Path(cfg["exceptions"])
     exceptions = json.loads(exc_path.read_text(encoding="utf-8"))["exceptions"] if exc_path.is_file() else []
     FLORA_FBX, GROUND = Path(cfg["flora_fbx"]), Path(cfg["ground"])
@@ -96,6 +113,10 @@ def run(cfg: dict, out: Path, seed: int, dcc=blender) -> int:
                                   "spozu_in": f["spozu_in"], "spozu_total": f["spozu_total"],
                                   "match": "exact" if f["pos"] in EXACT else ("substitute" if c else "no_model")}
     export = json.loads((FLORA_FBX / "export.json").read_text(encoding="utf-8"))["objects"]
+    if verona_rows:
+        inputs["verona"] = {"shapes": _rel(Path(cfg["verona"]["shapes"])), "shapes_sha256": sha(Path(cfg["verona"]["shapes"])),
+                            "build_report": str(cfg["verona"]["build_report"]),
+                            "build_report_sha256": sha(Path(cfg["verona"]["build_report"])), "points": verona_log}
     results = {"seed": a_seed, "inputs": inputs, "status": "running", "variants": {}}
     try:
         ps.validate_points(adapter["planting"] + adapter["maf"])
@@ -142,6 +163,12 @@ def run(cfg: dict, out: Path, seed: int, dcc=blender) -> int:
             assign[p["spozu_block"]], kind_of[p["set_id"]] = p["set_id"], "maf"
             meta[p["set_id"]] = {"kind": "maf", "block": p["spozu_block"], "spec": spec_dims(p["schedule_size_m"]),
                                  "spec_raw": p["schedule_size_m"]}
+        for r in verona_rows:
+            fbx = Path(r[var]["fbx"])
+            libs.append({"id": r["set_id"], "fbx": str(fbx)})
+            inputs.setdefault(f"maf_fbx_{var}", {})[r["set_id"]] = sha(fbx)
+            assign[r["set_id"]], kind_of[r["set_id"]] = r["set_id"], "maf"
+            meta[r["set_id"]] = {"kind": "maf", "block": r["block"], "spec": None, "spec_raw": "generated, checked by #817"}
         spec = {"libraries": libs, "ground": {"fbx": str(g_fbx)}}
         (vdir / "spec.json").write_text(json.dumps(spec, indent=1), encoding="utf-8")
         cmds = [dcc("facts", vdir / "spec.json", vdir / "facts.json")]
@@ -224,8 +251,9 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", required=True)
     ap.add_argument("--seed", type=int, default=296)
+    ap.add_argument("--site", choices=("v014", "v015"), default="v014")
     a = ap.parse_args()
-    return run(CFG, Path(a.out), a.seed)
+    return run(CFG_V015 if a.site == "v015" else CFG, Path(a.out), a.seed)
 
 
 if __name__ == "__main__":

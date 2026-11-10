@@ -6,7 +6,7 @@ import pytest
 from shapely.geometry import Polygon,MultiPolygon
 from dt_ai.geometry import ground_cake as g
 
-spec=importlib.util.spec_from_file_location('ground_371_coverage_job',Path(__file__).resolve().parents[1]/'jobs/VATUTINO-SITE/build_ground_v015.py')
+spec=importlib.util.spec_from_file_location('ground_371_coverage_job',Path(__file__).resolve().parents[1]/'tools/ground/build_ground_v015.py')
 job=importlib.util.module_from_spec(spec);spec.loader.exec_module(job)
 
 
