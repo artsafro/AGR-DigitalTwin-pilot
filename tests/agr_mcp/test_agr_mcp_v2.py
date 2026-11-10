@@ -211,7 +211,7 @@ def test_catalogue_is_generated_from_the_plan():
     assert set(catalog.apply_ids(PLAN)) == apply == set(max_bridge.APPLY_OVER_MCP)
     assert len(checks) == 38 + 1 and len(ops) == 32 + 3 and len(apply) == 11 + 2  # 1.1: +1 check (handoff.verify), +3 ops, 2 applied over MCP
     hook = {x.name for x in ops_d108.register({})}  # branch U's tools (empty with the stub)
-    assert set(tools.LISTED) | hook == set(cat) and len(cat) == 52 + 15 + 3 + 3 + len(hook)  # + agr_handoff_export/import/verify (1.1)
+    assert set(tools.LISTED) | hook == set(cat) and len(cat) == 52 + 15 + 3 + 3 + 10 + len(hook)  # + agr_handoff_export/import/verify (1.1), + phase 2 (#1021)
     for n in tools.PHASE0:
         assert "Deprecated" in cat[n].description, n
     assert not cat["agr_op_apply"].read_only and set(cat["agr_op_apply"].input["properties"]) == {
