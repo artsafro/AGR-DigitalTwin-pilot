@@ -146,6 +146,41 @@ def test_seam_material_merge_is_zero_and_counted():
     assert after["a+b"]["mat"] == [0] and merged == 1 and unmapped == 4 and after["a+b"]["uv"] == [None]
 
 
+def _two_tris(uv_b_shared):
+    """Two coplanar triangles (one quad split on the 0-2 diagonal) merged into one source-labelled polygon."""
+    v = np.array([(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)], float)
+    a = {"v": v, "faces": ((0, 1, 2), (0, 2, 3)), "mat": [1, 1],
+         "uv": [[(0.0, 0.0), (1.0, 0.0), (1.0, 1.0)], [(0.0, 0.0), uv_b_shared, (0.0, 1.0)]]}
+
+    class R:
+        mesh = K.PolyMesh(v, ((0, 1, 2, 3),))
+        face_sources = ((("a", 0), ("a", 1)),)
+        vertex_sources = ((("a", 0),), (("a", 1),), (("a", 2),), (("a", 3),))
+    return a, R
+
+
+def test_carry_seam_merged_polygon_with_continuous_uv_is_carried():
+    a, R = _two_tris((1.0, 1.0))
+    after, unmapped, merged = K.carry_seam({"a": a}, R, ("a",), "simplify_part")
+    assert after["simplified"]["uv"] == [[(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)]]
+    assert unmapped == 0 and merged == 0 and after["simplified"]["mat"] == [1]
+
+
+@pytest.mark.parametrize("shared", [(0.5, 1.0), (1.0, 1.0 + 2e-5)])
+def test_carry_seam_uv_seam_inside_merged_polygon_is_unmapped(shared):
+    """Two source corners at one vertex with different UV (a UV seam): unmapped, never the first one."""
+    a, R = _two_tris(shared)
+    after, unmapped, _ = K.carry_seam({"a": a}, R, ("a",), "simplify_part")
+    assert after["simplified"]["uv"] == [None] and unmapped == 4
+
+
+def test_carry_seam_source_polygon_without_uv_is_unmapped():
+    a, R = _two_tris((1.0, 1.0))
+    a["uv"][1] = None
+    after, unmapped, _ = K.carry_seam({"a": a}, R, ("a",), "simplify_part")
+    assert after["simplified"]["uv"] == [None] and unmapped == 4
+
+
 def test_committed_evidence_is_current_and_failures_are_listed():
     r = json.loads(EVIDENCE.read_text(encoding="utf-8"))
     assert r["source"]["sha256"] == r["source"]["sha256_after"] == K.SOURCE_SHA256
@@ -203,18 +238,35 @@ def test_real_source_control_is_accepted():
     assert len(mats) == 3 and all(r["equal"] for r in mats)
 
 
-@pytest.mark.parametrize("op_no,with_uv,faces", [(16, 168, 169), (17, 170, 174)])
-def test_real_partial_uv_states_fail_candidate_parity(real_states, op_no, with_uv, faces):
-    _, states = real_states
+def _source_uv_at(source):
+    """(rounded position, material id) -> set of rounded source UVs at that corner."""
+    out = {}
+    for p in source.values():
+        for f, c, m in zip(p["faces"], p["uv"], p["mat"]):
+            for vi, uv in zip(f, c):
+                key = (tuple(np.round(p["v"][vi], 6)), m)
+                out.setdefault(key, set()).add(tuple(np.round(uv, 6)))
+    return out
+
+
+@pytest.mark.parametrize("op_no", [15, 16, 17])
+def test_real_simplify_states_keep_uv_and_material_on_every_polygon(real_states, op_no):
+    """#1144: S15-S17 (simplify body / knob / plate) carry UV and one material id on every polygon, so export keeps
+    UV; every carried corner UV is a source UV of the same position and material (nothing invented)."""
+    source, states = real_states
     st = states[op_no - 1]
-    assert sum(c is not None for c in st["simplified"]["uv"]) == with_uv and len(st["simplified"]["uv"]) == faces
-    payload, _ = K.export_payload(st)
+    sim = st["simplified"]
+    assert sim["uv"] and all(c is not None for c in sim["uv"]), "polygons without carried UV"
+    assert 0 not in sim["mat"], "polygons merge different material ids"
+    at = _source_uv_at(source)
+    for f, c, m in zip(sim["faces"], sim["uv"], sim["mat"]):
+        for vi, uv in zip(f, c):
+            assert tuple(np.round(uv, 6)) in at[(tuple(np.round(sim["v"][vi], 6)), m)]
+    payload, notes = K.export_payload(st)
+    assert notes == {}
     c = K.compare_state(st, _report(payload))
-    assert not c["accepted"]
-    assert c["export_uv_loss"] == {"simplified": with_uv}
-    bad = {(r["part"], r["metric"]) for r in c["candidate_parity"] if not r["equal_within_tol"]}
-    assert ("simplified", "uv") in bad
-    assert all(r["equal_within_tol"] for r in c["payload_parity"])     # the FBX round trip itself is faithful
+    assert c["export_uv_loss"] == {} and c["accepted"]
+    assert len(sim["faces"]) < sum(len(p["faces"]) for p in source.values())     # still a simplification
 
 
 def test_real_material_mutation_fails_parity():
@@ -351,9 +403,10 @@ def test_combined_regressions_material_index_uv_missing_repeat(real_states):
     partial["meshes"] = [m for m in partial["meshes"] if m["name"] != "AC08_knob"]
     assert not K.compare_state(source, partial)["accepted"]         # missing part
     _, states = real_states
-    st = states[15]
+    st = K.copy_state(states[15])
+    st["simplified"] = {**st["simplified"], "uv": [None] + list(st["simplified"]["uv"][1:])}
     payload, _ = K.export_payload(st)
-    assert not K.compare_state(st, _report(payload))["accepted"]    # S16 UV loss still fails
+    assert not K.compare_state(st, _report(payload))["accepted"]    # a UV hole in S16 still fails (#1144)
 
 
 NATIVE_S00 = Path("C:/x/ev_t_1483e1fa/v002/readback/S00_source.json")

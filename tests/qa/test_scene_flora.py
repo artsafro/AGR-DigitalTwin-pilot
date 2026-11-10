@@ -178,7 +178,8 @@ def test_maps_not_run_on_old_readback_and_vpm_not_checked():
     assert named(scene_findings(old, "npm", "ground", PROFILES.npm), "V005", "Flora") == {"Flora maps": "not_run"}
     found = scene_findings(rb(plant("SM_Test_Flora", 5, 3), materials=[mat(Base_Color="d")]), "vpm", "ground",
                            PROFILES.vpm)
-    assert "V005" not in found
+    # V005 now also carries 'color attributes' (reg 4.1.1) on every profile; Flora maps stay NPM-only
+    assert [f.name for f in found.get("V005", [])] == ["color attributes"]
 
 
 def test_maps_flora_mesh_without_material_fails():

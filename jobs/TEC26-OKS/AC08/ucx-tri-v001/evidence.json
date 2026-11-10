@@ -1,0 +1,315 @@
+{
+ "issue": 1016,
+ "synthetic": false,
+ "source": "C:/x/tec26-oks/AC08/pilot-v010 (read only; 118 files sha256 identical before/after the run)",
+ "output_root": "C:/x/tec26-oks/AC08/ucx-tri-v001",
+ "drive": "G:/Мой диск/AGR-evidence/1016-ac08-ucx/ (SHA256SUMS.txt, 92 files)",
+ "ucx_triangulate": {
+  "readback_v010": [
+   {
+    "name": "UCX_SM_Nku_1_Main_001",
+    "faces_by_corners": {
+     "4": 6
+    },
+    "vertices": 8,
+    "uv_layers": [],
+    "materials": [],
+    "convex": null,
+    "closed": null,
+    "open_edges": null,
+    "volume_m3": null
+   }
+  ],
+  "readback_after": [
+   {
+    "name": "UCX_SM_Nku_1_Main_001",
+    "faces_by_corners": {
+     "3": 12
+    },
+    "vertices": 8,
+    "uv_layers": [],
+    "materials": [],
+    "convex": true,
+    "closed": true,
+    "open_edges": 0,
+    "volume_m3": 38.2723
+   }
+  ],
+  "main_mesh_identical_after_readback": true,
+  "ucx_vertex_set_identical": true
+ },
+ "twinqa_scene": {
+  "pilot-v010": {
+   "V001 GeoJSON": [
+    "fail",
+    "none"
+   ],
+   "V003 triangulated": [
+    "fail",
+    "SM_Nku_1.fbx: ['UCX_SM_Nku_1_Main_001']"
+   ],
+   "V003 triangle count": [
+    "pass",
+    "SM_Nku_1.fbx: 386"
+   ],
+   "V010 UCX present": [
+    "pass",
+    "SM_Nku_1.fbx: 1 UCX mesh(es)"
+   ],
+   "V010 UCX material slots": [
+    "pass",
+    "SM_Nku_1.fbx: no slots"
+   ],
+   "V010 UCX triangle budget": [
+    "pass",
+    "SM_Nku_1.fbx: 12 UCX for 386 model triangles"
+   ],
+   "V010 UCX intersections": [
+    "pass",
+    "SM_Nku_1.fbx: no overlapping pairs among 1 pieces"
+   ],
+   "V010 UCX intersections coverage": [
+    "pass",
+    "SM_Nku_1.fbx: every neighbour pair evaluated"
+   ],
+   "V010 UCX piece gap (advisory)": [
+    "pass",
+    "SM_Nku_1.fbx: touch=0 below_band=0 in_band=0 wide=0 unmeasured=0; []"
+   ],
+   "V010 UCX shape": [
+    "pass",
+    "SM_Nku_1.fbx: 1 closed convex piece(s)"
+   ],
+   "V010 UCX coverage and offsets": [
+    "not_run",
+    "coverage of the model, offsets"
+   ],
+   "V012 archive name": [
+    "review",
+    "SM_Nku_1"
+   ],
+   "V012 mesh names": [
+    "pass",
+    "SM_Nku_1.fbx: 1 name(s) follow the grammar"
+   ],
+   "V012 UCX names": [
+    "pass",
+    "SM_Nku_1.fbx: 1 name(s) follow the grammar"
+   ]
+  },
+  "ucx-tri-v001": {
+   "V001 GeoJSON": [
+    "fail",
+    "none"
+   ],
+   "V003 triangulated": [
+    "pass",
+    "SM_Nku_1.fbx: all triangles"
+   ],
+   "V003 triangle count": [
+    "pass",
+    "SM_Nku_1.fbx: 386"
+   ],
+   "V010 UCX present": [
+    "pass",
+    "SM_Nku_1.fbx: 1 UCX mesh(es)"
+   ],
+   "V010 UCX material slots": [
+    "pass",
+    "SM_Nku_1.fbx: no slots"
+   ],
+   "V010 UCX triangle budget": [
+    "pass",
+    "SM_Nku_1.fbx: 12 UCX for 386 model triangles"
+   ],
+   "V010 UCX intersections": [
+    "pass",
+    "SM_Nku_1.fbx: no overlapping pairs among 1 pieces"
+   ],
+   "V010 UCX intersections coverage": [
+    "pass",
+    "SM_Nku_1.fbx: every neighbour pair evaluated"
+   ],
+   "V010 UCX piece gap (advisory)": [
+    "pass",
+    "SM_Nku_1.fbx: touch=0 below_band=0 in_band=0 wide=0 unmeasured=0; []"
+   ],
+   "V010 UCX shape": [
+    "pass",
+    "SM_Nku_1.fbx: 1 closed convex piece(s)"
+   ],
+   "V010 UCX coverage and offsets": [
+    "not_run",
+    "coverage of the model, offsets"
+   ],
+   "V012 archive name": [
+    "review",
+    "SM_Nku_1"
+   ],
+   "V012 mesh names": [
+    "pass",
+    "SM_Nku_1.fbx: 1 name(s) follow the grammar"
+   ],
+   "V012 UCX names": [
+    "pass",
+    "SM_Nku_1.fbx: 1 name(s) follow the grammar"
+   ]
+  }
+ },
+ "one_sided_main": {
+  "builder": "tools/blender/ucx_build.py Main (defaults), input = the ucx-tri-v001 FBX copy",
+  "exit_code": 0,
+  "hulls": 7,
+  "triangles": 84,
+  "cell_m": 0.25,
+  "gap_m": 0.004,
+  "main_to_ucx_max_m [D134 one-sided]": 0.0035,
+  "within_tol": true,
+  "dropped_ucx": [
+   "UCX_SM_Nku_1_Main_001"
+  ],
+  "readback": [
+   {
+    "name": "UCX_SM_Nku_1_Main_001",
+    "faces_by_corners": {
+     "3": 12
+    },
+    "vertices": 8,
+    "uv_layers": [],
+    "materials": [],
+    "convex": true,
+    "closed": true,
+    "open_edges": 0,
+    "volume_m3": 2.75
+   },
+   {
+    "name": "UCX_SM_Nku_1_Main_002",
+    "faces_by_corners": {
+     "3": 12
+    },
+    "vertices": 8,
+    "uv_layers": [],
+    "materials": [],
+    "convex": true,
+    "closed": true,
+    "open_edges": 0,
+    "volume_m3": 6.5583
+   },
+   {
+    "name": "UCX_SM_Nku_1_Main_003",
+    "faces_by_corners": {
+     "3": 12
+    },
+    "vertices": 8,
+    "uv_layers": [],
+    "materials": [],
+    "convex": true,
+    "closed": true,
+    "open_edges": 0,
+    "volume_m3": 4.9054
+   },
+   {
+    "name": "UCX_SM_Nku_1_Main_004",
+    "faces_by_corners": {
+     "3": 12
+    },
+    "vertices": 8,
+    "uv_layers": [],
+    "materials": [],
+    "convex": true,
+    "closed": true,
+    "open_edges": 0,
+    "volume_m3": 0.2356
+   },
+   {
+    "name": "UCX_SM_Nku_1_Main_005",
+    "faces_by_corners": {
+     "3": 12
+    },
+    "vertices": 8,
+    "uv_layers": [],
+    "materials": [],
+    "convex": true,
+    "closed": true,
+    "open_edges": 0,
+    "volume_m3": 1.1947
+   },
+   {
+    "name": "UCX_SM_Nku_1_Main_006",
+    "faces_by_corners": {
+     "3": 12
+    },
+    "vertices": 8,
+    "uv_layers": [],
+    "materials": [],
+    "convex": true,
+    "closed": true,
+    "open_edges": 0,
+    "volume_m3": 0.0161
+   },
+   {
+    "name": "UCX_SM_Nku_1_Main_007",
+    "faces_by_corners": {
+     "3": 12
+    },
+    "vertices": 8,
+    "uv_layers": [],
+    "materials": [],
+    "convex": true,
+    "closed": true,
+    "open_edges": 0,
+    "volume_m3": 0.5046
+   }
+  ],
+  "twinqa_scene": {
+   "V003 triangulated": [
+    "pass",
+    "SM_Nku_1.fbx: all triangles"
+   ],
+   "V003 triangle count": [
+    "pass",
+    "SM_Nku_1.fbx: 386"
+   ],
+   "V010 UCX present": [
+    "pass",
+    "SM_Nku_1.fbx: 7 UCX mesh(es)"
+   ],
+   "V010 UCX material slots": [
+    "pass",
+    "SM_Nku_1.fbx: no slots"
+   ],
+   "V010 UCX triangle budget": [
+    "pass",
+    "SM_Nku_1.fbx: 84 UCX for 386 model triangles"
+   ],
+   "V010 UCX intersections": [
+    "pass",
+    "SM_Nku_1.fbx: no overlapping pairs among 7 pieces"
+   ],
+   "V010 UCX intersections coverage": [
+    "pass",
+    "SM_Nku_1.fbx: every neighbour pair evaluated"
+   ],
+   "V010 UCX piece gap (advisory)": [
+    "pass",
+    "SM_Nku_1.fbx: touch=0 below_band=0 in_band=14 wide=0 unmeasured=0; []"
+   ],
+   "V010 UCX shape": [
+    "pass",
+    "SM_Nku_1.fbx: 7 closed convex piece(s)"
+   ],
+   "V010 UCX coverage and offsets": [
+    "not_run",
+    "coverage of the model, offsets"
+   ],
+   "V012 mesh names": [
+    "pass",
+    "SM_Nku_1.fbx: 1 name(s) follow the grammar"
+   ],
+   "V012 UCX names": [
+    "pass",
+    "SM_Nku_1.fbx: 7 name(s) follow the grammar"
+   ]
+  }
+ }
+}

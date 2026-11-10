@@ -74,6 +74,38 @@
 SINTEZ провалы — те же, что в v007: VPM 2.1.1 (УКЭП), 2.2.1 и 2.10.4.1 (GeoJSON отложен), **2.3.17** (UCX не
 триангулирован); NPM 2.1.1, 2.1.2, 2.1.6 (нет Ground), 2.10.3.1 (код района `0000`), 4.1.4 (отметка).
 
+## UCX triangulation on a copy of v010 (#1016, not a new accepted version)
+
+AGR Tools `ucx.triangulate` core (`geom_core.ucx_plan`, nonconvex=report, 0,1 мм) применён к КОПИИ
+`pilot-v010/package-vpm/VPM_export_tri.blend`; FBX переэкспортирован с аргументами `export_vpm.py` в
+`C:/x/tec26-oks/AC08/ucx-tri-v001` (v010: 118 файлов, sha256 до/после совпадают). Геометрия/цвета не менялись:
+`SM_Nku_1_Main` в readback идентичен v010 (вершины, грани, UV, материалы). Данные реальные, не синтетика.
+
+| Проверка | pilot-v010 | ucx-tri-v001 | Доказательство |
+|---|---|---|---|
+| `UCX_SM_Nku_1_Main_001` в FBX readback | 6 четырёхугольников | 12 треугольников, те же 8 вершин, convex, closed, 0 open edges, без UV/материалов | `ucx-tri-v001/evidence.json` |
+| twinqa V003 triangulated / V010 UCX shape / V012 UCX names | fail / pass / pass | pass / pass / pass | то же, `twinqa_scene` |
+| SINTEZ 1.6.1 VPM verified/failed/undefined | 62 / 4 / 54 | **63 / 3 / 54** | `ucx-tri-v001/sintez-diff.json` |
+| SINTEZ 2.3.17 «Триангуляция» | failed (не треугольных = 6) | verified | то же |
+| SINTEZ 2.13.1/2.13.3/2.13.4/2.13.7 (UCX) | verified | verified | то же |
+| SINTEZ NPM (тот же ZIP v010) | 38 / 5 / 29 | 38 / 5 / 29 | то же |
+
+Оставшиеся провалы VPM — не UCX: 2.1.1 (УКЭП), 2.2.1 и 2.10.4.1 (GeoJSON отложен решением 2026-10-07).
+UCX-пункты 2.13.2, 2.13.5(а-в), 2.13.6 — `undefined` (ручные у чекера) до и после.
+
+Односторонний случай (один корпус, `tools/blender/ucx_build.py` Main, по умолчанию cell 0,25 м, gap 4 мм, на копии
+FBX ucx-tri-v001): **7 оболочек**, 84 треугольника, readback — все 7 closed + convex (0 open edges), V010 shape/
+intersections pass, V012 names pass, model→UCX max 3,5 мм [D134]. Это кейс-замер, не замена принятого UCX.
+Файлы: Drive `G:/Мой диск/AGR-evidence/1016-ac08-ucx/` (`SHA256SUMS.txt`, 92 файла; копия в `ucx-tri-v001/`).
+
+```
+blender -b --factory-startup --python jobs/TEC26-OKS/scripts/ucx_triangulate_vpm.py -- <copy of VPM_export_tri.blend>     <new>/package-vpm/SM_Nku_1 C:/x/tec26-oks/AC08/pilot-v010          # exit 1, no FBX, if a piece stays non-convex
+uv run python jobs/TEC26-OKS/scripts/package_vpm.py <new>/package-vpm/SM_Nku_1 <v010>/textures-vpm --no-geojson
+blender -b --factory-startup --python jobs/TEC26-OKS/scripts/run_agr_checker.py -- <new>/checker <new>/agr_check.json
+python jobs/TEC26-OKS/scripts/ucx_tri_core.py <v010>/agr_check.json <new>/agr_check.json <new>/sintez-diff.json
+blender -b --factory-startup --python-exit-code 1 --python tools/blender/ucx_build.py -- <new FBX copy> <one-sided>/SM_Nku_1/SM_Nku_1.fbx Main
+```
+
 ## Открытые вопросы к Артёму (не исправлялись)
 
 1. **Кровля** — тоже ID1; по правилу «7004 только двери, крыльца, цоколь и что на листе серое» она теперь синяя 5015
@@ -82,7 +114,8 @@ SINTEZ провалы — те же, что в v007: VPM 2.1.1 (УКЭП), 2.2.1
    внутренний контур поля есть. Нужен ли наружный?
 3. Раскладка рёбер — равномерная по полю (как сказал оператор), а не «200 мм от левого края с остатком 58/38 мм», как
    начерчено на листе; число рёбер одинаковое.
-4. UCX `Colizii_044` не триангулирован (SINTEZ 2.3.17) — триангулировать при экспорте?
+4. UCX `Colizii_044` не триангулирован (SINTEZ 2.3.17) — триангулировать при экспорте? Замер #1016: на копии v010 ucx.triangulate
+   снимает 2.3.17 (VPM 63/3/54), Main не меняется; выпускать ли это как новую принятую версию — решение Артёма.
 5. Пивот, адрес `Nku_1` и код `0000` — заглушки, как у КПП.
 
 ## Как повторить
