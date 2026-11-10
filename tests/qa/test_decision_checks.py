@@ -541,6 +541,27 @@ def test_ucx_open_mesh_named_once_for_many_pieces_1192():
     assert observed.count("2 MAF/Flora") == 1
 
 
+@pytest.mark.parametrize("bad", [float("nan"), float("inf")])
+def test_ucx_nonfinite_far_open_flora_never_passes_1192(bad):
+    from twinqa.scene import _ucx_maf_flora_finding
+
+    far = _open_quad("SM_Far_Flora", ((50, 0, 0.5), (51, 0, bad), (51, 1, 0.5), (50, 1, 0.5)))
+    ucx = _ucx_box("UCX_SM_Test_Ground_001", (0, 0, 0), (1, 1, 1))
+    finding = _ucx_maf_flora_finding([ucx], [far], "synthetic")[0]
+    assert finding.status == "not_run" and "SM_Far_Flora" in finding.observed
+
+
+def test_ucx_vertex_on_open_mesh_aabb_face_cannot_be_contained_1192():
+    """Exactly at the AABB face: a boundary point is never strictly inside the volume (touch exempt)."""
+    from twinqa.scene import _ucx_maf_flora_finding
+
+    card = _open_quad("SM_Card_Flora", _TILTED)
+    ucx = _ucx_box("UCX_SM_Test_Ground_001", (2, 0.5, 0.2), (2.2, 0.7, 0.4))  # x == AABB max
+    assert _ucx_maf_flora_finding([ucx], [card], "synthetic")[0].status == "pass"
+    inside = _ucx_box("UCX_SM_Test_Ground_001", (1.999, 0.5, 0.2), (2.2, 0.7, 0.4))
+    assert _ucx_maf_flora_finding([inside], [card], "synthetic")[0].status == "not_run"
+
+
 @pytest.mark.parametrize("seed", range(40))
 def test_ucx_aabb_prefilter_matches_full_containment_1192(seed):
     """Probe: the AABB prefilter never changes a closed-mesh verdict (fail stays fail, pass stays pass)."""
