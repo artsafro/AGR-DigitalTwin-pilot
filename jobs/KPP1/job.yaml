@@ -1,0 +1,58 @@
+schema_version: 1.0.0
+job_id: KPP1
+run_id: issue-1172-cold-run-v001
+synthetic: false
+path: deviation
+inputs: &inputs
+- path: jobs/KPP1/cold-run-1172/inputs-manifest.json
+  sha256: b694d23a38067658fc6c5867f10267b9d79e84ba260a6d7ed671b01c5944031d
+- path: jobs/KPP1/object.json
+  sha256: a34cc18038e9440e164518523c39b25be0e7d82e0582348e4411b0763bcd020c
+- path: docs/methods/building-body/kpp1-drawing/plan-contours.json
+  sha256: 087f1055820ec278979bb2b9e4598fa66878fc4ea1f3f5c6929dc25ad86a891f
+- path: jobs/KPP1/cold-run-1172/plan-repro-v001.json
+  sha256: 73df3459f64d14bba256941935c6851628e3f0cffe25ee184dba595fe90928cb
+artifacts: []
+deviations:
+- gate: inputs
+  what_failed: "The АС.03 DWGs are not on the named asset store (G:/Мой диск/AGR-assets/tec26 holds only album/TEC26_na_RR_1.pptx and ac08); no repo file names their location. The #967 DXF readback (C:/x/methods/building-body/kpp1/readback) is gone."
+  what_was_tried: "Searched Downloads/Documents/Desktop: found the three DWGs in C:/Users/artsafro/Downloads with the census SHA-256 (3/3 equal). Re-ran DXFOUT 2018 with AutoCAD 2025 accoreconsole on a copy (C:/x/ev_t_0b1dbdbf/src/L03.dwg) and plan_from_dxf.py extract with the layer map rebuilt from plan-account.json."
+  new_tool_written: "none"
+  result: "Bands and coverage of plan-contours.json and the full plan-account.json reproduced exactly (cold-run-1172/plan-repro-v001.json); method/opening_decision/source fields of the committed file are hand-written, not tool output (gap G4). Inputs stay review: the sources live outside the asset store and outside the repo (gap G2/G3)."
+gates:
+  inputs:
+    status: review
+    note: "Inventory: the 4 external sources (3 АС.03 DWGs, album pptx) sit in inputs-manifest.json because the walker takes only repo-relative paths (gap G3); object.json, plan-contours.json and its reproduction receipt are direct; source authority above the entrance frames (one L03 plan copied into both bands vs the Revit L1 rectangle) and the profile are open user questions in parts-v001.json; DWGs are outside the asset store."
+    evidence: *inputs
+  parts:
+    status: review
+    note: "Draft PartsList, validated by dt_ai.core.models.PartsList (8 parts, NPM 145 000 / 150 000, VPM 960 000 / 1 000 000); Gate 1 (user) not given, 5 questions open. Build must not start (D111/D124/D125)."
+    evidence:
+    - path: jobs/KPP1/cold-run-1172/parts-v001.json
+      sha256: 7868fbee353a3f192a9b04fb041f46787839cf07887e08d17d5dbd822444a775
+  operations:
+    status: missing
+    note: "waits-user (Gate 1) then waits-max: the oks-vpm route for body/windows/roof is AGR Tools stages 1-4 in 3ds Max; the offline kernel route (dt_ai.ops on plan-contours) needs the confirmed PartsList first."
+    evidence: []
+  budgets:
+    status: missing
+    note: "Needs a built master (after operations)."
+    evidence: []
+  export_readback:
+    status: missing
+    note: "waits-max: export is Max export [D212] on the oks-vpm route; Blender readback (tools/blender/fbx_readback.py) is ready once an export exists."
+    evidence: []
+  report:
+    status: review
+    note: "Cold-run log, not a delivery report: gates, receipts and procedure gaps."
+    evidence:
+    - path: jobs/KPP1/cold-run-1172/RUN-LOG.md
+      sha256: a073d51065ffb218c7ab288930a8a9a197a427a8eb0befa3a86ea65ea13c0f6b
+  visual:
+    status: missing
+    note: "waits-user: board review tool decision on a versioned sheet (D119); nothing to show before a build."
+    evidence: []
+  checker:
+    status: missing
+    note: "waits-visual: SINTEZ AGR Checker runs after visual acceptance (D104)."
+    evidence: []

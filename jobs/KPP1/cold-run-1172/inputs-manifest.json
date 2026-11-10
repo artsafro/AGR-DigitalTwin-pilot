@@ -1,0 +1,16 @@
+{
+ "manifest": "external-inputs/1",
+ "job": "KPP1",
+ "run_id": "issue-1172-cold-run-v001",
+ "why": "The job walker accepts only repository-relative evidence paths; customer DWGs are not committed (rule 57, no LFS). This manifest is the in-repo proxy; its rows are re-hashed by any agent with access to the paths.",
+ "files": [
+  {"path": "C:/Users/artsafro/Downloads/22Е56-АР2-1002-АС.03-R1_L01_без подписей.dwg", "sha256": "cb74ba142142e9181dfc14e235f94aed7eabec597e746760e5a972427f0f3648", "sheet": "L01 facades 1-4, 4-1, А-В, В-А", "units": "mm ($INSUNITS 4)", "role": "facade heights, openings (proposed)", "on_asset_store": false},
+  {"path": "C:/Users/artsafro/Downloads/22Е56-АР2-1002-АС.03-R1_L02_без подписей.dwg", "sha256": "428426002f2642d29e97a8db34053546dc1e427bdff8aeef9ad1c81005b73cb2", "sheet": "L02 colour facades", "units": "mm ($INSUNITS 4)", "role": "finishes", "on_asset_store": false},
+  {"path": "C:/Users/artsafro/Downloads/22Е56-АР2-1002-АС.03-R1_L03_без подписей.dwg", "sha256": "ad1de2b203bd4394bd3604642cd41bd8f3b2427ec23b900413bd396612624469", "sheet": "L03 plan at 0.000", "units": "mm ($INSUNITS 4)", "role": "plan contour (plan_from_dxf, hatch)", "on_asset_store": false},
+  {"path": "G:/Мой диск/AGR-assets/tec26/album/TEC26_na_RR_1.pptx", "sha256": "74e50277df5e2dfde3ba7ab945eb6bab45a8fa8c0207d7aca3a136d9656b78ac", "sheet": "ИД slides 25-30 (STATE.md)", "units": "n/a (images)", "role": "finish bands, cassette module, RAL", "on_asset_store": true}
+ ],
+ "coordinate_system": "object frame of jobs/KPP1/object.json: grid axis 1 / axis А origin (25884.5, 0 mm), frame_shift_m -14.655 / -5.355; 0.000 = absolute 171.050 m; MSK-77 placement deferred by the user (STATE.md 2026-10-07)",
+ "requirement": "Moscow regulation NPM / VPM for OKS (docs/domain/areas/body.md BODY-F); profile for this run is an open Gate 1 question",
+ "source_authority": "open: the L03 hatch contour (27.60 x 13.06 m, with 0.70 m entrance-frame bumps) is copied into both bands 0.000-3.900-7.909; Revit L1 is 27.66 x 11.66 m (parts-v001.json question 1)",
+ "synthetic": false
+}
