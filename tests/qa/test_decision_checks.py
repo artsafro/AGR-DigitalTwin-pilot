@@ -333,14 +333,17 @@ def test_edge_loop_t_junction_is_review_never_fail_d200():
 
 # --- Ground skirt >= 1 m [GND-03] (blocking) ----------------------------------------------------------------
 
-def _ground_face_mesh(name, verts, polys):
+def _ground_face_mesh(name, verts, polys, materials=None):
     m = mesh(name=name, tris=len(polys), degrees={"3": len(polys)})
-    m["face_geometry"] = {"vertices": verts, "polygons": polys}
+    fg = {"vertices": verts, "polygons": polys}
+    if materials is not None:
+        fg["polygon_material"] = materials
+    m["face_geometry"] = fg
     return m
 
 
-def _skirt_finding(verts, polys, kind="npm"):
-    found = scene_findings(rb(_ground_face_mesh("SM_Test_Ground", verts, polys)), kind, "ground",
+def _skirt_finding(verts, polys, kind="npm", materials=None):
+    found = scene_findings(rb(_ground_face_mesh("SM_Test_Ground", verts, polys, materials)), kind, "ground",
                            PROFILES.npm if kind == "npm" else PROFILES.vpm)
     return next(f for f in found["V003"] if f.name == "ground skirt depth")
 
@@ -611,6 +614,99 @@ def test_ground_skirt_spanning_bottom_edge_covering_half_a_side_fails_1133():
     verts, polys = _fan_skirt(1.0, last_span=0.5)
     f = _skirt_finding(verts, polys)
     assert f.status == "fail" and f.measured == pytest.approx(0.0)
+
+
+def _step_band_ground(skirt_sides=4):
+    """A 10x10 quad Ground with a closed ~76 deg interior step band (a raised 4x4 plateau) and a
+    1 m skirt on the outer boundary. ``skirt_sides`` < 4 removes one side of the skirt."""
+    verts = []
+
+    def V(x, y, z):
+        verts.append([x, y, z])
+        return len(verts) - 1
+
+    a = V(0, 0, 0); b = V(10, 0, 0); c = V(10, 10, 0); d = V(0, 10, 0)
+    a_ = V(0, 0, -1); b_ = V(10, 0, -1); c_ = V(10, 10, -1); d_ = V(0, 10, -1)
+    e = V(4, 4, 0); f = V(6, 4, 0); g = V(6, 6, 0); h = V(4, 6, 0)
+    i = V(4.5, 4.5, 2); j = V(5.5, 4.5, 2); k = V(5.5, 5.5, 2); l = V(4.5, 5.5, 2)
+    polys, mats = [], []
+
+    def add(p, m):
+        polys.append(p)
+        mats.append(m)
+
+    tile = "M_Ground_Tile"
+    for q in ([a, b, f, e], [b, c, g, f], [c, d, h, g], [d, a, e, h]):
+        add([q[0], q[1], q[2]], tile)
+        add([q[0], q[2], q[3]], tile)
+    for q in ([e, f, j, i], [f, g, k, j], [g, h, l, k], [h, e, i, l]):
+        add([q[0], q[1], q[2]], tile)
+        add([q[0], q[2], q[3]], tile)
+    add([i, j, k], tile)
+    add([i, k, l], tile)
+    for q in ([a, b, b_, a_], [b, c, c_, b_], [c, d, d_, c_], [d, a, a_, d_])[:skirt_sides]:
+        add([q[0], q[1], q[2]], "M_Ground_Skirt")
+        add([q[0], q[2], q[3]], "M_Ground_Skirt")
+    return verts, polys, mats
+
+
+def _tilted_skirt_ground(lean):
+    """A flat 10x10 quad with a full skirt whose walls lean outward by ``lean`` (XY), giving each
+    skirt face an upward normal ratio ~ ``lean``. ``lean`` < 1e-4 keeps the skirt-bottom XY inside
+    the 0.1 mm pairing tolerance so the drop still measures 1 m."""
+    verts = []
+
+    def V(x, y, z):
+        verts.append([x, y, z])
+        return len(verts) - 1
+
+    t0 = V(0, 0, 0); t1 = V(10, 0, 0); t2 = V(10, 10, 0); t3 = V(0, 10, 0)
+    s0 = V(-lean, -lean, -1); s1 = V(10 + lean, -lean, -1)
+    s2 = V(10 + lean, 10 + lean, -1); s3 = V(-lean, 10 + lean, -1)
+    polys, mats = [], []
+
+    def add(p, m):
+        polys.append(p)
+        mats.append(m)
+
+    add([t0, t1, t2], "M_Ground_Tile")
+    add([t0, t2, t3], "M_Ground_Tile")
+    for q in ([t0, t1, s1, s0], [t1, t2, s2, s1], [t2, t3, s3, s2], [t3, t0, s0, s3]):
+        add([q[0], q[1], q[2]], "M_Ground_Skirt")
+        add([q[0], q[2], q[3]], "M_Ground_Skirt")
+    return verts, polys, mats
+
+
+def test_ground_skirt_steep_interior_step_band_passes_gnd03():
+    # A closed ~76 deg interior step band is surface, not perimeter: its rim must not detour the
+    # outer loop. The full 1 m skirt then makes every outer edge drop 1 m.
+    verts, polys, mats = _step_band_ground()
+    f = _skirt_finding(verts, polys, materials=mats)
+    assert f.status == "pass" and f.measured == pytest.approx(1.0)
+
+
+def test_ground_skirt_steep_step_band_skirt_removed_one_side_fails_gnd03():
+    # Same ground with one skirt side removed: the bare outer edge still fails (unchanged behaviour).
+    verts, polys, mats = _step_band_ground(skirt_sides=3)
+    f = _skirt_finding(verts, polys, materials=mats)
+    assert f.status == "fail" and f.measured == pytest.approx(0.0)
+
+
+def test_ground_skirt_float_noise_tilted_skirt_stays_skirt_gnd03():
+    # A *_Skirt wall tilted by float noise (nz/|n| ~ 1e-9) must stay a skirt, not become surface:
+    # the full skirt still measures a 1 m drop.
+    verts, polys, mats = _tilted_skirt_ground(lean=1e-9)
+    f = _skirt_finding(verts, polys, materials=mats)
+    assert f.status == "pass" and f.measured == pytest.approx(1.0)
+
+
+def test_ground_skirt_upward_skirt_face_excluded_by_material_gnd03():
+    # Material guard: a flat upward face (nz/|n| = 1) named *_Skirt is excluded from the surface
+    # even though the geometry alone (nz > eps*|n|) would admit it.
+    verts = [[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0]]
+    polys = [[0, 1, 2], [0, 2, 3]]
+    assert _skirt_finding(verts, polys).status == "fail"  # geometry alone: surface, no skirt
+    assert _skirt_finding(verts, polys, materials=["M_Ground_Skirt"] * 2).status == "not_run"
 
 
 def test_edge_loop_100x100_grid_runtime_bounded_d200():
