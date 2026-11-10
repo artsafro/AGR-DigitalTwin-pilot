@@ -164,6 +164,51 @@ def test_package_fails_closed_and_writes_nothing(tmp_path, case):
 
 
 # ---- atlas: byte parity on an accepted job spec + fail-closed
+# Keep workstation assets read-only; stage verified bytes beside the temporary spec.
+DRIVE_TEXTURES = Path("G:/Мой диск/AGR-evidence/tec26-oks/user-textures")
+
+
+def atlas_parity_spec(spec, stage, drive_root=DRIVE_TEXTURES):
+    import hashlib
+
+    data = json.loads(spec.read_text(encoding="utf-8"))
+    stage.mkdir()
+    for index, finish in enumerate(data["finishes"].values()):
+        source = finish.get("source_texture")
+        if source is None:
+            continue
+        local = Path(source["path"])
+        raw = local.read_bytes()
+        assert hashlib.sha256(raw).hexdigest() == source["sha256"], f"sha256 mismatch: {local}"
+        target = stage / f"source-{index}.png"
+        target.write_bytes(raw)
+        source["path"] = str(target)
+    target_spec = stage / "spec.json"
+    target_spec.write_text(json.dumps(data), encoding="utf-8")
+    return target_spec
+
+
+def test_atlas_parity_uses_verified_drive_copy_after_local_rename(tmp_path):
+    import hashlib
+
+    local = tmp_path / "panel.png"
+    local.write_bytes(b"synthetic texture bytes; resolver does not decode")
+    drive = tmp_path / "drive"
+    drive.mkdir()
+    raw = local.read_bytes()
+    (drive / local.name).write_bytes(raw)
+    local.rename(tmp_path / "panel.renamed.png")
+    spec = tmp_path / "input.json"
+    spec.write_text(json.dumps({"finishes": {"Panel": {"source_texture": {
+        "path": str(local), "sha256": hashlib.sha256(raw).hexdigest(),
+    }}}}), encoding="utf-8")
+    prepared = atlas_parity_spec(spec, tmp_path / "stage", drive)
+    source = json.loads(prepared.read_text())["finishes"]["Panel"]["source_texture"]
+    assert Path(source["path"]).read_bytes() == raw
+    assert not local.exists()
+    assert (drive / local.name).read_bytes() == raw
+
+
 def test_atlas_is_byte_identical_to_the_tec26_job_script_on_ac08(tmp_path):
     spec = ROOT / "jobs/TEC26-OKS/AC08/vpm_textures.json"
     rj = run([sys.executable, ROOT / "jobs/TEC26-OKS/scripts/make_npm_atlas.py", spec, tmp_path / "job"])
