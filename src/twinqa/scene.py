@@ -4,6 +4,7 @@ Fills the scene stages the header-only validator leaves not_run: V002 (units and
 units come from a pure-Python GlobalSettings read), V003 (triangulation,
 triangle limits, object types), V004 (applied transforms, co-directional overlap clearance, regulatory topology defect count, MAF smoothing/flipped normals/dimensions (GroundEl)), V006 (NPM embedded images),
 V008 (one UV channel, mirrored islands, glass tile), V009 (texel density from UV and the diffuse side per tile),
+V005 (color attributes, reg 4.1.1, review only),
 V012 (VPM OKS MainGlass object and glass material names), V010 (UCX presence, no material slots, triangle budget, intersections, intersection coverage, advisory gap, piece shape closed/convex; coverage and offsets stay not_run),
 V013 (origin, geometric-centre pivot, shared pivot). Triangle limits follow the 2026-10-07 decisions on conflicts #1 and #3.
 Ground FBX: Flora checks from twinqa.flora (V015 dimensions, V005 maps, V003 Flora share; #191).
@@ -949,7 +950,8 @@ def _ground_footprint_findings(meshes: list[dict], ucx: list[dict], src: str, gr
 
 
 SKIRT_MIN_M = 1.0  # GND-03: Ground perimeter polygons extruded down by at least 1 m (reg p.7 §3.4, p.28 §3.7)
-_SKIRT_XY_ROUND = 4  # XY rounding (0.1 mm) pairing a surface perimeter edge with its skirt-bottom copy (GND-03)
+_SKIRT_XY_ROUND = 4  # XY rounding (0.1 mm): a perimeter edge shorter than this in XY is degenerate (GND-03)
+_SKIRT_XY_TOL = 10.0 ** -_SKIRT_XY_ROUND  # XY distance (0.1 mm) within which a mesh edge lies on a perimeter edge
 
 
 def _polygon_normal(verts: list, poly) -> tuple[float, float, float]:
@@ -969,15 +971,73 @@ def _xy_key(x, y) -> tuple[float, float]:
     return round(float(x), _SKIRT_XY_ROUND), round(float(y), _SKIRT_XY_ROUND)
 
 
+def _skirt_cells(x0: float, y0: float, x1: float, y1: float, cell: float) -> set[tuple[int, int]]:
+    """Grid cells of samples spaced <= ``cell / 2`` along an XY segment (every point of the
+    segment lies within ``cell / 4`` of a sample, so two segments sharing a point have samples
+    at most two cells apart per axis)."""
+    steps = int(math.ceil(math.hypot(x1 - x0, y1 - y0) / (cell / 2.0))) or 1
+    return {(math.floor((x0 + (x1 - x0) * m / steps) / cell), math.floor((y0 + (y1 - y0) * m / steps) / cell))
+            for m in range(steps + 1)}
+
+
+def _skirt_edge_drop(vi, vj, segs) -> float:
+    """Smallest skirt drop along the perimeter edge ``vi``-``vj`` (GND-03, #1133 case 1).
+
+    At every point of the edge's XY segment the drop is the top Z minus the lowest Z of the mesh
+    edges that cover that point collinearly in XY (within ``_SKIRT_XY_TOL``); the edge itself
+    covers it at drop 0, so an uncovered stretch gives 0. Between breakpoints (ends of covering
+    edges) the drop is the upper envelope of linear functions, so its minimum is at a piece end
+    or at a crossing of two of those lines: those are the points evaluated, nothing is sampled.
+    """
+    x0, y0, z0 = float(vi[0]), float(vi[1]), float(vi[2])
+    dx, dy, dz = float(vj[0]) - x0, float(vj[1]) - y0, float(vj[2]) - z0
+    l2 = dx * dx + dy * dy
+    length = math.sqrt(l2)
+    eps = _SKIRT_XY_TOL / length
+    lines = [(0.0, 1.0, 0.0, 0.0)]  # (t_lo, t_hi, drop at t=0, drop slope): the edge itself
+    for ax, ay, az, bx, by, bz in segs:
+        if abs((ax - x0) * dy - (ay - y0) * dx) / length > _SKIRT_XY_TOL:
+            continue
+        if abs((bx - x0) * dy - (by - y0) * dx) / length > _SKIRT_XY_TOL:
+            continue
+        ta = ((ax - x0) * dx + (ay - y0) * dy) / l2
+        tb = ((bx - x0) * dx + (by - y0) * dy) / l2
+        lo, hi = max(min(ta, tb), 0.0), min(max(ta, tb), 1.0)
+        if hi - lo <= eps or tb == ta:
+            continue
+        slope = (bz - az) / (tb - ta)  # segment Z(t) = az + slope * (t - ta)
+        lines.append((lo, hi, z0 - (az - slope * ta), dz - slope))
+    cuts = sorted({0.0, 1.0, *(t for ln in lines for t in ln[:2])})
+    best = math.inf
+    for t0, t1 in zip(cuts, cuts[1:]):
+        if t1 - t0 <= eps:
+            continue
+        cover = [(c, m) for lo, hi, c, m in lines if lo <= t0 + eps and hi >= t1 - eps]
+        points = [t0, t1]
+        for k, (c1, m1) in enumerate(cover):
+            for c2, m2 in cover[k + 1:]:
+                if m1 != m2:
+                    t = (c2 - c1) / (m1 - m2)
+                    if t0 < t < t1:
+                        points.append(t)
+        for t in points:
+            drop = max(c + m * t for c, m in cover)
+            if drop < best:
+                best = drop
+    return best if math.isfinite(best) else 0.0
+
+
 def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
     """``(status, depth)`` of the Ground perimeter skirt (GND-03), or ``None`` when unmeasurable.
 
     ``status`` is ``"fail"`` for broken (empty/partial/non-finite) face data, ``"unmeasurable"``
     when the mesh has no upward-facing surface or no surface perimeter to measure, and ``"ok"``
     when the perimeter drop was measured. The skirt extrudes the Ground surface's perimeter
-    straight down, so for every perimeter edge of the upward-facing surface the mesh must carry
-    the same XY edge at least ``SKIRT_MIN_M`` lower. The drop is measured per perimeter edge
-    (top Z vs the lowest Z at the same XY), never at the convex-hull corners alone: a skirt on
+    straight down, so under every perimeter edge of the upward-facing surface the mesh must carry
+    edges at least ``SKIRT_MIN_M`` lower that lie on the same XY segment, either one copy per
+    perimeter edge or one bottom edge spanning several collinear perimeter edges (#1133 case 1).
+    The drop is measured per perimeter edge
+    (top Z vs the lowest Z under the same XY segment), never at the convex-hull corners alone: a skirt on
     two sides of a quad leaves the two other perimeter edges uncovered, which a corner-only
     measure cannot see. The measured depth is the smallest drop over all perimeter edges; a
     sloped surface with relief but no skirt fails (each perimeter edge has no lower copy -> drop
@@ -1025,42 +1085,43 @@ def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
     if not perimeter:
         return "unmeasurable", None
 
-    # lowest Z at each XY edge over the whole mesh (the skirt bottom copies the perimeter XY)
-    lowest: dict[tuple[tuple[float, float], tuple[float, float]], list[float]] = {}
+    # every mesh edge with an XY extent (vertical edges have none), on a uniform XY grid; the skirt
+    # bottom lies under the perimeter XY but may span several collinear perimeter edges (#1133)
+    segs: list[tuple[float, float, float, float, float, float]] = []
+    seen: set[tuple[int, int]] = set()
+    total = 0.0
     for p in polys:
         n = len(p)
         for k in range(n):
             a, b = p[k], p[(k + 1) % n]
+            key = (a, b) if a < b else (b, a)
+            if key in seen:
+                continue
+            seen.add(key)
             va, vb = verts[a], verts[b]
-            ka, kb = _xy_key(va[0], va[1]), _xy_key(vb[0], vb[1])
-            if ka == kb:
+            length = math.hypot(float(vb[0]) - float(va[0]), float(vb[1]) - float(va[1]))
+            if length <= _SKIRT_XY_TOL:
                 continue  # vertical edge: zero XY length, not a perimeter copy
-            if ka <= kb:
-                key, z0, z1 = (ka, kb), float(va[2]), float(vb[2])
-            else:
-                key, z0, z1 = (kb, ka), float(vb[2]), float(va[2])
-            cur = lowest.get(key)
-            if cur is None:
-                lowest[key] = [z0, z1]
-            else:
-                if z0 < cur[0]:
-                    cur[0] = z0
-                if z1 < cur[1]:
-                    cur[1] = z1
+            segs.append((float(va[0]), float(va[1]), float(va[2]), float(vb[0]), float(vb[1]), float(vb[2])))
+            total += length
+    cell = max(total / len(segs), 100 * _SKIRT_XY_TOL) if segs else 1.0
+    grid: dict[tuple[int, int], list[int]] = {}
+    for s, seg in enumerate(segs):
+        for c in _skirt_cells(seg[0], seg[1], seg[3], seg[4], cell):
+            grid.setdefault(c, []).append(s)
 
     best = math.inf
     for i, j in perimeter:
         vi, vj = verts[i], verts[j]
-        ki, kj = _xy_key(vi[0], vi[1]), _xy_key(vj[0], vj[1])
-        if ki == kj:
+        if _xy_key(vi[0], vi[1]) == _xy_key(vj[0], vj[1]):
             drop = 0.0  # degenerate perimeter edge: no downward skirt
         else:
-            if ki <= kj:
-                key, z_top = (ki, kj), (float(vi[2]), float(vj[2]))
-            else:
-                key, z_top = (kj, ki), (float(vj[2]), float(vi[2]))
-            bot = lowest.get(key)
-            drop = min(z_top[0] - bot[0], z_top[1] - bot[1]) if bot is not None else 0.0
+            near: set[int] = set()
+            for cx, cy in _skirt_cells(float(vi[0]), float(vi[1]), float(vj[0]), float(vj[1]), cell):
+                for ox in range(-2, 3):
+                    for oy in range(-2, 3):
+                        near.update(grid.get((cx + ox, cy + oy), ()))
+            drop = _skirt_edge_drop(vi, vj, [segs[s] for s in near])
         if drop < 0.0:
             drop = 0.0
         if drop < best:
@@ -1271,6 +1332,52 @@ def main_glass_findings(meshes: list[dict], stem: str, src: str) -> list[Finding
     return out
 
 
+def _color_layer_names(attrs) -> list[str] | None:
+    """Names of readback color attributes; None when the value is not a list of {name: str} dicts."""
+    if not isinstance(attrs, list):
+        return None
+    names = []
+    for attr in attrs:
+        if not isinstance(attr, dict) or not isinstance(attr.get("name"), str):
+            return None
+        names.append(attr["name"])
+    return names
+
+
+def color_attribute_finding(meshes: list[dict], src: str) -> Finding:
+    """V005 'color attributes' (reg 2026 req 4.1.1, SINTEZ lp_color_attributes / check_color_attributes).
+
+    The regulation only recommends removing color attributes (they break the UV display in 3ds Max),
+    so any layer is 'review', not 'fail'. Every mesh, UCX included, is checked: SINTEZ counts the file.
+    A mesh without the readback key (old readback JSON), a malformed value or no meshes at all is
+    not_run, never pass.
+    """
+    expected = "no color attributes (reg 4.1.1: recommended to remove)"
+    if not meshes:
+        return _f("not_run", "color attributes", f"{src}: no meshes in readback", expected, [], src)
+    unknown, found = [], {}
+    for m in meshes:
+        names = _color_layer_names(m.get("color_attributes"))
+        legacy = m.get("legacy_vertex_colors", 0)
+        legacy_ok = isinstance(legacy, int) and not isinstance(legacy, bool) and legacy >= 0
+        if names is None or not legacy_ok:
+            unknown.append(m["name"])
+            continue
+        if names or legacy:
+            found.setdefault(m["name"], []).extend(names or [f"<{legacy} legacy vertex_colors>"])
+    if unknown:
+        return _f("not_run", "color attributes",
+                  f"{src}: readback has no color_attributes for {len(unknown)} mesh(es): {unknown[:5]}",
+                  expected, [], src, data={"unknown": unknown})
+    count = sum(len(v) for v in found.values())
+    if not found:
+        return _f("pass", "color attributes", f"{src}: 0 color attributes on {len(meshes)} mesh(es)", expected,
+                  [], src, measured=0, threshold=0, data={"objects": {}})
+    labels = [f"{obj}:{name}" for obj, names in found.items() for name in names]
+    return _f("review", "color attributes", f"{src}: {count} on {len(found)} object(s): {labels[:10]}", expected,
+              [], src, measured=count, threshold=0, data={"objects": found})
+
+
 def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule: dict | None = None,
                    flora_share: int = FLORA_SHARE, *, maf_sizes=None, smoothing_angle_deg=None,
                    ground_area_m2=None, footprint_holes=None, diffuse_px=None) -> dict[str, list[Finding]]:
@@ -1292,6 +1399,8 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
     meshes = rb["meshes"]
     ucx = [m for m in meshes if m["name"].upper().startswith("UCX_")]
     out["V002"].extend(_v002_findings(rb, meshes, src))
+    # V005: color attributes (reg 4.1.1, SINTEZ lp_color_attributes); review only, the regulation recommends removal
+    out.setdefault("V005", []).append(color_attribute_finding(meshes, src))
     tris = sum(m["triangles"] for m in meshes if m not in ucx)  # collision is excluded (reg p.28 §3.9)
 
     # V003: triangulated on export, triangle limits, no foreign objects (reg p.6-8, 28-29)

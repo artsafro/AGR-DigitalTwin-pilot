@@ -19,6 +19,10 @@ scripts (compare_facades.py, run_agr_checker.py) and recorded in REPORT.md.
 `--invariants relative` (default, [D201], #968): the kernel judges every op against the source baseline (no new
 violators) plus UV/material preservation; the source's own violations are the recorded baseline gate, not a failure.
 `--invariants absolute` reproduces the #753 run.
+`--repair` (#1144): `repair.flip_close` (run_kernel_ops.repair_flip_close) runs first on the source; it must be
+applied (no new violators vs the source, UV/material ids kept, back-face px and unhidden borders reduced) or the run
+stops. The repaired state (R00) is the NEW baseline the 19 ops are judged against and the base of the kernel output;
+the delivered comparison expects exactly the recorded cap area on top of the delivered area.
 Pattern: none | new-case: job-local AC08 L4 source-FBX -> kernel -> delivered-FBX comparison driver (#753).
 """
 from __future__ import annotations
@@ -289,8 +293,10 @@ def pivot_offset(meta_path: Path):
     return -_finite(piv, "pivot_revit_internal_m")
 
 
-def compare_delivered(out_state, src_report, delivered_report, png_dir: Path | None, offset=None):
-    """Kernel output moved by `offset` (the declared pivot rebase) vs the delivered FBX."""
+def compare_delivered(out_state, src_report, delivered_report, png_dir: Path | None, offset=None,
+                      added_area_m2: float = 0.0):
+    """Kernel output moved by `offset` (the declared pivot rebase) vs the delivered FBX. `added_area_m2`: area the
+    kernel output adds on purpose (repair caps, #1144); the area check expects delivered + exactly that."""
     offset = np.zeros(3) if offset is None else _finite(offset, "offset")
     m = _meshes(delivered_report, {DELIVERED_BODY, DELIVERED_UCX}, "delivered FBX")
     g = m[DELIVERED_BODY]["face_geometry"]
@@ -329,11 +335,12 @@ def compare_delivered(out_state, src_report, delivered_report, png_dir: Path | N
            "kernel_area_m2": _area(kv, kt), "delivered_area_m2": _area(dv, dt),
            "bounds_max_abs_dev_m": float(max(np.abs(kv.min(0) - dv.min(0)).max(), np.abs(kv.max(0) - dv.max(0)).max())),
            "kernel_to_delivered_max_m": float(d_kd.max()), "delivered_to_kernel_max_m": float(d_dk.max()),
-           "ucx_vertex_set_dev_m": ucx_dev, "silhouettes": views}
+           "ucx_vertex_set_dev_m": ucx_dev, "silhouettes": views,
+           **({"expected_added_area_m2": float(added_area_m2)} if added_area_m2 else {})}
     area_tol = DELIVERED_DIST_TOL_M * 0.01 * res["kernel_area_m2"]
     res["checks"] = {
         "surface_distance": max(res["kernel_to_delivered_max_m"], res["delivered_to_kernel_max_m"]) < DELIVERED_DIST_TOL_M,
-        "area": abs(res["kernel_area_m2"] - res["delivered_area_m2"]) < area_tol,
+        "area": abs(res["kernel_area_m2"] - res["delivered_area_m2"] - float(added_area_m2)) < area_tol,
         "bounds": res["bounds_max_abs_dev_m"] < DELIVERED_DIST_TOL_M,
         "ucx": ucx_dev < DELIVERED_DIST_TOL_M,
         "silhouettes": all(x["passed"] for x in views.values())}
@@ -358,8 +365,10 @@ def _require_new(inputs, *outs):
 
 
 def run(source_fbx: Path, delivered_fbx: Path, work: Path, evidence: Path, blender: bool = True,
-        relative: bool = True):
+        relative: bool = True, repair: bool = False):
     from dt_ai.core.blender_runner import run_blender
+    if repair and not relative:
+        raise InputError("--repair needs relative invariants: the repaired state is the new baseline [D201]")
     delivered_meta = Path(delivered_fbx).parent.parent / "export_meta.json"
     inputs = [source_fbx, delivered_fbx, delivered_meta, rko.SOURCE]
     for p in inputs:
@@ -378,9 +387,16 @@ def run(source_fbx: Path, delivered_fbx: Path, work: Path, evidence: Path, blend
     parity_rows, mat_map = source_parity(rb["source"])
     source, drops = state_from_source(rb["source"], mat_map)
     ctx = Context()
+    states = {"S00_source": source}
+    repair_rec = None
+    if repair:
+        repaired, repair_rec = rko.repair_flip_close(source)
+        if not repair_rec["applied"]:
+            raise InputError(f"repair.flip_close not applied: {repair_rec['refusal_or_rollback']}")
+        source = repaired
+        states["R00_repair_flip_close"] = repaired
     before = rko.scene_metrics(source)
     rows = rko.run_ops(source, relative=relative)
-    states = {"S00_source": source}
     for k, r in enumerate(rows, 1):
         st = r.get("after_state")
         r["label"] = f"S{k:02d}_{r['op']}_{r['part'].replace('+', '_')}"
@@ -400,8 +416,10 @@ def run(source_fbx: Path, delivered_fbx: Path, work: Path, evidence: Path, blend
             not_exported[label] = f"not exported: polygons merge different material ids {merged}"
             continue
         payload[label], notes[label] = rko.export_payload(st)
-    result = {"issue": 968 if relative else 753, "invariants": "relative [D201]" if relative else "absolute",
+    result = {"issue": (1144 if repair else 968) if relative else 753,
+              "invariants": "relative [D201]" if relative else "absolute",
               "inputs": hashes, "source_parity": parity_rows, "drops": drops, "profile": rko.PROFILE,
+              **({} if repair_rec is None else {"repair": repair_rec}),
               "parts": {k: {"faces": len(p["faces"]), "vertices": len(p["v"])} for k, p in source.items()},
               "before": before, "before_visibility": rko.visibility(source, ctx), "ops": rows,
               "kernel_applied_ops": applied, "not_exported": not_exported,
@@ -425,7 +443,8 @@ def run(source_fbx: Path, delivered_fbx: Path, work: Path, evidence: Path, blend
     png_dir = work / "silhouettes"
     png_dir.mkdir()
     result["delivered_comparison"] = compare_delivered(out_state, rb["source"], rb["delivered"], png_dir,
-                                                       pivot_offset(delivered_meta))
+                                                       pivot_offset(delivered_meta),
+                                                       0.0 if repair_rec is None else repair_rec["cap_area_m2"])
     after = {_key(p): sha256(p) for p in inputs}
     if after != hashes:
         raise InputError("an input changed during the run")
@@ -447,11 +466,12 @@ def gates(r):
                                                  "numbers": "baseline (было до нас): " + inv["numbers"]})
     else:
         inv_gate = ("kernel_invariants_on_source", inv)
-    return {
+    out = {
         "source_fbx_equals_pinned_dump": {"passed": r["source_parity"]["passed"],
                                           "numbers": f"{r['source_parity']['polygons']} polygons, max corner dev "
                                                      f"{r['source_parity']['max_corner_dev_m']:.2e} m, UV dev "
                                                      f"{r['source_parity']['max_uv_dev']:.2e}"},
+        **({} if "repair" not in r else {"repair_flip_close": _repair_gate(r["repair"])}),
         inv_gate[0]: inv_gate[1],
         "kernel_ops_applied": {"passed": bool(r["kernel_applied_ops"]),
                                "numbers": f"{sum(bool(o.get('applied')) for o in ops)}/{len(ops)} applied"},
@@ -460,6 +480,19 @@ def gates(r):
         "delivered_fbx_comparison": {"passed": r["delivered_comparison"]["passed"],
                                      "numbers": ", ".join(f"{k}={v}" for k, v in
                                                           r["delivered_comparison"]["checks"].items())}}
+    return out
+
+
+def _repair_gate(rep):
+    """#1144: the repair op is applied only with no new violators, UV/material kept and both counts reduced."""
+    caps = sum(len(c) for c in rep["caps"].values())
+    flips = sum(len(f) for f in rep["flipped"].values())
+    return {"passed": rep["applied"] is True and rep["back_face_px"][1] < rep["back_face_px"][0]
+            and rep["open_borders_unhidden"][1] < rep["open_borders_unhidden"][0],
+            "numbers": f"back-face px {rep['back_face_px'][0]}->{rep['back_face_px'][1]}, unhidden borders "
+                       f"{rep['open_borders_unhidden'][0]}->{rep['open_borders_unhidden'][1]}, {flips} flipped, "
+                       f"{caps} caps ({rep['cap_area_m2']:.4f} m2), new violators "
+                       f"{sum(x.get('new', 0) for x in rep['check_operation']['results'])}"}
 
 
 def markdown(r):
@@ -470,6 +503,16 @@ def markdown(r):
              "Inputs (sha256): " + "; ".join(f"`{Path(k).name}` `{v[:12]}`" for k, v in r["inputs"].items()), "",
              "## Gates", "", "| gate | result | numbers |", "|---|---|---|"]
     lines += [f"| {k} | {'pass' if g['passed'] else 'FAIL'} | {g['numbers']} |" for k, g in r["gates"].items()]
+    if "repair" in r:
+        rep = r["repair"]
+        lines += ["", "## repair.flip_close (#1144): the new baseline", "",
+                  "| part | flipped | caps (points, material, m2) | skipped loops |", "|---|---|---|---|"]
+        lines += [f"| {k} | {len(rep['flipped'][k])} | "
+                  + ("; ".join(f"{c['points']} pts, id {c['material']}, {c['area_m2']:.6f}" for c in rep["caps"][k])
+                     or "-") + " | "
+                  + ("; ".join(f"{s['points']} pts: {s['reason']}" for s in rep["skipped"][k]) or "-") + " |"
+                  for k in rep["flipped"]]
+        lines += ["", f"Cap UV: {rep['cap_uv']}. Applied: {rep['applied']}."]
     lines += ["", "## Before (source FBX)", "", "| part | metrics |", "|---|---|"]
     lines += [f"| {k} | {rko._short(p)} |" for k, p in r["before"]["parts"].items()]
     lines += ["", "## Operations (same set as #752)", "", "| # | op | part | applied | check_operation | refusal |",
@@ -515,9 +558,12 @@ def main(argv=None):
     ap.add_argument("--evidence", type=Path, default=HERE / "evidence")
     ap.add_argument("--invariants", choices=("relative", "absolute"), default="relative",
                     help="relative = judged against the source baseline [D201]; absolute = the #753 run")
+    ap.add_argument("--repair", action="store_true",
+                    help="run repair.flip_close first; its result is the new baseline (#1144)")
     a = ap.parse_args(argv)
     try:
-        r = run(a.source_fbx, a.delivered_fbx, a.work, a.evidence, relative=a.invariants == "relative")
+        r = run(a.source_fbx, a.delivered_fbx, a.work, a.evidence, relative=a.invariants == "relative",
+                repair=a.repair)
     except InputError as e:
         print(f"ERROR: {e}", file=sys.stderr)
         return 2
