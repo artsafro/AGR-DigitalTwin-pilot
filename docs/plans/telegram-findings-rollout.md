@@ -54,5 +54,5 @@ One step = one branch / PR unless marked "batch". Status: `done`, `next`, `later
 ## Not taken
 
 Max Ultra MCP, opencode, rea, DragShift, allesimfluss, UV Unfoldr, new requirements PDF / IFC post / window atlas
-rule / SintezAgrChecker / AlexYo_AssetImporter from «АГР - Holding» (user 2026-11-10), the DLSS exe from
+rule / SintezAgrChecker / AlexYo_AssetImporter from «АГР - Holding» (user 2026-11-10 [D237]), the DLSS exe from
 @neuroviza (untrusted binary).

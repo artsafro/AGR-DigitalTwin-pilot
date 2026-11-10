@@ -21,7 +21,7 @@ back before reporting success. Inspection and live-mutation coverage are separat
 ## Session rules (zero prompt)
 
 Apply these from the first call of every Revit session, before the task itself. Adapted from the «zero
-prompt» of the novusarchitectus.ru Revit + Claude lessons (user decision 2026-11-10,
+prompt» of the novusarchitectus.ru Revit + Claude lessons (user decision 2026-11-10 [D237],
 `docs/research/telegram-3dsmax-chat-2026-11.md`).
 
 1. Read-only by default. Ask every open question before the first change, not midway.
