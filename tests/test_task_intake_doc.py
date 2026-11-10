@@ -51,6 +51,29 @@ def test_harness_tasks_require_a_before_after_metric():
         assert needle in checklist, needle
 
 
+def test_guard_prompt_metric_names_denial_source_and_marks_asks_unmeasured():
+    # The 'guard prompts per session' metric names a real source for denials and says asks are unmeasured:
+    # hook denials -> `tools/hooks/agent_trace.py --transcript <session.jsonl>` (the `Hook denials` field);
+    # guard asks -> "not measured today". `usage_log.py stats` stays next to subagent/skill/command counts
+    # only, never next to the guard metric. The doc wraps "guard prompts per session" across a line break,
+    # so assert on a whitespace-collapsed checklist, never on the raw text (a bare `"... not in ..."` on the
+    # raw text would pass for the wrong reason).
+    checklist = _text()[_text().index("## Checklist"):]
+    collapsed = " ".join(checklist.split()).lower()
+    guard_metric = collapsed[collapsed.index("guard prompts per session"):
+                             collapsed.index("say how and when it is measured")]
+    # Denials have a real source; asks are not measured today.
+    assert "agent_trace.py --transcript <session.jsonl>" in guard_metric
+    assert "hook denials" in guard_metric
+    assert "guard asks are not measured today" in guard_metric
+    # `usage_log.py stats` is not paired with the guard metric.
+    assert "usage_log.py stats" not in guard_metric
+    # Every `usage_log.py stats` mention sits next to subagent / skill / command counts.
+    for m in re.finditer(r"usage_log\.py stats", collapsed):
+        window = collapsed[max(0, m.start() - 40):m.start() + 80]
+        assert any(w in window for w in ("subagent", "skill", "command")), window
+
+
 def test_pr_template_asks_for_the_before_after_numbers():
     template = (ROOT / ".github" / "pull_request_template.md").read_text(encoding="utf-8")
     assert "before/after metric" in template.lower()

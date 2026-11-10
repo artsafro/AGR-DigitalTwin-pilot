@@ -28,6 +28,8 @@ evidence contract, **not** a new geometry checker, user-authentication service o
 publication authorization. Producers and the reviewer must verify receipt truth.
 Never synthesize a receipt to fill a missing check or a human decision.
 
+**Look-finished step (D227, report-only).** After the overlap postcondition, run the look-finished checks (seams, broken edge loops, decor gaps; ELV/skug26 retros) on the export and put every finding into the job report. Per [D227] the step is REPORT-ONLY for now: findings do not block delivery and do not flip `passed`. It becomes blocking only after it has run without false failures on 2-3 already accepted jobs (a later user decision).
+
 **Overlap postcondition of every build / fix step (#527, D152).** After each step that writes geometry
 (build, fix, simplify, join) and on the export, run `uv run dt qa xview <file.fbx|.blend|.npz> --out <new report.json>`
 (local coordinates, NPM/VPM xView thresholds 2 mm / 5 mm) and keep its report with the step. The step is done
