@@ -135,6 +135,35 @@ Items for this pipeline (a) and archviz (b):
   Nano Banana 2.1 mask edits (@neuroviza 1046); Seedance camera from 3ds Max (1065); Kimi + Tripo FBX from a
   collage (1075); MOSS-Image ControlNet set for ComfyUI (@cgevent 17293); Runway Sightline 360 panoramas.
 
+### Subscribed channels — deep read (2026-11-10)
+
+The user subscribed to @cgevent, @neuroviza, @NishA_Ai, @tips_ai, @novus_architectus. Nothing below is installed
+or tested here.
+
+- @cgevent (708 messages, 2026-09-10 … 11-10; ~10 % substantive 3D pipeline posts, from 2026-11-05 many unverified
+  digest posts): Unreal 5.9 Preview Unreal MCP (17289, claims unverified); Megascans free with AI training allowed
+  (17209; check Fab licence for commercial delivery); Tripo P2.0 native quads + Smart UV (16718; MAF drafts only);
+  UV prompt via BlenderMCP — keep source, new UV channel, seams → unwrap → bake (16648); sand3d — 100k parametric
+  models as Python code (17231, github.com/Sandflow-ai/sand3d; pattern for parametric MAF); Image 2 Sculpt skill for
+  Claude Code / Codex (17249, github.com/gokayfem/image-to-sculpt); OOOSplat local video → Gaussian splat (17257);
+  Loremax / Bridex agent-built city block in UE 5.8, 13 h, ~$1000 (16617); (b) LTX-2.5 Layout-to-Render ComfyUI
+  workflow from a viewport playblast (16836), ComfyUI_Assistant (16613), Ming Design-Layer RGBA layers (16751).
+- @tips_ai (agent tooling, daily, ~4 % ads): Rejudge — three models in isolated contexts plus a judge (4838,
+  github.com/syabro/rejudge, MIT); «Log papercuts» block for AGENTS.md (4799) as raw material for `/retro`;
+  destructive_command_guard (4802) to compare with `.claude/hooks/guard.py`; Anthropic prompt-guide paragraphs (4874);
+  tare token-use skill (4868); zoetrope session map from JSONL (4858); `CLAUDE_CODE_RETRY_WATCHDOG=1` (4841).
+- @novus_architectus (most posts unreadable via MCP; content on novusarchitectus.ru, 24 free lessons): u00 Revit
+  + Claude via LuDattilo/revit-mcp-server (MIT) with a «zero prompt» — native categories only, no DirectShape or
+  zero-thickness meshes, study the model and propose a plan first, never invent dimensions, one Revit request at a
+  time, report created ids and checked / open items; candidate for the `revit-mcp` skill. u09 / u23 colour-map
+  render check (render each camera, compare with the category colour map, flag where the building changed);
+  u21 / u22 QGIS relief → Revit toposolid with three data checks; u07 pyRevit check for elements in no schedule.
+- @NishA_Ai (industry feed, ~25 % tool digests): archicad-mcp (1071, MIT, Tapir, `safe` mode) for Archicad sources;
+  Urban3DAnalysis (862); PIK thesis «the 50× saving came from strict rules, not the model» (950).
+- @neuroviza (archviz, ~3 posts / month, course sales): free prompts — JSON meta-prompt for a new camera from a
+  render (892), render → albedo → photo (973), Nano Banana editing rules (1012), colour-mask edits (1046),
+  Seedance camera from 3ds Max (1065). 1011 is an untrusted exe (DLSS batch): do not run.
+
 ## Not taken
 
 Max Ultra MCP (licence unclear: page says Free and «requires purchase»; we keep `3dsmax-mcp`), opencode,
