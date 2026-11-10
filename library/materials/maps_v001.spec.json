@@ -1643,7 +1643,7 @@
    "catalogue": "new (401 is S. novae-angliae, another species)",
    "variants": 1,
    "source_msg_id": 61627,
-   "status": "maps approved [D242]; NPM star + VPM shell C:/x/flora-telegram-stars/v002 accepted, height confirmed [D243] (spec library/flora/stars-telegram-v001.json, material id 410 proposed); catalogue row waits for a library version with these objects and a generator route for non-audit sources (PR #1191 open items)"
+   "status": "maps approved [D242]; NPM star + VPM shell C:/x/flora-telegram-stars/v002 accepted, height confirmed [D244] (spec library/flora/stars-telegram-v001.json, material id 410 proposed); catalogue row waits for a library version with these objects and a generator route for non-audit sources (PR #1191 open items)"
   },
   {
    "slug": "berberis",
@@ -1669,7 +1669,7 @@
    "catalogue": "new",
    "variants": 1,
    "source_msg_id": 61629,
-   "status": "maps approved [D242]; NPM star + VPM shell C:/x/flora-telegram-stars/v002 accepted, height confirmed [D243] (spec library/flora/stars-telegram-v001.json, material id 411 proposed); catalogue row waits for a library version with these objects and a generator route for non-audit sources (PR #1191 open items)"
+   "status": "maps approved [D242]; NPM star + VPM shell C:/x/flora-telegram-stars/v002 accepted, height confirmed [D244] (spec library/flora/stars-telegram-v001.json, material id 411 proposed); catalogue row waits for a library version with these objects and a generator route for non-audit sources (PR #1191 open items)"
   },
   {
    "slug": "syringa",
@@ -1695,7 +1695,7 @@
    "catalogue": "new",
    "variants": 2,
    "source_msg_id": 61631,
-   "status": "maps approved [D242]; NPM star + VPM shell C:/x/flora-telegram-stars/v002 accepted, height confirmed [D243] (spec library/flora/stars-telegram-v001.json, material id 412 proposed); catalogue row waits for a library version with these objects and a generator route for non-audit sources (PR #1191 open items); v1 is the species map, v2 a variant"
+   "status": "maps approved [D242]; NPM star + VPM shell C:/x/flora-telegram-stars/v002 accepted, height confirmed [D244] (spec library/flora/stars-telegram-v001.json, material id 412 proposed); catalogue row waits for a library version with these objects and a generator route for non-audit sources (PR #1191 open items); v1 is the species map, v2 a variant"
   },
   {
    "slug": "rosa",
