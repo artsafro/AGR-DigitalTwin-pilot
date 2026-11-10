@@ -260,6 +260,78 @@ def test_open_pr_logs_skips_own_branch_and_reads_heads(repo, monkeypatch):
     assert list(out) == ["PR #9 (other)"] and "work-FBX rule" in out["PR #9 (other)"]
 
 
+def test_open_pr_logs_skips_own_pr_by_head_commit_when_branch_renamed(repo, monkeypatch):
+    git(repo, "branch", "-m", "feature", "local-x")
+    oid = git(repo, "rev-parse", "HEAD").stdout.strip()
+    payload = f'[{{"number": 42, "headRefName": "improve/y", "headRefOid": "{oid}"}}]'
+    real = subprocess.run
+
+    def fake(cmd, *a, **k):
+        if cmd[0] == "gh":
+            return subprocess.CompletedProcess(cmd, 0, payload, "")
+        return real(cmd, *a, **k)
+    monkeypatch.setattr(ids.subprocess, "run", fake)
+    assert ids.open_pr_logs(repo, None) == {}
+
+
+def test_open_pr_logs_skips_own_pr_when_head_is_an_ancestor(repo, monkeypatch):
+    git(repo, "branch", "child", "feature")
+    git(repo, "checkout", "-q", "child")
+    commit(repo, log(("D001", "one"), ("D002", "two"), ("D004", "child rule")))
+    ancestor_oid = git(repo, "rev-parse", "feature").stdout.strip()
+    payload = f'[{{"number": 42, "headRefName": "feature", "headRefOid": "{ancestor_oid}"}}]'
+    real = subprocess.run
+
+    def fake(cmd, *a, **k):
+        if cmd[0] == "gh":
+            return subprocess.CompletedProcess(cmd, 0, payload, "")
+        return real(cmd, *a, **k)
+    monkeypatch.setattr(ids.subprocess, "run", fake)
+    assert ids.open_pr_logs(repo, None) == {}
+
+
+def test_detached_head_at_own_pr_oid_does_not_self_collide(repo, monkeypatch, capsys):
+    git(repo, "remote", "add", "origin", "https://github.com/artsafro/AGR-DigitalTwin-pilot.git")
+    git(repo, "update-ref", "refs/remotes/origin/main", "main")
+    commit(repo, log(("D001", "one"), ("D002", "two"), ("D004", "own rule")))
+    oid = git(repo, "rev-parse", "HEAD").stdout.strip()
+    # stage a further edit of the new row so it differs from the committed PR head
+    (repo / "docs/decisions.md").write_text(log(("D001", "one"), ("D002", "two"), ("D004", "own rule, revised")),
+                                            encoding="utf-8", newline="\n")
+    git(repo, "add", "docs/decisions.md")
+    git(repo, "checkout", "-q", "--detach", oid)
+    payload = f'[{{"number": 42, "headRefName": "improve/y", "headRefOid": "{oid}"}}]'
+    real = subprocess.run
+
+    def fake(cmd, *a, **k):
+        if cmd[0] == "gh":
+            return subprocess.CompletedProcess(cmd, 0, payload, "")
+        return real(cmd, *a, **k)
+    monkeypatch.setattr(ids.subprocess, "run", fake)
+    assert ids.main(["check", "--staged", "--repo-dir", str(repo)]) == 0, capsys.readouterr().err
+
+
+def test_open_pr_head_not_ancestor_still_collides(repo, monkeypatch, capsys):
+    git(repo, "remote", "add", "origin", "https://github.com/artsafro/AGR-DigitalTwin-pilot.git")
+    git(repo, "update-ref", "refs/remotes/origin/main", "main")
+    git(repo, "branch", "other", "main")
+    git(repo, "checkout", "-q", "other")
+    commit(repo, log(("D001", "one"), ("D002", "two"), ("D003", "work-FBX rule"), ("D004", "Kasatkino rule")))
+    other_oid = git(repo, "rev-parse", "HEAD").stdout.strip()
+    git(repo, "checkout", "-q", "feature")
+    commit(repo, log(("D001", "one"), ("D002", "two"), ("D004", "Garibaldi rule")))
+    payload = f'[{{"number": 9, "headRefName": "other", "headRefOid": "{other_oid}"}}]'
+    real = subprocess.run
+
+    def fake(cmd, *a, **k):
+        if cmd[0] == "gh":
+            return subprocess.CompletedProcess(cmd, 0, payload, "")
+        return real(cmd, *a, **k)
+    monkeypatch.setattr(ids.subprocess, "run", fake)
+    assert ids.main(["check", "--repo-dir", str(repo)]) == 1
+    assert "D004: also allocated by PR #9" in capsys.readouterr().err
+
+
 def test_open_pr_unfetchable_head_errors(repo, monkeypatch):
     payload = '[{"number": 9, "headRefName": "x", "headRefOid": "' + "1" * 40 + '"}]'
     real = subprocess.run
