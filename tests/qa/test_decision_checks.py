@@ -709,6 +709,14 @@ def test_ground_skirt_upward_skirt_face_excluded_by_material_gnd03():
     assert _skirt_finding(verts, polys, materials=["M_Ground_Skirt"] * 2).status == "not_run"
 
 
+def test_ground_skirt_partial_polygon_material_fails_gnd03():
+    # fail-closed: a polygon_material list shorter than the polygons is partial input, an error,
+    # never a silent pass (it must not crash and must not default the missing faces to non-skirt).
+    verts, polys, _ = _step_band_ground()
+    f = _skirt_finding(verts, polys, materials=["M_Ground_Tile"] * (len(polys) - 1))
+    assert f.status == "fail"
+
+
 def test_edge_loop_100x100_grid_runtime_bounded_d200():
     import time
 
