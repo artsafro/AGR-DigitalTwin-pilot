@@ -1,0 +1,1158 @@
+{
+ "inbox": "_inbox/telegram-materials-2026-11",
+ "new_library_ids": [
+  {
+   "library_id": 43,
+   "key": "gate_panel_grey",
+   "name_ru": "Ворота ОКС, серые с горизонтальными линиями",
+   "class": "metal",
+   "status": "proposed",
+   "note": "proposed in maps_v001 [D239]; not yet a row of materials_v002.json / ground_v001.json"
+  },
+  {
+   "library_id": 44,
+   "key": "address_plate_template",
+   "name_ru": "Адресная табличка (шаблон и плейсхолдеры)",
+   "class": "sign",
+   "status": "proposed",
+   "note": "proposed in maps_v001 [D239]; not yet a row of materials_v002.json / ground_v001.json"
+  },
+  {
+   "library_id": 45,
+   "key": "paving_slab_grey",
+   "name_ru": "Плита тротуарная серая (3x3 плиты на тайл, размер неизвестен)",
+   "class": "paving",
+   "status": "proposed",
+   "note": "proposed in maps_v001 [D239]; not yet a row of materials_v002.json / ground_v001.json"
+  },
+  {
+   "library_id": 46,
+   "key": "wood_grain_medium",
+   "name_ru": "Дерево, текстура волокон, средне-коричневое",
+   "class": "wood",
+   "status": "proposed",
+   "note": "proposed in maps_v001 [D239]; not yet a row of materials_v002.json / ground_v001.json"
+  },
+  {
+   "library_id": 47,
+   "key": "brick_long_format_mask",
+   "name_ru": "Кирпич длинного формата, серая маска",
+   "class": "brick",
+   "status": "proposed",
+   "note": "proposed in maps_v001 [D239]; not yet a row of materials_v002.json / ground_v001.json"
+  },
+  {
+   "library_id": 48,
+   "key": "facade_strip_tile_grey",
+   "name_ru": "Фасадная плитка-полоса серая",
+   "class": "tile",
+   "status": "proposed",
+   "note": "proposed in maps_v001 [D239]; not yet a row of materials_v002.json / ground_v001.json"
+  },
+  {
+   "library_id": 49,
+   "key": "perforated_sheet_round",
+   "name_ru": "Лист перфорированный, круглые отверстия (opacity)",
+   "class": "metal",
+   "status": "proposed",
+   "note": "proposed in maps_v001 [D239]; not yet a row of materials_v002.json / ground_v001.json"
+  },
+  {
+   "library_id": 50,
+   "key": "mesh_square_grid",
+   "name_ru": "Сетка квадратная (opacity)",
+   "class": "metal",
+   "status": "proposed",
+   "note": "proposed in maps_v001 [D239]; not yet a row of materials_v002.json / ground_v001.json"
+  },
+  {
+   "library_id": 51,
+   "key": "fence_chainlink",
+   "name_ru": "Забор сетка-рабица (opacity)",
+   "class": "metal",
+   "status": "proposed",
+   "note": "proposed in maps_v001 [D239]; not yet a row of materials_v002.json / ground_v001.json"
+  },
+  {
+   "library_id": 52,
+   "key": "fence_barbed",
+   "name_ru": "Колючая проволока (opacity)",
+   "class": "metal",
+   "status": "proposed",
+   "note": "proposed in maps_v001 [D239]; not yet a row of materials_v002.json / ground_v001.json"
+  }
+ ],
+ "skipped": [
+  {
+   "msg_id": 53407,
+   "reason": "MAF atlas source: step 2.3 (other branch)"
+  },
+  {
+   "msg_id": 53408,
+   "reason": "MAF atlas ID map: step 2.3 (other branch)"
+  },
+  {
+   "msg_id": 107807,
+   "reason": "FBX geometry, not a map; its tile texture is taken from the zip 107806"
+  }
+ ],
+ "sources": [
+  {
+   "src": 20949,
+   "key": "interior",
+   "library_id": 40,
+   "verdict": "good: VPM placeholder 256 and NPM 128 colour",
+   "notes": "Interior capsule Diffuse, sRGB (57,57,57).",
+   "outputs": [
+    {
+     "path": "materials/placeholders/v001/interior_d_{size}.png",
+     "op": "flat",
+     "size": 256,
+     "map": "d",
+     "profile": "vpm"
+    },
+    {
+     "path": "materials/placeholders/v001/interior_d_{size}.png",
+     "op": "flat",
+     "size": 128,
+     "map": "d",
+     "profile": "npm",
+     "notes": "NPM: TEX-09 allows standalone 128 placeholders for Metallic/Roughness only; use this colour as a solid atlas cell"
+    }
+   ]
+  },
+  {
+   "src": 20953,
+   "key": "lighting",
+   "library_id": null,
+   "verdict": "good: VPM ERM placeholder; NPM M/R 128",
+   "notes": "ERM (255,255,0): emissive 255, roughness 255, metallic 0. No library id yet (lighting).",
+   "outputs": [
+    {
+     "path": "materials/placeholders/v001/lighting_erm_{size}.png",
+     "op": "flat",
+     "size": 256,
+     "map": "erm",
+     "profile": "vpm"
+    },
+    {
+     "path": "materials/placeholders/v001/lighting_r_{size}.png",
+     "op": "flat",
+     "size": 128,
+     "map": "r",
+     "profile": "npm",
+     "channel": "G"
+    },
+    {
+     "path": "materials/placeholders/v001/lighting_m_{size}.png",
+     "op": "flat",
+     "size": 128,
+     "map": "m",
+     "profile": "npm",
+     "channel": "B"
+    }
+   ]
+  },
+  {
+   "src": 20954,
+   "key": "flat",
+   "library_id": null,
+   "verdict": "good: flat DirectX normal placeholder for any VPM set",
+   "notes": "(128,128,255); 27885 (address plates Normal) is the same colour. NPM has no normal maps [D014].",
+   "outputs": [
+    {
+     "path": "materials/placeholders/v001/flat_n_{size}.png",
+     "op": "flat",
+     "size": 256,
+     "map": "n",
+     "profile": "vpm"
+    }
+   ]
+  },
+  {
+   "src": 20955,
+   "key": "lighting",
+   "library_id": null,
+   "verdict": "good: VPM Diffuse placeholder 256; NPM 128 colour",
+   "notes": "Yellow (255,255,0); same bytes as the ERM 20953 in the source chat.",
+   "outputs": [
+    {
+     "path": "materials/placeholders/v001/lighting_d_{size}.png",
+     "op": "flat",
+     "size": 256,
+     "map": "d",
+     "profile": "vpm"
+    },
+    {
+     "path": "materials/placeholders/v001/lighting_d_{size}.png",
+     "op": "flat",
+     "size": 128,
+     "map": "d",
+     "profile": "npm",
+     "notes": "NPM: TEX-09 allows standalone 128 placeholders for Metallic/Roughness only; use this colour as a solid atlas cell"
+    }
+   ]
+  },
+  {
+   "src": 20956,
+   "key": "roof_dark",
+   "library_id": null,
+   "verdict": "good: VPM placeholder 256 and NPM 128 colour",
+   "notes": "Roof Diffuse (80,83,95); which roof row (29-31) it stands for is unknown; closest by tone 30 roof_solo.",
+   "outputs": [
+    {
+     "path": "materials/placeholders/v001/roof_dark_d_{size}.png",
+     "op": "flat",
+     "size": 256,
+     "map": "d",
+     "profile": "vpm"
+    },
+    {
+     "path": "materials/placeholders/v001/roof_dark_d_{size}.png",
+     "op": "flat",
+     "size": 128,
+     "map": "d",
+     "profile": "npm",
+     "notes": "NPM: TEX-09 allows standalone 128 placeholders for Metallic/Roughness only; use this colour as a solid atlas cell"
+    }
+   ]
+  },
+  {
+   "src": 27159,
+   "key": "metal_glossy",
+   "library_id": null,
+   "verdict": "good: VPM ERM placeholder; NPM M/R 128",
+   "notes": "ERM (0,129,255): roughness 129, metallic 255; candidate for 36 steel_stainless (not confirmed).",
+   "outputs": [
+    {
+     "path": "materials/placeholders/v001/metal_glossy_erm_{size}.png",
+     "op": "flat",
+     "size": 256,
+     "map": "erm",
+     "profile": "vpm"
+    },
+    {
+     "path": "materials/placeholders/v001/metal_glossy_r_{size}.png",
+     "op": "flat",
+     "size": 128,
+     "map": "r",
+     "profile": "npm",
+     "channel": "G"
+    },
+    {
+     "path": "materials/placeholders/v001/metal_glossy_m_{size}.png",
+     "op": "flat",
+     "size": 128,
+     "map": "m",
+     "profile": "npm",
+     "channel": "B"
+    }
+   ]
+  },
+  {
+   "src": 27161,
+   "key": "metal_matte",
+   "library_id": null,
+   "verdict": "weak: metallic 128 (half metal), check intent before use",
+   "notes": "ERM (0,128,128): roughness 128, metallic 128.",
+   "outputs": [
+    {
+     "path": "materials/placeholders/v001/metal_matte_erm_{size}.png",
+     "op": "flat",
+     "size": 256,
+     "map": "erm",
+     "profile": "vpm"
+    },
+    {
+     "path": "materials/placeholders/v001/metal_matte_r_{size}.png",
+     "op": "flat",
+     "size": 128,
+     "map": "r",
+     "profile": "npm",
+     "channel": "G"
+    },
+    {
+     "path": "materials/placeholders/v001/metal_matte_m_{size}.png",
+     "op": "flat",
+     "size": 128,
+     "map": "m",
+     "profile": "npm",
+     "channel": "B"
+    }
+   ]
+  },
+  {
+   "src": 27884,
+   "key": "address_plate",
+   "library_id": 44,
+   "verdict": "good: VPM ERM placeholder; NPM M/R 128",
+   "notes": "Address plates (house number 1016 set): ERM (0,197,38).",
+   "outputs": [
+    {
+     "path": "materials/placeholders/v001/address_plate_erm_{size}.png",
+     "op": "flat",
+     "size": 256,
+     "map": "erm",
+     "profile": "vpm"
+    },
+    {
+     "path": "materials/placeholders/v001/address_plate_r_{size}.png",
+     "op": "flat",
+     "size": 128,
+     "map": "r",
+     "profile": "npm",
+     "channel": "G"
+    },
+    {
+     "path": "materials/placeholders/v001/address_plate_m_{size}.png",
+     "op": "flat",
+     "size": 128,
+     "map": "m",
+     "profile": "npm",
+     "channel": "B"
+    }
+   ]
+  },
+  {
+   "src": 27886,
+   "key": "address_plate",
+   "library_id": 44,
+   "verdict": "good: VPM Diffuse placeholder 256; NPM 128 colour",
+   "notes": "Diffuse (0,0,98) navy. Normal 27885 = flat_n_256.",
+   "outputs": [
+    {
+     "path": "materials/placeholders/v001/address_plate_d_{size}.png",
+     "op": "flat",
+     "size": 256,
+     "map": "d",
+     "profile": "vpm"
+    },
+    {
+     "path": "materials/placeholders/v001/address_plate_d_{size}.png",
+     "op": "flat",
+     "size": 128,
+     "map": "d",
+     "profile": "npm",
+     "notes": "NPM: TEX-09 allows standalone 128 placeholders for Metallic/Roughness only; use this colour as a solid atlas cell"
+    }
+   ]
+  },
+  {
+   "src": 27902,
+   "key": "gate",
+   "library_id": 43,
+   "verdict": "good: VPM ERM placeholder (source palette PNG converted to RGB); NPM M/R 128",
+   "notes": "ERM (0,102,104): roughness 102, metallic 104.",
+   "outputs": [
+    {
+     "path": "materials/placeholders/v001/gate_erm_{size}.png",
+     "op": "flat",
+     "size": 256,
+     "map": "erm",
+     "profile": "vpm"
+    },
+    {
+     "path": "materials/placeholders/v001/gate_r_{size}.png",
+     "op": "flat",
+     "size": 128,
+     "map": "r",
+     "profile": "npm",
+     "channel": "G"
+    },
+    {
+     "path": "materials/placeholders/v001/gate_m_{size}.png",
+     "op": "flat",
+     "size": 128,
+     "map": "m",
+     "profile": "npm",
+     "channel": "B"
+    }
+   ]
+  },
+  {
+   "src": 27903,
+   "key": "gate_panel_grey",
+   "library_id": 43,
+   "verdict": "VPM-ok: 4096 Diffuse + Normal, ERM placeholder gate_erm_256; good for NPM at 2048",
+   "notes": "OKS gates, horizontal lines; real-world size unknown.",
+   "outputs": [
+    {
+     "path": "materials/v001/43/43_gate_panel_grey_d_{size}.png",
+     "op": "rgb",
+     "map": "d",
+     "profile": "vpm"
+    },
+    {
+     "path": "materials/v001/43/43_gate_panel_grey_d_{size}.png",
+     "op": "rgb",
+     "size": 2048,
+     "map": "d",
+     "profile": "npm"
+    }
+   ]
+  },
+  {
+   "src": 27904,
+   "key": "gate_panel_grey",
+   "library_id": 43,
+   "verdict": "VPM-ok: 4096 DirectX normal (convention not re-checked)",
+   "outputs": [
+    {
+     "path": "materials/v001/43/43_gate_panel_grey_n_{size}.png",
+     "op": "rgb",
+     "map": "n",
+     "profile": "vpm"
+    }
+   ]
+  },
+  {
+   "src": 21003,
+   "key": "address_plate_template",
+   "library_id": 44,
+   "verdict": "VPM-ok: 4096 triplet; template strokes, replace per address",
+   "notes": "Address template T_Template_Address_001; real-world size unknown.",
+   "outputs": [
+    {
+     "path": "materials/v001/44/44_address_plate_template_d_{size}.png",
+     "op": "rgb",
+     "map": "d",
+     "profile": "vpm"
+    },
+    {
+     "path": "materials/v001/44/44_address_plate_template_d_{size}.png",
+     "op": "rgb",
+     "size": 2048,
+     "map": "d",
+     "profile": "npm"
+    }
+   ]
+  },
+  {
+   "src": 21001,
+   "key": "address_plate_template",
+   "library_id": 44,
+   "verdict": "VPM-ok: ERM 4096; NPM R/M pair at 2048 from its G/B",
+   "outputs": [
+    {
+     "path": "materials/v001/44/44_address_plate_template_erm_{size}.png",
+     "op": "rgb",
+     "map": "erm",
+     "profile": "vpm"
+    },
+    {
+     "path": "materials/v001/44/44_address_plate_template_r_{size}.png",
+     "op": "channel",
+     "channel": "G",
+     "size": 2048,
+     "map": "r",
+     "profile": "npm"
+    },
+    {
+     "path": "materials/v001/44/44_address_plate_template_m_{size}.png",
+     "op": "channel",
+     "channel": "B",
+     "size": 2048,
+     "map": "m",
+     "profile": "npm"
+    }
+   ]
+  },
+  {
+   "src": 21002,
+   "key": "address_plate_template",
+   "library_id": 44,
+   "verdict": "VPM-ok: 4096 normal",
+   "outputs": [
+    {
+     "path": "materials/v001/44/44_address_plate_template_n_{size}.png",
+     "op": "rgb",
+     "map": "n",
+     "profile": "vpm"
+    }
+   ]
+  },
+  {
+   "src": 69812,
+   "library_id": 22,
+   "key": "asphalt",
+   "surface": true,
+   "verdict": "good: tileable; VPM-ok as Diffuse only (no ERM/Normal); good for NPM",
+   "notes": "Real-world size unknown.",
+   "outputs": [
+    {
+     "path": "materials/v001/22/22_asphalt_d_{size}.png",
+     "op": "rgb",
+     "map": "d",
+     "profile": "vpm"
+    },
+    {
+     "path": "materials/v001/22/22_asphalt_d_{size}.png",
+     "op": "rgb",
+     "size": 2048,
+     "map": "d",
+     "profile": "vpm",
+     "notes": "VPM 2048 variant (Lanczos)."
+    },
+    {
+     "path": "materials/v001/22/22_asphalt_d_{size}.png",
+     "op": "rgb",
+     "size": "npm_auto",
+     "map": "d",
+     "profile": "npm",
+     "notes": "NPM: largest of 2048/1024/512 within 3 MiB."
+    }
+   ]
+  },
+  {
+   "src": 58971,
+   "library_id": 28,
+   "key": "concrete_arch",
+   "surface": true,
+   "verdict": "good: tileable, low contrast; VPM-ok as Diffuse only; good for NPM",
+   "notes": "JPEG source (compression artefacts possible); real-world size unknown; table recipe for 28 is solid.",
+   "outputs": [
+    {
+     "path": "materials/v001/28/28_concrete_arch_d_{size}.png",
+     "op": "rgb",
+     "map": "d",
+     "profile": "vpm"
+    },
+    {
+     "path": "materials/v001/28/28_concrete_arch_d_{size}.png",
+     "op": "rgb",
+     "size": 2048,
+     "map": "d",
+     "profile": "vpm",
+     "notes": "VPM 2048 variant (Lanczos)."
+    },
+    {
+     "path": "materials/v001/28/28_concrete_arch_d_{size}.png",
+     "op": "rgb",
+     "size": "npm_auto",
+     "map": "d",
+     "profile": "npm",
+     "notes": "NPM: largest of 2048/1024/512 within 3 MiB."
+    }
+   ]
+  },
+  {
+   "src": 64381,
+   "library_id": 45,
+   "key": "paving_slab_grey",
+   "surface": true,
+   "verdict": "good: tileable 3x3 slabs; VPM-ok as Diffuse only; good for NPM",
+   "notes": "Slab size unknown, so px/m unknown; not the 100x300 'Gotika' paving of ids 18-20.",
+   "outputs": [
+    {
+     "path": "materials/v001/45/45_paving_slab_grey_d_{size}.png",
+     "op": "rgb",
+     "map": "d",
+     "profile": "vpm"
+    },
+    {
+     "path": "materials/v001/45/45_paving_slab_grey_d_{size}.png",
+     "op": "rgb",
+     "size": 2048,
+     "map": "d",
+     "profile": "vpm",
+     "notes": "VPM 2048 variant (Lanczos)."
+    },
+    {
+     "path": "materials/v001/45/45_paving_slab_grey_d_{size}.png",
+     "op": "rgb",
+     "size": "npm_auto",
+     "map": "d",
+     "profile": "npm",
+     "notes": "NPM: largest of 2048/1024/512 within 3 MiB."
+    }
+   ]
+  },
+  {
+   "src": 69811,
+   "library_id": 46,
+   "key": "wood_grain_medium",
+   "surface": true,
+   "verdict": "weak: visible seam when tiled along U; VPM Diffuse only",
+   "notes": "Medium-brown wood grain; real-world size unknown; not larch 37/41.",
+   "outputs": [
+    {
+     "path": "materials/v001/46/46_wood_grain_medium_d_{size}.png",
+     "op": "rgb",
+     "map": "d",
+     "profile": "vpm"
+    },
+    {
+     "path": "materials/v001/46/46_wood_grain_medium_d_{size}.png",
+     "op": "rgb",
+     "size": 2048,
+     "map": "d",
+     "profile": "vpm",
+     "notes": "VPM 2048 variant (Lanczos)."
+    },
+    {
+     "path": "materials/v001/46/46_wood_grain_medium_d_{size}.png",
+     "op": "rgb",
+     "size": "npm_auto",
+     "map": "d",
+     "profile": "npm",
+     "notes": "NPM: largest of 2048/1024/512 within 3 MiB."
+    }
+   ]
+  },
+  {
+   "src": 107813,
+   "library_id": 47,
+   "key": "brick_long_format_mask",
+   "surface": true,
+   "tile_m": 3.0,
+   "tile_m_basis": "chat label 'tile 3x3' (unverified); consistent with 55 courses of ~54.5 mm (long-format brick ~500x40 mm + joint)",
+   "verdict": "good as greyscale mask (recipe greyscale_mask), tileable; NPM-ok; VPM-ok at 2048",
+   "notes": "Long-format brick, not 17 brick_250x65 (a 75 mm course would give 40 courses in 3 m).",
+   "outputs": [
+    {
+     "path": "materials/v001/47/47_brick_long_format_mask_mask_{size}.png",
+     "op": "rgb",
+     "map": "mask",
+     "profile": "npm"
+    }
+   ]
+  },
+  {
+   "src": 107806,
+   "member": "плитка.png",
+   "library_id": 48,
+   "key": "facade_strip_tile_grey",
+   "surface": true,
+   "tile_m": 4.0,
+   "tile_m_basis": "chat label 'tile 4x4' (unverified)",
+   "verdict": "good: tileable; NPM-ok; VPM-ok as 2048 Diffuse only",
+   "notes": "Grey long-strip facade tile, read from the zip (the FBX 107807 next to it is not processed).",
+   "outputs": [
+    {
+     "path": "materials/v001/48/48_facade_strip_tile_grey_d_{size}.png",
+     "op": "rgb",
+     "map": "d",
+     "profile": "npm"
+    }
+   ]
+  },
+  {
+   "src": 66211,
+   "library_id": 26,
+   "key": "lawn_reinforced",
+   "surface": true,
+   "verdict": "weak: low-res (900 px source, resampled up to 1024); NPM only",
+   "notes": "Eco-grid lawn; tiles acceptably; real-world size unknown.",
+   "outputs": [
+    {
+     "path": "materials/v001/26/26_lawn_reinforced_d_{size}.png",
+     "op": "rgb",
+     "size": 1024,
+     "map": "d",
+     "profile": "npm",
+     "notes": "Non-power-of-two 900 px -> nearest power of two 1024 by Lanczos resample."
+    }
+   ]
+  },
+  {
+   "src": 42371,
+   "library_id": 49,
+   "key": "perforated_sheet_round",
+   "verdict": "good opacity mask, tileable; licence unverified (name looks like ambientCG SheetMetal001)",
+   "notes": "White = metal, black = hole; real-world size unknown.",
+   "outputs": [
+    {
+     "path": "materials/v001/49/49_perforated_sheet_round_o_{size}.png",
+     "op": "luma",
+     "map": "o",
+     "profile": "npm"
+    }
+   ]
+  },
+  {
+   "src": 66210,
+   "library_id": 50,
+   "key": "mesh_square_grid",
+   "verdict": "weak: 700 px source resampled to 512, thin bars soften",
+   "notes": "Opacity from the source alpha; the source colour is a flat (107,107,107).",
+   "outputs": [
+    {
+     "path": "materials/v001/50/50_mesh_square_grid_o_{size}.png",
+     "op": "alpha",
+     "size": 512,
+     "map": "o",
+     "profile": "npm",
+     "notes": "Non-power-of-two 700 px -> nearest power of two 512 by Lanczos resample (tiling kept, no padding)."
+    }
+   ]
+  },
+  {
+   "src": 111223,
+   "library_id": 51,
+   "key": "fence_chainlink",
+   "verdict": "good opacity mask, tileable; aspect changed, see notes",
+   "notes": "White = wire.",
+   "outputs": [
+    {
+     "path": "materials/v001/51/51_fence_chainlink_o_{size}.png",
+     "op": "luma",
+     "size": [
+      2048,
+      2048
+     ],
+     "map": "o",
+     "profile": "npm",
+     "notes": "2048x2560 -> 2048x2048 by non-uniform Lanczos resample to keep tiling; scale UV V by 1.25 (one tile = 4:5) to restore the wire proportions."
+    }
+   ]
+  },
+  {
+   "src": 111224,
+   "library_id": 52,
+   "key": "fence_barbed",
+   "verdict": "good opacity strip, tiles along U; padded",
+   "notes": "White = wire.",
+   "outputs": [
+    {
+     "path": "materials/v001/52/52_fence_barbed_o_{size}.png",
+     "op": "luma",
+     "pad_to": [
+      2048,
+      2048
+     ],
+     "map": "o",
+     "profile": "npm",
+     "notes": "2048x640 padded (not resampled) to 2048x2048 with black = transparent; content in rows 0-639, UV V range 0..0.3125."
+    }
+   ]
+  },
+  {
+   "src": 61626,
+   "key": "miscanthus",
+   "library_id": null,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "outputs": [
+    {
+     "path": "flora/v003/maps/miscanthus/miscanthus_d_{size}.png",
+     "op": "rgb",
+     "map": "d",
+     "profile": "flora_source"
+    },
+    {
+     "path": "flora/v003/maps/miscanthus/miscanthus_o_{size}.png",
+     "op": "alpha",
+     "map": "o",
+     "profile": "flora_source"
+    },
+    {
+     "path": "flora/v003/maps/miscanthus/miscanthus_d_{size}.png",
+     "op": "rgb",
+     "size": 2048,
+     "map": "d",
+     "profile": "flora_source",
+     "notes": "2048 Lanczos for the <= 2048 Flora atlas."
+    },
+    {
+     "path": "flora/v003/maps/miscanthus/miscanthus_o_{size}.png",
+     "op": "alpha",
+     "size": 2048,
+     "map": "o",
+     "profile": "flora_source",
+     "notes": "2048 Lanczos for the <= 2048 Flora atlas."
+    }
+   ]
+  },
+  {
+   "src": 61627,
+   "key": "aster-dumosus-island-samoa",
+   "library_id": null,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "outputs": [
+    {
+     "path": "flora/v003/maps/aster-dumosus-island-samoa/aster-dumosus-island-samoa_d_{size}.png",
+     "op": "rgb",
+     "map": "d",
+     "profile": "flora_source"
+    },
+    {
+     "path": "flora/v003/maps/aster-dumosus-island-samoa/aster-dumosus-island-samoa_o_{size}.png",
+     "op": "alpha",
+     "map": "o",
+     "profile": "flora_source"
+    },
+    {
+     "path": "flora/v003/maps/aster-dumosus-island-samoa/aster-dumosus-island-samoa_d_{size}.png",
+     "op": "rgb",
+     "size": 2048,
+     "map": "d",
+     "profile": "flora_source",
+     "notes": "2048 Lanczos for the <= 2048 Flora atlas."
+    },
+    {
+     "path": "flora/v003/maps/aster-dumosus-island-samoa/aster-dumosus-island-samoa_o_{size}.png",
+     "op": "alpha",
+     "size": 2048,
+     "map": "o",
+     "profile": "flora_source",
+     "notes": "2048 Lanczos for the <= 2048 Flora atlas."
+    }
+   ]
+  },
+  {
+   "src": 61628,
+   "key": "berberis",
+   "library_id": null,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "outputs": [
+    {
+     "path": "flora/v003/maps/berberis/berberis_d_{size}.png",
+     "op": "rgb",
+     "map": "d",
+     "profile": "flora_source"
+    },
+    {
+     "path": "flora/v003/maps/berberis/berberis_o_{size}.png",
+     "op": "alpha",
+     "map": "o",
+     "profile": "flora_source"
+    },
+    {
+     "path": "flora/v003/maps/berberis/berberis_d_{size}.png",
+     "op": "rgb",
+     "size": 2048,
+     "map": "d",
+     "profile": "flora_source",
+     "notes": "2048 Lanczos for the <= 2048 Flora atlas."
+    },
+    {
+     "path": "flora/v003/maps/berberis/berberis_o_{size}.png",
+     "op": "alpha",
+     "size": 2048,
+     "map": "o",
+     "profile": "flora_source",
+     "notes": "2048 Lanczos for the <= 2048 Flora atlas."
+    }
+   ]
+  },
+  {
+   "src": 61629,
+   "key": "lysimachia",
+   "library_id": null,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "outputs": [
+    {
+     "path": "flora/v003/maps/lysimachia/lysimachia_d_{size}.png",
+     "op": "rgb",
+     "map": "d",
+     "profile": "flora_source"
+    },
+    {
+     "path": "flora/v003/maps/lysimachia/lysimachia_o_{size}.png",
+     "op": "alpha",
+     "map": "o",
+     "profile": "flora_source"
+    },
+    {
+     "path": "flora/v003/maps/lysimachia/lysimachia_d_{size}.png",
+     "op": "rgb",
+     "size": 2048,
+     "map": "d",
+     "profile": "flora_source",
+     "notes": "2048 Lanczos for the <= 2048 Flora atlas."
+    },
+    {
+     "path": "flora/v003/maps/lysimachia/lysimachia_o_{size}.png",
+     "op": "alpha",
+     "size": 2048,
+     "map": "o",
+     "profile": "flora_source",
+     "notes": "2048 Lanczos for the <= 2048 Flora atlas."
+    }
+   ]
+  },
+  {
+   "src": 61630,
+   "key": "syringa",
+   "library_id": null,
+   "verdict": "good for the NPM Flora atlas: sprites fill most of the 4096 canvas",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "outputs": [
+    {
+     "path": "flora/v003/maps/syringa/syringa_d_{size}.png",
+     "op": "rgb",
+     "map": "d",
+     "profile": "flora_source"
+    },
+    {
+     "path": "flora/v003/maps/syringa/syringa_o_{size}.png",
+     "op": "alpha",
+     "map": "o",
+     "profile": "flora_source"
+    },
+    {
+     "path": "flora/v003/maps/syringa/syringa_d_{size}.png",
+     "op": "rgb",
+     "size": 2048,
+     "map": "d",
+     "profile": "flora_source",
+     "notes": "2048 Lanczos for the <= 2048 Flora atlas."
+    },
+    {
+     "path": "flora/v003/maps/syringa/syringa_o_{size}.png",
+     "op": "alpha",
+     "size": 2048,
+     "map": "o",
+     "profile": "flora_source",
+     "notes": "2048 Lanczos for the <= 2048 Flora atlas."
+    }
+   ]
+  },
+  {
+   "src": 61632,
+   "key": "rosa",
+   "library_id": null,
+   "verdict": "good for the NPM Flora atlas: sprites fill most of the 4096 canvas",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "outputs": [
+    {
+     "path": "flora/v003/maps/rosa/rosa_d_{size}.png",
+     "op": "rgb",
+     "map": "d",
+     "profile": "flora_source"
+    },
+    {
+     "path": "flora/v003/maps/rosa/rosa_o_{size}.png",
+     "op": "alpha",
+     "map": "o",
+     "profile": "flora_source"
+    },
+    {
+     "path": "flora/v003/maps/rosa/rosa_d_{size}.png",
+     "op": "rgb",
+     "size": 2048,
+     "map": "d",
+     "profile": "flora_source",
+     "notes": "2048 Lanczos for the <= 2048 Flora atlas."
+    },
+    {
+     "path": "flora/v003/maps/rosa/rosa_o_{size}.png",
+     "op": "alpha",
+     "size": 2048,
+     "map": "o",
+     "profile": "flora_source",
+     "notes": "2048 Lanczos for the <= 2048 Flora atlas."
+    }
+   ]
+  },
+  {
+   "src": 66203,
+   "key": "daisy-white",
+   "library_id": null,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "outputs": [
+    {
+     "path": "flora/v003/maps/daisy-white/daisy-white_d_{size}.png",
+     "op": "rgb",
+     "map": "d",
+     "profile": "flora_source"
+    },
+    {
+     "path": "flora/v003/maps/daisy-white/daisy-white_o_{size}.png",
+     "op": "alpha",
+     "map": "o",
+     "profile": "flora_source"
+    },
+    {
+     "path": "flora/v003/maps/daisy-white/daisy-white_d_{size}.png",
+     "op": "rgb",
+     "size": 2048,
+     "map": "d",
+     "profile": "flora_source",
+     "notes": "2048 Lanczos for the <= 2048 Flora atlas."
+    },
+    {
+     "path": "flora/v003/maps/daisy-white/daisy-white_o_{size}.png",
+     "op": "alpha",
+     "size": 2048,
+     "map": "o",
+     "profile": "flora_source",
+     "notes": "2048 Lanczos for the <= 2048 Flora atlas."
+    }
+   ]
+  },
+  {
+   "src": 66204,
+   "key": "daisy-yellow",
+   "library_id": null,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "outputs": [
+    {
+     "path": "flora/v003/maps/daisy-yellow/daisy-yellow_d_{size}.png",
+     "op": "rgb",
+     "map": "d",
+     "profile": "flora_source"
+    },
+    {
+     "path": "flora/v003/maps/daisy-yellow/daisy-yellow_o_{size}.png",
+     "op": "alpha",
+     "map": "o",
+     "profile": "flora_source"
+    },
+    {
+     "path": "flora/v003/maps/daisy-yellow/daisy-yellow_d_{size}.png",
+     "op": "rgb",
+     "size": 2048,
+     "map": "d",
+     "profile": "flora_source",
+     "notes": "2048 Lanczos for the <= 2048 Flora atlas."
+    },
+    {
+     "path": "flora/v003/maps/daisy-yellow/daisy-yellow_o_{size}.png",
+     "op": "alpha",
+     "size": 2048,
+     "map": "o",
+     "profile": "flora_source",
+     "notes": "2048 Lanczos for the <= 2048 Flora atlas."
+    }
+   ]
+  },
+  {
+   "src": 66205,
+   "key": "lavandula",
+   "library_id": null,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "outputs": [
+    {
+     "path": "flora/v003/maps/lavandula/lavandula_d_{size}.png",
+     "op": "rgb",
+     "map": "d",
+     "profile": "flora_source"
+    },
+    {
+     "path": "flora/v003/maps/lavandula/lavandula_o_{size}.png",
+     "op": "alpha",
+     "map": "o",
+     "profile": "flora_source"
+    },
+    {
+     "path": "flora/v003/maps/lavandula/lavandula_d_{size}.png",
+     "op": "rgb",
+     "size": 2048,
+     "map": "d",
+     "profile": "flora_source",
+     "notes": "2048 Lanczos for the <= 2048 Flora atlas."
+    },
+    {
+     "path": "flora/v003/maps/lavandula/lavandula_o_{size}.png",
+     "op": "alpha",
+     "size": 2048,
+     "map": "o",
+     "profile": "flora_source",
+     "notes": "2048 Lanczos for the <= 2048 Flora atlas."
+    }
+   ]
+  },
+  {
+   "src": 66206,
+   "key": "miscanthus-v2",
+   "library_id": null,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "outputs": [
+    {
+     "path": "flora/v003/maps/miscanthus-v2/miscanthus-v2_d_{size}.png",
+     "op": "rgb",
+     "map": "d",
+     "profile": "flora_source"
+    },
+    {
+     "path": "flora/v003/maps/miscanthus-v2/miscanthus-v2_o_{size}.png",
+     "op": "alpha",
+     "map": "o",
+     "profile": "flora_source"
+    },
+    {
+     "path": "flora/v003/maps/miscanthus-v2/miscanthus-v2_d_{size}.png",
+     "op": "rgb",
+     "size": 2048,
+     "map": "d",
+     "profile": "flora_source",
+     "notes": "2048 Lanczos for the <= 2048 Flora atlas."
+    },
+    {
+     "path": "flora/v003/maps/miscanthus-v2/miscanthus-v2_o_{size}.png",
+     "op": "alpha",
+     "size": 2048,
+     "map": "o",
+     "profile": "flora_source",
+     "notes": "2048 Lanczos for the <= 2048 Flora atlas."
+    }
+   ]
+  },
+  {
+   "src": 66207,
+   "key": "triticum",
+   "library_id": null,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "outputs": [
+    {
+     "path": "flora/v003/maps/triticum/triticum_d_{size}.png",
+     "op": "rgb",
+     "map": "d",
+     "profile": "flora_source"
+    },
+    {
+     "path": "flora/v003/maps/triticum/triticum_o_{size}.png",
+     "op": "alpha",
+     "map": "o",
+     "profile": "flora_source"
+    },
+    {
+     "path": "flora/v003/maps/triticum/triticum_d_{size}.png",
+     "op": "rgb",
+     "size": 2048,
+     "map": "d",
+     "profile": "flora_source",
+     "notes": "2048 Lanczos for the <= 2048 Flora atlas."
+    },
+    {
+     "path": "flora/v003/maps/triticum/triticum_o_{size}.png",
+     "op": "alpha",
+     "size": 2048,
+     "map": "o",
+     "profile": "flora_source",
+     "notes": "2048 Lanczos for the <= 2048 Flora atlas."
+    }
+   ]
+  },
+  {
+   "src": 61631,
+   "key": "achillea",
+   "library_id": null,
+   "verdict": "good for the NPM Flora atlas: 2048, two sprites fill the canvas",
+   "notes": "Species not confirmed (slug from the chat label 'yarrow'); no catalogue id yet (step 2.4). Lossless split; the 2048 diffuse PNG is 3.3 MiB (> 3 MiB): atlas input only, not a delivery map.",
+   "outputs": [
+    {
+     "path": "flora/v003/maps/achillea/achillea_d_{size}.png",
+     "op": "rgb",
+     "map": "d",
+     "profile": "flora_source"
+    },
+    {
+     "path": "flora/v003/maps/achillea/achillea_o_{size}.png",
+     "op": "alpha",
+     "map": "o",
+     "profile": "flora_source"
+    }
+   ]
+  }
+ ]
+}

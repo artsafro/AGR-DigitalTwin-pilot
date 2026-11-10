@@ -1,0 +1,2934 @@
+{
+ "schema": 1,
+ "version": "v001",
+ "decision": "D239",
+ "root": "G:\\Мой диск\\AGR-assets",
+ "inbox": "_inbox/telegram-materials-2026-11",
+ "inbox_manifest_sha256": "e29d7ee60623bc8200807648131deef488b511d953fb4a63e9caaad75888d179",
+ "spec": "library/materials/maps_v001.spec.json",
+ "tool": "tools/materials/inbox_maps.py",
+ "new_library_ids": [
+  {
+   "library_id": 43,
+   "key": "gate_panel_grey",
+   "name_ru": "Ворота ОКС, серые с горизонтальными линиями",
+   "class": "metal",
+   "status": "proposed",
+   "note": "proposed in maps_v001 [D239]; not yet a row of materials_v002.json / ground_v001.json"
+  },
+  {
+   "library_id": 44,
+   "key": "address_plate_template",
+   "name_ru": "Адресная табличка (шаблон и плейсхолдеры)",
+   "class": "sign",
+   "status": "proposed",
+   "note": "proposed in maps_v001 [D239]; not yet a row of materials_v002.json / ground_v001.json"
+  },
+  {
+   "library_id": 45,
+   "key": "paving_slab_grey",
+   "name_ru": "Плита тротуарная серая (3x3 плиты на тайл, размер неизвестен)",
+   "class": "paving",
+   "status": "proposed",
+   "note": "proposed in maps_v001 [D239]; not yet a row of materials_v002.json / ground_v001.json"
+  },
+  {
+   "library_id": 46,
+   "key": "wood_grain_medium",
+   "name_ru": "Дерево, текстура волокон, средне-коричневое",
+   "class": "wood",
+   "status": "proposed",
+   "note": "proposed in maps_v001 [D239]; not yet a row of materials_v002.json / ground_v001.json"
+  },
+  {
+   "library_id": 47,
+   "key": "brick_long_format_mask",
+   "name_ru": "Кирпич длинного формата, серая маска",
+   "class": "brick",
+   "status": "proposed",
+   "note": "proposed in maps_v001 [D239]; not yet a row of materials_v002.json / ground_v001.json"
+  },
+  {
+   "library_id": 48,
+   "key": "facade_strip_tile_grey",
+   "name_ru": "Фасадная плитка-полоса серая",
+   "class": "tile",
+   "status": "proposed",
+   "note": "proposed in maps_v001 [D239]; not yet a row of materials_v002.json / ground_v001.json"
+  },
+  {
+   "library_id": 49,
+   "key": "perforated_sheet_round",
+   "name_ru": "Лист перфорированный, круглые отверстия (opacity)",
+   "class": "metal",
+   "status": "proposed",
+   "note": "proposed in maps_v001 [D239]; not yet a row of materials_v002.json / ground_v001.json"
+  },
+  {
+   "library_id": 50,
+   "key": "mesh_square_grid",
+   "name_ru": "Сетка квадратная (opacity)",
+   "class": "metal",
+   "status": "proposed",
+   "note": "proposed in maps_v001 [D239]; not yet a row of materials_v002.json / ground_v001.json"
+  },
+  {
+   "library_id": 51,
+   "key": "fence_chainlink",
+   "name_ru": "Забор сетка-рабица (opacity)",
+   "class": "metal",
+   "status": "proposed",
+   "note": "proposed in maps_v001 [D239]; not yet a row of materials_v002.json / ground_v001.json"
+  },
+  {
+   "library_id": 52,
+   "key": "fence_barbed",
+   "name_ru": "Колючая проволока (opacity)",
+   "class": "metal",
+   "status": "proposed",
+   "note": "proposed in maps_v001 [D239]; not yet a row of materials_v002.json / ground_v001.json"
+  }
+ ],
+ "skipped": [
+  {
+   "msg_id": 53407,
+   "reason": "MAF atlas source: step 2.3 (other branch)"
+  },
+  {
+   "msg_id": 53408,
+   "reason": "MAF atlas ID map: step 2.3 (other branch)"
+  },
+  {
+   "msg_id": 107807,
+   "reason": "FBX geometry, not a map; its tile texture is taken from the zip 107806"
+  }
+ ],
+ "maps": [
+  {
+   "path": "materials/placeholders/v001/interior_d_256.png",
+   "library_id": 40,
+   "key": "interior",
+   "map": "d",
+   "profile": "vpm",
+   "width": 256,
+   "height": 256,
+   "mode": "RGB",
+   "bytes": 565,
+   "sha256": "7838298711c57ade49821a0e371c88d41f2804ae30983c9c25e514c2feb47320",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "flat",
+    "size": 256
+   },
+   "source": {
+    "msg_id": 20949,
+    "file": "20949_T_77_17_0130206_5812_002_Diffuse_1.1013.png",
+    "sha256": "9e790c19874c193941616c1326ded02d954aa95ffb017ee23e120a660de8abda"
+   },
+   "synthetic": false,
+   "verdict": "good: VPM placeholder 256 and NPM 128 colour",
+   "notes": "Interior capsule Diffuse, sRGB (57,57,57).",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/placeholders/v001/interior_d_128.png",
+   "library_id": 40,
+   "key": "interior",
+   "map": "d",
+   "profile": "npm",
+   "width": 128,
+   "height": 128,
+   "mode": "RGB",
+   "bytes": 254,
+   "sha256": "d87613cf741fc974c47ef4d03a0766156db35af39a9c5adc574d79998cea5566",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "flat",
+    "size": 128
+   },
+   "source": {
+    "msg_id": 20949,
+    "file": "20949_T_77_17_0130206_5812_002_Diffuse_1.1013.png",
+    "sha256": "9e790c19874c193941616c1326ded02d954aa95ffb017ee23e120a660de8abda"
+   },
+   "synthetic": false,
+   "verdict": "good: VPM placeholder 256 and NPM 128 colour",
+   "notes": "Interior capsule Diffuse, sRGB (57,57,57). NPM: TEX-09 allows standalone 128 placeholders for Metallic/Roughness only; use this colour as a solid atlas cell",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/placeholders/v001/lighting_erm_256.png",
+   "library_id": null,
+   "key": "lighting",
+   "map": "erm",
+   "profile": "vpm",
+   "width": 256,
+   "height": 256,
+   "mode": "RGB",
+   "bytes": 564,
+   "sha256": "a43c0c327c62a504ba113dbe65d67d6d34de81786f47413fa7d552934e7a5e30",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "flat",
+    "size": 256
+   },
+   "source": {
+    "msg_id": 20953,
+    "file": "20953_T_77_17_0130206_5812_002_ERM_1.1014.png",
+    "sha256": "832ebe10d107ed012ab9f62fbe8152269c3acf13b4a54d7fd2ca979d12528426"
+   },
+   "synthetic": false,
+   "verdict": "good: VPM ERM placeholder; NPM M/R 128",
+   "notes": "ERM (255,255,0): emissive 255, roughness 255, metallic 0. No library id yet (lighting).",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/placeholders/v001/lighting_r_128.png",
+   "library_id": null,
+   "key": "lighting",
+   "map": "r",
+   "profile": "npm",
+   "width": 128,
+   "height": 128,
+   "mode": "RGB",
+   "bytes": 253,
+   "sha256": "68dfedfac3726a7da3ec4440a7accb0bc98963cbc223da7d4af616cc9156aa77",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "flat",
+    "size": 128,
+    "channel": "G"
+   },
+   "source": {
+    "msg_id": 20953,
+    "file": "20953_T_77_17_0130206_5812_002_ERM_1.1014.png",
+    "sha256": "832ebe10d107ed012ab9f62fbe8152269c3acf13b4a54d7fd2ca979d12528426"
+   },
+   "synthetic": false,
+   "verdict": "good: VPM ERM placeholder; NPM M/R 128",
+   "notes": "ERM (255,255,0): emissive 255, roughness 255, metallic 0. No library id yet (lighting).",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/placeholders/v001/lighting_m_128.png",
+   "library_id": null,
+   "key": "lighting",
+   "map": "m",
+   "profile": "npm",
+   "width": 128,
+   "height": 128,
+   "mode": "RGB",
+   "bytes": 125,
+   "sha256": "7659100791b0b0d9d5707576f6d04cdae4e769ae4ba3034169540fe3990efae5",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "flat",
+    "size": 128,
+    "channel": "B"
+   },
+   "source": {
+    "msg_id": 20953,
+    "file": "20953_T_77_17_0130206_5812_002_ERM_1.1014.png",
+    "sha256": "832ebe10d107ed012ab9f62fbe8152269c3acf13b4a54d7fd2ca979d12528426"
+   },
+   "synthetic": false,
+   "verdict": "good: VPM ERM placeholder; NPM M/R 128",
+   "notes": "ERM (255,255,0): emissive 255, roughness 255, metallic 0. No library id yet (lighting).",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/placeholders/v001/flat_n_256.png",
+   "library_id": null,
+   "key": "flat",
+   "map": "n",
+   "profile": "vpm",
+   "width": 256,
+   "height": 256,
+   "mode": "RGB",
+   "bytes": 564,
+   "sha256": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "flat",
+    "size": 256
+   },
+   "source": {
+    "msg_id": 20954,
+    "file": "20954_T_77_17_0130206_5812_002_Normal_1.1014.png",
+    "sha256": "e2aee37a3eb95998a5308254072ffc0b3140364ce137cf7a0f121cb77b0f97f7"
+   },
+   "synthetic": false,
+   "verdict": "good: flat DirectX normal placeholder for any VPM set",
+   "notes": "(128,128,255); 27885 (address plates Normal) is the same colour. NPM has no normal maps [D014].",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/placeholders/v001/lighting_d_256.png",
+   "library_id": null,
+   "key": "lighting",
+   "map": "d",
+   "profile": "vpm",
+   "width": 256,
+   "height": 256,
+   "mode": "RGB",
+   "bytes": 564,
+   "sha256": "a43c0c327c62a504ba113dbe65d67d6d34de81786f47413fa7d552934e7a5e30",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "flat",
+    "size": 256
+   },
+   "source": {
+    "msg_id": 20955,
+    "file": "20955_T_77_17_0130206_5812_002_Diffuse_1.1014.png",
+    "sha256": "832ebe10d107ed012ab9f62fbe8152269c3acf13b4a54d7fd2ca979d12528426"
+   },
+   "synthetic": false,
+   "verdict": "good: VPM Diffuse placeholder 256; NPM 128 colour",
+   "notes": "Yellow (255,255,0); same bytes as the ERM 20953 in the source chat.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/placeholders/v001/lighting_d_128.png",
+   "library_id": null,
+   "key": "lighting",
+   "map": "d",
+   "profile": "npm",
+   "width": 128,
+   "height": 128,
+   "mode": "RGB",
+   "bytes": 253,
+   "sha256": "3162fd67ec3d6a8754024d6ea29785776ec75dfcc468da84fd750969f2613779",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "flat",
+    "size": 128
+   },
+   "source": {
+    "msg_id": 20955,
+    "file": "20955_T_77_17_0130206_5812_002_Diffuse_1.1014.png",
+    "sha256": "832ebe10d107ed012ab9f62fbe8152269c3acf13b4a54d7fd2ca979d12528426"
+   },
+   "synthetic": false,
+   "verdict": "good: VPM Diffuse placeholder 256; NPM 128 colour",
+   "notes": "Yellow (255,255,0); same bytes as the ERM 20953 in the source chat. NPM: TEX-09 allows standalone 128 placeholders for Metallic/Roughness only; use this colour as a solid atlas cell",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/placeholders/v001/roof_dark_d_256.png",
+   "library_id": null,
+   "key": "roof_dark",
+   "map": "d",
+   "profile": "vpm",
+   "width": 256,
+   "height": 256,
+   "mode": "RGB",
+   "bytes": 569,
+   "sha256": "c19cb4d068f0e2cb536d7273884d5cf82d7804e329a9c8c63201e5a678808629",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "flat",
+    "size": 256
+   },
+   "source": {
+    "msg_id": 20956,
+    "file": "20956_T_2_VT_NEW_Main_крыши_1.1011.png",
+    "sha256": "961a6778a414c5beb56ae6af0ae82fb004981f06341deaa9aa2a8a023418fa07"
+   },
+   "synthetic": false,
+   "verdict": "good: VPM placeholder 256 and NPM 128 colour",
+   "notes": "Roof Diffuse (80,83,95); which roof row (29-31) it stands for is unknown; closest by tone 30 roof_solo.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/placeholders/v001/roof_dark_d_128.png",
+   "library_id": null,
+   "key": "roof_dark",
+   "map": "d",
+   "profile": "npm",
+   "width": 128,
+   "height": 128,
+   "mode": "RGB",
+   "bytes": 258,
+   "sha256": "5f2028e62bd190139bca75e37933d85676a551f9c1a38844004a5537a15ae5d2",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "flat",
+    "size": 128
+   },
+   "source": {
+    "msg_id": 20956,
+    "file": "20956_T_2_VT_NEW_Main_крыши_1.1011.png",
+    "sha256": "961a6778a414c5beb56ae6af0ae82fb004981f06341deaa9aa2a8a023418fa07"
+   },
+   "synthetic": false,
+   "verdict": "good: VPM placeholder 256 and NPM 128 colour",
+   "notes": "Roof Diffuse (80,83,95); which roof row (29-31) it stands for is unknown; closest by tone 30 roof_solo. NPM: TEX-09 allows standalone 128 placeholders for Metallic/Roughness only; use this colour as a solid atlas cell",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/placeholders/v001/metal_glossy_erm_256.png",
+   "library_id": null,
+   "key": "metal_glossy",
+   "map": "erm",
+   "profile": "vpm",
+   "width": 256,
+   "height": 256,
+   "mode": "RGB",
+   "bytes": 564,
+   "sha256": "9825d69cf885c1dffb23e00ce67d071797b47e01376b3606ab82076f7c260390",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "flat",
+    "size": 256
+   },
+   "source": {
+    "msg_id": 27159,
+    "file": "27159_T_PoselenieDesenovskoe_Kv_18_002_ERM_1.1006.png",
+    "sha256": "63b13f1e62e206a453136e9ae46806bfc7982ba8e400e9bb52d5cb5aa8b7903b"
+   },
+   "synthetic": false,
+   "verdict": "good: VPM ERM placeholder; NPM M/R 128",
+   "notes": "ERM (0,129,255): roughness 129, metallic 255; candidate for 36 steel_stainless (not confirmed).",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/placeholders/v001/metal_glossy_r_128.png",
+   "library_id": null,
+   "key": "metal_glossy",
+   "map": "r",
+   "profile": "npm",
+   "width": 128,
+   "height": 128,
+   "mode": "RGB",
+   "bytes": 253,
+   "sha256": "f3660bb1a2b908471f87d0eb519dc62ed84ff5e206d821501f2b5e7b7db6939e",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "flat",
+    "size": 128,
+    "channel": "G"
+   },
+   "source": {
+    "msg_id": 27159,
+    "file": "27159_T_PoselenieDesenovskoe_Kv_18_002_ERM_1.1006.png",
+    "sha256": "63b13f1e62e206a453136e9ae46806bfc7982ba8e400e9bb52d5cb5aa8b7903b"
+   },
+   "synthetic": false,
+   "verdict": "good: VPM ERM placeholder; NPM M/R 128",
+   "notes": "ERM (0,129,255): roughness 129, metallic 255; candidate for 36 steel_stainless (not confirmed).",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/placeholders/v001/metal_glossy_m_128.png",
+   "library_id": null,
+   "key": "metal_glossy",
+   "map": "m",
+   "profile": "npm",
+   "width": 128,
+   "height": 128,
+   "mode": "RGB",
+   "bytes": 253,
+   "sha256": "68dfedfac3726a7da3ec4440a7accb0bc98963cbc223da7d4af616cc9156aa77",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "flat",
+    "size": 128,
+    "channel": "B"
+   },
+   "source": {
+    "msg_id": 27159,
+    "file": "27159_T_PoselenieDesenovskoe_Kv_18_002_ERM_1.1006.png",
+    "sha256": "63b13f1e62e206a453136e9ae46806bfc7982ba8e400e9bb52d5cb5aa8b7903b"
+   },
+   "synthetic": false,
+   "verdict": "good: VPM ERM placeholder; NPM M/R 128",
+   "notes": "ERM (0,129,255): roughness 129, metallic 255; candidate for 36 steel_stainless (not confirmed).",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/placeholders/v001/metal_matte_erm_256.png",
+   "library_id": null,
+   "key": "metal_matte",
+   "map": "erm",
+   "profile": "vpm",
+   "width": 256,
+   "height": 256,
+   "mode": "RGB",
+   "bytes": 564,
+   "sha256": "02d5e3a7cdbf7655e32432b08323cea01d6b1c57f88fe4907476ee8f38ad7365",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "flat",
+    "size": 256
+   },
+   "source": {
+    "msg_id": 27161,
+    "file": "27161_T_Polyani_ZU_50_D_19_004_ERM_1.1004.png",
+    "sha256": "7e53c82ccbf7857332ebdd83c5b27713393e729a90eecd917669fecedb994129"
+   },
+   "synthetic": false,
+   "verdict": "weak: metallic 128 (half metal), check intent before use",
+   "notes": "ERM (0,128,128): roughness 128, metallic 128.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/placeholders/v001/metal_matte_r_128.png",
+   "library_id": null,
+   "key": "metal_matte",
+   "map": "r",
+   "profile": "npm",
+   "width": 128,
+   "height": 128,
+   "mode": "RGB",
+   "bytes": 253,
+   "sha256": "915440d3b41c37b9265cd4f4af4d715931c81813c8445165d73aa2ff3a291f1a",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "flat",
+    "size": 128,
+    "channel": "G"
+   },
+   "source": {
+    "msg_id": 27161,
+    "file": "27161_T_Polyani_ZU_50_D_19_004_ERM_1.1004.png",
+    "sha256": "7e53c82ccbf7857332ebdd83c5b27713393e729a90eecd917669fecedb994129"
+   },
+   "synthetic": false,
+   "verdict": "weak: metallic 128 (half metal), check intent before use",
+   "notes": "ERM (0,128,128): roughness 128, metallic 128.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/placeholders/v001/metal_matte_m_128.png",
+   "library_id": null,
+   "key": "metal_matte",
+   "map": "m",
+   "profile": "npm",
+   "width": 128,
+   "height": 128,
+   "mode": "RGB",
+   "bytes": 253,
+   "sha256": "915440d3b41c37b9265cd4f4af4d715931c81813c8445165d73aa2ff3a291f1a",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "flat",
+    "size": 128,
+    "channel": "B"
+   },
+   "source": {
+    "msg_id": 27161,
+    "file": "27161_T_Polyani_ZU_50_D_19_004_ERM_1.1004.png",
+    "sha256": "7e53c82ccbf7857332ebdd83c5b27713393e729a90eecd917669fecedb994129"
+   },
+   "synthetic": false,
+   "verdict": "weak: metallic 128 (half metal), check intent before use",
+   "notes": "ERM (0,128,128): roughness 128, metallic 128.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/placeholders/v001/address_plate_erm_256.png",
+   "library_id": 44,
+   "key": "address_plate",
+   "map": "erm",
+   "profile": "vpm",
+   "width": 256,
+   "height": 256,
+   "mode": "RGB",
+   "bytes": 567,
+   "sha256": "35c8bc70f92f6f05a9a9baf5e40cfd79bc394c2cdae9f5661aec686eecb57606",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "flat",
+    "size": 256
+   },
+   "source": {
+    "msg_id": 27884,
+    "file": "27884_T_77_17_0130206_5812_002_ERM_1.1016.png",
+    "sha256": "50e4cd1e75a64cf36f94bdb64cd6c82374358d2cd21bcf2db9da168c9ca33e6e"
+   },
+   "synthetic": false,
+   "verdict": "good: VPM ERM placeholder; NPM M/R 128",
+   "notes": "Address plates (house number 1016 set): ERM (0,197,38).",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/placeholders/v001/address_plate_r_128.png",
+   "library_id": 44,
+   "key": "address_plate",
+   "map": "r",
+   "profile": "npm",
+   "width": 128,
+   "height": 128,
+   "mode": "RGB",
+   "bytes": 254,
+   "sha256": "cc77bc3dbcb18215e26473042354aaafcbccddb757311b60c91d93ccca41e249",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "flat",
+    "size": 128,
+    "channel": "G"
+   },
+   "source": {
+    "msg_id": 27884,
+    "file": "27884_T_77_17_0130206_5812_002_ERM_1.1016.png",
+    "sha256": "50e4cd1e75a64cf36f94bdb64cd6c82374358d2cd21bcf2db9da168c9ca33e6e"
+   },
+   "synthetic": false,
+   "verdict": "good: VPM ERM placeholder; NPM M/R 128",
+   "notes": "Address plates (house number 1016 set): ERM (0,197,38).",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/placeholders/v001/address_plate_m_128.png",
+   "library_id": 44,
+   "key": "address_plate",
+   "map": "m",
+   "profile": "npm",
+   "width": 128,
+   "height": 128,
+   "mode": "RGB",
+   "bytes": 254,
+   "sha256": "09ae235612025ca29ff12fb07fb73cd1dbb8c5c4a2d7f15657ed47432bc20a9a",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "flat",
+    "size": 128,
+    "channel": "B"
+   },
+   "source": {
+    "msg_id": 27884,
+    "file": "27884_T_77_17_0130206_5812_002_ERM_1.1016.png",
+    "sha256": "50e4cd1e75a64cf36f94bdb64cd6c82374358d2cd21bcf2db9da168c9ca33e6e"
+   },
+   "synthetic": false,
+   "verdict": "good: VPM ERM placeholder; NPM M/R 128",
+   "notes": "Address plates (house number 1016 set): ERM (0,197,38).",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/placeholders/v001/address_plate_d_256.png",
+   "library_id": 44,
+   "key": "address_plate",
+   "map": "d",
+   "profile": "vpm",
+   "width": 256,
+   "height": 256,
+   "mode": "RGB",
+   "bytes": 565,
+   "sha256": "2b779eaea7be5966accbfa8e65731205ac65cf0979ea5a1ee6457b093f001b0e",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "flat",
+    "size": 256
+   },
+   "source": {
+    "msg_id": 27886,
+    "file": "27886_T_77_17_0130206_5812_002_Diffuse_1.1016.png",
+    "sha256": "15543ae26b8754ee20129a2853bcf1dcf017ca6d3e68c3f7254c7d7665ec6fe5"
+   },
+   "synthetic": false,
+   "verdict": "good: VPM Diffuse placeholder 256; NPM 128 colour",
+   "notes": "Diffuse (0,0,98) navy. Normal 27885 = flat_n_256.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/placeholders/v001/address_plate_d_128.png",
+   "library_id": 44,
+   "key": "address_plate",
+   "map": "d",
+   "profile": "npm",
+   "width": 128,
+   "height": 128,
+   "mode": "RGB",
+   "bytes": 254,
+   "sha256": "38ad6e9678b8f7e9dbc027d4126b7b42c415a673333aaaa2fc5dd387c916299f",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "flat",
+    "size": 128
+   },
+   "source": {
+    "msg_id": 27886,
+    "file": "27886_T_77_17_0130206_5812_002_Diffuse_1.1016.png",
+    "sha256": "15543ae26b8754ee20129a2853bcf1dcf017ca6d3e68c3f7254c7d7665ec6fe5"
+   },
+   "synthetic": false,
+   "verdict": "good: VPM Diffuse placeholder 256; NPM 128 colour",
+   "notes": "Diffuse (0,0,98) navy. Normal 27885 = flat_n_256. NPM: TEX-09 allows standalone 128 placeholders for Metallic/Roughness only; use this colour as a solid atlas cell",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/placeholders/v001/gate_erm_256.png",
+   "library_id": 43,
+   "key": "gate",
+   "map": "erm",
+   "profile": "vpm",
+   "width": 256,
+   "height": 256,
+   "mode": "RGB",
+   "bytes": 566,
+   "sha256": "22024469d36f7d52a590ac3604be911efca5a9232b2870725e1053b8d366b278",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "flat",
+    "size": 256
+   },
+   "source": {
+    "msg_id": 27902,
+    "file": "27902_T_77_17_0120316_31637_003_ERM_1.1015.png",
+    "sha256": "2ccb06cc1ccf3445205bcd03abe70557b17aa8146bad42007a03ba8623e4ec28"
+   },
+   "synthetic": false,
+   "verdict": "good: VPM ERM placeholder (source palette PNG converted to RGB); NPM M/R 128",
+   "notes": "ERM (0,102,104): roughness 102, metallic 104.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/placeholders/v001/gate_r_128.png",
+   "library_id": 43,
+   "key": "gate",
+   "map": "r",
+   "profile": "npm",
+   "width": 128,
+   "height": 128,
+   "mode": "RGB",
+   "bytes": 254,
+   "sha256": "f8865e84a843059ddd353221f1fb8622e3d559323c22a4757aac2049ba1124f8",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "flat",
+    "size": 128,
+    "channel": "G"
+   },
+   "source": {
+    "msg_id": 27902,
+    "file": "27902_T_77_17_0120316_31637_003_ERM_1.1015.png",
+    "sha256": "2ccb06cc1ccf3445205bcd03abe70557b17aa8146bad42007a03ba8623e4ec28"
+   },
+   "synthetic": false,
+   "verdict": "good: VPM ERM placeholder (source palette PNG converted to RGB); NPM M/R 128",
+   "notes": "ERM (0,102,104): roughness 102, metallic 104.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/placeholders/v001/gate_m_128.png",
+   "library_id": 43,
+   "key": "gate",
+   "map": "m",
+   "profile": "npm",
+   "width": 128,
+   "height": 128,
+   "mode": "RGB",
+   "bytes": 254,
+   "sha256": "67d8d87edd39e8a5162262a095c4fe43e877815938344afa3e261720e80103e5",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "flat",
+    "size": 128,
+    "channel": "B"
+   },
+   "source": {
+    "msg_id": 27902,
+    "file": "27902_T_77_17_0120316_31637_003_ERM_1.1015.png",
+    "sha256": "2ccb06cc1ccf3445205bcd03abe70557b17aa8146bad42007a03ba8623e4ec28"
+   },
+   "synthetic": false,
+   "verdict": "good: VPM ERM placeholder (source palette PNG converted to RGB); NPM M/R 128",
+   "notes": "ERM (0,102,104): roughness 102, metallic 104.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/43/43_gate_panel_grey_d_4096.png",
+   "library_id": 43,
+   "key": "gate_panel_grey",
+   "map": "d",
+   "profile": "vpm",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 57985,
+   "sha256": "d05f535b993307d7dd7eb445ceaf663a8880b78733da5a471e46359d0416f0a6",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb"
+   },
+   "source": {
+    "msg_id": 27903,
+    "file": "27903_T_77_17_0120316_31637_003_Diffuse_1.1015.png",
+    "sha256": "54c34295ebd80b3ad2fbb51431067dff1a58646e3291adc62ab3c1c2f24f5a1e"
+   },
+   "synthetic": false,
+   "verdict": "VPM-ok: 4096 Diffuse + Normal, ERM placeholder gate_erm_256; good for NPM at 2048",
+   "notes": "OKS gates, horizontal lines; real-world size unknown.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/43/43_gate_panel_grey_d_2048.png",
+   "library_id": 43,
+   "key": "gate_panel_grey",
+   "map": "d",
+   "profile": "npm",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 16730,
+   "sha256": "24aeb1ddd2e0f8c2a19d45ba1ce095a6d2d5569fa27d3aa0aa57cea4188341d3",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 27903,
+    "file": "27903_T_77_17_0120316_31637_003_Diffuse_1.1015.png",
+    "sha256": "54c34295ebd80b3ad2fbb51431067dff1a58646e3291adc62ab3c1c2f24f5a1e"
+   },
+   "synthetic": false,
+   "verdict": "VPM-ok: 4096 Diffuse + Normal, ERM placeholder gate_erm_256; good for NPM at 2048",
+   "notes": "OKS gates, horizontal lines; real-world size unknown.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/43/43_gate_panel_grey_n_4096.png",
+   "library_id": 43,
+   "key": "gate_panel_grey",
+   "map": "n",
+   "profile": "vpm",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 58156,
+   "sha256": "1deb1bc50e4f1897dbd1c88b9f831563edb7453a715cf53f66f53bdec2b08445",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb"
+   },
+   "source": {
+    "msg_id": 27904,
+    "file": "27904_T_77_17_0120316_31637_003_Normal_1.1015.png",
+    "sha256": "5d0c2a8bb90aabaefa81fa328f7d39ccbe000a0524f12688fc24e59b0db4645b"
+   },
+   "synthetic": false,
+   "verdict": "VPM-ok: 4096 DirectX normal (convention not re-checked)",
+   "notes": null,
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/44/44_address_plate_template_d_4096.png",
+   "library_id": 44,
+   "key": "address_plate_template",
+   "map": "d",
+   "profile": "vpm",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 59452,
+   "sha256": "a1eb2a4954be7fd31b186c7331a58cf74485c4b9985e6f8a0927902684106d8d",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb"
+   },
+   "source": {
+    "msg_id": 21003,
+    "file": "21003_T_Template_Address_001_Diffuse_1.1007.png",
+    "sha256": "3c16de1f8efb02ccb564fe0262a0a6ae5f0fb6804fe60615b3dbad7eb463d625"
+   },
+   "synthetic": false,
+   "verdict": "VPM-ok: 4096 triplet; template strokes, replace per address",
+   "notes": "Address template T_Template_Address_001; real-world size unknown.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/44/44_address_plate_template_d_2048.png",
+   "library_id": 44,
+   "key": "address_plate_template",
+   "map": "d",
+   "profile": "npm",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 29499,
+   "sha256": "4ac50b3d65cfee592e5dd8bfd22bf41e77656b3f585fd45d8f29a2ad590494b9",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 21003,
+    "file": "21003_T_Template_Address_001_Diffuse_1.1007.png",
+    "sha256": "3c16de1f8efb02ccb564fe0262a0a6ae5f0fb6804fe60615b3dbad7eb463d625"
+   },
+   "synthetic": false,
+   "verdict": "VPM-ok: 4096 triplet; template strokes, replace per address",
+   "notes": "Address template T_Template_Address_001; real-world size unknown.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/44/44_address_plate_template_erm_4096.png",
+   "library_id": 44,
+   "key": "address_plate_template",
+   "map": "erm",
+   "profile": "vpm",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 58937,
+   "sha256": "e2f14a8412f666e455ca8cda912218dd36ef0fd3b3516ce2efeec47b36abcb06",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb"
+   },
+   "source": {
+    "msg_id": 21001,
+    "file": "21001_T_Template_Address_001_ERM_1.1007.png",
+    "sha256": "6232afcdc5dd210fa4f21fad8a918b171a4f71b53292be7e53a63648869c8b90"
+   },
+   "synthetic": false,
+   "verdict": "VPM-ok: ERM 4096; NPM R/M pair at 2048 from its G/B",
+   "notes": null,
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/44/44_address_plate_template_r_2048.png",
+   "library_id": 44,
+   "key": "address_plate_template",
+   "map": "r",
+   "profile": "npm",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 27064,
+   "sha256": "aa4e5756bc607be75c15a1417e437562df7f1b67c73c4ab817074e120dc8b2da",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "channel",
+    "channel": "G",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 21001,
+    "file": "21001_T_Template_Address_001_ERM_1.1007.png",
+    "sha256": "6232afcdc5dd210fa4f21fad8a918b171a4f71b53292be7e53a63648869c8b90"
+   },
+   "synthetic": false,
+   "verdict": "VPM-ok: ERM 4096; NPM R/M pair at 2048 from its G/B",
+   "notes": null,
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/44/44_address_plate_template_m_2048.png",
+   "library_id": 44,
+   "key": "address_plate_template",
+   "map": "m",
+   "profile": "npm",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 26026,
+   "sha256": "9bfa8ad5b1ff4bfcfbeef7600c39902edc32d00be09fdc444914c7dd5a1c01df",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "channel",
+    "channel": "B",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 21001,
+    "file": "21001_T_Template_Address_001_ERM_1.1007.png",
+    "sha256": "6232afcdc5dd210fa4f21fad8a918b171a4f71b53292be7e53a63648869c8b90"
+   },
+   "synthetic": false,
+   "verdict": "VPM-ok: ERM 4096; NPM R/M pair at 2048 from its G/B",
+   "notes": null,
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/44/44_address_plate_template_n_4096.png",
+   "library_id": 44,
+   "key": "address_plate_template",
+   "map": "n",
+   "profile": "vpm",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 64422,
+   "sha256": "d2f365295382ad7f973bb76265396c19c6c56c99229641b59a7dd5455fc5c9a0",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb"
+   },
+   "source": {
+    "msg_id": 21002,
+    "file": "21002_T_Template_Address_001_Normal_1.1007.png",
+    "sha256": "c6b154366c847194fbe32fcff2eaf05705d41a95e7ad229ae88ca6de82618c01"
+   },
+   "synthetic": false,
+   "verdict": "VPM-ok: 4096 normal",
+   "notes": null,
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/22/22_asphalt_d_4096.png",
+   "library_id": 22,
+   "key": "asphalt",
+   "map": "d",
+   "profile": "vpm",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 9762068,
+   "sha256": "d9c20cb49f97e1aa9c3cc4aee65759f61a6d7f15a7f9b2b5ca58013dfa293c1d",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": "unknown: no real-world size in the source",
+   "op": {
+    "op": "rgb"
+   },
+   "source": {
+    "msg_id": 69812,
+    "file": "69812_Асфальт_03.png",
+    "sha256": "03bb55f37bd3c0635634901cde92145fd7fdd95500f782af46276e85a1becd8d"
+   },
+   "synthetic": false,
+   "verdict": "good: tileable; VPM-ok as Diffuse only (no ERM/Normal); good for NPM",
+   "notes": "Real-world size unknown.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/22/22_asphalt_d_2048.png",
+   "library_id": 22,
+   "key": "asphalt",
+   "map": "d",
+   "profile": "vpm",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 3488343,
+   "sha256": "0e2d5dde4302b19324b4ee030facbfc816ab69da5926ba5cd4dd15741ed56174",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": "unknown: no real-world size in the source",
+   "op": {
+    "op": "rgb",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 69812,
+    "file": "69812_Асфальт_03.png",
+    "sha256": "03bb55f37bd3c0635634901cde92145fd7fdd95500f782af46276e85a1becd8d"
+   },
+   "synthetic": false,
+   "verdict": "good: tileable; VPM-ok as Diffuse only (no ERM/Normal); good for NPM",
+   "notes": "Real-world size unknown. VPM 2048 variant (Lanczos).",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/22/22_asphalt_d_1024.png",
+   "library_id": 22,
+   "key": "asphalt",
+   "map": "d",
+   "profile": "npm",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 1045241,
+   "sha256": "fbe63c55f4af2a6b9f8714b16d9bc688ff5e3782b21505eda9eaa37da7bf2351",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": "unknown: no real-world size in the source",
+   "op": {
+    "op": "rgb",
+    "size": "npm_auto"
+   },
+   "source": {
+    "msg_id": 69812,
+    "file": "69812_Асфальт_03.png",
+    "sha256": "03bb55f37bd3c0635634901cde92145fd7fdd95500f782af46276e85a1becd8d"
+   },
+   "synthetic": false,
+   "verdict": "good: tileable; VPM-ok as Diffuse only (no ERM/Normal); good for NPM",
+   "notes": "Real-world size unknown. NPM: largest of 2048/1024/512 within 3 MiB.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/28/28_concrete_arch_d_4096.png",
+   "library_id": 28,
+   "key": "concrete_arch",
+   "map": "d",
+   "profile": "vpm",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 23428294,
+   "sha256": "79a92266c34e7bc4b85b804571f384e5abcd60cfd1a9fd5bbdb0c684a692bf52",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": "unknown: no real-world size in the source",
+   "op": {
+    "op": "rgb"
+   },
+   "source": {
+    "msg_id": 58971,
+    "file": "58971_Concrete_01.jpg",
+    "sha256": "cd56b7dcc6fd9889ad9e8e79d0603ee2a40dc4474029456987a1b8f10305fdd3"
+   },
+   "synthetic": false,
+   "verdict": "good: tileable, low contrast; VPM-ok as Diffuse only; good for NPM",
+   "notes": "JPEG source (compression artefacts possible); real-world size unknown; table recipe for 28 is solid.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/28/28_concrete_arch_d_2048.png",
+   "library_id": 28,
+   "key": "concrete_arch",
+   "map": "d",
+   "profile": "vpm",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 4108722,
+   "sha256": "bc35f286fb31dbf78bd61e16b982c9d0dbd1fd69f636278dc688d5c5f9c19c20",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": "unknown: no real-world size in the source",
+   "op": {
+    "op": "rgb",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 58971,
+    "file": "58971_Concrete_01.jpg",
+    "sha256": "cd56b7dcc6fd9889ad9e8e79d0603ee2a40dc4474029456987a1b8f10305fdd3"
+   },
+   "synthetic": false,
+   "verdict": "good: tileable, low contrast; VPM-ok as Diffuse only; good for NPM",
+   "notes": "JPEG source (compression artefacts possible); real-world size unknown; table recipe for 28 is solid. VPM 2048 variant (Lanczos).",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/28/28_concrete_arch_d_1024.png",
+   "library_id": 28,
+   "key": "concrete_arch",
+   "map": "d",
+   "profile": "npm",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 863794,
+   "sha256": "9559e7f47e4caffec99196823223773c52502151e2ca1987fd771b8392fa0d5f",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": "unknown: no real-world size in the source",
+   "op": {
+    "op": "rgb",
+    "size": "npm_auto"
+   },
+   "source": {
+    "msg_id": 58971,
+    "file": "58971_Concrete_01.jpg",
+    "sha256": "cd56b7dcc6fd9889ad9e8e79d0603ee2a40dc4474029456987a1b8f10305fdd3"
+   },
+   "synthetic": false,
+   "verdict": "good: tileable, low contrast; VPM-ok as Diffuse only; good for NPM",
+   "notes": "JPEG source (compression artefacts possible); real-world size unknown; table recipe for 28 is solid. NPM: largest of 2048/1024/512 within 3 MiB.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/45/45_paving_slab_grey_d_4096.png",
+   "library_id": 45,
+   "key": "paving_slab_grey",
+   "map": "d",
+   "profile": "vpm",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 12276527,
+   "sha256": "353183cf88ca12a5eb89ccb14acc48f4dfe34e478c6196ce4399fa7a5445f6c1",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": "unknown: no real-world size in the source",
+   "op": {
+    "op": "rgb"
+   },
+   "source": {
+    "msg_id": 64381,
+    "file": "64381_Брусчатка_01_BaseColor.png",
+    "sha256": "9a7428d6cf5688d347460b5e59634ff7ac5f0908a1965ec7250ad2f836a37eb6"
+   },
+   "synthetic": false,
+   "verdict": "good: tileable 3x3 slabs; VPM-ok as Diffuse only; good for NPM",
+   "notes": "Slab size unknown, so px/m unknown; not the 100x300 'Gotika' paving of ids 18-20.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/45/45_paving_slab_grey_d_2048.png",
+   "library_id": 45,
+   "key": "paving_slab_grey",
+   "map": "d",
+   "profile": "vpm",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 3175266,
+   "sha256": "bd004cd11856591228c7cd2dbfa94bc693f855db24160a52058dedb98eaa773e",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": "unknown: no real-world size in the source",
+   "op": {
+    "op": "rgb",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 64381,
+    "file": "64381_Брусчатка_01_BaseColor.png",
+    "sha256": "9a7428d6cf5688d347460b5e59634ff7ac5f0908a1965ec7250ad2f836a37eb6"
+   },
+   "synthetic": false,
+   "verdict": "good: tileable 3x3 slabs; VPM-ok as Diffuse only; good for NPM",
+   "notes": "Slab size unknown, so px/m unknown; not the 100x300 'Gotika' paving of ids 18-20. VPM 2048 variant (Lanczos).",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/45/45_paving_slab_grey_d_1024.png",
+   "library_id": 45,
+   "key": "paving_slab_grey",
+   "map": "d",
+   "profile": "npm",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 810987,
+   "sha256": "fa3e15b1505cd4bd4767f0dc5c86c9710a9483d4748ee79001b6bf24a41e535b",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": "unknown: no real-world size in the source",
+   "op": {
+    "op": "rgb",
+    "size": "npm_auto"
+   },
+   "source": {
+    "msg_id": 64381,
+    "file": "64381_Брусчатка_01_BaseColor.png",
+    "sha256": "9a7428d6cf5688d347460b5e59634ff7ac5f0908a1965ec7250ad2f836a37eb6"
+   },
+   "synthetic": false,
+   "verdict": "good: tileable 3x3 slabs; VPM-ok as Diffuse only; good for NPM",
+   "notes": "Slab size unknown, so px/m unknown; not the 100x300 'Gotika' paving of ids 18-20. NPM: largest of 2048/1024/512 within 3 MiB.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/46/46_wood_grain_medium_d_4096.png",
+   "library_id": 46,
+   "key": "wood_grain_medium",
+   "map": "d",
+   "profile": "vpm",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 8152964,
+   "sha256": "d2d4ada7ac48b52dfbd0f2c8e39a637329801af3f6bf1509344e8fe61cc076d9",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": "unknown: no real-world size in the source",
+   "op": {
+    "op": "rgb"
+   },
+   "source": {
+    "msg_id": 69811,
+    "file": "69811_Wood_03.png",
+    "sha256": "932b38fee6b1475445f473e38edebb55e07ed48fb16c8e048664554ffc667f47"
+   },
+   "synthetic": false,
+   "verdict": "weak: visible seam when tiled along U; VPM Diffuse only",
+   "notes": "Medium-brown wood grain; real-world size unknown; not larch 37/41.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/46/46_wood_grain_medium_d_2048.png",
+   "library_id": 46,
+   "key": "wood_grain_medium",
+   "map": "d",
+   "profile": "vpm",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 3324207,
+   "sha256": "d50dd6e261f044d88fd3172ffc554ee655d0a3d0a0fc9133beda22af3a75cdef",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": "unknown: no real-world size in the source",
+   "op": {
+    "op": "rgb",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 69811,
+    "file": "69811_Wood_03.png",
+    "sha256": "932b38fee6b1475445f473e38edebb55e07ed48fb16c8e048664554ffc667f47"
+   },
+   "synthetic": false,
+   "verdict": "weak: visible seam when tiled along U; VPM Diffuse only",
+   "notes": "Medium-brown wood grain; real-world size unknown; not larch 37/41. VPM 2048 variant (Lanczos).",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/46/46_wood_grain_medium_d_1024.png",
+   "library_id": 46,
+   "key": "wood_grain_medium",
+   "map": "d",
+   "profile": "npm",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 1150968,
+   "sha256": "dc7a1da96efa1be3af94f39eddd1838572738a54357e3eb44c9c145354c70140",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": "unknown: no real-world size in the source",
+   "op": {
+    "op": "rgb",
+    "size": "npm_auto"
+   },
+   "source": {
+    "msg_id": 69811,
+    "file": "69811_Wood_03.png",
+    "sha256": "932b38fee6b1475445f473e38edebb55e07ed48fb16c8e048664554ffc667f47"
+   },
+   "synthetic": false,
+   "verdict": "weak: visible seam when tiled along U; VPM Diffuse only",
+   "notes": "Medium-brown wood grain; real-world size unknown; not larch 37/41. NPM: largest of 2048/1024/512 within 3 MiB.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/47/47_brick_long_format_mask_mask_2048.png",
+   "library_id": 47,
+   "key": "brick_long_format_mask",
+   "map": "mask",
+   "profile": "npm",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 299246,
+   "sha256": "fb417b0530be18769bc61dc43cd4b1db9f277fd7bc7bd425845635351eb08329",
+   "px_per_m": 682.7,
+   "px_per_m_basis": "chat label 'tile 3x3' (unverified); consistent with 55 courses of ~54.5 mm (long-format brick ~500x40 mm + joint)",
+   "d207": "below: 682.7 < 1000 px/m (D207 grid wants 3600 px per 3.6 m tile)",
+   "op": {
+    "op": "rgb"
+   },
+   "source": {
+    "msg_id": 107813,
+    "file": "107813_1_d.png",
+    "sha256": "b3251d44fc1e0f12b09e9eac534e2cc8672ef45170ea7f6e80dcad95f3005ed6"
+   },
+   "synthetic": false,
+   "verdict": "good as greyscale mask (recipe greyscale_mask), tileable; NPM-ok; VPM-ok at 2048",
+   "notes": "Long-format brick, not 17 brick_250x65 (a 75 mm course would give 40 courses in 3 m).",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/48/48_facade_strip_tile_grey_d_2048.png",
+   "library_id": 48,
+   "key": "facade_strip_tile_grey",
+   "map": "d",
+   "profile": "npm",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 1642843,
+   "sha256": "9702fd5af5117dbcec6693161ec0d5c3278b6a3aff5a0927d4d711aeede118ef",
+   "px_per_m": 512.0,
+   "px_per_m_basis": "chat label 'tile 4x4' (unverified)",
+   "d207": "below: 512.0 < 1000 px/m (D207 grid wants 3600 px per 3.6 m tile)",
+   "op": {
+    "op": "rgb"
+   },
+   "source": {
+    "msg_id": 107806,
+    "file": "107806_плитка.zip",
+    "sha256": "60241d639e73b7033c3f5e0d89df870d30fb03f6181ec95824cdf47c0098492e",
+    "member": "плитка.png",
+    "member_sha256": "daaa0344e93489d5587358a7d9afed3b2886f7bb51b60ed0ca56de812ecd81f9"
+   },
+   "synthetic": false,
+   "verdict": "good: tileable; NPM-ok; VPM-ok as 2048 Diffuse only",
+   "notes": "Grey long-strip facade tile, read from the zip (the FBX 107807 next to it is not processed).",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/26/26_lawn_reinforced_d_1024.png",
+   "library_id": 26,
+   "key": "lawn_reinforced",
+   "map": "d",
+   "profile": "npm",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 2110203,
+   "sha256": "e9a4b5e32f6565af4b28303852918f5b3e1d5a53d90e536253a0d325e3e65627",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": "unknown: no real-world size in the source",
+   "op": {
+    "op": "rgb",
+    "size": 1024
+   },
+   "source": {
+    "msg_id": 66211,
+    "file": "66211_Газон_решетка.jpg",
+    "sha256": "4785f166397a0c261ac1ed7a8892b61b05b87abfbac35021dc1684a1c2c1264e"
+   },
+   "synthetic": false,
+   "verdict": "weak: low-res (900 px source, resampled up to 1024); NPM only",
+   "notes": "Eco-grid lawn; tiles acceptably; real-world size unknown. Non-power-of-two 900 px -> nearest power of two 1024 by Lanczos resample.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/49/49_perforated_sheet_round_o_2048.png",
+   "library_id": 49,
+   "key": "perforated_sheet_round",
+   "map": "o",
+   "profile": "npm",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 147217,
+   "sha256": "8f511daa3564565b4cadc817f944e571dff6ff9ee21ba65ec24008ee4bd8559c",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "luma"
+   },
+   "source": {
+    "msg_id": 42371,
+    "file": "42371_SheetMetal001_2K-JPG_Opacity.jpg",
+    "sha256": "959b7c5d840d57c093aabdd9acde446f1f02cb5c1241fddc7c39d0c0a8264057"
+   },
+   "synthetic": false,
+   "verdict": "good opacity mask, tileable; licence unverified (name looks like ambientCG SheetMetal001)",
+   "notes": "White = metal, black = hole; real-world size unknown.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/50/50_mesh_square_grid_o_512.png",
+   "library_id": 50,
+   "key": "mesh_square_grid",
+   "map": "o",
+   "profile": "npm",
+   "width": 512,
+   "height": 512,
+   "mode": "RGB",
+   "bytes": 57816,
+   "sha256": "33c48980d7f8aa8022cfb7feb3726c51dd1506ca34765e2d33f89383c674f096",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "alpha",
+    "size": 512
+   },
+   "source": {
+    "msg_id": 66210,
+    "file": "66210_Сетка_700pх700px.png",
+    "sha256": "3357c9444ceac82b355ad91eb9eb218ff1d57851d5ecdefd9a8d120c3eacbeb7"
+   },
+   "synthetic": false,
+   "verdict": "weak: 700 px source resampled to 512, thin bars soften",
+   "notes": "Opacity from the source alpha; the source colour is a flat (107,107,107). Non-power-of-two 700 px -> nearest power of two 512 by Lanczos resample (tiling kept, no padding).",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/51/51_fence_chainlink_o_2048.png",
+   "library_id": 51,
+   "key": "fence_chainlink",
+   "map": "o",
+   "profile": "npm",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 1294110,
+   "sha256": "04d6a33ff0dd18f116e4cd39c33430bcfdb3993dc66acc421277fd10c7c567a7",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "luma",
+    "size": [
+     2048,
+     2048
+    ]
+   },
+   "source": {
+    "msg_id": 111223,
+    "file": "111223_T_Zabor_Mesh_Opacity.png",
+    "sha256": "e1eabc107e98dbdfa96069a4fa72372b93cbf5c062e9d79b6944658c56febac7"
+   },
+   "synthetic": false,
+   "verdict": "good opacity mask, tileable; aspect changed, see notes",
+   "notes": "White = wire. 2048x2560 -> 2048x2048 by non-uniform Lanczos resample to keep tiling; scale UV V by 1.25 (one tile = 4:5) to restore the wire proportions.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "materials/v001/52/52_fence_barbed_o_2048.png",
+   "library_id": 52,
+   "key": "fence_barbed",
+   "map": "o",
+   "profile": "npm",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 125157,
+   "sha256": "234824a1576f3eecb8ceb0cdfb3a6f4a9c345f32cf56ca6592a3dba940438e4c",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "luma",
+    "pad_to": [
+     2048,
+     2048
+    ]
+   },
+   "source": {
+    "msg_id": 111224,
+    "file": "111224_T_Zabor_Barbed_Opacity.png",
+    "sha256": "47c09cfc24b40d20186c52af1a1b50bdcdce87cdc00e331a7c9552817fbb2e6b"
+   },
+   "synthetic": false,
+   "verdict": "good opacity strip, tiles along U; padded",
+   "notes": "White = wire. 2048x640 padded (not resampled) to 2048x2048 with black = transparent; content in rows 0-639, UV V range 0..0.3125.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/miscanthus/miscanthus_d_4096.png",
+   "library_id": null,
+   "key": "miscanthus",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 1260671,
+   "sha256": "5cfdd6217a6642930233434585cb7f4d0a3e7f4bceb1c6f74f5fbebd6a4e5caf",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb"
+   },
+   "source": {
+    "msg_id": 61626,
+    "file": "61626_T_Miskantus.png",
+    "sha256": "fb34b83bd1b25f2097ccd746e61ad07bb5d84f57de438d8ae2a393c693d9ea76"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/miscanthus/miscanthus_o_4096.png",
+   "library_id": null,
+   "key": "miscanthus",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 106354,
+   "sha256": "27d043defe444c8e690f7a5d5ac130f229ad3088b7cb60083d1782eb12766ada",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "alpha"
+   },
+   "source": {
+    "msg_id": 61626,
+    "file": "61626_T_Miskantus.png",
+    "sha256": "fb34b83bd1b25f2097ccd746e61ad07bb5d84f57de438d8ae2a393c693d9ea76"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/miscanthus/miscanthus_d_2048.png",
+   "library_id": null,
+   "key": "miscanthus",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 473050,
+   "sha256": "22a5f3a39178d0603a44c274b89ce95782eb90708a9f94185bf0750ba8f5caae",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 61626,
+    "file": "61626_T_Miskantus.png",
+    "sha256": "fb34b83bd1b25f2097ccd746e61ad07bb5d84f57de438d8ae2a393c693d9ea76"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/miscanthus/miscanthus_o_2048.png",
+   "library_id": null,
+   "key": "miscanthus",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 195170,
+   "sha256": "797424621bdf3412f3374a6530169aa200d1e04caac38ff3352bcd7a6e1c4d9a",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "alpha",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 61626,
+    "file": "61626_T_Miskantus.png",
+    "sha256": "fb34b83bd1b25f2097ccd746e61ad07bb5d84f57de438d8ae2a393c693d9ea76"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/aster-dumosus-island-samoa/aster-dumosus-island-samoa_d_4096.png",
+   "library_id": null,
+   "key": "aster-dumosus-island-samoa",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 1570685,
+   "sha256": "35b2fc4a11050c0e60448b2a671c1c54c394981550e08cc2dcb2fbeb0f3bb1b0",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb"
+   },
+   "source": {
+    "msg_id": 61627,
+    "file": "61627_T_Астра_кустарниковая_‘Island_Samoa’_Diff.png",
+    "sha256": "cc1e5e72696076bc7cb0744c72d43a871ed85cfacd2fed3f6cbf7b787f63d580"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/aster-dumosus-island-samoa/aster-dumosus-island-samoa_o_4096.png",
+   "library_id": null,
+   "key": "aster-dumosus-island-samoa",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 271180,
+   "sha256": "c15b448afb9583769977092e061c37216906ddcb9f442578644af9cb04f83b5c",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "alpha"
+   },
+   "source": {
+    "msg_id": 61627,
+    "file": "61627_T_Астра_кустарниковая_‘Island_Samoa’_Diff.png",
+    "sha256": "cc1e5e72696076bc7cb0744c72d43a871ed85cfacd2fed3f6cbf7b787f63d580"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/aster-dumosus-island-samoa/aster-dumosus-island-samoa_d_2048.png",
+   "library_id": null,
+   "key": "aster-dumosus-island-samoa",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 475990,
+   "sha256": "c6bf0c62d69c0cb3d8e67453007d14bfdf1cadbb74d2bb282da6c196c62aaf6a",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 61627,
+    "file": "61627_T_Астра_кустарниковая_‘Island_Samoa’_Diff.png",
+    "sha256": "cc1e5e72696076bc7cb0744c72d43a871ed85cfacd2fed3f6cbf7b787f63d580"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/aster-dumosus-island-samoa/aster-dumosus-island-samoa_o_2048.png",
+   "library_id": null,
+   "key": "aster-dumosus-island-samoa",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 125810,
+   "sha256": "6df6e53dd0718f3a7876c282e69badcdfc71781264724144b50561c73421e245",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "alpha",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 61627,
+    "file": "61627_T_Астра_кустарниковая_‘Island_Samoa’_Diff.png",
+    "sha256": "cc1e5e72696076bc7cb0744c72d43a871ed85cfacd2fed3f6cbf7b787f63d580"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/berberis/berberis_d_4096.png",
+   "library_id": null,
+   "key": "berberis",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 1299595,
+   "sha256": "a113d94e0005eea8c5a782edba34ec90cd1f77288872f1607b44e16159276e35",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb"
+   },
+   "source": {
+    "msg_id": 61628,
+    "file": "61628_T_Барбарис.png",
+    "sha256": "6860a44533dcf73db9b79d60f292c1fb503ed8a76bc80033cc18c4b97f30ce3a"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/berberis/berberis_o_4096.png",
+   "library_id": null,
+   "key": "berberis",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 214150,
+   "sha256": "8f5ea40b5d670ca7a4b399c3229690180fcae36d1a9883fa5b4f7af5a62f9c07",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "alpha"
+   },
+   "source": {
+    "msg_id": 61628,
+    "file": "61628_T_Барбарис.png",
+    "sha256": "6860a44533dcf73db9b79d60f292c1fb503ed8a76bc80033cc18c4b97f30ce3a"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/berberis/berberis_d_2048.png",
+   "library_id": null,
+   "key": "berberis",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 405606,
+   "sha256": "3e0a2088fc97e863c3dcccfa52dccfc15f78442c65ca99d58cef63451ecbfe9d",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 61628,
+    "file": "61628_T_Барбарис.png",
+    "sha256": "6860a44533dcf73db9b79d60f292c1fb503ed8a76bc80033cc18c4b97f30ce3a"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/berberis/berberis_o_2048.png",
+   "library_id": null,
+   "key": "berberis",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 103477,
+   "sha256": "ff709b884156cf81e3b8f2872051ae2ac276e8e06ffdcde3120858ba0aba5113",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "alpha",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 61628,
+    "file": "61628_T_Барбарис.png",
+    "sha256": "6860a44533dcf73db9b79d60f292c1fb503ed8a76bc80033cc18c4b97f30ce3a"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/lysimachia/lysimachia_d_4096.png",
+   "library_id": null,
+   "key": "lysimachia",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 1327471,
+   "sha256": "ab625dd44d9e2b43ee28c1e30f6a2cfff49fd2dfdab4881ce36a0adc2c0c0243",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb"
+   },
+   "source": {
+    "msg_id": 61629,
+    "file": "61629_T_Вербейник.png",
+    "sha256": "1cdf27f24f5393650c9ca76a197edbe14ae69770111c3085961fc72822fb4d77"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/lysimachia/lysimachia_o_4096.png",
+   "library_id": null,
+   "key": "lysimachia",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 312459,
+   "sha256": "4c232e634dc88efed2e72c700353df448a5098468696c5788a0710a220e32d82",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "alpha"
+   },
+   "source": {
+    "msg_id": 61629,
+    "file": "61629_T_Вербейник.png",
+    "sha256": "1cdf27f24f5393650c9ca76a197edbe14ae69770111c3085961fc72822fb4d77"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/lysimachia/lysimachia_d_2048.png",
+   "library_id": null,
+   "key": "lysimachia",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 427662,
+   "sha256": "8c5ffc2272a9ef77cf65b20bacf873a5048a0e5fe4a6286264c78441e6a311ec",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 61629,
+    "file": "61629_T_Вербейник.png",
+    "sha256": "1cdf27f24f5393650c9ca76a197edbe14ae69770111c3085961fc72822fb4d77"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/lysimachia/lysimachia_o_2048.png",
+   "library_id": null,
+   "key": "lysimachia",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 130328,
+   "sha256": "f18314eb0c06cdbea6addfd5f780ca68a1e41388f4ef5610440cfe1770195f6e",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "alpha",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 61629,
+    "file": "61629_T_Вербейник.png",
+    "sha256": "1cdf27f24f5393650c9ca76a197edbe14ae69770111c3085961fc72822fb4d77"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/syringa/syringa_d_4096.png",
+   "library_id": null,
+   "key": "syringa",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 2510984,
+   "sha256": "a2598e01a13645b76379b8ab3e282cdfa99eb98a88fef04941a1d79704adbe36",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb"
+   },
+   "source": {
+    "msg_id": 61630,
+    "file": "61630_T_Сирень.png",
+    "sha256": "9d086ed36d18d4e948bf6a95bef241ce6a78cb2c04b17fbe971da9c57a50a4d0"
+   },
+   "synthetic": false,
+   "verdict": "good for the NPM Flora atlas: sprites fill most of the 4096 canvas",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/syringa/syringa_o_4096.png",
+   "library_id": null,
+   "key": "syringa",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 945517,
+   "sha256": "30689c548f069a6c48516593b57f82aacfec598b78900265161244a768eeda92",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "alpha"
+   },
+   "source": {
+    "msg_id": 61630,
+    "file": "61630_T_Сирень.png",
+    "sha256": "9d086ed36d18d4e948bf6a95bef241ce6a78cb2c04b17fbe971da9c57a50a4d0"
+   },
+   "synthetic": false,
+   "verdict": "good for the NPM Flora atlas: sprites fill most of the 4096 canvas",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/syringa/syringa_d_2048.png",
+   "library_id": null,
+   "key": "syringa",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 1324180,
+   "sha256": "89ee9eeba30bb503aa8cb37e78e50ea9bf70e09ccf0313119aa17d25bfde2340",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 61630,
+    "file": "61630_T_Сирень.png",
+    "sha256": "9d086ed36d18d4e948bf6a95bef241ce6a78cb2c04b17fbe971da9c57a50a4d0"
+   },
+   "synthetic": false,
+   "verdict": "good for the NPM Flora atlas: sprites fill most of the 4096 canvas",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/syringa/syringa_o_2048.png",
+   "library_id": null,
+   "key": "syringa",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 520802,
+   "sha256": "0b2ed7fdda28f6baf3ab754b7c1c8a94a522bea033c9e5622f08b0c5f0e875ea",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "alpha",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 61630,
+    "file": "61630_T_Сирень.png",
+    "sha256": "9d086ed36d18d4e948bf6a95bef241ce6a78cb2c04b17fbe971da9c57a50a4d0"
+   },
+   "synthetic": false,
+   "verdict": "good for the NPM Flora atlas: sprites fill most of the 4096 canvas",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/rosa/rosa_d_4096.png",
+   "library_id": null,
+   "key": "rosa",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 5485890,
+   "sha256": "8da475874d42d48e636dbd19e85881780baef5f57f92f01705ff8422cc8950eb",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb"
+   },
+   "source": {
+    "msg_id": 61632,
+    "file": "61632_T_Роза.png",
+    "sha256": "54e92d21f7deef50331982d8c2596c15dc0dbe860255052e8434faba23f8a5fd"
+   },
+   "synthetic": false,
+   "verdict": "good for the NPM Flora atlas: sprites fill most of the 4096 canvas",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/rosa/rosa_o_4096.png",
+   "library_id": null,
+   "key": "rosa",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 193249,
+   "sha256": "e721537fa0199afefc90e44d9f92a595ebfbbd8f4457523010cb26e9b86061de",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "alpha"
+   },
+   "source": {
+    "msg_id": 61632,
+    "file": "61632_T_Роза.png",
+    "sha256": "54e92d21f7deef50331982d8c2596c15dc0dbe860255052e8434faba23f8a5fd"
+   },
+   "synthetic": false,
+   "verdict": "good for the NPM Flora atlas: sprites fill most of the 4096 canvas",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/rosa/rosa_d_2048.png",
+   "library_id": null,
+   "key": "rosa",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 2062018,
+   "sha256": "bec3f80855961917028dfc8c9bc83f4d5515a9380f11e504ef338fb763713741",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 61632,
+    "file": "61632_T_Роза.png",
+    "sha256": "54e92d21f7deef50331982d8c2596c15dc0dbe860255052e8434faba23f8a5fd"
+   },
+   "synthetic": false,
+   "verdict": "good for the NPM Flora atlas: sprites fill most of the 4096 canvas",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/rosa/rosa_o_2048.png",
+   "library_id": null,
+   "key": "rosa",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 448923,
+   "sha256": "01002981faf3151a7e0380f898a6ef597793d79f790aef00edfc587170d21388",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "alpha",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 61632,
+    "file": "61632_T_Роза.png",
+    "sha256": "54e92d21f7deef50331982d8c2596c15dc0dbe860255052e8434faba23f8a5fd"
+   },
+   "synthetic": false,
+   "verdict": "good for the NPM Flora atlas: sprites fill most of the 4096 canvas",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/daisy-white/daisy-white_d_4096.png",
+   "library_id": null,
+   "key": "daisy-white",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 1090661,
+   "sha256": "c48cab4af702bf35b69c4e1dea228ca0ff9a2b4bac04562c16172b859894cf12",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb"
+   },
+   "source": {
+    "msg_id": 66203,
+    "file": "66203_T_White_Romashka.png",
+    "sha256": "1e4fca388afbb60f6602ee38b13c0c8933c39f9130f09e701544b74175789ebf"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/daisy-white/daisy-white_o_4096.png",
+   "library_id": null,
+   "key": "daisy-white",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 77547,
+   "sha256": "b490ac6e1f8d051130f6593d0cf6e6970ef2616a02ad370f68cb173ce3719d84",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "alpha"
+   },
+   "source": {
+    "msg_id": 66203,
+    "file": "66203_T_White_Romashka.png",
+    "sha256": "1e4fca388afbb60f6602ee38b13c0c8933c39f9130f09e701544b74175789ebf"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/daisy-white/daisy-white_d_2048.png",
+   "library_id": null,
+   "key": "daisy-white",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 400959,
+   "sha256": "80faf1502cf6c9e304e9c4a27bd4a912f30279584e81ae60561ae570f95dffcc",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 66203,
+    "file": "66203_T_White_Romashka.png",
+    "sha256": "1e4fca388afbb60f6602ee38b13c0c8933c39f9130f09e701544b74175789ebf"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/daisy-white/daisy-white_o_2048.png",
+   "library_id": null,
+   "key": "daisy-white",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 96567,
+   "sha256": "7cef1fb253711f002583f660a31875cd38b4f0c9af74e8ddac26959ad2fc24e1",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "alpha",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 66203,
+    "file": "66203_T_White_Romashka.png",
+    "sha256": "1e4fca388afbb60f6602ee38b13c0c8933c39f9130f09e701544b74175789ebf"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/daisy-yellow/daisy-yellow_d_4096.png",
+   "library_id": null,
+   "key": "daisy-yellow",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 1099589,
+   "sha256": "76ce947e552834b9c998cada098bf5bea95fffee596b59510f41bcec2cbdcaaf",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb"
+   },
+   "source": {
+    "msg_id": 66204,
+    "file": "66204_T_Yellow_Romashka.png",
+    "sha256": "f887879b140e23a711dff82c683bd306d96aac8562eb287a8b4849c4444f01ad"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/daisy-yellow/daisy-yellow_o_4096.png",
+   "library_id": null,
+   "key": "daisy-yellow",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 65717,
+   "sha256": "62109efd4c40d300d247064f28676ebd49f195f2979dad7d8a5a7e5de5b5c9d3",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "alpha"
+   },
+   "source": {
+    "msg_id": 66204,
+    "file": "66204_T_Yellow_Romashka.png",
+    "sha256": "f887879b140e23a711dff82c683bd306d96aac8562eb287a8b4849c4444f01ad"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/daisy-yellow/daisy-yellow_d_2048.png",
+   "library_id": null,
+   "key": "daisy-yellow",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 417222,
+   "sha256": "603474ed124641a9f6034f1ef656fbd836fb7fa14720afc4723d7df9d0a2e8a2",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 66204,
+    "file": "66204_T_Yellow_Romashka.png",
+    "sha256": "f887879b140e23a711dff82c683bd306d96aac8562eb287a8b4849c4444f01ad"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/daisy-yellow/daisy-yellow_o_2048.png",
+   "library_id": null,
+   "key": "daisy-yellow",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 71237,
+   "sha256": "b4931d976242322779a2e96dfe7b98aede1e2514e42ebeee8792100a898cdd73",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "alpha",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 66204,
+    "file": "66204_T_Yellow_Romashka.png",
+    "sha256": "f887879b140e23a711dff82c683bd306d96aac8562eb287a8b4849c4444f01ad"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/lavandula/lavandula_d_4096.png",
+   "library_id": null,
+   "key": "lavandula",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 1259062,
+   "sha256": "25bc1a9e3f68a578f4a1383fd7f70c7e8c9289a8dd1f406b8907d4c7b059b25d",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb"
+   },
+   "source": {
+    "msg_id": 66205,
+    "file": "66205_T_Lavanda.png",
+    "sha256": "e65712f284aec7c6b74b5221c28745de8b90ddc1dfc30598d5914628a7dc9b6e"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/lavandula/lavandula_o_4096.png",
+   "library_id": null,
+   "key": "lavandula",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 510344,
+   "sha256": "0515d9d5c2643e098f97193230996cb57b98c1599bf6e07e1e3c1621460f2f66",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "alpha"
+   },
+   "source": {
+    "msg_id": 66205,
+    "file": "66205_T_Lavanda.png",
+    "sha256": "e65712f284aec7c6b74b5221c28745de8b90ddc1dfc30598d5914628a7dc9b6e"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/lavandula/lavandula_d_2048.png",
+   "library_id": null,
+   "key": "lavandula",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 395038,
+   "sha256": "5c238e3b544b708b67680c514c179038f3f7171b9db44752afce859eb92ad0a7",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 66205,
+    "file": "66205_T_Lavanda.png",
+    "sha256": "e65712f284aec7c6b74b5221c28745de8b90ddc1dfc30598d5914628a7dc9b6e"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/lavandula/lavandula_o_2048.png",
+   "library_id": null,
+   "key": "lavandula",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 160397,
+   "sha256": "918ec0b2e02baad366d2a77a2eac3e56a0b18a7bd936a3c1396fbe03b57cd8b0",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "alpha",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 66205,
+    "file": "66205_T_Lavanda.png",
+    "sha256": "e65712f284aec7c6b74b5221c28745de8b90ddc1dfc30598d5914628a7dc9b6e"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/miscanthus-v2/miscanthus-v2_d_4096.png",
+   "library_id": null,
+   "key": "miscanthus-v2",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 1413139,
+   "sha256": "2b24fe12eccb0f28ba4dcee8643a7bde510c5fb25053825a892a1fcc537ede6f",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb"
+   },
+   "source": {
+    "msg_id": 66206,
+    "file": "66206_T_Miskantus_v2.png",
+    "sha256": "11ebcce37b43a738acd1bbf4fd20f96041a35edf90643053a526941dcca991dd"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/miscanthus-v2/miscanthus-v2_o_4096.png",
+   "library_id": null,
+   "key": "miscanthus-v2",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 354075,
+   "sha256": "306797ea4fcad2fec041b8306ac998cd9543d878406e4641e24121ef80877035",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "alpha"
+   },
+   "source": {
+    "msg_id": 66206,
+    "file": "66206_T_Miskantus_v2.png",
+    "sha256": "11ebcce37b43a738acd1bbf4fd20f96041a35edf90643053a526941dcca991dd"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/miscanthus-v2/miscanthus-v2_d_2048.png",
+   "library_id": null,
+   "key": "miscanthus-v2",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 463459,
+   "sha256": "32c4edf431da3c2789c09fd7fe8de00b03c55b85826ac98cc736cad6070277dc",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 66206,
+    "file": "66206_T_Miskantus_v2.png",
+    "sha256": "11ebcce37b43a738acd1bbf4fd20f96041a35edf90643053a526941dcca991dd"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/miscanthus-v2/miscanthus-v2_o_2048.png",
+   "library_id": null,
+   "key": "miscanthus-v2",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 161910,
+   "sha256": "eda3759f54a33f48d5c0429d3812e7fcbd87256af78098ca411cfb48580bbcd4",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "alpha",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 66206,
+    "file": "66206_T_Miskantus_v2.png",
+    "sha256": "11ebcce37b43a738acd1bbf4fd20f96041a35edf90643053a526941dcca991dd"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/triticum/triticum_d_4096.png",
+   "library_id": null,
+   "key": "triticum",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 1340645,
+   "sha256": "fe3f2763c256865e74dacda371c2b64a75ed98aed9eaf485645f7ad937858b60",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb"
+   },
+   "source": {
+    "msg_id": 66207,
+    "file": "66207_T_Pshenica.png",
+    "sha256": "82646f69bcd95e9f0c7f17bca05d368d1a2655e31bbb2f5c5b94a28b189091c0"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/triticum/triticum_o_4096.png",
+   "library_id": null,
+   "key": "triticum",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 4096,
+   "height": 4096,
+   "mode": "RGB",
+   "bytes": 924365,
+   "sha256": "d464076a19eb7e727dd04e00ff3762ebf9c52395d93c35f7ff4a40baa113ef3b",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "alpha"
+   },
+   "source": {
+    "msg_id": 66207,
+    "file": "66207_T_Pshenica.png",
+    "sha256": "82646f69bcd95e9f0c7f17bca05d368d1a2655e31bbb2f5c5b94a28b189091c0"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/triticum/triticum_d_2048.png",
+   "library_id": null,
+   "key": "triticum",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 473620,
+   "sha256": "8b64a3343d38fd70f8bb568c04727aa31d69fd112a3d7947b02cd89bc1250795",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 66207,
+    "file": "66207_T_Pshenica.png",
+    "sha256": "82646f69bcd95e9f0c7f17bca05d368d1a2655e31bbb2f5c5b94a28b189091c0"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/triticum/triticum_o_2048.png",
+   "library_id": null,
+   "key": "triticum",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 368926,
+   "sha256": "e2b5249fb0288472ea31f520f2c1f80ca8969997a21db5e5495bc6ecb319c3af",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "alpha",
+    "size": 2048
+   },
+   "source": {
+    "msg_id": 66207,
+    "file": "66207_T_Pshenica.png",
+    "sha256": "82646f69bcd95e9f0c7f17bca05d368d1a2655e31bbb2f5c5b94a28b189091c0"
+   },
+   "synthetic": false,
+   "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
+   "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/achillea/achillea_d_2048.png",
+   "library_id": null,
+   "key": "achillea",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 3470751,
+   "sha256": "f872e896f35fa248b88ff25d2f9e83fc692c0dbd592dff6f9709ef44a04b7cc9",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "rgb"
+   },
+   "source": {
+    "msg_id": 61631,
+    "file": "61631_T_Тысячелистник.png",
+    "sha256": "0a875d113e29aa04fd4580f6f88bd35e7a6756676308b46f30fa33ed175b92b9"
+   },
+   "synthetic": false,
+   "verdict": "good for the NPM Flora atlas: 2048, two sprites fill the canvas",
+   "notes": "Species not confirmed (slug from the chat label 'yarrow'); no catalogue id yet (step 2.4). Lossless split; the 2048 diffuse PNG is 3.3 MiB (> 3 MiB): atlas input only, not a delivery map.",
+   "checks": "pass",
+   "write": "written"
+  },
+  {
+   "path": "flora/v003/maps/achillea/achillea_o_2048.png",
+   "library_id": null,
+   "key": "achillea",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 126407,
+   "sha256": "7f3925536987e416f9ed5320a006e0afeeee59589dba15bdf8e462ff5da2def4",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "alpha"
+   },
+   "source": {
+    "msg_id": 61631,
+    "file": "61631_T_Тысячелистник.png",
+    "sha256": "0a875d113e29aa04fd4580f6f88bd35e7a6756676308b46f30fa33ed175b92b9"
+   },
+   "synthetic": false,
+   "verdict": "good for the NPM Flora atlas: 2048, two sprites fill the canvas",
+   "notes": "Species not confirmed (slug from the chat label 'yarrow'); no catalogue id yet (step 2.4). Lossless split; the 2048 diffuse PNG is 3.3 MiB (> 3 MiB): atlas input only, not a delivery map.",
+   "checks": "pass",
+   "write": "written"
+  }
+ ]
+}
