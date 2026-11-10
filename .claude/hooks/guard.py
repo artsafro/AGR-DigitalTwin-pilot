@@ -54,6 +54,38 @@ SHELL_RULES = [
     (r"\b(winget|choco|scoop|msiexec)\b|\bnpm\s+(i|install)\s+(-g|--global)|\b(pip|uv\s+pip|uv\s+tool)\s+install\b",
      "installs software"),
     (r"\b(setx|reg\s+(add|delete)|Set-ExecutionPolicy|New-ItemProperty|Set-ItemProperty)\b", "system-level change"),
+] + [
+    # Ported from destructive_command_guard (core.git, core.filesystem, windows.filesystem,
+    # careful_company): only what is missing above and relevant here (docs/research/guard-vs-dcg-2026-11.md).
+    (r"\bgit\b[^|;&]*\breset\b[^|;&]*--merge", "git reset --merge can discard work"),
+    (r"\bgit\b[^|;&]*\b(checkout|switch)\b[^|;&]*\s(?-i:-[A-Za-z]*f|--force|--discard-changes)(?=\s|$)",
+     "discards working-tree changes"),
+    (r"\bgit\b[^|;&]*\bread-tree\b[^|;&]*--reset", "discards working-tree changes"),
+    (r"\bgit\b[^|;&]*\brm\b[^|;&]*\s(?-i:-[A-Za-z]*f|--force)(?=\s|$)", "git rm -f deletes modified files"),
+    (r"\bgit\b[^|;&]*\b(reflog\s+(expire|delete)|gc\b[^|;&]*--prune)\b",
+     "destroys recovery data (reflog / unreachable objects)"),
+    (r"\bgit\b[^|;&]*\bstash\s+(drop|clear)\b", "deletes stash entries (the stash stack is shared by all worktrees)"),
+    (r"\bgit\s+lfs\s+(prune|uninstall)\b", "removes LFS objects or filters"),
+    (r"\bgit\b[^|;&]*\bworktree\s+remove\b[^|;&]*\s(?-i:-f|--force)(?=\s|$)",
+     "force-removes a worktree with uncommitted work"),
+    (r"(?<![-/.\w])(rm|ri|del|erase|rmdir|rd|Remove-Item)\b[^|;&]*"
+     r"(?:(?-i:\s-[dfiIvR]*[rR][dfiIvR]*)|\s--recursive|\s-r(?:e(?:c(?:u(?:r(?:s(?:e)?)?)?)?)?)?)(?=[\s:]|$)"
+     r"|(?<![-/.\w])(del|erase)(\.exe)?\b[^|;&]*\s/s\b"
+     r"|\[\s*(System\.)?IO\.Directory\s*\]\s*::\s*['\"]?Delete\b|\.\s*Delete\s*\(\s*\$true\s*\)",
+     "recursive delete / mass overwrite"),
+    (r"\bformat(\.com|\.exe)?\s+(/\S+\s+)*[a-z]:(?=[\s\\/]|$)|\b(Format-Volume|Clear-Disk)\b"
+     r"|\bvssadmin\b[^|;&]*\bdelete\s+shadows\b|\bwmic\b[^|;&]*\bshadowcopy\b[^|;&]*\bdelete\b"
+     r"|\bWin32_ShadowCopy\b[^;&\n]*\b(Remove-WmiObject|Remove-CimInstance|Delete\s*\()",
+     "erases a volume or shadow copies"),
+    (r"\bClear-RecycleBin\b", "purges the Recycle Bin (earlier deletes become unrecoverable)"),
+    (r"\b(Set-MpPreference|Add-MpPreference|Remove-MpPreference|Set-NetFirewallProfile|Disable-NetFirewallRule"
+     r"|Disable-BitLocker|Clear-EventLog)\b|\bnetsh\b[^|;&]*\badvfirewall\b[^|;&]*\b(set|reset|delete)\b"
+     r"|\bwevtutil\b[^|;&]*\s(cl|clear-log)\b", "security settings change"),
+    (r"\b(powershell|pwsh)(\.exe)?\b[^|;&]*\s-(e|ec|en\w*)(?=\s|$)"
+     r"|\b(iwr|irm|Invoke-WebRequest|Invoke-RestMethod|curl|wget)\b[^;&\n]*\|\s*(iex|Invoke-Expression|(ba|z)?sh)\b"
+     r"|\b(iex|Invoke-Expression)\b[^;&\n]*\b(iwr|irm|Invoke-WebRequest|Invoke-RestMethod|DownloadString)\b",
+     "runs encoded or downloaded code"),
+    (GH_PREFIX + r"\bgist\s+create\b", "gh gist create publishes files"),
 ]
 
 HOME = Path.home()

@@ -247,6 +247,16 @@ Rules:
   unresolved result-changing questions while preserving mandatory confirmations.
 - Disputed geometry: look first, then classify (user 2026-10-13 [D072]) - every group of a classifier's verdict, every
   question and every stop is shown isolated on the body (renders, three views, sizes) before a rule or a question.
+- Every subagent prompt and every `.claude/agents/*.md` body follows the [Prompt guide](#prompt-guide).
+
+### Prompt guide
+
+The single shared brief for any subagent prompt (named agents, general-purpose, Explore, fork). Do the one
+task you were given; anything else you notice goes into one "Open" line at the end, not into the work. Run
+independent tool calls in parallel in one message; serialize only when a call needs an earlier result. No
+filler: no restating the task, no narration of steps, no closing summary of what you did. Report numbers, not
+prose: counts, measured values with units, pass/fail per check, paths and ids, and the command that produced
+each; say "not checked" instead of guessing.
 
 ## Triggers (user 2026-10-14 [D074])
 
