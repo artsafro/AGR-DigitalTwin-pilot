@@ -45,6 +45,23 @@ carries `ref`. Exactly one of `handles` / `refs` / `scope`.
 
 The selection of the pinned Max is restored after every Max call (`selection_changed` if it cannot be).
 
+## Phase 2 previews (#1021, [D231])
+
+Runtime 0.9.0 copy families, preview only (read-only, max-live, schema 1, not deprecated):
+
+| tool | wraps | apply pair (always `needs_human`, host offline, Max never called) |
+|---|---|---|
+| `agr_cleanup_preview` | `runtime.cleanup_preview(nodes, options)` | `agr_cleanup_apply` |
+| `agr_uv_nudge_preview` | `runtime.nudge_preview` | `agr_uv_nudge_apply` |
+| `agr_atlas_preview` | `runtime.atlas_preview` (PNG bytes -> `{bytes, sha256}`) | `agr_atlas_apply` |
+| `agr_ucx_preview` | `runtime.ucx_preview` | `agr_ucx_apply` |
+| `agr_export_preview` | `runtime.export_preview(nodes, target)` | `agr_export_commit` |
+
+Targets: non-empty `handles` or `scope: "selection"`. A preview that leaves or deletes a node is an error. The
+export `target` is a new absolute `.fbx` whose `.report.json` and `.partial` do not exist and are not the scene file
+(`invalid_target`, checked before Max). Apply is the button in the AGR Tools panel/dock (owner answers 06.11.2026);
+`max_bridge` refuses the five apply names with `needs_human` as a second line.
+
 ## Answer: envelope v2 (`envelope.py`)
 
 `structuredContent`: `tool_schema_version: 2`, `server_version`, `tool`, `status`

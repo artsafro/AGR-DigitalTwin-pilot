@@ -7,6 +7,14 @@ import pytest
 from dt_ai.core.io import read_json
 from dt_ai.core.models import BuildJob
 
+import exit_guard
+
+
+def pytest_configure(config):
+    """A hard exit inside the suite turns it red, never green without a summary (exit_guard.py)."""
+    if not config.pluginmanager.has_plugin("exit_guard"):
+        config.pluginmanager.register(exit_guard, "exit_guard")
+
 
 @pytest.fixture
 def root():
