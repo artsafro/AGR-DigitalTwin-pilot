@@ -547,6 +547,72 @@ def test_ground_skirt_judges_every_ground_mesh_names_worst():
     assert "T_Ground" in f.observed
 
 
+# #1133 case 1: a skirt whose ONE bottom edge spans several collinear perimeter edges of a
+# subdivided surface. Grid (0,0,0)-(10,10,0), 4x4 quads; perimeter walked corner to corner.
+
+def _grid_4x4():
+    n, step = 4, 2.5
+    verts = [[x * step, y * step, 0.0] for y in range(n + 1) for x in range(n + 1)]
+    polys = [[y * (n + 1) + x, y * (n + 1) + x + 1, (y + 1) * (n + 1) + x + 1, (y + 1) * (n + 1) + x]
+             for y in range(n) for x in range(n)]
+    idx = lambda x, y: y * (n + 1) + x  # noqa: E731
+    sides = [[idx(k, 0) for k in range(n + 1)], [idx(n, k) for k in range(n + 1)],
+             [idx(n - k, n) for k in range(n + 1)], [idx(0, n - k) for k in range(n + 1)]]
+    return verts, polys, sides
+
+
+def _fan_skirt(depth, last_span=1.0):
+    """One bottom edge per side, fanned to the side's top vertices (``last_span`` < 1: the last
+    side's bottom edge covers only that fraction of the side, from its first corner)."""
+    verts, polys, sides = _grid_4x4()
+    for i, side in enumerate(sides):
+        span = last_span if i == len(sides) - 1 else 1.0
+        a, b = verts[side[0]], verts[side[-1]]
+        end = [a[0] + (b[0] - a[0]) * span, a[1] + (b[1] - a[1]) * span]
+        b0, b1 = len(verts), len(verts) + 1
+        verts += [[a[0], a[1], -depth], [end[0], end[1], -depth]]
+        polys.append([b0, b1, side[-1]])
+        for k in range(len(side) - 1, 0, -1):
+            polys.append([b0, side[k], side[k - 1]])
+    return verts, polys
+
+
+def test_ground_skirt_one_bottom_edge_spans_collinear_perimeter_edges_passes_1133():
+    verts, polys = _fan_skirt(1.0)
+    f = _skirt_finding(verts, polys)
+    assert f.status == "pass" and f.measured == pytest.approx(1.0)
+
+
+def test_ground_skirt_per_edge_skirt_on_subdivided_surface_passes_1133():
+    verts, polys, sides = _grid_4x4()
+    for side in sides:
+        base = len(verts)
+        verts += [[verts[v][0], verts[v][1], -1.0] for v in side]
+        for k in range(len(side) - 1):
+            polys.append([side[k + 1], side[k], base + k, base + k + 1])
+    f = _skirt_finding(verts, polys)
+    assert f.status == "pass" and f.measured == pytest.approx(1.0)
+
+
+def test_ground_skirt_subdivided_surface_without_skirt_fails_1133():
+    verts, polys, _ = _grid_4x4()
+    f = _skirt_finding(verts, polys)
+    assert f.status == "fail" and f.measured == pytest.approx(0.0)
+
+
+def test_ground_skirt_spanning_half_metre_fails_1133():
+    verts, polys = _fan_skirt(0.5)
+    f = _skirt_finding(verts, polys)
+    assert f.status == "fail" and f.measured == pytest.approx(0.5)
+
+
+def test_ground_skirt_spanning_bottom_edge_covering_half_a_side_fails_1133():
+    # fail-closed: the bottom edge of one side stops half way; the rest of that side has no skirt
+    verts, polys = _fan_skirt(1.0, last_span=0.5)
+    f = _skirt_finding(verts, polys)
+    assert f.status == "fail" and f.measured == pytest.approx(0.0)
+
+
 def test_edge_loop_100x100_grid_runtime_bounded_d200():
     import time
 
