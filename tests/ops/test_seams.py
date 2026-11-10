@@ -272,3 +272,49 @@ def test_report_includes_coincident_weld_motion_not_only_boundary_snaps():
                      (0,0,5e-9),(0,0,1),(1,0,1)], ((0,1,2),(3,4,5)))
     result = join_parts({'part':mesh})
     assert result.max_weld_m == pytest.approx(5e-9, abs=1e-15)
+
+
+def _panels():
+    """Six coplanar glass panels sharing the band's top row (as in the update test above)."""
+    glass, strip = band(cols=6, sag=0)
+    v = strip.vertices.tolist()
+    top = [3] + list(range(4, 9)) + [2]
+    bottom = list(range(len(v), len(v) + 7))
+    v += [(x, 0, 0) for x in np.linspace(0, 10, 7)]
+    return PolyMesh(v, tuple((bottom[i], bottom[i+1], top[i+1], top[i]) for i in range(6))), strip
+
+
+def test_simplification_face_labels_keep_differently_labelled_faces_apart():
+    """#1144: faces with different caller labels (material id) never dissolve into one polygon."""
+    from dt_ai.ops.seams import simplify_part
+    source, strip = _panels()
+    labels = {'glass': (1, 1, 1, 2, 2, 2)}
+    result = simplify_part({'glass': source, 'band': strip}, 'glass', face_labels=labels)
+    glass_out = [s for s in result.face_sources if s[0][0] == 'glass']
+    assert sorted(glass_out) == [tuple(('glass', i) for i in range(3)), tuple(('glass', i) for i in range(3, 6))]
+    assert contacts(result.mesh) == []
+    same = simplify_part({'glass': source, 'band': strip}, 'glass', face_labels={'glass': (7,) * 6})
+    assert same.face_sources == simplify_part({'glass': source, 'band': strip}, 'glass').face_sources
+
+
+@pytest.mark.parametrize('labels', [{'glass': (1,) * 5}, {'band': (1,)}, {'glass': (1,) * 7}, ['x']])
+def test_simplification_face_labels_fail_closed(labels):
+    from dt_ai.ops.seams import simplify_part
+    source, strip = _panels()
+    with pytest.raises(ValueError, match='face_labels'):
+        simplify_part({'glass': source, 'band': strip}, 'glass', face_labels=labels)
+
+
+@pytest.mark.parametrize('labels,top_corners', [((1, 1, 2, 2), 5), ((1, 1, 1, 1), None)])
+def test_simplification_keeps_a_point_shared_with_a_differently_labelled_face(labels, top_corners):
+    """#1144: a straight-run point of one label group that a face of another label uses stays (no T-junction)."""
+    from dt_ai.ops.seams import simplify_part
+    v = [(0, 0, 0), (1, 0, 0), (2, 0, 0), (0, 0, 1), (1, 0, 1), (2, 0, 1), (0, 0, 2), (1, 0, 2), (2, 0, 2)]
+    faces = ((0, 1, 4, 3), (1, 2, 5, 4), (3, 4, 7, 6), (4, 5, 8, 7))
+    result = simplify_part({'w': PolyMesh(v, faces)}, 'w', face_labels={'w': labels})
+    if top_corners is None:
+        assert len(result.mesh.faces) == 1
+        return
+    top = [f for f, s in zip(result.mesh.faces, result.face_sources) if s == (('w', 2), ('w', 3))]
+    assert len(top) == 1 and len(top[0]) == top_corners
+    assert len(result.mesh.faces) == 2
