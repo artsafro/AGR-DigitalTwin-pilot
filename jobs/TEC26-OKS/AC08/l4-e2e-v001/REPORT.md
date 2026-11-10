@@ -113,3 +113,48 @@ stand for the kernel output too.
 Kernel finding (ops 14, 16, 17): `open_borders_hidden` counts a border hidden only inside ANOTHER part, so a join
 exposes borders that are still physically inside the joined solid. The repair op and this rule are follow-ups
 (draft: `FOLLOWUP-repair-op-draft.md`), not part of #968.
+
+## S15-S17 UV fix and `repair.flip_close` (#1144)
+
+Same inputs (hashes equal to #753/#968). Technical QA only; `passed=true` is not claimed. Generated numbers:
+`evidence-1144-uvfix/` (rerun without repair) and `evidence-1144/` (`--repair`). Kernel-state FBX of both runs:
+`G:/Мой диск/AGR-evidence/1144-ac08-uv-repair/` + `SHA256SUMS.txt` (30 files, `sha256sum -c` OK; copy
+`evidence-1144/DRIVE-SHA256SUMS.txt`).
+
+**Where UV was lost: op output, not the FBX writer or the readback.** `carry_seam` carried UV only for single-source
+polygons; every polygon the simplifier merged from 2+ source polygons got no UV, and `export_payload` then (by design)
+dropped the UV of the whole mixed object. S15 also merged material ids 2+3 into one polygon. Fix: `simplify_part`
+takes `face_labels` (material id + UV island per face) so a dissolved polygon never spans two materials or a UV seam,
+and keeps a straight point shared with a differently labelled face in the same plane (no T-junction); `carry_seam`
+carries a corner UV when every source corner at that vertex agrees within 1e-5 (never interpolated or defaulted).
+
+| state | #968 (evidence-d197): UV faces in memory -> after export | #1144 (evidence-1144-uvfix) |
+|---|---|---|
+| S15 simplify body | not exported (material ids 2+3 merged) | 127/127 -> 127/127, accepted |
+| S16 simplify knob | 168/169 -> 0 (export dropped all) | 169/169 -> 169/169, accepted |
+| S17 simplify plate | 170/174 -> 0 (export dropped all) | 177/177 -> 177/177, accepted |
+
+Readback gate 14/17 -> 17/17. S15-S17 stay rolled back by `check_operation` (new open borders, see the #968 kernel
+finding), but their candidate states now export and read back with full UV.
+
+**`repair.flip_close`** (`src/dt_ai/ops/repair.py`, driver `run_kernel_ops.repair_flip_close`): flips polygons
+against their component's majority winding, caps planar convex loops whose edges are ALL unhidden border violators.
+A cap takes the single material id of the polygons on its loop (two ids = error naming them) and a generated planar
+UV normalised to its bbox. On AC08: 0 polygons needed a flip; caps: body bottom loop (16 points, z = -2.047, id 1,
+14.7712 m2) and plate loop (4 points, id 3, 0.0002 m2); the knob's 12 border edges are hidden inside the body and
+are not selected. The 3107 back-face pixels were the inside of the walls seen through the open bottom, so the cap
+removes them.
+
+| gate (`--repair`) | result | numbers |
+|---|---|---|
+| source FBX = pinned dump | pass | 180 polygons, corner dev 5.69e-7 m |
+| repair_flip_close | pass | back-face px 3107 -> 0, unhidden borders 20 -> 0, 0 flipped, 2 caps, new violators 0, UV/material ids of all 180 polygons kept |
+| source baseline (new, after repair) | pass | back faces 0, borders 0 + 0 + 0, overlaps 0 |
+| kernel ops applied | 4/19 | keep x3, join body+plate (join knob+plate is now refused by join_parts: 12 xView contact/area pairs with the plate cap) |
+| export readback parity | pass 13/13 | incl. R00_repair_flip_close 58/58 rows; refused ops have no candidate |
+| delivered pilot-v010 comparison | pass | area = delivered + the recorded 14.7714 m2 of caps; surface distance, bounds, UCX, silhouettes as before |
+
+Album (slide 49) and SINTEZ measure the delivered package and were not rerun: the repaired kernel output adds the
+two caps (bottom, not seen in the facade renders) and is not delivered. On the repaired baseline the three
+simplify ops (15-17) and join knob+plate (13) are refused by the seam ops themselves (xView contact/area pairs
+next to the caps; follow-up, not tuned here). Per-op table: `evidence-1144/e2e.md`. No 3ds Max was used (offline card).

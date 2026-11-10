@@ -1,4 +1,4 @@
-# DRAFT issue (not filed, not done) - waits-artem
+# DRAFT issue - superseded by #1144 (repair.flip_close delivered offline; see REPORT.md "S15-S17 UV fix and repair.flip_close")
 
 Title: AC08 kernel: repair operation (flip back faces / close open borders) on the source baseline
 
