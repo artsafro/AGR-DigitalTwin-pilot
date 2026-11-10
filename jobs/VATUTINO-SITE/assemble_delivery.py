@@ -255,7 +255,9 @@ bpy.ops.wm.save_as_mainfile(filepath=str(out / 'assembled.blend'))
 # Same unit/axis export as the accepted Ground tool (tools/blender/ground_json_to_fbx.py): metres, Z up.
 bpy.ops.export_scene.fbx(filepath=str(fbx), use_selection=True, object_types={'MESH'}, apply_unit_scale=True,
                          apply_scale_options='FBX_SCALE_UNITS', global_scale=1.0, bake_anim=False,
-                         use_triangles=True,  # MAF-18 / V003: derived FBX triangulated on export (reg p.8 3.11, p.29 3.17) path_mode='COPY' if profile == 'npm' else 'STRIP', embed_textures=profile == 'npm',
+                         use_triangles=True,  # MAF-18 / V003: derived FBX triangulated on export (reg p.8 3.11, p.29 3.17)
+                         # V006 / SINTEZ 2.5.1: NPM embeds the packed PNGs; VPM ships them beside the FBX (STRIP).
+                         path_mode='COPY' if profile == 'npm' else 'STRIP', embed_textures=profile == 'npm',
                          axis_forward='Y', axis_up='Z', use_custom_props=True)
 (out / 'assembly.json').write_text(json.dumps({'profile': profile, 'triangles': counts, 'maf_uv_outside': len(maf_bad), 'objects': len(meshes), 'blender': bpy.app.version_string, 'site': site, 'vpm_slots': slot_map}, indent=1))
 print('ASSEMBLED', profile, counts, 'objects', len(meshes))
