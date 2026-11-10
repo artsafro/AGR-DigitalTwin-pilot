@@ -28,3 +28,30 @@ Rows **18**; plants **4915** (trees 105, bushes 4810); NPM star estimate 105 × 
 Map status: approved-exact = 11, 14; approved-species = 1, 3, 12, 15, 17; missing = 2, 5, 8, 10, 13, 16, Ива; proxy = 4, 6, 7, 9.
 
 Kind: trees = positions 1, 2, 3, 4, 5, 7 (route estimate ~105 trees); 6 Ирга and 8 Лох (1.25–3.5 m) are built as bushes.
+
+## Route-A maps [D237]
+
+Artem 2026-11-10 «да»: A101 matches approved (16 = `el_nidiformis`, 9 = Physocarpus t2 dark red for 'Lady in Red'); every row without an exact map is built from a named stand-in approved map pair and is marked `stand-in` here and in the run report until an exact map exists.
+
+| Поз. | Exact species | Route-A map | Plants |
+|---|---|---|---|
+| 1 | *Tilia cordata 'Greenspire'* | approved: Tilia cordata | 23 |
+| 2 | *Alnus glutinosa 'Laciniata' (RU name = Alnus incana, F5)* | stand-in: Acer platanoides | 8 |
+| 3 | *Prunus padus 'Watereri'* | approved: Prunus padus | 11 |
+| 4 | *Malus × purpurea 'Makowieckiana'* | stand-in: Malus niedzwetzkyana | 21 |
+| 5 | *Larix decidua 'Pendula'* | stand-in: Pinus mugo | 13 |
+| 6 | *Amelanchier spicata* | stand-in: Amelanchier lamarckii | 38 |
+| 7 | *Crataegus laevigata 'Paul's Scarlet'* | stand-in: Crataegus mollis | 29 |
+| 8 | *Elaeagnus angustifolia* | stand-in: Syringa vulgaris | 25 |
+| 9 | *Physocarpus opulifolius 'Lady in Red'* | a101: `puzyreplodnik_kalinolistnyj_t2_h150_high.png` | 191 |
+| 10 | *Cornus sanguinea 'Anny's Winter Orange'* | stand-in: Cornus sericea | 439 |
+| 11 | *Sorbaria sorbifolia* | approved: Sorbaria sorbifolia | 866 |
+| 12 | *Cornus sericea 'Red Gnome'* | approved: Cornus sericea | 325 |
+| 13 | *Hippophae rhamnoides 'Hikul'* | stand-in: Salix purpurea 'Mayak' | 1059 |
+| 14 | *Dasiphora fruticosa* | approved: Dasiphora fruticosa | 558 |
+| 15 | *Stephanandra incisa* | approved: Stephanandra incisa 'Crispa' | 1002 |
+| 16 | *Picea abies 'Nidiformis'* | a101: `el_nidiformis_t1_h60_high.png` | 70 |
+| 17 | *Pinus mugo var. mughus* | approved: Pinus mugo | 106 |
+| Ива | *Salix helvetica* | stand-in: Salix purpurea 'Mayak' | 131 |
+
+Stand-ins **9** rows, **1763** plants (positions 2, 4, 5, 6, 7, 8, 10, 13, Ива).

@@ -60,6 +60,16 @@
     "diffuse": "C:/x/flora-library/v001/maps/tilia-cordata/diffuse-v001.png",
     "opacity": "C:/x/flora-library/v001/maps/tilia-cordata/opacity-v001.png",
     "evidence": "Artem 2026-10-16 card t_6c48bc9d comment: all five batch-1 pairs approved (map-only approval, not model acceptance); review-sheet-batch1-v001.png"
+   },
+   "route_a": {
+    "source": "approved",
+    "map_key": "Tilia cordata",
+    "a101_file": null,
+    "map": {
+     "diffuse": "C:/x/flora-library/v001/maps/tilia-cordata/diffuse-v001.png",
+     "opacity": "C:/x/flora-library/v001/maps/tilia-cordata/opacity-v001.png",
+     "evidence": "Artem 2026-10-16 card t_6c48bc9d comment: all five batch-1 pairs approved (map-only approval, not model acceptance); review-sheet-batch1-v001.png"
+    }
    }
   },
   {
@@ -81,7 +91,17 @@
    "map_status": "missing",
    "map_key": null,
    "material_id": 131,
-   "proposed_source": "NEW map (step 2)"
+   "proposed_source": "NEW map (step 2)",
+   "route_a": {
+    "source": "stand-in",
+    "map_key": "Acer platanoides",
+    "a101_file": null,
+    "map": {
+     "diffuse": "C:/x/flora-library/v001/maps/acer-platanoides/diffuse-v001.png",
+     "opacity": "C:/x/flora-library/v001/maps/acer-platanoides/opacity-v001.png",
+     "evidence": "Artem 2026-10-16 card t_6c48bc9d comment: all five batch-1 pairs approved (map-only approval, not model acceptance); review-sheet-batch1-v001.png"
+    }
+   }
   },
   {
    "pos": 3,
@@ -107,6 +127,16 @@
     "diffuse": "C:/x/flora-library/v001/maps/prunus-padus/diffuse-v001.png",
     "opacity": "C:/x/flora-library/v001/maps/prunus-padus/opacity-v001.png",
     "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 3a4011cb54e8; published via flora library gate (library-batch2-v001.json)"
+   },
+   "route_a": {
+    "source": "approved",
+    "map_key": "Prunus padus",
+    "a101_file": null,
+    "map": {
+     "diffuse": "C:/x/flora-library/v001/maps/prunus-padus/diffuse-v001.png",
+     "opacity": "C:/x/flora-library/v001/maps/prunus-padus/opacity-v001.png",
+     "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 3a4011cb54e8; published via flora library gate (library-batch2-v001.json)"
+    }
    }
   },
   {
@@ -133,6 +163,16 @@
     "diffuse": "C:/x/flora-library/v001/maps/malus-niedzwetzkyana/diffuse-v001.png",
     "opacity": "C:/x/flora-library/v001/maps/malus-niedzwetzkyana/opacity-v001.png",
     "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate b03198d4c883; published via flora library gate (library-batch2-v001.json)"
+   },
+   "route_a": {
+    "source": "stand-in",
+    "map_key": "Malus niedzwetzkyana",
+    "a101_file": null,
+    "map": {
+     "diffuse": "C:/x/flora-library/v001/maps/malus-niedzwetzkyana/diffuse-v001.png",
+     "opacity": "C:/x/flora-library/v001/maps/malus-niedzwetzkyana/opacity-v001.png",
+     "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate b03198d4c883; published via flora library gate (library-batch2-v001.json)"
+    }
    }
   },
   {
@@ -154,7 +194,17 @@
    "map_status": "missing",
    "map_key": null,
    "material_id": 129,
-   "proposed_source": "NEW map (step 2)"
+   "proposed_source": "NEW map (step 2)",
+   "route_a": {
+    "source": "stand-in",
+    "map_key": "Pinus mugo",
+    "a101_file": null,
+    "map": {
+     "diffuse": "C:/x/flora-library/v001/maps/pinus-mugo/diffuse-v001.png",
+     "opacity": "C:/x/flora-library/v001/maps/pinus-mugo/opacity-v001.png",
+     "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate eab5ac5c63f9; published via flora library gate (library-batch2-v001.json)"
+    }
+   }
   },
   {
    "pos": 6,
@@ -180,6 +230,16 @@
     "diffuse": "C:/x/flora-library/v001/maps/amelanchier-lamarckii/diffuse-v001.png",
     "opacity": "C:/x/flora-library/v001/maps/amelanchier-lamarckii/opacity-v001.png",
     "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 095bd50fc73b; published via flora library gate (library-batch2-v001.json)"
+   },
+   "route_a": {
+    "source": "stand-in",
+    "map_key": "Amelanchier lamarckii",
+    "a101_file": null,
+    "map": {
+     "diffuse": "C:/x/flora-library/v001/maps/amelanchier-lamarckii/diffuse-v001.png",
+     "opacity": "C:/x/flora-library/v001/maps/amelanchier-lamarckii/opacity-v001.png",
+     "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 095bd50fc73b; published via flora library gate (library-batch2-v001.json)"
+    }
    }
   },
   {
@@ -206,6 +266,16 @@
     "diffuse": "C:/x/flora-library/v001/maps/crataegus-mollis/diffuse-v001.png",
     "opacity": "C:/x/flora-library/v001/maps/crataegus-mollis/opacity-v001.png",
     "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate b1db952c0014; published via flora library gate (library-batch2-v001.json)"
+   },
+   "route_a": {
+    "source": "stand-in",
+    "map_key": "Crataegus mollis",
+    "a101_file": null,
+    "map": {
+     "diffuse": "C:/x/flora-library/v001/maps/crataegus-mollis/diffuse-v001.png",
+     "opacity": "C:/x/flora-library/v001/maps/crataegus-mollis/opacity-v001.png",
+     "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate b1db952c0014; published via flora library gate (library-batch2-v001.json)"
+    }
    }
   },
   {
@@ -227,7 +297,17 @@
    "map_status": "missing",
    "map_key": null,
    "material_id": 241,
-   "proposed_source": "NEW map (step 2)"
+   "proposed_source": "NEW map (step 2)",
+   "route_a": {
+    "source": "stand-in",
+    "map_key": "Syringa vulgaris",
+    "a101_file": null,
+    "map": {
+     "diffuse": "C:/x/flora-library/v001/maps/syringa-vulgaris/diffuse-v001.png",
+     "opacity": "C:/x/flora-library/v001/maps/syringa-vulgaris/opacity-v001.png",
+     "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 223cd7260517; published via flora library gate (library-batch2-v001.json)"
+    }
+   }
   },
   {
    "pos": 9,
@@ -253,6 +333,11 @@
     "diffuse": "C:/x/flora-library/v001/maps/physocarpus-opulifolius-diabolo/diffuse-v001.png",
     "opacity": "C:/x/flora-library/v001/maps/physocarpus-opulifolius-diabolo/opacity-v001.png",
     "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate a43aa714eef5; published via flora library gate (library-batch2-v001.json)"
+   },
+   "route_a": {
+    "source": "a101",
+    "map_key": null,
+    "a101_file": "puzyreplodnik_kalinolistnyj_t2_h150_high.png"
    }
   },
   {
@@ -274,7 +359,17 @@
    "map_status": "missing",
    "map_key": null,
    "material_id": 228,
-   "proposed_source": "NEW map (step 2)"
+   "proposed_source": "NEW map (step 2)",
+   "route_a": {
+    "source": "stand-in",
+    "map_key": "Cornus sericea",
+    "a101_file": null,
+    "map": {
+     "diffuse": "C:/x/flora-library/v001/maps/cornus-sericea/diffuse-v001.png",
+     "opacity": "C:/x/flora-library/v001/maps/cornus-sericea/opacity-v001.png",
+     "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 05395f098d96; published via flora library gate (library-batch2-v001.json)"
+    }
+   }
   },
   {
    "pos": 11,
@@ -300,6 +395,16 @@
     "diffuse": "C:/x/flora-library/v001/maps/sorbaria-sorbifolia/diffuse-v001.png",
     "opacity": "C:/x/flora-library/v001/maps/sorbaria-sorbifolia/opacity-v001.png",
     "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 2a7276304fd4; published via flora library gate (library-batch2-v001.json)"
+   },
+   "route_a": {
+    "source": "approved",
+    "map_key": "Sorbaria sorbifolia",
+    "a101_file": null,
+    "map": {
+     "diffuse": "C:/x/flora-library/v001/maps/sorbaria-sorbifolia/diffuse-v001.png",
+     "opacity": "C:/x/flora-library/v001/maps/sorbaria-sorbifolia/opacity-v001.png",
+     "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 2a7276304fd4; published via flora library gate (library-batch2-v001.json)"
+    }
    }
   },
   {
@@ -326,6 +431,16 @@
     "diffuse": "C:/x/flora-library/v001/maps/cornus-sericea/diffuse-v001.png",
     "opacity": "C:/x/flora-library/v001/maps/cornus-sericea/opacity-v001.png",
     "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 05395f098d96; published via flora library gate (library-batch2-v001.json)"
+   },
+   "route_a": {
+    "source": "approved",
+    "map_key": "Cornus sericea",
+    "a101_file": null,
+    "map": {
+     "diffuse": "C:/x/flora-library/v001/maps/cornus-sericea/diffuse-v001.png",
+     "opacity": "C:/x/flora-library/v001/maps/cornus-sericea/opacity-v001.png",
+     "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 05395f098d96; published via flora library gate (library-batch2-v001.json)"
+    }
    }
   },
   {
@@ -347,7 +462,17 @@
    "map_status": "missing",
    "map_key": null,
    "material_id": 243,
-   "proposed_source": "NEW map (step 2)"
+   "proposed_source": "NEW map (step 2)",
+   "route_a": {
+    "source": "stand-in",
+    "map_key": "Salix purpurea 'Mayak'",
+    "a101_file": null,
+    "map": {
+     "diffuse": "C:/x/flora-library/v001/maps/salix-purpurea-mayak/diffuse-v001.png",
+     "opacity": "C:/x/flora-library/v001/maps/salix-purpurea-mayak/opacity-v001.png",
+     "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate eaba0b2f92da; published via flora library gate (library-batch2-v001.json)"
+    }
+   }
   },
   {
    "pos": 14,
@@ -373,6 +498,16 @@
     "diffuse": "C:/x/flora-library/v001/maps/dasiphora-fruticosa/diffuse-v001.png",
     "opacity": "C:/x/flora-library/v001/maps/dasiphora-fruticosa/opacity-v001.png",
     "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 447e4aa00d98; published via flora library gate (library-batch2-v001.json)"
+   },
+   "route_a": {
+    "source": "approved",
+    "map_key": "Dasiphora fruticosa",
+    "a101_file": null,
+    "map": {
+     "diffuse": "C:/x/flora-library/v001/maps/dasiphora-fruticosa/diffuse-v001.png",
+     "opacity": "C:/x/flora-library/v001/maps/dasiphora-fruticosa/opacity-v001.png",
+     "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 447e4aa00d98; published via flora library gate (library-batch2-v001.json)"
+    }
    }
   },
   {
@@ -399,6 +534,16 @@
     "diffuse": "C:/x/flora-library/v001/maps/stephanandra-incisa-crispa/diffuse-v001.png",
     "opacity": "C:/x/flora-library/v001/maps/stephanandra-incisa-crispa/opacity-v001.png",
     "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate f38a2c36bdcd; published via flora library gate (library-batch2-v001.json)"
+   },
+   "route_a": {
+    "source": "approved",
+    "map_key": "Stephanandra incisa 'Crispa'",
+    "a101_file": null,
+    "map": {
+     "diffuse": "C:/x/flora-library/v001/maps/stephanandra-incisa-crispa/diffuse-v001.png",
+     "opacity": "C:/x/flora-library/v001/maps/stephanandra-incisa-crispa/opacity-v001.png",
+     "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate f38a2c36bdcd; published via flora library gate (library-batch2-v001.json)"
+    }
    }
   },
   {
@@ -420,7 +565,12 @@
    "map_status": "missing",
    "map_key": null,
    "material_id": 236,
-   "proposed_source": "NEW map (step 2)"
+   "proposed_source": "NEW map (step 2)",
+   "route_a": {
+    "source": "a101",
+    "map_key": null,
+    "a101_file": "el_nidiformis_t1_h60_high.png"
+   }
   },
   {
    "pos": 17,
@@ -446,6 +596,16 @@
     "diffuse": "C:/x/flora-library/v001/maps/pinus-mugo/diffuse-v001.png",
     "opacity": "C:/x/flora-library/v001/maps/pinus-mugo/opacity-v001.png",
     "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate eab5ac5c63f9; published via flora library gate (library-batch2-v001.json)"
+   },
+   "route_a": {
+    "source": "approved",
+    "map_key": "Pinus mugo",
+    "a101_file": null,
+    "map": {
+     "diffuse": "C:/x/flora-library/v001/maps/pinus-mugo/diffuse-v001.png",
+     "opacity": "C:/x/flora-library/v001/maps/pinus-mugo/opacity-v001.png",
+     "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate eab5ac5c63f9; published via flora library gate (library-batch2-v001.json)"
+    }
    }
   },
   {
@@ -461,7 +621,17 @@
    "map_status": "missing",
    "map_key": null,
    "material_id": 244,
-   "proposed_source": "NEW map (step 2)"
+   "proposed_source": "NEW map (step 2)",
+   "route_a": {
+    "source": "stand-in",
+    "map_key": "Salix purpurea 'Mayak'",
+    "a101_file": null,
+    "map": {
+     "diffuse": "C:/x/flora-library/v001/maps/salix-purpurea-mayak/diffuse-v001.png",
+     "opacity": "C:/x/flora-library/v001/maps/salix-purpurea-mayak/opacity-v001.png",
+     "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate eaba0b2f92da; published via flora library gate (library-batch2-v001.json)"
+    }
+   }
   }
  ]
 }

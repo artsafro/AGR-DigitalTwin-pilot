@@ -244,6 +244,77 @@ def test_species_sheet_rejects_bad_rows(monkeypatch):
         sheet.records()
 
 
+def test_species_sheet_route_a_d237_sources():
+    """D237: A101 for 9 and 16; every other non-exact row is a named stand-in from an approved map pair."""
+    recs = {r["pos"]: r for r in sheet.records()}
+    by = {}
+    for pos, r in recs.items():
+        by.setdefault(r["route_a"]["source"], set()).add(pos)
+    assert by["a101"] == {9, 16}
+    assert by["stand-in"] == {2, 4, 5, 6, 7, 8, 10, 13, "Ива"}
+    assert by["approved"] == {1, 3, 11, 12, 14, 15, 17}
+    maps = json.loads((ROOT / "library/flora/maps.json").read_text(encoding="utf-8"))
+    for pos in by["stand-in"] | by["approved"]:
+        key = recs[pos]["route_a"]["map_key"]
+        assert maps[key]["review_status"] == "approved", pos
+    assert recs[9]["route_a"]["a101_file"] == "puzyreplodnik_kalinolistnyj_t2_h150_high.png"
+    assert recs[16]["route_a"]["a101_file"] == "el_nidiformis_t1_h60_high.png"
+    md = (ROOT / "jobs/VATUTINO-SITE/flora-species.md").read_text(encoding="utf-8")
+    assert md.count("| stand-in:") == 9 and "D237" in md
+
+
+def test_species_sheet_route_a_rejects_unapproved_stand_in(monkeypatch):
+    bad = dict(sheet.ROUTE_A)
+    bad[2] = ("stand-in", "Alnus imaginaria", None)
+    monkeypatch.setattr(sheet, "ROUTE_A", bad)
+    with pytest.raises(ValueError, match="not an approved"):
+        sheet.records()
+
+
+def _atlas_spec(tmp, items, cells, tile=1002):
+    ad, ao = _maps(tmp, "atlas", size=128)
+    for it, cell in zip(items, cells):
+        it["atlas_cell"] = cell
+    spec = {"udim_tile": tile, "atlas": {"diffuse": str(ad), "opacity": str(ao), "size": 128,
+                                         "material": "M_TEST_Flora_1"}, "species": items}
+    p = tmp / "spec_atlas.json"
+    p.write_text(json.dumps(spec), encoding="utf-8")
+    return p
+
+
+def test_atlas_mode_uv_inside_cell_and_atlas_texel(tmp_path):
+    cell = [0.5, 0.25, 0.75, 0.5]
+    out = tmp_path / "out"
+    spec = _atlas_spec(tmp_path, [_item(tmp_path, "a")], [cell])
+    assert star.main(["--spec", str(spec), "--out", str(out)]) == 0
+    rep = json.loads((out / "report.json").read_text(encoding="utf-8"))
+    sp = rep["species"][0]
+    assert sp["atlas"]["uv_faces_outside_cell"] == {"npm": 0, "vpm": 0}
+    assert rep["atlas"]["material"] == "M_TEST_Flora_1" and rep["atlas"]["count"] == 1
+    meshes = json.loads((out / "meshes.json").read_text(encoding="utf-8"))["a"]
+    us = [u for tri in meshes["npm"]["uvs"] for u, _ in tri]
+    vs = [v for tri in meshes["npm"]["uvs"] for _, v in tri]
+    assert min(us) >= 0.5 - 1e-9 and max(us) <= 0.75 + 1e-9 and min(vs) >= 0.25 - 1e-9 and max(vs) <= 0.5 + 1e-9
+    vus = [u for tri in meshes["vpm"]["uvs"] for u, _ in tri]
+    assert min(vus) >= 1.5 - 1e-9 and max(vus) <= 1.75 + 1e-9  # tile 1002 = u + 1
+    # atlas texel = source px/m x (cell px / source px): 64 px source, cell 0.25 x 128 = 32 px -> half
+    assert math.isclose(sp["atlas"]["texel_px_per_m"], sp["vpm"]["texel_px_per_m"] * 32 / 64, rel_tol=1e-3)
+    assert meshes["diffuse"] == str(Path(tmp_path / "atlas_d.png").resolve())
+
+
+@pytest.mark.parametrize("cell", [[0.5, 0.5, 0.4, 0.9], [-0.1, 0, 0.5, 0.5], [0, 0, 1.2, 1], None])
+def test_atlas_mode_bad_cell_fails_closed(tmp_path, cell):
+    item = _item(tmp_path, "a")
+    spec = _atlas_spec(tmp_path, [item], [cell])
+    if cell is None:
+        data = json.loads(spec.read_text(encoding="utf-8"))
+        del data["species"][0]["atlas_cell"]
+        spec.write_text(json.dumps(data), encoding="utf-8")
+    with pytest.raises(SystemExit) as err:
+        star.main(["--spec", str(spec), "--out", str(tmp_path / "out")])
+    assert err.value.code not in (0, None) and not (tmp_path / "out").exists()
+
+
 BLENDER = Path(star.BLENDER)
 
 

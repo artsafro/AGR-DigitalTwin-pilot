@@ -44,6 +44,48 @@ SOURCE = {
 }
 STATUSES = set(SOURCE)
 
+# D237 (Artem 2026-11-10 «да»): route-A map per row. source: approved = the row's own approved map;
+# a101 = approved A101 match (file in G:/Мой диск/AGR-assets/flora/a101/TextureFlora/, copy + sha256);
+# stand-in = a named approved map pair of another species, shown as `stand-in` until an exact map exists.
+ROUTE_A = {
+    1: ("approved", "Tilia cordata", None),
+    2: ("stand-in", "Acer platanoides", None),        # Alnus: broad deciduous tree, no Alnus map
+    3: ("approved", "Prunus padus", None),
+    4: ("stand-in", "Malus niedzwetzkyana", None),    # former proxy, same genus
+    5: ("stand-in", "Pinus mugo", None),              # Larix: only conifer map on disk
+    6: ("stand-in", "Amelanchier lamarckii", None),   # former proxy, same genus
+    7: ("stand-in", "Crataegus mollis", None),        # former proxy, same genus
+    8: ("stand-in", "Syringa vulgaris", None),        # Elaeagnus: large shrub 1-4 m
+    9: ("a101", None, "puzyreplodnik_kalinolistnyj_t2_h150_high.png"),
+    10: ("stand-in", "Cornus sericea", None),         # same genus Cornus
+    11: ("approved", "Sorbaria sorbifolia", None),
+    12: ("approved", "Cornus sericea", None),
+    13: ("stand-in", "Salix purpurea 'Mayak'", None),  # Hippophae: narrow grey-green leaves
+    14: ("approved", "Dasiphora fruticosa", None),
+    15: ("approved", "Stephanandra incisa 'Crispa'", None),
+    16: ("a101", None, "el_nidiformis_t1_h60_high.png"),
+    17: ("approved", "Pinus mugo", None),
+    "Ива": ("stand-in", "Salix purpurea 'Mayak'", None),  # same genus Salix
+}
+ROUTE_SOURCES = {"approved", "a101", "stand-in"}
+
+
+def route_a(pos, maps):
+    if pos not in ROUTE_A:
+        raise ValueError(f"pos {pos}: no D237 route-A map")
+    source, key, a101 = ROUTE_A[pos]
+    if source not in ROUTE_SOURCES:
+        raise ValueError(f"pos {pos}: unknown route-A source {source!r}")
+    if source == "a101":
+        if not a101 or key is not None:
+            raise ValueError(f"pos {pos}: a101 row needs a file and no map key")
+        return {"source": source, "map_key": None, "a101_file": a101}
+    entry = maps.get(key)
+    if entry is None or entry.get("review_status") != "approved":
+        raise ValueError(f"pos {pos}: route-A map {key!r} is not an approved maps.json entry")
+    return {"source": source, "map_key": key, "a101_file": None,
+            "map": {k: entry[k] for k in ("diffuse", "opacity", "evidence")}}
+
 
 def records():
     maps = json.loads((ROOT / "library/flora/maps.json").read_text(encoding="utf-8"))
@@ -66,6 +108,9 @@ def records():
             if entry is None or entry.get("review_status") != "approved":
                 raise ValueError(f"pos {pos}: map {key!r} is not an approved maps.json entry")
             rec["map"] = {k: entry[k] for k in ("diffuse", "opacity", "evidence")}
+        rec["route_a"] = route_a(pos, maps)
+        if rec["route_a"]["source"] == "approved" and rec["route_a"]["map_key"] != key:
+            raise ValueError(f"pos {pos}: route-A approved map {rec['route_a']['map_key']!r} != row map {key!r}")
         out.append(rec)
     ids = [r["material_id"] for r in out]
     if len(set(ids)) != len(ids):
@@ -117,6 +162,18 @@ def markdown(recs):
               f"NPM star estimate {s['trees']} × 8 + {s['bushes']} × 6 = **{s['npm_tris_estimate']}** tris (budget 70,000 [D097]).", "",
               "Map status: " + "; ".join(f"{k} = {', '.join(map(str, v))}" for k, v in s["by_map_status"].items()) + ".", "",
               "Kind: trees = positions 1, 2, 3, 4, 5, 7 (route estimate ~105 trees); 6 Ирга and 8 Лох (1.25–3.5 m) are built as bushes.", ""]
+    lines += ["## Route-A maps [D237]", "",
+              "Artem 2026-11-10 «да»: A101 matches approved (16 = `el_nidiformis`, 9 = Physocarpus t2 dark red for "
+              "'Lady in Red'); every row without an exact map is built from a named stand-in approved map pair and is "
+              "marked `stand-in` here and in the run report until an exact map exists.", "",
+              "| Поз. | Exact species | Route-A map | Plants |", "|---|---|---|---|"]
+    for r in recs:
+        ra = r["route_a"]
+        what = f"a101: `{ra['a101_file']}`" if ra["source"] == "a101" else f"{ra['source']}: {ra['map_key']}"
+        lines.append(f"| {r['pos']} | *{r['exact_latin']}* | {what} | {r['plants_in_plot']} |")
+    stand = [r for r in recs if r["route_a"]["source"] == "stand-in"]
+    lines += ["", f"Stand-ins **{len(stand)}** rows, **{sum(r['plants_in_plot'] for r in stand)}** plants "
+              f"(positions {', '.join(str(r['pos']) for r in stand)}).", ""]
     return "\n".join(lines)
 
 

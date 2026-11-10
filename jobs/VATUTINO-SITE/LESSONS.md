@@ -28,3 +28,8 @@ Job-local preferences and lessons (not D-rows).
 - Ground v015 VPM is a single UDIM tile 1001 (D209 numbers each mesh from 1001; `ground-build-v006.md` readback
   `tiles [1001]`), so Flora/MAF VPM start at 1002 [D210]. Small bushes cannot hit VPM texel 520–1706 px/m on their
   own 2K map; measure texel in the final atlas, no upscaling (Artem «мерить»). (#1146)
+- An A101 flora map is a sheet with the side view (upper right) and the top view (lower left) on one 2K image; a
+  bbox crop of the whole alpha puts both into a star plane. Keep the component that holds the topmost plant pixel
+  (alpha closed by a ~size/256 px max filter so loose leaves stay) and check the species render before atlas work. (#1146)
+- `PIL.Image.fromarray` shares the numpy buffer read-only: `ImageDraw.floodfill` on it silently changes nothing;
+  `.copy()` first. (#1146)
