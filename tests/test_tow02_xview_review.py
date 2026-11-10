@@ -13,6 +13,8 @@ import sys
 
 import pytest
 
+from tests._dcc_card import card_id
+
 ROOT = Path(__file__).resolve().parents[1]
 RUNNER = ROOT / "jobs/vyatskaya-tow02/scripts/xview_review.ms"
 MAX_EXEC = Path("C:/Users/artsafro/hermes_kanban/scripts/max_exec.py")
@@ -120,7 +122,7 @@ def native(tmp_path_factory):
     # The worker must pin the inspected live PID, never choose another/newest GUI.
     assert env.get("MCP_MAX_PID"), "pin inspected Max PID before native tests"
     result = subprocess.run([sys.executable, str(MAX_EXEC), "--file", str(script),
-                             "--card", "t_87373483", "--timeout", "180"],
+                             "--card", card_id(), "--timeout", "180"],
                             capture_output=True, text=True, encoding="utf-8", env=env, timeout=240)
     (out / "transport.json").write_text(result.stdout + result.stderr, encoding="utf-8")
     assert result.returncode == 0, result.stdout + result.stderr
@@ -248,7 +250,7 @@ def test_output_input_alias(native, kind):
     script = sub / "runner.ms"
     script.write_text(source, encoding="utf-8")
     result = subprocess.run([sys.executable, str(MAX_EXEC), "--file", str(script),
-                             "--card", "t_87373483", "--timeout", "30"],
+                             "--card", card_id(), "--timeout", "30"],
                             capture_output=True, text=True, encoding="utf-8", timeout=60)
     payload = json.loads(result.stdout)
     assert "Existing report: alias" in payload["result"]["result"], payload

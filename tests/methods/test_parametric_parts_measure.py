@@ -14,6 +14,7 @@ from pathlib import Path
 
 import pytest
 
+from tests._dcc_card import card_id
 from tests.dcc_session import skip_if_dcc_session_busy
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -774,7 +775,7 @@ def _max_inventory(paths, work: Path):
             "--version",
             "2026",
             "--card",
-            "t_5fcef264",
+            card_id(),
             "--timeout",
             "180",
             "--wait",
