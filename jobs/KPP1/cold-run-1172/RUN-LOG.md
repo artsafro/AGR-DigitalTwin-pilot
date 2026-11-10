@@ -3,14 +3,14 @@
 Agent: dt-worker (Hermes Kanban card t_0b1dbdbf), fresh session, 2026-11-10. Inputs: the repository at
 `origin/main` 1f76e806 and the machine's file system. No chat history; the only task text was the card
 (object KPP1, real АС.03 drawings, mapping #967, `plan_from_dxf` #989; Max busy -> offline only).
-Checklist: `jobs/KPP1/job.yaml`; machine walk: `jobs/KPP1/cold-run-1172/walk-v001.json`.
+Checklist: `jobs/KPP1/job.yaml`; machine walk: `jobs/KPP1/cold-run-1172/walk-v002.json`.
 
 ## Result in one line
 
 The run stops at **Gate 1 (parts, user)**: inputs and a validated draft PartsList are done with receipts,
 the six later gates are `missing` (waits-user, then waits-max). `passed=false`, walker exit 1. That is the
 correct outcome under TASK_TO_MODEL (D111/D124/D125: no build before Gate 1), not a failure of the run.
-The real output is the gap list below (14 items, 8 proposed follow-up issues).
+The real output is the gap list below (15 items, 8 proposed follow-up issues).
 
 ## Entry path and tokens
 
@@ -42,10 +42,14 @@ Estimate = characters / 4 (Cyrillic-heavy files read heavier); counted on the fi
 | visual | missing — **waits-user** | none | Board review tool (D119) on a versioned sheet; nothing built to show. |
 | checker | missing — **waits-visual** | none | SINTEZ after visual acceptance (D104). |
 
-Walk: `uv run python -m dt_ai.procedure jobs/KPP1/job.yaml --root . --output jobs/KPP1/cold-run-1172/walk-v001.json`
+Walk: `uv run python -m dt_ai.procedure jobs/KPP1/job.yaml --root . --output jobs/KPP1/cold-run-1172/walk-v002.json`
 -> exit 1, `passed: false`, 0 errors, every evidence `verified: true`, every gate `ready: false`.
 A first walk with the DWGs listed directly in `inputs` failed with
 `evidence paths must be repository-relative POSIX paths` and wrote no output (G3).
+`walk-v001.json` was withdrawn: a walk of the committed tree in a fresh worktree failed with
+`hash mismatch: jobs/KPP1/cold-run-1172/plan-repro-v001.json` — the receipt was written with CRLF on Windows and
+`.gitattributes` (`eol=lf`) normalised it on commit. All job files are now LF and `walk-v002.json` was produced
+after the fix; the fresh-worktree walk gives the same result (G15).
 
 ### Offline work actually executed (receipts)
 
@@ -80,13 +84,15 @@ A first walk with the DWGs listed directly in `inputs` failed with
 | G12 | TASK_TO_MODEL last line | "No real-building run is required" is stale now that this card requires one. | F1 |
 | G13 | Per-part triangle budgets | Only the per-FBX total is a rule (BODY-F); per-part numbers are the agent's proposal, so they became a Gate 1 question. | — (asked) |
 | G14 | Plan contour bands | `plan_from_dxf` copies one plan into every band; the L03 hatch carries the 0.70 m entrance-frame bumps, so the L1 band would carry them up to 7.909 m while Revit L1 is a plain rectangle. Not in mapping-questions; found by this run. | — (asked, question 1) |
+| G15 | TASK_TO_MODEL "Machine walk" | Hashes are of working-tree bytes, but `.gitattributes` normalises text to LF on commit; a receipt written with CRLF on Windows passes locally and fails on every fresh checkout. The procedure does not say "write LF" or "walk a fresh checkout before review". | F2 |
 
 ## Proposed follow-up issues (orchestrator files them)
 
 - **F1** TASK_TO_MODEL <-> scenario skill: one entry sequence (cell -> TASK.md -> job.yaml gates), the standard
   body route per cell (Max AGR Tools vs offline kernel) and drop the stale "no real-building run" line (G1, G8, G12).
 - **F2** Source registry for real jobs: where each job's customer sources live (asset store path or a named
-  folder) plus walker support for an external-input manifest that re-hashes reachable paths (G2, G3).
+  folder) plus walker support for an external-input manifest that re-hashes reachable paths; LF-only receipts
+  and a fresh-checkout walk before review (G2, G3, G15).
 - **F3** `plan_from_dxf`: write the full command (map, origin, shift) into the output, fix `method` for
   `hatch`, and a committed DWG->DXF readback script (accoreconsole DXFOUT) (G4).
 - **F4** JobChecklist: an explicit wait status or a `waits` field (`user`/`max`/`visual`) that the walker reports (G5).

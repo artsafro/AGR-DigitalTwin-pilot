@@ -20,9 +20,9 @@ $W $P/p4.yaml --root . --output $P/p4.yaml >/dev/null 2>&1; rc=$?
 [ "$(sha256sum $P/p4.yaml | cut -c1-64)" = "$H" ] && u=yes || u=NO
 echo "P4 output path = input: exit=$rc input unchanged=$u"
 
-H=$(sha256sum jobs/KPP1/cold-run-1172/walk-v001.json | cut -c1-64)
-$W jobs/KPP1/job.yaml --root . --output jobs/KPP1/cold-run-1172/walk-v001.json >/dev/null 2>&1; rc=$?
-[ "$(sha256sum jobs/KPP1/cold-run-1172/walk-v001.json | cut -c1-64)" = "$H" ] && u=yes || u=NO
+H=$(sha256sum jobs/KPP1/cold-run-1172/walk-v002.json | cut -c1-64)
+$W jobs/KPP1/job.yaml --root . --output jobs/KPP1/cold-run-1172/walk-v002.json >/dev/null 2>&1; rc=$?
+[ "$(sha256sum jobs/KPP1/cold-run-1172/walk-v002.json | cut -c1-64)" = "$H" ] && u=yes || u=NO
 echo "P5 existing output reused: exit=$rc receipt unchanged=$u"
 
 sed 's#path: jobs/KPP1/object.json#path: C:/Users/artsafro/agr-pilot/AGR-DigitalTwin/.worktrees/t_0b1dbdbf/jobs/KPP1/object.json#' jobs/KPP1/job.yaml > $P/p6.yaml

@@ -19,3 +19,5 @@ Rules learned on this job, for the next agent on KPP1. Source of each: the run n
   manifest in `inputs`; a direct absolute path makes the walker fail without writing output. [#1172]
 - **No build before Gate 1.** The walk stops at `parts: review` until the user confirms the PartsList; record
   Max-only steps as `missing` with a `waits-max` note, never as `pass`. [#1172]
+- **Write receipts with LF** (`open(..., newline='\n')`) and walk a fresh `git worktree add --detach` of the
+  commit before review: `.gitattributes` turns CRLF into LF on commit and the hash no longer matches. [#1172]

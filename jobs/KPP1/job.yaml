@@ -11,7 +11,7 @@ inputs: &inputs
 - path: docs/methods/building-body/kpp1-drawing/plan-contours.json
   sha256: 087f1055820ec278979bb2b9e4598fa66878fc4ea1f3f5c6929dc25ad86a891f
 - path: jobs/KPP1/cold-run-1172/plan-repro-v001.json
-  sha256: d4cfe43379e0311845c9027d6941e032437a4d502ca83987b566188136d5e629
+  sha256: 73df3459f64d14bba256941935c6851628e3f0cffe25ee184dba595fe90928cb
 artifacts: []
 deviations:
 - gate: inputs
@@ -47,7 +47,7 @@ gates:
     note: "Cold-run log, not a delivery report: gates, receipts and procedure gaps."
     evidence:
     - path: jobs/KPP1/cold-run-1172/RUN-LOG.md
-      sha256: e081c4e5bd991558cd3a773695c41ee5b16831c66298386b50cc5ec6c4ce187f
+      sha256: a073d51065ffb218c7ab288930a8a9a197a427a8eb0befa3a86ea65ea13c0f6b
   visual:
     status: missing
     note: "waits-user: board review tool decision on a versioned sheet (D119); nothing to show before a build."
