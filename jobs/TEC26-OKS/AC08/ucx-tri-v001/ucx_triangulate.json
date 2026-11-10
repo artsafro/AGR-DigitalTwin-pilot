@@ -1,0 +1,26 @@
+{
+ "tool": "ucx.triangulate (AGR Tools geom_core.ucx_plan, nonconvex=report)",
+ "source": "C:/x/tec26-oks/AC08/ucx-tri-v001/input/VPM_export_tri.blend",
+ "fbx": "C:/x/tec26-oks/AC08/ucx-tri-v001/package-vpm/SM_Nku_1\\SM_Nku_1.fbx",
+ "address": "Nku_1",
+ "objects": [
+  "SM_Nku_1_Main",
+  "UCX_SM_Nku_1_Main_001"
+ ],
+ "ucx": [
+  {
+   "name": "UCX_SM_Nku_1_Main_001",
+   "action": "diagonals",
+   "before": {
+    "4": 6
+   },
+   "after": {
+    "3": 12
+   },
+   "vertices": 8,
+   "convex": true,
+   "closed": true,
+   "flips": 0
+  }
+ ]
+}

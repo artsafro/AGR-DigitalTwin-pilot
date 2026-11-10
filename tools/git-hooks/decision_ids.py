@@ -102,6 +102,11 @@ def current_branch(cwd: Path) -> str:
     return r.stdout.strip() if r.returncode == 0 else ""
 
 
+def is_own_head(oid: str, cwd: Path) -> bool:
+    """True when `oid` is HEAD or an ancestor of HEAD: the current branch's own open PR, even renamed."""
+    return git("merge-base", "--is-ancestor", oid, "HEAD", cwd=cwd).returncode == 0
+
+
 def open_pr_logs(cwd: Path, repo: str | None, remote: str = "origin") -> dict[str, str | None]:
     """PR label -> log at its head, for every open PR except the one of the current branch."""
     cmd = ["gh", "pr", "list", "--state", "open", "--limit", "1000", "--json", "number,headRefName,headRefOid"]
@@ -119,11 +124,15 @@ def open_pr_logs(cwd: Path, repo: str | None, remote: str = "origin") -> dict[st
         raise CheckError(f"gh pr list returned no JSON: {exc}") from exc
     mine, out = current_branch(cwd), {}
     for pr in prs:
-        if pr.get("headRefName") == mine:
+        name = pr.get("headRefName")
+        if name == mine:
             continue
-        oid, label = pr.get("headRefOid"), f"PR #{pr.get('number')} ({pr.get('headRefName')})"
+        oid = pr.get("headRefOid")
+        label = f"PR #{pr.get('number')} ({name})"
         if not oid:
             raise CheckError(f"{label}: no head commit in gh output")
+        if is_own_head(oid, cwd):
+            continue
         if git("cat-file", "-e", f"{oid}^{{commit}}", cwd=cwd).returncode != 0:
             git("fetch", "-q", remote, f"pull/{pr.get('number')}/head", cwd=cwd)
             if git("cat-file", "-e", f"{oid}^{{commit}}", cwd=cwd).returncode != 0:
