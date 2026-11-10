@@ -335,6 +335,33 @@ Territory (Ground, MAF, Flora, placement; verified 2026-11-07 against job report
 - Site placement `tools/placement_site.py` + `tools/blender/placement_instance.py` (PR #344) — TOOL ONLY: SPOZU points
   -> engine -> Blender instancing -> scene readback gate (0 mismatches on Vatutino v006); acceptance open; tests
   `tests/placement/test_site_*.py`.
+- Ground producer `dt ground v015` (`tools/ground/build_ground_v015.py`, #1106; moved from the job, whose path is now a
+  shim) — WORKING: replay on the accepted v015 inputs gives masters byte-identical to the accepted build
+  (NPM `c26b7feb…ca1a`, VPM `59310ac9…2eb4`); site data from `--job-dir` (default `jobs/VATUTINO-SITE`); tests
+  `tests/test_ground_v015_producer.py`, `tests/test_shared_tools_1106.py`.
+
+Shared derivation `dt derive` (NPM<->VPM, #1106; one implementation per step instead of the job copies
+`jobs/{KPP1,PSU275,TEC26-OKS}/scripts/{make_npm_atlas,export_npm,package_vpm}.py`, which stay as frozen records):
+- `dt derive atlas <spec> <new out> [--address A --index N]` (`tools/derive/npm_atlas.py`), `dt derive npm --blender B
+  <master.blend> <spec> <atlas dir> <new out> [prefix] [--address --index --pivot x,y --keep-quads]`
+  (`tools/derive/export_npm.py`), `dt derive package <pkg dir> <textures> [--object object.json] [--no-geojson]`
+  (`tools/derive/package_vpm.py`; per-job name / H_RELIEF / glass in `object.json`, not in code); FBX readback parity
+  `tools/derive/fbx_parity.py`. Texture painters still come from `jobs/TEC26-OKS/scripts` (`--recipe-dir`).
+- WORKING (2026-11-09, Blender 5.1): replayed on TEC26 AC08 pilot-v010 (accepted recipe) and AC09 build-v001 against the
+  job scripts: atlas PNG + JSON byte-identical (also to the recorded accepted outputs), VPM ZIP byte-identical (also
+  to the recorded ZIPs), NPM FBX readback-identical (geometry, UV, materials, embedded pixels; FBX bytes differ only
+  by Blender's per-run UIDs). KPP1 / PSU275 masters are not on this PC: their variants are covered by options, not
+  replayed. Tests `tests/test_shared_tools_1106.py`.
+
+Duplicate implementations (#1106 inventory; the canonical side for UCX / atlas / placement is the AGR Tools Max
+cores, keeping the Max side per the AC08 route [D228]; routing the Blender/Python versions to them is deferred to
+#1141, starts after #1105 [D225]):
+
+| Function | Blender / Python | 3ds Max (AGR Tools) | Job copies |
+|---|---|---|---|
+| UCX | `src/dt_ai/geometry/ucx_build.py` + `tools/blender/ucx_build.py` (#166, TOOL ONLY), methods `tools/methods/ucx/` | `adapters/max/agr_tools/ucx_core.py`, `ucx10_core.py` (1.0 `ucx.gap`), `ucxstairs_core.py` | `jobs/KPP1/scripts/vpm_ucx.py`, `jobs/PSU275/scripts/vpm_ucx.py`, `jobs/elv-tc-vpm/scripts/ucx_dev_by_part_v001.py` |
+| NPM atlas | `tools/derive/npm_atlas.py` (finish regions), `tools/materials/npm_atlas_udim.py` (#546, UDIM crop) | `adapters/max/agr_tools/atlas_core.py` (mirrors `npm_atlas_udim.pack()`), `facadeatlas_core.py` | `jobs/*/scripts/make_npm_atlas.py`, `jobs/vyatskaya-tow02/scripts/texture_atlas_blender.py` |
+| Placement | `src/dt_ai/placement/engine.py` + `tools/placement_site.py` (#316, #344) | `adapters/max/agr_tools/place_core.py`, `placegeo_core.py`, `winplace_core.py` | pivot logic inside `export_npm` / `export_vpm` copies |
 
 Export:
 - `tools/export/export_mesh_blender.py`, `tools/export/export_modules_blender.py` — Blender scene + FBX writers of
