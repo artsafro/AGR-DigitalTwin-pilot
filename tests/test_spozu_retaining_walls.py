@@ -2,6 +2,7 @@
 
 Source: docs/research/vatutino-ground-80deg-step-source.md (PR #1165), "Proposed next tasks" item 1.
 Synthetic ezdxf documents built in the test, no user files.
+new-case: SPOZU spot-height pair detection (informational retaining_wall_marks finding).
 """
 
 from __future__ import annotations
