@@ -48,3 +48,46 @@
    `polygon_core.load_catalog()` (полигон + фрагменты).
 4. Живой прогон своих станций в Max 2024: `run_polygon.py` пишет `<out>/catalog.json` из `load_catalog()` и передаёт
    его билдеру (`AGR_POLYGON_CATALOG`).
+
+## База 1.0 (#1024)
+
+База 1.0 (станции `1.0.1`–`1.0.33`) стоит в `polygon_core.py` с ветки 0 в порядке этапов
+(`roadmap.stage_buttons`), камера `_cam_База 1.0`, `TOUR_LAST = '1.0'`. Фрагменты веток F…U — тот же формат,
+но `"issue": "#1024"`; владелец кнопки — `polygon_core.OWNER_100`:
+
+| Файл | Кнопки |
+|---|---|
+| `F.json` | `project.passport`, `source.intake`, `scene.source_class`, `scene.small_parts` |
+| `G.json` | `body.prepare`, `model.attach_by_material`, `model.move_apart` |
+| `H.json` | `model.grid_cleanup`, `model.glass_planes` |
+| `J.json` | `win.generate`, `win.place` |
+| `K.json` | `body.capsules`, `body.roof` |
+| `L.json` | `mat.table`, `mat.tiles`, `tex.plug_colour` |
+| `M.json` | `vpm.build`, `udim.rescale`, `udim.distortion` |
+| `N.json` | `tex.dilate`, `udim.plugs` |
+| `P.json` | `npm.build`, `atlas.facade_strip` |
+| `Q.json` | `npm.to_vpm`, `udim.udims_to_ids` |
+| `S.json` | `pack.deliver`, `ucx.gap`, `light.export` |
+| `T.json` | `ucx.stairs`, `qa.omk_te`, `export.place_by_passport` |
+| `U.json` | `agent.request`, `agent.accept` |
+
+Новый вид узла: `"builder": "<буква>_build"` и `stations/<буква>_build.py` (`make(obj, rt) -> node`).
+Без `expected` станция остаётся «станция в работе, #1024, ветка X». Свои `expected/<id>.json` пишет
+`python test-polygon/polygon_core.py --branch <буква>`. Строки хвоста (`fate: tail/obsolete`, версия 1.x) стоят
+без станций, с прежним `reason`; три `step`-строки 1.0 (`model.window_placer`, `tex.vpm_sets`, `atlas.unatlas`)
+не кнопки базы.
+
+## База 1.1 (#1024)
+
+База 1.1 (станции `1.1.1`–`1.1.4`) — хендофф Max ↔ Blender, `TOUR_LAST = '1.1'`, камера `_cam_База 1.1`, строки в порядке
+`roadmap.stage_buttons(suite, '1.1')`. Один фрагмент, ветка `BH` (`polygon_core.OWNER_110`, `"issue": "#1024"`,
+сцены `frag_bh_*`, билдер `BH_build`):
+
+| Файл | Кнопки |
+|---|---|
+| `BH.json` | `handoff.export`, `handoff.import`, `handoff.verify`, `handoff.restore_materials` |
+
+`handoff.export` (preview, `options.job_dir`): PASS — коробка с уникальным именем, FAIL — коробка с двойником того же имени
+(`duplicate_name`). Остальным трём нужен бандл `handoff/<seq>` на диске, а станция статична: ожидание `error` и `reason`;
+PASS и FAIL круга проверяет нативный джоб ветки BH `tests/max_tools/run_agr_tools_handoff_native.py`.
+Свои `expected/<id>.json` пишет `python test-polygon/polygon_core.py --branch BH`.

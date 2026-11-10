@@ -68,3 +68,93 @@ uv run python jobs/TEC26-OKS/scripts/compare_facades.py jobs/TEC26-OKS/AC08/vpm_
     C:/x/tec26-oks/AC08/pilot-v010/readback/vpm.readback.json <new dir>
 blender --background --factory-startup --python-exit-code 1 --python jobs/TEC26-OKS/scripts/run_agr_checker.py -- <dir with both zips> <out.json>
 ```
+
+## Rerun with invariants relative to the source [D201] (#968)
+
+Same inputs (hashes equal to the #753 run). The kernel now judges every op against the source baseline: per
+invariant the source's violators (border edges not hidden, back-face pixels on one probe frame, close-overlap pairs)
+are the baseline, an op fails only on NEW violators, and it counts as applied only when it also keeps UV and material
+ids. Generated numbers: `evidence-d197/e2e.md` / `e2e.json`, `evidence-d197/album_compare.json`,
+`evidence-d197/sintez_summary.json`. Binaries (16 kernel-state FBX, silhouettes, album compare PNG, SINTEZ JSON + log):
+`G:/Мой диск/AGR-evidence/968-ac08-relative-invariants/` + `SHA256SUMS.txt` (28 files, `sha256sum -c` OK; copy
+`evidence-d197/DRIVE-SHA256SUMS.txt`). Technical QA only; `passed=true` is not claimed.
+
+| # | gate | #753 (absolute) | #968 (relative, D201) |
+|---|---|---|---|
+| 1 | source FBX = pinned dump | pass: 180/180, corner dev 5.7e-7 m | pass: same |
+| 2 | kernel invariants on the source | FAIL: back faces 3107 px, borders 16 + 4 | baseline recorded: 3107 px, borders 16 + 4 (20 edges), overlaps 0 |
+| 3 | kernel ops applied | FAIL 0/19 | 5/19 (keep x3, join body+plate, join knob+plate) |
+| 4 | export -> readback parity | FAIL 13/17 | FAIL 14/17 (S09 now accepted: bounds parity uses the vertex tolerance on main; S15 not exported, S16/S17 UV loss unchanged) |
+| 5 | kernel output vs delivered pilot-v010 | pass: 1.53e-5 m, area 97.5350, IoU top 0.99592 | pass: same numbers; output = keep x3 + join body+plate (geometry unchanged: 180 polygons) |
+| 6 | album slide 49 (`compare_facades.py`) | pass 4/4: 29/29/29, 29/29/29, 11/11/11, 11/11/11 | pass 4/4: identical facades block |
+| 7 | SINTEZ (VPM / NPM) | 62/4/54, 38/5/29 (verified/failed/undefined) | 62/4/54, 38/5/29; same failed ids (2.1.1, 2.2.1, 2.3.17, 2.10.4.1 / 2.1.1, 2.1.2, 2.1.6, 2.10.3.1, 4.1.4) |
+
+`join_parts:AC08_knob+AC08_plate` is applied but not composed into the kernel output: the ops are alternatives on one
+source and its footprint (part AC08_plate) is already owned by `join_parts:AC08_body+AC08_plate` (op order of the
+#752 table). Album and SINTEZ measure the delivered package; the kernel output equals it within 1.5e-5 m, so they
+stand for the kernel output too.
+
+### Ops still refused (14/19), with the reason
+
+| # | op | part | reason (baseline/after/+new) |
+|---|---|---|---|
+| 4, 5 | primitive_box | knob, plate | invariants pass (+0); UV lost on 12 faces (the box has no UV) |
+| 6, 7 | embed_into_neighbour | knob, plate | refused before any change: after sinking 15 mm no face lies inside AC08_body |
+| 8 | to_opacity_plane | plate | invariants pass (+0); UV lost on 2 faces |
+| 9 | to_opacity_plane | knob | back faces 3107/3108/+1 new pixel of AC08_body (direction +z) |
+| 10 | rebuild_by_contour | knob | refused before any change: the front contour repeats a vertex |
+| 11 | rebuild_by_contour | plate | invariants pass (+0); UV lost on 12 faces |
+| 14 | join_parts | body+knob | borders 20/32/+12: the knob's border edges, hidden inside AC08_body as a neighbour, are inside the same part after the join |
+| 15 | simplify_part | body | borders 20/45/+25 (the simplifier opens new borders) |
+| 16, 17 | simplify_part | knob, plate | borders 20/32/+12 (same as op 14: everything joins into one part) |
+| 18 | move_rigid | knob | borders 20/12/+12 and back faces +1: the 11 mm move pulls the knob out of the body |
+| 19 | move_rigid | plate | borders 20/4/+4: the plate's 4 open borders move off their source position |
+
+Kernel finding (ops 14, 16, 17): `open_borders_hidden` counts a border hidden only inside ANOTHER part, so a join
+exposes borders that are still physically inside the joined solid. The repair op and this rule are follow-ups
+(draft: `FOLLOWUP-repair-op-draft.md`), not part of #968.
+
+## S15-S17 UV fix and `repair.flip_close` (#1144)
+
+Same inputs (hashes equal to #753/#968). Technical QA only; `passed=true` is not claimed. Generated numbers:
+`evidence-1144-uvfix/` (rerun without repair) and `evidence-1144/` (`--repair`). Kernel-state FBX of both runs:
+`G:/Мой диск/AGR-evidence/1144-ac08-uv-repair/` + `SHA256SUMS.txt` (30 files, `sha256sum -c` OK; copy
+`evidence-1144/DRIVE-SHA256SUMS.txt`).
+
+**Where UV was lost: op output, not the FBX writer or the readback.** `carry_seam` carried UV only for single-source
+polygons; every polygon the simplifier merged from 2+ source polygons got no UV, and `export_payload` then (by design)
+dropped the UV of the whole mixed object. S15 also merged material ids 2+3 into one polygon. Fix: `simplify_part`
+takes `face_labels` (material id + UV island per face) so a dissolved polygon never spans two materials or a UV seam,
+and keeps a straight point shared with a differently labelled face in the same plane (no T-junction); `carry_seam`
+carries a corner UV when every source corner at that vertex agrees within 1e-5 (never interpolated or defaulted).
+
+| state | #968 (evidence-d197): UV faces in memory -> after export | #1144 (evidence-1144-uvfix) |
+|---|---|---|
+| S15 simplify body | not exported (material ids 2+3 merged) | 127/127 -> 127/127, accepted |
+| S16 simplify knob | 168/169 -> 0 (export dropped all) | 169/169 -> 169/169, accepted |
+| S17 simplify plate | 170/174 -> 0 (export dropped all) | 177/177 -> 177/177, accepted |
+
+Readback gate 14/17 -> 17/17. S15-S17 stay rolled back by `check_operation` (new open borders, see the #968 kernel
+finding), but their candidate states now export and read back with full UV.
+
+**`repair.flip_close`** (`src/dt_ai/ops/repair.py`, driver `run_kernel_ops.repair_flip_close`): flips polygons
+against their component's majority winding, caps planar convex loops whose edges are ALL unhidden border violators.
+A cap takes the single material id of the polygons on its loop (two ids = error naming them) and a generated planar
+UV normalised to its bbox. On AC08: 0 polygons needed a flip; caps: body bottom loop (16 points, z = -2.047, id 1,
+14.7712 m2) and plate loop (4 points, id 3, 0.0002 m2); the knob's 12 border edges are hidden inside the body and
+are not selected. The 3107 back-face pixels were the inside of the walls seen through the open bottom, so the cap
+removes them.
+
+| gate (`--repair`) | result | numbers |
+|---|---|---|
+| source FBX = pinned dump | pass | 180 polygons, corner dev 5.69e-7 m |
+| repair_flip_close | pass | back-face px 3107 -> 0, unhidden borders 20 -> 0, 0 flipped, 2 caps, new violators 0, UV/material ids of all 180 polygons kept |
+| source baseline (new, after repair) | pass | back faces 0, borders 0 + 0 + 0, overlaps 0 |
+| kernel ops applied | 4/19 | keep x3, join body+plate (join knob+plate is now refused by join_parts: 12 xView contact/area pairs with the plate cap) |
+| export readback parity | pass 13/13 | incl. R00_repair_flip_close 58/58 rows; refused ops have no candidate |
+| delivered pilot-v010 comparison | pass | area = delivered + the recorded 14.7714 m2 of caps; surface distance, bounds, UCX, silhouettes as before |
+
+Album (slide 49) and SINTEZ measure the delivered package and were not rerun: the repaired kernel output adds the
+two caps (bottom, not seen in the facade renders) and is not delivered. On the repaired baseline the three
+simplify ops (15-17) and join knob+plate (13) are refused by the seam ops themselves (xView contact/area pairs
+next to the caps; follow-up, not tuned here). Per-op table: `evidence-1144/e2e.md`. No 3ds Max was used (offline card).

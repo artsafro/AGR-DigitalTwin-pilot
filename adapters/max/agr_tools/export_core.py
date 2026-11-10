@@ -15,7 +15,6 @@ import argparse
 import hashlib
 import json
 import math
-import os
 import struct
 import sys
 import zlib
@@ -188,19 +187,16 @@ def _validate_scene(scene):
     return validated, validated_pieces
 
 
-def _same(a, b):
-    a, b = Path(a), Path(b)
-    try:
-        if os.path.normcase(str(a.resolve())) == os.path.normcase(str(b.resolve())):
-            return True
-    except OSError as exc:
-        raise ValueError(f'cannot resolve paths: {exc}') from exc
-    if a.exists() and b.exists():
-        try:
-            return os.path.samefile(a, b)
-        except OSError as exc:
-            raise ValueError(f'cannot compare input and output identity: {exc}') from exc
-    return False
+def _session_core():
+    """Shared helpers (session_core.py next to this file), loaded by path like the other sibling cores."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('agr_tools_session_core', Path(__file__).with_name('session_core.py'))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+_same = _session_core().same
 
 
 def _paths(target, source, report_path):
@@ -291,8 +287,18 @@ def _cleanup_channels(actions, options=None):
 # originals. Here: vertex channels and keys only as opt-in actions on the export copy; pipeline UDP stays.
 VERTEX_CHANNELS = (0, -1, -2)  # vertex colour, illumination, alpha
 # Tool instructions of the AGR pipeline (runtime._HELD_OFF holds the same keys off the export hygiene gate).
-PIPELINE_UDP = frozenset({'AGR_EXPORT_PATH', 'AGR_TEXEL_PROFILE', 'AGR_TEXEL_MAP', 'AGR_UV_PERIODS',
+PIPELINE_UDP = frozenset({'AGR_EXPORT_PATH', 'AGR_ZERO_M', 'AGR_TEXEL_PROFILE', 'AGR_TEXEL_MAP', 'AGR_UV_PERIODS',
                           'AGR_UV_TARGET', 'AGR_ATLAS_MODE', 'AGR_ATLAS_SIZE', 'AGR_UCX_KIND'})
+# 1.0.1 (KPP1 e2e 20261106-075555-c179f5f0): the lower-case working keys of the 1.0 buttons (contract_core К1
+# `agr_role`, `agr_window_type`, `agr_face_axis`, `agr_udim_table`, `agr_npm_source`, `agr_intake_source`, ...) are
+# pipeline data as well: held off the hygiene gate and off the delivered copy, never a `clear_user_defined_lines`.
+PIPELINE_UDP_PREFIX = 'agr_'
+
+
+def pipeline_key(key):
+    """True for a user-prop key of the AGR pipeline (kept on the working object, not delivered)."""
+    key = str(key).strip()
+    return key in PIPELINE_UDP or key.startswith(PIPELINE_UDP_PREFIX)
 CLEANUP_FACT_KEYS = ('vertex_channels', 'keys')
 
 
@@ -335,8 +341,8 @@ def cleanup_plan(plan, facts, options=None):
         actions, kept = [], []
         for action in item['actions']:
             if action.get('action') == 'clear_user_defined_lines':
-                kept += [line for line in action['lines'] if udp_key(line) in PIPELINE_UDP]
-                lines = [line for line in action['lines'] if udp_key(line) not in PIPELINE_UDP]
+                kept += [line for line in action['lines'] if pipeline_key(udp_key(line))]
+                lines = [line for line in action['lines'] if not pipeline_key(udp_key(line))]
                 if lines:
                     actions.append(dict(action, lines=lines))
                 continue

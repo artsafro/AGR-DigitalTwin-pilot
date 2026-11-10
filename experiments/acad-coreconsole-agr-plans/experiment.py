@@ -19,6 +19,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
+sys.path.insert(0, str(ROOT))
+from adapters.cad.dwg import filedia_guarded, user_filedia  # noqa: E402
 from dt_ai.spec.model import Spec  # noqa: E402
 
 LIMITATION = (
@@ -320,18 +322,19 @@ def write_script(path, text):
 
 
 def write_forms(features, dwg, dxf):
+    # FILEDIA is the user's registry setting: set 0 for the run, put the user's value back (#1121).
     save, export = _save_form(dwg, dxf)
-    body = "\n".join([
-        '(setvar "FILEDIA" 0)', '(setvar "CMDECHO" 0)', '(setvar "INSUNITS" 4)',
+    body = filedia_guarded("\n".join([
+        '(setvar "CMDECHO" 0)', '(setvar "INSUNITS" 4)',
         HELPERS, IDENTITY, *[_feature_lisp(feature) for feature in features],
         save, export, '(princ "\\nAGR_WRITE_DONE\\n")', "(princ)",
-    ])
+    ]), user_filedia())
     return body, body
 
 
 def read_forms():
-    body = "\n".join(['(setvar "FILEDIA" 0)', '(setvar "CMDECHO" 0)', HELPERS, IDENTITY,
-                      "(agr-walk)", '(princ "\\nAGR_READ_DONE\\n")', "(princ)"])
+    body = filedia_guarded("\n".join(['(setvar "CMDECHO" 0)', HELPERS, IDENTITY,
+                                      "(agr-walk)", '(princ "\\nAGR_READ_DONE\\n")', "(princ)"]), user_filedia())
     return body, body
 
 

@@ -240,17 +240,22 @@ def valid_receipt(sha=SHA, failed="0", result="PASS", pytest_block=True, profile
     return "\n".join(lines)
 
 
-def test_workflow_trigger_is_manual_dispatch_only():
+def test_workflow_runs_light_non_dcc_suite_on_self_hosted():
     text = WORKFLOW_YML.read_text(encoding="utf-8")
     head, _, tail = text.partition("permissions:")
+    assert "pull_request:" in head
     assert "workflow_dispatch:" in head
     assert "push:" not in head
-    assert "pull_request:" not in head
-    assert "branches:" not in head
-    assert "runs-on: ubuntu-latest" in tail
+    assert "concurrency:" in tail
+    assert "runs-on: [self-hosted, windows, agr]" in text
+    assert "github.event.pull_request.head.repo.full_name == github.repository" in text
     assert "actions/checkout@v4" in text
     assert "astral-sh/setup-uv@" in text and "uv sync --frozen" in text
-    assert tail.strip().endswith("uv run pytest -q")
+    marker_exclusion = (
+        "not blender and not dcc and not acad and not perf and not job "
+        "and not max and not panel_texture and not native_max"
+    )
+    assert marker_exclusion in text
 
 
 def test_author_receipts_mentions_ci_receipt_once():

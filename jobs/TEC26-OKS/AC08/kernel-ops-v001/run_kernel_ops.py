@@ -52,6 +52,7 @@ SOURCE_SHA256 = "f1fc27dc77d5d194ae25aebe8aeb23e71993ab0890cb08def97279bac3e4522
 PROFILE = "VPM-OKS"
 PART_NAMES = ("AC08_body", "AC08_knob", "AC08_plate")   # connected components by descending face count
 ZERO_AREA_M2 = ix.AREA_EPS_M2
+UV_AGREE = 1e-5                 # #1144: source corners at one vertex carry one UV only when they agree this close
 READBACK_ROUND_M = 1e-6          # fbx_readback rounds world coordinates to 6 decimals
 EXPORT = HERE / "export_states_blender.py"
 READBACK = ROOT / "tools" / "blender" / "fbx_readback.py"
@@ -243,16 +244,39 @@ def op_kernel(state, name, part, fn, ctx, params):
     return res, after
 
 
-def run_ops(source):
-    ctx = Context()
+def preservation(source, after):
+    """[D201] UV/material preservation of a candidate state against the source: faces that had UV and lost it,
+    merged material ids (0) and source material ids that vanished. Empty list = preserved."""
+    why = []
+    lost = sum(1 for p in after.values() for c in p["uv"] if c is None) - \
+        sum(1 for p in source.values() for c in p["uv"] if c is None)
+    if lost > 0:
+        parts = sorted(k for k, p in after.items() if any(c is None for c in p["uv"]))
+        why.append(f"UV lost on {lost} faces of {parts}")
+    merged = {k: p["mat"].count(0) for k, p in after.items() if 0 in p["mat"]}
+    if merged:
+        why.append(f"material ids merged on polygons {merged}")
+    gone = sorted({m for p in source.values() for m in p["mat"]} - {m for p in after.values() for m in p["mat"]})
+    if gone:
+        why.append(f"material ids {gone} vanished")
+    return why
+
+
+def run_ops(source, relative=False):
+    """The #752 op set. `relative` [D201, #968]: invariants judged against the source (no new violators) and an
+    op counts as applied only when it also preserves UV and material ids (`preservation`)."""
+    ctx = Context(source=tri_scene(source)) if relative else Context()
     rows = []
 
     def record(op, part, params, applied, after, report, question, extra=None):
         """after = the candidate state (None when the op refused before changing geometry); `applied` = the
         kernel verdict (False = rolled back or refused)."""
+        lost = preservation(source, after) if relative and after is not None else []
+        if applied and lost:
+            applied, question = False, f"{op} on {part}: invariants pass but not preserved: " + "; ".join(lost)
         rows.append({"op": op, "part": part, "params": params, "applied": bool(applied),
                      "refusal_or_rollback": question, "check_operation": None if report is None else report.to_dict(),
-                     "after_state": after, **(extra or {})})
+                     **({"preservation": lost} if relative else {}), "after_state": after, **(extra or {})})
 
     for part in PART_NAMES:
         s = copy_state(source)
@@ -314,13 +338,121 @@ def run_ops(source):
     return rows
 
 
+def _cap_uv(v, ring):
+    """Generated planar UV of a cap, normalised to its own bounding box in [0, 1] (recorded as generated)."""
+    p = np.asarray(v, float)[list(ring)]
+    n = np.cross(p[1] - p[0], p[-1] - p[0])
+    for k in range(len(p)):           # first non-collinear corner gives the plane normal
+        n = np.cross(p[(k + 1) % len(p)] - p[k], p[k - 1] - p[k])
+        if np.linalg.norm(n) > 1e-12:
+            break
+    n /= np.linalg.norm(n)
+    u = p[1] - p[0]
+    u /= np.linalg.norm(u)
+    w = np.cross(n, u)
+    q = np.stack([(p - p[0]) @ u, (p - p[0]) @ w], 1)
+    lo, span = q.min(0), np.maximum(q.max(0) - q.min(0), 1e-12)
+    return [tuple(float(x) for x in c) for c in (q - lo) / span]
+
+
+def repair_flip_close(source):
+    """`repair.flip_close` (#1144) on every part: flip polygons against their component's winding, cap the open
+    border loops whose edges are ALL unhidden violators (open_borders_hidden, absolute). Flipped polygons keep their
+    material id and their UV corners (permuted with the winding); a cap takes the one material id of the polygons
+    on its loop (two ids on one loop = InputError naming the part and the ids, never a default) and a generated
+    planar UV normalised to its bounding box. Returns (repaired state, record). The record holds the absolute
+    violators before/after (the new [D201] baseline), the relative check against the source and `applied`:
+    no new violators, UV and material ids of every source polygon kept, back-face px AND unhidden borders reduced."""
+    from dt_ai.ops.invariants import _unhidden_edges
+    from dt_ai.ops.repair import flip_close
+    abs_ctx, tri = Context(), tri_scene(source)
+    after, flipped, caps, skipped = copy_state(source), {}, {}, {}
+    for k, p in source.items():
+        unhidden = {tuple(sorted((tuple(np.round(e[0], 9)), tuple(np.round(e[1], 9)))))
+                    for e in _unhidden_edges(tri, k, abs_ctx)}
+        sel = {frozenset((a, b)) for f in p["faces"] for a, b in zip(f, f[1:] + f[:1])
+               if tuple(sorted((tuple(np.round(p["v"][a], 9)), tuple(np.round(p["v"][b], 9))))) in unhidden}
+        res = flip_close(PolyMesh(p["v"], tuple(p["faces"])), close=sel)
+        flip = set(res.flipped)
+        uv, mat = [], []
+        for f, src in zip(res.mesh.faces, res.face_sources):
+            if src is not None:
+                c = p["uv"][src]
+                uv.append(c if c is None or src not in flip else [c[0]] + list(c[1:])[::-1])
+                mat.append(p["mat"][src])
+                continue
+            ring = {frozenset((f[j], f[(j + 1) % len(f)])) for j in range(len(f))}
+            ids = sorted({p["mat"][i] for i, g in enumerate(p["faces"])
+                          if ring & {frozenset((g[j], g[(j + 1) % len(g)])) for j in range(len(g))}})
+            if len(ids) != 1:
+                raise InputError(f"repair.flip_close {k}: cap loop of {len(f)} points borders material ids {ids}")
+            uv.append(_cap_uv(p["v"], f))
+            mat.append(ids[0])
+        after[k] = {**after[k], "faces": tuple(map(tuple, res.mesh.faces)), "uv": uv, "mat": mat}
+        flipped[k] = list(res.flipped)
+        caps[k] = [{"points": len(ring), "material": after[k]["mat"][i],
+                    "area_m2": float(_area(p["v"], ring))} for i, ring in res.caps]
+        skipped[k] = [{"points": len(ring), "reason": why} for ring, why in res.skipped]
+    vis_before, vis_after = visibility(source, abs_ctx), visibility(after, abs_ctx)
+
+    def borders(vis):
+        return sum(x["count"] for n, x in vis.items() if n.startswith("open_borders_hidden"))
+    report = check_operation(tri, tri_scene(after), list(after), Context(source=tri))
+    kept = preservation(source, after)
+    for k, p in source.items():       # every source polygon: same material, same UV corners (flip-permuted)
+        for i, f in enumerate(p["faces"]):
+            g, c = after[k]["faces"][i], after[k]["uv"][i]
+            if after[k]["mat"][i] != p["mat"][i] or set(g) != set(f) or \
+                    (p["uv"][i] is not None and sorted(map(tuple, c)) != sorted(map(tuple, p["uv"][i]))):
+                kept.append(f"{k} polygon {i}: material/UV/corners not kept")
+    bf = (vis_before["no_visible_back_faces"]["count"], vis_after["no_visible_back_faces"]["count"])
+    ob = (borders(vis_before), borders(vis_after))
+    why = [] if report.passed else ["check_operation: " + "; ".join(r.name for r in report.broken)]
+    why += kept
+    if not (bf[1] < bf[0] and ob[1] < ob[0]):
+        why.append(f"not reduced: back-face px {bf[0]}->{bf[1]}, unhidden borders {ob[0]}->{ob[1]}")
+    record = {"op": "repair.flip_close", "applied": not why, "refusal_or_rollback": "; ".join(why) or None,
+              "flipped": flipped, "caps": caps, "skipped": skipped, "back_face_px": list(bf),
+              "open_borders_unhidden": list(ob), "visibility_before": vis_before, "visibility_after": vis_after,
+              "cap_area_m2": float(sum(c["area_m2"] for cs in caps.values() for c in cs)),
+              "check_operation": report.to_dict(), "cap_uv": "generated planar, normalised to the cap bbox"}
+    return after, record
+
+
+def uv_islands(p):
+    """Per-face island id (#1144): faces joined across a shared edge only when both end corners carry the same UV
+    (within UV_AGREE) in both faces; a face without UV is its own island. Used as a simplify barrier with the
+    material id, so a dissolved polygon never spans a UV seam."""
+    parent = list(range(len(p["faces"])))
+
+    def find(a):
+        while parent[a] != a:
+            parent[a] = parent[parent[a]]
+            a = parent[a]
+        return a
+    edge = defaultdict(list)
+    for fi, (f, c) in enumerate(zip(p["faces"], p["uv"])):
+        if c is None:
+            continue
+        for k in range(len(f)):
+            a, b = f[k], f[(k + 1) % len(f)]
+            edge[tuple(sorted((a, b)))].append((fi, {a: c[k], b: c[(k + 1) % len(f)]}))
+    for items in edge.values():
+        for (fa, ua), (fb, ub) in zip(items, items[1:]):
+            if all(max(abs(float(x) - float(y)) for x, y in zip(ua[vi], ub[vi])) <= UV_AGREE for vi in ua):
+                parent[find(fb)] = find(fa)
+    return [find(i) for i in range(len(parent))]
+
+
 def seam_op(source, op, parts, ctx, record):
     s = copy_state(source)
     try:
         if op == "join_parts":
             res = join_parts({k: PolyMesh(s[k]["v"], tuple(s[k]["faces"])) for k in parts})
-        else:   # every part goes in: simplify conforms the neighbours' seams too
-            res = simplify_part(poly_scene(s), parts[0])
+        else:   # every part goes in: simplify conforms the neighbours' seams too; a dissolved polygon keeps one
+            p = s[parts[0]]   # material id and one UV island (#1144)
+            labels = tuple(zip(p["mat"], uv_islands(p)))
+            res = simplify_part(poly_scene(s), parts[0], face_labels={parts[0]: labels})
     except (OperationRefused, ValueError) as why:
         record(op, "+".join(parts), {}, False, None, None, f"{op} on {'+'.join(parts)}: {type(why).__name__}: {why}")
         return
@@ -334,26 +466,31 @@ def seam_op(source, op, parts, ctx, record):
 
 def carry_seam(state, res, consumed, op):
     """SeamResult -> state. join: the consumed parts become one part "a+b"; simplify: the result replaces all
-    parts as one mesh named "simplified". UV/material carried per corner only from a single-source polygon whose
-    source corner has the same output vertex; anything else is reported as unmapped, never defaulted."""
+    parts as one mesh named "simplified". UV/material carried per corner from the source polygon(s) of the output
+    polygon (#1144): a corner takes the source UV of its vertex when EVERY source polygon of the group that has that
+    vertex as a corner has UV there and all of them agree within UV_AGREE. A corner with no source corner, a source
+    polygon without UV or disagreeing UVs (a UV seam inside a merged group) leaves the whole polygon without UV and
+    all its corners are counted as unmapped: reported, never defaulted, never interpolated."""
     vsrc = res.vertex_sources
-    corner_uv, unmapped, uv, mats = {}, 0, [], []
+    unmapped, uv, mats = 0, [], []
     for f, srcs in zip(res.mesh.faces, res.face_sources):
         srcs = tuple(srcs)
-        part, fi = srcs[0]
         m = {state[p]["mat"][i] for p, i in srcs}
         mats.append(m.pop() if len(m) == 1 else 0)   # 0 = merged ids: reported, never defaulted
-        if len(srcs) != 1:
-            uv.append(None)
-            unmapped += len(f)
-            continue
-        src_face, src_uv = state[part]["faces"][fi], state[part]["uv"][fi]
         corners = []
         for vi in f:
-            hit = [k for k, sv in enumerate(src_face) if (part, sv) in set(map(tuple, vsrc[vi]))]
-            corners.append(None if not hit or src_uv is None else src_uv[hit[0]])
+            origin = set(map(tuple, vsrc[vi]))
+            found, missing = [], False
+            for part, fi in srcs:
+                src_face, src_uv = state[part]["faces"][fi], state[part]["uv"][fi]
+                hit = [k for k, sv in enumerate(src_face) if (part, sv) in origin]
+                missing |= bool(hit) and src_uv is None
+                found += [tuple(map(float, src_uv[k])) for k in hit if src_uv is not None]
+            agree = bool(found) and not missing and all(
+                max(abs(a - b) for a, b in zip(c, found[0])) <= UV_AGREE for c in found)
+            corners.append(found[0] if agree else None)
         if any(c is None for c in corners):
-            unmapped += sum(c is None for c in corners)
+            unmapped += len(f)
             uv.append(None)
         else:
             uv.append(corners)

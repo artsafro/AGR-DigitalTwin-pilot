@@ -1,8 +1,11 @@
-"""new-case: the agr-mcp phase-0 tool catalog: schemas, host per call and handlers (plan sections 2 and 5).
+"""new-case: the agr-mcp tool catalog: schemas, host per call and handlers (plan sections 2 and 5).
 
-Every handler wraps exactly one existing function and returns its output made JSON-safe (dataclasses ->
-dicts, a JSON round trip with allow_nan=False). No handler takes a `code` argument; the only tool that does,
-`agr_exec_unsafe`, is added by `catalog(unsafe=True)` and the server registers it only with AGR_MCP_UNSAFE=1.
+v1 (PHASE0, 52 tools, deprecated since tool_schema_version 2): every handler wraps exactly one existing function
+and returns its output made JSON-safe (dataclasses -> dicts, a JSON round trip with allow_nan=False).
+v2 (#1024 branch 0): catalog.py generates the stage tools, agr_check_run, agr_op_preview and agr_op_apply from
+docs/plans/agr-tools-suite.json; ops_d108.register (branch U) appends D108 operations without editing this file.
+No handler takes a `code` argument; the only tool that does, `agr_exec_unsafe`, is added by `catalog(unsafe=True)`
+and the server registers it only with AGR_MCP_UNSAFE=1.
 """
 from __future__ import annotations
 
@@ -12,11 +15,11 @@ import json
 import math
 import os
 import sys
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable
 
 from . import max_pipe
+from .spec import Outcome, Spec
 
 ROOT = Path(__file__).resolve().parents[2]
 MAX_TIMEOUT = float(os.environ.get("AGR_MCP_MAX_TIMEOUT", "600"))
@@ -80,26 +83,16 @@ MAX_IN = {"type": "object", "required": ["scene"], "additionalProperties": False
                                    "description": "'live' (the pinned open Max document) or its exact path"},
                          "handles": {"type": "array", "uniqueItems": True,
                                      "items": {"type": "integer", "minimum": 1},
-                                     "description": "node handles; empty = runtime._targets (selection or all geometry)"}}}
+                                     "description": "node handles to check; required unless scope=selection "
+                                                    "(empty without scope is the error handles_required)"},
+                         "scope": {"enum": ["selection"],
+                                   "description": "take the current Max selection as targets; never with handles"}}}
 MAX_OUT = {"type": "object", "required": ["schema", "tool", "status", "objects"],
            "properties": {"schema": {"const": 1}, "tool": {"type": "string"}, "status": {"enum": ["pass", "fail"]},
                           "objects": {"type": "array", "items": {
                               "type": "object", "required": ["findings"], "properties": {"findings": {
                                   "type": "array", "items": {"type": "object", "required": ["code", "ids"]}}}}}}}
 TEXEL_OUT = {"type": "object"}  # texel_preview's own report; exact shape is runtime's (plan: min/median px/m)
-
-
-@dataclass(frozen=True)
-class Spec:
-    name: str
-    description: str
-    input: dict
-    result: dict
-    handler: Callable[[dict], Any]
-    host: Callable[[dict], str]
-    read_only: bool = True
-    destructive: bool = False
-    timeout: Callable[[dict], float] | None = None  # the wrapped call's own timeout; sizes the host lock (#871)
 
 
 def _const(host: str) -> Callable[[dict], str]:
@@ -164,10 +157,21 @@ def _max_timeout(_args: dict) -> float:
 
 
 # ---- handlers -------------------------------------------------------------------------------------------
+def check_targets(args: dict) -> None:
+    """Selection contract (docs/plans/agr-mcp.md): refuse before Max is called."""
+    if args.get("handles") and args.get("scope"):
+        raise ValueError("target_conflict: handles and scope are two target sources")
+    if not args.get("handles") and args.get("scope") != "selection":
+        raise ValueError("handles_required: pass node handles or scope=selection; an empty target set would take "
+                         "the user's selection or all geometry")
+
+
 def _max_tool(tool: str, transport=None):
     def handler(args: dict):
+        check_targets(args)
         payload = max_pipe.call_bridge(tool, args, MAX_TIMEOUT, transport=transport)
-        return payload["result"]
+        return Outcome(payload["result"], {k: payload.get(k) for k in (
+            "runtime_version", "runtime_file", "doc", "selection", "journaled", "journaled_rows")})
     return handler
 
 
@@ -252,7 +256,7 @@ EDITS_080 = (
     ("agr_export_pivot_place", "export.pivot_place", "pivot and placement on export copies", "additive"),
     ("agr_export_zip", "export.zip", "write a new NPM/VPM ZIP with size limits, checked before and after", "additive"),
 )
-_LOCATE = {"scene": MAX_IN["properties"]["scene"], "handles": MAX_IN["properties"]["handles"]}
+_LOCATE = {k: MAX_IN["properties"][k] for k in ("scene", "handles", "scope")}
 _OPTIONS = {"type": "object", "description": "tool options (paths, profile); recorded in the preview"}
 READ_080_IN = {"type": "object", "required": ["scene"], "additionalProperties": False,
                "properties": dict(_LOCATE, options=_OPTIONS)}
@@ -298,14 +302,102 @@ EDIT_090_IN = {"type": "object", "required": ["scene"], "additionalProperties": 
                "properties": dict(_LOCATE, mode={"const": "preview"}, options=_OPTIONS)}
 
 
-def catalog(unsafe: bool = False, max_transport=None) -> dict[str, Spec]:
+def _same_path(a: Path, b: Path) -> bool:
+    try:
+        if a.exists() and b.exists():
+            return os.path.samefile(a, b)
+    except OSError:
+        pass
+    return os.path.normcase(str(a.resolve(strict=False))) == os.path.normcase(str(b.resolve(strict=False)))
+
+
+def check_new_target(target: str, scene: str | None) -> None:
+    """A phase-2 FBX target is a NEW absolute .fbx path; its report and .partial are new too; none is the scene."""
+    p = Path(target)
+    if not p.is_absolute():
+        raise ValueError(f"invalid_target: target must be an absolute path: {target}")
+    if p.suffix.lower() != ".fbx":
+        raise ValueError(f"invalid_target: target must be a .fbx path: {target}")
+    if not p.parent.is_dir():
+        raise ValueError(f"invalid_target: target folder does not exist: {p.parent}")
+    roles = (("target", p), ("report", p.with_suffix(".report.json")), ("partial", Path(str(p) + ".partial")))
+    for role, q in roles:
+        if q.exists() or q.is_symlink():
+            raise ValueError(f"invalid_target: {role} path exists, a new path is required: {q}")
+    if scene and scene != "live":
+        for role, q in roles:
+            if _same_path(q, Path(scene)):
+                raise ValueError(f"invalid_target: {role} path is the scene file: {q}")
+
+
+# AGR MCP phase 2 (#1021, plan section 5 "mutations on copies"), runtime 0.9.0. Over MCP only the preview of each
+# copy family; the apply/commit tools stay listed and answer needs_human without calling Max: apply of a 0.9 row is
+# a button in the AGR Tools panel/dock (owner answers 06.11.2026, [D231]). (preview, apply, runtime fn, what)
+PHASE2_TOOLS = (
+    ("agr_cleanup_preview", "agr_cleanup_apply", "cleanup_preview", "export cleanup plan (channels, user props, "
+     "opt-in keys)"),
+    ("agr_uv_nudge_preview", "agr_uv_nudge_apply", "nudge_preview", "whole-tile UV nudge plan"),
+    ("agr_atlas_preview", "agr_atlas_apply", "atlas_preview", "UDIM -> NPM atlas plan (PNG bytes shown as length "
+     "+ sha256)"),
+    ("agr_ucx_preview", "agr_ucx_apply", "ucx_preview", "UCX pieces, budget and audit verdict"),
+    ("agr_export_preview", "agr_export_commit", "export_preview", "checked-export gates for a new FBX path (no file)"),
+)
+_TARGET = {"type": "string", "minLength": 1, "description": "new absolute .fbx path (never an existing file)"}
+
+
+def _p2_preview_input(name: str) -> dict:
+    props, required = dict(_LOCATE), ["scene"]
+    if name == "agr_cleanup_preview":
+        props["options"] = _OPTIONS
+    if name == "agr_export_preview":
+        props["target"], required = _TARGET, required + ["target"]
+    return {"type": "object", "required": required, "additionalProperties": False, "properties": props}
+
+
+def _phase2_preview(tool: str, transport=None):
+    def handler(args: dict):
+        check_targets(args)
+        if "target" in args:
+            check_new_target(args["target"], args.get("scene"))
+        payload = max_pipe.call_bridge(tool, args, MAX_TIMEOUT, transport=transport)
+        return Outcome(payload["result"], {k: payload.get(k) for k in (
+            "runtime_version", "runtime_file", "doc", "selection")})
+    return handler
+
+
+def _phase2_needs_human(tool: str):
+    def handler(_args: dict):
+        raise ValueError(f"needs_human: {tool} is confirmed only by a button in the AGR Tools panel/dock "
+                         "(owner answers 06.11.2026, [D231]); nothing was sent to Max")
+    return handler
+
+
+def phase2_specs(max_transport=None) -> list[Spec]:
+    out = []
+    for preview, apply, fn, what in PHASE2_TOOLS:
+        out.append(Spec(preview, f"AGR Tools runtime.{fn} in the pinned open 3ds Max: {what}. Read-only: no node "
+                        "left or deleted, the selection is restored. Targets: non-empty handles or "
+                        "scope='selection'. Needs runtime 0.9.0 (#1021).",
+                        _p2_preview_input(preview), {"type": "object"}, _phase2_preview(preview, max_transport),
+                        _const("max-live"), timeout=_max_timeout))
+        out.append(Spec(apply, f"Apply of {preview} is NOT available over MCP: always answers needs_human; the user "
+                        "presses the button in the AGR Tools panel/dock [D231]. Nothing is sent to Max.",
+                        {"type": "object"}, {"type": "object"}, _phase2_needs_human(apply), _const("offline")))
+    return out
+
+
+DEPRECATED = (" Deprecated (tool_schema_version 1 tool, kept for compatibility): use the stage tools, "
+              "agr_check_run, agr_op_preview / agr_op_apply.")
+
+
+def catalog(unsafe: bool = False, max_transport=None, store=None) -> dict[str, Spec]:
     specs = [
-        Spec("agr_xview_check", "AGR Tools runtime.xview in the pinned open 3ds Max (selection-modifying: the "
-             "runtime selects nodes with findings; geometry and files untouched).",
+        Spec("agr_xview_check", "AGR Tools runtime.xview in the pinned open 3ds Max (read-only: the selection "
+             "before the call is restored; geometry and files untouched).",
              MAX_IN, MAX_OUT, _max_tool("agr_xview_check", max_transport), _const("max-live"),
              timeout=_max_timeout),
-        Spec("agr_matid_check", "AGR Tools runtime.matid in the pinned open 3ds Max (selection-modifying, "
-             "as agr_xview_check).", MAX_IN, MAX_OUT, _max_tool("agr_matid_check", max_transport),
+        Spec("agr_matid_check", "AGR Tools runtime.matid in the pinned open 3ds Max (read-only, selection "
+             "restored as agr_xview_check).", MAX_IN, MAX_OUT, _max_tool("agr_matid_check", max_transport),
              _const("max-live"), timeout=_max_timeout),
         Spec("agr_texel_readout", "AGR Tools runtime.texel_preview in the pinned open 3ds Max (read-only).",
              MAX_IN, TEXEL_OUT, _max_tool("agr_texel_readout", max_transport), _const("max-live"),
@@ -344,10 +436,10 @@ def catalog(unsafe: bool = False, max_transport=None) -> dict[str, Spec]:
     ]
     for name, what in CHECKS_070:
         specs.append(Spec(name, "AGR Tools 0.7.0 runtime.checks_070 '{}' in the pinned open 3ds Max: {} (read-only; "
-                          "selects nodes with findings, geometry and files untouched; needs runtime 0.7.0)."
+                          "select=False, selection unchanged, geometry and files untouched; needs runtime >= 0.7.0)."
                           .format(name.split("_", 2)[2] if name != "agr_ucx_audit" else "ucx_audit", what),
                           MAX_IN, MAX_OUT, _max_tool(name, max_transport), _const("max-live"),
-                          timeout=_max_timeout))
+                          timeout=_max_timeout, row=_ROW_070.get(name)))
     for name, row, what, kind in EDITS_080:
         if kind == "read":
             text = ("AGR Tools 0.8 runtime.edits_080 '{}' in the pinned open 3ds Max: {} (read-only; one call)."
@@ -359,13 +451,13 @@ def catalog(unsafe: bool = False, max_transport=None) -> dict[str, Spec]:
         specs.append(Spec(name, text + " An empty stub answers status not_implemented.",
                           READ_080_IN if kind == "read" else EDIT_080_IN, EDIT_080_OUT,
                           _max_tool(name, max_transport), _const("max-live"), read_only=kind == "read",
-                          destructive=kind == "rename", timeout=_max_timeout))
+                          destructive=kind == "rename", timeout=_max_timeout, row=row))
     for name, row, what, mode in EDITS_090:
         text = ("AGR Tools 0.9 runtime.edits_090 '{}' in the pinned open 3ds Max: {}. Plan mode {}; over MCP only "
                 "mode=preview (changes nothing, selects nothing). An empty stub answers status not_implemented "
                 "(#979).".format(row, what, mode))
         specs.append(Spec(name, text, EDIT_090_IN, EDIT_080_OUT, _max_tool(name, max_transport), _const("max-live"),
-                          read_only=True, destructive=False, timeout=_max_timeout))
+                          read_only=True, destructive=False, timeout=_max_timeout, row=row))
     if unsafe:
         def h_exec(args: dict):
             raw = (max_transport or max_pipe.pipe_transport)(args["code"], float(args.get("timeout", EXEC_TIMEOUT)))
@@ -377,8 +469,39 @@ def catalog(unsafe: bool = False, max_transport=None) -> dict[str, Spec]:
              "properties": {"code": STR, "timeout": {"type": "integer", "minimum": 1, "maximum": 7200}}},
             {"type": "object", "required": ["value"]}, h_exec, _const("max-live"),
             read_only=False, destructive=True, timeout=_arg_timeout(EXEC_TIMEOUT)))
-    return {s.name: s for s in specs}
+    specs = [dataclasses.replace(s, description=s.description + DEPRECATED) if s.name in PHASE0 else s
+             for s in specs]
+    specs += phase2_specs(max_transport)
+    from . import catalog as v2
+    from . import ops_d108
+    specs += v2.specs(store=store, transport=max_transport)
+    out = {s.name: s for s in specs}
+    if len(out) != len(specs):
+        raise RuntimeError("duplicate tool names in the catalogue")
+    for extra in ops_d108.register(dict(out)) or ():
+        if not isinstance(extra, Spec) or extra.name in out:
+            raise RuntimeError("ops_d108.register returned a bad or duplicate spec: {!r}".format(
+                getattr(extra, "name", extra)))
+        out[extra.name] = extra
+    return out
 
 
+_ROW_070 = {"agr_" + r.replace(".", "_"): r for r in (
+    "scene.census", "scene.units", "model.perimeter_drop", "tex.material_type", "atlas.sets_count", "qa.fbx_split",
+    "qa.glass", "qa.preflight", "qa.scene_hygiene", "qa.xform", "qa.zero_area")}
+_ROW_070["agr_ucx_audit"] = "ucx.audit"
 PHASE0 = tuple(n for n, _ in CHECKS_070) + tuple(n for n, *_ in EDITS_080) + tuple(n for n, *_ in EDITS_090) + ("agr_xview_check", "agr_matid_check", "agr_texel_readout", "agr_fbx_readback", "agr_package_validate",
           "agr_mesh_names", "agr_geojson_check", "agr_xview_parity")
+
+
+def v2_names(plan=None) -> tuple[str, ...]:
+    """Names of the v2 catalogue (stage tools + agr_check_run/op_preview/op_apply), in catalogue order."""
+    from . import catalog as v2
+    plan = plan or v2.load_plan()
+    return tuple(v2.tool_name(r["id"]) for r in v2.stage_rows(plan)) + ("agr_check_run", "agr_op_preview",
+                                                                       "agr_op_apply") + v2.HANDOFF_TOOLS
+
+
+PHASE2 = tuple(n for p, a, *_ in PHASE2_TOOLS for n in (p, a))
+PHASE2_PREVIEWS = tuple(p for p, *_ in PHASE2_TOOLS)
+LISTED = PHASE0 + v2_names() + PHASE2  # tools/list without AGR_MCP_UNSAFE (plus whatever ops_d108 registers)

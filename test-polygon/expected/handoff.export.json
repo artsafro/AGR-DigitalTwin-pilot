@@ -1,0 +1,34 @@
+{
+ "schema": 1,
+ "button": "handoff.export",
+ "tool": "handoff.export",
+ "version": "1.1",
+ "shipped": true,
+ "select": "named",
+ "reason": "",
+ "apply_status": null,
+ "objects": [
+  {
+   "name": "SM_FragBH_ExpOk_Main",
+   "scene": "frag_bh_export",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "SM_FragBH_ExpBad_Main",
+   "scene": "frag_bh_export",
+   "expect": "fail",
+   "codes": [
+    "duplicate_name"
+   ]
+  }
+ ],
+ "options": {
+  "job_dir": "C:/agr-polygon/jobs/FRAGBH"
+ },
+ "base": "1.1",
+ "station": "1.1.1",
+ "stations": [
+  "1.1.1"
+ ]
+}

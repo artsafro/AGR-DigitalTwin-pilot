@@ -34,7 +34,7 @@ or an eval id is no task.
 
 | Component | Kind | Failure it prevents | Evidence it happened | Last verified | Eval |
 |---|---|---|---|---|---|
-| `.claude/hooks/guard.py` | PreToolUse hook (Bash, PowerShell, Write, Edit, NotebookEdit), "ask" | a destructive, outward or asset-corrupting action without the user's word | PR #142: the app isolation hook refused a Write into another worktree (real handover transcript); not component-specific evidence for project guard | never (project-guard verification unknown; component-specific run required) | none |
+| `.claude/hooks/guard.py` | PreToolUse hook via `pretool.py` (Bash, PowerShell, Write, Edit, NotebookEdit), "ask" | a destructive, outward or asset-corrupting action without the user's word | PR #142: the app isolation hook refused a Write into another worktree (real handover transcript); not component-specific evidence for project guard | never (project-guard verification unknown; component-specific run required) | none |
 | `.pi/extensions/agr-guard.ts` + `tools/hooks/pi_guard_adapter.py` | Pi `tool_call` bridge (bash, powershell, write, edit), fail closed | Pi skips Claude hooks; headless ask/deny and hook failures must block | #58: Windows third-party hook adapter passed an unexpanded project path | 2026-10-15 live via `pi-run.sh` + nested smoke driver (`tests/fixtures/pi_guard_smoke.ts`): status allowed, reset blocked; pytest `tests/test_pi_guard_adapter.py` + `tests/test_pi_guard_contract.py` (installed-Pi parity); exact `edits[]` preview; special Pi paths and fuzzy-only edits block (use native/relative paths and exact text); opt in with `PI_EXTENSIONS=.pi/extensions/agr-guard.ts`, wrapper wiring deferred | none |
 | guard rule set `SHELL_RULES` | guard rule set | push, `reset --hard`, `clean`, forced branch delete, discarded changes, history rewrite, LFS migrate, deletes of sources or production assets, recursive delete, installs, system changes | none (precaution, carried over from DigitalTwinProject) | never (no test) | none |
 | guard rule set `PRODUCTION_EXT` | guard rule set (Write, Edit) | a text write over a production asset (`.fbx`, `.max`, `.blend`, `.png`, ...) | none (precaution) | never (no test) | none |
@@ -42,13 +42,18 @@ or an eval id is no task.
 | `permissions.allow` | `.claude/settings.json` list | a routine read-only git, test or `dt` call stops the session for a confirmation | none (convenience) | never (no test) | none |
 | `permissions.ask` | `.claude/settings.json` list | push, `reset --hard`, `clean`, `branch -D` without the user's word (duplicates `SHELL_RULES`) | none (precaution) | never (no test) | none |
 | `permissions.deny` | `.claude/settings.json` list | secrets in `.env` read into the context | none (precaution) | never (no test) | none |
-| `.claude/hooks/pipeline_gate.py` | PreToolUse hook (Write, Edit), deny | a job status above draft without spec, extractor report and checker report; a job script without an engine gap | case alina-bld (`docs/cases.md`): no spec, no checker report, build script left only as `.pyc` | 2026-10-15 pytest (`tests/test_pipeline_gate.py`) | none |
+| `.claude/hooks/pipeline_gate.py` | PreToolUse hook via `pretool.py` (Bash, PowerShell, Write, Edit), deny | a job status above draft without spec, extractor report and checker report; a job script without an engine gap | case alina-bld (`docs/cases.md`): no spec, no checker report, build script left only as `.pyc` | 2026-10-15 pytest (`tests/test_pipeline_gate.py`) | none |
+| `.claude/hooks/pretool.py` | PreToolUse dispatcher (Bash, PowerShell, Write, Edit, NotebookEdit): runs guard and pipeline gate in one process, one output (deny > ask > none); a shell command running a bare `python`/`python3` gets an advisory to use `py -3` (additionalContext + systemMessage, never a decision) | a decision of one part lost or doubled; two interpreter starts per tool call; the Microsoft Store stub (exit 49) run by bare `python` | none (performance; repo hygiene phase 4); #1034 (retro 2026-11-05, problem 4) | 2026-11-09 pytest (`tests/test_hook_dispatchers.py`) | none |
 | `tools/hooks/skill_gate.py` | PreToolUse hook (DCC MCP), deny | a 3ds Max / Blender / Revit MCP call before its skill is loaded | none (precaution, [D074], PR #107) | 2026-10-15 pytest (`tests/test_usage_hooks.py`) | none |
 | `tools/hooks/session_context.py start` | SessionStart hook | a session after `/clear` or compaction starts without branch, state and handoff, or on a stale / foreign handoff | none (precaution, [D076], PR #107) | 2026-10-15 pytest (`tests/test_session_context.py`); live 2026-10-14 in `claude -p` | none |
 | `tools/hooks/session_context.py precompact` | PreCompact hook | a manual `/compact` over a stale handoff loses the session state | none (precaution, [D076]) | 2026-10-15 pytest (`tests/test_session_context.py`) | none |
-| `tools/hooks/context_watch.py` | UserPromptSubmit hook | the session runs into auto-compaction without a handover (45 % / 65 % notes) | none (precaution, [D076]) | 2026-10-15 pytest (`tests/test_context_watch.py`) | none |
-| `tools/hooks/usage_log.py prompt` | UserPromptSubmit hook | an unused `/command` stays invisible (no 7-day counts at `/takeover`) | none (precaution, [D074]) | 2026-10-15 pytest (`tests/test_usage_hooks.py`) | none |
+| `tools/hooks/prompt_hooks.py` | UserPromptSubmit dispatcher: runs `context_watch.py`, `usage_log.py prompt` and the acceptance nudge in one process, prints their notes | a part's failure hiding the other; two interpreter starts per prompt; an accepted result with no `experience-transfer` | #1036: experience-transfer skipped after ~10 acceptances on 2026-11-04/05 | 2026-11-05 pytest (`tests/test_hook_dispatchers.py`) | none |
+| `tools/retro/condense_transcript.py` | script of `/retro` | a retro reads megabytes of tool output, or each agent rewrites its own condenser | #1039: five agents wrote five condensers on 2026-11-05 | 2026-11-05 pytest (`tests/test_condense_transcript.py`) | none |
+| `.claude/commands/retro.md` | command `/retro`; step 7a of `/handover` | the user's corrections are never recorded and repeat in the next session | #1039; `docs/retros/2026-11-05-sessions-retro-04-05.md` | never as a command; the 2026-11-05 retro followed its steps by hand | none |
+| `tools/hooks/context_watch.py` | UserPromptSubmit hook via `prompt_hooks.py` | the session runs into auto-compaction without a handover (45 % / 65 % notes) | none (precaution, [D076]) | 2026-10-15 pytest (`tests/test_context_watch.py`) | none |
+| `tools/hooks/usage_log.py prompt` | UserPromptSubmit hook via `prompt_hooks.py` | an unused `/command` stays invisible (no 7-day counts at `/takeover`) | none (precaution, [D074]) | 2026-10-15 pytest (`tests/test_usage_hooks.py`) | none |
 | `tools/hooks/usage_log.py post` | PostToolUse hook (Agent, Task, Skill) | an unused subagent or skill stays invisible; the usage-log evidence for evals | none (precaution, [D074]) | 2026-10-15 pytest (`tests/test_usage_hooks.py`) | none |
+| `tools/state/after_merge.py hook` | PostToolUse hook (Bash, PowerShell): after `gh pr merge N` regenerates `docs/PROJECT_STATE.md` on the local `main` checkout and commits it (no push); refuses on a dirty `main` | PROJECT_STATE drifting behind `main` (merged PRs listed as open) | 2026-11-07 audit: PROJECT_STATE ~227 commits behind `main`, #1006 and #1048-#1058 listed open after merge | 2026-11-07 pytest (`tests/test_state_after_merge.py`) | none |
 | `.claude/hooks/subagents.py start` | SubagentStart hook | a subagent forgets it is read-only; no `git status` snapshot for the stop check | none (precaution, [D071]) | 2026-10-15 pytest (`tests/test_subagents.py`) | none |
 | `.claude/hooks/subagents.py stop` | SubagentStop hook | tracked files changed by a subagent go unnamed; `independent-checker` ends without a verdict table | none (precaution, [D071]) | 2026-10-15 pytest (`tests/test_subagents.py`) | none |
 | `.claude/hooks/subagents.py guard` | PreToolUse hook in all five subagents, deny | a plain Bash write from a read-only subagent | none (precaution, [D071]) | 2026-10-15 pytest (`tests/test_subagents.py`) | none |
@@ -62,10 +67,11 @@ or an eval id is no task.
 | `.claude/agents/bench-runner.md` | subagent, read only | raw benchmark and test logs in the main context | none (precaution, [D071]) | 2026-10-13 live (PR #86, B01 9/9) | none |
 | `.claude/agents/independent-checker.md` | subagent, read only | "done" reported from the engine's own output | #117 | 2026-10-13 live (PR #86, B01 model) | `engine-checked` |
 | `.claude/agents/mesh-reader.md` | subagent, read only | a mesh dump read into the main context | none (precaution, [D071]) | never (not test-called) | none |
-| `tools/git-hooks/pre-commit` | git pre-commit (every agent) | a commit that skips linking or the pipeline gate; fail-open when the root or the gate is missing | case alina-bld (the gate it runs); fail-open versions were found in review of PR #79, not in use | 2026-10-13 live (manual blocked commit) | none |
+| `tools/git-hooks/pre-commit` | git pre-commit (every agent) | a commit that skips linking, the pipeline gate or the decision-id check (#1037); fail-open when the root or the gate is missing | case alina-bld (the gate it runs); fail-open versions were found in review of PR #79, not in use | 2026-10-13 live (manual blocked commit) | none |
 | `tools/git-hooks/link_large_files.py` | git pre-commit step | a new file over 50 MB committed into history | none recorded | 2026-10-06 live (60 MB file) | none |
 | `tools/git-hooks/pipeline_gate.py` | git pre-commit step, delivery gate | as `.claude/hooks/pipeline_gate.py`, for every agent; a commit on an auto-named branch; a `.pyc` without its `.py` at delivery | case alina-bld | 2026-10-15 pytest (`tests/test_pipeline_gate.py`) | `branch-name` |
 | `tools/git-hooks/branch_names.py` | rule module of the gate and the SessionStart hook | a commit on an auto-generated worktree branch | `claude/npm-models-school-kpp-ec9ced` (`evals/branch-name/task.md`), [D078] | 2026-10-15 pytest (`tests/test_branch_names.py`) | `branch-name` |
+| `tools/git-hooks/decision_ids.py` | git pre-commit step (staged `docs/decisions.md`), `next` id allocator | a branch reusing a `D<n>` of `origin/main` or of an open PR (#1037) | `job/garibaldi-vpm` D198 vs main's D198; PR #803 D189/D190 conflicts (`docs/retros/2026-11-05-sessions-retro-04-05.md` problem 7) | 2026-11-09 pytest (`tests/test_decision_ids.py`) | none |
 
 **Indirect procedural signals** (not component behavior coverage):
 - `no-hook-denial`: `.claude/hooks/guard.py`, `SHELL_RULES`, `PRODUCTION_EXT`, `ALLOWED_WRITE_ROOTS`,
@@ -99,7 +105,7 @@ Removal candidates by the rule (no evidence, no eval): `permissions.allow`, `per
 
 ## Guard hook status — `.claude/hooks/guard.py`
 
-- Claude Code: CONFIGURED (PreToolUse in `.claude/settings.json`); project-guard live verification
+- Claude Code: CONFIGURED (PreToolUse in `.claude/settings.json`, run in-process by `.claude/hooks/pretool.py`); project-guard live verification
   unknown. PR #142's foreign-worktree Write was refused by the app isolation hook, not proven to be
   refused by this project hook. A component-specific run is required; the hook and rules remain enabled.
 - Antigravity: CONFIGURED (`.agents/hooks.json` → `guard.cmd`; Antigravity-side run not validated).
@@ -112,7 +118,7 @@ Behaviour rule: `docs/agents/WORKFLOW.md`, "Context rotation"; triggers: same fi
 - `tools/hooks/session_context.py`: SessionStart (`startup|clear|compact`) passes branch, status, last commits,
   open PRs and `docs/HANDOFF.md` (warnings when stale / foreign / old format); PreCompact blocks a manual
   `/compact` with a stale handoff (`/compact force` passes), logs auto ones to `<git dir>/agr-compactions.log`.
-- `tools/hooks/context_watch.py`: UserPromptSubmit, context share from the transcript's last `usage`; tells the
+- `tools/hooks/context_watch.py`: UserPromptSubmit (with `usage_log.py prompt`, one process: `tools/hooks/prompt_hooks.py`), context share from the transcript's last `usage`; tells the
   agent once per session at 45 % and 65 %. Context % on screen: the user-level status line (`ctx N%`).
 - `tools/hooks/skill_gate.py`: PreToolUse on DCC MCP tools (3ds Max, Blender, Revit) denies the call in the
   main session until `3dsmax-mcp-dev` / `blender-mcp` / `revit-mcp` is loaded.
@@ -126,7 +132,7 @@ Behaviour rule: `docs/agents/WORKFLOW.md`, "Context rotation"; triggers: same fi
   Status: WORKING (2026-10-15, PR #140): found the live desktop session by its nonce; not yet run inside a real
   /handover.
 - Commands: `/handover`, `/takeover` (ends with 7-day usage), `/reuse-scan` (+ `tools/reuse_candidates.py`).
-- Tests: `tests/test_session_context.py`, `tests/test_context_watch.py`, `tests/test_usage_hooks.py`,
+- Tests: `tests/test_session_context.py`, `tests/test_context_watch.py`, `tests/test_usage_hooks.py`, `tests/test_hook_dispatchers.py`,
   `tests/test_save_transcript.py`.
 - Agent trace (#124): `/handover` generates the `## Agent trace` block with `tools/hooks/agent_trace.py` from the
   usage log and the transcript, and writes it into the handoff and the PR body. Fixed fields: Sessions, Written by,

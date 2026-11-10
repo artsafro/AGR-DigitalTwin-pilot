@@ -15,6 +15,8 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+from dt_ai.core.max_env import max_child_env  # noqa: E402
 
 FORMATS = ("max", "fbx")
 
@@ -484,7 +486,7 @@ def main(argv=None) -> int:
         "--out",
         result_path,
     ]
-    env = os.environ.copy()
+    env = max_child_env()
     env["AGR_BATCH_EXPORT_REQUEST"] = request_path
     completed = subprocess.run(cmd, env=env)
     _print_summary(log_path)

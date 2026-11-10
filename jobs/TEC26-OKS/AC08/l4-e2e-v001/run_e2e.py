@@ -16,6 +16,13 @@ Gates fail closed: an unknown mesh, an unmapped or ambiguous material, a missing
 a tolerance breach is a failure naming the item; never a default. Outputs must be new paths, and no output may alias
 an input. Nothing writes or deletes an input. The album (slide 49) and SINTEZ gates are measured by their own job
 scripts (compare_facades.py, run_agr_checker.py) and recorded in REPORT.md.
+`--invariants relative` (default, [D201], #968): the kernel judges every op against the source baseline (no new
+violators) plus UV/material preservation; the source's own violations are the recorded baseline gate, not a failure.
+`--invariants absolute` reproduces the #753 run.
+`--repair` (#1144): `repair.flip_close` (run_kernel_ops.repair_flip_close) runs first on the source; it must be
+applied (no new violators vs the source, UV/material ids kept, back-face px and unhidden borders reduced) or the run
+stops. The repaired state (R00) is the NEW baseline the 19 ops are judged against and the base of the kernel output;
+the delivered comparison expects exactly the recorded cap area on top of the delivered area.
 Pattern: none | new-case: job-local AC08 L4 source-FBX -> kernel -> delivered-FBX comparison driver (#753).
 """
 from __future__ import annotations
@@ -222,28 +229,36 @@ def op_footprint(source, after):
     return changed, set(after) - set(source), set(source) - set(after)
 
 
-def kernel_output(source, rows):
+def kernel_output(source, rows, conflicts: list | None = None):
     """Source + every op the kernel APPLIED. Each op ran on a fresh copy of the source, so its footprint
     (changed, added and removed keys of its after_state vs the source) is applied; overlapping footprints
-    of two applied ops are an error naming both."""
+    of two applied ops are an error naming both. `conflicts` a list [D201 run, #968]: the ops are alternatives on
+    one source, so a later applied op whose footprint overlaps an earlier composed one is NOT composed and is
+    appended there ({op, conflicts_with, part}) instead of raising; the op order of the #752 table decides."""
     out = rko.copy_state(source)
     applied = [r for r in rows if r.get("applied")]
-    owner = {}
+    owner, composed = {}, []
     for r in applied:
         name = f"{r['op']}:{r['part']}"
         st = r.get("after_state")
         if not isinstance(st, dict):
             raise InputError(f"applied op {name} has no after_state")
         changed, added, removed = op_footprint(source, st)
-        for key in sorted(changed | added | removed):
-            if key in owner:
-                raise InputError(f"two applied ops touch part {key!r}: {owner[key]} and {name}")
+        keys = sorted(changed | added | removed)
+        clash = [k for k in keys if k in owner]
+        if clash and conflicts is None:
+            raise InputError(f"two applied ops touch part {clash[0]!r}: {owner[clash[0]]} and {name}")
+        if clash:
+            conflicts.append({"op": name, "conflicts_with": owner[clash[0]], "part": clash[0]})
+            continue
+        for key in keys:
             owner[key] = name
         for key in removed:
             out.pop(key, None)
         for key in changed | added:
             out[key] = rko.copy_state({key: st[key]})[key]
-    return out, [f"{r['op']}:{r['part']}" for r in applied]
+        composed.append(name)
+    return out, composed
 
 
 def _tri(v, polys):
@@ -278,8 +293,10 @@ def pivot_offset(meta_path: Path):
     return -_finite(piv, "pivot_revit_internal_m")
 
 
-def compare_delivered(out_state, src_report, delivered_report, png_dir: Path | None, offset=None):
-    """Kernel output moved by `offset` (the declared pivot rebase) vs the delivered FBX."""
+def compare_delivered(out_state, src_report, delivered_report, png_dir: Path | None, offset=None,
+                      added_area_m2: float = 0.0):
+    """Kernel output moved by `offset` (the declared pivot rebase) vs the delivered FBX. `added_area_m2`: area the
+    kernel output adds on purpose (repair caps, #1144); the area check expects delivered + exactly that."""
     offset = np.zeros(3) if offset is None else _finite(offset, "offset")
     m = _meshes(delivered_report, {DELIVERED_BODY, DELIVERED_UCX}, "delivered FBX")
     g = m[DELIVERED_BODY]["face_geometry"]
@@ -318,11 +335,12 @@ def compare_delivered(out_state, src_report, delivered_report, png_dir: Path | N
            "kernel_area_m2": _area(kv, kt), "delivered_area_m2": _area(dv, dt),
            "bounds_max_abs_dev_m": float(max(np.abs(kv.min(0) - dv.min(0)).max(), np.abs(kv.max(0) - dv.max(0)).max())),
            "kernel_to_delivered_max_m": float(d_kd.max()), "delivered_to_kernel_max_m": float(d_dk.max()),
-           "ucx_vertex_set_dev_m": ucx_dev, "silhouettes": views}
+           "ucx_vertex_set_dev_m": ucx_dev, "silhouettes": views,
+           **({"expected_added_area_m2": float(added_area_m2)} if added_area_m2 else {})}
     area_tol = DELIVERED_DIST_TOL_M * 0.01 * res["kernel_area_m2"]
     res["checks"] = {
         "surface_distance": max(res["kernel_to_delivered_max_m"], res["delivered_to_kernel_max_m"]) < DELIVERED_DIST_TOL_M,
-        "area": abs(res["kernel_area_m2"] - res["delivered_area_m2"]) < area_tol,
+        "area": abs(res["kernel_area_m2"] - res["delivered_area_m2"] - float(added_area_m2)) < area_tol,
         "bounds": res["bounds_max_abs_dev_m"] < DELIVERED_DIST_TOL_M,
         "ucx": ucx_dev < DELIVERED_DIST_TOL_M,
         "silhouettes": all(x["passed"] for x in views.values())}
@@ -346,8 +364,11 @@ def _require_new(inputs, *outs):
         raise InputError("output paths alias each other or an input")
 
 
-def run(source_fbx: Path, delivered_fbx: Path, work: Path, evidence: Path, blender: bool = True):
+def run(source_fbx: Path, delivered_fbx: Path, work: Path, evidence: Path, blender: bool = True,
+        relative: bool = True, repair: bool = False):
     from dt_ai.core.blender_runner import run_blender
+    if repair and not relative:
+        raise InputError("--repair needs relative invariants: the repaired state is the new baseline [D201]")
     delivered_meta = Path(delivered_fbx).parent.parent / "export_meta.json"
     inputs = [source_fbx, delivered_fbx, delivered_meta, rko.SOURCE]
     for p in inputs:
@@ -366,9 +387,16 @@ def run(source_fbx: Path, delivered_fbx: Path, work: Path, evidence: Path, blend
     parity_rows, mat_map = source_parity(rb["source"])
     source, drops = state_from_source(rb["source"], mat_map)
     ctx = Context()
-    before = rko.scene_metrics(source)
-    rows = rko.run_ops(source)
     states = {"S00_source": source}
+    repair_rec = None
+    if repair:
+        repaired, repair_rec = rko.repair_flip_close(source)
+        if not repair_rec["applied"]:
+            raise InputError(f"repair.flip_close not applied: {repair_rec['refusal_or_rollback']}")
+        source = repaired
+        states["R00_repair_flip_close"] = repaired
+    before = rko.scene_metrics(source)
+    rows = rko.run_ops(source, relative=relative)
     for k, r in enumerate(rows, 1):
         st = r.get("after_state")
         r["label"] = f"S{k:02d}_{r['op']}_{r['part'].replace('+', '_')}"
@@ -377,7 +405,8 @@ def run(source_fbx: Path, delivered_fbx: Path, work: Path, evidence: Path, blend
             r["after"] = rko.scene_metrics(st)
             r["after_visibility"] = rko.visibility(st, ctx)
             states[r["label"]] = st
-    out_state, applied = kernel_output(source, rows)
+    not_composed = [] if relative else None
+    out_state, applied = kernel_output(source, rows, not_composed)
     for r in rows:
         r.pop("after_state", None)
     payload, notes, not_exported = {}, {}, {}
@@ -387,10 +416,14 @@ def run(source_fbx: Path, delivered_fbx: Path, work: Path, evidence: Path, blend
             not_exported[label] = f"not exported: polygons merge different material ids {merged}"
             continue
         payload[label], notes[label] = rko.export_payload(st)
-    result = {"issue": 753, "inputs": hashes, "source_parity": parity_rows, "drops": drops, "profile": rko.PROFILE,
+    result = {"issue": (1144 if repair else 968) if relative else 753,
+              "invariants": "relative [D201]" if relative else "absolute",
+              "inputs": hashes, "source_parity": parity_rows, "drops": drops, "profile": rko.PROFILE,
+              **({} if repair_rec is None else {"repair": repair_rec}),
               "parts": {k: {"faces": len(p["faces"]), "vertices": len(p["v"])} for k, p in source.items()},
               "before": before, "before_visibility": rko.visibility(source, ctx), "ops": rows,
               "kernel_applied_ops": applied, "not_exported": not_exported,
+              **({} if not_composed is None else {"applied_not_composed": not_composed}),
               "readback": {lab: {"status": "not_exported", "reason": why} for lab, why in not_exported.items()}}
     if blender:
         sj = work / "states.json"
@@ -410,7 +443,8 @@ def run(source_fbx: Path, delivered_fbx: Path, work: Path, evidence: Path, blend
     png_dir = work / "silhouettes"
     png_dir.mkdir()
     result["delivered_comparison"] = compare_delivered(out_state, rb["source"], rb["delivered"], png_dir,
-                                                       pivot_offset(delivered_meta))
+                                                       pivot_offset(delivered_meta),
+                                                       0.0 if repair_rec is None else repair_rec["cap_area_m2"])
     after = {_key(p): sha256(p) for p in inputs}
     if after != hashes:
         raise InputError("an input changed during the run")
@@ -424,14 +458,21 @@ def gates(r):
     ops = r["ops"]
     rbk = r["readback"]
     ok_rb = [k for k, x in rbk.items() if x.get("accepted")]
-    return {
+    inv = {"passed": bool(r["before_visibility"]) and all(x["passed"] for x in r["before_visibility"].values()),
+           "numbers": ", ".join(f"{k}={x['count']}" for k, x in r["before_visibility"].items())}
+    if r.get("invariants", "absolute") != "absolute":
+        # [D201]: the source's own violations are the baseline every op is judged against, not a failure
+        inv_gate = ("source_baseline_recorded", {"passed": bool(r["before_visibility"]),
+                                                 "numbers": "baseline (было до нас): " + inv["numbers"]})
+    else:
+        inv_gate = ("kernel_invariants_on_source", inv)
+    out = {
         "source_fbx_equals_pinned_dump": {"passed": r["source_parity"]["passed"],
                                           "numbers": f"{r['source_parity']['polygons']} polygons, max corner dev "
                                                      f"{r['source_parity']['max_corner_dev_m']:.2e} m, UV dev "
                                                      f"{r['source_parity']['max_uv_dev']:.2e}"},
-        "kernel_invariants_on_source": {"passed": bool(r["before_visibility"]) and all(x["passed"] for x in r["before_visibility"].values()),
-                                        "numbers": ", ".join(f"{k}={x['count']}" for k, x in
-                                                             r["before_visibility"].items())},
+        **({} if "repair" not in r else {"repair_flip_close": _repair_gate(r["repair"])}),
+        inv_gate[0]: inv_gate[1],
         "kernel_ops_applied": {"passed": bool(r["kernel_applied_ops"]),
                                "numbers": f"{sum(bool(o.get('applied')) for o in ops)}/{len(ops)} applied"},
         "export_readback_parity": {"passed": len(ok_rb) == len(rbk) and bool(rbk),
@@ -439,22 +480,49 @@ def gates(r):
         "delivered_fbx_comparison": {"passed": r["delivered_comparison"]["passed"],
                                      "numbers": ", ".join(f"{k}={v}" for k, v in
                                                           r["delivered_comparison"]["checks"].items())}}
+    return out
+
+
+def _repair_gate(rep):
+    """#1144: the repair op is applied only with no new violators, UV/material kept and both counts reduced."""
+    caps = sum(len(c) for c in rep["caps"].values())
+    flips = sum(len(f) for f in rep["flipped"].values())
+    return {"passed": rep["applied"] is True and rep["back_face_px"][1] < rep["back_face_px"][0]
+            and rep["open_borders_unhidden"][1] < rep["open_borders_unhidden"][0],
+            "numbers": f"back-face px {rep['back_face_px'][0]}->{rep['back_face_px'][1]}, unhidden borders "
+                       f"{rep['open_borders_unhidden'][0]}->{rep['open_borders_unhidden'][1]}, {flips} flipped, "
+                       f"{caps} caps ({rep['cap_area_m2']:.4f} m2), new violators "
+                       f"{sum(x.get('new', 0) for x in rep['check_operation']['results'])}"}
 
 
 def markdown(r):
     dc = r["delivered_comparison"]
-    lines = ["# AC08 L4 end to end (#753) - generated by run_e2e.py", "",
+    head = ("# AC08 L4 end to end (#753) - generated by run_e2e.py" if "invariants" not in r else
+            f"# AC08 L4 end to end (#{r['issue']}, invariants {r['invariants']}) - generated by run_e2e.py")
+    lines = [head, "",
              "Inputs (sha256): " + "; ".join(f"`{Path(k).name}` `{v[:12]}`" for k, v in r["inputs"].items()), "",
              "## Gates", "", "| gate | result | numbers |", "|---|---|---|"]
     lines += [f"| {k} | {'pass' if g['passed'] else 'FAIL'} | {g['numbers']} |" for k, g in r["gates"].items()]
+    if "repair" in r:
+        rep = r["repair"]
+        lines += ["", "## repair.flip_close (#1144): the new baseline", "",
+                  "| part | flipped | caps (points, material, m2) | skipped loops |", "|---|---|---|---|"]
+        lines += [f"| {k} | {len(rep['flipped'][k])} | "
+                  + ("; ".join(f"{c['points']} pts, id {c['material']}, {c['area_m2']:.6f}" for c in rep["caps"][k])
+                     or "-") + " | "
+                  + ("; ".join(f"{s['points']} pts: {s['reason']}" for s in rep["skipped"][k]) or "-") + " |"
+                  for k in rep["flipped"]]
+        lines += ["", f"Cap UV: {rep['cap_uv']}. Applied: {rep['applied']}."]
     lines += ["", "## Before (source FBX)", "", "| part | metrics |", "|---|---|"]
     lines += [f"| {k} | {rko._short(p)} |" for k, p in r["before"]["parts"].items()]
     lines += ["", "## Operations (same set as #752)", "", "| # | op | part | applied | check_operation | refusal |",
               "|---|---|---|---|---|---|"]
     for k, o in enumerate(r["ops"], 1):
         co = o["check_operation"]
-        cos = "-" if co is None else ("pass" if co["passed"] else "FAIL ") + ", ".join(
+        cos = "-" if co is None else (("pass" if co["passed"] else "FAIL ") + ", ".join(
             f"{x['name']}={x['count']}" for x in co["results"] if not x["passed"])
+            + "".join(f" {x['name']} {x['baseline']}/{x['after']}/+{x['new']}" for x in co["results"]
+                      if "baseline" in x))
         why = (o["refusal_or_rollback"] or "").replace("|", "/")[:120]
         lines.append(f"| {k} | {o['op']} | {o['part']} | {o['applied']} | {cos} | {why} |")
     lines += ["", "## Export readback", "", "| state | accepted | rows within tol | UV loss |", "|---|---|---|---|"]
@@ -469,7 +537,10 @@ def markdown(r):
               f"Pivot rebase applied to the kernel output: {dc['pivot_offset_m']} m (delivered export_meta.json "
               "pivot_revit_internal_m -> origin).",
               f"Kernel output = source + applied ops {r['kernel_applied_ops'] or '(none)'}: {dc['kernel_faces']} "
-              f"polygons / {dc['kernel_triangles']} triangles; delivered {dc['delivered_polygons']} triangles.", "",
+              f"polygons / {dc['kernel_triangles']} triangles; delivered {dc['delivered_polygons']} triangles.",
+              *([f"Applied but not composed (footprint overlaps an earlier composed op): "
+                 + "; ".join(f"{x['op']} (part {x['part']} owned by {x['conflicts_with']})"
+                             for x in r["applied_not_composed"])] if r.get("applied_not_composed") else []), "",
               f"- surface distance kernel->delivered {dc['kernel_to_delivered_max_m']:.2e} m, delivered->kernel "
               f"{dc['delivered_to_kernel_max_m']:.2e} m (tol {DELIVERED_DIST_TOL_M} m)",
               f"- area {dc['kernel_area_m2']:.4f} vs {dc['delivered_area_m2']:.4f} m2; bounds dev "
@@ -485,9 +556,14 @@ def main(argv=None):
     ap.add_argument("--delivered-fbx", required=True, type=Path)
     ap.add_argument("--work", required=True, type=Path)
     ap.add_argument("--evidence", type=Path, default=HERE / "evidence")
+    ap.add_argument("--invariants", choices=("relative", "absolute"), default="relative",
+                    help="relative = judged against the source baseline [D201]; absolute = the #753 run")
+    ap.add_argument("--repair", action="store_true",
+                    help="run repair.flip_close first; its result is the new baseline (#1144)")
     a = ap.parse_args(argv)
     try:
-        r = run(a.source_fbx, a.delivered_fbx, a.work, a.evidence)
+        r = run(a.source_fbx, a.delivered_fbx, a.work, a.evidence, relative=a.invariants == "relative",
+                repair=a.repair)
     except InputError as e:
         print(f"ERROR: {e}", file=sys.stderr)
         return 2

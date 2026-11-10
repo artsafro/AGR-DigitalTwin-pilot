@@ -1,0 +1,39 @@
+{
+ "schema": 1,
+ "button": "mat.table",
+ "tool": "mat.table",
+ "version": "1.0",
+ "shipped": true,
+ "select": "named",
+ "reason": "",
+ "apply_status": null,
+ "objects": [
+  {
+   "name": "BODY_FragLMid_001",
+   "scene": "frag_l_mat",
+   "expect": "pass",
+   "codes": []
+  },
+  {
+   "name": "BODY_FragLUdim_001",
+   "scene": "frag_l_mat",
+   "expect": "fail",
+   "codes": [
+    "udim_id_on_geometry"
+   ]
+  },
+  {
+   "name": "BODY_FragLGlass_001",
+   "scene": "frag_l_mat",
+   "expect": "fail",
+   "codes": [
+    "glass_not_on_glass"
+   ]
+  }
+ ],
+ "base": "1.0",
+ "station": "1.0.14",
+ "stations": [
+  "1.0.14"
+ ]
+}

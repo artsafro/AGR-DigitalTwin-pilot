@@ -43,7 +43,7 @@ scratch dir `tmp/issue139/`. A smoke run is not delivery validation (`passed=tru
 | ezdxf | 1.4.3 | `uv run --offline --extra cad python tmp/issue139/cad.py` ([run 4](../research/toolchain-smoke-2026-10-15.md#run-4-cad_extra_fallback)) | works: 1 LINE written to DXF and read back. The issue's `--group cad` fails: `error: Group 'cad' is not defined in the project's 'dependency-groups' table` (it is an optional extra) | 2026-10-15 |
 | CheckToolBox | v1.5 add-on (no version in bl_info) on Blender 4.4.0 | `blender 4.4 --background --factory-startup --python-exit-code 1 --python jobs/KPP1/scripts/qa_checktoolbox.py -- <out.json> <synthetic_cube.fbx>` ([run 14](../research/toolchain-smoke-2026-10-15.md#run-14-blender_44_qa_checktoolbox_run)) | works on Blender 4.4 (the KPP1 host): faces 6, doubles 0, intersect_faces 0. Fails on Blender 5.1.2: `ModuleNotFoundError: No module named 'CheckToolBox_v1_5'` (add-on not installed there; Blender exits 0 unless `--python-exit-code` is set) | 2026-10-15 |
 | speedtree-mcp | mcp 1.30.0; SpeedTree Modeler v10.0.1 install | `python tmp/issue139/speedtree.py` (stdio client in the BlenderLab103 venv) ([run 5](../research/toolchain-smoke-2026-10-15.md#run-5-speedtree_mcp_client)) | works: server starts, 6 tools listed, `installation_info` installed=True. No `.spm` sample is tracked, so no inspect or export | 2026-10-15 |
-| AutoCAD core console | AutoCAD 2025, ACADVER 25.0 | `python hermes_kanban/scripts/dcc_batch.py acad --ping` ([run 10](../research/toolchain-smoke-2026-10-15.md#run-10-acad_dcc_batch_ping)) | works: `AGR_PING acad=25.0`, exit code 0, 4.0 s | 2026-10-15 |
+| AutoCAD core console | AutoCAD 2025, ACADVER 25.0 | `python hermes_kanban/scripts/dcc_batch.py acad --ping` ([run 10](../research/toolchain-smoke-2026-10-15.md#run-10-acad_dcc_batch_ping)) | works: `AGR_PING acad=25.0`, exit code 0, 4.0 s; `FILEDIA` is a user registry setting shared with the interactive AutoCAD, the console starts at 0 and writes its value back on exit, so scripts restore the user's value (`adapters.cad.dwg.filedia_guarded`, #1026) | 2026-10-15 |
 | 3ds Max batch | 3ds Max 2026.3 (28.3.0.30732) | `python hermes_kanban/scripts/dcc_batch.py max --ping` ([run 11](../research/toolchain-smoke-2026-10-15.md#run-11-max_dcc_batch_ping)) | works with an error: `AGR_PING max=28000` printed, wrapper status ok, but native exit 4294967166 and `MAXScript Auto-load Script Error Exception ... polyunwrapper_autoload.mse` (a startup script in the user profile; the whole batch run took 119.9 s) | 2026-10-15 |
 | Blender | 5.1.2 (hash ec6e62d40fa9) | `blender 5.1 --background --factory-startup --version` ([run 6](../research/toolchain-smoke-2026-10-15.md#run-6-blender_version)) | works: version printed, exit 0; the synthetic test FBX was also exported headless ([run 7](../research/toolchain-smoke-2026-10-15.md#run-7-blender_synthetic_cube_fbx)) | 2026-10-15 |
 | autocad-mcp | multiCAD (`tools/mcp/multicad_stdio.py`) | none | not checked: needs AutoCAD open (user); the MCP server drives a live AutoCAD session, which a headless smoke check does not start | 2026-10-15 |
@@ -90,6 +90,33 @@ substitute ad-hoc scripting.
   `C:\ProgramData\Autodesk\ApplicationPlugins\3dsmax-mcp`; `safe_mode = true`
 - Use: 3ds Max 2026 (2024 is forced to run as administrator and may not connect from a
   non-elevated client). Skill: `3dsmax-mcp-dev`.
+
+### AGR checkers and AGR Tools rows — `agr-mcp`
+- What: our own stdio MCP server (`src/agr_mcp`, `uv run --directory <pilot> agr-mcp`) over the AGR
+  checkers and the AGR Tools plan rows; it reaches the pinned open 3ds Max through the `3dsmax-mcp`
+  pipe above and calls only the installed AGR Tools `runtime.*`. Plan: `docs/plans/agr-mcp.md`;
+  usage: `src/agr_mcp/README.md`. Registered in `.agents/mcp_config.json` (directory
+  `C:\agr\AGR-DigitalTwin-pilot`); set `AGR_MCP_MAX_PID` to the pid of the open Max per session —
+  without it every Max tool answers `host_unavailable`, it never picks a Max by itself.
+- Status: CONFIGURED, tool_schema_version 2 (#1024 branch 0, 2026-11-06). Unit-tested on a fake pymxs;
+  the v2 tools have not been run against a live Max yet (L12 checks latency, one Undo record,
+  selection restore, slot isolation).
+- Catalogue (generated from `docs/plans/agr-tools-suite.json`): 15 stage tools of 1.0
+  (`agr_project_passport` … `agr_agent_accept`), `agr_check_run` (38 read rows), `agr_op_preview`
+  (32 editing rows), `agr_op_apply`; plus the 52 v1 tools, deprecated. Profiles
+  (`observer` / `operator` / `modeller` / `dev`) do not exist yet — branch U; today every tool is listed.
+- Preview-only rule: editing rows answer a preview held by the server (`preview_id`, bound to host,
+  Max pid, document, runtime version and scene state hash; TTL 30 min). `agr_op_apply` applies only
+  the 0.8 rows (export copies, new files, UCX rename in one undo record); every 0.9 / 1.0 row answers
+  `needs_human` — apply is the user's button in the AGR Tools panel/dock (owner answers 06.11.2026).
+- Journal: one journal for panel and MCP (`journal_core.py`, `%LOCALAPPDATA%\AGRTools\journal`),
+  one line per call with actor `mcp`; plus the transport audit `%LOCALAPPDATA%\agr-mcp\audit.jsonl`.
+- Errors carry `structuredContent.error_code`: `busy`, `stale_preview`, `scene_mismatch`,
+  `version_mismatch`, `needs_human`, `host_unavailable`, `handles_required`, `target_conflict`,
+  `unknown_handle`, `selection_changed`, `runtime_missing`, `invalid_input`, … (`instance_ambiguous`,
+  `invariant_broken` reserved for branch U / D108).
+- `agr_exec_unsafe` exists only with `AGR_MCP_UNSAFE=1` (destructive, audited).
+- Owner: Claude (main) · scope: repo (`.agents/mcp_config.json`)
 
 ### Revit — `revit-bridge` (the live route)
 - Status: CONFIGURED (Codex, 2026-10-06: `revit_status` answered from the running Revit 2025;
@@ -181,6 +208,9 @@ that those tools have been tested. No generic MCP sandbox is implemented by guar
 |---|---|---|
 | 3dsmax-mcp | `get_selected_max_instance`; `query_scene` with `action` `overview` or `selection` only; `get_object_properties` by `name`/`handle`; `geometry_qa` (scene untouched; the server writes and deletes its own temp snapshot file) — source-inspected at `bcd4e4c6`, used in the 2026-11-03 live cycle | read-only |
 | 3dsmax-mcp | All other tools and operations, including `query_scene` `class`/`property`/`filter`/`delta` (caller strings reach MAXScript `execute` or unquoted code on the TCP path; `delta` resets a baseline), `select_max_instance` (rebinds the session), `manage_scene`, viewport tools and script execution; inspect schema before use | destructive |
+| agr-mcp | `agr_check_run`, `agr_op_preview`, the 15 stage tools (preview only), v1 checks and every v1 `mode=preview` / read tool; the selection is restored after each call | read-only |
+| agr-mcp | v1 `mode=apply` of the 0.8 copy/file rows (export copies and new files, never overwrites) | versioned-write |
+| agr-mcp | `agr_op_apply` (its 0.8 rows include `ucx.rename`, an in-place rename in one undo record), v1 `agr_ucx_rename` apply, `agr_exec_unsafe` (only with `AGR_MCP_UNSAFE=1`) and anything not listed | destructive |
 | revit-bridge | `revit_status` | read-only |
 | revit-bridge | `export_fbx*`, `agr_export_fbx` to new versioned destinations | versioned-write |
 | revit-bridge | All other tools, including `open_document`, link load/unload/reload/repath | destructive |
@@ -260,15 +290,78 @@ Pipeline core:
   `dt spec extract|merge-questions|compare`, `dt intake check` — WORKING on synthetic data; first real run KPP1.
 - Engine `src/dt_ai/geometry/from_spec.py` — WORKING on synthetic specs only.
 - Build by source modules `src/dt_ai/geometry/from_source.py`, `tools/qa/run_from_source.py` — EXPERIMENTAL [D079].
-- Window type list `library/windows/window_types.json` (`tools/library/build_window_types.py`) — WORKING, 46 entries.
+- Window type list `library/windows/window_types.json` (`tools/library/build_window_types.py`) — WORKING, 67 entries.
+- Window library preview `tools/library/window_library_preview.py` (Blender, headless) — WORKING (2026-11-05): every
+  type laid out flat by role (frame, `panes_m` glass, `opaque_m` leaves, label, red = unconfirmed) into a new `.blend`
+  for a visual check; not a production asset.
 - Operation library `technical_library/` — WORKING per package README.
 - Album page reader `src/dt_ai/album/` (#317) — on `main`, synthetic PDFs only.
-- Placement engine `src/dt_ai/placement/engine.py` (#316) — on `main`, synthetic tests only.
 - Project state `tools/state/project_state.py` — WORKING; rule `docs/agents/WORKFLOW.md`, "Project state";
-  `tools/state/project_state_freshness.py` is an advisory read-only freshness check.
+  `tools/state/project_state_freshness.py` is an advisory read-only freshness check; `tools/state/after_merge.py`
+  (2026-11-07, offline tests only) regenerates and commits it on local `main` after a merge (PostToolUse hook on
+  `gh pr merge`), no push.
 - AGR Tools for 3ds Max 2024/2026, `adapters/max/agr_tools/` (build `tools/max/build_agr_tools.py`) — diagnostic
   and checked-export tool, not a delivery validator; version, install, native evidence: its `README.md`,
-  `CHANGELOG.md`; native runners in `tests/max_tools/`.
+  `CHANGELOG.md`; native runners in `tests/max_tools/`. Entry page for agents (1.0 conveyor, MCP v2, passport,
+  libraries, owner decisions): `docs/agr-tools/OVERVIEW.md`.
+
+Territory (Ground, MAF, Flora, placement; verified 2026-11-07 against job reports and PRs):
+- Ground layered cake `src/dt_ai/geometry/ground_cake.py` (#295, PR #308) — WORKING: library driven by
+  `jobs/VATUTINO-SITE/build_ground.py` / `build_ground_v015.py`, FBX via `tools/blender/ground_json_to_fbx.py`; built
+  Vatutino v005–v015, v015 accepted by the user 2026-11-04 [D193] (PR #906); COD-20207 v016 trial not passed;
+  tests `tests/test_ground_cake.py`, `tests/test_ground_*.py`.
+- Ground quads `src/dt_ai/geometry/ground_quads.py` — WORKING on one object: paired-fan quads of Vatutino v015
+  (accepted, PR #906, [D157]); docstring still says "checkpoint only"; tests `tests/test_ground_quads.py`,
+  `test_ground_pairing.py`, `test_ground_v015_producer.py`.
+- MAF atlas `tools/materials/atlas_maf.py` (PR #196) — TOOL ONLY: one 512 atlas + UV map from a material list; used
+  for the Vatutino MAF set v005 (PR #320) and «Верона» atlas-v006; no separate acceptance; tests
+  `tests/test_atlas_maf*.py`.
+- MAF bench generator `tools/library/maf_gen_bench.py` + `maf_gen_bench_checks.py`, Blender build
+  `tools/blender/maf_gen_bench_build.py` (PR #805) — WORKING: «Верона» rows 2-10 accepted for the library [D202]
+  (PR #1093), row 1 pending; tests `tests/test_maf_gen_bench*.py`.
+- MAF site set `tools/library/maf_site_set.py` + `tools/blender/maf_site_set_build.py` (PR #320) — TOOL ONLY: 13
+  Vatutino positions built, geometry accepted 2026-11-04 (issue #889), the set report stays `passed=false`, colour
+  zones open (PR #991); tests `tests/test_maf_site_set.py`.
+- MAF showcase `tools/review/maf_showcase.py` (PR #493) — WORKING as a review aid (display-only 3ds Max scene of
+  NPM/VPM pairs, headless 3dsmaxbatch); not a delivery tool; tests `tests/test_maf_showcase.py`.
+- Flora textures `python -m dt_ai.materials.flora plan|library` (`src/dt_ai/materials/flora.py`, PR #220) — WORKING
+  for texture handoff and approval: three-species test list approved 2026-10-15 (#190); no object delivery;
+  tests `tests/test_flora_textures.py`.
+- Flora atlas `tools/library/flora_atlas_from_scene.py` (PR #310) — TOOL ONLY: one 2048 Flora atlas from a placed
+  scene; synthetic run only (3 species); tests `tests/test_flora_atlas_from_scene.py`.
+- Placement engine `python -m dt_ai.placement.engine` (`src/dt_ai/placement/engine.py`, #316, PR #323) — TOOL ONLY:
+  ran on real data, Vatutino run v006 (PR #344): NPM 3,289/3,289 placed, 0 failed, sinking 0.0998–0.1001 m; user
+  geometry acceptance open, `passed=false`; tests `tests/test_placement_engine.py`, `tests/placement/`.
+- Site placement `tools/placement_site.py` + `tools/blender/placement_instance.py` (PR #344) — TOOL ONLY: SPOZU points
+  -> engine -> Blender instancing -> scene readback gate (0 mismatches on Vatutino v006); acceptance open; tests
+  `tests/placement/test_site_*.py`.
+- Ground producer `dt ground v015` (`tools/ground/build_ground_v015.py`, #1106; moved from the job, whose path is now a
+  shim) — WORKING: replay on the accepted v015 inputs gives masters byte-identical to the accepted build
+  (NPM `c26b7feb…ca1a`, VPM `59310ac9…2eb4`); site data from `--job-dir` (default `jobs/VATUTINO-SITE`); tests
+  `tests/test_ground_v015_producer.py`, `tests/test_shared_tools_1106.py`.
+
+Shared derivation `dt derive` (NPM<->VPM, #1106; one implementation per step instead of the job copies
+`jobs/{KPP1,PSU275,TEC26-OKS}/scripts/{make_npm_atlas,export_npm,package_vpm}.py`, which stay as frozen records):
+- `dt derive atlas <spec> <new out> [--address A --index N]` (`tools/derive/npm_atlas.py`), `dt derive npm --blender B
+  <master.blend> <spec> <atlas dir> <new out> [prefix] [--address --index --pivot x,y --keep-quads]`
+  (`tools/derive/export_npm.py`), `dt derive package <pkg dir> <textures> [--object object.json] [--no-geojson]`
+  (`tools/derive/package_vpm.py`; per-job name / H_RELIEF / glass in `object.json`, not in code); FBX readback parity
+  `tools/derive/fbx_parity.py`. Texture painters still come from `jobs/TEC26-OKS/scripts` (`--recipe-dir`).
+- WORKING (2026-11-09, Blender 5.1): replayed on TEC26 AC08 pilot-v010 (accepted recipe) and AC09 build-v001 against the
+  job scripts: atlas PNG + JSON byte-identical (also to the recorded accepted outputs), VPM ZIP byte-identical (also
+  to the recorded ZIPs), NPM FBX readback-identical (geometry, UV, materials, embedded pixels; FBX bytes differ only
+  by Blender's per-run UIDs). KPP1 / PSU275 masters are not on this PC: their variants are covered by options, not
+  replayed. Tests `tests/test_shared_tools_1106.py`.
+
+Duplicate implementations (#1106 inventory; the canonical side for UCX / atlas / placement is the AGR Tools Max
+cores, keeping the Max side per the AC08 route [D228]; routing the Blender/Python versions to them is deferred to
+#1141, starts after #1105 [D225]):
+
+| Function | Blender / Python | 3ds Max (AGR Tools) | Job copies |
+|---|---|---|---|
+| UCX | `src/dt_ai/geometry/ucx_build.py` + `tools/blender/ucx_build.py` (#166, TOOL ONLY), methods `tools/methods/ucx/` | `adapters/max/agr_tools/ucx_core.py`, `ucx10_core.py` (1.0 `ucx.gap`), `ucxstairs_core.py` | `jobs/KPP1/scripts/vpm_ucx.py`, `jobs/PSU275/scripts/vpm_ucx.py`, `jobs/elv-tc-vpm/scripts/ucx_dev_by_part_v001.py` |
+| NPM atlas | `tools/derive/npm_atlas.py` (finish regions), `tools/materials/npm_atlas_udim.py` (#546, UDIM crop) | `adapters/max/agr_tools/atlas_core.py` (mirrors `npm_atlas_udim.pack()`), `facadeatlas_core.py` | `jobs/*/scripts/make_npm_atlas.py`, `jobs/vyatskaya-tow02/scripts/texture_atlas_blender.py` |
+| Placement | `src/dt_ai/placement/engine.py` + `tools/placement_site.py` (#316, #344) | `adapters/max/agr_tools/place_core.py`, `placegeo_core.py`, `winplace_core.py` | pivot logic inside `export_npm` / `export_vpm` copies |
 
 Export:
 - `tools/export/export_mesh_blender.py`, `tools/export/export_modules_blender.py` — Blender scene + FBX writers of

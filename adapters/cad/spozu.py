@@ -53,6 +53,11 @@ UNIT_NAMES = {"in": 0.0254, "ft": 0.3048, "mm": 0.001, "cm": 0.01, "dm": 0.1, "m
 MAX_NESTING = 8  # INSERT levels expanded below model space
 CLOSE_TOL_M = 0.001  # m, largest endpoint gap of a hatch edge loop that still counts as closed
 GRID = 1e-6  # m, precision grid for unions/overlays
+# retaining-wall spot-height pairs (VP convention: top and bottom marks written at one plan position,
+# research PR #1165): informational finding only, no geometry change
+RETAINING_WALL_DX_TOL_M = 0.01  # m, largest X difference of the two marks (after unit scale)
+RETAINING_WALL_MAX_PLANAR_M = 1.0  # m, largest planar distance of the two marks (inclusive)
+RETAINING_WALL_MIN_DROP_M = 1.0  # m, the Z difference must be strictly greater
 NUMBER = re.compile(r"[-+]?\d+(?:[.,]\d+)?")
 
 
@@ -187,7 +192,9 @@ class Finding:
     code: str  # open_contour | self_intersecting_contour | degenerate_contour | overlapping_coverings |
     #            point_outside_boundary | unmapped_layer | boundary_not_found | boundary_ambiguous |
     #            elevation_unparsed | label_missing | nested_cycle | nesting_too_deep | nested_unsupported |
-    #            repaired_contour (a self-intersecting hatch loop repaired by make_valid; area = after)
+    #            repaired_contour (a self-intersecting hatch loop repaired by make_valid; area = after) |
+    #            retaining_wall_marks (informational: two spot heights of one layer at one plan position with a
+    #            large drop; handle = the top mark)
     layer: str
     handle: str | None = None  # the source entity (inside the block definition for block content)
     detail: str = ""
@@ -558,6 +565,29 @@ def _walk(msp, atomic, relevant, findings: list, max_depth: int = MAX_NESTING, s
 # ---------------------------------------------------------------- reader
 
 
+def _retaining_wall_marks(points) -> list[Finding]:
+    """One finding per unordered pair of spot heights (same layer) that share X within
+    RETAINING_WALL_DX_TOL_M, lie <= RETAINING_WALL_MAX_PLANAR_M apart and differ in Z by more than
+    RETAINING_WALL_MIN_DROP_M. Contour vertices and non-finite coordinates are not paired."""
+    pts = sorted((p for p in points if p.source == "point" and all(math.isfinite(v) for v in (p.x, p.y, p.z))),
+                 key=lambda p: (p.x, p.y, p.handle))
+    out = []
+    for i, a in enumerate(pts):
+        for b in pts[i + 1:]:
+            if b.x - a.x > RETAINING_WALL_DX_TOL_M:
+                break
+            if a.layer != b.layer or math.hypot(b.x - a.x, b.y - a.y) > RETAINING_WALL_MAX_PLANAR_M:
+                continue
+            drop = abs(a.z - b.z)
+            if drop <= RETAINING_WALL_MIN_DROP_M:
+                continue
+            top, bot = (a, b) if a.z > b.z else (b, a)
+            out.append(Finding("retaining_wall_marks", top.layer, top.handle,
+                               f"top {top.handle} at {top.x:.3f},{top.y:.3f} Z {top.z:.2f}; bottom {bot.handle} at "
+                               f"{bot.x:.3f},{bot.y:.3f} Z {bot.z:.2f}; drop {drop:.2f} m", ref=top.ref))
+    return out
+
+
 def read_spozu_dxf(source, cfg: SpozuConfig, tol: float = 0.001) -> SpozuResult:
     """Read a SPOZU DXF (path or ezdxf document) with ``cfg``; all lengths in metres."""
     import ezdxf
@@ -721,6 +751,8 @@ def read_spozu_dxf(source, cfg: SpozuConfig, tol: float = 0.001) -> SpozuResult:
         if ins is False:
             findings.append(Finding("point_outside_boundary", it.layer, it.handle,
                                     f"elevation {z} at {x:.3f},{y:.3f} (container {it.container})", ref=it.ref))
+
+    findings.extend(_retaining_wall_marks(elevations))
 
     # elevation contours: every flattened vertex of a contour polyline, Z = the polyline elevation
     from ezdxf import path as ezpath

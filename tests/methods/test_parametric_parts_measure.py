@@ -14,6 +14,9 @@ from pathlib import Path
 
 import pytest
 
+from tests._dcc_card import card_id
+from tests.dcc_session import skip_if_dcc_session_busy
+
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / "tools" / "methods" / "parametric_parts_measure.py"
 
@@ -772,7 +775,7 @@ def _max_inventory(paths, work: Path):
             "--version",
             "2026",
             "--card",
-            "t_5fcef264",
+            card_id(),
             "--timeout",
             "180",
             "--wait",
@@ -786,6 +789,7 @@ def _max_inventory(paths, work: Path):
         text=True,
         cwd=str(ROOT),
     )
+    skip_if_dcc_session_busy(proc.returncode, proc.stdout, proc.stderr)
     wrapper_text = out.read_text(encoding="utf-8") if out.is_file() else proc.stdout
     wrapper = json.loads(wrapper_text)
     raw = wrapper.get("log") or ""

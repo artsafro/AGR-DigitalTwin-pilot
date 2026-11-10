@@ -1,0 +1,467 @@
+{
+ "schema": "vatutino-flora-species-v1",
+ "summary": {
+  "rows": 18,
+  "plants": 4915,
+  "trees": 105,
+  "bushes": 4810,
+  "npm_tris_estimate": 29700,
+  "by_map_status": {
+   "approved-exact": [
+    11,
+    14
+   ],
+   "approved-species": [
+    1,
+    3,
+    12,
+    15,
+    17
+   ],
+   "missing": [
+    2,
+    5,
+    8,
+    10,
+    13,
+    16,
+    "Ива"
+   ],
+   "proxy": [
+    4,
+    6,
+    7,
+    9
+   ]
+  }
+ },
+ "species": [
+  {
+   "pos": 1,
+   "russian": "Липа мелколистная",
+   "schedule_latin": "Tilia cordata Greenspire",
+   "exact_latin": "Tilia cordata 'Greenspire'",
+   "kind": "tree",
+   "schedule_cm": [
+    500,
+    550
+   ],
+   "band_m": [
+    4.0,
+    6.6
+   ],
+   "target_height_m": 5.25,
+   "plants_in_plot": 23,
+   "map_status": "approved-species",
+   "map_key": "Tilia cordata",
+   "material_id": 101,
+   "proposed_source": "approved map, same species (cultivar differs)",
+   "map": {
+    "diffuse": "C:/x/flora-library/v001/maps/tilia-cordata/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/tilia-cordata/opacity-v001.png",
+    "evidence": "Artem 2026-10-16 card t_6c48bc9d comment: all five batch-1 pairs approved (map-only approval, not model acceptance); review-sheet-batch1-v001.png"
+   }
+  },
+  {
+   "pos": 2,
+   "russian": "Ольха серая",
+   "schedule_latin": "Alnus glutinosa Laciniata",
+   "exact_latin": "Alnus glutinosa 'Laciniata' (RU name = Alnus incana, F5)",
+   "kind": "tree",
+   "schedule_cm": [
+    500,
+    550
+   ],
+   "band_m": [
+    4.0,
+    6.6
+   ],
+   "target_height_m": 5.25,
+   "plants_in_plot": 8,
+   "map_status": "missing",
+   "map_key": null,
+   "material_id": 131,
+   "proposed_source": "NEW map (step 2)"
+  },
+  {
+   "pos": 3,
+   "russian": "Черемуха обыкновенная",
+   "schedule_latin": "Prunus padus Watereri",
+   "exact_latin": "Prunus padus 'Watereri'",
+   "kind": "tree",
+   "schedule_cm": [
+    300,
+    550
+   ],
+   "band_m": [
+    2.4,
+    6.6
+   ],
+   "target_height_m": 4.25,
+   "plants_in_plot": 11,
+   "map_status": "approved-species",
+   "map_key": "Prunus padus",
+   "material_id": 120,
+   "proposed_source": "approved map, same species (cultivar differs)",
+   "map": {
+    "diffuse": "C:/x/flora-library/v001/maps/prunus-padus/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/prunus-padus/opacity-v001.png",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 3a4011cb54e8; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "pos": 4,
+   "russian": "Яблоня Маковецкого",
+   "schedule_latin": "Malus Makowieckiana",
+   "exact_latin": "Malus × purpurea 'Makowieckiana'",
+   "kind": "tree",
+   "schedule_cm": [
+    300,
+    550
+   ],
+   "band_m": [
+    2.4,
+    6.6
+   ],
+   "target_height_m": 4.25,
+   "plants_in_plot": 21,
+   "map_status": "proxy",
+   "map_key": "Malus niedzwetzkyana",
+   "material_id": 128,
+   "proposed_source": "NEW exact map (step 2); fallback = approved proxy map",
+   "map": {
+    "diffuse": "C:/x/flora-library/v001/maps/malus-niedzwetzkyana/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/malus-niedzwetzkyana/opacity-v001.png",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate b03198d4c883; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "pos": 5,
+   "russian": "Лиственница обыкновенная",
+   "schedule_latin": "Larix decidua Pendula",
+   "exact_latin": "Larix decidua 'Pendula'",
+   "kind": "tree",
+   "schedule_cm": [
+    150,
+    500
+   ],
+   "band_m": [
+    1.2,
+    6.0
+   ],
+   "target_height_m": 3.25,
+   "plants_in_plot": 13,
+   "map_status": "missing",
+   "map_key": null,
+   "material_id": 129,
+   "proposed_source": "NEW map (step 2)"
+  },
+  {
+   "pos": 6,
+   "russian": "Ирга колосистая",
+   "schedule_latin": "Amelanchier spicata",
+   "exact_latin": "Amelanchier spicata",
+   "kind": "bush",
+   "schedule_cm": [
+    125,
+    350
+   ],
+   "band_m": [
+    1.0,
+    4.2
+   ],
+   "target_height_m": 2.375,
+   "plants_in_plot": 38,
+   "map_status": "proxy",
+   "map_key": "Amelanchier lamarckii",
+   "material_id": 240,
+   "proposed_source": "NEW exact map (step 2); fallback = approved proxy map",
+   "map": {
+    "diffuse": "C:/x/flora-library/v001/maps/amelanchier-lamarckii/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/amelanchier-lamarckii/opacity-v001.png",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 095bd50fc73b; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "pos": 7,
+   "russian": "Боярышник обыкновенный",
+   "schedule_latin": "Crataegus laevigata Paul`s Scarlet",
+   "exact_latin": "Crataegus laevigata 'Paul's Scarlet'",
+   "kind": "tree",
+   "schedule_cm": [
+    125,
+    350
+   ],
+   "band_m": [
+    1.0,
+    4.2
+   ],
+   "target_height_m": 2.375,
+   "plants_in_plot": 29,
+   "map_status": "proxy",
+   "map_key": "Crataegus mollis",
+   "material_id": 130,
+   "proposed_source": "NEW exact map (step 2); fallback = approved proxy map",
+   "map": {
+    "diffuse": "C:/x/flora-library/v001/maps/crataegus-mollis/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/crataegus-mollis/opacity-v001.png",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate b1db952c0014; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "pos": 8,
+   "russian": "Лох узколистный",
+   "schedule_latin": "Elaeagnus angustifolia",
+   "exact_latin": "Elaeagnus angustifolia",
+   "kind": "bush",
+   "schedule_cm": [
+    125,
+    350
+   ],
+   "band_m": [
+    1.0,
+    4.2
+   ],
+   "target_height_m": 2.375,
+   "plants_in_plot": 25,
+   "map_status": "missing",
+   "map_key": null,
+   "material_id": 241,
+   "proposed_source": "NEW map (step 2)"
+  },
+  {
+   "pos": 9,
+   "russian": "Пузыреплодник калинолистный",
+   "schedule_latin": "Physocarpus opulifolius Lady in red",
+   "exact_latin": "Physocarpus opulifolius 'Lady in Red'",
+   "kind": "bush",
+   "schedule_cm": [
+    125,
+    200
+   ],
+   "band_m": [
+    1.0,
+    2.4
+   ],
+   "target_height_m": 1.625,
+   "plants_in_plot": 191,
+   "map_status": "proxy",
+   "map_key": "Physocarpus opulifolius 'Diabolo'",
+   "material_id": 242,
+   "proposed_source": "NEW exact map (step 2); fallback = approved proxy map",
+   "map": {
+    "diffuse": "C:/x/flora-library/v001/maps/physocarpus-opulifolius-diabolo/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/physocarpus-opulifolius-diabolo/opacity-v001.png",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate a43aa714eef5; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "pos": 10,
+   "russian": "Дерен кроваво-красный",
+   "schedule_latin": "Cornus sanguinea Anny Winter Orange",
+   "exact_latin": "Cornus sanguinea 'Anny's Winter Orange'",
+   "kind": "bush",
+   "schedule_cm": [
+    125,
+    200
+   ],
+   "band_m": [
+    1.0,
+    2.4
+   ],
+   "target_height_m": 1.625,
+   "plants_in_plot": 439,
+   "map_status": "missing",
+   "map_key": null,
+   "material_id": 228,
+   "proposed_source": "NEW map (step 2)"
+  },
+  {
+   "pos": 11,
+   "russian": "Рябинник рябинолистный",
+   "schedule_latin": "Sorbaria sorbifolia",
+   "exact_latin": "Sorbaria sorbifolia",
+   "kind": "bush",
+   "schedule_cm": [
+    125,
+    200
+   ],
+   "band_m": [
+    1.0,
+    2.4
+   ],
+   "target_height_m": 1.625,
+   "plants_in_plot": 866,
+   "map_status": "approved-exact",
+   "map_key": "Sorbaria sorbifolia",
+   "material_id": 212,
+   "proposed_source": "approved map, exact species",
+   "map": {
+    "diffuse": "C:/x/flora-library/v001/maps/sorbaria-sorbifolia/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/sorbaria-sorbifolia/opacity-v001.png",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 2a7276304fd4; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "pos": 12,
+   "russian": "Дерен отпрысковый 'Red Gnome'",
+   "schedule_latin": "Cornus sericea 'Red Gnome'",
+   "exact_latin": "Cornus sericea 'Red Gnome'",
+   "kind": "bush",
+   "schedule_cm": [
+    125,
+    200
+   ],
+   "band_m": [
+    1.0,
+    2.4
+   ],
+   "target_height_m": 1.625,
+   "plants_in_plot": 325,
+   "map_status": "approved-species",
+   "map_key": "Cornus sericea",
+   "material_id": 204,
+   "proposed_source": "approved map, same species (cultivar differs)",
+   "map": {
+    "diffuse": "C:/x/flora-library/v001/maps/cornus-sericea/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/cornus-sericea/opacity-v001.png",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 05395f098d96; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "pos": 13,
+   "russian": "Облепиха крушиновидная",
+   "schedule_latin": "Hippophae rhamnoides hikul",
+   "exact_latin": "Hippophae rhamnoides 'Hikul'",
+   "kind": "bush",
+   "schedule_cm": [
+    125,
+    200
+   ],
+   "band_m": [
+    1.0,
+    2.4
+   ],
+   "target_height_m": 1.625,
+   "plants_in_plot": 1059,
+   "map_status": "missing",
+   "map_key": null,
+   "material_id": 243,
+   "proposed_source": "NEW map (step 2)"
+  },
+  {
+   "pos": 14,
+   "russian": "Лапчатка кустарниковая",
+   "schedule_latin": "Potentila fruticosa",
+   "exact_latin": "Dasiphora fruticosa",
+   "kind": "bush",
+   "schedule_cm": [
+    80,
+    100
+   ],
+   "band_m": [
+    0.64,
+    1.2
+   ],
+   "target_height_m": 0.9,
+   "plants_in_plot": 558,
+   "map_status": "approved-exact",
+   "map_key": "Dasiphora fruticosa",
+   "material_id": 230,
+   "proposed_source": "approved map, exact species",
+   "map": {
+    "diffuse": "C:/x/flora-library/v001/maps/dasiphora-fruticosa/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/dasiphora-fruticosa/opacity-v001.png",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate 447e4aa00d98; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "pos": 15,
+   "russian": "Стефанандра надрезаннолистная",
+   "schedule_latin": "Stephanandra incisa",
+   "exact_latin": "Stephanandra incisa",
+   "kind": "bush",
+   "schedule_cm": [
+    20,
+    60
+   ],
+   "band_m": [
+    0.16,
+    0.72
+   ],
+   "target_height_m": 0.4,
+   "plants_in_plot": 1002,
+   "map_status": "approved-species",
+   "map_key": "Stephanandra incisa 'Crispa'",
+   "material_id": 223,
+   "proposed_source": "approved map, same species (cultivar differs)",
+   "map": {
+    "diffuse": "C:/x/flora-library/v001/maps/stephanandra-incisa-crispa/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/stephanandra-incisa-crispa/opacity-v001.png",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate f38a2c36bdcd; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "pos": 16,
+   "russian": "Ель нидиформис",
+   "schedule_latin": "Picea abies Nidiformis",
+   "exact_latin": "Picea abies 'Nidiformis'",
+   "kind": "bush",
+   "schedule_cm": [
+    60,
+    100
+   ],
+   "band_m": [
+    0.48,
+    1.2
+   ],
+   "target_height_m": 0.8,
+   "plants_in_plot": 70,
+   "map_status": "missing",
+   "map_key": null,
+   "material_id": 236,
+   "proposed_source": "NEW map (step 2)"
+  },
+  {
+   "pos": 17,
+   "russian": "Сосна горная ф. Мугус",
+   "schedule_latin": "Pinus mugo var. Mughus",
+   "exact_latin": "Pinus mugo var. mughus",
+   "kind": "bush",
+   "schedule_cm": [
+    60,
+    100
+   ],
+   "band_m": [
+    0.48,
+    1.2
+   ],
+   "target_height_m": 0.8,
+   "plants_in_plot": 106,
+   "map_status": "approved-species",
+   "map_key": "Pinus mugo",
+   "material_id": 224,
+   "proposed_source": "approved map, same species (cultivar differs)",
+   "map": {
+    "diffuse": "C:/x/flora-library/v001/maps/pinus-mugo/diffuse-v001.png",
+    "opacity": "C:/x/flora-library/v001/maps/pinus-mugo/opacity-v001.png",
+    "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate eab5ac5c63f9; published via flora library gate (library-batch2-v001.json)"
+   }
+  },
+  {
+   "pos": "Ива",
+   "russian": "Ива швейцарская (block only, not in *T3509)",
+   "schedule_latin": "Salix helvetica",
+   "exact_latin": "Salix helvetica",
+   "kind": "bush",
+   "schedule_cm": null,
+   "band_m": null,
+   "target_height_m": null,
+   "plants_in_plot": 131,
+   "map_status": "missing",
+   "map_key": null,
+   "material_id": 244,
+   "proposed_source": "NEW map (step 2)"
+  }
+ ]
+}

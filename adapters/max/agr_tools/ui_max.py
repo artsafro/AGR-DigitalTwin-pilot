@@ -47,9 +47,9 @@ class MaxBackend:
         fn = {'xview': self.agr.xview, 'matid': self.agr.matid}[tool]
         return fn(chunk, on_item=on_item)
 
-    def run_tool(self, tool, scope_all):
+    def run_tool(self, tool, scope_all, options=None):
         if not scope_all:
-            return self._run_tool(tool)
+            return self._run_tool(tool, options=options)
         # runtime.ui reads rt.selection, so "вся сцена" selects the scope for the call and then puts the
         # user's selection back, also on error; nodes deleted by the tool are dropped (#861).
         keep = list(rt.selection)
@@ -57,7 +57,7 @@ class MaxBackend:
         rt.select(rt.objects if tool in self.agr.CHECKS_070 or tool in self.agr.EDITS_090 else rt.geometry)
         report = None
         try:
-            report = self._run_tool(tool, select=False)
+            report = self._run_tool(tool, select=False, options=options)
             return report
         finally:
             alive = [n for n in keep if rt.isValidNode(n)]
@@ -67,7 +67,13 @@ class MaxBackend:
                 rt.clearSelection()
             self._select_offenders(tool, report)  # after the user's selection is back, so Ctrl+Z returns to it
 
-    def _run_tool(self, tool, select=True):
+    def _run_tool(self, tool, select=True, options=None):
+        if tool in getattr(self.agr, 'EDITS_100', ()):
+            # 1.0 stage buttons (#1024): runtime.ui has no 1.0 branch, a press goes to edit_ui (preview -> apply,
+            # actor panel). The panel never calls this while the button is wip. 1.1: options of the panel form.
+            report = self.agr.edit_ui(tool, select=False, options=options)
+            self.log(report)
+            return report
         if tool in self.agr.EDITS_080 or tool in self.agr.EDITS_090:
             # 0.8 (#908) / 0.9 (#979): preview -> apply through runtime.edits_080 / edits_090; a `select` row
             # (SELECT_090) selects its offenders here, never in the core
@@ -144,6 +150,26 @@ class MaxBackend:
 
     def last_reports(self):
         return self.agr.last_reports()
+
+    def passport(self):
+        """Project passport dict (K1) for the stage statuses of the 1.0 stage rail (#1024). The reader is branch F
+        (passport_core); until it ships there is no passport and every stage shows «не начат»."""
+        return None
+
+    def form_context(self, tool):  # noqa: ARG002 - the same context for every form
+        """Defaults of the 1.1 parameter form: the scene's passport (file property agr_passport, read by the agent
+        bridge), the scene path and the bundles / agent requests of the project folder."""
+        import os
+        bridge = self.agr._load_core('agentbridge_max.py', 'agr_tools_agentbridge_max')
+        params = self.agr._params_core()
+        path, data = bridge.passport(rt)
+        scene = os.path.join(str(rt.maxFilePath), str(rt.maxFileName)) if str(rt.maxFileName) else None
+        ctx = {'passport_path': path, 'passport': data, 'scene': scene}
+        ctx.update(params.scan_project(os.path.dirname(path) if path else None))
+        return ctx
+
+    def agent_dock(self):
+        return self.agr.agent_dock()
 
     def log_error(self, tool, exc):
         print('AGR_TOOLS_ERROR tool={} {}'.format(tool, ''.join(traceback.format_exception_only(type(exc), exc)).strip()))

@@ -12,6 +12,8 @@ from pathlib import Path
 
 import pytest
 
+from tests.dcc_session import skip_if_dcc_session_busy
+
 
 ROOT = Path(__file__).resolve().parents[1]
 REVIEW = ROOT / "tools" / "review"
@@ -530,11 +532,91 @@ def test_max_dependent_merge_skips_when_max_absent(review, tmp_path):
         pytest.skip("3ds Max is not installed")
     out = tmp_path / "scene.max"
     preview = tmp_path / "preview.png"
-    result = adapter_mod.default_adapter().selftest(tmp_path / "work", out, preview)
+    try:
+        result = adapter_mod.default_adapter().selftest(tmp_path / "work", out, preview)
+    except RuntimeError as exc:
+        skip_if_dcc_session_busy(getattr(exc, "returncode", 1), str(exc))
+        raise
     assert result["cameras"] >= 1
     assert result["materials"] >= 1
     assert out.is_file() and out.stat().st_size > 0
     assert preview.is_file() and preview.read_bytes().startswith(b"\x89PNG")
+
+
+def _fake_batch_proc(returncode: int, stdout: str):
+    class _Proc:
+        def __init__(self):
+            self.returncode = returncode
+            self.stdout = stdout
+            self.stderr = ""
+    return _Proc()
+
+
+def test_batch_adapter_returns_result_when_wrapper_exits_nonzero_for_startup_script(review, tmp_path, monkeypatch):
+    """The batch wrapper exits non-zero for the user's Max startup auto-load scripts
+    (the _maxUsd USD import) even though the job completed; the job's own result.json is
+    authoritative. Regression for the two review tests failing in every merge gate where
+    Max is free."""
+    adapter = _load("max_adapter")
+    out = tmp_path / "scene.max"
+
+    def fake_call(args):
+        work = tmp_path / "max-job"
+        work.mkdir(parents=True, exist_ok=True)
+        (work / "result.json").write_text(
+            '{"ok":true,"version":"fake","cameras":1,"materials":1,"meshes":1}', encoding="utf-8")
+        return _fake_batch_proc(1, '{"status":"error","exit_code":4294967166,'
+                                   '"log":"MAXScript Auto-load Script Error Exception: Runtime error: '
+                                   'Traceback ... ImportError: DLL load failed while importing _maxUsd"}')
+
+    monkeypatch.setattr(adapter, "_call", fake_call)
+    monkeypatch.setattr(adapter, "max_batch_path",
+                        lambda: Path("C:/Fake/3ds Max 2026/3dsmaxbatch.exe"))
+    info = adapter.BatchAdapter()._run(tmp_path / "in.fbx", out, None)
+    assert info["ok"] is True
+    assert info["meshes"] == 1
+
+
+def test_batch_adapter_still_fails_when_result_json_is_not_ok(review, tmp_path, monkeypatch):
+    adapter = _load("max_adapter")
+    out = tmp_path / "scene.max"
+
+    def fake_call(args):
+        work = tmp_path / "max-job"
+        work.mkdir(parents=True, exist_ok=True)
+        (work / "result.json").write_text('{"ok":false,"error":"boom"}', encoding="utf-8")
+        return _fake_batch_proc(0, "{}")
+
+    monkeypatch.setattr(adapter, "_call", fake_call)
+    monkeypatch.setattr(adapter, "max_batch_path",
+                        lambda: Path("C:/Fake/3ds Max 2026/3dsmaxbatch.exe"))
+    with pytest.raises(RuntimeError):
+        adapter.BatchAdapter()._run(tmp_path / "in.fbx", out, None)
+
+
+def test_batch_adapter_fails_when_result_json_is_missing(review, tmp_path, monkeypatch):
+    adapter = _load("max_adapter")
+    out = tmp_path / "scene.max"
+
+    def fake_call(args):
+        return _fake_batch_proc(5, '{"status":"timeout"}')
+
+    monkeypatch.setattr(adapter, "_call", fake_call)
+    monkeypatch.setattr(adapter, "max_batch_path",
+                        lambda: Path("C:/Fake/3ds Max 2026/3dsmaxbatch.exe"))
+    with pytest.raises(adapter.MaxAdapterError):
+        adapter.BatchAdapter()._run(tmp_path / "in.fbx", out, None)
+
+
+def test_startup_script_error_recognizes_autoload_only_failures(review):
+    adapter = _load("max_adapter")
+    startup = _fake_batch_proc(1, '{"log":"MAXScript Auto-load Script Error Exception: '
+                                   'Runtime error: Traceback ... _maxUsd ..."}')
+    assert adapter.startup_script_error(startup) is True
+    job = _fake_batch_proc(1, '{"log":"ExecuteMAXScriptScript Exception: boom"}')
+    assert adapter.startup_script_error(job) is False
+    ok = _fake_batch_proc(0, "{}")
+    assert adapter.startup_script_error(ok) is False
 
 
 def test_max_job_source_merges_fbx_and_sets_a_camera():
