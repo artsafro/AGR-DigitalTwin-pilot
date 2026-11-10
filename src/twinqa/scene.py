@@ -952,6 +952,13 @@ def _ground_footprint_findings(meshes: list[dict], ucx: list[dict], src: str, gr
 SKIRT_MIN_M = 1.0  # GND-03: Ground perimeter polygons extruded down by at least 1 m (reg p.7 §3.4, p.28 §3.7)
 _SKIRT_XY_ROUND = 4  # XY rounding (0.1 mm): a perimeter edge shorter than this in XY is degenerate (GND-03)
 _SKIRT_XY_TOL = 10.0 ** -_SKIRT_XY_ROUND  # XY distance (0.1 mm) within which a mesh edge lies on a perimeter edge
+# GND-03: minimum upward normal ratio (nz/|n|) for a Ground face to count as "surface". A skirt wall
+# is vertical (nz ~ 0), but the v015 readback has 13 _Skirt faces that are not quite vertical: their
+# nz/|n| runs up to 0.0054 (a ~0.3 deg build slant, not pure float noise). eps sits above that so the
+# geometry alone keeps the skirt walls out, and far below the steepest real surface band (nz/|n| ~ 0.148
+# at 81.5 deg) so interior step bands stay in. The material guard (below) is a second, naming-independent
+# backstop for any skirt face tilted past eps.
+_SKIRT_UP_EPS = 0.01
 
 
 def _polygon_normal(verts: list, poly) -> tuple[float, float, float]:
@@ -1064,12 +1071,22 @@ def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
             if isinstance(idx, bool) or not isinstance(idx, int) or idx < 0 or idx >= len(verts):
                 return "fail", 0.0
 
-    # upward-facing surface polygons: the Ground top whose perimeter the skirt must extrude
+    # upward-facing surface polygons: the Ground top whose perimeter the skirt must extrude. A face is
+    # surface when its normal has an upward component above the skirt-tilt tolerance (nz > eps*|n|) and
+    # its material is not a skirt wall (*_Skirt). Interior step bands are steep (75-81.5 deg, nz/|n| ~
+    # 0.15-0.26) but still surface: dropping them turns their rim into a false "perimeter" with no lower
+    # copy (drop 0). Skirt walls are near-vertical (nz ~ 0) or *_Skirt, so both tests keep them out.
+    materials = shape.get("polygon_material")
+    if materials is not None and (not isinstance(materials, list) or len(materials) != len(polys)):
+        return "fail", 0.0
     top = []
-    for p in polys:
+    for idx, p in enumerate(polys):
         nx, ny, nz = _polygon_normal(verts, p)
-        if nz > 0.0 and abs(nz) >= abs(nx) and abs(nz) >= abs(ny):
-            top.append(p)
+        if nz <= _SKIRT_UP_EPS * math.hypot(nx, ny, nz):
+            continue
+        if materials is not None and str(materials[idx]).endswith("_Skirt"):
+            continue
+        top.append(p)
     if not top:
         return "unmeasurable", None
 
