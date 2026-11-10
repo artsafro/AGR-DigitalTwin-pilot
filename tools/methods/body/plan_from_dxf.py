@@ -485,7 +485,8 @@ def extract_plan(doc, layer_map: dict, *, z0: float, z1: float | None = None,
             raise ValueError(
                 f"coverage: kept {contour_source} pieces cover {coverage['covered_share']:.1%} of the wall hatch "
                 f"({coverage['hatch_area_m2']} m2), bbox offset {coverage['bbox_delta_m']} m, "
-                f"{coverage['unaccounted_m2']} m2 unaccounted by the closed hatch outlines "
+                f"{coverage['unaccounted_m2']} m2 unaccounted by the hatch closed at the "
+                f"{COVERAGE_REF_GAP_CLOSE_M} m reference "
                 f"at {coverage.get('unaccounted_bbox_m')}; need > {COVERAGE_MIN_SHARE:.0%}, "
                 f"< {COVERAGE_BBOX_M} m and < {MAX_UNACCOUNTED_M2} m2 unaccounted")
     else:
