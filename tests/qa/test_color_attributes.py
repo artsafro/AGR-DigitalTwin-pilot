@@ -68,6 +68,6 @@ def test_ucx_color_layer_is_reported_too():
 
 
 def test_scene_findings_carries_v005_color_attributes():
-    found = scene_findings(rb(colored("SM_Test_K_1_Main", [COL])), "npm", "oks", PROFILES["npm"])
+    found = scene_findings(rb(colored("SM_Test_K_1_Main", [COL])), "npm", "oks", PROFILES.npm)
     names = {f.name: f.status for f in found["V005"]}
     assert names["color attributes"] == "review"
