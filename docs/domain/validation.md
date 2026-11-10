@@ -134,7 +134,7 @@ never a claim of cryptographic validity. No signature checker is added by this d
 | `lp_uv` | LP | 4.1.3 | src/twinqa/uv.py face_issue | same |
 | `lp_district_code` | LP | 2.10.3.1 | missing (geo_utils.find_district has no twinqa equivalent) | missing |
 | `lp_height` | LP | 4.1.4 | missing | missing |
-| `lp_color_attributes` | LP | 4.1.1 | missing | missing |
+| `lp_color_attributes` | LP | 4.1.1 | partial (src/twinqa/scene.py color_attribute_finding, V005 review; readback tools/blender/fbx_readback.py color_attributes) | partial |
 | `hp_images` | HP | 2.5.1.1 | missing | missing |
 | `hp_udim_numbers` | HP | 2.5.1.2, 2.5.1.3, 2.5.2.1.3 | partial (src/twinqa/uv.py sequential_tiles) | partial |
 | `hp_meshes_transforms` | HP | 2.3.18, 2.9.3 | src/twinqa/scene.py | same |

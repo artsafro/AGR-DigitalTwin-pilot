@@ -4,6 +4,7 @@ Fills the scene stages the header-only validator leaves not_run: V002 (units and
 units come from a pure-Python GlobalSettings read), V003 (triangulation,
 triangle limits, object types), V004 (applied transforms, co-directional overlap clearance, regulatory topology defect count, MAF smoothing/flipped normals/dimensions (GroundEl)), V006 (NPM embedded images),
 V008 (one UV channel, mirrored islands, glass tile), V009 (texel density from UV and the diffuse side per tile),
+V005 (color attributes, reg 4.1.1, review only),
 V012 (VPM OKS MainGlass object and glass material names), V010 (UCX presence, no material slots, triangle budget, intersections, intersection coverage, advisory gap, piece shape closed/convex; coverage and offsets stay not_run),
 V013 (origin, geometric-centre pivot, shared pivot). Triangle limits follow the 2026-10-07 decisions on conflicts #1 and #3.
 Ground FBX: Flora checks from twinqa.flora (V015 dimensions, V005 maps, V003 Flora share; #191).
@@ -1348,6 +1349,52 @@ def main_glass_findings(meshes: list[dict], stem: str, src: str) -> list[Finding
     return out
 
 
+def _color_layer_names(attrs) -> list[str] | None:
+    """Names of readback color attributes; None when the value is not a list of {name: str} dicts."""
+    if not isinstance(attrs, list):
+        return None
+    names = []
+    for attr in attrs:
+        if not isinstance(attr, dict) or not isinstance(attr.get("name"), str):
+            return None
+        names.append(attr["name"])
+    return names
+
+
+def color_attribute_finding(meshes: list[dict], src: str) -> Finding:
+    """V005 'color attributes' (reg 2026 req 4.1.1, SINTEZ lp_color_attributes / check_color_attributes).
+
+    The regulation only recommends removing color attributes (they break the UV display in 3ds Max),
+    so any layer is 'review', not 'fail'. Every mesh, UCX included, is checked: SINTEZ counts the file.
+    A mesh without the readback key (old readback JSON), a malformed value or no meshes at all is
+    not_run, never pass.
+    """
+    expected = "no color attributes (reg 4.1.1: recommended to remove)"
+    if not meshes:
+        return _f("not_run", "color attributes", f"{src}: no meshes in readback", expected, [], src)
+    unknown, found = [], {}
+    for m in meshes:
+        names = _color_layer_names(m.get("color_attributes"))
+        legacy = m.get("legacy_vertex_colors", 0)
+        legacy_ok = isinstance(legacy, int) and not isinstance(legacy, bool) and legacy >= 0
+        if names is None or not legacy_ok:
+            unknown.append(m["name"])
+            continue
+        if names or legacy:
+            found.setdefault(m["name"], []).extend(names or [f"<{legacy} legacy vertex_colors>"])
+    if unknown:
+        return _f("not_run", "color attributes",
+                  f"{src}: readback has no color_attributes for {len(unknown)} mesh(es): {unknown[:5]}",
+                  expected, [], src, data={"unknown": unknown})
+    count = sum(len(v) for v in found.values())
+    if not found:
+        return _f("pass", "color attributes", f"{src}: 0 color attributes on {len(meshes)} mesh(es)", expected,
+                  [], src, measured=0, threshold=0, data={"objects": {}})
+    labels = [f"{obj}:{name}" for obj, names in found.items() for name in names]
+    return _f("review", "color attributes", f"{src}: {count} on {len(found)} object(s): {labels[:10]}", expected,
+              [], src, measured=count, threshold=0, data={"objects": found})
+
+
 def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule: dict | None = None,
                    flora_share: int = FLORA_SHARE, *, maf_sizes=None, smoothing_angle_deg=None,
                    ground_area_m2=None, footprint_holes=None, diffuse_px=None) -> dict[str, list[Finding]]:
@@ -1369,6 +1416,8 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
     meshes = rb["meshes"]
     ucx = [m for m in meshes if m["name"].upper().startswith("UCX_")]
     out["V002"].extend(_v002_findings(rb, meshes, src))
+    # V005: color attributes (reg 4.1.1, SINTEZ lp_color_attributes); review only, the regulation recommends removal
+    out.setdefault("V005", []).append(color_attribute_finding(meshes, src))
     tris = sum(m["triangles"] for m in meshes if m not in ucx)  # collision is excluded (reg p.28 §3.9)
 
     # V003: triangulated on export, triangle limits, no foreign objects (reg p.6-8, 28-29)

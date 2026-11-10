@@ -213,7 +213,7 @@ def join_parts(parts, *, displacements=None):
                       {k: tuple(map(float, d)) for k, d in offsets.items()})
 
 
-def simplify_part(parts, part, *, line_m=0.002):
+def simplify_part(parts, part, *, line_m=0.002, face_labels=None):
     """Dissolve connected near-coplanar disks, then conform ALL seams atomically.
 
     Non-disk patches (holes/branching boundaries) are kept, never filled. A removed
@@ -221,6 +221,8 @@ def simplify_part(parts, part, *, line_m=0.002):
     count is reduced without leaving the neighbour's boundary as a T-junction.
     Use polygon source labels to carry caller-owned material/UV data; this operation
     deliberately accepts no implicit material defaults or attribute interpolation.
+    `face_labels` ({part: one hashable label per face of `part`}, #1144): faces with
+    different labels (e.g. material ids) never dissolve into one polygon.
     """
     if part not in parts:
         raise ValueError(f'unknown simplification part {part!r}')
@@ -230,6 +232,19 @@ def simplify_part(parts, part, *, line_m=0.002):
     if not mesh.faces:
         raise ValueError(f'{part}: empty mesh')
     v, faces = mesh.vertices, mesh.faces
+    if face_labels is None:
+        labels = (None,) * len(faces)
+    elif not isinstance(face_labels, dict) or set(face_labels) != {part} \
+            or len(face_labels[part]) != len(faces):
+        raise ValueError(f'face_labels must be {{{part!r}: one label per face ({len(faces)})}}')
+    else:
+        labels = tuple(face_labels[part])
+    vertex_labels = defaultdict(set)     # a vertex used by faces of two labels is a label border
+    vertex_faces = defaultdict(list)
+    for fi, f in enumerate(faces):
+        for i in f:
+            vertex_labels[i].add(labels[fi])
+            vertex_faces[i].append(fi)
     planes = [_plane(v, f) for f in faces]
     edge_faces = defaultdict(list)
     for fi, f in enumerate(faces):
@@ -252,7 +267,7 @@ def simplify_part(parts, part, *, line_m=0.002):
         while queue:
             current = queue.pop()
             for other in sorted(neighbours[current] & pending):
-                if np.dot(normal, planes[other][0]) < _COS:
+                if np.dot(normal, planes[other][0]) < _COS or labels[other] != labels[seed]:
                     continue
                 if np.max(np.abs((v[list(faces[other])] - anchor) @ normal)) > line_m + 1e-12:
                     continue
@@ -284,11 +299,20 @@ def simplify_part(parts, part, *, line_m=0.002):
         # Each candidate chord is checked against EVERY original boundary point
         # it replaces, preventing a chain of individually small cumulative errors.
         paths = [[i] for i in ring]
+        # A point shared with a differently labelled face IN THIS PLANE stays: removing it would leave
+        # that face's edge as a T-junction inside the part (#1144). Out-of-plane neighbours are restored
+        # by the join below, as without labels.
+        pinned = {i for i in ring if len(vertex_labels[i]) > 1 and any(
+            labels[o] != labels[seed] and np.dot(normal, planes[o][0]) >= _COS
+            and np.max(np.abs((v[list(faces[o])] - anchor) @ normal)) <= line_m + 1e-12
+            for o in vertex_faces[i])}
         changed = True
         while changed and len(ring) > 3:
             changed = False
             for i in range(len(ring)):
                 prev = (i - 1) % len(ring)
+                if ring[i] in pinned:
+                    continue
                 a, b = v[ring[prev]], v[ring[(i + 1) % len(ring)]]
                 edge = b - a
                 den = np.dot(edge, edge)
