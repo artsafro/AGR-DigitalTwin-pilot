@@ -939,13 +939,92 @@ def _ground_hole_finding(geometry: list[dict], src: str, footprint_holes) -> Fin
               measured=coverage, threshold=GROUND_AREA_TOL_M2, margin=margin)
 
 
+def check_ground_materials(value) -> list[str]:
+    """Allow-list of Ground material names or fnmatch globs. Raises ValueError naming `ground_materials`
+    for anything but a non-empty list of non-empty strings."""
+    if isinstance(value, (str, bytes)) or not isinstance(value, (list, tuple)) or not value:
+        raise ValueError(f"ground_materials must be a non-empty list of material names or globs, got {value!r}")
+    for item in value:
+        if not isinstance(item, str) or not item.strip():
+            raise ValueError(f"ground_materials entry must be a non-empty string, got {item!r}")
+    return list(value)
+
+
+def _select_ground_faces(geometry: list[dict], ground_materials: list[str]) -> tuple[list[dict], dict]:
+    """Keep only polygons whose material matches the allow-list (exact name or fnmatch glob, case-sensitive).
+
+    Meshes without a face_geometry dict pass through unchanged so the presence check still reports them.
+    A mesh whose ``polygon_material`` is missing or not one entry per polygon raises ValueError: a filter
+    that cannot read materials must never pass. Returns the filtered meshes and a report of the drop.
+    """
+    from fnmatch import fnmatchcase
+
+    selected, excluded, kept, excluded_materials, readable = [], 0, 0, {}, False
+    for mesh in geometry:
+        shape = mesh.get("face_geometry")
+        if not isinstance(shape, dict):
+            selected.append(mesh)
+            continue
+        readable = True
+        polygons, materials = shape.get("polygons"), shape.get("polygon_material")
+        if not isinstance(polygons, (list, tuple)) or not isinstance(materials, (list, tuple)) \
+                or len(materials) != len(polygons):
+            raise ValueError(f"--ground-materials needs one polygon_material per polygon on {mesh['name']}")
+        keep = []
+        for polygon, material in zip(polygons, materials):
+            if isinstance(material, str) and any(fnmatchcase(material, pattern) for pattern in ground_materials):
+                keep.append(polygon)
+            else:
+                excluded += 1
+                excluded_materials[str(material)] = excluded_materials.get(str(material), 0) + 1
+        kept += len(keep)
+        if keep:
+            selected.append({**mesh, "face_geometry": {**shape, "polygons": keep}})
+    if readable and kept == 0:
+        raise ValueError(f"no faces match --ground-materials {ground_materials}")
+    return selected, {"ground_materials": list(ground_materials), "excluded_faces": excluded,
+                      "excluded_materials": dict(sorted(excluded_materials.items()))}
+
+
+def _filter_note(report: dict) -> str:
+    names = ", ".join(report["excluded_materials"]) or "none"
+    return (f"; filter --ground-materials {report['ground_materials']}: "
+            f"{report['excluded_faces']} face(s) excluded ({names})")
+
+
+def _with_filter(finding: Finding, report: dict) -> Finding:
+    finding.observed += _filter_note(report)
+    finding.data = {**(finding.data or {}), **report}
+    return finding
+
+
 def _ground_footprint_findings(meshes: list[dict], ucx: list[dict], src: str, ground_area_m2,
-                               footprint_holes) -> list[Finding]:
-    """Scalar area check, then the spatial hole check. UCX meshes are excluded from both."""
+                               footprint_holes, ground_materials=None) -> list[Finding]:
+    """Scalar area check, then the spatial hole check. UCX meshes are excluded from both.
+
+    ground_materials (opt-in): only faces whose material matches feed both checks; None keeps every
+    non-UCX render face (unchanged behaviour). An allow-list that matches no face fails both."""
     geometry = [mesh for mesh in meshes if mesh not in ucx]
+    if ground_materials is None:
+        return [
+            _ground_area_finding(geometry, src, ground_area_m2),
+            _ground_hole_finding(geometry, src, footprint_holes),
+        ]
+    try:
+        geometry, report = _select_ground_faces(geometry, ground_materials)
+    except ValueError as exc:
+        data = {"ground_materials": list(ground_materials), "excluded_faces": None}
+        area = _f("fail", "ground footprint coverage", f"{src}: {exc}",
+                  f"|top-down area - ground_area_m2| < {GROUND_AREA_TOL_M2} m2", [28, 29], src,
+                  data={"measured_m2": None, "expected_m2": ground_area_m2, "difference_m2": None, **data})
+        hole = _ground_hole_finding([], src, footprint_holes)
+        if footprint_holes is not None:
+            hole.status, hole.observed = "fail", f"{src}: {exc}"
+        hole.data = {**(hole.data or {}), **data}
+        return [area, hole]
     return [
-        _ground_area_finding(geometry, src, ground_area_m2),
-        _ground_hole_finding(geometry, src, footprint_holes),
+        _with_filter(_ground_area_finding(geometry, src, ground_area_m2), report),
+        _with_filter(_ground_hole_finding(geometry, src, footprint_holes), report),
     ]
 
 
@@ -1380,7 +1459,8 @@ def color_attribute_finding(meshes: list[dict], src: str) -> Finding:
 
 def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule: dict | None = None,
                    flora_share: int = FLORA_SHARE, *, maf_sizes=None, smoothing_angle_deg=None,
-                   ground_area_m2=None, footprint_holes=None, diffuse_px=None) -> dict[str, list[Finding]]:
+                   ground_area_m2=None, footprint_holes=None, diffuse_px=None,
+                   ground_materials=None) -> dict[str, list[Finding]]:
     """role: 'oks' | 'ground' | 'light'. Returns {stage_id: findings}. Ground FBX: Flora checks
     (twinqa.flora; flora_schedule = {mesh name: {"height_m", "crown_m"}}, flora_share default 70 000).
     ground_area_m2: VPM Ground area basis = site minus OKS footprint, m2; selects the reg p.29 band for the
@@ -1388,9 +1468,13 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
     and is the expected top-down area of the footprint-coverage finding (missing -> not_run, never pass).
     footprint_holes: optional list of XY rings, one polygon per OKS footprint hole. Ground coverage
     inside that region is a separate finding; None leaves it not_run and never a pass of the hole claim.
-    diffuse_px: VPM {(slot, udim): side px} of the archive Diffuse PNGs for V009 texel density."""
+    diffuse_px: VPM {(slot, udim): side px} of the archive Diffuse PNGs for V009 texel density.
+    ground_materials: optional allow-list (exact names or fnmatch globs) of Ground materials; only matching
+    faces feed the footprint area and hole checks. None keeps every non-UCX render face."""
     if ground_area_m2 is not None:
         check_ground_area(ground_area_m2)
+    if ground_materials is not None:
+        ground_materials = check_ground_materials(ground_materials)
     src = Path(rb["source"]).name
     out = {"V003": [], "V004": [], "V008": [], "V009": [], "V010": [], "V013": [], "V006": [], "V002": []}
     if not rb.get("readback_ok"):
@@ -1440,7 +1524,8 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
         out["V003"].append(_f(status, "triangle count", observed, f"<= {limit}", [7, 28, 29], src, conflicts, data,
                               measured=measured, threshold=threshold_n, margin=margin))
         if role == "ground":
-            out["V003"].extend(_ground_footprint_findings(meshes, ucx, src, ground_area_m2, footprint_holes))
+            out["V003"].extend(_ground_footprint_findings(meshes, ucx, src, ground_area_m2, footprint_holes,
+                                                         ground_materials))
             out["V003"].append(_ground_skirt_finding(meshes, ucx, src))
     foreign = [o for o in rb["other_objects"] if not (role == "light" and o["type"] in ("LIGHT", "EMPTY"))]
     if foreign:
