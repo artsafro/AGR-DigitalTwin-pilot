@@ -73,7 +73,7 @@ def start(repo, source):
 
 @pytest.mark.parametrize("name", ["handover", "takeover"])
 @pytest.mark.parametrize("shell", ["bash", "powershell"])
-@pytest.mark.parametrize("subdir", ["tools/max/viz", ".claude/commands", "tools/hooks"])
+@pytest.mark.parametrize("subdir", ["tools/max", ".claude/commands", "tools/hooks"])
 def test_rotation_command_from_subdirectory(name, shell, subdir, repo):
     """Execute the Markdown injection verbatim, not a reconstructed Python call."""
     executable = shutil.which(shell)
