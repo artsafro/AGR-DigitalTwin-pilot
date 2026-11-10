@@ -370,5 +370,23 @@
   "opacity": "C:/x/flora-library/v001/maps/calamagrostis-brachytricha/opacity-v001.png",
   "review_status": "approved",
   "evidence": "Artem 2026-10-16 Telegram 'Карты одобряю' (relayed to card t_6c48bc9d): all 54 batch-2 pairs approved, version v001 only (map-only approval, not model acceptance); review-sheet-batch2-v001.png; candidate e683fe151178; published via flora library gate (library-batch2-v001.json)"
+ },
+ "Symphyotrichum dumosum 'Island Samoa'": {
+  "diffuse": "G:/Мой диск/AGR-assets/flora/v003/maps/aster-dumosus-island-samoa/aster-dumosus-island-samoa_d_atlas_1024.png",
+  "opacity": "G:/Мой диск/AGR-assets/flora/v003/maps/aster-dumosus-island-samoa/aster-dumosus-island-samoa_o_atlas_1024.png",
+  "review_status": "pending_review",
+  "evidence": "pending review: Telegram «Материалы» msg 61627, atlas-ready crop (library/materials/maps_v001.json, D239); species high by caption + image; maps only, no mesh; not approved"
+ },
+ "Lysimachia punctata": {
+  "diffuse": "G:/Мой диск/AGR-assets/flora/v003/maps/lysimachia/lysimachia_d_atlas_1024.png",
+  "opacity": "G:/Мой диск/AGR-assets/flora/v003/maps/lysimachia/lysimachia_o_atlas_1024.png",
+  "review_status": "pending_review",
+  "evidence": "pending review: Telegram «Материалы» msg 61629, atlas-ready crop (library/materials/maps_v001.json, D239); species high by caption + image; maps only, no mesh; not approved"
+ },
+ "Achillea millefolium": {
+  "diffuse": "G:/Мой диск/AGR-assets/flora/v003/maps/achillea/achillea_v1_d_atlas_1024.png",
+  "opacity": "G:/Мой диск/AGR-assets/flora/v003/maps/achillea/achillea_v1_o_atlas_1024.png",
+  "review_status": "pending_review",
+  "evidence": "pending review: Telegram «Материалы» msg 61631, atlas-ready crop v1 of 2 (v2 in the same folder) (library/materials/maps_v001.json, D239); species high by caption + image; maps only, no mesh; not approved"
  }
 }

@@ -17,6 +17,7 @@ import sys
 import zipfile
 from pathlib import Path
 
+import numpy as np
 import yaml
 from PIL import Image
 
@@ -86,7 +87,59 @@ def render(im: Image.Image, out: dict) -> Image.Image:
             rgb = grey_rgb(rgb.getchannel(out["channel"]))
         colour = rgb.resize((1, 1), Image.Resampling.BOX).getpixel((0, 0))
         return Image.new("RGB", (out["size"], out["size"]), colour)
+    if op == "sprite":  # atlas-ready flora cut-out: `sprite` index, `map` d (dilated RGB) or o (alpha)
+        return sprite_map(im.convert("RGBA"), out)
     raise SystemExit(f"unknown op {op!r}")
+
+
+def sprites(alpha: np.ndarray, min_gap: int = 16, min_px: int = 4096) -> list[tuple[int, int, int, int]]:
+    """Plant boxes (x0, y0, x1, y1) by recursive XY-cut on empty rows/columns of the alpha mask, reading order."""
+    def cut(y0, y1, x0, x1):
+        mask = alpha[y0:y1, x0:x1]
+        if mask.sum() < min_px:
+            return []
+        rows, cols = np.flatnonzero(mask.any(1)), np.flatnonzero(mask.any(0))
+        y0, y1, x0, x1 = y0 + rows[0], y0 + rows[-1] + 1, x0 + cols[0], x0 + cols[-1] + 1
+        for axis, idx in ((0, rows), (1, cols)):  # split at the first gap >= min_gap
+            gaps = np.flatnonzero(np.diff(idx) > min_gap)
+            if gaps.size:
+                at = idx[gaps[0]] + 1 - idx[0]
+                return cut(y0, y0 + at, x0, x1) + cut(y0 + at, y1, x0, x1) if axis == 0 else \
+                    cut(y0, y1, x0, x0 + at) + cut(y0, y1, x0 + at, x1)
+        return [(int(x0), int(y0), int(x1), int(y1))]
+    return cut(0, alpha.shape[0], 0, alpha.shape[1])
+
+
+def push_pull(rgb: np.ndarray, weight: np.ndarray) -> np.ndarray:
+    """Fill colour where weight == 0 from the nearest coverage (pull: 2x box means, push: upsample); square POT."""
+    if rgb.shape[0] == 1 or weight.all():
+        return rgb
+    w = weight[..., None]
+    h = rgb.shape[0] // 2
+    sum_c = (rgb * w).reshape(h, 2, h, 2, 3).sum((1, 3))
+    sum_w = w.reshape(h, 2, h, 2, 1).sum((1, 3))
+    coarse = push_pull(np.where(sum_w > 0, sum_c / np.maximum(sum_w, 1e-9), 0), (sum_w[..., 0] > 0).astype(float))
+    fill = coarse.repeat(2, 0).repeat(2, 1)
+    return np.where(w > 0, rgb, fill)
+
+
+def sprite_map(im: Image.Image, out: dict) -> Image.Image:
+    alpha = np.asarray(im.getchannel("A")) > out.get("threshold", 8)
+    boxes = sprites(alpha)
+    x0, y0, x1, y1 = boxes[out["sprite"]]
+    m = out.get("margin_px", 32)
+    side = max(x1 - x0, y1 - y0) + 2 * m  # square, plant bottom-centred (star plane pivot at the base)
+    cx, bottom = (x0 + x1) // 2, y1 + m
+    box = (cx - side // 2, bottom - side, cx - side // 2 + side, bottom)
+    canvas = Image.new("RGBA", (side, side), (0, 0, 0, 0))
+    canvas.paste(im.crop((x0, y0, x1, y1)), (x0 - box[0], y0 - box[1]))  # only this plant's pixels, never a neighbour
+    size = min(out.get("max_size", 2048), 1 << (side.bit_length() - 1))  # largest POT <= side, capped
+    small = canvas.convert("RGBa").resize((size, size), Image.Resampling.LANCZOS).convert("RGBA")  # premultiplied
+    a = np.asarray(small.getchannel("A"))
+    if out["map"] == "o":
+        return grey_rgb(Image.fromarray(a))
+    rgb = np.asarray(small.convert("RGB")).astype(float)
+    return Image.fromarray(np.clip(push_pull(rgb, (a > 0).astype(float)) + 0.5, 0, 255).astype(np.uint8), "RGB")
 
 
 def encode(im: Image.Image) -> bytes:
@@ -151,7 +204,7 @@ def main(argv=None):
     inbox_dir = spec["inbox"]
     raw = json.loads((args.root / inbox_dir / "manifest.json").read_text(encoding="utf-8"))
     inbox = {i["msg_id"]: dict(i, path=f"{inbox_dir}/{i['file']}") for i in raw["items"]}
-    rows, seen = [], set()
+    rows, seen, written = [], set(), 0
     for src in spec["sources"]:
         im, ref = load_source(args.root, inbox, src)
         for out in src["outputs"]:
@@ -160,7 +213,7 @@ def main(argv=None):
             if path in seen:
                 raise SystemExit(f"duplicate output path {path}")
             seen.add(path)
-            state = write_new(args.root / path, data)
+            written += write_new(args.root / path, data) == "written"
             tile_m = out.get("tile_m", src.get("tile_m"))
             px_per_m = round(img.width / tile_m, 1) if tile_m else None
             rows.append({
@@ -180,7 +233,6 @@ def main(argv=None):
                 "verdict": out.get("verdict", src["verdict"]),
                 "notes": " ".join(x for x in (src.get("notes"), out.get("notes")) if x) or None,
                 "checks": checks(path, data, out["profile"], npm_profile),
-                "write": state,
             })
     manifest = {
         "schema": 1, "version": "v001", "decision": "D239",
@@ -188,12 +240,13 @@ def main(argv=None):
         "inbox": inbox_dir, "inbox_manifest_sha256": sha256((args.root / inbox_dir / "manifest.json").read_bytes()),
         "spec": args.spec.as_posix(), "tool": "tools/materials/inbox_maps.py",
         "new_library_ids": spec.get("new_library_ids", []),
+        "flora_candidates": spec.get("flora_candidates", []),
         "skipped": spec.get("skipped", []),
         "maps": rows,
     }
     args.out.write_text(json.dumps(manifest, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     failed = [r["path"] for r in rows if r["checks"] != "pass"]
-    print(f"{len(rows)} maps, {sum(r['write'] == 'written' for r in rows)} written, {len(failed)} failed checks")
+    print(f"{len(rows)} maps, {written} written, {len(failed)} failed checks")
     for p in failed:
         print("  FAIL", p)
     return 1 if failed else 0

@@ -1153,6 +1153,590 @@
      "profile": "flora_source"
     }
    ]
+  },
+  {
+   "src": 61626,
+   "key": "miscanthus",
+   "library_id": null,
+   "verdict": "",
+   "outputs": [
+    {
+     "path": "flora/v003/maps/miscanthus/miscanthus_d_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 0,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "d",
+     "profile": "flora_source",
+     "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+     "notes": "Plant 1 of 1 in the source."
+    },
+    {
+     "path": "flora/v003/maps/miscanthus/miscanthus_o_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 0,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "o",
+     "profile": "flora_source",
+     "verdict": "atlas-ready opacity of the same crop",
+     "notes": "Plant 1 of 1 in the source."
+    }
+   ]
+  },
+  {
+   "src": 61627,
+   "key": "aster-dumosus-island-samoa",
+   "library_id": null,
+   "verdict": "",
+   "outputs": [
+    {
+     "path": "flora/v003/maps/aster-dumosus-island-samoa/aster-dumosus-island-samoa_d_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 0,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "d",
+     "profile": "flora_source",
+     "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+     "notes": "Plant 1 of 1 in the source."
+    },
+    {
+     "path": "flora/v003/maps/aster-dumosus-island-samoa/aster-dumosus-island-samoa_o_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 0,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "o",
+     "profile": "flora_source",
+     "verdict": "atlas-ready opacity of the same crop",
+     "notes": "Plant 1 of 1 in the source."
+    }
+   ]
+  },
+  {
+   "src": 61628,
+   "key": "berberis",
+   "library_id": null,
+   "verdict": "",
+   "outputs": [
+    {
+     "path": "flora/v003/maps/berberis/berberis_d_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 0,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "d",
+     "profile": "flora_source",
+     "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+     "notes": "Plant 1 of 1 in the source."
+    },
+    {
+     "path": "flora/v003/maps/berberis/berberis_o_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 0,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "o",
+     "profile": "flora_source",
+     "verdict": "atlas-ready opacity of the same crop",
+     "notes": "Plant 1 of 1 in the source."
+    }
+   ]
+  },
+  {
+   "src": 61629,
+   "key": "lysimachia",
+   "library_id": null,
+   "verdict": "",
+   "outputs": [
+    {
+     "path": "flora/v003/maps/lysimachia/lysimachia_d_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 0,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "d",
+     "profile": "flora_source",
+     "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+     "notes": "Plant 1 of 1 in the source."
+    },
+    {
+     "path": "flora/v003/maps/lysimachia/lysimachia_o_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 0,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "o",
+     "profile": "flora_source",
+     "verdict": "atlas-ready opacity of the same crop",
+     "notes": "Plant 1 of 1 in the source."
+    }
+   ]
+  },
+  {
+   "src": 61630,
+   "key": "syringa",
+   "library_id": null,
+   "verdict": "",
+   "outputs": [
+    {
+     "path": "flora/v003/maps/syringa/syringa_v1_d_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 0,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "d",
+     "profile": "flora_source",
+     "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+     "notes": "Plant 1 of 2 in the source."
+    },
+    {
+     "path": "flora/v003/maps/syringa/syringa_v1_o_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 0,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "o",
+     "profile": "flora_source",
+     "verdict": "atlas-ready opacity of the same crop",
+     "notes": "Plant 1 of 2 in the source."
+    },
+    {
+     "path": "flora/v003/maps/syringa/syringa_v2_d_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 1,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "d",
+     "profile": "flora_source",
+     "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+     "notes": "Plant 2 of 2 in the source."
+    },
+    {
+     "path": "flora/v003/maps/syringa/syringa_v2_o_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 1,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "o",
+     "profile": "flora_source",
+     "verdict": "atlas-ready opacity of the same crop",
+     "notes": "Plant 2 of 2 in the source."
+    }
+   ]
+  },
+  {
+   "src": 61631,
+   "key": "achillea",
+   "library_id": null,
+   "verdict": "",
+   "outputs": [
+    {
+     "path": "flora/v003/maps/achillea/achillea_v1_d_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 0,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "d",
+     "profile": "flora_source",
+     "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+     "notes": "Plant 1 of 2 in the source."
+    },
+    {
+     "path": "flora/v003/maps/achillea/achillea_v1_o_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 0,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "o",
+     "profile": "flora_source",
+     "verdict": "atlas-ready opacity of the same crop",
+     "notes": "Plant 1 of 2 in the source."
+    },
+    {
+     "path": "flora/v003/maps/achillea/achillea_v2_d_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 1,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "d",
+     "profile": "flora_source",
+     "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+     "notes": "Plant 2 of 2 in the source."
+    },
+    {
+     "path": "flora/v003/maps/achillea/achillea_v2_o_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 1,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "o",
+     "profile": "flora_source",
+     "verdict": "atlas-ready opacity of the same crop",
+     "notes": "Plant 2 of 2 in the source."
+    }
+   ]
+  },
+  {
+   "src": 61632,
+   "key": "rosa",
+   "library_id": null,
+   "verdict": "",
+   "outputs": [
+    {
+     "path": "flora/v003/maps/rosa/rosa_v1_d_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 0,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "d",
+     "profile": "flora_source",
+     "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+     "notes": "Plant 1 of 2 in the source."
+    },
+    {
+     "path": "flora/v003/maps/rosa/rosa_v1_o_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 0,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "o",
+     "profile": "flora_source",
+     "verdict": "atlas-ready opacity of the same crop",
+     "notes": "Plant 1 of 2 in the source."
+    },
+    {
+     "path": "flora/v003/maps/rosa/rosa_v2_d_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 1,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "d",
+     "profile": "flora_source",
+     "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+     "notes": "Plant 2 of 2 in the source."
+    },
+    {
+     "path": "flora/v003/maps/rosa/rosa_v2_o_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 1,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "o",
+     "profile": "flora_source",
+     "verdict": "atlas-ready opacity of the same crop",
+     "notes": "Plant 2 of 2 in the source."
+    }
+   ]
+  },
+  {
+   "src": 66203,
+   "key": "daisy-white",
+   "library_id": null,
+   "verdict": "",
+   "outputs": [
+    {
+     "path": "flora/v003/maps/daisy-white/daisy-white_d_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 0,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "d",
+     "profile": "flora_source",
+     "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+     "notes": "Plant 1 of 1 in the source."
+    },
+    {
+     "path": "flora/v003/maps/daisy-white/daisy-white_o_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 0,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "o",
+     "profile": "flora_source",
+     "verdict": "atlas-ready opacity of the same crop",
+     "notes": "Plant 1 of 1 in the source."
+    }
+   ]
+  },
+  {
+   "src": 66204,
+   "key": "daisy-yellow",
+   "library_id": null,
+   "verdict": "",
+   "outputs": [
+    {
+     "path": "flora/v003/maps/daisy-yellow/daisy-yellow_d_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 0,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "d",
+     "profile": "flora_source",
+     "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+     "notes": "Plant 1 of 1 in the source."
+    },
+    {
+     "path": "flora/v003/maps/daisy-yellow/daisy-yellow_o_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 0,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "o",
+     "profile": "flora_source",
+     "verdict": "atlas-ready opacity of the same crop",
+     "notes": "Plant 1 of 1 in the source."
+    }
+   ]
+  },
+  {
+   "src": 66205,
+   "key": "lavandula",
+   "library_id": null,
+   "verdict": "",
+   "outputs": [
+    {
+     "path": "flora/v003/maps/lavandula/lavandula_d_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 0,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "d",
+     "profile": "flora_source",
+     "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+     "notes": "Plant 1 of 1 in the source."
+    },
+    {
+     "path": "flora/v003/maps/lavandula/lavandula_o_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 0,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "o",
+     "profile": "flora_source",
+     "verdict": "atlas-ready opacity of the same crop",
+     "notes": "Plant 1 of 1 in the source."
+    }
+   ]
+  },
+  {
+   "src": 66206,
+   "key": "miscanthus-v2",
+   "library_id": null,
+   "verdict": "",
+   "outputs": [
+    {
+     "path": "flora/v003/maps/miscanthus-v2/miscanthus-v2_d_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 0,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "d",
+     "profile": "flora_source",
+     "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+     "notes": "Plant 1 of 1 in the source."
+    },
+    {
+     "path": "flora/v003/maps/miscanthus-v2/miscanthus-v2_o_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 0,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "o",
+     "profile": "flora_source",
+     "verdict": "atlas-ready opacity of the same crop",
+     "notes": "Plant 1 of 1 in the source."
+    }
+   ]
+  },
+  {
+   "src": 66207,
+   "key": "triticum",
+   "library_id": null,
+   "verdict": "",
+   "outputs": [
+    {
+     "path": "flora/v003/maps/triticum/triticum_d_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 0,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "d",
+     "profile": "flora_source",
+     "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+     "notes": "Plant 1 of 1 in the source."
+    },
+    {
+     "path": "flora/v003/maps/triticum/triticum_o_atlas_{size}.png",
+     "op": "sprite",
+     "sprite": 0,
+     "margin_px": 32,
+     "max_size": 2048,
+     "map": "o",
+     "profile": "flora_source",
+     "verdict": "atlas-ready opacity of the same crop",
+     "notes": "Plant 1 of 1 in the source."
+    }
+   ]
+  }
+ ],
+ "flora_candidates": [
+  {
+   "slug": "miscanthus",
+   "caption_ru": "Мискантус",
+   "latin": null,
+   "latin_candidate": "Miscanthus sinensis",
+   "type": "flower",
+   "confidence": "medium",
+   "basis": "caption + silvery plumes on a tall clumping grass; species by habit only",
+   "catalogue": "same genus as 406 Miscanthus sinensis (its approved maps kept)",
+   "variants": 1,
+   "source_msg_id": 61626,
+   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+  },
+  {
+   "slug": "aster-dumosus-island-samoa",
+   "caption_ru": "Астра кустарниковая ‘Island Samoa’",
+   "latin": "Symphyotrichum dumosum 'Island Samoa'",
+   "latin_candidate": null,
+   "type": "flower",
+   "confidence": "high",
+   "basis": "caption names the cultivar (syn. Aster dumosus); pink-violet daisy cushion matches",
+   "catalogue": "new (401 is S. novae-angliae, another species)",
+   "variants": 1,
+   "source_msg_id": 61627,
+   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+  },
+  {
+   "slug": "berberis",
+   "caption_ru": "Барбарис",
+   "latin": null,
+   "latin_candidate": "Berberis thunbergii 'Atropurpurea' or Berberis × ottawensis 'Superba'",
+   "type": "bush",
+   "confidence": "unconfirmed",
+   "basis": "caption gives the genus; red-purple foliage fits both candidates",
+   "catalogue": "201 / 226 exist (their approved maps kept)",
+   "variants": 1,
+   "source_msg_id": 61628,
+   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+  },
+  {
+   "slug": "lysimachia",
+   "caption_ru": "Вербейник",
+   "latin": "Lysimachia punctata",
+   "latin_candidate": null,
+   "type": "flower",
+   "confidence": "high",
+   "basis": "caption + yellow flowers in whorls along upright leafy stems",
+   "catalogue": "new",
+   "variants": 1,
+   "source_msg_id": 61629,
+   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+  },
+  {
+   "slug": "syringa",
+   "caption_ru": "Сирень",
+   "latin": null,
+   "latin_candidate": "Syringa vulgaris",
+   "type": "bush",
+   "confidence": "medium",
+   "basis": "caption + lilac panicles; species not visible on a sprite",
+   "catalogue": "111-113 / 116 exist (their approved maps kept)",
+   "variants": 2,
+   "source_msg_id": 61630,
+   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+  },
+  {
+   "slug": "achillea",
+   "caption_ru": "Тысячелистник",
+   "latin": "Achillea millefolium",
+   "latin_candidate": null,
+   "type": "flower",
+   "confidence": "high",
+   "basis": "caption + flat white umbels and feathery leaves",
+   "catalogue": "new",
+   "variants": 2,
+   "source_msg_id": 61631,
+   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+  },
+  {
+   "slug": "rosa",
+   "caption_ru": "Роза",
+   "latin": null,
+   "latin_candidate": "Rosa (pink shrub rose, cultivar unknown)",
+   "type": "bush",
+   "confidence": "unconfirmed",
+   "basis": "caption gives the genus only",
+   "catalogue": "new",
+   "variants": 2,
+   "source_msg_id": 61632,
+   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+  },
+  {
+   "slug": "daisy-white",
+   "caption_ru": "Ромашка белая",
+   "latin": null,
+   "latin_candidate": "Leucanthemum or Argyranthemum (white marguerite)",
+   "type": "flower",
+   "confidence": "unconfirmed",
+   "basis": "caption 'Romashka' is a common name for several genera; cushion habit",
+   "catalogue": "new",
+   "variants": 1,
+   "source_msg_id": 66203,
+   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+  },
+  {
+   "slug": "daisy-yellow",
+   "caption_ru": "Ромашка жёлтая",
+   "latin": null,
+   "latin_candidate": "Argyranthemum / Euryops / Anthemis (yellow daisy)",
+   "type": "flower",
+   "confidence": "unconfirmed",
+   "basis": "caption 'Romashka' is a common name; yellow-rayed cushion",
+   "catalogue": "new",
+   "variants": 1,
+   "source_msg_id": 66204,
+   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+  },
+  {
+   "slug": "lavandula",
+   "caption_ru": "Лаванда",
+   "latin": null,
+   "latin_candidate": "Lavandula angustifolia",
+   "type": "flower",
+   "confidence": "medium",
+   "basis": "caption + lavender spikes on grey foliage; species not visible",
+   "catalogue": "new",
+   "variants": 1,
+   "source_msg_id": 66205,
+   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+  },
+  {
+   "slug": "miscanthus-v2",
+   "caption_ru": "Мискантус v2",
+   "latin": null,
+   "latin_candidate": "grass, genus unknown (no plumes)",
+   "type": "flower",
+   "confidence": "unconfirmed",
+   "basis": "caption says miscanthus, the image shows a green grass clump without plumes",
+   "catalogue": "new",
+   "variants": 1,
+   "source_msg_id": 66206,
+   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+  },
+  {
+   "slug": "triticum",
+   "caption_ru": "Пшеница",
+   "latin": null,
+   "latin_candidate": "Triticum aestivum",
+   "type": "flower",
+   "confidence": "medium",
+   "basis": "caption + wheat ears; ornamental use, species by look",
+   "catalogue": "new",
+   "variants": 1,
+   "source_msg_id": 66207,
+   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
   }
  ]
 }
