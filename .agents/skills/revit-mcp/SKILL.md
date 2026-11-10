@@ -18,6 +18,23 @@ document, units and version; preserve sources and accepted outputs. Apply the
 before execution; authorization never permits a prohibited overwrite. Read outputs
 back before reporting success. Inspection and live-mutation coverage are separate.
 
+## Session rules (zero prompt)
+
+Apply these from the first call of every Revit session, before the task itself. Adapted from the «zero
+prompt» of the novusarchitectus.ru Revit + Claude lessons (user decision 2026-11-10,
+`docs/research/telegram-3dsmax-chat-2026-11.md`).
+
+1. Read-only by default. Ask every open question before the first change, not midway.
+2. Study the model first (document, levels, categories, the elements the task names), then propose a short
+   plan with the exact operations and wait for approval before any write.
+3. Build only native Revit elements of the right category (walls, floors, roofs, openings, families).
+   Never DirectShape, imported meshes or zero-thickness surfaces as a stand-in for a building element.
+4. Never invent a dimension, level, type or parameter value. Take it from the model, the source or the user;
+   when it is missing, ask.
+5. One Revit request at a time; read the result before the next call.
+6. Finish with the ids of every created or changed element and two lists: what was checked (by readback) and
+   what is still open.
+
 ## Connect and verify
 
 1. Use `revit-http-2025` for broad Revit model information. It is configured
