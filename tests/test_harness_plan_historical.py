@@ -309,8 +309,14 @@ def test_mesh_frame_error_string_carries_the_marker():
     idx = next(i for i, ln in enumerate(lines) if "every spec needs a frame" in ln)
     window = "".join(lines[idx : idx + 2])
     assert _TOKEN in window and _MARKER.search(window), lines[idx]
-    stripped = _MARKER.sub("", window)
-    assert _MARKER.search(stripped) is None
+    text = "\n".join(lines)
+    assert unmarked_lines(text) == []
+    stripped = "\n".join(
+        _MARKER.sub("", ln) if idx <= i < idx + 2 else ln for i, ln in enumerate(lines)
+    )
+    hits = unmarked_lines(stripped)
+    mention = next(i for i in (idx, idx + 1) if _TOKEN in lines[i])
+    assert hits == [mention + 1], hits
 
 
 def test_missing_live_file_fails_never_skips(monkeypatch):

@@ -7,6 +7,7 @@ import pytest
 from dt_ai.core.io import read_json
 from dt_ai.core.models import BuildJob
 
+import exit_guard
 from basetemp_default import default_basetemp, is_inside
 
 _BASETEMP_SOURCE = pytest.StashKey[str]()
@@ -19,6 +20,9 @@ def pytest_configure(config):
     A given basetemp inside the repository (e.g. the shlex-mangled ``C:Users...pytest_tmp`` from a
     backslash ``PYTEST_ADDOPTS``) is replaced by the default, with a warning.
     """
+    # Register main's hard-exit protection even when an explicit basetemp returns early.
+    if not config.pluginmanager.has_plugin("exit_guard"):
+        config.pluginmanager.register(exit_guard, "exit_guard")
     given = config.option.basetemp
     if given and not is_inside(given, config.rootpath):
         config.stash[_BASETEMP_SOURCE] = "--basetemp"
