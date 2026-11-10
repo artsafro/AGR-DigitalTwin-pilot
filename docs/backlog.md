@@ -77,7 +77,7 @@ items out of this file in the same merge. `C<N>` = conflict N in `docs/domain/co
   regression; keep the ten Vatutino rows as the acceptance set.
 - **P15** (Codex) Scene analyser for reduction: rank objects by size, find near-identical meshes (same topology,
   transform-invariant) and propose instances; report before any change. Idea from the «3ds Max» Telegram group
-  (`docs/research/telegram-3dsmax-chat-2026-11.md`, accepted by the user 2026-11-10).
+  (`docs/research/telegram-3dsmax-chat-2026-11.md`, accepted by the user 2026-11-10 [D237]).
 - **P16** (Claude) Evaluate FenceFit03.dlm (RailClone sub-evenly segments fitted to terrain) for Ground / MAF
   fences: deterministic result, collapse to mesh, FBX readback; same research note.
 - **P17** (later) Own asset catalog (models, materials, textures, previews, relink without Max); Project Manager
@@ -298,7 +298,7 @@ The harness spec upstream#118 tail (freeze `archive/2026-11:docs/HARNESS_PLAN.md
 - **H12** Branches not merged on purpose (user, 2026-10-07 [D006]): `claude/npm-models-school-kpp-ec9ced`
   (BUTOVSKAYA-NPM, work in progress), `claude/modest-ptolemy-684fb7` and `feature/kpp1-ground` (TEC26
   ground, adds `ezdxf`). Owner: user decides when to resume.
-- **H14** (Claude) Update `3dsmax-mcp` v1.7.5 → v1.7.8 (user 2026-11-10): close 3ds Max and every agent client
+- **H14** (Claude) Update `3dsmax-mcp` v1.7.5 → v1.7.8 (user 2026-11-10 [D237]): close 3ds Max and every agent client
   that runs the server, `git checkout v1.7.8`, `uv sync`, `uv run python install.py --tool-profile full`, keep
   `safe_mode = true`, rerun the read-only smoke, update `CAPABILITIES.md`.
 - **H13** (Claude) Rerun the merged `fix/export-safety` scripts on real data: KPP1 full `run_all.sh` on a new
