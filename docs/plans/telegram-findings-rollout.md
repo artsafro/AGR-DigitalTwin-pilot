@@ -31,7 +31,6 @@ One step = one branch / PR unless marked "batch". Status: `done`, `next`, `later
 | 2.3 | MAF atlas 512 bake from 53407 by `library/maf/material_ids_v005.json`; pine as its own WOOD2 slot [D239] | atlas passes the MAF atlas rules | next |
 | 2.4 | New flora species (daisy white / yellow, lavender, wheat, loosestrife, yarrow) into `library/flora/catalogue.json` | rows + maps, `model-flora` tests pass | after 2.2 |
 | 2.5 | Fill the missing sets from Megascans (gravel, pebbles, mulch, rubber crumb, roll lawn, roofs, facade masks, pine): check the Fab licence for commercial delivery first | licence note + rows in the manifest | blocked: licence |
-| 2.6 | Inventory of the Yandex «ALL textures» folder (69813) — listing only, no import | list with sizes and origin | later |
 
 ## Phase 3 — 3ds Max tooling
 
@@ -55,4 +54,4 @@ One step = one branch / PR unless marked "batch". Status: `done`, `next`, `later
 
 Max Ultra MCP, opencode, rea, DragShift, allesimfluss, UV Unfoldr, new requirements PDF / IFC post / window atlas
 rule / SintezAgrChecker / AlexYo_AssetImporter from «АГР - Holding» (user 2026-11-10 [D237]), the DLSS exe from
-@neuroviza (untrusted binary).
+@neuroviza (untrusted binary), the inventory of the Yandex «ALL textures» folder (69813, former step 2.6; user 2026-11-10 [D240]).
