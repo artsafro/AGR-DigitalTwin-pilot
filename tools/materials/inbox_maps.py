@@ -7,7 +7,7 @@ The spec names, per inbox source (msg id), the outputs to write under --root: pl
 resamples, one-colour placeholders, single channels, alpha -> `_o` grey maps, padding to a power of
 two. Inbox originals are only read (sha256 checked against the inbox manifest.json). An output that
 already exists is never overwritten: identical bytes are kept, different bytes stop the run.
-Every output is a PNG, 8 bit RGB, no alpha; NPM outputs are checked with twinqa.png (V006 rules).
+Every output is a PNG, 8 bit, no alpha (RGB; binary star opacity is grey L); NPM outputs are checked with twinqa.png (V006 rules).
 """
 import argparse
 import hashlib
@@ -136,10 +136,39 @@ def sprite_map(im: Image.Image, out: dict) -> Image.Image:
     size = min(out.get("max_size", 2048), 1 << (side.bit_length() - 1))  # largest POT <= side, capped
     small = canvas.convert("RGBa").resize((size, size), Image.Resampling.LANCZOS).convert("RGBA")  # premultiplied
     a = np.asarray(small.getchannel("A"))
+    if out["map"] == "o" and out.get("binary"):  # star opacity: grey L, 0/255 at 128 (build_flora_star.py)
+        mask = a >= 128
+        if out.get("fill_holes_px"):
+            mask = fill_small_holes(mask, out["fill_holes_px"])
+        return Image.fromarray((mask * 255).astype(np.uint8), "L")
     if out["map"] == "o":
         return grey_rgb(Image.fromarray(a))
     rgb = np.asarray(small.convert("RGB")).astype(float)
     return Image.fromarray(np.clip(push_pull(rgb, (a > 0).astype(float)) + 0.5, 0, 255).astype(np.uint8), "RGB")
+
+
+def fill_small_holes(mask: np.ndarray, max_px: int) -> np.ndarray:
+    """Close background islands enclosed by the plant with at most `max_px` pixels (4-connected)."""
+    h, w = mask.shape
+    seen = mask.copy()
+    out = mask.copy()
+    for y, x in zip(*np.nonzero(~mask)):
+        if seen[y, x]:
+            continue
+        stack, comp, border = [(y, x)], [], False
+        seen[y, x] = True
+        while stack:
+            cy, cx = stack.pop()
+            comp.append((cy, cx))
+            border |= cy in (0, h - 1) or cx in (0, w - 1)
+            for ny, nx in ((cy - 1, cx), (cy + 1, cx), (cy, cx - 1), (cy, cx + 1)):
+                if 0 <= ny < h and 0 <= nx < w and not seen[ny, nx]:
+                    seen[ny, nx] = True
+                    stack.append((ny, nx))
+        if not border and len(comp) <= max_px:
+            ys, xs = zip(*comp)
+            out[list(ys), list(xs)] = True
+    return out
 
 
 def encode(im: Image.Image) -> bytes:
@@ -173,8 +202,8 @@ def write_new(path: Path, data: bytes) -> str:
 def checks(name: str, data: bytes, profile: str, npm_profile: dict) -> str:
     facts = png_facts(name, data)
     bad = []
-    if facts.has_alpha or facts.color_type != 2 or facts.bit_depth != 8:
-        bad.append("not 8-bit RGB without alpha")
+    if facts.has_alpha or facts.color_type not in (0, 2) or facts.bit_depth != 8:
+        bad.append("not 8-bit RGB or grey without alpha")
     side = facts.width
     if facts.width != facts.height or side & (side - 1):
         bad.append("not a square power of two")

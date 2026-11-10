@@ -373,20 +373,20 @@
  },
  "Symphyotrichum dumosum 'Island Samoa'": {
   "diffuse": "G:/Мой диск/AGR-assets/flora/v003/maps/aster-dumosus-island-samoa/aster-dumosus-island-samoa_d_atlas_1024.png",
-  "opacity": "G:/Мой диск/AGR-assets/flora/v003/maps/aster-dumosus-island-samoa/aster-dumosus-island-samoa_o_atlas_1024.png",
-  "review_status": "pending_review",
-  "evidence": "pending review: Telegram «Материалы» msg 61627, atlas-ready crop (library/materials/maps_v001.json, D239); species high by caption + image; maps only, no mesh; not approved"
+  "opacity": "G:/Мой диск/AGR-assets/flora/v003/maps/aster-dumosus-island-samoa/aster-dumosus-island-samoa_o_star_1024.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-11-10 «Подходят, да строить» on the review sheet [D242] (map-only approval, not model acceptance); Telegram «Материалы» msg 61627, crop; opacity = binary star map"
  },
  "Lysimachia punctata": {
   "diffuse": "G:/Мой диск/AGR-assets/flora/v003/maps/lysimachia/lysimachia_d_atlas_1024.png",
-  "opacity": "G:/Мой диск/AGR-assets/flora/v003/maps/lysimachia/lysimachia_o_atlas_1024.png",
-  "review_status": "pending_review",
-  "evidence": "pending review: Telegram «Материалы» msg 61629, atlas-ready crop (library/materials/maps_v001.json, D239); species high by caption + image; maps only, no mesh; not approved"
+  "opacity": "G:/Мой диск/AGR-assets/flora/v003/maps/lysimachia/lysimachia_o_star_1024.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-11-10 «Подходят, да строить» on the review sheet [D242] (map-only approval, not model acceptance); Telegram «Материалы» msg 61629, crop; opacity = binary star map"
  },
  "Achillea millefolium": {
   "diffuse": "G:/Мой диск/AGR-assets/flora/v003/maps/achillea/achillea_v1_d_atlas_1024.png",
-  "opacity": "G:/Мой диск/AGR-assets/flora/v003/maps/achillea/achillea_v1_o_atlas_1024.png",
-  "review_status": "pending_review",
-  "evidence": "pending review: Telegram «Материалы» msg 61631, atlas-ready crop v1 of 2 (v2 in the same folder) (library/materials/maps_v001.json, D239); species high by caption + image; maps only, no mesh; not approved"
+  "opacity": "G:/Мой диск/AGR-assets/flora/v003/maps/achillea/achillea_v1_o_star_1024.png",
+  "review_status": "approved",
+  "evidence": "Artem 2026-11-10 «Подходят, да строить» on the review sheet [D242] (map-only approval, not model acceptance); Telegram «Материалы» msg 61631, crop v1 (species map; v2 in the same folder is a variant); opacity = binary star map"
  }
 }

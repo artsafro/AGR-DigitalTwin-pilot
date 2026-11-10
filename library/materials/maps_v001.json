@@ -98,10 +98,10 @@
    "type": "flower",
    "confidence": "medium",
    "basis": "caption + silvery plumes on a tall clumping grass; species by habit only",
-   "catalogue": "same genus as 406 Miscanthus sinensis (its approved maps kept)",
+   "catalogue": "same genus as 406 Miscanthus sinensis; approved catalogue maps stay, Telegram crops are extra variants only [D242]",
    "variants": 1,
    "source_msg_id": 61626,
-   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+   "status": "candidate: waits for the user to confirm the Latin name [D242]; maps only, no mesh"
   },
   {
    "slug": "aster-dumosus-island-samoa",
@@ -114,7 +114,7 @@
    "catalogue": "new (401 is S. novae-angliae, another species)",
    "variants": 1,
    "source_msg_id": 61627,
-   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+   "status": "maps approved [D242]; NPM star + VPM shell built in C:/x/flora-telegram-stars/v002 (spec library/flora/stars-telegram-v001.json, material id 410 proposed); catalogue row waits for the object in the library .max and its audit source (Max held by the user)"
   },
   {
    "slug": "berberis",
@@ -124,10 +124,10 @@
    "type": "bush",
    "confidence": "unconfirmed",
    "basis": "caption gives the genus; red-purple foliage fits both candidates",
-   "catalogue": "201 / 226 exist (their approved maps kept)",
+   "catalogue": "201 / 226 exist; approved catalogue maps stay, Telegram crops are extra variants only [D242]",
    "variants": 1,
    "source_msg_id": 61628,
-   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+   "status": "candidate: waits for the user to confirm the Latin name [D242]; maps only, no mesh"
   },
   {
    "slug": "lysimachia",
@@ -140,7 +140,7 @@
    "catalogue": "new",
    "variants": 1,
    "source_msg_id": 61629,
-   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+   "status": "maps approved [D242]; NPM star + VPM shell built in C:/x/flora-telegram-stars/v002 (spec library/flora/stars-telegram-v001.json, material id 411 proposed); catalogue row waits for the object in the library .max and its audit source (Max held by the user)"
   },
   {
    "slug": "syringa",
@@ -150,10 +150,10 @@
    "type": "bush",
    "confidence": "medium",
    "basis": "caption + lilac panicles; species not visible on a sprite",
-   "catalogue": "111-113 / 116 exist (their approved maps kept)",
+   "catalogue": "111-113 / 116 exist; approved catalogue maps stay, Telegram crops are extra variants only [D242]",
    "variants": 2,
    "source_msg_id": 61630,
-   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+   "status": "candidate: waits for the user to confirm the Latin name [D242]; maps only, no mesh"
   },
   {
    "slug": "achillea",
@@ -166,7 +166,7 @@
    "catalogue": "new",
    "variants": 2,
    "source_msg_id": 61631,
-   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+   "status": "maps approved [D242]; NPM star + VPM shell built in C:/x/flora-telegram-stars/v002 (spec library/flora/stars-telegram-v001.json, material id 412 proposed); catalogue row waits for the object in the library .max and its audit source (Max held by the user); v1 is the species map, v2 a variant"
   },
   {
    "slug": "rosa",
@@ -179,7 +179,7 @@
    "catalogue": "new",
    "variants": 2,
    "source_msg_id": 61632,
-   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+   "status": "candidate: waits for the user to confirm the Latin name [D242]; maps only, no mesh"
   },
   {
    "slug": "daisy-white",
@@ -192,7 +192,7 @@
    "catalogue": "new",
    "variants": 1,
    "source_msg_id": 66203,
-   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+   "status": "candidate: waits for the user to confirm the Latin name [D242]; maps only, no mesh"
   },
   {
    "slug": "daisy-yellow",
@@ -205,7 +205,7 @@
    "catalogue": "new",
    "variants": 1,
    "source_msg_id": 66204,
-   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+   "status": "candidate: waits for the user to confirm the Latin name [D242]; maps only, no mesh"
   },
   {
    "slug": "lavandula",
@@ -218,7 +218,7 @@
    "catalogue": "new",
    "variants": 1,
    "source_msg_id": 66205,
-   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+   "status": "candidate: waits for the user to confirm the Latin name [D242]; maps only, no mesh"
   },
   {
    "slug": "miscanthus-v2",
@@ -231,7 +231,7 @@
    "catalogue": "new",
    "variants": 1,
    "source_msg_id": 66206,
-   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+   "status": "candidate: waits for the user to confirm the Latin name [D242]; maps only, no mesh"
   },
   {
    "slug": "triticum",
@@ -244,7 +244,7 @@
    "catalogue": "new",
    "variants": 1,
    "source_msg_id": 66207,
-   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+   "status": "candidate: waits for the user to confirm the Latin name [D242]; maps only, no mesh"
   }
  ],
  "skipped": [
@@ -3111,6 +3111,38 @@
    "checks": "pass"
   },
   {
+   "path": "flora/v003/maps/aster-dumosus-island-samoa/aster-dumosus-island-samoa_o_star_1024.png",
+   "library_id": null,
+   "key": "aster-dumosus-island-samoa",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "L",
+   "bytes": 12177,
+   "sha256": "6c81f15087d32567cd807bfea32af9abade46c5a1ac9fbe195df9381bf3b5026",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048,
+    "binary": true,
+    "fill_holes_px": 64
+   },
+   "source": {
+    "msg_id": 61627,
+    "file": "61627_T_Астра_кустарниковая_‘Island_Samoa’_Diff.png",
+    "sha256": "cc1e5e72696076bc7cb0744c72d43a871ed85cfacd2fed3f6cbf7b787f63d580"
+   },
+   "synthetic": false,
+   "verdict": "star opacity: binary 0/255 at 128 (build_flora_star.py input), same crop as the atlas maps",
+   "notes": "Binary grey L. Enclosed holes <= 64 px filled: the source alpha has semi-transparent rings round the flower heads inside the bush (in the original cut-out, not from processing).",
+   "checks": "pass"
+  },
+  {
    "path": "flora/v003/maps/berberis/berberis_d_atlas_1024.png",
    "library_id": null,
    "key": "berberis",
@@ -3228,6 +3260,37 @@
    "synthetic": false,
    "verdict": "atlas-ready opacity of the same crop",
    "notes": "Plant 1 of 1 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/lysimachia/lysimachia_o_star_1024.png",
+   "library_id": null,
+   "key": "lysimachia",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "L",
+   "bytes": 18925,
+   "sha256": "20c9189b80e8727e39b9cfdac34b75f3fae2fcec0d79bc9eee9e0eaee4a288d6",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048,
+    "binary": true
+   },
+   "source": {
+    "msg_id": 61629,
+    "file": "61629_T_Вербейник.png",
+    "sha256": "1cdf27f24f5393650c9ca76a197edbe14ae69770111c3085961fc72822fb4d77"
+   },
+   "synthetic": false,
+   "verdict": "star opacity: binary 0/255 at 128 (build_flora_star.py input), same crop as the atlas maps",
+   "notes": "Binary grey L.",
    "checks": "pass"
   },
   {
@@ -3468,6 +3531,37 @@
    "synthetic": false,
    "verdict": "atlas-ready opacity of the same crop",
    "notes": "Plant 2 of 2 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/achillea/achillea_v1_o_star_1024.png",
+   "library_id": null,
+   "key": "achillea",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "L",
+   "bytes": 26902,
+   "sha256": "86d1555d9f6cfe782ef765d241e9659fa5cb43e30fa506ca36d32b82a73ed1db",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048,
+    "binary": true
+   },
+   "source": {
+    "msg_id": 61631,
+    "file": "61631_T_Тысячелистник.png",
+    "sha256": "0a875d113e29aa04fd4580f6f88bd35e7a6756676308b46f30fa33ed175b92b9"
+   },
+   "synthetic": false,
+   "verdict": "star opacity: binary 0/255 at 128 (build_flora_star.py input), same crop as the atlas maps",
+   "notes": "Binary grey L.",
    "checks": "pass"
   },
   {

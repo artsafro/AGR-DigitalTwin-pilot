@@ -32,7 +32,8 @@ def test_rows_are_well_formed():
         p = r["path"]
         assert p.startswith(PREFIXES) and p.endswith(".png") and p.isascii(), p
         assert r["map"] in MAPS and r["profile"] in PROFILES, p
-        assert r["mode"] == "RGB" and r["width"] == r["height"] and r["width"] & (r["width"] - 1) == 0, p
+        assert r["mode"] == "RGB" or (r["mode"] == "L" and r["map"] == "o"), p  # binary star opacity is grey
+        assert r["width"] == r["height"] and r["width"] & (r["width"] - 1) == 0, p
         assert len(r["sha256"]) == 64 and r["bytes"] > 0, p
         assert r["source"]["msg_id"] and len(r["source"]["sha256"]) == 64, p
         assert r["verdict"] and r["checks"] == "pass", p
@@ -70,7 +71,7 @@ def test_flora_candidates_name_species_only_when_confident():
         assert c["latin"] not in species, "maps-only candidates are not catalogue species"
         if c["latin"]:
             record = maps[c["latin"]]
-            assert record["review_status"] == "pending_review"  # only the user approves maps
+            assert record["review_status"] in ("pending_review", "approved")  # approved only by the user [D242]
             for key in ("diffuse", "opacity"):
                 assert record[key].split("AGR-assets/", 1)[1] in rows, record[key]
 

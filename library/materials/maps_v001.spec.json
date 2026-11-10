@@ -1211,6 +1211,19 @@
      "profile": "flora_source",
      "verdict": "atlas-ready opacity of the same crop",
      "notes": "Plant 1 of 1 in the source."
+    },
+    {
+     "path": "flora/v003/maps/aster-dumosus-island-samoa/aster-dumosus-island-samoa_o_star_{size}.png",
+     "op": "sprite",
+     "sprite": 0,
+     "margin_px": 32,
+     "max_size": 2048,
+     "binary": true,
+     "map": "o",
+     "profile": "flora_source",
+     "verdict": "star opacity: binary 0/255 at 128 (build_flora_star.py input), same crop as the atlas maps",
+     "notes": "Binary grey L. Enclosed holes <= 64 px filled: the source alpha has semi-transparent rings round the flower heads inside the bush (in the original cut-out, not from processing).",
+     "fill_holes_px": 64
     }
    ]
   },
@@ -1271,6 +1284,18 @@
      "profile": "flora_source",
      "verdict": "atlas-ready opacity of the same crop",
      "notes": "Plant 1 of 1 in the source."
+    },
+    {
+     "path": "flora/v003/maps/lysimachia/lysimachia_o_star_{size}.png",
+     "op": "sprite",
+     "sprite": 0,
+     "margin_px": 32,
+     "max_size": 2048,
+     "binary": true,
+     "map": "o",
+     "profile": "flora_source",
+     "verdict": "star opacity: binary 0/255 at 128 (build_flora_star.py input), same crop as the atlas maps",
+     "notes": "Binary grey L."
     }
    ]
   },
@@ -1375,6 +1400,18 @@
      "profile": "flora_source",
      "verdict": "atlas-ready opacity of the same crop",
      "notes": "Plant 2 of 2 in the source."
+    },
+    {
+     "path": "flora/v003/maps/achillea/achillea_v1_o_star_{size}.png",
+     "op": "sprite",
+     "sprite": 0,
+     "margin_px": 32,
+     "max_size": 2048,
+     "binary": true,
+     "map": "o",
+     "profile": "flora_source",
+     "verdict": "star opacity: binary 0/255 at 128 (build_flora_star.py input), same crop as the atlas maps",
+     "notes": "Binary grey L."
     }
    ]
   },
@@ -1590,10 +1627,10 @@
    "type": "flower",
    "confidence": "medium",
    "basis": "caption + silvery plumes on a tall clumping grass; species by habit only",
-   "catalogue": "same genus as 406 Miscanthus sinensis (its approved maps kept)",
+   "catalogue": "same genus as 406 Miscanthus sinensis; approved catalogue maps stay, Telegram crops are extra variants only [D242]",
    "variants": 1,
    "source_msg_id": 61626,
-   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+   "status": "candidate: waits for the user to confirm the Latin name [D242]; maps only, no mesh"
   },
   {
    "slug": "aster-dumosus-island-samoa",
@@ -1606,7 +1643,7 @@
    "catalogue": "new (401 is S. novae-angliae, another species)",
    "variants": 1,
    "source_msg_id": 61627,
-   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+   "status": "maps approved [D242]; NPM star + VPM shell built in C:/x/flora-telegram-stars/v002 (spec library/flora/stars-telegram-v001.json, material id 410 proposed); catalogue row waits for the object in the library .max and its audit source (Max held by the user)"
   },
   {
    "slug": "berberis",
@@ -1616,10 +1653,10 @@
    "type": "bush",
    "confidence": "unconfirmed",
    "basis": "caption gives the genus; red-purple foliage fits both candidates",
-   "catalogue": "201 / 226 exist (their approved maps kept)",
+   "catalogue": "201 / 226 exist; approved catalogue maps stay, Telegram crops are extra variants only [D242]",
    "variants": 1,
    "source_msg_id": 61628,
-   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+   "status": "candidate: waits for the user to confirm the Latin name [D242]; maps only, no mesh"
   },
   {
    "slug": "lysimachia",
@@ -1632,7 +1669,7 @@
    "catalogue": "new",
    "variants": 1,
    "source_msg_id": 61629,
-   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+   "status": "maps approved [D242]; NPM star + VPM shell built in C:/x/flora-telegram-stars/v002 (spec library/flora/stars-telegram-v001.json, material id 411 proposed); catalogue row waits for the object in the library .max and its audit source (Max held by the user)"
   },
   {
    "slug": "syringa",
@@ -1642,10 +1679,10 @@
    "type": "bush",
    "confidence": "medium",
    "basis": "caption + lilac panicles; species not visible on a sprite",
-   "catalogue": "111-113 / 116 exist (their approved maps kept)",
+   "catalogue": "111-113 / 116 exist; approved catalogue maps stay, Telegram crops are extra variants only [D242]",
    "variants": 2,
    "source_msg_id": 61630,
-   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+   "status": "candidate: waits for the user to confirm the Latin name [D242]; maps only, no mesh"
   },
   {
    "slug": "achillea",
@@ -1658,7 +1695,7 @@
    "catalogue": "new",
    "variants": 2,
    "source_msg_id": 61631,
-   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+   "status": "maps approved [D242]; NPM star + VPM shell built in C:/x/flora-telegram-stars/v002 (spec library/flora/stars-telegram-v001.json, material id 412 proposed); catalogue row waits for the object in the library .max and its audit source (Max held by the user); v1 is the species map, v2 a variant"
   },
   {
    "slug": "rosa",
@@ -1671,7 +1708,7 @@
    "catalogue": "new",
    "variants": 2,
    "source_msg_id": 61632,
-   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+   "status": "candidate: waits for the user to confirm the Latin name [D242]; maps only, no mesh"
   },
   {
    "slug": "daisy-white",
@@ -1684,7 +1721,7 @@
    "catalogue": "new",
    "variants": 1,
    "source_msg_id": 66203,
-   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+   "status": "candidate: waits for the user to confirm the Latin name [D242]; maps only, no mesh"
   },
   {
    "slug": "daisy-yellow",
@@ -1697,7 +1734,7 @@
    "catalogue": "new",
    "variants": 1,
    "source_msg_id": 66204,
-   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+   "status": "candidate: waits for the user to confirm the Latin name [D242]; maps only, no mesh"
   },
   {
    "slug": "lavandula",
@@ -1710,7 +1747,7 @@
    "catalogue": "new",
    "variants": 1,
    "source_msg_id": 66205,
-   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+   "status": "candidate: waits for the user to confirm the Latin name [D242]; maps only, no mesh"
   },
   {
    "slug": "miscanthus-v2",
@@ -1723,7 +1760,7 @@
    "catalogue": "new",
    "variants": 1,
    "source_msg_id": 66206,
-   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+   "status": "candidate: waits for the user to confirm the Latin name [D242]; maps only, no mesh"
   },
   {
    "slug": "triticum",
@@ -1736,7 +1773,7 @@
    "catalogue": "new",
    "variants": 1,
    "source_msg_id": 66207,
-   "status": "maps only, no mesh: not a catalogue species until it has its own mesh (model-flora step 6)"
+   "status": "candidate: waits for the user to confirm the Latin name [D242]; maps only, no mesh"
   }
  ]
 }
