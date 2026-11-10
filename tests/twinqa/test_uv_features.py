@@ -171,6 +171,8 @@ def test_border_blob_never_counted_any_edge(tmp_path):
     [(0, 0), (1, 1), (1, 0), (0, 1)],          # self-intersecting bow-tie
     [(0.1, 0.1), (0.5, 0.5), (0.9, 0.9)],      # zero area, collinear
     [(0.2, 0.2), (0.2, 0.2), (0.2, 0.2)],      # zero area, one point
+    [(0.1, 0.7), (0.5, 0.3), (0.9, 0.7), (0.3, 0.1)],  # pinched: vertex 1 on edge 2-3, shapely says valid
+    [(0.1, 0.1), (0.9, 0.1), (0.5, 0.1 + 1e-9)],      # sliver below tolerance
 ])
 def test_invalid_polygon_is_reported(tmp_path, uv):
     tex = _opaque_with_hole(tmp_path, (300, 300), (300, 300))  # no features
