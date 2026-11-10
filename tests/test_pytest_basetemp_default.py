@@ -1,4 +1,7 @@
-"""The default pytest basetemp is short and outside the repository (#1035, [D063])."""
+"""The default pytest basetemp is short and outside the repository (#1035, [D063]).
+
+new-case: regression tests for the per-worktree pytest basetemp default.
+"""
 
 import os
 import re
