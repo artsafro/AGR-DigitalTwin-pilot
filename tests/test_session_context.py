@@ -71,6 +71,39 @@ def start(repo, source):
     return out["additionalContext"]
 
 
+@pytest.mark.parametrize("name", ["handover", "takeover"])
+@pytest.mark.parametrize("shell", ["bash", "powershell"])
+@pytest.mark.parametrize("subdir", ["tools/max/viz", ".claude/commands", "tools/hooks"])
+def test_rotation_command_from_subdirectory(name, shell, subdir, repo):
+    """Execute the Markdown injection verbatim, not a reconstructed Python call."""
+    executable = shutil.which(shell)
+    if not executable or (shell == "powershell" and os.name != "nt"):
+        pytest.skip(f"{shell} is not available on this host")
+    text = (ROOT / f".claude/commands/{name}.md").read_text(encoding="utf-8")
+    command, = [line[2:-1] for line in text.splitlines()
+                if line.startswith("!`") and "session_context.py" in line]
+    args = [executable, "-c", command] if shell == "bash" else [
+        executable, "-NoProfile", "-NonInteractive", "-Command", command]
+    env = {**os.environ, "CLAUDE_PROJECT_DIR": str(repo), "PYTHONUTF8": "1"}
+    env.pop("MSYS_NO_PATHCONV", None)
+    env.pop("MSYS2_ARG_CONV_EXCL", None)
+    result = subprocess.run(args, cwd=ROOT / subdir, env=env, capture_output=True,
+                            text=True, encoding="utf-8", errors="replace", timeout=60)
+    assert result.returncode == 0, result.stderr
+    assert "Branch: task/a" in result.stdout
+
+
+def test_slash_command_script_paths():
+    """Audit all current injections, including the usage and reuse reports."""
+    commands = [(path.name, line) for path in (ROOT / ".claude/commands").glob("*.md")
+                for line in path.read_text(encoding="utf-8").splitlines()
+                if line.startswith("!`") and "tools/" in line]
+    assert commands, "No script injections found; check the command extraction"
+    for name, line in commands:
+        assert not re.search(r'(?:\s|[\"\x27])(?:\./)?tools/', line), (name, line)
+        assert '"$(git rev-parse --show-toplevel)/tools/' in line, (name, line)
+
+
 def test_hooks_are_wired():
     hooks = json.loads((ROOT / ".claude/settings.json").read_text(encoding="utf-8"))["hooks"]
     entry = hooks["SessionStart"][0]
@@ -161,7 +194,7 @@ def test_commands(name):
     text = (ROOT / f".claude/commands/{name}.md").read_text(encoding="utf-8")
     meta = yaml.safe_load(text.split("---\n")[1])
     assert meta["disable-model-invocation"] is True and meta["description"]
-    assert "!`py -3 tools/hooks/session_context.py report`" in text
+    assert 'session_context.py" report`' in text
     if name == "handover":
         assert "HANDOFF.template.md" in text and "Чекпоинт готов, можно /clear" in text
     else:
