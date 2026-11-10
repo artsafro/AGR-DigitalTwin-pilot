@@ -22,6 +22,11 @@ Guarantees (each has a test):
   (0.1 m) of the hatch bbox. Otherwise the extract is an error naming the coverage: no contour that lost
   the drawn wall is written. Exactly 0.9 or exactly 0.1 m fails. With no hatch layer the coverage is
   ``not measured`` with the reason.
+- Overshoot (#1004): ``unaccounted_m2`` is the kept footprint minus the hatch closed at the run's
+  ``gap_close_m`` (outlines plus the strips bridging gaps strictly under ``2 * gap_close_m``, filled).
+  It must be strictly under MAX_UNACCOUNTED_M2 (0.5 m2, the smallest kept piece); exactly 0.5 fails and
+  the error names the area and its bbox. A footprint that closes over a notch the hatch leaves open fails.
+  A ``gap_close_m`` that is not a finite number above 0.1 mm is an error naming it.
 - A non-finite coordinate is an error naming the handle. An empty model space is an error.
 - A wall or symbol entity whose type this reader does not support is an error naming the
   type (a CIRCLE on a wall layer is not a contour).
@@ -62,6 +67,8 @@ from contours import GAP_CLOSE_M, MIN_PIECE_M2  # noqa: E402
 
 COVERAGE_MIN_SHARE = 0.9  # covered share of the wall hatch must be strictly above this
 COVERAGE_BBOX_M = 0.1  # every bbox side strictly within this of the hatch bbox
+# footprint area outside the hatch closed at gap_close_m must stay strictly under the smallest kept piece (#1004)
+MAX_UNACCOUNTED_M2 = MIN_PIECE_M2
 CONTOUR_SOURCES = ("lines", "hatch")
 FACE_LIMIT_M = 1.0  # a host-wall face is strictly closer than this; exactly 1.0 m is not used
 # L03 of АС.03. Only A-WALL-____-MCUT is the exterior cut. I-WALL stays out (accepted Q1).
@@ -188,8 +195,12 @@ def _split(parts) -> tuple[list[Polygon], list[Polygon]]:
     return keep, dropped
 
 
-def _fill_pieces(areas: list, gap_close_m: float) -> tuple[list[Polygon], list[Polygon]]:
-    """Hatched wall mass to plan pieces: grown, outlines filled, shrunk back (contours.py closing)."""
+def _close_fill(areas: list, gap_close_m: float):
+    """Hatched wall mass grown, outlines filled, shrunk back (contours.py closing), as one geometry.
+
+    This is the area the closed hatch outlines account for: the hatch, the strips that bridge its gaps
+    strictly under ``2 * gap_close_m``, and everything those closed outlines enclose.
+    """
     radius = float(gap_close_m) - 1e-4
     thick = unary_union([a.buffer(radius, quad_segs=2) for a in areas])
     geoms = list(thick.geoms) if thick.geom_type == "MultiPolygon" else [thick]
@@ -199,29 +210,51 @@ def _fill_pieces(areas: list, gap_close_m: float) -> tuple[list[Polygon], list[P
             continue
         shrunk = Polygon(geom.exterior).buffer(-radius, quad_segs=2)
         filled.extend(list(shrunk.geoms) if shrunk.geom_type == "MultiPolygon" else [shrunk])
-    merged = unary_union([p for p in filled if not p.is_empty])
+    return unary_union([p for p in filled if not p.is_empty])
+
+
+def _fill_pieces(areas: list, gap_close_m: float) -> tuple[list[Polygon], list[Polygon]]:
+    """Hatched wall mass to plan pieces: the closed fill split into kept and dropped pieces."""
+    merged = _close_fill(areas, gap_close_m)
     if merged.is_empty:
         return [], []
     return _split(list(merged.geoms) if merged.geom_type == "MultiPolygon" else [merged])
 
 
-def coverage_check(keep: list, hatch) -> dict:
-    """Share of the hatch area under the kept pieces and the largest bbox side offset; fail-closed."""
+def coverage_check(keep: list, hatch, gap_close_m: float = GAP_CLOSE_M) -> dict:
+    """Hatch share under the kept pieces, bbox offset and footprint area the hatch does not account for.
+
+    ``unaccounted_m2`` is the kept footprint minus the hatch closed at ``gap_close_m`` (``_close_fill``:
+    outlines plus bridged gap strips, filled). It must stay strictly under MAX_UNACCOUNTED_M2. Fail-closed.
+    """
     if hatch is None or hatch.is_empty or not hatch.area > 0:
         raise ValueError("coverage: the hatch reference has no area")
+    if isinstance(gap_close_m, bool) or not isinstance(gap_close_m, (int, float)) \
+            or not math.isfinite(gap_close_m) or gap_close_m <= 1e-4:
+        raise ValueError(f"coverage: gap_close_m must be a finite number above 0.0001 m, got {gap_close_m!r}")
     parts = [p for p in keep if not p.is_empty and p.area > 0]
     kept = unary_union(parts) if parts else None
     hatch_area = float(hatch.area)
     if kept is None or kept.is_empty or not kept.area > 0:
         return {"status": "fail", "hatch_area_m2": round(hatch_area, 4), "kept_area_m2": 0.0,
-                "covered_share": 0.0, "bbox_delta_m": None, "reason": "no kept piece"}
+                "covered_share": 0.0, "bbox_delta_m": None, "unaccounted_m2": None, "reason": "no kept piece"}
     share = round(float(kept.intersection(hatch).area) / hatch_area, 9)
     delta = round(max(abs(a - b) for a, b in zip(kept.bounds, hatch.bounds)), 9)
-    ok = math.isfinite(share) and math.isfinite(delta) and share > COVERAGE_MIN_SHARE and delta < COVERAGE_BBOX_M
+    # the hatch's own closed outlines count exactly; the closing adds the bridged strips and what they enclose
+    own = [Polygon(g.exterior) for g in (hatch.geoms if hasattr(hatch, "geoms") else [hatch])
+           if g.geom_type == "Polygon"]
+    accounted = unary_union([_close_fill([hatch], gap_close_m), *own])
+    extra = kept.difference(accounted) if not accounted.is_empty else kept
+    unaccounted = round(float(extra.area), 9)
+    ok = (math.isfinite(share) and math.isfinite(delta) and math.isfinite(unaccounted)
+          and share > COVERAGE_MIN_SHARE and delta < COVERAGE_BBOX_M and unaccounted < MAX_UNACCOUNTED_M2)
     return {"status": "pass" if ok else "fail", "hatch_area_m2": round(hatch_area, 4),
             "kept_area_m2": round(float(kept.area), 4), "covered_share": share, "bbox_delta_m": delta,
             "hatch_bbox_m": [round(v, 4) for v in hatch.bounds], "kept_bbox_m": [round(v, 4) for v in kept.bounds],
-            "min_share": COVERAGE_MIN_SHARE, "max_bbox_delta_m": COVERAGE_BBOX_M}
+            "accounted_area_m2": round(float(accounted.area), 4), "unaccounted_m2": unaccounted,
+            "unaccounted_bbox_m": [round(v, 4) for v in extra.bounds] if not extra.is_empty else None,
+            "gap_close_m": gap_close_m, "min_share": COVERAGE_MIN_SHARE, "max_bbox_delta_m": COVERAGE_BBOX_M,
+            "max_unaccounted_m2": MAX_UNACCOUNTED_M2}
 
 
 def _pieces(lines: list[LineString], gap_close_m: float) -> tuple[list[Polygon], list[Polygon]]:
@@ -440,12 +473,14 @@ def extract_plan(doc, layer_map: dict, *, z0: float, z1: float | None = None,
     else:
         keep, small = _pieces([ln for _, ln in wall_lines], gap_close_m)
     if hatches:
-        coverage = coverage_check(keep, unary_union(hatches))
+        coverage = coverage_check(keep, unary_union(hatches), gap_close_m)
         if coverage["status"] != "pass":
             raise ValueError(
                 f"coverage: kept {contour_source} pieces cover {coverage['covered_share']:.1%} of the wall hatch "
-                f"({coverage['hatch_area_m2']} m2), bbox offset {coverage['bbox_delta_m']} m; need > "
-                f"{COVERAGE_MIN_SHARE:.0%} and < {COVERAGE_BBOX_M} m")
+                f"({coverage['hatch_area_m2']} m2), bbox offset {coverage['bbox_delta_m']} m, "
+                f"{coverage['unaccounted_m2']} m2 unaccounted by the closed hatch outlines "
+                f"at {coverage.get('unaccounted_bbox_m')}; need > {COVERAGE_MIN_SHARE:.0%}, "
+                f"< {COVERAGE_BBOX_M} m and < {MAX_UNACCOUNTED_M2} m2 unaccounted")
     else:
         coverage = {"status": "not measured", "reason": "no hatch layer mapped, no drawn wall mass to compare"}
     if not keep:
