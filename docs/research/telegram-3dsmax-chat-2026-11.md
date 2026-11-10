@@ -52,7 +52,45 @@ A texture dump the team reuses, not rules. Message ids are in that group; nothin
 - Most files carry a real address / cadastral number in the name; rename to neutral names before a shared library.
 
 Main goal for this topic (user, 2026-11-10): fill the missing sets of the materials library, so an agent knows
-at once what to use and whether it is a good choice. Gap analysis against the repository library: pending.
+at once what to use and whether it is a good choice.
+
+Gap analysis against the repository library (2026-11-10, media not opened — resolution, alpha and tiling unchecked):
+
+- The tables exist, the maps do not: `library/materials/materials_v002.json` (42 rows, mostly `proposed`) and
+  `ground_v001.json` (11 rows) point at `G:\Мой диск\AGR-assets\materials\`, which is absent; flora `maps.json`
+  points at `C:\x\flora-library\v001\maps\`, also absent. MAF IDs `library/maf/material_ids_v005.json` (31 ids,
+  [D181]) already cover all 15 slots of «айди по мафам.txt» (pine only as «WOOD medium»).
+- Take after rename / resize / check: OKS placeholders (20949–20956), glossy and matte metal ERM (27158–27161),
+  address plates and template (27883–27886, 21001–21003), gates (27901–27904), MAF atlas source for a 512 bake
+  (53407 + 53408), flora — 12 files, new species: daisy white / yellow, lavender, wheat, loosestrife, yarrow
+  (61626–61632, 66203–66207), tiling surfaces concrete / paving / wood / asphalt (58971, 64381, 69811, 69812;
+  check 1000 px/m [D207]), tile and brick (107806–107813; tile 4 m vs the 3.6 m grid), opacity meshes and fences
+  (42371, 66210, 111223, 111224, 66211; 700 px not a power of two; SheetMetal001 licence to check).
+- Reference only: `T_Domashniy_Ground_D.1001–1018` and other per-object sets (real addresses, 4 m step).
+- Skip: 102408 (AI-generated), 28663–28674 (unknown content) until reviewed; Yandex «ALL textures» (69813) needs
+  an inventory first.
+- Missing in both sources: maps for the 42 + 11 table rows, built placeholders NPM 128 / VPM 256, gravel, pebbles,
+  mulch, rubber crumb, roll lawn, roofs (Logicroof, Solo, profiled sheet), facade masks (cassette 600, tile
+  600×1200, panel V1200), pine, maps for the 61 flora species, VPM normals for tiling materials.
+- Proposed layout (not approved): originals to `G:\Мой диск\AGR-assets\_inbox\telegram-materials-2026-11\`,
+  processed maps to `materials\v001\<library_id>_<key>\`, placeholders to `materials\placeholders\v001\`, flora to
+  `flora\v003\maps\<slug>\`; a manifest `library/materials/maps_v001.json` (file, sha256, size, px/m, source msg
+  id, synthetic flag) in git; no binaries in git (H9).
+
+## Topic «Нейротипс» (group «АГР - Holding», root 8283) — AI for 3D sources
+
+Keyword-sampled (225 messages found; the topic is not read in full). Mostly a news feed of model releases.
+
+- Channels worth subscribing: @neuroviza (neural networks for 3D visualisation), @gracehoppers (Rhino /
+  Grasshopper + Claude Code, Rhino MCP, building generation), @sintez_space (AGR add-ons for Blender, AI viz).
+  Skim: @acidcrunch, @tips_ai, Dark Max, «ArchViz 3dsmax Corona UE AI», «AI в архвизе». Skip: @petsproject
+  (main repost source, generic), @bezsmuzi.
+- Items for the pipeline: 103786 (cutting agent token use in Blender: quiet logs, short QA, one render per
+  iteration, STATE.md), 125308 (m/agentic3d community on agents for 3D / BIM / digital twins), 115898 (Scenario:
+  3D generator returning a named-parts `.blend` with PBR — try on MAF placeholders), 126081 (GPT-6.1 Terra: 3D
+  from drawings — try on MAF), 56041 (Claude to Unreal), 103547 (B2MAX Blender → Max).
+- Items for archviz: 61518 (3ds Max render elements → ComfyUI FLUX + ControlNet + IPAdapter, mask inpaint →
+  Photoshop), 122390 / 118125 (upscale to 4K–8K), Kimi + Tripo FBX furniture from a collage (seen in @neuroviza).
 
 ### Other «АГР - Holding» topics — user decisions 2026-11-10
 
