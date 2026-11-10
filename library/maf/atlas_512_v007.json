@@ -14,6 +14,14 @@
   ],
   "source": "PR #1187 review via the coordinator; visual only, no UV/model readback"
  },
+ "scope": {
+  "applies_to": "new MAF models only",
+  "existing_library_maf": "keep their current UV and atlas; no re-mapping to this atlas",
+  "quote": "Переназначать на него наверное не надо, так как там уже в мафов настроена развертка библиотечных, это для новых можно",
+  "by": "Artem",
+  "date": "2026-11-10",
+  "decision": "D240"
+ },
  "decision": "D240: pine as its own WOOD2 id 33; atlas 512 v007 r2 accepted visually (2026-11-10, plan step 2.3)",
  "generated_by": "jobs/maf-atlas-512/scripts/atlas_maf_from_source.py",
  "inputs": {
