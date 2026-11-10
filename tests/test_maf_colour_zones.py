@@ -351,6 +351,20 @@ def test_position_16_policy_paints_tube_faces_id_4(z, catalogue):
     assert 4 in out["material_ids"]
 
 
+def test_rows_from_set_rejects_collapsed_schedule(z, catalogue):
+    report_in = json.loads(SET.read_text(encoding="utf-8"))
+    pos = next(p for p in report_in["positions"] if p["set_id"] == "VAT_MAF_T3510_16")
+    # Synthetic collapse: keep every face, but assign all to the wood atlas slot.
+    for prof in ("npm", "vpm"):
+        uv = pos[prof]["uv_slots"]
+        uv["per_material"] = {"larch_light_oak": {"faces": uv["faces"]}}
+    counts = json.loads(COUNTS.read_text(encoding="utf-8"))
+    rows = z.rows_from_set({"positions": [pos]}, catalogue, counts)
+    assert "schedule_finishes" not in rows[0]
+    with pytest.raises(z.ZoneError, match="VAT_MAF_T3510_16: schedule names 2 finishes but one zone"):
+        z.compile_zones([pos["set_id"]], rows, catalogue)
+
+
 def test_two_schedule_finishes_cannot_end_as_one_zone(z, catalogue):
     """A schedule that names two finishes must not compile as a single zone."""
     row = _pos("VAT_MAF_T3510_16", faces=4, verts=6)
