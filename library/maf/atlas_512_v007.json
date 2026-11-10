@@ -2,7 +2,18 @@
  "schema": "library-maf-atlas-512",
  "version": "v007",
  "revision": "r2",
- "status": "technical QA only; visual acceptance by the user open",
+ "status": "accepted visually 2026-11-10 (r2); merge pending D id",
+ "acceptance": {
+  "date": "2026-11-10",
+  "by": "Artem",
+  "revision": "r2",
+  "atlas_sha256": "a30dac001483b42d99afee0fc315e58ddc4ba1ce10d7bb58e8565017e4b3f340",
+  "quotes": [
+   {"revision": "r1", "quote": "в атласе wood log только не очень", "meaning": "all cells accepted except the log end (ID 18)"},
+   {"revision": "r2", "quote": "спил норм", "meaning": "r2 log end accepted"}
+  ],
+  "source": "PR #1187 review via the coordinator; visual only, no UV/model readback"
+ },
  "decision": "pine as its own WOOD2 id 33: user 2026-11-10 (plan step 2.3); D id to be assigned at merge",
  "generated_by": "jobs/maf-atlas-512/scripts/atlas_maf_from_source.py",
  "inputs": {
