@@ -3045,7 +3045,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map panel_v1200 of tiles_core.py; Сэндвич-панель RAL 5015, вертикальные швы 1,2 м master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/9/9_panel_v1200_ral5015_d_4096.png",
@@ -3121,7 +3122,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map panel_v1200 of tiles_core.py; Сэндвич-панель RAL 5015, вертикальные швы 1,2 м",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/9/9_panel_v1200_ral5015_n_4096.png",
@@ -3197,7 +3199,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map panel_v1200 of tiles_core.py; Сэндвич-панель RAL 5015, вертикальные швы 1,2 м DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/placeholders/v001/panel_v1200_ral5015_erm_256.png",
@@ -3275,7 +3278,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map panel_v1200 of tiles_core.py; Сэндвич-панель RAL 5015, вертикальные швы 1,2 м ERM placeholder = record fields (E, R, M) [0, 150, 0]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/9/9_panel_v1200_ral5015_d_npm_2048.png",
@@ -3351,7 +3355,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map panel_v1200 of tiles_core.py; Сэндвич-панель RAL 5015, вертикальные швы 1,2 м",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/9/panel_v1200_mask_3600.png",
@@ -3425,7 +3430,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map panel_v1200 of tiles_core.py; Сэндвич-панель RAL 5015, вертикальные швы 1,2 м AGR Tools K3 grey mask (R body grey, G joint), shared by ids [9, 10]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/10/10_panel_v1200_ral7047_d_3600.png",
@@ -3499,7 +3505,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map panel_v1200 of tiles_core.py; Сэндвич-панель RAL 7047, вертикальные швы 1,2 м master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/10/10_panel_v1200_ral7047_d_4096.png",
@@ -3575,7 +3582,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map panel_v1200 of tiles_core.py; Сэндвич-панель RAL 7047, вертикальные швы 1,2 м",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/10/10_panel_v1200_ral7047_n_4096.png",
@@ -3651,7 +3659,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map panel_v1200 of tiles_core.py; Сэндвич-панель RAL 7047, вертикальные швы 1,2 м DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/placeholders/v001/panel_v1200_ral7047_erm_256.png",
@@ -3729,7 +3738,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map panel_v1200 of tiles_core.py; Сэндвич-панель RAL 7047, вертикальные швы 1,2 м ERM placeholder = record fields (E, R, M) [0, 150, 0]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/10/10_panel_v1200_ral7047_d_npm_2048.png",
@@ -3805,7 +3815,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map panel_v1200 of tiles_core.py; Сэндвич-панель RAL 7047, вертикальные швы 1,2 м",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/12/12_cassette_600_ral7047_d_3600.png",
@@ -3879,7 +3890,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_600x600 of tiles_core.py; Кассета типовая RAL 7047 600x600 master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/12/12_cassette_600_ral7047_d_4096.png",
@@ -3955,7 +3967,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_600x600 of tiles_core.py; Кассета типовая RAL 7047 600x600",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/12/12_cassette_600_ral7047_n_4096.png",
@@ -4031,7 +4044,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_600x600 of tiles_core.py; Кассета типовая RAL 7047 600x600 DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/placeholders/v001/cassette_600_ral7047_erm_256.png",
@@ -4109,7 +4123,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_600x600 of tiles_core.py; Кассета типовая RAL 7047 600x600 ERM placeholder = record fields (E, R, M) [0, 150, 0]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/12/12_cassette_600_ral7047_d_npm_2048.png",
@@ -4185,7 +4200,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_600x600 of tiles_core.py; Кассета типовая RAL 7047 600x600",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/12/tile_600x600_mask_3600.png",
@@ -4259,7 +4275,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_600x600 of tiles_core.py; Кассета типовая RAL 7047 600x600 AGR Tools K3 grey mask (R body grey, G joint), shared by ids [12, 13]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/13/13_cassette_600_ral9016_d_3600.png",
@@ -4333,7 +4350,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_600x600 of tiles_core.py; Кассета перфорированная RAL 9016 600x600 master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/13/13_cassette_600_ral9016_d_4096.png",
@@ -4409,7 +4427,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_600x600 of tiles_core.py; Кассета перфорированная RAL 9016 600x600",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/13/13_cassette_600_ral9016_n_4096.png",
@@ -4485,7 +4504,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_600x600 of tiles_core.py; Кассета перфорированная RAL 9016 600x600 DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/placeholders/v001/cassette_600_ral9016_erm_256.png",
@@ -4563,7 +4583,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_600x600 of tiles_core.py; Кассета перфорированная RAL 9016 600x600 ERM placeholder = record fields (E, R, M) [0, 150, 0]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/13/13_cassette_600_ral9016_d_npm_2048.png",
@@ -4639,7 +4660,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_600x600 of tiles_core.py; Кассета перфорированная RAL 9016 600x600",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/14/14_tile_600x1200_ral7024_d_3600.png",
@@ -4713,7 +4735,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map facade_600x1200 of tiles_core.py; Керамогранит 600x1200 тёмно-серый (вертикально) master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/14/14_tile_600x1200_ral7024_d_4096.png",
@@ -4789,7 +4812,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map facade_600x1200 of tiles_core.py; Керамогранит 600x1200 тёмно-серый (вертикально)",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/14/14_tile_600x1200_ral7024_n_4096.png",
@@ -4865,7 +4889,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map facade_600x1200 of tiles_core.py; Керамогранит 600x1200 тёмно-серый (вертикально) DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/placeholders/v001/tile_600x1200_ral7024_erm_256.png",
@@ -4943,7 +4968,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map facade_600x1200 of tiles_core.py; Керамогранит 600x1200 тёмно-серый (вертикально) ERM placeholder = record fields (E, R, M) [0, 150, 0]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/14/14_tile_600x1200_ral7024_d_npm_2048.png",
@@ -5019,7 +5045,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map facade_600x1200 of tiles_core.py; Керамогранит 600x1200 тёмно-серый (вертикально)",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/14/facade_600x1200_mask_3600.png",
@@ -5093,7 +5120,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map facade_600x1200 of tiles_core.py; Керамогранит 600x1200 тёмно-серый (вертикально) AGR Tools K3 grey mask (R body grey, G joint), shared by ids [14, 15]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/15/15_tile_600x1200_ral7040_d_3600.png",
@@ -5167,7 +5195,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map facade_600x1200 of tiles_core.py; Керамогранит 600x1200 светло-серый (вертикально) master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/15/15_tile_600x1200_ral7040_d_4096.png",
@@ -5243,7 +5272,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map facade_600x1200 of tiles_core.py; Керамогранит 600x1200 светло-серый (вертикально)",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/15/15_tile_600x1200_ral7040_n_4096.png",
@@ -5319,7 +5349,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map facade_600x1200 of tiles_core.py; Керамогранит 600x1200 светло-серый (вертикально) DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/placeholders/v001/tile_600x1200_ral7040_erm_256.png",
@@ -5397,7 +5428,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map facade_600x1200 of tiles_core.py; Керамогранит 600x1200 светло-серый (вертикально) ERM placeholder = record fields (E, R, M) [0, 150, 0]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/15/15_tile_600x1200_ral7040_d_npm_2048.png",
@@ -5473,7 +5505,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map facade_600x1200 of tiles_core.py; Керамогранит 600x1200 светло-серый (вертикально)",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/16/16_tile_300x300_ral7004_d_3600.png",
@@ -5547,7 +5580,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_300x300 of tiles_core.py; Цокольная плитка 300x300 RAL 7004 master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/16/16_tile_300x300_ral7004_d_4096.png",
@@ -5623,7 +5657,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_300x300 of tiles_core.py; Цокольная плитка 300x300 RAL 7004",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/16/16_tile_300x300_ral7004_n_4096.png",
@@ -5699,7 +5734,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_300x300 of tiles_core.py; Цокольная плитка 300x300 RAL 7004 DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/placeholders/v001/tile_300x300_ral7004_erm_256.png",
@@ -5777,7 +5813,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_300x300 of tiles_core.py; Цокольная плитка 300x300 RAL 7004 ERM placeholder = record fields (E, R, M) [0, 150, 0]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/16/16_tile_300x300_ral7004_d_npm_2048.png",
@@ -5853,7 +5890,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_300x300 of tiles_core.py; Цокольная плитка 300x300 RAL 7004",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/16/tile_300x300_mask_3600.png",
@@ -5927,7 +5965,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_300x300 of tiles_core.py; Цокольная плитка 300x300 RAL 7004 AGR Tools K3 grey mask (R body grey, G joint), shared by ids [16]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/17/17_brick_250x65_d_3600.png",
@@ -6001,7 +6040,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map brick_250x65 of tiles_core.py; Кирпич 250x65, шов 10, перевязка 1/2 (ряд 75 мм, 14 кирпичей на 3,6 м) master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/17/17_brick_250x65_d_4096.png",
@@ -6077,7 +6117,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map brick_250x65 of tiles_core.py; Кирпич 250x65, шов 10, перевязка 1/2 (ряд 75 мм, 14 кирпичей на 3,6 м)",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/17/17_brick_250x65_n_4096.png",
@@ -6153,7 +6194,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map brick_250x65 of tiles_core.py; Кирпич 250x65, шов 10, перевязка 1/2 (ряд 75 мм, 14 кирпичей на 3,6 м) DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/placeholders/v001/brick_250x65_erm_256.png",
@@ -6231,7 +6273,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map brick_250x65 of tiles_core.py; Кирпич 250x65, шов 10, перевязка 1/2 (ряд 75 мм, 14 кирпичей на 3,6 м) ERM placeholder = record fields (E, R, M) [0, 150, 0]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/17/17_brick_250x65_d_npm_2048.png",
@@ -6307,7 +6350,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map brick_250x65 of tiles_core.py; Кирпич 250x65, шов 10, перевязка 1/2 (ряд 75 мм, 14 кирпичей на 3,6 м)",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/17/brick_250x65_mask_3600.png",
@@ -6381,7 +6425,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map brick_250x65 of tiles_core.py; Кирпич 250x65, шов 10, перевязка 1/2 (ряд 75 мм, 14 кирпичей на 3,6 м) AGR Tools K3 grey mask (R body grey, G joint), shared by ids [17]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/18/18_paving_100x300_dark_d_3600.png",
@@ -6455,7 +6500,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 тёмная (Bronze 25) master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/18/18_paving_100x300_dark_d_4096.png",
@@ -6531,7 +6577,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 тёмная (Bronze 25)",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/18/18_paving_100x300_dark_n_4096.png",
@@ -6607,7 +6654,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 тёмная (Bronze 25) DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/placeholders/v001/paving_100x300_dark_erm_256.png",
@@ -6685,7 +6733,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 тёмная (Bronze 25) ERM placeholder = record fields (E, R, M) [0, 150, 0]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/18/18_paving_100x300_dark_d_npm_2048.png",
@@ -6761,7 +6810,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 тёмная (Bronze 25)",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/18/ground_100x300_mask_3600.png",
@@ -6835,7 +6885,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 тёмная (Bronze 25) AGR Tools K3 grey mask (R body grey, G joint), shared by ids [18, 19, 20]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/19/19_paving_100x300_light_d_3600.png",
@@ -6909,7 +6960,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 светлая (Gold 22 / Profi 8) master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/19/19_paving_100x300_light_d_4096.png",
@@ -6985,7 +7037,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 светлая (Gold 22 / Profi 8)",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/19/19_paving_100x300_light_n_4096.png",
@@ -7061,7 +7114,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 светлая (Gold 22 / Profi 8) DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/placeholders/v001/paving_100x300_light_erm_256.png",
@@ -7139,7 +7193,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 светлая (Gold 22 / Profi 8) ERM placeholder = record fields (E, R, M) [0, 150, 0]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/19/19_paving_100x300_light_d_npm_2048.png",
@@ -7215,7 +7270,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 светлая (Gold 22 / Profi 8)",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/20/20_paving_100x300_red_d_3600.png",
@@ -7289,7 +7345,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 красная (Silver 9) master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/20/20_paving_100x300_red_d_4096.png",
@@ -7365,7 +7422,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 красная (Silver 9)",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/20/20_paving_100x300_red_n_4096.png",
@@ -7441,7 +7499,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 красная (Silver 9) DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/placeholders/v001/paving_100x300_red_erm_256.png",
@@ -7519,7 +7578,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 красная (Silver 9) ERM placeholder = record fields (E, R, M) [0, 150, 0]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/20/20_paving_100x300_red_d_npm_2048.png",
@@ -7595,7 +7655,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 красная (Silver 9)",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/21/21_slab_900x300_d_3600.png",
@@ -7669,7 +7730,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map slab_900x300 of tiles_core.py; Плита шаговая 900x300 master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/21/21_slab_900x300_d_4096.png",
@@ -7745,7 +7807,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map slab_900x300 of tiles_core.py; Плита шаговая 900x300",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/21/21_slab_900x300_n_4096.png",
@@ -7821,7 +7884,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map slab_900x300 of tiles_core.py; Плита шаговая 900x300 DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/placeholders/v001/slab_900x300_erm_256.png",
@@ -7899,7 +7963,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map slab_900x300 of tiles_core.py; Плита шаговая 900x300 ERM placeholder = record fields (E, R, M) [0, 150, 0]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/21/21_slab_900x300_d_npm_2048.png",
@@ -7975,7 +8040,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map slab_900x300 of tiles_core.py; Плита шаговая 900x300",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/21/slab_900x300_mask_3600.png",
@@ -8049,7 +8115,8 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map slab_900x300 of tiles_core.py; Плита шаговая 900x300 AGR Tools K3 grey mask (R body grey, G joint), shared by ids [21]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/24/24_pebbles_d_1000.png",
@@ -8103,7 +8170,8 @@
    "verdict": "synthetic: round pebbles 20-60 mm + fill 6-20 mm, seamless; stylised (no real photo of our own found)",
    "notes": "pebble size 20-60 mm assumed (no project spec in the repo); Галька master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/24/24_pebbles_d_2048.png",
@@ -8159,7 +8227,8 @@
    "verdict": "synthetic: round pebbles 20-60 mm + fill 6-20 mm, seamless; stylised (no real photo of our own found)",
    "notes": "pebble size 20-60 mm assumed (no project spec in the repo); Галька",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/24/24_pebbles_n_2048.png",
@@ -8215,7 +8284,8 @@
    "verdict": "synthetic: round pebbles 20-60 mm + fill 6-20 mm, seamless; stylised (no real photo of our own found)",
    "notes": "pebble size 20-60 mm assumed (no project spec in the repo); Галька DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/placeholders/v001/pebbles_erm_256.png",
@@ -8273,7 +8343,8 @@
    "verdict": "synthetic: round pebbles 20-60 mm + fill 6-20 mm, seamless; stylised (no real photo of our own found)",
    "notes": "pebble size 20-60 mm assumed (no project spec in the repo); Галька ERM placeholder = record fields (E, R, M) [0, 200, 0]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/24/24_pebbles_d_npm_2048.png",
@@ -8329,7 +8400,8 @@
    "verdict": "synthetic: round pebbles 20-60 mm + fill 6-20 mm, seamless; stylised (no real photo of our own found)",
    "notes": "pebble size 20-60 mm assumed (no project spec in the repo); Галька",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/29/29_roof_logicroof_d_1000.png",
@@ -8370,10 +8442,11 @@
     }
    },
    "synthetic": true,
-   "verdict": "synthetic: fine grain + mottling, seamless; no weld seams (roll width not known)",
+   "verdict": "superseded by 29_roof_logicroof_v002_* (roll seams drawn, user 2026-11-11); kept, not overwritten",
    "notes": "Logicroof (PVC): roll overlap seams not drawn; Кровельная мембрана Logicroof master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/29/29_roof_logicroof_d_2048.png",
@@ -8416,10 +8489,11 @@
     }
    },
    "synthetic": true,
-   "verdict": "synthetic: fine grain + mottling, seamless; no weld seams (roll width not known)",
+   "verdict": "superseded by 29_roof_logicroof_v002_* (roll seams drawn, user 2026-11-11); kept, not overwritten",
    "notes": "Logicroof (PVC): roll overlap seams not drawn; Кровельная мембрана Logicroof",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/29/29_roof_logicroof_n_2048.png",
@@ -8462,10 +8536,11 @@
     }
    },
    "synthetic": true,
-   "verdict": "synthetic: fine grain + mottling, seamless; no weld seams (roll width not known)",
+   "verdict": "superseded by 29_roof_logicroof_v002_* (roll seams drawn, user 2026-11-11); kept, not overwritten",
    "notes": "Logicroof (PVC): roll overlap seams not drawn; Кровельная мембрана Logicroof DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/placeholders/v001/roof_logicroof_erm_256.png",
@@ -8510,10 +8585,11 @@
     }
    },
    "synthetic": true,
-   "verdict": "synthetic: fine grain + mottling, seamless; no weld seams (roll width not known)",
+   "verdict": "superseded by 29_roof_logicroof_v002_* (roll seams drawn, user 2026-11-11); kept, not overwritten",
    "notes": "Logicroof (PVC): roll overlap seams not drawn; Кровельная мембрана Logicroof ERM placeholder = record fields (E, R, M) [0, 200, 0]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/29/29_roof_logicroof_d_npm_2048.png",
@@ -8556,10 +8632,11 @@
     }
    },
    "synthetic": true,
-   "verdict": "synthetic: fine grain + mottling, seamless; no weld seams (roll width not known)",
+   "verdict": "superseded by 29_roof_logicroof_v002_* (roll seams drawn, user 2026-11-11); kept, not overwritten",
    "notes": "Logicroof (PVC): roll overlap seams not drawn; Кровельная мембрана Logicroof",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/30/30_roof_solo_d_1000.png",
@@ -8602,10 +8679,11 @@
     }
    },
    "synthetic": true,
-   "verdict": "synthetic: dark fine grain, seamless; no weld seams",
+   "verdict": "superseded by 30_roof_solo_v002_* (roll seams drawn, user 2026-11-11); kept, not overwritten",
    "notes": "Solo (dark): roll overlap seams not drawn; Кровельная мембрана Solo (тёмная) master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/30/30_roof_solo_d_2048.png",
@@ -8650,10 +8728,11 @@
     }
    },
    "synthetic": true,
-   "verdict": "synthetic: dark fine grain, seamless; no weld seams",
+   "verdict": "superseded by 30_roof_solo_v002_* (roll seams drawn, user 2026-11-11); kept, not overwritten",
    "notes": "Solo (dark): roll overlap seams not drawn; Кровельная мембрана Solo (тёмная)",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/30/30_roof_solo_n_2048.png",
@@ -8698,10 +8777,11 @@
     }
    },
    "synthetic": true,
-   "verdict": "synthetic: dark fine grain, seamless; no weld seams",
+   "verdict": "superseded by 30_roof_solo_v002_* (roll seams drawn, user 2026-11-11); kept, not overwritten",
    "notes": "Solo (dark): roll overlap seams not drawn; Кровельная мембрана Solo (тёмная) DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/placeholders/v001/roof_solo_erm_256.png",
@@ -8748,10 +8828,11 @@
     }
    },
    "synthetic": true,
-   "verdict": "synthetic: dark fine grain, seamless; no weld seams",
+   "verdict": "superseded by 30_roof_solo_v002_* (roll seams drawn, user 2026-11-11); kept, not overwritten",
    "notes": "Solo (dark): roll overlap seams not drawn; Кровельная мембрана Solo (тёмная) ERM placeholder = record fields (E, R, M) [0, 200, 0]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/30/30_roof_solo_d_npm_2048.png",
@@ -8796,10 +8877,11 @@
     }
    },
    "synthetic": true,
-   "verdict": "synthetic: dark fine grain, seamless; no weld seams",
+   "verdict": "superseded by 30_roof_solo_v002_* (roll seams drawn, user 2026-11-11); kept, not overwritten",
    "notes": "Solo (dark): roll overlap seams not drawn; Кровельная мембрана Solo (тёмная)",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/31/31_roof_profiled_sheet_d_3600.png",
@@ -8844,10 +8926,11 @@
     }
    },
    "synthetic": true,
-   "verdict": "synthetic: trapezoid ribs, 36 per 3.6 m, seamless; profile is an assumption (C21: pitch 100, h 21 mm)",
+   "verdict": "synthetic: trapezoid ribs, 36 per 3.6 m, seamless; C21 pitch 100 mm accepted by the user 2026-11-11",
    "notes": "rib pitch not given in the table (MAF v005 note); C21 assumed: pitch 100 mm, height 21 mm, top shelf 25 mm; Профнастил / кровельный лист master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/31/31_roof_profiled_sheet_d_4096.png",
@@ -8894,10 +8977,11 @@
     }
    },
    "synthetic": true,
-   "verdict": "synthetic: trapezoid ribs, 36 per 3.6 m, seamless; profile is an assumption (C21: pitch 100, h 21 mm)",
+   "verdict": "synthetic: trapezoid ribs, 36 per 3.6 m, seamless; C21 pitch 100 mm accepted by the user 2026-11-11",
    "notes": "rib pitch not given in the table (MAF v005 note); C21 assumed: pitch 100 mm, height 21 mm, top shelf 25 mm; Профнастил / кровельный лист",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/31/31_roof_profiled_sheet_n_4096.png",
@@ -8944,10 +9028,11 @@
     }
    },
    "synthetic": true,
-   "verdict": "synthetic: trapezoid ribs, 36 per 3.6 m, seamless; profile is an assumption (C21: pitch 100, h 21 mm)",
+   "verdict": "synthetic: trapezoid ribs, 36 per 3.6 m, seamless; C21 pitch 100 mm accepted by the user 2026-11-11",
    "notes": "rib pitch not given in the table (MAF v005 note); C21 assumed: pitch 100 mm, height 21 mm, top shelf 25 mm; Профнастил / кровельный лист DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/placeholders/v001/roof_profiled_sheet_erm_256.png",
@@ -8996,10 +9081,11 @@
     }
    },
    "synthetic": true,
-   "verdict": "synthetic: trapezoid ribs, 36 per 3.6 m, seamless; profile is an assumption (C21: pitch 100, h 21 mm)",
+   "verdict": "synthetic: trapezoid ribs, 36 per 3.6 m, seamless; C21 pitch 100 mm accepted by the user 2026-11-11",
    "notes": "rib pitch not given in the table (MAF v005 note); C21 assumed: pitch 100 mm, height 21 mm, top shelf 25 mm; Профнастил / кровельный лист ERM placeholder = record fields (E, R, M) [0, 120, 200]",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/31/31_roof_profiled_sheet_d_npm_2048.png",
@@ -9046,10 +9132,495 @@
     }
    },
    "synthetic": true,
-   "verdict": "synthetic: trapezoid ribs, 36 per 3.6 m, seamless; profile is an assumption (C21: pitch 100, h 21 mm)",
+   "verdict": "synthetic: trapezoid ribs, 36 per 3.6 m, seamless; C21 pitch 100 mm accepted by the user 2026-11-11",
    "notes": "rib pitch not given in the table (MAF v005 note); C21 assumed: pitch 100 mm, height 21 mm, top shelf 25 mm; Профнастил / кровельный лист",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "generated"
+  },
+  {
+   "path": "materials/v001/29/29_roof_logicroof_v002_d_1950.png",
+   "library_id": 29,
+   "key": "roof_logicroof",
+   "map": "d",
+   "profile": "d207",
+   "width": 1950,
+   "height": 1950,
+   "mode": "RGB",
+   "bytes": 2023922,
+   "sha256": "f49b4f27ed10397f6b9de197c8a8fd46c17ad8b3c8a57aef3db7be10d4e85159",
+   "px_per_m": 1000.0,
+   "px_per_m_basis": "generated: 1.95 m (1 x 1.95 m period) at 1000 px/m [D207]",
+   "d207": "ok: 1000.0 >= 1000 px/m",
+   "op": {
+    "image": "d",
+    "op": "rgb",
+    "tile_m": 1.95
+   },
+   "source": {
+    "generator": "tools/materials/texture_surfaces.py",
+    "recipe": {
+     "recipe": "membrane",
+     "seed": 29,
+     "period_m": 1.95,
+     "seam_every": 1.95,
+     "overlap": 0.1,
+     "thickness": 0.0015,
+     "weld": 0.04,
+     "edge_line": 0.003,
+     "rgb": [
+      140,
+      143,
+      145
+     ]
+    },
+    "recipe_sha256": "ab8bacab668cac96adcf6925c79229bde03ecd9945c4ca72426840e8b56604d5",
+    "info": {
+     "size_px": 1950,
+     "period_m": 1.95,
+     "grain": 0.012,
+     "mottle": 0.03,
+     "seam_every_m": 1.95,
+     "seams": 1,
+     "overlap_m": 0.1,
+     "thickness_m": 0.0015,
+     "weld_m": 0.04,
+     "edge_line_m": 0.003
+    }
+   },
+   "synthetic": true,
+   "verdict": "synthetic: fine grain + roll seams along V, seamless across the tile; seam layout is an assumption",
+   "notes": "ASSUMPTION (coordinator 2026-11-11): Logicroof PVC roll 2.05 m, seam every ~1.95 m (welded overlap ~0.10 m, hot-air weld strip 40 mm, membrane 1.5 mm); ERM placeholder: materials/placeholders/v001/roof_logicroof_erm_256.png (unchanged); Кровельная мембрана Logicroof master: one period at 1000 px/m [D207]",
+   "checks": "pass",
+   "write": "written",
+   "provenance": "generated"
+  },
+  {
+   "path": "materials/v001/29/29_roof_logicroof_v002_d_2048.png",
+   "library_id": 29,
+   "key": "roof_logicroof",
+   "map": "d",
+   "profile": "vpm",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 2394014,
+   "sha256": "d5506df914a3f791689de9c34f59b9101ecd2c107bccb9ce41e04bfe93de85d3",
+   "px_per_m": 1050.3,
+   "px_per_m_basis": "generated: 1.95 m (1 x 1.95 m period) at 1000 px/m [D207]",
+   "d207": "ok: 1050.3 >= 1000 px/m",
+   "op": {
+    "image": "d",
+    "op": "rgb",
+    "size": 2048,
+    "repeat": 1,
+    "tile_m": 1.95
+   },
+   "source": {
+    "generator": "tools/materials/texture_surfaces.py",
+    "recipe": {
+     "recipe": "membrane",
+     "seed": 29,
+     "period_m": 1.95,
+     "seam_every": 1.95,
+     "overlap": 0.1,
+     "thickness": 0.0015,
+     "weld": 0.04,
+     "edge_line": 0.003,
+     "rgb": [
+      140,
+      143,
+      145
+     ]
+    },
+    "recipe_sha256": "ab8bacab668cac96adcf6925c79229bde03ecd9945c4ca72426840e8b56604d5",
+    "info": {
+     "size_px": 1950,
+     "period_m": 1.95,
+     "grain": 0.012,
+     "mottle": 0.03,
+     "seam_every_m": 1.95,
+     "seams": 1,
+     "overlap_m": 0.1,
+     "thickness_m": 0.0015,
+     "weld_m": 0.04,
+     "edge_line_m": 0.003
+    }
+   },
+   "synthetic": true,
+   "verdict": "synthetic: fine grain + roll seams along V, seamless across the tile; seam layout is an assumption",
+   "notes": "ASSUMPTION (coordinator 2026-11-11): Logicroof PVC roll 2.05 m, seam every ~1.95 m (welded overlap ~0.10 m, hot-air weld strip 40 mm, membrane 1.5 mm); ERM placeholder: materials/placeholders/v001/roof_logicroof_erm_256.png (unchanged); Кровельная мембрана Logicroof",
+   "checks": "pass",
+   "write": "written",
+   "provenance": "generated"
+  },
+  {
+   "path": "materials/v001/29/29_roof_logicroof_v002_n_2048.png",
+   "library_id": 29,
+   "key": "roof_logicroof",
+   "map": "n",
+   "profile": "vpm",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 6058676,
+   "sha256": "95accb74c0869e68b006e1b57e78cbb069316c1a092b9a3da23bcd524f0ca7a3",
+   "px_per_m": 1050.3,
+   "px_per_m_basis": "generated: 1.95 m (1 x 1.95 m period) at 1000 px/m [D207]",
+   "d207": null,
+   "op": {
+    "image": "n",
+    "op": "rgb",
+    "size": 2048,
+    "repeat": 1,
+    "tile_m": 1.95
+   },
+   "source": {
+    "generator": "tools/materials/texture_surfaces.py",
+    "recipe": {
+     "recipe": "membrane",
+     "seed": 29,
+     "period_m": 1.95,
+     "seam_every": 1.95,
+     "overlap": 0.1,
+     "thickness": 0.0015,
+     "weld": 0.04,
+     "edge_line": 0.003,
+     "rgb": [
+      140,
+      143,
+      145
+     ]
+    },
+    "recipe_sha256": "ab8bacab668cac96adcf6925c79229bde03ecd9945c4ca72426840e8b56604d5",
+    "info": {
+     "size_px": 1950,
+     "period_m": 1.95,
+     "grain": 0.012,
+     "mottle": 0.03,
+     "seam_every_m": 1.95,
+     "seams": 1,
+     "overlap_m": 0.1,
+     "thickness_m": 0.0015,
+     "weld_m": 0.04,
+     "edge_line_m": 0.003
+    }
+   },
+   "synthetic": true,
+   "verdict": "synthetic: fine grain + roll seams along V, seamless across the tile; seam layout is an assumption",
+   "notes": "ASSUMPTION (coordinator 2026-11-11): Logicroof PVC roll 2.05 m, seam every ~1.95 m (welded overlap ~0.10 m, hot-air weld strip 40 mm, membrane 1.5 mm); ERM placeholder: materials/placeholders/v001/roof_logicroof_erm_256.png (unchanged); Кровельная мембрана Logicroof DirectX (green down), from the generated height (seam step)",
+   "checks": "pass",
+   "write": "written",
+   "provenance": "generated"
+  },
+  {
+   "path": "materials/v001/29/29_roof_logicroof_v002_d_npm_2048.png",
+   "library_id": 29,
+   "key": "roof_logicroof",
+   "map": "d",
+   "profile": "npm",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 2394014,
+   "sha256": "d5506df914a3f791689de9c34f59b9101ecd2c107bccb9ce41e04bfe93de85d3",
+   "px_per_m": 1050.3,
+   "px_per_m_basis": "generated: 1.95 m (1 x 1.95 m period) at 1000 px/m [D207]",
+   "d207": "ok: 1050.3 >= 1000 px/m",
+   "op": {
+    "image": "d",
+    "op": "rgb",
+    "size": "npm_auto",
+    "repeat": 1,
+    "tile_m": 1.95
+   },
+   "source": {
+    "generator": "tools/materials/texture_surfaces.py",
+    "recipe": {
+     "recipe": "membrane",
+     "seed": 29,
+     "period_m": 1.95,
+     "seam_every": 1.95,
+     "overlap": 0.1,
+     "thickness": 0.0015,
+     "weld": 0.04,
+     "edge_line": 0.003,
+     "rgb": [
+      140,
+      143,
+      145
+     ]
+    },
+    "recipe_sha256": "ab8bacab668cac96adcf6925c79229bde03ecd9945c4ca72426840e8b56604d5",
+    "info": {
+     "size_px": 1950,
+     "period_m": 1.95,
+     "grain": 0.012,
+     "mottle": 0.03,
+     "seam_every_m": 1.95,
+     "seams": 1,
+     "overlap_m": 0.1,
+     "thickness_m": 0.0015,
+     "weld_m": 0.04,
+     "edge_line_m": 0.003
+    }
+   },
+   "synthetic": true,
+   "verdict": "synthetic: fine grain + roll seams along V, seamless across the tile; seam layout is an assumption",
+   "notes": "ASSUMPTION (coordinator 2026-11-11): Logicroof PVC roll 2.05 m, seam every ~1.95 m (welded overlap ~0.10 m, hot-air weld strip 40 mm, membrane 1.5 mm); ERM placeholder: materials/placeholders/v001/roof_logicroof_erm_256.png (unchanged); Кровельная мембрана Logicroof",
+   "checks": "pass",
+   "write": "written",
+   "provenance": "generated"
+  },
+  {
+   "path": "materials/v001/30/30_roof_solo_v002_d_900.png",
+   "library_id": 30,
+   "key": "roof_solo",
+   "map": "d",
+   "profile": "d207",
+   "width": 900,
+   "height": 900,
+   "mode": "RGB",
+   "bytes": 307036,
+   "sha256": "8ed39502fa1f0f2e5cfaee70ac3660214facf9ae4e37590201fb1533ef87c923",
+   "px_per_m": 1000.0,
+   "px_per_m_basis": "generated: 0.9 m (1 x 0.9 m period) at 1000 px/m [D207]",
+   "d207": "ok: 1000.0 >= 1000 px/m",
+   "op": {
+    "image": "d",
+    "op": "rgb",
+    "tile_m": 0.9
+   },
+   "source": {
+    "generator": "tools/materials/texture_surfaces.py",
+    "recipe": {
+     "recipe": "membrane",
+     "seed": 30,
+     "grain": 0.02,
+     "mottle": 0.04,
+     "period_m": 0.9,
+     "seam_every": 0.9,
+     "overlap": 0.1,
+     "thickness": 0.004,
+     "weld": 0.1,
+     "weld_tone": -0.03,
+     "edge_line": 0.005,
+     "edge_tone": -0.25,
+     "rgb": [
+      45,
+      45,
+      48
+     ]
+    },
+    "recipe_sha256": "ec3ed8b48302f26d3f6393313b1ef5ed1cff99e2c26ceec9418fd8bd8890a072",
+    "info": {
+     "size_px": 900,
+     "period_m": 0.9,
+     "grain": 0.02,
+     "mottle": 0.04,
+     "seam_every_m": 0.9,
+     "seams": 1,
+     "overlap_m": 0.1,
+     "thickness_m": 0.004,
+     "weld_m": 0.1,
+     "edge_line_m": 0.005
+    }
+   },
+   "synthetic": true,
+   "verdict": "synthetic: fine grain + roll seams along V, seamless across the tile; seam layout is an assumption",
+   "notes": "ASSUMPTION (coordinator 2026-11-11): Solo treated as a bitumen roll membrane, roll 1.0 m, seam every ~0.9 m (torched overlap 0.10 m, bitumen bead 5 mm, 4 mm sheet); ERM placeholder: materials/placeholders/v001/roof_solo_erm_256.png (unchanged); Кровельная мембрана Solo (тёмная) master: one period at 1000 px/m [D207]",
+   "checks": "pass",
+   "write": "written",
+   "provenance": "generated"
+  },
+  {
+   "path": "materials/v001/30/30_roof_solo_v002_d_2048.png",
+   "library_id": 30,
+   "key": "roof_solo",
+   "map": "d",
+   "profile": "vpm",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 882484,
+   "sha256": "7aad9a3fb0034d93e6f2bb80f78c371579fa3773e10bbbe5f2c7ed0489f7062a",
+   "px_per_m": 1137.8,
+   "px_per_m_basis": "generated: 1.8 m (2 x 0.9 m period) at 1000 px/m [D207]",
+   "d207": "ok: 1137.8 >= 1000 px/m",
+   "op": {
+    "image": "d",
+    "op": "rgb",
+    "size": 2048,
+    "repeat": 2,
+    "tile_m": 1.8
+   },
+   "source": {
+    "generator": "tools/materials/texture_surfaces.py",
+    "recipe": {
+     "recipe": "membrane",
+     "seed": 30,
+     "grain": 0.02,
+     "mottle": 0.04,
+     "period_m": 0.9,
+     "seam_every": 0.9,
+     "overlap": 0.1,
+     "thickness": 0.004,
+     "weld": 0.1,
+     "weld_tone": -0.03,
+     "edge_line": 0.005,
+     "edge_tone": -0.25,
+     "rgb": [
+      45,
+      45,
+      48
+     ]
+    },
+    "recipe_sha256": "ec3ed8b48302f26d3f6393313b1ef5ed1cff99e2c26ceec9418fd8bd8890a072",
+    "info": {
+     "size_px": 900,
+     "period_m": 0.9,
+     "grain": 0.02,
+     "mottle": 0.04,
+     "seam_every_m": 0.9,
+     "seams": 1,
+     "overlap_m": 0.1,
+     "thickness_m": 0.004,
+     "weld_m": 0.1,
+     "edge_line_m": 0.005
+    }
+   },
+   "synthetic": true,
+   "verdict": "synthetic: fine grain + roll seams along V, seamless across the tile; seam layout is an assumption",
+   "notes": "ASSUMPTION (coordinator 2026-11-11): Solo treated as a bitumen roll membrane, roll 1.0 m, seam every ~0.9 m (torched overlap 0.10 m, bitumen bead 5 mm, 4 mm sheet); ERM placeholder: materials/placeholders/v001/roof_solo_erm_256.png (unchanged); Кровельная мембрана Solo (тёмная)",
+   "checks": "pass",
+   "write": "written",
+   "provenance": "generated"
+  },
+  {
+   "path": "materials/v001/30/30_roof_solo_v002_n_2048.png",
+   "library_id": 30,
+   "key": "roof_solo",
+   "map": "n",
+   "profile": "vpm",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 3020104,
+   "sha256": "5f78a6e953861df37daacb22f396e18bc6fa413a6b393306c661a88a18620eee",
+   "px_per_m": 1137.8,
+   "px_per_m_basis": "generated: 1.8 m (2 x 0.9 m period) at 1000 px/m [D207]",
+   "d207": null,
+   "op": {
+    "image": "n",
+    "op": "rgb",
+    "size": 2048,
+    "repeat": 2,
+    "tile_m": 1.8
+   },
+   "source": {
+    "generator": "tools/materials/texture_surfaces.py",
+    "recipe": {
+     "recipe": "membrane",
+     "seed": 30,
+     "grain": 0.02,
+     "mottle": 0.04,
+     "period_m": 0.9,
+     "seam_every": 0.9,
+     "overlap": 0.1,
+     "thickness": 0.004,
+     "weld": 0.1,
+     "weld_tone": -0.03,
+     "edge_line": 0.005,
+     "edge_tone": -0.25,
+     "rgb": [
+      45,
+      45,
+      48
+     ]
+    },
+    "recipe_sha256": "ec3ed8b48302f26d3f6393313b1ef5ed1cff99e2c26ceec9418fd8bd8890a072",
+    "info": {
+     "size_px": 900,
+     "period_m": 0.9,
+     "grain": 0.02,
+     "mottle": 0.04,
+     "seam_every_m": 0.9,
+     "seams": 1,
+     "overlap_m": 0.1,
+     "thickness_m": 0.004,
+     "weld_m": 0.1,
+     "edge_line_m": 0.005
+    }
+   },
+   "synthetic": true,
+   "verdict": "synthetic: fine grain + roll seams along V, seamless across the tile; seam layout is an assumption",
+   "notes": "ASSUMPTION (coordinator 2026-11-11): Solo treated as a bitumen roll membrane, roll 1.0 m, seam every ~0.9 m (torched overlap 0.10 m, bitumen bead 5 mm, 4 mm sheet); ERM placeholder: materials/placeholders/v001/roof_solo_erm_256.png (unchanged); Кровельная мембрана Solo (тёмная) DirectX (green down), from the generated height (seam step)",
+   "checks": "pass",
+   "write": "written",
+   "provenance": "generated"
+  },
+  {
+   "path": "materials/v001/30/30_roof_solo_v002_d_npm_2048.png",
+   "library_id": 30,
+   "key": "roof_solo",
+   "map": "d",
+   "profile": "npm",
+   "width": 2048,
+   "height": 2048,
+   "mode": "RGB",
+   "bytes": 882484,
+   "sha256": "7aad9a3fb0034d93e6f2bb80f78c371579fa3773e10bbbe5f2c7ed0489f7062a",
+   "px_per_m": 1137.8,
+   "px_per_m_basis": "generated: 1.8 m (2 x 0.9 m period) at 1000 px/m [D207]",
+   "d207": "ok: 1137.8 >= 1000 px/m",
+   "op": {
+    "image": "d",
+    "op": "rgb",
+    "size": "npm_auto",
+    "repeat": 2,
+    "tile_m": 1.8
+   },
+   "source": {
+    "generator": "tools/materials/texture_surfaces.py",
+    "recipe": {
+     "recipe": "membrane",
+     "seed": 30,
+     "grain": 0.02,
+     "mottle": 0.04,
+     "period_m": 0.9,
+     "seam_every": 0.9,
+     "overlap": 0.1,
+     "thickness": 0.004,
+     "weld": 0.1,
+     "weld_tone": -0.03,
+     "edge_line": 0.005,
+     "edge_tone": -0.25,
+     "rgb": [
+      45,
+      45,
+      48
+     ]
+    },
+    "recipe_sha256": "ec3ed8b48302f26d3f6393313b1ef5ed1cff99e2c26ceec9418fd8bd8890a072",
+    "info": {
+     "size_px": 900,
+     "period_m": 0.9,
+     "grain": 0.02,
+     "mottle": 0.04,
+     "seam_every_m": 0.9,
+     "seams": 1,
+     "overlap_m": 0.1,
+     "thickness_m": 0.004,
+     "weld_m": 0.1,
+     "edge_line_m": 0.005
+    }
+   },
+   "synthetic": true,
+   "verdict": "synthetic: fine grain + roll seams along V, seamless across the tile; seam layout is an assumption",
+   "notes": "ASSUMPTION (coordinator 2026-11-11): Solo treated as a bitumen roll membrane, roll 1.0 m, seam every ~0.9 m (torched overlap 0.10 m, bitumen bead 5 mm, 4 mm sheet); ERM placeholder: materials/placeholders/v001/roof_solo_erm_256.png (unchanged); Кровельная мембрана Solo (тёмная)",
+   "checks": "pass",
+   "write": "written",
+   "provenance": "generated"
   },
   {
    "path": "materials/v001/23/23_gravel_2_8_d_4096.png",
@@ -9078,7 +9649,8 @@
    "verdict": "good: grey granite chips, seamless (seam 0.94/0.96)",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "own delivered project, origin of source unknown"
   },
   {
    "path": "materials/v001/23/23_gravel_2_8_d_npm_1024.png",
@@ -9107,7 +9679,8 @@
    "verdict": "good: grey granite chips, seamless (seam 0.94/0.96)",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "own delivered project, origin of source unknown"
   },
   {
    "path": "materials/placeholders/v001/gravel_2_8_n_256.png",
@@ -9141,7 +9714,8 @@
    "verdict": "good: grey granite chips, seamless (seam 0.94/0.96)",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked flat normal placeholder: the source Normal 1003 is a baked atlas, not this tile (rejected)",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "own delivered project, origin of source unknown"
   },
   {
    "path": "materials/placeholders/v001/gravel_2_8_erm_256.png",
@@ -9175,7 +9749,8 @@
    "verdict": "good: grey granite chips, seamless (seam 0.94/0.96)",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked ERM placeholder = record fields [0, 240, 0]; the source ERM 1003 is a baked atlas (rejected)",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "own delivered project, origin of source unknown"
   },
   {
    "path": "materials/v001/27/27_rubber_crumb_d_4096.png",
@@ -9202,9 +9777,10 @@
    },
    "synthetic": false,
    "verdict": "good: EPDM crumb, seamless (1.10/1.03); colour yellow-green, the table record is red (175,43,30)",
-   "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
+   "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked; colour differs from table record (red); accepted by user 2026-11-11",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "own delivered project, origin of source unknown"
   },
   {
    "path": "materials/v001/27/27_rubber_crumb_d_npm_1024.png",
@@ -9231,9 +9807,10 @@
    },
    "synthetic": false,
    "verdict": "good: EPDM crumb, seamless (1.10/1.03); colour yellow-green, the table record is red (175,43,30)",
-   "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
+   "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked; colour differs from table record (red); accepted by user 2026-11-11",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "own delivered project, origin of source unknown"
   },
   {
    "path": "materials/v001/27/27_rubber_crumb_n_4096.png",
@@ -9260,9 +9837,10 @@
    },
    "synthetic": false,
    "verdict": "good: EPDM crumb, seamless (1.10/1.03); colour yellow-green, the table record is red (175,43,30)",
-   "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
+   "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked; colour differs from table record (red); accepted by user 2026-11-11",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "own delivered project, origin of source unknown"
   },
   {
    "path": "materials/v001/27/27_rubber_crumb_erm_4096.png",
@@ -9289,9 +9867,10 @@
    },
    "synthetic": false,
    "verdict": "good: EPDM crumb, seamless (1.10/1.03); colour yellow-green, the table record is red (175,43,30)",
-   "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
+   "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked; colour differs from table record (red); accepted by user 2026-11-11",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "own delivered project, origin of source unknown"
   },
   {
    "path": "materials/v001/42/42_lawn_rolled_d_4096.png",
@@ -9320,7 +9899,8 @@
    "verdict": "good: saturated green lawn, seamless (1.02/1.00)",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "own delivered project, origin of source unknown"
   },
   {
    "path": "materials/v001/42/42_lawn_rolled_d_npm_1024.png",
@@ -9349,7 +9929,8 @@
    "verdict": "good: saturated green lawn, seamless (1.02/1.00)",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "own delivered project, origin of source unknown"
   },
   {
    "path": "materials/v001/42/42_lawn_rolled_n_4096.png",
@@ -9378,7 +9959,8 @@
    "verdict": "good: saturated green lawn, seamless (1.02/1.00)",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "own delivered project, origin of source unknown"
   },
   {
    "path": "materials/v001/42/42_lawn_rolled_erm_4096.png",
@@ -9407,7 +9989,8 @@
    "verdict": "good: saturated green lawn, seamless (1.02/1.00)",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "own delivered project, origin of source unknown"
   },
   {
    "path": "materials/v001/53/53_wood_pine_light_d_4096.png",
@@ -9436,7 +10019,8 @@
    "verdict": "good: light planks, pine-like (species not confirmed), seamless (1.00/1.05); ERM in the source is one colour",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "own delivered project, origin of source unknown"
   },
   {
    "path": "materials/v001/53/53_wood_pine_light_d_npm_1024.png",
@@ -9465,7 +10049,8 @@
    "verdict": "good: light planks, pine-like (species not confirmed), seamless (1.00/1.05); ERM in the source is one colour",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "own delivered project, origin of source unknown"
   },
   {
    "path": "materials/v001/53/53_wood_pine_light_n_4096.png",
@@ -9494,7 +10079,8 @@
    "verdict": "good: light planks, pine-like (species not confirmed), seamless (1.00/1.05); ERM in the source is one colour",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "own delivered project, origin of source unknown"
   },
   {
    "path": "materials/placeholders/v001/wood_pine_light_erm_256.png",
@@ -9523,7 +10109,8 @@
    "verdict": "good: light planks, pine-like (species not confirmed), seamless (1.00/1.05); ERM in the source is one colour",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked source ERM is one colour (0,217,0) -> placeholder",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "own delivered project, origin of source unknown"
   },
   {
    "path": "materials/v001/25/25_mulch_d_1000.png",
@@ -9553,7 +10140,8 @@
    "verdict": "good: own procedural pine-bark mulch 2-4 cm, seamless (1.08/1.02), tile 1 x 1 m",
    "notes": "VPM at 2 x 2 tiles = 1024 px/m (D160 range 512-1706); D207 master resampled to 1000 px/m",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "own"
   },
   {
    "path": "materials/v001/25/25_mulch_d_2048.png",
@@ -9584,7 +10172,8 @@
    "verdict": "good: own procedural pine-bark mulch 2-4 cm, seamless (1.08/1.02), tile 1 x 1 m",
    "notes": "VPM at 2 x 2 tiles = 1024 px/m (D160 range 512-1706); D207 master resampled to 1000 px/m",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "own"
   },
   {
    "path": "materials/v001/25/25_mulch_d_npm_1024.png",
@@ -9615,7 +10204,8 @@
    "verdict": "good: own procedural pine-bark mulch 2-4 cm, seamless (1.08/1.02), tile 1 x 1 m",
    "notes": "VPM at 2 x 2 tiles = 1024 px/m (D160 range 512-1706); D207 master resampled to 1000 px/m",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "own"
   },
   {
    "path": "materials/v001/25/25_mulch_n_2048.png",
@@ -9647,7 +10237,8 @@
    "verdict": "good: own procedural pine-bark mulch 2-4 cm, seamless (1.08/1.02), tile 1 x 1 m",
    "notes": "VPM at 2 x 2 tiles = 1024 px/m (D160 range 512-1706); D207 master resampled to 1000 px/m DirectX normal from the 16-bit height (range ~4 cm per README)",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "own"
   },
   {
    "path": "materials/v001/25/25_mulch_erm_2048.png",
@@ -9678,7 +10269,8 @@
    "verdict": "good: own procedural pine-bark mulch 2-4 cm, seamless (1.08/1.02), tile 1 x 1 m",
    "notes": "VPM at 2 x 2 tiles = 1024 px/m (D160 range 512-1706); D207 master resampled to 1000 px/m ERM: R 0, G = source roughness, B 0",
    "checks": "pass",
-   "write": "written"
+   "write": "kept existing (identical bytes)",
+   "provenance": "own"
   }
  ]
 }

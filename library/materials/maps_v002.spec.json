@@ -58,6 +58,7 @@
      179
     ]
    },
+   "provenance": "generated",
    "key": "panel_v1200_ral5015",
    "library_id": 9,
    "surface": true,
@@ -133,6 +134,7 @@
      208
     ]
    },
+   "provenance": "generated",
    "key": "panel_v1200_ral7047",
    "library_id": 10,
    "surface": true,
@@ -200,6 +202,7 @@
      208
     ]
    },
+   "provenance": "generated",
    "key": "cassette_600_ral7047",
    "library_id": 12,
    "surface": true,
@@ -275,6 +278,7 @@
      246
     ]
    },
+   "provenance": "generated",
    "key": "cassette_600_ral9016",
    "library_id": 13,
    "surface": true,
@@ -342,6 +346,7 @@
      81
     ]
    },
+   "provenance": "generated",
    "key": "tile_600x1200_ral7024",
    "library_id": 14,
    "surface": true,
@@ -417,6 +422,7 @@
      161
     ]
    },
+   "provenance": "generated",
    "key": "tile_600x1200_ral7040",
    "library_id": 15,
    "surface": true,
@@ -484,6 +490,7 @@
      146
     ]
    },
+   "provenance": "generated",
    "key": "tile_300x300_ral7004",
    "library_id": 16,
    "surface": true,
@@ -559,6 +566,7 @@
      46
     ]
    },
+   "provenance": "generated",
    "key": "brick_250x65",
    "library_id": 17,
    "surface": true,
@@ -634,6 +642,7 @@
      114
     ]
    },
+   "provenance": "generated",
    "key": "paving_100x300_dark",
    "library_id": 18,
    "surface": true,
@@ -709,6 +718,7 @@
      196
     ]
    },
+   "provenance": "generated",
    "key": "paving_100x300_light",
    "library_id": 19,
    "surface": true,
@@ -776,6 +786,7 @@
      48
     ]
    },
+   "provenance": "generated",
    "key": "paving_100x300_red",
    "library_id": 20,
    "surface": true,
@@ -843,6 +854,7 @@
      153
     ]
    },
+   "provenance": "generated",
    "key": "slab_900x300",
    "library_id": 21,
    "surface": true,
@@ -921,6 +933,7 @@
    "key": "pebbles",
    "library_id": 24,
    "surface": true,
+   "provenance": "generated",
    "verdict": "synthetic: round pebbles 20-60 mm + fill 6-20 mm, seamless; stylised (no real photo of our own found)",
    "notes": "pebble size 20-60 mm assumed (no project spec in the repo); Галька",
    "outputs": [
@@ -988,7 +1001,8 @@
    "key": "roof_logicroof",
    "library_id": 29,
    "surface": true,
-   "verdict": "synthetic: fine grain + mottling, seamless; no weld seams (roll width not known)",
+   "provenance": "generated",
+   "verdict": "superseded by 29_roof_logicroof_v002_* (roll seams drawn, user 2026-11-11); kept, not overwritten",
    "notes": "Logicroof (PVC): roll overlap seams not drawn; Кровельная мембрана Logicroof",
    "outputs": [
     {
@@ -1057,7 +1071,8 @@
    "key": "roof_solo",
    "library_id": 30,
    "surface": true,
-   "verdict": "synthetic: dark fine grain, seamless; no weld seams",
+   "provenance": "generated",
+   "verdict": "superseded by 30_roof_solo_v002_* (roll seams drawn, user 2026-11-11); kept, not overwritten",
    "notes": "Solo (dark): roll overlap seams not drawn; Кровельная мембрана Solo (тёмная)",
    "outputs": [
     {
@@ -1124,7 +1139,8 @@
    "key": "roof_profiled_sheet",
    "library_id": 31,
    "surface": true,
-   "verdict": "synthetic: trapezoid ribs, 36 per 3.6 m, seamless; profile is an assumption (C21: pitch 100, h 21 mm)",
+   "provenance": "generated",
+   "verdict": "synthetic: trapezoid ribs, 36 per 3.6 m, seamless; C21 pitch 100 mm accepted by the user 2026-11-11",
    "notes": "rib pitch not given in the table (MAF v005 note); C21 assumed: pitch 100 mm, height 21 mm, top shelf 25 mm; Профнастил / кровельный лист",
    "outputs": [
     {
@@ -1179,11 +1195,138 @@
    ]
   },
   {
+   "generate": {
+    "recipe": "membrane",
+    "seed": 29,
+    "period_m": 1.95,
+    "seam_every": 1.95,
+    "overlap": 0.1,
+    "thickness": 0.0015,
+    "weld": 0.04,
+    "edge_line": 0.003,
+    "rgb": [
+     140,
+     143,
+     145
+    ]
+   },
+   "key": "roof_logicroof",
+   "library_id": 29,
+   "surface": true,
+   "provenance": "generated",
+   "verdict": "synthetic: fine grain + roll seams along V, seamless across the tile; seam layout is an assumption",
+   "notes": "ASSUMPTION (coordinator 2026-11-11): Logicroof PVC roll 2.05 m, seam every ~1.95 m (welded overlap ~0.10 m, hot-air weld strip 40 mm, membrane 1.5 mm); ERM placeholder: materials/placeholders/v001/roof_logicroof_erm_256.png (unchanged); Кровельная мембрана Logicroof",
+   "outputs": [
+    {
+     "path": "materials/v001/29/29_roof_logicroof_v002_d_{size}.png",
+     "image": "d",
+     "op": "rgb",
+     "map": "d",
+     "profile": "d207",
+     "notes": "master: one period at 1000 px/m [D207]"
+    },
+    {
+     "path": "materials/v001/29/29_roof_logicroof_v002_d_{size}.png",
+     "image": "d",
+     "op": "rgb",
+     "size": 2048,
+     "repeat": 1,
+     "map": "d",
+     "profile": "vpm"
+    },
+    {
+     "path": "materials/v001/29/29_roof_logicroof_v002_n_{size}.png",
+     "image": "n",
+     "op": "rgb",
+     "size": 2048,
+     "repeat": 1,
+     "map": "n",
+     "profile": "vpm",
+     "notes": "DirectX (green down), from the generated height (seam step)"
+    },
+    {
+     "path": "materials/v001/29/29_roof_logicroof_v002_d_npm_{size}.png",
+     "image": "d",
+     "op": "rgb",
+     "size": "npm_auto",
+     "repeat": 1,
+     "map": "d",
+     "profile": "npm"
+    }
+   ]
+  },
+  {
+   "generate": {
+    "recipe": "membrane",
+    "seed": 30,
+    "grain": 0.02,
+    "mottle": 0.04,
+    "period_m": 0.9,
+    "seam_every": 0.9,
+    "overlap": 0.1,
+    "thickness": 0.004,
+    "weld": 0.1,
+    "weld_tone": -0.03,
+    "edge_line": 0.005,
+    "edge_tone": -0.25,
+    "rgb": [
+     45,
+     45,
+     48
+    ]
+   },
+   "key": "roof_solo",
+   "library_id": 30,
+   "surface": true,
+   "provenance": "generated",
+   "verdict": "synthetic: fine grain + roll seams along V, seamless across the tile; seam layout is an assumption",
+   "notes": "ASSUMPTION (coordinator 2026-11-11): Solo treated as a bitumen roll membrane, roll 1.0 m, seam every ~0.9 m (torched overlap 0.10 m, bitumen bead 5 mm, 4 mm sheet); ERM placeholder: materials/placeholders/v001/roof_solo_erm_256.png (unchanged); Кровельная мембрана Solo (тёмная)",
+   "outputs": [
+    {
+     "path": "materials/v001/30/30_roof_solo_v002_d_{size}.png",
+     "image": "d",
+     "op": "rgb",
+     "map": "d",
+     "profile": "d207",
+     "notes": "master: one period at 1000 px/m [D207]"
+    },
+    {
+     "path": "materials/v001/30/30_roof_solo_v002_d_{size}.png",
+     "image": "d",
+     "op": "rgb",
+     "size": 2048,
+     "repeat": 2,
+     "map": "d",
+     "profile": "vpm"
+    },
+    {
+     "path": "materials/v001/30/30_roof_solo_v002_n_{size}.png",
+     "image": "n",
+     "op": "rgb",
+     "size": 2048,
+     "repeat": 2,
+     "map": "n",
+     "profile": "vpm",
+     "notes": "DirectX (green down), from the generated height (seam step)"
+    },
+    {
+     "path": "materials/v001/30/30_roof_solo_v002_d_npm_{size}.png",
+     "image": "d",
+     "op": "rgb",
+     "size": "npm_auto",
+     "repeat": 2,
+     "map": "d",
+     "profile": "npm"
+    }
+   ]
+  },
+  {
    "key": "gravel_2_8",
    "library_id": 23,
    "project": "A101 4BK (Kvartal 191 ZU 1), delivered VPM Ground, UDIM 1003",
    "verdict": "good: grey granite chips, seamless (seam 0.94/0.96)",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
+   "provenance": "own delivered project, origin of source unknown",
    "file": "C:\\Users\\artsafro\\Desktop\\!3D viz\\!А101\\47_4BK_new\\ground\\Blender\\SM_Kvartal_191_ZU_1_Ground\\T_Kvartal_191_ZU_1_Ground_Diffuse_1.1003.png",
    "sha256": "af7d6870d742997c2fee5514cfeef654b14d4e3066dc0a1c3f845deb5abbedb0",
    "outputs": [
@@ -1234,7 +1377,8 @@
    "library_id": 27,
    "project": "A101 4ACK, delivered VPM Ground (Textures_For-Render), UDIM 1008",
    "verdict": "good: EPDM crumb, seamless (1.10/1.03); colour yellow-green, the table record is red (175,43,30)",
-   "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
+   "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked; colour differs from table record (red); accepted by user 2026-11-11",
+   "provenance": "own delivered project, origin of source unknown",
    "file": "C:\\Users\\artsafro\\Desktop\\!3D viz\\!А101\\49_4ACK\\for_render\\сборка\\Textures_For-Render\\T_77_17_0120316_68365_4_A_Ground_Diffuse_1.1008.png",
    "sha256": "248634dac55f34f989df12b3e4ae4389887c299978f6e591e9fb15166d833d15",
    "outputs": [
@@ -1259,7 +1403,8 @@
    "library_id": 27,
    "project": "A101 4ACK, delivered VPM Ground (Textures_For-Render), UDIM 1008",
    "verdict": "good: EPDM crumb, seamless (1.10/1.03); colour yellow-green, the table record is red (175,43,30)",
-   "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
+   "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked; colour differs from table record (red); accepted by user 2026-11-11",
+   "provenance": "own delivered project, origin of source unknown",
    "file": "C:\\Users\\artsafro\\Desktop\\!3D viz\\!А101\\49_4ACK\\for_render\\сборка\\Textures_For-Render\\T_77_17_0120316_68365_4_A_Ground_Normal_1.1008.png",
    "sha256": "da7ec986afaddd6964046c1f61e77935cb1214d2c959242d7986dbe2f5282d71",
    "outputs": [
@@ -1277,7 +1422,8 @@
    "library_id": 27,
    "project": "A101 4ACK, delivered VPM Ground (Textures_For-Render), UDIM 1008",
    "verdict": "good: EPDM crumb, seamless (1.10/1.03); colour yellow-green, the table record is red (175,43,30)",
-   "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
+   "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked; colour differs from table record (red); accepted by user 2026-11-11",
+   "provenance": "own delivered project, origin of source unknown",
    "file": "C:\\Users\\artsafro\\Desktop\\!3D viz\\!А101\\49_4ACK\\for_render\\сборка\\Textures_For-Render\\T_77_17_0120316_68365_4_A_Ground_ERM_1.1008.png",
    "sha256": "1fade0afe7cc737ddecf8fc3ab6aa5c1f12e3f939aa2c837364e03e022117d22",
    "outputs": [
@@ -1296,6 +1442,7 @@
    "project": "A101 BC Prokshino stage 3, delivered VPM Ground, UDIM 1004",
    "verdict": "good: saturated green lawn, seamless (1.02/1.00)",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
+   "provenance": "own delivered project, origin of source unknown",
    "file": "C:\\Users\\artsafro\\Desktop\\!3D viz\\!А101\\Plants_all\\БЦ Прокшино_3 очередь_АГР\\SM_77_17_0120114_27995_Ground\\T_77_17_0120114_27995_Ground_Diffuse_1.1004.png",
    "sha256": "825b0d281be64c3eaf901b440cd1b603f389a18c30c2ee291d21bf8234a81ffa",
    "outputs": [
@@ -1321,6 +1468,7 @@
    "project": "A101 BC Prokshino stage 3, delivered VPM Ground, UDIM 1004",
    "verdict": "good: saturated green lawn, seamless (1.02/1.00)",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
+   "provenance": "own delivered project, origin of source unknown",
    "file": "C:\\Users\\artsafro\\Desktop\\!3D viz\\!А101\\Plants_all\\БЦ Прокшино_3 очередь_АГР\\SM_77_17_0120114_27995_Ground\\T_77_17_0120114_27995_Ground_Normal_1.1004.png",
    "sha256": "8c11434a9e47eb516bb88de2aee45338253064ba40636c33afcb1c51dc6328d2",
    "outputs": [
@@ -1339,6 +1487,7 @@
    "project": "A101 BC Prokshino stage 3, delivered VPM Ground, UDIM 1004",
    "verdict": "good: saturated green lawn, seamless (1.02/1.00)",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
+   "provenance": "own delivered project, origin of source unknown",
    "file": "C:\\Users\\artsafro\\Desktop\\!3D viz\\!А101\\Plants_all\\БЦ Прокшино_3 очередь_АГР\\SM_77_17_0120114_27995_Ground\\T_77_17_0120114_27995_Ground_ERM_1.1004.png",
    "sha256": "bb5e552549134bca193564192c77f4224f90a8fe5f179385dc85b11722dada50",
    "outputs": [
@@ -1357,6 +1506,7 @@
    "project": "Weltbau Ogorodny ZU 4_3, delivered VPM Ground (hp_source 2026-11-05), UDIM 1020",
    "verdict": "good: light planks, pine-like (species not confirmed), seamless (1.00/1.05); ERM in the source is one colour",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
+   "provenance": "own delivered project, origin of source unknown",
    "file": "C:\\Users\\artsafro\\Desktop\\!3D viz\\!Weltbau\\7_Ogorodniy\\npm_vpm\\НПМ, ВПМ\\Огородный зу 4_3, ХЛБ Результат 1.10.2026\\0305_OgorodnyjProezd_ZU_4_3\\hp_source_Ground_2026-11-05\\T_OgorodnyjProezd_ZU_4_3_Ground_Diffuse_1.1020.png",
    "sha256": "11d8f98e3153e18147893a41075d2c3cd63156294fa310c583970294aef10bfe",
    "outputs": [
@@ -1382,6 +1532,7 @@
    "project": "Weltbau Ogorodny ZU 4_3, delivered VPM Ground (hp_source 2026-11-05), UDIM 1020",
    "verdict": "good: light planks, pine-like (species not confirmed), seamless (1.00/1.05); ERM in the source is one colour",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
+   "provenance": "own delivered project, origin of source unknown",
    "file": "C:\\Users\\artsafro\\Desktop\\!3D viz\\!Weltbau\\7_Ogorodniy\\npm_vpm\\НПМ, ВПМ\\Огородный зу 4_3, ХЛБ Результат 1.10.2026\\0305_OgorodnyjProezd_ZU_4_3\\hp_source_Ground_2026-11-05\\T_OgorodnyjProezd_ZU_4_3_Ground_Normal_1.1020.png",
    "sha256": "62671c3b8339d13b816ec7bd009f6a2000b571e58c1f2f1a4af05406579b65f9",
    "outputs": [
@@ -1400,6 +1551,7 @@
    "project": "Weltbau Ogorodny ZU 4_3, delivered VPM Ground (hp_source 2026-11-05), UDIM 1020",
    "verdict": "good: light planks, pine-like (species not confirmed), seamless (1.00/1.05); ERM in the source is one colour",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
+   "provenance": "own delivered project, origin of source unknown",
    "file": "C:\\Users\\artsafro\\Desktop\\!3D viz\\!Weltbau\\7_Ogorodniy\\npm_vpm\\НПМ, ВПМ\\Огородный зу 4_3, ХЛБ Результат 1.10.2026\\0305_OgorodnyjProezd_ZU_4_3\\hp_source_Ground_2026-11-05\\T_OgorodnyjProezd_ZU_4_3_Ground_ERM_1.1020.png",
    "sha256": "a0004172ad024ea9a255414732ac1b7ef3f70da9b55667cf6313c7b09937d64b",
    "outputs": [
@@ -1418,6 +1570,7 @@
    "library_id": 25,
    "project": "TG_LIB TEX_LIB soil_mulch (own procedural generator _src/gen_mulch_tex.py, licence own; used on Savelovsky, Silikatny, Ogorodny)",
    "verdict": "good: own procedural pine-bark mulch 2-4 cm, seamless (1.08/1.02), tile 1 x 1 m",
+   "provenance": "own",
    "tile_m": 1.0,
    "tile_m_basis": "README.md of MULCH_Bark_Pine: tile 1 x 1 m, 4096 px/m",
    "surface": true,
@@ -1458,6 +1611,7 @@
    "library_id": 25,
    "project": "TG_LIB TEX_LIB soil_mulch (own procedural generator _src/gen_mulch_tex.py, licence own; used on Savelovsky, Silikatny, Ogorodny)",
    "verdict": "good: own procedural pine-bark mulch 2-4 cm, seamless (1.08/1.02), tile 1 x 1 m",
+   "provenance": "own",
    "tile_m": 1.0,
    "tile_m_basis": "README.md of MULCH_Bark_Pine: tile 1 x 1 m, 4096 px/m",
    "surface": true,
@@ -1483,6 +1637,7 @@
    "library_id": 25,
    "project": "TG_LIB TEX_LIB soil_mulch (own procedural generator _src/gen_mulch_tex.py, licence own; used on Savelovsky, Silikatny, Ogorodny)",
    "verdict": "good: own procedural pine-bark mulch 2-4 cm, seamless (1.08/1.02), tile 1 x 1 m",
+   "provenance": "own",
    "tile_m": 1.0,
    "tile_m_basis": "README.md of MULCH_Bark_Pine: tile 1 x 1 m, 4096 px/m",
    "surface": true,

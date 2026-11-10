@@ -252,6 +252,8 @@ def main(argv=None):
                 "checks": checks(path, data, out["profile"], npm_profile, tile_m),
                 "write": state,
             })
+            if "provenance" in src:  # licence risk of the source, readable by the next agent
+                rows[-1]["provenance"] = src["provenance"]
     manifest = {
         "schema": 1, "version": spec.get("version", "v001"), "decision": "D239",
         "root": "G:\\Мой диск\\AGR-assets",

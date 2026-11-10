@@ -6,7 +6,8 @@ Every recipe is periodic by construction over `period_m`, so the master is exact
 * `base_map`: the AGR Tools K3 grey mask (`adapters/max/agr_tools/tiles_core.py`, same module/joint/bond as the
   tools use), recoloured with the record RGB, DirectX normal from the joints. Nothing is re-implemented here.
 * `pebbles`: rounded stones packed without overlap on a torus, per-stone tone, dark lower layer; 1 m period.
-* `membrane`: PVC / bitumen roof membrane: fine periodic grain (FFT-filtered noise), no seams; 1 m period.
+* `membrane`: PVC / bitumen roof membrane: fine periodic grain (FFT-filtered noise); optional roll seams
+  (overlap step, weld strip, edge line) every `seam_every` metres along U.
 * `profiled_sheet`: trapezoid sheet, ribs along V, pitch / height / shelves in metres; 3.6 m period.
 
 Images: `d` (RGB colour), `n` (DirectX normal, green down), `mask` (base maps only: R body grey, G joint).
@@ -125,15 +126,32 @@ def pebbles(rgb, seed, period_m=1.0, d_min=0.02, d_max=0.06, fill_min=0.006, gap
         "stone_cover": round(float(stone.mean()), 3)}
 
 
-def membrane(rgb, seed, period_m=1.0, grain=0.012, mottle=0.03):
+def membrane(rgb, seed, period_m=1.0, grain=0.012, mottle=0.03, seam_every=None, overlap=0.10, thickness=0.0015,
+             weld=0.04, weld_tone=-0.04, edge_line=0.003, edge_tone=-0.12):
+    """Roof membrane. With `seam_every` (m, must divide period_m): roll seams run along V every seam_every; the
+    upper roll's edge is at x = 0 (a height step of `thickness`), the overlap band [0, overlap) is double thickness,
+    the welded strip [0, weld) and the thin edge line (weld bead / bitumen squeeze-out) are tinted."""
     size = int(round(period_m * PX_PER_M))
     rng = np.random.default_rng(seed)
     fine = _noise(size, 1.2, rng)
     low = _noise(size, 60.0, rng)
-    d = np.asarray(rgb, np.float32)[None, None, :] * (1 + grain * fine + mottle * low)[..., None]
+    tint = 1 + grain * fine + mottle * low
     height = 0.00015 * fine
-    return {"d": _rgb(d), "n": _normal(height, 1 / PX_PER_M)}, period_m, {
-        "size_px": size, "period_m": period_m, "grain": grain, "mottle": mottle}
+    info = {"size_px": size, "period_m": period_m, "grain": grain, "mottle": mottle}
+    if seam_every:
+        n = period_m / seam_every
+        if abs(n - round(n)) > 1e-6:
+            raise SystemExit(f"membrane: seam step {seam_every} m does not divide {period_m} m")
+        x = ((np.arange(size) + 0.5) / PX_PER_M) % seam_every  # metres from the upper roll's edge
+        ramp = np.clip(x * PX_PER_M, 0, 1)  # 1 px anti-aliased step at the edge
+        band = ramp * np.clip((overlap - x) / 0.02, 0, 1)  # the lower roll's edge under the upper one: soft
+        height = height + thickness * band[None, :]
+        tone = np.where(x < weld, weld_tone, 0.0) + np.where(x < edge_line, edge_tone, 0.0)
+        tint = tint * (1 + tone[None, :])
+        info.update({"seam_every_m": seam_every, "seams": int(round(n)), "overlap_m": overlap,
+                     "thickness_m": thickness, "weld_m": weld, "edge_line_m": edge_line})
+    d = np.asarray(rgb, np.float32)[None, None, :] * tint[..., None]
+    return {"d": _rgb(d), "n": _normal(height, 1 / PX_PER_M)}, period_m, info
 
 
 def profiled_sheet(rgb, seed, period_m=3.6, pitch=0.1, rib_h=0.021, top=0.025, slope=0.0125):

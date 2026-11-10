@@ -82,6 +82,8 @@ def test_v002_new_rows_follow_the_source_policy():
     for r in new:
         s = r["source"]
         assert r["synthetic"] or "Desktop" in s.get("file", "") or "msg_id" in s, r["path"]
+        assert r["provenance"] == "generated" if r["synthetic"] else r["provenance"] in (  # licence risk visible
+            "own", "own delivered project, origin of source unknown"), r["path"]
         if r["synthetic"]:
             assert r["profile"] != "d207" or r["d207"].startswith("ok"), r["path"]
 
