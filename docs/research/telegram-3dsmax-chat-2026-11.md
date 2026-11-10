@@ -116,6 +116,25 @@ Keyword-sampled (225 messages found; the topic is not read in full). Mostly a ne
   edge loops on OKS), `Import_HP_from_coordinates.ms` (126500, places high-poly by JSON coordinates).
 - In use by the user: `UDIM Viewer_V1.4.ms` (112216) — loads normals by coordinates together with materials.
 
+## AI-for-3D Telegram channels (survey 2026-11-10, ~25 channels checked)
+
+Subscribe, in order: @cgevent (AI-for-CG news, 10–20 posts/day), @neuroviza (tested archviz workflows),
+@gracehoppers (Rhino / Grasshopper + Claude Code + MCP), @NishA_Ai (AI in Revit / Archicad via MCP), Dark Max
+@darkmax3d (already), @CGIT_Vines, @Psy_Eyes, @cgnews (already), @makeev_architect (GENPLAN for Rhino), Клуб will3d
+(already). Skim: @novus_architectus, @acidcrunch, @tips_ai, @sintez_space. Skip: Nikita Tarasov (quiet since
+2026-09), Archviz Chat, @marchik3d, @cgAIFreelance.
+
+Items for this pipeline (a) and archviz (b):
+- (a) Unreal Engine 5.9 Preview: built-in Unreal Assistant and Unreal MCP — Claude Code / Codex edit scenes,
+  Blueprints, materials, pull Fab assets; Wasm / WebGPU browser export (@cgevent 17289, @CGIT_Vines 3360).
+- (a) Revit MCP Switch + «zero prompt» (@NishA_Ai 1067); Archicad MCP github.com/lgradisar/archicad-mcp (1071).
+- (a) Megascans free again on Fab (~23k assets incl. plants) — source for missing Ground / Flora sets (will3d 05.11).
+- (a) Hunyuan3D-WorldClaw: prompt → terrain, materials, objects, checked by Blender renders (Tencent).
+- (a) Easy AutoLoops, Edge Align (lod3ds on Gumroad); jifto (site context for Rhino); GENPLAN for Rhino (beta).
+- (b) ComfyUI + Nano Banana: colour scheme → photoreal master plan, 4K upscale (@gracehoppers 2339, 2346);
+  Nano Banana 2.1 mask edits (@neuroviza 1046); Seedance camera from 3ds Max (1065); Kimi + Tripo FBX from a
+  collage (1075); MOSS-Image ControlNet set for ComfyUI (@cgevent 17293); Runway Sightline 360 panoramas.
+
 ## Not taken
 
 Max Ultra MCP (licence unclear: page says Free and «requires purchase»; we keep `3dsmax-mcp`), opencode,
