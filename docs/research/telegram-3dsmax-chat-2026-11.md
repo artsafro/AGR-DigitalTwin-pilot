@@ -77,6 +77,22 @@ Gap analysis against the repository library (2026-11-10, media not opened — re
   `flora\v003\maps\<slug>\`; a manifest `library/materials/maps_v001.json` (file, sha256, size, px/m, source msg
   id, synthetic flag) in git; no binaries in git (H9).
 
+### Downloaded to the inbox (2026-11-10, user «Да, скачать»)
+
+42 originals in `G:\Мой диск\AGR-assets\_inbox\telegram-materials-2026-11\` as `<msgid>_<original name>`, with
+`manifest.json` (msg id, category, label, bytes, sha256, width × height, mode). Unprocessed; names still carry real
+addresses. What the files show against `docs/domain/areas/textures.md`:
+
+| Group | Measured | Fit / work needed |
+|---|---|---|
+| OKS placeholders, address plates 1016, metal ERM (20949–20956, 27159, 27161, 27884–27886) | 256 × 256 RGB, ≤ 3.4 KB | VPM placeholder size as is; NPM needs 128 × 128 copies; rename |
+| Address template, gates Diffuse / Normal (21001–21003, 27903–27904) | 4096 × 4096 RGB | VPM size; gates ERM 27902 is 256 palette (P) → convert to RGB |
+| MAF atlas 53407 + ID map 53408 | 4096 RGB, 14.4 MB; 15 slots | source only; bake the 512 set by `material_ids_v005.json`; WOOD2 pine = MAF №11/23/25/26/28–31 |
+| Flora, 12 species | 4096 RGBA (yarrow 2048), 1.2–6.0 MB | split into diffuse RGB + `_o` opacity, downsize for the ≤ 2048 Flora atlas |
+| Ground surfaces concrete / paving / wood / asphalt | 4096 RGB, 7.9–14.8 MB | over 3 MiB: VPM source only; check px/m against [D207]; concrete is JPG |
+| Tile (zip not extracted, FBX 34 MB), brick 2048 RGB | — | tile 4 m vs the 3.6 m grid |
+| Opacity / fences | 2048 L, 700² RGBA, 2048 × 2560, 2048 × 640, 900² RGB | not powers of two except SheetMetal; convert to single-channel `_o`; SheetMetal001 licence to check |
+
 ## Topic «Нейротипс» (group «АГР - Holding», root 8283) — AI for 3D sources
 
 Keyword-sampled (225 messages found; the topic is not read in full). Mostly a news feed of model releases.
