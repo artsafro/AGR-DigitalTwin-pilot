@@ -1,0 +1,33 @@
+{
+ "schema": "maf-atlas-512-slots",
+ "note": "Slot table of the team MAF atlas 53407 (4096 RGB, green 8 px frames, IDs painted into the cells) and its ID map 53408 «айди по мафам.txt», mapped to library/maf/material_ids_v007.json. Boxes are [x0, y0, x1, y1) in source pixels, chosen clear of the green frames and of the painted labels (checked by the script: no pure-white label or frame-green pixel inside). Pine as its own WOOD2 id 33: user 2026-11-10 (plan step 2.3).",
+ "source": {
+  "path": "G:/Мой диск/AGR-assets/_inbox/telegram-materials-2026-11/53407__atlas_maf_high_low_frame_id.png",
+  "sha256": "1c1a6821c11d867ad330f6d7f5a805ff26992e7d31a35514c51f5f1c21d02bf8",
+  "size": [4096, 4096],
+  "id_map": {
+   "path": "G:/Мой диск/AGR-assets/_inbox/telegram-materials-2026-11/53408_айди по мафам (1).txt",
+   "sha256": "ce95829f48752aaef54079760fb0f096a04be6bc30289ec994ff1ea7622bff3a"
+  }
+ },
+ "ids": "library/maf/material_ids_v007.json",
+ "atlas_size": 512,
+ "padding_px": 8,
+ "slots": [
+  {"slot": 1, "text": "металл краска RAL 9005", "id": 1, "key": "paint_ral9005", "kind": "solid", "px": 64, "box": [40, 40, 472, 380]},
+  {"slot": 2, "text": "металл краска RAL 7016", "id": 2, "key": "paint_ral7016", "kind": "solid", "px": 64, "box": [552, 40, 984, 380]},
+  {"slot": 3, "text": "металл краска RAL 7004", "id": 3, "key": "paint_ral7040", "kind": "solid", "px": 64, "box": [1064, 40, 1496, 380]},
+  {"slot": 4, "text": "металл краска RAL 9002", "id": 5, "key": "paint_ral9003", "kind": "solid", "px": 64, "box": [1576, 40, 2008, 380]},
+  {"slot": 5, "text": "метал глянец под сталь блеск", "id": 20, "key": "steel_stainless", "kind": "solid", "px": 64, "box": [2088, 40, 2520, 380]},
+  {"slot": 6, "text": "оранж краска", "id": 6, "key": "paint_orange", "kind": "solid", "px": 64, "box": [2600, 40, 3032, 380]},
+  {"slot": 7, "text": "салатовый ровный краска", "id": 8, "key": "paint_green_light", "kind": "solid", "px": 64, "box": [3112, 40, 3544, 380]},
+  {"slot": 8, "text": "красный ровный краска", "id": 7, "key": "paint_red", "kind": "solid", "px": 64, "box": [3624, 40, 4056, 380]},
+  {"slot": 9, "text": "WOOD1 дуб волокна усредненный тон", "id": 15, "key": "wood_medium", "kind": "patterned", "px": 256, "box": [8, 2552, 1528, 4072]},
+  {"slot": 10, "text": "WOOD2 сосна волокна усредненный тон", "id": 33, "key": "wood_pine", "kind": "patterned", "px": 256, "box": [1544, 2552, 3064, 4072]},
+  {"slot": 11, "text": "черная резина шина", "id": 23, "key": "rubber_black", "kind": "solid", "px": 64, "box": [3112, 3112, 4056, 3420]},
+  {"slot": 12, "text": "карта опасити полоски", "id": 28, "key": "perforation", "kind": "solid", "px": 64, "box": [3112, 2088, 4056, 2400], "note": "shares one dark cell with slot 13 in the source; the opacity pattern itself is not in 53407"},
+  {"slot": 13, "text": "карта опасити рабица", "id": 27, "key": "mesh_chainlink", "kind": "solid", "px": 64, "box": [3112, 2088, 4056, 2400], "note": "shares one dark cell with slot 12 in the source; the opacity pattern itself is not in 53407"},
+  {"slot": 14, "text": "профнастил", "id": 30, "key": "sheet_profiled", "kind": "solid", "px": 64, "box": [3112, 1064, 4056, 1400], "note": "flat grey in the source, no corrugation"},
+  {"slot": 15, "text": "бревно спил", "id": 18, "key": "wood_log_end", "kind": "patterned", "px": 128, "box": [1228, 1330, 1336, 1438], "note": "the source paints «ID 15» across the log end; only a 108 px clean patch below the label exists, so the 120 px cell content is a 1.1x upscale"}
+ ]
+}

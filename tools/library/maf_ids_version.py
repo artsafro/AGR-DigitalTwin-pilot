@@ -1,8 +1,9 @@
 """Derive the next MAF material ID list version from the previous one plus one reviewed change file.
 
 new-case: versioned edit of an approved ID list (D181: each change is a new version with a changelog line).
-v006 = v005 + ID 32 `wood_hpl_satin` (D229, #993). The previous list, its Markdown twin and its tiles are
-read-only inputs; outputs refuse to overwrite. The new tile is a flat swatch of the stated colour.
+v006 = v005 + ID 32 `wood_hpl_satin` (D229, #993); v007 = v006 + ID 33 `wood_pine` (plan step 2.3,
+2026-11-10). The previous list, its Markdown twin and its tiles are read-only inputs; outputs refuse to overwrite. The new
+tile is a flat swatch of the stated colour, or a Lanczos crop of a hash-checked source image (`tile.crop`).
 
 Usage:
   python tools/library/maf_ids_version.py --change library/maf/material_ids_v006_change.json \
@@ -17,9 +18,13 @@ import copy
 import hashlib
 import json
 import os
+import re
 import shutil
 import sys
 from pathlib import Path
+
+
+FLAT_RE = re.compile(r"\(flat (#[0-9A-Fa-f]{6})\)")
 
 
 class ChangeError(Exception):
@@ -78,11 +83,18 @@ def render_md(prev_md: str, prev: dict, new: dict, change: dict) -> str:
     add = change["add"]
     old14 = next(e for e in prev["ids"] if e["id"] == change["move_spec_rows"]["from_id"])
     out, done = [], set()
+    has_log = any(line.startswith("Changelog: ") for line in prev_md.splitlines())
+    last_id = max(e["id"] for e in prev["ids"])
     for line in prev_md.splitlines():
-        if line.startswith("# MAF material IDs v005"):
-            line = line.replace("v005", new["version"]).replace("(#524)", "(#524, #993)")
-            out += [line, "", f"Changelog: {change['changelog']}", ""]
+        if line.startswith(f"# MAF material IDs {prev['version']}"):
+            head, _, tail = line.replace(prev["version"], new["version"], 1).rpartition(")")
+            line = f"{head}, {change.get('md_ref', '#993')}){tail}"
+            out += [line] if has_log else [line, "", f"Changelog: {change['changelog']}", ""]
             done.add("title")
+            continue
+        if has_log and line.startswith("Changelog: ") and "log" not in done:
+            out += [line, f"Changelog: {change['changelog']}"]
+            done.add("log")
             continue
         if line.startswith(f"| {old14['id']} | ") and old14["name_ru"] in line and "row14" not in done:
             cols = line.split(" | ")
@@ -98,11 +110,12 @@ def render_md(prev_md: str, prev: dict, new: dict, change: dict) -> str:
             done.add("merge")
             continue
         out.append(line)
-        if line.startswith("| 31 | ") and "row32" not in done:
+        if line.startswith(f"| {last_id} | ") and "row32" not in done:
             out.append(f"| {add['id']} | - | `{add['key']}` | {add['name_ru']} | {add['kind']} | {add['size']} | "
                        f"{add['target']} | - | {len(add['spec_rows'])} | - | {add['status']} |")
             done.add("row32")
-    missing = {"title", "row14", "merge", "row32"} - done
+    missing = {"title", "row14", "merge", "row32"} | ({"log"} if has_log else set())
+    missing -= done
     if missing:
         raise ChangeError(f"md anchors not found: {sorted(missing)}")
     return "\n".join(out) + "\n"
@@ -119,18 +132,27 @@ def write_tile(add: dict, tiles_in: str, tiles_out: str, prev: dict) -> dict:
     for t in prev["evidence"]["tiles"]:
         src = os.path.join(tiles_in, t["file"])
         dst = os.path.join(tiles_out, t["file"])
-        if sha256_file(src) == t["sha256"]:
+        if os.path.exists(src) and sha256_file(src) == t["sha256"]:
             shutil.copyfile(src, dst)
-        elif t.get("source", "").startswith("GAP: target colour"):
-            # The ids run renders a gap tile as a flat swatch of the target; the recorded hash proves it.
-            Image.new("RGB", (512, 512), rgb(targets[t["key"]])).save(dst)
+        elif t.get("source", "").startswith("GAP: target colour") or FLAT_RE.search(t.get("source", "")):
+            # A gap tile is a flat swatch of the target, a versioned flat tile one of its stated colour; the
+            # recorded hash proves the regeneration.
+            flat = FLAT_RE.search(t["source"])
+            Image.new("RGB", (512, 512), rgb(flat.group(1) if flat else targets[t["key"]])).save(dst)
             if sha256_file(dst) != t["sha256"]:
                 raise ChangeError(f"stale tile {src}; flat regeneration does not match the recorded SHA256")
         else:
             raise ChangeError(f"stale tile {src}")
     tile = add["tile"]
     path = os.path.join(tiles_out, tile["file"])
-    Image.new("RGB", (tile["px"], tile["px"]), rgb(tile["flat"])).save(path)
+    if "crop" in tile:
+        crop = tile["crop"]
+        if sha256_file(crop["path"]) != crop["sha256"]:
+            raise ChangeError(f"crop source {crop['path']} does not match its recorded SHA256")
+        with Image.open(crop["path"]) as im:
+            im.convert("RGB").crop(tuple(crop["box"])).resize((tile["px"], tile["px"]), Image.LANCZOS).save(path)
+    else:
+        Image.new("RGB", (tile["px"], tile["px"]), rgb(tile["flat"])).save(path)
     return {"id": add["id"], "key": add["key"], "file": tile["file"], "sha256": sha256_file(path),
             "source": tile["source"]}
 

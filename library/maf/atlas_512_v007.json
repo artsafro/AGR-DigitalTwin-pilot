@@ -1,0 +1,724 @@
+{
+ "schema": "library-maf-atlas-512",
+ "version": "v007",
+ "status": "technical QA only; visual acceptance by the user open",
+ "decision": "pine as its own WOOD2 id 33: user 2026-11-10 (plan step 2.3); D id to be assigned at merge",
+ "generated_by": "jobs/maf-atlas-512/scripts/atlas_maf_from_source.py",
+ "inputs": {
+  "source": {
+   "path": "G:/Мой диск/AGR-assets/_inbox/telegram-materials-2026-11/53407__atlas_maf_high_low_frame_id.png",
+   "sha256": "1c1a6821c11d867ad330f6d7f5a805ff26992e7d31a35514c51f5f1c21d02bf8",
+   "size": [
+    4096,
+    4096
+   ]
+  },
+  "id_map": {
+   "path": "G:/Мой диск/AGR-assets/_inbox/telegram-materials-2026-11/53408_айди по мафам (1).txt",
+   "sha256": "ce95829f48752aaef54079760fb0f096a04be6bc30289ec994ff1ea7622bff3a"
+  },
+  "slots": {
+   "path": "jobs/maf-atlas-512/slots_53407.json"
+  },
+  "ids": {
+   "path": "library/maf/material_ids_v007.json",
+   "sha256": "897a16702c5e1bcefc40cb944e32da448737edd6e3bc2450066df5c3c35f5466"
+  }
+ },
+ "atlas": {
+  "path": "G:/Мой диск/AGR-assets/maf/atlas/v007/T_MAF_Atlas_v007_GroundEl_d_512.png",
+  "sha256": "55e654a2e04ce2e828cd1f7a1f585d54263a01050f00cb60d5d3bab4f6d0cf6d",
+  "bytes": 217050,
+  "size": [
+   512,
+   512
+  ],
+  "mode": "RGB"
+ },
+ "preview": {
+  "path": "G:/Мой диск/AGR-assets/maf/atlas/v007/preview_T_MAF_Atlas_v007_512_slots.png",
+  "sha256": "01360c0e12eba9127215a12de44b3be3dd4d63ee27a444d0e91d0e1519a18d73"
+ },
+ "padding_px": 8,
+ "free_share": 0.25,
+ "slots": [
+  {
+   "slot": 1,
+   "text": "металл краска RAL 9005",
+   "id": 1,
+   "key": "paint_ral9005",
+   "kind": "solid",
+   "px": 64,
+   "box": [
+    40,
+    40,
+    472,
+    380
+   ],
+   "colour": "#3C3C3C"
+  },
+  {
+   "slot": 2,
+   "text": "металл краска RAL 7016",
+   "id": 2,
+   "key": "paint_ral7016",
+   "kind": "solid",
+   "px": 64,
+   "box": [
+    552,
+    40,
+    984,
+    380
+   ],
+   "colour": "#4C4F54"
+  },
+  {
+   "slot": 3,
+   "text": "металл краска RAL 7004",
+   "id": 3,
+   "key": "paint_ral7040",
+   "kind": "solid",
+   "px": 64,
+   "box": [
+    1064,
+    40,
+    1496,
+    380
+   ],
+   "colour": "#A0A0A0"
+  },
+  {
+   "slot": 4,
+   "text": "металл краска RAL 9002",
+   "id": 5,
+   "key": "paint_ral9003",
+   "kind": "solid",
+   "px": 64,
+   "box": [
+    1576,
+    40,
+    2008,
+    380
+   ],
+   "colour": "#D8D8D0"
+  },
+  {
+   "slot": 5,
+   "text": "метал глянец под сталь блеск",
+   "id": 20,
+   "key": "steel_stainless",
+   "kind": "solid",
+   "px": 64,
+   "box": [
+    2088,
+    40,
+    2520,
+    380
+   ],
+   "colour": "#AFAFAF"
+  },
+  {
+   "slot": 6,
+   "text": "оранж краска",
+   "id": 6,
+   "key": "paint_orange",
+   "kind": "solid",
+   "px": 64,
+   "box": [
+    2600,
+    40,
+    3032,
+    380
+   ],
+   "colour": "#D2553F"
+  },
+  {
+   "slot": 7,
+   "text": "салатовый ровный краска",
+   "id": 8,
+   "key": "paint_green_light",
+   "kind": "solid",
+   "px": 64,
+   "box": [
+    3112,
+    40,
+    3544,
+    380
+   ],
+   "colour": "#C6DC7A"
+  },
+  {
+   "slot": 8,
+   "text": "красный ровный краска",
+   "id": 7,
+   "key": "paint_red",
+   "kind": "solid",
+   "px": 64,
+   "box": [
+    3624,
+    40,
+    4056,
+    380
+   ],
+   "colour": "#D8242C"
+  },
+  {
+   "slot": 9,
+   "text": "WOOD1 дуб волокна усредненный тон",
+   "id": 15,
+   "key": "wood_medium",
+   "kind": "patterned",
+   "px": 256,
+   "box": [
+    8,
+    2552,
+    1528,
+    4072
+   ],
+   "colour": "#967356",
+   "crop": {
+    "path": "crops/slot09_ID_15_wood_medium.png",
+    "sha256": "6d630d51bd1a658968a3cd9308c73923e361c885bb87717288480423f48b43e5"
+   }
+  },
+  {
+   "slot": 10,
+   "text": "WOOD2 сосна волокна усредненный тон",
+   "id": 33,
+   "key": "wood_pine",
+   "kind": "patterned",
+   "px": 256,
+   "box": [
+    1544,
+    2552,
+    3064,
+    4072
+   ],
+   "colour": "#82543D",
+   "crop": {
+    "path": "crops/slot10_ID_33_wood_pine.png",
+    "sha256": "6fa2152037eeaec86bb5cf72b60fcf5fff60d9f40a3c68d989bdbd43f373ef01"
+   }
+  },
+  {
+   "slot": 11,
+   "text": "черная резина шина",
+   "id": 23,
+   "key": "rubber_black",
+   "kind": "solid",
+   "px": 64,
+   "box": [
+    3112,
+    3112,
+    4056,
+    3420
+   ],
+   "colour": "#2B2B2B"
+  },
+  {
+   "slot": 12,
+   "text": "карта опасити полоски",
+   "id": 28,
+   "key": "perforation",
+   "kind": "solid",
+   "px": 64,
+   "box": [
+    3112,
+    2088,
+    4056,
+    2400
+   ],
+   "colour": "#2B2B2B",
+   "note": "shares one dark cell with slot 13 in the source; the opacity pattern itself is not in 53407"
+  },
+  {
+   "slot": 13,
+   "text": "карта опасити рабица",
+   "id": 27,
+   "key": "mesh_chainlink",
+   "kind": "solid",
+   "px": 64,
+   "box": [
+    3112,
+    2088,
+    4056,
+    2400
+   ],
+   "colour": "#2B2B2B",
+   "note": "shares one dark cell with slot 12 in the source; the opacity pattern itself is not in 53407"
+  },
+  {
+   "slot": 14,
+   "text": "профнастил",
+   "id": 30,
+   "key": "sheet_profiled",
+   "kind": "solid",
+   "px": 64,
+   "box": [
+    3112,
+    1064,
+    4056,
+    1400
+   ],
+   "colour": "#707070",
+   "note": "flat grey in the source, no corrugation"
+  },
+  {
+   "slot": 15,
+   "text": "бревно спил",
+   "id": 18,
+   "key": "wood_log_end",
+   "kind": "patterned",
+   "px": 128,
+   "box": [
+    1228,
+    1330,
+    1336,
+    1438
+   ],
+   "colour": "#826651",
+   "crop": {
+    "path": "crops/slot15_ID_18_wood_log_end.png",
+    "sha256": "b2133de0e7db6f21b48e375727b6fafaf060fc7fa02190c4b6e5a82e003270ad"
+   },
+   "note": "the source paints «ID 15» across the log end; only a 108 px clean patch below the label exists, so the 120 px cell content is a 1.1x upscale"
+  }
+ ],
+ "cells": [
+  {
+   "id": 1,
+   "key": "paint_ral9005",
+   "kind": "solid",
+   "slot_px": [
+    128,
+    256,
+    64,
+    64
+   ],
+   "content_px": [
+    132,
+    260,
+    56,
+    56
+   ],
+   "id_corner_px": [
+    172,
+    300,
+    16,
+    16
+   ],
+   "uv": [
+    0.257812,
+    0.382812,
+    0.367188,
+    0.492188
+   ]
+  },
+  {
+   "id": 2,
+   "key": "paint_ral7016",
+   "kind": "solid",
+   "slot_px": [
+    192,
+    256,
+    64,
+    64
+   ],
+   "content_px": [
+    196,
+    260,
+    56,
+    56
+   ],
+   "id_corner_px": [
+    236,
+    300,
+    16,
+    16
+   ],
+   "uv": [
+    0.382812,
+    0.382812,
+    0.492188,
+    0.492188
+   ]
+  },
+  {
+   "id": 3,
+   "key": "paint_ral7040",
+   "kind": "solid",
+   "slot_px": [
+    128,
+    320,
+    64,
+    64
+   ],
+   "content_px": [
+    132,
+    324,
+    56,
+    56
+   ],
+   "id_corner_px": [
+    172,
+    364,
+    16,
+    16
+   ],
+   "uv": [
+    0.257812,
+    0.257812,
+    0.367188,
+    0.367188
+   ]
+  },
+  {
+   "id": 5,
+   "key": "paint_ral9003",
+   "kind": "solid",
+   "slot_px": [
+    192,
+    320,
+    64,
+    64
+   ],
+   "content_px": [
+    196,
+    324,
+    56,
+    56
+   ],
+   "id_corner_px": [
+    236,
+    364,
+    16,
+    16
+   ],
+   "uv": [
+    0.382812,
+    0.257812,
+    0.492188,
+    0.367188
+   ]
+  },
+  {
+   "id": 6,
+   "key": "paint_orange",
+   "kind": "solid",
+   "slot_px": [
+    64,
+    384,
+    64,
+    64
+   ],
+   "content_px": [
+    68,
+    388,
+    56,
+    56
+   ],
+   "id_corner_px": [
+    108,
+    428,
+    16,
+    16
+   ],
+   "uv": [
+    0.132812,
+    0.132812,
+    0.242188,
+    0.242188
+   ]
+  },
+  {
+   "id": 7,
+   "key": "paint_red",
+   "kind": "solid",
+   "slot_px": [
+    64,
+    448,
+    64,
+    64
+   ],
+   "content_px": [
+    68,
+    452,
+    56,
+    56
+   ],
+   "id_corner_px": [
+    108,
+    492,
+    16,
+    16
+   ],
+   "uv": [
+    0.132812,
+    0.007812,
+    0.242188,
+    0.117188
+   ]
+  },
+  {
+   "id": 8,
+   "key": "paint_green_light",
+   "kind": "solid",
+   "slot_px": [
+    0,
+    448,
+    64,
+    64
+   ],
+   "content_px": [
+    4,
+    452,
+    56,
+    56
+   ],
+   "id_corner_px": [
+    44,
+    492,
+    16,
+    16
+   ],
+   "uv": [
+    0.007812,
+    0.007812,
+    0.117188,
+    0.117188
+   ]
+  },
+  {
+   "id": 15,
+   "key": "wood_medium",
+   "kind": "patterned",
+   "slot_px": [
+    0,
+    0,
+    256,
+    256
+   ],
+   "content_px": [
+    4,
+    4,
+    248,
+    248
+   ],
+   "id_corner_px": [
+    214,
+    214,
+    38,
+    38
+   ],
+   "uv": [
+    0.007812,
+    0.507812,
+    0.492188,
+    0.992188
+   ]
+  },
+  {
+   "id": 18,
+   "key": "wood_log_end",
+   "kind": "patterned",
+   "slot_px": [
+    0,
+    256,
+    128,
+    128
+   ],
+   "content_px": [
+    4,
+    260,
+    120,
+    120
+   ],
+   "id_corner_px": [
+    106,
+    362,
+    18,
+    18
+   ],
+   "uv": [
+    0.007812,
+    0.257812,
+    0.242188,
+    0.492188
+   ]
+  },
+  {
+   "id": 20,
+   "key": "steel_stainless",
+   "kind": "solid",
+   "slot_px": [
+    0,
+    384,
+    64,
+    64
+   ],
+   "content_px": [
+    4,
+    388,
+    56,
+    56
+   ],
+   "id_corner_px": [
+    44,
+    428,
+    16,
+    16
+   ],
+   "uv": [
+    0.007812,
+    0.132812,
+    0.117188,
+    0.242188
+   ]
+  },
+  {
+   "id": 23,
+   "key": "rubber_black",
+   "kind": "solid",
+   "slot_px": [
+    128,
+    384,
+    64,
+    64
+   ],
+   "content_px": [
+    132,
+    388,
+    56,
+    56
+   ],
+   "id_corner_px": [
+    172,
+    428,
+    16,
+    16
+   ],
+   "uv": [
+    0.257812,
+    0.132812,
+    0.367188,
+    0.242188
+   ]
+  },
+  {
+   "id": 27,
+   "key": "mesh_chainlink",
+   "kind": "solid",
+   "slot_px": [
+    128,
+    448,
+    64,
+    64
+   ],
+   "content_px": [
+    132,
+    452,
+    56,
+    56
+   ],
+   "id_corner_px": [
+    172,
+    492,
+    16,
+    16
+   ],
+   "uv": [
+    0.257812,
+    0.007812,
+    0.367188,
+    0.117188
+   ]
+  },
+  {
+   "id": 28,
+   "key": "perforation",
+   "kind": "solid",
+   "slot_px": [
+    192,
+    384,
+    64,
+    64
+   ],
+   "content_px": [
+    196,
+    388,
+    56,
+    56
+   ],
+   "id_corner_px": [
+    236,
+    428,
+    16,
+    16
+   ],
+   "uv": [
+    0.382812,
+    0.132812,
+    0.492188,
+    0.242188
+   ]
+  },
+  {
+   "id": 30,
+   "key": "sheet_profiled",
+   "kind": "solid",
+   "slot_px": [
+    192,
+    448,
+    64,
+    64
+   ],
+   "content_px": [
+    196,
+    452,
+    56,
+    56
+   ],
+   "id_corner_px": [
+    236,
+    492,
+    16,
+    16
+   ],
+   "uv": [
+    0.382812,
+    0.007812,
+    0.492188,
+    0.117188
+   ]
+  },
+  {
+   "id": 33,
+   "key": "wood_pine",
+   "kind": "patterned",
+   "slot_px": [
+    256,
+    0,
+    256,
+    256
+   ],
+   "content_px": [
+    260,
+    4,
+    248,
+    248
+   ],
+   "id_corner_px": [
+    470,
+    214,
+    38,
+    38
+   ],
+   "uv": [
+    0.507812,
+    0.507812,
+    0.992188,
+    0.992188
+   ]
+  }
+ ]
+}
