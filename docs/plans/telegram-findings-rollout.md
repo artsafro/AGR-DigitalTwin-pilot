@@ -39,7 +39,7 @@ One step = one branch / PR unless marked "batch". Status: `done`, `next`, `later
 |---|---|---|---|
 | 3.1 | Update `3dsmax-mcp` v1.7.5 → v1.7.8 (close Max and all agent clients) | H14 | blocked: user window |
 | 3.2 | Live smoke tests of AGR Tools / `agr-mcp` in a pinned Max | Q9 | after 3.1 |
-| 3.3 | Link Info «Inherit» → FBX test scene; rule into `docs/domain/` if confirmed | Q10 | next |
+| 3.3 | Link Info «Inherit» → FBX test scene; rule into `docs/domain/` if confirmed | Q10 | done: partly confirmed (rotate-off), rule in `export-import.md`, `docs/research/link-info-inherit-fbx-2026-11.md` |
 | 3.4 | Scene analyser: near-identical meshes → instance proposals (report only) | P15 | later (Codex) |
 | 3.5 | FenceFit03.dlm on a Ground fence: deterministic, collapse, FBX readback | P16 | later |
 | 3.6 | Raster plan → walls with a scale anchor | IN9 | later |

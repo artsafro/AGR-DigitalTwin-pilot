@@ -170,8 +170,6 @@ Plan: historical `archive/2026-11:docs/HARNESS_PLAN.md` §15 (user decision 2026
 - **Q9** Live smoke tests of AGR Tools / `agr-mcp` in a pinned 3ds Max after each change (the agent starts Max,
   runs the tools, reads results back, closes Max). Idea from `docs/research/telegram-3dsmax-chat-2026-11.md`
   (accepted 2026-11-10).
-- **Q10** Export check: Link Info «Inherit» locks are not carried into FBX — bake transforms before export and
-  verify by readback; add to the export rules in `docs/domain/` if confirmed on a test scene. Same research note.
 
 ## Unreal and IFC
 
