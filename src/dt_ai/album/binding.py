@@ -20,7 +20,7 @@ Rules (each has a test in ``tests/test_album_binding.py``):
   A span without readable text is a finding, never a silent omission.
 - Binding, in order: ``axis_pair`` (both span ends on axes of the same view, within 1 pt), ``opening`` (both
   ends on the edges of one closed rectangle of the view that faces the chain), ``level_pair`` (a vertical
-  span whose ends sit on two level-mark shelves of the view), else ``unbound`` with the reason. Level marks
+  span whose ends sit on the level lines of two level marks of the view: the horizontal leader nearest the mark text that reaches out of it, one line per mark), else ``unbound`` with the reason. Level marks
   bind as ``level`` to their own written value; the absolute elevation written under a mark is kept raw.
   Every dimension-like text token (>= 3 digits) that no span claims is a value with ``unbound`` /
   ``no_dimension_line``; nothing is dropped.

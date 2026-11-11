@@ -1,0 +1,144 @@
+{
+ "dwg": {
+  "path": "G:\\Мой диск\\AGR-assets\\KPP1\\source\\22Е56-АР2-1002-АС.03-R1_L01_без подписей.dwg",
+  "sha256": "cb74ba142142e9181dfc14e235f94aed7eabec597e746760e5a972427f0f3648"
+ },
+ "dxf": {
+  "path": "C:\\x\\ev_t_e8aff8d9\\L01.dxf",
+  "sha256": "8f7adfbde76219423b1cc95d1a1745511c81aa71944f8727d199cefe29650850",
+  "bytes": 11428926
+ },
+ "pdf": {
+  "path": "C:\\x\\ev_t_e8aff8d9\\kpp1-v001\\L01-plotted.pdf",
+  "sha256": "acfd32de269250171d7ac411eeb75f0747977f3faabf06eab303f0d11f36ef59"
+ },
+ "plot": {
+  "pages": [
+   {
+    "window_mm": [
+     -4060.7277682217573,
+     -2899.6564915806443,
+     33880.5073194798,
+     10462.473891730946
+    ],
+    "pt_per_mm": 0.029255768754871146,
+    "origin_pt": [
+     40.0,
+     40.0
+    ]
+   },
+   {
+    "window_mm": [
+     37717.06391002469,
+     -2953.3486831484834,
+     76082.6298154738,
+     10426.150422153478
+    ],
+    "pt_per_mm": 0.028932194112177692,
+    "origin_pt": [
+     40.0,
+     40.0
+    ]
+   },
+   {
+    "window_mm": [
+     77996.4938973113,
+     -2699.9999999999523,
+     97135.13471568597,
+     10426.150422153478
+    ],
+    "pt_per_mm": 0.057997848986972404,
+    "origin_pt": [
+     40.0,
+     40.0
+    ]
+   },
+   {
+    "window_mm": [
+     99019.90464308427,
+     -2813.104187132414,
+     117867.60391706793,
+     10426.150422153476
+    ],
+    "pt_per_mm": 0.05755611040711765,
+    "origin_pt": [
+     40.0,
+     40.0
+    ]
+   }
+  ],
+  "dropped_entities": {
+   "HATCH": 1388,
+   "ELLIPSE": 8,
+   "SPLINE": 32
+  }
+ },
+ "reference": {
+  "levels": 97,
+  "axes": 8,
+  "dimension_values": 0,
+  "unverified_levels": 2
+ },
+ "table": {
+  "level -> level line": {
+   "truth": 97,
+   "predicted": 99,
+   "correct": 0,
+   "precision": 0.0,
+   "recall": 0.0
+  },
+  "axis label + position": {
+   "truth": 8,
+   "predicted": 0,
+   "correct": 0,
+   "precision": null,
+   "recall": 0.0
+  },
+  "dimension value -> axis pair/opening/level pair": {
+   "truth": 0,
+   "predicted": 0,
+   "correct": 0,
+   "precision": null,
+   "recall": null
+  }
+ },
+ "scales": [
+  {
+   "view": "p1-v1",
+   "status": "unknown",
+   "reason": "0 independent model anchor(s) matched; >= 2 required"
+  },
+  {
+   "view": "p2-v1",
+   "status": "unknown",
+   "reason": "0 independent model anchor(s) matched; >= 2 required"
+  },
+  {
+   "view": "p3-v1",
+   "status": "unknown",
+   "reason": "0 independent model anchor(s) matched; >= 2 required"
+  },
+  {
+   "view": "p3-v2",
+   "status": "unknown",
+   "reason": "0 independent model anchor(s) matched; >= 2 required"
+  },
+  {
+   "view": "p4-v1",
+   "status": "unknown",
+   "reason": "0 independent model anchor(s) matched; >= 2 required"
+  }
+ ],
+ "summary": {
+  "values": 100,
+  "by_binding": {
+   "level": 99,
+   "unbound": 1
+  },
+  "vertical_dimensions": 0,
+  "views": 5,
+  "calibrated_views": 0,
+  "unresolved": 1
+ },
+ "passed": false
+}
