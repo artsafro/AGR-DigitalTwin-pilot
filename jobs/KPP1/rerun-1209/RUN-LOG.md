@@ -12,7 +12,7 @@ for both (exit 1); the exact blockers are listed below. Visual and checker gates
 
 ## Levels (answer 5 of [D238])
 
-Storey **3.900** and roof **7.909** (and the roof base 7.700) are **from Revit (`jobs/KPP1/object.json`), not
+Storey **3.900** and roof **7.909** [D238] (roof base **7.700** provisionally accepted in [D249]) are **from Revit (`jobs/KPP1/object.json`), not
 confirmed by the architect for R1**. АС.03 has no section sheet; the architect question stays open in
 `jobs/KPP1/questions.md` (Q-R1-LEVELS).
 
@@ -120,11 +120,11 @@ VPM `SM_Kpp_1.fbx` — `passed: false`, exit 1 (`SM_Kpp_1.validate.json`):
 
 | Stage | Check | Value | Limit |
 |---|---|---|---|
-| V004 | topology defects | `SM_Kpp_1_Main` duplicates_and_self_intersections = 170 (parts joined into one mesh touch / intersect: frames, mullions, parapet on the body) | 0 |
-| V004 | co-directional clearance | 3 pairs < 5 mm, 14 pairs 5-20 mm | none < 20 mm |
+| V004 | topology defects | `SM_Kpp_1_Main` duplicates_and_self_intersections = 170 (parts joined into one mesh touch / intersect: frames, mullions, parapet on the body) | <= 100 at 0.002 m per mesh; isolated elements / zero-length edges = 0 |
+| V004 | co-directional clearance | 3 pairs < 5 mm, 14 pairs 5-20 mm, 48 618 > 20 mm | 5-20 mm inclusive; >20 mm review |
 | V007 | textures | not_run: no Diffuse/ERM/Normal PNG | required |
 | V009 | texel density | not_run: no diffuse texture | 512..1706 px/m |
-| V010 | UCX coverage and offsets | not_run; piece gap advisory review (4 boxes touch) | — |
+| V010 | UCX coverage and offsets | coverage not_run; piece gap advisory review: 5 touching neighbour pairs at 0 mm | gap 2-10 mm inclusive [D098]; advisory, not fail |
 | V001 / V011 / V013 | archive, GeoJSON, MSK-77 point | not_run: no ZIP, no GeoJSON (MSK-77 placement deferred by the user) | required |
 | V003 | master quads | not_run: no quad master (`--master`) | [D021] |
 | V015 / V016 / V017 | manual | not signed (waits visual) | signed |
@@ -157,6 +157,39 @@ V015 / V017 manual. Pass: V002, V005, V012.
 | R3 | `validate_package` on a single FBX | V001/V011/V013 can only be `not_run` without a ZIP and GeoJSON, so a geometry-only run can never reach `passed=true`; the acceptance "passed=true for each built FBX" is not reachable while MSK-77 placement is deferred. | note in TASK_TO_MODEL |
 | R4 | Parapet thickness / roof base | Initially guessed; Artem provisionally approved 0.35 m parapet and slab 7.700-7.909 in [D249]. Marked 'provisional, not confirmed by drawings/architect [D249]'; architect confirmation stays open. | user modelling blocker resolved; architect question retained |
 | R5 | Mullions | 164 of 171 mullion inserts lie outside the merged opening boxes (their centres are not inside any cut), so they were not placed; the curtain-wall panels and the mullions use different layer groupings. | follow-up |
+
+## Final resume audit (Codex)
+
+No geometry or exports were modified. Both FBX SHA-256 values and all 14 files in the
+external SHA256SUMS were rehashed, as were all 6 copied/derived inputs in inputs-v001.json.
+Fresh clean-process `validate_package <external-fbx> --profile vpm|npm --scene --json`
+returned exit 1 for each; all stage findings equal the original committed receipts.
+`final-audit.json` retains the exact non-pass check/value/limit rows and manual stages.
+This confirms receipt provenance, **not** model acceptance. Four preview PNGs exist;
+the SE VPM preview was inspected: untextured grey surfaces, no visible stair, no
+architectural/finish approval inferred from this preview.
+
+Commands added in this resume:
+
+```bash
+uv run python tools/qa/validate_package.py 'G:/Мой диск/AGR-evidence/KPP1/rerun-1209/SM_Kpp_1.fbx' --profile vpm --scene --json
+uv run python tools/qa/validate_package.py 'G:/Мой диск/AGR-evidence/KPP1/rerun-1209/0000_Kpp_1_01.fbx' --profile npm --scene --json
+uv run dt qa xview 'G:/Мой диск/AGR-evidence/KPP1/rerun-1209/SM_Kpp_1.fbx' --profile VPM --out tmp/kpp1-resume/vpm-xview-profile-final.json
+uv run dt qa xview 'G:/Мой диск/AGR-evidence/KPP1/rerun-1209/0000_Kpp_1_01.fbx' --out tmp/kpp1-resume/npm-xview-final.json
+```
+
+Both xView commands exited 1. VPM: 2 853 overlapping faces / 40 overlapping vertices,
+3 953 face pairs (880 contact, 863 area, 2 210 area+contact). NPM: 785 overlapping faces /
+40 overlapping vertices, 1 237 face pairs (371 contact, 260 area, 606 area+contact).
+Required overlapping faces = 0 [D152]; the operation postcondition is **not met**.
+These are additional known blockers, not approved deviations. G1 texture-joint continuity,
+G2 decor embed, G3 edge loops remain not checked, and no signed visual/checker receipt exists.
+
+The final audit also caught CRLF in the inherited walk-v001.json (117/118 initial artifact
+probes); the walk is regenerated and LF-normalized before the fresh-worktree check.
+Artifact/synthetic input probes are in handoff-probes.json; they do not certify architectural
+fidelity or script safety for every possible Blender invocation. No changes to the validator,
+no live Max or 3dsmaxbatch calls, no rewriting of historical acceptance.
 
 ## Not done, and why
 
