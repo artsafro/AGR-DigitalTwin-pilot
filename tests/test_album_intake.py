@@ -1,7 +1,11 @@
 """new-case: synthetic PDF intake accounting and immutable deterministic publication."""
 import hashlib
 import importlib
+import importlib.util
 import json
+from pathlib import Path
+import subprocess
+import sys
 
 import pytest
 
