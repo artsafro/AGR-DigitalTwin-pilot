@@ -1,0 +1,76 @@
+"""Final serial receipt, then real focused load to keep the companion slot busy for #1227.
+Must itself run through suite_slot.py; never edits the worktree or source inputs.
+"""
+import json
+import os
+from pathlib import Path
+import subprocess
+import time
+
+ROOT = Path('C:/Users/artsafro/agr-pilot/AGR-DigitalTwin/.worktrees/t_4c32b36e')
+EVIDENCE = Path('C:/x/autoresearch-suite')
+import runpy
+# Do not add a third full suite when the shared configuration allows more slots.
+holders = runpy.run_path(str(EVIDENCE / 'xdist_matrix.py'), run_name='holder_probe')['holders']
+deadline = time.monotonic() + 3600
+while True:
+    live = holders()
+    if not any(row['card'] == 't_4c32b36e' for row in live):
+        raise SystemExit('no owned suite slot: refusing full-suite launch')
+    if len(live) <= 2:
+        break
+    if time.monotonic() >= deadline:
+        raise SystemExit(f'two-suite capacity unavailable: {live}')
+    print('WAITING for at most two live suite holders', live, flush=True)
+    time.sleep(30)
+for output in (ROOT / 'tmp/full-suite.log', ROOT / 'tmp/ci-receipt.md'):
+    if output.exists():
+        raise SystemExit(f'refusing stale receipt/log: {output}')
+final = EVIDENCE / 'final.jsonl'
+log = EVIDENCE / 'final_stdout.txt'
+if final.exists() or log.exists():
+    raise SystemExit('refusing to overwrite final evidence')
+head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
+env = dict(os.environ, PYTHONPATH=str(EVIDENCE), AR_CPU_OUT=str(final))
+for key in ('MSYS_NO_PATHCONV', 'MSYS2_ARG_CONV_EXCL'):
+    env.pop(key, None)
+# One real canonical receipt run also supplies the full-suite CPU evidence.
+# Plugins live in this worktree's venv; the producer intentionally scrubs PYTHONPATH.
+env['PYTEST_ADDOPTS'] = '-p no:cacheprovider -p ar_cpu_plugin -p ar_env_boundary'
+argv = ['uv', 'run', 'python', 'tools/ci_receipt.py', '--issue', '1227',
+        '--basetemp', 'C:/x/t_4c32b36e-final', '--pytest-log', 'tmp/full-suite.log',
+        '--out', 'tmp/ci-receipt.md']
+start = time.monotonic()
+with log.open('x', encoding='utf-8') as stream:
+    result = subprocess.run(argv, cwd=ROOT, env=env, stdout=stream, stderr=subprocess.STDOUT)
+receipt = {'head': head, 'head_after': subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
+           'argv': argv, 'exit_code': result.returncode, 'wall_s': time.monotonic()-start}
+(EVIDENCE / 'final-command.json').write_text(json.dumps(receipt, indent=2), encoding='utf-8')
+print('FINAL', json.dumps(receipt), flush=True)
+print(log.read_text(encoding='utf-8', errors='replace')[-2000:], flush=True)
+pytest_log = ROOT / 'tmp/full-suite.log'
+if pytest_log.exists():
+    data = pytest_log.read_bytes()
+    (EVIDENCE / 'final_pytest.log').open('xb').write(data)
+    print(data.decode('utf-8', errors='replace')[-2000:], flush=True)
+# Additional focused stress is not a full-suite receipt and is never included in the frozen metric.
+env.pop('AR_CPU_OUT', None)
+env.pop('PYTEST_ADDOPTS', None)
+targets = (EVIDENCE / 'targets.txt').read_text().splitlines()
+deadline = time.monotonic() + 10800
+iteration = 0
+while not (EVIDENCE / 'xdist-matrix.done').exists() and time.monotonic() < deadline:
+    iteration += 1
+    phase = {'phase': 'focused_companion', 'iteration': iteration, 'started': time.time()}
+    with (EVIDENCE / 'companion-phases.jsonl').open('a', encoding='utf-8') as f:
+        f.write(json.dumps(phase)+'\n')
+    with (EVIDENCE / f'companion-focused-{iteration}.log').open('x', encoding='utf-8') as stream:
+        load = subprocess.run(['uv','run','pytest','-q','-p','no:xdist','-p','no:cacheprovider',
+                               '--basetemp=C:/x/t_4c32b36e-companion', *targets],
+                              cwd=ROOT, env=env, stdout=stream, stderr=subprocess.STDOUT)
+    print('COMPANION', iteration, 'exit', load.returncode, flush=True)
+    if load.returncode:
+        raise SystemExit(load.returncode)
+if receipt['head_after'] != head:
+    raise SystemExit('HEAD changed during final suite')
+raise SystemExit(result.returncode)

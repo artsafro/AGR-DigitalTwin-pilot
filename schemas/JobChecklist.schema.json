@@ -103,6 +103,7 @@
     },
     "Gate": {
       "additionalProperties": false,
+      "description": "``waits`` (optional, #1204) names what a non-passed gate is parked on: ``user`` (a user\ndecision or review), ``max`` (a live 3ds Max step) or ``visual`` (the visual gate first).\nIt is counted by the walker and never makes a gate ready; a ``pass`` gate waits for nothing.",
       "properties": {
         "status": {
           "enum": [
@@ -126,6 +127,23 @@
           },
           "title": "Evidence",
           "type": "array"
+        },
+        "waits": {
+          "anyOf": [
+            {
+              "enum": [
+                "user",
+                "max",
+                "visual"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Waits"
         }
       },
       "required": [

@@ -527,7 +527,10 @@ class HeightField:
         surface can bend between mesh vertices: crossings of two triangle edges in plan and points where
         an edge pierces another triangle's plane inside that triangle. With the vertices and the boundary
         crossings they are the vertices of the envelope's arrangement, so the max of |envelope - plane| over
-        a leaf is attained among them. Pairs sharing a vertex (one welded layer) bend nowhere new."""
+        a leaf is attained among them. Pairs sharing a vertex (one welded layer) bend nowhere new.
+        Compact pairs already rejected by the existing masks before computing their coordinates;
+        every predicate, arithmetic expression and surviving pair's order stays unchanged.
+        """
         k = self._cands(self._grid, (lo[0], lo[1], hi[0], hi[1]))
         if len(k) < 2:
             return np.zeros((0, 2))
@@ -539,15 +542,15 @@ class HeightField:
         for s0 in range(0, len(e), 256):  # edge x edge crossings
             a, ra, ea = p0[s0:s0 + 256, None, :2], r[s0:s0 + 256, None], e[s0:s0 + 256, None]
             den = ra[..., 0] * r[None, :, 1] - ra[..., 1] * r[None, :, 0]
-            d = p0[None, :, :2] - a
             ok = (np.abs(den) > 1e-12) & (ea[..., 0] != e[None, :, 0]) & (ea[..., 0] != e[None, :, 1]) \
                 & (ea[..., 1] != e[None, :, 0]) & (ea[..., 1] != e[None, :, 1])
-            dd = np.where(ok, den, 1.0)
-            tq = (d[..., 0] * r[None, :, 1] - d[..., 1] * r[None, :, 0]) / dd
-            uq = (d[..., 0] * ra[..., 1] - d[..., 1] * ra[..., 0]) / dd
-            m = ok & (tq > 0) & (tq < 1) & (uq > 0) & (uq < 1)
-            i, _ = np.nonzero(m)
-            out.append((a[i, 0] + ra[i, 0] * tq[m][:, None]))
+            i, j = np.nonzero(ok)
+            d = p0[j, :2] - a[i, 0]
+            dd = den[i, j]
+            tq = (d[:, 0] * r[j, 1] - d[:, 1] * r[j, 0]) / dd
+            uq = (d[:, 0] * ra[i, 0, 1] - d[:, 1] * ra[i, 0, 0]) / dd
+            m = (tq > 0) & (tq < 1) & (uq > 0) & (uq < 1)
+            out.append(a[i[m], 0] + ra[i[m], 0] * tq[m, None])
         a0, e1, e2, det, okt = self._a[k], self._e1[k], self._e2[k], self._det[k], self._ok[k]
         nrm = np.cross(e1, e2)
         for s0 in range(0, len(e), 256):  # edge x foreign triangle plane
@@ -557,12 +560,15 @@ class HeightField:
             den = f0 - f1
             ok = okt[None] & (np.abs(nrm[None, :, 2]) > 1e-12) & (np.abs(den) > 1e-15)
             s = np.where(ok, f0 / np.where(ok, den, 1.0), -1.0)
-            pt = q0[..., :2] + s[..., None] * (q1[..., :2] - q0[..., :2])
-            d = pt - a0[None, :, :2]
-            u = (d[..., 0] * e2[None, :, 1] - d[..., 1] * e2[None, :, 0]) / det[None]
-            w = (e1[None, :, 0] * d[..., 1] - e1[None, :, 1] * d[..., 0]) / det[None]
-            shared = (tt[None, :, :] == ee[..., 0:1]).any(-1) | (tt[None, :, :] == ee[..., 1:2]).any(-1)
-            m = ok & ~shared & (s > 0) & (s < 1) & (u > 0) & (w > 0) & (u + w < 1)
+            i, j = np.nonzero(ok & (s > 0) & (s < 1))
+            if not len(i):
+                continue
+            pt = q0[i, 0, :2] + s[i, j, None] * (q1[i, 0, :2] - q0[i, 0, :2])
+            d = pt - a0[j, :2]
+            u = (d[:, 0] * e2[j, 1] - d[:, 1] * e2[j, 0]) / det[j]
+            w = (e1[j, 0] * d[:, 1] - e1[j, 1] * d[:, 0]) / det[j]
+            shared = (tt[j] == ee[i, 0, 0:1]).any(-1) | (tt[j] == ee[i, 0, 1:2]).any(-1)
+            m = ~shared & (u > 0) & (w > 0) & (u + w < 1)
             out.append(pt[m])
         pts = np.concatenate(out) if out else np.zeros((0, 2))
         return pts[((pts >= np.asarray(lo)) & (pts <= np.asarray(hi))).all(axis=1)]
