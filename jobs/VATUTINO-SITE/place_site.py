@@ -83,7 +83,9 @@ def run(cfg: dict, out: Path, seed: int, dcc=blender) -> int:
     a_seed = seed
     adapter = json.loads(cfg["adapter"].read_text(encoding="utf-8"))
     parts = json.loads(cfg["site_parts"].read_text(encoding="utf-8"))
-    mafset = json.loads(cfg["maf_set"].read_text(encoding="utf-8"))["positions"]
+    # #1146 v007: cfg may carry its own picks / exact set / scene version; maf_set None = Flora only
+    picks, exact, version = cfg.get("flora_picks", FLORA_PICKS), cfg.get("exact", EXACT), cfg.get("version", "v001")
+    mafset = json.loads(cfg["maf_set"].read_text(encoding="utf-8"))["positions"] if cfg.get("maf_set") else []
     verona_rows, verona_log = [], []
     if cfg.get("verona"):
         import importlib.util
@@ -100,18 +102,18 @@ def run(cfg: dict, out: Path, seed: int, dcc=blender) -> int:
     FLORA_FBX, GROUND = Path(cfg["flora_fbx"]), Path(cfg["ground"])
     inputs = {"adapter": {"path": str(cfg["adapter"]), "sha256": sha(cfg["adapter"])},
               "site_parts": {"path": _rel(cfg["site_parts"]), "sha256": sha(cfg["site_parts"])},
-              "maf_set": {"path": _rel(cfg["maf_set"]), "sha256": sha(cfg["maf_set"])},
+              "maf_set": {"path": _rel(cfg["maf_set"]), "sha256": sha(cfg["maf_set"])} if cfg.get("maf_set") else None,
               "ground_exceptions": {"path": _rel(exc_path), "sha256": sha(exc_path) if exc_path.is_file() else None,
                                     "entries": len(exceptions)},
               "flora_library": {"path": str(cfg["flora_library"]), "export_dir": str(FLORA_FBX)}}
     flora_rows = {}
     for f in parts["flora"]:
-        pick = FLORA_PICKS.get(f["pos"])
+        pick = picks.get(f["pos"])
         c = next((c for c in f["cands"] if c["id"] == pick), None) if pick else None
         flora_rows[f["block"]] = {"pos": f["pos"], "ru": f["ru"], "latin": f["latin"], "qty": f["qty"],
                                   "h_m": [f["h_cm"][0] / 100.0, f["h_cm"][1] / 100.0], "cand": c,
                                   "spozu_in": f["spozu_in"], "spozu_total": f["spozu_total"],
-                                  "match": "exact" if f["pos"] in EXACT else ("substitute" if c else "no_model")}
+                                  "match": "exact" if f["pos"] in exact else ("substitute" if c else "no_model")}
     export = json.loads((FLORA_FBX / "export.json").read_text(encoding="utf-8"))["objects"]
     if verona_rows:
         inputs["verona"] = {"shapes": _rel(Path(cfg["verona"]["shapes"])), "shapes_sha256": sha(Path(cfg["verona"]["shapes"])),
@@ -219,7 +221,7 @@ def run(cfg: dict, out: Path, seed: int, dcc=blender) -> int:
                               "engine_report_sha256": ps.report_sha256(rep), "input_hashes": rep["input_hashes"],
                               "totals": rep["totals"], "issue": 296, "variant": var}
         (vdir / "spec.json").write_text(json.dumps(spec, indent=1), encoding="utf-8")
-        blend = vdir / f"VATUTINO-SITE_placement_{var}_v001.blend"
+        blend = vdir / f"VATUTINO-SITE_placement_{var}_{version}.blend"
         cmds.append(dcc("instance", vdir / "spec.json", vdir / "plan.json", blend, vdir / "readback.json"))
         rb = json.loads((vdir / "readback.json").read_text(encoding="utf-8"))
         vr["scene_mismatches"] = ps.compare_scene(rep, rb, facts, offset)
