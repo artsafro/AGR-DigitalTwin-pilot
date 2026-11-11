@@ -1,9 +1,9 @@
 # Autoresearch: default-suite CPU (#1227)
 
-Status: **blocked on an uninterrupted two-slot validation window**. Retained code is ready,
-but the final serial CI/whole-suite CPU and three controlled repetitions at each xdist width
-are incomplete; no PR or final acceptance is claimed. See the interruption evidence below.
-After a controlled retry, exact-head final receipts, per-file tables and capacity results belong
+Status: **final validation resumed after the orchestrator's scheduling clarification**.
+Retained code is unchanged. Final serial CI/whole-suite CPU and capacity repetitions are
+pending; no acceptance is claimed before their actual results. See the interruption evidence.
+After validation, exact-head final receipts, per-file tables and capacity results belong
 in the PR body's **Final measurements** section and attached CSV, without changing the
 SHA they certify. This file is the committed search/round log.
 
@@ -129,10 +129,13 @@ not authorization to change `suite_slot.py`, rule 43, or merge_batch.
 The sampled load is **one xdist slot plus one serial slot**, not two xdist slots. The companion
 first runs the canonical local CI producer (including the real full default pytest suite), then
 repeats the real frozen target suite if needed to keep that slot busy. Exactly two live owned
-holders are required before each xdist run and sampled every two seconds. A third holder,
-worker crash, missing summary or desktop-heap marker invalidates the relevant observation;
-it is never silently discarded. This does not certify simultaneous xdist in both slots.
-Final numbers/recommendation will be published only after a controlled retry succeeds.
+holders are required before each xdist launch and sampled every two seconds. A successful
+run whose samples all contain >=2 holders counts as conservative capacity evidence, per the
+orchestrator's 2026-11-11 19:50 clarification on this card; a third foreign holder is disclosed,
+not silently discarded. This does not certify simultaneous xdist in both owned slots.
+A heap/worker failure under third-holder load receives at most two retries; if still contaminated,
+report that cell `not measured: shared-board load`. Ordinary failures remain visible negative evidence.
+Neither this clarification nor the experimental driver changes the shared scheduling policy.
 
 ## Interrupted final-validation attempt (external scheduling)
 
@@ -156,9 +159,12 @@ No foreign process, runner, configuration or coordination rule was changed.
 All eight validation files were preserved under
 `C:/x/autoresearch-suite/validation-attempt-001-interrupted/`; `manifest.json` binds their
 original names, sizes and SHA-256 hashes. Baseline/plugin/guard/target inputs are untouched.
-The incomplete `final.jsonl` must never be used as final evidence. A retry needs an operator-
-reserved uninterrupted two-slot window, then the same canonical CI and six observations on
-one frozen head; keep this invalid observation visible rather than silently dropping it.
+The incomplete `final.jsonl` must never be used as final evidence. The original two-slot-only
+interpretation above is historical: the orchestrator subsequently accepted the successful n=2/r1
+as conservative evidence under harder load (182/495 samples with three holders). It remains
+visible with its original measured SHA. A fresh matrix and serial CI are measured on the retry
+head; no baseline or retained target experiment is repeated. Launch preflights still wait for
+at most two live holders; another caller's later third-holder admission is recorded, not hidden.
 
 ## Reproduction and exact-head publication
 
