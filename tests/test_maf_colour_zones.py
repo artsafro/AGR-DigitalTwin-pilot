@@ -442,6 +442,64 @@ def test_two_schedule_finishes_cannot_end_as_one_zone(z, catalogue):
     assert z.compile_zones(["VAT_MAF_T3510_16"], [kept], catalogue)["ok"] is True
 
 
+def _committed_one_zone(set_id):
+    doc = json.loads(ZONES_JSON.read_text(encoding="utf-8"))
+    row = next(p for p in doc["positions"] if p["set_id"] == set_id)
+    row["zones"] = row["zones"][:1]
+    for geo in row["profiles"].values():
+        geo["zone_faces"] = {row["zones"][0]["zone"]: geo["faces_before"]}
+    return row
+
+
+@pytest.mark.parametrize("finishes", [["wood_light", "wood_light"], ["wood_light"]])
+def test_explicit_schedule_cannot_understate_table_1185(z, catalogue, finishes):
+    """#1185: an explicit row field may not hide a finish the canonical schedule names."""
+    row = _committed_one_zone("VAT_MAF_T3510_16")
+    row["schedule_finishes"] = finishes
+    with pytest.raises(z.ZoneError, match="^VAT_MAF_T3510_16: schedule_finishes differ from schedule$"):
+        z.compile_zones(["VAT_MAF_T3510_16"], [row], catalogue)
+
+
+def test_explicit_schedule_matching_table_still_guards_1185(z, catalogue):
+    row = _committed_one_zone("VAT_MAF_T3510_16")
+    row["schedule_finishes"] = ["paint_ral7047", "wood_light"]
+    with pytest.raises(z.ZoneError, match="schedule names 2 finishes but one zone"):
+        z.compile_zones(["VAT_MAF_T3510_16"], [row], catalogue)
+    full = json.loads(ZONES_JSON.read_text(encoding="utf-8"))
+    full_row = next(p for p in full["positions"] if p["set_id"] == "VAT_MAF_T3510_16")
+    full_row["schedule_finishes"] = ["paint_ral7047", "wood_light", "wood_light"]
+    assert z.compile_zones(["VAT_MAF_T3510_16"], [full_row], catalogue)["ok"] is True
+
+
+@pytest.mark.parametrize("set_id", SHOW)
+def test_explicit_schedule_exhaustive_subsets_and_supersets_1185(z, catalogue, set_id):
+    """Every proper subset / superset of every table schedule is rejected; the table itself passes."""
+    import itertools
+    table = set(z.SCHEDULE_FINISHES[set_id])
+    keys = sorted(z.ZONE_OF_KEY)
+    full = json.loads(ZONES_JSON.read_text(encoding="utf-8"))
+    row = next(p for p in full["positions"] if p["set_id"] == set_id)
+    checked = 0
+    for n in range(1, 4):
+        for combo in itertools.combinations(keys, n):
+            cand = copy.deepcopy(row)
+            cand["schedule_finishes"] = list(combo)
+            if set(combo) == table:
+                assert z.compile_zones([set_id], [cand], catalogue)["ok"] is True
+            else:
+                with pytest.raises(z.ZoneError, match=f"^{set_id}: schedule_finishes differ from schedule$"):
+                    z.compile_zones([set_id], [cand], catalogue)
+            checked += 1
+    assert checked > len(keys)
+
+
+def test_explicit_schedule_on_unmapped_position_is_error_1185(z, catalogue):
+    row = _pos("VAT_MAF_GHOST")
+    row["schedule_finishes"] = ["wood_light", "paint_ral7047"]
+    with pytest.raises(z.ZoneError, match="^unmapped position: VAT_MAF_GHOST$"):
+        z.compile_zones(["VAT_MAF_GHOST"], [row], catalogue)
+
+
 def test_finish_colour_uses_schedule_ral_or_marks_assumed(z, catalogue):
     steel = z.finish_colour("steel_ral7047", catalogue)
     assert steel["id"] == 4
