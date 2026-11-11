@@ -180,6 +180,21 @@ def test_clean_run_exits_zero_and_keeps_scenes(tmp_path):
         assert v["counts"]["M01"]["placed"] == 4 and v["counts"][f"BUSH_{var.upper()}"]["placed"] == 6
 
 
+def test_flora_only_run_with_cfg_picks_and_version(tmp_path):
+    """#1146 v007: cfg carries its own Flora picks / exact set / scene version; no MAF set -> flora only."""
+    cfg = make_inputs(tmp_path / "in")
+    cfg.update(maf_set=None, flora_picks={11: 212}, exact={11}, version="v007")
+    out = tmp_path / "run"
+    assert job.run(cfg, out, 296, dcc=FakeDCC()) == 0
+    res = results(out)
+    assert res["status"] == "pass" and res["inputs"]["maf_set"] is None
+    for var in ("npm", "vpm"):
+        assert blends(out, var) == [f"VATUTINO-SITE_placement_{var}_v007.blend"]
+        v = res["variants"][var]
+        assert v["counts"][f"BUSH_{var.upper()}"]["placed"] == 6 and "M01" not in v["counts"]
+        assert {m["kind"] for m in v["meta"].values()} == {"flora"}
+
+
 # ---------------------------------------------------------------- P1-2: scene QA gates the exit code
 def _shift_first(rb):
     rb["instances"][0]["matrix"][0][3] += 1.0
