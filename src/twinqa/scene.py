@@ -1120,7 +1120,7 @@ def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
     when the mesh has no upward-facing surface or no surface perimeter to measure, and ``"ok"``
     when the perimeter drop was measured. The skirt extrudes the Ground surface's perimeter
     straight down. Only outer boundary rings of every component count as perimeter; inner holes
-    (including building cut-outs) are excluded [D248]. Under every outer edge the mesh must carry
+    (including building cut-outs) are excluded [D249]. Under every outer edge the mesh must carry
     edges at least ``SKIRT_MIN_M`` lower that lie on the same XY segment, either one copy per
     perimeter edge or one bottom edge spanning several collinear perimeter edges (#1133 case 1).
     The drop is measured per perimeter edge
@@ -1171,7 +1171,7 @@ def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
         return "unmeasurable", None
 
     # Upward-facing surface polygons orient outer boundaries CCW in XY and holes CW.
-    # [D248]: only outer rings need skirts, including every disconnected component.
+    # [D249]: only outer rings need skirts, including every disconnected component.
     # Classify each directed ring, not by global containment/size (an island inside a
     # different component's hole is still an outer boundary of its own component).
     edge_count: dict[tuple[int, int], int] = {}
