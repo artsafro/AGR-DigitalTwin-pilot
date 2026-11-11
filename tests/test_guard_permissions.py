@@ -439,3 +439,78 @@ def test_guard_git_globals_and_flag_variants_generated_probe_1186():
 ])
 def test_guard_review_1186_bypasses_ask(command, protocol):
     assert guard(command, protocol) == "ask"
+
+
+# PR #1186 review round 2 (P1): shell separators right after a flag, quoted global-option values holding
+# separators, quoted subcommands and line continuations must not bypass the git rules.
+ROUND2_ASK = [
+    "git reset --hard;echo", "git reset --hard&&echo ok", "git reset --hard|cat", "git push&&x", "git push;x",
+    "git push|cat", "git clean -fd;echo", "git checkout -f;echo", "git branch -D x;echo", "git stash drop;echo",
+    "(git push)", "x;git push", "x&&git reset --hard", "x||git clean -fd",
+    'git -c "x.y=a;b" reset --hard', "git -c 'x.y=a|b' push", 'git -C "my&repo" clean -fd',
+    "git --git-dir='.g;it' reset --hard", "git --work-tree='a(b' checkout -f main", "git -C 'a)b' push",
+    "git 'push'", 'git "reset" --hard', "git 'clean' -fd", "git \"branch\" -D x", "'git' push", "g'i't push", "bash -c \"g'i't push\"",
+    "git \\\npush", "git \\\r\npush", "git `\npush", "git `\r\npush", "git reset \\\n--hard", "git -C repo `\nclean -fd",
+    "git pu\\\nsh", "bash -c 'git push'", "sh -c \"git -c 'x.y=a;b' reset --hard\"",
+    'powershell -Command "git push"', 'cmd /c "git clean -fd"', "echo x | xargs git push", "sudo git push",
+    "env A=1 git push", "A=1 git push", "C:/Git/bin/git.exe push", "git -c 'x.y=a' -C r --no-pager push",
+    "git status #; git push",
+]
+
+# #1210: argument text, global-option values and paths after `--` are not git operations.
+ROUND2_ALLOW = [
+    'git commit -m "checkout -fq main"', 'git log --grep="reset --mer"', 'git -C "repo/lfs prune" status',
+    "git --exec-path lfs prune", "git checkout -- -fq", "git rm -- -fq", "git stash push", "git stash push -m wip",
+    "git checkout force-push", "git branch force-push", "git switch -c harness/force-push",
+    'git commit -m "push --force; reset --hard"', "git log --oneline -- push", "git show HEAD:clean.txt",
+    "git -c 'x.y=a;b' status", 'git -C "my&repo" log -1', "git --git-dir='.g;it' status",
+    "git status;echo ok", "git status&&git log -1", "git diff|cat", "git 'status'", "git \\\nstatus",
+    "git `\nstatus", "bash -c 'git status'", "git branch -d x;echo", "git worktree remove ../wt;echo",
+]
+
+
+@pytest.mark.parametrize("protocol", ["claude", "antigravity"])
+@pytest.mark.parametrize("command", ROUND2_ASK)
+def test_guard_review2_1186_bypasses_ask(command, protocol):
+    assert guard(command, protocol) == "ask"
+
+
+@pytest.mark.parametrize("protocol", ["claude", "antigravity"])
+@pytest.mark.parametrize("command", ROUND2_ALLOW)
+def test_guard_review2_1210_safe_commands_allowed(command, protocol):
+    assert guard(command, protocol) == "allow"
+
+
+def test_guard_unbalanced_quotes_ask_1186():
+    shell_reason = _load_guard().shell_reason
+    assert shell_reason("git status 'x") is not None
+    assert shell_reason('git log --grep="x') is not None
+    assert shell_reason("git -c ';' push") is not None          # a quoted lone separator is not trusted
+
+
+ROUND2_GLOBALS = ["", '-c "x.y=a;b" ', "-c 'x.y=a|b' ", '-C "my&repo" ', "--git-dir='.g;it' ",
+                  "--work-tree \"w (t)\" ", "-C repo -c x=y --no-pager ", "--namespace=n -p "]
+ROUND2_HAZARDS = GIT_HAZARDS + ["'push' origin", '"reset" --hard', "reset --hard -- x", "clean -n",
+                                "stash drop stash@{0}", "branch -d -f x", "branch --del --forc x"]
+ROUND2_SAFE = GIT_SAFE + ["commit -m 'checkout -fq main'", "log --grep='reset --mer'", "checkout -- -fq",
+                          "rm -- -fq", "stash push", "checkout force-push", "commit -m 'git push later'"]
+
+
+def _wraps(c):
+    import shlex as _shlex
+    return [c, f"{c};echo ok", f"{c} ;echo ok", f"{c}&&echo ok", f"{c}|cat", f"{c}||true", f"cd x && {c}",
+            f"echo a;{c}", f"({c})", f"$({c})", f"{{ {c}; }}", f"if true; then {c}; fi", f"bash -c {_shlex.quote(c)}",
+            f"sudo {c}", f"A=1 {c}", f"env A=1 {c}", c.replace("git ", "git \\\n", 1), c.replace("git ", "git `\n", 1),
+            c.replace("git ", "'git' ", 1)]
+
+
+def test_guard_round2_wraps_quoted_globals_generated_probe_1186():
+    """Probe: every shell wrap x quoted global x hazard asks; the same wraps around safe commands allow."""
+    shell_reason = _load_guard().shell_reason
+    asked = [w for g in ROUND2_GLOBALS for h in ROUND2_HAZARDS for w in _wraps(f"git {g}{h}")]
+    allowed = [w for g in ROUND2_GLOBALS for s in ROUND2_SAFE for w in _wraps(f"git {g}{s}")]
+    wrong_allow = [c for c in asked if shell_reason(c) is None]
+    wrong_ask = [(c, shell_reason(c)) for c in allowed if shell_reason(c) is not None]
+    print(f"probe: asked={len(asked)} wrong_allow={len(wrong_allow)} allowed={len(allowed)} wrong_ask={len(wrong_ask)}")
+    assert len(asked) > 8000 and len(allowed) > 4000
+    assert wrong_allow[:20] == [] and wrong_ask[:20] == []
