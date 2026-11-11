@@ -27,6 +27,8 @@ INVARIANTS = ("open_borders_hidden", "no_see_through_hole", "no_visible_back_fac
 SOURCE_SUFFIXES = (".py", ".cs", ".ps1", ".ms", ".js", ".ts")
 # Gate roles that may legitimately carry source code; a ``commit`` is rejected anywhere else.
 SOURCE_ROLES = ("inputs", "parts", "operations")
+# Why a not-yet-passed gate is parked (#1204): the user, a live 3ds Max, or the visual gate.
+WAITS = ("user", "max", "visual")
 Text = Annotated[str, Field(min_length=1, pattern=r"\S")]
 Digest = Annotated[str, Field(pattern=r"^[a-f0-9]{64}$")]
 # Full object id only (SHA-1 or SHA-256 repositories): refs and abbreviations are mutable/ambiguous.
@@ -58,14 +60,20 @@ class Evidence(Strict):
 
 
 class Gate(Strict):
+    """``waits`` (optional, #1204) names what a non-passed gate is parked on: ``user`` (a user
+    decision or review), ``max`` (a live 3ds Max step) or ``visual`` (the visual gate first).
+    It is counted by the walker and never makes a gate ready; a ``pass`` gate waits for nothing."""
     status: Literal["pass", "fail", "review", "missing"]
     note: Text
     evidence: list[Evidence]
+    waits: Literal["user", "max", "visual"] | None = None
 
     @model_validator(mode="after")
     def passed_evidence(self):
         if self.status == "pass" and not self.evidence:
             raise ValueError("pass requires evidence")
+        if self.status == "pass" and self.waits is not None:
+            raise ValueError("a pass gate cannot declare waits")
         return self
 
 
@@ -390,8 +398,9 @@ def _gate(root, gate, entry, job):
 def inspect_job(data, root):
     """Inventory every gate; malformed contracts and incomplete evidence never pass."""
     root = Path(root)
-    rows = [{"gate": name, "status": "missing", "evidence_exists": [], "errors": []} for name in GATES]
-    result = {"passed": False, "gates": rows, "errors": []}
+    rows = [{"gate": name, "status": "missing", "waits": None, "evidence_exists": [], "errors": []}
+            for name in GATES]
+    result = {"passed": False, "gates": rows, "waits": dict.fromkeys(WAITS, 0), "errors": []}
     try:
         job = JobChecklist.model_validate(data)
     except ValidationError as exc:
@@ -402,7 +411,9 @@ def inspect_job(data, root):
     for row in rows:
         name = row["gate"]
         entry = getattr(job.gates, name)
-        row.update(status=entry.status, note=entry.note)
+        row.update(status=entry.status, note=entry.note, waits=entry.waits)
+        if entry.waits:
+            result["waits"][entry.waits] += 1
         primary_generated = name in ("parts", "operations") and entry.status == "pass"
         for i, ref in enumerate(entry.evidence):
             exists = False

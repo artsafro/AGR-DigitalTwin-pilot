@@ -1,0 +1,2 @@
+# Preserve the exact hashed research recorder/guard bytes, including original line endings.
+*.txt -text
