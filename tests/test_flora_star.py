@@ -329,3 +329,30 @@ def test_fbx_readback_blender(tmp_path):
     assert rb["b"]["npm_tris"] == 8 and rb["b"]["vpm_tris"] == 48
     assert all(r[f"{p}_uv_outside"] == 0 and r[f"{p}_materials"] == 1 for r in rb.values() for p in ("npm", "vpm"))
     assert math.isclose(rb["a"]["npm_height_m"], 1.0 + star.SINK, rel_tol=0.2)
+
+
+def test_vpm_atlas_moves_the_shell_into_its_own_cell(tmp_path):
+    """[D246] VPM shell samples its own 4096 atlas cell (UDIM 1002); NPM keeps the 2048 atlas cell."""
+    item = _item(tmp_path, "a")
+    item["vpm_atlas_cell"] = [0.0, 0.5, 0.25, 0.75]
+    spec = _atlas_spec(tmp_path, [item], [[0.5, 0.25, 0.75, 0.5]])
+    data = json.loads(spec.read_text(encoding="utf-8"))
+    vd, vo = _maps(tmp_path, "vatlas", size=256)
+    data["vpm_atlas"] = {"diffuse": str(vd), "opacity": str(vo), "size": 256, "material": "M_TEST_Flora_1"}
+    spec.write_text(json.dumps(data), encoding="utf-8")
+    out = tmp_path / "out"
+    assert star.main(["--spec", str(spec), "--out", str(out)]) == 0
+    rep = json.loads((out / "report.json").read_text(encoding="utf-8"))
+    sp = rep["species"][0]
+    meshes = json.loads((out / "meshes.json").read_text(encoding="utf-8"))["a"]
+    nus = [u for tri in meshes["npm"]["uvs"] for u, _ in tri]
+    vus = [u for tri in meshes["vpm"]["uvs"] for u, _ in tri]
+    vvs = [v for tri in meshes["vpm"]["uvs"] for _, v in tri]
+    assert min(nus) >= 0.5 - 1e-9 and max(nus) <= 0.75 + 1e-9
+    assert min(vus) >= 1.0 - 1e-9 and max(vus) <= 1.25 + 1e-9 and min(vvs) >= 0.5 - 1e-9 and max(vvs) <= 0.75 + 1e-9
+    assert sp["vpm_atlas"]["uv_faces_outside_cell"] == 0
+    # 0.25 x 256 = 64 px cell vs 0.25 x 128 = 32 px NPM cell -> twice the texel
+    assert math.isclose(sp["vpm_atlas"]["texel_px_per_m"], 2 * sp["atlas"]["texel_px_per_m"], rel_tol=1e-3)
+    assert meshes["vpm_diffuse"] == str(Path(vd).resolve()) and meshes["diffuse"] == str(Path(tmp_path / "atlas_d.png").resolve())
+    assert rep["vpm_atlas"]["size"] == 256
+    assert rep["texel_vpm_failures"] == [k for k in ["a"] if not sp["vpm_atlas"]["texel_ok"]]

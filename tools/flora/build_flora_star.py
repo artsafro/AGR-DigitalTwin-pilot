@@ -192,11 +192,18 @@ def outside_cell(mesh, cell, tile=1001, eps=1e-9):
                                                     and dv + v0 - eps <= v <= dv + v1 + eps) for u, v in tri))
 
 
-def build_species(item, tile, atlas=None):
-    """item: {key, latin, kind, height_m, band_m:[lo,hi], diffuse, opacity, material_id[, atlas_cell]}.
+def _atlas_texel(texel, cell, size, bbox):
+    """Texel in atlas pixels: source px/m x (cell px / source px) (G4: measured in the final atlas)."""
+    cell_px = (cell[2] - cell[0]) * size
+    return round(cell_px, 2), texel * cell_px / bbox[0]
+
+
+def build_species(item, tile, atlas=None, vpm_atlas=None):
+    """item: {key, latin, kind, height_m, band_m:[lo,hi], diffuse, opacity, material_id[, atlas_cell, vpm_atlas_cell]}.
 
     With `atlas` ({diffuse, opacity, size, material}) the UVs move into the item's atlas cell and
-    the texel is also reported in atlas pixels (G4: measured in the final atlas, no upscaling)."""
+    the texel is also reported in atlas pixels (G4: measured in the final atlas, no upscaling).
+    With `vpm_atlas` the VPM shell samples its own atlas cell `vpm_atlas_cell` instead [D246]."""
     for key in ("key", "latin", "kind", "height_m", "band_m", "diffuse", "opacity", "material_id"):
         if key not in item:
             raise StarError(f"species {item.get('key', '?')}: missing field {key!r}")
@@ -206,20 +213,26 @@ def build_species(item, tile, atlas=None):
     lo, hi = item["band_m"]
     bbox = plant_bbox(item["opacity"])
     npm = star_mesh(item["kind"], item["height_m"], bbox)
+    map_uvs = npm["uvs"]
     cell = atlas_cell(item.get("atlas_cell"), item["key"]) if atlas is not None else None
     if cell is not None:
         to_cell(npm, cell)
-    vpm = vpm_shell(npm, tile)
+    vcell = atlas_cell(item.get("vpm_atlas_cell"), item["key"]) if vpm_atlas is not None else None
+    vpm = vpm_shell(to_cell({**npm, "uvs": map_uvs}, vcell) if vcell is not None else npm, tile)
     m_npm, m_vpm = metrics(npm), metrics(vpm, tile)
     texel = 1.0 / npm["metres_per_px"]
     extra = {}
     if cell is not None and atlas is not None:
-        cell_px = (cell[2] - cell[0]) * atlas["size"]
-        t_atlas = texel * cell_px / bbox[0]
-        extra["atlas"] = {"cell": list(cell), "cell_px": round(cell_px, 2), "texel_px_per_m": round(t_atlas, 1),
+        cell_px, t_atlas = _atlas_texel(texel, cell, atlas["size"], bbox)
+        extra["atlas"] = {"cell": list(cell), "cell_px": cell_px, "texel_px_per_m": round(t_atlas, 1),
                           "texel_ok": TEXEL_VPM[0] <= t_atlas <= TEXEL_VPM[1],
                           "uv_faces_outside_cell": {"npm": outside_cell(npm, cell),
-                                                    "vpm": outside_cell(vpm, cell, tile)}}
+                                                    "vpm": outside_cell(vpm, vcell or cell, tile)}}
+    if vcell is not None:
+        cell_px, t_vpm = _atlas_texel(texel, vcell, vpm_atlas["size"], bbox)
+        extra["vpm_atlas"] = {"cell": list(vcell), "cell_px": cell_px, "texel_px_per_m": round(t_vpm, 1),
+                              "texel_ok": TEXEL_VPM[0] <= t_vpm <= TEXEL_VPM[1],
+                              "uv_faces_outside_cell": outside_cell(vpm, vcell, tile)}
     return {**extra,
         "key": item["key"], "latin": item["latin"], "kind": item["kind"],
         "material_id": item["material_id"], "bbox_px": list(bbox),
@@ -273,17 +286,22 @@ def main(argv=None):
     if out in inputs or any(out in p.parents for p in inputs):
         raise SystemExit(f"output {out} aliases an input")
     atlas = spec.get("atlas")
-    if atlas is not None:
-        if not (isinstance(atlas, dict) and all(k in atlas for k in ("diffuse", "opacity", "size", "material"))):
-            raise SystemExit("spec atlas needs diffuse, opacity, size, material")
+    vpm_atlas = spec.get("vpm_atlas")
+    if vpm_atlas is not None and atlas is None:
+        raise SystemExit("spec vpm_atlas needs the NPM atlas too [D246]")
+    for name, at in (("atlas", atlas), ("vpm_atlas", vpm_atlas)):
+        if at is None:
+            continue
+        if not (isinstance(at, dict) and all(k in at for k in ("diffuse", "opacity", "size", "material"))):
+            raise SystemExit(f"spec {name} needs diffuse, opacity, size, material")
         for k in ("diffuse", "opacity"):
-            if not Path(atlas[k]).is_file():
-                raise SystemExit(f"atlas {k} not found: {atlas[k]}")
-            inputs.add(Path(atlas[k]).resolve())
+            if not Path(at[k]).is_file():
+                raise SystemExit(f"{name} {k} not found: {at[k]}")
+            inputs.add(Path(at[k]).resolve())
         if out in inputs or any(out in p.parents for p in inputs):
             raise SystemExit(f"output {out} aliases an input")
     try:
-        results = [build_species(i, spec["udim_tile"], atlas) for i in items]
+        results = [build_species(i, spec["udim_tile"], atlas, vpm_atlas) for i in items]
     except StarError as error:
         raise SystemExit(str(error))
     partial = out.with_name(out.name + ".partial")
@@ -297,13 +315,18 @@ def main(argv=None):
                                 opacity=str(Path(src["opacity"]).resolve()))
         if atlas is not None:
             meshes[r["key"]]["material"] = atlas["material"]
+        if vpm_atlas is not None:
+            meshes[r["key"]].update(vpm_diffuse=str(Path(vpm_atlas["diffuse"]).resolve()),
+                                    vpm_opacity=str(Path(vpm_atlas["opacity"]).resolve()),
+                                    vpm_material=vpm_atlas["material"])
     (partial / "meshes.json").write_text(json.dumps(meshes), encoding="utf-8")
     report = {"schema": "flora-star-v1", "spec": str(spec_path), "spec_sha256": sha(spec_path),
               "udim_tile": spec["udim_tile"], "species": results}
-    if atlas is not None:
-        report["atlas"] = {"count": 1, "material": atlas["material"], "size": atlas["size"],
-                           "diffuse": str(Path(atlas["diffuse"]).resolve()), "diffuse_sha256": sha(atlas["diffuse"]),
-                           "opacity": str(Path(atlas["opacity"]).resolve()), "opacity_sha256": sha(atlas["opacity"])}
+    for name, at in (("atlas", atlas), ("vpm_atlas", vpm_atlas)):
+        if at is not None:
+            report[name] = {"count": 1, "material": at["material"], "size": at["size"],
+                            "diffuse": str(Path(at["diffuse"]).resolve()), "diffuse_sha256": sha(at["diffuse"]),
+                            "opacity": str(Path(at["opacity"]).resolve()), "opacity_sha256": sha(at["opacity"])}
     if args.fbx:
         _blender(["build", str(partial / "meshes.json"), str(partial)])
         readback = json.loads((partial / "readback.json").read_text(encoding="utf-8"))
@@ -313,7 +336,8 @@ def main(argv=None):
         checks.append(r["npm"]["tris"] == r["expected_tris"]["npm"] and r["vpm"]["tris"] == r["expected_tris"]["vpm"]
                       and r["height_in_band"] and r["npm"]["uv_faces_outside_tile"] == 0
                       and r["vpm"]["uv_faces_outside_tile"] == 0 and r["vpm"]["closed_planes"] == r["vpm"]["planes"]
-                      and ("atlas" not in r or r["atlas"]["uv_faces_outside_cell"] == {"npm": 0, "vpm": 0}))
+                      and (all(v == 0 for v in r["atlas"]["uv_faces_outside_cell"].values()) if "atlas" in r else True)
+                      and r.get("vpm_atlas", {}).get("uv_faces_outside_cell", 0) == 0)
     if args.fbx:
         for r in results:
             rb = report["fbx_readback"].get(r["key"], {})
@@ -322,7 +346,7 @@ def main(argv=None):
                           and rb.get("npm_materials") == 1 and rb.get("vpm_materials") == 1)
     report["geometry_passed"] = all(checks)
     report["texel_vpm_failures"] = [r["key"] for r in results
-                                    if not (r["atlas"]["texel_ok"] if "atlas" in r else r["vpm"]["texel_ok"])]
+                                    if not r.get("vpm_atlas", r.get("atlas", r["vpm"]))["texel_ok"]]
     report["passed"] = False  # visual acceptance (route step 9) is a manual gate
     (partial / "report.json").write_text(json.dumps(report, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
     partial.rename(out)
@@ -367,8 +391,9 @@ def _bpy_build(meshes_json, out_dir):
     for key, m in data.items():
         for prof in ("npm", "vpm"):
             bpy.ops.wm.read_factory_settings(use_empty=True)
-            mat = make_material(m.get("material") or f"M_Flora_{m['material_id']}_{prof.upper()}",
-                                m["diffuse"], m["opacity"])
+            vp = "vpm_" if prof == "vpm" and "vpm_diffuse" in m else ""  # VPM own atlas [D246]
+            mat = make_material(m.get(f"{vp}material") or f"M_Flora_{m['material_id']}_{prof.upper()}",
+                                m[f"{vp}diffuse"], m[f"{vp}opacity"])
             obj = make_object(f"SM_{key}_{prof.upper()}", m[prof], mat)
             obj["material_id"] = int(m["material_id"])
             path = out_dir / f"{key}_{prof}.fbx"

@@ -99,6 +99,8 @@ def _atlas_material(diffuse, opacity):
     op.interpolation = "Closest"
     nt.links.new(op.outputs["Color"], bsdf.inputs["Alpha"])
     bsdf.inputs["Roughness"].default_value = 0.9
+    # [D246] no grazing-angle specular: Fresnel at the near edge-on crossing plane washed it out (pale band)
+    bsdf.inputs["Specular IOR Level"].default_value = 0.0
     if hasattr(mat, "surface_render_method"):
         mat.surface_render_method = "DITHERED"
     if hasattr(mat, "blend_method"):
@@ -187,14 +189,15 @@ def cmd_site(blend, diffuse, opacity, out_dir):
     print(f"site: {len(views)} views, {len(inst)} plants")
 
 
-def cmd_species(meshes_json, diffuse, opacity, out_dir):
+def cmd_species(meshes_json, diffuse, opacity, vpm_diffuse, vpm_opacity, out_dir):
     data = json.loads(Path(meshes_json).read_text(encoding="utf-8"))
     out = Path(out_dir)
     for key, m in data.items():
         for prof in ("npm", "vpm"):
             bpy.ops.wm.read_factory_settings(use_empty=True)
             scene = bpy.context.scene
-            mat = _atlas_material(diffuse, opacity)
+            # [D246] VPM samples its own 4096 atlas
+            mat = _atlas_material(*((vpm_diffuse, vpm_opacity) if prof == "vpm" else (diffuse, opacity)))
             mesh = m[prof]
             du = 1.0 if prof == "vpm" else 0.0  # UDIM 1002 -> 0-1 to sample the single atlas image
             uvs = [(u - du, v) for tri in mesh["uvs"] for u, v in tri]
@@ -223,7 +226,7 @@ def cmd_species(meshes_json, diffuse, opacity, out_dir):
 
 def main():
     a = _args()
-    cmds = {"export": (cmd_export, 2), "readback": (cmd_readback, 3), "site": (cmd_site, 4), "species": (cmd_species, 4)}
+    cmds = {"export": (cmd_export, 2), "readback": (cmd_readback, 3), "site": (cmd_site, 4), "species": (cmd_species, 6)}
     if not a or a[0] not in cmds or len(a) - 1 != cmds[a[0]][1]:
         raise SystemExit(f"usage: -- {{{'|'.join(cmds)}}} ... ; got {a}")
     cmds[a[0]][0](*a[1:])

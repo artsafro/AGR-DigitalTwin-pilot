@@ -74,3 +74,41 @@ def test_rows_cover_all_plants_and_iva_band_is_assumed():
     iva = next(r for r in recs if r["pos"] == "Ива")
     assert iva["key"] == "iva_244" and iva["assumed_cm"] == [60, 100] and iva["schedule_cm"] is None
     assert len({r["key"] for r in recs}) == 18
+
+
+def test_bleed_rgb_fills_transparent_pixels_with_plant_colour():
+    """[D246] pale crossing plane: the maps carried white (252) RGB under opacity 0, so texture filtering and
+    mipmaps mixed white into the foliage (worst on the near edge-on plane and on distant site views)."""
+    rgb, op = _plant(size=64, box=(20, 10, 40, 60))
+    rgb[op == 0] = 252                       # white background of the source map
+    rgb[op > 0] = (60, 120, 40)
+    out = job.bleed_rgb(rgb, op)
+    assert out.dtype == np.uint8 and out.shape == rgb.shape
+    assert (out[op > 0] == rgb[op > 0]).all()                       # plant pixels unchanged
+    assert np.abs(out[op == 0].astype(int) - (60, 120, 40)).max() <= 1  # background takes the plant colour
+    from PIL import Image
+    small = np.asarray(Image.fromarray(out).resize((16, 16), Image.Resampling.LANCZOS)).astype(int)
+    assert np.abs(small - (60, 120, 40)).max() <= 2                    # no white halo after downscale
+
+
+def test_bleed_rgb_keeps_an_empty_mask_and_a_full_mask():
+    rgb, op = _plant(size=16, box=(0, 0, 16, 16))
+    assert (job.bleed_rgb(rgb, op) == rgb).all()
+    assert job.bleed_rgb(rgb, np.zeros_like(op)).shape == rgb.shape
+
+
+def test_stage_maps_bleeds_the_cropped_map():
+    import inspect
+    src = inspect.getsource(job.stage_maps)
+    assert "bleed_rgb(" in src and src.index("square_crop(") < src.index("bleed_rgb(")
+
+
+def test_review_material_has_no_grazing_specular():
+    """[D246] Principled specular at grazing angles washed the crossing plane out in the review renders."""
+    src = (ROOT / "jobs/VATUTINO-SITE/flora_v007_blender.py").read_text(encoding="utf-8")
+    body = src[src.index("def _atlas_material"):src.index("def _engine")]
+    assert 'bsdf.inputs["Specular IOR Level"].default_value = 0.0' in body
+
+
+def test_vpm_atlas_is_4096_and_npm_stays_2048():
+    assert job.ATLAS_PROFILES == {"npm": ("atlas", 2048), "vpm": ("atlas-vpm", 4096)}

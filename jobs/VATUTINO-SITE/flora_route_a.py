@@ -1,16 +1,19 @@
-"""Vatutino Flora route A, run v003 (#1146, [D232], [D245]): maps -> atlas -> stars -> placement v007 -> readback -> sheet.
+"""Vatutino Flora route A, run v004 (#1146, [D232], [D245], [D246]): maps -> atlas -> stars -> placement v007 -> readback -> sheet.
 
 Job script (not a shared tool). Inputs are read-only copies and are hashed; every output goes to a new run directory
 outside git (rule 57). Stages (each refuses an existing output dir):
 
-  maps      resolve the D245 map pair per row (approved / A101 / stand-in), crop it to a square around the plant
-  atlas     one 2048 Flora atlas from the cropped pairs (tools/library/flora_atlas_from_scene.py) + UV sample check
-  stars     NPM star + VPM shell per row, UVs in the row's atlas cell, VPM in UDIM 1002 (tools/flora/build_flora_star.py)
+  maps      resolve the D245 map pair per row (approved / A101 / stand-in), crop it to a square around the plant,
+            bleed the plant colour into the transparent pixels (v004: white RGB under opacity 0 washed the planes out)
+  atlas     NPM: one 2048 Flora atlas; VPM: its own 4096 atlas [D246] (tools/library/flora_atlas_from_scene.py)
+            + UV sample check
+  stars     NPM star + VPM shell per row, UVs in the row's atlas cell, VPM in its 4096 atlas cell and UDIM 1002
+            (tools/flora/build_flora_star.py)
   place     placement v007 on Ground v015 through place_site.run (engine #316 + Blender instancing)
   readback  export the placed Flora to FBX per variant and read it back in a fresh Blender (flora_v007_blender.py)
-  sheet     renders: 6 site views + 1 species sheet NPM/VPM (visual gate, route step 9)
+  sheet     renders: 6 site views + 1 species sheet NPM/VPM (visual gate, route step 9) + VPM texel table
 
-  uv run python jobs/VATUTINO-SITE/flora_route_a.py all --run C:/x/ev_t_c9ff2af1/run-v003
+  uv run python jobs/VATUTINO-SITE/flora_route_a.py all --run C:/x/ev_t_c9ff2af1/run-v004
 """
 from __future__ import annotations
 
@@ -39,6 +42,8 @@ GROUND_ZIP_SHA = "7441764b82ce799684b400a6dd90fcd7a61991ff575f3fbb00d77cef1fef52
 GROUND_PREFIX = "artefacts/ground-v015-dcc-v001/textured/"
 ADAPTER = Path("C:/x/t_d94665f2/paving_ground_inputs_v4.json")
 ATLAS_ADDRESS = "VATUTINO"
+# [D246]: NPM keeps the single 2048 atlas [D232]; VPM gets its own 4096 atlas (texel ~2x). profile -> (run subdir, px)
+ATLAS_PROFILES = {"npm": ("atlas", 2048), "vpm": ("atlas-vpm", 4096)}
 UDIM_TILE = 1002                                         # G3: Ground v015 VPM = 1001 [D210]
 MARGIN = 0.015                                           # D155: plane slightly larger than the plant
 # Ива is not in schedule *T3509: assumed dwarf-willow band, flagged to Artem at the visual gate
@@ -177,6 +182,29 @@ def square_crop(rgb, opacity, margin=MARGIN):
     return out_rgb, out_op, {"source_px": size, "bbox": [x0, y0, x1, y1], "window": [left, top, side]}
 
 
+def bleed_rgb(rgb, opacity):
+    """Fill every transparent pixel with the colour of the nearby plant pixels (push-pull pyramid), plant pixels
+    unchanged. The source maps carry white RGB under opacity 0; filtering, mipmaps and the atlas downscale mixed it
+    into the leaves, so planes seen at a grazing angle or from afar rendered pale [D246]."""
+    mask = np.asarray(opacity) >= 128
+
+    def fill(c, w):
+        if w.all() or not w.any():
+            return c
+        h, wd = w.shape
+        ph, pw = h + h % 2, wd + wd % 2
+        cs = np.zeros((ph, pw, 3))
+        ws = np.zeros((ph, pw))
+        cs[:h, :wd], ws[:h, :wd] = c * w[..., None], w
+        cs = cs.reshape(ph // 2, 2, pw // 2, 2, 3).sum((1, 3))
+        ws = ws.reshape(ph // 2, 2, pw // 2, 2).sum((1, 3))
+        small = fill(np.where(ws[..., None] > 0, cs / np.maximum(ws, 1e-9)[..., None], 0.0), ws > 0)
+        return np.where(w[..., None] > 0, c, small.repeat(2, 0).repeat(2, 1)[:h, :wd])
+
+    out = fill(np.asarray(rgb, np.float64), mask.astype(np.float64))
+    return np.where(mask[..., None], rgb, np.clip(np.rint(out), 0, 255)).astype(np.uint8)
+
+
 def stage_maps(run: Path):
     out = fresh(run / "maps")
     found = approved_sources()
@@ -184,6 +212,7 @@ def stage_maps(run: Path):
     for r in rows():
         pair = resolve_pair(r, found)
         rgb, op, box = square_crop(pair.pop("rgb"), pair.pop("opacity"))
+        rgb = bleed_rgb(rgb, op)
         d = out / r["key"]
         d.mkdir()
         Image.fromarray(rgb, "RGB").save(d / "diffuse.png")
@@ -220,8 +249,14 @@ def uv_sample_check(src_rgb, src_op, atlas_rgb, atlas_op, cell, n=20000, seed=7)
 
 
 def stage_atlas(run: Path):
+    for profile in ATLAS_PROFILES:
+        _atlas(run, profile)
+
+
+def _atlas(run: Path, profile: str):
     fa = _load("flora_atlas_from_scene", "tools/library/flora_atlas_from_scene.py")
-    out = fresh(run / "atlas")
+    sub, size = ATLAS_PROFILES[profile]
+    out = fresh(run / sub)
     maps = json.loads((run / "maps" / "maps.json").read_text(encoding="utf-8"))["rows"]
     cat = {"schema": "flora-library-v1", "species": [
         {"material_id": m["material_id"], "type": m["kind"], "latin": m["exact_latin"],
@@ -233,7 +268,9 @@ def stage_atlas(run: Path):
     dump(out / "scene.json", scene)
     rep = fa.build_atlas(out / "scene.json", out / "catalogue.json", out_diffuse=out / f"T_{ATLAS_ADDRESS}_Flora_Diffuse.png",
                          out_opacity=out / f"T_{ATLAS_ADDRESS}_Flora_Opacity.png", out_report=out / "atlas-report.json",
-                         address=ATLAS_ADDRESS)
+                         address=ATLAS_ADDRESS, profile=profile)
+    if rep["atlas_size"] != size:
+        raise SystemExit(f"{profile} atlas is {rep['atlas_size']}, expected {size}")
     a_rgb = np.asarray(Image.open(out / f"T_{ATLAS_ADDRESS}_Flora_Diffuse.png").convert("RGB"))
     a_op = np.asarray(Image.open(out / f"T_{ATLAS_ADDRESS}_Flora_Opacity.png").convert("L"))
     cells = {i["material_id"]: i["uv"] for i in rep["ids"]}
@@ -252,14 +289,14 @@ def stage_atlas(run: Path):
         checks[m["key"]] = {"at_cell_resolution": at_cell, "vs_full_map": full, "cell_px": [cw, ch]}
     worst = max(c["at_cell_resolution"]["opacity_mismatch_pct"] for c in checks.values())
     worst_full = max(c["vs_full_map"]["opacity_mismatch_pct"] for c in checks.values())
-    dump(out / "atlas-check.json", {"atlas_count": rep["atlas_count"], "atlas_size": rep["atlas_size"],
+    dump(out / "atlas-check.json", {"profile": profile, "atlas_count": rep["atlas_count"], "atlas_size": rep["atlas_size"],
                                     "scale_factor": rep["scale_factor"], "fill_percent": round(rep["fill_percent"], 2),
                                     "cells": {str(k): v for k, v in cells.items()}, "uv_sample": checks,
                                     "worst_opacity_mismatch_pct": worst, "pass": worst <= 2.0,
                                     "worst_opacity_loss_vs_full_map_pct": worst_full,
                                     "diffuse_sha256": sha(out / f"T_{ATLAS_ADDRESS}_Flora_Diffuse.png"),
                                     "opacity_sha256": sha(out / f"T_{ATLAS_ADDRESS}_Flora_Opacity.png")})
-    print(f"atlas: {rep['atlas_count']} x {rep['atlas_size']}, scale {rep['scale_factor']:.4f}, "
+    print(f"atlas {profile}: {rep['atlas_count']} x {rep['atlas_size']}, scale {rep['scale_factor']:.4f}, "
           f"fill {rep['fill_percent']:.1f} %, worst opacity mismatch at cell res {worst} % (vs full map {worst_full} %)")
 
 
@@ -267,6 +304,8 @@ def stage_atlas(run: Path):
 def stage_stars(run: Path):
     maps = {m["key"]: m for m in json.loads((run / "maps" / "maps.json").read_text(encoding="utf-8"))["rows"]}
     check = json.loads((run / "atlas" / "atlas-check.json").read_text(encoding="utf-8"))
+    vsub = ATLAS_PROFILES["vpm"][0]
+    vcheck = json.loads((run / vsub / "atlas-check.json").read_text(encoding="utf-8"))
     species = []
     for r in rows():
         m = maps[r["key"]]
@@ -274,11 +313,16 @@ def stage_stars(run: Path):
         species.append({"key": r["key"], "latin": r["exact_latin"] + tag, "kind": r["kind"],
                         "height_m": r["target_height_m"], "band_m": r["band_m"], "material_id": r["material_id"],
                         "diffuse": m["out"]["diffuse"], "opacity": m["out"]["opacity"],
-                        "atlas_cell": check["cells"][str(r["material_id"])]})
+                        "atlas_cell": check["cells"][str(r["material_id"])],
+                        "vpm_atlas_cell": vcheck["cells"][str(r["material_id"])]})
     spec = {"udim_tile": UDIM_TILE, "species": species,
             "atlas": {"diffuse": str(run / "atlas" / f"T_{ATLAS_ADDRESS}_Flora_Diffuse.png"),
                       "opacity": str(run / "atlas" / f"T_{ATLAS_ADDRESS}_Flora_Opacity.png"), "size": check["atlas_size"],
-                      "material": f"M_{ATLAS_ADDRESS}_Flora_1"}}
+                      "material": f"M_{ATLAS_ADDRESS}_Flora_1"},
+            # [D246] VPM model: its own 4096 atlas, same names inside the VPM package
+            "vpm_atlas": {"diffuse": str(run / vsub / f"T_{ATLAS_ADDRESS}_Flora_Diffuse.png"),
+                          "opacity": str(run / vsub / f"T_{ATLAS_ADDRESS}_Flora_Opacity.png"),
+                          "size": vcheck["atlas_size"], "material": f"M_{ATLAS_ADDRESS}_Flora_1"}}
     dump(run / "star-spec-v002.json", spec)
     r = subprocess.run([sys.executable, str(ROOT / "tools/flora/build_flora_star.py"), "--spec",
                         str(run / "star-spec-v002.json"), "--out", str(run / "stars"), "--fbx"],
@@ -372,9 +416,31 @@ def stage_sheet(run: Path):
     atlas = run / "atlas"
     _blender("site", run / "place" / "npm" / "VATUTINO-SITE_placement_npm_v007.blend",
              atlas / f"T_{ATLAS_ADDRESS}_Flora_Diffuse.png", atlas / f"T_{ATLAS_ADDRESS}_Flora_Opacity.png", out)
+    vatlas = run / ATLAS_PROFILES["vpm"][0]
     _blender("species", run / "stars" / "meshes.json", atlas / f"T_{ATLAS_ADDRESS}_Flora_Diffuse.png",
-             atlas / f"T_{ATLAS_ADDRESS}_Flora_Opacity.png", out)
+             atlas / f"T_{ATLAS_ADDRESS}_Flora_Opacity.png", vatlas / f"T_{ATLAS_ADDRESS}_Flora_Diffuse.png",
+             vatlas / f"T_{ATLAS_ADDRESS}_Flora_Opacity.png", out)
+    texel_table(run, out)
     compose_sheets(run, out)
+
+
+def texel_table(run: Path, out: Path):
+    """VPM texel per row in the 2048 (v003) and the own 4096 atlas [D246]; rows still below the D097/D160 range are
+    accepted (smallest shrubs) and listed."""
+    rep = json.loads((run / "stars" / "report.json").read_text(encoding="utf-8"))
+    rows_ = []
+    for s in rep["species"]:
+        v = s.get("vpm_atlas") or s["atlas"]
+        rows_.append({"key": s["key"], "npm_2048_px_per_m": s["atlas"]["texel_px_per_m"],
+                      "vpm_4096_px_per_m": v["texel_px_per_m"], "in_range": v["texel_ok"]})
+    below = [r["key"] for r in rows_ if not r["in_range"]]
+    dump(out / "texel-vpm.json", {"range_px_per_m": [520, 1706], "rows": rows_, "below_range_accepted_D246": below})
+    lines = ["| row | 2048 atlas px/m | VPM 4096 atlas px/m | in 520-1706 |", "|---|---|---|---|"]
+    lines += [f"| {r['key']} | {r['npm_2048_px_per_m']} | {r['vpm_4096_px_per_m']} | {'yes' if r['in_range'] else 'no'} |"
+              for r in rows_]
+    (out / "texel-vpm.md").write_text("\n".join(lines) + f"\n\nBelow range (accepted [D246]): {', '.join(below) or 'none'}\n",
+                                      encoding="utf-8")
+    print(f"texel: {len(rows_) - len(below)}/{len(rows_)} VPM rows in range; below: {below}")
 
 
 def compose_sheets(run: Path, out: Path):
@@ -405,8 +471,8 @@ def compose_sheets(run: Path, out: Path):
         cell_h = 2 * h + 70
         sheet = Image.new("RGB", (cols * w, rows_n * cell_h + 50), "white")
         d = ImageDraw.Draw(sheet)
-        d.text((10, 10), "Flora route A stars: NPM (top) / VPM (bottom), atlas M_VATUTINO_Flora_1; red = stand-in [D245]",
-               fill="black", font=font)
+        d.text((10, 10), "Flora route A stars: NPM 2048 atlas (top) / VPM own 4096 atlas (bottom) [D246]; "
+               "red = stand-in [D245]", fill="black", font=font)
         for i, t in enumerate(tiles):
             key = t.stem[3:-4]
             m = maps[key]
