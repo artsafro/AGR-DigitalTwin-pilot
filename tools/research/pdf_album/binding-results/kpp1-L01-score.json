@@ -9,8 +9,8 @@
   "bytes": 11428926
  },
  "pdf": {
-  "path": "C:\\x\\ev_t_e8aff8d9\\kpp1-v001\\L01-plotted.pdf",
-  "sha256": "acfd32de269250171d7ac411eeb75f0747977f3faabf06eab303f0d11f36ef59"
+  "path": "C:\\x\\ev_t_e8aff8d9\\kpp1-v003\\L01-plotted.pdf",
+  "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37"
  },
  "plot": {
   "pages": [
@@ -82,10 +82,17 @@
  "table": {
   "level -> level line": {
    "truth": 97,
-   "predicted": 99,
-   "correct": 0,
-   "precision": 0.0,
-   "recall": 0.0
+   "predicted": 43,
+   "correct": 43,
+   "precision": 1.0,
+   "recall": 0.443
+  },
+  "level marks refused as level_value_inconsistent": {
+   "truth": 2,
+   "predicted": 1,
+   "correct": 1,
+   "precision": 1.0,
+   "recall": 0.5
   },
   "axis label + position": {
    "truth": 8,
@@ -132,13 +139,13 @@
  "summary": {
   "values": 100,
   "by_binding": {
-   "level": 99,
-   "unbound": 1
+   "level": 43,
+   "unbound": 57
   },
   "vertical_dimensions": 0,
   "views": 5,
   "calibrated_views": 0,
-  "unresolved": 1
+  "unresolved": 57
  },
  "passed": false
 }

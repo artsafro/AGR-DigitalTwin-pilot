@@ -20,8 +20,14 @@ Rules (each has a test in ``tests/test_album_binding.py``):
   A span without readable text is a finding, never a silent omission.
 - Binding, in order: ``axis_pair`` (both span ends on axes of the same view, within 1 pt), ``opening`` (both
   ends on the edges of one closed rectangle of the view that faces the chain), ``level_pair`` (a vertical
-  span whose ends sit on the level lines of two level marks of the view: the horizontal leader nearest the mark text that reaches out of it, one line per mark), else ``unbound`` with the reason. Level marks
-  bind as ``level`` to their own written value; the absolute elevation written under a mark is kept raw.
+  span whose ends sit on the level lines of two level marks of the view), else ``unbound`` with the reason.
+- Level marks: the level line is found ONLY through the mark symbol: a shelf under (or over) the text covering
+  >= half of it, and an arrow/triangle tip (two ~45 deg arms pointing back to the text) at a shelf end, either
+  within 1.5 text heights or reached by one vertical stem (Revit). No tip -> ``unbound no_level_line``; two
+  distinct tips, or one tip claimed by two marks -> ``level_line_ambiguous``; never the nearest line. Bound marks
+  of one view (>= 3 distinct values) must fit one linear value(y) (Theil-Sen); an outlier beyond 1 pt is
+  ``unbound level_value_inconsistent`` with a D112 finding, its drawn line kept as ``level_y_drawn``. Only bound
+  marks bind as ``level`` and feed ``level_pair``; the absolute elevation written under a mark is kept raw.
   Every dimension-like text token (>= 3 digits) that no span claims is a value with ``unbound`` /
   ``no_dimension_line``; nothing is dropped.
 - Axes: a stroked circle holding exactly one axis-label run. A bubble with a radial line takes the line
@@ -75,6 +81,92 @@ def _horiz(s: R.Segment) -> bool:
 
 def _vert(s: R.Segment) -> bool:
     return abs(s.p0[0] - s.p1[0]) <= 0.05
+
+
+def _level_tips(segs: list[R.Segment]) -> list[tuple[float, float, int]]:
+    """Arrow/triangle apexes of level marks: >= 2 short ~45 deg strokes ending in one point, one going left and
+    one going right, both to the same side (``side`` = +1 arms below the apex, -1 above). A dimension tick
+    drawn as two half-strokes leaves to opposite sides and is not a tip."""
+    ends: dict[tuple[int, int], list[tuple[float, float, float, float]]] = {}
+    for s in segs:
+        dx, dy = s.p1[0] - s.p0[0], s.p1[1] - s.p0[1]
+        if _horiz(s) or _vert(s) or not 1.0 <= math.hypot(dx, dy) <= 15.0 or not 0.4 <= abs(dy) / abs(dx) <= 2.5:
+            continue
+        for (px, py), (qx, qy) in ((s.p0, s.p1), (s.p1, s.p0)):
+            ends.setdefault((round(px / 0.3), round(py / 0.3)), []).append((px, py, qx - px, qy - py))
+    tips = []
+    for arms in ends.values():
+        for side in (1, -1):
+            sel = [a for a in arms if a[3] * side > 0]
+            if any(a[2] < 0 for a in sel) and any(a[2] > 0 for a in sel):
+                tips.append((round(sel[0][0], 2), round(sel[0][1], 2), side))
+    return tips
+
+
+def _level_line(r: R.TextRun, segs: list[R.Segment], tips: list[tuple[float, float, int]]) -> list[tuple[float, float]]:
+    """Distinct level-line points of one level mark text. The shelf is a horizontal line under (or over) the text
+    covering >= half of it; the line is the tip at a shelf end (+-0.6 pt) whose arms point back to the text,
+    either within 1.5 text heights of the shelf or reached by one vertical stem from that shelf end."""
+    x0, y0, x1, y1 = r.bbox
+    s_ = r.size
+    shelves = []
+    for s in segs:
+        if not _horiz(s):
+            continue
+        lo, hi = sorted((s.p0[0], s.p1[0]))
+        if min(hi, x1) - max(lo, x0) < 0.5 * (x1 - x0):
+            continue
+        y = s.p0[1]
+        if y1 - 0.35 * s_ <= y <= y1 + 0.6 * s_:
+            shelves.append((y, lo, hi, 1))  # text above the shelf: the line is below
+        if y0 - 0.6 * s_ <= y <= y0 + 0.35 * s_:
+            shelves.append((y, lo, hi, -1))
+    found: set[tuple[float, float]] = set()
+    for y, lo, hi, away in shelves:
+        for e in (lo, hi):
+            for tx, ty, side in tips:
+                if abs(tx - e) > 0.6 or side != -away:
+                    continue
+                d = (ty - y) * away
+                if -0.5 <= d <= 1.5 * s_:
+                    found.add((tx, ty))
+                elif 0 < d <= 6.0 * s_ and any(
+                        _vert(v) and abs(v.p0[0] - e) <= 0.6
+                        and abs(min(v.p0[1], v.p1[1]) - min(y, ty)) <= 0.6
+                        and abs(max(v.p0[1], v.p1[1]) - max(y, ty)) <= 0.6 for v in segs):
+                    found.add((tx, ty))
+    ys: dict[float, tuple[float, float]] = {}
+    for p in sorted(found):
+        ys.setdefault(round(p[1] * 2) / 2, p)  # tips on one line (+-0.25 pt) are one level line
+    return list(ys.values())
+
+
+def _level_outliers(levels: list[dict[str, Any]]) -> list[tuple[str, dict[str, Any], float]]:
+    """Scale-free consistency of the bound level marks of one view: the written values must be one linear
+    function of the drawn line y (Theil-Sen fit, >= 3 marks with >= 3 distinct values, values rising upwards).
+    A mark more than END_SNAP_PT off the fit is ``level_value_inconsistent``; the written value is kept."""
+    out = []
+    by_view: dict[str, list[dict[str, Any]]] = {}
+    for lv in levels:
+        if lv["view"] and lv["level_y"] is not None:
+            by_view.setdefault(lv["view"], []).append(lv)
+    for group in by_view.values():
+        if len({lv["value_m"] for lv in group}) < 3:
+            continue
+        slopes = sorted((b["value_m"] - a["value_m"]) / (b["level_y"] - a["level_y"])
+                        for i, a in enumerate(group) for b in group[i + 1:] if abs(b["level_y"] - a["level_y"]) > END_SNAP_PT)
+        if not slopes:
+            continue
+        k = slopes[len(slopes) // 2]
+        if not k < 0:
+            continue
+        cs = sorted(lv["value_m"] - k * lv["level_y"] for lv in group)
+        c = cs[len(cs) // 2]
+        for lv in group:
+            expected = (lv["value_m"] - c) / k
+            if abs(expected - lv["level_y"]) > END_SNAP_PT:
+                out.append(("level_value_inconsistent", lv, round(expected, 2)))
+    return out
 
 
 def _ticks(segs: list[R.Segment]) -> list[R.Segment]:
@@ -280,42 +372,35 @@ def _bind_page(pymupdf: Any, page: Any, number: int, sheet: str | None) -> dict[
     nominal = [{"text": r.text, "bbox": list(r.bbox), "used_for_calibration": False}
                for r in runs if _NOMINAL.search(r.text)]
 
-    # level marks: written value + its level line (a horizontal leader reaching out of the text, nearest the
-    # text centre; each line belongs to at most one mark, closest pairs first) + raw absolute elevation below
+    # level marks: written value + its level line, found ONLY through the mark symbol (shelf under/over the
+    # text -> arrow/triangle tip at a shelf end, directly or through a vertical stem). No tip or more than one
+    # distinct tip -> unbound (never the nearest line); + raw absolute elevation below the mark
     levels = []
     level_runs: set[int] = set()
-    pairs = []
+    tips = _level_tips(segs)
     for i, r in enumerate(runs):
         v = R.parse_level_text(r.text)
         if v is None:
             continue
         level_runs.add(i)
-        cy = R._center(r.bbox)[1]
-        for s_ in segs:
-            if not _horiz(s_) or math.dist(s_.p0, s_.p1) < 10.0:
-                continue
-            y = s_.p0[1]
-            lo, hi = sorted((s_.p0[0], s_.p1[0]))
-            reaches_out = lo < r.bbox[0] - 5.0 or hi > r.bbox[2] + 5.0
-            if (abs(y - cy) <= 2.5 * r.size and reaches_out and lo <= r.bbox[2] + 10.0
-                    and hi >= r.bbox[0] - 10.0):
-                pairs.append((abs(y - cy), i, round(y, 2), y))
         absolute = None
         for k, o in enumerate(runs):
             if _ABS_ELEV.match(o.text) and 0 <= o.bbox[1] - r.bbox[1] <= 2.5 * r.size and abs(o.bbox[0] - r.bbox[0]) <= 3 * r.size:
                 absolute = o.text
                 level_runs.add(k)
                 break
-        levels.append({"run": i, "text": r.text, "value_m": v, "level_y": None, "absolute_text": absolute})
-    by_run = {lv["run"]: lv for lv in levels}
-    taken: set[tuple[int, float]] = set()
-    for _, i, key, y in sorted(pairs):
-        lv = by_run[i]
-        x = round(R._center(runs[i].bbox)[0] / 60.0)  # one line per mark column
-        if lv["level_y"] is not None or (x, key) in taken:
-            continue
-        lv["level_y"] = y
-        taken.add((x, key))
+        found = _level_line(r, segs, tips)
+        levels.append({"run": i, "text": r.text, "value_m": v, "absolute_text": absolute,
+                       "level_y": found[0][1] if len(found) == 1 else None,
+                       "tip": found[0] if len(found) == 1 else None,
+                       "line_reason": None if len(found) == 1 else ("no_level_line" if not found else "level_line_ambiguous")})
+    shared: dict[tuple[float, float], int] = {}
+    for lv in levels:
+        if lv["tip"] is not None:
+            shared[lv["tip"]] = shared.get(lv["tip"], 0) + 1
+    for lv in levels:  # one tip claimed by two marks: neither is trusted
+        if lv["tip"] is not None and shared[lv["tip"]] > 1:
+            lv["level_y"], lv["line_reason"] = None, "level_line_ambiguous"
 
     # text along each span
     usable = [(i, r) for i, r in enumerate(runs) if i not in label_runs and i not in level_runs]
@@ -374,6 +459,11 @@ def _bind_page(pymupdf: Any, page: Any, number: int, sheet: str | None) -> dict[
                              "message": "lone bubble without a radial line; axis not used for binding"})
     for lv in levels:
         lv["view"] = view_of(*R._center(runs[lv["run"]].bbox))
+    for code, lv, expected_y in _level_outliers(levels):  # value vs drawn line disagree: architect (D112)
+        lv["level_y_drawn"], lv["level_y"], lv["line_reason"] = lv["level_y"], None, code
+        findings.append({"code": code, "page": number, "text": lv["text"], "view": lv["view"],
+                         "drawn_y_pt": lv["level_y_drawn"], "expected_y_pt": expected_y,
+                         "message": "written level disagrees with the other marks of the view; kept as written (D112)"})
 
     values: list[dict[str, Any]] = []
     openings: dict[R.Box, str] = {}
@@ -444,8 +534,10 @@ def _bind_page(pymupdf: Any, page: Any, number: int, sheet: str | None) -> dict[
         values.append({"id": f"p{number}-l{counter:04d}", "kind": "level", **loc, "view": lv["view"],
                        "raw": r.text, "value": lv["value_m"], "unit": "m", "orientation": None,
                        "bbox": list(r.bbox), "span": None, "method": "pdf-vector-text",
-                       "level_y": lv["level_y"], "absolute_text": lv["absolute_text"],
-                       "binding": {"type": "level", "level": r.text} if lv["view"] else {"type": "unbound", "reason": "no_view"}})
+                       "level_y": lv["level_y"], "level_y_drawn": lv.get("level_y_drawn"), "absolute_text": lv["absolute_text"],
+                       "binding": ({"type": "unbound", "reason": "no_view"} if not lv["view"]
+                                   else {"type": "unbound", "reason": lv["line_reason"]} if lv["level_y"] is None
+                                   else {"type": "level", "level": r.text, "level_y": lv["level_y"]})})
     for i, r in usable:
         if i in claimed or not _LONG_DIM.match(r.text) or _NOMINAL.search(r.text):
             continue

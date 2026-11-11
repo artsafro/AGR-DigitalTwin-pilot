@@ -300,13 +300,13 @@
   "summary": {
     "by_binding": {
       "axis_pair": 75,
-      "level": 65,
+      "level": 27,
       "level_pair": 1,
       "opening": 2,
-      "unbound": 53
+      "unbound": 91
     },
     "calibrated_views": 0,
-    "unresolved": 131,
+    "unresolved": 169,
     "values": 196,
     "vertical_dimensions": 22,
     "views": 14
@@ -1172,8 +1172,11 @@
         156.9605
       ],
       "binding": {
-        "reason": "ends_not_on_axes_openings_or_levels",
-        "type": "unbound"
+        "levels": [
+          "-0.150",
+          "+16.220"
+        ],
+        "type": "level_pair"
       },
       "check": "not_checked",
       "id": "p18-d0023",
@@ -1208,11 +1211,8 @@
         410.6355
       ],
       "binding": {
-        "levels": [
-          "-0.150",
-          "+16.220"
-        ],
-        "type": "level_pair"
+        "reason": "ends_not_on_axes_openings_or_levels",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p18-d0024",
@@ -1249,12 +1249,14 @@
       ],
       "binding": {
         "level": "+15.900",
+        "level_y": 73.32,
         "type": "level"
       },
       "check": "not_checked",
       "id": "p18-l0025",
       "kind": "level",
-      "level_y": 73.3199,
+      "level_y": 73.32,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -1277,12 +1279,14 @@
       ],
       "binding": {
         "level": "+16.220",
+        "level_y": 70.32,
         "type": "level"
       },
       "check": "not_checked",
       "id": "p18-l0026",
       "kind": "level",
-      "level_y": 70.3199,
+      "level_y": 70.32,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -1305,12 +1309,14 @@
       ],
       "binding": {
         "level": "+0.000",
+        "level_y": 223.56,
         "type": "level"
       },
       "check": "not_checked",
       "id": "p18-l0027",
       "kind": "level",
-      "level_y": null,
+      "level_y": 223.56,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -1333,12 +1339,14 @@
       ],
       "binding": {
         "level": "-0.150",
+        "level_y": 225.0,
         "type": "level"
       },
       "check": "not_checked",
       "id": "p18-l0028",
       "kind": "level",
-      "level_y": 224.9999,
+      "level_y": 225.0,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -1361,12 +1369,14 @@
       ],
       "binding": {
         "level": "+16.220",
+        "level_y": 70.32,
         "type": "level"
       },
       "check": "not_checked",
       "id": "p18-l0029",
       "kind": "level",
-      "level_y": null,
+      "level_y": 70.32,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -1389,12 +1399,14 @@
       ],
       "binding": {
         "level": "+4.720",
+        "level_y": 178.92,
         "type": "level"
       },
       "check": "not_checked",
       "id": "p18-l0030",
       "kind": "level",
-      "level_y": 178.9199,
+      "level_y": 178.92,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -1417,12 +1429,14 @@
       ],
       "binding": {
         "level": "+13.920",
+        "level_y": 92.04,
         "type": "level"
       },
       "check": "not_checked",
       "id": "p18-l0031",
       "kind": "level",
-      "level_y": 70.3199,
+      "level_y": 92.04,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -1445,12 +1459,14 @@
       ],
       "binding": {
         "level": "+4.720",
+        "level_y": 178.92,
         "type": "level"
       },
       "check": "not_checked",
       "id": "p18-l0032",
       "kind": "level",
-      "level_y": null,
+      "level_y": 178.92,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -1473,12 +1489,14 @@
       ],
       "binding": {
         "level": "+13.920",
+        "level_y": 92.04,
         "type": "level"
       },
       "check": "not_checked",
       "id": "p18-l0033",
       "kind": "level",
-      "level_y": 92.0399,
+      "level_y": 92.04,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -1501,12 +1519,14 @@
       ],
       "binding": {
         "level": "+0.000",
+        "level_y": 223.56,
         "type": "level"
       },
       "check": "not_checked",
       "id": "p18-l0034",
       "kind": "level",
-      "level_y": 197.9999,
+      "level_y": 223.56,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -1529,12 +1549,14 @@
       ],
       "binding": {
         "level": "+2.710",
+        "level_y": 198.0,
         "type": "level"
       },
       "check": "not_checked",
       "id": "p18-l0035",
       "kind": "level",
-      "level_y": 178.9199,
+      "level_y": 198.0,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -1556,13 +1578,14 @@
         361.166
       ],
       "binding": {
-        "level": "+13.920",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p18-l0036",
       "kind": "level",
-      "level_y": 345.7199,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -1570,7 +1593,7 @@
       "raw": "+13.920",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 13.92,
       "view": "p18-v2"
@@ -1585,12 +1608,14 @@
       ],
       "binding": {
         "level": "+4.720",
+        "level_y": 432.6,
         "type": "level"
       },
       "check": "not_checked",
       "id": "p18-l0037",
       "kind": "level",
-      "level_y": null,
+      "level_y": 432.6,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -1613,12 +1638,14 @@
       ],
       "binding": {
         "level": "+0.000",
+        "level_y": 477.24,
         "type": "level"
       },
       "check": "not_checked",
       "id": "p18-l0038",
       "kind": "level",
-      "level_y": null,
+      "level_y": 477.24,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -1641,12 +1668,14 @@
       ],
       "binding": {
         "level": "+16.220",
+        "level_y": 324.0,
         "type": "level"
       },
       "check": "not_checked",
       "id": "p18-l0039",
       "kind": "level",
-      "level_y": 323.9999,
+      "level_y": 324.0,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -1669,12 +1698,14 @@
       ],
       "binding": {
         "level": "+15.900",
+        "level_y": 327.0,
         "type": "level"
       },
       "check": "not_checked",
       "id": "p18-l0040",
       "kind": "level",
-      "level_y": 326.9999,
+      "level_y": 327.0,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -1697,12 +1728,14 @@
       ],
       "binding": {
         "level": "+16.220",
+        "level_y": 324.0,
         "type": "level"
       },
       "check": "not_checked",
       "id": "p18-l0041",
       "kind": "level",
-      "level_y": 322.5599,
+      "level_y": 324.0,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -1724,13 +1757,14 @@
         494.1273
       ],
       "binding": {
-        "level": "-0.150",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p18-l0042",
       "kind": "level",
-      "level_y": 478.6799,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -1738,7 +1772,7 @@
       "raw": "-0.150",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": -0.15,
       "view": "p18-v2"
@@ -2925,13 +2959,14 @@
         105.0868
       ],
       "binding": {
-        "level": "+13.920",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p19-l0032",
       "kind": "level",
-      "level_y": 89.5199,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -2939,7 +2974,7 @@
       "raw": "+13.920",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 13.92,
       "view": "p19-v1"
@@ -2954,12 +2989,14 @@
       ],
       "binding": {
         "level": "+4.720",
+        "level_y": 176.4,
         "type": "level"
       },
       "check": "not_checked",
       "id": "p19-l0033",
       "kind": "level",
-      "level_y": 176.3999,
+      "level_y": 176.4,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -2982,12 +3019,14 @@
       ],
       "binding": {
         "level": "+0.000",
+        "level_y": 221.04,
         "type": "level"
       },
       "check": "not_checked",
       "id": "p19-l0034",
       "kind": "level",
-      "level_y": 221.5199,
+      "level_y": 221.04,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -3010,12 +3049,14 @@
       ],
       "binding": {
         "level": "+16.220",
+        "level_y": 67.8,
         "type": "level"
       },
       "check": "not_checked",
       "id": "p19-l0035",
       "kind": "level",
-      "level_y": 67.7999,
+      "level_y": 67.8,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -3037,13 +3078,14 @@
         237.9245
       ],
       "binding": {
-        "level": "-0.150",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p19-l0036",
       "kind": "level",
-      "level_y": 222.4799,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -3051,7 +3093,7 @@
       "raw": "-0.150",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": -0.15,
       "view": "p19-v1"
@@ -3065,13 +3107,14 @@
         347.1287
       ],
       "binding": {
-        "level": "+13.920",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p19-l0037",
       "kind": "level",
       "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -3079,7 +3122,7 @@
       "raw": "+13.920",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 13.92,
       "view": "p19-v2"
@@ -3094,12 +3137,14 @@
       ],
       "binding": {
         "level": "+4.720",
+        "level_y": 418.56,
         "type": "level"
       },
       "check": "not_checked",
       "id": "p19-l0038",
       "kind": "level",
-      "level_y": null,
+      "level_y": 418.56,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -3122,12 +3167,14 @@
       ],
       "binding": {
         "level": "+0.000",
+        "level_y": 463.08,
         "type": "level"
       },
       "check": "not_checked",
       "id": "p19-l0039",
       "kind": "level",
-      "level_y": 463.5599,
+      "level_y": 463.08,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -3150,12 +3197,14 @@
       ],
       "binding": {
         "level": "+16.220",
+        "level_y": 309.84,
         "type": "level"
       },
       "check": "not_checked",
       "id": "p19-l0040",
       "kind": "level",
-      "level_y": 309.8399,
+      "level_y": 309.84,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -3177,13 +3226,14 @@
         480.0868
       ],
       "binding": {
-        "level": "-0.150",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p19-l0041",
       "kind": "level",
       "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -3191,7 +3241,7 @@
       "raw": "-0.150",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": -0.15,
       "view": "p19-v2"
@@ -3205,13 +3255,14 @@
         347.1287
       ],
       "binding": {
-        "level": "+13.920",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p19-l0042",
       "kind": "level",
       "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -3219,7 +3270,7 @@
       "raw": "+13.920",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 13.92,
       "view": "p19-v2"
@@ -3234,12 +3285,14 @@
       ],
       "binding": {
         "level": "+4.720",
+        "level_y": 418.56,
         "type": "level"
       },
       "check": "not_checked",
       "id": "p19-l0043",
       "kind": "level",
-      "level_y": null,
+      "level_y": 418.56,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -3262,12 +3315,14 @@
       ],
       "binding": {
         "level": "+2.710",
+        "level_y": 437.52,
         "type": "level"
       },
       "check": "not_checked",
       "id": "p19-l0044",
       "kind": "level",
-      "level_y": null,
+      "level_y": 437.52,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -3290,12 +3345,14 @@
       ],
       "binding": {
         "level": "+0.000",
+        "level_y": 463.08,
         "type": "level"
       },
       "check": "not_checked",
       "id": "p19-l0045",
       "kind": "level",
-      "level_y": null,
+      "level_y": 463.08,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -3318,12 +3375,14 @@
       ],
       "binding": {
         "level": "+15.420",
+        "level_y": 317.4,
         "type": "level"
       },
       "check": "not_checked",
       "id": "p19-l0046",
       "kind": "level",
-      "level_y": null,
+      "level_y": 317.4,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -3345,13 +3404,14 @@
         480.0868
       ],
       "binding": {
-        "level": "-0.150",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p19-l0047",
       "kind": "level",
-      "level_y": 463.5599,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -3359,7 +3419,7 @@
       "raw": "-0.150",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": -0.15,
       "view": "p19-v2"
@@ -3809,12 +3869,14 @@
       ],
       "binding": {
         "level": "+15.900",
+        "level_y": 119.4,
         "type": "level"
       },
       "check": "not_checked",
       "id": "p23-l0013",
       "kind": "level",
-      "level_y": 119.3999,
+      "level_y": 119.4,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -4927,13 +4989,14 @@
         555.8176
       ],
       "binding": {
-        "level": "+2.800",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p26-l0025",
       "kind": "level",
-      "level_y": 537.72,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -4941,7 +5004,7 @@
       "raw": "+2.800",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 2.8,
       "view": "p26-v1"
@@ -6203,13 +6266,14 @@
         363.0853
       ],
       "binding": {
-        "level": "+12.520",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0034",
       "kind": "level",
-      "level_y": 355.5599,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6217,7 +6281,7 @@
       "raw": "+12.520",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 12.52,
       "view": "p31-v1"
@@ -6231,13 +6295,14 @@
         277.4044
       ],
       "binding": {
-        "level": "+13.920",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0035",
       "kind": "level",
-      "level_y": 278.2799,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6245,7 +6310,7 @@
       "raw": "+13.920",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 13.92,
       "view": "p31-v1"
@@ -6259,13 +6324,14 @@
         374.8553
       ],
       "binding": {
-        "level": "+12.070",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0036",
       "kind": "level",
-      "level_y": 370.5599,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6273,7 +6339,7 @@
       "raw": "+12.070",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 12.07,
       "view": "p31-v1"
@@ -6287,13 +6353,14 @@
         370.2956
       ],
       "binding": {
-        "level": "+12.070",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0037",
       "kind": "level",
-      "level_y": 363.36,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6301,7 +6368,7 @@
       "raw": "+12.070",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 12.07,
       "view": "p31-v1"
@@ -6315,13 +6382,14 @@
         487.0513
       ],
       "binding": {
-        "level": "+13.920",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0038",
       "kind": "level",
-      "level_y": 487.9199,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6329,7 +6397,7 @@
       "raw": "+13.920",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 13.92,
       "view": "p31-v1"
@@ -6343,13 +6411,14 @@
         594.0875
       ],
       "binding": {
-        "level": "+13.920",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0039",
       "kind": "level",
-      "level_y": 579.96,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6357,7 +6426,7 @@
       "raw": "+13.920",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 13.92,
       "view": "p31-v1"
@@ -6371,13 +6440,14 @@
         109.4067
       ],
       "binding": {
-        "level": "+13.920",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0040",
       "kind": "level",
-      "level_y": 110.2799,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6385,7 +6455,7 @@
       "raw": "+13.920",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 13.92,
       "view": "p31-v1"
@@ -6399,13 +6469,14 @@
         62.8441
       ],
       "binding": {
-        "level": "+15.420",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0041",
       "kind": "level",
-      "level_y": 63.8399,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6413,7 +6484,7 @@
       "raw": "+15.420",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 15.42,
       "view": "p31-v1"
@@ -6427,13 +6498,14 @@
         332.0068
       ],
       "binding": {
-        "level": "+13.920",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0042",
       "kind": "level",
-      "level_y": 332.9999,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6441,7 +6513,7 @@
       "raw": "+13.920",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 13.92,
       "view": "p31-v1"
@@ -6455,13 +6527,14 @@
         453.8101
       ],
       "binding": {
-        "level": "+13.920",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0043",
       "kind": "level",
-      "level_y": 441.72,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6469,7 +6542,7 @@
       "raw": "+13.920",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 13.92,
       "view": "p31-v1"
@@ -6483,13 +6556,14 @@
         183.0841
       ],
       "binding": {
-        "level": "+13.920",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0044",
       "kind": "level",
-      "level_y": 183.9599,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6497,7 +6571,7 @@
       "raw": "+13.920",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 13.92,
       "view": "p31-v1"
@@ -6511,13 +6585,14 @@
         50.6033
       ],
       "binding": {
-        "level": "+13.920",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0045",
       "kind": "level",
-      "level_y": 51.4799,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6525,7 +6600,7 @@
       "raw": "+13.920",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 13.92,
       "view": "p31-v1"
@@ -6539,13 +6614,14 @@
         315.9272
       ],
       "binding": {
-        "level": "+13.690",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0046",
       "kind": "level",
-      "level_y": 303.9599,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6553,7 +6629,7 @@
       "raw": "+13.690",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 13.69,
       "view": "p31-v1"
@@ -6567,13 +6643,14 @@
         431.1289
       ],
       "binding": {
-        "level": "+12.155",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0047",
       "kind": "level",
-      "level_y": 431.9999,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6581,7 +6658,7 @@
       "raw": "+12.155",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 12.155,
       "view": "p31-v1"
@@ -6595,13 +6672,14 @@
         202.6456
       ],
       "binding": {
-        "level": "+12.155",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0048",
       "kind": "level",
-      "level_y": 203.6399,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6609,7 +6687,7 @@
       "raw": "+12.155",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 12.155,
       "view": "p31-v1"
@@ -6623,13 +6701,14 @@
         497.3646
       ],
       "binding": {
-        "level": "+12.075",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0049",
       "kind": "level",
-      "level_y": 485.1599,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6637,7 +6716,7 @@
       "raw": "+12.075",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 12.075,
       "view": "p31-v1"
@@ -6651,13 +6730,14 @@
         511.4085
       ],
       "binding": {
-        "level": "+12.075",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0050",
       "kind": "level",
-      "level_y": 512.4,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6665,7 +6745,7 @@
       "raw": "+12.075",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 12.075,
       "view": "p31-v1"
@@ -6679,13 +6759,14 @@
         392.606
       ],
       "binding": {
-        "level": "+12.075",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0051",
       "kind": "level",
-      "level_y": 384.72,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6693,7 +6774,7 @@
       "raw": "+12.075",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 12.075,
       "view": "p31-v1"
@@ -6707,13 +6788,14 @@
         393.2041
       ],
       "binding": {
-        "level": "+12.075",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0052",
       "kind": "level",
-      "level_y": 386.9999,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6721,7 +6803,7 @@
       "raw": "+12.075",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 12.075,
       "view": "p31-v1"
@@ -6735,13 +6817,14 @@
         273.3277
       ],
       "binding": {
-        "level": "+12.080",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0053",
       "kind": "level",
-      "level_y": 271.08,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6749,7 +6832,7 @@
       "raw": "+12.080",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 12.08,
       "view": "p31-v1"
@@ -6763,13 +6846,14 @@
         273.3277
       ],
       "binding": {
-        "level": "+12.080",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0054",
       "kind": "level",
-      "level_y": 265.6799,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6777,7 +6861,7 @@
       "raw": "+12.080",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 12.08,
       "view": "p31-v1"
@@ -6791,13 +6875,14 @@
         149.9679
       ],
       "binding": {
-        "level": "+12.080",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0055",
       "kind": "level",
-      "level_y": 140.8799,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6805,7 +6890,7 @@
       "raw": "+12.080",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 12.08,
       "view": "p31-v1"
@@ -6819,13 +6904,14 @@
         132.0879
       ],
       "binding": {
-        "level": "+12.080",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0056",
       "kind": "level",
-      "level_y": 125.1599,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6833,7 +6919,7 @@
       "raw": "+12.080",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 12.08,
       "view": "p31-v1"
@@ -6847,13 +6933,14 @@
         100.6479
       ],
       "binding": {
-        "level": "+11.310",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0057",
       "kind": "level",
-      "level_y": 101.5199,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6861,7 +6948,7 @@
       "raw": "+11.310",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 11.31,
       "view": "p31-v1"
@@ -6875,13 +6962,14 @@
         151.644
       ],
       "binding": {
-        "level": "+11.310",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0058",
       "kind": "level",
-      "level_y": 137.3999,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6889,7 +6977,7 @@
       "raw": "+11.310",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 11.31,
       "view": "p31-v1"
@@ -6903,13 +6991,14 @@
         93.4461
       ],
       "binding": {
-        "level": "+12.210",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0059",
       "kind": "level",
-      "level_y": 94.4399,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6917,7 +7006,7 @@
       "raw": "+12.210",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 12.21,
       "view": "p31-v1"
@@ -6931,13 +7020,14 @@
         83.2436
       ],
       "binding": {
-        "level": "+12.210",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0060",
       "kind": "level",
-      "level_y": 74.1599,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6945,7 +7035,7 @@
       "raw": "+12.210",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 12.21,
       "view": "p31-v1"
@@ -6959,13 +7049,14 @@
         265.2879
       ],
       "binding": {
-        "level": "+12.210",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0061",
       "kind": "level",
-      "level_y": 266.2799,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -6973,7 +7064,7 @@
       "raw": "+12.210",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 12.21,
       "view": "p31-v1"
@@ -6987,13 +7078,14 @@
         206.2465
       ],
       "binding": {
-        "level": "+12.410",
-        "type": "level"
+        "reason": "no_level_line",
+        "type": "unbound"
       },
       "check": "not_checked",
       "id": "p31-l0062",
       "kind": "level",
-      "level_y": 203.6399,
+      "level_y": null,
+      "level_y_drawn": null,
       "measured_mm": null,
       "method": "pdf-vector-text",
       "orientation": null,
@@ -7001,7 +7093,7 @@
       "raw": "+12.410",
       "sheet": null,
       "span": null,
-      "status": "bound",
+      "status": "unresolved",
       "unit": "m",
       "value": 12.41,
       "view": "p31-v1"

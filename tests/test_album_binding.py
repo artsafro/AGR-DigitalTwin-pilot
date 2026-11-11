@@ -63,6 +63,30 @@ def _vchain(shape, page, font, x, ys, texts):
             page.insert_text((x - 2.0, (a + b) / 2 + 8), t, fontsize=6, fontname=font, rotate=90)
 
 
+def _gost_mark(shape, page, font, x, y, text, size=6.0, arms=True, shelf_to=22.0):
+    """Level mark: triangle apex at (x, y) on the level line, shelf on the arm tops, text on the shelf."""
+    if arms:
+        shape.draw_line((x - 3, y - 3), (x, y))
+        shape.draw_line((x, y), (x + 3, y - 3))
+    shape.draw_line((x, y - 3), (x + shelf_to, y - 3))
+    shape.finish(color=(0, 0, 0), width=0.3)
+    page.insert_text((x + 1, y - 4.5), text, fontsize=size, fontname=font)
+
+
+def _revit_mark(shape, page, font, x, y, text, stem=True):
+    """KPP1 (Revit) mark: text ~15 pt ABOVE its own line, shelf under the text, vertical stem from the shelf end
+    down to the arrow tip at (x, y); the level line runs right from the tip."""
+    shelf = y - 14.6
+    shape.draw_line((x - 38, shelf), (x, shelf))
+    if stem:
+        shape.draw_line((x, shelf), (x, y))
+    shape.draw_line((x - 6, y - 6), (x, y))
+    shape.draw_line((x, y), (x + 6, y - 6))
+    shape.draw_line((x - 9, y), (x + 120, y))
+    shape.finish(color=(0, 0, 0), width=0.25)
+    page.insert_text((x - 32, shelf - 2.0), text, fontsize=9, fontname=font)
+
+
 def make_pdf(path: Path, *, nominal=True, second_view=True, lone_number=True) -> Path:
     doc = pymupdf.open()
     page = doc.new_page(width=842, height=595)
@@ -80,11 +104,11 @@ def make_pdf(path: Path, *, nominal=True, second_view=True, lone_number=True) ->
     _hchain(sh, page, font, 205.0 - 60, [140.0, 180.0], ["800"])  # opening width chain above the door top
     for x, lab in zip(xs, "123"):
         _bubble(sh, page, font, (x, 290.0), lab, line_to=(x, 276.0))
-    # level marks on the right: +0.000 at y 250, +3.000 at y 190 (60 pt = 3000 mm)
+    # level marks on the right: +0.000 at y 250, +3.000 at y 190 (60 pt = 3000 mm); GOST mark: triangle apex on
+    # the level line at x 448, shelf at the arm tops, text on the shelf
     for y, t in ((250.0, "+0.000"), (190.0, "+3.000")):
         sh.draw_line((400, y), (470, y))
-        sh.finish(color=(0, 0, 0), width=0.3)
-        page.insert_text((448, y - 3.0), t, fontsize=6, fontname=font)
+        _gost_mark(sh, page, font, 448.0, y, t)
     _vchain(sh, page, font, 440.0, [190.0, 250.0], ["3000"])
     _vchain(sh, page, font, 120.0, [150.0, 230.0], ["1600"])  # opening height (door 80 pt = 1600 mm)
     if second_view:  # plan view far away with letter axes in a column
@@ -301,3 +325,125 @@ def test_generated_pages_never_pass_and_never_drop_number_tokens(tmp_path):
         assert all(vw["scale"]["status"] == "unknown" for vw in out["views"])
         assert sum(1 for v in out["values"] if v["orientation"] == "vertical") == len(vt)
         assert all(math.isfinite(v["value"]) for v in out["values"] if v["value"] is not None)
+
+
+def _levels_page(tmp_path, name, draw):
+    doc = pymupdf.open()
+    page = doc.new_page(width=842, height=595)
+    font = _font(page)
+    sh = page.new_shape()
+    draw(sh, page, font)
+    sh.commit()
+    path = tmp_path / name
+    doc.save(path)
+    return B.bind_album(path)
+
+
+def _level(doc, raw):
+    (v,) = [v for v in doc["values"] if v["kind"] == "level" and v["raw"] == raw]
+    return v
+
+
+def test_level_without_mark_symbol_is_unresolved_never_bound(tmp_path):
+    """P1-1: a level text over a plain line (no tip / leader) has no level line -> unbound no_level_line."""
+    def draw(sh, page, font):
+        for y, t in ((250.0, "+0.000"), (190.0, "+3.000")):
+            sh.draw_line((400, y), (470, y))
+            sh.finish(color=(0, 0, 0), width=0.3)
+            page.insert_text((448, y - 3.0), t, fontsize=6, fontname=font)
+        _vchain(sh, page, font, 440.0, [190.0, 250.0], ["3000"])
+    doc = _levels_page(tmp_path, "noleader.pdf", draw)
+    for raw in ("+0.000", "+3.000"):
+        lv = _level(doc, raw)
+        assert lv["level_y"] is None and lv["status"] == "unresolved"
+        assert lv["binding"] == {"type": "unbound", "reason": "no_level_line"}
+    (v3000,) = _by(doc, "3000", "vertical")
+    assert v3000["binding"]["type"] == "unbound"  # level_pair only from resolved level lines
+
+
+def test_level_with_arms_but_no_shelf_or_far_tip_is_unresolved(tmp_path):
+    def draw(sh, page, font):
+        _gost_mark(sh, page, font, 448.0, 250.0, "+0.000", arms=False)
+        _gost_mark(sh, page, font, 448.0, 150.0, "+5.000", shelf_to=6.0)  # shelf under < half of the text
+    doc = _levels_page(tmp_path, "noarms.pdf", draw)
+    assert _level(doc, "+0.000")["binding"] == {"type": "unbound", "reason": "no_level_line"}
+    assert _level(doc, "+5.000")["binding"] == {"type": "unbound", "reason": "no_level_line"}
+
+
+def test_revit_text_between_two_lines_never_picks_the_nearest_wrong_line(tmp_path):
+    """P1-2 regression (KPP1 L01 geometry): each text sits ~15 pt above its own line and just above the NEXT
+    mark's line; the binder follows shelf -> stem -> tip, and without the stem it stays unresolved."""
+    def draw(sh, page, font):
+        _revit_mark(sh, page, font, 78.3, 284.65, "+2,100")
+        _revit_mark(sh, page, font, 78.2, 267.1, "+2,700")
+        _revit_mark(sh, page, font, 79.2, 249.54, "+3,300")
+        _revit_mark(sh, page, font, 378.3, 284.65, "+2,100", stem=False)
+        _revit_mark(sh, page, font, 378.2, 267.1, "+2,700", stem=False)
+    doc = _levels_page(tmp_path, "revit.pdf", draw)
+    got = {(round(v["bbox"][0]), v["raw"]): v for v in doc["values"] if v["kind"] == "level"}
+    left = {raw: v for (x, raw), v in got.items() if x < 200}
+    assert left["+2,100"]["level_y"] == pytest.approx(284.65, abs=0.05)
+    assert left["+2,700"]["level_y"] == pytest.approx(267.1, abs=0.05)
+    assert left["+3,300"]["level_y"] == pytest.approx(249.54, abs=0.05)
+    assert all(v["binding"]["type"] == "level" and v["status"] == "bound" for v in left.values())
+    right = [v for (x, _), v in got.items() if x > 200]
+    assert len(right) == 2
+    for v in right:
+        assert v["level_y"] is None and v["binding"] == {"type": "unbound", "reason": "no_level_line"}
+
+
+def test_two_tips_at_one_shelf_are_ambiguous(tmp_path):
+    def draw(sh, page, font):
+        _gost_mark(sh, page, font, 448.0, 250.0, "+0.000")
+        sh.draw_line((467, 251), (470, 254))  # a second apex at the other shelf end, on another line
+        sh.draw_line((470, 254), (473, 251))
+        sh.finish(color=(0, 0, 0), width=0.3)
+    doc = _levels_page(tmp_path, "ambig.pdf", draw)
+    lv = _level(doc, "+0.000")
+    assert lv["level_y"] is None and lv["binding"] == {"type": "unbound", "reason": "level_line_ambiguous"}
+
+
+def test_generated_level_marks_bind_own_line_or_stay_unresolved(tmp_path):
+    """Probe: 30 random stacks of Revit and GOST marks with random spacing / missing stems: a bound level never
+    sits on another mark's line; a mark without its symbol is never bound."""
+    rng = random.Random(4321)
+    for k in range(30):
+        marks = []
+        y = 520.0
+        for n in range(rng.randint(2, 6)):
+            y -= rng.uniform(12.0, 40.0)
+            marks.append((y, f"+{n + 1},{rng.randint(100, 999)}", rng.random() > 0.3, rng.choice(["revit", "gost"])))
+
+        def draw(sh, page, font, marks=marks):
+            for y_, t, ok, style in marks:
+                if style == "revit":
+                    _revit_mark(sh, page, font, 200.0, y_, t, stem=ok)
+                else:
+                    _gost_mark(sh, page, font, 200.0, y_, t, arms=ok)
+        doc = _levels_page(tmp_path, f"lv{k}.pdf", draw)
+        for y_, t, ok, _ in marks:
+            v = _level(doc, t)
+            if v["level_y"] is not None:
+                assert v["level_y"] == pytest.approx(y_, abs=0.05), (k, t)
+            if not ok:
+                assert v["status"] == "unresolved", (k, t)
+
+
+def test_level_mark_drawn_off_its_written_value_is_refused_not_bound(tmp_path):
+    """KPP1 +3,000 case: the mark's own tip sits where the other marks say +3.720; the drawn line is kept as
+    level_y_drawn, the value is unbound level_value_inconsistent with a D112 finding, never corrected."""
+    def draw(sh, page, font):
+        for y, t in ((300.0, "+0,000"), (240.0, "+3,000"), (180.0, "+6,000"), (120.0, "+9,000")):
+            _revit_mark(sh, page, font, 200.0, y, t)
+        _revit_mark(sh, page, font, 300.0, 225.6, "+3,000")  # drawn at +3.720, same view
+        sh.draw_line((240.0, 100.0), (240.0, 310.0))  # facade edge: one view
+        sh.finish(color=(0, 0, 0), width=0.5)
+    doc = _levels_page(tmp_path, "odd.pdf", draw)
+    odd = [v for v in doc["values"] if v["kind"] == "level" and v["bbox"][0] > 250]
+    (odd,) = odd
+    assert odd["binding"] == {"type": "unbound", "reason": "level_value_inconsistent"} and odd["status"] == "unresolved"
+    assert odd["value"] == 3.0 and odd["level_y"] is None and odd["level_y_drawn"] == pytest.approx(225.6, abs=0.05)
+    (f,) = [f for f in doc["findings"] if f["code"] == "level_value_inconsistent"]
+    assert f["expected_y_pt"] == pytest.approx(240.0, abs=0.05)
+    good = [v for v in doc["values"] if v["kind"] == "level" and v["bbox"][0] < 250]
+    assert len(good) == 4 and all(v["binding"]["type"] == "level" for v in good)

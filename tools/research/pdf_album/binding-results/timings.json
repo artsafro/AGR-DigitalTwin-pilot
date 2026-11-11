@@ -7,26 +7,30 @@
       26,
       31
     ],
-    "seconds": 14.84,
+    "seconds": 42.72,
     "summary": {
       "values": 196,
       "by_binding": {
         "axis_pair": 75,
-        "level": 65,
+        "level": 27,
         "level_pair": 1,
         "opening": 2,
-        "unbound": 53
+        "unbound": 91
       },
       "vertical_dimensions": 22,
       "views": 14,
       "calibrated_views": 0,
-      "unresolved": 131
+      "unresolved": 169
     },
-    "sha256": "49c105275ea56f16f9f281b3586876818215d99544d82644a5aab8e1cfba9545"
+    "sha256": "49c105275ea56f16f9f281b3586876818215d99544d82644a5aab8e1cfba9545",
+    "level_marks": {
+      "bound": 27,
+      "no_level_line": 38
+    }
   },
   "cod20207": {
     "pages": "all",
-    "seconds": 0.21,
+    "seconds": 0.36,
     "summary": {
       "values": 1,
       "by_binding": {
@@ -37,11 +41,12 @@
       "calibrated_views": 0,
       "unresolved": 1
     },
-    "sha256": "3398c18864b0ef46b3cb59d43c34e8e3a7707172ee372545861ff8a672bb87ce"
+    "sha256": "3398c18864b0ef46b3cb59d43c34e8e3a7707172ee372545861ff8a672bb87ce",
+    "level_marks": {}
   },
   "tec26": {
     "pages": "all",
-    "seconds": 7.78,
+    "seconds": 24.73,
     "summary": {
       "values": 0,
       "by_binding": {},
@@ -50,6 +55,7 @@
       "calibrated_views": 0,
       "unresolved": 0
     },
-    "sha256": "ab4339496166779b2989a42bdbf88072bf8267a6a30ad748da544bf48ed3f997"
+    "sha256": "ab4339496166779b2989a42bdbf88072bf8267a6a30ad748da544bf48ed3f997",
+    "level_marks": {}
   }
 }

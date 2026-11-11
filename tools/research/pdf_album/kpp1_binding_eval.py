@@ -175,7 +175,7 @@ def truth(dxf: Path, transforms: list[dict]) -> dict:
 
 def score(dims: dict, ref: dict, transforms: list[dict]) -> dict:
     rows = {}
-    pred_levels = [v for v in dims["values"] if v["kind"] == "level" and v.get("level_y") is not None]
+    pred_levels = [v for v in dims["values"] if v["kind"] == "level" and v["binding"]["type"] == "level"]
     correct = 0
     for v in pred_levels:
         tr = transforms[v["page"] - 1]
@@ -186,6 +186,12 @@ def score(dims: dict, ref: dict, transforms: list[dict]) -> dict:
                for t in ref["levels"]):
             correct += 1
     rows["level -> level line"] = {"truth": len(ref["levels"]), "predicted": len(pred_levels), "correct": correct}
+    # marks the binder refused as value/line disagreement (D112): how many the DWG itself cannot verify either
+    flagged = [v for v in dims["values"] if v["kind"] == "level" and v["binding"].get("reason") == "level_value_inconsistent"]
+    rows["level marks refused as level_value_inconsistent"] = {
+        "truth": len(ref["unverified_levels"]), "predicted": len(flagged),
+        "correct": sum(1 for v in flagged if any(t["page"] == v["page"] and t["text"].lstrip("+") == v["raw"].lstrip("+")
+                                                  for t in ref["unverified_levels"]))}
     pred_axes = [(vw["page"], a) for vw in dims["views"] for a in vw["axes"] if a["orientation"] == "vertical"]
     correct = 0
     for page, a in pred_axes:
