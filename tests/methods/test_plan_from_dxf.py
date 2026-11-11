@@ -715,3 +715,21 @@ def test_invocation_options_reproduce_brute_force(tmp_path):
             {k: v for k, v in d2.items() if k != "invocation"}
         checked += 1
     assert checked == 12
+
+
+def test_dxf_changing_while_it_is_read_is_an_error_and_writes_nothing(tmp_path, monkeypatch, capsys):
+    import ezdxf as real
+    dxf = _hatched_square_dxf(tmp_path)
+    orig = real.readfile
+
+    def readfile_then_touch(path, *a, **k):
+        doc = orig(path, *a, **k)
+        with open(path, "ab") as f:
+            f.write(b"\n")
+        return doc
+
+    monkeypatch.setattr(real, "readfile", readfile_then_touch)
+    out, rep = tmp_path / "o.json", tmp_path / "r.json"
+    code = pf.main(_extract_argv(dxf, out, rep, "--map", "WALL=wall", "--map", "PATT=hatch", "--z0", "0", "--z1", "3"))
+    assert code == 2 and "changed while it was read" in capsys.readouterr().err
+    assert not out.exists() and not rep.exists()

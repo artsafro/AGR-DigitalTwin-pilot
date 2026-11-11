@@ -45,6 +45,9 @@ class FakeAcc:
             target.write_text(DXF_TEXT, encoding="ascii", newline="")
         elif self.mode == "garbage":
             target.write_bytes(b"not a dxf")
+        elif self.mode == "touch_source":
+            self.source.write_bytes(b"changed by someone else")
+            target.write_text(DXF_TEXT, encoding="ascii", newline="")
         elif self.mode == "touch_copy":
             Path(cmd[cmd.index("/i") + 1]).write_bytes(b"changed")
             target.write_text(DXF_TEXT, encoding="ascii", newline="")
@@ -105,13 +108,15 @@ def test_run_copies_hashes_and_hands_autocad_only_the_copy(tmp_path):
 
 
 def test_failing_readbacks_are_failures_never_pass(tmp_path):
-    for i, mode in enumerate(("nothing", "garbage", "exit1", "touch_copy")):
+    for i, mode in enumerate(("nothing", "garbage", "exit1", "touch_copy", "touch_source")):
         src = _source(tmp_path / str(i))
         work = tmp_path / str(i) / "work"
         work.mkdir(parents=True)
         (work / "acc.exe").write_bytes(b"")
         argv, out, rec = _args(src, work)
-        code = dd.main(argv, runner=FakeAcc(mode))
+        fake = FakeAcc(mode)
+        fake.source = src
+        code = dd.main(argv, runner=fake)
         receipt = json.loads(rec.read_text(encoding="utf-8"))
         assert code == 3 and receipt["status"] == "fail" and receipt["reason"], (mode, receipt)
 
