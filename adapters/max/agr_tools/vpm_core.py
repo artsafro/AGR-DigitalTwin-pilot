@@ -6,13 +6,16 @@ Steps of #1024 §1.0.17 done here (the glue writes the copy and the files):
      unroll (uvlayout_core.project_k6); other ids keep their unwrap;
   2. texel: other ids are rescaled to the texel of their period around UV (0, 0) (udim.rescale rule, L09);
   3. layout into UDIM seam to seam: cut by the integer UV grid, whole shifts into the tile of the material (K6);
-  4. renumbering library ids -> UDIM 1001.. without gaps PER MESH (K3; owner answer V9 06.11.2026: body and the
-     windows/glass mesh each start at 1001), matlib_core.renumber_dense of branch L when it is implemented;
-  5. glass: faces of the glass ids go to a separate object with its own numbering;
-  9. check: seam metric (norm 0), texel per piece (+-1 %), 0 pieces across a tile line, UDIM 1001..N without gaps
-     (udim.distortion rule on the pieces).
+  4. renumbering library ids -> UDIM 1001.. without gaps PER MESH for the body (K3; owner answer V9 06.11.2026 /
+     D209), matlib_core.renumber_dense of branch L when it is implemented;
+  5. glass: faces of the glass ids go to a separate object; ALL its glass ids stay in UDIM 1001 (D221, reg p.31
+     §2.2 / 2.5.2.2.1а: transparent geometry is unwrapped inside the 1001 tile; amends D209 for glass only). The glass
+     ids share the tile with the same whole shifts, texel and seam norm; glass has no texture maps (reg 2.4.2), so two
+     glass materials over each other in 1001 sample nothing;
+  9. check: seam metric (norm 0), texel per piece (+-1 %), 0 pieces across a tile line, UDIM 1001..N without gaps on
+     the body and only 1001 on the glass (udim.distortion rule on the pieces).
 Steps 6-8 (maps D+ERM+N, tex.dilate, udim.plugs) belong to branches N; the glue calls vpmmaps_core.build_maps and
-reports `skipped` while it is a stub.
+reports `skipped` while it is a stub. The glass part gets no maps (reg 2.4.2, D221): maps_table leaves it out.
 
 Input mesh: {'key': handle, 'name', 'verts': [[x, y, z]] metres world double, 'tris', 'mat_ids',
 'uvs': [[u, v]] | None, 'uv_tris': [[a, b, c]] | None}.
@@ -173,7 +176,8 @@ def build_part(mesh, faces, o, renumber, part):
     """Steps 1-4 and 9 for the faces of one output mesh. Returns (summary, geometry, findings)."""
     findings = []
     used = sorted({mesh['mat_ids'][f] for f in faces})
-    table = renumber(used)
+    # D221: every glass id of the glass mesh sits in 1001 (reg p.31 §2.2); the body keeps the dense numbering (D209)
+    table = glass_table(used) if part == 'glass' else renumber(used)
     # 'all' (default until branch L's library gives the recipes): every face, glass too, is projected (K6);
     # a list keeps the unwrap of the other ids (rescaled to their texel, step 2).
     projected = [f for f in faces if o['projected_ids'] == 'all' or mesh['mat_ids'][f] in o['projected_ids']]
@@ -229,7 +233,7 @@ def build_part(mesh, faces, o, renumber, part):
     if tex_bad:
         findings.append(('texel', sorted(tex_bad), 'texel off by more than 1 %'))
     tiles = sorted({p['tile'] for p in pieces})
-    want_tiles = list(range(lay.FIRST_UDIM, lay.FIRST_UDIM + len(table)))
+    want_tiles = [lay.FIRST_UDIM] if part == 'glass' else list(range(lay.FIRST_UDIM, lay.FIRST_UDIM + len(table)))
     if tiles != want_tiles:
         findings.append(('udim_gap', [], 'tiles {} instead of {}'.format(tiles, want_tiles)))
     geo = weld(mesh, pieces)
@@ -248,6 +252,12 @@ def build_part(mesh, faces, o, renumber, part):
                'texel_target': {str(k): round(texel_of(o, k), 4) for k in used},
                'out_tris': len(geo['tris']), 'out_verts': len(geo['verts_w'])}
     return summary, geo, findings
+
+
+def glass_table(used_ids):
+    """{library id: 1001} for every glass id of ONE glass mesh (D221; reg p.31 §2.2 / 2.5.2.2.1а)."""
+    lay.renumber_dense(used_ids)  # the same id range check as the body (1..1000 on working geometry, K3)
+    return {lid: lay.FIRST_UDIM for lid in sorted(set(used_ids))}
 
 
 def _cut_count(faces, pieces):
@@ -299,10 +309,11 @@ def map_mesh_name(o, part_name, part):
 
 
 def maps_table(plan):
-    """udim_table of vpmmaps_core.build_maps (branch N): {map mesh name: {library_id: udim}}."""
+    """udim_table of vpmmaps_core.build_maps (branch N): {map mesh name: {library_id: udim}}. Glass parts are left
+    out: no texture maps on glass materials (reg 2.4.2, D221)."""
     o = plan['options']
     return {map_mesh_name(o, p['name'], p['summary']['part']): {int(k): v for k, v in p['summary']['udim_table'].items()}
-            for ob in plan['objects'] if not ob['findings'] for p in ob['parts']}
+            for ob in plan['objects'] if not ob['findings'] for p in ob['parts'] if p['summary']['part'] != 'glass'}
 
 
 def table_json(plan, scene, version):
