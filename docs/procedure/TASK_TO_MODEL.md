@@ -23,6 +23,7 @@ Use the matching `.agents/skills/model-*/SKILL.md` and `validate-delivery` skill
 
 Record every gate in `jobs/<JOB>/job.yaml`; schema:
 [`JobChecklist.schema.json`](../../schemas/JobChecklist.schema.json).
+A non-pass gate parked on someone else sets `waits: user | max | visual` (never on `pass`); the walk JSON reports it per gate and counts it under `waits` [#1204].
 Fixed dependency order below follows D104/D125: human geometry acceptance precedes
 **final SINTEZ**, even though preliminary checker diagnostics may run earlier.
 

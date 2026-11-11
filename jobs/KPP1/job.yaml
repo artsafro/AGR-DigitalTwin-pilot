@@ -37,6 +37,7 @@ gates:
       sha256: b36c66e926df2069722d773408f34d29f2f5b700e13930ace0dbfbf1bce7f814
   operations:
     status: review
+    waits: max
     note: "Built offline (path: deviation, Max busy): two bands + 6 frame bumps to +3.300, 53 L01 openings cut, frames/glass/doors, 7 of 171 mullions, roof slab, parapet. Stair not built. Max route waits-max."
     evidence:
     - path: jobs/KPP1/rerun-1209/build_parts.py
@@ -54,6 +55,7 @@ gates:
       sha256: c8de74e584fca263e0ae19d9038ec205b95b78e5b8ff0eb3a5481ee020dc52aa
   export_readback:
     status: review
+    waits: max
     note: "Both FBX read back by tools/blender/fbx_readback.py; validate_package --scene passed=false, exit 1: V004 self-intersections 170 + clearance, V006/V007/V009 textures, V001/V011/V013/V014 not_run (no ZIP/GeoJSON, MSK-77 deferred), V015-V017 manual. Max export [D212] waits-max."
     evidence:
     - path: jobs/KPP1/rerun-1209/SM_Kpp_1.validate.json
@@ -70,9 +72,11 @@ gates:
       sha256: eb6a9eb77884f19f0f1544a7aa547e7632934ab3f380cd22cf13fc1a0307c3e6
   visual:
     status: missing
+    waits: user
     note: "waits-user: previews in G:/Мой диск/AGR-evidence/KPP1/rerun-1209; board review (D119) not done."
     evidence: []
   checker:
     status: missing
+    waits: visual
     note: "waits-visual: SINTEZ AGR Checker after visual acceptance (D104)."
     evidence: []
