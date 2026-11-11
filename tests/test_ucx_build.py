@@ -171,6 +171,8 @@ def test_ground_random_terrains_probe():
     """Probe: 8 seeded random terrains -> every piece closed/convex, no overlap; the reported
     max_vertical_dev_m is exact (never below the dense-sample deviation), so 'within R11' is never claimed
     falsely; terrains with noise below the mesh step pass R11."""
+    from tests.ucx_kinks_reference import assert_kinks_compaction
+    assert_kinks_compaction()
     rng = np.random.default_rng(166)
     passed = 0
     for k in range(8):
