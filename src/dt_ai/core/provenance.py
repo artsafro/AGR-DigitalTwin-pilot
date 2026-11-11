@@ -32,3 +32,7 @@ class Approval(Contract):
     date: str = Field(pattern=r"^\d{4}-\d{2}-\d{2}$")
     scope: Literal["synthetic_fixture", "project"]
     note: str = Field(min_length=1)
+    # Proof of the user's answer [#1205]: https issue/comment URL, kanban card id or D<n> decision id.
+    # `not \s` keeps JSON Schema validators whose `$` matches before a final newline as strict as the model.
+    ref: str | None = Field(default=None, pattern=r"^(https://\S+|t_[0-9a-f]+|D[1-9][0-9]*)$",
+                            json_schema_extra={"not": {"type": "string", "pattern": r"\s"}})

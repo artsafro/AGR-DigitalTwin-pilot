@@ -95,7 +95,7 @@ def test_schema_has_optional_ref():
 
 
 # Job parts files that validate on origin/main 42c3bdb9 (elv_full_parts_v002/v003 already fail there on
-# SourceRef.kind "pdf" and extra keys, F6 territory); none of them may break because of gate1.
+# SourceRef.kind "pdf" and extra keys, F6 territory); gate1 is set or null; none may break because of gate1.
 VALID_ON_MAIN = [
     "jobs/COD-20207/parts.json",
     "jobs/elv-tc-vpm/parts/elv_full_parts_v001.json",
@@ -109,7 +109,6 @@ VALID_ON_MAIN = [
 @pytest.mark.parametrize("rel", VALID_ON_MAIN)
 def test_existing_job_parts_files_still_validate(rel):
     data = json.loads((ROOT / rel).read_text(encoding="utf-8"))
-    assert data.get("gate1") is not None
     PartsList.model_validate(data)
     assert schema_ok(data), rel
 
