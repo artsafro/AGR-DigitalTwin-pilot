@@ -49,7 +49,10 @@ Action: **port** = new rule + test in `tests/test_guard_permissions.py` (`DCG_PO
 | fork bomb, Linux disk tools (`mkfs`, `fdisk`, `mdadm`, ...) | deny | — | skip: not on this Windows host |
 
 Counts (rows): 17 ported as 14 new rules, 10 already covered, 10 skipped.
-Tests: 57 ask commands x 2 protocols + 30 safe neighbours.
+Tests: 57 ask commands x 2 protocols + 30 safe neighbours. Review round 1 (#1186): every git rule (new and
+existing) now also matches after git global options (`-C`, `-c`, `--no-pager`, `--git-dir=`), with force in any
+short cluster (`-fq`, `-qf`, `-ff`), quoted flags and long-option prefixes (`--forc`, `--har`); generated probe
+`test_guard_git_globals_and_flag_variants_generated_probe_1186` (7 global prefixes x 51 hazards = 357 ask, x 26 safe forms = 182 allow).
 
 Open items:
 - Pre-existing false positive: `git stash push ...` asks as "git push publishes to a remote" (not changed here).

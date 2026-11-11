@@ -36,17 +36,36 @@ _FORCE_BRANCH_DELETE = (
     _BRANCH + r"(?=[^|;&]*(?-i:\s" + _Q + r"-[A-Za-z]*D))"
     r"|" + _BRANCH + r"(?=[^|;&]*(?-i:\s" + _Q + r"(?:--d(?:e(?:l(?:e(?:t(?:e)?)?)?)?)?(?=[\s='\"]|$)|-[A-Za-z]*d)))"
     r"(?=[^|;&]*(?-i:\s" + _Q + r"(?:--forc(?:e)?(?=[\s='\"]|$)|-[A-Za-z]*f)))")
+
+
+def _long(word, keep):
+    """`--word` and every prefix of it down to `keep` letters (git accepts unambiguous prefixes)."""
+    tail = ""
+    for ch in reversed(word[keep:]):
+        tail = "(?:" + re.escape(ch) + tail + ")?"
+    return "--" + re.escape(word[:keep]) + tail
+
+
+def _flag(long, keep, short=None):
+    """A git option token (#1186 review round 1): optional quotes, then a short cluster holding `short`
+    anywhere (-f, -fq, -qf, -ff) or a long-option prefix; case-sensitive; ends at whitespace, `=` or end."""
+    alts = ([r"-[A-Za-z]*" + short + r"[A-Za-z]*"] if short else []) + [_long(long, keep)]
+    return r"\s" + _Q + r"(?-i:" + "|".join(alts) + r")" + _Q + r"(?=[\s=]|$)"
+
+
+# `git`, then any global options (-C dir, -c k=v, --no-pager, ...) up to the subcommand.
+_GIT = r"\bgit\b[^|;&]*"
 SHELL_RULES = [
     (GH_PREFIX + r"\bpr\s+merge\b", "gh pr merge requires the user's merge command"),
     (GH_PREFIX + r"\bdelete\b", "gh delete changes remote data"),
     (GH_REPO_SUBCOMMAND, "gh repo operations require explicit authorization"),
     (r"\bgit\b[^|;&]*\bpush\b", "git push publishes to a remote"),
-    (r"\bgit\b[^|;&]*\breset\b[^|;&]*--hard", "git reset --hard discards work"),
+    (_GIT + r"\breset\b[^|;&]*(?:--hard|" + _flag("hard", 2) + ")", "git reset --hard discards work"),
     (r"\bgit\b[^|;&]*\bclean\b", "git clean deletes untracked files"),
     (_FORCE_BRANCH_DELETE, "force branch delete"),
     (r"\bgit\b[^|;&]*\b(checkout|restore)\b[^|;&]*\s(--\s+)?\.(\s|$)", "discards working-tree changes"),
     (r"\bgit\b[^|;&]*\b(filter-branch|filter-repo|rebase|update-ref\s+-d)\b", "rewrites history/refs"),
-    (r"\bgit\s+lfs\s+migrate\b", "rewrites history (LFS migrate)"),
+    (_GIT + r"\blfs\s+migrate\b", "rewrites history (LFS migrate)"),
     (r"\b(rm|del|rmdir|rd|Remove-Item|ri)\b[^|;&]*(Revit[/\\\\]|Source[/\\\\]|Unreal[/\\\\]|" + PRODUCTION_EXT + ")",
      "deletes source/production assets"),
     (r"\brm\s+-[a-zA-Z]*r|\bRemove-Item\b[^|;&]*-(Recurse|Rec)|\b(rmdir|rd)\b[^|;&]*/[sS]|\brobocopy\b[^|;&]*/(MIR|PURGE)|\bfind\b[^|;&]*-delete",
@@ -57,16 +76,16 @@ SHELL_RULES = [
 ] + [
     # Ported from destructive_command_guard (core.git, core.filesystem, windows.filesystem,
     # careful_company): only what is missing above and relevant here (docs/research/guard-vs-dcg-2026-11.md).
-    (r"\bgit\b[^|;&]*\breset\b[^|;&]*--merge", "git reset --merge can discard work"),
-    (r"\bgit\b[^|;&]*\b(checkout|switch)\b[^|;&]*\s(?-i:-[A-Za-z]*f|--force|--discard-changes)(?=\s|$)",
+    (_GIT + r"\breset\b[^|;&]*" + _flag("merge", 2), "git reset --merge can discard work"),
+    (_GIT + r"\b(checkout|switch)\b[^|;&]*(?:" + _flag("force", 1, "f") + "|" + _flag("discard-changes", 2) + ")",
      "discards working-tree changes"),
-    (r"\bgit\b[^|;&]*\bread-tree\b[^|;&]*--reset", "discards working-tree changes"),
-    (r"\bgit\b[^|;&]*\brm\b[^|;&]*\s(?-i:-[A-Za-z]*f|--force)(?=\s|$)", "git rm -f deletes modified files"),
-    (r"\bgit\b[^|;&]*\b(reflog\s+(expire|delete)|gc\b[^|;&]*--prune)\b",
+    (_GIT + r"\bread-tree\b[^|;&]*(?:--reset|" + _flag("reset", 3) + ")", "discards working-tree changes"),
+    (_GIT + r"\brm\b[^|;&]*" + _flag("force", 1, "f"), "git rm -f deletes modified files"),
+    (_GIT + r"\b(reflog\s+(expire|delete)\b|gc\b[^|;&]*(?:--prune\b|" + _flag("prune", 1) + "))",
      "destroys recovery data (reflog / unreachable objects)"),
-    (r"\bgit\b[^|;&]*\bstash\s+(drop|clear)\b", "deletes stash entries (the stash stack is shared by all worktrees)"),
-    (r"\bgit\s+lfs\s+(prune|uninstall)\b", "removes LFS objects or filters"),
-    (r"\bgit\b[^|;&]*\bworktree\s+remove\b[^|;&]*\s(?-i:-f|--force)(?=\s|$)",
+    (_GIT + r"\bstash\s+(drop|clear)\b", "deletes stash entries (the stash stack is shared by all worktrees)"),
+    (_GIT + r"\blfs\s+(prune|uninstall)\b", "removes LFS objects or filters"),
+    (_GIT + r"\bworktree\s+remove\b[^|;&]*" + _flag("force", 1, "f"),
      "force-removes a worktree with uncommitted work"),
     (r"(?<![-/.\w])(rm|ri|del|erase|rmdir|rd|Remove-Item)\b[^|;&]*"
      r"(?:(?-i:\s-[dfiIvR]*[rR][dfiIvR]*)|\s--recursive|\s-r(?:e(?:c(?:u(?:r(?:s(?:e)?)?)?)?)?)?)(?=[\s:]|$)"

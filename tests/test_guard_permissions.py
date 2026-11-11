@@ -381,3 +381,61 @@ def test_guard_dcg_ported_patterns_ask(command, protocol):
 @pytest.mark.parametrize("command", DCG_PORTED_ALLOW)
 def test_guard_dcg_ported_safe_neighbours_allowed(command):
     assert _load_guard().shell_reason(command) is None, command
+
+
+# PR #1186 review round 1: git global options before the subcommand, combined short-flag clusters,
+# repeated flags, quoted flags and unambiguous long-option prefixes must not bypass any git rule.
+GIT_GLOBALS = ["", "-C repo ", "-C 'C:/my repo' ", "-c core.bare=false ", "--no-pager ", "--git-dir=.git ",
+               "-C repo -c x=y "]
+GIT_HAZARDS = [
+    "push origin main", "push -fq origin main",
+    "reset --hard", "reset --har HEAD", "reset -q --hard HEAD~1",
+    "reset --merge", "reset --mer HEAD~1",
+    "clean -fdq", "clean --force",
+    "checkout .", "restore .",
+    "checkout -f main", "checkout -fq main", "checkout -qf main", "checkout -f -f main", "checkout --forc main",
+    "checkout '-f' main",
+    "switch -f main", "switch -fq main", "switch --discard-changes main", "switch --discard main",
+    "switch \"--force\" main",
+    "read-tree --reset -u HEAD", "read-tree -u --res HEAD",
+    "rm -f x.txt", "rm -fq x.txt", "rm -qf x.txt", "rm --forc x.txt", "rm -rfq dir",
+    "reflog expire --expire=now --all", "reflog delete HEAD@{1}",
+    "gc --prune=now", "gc --prun=now", "gc --aggressive --prune=now",
+    "stash drop", "stash clear", "stash drop -q stash@{0}",
+    "lfs prune", "lfs uninstall", "lfs migrate import --everything",
+    "worktree remove --force ../wt", "worktree remove -f ../wt", "worktree remove -ff ../wt",
+    "worktree remove -f -f ../wt", "worktree remove --forc ../wt", "worktree remove '-f' ../wt",
+    "branch -D x", "branch -dfq x", "filter-branch --all", "rebase -i HEAD~3", "update-ref -d refs/heads/x",
+]
+GIT_SAFE = [
+    "status", "checkout -b feature/fix-f", "checkout -qb x", "checkout main", "checkout main -- docs/x.md",
+    "switch -c harness/x", "switch -qc x", "switch main", "stash list", "stash apply 1a2b3c",
+    "worktree remove ../wt", "worktree list", "lfs pull", "lfs ls-files", "rm --cached x.txt", "rm -q x.txt",
+    "reset --soft HEAD~1", "reset -q HEAD x.txt", "gc", "gc --auto", "reflog", "reflog show",
+    "read-tree HEAD", "log --format=%H -1", "restore --staged x.txt", "branch -d x",
+]
+
+
+def test_guard_git_globals_and_flag_variants_generated_probe_1186():
+    shell_reason = _load_guard().shell_reason
+    asked = [f"git {g}{h}" for g in GIT_GLOBALS for h in GIT_HAZARDS]
+    allowed = [f"git {g}{s}" for g in GIT_GLOBALS for s in GIT_SAFE]
+    wrong_allow = [c for c in asked if shell_reason(c) is None]
+    wrong_ask = [(c, shell_reason(c)) for c in allowed if shell_reason(c) is not None]
+    assert len(asked) == 7 * len(GIT_HAZARDS) and len(allowed) == 7 * len(GIT_SAFE)
+    assert wrong_allow == [] and wrong_ask == []
+
+
+@pytest.mark.parametrize("protocol", ["claude", "antigravity"])
+@pytest.mark.parametrize("command", [
+    "git checkout -fq main",
+    "git switch -fq main",
+    "git worktree remove -ff ../wt",
+    "git -C repo lfs prune",
+    "git -c core.bare=false lfs uninstall",
+    "git -C repo lfs migrate import --everything",
+    "git reset --har HEAD",
+    "git -C repo rm -fq x.txt",
+])
+def test_guard_review_1186_bypasses_ask(command, protocol):
+    assert guard(command, protocol) == "ask"
