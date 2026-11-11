@@ -1,4 +1,7 @@
-"""Headless DWG -> DXF readback (#1203): works on a copy, records hashes, never hands AutoCAD the original."""
+"""Headless DWG -> DXF readback (#1203): works on a copy, records hashes, never hands AutoCAD the original.
+
+Pattern: new-case: tests for the headless AutoCAD DWG->DXF readback (fake accoreconsole runner).
+"""
 from __future__ import annotations
 
 import hashlib
