@@ -1,3 +1,7 @@
+Current run: Autoresearch #118 round 3, experiment 16 of 21 current best; geometry-only experiment, delivery_passed=false.
+Source: Revit 2025 БУТОВСКАЯ_СОШ1000_АР_В3_ВИЗАМ_2025.rvt TwinPack mesh snapshot C:/x/butovskaya-snapshot-twin/ (Source below).
+Next gate: User visual acceptance of experiment renders; technical QA and publication remain open.
+
 # butovskaya-sosh1000 — school for 1000 pupils, Bolshaya Butovskaya vl. 9 (NPM by autoresearch, #118)
 
 Pipeline status: experiment (autoresearch lane 3 of 3, issue artsafro/AGR-DigitalTwin-pilot#118). Not a delivery:

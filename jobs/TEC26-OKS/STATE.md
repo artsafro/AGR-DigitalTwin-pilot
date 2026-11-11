@@ -1,3 +1,7 @@
+Current run: AC08 pilot-v010 (#559), following scene intake #558; open user review in AC08/PILOT_REPORT.md.
+Source: Copied source scenes (census/scenes.md); presentation slide 49 and AC08/sheet-facades.json control pilot facade ribs/finishes.
+Next gate: Artem review of roof colour, outer outline and UCX triangulation (AC08/PILOT_REPORT.md).
+
 # TEC26-OKS — scene intake
 
 Job: `tec26-oks`; source issue #558; branch `job/tec26-oks-intake`.
