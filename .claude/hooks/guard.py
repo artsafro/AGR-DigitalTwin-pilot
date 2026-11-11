@@ -159,7 +159,8 @@ _MAX_DEPTH = 4
 # Quoted or escaped `>`/`<` are text, not redirections: masked while tokenizing, restored on a re-read.
 _MASK = {">": "\ue000", "<": "\ue001"}
 _UNMASK = str.maketrans({v: k for k, v in _MASK.items()})
-_REDIRECT_OP = re.compile(r"(?:>>?|<<?<?|<>|>\||>&|<&)")
+# Match longer operators before their single-character prefixes.
+_REDIRECT_OP = re.compile(r"(?:>\||>&|<&|<>|>>?|<<?<?)")
 
 
 def _mask_quoted_separators(text, escape):
@@ -204,13 +205,13 @@ def _shell_tokens(text, posix_escape):
 
 
 def _join_redirections(tokens):
-    """Glue `&` back into the redirection it belongs to (`2>&1`, `>&2`, `&>out`); shlex splits it off."""
+    """Glue `&`/`|` back into redirections (`2>&1`, `>&2`, `&>out`, `>|out`); shlex splits them off."""
     out, k = [], 0
     while k < len(tokens):
         tok, nxt = tokens[k], tokens[k + 1] if k + 1 < len(tokens) else None
         word_next = nxt is not None and not set(nxt) <= set(_SEPARATORS + "`")
-        if tok == "&" and out and re.fullmatch(r"(\d*|\*)>>?", out[-1]) and word_next:
-            out[-1] += "&" + nxt
+        if tok in ("&", "|") and out and re.fullmatch(r"(\d*|\*)>>?", out[-1]) and word_next:
+            out[-1] += tok + nxt
             k += 2
         elif tok == "&" and word_next and nxt.startswith(">"):
             out.append("&" + nxt)

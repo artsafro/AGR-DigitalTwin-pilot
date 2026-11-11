@@ -551,6 +551,12 @@ def test_guard_review3_1186_safe_commands_allowed(command, protocol):
     assert guard(command, protocol) == "allow"
 
 
+@pytest.mark.parametrize("protocol", ["claude", "antigravity"])
+@pytest.mark.parametrize("command", ["git >| out reset --hard", "git >|out push"])
+def test_guard_review_delta_1186_clobber_redirection_asks(command, protocol):
+    assert guard(command, protocol) == "ask"
+
+
 def test_guard_research_stash_push_contract_1225():
     """The research note must describe the tokenizer's current safe-stash policy."""
     note = (ROOT / "docs/research/guard-vs-dcg-2026-11.md").read_text(encoding="utf-8")
