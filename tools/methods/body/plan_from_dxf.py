@@ -45,16 +45,26 @@ Guarantees (each has a test):
   wall faces sit strictly within 1.0 m on opposite sides of that centre. Otherwise the
   insert is dropped with the missing fact named. No default depth and no default base point.
   A face at exactly 1.0 m is not used.
-- The CLI refuses an output or report path that is the input or the same file as the other
-  output (exit 4, nothing written). It never deletes an input.
+- The CLI refuses an output or report path that is the input (the DXF or the ``--map-file``) or the
+  same file as the other output (exit 4, nothing written). It never deletes an input.
+- ``method`` follows ``contour_source`` (``METHODS``; #1203).
+- The extract output carries ``invocation`` (#1203): the argv as given, ``options_argv`` (every map entry
+  expanded, z0/z1/levels, contour source, origin and shift), the DXF path and SHA-256, the map file
+  path and SHA-256, the tool SHA-256 and the git sha (``null`` with ``git_error`` when git cannot say).
+  ``extract <dxf> <out> <report> *options_argv`` re-runs it from the file alone.
+- A layer mapped twice (``--map`` or ``--map-file``), an empty map, or an empty map file is an error
+  naming it; nothing is written. A DXF that changes while it is read is an error.
 """
 from __future__ import annotations
 
 import argparse
 import copy
+import hashlib
 import json
 import math
 import re
+import shlex
+import subprocess
 import sys
 from pathlib import Path
 
@@ -74,6 +84,12 @@ COVERAGE_BBOX_M = 0.1  # every bbox side strictly within this of the hatch bbox
 MAX_UNACCOUNTED_M2 = MIN_PIECE_M2
 COVERAGE_REF_GAP_CLOSE_M = GAP_CLOSE_M
 CONTOUR_SOURCES = ("lines", "hatch")
+# #1203: the method string follows the contour source (it was "wall lines" for hatch too).
+METHODS = {
+    "lines": "plan wall lines from a DXF readback (tools/methods/body/plan_from_dxf.py)",
+    "hatch": "plan wall hatch union from a DXF readback (tools/methods/body/plan_from_dxf.py, contour_source hatch)",
+}
+TOOL_REL = "tools/methods/body/plan_from_dxf.py"
 FACE_LIMIT_M = 1.0  # a host-wall face is strictly closer than this; exactly 1.0 m is not used
 # L03 of АС.03. Only A-WALL-____-MCUT is the exterior cut. I-WALL stays out (accepted Q1).
 # Symbol layers are read and then kept only when the block is a door or a window (Q3).
@@ -560,7 +576,7 @@ def extract_plan(doc, layer_map: dict, *, z0: float, z1: float | None = None,
         levels_out = [spans[0][0], *[b for _, b in spans]]
         provisional = False
     result = {"schema": "body-contours/1", "synthetic_drawing": False, "provisional": provisional,
-              "method": "plan wall lines from a DXF readback (tools/methods/body/plan_from_dxf.py)",
+              "method": METHODS[contour_source],
               "units": "m", "source_units": "mm",
               "origin_mm": [origin_mm[0], origin_mm[1]],
               "frame_shift_m": [frame_shift_m[0], frame_shift_m[1]],
@@ -612,21 +628,88 @@ def _map_list(items: list[str]) -> dict[str, str]:
         layer, spec = item.split("=", 1)
         if not layer:
             raise ValueError("layer map entry has an empty layer")
+        if layer in out:
+            raise ValueError(f"layer {layer!r} is mapped twice ({out[layer]!r} and {spec!r})")
         out[layer] = spec
+    if not out:
+        raise ValueError("layer map is empty")
     return out
+
+
+def _map_file_entries(path: Path) -> list[str]:
+    """One ``layer=role`` per line (UTF-8, BOM and CRLF allowed); blank lines are skipped."""
+    lines = [line.strip() for line in path.read_text(encoding="utf-8-sig").splitlines()]
+    entries = [line for line in lines if line]
+    if not entries:
+        raise ValueError(f"layer map file {path} is empty")
+    return entries
+
+
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def _git_facts() -> dict:
+    tool = Path(__file__).resolve()
+    try:
+        sha = subprocess.run(["git", "-C", str(tool.parent), "rev-parse", "HEAD"], capture_output=True,
+                             text=True, timeout=30, check=True).stdout.strip()
+        dirty = subprocess.run(["git", "-C", str(tool.parent), "status", "--porcelain", "--", tool.name],
+                               capture_output=True, text=True, timeout=30, check=True).stdout.strip()
+    except (OSError, subprocess.SubprocessError) as exc:
+        return {"git_sha": None, "git_error": f"{type(exc).__name__}: {exc}"[:300]}
+    if not re.fullmatch(r"[0-9a-f]{40}", sha):
+        return {"git_sha": None, "git_error": f"unexpected rev-parse output {sha[:80]!r}"}
+    return {"git_sha": sha, "tool_dirty": bool(dirty)}
+
+
+def _invocation(argv: list[str], args, entries: list[str], dxf_sha: str, levels) -> dict:
+    """Everything needed to re-run the extract from the output file alone (#1203).
+
+    ``options_argv`` is the canonical option list (the map file expanded into ``--map`` entries);
+    ``extract <dxf> <out> <report> *options_argv`` reproduces the output.
+    """
+    opts: list[str] = []
+    for entry in entries:
+        opts += ["--map", entry]
+    if args.z0 is not None:
+        opts += ["--z0", repr(args.z0)]
+    if args.z1 is not None:
+        opts += ["--z1", repr(args.z1)]
+    if args.levels is not None:
+        opts += ["--levels", args.levels]
+    if args.opening_insert is not None:
+        opts += ["--opening-insert", args.opening_insert]
+    if args.opening_decision is not None:
+        opts += ["--opening-decision", args.opening_decision]
+    opts += ["--contour-source", args.contour_source, f"--origin-mm={args.origin_mm}",
+             f"--frame-shift-m={args.frame_shift_m}"]
+    inv = {"tool": TOOL_REL, "tool_sha256": _sha256(Path(__file__)), **_git_facts(),
+           "argv": list(argv), "options_argv": opts,
+           "command": "uv run python " + shlex.join([TOOL_REL, *argv]),
+           "dxf": {"path": str(args.dxf), "sha256": dxf_sha},
+           "map": list(entries), "z0": args.z0, "z1": args.z1, "levels_m": levels,
+           "contour_source": args.contour_source,
+           "origin_mm": [float(v) for v in args.origin_mm.split(",")],
+           "frame_shift_m": [float(v) for v in args.frame_shift_m.split(",")]}
+    if args.map_file is not None:
+        inv["map_file"] = {"path": str(args.map_file), "sha256": _sha256(args.map_file)}
+    return inv
 
 
 def main(argv=None) -> int:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     from safe_write import Refused, guard_cli, publish_text
 
-    argv = sys.argv[1:] if argv is None else argv
+    argv = [str(a) for a in (sys.argv[1:] if argv is None else argv)]
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("command", choices=("extract", "census"))
     parser.add_argument("dxf", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("report", type=Path, nargs="?")
     parser.add_argument("--map", action="append", default=[])
+    parser.add_argument("--map-file", type=Path, default=None,
+                        help="text file, one layer=role per line; its entries come before any --map")
     parser.add_argument("--z0", type=float)
     parser.add_argument("--z1", type=float)
     parser.add_argument("--levels", default=None, help="comma-separated elevations in metres, strictly increasing")
@@ -641,9 +724,12 @@ def main(argv=None) -> int:
         print("extract needs an output and a report path", file=sys.stderr)
         return 2
     try:
-        guard_cli([args.dxf], outs)
+        guard_cli([args.dxf] + ([args.map_file] if args.map_file is not None else []), outs)
+        dxf_sha = _sha256(args.dxf)
         import ezdxf
         doc = ezdxf.readfile(args.dxf)
+        if _sha256(args.dxf) != dxf_sha:
+            raise ValueError(f"{args.dxf} changed while it was read")
         if args.command == "census":
             publish_text(args.output, json.dumps(sheet_census(doc), ensure_ascii=False, indent=1))
             return 0
@@ -658,7 +744,10 @@ def main(argv=None) -> int:
             z0 = levels[0] if z0 is None else z0
         if z0 is None:
             raise ValueError("z0 is not finite: None")
-        result = extract_plan(doc, _map_list(args.map), z0=z0, z1=args.z1, levels_m=levels,
+        entries = (_map_file_entries(args.map_file) if args.map_file is not None else []) + list(args.map)
+        layer_map = _map_list(entries)
+        invocation = _invocation(argv, args, entries, dxf_sha, levels)
+        result = extract_plan(doc, layer_map, z0=z0, z1=args.z1, levels_m=levels,
                               opening_insert=args.opening_insert, opening_decision=args.opening_decision,
                               origin_mm=(ox, oy), frame_shift_m=(sx, sy), contour_source=args.contour_source)
     except Refused as exc:
@@ -668,6 +757,7 @@ def main(argv=None) -> int:
         print(f"PLAN_DXF error: {exc}", file=sys.stderr)
         return 2
     body = {k: v for k, v in result.items() if k != "entities"}
+    body["invocation"] = invocation
     publish_text(args.output, json.dumps(body, ensure_ascii=False))
     publish_text(args.report, json.dumps({"entities": result["entities"], "provisional": result["provisional"]},
                                         ensure_ascii=False))

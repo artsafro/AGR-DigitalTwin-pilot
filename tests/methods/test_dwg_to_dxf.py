@@ -24,7 +24,7 @@ def _sha(p: Path) -> str:
 
 def _source(tmp_path: Path, name: str = "Лист L03 без подписей.dwg") -> Path:
     src_dir = tmp_path / "Downloads"
-    src_dir.mkdir()
+    src_dir.mkdir(parents=True)
     src = src_dir / name
     src.write_bytes(b"AC1032" + bytes(range(256)) * 4)
     return src
