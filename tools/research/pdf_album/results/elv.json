@@ -1,0 +1,1908 @@
+{
+  "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\3_sreda\\for_ai\\ЭЛВ_ИД_АГР_45-4-25-С_Буклет АГР от 27.01.2025 (1) (1).pdf",
+  "sha256": "49c105275ea56f16f9f281b3586876818215d99544d82644a5aab8e1cfba9545",
+  "bytes": 47786873,
+  "pages": 42,
+  "metadata": {
+    "format": "PDF 1.7",
+    "title": "C:\\Users\\Asus\\YandexDisk-allprojectbureau\\24-1A_Elevatornaya\\10  K?CA:\\24-11-15\\24-1A_Elevatornaya_24-11-15_87<.1.pdf",
+    "author": "",
+    "subject": "",
+    "keywords": "",
+    "creator": "",
+    "producer": "Microsoft: Print To PDF",
+    "creationDate": "D:20241115155146+03'00'",
+    "modDate": "D:20250120090549+03'00'",
+    "trapped": "",
+    "encryption": null
+  },
+  "album": "elv",
+  "scoring_note": "Text recall only; numerical tokens are not axis/level/finish bindings. No calibrated geometry certified.",
+  "ocg_count": 0,
+  "embedded_files": [],
+  "index": [
+    {
+      "pdf_page": 1,
+      "sheet": null,
+      "kind_candidate": "unknown",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 230
+    },
+    {
+      "pdf_page": 2,
+      "sheet": null,
+      "kind_candidate": "unknown",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 0
+    },
+    {
+      "pdf_page": 3,
+      "sheet": null,
+      "kind_candidate": "facade",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 5362
+    },
+    {
+      "pdf_page": 4,
+      "sheet": null,
+      "kind_candidate": "unknown",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 1832
+    },
+    {
+      "pdf_page": 5,
+      "sheet": null,
+      "kind_candidate": "unknown",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 2127
+    },
+    {
+      "pdf_page": 6,
+      "sheet": null,
+      "kind_candidate": "unknown",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 1347
+    },
+    {
+      "pdf_page": 7,
+      "sheet": null,
+      "kind_candidate": "unknown",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 2162
+    },
+    {
+      "pdf_page": 8,
+      "sheet": null,
+      "kind_candidate": "unknown",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 616
+    },
+    {
+      "pdf_page": 9,
+      "sheet": null,
+      "kind_candidate": "unknown",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 1359
+    },
+    {
+      "pdf_page": 10,
+      "sheet": null,
+      "kind_candidate": "facade",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 833
+    },
+    {
+      "pdf_page": 11,
+      "sheet": null,
+      "kind_candidate": "unknown",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 426
+    },
+    {
+      "pdf_page": 12,
+      "sheet": null,
+      "kind_candidate": "unknown",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 426
+    },
+    {
+      "pdf_page": 13,
+      "sheet": null,
+      "kind_candidate": "unknown",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 419
+    },
+    {
+      "pdf_page": 14,
+      "sheet": null,
+      "kind_candidate": "3D view",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 250
+    },
+    {
+      "pdf_page": 15,
+      "sheet": null,
+      "kind_candidate": "3D view",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 250
+    },
+    {
+      "pdf_page": 16,
+      "sheet": null,
+      "kind_candidate": "3D view",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 250
+    },
+    {
+      "pdf_page": 17,
+      "sheet": null,
+      "kind_candidate": "3D view",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 250
+    },
+    {
+      "pdf_page": 18,
+      "sheet": "18",
+      "kind_candidate": "unknown",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 2450
+    },
+    {
+      "pdf_page": 19,
+      "sheet": "19",
+      "kind_candidate": "facade",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 2536
+    },
+    {
+      "pdf_page": 20,
+      "sheet": null,
+      "kind_candidate": "facade",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 1173
+    },
+    {
+      "pdf_page": 21,
+      "sheet": null,
+      "kind_candidate": "facade",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 794
+    },
+    {
+      "pdf_page": 22,
+      "sheet": null,
+      "kind_candidate": "facade",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 2876
+    },
+    {
+      "pdf_page": 23,
+      "sheet": null,
+      "kind_candidate": "facade",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 633
+    },
+    {
+      "pdf_page": 24,
+      "sheet": null,
+      "kind_candidate": "facade",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 621
+    },
+    {
+      "pdf_page": 25,
+      "sheet": null,
+      "kind_candidate": "unknown",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 1955
+    },
+    {
+      "pdf_page": 26,
+      "sheet": null,
+      "kind_candidate": "plan",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 564
+    },
+    {
+      "pdf_page": 27,
+      "sheet": "27",
+      "kind_candidate": "schedule",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 3183
+    },
+    {
+      "pdf_page": 28,
+      "sheet": null,
+      "kind_candidate": "unknown",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 1599
+    },
+    {
+      "pdf_page": 29,
+      "sheet": null,
+      "kind_candidate": "schedule",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 2360
+    },
+    {
+      "pdf_page": 30,
+      "sheet": null,
+      "kind_candidate": "unknown",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 1505
+    },
+    {
+      "pdf_page": 31,
+      "sheet": null,
+      "kind_candidate": "unknown",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 1934
+    },
+    {
+      "pdf_page": 32,
+      "sheet": null,
+      "kind_candidate": "unknown",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 963
+    },
+    {
+      "pdf_page": 33,
+      "sheet": null,
+      "kind_candidate": "unknown",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 1383
+    },
+    {
+      "pdf_page": 34,
+      "sheet": null,
+      "kind_candidate": "unknown",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 1161
+    },
+    {
+      "pdf_page": 35,
+      "sheet": null,
+      "kind_candidate": "facade",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 707
+    },
+    {
+      "pdf_page": 36,
+      "sheet": null,
+      "kind_candidate": "3D view",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 596
+    },
+    {
+      "pdf_page": 37,
+      "sheet": null,
+      "kind_candidate": "3D view",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 603
+    },
+    {
+      "pdf_page": 38,
+      "sheet": null,
+      "kind_candidate": "3D view",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 556
+    },
+    {
+      "pdf_page": 39,
+      "sheet": null,
+      "kind_candidate": "3D view",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 544
+    },
+    {
+      "pdf_page": 40,
+      "sheet": null,
+      "kind_candidate": "unknown",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 610
+    },
+    {
+      "pdf_page": 41,
+      "sheet": null,
+      "kind_candidate": "plan",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 9566
+    },
+    {
+      "pdf_page": 42,
+      "sheet": null,
+      "kind_candidate": "unknown",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 1836
+    }
+  ],
+  "routes": {
+    "A": {
+      "seconds": 115.7853,
+      "pages_processed": 42,
+      "input_unchanged": true,
+      "dimension_text": {
+        "correct": 4,
+        "denominator": 4,
+        "share": 1.0,
+        "samples": [
+          {
+            "reference": {
+              "value": 52600,
+              "unit": "mm",
+              "page": 18,
+              "sheet": "18",
+              "meaning": "axes И-А total"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "value": 8400,
+              "unit": "mm",
+              "page": 18,
+              "sheet": "18",
+              "meaning": "repeated axis spacing"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "value": 5300,
+              "unit": "mm",
+              "page": 18,
+              "sheet": "18",
+              "meaning": "end axis spacing"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "value": 84000,
+              "unit": "mm",
+              "page": 19,
+              "sheet": "19",
+              "meaning": "axes 1-12 total"
+            },
+            "found": true
+          }
+        ]
+      },
+      "level_text": {
+        "correct": 4,
+        "denominator": 4,
+        "share": 1.0,
+        "samples": [
+          {
+            "reference": {
+              "value": 0,
+              "text": "+0.000",
+              "unit": "m",
+              "page": 18,
+              "sheet": "18"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "value": 4.72,
+              "text": "+4.720",
+              "unit": "m",
+              "page": 18,
+              "sheet": "18"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "value": 13.92,
+              "text": "+13.920",
+              "unit": "m",
+              "page": 18,
+              "sheet": "18"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "value": 16.22,
+              "text": "+16.220",
+              "unit": "m",
+              "page": 18,
+              "sheet": "18"
+            },
+            "found": true
+          }
+        ]
+      },
+      "ral_code_text": {
+        "correct": 3,
+        "denominator": 3,
+        "share": 1.0,
+        "samples": [
+          {
+            "reference": {
+              "code": "RAL 1001",
+              "page": 18,
+              "sheet": "18",
+              "application": "wood-textured metal facade panels, pine",
+              "ground_truth": "jobs/elv-tc-vpm/TASK.md D01; parts/pilot_IA_parts_v001.json P01"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "code": "RAL 7021",
+              "page": 18,
+              "sheet": "18",
+              "application": "metal facade panels",
+              "ground_truth": "jobs/elv-tc-vpm/TASK.md D03; parts/pilot_IA_parts_v001.json P02"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "code": "RAL 5024",
+              "page": 18,
+              "sheet": "18",
+              "application": "stemalit",
+              "ground_truth": "jobs/elv-tc-vpm/TASK.md D06; parts/pilot_IA_parts_v001.json P05"
+            },
+            "found": true
+          }
+        ]
+      },
+      "structured_dimensions": 1,
+      "structured_levels": 2,
+      "scale_calibration": "not certified",
+      "artifact": "elv-A-all-v001\\result.json",
+      "schedule_rows": {
+        "correct": 0,
+        "denominator": 3,
+        "samples": [
+          {
+            "reference": {
+              "key": "1.D.17",
+              "value": "10.77",
+              "page": 27,
+              "sheet": "27",
+              "unit": "m2",
+              "description": "Гардероб персонала ТЦ"
+            },
+            "found": false
+          },
+          {
+            "reference": {
+              "key": "1.D.18",
+              "value": "11.54",
+              "page": 27,
+              "sheet": "27",
+              "unit": "m2",
+              "description": "Гардероб персонала ТЦ"
+            },
+            "found": false
+          },
+          {
+            "reference": {
+              "key": "1.O.01",
+              "value": "15.65",
+              "page": 27,
+              "sheet": "27",
+              "unit": "m2",
+              "description": "Диспетчерская"
+            },
+            "found": false
+          }
+        ]
+      },
+      "reader_observations": [
+        {
+          "page": 1,
+          "status": "ok",
+          "counts": {
+            "paths": 7,
+            "lines": 4,
+            "spans": 8
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 2,
+          "status": "not_vector",
+          "counts": {
+            "paths": 0,
+            "lines": 0,
+            "spans": 0
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "page status not_vector"
+          }
+        },
+        {
+          "page": 3,
+          "status": "ok",
+          "counts": {
+            "paths": 15,
+            "lines": 15,
+            "spans": 135
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 4,
+          "status": "ok",
+          "counts": {
+            "paths": 284,
+            "lines": 284,
+            "spans": 95
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 5,
+          "status": "ok",
+          "counts": {
+            "paths": 704,
+            "lines": 696,
+            "spans": 104
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 1,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 6,
+          "status": "ok",
+          "counts": {
+            "paths": 704,
+            "lines": 681,
+            "spans": 77
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 2,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 7,
+          "status": "ok",
+          "counts": {
+            "paths": 68,
+            "lines": 68,
+            "spans": 140
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 8,
+          "status": "ok",
+          "counts": {
+            "paths": 417,
+            "lines": 396,
+            "spans": 42
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 1,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 9,
+          "status": "ok",
+          "counts": {
+            "paths": 15,
+            "lines": 15,
+            "spans": 40
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 10,
+          "status": "ok",
+          "counts": {
+            "paths": 217,
+            "lines": 204,
+            "spans": 55
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 11,
+          "status": "ok",
+          "counts": {
+            "paths": 128,
+            "lines": 136,
+            "spans": 23
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 12,
+          "status": "ok",
+          "counts": {
+            "paths": 128,
+            "lines": 136,
+            "spans": 23
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 13,
+          "status": "ok",
+          "counts": {
+            "paths": 122,
+            "lines": 126,
+            "spans": 21
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 14,
+          "status": "ok",
+          "counts": {
+            "paths": 15,
+            "lines": 15,
+            "spans": 12
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 15,
+          "status": "ok",
+          "counts": {
+            "paths": 15,
+            "lines": 15,
+            "spans": 12
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 16,
+          "status": "ok",
+          "counts": {
+            "paths": 15,
+            "lines": 15,
+            "spans": 12
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 17,
+          "status": "ok",
+          "counts": {
+            "paths": 15,
+            "lines": 15,
+            "spans": 12
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 18,
+          "status": "ok",
+          "counts": {
+            "paths": 44338,
+            "lines": 38128,
+            "spans": 149
+          },
+          "axes": 12,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 17,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 19,
+          "status": "ok",
+          "counts": {
+            "paths": 38953,
+            "lines": 29148,
+            "spans": 173
+          },
+          "axes": 5,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 13,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 20,
+          "status": "ok",
+          "counts": {
+            "paths": 2525,
+            "lines": 2298,
+            "spans": 46
+          },
+          "axes": 2,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 21,
+          "status": "ok",
+          "counts": {
+            "paths": 40129,
+            "lines": 34421,
+            "spans": 99
+          },
+          "axes": 20,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 9,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 22,
+          "status": "ok",
+          "counts": {
+            "paths": 461,
+            "lines": 461,
+            "spans": 183
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 23,
+          "status": "ok",
+          "counts": {
+            "paths": 12000,
+            "lines": 11214,
+            "spans": 49
+          },
+          "axes": 5,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 24,
+          "status": "ok",
+          "counts": {
+            "paths": 3830,
+            "lines": 3690,
+            "spans": 49
+          },
+          "axes": 3,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 25,
+          "status": "ok",
+          "counts": {
+            "paths": 43312,
+            "lines": 35134,
+            "spans": 238
+          },
+          "axes": 20,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 39,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 26,
+          "status": "ok",
+          "counts": {
+            "paths": 27195,
+            "lines": 23723,
+            "spans": 61
+          },
+          "axes": 13,
+          "dimensions": 1,
+          "levels": 0,
+          "legend_candidates": 1,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 27,
+          "status": "ok",
+          "counts": {
+            "paths": 630,
+            "lines": 630,
+            "spans": 273
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 28,
+          "status": "ok",
+          "counts": {
+            "paths": 75740,
+            "lines": 53144,
+            "spans": 184
+          },
+          "axes": 18,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 36,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 29,
+          "status": "ok",
+          "counts": {
+            "paths": 464,
+            "lines": 464,
+            "spans": 188
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 30,
+          "status": "ok",
+          "counts": {
+            "paths": 15934,
+            "lines": 9989,
+            "spans": 119
+          },
+          "axes": 9,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 7,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 31,
+          "status": "ok",
+          "counts": {
+            "paths": 25893,
+            "lines": 20274,
+            "spans": 161
+          },
+          "axes": 20,
+          "dimensions": 0,
+          "levels": 2,
+          "legend_candidates": 18,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 32,
+          "status": "ok",
+          "counts": {
+            "paths": 60387,
+            "lines": 21525,
+            "spans": 104
+          },
+          "axes": 20,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 1,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 33,
+          "status": "ok",
+          "counts": {
+            "paths": 43861,
+            "lines": 37689,
+            "spans": 87
+          },
+          "axes": 20,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 8,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 34,
+          "status": "ok",
+          "counts": {
+            "paths": 46774,
+            "lines": 37364,
+            "spans": 98
+          },
+          "axes": 20,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 5,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 35,
+          "status": "ok",
+          "counts": {
+            "paths": 39149,
+            "lines": 31295,
+            "spans": 41
+          },
+          "axes": 20,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 2,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 36,
+          "status": "ok",
+          "counts": {
+            "paths": 39,
+            "lines": 15,
+            "spans": 21
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 37,
+          "status": "ok",
+          "counts": {
+            "paths": 39,
+            "lines": 15,
+            "spans": 21
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 38,
+          "status": "ok",
+          "counts": {
+            "paths": 39,
+            "lines": 15,
+            "spans": 21
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 39,
+          "status": "ok",
+          "counts": {
+            "paths": 36,
+            "lines": 15,
+            "spans": 20
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 40,
+          "status": "ok",
+          "counts": {
+            "paths": 83,
+            "lines": 15,
+            "spans": 29
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 41,
+          "status": "ok",
+          "counts": {
+            "paths": 15,
+            "lines": 15,
+            "spans": 125
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 42,
+          "status": "ok",
+          "counts": {
+            "paths": 47,
+            "lines": 47,
+            "spans": 108
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        }
+      ]
+    },
+    "C": {
+      "seconds": 302.432,
+      "pages_processed": 42,
+      "input_unchanged": true,
+      "dimension_text": {
+        "correct": 2,
+        "denominator": 4,
+        "share": 0.5,
+        "samples": [
+          {
+            "reference": {
+              "value": 52600,
+              "unit": "mm",
+              "page": 18,
+              "sheet": "18",
+              "meaning": "axes И-А total"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "value": 8400,
+              "unit": "mm",
+              "page": 18,
+              "sheet": "18",
+              "meaning": "repeated axis spacing"
+            },
+            "found": false
+          },
+          {
+            "reference": {
+              "value": 5300,
+              "unit": "mm",
+              "page": 18,
+              "sheet": "18",
+              "meaning": "end axis spacing"
+            },
+            "found": false
+          },
+          {
+            "reference": {
+              "value": 84000,
+              "unit": "mm",
+              "page": 19,
+              "sheet": "19",
+              "meaning": "axes 1-12 total"
+            },
+            "found": true
+          }
+        ]
+      },
+      "level_text": {
+        "correct": 0,
+        "denominator": 4,
+        "share": 0.0,
+        "samples": [
+          {
+            "reference": {
+              "value": 0,
+              "text": "+0.000",
+              "unit": "m",
+              "page": 18,
+              "sheet": "18"
+            },
+            "found": false
+          },
+          {
+            "reference": {
+              "value": 4.72,
+              "text": "+4.720",
+              "unit": "m",
+              "page": 18,
+              "sheet": "18"
+            },
+            "found": false
+          },
+          {
+            "reference": {
+              "value": 13.92,
+              "text": "+13.920",
+              "unit": "m",
+              "page": 18,
+              "sheet": "18"
+            },
+            "found": false
+          },
+          {
+            "reference": {
+              "value": 16.22,
+              "text": "+16.220",
+              "unit": "m",
+              "page": 18,
+              "sheet": "18"
+            },
+            "found": false
+          }
+        ]
+      },
+      "ral_code_text": {
+        "correct": 0,
+        "denominator": 3,
+        "share": 0.0,
+        "samples": [
+          {
+            "reference": {
+              "code": "RAL 1001",
+              "page": 18,
+              "sheet": "18",
+              "application": "wood-textured metal facade panels, pine",
+              "ground_truth": "jobs/elv-tc-vpm/TASK.md D01; parts/pilot_IA_parts_v001.json P01"
+            },
+            "found": false
+          },
+          {
+            "reference": {
+              "code": "RAL 7021",
+              "page": 18,
+              "sheet": "18",
+              "application": "metal facade panels",
+              "ground_truth": "jobs/elv-tc-vpm/TASK.md D03; parts/pilot_IA_parts_v001.json P02"
+            },
+            "found": false
+          },
+          {
+            "reference": {
+              "code": "RAL 5024",
+              "page": 18,
+              "sheet": "18",
+              "application": "stemalit",
+              "ground_truth": "jobs/elv-tc-vpm/TASK.md D06; parts/pilot_IA_parts_v001.json P05"
+            },
+            "found": false
+          }
+        ]
+      },
+      "structured_dimensions": 0,
+      "structured_levels": 0,
+      "scale_calibration": "not certified",
+      "artifact": "elv-C-all-v001\\result.json",
+      "schedule_rows": {
+        "correct": 3,
+        "denominator": 3,
+        "samples": [
+          {
+            "reference": {
+              "key": "1.D.17",
+              "value": "10.77",
+              "page": 27,
+              "sheet": "27",
+              "unit": "m2",
+              "description": "Гардероб персонала ТЦ"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "key": "1.D.18",
+              "value": "11.54",
+              "page": 27,
+              "sheet": "27",
+              "unit": "m2",
+              "description": "Гардероб персонала ТЦ"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "key": "1.O.01",
+              "value": "15.65",
+              "page": 27,
+              "sheet": "27",
+              "unit": "m2",
+              "description": "Диспетчерская"
+            },
+            "found": true
+          }
+        ]
+      },
+      "tables": {
+        "pymupdf_tables": 93,
+        "pdfplumber_tables": 114
+      }
+    },
+    "D": {
+      "seconds": 270.5679,
+      "pages_processed": 42,
+      "input_unchanged": true,
+      "dimension_text": {
+        "correct": 4,
+        "denominator": 4,
+        "share": 1.0,
+        "samples": [
+          {
+            "reference": {
+              "value": 52600,
+              "unit": "mm",
+              "page": 18,
+              "sheet": "18",
+              "meaning": "axes И-А total"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "value": 8400,
+              "unit": "mm",
+              "page": 18,
+              "sheet": "18",
+              "meaning": "repeated axis spacing"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "value": 5300,
+              "unit": "mm",
+              "page": 18,
+              "sheet": "18",
+              "meaning": "end axis spacing"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "value": 84000,
+              "unit": "mm",
+              "page": 19,
+              "sheet": "19",
+              "meaning": "axes 1-12 total"
+            },
+            "found": true
+          }
+        ]
+      },
+      "level_text": {
+        "correct": 4,
+        "denominator": 4,
+        "share": 1.0,
+        "samples": [
+          {
+            "reference": {
+              "value": 0,
+              "text": "+0.000",
+              "unit": "m",
+              "page": 18,
+              "sheet": "18"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "value": 4.72,
+              "text": "+4.720",
+              "unit": "m",
+              "page": 18,
+              "sheet": "18"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "value": 13.92,
+              "text": "+13.920",
+              "unit": "m",
+              "page": 18,
+              "sheet": "18"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "value": 16.22,
+              "text": "+16.220",
+              "unit": "m",
+              "page": 18,
+              "sheet": "18"
+            },
+            "found": true
+          }
+        ]
+      },
+      "ral_code_text": {
+        "correct": 1,
+        "denominator": 3,
+        "share": 0.3333333333333333,
+        "samples": [
+          {
+            "reference": {
+              "code": "RAL 1001",
+              "page": 18,
+              "sheet": "18",
+              "application": "wood-textured metal facade panels, pine",
+              "ground_truth": "jobs/elv-tc-vpm/TASK.md D01; parts/pilot_IA_parts_v001.json P01"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "code": "RAL 7021",
+              "page": 18,
+              "sheet": "18",
+              "application": "metal facade panels",
+              "ground_truth": "jobs/elv-tc-vpm/TASK.md D03; parts/pilot_IA_parts_v001.json P02"
+            },
+            "found": false
+          },
+          {
+            "reference": {
+              "code": "RAL 5024",
+              "page": 18,
+              "sheet": "18",
+              "application": "stemalit",
+              "ground_truth": "jobs/elv-tc-vpm/TASK.md D06; parts/pilot_IA_parts_v001.json P05"
+            },
+            "found": false
+          }
+        ]
+      },
+      "structured_dimensions": 0,
+      "structured_levels": 0,
+      "scale_calibration": "not certified",
+      "artifact": "elv-D-all-v001\\result.json",
+      "schedule_rows": {
+        "correct": 0,
+        "denominator": 3,
+        "samples": [
+          {
+            "reference": {
+              "key": "1.D.17",
+              "value": "10.77",
+              "page": 27,
+              "sheet": "27",
+              "unit": "m2",
+              "description": "Гардероб персонала ТЦ"
+            },
+            "found": false
+          },
+          {
+            "reference": {
+              "key": "1.D.18",
+              "value": "11.54",
+              "page": 27,
+              "sheet": "27",
+              "unit": "m2",
+              "description": "Гардероб персонала ТЦ"
+            },
+            "found": false
+          },
+          {
+            "reference": {
+              "key": "1.O.01",
+              "value": "15.65",
+              "page": 27,
+              "sheet": "27",
+              "unit": "m2",
+              "description": "Диспетчерская"
+            },
+            "found": false
+          }
+        ]
+      }
+    },
+    "B": {
+      "pages": [
+        {
+          "page": 18,
+          "entity_types": {
+            "SOLID": 1856,
+            "HATCH": 1791,
+            "LWPOLYLINE": 23484,
+            "MTEXT": 149
+          },
+          "layers": [
+            "0",
+            "PDF_Geometry",
+            "PDF_Solid Fills",
+            "PDF_Text",
+            "Defpoints"
+          ],
+          "insunits": 4,
+          "extents": [
+            [
+              0.0,
+              -0.4505945917942247,
+              0.0
+            ],
+            [
+              16.53499984375,
+              13.267506039926984,
+              0.0
+            ]
+          ],
+          "model_scale": "unknown",
+          "source": "C:\\x\\pdf-album-research\\t_5b23c219\\elv-p18-import-v002.dxf"
+        }
+      ],
+      "dimension_text": {
+        "correct": 3,
+        "denominator": 3,
+        "share": 1.0,
+        "samples": [
+          {
+            "reference": {
+              "value": 52600,
+              "unit": "mm",
+              "page": 18,
+              "sheet": "18",
+              "meaning": "axes И-А total"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "value": 8400,
+              "unit": "mm",
+              "page": 18,
+              "sheet": "18",
+              "meaning": "repeated axis spacing"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "value": 5300,
+              "unit": "mm",
+              "page": 18,
+              "sheet": "18",
+              "meaning": "end axis spacing"
+            },
+            "found": true
+          }
+        ]
+      },
+      "level_text": {
+        "correct": 4,
+        "denominator": 4,
+        "share": 1.0,
+        "samples": [
+          {
+            "reference": {
+              "value": 0,
+              "text": "+0.000",
+              "unit": "m",
+              "page": 18,
+              "sheet": "18"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "value": 4.72,
+              "text": "+4.720",
+              "unit": "m",
+              "page": 18,
+              "sheet": "18"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "value": 13.92,
+              "text": "+13.920",
+              "unit": "m",
+              "page": 18,
+              "sheet": "18"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "value": 16.22,
+              "text": "+16.220",
+              "unit": "m",
+              "page": 18,
+              "sheet": "18"
+            },
+            "found": true
+          }
+        ]
+      },
+      "ral_code_text": {
+        "correct": 3,
+        "denominator": 3,
+        "share": 1.0,
+        "samples": [
+          {
+            "reference": {
+              "code": "RAL 1001",
+              "page": 18,
+              "sheet": "18",
+              "application": "wood-textured metal facade panels, pine",
+              "ground_truth": "jobs/elv-tc-vpm/TASK.md D01; parts/pilot_IA_parts_v001.json P01"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "code": "RAL 7021",
+              "page": 18,
+              "sheet": "18",
+              "application": "metal facade panels",
+              "ground_truth": "jobs/elv-tc-vpm/TASK.md D03; parts/pilot_IA_parts_v001.json P02"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "code": "RAL 5024",
+              "page": 18,
+              "sheet": "18",
+              "application": "stemalit",
+              "ground_truth": "jobs/elv-tc-vpm/TASK.md D06; parts/pilot_IA_parts_v001.json P05"
+            },
+            "found": true
+          }
+        ]
+      },
+      "sample_only": true,
+      "model_scale": "unknown",
+      "structured_dimensions": 0,
+      "structured_rows": 0
+    },
+    "B2": {
+      "entity_types": {
+        "POLYLINE": 3645,
+        "LINE": 41828,
+        "SPLINE": 80,
+        "TEXT": 280
+      },
+      "layers": [
+        "0",
+        "Defpoints"
+      ],
+      "insunits": 0,
+      "extents": [
+        [
+          0.0,
+          0.1199951171875,
+          0.0
+        ],
+        [
+          1852.1572093373193,
+          841.9200439453125,
+          0.0
+        ]
+      ],
+      "model_scale": "unknown",
+      "source": "C:\\x\\pdf-album-research\\t_5b23c219\\elv-B2-v001\\page.dxf",
+      "route": "B2-PyMuPDF-ezdxf",
+      "reference": {
+        "pdf_sha256": "49c105275ea56f16f9f281b3586876818215d99544d82644a5aab8e1cfba9545",
+        "pdf_page": 18
+      },
+      "emitted": 45833,
+      "seconds": 33.2688,
+      "input_unchanged": true,
+      "losses": [
+        "fills",
+        "clips",
+        "images",
+        "fonts",
+        "dashes",
+        "text rotation"
+      ],
+      "drops_count": 131
+    }
+  }
+}

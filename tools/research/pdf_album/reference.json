@@ -1,0 +1,17 @@
+{
+  "schema": "pdf-research-reference/1",
+  "note": "Frozen before automatic scoring. Tiny audit sample, not statistical coverage or production acceptance. Drawing-text references are manually transcribed from rendered source pages; only ELV material bindings have prior job approval. TEC26 visualization booklet contains no dimensional/schedule denominator.",
+  "elv": {
+    "dimensions": [{"value": 52600, "unit": "mm", "page": 18, "sheet": "18", "meaning": "axes И-А total"}, {"value": 8400, "unit": "mm", "page": 18, "sheet": "18", "meaning": "repeated axis spacing"}, {"value": 5300, "unit": "mm", "page": 18, "sheet": "18", "meaning": "end axis spacing"}, {"value": 84000, "unit": "mm", "page": 19, "sheet": "19", "meaning": "axes 1-12 total"}],
+    "levels": [{"value": 0, "text": "+0.000", "unit": "m", "page": 18, "sheet": "18"}, {"value": 4.72, "text": "+4.720", "unit": "m", "page": 18, "sheet": "18"}, {"value": 13.92, "text": "+13.920", "unit": "m", "page": 18, "sheet": "18"}, {"value": 16.22, "text": "+16.220", "unit": "m", "page": 18, "sheet": "18"}],
+    "materials": [{"code": "RAL 1001", "page": 18, "sheet": "18", "application": "wood-textured metal facade panels, pine", "ground_truth": "jobs/elv-tc-vpm/TASK.md D01; parts/pilot_IA_parts_v001.json P01"}, {"code": "RAL 7021", "page": 18, "sheet": "18", "application": "metal facade panels", "ground_truth": "jobs/elv-tc-vpm/TASK.md D03; parts/pilot_IA_parts_v001.json P02"}, {"code": "RAL 5024", "page": 18, "sheet": "18", "application": "stemalit", "ground_truth": "jobs/elv-tc-vpm/TASK.md D06; parts/pilot_IA_parts_v001.json P05"}],
+    "rows": [{"key": "1.D.17", "value": "10.77", "page": 27, "sheet": "27", "unit": "m2", "description": "Гардероб персонала ТЦ"}, {"key": "1.D.18", "value": "11.54", "page": 27, "sheet": "27", "unit": "m2", "description": "Гардероб персонала ТЦ"}, {"key": "1.O.01", "value": "15.65", "page": 27, "sheet": "27", "unit": "m2", "description": "Диспетчерская"}]
+  },
+  "cod20207": {
+    "dimensions": [{"value": 69600, "unit": "mm", "page": 1, "sheet": "12", "meaning": "printed facade dimension, first span"}, {"value": 17800, "unit": "mm", "page": 1, "sheet": "12", "meaning": "printed facade dimension, second span"}, {"value": 87450, "unit": "mm", "page": 1, "sheet": "12", "meaning": "printed overall dimension; not reconciled to spans"}],
+    "levels": [{"value": 0, "text": "+0.000", "unit": "m", "page": 1, "sheet": "12"}, {"value": 35.8, "text": "+35.800", "unit": "m", "page": 1, "sheet": "12"}],
+    "materials": [{"code": "RAL 9003", "page": 1, "sheet": "12", "application": "white facade panel legend; application binding unapproved"}, {"code": "RAL 5023", "page": 1, "sheet": "12", "application": "blue facade panel legend; application binding unapproved"}, {"code": "RAL 7024", "page": 1, "sheet": "12", "application": "grey facade panel legend; application binding unapproved"}],
+    "rows": [{"key": "LACE RGBW Custom", "value": "1", "page": 5, "sheet": "unnumbered equipment specification 20.07.2026", "unit": "schedule quantity", "description": "INTILED; total length 5 505 m; cross-section 16x15 mm. Quantity 1 is not 1 metre."}]
+  },
+  "tec26": {"dimensions": [], "levels": [], "materials": [], "rows": [], "absence": "6-page visualization-only booklet, docs/sources/psu275.md S1; no dimensioned drawings/finish legend/schedule. Do not borrow values from Revit/AS.02 and call them extracted from this booklet."}
+}
