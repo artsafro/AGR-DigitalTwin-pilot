@@ -1,3 +1,7 @@
+Current run: Closed at review stage on 2026-10-22; user's hand-finished for_placement/0213_Vyatskaya_Vl_47_49_05.fbx kept as delivered, validate-delivery not passed.
+Source: User Untitled.blend scene, RC_TOW_02 / RC_TOW_Lapatki_02 / SLAB_TOW_02 (Sources below); final hand finish recorded in Build log.
+Next gate: None in this closed job; follow-ups #527–#535 and backlog Q8 are separate (Next below).
+
 # vyatskaya-tow02 (Башня TOW02, ул. Вятская вл. 47–49) - mid-poly master → NPM-OKS, 2026-10-20
 
 Pipeline status: closed at the review stage (2026-10-22, [D185])

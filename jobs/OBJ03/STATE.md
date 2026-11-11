@@ -1,3 +1,7 @@
+Current run: from_source v012; case closed as unsuccessful after user review of v011 (2026-10-14, #117).
+Source: Source .max layer Геометрия исходная / data/sources/OBJ03/source-geometry-v001.fbx (Source below).
+Next gate: unknown — unsuccessful case closed; no restart gate recorded, user continues development.
+
 # OBJ03 — panelised tower, facade decor, through the harness
 
 Pipeline status: draft

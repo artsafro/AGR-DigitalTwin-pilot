@@ -15,18 +15,18 @@ Reached so far (curated in `docs/PROJECT_STATE.milestones.md`; each line cites i
 ## In production
 
 PR merges do not imply delivery acceptance. Per-object gates stay in `jobs/<ID>/STATE.md`. Merged pull requests, newest first:
-- `4d2ed66` Merge pull request #1175 from artsafro/job/elv-tc-vpm-album-review
-- `4b2575d` Merge pull request #1153 from artsafro/improve/issue-298-site-slice-vatutino-site-assembly-l2-sin
-- `d165670` Merge pull request #1115 from artsafro/improve/issue-1106-shared-tools-instead-of-job-scripts-one
-- `f9dad06` Merge pull request #1170 from artsafro/improve/spozu-retaining-wall-mark-pairs
-- `1f76e80` Merge pull request #1165 from artsafro/docs/research-vatutino-ground-80deg-step-source
-- `144b56c` Merge pull request #1164 from artsafro/docs/research-vatutino-ground-v015-outer-skirt-gap-20-edges
-- `06ed7f6` Merge pull request #1161 from artsafro/docs/research-vatutino-ground-footprint-overshoot-6m2
-- `07a307e` Merge pull request #1123 from artsafro/improve/issue-1107-geojson-per-d220-collect-the-customer-fi
-- `0372a4e` Merge pull request #1080 from artsafro/improve/issue-1021-agr-mcp-phase-2-edit-tools-on-copies-cle
-- `1088402` Merge pull request #1148 from artsafro/improve/issue-1033-blender-mcp-skill-port-check-and-agent-o
-- `7f5191e` Merge pull request #982 from artsafro/improve/issue-965-p3-mesh-py-acceptance-row-test-asserts-a
-- `40c526a` Merge pull request #1168 from artsafro/improve/issue-1121-dcc-batch-acad-core-console-writes-filed
+- `9321eae` Merge pull request #1218 from artsafro/improve/issue-1207-kpp1-cold-run-f7-passport-json-scope-req
+- `c6d2946` Merge pull request #1215 from artsafro/improve/issue-1208-kpp1-cold-run-f8-jobs-id-state-md-three
+- `b66aba1` Merge pull request #1211 from artsafro/improve/issue-1203-kpp1-cold-run-f3-plan-from-dxf-records-t
+- `a9fac66` Merge pull request #1217 from artsafro/improve/issue-1212-tests-move-2-wall-clock-budgets-vpm-layo
+- `55a7479` Merge pull request #1213 from artsafro/improve/issue-1185-maf-colour-zones-explicit-schedule-finis
+- `5619dc3` Merge pull request #1214 from artsafro/fix/maf-gen-bench-unwritable-output-exit2
+- `2b5e376` Merge pull request #1219 from artsafro/job/elv-tc-vpm-passport
+- `c3975c4` Merge pull request #1149 from artsafro/improve/issue-1028-harness-guard-decide-how-an-explicit-cha
+- `9115729` Merge pull request #1196 from artsafro/improve/issue-1192-ucx-vs-maf-flora-open-flora-mesh-far-fro
+- `f57dd19` Merge pull request #1193 from artsafro/improve/issue-1113-slash-commands-handover-and-takeover-mus
+- `cbb8297` Merge pull request #1190 from artsafro/improve/issue-1129-ucx-vs-maf-flora-check-misses-a-ucx-hull
+- `5f31e2b` Merge pull request #1183 from artsafro/improve/issue-1004-plan-from-dxf-coverage-gate-does-not-bou
 
 ## Harness
 
@@ -34,18 +34,18 @@ Capability A (`capability-b01`, codex): benchmark 1 passed / 0 failed / 0 not me
 Capability B (`capability-ticket`, codex): local_pr 0 passed / 1 failed / 0 not measured; procedural 0 passed / 0 failed / 10 not measured; not ready; repository + user skills. Reference: `evals/capability-ticket/reference.json`.
 
 Open pull requests:
-- #803 job(silikatny-maf-viz): visualisation MAF set, D189-D190 [job/silikatny-maf-viz] draft
-- #876 Improve: AGR Tools 0.6.0 panel: tooltip requirement ids = docs/plans/agr-tools-suite.json (#862) [improve/agr-tools-ui-reqs-match-suite-json]
-- #991 MAF showcase: colour zones with material IDs for the 13 Vatutino positions (#889) [improve/issue-889-maf-showcase-split-the-13-vatutino-posit]
-- #1044 AGR Tools assets: Flora + MAF browser/import, unified agent library (#1024) [improve/issue-1024-assets-flora] draft
-- #1090 atlas.flora same-file opacity + atlas.groundel texel none for NPM MAF (#1024) [improve/issue-1024-flora-atlas-same-file-opacity] draft
-- #1098 Asset intake: delivered 3DVis projects -> A101 candidates (Part of #1024) [improve/issue-1024-asset-intake] draft
 - #1102 AGR Tools: VPM glass in UDIM 1001 only, no glass maps (D221) [fix/agr-tools-glass-udim-1001]
-- #1149 Harness guard: one-shot merge token for a chat merge command naming the PR [D223] (#1028) [improve/issue-1028-harness-guard-decide-how-an-explicit-cha]
-- #1167 Tests: default pytest basetemp outside the repo via config (#1035) [improve/issue-1035-tests-default-pytest-basetemp-outside-th]
-- #1169 Improve: GND-03: steep interior Ground faces count as surface, not perimeter [improve/gnd03-steep-interior-faces-are-surface]
-- #1173 KPP1 cold-agent run through TASK_TO_MODEL: gates with receipts, 15 procedure gaps (#1172) [improve/issue-1172-cold-agent-run-a-fresh-agent-takes-kpp1]
-- #1174 Improve: twinqa V003: ground footprint check can measure ground materials only (opt-in allow-list) [improve/twinqa-ground-footprint-material-allowlist]
+- #1178 Flora route A (#1146): stars, 2048 atlas, placement v007, readback — visual gate [agr-pilot/t_c9ff2af1-1146-flora-route-a-steps-3-stars-atlas-p]
+- #1179 Harness: papercuts log — agents note worked-around snags, /retro collects them [harness/agents-papercuts-log]
+- #1186 Guard: port missing destructive_command_guard patterns; shared subagent prompt guide (plan 1.2, 1.3) [harness/guard-dcg-and-prompt-guide]
+- #1187 MAF material IDs v007 (pine = WOOD2 id 33) + 512 atlas from team atlas 53407 (plan 2.3) [feature/maf-atlas-512-v006]
+- #1188 Materials library maps v001: layout D239, Telegram inbox -> 98 maps + manifest (plan 2.1/2.2) [feature/library-materials-maps-v001]
+- #1189 Research: Fab/Megascans licence for client delivery + CC0 coverage (plan 2.5) [research/fab-megascans-licence]
+- #1191 Flora step 2.4: Telegram species candidates, atlas-ready crops, pending_review maps (stacked on #1188) [feature/flora-species-telegram-v003]
+- #1194 Materials library maps v002: own project textures + generated sets (step 2.5, D243) [feature/library-materials-maps-v002]
+- #1195 Q10: Link Info «Inherit» -> FBX verified on a synthetic scene (plan 3.3) [research/export-link-info-inherit-fbx]
+- #1216 KPP1 rerun after Gate 1 [D238]: offline VPM + derived NPM, readback, validator blockers (#1209) [improve/issue-1209-kpp1-rerun-after-gate-1-build-vpm-npm-de]
+- #1220 Unify model entry sequence and authorize the busy-Max deviation [D250] (#1201) [improve/issue-1201-kpp1-cold-run-f1-one-entry-sequence-task] draft
 
 ## Next step
 
