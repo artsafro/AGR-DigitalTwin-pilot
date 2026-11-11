@@ -1,0 +1,258 @@
+{
+ "ok": true,
+ "vpm": "C:\\x\\kpp1\\r1209\\out-v003\\SM_Kpp_1.fbx",
+ "npm": "C:\\x\\kpp1\\r1209\\out-v003\\0000_Kpp_1_01.fbx",
+ "triangles_vpm_parts": {
+  "Body_Walls": 2970,
+  "Parapet": 32,
+  "Roof_Plate": 12,
+  "Windows": 2016,
+  "Doors": 660,
+  "CurtainWall_Mullions": 84,
+  "Glass": 504
+ },
+ "triangles_vpm_total": 6278,
+ "triangles_npm_parts": {
+  "Body_Walls": 2970,
+  "Parapet": 32,
+  "Roof_Plate": 12,
+  "Doors": 660,
+  "Glass": 504
+ },
+ "triangles_npm_total": 4178,
+ "ucx": [
+  "UCX_SM_Kpp_1_Main_001",
+  "UCX_SM_Kpp_1_Main_002",
+  "UCX_SM_Kpp_1_Main_003",
+  "UCX_SM_Kpp_1_Main_004"
+ ],
+ "meshes_vpm": [
+  "SM_Kpp_1_Main",
+  "SM_Kpp_1_MainGlass",
+  "UCX_SM_Kpp_1_Main_001",
+  "UCX_SM_Kpp_1_Main_002",
+  "UCX_SM_Kpp_1_Main_003",
+  "UCX_SM_Kpp_1_Main_004"
+ ],
+ "meshes_npm": [
+  "SM_Kpp_1_001_Main",
+  "SM_Kpp_1_001_MainGlass"
+ ],
+ "openings_cut": [
+  {
+   "id": "Ю00",
+   "removed_m3": 0.70075
+  },
+  {
+   "id": "Ю01",
+   "removed_m3": 0.954789
+  },
+  {
+   "id": "Ю02",
+   "removed_m3": 4.018177
+  },
+  {
+   "id": "Ю03",
+   "removed_m3": 0.212274
+  },
+  {
+   "id": "Ю04",
+   "removed_m3": 0.834478
+  },
+  {
+   "id": "Ю05",
+   "removed_m3": 0.43543
+  },
+  {
+   "id": "Ю06",
+   "removed_m3": 0.43543
+  },
+  {
+   "id": "Ю07",
+   "removed_m3": 0.43543
+  },
+  {
+   "id": "Ю08",
+   "removed_m3": 0.43543
+  },
+  {
+   "id": "Ю09",
+   "removed_m3": 1.271699
+  },
+  {
+   "id": "Ю10",
+   "removed_m3": 0.4266
+  },
+  {
+   "id": "Ю11",
+   "removed_m3": 0.2997
+  },
+  {
+   "id": "Ю12",
+   "removed_m3": 0.40741
+  },
+  {
+   "id": "Ю13",
+   "removed_m3": 3.919048
+  },
+  {
+   "id": "Ю14",
+   "removed_m3": 0.954789
+  },
+  {
+   "id": "Ю15",
+   "removed_m3": 0.952162
+  },
+  {
+   "id": "Ю16",
+   "removed_m3": 0.485822
+  },
+  {
+   "id": "Ю17",
+   "removed_m3": 0.485822
+  },
+  {
+   "id": "Ю18",
+   "removed_m3": 0.195045
+  },
+  {
+   "id": "Ю19",
+   "removed_m3": 0.198
+  },
+  {
+   "id": "Ю20",
+   "removed_m3": 0.415629
+  },
+  {
+   "id": "Ю21",
+   "removed_m3": 0.43543
+  },
+  {
+   "id": "Ю22",
+   "removed_m3": 0.43543
+  },
+  {
+   "id": "Ю23",
+   "removed_m3": 0.43543
+  },
+  {
+   "id": "Ю24",
+   "removed_m3": 0.4212
+  },
+  {
+   "id": "Ю25",
+   "removed_m3": 0.253799
+  },
+  {
+   "id": "Ю26",
+   "removed_m3": 0.048
+  },
+  {
+   "id": "С27",
+   "removed_m3": 3.9264
+  },
+  {
+   "id": "С28",
+   "removed_m3": 0.485822
+  },
+  {
+   "id": "С29",
+   "removed_m3": 0.485822
+  },
+  {
+   "id": "С30",
+   "removed_m3": 0.485823
+  },
+  {
+   "id": "С31",
+   "removed_m3": 0.939527
+  },
+  {
+   "id": "С32",
+   "removed_m3": 0.054164
+  },
+  {
+   "id": "С33",
+   "removed_m3": 1.105563
+  },
+  {
+   "id": "С34",
+   "removed_m3": 0.43543
+  },
+  {
+   "id": "С35",
+   "removed_m3": 10.015825
+  },
+  {
+   "id": "С36",
+   "removed_m3": 0.485822
+  },
+  {
+   "id": "С37",
+   "removed_m3": 0.485823
+  },
+  {
+   "id": "С38",
+   "removed_m3": 0.403032
+  },
+  {
+   "id": "С39",
+   "removed_m3": 1.388852
+  },
+  {
+   "id": "С40",
+   "removed_m3": 0.43543
+  },
+  {
+   "id": "З41",
+   "removed_m3": 0.485782
+  },
+  {
+   "id": "З42",
+   "removed_m3": 0.485782
+  },
+  {
+   "id": "З43",
+   "removed_m3": 0.571034
+  },
+  {
+   "id": "З44",
+   "removed_m3": 0.363169
+  },
+  {
+   "id": "З45",
+   "removed_m3": 0.363169
+  },
+  {
+   "id": "З46",
+   "removed_m3": 0.974698
+  },
+  {
+   "id": "З47",
+   "removed_m3": 0.700594
+  },
+  {
+   "id": "З48",
+   "removed_m3": 0.047997
+  },
+  {
+   "id": "В49",
+   "removed_m3": 0.669475
+  },
+  {
+   "id": "В50",
+   "removed_m3": 0.954869
+  },
+  {
+   "id": "В51",
+   "removed_m3": 0.048003
+  },
+  {
+   "id": "В52",
+   "removed_m3": 0.819001
+  }
+ ],
+ "mullions_kept": 7,
+ "mullions_listed": 171,
+ "blender": "5.1.2"
+}
