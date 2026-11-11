@@ -80,7 +80,8 @@ must also verify unchanged assertions, tolerances and fixture inputs; a token co
 
 | Round | Hypothesis / files | CPU before / after (3-run medians) | Guard | Decision |
 | --- | --- | --- | --- | --- |
-| 0 | Unmodified baseline; target-set median measurements running | pending | pending | baseline |
+| 0 | Unmodified baseline; target-set runs CPU 1292.23367 / 977.17120 / 842.18663 s; wall 1904.1 / 1256.3 / 1089.5 s | median 977.17120 s | PASS, 1729/1729 IDs and outcomes in every run | baseline |
+| 1 | Reuse generated setup in four target files: immutable PNG/icon bytes, a layered-site build with deep per-test copies, and a synthetic Git template with independent file/ref copies | before 977.17120 s; after pending | RED: 4 regression failures at detached `1f742b74`; GREEN: 4/4 probes pass | trial, not yet kept |
 
 ## Parallelism evidence (no policy change)
 

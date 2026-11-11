@@ -1,7 +1,9 @@
 """Ground diffuse binding: plan table, fail-closed gates, geometry and density (issue #340)."""
 import copy
+from functools import lru_cache
 import hashlib
 import importlib.util
+from io import BytesIO
 import json
 import math
 import os
@@ -42,8 +44,16 @@ def _sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+@lru_cache(maxsize=8)
+def _png_bytes(size: int) -> bytes:
+    """Encode identical synthetic pixels once; every caller still gets its own file."""
+    with BytesIO() as stream:
+        Image.new("RGB", (size, size), (size % 255, 20, 30)).save(stream, format="PNG")
+        return stream.getvalue()
+
+
 def _png(path: Path, size: int) -> None:
-    Image.new("RGB", (size, size), (size % 255, 20, 30)).save(path)
+    path.write_bytes(_png_bytes(size))
 
 
 def _readback(names):

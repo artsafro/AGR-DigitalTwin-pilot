@@ -7,6 +7,7 @@ src/twinqa/naming.py, so the builder is judged by the same code that judges deli
 from __future__ import annotations
 
 import math
+import copy
 
 import numpy as np
 import pytest
@@ -644,12 +645,24 @@ def layered_site(angle=33.0):
     return v, t, centres
 
 
-def test_ground_real_size_layered_perforated_site_fits_999_and_budget():
+@pytest.fixture(scope="module")
+def _layered_ground():
+    """Build the identical expensive synthetic input once for its two independent audits."""
+    v, t, centres = layered_site()
+    return v, t, centres, ub.build_ground(v, t, model_triangles=46343)
+
+
+@pytest.fixture
+def layered_ground(_layered_ground):
+    # Retain the original writable, per-test data rather than sharing mutable results.
+    return copy.deepcopy(_layered_ground)
+
+
+def test_ground_real_size_layered_perforated_site_fits_999_and_budget(layered_ground):
     """#326 regression: the shared builder must give a bounded Ground UCX for a real-size perforated,
     overlapping layered heightfield: <= 999 names, <= [D012] budget, closed convex pieces with gaps,
     model -> UCX <= R11 [D134], building voids kept open."""
-    v, t, centres = layered_site()
-    res = ub.build_ground(v, t, model_triangles=46343)  # n of the real v011 file -> [D012] 15 000
+    v, t, centres, res = layered_ground  # n of the real v011 file -> [D012] 15 000
     assert len(res.pieces) <= ub.MAX_PIECES and res.triangles <= res.budget == 15000
     assert res.within_tol and res.max_vertical_dev_m <= 0.08 and res.uncovered_strip_m <= ub.GROUND_TOL_M
     assert_valid_pieces(res)
@@ -670,11 +683,10 @@ def readback_nonconvex(res) -> int:
                                 [tuple(map(int, x)) for x in pc.tris]) for pc in res.pieces)
 
 
-def test_ground_layered_site_reads_back_convex():
+def test_ground_layered_site_reads_back_convex(layered_ground):
     """#326: every Ground piece of the real-size layered site stays convex after the float32 round trip
     (a planar top fan over near-collinear vertices read back non-convex on the Vatutino v011 file)."""
-    v, t, _ = layered_site()
-    res = ub.build_ground(v, t, model_triangles=46343)
+    v, t, _, res = layered_ground
     assert readback_nonconvex(res) == 0
     assert all(ub.convex_after_float32(pc.verts, pc.tris) for pc in res.pieces)
 
