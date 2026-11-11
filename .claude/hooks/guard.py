@@ -120,11 +120,11 @@ def allow(is_antigravity: bool) -> None:
     sys.exit(0)
 
 
-def shell_reasons(cmd: str):
-    """Reasons of every SHELL_RULES match, then of every hazardous git command, in that order."""
+def shell_reasons(cmd: str, depth=0):
+    """Reasons of every SHELL_RULES match, then of every command substitution and hazardous git command."""
     cmd = cmd or ""
     reasons = [reason for pattern, reason in SHELL_RULES if re.search(pattern, cmd, re.IGNORECASE)]
-    return reasons + git_reasons(cmd)
+    return list(dict.fromkeys(reasons + substitution_reasons(cmd, depth) + git_reasons(cmd, depth)))
 
 
 def shell_reason(cmd: str):
@@ -156,6 +156,10 @@ _DISCARDS = "discards working-tree changes"
 _RECOVERY = "destroys recovery data (reflog / unreachable objects)"
 _REWRITES = "rewrites history/refs"
 _MAX_DEPTH = 4
+# Quoted or escaped `>`/`<` are text, not redirections: masked while tokenizing, restored on a re-read.
+_MASK = {">": "\ue000", "<": "\ue001"}
+_UNMASK = str.maketrans({v: k for k, v in _MASK.items()})
+_REDIRECT_OP = re.compile(r"(?:>>?|<<?<?|<>|>\||>&|<&)")
 
 
 def _mask_quoted_separators(text, escape):
@@ -164,7 +168,7 @@ def _mask_quoted_separators(text, escape):
     while i < n:
         ch = text[i]
         if escape and ch == "\\":
-            out.append(text[i:i + 2])
+            out.append("\\" + _MASK.get(text[i + 1:i + 2], text[i + 1:i + 2]))
             i += 2
             continue
         if ch in "'\"":
@@ -174,6 +178,7 @@ def _mask_quoted_separators(text, escape):
             body = text[i + 1:j]
             if body and set(body) <= set(_SEPARATORS + "`"):
                 body = "_sep_"
+            body = "".join(_MASK.get(c, c) for c in body)
             out.append(ch + body + text[j:j + 1])
             i = j + 1
             continue
@@ -196,6 +201,42 @@ def _shell_tokens(text, posix_escape):
     if not posix_escape:
         lex.escape = ""
     return list(lex)
+
+
+def _join_redirections(tokens):
+    """Glue `&` back into the redirection it belongs to (`2>&1`, `>&2`, `&>out`); shlex splits it off."""
+    out, k = [], 0
+    while k < len(tokens):
+        tok, nxt = tokens[k], tokens[k + 1] if k + 1 < len(tokens) else None
+        word_next = nxt is not None and not set(nxt) <= set(_SEPARATORS + "`")
+        if tok == "&" and out and re.fullmatch(r"(\d*|\*)>>?", out[-1]) and word_next:
+            out[-1] += "&" + nxt
+            k += 2
+        elif tok == "&" and word_next and nxt.startswith(">"):
+            out.append("&" + nxt)
+            k += 2
+        else:
+            out.append(tok)
+            k += 1
+    return out
+
+
+def _drop_redirections(words):
+    """The words of a simple command without its redirections (`> out`, `2>/dev/null`, `*>`, `git>out` -> git)."""
+    out, k = [], 0
+    while k < len(words):
+        word = words[k]
+        pos = min((word.find(c) for c in "<>" if c in word), default=-1)
+        op = _REDIRECT_OP.match(word, pos) if pos >= 0 else None
+        if op is None:
+            out.append(word)
+            k += 1
+            continue
+        head = word[:pos]
+        if head and not re.fullmatch(r"\d+|\*|&", head):        # `git>out`: the word before is kept
+            out.append(head)
+        k += 1 if word[op.end():] else 2                         # a bare operator takes the next word
+    return out
 
 
 def _simple_commands(tokens):
@@ -327,7 +368,8 @@ def git_reasons(cmd, depth=0):
         return ["unbalanced quotes around a git command"]
     reasons = []
     for tokens in readings:
-        for words in _simple_commands(tokens):
+        for words in _simple_commands(_join_redirections(tokens)):
+            words = _drop_redirections(words)
             text_args = set()
             for k, word in enumerate(words):
                 if not _is_git(word):
@@ -340,8 +382,77 @@ def git_reasons(cmd, depth=0):
             for k, word in enumerate(words):
                 if k not in text_args and word != cmd and re.search(r"[\s;&|()`]", word) \
                         and _mentions_git(word):
-                    reasons += git_reasons(word, depth + 1)
+                    reasons += shell_reasons(word.translate(_UNMASK), depth + 1)
     return list(dict.fromkeys(reasons))
+
+
+class _Unbalanced(ValueError):
+    pass
+
+
+def _substitutions(text, posix, bodies, i=0, stop=None):
+    """Bodies of the `$(...)` (and, in the POSIX reading, backtick) substitutions the shell runs: unquoted or
+    inside double quotes, never inside single quotes; appended to `bodies`. With stop=")" scans one body and
+    returns the index after it. _Unbalanced(position) on an unclosed substitution."""
+    depth, quoted, n, start = 0, False, len(text), i - 2
+    escape = "\\" if posix else "`"
+    while i < n:
+        ch = text[i]
+        if ch == escape:
+            i += 2
+        elif ch == "'" and not quoted:
+            j = text.find("'", i + 1)
+            i = n if j < 0 else j + 1
+        elif ch == '"':
+            quoted, i = not quoted, i + 1
+        elif ch == "$" and text.startswith("(", i + 1):
+            end = _substitutions(text, posix, [], i + 2, ")")
+            bodies.append(text[i + 2:end - 1])
+            i = end
+        elif ch == "`" and posix:
+            j = i + 1
+            while j < n and text[j] != "`":
+                j += 2 if text[j] == "\\" else 1
+            if j >= n:
+                raise _Unbalanced(i)
+            bodies.append(re.sub(r"\\([`\\$])", r"\1", text[i + 1:j]))
+            i = j + 1
+        else:
+            if stop and not quoted and ch == "(":
+                depth += 1
+            elif stop and not quoted and ch == ")":
+                if depth == 0:
+                    return i + 1
+                depth -= 1
+            i += 1
+    if stop:
+        raise _Unbalanced(start)                                  # at the `$(` opener
+    return i
+
+
+def substitution_reasons(cmd, depth=0):
+    """Reasons of every command run by a `$(...)`/backtick substitution, read as a full shell command.
+
+    Bash runs them unquoted and inside double quotes, PowerShell runs `$(...)` there too; both readings
+    are unioned. Nested substitutions are found by the recursive check of each body. An unbalanced
+    substitution whose rest mentions git asks (#1186 review round 3)."""
+    if "$(" not in cmd and "`" not in cmd:
+        return []
+    cmd = re.sub(r"`\r?\n", " ", re.sub(r"\\\r?\n", "", cmd))          # line continuations, as in git_reasons
+    reasons, bodies = [], []
+    for posix in (True, False):
+        try:
+            _substitutions(cmd, posix, bodies)
+        except _Unbalanced as error:
+            if _mentions_git(cmd[error.args[0]:]):
+                reasons.append("unbalanced command substitution around a git command")
+    for body in dict.fromkeys(bodies):
+        if depth >= _MAX_DEPTH:
+            if _mentions_git(body):
+                reasons.append("command substitution nested too deep to check")
+            continue
+        reasons += shell_reasons(body, depth + 1)
+    return reasons
 
 
 # One-shot merge token [D234] (#1028). The token covers one plain merge and nothing else: no shell

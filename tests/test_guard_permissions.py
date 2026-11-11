@@ -514,3 +514,38 @@ def test_guard_round2_wraps_quoted_globals_generated_probe_1186():
     print(f"probe: asked={len(asked)} wrong_allow={len(wrong_allow)} allowed={len(allowed)} wrong_ask={len(wrong_ask)}")
     assert len(asked) > 8000 and len(allowed) > 4000
     assert wrong_allow[:20] == [] and wrong_ask[:20] == []
+
+
+# PR #1186 review round 3 (P1): command substitution inside quoted or text arguments, and redirections
+# before the git subcommand, must not bypass the git rules.
+ROUND3_ASK = [
+    'git commit -m "$(git push)"', 'git commit -m "`git push`"', 'git -C "$(git push)" status',
+    'git log --format="$(git reset --hard)"', 'git stash push -m "$(git clean -fdx)"',
+    "git > out reset --hard", "git 2>/dev/null reset --hard", "git >out push",
+    'git commit -m "$(echo $(git push))"', 'echo "$(git clean -fd)"', "git reset --hard > out",
+    'git commit -m "x `git push` y"', "git commit -m $(git push)", 'echo "a $(b "$(git push)") c"',
+    "bash -c 'git commit -m \"$(git push)\"'", "git 2>&1 reset --hard", "git *> out push", "git &>out push",
+    "git>out push", "git -C repo > out clean -fd", "git < in push", "git 2> err push", 'git commit -m "$(git push"',
+    # Conservative: a quoted word holding `git` and a space is re-read as a command (it cannot tell
+    # `echo '...'` from `bash -c '...'`), so single-quoted substitution text outside a git message asks.
+    "echo '$(git push)'",
+]
+
+# Single quotes are literal in bash and in PowerShell; redirections after a safe subcommand are not git operations.
+ROUND3_ALLOW = [
+    'git commit -m "fix: x"', 'git log --format="%H %s"', "git commit -m '$(git push)'",
+    "git status 2>/dev/null", "git diff > patch.txt", "git status 2>&1", "git log -1 > out.txt 2>&1",
+    'git commit -m "$(cat msg.txt)"', 'git commit -m "it\'s fine"', 'git -C ">x" status',
+]
+
+
+@pytest.mark.parametrize("protocol", ["claude", "antigravity"])
+@pytest.mark.parametrize("command", ROUND3_ASK)
+def test_guard_review3_1186_bypasses_ask(command, protocol):
+    assert guard(command, protocol) == "ask"
+
+
+@pytest.mark.parametrize("protocol", ["claude", "antigravity"])
+@pytest.mark.parametrize("command", ROUND3_ALLOW)
+def test_guard_review3_1186_safe_commands_allowed(command, protocol):
+    assert guard(command, protocol) == "allow"
