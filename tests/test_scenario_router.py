@@ -72,14 +72,14 @@ def test_oks_vpm_route_policy():
     route = cell.split("## Route by stage", 1)[1].split("## Etalons", 1)[0]
     for required in ("standard", "AGR Tools stages 1–4", "body", "windows", "roof",
                      "after Gate 1", "Max is busy", "dt_ai.ops", "R14", "path: deviation",
-                     "all eight gates", "[D249]"):
+                     "all eight gates", "[D250]"):
         assert required in route, required
     procedure = (ROOT / "docs/procedure/TASK_TO_MODEL.md").read_text(encoding="utf-8")
     operations = next(line for line in procedure.splitlines() if line.startswith("| operations |"))
     assert "oks-vpm.md#route-by-stage" in operations
     assert "cell's standard route" in operations
     decision = next(line for line in (ROOT / "docs/decisions.md").read_text(encoding="utf-8").splitlines()
-                    if line.startswith("| D249 |"))
+                    if line.startswith("| D250 |"))
     assert "2026-11-11" in decision and "path: deviation" in decision
 
 
