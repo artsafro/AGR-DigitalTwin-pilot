@@ -417,7 +417,7 @@ Roles in `ROLES.md` assign work, not extra permissions. More restrictive task po
 | Edit task code/docs and commit in own worktree | free | free | free | Task scope and NAMING.md; pre-commit checks |
 | Authorized DCC saves/exports to new versioned paths | versioned write | versioned write | versioned write | CAPABILITIES.md risk classes; DCC skill and output readback |
 | Publish branch (git push) | ask | ask | ask | guard: `git push origin task/example` |
-| Merge after review on the user's explicit command | ask | ask | ask | guard: `gh pr merge 127`; gate: [Merge authorization](WORKFLOW.md#gate-merge-authorization) |
+| Merge after review on the user's explicit command | ask | ask | ask | guard: `gh pr merge 127` (allow once with a one-shot token for a command naming #127 [D234]); gate: [Merge authorization](WORKFLOW.md#gate-merge-authorization) |
 | gh delete operations (issue, release, etc.) | ask | ask | ask | guard: `gh issue delete 127`; guard: `gh release delete v1` |
 | All gh repo operations (including reads) | ask | ask | ask | guard: `gh repo view owner/repo`; guard: `gh repo delete owner/repo` |
 | Destructive DCC tools or arbitrary DCC code | ask | ask | ask | gate: [DCC authorization](WORKFLOW.md#gate-dcc-authorization) |
@@ -457,6 +457,16 @@ Manual pre-execution gate: require review and the user's command naming the merg
 approval to code, push or open a PR is not a merge command. Applies equally to `git merge`,
 `gh pr merge`, UI and API routes. Without it stop; the gh guard prompt is not evidence that
 the command was granted. Record the command in the handoff/PR when a merge is authorized.
+When the user's chat command names the PR number («Мерджи #N»), quote it into a one-shot token
+first, from the checkout whose `origin` is the PR's repository: `py -3 .claude/hooks/guard.py merge-token N
+"<the user's literal command>"`; the guard then
+allows exactly one plain `gh pr merge N` within 10 minutes without a second prompt [D234]. Never
+write a token for a command without the number («вперед», «мержи»): ask which PR, or let the guard
+prompt be the confirmation. The token covers no other PR, no `--delete-branch`/`--admin` and no
+chained command, and no other repository (the `-R`/`--repo` value, else `GH_REPO`, else the
+`gh repo set-default` remote, else every remote of the hook's cwd must name the token's repository;
+otherwise the guard asks and keeps the token). In the pilot clone (`origin` = pilot, `upstream` =
+AGR-DigitalTwin) run `gh pr merge N -R <owner>/<repo>`.
 
 ### Gate standards procedure
 
