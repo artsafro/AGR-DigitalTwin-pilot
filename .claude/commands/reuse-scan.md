@@ -7,9 +7,9 @@ argument-hint: "[days, default 7]"
 Reuse review by the rule of three (`docs/agents/WORKFLOW.md`, "Rule of three"). Period: $ARGUMENTS days (7 if
 empty; the facts below are for 7). Measured facts:
 
-!`py -3 tools/reuse_candidates.py --days 7`
+!`py -3 "$(git rev-parse --show-toplevel)/tools/reuse_candidates.py" --days 7`
 
-!`py -3 tools/hooks/usage_log.py stats --days 7`
+!`py -3 "$(git rev-parse --show-toplevel)/tools/hooks/usage_log.py" stats --days 7`
 
 This command only reads and reports. Create no code, skill, pattern or issue.
 

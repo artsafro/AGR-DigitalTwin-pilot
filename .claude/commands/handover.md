@@ -5,7 +5,7 @@ disable-model-invocation: true
 
 Handover before a context rotation (docs/agents/WORKFLOW.md, "Context rotation"). Current state:
 
-!`py -3 tools/hooks/session_context.py report`
+!`py -3 "$(git rev-parse --show-toplevel)/tools/hooks/session_context.py" report`
 
 Do these steps in order. Talk to the user in Russian; files stay in English.
 

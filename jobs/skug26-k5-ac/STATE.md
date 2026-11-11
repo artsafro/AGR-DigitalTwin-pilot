@@ -1,3 +1,7 @@
+Current run: K5_VPM_textured_UV_v003.max viewport texture/hole layout accepted on 2026-11-05; not a delivery.
+Source: K5_VPM_textured_UV_v002.max, hidden-layer SKUG-26_PP_AR_K5_fsd FBX hole geometry, konderi.psd (Inputs below).
+Next gate: unknown — no next gate selected; FBX export, validate-delivery and cutout render remain undone.
+
 # SKUG-26 K5 — conditioner screens, VPM texture 4K with alpha (UDIM 1004)
 
 Status: **accepted by the user** (Artem, 2026-11-05: «Видны, принято») — the texture and the hole layout

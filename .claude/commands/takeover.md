@@ -5,7 +5,7 @@ disable-model-invocation: true
 
 Take over after a context rotation (docs/agents/WORKFLOW.md, "Context rotation"). Current state:
 
-!`py -3 tools/hooks/session_context.py report`
+!`py -3 "$(git rev-parse --show-toplevel)/tools/hooks/session_context.py" report`
 
 This command only reads and reports. Change no file, run no DCC call, push nothing.
 
@@ -46,4 +46,4 @@ Answer in Russian, short: discrepancies, open items, proposal, usage.
 
 Usage of subagents, skills and commands:
 
-!`py -3 tools/hooks/usage_log.py stats --days 7`
+!`py -3 "$(git rev-parse --show-toplevel)/tools/hooks/usage_log.py" stats --days 7`

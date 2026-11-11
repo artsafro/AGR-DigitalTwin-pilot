@@ -6,10 +6,13 @@ generalised from the job script jobs/skug26-k5-ac/scripts/uvverify.py (retro T3,
 Input rows are ``name, face_index, material_id, u0, v0, u1, v1, ...`` (the uvdump CSV), either as
 CSV text lines or as already split sequences. A feature is a 4-connected blob of pixels with
 alpha < ``alpha_threshold``; it belongs to a face when its centroid (pixel centres) lies inside the
-face's UV polygon mapped into the face's own UDIM tile. Only problems are findings, all ``fail``:
-empty input, unreadable texture or no alpha channel, invalid/duplicated rows, faces outside the
-expected tile, a count different from ``expected``, a face with no expected key and an expected key
-that matched no face, and features covered by no face (``uv_features.unassigned``, with centroids).
+face's UV polygon mapped into the face's own UDIM tile. A blob touching the texture border is the
+background (e.g. the transparent area around atlas islands), not a feature: no face counts it and
+``measure_features_per_face`` reports it as ``border_features``. Only problems are findings, all
+``fail``: empty input, unreadable texture or no alpha channel, invalid/duplicated rows, non-simple or
+zero-area UV polygons (``uv_features.invalid_polygon``), faces outside the expected tile, a count
+different from ``expected``, a face with no expected key and an expected key that matched no face,
+and features covered by no face (``uv_features.unassigned``, with centroids).
 A feature whose centroid lies only on face boundaries counts once, for the covering face with the
 smallest (name, face). Zero findings means every face was checked and matched.
 
@@ -61,11 +64,18 @@ def read_uv_csv(path) -> list[str]:
 
 
 def label_features(alpha: np.ndarray, threshold: int):
-    """Centroids (x, y in pixel units, pixel centres at +0.5) of 4-connected blobs with alpha < threshold.
+    """Centroids (x, y in pixel units, pixel centres at +0.5) of 4-connected blobs with alpha < threshold."""
+    return label_blobs(alpha, threshold)[0]
 
-    Run-length union-find: no scipy, linear in the number of runs.
+
+def label_blobs(alpha: np.ndarray, threshold: int):
+    """(centroids (n, 2), touches_border bool (n,)) of 4-connected blobs with alpha < threshold.
+
+    Run-length union-find: no scipy, linear in the number of runs. A blob touches the border when
+    any of its pixels lies in the first or last row or column.
     """
     mask = np.asarray(alpha) < threshold
+    rows_n, cols_n = mask.shape
     parent: list[int] = []
 
     def find(i):
@@ -98,11 +108,13 @@ def label_features(alpha: np.ndarray, threshold: int):
     acc: dict[int, list[float]] = {}
     for r, s, e, rid in runs:
         n = e - s
-        a = acc.setdefault(find(rid), [0.0, 0.0, 0.0])
+        a = acc.setdefault(find(rid), [0.0, 0.0, 0.0, False])
         a[0] += n
         a[1] += (s + e) / 2 * n  # sum of (col + 0.5)
         a[2] += (r + 0.5) * n
-    return np.array([(sx / n, sy / n) for n, sx, sy in acc.values()]).reshape(-1, 2)
+        a[3] = a[3] or r == 0 or r == rows_n - 1 or s == 0 or e == cols_n
+    centroids = np.array([(sx / n, sy / n) for n, sx, sy, _ in acc.values()]).reshape(-1, 2)
+    return centroids, np.array([b for *_, b in acc.values()], dtype=bool)
 
 
 def _load_alpha(texture_path):
@@ -141,11 +153,54 @@ def assign_features(centroids, polys):
     return counts, unassigned
 
 
+def _polygon_defect(pts, tol):
+    """None for a simple ring with area > 0, else the reason. pts: pixel-space vertices.
+
+    shapely's validity is exact in floats, so a ring pinched at a vertex lying on a non-adjacent edge
+    can pass by rounding; a vertex within ``tol`` of a non-adjacent edge is reported as a pinch.
+    Consecutive vertices within ``tol`` (and a closing repeat) are merged first.
+    """
+    ring = []
+    for p in pts:
+        if not ring or math.dist(ring[-1], p) > tol:
+            ring.append(p)
+    while len(ring) > 1 and math.dist(ring[0], ring[-1]) <= tol:
+        ring.pop()
+    poly = shapely.Polygon(ring) if len(ring) >= 3 else None
+    if poly is None or not poly.area > 0:
+        return "zero area"
+    if not poly.is_valid:
+        return shapely.is_valid_reason(poly)
+    n = len(ring)
+    for i, p in enumerate(ring):
+        pt = shapely.Point(p)
+        for j in range(n):
+            if i in (j, (j + 1) % n):
+                continue
+            if shapely.LineString([ring[j], ring[(j + 1) % n]]).distance(pt) <= tol:
+                return f"ring pinched at vertex {i}"
+    return None
+
+
 def count_features_per_face(uv_rows, texture_path, *, alpha_threshold=128, expected=None, tile=None):
     """Findings for a UV dump against a texture; [] means all faces checked and matched.
 
     expected: {face name or material id: features per face}; the name wins over the material.
+    expected=None checks rows, polygons, tiles and unassigned features only, never the counts; read
+    the per-face counts with ``measure_features_per_face``.
     tile: UDIM every face must lie in (centroid tile and all vertices), or None to skip.
+    """
+    return measure_features_per_face(uv_rows, texture_path, alpha_threshold=alpha_threshold,
+                                     expected=expected, tile=tile)["findings"]
+
+
+def measure_features_per_face(uv_rows, texture_path, *, alpha_threshold=128, expected=None, tile=None):
+    """{"findings": [...], "counts": [{name, face, material, count}], "border_features": n}.
+
+    Same checks and arguments as ``count_features_per_face``. ``counts`` lists every placed face
+    (valid polygon in a UDIM tile) in input order, also when ``expected`` is None; a face with an
+    invalid row, polygon or no UDIM tile is only a finding. ``border_features`` is the number of
+    blobs touching the texture border (background), which no face counts.
     """
     if type(alpha_threshold) is not int or not 1 <= alpha_threshold <= 256:
         raise ValueError("alpha_threshold must be an int in 1..256")
@@ -158,14 +213,18 @@ def count_features_per_face(uv_rows, texture_path, *, alpha_threshold=128, expec
     findings = []
     rows = list(uv_rows)
     if not rows:
-        return [_fail("uv_features.input", "0 UV rows", ">= 1 UV row")]
+        return {"findings": [_fail("uv_features.input", "0 UV rows", ">= 1 UV row")], "counts": [],
+                "border_features": 0}
     try:
         alpha = _load_alpha(texture_path)
     except (OSError, ValueError) as exc:
-        return [_fail("uv_features.texture", f"{texture_path}: {exc}", "readable texture with alpha",
-                      {"texture": str(texture_path)})]
+        return {"findings": [_fail("uv_features.texture", f"{texture_path}: {exc}",
+                                   "readable texture with alpha", {"texture": str(texture_path)})],
+                "counts": [], "border_features": 0}
     h, w = alpha.shape
-    centroids = label_features(alpha, alpha_threshold)
+    centroids, border = label_blobs(alpha, alpha_threshold)
+    border_features = int(border.sum())
+    centroids = centroids[~border]
     faces, seen = [], set()
     for i, row in enumerate(rows):
         try:
@@ -181,6 +240,7 @@ def count_features_per_face(uv_rows, texture_path, *, alpha_threshold=128, expec
         seen.add((f.name, f.face))
         faces.append(f)
     placed = []  # (face, ident, polygon in pixel space)
+    invalid = []  # faces with a non-simple or zero-area UV polygon: a finding, never counted
     for f in faces:
         ident = {"name": f.name, "face": f.face, "material": f.material}
         own = udim_of(f.uv)
@@ -195,13 +255,23 @@ def count_features_per_face(uv_rows, texture_path, *, alpha_threshold=128, expec
         if not all(tu - EPS <= u <= tu + 1 + EPS and tv - EPS <= v <= tv + 1 + EPS for u, v in f.uv):
             findings.append(_fail("uv_features.cross_tile", f"{f.name} face {f.face}: vertex leaves tile {own}",
                                   f"all vertices in tile {own}", {**ident, "tile": own}, UDIM_PAGES))
-        placed.append((f, ident, shapely.Polygon([((u - tu) * w, (1 - (v - tv)) * h) for u, v in f.uv])))
+        pts = [((u - tu) * w, (1 - (v - tv)) * h) for u, v in f.uv]
+        reason = _polygon_defect(pts, EPS * max(w, h))
+        if reason:
+            findings.append(_fail("uv_features.invalid_polygon", f"{f.name} face {f.face}: {reason}",
+                                  "simple UV polygon with area > 0", {**ident, "reason": reason}))
+            invalid.append(f)
+            continue
+        placed.append((f, ident, shapely.Polygon(pts)))
     counts, unassigned = assign_features(centroids, [(f.name, f.face, poly) for f, _, poly in placed])
     if unassigned:
         findings.append(_fail("uv_features.unassigned", f"{len(unassigned)} feature(s) inside no face polygon",
                               "every feature inside or on the boundary of a face",
                               {"count": len(unassigned), "centroids_px": unassigned}))
+    counts_out = [{**ident, "count": count} for (_, ident, _), count in zip(placed, counts)]
     used_keys = set()
+    for f in invalid if expected else []:  # already an invalid_polygon finding, not also "unused"
+        used_keys.add(f.name if f.name in expected else f.material if f.material in expected else None)
     for (f, ident, _), count in zip(placed, counts):
         if not expected:
             continue
@@ -218,4 +288,4 @@ def count_features_per_face(uv_rows, texture_path, *, alpha_threshold=128, expec
     for key in sorted(set(expected) - used_keys):
         findings.append(_fail("uv_features.expected_unused", f"expected key {key!r} matched no face",
                               "every expected key matches a face", {"key": key}))
-    return findings
+    return {"findings": findings, "counts": counts_out, "border_features": border_features}

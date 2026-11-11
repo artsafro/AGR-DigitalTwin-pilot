@@ -1,3 +1,7 @@
+Current run: Mesh clean-up v009 / delivery-v003 accepted on 2026-10-07; stage complete, not final delivery.
+Source: S1 PDF, S2 detached Revit copy, S3 FBX and S4 PPTX; docs/sources/psu275.md (Sources and Done below).
+Next gate: unknown — no single next gate selected; optional work and user-deferred GeoJSON/MSK-77/Ground are listed in Next.
+
 # PSU275 — main building No 1
 
 Sources, decisions and derived values: `docs/sources/psu275.md`. Profile: NPM + VPM.

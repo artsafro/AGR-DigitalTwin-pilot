@@ -6,7 +6,8 @@ Moved verbatim from `AGENTS.md` (context diet); the rules remain binding for eve
 
 Правила волны 1.0. Контракты К1–К5 — в `issue_body.md` волны. Решения Артёма 06.11.2026 приоритетнее.
 
-- **Паспорт проекта обязателен (К1).**
+- **Passport scope (K1) [D247].** `jobs/<ID>/passport.json` is required only on the AGR Tools route until a second route exists; other OKS routes record the same facts in `job.yaml` inputs / REPORT.
+- **Паспорт проекта обязателен на маршруте AGR Tools (К1) [D247].**
   - У каждого проекта есть `jobs/<ID>/passport.json` и `PASSPORT.md`.
   - Схема — `schemas/ProjectPassport.schema.json`. Битая схема — ошибка.
   - Сцена хранит в file properties `agr_passport` путь и sha паспорта.
