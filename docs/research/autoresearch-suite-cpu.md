@@ -1,11 +1,11 @@
 # Autoresearch: default-suite CPU (#1227)
 
-Status: search ledger and retained code are frozen for final validation. Exact-head final
-full-suite/CPU, per-file tables, remaining hotspots, guard and xdist measurements are published
-in the PR body's **Final measurements** section (and attached CSV), after execution. Keeping
-those derived receipts outside Git avoids changing the SHA they verify or rerunning the full
-suite solely to commit its own results. This file is the committed round log, not a substitute
-for those final receipts.
+Status: **blocked on an uninterrupted two-slot validation window**. Retained code is ready,
+but the final serial CI/whole-suite CPU and three controlled repetitions at each xdist width
+are incomplete; no PR or final acceptance is claimed. See the interruption evidence below.
+After a controlled retry, exact-head final receipts, per-file tables and capacity results belong
+in the PR body's **Final measurements** section and attached CSV, without changing the
+SHA they certify. This file is the committed search/round log.
 
 ## Frozen experiment contract
 
@@ -132,7 +132,33 @@ repeats the real frozen target suite if needed to keep that slot busy. Exactly t
 holders are required before each xdist run and sampled every two seconds. A third holder,
 worker crash, missing summary or desktop-heap marker invalidates the relevant observation;
 it is never silently discarded. This does not certify simultaneous xdist in both slots.
-Final numbers/recommendation are in the PR's Final measurements section.
+Final numbers/recommendation will be published only after a controlled retry succeeds.
+
+## Interrupted final-validation attempt (external scheduling)
+
+Measured head: `c43b0642af8b949b5f23242910dda1e96ae9b683`. After the low-priority queue wait,
+our slots were granted at 18:38:58 and 18:53:56. Both preflights waited for the third foreign
+holder to drain before starting. The final recorder collected 20600 IDs.
+
+| Observation | Actual result | Validity |
+| --- | --- | --- |
+| n=2, run 1 | 996.203173 s command wall; pytest `20439 passed, 114 skipped, 49 xfailed, 109 warnings in 993.94s (0:16:33)`; exit 0; no desktop-heap or worker-failure markers | **Not a controlled two-slot observation**: holder counts [2, 3]; 182/495 samples had a third holder |
+| n=2, run 2 | Started, then intentionally interrupted | No completed result; not counted as a passing run |
+| Final serial CI | Interrupted; 15829 JSONL lines, no final session record or CI receipt | Incomplete; no whole-suite after-CPU or passing full-suite claim |
+| n=4 | Not run | No capacity claim |
+
+A new foreign slot-2 holder (`t_ed5212d6`) joined at 19:13:58 and restarted at 19:22:04.
+Per-call `--slots 2` does not constrain other callers using the shared configuration of 3.
+Continuing would knowingly overlap three suite jobs, so only our two owned process trees
+were stopped; all recorded descendants were verified gone, and no owned live holder remained.
+No foreign process, runner, configuration or coordination rule was changed.
+
+All eight validation files were preserved under
+`C:/x/autoresearch-suite/validation-attempt-001-interrupted/`; `manifest.json` binds their
+original names, sizes and SHA-256 hashes. Baseline/plugin/guard/target inputs are untouched.
+The incomplete `final.jsonl` must never be used as final evidence. A retry needs an operator-
+reserved uninterrupted two-slot window, then the same canonical CI and six observations on
+one frozen head; keep this invalid observation visible rather than silently dropping it.
 
 ## Reproduction and exact-head publication
 
