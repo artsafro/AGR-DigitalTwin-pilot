@@ -241,6 +241,15 @@ def test_fresh_process_cli_refuses_over_budget_with_exit_1(tmp_path):
     assert output.read_bytes() == before
 
 
+def test_candidate_text_outside_the_entry_set_fails_closed(tmp_path):
+    repo = _repo(tmp_path)
+    with pytest.raises(eb.FailClosed) as exc:
+        eb.check(repo, repo / RECEIPT_REL, texts={"docs/OTHER.md": "x"})
+    assert "outside the entry set" in exc.value.reason
+    with pytest.raises(eb.FailClosed):
+        eb.check(repo, repo / RECEIPT_REL, texts={"docs/PROJECT_STATE.md": "  \n"})
+
+
 def test_budget_value_is_unchanged():
     assert eb.BUDGET == 10_000
     assert json.loads((ROOT / RECEIPT_REL).read_text(encoding="utf-8"))["budget"] == 10_000
