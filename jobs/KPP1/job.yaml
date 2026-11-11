@@ -66,7 +66,7 @@ gates:
     note: "Run log with commands, triangle table, validator blockers and procedure gaps R1-R5."
     evidence:
     - path: jobs/KPP1/rerun-1209/RUN-LOG.md
-      sha256: 4f6f679ce5ab363f3ab72934e6d18f72ca7ab81c7a55b0475cbba3b9449ebf06
+      sha256: eb6a9eb77884f19f0f1544a7aa547e7632934ab3f380cd22cf13fc1a0307c3e6
   visual:
     status: missing
     note: "waits-user: previews in G:/Мой диск/AGR-evidence/KPP1/rerun-1209; board review (D119) not done."

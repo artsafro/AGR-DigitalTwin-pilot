@@ -50,9 +50,9 @@ the textures (V006/V007/V009), the missing Stair and the 164 mullions (open item
 Decision allocation: `uv run python tools/git-hooks/decision_ids.py next` -> **D249**,
 checked across origin/main, this branch and **15 open PR heads**.
 
-## Commands (exact)
+## Commands (exact historical record; not runnable templates)
 
-```
+```text
 # 0. copies, SHA-256 equal to inputs-manifest.json (L01 cb74ba14..., L03 ad1de2b2...)
 cp ".../Downloads/22Е56-АР2-1002-АС.03-R1_L0{1,3}_без подписей.dwg" C:/x/kpp1/r1209/L0{1,3}.dwg
 # 1. DWG -> DXF, AutoCAD 2025 accoreconsole, script: _.DXFOUT <dxf> _V _2018 16 _.QUIT _Y
@@ -190,6 +190,24 @@ probes); the walk is regenerated and LF-normalized before the fresh-worktree che
 Artifact/synthetic input probes are in handoff-probes.json; they do not certify architectural
 fidelity or script safety for every possible Blender invocation. No changes to the validator,
 no live Max or 3dsmaxbatch calls, no rewriting of historical acceptance.
+
+## Suite repair receipt
+
+Full suite through suite_slot / ci_receipt on 687ce7ac: **2 failed, 20439 passed,
+114 skipped, 435 deselected, 49 xfailed, 102 warnings in 3866.16s (1:04:26)**.
+Profiles, schemas and issue-ready gate exited 0. The original CI-RECEIPT remains FAIL;
+it is not rewritten to the repaired head.
+
+Repair attempt 1 (documentation/tests only): the historical preview invocation omitted
+`--python-exit-code`; preserve it as a `text` historical-command fence rather than inventing
+an invocation that never ran. Future runnable preview commands must supply the exit-code flag.
+F8's KPP1 assertion still expected the old cold-run header; update it to require #1209,
+`passed=false`, the manifest and the pending architect/visual/checker gates. No check removed.
+
+Affected verification after repair:
+`env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run pytest -q -p no:cacheprovider --basetemp=C:/x/t_d1f84643-repair tests/test_blender_exit_code_guard.py tests/test_job_state_headers.py tests/test_kpp1_roof_approval.py tests/test_decisions.py`
+-> **96 passed, 7 warnings in 15.15s**. The full suite is not rerun after this bounded
+report/test repair (one full suite per PR); there is no green exact-head full-suite claim.
 
 ## Not done, and why
 
