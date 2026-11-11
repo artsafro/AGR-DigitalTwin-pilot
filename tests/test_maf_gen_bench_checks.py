@@ -176,6 +176,25 @@ def test_output_onto_an_input_or_existing_file_is_refused(tmp_path, target):
     assert dest.read_bytes() == before
 
 
+@pytest.mark.parametrize("parent_kind", ["missing", "file"])
+@pytest.mark.parametrize("gate_fails", [False, True])
+def test_unwritable_output_is_refused(tmp_path, parent_kind, gate_fails):
+    readback = {(1, "npm"): [3.9, 2.9, 0.45]} if gate_fails else None
+    report, rb, _ = make_case(tmp_path, DIMS, readback)
+    parent = tmp_path / "blocked"
+    if parent_kind == "file":
+        parent.write_text("keep", encoding="utf-8")
+    out = parent / "checks.json"
+    before = {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
+    proc = subprocess.run([sys.executable, str(TOOL), str(report), str(rb), str(out)],
+                          capture_output=True, text=True, cwd=ROOT)
+    assert proc.returncode == 2, proc.stderr
+    assert proc.stderr.startswith("error: ") and str(out) in proc.stderr
+    assert "Traceback" not in proc.stderr and not proc.stdout
+    assert not out.exists()
+    assert {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()} == before
+
+
 def test_fresh_process_exit_codes(tmp_path):
     ok_dir, bad_dir = tmp_path / "ok", tmp_path / "bad"
     ok_dir.mkdir(), bad_dir.mkdir()
