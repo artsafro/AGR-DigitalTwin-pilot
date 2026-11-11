@@ -10,8 +10,10 @@ Changes against #1209 (issue #1230):
   bbox (a line in the view) takes the face width of its profile (`200х75` -> 75 mm, `50х100` -> 50 mm). A
   mullion whose facade centre lies in an opening sits in that opening's glass plane (depth = profile depth,
   centred); any other mullion stands on the first body face (profile depth outward, 10 mm embedded so the
-  union is solid). An insert that hits no body face is reported in `mullions_dropped` with its reason;
-  nothing is dropped silently (#1209 dropped zero-width inserts and kept 7 of 171).
+  union is solid). Beyond a facade end, a projection is counted as an alias only when a directly built
+  perpendicular member matches its profile, height endpoints (20 mm) and physical corner. Otherwise the
+  measured rectangle is built at that facade's outer plane using the declared profile depth, without snapping
+  it onto the body. Interior no-hit inserts remain reported; nothing is dropped silently (#1209 kept 7 of 171).
 - Stair: the exterior stair at the east facade from L03 `S-STRS-____-OTLN` (plan: flight 1 treads x 55215..57215,
   y 2320..3680 mm) and L01 (Восточный / Южный views: landing +2.100, upper flight along the wall to the
   landing +3.600..+3.900, width 1 200 mm, 300 mm from the wall). Rises are approximations of the facade
@@ -74,9 +76,35 @@ def mullion_items(dxf_path: Path):
     return out
 
 
+def edge_counterpart(f, name, rect, boxes):
+    """Return a built perpendicular member index, only at this physical corner.
+
+    Height endpoints must agree within 20 mm. The member must reach the facade
+    end within its own profile depth + 20 mm, and overlap the edge-on projection.
+    A same-height member elsewhere on the building is not evidence of coverage.
+    """
+    cfg = R9.FACADES[f]
+    normal_axis = 0 if cfg["axis"] == "x" else 1
+    along_axis = 1 - normal_axis
+    ua, ub, za, zb = rect
+    for i, b in enumerate(boxes):
+        if R9.FACADES[b["facade"]]["axis"] == cfg["axis"] or profile_of(b["block"]) != profile_of(name):
+            continue
+        lo, hi = b["min"], b["max"]
+        if not (za - 0.02 <= lo[2] <= za + 0.02 and zb - 0.02 <= hi[2] <= zb + 0.02):
+            continue
+        end = cfg["outer"] + R9.SHIFT[normal_axis]
+        distance = max(lo[normal_axis] - end, end - hi[normal_axis], 0.0)
+        if distance > profile_of(name)[1] + 0.02:
+            continue
+        if hi[along_axis] < ua + R9.SHIFT[along_axis] - 0.02 or lo[along_axis] > ub + R9.SHIFT[along_axis] + 0.02:
+            continue
+        return i
+    return None
+
+
 def place_mullions(bands, items, sched, report):
-    rep = {r["id"]: r for r in report}
-    boxes, drops = [], []
+    boxes, drops, edge_items = [], [], []
     for it in items:
         f, name = it["facade"], it["block"]
         if it["rect"] is None:
@@ -84,6 +112,7 @@ def place_mullions(bands, items, sched, report):
             continue
         width, depth = profile_of(name)
         x0, x1, z0, z1 = it["rect"]
+        R9._fin(x0, x1, z0, z1)
         u = R9.FACADES[f]["u"]
         ua, ub = sorted((u(x0), u(x1)))
         za, zb = max(z0, 0.0) / 1000.0, z1 / 1000.0
@@ -107,16 +136,32 @@ def place_mullions(bands, items, sched, report):
             if hit is None:
                 span = (-0.33, 27.33) if R9.FACADES[f]["axis"] == "y" else (-0.33, 11.33)
                 edge_on = ub <= span[0] + 1e-3 or ua >= span[1] - 1e-3
-                drops.append({"facade": f, "block": name, "rect_m": [ua, ub, za, zb],
-                              "reason": ("edge-on view beyond the facade end: a member of the perpendicular facade"
-                                         if edge_on else "no body face behind it (outside the plan)")})
+                if edge_on:
+                    edge_items.append((f, name, (ua, ub, za, zb), depth))
+                else:
+                    drops.append({"facade": f, "block": name, "rect_m": [ua, ub, za, zb],
+                                  "reason": "no body face behind it (outside the plan); no corner placement"})
                 continue
             d0, d1, mode = hit - depth, hit + EMBED_M, "on the facade"
         if ub - ua <= 0 or zb - za <= 0:
             drops.append({"facade": f, "block": name, "rect_m": [ua, ub, za, zb], "reason": "empty after clipping"})
             continue
         boxes.append({"facade": f, "block": name, "placement": mode, **R9.cutter(f, (ua, ub, za, zb), d0, d1)})
-    del rep
+    # Resolve only against the directly built inventory, never another unresolved
+    # projection (and never recursively alias two dropped inserts to one another).
+    direct = list(boxes)
+    for f, name, rect, depth in edge_items:
+        match = edge_counterpart(f, name, rect, direct)
+        if match is not None:
+            drops.append({"facade": f, "block": name, "rect_m": list(rect),
+                          "reason": "edge-on view: verified built member of the perpendicular facade",
+                          "counterpart_index": match, "counterpart_block": direct[match]["block"]})
+        else:
+            # Preserve the measured projection and use the declared profile depth,
+            # just as for on-facade members. No snapping to a convenient body face.
+            boxes.append({"facade": f, "block": name, "rect_m": list(rect),
+                          "placement": "corner member: no built perpendicular counterpart",
+                          **R9.cutter(f, rect, -depth, EMBED_M)})
     return boxes, drops
 
 

@@ -1,4 +1,76 @@
-# KPP1 R1 rerun #1230 (after #1209) — run `issue-1230-rerun-v001`
+# KPP1 R1 rerun #1230 — latest run `issue-1230-r1-v002`
+
+## Review R1 correction (dt-worker-codex, 2026-11-11)
+
+The v001 claim that all 27 dropped projections had built counterparts was unsupported.
+The six reported West/East `200х75` members are now built. Matching is stricter than
+same-height/profile: the perpendicular box must also reach the physical facade end
+(within profile depth + 20 mm) and overlap the projected interval (20 mm tolerance).
+No v001 drop meets all these conditions, so **all 244 source inserts are now built,
+0 dropped**, including all 27 formerly omitted projections. Original 217 boxes and
+all 17 stair boxes are byte-for-byte semantically unchanged in the new schedule.
+
+Corner members preserve the measured facade rectangle and use the declared profile
+depth at that facade's outer plane; they are not snapped or extended to touch the
+body. This placement is the offline profile-depth construction rule, not proof of
+an architect-confirmed corner joint; the visual gate remains open. A verified alias
+would name its actual built counterpart index/block, never another dropped insert.
+
+### Fresh exported-file evidence
+
+- Agent-owned factory-startup Blender **5.1.2**, metres; no live Max or user scene used.
+- `parts-schedule-r1-v002.json`, `build-report-r1-v002.json`: 244 mullions, 17 stair boxes;
+  VPM Main 30,163 triangles, glass 504; NPM Main 18,332 triangles.
+- `SM_Kpp_1.zip.r1-v002.validate.json`: exit **1**, `passed=false`; V004 topology **0**,
+  co-directional <5 mm **0**, 5–20 mm **98** (`review`); V007/V009 pass, V010 gap pass.
+- `0000_Kpp_1_01.r1-v002.validate.json`: exit **2**, `passed=false`; V004 topology **0**,
+  co-directional <5 mm **0**, 5–20 mm **52**; V006 embedded atlas pass.
+- `corner-readback-r1-v002.json`: clean-process import of the actual new VPM FBX,
+  9 interior samples on the outer profile face of each of the six review witnesses,
+  **54/54** within 4 mm; largest distance **0.000000954 m**. This is sampled presence
+  evidence, not a complete shape-distance certificate or whole-delivery approval.
+- Fresh `dt qa xview`: VPM **112 overlapping faces / 0 vertices**, NPM **12 / 0**,
+  both exit **1** (not pass). These residuals and the 98/52 clearance band remain
+  tracked by [#1244](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1244),
+  explicitly nonblocking in review R1. No global topology/visual pass is claimed.
+- New evidence is sealed under `G:/Мой диск/AGR-evidence/1230-kpp1-r1/r1-v002/`;
+  `evidence-r1-v002-SHA256SUMS.txt`: **12/12** copied files independently verified.
+  All three DXF/plan input hashes still match the #1209 inventory. Raw receipts name
+  the staging `tmp/out-r1-v002` paths; the sealed copies have identical bytes/hashes.
+  Prior v001 receipts/evidence remain untouched below and are historical, not current.
+
+### Reproduction and tests
+
+```bash
+uv run python jobs/KPP1/rerun-1230/build_parts.py C:/x/kpp1/r1209/plan-contours-L03.json \
+  C:/x/kpp1/r1209/dxf/L01.dxf C:/x/kpp1/r1209/dxf/L03.dxf tmp/parts-r1-v002.json
+"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe" --background --factory-startup \
+  --python-exit-code 1 --python jobs/KPP1/rerun-1230/build_blender.py -- \
+  tmp/parts-r1-v002.json C:/x/kpp1/r1230/tex tmp/out-r1-v002 tmp/build-report-r1-v002.json
+uv run python tools/qa/validate_package.py tmp/out-r1-v002/SM_Kpp_1.zip --profile vpm --scene --json
+uv run python tools/qa/validate_package.py tmp/out-r1-v002/0000_Kpp_1_01.fbx --profile npm --scene --json
+uv run dt qa xview tmp/out-r1-v002/SM_Kpp_1.fbx --out tmp/xview-vpm-r1-v002.json
+uv run dt qa xview tmp/out-r1-v002/0000_Kpp_1_01.fbx --out tmp/xview-npm-r1-v002.json
+```
+
+The sealed `check-corners-r1.py` reproduces the presence probe from the worktree
+staging paths. Builder rerun after all code changes reproduced the exact parts bytes.
+
+RED before the fix: **6 failed** (the review's six rectangles), committed as
+`135c762e`; matching probes also exposed **2 failed / 4 passed** at exact ±20 mm
+before replacing subtraction with inclusive endpoint bounds. NaN/inf direct-input
+probes failed **3/3** before adding the finite-coordinate guard.
+GREEN: **35 passed / 0 failed** (`tests/test_kpp1_rerun_1230.py` and
+`tests/test_kpp1_roof_approval.py`), including earlier topology/texture/stair tests,
+profile/height/corner mismatch controls, ±20 mm boundaries, source-order permutations,
+interior-no-host and nonfinite rejection. No shared module changed: full suite is
+not repeated after changes_requested (coordination rule 49); the initial suite
+receipt remains 20,569 passed / 1 environment setup error (file rerun: 339 passed).
+
+Remaining deferred and manual gates are unchanged; both whole-package verdicts stay false.
+
+## Historical run `issue-1230-rerun-v001` (superseded)
+
 
 Agent: dt-worker (Hermes Kanban card t_b1946208), 2026-11-11. Base: origin/main 4820e43b. Offline kernel route
 (`path: deviation`, Max busy), Blender 5.1.2 agent-owned [D233]. Inputs = the #1209 copies (`C:/x/kpp1/r1209/`:

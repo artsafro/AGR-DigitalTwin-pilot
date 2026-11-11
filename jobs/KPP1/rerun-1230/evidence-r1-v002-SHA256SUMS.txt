@@ -1,0 +1,12 @@
+9604a8f14f064495a8ccbbf17d21cdd1445825f6a9fc3ca215531327ada812bd  G:/Мой диск/AGR-evidence/1230-kpp1-r1/r1-v002/0000_Kpp_1_01.fbx
+1f46b0dd5973b6e3ba40acbe04d65fb3595dcacb0d90a7724e921eda9b56b676  G:/Мой диск/AGR-evidence/1230-kpp1-r1/r1-v002/SM_Kpp_1.fbx
+7479908fb68dd7fd95dad84c858605cfbf23c6c4fad306384a8082c15dac8fff  G:/Мой диск/AGR-evidence/1230-kpp1-r1/r1-v002/SM_Kpp_1.zip
+11ea9b6e6cc597f6035bb481815b38f28b348cdfd4d29cbca74fd3afa4a013d0  G:/Мой диск/AGR-evidence/1230-kpp1-r1/r1-v002/parts-r1-v002.json
+b9b217022191c6d588e526dc1d67d4b99c007c6f854175cb79afc250f3875deb  G:/Мой диск/AGR-evidence/1230-kpp1-r1/r1-v002/build-report-r1-v002.json
+1ef68642d2c01730578a51348ef8ce208da63893efe8a242e5b46df1a4516962  G:/Мой диск/AGR-evidence/1230-kpp1-r1/r1-v002/corner-readback-r1-v002.json
+fee3ba167e562559d8a89e1395d325e251c535b3f4cfcb406f6546ca2134bd26  G:/Мой диск/AGR-evidence/1230-kpp1-r1/r1-v002/check-corners-r1.py
+743e3db84c08057cca3ad03c0642628d584d13124fea97e4f5a0a1d419d9febd  G:/Мой диск/AGR-evidence/1230-kpp1-r1/r1-v002/xview-vpm-r1-v002.json
+4aa37ea9998cf5ad6f8a3e76a42ab0dbefc5bd4b94050c0c74b9cf70f7c8cdc7  G:/Мой диск/AGR-evidence/1230-kpp1-r1/r1-v002/xview-npm-r1-v002.json
+5f5e8a952345822a1533c1e818e89dff053ab2171cf60ce5ef56ab751b0a9bf9  G:/Мой диск/AGR-evidence/1230-kpp1-r1/r1-v002/vpm-r1-v002.validate.json
+e0d9ae665f7e5eb15a993f026ff76eb680f4d5b0322bfaa6fcae6334dd0cf407  G:/Мой диск/AGR-evidence/1230-kpp1-r1/r1-v002/npm-r1-v002.validate.json
+1e87a80c889a8ea9d99f275d53c693f3acd0899f1db42f311424407936865a31  G:/Мой диск/AGR-evidence/1230-kpp1-r1/r1-v002/T_Kpp_1_001_Main_d_1.png
