@@ -819,3 +819,19 @@ def test_max_job_source_is_a_pymxs_script():
     assert "pymxs" in source
     assert "saveMaxFile" in source
     assert "flora_atlas_from_scene.py" in source
+
+
+def test_vpm_profile_packs_its_own_4096_atlas(flora, tmp_path):
+    """[D246] VPM gets its own 4096 atlas; NPM keeps the single 2048 atlas [D232]."""
+    result, diffuse, _opacity, report = _build(flora, tmp_path, [{"name": "tree", "faces": [_quad(101)]}],
+                                               profile="vpm")
+    assert result["atlas_size"] == 4096 and result["atlas_count"] == 1
+    assert Image.open(diffuse).size == (4096, 4096)
+    assert json.loads(report.read_text(encoding="utf-8"))["profile"] == "vpm"
+
+
+@pytest.mark.parametrize("extra", [{"profile": "vpm", "atlas_size": 2048}, {"profile": "npm", "atlas_size": 4096},
+                                   {"profile": "ipm"}])
+def test_atlas_size_must_match_the_profile(flora, tmp_path, extra):
+    with pytest.raises(flora.FloraAtlasError):
+        _build(flora, tmp_path, [{"name": "tree", "faces": [_quad(101)]}], **extra)
