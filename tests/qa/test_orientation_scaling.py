@@ -2,9 +2,6 @@
 
 Pattern: n/a | new-case: issue-203 synthetic orientation acceleration probes.
 """
-import copy
-from functools import lru_cache
-
 import numpy as np
 import pytest
 
@@ -53,16 +50,6 @@ def bipyramid(faces):
                    [[0, 0, 10.0]], [[0, 0, -10.0]]])
     t = [(i, (i + 1) % m, m) for i in range(m)] + [((i + 1) % m, i, m + 1) for i in range(m)]
     return soup(v, np.array(t, int))
-
-
-@lru_cache(maxsize=1)
-def _large_box_data():
-    return box(65)
-
-
-def _large_box():
-    """Fresh writable copy of the same expensive synthetic input, never a cached check result."""
-    return copy.deepcopy(_large_box_data())
 
 
 def assert_equivalent(model, monkeypatch):
@@ -123,7 +110,7 @@ def _assert_clean_orientation_result(result):
 @pytest.mark.parametrize("shape", ["box", "slivers"])
 def test_orientation_real_size_exact(shape):
     """Real-size inputs return the exact clean-model result; no wall-clock budget (see the perf test)."""
-    model = _large_box() if shape == "box" else bipyramid(5000)
+    model = box(65) if shape == "box" else bipyramid(5000)
     _assert_clean_orientation_result(checks.check_orientation(model, {"weld_m": 0.003}))
 
 
@@ -131,7 +118,7 @@ def test_orientation_real_size_exact(shape):
 @pytest.mark.parametrize("shape,limit", [("box", 10.0), ("slivers", 5.0)])
 def test_orientation_real_size_budget(shape, limit, measure_process_time):
     """Opt-in CPU-time budget: warm-up then median of 5 runs; wall time reported only."""
-    model = _large_box() if shape == "box" else bipyramid(5000)
+    model = box(65) if shape == "box" else bipyramid(5000)
     median, wall = measure_process_time(lambda: checks.check_orientation(model, {"weld_m": 0.003}))
     print(f"[perf] {shape} ({len(model.triangles)} tris): median CPU {median:.4f}s, "
           f"wall {wall:.4f}s, budget {limit}s")
