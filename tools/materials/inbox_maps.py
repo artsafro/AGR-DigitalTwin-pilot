@@ -10,10 +10,15 @@ two. A source is one of:
 * `file`: an image from one of our own projects (absolute path, expected sha256, `project`); only read;
 * `generate`: a synthetic recipe of `texture_surfaces.py` (rows get `synthetic: true`); outputs pick
   the generated image by `image` (`d`, `n`, `mask`) and may tile it `repeat` x `repeat` first.
-`base_manifest` (optional) carries the rows of an earlier manifest over unchanged (v002 = v001 + new).
+`base_manifest` (optional) carries the rows of an earlier manifest over unchanged (v002 = v001 + new);
+it must have been written under the same --root.
 Profile `d207` is the master at exactly 1000 px/m over a whole period (size need not be a power of two).
 An output that already exists is never overwritten: identical bytes are kept, different bytes stop the
 run. Every output is a PNG, 8 bit RGB, no alpha; NPM outputs are checked with twinqa.png (V006 rules).
+Manifest paths are relative to --root (the D239 layout) and the manifest records that root.
+
+Pattern: n/a | new-case: inbox -> library map processing with a hashed manifest (#1188); no registry
+pattern in docs/domain/patterns/INDEX.md covers texture intake.
 """
 import argparse
 import hashlib
@@ -39,6 +44,7 @@ Image.MAX_IMAGE_PIXELS = None  # own 4096 project maps
 NPM_MAX_BYTES = 3 * 1024 * 1024  # [D015], reg p.9 §5.3
 NPM_AUTO_SIZES = (2048, 1024, 512)
 D207_PX_PER_M = 1000  # texture grid: 3.6 m per UDIM tile at 1000 px/m [D207]
+DEFAULT_ROOT = Path("G:/Мой диск/AGR-assets")  # D239 layout root
 
 
 def sha256(data: bytes) -> str:
@@ -204,7 +210,7 @@ def d207(px_per_m):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--spec", required=True, type=Path)
-    ap.add_argument("--root", required=True, type=Path, help="AGR-assets root")
+    ap.add_argument("--root", type=Path, default=DEFAULT_ROOT, help=f"AGR-assets root (default {DEFAULT_ROOT})")
     ap.add_argument("--out", required=True, type=Path, help="manifest JSON to write")
     args = ap.parse_args(argv)
     spec = json.loads(args.spec.read_text(encoding="utf-8"))
@@ -213,6 +219,8 @@ def main(argv=None):
     raw = json.loads((args.root / inbox_dir / "manifest.json").read_text(encoding="utf-8"))
     inbox = {i["msg_id"]: dict(i, path=f"{inbox_dir}/{i['file']}") for i in raw["items"]}
     base = json.loads((ROOT / spec["base_manifest"]).read_text(encoding="utf-8")) if "base_manifest" in spec else {}
+    if base and Path(base["root"]) != args.root:  # carried rows are relative to the base manifest's root
+        raise SystemExit(f"base manifest root {base['root']} differs from --root {args.root}")
     rows = list(base.get("maps", []))
     seen = {r["path"] for r in rows}
     for src in spec["sources"]:
@@ -256,7 +264,7 @@ def main(argv=None):
                 rows[-1]["provenance"] = src["provenance"]
     manifest = {
         "schema": 1, "version": spec.get("version", "v001"), "decision": "D239",
-        "root": "G:\\Мой диск\\AGR-assets",
+        "root": str(args.root),  # the root the files were written under; paths below are relative to it
         "inbox": inbox_dir, "inbox_manifest_sha256": sha256((args.root / inbox_dir / "manifest.json").read_bytes()),
         "spec": args.spec.as_posix(), "tool": "tools/materials/inbox_maps.py",
         "base_manifest": spec.get("base_manifest"),
