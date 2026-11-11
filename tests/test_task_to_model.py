@@ -220,9 +220,10 @@ def test_passport_scope_decision():
     rows = (ROOT / "docs/decisions.md").read_text(encoding="utf-8").splitlines()
     row = next((line for line in rows if line.startswith("| D247 |")), "")
     for fact in ("2026-11-11", "passport.json", "only on the AGR Tools route",
-                 "until a second route exists", "job.yaml", "REPORT",
-                 "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1207#issuecomment-6783203728"):
+                 "until a second route exists", "job.yaml", "REPORT", "[passport-scope-source]"):
         assert fact in row
+    assert ("[passport-scope-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1207"
+            "#issuecomment-6783203728") in rows
 
 
 @pytest.mark.parametrize("path,prefix", [
