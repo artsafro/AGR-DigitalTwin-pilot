@@ -21,7 +21,7 @@ plan at 0.000, L01 the facades, L02 the colour facades, and there is no section.
 (`A-WALL-____-PATT`, 33.07 m²) closed with the unchanged 0.75 m gap: one footprint of 27.60 × 13.06 m that
 covers 99.2 % of the hatch (`plan_from_dxf.py --contour-source hatch`). The wall lines alone kept 10.54 m² and covered 14.2 % of
 it, and the extract now refuses any contour that covers 90 % of the hatch or less, or whose bbox is 0.1 m or
-more off it. The footprint lies inside the larger synthetic mesh contour (33.28 × 14.75 m). Openings are not cut: the insert was measured on
+more off it, or whose footprint has 0.5 m² or more that the hatch closed at a fixed 0.75 m reference (not the run's gap) does not account for (#1004). The footprint lies inside the larger synthetic mesh contour (33.28 × 14.75 m). Openings are not cut: the insert was measured on
 the plan and on L01 and is not the opening centre (see `kpp1-drawing/mapping-questions.md`). kernel-prisms and
 blender-gn-union on that contour are R14 and R15. source-as-is and max-pymxs-cleanup do not read the plan
 (R13, R16). ac08 and tow02 have no drawing row.
