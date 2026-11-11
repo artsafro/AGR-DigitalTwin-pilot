@@ -481,7 +481,9 @@ def _zone_record(zone_name: str, id_key: str, colour_source: str, catalogue: dic
 def guard_schedule_zones(set_id: str, finishes, zones: list) -> None:
     """A schedule that names two or more finishes cannot end as one zone."""
     if finishes is None:
-        return
+        if set_id not in SCHEDULE_FINISHES:
+            raise ZoneError(f"unmapped position: {set_id}")
+        finishes = SCHEDULE_FINISHES[set_id]
     if not isinstance(finishes, (list, tuple)) or not finishes:
         raise ZoneError(f"{set_id}: schedule finishes missing")
     named = []
