@@ -82,7 +82,7 @@ items out of this file in the same merge. `C<N>` = conflict N in `docs/domain/co
   fences: deterministic result, collapse to mesh, FBX readback; same research note.
 - **P17** (later) Own asset catalog (models, materials, textures, previews, relink without Max); Project Manager
   covers it today. Same research note.
-- **P18** (Codex) Flora catalogue path for built stars (#1191, [D244]). The three accepted Telegram stars
+- **P18** (Codex) Flora catalogue path for built stars (#1191, [D253]). The three accepted Telegram stars
   (`library/flora/stars-telegram-v001.json`, `C:/x/flora-telegram-stars/v002`, ids 410-412 proposed) are not in
   `library/flora/catalogue.json`. To get them in: (1) a generator route for built stars without an audit-scene entry,
   or the audit run by `experiments/flora-library-audit/inspect_scene.py` on a labelled v004 scene; (2) flora-library
