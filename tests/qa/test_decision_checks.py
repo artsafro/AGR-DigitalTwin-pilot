@@ -808,6 +808,80 @@ def test_ground_skirt_outer_only_with_building_hole_passes_1133():
     assert finding.measured == pytest.approx(1.0)
 
 
+@pytest.mark.parametrize("depth,expected", [(0.0, "fail"), (0.5, "fail"), (0.999, "fail"),
+                                            (1.0, "pass"), (1.25, "pass")])
+@pytest.mark.parametrize("offset,rotate", [(0.0, False), (0.0, True), (1_000_000.0, False),
+                                           (1_000_000.0, True)])
+def test_ground_skirt_hole_generated_threshold_transforms_1133(depth, expected, offset, rotate):
+    verts, polys = _hole_ground_1133(depth)
+    verts = [[offset + (-y if rotate else x), offset + (x if rotate else y), z]
+             for x, y, z in verts]
+    # Reorder faces and cyclically rotate their starting vertices; neither changes rings.
+    polys = [p[1:] + p[:1] for p in reversed(polys)]
+    finding = _skirt_finding(verts, polys)
+    assert finding.status == expected
+    assert finding.measured == pytest.approx(depth)
+
+
+@pytest.mark.parametrize("skirt_sides", range(4))
+def test_ground_skirt_hole_never_hides_missing_outer_side_1133(skirt_sides):
+    verts, polys = _hole_ground_1133(skirt_sides=skirt_sides)
+    finding = _skirt_finding(verts, polys)
+    assert finding.status == "fail"
+    assert finding.measured == pytest.approx(0.0)
+
+
+@pytest.mark.parametrize("inside_hole", [False, True])
+@pytest.mark.parametrize("depth,expected", [(0.0, "fail"), (1.0, "pass")])
+def test_ground_skirt_every_disconnected_component_checked_1133(inside_hole, depth, expected):
+    verts, polys = _hole_ground_1133()
+    # A second independent 1x1 component, either outside the first or inside its hole.
+    x = 4.0 if inside_hole else 20.0
+    base = len(verts)
+    verts += [[x, x, 0], [x + 1, x, 0], [x + 1, x + 1, 0], [x, x + 1, 0],
+              [x, x, -depth], [x + 1, x, -depth], [x + 1, x + 1, -depth], [x, x + 1, -depth]]
+    polys += [[base + i for i in p] for p in
+              [[0, 1, 2, 3], [1, 0, 4, 5], [2, 1, 5, 6], [3, 2, 6, 7], [0, 3, 7, 4]]]
+    finding = _skirt_finding(verts, polys)
+    assert finding.status == expected
+    assert finding.measured == pytest.approx(depth)
+
+
+def test_ground_skirt_multiple_holes_excluded_1133():
+    verts, polys = _hole_ground_1133()
+    # Remove a second, separate inner cell without altering outer skirts.
+    polys.remove([11, 12, 22, 21])
+    finding = _skirt_finding(verts, polys)
+    assert finding.status == "pass"
+    assert finding.measured == pytest.approx(1.0)
+
+
+def test_ground_skirt_boundary_connected_cut_is_not_inner_hole_1133():
+    verts, polys = _hole_ground_1133()
+    # Connect the building cut to the exterior; the bare channel edges are now outer.
+    for y in range(3):
+        polys.remove([10 * y + 3, 10 * y + 4, 10 * (y + 1) + 4, 10 * (y + 1) + 3])
+    finding = _skirt_finding(verts, polys)
+    assert finding.status == "fail"
+    assert finding.measured == pytest.approx(0.0)
+
+
+@pytest.mark.parametrize("bad", [float("nan"), float("inf"), -float("inf")])
+def test_ground_skirt_hole_nonfinite_input_fails_1133(bad):
+    verts, polys = _hole_ground_1133()
+    verts[44][2] = bad  # even an unused vertex inside the hole must not bypass validation
+    assert _skirt_finding(verts, polys).status == "fail"
+
+
+def test_ground_skirt_branched_boundary_not_exempted_as_hole_1133():
+    verts, polys = _hole_ground_1133()
+    # A triangle touching the hole at a vertex makes its ring ambiguous.
+    base = len(verts)
+    verts += [[3.5, 3, 0], [3, 3.5, 0]]
+    polys.append([33, base, base + 1])
+    assert _skirt_finding(verts, polys).status == "fail"
+
+
 def _step_band_ground(skirt_sides=4):
     """A 10x10 quad Ground with a closed ~76 deg interior step band (a raised 4x4 plateau) and a
     1 m skirt on the outer boundary. ``skirt_sides`` < 4 removes one side of the skirt."""
