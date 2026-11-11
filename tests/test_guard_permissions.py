@@ -557,6 +557,23 @@ def test_guard_review_delta_1186_clobber_redirection_asks(command, protocol):
     assert guard(command, protocol) == "ask"
 
 
+@pytest.mark.parametrize("protocol", ["claude", "antigravity"])
+@pytest.mark.parametrize("command", [
+    "git>|out reset --hard", "git>| out reset --hard", "git>|out push",
+    "git>| out push", "git>&2 reset --hard",
+])
+def test_guard_review_delta_1186_glued_redirection_asks(command, protocol):
+    assert guard(command, protocol) == "ask"
+
+
+@pytest.mark.parametrize("protocol", ["claude", "antigravity"])
+@pytest.mark.parametrize("command", [
+    "git status>|out", "git log>&2 | tail", "git log>&2", "git status | grep x",
+])
+def test_guard_review_delta_1186_glued_redirection_safe_allowed(command, protocol):
+    assert guard(command, protocol) == "allow"
+
+
 def test_guard_research_stash_push_contract_1225():
     """The research note must describe the tokenizer's current safe-stash policy."""
     note = (ROOT / "docs/research/guard-vs-dcg-2026-11.md").read_text(encoding="utf-8")
