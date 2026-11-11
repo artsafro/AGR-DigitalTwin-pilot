@@ -11,6 +11,8 @@ Every recipe is periodic by construction over `period_m`, so the master is exact
 * `profiled_sheet`: trapezoid sheet, ribs along V, pitch / height / shelves in metres; 3.6 m period.
 
 Images: `d` (RGB colour), `n` (DirectX normal, green down), `mask` (base maps only: R body grey, G joint).
+
+Pattern: new-case — periodic synthetic library surfaces; no registry pattern covers texture generation.
 """
 import sys
 from pathlib import Path
