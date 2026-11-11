@@ -5,6 +5,20 @@ Read this before building or reducing a model. Start with the card, its area she
 A conflict or unknown source fact is a user question, not a modelling assumption.
 Use the matching `.agents/skills/model-*/SKILL.md` and `validate-delivery` skill.
 
+## Entry (one sequence, from either entry point)
+
+`docs/scenarios/<cell>.md` -> `jobs/<ID>/TASK.md` / contract questions -> `jobs/<ID>/job.yaml` gates
+
+1. Name the cell via the [scenario skill](../../.agents/skills/scenario/SKILL.md#step-1--name-the-cell)
+   and load its card and applicable area rules. A `todo` cell has no card: use its `reads` in
+   [scenarios.json](../scenarios/scenarios.json), and ask rather than invent its route.
+2. Hand over to [scenario Step 3](../../.agents/skills/scenario/SKILL.md#step-3--run-the-minimal-contract):
+   resolve the contract questions and record the answers in `jobs/<ID>/TASK.md`.
+   Reuse existing confirmed answers; an open question that changes the result stops the dependent work.
+3. Create or continue `jobs/<ID>/job.yaml` with the [eight gates below](#gates-same-for-every-path).
+   Return to [scenario Step 4](../../.agents/skills/scenario/SKILL.md#step-4--work-the-route) for the cell's
+   stage route, recording gate evidence here as work proceeds. No build before user Gate 1 confirmation.
+
 ## GATES (same for every path)
 
 Record every gate in `jobs/<JOB>/job.yaml`; schema:
@@ -16,7 +30,7 @@ Fixed dependency order below follows D104/D125: human geometry acceptance preced
 |---|---|
 | inputs | Full source inventory with paths and SHA-256; requirement/profile/version, source units, coordinate system and source authority recorded in the job report. Mark synthetic sources. `jobs/<ID>/passport.json` (K1) is required only on the AGR Tools route until a second route exists; other OKS routes record the same facts in `job.yaml` inputs / REPORT [D247]. |
 | parts | `parts.json` validates against [PartsList](../../schemas/PartsList.schema.json), via the public `dt_ai.core.models.PartsList` facade; source coverage, operation and triangle budget per part, joints and questions; **user Gate 1 confirmation before build** (D111/D124/D125). |
-| operations | Apply [kernel operations](../../src/dt_ai/ops/) to [parts](../../src/dt_ai/parts/); log operation names and before/after invariant results (D108/D131). Broken invariants roll back; stop and ask. Include additional applicable invariants, including D129, when supported; never silently omit a mandatory check. |
+| operations | Follow the cell's standard route ([oks-vpm body/windows/roof](../scenarios/oks-vpm.md#route-by-stage), [D248]); alternatives use `path: deviation` below. When using [kernel operations](../../src/dt_ai/ops/), apply them to [parts](../../src/dt_ai/parts/); log operation names and before/after invariant results (D108/D131). Broken invariants roll back; stop and ask. Include additional applicable invariants, including D129, when supported; never silently omit a mandatory check. |
 | budgets | Measured budgets vs cited profile/area/decision limits: master, NPM/VPM, UCX, materials, textures, density. Each measurement names its rule and comparison (`le` inclusive, `lt` exclusive); no inferred limit. |
 | export_readback | New versioned export, SHA-256; clean-process readback of **exported file**, checking topology, UV, materials, units/transforms. Working-scene checks alone do not complete this gate. |
 | report | Nonempty delivery report: source coverage/discrepancies, files/hashes, commands, measured checks, exceptions/deviations and missing/manual checks. Technical QA, user acceptance and publication remain separate. `jobs/<ID>/passport.json` (K1) is required only on the AGR Tools route until a second route exists; other OKS routes record the same facts in `job.yaml` inputs / REPORT [D247]. |
@@ -119,4 +133,6 @@ command. [Dry-run evidence](task-to-model-dry-run.md) records both inventories.
 Kernel tests are synthetic capability evidence, not a delivered model or invented
 user approval. Vatutino's committed reports describe real local artifacts but do
 not make absent exports/receipts reproducible here; `ground-parts.json` is not the
-PartsList contract. Keep these gaps visible. No real-building run is required.
+PartsList contract. Keep these gaps visible. The real-building [KPP1 cold run](../../jobs/KPP1/cold-run-1172/RUN-LOG.md)
+(#1172 / PR #1173) records its Gate 1 stop and procedure gaps, not delivery acceptance;
+use its receipts and the current job state when continuing a real-building task.
