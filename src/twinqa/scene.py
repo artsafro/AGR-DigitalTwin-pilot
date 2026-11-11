@@ -1113,6 +1113,88 @@ def _skirt_edge_drop(vi, vj, segs) -> float:
     return best if math.isfinite(best) else 0.0
 
 
+_RING_TURN_EPS = 1e-9  # rad: outgoing directions closer than this at a shared vertex are ambiguous
+
+
+def _boundary_rings(verts: list, boundary: list[tuple[int, int]]) -> list[list[tuple[int, int]]] | None:
+    """Split directed boundary edges into simple closed rings, or ``None`` when ambiguous (#1224).
+
+    Every vertex must have as many outgoing as incoming boundary edges (else non-manifold ->
+    ``None``). At a vertex shared by several rings (a pinch, or a hole touching the outer ring)
+    the edge after an incoming one is the first outgoing edge clockwise from the reversed incoming
+    direction in XY: the planar-face walk, which keeps the surface on the left and never crosses
+    rings. A face walk can still pass a shared vertex twice (a hole touching the outer ring is
+    one walk), so each walk is cut at every repeated vertex into simple rings, which the caller
+    classifies by signed area. Zero-length or coinciding outgoing directions -> ``None``.
+    """
+    out: dict[int, list[int]] = {}
+    in_deg: dict[int, int] = {}
+    for a, b in boundary:
+        out.setdefault(a, []).append(b)
+        in_deg[b] = in_deg.get(b, 0) + 1
+    if set(out) != set(in_deg) or any(len(out[v]) != in_deg[v] for v in out):
+        return None
+
+    def direction(v: int, w: int) -> float | None:
+        dx, dy = verts[w][0] - verts[v][0], verts[w][1] - verts[v][1]
+        return math.atan2(dy, dx) if (dx or dy) else None
+
+    nxt: dict[tuple[int, int], tuple[int, int]] = {}
+    for p, v in boundary:
+        choices = out[v]
+        if len(choices) == 1:
+            nxt[(p, v)] = (v, choices[0])
+            continue
+        back = direction(v, p)
+        if back is None:
+            return None
+        turns = []
+        for w in choices:
+            ang = direction(v, w)
+            if ang is None:
+                return None
+            cw = (back - ang) % (2 * math.pi)
+            if cw <= _RING_TURN_EPS or cw >= 2 * math.pi - _RING_TURN_EPS:
+                return None  # leaves along the incoming edge: overlapping boundary
+            turns.append((cw, w))
+        turns.sort()
+        if turns[1][0] - turns[0][0] <= _RING_TURN_EPS:
+            return None
+        nxt[(p, v)] = (v, turns[0][1])
+    if len(set(nxt.values())) != len(nxt):
+        return None  # two incoming edges claim the same outgoing edge: not a planar boundary
+
+    rings: list[list[tuple[int, int]]] = []
+    seen: set[tuple[int, int]] = set()
+    for first in boundary:
+        if first in seen:
+            continue
+        walk = []
+        e = first
+        while e not in seen:
+            seen.add(e)
+            walk.append(e)
+            e = nxt[e]
+        if e != first:
+            return None
+        # Cut the closed walk at every repeated vertex into simple rings.
+        stack: list[tuple[int, int]] = []
+        pos = {first[0]: 0}
+        for a, b in walk:
+            stack.append((a, b))
+            if b in pos:
+                i = pos[b]
+                rings.append(stack[i:])
+                for x, _ in stack[i + 1:]:
+                    pos.pop(x, None)
+                del stack[i:]
+            else:
+                pos[b] = len(stack)
+        if stack:
+            return None
+    return rings
+
+
 def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
     """``(status, depth)`` of the Ground perimeter skirt (GND-03), or ``None`` when unmeasurable.
 
@@ -1120,7 +1202,8 @@ def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
     when the mesh has no upward-facing surface or no surface perimeter to measure, and ``"ok"``
     when the perimeter drop was measured. The skirt extrudes the Ground surface's perimeter
     straight down. Only outer boundary rings of every component count as perimeter; inner holes
-    (including building cut-outs) are excluded [D251]. Under every outer edge the mesh must carry
+    (including building cut-outs) are excluded [D251]; rings sharing a welded vertex are split there
+    by ``_boundary_rings`` (#1224). Under every outer edge the mesh must carry
     edges at least ``SKIRT_MIN_M`` lower that lie on the same XY segment, either one copy per
     perimeter edge or one bottom edge spanning several collinear perimeter edges (#1133 case 1).
     The drop is measured per perimeter edge
@@ -1186,26 +1269,12 @@ def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
     boundary = [directed[e] for e, c in edge_count.items() if c == 1]
     if not boundary:
         return "unmeasurable", None
-    following: dict[int, int] = {}
-    incoming: set[int] = set()
-    for a, b in boundary:
-        if a in following or b in incoming:
-            return "fail", 0.0  # branched boundary: cannot safely exempt a hole
-        following[a] = b
-        incoming.add(b)
-    if set(following) != incoming:
+    rings = _boundary_rings(verts, boundary)
+    if rings is None:
         return "fail", 0.0
     perimeter = []
-    while following:
-        start = next(iter(following))
-        ring = []
-        a = start
-        while a in following:
-            b = following.pop(a)
-            ring.append((a, b))
-            a = b
-        if a != start:
-            return "fail", 0.0
+    for ring in rings:
+        start = ring[0][0]
         # Translate before shoelace accumulation to avoid cancellation at map coordinates.
         x0, y0 = verts[start][:2]
         area2 = math.fsum((verts[i][0] - x0) * (verts[j][1] - y0)
