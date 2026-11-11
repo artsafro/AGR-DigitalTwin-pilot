@@ -1,3 +1,7 @@
+Current run: NPM v012 and VPM v011 accepted (APPROVED_VERSIONS.json); full OKS delivery remains open.
+Source: Обр22_К02_С7-9_АР_Верх_R21_отсоединено_2025.rvt extraction and facade PDF pages 14–15 (source path and UV history below).
+Next gate: Review NPM, resolve ID0/white finish, then PBR and final OKS export/readback (accepted-version and v011 notes below).
+
 # Обр22 — корпус 2, секции 7–9: типовой этаж в Blender
 
 ## Принято пользователем
