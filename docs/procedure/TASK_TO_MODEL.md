@@ -92,10 +92,13 @@ versioned job evidence directory when a reproducible walk is needed.
 
 **Customer sources (#1202).** The named asset store is the shared Google Drive folder
 `G:/Мой диск/AGR-assets/` (one subfolder per library or object, `library/README.md`);
-customer sources are never committed (rule 57). Each job keeps a source registry
+customer sources are never committed (rule 57). An object's customer sources go to
+`G:/Мой диск/AGR-assets/<object>/source/` with a `SHA256SUMS.txt` (#1239; copy, never move,
+and hash the originals before and after). Each job keeps a source registry
 `jobs/<ID>/sources.json`: an `external-inputs/1` manifest whose `files` rows give the
 absolute `path`, `sha256`, `location` (`asset-store` or `named-folder`) and `folder` of
-every customer source, wherever it lives today. List such a manifest in `inputs` with
+every customer source, wherever it lives today; a row's `kind` is `customer-source` or
+`delivered-output`, and `original_path` keeps where a copied file came from. List such a manifest in `inputs` with
 `manifest: external-inputs/1`; the walker verifies the manifest itself as repo-relative
 evidence, then re-hashes every listed path and reports each row in the inputs gate's
 `external_inputs` as `equal`, `mismatch` (an error, the gate fails) or `unreachable`

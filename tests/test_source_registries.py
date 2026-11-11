@@ -110,6 +110,32 @@ def test_walker_passes_on_every_registry():
     assert {r["status"] for r in row["external_inputs"]} <= {"equal", "unreachable"}
 
 
+def test_tampered_registry_row_never_passes_as_equal(tmp_path):
+    """Probe: flip one hash at a time in every registry row (12 rows): never `equal`."""
+    seen = 0
+    for rel in REGISTRIES.values():
+        reg = load(rel)
+        for i in range(len(reg["files"])):
+            bad = json.loads(json.dumps(reg))
+            digest = bad["files"][i]["sha256"]
+            bad["files"][i]["sha256"] = ("0" if digest[0] != "0" else "1") + digest[1:]
+            data = json.dumps(bad, ensure_ascii=False).encode("utf-8")
+            target = tmp_path / f"{seen}" / rel
+            target.parent.mkdir(parents=True)
+            target.write_bytes(data)
+            ref = {"path": rel, "sha256": hashlib.sha256(data).hexdigest(), "manifest": TAG}
+            job = {"schema_version": "1.0.0", "job_id": "SYNTHETIC", "run_id": "probe", "synthetic": True,
+                   "path": "standard", "inputs": [ref], "artifacts": [], "deviations": [],
+                   "gates": {g: {"status": "missing", "note": "SYNTHETIC", "evidence": []} for g in p.GATES}}
+            job["gates"]["inputs"] = {"status": "pass", "note": "SYNTHETIC", "evidence": [ref]}
+            row = next(r for r in p.inspect_job(job, tmp_path / f"{seen}")["gates"] if r["gate"] == "inputs")
+            status = row["external_inputs"][i]["status"]
+            assert status in ("mismatch", "unreachable"), (rel, i, status)
+            assert row["ready"] is False and (status == "unreachable" or row["errors"]), (rel, i)
+            seen += 1
+    assert seen == sum(len(load(rel)["files"]) for rel in REGISTRIES.values())
+
+
 def test_kpp1_store_sha256sums_matches_registry():
     sums = Path(STORE + "KPP1/source/SHA256SUMS.txt")
     if not sums.is_file():
