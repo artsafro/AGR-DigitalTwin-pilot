@@ -27,7 +27,7 @@ LISTING = {
     "parts": [{"id": "wall_a", "part_class": "wall", "sources": [{"kind": "object", "reference": "Wall_A"}],
                "operation": "keep", "triangle_budget": {"npm": 100, "vpm": 200}}],
     "joints": [],
-    "gate1": {"actor": "user", "date": "2026-11-11", "scope": "synthetic_fixture", "note": "gate 1"},
+    "gate1": {"actor": "synthetic fixture", "date": "2026-11-11", "scope": "synthetic_fixture", "note": "gate 1"},
 }
 GOOD_REFS = [
     "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1205#issuecomment-123",
@@ -84,7 +84,7 @@ def test_bad_ref_rejected_by_model_and_schema(ref):
 
 
 def test_ref_roundtrips_through_json():
-    item = Approval(actor="user", date="2026-11-11", scope="project", note="gate 1", ref="D111")
+    item = Approval(actor="synthetic fixture", date="2026-11-11", scope="project", note="gate 1", ref="D111")
     assert Approval.model_validate_json(item.model_dump_json()) == item
 
 
