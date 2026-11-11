@@ -6,8 +6,8 @@ hard-wired in the name (`:23016-23018`), a ready ERM that is not 256x256 giving 
 changed Physical Diffuse (almost black), non-deterministic PNGs, external programs without an exit-code check.
 
 Here (K3): the record of the material library supplies the maps. Per used library id of a mesh, with the UDIM from
-`matlib_core.renumber_dense` (UDIM numbering is per mesh, owner answer V9 06.11.2026: body from 1001, windows/glass
-mesh from 1001 too):
+`matlib_core.renumber_dense` (UDIM numbering is per body mesh from 1001, owner answer V9 06.11.2026). The glass
+mesh gets NO maps (reg 2.4.2, D221): vpm_core.maps_table leaves it out.
 * Diffuse: `rgb_srgb` of the record (solid), or the mask recipe through the `base_map` file when it is given
   (`options.map_dir`); never a Physical-material read;
 * ERM: R = emissive, G = roughness, B = metallic of the record, 8 bit: the record keeps levels 0..255 and the texel

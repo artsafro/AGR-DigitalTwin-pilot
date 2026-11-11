@@ -6,7 +6,7 @@ host (host_max.MaxHost). Import pymxs inside functions so this file loads under 
 
 preview: reads every selected OKS mesh (udim10_max.read_tri: object coordinates + objectTransform in double, metres
 by units.SystemScale) and plans the build (vpm_core.build): K6 projection with the perimeter unroll, texel, cut by
-the UV grid, whole shifts into the tile of each material, UDIM 1001.. per mesh, glass to its own object, seam /
+the UV grid, whole shifts into the tile of each material, UDIM 1001.. per body mesh, glass to its own object in 1001 only (D221), seam /
 texel / tile checks. Nothing changes.
 apply: re-reads and compares (edit_core.require_current + the planned rows), then in ONE undo record (selection
 restored) makes export copies on layer `AGR_vpm` (`<name>_VPM_NNN`, glass `<name>_glass_VPM_NNN`), writes the new
@@ -75,8 +75,8 @@ def _steps(maps_reason, file_reason):
     return [{'step': 1, 'name': 'UV: K6 projection, perimeter unroll', 'status': 'done'},
             {'step': 2, 'name': 'texel (udim.rescale rule)', 'status': 'done'},
             {'step': 3, 'name': 'UDIM layout seam to seam (K6)', 'status': 'done'},
-            {'step': 4, 'name': 'library ids -> UDIM 1001.. per mesh (K3)', 'status': 'done'},
-            {'step': 5, 'name': 'glass to its own object', 'status': 'done'},
+            {'step': 4, 'name': 'library ids -> UDIM 1001.. per body mesh (K3)', 'status': 'done'},
+            {'step': 5, 'name': 'glass to its own object, all glass ids in UDIM 1001 (D221)', 'status': 'done'},
             {'step': 6, 'name': 'maps D+ERM+N', 'status': 'skipped' if maps_reason else 'done',
              'reason': maps_reason or ''},
             {'step': 7, 'name': 'tex.dilate', 'status': 'skipped', 'reason': 'button of branch N (tex.dilate)'},
