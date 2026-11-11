@@ -46,6 +46,27 @@ def test_route(prompt, cells, ask):
     assert result["ask"] == ask
 
 
+@pytest.mark.parametrize("relative", [
+    "docs/procedure/TASK_TO_MODEL.md",
+    ".agents/skills/scenario/SKILL.md",
+    ".claude/skills/scenario/SKILL.md",
+])
+def test_model_entry_sequence(relative):
+    text = (ROOT / relative).read_text(encoding="utf-8")
+    # One explicit sequence from either entry, not an independently inferred order.
+    sequence = "`docs/scenarios/<cell>.md` -> `jobs/<ID>/TASK.md` / contract questions -> `jobs/<ID>/job.yaml` gates"
+    assert sequence in text
+    if relative.startswith("docs/"):
+        assert ".agents/skills/scenario/SKILL.md#step-3" in text
+    else:
+        handover = text.split("## Step 4", 1)[0].split("## Step 3", 1)[1]
+        assert "TASK_TO_MODEL.md#gates" in handover
+        assert "eight gates" in handover
+    assert "docs/procedure/TASK_TO_MODEL.md" in (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+    assert (ROOT / ".agents/skills/scenario/SKILL.md").read_bytes() == (
+        ROOT / ".claude/skills/scenario/SKILL.md").read_bytes()
+
+
 def test_table_points_at_real_files():
     ids = [c["id"] for c in TABLE["cells"]]
     assert len(ids) == len(set(ids))
