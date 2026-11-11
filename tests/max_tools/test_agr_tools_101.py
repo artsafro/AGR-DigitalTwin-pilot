@@ -80,8 +80,10 @@ def test_plug_tile_from_the_mesh_table_core():
     assert [(f['face'], f['udim']) for f in plan['faces']] == [(1, 1004), (2, 1006)]
     assert plan['skipped'][0]['code'] == 'plug_matid' and plan['skipped'][0]['face'] == 3   # id not in the table
     assert pc.plug_check([plan['faces'][0]['uv']], 1004)
-    with pytest.raises(ValueError):
-        pc.plug_options({'udim_table': {'12': 1004, '29': 1004}})     # one tile for two ids
+    shared = pc.plug_options({'udim_table': {'12': 1004, '29': 1004}})   # glass copy: ids share a tile (D221)
+    with pytest.raises(ValueError):                                       # ... but two plugs in one tile refuse
+        pc.plug_plan([{'face': 1, 'matid': 12, 'verts': WALL}, {'face': 2, 'matid': 29, 'verts': WALL}], shared)
+    assert [f['udim'] for f in pc.plug_plan([{'face': 1, 'matid': 12, 'verts': WALL}], shared)['faces']] == [1004]
     with pytest.raises(ValueError):
         pc.plug_options({'udim_table': {'12': 2004}})
 
@@ -387,8 +389,8 @@ def test_vpm_maps_named_by_the_address_of_the_working_body(tmp_path):
                 {'name': 'BODY_AGRLibraryv001_001', 'summary': {'part': 'body', 'udim_table': {'3': 1001, '29': 1002}}},
                 {'name': 'BODY_AGRLibraryv001_001_glass', 'summary': {'part': 'glass', 'udim_table': {'39': 1001}}}]}]}
     table = vpm.maps_table(plan)
-    assert table == {'SM_Kpp_1_Main': {3: 1001, 29: 1002}, 'SM_Kpp_1_MainGlass': {39: 1001}}
-    res = vc.plan_maps(table, lib, str(tmp_path), {'slot': {'SM_Kpp_1_MainGlass': 2}})
+    assert table == {'SM_Kpp_1_Main': {3: 1001, 29: 1002}}   # no maps on glass (reg 2.4.2, D221)
+    res = vc.plan_maps(table, lib, str(tmp_path))
     names = sorted(m['name'] for m in res['maps'])
     assert 'T_Kpp_1_Diffuse_1.1001.png' in names and 'T_Kpp_1_ERM_1.1002.png' in names and not res['skipped']
     with pytest.raises(ValueError):

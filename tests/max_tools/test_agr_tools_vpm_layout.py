@@ -359,14 +359,40 @@ def test_options_period_texel_parameter_and_validation():
             vc.options(bad)
 
 
-def test_glass_and_body_are_numbered_per_mesh_and_renumber_is_dense():
+def test_body_is_numbered_per_mesh_and_renumber_is_dense_glass_is_1001():
     assert lay.renumber_dense([12, 3, 31, 7]) == {3: 1001, 7: 1002, 12: 1003, 31: 1004}
     with pytest.raises(ValueError):
         lay.renumber_dense([1005])
     seen = []
     obj = vc.build([core_mesh(MB.facade())], {'glass_ids': [MB.GLASS]},
                    lambda ids: seen.append(list(ids)) or lay.renumber_dense(ids))['objects'][0]
-    assert seen == [[3, 7], [31]] and obj['findings'] == []
+    # only the body is renumbered; the glass table is 1001 for every glass id (D221)
+    assert seen == [[3, 7]] and obj['findings'] == []
+    assert vc.glass_table([40, 31]) == {31: 1001, 40: 1001}
+    with pytest.raises(ValueError):
+        vc.glass_table([1005])
+
+
+def test_two_glass_materials_stay_in_udim_1001_and_get_no_maps():
+    """D221 (reg p.31 §2.2 / 2.5.2.2.1а): a glass mesh with k glass ids lies in 1001 only (was 1001..1000+k under
+    D209, conflict C47), with no udim_gap finding; maps_table gives the glass part no maps (reg 2.4.2)."""
+    mesh = core_mesh(MB.facade())
+    glass = [f for f, i in enumerate(mesh['mat_ids']) if i == MB.GLASS]
+    assert len(glass) >= 2
+    second = MB.GLASS + 9
+    for f in glass[len(glass) // 2:]:
+        mesh['mat_ids'][f] = second
+    plan = vc.build([mesh], {'glass_ids': [MB.GLASS, second], 'address': 'Kpp_1'})
+    obj = plan['objects'][0]
+    assert obj['findings'] == []
+    g = next(p['summary'] for p in obj['parts'] if p['summary']['part'] == 'glass')
+    assert g['tiles'] == [1001]
+    assert g['udim_table'] == {str(MB.GLASS): 1001, str(second): 1001}
+    assert g['crossing_pieces'] == 0 and g['seam_internal_max_px'] <= 0.01
+    geo = next(p['geometry'] for p in obj['parts'] if p['summary']['part'] == 'glass')
+    assert all(-1e-7 <= u <= 1 + 1e-7 and -1e-7 <= v <= 1 + 1e-7 for u, v in geo['uvs'])
+    assert set(geo['mat_ids']) == {MB.GLASS, second}   # the glass materials stay apart on the faces
+    assert vc.maps_table(plan) == {'SM_Kpp_1_Main': {3: 1001, 7: 1002}}
 
 
 def test_weld_output_is_closed_where_the_source_is():

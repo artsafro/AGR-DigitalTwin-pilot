@@ -123,7 +123,8 @@ def plug_uv(verts, udim, size=PLUG_SIZE, centre=PLUG_CENTRE):
 
 def udim_table(value):
     """{library id: UDIM} of a mesh from options / the `agr_udim_table` user prop (JSON object, string keys allowed);
-    UDIM 1001..1100, one tile per id. None stays None."""
+    UDIM 1001..1100. Ids may share a tile: the glass copy of vpm.build has every glass id in 1001 (D221); two PLUGGED
+    ids in one tile are refused by plug_plan. None stays None."""
     if value is None:
         return None
     if not isinstance(value, dict) or not value:
@@ -137,8 +138,6 @@ def udim_table(value):
         if lid <= 0 or str(lid) != str(k).strip() or type(v) is not int or not 1001 <= v <= 1000 + MAX_TILE_ID:
             raise ValueError('udim_table row {!r}: {!r} must be library id -> UDIM 1001..1100'.format(k, v))
         out[lid] = v
-    if len(set(out.values())) != len(out):
-        raise ValueError('udim_table gives one UDIM to two ids: {}'.format(out))
     return out
 
 
@@ -190,6 +189,14 @@ def plug_plan(faces, opts):
         tiles[udim] = tiles.get(udim, 0) + 1
     if not planned and not skipped:
         raise ValueError('no face matches options.matids: nothing to plug')
+    if opts['fixed_udim'] is None and opts.get('udim_table') is not None:
+        ids_of = {}
+        for f in planned:
+            ids_of.setdefault(f['udim'], set()).add(f['matid'])
+        shared = {u: sorted(ids) for u, ids in sorted(ids_of.items()) if len(ids) > 1}
+        if shared:
+            raise ValueError('udim_table gives one UDIM to two plugged ids {} (a glass copy keeps all glass ids in 1001, '
+                             'D221: glass gets no plugs, give options.matids)'.format(shared))
     ambiguous = [{'item': 'tile {}'.format(u), 'reason': 'tile centre already holds a real island; the plug sits on '
                   'top of it (plugs are for placeholder materials only)'} for u in sorted(tiles)
                  if opts['occupied'].get(u)]
