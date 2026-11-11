@@ -216,6 +216,30 @@ def test_repository_walks():
         assert {row["gate"] for row in result["gates"] if row["status"] == "missing"} >= {"visual", "checker"}
 
 
+def test_passport_scope_decision():
+    rows = (ROOT / "docs/decisions.md").read_text(encoding="utf-8").splitlines()
+    row = next((line for line in rows if line.startswith("| D247 |")), "")
+    for fact in ("2026-11-11", "passport.json", "only on the AGR Tools route",
+                 "until a second route exists", "job.yaml", "REPORT", "[passport-scope-source]"):
+        assert fact in row
+    assert ("[passport-scope-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1207"
+            "#issuecomment-6783203728") in rows
+
+
+@pytest.mark.parametrize("path,prefix", [
+    ("docs/procedure/TASK_TO_MODEL.md", "| inputs |"),
+    ("docs/procedure/TASK_TO_MODEL.md", "| report |"),
+    ("docs/scenarios/oks-vpm.md", "| Passport |"),
+    ("docs/agents/agr-tools-1.0-rules.md", "- **Passport scope"),
+])
+def test_passport_scope_documentation(path, prefix):
+    rows = (ROOT / path).read_text(encoding="utf-8").splitlines()
+    row = next((line for line in rows if line.startswith(prefix)), "")
+    for fact in ("passport.json", "only on the AGR Tools route", "until a second route exists",
+                 "other OKS routes", "job.yaml", "REPORT", "[D247]"):
+        assert fact in row, (path, prefix, fact)
+
+
 def test_playbook_and_schema():
     p = load()
     schema = json.loads((ROOT / "schemas/JobChecklist.schema.json").read_text(encoding="utf-8"))

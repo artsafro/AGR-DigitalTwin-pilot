@@ -341,17 +341,37 @@ def _npz_faces(path):
     return z["vertices"], [tuple(int(x) for x in lv[s:s + t]) for s, t in zip(z["loop_start"], z["loop_total"])]
 
 
-@pytest.mark.skipif(not (TOW02 / "xview/ours_v005.keep").exists(), reason="TOW02 review-v002 evidence not on this PC")
-def test_tow02_v005_fast_equals_xview_185_within_10_s():
+_TOW02_V005 = pytest.mark.skipif(not (TOW02 / "xview/ours_v005.keep").exists(),
+                                 reason="TOW02 review-v002 evidence not on this PC")
+
+
+def _tow02_v005_report():
     keep = json.loads((TOW02 / "xview/ours_v005.keep").read_text(encoding="cp1251"))
     v, f = _npz_faces(TOW02 / "xcheck/raw/arrays_ours.npz")
     t = time.perf_counter()
     r = X.mesh_report(v, f, "NPM")
-    dt = time.perf_counter() - t
+    return keep, r, time.perf_counter() - t
+
+
+def _assert_tow02_v005_equals_xview_185(keep, r):
     xv = sorted(i[0] for i in keep["facesCheck"]["items"])
     stored = [int(x) for x in (FIX / "tow02_v005_xview_faces.txt").read_text().split()]
     assert r["xview_faces"] == xv == stored and len(xv) == 185
     assert r["vertex_pairs"] == 0 == keep["verticesCheck"]["count"]
+
+
+@_TOW02_V005
+def test_tow02_v005_fast_equals_xview_185():
+    # correctness half; the 10 s wall-clock budget is the perf test below (#1212)
+    keep, r, _ = _tow02_v005_report()
+    _assert_tow02_v005_equals_xview_185(keep, r)
+
+
+@pytest.mark.perf
+@_TOW02_V005
+def test_tow02_v005_fast_equals_xview_185_within_10_s():
+    keep, r, dt = _tow02_v005_report()
+    _assert_tow02_v005_equals_xview_185(keep, r)
     assert dt <= 10.0, f"inv_xview on TOW02 v005 took {dt:.1f} s"
 
 

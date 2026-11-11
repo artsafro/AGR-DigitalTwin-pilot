@@ -204,11 +204,19 @@ like on an empty field.
 
 ## Job contract (#130)
 
-`jobs/<ID>/STATE.md` opens with the contract. The Requirement section is copied once from the user and not
+Every `jobs/<ID>/STATE.md` starts with the three-line header below, in that order, with non-empty values.
+Summarize the current run (including stopped/closed status), its source/manifest and the next gate from job
+content; write `unknown — <why>` for an unknown value, never guess. Refresh the header when the run, source
+or next gate changes; keep the history below it intact. The header is orientation, not delivery acceptance.
+The contract follows the header. The Requirement section is copied once from the user and not
 edited afterwards; a later decision is added below it with its date or `D<n>`, never written over it. The
 handover (step 7, `/handover`) compares the result with this section item by item.
 
 ```markdown
+Current run: <run/version and status; link to run log if present>
+Source: <authoritative inputs or manifest; unresolved authority stays explicit>
+Next gate: <required answer/check and the action after it; none if the job is closed>
+
 # <ID> (<object name>) - <profile>, <date>
 
 Status: <draft | built | accepted by the user (<date>) | ...>
