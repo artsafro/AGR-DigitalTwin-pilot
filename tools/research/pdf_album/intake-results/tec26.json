@@ -1,0 +1,172 @@
+{
+  "album": "tec26",
+  "source_sha256": "ab4339496166779b2989a42bdbf88072bf8267a6a30ad748da544bf48ed3f997",
+  "pages": [
+    {
+      "pdf_page": 1,
+      "kind": "3D",
+      "expected_kind": "3D",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "Архитектурно-градостроительное решение. Визуализации.",
+      "routes": {
+        "vector_read": 9,
+        "ocr_vision": 1
+      },
+      "indicators": {
+        "text": 6,
+        "raster": 1,
+        "vector": 3
+      }
+    },
+    {
+      "pdf_page": 2,
+      "kind": "unknown",
+      "expected_kind": "unknown",
+      "status": "partial",
+      "reason": "dense_display_list_cutoff",
+      "printed_sheet": null,
+      "title": null,
+      "routes": {
+        "vector_read": 2,
+        "ocr_vision": 1
+      },
+      "indicators": {
+        "text": 2,
+        "unknown": 1
+      }
+    },
+    {
+      "pdf_page": 3,
+      "kind": "3D",
+      "expected_kind": "3D",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "Новый парогазовый блок. Визуализация 1",
+      "routes": {
+        "vector_read": 4,
+        "ocr_vision": 1
+      },
+      "indicators": {
+        "text": 2,
+        "raster": 1,
+        "vector": 2
+      }
+    },
+    {
+      "pdf_page": 4,
+      "kind": "3D",
+      "expected_kind": "3D",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "Новый парогазовый блок. Визуализация 2",
+      "routes": {
+        "vector_read": 4,
+        "ocr_vision": 1
+      },
+      "indicators": {
+        "text": 2,
+        "raster": 1,
+        "vector": 2
+      }
+    },
+    {
+      "pdf_page": 5,
+      "kind": "3D",
+      "expected_kind": "3D",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "Новый парогазовый блок. Визуализация 3",
+      "routes": {
+        "vector_read": 4,
+        "ocr_vision": 1
+      },
+      "indicators": {
+        "text": 2,
+        "raster": 1,
+        "vector": 2
+      }
+    },
+    {
+      "pdf_page": 6,
+      "kind": "3D",
+      "expected_kind": "3D",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "Новый парогазовый блок. Визуализация 4",
+      "routes": {
+        "vector_read": 4,
+        "ocr_vision": 1
+      },
+      "indicators": {
+        "text": 2,
+        "raster": 1,
+        "vector": 2
+      }
+    }
+  ],
+  "accounted": 6,
+  "reference_pages": 6,
+  "kind_agreement": 6,
+  "scores": {
+    "plan": {
+      "correct": 0,
+      "predicted": 0,
+      "reference": 0,
+      "precision": null,
+      "recall": null
+    },
+    "facade": {
+      "correct": 0,
+      "predicted": 0,
+      "reference": 0,
+      "precision": null,
+      "recall": null
+    },
+    "section": {
+      "correct": 0,
+      "predicted": 0,
+      "reference": 0,
+      "precision": null,
+      "recall": null
+    },
+    "schedule": {
+      "correct": 0,
+      "predicted": 0,
+      "reference": 0,
+      "precision": null,
+      "recall": null
+    },
+    "3D": {
+      "correct": 5,
+      "predicted": 5,
+      "reference": 5,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "unknown": {
+      "correct": 1,
+      "predicted": 1,
+      "reference": 1,
+      "precision": 1.0,
+      "recall": 1.0
+    }
+  },
+  "scope": "agreement with frozen text heuristics; NOT semantic ground truth",
+  "seconds": [
+    6.21585189999314,
+    4.410251499997685
+  ],
+  "deterministic": true,
+  "passed": false,
+  "evidence": "G:\\Мой диск\\AGR-evidence\\pdf-album\\1233\\t_3996e752-v002\\tec26\\first",
+  "hashes": {
+    "album_index.json": "fb19804cb7ae7ab15095d4088c6d239c5c840e51abebff12e34ad04a258ea5d0",
+    "manifest.json": "df21dff1adcac89ab4ea31c8048d7216861cce45eaa515504fa8300e9e7da795"
+  }
+}
