@@ -1,0 +1,173 @@
+"""guard.py - frozen guard for autoresearch #1227. Exit 0 = PASS, 1 = FAIL, 2 = usage/input error.
+
+Usage:
+  python guard.py --oracle baseline.jsonl --targets targets.txt --run run.jsonl [--run run2.jsonl ...]
+                  [--repo <worktree> --base <git ref>] [--collected N]
+
+Checks (all fail-closed):
+  G1 every run: set of test ids for target files == oracle ids restricted to target files (no missing, no extra)
+  G2 every run: each test's outcome == oracle outcome; any failed/error outcome is a FAIL even if the oracle has it
+  G3 every run: run file is complete (meta first line, session last line, exitstatus 0)
+  G4 --collected N: default-suite collected count N >= oracle collected count
+  G5 --repo/--base: in the git diff base..HEAD of tests/**.py: no removed `def test_`, no added deselecting or skipping
+     marker (perf, job, max, blender, dcc, acad, panel_texture, native_max, skip, skipif, xfail), and the number of
+     `assert` / `pytest.raises` / `pytest.approx` tokens removed does not exceed the number added per file.
+"""
+import argparse
+import json
+import math
+import os
+import re
+import subprocess
+import sys
+
+DESELECT = re.compile(r"pytest\.mark\.(perf|job|max|blender|dcc|acad|panel_texture|native_max|skip|skipif|xfail)\b"
+                      r"|pytest\.(skip|xfail)\(|importorskip\(")
+ASSERTS = re.compile(r"\bassert\b|pytest\.raises|pytest\.approx|pytest\.warns")
+TESTDEF = re.compile(r"^\s*(async\s+)?def\s+(test_\w+)")
+
+
+def load(path):
+    if not os.path.isfile(path) or os.path.getsize(path) == 0:
+        raise ValueError(f"missing or empty jsonl: {path}")
+    meta = session = None
+    tests = {}
+    with open(path, encoding="utf-8") as f:
+        for n, line in enumerate(f):
+            if not line.strip():
+                raise ValueError(f"blank event in {path}")
+            o = json.loads(line)
+            if not isinstance(o, dict) or session is not None:
+                raise ValueError(f"invalid event order in {path}")
+            if "meta" in o:
+                if n != 0 or meta is not None:
+                    raise ValueError(f"meta must occur exactly once, first in {path}")
+                meta = o["meta"]
+                if type(meta.get("collected")) is not int or meta["collected"] <= 0:
+                    raise ValueError(f"invalid collected count in {path}")
+            elif "session" in o:
+                session = o["session"]
+                if type(session.get("exitstatus")) is not int or session["exitstatus"] != 0:
+                    raise ValueError(f"unsuccessful session in {path}")
+            else:
+                if meta is None or not isinstance(o.get("id"), str) or not o["id"]:
+                    raise ValueError(f"invalid test event in {path}")
+                if o["id"] in tests:
+                    raise ValueError(f"duplicate test id {o['id']} in {path}")
+                if o.get("file") != o["id"].split("::")[0]:
+                    raise ValueError(f"inconsistent file/id in {path}")
+                if o.get("outcome") not in {"passed", "skipped", "xfailed"}:
+                    raise ValueError(f"unsupported/failing outcome in {path}: {o.get('outcome')}")
+                for field in ("cpu", "wall"):
+                    value = o.get(field)
+                    if type(value) not in (int, float) or not math.isfinite(value) or value < 0:
+                        raise ValueError(f"invalid {field} in {path}")
+                tests[o["id"]] = o
+    if meta is None or session is None or len(tests) != meta["collected"]:
+        raise ValueError(f"incomplete run or collected count mismatch in {path}")
+    return meta, session, tests
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--oracle", required=True)
+    ap.add_argument("--targets", required=True)
+    ap.add_argument("--run", action="append", default=[])
+    ap.add_argument("--collected", type=int)
+    ap.add_argument("--repo")
+    ap.add_argument("--base")
+    a = ap.parse_args(argv)
+    fails = []
+    if not a.run:
+        print("GUARD ERROR: at least one --run is required")
+        return 2
+    try:
+        with open(a.targets, encoding="utf-8") as target_file:
+            targets = [t.strip() for t in target_file if t.strip() and not t.startswith("#")]
+        if not targets:
+            raise ValueError("empty target list")
+        ometa, _, otests = load(a.oracle)
+        if ometa is None:
+            raise ValueError("oracle has no meta line")
+    except (OSError, ValueError) as e:
+        print(f"GUARD ERROR: {e}")
+        return 2
+    tset = set(targets)
+    oracle = {k: v["outcome"] for k, v in otests.items() if v["file"] in tset}
+    missing_files = tset - {v["file"] for v in otests.values()}
+    if missing_files:
+        fails.append(f"G0 target files absent from oracle: {sorted(missing_files)[:5]}")
+    for rp in a.run:
+        try:
+            meta, session, tests = load(rp)
+        except (OSError, ValueError) as e:
+            fails.append(f"G3 {rp}: {e}")
+            continue
+        if meta is None or session is None:
+            fails.append(f"G3 {rp}: incomplete run (meta={meta is not None}, session={session is not None})")
+        elif session.get("exitstatus") != 0:
+            fails.append(f"G3 {rp}: exitstatus {session.get('exitstatus')}")
+        got = {k: v["outcome"] for k, v in tests.items() if v["file"] in tset}
+        extra_files = {v["file"] for v in tests.values()} - tset
+        if extra_files:
+            fails.append(f"G1 {rp}: tests from non-target files {sorted(extra_files)[:3]}")
+        miss, extra = set(oracle) - set(got), set(got) - set(oracle)
+        if miss:
+            fails.append(f"G1 {rp}: {len(miss)} oracle ids missing, e.g. {sorted(miss)[:3]}")
+        if extra:
+            fails.append(f"G1 {rp}: {len(extra)} new ids, e.g. {sorted(extra)[:3]}")
+        diff = [(k, oracle[k], got[k]) for k in set(oracle) & set(got) if oracle[k] != got[k]]
+        if diff:
+            fails.append(f"G2 {rp}: {len(diff)} outcome changes, e.g. {sorted(diff)[:3]}")
+        bad = [k for k, o in got.items() if o in ("failed", "error")]
+        if bad:
+            fails.append(f"G2 {rp}: {len(bad)} failed/error, e.g. {sorted(bad)[:3]}")
+        print(f"run {rp}: {len(got)} target tests checked")
+    if a.collected is not None and a.collected < ometa["collected"]:
+        fails.append(f"G4 default-suite collected {a.collected} < oracle {ometa['collected']}")
+    if a.repo and a.base:
+        cp = subprocess.run(["git", "-C", a.repo, "diff", "-U0", f"{a.base}...HEAD", "--", "tests"],
+                            capture_output=True, text=True, encoding="utf-8")
+        if cp.returncode != 0:
+            fails.append(f"G5 git diff failed: {cp.stderr.strip()[:200]}")
+        else:
+            cur, add, rem, defs_add, defs_rem = None, {}, {}, set(), set()
+            for ln in cp.stdout.splitlines():
+                if ln.startswith("+++ "):
+                    cur = ln[6:] if ln.startswith("+++ b/") else ln[4:]
+                    continue
+                if ln.startswith("--- "):
+                    continue
+                if ln.startswith("+"):
+                    body = ln[1:]
+                    if DESELECT.search(body):
+                        fails.append(f"G5 {cur}: added deselect/skip marker: {body.strip()[:100]}")
+                    m = TESTDEF.match(body)
+                    if m:
+                        defs_add.add((cur, m.group(2)))
+                    add[cur] = add.get(cur, 0) + len(ASSERTS.findall(body))
+                elif ln.startswith("-"):
+                    body = ln[1:]
+                    m = TESTDEF.match(body)
+                    if m:
+                        defs_rem.add((cur, m.group(2)))
+                    rem[cur] = rem.get(cur, 0) + len(ASSERTS.findall(body))
+            for f, name in sorted(defs_rem - defs_add):
+                fails.append(f"G5 {f}: removed test def {name}")
+            for f in rem:
+                if rem[f] > add.get(f, 0):
+                    fails.append(f"G5 {f}: assertion tokens removed {rem[f]} > added {add.get(f, 0)}")
+            print(f"G5 diff {a.base}...HEAD: {len(set(add) | set(rem))} test files changed")
+    print(f"oracle target tests: {len(oracle)}; oracle collected: {ometa['collected']}"
+          + (f"; candidate collected: {a.collected}" if a.collected is not None else ""))
+    if fails:
+        print("GUARD FAIL")
+        for f in fails:
+            print("  " + f)
+        return 1
+    print("GUARD PASS")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

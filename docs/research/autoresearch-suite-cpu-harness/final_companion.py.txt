@@ -1,0 +1,49 @@
+"""Final serial receipt, then real focused load to keep the companion slot busy for #1227.
+Must itself run through suite_slot.py; never edits the worktree or source inputs.
+"""
+import json
+import os
+from pathlib import Path
+import subprocess
+import time
+
+ROOT = Path('C:/Users/artsafro/agr-pilot/AGR-DigitalTwin/.worktrees/t_4c32b36e')
+EVIDENCE = Path('C:/x/autoresearch-suite')
+final = EVIDENCE / 'final.jsonl'
+log = EVIDENCE / 'final_stdout.txt'
+if final.exists() or log.exists():
+    raise SystemExit('refusing to overwrite final evidence')
+head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
+env = dict(os.environ, PYTHONPATH=str(EVIDENCE), AR_CPU_OUT=str(final))
+for key in ('MSYS_NO_PATHCONV', 'MSYS2_ARG_CONV_EXCL'):
+    env.pop(key, None)
+argv = ['uv', 'run', 'pytest', '-q', '-p', 'no:xdist', '-p', 'no:cacheprovider',
+        '-p', 'ar_cpu_plugin', '--basetemp=C:/x/t_4c32b36e-final']
+start = time.monotonic()
+with log.open('x', encoding='utf-8') as stream:
+    result = subprocess.run(argv, cwd=ROOT, env=env, stdout=stream, stderr=subprocess.STDOUT)
+receipt = {'head': head, 'head_after': subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
+           'argv': argv, 'exit_code': result.returncode, 'wall_s': time.monotonic()-start}
+(EVIDENCE / 'final-command.json').write_text(json.dumps(receipt, indent=2), encoding='utf-8')
+print('FINAL', json.dumps(receipt), flush=True)
+print(log.read_text(encoding='utf-8', errors='replace')[-2000:], flush=True)
+# Additional focused stress is not a full-suite receipt and is never included in the frozen metric.
+env.pop('AR_CPU_OUT', None)
+targets = (EVIDENCE / 'targets.txt').read_text().splitlines()
+deadline = time.monotonic() + 10800
+iteration = 0
+while not (EVIDENCE / 'xdist-matrix.done').exists() and time.monotonic() < deadline:
+    iteration += 1
+    phase = {'phase': 'focused_companion', 'iteration': iteration, 'started': time.time()}
+    with (EVIDENCE / 'companion-phases.jsonl').open('a', encoding='utf-8') as f:
+        f.write(json.dumps(phase)+'\n')
+    with (EVIDENCE / f'companion-focused-{iteration}.log').open('x', encoding='utf-8') as stream:
+        load = subprocess.run(['uv','run','pytest','-q','-p','no:xdist','-p','no:cacheprovider',
+                               '--basetemp=C:/x/t_4c32b36e-companion', *targets],
+                              cwd=ROOT, env=env, stdout=stream, stderr=subprocess.STDOUT)
+    print('COMPANION', iteration, 'exit', load.returncode, flush=True)
+    if load.returncode:
+        raise SystemExit(load.returncode)
+if receipt['head_after'] != head:
+    raise SystemExit('HEAD changed during final suite')
+raise SystemExit(result.returncode)

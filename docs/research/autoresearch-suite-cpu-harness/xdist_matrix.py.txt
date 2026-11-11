@@ -1,0 +1,101 @@
+"""Bounded, card-authorized xdist observation; run ONLY under suite_slot.py.
+No runner/policy edits. Raw logs and holder samples retained; no CPU-metric claims.
+"""
+import argparse
+import ctypes
+import json
+import os
+from pathlib import Path
+import re
+import subprocess
+import threading
+import time
+
+ROOT = Path('C:/Users/artsafro/agr-pilot/AGR-DigitalTwin/.worktrees/t_4c32b36e')
+EVIDENCE = Path('C:/x/autoresearch-suite')
+LOCK_ROOT = Path(os.environ['LOCALAPPDATA']) / 'Temp'
+
+def holders():
+    found = []
+    kernel = ctypes.windll.kernel32
+    for path in LOCK_ROOT.glob('agr-suite-slot-*.lock'):
+        try:
+            record = json.loads(path.read_text(encoding='utf-8'))
+            handle = kernel.OpenProcess(0x1000, False, int(record['pid']))
+            if not handle:
+                continue
+            try:
+                code = ctypes.c_ulong()
+                if kernel.GetExitCodeProcess(handle, ctypes.byref(code)) and code.value == 259:
+                    found.append({'slot': path.name, **record})
+            finally:
+                kernel.CloseHandle(handle)
+        except (OSError, ValueError, KeyError):
+            continue
+    return found
+
+def run_one(n, repetition, head):
+    deadline = time.monotonic() + 3600
+    while True:
+        live = holders()
+        if len(live) == 2 and all(row['card'] == 't_4c32b36e' for row in live):
+            break
+        if time.monotonic() >= deadline:
+            raise RuntimeError(f'two owned slots did not become available: {live}')
+        print('WAITING for exactly two owned live holders', live, flush=True)
+        time.sleep(30)
+    prefix = EVIDENCE / f'xdist-n{n}-r{repetition}'
+    if prefix.with_suffix('.json').exists() or prefix.with_suffix('.log').exists():
+        raise RuntimeError(f'refusing existing evidence: {prefix}')
+    argv = ['uv', 'run', 'pytest', '-q', '-p', 'no:cacheprovider', '-n', str(n),
+            '--dist', 'loadfile', '--basetemp=C:/x/t_4c32b36e-xdist']
+    env = dict(os.environ)
+    for key in ('MSYS_NO_PATHCONV', 'MSYS2_ARG_CONV_EXCL', 'AR_CPU_OUT'):
+        env.pop(key, None)
+    samples, stop = [], threading.Event()
+    def sample():
+        while not stop.is_set():
+            samples.append({'monotonic': time.monotonic(), 'holders': holders()})
+            stop.wait(2)
+    thread = threading.Thread(target=sample, daemon=True)
+    start = time.monotonic()
+    thread.start()
+    try:
+        with prefix.with_suffix('.log').open('x', encoding='utf-8') as log:
+            child = subprocess.run(argv, cwd=ROOT, env=env, stdout=log, stderr=subprocess.STDOUT)
+    finally:
+        stop.set()
+        thread.join()
+    elapsed = time.monotonic() - start
+    samples.append({'monotonic': time.monotonic(), 'holders': holders()})
+    text = prefix.with_suffix('.log').read_text(encoding='utf-8', errors='replace')
+    summary = [line for line in text.splitlines() if re.search(r'\d+ (?:passed|failed).* in [\d.]+s', line)]
+    crash_markers = re.findall(r'(?i)0xc0000142|3221225794|-1073741502|DLL initialization', text)
+    worker_failures = re.findall(r'(?i)node down|worker .*crashed|worker failed|INTERNALERROR|Fatal Python error', text)
+    final_head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
+    row = {'n': n, 'repetition': repetition, 'head': head, 'head_after': final_head,
+           'argv': argv, 'wall_s': elapsed, 'exit_code': child.returncode,
+           'summary': summary[-1] if summary else None, 'desktop_heap_markers': crash_markers,
+           'worker_failure_markers': worker_failures,
+           'holder_counts': sorted({len(sample['holders']) for sample in samples}),
+           'two_slots_all_samples': bool(samples) and all(len(sample['holders']) == 2 for sample in samples),
+           'samples': samples}
+    prefix.with_suffix('.json').write_text(json.dumps(row, indent=2), encoding='utf-8')
+    if row['summary']:
+        print(row['summary'], flush=True)
+    print(json.dumps({k: v for k, v in row.items() if k != 'samples'}), flush=True)
+    if final_head != head:
+        raise RuntimeError('HEAD changed during measurement')
+    return row
+
+if __name__ == '__main__':
+    head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
+    rows = []
+    for n in (2, 4):
+        for repetition in (1, 2, 3):
+            rows.append(run_one(n, repetition, head))
+    (EVIDENCE / 'xdist-matrix.json').write_text(json.dumps(rows, indent=2), encoding='utf-8')
+    (EVIDENCE / 'xdist-matrix.done').write_text(head, encoding='utf-8')
+    raise SystemExit(0 if all(row['exit_code'] == 0 and row['summary'] and row['two_slots_all_samples']
+                              and not row['desktop_heap_markers'] and not row['worker_failure_markers']
+                              for row in rows) else 1)

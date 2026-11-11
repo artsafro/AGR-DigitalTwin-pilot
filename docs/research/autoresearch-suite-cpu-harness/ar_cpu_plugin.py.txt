@@ -1,0 +1,69 @@
+"""ar_cpu_plugin - per-test CPU recorder for autoresearch #1227 (conftest-free, load with -p ar_cpu_plugin).
+
+Writes one JSON line per test to $AR_CPU_OUT: nodeid, file, cpu (time.process_time delta over
+setup+call+teardown of this process), wall (perf_counter delta), outcome (passed/failed/skipped/xfailed/xpassed/error).
+First line: {"meta": ...} with collected count; last line: {"session": ...} with collection and total CPU.
+Child-process CPU is NOT included (process_time is this process only).
+"""
+import json
+import os
+import time
+
+import pytest
+
+_out = None
+_t0 = None
+_coll = None
+
+
+def _w(obj):
+    if _out is not None:
+        _out.write(json.dumps(obj, ensure_ascii=False) + "\n")
+        _out.flush()
+
+
+def pytest_sessionstart(session):
+    global _out, _t0
+    path = os.environ.get("AR_CPU_OUT")
+    if path:
+        _out = open(path, "w", encoding="utf-8")
+    _t0 = time.process_time()
+
+
+def pytest_collection_finish(session):
+    global _coll
+    _coll = time.process_time() - _t0
+    _w({"meta": {"collected": len(session.items), "collect_cpu": round(_coll, 4)}})
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_protocol(item, nextitem):
+    item._ar_reports = []
+    c0, w0 = time.process_time(), time.perf_counter()
+    yield
+    cpu, wall = time.process_time() - c0, time.perf_counter() - w0
+    reps = item._ar_reports
+    outcome = "passed"
+    for r in reps:
+        if r.failed:
+            outcome = "failed" if r.when == "call" else "error"
+            break
+        if r.skipped:
+            outcome = "xfailed" if hasattr(r, "wasxfail") else "skipped"
+        elif r.when == "call" and hasattr(r, "wasxfail"):
+            outcome = "xpassed"
+    _w({"id": item.nodeid, "file": item.nodeid.split("::")[0], "cpu": round(cpu, 5),
+        "wall": round(wall, 5), "outcome": outcome})
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    rep = outcome.get_result()
+    getattr(item, "_ar_reports", []).append(rep)
+
+
+def pytest_sessionfinish(session, exitstatus):
+    _w({"session": {"total_cpu": round(time.process_time() - _t0, 3), "exitstatus": int(exitstatus)}})
+    if _out is not None:
+        _out.close()
