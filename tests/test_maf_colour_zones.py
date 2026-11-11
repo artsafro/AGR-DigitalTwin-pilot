@@ -206,7 +206,16 @@ def test_real_showcase_table_maps_every_position(z, catalogue):
     report_in = json.loads(SET.read_text(encoding="utf-8"))
     counts = json.loads(COUNTS.read_text(encoding="utf-8"))
     rows = z.rows_from_set(report_in, catalogue, counts)
-    compiled = z.compile_zones(list(SHOW), rows, catalogue)
+    # Atlas-only single-slot rows cannot certify a multi-finish schedule.
+    for row in rows:
+        sid = row["set_id"]
+        if len(row["zones"]) == 1 and len(z.SCHEDULE_FINISHES[sid]) >= 2:
+            with pytest.raises(z.ZoneError, match=f"{sid}: schedule names"):
+                z.compile_zones([sid], [row], catalogue)
+        else:
+            assert z.compile_zones([sid], [row], catalogue)["ok"] is True
+    applied_rows = json.loads(ZONES_JSON.read_text(encoding="utf-8"))["positions"]
+    compiled = z.compile_zones(list(SHOW), applied_rows, catalogue)
     assert compiled["ok"] is True
     assert len(compiled["positions"]) == 13
     seen = []
@@ -226,11 +235,9 @@ def test_real_showcase_table_maps_every_position(z, catalogue):
             assert geo["faces_before"] == geo["faces_after"]
             assert sum(geo["zone_faces"].values()) == geo["faces_before"]
     assert len(seen) == len(set(seen))
-    # The accepted set still has single-material meshes. Those stay one zone;
-    # a second invented zone is not added.
+    # The applied table retains single zones only for single-finish positions.
     single = [p["set_id"] for p in compiled["positions"] if len(p["zones"]) == 1]
-    assert "VAT_MAF_T3510_07" in single
-    assert "VAT_MAF_T3510_01" not in single
+    assert set(single) == {"VAT_MAF_T3510_02", "VAT_MAF_T3510_32"}
 
 
 def _board_and_tube():
@@ -351,6 +358,76 @@ def test_position_16_policy_paints_tube_faces_id_4(z, catalogue):
     assert 4 in out["material_ids"]
 
 
+def test_rows_from_set_rejects_collapsed_schedule(z, catalogue):
+    report_in = json.loads(SET.read_text(encoding="utf-8"))
+    pos = next(p for p in report_in["positions"] if p["set_id"] == "VAT_MAF_T3510_16")
+    # Synthetic collapse: keep every face, but assign all to the wood atlas slot.
+    for prof in ("npm", "vpm"):
+        uv = pos[prof]["uv_slots"]
+        uv["per_material"] = {"larch_light_oak": {"faces": uv["faces"]}}
+    counts = json.loads(COUNTS.read_text(encoding="utf-8"))
+    rows = z.rows_from_set({"positions": [pos]}, catalogue, counts)
+    assert "schedule_finishes" not in rows[0]
+    with pytest.raises(z.ZoneError, match="VAT_MAF_T3510_16: schedule names 2 finishes but one zone"):
+        z.compile_zones([pos["set_id"]], rows, catalogue)
+
+
+@pytest.mark.parametrize("set_id", SHOW)
+@pytest.mark.parametrize("schedule_state", ["absent", "null"])
+def test_schedule_fallback_exhaustive(z, catalogue, set_id, schedule_state):
+    """All 13 real schedules: complete -> synthetic collapse -> complete reset."""
+    doc = json.loads(ZONES_JSON.read_text(encoding="utf-8"))
+    row = next(p for p in doc["positions"] if p["set_id"] == set_id)
+    row.pop("schedule_finishes")
+    if schedule_state == "null":
+        row["schedule_finishes"] = None
+    original = copy.deepcopy(row)
+    assert z.compile_zones([set_id], [row], catalogue)["ok"] is True
+    collapsed = copy.deepcopy(row)
+    collapsed["zones"] = collapsed["zones"][:1]
+    for geo in collapsed["profiles"].values():
+        geo["zone_faces"] = {collapsed["zones"][0]["zone"]: geo["faces_before"]}
+    for _ in range(2):
+        if set_id in {"VAT_MAF_T3510_02", "VAT_MAF_T3510_32"}:
+            assert z.compile_zones([set_id], [collapsed], catalogue)["ok"] is True
+        else:
+            with pytest.raises(z.ZoneError, match=f"{set_id}: schedule names .* finishes but one zone"):
+                z.compile_zones([set_id], [collapsed], catalogue)
+    assert z.compile_zones([set_id], [row], catalogue)["ok"] is True
+    assert row == original
+
+
+def test_missing_schedule_rejects_unknown_position(z, catalogue):
+    with pytest.raises(z.ZoneError, match="^unmapped position: VAT_MAF_GHOST$"):
+        z.compile_zones(["VAT_MAF_GHOST"], [_pos("VAT_MAF_GHOST")], catalogue)
+
+
+@pytest.mark.parametrize("finishes", [[], "wood_light", ["ghost_finish"], [math.nan], [math.inf]])
+def test_invalid_explicit_schedule(z, catalogue, finishes):
+    row = _pos()
+    row["schedule_finishes"] = finishes
+    with pytest.raises(z.ZoneError):
+        z.compile_zones([row["set_id"]], [row], catalogue)
+
+
+def test_atlas_cli_rejects_missing_schedule_without_writes(tmp_path):
+    out_json, out_md = tmp_path / "out.json", tmp_path / "out.md"
+    out_json.write_text("stale report", encoding="utf-8")
+    out_md.write_text("stale markdown", encoding="utf-8")
+    inputs = {p: p.read_bytes() for p in (SET, IDS, COUNTS)}
+    proc = subprocess.run(
+        [sys.executable, str(ROOT / "tools/review/maf_colour_zones.py"),
+         "--set", str(SET), "--ids", str(IDS), "--counts", str(COUNTS),
+         "--out-json", str(out_json), "--out-md", str(out_md)],
+        capture_output=True, text=True, encoding="utf-8", errors="replace")
+    assert proc.returncode == 1
+    assert "schedule names" in proc.stderr
+    assert proc.stdout == ""
+    assert out_json.read_text(encoding="utf-8") == "stale report"
+    assert out_md.read_text(encoding="utf-8") == "stale markdown"
+    assert {p: p.read_bytes() for p in inputs} == inputs
+
+
 def test_two_schedule_finishes_cannot_end_as_one_zone(z, catalogue):
     """A schedule that names two finishes must not compile as a single zone."""
     row = _pos("VAT_MAF_T3510_16", faces=4, verts=6)
@@ -363,6 +440,64 @@ def test_two_schedule_finishes_cannot_end_as_one_zone(z, catalogue):
     kept = _pos("VAT_MAF_T3510_16", faces=4, verts=6)
     kept["schedule_finishes"] = ["wood_light", "paint_ral7047"]
     assert z.compile_zones(["VAT_MAF_T3510_16"], [kept], catalogue)["ok"] is True
+
+
+def _committed_one_zone(set_id):
+    doc = json.loads(ZONES_JSON.read_text(encoding="utf-8"))
+    row = next(p for p in doc["positions"] if p["set_id"] == set_id)
+    row["zones"] = row["zones"][:1]
+    for geo in row["profiles"].values():
+        geo["zone_faces"] = {row["zones"][0]["zone"]: geo["faces_before"]}
+    return row
+
+
+@pytest.mark.parametrize("finishes", [["wood_light", "wood_light"], ["wood_light"]])
+def test_explicit_schedule_cannot_understate_table_1185(z, catalogue, finishes):
+    """#1185: an explicit row field may not hide a finish the canonical schedule names."""
+    row = _committed_one_zone("VAT_MAF_T3510_16")
+    row["schedule_finishes"] = finishes
+    with pytest.raises(z.ZoneError, match="^VAT_MAF_T3510_16: schedule_finishes differ from schedule$"):
+        z.compile_zones(["VAT_MAF_T3510_16"], [row], catalogue)
+
+
+def test_explicit_schedule_matching_table_still_guards_1185(z, catalogue):
+    row = _committed_one_zone("VAT_MAF_T3510_16")
+    row["schedule_finishes"] = ["paint_ral7047", "wood_light"]
+    with pytest.raises(z.ZoneError, match="schedule names 2 finishes but one zone"):
+        z.compile_zones(["VAT_MAF_T3510_16"], [row], catalogue)
+    full = json.loads(ZONES_JSON.read_text(encoding="utf-8"))
+    full_row = next(p for p in full["positions"] if p["set_id"] == "VAT_MAF_T3510_16")
+    full_row["schedule_finishes"] = ["paint_ral7047", "wood_light", "wood_light"]
+    assert z.compile_zones(["VAT_MAF_T3510_16"], [full_row], catalogue)["ok"] is True
+
+
+@pytest.mark.parametrize("set_id", SHOW)
+def test_explicit_schedule_exhaustive_subsets_and_supersets_1185(z, catalogue, set_id):
+    """Every proper subset / superset of every table schedule is rejected; the table itself passes."""
+    import itertools
+    table = set(z.SCHEDULE_FINISHES[set_id])
+    keys = sorted(z.ZONE_OF_KEY)
+    full = json.loads(ZONES_JSON.read_text(encoding="utf-8"))
+    row = next(p for p in full["positions"] if p["set_id"] == set_id)
+    checked = 0
+    for n in range(1, 4):
+        for combo in itertools.combinations(keys, n):
+            cand = copy.deepcopy(row)
+            cand["schedule_finishes"] = list(combo)
+            if set(combo) == table:
+                assert z.compile_zones([set_id], [cand], catalogue)["ok"] is True
+            else:
+                with pytest.raises(z.ZoneError, match=f"^{set_id}: schedule_finishes differ from schedule$"):
+                    z.compile_zones([set_id], [cand], catalogue)
+            checked += 1
+    assert checked > len(keys)
+
+
+def test_explicit_schedule_on_unmapped_position_is_error_1185(z, catalogue):
+    row = _pos("VAT_MAF_GHOST")
+    row["schedule_finishes"] = ["wood_light", "paint_ral7047"]
+    with pytest.raises(z.ZoneError, match="^unmapped position: VAT_MAF_GHOST$"):
+        z.compile_zones(["VAT_MAF_GHOST"], [row], catalogue)
 
 
 def test_finish_colour_uses_schedule_ral_or_marks_assumed(z, catalogue):

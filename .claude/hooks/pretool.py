@@ -6,8 +6,9 @@ Reads stdin once and runs each part's own main() in-process on that input (stdin
 caught), so guard.py and pipeline_gate.py stay the standalone scripts Codex and Antigravity call. pipeline_gate runs
 only for the tools it was registered for (Bash, PowerShell, Write, Edit; not NotebookEdit).
 
-One output: the part with the strongest permissionDecision wins (deny > ask > nothing), printed verbatim. A part
-that raises does not hide the other's decision; with no decision, an error is reported as the part would report it
+One output: the part with the strongest permissionDecision wins (deny > ask > allow > nothing), printed verbatim.
+"allow" comes only from guard.py's one-shot merge token [D234] and is forwarded only when no part failed. A part
+that raises does not hide the other's deny/ask; with no such decision, an error is reported as the part would report it
 standalone (traceback on stderr, exit 1: a non-blocking hook error).
 
 Bare python advisory (#1034): a Bash/PowerShell command that runs a bare `python`/`python3` as a command name (at
@@ -31,7 +32,7 @@ PARTS = [
     ("guard.py", None),
     ("pipeline_gate.py", {"Bash", "PowerShell", "Write", "Edit"}),
 ]
-RANK = {"deny": 2, "ask": 1}
+RANK = {"deny": 3, "ask": 2, "allow": 1}   # deny > ask > allow > nothing; allow only from guard's merge token [D234]
 SHELLS = {"Bash", "PowerShell"}
 BARE_PYTHON = {"python", "python3", "python.exe", "python3.exe"}
 # Words that may precede the command name of one simple command (shell keywords and transparent wrappers).
@@ -204,7 +205,8 @@ def dispatch(raw):
         if rank > best[1]:
             best = (out, rank)
     note = _advisory(data)
-    if best[1]:
+    # deny/ask win over a failed part; an explicit allow does not (a part that crashed may have denied).
+    if best[1] > RANK["allow"] or (best[1] and not errors):
         return _with_advisory(best[0], note), "", 0
     if errors:
         return "", "".join(errors), 1
