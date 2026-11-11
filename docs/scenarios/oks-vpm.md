@@ -37,7 +37,7 @@ external PNG UDIM sets. Ground, MAF and Flora of the same site are the `ground-v
 | Stage | Route today | Status |
 |---|---|---|
 | Source intake | skill `analyze-architectural-source` | tool, run by hand |
-| Body, windows, capsules, roof | **standard**: AGR Tools stages 1–4 (Max) [D248]; job scripts in the etalons are precedent, not an automatic standard-route fallback | AGR Tools not yet run on a real building; etalons used job scripts |
+| Body, windows, capsules, roof | **standard**: AGR Tools stages 1–4 (Max) [D249]; job scripts in the etalons are precedent, not an automatic standard-route fallback | AGR Tools not yet run on a real building; etalons used job scripts |
 | Materials, UDIM, textures | AGR Tools stages 5–6; `tools/materials/` | partial; texel checked by V009 |
 | UCX | AGR Tools `ucx_core`; etalon `jobs/KPP1/scripts/` | job scripts, no Main UCX case accepted |
 | Export, readback | Max export [D212]; `tools/blender/fbx_readback.py`; `dt qa xview` | proven |
@@ -45,7 +45,7 @@ external PNG UDIM sets. Ground, MAF and Flora of the same site are the `ground-v
 
 For body / windows / roof, **after Gate 1**, when **Max is busy**, the offline route
 (`dt_ai.ops` / [VARIANTS R14 kernel-prisms](../methods/building-body/VARIANTS.md)) is permitted only as
-`path: deviation` [D248]. Append the [deviation log](../procedure/TASK_TO_MODEL.md#free-path-and-deviation-log)
+`path: deviation` [D249]. Append the [deviation log](../procedure/TASK_TO_MODEL.md#free-path-and-deviation-log)
 before continuing; all eight gates remain required, including before/after invariants, export readback,
 visual acceptance and final SINTEZ. This route permission is not Gate 1 approval or a waiver of a failed check.
 
