@@ -10,6 +10,7 @@ Python (no DCC) and check them against generated inputs.
 from __future__ import annotations
 
 import importlib.util
+from functools import lru_cache
 import json
 import math
 import random
@@ -71,9 +72,15 @@ def _steps(text: str) -> list[tuple[int, str, str]]:
     return out
 
 
-def _shingles(text: str, n: int = 8) -> set[tuple[str, ...]]:
+@lru_cache(maxsize=16, typed=True)
+def _shingle_data(text: str, n: int) -> frozenset[tuple[str, ...]]:
     words = re.findall(r"[\wА-Яа-яЁё]+", text.lower())
-    return {tuple(words[i:i + n]) for i in range(len(words) - n + 1)}
+    return frozenset(tuple(words[i:i + n]) for i in range(len(words) - n + 1))
+
+
+def _shingles(text: str, n: int = 8) -> set[tuple[str, ...]]:
+    # Cache only complete immutable input facts; callers retain independent mutable sets.
+    return set(_shingle_data(text, n))
 
 
 def _rule_text() -> str:

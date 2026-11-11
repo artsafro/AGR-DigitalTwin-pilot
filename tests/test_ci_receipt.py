@@ -14,6 +14,7 @@ P1 acceptance rows (review round 1):
 import importlib.util
 import os
 import re
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -122,7 +123,7 @@ def git(repo, *args, env=None):
     )
 
 
-def init_repo(path):
+def _init_repo(path):
     path.mkdir(parents=True, exist_ok=True)
     env = git_env()
     git(path, "init", env=env)
@@ -139,6 +140,37 @@ def init_repo(path):
         capture_output=True, text=True,
     ).stdout.strip()
     return sha, branch
+
+
+_REPO_TEMPLATE = None
+_REPO_FACTORY = None
+
+
+@pytest.fixture(scope="module", autouse=True)
+def _repo_template(tmp_path_factory):
+    """Defer Git setup until requested: parser-only selections still need no Git repository."""
+    global _REPO_TEMPLATE, _REPO_FACTORY
+    _REPO_FACTORY = tmp_path_factory
+    try:
+        yield
+    finally:
+        _REPO_TEMPLATE = None
+        _REPO_FACTORY = None
+
+
+def init_repo(path):
+    """Copy the identical seed into new private paths; preserve existing-path setup semantics."""
+    global _REPO_TEMPLATE
+    if not path.exists():
+        if _REPO_TEMPLATE is None and _REPO_FACTORY is not None:
+            template = _REPO_FACTORY.mktemp("ci-receipt-seed")
+            sha, branch = _init_repo(template)
+            _REPO_TEMPLATE = template, sha, branch
+        if _REPO_TEMPLATE is not None:
+            template, sha, branch = _REPO_TEMPLATE
+            shutil.copytree(template, path)
+            return sha, branch
+    return _init_repo(path)
 
 
 def make_runner(pytest_out="4 passed, 1 deselected in 0.02s\n", pytest_code=0,
