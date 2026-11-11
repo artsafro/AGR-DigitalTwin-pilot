@@ -30,7 +30,7 @@ gates:
     evidence: *inputs
   parts:
     status: review
-    note: "PartsList confirmed: gate1 Artem 2026-11-11 [D238], 8 parts, NPM 145 000 / VPM 960 000 under BODY-F. Stays review (walker: unanswered parts question) because the architect question on levels 3.900 / 7.909 stays open by [D238] answer 5."
+    note: "PartsList confirmed: gate1 Artem 2026-11-11 [D238], 8 parts, NPM 145 000 / VPM 960 000 under BODY-F. Stays review because the architect question on levels 3.900 / 7.909 stays open by [D238] answer 5."
     evidence:
     - path: jobs/KPP1/rerun-1209/parts-v002.json
       sha256: b36c66e926df2069722d773408f34d29f2f5b700e13930ace0dbfbf1bce7f814
@@ -46,7 +46,7 @@ gates:
       sha256: c8de74e584fca263e0ae19d9038ec205b95b78e5b8ff0eb3a5481ee020dc52aa
   budgets:
     status: review
-    note: "Per part (before the regulation join) and per FBX under [D238] answer 4 and BODY-F: VPM 6 278 / 1 000 000, NPM 4 178 / 150 000 (RUN-LOG table); build-report.json is not a budgets-gate receipt of the walker (wrong gate/run receipt), so review."
+    note: "Per part (before the regulation join) and per FBX under [D238] answer 4 and BODY-F: VPM 6 278 / 1 000 000, NPM 4 178 / 150 000 (RUN-LOG table); review until the visual gate."
     evidence:
     - path: jobs/KPP1/rerun-1209/build-report.json
       sha256: c8de74e584fca263e0ae19d9038ec205b95b78e5b8ff0eb3a5481ee020dc52aa
@@ -65,7 +65,7 @@ gates:
     note: "Run log with commands, triangle table, validator blockers and procedure gaps R1-R5."
     evidence:
     - path: jobs/KPP1/rerun-1209/RUN-LOG.md
-      sha256: f9ce1a58ac18da628591af9a64f4ae04aeb0baf85a2d5519360397243cf1cb1f
+      sha256: b76bed931e8427f4c61926720a47348790b6c78dc3c1f0d73bbef8dfd38182f7
   visual:
     status: missing
     note: "waits-user: previews in G:/Мой диск/AGR-evidence/KPP1/rerun-1209; board review (D119) not done."

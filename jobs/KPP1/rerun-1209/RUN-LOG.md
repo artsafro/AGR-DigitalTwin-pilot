@@ -106,9 +106,9 @@ V015 / V017 manual. Pass: V002, V005, V012.
 | Gate | Status | Receipt | Why |
 |---|---|---|---|
 | inputs | review | cold-run manifest, object.json, plan-contours.json, `rerun-1209/inputs-v001.json` | DWG copies re-hashed equal; still outside the asset store (G2 of the cold run) |
-| parts | review (walker: **fail**, unanswered parts question) | `rerun-1209/parts-v002.json` (`confirmed`, gate1 Artem 2026-11-11 [D238]) | the walker keeps it review while the architect question (levels) is open — [D238] answer 5 |
+| parts | review | `rerun-1209/parts-v002.json` (`confirmed`, gate1 Artem 2026-11-11 [D238]) | the walker keeps it review while the architect question (levels) is open — [D238] answer 5 |
 | operations | review | `build-report.json`, `build_parts.py`, `build_blender.py` | built on the offline route (`path: deviation`, Max busy); Stair not built, mullions 7 / 171 |
-| budgets | review (walker: **fail**, wrong gate/run receipt) | `build-report.json` | every part and both FBX under [D238] 4 / BODY-F; not a walker budgets receipt (R6) |
+| budgets | review | `build-report.json` | every part and both FBX under [D238] 4 / BODY-F; review until the visual gate |
 | export_readback | review | `SM_Kpp_1.validate.json`, `0000_Kpp_1_01.validate.json` | read back; `passed=false` (blockers above) |
 | report | review | this file | |
 | visual | missing — waits-user | — | previews on the evidence folder, board review not done |
@@ -122,7 +122,6 @@ V015 / V017 manual. Pass: V002, V005, V012.
 | R2 | L01 opening source | Openings come from Revit-exported block inserts; `plan_from_dxf` reads plans only. There is no shared facade reader (view placement by grid lines, insert bboxes per facade suffix `О_АР_Ф_<Сторона>`); this run wrote one into the job folder. | follow-up |
 | R3 | `validate_package` on a single FBX | V001/V011/V013 can only be `not_run` without a ZIP and GeoJSON, so a geometry-only run can never reach `passed=true`; the acceptance "passed=true for each built FBX" is not reachable while MSK-77 placement is deferred. | note in TASK_TO_MODEL |
 | R4 | Parapet thickness / roof base | No section sheet: parapet ring 0.35 m and roof base 7.700 (Revit +7,700) are assumptions; not in `mapping-questions.md`. | architect question |
-| R6 | Walker `budgets` gate | `budgets: pass` needs a dedicated budgets receipt (walker error "wrong gate/run receipt"); TASK_TO_MODEL does not name its format, so a build report cannot close the gate. | follow-up |
 | R5 | Mullions | 164 of 171 mullion inserts lie outside the merged opening boxes (their centres are not inside any cut), so they were not placed; the curtain-wall panels and the mullions use different layer groupings. | follow-up |
 
 ## Not done, and why

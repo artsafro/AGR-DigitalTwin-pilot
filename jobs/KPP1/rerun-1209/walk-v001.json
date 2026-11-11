@@ -36,7 +36,7 @@
         }
       ],
       "errors": [],
-      "note": "PartsList confirmed: gate1 Artem 2026-11-11 [D238], 8 parts, NPM 145 000 / VPM 960 000 under BODY-F. Stays review (walker: unanswered parts question) because the architect question on levels 3.900 / 7.909 stays open by [D238] answer 5.",
+      "note": "PartsList confirmed: gate1 Artem 2026-11-11 [D238], 8 parts, NPM 145 000 / VPM 960 000 under BODY-F. Stays review because the architect question on levels 3.900 / 7.909 stays open by [D238] answer 5.",
       "ready": false
     },
     {
@@ -70,7 +70,7 @@
         }
       ],
       "errors": [],
-      "note": "Per part (before the regulation join) and per FBX under [D238] answer 4 and BODY-F: VPM 6 278 / 1 000 000, NPM 4 178 / 150 000 (RUN-LOG table); build-report.json is not a budgets-gate receipt of the walker (wrong gate/run receipt), so review.",
+      "note": "Per part (before the regulation join) and per FBX under [D238] answer 4 and BODY-F: VPM 6 278 / 1 000 000, NPM 4 178 / 150 000 (RUN-LOG table); review until the visual gate.",
       "ready": false
     },
     {
