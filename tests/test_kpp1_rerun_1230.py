@@ -69,6 +69,27 @@ def test_every_mullion_insert_is_built_or_reported_and_stair_built():
     assert rep["triangles_parts_before_union"]["Stair"] > 0
 
 
+@pytest.mark.parametrize("facade", ["Западный", "Восточный"])
+@pytest.mark.parametrize("rect", [(-0.4579, -0.3829, 3.300, 4.775),
+                                  (11.3821, 11.4571, 3.075, 4.815),
+                                  (11.3296, 11.4196, 6.725, 8.550)])
+def test_missing_corner_members_are_built(facade, rect):
+    mod = _parts()
+    # Real L01 review witnesses, in facade metres; no perpendicular counterpart.
+    inverse = ((lambda u: 92848 - u * 1000) if facade == "Западный"
+               else (lambda u: 102956 + u * 1000))
+    a, b, za, zb = rect
+    x0, x1 = sorted((inverse(a), inverse(b)))
+    item = {"facade": facade, "block": "Прямоугольный импост - 200х75 мм",
+            "rect": (x0, x1, za * 1000, zb * 1000)}
+    built, dropped = mod.place_mullions([], [item], [], [])
+    assert not dropped, dropped
+    assert len(built) == 1
+    assert built[0]["min"][2] == pytest.approx(za)
+    assert built[0]["max"][2] == pytest.approx(zb)
+    assert all(a < b for a, b in zip(built[0]["min"], built[0]["max"]))
+
+
 def test_profile_of_unknown_is_an_error():
     mod = _parts()
     assert mod.profile_of("Прямоугольный импост - 200х75 мм") == (0.075, 0.200)
