@@ -41,6 +41,12 @@ Recommended: retain the geometry-run scope and keep final delivery certification
 Neither interpretation permits fabricated approvals or changing the validator to pass.
 The missing Stair and 164 mullions remain in-scope work, not waived or reclassified.
 
+Resolution (orchestrator, card t_d1f84643, 2026-11-11 11:41): within #1209's own acceptance
+("`passed=true` for each built FBX — or the PR lists exactly what blocks it") no user decision is
+needed. This run closes with `passed=false`; the deferred placement checks V001/V011/V013 and the
+manual checks V015-V017 stay open and are listed as exact blockers below, together with V004,
+the textures (V006/V007/V009), the missing Stair and the 164 mullions (open items of the PR).
+
 Decision allocation: `uv run python tools/git-hooks/decision_ids.py next` -> **D249**,
 checked across origin/main, this branch and **15 open PR heads**.
 
