@@ -397,13 +397,25 @@ def test_weld_output_is_closed_where_the_source_is():
     assert out_len == pytest.approx(src_len, rel=1e-9)
 
 
-def test_20000_faces_within_the_time_budget():
+def _build_20000_faces():
     poly = MB.facade(height=22.0, col=0.6, floor=1.0, margin=0.15)
     mesh = core_mesh(poly)
-    assert len(mesh['tris']) >= 19000
     t = time.perf_counter()
     obj = vc.build([mesh], {'glass_ids': [MB.GLASS]})['objects'][0]
-    dt = time.perf_counter() - t
+    return mesh, obj, time.perf_counter() - t
+
+
+def test_20000_faces_build_without_findings():
+    # correctness half of the 20k-face case; the wall-clock half is the perf test below (#1212)
+    mesh, obj, _ = _build_20000_faces()
+    assert len(mesh['tris']) >= 19000
+    assert obj['findings'] == []
+
+
+@pytest.mark.perf
+def test_20000_faces_within_the_time_budget():
+    mesh, obj, dt = _build_20000_faces()
+    assert len(mesh['tris']) >= 19000
     assert obj['findings'] == []
     assert dt < 10.0, dt
 

@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 from PIL import Image
 
-from twinqa.uv_features import count_features_per_face, label_features, read_uv_csv
+from twinqa.uv_features import count_features_per_face, label_features, measure_features_per_face, read_uv_csv
 
 SIZE = 256
 
@@ -131,3 +131,72 @@ def test_feature_outside_every_face_is_unassigned_finding(tmp_path):
     out = count_features_per_face([_row("A", 0, 1, _square(0, 0, 0.5, 0.5))], tex, expected={"A": 0}, tile=1001)
     assert [(f.name, f.status) for f in out] == [("uv_features.unassigned", "fail")]
     assert out[0].data["count"] == 1 and out[0].data["centroids_px"] == [(202.5, 12.5)]
+
+
+def _island_on_transparent(tmp_path, holes):
+    # issue #1078(1): alpha 0 background, opaque island px 64..192 with holes
+    alpha = np.zeros((SIZE, SIZE), np.uint8)
+    alpha[64:192, 64:192] = 255
+    for r, c in holes:
+        alpha[r:r + 6, c:c + 6] = 0
+    path = tmp_path / "island.png"
+    Image.fromarray(np.dstack([np.full((SIZE, SIZE, 3), 128, np.uint8), alpha]), "RGBA").save(path)
+    return path
+
+
+def test_transparent_background_is_not_a_feature(tmp_path):
+    tex = _island_on_transparent(tmp_path, [(90, 90), (150, 150)])
+    rows = [_row("A", 0, 1, _square(0.25, 0.25, 0.75, 0.75))]
+    assert count_features_per_face(rows, tex, expected={"A": 2}, tile=1001) == []
+    m = measure_features_per_face(rows, tex, tile=1001)
+    assert [(c["name"], c["face"], c["count"]) for c in m["counts"]] == [("A", 0, 2)]
+    assert m["border_features"] == 1 and m["findings"] == []
+
+
+def test_border_blob_never_counted_any_edge(tmp_path):
+    # generated: a blob touching each edge (and a corner) is excluded; an interior hole is counted
+    for rows_, cols_ in [((0, 5), (100, 110)), ((251, 256), (100, 110)), ((100, 110), (0, 5)),
+                         ((100, 110), (251, 256)), ((0, 4), (0, 4)), ((250, 256), (250, 256))]:
+        alpha = np.full((SIZE, SIZE), 255, np.uint8)
+        alpha[rows_[0]:rows_[1], cols_[0]:cols_[1]] = 0
+        alpha[60:66, 60:66] = 0
+        path = tmp_path / "edge.png"
+        Image.fromarray(np.dstack([np.full((SIZE, SIZE, 3), 128, np.uint8), alpha]), "RGBA").save(path)
+        m = measure_features_per_face([_row("F", 0, 1, _square(0, 0, 1, 1))], path, tile=1001)
+        assert m["counts"][0]["count"] == 1 and m["border_features"] == 1, (rows_, cols_)
+        assert m["findings"] == []
+
+
+@pytest.mark.parametrize("uv", [
+    [(0, 0), (1, 1), (1, 0), (0, 1)],          # self-intersecting bow-tie
+    [(0.1, 0.1), (0.5, 0.5), (0.9, 0.9)],      # zero area, collinear
+    [(0.2, 0.2), (0.2, 0.2), (0.2, 0.2)],      # zero area, one point
+    [(0.1, 0.7), (0.5, 0.3), (0.9, 0.7), (0.3, 0.1)],  # pinched: vertex 1 on edge 2-3, shapely says valid
+    [(0.1, 0.1), (0.9, 0.1), (0.5, 0.1 + 1e-9)],      # sliver below tolerance
+])
+def test_invalid_polygon_is_reported(tmp_path, uv):
+    tex = _opaque_with_hole(tmp_path, (300, 300), (300, 300))  # no features
+    out = count_features_per_face([_row("X", 0, 1, uv)], tex, expected={"X": 0})
+    assert [(f.name, f.status, f.data["face"]) for f in out] == [("uv_features.invalid_polygon", "fail", 0)]
+    out = count_features_per_face([_row("X", 0, 1, uv)], tex)
+    assert [f.name for f in out] == ["uv_features.invalid_polygon"]
+
+
+def test_expected_none_returns_counts(tmp_path, csv):
+    tex = _texture(tmp_path)
+    m = measure_features_per_face(read_uv_csv(csv), tex)
+    assert m["findings"] == []
+    assert [(c["name"], c["face"], c["material"], c["count"]) for c in m["counts"]] == [
+        ("A", 0, "1", 3), ("B", 0, "2", 5)]
+    assert count_features_per_face(read_uv_csv(csv), tex) == m["findings"]
+    assert "expected=None" in count_features_per_face.__doc__
+
+
+def test_combined_background_invalid_and_counts(tmp_path):
+    # all three #1078 fixes together with the earlier unassigned / tie rules
+    tex = _island_on_transparent(tmp_path, [(90, 90), (150, 150), (66, 180)])
+    rows = [_row("A", 0, 1, _square(0.25, 0.25, 0.75, 0.6)), _row("Z", 0, 1, [(0, 0), (1, 1), (1, 0), (0, 1)])]
+    m = measure_features_per_face(rows, tex, expected={"A": 1, "Z": 0})
+    assert sorted(f.name for f in m["findings"]) == ["uv_features.invalid_polygon", "uv_features.unassigned"]
+    assert [(c["name"], c["count"]) for c in m["counts"]] == [("A", 1)]
+    assert m["border_features"] == 1
