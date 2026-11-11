@@ -1,0 +1,6 @@
+{
+ "_doc": "#1230 finish order (UDIM 1001.. sequential, NPM atlas cell index) and part -> finish. Body faces take the finish of the facade band of their centroid height (jobs/KPP1/scripts/build_kpp1.py: plinth RAL 7004 up to +0.9, cassettes RAL 7047 0.9-2.7, blue RAL 5015 band 2.7-7.1, grey RAL 7047 above). Stair finish RAL 7004 metal grey is an assumption (no finish in the drawings for the stair).",
+ "order": ["Plinth_RAL7004", "Cassette_RAL7047", "Cassette_RAL5015", "Membrane_Logicroof", "Frame_RAL9016", "Door_RAL7004", "Grille_RAL7004"],
+ "body_bands": [[0.9, "Plinth_RAL7004"], [2.7, "Cassette_RAL7047"], [7.1, "Cassette_RAL5015"], [99.0, "Cassette_RAL7047"]],
+ "parts": {"Body": "@bands", "Parapet": "@bands", "Roof_Plate": "Membrane_Logicroof", "Windows": "Frame_RAL9016", "CurtainWall_Mullions": "Frame_RAL9016", "Doors": "Door_RAL7004", "Stair": "Grille_RAL7004"}
+}
