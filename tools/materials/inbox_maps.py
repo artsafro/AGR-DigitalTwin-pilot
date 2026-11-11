@@ -8,6 +8,10 @@ resamples, one-colour placeholders, single channels, alpha -> `_o` grey maps, pa
 two. Inbox originals are only read (sha256 checked against the inbox manifest.json). An output that
 already exists is never overwritten: identical bytes are kept, different bytes stop the run.
 Every output is a PNG, 8 bit, no alpha (RGB; binary star opacity is grey L); NPM outputs are checked with twinqa.png (V006 rules).
+Manifest paths are relative to --root (the D239 layout) and the manifest records that root.
+
+Pattern: n/a | new-case: inbox -> library map processing with a hashed manifest (#1188); no registry
+pattern in docs/domain/patterns/INDEX.md covers texture intake.
 """
 import argparse
 import hashlib
@@ -28,6 +32,7 @@ from twinqa.png import npm_texture_findings, png_facts  # noqa: E402
 NPM_MAX_BYTES = 3 * 1024 * 1024  # [D015], reg p.9 §5.3
 NPM_AUTO_SIZES = (2048, 1024, 512)
 D207_PX_PER_M = 1000  # texture grid: 3.6 m per UDIM tile at 1000 px/m [D207]
+DEFAULT_ROOT = Path("G:/Мой диск/AGR-assets")  # D239 layout root
 
 
 def sha256(data: bytes) -> str:
@@ -225,7 +230,7 @@ def d207(px_per_m):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--spec", required=True, type=Path)
-    ap.add_argument("--root", required=True, type=Path, help="AGR-assets root")
+    ap.add_argument("--root", type=Path, default=DEFAULT_ROOT, help=f"AGR-assets root (default {DEFAULT_ROOT})")
     ap.add_argument("--out", required=True, type=Path, help="manifest JSON to write")
     args = ap.parse_args(argv)
     spec = json.loads(args.spec.read_text(encoding="utf-8"))
@@ -265,7 +270,7 @@ def main(argv=None):
             })
     manifest = {
         "schema": 1, "version": "v001", "decision": "D239",
-        "root": "G:\\Мой диск\\AGR-assets",
+        "root": str(args.root),  # the root the files were written under; paths below are relative to it
         "inbox": inbox_dir, "inbox_manifest_sha256": sha256((args.root / inbox_dir / "manifest.json").read_bytes()),
         "spec": args.spec.as_posix(), "tool": "tools/materials/inbox_maps.py",
         "new_library_ids": spec.get("new_library_ids", []),

@@ -76,7 +76,43 @@ def test_flora_candidates_name_species_only_when_confident():
                 assert record[key].split("AGR-assets/", 1)[1] in rows, record[key]
 
 
-@pytest.mark.skipif(not DRIVE.is_dir(), reason="AGR-assets drive not mounted")
+def test_manifest_records_the_root_it_wrote_under(tmp_path):
+    """#1188 review P1: a run under another root records that root; every path/hash resolves under it."""
+    import importlib.util
+
+    from PIL import Image
+    loader = importlib.util.spec_from_file_location("inbox_maps", ROOT / "tools/materials/inbox_maps.py")
+    inbox_maps = importlib.util.module_from_spec(loader)
+    loader.loader.exec_module(inbox_maps)
+    assets = tmp_path / "assets"
+    inbox = assets / "_inbox" / "synthetic"
+    inbox.mkdir(parents=True)
+    Image.new("RGB", (256, 256), (57, 57, 57)).save(inbox / "1_flat.png")  # synthetic, not a real map
+    digest = hashlib.sha256((inbox / "1_flat.png").read_bytes()).hexdigest()
+    (inbox / "manifest.json").write_text(json.dumps(
+        {"items": [{"msg_id": 1, "file": "1_flat.png", "sha256": digest}]}), encoding="utf-8")
+    spec = tmp_path / "spec.json"
+    spec.write_text(json.dumps({"inbox": "_inbox/synthetic", "sources": [{
+        "src": 1, "key": "synthetic", "verdict": "test",
+        "outputs": [{"path": "materials/placeholders/v001/synthetic_d_{size}.png", "op": "flat", "size": 128,
+                     "map": "d", "profile": "npm"}]}]}), encoding="utf-8")
+    out = tmp_path / "maps.json"
+    assert inbox_maps.main(["--spec", str(spec), "--root", str(assets), "--out", str(out)]) == 0
+    manifest = json.loads(out.read_text(encoding="utf-8"))
+    assert Path(manifest["root"]) == assets
+    for row in manifest["maps"]:
+        written = (Path(manifest["root"]) / row["path"]).read_bytes()
+        assert hashlib.sha256(written).hexdigest() == row["sha256"], row["path"]
+
+
+def _drive_mounted() -> bool:
+    try:  # a sandbox may raise PermissionError instead of returning False
+        return DRIVE.is_dir()
+    except OSError:
+        return False
+
+
+@pytest.mark.skipif(not _drive_mounted(), reason="AGR-assets drive not mounted or not readable")
 def test_files_on_drive_match_manifest():
     for r in MANIFEST["maps"]:
         data = (DRIVE / r["path"]).read_bytes()
