@@ -1,6 +1,7 @@
 """Handoff evidence check (#584); every body, report and repository here is synthetic."""
 import json
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -17,11 +18,10 @@ def git(repo, *args):
                           text=True).stdout.strip()
 
 
-@pytest.fixture
-def repo(tmp_path, monkeypatch):
+@pytest.fixture(scope="module")
+def _repo_template(tmp_path_factory):
     """Synthetic repository: base -> test-first (RED) -> fix (head); `side` is not an ancestor."""
-    path = tmp_path / "repo"
-    path.mkdir()
+    path = tmp_path_factory.mktemp("handoff-template")
     git(path, "init", "-q")
     git(path, "config", "user.email", "t@example.invalid")
     git(path, "config", "user.name", "t")
@@ -37,8 +37,17 @@ def repo(tmp_path, monkeypatch):
     git(path, "commit", "-q", "-m", "side")
     shas["side"] = git(path, "rev-parse", "HEAD")
     git(path, "checkout", "-q", shas["head"])
-    monkeypatch.chdir(path)
     return path, shas
+
+
+@pytest.fixture
+def repo(tmp_path, monkeypatch, _repo_template):
+    """Private, ordinary copies of the same history; no hardlinks or shared mutable refs."""
+    template, shas = _repo_template
+    path = tmp_path / "repo"
+    shutil.copytree(template, path)
+    monkeypatch.chdir(path)
+    return path, dict(shas)
 
 
 @pytest.fixture

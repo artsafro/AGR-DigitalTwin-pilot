@@ -1,0 +1,403 @@
+{
+ "name": "xview_gate",
+ "kernel": "xview_overlaps",
+ "profile": "NPM",
+ "coords": "local",
+ "thresholds": {
+  "vertex_m": 0.002,
+  "face_m": 0.005,
+  "parallel_cos_min": 0.9999
+ },
+ "totals": {
+  "overlapping_vertices": 0,
+  "overlapping_faces": 12,
+  "vertex_pairs": 0,
+  "face_pairs": 9,
+  "face_pairs_by_kind": {
+   "contact": 9,
+   "area": 0,
+   "area+contact": 0
+  },
+  "bowtie_vertices": 0,
+  "bowtie_pairs": 0,
+  "parts_without_faces": 0
+ },
+ "passed": false,
+ "parts": [
+  {
+   "part": "SM_Kpp_1_001_Main",
+   "location": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "vertices_count": 9165,
+   "faces_count": 18332,
+   "overlapping_vertices": 0,
+   "overlapping_faces": 12,
+   "vertex_pairs": [],
+   "face_pairs": [
+    {
+     "a": 622,
+     "b": 14218,
+     "kind": "contact",
+     "separation_m": null,
+     "centre": [
+      2.405186573664347,
+      5.974781195473538,
+      3.9033323726336495
+     ]
+    },
+    {
+     "a": 651,
+     "b": 12890,
+     "kind": "contact",
+     "separation_m": null,
+     "centre": [
+      -10.067854881286621,
+      5.974804163129991,
+      3.9033323726299076
+     ]
+    },
+    {
+     "a": 692,
+     "b": 16744,
+     "kind": "contact",
+     "separation_m": null,
+     "centre": [
+      -14.984989643096924,
+      -0.3576309033713089,
+      3.9033334043145658
+     ]
+    },
+    {
+     "a": 3635,
+     "b": 12890,
+     "kind": "contact",
+     "separation_m": null,
+     "centre": [
+      -10.191718101501465,
+      5.974617401909695,
+      3.903332372660335
+     ]
+    },
+    {
+     "a": 3640,
+     "b": 14218,
+     "kind": "contact",
+     "separation_m": null,
+     "centre": [
+      2.3562832673390703,
+      5.974674542895819,
+      3.9033323726510254
+     ]
+    },
+    {
+     "a": 3715,
+     "b": 16744,
+     "kind": "contact",
+     "separation_m": null,
+     "centre": [
+      -14.984989643096924,
+      -0.495300908732548,
+      3.9033334267438575
+     ]
+    },
+    {
+     "a": 9112,
+     "b": 14218,
+     "kind": "contact",
+     "separation_m": null,
+     "centre": [
+      2.380734920501709,
+      5.974727877059184,
+      3.951665739354272
+     ]
+    },
+    {
+     "a": 9132,
+     "b": 12890,
+     "kind": "contact",
+     "separation_m": null,
+     "centre": [
+      -10.129786491394043,
+      5.974710790394348,
+      3.951665739357056
+     ]
+    },
+    {
+     "a": 9158,
+     "b": 16744,
+     "kind": "contact",
+     "separation_m": null,
+     "centre": [
+      -14.984989643096924,
+      -0.4264658981774232,
+      3.951666782241146
+     ]
+    }
+   ],
+   "face_pairs_by_kind": {
+    "contact": 9,
+    "area": 0,
+    "area+contact": 0
+   },
+   "xview_faces": [
+    622,
+    651,
+    692,
+    3635,
+    3640,
+    3715,
+    9112,
+    9132,
+    9158,
+    12890,
+    14218,
+    16744
+   ],
+   "faces": [
+    {
+     "id": 622,
+     "partners": [
+      14218
+     ],
+     "kinds": [
+      "contact"
+     ],
+     "xview": true,
+     "centre": [
+      2.3953730265299478,
+      5.974561818339687,
+      3.706665655140089
+     ]
+    },
+    {
+     "id": 651,
+     "partners": [
+      12890
+     ],
+     "kinds": [
+      "contact"
+     ],
+     "xview": true,
+     "centre": [
+      -9.94394334157308,
+      5.974607753652594,
+      3.706665655132605
+     ]
+    },
+    {
+     "id": 692,
+     "partners": [
+      16744
+     ],
+     "kinds": [
+      "contact"
+     ],
+     "xview": true,
+     "centre": [
+      -14.984979629516602,
+      -0.3302624047813198,
+      3.7066666823263694
+     ]
+    },
+    {
+     "id": 3635,
+     "partners": [
+      12890
+     ],
+     "kinds": [
+      "contact"
+     ],
+     "xview": true,
+     "centre": [
+      -10.191669782002768,
+      5.974234231212002,
+      3.7066656551934596
+     ]
+    },
+    {
+     "id": 3640,
+     "partners": [
+      14218
+     ],
+     "kinds": [
+      "contact"
+     ],
+     "xview": true,
+     "centre": [
+      2.2975664138793945,
+      5.974348513184251,
+      3.7066656551748403
+     ]
+    },
+    {
+     "id": 3715,
+     "partners": [
+      16744
+     ],
+     "kinds": [
+      "contact"
+     ],
+     "xview": true,
+     "centre": [
+      -14.984979629516602,
+      -0.6056024155037981,
+      3.7066667271849525
+     ]
+    },
+    {
+     "id": 9112,
+     "partners": [
+      14218
+     ],
+     "kinds": [
+      "contact"
+     ],
+     "xview": true,
+     "centre": [
+      2.3464697202046714,
+      5.974455181510979,
+      3.8033323885813335
+     ]
+    },
+    {
+     "id": 9132,
+     "partners": [
+      12890
+     ],
+     "kinds": [
+      "contact"
+     ],
+     "xview": true,
+     "centre": [
+      -10.067806561787924,
+      5.9744210081813085,
+      3.803332388586901
+     ]
+    },
+    {
+     "id": 9158,
+     "partners": [
+      16744
+     ],
+     "kinds": [
+      "contact"
+     ],
+     "xview": true,
+     "centre": [
+      -14.984979629516602,
+      -0.46793239439354856,
+      3.80333343817953
+     ]
+    },
+    {
+     "id": 12890,
+     "partners": [
+      651,
+      3635,
+      9132
+     ],
+     "kinds": [
+      "contact",
+      "contact",
+      "contact"
+     ],
+     "xview": true,
+     "centre": [
+      -10.191766421000162,
+      5.975000572607388,
+      4.09999909012721
+     ]
+    },
+    {
+     "id": 14218,
+     "partners": [
+      622,
+      3640,
+      9112
+     ],
+     "kinds": [
+      "contact",
+      "contact",
+      "contact"
+     ],
+     "xview": true,
+     "centre": [
+      2.4150001207987466,
+      5.975000572607388,
+      4.09999909012721
+     ]
+    },
+    {
+     "id": 16744,
+     "partners": [
+      692,
+      3715,
+      9158
+     ],
+     "kinds": [
+      "contact",
+      "contact",
+      "contact"
+     ],
+     "xview": true,
+     "centre": [
+      -14.984999656677246,
+      -0.3849994019612979,
+      4.100000126302763
+     ]
+    }
+   ],
+   "bowtie_vertices": [],
+   "passed": false,
+   "reasons": []
+  },
+  {
+   "part": "SM_Kpp_1_001_MainGlass",
+   "location": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "vertices_count": 336,
+   "faces_count": 504,
+   "overlapping_vertices": 0,
+   "overlapping_faces": 0,
+   "vertex_pairs": [],
+   "face_pairs": [],
+   "face_pairs_by_kind": {
+    "contact": 0,
+    "area": 0,
+    "area+contact": 0
+   },
+   "xview_faces": [],
+   "faces": [],
+   "bowtie_vertices": [],
+   "passed": true,
+   "reasons": []
+  }
+ ],
+ "input": {
+  "path": "tmp\\out-r1-v002\\0000_Kpp_1_01.fbx",
+  "sha256": "9604a8f14f064495a8ccbbf17d21cdd1445825f6a9fc3ca215531327ada812bd",
+  "kind": "fbx",
+  "parts_in_file": [
+   "SM_Kpp_1_001_Main",
+   "SM_Kpp_1_001_MainGlass"
+  ],
+  "not_selected": [],
+  "units": {
+   "unit_system": "METRIC",
+   "unit_scale": 1.0,
+   "coordinates": "m"
+  },
+  "dropped": [],
+  "blender": {
+   "version": "5.1.2",
+   "log": "tmp\\xview-npm-r1-v002.json.blender.log",
+   "scene": "Scene"
+  }
+ }
+}

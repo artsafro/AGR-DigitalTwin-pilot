@@ -33,3 +33,5 @@ Report, in this order and nothing else:
 
 Facts only: numbers, names, paths. No classification of what an element "is" unless the source names it;
 no fixes, no proposals.
+
+Shared brief (focus, parallel calls, no filler, numbers): `docs/agents/WORKFLOW.md#prompt-guide`.

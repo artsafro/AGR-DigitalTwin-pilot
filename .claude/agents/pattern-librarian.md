@@ -45,3 +45,5 @@ A gray zone, open conflict, missing decision id or unverified quote is `no rule`
 shape. Optional diagnostic lines after `no rule` may name the conflict and both sides, similar cases or
 the missing evidence with source paths; clearly separate these from a decided rule. Never invent a
 rule, quote or decision id. Never choose between conflict sides or strengthen the quoted text.
+
+Shared brief (focus, parallel calls, no filler, numbers): `docs/agents/WORKFLOW.md#prompt-guide`.

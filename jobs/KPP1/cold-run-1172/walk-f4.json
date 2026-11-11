@@ -1,0 +1,173 @@
+{
+  "passed": false,
+  "gates": [
+    {
+      "gate": "inputs",
+      "status": "fail",
+      "waits": null,
+      "evidence_exists": [
+        {
+          "path": "jobs/KPP1/cold-run-1172/inputs-manifest.json",
+          "verified": true
+        },
+        {
+          "path": "jobs/KPP1/object.json",
+          "verified": true
+        },
+        {
+          "path": "docs/methods/building-body/kpp1-drawing/plan-contours.json",
+          "verified": true
+        },
+        {
+          "path": "jobs/KPP1/rerun-1209/inputs-v001.json",
+          "verified": true
+        }
+      ],
+      "errors": [
+        "undeclared external-inputs manifest: jobs/KPP1/rerun-1209/inputs-v001.json (add manifest: external-inputs/1)"
+      ],
+      "note": "DWG copies under C:/x/kpp1/r1209 re-hashed equal to the cold-run manifest; DXF, contour and parts-mesh hashes in inputs-v001.json. Levels 3.900 / 7.909 from Revit, not confirmed by the architect for R1 [D238]; DWGs still outside the asset store (cold-run G2).",
+      "external_inputs": [
+        {
+          "manifest": "jobs/KPP1/cold-run-1172/inputs-manifest.json",
+          "path": "C:/Users/artsafro/Downloads/22\u041556-\u0410\u04202-1002-\u0410\u0421.03-R1_L01_\u0431\u0435\u0437 \u043f\u043e\u0434\u043f\u0438\u0441\u0435\u0439.dwg",
+          "sha256": "cb74ba142142e9181dfc14e235f94aed7eabec597e746760e5a972427f0f3648",
+          "status": "equal"
+        },
+        {
+          "manifest": "jobs/KPP1/cold-run-1172/inputs-manifest.json",
+          "path": "C:/Users/artsafro/Downloads/22\u041556-\u0410\u04202-1002-\u0410\u0421.03-R1_L02_\u0431\u0435\u0437 \u043f\u043e\u0434\u043f\u0438\u0441\u0435\u0439.dwg",
+          "sha256": "428426002f2642d29e97a8db34053546dc1e427bdff8aeef9ad1c81005b73cb2",
+          "status": "equal"
+        },
+        {
+          "manifest": "jobs/KPP1/cold-run-1172/inputs-manifest.json",
+          "path": "C:/Users/artsafro/Downloads/22\u041556-\u0410\u04202-1002-\u0410\u0421.03-R1_L03_\u0431\u0435\u0437 \u043f\u043e\u0434\u043f\u0438\u0441\u0435\u0439.dwg",
+          "sha256": "ad1de2b203bd4394bd3604642cd41bd8f3b2427ec23b900413bd396612624469",
+          "status": "equal"
+        },
+        {
+          "manifest": "jobs/KPP1/cold-run-1172/inputs-manifest.json",
+          "path": "G:/\u041c\u043e\u0439 \u0434\u0438\u0441\u043a/AGR-assets/tec26/album/TEC26_na_RR_1.pptx",
+          "sha256": "74e50277df5e2dfde3ba7ab945eb6bab45a8fa8c0207d7aca3a136d9656b78ac",
+          "status": "equal"
+        }
+      ],
+      "unreachable": 0,
+      "ready": false
+    },
+    {
+      "gate": "parts",
+      "status": "review",
+      "waits": null,
+      "evidence_exists": [
+        {
+          "path": "jobs/KPP1/rerun-1209/parts-v002.json",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "PartsList confirmed: gate1 Artem 2026-11-11 [D238], 8 parts, NPM 145 000 / VPM 960 000 under BODY-F. Stays review because the architect question on levels 3.900 / 7.909 stays open by [D238] answer 5.",
+      "ready": false
+    },
+    {
+      "gate": "operations",
+      "status": "review",
+      "waits": "max",
+      "evidence_exists": [
+        {
+          "path": "jobs/KPP1/rerun-1209/build_parts.py",
+          "verified": true
+        },
+        {
+          "path": "jobs/KPP1/rerun-1209/build_blender.py",
+          "verified": true
+        },
+        {
+          "path": "jobs/KPP1/rerun-1209/build-report.json",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "Built offline (path: deviation, Max busy): two bands + 6 frame bumps to +3.300, 53 L01 openings cut, frames/glass/doors, 7 of 171 mullions, roof slab, parapet. Stair not built. Max route waits-max.",
+      "ready": false
+    },
+    {
+      "gate": "budgets",
+      "status": "review",
+      "waits": null,
+      "evidence_exists": [
+        {
+          "path": "jobs/KPP1/rerun-1209/build-report.json",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "Per part (before the regulation join) and per FBX under [D238] answer 4 and BODY-F: VPM 6 278 / 1 000 000, NPM 4 178 / 150 000 (RUN-LOG table); review until the visual gate.",
+      "ready": false
+    },
+    {
+      "gate": "export_readback",
+      "status": "review",
+      "waits": "max",
+      "evidence_exists": [
+        {
+          "path": "jobs/KPP1/rerun-1209/SM_Kpp_1.validate.json",
+          "verified": true
+        },
+        {
+          "path": "jobs/KPP1/rerun-1209/0000_Kpp_1_01.validate.json",
+          "verified": true
+        },
+        {
+          "path": "jobs/KPP1/rerun-1209/evidence-SHA256SUMS.txt",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "Both FBX read back by tools/blender/fbx_readback.py; validate_package --scene passed=false, exit 1: V004 self-intersections 170 + clearance, V006/V007/V009 textures, V001/V011/V013/V014 not_run (no ZIP/GeoJSON, MSK-77 deferred), V015-V017 manual. Max export [D212] waits-max.",
+      "ready": false
+    },
+    {
+      "gate": "report",
+      "status": "review",
+      "waits": null,
+      "evidence_exists": [
+        {
+          "path": "jobs/KPP1/rerun-1209/RUN-LOG.md",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "Run log with commands, triangle table, validator blockers and procedure gaps R1-R5.",
+      "ready": false
+    },
+    {
+      "gate": "visual",
+      "status": "missing",
+      "waits": "user",
+      "evidence_exists": [],
+      "errors": [],
+      "note": "waits-user: previews in G:/\u041c\u043e\u0439 \u0434\u0438\u0441\u043a/AGR-evidence/KPP1/rerun-1209; board review (D119) not done.",
+      "ready": false
+    },
+    {
+      "gate": "checker",
+      "status": "missing",
+      "waits": "visual",
+      "evidence_exists": [],
+      "errors": [],
+      "note": "waits-visual: SINTEZ AGR Checker after visual acceptance (D104).",
+      "ready": false
+    }
+  ],
+  "waits": {
+    "user": 1,
+    "max": 2,
+    "visual": 1
+  },
+  "errors": [],
+  "job_id": "KPP1",
+  "run_id": "issue-1209-rerun-v001",
+  "synthetic": false
+}

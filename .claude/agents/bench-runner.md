@@ -33,3 +33,5 @@ Report:
 5. Question count from `spec.report.json`; stops if any (stage, level, message).
 6. Output paths.
 Facts only. No interpretation of why something failed unless the log says it in one line.
+
+Shared brief (focus, parallel calls, no filler, numbers): `docs/agents/WORKFLOW.md#prompt-guide`.
