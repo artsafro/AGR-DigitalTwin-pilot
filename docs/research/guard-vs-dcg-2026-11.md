@@ -54,7 +54,11 @@ existing) now also matches after git global options (`-C`, `-c`, `--no-pager`, `
 short cluster (`-fq`, `-qf`, `-ff`), quoted flags and long-option prefixes (`--forc`, `--har`); generated probe
 `test_guard_git_globals_and_flag_variants_generated_probe_1186` (7 global prefixes x 51 hazards = 357 ask, x 26 safe forms = 182 allow).
 
+Review round 2 (#1186, #1210): `git stash push ...` is allowed since #1186: the tokenizer
+matches the git subcommand, not `push` in an argument. The #1210 issue's "pre-existing" note
+describes the earlier regex implementation, not the current policy. Safe argument text, quoted
+global-option paths and paths after `--` are covered by both-protocol regressions.
+
 Open items:
-- Pre-existing false positive: `git stash push ...` asks as "git push publishes to a remote" (not changed here).
 - Writes into `.git/` and agent hook configuration are not guarded; both need a shell parser or a
   file-tool rule with an exception for harness branches.

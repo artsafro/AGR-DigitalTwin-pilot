@@ -549,3 +549,12 @@ def test_guard_review3_1186_bypasses_ask(command, protocol):
 @pytest.mark.parametrize("command", ROUND3_ALLOW)
 def test_guard_review3_1186_safe_commands_allowed(command, protocol):
     assert guard(command, protocol) == "allow"
+
+
+def test_guard_research_stash_push_contract_1225():
+    """The research note must describe the tokenizer's current safe-stash policy."""
+    note = (ROOT / "docs/research/guard-vs-dcg-2026-11.md").read_text(encoding="utf-8")
+    assert "`git stash push ...` is allowed since #1186" in note
+    assert 'asks as "git push publishes to a remote"' not in note
+    assert guard("git stash push -u -m tag") == "allow"
+    assert guard("git stash push -u -m tag", "antigravity") == "allow"
