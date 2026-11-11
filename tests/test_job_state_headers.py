@@ -41,14 +41,15 @@ def test_job_contract_documents_header():
     assert "every" in contract.lower()
 
 
-def test_kpp1_header_routes_to_cold_run():
+def test_kpp1_header_routes_to_gate1_rerun_without_claiming_acceptance():
     lines = (ROOT / "jobs/KPP1/STATE.md").read_text(encoding="utf-8").splitlines()
-    assert "#1172 stopped at Gate 1" in lines[0]
-    assert "not a continuation of unaccepted v007" in lines[0]
-    assert "АС.03 DWGs" in lines[1]
+    assert "#1209 rerun after Gate 1 [D238]" in lines[0]
+    assert "both passed=false" in lines[0]
+    assert "АС.03 copied DWGs" in lines[1]
     assert "cold-run-1172/inputs-manifest.json" in lines[1]
-    assert "Gate 1 (parts) answers -> rerun" in lines[2]
-    assert "cold-run-1172/parts-v001.json" in lines[2]
+    assert "architect levels question open" in lines[1]
+    assert "PR #1216" in lines[2]
+    assert "visual waits-user, checker waits-visual" in lines[2]
 
 
 VALID = "Current run: x\nSource: y\nNext gate: z\n"

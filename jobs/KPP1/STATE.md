@@ -1,6 +1,6 @@
-Current run: Cold run #1172 stopped at Gate 1 (cold-run-1172/RUN-LOG.md); not a continuation of unaccepted v007.
-Source: АС.03 DWGs listed in cold-run-1172/inputs-manifest.json; source-authority questions remain open.
-Next gate: Gate 1 (parts) answers -> rerun #1172 (cold-run-1172/parts-v001.json).
+Current run: #1209 rerun after Gate 1 [D238], offline VPM + derived NPM; both passed=false (rerun-1209/RUN-LOG.md).
+Source: АС.03 copied DWGs (cold-run-1172/inputs-manifest.json); provisional roof/parapet [D249]; architect levels question open.
+Next gate: Review PR #1216 with exact validator blockers; visual waits-user, checker waits-visual; Max steps waits-max.
 
 # KPP1 (Центральная проходная) — VPM + NPM model, 2026-10-07
 
