@@ -1119,7 +1119,8 @@ def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
     ``status`` is ``"fail"`` for broken (empty/partial/non-finite) face data, ``"unmeasurable"``
     when the mesh has no upward-facing surface or no surface perimeter to measure, and ``"ok"``
     when the perimeter drop was measured. The skirt extrudes the Ground surface's perimeter
-    straight down, so under every perimeter edge of the upward-facing surface the mesh must carry
+    straight down. Only outer boundary rings of every component count as perimeter; inner holes
+    (including building cut-outs) are excluded [D251]. Under every outer edge the mesh must carry
     edges at least ``SKIRT_MIN_M`` lower that lie on the same XY segment, either one copy per
     perimeter edge or one bottom edge spanning several collinear perimeter edges (#1133 case 1).
     The drop is measured per perimeter edge
@@ -1169,17 +1170,52 @@ def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
     if not top:
         return "unmeasurable", None
 
-    # perimeter edges of the surface: an edge used by exactly one surface polygon
+    # Upward-facing surface polygons orient outer boundaries CCW in XY and holes CW.
+    # [D251]: only outer rings need skirts, including every disconnected component.
+    # Classify each directed ring, not by global containment/size (an island inside a
+    # different component's hole is still an outer boundary of its own component).
     edge_count: dict[tuple[int, int], int] = {}
+    directed: dict[tuple[int, int], tuple[int, int]] = {}
     for p in top:
         n = len(p)
         for k in range(n):
             a, b = p[k], p[(k + 1) % n]
             key = (a, b) if a < b else (b, a)
             edge_count[key] = edge_count.get(key, 0) + 1
-    perimeter = [e for e, c in edge_count.items() if c == 1]
-    if not perimeter:
+            directed[key] = (a, b)
+    boundary = [directed[e] for e, c in edge_count.items() if c == 1]
+    if not boundary:
         return "unmeasurable", None
+    following: dict[int, int] = {}
+    incoming: set[int] = set()
+    for a, b in boundary:
+        if a in following or b in incoming:
+            return "fail", 0.0  # branched boundary: cannot safely exempt a hole
+        following[a] = b
+        incoming.add(b)
+    if set(following) != incoming:
+        return "fail", 0.0
+    perimeter = []
+    while following:
+        start = next(iter(following))
+        ring = []
+        a = start
+        while a in following:
+            b = following.pop(a)
+            ring.append((a, b))
+            a = b
+        if a != start:
+            return "fail", 0.0
+        # Translate before shoelace accumulation to avoid cancellation at map coordinates.
+        x0, y0 = verts[start][:2]
+        area2 = math.fsum((verts[i][0] - x0) * (verts[j][1] - y0)
+                          - (verts[j][0] - x0) * (verts[i][1] - y0) for i, j in ring)
+        if not math.isfinite(area2) or area2 == 0:
+            return "fail", 0.0
+        if area2 > 0:
+            perimeter.extend(ring)
+    if not perimeter:
+        return "fail", 0.0
 
     # every mesh edge with an XY extent (vertical edges have none), on a uniform XY grid; the skirt
     # bottom lies under the perimeter XY but may span several collinear perimeter edges (#1133)

@@ -1,0 +1,183 @@
+{
+  "schema_version": "1.0.0",
+  "synthetic": false,
+  "object_id": "SM_Kpp_1",
+  "source_tier": "B",
+  "status": "confirmed",
+  "gate1": {
+    "actor": "Artem",
+    "date": "2026-11-11",
+    "scope": "project",
+    "note": "Gate 1 for KPP1 [D238], issue #1209 («принимаю рекомендации»): footprint = L03 hatch for 0.000-3.900 and the L1 rectangle 27.66 x 11.66 m for 3.900-7.909, openings from the L01 facade dimensions, VPM first then NPM derived, per-part budgets as listed, levels 3.900 / 7.909 from Revit, not confirmed by the architect for R1."
+  },
+  "sources": [
+    {
+      "kind": "model",
+      "reference": "C:/Users/artsafro/Downloads/22Е56-АР2-1002-АС.03-R1_L01_без подписей.dwg (DWG facades; SourceRef.kind has no dwg value, model as in jobs/COD-20207, gap G7)",
+      "sha256": "cb74ba142142e9181dfc14e235f94aed7eabec597e746760e5a972427f0f3648"
+    },
+    {
+      "kind": "model",
+      "reference": "C:/Users/artsafro/Downloads/22Е56-АР2-1002-АС.03-R1_L02_без подписей.dwg (DWG colour facades; gap G7)",
+      "sha256": "428426002f2642d29e97a8db34053546dc1e427bdff8aeef9ad1c81005b73cb2"
+    },
+    {
+      "kind": "model",
+      "reference": "C:/Users/artsafro/Downloads/22Е56-АР2-1002-АС.03-R1_L03_без подписей.dwg (DWG plan at 0.000; gap G7)",
+      "sha256": "ad1de2b203bd4394bd3604642cd41bd8f3b2427ec23b900413bd396612624469"
+    },
+    {
+      "kind": "model",
+      "reference": "jobs/KPP1/object.json (levels 0.000 / 3.900 / 7.909, frame shift +14.655 / +5.355)",
+      "sha256": "a34cc18038e9440e164518523c39b25be0e7d82e0582348e4411b0763bcd020c"
+    },
+    {
+      "kind": "model",
+      "reference": "docs/methods/building-body/kpp1-drawing/plan-contours.json (#967 accepted mapping; bands reproduced by this run, cold-run-1172/plan-repro-v001.json)",
+      "sha256": "087f1055820ec278979bb2b9e4598fa66878fc4ea1f3f5c6929dc25ad86a891f"
+    }
+  ],
+  "triangle_budget": {
+    "npm": 150000,
+    "vpm": 1000000
+  },
+  "parts": [
+    {
+      "id": "Body_Walls",
+      "part_class": "wall",
+      "sources": [
+        {
+          "kind": "layer",
+          "reference": "A-WALL-____-PATT"
+        },
+        {
+          "kind": "layer",
+          "reference": "A-WALL-____-MCUT"
+        }
+      ],
+      "legend_item": "L03 exterior wall hatch for band 0.000-3.900 (with the 0.70 m entrance-frame bumps); L1 rectangle 27.66 x 11.66 m for band 3.900-7.909; openings cut from the L01 facade dimensions [D238]",
+      "operation": "contour_rebuild",
+      "triangle_budget": {
+        "npm": 60000,
+        "vpm": 300000
+      }
+    },
+    {
+      "id": "Roof_Plate",
+      "part_class": "slab",
+      "sources": [
+        {
+          "kind": "region",
+          "reference": "roof outline at 7.909 inside the parapet (object.json; pattern roof-inset-plane)"
+        }
+      ],
+      "operation": "primitive",
+      "build_as": "plane",
+      "triangle_budget": {
+        "npm": 4000,
+        "vpm": 20000
+      }
+    },
+    {
+      "id": "Parapet",
+      "part_class": "parapet",
+      "sources": [
+        {
+          "kind": "region",
+          "reference": "L01 / L02 facade mark +8.650"
+        }
+      ],
+      "operation": "contour_rebuild",
+      "triangle_budget": {
+        "npm": 6000,
+        "vpm": 40000
+      }
+    },
+    {
+      "id": "Windows",
+      "part_class": "window",
+      "sources": [
+        {
+          "kind": "layer",
+          "reference": "A-GLAZ-____-OTLN"
+        }
+      ],
+      "legend_item": "10 window inserts; openings and frames from the L01 facade dimensions [D238]",
+      "operation": "detail_per_profile",
+      "triangle_budget": {
+        "npm": 30000,
+        "vpm": 250000
+      }
+    },
+    {
+      "id": "Doors",
+      "part_class": "door",
+      "sources": [
+        {
+          "kind": "layer",
+          "reference": "A-DOOR-____-OTLN"
+        }
+      ],
+      "legend_item": "30 door inserts; openings and frames from the L01 facade dimensions [D238]",
+      "operation": "detail_per_profile",
+      "triangle_budget": {
+        "npm": 20000,
+        "vpm": 150000
+      }
+    },
+    {
+      "id": "CurtainWall_Mullions",
+      "part_class": "frame",
+      "sources": [
+        {
+          "kind": "layer",
+          "reference": "A-GLAZ-CWMG-OTLN"
+        }
+      ],
+      "legend_item": "86 'Прямоугольный импост' inserts",
+      "operation": "detail_per_profile",
+      "triangle_budget": {
+        "npm": 15000,
+        "vpm": 120000
+      }
+    },
+    {
+      "id": "Grille",
+      "part_class": "grille",
+      "sources": [
+        {
+          "kind": "component",
+          "reference": "insert 'Решетка 1000х500' on A-GLAZ-CWMG-OTLN"
+        }
+      ],
+      "operation": "to_texture",
+      "triangle_budget": {
+        "npm": 0,
+        "vpm": 0
+      }
+    },
+    {
+      "id": "Stair",
+      "part_class": "railing",
+      "sources": [
+        {
+          "kind": "layer",
+          "reference": "S-STRS-____-OTLN"
+        }
+      ],
+      "legend_item": "L03 stair outline; heights from the L01 facades",
+      "operation": "detail_per_profile",
+      "triangle_budget": {
+        "npm": 10000,
+        "vpm": 80000
+      }
+    }
+  ],
+  "joints": [],
+  "questions": [
+    {
+      "audience": "architect",
+      "text": "АС.03 has no section sheet: storey 3.900 and roof 7.909 come from object.json (Revit). Do they hold for revision R1? Used for now per [D238] answer 5: 'from Revit, not confirmed by the architect for R1'."
+    }
+  ]
+}

@@ -1,0 +1,604 @@
+{
+  "synthetic": false,
+  "note": "Real artifact checks plus explicitly synthetic malformed/alias inputs; no user/manual approval.",
+  "passed": true,
+  "probes": [
+    {
+      "probe": "evidence_hash",
+      "passed": true,
+      "detail": "0000_Kpp_1_01.fbx"
+    },
+    {
+      "probe": "evidence_hash",
+      "passed": true,
+      "detail": "0000_Kpp_1_01.preview_NW.png"
+    },
+    {
+      "probe": "evidence_hash",
+      "passed": true,
+      "detail": "0000_Kpp_1_01.preview_SE.png"
+    },
+    {
+      "probe": "evidence_hash",
+      "passed": true,
+      "detail": "0000_Kpp_1_01.readback.json"
+    },
+    {
+      "probe": "evidence_hash",
+      "passed": true,
+      "detail": "0000_Kpp_1_01.validate.json"
+    },
+    {
+      "probe": "evidence_hash",
+      "passed": true,
+      "detail": "build-report.json"
+    },
+    {
+      "probe": "evidence_hash",
+      "passed": true,
+      "detail": "parts-mesh-v002.json"
+    },
+    {
+      "probe": "evidence_hash",
+      "passed": true,
+      "detail": "plan-account-L03.json"
+    },
+    {
+      "probe": "evidence_hash",
+      "passed": true,
+      "detail": "plan-contours-L03.json"
+    },
+    {
+      "probe": "evidence_hash",
+      "passed": true,
+      "detail": "SM_Kpp_1.fbx"
+    },
+    {
+      "probe": "evidence_hash",
+      "passed": true,
+      "detail": "SM_Kpp_1.preview_NW.png"
+    },
+    {
+      "probe": "evidence_hash",
+      "passed": true,
+      "detail": "SM_Kpp_1.preview_SE.png"
+    },
+    {
+      "probe": "evidence_hash",
+      "passed": true,
+      "detail": "SM_Kpp_1.readback.json"
+    },
+    {
+      "probe": "evidence_hash",
+      "passed": true,
+      "detail": "SM_Kpp_1.validate.json"
+    },
+    {
+      "probe": "manifest_hash",
+      "passed": true,
+      "detail": "external == committed"
+    },
+    {
+      "probe": "copied_input_hash",
+      "passed": true,
+      "detail": "C:/x/kpp1/r1209/L01.dwg"
+    },
+    {
+      "probe": "copied_input_hash",
+      "passed": true,
+      "detail": "C:/x/kpp1/r1209/L03.dwg"
+    },
+    {
+      "probe": "copied_input_hash",
+      "passed": true,
+      "detail": "C:/x/kpp1/r1209/dxf/L01.dxf"
+    },
+    {
+      "probe": "copied_input_hash",
+      "passed": true,
+      "detail": "C:/x/kpp1/r1209/dxf/L03.dxf"
+    },
+    {
+      "probe": "copied_input_hash",
+      "passed": true,
+      "detail": "C:/x/kpp1/r1209/plan-contours-L03.json"
+    },
+    {
+      "probe": "copied_input_hash",
+      "passed": true,
+      "detail": "C:/x/kpp1/r1209/parts-mesh-v002.json"
+    },
+    {
+      "probe": "approved_budgets_unchanged",
+      "passed": true,
+      "detail": "8 approved part ids/budget pairs"
+    },
+    {
+      "probe": "part_budget",
+      "passed": true,
+      "detail": "vpm/Body_Walls: 2970 <= 300000"
+    },
+    {
+      "probe": "part_budget",
+      "passed": true,
+      "detail": "vpm/Roof_Plate: 12 <= 20000"
+    },
+    {
+      "probe": "part_budget",
+      "passed": true,
+      "detail": "vpm/Parapet: 32 <= 40000"
+    },
+    {
+      "probe": "part_budget",
+      "passed": true,
+      "detail": "vpm/Windows: 2520 <= 250000"
+    },
+    {
+      "probe": "part_budget",
+      "passed": true,
+      "detail": "vpm/Doors: 660 <= 150000"
+    },
+    {
+      "probe": "part_budget",
+      "passed": true,
+      "detail": "vpm/CurtainWall_Mullions: 84 <= 120000"
+    },
+    {
+      "probe": "part_budget",
+      "passed": true,
+      "detail": "vpm/Grille: 0 <= 0"
+    },
+    {
+      "probe": "part_budget",
+      "passed": true,
+      "detail": "vpm/Stair: 0 <= 80000"
+    },
+    {
+      "probe": "FBX_budget",
+      "passed": true,
+      "detail": "vpm"
+    },
+    {
+      "probe": "part_budget",
+      "passed": true,
+      "detail": "npm/Body_Walls: 2970 <= 60000"
+    },
+    {
+      "probe": "part_budget",
+      "passed": true,
+      "detail": "npm/Roof_Plate: 12 <= 4000"
+    },
+    {
+      "probe": "part_budget",
+      "passed": true,
+      "detail": "npm/Parapet: 32 <= 6000"
+    },
+    {
+      "probe": "part_budget",
+      "passed": true,
+      "detail": "npm/Windows: 504 <= 30000"
+    },
+    {
+      "probe": "part_budget",
+      "passed": true,
+      "detail": "npm/Doors: 660 <= 20000"
+    },
+    {
+      "probe": "part_budget",
+      "passed": true,
+      "detail": "npm/CurtainWall_Mullions: 0 <= 15000"
+    },
+    {
+      "probe": "part_budget",
+      "passed": true,
+      "detail": "npm/Grille: 0 <= 0"
+    },
+    {
+      "probe": "part_budget",
+      "passed": true,
+      "detail": "npm/Stair: 0 <= 10000"
+    },
+    {
+      "probe": "FBX_budget",
+      "passed": true,
+      "detail": "npm"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "Ю00"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "Ю01"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "Ю02"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "Ю03"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "Ю04"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "Ю05"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "Ю06"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "Ю07"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "Ю08"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "Ю09"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "Ю10"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "Ю11"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "Ю12"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "Ю13"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "Ю14"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "Ю15"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "Ю16"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "Ю17"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "Ю18"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "Ю19"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "Ю20"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "Ю21"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "Ю22"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "Ю23"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "Ю24"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "Ю25"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "Ю26"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "С27"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "С28"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "С29"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "С30"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "С31"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "С32"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "С33"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "С34"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "С35"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "С36"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "С37"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "С38"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "С39"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "С40"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "З41"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "З42"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "З43"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "З44"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "З45"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "З46"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "З47"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "З48"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "В49"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "В50"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "В51"
+    },
+    {
+      "probe": "opening_cut",
+      "passed": true,
+      "detail": "В52"
+    },
+    {
+      "probe": "fresh_validation_matches",
+      "passed": true,
+      "detail": "vpm"
+    },
+    {
+      "probe": "fresh_validation_matches",
+      "passed": true,
+      "detail": "npm"
+    },
+    {
+      "probe": "LF_only",
+      "passed": true,
+      "detail": "0000_Kpp_1_01.validate.json"
+    },
+    {
+      "probe": "LF_only",
+      "passed": true,
+      "detail": "build-report.json"
+    },
+    {
+      "probe": "LF_only",
+      "passed": true,
+      "detail": "build_blender.py"
+    },
+    {
+      "probe": "LF_only",
+      "passed": true,
+      "detail": "build_parts.py"
+    },
+    {
+      "probe": "LF_only",
+      "passed": true,
+      "detail": "evidence-SHA256SUMS.txt"
+    },
+    {
+      "probe": "LF_only",
+      "passed": true,
+      "detail": "final-audit.json"
+    },
+    {
+      "probe": "LF_only",
+      "passed": true,
+      "detail": "inputs-v001.json"
+    },
+    {
+      "probe": "LF_only",
+      "passed": true,
+      "detail": "parts-v002.json"
+    },
+    {
+      "probe": "LF_only",
+      "passed": true,
+      "detail": "render_preview.py"
+    },
+    {
+      "probe": "LF_only",
+      "passed": true,
+      "detail": "RUN-LOG.md"
+    },
+    {
+      "probe": "LF_only",
+      "passed": true,
+      "detail": "SM_Kpp_1.validate.json"
+    },
+    {
+      "probe": "LF_only",
+      "passed": true,
+      "detail": "walk-v001.json"
+    },
+    {
+      "probe": "LF_only",
+      "passed": true,
+      "detail": "job.yaml"
+    },
+    {
+      "probe": "nonfinite_rejected",
+      "passed": true,
+      "detail": "nan"
+    },
+    {
+      "probe": "nonfinite_rejected",
+      "passed": true,
+      "detail": "inf"
+    },
+    {
+      "probe": "nonfinite_rejected",
+      "passed": true,
+      "detail": "-inf"
+    },
+    {
+      "probe": "malformed_cli_fail_closed",
+      "passed": true,
+      "detail": "case 0; exit 1"
+    },
+    {
+      "probe": "malformed_cli_fail_closed",
+      "passed": true,
+      "detail": "case 1; exit 1"
+    },
+    {
+      "probe": "malformed_cli_fail_closed",
+      "passed": true,
+      "detail": "case 2; exit 1"
+    },
+    {
+      "probe": "malformed_cli_fail_closed",
+      "passed": true,
+      "detail": "case 3; exit 1"
+    },
+    {
+      "probe": "malformed_cli_fail_closed",
+      "passed": true,
+      "detail": "case 4; exit 1"
+    },
+    {
+      "probe": "alias_cli_rejected",
+      "passed": true,
+      "detail": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d1f84643\\tmp\\kpp1-final-probes\\alias.json"
+    },
+    {
+      "probe": "alias_cli_rejected",
+      "passed": true,
+      "detail": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d1f84643\\tmp\\kpp1-final-probes\\..\\kpp1-final-probes\\alias.json"
+    },
+    {
+      "probe": "no_binary_committed",
+      "passed": true,
+      "detail": "git diff origin/main...HEAD"
+    }
+  ],
+  "count": 119,
+  "failed": 0
+}
