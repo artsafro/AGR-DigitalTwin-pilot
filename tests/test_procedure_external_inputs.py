@@ -1,5 +1,7 @@
 """External-input manifests and LF receipts in the job walker (#1202, KPP1 cold-run F2).
 
+new-case: external-inputs/1 manifest rows re-hashed by dt_ai.procedure; LF walk output.
+
 All files here are SYNTHETIC temp files except the read-only checks of the committed
 KPP1 source registry.
 """
