@@ -16,6 +16,34 @@ Storey **3.900** and roof **7.909** (and the roof base 7.700) are **from Revit (
 confirmed by the architect for R1**. АС.03 has no section sheet; the architect question stays open in
 `jobs/KPP1/questions.md` (Q-R1-LEVELS).
 
+Resume approval: parapet thickness **0.35 m** and roof slab **7.700-7.909** are
+**provisional, not confirmed by drawings/architect [D248]**. This resolves the previous
+modelling question, not the outstanding delivery checks. No export was rebuilt in this resume.
+
+## Resume preflight: delivery target conflict
+
+The latest card instruction asks for `validate_package passed=true`, but the card keeps
+MSK-77 placement out of scope and permits missing visual/checker gates. [D224] explicitly
+keeps the KPP GeoJSON/coordinates deferral as a blocker, never passed; AGENTS.md and
+TASK_TO_MODEL forbid pass while mandatory/manual gates remain open.
+
+Fresh execution on the existing VPM (not a cached report):
+`uv run python tools/qa/validate_package.py G:/<Drive>/AGR-evidence/KPP1/rerun-1209/SM_Kpp_1.fbx --profile vpm --scene --json`
+returned exit **1**, `passed=false`, machine stages **4 pass / 1 fail / 1 review / 6 not_run**;
+manual reviews pending **V015/V016/V017**. V001/V011/V013 are not_run without the package,
+GeoJSON and placement; V004 still fails; V010 is review. Local diagnostic:
+`tmp/kpp1-resume/vpm-scene.json` (no new delivery receipt or acceptance claimed).
+
+Decision required before further production: retain the original geometry-run acceptance
+(explicit blocked checks, `passed=false`, finish all in-scope geometry/textures), or expand
+this card to include placement/GeoJSON and arrange user visual/manual/checker acceptance?
+Recommended: retain the geometry-run scope and keep final delivery certification separate.
+Neither interpretation permits fabricated approvals or changing the validator to pass.
+The missing Stair and 164 mullions remain in-scope work, not waived or reclassified.
+
+Decision allocation: `uv run python tools/git-hooks/decision_ids.py next` -> **D248**,
+checked across origin/main, this branch and **15 open PR heads**.
+
 ## Commands (exact)
 
 ```
@@ -121,7 +149,7 @@ V015 / V017 manual. Pass: V002, V005, V012.
 | R1 | TASK_TO_MODEL `operations` / parts list | The PartsList has per-part budgets, but the VPM/NPM grammar allows only `SM_<A>_Main` + `MainGlass` (+UCX): parts must be joined before export, so per-part triangles are measurable only before the join and the joined mesh then fails V004 self-intersections where parts touch. No rule says whether parts are joined, welded or unioned. | follow-up |
 | R2 | L01 opening source | Openings come from Revit-exported block inserts; `plan_from_dxf` reads plans only. There is no shared facade reader (view placement by grid lines, insert bboxes per facade suffix `О_АР_Ф_<Сторона>`); this run wrote one into the job folder. | follow-up |
 | R3 | `validate_package` on a single FBX | V001/V011/V013 can only be `not_run` without a ZIP and GeoJSON, so a geometry-only run can never reach `passed=true`; the acceptance "passed=true for each built FBX" is not reachable while MSK-77 placement is deferred. | note in TASK_TO_MODEL |
-| R4 | Parapet thickness / roof base | No section sheet: parapet ring 0.35 m and roof base 7.700 (Revit +7,700) are assumptions; not in `mapping-questions.md`. | architect question |
+| R4 | Parapet thickness / roof base | Initially guessed; Artem provisionally approved 0.35 m parapet and slab 7.700-7.909 in [D248]. Marked 'provisional, not confirmed by drawings/architect [D248]'; architect confirmation stays open. | user modelling blocker resolved; architect question retained |
 | R5 | Mullions | 164 of 171 mullion inserts lie outside the merged opening boxes (their centres are not inside any cut), so they were not placed; the curtain-wall panels and the mullions use different layer groupings. | follow-up |
 
 ## Not done, and why

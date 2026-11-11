@@ -36,9 +36,10 @@ sys.path.insert(0, str(ROOT / "src"))
 from dt_ai.ops.contour import extrude_polygon  # noqa: E402
 
 LEVELS = (0.0, 3.9, 7.909)          # object.json (Revit) [D238] 5
-ROOF_BASE_M = 7.700                 # Revit structural level +7,700 (object.json revit_levels), roof slab below 7.909
+ROOF_BASE_M = 7.700                 # provisional roof slab base [D248]; Revit level, not architect-confirmed
 PARAPET_TOP_M = 8.650               # L01 mark +8,650 on all four facades
-PARAPET_T_M = 0.35                  # assumption (no section sheet): parapet ring thickness, RUN-LOG gap
+PARAPET_T_M = 0.35                  # provisional user approval [D248], not an architect-confirmed dimension
+ROOF_PROVISIONAL_NOTE = "provisional, not confirmed by drawings/architect [D248]"
 FRAME_TOP_M = 3.300                 # L01 Южный: frame hatch band +2,700..+3,300 at the entrance frames
 SHIFT = (-14.655, -5.355)           # Revit -> object frame (object.json SM_Kpp_1.fbx inverse)
 L1_RECT = (-0.33 + SHIFT[0], -0.33 + SHIFT[1], 27.33 + SHIFT[0], 11.33 + SHIFT[1])  # 27.66 x 11.66 m
@@ -212,6 +213,7 @@ def main(argv):
     }
     out = {"schema": "kpp1-rerun-parts/1", "decision": "D238", "synthetic": False,
            "levels_m": list(LEVELS), "levels_note": "from Revit, not confirmed by the architect for R1 [D238]",
+           "roof_provisional_note": ROOF_PROVISIONAL_NOTE,
            "params": {"roof_base_m": ROOF_BASE_M, "parapet_top_m": PARAPET_TOP_M, "parapet_t_m": PARAPET_T_M,
                       "frame_top_m": FRAME_TOP_M, "recess_m": [round(recess.bounds[0], 4), round(recess.bounds[2], 4), round(recess.bounds[3], 4)], "recess_area_m2": round(recess.area, 3), "l1_rect_m": L1_RECT, "merge_mm": MERGE_MM, "cut_depth_m": CUT_DEPTH_M},
            "band_areas_m2": {n: round(p.area, 3) for p, _, _, n in bands},

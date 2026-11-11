@@ -94,4 +94,4 @@ column (`\|` for a pipe); ids are stable across spec versions. Status: open, ans
 
 ## Open for the architect (rerun #1209)
 
-- **Q-R1-LEVELS** (open): АС.03 has no section sheet. Storey 3.900 and roof 7.909 (roof base 7.700) come from `jobs/KPP1/object.json` (Revit) and are used per [D238] answer 5, marked 'from Revit, not confirmed by the architect for R1'. Do they hold for revision R1? Also: parapet thickness (assumed 0.35 m) and roof build-up.
+- **Q-R1-LEVELS** (open): АС.03 has no section sheet. Storey 3.900 and roof 7.909 (roof base 7.700) come from `jobs/KPP1/object.json` (Revit) and are used per [D238] answer 5, marked 'from Revit, not confirmed by the architect for R1'. Do they hold for revision R1? Roof base 7.700 is covered separately by [D248], not [D238]. Parapet thickness 0.35 m and roof slab 7.700-7.909 are provisionally accepted by Artem: 'provisional, not confirmed by drawings/architect [D248]'. Architect confirmation of both still remains open.

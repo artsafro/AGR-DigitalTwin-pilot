@@ -40,6 +40,7 @@ gates:
     evidence:
     - path: jobs/KPP1/rerun-1209/build_parts.py
       sha256: 2ac9ce390468c5b6c02b721594bd72ff9ea9128d652fc8a53c70b9f37432114b
+      commit: 0b50b3a9417e79d7bc68dcbb61bb6f3ff26a5f91
     - path: jobs/KPP1/rerun-1209/build_blender.py
       sha256: 5ac583f94ff3f3ab9db20c11aa83681094d5452728f9267af47d53cc42e1e45b
     - path: jobs/KPP1/rerun-1209/build-report.json
@@ -65,7 +66,7 @@ gates:
     note: "Run log with commands, triangle table, validator blockers and procedure gaps R1-R5."
     evidence:
     - path: jobs/KPP1/rerun-1209/RUN-LOG.md
-      sha256: b76bed931e8427f4c61926720a47348790b6c78dc3c1f0d73bbef8dfd38182f7
+      sha256: edea238847f7b05f881c2818388a379718645be109a50dd7ca96b495dae1cf71
   visual:
     status: missing
     note: "waits-user: previews in G:/Мой диск/AGR-evidence/KPP1/rerun-1209; board review (D119) not done."
