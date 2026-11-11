@@ -1,5 +1,8 @@
 """#1230 KPP1 R1 rerun receipts: V004 topology within its limit, Stair built, every L01 mullion accounted for,
-textures (V006/V007/V009) run and pass, UCX gaps in band; fail-closed probes of the parts builder."""
+textures (V006/V007/V009) run and pass, UCX gaps in band; fail-closed probes of the parts builder.
+
+new-case: receipt tests for the KPP1 #1230 offline rerun (jobs/KPP1/rerun-1230/).
+"""
 from __future__ import annotations
 
 import importlib.util
