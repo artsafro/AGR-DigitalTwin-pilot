@@ -97,7 +97,7 @@ def test_long_titles_over_budget_are_clipped_until_the_budget_passes(tmp_path, m
     assert total <= eb.BUDGET
     merges, opens = _rows(output.read_text(encoding="utf-8"))
     assert merges == [2000 - i for i in range(12)]  # all 12, newest first
-    assert sorted(opens) == [3000 - i for i in range(12)]  # all 12 open PR numbers kept
+    assert sorted(opens) == sorted(3000 - i for i in range(12))  # all 12 open PR numbers kept
     assert "..." in output.read_text(encoding="utf-8")
 
 
@@ -177,7 +177,7 @@ def test_clipped_rows_still_parse_for_after_merge_and_freshness(width):
     text = ps.render(merges, opens, width=width)
     got_merges, got_opens = _rows(text)
     assert got_merges == [2000 - i for i in range(12)]
-    assert sorted(am.listed_open_prs(text)) == sorted(got_opens) == [3000 - i for i in range(12)]
+    assert sorted(am.listed_open_prs(text)) == sorted(got_opens) == sorted(3000 - i for i in range(12))
     for line in text.splitlines():
         if line.startswith("- `"):
             assert len(line.split("` ", 1)[1]) <= width
@@ -199,6 +199,27 @@ def test_generated_titles_never_exceed_width_and_keep_the_merge_prefix():
         assert re.match(rf"Merge pull request #{number} from \S", clipped)
         if len(subject) <= width:
             assert clipped == subject
+
+
+def test_probe_random_title_lengths_pass_or_refuse(tmp_path, monkeypatch):
+    """Probe (seed 1222, 80 cases): output within budget with 12/12 rows, or refused and nothing written."""
+    rng = random.Random(1222)
+    outcomes = {"pass": 0, "refuse": 0}
+    for case in range(80):
+        repo = _repo(tmp_path / f"c{case}", agents_tokens=rng.choice([8600, 8800, 9000, 9300, 9900]))
+        output = repo / "docs" / "PROJECT_STATE.md"
+        before = output.read_bytes()
+        _fake_capture(monkeypatch, _merges(12, rng.randint(1, 400)), _opens(12, rng.randint(1, 400)))
+        try:
+            text = ps.generate(repo, output, 12, 12)
+        except ps.FailClosed as exc:
+            assert "budget" in exc.reason and output.read_bytes() == before
+            outcomes["refuse"] += 1
+            continue
+        assert eb.check(repo, repo / RECEIPT_REL)[1] <= eb.BUDGET
+        assert [len(r) for r in _rows(text)] == [12, 12]
+        outcomes["pass"] += 1
+    assert outcomes["pass"] and outcomes["refuse"]
 
 
 def test_fresh_process_cli_clips_and_passes_the_budget(tmp_path):
