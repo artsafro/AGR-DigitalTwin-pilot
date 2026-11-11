@@ -10,6 +10,7 @@ PySide6 missing, the pytest-qt plugin aborts the whole session at startup (exit 
 below are direct, so a broken install (for example a DLL error on Windows) fails instead of skipping.
 """
 import importlib.util
+from functools import lru_cache
 import inspect
 import json
 import os
@@ -54,6 +55,12 @@ _ispec.loader.exec_module(ICONS)
 QtCore, QtGui, QtWidgets = qt.QtCore, qt.QtGui, qt.QtWidgets
 
 
+@lru_cache(maxsize=256)
+def _icon_png(svg_text, size):
+    """Cache immutable synthetic icon bytes by complete content, not theme/name alone."""
+    return ICONS.png_bytes(svg_text, size)
+
+
 class FakeBackend:
     def __init__(self, n=1000, cancel_at=None):
         self.nodes = list(range(1, n + 1))
@@ -76,7 +83,7 @@ class FakeBackend:
         icon = QtGui.QIcon()
         for s in (24, 30, 36, 48):
             pm = QtGui.QPixmap()
-            pm.loadFromData(ICONS.png_bytes(ICONS.svg(name, ICONS.THEMES['Dark']), s), 'PNG')
+            pm.loadFromData(_icon_png(ICONS.svg(name, ICONS.THEMES['Dark']), s), 'PNG')
             icon.addPixmap(pm)
         return icon
 

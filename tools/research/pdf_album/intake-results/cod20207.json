@@ -1,0 +1,160 @@
+{
+  "album": "cod20207",
+  "source_sha256": "3398c18864b0ef46b3cb59d43c34e8e3a7707172ee372545861ff8a672bb87ce",
+  "pages": [
+    {
+      "pdf_page": 1,
+      "kind": "facade",
+      "expected_kind": "facade",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "Схема фасада в осях 1-17 с указанием материалов (без отдельных фрагментов)",
+      "routes": {
+        "vector_read": 16,
+        "ocr_vision": 7
+      },
+      "indicators": {
+        "text": 8,
+        "outline_candidate": 2,
+        "raster": 5,
+        "vector": 8
+      }
+    },
+    {
+      "pdf_page": 2,
+      "kind": "facade",
+      "expected_kind": "facade",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "Схема фасада в осях 17-1 с указанием материалов (без отдельных фрагментов)",
+      "routes": {
+        "vector_read": 12,
+        "ocr_vision": 7
+      },
+      "indicators": {
+        "text": 6,
+        "outline_candidate": 2,
+        "raster": 5,
+        "vector": 6
+      }
+    },
+    {
+      "pdf_page": 3,
+      "kind": "facade",
+      "expected_kind": "facade",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "Схема фасада в осях А-Д; Д-А с указанием материалов (без отдельных фрагментов)",
+      "routes": {
+        "vector_read": 12,
+        "ocr_vision": 7
+      },
+      "indicators": {
+        "text": 6,
+        "outline_candidate": 2,
+        "raster": 5,
+        "vector": 6
+      }
+    },
+    {
+      "pdf_page": 4,
+      "kind": "unknown",
+      "expected_kind": "unknown",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": null,
+      "routes": {
+        "vector_read": 16,
+        "ocr_vision": 7
+      },
+      "indicators": {
+        "text": 7,
+        "outline_candidate": 4,
+        "raster": 3,
+        "vector": 9
+      }
+    },
+    {
+      "pdf_page": 5,
+      "kind": "unknown",
+      "expected_kind": "unknown",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "* Сечение светильника и его финальная длина требуют согласования и подтверждения соответствующими разрезами.",
+      "routes": {
+        "vector_read": 20,
+        "table_extraction": 2,
+        "ocr_vision": 2
+      },
+      "indicators": {
+        "text": 16,
+        "raster": 2,
+        "vector": 6
+      }
+    }
+  ],
+  "accounted": 5,
+  "reference_pages": 5,
+  "kind_agreement": 5,
+  "scores": {
+    "plan": {
+      "correct": 0,
+      "predicted": 0,
+      "reference": 0,
+      "precision": null,
+      "recall": null
+    },
+    "facade": {
+      "correct": 3,
+      "predicted": 3,
+      "reference": 3,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "section": {
+      "correct": 0,
+      "predicted": 0,
+      "reference": 0,
+      "precision": null,
+      "recall": null
+    },
+    "schedule": {
+      "correct": 0,
+      "predicted": 0,
+      "reference": 0,
+      "precision": null,
+      "recall": null
+    },
+    "3D": {
+      "correct": 0,
+      "predicted": 0,
+      "reference": 0,
+      "precision": null,
+      "recall": null
+    },
+    "unknown": {
+      "correct": 2,
+      "predicted": 2,
+      "reference": 2,
+      "precision": 1.0,
+      "recall": 1.0
+    }
+  },
+  "scope": "agreement with frozen text heuristics; NOT semantic ground truth",
+  "seconds": [
+    2.2373825999966357,
+    2.9259049000102095
+  ],
+  "deterministic": true,
+  "passed": false,
+  "evidence": "G:\\Мой диск\\AGR-evidence\\pdf-album\\1233\\t_3996e752-v002\\cod20207\\first",
+  "hashes": {
+    "album_index.json": "70bc09b9df16ea5620dd864a13e2c437abf59ab98fb0b1213ccb0402376e32ad",
+    "manifest.json": "2044b240dcf4bba8c7dcbc969224cda0666a9fa6764f307fbf820987f0afc286"
+  }
+}

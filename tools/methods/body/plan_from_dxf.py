@@ -22,6 +22,13 @@ Guarantees (each has a test):
   (0.1 m) of the hatch bbox. Otherwise the extract is an error naming the coverage: no contour that lost
   the drawn wall is written. Exactly 0.9 or exactly 0.1 m fails. With no hatch layer the coverage is
   ``not measured`` with the reason.
+- Overshoot (#1004): ``unaccounted_m2`` is the kept footprint minus the hatch closed at the fixed
+  reference COVERAGE_REF_GAP_CLOSE_M (0.75 m = GAP_CLOSE_M; outlines plus the strips bridging gaps strictly
+  under 1.5 m, filled). It does not follow the run's ``gap_close_m``: a wider run closing that bridges an
+  opening the reference leaves open fails.
+  It must be strictly under MAX_UNACCOUNTED_M2 (0.5 m2, the smallest kept piece); exactly 0.5 fails and
+  the error names the area and its bbox. A footprint that closes over a notch the hatch leaves open fails.
+  A ``gap_close_m`` that is not a finite number above 0.1 mm is an error naming it.
 - A non-finite coordinate is an error naming the handle. An empty model space is an error.
 - A wall or symbol entity whose type this reader does not support is an error naming the
   type (a CIRCLE on a wall layer is not a contour).
@@ -38,16 +45,26 @@ Guarantees (each has a test):
   wall faces sit strictly within 1.0 m on opposite sides of that centre. Otherwise the
   insert is dropped with the missing fact named. No default depth and no default base point.
   A face at exactly 1.0 m is not used.
-- The CLI refuses an output or report path that is the input or the same file as the other
-  output (exit 4, nothing written). It never deletes an input.
+- The CLI refuses an output or report path that is the input (the DXF or the ``--map-file``) or the
+  same file as the other output (exit 4, nothing written). It never deletes an input.
+- ``method`` follows ``contour_source`` (``METHODS``; #1203).
+- The extract output carries ``invocation`` (#1203): the argv as given, ``options_argv`` (every map entry
+  expanded, z0/z1/levels, contour source, origin and shift), the DXF path and SHA-256, the map file
+  path and SHA-256, the tool SHA-256 and the git sha (``null`` with ``git_error`` when git cannot say).
+  ``extract <dxf> <out> <report> *options_argv`` re-runs it from the file alone.
+- A layer mapped twice (``--map`` or ``--map-file``), an empty map, or an empty map file is an error
+  naming it; nothing is written. A DXF that changes while it is read is an error.
 """
 from __future__ import annotations
 
 import argparse
 import copy
+import hashlib
 import json
 import math
 import re
+import shlex
+import subprocess
 import sys
 from pathlib import Path
 
@@ -62,7 +79,17 @@ from contours import GAP_CLOSE_M, MIN_PIECE_M2  # noqa: E402
 
 COVERAGE_MIN_SHARE = 0.9  # covered share of the wall hatch must be strictly above this
 COVERAGE_BBOX_M = 0.1  # every bbox side strictly within this of the hatch bbox
+# footprint area outside the hatch closed at the reference radius must stay strictly under the smallest
+# kept piece (#1004). The reference is fixed (the default GAP_CLOSE_M), never the run's gap_close_m.
+MAX_UNACCOUNTED_M2 = MIN_PIECE_M2
+COVERAGE_REF_GAP_CLOSE_M = GAP_CLOSE_M
 CONTOUR_SOURCES = ("lines", "hatch")
+# #1203: the method string follows the contour source (it was "wall lines" for hatch too).
+METHODS = {
+    "lines": "plan wall lines from a DXF readback (tools/methods/body/plan_from_dxf.py)",
+    "hatch": "plan wall hatch union from a DXF readback (tools/methods/body/plan_from_dxf.py, contour_source hatch)",
+}
+TOOL_REL = "tools/methods/body/plan_from_dxf.py"
 FACE_LIMIT_M = 1.0  # a host-wall face is strictly closer than this; exactly 1.0 m is not used
 # L03 of АС.03. Only A-WALL-____-MCUT is the exterior cut. I-WALL stays out (accepted Q1).
 # Symbol layers are read and then kept only when the block is a door or a window (Q3).
@@ -188,8 +215,12 @@ def _split(parts) -> tuple[list[Polygon], list[Polygon]]:
     return keep, dropped
 
 
-def _fill_pieces(areas: list, gap_close_m: float) -> tuple[list[Polygon], list[Polygon]]:
-    """Hatched wall mass to plan pieces: grown, outlines filled, shrunk back (contours.py closing)."""
+def _close_fill(areas: list, gap_close_m: float):
+    """Hatched wall mass grown, outlines filled, shrunk back (contours.py closing), as one geometry.
+
+    This is the area the closed hatch outlines account for: the hatch, the strips that bridge its gaps
+    strictly under ``2 * gap_close_m``, and everything those closed outlines enclose.
+    """
     radius = float(gap_close_m) - 1e-4
     thick = unary_union([a.buffer(radius, quad_segs=2) for a in areas])
     geoms = list(thick.geoms) if thick.geom_type == "MultiPolygon" else [thick]
@@ -199,29 +230,54 @@ def _fill_pieces(areas: list, gap_close_m: float) -> tuple[list[Polygon], list[P
             continue
         shrunk = Polygon(geom.exterior).buffer(-radius, quad_segs=2)
         filled.extend(list(shrunk.geoms) if shrunk.geom_type == "MultiPolygon" else [shrunk])
-    merged = unary_union([p for p in filled if not p.is_empty])
+    return unary_union([p for p in filled if not p.is_empty])
+
+
+def _fill_pieces(areas: list, gap_close_m: float) -> tuple[list[Polygon], list[Polygon]]:
+    """Hatched wall mass to plan pieces: the closed fill split into kept and dropped pieces."""
+    merged = _close_fill(areas, gap_close_m)
     if merged.is_empty:
         return [], []
     return _split(list(merged.geoms) if merged.geom_type == "MultiPolygon" else [merged])
 
 
-def coverage_check(keep: list, hatch) -> dict:
-    """Share of the hatch area under the kept pieces and the largest bbox side offset; fail-closed."""
+def coverage_check(keep: list, hatch, gap_close_m: float = GAP_CLOSE_M) -> dict:
+    """Hatch share under the kept pieces, bbox offset and footprint area the hatch does not account for.
+
+    ``unaccounted_m2`` is the kept footprint minus the hatch closed at the fixed COVERAGE_REF_GAP_CLOSE_M
+    (``_close_fill``: outlines plus bridged gap strips, filled), whatever the run's ``gap_close_m`` is; the
+    run's value is validated and reported only. It must stay strictly under MAX_UNACCOUNTED_M2. Fail-closed.
+    """
     if hatch is None or hatch.is_empty or not hatch.area > 0:
         raise ValueError("coverage: the hatch reference has no area")
+    if isinstance(gap_close_m, bool) or not isinstance(gap_close_m, (int, float)) \
+            or not math.isfinite(gap_close_m) or gap_close_m <= 1e-4:
+        raise ValueError(f"coverage: gap_close_m must be a finite number above 0.0001 m, got {gap_close_m!r}")
     parts = [p for p in keep if not p.is_empty and p.area > 0]
     kept = unary_union(parts) if parts else None
     hatch_area = float(hatch.area)
     if kept is None or kept.is_empty or not kept.area > 0:
         return {"status": "fail", "hatch_area_m2": round(hatch_area, 4), "kept_area_m2": 0.0,
-                "covered_share": 0.0, "bbox_delta_m": None, "reason": "no kept piece"}
+                "covered_share": 0.0, "bbox_delta_m": None, "unaccounted_m2": None, "reason": "no kept piece"}
     share = round(float(kept.intersection(hatch).area) / hatch_area, 9)
     delta = round(max(abs(a - b) for a, b in zip(kept.bounds, hatch.bounds)), 9)
-    ok = math.isfinite(share) and math.isfinite(delta) and share > COVERAGE_MIN_SHARE and delta < COVERAGE_BBOX_M
+    # the hatch's own closed outlines count exactly; the closing adds the bridged strips and what they enclose
+    own = [Polygon(g.exterior) for g in (hatch.geoms if hasattr(hatch, "geoms") else [hatch])
+           if g.geom_type == "Polygon"]
+    # fixed reference radius, never the run's gap_close_m: a wider run closing must not account for itself
+    accounted = unary_union([_close_fill([hatch], COVERAGE_REF_GAP_CLOSE_M), *own])
+    extra = kept.difference(accounted) if not accounted.is_empty else kept
+    unaccounted = round(float(extra.area), 9)
+    ok = (math.isfinite(share) and math.isfinite(delta) and math.isfinite(unaccounted)
+          and share > COVERAGE_MIN_SHARE and delta < COVERAGE_BBOX_M and unaccounted < MAX_UNACCOUNTED_M2)
     return {"status": "pass" if ok else "fail", "hatch_area_m2": round(hatch_area, 4),
             "kept_area_m2": round(float(kept.area), 4), "covered_share": share, "bbox_delta_m": delta,
             "hatch_bbox_m": [round(v, 4) for v in hatch.bounds], "kept_bbox_m": [round(v, 4) for v in kept.bounds],
-            "min_share": COVERAGE_MIN_SHARE, "max_bbox_delta_m": COVERAGE_BBOX_M}
+            "accounted_area_m2": round(float(accounted.area), 4), "unaccounted_m2": unaccounted,
+            "unaccounted_bbox_m": [round(v, 4) for v in extra.bounds] if not extra.is_empty else None,
+            "gap_close_m": gap_close_m, "ref_gap_close_m": COVERAGE_REF_GAP_CLOSE_M,
+            "min_share": COVERAGE_MIN_SHARE, "max_bbox_delta_m": COVERAGE_BBOX_M,
+            "max_unaccounted_m2": MAX_UNACCOUNTED_M2}
 
 
 def _pieces(lines: list[LineString], gap_close_m: float) -> tuple[list[Polygon], list[Polygon]]:
@@ -440,12 +496,15 @@ def extract_plan(doc, layer_map: dict, *, z0: float, z1: float | None = None,
     else:
         keep, small = _pieces([ln for _, ln in wall_lines], gap_close_m)
     if hatches:
-        coverage = coverage_check(keep, unary_union(hatches))
+        coverage = coverage_check(keep, unary_union(hatches), gap_close_m)
         if coverage["status"] != "pass":
             raise ValueError(
                 f"coverage: kept {contour_source} pieces cover {coverage['covered_share']:.1%} of the wall hatch "
-                f"({coverage['hatch_area_m2']} m2), bbox offset {coverage['bbox_delta_m']} m; need > "
-                f"{COVERAGE_MIN_SHARE:.0%} and < {COVERAGE_BBOX_M} m")
+                f"({coverage['hatch_area_m2']} m2), bbox offset {coverage['bbox_delta_m']} m, "
+                f"{coverage['unaccounted_m2']} m2 unaccounted by the hatch closed at the "
+                f"{COVERAGE_REF_GAP_CLOSE_M} m reference "
+                f"at {coverage.get('unaccounted_bbox_m')}; need > {COVERAGE_MIN_SHARE:.0%}, "
+                f"< {COVERAGE_BBOX_M} m and < {MAX_UNACCOUNTED_M2} m2 unaccounted")
     else:
         coverage = {"status": "not measured", "reason": "no hatch layer mapped, no drawn wall mass to compare"}
     if not keep:
@@ -517,7 +576,7 @@ def extract_plan(doc, layer_map: dict, *, z0: float, z1: float | None = None,
         levels_out = [spans[0][0], *[b for _, b in spans]]
         provisional = False
     result = {"schema": "body-contours/1", "synthetic_drawing": False, "provisional": provisional,
-              "method": "plan wall lines from a DXF readback (tools/methods/body/plan_from_dxf.py)",
+              "method": METHODS[contour_source],
               "units": "m", "source_units": "mm",
               "origin_mm": [origin_mm[0], origin_mm[1]],
               "frame_shift_m": [frame_shift_m[0], frame_shift_m[1]],
@@ -569,21 +628,88 @@ def _map_list(items: list[str]) -> dict[str, str]:
         layer, spec = item.split("=", 1)
         if not layer:
             raise ValueError("layer map entry has an empty layer")
+        if layer in out:
+            raise ValueError(f"layer {layer!r} is mapped twice ({out[layer]!r} and {spec!r})")
         out[layer] = spec
+    if not out:
+        raise ValueError("layer map is empty")
     return out
+
+
+def _map_file_entries(path: Path) -> list[str]:
+    """One ``layer=role`` per line (UTF-8, BOM and CRLF allowed); blank lines are skipped."""
+    lines = [line.strip() for line in path.read_text(encoding="utf-8-sig").splitlines()]
+    entries = [line for line in lines if line]
+    if not entries:
+        raise ValueError(f"layer map file {path} is empty")
+    return entries
+
+
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def _git_facts() -> dict:
+    tool = Path(__file__).resolve()
+    try:
+        sha = subprocess.run(["git", "-C", str(tool.parent), "rev-parse", "HEAD"], capture_output=True,
+                             text=True, timeout=30, check=True).stdout.strip()
+        dirty = subprocess.run(["git", "-C", str(tool.parent), "status", "--porcelain", "--", tool.name],
+                               capture_output=True, text=True, timeout=30, check=True).stdout.strip()
+    except (OSError, subprocess.SubprocessError) as exc:
+        return {"git_sha": None, "git_error": f"{type(exc).__name__}: {exc}"[:300]}
+    if not re.fullmatch(r"[0-9a-f]{40}", sha):
+        return {"git_sha": None, "git_error": f"unexpected rev-parse output {sha[:80]!r}"}
+    return {"git_sha": sha, "tool_dirty": bool(dirty)}
+
+
+def _invocation(argv: list[str], args, entries: list[str], dxf_sha: str, levels) -> dict:
+    """Everything needed to re-run the extract from the output file alone (#1203).
+
+    ``options_argv`` is the canonical option list (the map file expanded into ``--map`` entries);
+    ``extract <dxf> <out> <report> *options_argv`` reproduces the output.
+    """
+    opts: list[str] = []
+    for entry in entries:
+        opts += ["--map", entry]
+    if args.z0 is not None:
+        opts += ["--z0", repr(args.z0)]
+    if args.z1 is not None:
+        opts += ["--z1", repr(args.z1)]
+    if args.levels is not None:
+        opts += ["--levels", args.levels]
+    if args.opening_insert is not None:
+        opts += ["--opening-insert", args.opening_insert]
+    if args.opening_decision is not None:
+        opts += ["--opening-decision", args.opening_decision]
+    opts += ["--contour-source", args.contour_source, f"--origin-mm={args.origin_mm}",
+             f"--frame-shift-m={args.frame_shift_m}"]
+    inv = {"tool": TOOL_REL, "tool_sha256": _sha256(Path(__file__)), **_git_facts(),
+           "argv": list(argv), "options_argv": opts,
+           "command": "uv run python " + shlex.join([TOOL_REL, *argv]),
+           "dxf": {"path": str(args.dxf), "sha256": dxf_sha},
+           "map": list(entries), "z0": args.z0, "z1": args.z1, "levels_m": levels,
+           "contour_source": args.contour_source,
+           "origin_mm": [float(v) for v in args.origin_mm.split(",")],
+           "frame_shift_m": [float(v) for v in args.frame_shift_m.split(",")]}
+    if args.map_file is not None:
+        inv["map_file"] = {"path": str(args.map_file), "sha256": _sha256(args.map_file)}
+    return inv
 
 
 def main(argv=None) -> int:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     from safe_write import Refused, guard_cli, publish_text
 
-    argv = sys.argv[1:] if argv is None else argv
+    argv = [str(a) for a in (sys.argv[1:] if argv is None else argv)]
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("command", choices=("extract", "census"))
     parser.add_argument("dxf", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("report", type=Path, nargs="?")
     parser.add_argument("--map", action="append", default=[])
+    parser.add_argument("--map-file", type=Path, default=None,
+                        help="text file, one layer=role per line; its entries come before any --map")
     parser.add_argument("--z0", type=float)
     parser.add_argument("--z1", type=float)
     parser.add_argument("--levels", default=None, help="comma-separated elevations in metres, strictly increasing")
@@ -598,9 +724,12 @@ def main(argv=None) -> int:
         print("extract needs an output and a report path", file=sys.stderr)
         return 2
     try:
-        guard_cli([args.dxf], outs)
+        guard_cli([args.dxf] + ([args.map_file] if args.map_file is not None else []), outs)
+        dxf_sha = _sha256(args.dxf)
         import ezdxf
         doc = ezdxf.readfile(args.dxf)
+        if _sha256(args.dxf) != dxf_sha:
+            raise ValueError(f"{args.dxf} changed while it was read")
         if args.command == "census":
             publish_text(args.output, json.dumps(sheet_census(doc), ensure_ascii=False, indent=1))
             return 0
@@ -615,7 +744,10 @@ def main(argv=None) -> int:
             z0 = levels[0] if z0 is None else z0
         if z0 is None:
             raise ValueError("z0 is not finite: None")
-        result = extract_plan(doc, _map_list(args.map), z0=z0, z1=args.z1, levels_m=levels,
+        entries = (_map_file_entries(args.map_file) if args.map_file is not None else []) + list(args.map)
+        layer_map = _map_list(entries)
+        invocation = _invocation(argv, args, entries, dxf_sha, levels)
+        result = extract_plan(doc, layer_map, z0=z0, z1=args.z1, levels_m=levels,
                               opening_insert=args.opening_insert, opening_decision=args.opening_decision,
                               origin_mm=(ox, oy), frame_shift_m=(sx, sy), contour_source=args.contour_source)
     except Refused as exc:
@@ -625,6 +757,7 @@ def main(argv=None) -> int:
         print(f"PLAN_DXF error: {exc}", file=sys.stderr)
         return 2
     body = {k: v for k, v in result.items() if k != "entities"}
+    body["invocation"] = invocation
     publish_text(args.output, json.dumps(body, ensure_ascii=False))
     publish_text(args.report, json.dumps({"entities": result["entities"], "provisional": result["provisional"]},
                                         ensure_ascii=False))

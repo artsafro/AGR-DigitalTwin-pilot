@@ -51,3 +51,5 @@ silently skipped face shows up even without a counter (#1031; `uv run python -m 
 --counter <name>`).
 `not measured` with the reason where a check could not run. After the table, the input paths and the commit.
 No proposals, no fixes, no guesses about the cause.
+
+Shared brief (focus, parallel calls, no filler, numbers): `docs/agents/WORKFLOW.md#prompt-guide`.

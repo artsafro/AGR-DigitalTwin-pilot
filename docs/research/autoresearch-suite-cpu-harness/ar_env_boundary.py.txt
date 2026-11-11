@@ -1,0 +1,10 @@
+"""Research-only environment boundary for a nested CI receipt pytest invocation (#1227).
+The frozen CPU recorder opens its file first; child pytest processes must not inherit its output.
+"""
+import os
+import pytest
+
+@pytest.hookimpl(trylast=True)
+def pytest_sessionstart(session):
+    os.environ.pop('AR_CPU_OUT', None)
+    os.environ.pop('PYTEST_ADDOPTS', None)

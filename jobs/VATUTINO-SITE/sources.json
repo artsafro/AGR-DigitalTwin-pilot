@@ -1,0 +1,13 @@
+{
+ "manifest": "external-inputs/1",
+ "registry": "job-sources/1",
+ "job": "VATUTINO-SITE",
+ "asset_store": "G:/Мой диск/AGR-assets/",
+ "why": "Source registry (#1239): the Flora star run-v004 (#1146) as delivered output, outside git in the evidence store (rule 57). SHA256SUMS.txt pins all 256 run files; the two delivery FBX are listed by name with the hashes from that list.",
+ "files": [
+  {"path": "G:/Мой диск/AGR-evidence/1146-flora-star/run-v004/SHA256SUMS.txt", "sha256": "21a13860a0c3c4ed5d2a3f86d522b5abf338068a820a384aa09d886ca1d75ae2", "location": "named-folder", "folder": "G:/Мой диск/AGR-evidence/1146-flora-star/run-v004/", "kind": "delivered-output", "role": "hash list of the 256 run files (flora-route-a-v004.md)"},
+  {"path": "G:/Мой диск/AGR-evidence/1146-flora-star/run-v004/fbx/SM_VATUTINO-SITE_Flora_NPM_v007.fbx", "sha256": "c44a66fb8db6a143dca8be79d81aba851c1462d1492bd3761062d1a9310f19a9", "location": "named-folder", "folder": "G:/Мой диск/AGR-evidence/1146-flora-star/run-v004/", "kind": "delivered-output", "role": "Flora NPM FBX v007 (star run)"},
+  {"path": "G:/Мой диск/AGR-evidence/1146-flora-star/run-v004/fbx/SM_VATUTINO-SITE_Flora_VPM_v007.fbx", "sha256": "5fa68f560c9b8ad3f32a08ab5aa1d8bc0234618d90f2d946f5e066eacdb95e0c", "location": "named-folder", "folder": "G:/Мой диск/AGR-evidence/1146-flora-star/run-v004/", "kind": "delivered-output", "role": "Flora VPM FBX v007 (star run)"}
+ ],
+ "synthetic": false
+}

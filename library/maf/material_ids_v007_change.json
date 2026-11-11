@@ -1,0 +1,39 @@
+{
+ "schema": "library-maf-material-ids-change",
+ "from": "library/maf/material_ids_v006.json",
+ "version": "v007",
+ "decision": "D240",
+ "md_ref": "plan 2.3",
+ "approval": {
+  "date": "2026-11-10",
+  "quote": null,
+  "by": "Artem",
+  "source": "chat 2026-11-10 to the lead agent: pine becomes its own WOOD2 slot (docs/plans/telegram-findings-rollout.md step 2.3); verbatim quote not relayed"
+ },
+ "changelog": "v007 (2026-11-10, D240, plan step 2.3): pine gets its own ID 33 `wood_pine` (WOOD2 of the team MAF atlas, Telegram «Материалы» 53407/53408) #82543D; ID 14 `wood_light` keeps larch / light oak; the v005 merge wood_pine -> wood_light is undone. Nothing else changes.",
+ "add": {
+  "id": 33,
+  "key": "wood_pine",
+  "name_ru": "WOOD2 сосна: волокна, усреднённый тон",
+  "kind": "wood",
+  "ral": null,
+  "target": "#82543D",
+  "size": "L",
+  "atlas": true,
+  "tile": {
+   "file": "tiles/ID_33_wood_pine.png",
+   "px": 512,
+   "crop": {
+    "path": "G:/Мой диск/AGR-assets/_inbox/telegram-materials-2026-11/53407__atlas_maf_high_low_frame_id.png",
+    "sha256": "1c1a6821c11d867ad330f6d7f5a805ff26992e7d31a35514c51f5f1c21d02bf8",
+    "box": [1544, 2552, 3064, 4072]
+   },
+   "source": "53407__atlas_maf_high_low_frame_id.png slot ID10 «WOOD2 сосна» (53408), crop [1544, 2552, 3064, 4072] below the painted label, Lanczos to 512; target = crop mean"
+  },
+  "spec_rows": [],
+  "status": "approved-v1 (D240): WOOD2 pine from the team atlas 53407"
+ },
+ "move_spec_rows": {"from_id": 14, "rows": []},
+ "id14_name_ru": "WOOD светлая: лиственница «светлый дуб»",
+ "undo_merge_from_key": "wood_pine"
+}

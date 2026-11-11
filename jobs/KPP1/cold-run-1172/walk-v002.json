@@ -1,0 +1,100 @@
+{
+  "passed": false,
+  "gates": [
+    {
+      "gate": "inputs",
+      "status": "review",
+      "evidence_exists": [
+        {
+          "path": "jobs/KPP1/cold-run-1172/inputs-manifest.json",
+          "verified": true
+        },
+        {
+          "path": "jobs/KPP1/object.json",
+          "verified": true
+        },
+        {
+          "path": "docs/methods/building-body/kpp1-drawing/plan-contours.json",
+          "verified": true
+        },
+        {
+          "path": "jobs/KPP1/cold-run-1172/plan-repro-v001.json",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "Inventory: the 4 external sources (3 \u0410\u0421.03 DWGs, album pptx) sit in inputs-manifest.json because the walker takes only repo-relative paths (gap G3); object.json, plan-contours.json and its reproduction receipt are direct; source authority above the entrance frames (one L03 plan copied into both bands vs the Revit L1 rectangle) and the profile are open user questions in parts-v001.json; DWGs are outside the asset store.",
+      "ready": false
+    },
+    {
+      "gate": "parts",
+      "status": "review",
+      "evidence_exists": [
+        {
+          "path": "jobs/KPP1/cold-run-1172/parts-v001.json",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "Draft PartsList, validated by dt_ai.core.models.PartsList (8 parts, NPM 145 000 / 150 000, VPM 960 000 / 1 000 000); Gate 1 (user) not given, 5 questions open. Build must not start (D111/D124/D125).",
+      "ready": false
+    },
+    {
+      "gate": "operations",
+      "status": "missing",
+      "evidence_exists": [],
+      "errors": [],
+      "note": "waits-user (Gate 1) then waits-max: the oks-vpm route for body/windows/roof is AGR Tools stages 1-4 in 3ds Max; the offline kernel route (dt_ai.ops on plan-contours) needs the confirmed PartsList first.",
+      "ready": false
+    },
+    {
+      "gate": "budgets",
+      "status": "missing",
+      "evidence_exists": [],
+      "errors": [],
+      "note": "Needs a built master (after operations).",
+      "ready": false
+    },
+    {
+      "gate": "export_readback",
+      "status": "missing",
+      "evidence_exists": [],
+      "errors": [],
+      "note": "waits-max: export is Max export [D212] on the oks-vpm route; Blender readback (tools/blender/fbx_readback.py) is ready once an export exists.",
+      "ready": false
+    },
+    {
+      "gate": "report",
+      "status": "review",
+      "evidence_exists": [
+        {
+          "path": "jobs/KPP1/cold-run-1172/RUN-LOG.md",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "Cold-run log, not a delivery report: gates, receipts and procedure gaps.",
+      "ready": false
+    },
+    {
+      "gate": "visual",
+      "status": "missing",
+      "evidence_exists": [],
+      "errors": [],
+      "note": "waits-user: board review tool decision on a versioned sheet (D119); nothing to show before a build.",
+      "ready": false
+    },
+    {
+      "gate": "checker",
+      "status": "missing",
+      "evidence_exists": [],
+      "errors": [],
+      "note": "waits-visual: SINTEZ AGR Checker runs after visual acceptance (D104).",
+      "ready": false
+    }
+  ],
+  "errors": [],
+  "job_id": "KPP1",
+  "run_id": "issue-1172-cold-run-v001",
+  "synthetic": false
+}

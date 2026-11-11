@@ -23,3 +23,5 @@ Foundation/Blender 5.1/blender.exe"). Scratch output only under `C:/x/`.
 Answer with numbers and lists only: counts, coordinates (3 decimals, metres), areas, heights, ids, paths. If a
 list is long, give the count, the first 20 entries and the path of a file with the rest. No interpretation, no
 fixes.
+
+Shared brief (focus, parallel calls, no filler, numbers): `docs/agents/WORKFLOW.md#prompt-guide`.

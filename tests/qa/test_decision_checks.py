@@ -5,6 +5,7 @@ V009 texel density per UDIM tile with the archive Diffuse side [D160], PNG count
 object and glass material names (#1029, DER-18/19, reg 2.8-2.8.2).
 All readbacks, meshes and packages below are SYNTHETIC fixtures, not data of a real object.
 """
+import copy
 import zipfile
 
 import pytest
@@ -333,14 +334,17 @@ def test_edge_loop_t_junction_is_review_never_fail_d200():
 
 # --- Ground skirt >= 1 m [GND-03] (blocking) ----------------------------------------------------------------
 
-def _ground_face_mesh(name, verts, polys):
+def _ground_face_mesh(name, verts, polys, materials=None):
     m = mesh(name=name, tris=len(polys), degrees={"3": len(polys)})
-    m["face_geometry"] = {"vertices": verts, "polygons": polys}
+    fg = {"vertices": verts, "polygons": polys}
+    if materials is not None:
+        fg["polygon_material"] = materials
+    m["face_geometry"] = fg
     return m
 
 
-def _skirt_finding(verts, polys, kind="npm"):
-    found = scene_findings(rb(_ground_face_mesh("SM_Test_Ground", verts, polys)), kind, "ground",
+def _skirt_finding(verts, polys, kind="npm", materials=None):
+    found = scene_findings(rb(_ground_face_mesh("SM_Test_Ground", verts, polys, materials)), kind, "ground",
                            PROFILES.npm if kind == "npm" else PROFILES.vpm)
     return next(f for f in found["V003"] if f.name == "ground skirt depth")
 
@@ -416,6 +420,170 @@ def _ucx_maf_status(ucx_lo, ucx_hi, maf_lo, maf_hi, name="SM_Test_GroundEl"):
     found = scene_findings(rb(ground, _ucx_box("UCX_SM_Test_Ground_001", ucx_lo, ucx_hi),
                               _maf_mesh(name, maf_lo, maf_hi)), "vpm", "ground", PROFILES.vpm)
     return next(f.status for f in found["V010"] if f.name == "UCX vs MAF/Flora intersection")
+
+
+@pytest.mark.parametrize("suffix", ["GroundEl", "GroundElGlass", "Flora"])
+def test_ucx_wholly_inside_element_fails_1129(suffix):
+    assert _ucx_maf_status((0.3, 0.3, 0.3), (0.7, 0.7, 0.7),
+                           (0, 0, 0), (1, 1, 1), name=f"SM_Test_{suffix}") == "fail"
+
+
+def test_ucx_open_element_cannot_certify_no_containment_1129():
+    from twinqa.scene import _ucx_maf_flora_finding
+
+    maf = _maf_mesh("SM_Test_GroundEl", (0, 0, 0), (1, 1, 1))
+    maf["face_geometry"]["polygons"].pop()
+    ucx = _ucx_box("UCX_SM_Test_Ground_001", (0.3, 0.3, 0.3), (0.7, 0.7, 0.7))
+    finding = _ucx_maf_flora_finding([ucx], [maf], "synthetic")[0]
+    assert finding.status == "not_run"
+    assert "SM_Test_GroundEl" in finding.observed
+
+
+@pytest.mark.parametrize("offset", [0.0, -7.0, 1234.0])
+@pytest.mark.parametrize("zlo,zhi,expected", [(0.02, 0.08, "pass"), (0.02, 0.1, "pass"),
+                                               (0.05, 0.15, "fail"), (0.3, 0.7, "fail")])
+def test_ucx_containment_band_generated_1129(offset, zlo, zhi, expected):
+    for x in (0.15, 0.4, 0.65):
+        assert _ucx_maf_status((offset + x, 0.3, zlo), (offset + x + 0.1, 0.6, zhi),
+                               (offset, 0, 0), (offset + 1, 1, 1)) == expected
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+@pytest.mark.parametrize("split", [False, True])
+def test_ucx_containment_winding_and_fbx_split_vertices_1129(reverse, split):
+    from twinqa.scene import _ucx_maf_flora_finding
+
+    maf = _maf_mesh("SM_Test_Flora", (0, 0, 0), (1, 1, 1))
+    shape = maf["face_geometry"]
+    if reverse:
+        shape["polygons"] = [p[::-1] if i % 2 else p for i, p in enumerate(shape["polygons"])]
+    if split:
+        shape["vertices"] = [shape["vertices"][i] for p in shape["polygons"] for i in p]
+        shape["polygons"] = [list(range(i, i + 3)) for i in range(0, 36, 3)]
+    ucx = _ucx_box("UCX_SM_Test_Ground_001", (0.3, 0.3, 0.3), (0.7, 0.7, 0.7))
+    before = copy.deepcopy((ucx, maf))
+    for _ in range(2):
+        finding = _ucx_maf_flora_finding([ucx, ucx], [maf, maf], "synthetic")[0]
+        assert finding.status == "fail"
+    assert (ucx, maf) == before
+
+
+@pytest.mark.parametrize("lo,hi,expected", [((-1, -1, -1), (2, 2, 2), "fail"),
+                                           ((1, 0.3, 0.3), (1.4, 0.7, 0.7), "pass"),
+                                           ((1.01, 0.3, 0.3), (1.4, 0.7, 0.7), "pass")])
+def test_ucx_containment_reverse_and_touch_controls_1129(lo, hi, expected):
+    assert _ucx_maf_status(lo, hi, (0, 0, 0), (1, 1, 1)) == expected
+
+
+def test_ucx_open_coverage_does_not_hide_proven_containment_1129():
+    from twinqa.scene import _ucx_maf_flora_finding
+
+    closed = _maf_mesh("closed_Flora", (0, 0, 0), (1, 1, 1))
+    opened = _maf_mesh("open_GroundEl", (0, 0, 0), (1, 1, 1))
+    opened["face_geometry"]["polygons"].pop()
+    ucx = _ucx_box("UCX_SM_Test_Ground_001", (0.3, 0.3, 0.3), (0.7, 0.7, 0.7))
+    finding = _ucx_maf_flora_finding([ucx, mesh(name="UCX_unsupported")], [opened, closed], "synthetic")[0]
+    assert finding.status == "fail"
+    assert "closed_Flora" in finding.observed
+
+
+def test_ucx_inside_cavity_is_not_inside_element_volume_1129():
+    from twinqa.scene import _ucx_maf_flora_finding
+
+    maf = _maf_mesh("hollow_GroundEl", (0, 0, 0), (3, 3, 3))
+    inner = _maf_mesh("inner", (0.5, 0.5, 0.5), (2.5, 2.5, 2.5))["face_geometry"]
+    maf["face_geometry"]["vertices"] += inner["vertices"]
+    maf["face_geometry"]["polygons"] += [[i + 8 for i in p[::-1]] for p in inner["polygons"]]
+    ucx = _ucx_box("UCX_SM_Test_Ground_001", (1, 1, 1), (2, 2, 2))
+    assert _ucx_maf_flora_finding([ucx], [maf], "synthetic")[0].status == "pass"
+
+
+def _open_quad(name, corners):
+    m = mesh(name=name, tris=2)
+    m["face_geometry"] = {"vertices": [list(c) for c in corners], "polygons": [[0, 1, 2], [0, 2, 3]]}
+    return m
+
+
+# Tilted open card z == y over x, y in [0, 2]: its AABB is a 3D box, its surface encloses nothing.
+_TILTED = ((0, 0, 0), (2, 0, 0), (2, 2, 2), (0, 2, 2))
+
+
+def test_ucx_far_open_flora_passes_1192():
+    from twinqa.scene import _ucx_maf_flora_finding
+
+    far = _open_quad("SM_Far_Flora", ((50, 0, 0.5), (51, 0, 0.5), (51, 1, 0.5), (50, 1, 0.5)))
+    ucx = _ucx_box("UCX_SM_Test_Ground_001", (0, 0, 0), (1, 1, 1))
+    assert _ucx_maf_flora_finding([ucx], [far], "synthetic")[0].status == "pass"
+
+
+def test_ucx_vertex_inside_open_mesh_aabb_is_not_run_1192():
+    from twinqa.scene import _ucx_maf_flora_finding
+
+    card = _open_quad("SM_Card_Flora", _TILTED)
+    ucx = _ucx_box("UCX_SM_Test_Ground_001", (1.5, 0.5, 0.2), (1.7, 0.7, 0.4))  # below the card, inside AABB
+    finding = _ucx_maf_flora_finding([ucx], [card], "synthetic")[0]
+    assert finding.status == "not_run"
+    assert "SM_Card_Flora" in finding.observed and "open" in finding.observed
+    assert "without measurable geometry" not in finding.observed
+
+
+def test_ucx_open_mesh_named_once_for_many_pieces_1192():
+    from twinqa.scene import _ucx_maf_flora_finding
+
+    card = _open_quad("SM_Card_Flora", _TILTED)
+    other = _open_quad("SM_Other_GroundEl", tuple((x + 10, y, z) for x, y, z in _TILTED))
+    ucx = [_ucx_box(f"UCX_SM_Test_Ground_00{i}", (0.2 + 0.5 * i, 0.5, 0.2), (0.4 + 0.5 * i, 0.7, 0.4))
+           for i in range(3)]
+    ucx.append(_ucx_box("UCX_SM_Test_Ground_009", (11.5, 0.5, 0.2), (11.7, 0.7, 0.4)))
+    observed = _ucx_maf_flora_finding(ucx, [card, other], "synthetic")[0].observed
+    assert observed.count("SM_Card_Flora") == 1
+    assert observed.count("SM_Other_GroundEl") == 1
+    assert observed.count("2 MAF/Flora") == 1
+
+
+@pytest.mark.parametrize("bad", [float("nan"), float("inf")])
+def test_ucx_nonfinite_far_open_flora_never_passes_1192(bad):
+    from twinqa.scene import _ucx_maf_flora_finding
+
+    far = _open_quad("SM_Far_Flora", ((50, 0, 0.5), (51, 0, bad), (51, 1, 0.5), (50, 1, 0.5)))
+    ucx = _ucx_box("UCX_SM_Test_Ground_001", (0, 0, 0), (1, 1, 1))
+    finding = _ucx_maf_flora_finding([ucx], [far], "synthetic")[0]
+    assert finding.status == "not_run" and "SM_Far_Flora" in finding.observed
+
+
+def test_ucx_vertex_on_open_mesh_aabb_face_cannot_be_contained_1192():
+    """Exactly at the AABB face: a boundary point is never strictly inside the volume (touch exempt)."""
+    from twinqa.scene import _ucx_maf_flora_finding
+
+    card = _open_quad("SM_Card_Flora", _TILTED)
+    ucx = _ucx_box("UCX_SM_Test_Ground_001", (2, 0.5, 0.2), (2.2, 0.7, 0.4))  # x == AABB max
+    assert _ucx_maf_flora_finding([ucx], [card], "synthetic")[0].status == "pass"
+    inside = _ucx_box("UCX_SM_Test_Ground_001", (1.999, 0.5, 0.2), (2.2, 0.7, 0.4))
+    assert _ucx_maf_flora_finding([inside], [card], "synthetic")[0].status == "not_run"
+
+
+@pytest.mark.parametrize("seed", range(40))
+def test_ucx_aabb_prefilter_matches_full_containment_1192(seed):
+    """Probe: the AABB prefilter never changes a closed-mesh verdict (fail stays fail, pass stays pass)."""
+    import random
+
+    from twinqa.scene import _ucx_maf_flora_finding
+
+    rnd = random.Random(seed)
+    lo = [rnd.uniform(-3, 3) for _ in range(3)]
+    hi = [c + rnd.uniform(0.3, 2) for c in lo]
+    a = [rnd.uniform(-4, 4) for _ in range(3)]
+    b = [c + rnd.uniform(0.05, 1) for c in a]
+    inside = all(l < x and y < h for l, x, y, h in zip(lo, a, b, hi)) and a[2] > lo[2] + 0.1
+    status = _ucx_maf_flora_finding([_ucx_box("UCX_SM_T_Ground_001", a, b)],
+                                    [_maf_mesh("SM_T_GroundEl", lo, hi)], "synthetic")[0].status
+    disjoint = any(x > h or y < l for l, x, y, h in zip(lo, a, b, hi))
+    if inside:
+        assert status == "fail"
+    elif disjoint:
+        assert status == "pass"
+    else:
+        assert status in ("pass", "fail")
 
 
 def test_ucx_covering_maf_fails_flo15():
@@ -611,6 +779,303 @@ def test_ground_skirt_spanning_bottom_edge_covering_half_a_side_fails_1133():
     verts, polys = _fan_skirt(1.0, last_span=0.5)
     f = _skirt_finding(verts, polys)
     assert f.status == "fail" and f.measured == pytest.approx(0.0)
+
+
+def _hole_ground_1133(depth=1.0, skirt_sides=4):
+    """Synthetic 9x9 surface, 3x3 building cut, one spanning bottom edge per side."""
+    n = 9
+    verts = [[x, y, 0.0] for y in range(n + 1) for x in range(n + 1)]
+    idx = lambda x, y: y * (n + 1) + x  # noqa: E731
+    polys = [[idx(x, y), idx(x + 1, y), idx(x + 1, y + 1), idx(x, y + 1)]
+             for y in range(n) for x in range(n) if not (3 <= x < 6 and 3 <= y < 6)]
+    sides = [[idx(k, 0) for k in range(n + 1)], [idx(n, k) for k in range(n + 1)],
+             [idx(n - k, n) for k in range(n + 1)], [idx(0, n - k) for k in range(n + 1)]]
+    for side in sides[:skirt_sides]:
+        a, b = verts[side[0]], verts[side[-1]]
+        b0, b1 = len(verts), len(verts) + 1
+        verts += [[a[0], a[1], -depth], [b[0], b[1], -depth]]
+        polys.append([b0, b1, side[-1]])
+        for k in range(len(side) - 1, 0, -1):
+            polys.append([b0, side[k], side[k - 1]])
+    return verts, polys
+
+
+def test_ground_skirt_outer_only_with_building_hole_passes_1133():
+    # Combines case 2 (unskirted hole) with case 1 (spanning skirt-bottom edges).
+    verts, polys = _hole_ground_1133()
+    finding = _skirt_finding(verts, polys)
+    assert finding.status == "pass"
+    assert finding.measured == pytest.approx(1.0)
+
+
+@pytest.mark.parametrize("depth,expected", [(0.0, "fail"), (0.5, "fail"), (0.999, "fail"),
+                                            (1.0, "pass"), (1.25, "pass")])
+@pytest.mark.parametrize("offset,rotate", [(0.0, False), (0.0, True), (1_000_000.0, False),
+                                           (1_000_000.0, True)])
+def test_ground_skirt_hole_generated_threshold_transforms_1133(depth, expected, offset, rotate):
+    verts, polys = _hole_ground_1133(depth)
+    verts = [[offset + (-y if rotate else x), offset + (x if rotate else y), z]
+             for x, y, z in verts]
+    # Reorder faces and cyclically rotate their starting vertices; neither changes rings.
+    polys = [p[1:] + p[:1] for p in reversed(polys)]
+    finding = _skirt_finding(verts, polys)
+    assert finding.status == expected
+    assert finding.measured == pytest.approx(depth)
+
+
+@pytest.mark.parametrize("skirt_sides", range(4))
+def test_ground_skirt_hole_never_hides_missing_outer_side_1133(skirt_sides):
+    verts, polys = _hole_ground_1133(skirt_sides=skirt_sides)
+    finding = _skirt_finding(verts, polys)
+    assert finding.status == "fail"
+    assert finding.measured == pytest.approx(0.0)
+
+
+@pytest.mark.parametrize("inside_hole", [False, True])
+@pytest.mark.parametrize("depth,expected", [(0.0, "fail"), (1.0, "pass")])
+def test_ground_skirt_every_disconnected_component_checked_1133(inside_hole, depth, expected):
+    verts, polys = _hole_ground_1133()
+    # A second independent 1x1 component, either outside the first or inside its hole.
+    x = 4.0 if inside_hole else 20.0
+    base = len(verts)
+    verts += [[x, x, 0], [x + 1, x, 0], [x + 1, x + 1, 0], [x, x + 1, 0],
+              [x, x, -depth], [x + 1, x, -depth], [x + 1, x + 1, -depth], [x, x + 1, -depth]]
+    polys += [[base + i for i in p] for p in
+              [[0, 1, 2, 3], [1, 0, 4, 5], [2, 1, 5, 6], [3, 2, 6, 7], [0, 3, 7, 4]]]
+    finding = _skirt_finding(verts, polys)
+    assert finding.status == expected
+    assert finding.measured == pytest.approx(depth)
+
+
+def test_ground_skirt_multiple_holes_excluded_1133():
+    verts, polys = _hole_ground_1133()
+    # Remove a second, separate inner cell without altering outer skirts.
+    polys.remove([11, 12, 22, 21])
+    finding = _skirt_finding(verts, polys)
+    assert finding.status == "pass"
+    assert finding.measured == pytest.approx(1.0)
+
+
+def test_ground_skirt_boundary_connected_cut_is_not_inner_hole_1133():
+    verts, polys = _hole_ground_1133()
+    # Connect the building cut to the exterior; the bare channel edges are now outer.
+    for y in range(3):
+        polys.remove([10 * y + 3, 10 * y + 4, 10 * (y + 1) + 4, 10 * (y + 1) + 3])
+    finding = _skirt_finding(verts, polys)
+    assert finding.status == "fail"
+    assert finding.measured == pytest.approx(0.0)
+
+
+@pytest.mark.parametrize("bad", [float("nan"), float("inf"), -float("inf")])
+def test_ground_skirt_hole_nonfinite_input_fails_1133(bad):
+    verts, polys = _hole_ground_1133()
+    verts[44][2] = bad  # even an unused vertex inside the hole must not bypass validation
+    assert _skirt_finding(verts, polys).status == "fail"
+
+
+def test_ground_skirt_branched_boundary_not_exempted_as_hole_1133():
+    verts, polys = _hole_ground_1133()
+    # A triangle touching the hole at a vertex makes its ring ambiguous.
+    base = len(verts)
+    verts += [[3.5, 3, 0], [3, 3.5, 0]]
+    polys.append([33, base, base + 1])
+    assert _skirt_finding(verts, polys).status == "fail"
+
+
+def _add_skirt_1224(verts, polys, ring, depth, n_edges=None):
+    n = len(ring)
+    for k in range(n if n_edges is None else n_edges):
+        a, b = ring[k], ring[(k + 1) % n]
+        a_, b_ = len(verts), len(verts) + 1
+        verts += [[verts[a][0], verts[a][1], -depth], [verts[b][0], verts[b][1], -depth]]
+        polys.append([b, a, a_, b_])
+
+
+def _pinch_squares_1224(depth=1.0, welded=True, skirt_edges=None):
+    """Two unit squares (0,0)-(1,1) and (1,1)-(2,2) sharing the corner (1,1), each with a skirt."""
+    verts = [[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0], [2, 1, 0], [2, 2, 0], [1, 2, 0]]
+    corner = 2
+    if not welded:
+        verts.append([1, 1, 0])
+        corner = 7
+    a, b = [0, 1, 2, 3], [corner, 4, 5, 6]
+    polys = [a[:], b[:]]
+    _add_skirt_1224(verts, polys, a, depth)
+    _add_skirt_1224(verts, polys, b, depth, skirt_edges)
+    return verts, polys
+
+
+@pytest.mark.parametrize("welded", [True, False])
+@pytest.mark.parametrize("depth,expected", [(0.0, "fail"), (0.999, "fail"), (1.0, "pass"), (1.5, "pass")])
+@pytest.mark.parametrize("offset,rotate", [(0.0, False), (0.0, True), (1_000_000.0, False),
+                                           (1_000_000.0, True)])
+def test_ground_skirt_pinch_vertex_shared_by_two_rings_1224(welded, depth, expected, offset, rotate):
+    verts, polys = _pinch_squares_1224(depth, welded)
+    verts = [[offset + (-y if rotate else x), offset + (x if rotate else y), z] for x, y, z in verts]
+    polys = [p[1:] + p[:1] for p in reversed(polys)]
+    finding = _skirt_finding(verts, polys)
+    assert finding.status == expected
+    assert finding.measured == pytest.approx(depth)
+
+
+@pytest.mark.parametrize("skirt_edges", range(4))
+def test_ground_skirt_pinch_partial_skirt_still_fails_1224(skirt_edges):
+    verts, polys = _pinch_squares_1224(1.0, True, skirt_edges)
+    finding = _skirt_finding(verts, polys)
+    assert finding.status == "fail"
+    assert finding.measured == pytest.approx(0.0)
+
+
+def _hole_touching_outer_1224(depth=1.0, skirt_hole=False, outer_edges=None):
+    """A 4x4 square with a triangular hole (2,0)-(3,1)-(1,1) touching the outer ring at (2,0)."""
+    verts = [[0, 0, 0], [2, 0, 0], [4, 0, 0], [4, 4, 0], [0, 4, 0], [3, 1, 0], [1, 1, 0]]
+    polys = [[0, 1, 6], [1, 2, 5], [2, 3, 5], [5, 3, 4, 6], [0, 6, 4]]
+    _add_skirt_1224(verts, polys, [0, 1, 2, 3, 4], depth, outer_edges)
+    if skirt_hole:
+        _add_skirt_1224(verts, polys, [1, 6, 5], depth)
+    return verts, polys
+
+
+@pytest.mark.parametrize("skirt_hole", [False, True])
+@pytest.mark.parametrize("depth,expected", [(0.0, "fail"), (0.999, "fail"), (1.0, "pass")])
+@pytest.mark.parametrize("offset,rotate", [(0.0, False), (1_000_000.0, True)])
+def test_ground_skirt_hole_touching_outer_at_vertex_excluded_1224(skirt_hole, depth, expected,
+                                                                   offset, rotate):
+    verts, polys = _hole_touching_outer_1224(depth, skirt_hole)
+    verts = [[offset + (-y if rotate else x), offset + (x if rotate else y), z] for x, y, z in verts]
+    polys = [p[1:] + p[:1] for p in reversed(polys)]
+    finding = _skirt_finding(verts, polys)
+    assert finding.status == expected
+    assert finding.measured == pytest.approx(depth)
+
+
+@pytest.mark.parametrize("outer_edges", range(5))
+def test_ground_skirt_hole_touching_outer_never_hides_missing_side_1224(outer_edges):
+    verts, polys = _hole_touching_outer_1224(1.0, False, outer_edges)
+    finding = _skirt_finding(verts, polys)
+    assert finding.status == "fail"
+    assert finding.measured == pytest.approx(0.0)
+
+
+def test_ground_skirt_unbalanced_boundary_vertex_fails_closed_1224():
+    # Edge (0,1) is shared by three faces, so vertex 0 has two incoming and one outgoing
+    # boundary edge: real non-manifold input stays fail-closed.
+    verts = [[0, 0, 0], [1, 0, 0], [0.5, 1, 0], [0.5, -1, 0], [0.5, 0.5, 0]]
+    polys = [[0, 1, 2], [1, 0, 3], [0, 1, 4]]
+    assert _skirt_finding(verts, polys).status == "fail"
+
+
+def test_ground_skirt_pinch_overlapping_outgoing_directions_fail_closed_1224():
+    # Two outgoing boundary edges leave the shared vertex in the same XY direction (overlapping
+    # faces): the next edge is ambiguous, so the check fails closed even with full skirts.
+    verts, polys = _pinch_squares_1224(1.0)
+    base = len(verts)
+    verts += [[0.5, 1, 0], [0.75, 0.5, 0]]
+    tri = [2, base, base + 1]
+    polys.append(tri)
+    _add_skirt_1224(verts, polys, tri, 1.0)
+    assert _skirt_finding(verts, polys).status == "fail"
+
+
+def _step_band_ground(skirt_sides=4):
+    """A 10x10 quad Ground with a closed ~76 deg interior step band (a raised 4x4 plateau) and a
+    1 m skirt on the outer boundary. ``skirt_sides`` < 4 removes one side of the skirt."""
+    verts = []
+
+    def V(x, y, z):
+        verts.append([x, y, z])
+        return len(verts) - 1
+
+    a = V(0, 0, 0); b = V(10, 0, 0); c = V(10, 10, 0); d = V(0, 10, 0)
+    a_ = V(0, 0, -1); b_ = V(10, 0, -1); c_ = V(10, 10, -1); d_ = V(0, 10, -1)
+    e = V(4, 4, 0); f = V(6, 4, 0); g = V(6, 6, 0); h = V(4, 6, 0)
+    i = V(4.5, 4.5, 2); j = V(5.5, 4.5, 2); k = V(5.5, 5.5, 2); l = V(4.5, 5.5, 2)
+    polys, mats = [], []
+
+    def add(p, m):
+        polys.append(p)
+        mats.append(m)
+
+    tile = "M_Ground_Tile"
+    for q in ([a, b, f, e], [b, c, g, f], [c, d, h, g], [d, a, e, h]):
+        add([q[0], q[1], q[2]], tile)
+        add([q[0], q[2], q[3]], tile)
+    for q in ([e, f, j, i], [f, g, k, j], [g, h, l, k], [h, e, i, l]):
+        add([q[0], q[1], q[2]], tile)
+        add([q[0], q[2], q[3]], tile)
+    add([i, j, k], tile)
+    add([i, k, l], tile)
+    for q in ([a, b, b_, a_], [b, c, c_, b_], [c, d, d_, c_], [d, a, a_, d_])[:skirt_sides]:
+        add([q[0], q[1], q[2]], "M_Ground_Skirt")
+        add([q[0], q[2], q[3]], "M_Ground_Skirt")
+    return verts, polys, mats
+
+
+def _tilted_skirt_ground(lean):
+    """A flat 10x10 quad with a full skirt whose walls lean outward by ``lean`` (XY), giving each
+    skirt face an upward normal ratio ~ ``lean``. ``lean`` < 1e-4 keeps the skirt-bottom XY inside
+    the 0.1 mm pairing tolerance so the drop still measures 1 m."""
+    verts = []
+
+    def V(x, y, z):
+        verts.append([x, y, z])
+        return len(verts) - 1
+
+    t0 = V(0, 0, 0); t1 = V(10, 0, 0); t2 = V(10, 10, 0); t3 = V(0, 10, 0)
+    s0 = V(-lean, -lean, -1); s1 = V(10 + lean, -lean, -1)
+    s2 = V(10 + lean, 10 + lean, -1); s3 = V(-lean, 10 + lean, -1)
+    polys, mats = [], []
+
+    def add(p, m):
+        polys.append(p)
+        mats.append(m)
+
+    add([t0, t1, t2], "M_Ground_Tile")
+    add([t0, t2, t3], "M_Ground_Tile")
+    for q in ([t0, t1, s1, s0], [t1, t2, s2, s1], [t2, t3, s3, s2], [t3, t0, s0, s3]):
+        add([q[0], q[1], q[2]], "M_Ground_Skirt")
+        add([q[0], q[2], q[3]], "M_Ground_Skirt")
+    return verts, polys, mats
+
+
+def test_ground_skirt_steep_interior_step_band_passes_gnd03():
+    # A closed ~76 deg interior step band is surface, not perimeter: its rim must not detour the
+    # outer loop. The full 1 m skirt then makes every outer edge drop 1 m.
+    verts, polys, mats = _step_band_ground()
+    f = _skirt_finding(verts, polys, materials=mats)
+    assert f.status == "pass" and f.measured == pytest.approx(1.0)
+
+
+def test_ground_skirt_steep_step_band_skirt_removed_one_side_fails_gnd03():
+    # Same ground with one skirt side removed: the bare outer edge still fails (unchanged behaviour).
+    verts, polys, mats = _step_band_ground(skirt_sides=3)
+    f = _skirt_finding(verts, polys, materials=mats)
+    assert f.status == "fail" and f.measured == pytest.approx(0.0)
+
+
+def test_ground_skirt_float_noise_tilted_skirt_stays_skirt_gnd03():
+    # A *_Skirt wall tilted by float noise (nz/|n| ~ 1e-9) must stay a skirt, not become surface:
+    # the full skirt still measures a 1 m drop.
+    verts, polys, mats = _tilted_skirt_ground(lean=1e-9)
+    f = _skirt_finding(verts, polys, materials=mats)
+    assert f.status == "pass" and f.measured == pytest.approx(1.0)
+
+
+def test_ground_skirt_upward_skirt_face_excluded_by_material_gnd03():
+    # Material guard: a flat upward face (nz/|n| = 1) named *_Skirt is excluded from the surface
+    # even though the geometry alone (nz > eps*|n|) would admit it.
+    verts = [[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0]]
+    polys = [[0, 1, 2], [0, 2, 3]]
+    assert _skirt_finding(verts, polys).status == "fail"  # geometry alone: surface, no skirt
+    assert _skirt_finding(verts, polys, materials=["M_Ground_Skirt"] * 2).status == "not_run"
+
+
+def test_ground_skirt_partial_polygon_material_fails_gnd03():
+    # fail-closed: a polygon_material list shorter than the polygons is partial input, an error,
+    # never a silent pass (it must not crash and must not default the missing faces to non-skirt).
+    verts, polys, _ = _step_band_ground()
+    f = _skirt_finding(verts, polys, materials=["M_Ground_Tile"] * (len(polys) - 1))
+    assert f.status == "fail"
 
 
 def test_edge_loop_100x100_grid_runtime_bounded_d200():

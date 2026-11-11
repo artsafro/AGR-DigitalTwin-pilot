@@ -1,0 +1,82 @@
+schema_version: 1.0.0
+job_id: KPP1
+run_id: issue-1209-rerun-v001
+synthetic: false
+path: deviation
+inputs: &inputs
+- path: jobs/KPP1/cold-run-1172/inputs-manifest.json
+  sha256: b694d23a38067658fc6c5867f10267b9d79e84ba260a6d7ed671b01c5944031d
+  manifest: external-inputs/1
+- path: jobs/KPP1/object.json
+  sha256: a34cc18038e9440e164518523c39b25be0e7d82e0582348e4411b0763bcd020c
+- path: docs/methods/building-body/kpp1-drawing/plan-contours.json
+  sha256: 087f1055820ec278979bb2b9e4598fa66878fc4ea1f3f5c6929dc25ad86a891f
+- path: jobs/KPP1/rerun-1209/inputs-v001.json
+  sha256: 9e46a36980fcdff3222a80df933a33ffc5b3b47558aed5a4ac57cfa842597e99
+artifacts:
+- path: jobs/KPP1/rerun-1209/build-report.json
+  sha256: c8de74e584fca263e0ae19d9038ec205b95b78e5b8ff0eb3a5481ee020dc52aa
+- path: jobs/KPP1/rerun-1209/evidence-SHA256SUMS.txt
+  sha256: 73ddf514ee545cb5f39b54c2c080fbab2408e344182d1d8a2fa88adfe127da3b
+deviations:
+- gate: operations
+  what_failed: "The oks-vpm cell route for body / windows / roof is AGR Tools stages 1-4 in 3ds Max and export is Max [D212]; Max is busy (Artem's), no live Max and no 3dsmaxbatch."
+  what_was_tried: "Offline kernel route [D238]: plan_from_dxf L03 hatch contour + dt_ai.ops.contour.extrude_polygon prisms (build_parts.py), L01 facade opening schedule, agent-owned Blender 5.1.2 background [D233] for the Boolean union / cuts and the FBX (build_blender.py)."
+  new_tool_written: "jobs/KPP1/rerun-1209/build_parts.py, build_blender.py, render_preview.py (job-local)"
+  result: "VPM SM_Kpp_1.fbx 6278 triangles, NPM 0000_Kpp_1_01.fbx 4178 derived from it; read back; validate_package passed=false (V004, textures, ZIP/GeoJSON/MSK-77, manual stages; RUN-LOG). Max-only steps stay waits-max."
+gates:
+  inputs:
+    status: review
+    note: "DWG copies under C:/x/kpp1/r1209 re-hashed equal to the cold-run manifest; DXF, contour and parts-mesh hashes in inputs-v001.json. Levels 3.900 / 7.909 from Revit, not confirmed by the architect for R1 [D238]; DWGs still outside the asset store (cold-run G2)."
+    evidence: *inputs
+  parts:
+    status: review
+    note: "PartsList confirmed: gate1 Artem 2026-11-11 [D238], 8 parts, NPM 145 000 / VPM 960 000 under BODY-F. Stays review because the architect question on levels 3.900 / 7.909 stays open by [D238] answer 5."
+    evidence:
+    - path: jobs/KPP1/rerun-1209/parts-v002.json
+      sha256: b36c66e926df2069722d773408f34d29f2f5b700e13930ace0dbfbf1bce7f814
+  operations:
+    status: review
+    waits: max
+    note: "Built offline (path: deviation, Max busy): two bands + 6 frame bumps to +3.300, 53 L01 openings cut, frames/glass/doors, 7 of 171 mullions, roof slab, parapet. Stair not built. Max route waits-max."
+    evidence:
+    - path: jobs/KPP1/rerun-1209/build_parts.py
+      sha256: 2ac9ce390468c5b6c02b721594bd72ff9ea9128d652fc8a53c70b9f37432114b
+      commit: 0b50b3a9417e79d7bc68dcbb61bb6f3ff26a5f91
+    - path: jobs/KPP1/rerun-1209/build_blender.py
+      sha256: 5ac583f94ff3f3ab9db20c11aa83681094d5452728f9267af47d53cc42e1e45b
+    - path: jobs/KPP1/rerun-1209/build-report.json
+      sha256: c8de74e584fca263e0ae19d9038ec205b95b78e5b8ff0eb3a5481ee020dc52aa
+  budgets:
+    status: review
+    note: "Per part (before the regulation join) and per FBX under [D238] answer 4 and BODY-F: VPM 6 278 / 1 000 000, NPM 4 178 / 150 000 (RUN-LOG table); review until the visual gate."
+    evidence:
+    - path: jobs/KPP1/rerun-1209/build-report.json
+      sha256: c8de74e584fca263e0ae19d9038ec205b95b78e5b8ff0eb3a5481ee020dc52aa
+  export_readback:
+    status: review
+    waits: max
+    note: "Both FBX read back by tools/blender/fbx_readback.py; validate_package --scene passed=false, exit 1: V004 self-intersections 170 + clearance, V006/V007/V009 textures, V001/V011/V013/V014 not_run (no ZIP/GeoJSON, MSK-77 deferred), V015-V017 manual. Max export [D212] waits-max."
+    evidence:
+    - path: jobs/KPP1/rerun-1209/SM_Kpp_1.validate.json
+      sha256: f1781fca26d949667f64105cb42e441e6586df05022221bf1b02c6088ddf23ad
+    - path: jobs/KPP1/rerun-1209/0000_Kpp_1_01.validate.json
+      sha256: e4053772516845a111e18acb8063046aebe1174800eef472d143f4a014387d15
+    - path: jobs/KPP1/rerun-1209/evidence-SHA256SUMS.txt
+      sha256: 73ddf514ee545cb5f39b54c2c080fbab2408e344182d1d8a2fa88adfe127da3b
+  report:
+    status: review
+    note: "Run log with commands, triangle table, validator blockers and procedure gaps R1-R5."
+    evidence:
+    - path: jobs/KPP1/rerun-1209/RUN-LOG.md
+      sha256: eb6a9eb77884f19f0f1544a7aa547e7632934ab3f380cd22cf13fc1a0307c3e6
+  visual:
+    status: missing
+    waits: user
+    note: "waits-user: previews in G:/Мой диск/AGR-evidence/KPP1/rerun-1209; board review (D119) not done."
+    evidence: []
+  checker:
+    status: missing
+    waits: visual
+    note: "waits-visual: SINTEZ AGR Checker after visual acceptance (D104)."
+    evidence: []

@@ -1,0 +1,15 @@
+{
+ "manifest": "external-inputs/1",
+ "registry": "job-sources/1",
+ "job": "elv-tc-vpm",
+ "asset_store": "G:/Мой диск/AGR-assets/",
+ "why": "Source registry (#1239): the customer sources of the ELV delivery named in jobs/elv-tc-vpm/TASK.md (Inputs; Customer TZ 2026-11-05) and passport.json, hashed 2026-11-11. They stay in the owner's named folder (moving other jobs' sources is out of scope of #1239); the delivery outputs (outputs/delivery-v005) are not on this machine and are not listed.",
+ "files": [
+  {"path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/3_sreda/for_ai/00900-МСК-ЭЛВ-ГП1-Р-АР_building (1).fbx", "sha256": "7ccf502d9dc1494daa885e650dd8b2b7e261c7b90b262ee157c188ec3a78b961", "location": "named-folder", "folder": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/3_sreda/for_ai/ (owner's PC, not the asset store)", "kind": "customer-source", "role": "Revit 2023 FBX, feet, no materials: geometry (TASK.md Inputs)"},
+  {"path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/3_sreda/for_ai/ЭЛВ_ИД_АГР_45-4-25-С_Буклет АГР от 27.01.2025 (1) (1).pdf", "sha256": "49c105275ea56f16f9f281b3586876818215d99544d82644a5aab8e1cfba9545", "location": "named-folder", "folder": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/3_sreda/for_ai/ (owner's PC, not the asset store)", "kind": "customer-source", "role": "AGR booklet, 42 sheets: finishes, lights, signage (TASK.md Inputs)"},
+  {"path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/3_sreda/customer_2026-11-05/TC_Sreda-04-11-2026-1.pur", "sha256": "1e088d29b5808c2917d2ddaf1d90d37103ad03bb057a0931a345f7a5ca7d849b", "location": "named-folder", "folder": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/3_sreda/customer_2026-11-05/ (owner's PC, not the asset store)", "kind": "customer-source", "role": "customer TZ 2026-11-05 rework list"},
+  {"path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/3_sreda/customer_2026-11-05/SREDA_fasad_v0.6.blend", "sha256": "acecd0ad78717992f0ebe04f687cc4bc64d655111dc50f1acd022da756f7615e", "location": "named-folder", "folder": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/3_sreda/customer_2026-11-05/ (owner's PC, not the asset store)", "kind": "customer-source", "role": "customer TZ 2026-11-05 facade scene"},
+  {"path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/3_sreda/customer_2026-11-05/SM_Elevatornaya_Vl_1_A_001.zip", "sha256": "3051e465046c926738d17f83b07ee86d09e64c9a0f2e89f192c9a2a870da813f", "location": "named-folder", "folder": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/3_sreda/customer_2026-11-05/ (owner's PC, not the asset store)", "kind": "customer-source", "role": "customer blank SM_Elevatornaya_Vl_1_A_001"}
+ ],
+ "synthetic": false
+}

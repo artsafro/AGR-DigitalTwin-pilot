@@ -90,8 +90,13 @@ def _load(receipt):
     return data, files
 
 
-def check(root, receipt=RECEIPT):
-    """Return (rows, total) for the live entry set; raise FailClosed past the budget."""
+def check(root, receipt=RECEIPT, texts=None):
+    """Return (rows, total) for the live entry set; raise FailClosed past the budget.
+
+    ``texts`` maps an entry path to candidate text measured instead of the file on disk
+    (``project_state.py`` checks its output before writing it, #1222).
+    """
+    texts = dict(texts or {})
     data, files = _load(receipt)
     seen, rows, measured = set(), [], 0
     for row in files:
@@ -102,11 +107,19 @@ def check(root, receipt=RECEIPT):
         chars = _count(row.get("chars"), "chars", rel)
         tokens = _count(row.get("tokens"), "tokens", rel)
         measured += tokens
-        live = len(_text(path, rel))
+        if rel in texts:
+            candidate = texts.pop(rel)
+            if not isinstance(candidate, str) or candidate.strip() == "":
+                raise FailClosed(f"empty entry file: {rel}")
+            live = len(candidate.replace("\r\n", "\n"))
+        else:
+            live = len(_text(path, rel))
         if live > chars * (1 + GROWTH):
             raise FailClosed(f"{rel} grew {chars} -> {live} chars (> {GROWTH:.0%}); re-measure with --write")
         rows.append({"path": rel, "tokens": tokens, "chars": chars, "live_chars": live,
                      "estimate": math.ceil(tokens * live / chars)})
+    if texts:
+        raise FailClosed(f"candidate text for a path outside the entry set: {sorted(texts)}")
     names = {row["path"] for row in rows}
     for name in REQUIRED:
         if name not in names:

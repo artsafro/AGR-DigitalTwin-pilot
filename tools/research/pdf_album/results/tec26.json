@@ -1,0 +1,388 @@
+{
+  "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\2_kotelnya\\ИД\\26.pdf",
+  "sha256": "ab4339496166779b2989a42bdbf88072bf8267a6a30ad748da544bf48ed3f997",
+  "bytes": 4595029,
+  "pages": 6,
+  "metadata": {
+    "format": "PDF 1.4",
+    "title": "",
+    "author": "",
+    "subject": "",
+    "keywords": "",
+    "creator": "Archicad (GSPublisherVersion: 0.44.100.100)",
+    "producer": "PDFTron PDFNet, V6.40292\n",
+    "creationDate": "D:20260925052916Z00'00'",
+    "modDate": "D:20260925052916Z00'00'",
+    "trapped": "",
+    "encryption": null
+  },
+  "album": "tec26",
+  "scoring_note": "Text recall only; numerical tokens are not axis/level/finish bindings. No calibrated geometry certified.",
+  "ocg_count": 0,
+  "embedded_files": [],
+  "index": [
+    {
+      "pdf_page": 1,
+      "sheet": null,
+      "kind_candidate": "3D view",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 369
+    },
+    {
+      "pdf_page": 2,
+      "sheet": null,
+      "kind_candidate": "unknown",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 64
+    },
+    {
+      "pdf_page": 3,
+      "sheet": null,
+      "kind_candidate": "3D view",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 71
+    },
+    {
+      "pdf_page": 4,
+      "sheet": null,
+      "kind_candidate": "3D view",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 71
+    },
+    {
+      "pdf_page": 5,
+      "sheet": null,
+      "kind_candidate": "3D view",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 71
+    },
+    {
+      "pdf_page": 6,
+      "sheet": null,
+      "kind_candidate": "3D view",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 71
+    }
+  ],
+  "routes": {
+    "A": {
+      "seconds": 234.657,
+      "pages_processed": 6,
+      "input_unchanged": true,
+      "dimension_text": {
+        "correct": 0,
+        "denominator": 0,
+        "share": null,
+        "samples": []
+      },
+      "level_text": {
+        "correct": 0,
+        "denominator": 0,
+        "share": null,
+        "samples": []
+      },
+      "ral_code_text": {
+        "correct": 0,
+        "denominator": 0,
+        "share": null,
+        "samples": []
+      },
+      "structured_dimensions": 0,
+      "structured_levels": 0,
+      "scale_calibration": "not certified",
+      "artifact": "tec26-A-all-v001\\result.json",
+      "schedule_rows": {
+        "correct": 0,
+        "denominator": 0,
+        "samples": []
+      },
+      "reader_observations": [
+        {
+          "page": 1,
+          "status": "ok",
+          "counts": {
+            "paths": 3,
+            "lines": 12,
+            "spans": 8
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 2,
+          "status": "ok",
+          "counts": {
+            "paths": 125918,
+            "lines": 214072,
+            "spans": 2
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 3,
+          "status": "ok",
+          "counts": {
+            "paths": 2,
+            "lines": 8,
+            "spans": 2
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 4,
+          "status": "ok",
+          "counts": {
+            "paths": 2,
+            "lines": 8,
+            "spans": 2
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 5,
+          "status": "ok",
+          "counts": {
+            "paths": 2,
+            "lines": 8,
+            "spans": 2
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 6,
+          "status": "ok",
+          "counts": {
+            "paths": 2,
+            "lines": 8,
+            "spans": 2
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        }
+      ]
+    },
+    "C": {
+      "seconds": 38.5504,
+      "pages_processed": 6,
+      "input_unchanged": true,
+      "dimension_text": {
+        "correct": 0,
+        "denominator": 0,
+        "share": null,
+        "samples": []
+      },
+      "level_text": {
+        "correct": 0,
+        "denominator": 0,
+        "share": null,
+        "samples": []
+      },
+      "ral_code_text": {
+        "correct": 0,
+        "denominator": 0,
+        "share": null,
+        "samples": []
+      },
+      "structured_dimensions": 0,
+      "structured_levels": 0,
+      "scale_calibration": "not certified",
+      "artifact": "tec26-C-all-v001\\result.json",
+      "schedule_rows": {
+        "correct": 0,
+        "denominator": 0,
+        "samples": []
+      },
+      "tables": {
+        "pymupdf_tables": 0,
+        "pdfplumber_tables": 0
+      }
+    },
+    "D": {
+      "seconds": 22.193,
+      "pages_processed": 6,
+      "input_unchanged": true,
+      "dimension_text": {
+        "correct": 0,
+        "denominator": 0,
+        "share": null,
+        "samples": []
+      },
+      "level_text": {
+        "correct": 0,
+        "denominator": 0,
+        "share": null,
+        "samples": []
+      },
+      "ral_code_text": {
+        "correct": 0,
+        "denominator": 0,
+        "share": null,
+        "samples": []
+      },
+      "structured_dimensions": 0,
+      "structured_levels": 0,
+      "scale_calibration": "not certified",
+      "artifact": "tec26-D-all-v001\\result.json",
+      "schedule_rows": {
+        "correct": 0,
+        "denominator": 0,
+        "samples": []
+      }
+    },
+    "B": {
+      "pages": [
+        {
+          "page": 3,
+          "entity_types": {
+            "SOLID": 2,
+            "MTEXT": 2
+          },
+          "layers": [
+            "0",
+            "PDF_Geometry",
+            "PDF_Solid Fills",
+            "PDF_Text",
+            "Defpoints"
+          ],
+          "insunits": 4,
+          "extents": [
+            [
+              0.0,
+              -0.32624750751416115,
+              0.0
+            ],
+            [
+              16.53860258435567,
+              10.58389713419342,
+              0.0
+            ]
+          ],
+          "model_scale": "unknown",
+          "source": "C:\\x\\pdf-album-research\\t_5b23c219\\tec26-p3-v001.dxf"
+        }
+      ],
+      "dimension_text": {
+        "correct": 0,
+        "denominator": 0,
+        "share": null,
+        "samples": []
+      },
+      "level_text": {
+        "correct": 0,
+        "denominator": 0,
+        "share": null,
+        "samples": []
+      },
+      "ral_code_text": {
+        "correct": 0,
+        "denominator": 0,
+        "share": null,
+        "samples": []
+      },
+      "sample_only": true,
+      "model_scale": "unknown",
+      "structured_dimensions": 0,
+      "structured_rows": 0
+    },
+    "B2": {
+      "entity_types": {
+        "LINE": 8,
+        "TEXT": 2
+      },
+      "layers": [
+        "0",
+        "Defpoints"
+      ],
+      "insunits": 0,
+      "extents": [
+        [
+          0.0,
+          -1.424395368044662,
+          0.0
+        ],
+        [
+          1415.5234421842993,
+          762.0407562255859,
+          0.0
+        ]
+      ],
+      "model_scale": "unknown",
+      "source": "C:\\x\\pdf-album-research\\t_5b23c219\\tec26-B2-v001\\page.dxf",
+      "route": "B2-PyMuPDF-ezdxf",
+      "reference": {
+        "pdf_sha256": "ab4339496166779b2989a42bdbf88072bf8267a6a30ad748da544bf48ed3f997",
+        "pdf_page": 3
+      },
+      "emitted": 10,
+      "seconds": 0.1098,
+      "input_unchanged": true,
+      "losses": [
+        "fills",
+        "clips",
+        "images",
+        "fonts",
+        "dashes",
+        "text rotation"
+      ],
+      "drops_count": 0
+    }
+  }
+}
