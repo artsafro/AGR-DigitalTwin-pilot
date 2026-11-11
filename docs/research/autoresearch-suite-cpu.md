@@ -1,0 +1,90 @@
+# Autoresearch: default-suite CPU (#1227)
+
+Status: measurements in progress; no improvement or acceptance claimed yet.
+
+## Frozen experiment contract
+
+- Worktree/branch: `t_4c32b36e` / `research/autoresearch-suite-cpu`.
+- Baseline revision: `a4621a56` (pilot main at start).
+- Reused the previous worker's live round-0 process, slot PID 403828; did not restart it.
+- Default selection remains the `pyproject.toml` addopts, including the absence of a `native_max` exclusion.
+- Per-test CPU is `time.process_time()` across setup/call/teardown in the serial pytest process.
+  It excludes child-process CPU and collection; it is not whole-machine CPU, and is not perfectly
+  deterministic under load. Wall time is informational, not the selection metric.
+- Metric: median of three serial target-set pytest invocations, summing per-test CPU in each.
+  Keep only at least 5% improvement versus the previous retained median, with exact node/outcome parity.
+- Stop at 8 hours, three consecutive experiments below 2% gain, or at least 40% target CPU reduction.
+- No test selection, marker, assertion, tolerance, production input, CI, runner, or coordination-policy change.
+- Raw measurements and frozen harness: `C:/x/autoresearch-suite/` (not committed).
+
+## Round 0
+
+Command (retained process): `python C:/Users/artsafro/hermes_kanban/scripts/suite_slot.py
+--card t_4c32b36e -- uv run pytest -q -p no:xdist --durations=0 -p ar_cpu_plugin ...`.
+The plugin is supplied through `PYTHONPATH=C:/x/autoresearch-suite` and
+`AR_CPU_OUT=C:/x/autoresearch-suite/baseline.jsonl`.
+
+Final summary: `20439 passed, 114 skipped, 435 deselected, 49 xfailed, 102 warnings in 2963.19s (0:49:23)`.
+The authoritative selected node count is **20600**, from collection and 20600 unique test records;
+per-node outcomes are 20439 passed / 112 skipped / 49 xfailed. Pytest's phase-summary skipped count
+is not the selected-node count. Session CPU: **1766.562 s**; summed test CPU: **1731.13778 s**.
+
+### Frozen hashes (SHA-256)
+
+| Artifact | SHA-256 |
+| --- | --- |
+| `ar_cpu_plugin.py` | `12b43cf3bbd0d5fa28abd2539490114bf821e23511701ed3663e0997afd4626a` |
+| `baseline.jsonl` | `1ce7788c55d4aeb2ca23f25b861b5ad8a6099c0a715a8d92a5a740b99fd5a78f` |
+| `guard.py` | `f1ab91f051886ac0843deeefcd507507f8040590076a62fb6574a2a262593f46` |
+| `targets.txt` | `7da989d70259b35fb1e31a1ed394e1f8834084db68744168afef1b549ebc140a` |
+
+Before freeze, `guard_probes.py` exposed 9 false passes in the inherited draft guard. Repaired event
+ordering, completeness, finite/nonnegative timings, allowed outcomes, and mandatory candidate runs.
+Synthetic probe output: **24 checks**, unittest PASS; RED and GREEN logs are local. No optimization was
+measured or selected with the draft guard. The frozen diff-token check is only a heuristic: manual review
+must also verify unchanged assertions, tolerances and fixture inputs; a token count cannot prove semantics.
+
+### Frozen target set: 1052.17124 s, 60.77917% of baseline test CPU
+
+| File | Baseline CPU s |
+| --- | ---: |
+| `tests/test_ucx_build.py` | 237.98436 |
+| `tests/ops/test_opacity.py` | 130.39058 |
+| `tests/test_bind_ground_textures.py` | 120.65623 |
+| `tests/test_evals_handoff.py` | 64.89058 |
+| `tests/test_spec_contour_shapes.py` | 63.12508 |
+| `tests/qa/test_orientation_scaling.py` | 56.76555 |
+| `tests/qa/test_scene_clearance.py` | 56.70295 |
+| `tests/max_tools/test_agr_tools_ui_qt.py` | 46.90625 |
+| `tests/test_ci_receipt.py` | 45.54686 |
+| `tests/max_tools/test_agr_tools_uv.py` | 36.79685 |
+| `tests/evals/test_geometry_mutation.py` | 33.62498 |
+| `tests/test_ground_recipes.py` | 33.01553 |
+| `tests/max_tools/test_agr_tools_tex.py` | 31.43742 |
+| `tests/qa/test_from_spec.py` | 24.54684 |
+| `tests/test_model_maf_skill.py` | 24.48435 |
+| `tests/max_tools/test_polygon_expected.py` | 23.64062 |
+| `tests/test_flora_catalogue.py` | 21.65621 |
+
+## Acceptance/probe plan (before optimization)
+
+| Invariant | Concrete input | Expected | Probe |
+| --- | --- | --- | --- |
+| Guard fails closed | Empty/partial/reordered/duplicate events, NaN/inf/negative CPU, failing/unknown outcomes | nonzero; valid control zero | `python C:/x/autoresearch-suite/guard_probes.py` |
+| PNG fixture equivalence | Sizes 2048/4096 and repeated calls into independent output files | original PNG bytes; one encode per size; mutation of one file cannot change another | fixture-cache probe, to be executed before/after change |
+| Cached layered fixture equivalence | Existing synthetic 200 x 190 m layered site, original builder parameters | identical source/mesh/result data, no cross-test mutation | layered-fixture parity probe, to be executed before/after change |
+| Selection/outcomes unchanged | All 17 target files, 3 runs each | identical selected ids and per-node outcomes | frozen `guard.py` |
+| Default selection unchanged | Final full default serial suite | 20600 selected, zero failures | slot + CPU plugin |
+
+## Experiment ledger
+
+| Round | Hypothesis / files | CPU before / after (3-run medians) | Guard | Decision |
+| --- | --- | --- | --- | --- |
+| 0 | Unmodified baseline; target-set median measurements running | pending | pending | baseline |
+
+## Parallelism evidence (no policy change)
+
+The earlier report [601 s versus 2000–4000 s](full-suite-wall-time-601s-vs-4000s.md) found `-n 8`
+ran the same default selection faster, but violated rule 43's xdist-in-slot ban. The present card explicitly
+requests bounded n=2/4 experiments with two busy slots, three runs each; this is an experimental exception,
+not authorization to change `suite_slot.py`, rule 43, or merge_batch. Measurements pending.
