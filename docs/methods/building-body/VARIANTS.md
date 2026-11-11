@@ -25,6 +25,9 @@ more off it, or whose footprint has 0.5 m² or more that the hatch closed at a f
 the plan and on L01 and is not the opening centre (see `kpp1-drawing/mapping-questions.md`). kernel-prisms and
 blender-gn-union on that contour are R14 and R15. source-as-is and max-pymxs-cleanup do not read the plan
 (R13, R16). ac08 and tow02 have no drawing row.
+KPP1 Gate 1 [D238] then fixed the source authority: L03 hatch for 0.000-3.900 (entrance-frame bumps to the L01
+frame top +3.300), the L1 rectangle 27.66 x 11.66 m above, openings from the L01 facade inserts; the offline build of
+that rule is `jobs/KPP1/rerun-1209/` (#1209), not a benchmark row.
 RESULTS.md "Synthetic vs drawing" pairs each synthetic row with the drawing row of
 the same object and variant (a row without the marker); a missing drawing row reads "not measured", never a number. Re-measure the kept outputs without rebuilding:
 `uv run python tools/methods/body/run_benchmarks.py --measure-only` (one row:
