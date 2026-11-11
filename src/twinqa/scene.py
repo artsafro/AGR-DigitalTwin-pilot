@@ -1397,7 +1397,11 @@ def _hull_intersects_mesh_above(hull, verts: list, tris: list, band_z: float) ->
             if sat_separation((hv, ht), (ctri, [(0, 1, 2)])) < -OVERLAP_EPS_M:
                 return True
     # Surface crossings do not detect a hull wholly enclosed by the element.
-    candidates = [v for v in hv if v[2] > band_z]
+    # A point strictly inside the volume is strictly inside the mesh AABB, so the AABB prefilter
+    # skips far meshes (open Flora alpha cards included) without a parity test (#1192).
+    lo = [min(v[i] for v in verts) for i in range(3)]
+    hi = [max(v[i] for v in verts) for i in range(3)]
+    candidates = [v for v in hv if v[2] > band_z and all(lo[i] < v[i] < hi[i] for i in range(3))]
     if not candidates:
         return False
     # Closure is needed only for volume parity; proven surface crossings above still fail.
@@ -1423,7 +1427,9 @@ def _ucx_maf_flora_finding(ucx: list[dict], meshes: list[dict], src: str) -> lis
     *above* its 10 cm sunk band is judged. Each supported (closed, convex, non-degenerate) UCX
     piece is tested against that part of every MAF/Flora mesh with a real hull-triangle SAT
     intersection test and closed-mesh volume containment; a proven overlap is a blocking fail.
-    Open meshes or ambiguous containment are ``not_run`` unless a surface crossing is proven.
+    Open meshes or ambiguous containment are ``not_run`` (each mesh named once) unless a surface
+    crossing is proven; containment is tested only for UCX vertices strictly inside the mesh
+    bounding box, so an open mesh away from every UCX passes (#1192).
     A MAF/Flora mesh without measurable
     face geometry is ``not_run`` naming the mesh, never a silent pass; an unsupported UCX piece is
     ``not_run`` too and never hides a proven intersection.
@@ -1445,7 +1451,7 @@ def _ucx_maf_flora_finding(ucx: list[dict], meshes: list[dict], src: str) -> lis
     pieces = [_ucx_piece(mesh) for mesh in ucx]
     supported = [p for p in pieces if p["reason"] is None and p["hull"] is not None]
     unresolved = [p["name"] for p in pieces if p["reason"] is not None]
-    offenders = []
+    offenders, ambiguous = [], {}
     for p in supported:
         for m, mverts, mtris in measurable:
             band_z = min(v[2] for v in mverts) + MAF_FLORA_SINK_M
@@ -1454,16 +1460,21 @@ def _ucx_maf_flora_finding(ucx: list[dict], meshes: list[dict], src: str) -> lis
                 offenders.append((p["name"], m["name"]))
                 break
             if intersection is None:
-                unmeasurable.append((m["name"], "containment requires a closed mesh and unambiguous ray"))
+                ambiguous.setdefault(id(m), m["name"])
     if offenders:
         shown = ", ".join(f"{a} intersects {b}" for a, b in offenders[:5])
         return [_f("fail", name, f"{src}: {len(offenders)} UCX piece(s) intersect a MAF/Flora element: {shown}",
                    expected, pages, src)]
-    if unmeasurable or unresolved:
+    if unmeasurable or ambiguous or unresolved:
         notes = []
         if unmeasurable:
             notes.append(f"{len(unmeasurable)} MAF/Flora without measurable geometry: "
                          f"{', '.join(f'{n} ({r})' for n, r in unmeasurable[:5])}")
+        if ambiguous:
+            names = list(ambiguous.values())
+            notes.append(f"{len(names)} MAF/Flora open or ambiguous (a UCX vertex lies inside the mesh "
+                         f"bounding box; containment needs a closed mesh and an unambiguous ray): "
+                         f"{', '.join(names[:5])}")
         if unresolved:
             notes.append(f"{len(unresolved)} unsupported UCX piece(s): {unresolved[:5]}")
         return [_f("not_run", name, f"{src}: {'; '.join(notes)}", expected, pages, src)]

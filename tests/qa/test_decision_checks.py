@@ -498,6 +498,94 @@ def test_ucx_inside_cavity_is_not_inside_element_volume_1129():
     assert _ucx_maf_flora_finding([ucx], [maf], "synthetic")[0].status == "pass"
 
 
+def _open_quad(name, corners):
+    m = mesh(name=name, tris=2)
+    m["face_geometry"] = {"vertices": [list(c) for c in corners], "polygons": [[0, 1, 2], [0, 2, 3]]}
+    return m
+
+
+# Tilted open card z == y over x, y in [0, 2]: its AABB is a 3D box, its surface encloses nothing.
+_TILTED = ((0, 0, 0), (2, 0, 0), (2, 2, 2), (0, 2, 2))
+
+
+def test_ucx_far_open_flora_passes_1192():
+    from twinqa.scene import _ucx_maf_flora_finding
+
+    far = _open_quad("SM_Far_Flora", ((50, 0, 0.5), (51, 0, 0.5), (51, 1, 0.5), (50, 1, 0.5)))
+    ucx = _ucx_box("UCX_SM_Test_Ground_001", (0, 0, 0), (1, 1, 1))
+    assert _ucx_maf_flora_finding([ucx], [far], "synthetic")[0].status == "pass"
+
+
+def test_ucx_vertex_inside_open_mesh_aabb_is_not_run_1192():
+    from twinqa.scene import _ucx_maf_flora_finding
+
+    card = _open_quad("SM_Card_Flora", _TILTED)
+    ucx = _ucx_box("UCX_SM_Test_Ground_001", (1.5, 0.5, 0.2), (1.7, 0.7, 0.4))  # below the card, inside AABB
+    finding = _ucx_maf_flora_finding([ucx], [card], "synthetic")[0]
+    assert finding.status == "not_run"
+    assert "SM_Card_Flora" in finding.observed and "open" in finding.observed
+    assert "without measurable geometry" not in finding.observed
+
+
+def test_ucx_open_mesh_named_once_for_many_pieces_1192():
+    from twinqa.scene import _ucx_maf_flora_finding
+
+    card = _open_quad("SM_Card_Flora", _TILTED)
+    other = _open_quad("SM_Other_GroundEl", tuple((x + 10, y, z) for x, y, z in _TILTED))
+    ucx = [_ucx_box(f"UCX_SM_Test_Ground_00{i}", (0.2 + 0.5 * i, 0.5, 0.2), (0.4 + 0.5 * i, 0.7, 0.4))
+           for i in range(3)]
+    ucx.append(_ucx_box("UCX_SM_Test_Ground_009", (11.5, 0.5, 0.2), (11.7, 0.7, 0.4)))
+    observed = _ucx_maf_flora_finding(ucx, [card, other], "synthetic")[0].observed
+    assert observed.count("SM_Card_Flora") == 1
+    assert observed.count("SM_Other_GroundEl") == 1
+    assert observed.count("2 MAF/Flora") == 1
+
+
+@pytest.mark.parametrize("bad", [float("nan"), float("inf")])
+def test_ucx_nonfinite_far_open_flora_never_passes_1192(bad):
+    from twinqa.scene import _ucx_maf_flora_finding
+
+    far = _open_quad("SM_Far_Flora", ((50, 0, 0.5), (51, 0, bad), (51, 1, 0.5), (50, 1, 0.5)))
+    ucx = _ucx_box("UCX_SM_Test_Ground_001", (0, 0, 0), (1, 1, 1))
+    finding = _ucx_maf_flora_finding([ucx], [far], "synthetic")[0]
+    assert finding.status == "not_run" and "SM_Far_Flora" in finding.observed
+
+
+def test_ucx_vertex_on_open_mesh_aabb_face_cannot_be_contained_1192():
+    """Exactly at the AABB face: a boundary point is never strictly inside the volume (touch exempt)."""
+    from twinqa.scene import _ucx_maf_flora_finding
+
+    card = _open_quad("SM_Card_Flora", _TILTED)
+    ucx = _ucx_box("UCX_SM_Test_Ground_001", (2, 0.5, 0.2), (2.2, 0.7, 0.4))  # x == AABB max
+    assert _ucx_maf_flora_finding([ucx], [card], "synthetic")[0].status == "pass"
+    inside = _ucx_box("UCX_SM_Test_Ground_001", (1.999, 0.5, 0.2), (2.2, 0.7, 0.4))
+    assert _ucx_maf_flora_finding([inside], [card], "synthetic")[0].status == "not_run"
+
+
+@pytest.mark.parametrize("seed", range(40))
+def test_ucx_aabb_prefilter_matches_full_containment_1192(seed):
+    """Probe: the AABB prefilter never changes a closed-mesh verdict (fail stays fail, pass stays pass)."""
+    import random
+
+    from twinqa.scene import _ucx_maf_flora_finding
+
+    rnd = random.Random(seed)
+    lo = [rnd.uniform(-3, 3) for _ in range(3)]
+    hi = [c + rnd.uniform(0.3, 2) for c in lo]
+    a = [rnd.uniform(-4, 4) for _ in range(3)]
+    b = [c + rnd.uniform(0.05, 1) for c in a]
+    inside = all(l < x and y < h for l, x, y, h in zip(lo, a, b, hi)) and a[2] > lo[2] + 0.1
+    status = _ucx_maf_flora_finding([_ucx_box("UCX_SM_T_Ground_001", a, b)],
+                                    [_maf_mesh("SM_T_GroundEl", lo, hi)], "synthetic")[0].status
+    disjoint = any(x > h or y < l for l, x, y, h in zip(lo, a, b, hi))
+    if inside:
+        assert status == "fail"
+    elif disjoint:
+        assert status == "pass"
+    else:
+        assert status in ("pass", "fail")
+
+
 def test_ucx_covering_maf_fails_flo15():
     assert _ucx_maf_status((0, 0, 0), (1, 1, 1), (0.2, 0.2, 0.5), (0.8, 0.8, 1.5)) == "fail"
 
