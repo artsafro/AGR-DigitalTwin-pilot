@@ -185,7 +185,20 @@ def main(argv) -> int:
     res = {"verdict": "fail" if bad else "pass", "failures": bad,
            "reference_file": str(Path(args.reference).resolve()) if args.reference else None,
            "reference_rows_unused": unused, **res}
-    out.write_text(json.dumps(res, indent=1, ensure_ascii=False), encoding="utf-8")
+    payload = json.dumps(res, indent=1, ensure_ascii=False)
+    created = False
+    try:
+        with out.open("x", encoding="utf-8") as stream:
+            created = True
+            stream.write(payload)
+    except OSError as exc:
+        print(f"error: cannot write {out}: {exc}", file=sys.stderr)
+        if created:
+            try:
+                out.unlink()
+            except OSError as cleanup_exc:
+                print(f"error: cannot remove incomplete report {out}: {cleanup_exc}", file=sys.stderr)
+        return 2
     for row in res["rows"]:
         for role in ROLES:
             e = row[role]

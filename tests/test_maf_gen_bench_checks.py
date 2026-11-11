@@ -176,6 +176,103 @@ def test_output_onto_an_input_or_existing_file_is_refused(tmp_path, target):
     assert dest.read_bytes() == before
 
 
+@pytest.mark.parametrize("parent_kind", ["missing", "file"])
+@pytest.mark.parametrize("gate_fails", [False, True])
+def test_unwritable_output_is_refused(tmp_path, parent_kind, gate_fails):
+    readback = {(1, "npm"): [3.9, 2.9, 0.45]} if gate_fails else None
+    report, rb, _ = make_case(tmp_path, DIMS, readback)
+    parent = tmp_path / "blocked"
+    if parent_kind == "file":
+        parent.write_text("keep", encoding="utf-8")
+    out = parent / "checks.json"
+    before = {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
+    proc = subprocess.run([sys.executable, str(TOOL), str(report), str(rb), str(out)],
+                          capture_output=True, text=True, cwd=ROOT)
+    assert proc.returncode == 2, proc.stderr
+    assert proc.stderr.startswith("error: ") and str(out) in proc.stderr
+    assert "Traceback" not in proc.stderr and not proc.stdout
+    assert not out.exists()
+    assert {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()} == before
+
+
+@pytest.mark.parametrize("error_type", [PermissionError, OSError])
+def test_output_open_error_is_refused(tmp_path, monkeypatch, capsys, error_type):
+    report, rb, out = make_case(tmp_path, DIMS)
+    original_open = Path.open
+
+    def denied(path, *args, **kwargs):
+        if path == out:
+            raise error_type("synthetic write refusal")
+        return original_open(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "open", denied)
+    assert run(report, rb, out) == 2
+    captured = capsys.readouterr()
+    assert captured.err.startswith("error: ") and str(out) in captured.err
+    assert "synthetic write refusal" in captured.err and not captured.out
+    assert not out.exists()
+
+
+def test_output_write_error_removes_partial_report(tmp_path, monkeypatch, capsys):
+    report, rb, out = make_case(tmp_path, DIMS)
+    original_open = Path.open
+    before = {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
+
+    class BrokenWriter:
+        def __enter__(self):
+            self.stream = original_open(out, "x", encoding="utf-8")
+            return self
+
+        def write(self, text):
+            self.stream.write(text[:10])
+            self.stream.flush()
+            raise OSError("synthetic disk full")
+
+        def __exit__(self, *args):
+            self.stream.close()
+
+    def broken(path, *args, **kwargs):
+        return BrokenWriter() if path == out else original_open(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "open", broken)
+    assert run(report, rb, out) == 2
+    captured = capsys.readouterr()
+    assert "error: " in captured.err and "synthetic disk full" in captured.err
+    assert not captured.out
+    assert not out.exists()
+    assert {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()} == before
+
+
+def test_output_created_during_checks_is_not_overwritten(tmp_path, monkeypatch, capsys):
+    report, rb, out = make_case(tmp_path, DIMS)
+    original_check = chk.check
+
+    def create_output(*args, **kwargs):
+        result = original_check(*args, **kwargs)
+        out.write_text("keep concurrent output", encoding="utf-8")
+        return result
+
+    monkeypatch.setattr(chk, "check", create_output)
+    assert run(report, rb, out) == 2
+    assert out.read_text(encoding="utf-8") == "keep concurrent output"
+    assert capsys.readouterr().err.startswith("error: ")
+
+
+def test_probe_refused_output_paths_preserve_inputs(tmp_path, capsys):
+    """Synthetic bounded probe: eight missing depths and three input aliases."""
+    report, rb, _ = make_case(tmp_path, DIMS)
+    alias = tmp_path / "report-hardlink.json"
+    alias.hardlink_to(report)
+    before = {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
+    targets = [tmp_path.joinpath(*(["missing"] * depth), "checks.json") for depth in range(1, 9)]
+    targets += [tmp_path / "readback" / ".." / report.name, alias, rb / "npm_SET_01.json"]
+    for target in targets:
+        assert run(report, rb, target) == 2, target
+        captured = capsys.readouterr()
+        assert captured.err.startswith("error: ") and not captured.out
+        assert {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()} == before
+
+
 def test_fresh_process_exit_codes(tmp_path):
     ok_dir, bad_dir = tmp_path / "ok", tmp_path / "bad"
     ok_dir.mkdir(), bad_dir.mkdir()
