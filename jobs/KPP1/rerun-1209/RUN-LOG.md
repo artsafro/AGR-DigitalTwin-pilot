@@ -17,7 +17,7 @@ confirmed by the architect for R1**. АС.03 has no section sheet; the architect
 `jobs/KPP1/questions.md` (Q-R1-LEVELS).
 
 Resume approval: parapet thickness **0.35 m** and roof slab **7.700-7.909** are
-**provisional, not confirmed by drawings/architect [D248]**. This resolves the previous
+**provisional, not confirmed by drawings/architect [D249]**. This resolves the previous
 modelling question, not the outstanding delivery checks. No export was rebuilt in this resume.
 
 ## Resume preflight: delivery target conflict
@@ -41,7 +41,7 @@ Recommended: retain the geometry-run scope and keep final delivery certification
 Neither interpretation permits fabricated approvals or changing the validator to pass.
 The missing Stair and 164 mullions remain in-scope work, not waived or reclassified.
 
-Decision allocation: `uv run python tools/git-hooks/decision_ids.py next` -> **D248**,
+Decision allocation: `uv run python tools/git-hooks/decision_ids.py next` -> **D249**,
 checked across origin/main, this branch and **15 open PR heads**.
 
 ## Commands (exact)
@@ -149,7 +149,7 @@ V015 / V017 manual. Pass: V002, V005, V012.
 | R1 | TASK_TO_MODEL `operations` / parts list | The PartsList has per-part budgets, but the VPM/NPM grammar allows only `SM_<A>_Main` + `MainGlass` (+UCX): parts must be joined before export, so per-part triangles are measurable only before the join and the joined mesh then fails V004 self-intersections where parts touch. No rule says whether parts are joined, welded or unioned. | follow-up |
 | R2 | L01 opening source | Openings come from Revit-exported block inserts; `plan_from_dxf` reads plans only. There is no shared facade reader (view placement by grid lines, insert bboxes per facade suffix `О_АР_Ф_<Сторона>`); this run wrote one into the job folder. | follow-up |
 | R3 | `validate_package` on a single FBX | V001/V011/V013 can only be `not_run` without a ZIP and GeoJSON, so a geometry-only run can never reach `passed=true`; the acceptance "passed=true for each built FBX" is not reachable while MSK-77 placement is deferred. | note in TASK_TO_MODEL |
-| R4 | Parapet thickness / roof base | Initially guessed; Artem provisionally approved 0.35 m parapet and slab 7.700-7.909 in [D248]. Marked 'provisional, not confirmed by drawings/architect [D248]'; architect confirmation stays open. | user modelling blocker resolved; architect question retained |
+| R4 | Parapet thickness / roof base | Initially guessed; Artem provisionally approved 0.35 m parapet and slab 7.700-7.909 in [D249]. Marked 'provisional, not confirmed by drawings/architect [D249]'; architect confirmation stays open. | user modelling blocker resolved; architect question retained |
 | R5 | Mullions | 164 of 171 mullion inserts lie outside the merged opening boxes (their centres are not inside any cut), so they were not placed; the curtain-wall panels and the mullions use different layer groupings. | follow-up |
 
 ## Not done, and why
