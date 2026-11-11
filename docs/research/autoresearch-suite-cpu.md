@@ -1,6 +1,11 @@
 # Autoresearch: default-suite CPU (#1227)
 
-Status: measurements in progress; no improvement or acceptance claimed yet.
+Status: search ledger and retained code are frozen for final validation. Exact-head final
+full-suite/CPU, per-file tables, remaining hotspots, guard and xdist measurements are published
+in the PR body's **Final measurements** section (and attached CSV), after execution. Keeping
+those derived receipts outside Git avoids changing the SHA they verify or rerunning the full
+suite solely to commit its own results. This file is the committed round log, not a substitute
+for those final receipts.
 
 ## Frozen experiment contract
 
@@ -19,10 +24,14 @@ Status: measurements in progress; no improvement or acceptance claimed yet.
 
 ## Round 0
 
-Command (retained process): `python C:/Users/artsafro/hermes_kanban/scripts/suite_slot.py
---card t_4c32b36e -- uv run pytest -q -p no:xdist --durations=0 -p ar_cpu_plugin ...`.
-The plugin is supplied through `PYTHONPATH=C:/x/autoresearch-suite` and
-`AR_CPU_OUT=C:/x/autoresearch-suite/baseline.jsonl`.
+Exact retained command, recovered from `proc_42bc4c645430.json` (native Hermes process receipt):
+
+```bash
+python C:/Users/artsafro/hermes_kanban/scripts/suite_slot.py --card t_4c32b36e -- env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL PYTHONPATH=C:/x/autoresearch-suite AR_CPU_OUT=C:/x/autoresearch-suite/baseline.jsonl uv run pytest -q -p no:xdist -p no:cacheprovider --durations=0 -p ar_cpu_plugin --basetemp=C:/x/t_4c32b36e
+```
+
+Run from the card worktree; stdout/stderr were retained as `baseline_stdout.txt`.
+The plugin is conftest-free. Baseline was reused, not repeated.
 
 Final summary: `20439 passed, 114 skipped, 435 deselected, 49 xfailed, 102 warnings in 2963.19s (0:49:23)`.
 The authoritative selected node count is **20600**, from collection and 20600 unique test records;
@@ -115,4 +124,34 @@ the pre-change `HeightField.kinks` body (excluding its docstring); its source mo
 The earlier report [601 s versus 2000–4000 s](full-suite-wall-time-601s-vs-4000s.md) found `-n 8`
 ran the same default selection faster, but violated rule 43's xdist-in-slot ban. The present card explicitly
 requests bounded n=2/4 experiments with two busy slots, three runs each; this is an experimental exception,
-not authorization to change `suite_slot.py`, rule 43, or merge_batch. Measurements pending.
+not authorization to change `suite_slot.py`, rule 43, or merge_batch.
+
+The sampled load is **one xdist slot plus one serial slot**, not two xdist slots. The companion
+first runs the canonical local CI producer (including the real full default pytest suite), then
+repeats the real frozen target suite if needed to keep that slot busy. Exactly two live owned
+holders are required before each xdist run and sampled every two seconds. A third holder,
+worker crash, missing summary or desktop-heap marker invalidates the relevant observation;
+it is never silently discarded. This does not certify simultaneous xdist in both slots.
+Final numbers/recommendation are in the PR's Final measurements section.
+
+## Reproduction and exact-head publication
+
+- Platform observed: Windows 11 build 26200, 32 logical CPUs; project Python 3.14.7,
+  pytest 9.1.1, xdist 3.8.0, NumPy 2.5.3, Shapely 2.1.2, Pillow 12.3.0.
+- Exact research harness snapshots are in [autoresearch-suite-cpu-harness](autoresearch-suite-cpu-harness/).
+  They are `.txt` audit snapshots, not shared production tools. Scoped `.gitattributes` preserves
+  original bytes/line endings; a RED probe caught Git normalizing the recorder, then 6/6 raw/index
+  byte-parity checks passed. Raw plugin/guard/baseline hashes above remain unchanged.
+- Target repetitions: `python C:/x/autoresearch-suite/bench.py --repo <worktree> --targets C:/x/autoresearch-suite/targets.txt --out <new-evidence-directory>`.
+- Final serial command is the archived `final_companion.py`, through
+  `python C:/Users/artsafro/hermes_kanban/scripts/suite_slot.py --slots 2 --card t_4c32b36e -- python C:/x/autoresearch-suite/final_companion.py`.
+  It invokes `uv run python tools/ci_receipt.py --issue 1227 --basetemp C:/x/t_4c32b36e-final --pytest-log tmp/full-suite.log --out tmp/ci-receipt.md`.
+  The ready-gate preflight passed. Process-local `PYTEST_ADDOPTS` adds only `-p no:cacheprovider -p ar_cpu_plugin -p ar_env_boundary`;
+  the recorder is installed in this worktree's venv, and the boundary clears recorder/addopts
+  inheritance after recorder initialization, avoiding recursive nested-test evidence writes.
+- In parallel, use the same slot wrapper with `--slots 2 --card t_4c32b36e -- python C:/x/autoresearch-suite/xdist_matrix.py`.
+  Neither driver changes the shared slot configuration. Existing raw outputs are refused.
+- Final CPU/node data are `final.jsonl`; actual pytest output is `final_pytest.log`; producer
+  stdout is `final_stdout.txt`. The final guard, per-file CSV and top-node table are generated
+  from those actual records. Exact-head CI/evals receipts and Agent trace are copied into the PR body.
+  No tracked file is edited after the final suite starts.
