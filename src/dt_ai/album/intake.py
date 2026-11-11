@@ -86,10 +86,25 @@ def _inspect_page(source, number):
             regions.append(dict(bbox=list(block[:4]), indicator='text', label=label,
                                 route='table_extraction' if table else 'vector_read',
                                 reason='schedule_heading_candidate' if table else 'searchable_text'))
+        # A heading alone is not a useful table ROI: retain the surrounding text
+        # envelope so downstream extraction can see data rows as well as the title.
+        if any(r['route'] == 'table_extraction' for r in regions):
+            boxes = [r['bbox'] for r in regions]
+            regions.append(dict(bbox=[min(b[0] for b in boxes), min(b[1] for b in boxes),
+                                      max(b[2] for b in boxes), max(b[3] for b in boxes)],
+                                indicator='text', label=None, route='table_extraction',
+                                reason='schedule_context_candidate_unverified'))
         # Bound output size without materializing the full get_drawings() path tree.
         # Separate indicator buckets even when searchable headers share a tile.
         buckets = {}
-        for op, box, *_ in page.get_bboxlog():
+        display = page.get_bboxlog()
+        if len(display) >= 20000:
+            item.update(status='partial', reason='dense_display_list_cutoff')
+            regions.append(dict(bbox=list(page.rect), indicator='unknown', label=None,
+                                route='ocr_vision', reason='dense_display_list_cutoff',
+                                operations=len(display)))
+            display = []  # complete uninspected display list is accounted by the ROI
+        for op, box, *_ in display:
             if op in ('fill-text', 'stroke-text', 'ignore-text'):
                 continue
             x0, y0, x1, y1 = box
