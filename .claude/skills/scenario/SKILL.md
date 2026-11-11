@@ -5,6 +5,10 @@ description: 'Route a production task to its cell (NPM / simplified NPM / VPM x 
 
 # Scenario: work inside a production cell
 
+One entry sequence (also used by [TASK_TO_MODEL](../../../docs/procedure/TASK_TO_MODEL.md#entry-one-sequence-from-either-entry-point)):
+
+`docs/scenarios/<cell>.md` -> `jobs/<ID>/TASK.md` / contract questions -> `jobs/<ID>/job.yaml` gates
+
 A **cell** is one product profile times one object class, as in the NTR pipeline map: `oks-vpm`, `oks-npm`,
 `oks-npm-lite`, `ground-npm`, `ground-vpm`. MAF and Flora live inside the Ground cells; UCX is VPM only. The table of
 cells, triggers and cards is [scenarios.json](../../../docs/scenarios/scenarios.json); each ready cell has a card
@@ -29,7 +33,9 @@ intake. Done when every binding rule row that the task touches is known with its
 Ask the card's contract questions that the sources leave open, in one batch of at most 5, each with your
 recommendation first, per [task-intake](../../../docs/agents/task-intake.md). Write the answers into
 `jobs/<ID>/TASK.md` (requirement verbatim, «Не трогать», acceptance, pilot). Done when no open item would change
-the result.
+the result. Then hand over to [TASK_TO_MODEL GATES](../../../docs/procedure/TASK_TO_MODEL.md#gates-same-for-every-path):
+create or continue `jobs/<ID>/job.yaml` and track all eight gates there. This is the continuation of this
+contract, not a second intake. Do not build before user Gate 1 confirms the PartsList.
 
 ## Step 4 — Work the route
 

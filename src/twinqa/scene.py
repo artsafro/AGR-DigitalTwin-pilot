@@ -1119,7 +1119,8 @@ def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
     ``status`` is ``"fail"`` for broken (empty/partial/non-finite) face data, ``"unmeasurable"``
     when the mesh has no upward-facing surface or no surface perimeter to measure, and ``"ok"``
     when the perimeter drop was measured. The skirt extrudes the Ground surface's perimeter
-    straight down, so under every perimeter edge of the upward-facing surface the mesh must carry
+    straight down. Only outer boundary rings of every component count as perimeter; inner holes
+    (including building cut-outs) are excluded [D251]. Under every outer edge the mesh must carry
     edges at least ``SKIRT_MIN_M`` lower that lie on the same XY segment, either one copy per
     perimeter edge or one bottom edge spanning several collinear perimeter edges (#1133 case 1).
     The drop is measured per perimeter edge
@@ -1169,17 +1170,52 @@ def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
     if not top:
         return "unmeasurable", None
 
-    # perimeter edges of the surface: an edge used by exactly one surface polygon
+    # Upward-facing surface polygons orient outer boundaries CCW in XY and holes CW.
+    # [D251]: only outer rings need skirts, including every disconnected component.
+    # Classify each directed ring, not by global containment/size (an island inside a
+    # different component's hole is still an outer boundary of its own component).
     edge_count: dict[tuple[int, int], int] = {}
+    directed: dict[tuple[int, int], tuple[int, int]] = {}
     for p in top:
         n = len(p)
         for k in range(n):
             a, b = p[k], p[(k + 1) % n]
             key = (a, b) if a < b else (b, a)
             edge_count[key] = edge_count.get(key, 0) + 1
-    perimeter = [e for e, c in edge_count.items() if c == 1]
-    if not perimeter:
+            directed[key] = (a, b)
+    boundary = [directed[e] for e, c in edge_count.items() if c == 1]
+    if not boundary:
         return "unmeasurable", None
+    following: dict[int, int] = {}
+    incoming: set[int] = set()
+    for a, b in boundary:
+        if a in following or b in incoming:
+            return "fail", 0.0  # branched boundary: cannot safely exempt a hole
+        following[a] = b
+        incoming.add(b)
+    if set(following) != incoming:
+        return "fail", 0.0
+    perimeter = []
+    while following:
+        start = next(iter(following))
+        ring = []
+        a = start
+        while a in following:
+            b = following.pop(a)
+            ring.append((a, b))
+            a = b
+        if a != start:
+            return "fail", 0.0
+        # Translate before shoelace accumulation to avoid cancellation at map coordinates.
+        x0, y0 = verts[start][:2]
+        area2 = math.fsum((verts[i][0] - x0) * (verts[j][1] - y0)
+                          - (verts[j][0] - x0) * (verts[i][1] - y0) for i, j in ring)
+        if not math.isfinite(area2) or area2 == 0:
+            return "fail", 0.0
+        if area2 > 0:
+            perimeter.extend(ring)
+    if not perimeter:
+        return "fail", 0.0
 
     # every mesh edge with an XY extent (vertical edges have none), on a uniform XY grid; the skirt
     # bottom lies under the perimeter XY but may span several collinear perimeter edges (#1133)
@@ -1333,19 +1369,90 @@ def _clip_tri_above(tri: list, band_z: float) -> list[list]:
     return [[tri[a], cross(a, below), cross(b, below)], [tri[a], cross(b, below), tri[b]]]
 
 
-def _hull_intersects_mesh_above(hull, verts: list, tris: list, band_z: float) -> bool:
+def _point_in_closed_mesh(point, verts, tris) -> bool | None:
+    """Exact ray parity, independent of face winding; None for ambiguous rays.
+
+    Retry edge/vertex hits with different directions, never count a shared edge twice.
+    Fractions preserve the supplied float coordinates without a scale-dependent epsilon.
+    A point on the surface is not strict containment (touch remains exempt).
+    """
+    def sub(a, b):
+        return tuple(x - y for x, y in zip(a, b))
+
+    def dot(a, b):
+        return sum(x * y for x, y in zip(a, b))
+
+    def cross(a, b):
+        return (a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2],
+                a[0] * b[1] - a[1] * b[0])
+
+    p = tuple(Fraction(c) for c in point)
+    vv = [tuple(Fraction(c) for c in v) for v in verts]
+    for direction in ((1, 0, 0), (0, 1, 0), (0, 0, 1), (1, 2, 3), (3, 1, 2)):
+        hits, ambiguous = 0, False
+        for i, j, k in tris:
+            a, b, c = vv[i], vv[j], vv[k]
+            e1, e2, s = sub(b, a), sub(c, a), sub(p, a)
+            h = cross(direction, e2)
+            det = dot(e1, h)
+            if det == 0:
+                # Coplanar rays cannot certify parity; another direction may.
+                if dot(cross(e1, e2), s) == 0:
+                    ambiguous = True
+                    break
+                continue
+            u = dot(s, h) / det
+            q = cross(s, e1)
+            v = dot(direction, q) / det
+            t = dot(e2, q) / det
+            if u < 0 or v < 0 or u + v > 1 or t < 0:
+                continue
+            if t == 0:
+                return False
+            if u == 0 or v == 0 or u + v == 1:
+                ambiguous = True
+                break
+            hits += 1
+        if not ambiguous:
+            return hits % 2 == 1
+    return None
+
+
+def _hull_intersects_mesh_above(hull, verts: list, tris: list, band_z: float) -> bool | None:
     """True if the convex ``hull`` (verts, tris) overlaps any mesh triangle at or above ``band_z``.
 
     Each triangle is clipped to the half-space ``z >= band_z`` (the sunk band [D095]/[D100] is not
     coverage) and tested against the hull with the SAT separation already used by the UCX pair
     checks; a real penetration (< -OVERLAP_EPS_M) is an intersection, mere touching is not.
+    If no surface crosses, test hull vertices strictly above the band for volume containment.
+    Return None when closure or ray parity cannot certify the remaining volume check.
     """
     hv, ht = hull
     for tri in tris:
         for ctri in _clip_tri_above([verts[i] for i in tri], band_z):
             if sat_separation((hv, ht), (ctri, [(0, 1, 2)])) < -OVERLAP_EPS_M:
                 return True
-    return False
+    # Surface crossings do not detect a hull wholly enclosed by the element.
+    # A point strictly inside the volume is strictly inside the mesh AABB, so the AABB prefilter
+    # skips far meshes (open Flora alpha cards included) without a parity test (#1192).
+    lo = [min(v[i] for v in verts) for i in range(3)]
+    hi = [max(v[i] for v in verts) for i in range(3)]
+    candidates = [v for v in hv if v[2] > band_z and all(lo[i] < v[i] < hi[i] for i in range(3))]
+    if not candidates:
+        return False
+    # Closure is needed only for volume parity; proven surface crossings above still fail.
+    unique = {v: i for i, v in enumerate(dict.fromkeys(verts))}
+    mv = list(unique)
+    mt = [tuple(unique[verts[i]] for i in tri) for tri in tris]
+    if not is_closed(mt):
+        return None
+    uncertain = False
+    for point in candidates:
+        inside = _point_in_closed_mesh(point, mv, mt)
+        if inside is True:
+            return True
+        uncertain |= inside is None
+    return None if uncertain else False
 
 
 def _ucx_maf_flora_finding(ucx: list[dict], meshes: list[dict], src: str) -> list[Finding]:
@@ -1355,7 +1462,11 @@ def _ucx_maf_flora_finding(ucx: list[dict], meshes: list[dict], src: str) -> lis
     and both sink 10 cm into the Ground [D095]/[D100], so only the part of a MAF/Flora element
     *above* its 10 cm sunk band is judged. Each supported (closed, convex, non-degenerate) UCX
     piece is tested against that part of every MAF/Flora mesh with a real hull-triangle SAT
-    intersection test; a proven overlap is a blocking fail. A MAF/Flora mesh without measurable
+    intersection test and closed-mesh volume containment; a proven overlap is a blocking fail.
+    Open meshes or ambiguous containment are ``not_run`` (each mesh named once) unless a surface
+    crossing is proven; containment is tested only for UCX vertices strictly inside the mesh
+    bounding box, so an open mesh away from every UCX passes (#1192).
+    A MAF/Flora mesh without measurable
     face geometry is ``not_run`` naming the mesh, never a silent pass; an unsupported UCX piece is
     ``not_run`` too and never hides a proven intersection.
     """
@@ -1376,22 +1487,30 @@ def _ucx_maf_flora_finding(ucx: list[dict], meshes: list[dict], src: str) -> lis
     pieces = [_ucx_piece(mesh) for mesh in ucx]
     supported = [p for p in pieces if p["reason"] is None and p["hull"] is not None]
     unresolved = [p["name"] for p in pieces if p["reason"] is not None]
-    offenders = []
+    offenders, ambiguous = [], {}
     for p in supported:
         for m, mverts, mtris in measurable:
             band_z = min(v[2] for v in mverts) + MAF_FLORA_SINK_M
-            if _hull_intersects_mesh_above(p["hull"], mverts, mtris, band_z):
+            intersection = _hull_intersects_mesh_above(p["hull"], mverts, mtris, band_z)
+            if intersection is True:
                 offenders.append((p["name"], m["name"]))
                 break
+            if intersection is None:
+                ambiguous.setdefault(id(m), m["name"])
     if offenders:
         shown = ", ".join(f"{a} intersects {b}" for a, b in offenders[:5])
         return [_f("fail", name, f"{src}: {len(offenders)} UCX piece(s) intersect a MAF/Flora element: {shown}",
                    expected, pages, src)]
-    if unmeasurable or unresolved:
+    if unmeasurable or ambiguous or unresolved:
         notes = []
         if unmeasurable:
             notes.append(f"{len(unmeasurable)} MAF/Flora without measurable geometry: "
                          f"{', '.join(f'{n} ({r})' for n, r in unmeasurable[:5])}")
+        if ambiguous:
+            names = list(ambiguous.values())
+            notes.append(f"{len(names)} MAF/Flora open or ambiguous (a UCX vertex lies inside the mesh "
+                         f"bounding box; containment needs a closed mesh and an unambiguous ray): "
+                         f"{', '.join(names[:5])}")
         if unresolved:
             notes.append(f"{len(unresolved)} unsupported UCX piece(s): {unresolved[:5]}")
         return [_f("not_run", name, f"{src}: {'; '.join(notes)}", expected, pages, src)]

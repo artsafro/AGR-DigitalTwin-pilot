@@ -21,3 +21,8 @@ Rules learned on this job, for the next agent on KPP1. Source of each: the run n
   Max-only steps as `missing` with a `waits-max` note, never as `pass`. [#1172]
 - **Write receipts with LF** (`open(..., newline='\n')`) and walk a fresh `git worktree add --detach` of the
   commit before review: `.gitattributes` turns CRLF into LF on commit and the hash no longer matches. [#1172]
+- **Facades of a Revit-exported DWG are readable without a dimension parser.** Each view's blocks carry the facade suffix (`О_АР_Ф_Южный` ...); grid lines give the u origin and the drawing Y is the elevation in mm. Opening rectangles = merged insert bboxes per facade. [#1209, D238]
+- **The regulation grammar joins parts.** VPM/NPM allow only `Main` / `MainGlass` (+UCX), so count per-part triangles before the join and expect V004 self-intersections where joined parts touch. [#1209]
+- **A single FBX cannot reach `passed=true`.** V001/V011/V013 need the ZIP and the GeoJSON; record the blockers (stage, value, limit) instead of chasing a pass. [#1209]
+- **Quote measured validator limits, not an idealized zero.** V004 topology allows <=100 defects per mesh at 2 mm; xView zero-overlap is a separate postcondition. Copy check/value/limit from the real JSON and retain fail/review/not_run. [#1209]
+- **Provisional geometry approval is not delivery certification.** Roof/parapet values are provisionally approved in [D249], while the architect question remains open. Resolve a new `passed=true` target against the existing [D224] placement deferral before rebuilding; never sign V015-V017 for the user. [#1209]

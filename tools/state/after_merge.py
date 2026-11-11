@@ -7,7 +7,9 @@ AGENTS.md: PROJECT_STATE is regenerated only on `main` after a merge. This scrip
     python tools/state/after_merge.py check [--states-json FILE]
 
 `--pr N` checks that #N is MERGED, finds the checkout of `main` (`git worktree list`), refuses when it is dirty,
-fast-forwards it to `origin/main`, runs `tools/state/project_state.py` there and commits the regenerated file
+fast-forwards it to `origin/main`, runs `tools/state/project_state.py` there, then `tools/state/entry_budget.py
+--check` (#1222): over the cold-entry budget it restores the file and exits 1 without committing. Otherwise it
+commits the regenerated file
 (`docs(state): regenerate PROJECT_STATE after #N`). It never pushes: `git push origin main` stays the user's
 approval (guard). Then it runs `check` on the new file.
 
@@ -15,8 +17,8 @@ approval (guard). Then it runs `check` on the new file.
 from `gh pr view` or, offline, from a JSON file `{"<number>": "OPEN|MERGED|CLOSED"}` (`--states-json` or the
 environment variable DT_PR_STATES_JSON; `tests/test_state_after_merge.py` uses the same injection).
 
-Exit codes: 0 done / nothing to do, 1 stale state after the run, 2 refused (dirty main, no main checkout,
-PR not merged, git/gh failure).
+Exit codes: 0 done / nothing to do, 1 stale state or over the cold-entry budget, 2 refused (dirty main, no main
+checkout, PR not merged, git/gh failure).
 """
 import argparse
 import json
@@ -29,6 +31,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 STATE = "docs/PROJECT_STATE.md"
 GENERATOR = "tools/state/project_state.py"
+BUDGET_CHECK = "tools/state/entry_budget.py"
 _OPEN_ROW = re.compile(r"^- #([1-9][0-9]*) ")
 _MERGE_CMD = re.compile(r"\bgh\s+pr\s+merge\b(?P<rest>[^\n;&|]*)")
 
@@ -128,6 +131,12 @@ def refresh(number, run=_run, cwd=ROOT, python=sys.executable, commit=True):
         _ok(run, ["git", "fetch", "origin", "main"], main, "git fetch")
         _ok(run, ["git", "merge", "--ff-only", "origin/main"], main, "git merge --ff-only origin/main")
         _ok(run, [python, GENERATOR, "--repo", "."], main, "project_state.py")
+        budget_code, budget_out = run([python, BUDGET_CHECK, "--check"], main)
+        if budget_code != 0:
+            _ok(run, ["git", "checkout", "--", STATE], main, "git checkout")
+            total = (budget_out or "").strip().splitlines()[-1:] or [f"exit {budget_code}"]
+            return 1, (f"after_merge: cold-entry budget check failed ({total[0]}): "
+                       f"PROJECT_STATE after #{number} not committed, file restored")
         changed = _ok(run, ["git", "status", "--porcelain", "--", STATE], main, "git status").strip()
         note = "unchanged"
         if changed and commit:

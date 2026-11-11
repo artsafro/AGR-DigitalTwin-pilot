@@ -5,6 +5,20 @@ Read this before building or reducing a model. Start with the card, its area she
 A conflict or unknown source fact is a user question, not a modelling assumption.
 Use the matching `.agents/skills/model-*/SKILL.md` and `validate-delivery` skill.
 
+## Entry (one sequence, from either entry point)
+
+`docs/scenarios/<cell>.md` -> `jobs/<ID>/TASK.md` / contract questions -> `jobs/<ID>/job.yaml` gates
+
+1. Name the cell via the [scenario skill](../../.agents/skills/scenario/SKILL.md#step-1--name-the-cell)
+   and load its card and applicable area rules. A `todo` cell has no card: use its `reads` in
+   [scenarios.json](../scenarios/scenarios.json), and ask rather than invent its route.
+2. Hand over to [scenario Step 3](../../.agents/skills/scenario/SKILL.md#step-3--run-the-minimal-contract):
+   resolve the contract questions and record the answers in `jobs/<ID>/TASK.md`.
+   Reuse existing confirmed answers; an open question that changes the result stops the dependent work.
+3. Create or continue `jobs/<ID>/job.yaml` with the [eight gates below](#gates-same-for-every-path).
+   Return to [scenario Step 4](../../.agents/skills/scenario/SKILL.md#step-4--work-the-route) for the cell's
+   stage route, recording gate evidence here as work proceeds. No build before user Gate 1 confirmation.
+
 ## GATES (same for every path)
 
 Record every gate in `jobs/<JOB>/job.yaml`; schema:
@@ -14,12 +28,12 @@ Fixed dependency order below follows D104/D125: human geometry acceptance preced
 
 | ID | Completion evidence |
 |---|---|
-| inputs | Full source inventory with paths and SHA-256; requirement/profile/version, source units, coordinate system and source authority recorded in the job report. Mark synthetic sources. |
+| inputs | Full source inventory with paths and SHA-256; requirement/profile/version, source units, coordinate system and source authority recorded in the job report. Mark synthetic sources. `jobs/<ID>/passport.json` (K1) is required only on the AGR Tools route until a second route exists; other OKS routes record the same facts in `job.yaml` inputs / REPORT [D247]. |
 | parts | `parts.json` validates against [PartsList](../../schemas/PartsList.schema.json), via the public `dt_ai.core.models.PartsList` facade; source coverage, operation and triangle budget per part, joints and questions; **user Gate 1 confirmation before build** (D111/D124/D125). |
-| operations | Apply [kernel operations](../../src/dt_ai/ops/) to [parts](../../src/dt_ai/parts/); log operation names and before/after invariant results (D108/D131). Broken invariants roll back; stop and ask. Include additional applicable invariants, including D129, when supported; never silently omit a mandatory check. |
+| operations | Follow the cell's standard route ([oks-vpm body/windows/roof](../scenarios/oks-vpm.md#route-by-stage), [D250]); alternatives use `path: deviation` below. When using [kernel operations](../../src/dt_ai/ops/), apply them to [parts](../../src/dt_ai/parts/); log operation names and before/after invariant results (D108/D131). Broken invariants roll back; stop and ask. Include additional applicable invariants, including D129, when supported; never silently omit a mandatory check. |
 | budgets | Measured budgets vs cited profile/area/decision limits: master, NPM/VPM, UCX, materials, textures, density. Each measurement names its rule and comparison (`le` inclusive, `lt` exclusive); no inferred limit. |
 | export_readback | New versioned export, SHA-256; clean-process readback of **exported file**, checking topology, UV, materials, units/transforms. Working-scene checks alone do not complete this gate. |
-| report | Nonempty delivery report: source coverage/discrepancies, files/hashes, commands, measured checks, exceptions/deviations and missing/manual checks. Technical QA, user acceptance and publication remain separate. |
+| report | Nonempty delivery report: source coverage/discrepancies, files/hashes, commands, measured checks, exceptions/deviations and missing/manual checks. Technical QA, user acceptance and publication remain separate. `jobs/<ID>/passport.json` (K1) is required only on the AGR Tools route until a second route exists; other OKS routes record the same facts in `job.yaml` inputs / REPORT [D247]. |
 | visual | User decision through the **board review tool** (D119), linked to a versioned review page/sheet and exact export hashes: Face Orientation/back-face counts, album/source overlays, material legend, level sections, deviations (D125). Send a Needs-you card with link/options; notification is not approval. A code reviewer/agent cannot sign for the user. |
 | checker | Complete SINTEZ AGR Checker on the same exports after visual acceptance (D104); save raw output and normalized receipt, tool/version/command in the report. Partial checks and `review`/`not_run` are not passes. |
 
@@ -73,8 +87,36 @@ uv run python -m dt_ai.procedure jobs/<JOB>/job.yaml --root . --output tmp/walk-
 
 Exit 0 means all declared gates complete; exit 1 means malformed, missing, failed,
 unverified or review evidence. Output must be a **new** file, never an input/alias.
-Use repository-relative POSIX evidence paths; copy external receipts/assets into a
-versioned job evidence directory when a reproducible walk is needed. References are
+Use repository-relative POSIX evidence paths; copy external receipts into a
+versioned job evidence directory when a reproducible walk is needed.
+
+**Customer sources (#1202).** The named asset store is the shared Google Drive folder
+`G:/Мой диск/AGR-assets/` (one subfolder per library or object, `library/README.md`);
+customer sources are never committed (rule 57). Each job keeps a source registry
+`jobs/<ID>/sources.json`: an `external-inputs/1` manifest whose `files` rows give the
+absolute `path`, `sha256`, `location` (`asset-store` or `named-folder`) and `folder` of
+every customer source, wherever it lives today. List such a manifest in `inputs` with
+`manifest: external-inputs/1`; the walker verifies the manifest itself as repo-relative
+evidence, then re-hashes every listed path and reports each row in the inputs gate's
+`external_inputs` as `equal`, `mismatch` (an error, the gate fails) or `unreachable`
+(not on this machine: not a hash failure, but a `pass` claim drops to `review`).
+A malformed, NaN, duplicated-path or undeclared manifest is an error.
+
+**LF only.** `.gitattributes` stores text with `eol=lf`, so a receipt hashed with CRLF on
+Windows fails on every fresh checkout (G15). Write receipts and walk output as LF bytes
+(`dt_ai.core.io.write_json`, or `open(path, "wb")`/`newline="\n"`); the walker's
+`--output` and stdout are LF on every OS.
+
+**Fresh-checkout walk before review.** Walk the pushed PR head from a new worktree, not
+your working tree, and attach that output:
+
+```bash
+git fetch origin <branch> && git worktree add --detach "$TMPDIR/walk-<branch>" FETCH_HEAD
+cd "$TMPDIR/walk-<branch>" && uv run python -m dt_ai.procedure jobs/<JOB>/job.yaml --root . --output "$TMPDIR/walk-fresh.json"
+cd - && git worktree remove "$TMPDIR/walk-<branch>"
+```
+
+References are
 SHA-256 verified even for incomplete gates. Source-code evidence (`.py`, `.cs`,
 `.ps1`, `.ms`, `.js`, `.ts`) is pinned to an immutable revision with a full-object-id
 `commit` (#387): its `sha256` is checked against the blob at that commit, so later
@@ -119,4 +161,6 @@ command. [Dry-run evidence](task-to-model-dry-run.md) records both inventories.
 Kernel tests are synthetic capability evidence, not a delivered model or invented
 user approval. Vatutino's committed reports describe real local artifacts but do
 not make absent exports/receipts reproducible here; `ground-parts.json` is not the
-PartsList contract. Keep these gaps visible. No real-building run is required.
+PartsList contract. Keep these gaps visible. The real-building [KPP1 cold run](../../jobs/KPP1/cold-run-1172/RUN-LOG.md)
+(#1172 / PR #1173) records its Gate 1 stop and procedure gaps, not delivery acceptance;
+use its receipts and the current job state when continuing a real-building task.
