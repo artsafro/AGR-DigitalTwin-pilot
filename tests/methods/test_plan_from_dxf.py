@@ -5,6 +5,7 @@ Pattern: wall-from-contour
 from __future__ import annotations
 
 import importlib.util
+import json
 import math
 from pathlib import Path
 
@@ -578,3 +579,139 @@ def test_gap_close_sweep_in_hatch_mode_fails_once_it_bridges_beyond_the_referenc
         prev = u
         checked += 1
     assert checked == 47
+
+
+# --- #1203 (KPP1 cold run F3): method follows the contour source, the output records its full invocation ---
+
+def _hatched_square_dxf(tmp_path):
+    doc = _square(4000)
+    doc.layers.add("PATT")
+    _hatch(doc.modelspace(), "PATT", 0, 0, 4000, 4000)
+    dxf = tmp_path / "sq.dxf"
+    doc.saveas(dxf)
+    return dxf
+
+
+def test_method_names_the_contour_source_for_lines_and_hatch():
+    lines = pf.extract_plan(_square(4000), {"WALL": "wall"}, z0=0.0, z1=3.0, contour_source="lines")
+    assert lines["method"] == pf.METHODS["lines"] and "wall lines" in lines["method"]
+    assert "hatch" not in lines["method"]
+    hatch = pf.extract_plan(_ring_doc(), {"WALL": "wall", "NOTE": "drop:note", "PATT": "hatch"},
+                            z0=0.0, z1=3.0, contour_source="hatch")
+    assert hatch["method"] == pf.METHODS["hatch"]
+    # the string the accepted KPP1 file carries (it was hand-edited before #1203)
+    committed = json.loads((ROOT / "docs/methods/building-body/kpp1-drawing/plan-contours.json"
+                            ).read_text(encoding="utf-8"))
+    assert hatch["method"] == committed["method"]
+    assert set(pf.METHODS) == set(pf.CONTOUR_SOURCES)
+
+
+def _extract_argv(dxf, out, rep, *opts):
+    return ["extract", str(dxf), str(out), str(rep), *opts]
+
+
+def test_cli_records_the_full_invocation_and_reruns_from_the_file_alone(tmp_path):
+    import hashlib
+    dxf = _hatched_square_dxf(tmp_path)
+    opts = ["--map", "WALL=wall", "--map", "PATT=hatch", "--z0", "0", "--levels", "0,3,6",
+            "--contour-source", "hatch", "--origin-mm", "1000,500", "--frame-shift-m=-2.5,1.25"]
+    out, rep = tmp_path / "out.json", tmp_path / "rep.json"
+    argv = _extract_argv(dxf, out, rep, *opts)
+    assert pf.main(list(argv)) == 0
+    data = json.loads(out.read_text(encoding="utf-8"))
+    inv = data["invocation"]
+    assert inv["argv"] == argv
+    assert inv["map"] == ["WALL=wall", "PATT=hatch"]
+    assert inv["origin_mm"] == [1000.0, 500.0] and inv["frame_shift_m"] == [-2.5, 1.25]
+    assert inv["contour_source"] == "hatch" and inv["levels_m"] == [0.0, 3.0, 6.0] and inv["z0"] == 0.0
+    tool = ROOT / "tools/methods/body/plan_from_dxf.py"
+    assert inv["tool"] == "tools/methods/body/plan_from_dxf.py"
+    assert inv["tool_sha256"] == hashlib.sha256(tool.read_bytes()).hexdigest()
+    assert "git_sha" in inv and (inv["git_sha"] is None) == ("git_error" in inv)
+    if inv["git_sha"] is not None:
+        assert len(inv["git_sha"]) == 40
+    assert inv["dxf"] == {"path": str(dxf), "sha256": hashlib.sha256(dxf.read_bytes()).hexdigest()}
+    assert inv["command"].startswith("uv run python tools/methods/body/plan_from_dxf.py extract ")
+    assert "--frame-shift-m=-2.5,1.25" in inv["command"] or "--frame-shift-m -2.5,1.25" in inv["command"]
+    # re-run from the file alone: the canonical options, nothing else
+    out2, rep2 = tmp_path / "out2.json", tmp_path / "rep2.json"
+    assert pf.main(_extract_argv(dxf, out2, rep2, *inv["options_argv"])) == 0
+    again = json.loads(out2.read_text(encoding="utf-8"))
+    for key in ("bands", "coverage", "levels_m", "origin_mm", "frame_shift_m", "params", "method", "openings"):
+        assert again[key] == data[key], key
+    assert again["invocation"]["options_argv"] == inv["options_argv"]
+
+
+def test_map_file_equals_map_entries_and_is_recorded_expanded(tmp_path):
+    import hashlib
+    dxf = _hatched_square_dxf(tmp_path)
+    mf = tmp_path / "map.txt"
+    mf.write_bytes(b"WALL=wall\r\n\r\nPATT=hatch\r\n")
+    base = ["--z0", "0", "--z1", "3", "--contour-source", "hatch"]
+    a, ar = tmp_path / "a.json", tmp_path / "ar.json"
+    b, br = tmp_path / "b.json", tmp_path / "br.json"
+    assert pf.main(_extract_argv(dxf, a, ar, "--map", "WALL=wall", "--map", "PATT=hatch", *base)) == 0
+    assert pf.main(_extract_argv(dxf, b, br, "--map-file", str(mf), *base)) == 0
+    da, db = (json.loads(p.read_text(encoding="utf-8")) for p in (a, b))
+    assert da["bands"] == db["bands"]
+    inv = db["invocation"]
+    assert inv["map"] == ["WALL=wall", "PATT=hatch"]
+    assert inv["map_file"] == {"path": str(mf), "sha256": hashlib.sha256(mf.read_bytes()).hexdigest()}
+    assert "--map-file" not in inv["options_argv"]
+    assert inv["options_argv"].count("--map") == 2
+
+
+def test_duplicate_or_malformed_map_entries_are_errors_naming_them_and_write_nothing(tmp_path, capsys):
+    dxf = _hatched_square_dxf(tmp_path)
+    cases = [
+        (["--map", "WALL=wall", "--map", "WALL=drop:x", "--map", "PATT=hatch"], "WALL"),
+        (["--map", "WALL=wall", "--map", "WALL=wall", "--map", "PATT=hatch"], "WALL"),
+        (["--map", "WALL=wall", "--map", "PATTERN", "--map", "PATT=hatch"], "PATTERN"),
+    ]
+    mf = tmp_path / "dup.txt"
+    mf.write_text("WALL=wall\nPATT=hatch\n", encoding="utf-8")
+    cases.append((["--map-file", str(mf), "--map", "PATT=hatch"], "PATT"))
+    empty = tmp_path / "empty.txt"
+    empty.write_text("\n\n", encoding="utf-8")
+    cases.append((["--map-file", str(empty)], "empty"))
+    cases.append((["--map-file", str(tmp_path / "missing.txt")], "missing.txt"))
+    for i, (opts, named) in enumerate(cases):
+        out, rep = tmp_path / f"o{i}.json", tmp_path / f"r{i}.json"
+        code = pf.main(_extract_argv(dxf, out, rep, *opts, "--z0", "0", "--z1", "3"))
+        err = capsys.readouterr().err
+        assert code == 2 and named in err, (opts, err)
+        assert not out.exists() and not rep.exists()
+
+
+def test_map_file_that_is_an_output_is_refused_and_untouched(tmp_path):
+    dxf = _hatched_square_dxf(tmp_path)
+    mf = tmp_path / "map.txt"
+    mf.write_text("WALL=wall\nPATT=hatch\n", encoding="utf-8")
+    before = mf.read_bytes()
+    rep = tmp_path / "rep.json"
+    code = pf.main(_extract_argv(dxf, mf, rep, "--map-file", str(mf), "--z0", "0", "--z1", "3"))
+    assert code == 4 and mf.read_bytes() == before and not rep.exists()
+
+
+def test_invocation_options_reproduce_brute_force(tmp_path):
+    """Probe: for generated origin/shift/source/levels, options_argv alone reproduces the output."""
+    import random
+    rng = random.Random(1203)
+    dxf = _hatched_square_dxf(tmp_path)
+    checked = 0
+    for i in range(12):
+        ox, oy = rng.uniform(-5e4, 5e4), rng.uniform(-5e4, 5e4)
+        sx, sy = rng.uniform(-50, 50), rng.uniform(-50, 50)
+        src = rng.choice(["lines", "hatch"])
+        opts = ["--map", "WALL=wall", "--map", "PATT=hatch", "--z0", "0", "--levels", "0,3.9,7.909",
+                "--contour-source", src, f"--origin-mm={ox!r},{oy!r}", f"--frame-shift-m={sx!r},{sy!r}"]
+        o1, r1, o2, r2 = (tmp_path / f"{n}{i}.json" for n in ("o", "r", "p", "q"))
+        assert pf.main(_extract_argv(dxf, o1, r1, *opts)) == 0
+        d1 = json.loads(o1.read_text(encoding="utf-8"))
+        assert d1["method"] == pf.METHODS[src]
+        assert pf.main(_extract_argv(dxf, o2, r2, *d1["invocation"]["options_argv"])) == 0
+        d2 = json.loads(o2.read_text(encoding="utf-8"))
+        assert {k: v for k, v in d1.items() if k != "invocation"} == \
+            {k: v for k, v in d2.items() if k != "invocation"}
+        checked += 1
+    assert checked == 12
