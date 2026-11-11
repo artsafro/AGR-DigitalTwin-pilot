@@ -294,12 +294,13 @@ def test_reuse_scan_command_and_helper():
     text = (ROOT / ".claude/commands/reuse-scan.md").read_text(encoding="utf-8")
     meta = yaml.safe_load(text.split("---\n")[1])
     assert meta["disable-model-invocation"] is True
-    assert "!`py -3 tools/reuse_candidates.py --days 7`" in text and "usage_log.py stats --days 7" in text
+    assert '!`py -3 "$(git rev-parse --show-toplevel)/tools/reuse_candidates.py" --days 7`' in text
+    assert '!`py -3 "$(git rev-parse --show-toplevel)/tools/hooks/usage_log.py" stats --days 7`' in text
     r = subprocess.run([sys.executable, str(ROOT / "tools/reuse_candidates.py"), "--days", "7"], capture_output=True,
                        text=True, encoding="utf-8")
     assert r.returncode == 0 and r.stdout.startswith("Job scripts: ")
     takeover = (ROOT / ".claude/commands/takeover.md").read_text(encoding="utf-8")
-    assert "!`py -3 tools/hooks/usage_log.py stats --days 7`" in takeover
+    assert '!`py -3 "$(git rev-parse --show-toplevel)/tools/hooks/usage_log.py" stats --days 7`' in takeover
     assert "Repeats" in (ROOT / ".claude/commands/handover.md").read_text(encoding="utf-8")
 
 
