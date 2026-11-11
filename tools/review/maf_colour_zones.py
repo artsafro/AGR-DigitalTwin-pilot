@@ -479,9 +479,16 @@ def _zone_record(zone_name: str, id_key: str, colour_source: str, catalogue: dic
 
 
 def guard_schedule_zones(set_id: str, finishes, zones: list) -> None:
-    """A schedule that names two or more finishes cannot end as one zone."""
-    if finishes is None:
-        return
+    """A schedule that names two or more finishes cannot end as one zone.
+
+    SCHEDULE_FINISHES is canonical: an explicit row field must name the same set of
+    finishes (#1185), so a JSON row cannot under-state its schedule.
+    """
+    if set_id not in SCHEDULE_FINISHES:
+        raise ZoneError(f"unmapped position: {set_id}")
+    explicit = finishes is not None
+    if not explicit:
+        finishes = SCHEDULE_FINISHES[set_id]
     if not isinstance(finishes, (list, tuple)) or not finishes:
         raise ZoneError(f"{set_id}: schedule finishes missing")
     named = []
@@ -490,6 +497,8 @@ def guard_schedule_zones(set_id: str, finishes, zones: list) -> None:
             raise ZoneError(f"unmapped material: {key}")
         if key not in named:
             named.append(key)
+    if explicit and set(named) != set(SCHEDULE_FINISHES[set_id]):
+        raise ZoneError(f"{set_id}: schedule_finishes differ from schedule")
     if len(named) >= 2 and len(zones) < 2:
         raise ZoneError(f"{set_id}: schedule names {len(named)} finishes but one zone")
 

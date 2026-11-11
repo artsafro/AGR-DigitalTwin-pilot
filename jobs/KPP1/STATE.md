@@ -1,3 +1,7 @@
+Current run: Cold run #1172 stopped at Gate 1 (cold-run-1172/RUN-LOG.md); not a continuation of unaccepted v007.
+Source: АС.03 DWGs listed in cold-run-1172/inputs-manifest.json; source-authority questions remain open.
+Next gate: Gate 1 (parts) answers -> rerun #1172 (cold-run-1172/parts-v001.json).
+
 # KPP1 (Центральная проходная) — VPM + NPM model, 2026-10-07
 
 Status: **v005 accepted by the user as ~90 % ready (2026-10-07); not passed for hand-over** (deferred items below).

@@ -1,3 +1,7 @@
+Current run: Synthetic atlas/tiles -> FBX -> readback slice completed at 8f58339745574f3c5a668b8120e21e293a742f29; not a real OKS.
+Source: Approved synthetic test registry, project.json and project.inputs.fixture-definition.json (hash references below).
+Next gate: DT-020 package inspector, separate from the dev-bundle; delivery passed=false.
+
 # SYNTH-001
 
 Продолжение: `../../STATE.md`. Код: `8f58339745574f3c5a668b8120e21e293a742f29`.

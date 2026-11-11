@@ -164,8 +164,94 @@ def test_package_fails_closed_and_writes_nothing(tmp_path, case):
 
 
 # ---- atlas: byte parity on an accepted job spec + fail-closed
+# Keep workstation assets read-only; stage verified bytes beside the temporary spec.
+DRIVE_TEXTURES = Path("G:/Мой диск/AGR-evidence/tec26-oks/user-textures")
+
+
+def atlas_parity_spec(spec, stage, drive_root=DRIVE_TEXTURES):
+    import hashlib
+
+    data = json.loads(spec.read_text(encoding="utf-8"))
+    stage.mkdir()
+    for index, finish in enumerate(data["finishes"].values()):
+        source = finish.get("source_texture")
+        if source is None:
+            continue
+        local = Path(source["path"])
+        drive = drive_root / local.name
+        selected = local if local.is_file() else drive
+        try:
+            raw = selected.read_bytes()
+        except FileNotFoundError:
+            pytest.skip(f"missing atlas asset {local.name}: local={local}; drive_copy={drive}")
+        assert hashlib.sha256(raw).hexdigest() == source["sha256"], f"sha256 mismatch: {selected}"
+        target = stage / f"source-{index}.png"
+        target.write_bytes(raw)
+        source["path"] = str(target)
+    target_spec = stage / "spec.json"
+    target_spec.write_text(json.dumps(data), encoding="utf-8")
+    return target_spec
+
+
+def test_atlas_parity_uses_verified_drive_copy_after_local_rename(tmp_path):
+    import hashlib
+
+    local = tmp_path / "panel.png"
+    local.write_bytes(b"synthetic texture bytes; resolver does not decode")
+    drive = tmp_path / "drive"
+    drive.mkdir()
+    raw = local.read_bytes()
+    (drive / local.name).write_bytes(raw)
+    local.rename(tmp_path / "panel.renamed.png")
+    spec = tmp_path / "input.json"
+    spec.write_text(json.dumps({"finishes": {"Panel": {"source_texture": {
+        "path": str(local), "sha256": hashlib.sha256(raw).hexdigest(),
+    }}}}), encoding="utf-8")
+    prepared = atlas_parity_spec(spec, tmp_path / "stage", drive)
+    source = json.loads(prepared.read_text())["finishes"]["Panel"]["source_texture"]
+    assert Path(source["path"]).read_bytes() == raw
+    assert not local.exists()
+    assert (drive / local.name).read_bytes() == raw
+
+
+@pytest.mark.parametrize("local_state,drive_state", [
+    (local, drive) for local in ("missing", "valid", "bad", "empty")
+    for drive in ("missing", "valid", "bad", "empty")
+])
+def test_atlas_parity_asset_availability_matrix(tmp_path, local_state, drive_state):
+    import hashlib
+
+    raw = b"synthetic verified source"
+    local, drive = tmp_path / "local/panel.png", tmp_path / "drive/panel.png"
+    for path, state in ((local, local_state), (drive, drive_state)):
+        path.parent.mkdir()
+        if state != "missing":
+            path.write_bytes(raw if state == "valid" else b"" if state == "empty" else b"corrupt")
+    spec = tmp_path / "input.json"
+    spec.write_text(json.dumps({"finishes": {"Panel": {"source_texture": {
+        "path": str(local), "sha256": hashlib.sha256(raw).hexdigest(),
+    }}, "Solid": {"kind": "solid"}}}), encoding="utf-8")
+    before = snapshot(tmp_path)
+    selected = local_state if local_state != "missing" else drive_state
+    if selected == "missing":
+        with pytest.raises(pytest.skip.Exception, match="missing atlas asset panel.png") as exc:
+            atlas_parity_spec(spec, tmp_path / "stage", drive.parent)
+        assert str(local) in str(exc.value) and str(drive) in str(exc.value)
+    elif selected != "valid":
+        with pytest.raises(AssertionError, match="sha256 mismatch"):
+            atlas_parity_spec(spec, tmp_path / "stage", drive.parent)
+    else:
+        prepared = atlas_parity_spec(spec, tmp_path / "stage", drive.parent)
+        source = json.loads(prepared.read_text())["finishes"]["Panel"]["source_texture"]
+        # Changes to the original after preparation cannot change the CLI's private input.
+        (local if local_state != "missing" else drive).write_bytes(b"changed after read")
+        assert Path(source["path"]).read_bytes() == raw
+        (local if local_state != "missing" else drive).write_bytes(raw)
+    assert all((tmp_path / name).read_bytes() == value for name, value in before.items())
+
+
 def test_atlas_is_byte_identical_to_the_tec26_job_script_on_ac08(tmp_path):
-    spec = ROOT / "jobs/TEC26-OKS/AC08/vpm_textures.json"
+    spec = atlas_parity_spec(ROOT / "jobs/TEC26-OKS/AC08/vpm_textures.json", tmp_path / "inputs")
     rj = run([sys.executable, ROOT / "jobs/TEC26-OKS/scripts/make_npm_atlas.py", spec, tmp_path / "job"])
     rd = run([sys.executable, ATLAS_TOOL, spec, tmp_path / "dt"])
     assert rj.returncode == 0 and rd.returncode == 0, rj.stderr + rd.stderr
