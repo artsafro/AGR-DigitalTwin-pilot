@@ -6,6 +6,7 @@ path: deviation
 inputs: &inputs
 - path: jobs/KPP1/cold-run-1172/inputs-manifest.json
   sha256: b694d23a38067658fc6c5867f10267b9d79e84ba260a6d7ed671b01c5944031d
+  manifest: external-inputs/1
 - path: jobs/KPP1/object.json
   sha256: a34cc18038e9440e164518523c39b25be0e7d82e0582348e4411b0763bcd020c
 - path: docs/methods/building-body/kpp1-drawing/plan-contours.json

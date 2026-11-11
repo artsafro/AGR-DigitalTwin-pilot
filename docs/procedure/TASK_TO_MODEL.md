@@ -87,8 +87,36 @@ uv run python -m dt_ai.procedure jobs/<JOB>/job.yaml --root . --output tmp/walk-
 
 Exit 0 means all declared gates complete; exit 1 means malformed, missing, failed,
 unverified or review evidence. Output must be a **new** file, never an input/alias.
-Use repository-relative POSIX evidence paths; copy external receipts/assets into a
-versioned job evidence directory when a reproducible walk is needed. References are
+Use repository-relative POSIX evidence paths; copy external receipts into a
+versioned job evidence directory when a reproducible walk is needed.
+
+**Customer sources (#1202).** The named asset store is the shared Google Drive folder
+`G:/Мой диск/AGR-assets/` (one subfolder per library or object, `library/README.md`);
+customer sources are never committed (rule 57). Each job keeps a source registry
+`jobs/<ID>/sources.json`: an `external-inputs/1` manifest whose `files` rows give the
+absolute `path`, `sha256`, `location` (`asset-store` or `named-folder`) and `folder` of
+every customer source, wherever it lives today. List such a manifest in `inputs` with
+`manifest: external-inputs/1`; the walker verifies the manifest itself as repo-relative
+evidence, then re-hashes every listed path and reports each row in the inputs gate's
+`external_inputs` as `equal`, `mismatch` (an error, the gate fails) or `unreachable`
+(not on this machine: not a hash failure, but a `pass` claim drops to `review`).
+A malformed, NaN, duplicated-path or undeclared manifest is an error.
+
+**LF only.** `.gitattributes` stores text with `eol=lf`, so a receipt hashed with CRLF on
+Windows fails on every fresh checkout (G15). Write receipts and walk output as LF bytes
+(`dt_ai.core.io.write_json`, or `open(path, "wb")`/`newline="\n"`); the walker's
+`--output` and stdout are LF on every OS.
+
+**Fresh-checkout walk before review.** Walk the pushed PR head from a new worktree, not
+your working tree, and attach that output:
+
+```bash
+git fetch origin <branch> && git worktree add --detach "$TMPDIR/walk-<branch>" FETCH_HEAD
+cd "$TMPDIR/walk-<branch>" && uv run python -m dt_ai.procedure jobs/<JOB>/job.yaml --root . --output "$TMPDIR/walk-fresh.json"
+cd - && git worktree remove "$TMPDIR/walk-<branch>"
+```
+
+References are
 SHA-256 verified even for incomplete gates. Source-code evidence (`.py`, `.cs`,
 `.ps1`, `.ms`, `.js`, `.ts`) is pinned to an immutable revision with a full-object-id
 `commit` (#387): its `sha256` is checked against the blob at that commit, so later
