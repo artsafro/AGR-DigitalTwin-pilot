@@ -8,9 +8,19 @@ The write is refused (exit 1, destination untouched) when the sources are empty,
 partial, or unsupported, when a value is NaN or infinite, when the document
 would be 80 lines or more, or when the output path resolves to an input.
 
+Cold-entry budget (#1222): when the repository has the cold-entry receipt
+(`tests/fixtures/cold_entry/receipt.json`), the text is checked with
+`tools/state/entry_budget.py` as if it were `docs/PROJECT_STATE.md` before it is
+written. Over budget, merge subjects and open-PR titles are clipped to the next
+width of TITLE_WIDTHS (all rows stay listed, so the 12-row windows used by
+`after_merge.py check` and `project_state_freshness.py` keep their meaning); the
+widest width that passes wins. Still over budget at the narrowest width, or a
+broken receipt: refuse, write nothing.
+
 new-case: deterministic git/GitHub state snapshot and repository context budget.
 """
 import argparse
+import importlib.util
 import json
 import math
 import os
@@ -28,6 +38,47 @@ NONFINITE = {
     "nan", "+nan", "-nan", "inf", "+inf", "-inf", "infinity", "+infinity", "-infinity",
 }
 JSON_NONFINITE = re.compile(r"\bNaN\b|\bInfinity\b|\b-Infinity\b")
+STATE_REL = "docs/PROJECT_STATE.md"
+RECEIPT_REL = "tests/fixtures/cold_entry/receipt.json"
+BUDGET_SCRIPT = Path(__file__).resolve().with_name("entry_budget.py")
+# None = unclipped; then fixed widths, widest first (#1222).
+TITLE_WIDTHS = (None, 120, 96, 80, 64, 48)
+MERGE_PREFIX = re.compile(r"Merge pull request #[1-9][0-9]* from \S")
+
+
+def clip(text, width=None):
+    """Clip ``text`` to ``width`` chars ending in '...'; never cut 'Merge pull request #N from X'."""
+    if width is None or len(text) <= width:
+        return text
+    keep = width - 3
+    prefix = MERGE_PREFIX.match(text)
+    if prefix:
+        keep = max(keep, prefix.end())
+    if keep >= len(text):
+        return text
+    return text[:keep].rstrip() + "..."
+
+
+def _budget_module():
+    spec = importlib.util.spec_from_file_location("project_state_entry_budget", BUDGET_SCRIPT)
+    if spec is None or spec.loader is None:
+        raise FailClosed("unsupported")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _budget_reason(repo, text):
+    """None when the cold-entry set with ``text`` as PROJECT_STATE is within budget (or no receipt)."""
+    receipt = Path(repo) / RECEIPT_REL
+    if not receipt.exists():
+        return None
+    budget = _budget_module()
+    try:
+        budget.check(repo, receipt, texts={STATE_REL: text})
+    except budget.FailClosed as exc:
+        return exc.reason
+    return None
 
 
 class FailClosed(Exception):
@@ -224,7 +275,7 @@ def _capability_line(repo, slug, label, group):
             f'Reference: `evals/{slug}/reference.json`.']
 
 
-def render(merges, opens, next_lines=None, capability_lines=None, milestone_lines=None):
+def render(merges, opens, next_lines=None, capability_lines=None, milestone_lines=None, width=None):
     require_sources(merges, opens)
     opens = sorted(opens, key=lambda pr: pr["number"])
     next_lines = list(next_lines or [])
@@ -250,7 +301,7 @@ def render(merges, opens, next_lines=None, capability_lines=None, milestone_line
         "Merged pull requests, newest first:",
     ]
     if merges:
-        lines.extend(f"- `{sha[:7]}` {subject}" for sha, subject in merges)
+        lines.extend(f"- `{sha[:7]}` {clip(subject, width)}" for sha, subject in merges)
     else:
         lines.append("- (none)")
     lines.extend(["", "## Harness", ""])
@@ -260,7 +311,7 @@ def render(merges, opens, next_lines=None, capability_lines=None, milestone_line
     if opens:
         for pr in opens:
             draft = " draft" if pr["isDraft"] else ""
-            lines.append(f"- #{pr['number']} {pr['title']} [{pr['headRefName']}]{draft}")
+            lines.append(f"- #{pr['number']} {clip(pr['title'], width)} [{pr['headRefName']}]{draft}")
     else:
         lines.append("- (none)")
     lines.extend(["", "## Next step", ""])
@@ -313,6 +364,8 @@ def _inputs(repo):
     found.append(repo / "docs" / "PROJECT_STATE.milestones.md")
     found.append(repo / "evals/capability-b01/reference.json")
     found.append(repo / "evals/capability-ticket/reference.json")
+    found.append(repo / RECEIPT_REL)
+    found.append(BUDGET_SCRIPT)
     found.append(Path(__file__).resolve())
     return found
 
@@ -400,8 +453,15 @@ def generate(repo, output, max_merges, max_open):
     merges = normalize_merges(merges_raw)[:max_merges]
     opens = _load_opens(opens_raw)[:max_open]
     require_sources(merges, opens)
-    text = finalize(render(merges, opens, _next_lines(repo), _capability_lines(repo),
-                           _milestone_lines(repo)))
+    sections = (_next_lines(repo), _capability_lines(repo), _milestone_lines(repo))
+    reason = None
+    for width in TITLE_WIDTHS:
+        text = finalize(render(merges, opens, *sections, width=width))
+        reason = _budget_reason(repo, text)
+        if reason is None:
+            break
+    else:
+        raise FailClosed(f"cold-entry budget: {reason} (narrowest title width {TITLE_WIDTHS[-1]})")
     _publish(output, text)
     return text
 
