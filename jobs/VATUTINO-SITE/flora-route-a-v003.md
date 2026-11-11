@@ -1,5 +1,7 @@
 # Vatutino Flora route A — run v003 status (#1146, [D232], [D245])
 
+Superseded by run v004 after the visual gate: `flora-route-a-v004.md` [D246].
+
 Route: `docs/plans/flora-426-route-2026-11.md`. Status: **stopped at the step-9 visual gate (Artem)**; `passed=false`.
 Script: `jobs/VATUTINO-SITE/flora_route_a.py all --run <dir>` (Blender part `flora_v007_blender.py`), offline only.
 Evidence (outside git, rule 57): `G:/Мой диск/AGR-evidence/1146-flora-star/run-v003/` + `SHA256SUMS.txt`

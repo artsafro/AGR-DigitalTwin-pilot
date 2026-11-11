@@ -433,14 +433,18 @@ def texel_table(run: Path, out: Path):
         v = s.get("vpm_atlas") or s["atlas"]
         rows_.append({"key": s["key"], "npm_2048_px_per_m": s["atlas"]["texel_px_per_m"],
                       "vpm_4096_px_per_m": v["texel_px_per_m"], "in_range": v["texel_ok"]})
-    below = [r["key"] for r in rows_ if not r["in_range"]]
-    dump(out / "texel-vpm.json", {"range_px_per_m": [520, 1706], "rows": rows_, "below_range_accepted_D246": below})
+    lo, hi = 520, 1706                                     # [D097] VPM range
+    below = [r["key"] for r in rows_ if r["vpm_4096_px_per_m"] < lo]
+    above = [r["key"] for r in rows_ if r["vpm_4096_px_per_m"] > hi]
+    dump(out / "texel-vpm.json", {"range_px_per_m": [lo, hi], "rows": rows_, "below_range_accepted_D246": below,
+                                  "above_range": above})
     lines = ["| row | 2048 atlas px/m | VPM 4096 atlas px/m | in 520-1706 |", "|---|---|---|---|"]
     lines += [f"| {r['key']} | {r['npm_2048_px_per_m']} | {r['vpm_4096_px_per_m']} | {'yes' if r['in_range'] else 'no'} |"
               for r in rows_]
-    (out / "texel-vpm.md").write_text("\n".join(lines) + f"\n\nBelow range (accepted [D246]): {', '.join(below) or 'none'}\n",
+    (out / "texel-vpm.md").write_text("\n".join(lines) + f"\n\nBelow range (accepted [D246]): {', '.join(below) or 'none'}\n"
+                                      f"Above range (open, not covered by [D246]): {', '.join(above) or 'none'}\n",
                                       encoding="utf-8")
-    print(f"texel: {len(rows_) - len(below)}/{len(rows_)} VPM rows in range; below: {below}")
+    print(f"texel: {len(rows_) - len(below) - len(above)}/{len(rows_)} VPM rows in range; below: {below}; above: {above}")
 
 
 def compose_sheets(run: Path, out: Path):

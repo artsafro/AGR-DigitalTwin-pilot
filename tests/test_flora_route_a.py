@@ -112,3 +112,17 @@ def test_review_material_has_no_grazing_specular():
 
 def test_vpm_atlas_is_4096_and_npm_stays_2048():
     assert job.ATLAS_PROFILES == {"npm": ("atlas", 2048), "vpm": ("atlas-vpm", 4096)}
+
+
+def test_texel_table_splits_below_and_above_the_vpm_range(tmp_path):
+    """[D246] only rows below 520 px/m are accepted; a row above 1706 is a separate gate item."""
+    import json
+    (tmp_path / "stars").mkdir()
+    sp = [{"key": k, "atlas": {"texel_px_per_m": t / 2, "texel_ok": False},
+           "vpm_atlas": {"texel_px_per_m": t, "texel_ok": 520 <= t <= 1706}} for k, t in (("a", 160), ("b", 900), ("c", 2100))]
+    (tmp_path / "stars" / "report.json").write_text(json.dumps({"species": sp}), encoding="utf-8")
+    job.texel_table(tmp_path, tmp_path)
+    out = json.loads((tmp_path / "texel-vpm.json").read_text(encoding="utf-8"))
+    assert out["below_range_accepted_D246"] == ["a"] and out["above_range"] == ["c"]
+    md = (tmp_path / "texel-vpm.md").read_text(encoding="utf-8")
+    assert "Above range (open, not covered by [D246]): c" in md

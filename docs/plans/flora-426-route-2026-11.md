@@ -37,6 +37,7 @@ transfer to the atlas, site package not accepted) belong to block #425 and are o
 
 Steps 1–7, 9, 10 run without Max. Only step 8 waits for a free Max.
 Step-2 map sources (A101 for pos 9 and 16, named stand-ins for the unmatched rows) are fixed [D245].
+Visual gate v007 [D246]: VPM gets its own 4096 atlas (NPM keeps the single 2048 atlas); rows below the VPM texel range are accepted and listed; run v004 status in `jobs/VATUTINO-SITE/flora-route-a-v004.md`.
 
 ## Variants (A chosen [D232]; detail in the PR body)
 
