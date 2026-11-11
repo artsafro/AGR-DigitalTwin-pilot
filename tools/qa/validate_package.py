@@ -40,7 +40,7 @@ from twinqa.png import npm_texture_findings, vpm_texture_findings  # noqa: E402
 from twinqa.profiles import (DEFAULT_STANDARDS, expected_stages, load_profiles, read_snapshot,  # noqa: E402
                              snapshot_digest, snapshot_validator)
 from twinqa.report import Finding, Stage, ValidationReport, code_commit, recheck, recheck_summary  # noqa: E402
-from twinqa.scene import check_ground_area, readback, scene_findings  # noqa: E402
+from twinqa.scene import check_ground_area, check_ground_materials, readback, scene_findings  # noqa: E402
 from twinqa.uv import sequential_tiles  # noqa: E402
 
 STEM = re.compile(r"^[A-Za-z0-9_]+$")
@@ -364,11 +364,13 @@ def fbx_role(name: str) -> str:
 
 
 def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, bytes], notes: list[str],
-              ground_area_m2: float | None = None, footprint_holes=None, diffuse_px: dict | None = None):
+              ground_area_m2: float | None = None, footprint_holes=None, diffuse_px: dict | None = None,
+              ground_materials: list[str] | None = None):
     """Blender readback of each FBX; replaces the scene not_run placeholders it covers.
     ground_area_m2 (site minus OKS footprint) selects the VPM Ground triangle band (reg p.29)
     and is the expected top-down area for the Ground footprint-coverage finding.
     footprint_holes is an optional list of XY rings for the footprint-hole coverage finding.
+    ground_materials is an optional allow-list (names or globs): only those faces feed both footprint findings.
     diffuse_px {(slot, udim): side px} from the archive Diffuse PNGs feeds the VPM V009 texel density."""
     import tempfile
     with tempfile.TemporaryDirectory() as tmp:
@@ -382,7 +384,8 @@ def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, byt
                 notes.append(f"scene readback skipped for {name}: {exc}")
                 continue
             found = scene_findings(rb, kind, fbx_role(name), profile, ground_area_m2=ground_area_m2,
-                                   footprint_holes=footprint_holes, diffuse_px=diffuse_px)
+                                   footprint_holes=footprint_holes, diffuse_px=diffuse_px,
+                                   ground_materials=ground_materials)
             if kind == "npm":
                 _no_texture_findings(found, fbx_role(name), name, rb)
             for stage_id, findings in found.items():
@@ -420,9 +423,11 @@ def add_master(st: dict[str, Stage], kind: str, master: Path | None, notes: list
 
 def validate(target: Path, kind: str | None, profiles, scene: bool = False,
              ground_area_m2: float | None = None, footprint_holes=None,
-             master: Path | None = None) -> ValidationReport:
+             master: Path | None = None, ground_materials: list[str] | None = None) -> ValidationReport:
     if ground_area_m2 is not None:
         check_ground_area(ground_area_m2)
+    if ground_materials is not None:
+        ground_materials = check_ground_materials(ground_materials)
     data = target.read_bytes()
     suffix = target.suffix.lower()
     files, notes = {}, []
@@ -479,11 +484,12 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
         diffuse_px = (validate_vpm_zip if kind == "vpm" else validate_npm_zip)(target.stem, files, profile, st)
         if scene:
             add_scene(st, kind, profile, {n: d for n, d in files.items() if n.lower().endswith(".fbx")}, notes,
-                      ground_area_m2, footprint_holes, diffuse_px)
+                      ground_area_m2, footprint_holes, diffuse_px, ground_materials)
     elif suffix == ".fbx":
         check_fbx_headers(st["V002"], {target.name: data})
         if scene:
-            add_scene(st, kind, profile, {target.name: data}, notes, ground_area_m2, footprint_holes)
+            add_scene(st, kind, profile, {target.name: data}, notes, ground_area_m2, footprint_holes,
+                      ground_materials=ground_materials)
         else:
             notes.append("single FBX: header only; add --scene for the Blender readback")
     elif suffix == ".geojson":
@@ -505,7 +511,17 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
         notes.append(f"ground_area_m2 {ground_area_m2} unused: the VPM Ground band applies only to a VPM --scene readback")
     if footprint_holes is not None and not scene_readback:
         notes.append("footprint_holes unused: the footprint-hole check applies only to a --scene readback")
+    if ground_materials is not None and not scene_readback:
+        notes.append("ground_materials unused: the footprint checks apply only to a --scene readback")
     return report(target, data, kind, profiles, st, notes)
+
+
+def _ground_materials_arg(text: str) -> list[str]:
+    """Comma-separated material names or fnmatch globs; empty entries are an error."""
+    items = [item.strip() for item in text.split(",")]
+    if not items or any(not item for item in items):
+        raise argparse.ArgumentTypeError(f"ground_materials entry must be a non-empty name or glob, got {text!r}")
+    return items
 
 
 def _holes_arg(text: str):
@@ -589,10 +605,17 @@ def main(argv=None) -> int:
                     help="quad work FBX of this delivery (DER-03, [D198]); read back with --scene")
     ap.add_argument("--footprint-holes", type=_holes_arg, default=None, metavar="JSON",
                     help="JSON list of OKS footprint-hole rings [[[x,y],...], ...]; hole coverage is not_run without it")
+    ap.add_argument("--ground-materials", type=_ground_materials_arg, action="append", default=None,
+                    metavar="NAMES",
+                    help="Ground material names or fnmatch globs (comma-separated, repeatable); only those faces "
+                         "feed the footprint area and hole checks (default: every non-UCX render face)")
     args = ap.parse_args(argv)
+    if args.ground_materials is not None:
+        args.ground_materials = [item for group in args.ground_materials for item in group]
     if args.recheck is not None:
         if (args.target is not None or args.output is None or args.profile or args.scene
-                or args.ground_area_m2 is not None or args.footprint_holes is not None or args.master is not None):
+                or args.ground_area_m2 is not None or args.footprint_holes is not None or args.master is not None
+                or args.ground_materials is not None):
             ap.error("--recheck takes only --output, --standards and --json")
         return run_recheck(args.recheck, args.output, args.standards or DEFAULT_STANDARDS, args.json)
     if args.output is not None:
@@ -607,7 +630,7 @@ def main(argv=None) -> int:
         print(f"Error: {args.master} does not exist", file=sys.stderr)
         return 1
     result = validate(args.target, args.profile, profiles, args.scene, args.ground_area_m2,
-                      args.footprint_holes, args.master)
+                      args.footprint_holes, args.master, ground_materials=args.ground_materials)
     sys.stdout.reconfigure(encoding="utf-8")
     print(json.dumps(result.to_dict(), ensure_ascii=False, indent=2) if args.json else result.summary())
     return result.exit_code

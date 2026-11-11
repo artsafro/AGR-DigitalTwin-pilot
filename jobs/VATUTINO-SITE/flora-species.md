@@ -29,7 +29,7 @@ Map status: approved-exact = 11, 14; approved-species = 1, 3, 12, 15, 17; missin
 
 Kind: trees = positions 1, 2, 3, 4, 5, 7 (route estimate ~105 trees); 6 Ирга and 8 Лох (1.25–3.5 m) are built as bushes.
 
-## Route-A maps [D237]
+## Route-A maps [D245]
 
 Artem 2026-11-10 «да»: A101 matches approved (16 = `el_nidiformis`, 9 = Physocarpus t2 dark red for 'Lady in Red'); every row without an exact map is built from a named stand-in approved map pair and is marked `stand-in` here and in the run report until an exact map exists.
 

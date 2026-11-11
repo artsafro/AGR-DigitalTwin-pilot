@@ -245,7 +245,7 @@ def test_species_sheet_rejects_bad_rows(monkeypatch):
 
 
 def test_species_sheet_route_a_d237_sources():
-    """D237: A101 for 9 and 16; every other non-exact row is a named stand-in from an approved map pair."""
+    """D245: A101 for 9 and 16; every other non-exact row is a named stand-in from an approved map pair."""
     recs = {r["pos"]: r for r in sheet.records()}
     by = {}
     for pos, r in recs.items():
@@ -260,7 +260,7 @@ def test_species_sheet_route_a_d237_sources():
     assert recs[9]["route_a"]["a101_file"] == "puzyreplodnik_kalinolistnyj_t2_h150_high.png"
     assert recs[16]["route_a"]["a101_file"] == "el_nidiformis_t1_h60_high.png"
     md = (ROOT / "jobs/VATUTINO-SITE/flora-species.md").read_text(encoding="utf-8")
-    assert md.count("| stand-in:") == 9 and "D237" in md
+    assert md.count("| stand-in:") == 9 and "D245" in md
 
 
 def test_species_sheet_route_a_rejects_unapproved_stand_in(monkeypatch):

@@ -44,7 +44,7 @@ SOURCE = {
 }
 STATUSES = set(SOURCE)
 
-# D237 (Artem 2026-11-10 «да»): route-A map per row. source: approved = the row's own approved map;
+# D245 (Artem 2026-11-10 «да»): route-A map per row. source: approved = the row's own approved map;
 # a101 = approved A101 match (file in G:/Мой диск/AGR-assets/flora/a101/TextureFlora/, copy + sha256);
 # stand-in = a named approved map pair of another species, shown as `stand-in` until an exact map exists.
 ROUTE_A = {
@@ -72,7 +72,7 @@ ROUTE_SOURCES = {"approved", "a101", "stand-in"}
 
 def route_a(pos, maps):
     if pos not in ROUTE_A:
-        raise ValueError(f"pos {pos}: no D237 route-A map")
+        raise ValueError(f"pos {pos}: no D245 route-A map")
     source, key, a101 = ROUTE_A[pos]
     if source not in ROUTE_SOURCES:
         raise ValueError(f"pos {pos}: unknown route-A source {source!r}")
@@ -162,7 +162,7 @@ def markdown(recs):
               f"NPM star estimate {s['trees']} × 8 + {s['bushes']} × 6 = **{s['npm_tris_estimate']}** tris (budget 70,000 [D097]).", "",
               "Map status: " + "; ".join(f"{k} = {', '.join(map(str, v))}" for k, v in s["by_map_status"].items()) + ".", "",
               "Kind: trees = positions 1, 2, 3, 4, 5, 7 (route estimate ~105 trees); 6 Ирга and 8 Лох (1.25–3.5 m) are built as bushes.", ""]
-    lines += ["## Route-A maps [D237]", "",
+    lines += ["## Route-A maps [D245]", "",
               "Artem 2026-11-10 «да»: A101 matches approved (16 = `el_nidiformis`, 9 = Physocarpus t2 dark red for "
               "'Lady in Red'); every row without an exact map is built from a named stand-in approved map pair and is "
               "marked `stand-in` here and in the run report until an exact map exists.", "",

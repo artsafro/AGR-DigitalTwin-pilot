@@ -1,4 +1,4 @@
-# Vatutino Flora route A — run v003 status (#1146, [D232], [D237])
+# Vatutino Flora route A — run v003 status (#1146, [D232], [D245])
 
 Route: `docs/plans/flora-426-route-2026-11.md`. Status: **stopped at the step-9 visual gate (Artem)**; `passed=false`.
 Script: `jobs/VATUTINO-SITE/flora_route_a.py all --run <dir>` (Blender part `flora_v007_blender.py`), offline only.
@@ -10,7 +10,7 @@ v002 put both into the star cell (pos 9, 16 showed 3–4 plants per plane); v003
 
 | # | Step | Result v003 | Status |
 |---|---|---|---|
-| 1–2 | Species sheet + maps [D237] | 18 map pairs: 2 A101 (9 t2, 16 `el_nidiformis`), 9 stand-in, 7 approved; inputs sha256 in `maps/maps.json` | done |
+| 1–2 | Species sheet + maps [D245] | 18 map pairs: 2 A101 (9 t2, 16 `el_nidiformis`), 9 stand-in, 7 approved; inputs sha256 in `maps/maps.json` | done |
 | 3 | NPM stars | 18/18: tree 8, bush 6 tris; height in band 18/18; FBX readback tris = built, 1 material | done |
 | 4 | VPM shells | 18/18 closed planes, tree 48 / bush 36 tris, UDIM 1002, 0 UV outside the cell; **texel in the 2048 atlas 81–1,038 px/m, 16/18 below 520 [D097]** | open — see gate question |
 | 5 | One 2048 atlas | 1 atlas `M_VATUTINO_Flora_1`, scale 0.2160, fill 77.4 %; opacity mismatch at cell resolution 0.0 % (vs full-res map 2.845 %) | done |

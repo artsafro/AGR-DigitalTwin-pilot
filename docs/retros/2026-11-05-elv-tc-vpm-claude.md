@@ -124,3 +124,17 @@ None of the proposals is applied in this branch. D197–D200 are recorded; the r
    package would still pass both before it goes out.
 3. With [D199] on embeds, V004 counts each embed. Do we raise the per-job V004 tolerance, or document the embeds as
    an accepted deviation in each delivery report? This decides conflicts #44.
+
+## Post-acceptance album review (2026-11-10)
+
+After the job was accepted, the user sent the v005 work FBX, the booklet and the Revit FBX to a colleague (Влад
+Жуков) for a comparison. His 25 remarks (chat «3D_A&V», ids 1540–1612) are classified in
+`jobs/elv-tc-vpm/REVIEW-album-2026-11-10.md`: 7 our misses (a), 5 where the sources disagree and we followed the FBX
+or a decision (b), 5 simplifications or user decisions (c), 3 not defects (d), 5 unclear (e).
+
+The (a) misses add three causes to section 3: no element-by-element census from source to build (dropped louvres,
+grilles, frames, guards left no trace), nothing checks shading (every curve is faceted although
+`docs/domain/geometry.md` requires smoothing groups), and colours without a cited source (base flashing 5024 against
+TASK D13 and our own parts list; dock shelters RAL 9005). As in section 3, the user's acceptance on overview renders
+could not see them. Proposed checks (census at Gate 1, shading check, colour provenance, close-up acceptance sheet) are
+listed there as proposals; they extend #1 and #9 of section 6.

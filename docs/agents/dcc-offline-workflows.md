@@ -66,8 +66,9 @@ selected/deselected totals separately; never describe that run as unrestricted n
 
 On this Windows/Git Bash host, use native `C:/...` subprocess paths and quote spaces. For shell
 fixture tests that depend on MSYS conversion, remove `MSYS_NO_PATHCONV` and `MSYS2_ARG_CONV_EXCL`
-only for the test command. Use a card-private `TMPDIR`/`TEMP`/`TMP` and pytest `--basetemp` to avoid
-cross-worktree collisions. Do not alter global environment settings to make a test pass.
+only for the test command. Use a card-private `TMPDIR`/`TEMP`/`TMP`; pytest's default basetemp is already
+per-worktree and outside the repo (`C:/x/t-<hash>`, #1035), pass `--basetemp` only for a second concurrent run in
+one worktree. Do not alter global environment settings to make a test pass.
 
 ## Future headless runs (examples only; not executed here)
 

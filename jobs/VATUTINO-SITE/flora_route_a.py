@@ -1,9 +1,9 @@
-"""Vatutino Flora route A, run v003 (#1146, [D232], [D237]): maps -> atlas -> stars -> placement v007 -> readback -> sheet.
+"""Vatutino Flora route A, run v003 (#1146, [D232], [D245]): maps -> atlas -> stars -> placement v007 -> readback -> sheet.
 
 Job script (not a shared tool). Inputs are read-only copies and are hashed; every output goes to a new run directory
 outside git (rule 57). Stages (each refuses an existing output dir):
 
-  maps      resolve the D237 map pair per row (approved / A101 / stand-in), crop it to a square around the plant
+  maps      resolve the D245 map pair per row (approved / A101 / stand-in), crop it to a square around the plant
   atlas     one 2048 Flora atlas from the cropped pairs (tools/library/flora_atlas_from_scene.py) + UV sample check
   stars     NPM star + VPM shell per row, UVs in the row's atlas cell, VPM in UDIM 1002 (tools/flora/build_flora_star.py)
   place     placement v007 on Ground v015 through place_site.run (engine #316 + Blender instancing)
@@ -338,7 +338,7 @@ def stage_place(run: Path):
     dump(fl / "export.json", {"objects": export})
     dump(inputs / "site-parts-v007.json", {"flora": flora})
     cfg = {"adapter": adapter, "ground": ground, "flora_fbx": fl, "site_parts": inputs / "site-parts-v007.json",
-           "maf_set": None, "exceptions": HERE / "ground-exceptions.json", "flora_library": "star-v002 (route A, D237)",
+           "maf_set": None, "exceptions": HERE / "ground-exceptions.json", "flora_library": "star-v002 (route A, D245)",
            "flora_picks": picks, "exact": {11, 14, 16}, "version": "v007"}
     rc = ps.run(cfg, run / "place", SEED)
     print(f"place: exit {rc}")
@@ -405,7 +405,7 @@ def compose_sheets(run: Path, out: Path):
         cell_h = 2 * h + 70
         sheet = Image.new("RGB", (cols * w, rows_n * cell_h + 50), "white")
         d = ImageDraw.Draw(sheet)
-        d.text((10, 10), "Flora route A stars: NPM (top) / VPM (bottom), atlas M_VATUTINO_Flora_1; red = stand-in [D237]",
+        d.text((10, 10), "Flora route A stars: NPM (top) / VPM (bottom), atlas M_VATUTINO_Flora_1; red = stand-in [D245]",
                fill="black", font=font)
         for i, t in enumerate(tiles):
             key = t.stem[3:-4]

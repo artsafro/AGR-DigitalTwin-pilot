@@ -15,18 +15,18 @@ Reached so far (curated in `docs/PROJECT_STATE.milestones.md`; each line cites i
 ## In production
 
 PR merges do not imply delivery acceptance. Per-object gates stay in `jobs/<ID>/STATE.md`. Merged pull requests, newest first:
-- `68dce3f` Merge pull request #1111 from artsafro/harness/scenario-router-noise
-- `939e556` Merge pull request #1103 from artsafro/harness/scenario-router
-- `195fa29` Merge pull request #1100 from artsafro/feature/qa-decision-checks
-- `d886be0` Merge pull request #1101 from artsafro/harness/status-layer-truth
-- `1f7bd63` Merge pull request #1099 from artsafro/docs/decision-d220-delivery-external-data
-- `c89a172` Merge pull request #1096 from artsafro/improve/issue-1024-blender-handoff
-- `3464218` Merge pull request #1091 from artsafro/harness/retro-session-loop
-- `857873e` Merge pull request #1095 from artsafro/docs/agr-tools-knowledge-for-agents
-- `792dc6e` Merge pull request #1093 from artsafro/improve/issue-1046-maf-rows-1-10-library-entries-after-arte
-- `7473cb3` Merge pull request #1081 from artsafro/fix/red-main-20261106
-- `8e618bd` Merge pull request #1006 from artsafro/improve/issue-968-ac08-kernel-invariants-relative-to-the-s
-- `63d2cf6` Merge pull request #1079 from artsafro/improve/dcc-session-busy-skip-exit3-only
+- `4d2ed66` Merge pull request #1175 from artsafro/job/elv-tc-vpm-album-review
+- `4b2575d` Merge pull request #1153 from artsafro/improve/issue-298-site-slice-vatutino-site-assembly-l2-sin
+- `d165670` Merge pull request #1115 from artsafro/improve/issue-1106-shared-tools-instead-of-job-scripts-one
+- `f9dad06` Merge pull request #1170 from artsafro/improve/spozu-retaining-wall-mark-pairs
+- `1f76e80` Merge pull request #1165 from artsafro/docs/research-vatutino-ground-80deg-step-source
+- `144b56c` Merge pull request #1164 from artsafro/docs/research-vatutino-ground-v015-outer-skirt-gap-20-edges
+- `06ed7f6` Merge pull request #1161 from artsafro/docs/research-vatutino-ground-footprint-overshoot-6m2
+- `07a307e` Merge pull request #1123 from artsafro/improve/issue-1107-geojson-per-d220-collect-the-customer-fi
+- `0372a4e` Merge pull request #1080 from artsafro/improve/issue-1021-agr-mcp-phase-2-edit-tools-on-copies-cle
+- `1088402` Merge pull request #1148 from artsafro/improve/issue-1033-blender-mcp-skill-port-check-and-agent-o
+- `7f5191e` Merge pull request #982 from artsafro/improve/issue-965-p3-mesh-py-acceptance-row-test-asserts-a
+- `40c526a` Merge pull request #1168 from artsafro/improve/issue-1121-dcc-batch-acad-core-console-writes-filed
 
 ## Harness
 
@@ -34,18 +34,18 @@ Capability A (`capability-b01`, codex): benchmark 1 passed / 0 failed / 0 not me
 Capability B (`capability-ticket`, codex): local_pr 0 passed / 1 failed / 0 not measured; procedural 0 passed / 0 failed / 10 not measured; not ready; repository + user skills. Reference: `evals/capability-ticket/reference.json`.
 
 Open pull requests:
+- #803 job(silikatny-maf-viz): visualisation MAF set, D189-D190 [job/silikatny-maf-viz] draft
+- #876 Improve: AGR Tools 0.6.0 panel: tooltip requirement ids = docs/plans/agr-tools-suite.json (#862) [improve/agr-tools-ui-reqs-match-suite-json]
 - #991 MAF showcase: colour zones with material IDs for the 13 Vatutino positions (#889) [improve/issue-889-maf-showcase-split-the-13-vatutino-posit]
-- #1023 Improve: DCC tests: stop passing a hard-coded done card id to dcc_batch --card [improve/dcc-tests-no-hardcoded-card-id]
 - #1044 AGR Tools assets: Flora + MAF browser/import, unified agent library (#1024) [improve/issue-1024-assets-flora] draft
-- #1051 Improve: dt_ai invariant open_borders_hidden: count borders buried inside another shell of the SAME part as hidden [improve/open-borders-hidden-same-part-shells]
-- #1054 maf_gen_bench: remove the rejected forms (slab variant B, seams as geometry) (#819) [improve/issue-819-maf-gen-bench-remove-or-justify-the-reje]
-- #1056 Readiness area 6: ucx.triangulate on AC08 v010 copy, SINTEZ rerun, one-sided UCX case (#1016) [improve/issue-1016-readiness-area-6-ucx-triangulate-on-the]
-- #1077 Improve: twinqa: generic 'features per UV face' check from a UV CSV + texture (replaces job script uvverify.py) [improve/twinqa-uv-features-per-face-check]
-- #1080 AGR MCP phase 2: edit tools on copies (cleanup/nudge/atlas/ucx apply, checked export) (#1021) [improve/issue-1021-agr-mcp-phase-2-edit-tools-on-copies-cle]
 - #1090 atlas.flora same-file opacity + atlas.groundel texel none for NPM MAF (#1024) [improve/issue-1024-flora-atlas-same-file-opacity] draft
-- #1092 docs: decisions D202-D204 (#1088) [improve/issue-1088-decisions-d202-d204-verona-rows-2-10-v00]
 - #1098 Asset intake: delivered 3DVis projects -> A101 candidates (Part of #1024) [improve/issue-1024-asset-intake] draft
 - #1102 AGR Tools: VPM glass in UDIM 1001 only, no glass maps (D221) [fix/agr-tools-glass-udim-1001]
+- #1149 Harness guard: one-shot merge token for a chat merge command naming the PR [D223] (#1028) [improve/issue-1028-harness-guard-decide-how-an-explicit-cha]
+- #1167 Tests: default pytest basetemp outside the repo via config (#1035) [improve/issue-1035-tests-default-pytest-basetemp-outside-th]
+- #1169 Improve: GND-03: steep interior Ground faces count as surface, not perimeter [improve/gnd03-steep-interior-faces-are-surface]
+- #1173 KPP1 cold-agent run through TASK_TO_MODEL: gates with receipts, 15 procedure gaps (#1172) [improve/issue-1172-cold-agent-run-a-fresh-agent-takes-kpp1]
+- #1174 Improve: twinqa V003: ground footprint check can measure ground materials only (opt-in allow-list) [improve/twinqa-ground-footprint-material-allowlist]
 
 ## Next step
 

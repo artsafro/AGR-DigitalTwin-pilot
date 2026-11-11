@@ -3,7 +3,7 @@ from pathlib import Path
 import subprocess,sys
 import pytest
 
-SCRIPT=Path(__file__).resolve().parents[1]/'jobs/VATUTINO-SITE/build_ground_v015.py'
+SCRIPT=Path(__file__).resolve().parents[1]/'tools/ground/build_ground_v015.py'
 
 
 def test_v015_driver_exposes_a_real_fresh_process_cli():

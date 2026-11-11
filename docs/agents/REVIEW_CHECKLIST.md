@@ -79,9 +79,17 @@ Lessons of PR #15 (2026-10-08). The Codex sandbox runs as a separate Windows use
 - Run: `codex exec -s workspace-write -C <dir> --skip-git-repo-check --output-last-message <file> -`
   with the prompt on stdin; tests as `.venv/Scripts/python.exe -m pytest -q -p no:cacheprovider
   --basetemp=../tN`; git as `git -c safe.directory=* ...`.
-- Keep `--basetemp` short (`../tN`, `C:/x/t-<name>`), for authors too: a long one passes MAX_PATH (git
-  "Filename too long", the Win32 working-directory limit of 258) - PR #79. On the user's machine the default
-  `%TEMP%\pytest-of-artsafro` is inaccessible (left as is, user 2026-10-12 [D063]): plain `uv run pytest` errors there.
+- The default is already safe: without `--basetemp`, `tests/conftest.py` uses `C:/x/t-<8 hex of the worktree
+  path>` (POSIX: `/tmp/t-<hash>`), printed in the header as `basetemp: ... (default)` (#1035). Not
+  `%TEMP%\pytest-of-artsafro`, which is inaccessible on the user's machine (left as is, user 2026-10-12 [D063]).
+  A `--basetemp` inside the repository is replaced by that default with a `PytestConfigWarning`.
+  An explicit `--basetemp` outside the repo still wins: keep it short (`../tN`, `C:/x/t-<name>`) - a long one
+  passes MAX_PATH (git "Filename too long", the Win32 working-directory limit of 258) - PR #79. Two
+  concurrent runs in one worktree share the default; give the second its own `--basetemp`.
+- Quote or forward-slash Windows paths in bash and in `PYTEST_ADDOPTS`: pytest splits it with `shlex`, so
+  `--basetemp=C:\Users\artsafro\AppData\Local\Temp\pytest_tmp` becomes the drive-relative
+  `C:UsersartsafroAppDataLocalTemppytest_tmp`, a junk dir in the cwd (`.gitignore` `Users*pytest_tmp/`). Write
+  `C:/Users/...` or `'C:\Users\...'`.
 - Known sandbox-only failure: `tests/test_run_record.py::test_timeout_preserves_partial_stdout_and_stderr`
   (`taskkill` access denied). It is not a finding.
 - `codex review --base` does not take custom instructions; use `codex exec` for this checklist.
