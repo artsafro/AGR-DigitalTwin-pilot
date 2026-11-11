@@ -66,7 +66,7 @@ def ring_clone(src: np.ndarray, s: dict) -> np.ndarray:
         t = np.deg2rad(deg)
         sx = np.rint(np.cos(t) * dx - np.sin(t) * dy + cx).astype(int)
         sy = np.rint(np.sin(t) * dx + np.cos(t) * dy + cy).astype(int)
-        ok = todo & (sx >= x0 - 160) & (sx < x1 + 160) & (sy >= y0 - 160) & (sy < y1 + 160)
+        ok = todo & (sx >= 0) & (sx < src.shape[1]) & (sy >= 0) & (sy < src.shape[0])
         ok[ok] &= ~m[sy[ok], sx[ok]]
         out[ok] = src[sy[ok], sx[ok]]
         todo &= ~ok
@@ -82,6 +82,8 @@ def ring_clone(src: np.ndarray, s: dict) -> np.ndarray:
 
 def crop_slot(src: np.ndarray, s: dict) -> np.ndarray:
     x0, y0, x1, y1 = s["box"]
+    if not (0 <= x0 < x1 <= src.shape[1] and 0 <= y0 < y1 <= src.shape[0]):
+        raise BakeError(f"slot {s['slot']}: crop box {s['box']} is not inside the source")
     c = ring_clone(src, s) if "clean" in s else src[y0:y1, x0:x1]
     label = (c.min(axis=2) > 235).sum()  # painted IDs are pure white
     frame = ((c[:, :, 1] > 200) & (c[:, :, 0] < 60) & (c[:, :, 2] < 60)).sum()  # green 8 px frames
@@ -109,6 +111,9 @@ def bake(spec: dict, out_dir: Path, rev: str = "") -> dict:
         src = np.asarray(im.convert("RGB"))
     size, pad = spec["atlas_size"], spec["padding_px"]
     crops = [crop_slot(src, s) for s in slots]  # validate every crop before anything is written
+    placed = atlas_maf._place([(n, s["px"]) for n, s in enumerate(slots)], size)  # and the placement (#1199)
+    if placed is None:
+        raise BakeError("slot table does not fit the atlas")
     sfx = f"_{rev}" if rev else ""
     atlas_path = out_dir / ATLAS.replace(".png", f"{sfx}.png")
     preview_path = out_dir / PREVIEW.replace(".png", f"{sfx}.png")
@@ -134,9 +139,6 @@ def bake(spec: dict, out_dir: Path, rev: str = "") -> dict:
         if "note" in s:
             row["note"] = s["note"]
         rows.append(row)
-    placed = atlas_maf._place([(m.index, m.size) for m in mats], size)
-    if placed is None:
-        raise BakeError("slot table does not fit the atlas")
     slot_objs = [atlas_maf.Slot(m.name, m.kind, *placed[m.index], m.size) for m in mats]
     img = atlas_maf.render_atlas(slot_objs, mats, size, pad)
     d = ImageDraw.Draw(img)

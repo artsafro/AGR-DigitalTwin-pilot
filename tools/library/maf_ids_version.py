@@ -123,6 +123,19 @@ def render_md(prev_md: str, prev: dict, new: dict, change: dict) -> str:
 
 def write_tile(add: dict, tiles_in: str, tiles_out: str, prev: dict) -> dict:
     from PIL import Image
+    tile = add["tile"]
+    cropped = None
+    if "crop" in tile:  # validated before anything is written
+        crop = tile["crop"]
+        if sha256_file(crop["path"]) != crop["sha256"]:
+            raise ChangeError(f"crop source {crop['path']} does not match its recorded SHA256")
+        with Image.open(crop["path"]) as im:
+            box = crop["box"]
+            if (len(box) != 4 or not all(isinstance(v, int) for v in box)
+                    or not (0 <= box[0] < box[2] <= im.width and 0 <= box[1] < box[3] <= im.height)):
+                # Pillow pads an out-of-image crop with black: that would invent texture, so refuse
+                raise ChangeError(f"crop box {box} is not inside the {im.width}x{im.height} source {crop['path']}")
+            cropped = im.convert("RGB").crop(tuple(box))
     os.makedirs(os.path.join(tiles_out, "tiles"), exist_ok=False)
     def rgb(hexs):
         h = hexs.lstrip("#")
@@ -143,14 +156,9 @@ def write_tile(add: dict, tiles_in: str, tiles_out: str, prev: dict) -> dict:
                 raise ChangeError(f"stale tile {src}; flat regeneration does not match the recorded SHA256")
         else:
             raise ChangeError(f"stale tile {src}")
-    tile = add["tile"]
     path = os.path.join(tiles_out, tile["file"])
-    if "crop" in tile:
-        crop = tile["crop"]
-        if sha256_file(crop["path"]) != crop["sha256"]:
-            raise ChangeError(f"crop source {crop['path']} does not match its recorded SHA256")
-        with Image.open(crop["path"]) as im:
-            im.convert("RGB").crop(tuple(crop["box"])).resize((tile["px"], tile["px"]), Image.LANCZOS).save(path)
+    if cropped is not None:
+        cropped.resize((tile["px"], tile["px"]), Image.LANCZOS).save(path)
     else:
         Image.new("RGB", (tile["px"], tile["px"]), rgb(tile["flat"])).save(path)
     return {"id": add["id"], "key": add["key"], "file": tile["file"], "sha256": sha256_file(path),

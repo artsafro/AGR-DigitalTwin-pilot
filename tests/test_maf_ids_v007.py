@@ -4,6 +4,8 @@ import json
 import re
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 LIB = ROOT / "library" / "maf"
 HEX = re.compile(r"^#[0-9A-F]{6}$")
@@ -84,3 +86,48 @@ def test_atlas_512_v007_record():
         cx, cy, cw, ch = c["content_px"]
         x, y, w, h = c["slot_px"]
         assert cx - x == pad // 2 and cy - y == pad // 2 and cw == w - pad and ch == h - pad
+
+
+def _bake_mod():
+    spec = importlib.util.spec_from_file_location(
+        "atlas_maf_from_source", ROOT / "jobs" / "maf-atlas-512" / "scripts" / "atlas_maf_from_source.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def _flat_png(path, size, rgb):
+    from PIL import Image
+    Image.new("RGB", (size, size), rgb).save(path)
+    return _tool().sha256_file(path)
+
+
+@pytest.mark.parametrize("box", [[-2, -2, 8, 8], [0, 0, 9, 8], [4, 4, 4, 8], [6, 0, 2, 8], [0, 0, 8]])
+def test_write_tile_rejects_crop_outside_the_source(tmp_path, box):
+    # Codex review round 1 on PR #1187, P1: an out-of-image crop must fail, not pad with black, and write nothing
+    t = _tool()
+    src = tmp_path / "src.png"
+    add = {"id": 33, "key": "k", "tile": {"file": "tiles/ID_33_k.png", "px": 8, "source": "probe",
+                                          "crop": {"path": str(src), "sha256": _flat_png(src, 8, (120, 80, 40)),
+                                                   "box": box}}}
+    prev = {"ids": [], "evidence": {"tiles": []}}
+    with pytest.raises(t.ChangeError, match="crop box"):
+        t.write_tile(add, str(tmp_path / "in"), str(tmp_path / "out"), prev)
+    assert not (tmp_path / "out").exists()
+
+
+def test_bake_rejected_placement_writes_nothing_and_retry_works(tmp_path):
+    # Codex review round 1 on PR #1187, P2 / #1199: placement is checked before any output exists
+    b = _bake_mod()
+    src = tmp_path / "src.png"
+    sha = _flat_png(src, 128, (120, 80, 40))
+    spec = {"source": {"path": str(src), "sha256": sha, "size": [128, 128], "id_map": {}},
+            "ids": "library/maf/material_ids_v007.json", "atlas_size": 32, "padding_px": 8,
+            "slots": [{"slot": 1, "text": "t", "id": 33, "key": "wood_pine", "kind": "patterned", "px": 64,
+                       "box": [0, 0, 64, 64]}]}
+    out = tmp_path / "out"
+    with pytest.raises(b.BakeError, match="does not fit"):
+        b.bake(spec, out)
+    assert not out.exists()
+    spec["atlas_size"] = 64
+    assert b.bake(spec, out)["atlas"]["size"] == [64, 64]
