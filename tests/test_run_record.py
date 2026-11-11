@@ -249,7 +249,19 @@ def test_timeout_preserves_partial_stdout_and_stderr(
         for handle in handles:
             assert kernel.WaitForSingleObject(handle, 5000) == 0, record
         assert record["timeout_cleanup_argv"] == ["taskkill", "/PID", str(record["spawned_pid"]), "/T", "/F"]
-        assert record["timeout_cleanup_returncode"] == 0
+        # taskkill can report 255 after killing the interpreter because its venv
+        # launcher exits before taskkill reaches it. Exact-handle death above is
+        # the contract, not a diagnostic exit code (and never just root death).
+        assert isinstance(record["timeout_cleanup_returncode"], int)
+        if cleanup_returncode is not None:
+            assert record["timeout_cleanup_returncode"] == cleanup_returncode
+        ledger = run.read()
+        if record["timeout_cleanup_returncode"]:
+            assert ledger["stopped"] is True
+            assert ledger["stop_reason"] == "timeout_cleanup_failed"
+            assert "descendant termination unverified" in record["timeout_cleanup_error"]
+        else:
+            assert ledger["stopped"] is False
     assert "partial out" in Path(record["stdout"]).read_text()
     assert "partial err" in Path(record["stderr"]).read_text()
     assert json.loads(run.path.read_text())["attempts"][0]["stages"]["export"]["status"] == "interrupted"
