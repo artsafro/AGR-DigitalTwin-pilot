@@ -882,6 +882,101 @@ def test_ground_skirt_branched_boundary_not_exempted_as_hole_1133():
     assert _skirt_finding(verts, polys).status == "fail"
 
 
+def _add_skirt_1224(verts, polys, ring, depth, n_edges=None):
+    n = len(ring)
+    for k in range(n if n_edges is None else n_edges):
+        a, b = ring[k], ring[(k + 1) % n]
+        a_, b_ = len(verts), len(verts) + 1
+        verts += [[verts[a][0], verts[a][1], -depth], [verts[b][0], verts[b][1], -depth]]
+        polys.append([b, a, a_, b_])
+
+
+def _pinch_squares_1224(depth=1.0, welded=True, skirt_edges=None):
+    """Two unit squares (0,0)-(1,1) and (1,1)-(2,2) sharing the corner (1,1), each with a skirt."""
+    verts = [[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0], [2, 1, 0], [2, 2, 0], [1, 2, 0]]
+    corner = 2
+    if not welded:
+        verts.append([1, 1, 0])
+        corner = 7
+    a, b = [0, 1, 2, 3], [corner, 4, 5, 6]
+    polys = [a[:], b[:]]
+    _add_skirt_1224(verts, polys, a, depth)
+    _add_skirt_1224(verts, polys, b, depth, skirt_edges)
+    return verts, polys
+
+
+@pytest.mark.parametrize("welded", [True, False])
+@pytest.mark.parametrize("depth,expected", [(0.0, "fail"), (0.999, "fail"), (1.0, "pass"), (1.5, "pass")])
+@pytest.mark.parametrize("offset,rotate", [(0.0, False), (0.0, True), (1_000_000.0, False),
+                                           (1_000_000.0, True)])
+def test_ground_skirt_pinch_vertex_shared_by_two_rings_1224(welded, depth, expected, offset, rotate):
+    verts, polys = _pinch_squares_1224(depth, welded)
+    verts = [[offset + (-y if rotate else x), offset + (x if rotate else y), z] for x, y, z in verts]
+    polys = [p[1:] + p[:1] for p in reversed(polys)]
+    finding = _skirt_finding(verts, polys)
+    assert finding.status == expected
+    assert finding.measured == pytest.approx(depth)
+
+
+@pytest.mark.parametrize("skirt_edges", range(4))
+def test_ground_skirt_pinch_partial_skirt_still_fails_1224(skirt_edges):
+    verts, polys = _pinch_squares_1224(1.0, True, skirt_edges)
+    finding = _skirt_finding(verts, polys)
+    assert finding.status == "fail"
+    assert finding.measured == pytest.approx(0.0)
+
+
+def _hole_touching_outer_1224(depth=1.0, skirt_hole=False, outer_edges=None):
+    """A 4x4 square with a triangular hole (2,0)-(3,1)-(1,1) touching the outer ring at (2,0)."""
+    verts = [[0, 0, 0], [2, 0, 0], [4, 0, 0], [4, 4, 0], [0, 4, 0], [3, 1, 0], [1, 1, 0]]
+    polys = [[0, 1, 6], [1, 2, 5], [2, 3, 5], [5, 3, 4, 6], [0, 6, 4]]
+    _add_skirt_1224(verts, polys, [0, 1, 2, 3, 4], depth, outer_edges)
+    if skirt_hole:
+        _add_skirt_1224(verts, polys, [1, 6, 5], depth)
+    return verts, polys
+
+
+@pytest.mark.parametrize("skirt_hole", [False, True])
+@pytest.mark.parametrize("depth,expected", [(0.0, "fail"), (0.999, "fail"), (1.0, "pass")])
+@pytest.mark.parametrize("offset,rotate", [(0.0, False), (1_000_000.0, True)])
+def test_ground_skirt_hole_touching_outer_at_vertex_excluded_1224(skirt_hole, depth, expected,
+                                                                   offset, rotate):
+    verts, polys = _hole_touching_outer_1224(depth, skirt_hole)
+    verts = [[offset + (-y if rotate else x), offset + (x if rotate else y), z] for x, y, z in verts]
+    polys = [p[1:] + p[:1] for p in reversed(polys)]
+    finding = _skirt_finding(verts, polys)
+    assert finding.status == expected
+    assert finding.measured == pytest.approx(depth)
+
+
+@pytest.mark.parametrize("outer_edges", range(5))
+def test_ground_skirt_hole_touching_outer_never_hides_missing_side_1224(outer_edges):
+    verts, polys = _hole_touching_outer_1224(1.0, False, outer_edges)
+    finding = _skirt_finding(verts, polys)
+    assert finding.status == "fail"
+    assert finding.measured == pytest.approx(0.0)
+
+
+def test_ground_skirt_unbalanced_boundary_vertex_fails_closed_1224():
+    # Edge (0,1) is shared by three faces, so vertex 0 has two incoming and one outgoing
+    # boundary edge: real non-manifold input stays fail-closed.
+    verts = [[0, 0, 0], [1, 0, 0], [0.5, 1, 0], [0.5, -1, 0], [0.5, 0.5, 0]]
+    polys = [[0, 1, 2], [1, 0, 3], [0, 1, 4]]
+    assert _skirt_finding(verts, polys).status == "fail"
+
+
+def test_ground_skirt_pinch_overlapping_outgoing_directions_fail_closed_1224():
+    # Two outgoing boundary edges leave the shared vertex in the same XY direction (overlapping
+    # faces): the next edge is ambiguous, so the check fails closed even with full skirts.
+    verts, polys = _pinch_squares_1224(1.0)
+    base = len(verts)
+    verts += [[0.5, 1, 0], [0.75, 0.5, 0]]
+    tri = [2, base, base + 1]
+    polys.append(tri)
+    _add_skirt_1224(verts, polys, tri, 1.0)
+    assert _skirt_finding(verts, polys).status == "fail"
+
+
 def _step_band_ground(skirt_sides=4):
     """A 10x10 quad Ground with a closed ~76 deg interior step band (a raised 4x4 plateau) and a
     1 m skirt on the outer boundary. ``skirt_sides`` < 4 removes one side of the skirt."""
