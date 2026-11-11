@@ -1,0 +1,749 @@
+{
+  "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\NTR\\22_COD\\Исходные данные\\001 - Исходные данные\\Альбом\\20207_ЦОД_свет_задание.pdf",
+  "sha256": "3398c18864b0ef46b3cb59d43c34e8e3a7707172ee372545861ff8a672bb87ce",
+  "bytes": 2981548,
+  "pages": 5,
+  "metadata": {
+    "format": "PDF 1.4",
+    "title": "",
+    "author": "",
+    "subject": "",
+    "keywords": "",
+    "creator": "PDF-XChange Editor 10.1.2.382",
+    "producer": "PDF-XChange Core API SDK (10.1.2.382)",
+    "creationDate": "D:20260721111616+03'00'",
+    "modDate": "D:20260721112044+03'00'",
+    "trapped": "",
+    "encryption": null
+  },
+  "album": "cod20207",
+  "scoring_note": "Text recall only; numerical tokens are not axis/level/finish bindings. No calibrated geometry certified.",
+  "ocg_count": 0,
+  "embedded_files": [],
+  "index": [
+    {
+      "pdf_page": 1,
+      "sheet": "12",
+      "kind_candidate": "facade",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 358
+    },
+    {
+      "pdf_page": 2,
+      "sheet": "13",
+      "kind_candidate": "facade",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 290
+    },
+    {
+      "pdf_page": 3,
+      "sheet": "14",
+      "kind_candidate": "facade",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 290
+    },
+    {
+      "pdf_page": 4,
+      "sheet": "7",
+      "kind_candidate": "unknown",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 290
+    },
+    {
+      "pdf_page": 5,
+      "sheet": "unnumbered equipment specification",
+      "kind_candidate": "unknown",
+      "kind_status": "text heuristic; visual check required",
+      "text_chars": 1108
+    }
+  ],
+  "routes": {
+    "A": {
+      "seconds": 0.7835,
+      "pages_processed": 5,
+      "input_unchanged": true,
+      "dimension_text": {
+        "correct": 0,
+        "denominator": 3,
+        "share": 0.0,
+        "samples": [
+          {
+            "reference": {
+              "value": 69600,
+              "unit": "mm",
+              "page": 1,
+              "sheet": "12",
+              "meaning": "printed facade dimension, first span"
+            },
+            "found": false
+          },
+          {
+            "reference": {
+              "value": 17800,
+              "unit": "mm",
+              "page": 1,
+              "sheet": "12",
+              "meaning": "printed facade dimension, second span"
+            },
+            "found": false
+          },
+          {
+            "reference": {
+              "value": 87450,
+              "unit": "mm",
+              "page": 1,
+              "sheet": "12",
+              "meaning": "printed overall dimension; not reconciled to spans"
+            },
+            "found": false
+          }
+        ]
+      },
+      "level_text": {
+        "correct": 0,
+        "denominator": 2,
+        "share": 0.0,
+        "samples": [
+          {
+            "reference": {
+              "value": 0,
+              "text": "+0.000",
+              "unit": "m",
+              "page": 1,
+              "sheet": "12"
+            },
+            "found": false
+          },
+          {
+            "reference": {
+              "value": 35.8,
+              "text": "+35.800",
+              "unit": "m",
+              "page": 1,
+              "sheet": "12"
+            },
+            "found": false
+          }
+        ]
+      },
+      "ral_code_text": {
+        "correct": 0,
+        "denominator": 3,
+        "share": 0.0,
+        "samples": [
+          {
+            "reference": {
+              "code": "RAL 9003",
+              "page": 1,
+              "sheet": "12",
+              "application": "white facade panel legend; application binding unapproved"
+            },
+            "found": false
+          },
+          {
+            "reference": {
+              "code": "RAL 5023",
+              "page": 1,
+              "sheet": "12",
+              "application": "blue facade panel legend; application binding unapproved"
+            },
+            "found": false
+          },
+          {
+            "reference": {
+              "code": "RAL 7024",
+              "page": 1,
+              "sheet": "12",
+              "application": "grey facade panel legend; application binding unapproved"
+            },
+            "found": false
+          }
+        ]
+      },
+      "structured_dimensions": 0,
+      "structured_levels": 0,
+      "scale_calibration": "not certified",
+      "artifact": "cod20207-A-all-v001\\result.json",
+      "schedule_rows": {
+        "correct": 0,
+        "denominator": 1,
+        "samples": [
+          {
+            "reference": {
+              "key": "LACE RGBW Custom",
+              "value": "1",
+              "page": 5,
+              "sheet": "unnumbered equipment specification 20.07.2026",
+              "unit": "schedule quantity",
+              "description": "INTILED; total length 5 505 m; cross-section 16x15 mm. Quantity 1 is not 1 metre."
+            },
+            "found": false
+          }
+        ]
+      },
+      "reader_observations": [
+        {
+          "page": 1,
+          "status": "ok",
+          "counts": {
+            "paths": 158,
+            "lines": 1615,
+            "spans": 14
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 1,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 2,
+          "status": "ok",
+          "counts": {
+            "paths": 146,
+            "lines": 1594,
+            "spans": 10
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 1,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 3,
+          "status": "ok",
+          "counts": {
+            "paths": 146,
+            "lines": 1586,
+            "spans": 10
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 1,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 4,
+          "status": "ok",
+          "counts": {
+            "paths": 165,
+            "lines": 1611,
+            "spans": 13
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 2,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        },
+        {
+          "page": 5,
+          "status": "ok",
+          "counts": {
+            "paths": 24,
+            "lines": 0,
+            "spans": 43
+          },
+          "axes": 0,
+          "dimensions": 0,
+          "levels": 0,
+          "legend_candidates": 0,
+          "scale": {
+            "status": "unknown",
+            "mm_per_pt": null,
+            "reference_axes": null,
+            "reference_mm": null,
+            "reason": "no dimension between two named axes; scale not guessed"
+          }
+        }
+      ]
+    },
+    "C": {
+      "seconds": 1.789,
+      "pages_processed": 5,
+      "input_unchanged": true,
+      "dimension_text": {
+        "correct": 0,
+        "denominator": 3,
+        "share": 0.0,
+        "samples": [
+          {
+            "reference": {
+              "value": 69600,
+              "unit": "mm",
+              "page": 1,
+              "sheet": "12",
+              "meaning": "printed facade dimension, first span"
+            },
+            "found": false
+          },
+          {
+            "reference": {
+              "value": 17800,
+              "unit": "mm",
+              "page": 1,
+              "sheet": "12",
+              "meaning": "printed facade dimension, second span"
+            },
+            "found": false
+          },
+          {
+            "reference": {
+              "value": 87450,
+              "unit": "mm",
+              "page": 1,
+              "sheet": "12",
+              "meaning": "printed overall dimension; not reconciled to spans"
+            },
+            "found": false
+          }
+        ]
+      },
+      "level_text": {
+        "correct": 0,
+        "denominator": 2,
+        "share": 0.0,
+        "samples": [
+          {
+            "reference": {
+              "value": 0,
+              "text": "+0.000",
+              "unit": "m",
+              "page": 1,
+              "sheet": "12"
+            },
+            "found": false
+          },
+          {
+            "reference": {
+              "value": 35.8,
+              "text": "+35.800",
+              "unit": "m",
+              "page": 1,
+              "sheet": "12"
+            },
+            "found": false
+          }
+        ]
+      },
+      "ral_code_text": {
+        "correct": 0,
+        "denominator": 3,
+        "share": 0.0,
+        "samples": [
+          {
+            "reference": {
+              "code": "RAL 9003",
+              "page": 1,
+              "sheet": "12",
+              "application": "white facade panel legend; application binding unapproved"
+            },
+            "found": false
+          },
+          {
+            "reference": {
+              "code": "RAL 5023",
+              "page": 1,
+              "sheet": "12",
+              "application": "blue facade panel legend; application binding unapproved"
+            },
+            "found": false
+          },
+          {
+            "reference": {
+              "code": "RAL 7024",
+              "page": 1,
+              "sheet": "12",
+              "application": "grey facade panel legend; application binding unapproved"
+            },
+            "found": false
+          }
+        ]
+      },
+      "structured_dimensions": 0,
+      "structured_levels": 0,
+      "scale_calibration": "not certified",
+      "artifact": "cod20207-C-all-v001\\result.json",
+      "schedule_rows": {
+        "correct": 1,
+        "denominator": 1,
+        "samples": [
+          {
+            "reference": {
+              "key": "LACE RGBW Custom",
+              "value": "1",
+              "page": 5,
+              "sheet": "unnumbered equipment specification 20.07.2026",
+              "unit": "schedule quantity",
+              "description": "INTILED; total length 5 505 m; cross-section 16x15 mm. Quantity 1 is not 1 metre."
+            },
+            "found": true
+          }
+        ]
+      },
+      "tables": {
+        "pymupdf_tables": 1,
+        "pdfplumber_tables": 1
+      }
+    },
+    "D": {
+      "seconds": 35.2321,
+      "pages_processed": 5,
+      "input_unchanged": true,
+      "dimension_text": {
+        "correct": 3,
+        "denominator": 3,
+        "share": 1.0,
+        "samples": [
+          {
+            "reference": {
+              "value": 69600,
+              "unit": "mm",
+              "page": 1,
+              "sheet": "12",
+              "meaning": "printed facade dimension, first span"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "value": 17800,
+              "unit": "mm",
+              "page": 1,
+              "sheet": "12",
+              "meaning": "printed facade dimension, second span"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "value": 87450,
+              "unit": "mm",
+              "page": 1,
+              "sheet": "12",
+              "meaning": "printed overall dimension; not reconciled to spans"
+            },
+            "found": true
+          }
+        ]
+      },
+      "level_text": {
+        "correct": 2,
+        "denominator": 2,
+        "share": 1.0,
+        "samples": [
+          {
+            "reference": {
+              "value": 0,
+              "text": "+0.000",
+              "unit": "m",
+              "page": 1,
+              "sheet": "12"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "value": 35.8,
+              "text": "+35.800",
+              "unit": "m",
+              "page": 1,
+              "sheet": "12"
+            },
+            "found": true
+          }
+        ]
+      },
+      "ral_code_text": {
+        "correct": 3,
+        "denominator": 3,
+        "share": 1.0,
+        "samples": [
+          {
+            "reference": {
+              "code": "RAL 9003",
+              "page": 1,
+              "sheet": "12",
+              "application": "white facade panel legend; application binding unapproved"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "code": "RAL 5023",
+              "page": 1,
+              "sheet": "12",
+              "application": "blue facade panel legend; application binding unapproved"
+            },
+            "found": true
+          },
+          {
+            "reference": {
+              "code": "RAL 7024",
+              "page": 1,
+              "sheet": "12",
+              "application": "grey facade panel legend; application binding unapproved"
+            },
+            "found": true
+          }
+        ]
+      },
+      "structured_dimensions": 0,
+      "structured_levels": 0,
+      "scale_calibration": "not certified",
+      "artifact": "cod20207-D-all-v001\\result.json",
+      "schedule_rows": {
+        "correct": 0,
+        "denominator": 1,
+        "samples": [
+          {
+            "reference": {
+              "key": "LACE RGBW Custom",
+              "value": "1",
+              "page": 5,
+              "sheet": "unnumbered equipment specification 20.07.2026",
+              "unit": "schedule quantity",
+              "description": "INTILED; total length 5 505 m; cross-section 16x15 mm. Quantity 1 is not 1 metre."
+            },
+            "found": false
+          }
+        ]
+      }
+    },
+    "B": {
+      "pages": [
+        {
+          "page": 1,
+          "entity_types": {
+            "HATCH": 84,
+            "SOLID": 19,
+            "SPLINE": 2495,
+            "LWPOLYLINE": 2,
+            "MTEXT": 6
+          },
+          "layers": [
+            "0",
+            "PDF_Geometry",
+            "PDF_Solid Fills",
+            "PDF_Text",
+            "Defpoints"
+          ],
+          "insunits": 4,
+          "extents": [
+            [
+              0.0,
+              8.472222222e-07,
+              0.0
+            ],
+            [
+              16.53500027777777,
+              11.967134660823893,
+              0.0
+            ]
+          ],
+          "model_scale": "unknown",
+          "source": "C:\\x\\pdf-album-research\\t_5b23c219\\cod20207-p1-v001.dxf"
+        },
+        {
+          "page": 5,
+          "entity_types": {
+            "SOLID": 24,
+            "MTEXT": 43
+          },
+          "layers": [
+            "0",
+            "PDF_Geometry",
+            "PDF_Solid Fills",
+            "PDF_Text",
+            "Defpoints"
+          ],
+          "insunits": 4,
+          "extents": [
+            [
+              0.2366665818956163,
+              2.457354567925171,
+              0.0
+            ],
+            [
+              11.41500005411784,
+              8.235612220270914,
+              0.0
+            ]
+          ],
+          "model_scale": "unknown",
+          "source": "C:\\x\\pdf-album-research\\t_5b23c219\\cod20207-p5-v001.dxf"
+        }
+      ],
+      "dimension_text": {
+        "correct": 0,
+        "denominator": 3,
+        "share": 0.0,
+        "samples": [
+          {
+            "reference": {
+              "value": 69600,
+              "unit": "mm",
+              "page": 1,
+              "sheet": "12",
+              "meaning": "printed facade dimension, first span"
+            },
+            "found": false
+          },
+          {
+            "reference": {
+              "value": 17800,
+              "unit": "mm",
+              "page": 1,
+              "sheet": "12",
+              "meaning": "printed facade dimension, second span"
+            },
+            "found": false
+          },
+          {
+            "reference": {
+              "value": 87450,
+              "unit": "mm",
+              "page": 1,
+              "sheet": "12",
+              "meaning": "printed overall dimension; not reconciled to spans"
+            },
+            "found": false
+          }
+        ]
+      },
+      "level_text": {
+        "correct": 0,
+        "denominator": 2,
+        "share": 0.0,
+        "samples": [
+          {
+            "reference": {
+              "value": 0,
+              "text": "+0.000",
+              "unit": "m",
+              "page": 1,
+              "sheet": "12"
+            },
+            "found": false
+          },
+          {
+            "reference": {
+              "value": 35.8,
+              "text": "+35.800",
+              "unit": "m",
+              "page": 1,
+              "sheet": "12"
+            },
+            "found": false
+          }
+        ]
+      },
+      "ral_code_text": {
+        "correct": 0,
+        "denominator": 3,
+        "share": 0.0,
+        "samples": [
+          {
+            "reference": {
+              "code": "RAL 9003",
+              "page": 1,
+              "sheet": "12",
+              "application": "white facade panel legend; application binding unapproved"
+            },
+            "found": false
+          },
+          {
+            "reference": {
+              "code": "RAL 5023",
+              "page": 1,
+              "sheet": "12",
+              "application": "blue facade panel legend; application binding unapproved"
+            },
+            "found": false
+          },
+          {
+            "reference": {
+              "code": "RAL 7024",
+              "page": 1,
+              "sheet": "12",
+              "application": "grey facade panel legend; application binding unapproved"
+            },
+            "found": false
+          }
+        ]
+      },
+      "sample_only": true,
+      "model_scale": "unknown",
+      "structured_dimensions": 0,
+      "structured_rows": 0
+    },
+    "B2": {
+      "entity_types": {
+        "POLYLINE": 24,
+        "TEXT": 48
+      },
+      "layers": [
+        "0",
+        "Defpoints"
+      ],
+      "insunits": 0,
+      "extents": [
+        [
+          17.03999900817871,
+          175.4368321318004,
+          0.0
+        ],
+        [
+          851.1841786899284,
+          573.116233866757,
+          0.0
+        ]
+      ],
+      "model_scale": "unknown",
+      "source": "C:\\x\\pdf-album-research\\t_5b23c219\\cod20207-B2-v001\\page.dxf",
+      "route": "B2-PyMuPDF-ezdxf",
+      "reference": {
+        "pdf_sha256": "3398c18864b0ef46b3cb59d43c34e8e3a7707172ee372545861ff8a672bb87ce",
+        "pdf_page": 5
+      },
+      "emitted": 72,
+      "seconds": 0.188,
+      "input_unchanged": true,
+      "losses": [
+        "fills",
+        "clips",
+        "images",
+        "fonts",
+        "dashes",
+        "text rotation"
+      ],
+      "drops_count": 3
+    }
+  }
+}
