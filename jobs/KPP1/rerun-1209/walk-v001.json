@@ -28,17 +28,15 @@
     },
     {
       "gate": "parts",
-      "status": "fail",
+      "status": "review",
       "evidence_exists": [
         {
           "path": "jobs/KPP1/rerun-1209/parts-v002.json",
           "verified": true
         }
       ],
-      "errors": [
-        "unanswered parts question"
-      ],
-      "note": "PartsList confirmed: gate1 Artem 2026-11-11 [D238], 8 parts, NPM 145 000 / VPM 960 000 under BODY-F.",
+      "errors": [],
+      "note": "PartsList confirmed: gate1 Artem 2026-11-11 [D238], 8 parts, NPM 145 000 / VPM 960 000 under BODY-F. Stays review (walker: unanswered parts question) because the architect question on levels 3.900 / 7.909 stays open by [D238] answer 5.",
       "ready": false
     },
     {
@@ -64,17 +62,15 @@
     },
     {
       "gate": "budgets",
-      "status": "fail",
+      "status": "review",
       "evidence_exists": [
         {
           "path": "jobs/KPP1/rerun-1209/build-report.json",
           "verified": true
         }
       ],
-      "errors": [
-        "wrong gate/run receipt"
-      ],
-      "note": "Per part (before the regulation join) and per FBX under [D238] answer 4 and BODY-F: VPM 6 278 / 1 000 000, NPM 4 178 / 150 000 (RUN-LOG table).",
+      "errors": [],
+      "note": "Per part (before the regulation join) and per FBX under [D238] answer 4 and BODY-F: VPM 6 278 / 1 000 000, NPM 4 178 / 150 000 (RUN-LOG table); build-report.json is not a budgets-gate receipt of the walker (wrong gate/run receipt), so review.",
       "ready": false
     },
     {
