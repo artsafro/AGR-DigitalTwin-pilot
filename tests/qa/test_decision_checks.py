@@ -781,6 +781,33 @@ def test_ground_skirt_spanning_bottom_edge_covering_half_a_side_fails_1133():
     assert f.status == "fail" and f.measured == pytest.approx(0.0)
 
 
+def _hole_ground_1133(depth=1.0, skirt_sides=4):
+    """Synthetic 9x9 surface, 3x3 building cut, one spanning bottom edge per side."""
+    n = 9
+    verts = [[x, y, 0.0] for y in range(n + 1) for x in range(n + 1)]
+    idx = lambda x, y: y * (n + 1) + x  # noqa: E731
+    polys = [[idx(x, y), idx(x + 1, y), idx(x + 1, y + 1), idx(x, y + 1)]
+             for y in range(n) for x in range(n) if not (3 <= x < 6 and 3 <= y < 6)]
+    sides = [[idx(k, 0) for k in range(n + 1)], [idx(n, k) for k in range(n + 1)],
+             [idx(n - k, n) for k in range(n + 1)], [idx(0, n - k) for k in range(n + 1)]]
+    for side in sides[:skirt_sides]:
+        a, b = verts[side[0]], verts[side[-1]]
+        b0, b1 = len(verts), len(verts) + 1
+        verts += [[a[0], a[1], -depth], [b[0], b[1], -depth]]
+        polys.append([b0, b1, side[-1]])
+        for k in range(len(side) - 1, 0, -1):
+            polys.append([b0, side[k], side[k - 1]])
+    return verts, polys
+
+
+def test_ground_skirt_outer_only_with_building_hole_passes_1133():
+    # Combines case 2 (unskirted hole) with case 1 (spanning skirt-bottom edges).
+    verts, polys = _hole_ground_1133()
+    finding = _skirt_finding(verts, polys)
+    assert finding.status == "pass"
+    assert finding.measured == pytest.approx(1.0)
+
+
 def _step_band_ground(skirt_sides=4):
     """A 10x10 quad Ground with a closed ~76 deg interior step band (a raised 4x4 plateau) and a
     1 m skirt on the outer boundary. ``skirt_sides`` < 4 removes one side of the skirt."""
