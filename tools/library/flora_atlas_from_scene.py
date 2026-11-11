@@ -20,6 +20,8 @@ from PIL import Image
 
 
 ATLAS_SIZE = 2048
+# [D246]: VPM gets its own 4096 atlas; NPM keeps the single 2048 atlas [D232]
+PROFILE_SIZES = {"npm": ATLAS_SIZE, "vpm": 4096}
 MIN_TILE_PX = 256
 RANGE_NAMES = {
     "tree": (101, 199),
@@ -118,18 +120,25 @@ def build_atlas(
     scene_path=None,
     min_tile_px=MIN_TILE_PX,
     padding_px=_MAF.MIN_PADDING,
-    atlas_size=ATLAS_SIZE,
+    atlas_size=None,
     force=False,
+    profile="npm",
 ) -> dict:
     """Pack one atlas for the species used by ``scene_json`` and write the report.
 
+    ``profile`` npm = the single 2048 atlas; vpm = the VPM model's own 4096 atlas [D246].
     PNG paths inside this repository are rejected. An output that resolves to an
     input raises before any output file is created.
     """
 
-    if atlas_size != ATLAS_SIZE:
+    if profile not in PROFILE_SIZES:
+        raise FloraAtlasError(f"Flora atlas profile must be one of {sorted(PROFILE_SIZES)}, got {profile!r}")
+    size = PROFILE_SIZES[profile]
+    if atlas_size is None:
+        atlas_size = size
+    if atlas_size != size:
         raise FloraAtlasError(
-            f"Flora atlas size must be {ATLAS_SIZE}; a second atlas is not allowed, got {atlas_size}"
+            f"{profile.upper()} Flora atlas size must be {size}; a second atlas is not allowed, got {atlas_size}"
         )
     _address(address)
     _padding(padding_px)
@@ -166,11 +175,11 @@ def build_atlas(
         items.append({"key": material_id, "width": width, "height": height})
     packed = pack_uniform_tiles(
         items,
-        ATLAS_SIZE,
+        size,
         padding_px=padding_px,
         min_long_side=min_tile_px,
     )
-    if packed["atlas_count"] != 1 or packed["atlas_size"] != ATLAS_SIZE:
+    if packed["atlas_count"] != 1 or packed["atlas_size"] != size:
         raise FloraAtlasError("packer returned more than one atlas")
     diffuse, opacity = _render(packed, images)
     after = sha256_file(scene_path) if scene_path is not None else None
@@ -188,12 +197,13 @@ def build_atlas(
         before,
         after,
     )
+    report["profile"] = profile
     _write_outputs(diffuse, opacity, report, outputs)
     return report
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Pack one 2048 Flora atlas from a placed scene")
+    parser = argparse.ArgumentParser(description="Pack one Flora atlas (NPM 2048, VPM 4096 [D246]) from a placed scene")
     parser.add_argument("--scene-json", required=True, help="placed-scene JSON (flora-placed-v1)")
     parser.add_argument("--catalogue", required=True, help="flora-library-v1 catalogue")
     parser.add_argument("--out-dir", required=True, help="directory for atlas PNGs and the report")
@@ -205,6 +215,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--min-tile-px", type=int, default=MIN_TILE_PX)
     parser.add_argument("--padding-px", type=int, default=_MAF.MIN_PADDING)
     parser.add_argument("--force", action="store_true")
+    parser.add_argument("--profile", choices=sorted(PROFILE_SIZES), default="npm",
+                        help="npm = single 2048 atlas; vpm = own 4096 atlas [D246]")
     args = parser.parse_args(argv)
     out_dir = Path(args.out_dir)
     diffuse = Path(args.out_diffuse) if args.out_diffuse else out_dir / f"T_{args.address}_Flora_d_1.png"
@@ -222,6 +234,7 @@ def main(argv: list[str] | None = None) -> int:
             min_tile_px=args.min_tile_px,
             padding_px=args.padding_px,
             force=args.force,
+            profile=args.profile,
         )
     except FloraAtlasError as exc:
         print(f"error: {exc}", file=sys.stderr)

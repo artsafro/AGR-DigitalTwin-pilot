@@ -46,6 +46,65 @@ def test_route(prompt, cells, ask):
     assert result["ask"] == ask
 
 
+@pytest.mark.parametrize("relative", [
+    "docs/procedure/TASK_TO_MODEL.md",
+    ".agents/skills/scenario/SKILL.md",
+    ".claude/skills/scenario/SKILL.md",
+])
+def test_model_entry_sequence(relative):
+    text = (ROOT / relative).read_text(encoding="utf-8")
+    # One explicit sequence from either entry, not an independently inferred order.
+    sequence = "`docs/scenarios/<cell>.md` -> `jobs/<ID>/TASK.md` / contract questions -> `jobs/<ID>/job.yaml` gates"
+    assert sequence in text
+    if relative.startswith("docs/"):
+        assert ".agents/skills/scenario/SKILL.md#step-3" in text
+    else:
+        handover = text.split("## Step 4", 1)[0].split("## Step 3", 1)[1]
+        assert "TASK_TO_MODEL.md#gates" in handover
+        assert "eight gates" in handover
+    assert "docs/procedure/TASK_TO_MODEL.md" in (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+    assert (ROOT / ".agents/skills/scenario/SKILL.md").read_bytes() == (
+        ROOT / ".claude/skills/scenario/SKILL.md").read_bytes()
+
+
+def test_oks_vpm_route_policy():
+    cell = (ROOT / "docs/scenarios/oks-vpm.md").read_text(encoding="utf-8")
+    route = cell.split("## Route by stage", 1)[1].split("## Etalons", 1)[0]
+    for required in ("standard", "AGR Tools stages 1–4", "body", "windows", "roof",
+                     "after Gate 1", "Max is busy", "dt_ai.ops", "R14", "path: deviation",
+                     "all eight gates", "[D250]"):
+        assert required in route, required
+    procedure = (ROOT / "docs/procedure/TASK_TO_MODEL.md").read_text(encoding="utf-8")
+    operations = next(line for line in procedure.splitlines() if line.startswith("| operations |"))
+    assert "oks-vpm.md#route-by-stage" in operations
+    assert "cell's standard route" in operations
+    decision = next(line for line in (ROOT / "docs/decisions.md").read_text(encoding="utf-8").splitlines()
+                    if line.startswith("| D250 |"))
+    assert "2026-11-11" in decision and "path: deviation" in decision
+
+
+def test_real_building_cold_run_pointer():
+    text = (ROOT / "docs/procedure/TASK_TO_MODEL.md").read_text(encoding="utf-8")
+    assert "No real-building run is required." not in text
+    assert "../../jobs/KPP1/cold-run-1172/RUN-LOG.md" in text
+
+
+@pytest.mark.parametrize("relative", [
+    "docs/procedure/TASK_TO_MODEL.md", ".agents/skills/scenario/SKILL.md",
+    ".claude/skills/scenario/SKILL.md",
+])
+def test_model_entry_links(relative):
+    source = ROOT / relative
+    for target in re.findall(r"\]\(([^)]+)\)", source.read_text(encoding="utf-8")):
+        path, _, anchor = target.partition("#")
+        destination = (source.parent / path).resolve() if path else source
+        assert destination.exists(), f"{relative}: {target}"
+        if anchor:
+            headings = re.findall(r"^#+ (.+)$", destination.read_text(encoding="utf-8"), re.M)
+            slugs = {re.sub(r"[^\w -]", "", heading.lower()).replace(" ", "-") for heading in headings}
+            assert anchor in slugs, f"{relative}: missing anchor {target}"
+
+
 def test_table_points_at_real_files():
     ids = [c["id"] for c in TABLE["cells"]]
     assert len(ids) == len(set(ids))
