@@ -1,0 +1,60 @@
+"""bench.py - frozen metric for autoresearch #1227.
+Runs `uv run pytest -p no:xdist <target files>` N times (default 3) in the given worktree, each with ar_cpu_plugin,
+writes <outdir>/run<i>.jsonl, prints per-run target CPU sum (s) and wall (s), the median, then runs guard.py on all runs.
+Usage: python bench.py --repo <worktree> --targets targets.txt --out <new dir> [--n 3]
+"""
+import argparse
+import json
+import os
+import statistics
+import subprocess
+import sys
+import time
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+ap = argparse.ArgumentParser()
+ap.add_argument("--repo", required=True)
+ap.add_argument("--targets", required=True)
+ap.add_argument("--out", required=True)
+ap.add_argument("--n", type=int, default=3)
+ap.add_argument("--oracle", default=os.path.join(HERE, "baseline.jsonl"))
+ap.add_argument("--extra", nargs="*", default=[], help="guard extras, e.g. --base origin/main")
+a = ap.parse_args()
+out = os.path.abspath(a.out)
+if os.path.exists(out):
+    sys.exit(f"--out exists, refusing to overwrite: {out}")
+if os.path.normcase(out) == os.path.normcase(HERE):
+    sys.exit("--out must not be the oracle dir")
+os.makedirs(out)
+targets = [t.strip() for t in open(a.targets, encoding="utf-8") if t.strip() and not t.startswith("#")]
+if not targets:
+    sys.exit("empty targets")
+env = dict(os.environ, PYTHONPATH=HERE)
+env.pop("MSYS_NO_PATHCONV", None)
+env.pop("MSYS2_ARG_CONV_EXCL", None)
+cpus, walls, runs = [], [], []
+for i in range(a.n):
+    rp = os.path.join(out, f"run{i}.jsonl")
+    runs.append(rp)
+    env["AR_CPU_OUT"] = rp
+    t0 = time.perf_counter()
+    cp = subprocess.run(["uv", "run", "pytest", "-q", "-p", "no:xdist", "-p", "no:cacheprovider", "-p", "ar_cpu_plugin",
+                         "--basetemp=C:/x/t_4c32b36e-bench", *targets], cwd=a.repo, env=env,
+                        capture_output=True, text=True, encoding="utf-8", errors="replace")
+    w = time.perf_counter() - t0
+    with open(os.path.join(out, f"run{i}.out.txt"), "w", encoding="utf-8") as f:
+        f.write(cp.stdout[-20000:] + cp.stderr[-5000:])
+    tests = [json.loads(ln) for ln in open(rp, encoding="utf-8") if ln.strip()] if os.path.exists(rp) else []
+    c = sum(t["cpu"] for t in tests if "id" in t)
+    cpus.append(c)
+    walls.append(w)
+    last = cp.stdout.strip().splitlines()[-1] if cp.stdout.strip() else ""
+    print(f"run{i}: target_cpu={c:.2f}s wall={w:.1f}s rc={cp.returncode} :: {last}", flush=True)
+med = statistics.median(cpus)
+print(f"MEDIAN target_cpu={med:.2f}s wall_median={statistics.median(walls):.1f}s")
+with open(os.path.join(out, "summary.json"), "w") as f:
+    json.dump({"cpus": cpus, "walls": walls, "median": med}, f)
+g = subprocess.run([sys.executable, os.path.join(HERE, "guard.py"), "--oracle", a.oracle, "--targets", a.targets,
+                    *sum([["--run", r] for r in runs], []), *a.extra], capture_output=True, text=True)
+print(g.stdout.strip())
+sys.exit(g.returncode)
