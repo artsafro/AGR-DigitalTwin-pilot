@@ -76,6 +76,12 @@ def test_absence_is_not_perfect_score():
     assert result['share'] is None
 
 
+@pytest.mark.parametrize('row,expected', [(['1.D.17', '10.77'], True), (['1.D.170', '10.77'], False),
+    (['1.D.17', '110.77'], False), (['prefix 1.D.17', '10.77'], False)])
+def test_schedule_key_and_value_are_exact_cells(row, expected):
+    assert load_summary().row_matches({'key': '1.D.17', 'value': '10.77'}, row) is expected
+
+
 @pytest.mark.parametrize('route_status', ['fail', 'review', 'not_run', 'unknown', 'observed'])
 def test_partial_or_failing_receipt_rejected(tmp_path, route_status):
     import json

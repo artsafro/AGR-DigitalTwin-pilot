@@ -29,6 +29,11 @@ def hits(values, texts, key):
             'share': sum(x['found'] for x in found) / len(found) if found else None, 'samples': found}
 
 
+def row_matches(reference, row):
+    cells = [str(x) for x in row]
+    return reference['key'] in cells and reference['value'] in cells
+
+
 def make_summary(root, album, reference):
     inventory = read(root / f'{album}-inventory.json')
     summary = {k: inventory[k] for k in ['source', 'sha256', 'bytes', 'pages', 'metadata']}
@@ -79,9 +84,7 @@ def make_summary(root, album, reference):
                   'artifact': str(path.relative_to(root))}
         rows = []
         for ref in reference['rows']:
-            matched = any(ref['key'] in ' '.join(str(x or '') for x in row)
-                          and ref['value'] in [str(x) for x in row]
-                          for row in tables.get(ref['page'], []))
+            matched = any(row_matches(ref, row) for row in tables.get(ref['page'], []))
             rows.append({'reference': ref, 'found': matched})
         record['schedule_rows'] = {'correct': sum(x['found'] for x in rows), 'denominator': len(rows), 'samples': rows}
         if route == 'A':

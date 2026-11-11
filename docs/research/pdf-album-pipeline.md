@@ -241,8 +241,10 @@ Drive cloud-sync completion was not independently queried. Sources are not LFS a
 Regression controls were tested first: commit `3402bbb1`, 18 failed because the prototype did
 not exist; implemented runner, 18 passed. A later scorer witness (`цвет сосна, RAL 1001`)
 exposed a punctuation-boundary miss: 1 failed/30 passed before separating code/numeric boundaries,
-31 passed after. Final affected/hostile controls: **38 passed** (including fresh-process CLI
-rejections and actual synthetic-source mutation); no passing certificate is emitted.
+31 passed after. A hostile row-key probe then found substring matches (`1.D.170` counted as
+`1.D.17`): 2 failed/2 passed; exact-cell comparison repaired both, with unchanged real-corpus
+scores. Final affected/hostile controls: **42 passed** (including fresh-process CLI rejections
+and actual synthetic-source mutation); no passing certificate is emitted.
 The raw extraction runs are unchanged; only scoring summaries were regenerated.
 The report does not claim full opening reconstruction, independent as-built truth, all-row recall,
 calibrated model geometry or separately metered vision performance. These are explicitly not
