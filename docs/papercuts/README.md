@@ -21,4 +21,6 @@ and `docs/backlog.md`; a single one is cheap to ignore, the same one five times 
 ## Who reads them
 
 `/retro` (step 2) reads the papercut lines dated in its range, groups repeats and turns a repeated or costly one
-into a deduplicated issue. Lines stay in place; the date range keeps a retro from counting a line twice.
+into a deduplicated issue. Lines stay in place; this is date filtering only:
+overlapping or identical ranges can select the same lines again.
+Issue deduplication does not deduplicate incident counts.
