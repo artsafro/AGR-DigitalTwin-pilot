@@ -65,7 +65,8 @@ values (`Lcl Scaling [0.5, 1, 2]`; `Lcl Translation [-9.330, 7, 1]`), so they su
 - Not measured, expected from the algebra: under a uniformly scaled parent the rotate-off local is a similarity
   and should export exactly; partial rotate flags (one axis) and rotate-off + scale-off combinations are untested.
 - The Max re-import reads the same SDK the exporter used, so it is not independent of FBX semantics; Blender is the
-  independent reader and agrees to 0.001 mm.
+  independent reader and agrees on the match/mismatch verdicts at the stated 1 mm / 0.01° tolerance.
+  Direct inter-reader vertex distance was not measured.
 
 ## Reproduce
 

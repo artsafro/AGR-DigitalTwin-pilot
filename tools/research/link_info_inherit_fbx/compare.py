@@ -6,6 +6,7 @@ Inputs in <out_dir>: max_<v>.json, blender_<v>.json (tools/blender/fbx_readback.
 Per node: max vertex distance in mm (same vertex index; order-free nearest-neighbour as a cross-check), max angle
 between centroid->vertex directions in degrees, centroid shift in mm. Pass: <= 1 mm and <= 0.01 deg.
 Prints a Markdown table and writes compare.json.
+Pattern: new-case (standalone synthetic Link Info/FBX experiment).
 """
 import json
 import math
@@ -74,9 +75,11 @@ def main(out_dir):
             b, m = r["blender"], r["max_reimport"]
             ok = b.get("pass") and m.get("pass")
             flags = "".join(str(x) for x in r["inherit"])
+            b_delta = b["error"] if "error" in b else f"{b['max_vertex_mm']:.3f}"
+            m_delta = m["error"] if "error" in m else f"{m['max_vertex_mm']:.3f}"
             lines.append(f"| {r['name']} | {flags[:3]} {flags[3:6]} {flags[6:]} | {r['max_centroid_m']} "
-                         f"| {r.get('blender_centroid_m')} | {b.get('max_vertex_mm', b.get('error')):.3f} "
-                         f"| {b.get('max_angle_deg', 0):.4f} | {m.get('max_vertex_mm', m.get('error')):.3f} "
+                         f"| {r.get('blender_centroid_m')} | {b_delta} "
+                         f"| {b.get('max_angle_deg', 0):.4f} | {m_delta} "
                          f"| {m.get('max_angle_deg', 0):.4f} | {'match' if ok else 'MISMATCH'} |")
     (out / "compare.json").write_text(json.dumps(result, indent=1), encoding="utf-8")
     print("\n".join(lines))

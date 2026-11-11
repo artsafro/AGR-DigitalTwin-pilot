@@ -1,4 +1,5 @@
 -- SYNTHETIC test scene for backlog Q10 (Link Info «Inherit» -> FBX). Not a real object.
+-- Pattern: new-case (standalone synthetic Link Info/FBX experiment).
 -- Run only headless: 3dsmaxbatch.exe build_export.ms   (outputs outside the repo)
 -- Writes <Q10_OUT>raw.fbx, baked.fbx, *.max and max_raw.json / max_baked.json (world transforms and world vertices).
 Q10_OUT = @"C:\x\link-info-test-2026-11\"

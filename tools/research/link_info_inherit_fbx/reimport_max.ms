@@ -1,4 +1,5 @@
 -- SYNTHETIC Q10 test: re-import raw.fbx / baked.fbx in a fresh headless Max and dump world transforms.
+-- Pattern: new-case (standalone synthetic Link Info/FBX experiment).
 -- Run only headless: 3dsmaxbatch.exe reimport_max.ms   (second reader next to Blender)
 Q10_OUT = @"C:\x\link-info-test-2026-11\"
 

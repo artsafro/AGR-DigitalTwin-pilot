@@ -3,6 +3,7 @@
     blender --background --factory-startup --python-exit-code 1 --python fbx_model_props.py -- <in.fbx> <out.json>
 
 Reads the file only; no import, no scene.
+Pattern: new-case (standalone synthetic Link Info/FBX experiment).
 """
 import json
 import sys
