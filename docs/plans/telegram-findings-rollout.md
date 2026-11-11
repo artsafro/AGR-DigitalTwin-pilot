@@ -16,9 +16,9 @@ One step = one branch / PR unless marked "batch". Status: `done`, `next`, `later
 
 | # | Step | Done when | Status |
 |---|---|---|---|
-| 1.1 | «Log papercuts» block in `AGENTS.md` → `docs/papercuts.md`, read by `/retro` | block ≤ 5 lines; `/retro` lists papercuts | next |
-| 1.2 | Compare `destructive_command_guard` with `.claude/hooks/guard.py`; port missing patterns only | diff table + tests for each new pattern | next |
-| 1.3 | Prompt-guide paragraphs (focus, parallel tool calls, no filler) into subagent prompt templates | one shared paragraph, no duplicates in CLAUDE.md | later |
+| 1.1 | «Log papercuts» block in `AGENTS.md` → `docs/papercuts.md`, read by `/retro` | block ≤ 5 lines; `/retro` lists papercuts | PR #1179 |
+| 1.2 | Compare `destructive_command_guard` with `.claude/hooks/guard.py`; port missing patterns only | diff table + tests for each new pattern | PR #1186 |
+| 1.3 | Prompt-guide paragraphs (focus, parallel tool calls, no filler) into subagent prompt templates | one shared paragraph, no duplicates in CLAUDE.md | PR #1186 |
 | 1.4 | Try `CLAUDE_CODE_RETRY_WATCHDOG=1` on one long overnight run | run resumes after a limit reset, noted in `CAPABILITIES.md` | later |
 | 1.5 | Evaluate Rejudge (3 models + judge) on two closed PR diffs vs the Codex review | findings compared, keep / drop decision | later |
 
