@@ -158,3 +158,9 @@ The abandoned earlier suite completed with 637 failures / 104 errors, including 
 child-process DLL initialization failures (3221225794 / 0xC0000142); it is preserved in
 `tmp/full-suite.log` and is NOT final-head CI evidence. No result is relabelled green.
 
+Repair 3/3: the resumed full suite on 3931bb2d reported **21273 passed / 1 failed /
+0 errors**: the Blender exit-code guard treated RUN-LOG's historical untagged fence
+as an executable template. It is now explicitly `text`, preserving the actual earlier
+invocation verbatim; current safe commands remain in REPORT. The failed receipt is
+retained byte-for-byte (`tmp/ci-receipt-final.md`), never rewritten into a PASS.
+

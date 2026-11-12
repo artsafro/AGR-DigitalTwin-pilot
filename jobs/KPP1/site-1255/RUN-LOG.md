@@ -20,7 +20,9 @@ both counts, so no GeoJSON was written and the R1 package was not placed.
 
 ## Commands
 
-```
+Recorded historical invocations (not executable templates; current safe commands are in REPORT.md):
+
+```text
 blender --background --factory-startup --python jobs/KPP1/site-1255/dump_vertices.py -- <fbx> <npz> <json>
 uv run python jobs/KPP1/site-1255/fit_msk77.py dump-tg02.npz dump-npm.npz 171.05 fit-npm.json
 ```
