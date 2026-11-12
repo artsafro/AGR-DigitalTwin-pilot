@@ -9,7 +9,7 @@
     "schema": {"const": "agr-library/1"},
     "library": {"enum": ["windows", "maf", "flora", "roof_equipment"]},
     "version": {"type": "string", "pattern": "^v[0-9]{3}$"},
-    "pivot": {"enum": ["bottom-left", "bottom-center"]},
+    "pivot": {"enum": ["bottom-left", "bottom-center", "flora-bbox-plus-0.1"]},
     "inputs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/file"}},
     "showcase": {"$ref": "#/$defs/file"},
     "assets": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/asset"}}

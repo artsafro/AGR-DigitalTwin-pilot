@@ -54,7 +54,9 @@ mark standard-generated or synthetic geometry. Missing source identity is not a 
 
 One scene, one view layer, metres (`METRIC`, `scale_length=1`), Z up. Window geometry faces
 -Y: origin at the opening's **bottom-left/front**, XYZ bounds `[0,0,0]..[W,D,H]`.
-MAF/Flora/roof assets use `bottom-center`: base at Z=0, X/Y extents centred on origin.
+MAF/roof assets use `bottom-center`: base at Z=0, X/Y extents centred on origin.
+Flora MUST use `flora-bbox-plus-0.1` [D100]: X/Y bbox centred on origin, lowest vertex
+at Z=-0.1 m, so the pivot is 10 cm above it. Placement on Ground adds no further sinking.
 All part-object origins share that assembly anchor. Geometry lives in mesh coordinates;
 object world transforms are identity. No unapplied modifiers, constraints, parents, instances,
 linked libraries, animation/drivers, hidden objects/collections, cameras, labels, helpers,

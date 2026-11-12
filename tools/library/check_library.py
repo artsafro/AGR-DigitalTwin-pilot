@@ -26,6 +26,8 @@ def validate_catalogue(doc):
     errors = list(Draft202012Validator(schema).iter_errors(doc))
     if errors:
         raise ValueError('; '.join(str(list(e.path)) + ': ' + e.message for e in errors))
+    if (doc['library'] == 'flora') != (doc['pivot'] == 'flora-bbox-plus-0.1'):
+        raise ValueError('D100: Flora requires flora-bbox-plus-0.1; other libraries must not use it')
     ids, cells = set(), set()
     for asset in doc['assets']:
         if asset['id'].casefold() in ids:
@@ -105,7 +107,9 @@ def scene_errors(scene, expected, pivot):
             hi = [max(b[1][i] for b in bounds) for i in range(3)]
             size = expected['size_m']
             origin = [0, 0, 0] if pivot == 'bottom-left' else [-size[0]/2, -size[1]/2, 0]
-            if pivot not in ('bottom-left', 'bottom-center') or any(
+            if pivot == 'flora-bbox-plus-0.1':
+                origin[2] = -0.1  # D100: place pivot on Ground, do not sink another 10 cm.
+            if pivot not in ('bottom-left', 'bottom-center', 'flora-bbox-plus-0.1') or any(
                     abs(hi[i]-lo[i]-size[i]) > 1e-5 or abs(lo[i]-origin[i]) > 1e-5 for i in range(3)):
                 errors.append(f'{names}: size/pivot mismatch: {lo}, {hi}')
     except (KeyError, TypeError, ValueError) as exc:

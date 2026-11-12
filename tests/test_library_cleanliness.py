@@ -108,6 +108,25 @@ def variant():
             'materials': [{'id': 1, 'name': 'matid_1'}]}
 
 
+def test_flora_keeps_d100_pivot_above_lowest_vertex():
+    scene = clean_scene()
+    scene['objects'][0]['bounds'] = [[-0.5, -0.5, -0.1], [0.5, 0.5, 1.9]]
+    expected = {**variant(), 'size_m': [1, 1, 2]}
+    assert checker().scene_errors(scene, expected, 'flora-bbox-plus-0.1') == []
+    scene['objects'][0]['bounds'] = [[-0.5, -0.5, 0], [0.5, 0.5, 2]]
+    assert checker().scene_errors(scene, expected, 'flora-bbox-plus-0.1')
+
+
+def test_flora_catalogue_requires_d100_convention():
+    doc = catalogue()
+    doc['library'] = 'flora'
+    doc['pivot'] = 'flora-bbox-plus-0.1'
+    checker().validate_catalogue(doc)
+    doc['pivot'] = 'bottom-center'
+    with pytest.raises(ValueError, match='D100'):
+        checker().validate_catalogue(doc)
+
+
 def test_clean_scene_passes():
     assert checker().scene_errors(clean_scene(), variant(), 'bottom-left') == []
 
