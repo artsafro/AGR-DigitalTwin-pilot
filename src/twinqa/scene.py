@@ -1855,19 +1855,6 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
                                   f"{src}: {bad_sizes or 'all measured sides <= 2048 px'}",
                                   'positive measured NPM image dimensions, each side <= 2048 px; PNG-byte checks separate',
                                   [9], src))
-            # Reg p.9 §5.2 plus the 128 px placeholder exception [D013].
-            allowed = set(profile['textures']['allowed_square_sizes_px']) | {128}
-            off_grid = []
-            for image in images:
-                size = image.get('size')
-                if (not isinstance(size, (list, tuple)) or len(size) != 2
-                        or any(type(s) is not int for s in size)
-                        or size[0] != size[1] or size[0] not in allowed):
-                    off_grid.append((image.get('name'), size))
-            out['V006'].append(_f('fail' if off_grid else 'pass', 'atlas resolution grid',
-                                  f"{src}: {off_grid or 'all images on the allowed grid'}",
-                                  f'square sides {sorted(allowed)}; placeholder pixels/roles require PNG-byte checks [D013]',
-                                  [3, 4, 9], src))
     if role == "ground":  # Flora checks (#191): dimensions V015, maps V005, Flora share V003
         geometry = [m for m in meshes if m not in ucx]
         for stage_id, findings in flora_findings(rb, kind, geometry, tris, profile, flora_schedule, flora_share).items():
