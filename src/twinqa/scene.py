@@ -1690,6 +1690,42 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
     out["V002"].extend(_v002_findings(rb, meshes, src))
     # V005: color attributes (reg 4.1.1, SINTEZ lp_color_attributes); review only, the regulation recommends removal
     out.setdefault("V005", []).append(color_attribute_finding(meshes, src))
+    if kind == 'npm' and role != 'light':
+        # NPM opaque materials carry their texture set: reg p.8 §4.4, p.9 §4.5.
+        # Never apply this to VPM: its FBX paths MUST be cleared (reg p.30 §4.2).
+        opaque = [m for m in meshes if m not in ucx and not m['name'].endswith(GLASS_SUFFIXES)]
+        if opaque:
+            image_names = {i.get('name') for i in rb.get('images', [])}
+            facts, bad_materials = {}, []
+            for material in rb.get('materials') or []:
+                name = material.get('name')
+                if name in facts:
+                    bad_materials.append(f'duplicate material facts: {name}')
+                facts[name] = material.get('maps') or []
+            for m in opaque:
+                slots = m.get('materials') or []
+                if not slots:
+                    bad_materials.append(f"{m['name']}: no material assignment")
+                geometry = m.get('face_geometry', {})
+                if 'polygon_material' in geometry:
+                    assigned = geometry['polygon_material']
+                    polygons = geometry.get('polygons', [])
+                    if not isinstance(assigned, list):
+                        bad_materials.append(f"{m['name']}: unsupported polygon material table")
+                    else:
+                        wrong = [(i, name) for i, name in enumerate(assigned) if not name or name not in slots]
+                        if len(assigned) != len(polygons) or wrong:
+                            bad_materials.append(f"{m['name']}: unmapped polygon materials {wrong[:5]}; "
+                                                 f"{len(wrong)} invalid, {len(assigned)} assignments for {len(polygons)} polygons")
+                for name in slots:
+                    maps = facts.get(name, [])
+                    diffuse = [item.get('image') for item in maps if item.get('socket') in _DIFFUSE_SOCKETS]
+                    if not name or not diffuse or any(not image or image not in image_names for image in diffuse):
+                        bad_materials.append(f"{m['name']}: unmapped diffuse for material {name!r}")
+            out['V005'].append(_f('fail' if bad_materials else 'pass', 'material assignments',
+                                  f"{src}: {bad_materials or 'every opaque material has a bound diffuse image'}",
+                                  'each NPM opaque material resolves to its diffuse texture; glass excluded',
+                                  [8, 9], src))
     tris = sum(m["triangles"] for m in meshes if m not in ucx)  # collision is excluded (reg p.28 §3.9)
 
     # V003: triangulated on export, triangle limits, no foreign objects (reg p.6-8, 28-29)

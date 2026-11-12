@@ -1953,3 +1953,39 @@ def test_npm_texture_dimension_probe_generated():
         found = scene_findings(data, 'npm', 'oks', PROFILES.npm)
         assert next(f.status for f in found['V006'] if f.name == 'texture dimensions') == ('fail' if side > 2048 else 'pass')
 
+
+@pytest.mark.parametrize('maps,status', [([], 'fail'), ([{'image': 'atlas.png', 'socket': 'Base Color'}], 'pass'),
+                                       ([{'image': 'unmapped.png', 'socket': 'Base Color'}], 'fail')])
+def test_npm_material_assignment_requires_bound_diffuse(maps, status):
+    data = rb(mesh(materials=['M_Test']))
+    data['materials'] = [{'name': 'M_Test', 'maps': maps}]
+    data['images'] = [{'name': 'atlas.png', 'size': [512, 512], 'packed': True}]
+    found = scene_findings(data, 'npm', 'oks', PROFILES.npm)
+    finding = next(f for f in found['V005'] if f.name == 'material assignments')
+    assert finding.status == status
+    if status == 'fail':
+        assert 'M_Test' in finding.observed
+
+
+def test_vpm_cleared_paths_are_not_npm_material_errors():
+    data = rb(mesh(materials=['M_Test']))
+    data['materials'] = [{'name': 'M_Test', 'maps': []}]
+    found = scene_findings(data, 'vpm', 'oks', PROFILES.vpm)
+    assert not any(f.name == 'material assignments' for f in found['V005'])
+
+
+@pytest.mark.parametrize('assigned', [['Ghost'], [None], []])
+def test_npm_unmapped_polygon_material_is_named(assigned):
+    data = rb(mesh(materials=['M_Test']))
+    data['meshes'][0]['face_geometry'] = {'vertices': [[0,0,0],[1,0,0],[0,1,0]],
+                                         'polygons': [[0,1,2]], 'polygon_material': assigned}
+    data['materials'] = [{'name': 'M_Test', 'maps': [{'image': 'atlas.png', 'socket': 'Base Color'}]}]
+    data['images'] = [{'name': 'atlas.png', 'size': [512,512], 'packed': True}]
+    found = scene_findings(data, 'npm', 'oks', PROFILES.npm)
+    f = next(f for f in found['V005'] if f.name == 'material assignments')
+    assert f.status == 'fail'
+    assert 'SM_Test_K_1_Main' in f.observed
+    assert 'polygon' in f.observed
+
+
+
