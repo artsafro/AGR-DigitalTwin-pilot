@@ -275,6 +275,8 @@ frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Mar
 
 | D256 | 2026-11-12 | KPP1 R1 only: accept the listed V004 5-20 mm band pairs (98 VPM / 52 NPM) from the C35 North curtain-wall glass top sitting 15 mm inside the parapet, with no clipping and no parapet cut; xView residuals and other delivery gates are not waived | `jobs/KPP1/rerun-1244/RUN-LOG.md`, `jobs/KPP1/rerun-1244/band-pairs-{vpm,npm}-r1-v002.json` | Artem 2026-11-12 «принимаю рекомендации», option A, USER DECISION on Kanban t_dd6f4bf9 (#1244, PR #1251) |
 
+| D258 | 2026-11-12 | Library migration #1259: VPM/mid windows keep geometric frames per D204 (F100/F73/F58); NPM is a separate plane. A passing library checker means library cleanliness only, not resolution of C35 geometry-vs-bake and not a delivery certificate. | `docs/library/TEMPLATE.md`, `library/windows/catalogue.json` | Artem «принимаю», USER DECISION on Kanban t_785829b4 |
+
 [passport-scope-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1207#issuecomment-6783203728
 
 [ground-refinement-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/295#issuecomment-6265799957
