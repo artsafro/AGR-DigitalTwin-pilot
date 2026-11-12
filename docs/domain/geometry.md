@@ -2,6 +2,8 @@
 
 Keys: `reg p.N` = `Rasporyajenies19012026trebovaniya(2).pdf` page N (see npm-vpm.md header). `local:` relative to the repo root (AGR knowledge base; AGR `docs/` lives in `docs/agr/`). Tags: (project decision) = user/project instruction, not regulation; (lesson) = only source is a lesson/case study.
 
+- PDF fallback evaluation is a three-album, agent-made reference audit only [D263]; OCR/vision text is not calibrated geometry or an approved binding. See [fallback report](../research/pdf-album-fallback.md).
+
 ## Regulation geometry rules (both profiles unless noted)
 - No empty objects, animation/keys, deformers, cameras, sounds, bones, extra layers, helpers, interior structures, underground/internal utilities, people, vehicles, animals. reg p.6 §1.3 (NPM), p.28 §3.1, p.29 §3.11 (VPM; also no extra modifiers).
 - VPM: all objects in the single default layer/collection; no more than one layer. reg p.28 §3.2.
