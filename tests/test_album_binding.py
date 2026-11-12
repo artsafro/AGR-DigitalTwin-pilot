@@ -1,5 +1,7 @@
 """Album binding (#1234): views, horizontal/vertical chains, openings, levels, anchor calibration.
 
+Pattern: n/a | new-case: synthetic fail-closed regression probes for per-view album binding and calibration.
+
 All PDFs here are SYNTHETIC, generated at test time with PyMuPDF (no committed PDF, no user album).
 Run: env -u PYTHONPATH -u VIRTUAL_ENV uv run -q --extra pdf-review pytest -q tests/test_album_binding.py
 """
