@@ -273,6 +273,8 @@ frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Mar
 | D255 | 2026-11-11 | Whenever 3ds Max is held by Artem, any modelling or check step that would use Max may run in an agent-owned Blender 5.1.2+ instance under [D233] rules (hashed copy, own PID) instead of waiting; Max stays required only for steps that are AGR-Tools-in-Max by definition (final AGR Tools check), run when Artem frees Max. Generalises [D250]. | `hermes_kanban/profiles/COORDINATION_RULES.md` | Artem 2026-11-11 («Если Макс занят всегда можно гонять блендер») |
 
 
+| D256 | 2026-11-12 | KPP1 R1 only: accept the listed V004 5-20 mm band pairs (98 VPM / 52 NPM) from the C35 North curtain-wall glass top sitting 15 mm inside the parapet, with no clipping and no parapet cut; xView residuals and other delivery gates are not waived | `jobs/KPP1/rerun-1244/RUN-LOG.md`, `jobs/KPP1/rerun-1244/band-pairs-{vpm,npm}-r1-v002.json` | Artem 2026-11-12 «принимаю рекомендации», option A, USER DECISION on Kanban t_dd6f4bf9 (#1244, PR #1251) |
+
 [passport-scope-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1207#issuecomment-6783203728
 
 [ground-refinement-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/295#issuecomment-6265799957
