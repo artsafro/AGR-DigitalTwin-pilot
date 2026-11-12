@@ -1809,16 +1809,24 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
         # complement (never replace) PNG-byte checks and area-specific smaller limits.
         images = rb.get('images', [])
         if images:
+            # Reg p.10 §5.12: the GroundEl atlas has a separate 512 px ceiling.
+            # Follow actual material/image bindings; a co-resident Flora atlas keeps 2048.
+            maf_materials = {name for m in meshes if m['name'].endswith('_GroundEl')
+                             for name in m.get('materials', []) if name}
+            maf_images = {item.get('image') for mat in rb.get('materials', [])
+                          if mat.get('name') in maf_materials for item in mat.get('maps', [])}
             bad_sizes = []
             for image in images:
                 size = image.get('size')
+                limit = 512 if image.get('name') in maf_images else 2048
                 if (not isinstance(size, (list, tuple)) or len(size) != 2
-                        or any(type(s) is not int or not 0 < s <= 2048 for s in size)):
+                        or any(type(s) is not int or not 0 < s <= limit for s in size)):
                     bad_sizes.append((image.get('name', '<unnamed image>'), size))
             out["V006"].append(_f('fail' if bad_sizes else 'pass', 'texture dimensions',
                                   f"{src}: {bad_sizes or 'all measured sides <= 2048 px'}",
-                                  'positive measured NPM image dimensions, each side <= 2048 px; PNG-byte checks separate',
-                                  [9], src))
+                                  ('positive measured sides: GroundEl <= 512 px, other NPM <= 2048 px' if maf_images
+                                   else 'positive measured NPM image dimensions, each side <= 2048 px; PNG-byte checks separate'),
+                                  [9, 10] if maf_images else [9], src))
     if role == "ground":  # Flora checks (#191): dimensions V015, maps V005, Flora share V003
         geometry = [m for m in meshes if m not in ucx]
         for stage_id, findings in flora_findings(rb, kind, geometry, tris, profile, flora_schedule, flora_share).items():
