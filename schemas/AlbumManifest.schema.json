@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Non-certifying immutable PDF album intake manifest",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema", "source", "page_count", "accounted_pages", "excluded_pages", "status", "passed", "unresolved", "tools", "metadata", "timings", "album_index_sha256"],
+  "properties": {
+    "schema": {"const": "album-manifest/1"},
+    "source": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sha256", "bytes", "frozen_file"],
+      "properties": {
+        "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "bytes": {"type": "integer", "minimum": 1},
+        "frozen_file": {"const": "source.pdf"}
+      }
+    },
+    "page_count": {"type": "integer", "minimum": 1},
+    "accounted_pages": {"type": "integer", "minimum": 1},
+    "excluded_pages": {"const": []},
+    "status": {"enum": ["indexed", "partial"]},
+    "passed": {"const": false},
+    "unresolved": {"const": ["binding", "calibration", "ground_truth", "approval"]},
+    "tools": {
+      "type": "object", "additionalProperties": false, "required": ["pymupdf", "router"],
+      "properties": {"pymupdf": {"type": "string"}, "router": {"const": "album-intake/1"}}
+    },
+    "metadata": {"type": "object"},
+    "timings": {
+      "type": "object", "additionalProperties": false,
+      "required": ["page_budget_s", "policy", "observed_seconds", "reason"],
+      "properties": {
+        "page_budget_s": {"type": "number", "exclusiveMinimum": 0},
+        "policy": {"const": "hard_wall_per_page_including_spawn"},
+        "observed_seconds": {"type": "null"},
+        "reason": {"const": "volatile wall times belong in external benchmark receipts"}
+      }
+    },
+    "album_index_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

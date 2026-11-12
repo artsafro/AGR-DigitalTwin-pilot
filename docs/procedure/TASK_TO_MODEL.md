@@ -23,13 +23,14 @@ Use the matching `.agents/skills/model-*/SKILL.md` and `validate-delivery` skill
 
 Record every gate in `jobs/<JOB>/job.yaml`; schema:
 [`JobChecklist.schema.json`](../../schemas/JobChecklist.schema.json).
+A non-pass gate parked on someone else sets `waits: user | max | visual` (never on `pass`); the walk JSON reports it per gate and counts it under `waits` [#1204].
 Fixed dependency order below follows D104/D125: human geometry acceptance precedes
 **final SINTEZ**, even though preliminary checker diagnostics may run earlier.
 
 | ID | Completion evidence |
 |---|---|
 | inputs | Full source inventory with paths and SHA-256; requirement/profile/version, source units, coordinate system and source authority recorded in the job report. Mark synthetic sources. `jobs/<ID>/passport.json` (K1) is required only on the AGR Tools route until a second route exists; other OKS routes record the same facts in `job.yaml` inputs / REPORT [D247]. |
-| parts | `parts.json` validates against [PartsList](../../schemas/PartsList.schema.json), via the public `dt_ai.core.models.PartsList` facade; source coverage, operation and triangle budget per part, joints and questions; **user Gate 1 confirmation before build** (D111/D124/D125). |
+| parts | `parts.json` validates against [PartsList](../../schemas/PartsList.schema.json), via the public `dt_ai.core.models.PartsList` facade; source coverage, operation and triangle budget per part, joints and questions; **user Gate 1 confirmation before build** (D111/D124/D125). A headless agent requests Gate 1 through the existing board channel ([KANBAN](../agents/KANBAN.md), [WORKFLOW](../agents/WORKFLOW.md) step 0): post the questions (with the `parts.json` path and hash) as an issue comment, move the card to Needs you (a Hermes card: block it as `needs_input` naming that comment), and set the gate to `waits: user`; it builds nothing until the answer. The user's answer is recorded in `parts.json` `gate1` (`actor/date/scope/note`) with `ref` = the answering issue-comment URL, the card id or the `D<n>` decision it became [#1205]; a gate1 without the user's answer is not Gate 1. |
 | operations | Follow the cell's standard route ([oks-vpm body/windows/roof](../scenarios/oks-vpm.md#route-by-stage), [D250]); alternatives use `path: deviation` below. When using [kernel operations](../../src/dt_ai/ops/), apply them to [parts](../../src/dt_ai/parts/); log operation names and before/after invariant results (D108/D131). Broken invariants roll back; stop and ask. Include additional applicable invariants, including D129, when supported; never silently omit a mandatory check. |
 | budgets | Measured budgets vs cited profile/area/decision limits: master, NPM/VPM, UCX, materials, textures, density. Each measurement names its rule and comparison (`le` inclusive, `lt` exclusive); no inferred limit. |
 | export_readback | New versioned export, SHA-256; clean-process readback of **exported file**, checking topology, UV, materials, units/transforms. Working-scene checks alone do not complete this gate. |
@@ -92,10 +93,13 @@ versioned job evidence directory when a reproducible walk is needed.
 
 **Customer sources (#1202).** The named asset store is the shared Google Drive folder
 `G:/Мой диск/AGR-assets/` (one subfolder per library or object, `library/README.md`);
-customer sources are never committed (rule 57). Each job keeps a source registry
+customer sources are never committed (rule 57). An object's customer sources go to
+`G:/Мой диск/AGR-assets/<object>/source/` with a `SHA256SUMS.txt` (#1239; copy, never move,
+and hash the originals before and after). Each job keeps a source registry
 `jobs/<ID>/sources.json`: an `external-inputs/1` manifest whose `files` rows give the
 absolute `path`, `sha256`, `location` (`asset-store` or `named-folder`) and `folder` of
-every customer source, wherever it lives today. List such a manifest in `inputs` with
+every customer source, wherever it lives today; a row's `kind` is `customer-source` or
+`delivered-output`, and `original_path` keeps where a copied file came from. List such a manifest in `inputs` with
 `manifest: external-inputs/1`; the walker verifies the manifest itself as repo-relative
 evidence, then re-hashes every listed path and reports each row in the inputs gate's
 `external_inputs` as `equal`, `mismatch` (an error, the gate fails) or `unreachable`

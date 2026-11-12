@@ -1,4 +1,8 @@
-"""new-case: KPP1 provisional roof approval provenance, not delivery acceptance."""
+"""new-case: KPP1 provisional roof approval provenance, not delivery acceptance.
+
+The rerun-1209 receipts keep their historical 'provisional' marking [D249]; for revision R1 the values are final
+[D254] - later KPP1 runs drop the marking (tracked on #1244 / the next KPP1 card).
+"""
 from __future__ import annotations
 
 import importlib.util

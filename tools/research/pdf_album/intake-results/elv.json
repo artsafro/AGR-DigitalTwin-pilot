@@ -1,0 +1,832 @@
+{
+  "album": "elv",
+  "source_sha256": "49c105275ea56f16f9f281b3586876818215d99544d82644a5aab8e1cfba9545",
+  "pages": [
+    {
+      "pdf_page": 1,
+      "kind": "unknown",
+      "expected_kind": "unknown",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": null,
+      "routes": {
+        "vector_read": 12,
+        "ocr_vision": 1
+      },
+      "indicators": {
+        "text": 7,
+        "raster": 1,
+        "vector": 5
+      }
+    },
+    {
+      "pdf_page": 2,
+      "kind": "unknown",
+      "expected_kind": "unknown",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": null,
+      "routes": {
+        "ocr_vision": 5
+      },
+      "indicators": {
+        "raster": 2,
+        "unknown": 3
+      }
+    },
+    {
+      "pdf_page": 3,
+      "kind": "facade",
+      "expected_kind": "facade",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "Схема ситуационного плана",
+      "routes": {
+        "vector_read": 32,
+        "table_extraction": 2,
+        "ocr_vision": 1
+      },
+      "indicators": {
+        "text": 27,
+        "raster": 1,
+        "vector": 7
+      }
+    },
+    {
+      "pdf_page": 4,
+      "kind": "unknown",
+      "expected_kind": "unknown",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "Экспликация ОКС",
+      "routes": {
+        "vector_read": 58,
+        "table_extraction": 2,
+        "ocr_vision": 4
+      },
+      "indicators": {
+        "text": 46,
+        "outline_candidate": 2,
+        "raster": 2,
+        "vector": 14
+      }
+    },
+    {
+      "pdf_page": 5,
+      "kind": "unknown",
+      "expected_kind": "unknown",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "Экспликация ОКС",
+      "routes": {
+        "vector_read": 64,
+        "table_extraction": 2,
+        "ocr_vision": 8
+      },
+      "indicators": {
+        "text": 51,
+        "outline_candidate": 6,
+        "raster": 2,
+        "vector": 15
+      }
+    },
+    {
+      "pdf_page": 6,
+      "kind": "unknown",
+      "expected_kind": "unknown",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": null,
+      "routes": {
+        "vector_read": 65,
+        "ocr_vision": 7
+      },
+      "indicators": {
+        "text": 50,
+        "outline_candidate": 5,
+        "raster": 2,
+        "vector": 15
+      }
+    },
+    {
+      "pdf_page": 7,
+      "kind": "unknown",
+      "expected_kind": "unknown",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": null,
+      "routes": {
+        "vector_read": 63,
+        "ocr_vision": 8
+      },
+      "indicators": {
+        "text": 49,
+        "raster": 8,
+        "vector": 14
+      }
+    },
+    {
+      "pdf_page": 8,
+      "kind": "unknown",
+      "expected_kind": "unknown",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": null,
+      "routes": {
+        "vector_read": 42,
+        "ocr_vision": 17
+      },
+      "indicators": {
+        "text": 27,
+        "outline_candidate": 9,
+        "raster": 8,
+        "vector": 15
+      }
+    },
+    {
+      "pdf_page": 9,
+      "kind": "unknown",
+      "expected_kind": "unknown",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": null,
+      "routes": {
+        "vector_read": 18,
+        "ocr_vision": 6
+      },
+      "indicators": {
+        "text": 11,
+        "raster": 6,
+        "vector": 7
+      }
+    },
+    {
+      "pdf_page": 10,
+      "kind": "facade",
+      "expected_kind": "facade",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "Схемы разверток фасадов",
+      "routes": {
+        "vector_read": 52,
+        "ocr_vision": 10
+      },
+      "indicators": {
+        "text": 40,
+        "outline_candidate": 1,
+        "raster": 9,
+        "vector": 12
+      }
+    },
+    {
+      "pdf_page": 11,
+      "kind": "unknown",
+      "expected_kind": "unknown",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": null,
+      "routes": {
+        "vector_read": 23,
+        "ocr_vision": 4
+      },
+      "indicators": {
+        "text": 16,
+        "outline_candidate": 1,
+        "raster": 3,
+        "vector": 7
+      }
+    },
+    {
+      "pdf_page": 12,
+      "kind": "unknown",
+      "expected_kind": "unknown",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": null,
+      "routes": {
+        "vector_read": 23,
+        "ocr_vision": 4
+      },
+      "indicators": {
+        "text": 16,
+        "outline_candidate": 1,
+        "raster": 3,
+        "vector": 7
+      }
+    },
+    {
+      "pdf_page": 13,
+      "kind": "unknown",
+      "expected_kind": "unknown",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": null,
+      "routes": {
+        "vector_read": 21,
+        "ocr_vision": 4
+      },
+      "indicators": {
+        "text": 14,
+        "outline_candidate": 1,
+        "raster": 3,
+        "vector": 7
+      }
+    },
+    {
+      "pdf_page": 14,
+      "kind": "3D",
+      "expected_kind": "3D",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "Визуализации",
+      "routes": {
+        "vector_read": 13,
+        "ocr_vision": 2
+      },
+      "indicators": {
+        "text": 6,
+        "raster": 2,
+        "vector": 7
+      }
+    },
+    {
+      "pdf_page": 15,
+      "kind": "3D",
+      "expected_kind": "3D",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "Визуализации",
+      "routes": {
+        "vector_read": 13,
+        "ocr_vision": 2
+      },
+      "indicators": {
+        "text": 6,
+        "raster": 2,
+        "vector": 7
+      }
+    },
+    {
+      "pdf_page": 16,
+      "kind": "3D",
+      "expected_kind": "3D",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "Визуализации",
+      "routes": {
+        "vector_read": 13,
+        "ocr_vision": 2
+      },
+      "indicators": {
+        "text": 6,
+        "raster": 2,
+        "vector": 7
+      }
+    },
+    {
+      "pdf_page": 17,
+      "kind": "3D",
+      "expected_kind": "3D",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "Визуализации",
+      "routes": {
+        "vector_read": 13,
+        "ocr_vision": 2
+      },
+      "indicators": {
+        "text": 6,
+        "raster": 2,
+        "vector": 7
+      }
+    },
+    {
+      "pdf_page": 18,
+      "kind": "unknown",
+      "expected_kind": "unknown",
+      "status": "partial",
+      "reason": "dense_display_list_cutoff",
+      "printed_sheet": null,
+      "title": "Фасадная конструкция, представляют собой конструкцию ALT F50 с",
+      "routes": {
+        "vector_read": 77,
+        "ocr_vision": 1
+      },
+      "indicators": {
+        "text": 77,
+        "unknown": 1
+      }
+    },
+    {
+      "pdf_page": 19,
+      "kind": "facade",
+      "expected_kind": "facade",
+      "status": "partial",
+      "reason": "dense_display_list_cutoff",
+      "printed_sheet": null,
+      "title": "Фасадная конструкция, представляют собой конструкцию ALT F50 с",
+      "routes": {
+        "vector_read": 87,
+        "ocr_vision": 1
+      },
+      "indicators": {
+        "text": 87,
+        "unknown": 1
+      }
+    },
+    {
+      "pdf_page": 20,
+      "kind": "facade",
+      "expected_kind": "facade",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "Фрагменты фасадов",
+      "routes": {
+        "vector_read": 44,
+        "ocr_vision": 12
+      },
+      "indicators": {
+        "text": 28,
+        "outline_candidate": 10,
+        "raster": 1,
+        "unknown": 1,
+        "vector": 16
+      }
+    },
+    {
+      "pdf_page": 21,
+      "kind": "facade",
+      "expected_kind": "facade",
+      "status": "partial",
+      "reason": "dense_display_list_cutoff",
+      "printed_sheet": null,
+      "title": "Схема размещения информационных конструкций на фасадах",
+      "routes": {
+        "vector_read": 46,
+        "ocr_vision": 1
+      },
+      "indicators": {
+        "text": 46,
+        "unknown": 1
+      }
+    },
+    {
+      "pdf_page": 22,
+      "kind": "facade",
+      "expected_kind": "facade",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "Ведомость информационных конструкций на фасадах",
+      "routes": {
+        "vector_read": 63,
+        "ocr_vision": 1
+      },
+      "indicators": {
+        "text": 49,
+        "raster": 1,
+        "vector": 14
+      }
+    },
+    {
+      "pdf_page": 23,
+      "kind": "facade",
+      "expected_kind": "facade",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "Схема размещения вывески на фасаде",
+      "routes": {
+        "vector_read": 39,
+        "ocr_vision": 12
+      },
+      "indicators": {
+        "text": 23,
+        "outline_candidate": 11,
+        "raster": 1,
+        "vector": 16
+      }
+    },
+    {
+      "pdf_page": 24,
+      "kind": "facade",
+      "expected_kind": "facade",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "Схема размещения вывески на фасаде",
+      "routes": {
+        "vector_read": 35,
+        "ocr_vision": 8
+      },
+      "indicators": {
+        "text": 19,
+        "outline_candidate": 7,
+        "raster": 1,
+        "vector": 16
+      }
+    },
+    {
+      "pdf_page": 25,
+      "kind": "unknown",
+      "expected_kind": "unknown",
+      "status": "partial",
+      "reason": "dense_display_list_cutoff",
+      "printed_sheet": null,
+      "title": "Схема плана 1 этажа",
+      "routes": {
+        "vector_read": 125,
+        "ocr_vision": 1
+      },
+      "indicators": {
+        "text": 125,
+        "unknown": 1
+      }
+    },
+    {
+      "pdf_page": 26,
+      "kind": "plan",
+      "expected_kind": "plan",
+      "status": "partial",
+      "reason": "dense_display_list_cutoff",
+      "printed_sheet": null,
+      "title": "Схема плана технического этажа на отм. +2,800",
+      "routes": {
+        "vector_read": 29,
+        "ocr_vision": 1
+      },
+      "indicators": {
+        "text": 29,
+        "unknown": 1
+      }
+    },
+    {
+      "pdf_page": 27,
+      "kind": "schedule",
+      "expected_kind": "schedule",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "Экспликация помещений 1 этажа и технического этажа",
+      "routes": {
+        "vector_read": 93,
+        "table_extraction": 6,
+        "ocr_vision": 1
+      },
+      "indicators": {
+        "text": 84,
+        "raster": 1,
+        "vector": 15
+      }
+    },
+    {
+      "pdf_page": 28,
+      "kind": "unknown",
+      "expected_kind": "unknown",
+      "status": "partial",
+      "reason": "dense_display_list_cutoff",
+      "printed_sheet": null,
+      "title": "Схема плана 2 этажа",
+      "routes": {
+        "vector_read": 95,
+        "ocr_vision": 1
+      },
+      "indicators": {
+        "text": 95,
+        "unknown": 1
+      }
+    },
+    {
+      "pdf_page": 29,
+      "kind": "schedule",
+      "expected_kind": "schedule",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "Экспликация помещений 2 этажа",
+      "routes": {
+        "vector_read": 73,
+        "table_extraction": 3,
+        "ocr_vision": 1
+      },
+      "indicators": {
+        "text": 62,
+        "raster": 1,
+        "vector": 14
+      }
+    },
+    {
+      "pdf_page": 30,
+      "kind": "unknown",
+      "expected_kind": "unknown",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "Фрагмент плана кровли",
+      "routes": {
+        "vector_read": 91,
+        "table_extraction": 2,
+        "ocr_vision": 12
+      },
+      "indicators": {
+        "text": 78,
+        "outline_candidate": 11,
+        "raster": 1,
+        "vector": 15
+      }
+    },
+    {
+      "pdf_page": 31,
+      "kind": "unknown",
+      "expected_kind": "unknown",
+      "status": "partial",
+      "reason": "dense_display_list_cutoff",
+      "printed_sheet": null,
+      "title": "Схема плана кровли",
+      "routes": {
+        "vector_read": 111,
+        "ocr_vision": 1
+      },
+      "indicators": {
+        "text": 111,
+        "unknown": 1
+      }
+    },
+    {
+      "pdf_page": 32,
+      "kind": "unknown",
+      "expected_kind": "unknown",
+      "status": "partial",
+      "reason": "dense_display_list_cutoff",
+      "printed_sheet": null,
+      "title": "Схемы разрезов",
+      "routes": {
+        "vector_read": 52,
+        "ocr_vision": 1
+      },
+      "indicators": {
+        "text": 52,
+        "unknown": 1
+      }
+    },
+    {
+      "pdf_page": 33,
+      "kind": "unknown",
+      "expected_kind": "unknown",
+      "status": "partial",
+      "reason": "dense_display_list_cutoff",
+      "printed_sheet": null,
+      "title": "Схемы размещения элементов архитектурного освещения на фасадах",
+      "routes": {
+        "vector_read": 38,
+        "ocr_vision": 1
+      },
+      "indicators": {
+        "text": 38,
+        "unknown": 1
+      }
+    },
+    {
+      "pdf_page": 34,
+      "kind": "unknown",
+      "expected_kind": "unknown",
+      "status": "partial",
+      "reason": "dense_display_list_cutoff",
+      "printed_sheet": null,
+      "title": "Схемы размещения элементов архитектурного освещения на фасадах",
+      "routes": {
+        "vector_read": 40,
+        "ocr_vision": 1
+      },
+      "indicators": {
+        "text": 40,
+        "unknown": 1
+      }
+    },
+    {
+      "pdf_page": 35,
+      "kind": "facade",
+      "expected_kind": "facade",
+      "status": "partial",
+      "reason": "dense_display_list_cutoff",
+      "printed_sheet": null,
+      "title": "* на плане отображены только штучные светильники,",
+      "routes": {
+        "vector_read": 21,
+        "ocr_vision": 1
+      },
+      "indicators": {
+        "text": 21,
+        "unknown": 1
+      }
+    },
+    {
+      "pdf_page": 36,
+      "kind": "3D",
+      "expected_kind": "3D",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "Техническая визуализация",
+      "routes": {
+        "vector_read": 21,
+        "ocr_vision": 5
+      },
+      "indicators": {
+        "text": 11,
+        "outline_candidate": 3,
+        "raster": 2,
+        "vector": 10
+      }
+    },
+    {
+      "pdf_page": 37,
+      "kind": "3D",
+      "expected_kind": "3D",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "Техническая визуализация",
+      "routes": {
+        "vector_read": 21,
+        "ocr_vision": 5
+      },
+      "indicators": {
+        "text": 11,
+        "outline_candidate": 3,
+        "raster": 2,
+        "vector": 10
+      }
+    },
+    {
+      "pdf_page": 38,
+      "kind": "3D",
+      "expected_kind": "3D",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "Техническая визуализация",
+      "routes": {
+        "vector_read": 20,
+        "ocr_vision": 8
+      },
+      "indicators": {
+        "text": 11,
+        "outline_candidate": 6,
+        "raster": 2,
+        "vector": 9
+      }
+    },
+    {
+      "pdf_page": 39,
+      "kind": "3D",
+      "expected_kind": "3D",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "Техническая визуализация",
+      "routes": {
+        "vector_read": 19,
+        "ocr_vision": 7
+      },
+      "indicators": {
+        "text": 11,
+        "outline_candidate": 5,
+        "raster": 2,
+        "vector": 8
+      }
+    },
+    {
+      "pdf_page": 40,
+      "kind": "unknown",
+      "expected_kind": "unknown",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": null,
+      "routes": {
+        "vector_read": 22,
+        "ocr_vision": 7
+      },
+      "indicators": {
+        "text": 11,
+        "outline_candidate": 5,
+        "raster": 2,
+        "vector": 11
+      }
+    },
+    {
+      "pdf_page": 41,
+      "kind": "plan",
+      "expected_kind": "plan",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": "77:05:0010002:6, разработаны на основании требований градостроительного плана земельных участков №",
+      "routes": {
+        "vector_read": 20,
+        "ocr_vision": 1
+      },
+      "indicators": {
+        "text": 13,
+        "raster": 1,
+        "vector": 7
+      }
+    },
+    {
+      "pdf_page": 42,
+      "kind": "unknown",
+      "expected_kind": "unknown",
+      "status": "indexed",
+      "reason": null,
+      "printed_sheet": null,
+      "title": null,
+      "routes": {
+        "vector_read": 82,
+        "ocr_vision": 1
+      },
+      "indicators": {
+        "text": 70,
+        "raster": 1,
+        "vector": 12
+      }
+    }
+  ],
+  "accounted": 42,
+  "reference_pages": 42,
+  "kind_agreement": 42,
+  "scores": {
+    "plan": {
+      "correct": 2,
+      "predicted": 2,
+      "reference": 2,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "facade": {
+      "correct": 9,
+      "predicted": 9,
+      "reference": 9,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "section": {
+      "correct": 0,
+      "predicted": 0,
+      "reference": 0,
+      "precision": null,
+      "recall": null
+    },
+    "schedule": {
+      "correct": 2,
+      "predicted": 2,
+      "reference": 2,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "3D": {
+      "correct": 8,
+      "predicted": 8,
+      "reference": 8,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "unknown": {
+      "correct": 21,
+      "predicted": 21,
+      "reference": 21,
+      "precision": 1.0,
+      "recall": 1.0
+    }
+  },
+  "scope": "agreement with frozen text heuristics; NOT semantic ground truth",
+  "seconds": [
+    31.35050600001705,
+    28.70028680001269
+  ],
+  "deterministic": true,
+  "passed": false,
+  "evidence": "G:\\Мой диск\\AGR-evidence\\pdf-album\\1233\\t_3996e752-v002\\elv\\first",
+  "hashes": {
+    "album_index.json": "4e672f71229bf2c8ae026425249579fe3019c38c3e14032f8dfaba72b4229bf5",
+    "manifest.json": "389e4a4bf8ef62636e0bb1c5e19e1ba6e4eb08e65204af598fdc052d0a706a69"
+  }
+}

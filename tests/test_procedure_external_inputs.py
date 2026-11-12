@@ -261,7 +261,8 @@ def test_kpp1_source_registry_matches_cold_run_manifest():
     registry = json.loads((ROOT / "jobs/KPP1/sources.json").read_text(encoding="utf-8"))
     manifest = json.loads((ROOT / "jobs/KPP1/cold-run-1172/inputs-manifest.json").read_text(encoding="utf-8"))
     assert registry["manifest"] == TAG and registry["job"] == "KPP1" and registry["synthetic"] is False
-    assert [(r["path"], r["sha256"]) for r in registry["files"]] == \
+    # #1239: the DWGs moved to the object store; original_path keeps the cold-run location
+    assert [(r.get("original_path", r["path"]), r["sha256"]) for r in registry["files"]] == \
         [(r["path"], r["sha256"]) for r in manifest["files"]]
     for row in registry["files"]:
         assert row["location"] in ("asset-store", "named-folder")

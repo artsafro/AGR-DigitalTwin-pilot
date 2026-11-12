@@ -23,20 +23,21 @@ Read on demand, one line each. Read the domain file that matches the task before
 - Every dated user decision (`D<n>`): `docs/decisions.md`.
 - Which kind of fact lives in which file: `docs/agents/WORKFLOW.md`, "Memory map".
 - Who owns what (Claude / Codex / Antigravity): `docs/agents/ROLES.md`.
-- Task loop, handoff, experience capture: `docs/agents/WORKFLOW.md`.
+- Task loop, handoff, experience capture, snags: `docs/agents/WORKFLOW.md`.
 - Review questions, author receipts and how to run a Codex review: `docs/agents/REVIEW_CHECKLIST.md`, `docs/agents/WORKFLOW.md#before-requesting-review-author`.
 - Tools, MCP routes and their verified status: `docs/agents/CAPABILITIES.md`.
 - Production rules with citations (NPM/VPM, geometry, UV, materials, export, validation): `docs/domain/`.
 - Open conflicts between sources: `docs/domain/conflicts.md`.
 - Pipeline stages and their status: `docs/pipeline.md`.
 - Unsolved work: `docs/backlog.md`.
-- Removed closed jobs, experiments and orphan docs (tag `archive/2026-11`): `docs/ARCHIVE.md`.
+- Archived jobs, experiments, orphan docs (tag `archive/2026-11`): `docs/ARCHIVE.md`.
 - Accepted cases and lessons: `docs/cases.md`.
 - Terms: `GLOSSARY.md`.
-- Names for scripts, tools, jobs, outputs, branches and tags; object ids: `docs/agents/NAMING.md`, `jobs/REGISTRY.md`.
-- Benchmark etalons and pattern registry: `benchmark/`, `docs/domain/patterns/INDEX.md`. Removed historical files: `docs/ARCHIVE.md`.
-- Machine-readable rules: `standards/` (locked; change procedure in `standards/README.md`).
-- AGR knowledge base (Russian originals, read-only): `docs/agr/INDEX.md` only, then the file it names.
+- Naming (scripts, jobs, outputs, branches, tags): `docs/agents/NAMING.md`; object ids: `jobs/REGISTRY.md`.
+- Benchmark etalons: `benchmark/`; patterns: `docs/domain/patterns/INDEX.md`.
+- Customer sources, outside git: `G:/Мой диск/AGR-assets/<object>/source/` + `SHA256SUMS.txt`; `jobs/<ID>/sources.json`.
+- Machine-readable rules: `standards/` (locked; see `standards/README.md`).
+- AGR knowledge base (Russian, read-only): `docs/agr/INDEX.md` only.
 - Code map, checks and plugin configuration: `docs/agents/agents-reference.md`.
 - Production task (NPM / VPM, OKS / Ground / MAF / Flora / UCX): name its cell in `docs/scenarios/scenarios.json` and follow the `scenario` skill.
 - Modelling or reducing a model: read `docs/procedure/TASK_TO_MODEL.md` (fixed gates, free path, evidence checklist).

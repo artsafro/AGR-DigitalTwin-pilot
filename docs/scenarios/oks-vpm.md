@@ -45,7 +45,7 @@ external PNG UDIM sets. Ground, MAF and Flora of the same site are the `ground-v
 
 For body / windows / roof, **after Gate 1**, when **Max is busy**, the offline route
 (`dt_ai.ops` / [VARIANTS R14 kernel-prisms](../methods/building-body/VARIANTS.md)) is permitted only as
-`path: deviation` [D250]. Append the [deviation log](../procedure/TASK_TO_MODEL.md#free-path-and-deviation-log)
+`path: deviation` [D250]; whenever Max is held, any Max step may run in an agent-owned Blender instead [D255]. Append the [deviation log](../procedure/TASK_TO_MODEL.md#free-path-and-deviation-log)
 before continuing; all eight gates remain required, including before/after invariants, export readback,
 visual acceptance and final SINTEZ. This route permission is not Gate 1 approval or a waiver of a failed check.
 

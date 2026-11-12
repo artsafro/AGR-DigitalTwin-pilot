@@ -255,6 +255,16 @@ Rules:
   unresolved result-changing questions while preserving mandatory confirmations.
 - Disputed geometry: look first, then classify (user 2026-10-13 [D072]) - every group of a classifier's verdict, every
   question and every stop is shown isolated on the body (renders, three views, sizes) before a rule or a question.
+- Every subagent prompt and every `.claude/agents/*.md` body follows the [Prompt guide](#prompt-guide).
+
+### Prompt guide
+
+The single shared brief for any subagent prompt (named agents, general-purpose, Explore, fork). Do the one
+task you were given; anything else you notice goes into one "Open" line at the end, not into the work. Run
+independent tool calls in parallel in one message; serialize only when a call needs an earlier result. No
+filler: no restating the task, no narration of steps, no closing summary of what you did. Report numbers, not
+prose: counts, measured values with units, pass/fail per check, paths and ids, and the command that produced
+each; say "not checked" instead of guessing.
 
 ## Triggers (user 2026-10-14 [D074])
 
@@ -343,6 +353,7 @@ Each kind of fact lives in one place; the others point to it.
 | Session state (branch, next step, what waits) | `docs/HANDOFF.md` of the branch |
 | Session transcript | `logs/transcripts/` of the main checkout (local), named in the handoff |
 | Unsolved work | `docs/backlog.md`, GitHub issues |
+| A snag worked around (papercut) | `docs/papercuts/<branch>.md`, collected by `/retro` |
 
 A rule question is looked up in the order of `AGENTS.md` ("Where things are"): decision log first.
 
@@ -394,6 +405,9 @@ stage ends with the `experience-transfer` skill: exact acceptance scope, inputs/
 hashes, code used, checks actually run, failures and fixes, reuse candidates. Add it to
 `docs/cases.md`. Praise does not replace QA. A procedure becomes a general tool or skill
 only after it works on a second representative object.
+
+Small snags an agent works around are logged as one-line papercuts in `docs/papercuts/<branch>.md` (format and
+rules: `docs/papercuts/README.md`); `/retro` collects them.
 
 ## Session retro
 
