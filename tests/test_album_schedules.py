@@ -53,7 +53,7 @@ def _engine(cells, **kw):
     return dict(bbox=[0.0, 0.0, 50.0 * len(cells[0]), 10.0 * len(cells)], cells=cells, cell_boxes=_boxes(cells, **kw))
 
 
-def _table(prim, sec="same", status="ok"):
+def _table(prim, sec: object = "same", status="ok"):
     secondary = _engine(prim) if sec == "same" else (None if sec is None else _engine(sec))
     return S.build_table("p1-t1", 1, "27", _engine(prim), secondary, secondary_status=status)
 
@@ -265,6 +265,79 @@ def test_probe_finish_never_copied_random_tables():
                 assert m["original_label"] == own and own
             else:
                 assert m["original_label"] is None and m["code"] is None
+            assert m["default_material"] is None
+
+
+def _mschema_entry_errors(mats):
+    jsonschema = pytest.importorskip("jsonschema")
+    schema = json.loads(Path("schemas/AlbumMaterials.schema.json").read_text("utf-8"))
+    for i, m in enumerate(mats):
+        m.setdefault("material_id", f"m{i + 1}")
+    doc = dict(schema="album-materials/1", source=dict(sha256="0" * 64, bytes=1, pages=1), passed=False,
+               default_material=None, open_gates=["x"], materials=mats,
+               summary=dict(entries=len(mats), present=0, missing=0, merged_unresolved=0, suspect=0,
+                            single_engine=0, unbound=0))
+    jsonschema.validate(doc, schema)
+
+
+FIN_HEAD = [["Элемент", "Отделка"]]
+
+
+def test_engine_disagreement_on_finish_is_suspect_never_picked():
+    """Review P1 (a): primary RAL 7021 vs secondary RAL 7024 -> suspect, both texts and codes, no chosen code."""
+    table = _table(FIN_HEAD + [["Панель 1", "RAL 7021"]], FIN_HEAD + [["Панель 1", "RAL 7024"]])
+    [m] = S.finish_materials(table)
+    assert m["status"] == "suspect" and m["cell_status"] == "suspect"
+    assert m["code"] is None and m["code_system"] is None
+    assert m["original_label"] == "RAL 7021" and m["text_alt"] == "RAL 7024"
+    assert m["codes_by_engine"] == dict(primary=["RAL 7021"], secondary=["RAL 7024"])
+    _mschema_entry_errors([m])
+
+
+def test_primary_empty_secondary_text_is_suspect_not_missing():
+    """Review P1 (b): primary None vs secondary RAL 7024 -> suspect (missing only when both engines are empty)."""
+    table = _table(FIN_HEAD + [["Панель 1", None]], FIN_HEAD + [["Панель 1", "RAL 7024"]])
+    [m] = S.finish_materials(table)
+    assert m["status"] == "suspect" and m["code"] is None
+    assert m["original_label"] is None and m["text_alt"] == "RAL 7024"
+    assert m["codes_by_engine"] == dict(primary=[], secondary=["RAL 7024"])
+    table = _table(FIN_HEAD + [["Панель 1", "RAL 7021"]], FIN_HEAD + [["Панель 1", ""]])
+    [m] = S.finish_materials(table)
+    assert m["status"] == "suspect" and m["code"] is None and m["original_label"] == "RAL 7021"
+    _mschema_entry_errors([m])
+
+
+def test_single_engine_finish_is_recorded_on_the_entry():
+    """Review P1 (c): without a second engine the entry carries cell_status single_engine."""
+    table = _table(FIN_HEAD + [["Панель 1", "RAL 7021"], ["Панель 2", ""]], None, "second_engine_missing")
+    mats = S.finish_materials(table)
+    by_row = {m["binding"]["row"]: m for m in mats}
+    assert by_row[2]["status"] == "present" and by_row[2]["cell_status"] == "single_engine"
+    assert by_row[2]["code"] == "RAL 7021" and by_row[2]["codes_by_engine"] == dict(primary=["RAL 7021"], secondary=None)
+    assert by_row[3]["status"] == "missing" and by_row[3]["cell_status"] == "single_engine"
+    _mschema_entry_errors(mats)
+
+
+def test_probe_finish_engine_pairs_random():
+    """Brute force: 500 random primary/secondary finish pairs; no entry ever picks one side of a disagreement."""
+    rng = random.Random(12351)
+    choices = ["RAL 7021", "RAL 7024", "RAL 7021 металл", "", None, "окраска", "NCS S 2010-Y30R"]
+    for _ in range(500):
+        n = rng.randint(1, 6)
+        prim = FIN_HEAD + [[f"E{i}", rng.choice(choices)] for i in range(n)]
+        sec = FIN_HEAD + [[f"E{i}", rng.choice(choices) if rng.random() < 0.5 else prim[i + 1][1]] for i in range(n)]
+        mats = S.finish_materials(_table(prim, sec))
+        assert {m["binding"]["row"] for m in mats} == set(range(2, n + 2))
+        for m in mats:
+            p, s = prim[m["binding"]["row"] - 1][1], sec[m["binding"]["row"] - 1][1]
+            if (p or "") != (s or "") or (p is None) != (s is None):
+                if (p or "").strip() or (s or "").strip():
+                    assert m["status"] == "suspect" and m["code"] is None, (p, s, m)
+                    assert m["original_label"] == (p or None) and m["text_alt"] == (s or "")
+                else:
+                    assert m["status"] == "missing" and m["code"] is None
+            if m["status"] == "missing":
+                assert not (p or "").strip() and not (s or "").strip()
             assert m["default_material"] is None
 
 
