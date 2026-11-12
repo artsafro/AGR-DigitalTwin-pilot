@@ -39,13 +39,16 @@ SKIP_DIRS = {
     'program files (x86)', 'programdata', 'appdata', 'recovery', '$windows.~ws',
     '$getcurrent', 'config.msi', 'msocache', '.git', 'node_modules', '.venv', 'venv',
     'site-packages', '__pycache__', '.worktrees', '.tmp.drivedownload', '.tmp.driveupload',
+    '.claude', '.codex', '.cursor', '.gemini',  # agent caches (web fetches, tool results)
 }
 
 COMPANIES = (
     ('Вилтба', re.compile(r'в[иі]лтба|viltba|vilt[-_ ]ba|weltbau|вельтбау', re.I)),
     ('NTR', re.compile(r'(?<![^\W\d_])(?:ntr|нтр)(?![^\W\d_])', re.I)),
     ('АСТО-1', re.compile(r'(?<![^\W\d_])(?:асто|asto)(?:[-_ ]?1)?(?![^\W_])', re.I)),
+    ('А101', re.compile(r'(?<![^\W\d_])[аa]101(?!\d)', re.I)),  # found on disk, not named in #1274
 )
+PILOT_COMPANIES = ('Вилтба', 'NTR', 'АСТО-1')
 OTHER = 'other'
 
 _CODES = ('АГР', 'АР', 'АИ', 'ГП', 'АС', 'КЖ', 'КМ', 'КР', 'ОВ', 'ВК', 'ЭОМ', 'ЭС', 'СС',
@@ -326,7 +329,7 @@ def _canonical(rows):
 
 def pick_pilot(rows, company=None, n=10):
     uniq = _canonical(rows)
-    named = [c for c, _rx in COMPANIES]
+    named = PILOT_COMPANIES
     if company is None:
         counts = Counter(r['company'] for r in uniq if r['company'] in named)
         if not counts:
@@ -341,7 +344,7 @@ def pick_pilot(rows, company=None, n=10):
         secs = set(filter(None, r['sections'].split(';')))
         prio = min((PILOT_PRIORITY.index(s) for s in secs if s in PILOT_PRIORITY), default=99)
         pages = r.get('pages') or 0
-        return (r['text_layer'] != 'yes', prio, not 3 <= pages <= 300, r['path'])
+        return (r['text_layer'] != 'yes', not 3 <= pages <= 300, prio, r['path'])
 
     by_project = defaultdict(list)
     for r in sorted(pool, key=score):
@@ -419,11 +422,11 @@ def render_summary(rows, roots, skipped, walk_errors, hash_kind, csv_path, comma
     company, pilot = pick_pilot(rows, pilot_company)
     lines += ['', '## Proposed pilot parse (10 albums of one company)', '']
     if company is None:
-        lines.append('No album of Вилтба, NTR or АСТО-1 found; no pilot proposed.')
+        lines.append('No album of ' + ', '.join(PILOT_COMPANIES) + ' found; no pilot proposed.')
     else:
         lines += [f'Company: **{company}** (most unique albums, then pages, among the named companies). Ranking: text '
-                  'layer first, then section priority ' + ' > '.join(PILOT_PRIORITY) +
-                  ', 3-300 pages, round-robin over projects. ' +
+                  'layer first, then 3-300 pages, then section priority ' + ' > '.join(PILOT_PRIORITY) +
+                  ', round-robin over projects. ' +
                   (f'Only {len(pilot)} albums available.' if len(pilot) < 10 else ''), '',
                   '| # | Project | Sections | Pages | Text | sha256 (12) | Path |', '|---:|---|---|---:|---|---|---|']
         for i, r in enumerate(pilot, 1):

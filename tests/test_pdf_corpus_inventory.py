@@ -53,6 +53,7 @@ def corpus(tmp_path):
     (root / 'misc' / 'empty.pdf').write_bytes(b'')
     (root / 'misc' / 'notes.txt').write_text('ignore me')
     make_pdf(root / 'node_modules' / 'hidden.pdf')
+    make_pdf(root / '.claude' / 'ntr-AI' / 'webfetch.pdf')
     return root
 
 
@@ -152,7 +153,7 @@ def test_exclude_skips_directory_and_is_reported(corpus, tmp_path):
     assert {Path(r['path']).name for r in rows} == {'0123-АР фасады.pdf', 'same.pdf', 'ГП благоустройство.pdf',
                                                     'КЖ1.pdf'}
     md = (tmp_path / 'e.md').read_text(encoding='utf-8')
-    assert 'excluded 1' in md and 'skip-list 1' in md and str(corpus / 'misc') in md
+    assert 'excluded 1' in md and 'skip-list 2' in md and str(corpus / 'misc') in md
 
 
 def test_cloud_placeholder_is_not_read(corpus, tmp_path, monkeypatch):
@@ -204,7 +205,8 @@ def test_company_regex_probe():
     """Generated probe: every spelling is found as a path part; embedded in a word it is not."""
     rng = random.Random(1274)
     spellings = {'Вилтба': ['Вилтба', 'ВИЛТБА', 'Viltba', 'VILTBA', 'vilt_ba', '!Weltbau', 'Вельтбау'],
-                 'NTR': ['NTR', 'ntr', 'НТР'], 'АСТО-1': ['АСТО-1', 'АСТО', 'ASTO-1', 'asto_1', 'Асто 1']}
+                 'NTR': ['NTR', 'ntr', 'НТР'], 'АСТО-1': ['АСТО-1', 'АСТО', 'ASTO-1', 'asto_1', 'Асто 1'],
+                 'А101': ['!А101', 'A101', 'а101']}
     hits = total = 0
     for company, words in spellings.items():
         for w in words:
@@ -215,8 +217,9 @@ def test_company_regex_probe():
                 got = inv.guess_company(path, {})[0]
                 total += 1
                 hits += got == company
-                assert inv.guess_company(f'D:/x{w}y/Проект/лист.pdf', {})[0] != company or company == 'Вилтба'
-    assert hits == total == 300
+                assert inv.guess_company(f'D:/x{w.lstrip("!")}y/Проект/лист.pdf', {})[0] != company or company == 'Вилтба'
+    assert hits == total == 360
+    assert inv.guess_company('D:/А1011/a.pdf', {})[0] == 'other'
     for word in ('ЦЕНТР', 'НАСТОЯЩИЙ', 'CONTROL', 'entrance', 'Pastor', 'мастока'):
         assert inv.guess_company(f'D:/{word}/a.pdf', {})[0] == 'other', word
 
@@ -235,4 +238,9 @@ def test_pilot_picks_ten_distinct_of_one_company():
     assert len({r['hash'] for r in pilot}) == 10 and all(r['company'] == 'Вилтба' for r in pilot)
     assert all(r['text_layer'] == 'yes' for r in pilot) and len({r['project'] for r in pilot}) == 4
     assert inv.pick_pilot(rows, 'NTR')[1] == [rows[14]]
+    a101 = [dict(r, company='А101', hash='a' + r['hash']) for r in rows[:3]]
+    assert inv.pick_pilot(a101)[0] is None  # auto pilot stays within the companies named in #1274
+    assert len(inv.pick_pilot(a101, 'А101')[1]) == 3
+    short = [dict(rows[i], pages=1, sections='АГР') for i in range(4)] + rows[4:12]
+    assert all(r['pages'] == 10 for r in inv.pick_pilot(short)[1][:8])  # albums before single sheets
     assert inv.pick_pilot([r for r in rows if r['company'] == 'other']) == (None, [])
