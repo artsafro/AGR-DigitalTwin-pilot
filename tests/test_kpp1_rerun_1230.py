@@ -333,3 +333,27 @@ def test_v002_corner_replay_reports_only_real_slivers():
     slivers = [s for b in built for v in b.get("views", []) for s in v.get("unbuilt_slivers_z_m", [])]
     assert slivers                                     # 6.65..6.6501 and 4.8499..4.85 at the SW post
     assert all(0 < (b - a) * 1000 <= 1.0 for a, b in slivers), slivers
+
+
+def test_r1_v003_schedule_and_exported_readback_have_no_corner_cross():
+    """Real L01 rerun after #1246: 7 reported pairs, no box overlap > 1 mm, exported VPM has no fins."""
+    sched = _load("parts-schedule-r1-v003.json")
+    built = sched["mullions"]
+    assert sched["mullion_inserts"] == 244 and sched["mullions_dropped"] == []
+    assert built[:217] == _load("parts-schedule-v001.json")["mullions"]
+    pairs = [b for b in built if "views" in b]
+    assert len(pairs) == 7 and len(built) == 240
+    corner = built[217:]
+    assert not [(a["block"], b["block"]) for i, a in enumerate(corner) for b in corner[i + 1:] if _vol_overlap(a, b)]
+    rb = _load("corner-pairs-readback-r1-v003.json")
+    assert rb["passed"] is True  # only this scoped witness, not delivery acceptance
+    assert all(v for k, v in rb["v002"]["inside_object"].items() if "fin" in k)       # control: v002 had fins
+    assert not any(v for k, v in rb["v003"]["inside_object"].items() if "fin" in k)
+    for name in ("SM_Kpp_1.zip.r1-v003.validate.json", "0000_Kpp_1_01.r1-v003.validate.json"):
+        rep = _load(name)
+        assert rep["passed"] is False
+        topo = [f for f in _findings(rep, "V004") if f["name"] == "topology defects"]
+        assert topo and all(f["status"] == "pass" for f in topo)
+        clear = [f for f in _findings(rep, "V004") if f["name"] == "co-directional clearance"]
+        assert clear and all(": 0 < 5 mm" in f["observed"] for f in clear)
+    assert _load("build-report-r1-v003.json")["mullions_built"] == 240
