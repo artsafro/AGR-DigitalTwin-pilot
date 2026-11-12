@@ -344,32 +344,53 @@ def _material(source_kind: str, label: str | None, code: str | None, status: str
                 code_system=None if code is None else code.split()[0], status=status, binding=binding,
                 legend_symbol=extra.pop("legend_symbol", None), merged_from=extra.pop("merged_from", None),
                 page=page, sheet=sheet, bbox=bbox, authority="pdf_album_unapproved", default_material=None,
-                conflicts=[], **extra)
+                conflicts=[], cell_status=extra.pop("cell_status", None), text_alt=extra.pop("text_alt", None),
+                codes_by_engine=extra.pop("codes_by_engine", None), **extra)
+
+
+def cell_materials(source_kind: str, table: dict[str, Any], r: int, c: int,
+                   fallback_codes: list[str] | None = None) -> list[dict[str, Any]]:
+    """Material entries of one schedule cell; the cell status and both engine texts travel with every entry.
+
+    A ``suspect`` cell (engines disagree, or one engine is missing the table shape) gives ONE entry with status
+    ``suspect``, ``code = None`` and the codes of both engines - no side is chosen. ``missing`` only when no
+    engine has text; ``single_engine`` is recorded as ``cell_status``. ``fallback_codes`` (codes read from the
+    page words inside the cell) apply only to a cell both engines agree on or a single-engine cell.
+    """
+    cell = table["cells"][r][c]
+    binding = dict(kind="schedule_row", table_id=table["table_id"], row=r + 1, col=c + 1)
+    status = cell["status"]
+    text, alt = cell["text"], cell["text_alt"]
+    shape = any(s["row"] == r + 1 and s["col"] == c + 1 and s["reason"] == "shape_mismatch"
+                for s in table["suspect_cells"])
+    second = None if status == "single_engine" or shape else material_codes(alt if status == "suspect" else text)
+    words = list(fallback_codes or [])
+    by_engine = dict(primary=material_codes(text), secondary=second)
+    if words and not text.strip():
+        by_engine["page_words"] = words  # a third reading inside the cell box: never a silent fill
+    base = dict(page=table["page"], sheet=table["sheet"], bbox=cell["bbox"], cell_status=status, text_alt=alt,
+                codes_by_engine=by_engine, merged_from=cell["merged_from"] or None)
+    if (status == "suspect" and (text.strip() or alt.strip())) or "page_words" in by_engine:
+        return [_material(source_kind, text or None, None, "suspect", binding, **base)]
+    if status in ("merged", "merged_unresolved") or (cell["merged_from"] and not text and status != "suspect"):
+        return [_material(source_kind, None, None, "merged_unresolved", binding, **base)]
+    if not text.strip():
+        return [_material(source_kind, None, None, "missing", binding, **base)]
+    codes = material_codes(text) or [None]
+    return [_material(source_kind, text, code, "present", binding, **base) for code in codes]
 
 
 def finish_materials(table: dict[str, Any]) -> list[dict[str, Any]]:
-    """One entry per data row and finish column; missing/merged rows stay without label and code."""
+    """One entry per data row and finish column; missing/merged/suspect rows stay without a chosen code."""
     out = []
     for col in table["columns"]:
         if not _FINISH_HEADER.search(col["label"]):
             continue
-        c = col["col"] - 1
         for row in table["rows"]:
-            if row["row_type"] != "data":
-                continue
-            r = row["row"] - 1
-            cell = table["cells"][r][c]
-            binding = dict(kind="schedule_row", table_id=table["table_id"], row=r + 1, col=c + 1)
-            base = dict(page=table["page"], sheet=table["sheet"], bbox=cell["bbox"])
-            if cell["status"] in ("merged", "merged_unresolved") or (cell["merged_from"] and not cell["text"]):
-                out.append(_material("schedule_finish_cell", None, None, "merged_unresolved", binding,
-                                     merged_from=cell["merged_from"] or None, **base))
-            elif not cell["text"].strip():
-                out.append(_material("schedule_finish_cell", None, None, "missing", binding, **base))
-            else:
-                codes = material_codes(cell["text"]) or [None]
-                for code in codes:
-                    out.append(_material("schedule_finish_cell", cell["text"], code, "present", binding, **base))
+            r, c = row["row"] - 1, col["col"] - 1
+            # a non-data row is kept when its finish cell is suspect: the other engine may hold a finish there
+            if row["row_type"] == "data" or (row["row_type"] != "header" and table["cells"][r][c]["status"] == "suspect"):
+                out += cell_materials("schedule_finish_cell", table, r, c)
     return out
 
 
@@ -509,11 +530,7 @@ def _page_materials(page: Any, number: int, sheet: str | None, tables: list[dict
             if (t["table_id"], r + 1, c + 1) in claimed:
                 continue
             claimed.add((t["table_id"], r + 1, c + 1))
-            cell = t["cells"][r][c]
-            binding = dict(kind="schedule_row", table_id=t["table_id"], row=r + 1, col=c + 1)
-            for code in material_codes(cell["text"]) or codes:
-                out.append(_material("schedule_cell", cell["text"], code, "present", binding, number, sheet,
-                                     cell["bbox"]))
+            out += cell_materials("schedule_cell", t, r, c, fallback_codes=codes)
             continue
         if log is None:
             log = page.get_bboxlog()
@@ -659,6 +676,8 @@ def export_schedules(pdf: str | Path, output: str | Path, *, album_index: str | 
                 summary=dict(entries=len(materials), present=sum(m["status"] == "present" for m in materials),
                              missing=sum(m["status"] == "missing" for m in materials),
                              merged_unresolved=sum(m["status"] == "merged_unresolved" for m in materials),
+                             suspect=sum(m["status"] == "suspect" for m in materials),
+                             single_engine=sum(m["cell_status"] == "single_engine" for m in materials),
                              unbound=sum(m["binding"]["kind"] == "unbound" for m in materials)))
     manifest = dict(schema=MANIFEST_SCHEMA, source=source, engines=engines, secondary_status=sec_status,
                     pages=routes, tables=summary_tables, passed=False, open_gates=OPEN_GATES,

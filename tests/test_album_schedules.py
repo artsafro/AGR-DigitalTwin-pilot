@@ -292,6 +292,10 @@ def test_engine_disagreement_on_finish_is_suspect_never_picked():
     assert m["original_label"] == "RAL 7021" and m["text_alt"] == "RAL 7024"
     assert m["codes_by_engine"] == dict(primary=["RAL 7021"], secondary=["RAL 7024"])
     _mschema_entry_errors([m])
+    jsonschema = pytest.importorskip("jsonschema")
+    for bad in (dict(m, code="RAL 7021", code_system="RAL"), dict(m, cell_status=None)):
+        with pytest.raises(jsonschema.ValidationError):
+            _mschema_entry_errors([bad])
 
 
 def test_primary_empty_secondary_text_is_suspect_not_missing():
@@ -326,8 +330,12 @@ def test_probe_finish_engine_pairs_random():
         n = rng.randint(1, 6)
         prim = FIN_HEAD + [[f"E{i}", rng.choice(choices)] for i in range(n)]
         sec = FIN_HEAD + [[f"E{i}", rng.choice(choices) if rng.random() < 0.5 else prim[i + 1][1]] for i in range(n)]
-        mats = S.finish_materials(_table(prim, sec))
-        assert {m["binding"]["row"] for m in mats} == set(range(2, n + 2))
+        table = _table(prim, sec)
+        mats = S.finish_materials(table)
+        expected = {r["row"] for r in table["rows"] if r["row_type"] == "data"
+                    or (r["row_type"] != "header" and table["cells"][r["row"] - 1][1]["status"] == "suspect")}
+        assert {m["binding"]["row"] for m in mats} == expected
+        assert all(table["cells"][r - 1][1]["status"] != "suspect" for r in range(2, n + 2) if r not in expected)
         for m in mats:
             p, s = prim[m["binding"]["row"] - 1][1], sec[m["binding"]["row"] - 1][1]
             if (p or "") != (s or "") or (p is None) != (s is None):
@@ -339,6 +347,18 @@ def test_probe_finish_engine_pairs_random():
             if m["status"] == "missing":
                 assert not (p or "").strip() and not (s or "").strip()
             assert m["default_material"] is None
+
+
+def test_page_word_codes_never_fill_an_empty_schedule_cell():
+    """In-table branch of _page_materials: codes seen in the page words of an empty cell -> suspect, no code."""
+    table = _table(FIN_HEAD + [["Панель 1", ""]])
+    [m] = S.cell_materials("schedule_cell", table, 1, 1, fallback_codes=["RAL 7021"])
+    assert m["status"] == "suspect" and m["code"] is None and m["original_label"] is None
+    assert m["codes_by_engine"] == dict(primary=[], secondary=[], page_words=["RAL 7021"])
+    table = _table(FIN_HEAD + [["Панель 1", "RAL 7021"]], FIN_HEAD + [["Панель 1", "RAL 7024"]])
+    [m] = S.cell_materials("schedule_cell", table, 1, 1, fallback_codes=["RAL 7021"])
+    assert m["status"] == "suspect" and m["code"] is None
+    _mschema_entry_errors([m])
 
 
 def test_codes_parsed_from_label():
