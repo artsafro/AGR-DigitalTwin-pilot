@@ -32,7 +32,8 @@ def test_rows_are_well_formed():
         p = r["path"]
         assert p.startswith(PREFIXES) and p.endswith(".png") and p.isascii(), p
         assert r["map"] in MAPS and r["profile"] in PROFILES, p
-        assert r["mode"] == "RGB" and r["width"] == r["height"] and r["width"] & (r["width"] - 1) == 0, p
+        assert r["mode"] == "RGB" or (r["mode"] == "L" and r["map"] == "o"), p  # binary star opacity is grey
+        assert r["width"] == r["height"] and r["width"] & (r["width"] - 1) == 0, p
         assert len(r["sha256"]) == 64 and r["bytes"] > 0, p
         assert r["source"]["msg_id"] and len(r["source"]["sha256"]) == 64, p
         assert r["verdict"] and r["checks"] == "pass", p
@@ -53,6 +54,26 @@ def test_skipped_maf_atlas_is_not_processed():
     skipped = {s["msg_id"] for s in MANIFEST["skipped"]}
     assert {53407, 53408} <= skipped
     assert not {r["source"]["msg_id"] for r in MANIFEST["maps"]} & skipped
+
+
+def test_flora_candidates_name_species_only_when_confident():
+    rows = {r["path"] for r in MANIFEST["maps"]}
+    maps = json.loads((ROOT / "library/flora/maps.json").read_text(encoding="utf-8"))
+    catalogue = json.loads((ROOT / "library/flora/catalogue.json").read_text(encoding="utf-8"))
+    species = {s["latin"] for s in catalogue["species"]}
+    cands = MANIFEST["flora_candidates"]
+    assert cands
+    for c in cands:
+        assert c["confidence"] in ("high", "medium", "unconfirmed"), c["slug"]
+        assert (c["latin"] is not None) == (c["confidence"] == "high"), c["slug"]  # no guessed Latin names
+        atlas = [p for p in rows if p.startswith(f"flora/v003/maps/{c['slug']}/") and "_atlas_" in p]
+        assert len(atlas) == 2 * c["variants"], c["slug"]  # one d + one o per plant
+        assert c["latin"] not in species, "maps-only candidates are not catalogue species"
+        if c["latin"]:
+            record = maps[c["latin"]]
+            assert record["review_status"] in ("pending_review", "approved")  # approved only by the user [D242]
+            for key in ("diffuse", "opacity"):
+                assert record[key].split("AGR-assets/", 1)[1] in rows, record[key]
 
 
 def test_manifest_records_the_root_it_wrote_under(tmp_path):
