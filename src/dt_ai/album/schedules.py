@@ -421,6 +421,9 @@ def _route(index: dict[str, Any] | None, count: int, pages: list[int] | None) ->
     if index is None:
         return [dict(pdf_page=p, sheet=None, route="table_extraction", reason="explicit_page_request", roi=None)
                 for p in pages]  # type: ignore[union-attr]
+    listed = [p.get("pdf_page") for p in index.get("pages", [])]
+    if len(set(listed)) != len(listed):
+        raise ValueError(f"album_index_duplicate_page: {sorted(n for n in set(listed) if listed.count(n) > 1)}")
     by_page = {p.get("pdf_page"): p for p in index.get("pages", [])}
     wanted = pages if pages is not None else list(range(1, count + 1))
     out = []

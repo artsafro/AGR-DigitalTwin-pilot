@@ -273,6 +273,44 @@ def test_codes_parsed_from_label():
     assert S.material_codes("без кода") == []
 
 
+def test_probe_every_disagreement_is_listed_random(tmp_path):
+    """Brute force: 300 random engine pairs; a cell is `agree`/`merged`/`empty` only if both strings are equal,
+    every other cell is in suspect_cells with both strings, and the CSV holds every cell exactly once."""
+    rng = random.Random(41235)
+    alphabet = ["", None, "1", "10.77", "RAL 7021", "Гардероб ТЦ", "ГардеробТЦ", "Итого"]
+    for i in range(300):
+        nr, nc = rng.randint(1, 6), rng.randint(1, 5)
+        prim = [[rng.choice(alphabet) for _ in range(nc)] for _ in range(nr)]
+        sec = [[v if rng.random() < 0.8 else rng.choice(alphabet) for v in row] for row in prim]
+        table = S.build_table("p1-t1", 1, None, dict(bbox=[0, 0, 1, 1], cells=prim, cell_boxes=None),
+                              dict(bbox=[0, 0, 1, 1], cells=sec, cell_boxes=None), secondary_status="ok")
+        listed = {(s["row"], s["col"]) for s in table["suspect_cells"]}
+        for r in range(nr):
+            for c in range(nc):
+                cell = table["cells"][r][c]
+                if prim[r][c] != sec[r][c]:
+                    assert cell["status"] == "suspect" and (r + 1, c + 1) in listed
+                    assert cell["text_alt"] == (sec[r][c] or "")
+                else:
+                    assert cell["status"] in ("agree", "empty", "merged", "merged_unresolved")
+                    assert (cell["status"] == "merged_unresolved") == ((r + 1, c + 1) in listed)
+                assert cell["text"] == (prim[r][c] or "")
+        path = tmp_path / f"t{i}.csv"
+        S.write_table_csv(table, path)
+        assert S.validate_schedule_csv(path) == []
+        with path.open(encoding="utf-8", newline="") as fh:
+            keys = [(int(x["row"]), int(x["col"])) for x in csv.DictReader(fh)]
+        assert sorted(keys) == [(r + 1, c + 1) for r in range(nr) for c in range(nc)]
+
+
+def test_write_csv_never_overwrites(tmp_path):
+    path = tmp_path / "t.csv"
+    path.write_text("keep", encoding="utf-8")
+    with pytest.raises(FileExistsError):
+        S.write_table_csv(_table(ELV_LIKE), path)
+    assert path.read_text(encoding="utf-8") == "keep"
+
+
 # ---------------------------------------------------------------- synthetic PDF end to end
 
 
@@ -448,6 +486,30 @@ def test_rotated_page_gets_no_unaligned_second_engine(tmp_path):
         side = json.loads((tmp_path / "out/schedules" / f"{t['table_id']}.json").read_text("utf-8"))
         assert {s["reason"] for s in side["suspect_cells"]} == {"second_engine_coordinates_differ"}
         assert len(side["suspect_cells"]) == t["n_rows"] * t["n_cols"]
+
+
+def test_duplicate_index_page_and_source_change_fail_closed(tmp_path, synthetic, monkeypatch):
+    sha = hashlib.sha256(synthetic.read_bytes()).hexdigest()
+    page = dict(pdf_page=1, printed_sheet=None, regions=[])
+    ipath = tmp_path / "album_index.json"
+    ipath.write_text(json.dumps(dict(source=dict(sha256=sha), pages=[page, page])), "utf-8")
+    with pytest.raises(ValueError, match="album_index_duplicate_page"):
+        S.export_schedules(synthetic, tmp_path / "out", album_index=ipath)
+    assert not (tmp_path / "out").exists()
+    # the source changes while it is read: the second hash differs -> error, nothing published
+    calls = iter([sha, "f" * 64])
+    monkeypatch.setattr(S, "_sha", lambda path: next(calls))
+    with pytest.raises(S.AlbumReadError):
+        S.export_schedules(synthetic, tmp_path / "out2", pages=[1])
+    assert not (tmp_path / "out2").exists()
+
+
+def test_output_equal_to_album_index_is_refused(tmp_path, synthetic):
+    ipath = _index_file(tmp_path, synthetic, [40, 40, 520, 200])
+    before = ipath.read_bytes()
+    code = subprocess.run([sys.executable, "-m", "dt_ai.album.schedules", str(synthetic), "--album-index",
+                           str(ipath), "--output", str(ipath)], capture_output=True, text=True).returncode
+    assert code == 2 and ipath.read_bytes() == before
 
 
 @pytest.mark.parametrize("pages", [[0], [2], [1, 1], [], [True]])
