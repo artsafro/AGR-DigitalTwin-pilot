@@ -102,7 +102,9 @@ def test_dimension_short_connectors_keep_native_tick_endpoints(tmp_path):
     ]
 
 
-def test_split_bezier_axis_arcs(tmp_path):
+@pytest.mark.parametrize("delta", [0, 20, 50])
+@pytest.mark.parametrize("rotation", [0, 90])
+def test_split_bezier_axis_arcs(tmp_path, delta, rotation):
     doc = pymupdf.open()
     p = doc.new_page(width=400, height=300)
     for cx, label in [(100, "1"), (300, "4")]:
@@ -111,24 +113,35 @@ def test_split_bezier_axis_arcs(tmp_path):
             sh = p.new_shape()
             sh.draw_bezier(
                 (cx - 10, 200),
-                (cx - 10, 200 + sign * k),
-                (cx - k, 200 + sign * 10),
+                (cx - 10 + delta, 200 + sign * k),
+                (cx - k - delta, 200 + sign * 10),
                 (cx, 200 + sign * 10),
             )
             sh.draw_bezier(
                 (cx, 200 + sign * 10),
-                (cx + k, 200 + sign * 10),
-                (cx + 10, 200 + sign * k),
+                (cx + k + delta, 200 + sign * 10),
+                (cx + 10 - delta, 200 + sign * k),
                 (cx + 10, 200),
             )
             sh.finish(color=(0, 0, 0), closePath=False)
             sh.commit()
         p.insert_text((cx - 3, 203), label, fontsize=8)
         p.draw_line((cx, 190), (cx, 100))
+    # Opposite control shifts cancel at t=.5 and preserve every endpoint,
+    # but not the curve. Exercise serialized paths, including Form transforms.
+    if rotation:
+        nested = pymupdf.open()
+        page = nested.new_page(width=500, height=500)
+        page.show_pdf_page(pymupdf.Rect(20, 20, 480, 480), doc, 0, rotate=rotation)
+        doc = nested
     path = tmp_path / "split-arcs.pdf"
     doc.save(path)
     r = B.bind_album(path)
-    assert sorted(a["label"] for v in r["views"] for a in v["axes"]) == ["1", "4"]
+    assert sorted(a["label"] for v in r["views"] for a in v["axes"]) == (
+        ["1", "4"] if delta == 0 else []
+    )
+    assert not r["passed"]
+    assert all(v["scale"]["status"] == "unknown" for v in r["views"])
 
 
 @pytest.mark.parametrize("mode", ["ellipse", "open", "two_labels"])
