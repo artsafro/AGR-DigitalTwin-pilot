@@ -59,6 +59,55 @@ bpy.ops.wm.save_as_mainfile(filepath={str(dirty)!r})
     assert 'empty collection: unused_collection' in scenes[str(dirty)]['unsupported']
 
 
+@pytest.mark.parametrize('value', [0.0, 1.0])
+def test_real_blender_rejects_shape_keys_with_clean_reset(tmp_path, value):
+    """Synthetic saved mesh: even inactive shape keys are unsupported reusable state."""
+    if not BLENDER.is_file():
+        pytest.skip('Blender 5.1.2 unavailable')
+    clean, dirty, reset = [tmp_path / (name + '.blend') for name in ('clean', 'dirty', 'reset')]
+    code = f'''
+import bpy
+bpy.ops.wm.read_factory_settings(use_empty=True)
+s = bpy.context.scene
+s.unit_settings.system = 'METRIC'
+s.unit_settings.scale_length = 1
+m = bpy.data.meshes.new('WIN-01_npm_frame')
+m.from_pydata([(0,0,0),(1,0,0),(1,0,2),(0,0,2)], [], [(0,1,2,3)])
+o = bpy.data.objects.new(m.name, m)
+s.collection.objects.link(o)
+a = bpy.data.materials.new('matid_1')
+a['agr_material_id'] = 1
+m.materials.append(a)
+m.uv_layers.new(name='UVMap')
+bpy.ops.wm.save_as_mainfile(filepath={str(clean)!r})
+o.shape_key_add(name='Basis')
+push = o.shape_key_add(name='Push')
+for point in push.data:
+    point.co.z += 0.5
+push.value = {value!r}
+bpy.ops.wm.save_as_mainfile(filepath={str(dirty)!r})
+o.shape_key_clear()
+bpy.ops.wm.save_as_mainfile(filepath={str(reset)!r})
+'''
+    result = subprocess.run([str(BLENDER), '-b', '--factory-startup', '--python-exit-code', '3', '--python-expr', code],
+                            capture_output=True, text=True, timeout=120)
+    assert result.returncode == 0, result.stdout[-2000:] + result.stderr
+    checker = module()
+    scenes = checker.native_inspect([clean, dirty, reset], BLENDER)
+    expected = {'objects': ['WIN-01_npm_frame'], 'triangles': 2, 'size_m': [1, 0, 2],
+                'materials': [{'id': 1, 'name': 'matid_1'}]}
+    for path in (clean, reset):
+        assert checker.scene_errors(scenes[str(path)], expected, 'bottom-left') == []
+    errors = checker.scene_errors(scenes[str(dirty)], expected, 'bottom-left')
+    assert errors, 'shape keys must not pass base-mesh-only cleanliness'
+    message = ' '.join(errors)
+    assert all(token in message for token in ('shape key', 'WIN-01_npm_frame', 'Basis', 'Push'))
+    # Combine the reviewer witness with earlier native-material and D100 regressions.
+    scenes[str(dirty)]['objects'][0]['materials'][0]['id'] = True
+    combined = ' '.join(checker.scene_errors(scenes[str(dirty)], expected, 'flora-bbox-plus-0.1'))
+    assert 'shape key' in combined and 'unmapped material' in combined and 'size/pivot mismatch' in combined
+
+
 def test_real_windows_migration_and_fresh_cli(tmp_path):
     import os
     import sys
