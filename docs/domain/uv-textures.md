@@ -2,6 +2,10 @@
 
 Keys: `reg p.N` = `Rasporyajenies19012026trebovaniya(2).pdf` page N. `local:` relative to the repo root (AGR knowledge base; AGR `docs/` lives in `docs/agr/`). (project decision) = user/project rule, not regulation; (lesson) = from case study only.
 
+## Substance research status (project scope only)
+
+[Capability report](../research/substance-finishes.md): the earlier photo-pilot scope [D260] is superseded by capability-only closure [D259]; no production texture approval or changed map requirements follow from the partial raw exports.
+
 ## NPM textures (App.1)
 - Textures delivered as PNG atlases embedded in FBX. reg p.9 §5.1.
 - Allowed sizes only 256, 512, 1024, 2048 px square; max 2048. reg p.9 §5.2.
