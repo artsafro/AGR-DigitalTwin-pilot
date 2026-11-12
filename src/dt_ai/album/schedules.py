@@ -87,6 +87,8 @@ _TOTAL = re.compile(r"^\s*(итого|всего|total)\b", re.I)
 _RAL = re.compile(r"\b(?:RAL|РАЛ)[ \u00a0]?(\d{4})\b", re.I)
 _NCS = re.compile(r"\bNCS[ \u00a0]?(S[ \u00a0]?\d{4}-[A-Z]\d{0,2}[A-Z]?)\b")
 _FINISH_HEADER = re.compile(r"отделк|материал|цвет|покрыт|finish|material|colou?r|\bral\b", re.I)
+# GOST spec column «Код оборудования, изделия, материала» holds product codes, never finishes
+_NOT_FINISH_HEADER = re.compile(r"код\s+оборудован|изделия", re.I)
 _KINDS = [(re.compile(p, re.I), k) for p, k in [
     (r"кол-?во|количеств|\bqty\b|quantity", "quantity"), (r"площад|\barea\b", "area"),
     (r"объ[её]м|volume", "volume"), (r"длин|length|высот|ширин|толщин|размер|сечени", "length"),
@@ -384,7 +386,7 @@ def finish_materials(table: dict[str, Any]) -> list[dict[str, Any]]:
     """One entry per data row and finish column; missing/merged/suspect rows stay without a chosen code."""
     out = []
     for col in table["columns"]:
-        if not _FINISH_HEADER.search(col["label"]):
+        if not _FINISH_HEADER.search(col["label"]) or _NOT_FINISH_HEADER.search(col["label"]):
             continue
         for row in table["rows"]:
             r, c = row["row"] - 1, col["col"] - 1
