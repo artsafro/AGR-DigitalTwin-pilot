@@ -1,0 +1,435 @@
+{
+ "schema_version": "1.0.0",
+ "status": "draft",
+ "synthetic": false,
+ "object_id": "K3_4BK",
+ "source_tier": "B",
+ "sources": [
+  {
+   "kind": "model",
+   "reference": "inbox/STLB-04_RR_K3_FSD.fbx",
+   "sha256": "5da402b812c233781ef9e09378fe83a7312797d98cb92c835466ef4be29879a9"
+  },
+  {
+   "kind": "model",
+   "reference": "inbox/3k.max (Vlad's work scene, layers revit/К3/helpers)",
+   "sha256": "38f24c28579112b05b5dd25a6d45d9d19fb46b635f85be32f81d2fd312d3cf54"
+  },
+  {
+   "kind": "user",
+   "reference": "inbox/ТЗ_Архитекторы/1.jpg (АКП joints, floors 13-18)",
+   "sha256": "b910f011600aed8130f73f3d41ac104fc5a3b70ffb3b525756b8e66d5117348f"
+  },
+  {
+   "kind": "user",
+   "reference": "inbox/ТЗ_Архитекторы/2.jpg (АКП joints, floors 6-18)",
+   "sha256": "fdc37a672ca960282e2d3543d36d3d38591d8f929b1ce940eae3b841121da960"
+  },
+  {
+   "kind": "user",
+   "reference": "inbox/ТЗ_Архитекторы/file.ObyMIe.png (colour scheme)",
+   "sha256": "01a50b195dff0941a0b7749fbe85136b8d00985ae2c6fcb40c4e8a9a9dadec04"
+  }
+ ],
+ "triangle_budget": {
+  "vpm": 150000,
+  "npm": 150000
+ },
+ "parts": [
+  {
+   "id": "TypFloor",
+   "part_class": "wall",
+   "operation": "contour_rebuild",
+   "triangle_budget": {
+    "vpm": 54600,
+    "npm": 54600
+   },
+   "sources": [
+    {
+     "kind": "object",
+     "reference": "3k.max:Plane001"
+    },
+    {
+     "kind": "revit_element",
+     "reference": "Вентфасад 250 250 кирпич / кирпич_АКП / Шт_фасад, floors 2-7, 9-12, 14-16"
+    }
+   ],
+   "legend_item": "Плитка под кирпич 280х85 RAL 020 30 20 (Bricks1); откосы; Семейство1/2 АКП"
+  },
+  {
+   "id": "TypFloorWindows",
+   "part_class": "window",
+   "operation": "keep",
+   "triangle_budget": {
+    "vpm": 26000,
+    "npm": 26000
+   },
+   "sources": [
+    {
+     "kind": "object",
+     "reference": "3k.max:Plane001 ID 9 frames + Plane052 glass"
+    },
+    {
+     "kind": "revit_element",
+     "reference": "ОК-10/15/17/19/23-19, 33 per floor"
+    }
+   ],
+   "legend_item": "рамы, отливы RAL 7024"
+  },
+  {
+   "id": "TypFloorCapsules",
+   "part_class": "other",
+   "operation": "from_face",
+   "triangle_budget": {
+    "vpm": 5200,
+    "npm": 5200
+   },
+   "sources": [
+    {
+     "kind": "material_id",
+     "reference": "3k.max:Plane001 ID 10"
+    },
+    {
+     "kind": "region",
+     "reference": "window polygon extruded ~1 m inward (meeting 2026-11-11)"
+    }
+   ]
+  },
+  {
+   "id": "TypFloorSlats",
+   "part_class": "decor",
+   "operation": "primitive",
+   "triangle_budget": {
+    "vpm": 10660,
+    "npm": 10660
+   },
+   "sources": [
+    {
+     "kind": "object",
+     "reference": "3k.max:Прямоугольный импост 50х50 [22197215]002"
+    },
+    {
+     "kind": "revit_element",
+     "reference": "Прямоугольный импост 50х50 под углом, 102 per floor, 15°"
+    }
+   ],
+   "legend_item": "ламели АКП RAL 4009",
+   "build_as": "box"
+  },
+  {
+   "id": "BandFloor",
+   "part_class": "band",
+   "operation": "contour_rebuild",
+   "triangle_budget": {
+    "vpm": 13000,
+    "npm": 13000
+   },
+   "sources": [
+    {
+     "kind": "object",
+     "reference": "3k.max:Базовая стена Вентфасад +100 фиолетовый [22008018]002 (blank)"
+    },
+    {
+     "kind": "revit_element",
+     "reference": "Вентфасад 250 250 фиолетовый, Отлив_7024, ПЕР-001/003/004, Семейство2/3, floors 8 and 13"
+    },
+    {
+     "kind": "region",
+     "reference": "levels 23.55/24.355/26.19/26.70 (+15.75 for floor 13)"
+    }
+   ],
+   "legend_item": "АКП RAL 4009; швы по 1.jpg/2.jpg/Screenshot_1"
+  },
+  {
+   "id": "BandWindows",
+   "part_class": "window",
+   "operation": "keep",
+   "triangle_budget": {
+    "vpm": 4400,
+    "npm": 4400
+   },
+   "sources": [
+    {
+     "kind": "revit_element",
+     "reference": "34 windows per band floor, plane -1.50"
+    }
+   ],
+   "legend_item": "рамы RAL 7024"
+  },
+  {
+   "id": "BandACBaskets",
+   "part_class": "ac_screen",
+   "operation": "primitive",
+   "triangle_budget": {
+    "vpm": 1200,
+    "npm": 1200
+   },
+   "sources": [
+    {
+     "kind": "revit_element",
+     "reference": "AC baskets x6 per band floor (source 28.6 k tris each)"
+    }
+   ],
+   "legend_item": "корзины RAL 7024",
+   "build_as": "box"
+  },
+  {
+   "id": "Superstructure",
+   "part_class": "superstructure",
+   "operation": "contour_rebuild",
+   "triangle_budget": {
+    "vpm": 9000,
+    "npm": 9000
+   },
+   "sources": [
+    {
+     "kind": "revit_element",
+     "reference": "floors 17-18: brick, АКП, violet, Утеплитель_Штукатурка ral 7024, Ламели фиолетовый, ОК-08-19"
+    },
+    {
+     "kind": "region",
+     "reference": "levels 51.90-58.20"
+    }
+   ],
+   "legend_item": "АКП RAL 4009 сквозные панели 2 этажа; кирпичные пилястры"
+  },
+  {
+   "id": "SuperACBaskets",
+   "part_class": "ac_screen",
+   "operation": "primitive",
+   "triangle_budget": {
+    "vpm": 1500,
+    "npm": 1500
+   },
+   "sources": [
+    {
+     "kind": "revit_element",
+     "reference": "AC baskets floors 17-18"
+    }
+   ],
+   "legend_item": "корзины RAL 7024",
+   "build_as": "box"
+  },
+  {
+   "id": "TerraceRailing",
+   "part_class": "railing",
+   "operation": "primitive",
+   "triangle_budget": {
+    "vpm": 800,
+    "npm": 800
+   },
+   "sources": [
+    {
+     "kind": "revit_element",
+     "reference": "ЛЛУ 1100 railing 52.40-53.20, Отлив_Парапет"
+    }
+   ],
+   "build_as": "frame"
+  },
+  {
+   "id": "Roof",
+   "part_class": "slab",
+   "operation": "contour_rebuild",
+   "triangle_budget": {
+    "vpm": 1500,
+    "npm": 1500
+   },
+   "sources": [
+    {
+     "kind": "revit_element",
+     "reference": "ЖБ+500, Кровля_заводится на 600, roof plinths"
+    },
+    {
+     "kind": "region",
+     "reference": "58.20-59.20"
+    }
+   ]
+  },
+  {
+   "id": "Parapet",
+   "part_class": "parapet",
+   "operation": "contour_rebuild",
+   "triangle_budget": {
+    "vpm": 1500,
+    "npm": 1500
+   },
+   "sources": [
+    {
+     "kind": "revit_element",
+     "reference": "brick parapets 58.2-59.8, НВФ 1200 railing, handrail 3x60"
+    }
+   ],
+   "legend_item": "штукатурка/кирпич RAL 020 30 20"
+  },
+  {
+   "id": "ScreenFrames",
+   "part_class": "frame",
+   "operation": "primitive",
+   "triangle_budget": {
+    "vpm": 2000,
+    "npm": 2000
+   },
+   "sources": [
+    {
+     "kind": "revit_element",
+     "reference": "Обобщенные модели 4/5/6/7, 59.20-62.20, members 60 mm"
+    }
+   ],
+   "build_as": "profile_extrude"
+  },
+  {
+   "id": "Pergola",
+   "part_class": "decor",
+   "operation": "primitive",
+   "triangle_budget": {
+    "vpm": 2500,
+    "npm": 2500
+   },
+   "sources": [
+    {
+     "kind": "revit_element",
+     "reference": "16 columns 58.60-61.30, canopy ПЕР3 61.30-61.60, 33 battens 0.1x0.1"
+    }
+   ],
+   "legend_item": "АКП",
+   "build_as": "box"
+  },
+  {
+   "id": "Stylobate",
+   "part_class": "wall",
+   "operation": "keep",
+   "triangle_budget": {
+    "vpm": 3000,
+    "npm": 3000
+   },
+   "sources": [
+    {
+     "kind": "object",
+     "reference": "3k.max:Plane053"
+    }
+   ],
+   "legend_item": "АКП / керамогранит RAL 7024"
+  },
+  {
+   "id": "StylobateRoof",
+   "part_class": "slab",
+   "operation": "contour_rebuild",
+   "triangle_budget": {
+    "vpm": 600,
+    "npm": 600
+   },
+   "sources": [
+    {
+     "kind": "region",
+     "reference": "small stylobate roof, not yet modelled"
+    }
+   ]
+  },
+  {
+   "id": "StylobateCanopies",
+   "part_class": "glazing",
+   "operation": "primitive",
+   "triangle_budget": {
+    "vpm": 400,
+    "npm": 400
+   },
+   "sources": [
+    {
+     "kind": "region",
+     "reference": "glass canopies"
+    },
+    {
+     "kind": "region",
+     "reference": "1 эт_2.jpg"
+    }
+   ],
+   "build_as": "box"
+  },
+  {
+   "id": "StylobateStair",
+   "part_class": "other",
+   "operation": "contour_rebuild",
+   "triangle_budget": {
+    "vpm": 800,
+    "npm": 800
+   },
+   "sources": [
+    {
+     "kind": "region",
+     "reference": "stair on the other side of the small stylobate"
+    }
+   ]
+  },
+  {
+   "id": "MainGlass",
+   "part_class": "glazing",
+   "operation": "keep",
+   "triangle_budget": {
+    "vpm": 6000,
+    "npm": 6000
+   },
+   "sources": [
+    {
+     "kind": "object",
+     "reference": "3k.max:Plane052 + all window glass"
+    }
+   ]
+  }
+ ],
+ "joints": [
+  {
+   "parts": [
+    "TypFloor",
+    "BandFloor"
+   ],
+   "decision": "weld",
+   "extra_edges": 0,
+   "reason": "same outer brick plane and outline at 23.55/26.70; band module built on the typical-floor contour"
+  },
+  {
+   "parts": [
+    "TypFloor",
+    "TypFloorSlats"
+   ],
+   "decision": "embed",
+   "embed_depth_m": 0.01,
+   "extra_edges": 0,
+   "reason": "slats stand in the -0.25 niche, embedded 10 mm [D199]"
+  },
+  {
+   "parts": [
+    "BandFloor",
+    "BandACBaskets"
+   ],
+   "decision": "embed",
+   "embed_depth_m": 0.01,
+   "extra_edges": 0,
+   "reason": "baskets fixed into the recessed wall"
+  },
+  {
+   "parts": [
+    "Roof",
+    "Pergola"
+   ],
+   "decision": "embed",
+   "embed_depth_m": 0.02,
+   "extra_edges": 0,
+   "reason": "columns stand on the roof slab"
+  }
+ ],
+ "questions": [
+  {
+   "audience": "user",
+   "text": "Reveal colour on the brick facade: scheme says RAL 020 30 20, the note 2026-11-11 says АКП RGB 122 92 96 — take the note (newer)?"
+  },
+  {
+   "audience": "user",
+   "text": "Brick scale: Bricks1 as is, course 85 mm (37 courses per 3.15 floor, tile ~4.08 m), phase from floor base — ok? Architect hatch shows 75 mm courses."
+  },
+  {
+   "audience": "user",
+   "text": "Budgets are totals over all copies: typical floor ~7.4 k tris x 13 floors, sum ~141 k of 150 k; slats as 8-tri boxes (102/floor). AC baskets replaced by simple boxes + grille texture. Ok?"
+  }
+ ],
+ "gate1": null
+}

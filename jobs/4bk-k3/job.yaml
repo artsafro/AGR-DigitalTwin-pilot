@@ -1,0 +1,32 @@
+schema_version: 1.0.0
+job_id: 4bk-k3
+run_id: vpm-v001
+synthetic: false
+path: standard
+inputs: &inputs
+- path: jobs/4bk-k3/sources.json
+  sha256: 161c18f566dd4ebc2b6e938bf5afd84c2c647068f1663e91219dcce357a708f7
+  manifest: external-inputs/1
+- path: jobs/4bk-k3/passport.json
+  sha256: cbf28002d91ecd0109507a8d9386eb6b7e6dd8d52a550b0e70da5a77f34fe5d9
+artifacts: []
+deviations: []
+gates:
+  inputs:
+    status: review
+    note: "14 inbox files hashed (sources.json); Revit FBX feet -> 3k.max metres, level 0 = floor-1 slab top, Artem's level helpers read (TASK.md). Open: address, stem, GeoJSON point (Artem later)."
+    waits: user
+    evidence: *inputs
+  parts:
+    status: review
+    waits: user
+    note: "PartsList draft v001, 19 parts, VPM sum 144 660 of 150 000 [D161]; Gate 1 requested from Artem 2026-11-12 in the session, 3 questions inside."
+    evidence:
+    - path: jobs/4bk-k3/parts/k3_parts_v001.json
+      sha256: bf04a1252cf822817c59a1ff51c50cbc3fb6be7c6e0998b8249acecf2e570cc5
+  operations: {status: missing, note: "No build before Gate 1.", evidence: []}
+  budgets: {status: missing, note: "No build yet.", evidence: []}
+  export_readback: {status: missing, note: "No export yet.", evidence: []}
+  report: {status: missing, note: "No delivery yet.", evidence: []}
+  visual: {status: missing, note: "First piece (typical floor) not built yet.", evidence: []}
+  checker: {status: missing, note: "SINTEZ after visual acceptance.", evidence: []}

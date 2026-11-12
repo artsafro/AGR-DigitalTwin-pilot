@@ -1,0 +1,99 @@
+{
+ "agent_requests": [],
+ "created": "2026-11-12T12:47:26+01:00",
+ "gaps": [
+  "K2: the spec names window_type as an int; the opening marker stores a string library id (agr_window_type). The spec is not changed in this wave (#1024).",
+  "Address, stem SM_<Address>_NNN, GeoJSON point and FNO not given yet.",
+  "Level 0.000 assumed at Z=0 of 3k.max (floor 1 slab top); the Revit link dummy sits at Z=-0.15. User places elevation points.",
+  "No written texture spec: joint width, bond phase, alignment to corners/openings/floors not given; Bricks1 module ratio 3.43 (~290x85 mm) vs scheme 280x85.",
+  "Window surround colour: scheme RAL 7024 vs messenger note ~RGB 122 92 96 (close to АКП RAL 4009).",
+  "Roof, pergola, railing, capsule finishes not specified.",
+  "Tower floor 1, stair and door: Vlad (meeting 2026-11-11); GAP data for floor 1 pending."
+ ],
+ "journal": {
+  "lines": 0,
+  "path": "journal.jsonl",
+  "tail": []
+ },
+ "materials": [],
+ "normalization": {
+  "grid_zero_m": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "origin_m": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "scale": 0.3048,
+  "source_units": "ft",
+  "units": "m",
+  "up_axis": "Z"
+ },
+ "openings": [],
+ "parts": [],
+ "project_id": "4bk-k3",
+ "questions": [
+  "Source level A/B/C is not defined in #1024; default rule: A shell, B panelised, C ambiguous/unclassified (scene10_core.LEVEL_RULE)."
+ ],
+ "scene": "C:\\Users\\artsafro\\Desktop\\!3D viz\\!А101\\63_4BK_vlad\\inbox\\3k.max",
+ "schema": 1,
+ "source": {
+  "class": "panelised",
+  "level": "B",
+  "note": "Revit 2024 FBX (K3 facade, FSD), feet, no materials; already imported into 3k.max layer 'revit' (metres, 5787 meshes). Finishes only as images (ТЗ_Архитекторы): K3 brick-look concrete tile 280x85 RAL 020 30 20, АКП RAL 4009, frames/sills RAL 7024. Brick texture Bricks1 4096². All inputs with hashes: sources.json.",
+  "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/STLB-04_RR_K3_FSD.fbx",
+  "route": "AGR Tools 1.0 in 3ds Max 2026 on Vlad's work scene (layer К3); typical parts modelled once, textured, then replicated",
+  "sha256": "5da402b812c233781ef9e09378fe83a7312797d98cb92c835466ef4be29879a9"
+ },
+ "stages": [
+  {
+   "id": 0,
+   "status": "todo"
+  },
+  {
+   "id": 1,
+   "status": "todo"
+  },
+  {
+   "id": 2,
+   "status": "todo"
+  },
+  {
+   "id": 3,
+   "status": "todo"
+  },
+  {
+   "id": 4,
+   "status": "todo"
+  },
+  {
+   "id": 5,
+   "status": "todo"
+  },
+  {
+   "id": 6,
+   "status": "todo"
+  },
+  {
+   "id": 7,
+   "status": "todo"
+  },
+  {
+   "id": 8,
+   "status": "todo"
+  },
+  {
+   "id": 9,
+   "status": "todo"
+  },
+  {
+   "id": "agent",
+   "status": "todo"
+  }
+ ],
+ "title": "4БК, корпус К3 (STLB-04), ВПМ → НПМ ОКС",
+ "updated": "2026-11-12T12:47:27+01:00"
+}
