@@ -1,0 +1,78 @@
+{
+  "objects": [
+    {
+      "profile": "vpm",
+      "name": "SM_Kpp_1_Main",
+      "uv_sha256": [
+        "aeab2ee94173f245807f04f4fbe6af43c9ed75e0747b8ce5321feadbf4e9306f"
+      ],
+      "materials": [
+        "M_Kpp_1_Main_1"
+      ],
+      "material_indices_sha256": "4650fa848ebf7cfd9be66050a763646d975ed21935dda5c6a6e9fb270d9ccc1c"
+    },
+    {
+      "profile": "vpm",
+      "name": "SM_Kpp_1_MainGlass",
+      "uv_sha256": [
+        "6e0f33daff59486606e214e0a89d00be956240a793aef66ef650c5d1a67ba26a"
+      ],
+      "materials": [
+        "M_Kpp_1_MainGlass_1"
+      ],
+      "material_indices_sha256": "d263c7c60b6f980623510b23a02228fd669b558f1957db7883b706b247133c92"
+    },
+    {
+      "profile": "vpm",
+      "name": "UCX_SM_Kpp_1_Main_001",
+      "uv_sha256": [],
+      "materials": [],
+      "material_indices_sha256": "17b0761f87b081d5cf10757ccc89f12be355c70e2e29df288b65b30710dcbcd1"
+    },
+    {
+      "profile": "vpm",
+      "name": "UCX_SM_Kpp_1_Main_002",
+      "uv_sha256": [],
+      "materials": [],
+      "material_indices_sha256": "17b0761f87b081d5cf10757ccc89f12be355c70e2e29df288b65b30710dcbcd1"
+    },
+    {
+      "profile": "vpm",
+      "name": "UCX_SM_Kpp_1_Main_003",
+      "uv_sha256": [],
+      "materials": [],
+      "material_indices_sha256": "17b0761f87b081d5cf10757ccc89f12be355c70e2e29df288b65b30710dcbcd1"
+    },
+    {
+      "profile": "vpm",
+      "name": "UCX_SM_Kpp_1_Main_004",
+      "uv_sha256": [],
+      "materials": [],
+      "material_indices_sha256": "17b0761f87b081d5cf10757ccc89f12be355c70e2e29df288b65b30710dcbcd1"
+    },
+    {
+      "profile": "npm",
+      "name": "SM_Kpp_1_001_Main",
+      "uv_sha256": [
+        "19ec16bc59b21416423e20340f7f83b25a30ac454fe82585b403d9a7a69e6bf1"
+      ],
+      "materials": [
+        "M_Kpp_1_001_Main_1"
+      ],
+      "material_indices_sha256": "e17d53751f56420dee8f6fec366dd82c8ca41277ae15909f3c7d538175150ea5"
+    },
+    {
+      "profile": "npm",
+      "name": "SM_Kpp_1_001_MainGlass",
+      "uv_sha256": [
+        "6e0f33daff59486606e214e0a89d00be956240a793aef66ef650c5d1a67ba26a"
+      ],
+      "materials": [
+        "M_Kpp_1_MainGlass_1"
+      ],
+      "material_indices_sha256": "d263c7c60b6f980623510b23a02228fd669b558f1957db7883b706b247133c92"
+    }
+  ],
+  "unchanged": true,
+  "delivery_passed": false
+}

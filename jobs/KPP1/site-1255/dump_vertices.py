@@ -33,7 +33,16 @@ for i, ob in enumerate(sorted((o for o in bpy.context.scene.objects if o.type ==
     tri = np.empty(len(me.loop_triangles) * 3, dtype=np.int64)
     me.loop_triangles.foreach_get("vertices", tri)
     arrays[f"t{i:04d}"] = tri.reshape(-1, 3)
+    import hashlib
+    uv_hashes = []
+    for layer in me.uv_layers:
+        uv = np.empty(len(me.loops) * 2, dtype=np.float32)
+        layer.data.foreach_get('uv', uv)
+        uv_hashes.append(hashlib.sha256(uv.tobytes()).hexdigest())
+    material_indices = np.array([p.material_index for p in me.polygons], dtype=np.int32)
     summary.append({"key": key, "name": ob.name, "verts": len(w), "faces": len(me.polygons),
+                    "uv_sha256": uv_hashes,
+                    "material_indices_sha256": hashlib.sha256(material_indices.tobytes()).hexdigest(),
                     "materials": [s.material.name if s.material else None for s in ob.material_slots],
                     "location": list(ob.location), "rotation_euler": list(ob.rotation_euler),
                     "scale": list(ob.scale),

@@ -1,4 +1,8 @@
-# KPP1 #1255 — MSK-77 placement by fit to the customer's NPM: STOP (fit ambiguous)
+# KPP1 #1255 — historical MSK-77 fit STOP (superseded by [D260])
+
+Current placement, GeoJSON, validator receipts and remaining gates: [REPORT.md](REPORT.md).
+The following is preserved as the pre-approval diagnostic record; its `fit_ok=false`
+and `unique=false` are not changed by the later approximate-placement approval.
 
 Agent: dt-worker (Hermes card t_cd0d8792), 2026-11-12. Base: origin/main 5a9606d5.
 

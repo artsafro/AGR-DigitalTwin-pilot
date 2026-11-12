@@ -1,0 +1,184 @@
+{
+  "method": "fresh Blender 5.1.2 processes; every vertex against independent R(theta)+translation; exact triangle indices",
+  "tolerance_m": 0.002,
+  "objects": [
+    {
+      "profile": "vpm",
+      "name": "SM_Kpp_1_Main",
+      "vertices": 15052,
+      "triangles": 30162,
+      "max_export_error_m": 3.419210643589444e-06,
+      "pivot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": [
+        -1.6292068494294654e-07,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "profile": "vpm",
+      "name": "SM_Kpp_1_MainGlass",
+      "vertices": 336,
+      "triangles": 504,
+      "max_export_error_m": 2.718233476772968e-06,
+      "pivot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": [
+        -1.6292068494294654e-07,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "profile": "vpm",
+      "name": "UCX_SM_Kpp_1_Main_001",
+      "vertices": 8,
+      "triangles": 12,
+      "max_export_error_m": 2.5096663661634948e-06,
+      "pivot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": [
+        -1.6292068494294654e-07,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "profile": "vpm",
+      "name": "UCX_SM_Kpp_1_Main_002",
+      "vertices": 8,
+      "triangles": 12,
+      "max_export_error_m": 1.978524667077705e-06,
+      "pivot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": [
+        -1.6292068494294654e-07,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "profile": "vpm",
+      "name": "UCX_SM_Kpp_1_Main_003",
+      "vertices": 8,
+      "triangles": 12,
+      "max_export_error_m": 1.9603987635570798e-06,
+      "pivot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": [
+        -1.6292068494294654e-07,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "profile": "vpm",
+      "name": "UCX_SM_Kpp_1_Main_004",
+      "vertices": 8,
+      "triangles": 12,
+      "max_export_error_m": 3.349237314677519e-06,
+      "pivot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": [
+        -1.6292068494294654e-07,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "profile": "npm",
+      "name": "SM_Kpp_1_001_Main",
+      "vertices": 9165,
+      "triangles": 18332,
+      "max_export_error_m": 0.00038631765546787904,
+      "pivot": [
+        8056.14404296875,
+        -9581.26953125,
+        171.0500030517578
+      ],
+      "rotation": [
+        -1.6292068494294654e-07,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "profile": "npm",
+      "name": "SM_Kpp_1_001_MainGlass",
+      "vertices": 336,
+      "triangles": 504,
+      "max_export_error_m": 0.0003855495501690278,
+      "pivot": [
+        8056.14404296875,
+        -9581.26953125,
+        171.0500030517578
+      ],
+      "rotation": [
+        -1.6292068494294654e-07,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  ],
+  "geometry_transform_verified": true,
+  "delivery_passed": false
+}
