@@ -833,6 +833,7 @@ def _blender_inventory(paths, work: Path):
     return json.loads(payload), "Blender 5.1.2 bpy import_scene.fbx"
 
 
+@pytest.mark.max
 def test_max_inventory_isolates_parent_virtualenv(monkeypatch, tmp_path):
     monkeypatch.setenv('VIRTUAL_ENV', 'synthetic-parent-venv')
     seen = {}
