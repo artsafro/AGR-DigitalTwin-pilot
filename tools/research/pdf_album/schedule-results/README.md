@@ -18,12 +18,18 @@ full outputs of COD20207 and TEC26, and for ELV `materials.json`, `schedules.jso
 `schedules/p27-t1.{csv,json}`. Full outputs of all three albums (two identical runs, v002 = v003 byte for byte):
 `G:/Мой диск/AGR-evidence/pdf-album/1235/t_759bcfaa-v001/` + `SHA256SUMS.txt` (59 members, read back with
 `sha256sum -c`; SHA-256 of `SHA256SUMS.txt`: `b5cd6bb93439687c0ba17facea8071be685bf20fa2b6ceb87e9acf835221a628`).
+Review round 1 rerun (materials entries now carry `cell_status`, `text_alt`, `codes_by_engine`; summary
+`suspect`, `single_engine`): `G:/Мой диск/AGR-evidence/pdf-album/1235/t_759bcfaa-v002/` + `SHA256SUMS.txt`
+(56 members, `sha256sum -c` OK; SHA-256 of `SHA256SUMS.txt`:
+`0843f2eeacf562361597d82faa60932ab5f2c65c31ef2c9ff145b22dad50798b`). Schedules/CSV unchanged byte for byte;
+only `materials.json` and receipts changed. The corpus has no schedule-derived material entries (ELV 30 legend
+lines, COD/TEC26 0), so the suspect/single_engine counts are 0; timings below are from this rerun.
 
 | Album | Pages routed / accounted | Tables | Cells | Suspect cells | Rows found / ref | Cells found / ref | RAL found / ref | Ref-page codes in ref / extracted | Seconds |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| ELV | 6 (3, 4, 5, 27, 29, 30) / 42 | 24 | 839 | 69 | 3/3 | 9/9 | 3/3 | 3/4 | 8.374 |
-| COD20207 | 1 (5) / 5 | 1 | 32 | 0 | 1/1 | 2/2 | 0/3 | 0/0 | 0.128 |
-| TEC26 | 0 / 6 | 0 | 0 | 0 | n/a (0 ref) | n/a | n/a | n/a | 0.151 |
+| ELV | 6 (3, 4, 5, 27, 29, 30) / 42 | 24 | 839 | 69 | 3/3 | 9/9 | 3/3 | 3/4 | 8.347 |
+| COD20207 | 1 (5) / 5 | 1 | 32 | 0 | 1/1 | 2/2 | 0/3 | 0/0 | 0.153 |
+| TEC26 | 0 / 6 | 0 | 0 | 0 | n/a (0 ref) | n/a | n/a | n/a | 0.164 |
 
 - ELV suspect cells: 32 `engines_disagree` (pdfplumber drops spaces in title-block text, e.g. `Торговый Центр`
   vs `ТорговыйЦентр`), 37 `primary_engine_missed_table` (pdfplumber-only tables on p4/p5/p30). Every one is listed

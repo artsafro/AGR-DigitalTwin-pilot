@@ -13,8 +13,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 9004",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [],
       "default_material": null,
       "legend_symbol": null,
@@ -25,7 +27,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "not_found"
+      "symbol_status": "not_found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -39,8 +42,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 9016",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [],
       "default_material": null,
       "legend_symbol": null,
@@ -51,7 +56,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "not_found"
+      "symbol_status": "not_found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -65,8 +71,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 1001",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [
         "m9",
         "m12",
@@ -98,7 +106,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "found"
+      "symbol_status": "found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -112,8 +121,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 7021",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [
         "m7",
         "m8",
@@ -151,7 +162,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "found"
+      "symbol_status": "found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -165,8 +177,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 7040",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [],
       "default_material": null,
       "legend_symbol": {
@@ -190,7 +204,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "found"
+      "symbol_status": "found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -204,8 +219,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 5024",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [],
       "default_material": null,
       "legend_symbol": {
@@ -229,7 +246,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "found"
+      "symbol_status": "found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -243,8 +261,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 7021",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [
         "m4",
         "m8",
@@ -269,7 +289,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "not_found"
+      "symbol_status": "not_found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -283,8 +304,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 7021",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [
         "m4",
         "m7",
@@ -322,7 +345,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "found"
+      "symbol_status": "found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -336,8 +360,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 1001",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [
         "m3",
         "m12",
@@ -356,7 +382,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "not_found"
+      "symbol_status": "not_found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -370,8 +397,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 7021",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [
         "m4",
         "m7",
@@ -409,7 +438,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "found"
+      "symbol_status": "found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -423,8 +453,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 7021",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [
         "m4",
         "m7",
@@ -462,7 +494,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "found"
+      "symbol_status": "found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -476,8 +509,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 1001",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [
         "m3",
         "m9",
@@ -496,7 +531,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "not_found"
+      "symbol_status": "not_found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -510,8 +546,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 7021",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [
         "m4",
         "m7",
@@ -536,7 +574,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "not_found"
+      "symbol_status": "not_found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -550,8 +589,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 1001",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [
         "m9",
         "m12",
@@ -583,7 +624,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "found"
+      "symbol_status": "found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -597,8 +639,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 7021",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [
         "m7",
         "m8",
@@ -636,7 +680,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "found"
+      "symbol_status": "found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -650,8 +695,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 7040",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [],
       "default_material": null,
       "legend_symbol": {
@@ -675,7 +722,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "found"
+      "symbol_status": "found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -689,8 +737,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 5024",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [],
       "default_material": null,
       "legend_symbol": {
@@ -714,7 +764,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "found"
+      "symbol_status": "found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -728,8 +779,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 7021",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [
         "m4",
         "m8",
@@ -754,7 +807,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "not_found"
+      "symbol_status": "not_found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -768,8 +822,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 7021",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [
         "m4",
         "m7",
@@ -807,7 +863,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "found"
+      "symbol_status": "found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -821,8 +878,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 1001",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [
         "m3",
         "m12",
@@ -841,7 +900,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "not_found"
+      "symbol_status": "not_found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -855,8 +915,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 7021",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [
         "m4",
         "m7",
@@ -894,7 +956,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "found"
+      "symbol_status": "found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -908,8 +971,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 7021",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [
         "m4",
         "m7",
@@ -947,7 +1012,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "found"
+      "symbol_status": "found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -961,8 +1027,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 1001",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [
         "m3",
         "m9",
@@ -981,7 +1049,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "not_found"
+      "symbol_status": "not_found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -995,8 +1064,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 7021",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [
         "m4",
         "m7",
@@ -1021,7 +1092,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "not_found"
+      "symbol_status": "not_found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -1035,8 +1107,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 1001",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [
         "m3",
         "m9",
@@ -1056,7 +1130,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "not_found"
+      "symbol_status": "not_found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -1070,8 +1145,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 1001",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [
         "m3",
         "m9",
@@ -1104,7 +1181,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "found"
+      "symbol_status": "found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -1118,8 +1196,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 7021",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [
         "m4",
         "m7",
@@ -1145,7 +1225,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "not_found"
+      "symbol_status": "not_found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -1159,8 +1240,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 7021",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [
         "m4",
         "m7",
@@ -1186,7 +1269,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "not_found"
+      "symbol_status": "not_found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -1200,8 +1284,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 7021",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [
         "m4",
         "m7",
@@ -1227,7 +1313,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "not_found"
+      "symbol_status": "not_found",
+      "text_alt": null
     },
     {
       "authority": "pdf_album_unapproved",
@@ -1241,8 +1328,10 @@
         "kind": "unbound",
         "reason": "region_application_requires_review"
       },
+      "cell_status": null,
       "code": "RAL 1001",
       "code_system": "RAL",
+      "codes_by_engine": null,
       "conflicts": [
         "m3",
         "m9",
@@ -1262,7 +1351,8 @@
       "sheet": null,
       "source_kind": "legend_text",
       "status": "present",
-      "symbol_status": "not_found"
+      "symbol_status": "not_found",
+      "text_alt": null
     }
   ],
   "open_gates": [
@@ -1284,6 +1374,8 @@
     "merged_unresolved": 0,
     "missing": 0,
     "present": 30,
+    "single_engine": 0,
+    "suspect": 0,
     "unbound": 30
   }
 }

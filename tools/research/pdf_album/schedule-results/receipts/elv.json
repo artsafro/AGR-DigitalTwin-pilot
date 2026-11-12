@@ -10,10 +10,12 @@
     "merged_unresolved": 0,
     "missing": 0,
     "present": 30,
+    "single_engine": 0,
+    "suspect": 0,
     "unbound": 30
   },
   "output_sha256": {
-    "materials.json": "45638955dc9ec66a707f9a821174170f2e886fec14b7d6c1e24dc9cad2dedf7c",
+    "materials.json": "86309f62d17c7ae5fa7a021ce42b069981e5cde59df9d6079bd7f7918b2cd760",
     "schedules.json": "5d6448ddb5364658e160ccc90fc7c1628c70b333f7c9f9187c97868e3bcaed0b",
     "schedules/p27-t1.csv": "be347d1b292ee1efaa5a142de7c6c6e878a8689e10d02adc82c54c57c094bc07",
     "schedules/p27-t1.json": "20e9a08598577b8d9e7613d17da7d234d8e4c23b088b45368d6635995058cb40",
@@ -195,7 +197,7 @@
     ]
   },
   "secondary_status": "ok",
-  "seconds": 8.374,
+  "seconds": 8.347,
   "source_sha256": "49c105275ea56f16f9f281b3586876818215d99544d82644a5aab8e1cfba9545",
   "summary": {
     "cells": 839,

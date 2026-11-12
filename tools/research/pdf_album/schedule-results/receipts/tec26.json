@@ -10,10 +10,12 @@
     "merged_unresolved": 0,
     "missing": 0,
     "present": 0,
+    "single_engine": 0,
+    "suspect": 0,
     "unbound": 0
   },
   "output_sha256": {
-    "materials.json": "b50d11d05c0e98b395c49099f5a053eb3a51f0548e1fd8ebeb4b1a4fc3716005",
+    "materials.json": "ba42cff1f2e754da3c58ca82c5cf45d6a63c7063fac5a15356751ab38990ff05",
     "schedules.json": "b45b5ff8b25e90ab8d633bd6a330e042357b74c613c75b1393ccda6f87e335f4"
   },
   "pages_accounted": 6,
@@ -36,7 +38,7 @@
     "samples": []
   },
   "secondary_status": "ok",
-  "seconds": 0.151,
+  "seconds": 0.164,
   "source_sha256": "ab4339496166779b2989a42bdbf88072bf8267a6a30ad748da544bf48ed3f997",
   "summary": {
     "cells": 0,

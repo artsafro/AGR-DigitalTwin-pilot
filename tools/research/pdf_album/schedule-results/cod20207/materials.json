@@ -20,6 +20,8 @@
     "merged_unresolved": 0,
     "missing": 0,
     "present": 0,
+    "single_engine": 0,
+    "suspect": 0,
     "unbound": 0
   }
 }
