@@ -1,0 +1,74 @@
+{
+  "schema": "album-questions/1",
+  "sha256": "3398c18864b0ef46b3cb59d43c34e8e3a7707172ee372545861ff8a672bb87ce",
+  "passed": false,
+  "questions": [
+    {
+      "id": "cod-materials",
+      "page": 1,
+      "bbox": [
+        650,
+        680,
+        825,
+        755
+      ],
+      "kind": "material",
+      "reasons": [
+        "binding_unresolved",
+        "scale_and_units_unverified",
+        "ground_truth_not_independent",
+        "approval_open",
+        "ocr_vision_disagreement"
+      ],
+      "ocr_label": "Стекло в составе двухкамерного\n5.1\nстеклопакета / цвет - синий / RAL 5023\nСтемалит глухое заполнение / цвет – синий /\n5.2\nRAL 5023\nСтекло в составе двухкамерного стеклопакетс\n5.3\nцвет – нейтральный / RAL 7024",
+      "vision_label": "5.1\nСтекло в составе двухкамерного\nстеклопакета / цвет - синий / RAL 5023\n\n5.2\nСтемалит глухое заполнение / цвет - синий /\nRAL 5023\n\n5.3\nСтекло в составе двухкамерного стеклопакет[обрезано]\nцвет - нейтральный / RAL 7024",
+      "status": "unresolved",
+      "recipient": "architect"
+    },
+    {
+      "id": "cod-chain",
+      "page": 1,
+      "bbox": [
+        155,
+        551,
+        1055,
+        598
+      ],
+      "kind": "conflict",
+      "reasons": [
+        "binding_unresolved",
+        "scale_and_units_unverified",
+        "ground_truth_not_independent",
+        "approval_open"
+      ],
+      "ocr_label": "69600\n17800\n87450",
+      "vision_label": "69600\n17800\n87450",
+      "status": "unresolved",
+      "recipient": "architect",
+      "source_question": "Printed 69600 + 17800 = 87400, but printed total is 87450 mm; preserve 50 mm discrepancy for architect (D112)."
+    },
+    {
+      "id": "cod-equipment",
+      "page": 5,
+      "bbox": [
+        44,
+        227,
+        220,
+        319
+      ],
+      "kind": "schedule",
+      "reasons": [
+        "binding_unresolved",
+        "scale_and_units_unverified",
+        "ground_truth_not_independent",
+        "approval_open",
+        "ocr_vision_disagreement"
+      ],
+      "ocr_label": "Гибкая светодиодная подсветка с установкой\nв алюминиевый профиль\nОбщая длина: 5 505 метров\nИсточник: LED 10W/m RGBW IP67 48V\nОптика: Diffused\nЦвет: белый\nМатериал: силикон\nСечение: 16х15 мм\nБлоки питания в комплект не входят (выносные)\nТип управления: зависит от блока питания",
+      "vision_label": "Гибкая светодиодная подсветка с установкой\nв алюминиевый профиль\nОбщая длина: 5 505 метров\nИсточник: LED 10W/m RGBW IP67 48V\nОптика: Diffused\nЦвет: белый\nМатериал: силикон\nСечение: 16x15 мм\nБлоки питания в комплект не входят (выносные)\nТип управления: зависит от блока питания",
+      "status": "unresolved",
+      "recipient": "architect",
+      "source_question": "Final length/section approval required by source; quantity 1 is not length 1 m."
+    }
+  ]
+}

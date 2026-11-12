@@ -278,6 +278,8 @@ frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Mar
 
 | D262 | 2026-11-12 | KPP1 R1 placement: no SPOZU/general-plan DWG will arrive (Ground by another author). Accept the best rigid fit WITHOUT the 180-degree alternative to customer NPM `0607_77_05_0009005_117_02`: approximate, ±0.1 m, fitted to customer NPM 0607_77_05_0009005_117_02; entrance orientation not independently confirmed. Median residual 0.099 m is NOT a maximum error bound or a unique survey match. Use Revit zero mark 171.050 m; continue GeoJSON and V001/V011/V013/V014 with placeholder territorial code `0000` and empty FNO awaiting SINTEZ [D220]/[D235]. No other checks or manual gates waived. | `jobs/KPP1/site-1255/REPORT.md`, `docs/domain/geometry.md` | Artem 2026-11-12 «принимаю рекомендацию», USER DECISION 11:38 on Kanban t_cd0d8792 (#1255) |
 
+| D263 | 2026-11-12 | PDF fallback #1236: evaluate the three existing ELV/COD20207/TEC26 albums from `C:/x/pdf-album-research/t_5b23c219`, with labels explicitly marked `not independent (agent-made reference)`; no expert labelling required for this audit. Report recall, cost and latency on these three; larger independently labelled corpus is a follow-up, not delivered here. No geometry, binding or approval gate waived. | `docs/research/pdf-album-fallback.md`, `docs/domain/geometry.md` | Artem «принимаю рекомендации», USER DECISION on Kanban t_b6312eb3, 2026-11-12 14:37 |
+
 [passport-scope-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1207#issuecomment-6783203728
 
 [ground-refinement-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/295#issuecomment-6265799957
