@@ -450,6 +450,33 @@ def _circles(raw: list[dict[str, Any]]) -> list[tuple[Point, float, int]]:
             out.append(
                 (((r.x0 + r.x1) / 2.0, (r.y0 + r.y1) / 2.0), r.width / 2.0, d["index"])
             )
+    # get_drawings() already applies nested Form/XObject matrices. CAD exporters
+    # can put several tessellated circles and their radial lines in ONE PDF path;
+    # its global rectangle is not a bubble. Inspect closed subpaths separately.
+    for d in raw:
+        points: list[Point] = []
+        for item in d["items"]:
+            if item[0] != "l":
+                points = []
+                continue
+            a, b = _pt(item[1]), _pt(item[2])
+            if not points or math.dist(points[-1], a) > 0.02:
+                points = [a]
+            points.append(b)
+            if len(points) < 13 or math.dist(points[0], b) > 0.02:
+                continue
+            ring = points[:-1]
+            cx = (min(p[0] for p in ring) + max(p[0] for p in ring)) / 2
+            cy = (min(p[1] for p in ring) + max(p[1] for p in ring)) / 2
+            radii = [math.dist(p, (cx, cy)) for p in ring]
+            radius = sum(radii) / len(radii)
+            angles = [math.atan2(p[1] - cy, p[0] - cx) for p in points]
+            turns = [(b - a + math.pi) % (2 * math.pi) - math.pi for a, b in zip(angles, angles[1:])]
+            if (radius > 0.5 and max(abs(r - radius) for r in radii) <= 0.02 * radius
+                    and all(0 < abs(t) <= math.pi / 4 + 0.001 for t in turns)
+                    and abs(abs(sum(turns)) - 2 * math.pi) < 0.01):
+                out.append(((cx, cy), radius, d["index"]))
+            points = []
     return out
 
 

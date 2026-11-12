@@ -55,3 +55,19 @@ def test_scaled_level_with_stem_in_either_direction(tmp_path, up, factor):
     bound=[v for v in result['values'] if v['binding']['type']=='level']
     assert len(bound)==1
     assert bound[0]['level_y']==pytest.approx(y,abs=.02)
+
+
+def test_dimension_short_connectors_keep_native_tick_endpoints(tmp_path):
+    doc=pymupdf.open();p=doc.new_page(width=500,height=300)
+    sh=p.new_shape()
+    for a,b in [(100,103),(103,197),(197,200),(200,203),(203,347),(347,350)]:
+        sh.draw_line((a,200),(b,200))
+    for x in [100,200,350]:
+        sh.draw_line((x-2,202),(x+2,198))
+    sh.finish(color=(0,0,0));sh.commit()
+    p.insert_text((140,197),'2000',fontsize=8)
+    p.insert_text((265,197),'3000',fontsize=8)
+    path=tmp_path/'connectors.pdf';doc.save(path)
+    result=B.bind_album(path)
+    dims=[v for v in result['values'] if v['kind']=='dimension' and v['span']]
+    assert [(v['value'],v['span']['length_pt']) for v in dims]==[(2000,100),(3000,150)]

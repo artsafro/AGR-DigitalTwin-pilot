@@ -83,14 +83,14 @@ def _vert(s: R.Segment) -> bool:
     return abs(s.p0[0] - s.p1[0]) <= 0.05
 
 
-def _level_tips(segs: list[R.Segment]) -> list[tuple[float, float, int]]:
+def _level_tips(segs: list[R.Segment], max_arm: float = 15.0) -> list[tuple[float, float, int]]:
     """Arrow/triangle apexes of level marks: >= 2 short ~45 deg strokes ending in one point, one going left and
     one going right, both to the same side (``side`` = +1 arms below the apex, -1 above). A dimension tick
     drawn as two half-strokes leaves to opposite sides and is not a tip."""
     ends: dict[tuple[int, int], list[tuple[float, float, float, float]]] = {}
     for s in segs:
         dx, dy = s.p1[0] - s.p0[0], s.p1[1] - s.p0[1]
-        if _horiz(s) or _vert(s) or not 1.0 <= math.hypot(dx, dy) <= 15.0 or not 0.4 <= abs(dy) / abs(dx) <= 2.5:
+        if _horiz(s) or _vert(s) or not 1.0 <= math.hypot(dx, dy) <= max_arm or not 0.4 <= abs(dy) / abs(dx) <= 2.5:
             continue
         for (px, py), (qx, qy) in ((s.p0, s.p1), (s.p1, s.p0)):
             ends.setdefault((round(px / 0.3), round(py / 0.3)), []).append((px, py, qx - px, qy - py))
@@ -125,15 +125,16 @@ def _level_line(r: R.TextRun, segs: list[R.Segment], tips: list[tuple[float, flo
     for y, lo, hi, away in shelves:
         for e in (lo, hi):
             for tx, ty, side in tips:
-                if abs(tx - e) > 0.6 or side != -away:
+                if abs(tx - e) > 0.6:
                     continue
                 d = (ty - y) * away
-                if -0.5 <= d <= 1.5 * s_:
+                if side == -away and -0.5 <= d <= 1.5 * s_:
                     found.add((tx, ty))
-                elif 0 < d <= 6.0 * s_ and any(
+                elif (0 < abs(ty - y) <= 6.0 * s_ and side * (y - ty) > 0
+                      and any(
                         _vert(v) and abs(v.p0[0] - e) <= 0.6
                         and abs(min(v.p0[1], v.p1[1]) - min(y, ty)) <= 0.6
-                        and abs(max(v.p0[1], v.p1[1]) - max(y, ty)) <= 0.6 for v in segs):
+                        and abs(max(v.p0[1], v.p1[1]) - max(y, ty)) <= 0.6 for v in segs)):
                     found.add((tx, ty))
     ys: dict[float, tuple[float, float]] = {}
     for p in sorted(found):
@@ -377,7 +378,7 @@ def _bind_page(pymupdf: Any, page: Any, number: int, sheet: str | None) -> dict[
     # distinct tip -> unbound (never the nearest line); + raw absolute elevation below the mark
     levels = []
     level_runs: set[int] = set()
-    tips = _level_tips(segs)
+    tips = _level_tips(segs, max([15.0] + [2.0 * r.size for r in runs if R.parse_level_text(r.text) is not None]))
     for i, r in enumerate(runs):
         v = R.parse_level_text(r.text)
         if v is None:
