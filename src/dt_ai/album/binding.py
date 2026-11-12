@@ -23,14 +23,20 @@ Rules (each has a test in ``tests/test_album_binding.py``):
   span whose ends sit on the level lines of two level marks of the view), else ``unbound`` with the reason.
 - Level marks: the level line is found ONLY through the mark symbol: a shelf under (or over) the text covering
   >= half of it, and an arrow/triangle tip (two ~45 deg arms pointing back to the text) at a shelf end, either
-  within 1.5 text heights or reached by one vertical stem (Revit). No tip -> ``unbound no_level_line``; two
+  within 1.5 text heights or reached by one vertical stem (Revit, either direction).
+  Tip arms are bounded relative to text size as well as the legacy 15 pt minimum budget.
+  A tight closed rectangle containing exactly one level text is a plan ``spot_level``:
+  its ``spot_bbox`` locates the tag, ``level_y`` stays null, and it NEVER feeds
+  ``level_pair`` or elevation-line consistency. No tip/box -> ``unbound no_level_line``; two
   distinct tips, or one tip claimed by two marks -> ``level_line_ambiguous``; never the nearest line. Bound marks
   of one view (>= 3 distinct values) must fit one linear value(y) (Theil-Sen); an outlier beyond 1 pt is
   ``unbound level_value_inconsistent`` with a D112 finding, its drawn line kept as ``level_y_drawn``. Only bound
   marks bind as ``level`` and feed ``level_pair``; the absolute elevation written under a mark is kept raw.
   Every dimension-like text token (>= 3 digits) that no span claims is a value with ``unbound`` /
   ``no_dimension_line``; nothing is dropped.
-- Axes: a stroked circle holding exactly one axis-label run. A bubble with a radial line takes the line
+- Axes: a stroked circle holding exactly one axis-label run (including closed polygon
+  loops inside compound paths and two native semicircle strokes). PyMuPDF applies nested
+  XObject transforms before recognition; non-circular or open loops are not bubbles. A bubble with a radial line takes the line
   orientation; otherwise >= 2 bubbles on one row are vertical axes (x), on one column horizontal axes (y).
 - Scale: per view, ONLY from model anchors ``{page, axes:[a, b], model_mm}`` taken from an independent
   DWG/BIM source whose SHA-256 differs from the PDF. >= 2 independent anchors (different axis pairs, different
@@ -128,13 +134,13 @@ def _level_line(r: R.TextRun, segs: list[R.Segment], tips: list[tuple[float, flo
                 if abs(tx - e) > 0.6:
                     continue
                 d = (ty - y) * away
-                if side == -away and -0.5 <= d <= 1.5 * s_:
-                    found.add((tx, ty))
-                elif (0 < abs(ty - y) <= 6.0 * s_ and side * (y - ty) > 0
-                      and any(
-                        _vert(v) and abs(v.p0[0] - e) <= 0.6
-                        and abs(min(v.p0[1], v.p1[1]) - min(y, ty)) <= 0.6
-                        and abs(max(v.p0[1], v.p1[1]) - max(y, ty)) <= 0.6 for v in segs)):
+                direct = side == -away and -0.5 <= d <= 1.5 * s_
+                stem = (0 < abs(ty - y) <= 6.0 * s_ and side * (y - ty) > 0
+                        and any(
+                            _vert(v) and abs(v.p0[0] - e) <= 0.6
+                            and abs(min(v.p0[1], v.p1[1]) - min(y, ty)) <= 0.6
+                            and abs(max(v.p0[1], v.p1[1]) - max(y, ty)) <= 0.6 for v in segs))
+                if direct or stem:
                     found.add((tx, ty))
     ys: dict[float, tuple[float, float]] = {}
     for p in sorted(found):

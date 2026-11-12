@@ -47,6 +47,7 @@ import json
 import math
 import re
 from dataclasses import asdict, dataclass, field
+from itertools import pairwise
 from pathlib import Path
 from typing import Any
 
@@ -471,12 +472,38 @@ def _circles(raw: list[dict[str, Any]]) -> list[tuple[Point, float, int]]:
             radii = [math.dist(p, (cx, cy)) for p in ring]
             radius = sum(radii) / len(radii)
             angles = [math.atan2(p[1] - cy, p[0] - cx) for p in points]
-            turns = [(b - a + math.pi) % (2 * math.pi) - math.pi for a, b in zip(angles, angles[1:])]
+            turns = [(b - a + math.pi) % (2 * math.pi) - math.pi for a, b in pairwise(angles)]
             if (radius > 0.5 and max(abs(r - radius) for r in radii) <= 0.02 * radius
                     and all(0 < abs(t) <= math.pi / 4 + 0.001 for t in turns)
                     and abs(abs(sum(turns)) - 2 * math.pi) < 0.01):
                 out.append(((cx, cy), radius, d["index"]))
             points = []
+    # Native AutoCAD emits a bubble as two separately stroked semicircles.
+    # Match the complete, connected loop, not two overlapping arc bounding boxes.
+    for left, right in pairwise(raw):
+        a, b = left['items'], right['items']
+        if len(a) != 2 or len(b) != 2 or any(it[0] != 'c' for it in a + b):
+            continue
+        if math.dist(_pt(a[-1][-1]), _pt(b[0][1])) > 0.02:
+            b = [('c', *reversed(it[1:])) for it in reversed(b)]
+        curves = a + b
+        if any(math.dist(_pt(c[-1]), _pt(n[1])) > 0.02 for c, n in zip(curves, curves[1:] + curves[:1])):
+            continue
+        points = []
+        for c in curves:
+            for t in (0.0, 0.5):
+                xy = [sum(w * p[j] for w, p in zip(
+                    ((1-t)**3, 3*(1-t)**2*t, 3*(1-t)*t*t, t**3), c[1:])) for j in (0, 1)]
+                points.append((xy[0], xy[1]))
+        cx = (min(p[0] for p in points) + max(p[0] for p in points)) / 2
+        cy = (min(p[1] for p in points) + max(p[1] for p in points)) / 2
+        radii = [math.dist(p, (cx, cy)) for p in points]
+        radius = sum(radii) / len(radii)
+        angles = [math.atan2(p[1]-cy, p[0]-cx) for p in points + points[:1]]
+        turns = [(b-a+math.pi) % (2*math.pi)-math.pi for a,b in pairwise(angles)]
+        if (radius > 0.5 and max(abs(r-radius) for r in radii) <= .02*radius
+                and abs(abs(sum(turns))-2*math.pi) < .01):
+            out.append(((cx, cy), radius, left['index']))
     return out
 
 
