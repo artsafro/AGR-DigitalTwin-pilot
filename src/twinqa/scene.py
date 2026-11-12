@@ -1805,6 +1805,20 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
         loose = [i["name"] for i in rb.get("images", []) if not i["packed"]]
         out["V006"].append(_f("fail" if loose else "pass", "embedded textures", f"{src}: {loose or 'all embedded'}",
                               "PNG embedded in FBX", [9], src))
+        # Reg p.9 §5.2: no NPM atlas side exceeds 2048 px. Readback dimensions
+        # complement (never replace) PNG-byte checks and area-specific smaller limits.
+        images = rb.get('images', [])
+        if images:
+            bad_sizes = []
+            for image in images:
+                size = image.get('size')
+                if (not isinstance(size, (list, tuple)) or len(size) != 2
+                        or any(type(s) is not int or not 0 < s <= 2048 for s in size)):
+                    bad_sizes.append((image.get('name', '<unnamed image>'), size))
+            out["V006"].append(_f('fail' if bad_sizes else 'pass', 'texture dimensions',
+                                  f"{src}: {bad_sizes or 'all measured sides <= 2048 px'}",
+                                  'positive measured NPM image dimensions, each side <= 2048 px; PNG-byte checks separate',
+                                  [9], src))
     if role == "ground":  # Flora checks (#191): dimensions V015, maps V005, Flora share V003
         geometry = [m for m in meshes if m not in ucx]
         for stage_id, findings in flora_findings(rb, kind, geometry, tris, profile, flora_schedule, flora_share).items():

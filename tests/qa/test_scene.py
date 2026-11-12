@@ -1931,3 +1931,25 @@ def test_ground_materials_cli_reaches_scene(monkeypatch, tmp_path):
     findings = [f for stage in seen["report"].stages for f in stage.findings]
     area = next(f for f in findings if f.name == "ground footprint coverage")
     assert area.status == "pass"
+
+
+@pytest.mark.parametrize("size,status", [([2048, 2048], "pass"), ([8192, 8192], "fail"),
+                                        ([2049, 2048], "fail"), ([0, 0], "fail"),
+                                        ([float('nan'), 512], "fail"), ([float('inf'), 512], "fail"),
+                                        (None, "fail"), ([True, 512], "fail"), ([], "fail")])
+def test_npm_readback_texture_dimensions(size, status):
+    data = rb(mesh())
+    data['images'] = [{'name': 'atlas.png', 'size': size, 'packed': True}]
+    found = scene_findings(data, 'npm', 'oks', PROFILES.npm)
+    finding = next(f for f in found['V006'] if f.name == 'texture dimensions')
+    assert finding.status == status
+    assert finding.source_pdf_pages == [9]
+
+
+def test_npm_texture_dimension_probe_generated():
+    for side in [1, 128, 256, 512, 1024, 2047, 2048, 2049, 4096, 8192]:
+        data = rb(mesh())
+        data['images'] = [{'name': f'atlas_{side}.png', 'size': [side, side], 'packed': True}]
+        found = scene_findings(data, 'npm', 'oks', PROFILES.npm)
+        assert next(f.status for f in found['V006'] if f.name == 'texture dimensions') == ('fail' if side > 2048 else 'pass')
+
