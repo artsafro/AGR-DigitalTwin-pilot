@@ -1,6 +1,6 @@
 # silikatny-maf-viz — МАФ ЖК «Силикатный» для визуализации
 
-Status: modelled; FBX read back in Blender and in 3ds Max 2026.3 (headless) — technical checks pass; user acceptance open.
+Status: modelled; v004 FBX read back in Blender and in a 3ds Max 2024 batch import (v003 also in 3ds Max 2026.3 headless) — technical checks pass; user acceptance open.
 Route: visualisation, not NPM/VPM [D189]. Binaries and builder scripts stay outside git in `C:/x/silikatny-maf-viz/`.
 
 ## Sources (read only)
