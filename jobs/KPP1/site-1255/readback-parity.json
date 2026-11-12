@@ -1,5 +1,5 @@
 {
-  "method": "fresh Blender 5.1.2 processes; every vertex against independent R(theta)+translation; exact triangle indices",
+  "method": "fresh Blender 5.1.2 output processes; immutable source readback; every vertex against independent R(theta)+translation; exact triangle indices",
   "tolerance_m": 0.002,
   "objects": [
     {

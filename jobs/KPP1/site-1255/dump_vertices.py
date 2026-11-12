@@ -8,13 +8,20 @@ import json
 import sys
 from pathlib import Path
 
+src, out_npz, out_json = map(Path, sys.argv[sys.argv.index("--") + 1:])
+# numpy appends .npz unless the supplied name already has that suffix.
+if not str(out_npz).endswith('.npz'):
+    out_npz = Path(str(out_npz) + '.npz')
+paths = (src, out_npz, out_json)
+if len({p.resolve() for p in paths}) != len(paths):
+    raise SystemExit('refusing aliased input/NPZ/report paths')
+for p in (out_npz, out_json):
+    if p.exists():
+        raise SystemExit(f"refusing to overwrite: {p}")
+
 import bpy
 import numpy as np
 
-src, out_npz, out_json = map(Path, sys.argv[sys.argv.index("--") + 1:][:3])
-for p in (out_npz, out_json):
-    if p.exists() or p.resolve() == src.resolve():
-        raise SystemExit(f"refusing to overwrite: {p}")
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.ops.import_scene.fbx(filepath=str(src))
 dg = bpy.context.evaluated_depsgraph_get()

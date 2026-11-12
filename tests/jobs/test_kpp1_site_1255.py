@@ -130,11 +130,11 @@ def test_committed_geojson_and_validator_receipts_are_same_run():
                 'V015': 'not_run', 'V017': 'not_run'},
     }
     for profile in ('vpm', 'npm'):
-        p = folder / f'{profile}-site-v003.validate.json'
+        p = folder / f'{profile}-site-v004.validate.json'
         assert hashlib.sha256(p.read_bytes()).hexdigest() == manifest[p.name]
         receipt = json.loads(p.read_text(encoding='utf-8'))
         assert receipt['passed'] is False and receipt['exit_code'] == 1
-        assert Path(receipt['target']).parent.name == 'site-v003'
+        assert Path(receipt['target']).parent.name == 'site-v004'
         assert receipt['target_sha256'] == manifest[Path(receipt['target']).name]
         assert {s['id']: s['status'] for s in receipt['stages'] if s['status'] != 'pass'} == expected[profile]
     assert '0000_Kpp_1.zip' in manifest  # territorial placeholder remains explicit

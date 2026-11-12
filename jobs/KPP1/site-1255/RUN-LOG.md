@@ -1,4 +1,4 @@
-# KPP1 #1255 — historical MSK-77 fit STOP (superseded by [D260])
+# KPP1 #1255 — historical MSK-77 fit STOP (superseded by [D262])
 
 Current placement, GeoJSON, validator receipts and remaining gates: [REPORT.md](REPORT.md).
 The following is preserved as the pre-approval diagnostic record; its `fit_ok=false`

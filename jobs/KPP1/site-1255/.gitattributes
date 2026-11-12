@@ -1,5 +1,5 @@
 # Frozen runtime receipts: preserve their actual bytes and SHA-256 across checkouts.
-*-site-v003.validate.json -text
+*-site-v*.validate.json -text
 placement-export.json -text
 readback-*.json -text
 *.geojson -text

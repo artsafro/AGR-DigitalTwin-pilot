@@ -1,7 +1,7 @@
 {
   "profile": "npm",
-  "target": "G:\\Мой диск\\AGR-evidence\\1255-kpp1-msk77\\site-v003\\0000_Kpp_1.zip",
-  "target_sha256": "01df357c82244cfc4b7559485be5920e1b018eb7cf89de7855dc53f43ddba169",
+  "target": "G:\\Мой диск\\AGR-evidence\\1255-kpp1-msk77\\site-v004\\0000_Kpp_1.zip",
+  "target_sha256": "de8fd557b1c79e8745a42d664fa3ee8f3192be8c4096b73a31f569e197a02f66",
   "source_sha256": "933f6b700c074d0db6b82030fc79d1dbe9db4a0067495ca716e0636acd544222",
   "source_pdf_verified": true,
   "passed": false,
@@ -29,7 +29,7 @@
         {
           "name": "archive size",
           "status": "pass",
-          "observed": "618524 B <= 1024 MiB",
+          "observed": "618526 B <= 1024 MiB",
           "expected": "<= 1073741824 B",
           "source_pdf_pages": [
             6,
@@ -384,5 +384,5 @@
     "scene readback: 0000_Kpp_1_01.fbx in Blender 5.1.2"
   ],
   "standards_sha256": "533991c8de3a319f46f7da08d1d23ccf79dd9e910fa4a376513d46a474d44058",
-  "code_commit": "5234b8e53f358a342d4856e9261d5f46d3c6b781"
+  "code_commit": "3f1c2f9634e599049a4e17161f5c9238825e238c"
 }

@@ -1,4 +1,4 @@
-"""new-case: KPP1 approved approximate R1 placement [D260], not a survey solution.
+"""new-case: KPP1 approved approximate R1 placement [D262], not a survey solution.
 
 Run in private headless Blender: --python place_package.py -- SOURCE_DIR NEW_OUTPUT_DIR.
 VPM bakes only the approved plan rotation; NPM also bakes translation and absolute zero.
@@ -42,7 +42,7 @@ def prepare(src, out, fit):
     approved = [-6.053044176714781, 8056.143933445407, -9581.26989822931, 171.05]
     actual = [fit['theta_deg'], *fit['origin_msk_blender_xy'], fit['zero_abs']]
     if actual != approved:
-        raise ValueError('placement is not the approved best fit [D260]')
+        raise ValueError('placement is not the approved best fit [D262]')
     transform_point([0, 0, 0], fit, 'npm')
     hashes = {}
     for name in required:
@@ -112,7 +112,7 @@ if __name__ == '__main__':
                          name='Центральная проходная', developer="ООО 'Развитие генерации ТЭЦ-26'",
                          designer="ООО 'Аспект'", cadNum='77:05:0009005:117', FNO_code='', FNO_name='',
                          ZU_area=6.4882, h_relief=171.05, h_otn=8.65, h_abs=179.70,
-                         s_obsh='', s_naz='', s_podz='', spp_gns='', act_AGR='', other=NOTE + ' [D260]')
+                         s_obsh='', s_naz='', s_podz='', spp_gns='', act_AGR='', other=NOTE + ' [D262]')
             data = core.geojson_document(props, '',
                                          [round(v, 3) for v in fit['origin_msk_blender_xy']],
                                          core.glasses_entry(entry['glasses']), False)
@@ -170,6 +170,6 @@ if __name__ == '__main__':
     # No Ground invented: the single-building NPM ZIP intentionally fails V001 composition.
     with zipfile.ZipFile(out / '0000_Kpp_1.zip', 'x', zipfile.ZIP_DEFLATED) as package:
         package.write(out / '0000_Kpp_1_01.fbx', '0000_Kpp_1_01.fbx')
-    (out / 'placement-export.json').write_text(json.dumps({'decision': 'D260', 'placement': NOTE,
+    (out / 'placement-export.json').write_text(json.dumps({'decision': 'D262', 'placement': NOTE,
         'source_sha256': hashes, 'blender': bpy.app.version_string,
         'zero_abs_m': 171.05, 'fit': fit, 'exports': reports, 'passed': False}, ensure_ascii=False, indent=2), encoding='utf-8')

@@ -1,7 +1,7 @@
 # KPP1 R1 site placement #1255 — approximate, NOT PASSED
 
 Cells: `oks-vpm`, `oks-npm`. Offline placement/readback only; no Max session touched.
-Decision: Artem, 2026-11-12, Kanban t_cd0d8792 USER DECISION 11:38, [D260].
+Decision: Artem, 2026-11-12, Kanban t_cd0d8792 USER DECISION 11:38, [D262].
 This supersedes the historical STOP in `RUN-LOG.md`, not the measured fit diagnostics.
 
 **approximate, ±0.1 m, fitted to customer NPM 0607_77_05_0009005_117_02; entrance orientation not independently confirmed**
@@ -16,7 +16,7 @@ No SPOZU/DWG alignment, entrance-direction verification or V017 sign-off is clai
 
 | Role | File / sheet / source | SHA-256 | Interpretation |
 |---|---|---|---|
-| Accepted MSK-77 reference | `C:/Users/artsafro/Downloads/Telegram Desktop/0607_77_05_0009005_117_02.zip`, member `0607_77_05_0009005_117_02.fbx`; no drawing sheet | ZIP `219524eae5acec4f58fbc4b683400512ec53578dcc865c646fba9cc65280376f`; FBX `fc08774a30058de2b2da296306946b1b60b65612ca73b7af563218a0c7b50b51` | Customer's delivered NPM, author/version not independently established; accepted instead of missing plan by [D260] |
+| Accepted MSK-77 reference | `C:/Users/artsafro/Downloads/Telegram Desktop/0607_77_05_0009005_117_02.zip`, member `0607_77_05_0009005_117_02.fbx`; no drawing sheet | ZIP `219524eae5acec4f58fbc4b683400512ec53578dcc865c646fba9cc65280376f`; FBX `fc08774a30058de2b2da296306946b1b60b65612ca73b7af563218a0c7b50b51` | Customer's delivered NPM, author/version not independently established; accepted instead of missing plan by [D262] |
 | Zero mark | `26_КПП1_АР_МЭП_RVT22.rvt`, level `отм. 0,000`; cached read-only Revit observation in `jobs/KPP1/object.json` | RVT unavailable in source store: hash not measured; cached JSON `a34cc18038e9440e164518523c39b25be0e7d82e0582348e4411b0763bcd020c` | 0.000 = absolute 171.050 m; explicitly chosen by Artem over customer spreadsheet 169.65 |
 | Customer properties | `C:/Users/artsafro/Downloads/Telegram Desktop/geojson ТЭЦ 26.xlsx`, sheet `Данные GEOJSON`, column `Центральная проходная` | `30a9c143d0241b3a06a604a8f296ce9630776122f7460124cfce33265576c598` | Address, okrug, rajon, developer, designer, cadNum, ZU_area; coordinates empty |
 | L01 facades | `22Е56-АР2-1002-АС.03-R1_L01_без подписей.dwg`, L01 | `cb74ba142142e9181dfc14e235f94aed7eabec597e746760e5a972427f0f3648` | Relative levels only, not a placement plan |
@@ -49,7 +49,8 @@ The original six fit evidence files were independently re-hashed: **6/6 match**.
 exclusively creates a new output directory and never replaces an input/output version.
 Blender **5.1.2**, private `--background --factory-startup` process, no shared live scene.
 
-Fresh-process imports of BOTH source and published output (4 separate Blender runs):
+Fresh-process source readbacks from the preceding immutable R1 run plus **2 new final-output
+Blender imports** (one per profile):
 `dump_vertices.py` -> every output vertex compared to an independently calculated rigid
 transform, exact triangle index arrays preserved. `readback-parity.json` records **8/8
 objects**, no drops (6 VPM including 4 UCX; 2 NPM), maximum VPM error **0.000003420 m**,
@@ -67,7 +68,7 @@ read from the imported R1 material (not copied from another building).
 
 - territorial code **0000 is a placeholder**, not a confirmed territorial classifier;
 - **FNO_code="", FNO_name="" are placeholders** awaiting SINTEZ at upload
-  [D220], [D235], [D260]. Do not use the spreadsheet's `013 006` as confirmed KPP1 FNO;
+  [D220], [D235], [D262]. Do not use the spreadsheet's `013 006` as confirmed KPP1 FNO;
 - ZU_area 6.48824 ha -> **6.4882 ha** per [D223] (4 decimals);
 - heights describe the R1 model: h_relief 171.05, h_otn 8.65, h_abs 179.70.
   Spreadsheet 169.65/8.95/178.60 is not silently mixed with the accepted Revit zero;
@@ -79,7 +80,7 @@ read from the imported R1 material (not copied from another building).
 
 ## Published artifacts and validator receipts
 
-Durable directory: **`G:/Мой диск/AGR-evidence/1255-kpp1-msk77/site-v003/`**.
+Durable directory: **`G:/Мой диск/AGR-evidence/1255-kpp1-msk77/site-v004/`**.
 `evidence-SHA256SUMS.txt` binds final FBX, ZIP, GeoJSON, actual render and receipt bytes.
 Small GeoJSON/export/validation/parity receipts are also committed here; large binaries
 and NPZ dumps stay outside Git (no LFS).
@@ -87,8 +88,8 @@ and NPZ dumps stay outside Git (no LFS).
 Commands (exit **1** for each validator; expected exact remaining failures):
 
 ```bash
-uv run python tools/qa/validate_package.py "G:/Мой диск/AGR-evidence/1255-kpp1-msk77/site-v003/SM_Kpp_1.zip" --profile vpm --scene --json
-uv run python tools/qa/validate_package.py "G:/Мой диск/AGR-evidence/1255-kpp1-msk77/site-v003/0000_Kpp_1.zip" --profile npm --scene --json
+uv run python tools/qa/validate_package.py "G:/Мой диск/AGR-evidence/1255-kpp1-msk77/site-v004/SM_Kpp_1.zip" --profile vpm --scene --json
+uv run python tools/qa/validate_package.py "G:/Мой диск/AGR-evidence/1255-kpp1-msk77/site-v004/0000_Kpp_1.zip" --profile npm --scene --json
 ```
 
 | Stage | VPM | NPM | Exact boundary |
@@ -135,3 +136,25 @@ explicit World creation fixed it, v002/v003 exited 0. Failed v001 log retained i
 An initial diagnostic dump used MSYS `$PWD` and failed with `\\c\\Users...`; rerun used
 native/relative paths (environment-only repair, no source changes).
 Full-suite exact-head receipt and final affected counts are in the PR Author receipts.
+
+## Resumed-run repair and evidence lineage
+
+D260 was concurrently allocated by #1270 before this branch could be pushed; the
+placement decision is now D262 (`decision_ids.py next`: main + 14 open heads).
+All current artifacts were regenerated into **site-v004**, never overwriting site-v003.
+Current manifest verifies **24/24** files. Historical site-v003 artifacts are provisional,
+not the current decision/GeoJSON/validator receipts.
+
+Hostile diagnostic RED: identical NPZ/report paths previously exited 0 and replaced the
+NPZ with JSON (`tmp/dump-collision-red.log`). Tests-first commit `3f1c2f96`: **5 failed**.
+The path guard now runs before Blender/numpy imports, normalizes numpy's implicit
+`.npz` suffix, and refuses resolved aliases and existing files. Same 5 cases: **5 passed**;
+native Blender identical-path probe: nonzero exit and no output created.
+Affected set plus basetemp/Max-marker contracts: **198 passed / 9 xfailed**.
+The rendered thumbnail was visually inspected: oblique view of the checkpoint,
+flat roof and facade openings visible. This is not architectural or user acceptance.
+
+The abandoned earlier suite completed with 637 failures / 104 errors, including native
+child-process DLL initialization failures (3221225794 / 0xC0000142); it is preserved in
+`tmp/full-suite.log` and is NOT final-head CI evidence. No result is relabelled green.
+
