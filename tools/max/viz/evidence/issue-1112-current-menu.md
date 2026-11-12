@@ -39,10 +39,11 @@ Exit **1**, raw JSON: `C:/x/t_1ca9121b/checker-current.json`.
 | Viz Materials | true | true | true | false | agr_viz_panel.ms |
 | Mat Slots | true | true | true | false | agr_mat_slots.ms |
 
-The requested **seven PASS** evidence is not established. This failure is retained,
-not relabelled as a successful installation; installation repair is outside this card.
-A decision is required: accept the real failing evidence for this checker-only card,
-or provide a corrected menu/environment copy and confirmed target-Max mapping.
+The historical **seven PASS** evidence is not established. Artem explicitly accepted
+these **seven FAIL** as the correct finding for this checker-only card on 2026-11-12
+(card decision comment, 11:39 UTC). This failure is retained, not relabelled as a
+successful installation. Installing the four missing scripts belongs to the max-ui
+tools, outside this card. No live `getDir` readback or real click is claimed.
 
 ## Tests so far
 
@@ -55,8 +56,9 @@ or provide a corrected menu/environment copy and confirmed target-Max mapping.
   **16 passed**.
 - XML hardening RED: **3 failed, 25 passed** (unknown button tag, DTD entity and duplicate
   command); scoped rejection fixes: **28 passed**.
-- Full suite/evals/PR not yet run or opened: held pending the real-data evidence decision;
-  the one-full-suite allowance remains unused.
+- The initial implementation stopped before the full suite/evals/PR pending the
+  real-data evidence decision. Final exact-head suite/evals receipts are published
+  in the PR body after the accepted decision (not retroactively attributed here).
 
 All fixtures are synthetic and all tests invoke the checker in a fresh process.
 Read-only hardlink/alias and preexisting `.partial` sentinels retain their bytes;

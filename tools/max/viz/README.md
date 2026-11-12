@@ -50,6 +50,21 @@ errors. There is no output-file option, cache or temporary file, so no input is 
 Capture stdout yourself only to a **new** path that is not the menu or a script input.
 For evidence use an unchanged menu copy and preserve its source/copy SHA-256.
 
+## Current-menu finding (#1112)
+
+The unchanged Max 2026 menu copy yields **seven FAIL**, with every requested button
+found, active and non-empty. Four referenced scripts are absent from the standard
+`ENU/scripts/startup` directory: `agr_viz_materials.ms`, `agr_forest_color.ms`,
+`agr_viz_panel.ms`, and `agr_mat_slots.ms`. See
+[evidence/issue-1112-current-menu.md](evidence/issue-1112-current-menu.md) for the
+mapping, menu hash and per-button results. The mapping is an explicit standard-path
+observation, not a live `getDir` readback.
+
+Artem accepted this failing evidence for the checker-only card on 2026-11-12.
+It is a correct diagnostic, **not** a successful installation. Installing the missing
+scripts belongs to the max-ui tools; no live menu or scene was changed and no real
+click was verified by this task. The install gates above remain mandatory.
+
 ## Source availability
 
 The historical `feature/viz-material-tools` commit, original inventory parser and
