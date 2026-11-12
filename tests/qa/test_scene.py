@@ -1988,4 +1988,14 @@ def test_npm_unmapped_polygon_material_is_named(assigned):
     assert 'polygon' in f.observed
 
 
+@pytest.mark.parametrize('size,status', [([512,512], 'pass'), ([128,128], 'pass'),
+                                       ([257,257], 'fail'), ([1024,512], 'fail'), ([], 'fail')])
+def test_npm_readback_resolution_grid(size, status):
+    data = rb(mesh())
+    data['images'] = [{'name': 'atlas.png', 'size': size, 'packed': True}]
+    found = scene_findings(data, 'npm', 'oks', PROFILES.npm)
+    assert next(f.status for f in found['V006'] if f.name == 'atlas resolution grid') == status
+
+
+
 
