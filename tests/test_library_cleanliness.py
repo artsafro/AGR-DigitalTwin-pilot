@@ -190,6 +190,8 @@ def test_json_duplicate_and_nonfinite_rejected(tmp_path):
     ('constraints', ['Copy']), ('triangles', 3), ('unused_slots', [1]), ('uv_layers', 0),
     ('uv_finite', False), ('degenerate_faces', 1), ('loose_vertices', 1), ('duplicate_faces', 1),
     ('min_vertex_distance_m', 0.002), ('min_vertex_distance_m', float('nan')),
+    ('materials', [{'id': True, 'name': 'matid_1'}]),
+    ('materials', [{'id': 1.0, 'name': 'matid_1'}]),
     ('materials', [{'id': 999, 'name': 'unknown'}]), ('bounds', [[0, 0, 0], [1, 0, float('nan')]]),
 ])
 def test_dirty_object_is_named(field, value):

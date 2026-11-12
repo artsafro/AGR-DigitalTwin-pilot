@@ -89,7 +89,7 @@ def scene_errors(scene, expected, pivot):
                     errors.append(f'{name}: missing materials')
                 for material in obj['materials']:
                     mid, mname = material['id'], material['name']
-                    if {'id': mid, 'name': mname} not in expected['materials']:
+                    if type(mid) is not int or {'id': mid, 'name': mname} not in expected['materials']:
                         errors.append(f'{name}: unmapped material {mid} {mname}')
                     if mid in materials and materials[mid] != mname:
                         errors.append(f'{name}: conflicting material {mid}')

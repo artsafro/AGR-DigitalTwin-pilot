@@ -119,7 +119,7 @@
   "checker_code": [
     {
       "path": "tools/library/check_library.py",
-      "sha256": "f3a5f1cda76cb6b1f7eafb9b6f61890571d00ecafd752351c095d7876d92507c"
+      "sha256": "bfd1cc4504ac2a79fb6199c763a72cb7374a72bcbd3b87e4f5b14e98492cd5a4"
     },
     {
       "path": "tools/library/inspect_library_blender.py",
@@ -139,7 +139,7 @@
     }
   ],
   "tests": {
-    "affected": 205,
+    "affected": 207,
     "native_end_to_end": 2,
     "generated_combination_probe": 1024
   },
