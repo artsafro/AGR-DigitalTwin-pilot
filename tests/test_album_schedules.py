@@ -392,6 +392,64 @@ def test_unrouted_page_is_accounted_not_dropped(tmp_path, synthetic):
     assert any(m["code"] == "RAL 5023" for m in mats["materials"])
 
 
+def _index_file(tmp_path, pdf, bbox, name="album_index.json"):
+    sha = hashlib.sha256(pdf.read_bytes()).hexdigest()
+    index = dict(schema="album-index/1", source=dict(sha256=sha), page_count=1, pages=[dict(
+        pdf_page=1, printed_sheet=None, regions=[dict(region_id="p1-r1", bbox=bbox, route="table_extraction",
+                                                      reason="schedule_context_candidate_unverified")])])
+    path = tmp_path / name
+    path.write_text(json.dumps(index), "utf-8")
+    return path
+
+
+def test_roi_that_cuts_a_table_keeps_the_whole_table(tmp_path, synthetic):
+    """Regression (COD p5): the index text envelope ended inside the table; the table must stay whole."""
+    manifest = S.export_schedules(synthetic, tmp_path / "out", album_index=_index_file(tmp_path, synthetic,
+                                                                                       [40, 40, 200, 120]))
+    assert [(t["n_rows"], t["n_cols"]) for t in manifest["tables"]] == [(5, 4)]
+    assert manifest["pages"][0]["outside_roi"] == []
+
+
+def test_table_outside_roi_is_reported_not_dropped(tmp_path, synthetic):
+    manifest = S.export_schedules(synthetic, tmp_path / "out", album_index=_index_file(tmp_path, synthetic,
+                                                                                       [600, 400, 800, 500]))
+    assert manifest["tables"] == []
+    assert {o["engine"] for o in manifest["pages"][0]["outside_roi"]} == {"primary", "secondary"}
+
+
+def test_cropbox_offset_still_pairs_the_engines(tmp_path):
+    """Regression (COD p5): pdfplumber coordinates start at its page origin; both engines must still pair."""
+    pytest.importorskip("pdfplumber", reason="second table engine")
+    import pymupdf
+
+    src = _synthetic_pdf(tmp_path / "a.pdf")
+    doc = pymupdf.open(src)
+    doc[0].set_cropbox(pymupdf.Rect(14, 12, 830, 590))
+    doc.save(tmp_path / "cropped.pdf")
+    doc.close()
+    manifest = S.export_schedules(tmp_path / "cropped.pdf", tmp_path / "out", pages=[1])
+    assert [t["found_by"] for t in manifest["tables"]] == [["primary", "secondary"]]
+    side = json.loads((tmp_path / "out/schedules/p1-t1.json").read_text("utf-8"))
+    assert all(s["reason"] != "shape_mismatch" for s in side["suspect_cells"])
+
+
+def test_rotated_page_gets_no_unaligned_second_engine(tmp_path):
+    pytest.importorskip("pdfplumber", reason="second table engine")
+    import pymupdf
+
+    src = _synthetic_pdf(tmp_path / "a.pdf")
+    doc = pymupdf.open(src)
+    doc[0].set_rotation(90)
+    doc.save(tmp_path / "rot.pdf")
+    doc.close()
+    manifest = S.export_schedules(tmp_path / "rot.pdf", tmp_path / "out", pages=[1])
+    assert manifest["tables"]
+    for t in manifest["tables"]:
+        side = json.loads((tmp_path / "out/schedules" / f"{t['table_id']}.json").read_text("utf-8"))
+        assert {s["reason"] for s in side["suspect_cells"]} == {"second_engine_coordinates_differ"}
+        assert len(side["suspect_cells"]) == t["n_rows"] * t["n_cols"]
+
+
 @pytest.mark.parametrize("pages", [[0], [2], [1, 1], [], [True]])
 def test_bad_pages_fail_and_write_nothing(tmp_path, synthetic, pages):
     with pytest.raises(ValueError):

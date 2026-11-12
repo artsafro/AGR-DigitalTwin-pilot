@@ -1,0 +1,49 @@
+{
+  "album": "tec26",
+  "album_index_sha256": "fb19804cb7ae7ab15095d4088c6d239c5c840e51abebff12e34ad04a258ea5d0",
+  "engines": {
+    "primary": "pymupdf 1.28.2 find_tables",
+    "secondary": "pdfplumber 0.11.10 find_tables"
+  },
+  "materials": {
+    "entries": 0,
+    "merged_unresolved": 0,
+    "missing": 0,
+    "present": 0,
+    "unbound": 0
+  },
+  "output_sha256": {
+    "materials.json": "b50d11d05c0e98b395c49099f5a053eb3a51f0548e1fd8ebeb4b1a4fc3716005",
+    "schedules.json": "b45b5ff8b25e90ab8d633bd6a330e042357b74c613c75b1393ccda6f87e335f4"
+  },
+  "pages_accounted": 6,
+  "pages_not_routed": 6,
+  "pages_routed": [],
+  "passed": false,
+  "ral": {
+    "codes_correct": 0,
+    "codes_denominator": 0,
+    "extracted_in_reference": 0,
+    "extracted_on_reference_pages": 0,
+    "samples": []
+  },
+  "row_types": {},
+  "rows": {
+    "cells_correct": 0,
+    "cells_denominator": 0,
+    "rows_correct": 0,
+    "rows_denominator": 0,
+    "samples": []
+  },
+  "secondary_status": "ok",
+  "seconds": 0.151,
+  "source_sha256": "ab4339496166779b2989a42bdbf88072bf8267a6a30ad748da544bf48ed3f997",
+  "summary": {
+    "cells": 0,
+    "materials": 0,
+    "suspect_cells": 0,
+    "tables": 0
+  },
+  "suspect_reasons": {},
+  "tables": []
+}

@@ -17,9 +17,12 @@ without any default material.
 Rules (each has a test in ``tests/test_album_schedules.py``):
 
 - Routing: with ``album_index`` (from :mod:`dt_ai.album.intake`, same source SHA-256 or an error) only pages
-  with a ``table_extraction`` region are extracted, inside the region ``schedule_context_candidate_unverified``
-  (else the union of the table regions); other pages are ``not_routed`` with the reason. Explicit ``pages``
-  extract the whole page. Legends (RAL/NCS codes in text) are scanned on every page in scope.
+  with a ``table_extraction`` region are extracted; the ROI is the region ``schedule_context_candidate_unverified``
+  (else the union of the table regions). Tables are detected on the routed page and kept when they touch the ROI
+  (a text-envelope ROI may cut a table); tables outside it are listed in ``outside_roi``. Other pages are
+  ``not_routed`` with the reason. Explicit ``pages`` use the whole page. Legends (RAL/NCS codes in text) are
+  scanned on every page in scope. pdfplumber boxes are shifted by its page origin (cropbox offset) into PyMuPDF
+  coordinates; a rotated page gets no second engine (``second_engine_coordinates_differ``).
 - Two engines: PyMuPDF ``find_tables`` (primary) and pdfplumber ``find_tables`` (secondary, optional:
   ``uv run --with pdfplumber==0.11.10``). Tables pair by bbox IoU >= 0.8. Equal text -> ``agree``; different
   text (whitespace included) or None vs text -> ``suspect`` with both strings; a different grid -> every cell
@@ -401,10 +404,17 @@ def _finite_box(box: Any, what: str) -> list[float]:
     return [float(v) for v in box]
 
 
-def _engine_table(t: Any) -> dict[str, Any]:
+def _engine_table(t: Any, dx: float = 0.0, dy: float = 0.0) -> dict[str, Any]:
+    """Engine table -> plain dict in PyMuPDF page coordinates (pdfplumber boxes are shifted by its page origin)."""
+    def shift(b: Any) -> list[float]:
+        return [float(b[0]) + dx, float(b[1]) + dy, float(b[2]) + dx, float(b[3]) + dy]
     cells = [[None if v is None else str(v) for v in row] for row in t.extract()]
-    boxes = [[None if b is None else [float(v) for v in b] for b in row.cells] for row in t.rows]
-    return dict(bbox=[float(v) for v in t.bbox], cells=cells, cell_boxes=boxes)
+    boxes = [[None if b is None else shift(b) for b in row.cells] for row in t.rows]
+    return dict(bbox=shift(t.bbox), cells=cells, cell_boxes=boxes)
+
+
+def _overlaps(box: list[float], roi: list[float]) -> bool:
+    return min(box[2], roi[2]) > max(box[0], roi[0]) and min(box[3], roi[3]) > max(box[1], roi[1])
 
 
 def _route(index: dict[str, Any] | None, count: int, pages: list[int] | None) -> list[dict[str, Any]]:
@@ -472,6 +482,10 @@ def _page_materials(page: Any, number: int, sheet: str | None, tables: list[dict
     lines: dict[tuple[int, int], list[Any]] = {}
     for w in page.get_text("words", sort=True):
         lines.setdefault((w[5], w[6]), []).append(w)
+    # original label of a legend line = its whole text block (multi-line finish descriptions stay whole)
+    blocks: dict[int, list[str]] = {}
+    for key in sorted(lines):
+        blocks.setdefault(key[0], []).append(" ".join(w[4] for w in lines[key]))
     log = None
     for key in sorted(lines, key=lambda k: (lines[k][0][1], lines[k][0][0], k)):
         words = lines[key]
@@ -502,7 +516,7 @@ def _page_materials(page: Any, number: int, sheet: str | None, tables: list[dict
             log = page.get_bboxlog()
         symbol = _swatch(page, log, box)
         for code in codes:
-            out.append(_material("legend_text", text, code, "present",
+            out.append(_material("legend_text", "\n".join(blocks[key[0]]), code, "present",
                                  dict(kind="unbound", reason="region_application_requires_review"), number, sheet,
                                  box, legend_symbol=symbol,
                                  symbol_status="found" if symbol else "not_found"))
@@ -576,15 +590,25 @@ def export_schedules(pdf: str | Path, output: str | Path, *, album_index: str | 
                 route["tables"] = []
                 page_tables: list[dict[str, Any]] = []
                 if route["route"] == "table_extraction":
-                    clip = route["roi"] or [float(v) for v in page.rect]
-                    prim = [_engine_table(t) for t in page.find_tables(clip=fitz.Rect(clip)).tables]
+                    # Detect on the routed page and keep every table touching the ROI: an index ROI is a
+                    # text envelope and may cut a table; a table outside the ROI is reported, not dropped.
+                    roi = route["roi"] or [float(v) for v in page.rect]
+                    prim = [_engine_table(t) for t in page.find_tables().tables]
                     sec, status = [], sec_status
                     if pl_doc is not None:
-                        if page.rotation or tuple(page.cropbox) != tuple(page.mediabox):
+                        pl_page = pl_doc.pages[n - 1]
+                        if page.rotation or pl_page.rotation:
                             status = "second_engine_coordinates_differ"
                         else:
-                            pl_page = pl_doc.pages[n - 1].crop(clip, strict=False)
-                            sec = [_engine_table(t) for t in pl_page.find_tables()]
+                            # PyMuPDF coordinates start at the cropbox corner; pdfplumber's are mediabox-based
+                            origin = getattr(pl_page, "cropbox", pl_page.bbox)
+                            sec = [_engine_table(t, -float(origin[0]), -float(origin[1]))
+                                   for t in pl_page.find_tables()]
+                    route["outside_roi"] = [dict(engine=e, bbox=t["bbox"]) for e, ts in (("primary", prim),
+                                                                                       ("secondary", sec))
+                                            for t in ts if not _overlaps(t["bbox"], roi)]
+                    prim = [t for t in prim if _overlaps(t["bbox"], roi)]
+                    sec = [t for t in sec if _overlaps(t["bbox"], roi)]
                     used: set[int] = set()
                     pairs = []
                     for t in prim:
