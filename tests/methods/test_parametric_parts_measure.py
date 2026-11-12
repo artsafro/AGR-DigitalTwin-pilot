@@ -831,6 +831,21 @@ def _blender_inventory(paths, work: Path):
     return json.loads(payload), "Blender 5.1.2 bpy import_scene.fbx"
 
 
+def test_max_inventory_isolates_parent_virtualenv(monkeypatch, tmp_path):
+    monkeypatch.setenv('VIRTUAL_ENV', 'synthetic-parent-venv')
+    seen = {}
+
+    def fake_run(cmd, **kwargs):
+        seen.update(kwargs)
+        return subprocess.CompletedProcess(cmd, 0, json.dumps({'log': 'DCC_READBACK []'}), '')
+
+    monkeypatch.setattr(subprocess, 'run', fake_run)
+    rows, tool = _max_inventory([], tmp_path)
+    assert rows == [] and tool
+    assert 'VIRTUAL_ENV' not in seen.get('env', os.environ)
+    assert os.environ['VIRTUAL_ENV'] == 'synthetic-parent-venv'
+
+
 @pytest.mark.max
 def test_dcc_readback_imports_mesh_and_solidcraft_files(tmp_path):
     max_batch = Path(r"C:\Program Files\Autodesk\3ds Max 2026\3dsmaxbatch.exe")
