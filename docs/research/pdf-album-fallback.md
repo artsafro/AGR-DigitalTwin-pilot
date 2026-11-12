@@ -2,7 +2,7 @@
 
 ## Scope and verdict
 
-**Implemented, PARTIAL observations, never approved geometry.** [D263] narrows this
+**Implemented, PARTIAL observations, never approved geometry.** [D265] narrows this
 card to the existing three real albums, 53 source pages, with references explicitly
 **not independent (agent-made reference)**. Seven frozen ROIs on five physical pages
 were exercised, not a new full-53-page OCR pass. Every other page is explicitly
@@ -138,7 +138,7 @@ customer PDF copies; original input corpus was not overwritten or re-exported.
 ## Remaining gates / follow-up
 
 A larger **>=6 real customer album corpus with independent expert-labelled rows and
-elements** is explicitly a follow-up under D263, not delivered or silently passed here.
+elements** is explicitly a follow-up under D265, not delivered or silently passed here.
 Needed: nominated expert identity/date, source hashes, page/bbox, complete row/element
 references and approval, then frozen semantic recall/precision evaluation. Full-album
 precision, row/element association, independently calibrated geometry and architect
