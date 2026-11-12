@@ -131,8 +131,8 @@ def main() -> int:
             rows=_score_rows(out, ref["rows"]), ral=_score_materials(mats, ref["materials"]),
             output_sha256={p.relative_to(out).as_posix(): _sha(p) for p in sorted(out.rglob("*")) if p.is_file()},
             passed=False)
-        (args.receipts / f"{album}.json").write_text(
-            json.dumps(receipt, ensure_ascii=False, indent=2, sort_keys=True) + "\n", "utf-8")
+        (args.receipts / f"{album}.json").write_bytes(
+            (json.dumps(receipt, ensure_ascii=False, indent=2, sort_keys=True) + "\n").encode("utf-8"))
         print(album, seconds, manifest["summary"], receipt["rows"]["rows_correct"], "/",
               receipt["rows"]["rows_denominator"], receipt["ral"]["codes_correct"], "/",
               receipt["ral"]["codes_denominator"], flush=True)
