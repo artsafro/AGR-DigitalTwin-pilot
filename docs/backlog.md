@@ -82,6 +82,15 @@ items out of this file in the same merge. `C<N>` = conflict N in `docs/domain/co
   fences: deterministic result, collapse to mesh, FBX readback; same research note.
 - **P17** (later) Own asset catalog (models, materials, textures, previews, relink without Max); Project Manager
   covers it today. Same research note.
+- **P18** (Codex) Flora catalogue path for built stars (#1191, [D253]). The three accepted Telegram stars
+  (`library/flora/stars-telegram-v001.json`, `C:/x/flora-telegram-stars/v002`, ids 410-412 proposed) are not in
+  `library/flora/catalogue.json`. To get them in: (1) a generator route for built stars without an audit-scene entry,
+  or the audit run by `experiments/flora-library-audit/inspect_scene.py` on a labelled v004 scene; (2) flora-library
+  v004 = a copy of v003 plus the 6 objects (`<Latin>_NPM` / `_VPM`, maps on the approved G: paths), headless via
+  `dcc_batch.py max`, with the library version taken out of code (`LIBRARY_FILE` in `flora_catalogue.py`,
+  `rebind_flora_library_maps.py`, `build_flora_npm_light.py`, `tests/test_flora_library_rebind.py`) into one config;
+  (3) restore `C:/x/flora-library` on this machine or point the tools at the G: copy
+  `G:\Мой диск\AGR-assets\flora\v003\flora-library-v003.max`. Then regenerate the catalogue.
 
 ## Engine gaps — mixed mode (user decision 2026-10-11 [D050]; historical `archive/2026-11:docs/HARNESS_PLAN.md` §16)
 

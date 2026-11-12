@@ -72,7 +72,7 @@ Gap analysis against the repository library (2026-11-10, media not opened — re
 - Missing in both sources: maps for the 42 + 11 table rows, built placeholders NPM 128 / VPM 256, gravel, pebbles,
   mulch, rubber crumb, roll lawn, roofs (Logicroof, Solo, profiled sheet), facade masks (cassette 600, tile
   600×1200, panel V1200), pine, maps for the 61 flora species, VPM normals for tiling materials.
-- Proposed layout (not approved): originals to `G:\Мой диск\AGR-assets\_inbox\telegram-materials-2026-11\`,
+- Layout (approved 2026-11-10 [D239]): originals to `G:\Мой диск\AGR-assets\_inbox\telegram-materials-2026-11\`,
   processed maps to `materials\v001\<library_id>_<key>\`, placeholders to `materials\placeholders\v001\`, flora to
   `flora\v003\maps\<slug>\`; a manifest `library/materials/maps_v001.json` (file, sha256, size, px/m, source msg
   id, synthetic flag) in git; no binaries in git (H9).
