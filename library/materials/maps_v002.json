@@ -98,6 +98,164 @@
    "note": "proposed in maps_v002 [D239]; pine for the MAF WOOD2 slot (step 2.3); not yet a row of materials_v002.json"
   }
  ],
+ "flora_candidates": [
+  {
+   "slug": "miscanthus",
+   "caption_ru": "Мискантус",
+   "latin": null,
+   "latin_candidate": "Miscanthus sinensis",
+   "type": "flower",
+   "confidence": "medium",
+   "basis": "caption + silvery plumes on a tall clumping grass; species by habit only",
+   "catalogue": "same genus as 406 Miscanthus sinensis; approved catalogue maps stay, Telegram crops are extra variants only [D242]",
+   "variants": 1,
+   "source_msg_id": 61626,
+   "status": "candidate: waits for the user to confirm the Latin name [D242]; maps only, no mesh"
+  },
+  {
+   "slug": "aster-dumosus-island-samoa",
+   "caption_ru": "Астра кустарниковая ‘Island Samoa’",
+   "latin": "Symphyotrichum dumosum 'Island Samoa'",
+   "latin_candidate": null,
+   "type": "flower",
+   "confidence": "high",
+   "basis": "caption names the cultivar (syn. Aster dumosus); pink-violet daisy cushion matches",
+   "catalogue": "new (401 is S. novae-angliae, another species)",
+   "variants": 1,
+   "source_msg_id": 61627,
+   "status": "maps approved [D242]; NPM star + VPM shell C:/x/flora-telegram-stars/v002 accepted, height confirmed [D253] (spec library/flora/stars-telegram-v001.json, material id 410 proposed); catalogue row waits for a library version with these objects and a generator route for non-audit sources (PR #1191 open items)"
+  },
+  {
+   "slug": "berberis",
+   "caption_ru": "Барбарис",
+   "latin": null,
+   "latin_candidate": "Berberis thunbergii 'Atropurpurea' or Berberis × ottawensis 'Superba'",
+   "type": "bush",
+   "confidence": "unconfirmed",
+   "basis": "caption gives the genus; red-purple foliage fits both candidates",
+   "catalogue": "201 / 226 exist; approved catalogue maps stay, Telegram crops are extra variants only [D242]",
+   "variants": 1,
+   "source_msg_id": 61628,
+   "status": "candidate: waits for the user to confirm the Latin name [D242]; maps only, no mesh"
+  },
+  {
+   "slug": "lysimachia",
+   "caption_ru": "Вербейник",
+   "latin": "Lysimachia punctata",
+   "latin_candidate": null,
+   "type": "flower",
+   "confidence": "high",
+   "basis": "caption + yellow flowers in whorls along upright leafy stems",
+   "catalogue": "new",
+   "variants": 1,
+   "source_msg_id": 61629,
+   "status": "maps approved [D242]; NPM star + VPM shell C:/x/flora-telegram-stars/v002 accepted, height confirmed [D253] (spec library/flora/stars-telegram-v001.json, material id 411 proposed); catalogue row waits for a library version with these objects and a generator route for non-audit sources (PR #1191 open items)"
+  },
+  {
+   "slug": "syringa",
+   "caption_ru": "Сирень",
+   "latin": null,
+   "latin_candidate": "Syringa vulgaris",
+   "type": "bush",
+   "confidence": "medium",
+   "basis": "caption + lilac panicles; species not visible on a sprite",
+   "catalogue": "111-113 / 116 exist; approved catalogue maps stay, Telegram crops are extra variants only [D242]",
+   "variants": 2,
+   "source_msg_id": 61630,
+   "status": "candidate: waits for the user to confirm the Latin name [D242]; maps only, no mesh"
+  },
+  {
+   "slug": "achillea",
+   "caption_ru": "Тысячелистник",
+   "latin": "Achillea millefolium",
+   "latin_candidate": null,
+   "type": "flower",
+   "confidence": "high",
+   "basis": "caption + flat white umbels and feathery leaves",
+   "catalogue": "new",
+   "variants": 2,
+   "source_msg_id": 61631,
+   "status": "maps approved [D242]; NPM star + VPM shell C:/x/flora-telegram-stars/v002 accepted, height confirmed [D253] (spec library/flora/stars-telegram-v001.json, material id 412 proposed); catalogue row waits for a library version with these objects and a generator route for non-audit sources (PR #1191 open items); v1 is the species map, v2 a variant"
+  },
+  {
+   "slug": "rosa",
+   "caption_ru": "Роза",
+   "latin": null,
+   "latin_candidate": "Rosa (pink shrub rose, cultivar unknown)",
+   "type": "bush",
+   "confidence": "unconfirmed",
+   "basis": "caption gives the genus only",
+   "catalogue": "new",
+   "variants": 2,
+   "source_msg_id": 61632,
+   "status": "candidate: waits for the user to confirm the Latin name [D242]; maps only, no mesh"
+  },
+  {
+   "slug": "daisy-white",
+   "caption_ru": "Ромашка белая",
+   "latin": null,
+   "latin_candidate": "Leucanthemum or Argyranthemum (white marguerite)",
+   "type": "flower",
+   "confidence": "unconfirmed",
+   "basis": "caption 'Romashka' is a common name for several genera; cushion habit",
+   "catalogue": "new",
+   "variants": 1,
+   "source_msg_id": 66203,
+   "status": "candidate: waits for the user to confirm the Latin name [D242]; maps only, no mesh"
+  },
+  {
+   "slug": "daisy-yellow",
+   "caption_ru": "Ромашка жёлтая",
+   "latin": null,
+   "latin_candidate": "Argyranthemum / Euryops / Anthemis (yellow daisy)",
+   "type": "flower",
+   "confidence": "unconfirmed",
+   "basis": "caption 'Romashka' is a common name; yellow-rayed cushion",
+   "catalogue": "new",
+   "variants": 1,
+   "source_msg_id": 66204,
+   "status": "candidate: waits for the user to confirm the Latin name [D242]; maps only, no mesh"
+  },
+  {
+   "slug": "lavandula",
+   "caption_ru": "Лаванда",
+   "latin": null,
+   "latin_candidate": "Lavandula angustifolia",
+   "type": "flower",
+   "confidence": "medium",
+   "basis": "caption + lavender spikes on grey foliage; species not visible",
+   "catalogue": "new",
+   "variants": 1,
+   "source_msg_id": 66205,
+   "status": "candidate: waits for the user to confirm the Latin name [D242]; maps only, no mesh"
+  },
+  {
+   "slug": "miscanthus-v2",
+   "caption_ru": "Мискантус v2",
+   "latin": null,
+   "latin_candidate": "grass, genus unknown (no plumes)",
+   "type": "flower",
+   "confidence": "unconfirmed",
+   "basis": "caption says miscanthus, the image shows a green grass clump without plumes",
+   "catalogue": "new",
+   "variants": 1,
+   "source_msg_id": 66206,
+   "status": "candidate: waits for the user to confirm the Latin name [D242]; maps only, no mesh"
+  },
+  {
+   "slug": "triticum",
+   "caption_ru": "Пшеница",
+   "latin": null,
+   "latin_candidate": "Triticum aestivum",
+   "type": "flower",
+   "confidence": "medium",
+   "basis": "caption + wheat ears; ornamental use, species by look",
+   "catalogue": "new",
+   "variants": 1,
+   "source_msg_id": 66207,
+   "status": "candidate: waits for the user to confirm the Latin name [D242]; maps only, no mesh"
+  }
+ ],
  "skipped": [
   {
    "msg_id": 53407,
@@ -173,8 +331,7 @@
    "synthetic": false,
    "verdict": "good: VPM placeholder 256 and NPM 128 colour",
    "notes": "Interior capsule Diffuse, sRGB (57,57,57).",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/placeholders/v001/interior_d_128.png",
@@ -202,8 +359,7 @@
    "synthetic": false,
    "verdict": "good: VPM placeholder 256 and NPM 128 colour",
    "notes": "Interior capsule Diffuse, sRGB (57,57,57). NPM: TEX-09 allows standalone 128 placeholders for Metallic/Roughness only; use this colour as a solid atlas cell",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/placeholders/v001/lighting_erm_256.png",
@@ -231,8 +387,7 @@
    "synthetic": false,
    "verdict": "good: VPM ERM placeholder; NPM M/R 128",
    "notes": "ERM (255,255,0): emissive 255, roughness 255, metallic 0. No library id yet (lighting).",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/placeholders/v001/lighting_r_128.png",
@@ -261,8 +416,7 @@
    "synthetic": false,
    "verdict": "good: VPM ERM placeholder; NPM M/R 128",
    "notes": "ERM (255,255,0): emissive 255, roughness 255, metallic 0. No library id yet (lighting).",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/placeholders/v001/lighting_m_128.png",
@@ -291,8 +445,7 @@
    "synthetic": false,
    "verdict": "good: VPM ERM placeholder; NPM M/R 128",
    "notes": "ERM (255,255,0): emissive 255, roughness 255, metallic 0. No library id yet (lighting).",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/placeholders/v001/flat_n_256.png",
@@ -320,8 +473,7 @@
    "synthetic": false,
    "verdict": "good: flat DirectX normal placeholder for any VPM set",
    "notes": "(128,128,255); 27885 (address plates Normal) is the same colour. NPM has no normal maps [D014].",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/placeholders/v001/lighting_d_256.png",
@@ -349,8 +501,7 @@
    "synthetic": false,
    "verdict": "good: VPM Diffuse placeholder 256; NPM 128 colour",
    "notes": "Yellow (255,255,0); same bytes as the ERM 20953 in the source chat.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/placeholders/v001/lighting_d_128.png",
@@ -378,8 +529,7 @@
    "synthetic": false,
    "verdict": "good: VPM Diffuse placeholder 256; NPM 128 colour",
    "notes": "Yellow (255,255,0); same bytes as the ERM 20953 in the source chat. NPM: TEX-09 allows standalone 128 placeholders for Metallic/Roughness only; use this colour as a solid atlas cell",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/placeholders/v001/roof_dark_d_256.png",
@@ -407,8 +557,7 @@
    "synthetic": false,
    "verdict": "good: VPM placeholder 256 and NPM 128 colour",
    "notes": "Roof Diffuse (80,83,95); which roof row (29-31) it stands for is unknown; closest by tone 30 roof_solo.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/placeholders/v001/roof_dark_d_128.png",
@@ -436,8 +585,7 @@
    "synthetic": false,
    "verdict": "good: VPM placeholder 256 and NPM 128 colour",
    "notes": "Roof Diffuse (80,83,95); which roof row (29-31) it stands for is unknown; closest by tone 30 roof_solo. NPM: TEX-09 allows standalone 128 placeholders for Metallic/Roughness only; use this colour as a solid atlas cell",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/placeholders/v001/metal_glossy_erm_256.png",
@@ -465,8 +613,7 @@
    "synthetic": false,
    "verdict": "good: VPM ERM placeholder; NPM M/R 128",
    "notes": "ERM (0,129,255): roughness 129, metallic 255; candidate for 36 steel_stainless (not confirmed).",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/placeholders/v001/metal_glossy_r_128.png",
@@ -495,8 +642,7 @@
    "synthetic": false,
    "verdict": "good: VPM ERM placeholder; NPM M/R 128",
    "notes": "ERM (0,129,255): roughness 129, metallic 255; candidate for 36 steel_stainless (not confirmed).",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/placeholders/v001/metal_glossy_m_128.png",
@@ -525,8 +671,7 @@
    "synthetic": false,
    "verdict": "good: VPM ERM placeholder; NPM M/R 128",
    "notes": "ERM (0,129,255): roughness 129, metallic 255; candidate for 36 steel_stainless (not confirmed).",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/placeholders/v001/metal_matte_erm_256.png",
@@ -554,8 +699,7 @@
    "synthetic": false,
    "verdict": "weak: metallic 128 (half metal), check intent before use",
    "notes": "ERM (0,128,128): roughness 128, metallic 128.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/placeholders/v001/metal_matte_r_128.png",
@@ -584,8 +728,7 @@
    "synthetic": false,
    "verdict": "weak: metallic 128 (half metal), check intent before use",
    "notes": "ERM (0,128,128): roughness 128, metallic 128.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/placeholders/v001/metal_matte_m_128.png",
@@ -614,8 +757,7 @@
    "synthetic": false,
    "verdict": "weak: metallic 128 (half metal), check intent before use",
    "notes": "ERM (0,128,128): roughness 128, metallic 128.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/placeholders/v001/address_plate_erm_256.png",
@@ -643,8 +785,7 @@
    "synthetic": false,
    "verdict": "good: VPM ERM placeholder; NPM M/R 128",
    "notes": "Address plates (house number 1016 set): ERM (0,197,38).",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/placeholders/v001/address_plate_r_128.png",
@@ -673,8 +814,7 @@
    "synthetic": false,
    "verdict": "good: VPM ERM placeholder; NPM M/R 128",
    "notes": "Address plates (house number 1016 set): ERM (0,197,38).",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/placeholders/v001/address_plate_m_128.png",
@@ -703,8 +843,7 @@
    "synthetic": false,
    "verdict": "good: VPM ERM placeholder; NPM M/R 128",
    "notes": "Address plates (house number 1016 set): ERM (0,197,38).",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/placeholders/v001/address_plate_d_256.png",
@@ -732,8 +871,7 @@
    "synthetic": false,
    "verdict": "good: VPM Diffuse placeholder 256; NPM 128 colour",
    "notes": "Diffuse (0,0,98) navy. Normal 27885 = flat_n_256.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/placeholders/v001/address_plate_d_128.png",
@@ -761,8 +899,7 @@
    "synthetic": false,
    "verdict": "good: VPM Diffuse placeholder 256; NPM 128 colour",
    "notes": "Diffuse (0,0,98) navy. Normal 27885 = flat_n_256. NPM: TEX-09 allows standalone 128 placeholders for Metallic/Roughness only; use this colour as a solid atlas cell",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/placeholders/v001/gate_erm_256.png",
@@ -790,8 +927,7 @@
    "synthetic": false,
    "verdict": "good: VPM ERM placeholder (source palette PNG converted to RGB); NPM M/R 128",
    "notes": "ERM (0,102,104): roughness 102, metallic 104.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/placeholders/v001/gate_r_128.png",
@@ -820,8 +956,7 @@
    "synthetic": false,
    "verdict": "good: VPM ERM placeholder (source palette PNG converted to RGB); NPM M/R 128",
    "notes": "ERM (0,102,104): roughness 102, metallic 104.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/placeholders/v001/gate_m_128.png",
@@ -850,8 +985,7 @@
    "synthetic": false,
    "verdict": "good: VPM ERM placeholder (source palette PNG converted to RGB); NPM M/R 128",
    "notes": "ERM (0,102,104): roughness 102, metallic 104.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/43/43_gate_panel_grey_d_4096.png",
@@ -878,8 +1012,7 @@
    "synthetic": false,
    "verdict": "VPM-ok: 4096 Diffuse + Normal, ERM placeholder gate_erm_256; good for NPM at 2048",
    "notes": "OKS gates, horizontal lines; real-world size unknown.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/43/43_gate_panel_grey_d_2048.png",
@@ -907,8 +1040,7 @@
    "synthetic": false,
    "verdict": "VPM-ok: 4096 Diffuse + Normal, ERM placeholder gate_erm_256; good for NPM at 2048",
    "notes": "OKS gates, horizontal lines; real-world size unknown.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/43/43_gate_panel_grey_n_4096.png",
@@ -935,8 +1067,7 @@
    "synthetic": false,
    "verdict": "VPM-ok: 4096 DirectX normal (convention not re-checked)",
    "notes": null,
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/44/44_address_plate_template_d_4096.png",
@@ -963,8 +1094,7 @@
    "synthetic": false,
    "verdict": "VPM-ok: 4096 triplet; template strokes, replace per address",
    "notes": "Address template T_Template_Address_001; real-world size unknown.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/44/44_address_plate_template_d_2048.png",
@@ -992,8 +1122,7 @@
    "synthetic": false,
    "verdict": "VPM-ok: 4096 triplet; template strokes, replace per address",
    "notes": "Address template T_Template_Address_001; real-world size unknown.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/44/44_address_plate_template_erm_4096.png",
@@ -1020,8 +1149,7 @@
    "synthetic": false,
    "verdict": "VPM-ok: ERM 4096; NPM R/M pair at 2048 from its G/B",
    "notes": null,
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/44/44_address_plate_template_r_2048.png",
@@ -1050,8 +1178,7 @@
    "synthetic": false,
    "verdict": "VPM-ok: ERM 4096; NPM R/M pair at 2048 from its G/B",
    "notes": null,
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/44/44_address_plate_template_m_2048.png",
@@ -1080,8 +1207,7 @@
    "synthetic": false,
    "verdict": "VPM-ok: ERM 4096; NPM R/M pair at 2048 from its G/B",
    "notes": null,
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/44/44_address_plate_template_n_4096.png",
@@ -1108,8 +1234,7 @@
    "synthetic": false,
    "verdict": "VPM-ok: 4096 normal",
    "notes": null,
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/22/22_asphalt_d_4096.png",
@@ -1136,8 +1261,7 @@
    "synthetic": false,
    "verdict": "good: tileable; VPM-ok as Diffuse only (no ERM/Normal); good for NPM",
    "notes": "Real-world size unknown.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/22/22_asphalt_d_2048.png",
@@ -1165,8 +1289,7 @@
    "synthetic": false,
    "verdict": "good: tileable; VPM-ok as Diffuse only (no ERM/Normal); good for NPM",
    "notes": "Real-world size unknown. VPM 2048 variant (Lanczos).",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/22/22_asphalt_d_1024.png",
@@ -1194,8 +1317,7 @@
    "synthetic": false,
    "verdict": "good: tileable; VPM-ok as Diffuse only (no ERM/Normal); good for NPM",
    "notes": "Real-world size unknown. NPM: largest of 2048/1024/512 within 3 MiB.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/28/28_concrete_arch_d_4096.png",
@@ -1222,8 +1344,7 @@
    "synthetic": false,
    "verdict": "good: tileable, low contrast; VPM-ok as Diffuse only; good for NPM",
    "notes": "JPEG source (compression artefacts possible); real-world size unknown; table recipe for 28 is solid.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/28/28_concrete_arch_d_2048.png",
@@ -1251,8 +1372,7 @@
    "synthetic": false,
    "verdict": "good: tileable, low contrast; VPM-ok as Diffuse only; good for NPM",
    "notes": "JPEG source (compression artefacts possible); real-world size unknown; table recipe for 28 is solid. VPM 2048 variant (Lanczos).",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/28/28_concrete_arch_d_1024.png",
@@ -1280,8 +1400,7 @@
    "synthetic": false,
    "verdict": "good: tileable, low contrast; VPM-ok as Diffuse only; good for NPM",
    "notes": "JPEG source (compression artefacts possible); real-world size unknown; table recipe for 28 is solid. NPM: largest of 2048/1024/512 within 3 MiB.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/45/45_paving_slab_grey_d_4096.png",
@@ -1308,8 +1427,7 @@
    "synthetic": false,
    "verdict": "good: tileable 3x3 slabs; VPM-ok as Diffuse only; good for NPM",
    "notes": "Slab size unknown, so px/m unknown; not the 100x300 'Gotika' paving of ids 18-20.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/45/45_paving_slab_grey_d_2048.png",
@@ -1337,8 +1455,7 @@
    "synthetic": false,
    "verdict": "good: tileable 3x3 slabs; VPM-ok as Diffuse only; good for NPM",
    "notes": "Slab size unknown, so px/m unknown; not the 100x300 'Gotika' paving of ids 18-20. VPM 2048 variant (Lanczos).",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/45/45_paving_slab_grey_d_1024.png",
@@ -1366,8 +1483,7 @@
    "synthetic": false,
    "verdict": "good: tileable 3x3 slabs; VPM-ok as Diffuse only; good for NPM",
    "notes": "Slab size unknown, so px/m unknown; not the 100x300 'Gotika' paving of ids 18-20. NPM: largest of 2048/1024/512 within 3 MiB.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/46/46_wood_grain_medium_d_4096.png",
@@ -1394,8 +1510,7 @@
    "synthetic": false,
    "verdict": "weak: visible seam when tiled along U; VPM Diffuse only",
    "notes": "Medium-brown wood grain; real-world size unknown; not larch 37/41.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/46/46_wood_grain_medium_d_2048.png",
@@ -1423,8 +1538,7 @@
    "synthetic": false,
    "verdict": "weak: visible seam when tiled along U; VPM Diffuse only",
    "notes": "Medium-brown wood grain; real-world size unknown; not larch 37/41. VPM 2048 variant (Lanczos).",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/46/46_wood_grain_medium_d_1024.png",
@@ -1452,8 +1566,7 @@
    "synthetic": false,
    "verdict": "weak: visible seam when tiled along U; VPM Diffuse only",
    "notes": "Medium-brown wood grain; real-world size unknown; not larch 37/41. NPM: largest of 2048/1024/512 within 3 MiB.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/47/47_brick_long_format_mask_mask_2048.png",
@@ -1480,8 +1593,7 @@
    "synthetic": false,
    "verdict": "good as greyscale mask (recipe greyscale_mask), tileable; NPM-ok; VPM-ok at 2048",
    "notes": "Long-format brick, not 17 brick_250x65 (a 75 mm course would give 40 courses in 3 m).",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/48/48_facade_strip_tile_grey_d_2048.png",
@@ -1510,8 +1622,7 @@
    "synthetic": false,
    "verdict": "good: tileable; NPM-ok; VPM-ok as 2048 Diffuse only",
    "notes": "Grey long-strip facade tile, read from the zip (the FBX 107807 next to it is not processed).",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/26/26_lawn_reinforced_d_1024.png",
@@ -1539,8 +1650,7 @@
    "synthetic": false,
    "verdict": "weak: low-res (900 px source, resampled up to 1024); NPM only",
    "notes": "Eco-grid lawn; tiles acceptably; real-world size unknown. Non-power-of-two 900 px -> nearest power of two 1024 by Lanczos resample.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/49/49_perforated_sheet_round_o_2048.png",
@@ -1567,8 +1677,7 @@
    "synthetic": false,
    "verdict": "good opacity mask, tileable; licence unverified (name looks like ambientCG SheetMetal001)",
    "notes": "White = metal, black = hole; real-world size unknown.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/50/50_mesh_square_grid_o_512.png",
@@ -1596,8 +1705,7 @@
    "synthetic": false,
    "verdict": "weak: 700 px source resampled to 512, thin bars soften",
    "notes": "Opacity from the source alpha; the source colour is a flat (107,107,107). Non-power-of-two 700 px -> nearest power of two 512 by Lanczos resample (tiling kept, no padding).",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/51/51_fence_chainlink_o_2048.png",
@@ -1628,8 +1736,7 @@
    "synthetic": false,
    "verdict": "good opacity mask, tileable; aspect changed, see notes",
    "notes": "White = wire. 2048x2560 -> 2048x2048 by non-uniform Lanczos resample to keep tiling; scale UV V by 1.25 (one tile = 4:5) to restore the wire proportions.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "materials/v001/52/52_fence_barbed_o_2048.png",
@@ -1660,8 +1767,7 @@
    "synthetic": false,
    "verdict": "good opacity strip, tiles along U; padded",
    "notes": "White = wire. 2048x640 padded (not resampled) to 2048x2048 with black = transparent; content in rows 0-639, UV V range 0..0.3125.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/miscanthus/miscanthus_d_4096.png",
@@ -1688,8 +1794,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/miscanthus/miscanthus_o_4096.png",
@@ -1716,8 +1821,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/miscanthus/miscanthus_d_2048.png",
@@ -1745,8 +1849,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/miscanthus/miscanthus_o_2048.png",
@@ -1774,8 +1877,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/aster-dumosus-island-samoa/aster-dumosus-island-samoa_d_4096.png",
@@ -1802,8 +1904,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/aster-dumosus-island-samoa/aster-dumosus-island-samoa_o_4096.png",
@@ -1830,8 +1931,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/aster-dumosus-island-samoa/aster-dumosus-island-samoa_d_2048.png",
@@ -1859,8 +1959,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/aster-dumosus-island-samoa/aster-dumosus-island-samoa_o_2048.png",
@@ -1888,8 +1987,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/berberis/berberis_d_4096.png",
@@ -1916,8 +2014,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/berberis/berberis_o_4096.png",
@@ -1944,8 +2041,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/berberis/berberis_d_2048.png",
@@ -1973,8 +2069,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/berberis/berberis_o_2048.png",
@@ -2002,8 +2097,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/lysimachia/lysimachia_d_4096.png",
@@ -2030,8 +2124,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/lysimachia/lysimachia_o_4096.png",
@@ -2058,8 +2151,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/lysimachia/lysimachia_d_2048.png",
@@ -2087,8 +2179,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/lysimachia/lysimachia_o_2048.png",
@@ -2116,8 +2207,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/syringa/syringa_d_4096.png",
@@ -2144,8 +2234,7 @@
    "synthetic": false,
    "verdict": "good for the NPM Flora atlas: sprites fill most of the 4096 canvas",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/syringa/syringa_o_4096.png",
@@ -2172,8 +2261,7 @@
    "synthetic": false,
    "verdict": "good for the NPM Flora atlas: sprites fill most of the 4096 canvas",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/syringa/syringa_d_2048.png",
@@ -2201,8 +2289,7 @@
    "synthetic": false,
    "verdict": "good for the NPM Flora atlas: sprites fill most of the 4096 canvas",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/syringa/syringa_o_2048.png",
@@ -2230,8 +2317,7 @@
    "synthetic": false,
    "verdict": "good for the NPM Flora atlas: sprites fill most of the 4096 canvas",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/rosa/rosa_d_4096.png",
@@ -2258,8 +2344,7 @@
    "synthetic": false,
    "verdict": "good for the NPM Flora atlas: sprites fill most of the 4096 canvas",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/rosa/rosa_o_4096.png",
@@ -2286,8 +2371,7 @@
    "synthetic": false,
    "verdict": "good for the NPM Flora atlas: sprites fill most of the 4096 canvas",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/rosa/rosa_d_2048.png",
@@ -2315,8 +2399,7 @@
    "synthetic": false,
    "verdict": "good for the NPM Flora atlas: sprites fill most of the 4096 canvas",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/rosa/rosa_o_2048.png",
@@ -2344,8 +2427,7 @@
    "synthetic": false,
    "verdict": "good for the NPM Flora atlas: sprites fill most of the 4096 canvas",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/daisy-white/daisy-white_d_4096.png",
@@ -2372,8 +2454,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/daisy-white/daisy-white_o_4096.png",
@@ -2400,8 +2481,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/daisy-white/daisy-white_d_2048.png",
@@ -2429,8 +2509,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/daisy-white/daisy-white_o_2048.png",
@@ -2458,8 +2537,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/daisy-yellow/daisy-yellow_d_4096.png",
@@ -2486,8 +2564,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/daisy-yellow/daisy-yellow_o_4096.png",
@@ -2514,8 +2591,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/daisy-yellow/daisy-yellow_d_2048.png",
@@ -2543,8 +2619,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/daisy-yellow/daisy-yellow_o_2048.png",
@@ -2572,8 +2647,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/lavandula/lavandula_d_4096.png",
@@ -2600,8 +2674,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/lavandula/lavandula_o_4096.png",
@@ -2628,8 +2701,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/lavandula/lavandula_d_2048.png",
@@ -2657,8 +2729,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/lavandula/lavandula_o_2048.png",
@@ -2686,8 +2757,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/miscanthus-v2/miscanthus-v2_d_4096.png",
@@ -2714,8 +2784,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/miscanthus-v2/miscanthus-v2_o_4096.png",
@@ -2742,8 +2811,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/miscanthus-v2/miscanthus-v2_d_2048.png",
@@ -2771,8 +2839,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/miscanthus-v2/miscanthus-v2_o_2048.png",
@@ -2800,8 +2867,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/triticum/triticum_d_4096.png",
@@ -2828,8 +2894,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/triticum/triticum_o_4096.png",
@@ -2856,8 +2921,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/triticum/triticum_d_2048.png",
@@ -2885,8 +2949,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/triticum/triticum_o_2048.png",
@@ -2914,8 +2977,7 @@
    "synthetic": false,
    "verdict": "NPM-ok after crop: one sprite ~1150 px centred in a 4096 canvas (~575 px at 2048); crop to the sprite before atlas packing",
    "notes": "Species / cultivar not confirmed (slug from the chat label); no catalogue id yet (step 2.4). Lossless split; RGB under alpha 0 kept as is (white/black blocks in some sources): dilate colour before atlas packing to avoid halos. 2048 Lanczos for the <= 2048 Flora atlas.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/achillea/achillea_d_2048.png",
@@ -2942,8 +3004,7 @@
    "synthetic": false,
    "verdict": "good for the NPM Flora atlas: 2048, two sprites fill the canvas",
    "notes": "Species not confirmed (slug from the chat label 'yarrow'); no catalogue id yet (step 2.4). Lossless split; the 2048 diffuse PNG is 3.3 MiB (> 3 MiB): atlas input only, not a delivery map.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
   },
   {
    "path": "flora/v003/maps/achillea/achillea_o_2048.png",
@@ -2970,8 +3031,1001 @@
    "synthetic": false,
    "verdict": "good for the NPM Flora atlas: 2048, two sprites fill the canvas",
    "notes": "Species not confirmed (slug from the chat label 'yarrow'); no catalogue id yet (step 2.4). Lossless split; the 2048 diffuse PNG is 3.3 MiB (> 3 MiB): atlas input only, not a delivery map.",
-   "checks": "pass",
-   "write": "written"
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/miscanthus/miscanthus_d_atlas_1024.png",
+   "library_id": null,
+   "key": "miscanthus",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 931128,
+   "sha256": "27009f608095a9928968a4831ac8cfc1ffc09ce7eccf69f2b22e4c6864144b2e",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 61626,
+    "file": "61626_T_Miskantus.png",
+    "sha256": "fb34b83bd1b25f2097ccd746e61ad07bb5d84f57de438d8ae2a393c693d9ea76"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+   "notes": "Plant 1 of 1 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/miscanthus/miscanthus_o_atlas_1024.png",
+   "library_id": null,
+   "key": "miscanthus",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 272158,
+   "sha256": "5e4d7eff81c398b49e9ebad691854a584333d55f2256f2e3fbbdb4958e74c8d5",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 61626,
+    "file": "61626_T_Miskantus.png",
+    "sha256": "fb34b83bd1b25f2097ccd746e61ad07bb5d84f57de438d8ae2a393c693d9ea76"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready opacity of the same crop",
+   "notes": "Plant 1 of 1 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/aster-dumosus-island-samoa/aster-dumosus-island-samoa_d_atlas_1024.png",
+   "library_id": null,
+   "key": "aster-dumosus-island-samoa",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 1146855,
+   "sha256": "ae9e781f1ce137d330601cfe02b33a8d99412264e4e1529d3acc9720867e9d9a",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 61627,
+    "file": "61627_T_Астра_кустарниковая_‘Island_Samoa’_Diff.png",
+    "sha256": "cc1e5e72696076bc7cb0744c72d43a871ed85cfacd2fed3f6cbf7b787f63d580"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+   "notes": "Plant 1 of 1 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/aster-dumosus-island-samoa/aster-dumosus-island-samoa_o_atlas_1024.png",
+   "library_id": null,
+   "key": "aster-dumosus-island-samoa",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 223198,
+   "sha256": "92d27b78f7b20b4c44b7bb91175afa3e61412fce5dcb2eac63451fd7d5cb1635",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 61627,
+    "file": "61627_T_Астра_кустарниковая_‘Island_Samoa’_Diff.png",
+    "sha256": "cc1e5e72696076bc7cb0744c72d43a871ed85cfacd2fed3f6cbf7b787f63d580"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready opacity of the same crop",
+   "notes": "Plant 1 of 1 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/aster-dumosus-island-samoa/aster-dumosus-island-samoa_o_star_1024.png",
+   "library_id": null,
+   "key": "aster-dumosus-island-samoa",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "L",
+   "bytes": 12177,
+   "sha256": "6c81f15087d32567cd807bfea32af9abade46c5a1ac9fbe195df9381bf3b5026",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048,
+    "binary": true,
+    "fill_holes_px": 64
+   },
+   "source": {
+    "msg_id": 61627,
+    "file": "61627_T_Астра_кустарниковая_‘Island_Samoa’_Diff.png",
+    "sha256": "cc1e5e72696076bc7cb0744c72d43a871ed85cfacd2fed3f6cbf7b787f63d580"
+   },
+   "synthetic": false,
+   "verdict": "star opacity: binary 0/255 at 128 (build_flora_star.py input), same crop as the atlas maps",
+   "notes": "Binary grey L. Enclosed holes <= 64 px filled: the source alpha has semi-transparent rings round the flower heads inside the bush (in the original cut-out, not from processing).",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/berberis/berberis_d_atlas_1024.png",
+   "library_id": null,
+   "key": "berberis",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 930595,
+   "sha256": "f678ab64f85df6e6cebfee5ce05aa4c135334cc8066d3b72d663a8780057b2d0",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 61628,
+    "file": "61628_T_Барбарис.png",
+    "sha256": "6860a44533dcf73db9b79d60f292c1fb503ed8a76bc80033cc18c4b97f30ce3a"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+   "notes": "Plant 1 of 1 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/berberis/berberis_o_atlas_1024.png",
+   "library_id": null,
+   "key": "berberis",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 180219,
+   "sha256": "d8471d452a2fa0e7d0a4ecaf94b811f0cd1b52c2cf44deb2c52420317b24f139",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 61628,
+    "file": "61628_T_Барбарис.png",
+    "sha256": "6860a44533dcf73db9b79d60f292c1fb503ed8a76bc80033cc18c4b97f30ce3a"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready opacity of the same crop",
+   "notes": "Plant 1 of 1 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/lysimachia/lysimachia_d_atlas_1024.png",
+   "library_id": null,
+   "key": "lysimachia",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 934067,
+   "sha256": "36957d46c819a9357b14dfd5e11a8222597b8fb112900893065a5d6be26fb381",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 61629,
+    "file": "61629_T_Вербейник.png",
+    "sha256": "1cdf27f24f5393650c9ca76a197edbe14ae69770111c3085961fc72822fb4d77"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+   "notes": "Plant 1 of 1 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/lysimachia/lysimachia_o_atlas_1024.png",
+   "library_id": null,
+   "key": "lysimachia",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 245098,
+   "sha256": "bd65271dea4013279002d097a9a81f0d1b86a27f1643c4640ed5e17b642a4b00",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 61629,
+    "file": "61629_T_Вербейник.png",
+    "sha256": "1cdf27f24f5393650c9ca76a197edbe14ae69770111c3085961fc72822fb4d77"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready opacity of the same crop",
+   "notes": "Plant 1 of 1 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/lysimachia/lysimachia_o_star_1024.png",
+   "library_id": null,
+   "key": "lysimachia",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "L",
+   "bytes": 18925,
+   "sha256": "20c9189b80e8727e39b9cfdac34b75f3fae2fcec0d79bc9eee9e0eaee4a288d6",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048,
+    "binary": true
+   },
+   "source": {
+    "msg_id": 61629,
+    "file": "61629_T_Вербейник.png",
+    "sha256": "1cdf27f24f5393650c9ca76a197edbe14ae69770111c3085961fc72822fb4d77"
+   },
+   "synthetic": false,
+   "verdict": "star opacity: binary 0/255 at 128 (build_flora_star.py input), same crop as the atlas maps",
+   "notes": "Binary grey L.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/syringa/syringa_v1_d_atlas_1024.png",
+   "library_id": null,
+   "key": "syringa",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 1308715,
+   "sha256": "0057a2467443f8b44dad37f3ebbd4588dcb6497b55c31b3cfe38b6fea2ff68f4",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 61630,
+    "file": "61630_T_Сирень.png",
+    "sha256": "9d086ed36d18d4e948bf6a95bef241ce6a78cb2c04b17fbe971da9c57a50a4d0"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+   "notes": "Plant 1 of 2 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/syringa/syringa_v1_o_atlas_1024.png",
+   "library_id": null,
+   "key": "syringa",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 458034,
+   "sha256": "0f25f2ed44fdc5f05a400518845b1cb0515f0482125f9b6d074508d97a7ec981",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 61630,
+    "file": "61630_T_Сирень.png",
+    "sha256": "9d086ed36d18d4e948bf6a95bef241ce6a78cb2c04b17fbe971da9c57a50a4d0"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready opacity of the same crop",
+   "notes": "Plant 1 of 2 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/syringa/syringa_v2_d_atlas_1024.png",
+   "library_id": null,
+   "key": "syringa",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 1078521,
+   "sha256": "fe6aada1f78945cb3bd4e84df9410a4a607b72f10174913cfa93867dc8e60a92",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 1,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 61630,
+    "file": "61630_T_Сирень.png",
+    "sha256": "9d086ed36d18d4e948bf6a95bef241ce6a78cb2c04b17fbe971da9c57a50a4d0"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+   "notes": "Plant 2 of 2 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/syringa/syringa_v2_o_atlas_1024.png",
+   "library_id": null,
+   "key": "syringa",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 397247,
+   "sha256": "dec06f83c871d3b117e849d59a04d4af169007de283eaa31716ac0afb4d8c05d",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 1,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 61630,
+    "file": "61630_T_Сирень.png",
+    "sha256": "9d086ed36d18d4e948bf6a95bef241ce6a78cb2c04b17fbe971da9c57a50a4d0"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready opacity of the same crop",
+   "notes": "Plant 2 of 2 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/achillea/achillea_v1_d_atlas_1024.png",
+   "library_id": null,
+   "key": "achillea",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 818601,
+   "sha256": "7942cbbdab85b09c3d66d6fc92b47fbe514b6086f609d34e62e8f06d43ae61bb",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 61631,
+    "file": "61631_T_Тысячелистник.png",
+    "sha256": "0a875d113e29aa04fd4580f6f88bd35e7a6756676308b46f30fa33ed175b92b9"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+   "notes": "Plant 1 of 2 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/achillea/achillea_v1_o_atlas_1024.png",
+   "library_id": null,
+   "key": "achillea",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 237905,
+   "sha256": "680559a0d67e93ce13ad7f1716fd22b88c7148cdd709fbcdf88b9ee630d786cf",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 61631,
+    "file": "61631_T_Тысячелистник.png",
+    "sha256": "0a875d113e29aa04fd4580f6f88bd35e7a6756676308b46f30fa33ed175b92b9"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready opacity of the same crop",
+   "notes": "Plant 1 of 2 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/achillea/achillea_v2_d_atlas_1024.png",
+   "library_id": null,
+   "key": "achillea",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 958791,
+   "sha256": "9e42e267400bcfa65e0e2b362ab8f0b713f55be2745f0f549c4326fd39c239fe",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 1,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 61631,
+    "file": "61631_T_Тысячелистник.png",
+    "sha256": "0a875d113e29aa04fd4580f6f88bd35e7a6756676308b46f30fa33ed175b92b9"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+   "notes": "Plant 2 of 2 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/achillea/achillea_v2_o_atlas_1024.png",
+   "library_id": null,
+   "key": "achillea",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 255813,
+   "sha256": "4c4b225be50088cd991aae0a171ade378aebebdf2581dee0db9d812b9d53659f",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 1,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 61631,
+    "file": "61631_T_Тысячелистник.png",
+    "sha256": "0a875d113e29aa04fd4580f6f88bd35e7a6756676308b46f30fa33ed175b92b9"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready opacity of the same crop",
+   "notes": "Plant 2 of 2 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/achillea/achillea_v1_o_star_1024.png",
+   "library_id": null,
+   "key": "achillea",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "L",
+   "bytes": 26902,
+   "sha256": "86d1555d9f6cfe782ef765d241e9659fa5cb43e30fa506ca36d32b82a73ed1db",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048,
+    "binary": true
+   },
+   "source": {
+    "msg_id": 61631,
+    "file": "61631_T_Тысячелистник.png",
+    "sha256": "0a875d113e29aa04fd4580f6f88bd35e7a6756676308b46f30fa33ed175b92b9"
+   },
+   "synthetic": false,
+   "verdict": "star opacity: binary 0/255 at 128 (build_flora_star.py input), same crop as the atlas maps",
+   "notes": "Binary grey L.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/rosa/rosa_v1_d_atlas_1024.png",
+   "library_id": null,
+   "key": "rosa",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 1284897,
+   "sha256": "89ba98d4d94fd30559e97057a06ad4455ab5e281e3e1203076674a400df5fe1f",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 61632,
+    "file": "61632_T_Роза.png",
+    "sha256": "54e92d21f7deef50331982d8c2596c15dc0dbe860255052e8434faba23f8a5fd"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+   "notes": "Plant 1 of 2 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/rosa/rosa_v1_o_atlas_1024.png",
+   "library_id": null,
+   "key": "rosa",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 238540,
+   "sha256": "530dfd790a20540e200b141457b9dc981d631e0bfd42abb4d2ed74f06b851efd",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 61632,
+    "file": "61632_T_Роза.png",
+    "sha256": "54e92d21f7deef50331982d8c2596c15dc0dbe860255052e8434faba23f8a5fd"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready opacity of the same crop",
+   "notes": "Plant 1 of 2 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/rosa/rosa_v2_d_atlas_1024.png",
+   "library_id": null,
+   "key": "rosa",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 1325084,
+   "sha256": "2d52bdc0ab50e26bc67ff60f102c0ba1842636914880160704e24629c38d8fdc",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 1,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 61632,
+    "file": "61632_T_Роза.png",
+    "sha256": "54e92d21f7deef50331982d8c2596c15dc0dbe860255052e8434faba23f8a5fd"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+   "notes": "Plant 2 of 2 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/rosa/rosa_v2_o_atlas_1024.png",
+   "library_id": null,
+   "key": "rosa",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 246288,
+   "sha256": "e654d9ca495ae08b3b2ec1c7f6349a529d617598b3a4d1be2c3833272e1d9add",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 1,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 61632,
+    "file": "61632_T_Роза.png",
+    "sha256": "54e92d21f7deef50331982d8c2596c15dc0dbe860255052e8434faba23f8a5fd"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready opacity of the same crop",
+   "notes": "Plant 2 of 2 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/daisy-white/daisy-white_d_atlas_1024.png",
+   "library_id": null,
+   "key": "daisy-white",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 1142337,
+   "sha256": "683d237689de3b89ed832c59de8af2f9b5e43b46042ca11f120e373a7e3d749c",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 66203,
+    "file": "66203_T_White_Romashka.png",
+    "sha256": "1e4fca388afbb60f6602ee38b13c0c8933c39f9130f09e701544b74175789ebf"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+   "notes": "Plant 1 of 1 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/daisy-white/daisy-white_o_atlas_1024.png",
+   "library_id": null,
+   "key": "daisy-white",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 165400,
+   "sha256": "73828e92cf7a41f8bee108a0038a6e356d2dc9ce69a6d677873d7869cada2e1b",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 66203,
+    "file": "66203_T_White_Romashka.png",
+    "sha256": "1e4fca388afbb60f6602ee38b13c0c8933c39f9130f09e701544b74175789ebf"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready opacity of the same crop",
+   "notes": "Plant 1 of 1 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/daisy-yellow/daisy-yellow_d_atlas_1024.png",
+   "library_id": null,
+   "key": "daisy-yellow",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 1041176,
+   "sha256": "d95e92ab1a75dbb6c7c5c56b48f3d0dc6978603186402fd68364cbff77ec6fa3",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 66204,
+    "file": "66204_T_Yellow_Romashka.png",
+    "sha256": "f887879b140e23a711dff82c683bd306d96aac8562eb287a8b4849c4444f01ad"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+   "notes": "Plant 1 of 1 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/daisy-yellow/daisy-yellow_o_atlas_1024.png",
+   "library_id": null,
+   "key": "daisy-yellow",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 108364,
+   "sha256": "ac8d9f150d42fdce9726dfc6e427f4c980761715707e15c140c6c4ecd4f9c647",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 66204,
+    "file": "66204_T_Yellow_Romashka.png",
+    "sha256": "f887879b140e23a711dff82c683bd306d96aac8562eb287a8b4849c4444f01ad"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready opacity of the same crop",
+   "notes": "Plant 1 of 1 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/lavandula/lavandula_d_atlas_1024.png",
+   "library_id": null,
+   "key": "lavandula",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 771510,
+   "sha256": "e915317402eccd8ade79e6722fb5526866b438f5077a625e8965cf13a823c610",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 66205,
+    "file": "66205_T_Lavanda.png",
+    "sha256": "e65712f284aec7c6b74b5221c28745de8b90ddc1dfc30598d5914628a7dc9b6e"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+   "notes": "Plant 1 of 1 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/lavandula/lavandula_o_atlas_1024.png",
+   "library_id": null,
+   "key": "lavandula",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 348817,
+   "sha256": "a50511a0f8860262465c2638c9e067c80e3843221ee9276dd8d892ef43deaaa2",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 66205,
+    "file": "66205_T_Lavanda.png",
+    "sha256": "e65712f284aec7c6b74b5221c28745de8b90ddc1dfc30598d5914628a7dc9b6e"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready opacity of the same crop",
+   "notes": "Plant 1 of 1 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/miscanthus-v2/miscanthus-v2_d_atlas_1024.png",
+   "library_id": null,
+   "key": "miscanthus-v2",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 938176,
+   "sha256": "7dd59641d2f0af46c6fd4ec68dd3e4d366e583aa8b46630adebf48081d3f50c2",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 66206,
+    "file": "66206_T_Miskantus_v2.png",
+    "sha256": "11ebcce37b43a738acd1bbf4fd20f96041a35edf90643053a526941dcca991dd"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+   "notes": "Plant 1 of 1 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/miscanthus-v2/miscanthus-v2_o_atlas_1024.png",
+   "library_id": null,
+   "key": "miscanthus-v2",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 265849,
+   "sha256": "991d4fe92f09527d46a296fb923aa8487a870e5280622d171b0ca6932d795246",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 66206,
+    "file": "66206_T_Miskantus_v2.png",
+    "sha256": "11ebcce37b43a738acd1bbf4fd20f96041a35edf90643053a526941dcca991dd"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready opacity of the same crop",
+   "notes": "Plant 1 of 1 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/triticum/triticum_d_atlas_1024.png",
+   "library_id": null,
+   "key": "triticum",
+   "map": "d",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 676073,
+   "sha256": "1a52ba401f1bb757a8e7704eaddf48d184be8814e16de9691ab4d46adc02e0cc",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 66207,
+    "file": "66207_T_Pshenica.png",
+    "sha256": "82646f69bcd95e9f0c7f17bca05d368d1a2655e31bbb2f5c5b94a28b189091c0"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready: cropped to the plant + 32 px, square, plant bottom-centred; colour dilated under alpha 0",
+   "notes": "Plant 1 of 1 in the source.",
+   "checks": "pass"
+  },
+  {
+   "path": "flora/v003/maps/triticum/triticum_o_atlas_1024.png",
+   "library_id": null,
+   "key": "triticum",
+   "map": "o",
+   "profile": "flora_source",
+   "width": 1024,
+   "height": 1024,
+   "mode": "RGB",
+   "bytes": 396077,
+   "sha256": "4088232abf6ebd53216863fc18bb504f33428c9d0e7fb0775423bfe2089fc916",
+   "px_per_m": null,
+   "px_per_m_basis": null,
+   "d207": null,
+   "op": {
+    "op": "sprite",
+    "sprite": 0,
+    "margin_px": 32,
+    "max_size": 2048
+   },
+   "source": {
+    "msg_id": 66207,
+    "file": "66207_T_Pshenica.png",
+    "sha256": "82646f69bcd95e9f0c7f17bca05d368d1a2655e31bbb2f5c5b94a28b189091c0"
+   },
+   "synthetic": false,
+   "verdict": "atlas-ready opacity of the same crop",
+   "notes": "Plant 1 of 1 in the source.",
+   "checks": "pass"
   },
   {
    "path": "materials/v001/9/9_panel_v1200_ral5015_d_3600.png",
@@ -3045,7 +4099,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map panel_v1200 of tiles_core.py; Сэндвич-панель RAL 5015, вертикальные швы 1,2 м master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -3122,7 +4175,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map panel_v1200 of tiles_core.py; Сэндвич-панель RAL 5015, вертикальные швы 1,2 м",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -3199,7 +4251,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map panel_v1200 of tiles_core.py; Сэндвич-панель RAL 5015, вертикальные швы 1,2 м DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -3278,7 +4329,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map panel_v1200 of tiles_core.py; Сэндвич-панель RAL 5015, вертикальные швы 1,2 м ERM placeholder = record fields (E, R, M) [0, 150, 0]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -3355,7 +4405,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map panel_v1200 of tiles_core.py; Сэндвич-панель RAL 5015, вертикальные швы 1,2 м",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -3430,7 +4479,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map panel_v1200 of tiles_core.py; Сэндвич-панель RAL 5015, вертикальные швы 1,2 м AGR Tools K3 grey mask (R body grey, G joint), shared by ids [9, 10]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -3505,7 +4553,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map panel_v1200 of tiles_core.py; Сэндвич-панель RAL 7047, вертикальные швы 1,2 м master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -3582,7 +4629,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map panel_v1200 of tiles_core.py; Сэндвич-панель RAL 7047, вертикальные швы 1,2 м",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -3659,7 +4705,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map panel_v1200 of tiles_core.py; Сэндвич-панель RAL 7047, вертикальные швы 1,2 м DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -3738,7 +4783,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map panel_v1200 of tiles_core.py; Сэндвич-панель RAL 7047, вертикальные швы 1,2 м ERM placeholder = record fields (E, R, M) [0, 150, 0]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -3815,7 +4859,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map panel_v1200 of tiles_core.py; Сэндвич-панель RAL 7047, вертикальные швы 1,2 м",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -3890,7 +4933,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_600x600 of tiles_core.py; Кассета типовая RAL 7047 600x600 master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -3967,7 +5009,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_600x600 of tiles_core.py; Кассета типовая RAL 7047 600x600",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -4044,7 +5085,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_600x600 of tiles_core.py; Кассета типовая RAL 7047 600x600 DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -4123,7 +5163,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_600x600 of tiles_core.py; Кассета типовая RAL 7047 600x600 ERM placeholder = record fields (E, R, M) [0, 150, 0]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -4200,7 +5239,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_600x600 of tiles_core.py; Кассета типовая RAL 7047 600x600",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -4275,7 +5313,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_600x600 of tiles_core.py; Кассета типовая RAL 7047 600x600 AGR Tools K3 grey mask (R body grey, G joint), shared by ids [12, 13]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -4350,7 +5387,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_600x600 of tiles_core.py; Кассета перфорированная RAL 9016 600x600 master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -4427,7 +5463,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_600x600 of tiles_core.py; Кассета перфорированная RAL 9016 600x600",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -4504,7 +5539,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_600x600 of tiles_core.py; Кассета перфорированная RAL 9016 600x600 DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -4583,7 +5617,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_600x600 of tiles_core.py; Кассета перфорированная RAL 9016 600x600 ERM placeholder = record fields (E, R, M) [0, 150, 0]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -4660,7 +5693,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_600x600 of tiles_core.py; Кассета перфорированная RAL 9016 600x600",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -4735,7 +5767,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map facade_600x1200 of tiles_core.py; Керамогранит 600x1200 тёмно-серый (вертикально) master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -4812,7 +5843,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map facade_600x1200 of tiles_core.py; Керамогранит 600x1200 тёмно-серый (вертикально)",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -4889,7 +5919,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map facade_600x1200 of tiles_core.py; Керамогранит 600x1200 тёмно-серый (вертикально) DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -4968,7 +5997,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map facade_600x1200 of tiles_core.py; Керамогранит 600x1200 тёмно-серый (вертикально) ERM placeholder = record fields (E, R, M) [0, 150, 0]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -5045,7 +6073,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map facade_600x1200 of tiles_core.py; Керамогранит 600x1200 тёмно-серый (вертикально)",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -5120,7 +6147,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map facade_600x1200 of tiles_core.py; Керамогранит 600x1200 тёмно-серый (вертикально) AGR Tools K3 grey mask (R body grey, G joint), shared by ids [14, 15]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -5195,7 +6221,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map facade_600x1200 of tiles_core.py; Керамогранит 600x1200 светло-серый (вертикально) master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -5272,7 +6297,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map facade_600x1200 of tiles_core.py; Керамогранит 600x1200 светло-серый (вертикально)",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -5349,7 +6373,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map facade_600x1200 of tiles_core.py; Керамогранит 600x1200 светло-серый (вертикально) DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -5428,7 +6451,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map facade_600x1200 of tiles_core.py; Керамогранит 600x1200 светло-серый (вертикально) ERM placeholder = record fields (E, R, M) [0, 150, 0]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -5505,7 +6527,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map facade_600x1200 of tiles_core.py; Керамогранит 600x1200 светло-серый (вертикально)",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -5580,7 +6601,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_300x300 of tiles_core.py; Цокольная плитка 300x300 RAL 7004 master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -5657,7 +6677,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_300x300 of tiles_core.py; Цокольная плитка 300x300 RAL 7004",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -5734,7 +6753,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_300x300 of tiles_core.py; Цокольная плитка 300x300 RAL 7004 DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -5813,7 +6831,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_300x300 of tiles_core.py; Цокольная плитка 300x300 RAL 7004 ERM placeholder = record fields (E, R, M) [0, 150, 0]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -5890,7 +6907,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_300x300 of tiles_core.py; Цокольная плитка 300x300 RAL 7004",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -5965,7 +6981,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map tile_300x300 of tiles_core.py; Цокольная плитка 300x300 RAL 7004 AGR Tools K3 grey mask (R body grey, G joint), shared by ids [16]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -6040,7 +7055,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map brick_250x65 of tiles_core.py; Кирпич 250x65, шов 10, перевязка 1/2 (ряд 75 мм, 14 кирпичей на 3,6 м) master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -6117,7 +7131,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map brick_250x65 of tiles_core.py; Кирпич 250x65, шов 10, перевязка 1/2 (ряд 75 мм, 14 кирпичей на 3,6 м)",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -6194,7 +7207,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map brick_250x65 of tiles_core.py; Кирпич 250x65, шов 10, перевязка 1/2 (ряд 75 мм, 14 кирпичей на 3,6 м) DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -6273,7 +7285,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map brick_250x65 of tiles_core.py; Кирпич 250x65, шов 10, перевязка 1/2 (ряд 75 мм, 14 кирпичей на 3,6 м) ERM placeholder = record fields (E, R, M) [0, 150, 0]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -6350,7 +7361,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map brick_250x65 of tiles_core.py; Кирпич 250x65, шов 10, перевязка 1/2 (ряд 75 мм, 14 кирпичей на 3,6 м)",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -6425,7 +7435,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map brick_250x65 of tiles_core.py; Кирпич 250x65, шов 10, перевязка 1/2 (ряд 75 мм, 14 кирпичей на 3,6 м) AGR Tools K3 grey mask (R body grey, G joint), shared by ids [17]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -6500,7 +7509,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 тёмная (Bronze 25) master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -6577,7 +7585,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 тёмная (Bronze 25)",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -6654,7 +7661,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 тёмная (Bronze 25) DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -6733,7 +7739,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 тёмная (Bronze 25) ERM placeholder = record fields (E, R, M) [0, 150, 0]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -6810,7 +7815,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 тёмная (Bronze 25)",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -6885,7 +7889,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 тёмная (Bronze 25) AGR Tools K3 grey mask (R body grey, G joint), shared by ids [18, 19, 20]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -6960,7 +7963,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 светлая (Gold 22 / Profi 8) master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -7037,7 +8039,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 светлая (Gold 22 / Profi 8)",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -7114,7 +8115,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 светлая (Gold 22 / Profi 8) DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -7193,7 +8193,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 светлая (Gold 22 / Profi 8) ERM placeholder = record fields (E, R, M) [0, 150, 0]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -7270,7 +8269,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 светлая (Gold 22 / Profi 8)",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -7345,7 +8343,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 красная (Silver 9) master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -7422,7 +8419,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 красная (Silver 9)",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -7499,7 +8495,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 красная (Silver 9) DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -7578,7 +8573,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 красная (Silver 9) ERM placeholder = record fields (E, R, M) [0, 150, 0]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -7655,7 +8649,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map ground_100x300 of tiles_core.py; Брусчатка «Готика» 100x300 красная (Silver 9)",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -7730,7 +8723,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map slab_900x300 of tiles_core.py; Плита шаговая 900x300 master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -7807,7 +8799,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map slab_900x300 of tiles_core.py; Плита шаговая 900x300",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -7884,7 +8875,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map slab_900x300 of tiles_core.py; Плита шаговая 900x300 DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -7963,7 +8953,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map slab_900x300 of tiles_core.py; Плита шаговая 900x300 ERM placeholder = record fields (E, R, M) [0, 150, 0]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -8040,7 +9029,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map slab_900x300 of tiles_core.py; Плита шаговая 900x300",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -8115,7 +9103,6 @@
    "verdict": "synthetic: exact module, seamless (seam 0 levels), flat tiles without surface grain (AGR Tools K3 recipe); colour = library RGB",
    "notes": "base map slab_900x300 of tiles_core.py; Плита шаговая 900x300 AGR Tools K3 grey mask (R body grey, G joint), shared by ids [21]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -8170,7 +9157,6 @@
    "verdict": "synthetic: round pebbles 20-60 mm + fill 6-20 mm, seamless; stylised (no real photo of our own found)",
    "notes": "pebble size 20-60 mm assumed (no project spec in the repo); Галька master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -8227,7 +9213,6 @@
    "verdict": "synthetic: round pebbles 20-60 mm + fill 6-20 mm, seamless; stylised (no real photo of our own found)",
    "notes": "pebble size 20-60 mm assumed (no project spec in the repo); Галька",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -8284,7 +9269,6 @@
    "verdict": "synthetic: round pebbles 20-60 mm + fill 6-20 mm, seamless; stylised (no real photo of our own found)",
    "notes": "pebble size 20-60 mm assumed (no project spec in the repo); Галька DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -8343,7 +9327,6 @@
    "verdict": "synthetic: round pebbles 20-60 mm + fill 6-20 mm, seamless; stylised (no real photo of our own found)",
    "notes": "pebble size 20-60 mm assumed (no project spec in the repo); Галька ERM placeholder = record fields (E, R, M) [0, 200, 0]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -8400,7 +9383,6 @@
    "verdict": "synthetic: round pebbles 20-60 mm + fill 6-20 mm, seamless; stylised (no real photo of our own found)",
    "notes": "pebble size 20-60 mm assumed (no project spec in the repo); Галька",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -8445,7 +9427,6 @@
    "verdict": "superseded by 29_roof_logicroof_v002_* (roll seams drawn, user 2026-11-11); kept, not overwritten",
    "notes": "Logicroof (PVC): roll overlap seams not drawn; Кровельная мембрана Logicroof master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -8492,7 +9473,6 @@
    "verdict": "superseded by 29_roof_logicroof_v002_* (roll seams drawn, user 2026-11-11); kept, not overwritten",
    "notes": "Logicroof (PVC): roll overlap seams not drawn; Кровельная мембрана Logicroof",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -8539,7 +9519,6 @@
    "verdict": "superseded by 29_roof_logicroof_v002_* (roll seams drawn, user 2026-11-11); kept, not overwritten",
    "notes": "Logicroof (PVC): roll overlap seams not drawn; Кровельная мембрана Logicroof DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -8588,7 +9567,6 @@
    "verdict": "superseded by 29_roof_logicroof_v002_* (roll seams drawn, user 2026-11-11); kept, not overwritten",
    "notes": "Logicroof (PVC): roll overlap seams not drawn; Кровельная мембрана Logicroof ERM placeholder = record fields (E, R, M) [0, 200, 0]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -8635,7 +9613,6 @@
    "verdict": "superseded by 29_roof_logicroof_v002_* (roll seams drawn, user 2026-11-11); kept, not overwritten",
    "notes": "Logicroof (PVC): roll overlap seams not drawn; Кровельная мембрана Logicroof",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -8682,7 +9659,6 @@
    "verdict": "superseded by 30_roof_solo_v002_* (roll seams drawn, user 2026-11-11); kept, not overwritten",
    "notes": "Solo (dark): roll overlap seams not drawn; Кровельная мембрана Solo (тёмная) master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -8731,7 +9707,6 @@
    "verdict": "superseded by 30_roof_solo_v002_* (roll seams drawn, user 2026-11-11); kept, not overwritten",
    "notes": "Solo (dark): roll overlap seams not drawn; Кровельная мембрана Solo (тёмная)",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -8780,7 +9755,6 @@
    "verdict": "superseded by 30_roof_solo_v002_* (roll seams drawn, user 2026-11-11); kept, not overwritten",
    "notes": "Solo (dark): roll overlap seams not drawn; Кровельная мембрана Solo (тёмная) DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -8831,7 +9805,6 @@
    "verdict": "superseded by 30_roof_solo_v002_* (roll seams drawn, user 2026-11-11); kept, not overwritten",
    "notes": "Solo (dark): roll overlap seams not drawn; Кровельная мембрана Solo (тёмная) ERM placeholder = record fields (E, R, M) [0, 200, 0]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -8880,7 +9853,6 @@
    "verdict": "superseded by 30_roof_solo_v002_* (roll seams drawn, user 2026-11-11); kept, not overwritten",
    "notes": "Solo (dark): roll overlap seams not drawn; Кровельная мембрана Solo (тёмная)",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -8929,7 +9901,6 @@
    "verdict": "synthetic: trapezoid ribs, 36 per 3.6 m, seamless; C21 pitch 100 mm accepted by the user 2026-11-11",
    "notes": "rib pitch not given in the table (MAF v005 note); C21 assumed: pitch 100 mm, height 21 mm, top shelf 25 mm; Профнастил / кровельный лист master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -8980,7 +9951,6 @@
    "verdict": "synthetic: trapezoid ribs, 36 per 3.6 m, seamless; C21 pitch 100 mm accepted by the user 2026-11-11",
    "notes": "rib pitch not given in the table (MAF v005 note); C21 assumed: pitch 100 mm, height 21 mm, top shelf 25 mm; Профнастил / кровельный лист",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -9031,7 +10001,6 @@
    "verdict": "synthetic: trapezoid ribs, 36 per 3.6 m, seamless; C21 pitch 100 mm accepted by the user 2026-11-11",
    "notes": "rib pitch not given in the table (MAF v005 note); C21 assumed: pitch 100 mm, height 21 mm, top shelf 25 mm; Профнастил / кровельный лист DirectX (green down), from the generated height",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -9084,7 +10053,6 @@
    "verdict": "synthetic: trapezoid ribs, 36 per 3.6 m, seamless; C21 pitch 100 mm accepted by the user 2026-11-11",
    "notes": "rib pitch not given in the table (MAF v005 note); C21 assumed: pitch 100 mm, height 21 mm, top shelf 25 mm; Профнастил / кровельный лист ERM placeholder = record fields (E, R, M) [0, 120, 200]",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -9135,7 +10103,6 @@
    "verdict": "synthetic: trapezoid ribs, 36 per 3.6 m, seamless; C21 pitch 100 mm accepted by the user 2026-11-11",
    "notes": "rib pitch not given in the table (MAF v005 note); C21 assumed: pitch 100 mm, height 21 mm, top shelf 25 mm; Профнастил / кровельный лист",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "generated"
   },
   {
@@ -9192,7 +10159,6 @@
    "verdict": "synthetic: fine grain + roll seams along V, seamless across the tile; seam layout is an assumption",
    "notes": "ASSUMPTION (coordinator 2026-11-11): Logicroof PVC roll 2.05 m, seam every ~1.95 m (welded overlap ~0.10 m, hot-air weld strip 40 mm, membrane 1.5 mm); ERM placeholder: materials/placeholders/v001/roof_logicroof_erm_256.png (unchanged); Кровельная мембрана Logicroof master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "written",
    "provenance": "generated"
   },
   {
@@ -9251,7 +10217,6 @@
    "verdict": "synthetic: fine grain + roll seams along V, seamless across the tile; seam layout is an assumption",
    "notes": "ASSUMPTION (coordinator 2026-11-11): Logicroof PVC roll 2.05 m, seam every ~1.95 m (welded overlap ~0.10 m, hot-air weld strip 40 mm, membrane 1.5 mm); ERM placeholder: materials/placeholders/v001/roof_logicroof_erm_256.png (unchanged); Кровельная мембрана Logicroof",
    "checks": "pass",
-   "write": "written",
    "provenance": "generated"
   },
   {
@@ -9310,7 +10275,6 @@
    "verdict": "synthetic: fine grain + roll seams along V, seamless across the tile; seam layout is an assumption",
    "notes": "ASSUMPTION (coordinator 2026-11-11): Logicroof PVC roll 2.05 m, seam every ~1.95 m (welded overlap ~0.10 m, hot-air weld strip 40 mm, membrane 1.5 mm); ERM placeholder: materials/placeholders/v001/roof_logicroof_erm_256.png (unchanged); Кровельная мембрана Logicroof DirectX (green down), from the generated height (seam step)",
    "checks": "pass",
-   "write": "written",
    "provenance": "generated"
   },
   {
@@ -9369,7 +10333,6 @@
    "verdict": "synthetic: fine grain + roll seams along V, seamless across the tile; seam layout is an assumption",
    "notes": "ASSUMPTION (coordinator 2026-11-11): Logicroof PVC roll 2.05 m, seam every ~1.95 m (welded overlap ~0.10 m, hot-air weld strip 40 mm, membrane 1.5 mm); ERM placeholder: materials/placeholders/v001/roof_logicroof_erm_256.png (unchanged); Кровельная мембрана Logicroof",
    "checks": "pass",
-   "write": "written",
    "provenance": "generated"
   },
   {
@@ -9430,7 +10393,6 @@
    "verdict": "synthetic: fine grain + roll seams along V, seamless across the tile; seam layout is an assumption",
    "notes": "ASSUMPTION (coordinator 2026-11-11): Solo treated as a bitumen roll membrane, roll 1.0 m, seam every ~0.9 m (torched overlap 0.10 m, bitumen bead 5 mm, 4 mm sheet); ERM placeholder: materials/placeholders/v001/roof_solo_erm_256.png (unchanged); Кровельная мембрана Solo (тёмная) master: one period at 1000 px/m [D207]",
    "checks": "pass",
-   "write": "written",
    "provenance": "generated"
   },
   {
@@ -9493,7 +10455,6 @@
    "verdict": "synthetic: fine grain + roll seams along V, seamless across the tile; seam layout is an assumption",
    "notes": "ASSUMPTION (coordinator 2026-11-11): Solo treated as a bitumen roll membrane, roll 1.0 m, seam every ~0.9 m (torched overlap 0.10 m, bitumen bead 5 mm, 4 mm sheet); ERM placeholder: materials/placeholders/v001/roof_solo_erm_256.png (unchanged); Кровельная мембрана Solo (тёмная)",
    "checks": "pass",
-   "write": "written",
    "provenance": "generated"
   },
   {
@@ -9556,7 +10517,6 @@
    "verdict": "synthetic: fine grain + roll seams along V, seamless across the tile; seam layout is an assumption",
    "notes": "ASSUMPTION (coordinator 2026-11-11): Solo treated as a bitumen roll membrane, roll 1.0 m, seam every ~0.9 m (torched overlap 0.10 m, bitumen bead 5 mm, 4 mm sheet); ERM placeholder: materials/placeholders/v001/roof_solo_erm_256.png (unchanged); Кровельная мембрана Solo (тёмная) DirectX (green down), from the generated height (seam step)",
    "checks": "pass",
-   "write": "written",
    "provenance": "generated"
   },
   {
@@ -9619,7 +10579,6 @@
    "verdict": "synthetic: fine grain + roll seams along V, seamless across the tile; seam layout is an assumption",
    "notes": "ASSUMPTION (coordinator 2026-11-11): Solo treated as a bitumen roll membrane, roll 1.0 m, seam every ~0.9 m (torched overlap 0.10 m, bitumen bead 5 mm, 4 mm sheet); ERM placeholder: materials/placeholders/v001/roof_solo_erm_256.png (unchanged); Кровельная мембрана Solo (тёмная)",
    "checks": "pass",
-   "write": "written",
    "provenance": "generated"
   },
   {
@@ -9649,7 +10608,6 @@
    "verdict": "good: grey granite chips, seamless (seam 0.94/0.96)",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "own delivered project, origin of source unknown"
   },
   {
@@ -9679,7 +10637,6 @@
    "verdict": "good: grey granite chips, seamless (seam 0.94/0.96)",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "own delivered project, origin of source unknown"
   },
   {
@@ -9714,7 +10671,6 @@
    "verdict": "good: grey granite chips, seamless (seam 0.94/0.96)",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked flat normal placeholder: the source Normal 1003 is a baked atlas, not this tile (rejected)",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "own delivered project, origin of source unknown"
   },
   {
@@ -9749,7 +10705,6 @@
    "verdict": "good: grey granite chips, seamless (seam 0.94/0.96)",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked ERM placeholder = record fields [0, 240, 0]; the source ERM 1003 is a baked atlas (rejected)",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "own delivered project, origin of source unknown"
   },
   {
@@ -9779,7 +10734,6 @@
    "verdict": "good: EPDM crumb, seamless (1.10/1.03); colour yellow-green, the table record is red (175,43,30)",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked; colour differs from table record (red); accepted by user 2026-11-11",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "own delivered project, origin of source unknown"
   },
   {
@@ -9809,7 +10763,6 @@
    "verdict": "good: EPDM crumb, seamless (1.10/1.03); colour yellow-green, the table record is red (175,43,30)",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked; colour differs from table record (red); accepted by user 2026-11-11",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "own delivered project, origin of source unknown"
   },
   {
@@ -9839,7 +10792,6 @@
    "verdict": "good: EPDM crumb, seamless (1.10/1.03); colour yellow-green, the table record is red (175,43,30)",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked; colour differs from table record (red); accepted by user 2026-11-11",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "own delivered project, origin of source unknown"
   },
   {
@@ -9869,7 +10821,6 @@
    "verdict": "good: EPDM crumb, seamless (1.10/1.03); colour yellow-green, the table record is red (175,43,30)",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked; colour differs from table record (red); accepted by user 2026-11-11",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "own delivered project, origin of source unknown"
   },
   {
@@ -9899,7 +10850,6 @@
    "verdict": "good: saturated green lawn, seamless (1.02/1.00)",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "own delivered project, origin of source unknown"
   },
   {
@@ -9929,7 +10879,6 @@
    "verdict": "good: saturated green lawn, seamless (1.02/1.00)",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "own delivered project, origin of source unknown"
   },
   {
@@ -9959,7 +10908,6 @@
    "verdict": "good: saturated green lawn, seamless (1.02/1.00)",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "own delivered project, origin of source unknown"
   },
   {
@@ -9989,7 +10937,6 @@
    "verdict": "good: saturated green lawn, seamless (1.02/1.00)",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "own delivered project, origin of source unknown"
   },
   {
@@ -10019,7 +10966,6 @@
    "verdict": "good: light planks, pine-like (species not confirmed), seamless (1.00/1.05); ERM in the source is one colour",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "own delivered project, origin of source unknown"
   },
   {
@@ -10049,7 +10995,6 @@
    "verdict": "good: light planks, pine-like (species not confirmed), seamless (1.00/1.05); ERM in the source is one colour",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "own delivered project, origin of source unknown"
   },
   {
@@ -10079,7 +11024,6 @@
    "verdict": "good: light planks, pine-like (species not confirmed), seamless (1.00/1.05); ERM in the source is one colour",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "own delivered project, origin of source unknown"
   },
   {
@@ -10109,7 +11053,6 @@
    "verdict": "good: light planks, pine-like (species not confirmed), seamless (1.00/1.05); ERM in the source is one colour",
    "notes": "own delivered project tile; the upstream source of the tile is not recorded (could be stock); real size of the tile unknown; Normal convention taken as delivered (VPM = DirectX), not re-checked source ERM is one colour (0,217,0) -> placeholder",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "own delivered project, origin of source unknown"
   },
   {
@@ -10140,7 +11083,6 @@
    "verdict": "good: own procedural pine-bark mulch 2-4 cm, seamless (1.08/1.02), tile 1 x 1 m",
    "notes": "VPM at 2 x 2 tiles = 1024 px/m (D160 range 512-1706); D207 master resampled to 1000 px/m",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "own"
   },
   {
@@ -10172,7 +11114,6 @@
    "verdict": "good: own procedural pine-bark mulch 2-4 cm, seamless (1.08/1.02), tile 1 x 1 m",
    "notes": "VPM at 2 x 2 tiles = 1024 px/m (D160 range 512-1706); D207 master resampled to 1000 px/m",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "own"
   },
   {
@@ -10204,7 +11145,6 @@
    "verdict": "good: own procedural pine-bark mulch 2-4 cm, seamless (1.08/1.02), tile 1 x 1 m",
    "notes": "VPM at 2 x 2 tiles = 1024 px/m (D160 range 512-1706); D207 master resampled to 1000 px/m",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "own"
   },
   {
@@ -10237,7 +11177,6 @@
    "verdict": "good: own procedural pine-bark mulch 2-4 cm, seamless (1.08/1.02), tile 1 x 1 m",
    "notes": "VPM at 2 x 2 tiles = 1024 px/m (D160 range 512-1706); D207 master resampled to 1000 px/m DirectX normal from the 16-bit height (range ~4 cm per README)",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "own"
   },
   {
@@ -10269,7 +11208,6 @@
    "verdict": "good: own procedural pine-bark mulch 2-4 cm, seamless (1.08/1.02), tile 1 x 1 m",
    "notes": "VPM at 2 x 2 tiles = 1024 px/m (D160 range 512-1706); D207 master resampled to 1000 px/m ERM: R 0, G = source roughness, B 0",
    "checks": "pass",
-   "write": "kept existing (identical bytes)",
    "provenance": "own"
   }
  ]
