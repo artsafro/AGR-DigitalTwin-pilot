@@ -13,6 +13,7 @@ inputs: &inputs
   sha256: 087f1055820ec278979bb2b9e4598fa66878fc4ea1f3f5c6929dc25ad86a891f
 - path: jobs/KPP1/rerun-1209/inputs-v001.json
   sha256: 9e46a36980fcdff3222a80df933a33ffc5b3b47558aed5a4ac57cfa842597e99
+  manifest: external-inputs/1
 artifacts:
 - path: jobs/KPP1/rerun-1209/build-report.json
   sha256: c8de74e584fca263e0ae19d9038ec205b95b78e5b8ff0eb3a5481ee020dc52aa
