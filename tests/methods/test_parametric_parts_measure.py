@@ -16,6 +16,7 @@ import pytest
 
 from tests._dcc_card import card_id
 from tests.dcc_session import skip_if_dcc_session_busy
+from dt_ai.core.max_env import max_child_env
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / "tools" / "methods" / "parametric_parts_measure.py"
@@ -788,6 +789,7 @@ def _max_inventory(paths, work: Path):
         capture_output=True,
         text=True,
         cwd=str(ROOT),
+        env=max_child_env(),
     )
     skip_if_dcc_session_busy(proc.returncode, proc.stdout, proc.stderr)
     wrapper_text = out.read_text(encoding="utf-8") if out.is_file() else proc.stdout
@@ -844,6 +846,24 @@ def test_max_inventory_isolates_parent_virtualenv(monkeypatch, tmp_path):
     assert rows == [] and tool
     assert 'VIRTUAL_ENV' not in seen.get('env', os.environ)
     assert os.environ['VIRTUAL_ENV'] == 'synthetic-parent-venv'
+
+
+@pytest.mark.max
+def test_max_inventory_synthetic_startup_without_catalog_assets(tmp_path):
+    """Synthetic native control: exercise the same caller without workstation assets."""
+    if not Path(r'C:\Program Files\Autodesk\3ds Max 2026\3dsmaxbatch.exe').is_file():
+        pytest.skip('3ds Max 2026 is not installed')
+    paths = [tmp_path / f'synthetic-{i}.fbx' for i in range(3)]
+    triangles = [tri for p in _cube_quads() for tri in
+                 ((p[0], p[1], p[2]), (p[0], p[2], p[3]))]
+    recipe = _load_recipe()
+    for path in paths:
+        recipe.write_ascii_fbx(path, _cube_vertices(), triangles)
+    rows, tool = _max_inventory(paths, tmp_path)
+    assert tool and len(rows) == 3
+    assert [str(Path(row['path'])) for row in rows] == list(map(str, paths))
+    assert all(row['importFile'] and row['objects'] == 1 and row['triangles'] == 12
+               for row in rows)
 
 
 @pytest.mark.max

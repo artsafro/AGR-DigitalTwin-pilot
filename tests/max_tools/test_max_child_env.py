@@ -48,6 +48,23 @@ def test_child_env_rejects_parent_virtualenv_case_variants(spelling):
     assert max_child_env({}) == {}
 
 
+def test_generated_unsafe_key_subsets_preserve_parent():
+    from itertools import combinations
+    unsafe = (*KEYS, 'VIRTUAL_ENV')
+    measured = 0
+    for count in range(len(unsafe) + 1):
+        for subset in combinations(unsafe, count):
+            base = {key: 'synthetic' for key in subset}
+            # Duplicate case aliases must all be removed, not just the first one.
+            base.update({key.lower(): 'alias' for key in subset})
+            base['PATH'] = r'C:\parent\Scripts;C:\Windows'
+            snapshot = base.copy()
+            assert max_child_env(base) == {'PATH': base['PATH']}
+            assert base == snapshot
+            measured += 1
+    assert measured == 32
+
+
 def test_virtualenv_is_absent_in_fresh_child(monkeypatch):
     monkeypatch.setenv('VIRTUAL_ENV', str(ROOT / '.venv'))
     code = 'import os; print("VIRTUAL_ENV=" + repr(os.environ.get("VIRTUAL_ENV")))'
