@@ -217,8 +217,27 @@ FINISH = [
 ]
 
 
+def _finish_table(cells):
+    """Two columns; a None finish cell is a VERTICAL merge covered by the cell above (realistic finish column)."""
+    boxes = []
+    for r, row in enumerate(cells):
+        boxes.append([[0.0, r * 10.0, 50.0, (r + 1) * 10.0], None if row[1] is None else [50.0, r * 10.0, 100.0, (r + 1) * 10.0]])
+    for r in range(len(cells) - 1, 0, -1):
+        if cells[r][1] is None:
+            k = r - 1
+            while cells[k][1] is None:
+                k -= 1
+            boxes[k][1][3] = max(boxes[k][1][3], (r + 1) * 10.0)
+    eng = dict(bbox=[0.0, 0.0, 100.0, 10.0 * len(cells)], cells=cells, cell_boxes=boxes)
+    return S.build_table("p1-t1", 1, None, eng, eng, secondary_status="ok")
+
+
+def test_finish_rows_are_data_not_categories():
+    assert [r["row_type"] for r in _finish_table(FINISH)["rows"]] == ["header", "data", "data", "data", "data"]
+
+
 def test_missing_finish_is_never_filled_from_a_neighbour():
-    table = _table(FINISH)
+    table = _finish_table(FINISH)
     mats = S.finish_materials(table)
     by_row = {m["binding"]["row"]: m for m in mats}
     assert by_row[2]["code"] == "RAL 7021" and by_row[2]["status"] == "present"
@@ -238,7 +257,9 @@ def test_probe_finish_never_copied_random_tables():
         cells = [["Элемент", "Отделка"]] + [[f"E{i}", rng.choice(choices)] for i in range(n)]
         if cells[1][1] is None:
             cells[1][1] = ""
-        for m in S.finish_materials(_table(cells)):
+        mats = S.finish_materials(_finish_table(cells))
+        assert {m["binding"]["row"] for m in mats} == set(range(2, n + 2))  # every data row accounted
+        for m in mats:
             own = cells[m["binding"]["row"] - 1][1]
             if m["status"] == "present":
                 assert m["original_label"] == own and own
