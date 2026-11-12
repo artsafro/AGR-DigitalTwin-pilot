@@ -61,8 +61,16 @@ uv run dt qa xview C:/x/ev_t_dd6f4bf9/0000_Kpp_1_01.fbx --profile NPM --out jobs
 uv run pytest -q tests/test_kpp1_band_pairs_1244.py
 ```
 
+## User acceptance — 2026-11-12 [D256]
+
+Artem accepted option A («принимаю рекомендации», USER DECISION on Kanban t_dd6f4bf9):
+accept the listed 98 VPM / 52 NPM V004 5-20 mm band pairs from the C35 North curtain-wall
+glass top sitting 15 mm inside the parapet, with no clipping and no parapet cut.
+The accepted lists are `band-pairs-vpm-r1-v002.json` and `band-pairs-npm-r1-v002.json`,
+bound to the r1-v002 FBX hashes; this is not permission to accept another build or change geometry.
+Together with the current-FBX xView receipts above, this satisfies #1244's acceptance.
+
 ## Open
 
-- User decision (issue acceptance "or the user accepts the listed pairs"): accept the 98 / 52 pairs as listed,
-  or change the model (clip the С35 glass at the roof top, or cut С35 through the parapet as drawn to 8.650).
-- xView residuals 112 / 12 stay nonzero.
+- xView residuals 112 / 12 stay nonzero (`passed=false`); [D256] does not waive [D152]
+  or other delivery gates. V004 remains `review`; this is not a delivery pass.

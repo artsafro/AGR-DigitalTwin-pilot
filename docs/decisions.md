@@ -271,6 +271,8 @@ frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Mar
 | D251 | 2026-11-11 | GND-03 requires a skirt at least 1 m deep only along the outer boundary of every Ground component. Inner rings (holes, including building cut-outs) are excluded from the skirt perimeter; disconnected components keep their own outer-boundary check. | `src/twinqa/scene.py`, `docs/domain/areas/ground-surface.md` | Artem, 2026-11-11 («принимаю рекомендации»), Kanban t_90a8bca9 / issue #1133 |
 
 
+| D256 | 2026-11-12 | KPP1 R1 only: accept the listed V004 5-20 mm band pairs (98 VPM / 52 NPM) from the C35 North curtain-wall glass top sitting 15 mm inside the parapet, with no clipping and no parapet cut; xView residuals and other delivery gates are not waived | `jobs/KPP1/rerun-1244/RUN-LOG.md`, `jobs/KPP1/rerun-1244/band-pairs-{vpm,npm}-r1-v002.json` | Artem 2026-11-12 «принимаю рекомендации», option A, USER DECISION on Kanban t_dd6f4bf9 (#1244, PR #1251) |
+
 [passport-scope-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1207#issuecomment-6783203728
 
 [ground-refinement-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/295#issuecomment-6265799957
