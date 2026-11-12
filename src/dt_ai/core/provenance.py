@@ -1,4 +1,5 @@
 """Shared provenance contracts; independent of parts, spec and intake models."""
+import re
 from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -13,17 +14,32 @@ class Contract(BaseModel):
     schema_version: Literal["1.0.0"] = "1.0.0"
 
 
+# A `drawing` reference names a .dwg/.dxf file (any case), optionally followed by a note [#1206].
+# Cross-field kind rules stay model-only, like the pdf rule: the committed schema carries the
+# structural contract only (tests/parts/test_schema_model_boundary.py; fbx reader's schema subset).
+DRAWING_REFERENCE = r"\.([dD][wW][gG]|[dD][xX][fF])([^A-Za-z0-9]|$)"
+
+
 class SourceRef(Contract):
-    kind: Literal["synthetic", "pdf", "model", "user"]
+    # `drawing` = DWG/DXF source: optional `sheet` (layout / sheet name), never `page` [#1206].
+    kind: Literal["synthetic", "pdf", "model", "user", "drawing"]
     reference: str = Field(min_length=1)
     page: int | None = Field(default=None, ge=1, le=100000)
     sha256: Hash | None = None
     region: list[Finite] | None = Field(default=None, min_length=4, max_length=4)
+    sheet: str | None = Field(default=None, min_length=1, max_length=255, pattern=r"\S")
 
     @model_validator(mode="after")
     def pdf_has_page(self):
         if self.kind == "pdf" and (self.page is None or self.sha256 is None):
             raise ValueError("PDF provenance requires page and sha256")
+        if self.kind == "drawing":
+            if self.page is not None:
+                raise ValueError("drawing provenance has no page; name the layout in sheet")
+            if not re.search(DRAWING_REFERENCE, self.reference):
+                raise ValueError("drawing provenance reference must name a .dwg or .dxf file")
+        elif self.sheet is not None:
+            raise ValueError(f"sheet is only allowed for kind 'drawing', not {self.kind!r}")
         return self
 
 

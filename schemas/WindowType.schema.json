@@ -67,7 +67,8 @@
             "synthetic",
             "pdf",
             "model",
-            "user"
+            "user",
+            "drawing"
           ],
           "title": "Kind",
           "type": "string"
@@ -126,6 +127,21 @@
           ],
           "default": null,
           "title": "Sha256"
+        },
+        "sheet": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sheet"
         }
       },
       "required": [
