@@ -33,6 +33,48 @@ def test_helper_strips_exactly_the_four_keys():
     assert out is not base and set(KEYS) <= set(base)  # a copy; the input is untouched
 
 
+@pytest.mark.parametrize('spelling', ['VIRTUAL_ENV', 'virtual_env', 'Virtual_Env'])
+def test_child_env_rejects_parent_virtualenv_case_variants(spelling):
+    # Synthetic parent environment: Windows keys are case-insensitive, even in
+    # a plain dict passed by a launcher. PATH must not be rewritten as a shortcut.
+    base = {spelling: r'C:\parent\venv', 'PATH': r'C:\parent\venv\Scripts;C:\Windows',
+            'AGR_OUT': 'keep', 'QT_OTHER': 'keep'}
+    snapshot = base.copy()
+    out = max_child_env(base)
+    assert spelling not in out
+    assert out == {k: v for k, v in snapshot.items() if k != spelling}
+    assert base == snapshot
+    assert max_child_env(out) == out
+    assert max_child_env({}) == {}
+
+
+def test_generated_unsafe_key_subsets_preserve_parent():
+    from itertools import combinations
+    unsafe = (*KEYS, 'VIRTUAL_ENV')
+    measured = 0
+    for count in range(len(unsafe) + 1):
+        for subset in combinations(unsafe, count):
+            base = {key: 'synthetic' for key in subset}
+            # Duplicate case aliases must all be removed, not just the first one.
+            base.update({key.lower(): 'alias' for key in subset})
+            base['PATH'] = r'C:\parent\Scripts;C:\Windows'
+            snapshot = base.copy()
+            assert max_child_env(base) == {'PATH': base['PATH']}
+            assert base == snapshot
+            measured += 1
+    assert measured == 32
+
+
+def test_virtualenv_is_absent_in_fresh_child(monkeypatch):
+    monkeypatch.setenv('VIRTUAL_ENV', str(ROOT / '.venv'))
+    code = 'import os; print("VIRTUAL_ENV=" + repr(os.environ.get("VIRTUAL_ENV")))'
+    proc = subprocess.run([sys.executable, '-c', code], env=max_child_env(),
+                          capture_output=True, text=True, timeout=30)
+    assert proc.returncode == 0, proc.stderr
+    assert proc.stdout.strip() == 'VIRTUAL_ENV=None'
+    assert os.environ['VIRTUAL_ENV'] == str(ROOT / '.venv')
+
+
 def test_helper_default_is_a_copy_of_os_environ(monkeypatch):
     for key in KEYS:
         monkeypatch.setenv(key, 'x')
