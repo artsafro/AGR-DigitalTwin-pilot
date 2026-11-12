@@ -1,6 +1,17 @@
 # Substance finishes feasibility — issue #1258
 
-## Status: blocked before the two pilots
+## Status: narrowed photo pilot blocked at Make It Tile
+
+**Continuation 2026-11-12:** Artem narrowed scope to the OBR22 sample-to-tileable
+Sampler pilot plus capability report [D258]. Procedural output is **not verified**;
+no installation/licensing now. The continuation below supersedes the initial
+status, export-availability and unblock notes. Six actual raw AI-export PNGs and a
+partial comparison sheet now exist, but Make It Tile crashes and no finished
+Diffuse/ERM/Normal triplet or completed finish time is claimed.
+
+## Initial investigation (historical)
+
+The following records the first run, before scope was narrowed:
 
 Research date: 2026-11-12. Base inspected: `origin/main` at `f1fbe9a4`.
 This is a partial capability investigation, **not** a completed finish benchmark.
@@ -125,7 +136,134 @@ The preserved files are discovery scripts, JSON checkpoints, logs and the source
 recipe; no sheet or map output exists. `uv sync` succeeded. No new production code,
 regression fix, full-suite receipt or completed acceptance is claimed.
 
-Required unblock: provide a working supported procedural Substance runtime
-(Designer/SAT, or a working licensed Sampler Brickwall path) or explicitly approve
-changing the procedural-pilot requirement. Do not mark this issue complete or open
-a closing PR while both real finish pilots and their comparison remain undelivered.
+The original procedural blocker is superseded by [D258]: no procedural pilot or
+installation is required now. The narrowed photo-to-tileable acceptance is still
+open for the separate Make It Tile native crash below.
+
+## Continuation: real photo-route export and tile-filter blocker [D258]
+
+### Calibrated existing job texture
+
+A brick-only source was found read-only, better than the initial mixed v010 atlas:
+`C:/Users/artsafro/AGR-DigitalTwin/jobs/OBR22-K02/outputs/shared_v011/VPM_Diffuse.1004.png`.
+It is an existing job texture, **not asserted to be a facade photograph**. The
+manifest refers to `Desktop/!3D viz/Alex_World/bricks.png`; original capture or
+generation provenance was not independently verified.
+
+- Source: 4096-square RGB8, SHA-256
+  `cee95e4aa386e27c065e2f1df8a228a130830bd188e3db353ed7dd05650396ac`.
+- `shared-uv-manifest.json`: finish **5**, full-tile region, **1024 px/m** for its
+  VPM entries; therefore the full map covers **4 x 4 m**. Manifest SHA-256:
+  `9a8efb81ec7358fb7cd8e83f20a2c4ad280b5e6a7af8b976e6b8d7e3ef50fec0`.
+- Recipe: brick face 250 x 65 mm, joint 10 mm, half running bond. These are job
+  reference dimensions, not independent photo measurements.
+- Successful raw AI export: 2048-square over 4 x 4 m = **512 px/m**, exactly the
+  D160-corrected D097 lower bound. The API's 0.01 m depth was experimental metadata,
+  not measured relief amplitude.
+- Tile-filter input: crop `(0,0,2130,2150)` / 1024 px/m =
+  **2.080078125 x 2.099609375 m**, approximately eight pitches by 28 courses;
+  not asserted pixel-perfect periodic. No tile-filter outputs exist.
+
+### Execution and distinct repairs
+
+| Experiment | Approach | Actual result |
+|---|---|---|
+| `photo_export_v001.py` | Entire import/wait/export in UI callback | Native 3221225477 (0xC0000005), 7.72 s; checkpoint `export_returned`, zero maps. A returned folder path is not completion. |
+| `photo_export_v002.py` | Controller/export outside asynchronously dispatched UI callback | Native exit 0, 5.46 s, caught `IndexError: list index out of range`; zero maps. Callback had not populated assets before access. |
+| `photo_export_v003.py` | Direct script-thread calls, `wait_for_computation`, explicit `ExportController.wait_for(120000)` | Native exit 0, **77.6666 s** wall / **73.5798 s** in-script; `WaitStatus.no_timeout`; six PNG files read back. |
+| `photo_tile_v001.py` | Calibrated crop; AI import; Make It Tile insertion on script thread | Native 3221225477, **3.2738 s**, checkpoint `image_imported`; zero maps. |
+| `photo_tile_v002.py` | Compute image first, insert on UI thread, await callback with `threading.Event` | Native 3221225477, **11.5807 s**, checkpoint `image_computed`; zero maps. |
+
+The tile-filter attempts are distinct script-thread and synchronised UI-thread
+routes, not repeated retries. No further procedural crash retries followed [D258].
+The demonstrated export route does not repair native filter insertion. Adobe
+binary/GPU/licensing repair is outside the research worktree.
+
+`photo_tile_v001.log` records a directory-collision rejection before the filter
+attempt; `photo_tile_v001_run2.log` records the native filter crash. Scripts retain
+fresh-version directory guards. Failed evidence is not a tool to rerun blindly.
+Commands below were wrapped in Python `subprocess.run(..., capture_output=True,
+timeout=...)`; native return codes, not the wrapper exit, are the runtime verdict.
+
+```bash
+# Successful raw image-to-material export:
+"C:/Program Files/Adobe/Adobe Substance 3D Sampler/Adobe Substance 3D Sampler.exe" --run-script-silent "C:/Users/artsafro/agr-pilot/AGR-DigitalTwin/.worktrees/t_ab5c23eb/tmp/substance-probe/photo_export_v003.py"
+# Failed tileable attempts, each with its own new output directory:
+"C:/Program Files/Adobe/Adobe Substance 3D Sampler/Adobe Substance 3D Sampler.exe" --run-script-silent "C:/Users/artsafro/agr-pilot/AGR-DigitalTwin/.worktrees/t_ab5c23eb/tmp/substance-probe/photo_tile_v001.py"
+"C:/Program Files/Adobe/Adobe Substance 3D Sampler/Adobe Substance 3D Sampler.exe" --run-script-silent "C:/Users/artsafro/agr-pilot/AGR-DigitalTwin/.worktrees/t_ab5c23eb/tmp/substance-probe/photo_tile_v002.py"
+# Partial-evidence generator; -P avoids historical inspect.py shadowing stdlib inspect:
+uv run python -P tmp/substance-probe/seal_photo_evidence.py
+```
+
+Additional installed primary reference:
+`Resources/pythonapi-doc/html/_generate/substance_sampler.ExportController.html`:
+`wait_for` blocks until associated exports finish, cancelling on timeout. The
+observed callback-order failure proves `run_in_main_thread` returning None is not
+a completion receipt. Successful raw exports ran in script thread. Logs enumerate
+desktop screens: this is silent automation, not proof of display-independent rendering.
+
+### Partial map readback and visual comparison
+
+Six **actual** 2048-square raw maps are in `substance-photo-v002/raw_ai_export/`:
+
+| Channel | IHDR / Pillow readback | Unresolved delivery constraint |
+|---|---|---|
+| BaseColor | RGB, 8 bit/channel | Diffuse candidate; tileability and colour acceptance open. |
+| Roughness | Grayscale, 8 bit | Inferred, not measured material property. |
+| Metallic | Grayscale, 8 bit | Inferred, not independent physical-property evidence. |
+| Normal | **RGBA, 16 bit/channel** | Invalid VPM export as-is: alpha, bit depth and DirectX convention unresolved. |
+| Height | Grayscale, 16 bit | Diagnostic only; no calibrated relief amplitude. |
+| AmbientOcclusion | Grayscale, 8 bit | Diagnostic only; never substitute for ERM emissive red. |
+
+`partial-comparison.png`: existing job texture, AI BaseColor, raw Normal,
+2 x 2 repeats and inferred roughness. Visual inspection shows recognisable
+bond/joint geometry with reduced baked-looking edge shading in BaseColor, but a
+repeat boundary remains visible. This unlit image sheet establishes neither
+shader quality nor a tileable approved finish.
+
+`readback.json` records file hashes, IHDR and diagnostic opposite-edge mean
+absolute RGB difference after resizing a preview to 256-square. BaseColor X/Y:
+**7.3711/12.1159**, current map: **13.4167/13.9622**, on 0-255 RGB. Lower preview
+edge error is not proof of phase continuity, scale accuracy or superior quality.
+The recorded Height preview uses Pillow's clipped 16-bit-to-RGB conversion; its
+zero edge value must not be interpreted as a height-quality result.
+
+**77.67 s is raw AI-export time, not time per completed tileable finish.** Completed
+finish time is unmeasured; preparation/debugging were not separately timed.
+No measured timing comparison against creation of the current texture is available.
+
+### Recommendation and current follow-up proposals
+
+Keep Substance upstream of the finish library. Its demonstrated role is source
+lighting reduction and inferred channels; autonomous tiling remains blocked.
+Do not replace the existing finish with this partial experiment. Do not rename raw
+maps into a purported valid delivery: the required ERM/DirectX RGB8 triplet still
+needs controlled conversion/readback after tileability succeeds.
+
+Catalogue binding must distinguish OBR22 finish **5** from library material 17 /
+RAL 8023; no automatic identity is established. Preserve RAL code separately from
+screen sRGB and require palette review. A future graph should expose bond, face
+size, joint width, colour and wear independently, recording metre units, seed,
+graph hash and RAL identity. Parameter fidelity, procedural output and timings
+remain **not verified** [D258].
+
+Proposed follow-up scopes (not created as issues; card forbids issue creation):
+1. Supported Sampler Make It Tile runtime repair from these reproductions, then
+   rerun the same source/crop to finish this card's existing photo acceptance.
+2. Once Designer + SAT exist, procedural `.sbsar` variant pilot with bond/joint/
+   colour/wear, stable seed, physical-scale checks and exact render/cook commands.
+3. Only after visual approval: finish-library recipe/provenance and RAL-binding
+   manifest; no automatic library promotion now.
+
+### Continuation evidence / handoff
+
+`G:/Мой диск/AGR-evidence/1258/substance-photo-v002/` holds raw PNGs, partial sheet,
+crop, scripts, checkpoints and logs, with `SHA256SUMS.txt`. The card comment records
+the final seal hash/count. Initial `substance-capability-v001` remains unchanged.
+No customer images, scenes or renders are committed; no shared Python modules
+or production scripts are introduced. No full-suite or completed-acceptance
+receipt is claimed; no PR is opened while narrowed acceptance remains blocked.
+
+**Required unblock:** repair the external Make It Tile native crash, or explicitly
+authorise a non-Sampler tileability stage / further scope reduction. Raw export
+alone does not satisfy the narrowed sample-to-tileable requirement.
