@@ -11,7 +11,7 @@ and in the text of `jobs/KPP1/job.yaml`, `STATE.md` and `docs/decisions.md`, see
 Stops at **Gate 1 (parts, user)** as the procedure requires: `inputs` **pass** (sources.json re-hashed, 4/4
 `equal`), draft PartsList validated (9 parts, VPM 29 200 / 150 000), six later gates `missing`; walker exit 1,
 `passed: false`, `waits: {user: 1}`. **5 min 56 s and 43 tool calls** from the card to the Gate 1 walk
-(first run: not timed; ~17 000 tokens of reading before the first artifact). 11 new findings F9-F19 below;
+(first run: not timed; ~17 000 tokens of reading before the first artifact). 12 new findings F9-F20 below;
 F1-F8 of the first run: 6 gone, 2 partly (F3, F8).
 
 ## Run log per stage
@@ -78,11 +78,16 @@ Same format as the first run: where, what was unclear/missing/wrong, what it cos
 | F17 | S5 | `schemas/JobChecklist.schema.json`, `TASK_TO_MODEL` | No minimal `job.yaml` template; a gate that has not started needs `note` and `evidence: []`. One missing field makes the whole walk report every gate `missing` with one pydantic blob, so the valid `inputs` gate looked failed too. | 1 walk retry | a 15-line template in `TASK_TO_MODEL` (or `dt job init`), and per-gate errors from the walker |
 | F18 | S5 | `TASK_TO_MODEL` parts row (#1205 channel) | The channel says "block the card as `needs_input`". For a card whose deliverable stops at Gate 1 (this measurement, a dry run, a parts-only card) blocking stalls the deliverable; not said whether to post + `waits: user` + finish instead. This run posted the Gate 1 comment and did not block. | judgement call | parts row: "a card whose scope ends at Gate 1 posts the request, sets `waits: user` and finishes" |
 | F19 | S1 | `jobs/KPP1/STATE.md` header, `jobs/KPP1/job.yaml` | The F8 header says "Current run: #1209 … Source: cold-run-1172/inputs-manifest.json", while D256 (11-12) and D262 cite `rerun-1244` / `site-1255`; `job.yaml` still lists `cold-run-1172/inputs-manifest.json` (not `sources.json`) with the note "DWGs still outside the asset store (cold-run G2)", false since #1239. Nothing checks the header against the newest run. Also the job-level `job.yaml` carries the previous run's route (deviation text), so a cold agent cannot work in it without seeing earlier-run hints. | 0 calls, but wrong orientation | a test or `after_merge` step: STATE header "Current run" names the run dir that `job.yaml` points at; `job.yaml` inputs -> `sources.json` |
+| F20 | after S5 (probe) | `src/dt_ai/procedure.py` inputs gate | Probe `probe_walk.py`: listing `jobs/KPP1/sources.json` twice in `inputs` still gives `inputs: pass, ready`, 0 errors (`evidence_exists` 6 rows, the manifest re-hashed twice). The procedure calls a duplicated-path manifest an error, but a duplicated inventory row is not caught. | 0 (found by the fail-closed probe, 4/5 others reject) | walker: a duplicated `inputs` path is an error naming it |
+
+Fail-closed probes (`uv run python jobs/KPP1/cold-run-1279/probe_walk.py . <new dir>`): parts hash off by one
+nibble -> hash mismatch; parts `pass` without gate1 -> rejected; `waits` on a pass gate -> rejected; unknown
+`waits` value -> rejected; duplicated inputs row -> **accepted** (F20). 4/5 reject.
 
 Minor friction, no issue proposed: the `build_as`-only-with-`primitive` rule is in the validator message, not in
 the schema description (1 retry); `execute_code` is refused in a headless session (use a script file).
 
 ## Gate 1 request
 
-Posted on issue #1279 (link in the PR body) with the `parts-v001.json` path and SHA-256 and the four questions
+Posted on issue #1279: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1279#issuecomment-6830005968 with the `parts-v001.json` path and SHA-256 and the four questions
 of the file. Measurement card: not blocked (F18); `parts` gate `waits: user`.
