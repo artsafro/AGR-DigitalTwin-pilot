@@ -1662,37 +1662,6 @@ def color_attribute_finding(meshes: list[dict], src: str) -> Finding:
               [], src, measured=count, threshold=0, data={"objects": found})
 
 
-def _closed_render_inward(meshes):
-    """Conservative closed-solid subset of reg p.8 §3.8 / p.29 §3.15.
-
-    Open surfaces, glass and UCX are not interpreted as outward solid boundaries.
-    Existing numerical weld/volume tolerances are reused, not new model tolerances.
-    """
-    inward = []
-    for mesh in meshes:
-        if mesh['name'].upper().startswith('UCX_') or mesh['name'].endswith(GLASS_SUFFIXES):
-            continue
-        shape = mesh.get('face_geometry', {})
-        coords, polys = shape.get('vertices'), shape.get('polygons')
-        if not coords or not polys:
-            continue
-        tris = [[p[0], p[j], p[j+1]] for p in polys for j in range(1, len(p)-1)]
-        vertices, triangles = weld(coords, tris)
-        if not triangles or not is_closed(triangles):
-            continue
-        origin = vertices[0]
-        terms = []
-        for tri in triangles:
-            a, b, c = [[vertices[k][i]-origin[i] for i in range(3)] for k in tri]
-            terms.append(a[0]*(b[1]*c[2]-b[2]*c[1]) + a[1]*(b[2]*c[0]-b[0]*c[2]) + a[2]*(b[0]*c[1]-b[1]*c[0]))
-        volume = math.fsum(terms)/6
-        if not math.isfinite(volume):
-            raise ValueError(f"{mesh['name']}: nonfinite orientation volume")
-        if volume < -_DEGENERATE_VOLUME_M3:
-            inward.append(mesh['name'])
-    return inward
-
-
 def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule: dict | None = None,
                    flora_share: int = FLORA_SHARE, *, maf_sizes=None, smoothing_angle_deg=None,
                    ground_area_m2=None, footprint_holes=None, diffuse_px=None,
@@ -1821,21 +1790,7 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
     out["V004"].append(_f("fail" if bad else "pass", "applied transforms",
                           f"{src}: {detail or 'rotation 0, scale 1'}{origin}",
                           "rotation 0, scale 1 after reset", [8, 29, 33], src))
-    topology = _topology_finding(meshes, profile, src)
-    try:
-        inward = _closed_render_inward(meshes)
-    except (ValueError, IndexError, TypeError, OverflowError) as exc:
-        topology.status = 'fail'
-        topology.observed += f'; invalid orientation geometry: {type(exc).__name__}: {exc}'
-        inward = []
-    if inward:
-        topology.status = 'fail'
-        topology.observed += f'; inward closed render solids: {inward}'
-        topology.expected += '; outward orientation of closed outer solids'
-        topology.measured = topology.threshold = topology.margin = None
-        topology.data['inward_closed_render_solids'] = inward
-        topology.source_pdf_pages = sorted(set(topology.source_pdf_pages + [8, 29]))
-    out["V004"].append(topology)
+    out["V004"].append(_topology_finding(meshes, profile, src))
     angle = SMOOTHING_ANGLE_DEG if smoothing_angle_deg is None else smoothing_angle_deg
     out["V004"].extend(maf_findings(meshes, role, src, smoothing_angle_deg=angle, maf_sizes=maf_sizes))
     if role != "light":

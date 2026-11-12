@@ -1988,25 +1988,4 @@ def test_npm_unmapped_polygon_material_is_named(assigned):
     assert 'polygon' in f.observed
 
 
-@pytest.mark.parametrize('offset', [0, 500000])
-@pytest.mark.parametrize('inward,status', [(False, 'pass'), (True, 'fail')])
-def test_closed_render_normals_orientation(offset, inward, status):
-    m = ucx_box('SM_Test_K_1_Main', (offset, 0, 0), (offset+1, 1, 1))
-    shape = m.pop('hull')
-    m['face_geometry'] = {'vertices': shape['verts'],
-                          'polygons': [p[::-1] if inward else p for p in shape['tris']]}
-    found = scene_findings(rb(m), 'vpm', 'oks', PROFILES.vpm)
-    assert next(f.status for f in found['V004'] if f.name == 'topology defects') == status
-
-
-def test_closed_normal_check_does_not_relax_existing_topology_fail():
-    m = ucx_box('SM_Test_K_1_Main', (0,0,0), (1,1,1))
-    shape = m.pop('hull')
-    m['face_geometry'] = {'vertices': shape['verts'], 'polygons': shape['tris']}
-    m['topology'] = _clean_topology(duplicate_polygons=101, duplicates_and_self_intersections=101)
-    found = scene_findings(rb(m), 'vpm', 'oks', PROFILES.vpm)
-    assert next(f.status for f in found['V004'] if f.name == 'topology defects') == 'fail'
-
-
-
 
