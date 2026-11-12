@@ -1,0 +1,317 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "AlbumSchedule.schema.json",
+  "title": "Album schedule sidecar (#1235): one table of schedules/<table_id>.csv",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "table_id",
+    "page",
+    "sheet",
+    "bbox",
+    "n_rows",
+    "n_cols",
+    "columns",
+    "rows",
+    "suspect_cells",
+    "merged_cells",
+    "engines",
+    "row_type_status",
+    "source",
+    "csv",
+    "csv_sha256",
+    "passed",
+    "open_gates"
+  ],
+  "properties": {
+    "schema": {
+      "const": "album-schedule/1"
+    },
+    "table_id": {
+      "type": "string",
+      "pattern": "^p[0-9]+-t[0-9]+$"
+    },
+    "page": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "sheet": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "bbox": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "n_rows": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "n_cols": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "columns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "col",
+          "label",
+          "value_kind",
+          "unit"
+        ],
+        "properties": {
+          "col": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "label": {
+            "type": "string"
+          },
+          "value_kind": {
+            "enum": [
+              "quantity",
+              "length",
+              "area",
+              "volume",
+              "mass",
+              "text",
+              "unknown"
+            ]
+          },
+          "unit": {
+            "enum": [
+              "",
+              "pcs",
+              "m",
+              "mm",
+              "m2",
+              "m3",
+              "kg"
+            ]
+          }
+        }
+      }
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "row",
+          "row_type",
+          "measures"
+        ],
+        "properties": {
+          "row": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "row_type": {
+            "enum": [
+              "header",
+              "category",
+              "data",
+              "total",
+              "empty"
+            ]
+          },
+          "measures": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "col",
+                "raw",
+                "value_text",
+                "unit",
+                "kind"
+              ],
+              "properties": {
+                "col": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "raw": {
+                  "type": "string"
+                },
+                "value_text": {
+                  "type": "string"
+                },
+                "unit": {
+                  "enum": [
+                    "pcs",
+                    "m",
+                    "mm",
+                    "m2",
+                    "m3",
+                    "kg"
+                  ]
+                },
+                "kind": {
+                  "enum": [
+                    "quantity",
+                    "length",
+                    "area",
+                    "volume",
+                    "mass"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "suspect_cells": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "row",
+          "col",
+          "reason",
+          "primary",
+          "secondary"
+        ],
+        "properties": {
+          "row": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "col": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "primary": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "secondary": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "merged_cells": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "row",
+          "col",
+          "merged_from"
+        ],
+        "properties": {
+          "row": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "col": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "merged_from": {
+            "type": "string",
+            "pattern": "^r[0-9]+c[0-9]+$"
+          }
+        }
+      }
+    },
+    "engines": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "primary",
+        "secondary",
+        "found_by"
+      ],
+      "properties": {
+        "primary": {
+          "type": "string"
+        },
+        "secondary": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "found_by": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "primary",
+              "secondary"
+            ]
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "row_type_status": {
+      "const": "heuristic_unapproved"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sha256",
+        "bytes",
+        "pages"
+      ],
+      "properties": {
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "pages": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "csv": {
+      "type": "string"
+    },
+    "csv_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "passed": {
+      "const": false
+    },
+    "open_gates": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    }
+  }
+}

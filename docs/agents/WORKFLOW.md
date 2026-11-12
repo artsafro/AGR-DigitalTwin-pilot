@@ -353,6 +353,7 @@ Each kind of fact lives in one place; the others point to it.
 | Session state (branch, next step, what waits) | `docs/HANDOFF.md` of the branch |
 | Session transcript | `logs/transcripts/` of the main checkout (local), named in the handoff |
 | Unsolved work | `docs/backlog.md`, GitHub issues |
+| A snag worked around (papercut) | `docs/papercuts/<branch>.md`, collected by `/retro` |
 
 A rule question is looked up in the order of `AGENTS.md` ("Where things are"): decision log first.
 
@@ -404,6 +405,9 @@ stage ends with the `experience-transfer` skill: exact acceptance scope, inputs/
 hashes, code used, checks actually run, failures and fixes, reuse candidates. Add it to
 `docs/cases.md`. Praise does not replace QA. A procedure becomes a general tool or skill
 only after it works on a second representative object.
+
+Small snags an agent works around are logged as one-line papercuts in `docs/papercuts/<branch>.md` (format and
+rules: `docs/papercuts/README.md`); `/retro` collects them.
 
 ## Session retro
 
