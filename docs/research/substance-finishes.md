@@ -1,9 +1,9 @@
 # Substance finishes feasibility — issue #1258
 
-## Status: capability report complete; finish pilots not verified [D259]
+## Status: capability report complete; finish pilots not verified [D261]
 
 **Final scope, 2026-11-12:** Artem accepted closing this research with the
-capability report and existing evidence, with **no more runtime attempts** [D259]
+capability report and existing evidence, with **no more runtime attempts** [D261]
 (Kanban t_ab5c23eb, USER DECISION 11:40, «принимаю рекомендацию»). This supersedes
 [D260]'s remaining photo-to-tileable requirement and all historical unblock notes
 below. No installation, licensing or production integration is authorised here.
@@ -18,7 +18,7 @@ texture, measured complete-finish time or procedural benchmark is claimed.
 
 ### Final acceptance disposition
 
-| Original acceptance | Final disposition under [D259] | Evidence |
+| Original acceptance | Final disposition under [D261] | Evidence |
 |---|---|---|
 | Installed inventory and exact agent commands | Delivered, with inspected-location limits | Inventory and command sections below; capability-v001 |
 | Photo-to-tileable and procedural pilots | Not delivered; explicitly replaced by capability-only closure | Native crash checkpoints; Designer/SAT unavailable; six raw AI maps are diagnostic only |
@@ -278,7 +278,7 @@ remain **not verified** [D260].
 Proposed follow-up scopes (not created as issues; card forbids issue creation):
 1. After a Sampler update/reinstall, a later issue can reuse the same hashed
    source/crop to retest filter insertion and attempt the photo-to-tileable pilot.
-   Do not resume attempts under this card [D259].
+   Do not resume attempts under this card [D261].
 2. Once Designer + SAT exist, procedural `.sbsar` variant pilot with bond/joint/
    colour/wear, stable seed, physical-scale checks and exact render/cook commands.
 3. Only after visual approval: finish-library recipe/provenance and RAL-binding
@@ -294,7 +294,7 @@ or production scripts are introduced. Probe scripts remain historical evidence,
 not supported pipeline tools. Final local-suite/eval receipts belong to the PR body;
 they verify this documentation branch, not a usable Substance workflow.
 
-**Historical unblock superseded by [D259]:** no more attempts are required or
+**Historical unblock superseded by [D261]:** no more attempts are required or
 permitted here. A later issue resumes after Sampler update/reinstall or Designer
 installation; it must independently verify runtime, tileability, physical scale,
 ERM packing, RGB8 DirectX normals, visual quality and time per completed finish.

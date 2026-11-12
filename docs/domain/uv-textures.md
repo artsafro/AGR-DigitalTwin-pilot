@@ -4,7 +4,7 @@ Keys: `reg p.N` = `Rasporyajenies19012026trebovaniya(2).pdf` page N. `local:` re
 
 ## Substance research status (project scope only)
 
-[Capability report](../research/substance-finishes.md): the earlier photo-pilot scope [D260] is superseded by capability-only closure [D259]; no production texture approval or changed map requirements follow from the partial raw exports.
+[Capability report](../research/substance-finishes.md): the earlier photo-pilot scope [D260] is superseded by capability-only closure [D261]; no production texture approval or changed map requirements follow from the partial raw exports.
 
 ## NPM textures (App.1)
 - Textures delivered as PNG atlases embedded in FBX. reg p.9 §5.1.
