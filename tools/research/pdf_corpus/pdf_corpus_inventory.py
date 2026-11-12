@@ -346,15 +346,16 @@ def pick_pilot(rows, company=None, n=10):
         pages = r.get('pages') or 0
         return (r['text_layer'] != 'yes', not 3 <= pages <= 300, prio, r['path'])
 
-    by_project = defaultdict(list)
-    for r in sorted(pool, key=score):
-        by_project[r['project']].append(r)
-    order = sorted(by_project, key=lambda p: score(by_project[p][0]))
     chosen = []
-    while len(chosen) < n and any(by_project[p] for p in order):
-        for p in order:
-            if by_project[p] and len(chosen) < n:
-                chosen.append(by_project[p].pop(0))
+    for tier in sorted({score(r)[:2] for r in pool}):  # round-robin over projects inside each tier
+        by_project = defaultdict(list)
+        for r in sorted((r for r in pool if score(r)[:2] == tier), key=score):
+            by_project[r['project']].append(r)
+        order = sorted(by_project, key=lambda p: score(by_project[p][0]))
+        while len(chosen) < n and any(by_project[p] for p in order):
+            for p in order:
+                if by_project[p] and len(chosen) < n:
+                    chosen.append(by_project[p].pop(0))
     return company, chosen
 
 

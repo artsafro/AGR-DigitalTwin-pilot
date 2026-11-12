@@ -242,7 +242,7 @@ def test_pilot_picks_ten_distinct_of_one_company():
     assert inv.pick_pilot(a101)[0] is None  # auto pilot stays within the companies named in #1274
     assert len(inv.pick_pilot(a101, 'А101')[1]) == 3
     short = [dict(rows[i], pages=1, sections='АГР') for i in range(4)] + rows[4:12]
-    assert all(r['pages'] == 10 for r in inv.pick_pilot(short)[1][:8])  # albums before single sheets
+    assert [r['pages'] for r in inv.pick_pilot(short)[1]] == [10] * 8 + [1] * 2  # albums before single sheets
     assert inv.pick_pilot([r for r in rows if r['company'] == 'other']) == (None, [])
 
 
