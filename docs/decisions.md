@@ -277,6 +277,8 @@ frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Mar
 
 | D258 | 2026-11-12 | Library migration #1259: VPM/mid windows keep geometric frames per D204 (F100/F73/F58); NPM is a separate plane. A passing library checker means library cleanliness only, not resolution of C35 geometry-vs-bake and not a delivery certificate. | `docs/library/TEMPLATE.md`, `library/windows/catalogue.json` | Artem «принимаю», USER DECISION on Kanban t_785829b4 |
 
+| D263 | 2026-11-12 | Roof-equipment research #1257 does not require delivered NPM/VPM pairs: roof equipment is the same in both profiles; study available delivered models with one profile per object, count Garibaldi _01/_02 as two objects, and record the profile actually used. This is not permission to invent missing geometry or delivery measurements. | `docs/research/roof-equipment.md`, `library/roof_equipment/` | Artem «принимаю рекомендации», USER DECISION on Kanban t_d0a92d95 at 14:37 |
+
 [passport-scope-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1207#issuecomment-6783203728
 
 [ground-refinement-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/295#issuecomment-6265799957

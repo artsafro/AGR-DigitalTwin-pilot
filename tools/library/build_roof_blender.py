@@ -119,8 +119,10 @@ def showcase(assets, root):
     for index, asset in enumerate(assets):
         variant = asset['variants']['vpm']
         with bpy.data.libraries.load(str(root/variant['path']), link=False) as (_, dest):
-            dest.objects = variant['objects']
-        x, y = (index % 5)*7, -(index//5)*8
+            # Blender mutates this list in place from names to Object instances.
+            # Never lend the catalogue's own list to the native loader.
+            dest.objects = list(variant['objects'])
+        x, y = (index % 6)*7, -(index//6)*8
         for obj in dest.objects:
             scene.collection.objects.link(obj)
             projected = [rotation@v.co for v in obj.data.vertices]
@@ -135,12 +137,12 @@ def showcase(assets, root):
         label(scene, ' x '.join(f'{v:.3f}' for v in variant['size_m'])+' m', x, y-5.45, .21)
         label(scene, f'NPM = VPM {variant["triangles"]} tris', x, y-5.85, .21)
     label(scene, 'ROOF EQUIPMENT / #1257 / source-derived form prototypes', 0, 2, .55)
-    label(scene, '10 forms from G01 | neutral finish, source UV retained | each card fitted independently, NOT one display scale', 0, 1, .29)
+    label(scene, '12 forms from G01 / OLY | neutral finish, source UV retained | each card fitted independently, NOT one display scale', 0, 1, .29)
     label(scene, 'Unconfirmed engineering identity / library review only / no atlas, xView or delivery certificate / visual approval pending', 0, -15, .28)
     camera = bpy.data.objects.new('Camera', bpy.data.cameras.new('Camera'))
     scene.collection.objects.link(camera)
-    camera.location = (17, -6.5, 100)
-    camera.data.type, camera.data.ortho_scale = 'ORTHO', 37
+    camera.location = (20.5, -6.5, 100)
+    camera.data.type, camera.data.ortho_scale = 'ORTHO', 44
     scene.camera = camera
     scene.world = bpy.data.worlds.new('ShowcaseWorld')
     scene.world.color = (.12, .12, .12)
@@ -160,23 +162,30 @@ def showcase(assets, root):
 
 
 def main():
-    repo, source, root = [Path(p).resolve() for p in sys.argv[sys.argv.index('--')+1:]]
+    repo, root, *sources = [Path(p).resolve() for p in sys.argv[sys.argv.index('--')+1:]]
     if bpy.app.version < (5, 1, 2):
         raise ValueError('Blender 5.1.2+ required')
-    if root.exists() or root.is_relative_to(repo) or repo.is_relative_to(root) or source.is_relative_to(root):
+    if root.exists() or root.is_relative_to(repo) or repo.is_relative_to(root) or any(p.is_relative_to(root) for p in sources):
         raise ValueError('output must be a new external directory, never an input/ancestor/repository')
+    if any(p.samefile(q) for i, p in enumerate(sources) for q in sources[:i]):
+        raise ValueError('duplicated/aliased source input')
     sys.path.insert(0, str(repo/'tools/library'))
     from check_library import load_json
-    from roof_parts import validate_plan
+    from roof_parts import validate_set
     plan_path = repo/'library/roof_equipment/extraction.json'
     plan_hash = sha(plan_path)
-    plan = validate_plan(load_json(plan_path))
-    if sha(source) != plan['source_sha256']:
-        raise ValueError('source sha256 mismatch')
-    parts = extract(source, plan)
+    document = validate_set(load_json(plan_path))
+    fingerprints = {p: sha(p) for p in sources}
+    byhash = {value: path for path, value in fingerprints.items()}
+    required = {p['source_sha256'] for p in document['plans']}
+    if len(byhash) != len(sources) or set(byhash) != required:
+        raise ValueError('source sha256 inventory mismatch: every source must match exactly one plan')
+    parts = []
+    for plan in document['plans']:
+        parts.extend((plan, *part) for part in extract(byhash[plan['source_sha256']], plan))
     root.mkdir(parents=True, exist_ok=False)
     assets = []
-    for cell, (row, vertices, faces, uvs) in enumerate(parts, 1):
+    for cell, (plan, row, vertices, faces, uvs) in enumerate(parts, 1):
         variants = {p: save_asset(row, vertices, faces, uvs, p, root) for p in ('npm', 'vpm')}
         assets.append(dict(id=row['id'], name=row['name'], status='ready', confirmation='unconfirmed',
                            source={'component': row['component'], 'object': row['source_object'],
@@ -191,7 +200,7 @@ def main():
                      inputs=[dict(path=p, sha256=sha(repo/p)) for p in inputs], showcase=sheet, assets=assets)
     with (root/'catalogue.json').open('x', encoding='utf-8', newline='\n') as stream:
         stream.write(json.dumps(catalogue, indent=2, allow_nan=False)+'\n')
-    if sha(source) != plan['source_sha256'] or sha(plan_path) != plan_hash:
+    if any(sha(path) != value for path, value in fingerprints.items()) or sha(plan_path) != plan_hash:
         raise ValueError('input changed during build; discard this candidate version')
     files = sorted(p for p in root.rglob('*') if p.is_file())
     with (root/'SHA256SUMS.txt').open('x', encoding='utf-8', newline='\n') as stream:

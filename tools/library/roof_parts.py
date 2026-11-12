@@ -46,3 +46,22 @@ def validate_plan(doc):
                 raise ValueError(f'{row["id"]}: duplicate/overlapping face {face}')
             claims.add(claim)
     return doc
+
+
+def validate_set(doc):
+    """Validate independent source plans without silently merging conflicting IDs."""
+    if not isinstance(doc, dict) or set(doc) != {'schema', 'plans'} or doc['schema'] != 'roof-extraction-set/1':
+        raise ValueError('schema: expected roof-extraction-set/1')
+    if not isinstance(doc['plans'], list) or not doc['plans']:
+        raise ValueError('plans: expected nonempty source list')
+    ids, hashes = set(), set()
+    for plan in doc['plans']:
+        validate_plan(plan)
+        if plan['source_sha256'] in hashes:
+            raise ValueError('duplicate source_sha256')
+        hashes.add(plan['source_sha256'])
+        for asset in plan['assets']:
+            if asset['id'].casefold() in ids:
+                raise ValueError('duplicate cross-source id: ' + asset['id'])
+            ids.add(asset['id'].casefold())
+    return doc
