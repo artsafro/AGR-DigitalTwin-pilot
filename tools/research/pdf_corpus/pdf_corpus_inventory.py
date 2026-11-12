@@ -42,7 +42,7 @@ SKIP_DIRS = {
 }
 
 COMPANIES = (
-    ('Вилтба', re.compile(r'в[иі]лтба|viltba|vilt[-_ ]ba', re.I)),
+    ('Вилтба', re.compile(r'в[иі]лтба|viltba|vilt[-_ ]ba|weltbau|вельтбау', re.I)),
     ('NTR', re.compile(r'(?<![^\W\d_])(?:ntr|нтр)(?![^\W\d_])', re.I)),
     ('АСТО-1', re.compile(r'(?<![^\W\d_])(?:асто|asto)(?:[-_ ]?1)?(?![^\W_])', re.I)),
 )
@@ -81,9 +81,14 @@ class InventoryError(Exception):
 
 # ---------------------------------------------------------------- discovery
 
-def discover(roots):
+def _key(path):
+    return os.path.normcase(os.path.realpath(path))
+
+
+def discover(roots, excludes=()):
     """Return (pdf paths, skipped dirs, walk errors); paths de-duplicated by real path."""
     seen, files, skipped, errors = set(), [], [], []
+    excluded = {_key(e) for e in excludes}
     for root in roots:
         def onerror(e):
             errors.append((str(e.filename), type(e).__name__))
@@ -93,6 +98,8 @@ def discover(roots):
                 full = os.path.join(directory, d)
                 if d.lower() in SKIP_DIRS or d.startswith('~$'):
                     skipped.append((full, 'skip-list'))
+                elif _key(full) in excluded:
+                    skipped.append((full, 'excluded'))
                 elif os.path.islink(full) or (hasattr(os.path, 'isjunction') and os.path.isjunction(full)):
                     skipped.append((full, 'link/junction'))
                 else:
@@ -102,7 +109,7 @@ def discover(roots):
                 if not name.lower().endswith('.pdf'):
                     continue
                 full = os.path.join(directory, name)
-                key = os.path.normcase(os.path.realpath(full))
+                key = _key(full)
                 if key in seen:
                     continue
                 seen.add(key)
@@ -111,6 +118,14 @@ def discover(roots):
 
 
 # ---------------------------------------------------------------- per-file inspection
+
+CLOUD_ATTRS = 0x1000 | 0x40000 | 0x400000  # OFFLINE | RECALL_ON_OPEN | RECALL_ON_DATA_ACCESS
+
+
+def _is_placeholder(st):
+    """True for an online-only cloud file (OneDrive/Dropbox): reading it would download it."""
+    return bool(getattr(st, 'st_file_attributes', 0) & CLOUD_ATTRS)
+
 
 def _hash(path, kind, size):
     h = hashlib.sha256()
@@ -153,6 +168,8 @@ def inspect(path, hash_kind='sha256', text_pages=2):
     row['modified_utc'] = datetime.fromtimestamp(st.st_mtime, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
     if st.st_size == 0:
         return {**row, 'status': 'error', 'error': 'empty file'}
+    if _is_placeholder(st):
+        return {**row, 'status': 'error', 'error': 'cloud placeholder (not downloaded)'}
     try:
         row['hash'] = _hash(path, hash_kind, st.st_size)
         row['hash_kind'] = 'fast' if row['hash'].startswith('fast-') else 'sha256'
@@ -342,7 +359,8 @@ def _pct(a, b):
     return f'{100 * a / b:.0f}%' if b else 'n/a'
 
 
-def render_summary(rows, roots, skipped, walk_errors, hash_kind, csv_path, command, pilot_company=None):
+def render_summary(rows, roots, skipped, walk_errors, hash_kind, csv_path, command, pilot_company=None,
+                   excludes=()):
     uniq = _canonical(rows)
     errors = Counter(r['error'].split(':')[0] for r in rows if r['status'] != 'ok')
     lines = [
@@ -352,7 +370,9 @@ def render_summary(rows, roots, skipped, walk_errors, hash_kind, csv_path, comma
         f'- Roots: {", ".join(f"`{r}`" for r in roots)}',
         f'- PDF files found: **{len(rows)}**; readable: **{sum(r["status"] == "ok" for r in rows)}**; '
         f'unique by {hash_kind} hash: **{len(uniq)}**; unreadable: **{sum(errors.values())}**',
-        f'- Skipped directories (skip-list/links): {len(skipped)}; walk errors: {len(walk_errors)}',
+        f'- Skipped directories: ' + (', '.join(f'{k} {v}' for k, v in sorted(Counter(r for _p, r in skipped).items()))
+                                      or '0') + f'; walk errors: {len(walk_errors)}',
+        f'- Excluded by `--exclude`: ' + (', '.join(f'`{e}`' for e in excludes) or 'none'),
         f'- Full list: `{csv_path}` (one row per file, incl. unreadable ones with `status`/`error`).',
         '',
     ]
@@ -437,7 +457,7 @@ def _csv_text(rows):
 
 
 def run(roots, csv_path, summary_path, hash_kind='sha256', workers=1, timeout=120.0,
-        text_pages=2, pilot_company=None, command='pdf_corpus_inventory.py'):
+        text_pages=2, pilot_company=None, command='pdf_corpus_inventory.py', excludes=()):
     if not roots:
         raise InventoryError('no --root given')
     norm_roots = []
@@ -445,6 +465,9 @@ def run(roots, csv_path, summary_path, hash_kind='sha256', workers=1, timeout=12
         if not os.path.isdir(r):
             raise InventoryError(f'root is not a directory: {r}')
         norm_roots.append(os.path.abspath(r))
+    for e in excludes:
+        if not os.path.isdir(e):
+            raise InventoryError(f'exclude is not a directory: {e}')
     if pilot_company is not None and pilot_company not in [c for c, _ in COMPANIES]:
         raise InventoryError(f'unknown pilot company: {pilot_company}')
     if not (timeout > 0 and timeout != float('inf')) or text_pages < 1 or workers < 1:
@@ -459,7 +482,7 @@ def run(roots, csv_path, summary_path, hash_kind='sha256', workers=1, timeout=12
             raise InventoryError(f'output exists, refusing to overwrite: {o}')
         if not o.parent.is_dir():
             raise InventoryError(f'output directory missing: {o.parent}')
-    files, skipped, walk_errors = discover(norm_roots)
+    files, skipped, walk_errors = discover(norm_roots, excludes)
     if not files:
         raise InventoryError('no PDF found under the roots')
     results = inspect_all([p for p, _r in files], hash_kind, text_pages, workers, timeout)
@@ -474,7 +497,7 @@ def run(roots, csv_path, summary_path, hash_kind='sha256', workers=1, timeout=12
             raise InventoryError(f'output appeared during scan, refusing to overwrite: {o}')
     _write_new(outs[0], _csv_text(rows))
     _write_new(outs[1], render_summary(rows, norm_roots, skipped, walk_errors, hash_kind,
-                                       csv_path, command, pilot_company))
+                                       csv_path, command, pilot_company, list(excludes)))
     return rows
 
 
@@ -488,10 +511,11 @@ def main(argv=None):
     ap.add_argument('--timeout', type=float, default=120.0, help='seconds per PDF (workers > 1)')
     ap.add_argument('--text-pages', type=int, default=2)
     ap.add_argument('--pilot-company', default=None)
+    ap.add_argument('--exclude', action='append', default=[], help='directory to skip (repeatable)')
     args = ap.parse_args(argv)
     try:
         rows = run(args.root, args.csv, args.summary, args.hash, args.workers, args.timeout,
-                   args.text_pages, args.pilot_company,
+                   args.text_pages, args.pilot_company, excludes=args.exclude,
                    command='python tools/research/pdf_corpus/pdf_corpus_inventory.py ' + ' '.join(
                        a for a in (argv if argv is not None else sys.argv[1:])))
     except InventoryError as e:

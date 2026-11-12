@@ -100,7 +100,7 @@ def test_synthetic_folder_inventory(corpus, tmp_path):
 
 @pytest.mark.parametrize('case', ['no-root', 'missing-root', 'no-pdf', 'csv-exists', 'same-output',
                                   'bad-suffix', 'unknown-company', 'timeout-nan', 'timeout-inf',
-                                  'timeout-zero', 'output-is-input'])
+                                  'timeout-zero', 'output-is-input', 'missing-exclude', 'all-excluded'])
 def test_fail_closed_writes_nothing(corpus, tmp_path, case):
     empty = tmp_path / 'empty'
     empty.mkdir()
@@ -123,6 +123,10 @@ def test_fail_closed_writes_nothing(corpus, tmp_path, case):
         args['extra'] = ['--pilot-company', 'Acme']
     elif case.startswith('timeout'):
         args['extra'] = ['--timeout', {'timeout-nan': 'nan', 'timeout-inf': 'inf', 'timeout-zero': '0'}[case]]
+    elif case == 'missing-exclude':
+        args['extra'] = ['--exclude', str(tmp_path / 'typo')]
+    elif case == 'all-excluded':
+        args['extra'] = [x for d in corpus.iterdir() for x in ('--exclude', str(d))]
     elif case == 'output-is-input':
         args['csv'] = str(corpus / 'misc' / 'broken.pdf')
     before = digest_tree(tmp_path)
@@ -141,6 +145,33 @@ def test_path_alias_roots_list_each_file_once(corpus, tmp_path):
                    tmp_path / 'a.csv', tmp_path / 'a.md')
     paths = [Path(r['path']).resolve() for r in rows]
     assert len(paths) == len(set(paths)) == 7
+
+
+def test_exclude_skips_directory_and_is_reported(corpus, tmp_path):
+    rows = inv.run([str(corpus)], tmp_path / 'e.csv', tmp_path / 'e.md', excludes=[str(corpus / 'misc')])
+    assert {Path(r['path']).name for r in rows} == {'0123-АР фасады.pdf', 'same.pdf', 'ГП благоустройство.pdf',
+                                                    'КЖ1.pdf'}
+    md = (tmp_path / 'e.md').read_text(encoding='utf-8')
+    assert 'excluded 1' in md and 'skip-list 1' in md and str(corpus / 'misc') in md
+
+
+def test_cloud_placeholder_is_not_read(corpus, tmp_path, monkeypatch):
+    target = str(corpus / 'NTR' / '22_COD' / 'ГП благоустройство.pdf')
+    real_stat = inv.os.stat
+
+    class Fake:
+        def __init__(self, st):
+            self.st_size, self.st_mtime, self.st_mtime_ns = st.st_size, st.st_mtime, st.st_mtime_ns
+            self.st_file_attributes = 0x400000
+
+    monkeypatch.setattr(inv.os, 'stat', lambda p, *a, **k: Fake(real_stat(p)) if str(p) == target
+                        else real_stat(p, *a, **k))
+    opened = []
+    real_open = open
+    monkeypatch.setattr('builtins.open', lambda p, *a, **k: (opened.append(str(p)), real_open(p, *a, **k))[1])
+    row = inv.inspect(target)
+    assert (row['status'], row['error']) == ('error', 'cloud placeholder (not downloaded)')
+    assert target not in opened and 'hash' not in row
 
 
 def test_file_changed_during_scan_is_an_error_row(corpus, tmp_path, monkeypatch):
@@ -172,7 +203,7 @@ def test_fast_hash_and_pool_match_inline(corpus, tmp_path):
 def test_company_regex_probe():
     """Generated probe: every spelling is found as a path part; embedded in a word it is not."""
     rng = random.Random(1274)
-    spellings = {'Вилтба': ['Вилтба', 'ВИЛТБА', 'Viltba', 'VILTBA', 'vilt_ba'],
+    spellings = {'Вилтба': ['Вилтба', 'ВИЛТБА', 'Viltba', 'VILTBA', 'vilt_ba', '!Weltbau', 'Вельтбау'],
                  'NTR': ['NTR', 'ntr', 'НТР'], 'АСТО-1': ['АСТО-1', 'АСТО', 'ASTO-1', 'asto_1', 'Асто 1']}
     hits = total = 0
     for company, words in spellings.items():
@@ -185,7 +216,7 @@ def test_company_regex_probe():
                 total += 1
                 hits += got == company
                 assert inv.guess_company(f'D:/x{w}y/Проект/лист.pdf', {})[0] != company or company == 'Вилтба'
-    assert hits == total == 260
+    assert hits == total == 300
     for word in ('ЦЕНТР', 'НАСТОЯЩИЙ', 'CONTROL', 'entrance', 'Pastor', 'мастока'):
         assert inv.guess_company(f'D:/{word}/a.pdf', {})[0] == 'other', word
 
