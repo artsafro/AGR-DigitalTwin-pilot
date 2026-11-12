@@ -1,0 +1,2 @@
+# Preserve the frozen runtime manifest byte-for-byte (including CRLF).
+checker-mutation-freeze.json -text

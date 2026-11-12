@@ -1988,4 +1988,21 @@ def test_npm_unmapped_polygon_material_is_named(assigned):
     assert 'polygon' in f.observed
 
 
+def test_npm_glass_does_not_require_an_opaque_diffuse():
+    data = rb(mesh(name='SM_Test_K_1_MainGlass', materials=['M_Glass']))
+    data['materials'] = [{'name': 'M_Glass', 'maps': []}]
+    found = scene_findings(data, 'npm', 'oks', PROFILES.npm)
+    assert not any(f.name == 'material assignments' for f in found['V005'])
+
+
+def test_npm_material_and_oversized_image_errors_both_survive():
+    data = rb(mesh(materials=['UnknownMaterial']))
+    data['materials'] = [{'name': 'UnknownMaterial', 'maps': []}]
+    data['images'] = [{'name': 'atlas.png', 'size': [8192,8192], 'packed': True}]
+    found = scene_findings(data, 'npm', 'oks', PROFILES.npm)
+    assert next(f.status for f in found['V005'] if f.name == 'material assignments') == 'fail'
+    assert next(f.status for f in found['V006'] if f.name == 'texture dimensions') == 'fail'
+
+
+
 
