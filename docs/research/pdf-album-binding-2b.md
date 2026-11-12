@@ -31,6 +31,15 @@ unresolved. OCR, schedules, materials and customer/model geometry were not chang
    split a circle into two separately stroked Bezier semicircles; join only a
    connected, closed circular loop. Synthetic nested-XObject rotations exercise
    transformed positions/orientations. Open/elliptic/ambiguous-label loops refuse.
+   Rework r1 also requires a **whole-cubic annulus certificate** for paired
+   semicircles: normalize about the candidate centre/radius, subdivide with de
+   Casteljau, and enclose each complete cell in its control hull. The control
+   bbox gives a lower radial bound; the farthest control point gives an upper
+   bound. Accept only cells strictly inside the existing 2% annulus (1e-10
+   normalized arithmetic margin); unresolved cells at depth 12, non-finite
+   controls and exact boundaries refuse. Endpoints/midpoints remain candidate
+   fitting only, never the shape proof. Opposite control shifts that cancel at
+   the midpoint must not invent axes.
 2. Level symbols may have a stem in either direction; their arrow arms can exceed
    the old fixed 15 pt limit after plotting at a larger paper scale. Require the
    actual shelf-to-tip stem and correctly facing arms, retaining shared-tip,

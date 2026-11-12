@@ -437,6 +437,43 @@ def _center(b: Box) -> Point:
     return ((b[0] + b[2]) / 2.0, (b[1] + b[3]) / 2.0)
 
 
+def _cubic_in_annulus(curve: Any, center: Point, radius: float) -> bool:
+    """Certify the whole cubic via subdivided convex hulls, never point samples.
+
+    A Bezier curve lies in its control hull. The hull's enclosing box supplies
+    a conservative lower radius; its farthest control point supplies the upper.
+    Unresolved cells (including exact tolerance boundaries) fail closed.
+    """
+    if not math.isfinite(radius) or radius <= 0:
+        return False
+    control = tuple(((float(p[0]) - center[0]) / radius,
+                     (float(p[1]) - center[1]) / radius) for p in curve[1:])
+    if any(not math.isfinite(v) for p in control for v in p):
+        return False
+    lower, upper = 0.98 + 1e-10, 1.02 - 1e-10
+    pending = [(control, 0)]
+    while pending:
+        pts, depth = pending.pop()
+        if any(not lower < math.hypot(*p) < upper for p in (pts[0], pts[-1])):
+            return False
+        # Every point in the box is at least this far from the origin.
+        nearest = [max(min(p[j] for p in pts), 0.0, -max(p[j] for p in pts))
+                   for j in (0, 1)]
+        if (math.hypot(*nearest) > lower
+                and max(math.hypot(*p) for p in pts) < upper):
+            continue
+        if depth == 12:
+            return False
+        # de Casteljau at t=.5: both new hulls cover the entire original curve.
+        levels = [pts]
+        while len(levels[-1]) > 1:
+            levels.append(tuple(((a[0] + b[0]) / 2, (a[1] + b[1]) / 2)
+                                for a, b in pairwise(levels[-1])))
+        pending.append((tuple(row[0] for row in levels), depth + 1))
+        pending.append((tuple(row[-1] for row in reversed(levels)), depth + 1))
+    return True
+
+
 def _circles(raw: list[dict[str, Any]]) -> list[tuple[Point, float, int]]:
     out = []
     for d in raw:
@@ -502,7 +539,8 @@ def _circles(raw: list[dict[str, Any]]) -> list[tuple[Point, float, int]]:
         angles = [math.atan2(p[1]-cy, p[0]-cx) for p in points + points[:1]]
         turns = [(b-a+math.pi) % (2*math.pi)-math.pi for a,b in pairwise(angles)]
         if (radius > 0.5 and max(abs(r-radius) for r in radii) <= .02*radius
-                and abs(abs(sum(turns))-2*math.pi) < .01):
+                and abs(abs(sum(turns))-2*math.pi) < .01
+                and all(_cubic_in_annulus(c, (cx, cy), radius) for c in curves)):
             out.append(((cx, cy), radius, left['index']))
     return out
 

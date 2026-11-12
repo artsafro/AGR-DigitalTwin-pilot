@@ -102,8 +102,8 @@ def test_dimension_short_connectors_keep_native_tick_endpoints(tmp_path):
     ]
 
 
-@pytest.mark.parametrize("delta", [0, 20, 50])
-@pytest.mark.parametrize("rotation", [0, 90])
+@pytest.mark.parametrize("delta", [0, 5, 10, 20, 50, 100, -5, -20, -50])
+@pytest.mark.parametrize("rotation", [0, 90, 180, 270])
 def test_split_bezier_axis_arcs(tmp_path, delta, rotation):
     doc = pymupdf.open()
     p = doc.new_page(width=400, height=300)
@@ -169,6 +169,43 @@ def test_non_bubbles_never_become_axes(tmp_path, mode):
     r = B.bind_album(path)
     assert not [a for v in r["views"] for a in v["axes"]]
     assert not r["passed"]
+
+
+def test_cubic_annulus_certificate_fail_closed():
+    """Exercise numerical certificate boundaries independently of PDF encoding."""
+    from dt_ai.album.reader import _cubic_in_annulus
+
+    for value in [0.98, 1.02, float("nan"), float("inf"), -float("inf")]:
+        assert not _cubic_in_annulus(("c", *((value, 0),) * 4), (0, 0), 1)
+    assert _cubic_in_annulus(("c", *((1, 0),) * 4), (0, 0), 1)
+    for radius in [0, -1, float("nan"), float("inf")]:
+        assert not _cubic_in_annulus(("c", *((1, 0),) * 4), (0, 0), radius)
+    # Endpoints are valid, but the entire interior cannot be certified.
+    assert not _cubic_in_annulus(("c", (1, 0), (-1, 0), (-1, 0), (1, 0)), (0, 0), 1)
+
+
+def test_generated_cubic_certificates_have_no_hidden_radial_excursions():
+    import random
+    from dt_ai.album.reader import _cubic_in_annulus
+
+    rng = random.Random(1254)
+    accepted = 0
+    for _ in range(200):
+        noise = rng.choice([0.001, 0.01, 0.2, 2.0])
+        k = 0.5522847498
+        pts = [(1, 0), (1, k), (k, 1), (0, 1)]
+        pts[1:3] = [(x + rng.uniform(-noise, noise), y + rng.uniform(-noise, noise))
+                    for x, y in pts[1:3]]
+        if not _cubic_in_annulus(("c", *pts), (0, 0), 1):
+            continue
+        accepted += 1
+        # Independent dense evaluation is a negative oracle, not the certificate.
+        for step in range(1001):
+            t = step / 1000
+            weights = ((1-t)**3, 3*(1-t)**2*t, 3*(1-t)*t*t, t**3)
+            xy = [sum(w*p[j] for w, p in zip(weights, pts)) for j in (0, 1)]
+            assert 0.98 < math.hypot(*xy) < 1.02
+    assert accepted >= 50  # prevent an always-refuse implementation passing
 
 
 def test_plan_boxed_spot_is_not_an_elevation_line(tmp_path):
