@@ -26,7 +26,7 @@ subsets need exported-FBX readback (`--scene`). This research ran no DCC or deli
 | UV-03 — Ground relief texture-set target | reg p.6–7 §1.5 | Ground FBX up to 22 texture sets: Ground geometry max 20 sets (count also governed by the density rule), GroundGlass and GroundElGlass without sets, GroundEl 1 set, Flora 1 set | Ground is UDIM on one channel (UV-09); no NPM set ceiling transferred | Manual set count per Ground object class | none | [NPM structure](../npm-vpm.md#npm-appendix-1) |
 | UV-04 — GroundEl atlas target | reg p.10 §5.12; reg p.7 §1.5 | One texture set for all GroundEl (MAF, lighting masts etc.), <= 512×512 px | Not an NPM limit transferred to VPM; VPM Ground texture contract applies | Manual grouping of all GroundEl into one set and image-dimension readback; generic NPM size helper does not enforce 512 | none | [NPM textures](../uv-textures.md#npm-textures-app1), [GroundEl / MAF sheet](groundel-maf.md) |
 | UV-05 — Flora atlas target | reg p.10 §5.13; reg p.7 §1.5 | One texture set for all vegetation, <= 2048×2048 px; only diffuse map and, if needed, opacity map | No separate Flora atlas limit on p.30–31; VPM Ground texture contract applies | Manual set count, map-type list and dimension readback | none | [NPM textures](../uv-textures.md#npm-textures-app1) |
-| UV-06 — Ground relief density band | reg p.10 §6.1; reg p.32 §6.2; [D097]; [D021] | only the relief surface inside the site: >= 10 and <= 40 (page text says "pixels per sq. metre", example 2048×2048 <-> square 204 × 204 m); C4 decided by the user [D097]: pixels per LINEAR metre, 10–40 px/m with 2K textures. Baking vs slicing: see UV-08 | Diffuse 512–1706 px/m, formula ρ = L_t ÷ L_p (texture side px / polygon length m); [D097] quotes 520–1706 px/m at 4K — differs from the regulation's 512, recorded as C36 (open, no side chosen); [D021] cut target about 4 × 4 m (1024 px/m) | Manual metric UV inspection; NPM Ground density has no general check; V009 unimplemented; OCR "+" vs image "÷" is C10 | none | [C4 / D097](../conflicts.md#a-inside-the-regulation), [C36](../conflicts.md#c-between-local-sources-project-decisionslessons), [VPM UV](../uv-textures.md#vpm-uv--udim) |
+| UV-06 — Ground relief density band | reg p.10 §6.1; reg p.32 §6.2; [D097]; [D021]; [D160] | only the relief surface inside the site: >= 10 and <= 40 (page text says "pixels per sq. metre", example 2048×2048 <-> square 204 × 204 m); C4 decided by the user [D097]: pixels per LINEAR metre, 10–40 px/m with 2K textures. Baking vs slicing: see UV-08 | Diffuse 512-1706 px/m [D160] supersedes D097's lower bound; C36 is decided; formula ρ = L_t ÷ L_p (texture side px / polygon length m); [D021] cut target about 4 × 4 m (1024 px/m); C10 remains open | V009 measures exported polygon ring-edge density with archive Diffuse side per slot/UDIM; NPM Ground density and semantic applicability remain manual | V009 — partial VPM density only, `scene.py:_texel_density_findings`; see current coverage below | [C4 / D097](../conflicts.md#a-inside-the-regulation), [C36](../conflicts.md#c-between-local-sources-project-decisionslessons), [VPM UV](../uv-textures.md#vpm-uv--udim), [V009 limits](#v009-current-coverage-and-limits) |
 | UV-07 — Density applicability and exemptions | reg p.10 §6.2; reg p.31–32 §6.1 | Density not applied to perimeter polygons extruded down (§3.4), Flora, OKS, GroundEl | Density applies only to Diffuse; ERM, Normal and placeholders exempt; for maps with alpha a higher density in the range is recommended (p.32 §6.2) | Manual target classification before grading | none | [NPM textures](../uv-textures.md#npm-textures-app1), [VPM UV](../uv-textures.md#vpm-uv--udim) |
 | UV-08 — Ground baking vs slicing approaches | reg p.18 fig.7–8 | Two example approaches for site landscaping and its atlas: «Запекание» (baking) and «Нарезка» (slicing); illustrative figures, not a numeric rule | Not shown for VPM | Choose and record the approach per site; manual atlas review | none | [NPM textures](../uv-textures.md#npm-textures-app1) |
 | UV-09 — VPM UDIM, single UV channel | reg p.31 §2.1.1; reg p.9 §5.1 | PNG atlases embedded in FBX (not UDIM) | `*_Main` and `*_Ground`: UV only by UDIM, one UV set on one channel | Exported-FBX readback of UV channel count; pre-export Max scene dump: map channel 1 named `UV`, channels 2+ listed (origin: team script `ClearCustomAttributesAndObjProp_010.ms`, #547) | V008 — `scene_findings` `uv_channels != 1` (needs `--scene` readback); pre-export `twinqa.export_hygiene` | [VPM UV](../uv-textures.md#vpm-uv--udim), [implementation](../../../src/twinqa/scene.py) |
@@ -58,22 +58,43 @@ The issue text (written before 2026-10-15) said the Ground density unit conflict
 
 ## L2 gaps
 
-The table contains **14 requirement rows**: **10** with `none` and **4** with partial coverage (UV-09, UV-10, UV-11, UV-14).
+The table contains **14 requirement rows**: **9** with `none` and **5** with partial coverage (UV-06, UV-09, UV-10, UV-11, UV-14).
 
 - **UV-01:** automatic count of OKS materials and texture sets against usable-roof presence; `texture_sets_per_oks` is machine-readable only, and the exactly-100 slot boundary (C11) is not checked.
 - **UV-02:** equality of material count and texture-set count, excluding translucent-part materials, with translucent-part materials <= 7.
 - **UV-03:** Ground FBX set ceiling (22) split by class: Ground max 20, GroundEl 1, Flora 1, glass classes without sets.
 - **UV-04:** one shared GroundEl texture set and the 512×512 px ceiling.
 - **UV-05:** one Flora texture set, diffuse plus optional opacity only, and the 2048×2048 px ceiling.
-- **UV-06:** NPM Ground relief density 10–40 px per linear metre [D097] and the VPM Diffuse band; V009 is unimplemented, and the 520 vs 512 lower bound stays open as C36.
+
 - **UV-07:** exemption classification before grading (NPM perimeter extrusion, Flora, OKS, GroundEl; VPM non-Diffuse maps).
 - **UV-08:** per-site record of baking versus slicing, and atlas review against the illustrative figures.
 - **UV-12:** split-at-tile, island overlap, tile-border margin and seam/shift/pattern-mismatch checks.
 - **UV-13:** island padding (NPM >= 8 px; VPM >= 16 px at 2048 and >= 32 px at 4096); local variants remain C29.
 
-Remaining work on the partial rows: UV-10 checks archive filename sequence only and does not cross-check scene UV tile layout against filenames; UV-14 checks meshes named `*MainGlass` only and does not check GroundGlass. V009 density is roadmap T-UV-3. The UV benchmark is roadmap T-UV-2. No complete UV L2 is claimed.
+Remaining work on the partial rows: UV-06 has VPM density coverage, but NPM Ground density remains unchecked (10-40 px/m [D097]); applicability and split policy still require manual review, including C10. UV-10 checks archive filename sequence only and does not cross-check scene UV tile layout against filenames; UV-14 checks meshes named `*MainGlass` only and does not check GroundGlass. V009 implements a bounded part of roadmap T-UV-3, not the independent UV benchmark T-UV-2. No complete UV L2 or L3 is claimed.
 
-**2026-10-20 update [D160]:** the VPM lower bound in the historical D097 quotations above is superseded: use 512-1706 px/m. C36 is decided; NPM Ground 10-40 is unchanged. See [2026 requirements](../requirements-2026.md).
+## V009 current coverage and limits
+
+[`scene.py:_texel_density_findings`](../../../src/twinqa/scene.py), called by `scene_findings`
+for VPM, checks exported polygon UVs and metric geometry with Diffuse side per slot/UDIM
+from the archive (`--scene`); without archive sizes it falls back to a single readback Diffuse size.
+The ring-edge metric is `texture_side_px * UV_edge_length / world_edge_length`, with inclusive
+512-1706 px/m bounds [D160]. C36 is decided; NPM Ground 10-40 px/m is unchanged.
+UCX and glass-named meshes are excluded; profile-sized placeholder tiles are exempt.
+ERM/Normal sizes are not density inputs. Semantic applicability/placeholder eligibility remains manual.
+No scene leaves V009 `not_run`; in the single-size fallback, missing UV or missing/ambiguous
+readback size yields `not_run`. Missing archive tile sizes add a
+`texel density coverage` `not_run` finding (measured tiles may still have pass/fail bounds).
+Malformed partial polygon UV arrays fail; these statuses must not be read as complete coverage.
+
+[`test_decision_checks.py`](../../../tests/qa/test_decision_checks.py) covers in/out-of-band,
+per-slot/per-tile sizes, placeholders, glass and missing-data/package wiring.
+[`test_texel_metric_divergence.py`](../../../tests/qa/test_texel_metric_divergence.py) shows that
+ring-edge extrema differ from area density and can miss directional extrema under shear/rotation.
+Tile lookup uses the polygon UV centroid; this is not a cross-tile/split-policy certificate.
+No normative metric choice or C10 resolution follows from those synthetic characterizations.
+[D193] is a job-local Vatutino Ground v015 frozen-face `texel_ready` exception, not a general density
+waiver. Manual gates and the NPM Ground gap remain; no full L2/L3 or delivery pass follows.
 
 ## Notes
 
