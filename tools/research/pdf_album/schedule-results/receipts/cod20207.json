@@ -1,0 +1,123 @@
+{
+  "album": "cod20207",
+  "album_index_sha256": "70bc09b9df16ea5620dd864a13e2c437abf59ab98fb0b1213ccb0402376e32ad",
+  "engines": {
+    "primary": "pymupdf 1.28.2 find_tables",
+    "secondary": "pdfplumber 0.11.10 find_tables"
+  },
+  "materials": {
+    "entries": 0,
+    "merged_unresolved": 0,
+    "missing": 0,
+    "present": 0,
+    "single_engine": 0,
+    "suspect": 0,
+    "unbound": 0
+  },
+  "output_sha256": {
+    "materials.json": "8b1f34fdf95fda67cf3520e04bc126b6731bbebaaac6a127591eff7c3b6e53e5",
+    "schedules.json": "5180c1f7245be6a6d32c3c7f0c166204484b08547584b7812cf954f9153df17b",
+    "schedules/p5-t1.csv": "bdb4607e846fe0ae516db23add8a5356abb636aebcec2008091ab17ccb4d9655",
+    "schedules/p5-t1.json": "a55078a725b11efed3a5982c4e67fa78cc31ece2dc22c9555eb8ae0bb3a00575"
+  },
+  "pages_accounted": 5,
+  "pages_not_routed": 4,
+  "pages_routed": [
+    5
+  ],
+  "passed": false,
+  "ral": {
+    "codes_correct": 0,
+    "codes_denominator": 3,
+    "extracted_in_reference": 0,
+    "extracted_on_reference_pages": 0,
+    "samples": [
+      {
+        "found": false,
+        "reference": {
+          "application": "white facade panel legend; application binding unapproved",
+          "code": "RAL 9003",
+          "page": 1,
+          "sheet": "12"
+        }
+      },
+      {
+        "found": false,
+        "reference": {
+          "application": "blue facade panel legend; application binding unapproved",
+          "code": "RAL 5023",
+          "page": 1,
+          "sheet": "12"
+        }
+      },
+      {
+        "found": false,
+        "reference": {
+          "application": "grey facade panel legend; application binding unapproved",
+          "code": "RAL 7024",
+          "page": 1,
+          "sheet": "12"
+        }
+      }
+    ]
+  },
+  "row_types": {
+    "data": 1,
+    "empty": 2,
+    "header": 1
+  },
+  "rows": {
+    "cells_correct": 2,
+    "cells_denominator": 2,
+    "rows_correct": 1,
+    "rows_denominator": 1,
+    "samples": [
+      {
+        "found": true,
+        "match": {
+          "cells_found": 2,
+          "description_exact": false,
+          "row": 4,
+          "row_type": "data",
+          "table_id": "p5-t1",
+          "unit": "",
+          "value_found": true,
+          "value_kind": "quantity",
+          "value_status": "agree"
+        },
+        "reference": {
+          "description": "INTILED; total length 5 505 m; cross-section 16x15 mm. Quantity 1 is not 1 metre.",
+          "key": "LACE RGBW Custom",
+          "page": 5,
+          "sheet": "unnumbered equipment specification 20.07.2026",
+          "unit": "schedule quantity",
+          "value": "1"
+        }
+      }
+    ]
+  },
+  "secondary_status": "ok",
+  "seconds": 0.153,
+  "source_sha256": "3398c18864b0ef46b3cb59d43c34e8e3a7707172ee372545861ff8a672bb87ce",
+  "summary": {
+    "cells": 32,
+    "materials": 0,
+    "suspect_cells": 0,
+    "tables": 1
+  },
+  "suspect_reasons": {},
+  "tables": [
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 8,
+      "n_rows": 4,
+      "page": 5,
+      "sheet": null,
+      "suspect_cells": 0,
+      "table_id": "p5-t1"
+    }
+  ]
+}

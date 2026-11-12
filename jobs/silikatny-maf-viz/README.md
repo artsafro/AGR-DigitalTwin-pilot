@@ -34,7 +34,7 @@ four scripts in that order, then `build_all()`; v004 = v003 with pos 1 replaced 
 Every object has the same 33 slots: `ID01_paint_ral9005` … `ID31_polycarbonate` (library v005 [D181]) +
 `ID32_paint_ral2003` (ДОО) + `ID33_paint_ral5012` (СОШ). HPL parts of play items are ID 32; swap to 33 for СОШ copies.
 This list is job-local: library v006 gives ID 32 to `wood_hpl_satin` [D229]; the set is not renumbered, and a model
-taken from here into the library remaps 32/33 first [D257].
+taken from here into the library remaps 32/33 first [D263].
 Blender FBX readback: 30/30 objects keep 33 slots in order, same IDs, tris, dims, one UV layer (box, 1 m = 1 UV).
 3ds Max 2026.3 FBX import (defaults, metres): 30/30 Editable_Poly sharing one `MultiMat_0` with subs 1..33 in order;
 per-object face IDs equal the Blender IDs for all 30; one Multi/Sub assigned to all objects changes 0 faces.

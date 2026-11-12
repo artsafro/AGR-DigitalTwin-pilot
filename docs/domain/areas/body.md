@@ -46,7 +46,7 @@ manual gates remain required. Partial coverage is explicitly qualified.
 | BODY-U — Inset slabs | [D038]; [D039]; [D068] | Required inset joint where surrounded; solid roof exception without parapet | Same | Match hole/plate loops and spec gap/embed; reject missing joints, invalid loops and off-spec plates | `src/twinqa/geometry/checks.py:check_mesh` (`slabs_not_inset`, `plates_off_spec`); B01/B02/B02t | [Inset slab](../patterns/roof-inset-plane.md) |
 | BODY-V — Opacity-plane interface / C7 | reg p.8 §3.13; reg p.36 §12.3; [D019] | No opacity-plane thickness or offset duplicate | For both-side visibility: flipped duplicate offset 0.003–0.01 m | Inspect profile-derived plane geometry; C7 shared-tool policy awaits user confirmation, not chosen here | none | [Geometry](../geometry.md#regulation-geometry-rules-both-profiles-unless-noted), [C7 — user decision pending](../conflicts.md#a-inside-the-regulation), [open choice](../conflict-choices-2026-10-09.md#c7--two-sided-alpha-planes) |
 | BODY-W — Alpha interface / C8 | reg p.9 §5.5, §5.8; reg p.30 §5.1.4, §5.1.6; reg p.36 §12.2; [D020] | Separate opacity map, no image alpha | Cut-out mask in Diffuse alpha; no ERM/Normal alpha | Inspect material/plane pairing; PNG helpers alone cannot verify the complete interface; C8 confirmation stays with user | none | [UV/textures](../uv-textures.md), [C8 / C21](../conflicts.md), [open C8 choice](../conflict-choices-2026-10-09.md#c8--alpha-in-textures) |
-| BODY-X — UV-driven BODY splits / C10 | reg p.31 §2.1.2; reg p.32 §6.2; [D021] | Follow NPM OKS atlas rules, not VPM density | Density-driven cuts; formula discrepancy is C10 | Compare to page image; V009 general delivery density is unimplemented; C10 remains a user decision | none | [UV rules](../uv-textures.md), [C10 — user decision pending](../conflicts.md#a-inside-the-regulation), [open choice](../conflict-choices-2026-10-09.md#c10--texel-density-formula), [cut policy](../geometry.md#project-modeling-rules-user-decisions-not-regulation) |
+| BODY-X — UV-driven BODY splits / C10 | reg p.31 §2.1.2; reg p.32 §6.2; [D021]; [D160] | Follow NPM OKS atlas rules, not VPM density | Density-driven cuts; formula discrepancy is C10 | V009 checks VPM exported polygon edge density (partial), not BODY split policy; compare splits to page image manually; C10 remains a user decision | none | [UV rules](../uv-textures.md), [bounded V009 coverage](uv-atlas.md#v009-current-coverage-and-limits), [C10 — user decision pending](../conflicts.md#a-inside-the-regulation), [open choice](../conflict-choices-2026-10-09.md#c10--texel-density-formula), [cut policy](../geometry.md#project-modeling-rules-user-decisions-not-regulation) |
 | BODY-Y — Scene collection ceiling | reg p.28 §3.2 | No transferred VPM layer mandate; cleanup under BODY-B | At most 1 default layer/collection | Inspect source scene collections; FBX mesh-only checks do not establish the source layer count | none | [Scene organization](../geometry.md#regulation-geometry-rules-both-profiles-unless-noted) |
 | BODY-Z — Roof screen enclosure | [D067]; [D086] | Silhouette enclosure via the linked pattern; source-module top follows source | Closed shell of the screen's thickness inward (spec v0.7 `thickness_m`, #91); bounded draft-pattern support, not official VPM certification | Check marked screen outline, roof boundary classification and the shell's thickness/closed-solid guards; a profile other than `npm_min`/`mid` still stops | `tests/test_spec_extract.py` (screen extraction); `tests/qa/test_from_spec.py` (mid/VPM shell build, thickness fallback, grid/closed-solid guards, touch/overlap stop); `src/twinqa/geometry/checks.py:check_mesh` (partial: enclosure boundary classification) | [Roof screen enclosure](../patterns/roof-screen-enclosure.md) |
 
@@ -88,13 +88,22 @@ Rows with `none` (11):
 - **BODY-P** — object hierarchy and indivisible-unit ownership.
 - **BODY-V** — profile-aware opacity-plane geometry; retain C7.
 - **BODY-W** — end-to-end alpha/material/plane pairing; retain C8.
-- **BODY-X** — general delivery density and split checks; retain C10.
+- **BODY-X** — BODY split-policy verification remains manual; implemented VPM density does not verify splits or resolve C10.
 - **BODY-Y** — source-scene default layer/collection ceiling.
 
 These are L2 ticket candidates, not filed tickets. Partial checks in BODY-E/I/Q/R and the
 bounded B01/B02/B02t coverage do not close their manual/generalisation gaps or K01's open checks.
 BODY-Z has only partial NPM coverage; its VPM roof screen shell is built from spec v0.7 `thickness_m` (issue #91).
 A source-level tool inventory is not a new benchmark run or an official validation pass.
+
+V009 partial coverage: [`scene.py:_texel_density_findings`](../../../src/twinqa/scene.py)
+checks VPM density at 512-1706 px/m [D160]; C36 is decided, not C10.
+[`test_decision_checks.py`](../../../tests/qa/test_decision_checks.py) covers slot/UDIM
+Diffuse sizes, bounds, exemptions and missing-data `not_run`.
+[`test_texel_metric_divergence.py`](../../../tests/qa/test_texel_metric_divergence.py)
+shows ring-edge versus area/directional metric limits; see [details](uv-atlas.md#v009-current-coverage-and-limits).
+This does not cover NPM Ground density or manual applicability/split gates. [D193] is a
+job-local Vatutino Ground v015 `texel_ready` exception, not a general V009 waiver.
 
 ## Documentation regression check
 

@@ -1,0 +1,432 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "AlbumMaterials.schema.json",
+  "title": "Album materials (#1235): codes bound to schedule rows or unbound legend lines; no default material",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "source",
+    "passed",
+    "default_material",
+    "open_gates",
+    "materials",
+    "summary"
+  ],
+  "properties": {
+    "schema": {
+      "const": "album-materials/1"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sha256",
+        "bytes",
+        "pages"
+      ],
+      "properties": {
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "pages": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "passed": {
+      "const": false
+    },
+    "default_material": {
+      "type": "null"
+    },
+    "open_gates": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "materials": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "material_id",
+          "source_kind",
+          "original_label",
+          "code",
+          "code_system",
+          "status",
+          "binding",
+          "legend_symbol",
+          "merged_from",
+          "page",
+          "sheet",
+          "bbox",
+          "authority",
+          "default_material",
+          "conflicts",
+          "cell_status",
+          "text_alt",
+          "codes_by_engine"
+        ],
+        "properties": {
+          "material_id": {
+            "type": "string",
+            "pattern": "^m[0-9]+$"
+          },
+          "source_kind": {
+            "enum": [
+              "schedule_finish_cell",
+              "schedule_cell",
+              "legend_text"
+            ]
+          },
+          "original_label": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "code": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "code_system": {
+            "enum": [
+              "RAL",
+              "NCS",
+              null
+            ]
+          },
+          "status": {
+            "enum": [
+              "present",
+              "missing",
+              "merged_unresolved",
+              "suspect"
+            ]
+          },
+          "binding": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "kind",
+                  "table_id",
+                  "row",
+                  "col"
+                ],
+                "properties": {
+                  "kind": {
+                    "const": "schedule_row"
+                  },
+                  "table_id": {
+                    "type": "string"
+                  },
+                  "row": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "col": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "kind",
+                  "reason"
+                ],
+                "properties": {
+                  "kind": {
+                    "const": "unbound"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            ]
+          },
+          "legend_symbol": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "kind",
+                  "bbox",
+                  "rgb"
+                ],
+                "properties": {
+                  "kind": {
+                    "const": "filled_swatch"
+                  },
+                  "bbox": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "minItems": 4,
+                    "maxItems": 4
+                  },
+                  "rgb": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 255
+                    },
+                    "minItems": 3,
+                    "maxItems": 3
+                  }
+                }
+              }
+            ]
+          },
+          "symbol_status": {
+            "enum": [
+              "found",
+              "not_found"
+            ]
+          },
+          "merged_from": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sheet": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bbox": {
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 4,
+                "maxItems": 4
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "authority": {
+            "const": "pdf_album_unapproved"
+          },
+          "default_material": {
+            "type": "null"
+          },
+          "conflicts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cell_status": {
+            "enum": [
+              "agree",
+              "empty",
+              "suspect",
+              "single_engine",
+              "merged",
+              "merged_unresolved",
+              null
+            ]
+          },
+          "text_alt": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "codes_by_engine": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "primary",
+                  "secondary"
+                ],
+                "properties": {
+                  "primary": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "secondary": {
+                    "oneOf": [
+                      {
+                        "type": "null"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    ]
+                  },
+                  "page_words": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "enum": [
+                    "missing",
+                    "merged_unresolved"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "original_label": {
+                  "type": "null"
+                },
+                "code": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "suspect"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "code": {
+                  "type": "null"
+                },
+                "code_system": {
+                  "type": "null"
+                },
+                "codes_by_engine": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "source_kind": {
+                  "enum": [
+                    "schedule_finish_cell",
+                    "schedule_cell"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "cell_status": {
+                  "type": "string"
+                },
+                "codes_by_engine": {
+                  "type": "object"
+                },
+                "text_alt": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entries",
+        "present",
+        "missing",
+        "merged_unresolved",
+        "unbound",
+        "suspect",
+        "single_engine"
+      ],
+      "properties": {
+        "entries": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "present": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "missing": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "merged_unresolved": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unbound": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "suspect": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "single_engine": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}
