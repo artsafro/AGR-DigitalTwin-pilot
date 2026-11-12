@@ -61,7 +61,7 @@ partial rows above keep their unchecked part manual.
 - **V006** (NPM, embedded PNG): textures area, no sheet yet.
 - **V007** (VPM, external PNG sets): textures area; the PNG count bound is PKG-04.
 - **V008** (VPM, UV and UDIM): UV area, no sheet yet.
-- **V009** (VPM, texel density): UV area; unimplemented.
+- **V009** (VPM, texel density): partial [UV-06](uv-atlas.md#v009-current-coverage-and-limits) / [TEX-18](textures.md), exported polygon ring-edge density with `--scene`, archive Diffuse side per slot/UDIM, 512-1706 px/m [D160]; C36 is decided. [`scene.py:_texel_density_findings`](../../../src/twinqa/scene.py), [`test_decision_checks.py`](../../../tests/qa/test_decision_checks.py), [`test_texel_metric_divergence.py`](../../../tests/qa/test_texel_metric_divergence.py). Missing scene/UV/size or unknown tiles leave `not_run` coverage; this does not certify NPM Ground 10-40 px/m, semantic applicability, BODY split policy or C10. [D193] is a job-local Vatutino Ground v015 `texel_ready` exception, not a general waiver; manual gates remain.
 - **V010** (VPM, UCX): [UCX sheet](ucx.md) R05-R15.
 - **V011** (VPM, GeoJSON): PKG-19 to PKG-25. Who supplies what [D220]: MSK-77 placement by the customer's DWG is
   ours (PKG-24); `FNO_code` / `FNO_name` (PKG-21) come from SINTEZ after that placement, never invented or asked of

@@ -1,0 +1,91 @@
+{
+  "anchors_source": null,
+  "findings": [
+    {
+      "code": "tick_spans_without_text",
+      "count_by_orientation": {
+        "horizontal": 287,
+        "vertical": 294
+      },
+      "message": "tick-to-tick spans with no value text (hatching, extension ticks); not values",
+      "page": 2
+    }
+  ],
+  "nominal_print_scale_text": [],
+  "note": "technical extraction only; not measured geometry unless a view is calibrated, not acceptance",
+  "open_gates": [
+    "calibration",
+    "binding_review",
+    "ground_truth",
+    "approval"
+  ],
+  "openings": [],
+  "pages": [
+    {
+      "page": 1,
+      "sheet": null,
+      "status": "ok"
+    },
+    {
+      "page": 2,
+      "sheet": null,
+      "status": "ok"
+    },
+    {
+      "page": 3,
+      "sheet": null,
+      "status": "ok"
+    },
+    {
+      "page": 4,
+      "sheet": null,
+      "status": "ok"
+    },
+    {
+      "page": 5,
+      "sheet": null,
+      "status": "ok"
+    },
+    {
+      "page": 6,
+      "sheet": null,
+      "status": "ok"
+    }
+  ],
+  "passed": false,
+  "schema": "album-dimensions/1",
+  "source": {
+    "name": "tec26.pdf",
+    "page_count": 6,
+    "sha256": "ab4339496166779b2989a42bdbf88072bf8267a6a30ad748da544bf48ed3f997"
+  },
+  "summary": {
+    "by_binding": {},
+    "calibrated_views": 0,
+    "unresolved": 0,
+    "values": 0,
+    "vertical_dimensions": 0,
+    "views": 1
+  },
+  "values": [],
+  "views": [
+    {
+      "axes": [],
+      "bbox": [
+        30.0,
+        24.0,
+        1194.0,
+        744.0
+      ],
+      "id": "p2-v1",
+      "page": 2,
+      "scale": {
+        "anchors": [],
+        "mm_per_pt": null,
+        "reason": "no independent model anchors supplied; nominal print scale and $INSUNITS are never used",
+        "status": "unknown"
+      },
+      "sheet": null
+    }
+  ]
+}

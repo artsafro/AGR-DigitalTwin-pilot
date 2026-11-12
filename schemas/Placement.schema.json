@@ -18,6 +18,23 @@
           "title": "Note",
           "type": "string"
         },
+        "ref": {
+          "anyOf": [
+            {
+              "pattern": "^(https://\\S+|t_[0-9a-f]+|D[1-9][0-9]*)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "not": {
+            "pattern": "\\s",
+            "type": "string"
+          },
+          "title": "Ref"
+        },
         "schema_version": {
           "const": "1.0.0",
           "default": "1.0.0",
@@ -50,7 +67,8 @@
             "synthetic",
             "pdf",
             "model",
-            "user"
+            "user",
+            "drawing"
           ],
           "title": "Kind",
           "type": "string"
@@ -109,6 +127,21 @@
           ],
           "default": null,
           "title": "Sha256"
+        },
+        "sheet": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sheet"
         }
       },
       "required": [

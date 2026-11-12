@@ -1,0 +1,27 @@
+{
+  "default_material": null,
+  "materials": [],
+  "open_gates": [
+    "row_type_review",
+    "unit_review",
+    "region_binding",
+    "ground_truth",
+    "approval"
+  ],
+  "passed": false,
+  "schema": "album-materials/1",
+  "source": {
+    "bytes": 4595029,
+    "pages": 6,
+    "sha256": "ab4339496166779b2989a42bdbf88072bf8267a6a30ad748da544bf48ed3f997"
+  },
+  "summary": {
+    "entries": 0,
+    "merged_unresolved": 0,
+    "missing": 0,
+    "present": 0,
+    "single_engine": 0,
+    "suspect": 0,
+    "unbound": 0
+  }
+}

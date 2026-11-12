@@ -1,0 +1,80 @@
+{
+  "storage": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1089-max-startup\\t_d739fdee-v001",
+  "files": [
+    {
+      "path": "issue-1089-v001/probe.py",
+      "sha256": "c74f3950c161bcf498ff7efe888d85bac10abf5fdc14cfaf5b85b9645cd831c6",
+      "bytes": 1927
+    },
+    {
+      "path": "issue-1089-v001/batch.json",
+      "sha256": "bbe087d2be600c4067eef59c47021f19deea437ffbe15b266df4ed4ff33aaed6",
+      "bytes": 2308
+    },
+    {
+      "path": "issue-1089-v001/batch-uv.json",
+      "sha256": "642314ae8b2a04439cc0ed5e10db1e875774c1fc104cabaf86f1bf0b20db1d78",
+      "bytes": 26896
+    },
+    {
+      "path": "issue-1089-v001/batch-no-virtualenv.json",
+      "sha256": "5848f72555543767e33c388dd17e74cb87f64c2c76d6748b10a26bfd7ed98c78",
+      "bytes": 2308
+    },
+    {
+      "path": "issue-1089-v001/native.json",
+      "sha256": "9630b7e70d41cbdfacd8b43ae5c652a4ae0f3be4da93b0566645b44e9b54d749",
+      "bytes": 90028
+    },
+    {
+      "path": "issue-1089-v001/uv-inherited/native.json",
+      "sha256": "b60328718dc89fbe569aebbaa4d1b0e93523f69618e36271f998e2b2b5f07b75",
+      "bytes": 87634
+    },
+    {
+      "path": "issue-1089-v001/windows-events.json",
+      "sha256": "24c40359fb5e47174cf024937e02de00bcb16dbf8240902d9dcfc4c064068177",
+      "bytes": 264734
+    },
+    {
+      "path": "issue-1089-v001/focused-max.log",
+      "sha256": "9b8314269f4c5fada6742d939e488aa40604c75c37089ac8dbb8be2d3938973a",
+      "bytes": 5079
+    },
+    {
+      "path": "issue-1089-v001/regression-red.log",
+      "sha256": "e4b24771a69d7c6259e8547d17c583df797eef4d6691af59f43f4399af37c66c",
+      "bytes": 6741
+    },
+    {
+      "path": "issue-1089-v001/affected-green.log",
+      "sha256": "ef84ceb3c840235f98f50e65a18624647f808f2aac1d84568b69e0cbb994bff6",
+      "bytes": 197
+    },
+    {
+      "path": "issue-1089-v002/probe.py",
+      "sha256": "c74f3950c161bcf498ff7efe888d85bac10abf5fdc14cfaf5b85b9645cd831c6",
+      "bytes": 1927
+    },
+    {
+      "path": "issue-1089-v002/native.json",
+      "sha256": "c4eb9dfef6e30819fec09a42a32445a365740e359bc9876933e5eb7cd79eec88",
+      "bytes": 142898
+    },
+    {
+      "path": "issue-1089-v002/batch.json",
+      "sha256": "189dbf7eea94a3251207baa7e6b0eed7ea633954ab6e3f2638448a4a5ffd2a6a",
+      "bytes": 2308
+    },
+    {
+      "path": "issue-1089-v002/native-tests.log",
+      "sha256": "734e2f7cc15868152d2b30b103a20e93aa86304b1aeaf64a1a9e799ded7dbc29",
+      "bytes": 448
+    },
+    {
+      "path": "issue-1089-v002/windows-recent.json",
+      "sha256": "fc2350ce12420809e2d9730a194c7d4f12cd0efea71ee90c505dcc8e0df0dc6d",
+      "bytes": 12272
+    }
+  ]
+}
