@@ -1,4 +1,4 @@
-"""Synthetic-folder tests for the zero-token PDF corpus inventory (#1274)."""
+"""new-case: synthetic-folder tests for the zero-token PDF corpus inventory (#1274)."""
 import csv
 import hashlib
 import random
