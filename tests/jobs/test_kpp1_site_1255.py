@@ -140,6 +140,34 @@ def test_committed_geojson_and_validator_receipts_are_same_run():
     assert '0000_Kpp_1.zip' in manifest  # territorial placeholder remains explicit
 
 
+@pytest.mark.parametrize('kind', ['same', 'resolved_alias', 'extension_alias', 'source_alias', 'existing'])
+def test_dump_paths_fail_closed_before_blender_import(tmp_path, kind):
+    import subprocess
+    import sys
+    src = tmp_path / 'source.fbx'
+    src.write_bytes(b'immutable source')
+    npz = tmp_path / 'dump.npz'
+    report = tmp_path / 'dump.json'
+    if kind == 'same':
+        report = npz
+    elif kind == 'resolved_alias':
+        report = tmp_path / 'unused' / '..' / 'dump.npz'
+    elif kind == 'extension_alias':
+        npz = tmp_path / 'dump'  # numpy adds .npz to string/Path outputs
+        report = tmp_path / 'dump.npz'
+    elif kind == 'source_alias':
+        report = src
+    else:
+        npz.write_bytes(b'keep existing dump')
+    before = {str(p): p.read_bytes() for p in tmp_path.iterdir() if p.is_file()}
+    result = subprocess.run([sys.executable, str(SCRIPT.parent / 'dump_vertices.py'),
+                             '--', str(src), str(npz), str(report)], capture_output=True)
+    assert result.returncode != 0
+    assert b'refusing' in result.stderr
+    assert b'No module named' not in result.stderr
+    assert {str(p): p.read_bytes() for p in tmp_path.iterdir() if p.is_file()} == before
+
+
 def test_readback_accounts_for_all_objects_without_promoting_delivery():
     import math
     parity = json.loads((SCRIPT.parent / 'readback-parity.json').read_text())
