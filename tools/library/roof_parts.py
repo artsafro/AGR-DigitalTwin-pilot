@@ -64,4 +64,6 @@ def validate_set(doc):
             if asset['id'].casefold() in ids:
                 raise ValueError('duplicate cross-source id: ' + asset['id'])
             ids.add(asset['id'].casefold())
+    if not 8 <= len(ids) <= 12:
+        raise ValueError('assets: roof prototype inventory must contain 8..12 types')
     return doc

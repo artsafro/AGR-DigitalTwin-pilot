@@ -1,0 +1,698 @@
+{
+  "schema": "agr-library/1",
+  "library": "roof_equipment",
+  "version": "v001",
+  "pivot": "bottom-center",
+  "inputs": [
+    {
+      "path": "library/roof_equipment/extraction.json",
+      "sha256": "83fc44cb5e46783488124e2b22546a4aaee58e0627e4c76d925855735810aa5b"
+    },
+    {
+      "path": "tools/library/roof_parts.py",
+      "sha256": "2e2af11d6a846d6ba2db264029c17e49006da9a26120d3fabf0e9339022aa172"
+    },
+    {
+      "path": "tools/library/build_roof_blender.py",
+      "sha256": "72b88e44c3b23205b019de7fbb5bcaee9e820ad1f4fea5934f4e24a8be6be2cc"
+    }
+  ],
+  "showcase": {
+    "path": "previews/roof-sheet.png",
+    "sha256": "f7989d13b76e56a20164580653a6eda9beb89c115a14709c4cea54a05313e54d"
+  },
+  "assets": [
+    {
+      "id": "R01",
+      "name": "Open rectangular shaft body",
+      "status": "ready",
+      "confirmation": "unconfirmed",
+      "source": {
+        "component": "G01-o0-c12",
+        "object": "SM_Garibaldi_22_001_Main",
+        "source_sha256": "fe3838b0f2a985045497015726dabdb2c62c05789ffdf571b81118a44fbe0d4c",
+        "geometry": "source-derived component, exact split vertices reunited; bottom-center translation only",
+        "material": "local neutral ID 1, NOT recovered customer AGR finish ID; source UV retained, no atlas offered",
+        "profiles": "same geometry for both profiles per [D263], t_d0a92d95, 2026-11-12"
+      },
+      "reason": [],
+      "preview_cell": 1,
+      "variants": {
+        "npm": {
+          "path": "assets/R01/npm.blend",
+          "sha256": "f666785427aaacacb03f2a406d1d4b06beeac1ddda51a1b5d499b17f280aac13",
+          "triangles": 8,
+          "size_m": [
+            3.3719940185546875,
+            3.3736000061035156,
+            3.2358131408691406
+          ],
+          "objects": [
+            "R01_npm_body"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/R01/vpm.blend",
+          "sha256": "620858692a6a09a9a1518ae206ad6fcfe15fbc588e215a9c2b07f5c54b1fec92",
+          "triangles": 8,
+          "size_m": [
+            3.3719940185546875,
+            3.3736000061035156,
+            3.2358131408691406
+          ],
+          "objects": [
+            "R01_vpm_body"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "R02",
+      "name": "Rimmed shaft body",
+      "status": "ready",
+      "confirmation": "unconfirmed",
+      "source": {
+        "component": "G01-o0-c71",
+        "object": "SM_Garibaldi_22_001_Main",
+        "source_sha256": "fe3838b0f2a985045497015726dabdb2c62c05789ffdf571b81118a44fbe0d4c",
+        "geometry": "source-derived component, exact split vertices reunited; bottom-center translation only",
+        "material": "local neutral ID 1, NOT recovered customer AGR finish ID; source UV retained, no atlas offered",
+        "profiles": "same geometry for both profiles per [D263], t_d0a92d95, 2026-11-12"
+      },
+      "reason": [],
+      "preview_cell": 2,
+      "variants": {
+        "npm": {
+          "path": "assets/R02/npm.blend",
+          "sha256": "6aa78f219a72bf44e50e04234a8c916a38dc265ba05123470ff8dc989f2ccfff",
+          "triangles": 24,
+          "size_m": [
+            1.45660400390625,
+            1.5598831176757812,
+            2.033641815185547
+          ],
+          "objects": [
+            "R02_npm_body"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/R02/vpm.blend",
+          "sha256": "0151eef9b03ffb63093620ee55f774fc31a109776023afebbda9329dbcd51cab",
+          "triangles": 24,
+          "size_m": [
+            1.45660400390625,
+            1.5598831176757812,
+            2.033641815185547
+          ],
+          "objects": [
+            "R02_vpm_body"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "R03",
+      "name": "Plinth shaft body",
+      "status": "ready",
+      "confirmation": "unconfirmed",
+      "source": {
+        "component": "G01-o0-c55",
+        "object": "SM_Garibaldi_22_001_Main",
+        "source_sha256": "fe3838b0f2a985045497015726dabdb2c62c05789ffdf571b81118a44fbe0d4c",
+        "geometry": "source-derived component, exact split vertices reunited; bottom-center translation only",
+        "material": "local neutral ID 1, NOT recovered customer AGR finish ID; source UV retained, no atlas offered",
+        "profiles": "same geometry for both profiles per [D263], t_d0a92d95, 2026-11-12"
+      },
+      "reason": [],
+      "preview_cell": 3,
+      "variants": {
+        "npm": {
+          "path": "assets/R03/npm.blend",
+          "sha256": "744d2d137b3890b7a5aeae45b95f288c04a803b718b3ee72d692d874c16f23e4",
+          "triangles": 24,
+          "size_m": [
+            2.1057510375976562,
+            2.1068239212036133,
+            1.6730690002441406
+          ],
+          "objects": [
+            "R03_npm_body"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/R03/vpm.blend",
+          "sha256": "a5a3a284874cac728c2519424a86a7ef6e130475a5faa20111f382ddc38fd8ea",
+          "triangles": 24,
+          "size_m": [
+            2.1057510375976562,
+            2.1068239212036133,
+            1.6730690002441406
+          ],
+          "objects": [
+            "R03_vpm_body"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "R04",
+      "name": "Stepped twin shaft body",
+      "status": "ready",
+      "confirmation": "unconfirmed",
+      "source": {
+        "component": "G01-o0-c76",
+        "object": "SM_Garibaldi_22_001_Main",
+        "source_sha256": "fe3838b0f2a985045497015726dabdb2c62c05789ffdf571b81118a44fbe0d4c",
+        "geometry": "source-derived component, exact split vertices reunited; bottom-center translation only",
+        "material": "local neutral ID 1, NOT recovered customer AGR finish ID; source UV retained, no atlas offered",
+        "profiles": "same geometry for both profiles per [D263], t_d0a92d95, 2026-11-12"
+      },
+      "reason": [],
+      "preview_cell": 4,
+      "variants": {
+        "npm": {
+          "path": "assets/R04/npm.blend",
+          "sha256": "4013a12d1f5fbe506d03555e0bc6be6c5f854fa9590960cb53b1120ded414e11",
+          "triangles": 52,
+          "size_m": [
+            2.3877105712890625,
+            2.794879913330078,
+            2.6899757385253906
+          ],
+          "objects": [
+            "R04_npm_body"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/R04/vpm.blend",
+          "sha256": "a53866d32722d8281af4465ce3cc4458f783653e3a021d8cfbae92bcfcf27701",
+          "triangles": 52,
+          "size_m": [
+            2.3877105712890625,
+            2.794879913330078,
+            2.6899757385253906
+          ],
+          "objects": [
+            "R04_vpm_body"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "R05",
+      "name": "Flat shaft cap",
+      "status": "ready",
+      "confirmation": "unconfirmed",
+      "source": {
+        "component": "G01-o0-c136",
+        "object": "SM_Garibaldi_22_001_Main",
+        "source_sha256": "fe3838b0f2a985045497015726dabdb2c62c05789ffdf571b81118a44fbe0d4c",
+        "geometry": "source-derived component, exact split vertices reunited; bottom-center translation only",
+        "material": "local neutral ID 1, NOT recovered customer AGR finish ID; source UV retained, no atlas offered",
+        "profiles": "same geometry for both profiles per [D263], t_d0a92d95, 2026-11-12"
+      },
+      "reason": [],
+      "preview_cell": 5,
+      "variants": {
+        "npm": {
+          "path": "assets/R05/npm.blend",
+          "sha256": "ef71c399d1d9d4ff0d0939de8f6c324a341b752360d38aff91db4d424d5e7168",
+          "triangles": 12,
+          "size_m": [
+            2.5960922241210938,
+            2.820148468017578,
+            0.20000076293945312
+          ],
+          "objects": [
+            "R05_npm_body"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/R05/vpm.blend",
+          "sha256": "a4fe20798dadfcb1ccdd3b989aa58f6b151ce1ec16b4bc0a4eea341f57ab5bf8",
+          "triangles": 12,
+          "size_m": [
+            2.5960922241210938,
+            2.820148468017578,
+            0.20000076293945312
+          ],
+          "objects": [
+            "R05_vpm_body"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "R06",
+      "name": "Hipped ventilation hood",
+      "status": "ready",
+      "confirmation": "unconfirmed",
+      "source": {
+        "component": "G01-o0-c1867",
+        "object": "SM_Garibaldi_22_001_Main",
+        "source_sha256": "fe3838b0f2a985045497015726dabdb2c62c05789ffdf571b81118a44fbe0d4c",
+        "geometry": "source-derived component, exact split vertices reunited; bottom-center translation only",
+        "material": "local neutral ID 1, NOT recovered customer AGR finish ID; source UV retained, no atlas offered",
+        "profiles": "same geometry for both profiles per [D263], t_d0a92d95, 2026-11-12"
+      },
+      "reason": [],
+      "preview_cell": 6,
+      "variants": {
+        "npm": {
+          "path": "assets/R06/npm.blend",
+          "sha256": "44007ce52d261e200823d6c6ac19d4fae9e7694de30a4328919e5682187ec423",
+          "triangles": 152,
+          "size_m": [
+            2.178375244140625,
+            2.016704559326172,
+            0.4999961853027344
+          ],
+          "objects": [
+            "R06_npm_body"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/R06/vpm.blend",
+          "sha256": "b089105c334b0b841080092454a0446d6fe71e5363de58a6305f4a2b37ae6df1",
+          "triangles": 152,
+          "size_m": [
+            2.178375244140625,
+            2.016704559326172,
+            0.4999961853027344
+          ],
+          "objects": [
+            "R06_vpm_body"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "R07",
+      "name": "Low polygon aerator",
+      "status": "ready",
+      "confirmation": "unconfirmed",
+      "source": {
+        "component": "G01-o0-c1875",
+        "object": "SM_Garibaldi_22_001_Main",
+        "source_sha256": "fe3838b0f2a985045497015726dabdb2c62c05789ffdf571b81118a44fbe0d4c",
+        "geometry": "source-derived component, exact split vertices reunited; bottom-center translation only",
+        "material": "local neutral ID 1, NOT recovered customer AGR finish ID; source UV retained, no atlas offered",
+        "profiles": "same geometry for both profiles per [D263], t_d0a92d95, 2026-11-12"
+      },
+      "reason": [],
+      "preview_cell": 7,
+      "variants": {
+        "npm": {
+          "path": "assets/R07/npm.blend",
+          "sha256": "41a1e08682f1bd02bdc6d2d0fb701dda754f4903a3696d887d037fff97908b07",
+          "triangles": 40,
+          "size_m": [
+            0.3742218017578125,
+            0.3570899963378906,
+            0.18213272094726562
+          ],
+          "objects": [
+            "R07_npm_body"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/R07/vpm.blend",
+          "sha256": "76370eee99ecdd89bc795560d4f1c930ac73199f5afe7399039c75148794553e",
+          "triangles": 40,
+          "size_m": [
+            0.3742218017578125,
+            0.3570899963378906,
+            0.18213272094726562
+          ],
+          "objects": [
+            "R07_vpm_body"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "R08",
+      "name": "Capped polygon vent",
+      "status": "ready",
+      "confirmation": "unconfirmed",
+      "source": {
+        "component": "G01-o0-c1931",
+        "object": "SM_Garibaldi_22_001_Main",
+        "source_sha256": "fe3838b0f2a985045497015726dabdb2c62c05789ffdf571b81118a44fbe0d4c",
+        "geometry": "source-derived component, exact split vertices reunited; bottom-center translation only",
+        "material": "local neutral ID 1, NOT recovered customer AGR finish ID; source UV retained, no atlas offered",
+        "profiles": "same geometry for both profiles per [D263], t_d0a92d95, 2026-11-12"
+      },
+      "reason": [],
+      "preview_cell": 8,
+      "variants": {
+        "npm": {
+          "path": "assets/R08/npm.blend",
+          "sha256": "b81c60b66461d926708709703417ddb115be084e30c2fe74583502357db86a31",
+          "triangles": 64,
+          "size_m": [
+            0.3297309875488281,
+            0.31463623046875,
+            0.6218528747558594
+          ],
+          "objects": [
+            "R08_npm_body"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/R08/vpm.blend",
+          "sha256": "3358d52bc310b02b2b54cf536da9a67e68e1e3d53e3e5a8142960e9d57b17f34",
+          "triangles": 64,
+          "size_m": [
+            0.3297309875488281,
+            0.31463623046875,
+            0.6218528747558594
+          ],
+          "objects": [
+            "R08_vpm_body"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "R09",
+      "name": "Roof access ladder",
+      "status": "ready",
+      "confirmation": "unconfirmed",
+      "source": {
+        "component": "G01-o0-c1858",
+        "object": "SM_Garibaldi_22_001_Main",
+        "source_sha256": "fe3838b0f2a985045497015726dabdb2c62c05789ffdf571b81118a44fbe0d4c",
+        "geometry": "source-derived component, exact split vertices reunited; bottom-center translation only",
+        "material": "local neutral ID 1, NOT recovered customer AGR finish ID; source UV retained, no atlas offered",
+        "profiles": "same geometry for both profiles per [D263], t_d0a92d95, 2026-11-12"
+      },
+      "reason": [],
+      "preview_cell": 9,
+      "variants": {
+        "npm": {
+          "path": "assets/R09/npm.blend",
+          "sha256": "df620219b83f70e655d057ab7a6f9be37943029e0b9fbe47f62b11b0fe895fb4",
+          "triangles": 220,
+          "size_m": [
+            0.8956069946289062,
+            0.5753669738769531,
+            4.899700164794922
+          ],
+          "objects": [
+            "R09_npm_body"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/R09/vpm.blend",
+          "sha256": "31e1a45d6f15120caa91a45a1d56ff5112ec4266840aa6721a8bf91aa4c40476",
+          "triangles": 220,
+          "size_m": [
+            0.8956069946289062,
+            0.5753669738769531,
+            4.899700164794922
+          ],
+          "objects": [
+            "R09_vpm_body"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "R10",
+      "name": "Roof railing section",
+      "status": "ready",
+      "confirmation": "unconfirmed",
+      "source": {
+        "component": "G01-o0-c2039",
+        "object": "SM_Garibaldi_22_001_Main",
+        "source_sha256": "fe3838b0f2a985045497015726dabdb2c62c05789ffdf571b81118a44fbe0d4c",
+        "geometry": "source-derived component, exact split vertices reunited; bottom-center translation only",
+        "material": "local neutral ID 1, NOT recovered customer AGR finish ID; source UV retained, no atlas offered",
+        "profiles": "same geometry for both profiles per [D263], t_d0a92d95, 2026-11-12"
+      },
+      "reason": [],
+      "preview_cell": 10,
+      "variants": {
+        "npm": {
+          "path": "assets/R10/npm.blend",
+          "sha256": "7f1289363230a41a6c2ee1b5dcd338a28f22b94320ae7880c273d594b76427ba",
+          "triangles": 88,
+          "size_m": [
+            1.2103958129882812,
+            1.9931373596191406,
+            0.7999839782714844
+          ],
+          "objects": [
+            "R10_npm_body"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/R10/vpm.blend",
+          "sha256": "ba241f819449ef85af279d8463a60e2cf5f9d815cb0b422ae010307a1968d256",
+          "triangles": 88,
+          "size_m": [
+            1.2103958129882812,
+            1.9931373596191406,
+            0.7999839782714844
+          ],
+          "objects": [
+            "R10_vpm_body"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "R11",
+      "name": "Rectangular duct elbow",
+      "status": "ready",
+      "confirmation": "unconfirmed",
+      "source": {
+        "component": "OLY-o0-c11045",
+        "object": "SM_OlimpijskijPrKt_Vld_16_Str_4_Main",
+        "source_sha256": "17c0885196c17ca179b7c8f3adb035515613b7257beb2aee68075cd90291a6e6",
+        "geometry": "source-derived component, exact split vertices reunited; bottom-center translation only",
+        "material": "local neutral ID 1, NOT recovered customer AGR finish ID; source UV retained, no atlas offered",
+        "profiles": "same geometry for both profiles per [D263], t_d0a92d95, 2026-11-12"
+      },
+      "reason": [],
+      "preview_cell": 11,
+      "variants": {
+        "npm": {
+          "path": "assets/R11/npm.blend",
+          "sha256": "23b2c73d24b75a6d6540bf5b93e00013c3e52dd06050fe651090dfedc4ab7fb3",
+          "triangles": 60,
+          "size_m": [
+            2.3290023803710938,
+            2.5392074584960938,
+            0.703094482421875
+          ],
+          "objects": [
+            "R11_npm_body"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/R11/vpm.blend",
+          "sha256": "4ea266ecf4bf9fe48a4ee68155bb7ae072d6e4a0781d168fe9c1824a28662d2a",
+          "triangles": 60,
+          "size_m": [
+            2.3290023803710938,
+            2.5392074584960938,
+            0.703094482421875
+          ],
+          "objects": [
+            "R11_vpm_body"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "R12",
+      "name": "Rectangular service box",
+      "status": "ready",
+      "confirmation": "unconfirmed",
+      "source": {
+        "component": "OLY-o0-c11046",
+        "object": "SM_OlimpijskijPrKt_Vld_16_Str_4_Main",
+        "source_sha256": "17c0885196c17ca179b7c8f3adb035515613b7257beb2aee68075cd90291a6e6",
+        "geometry": "source-derived component, exact split vertices reunited; bottom-center translation only",
+        "material": "local neutral ID 1, NOT recovered customer AGR finish ID; source UV retained, no atlas offered",
+        "profiles": "same geometry for both profiles per [D263], t_d0a92d95, 2026-11-12"
+      },
+      "reason": [],
+      "preview_cell": 12,
+      "variants": {
+        "npm": {
+          "path": "assets/R12/npm.blend",
+          "sha256": "912afca98b656adb8a8b6bc5319cdbb92af5c8660b767ee7d162a58ca92f16a4",
+          "triangles": 12,
+          "size_m": [
+            4.4000020027160645,
+            1.3800010681152344,
+            1.0800018310546875
+          ],
+          "objects": [
+            "R12_npm_body"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/R12/vpm.blend",
+          "sha256": "012d4bb9048f91966efbeb588385ef5cd4ee6cb646f0dedb1c352eabab2100e3",
+          "triangles": 12,
+          "size_m": [
+            4.4000020027160645,
+            1.3800010681152344,
+            1.0800018310546875
+          ],
+          "objects": [
+            "R12_vpm_body"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

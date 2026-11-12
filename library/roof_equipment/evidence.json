@@ -1,0 +1,55 @@
+{
+  "schema": "roof-research-evidence/1",
+  "research_root": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1257-roof-equipment\\research-v002",
+  "library_root": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1257-roof-equipment\\library-v005",
+  "manifests": [
+    {
+      "root": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1257-roof-equipment\\research-v002",
+      "path": "SHA256SUMS.txt",
+      "sha256": "959996489fcb6f4eeebfc40f843a9b92fa96418074b8b8e6dad8411869362c8c",
+      "files_verified": 363
+    },
+    {
+      "root": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1257-roof-equipment\\library-v005",
+      "path": "SHA256SUMS.txt",
+      "sha256": "e3fa8fec73056811d818239f5dd0677cde247ff5b5e81d863515834154d638a9",
+      "files_verified": 27
+    }
+  ],
+  "library_check": {
+    "path": "library-check-v005.json",
+    "sha256": "84d97079a7b2deb3451491b5163a087afdde6523c1964b80a210fa4e2ed8a977",
+    "ready": 12,
+    "variants_checked": 24,
+    "errors": 0,
+    "delivery_certificate": false
+  },
+  "xview": {
+    "path": "xview-v005/summary.json",
+    "sha256": "ed6be3abed640790a6785dfa6efd82be7a07748c837381dab98d808ff65daa50",
+    "runs": 24,
+    "nonzero_exits": 0,
+    "all_totals_zero": true
+  },
+  "hostile": {
+    "path": "hostile-v001/summary.json",
+    "sha256": "149825e08916f2d5c551d5f2a93b0e81a6b90cabdf86b1b341bfc8e8e61ccda2",
+    "rejected_before_output": 8
+  },
+  "original_and_copy_hashes_unchanged": 10,
+  "source_atlas": {
+    "path": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Alex_World\\pravki\\0707_Garibaldi_22\\maps\\0707_Garibaldi_22_01.fbm\\T_Garibaldi_22_001_Main_d_1.png",
+    "sha256": "1620ec5bd8dfb2674dc7982767dbd598ddd4ea76bb6028a247c61bfddcc1edba",
+    "size_px": [
+      2048,
+      2048
+    ],
+    "evidence_copy": "inputs/maps/T_Garibaldi_22_001_Main_d_1.png"
+  },
+  "semantic_limits": [
+    "Component counts are not assembled MEP-device schedules",
+    "Engineering identity and finish mapping unconfirmed",
+    "Historical exports; no fresh client acceptance or delivery certificate",
+    "Upper-roof study, explicit context/unclassified list retained"
+  ]
+}

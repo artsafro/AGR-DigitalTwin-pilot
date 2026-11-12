@@ -137,8 +137,8 @@ def showcase(assets, root):
         label(scene, ' x '.join(f'{v:.3f}' for v in variant['size_m'])+' m', x, y-5.45, .21)
         label(scene, f'NPM = VPM {variant["triangles"]} tris', x, y-5.85, .21)
     label(scene, 'ROOF EQUIPMENT / #1257 / source-derived form prototypes', 0, 2, .55)
-    label(scene, '12 forms from G01 / OLY | neutral finish, source UV retained | each card fitted independently, NOT one display scale', 0, 1, .29)
-    label(scene, 'Unconfirmed engineering identity / library review only / no atlas, xView or delivery certificate / visual approval pending', 0, -15, .28)
+    label(scene, f'{len(assets)} source-derived forms | neutral finish, source UV retained | each card fitted independently, NOT one display scale', 0, 1, .29)
+    label(scene, 'Unconfirmed engineering identity / library review only / no atlas or delivery certificate / visual approval pending', 0, -15, .28)
     camera = bpy.data.objects.new('Camera', bpy.data.cameras.new('Camera'))
     scene.collection.objects.link(camera)
     camera.location = (20.5, -6.5, 100)
@@ -192,16 +192,16 @@ def main():
                                    'source_sha256': plan['source_sha256'],
                                    'geometry': 'source-derived component, exact split vertices reunited; bottom-center translation only',
                                    'material': 'local neutral ID 1, NOT recovered customer AGR finish ID; source UV retained, no atlas offered',
-                                   'profiles': 'same geometry for both profiles per user decision on t_d0a92d95, 2026-11-12'},
+                                   'profiles': 'same geometry for both profiles per [D263], t_d0a92d95, 2026-11-12'},
                            reason=[], preview_cell=cell, variants=variants))
     sheet = showcase(assets, root)
     inputs = ['library/roof_equipment/extraction.json', 'tools/library/roof_parts.py', 'tools/library/build_roof_blender.py']
     catalogue = dict(schema='agr-library/1', library='roof_equipment', version='v001', pivot='bottom-center',
                      inputs=[dict(path=p, sha256=sha(repo/p)) for p in inputs], showcase=sheet, assets=assets)
-    with (root/'catalogue.json').open('x', encoding='utf-8', newline='\n') as stream:
-        stream.write(json.dumps(catalogue, indent=2, allow_nan=False)+'\n')
     if any(sha(path) != value for path, value in fingerprints.items()) or sha(plan_path) != plan_hash:
         raise ValueError('input changed during build; discard this candidate version')
+    with (root/'catalogue.json').open('x', encoding='utf-8', newline='\n') as stream:
+        stream.write(json.dumps(catalogue, indent=2, allow_nan=False)+'\n')
     files = sorted(p for p in root.rglob('*') if p.is_file())
     with (root/'SHA256SUMS.txt').open('x', encoding='utf-8', newline='\n') as stream:
         stream.write(''.join(f'{sha(p)}  {p.relative_to(root).as_posix()}\n' for p in files))
