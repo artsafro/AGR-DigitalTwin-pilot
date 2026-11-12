@@ -96,6 +96,20 @@ def test_sha_of_listed_fbx_matches_sealed_evidence():
         assert any(line.startswith(sha) and line.rstrip().endswith(name) for line in sums.splitlines())
 
 
+def test_user_acceptance_is_scoped_to_listed_r1_pairs():
+    """The accepted band counts must not turn residual xView failures into a pass."""
+    decisions = (ROOT / "docs" / "decisions.md").read_text(encoding="utf-8")
+    rows = [line for line in decisions.splitlines() if line.startswith("| D256 |")]
+    assert len(rows) == 1
+    assert all(text in rows[0] for text in ("98 VPM", "52 NPM", "15 mm", "no clipping", "no parapet cut"))
+    log = (RUN / "RUN-LOG.md").read_text(encoding="utf-8")
+    assert "[D256]" in log and "option A" in log
+    assert "not a delivery pass" in log
+    for kind, count in (("vpm", 98), ("npm", 52)):
+        assert len(_load(RUN / f"band-pairs-{kind}-r1-v002.json")["in_band_pairs"]) == count
+        assert _load(RUN / f"xview-{kind}-r1-v002.json")["passed"] is False
+
+
 # --- script probes (synthetic, readback stubbed) -----------------------------------------------------------
 
 def test_band_edges_inclusive(monkeypatch, tmp_path):
