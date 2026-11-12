@@ -44,5 +44,14 @@ y 4547 = 3720 + 827, a DIMS line at 3720, none at 3000) - a source discrepancy f
 binder error. Calibration with the DWG grid distances as anchors: every view `unknown` (0 matched anchors: no
 axis-bound span, because the grid bubbles are not detected in the plot: 0/8 axes).
 
-Open (user decision, see the card): level recall 0.443, axis recall 0/8 and no dimension-value truth set (the L01
-DWG holds no dimension values), so acceptance item 4 is only partly measured.
+## Partial acceptance and follow-up
+
+Artem accepted this partial result on 2026-11-12 (card t_e8aff8d9, option (a),
+«принимаю рекомендации»), authorizing `Closes #1234` so the album chain can proceed.
+This is acceptance of the bounded intake increment, not architectural approval or a complete binding benchmark.
+Acceptance item 4 remains only partly measured: level precision 43/43 (1.000), recall 0.443;
+axis recall 0/8; dimension precision/recall is not measurable because L01 has no dimension values.
+Follow-up https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1254 owns axis bubbles inside block
+references, level recall and a dimension truth set from KPP1 AS.03 DWG plotted to PDF and compared with DWG.
+Opening identity still needs vision/human review. All existing `passed: false`, unresolved bindings,
+unknown scales and mandatory ground-truth/approval gates remain unchanged.
