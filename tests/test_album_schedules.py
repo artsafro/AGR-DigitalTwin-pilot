@@ -361,6 +361,13 @@ def test_page_word_codes_never_fill_an_empty_schedule_cell():
     _mschema_entry_errors([m])
 
 
+def test_gost_equipment_code_column_is_not_a_finish_column():
+    """Review P3: «Код оборудования, изделия, материала» holds product codes, not finishes."""
+    cells = [["Поз.", "Код оборудования, изделия, материала", "Цвет (код RAL)"], ["1", "ABC-123", "RAL 7021"]]
+    mats = S.finish_materials(_table(cells))
+    assert [(m["binding"]["col"], m["code"]) for m in mats] == [(3, "RAL 7021")]
+
+
 def test_codes_parsed_from_label():
     assert S.material_codes("Панели RAL7021, RAL 1001 и NCS S 2010-Y30R") == ["RAL 7021", "RAL 1001", "NCS S 2010-Y30R"]
     assert S.material_codes("без кода") == []
