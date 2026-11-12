@@ -59,7 +59,8 @@ Flora MUST use `flora-bbox-plus-0.1` [D100]: X/Y bbox centred on origin, lowest 
 at Z=-0.1 m, so the pivot is 10 cm above it. Placement on Ground adds no further sinking.
 All part-object origins share that assembly anchor. Geometry lives in mesh coordinates;
 object world transforms are identity. No unapplied modifiers, constraints, parents, instances,
-linked libraries, animation/drivers, hidden objects/collections, cameras, labels, helpers,
+linked libraries, animation/drivers, shape keys (including inactive/Basis keys),
+hidden objects/collections, cameras, labels, helpers,
 loose geometry, duplicate faces, zero-area triangles, unused slots or orphan datablocks.
 Required parts are explicitly listed in the catalogue. Materials are used; dependencies are
 local and packed (no external image paths). One finite UV layer per mesh; no claim of texel

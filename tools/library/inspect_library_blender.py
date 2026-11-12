@@ -64,6 +64,9 @@ def inventory():
             unsupported.append('object animation/library/instance: ' + obj.name)
         if obj.type == 'MESH':
             mesh = obj.data
+            if mesh.shape_keys is not None:
+                for key in mesh.shape_keys.key_blocks:
+                    unsupported.append('shape key: ' + obj.name + ':' + key.name)
             mesh.calc_loop_triangles()
             points = [obj.matrix_world @ v.co for v in mesh.vertices]
             row['bounds'] = [[min((p[i] for p in points), default=0) for i in range(3)],
