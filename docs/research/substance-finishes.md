@@ -1,13 +1,41 @@
 # Substance finishes feasibility — issue #1258
 
-## Status: narrowed photo pilot blocked at Make It Tile
+## Status: capability report complete; finish pilots not verified [D259]
 
-**Continuation 2026-11-12:** Artem narrowed scope to the OBR22 sample-to-tileable
-Sampler pilot plus capability report [D258]. Procedural output is **not verified**;
-no installation/licensing now. The continuation below supersedes the initial
-status, export-availability and unblock notes. Six actual raw AI-export PNGs and a
-partial comparison sheet now exist, but Make It Tile crashes and no finished
-Diffuse/ERM/Normal triplet or completed finish time is claimed.
+**Final scope, 2026-11-12:** Artem accepted closing this research with the
+capability report and existing evidence, with **no more runtime attempts** [D259]
+(Kanban t_ab5c23eb, USER DECISION 11:40, «принимаю рекомендацию»). This supersedes
+[D258]'s remaining photo-to-tileable requirement and all historical unblock notes
+below. No installation, licensing or production integration is authorised here.
+
+Sampler 4.5 scripting is **not usable for the requested autonomous finish workflow
+on this PC**: Brickwall and Make It Tile filter insertion crashes with 0xC0000005,
+including script-thread and UI-callback routes. Basic API enumeration, image import
+and one raw AI export worked; this is not a claim that all scripting fails.
+Designer/SAT were not found in the inspected inventory; procedural `.sbsar` output
+is **not verified**. No finished tileable Diffuse/ERM/Normal set, approved replacement
+texture, measured complete-finish time or procedural benchmark is claimed.
+
+### Final acceptance disposition
+
+| Original acceptance | Final disposition under [D259] | Evidence |
+|---|---|---|
+| Installed inventory and exact agent commands | Delivered, with inspected-location limits | Inventory and command sections below; capability-v001 |
+| Photo-to-tileable and procedural pilots | Not delivered; explicitly replaced by capability-only closure | Native crash checkpoints; Designer/SAT unavailable; six raw AI maps are diagnostic only |
+| Same-finish side-by-side and time per finish | Partial diagnostic sheet delivered; finish quality/time not measured, no completion claim | photo-v002 partial-comparison.png; 77.67 s raw export, not a completed finish |
+| Integration recommendation and follow-up proposals | Delivered as proposals, not production adoption or newly created issues | Recommendation below; resume only after a changed Substance installation |
+
+Evidence re-read at finalisation: **41/41** manifest entries matched SHA-256;
+no Adobe process was launched. Immutable evidence seals:
+
+| Drive folder under `G:/Мой диск/AGR-evidence/1258/` | Entries verified | SHA-256 of `SHA256SUMS.txt` |
+|---|---|---|
+| `substance-capability-v001/` | 13/13 | `99ff80fefd378244b523842232fb4a6bdb3de5a15b2c5d41e89d1517b108ce6a` |
+| `substance-photo-v002/` | 28/28 | `8746a6c4b034e03c8b587c1b469d3bc4fee58fceb4270079d2027f8184d1e812` |
+
+The investigation is complete within the final approved scope; texture-production
+readiness and user visual acceptance are not established. Historical sections below
+preserve the sequence and failed results rather than relabelling them successful.
 
 ## Initial investigation (historical)
 
@@ -248,8 +276,9 @@ graph hash and RAL identity. Parameter fidelity, procedural output and timings
 remain **not verified** [D258].
 
 Proposed follow-up scopes (not created as issues; card forbids issue creation):
-1. Supported Sampler Make It Tile runtime repair from these reproductions, then
-   rerun the same source/crop to finish this card's existing photo acceptance.
+1. After a Sampler update/reinstall, a later issue can reuse the same hashed
+   source/crop to retest filter insertion and attempt the photo-to-tileable pilot.
+   Do not resume attempts under this card [D259].
 2. Once Designer + SAT exist, procedural `.sbsar` variant pilot with bond/joint/
    colour/wear, stable seed, physical-scale checks and exact render/cook commands.
 3. Only after visual approval: finish-library recipe/provenance and RAL-binding
@@ -261,9 +290,12 @@ Proposed follow-up scopes (not created as issues; card forbids issue creation):
 crop, scripts, checkpoints and logs, with `SHA256SUMS.txt`. The card comment records
 the final seal hash/count. Initial `substance-capability-v001` remains unchanged.
 No customer images, scenes or renders are committed; no shared Python modules
-or production scripts are introduced. No full-suite or completed-acceptance
-receipt is claimed; no PR is opened while narrowed acceptance remains blocked.
+or production scripts are introduced. Probe scripts remain historical evidence,
+not supported pipeline tools. Final local-suite/eval receipts belong to the PR body;
+they verify this documentation branch, not a usable Substance workflow.
 
-**Required unblock:** repair the external Make It Tile native crash, or explicitly
-authorise a non-Sampler tileability stage / further scope reduction. Raw export
-alone does not satisfy the narrowed sample-to-tileable requirement.
+**Historical unblock superseded by [D259]:** no more attempts are required or
+permitted here. A later issue resumes after Sampler update/reinstall or Designer
+installation; it must independently verify runtime, tileability, physical scale,
+ERM packing, RGB8 DirectX normals, visual quality and time per completed finish.
+Raw export alone still does not satisfy the original texture-production requirement.

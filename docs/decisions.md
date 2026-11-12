@@ -277,6 +277,8 @@ frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Mar
 
 | D258 | 2026-11-12 | Narrow Substance research #1258 to the OBR22 brick sample-to-tileable Sampler pilot and capability report. Procedural generation is not verified (Designer/SAT unavailable; Sampler Brickwall crashes 0xC0000005). No installation/licensing now; defer the procedural pilot until Designer and Automation Toolkit exist. | `docs/research/substance-finishes.md` | Artem 2026-11-12 («принимаю»), USER DECISION on Kanban t_ab5c23eb |
 
+| D259 | 2026-11-12 | Close Substance research #1258 with the capability report and existing evidence only, superseding the remaining photo-to-tileable pilot requirement in [D258]. No more runtime attempts: Sampler 4.5 filter insertion crashes 0xC0000005; procedural .sbsar remains not verified (Designer/SAT unavailable). Resume in a later issue only after a Sampler update/reinstall or Designer installation; no installation/licensing now. | `docs/research/substance-finishes.md` | Artem 2026-11-12 («принимаю рекомендацию»), USER DECISION 11:40 on Kanban t_ab5c23eb |
+
 [passport-scope-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1207#issuecomment-6783203728
 
 [ground-refinement-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/295#issuecomment-6265799957
