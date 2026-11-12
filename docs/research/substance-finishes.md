@@ -5,7 +5,7 @@
 **Final scope, 2026-11-12:** Artem accepted closing this research with the
 capability report and existing evidence, with **no more runtime attempts** [D259]
 (Kanban t_ab5c23eb, USER DECISION 11:40, «принимаю рекомендацию»). This supersedes
-[D258]'s remaining photo-to-tileable requirement and all historical unblock notes
+[D260]'s remaining photo-to-tileable requirement and all historical unblock notes
 below. No installation, licensing or production integration is authorised here.
 
 Sampler 4.5 scripting is **not usable for the requested autonomous finish workflow
@@ -164,11 +164,11 @@ The preserved files are discovery scripts, JSON checkpoints, logs and the source
 recipe; no sheet or map output exists. `uv sync` succeeded. No new production code,
 regression fix, full-suite receipt or completed acceptance is claimed.
 
-The original procedural blocker is superseded by [D258]: no procedural pilot or
+The original procedural blocker is superseded by [D260]: no procedural pilot or
 installation is required now. The narrowed photo-to-tileable acceptance is still
 open for the separate Make It Tile native crash below.
 
-## Continuation: real photo-route export and tile-filter blocker [D258]
+## Continuation: real photo-route export and tile-filter blocker [D260]
 
 ### Calibrated existing job texture
 
@@ -203,7 +203,7 @@ generation provenance was not independently verified.
 | `photo_tile_v002.py` | Compute image first, insert on UI thread, await callback with `threading.Event` | Native 3221225477, **11.5807 s**, checkpoint `image_computed`; zero maps. |
 
 The tile-filter attempts are distinct script-thread and synchronised UI-thread
-routes, not repeated retries. No further procedural crash retries followed [D258].
+routes, not repeated retries. No further procedural crash retries followed [D260].
 The demonstrated export route does not repair native filter insertion. Adobe
 binary/GPU/licensing repair is outside the research worktree.
 
@@ -273,7 +273,7 @@ RAL 8023; no automatic identity is established. Preserve RAL code separately fro
 screen sRGB and require palette review. A future graph should expose bond, face
 size, joint width, colour and wear independently, recording metre units, seed,
 graph hash and RAL identity. Parameter fidelity, procedural output and timings
-remain **not verified** [D258].
+remain **not verified** [D260].
 
 Proposed follow-up scopes (not created as issues; card forbids issue creation):
 1. After a Sampler update/reinstall, a later issue can reuse the same hashed
