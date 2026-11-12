@@ -244,3 +244,27 @@ def test_pilot_picks_ten_distinct_of_one_company():
     short = [dict(rows[i], pages=1, sections='АГР') for i in range(4)] + rows[4:12]
     assert all(r['pages'] == 10 for r in inv.pick_pilot(short)[1][:8])  # albums before single sheets
     assert inv.pick_pilot([r for r in rows if r['company'] == 'other']) == (None, [])
+
+
+def test_output_appearing_during_scan_is_not_clobbered(corpus, tmp_path, monkeypatch):
+    out_csv, out_md = tmp_path / 'late.csv', tmp_path / 'late.md'
+    real = inv.classify
+
+    def racing(rows):
+        out_md.write_text('someone else', encoding='utf-8')
+        return real(rows)
+    monkeypatch.setattr(inv, 'classify', racing)
+    assert inv.main(['--root', str(corpus), '--csv', str(out_csv), '--summary', str(out_md)]) == 2
+    assert out_md.read_text(encoding='utf-8') == 'someone else' and not out_csv.exists()
+    assert not list(tmp_path.glob('.*.partial'))
+
+
+def test_fresh_process_cli(corpus, tmp_path):
+    import subprocess
+    script = Path(inv.__file__)
+    args = [sys.executable, str(script), '--root', str(corpus), '--csv', str(tmp_path / 'f.csv'),
+            '--summary', str(tmp_path / 'f.md')]
+    ok = subprocess.run(args, capture_output=True, text=True, encoding='utf-8')
+    assert ok.returncode == 0 and '7 PDFs, 5 readable' in ok.stdout
+    again = subprocess.run(args, capture_output=True, text=True, encoding='utf-8')  # outputs exist now
+    assert again.returncode == 2 and 'refusing to overwrite' in again.stderr
