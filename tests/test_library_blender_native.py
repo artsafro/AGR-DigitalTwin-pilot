@@ -31,7 +31,9 @@ s.unit_settings.scale_length = 1
 m = bpy.data.meshes.new('WIN-01_npm_frame')
 m.from_pydata([(0,0,0),(1,0,0),(1,0,2),(0,0,2)], [], [(0,1,2,3)])
 o = bpy.data.objects.new(m.name, m)
-s.collection.objects.link(o)
+collection = bpy.data.collections.new('Asset')
+s.collection.children.link(collection)
+collection.objects.link(o)
 a = bpy.data.materials.new('matid_1')
 a['agr_material_id'] = 1
 m.materials.append(a)
@@ -40,6 +42,8 @@ bpy.ops.wm.save_as_mainfile(filepath={str(clean)!r})
 h = bpy.data.objects.new('hidden_helper', None)
 s.collection.objects.link(h)
 h.hide_render = True
+unused = bpy.data.collections.new('unused_collection')
+s.collection.children.link(unused)
 bpy.ops.wm.save_as_mainfile(filepath={str(dirty)!r})
 '''
     result = subprocess.run([str(BLENDER), '-b', '--factory-startup', '--python-exit-code', '3', '--python-expr', code],
@@ -52,3 +56,26 @@ bpy.ops.wm.save_as_mainfile(filepath={str(dirty)!r})
     assert checker.scene_errors(scenes[str(clean)], expected, 'bottom-left') == []
     errors = checker.scene_errors(scenes[str(dirty)], expected, 'bottom-left')
     assert errors and 'hidden_helper' in ' '.join(errors)
+    assert 'empty collection: unused_collection' in scenes[str(dirty)]['unsupported']
+
+
+def test_real_windows_migration_and_fresh_cli(tmp_path):
+    import os
+    import sys
+    if not BLENDER.is_file():
+        pytest.skip('Blender unavailable')
+    out = Path(os.environ.get('AGR_LIBRARY_MIGRATION_ROOT', str(tmp_path/'windows-v001')))
+    result = subprocess.run([sys.executable, str(ROOT/'tools/library/migrate_windows.py'), '--output', str(out)],
+                            capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=600)
+    assert result.returncode == 0, result.stdout[-4000:] + result.stderr[-2000:]
+    result = subprocess.run([sys.executable, str(ROOT/'tools/library/check_library.py'), str(out/'catalogue.json'),
+                             '--root', str(out)], capture_output=True, text=True, timeout=600)
+    assert result.returncode == 0, result.stdout[-6000:] + result.stderr
+    import json
+    receipt = json.loads(result.stdout)
+    assert receipt['cleanliness'] == 'pass' and receipt['variants_checked'] == 118
+    assert receipt['ready'] == 59 and len(receipt['quarantine']) == 8
+    before = (out/'catalogue.json').read_bytes()
+    again = subprocess.run([sys.executable, str(ROOT/'tools/library/migrate_windows.py'), '--output', str(out)],
+                            capture_output=True, text=True)
+    assert again.returncode != 0 and before == (out/'catalogue.json').read_bytes()

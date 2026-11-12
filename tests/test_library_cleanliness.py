@@ -37,6 +37,14 @@ def test_check_reads_every_variant_and_detects_mutation(tmp_path):
     result = module.check(p, tmp_path, tmp_path, inspect)
     assert result['cleanliness'] == 'pass' and result['variants_checked'] == 2
     assert len(seen) == 2
+    def extra_during_read(paths):
+        raw = inspect(paths)
+        extra = tmp_path/'assets/clobbered.partial'
+        extra.write_bytes(b'new unexpected file')
+        return raw
+    with pytest.raises(ValueError, match='changed'):
+        module.check(p, tmp_path, tmp_path, extra_during_read)
+    (tmp_path/'assets/clobbered.partial').unlink()
     def changed(paths):
         raw = inspect(paths)
         paths[0].write_bytes(b'changed during native readback')
@@ -92,7 +100,7 @@ def clean_scene():
                          'triangles': 2, 'bounds': [[0, 0, 0], [1, 0, 2]],
                          'materials': [{'id': 1, 'name': 'matid_1'}], 'unused_slots': [],
                          'uv_layers': 1, 'uv_finite': True, 'degenerate_faces': 0,
-                         'loose_vertices': 0, 'duplicate_faces': 0}]}
+                         'loose_vertices': 0, 'duplicate_faces': 0, 'min_vertex_distance_m': 1}]}
 
 
 def variant():
@@ -102,9 +110,6 @@ def variant():
 
 def test_clean_scene_passes():
     assert checker().scene_errors(clean_scene(), variant(), 'bottom-left') == []
-
-
-import pytest
 
 
 def catalogue():
@@ -147,6 +152,30 @@ def test_invalid_catalogue_fails(change):
         checker().validate_catalogue(doc)
 
 
+@pytest.mark.parametrize('status', ['fail', 'review', 'not_run', 'unknown'])
+def test_nonpass_status_is_not_a_ready_asset(status):
+    doc = catalogue()
+    doc['assets'][0]['status'] = status
+    with pytest.raises(ValueError):
+        checker().validate_catalogue(doc)
+
+
+def test_generated_combined_dirty_inventory_probe():
+    import copy
+    mutations = [('location', [0.001, 0, 0]), ('rotation', [0, 0.01, 0]), ('hidden', True),
+                 ('scale', [2, 1, 1]), ('modifiers', ['Bevel']), ('unused_slots', [0]),
+                 ('uv_layers', 0), ('duplicate_faces', 1), ('min_vertex_distance_m', 0.002),
+                 ('materials', [{'id': 999, 'name': 'unmapped'}])]
+    module = checker()
+    # Exhaust all 1024 presence subsets, including the clean/reset control.
+    for mask in range(1 << len(mutations)):
+        scene = copy.deepcopy(clean_scene())
+        for bit, (field, value) in enumerate(mutations):
+            if mask & (1 << bit):
+                scene['objects'][0][field] = value
+        assert bool(module.scene_errors(scene, variant(), 'bottom-left')) == bool(mask), mask
+
+
 def test_json_duplicate_and_nonfinite_rejected(tmp_path):
     p = tmp_path / 'bad.json'
     for text in ['{"assets": [], "assets": [1]}', '{"value": NaN}', '{"value": 1e999}']:
@@ -160,6 +189,7 @@ def test_json_duplicate_and_nonfinite_rejected(tmp_path):
     ('scale', [1, 2, 1]), ('hidden', True), ('parent', 'helper'), ('modifiers', ['Bevel']),
     ('constraints', ['Copy']), ('triangles', 3), ('unused_slots', [1]), ('uv_layers', 0),
     ('uv_finite', False), ('degenerate_faces', 1), ('loose_vertices', 1), ('duplicate_faces', 1),
+    ('min_vertex_distance_m', 0.002), ('min_vertex_distance_m', float('nan')),
     ('materials', [{'id': 999, 'name': 'unknown'}]), ('bounds', [[0, 0, 0], [1, 0, float('nan')]]),
 ])
 def test_dirty_object_is_named(field, value):

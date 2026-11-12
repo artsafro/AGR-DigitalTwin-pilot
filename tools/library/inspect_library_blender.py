@@ -10,6 +10,20 @@ from pathlib import Path
 
 import bpy
 
+from mathutils.kdtree import KDTree
+
+
+def native_min_spacing(mesh):
+    """Exact nearest distinct indexed vertex distance (Blender float32 coordinates)."""
+    if len(mesh.vertices) < 2:
+        return 0.0
+    tree = KDTree(len(mesh.vertices))
+    for vertex in mesh.vertices:
+        tree.insert(vertex.co, vertex.index)
+    tree.balance()
+    return min(distance for vertex in mesh.vertices for _, index, distance in tree.find_n(vertex.co, 2)
+               if index != vertex.index)
+
 
 def inventory():
     scene = bpy.context.scene
@@ -22,7 +36,9 @@ def inventory():
         for block in getattr(bpy.data, kind, []):
             if block.users == 0 or block.use_fake_user:
                 orphans.append(kind + ':' + block.name)
-            if kind not in allowed or block.library or block.animation_data:
+            if kind == 'collections' and not block.all_objects:
+                unsupported.append('empty collection: ' + block.name)
+            if kind not in allowed or block.library or getattr(block, 'animation_data', None):
                 unsupported.append(kind + ':' + block.name)
     if len(bpy.data.scenes) != 1 or len(scene.view_layers) != 1 or bpy.data.libraries:
         unsupported.append('multiple scenes/view layers or linked libraries')
@@ -55,6 +71,7 @@ def inventory():
             if not all(math.isfinite(c) for p in points for c in p):
                 unsupported.append('nonfinite vertex: ' + obj.name)
             row['triangles'] = len(mesh.loop_triangles)
+            row['min_vertex_distance_m'] = native_min_spacing(mesh)
             row['materials'] = [{'id': slot.material.get('agr_material_id'), 'name': slot.material.name}
                                 if slot.material else {'id': None, 'name': None} for slot in obj.material_slots]
             used = {p.material_index for p in mesh.polygons}

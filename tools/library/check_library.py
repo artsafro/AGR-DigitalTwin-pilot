@@ -71,6 +71,9 @@ def scene_errors(scene, expected, pivot):
                     if obj[key] != value:
                         errors.append(f'{name}: {key}={obj[key]!r}')
                 count = obj['triangles']
+                spacing = obj['min_vertex_distance_m']
+                if type(spacing) not in (int, float) or not math.isfinite(spacing) or spacing <= 0.002:
+                    errors.append(f'{name}: vertex spacing <= 2 mm or unmeasured: {spacing}')
                 if type(count) is not int or count <= 0:
                     errors.append(f'{name}: invalid triangles {count}')
                 total += count
@@ -149,6 +152,9 @@ def check(catalogue, root, repo, inspect):
     errors = []
     for (asset, profile, v), path in zip(variants, native_paths):
         errors += [asset['id'] + '/' + profile + ': ' + e for e in scene_errors(raw[str(path)], v, doc['pivot'])]
+    after_files = {p.resolve() for p in (root/'assets').rglob('*') if p.is_file()}
+    if actual != after_files:
+        raise ValueError('assets inventory changed during run')
     for path, sha in before.items():
         if not path.is_file() or digest(path) != sha:
             raise ValueError('input changed during run: ' + str(path))
