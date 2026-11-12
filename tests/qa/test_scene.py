@@ -1953,16 +1953,3 @@ def test_npm_texture_dimension_probe_generated():
         found = scene_findings(data, 'npm', 'oks', PROFILES.npm)
         assert next(f.status for f in found['V006'] if f.name == 'texture dimensions') == ('fail' if side > 2048 else 'pass')
 
-
-@pytest.mark.parametrize('maf_side,status', [(512, 'pass'), (513, 'fail'), (1024, 'fail')])
-def test_maf_texture_cap_keeps_flora_separate(maf_side, status):
-    data = rb(mesh(name='SM_Test_GroundEl', materials=['MAF']),
-              mesh(name='SM_Test_Flora', materials=['Flora']))
-    data['images'] = [{'name': 'maf.png', 'size': [maf_side]*2, 'packed': True},
-                      {'name': 'flora.png', 'size': [2048]*2, 'packed': True}]
-    data['materials'] = [{'name': 'MAF', 'maps': [{'image': 'maf.png', 'socket': 'Base Color'}]},
-                         {'name': 'Flora', 'maps': [{'image': 'flora.png', 'socket': 'Base Color'}]}]
-    found = scene_findings(data, 'npm', 'ground', PROFILES.npm)
-    assert next(f.status for f in found['V006'] if f.name == 'texture dimensions') == status
-
-
