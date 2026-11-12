@@ -1,7 +1,7 @@
 {
   "schema": "roof-research-evidence/1",
   "research_root": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1257-roof-equipment\\research-v002",
-  "library_root": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1257-roof-equipment\\library-v005",
+  "library_root": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1257-roof-equipment\\library-v006",
   "manifests": [
     {
       "root": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1257-roof-equipment\\research-v002",
@@ -10,31 +10,40 @@
       "files_verified": 363
     },
     {
-      "root": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1257-roof-equipment\\library-v005",
+      "root": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1257-roof-equipment\\library-v006",
       "path": "SHA256SUMS.txt",
-      "sha256": "e3fa8fec73056811d818239f5dd0677cde247ff5b5e81d863515834154d638a9",
+      "sha256": "63f3661e4e6a1840f6ee6589bcd3a8ac8945600f2e3bbe3fcf2b55cebbb6f4a4",
       "files_verified": 27
+    },
+    {
+      "root": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1257-roof-equipment\\verification-v003",
+      "path": "SHA256SUMS.txt",
+      "sha256": "4b64b0bddd62f433a6397ffd298c91c0404215afd7373fd9fe61a14efbc9f1b5",
+      "files_verified": 115
     }
   ],
   "library_check": {
-    "path": "library-check-v005.json",
+    "path": "library-check-v006.json",
     "sha256": "84d97079a7b2deb3451491b5163a087afdde6523c1964b80a210fa4e2ed8a977",
     "ready": 12,
     "variants_checked": 24,
     "errors": 0,
-    "delivery_certificate": false
+    "delivery_certificate": false,
+    "root": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1257-roof-equipment\\verification-v003"
   },
   "xview": {
-    "path": "xview-v005/summary.json",
-    "sha256": "ed6be3abed640790a6785dfa6efd82be7a07748c837381dab98d808ff65daa50",
+    "path": "xview-v006/summary.json",
+    "sha256": "4ed07c8a1ec74faec6dc04d5073719e0c625f62a0f826bf8ebb004ad843fe0b0",
     "runs": 24,
     "nonzero_exits": 0,
-    "all_totals_zero": true
+    "all_totals_zero": true,
+    "root": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1257-roof-equipment\\verification-v003"
   },
   "hostile": {
-    "path": "hostile-v001/summary.json",
+    "path": "hostile-v002/summary.json",
     "sha256": "149825e08916f2d5c551d5f2a93b0e81a6b90cabdf86b1b341bfc8e8e61ccda2",
-    "rejected_before_output": 8
+    "rejected_before_output": 8,
+    "root": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1257-roof-equipment\\verification-v003"
   },
   "original_and_copy_hashes_unchanged": 10,
   "source_atlas": {
@@ -51,5 +60,13 @@
     "Engineering identity and finish mapping unconfirmed",
     "Historical exports; no fresh client acceptance or delivery certificate",
     "Upper-roof study, explicit context/unclassified list retained"
-  ]
+  ],
+  "verification_root": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1257-roof-equipment\\verification-v003",
+  "focused_tests": {
+    "path": "focused-final-v3.log",
+    "root": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1257-roof-equipment\\verification-v003",
+    "sha256": "14591cf18cd6cf6c448d10fbfb0f0fed44a18ad11321113f242394e3bba6203b",
+    "passed": 96,
+    "failed": 0
+  }
 }
