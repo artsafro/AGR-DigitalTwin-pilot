@@ -192,7 +192,7 @@ def main():
                                    'source_sha256': plan['source_sha256'],
                                    'geometry': 'source-derived component, exact split vertices reunited; bottom-center translation only',
                                    'material': 'local neutral ID 1, NOT recovered customer AGR finish ID; source UV retained, no atlas offered',
-                                   'profiles': 'same geometry for both profiles per [D263], t_d0a92d95, 2026-11-12'},
+                                   'profiles': 'same geometry per task t_d0a92d95; counterprofile source measurements unavailable'},
                            reason=[], preview_cell=cell, variants=variants))
     sheet = showcase(assets, root)
     inputs = ['library/roof_equipment/extraction.json', 'tools/library/roof_parts.py', 'tools/library/build_roof_blender.py']

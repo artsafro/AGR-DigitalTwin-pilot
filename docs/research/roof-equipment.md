@@ -2,7 +2,7 @@
 
 ## Scope, decision and status
 
-Research, not a new OKS delivery. [D263] records Artem's answer on card `t_d0a92d95`
+Research, not a new OKS delivery. [D264] records Artem's answer on card `t_d0a92d95`
 (2026-11-12, 14:37): a delivered NPM/VPM **pair is not needed**; use the available profile,
 record it, and count Garibaldi `_01`/`_02` as separate objects. The five study units below
 are **five delivery exports / four addresses**, not five unrelated architectural commissions.
@@ -26,7 +26,8 @@ This distinction matters: merging source components into guessed devices would i
 ## Frozen evidence and sample qualification
 
 Evidence root: `G:/Мой диск/AGR-evidence/1257-roof-equipment/research-v002/`.
-Successful library: sibling `library-v005/` (catalogue release v001).
+Successful library: sibling `library-v006/` (catalogue release v001).
+Final native receipts supplement: sibling `verification-v003/`; the raw research snapshot stays immutable.
 Both have SHA256SUMS; the repository contains only small text/index/code, no customer FBX,
 BLEND, texture or render. `observations-final-v2.json` is the authoritative detailed research
 snapshot; earlier `observations*.json` files are preliminary diagnostics, not competing counts.
@@ -178,11 +179,11 @@ BODY-F/G and the owning OKS budget. They do not modify domain rules, C35 or lock
 
 | Proposal | Supporting evidence rows | Consequence / limit |
 |---|---|---|
-| Use one clean source-derived mid form for both library profiles; measure the actual source profile separately. | [D263]; all five source rows; catalogue R01–R12 | Avoid a duplicate detailed VPM library solely because of the profile label. Do not claim unobserved source triangles. |
+| Use one clean source-derived mid form for both library profiles; measure the actual source profile separately. | [D264]; all five source rows; catalogue R01–R12 | Avoid a duplicate detailed VPM library solely because of the profile label. Do not claim unobserved source triangles. |
 | Model the silhouette of shafts, raised heads, hoods, ducts, ladders and safety rails; do not replace them wholesale with texture. | G01-01/02/04/05/06/09; G02-01/07/08/11; OLY service rows; SKO-01/03 | These forms visibly project from the roof, and their source meshes carry real geometry. Integration still needs project source/visibility review. |
 | Bake/texture fine grille perforations, panel seams, fasteners and small finish relief where they do not change the required silhouette. | G01 modular atlas + G01-03/06; OLY boxes/ducts | This is a modelling recommendation, not proof that every <=5 cm mechanical object may be deleted. The decorative-detail rule and C35 must not be expanded to all equipment. |
 | No blanket 5 cm equipment deletion threshold. Retain thin visible safety/silhouette members, or explicitly approve their alternate representation. | G01-09 includes 20 mm-height rail fragments; G02 thin stubs; SKO-01 | Tiny component thickness is not the assembly's apparent size. 2 mm library spacing is hygiene, not a minimum equipment size. |
-| Start simple shaft/cap modules near 8–52 / 10–12 triangles; reserve separate hood/support cost. | G01-03/06/08/10/12, G02-03/09/12/15, SKO-02/03 | Same initial allocation NPM/VPM per D263. Never close a source-open shaft or omit its cap without an assembly check. |
+| Start simple shaft/cap modules near 8–52 / 10–12 triangles; reserve separate hood/support cost. | G01-03/06/08/10/12, G02-03/09/12/15, SKO-02/03 | Same initial allocation NPM/VPM per D264. Never close a source-open shaft or omit its cap without an assembly check. |
 | Prefer a low-segment form where it preserves silhouette: aerator around 40 triangles, capped vent around 64 as first library candidates, not hard maxima. | G01-02/05 versus G02-02/08 (64 vs 130; 40 vs 82) | Different source meshes already implement similar forms at different costs. Topology inflation is not evidence of necessary VPM detail. Compare renders before reducing. |
 | Budget ladders and railing by height/length/number of members, not one fixed per-type ceiling. | G01-01/09; G02-01/11; SKO-01 | Ladder examples 204–670 triangles and railing components 10–918. A short section must not be mistaken for a complete perimeter rail. R09/R10 are examples, not safety-design standards. |
 | Ducts require shape-specific budgets; keep elbows/risers, texture sheet joints, do not assign every cuboid an AC identity. | OLY service duct/box/transition rows; R11/R12 | Straight box 12 and selected elbow 60 triangles are starting prototypes. Complex source networks are not required to fit 60 triangles. |
@@ -221,7 +222,7 @@ not read this sheet as an approved material/MEP design or one common display sca
 - Original/copy hashes rechecked 10/10 unchanged after native inspection.
 - Library native readback: 12 ready, 24 variants, 0 errors, no quarantine, delivery_certificate=false.
 - Public `dt qa xview` on all 24 native exports, NPM-OKS / VPM-OKS, local coordinates:
-  24 exit 0; raw per-asset reports retained in `xview-v005/`.
+  24 exit 0; raw per-asset reports retained in the final supplement `xview-v006/`.
 - Fresh-process hostile builder probes: 8/8 rejected with nonzero exit and no output; source
   hashes unchanged. Cases: output=input, duplicate source, no sources, unsupported schema,
   NaN plan, unmapped material slot, unmapped source object, polygon outside source.
@@ -233,9 +234,11 @@ not read this sheet as an approved material/MEP design or one common display sca
   exact final counts, full-suite head and eval receipts are in the PR, not fabricated in this note.
 - Earlier native launch used MSYS `$PWD` and failed before output; retried with native C:/ paths.
   Attempt library-v001 then exposed catalogue mutation; v002 fixed it; v003 added two OLY forms;
-  v004 froze those forms; the decision-reference guard then found a missing inline D263 anchor
-  (1 failed / 94 passed). The metadata-only fix was rebuilt and checked as v005, the final
-  offering. Failed/obsolete attempts are not relabelled successful.
+  v004 froze those forms; the decision-reference guard then found a missing inline decision-ID anchor
+  (1 failed / 94 passed). The metadata-only fix was rebuilt as v005. Pre-push allocation checking
+  then found a concurrent D263 in PR #1272: this card renumbered its row to D264 and rebuilt
+  metadata as v006. Forms are unchanged; v006 is the final checked offering. Earlier receipts
+  keep their original hashes and are not relabelled successful current-head evidence.
 
 Exact commands and retained drivers: `COMMANDS.md`, `stage.py`, `census.py`, `surface.py`,
 `components.py`, `pdf_index.py`, `summarize.py`, `hostile.py`, `xview.py` in research evidence.
