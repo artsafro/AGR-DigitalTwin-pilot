@@ -11,6 +11,14 @@ def section(path: str, heading: str) -> str:
     return text.split(marker, 1)[1].split("\n## ", 1)[0]
 
 
+def test_papercut_date_filter_does_not_claim_cross_retro_deduplication():
+    text = section("docs/papercuts/README.md", "Who reads them")
+    assert "date filtering only" in text
+    assert "overlapping or identical ranges can select the same lines again" in text
+    assert "Issue deduplication does not deduplicate incident counts" in text
+    assert "keeps a retro from counting a line twice" not in text
+
+
 def test_author_probes_cover_guarantees_and_combined_review_fixes():
     text = section("docs/agents/WORKFLOW.md", "Before requesting review (author)")
     for required in ("invariant", "probe", "N/N", "generated", "brute-force", "synthetic",

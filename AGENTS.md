@@ -23,7 +23,7 @@ Read on demand, one line each. Read the domain file that matches the task before
 - Every dated user decision (`D<n>`): `docs/decisions.md`.
 - Which kind of fact lives in which file: `docs/agents/WORKFLOW.md`, "Memory map".
 - Who owns what (Claude / Codex / Antigravity): `docs/agents/ROLES.md`.
-- Task loop, handoff, experience capture: `docs/agents/WORKFLOW.md`.
+- Task loop, handoff, experience capture, snags: `docs/agents/WORKFLOW.md`.
 - Review questions, author receipts and how to run a Codex review: `docs/agents/REVIEW_CHECKLIST.md`, `docs/agents/WORKFLOW.md#before-requesting-review-author`.
 - Tools, MCP routes and their verified status: `docs/agents/CAPABILITIES.md`.
 - Production rules with citations (NPM/VPM, geometry, UV, materials, export, validation): `docs/domain/`.
