@@ -318,3 +318,18 @@ def test_corner_pair_probe_never_builds_overlapping_fins(seed):
         for k in range(int(z0 * 1000) + 1, int(z1 * 1000), 50):
             z = k / 1000
             assert any(b["min"][2] <= z <= b["max"][2] for b in built), (z, south, west)
+
+
+def test_v002_corner_replay_reports_only_real_slivers():
+    """Every unbuilt z remainder of a paired view is listed, and is > 0 and <= 1 mm (no empty entries)."""
+    mod = _parts()
+    corner = [b for b in _load("parts-schedule-r1-v002.json")["mullions"] if b["placement"].startswith("corner")]
+    items = []
+    for b in corner:
+        ua, ub, za, zb = b["rect_m"]
+        x0, x1 = sorted((_INV[b["facade"]](ua), _INV[b["facade"]](ub)))
+        items.append({"facade": b["facade"], "block": b["block"], "rect": (x0, x1, za * 1000, zb * 1000)})
+    built, _ = mod.place_mullions([], items, [], [])
+    slivers = [s for b in built for v in b.get("views", []) for s in v.get("unbuilt_slivers_z_m", [])]
+    assert slivers                                     # 6.65..6.6501 and 4.8499..4.85 at the SW post
+    assert all(0 < (b - a) * 1000 <= 1.0 for a, b in slivers), slivers
