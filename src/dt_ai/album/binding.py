@@ -142,6 +142,31 @@ def _level_line(r: R.TextRun, segs: list[R.Segment], tips: list[tuple[float, flo
     return list(ys.values())
 
 
+def _spot_box(r: R.TextRun, segs: list[R.Segment], runs: list[R.TextRun]) -> R.Box | None:
+    """A tight, closed four-sided plan-height tag, never an elevation line."""
+    x0, y0, x1, y1 = r.bbox
+    hs = [s for s in segs if _horiz(s) and x0 - r.size <= min(s.p0[0], s.p1[0]) <= x0
+          and x1 <= max(s.p0[0], s.p1[0]) <= x1 + r.size
+          and y0 - r.size <= s.p0[1] <= y1 + r.size]
+    boxes = set()
+    for top in hs:
+        for bottom in hs:
+            lo, hi = sorted((top.p0[0], top.p1[0]))
+            by = bottom.p0[1]
+            ty = top.p0[1]
+            if not (ty <= y0 and by >= y1 and by - ty <= 2.5 * r.size
+                    and abs(min(bottom.p0[0], bottom.p1[0]) - lo) <= 0.3
+                    and abs(max(bottom.p0[0], bottom.p1[0]) - hi) <= 0.3):
+                continue
+            if all(any(_vert(v) and abs(v.p0[0] - x) <= 0.3
+                       and abs(min(v.p0[1], v.p1[1]) - ty) <= 0.3
+                       and abs(max(v.p0[1], v.p1[1]) - by) <= 0.3 for v in segs) for x in (lo, hi)):
+                inside = [o for o in runs if lo < R._center(o.bbox)[0] < hi and ty < R._center(o.bbox)[1] < by]
+                if len(inside) == 1 and inside[0] is r:
+                    boxes.add((lo, ty, hi, by))
+    return next(iter(boxes)) if len(boxes) == 1 else None
+
+
 def _level_outliers(levels: list[dict[str, Any]]) -> list[tuple[str, dict[str, Any], float]]:
     """Scale-free consistency of the bound level marks of one view: the written values must be one linear
     function of the drawn line y (Theil-Sen fit, >= 3 marks with >= 3 distinct values, values rising upwards).
@@ -194,9 +219,9 @@ def _chains(segs: list[R.Segment]) -> list[dict[str, Any]]:
     ticks = _ticks(segs)
     groups: dict[tuple[str, float], list[tuple[float, float]]] = {}
     for s in segs:
-        if _horiz(s) and abs(s.p1[0] - s.p0[0]) > 4.0:
+        if _horiz(s) and abs(s.p1[0] - s.p0[0]) > 0.05:
             key, rng = ("horizontal", round((s.p0[1] + s.p1[1]) / 2.0, 1)), sorted((s.p0[0], s.p1[0]))
-        elif _vert(s) and abs(s.p1[1] - s.p0[1]) > 4.0:
+        elif _vert(s) and abs(s.p1[1] - s.p0[1]) > 0.05:
             key, rng = ("vertical", round((s.p0[0] + s.p1[0]) / 2.0, 1)), sorted((s.p0[1], s.p1[1]))
         else:
             continue
@@ -379,6 +404,12 @@ def _bind_page(pymupdf: Any, page: Any, number: int, sheet: str | None) -> dict[
     levels = []
     level_runs: set[int] = set()
     tips = _level_tips(segs, max([15.0] + [2.0 * r.size for r in runs if R.parse_level_text(r.text) is not None]))
+    spot_segs = list(segs)
+    for box in rects:
+        x0_, y0_, x1_, y1_ = box
+        spot_segs.extend(R.Segment(a, b, 0.0, None, -1) for a, b in (
+            ((x0_, y0_), (x1_, y0_)), ((x1_, y0_), (x1_, y1_)),
+            ((x1_, y1_), (x0_, y1_)), ((x0_, y1_), (x0_, y0_))))
     for i, r in enumerate(runs):
         v = R.parse_level_text(r.text)
         if v is None:
@@ -390,8 +421,9 @@ def _bind_page(pymupdf: Any, page: Any, number: int, sheet: str | None) -> dict[
                 absolute = o.text
                 level_runs.add(k)
                 break
-        found = _level_line(r, segs, tips)
-        levels.append({"run": i, "text": r.text, "value_m": v, "absolute_text": absolute,
+        spot = _spot_box(r, spot_segs, runs)
+        found = [] if spot else _level_line(r, segs, tips)
+        levels.append({"run": i, "text": r.text, "value_m": v, "absolute_text": absolute, "spot_bbox": spot,
                        "level_y": found[0][1] if len(found) == 1 else None,
                        "tip": found[0] if len(found) == 1 else None,
                        "line_reason": None if len(found) == 1 else ("no_level_line" if not found else "level_line_ambiguous")})
@@ -537,6 +569,7 @@ def _bind_page(pymupdf: Any, page: Any, number: int, sheet: str | None) -> dict[
                        "bbox": list(r.bbox), "span": None, "method": "pdf-vector-text",
                        "level_y": lv["level_y"], "level_y_drawn": lv.get("level_y_drawn"), "absolute_text": lv["absolute_text"],
                        "binding": ({"type": "unbound", "reason": "no_view"} if not lv["view"]
+                                   else {"type": "spot_level", "level": r.text, "spot_bbox": list(lv["spot_bbox"])} if lv["spot_bbox"]
                                    else {"type": "unbound", "reason": lv["line_reason"]} if lv["level_y"] is None
                                    else {"type": "level", "level": r.text, "level_y": lv["level_y"]})})
     for i, r in usable:
