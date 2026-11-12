@@ -1,6 +1,6 @@
 {
  "schema_version": "1.0.0",
- "status": "draft",
+ "status": "confirmed",
  "synthetic": false,
  "object_id": "K3_4BK",
  "source_tier": "B",
@@ -420,16 +420,26 @@
  "questions": [
   {
    "audience": "user",
-   "text": "Reveal colour on the brick facade: scheme says RAL 020 30 20, the note 2026-11-11 says АКП RGB 122 92 96 — take the note (newer)?"
+   "text": "Reveal colour on the brick facade: scheme says RAL 020 30 20, the note 2026-11-11 says АКП RGB 122 92 96 — take the note (newer)?",
+   "answer": "No: materials authority is the architect's images (ТЗ_Архитекторы): reveals RAL 020 30 20."
   },
   {
    "audience": "user",
-   "text": "Brick scale: Bricks1 as is, course 85 mm (37 courses per 3.15 floor, tile ~4.08 m), phase from floor base — ok? Architect hatch shows 75 mm courses."
+   "text": "Brick scale: Bricks1 as is, course 85 mm (37 courses per 3.15 floor, tile ~4.08 m), phase from floor base — ok? Architect hatch shows 75 mm courses.",
+   "answer": "Accepted (course 85 mm, 37 per floor, Bricks1 as delivered)."
   },
   {
    "audience": "user",
-   "text": "Budgets are totals over all copies: typical floor ~7.4 k tris x 13 floors, sum ~141 k of 150 k; slats as 8-tri boxes (102/floor). AC baskets replaced by simple boxes + grille texture. Ok?"
+   "text": "Budgets are totals over all copies: typical floor ~7.4 k tris x 13 floors, sum ~141 k of 150 k; slats as 8-tri boxes (102/floor). AC baskets replaced by simple boxes + grille texture. Ok?",
+   "answer": "Accepted; AC units one-sided per reference, placed at the end after replication."
   }
  ],
- "gate1": null
+ "gate1": {
+  "schema_version": "1.0.0",
+  "actor": "Artem",
+  "date": "2026-11-12",
+  "scope": "project",
+  "ref": null,
+  "note": "Gate 1 in the session 2026-11-12: «Почти все принимаю»; materials by the architect's TZ: reveals RAL 020 30 20; window frames, sills, metal RAL 7024; АКП panels RAL 4009 with joints over the full height; brick tile = Bricks1; plaster RAL 020 30 20 only on the inner roof parapet walls, as a cap ID without joints; AC one-sided, at the end."
+ }
 }

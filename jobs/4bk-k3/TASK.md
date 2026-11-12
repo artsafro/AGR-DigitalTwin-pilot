@@ -98,6 +98,17 @@ Stack: floors 2–7 brick (6 × 3.15), floor 8 band, floors 9–12 brick (4×), 
 superstructure from 51.90/52.71. Band floors 8 and 13 have identical offsets → one band module, instanced.
 Exact meaning of Point010–014 to confirm against the FBX roof analysis.
 
+## Gate 1 (Artem, 2026-11-12)
+
+> «Почти все принимаю ... цвет откосов мы берем как на PDF-ке ... основной источник истины по материалам это PDF,
+> то есть папки ТЗ архитектора.» «Штукатурка ... только на внутренних стенах кровли. Парапета ... в заглушку закинем.
+> Там швов не будет. А панели алюмокомпозитные со швами ... идут по всей высоте.» «Кондиционеры ... односторонние пока
+> что ... по референсу ... с кондиционерами в конце разберемся. Сначала сделаем модель, потом ее распространим.»
+
+Palette (authority: `ТЗ_Архитекторы`): brick tile = Bricks1 (course 85 mm); reveals RAL 020 30 20; window frames,
+sills, metal RAL 7024; АКП panels RAL 4009 with the measured joints, full height; plaster RAL 020 30 20 only on the inner
+roof-parapet walls, cap ID, no joints. AC units one-sided, placed last. Parts: `parts/k3_parts_v001.json` (confirmed).
+
 ## Open
 
 Address, stem `SM_<Address>_NNN`, naming reference, GeoJSON — from Artem later.

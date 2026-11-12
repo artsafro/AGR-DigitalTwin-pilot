@@ -18,12 +18,11 @@ gates:
     waits: user
     evidence: *inputs
   parts:
-    status: review
-    waits: user
-    note: "PartsList draft v001, 19 parts, VPM sum 144 660 of 150 000 [D161]; Gate 1 requested from Artem 2026-11-12 in the session, 3 questions inside."
+    status: pass
+    note: "PartsList v001 confirmed: gate1 Artem 2026-11-12 in the session (materials by the architect's TZ images; AC one-sided at the end), 19 parts, VPM sum 144 660 of 150 000 [D161]."
     evidence:
     - path: jobs/4bk-k3/parts/k3_parts_v001.json
-      sha256: bf04a1252cf822817c59a1ff51c50cbc3fb6be7c6e0998b8249acecf2e570cc5
+      sha256: d681151ccbe77cc76095a00a802535188f064ba0bc43f893871bc2805fd58b20
   operations: {status: missing, note: "No build before Gate 1.", evidence: []}
   budgets: {status: missing, note: "No build yet.", evidence: []}
   export_readback: {status: missing, note: "No export yet.", evidence: []}
