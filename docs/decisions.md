@@ -274,6 +274,7 @@ frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Mar
 
 
 | D256 | 2026-11-12 | KPP1 R1 only: accept the listed V004 5-20 mm band pairs (98 VPM / 52 NPM) from the C35 North curtain-wall glass top sitting 15 mm inside the parapet, with no clipping and no parapet cut; xView residuals and other delivery gates are not waived | `jobs/KPP1/rerun-1244/RUN-LOG.md`, `jobs/KPP1/rerun-1244/band-pairs-{vpm,npm}-r1-v002.json` | Artem 2026-11-12 «принимаю рекомендации», option A, USER DECISION on Kanban t_dd6f4bf9 (#1244, PR #1251) |
+| D259 | 2026-11-12 | MAF smoothing: the hard-edge angle may go above 45 degrees when low-poly cylinders sit at the limit; take it from a gap in the mesh's dihedral-angle histogram (49 degrees on Butovskaya GroundEl, so 8-segment cylinders at 45 degrees stay smooth), after clearing custom normals imported from FBX | `docs/domain/areas/groundel-maf.md`, `docs/cases.md` | Artem 2026-11-12 chat («Все отлично… Чекер проходит», «Да, запиши») |
 
 [passport-scope-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1207#issuecomment-6783203728
 
