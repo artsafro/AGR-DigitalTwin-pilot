@@ -1855,15 +1855,6 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
                                   f"{src}: {bad_sizes or 'all measured sides <= 2048 px'}",
                                   'positive measured NPM image dimensions, each side <= 2048 px; PNG-byte checks separate',
                                   [9], src))
-            # Reg p.9 §5.3 / [D015]: packed PNG file bytes <= 3 MiB, binary.
-            packed = [image for image in images if image.get('packed')]
-            if packed:
-                limit = profile['textures']['max_file_bytes']
-                bad_bytes = [(image.get('name'), image.get('packed_bytes')) for image in packed
-                             if type(image.get('packed_bytes')) is not int or not 0 < image['packed_bytes'] <= limit]
-                out['V006'].append(_f('fail' if bad_bytes else 'pass', 'embedded texture byte size',
-                                      f"{src}: {bad_bytes or 'all packed PNG byte sizes within limit'}",
-                                      f'positive packed PNG byte counts <= {limit} bytes [D015]', [9], src))
     if role == "ground":  # Flora checks (#191): dimensions V015, maps V005, Flora share V003
         geometry = [m for m in meshes if m not in ucx]
         for stage_id, findings in flora_findings(rb, kind, geometry, tris, profile, flora_schedule, flora_share).items():

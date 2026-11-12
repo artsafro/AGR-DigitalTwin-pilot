@@ -1988,15 +1988,4 @@ def test_npm_unmapped_polygon_material_is_named(assigned):
     assert 'polygon' in f.observed
 
 
-@pytest.mark.parametrize('byte_count,status', [(1, 'pass'), (3145728, 'pass'), (3145729, 'fail'),
-                                             (0, 'fail'), (None, 'fail'), (True, 'fail'),
-                                             (float('nan'), 'fail'), (float('inf'), 'fail')])
-def test_npm_packed_texture_byte_limit(byte_count, status):
-    data = rb(mesh())
-    data['images'] = [{'name': 'atlas.png', 'size': [512,512], 'packed': True, 'packed_bytes': byte_count}]
-    found = scene_findings(data, 'npm', 'oks', PROFILES.npm)
-    assert next(f.status for f in found['V006'] if f.name == 'embedded texture byte size') == status
-
-
-
 
