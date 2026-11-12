@@ -15,6 +15,8 @@ files and issues in English, user quotes verbatim in Russian (≤ 20 words each)
    `ignored-existing-rule`, `missing-rule`, `wrong-assumption-not-checked`, `tool/MCP-failure`,
    `harness/permission-friction`, `verification-gap`, `over-asking`, `scope-creep`, `slow/inefficient-path`, `other`.
    Also list the user's stated preferences and every acceptance with whether `experience-transfer` ran after it.
+   Then read the papercut lines in `docs/papercuts/*.md` dated in the range (`docs/papercuts/README.md`): group
+   repeats, give each group a cause from the list above, and treat a repeated or costly group as an incident.
 3. **Check against the rules** in the order of AGENTS.md ("A rule question"): `docs/decisions.md` → patterns →
    `docs/cases.md` → `docs/domain/conflicts.md` → `docs/domain/`, plus the agent's memory. Name the rule that already
    covered it (then the failure is enforcement, not knowledge) or say none.
