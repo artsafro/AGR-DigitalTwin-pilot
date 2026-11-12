@@ -109,6 +109,55 @@ Palette (authority: `ТЗ_Архитекторы`): brick tile = Bricks1 (course
 sills, metal RAL 7024; АКП panels RAL 4009 with the measured joints, full height; plaster RAL 020 30 20 only on the inner
 roof-parapet walls, cap ID, no joints. AC units one-sided, placed last. Parts: `parts/k3_parts_v001.json` (confirmed).
 
+## Brick scale (Artem, 2026-11-12)
+
+37 courses per floor broke the half bond at every floor seam (odd count). Artem chose **38 courses per 3.15 floor**:
+brick ≈ 284 × 83 mm, square tile 3.979 m, ≈ 1029 px/m, Bricks1 unchanged, no shear. Supersedes «course 85 mm» in
+Gate 1 Q2. UDIM tiles are renumbered contiguously at assembly (reg p.23: no gaps).
+
+## Typical module review (Artem, 2026-11-12, v003 in Blender)
+
+> «Кирпич увидел, разложил хорошо, красиво.» «Пояса горизонтальные, они будут металлические ... на втором ID были.»
+> «В нишах почему-то боковушки темные, а сама фронтальная часть кирпичная, тогда уже надо все делать под кирпич.»
+
+Clarified: «Откосы ... сейчас выполнены в цвет кирпича, это правильно. Неправильно в нишах боковые стенки, что они
+не кирпичные.»
+→ v004: wedge bands (sloped faces of Семейство1/2) = ID2 АКП; niche side walls = ID1 brick; window reveals ID3 unchanged.
+
+## Part joints (Artem, 2026-11-12)
+
+> «Можно сделать так, чтобы у нас эти все кубики Лего были врезкой ... один торчал на другой, или врезался там по
+> 6 миллиметров ... не обязательно точки подгонять.»
+
+Parts (typical module, bands, superstructure, roof, stylobate) may join by embedding ≈ 6–20 mm instead of welded
+vertices. Flush surfaces: «мелкую мы врезаем в большую, и у мелкой полигон, который врезался, мы просто его удаляем» —
+the smaller part is embedded into the larger one and its faces that end up inside / coplanar with the larger part are
+deleted (no coplanar overlap remains; the smaller part's open edge lies on the larger surface).
+
+## Roof v001 accepted (Artem, 2026-11-12)
+
+> «По кровле я принимаю.» «У металлика, который второй ID, тоже швы. Вот эти моменты надо все просмотреть.»
+
+Roof: coping ID4, Семейство1 at 58.2–58.9 ID2 accepted. Next: joints on every ID2 (АКП) surface by the architect's
+red lines (SOURCE_ANALYSIS «Joints»), brick joints come from Bricks1. АКП joint width 10 mm, dark (Artem,
+2026-11-12); Artem sends close-up screenshots of which joints he means before the texture is made.
+
+## UV review (Artem, 2026-11-12)
+
+> «ID 2 занимает 4 тайла ... это окей.» «По полоскам я пока что не уверен, что ты их раскрасил по 5 сантиметров.»
+> «По маленькому корпусу ... почему мы сделали его черно-белым. Он должен быть весь в кирпиче, а кровля ... серая,
+> такая же, как у основного. Лестница тоже вся в кирпиче.»
+
+→ ID2 multi-tile accepted; 5 cm АКП strips at window edges (typ_uv_v001) — open, Artem checks in Blender;
+small stylobate: walls + stair = Bricks1 brick, roof grey = tower roof ID6. Then: «геометрию Влада, что ты под швы
+порезал ... правильное решение ... швы должны быть на кирпиче, на текстуре отображены»; «светлый цоколь ... там все в
+кирпиче» → keep the 124 cuts; brick texture baked with 10 mm panel joints; no light fascia. Plinth: «делаем как у
+Влада» → Vlad's light plinth under the windows stays (own ID, light porcelain colour) (v002).
+Final (Artem after checking with Vlad, 2026-11-12): «он кирпичный весь со швами как у архитектора» — our stylobate is the
+brick block RIGHT of the tower in «1 эт_2.jpg» (the dark АКП block on the left is another building); all brick incl.
+the plinth; «швы там по логике проёмов» → 10 mm joints on the brick: verticals at corners and opening reveals,
+panels 1–2 m, horizontal at opening heads (the panel layout of the 124 cuts).
+
 ## Open
 
 Address, stem `SM_<Address>_NNN`, naming reference, GeoJSON — from Artem later.
