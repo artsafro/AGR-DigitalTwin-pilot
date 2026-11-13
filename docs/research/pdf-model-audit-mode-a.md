@@ -102,8 +102,14 @@ uv run --with numpy python tmp/build_audit_evidence.py
 uv run python -m dt_ai.album.compare --input jobs/KPP1/audit-1304/input-final.json --output-dir jobs/KPP1/audit-1304/report-final
 ```
 
-The complete evidence driver and readback helper are frozen in v003. On a fresh
-reproduction use a new version directory and add `--python-exit-code 1` to Blender
+The complete evidence driver and readback helper are frozen in v003. Its original
+reserved trust identifier is historical: final input/report metadata was
+reallocated to [D274] after an earlier unpublished reservation was discovered.
+`decision-renumber-v001/` preserves the old normalized input/report; all 112
+observation rows and the comparator executable AST are unchanged. On a fresh
+reproduction use the final normalized manifest, or apply that citation-only
+renumber after the historical driver, use a new version directory and add
+`--python-exit-code 1` to Blender
 invocations; inspect the produced measurements as well as process exit.
 
 ## Placement and tolerances
