@@ -7,7 +7,9 @@ itself the KPP1 v005 script with an explicit spec; PSU275's extra-OKS options ar
 Usage: python tools/derive/npm_atlas.py <spec.json> <new_out_dir> [--address A] [--index N] [--recipe-dir D]
 Writes T_<A>_<NNN>_Main_d_1.png (Diffuse RGB), T_<A>_<NNN>_Main_o_1.png (Opacity RGB, white = solid,
 reg p.9 §5.8; no alpha anywhere, conflict #21) and npm_atlas.json (finish -> region). One square region per
-finish on a 5 x 4 grid of 409 px cells, 6 px edge padding (reg p.9 §5.4); each region stands for the
+finish on a 5 x 4 grid of 409 px cells, 6 px edge padding by default (reg p.9 §5.4);
+--cell / --pad retain an explicitly approved job layout (R1: 512 / 8), not a new
+regulatory density rule. Each region stands for the
 finish's VPM tile S metres, joints >= 1.5 px. Texture painters (make_textures, finish_map) come from the
 recipe dir (default jobs/TEC26-OKS/scripts, the KPP recipe library).
 """
@@ -35,7 +37,13 @@ def main(argv=None):
     ap.add_argument("--address", help="NPM address (default: spec address); extra OKS share the main address")
     ap.add_argument("--index", type=int, default=1, help="OKS index inside the NPM package (NNN), default 1")
     ap.add_argument("--recipe-dir", default=RECIPE, help="directory with make_textures.py / finish_map.py")
+    ap.add_argument("--cell", type=int, default=CELL, help="atlas cell pixels (default: 409)")
+    ap.add_argument("--pad", type=int, default=PAD, help="padding inside each cell (default: 6)")
     a = ap.parse_args(argv)
+    cell, pad = a.cell, a.pad
+    if not 1 <= cell <= ATLAS or not 0 <= pad or 2 * pad >= cell:
+        raise ValueError("layout requires 1 <= cell <= 2048 and 0 <= 2*pad < cell")
+    cols, region = ATLAS // cell, cell - 2 * pad
     if not 1 <= a.index <= 999:
         raise ValueError(f"OKS index {a.index} outside 1..999")
     sys.path.insert(0, a.recipe_dir)
@@ -43,8 +51,8 @@ def main(argv=None):
     import make_textures as mt
     spec = json.load(open(a.spec, encoding="utf-8"))
     finish_map.validate_spec(spec, finish_map.load_kpp())
-    if len(spec["finishes"]) > COLS * (ATLAS // CELL):
-        raise ValueError(f"{len(spec['finishes'])} finishes do not fit the {COLS} x {ATLAS // CELL} atlas grid")
+    if len(spec["finishes"]) > cols * (ATLAS // cell):
+        raise ValueError(f"{len(spec['finishes'])} finishes do not fit the {cols} x {ATLAS // cell} atlas grid")
     addr = a.address or spec["address"]
     if not addr:
         raise ValueError("empty NPM address")
@@ -55,33 +63,33 @@ def main(argv=None):
     opa = np.full((ATLAS, ATLAS, 3), 255, np.uint8)
     layout = {}
     for k, (f, t) in enumerate(sorted(spec["finishes"].items(), key=lambda kv: kv[1]["udim"])):
-        cx, cy = (k % COLS) * CELL, (k // COLS) * CELL      # cell origin, image rows from the top
+        cx, cy = (k % cols) * cell, (k // cols) * cell      # cell origin, image rows from the top
         if t["kind"] == "full":
             # >= 1.5 px joints whatever metres the region spans (S = 4.096 gives the KPP value 8 mm)
-            tt = dict(t, joint_half_mm=max(NPM_JOINT_HALF_MM, math.ceil(750 * t.get("S", 4.096) / REGION)))
+            tt = dict(t, joint_half_mm=max(NPM_JOINT_HALF_MM, math.ceil(750 * t.get("S", 4.096) / region)))
             d, alpha, _, _ = mt.make_full(tt, spec["size_full"])
-            reg = np.asarray(Image.fromarray(d, "RGB").resize((REGION, REGION), Image.LANCZOS))
+            reg = np.asarray(Image.fromarray(d, "RGB").resize((region, region), Image.LANCZOS))
             if alpha is not None:
-                m = np.asarray(Image.fromarray(alpha, "L").resize((REGION, REGION), Image.BOX))
+                m = np.asarray(Image.fromarray(alpha, "L").resize((region, region), Image.BOX))
                 solid = m >= 128                                  # 0-127 void, 128-255 solid (reg p.36 §12.2)
                 o = np.where(solid, 255, 0).astype(np.uint8)
-                o = np.pad(o, PAD, mode="edge")
-                opa[cy:cy + CELL, cx:cx + CELL] = o[..., None]
+                o = np.pad(o, pad, mode="edge")
+                opa[cy:cy + cell, cx:cx + cell] = o[..., None]
                 mean = d[alpha >= 128].mean(0) if (alpha >= 128).any() else d.reshape(-1, 3).mean(0)
                 reg = np.where(solid[..., None], reg, mean.round().astype(np.uint8))  # void colour = average
         else:  # placeholder / solid finishes: flat colour (missing "rgb" -> KeyError naming it)
-            reg = np.broadcast_to(np.array(t["rgb"], np.uint8), (REGION, REGION, 3))
-        dif[cy:cy + CELL, cx:cx + CELL] = np.pad(reg, ((PAD, PAD), (PAD, PAD), (0, 0)), mode="edge")
+            reg = np.broadcast_to(np.array(t["rgb"], np.uint8), (region, region, 3))
+        dif[cy:cy + cell, cx:cx + cell] = np.pad(reg, ((pad, pad), (pad, pad), (0, 0)), mode="edge")
         # region in UV space (v up): x0, y0 of the region's lower-left corner and its size
-        layout[f] = {"udim": t["udim"], "u0": (cx + PAD) / ATLAS, "v0": 1 - (cy + PAD + REGION) / ATLAS,
-                     "size": REGION / ATLAS, "px_per_m": round(REGION / t.get("S", 4.096), 1)
+        layout[f] = {"udim": t["udim"], "u0": (cx + pad) / ATLAS, "v0": 1 - (cy + pad + region) / ATLAS,
+                     "size": region / ATLAS, "px_per_m": round(region / t.get("S", 4.096), 1)
                      if t["kind"] == "full" else None}
         print(f, t["udim"], t["kind"], (cx, cy))
     dn = os.path.join(out, f"T_{addr}_{nnn}_Main_d_1.png")
     on = os.path.join(out, f"T_{addr}_{nnn}_Main_o_1.png")
     Image.fromarray(dif, "RGB").save(dn, optimize=True)
     Image.fromarray(opa, "RGB").save(on, optimize=True)
-    json.dump({"atlas": ATLAS, "cell": CELL, "pad": PAD, "region": REGION, "finishes": layout},
+    json.dump({"atlas": ATLAS, "cell": cell, "pad": pad, "region": region, "finishes": layout},
               open(os.path.join(out, "npm_atlas.json"), "w", encoding="utf-8"), indent=1)
     for p in (dn, on):
         print(os.path.basename(p), os.path.getsize(p), "bytes")

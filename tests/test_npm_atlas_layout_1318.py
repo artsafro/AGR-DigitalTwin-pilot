@@ -1,4 +1,5 @@
 """new-case: explicit R1 atlas layout compatibility, without changing legacy defaults."""
+import importlib.util
 import json
 from pathlib import Path
 import subprocess
@@ -72,3 +73,52 @@ def test_output_alias_input_not_written(packet):
     before=spec.read_bytes()
     assert run((spec,recipe,spec)).returncode != 0
     assert spec.read_bytes() == before
+
+
+def runner():
+    spec = importlib.util.spec_from_file_location('benchmark1318', ROOT/'jobs/KPP1/benchmark-1318/run_benchmark.py')
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+@pytest.mark.parametrize('mutation', ['empty', 'missing', 'changed', 'extra', 'duplicate', 'escape'])
+def test_packet_integrity_fail_closed(tmp_path, mutation):
+    import hashlib
+    packet = tmp_path/'packet'
+    packet.mkdir()
+    source = packet/'input'
+    source.write_bytes(b'original')
+    line = hashlib.sha256(source.read_bytes()).hexdigest()+'  input\n'
+    manifest = packet/'SHA256SUMS.txt'
+    manifest.write_text(line)
+    module = runner()
+    assert module.verify(packet)
+    if mutation == 'empty': manifest.write_text('')
+    if mutation == 'missing': source.unlink()
+    if mutation == 'changed': source.write_bytes(b'changed')
+    if mutation == 'extra': (packet/'cache.pyc').write_bytes(b'unexpected cache')
+    if mutation == 'duplicate': manifest.write_text(line+line)
+    if mutation == 'escape': manifest.write_text(line.replace('input','../input'))
+    with pytest.raises(ValueError):
+        module.verify(packet)
+
+
+def test_failed_integrity_still_retains_native_exit_and_run_report(tmp_path, monkeypatch):
+    module=runner()
+    calls=0
+    def verify(_):
+        nonlocal calls
+        calls += 1
+        if calls >= 3: raise ValueError('packet integrity mismatch')
+        return 'hash'
+    monkeypatch.setattr(module, 'verify', verify)
+    monkeypatch.setattr(module.subprocess, 'check_output', lambda *a, **k: 'sha')
+    monkeypatch.setattr(module.subprocess, 'run', lambda *a, **k: subprocess.CompletedProcess(a,1))
+    out=tmp_path/'out'
+    with pytest.raises(ValueError,match='integrity'):
+        module.main(tmp_path/'packet',out)
+    record=json.loads((out/'run.json').read_text())
+    assert record['packet_unchanged'] is False
+    assert record['stages'][0]['exit'] == 1
+    assert 'integrity_error' in record

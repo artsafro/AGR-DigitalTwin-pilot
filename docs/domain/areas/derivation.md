@@ -52,6 +52,7 @@ C1/[D010], C6, C7, C8, C11, C14, C17, C19, C21, C26, C29, C33 are referenced. De
 
 ## L2 gaps
 Accepted NPM/OKS route and thin `agr` aliases: [D271], [routes/npm-oks.md](../../../routes/npm-oks.md). No new derivation implementation or delivery acceptance is implied.
+KPP1 benchmark adapter authorization: [D279]; geometry-preserving recovery from the pinned R1 FBX is not a quad-master or delivery certificate.
 
 - **DER-02:** profile-symmetric content inventory (both exports vs source); manual V015 today.
 - **DER-08:** NPM georeference in Moscow coordinates and heights (V014).
