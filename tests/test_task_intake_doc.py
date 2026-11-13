@@ -78,3 +78,22 @@ def test_pr_template_asks_for_the_before_after_numbers():
     template = (ROOT / ".github" / "pull_request_template.md").read_text(encoding="utf-8")
     assert "before/after metric" in template.lower()
     assert "not measured" in template
+
+
+def test_check_level_intake_contract():
+    for path in (".github/ISSUE_TEMPLATE/task.md", "docs/agents/task-intake.md"):
+        text = " ".join((ROOT / path).read_text(encoding="utf-8").split())
+        for clause in (
+            "level: fast | standard | full",
+            "orchestrator/agent sets",
+            "at intake",
+            "Artem overrides with one word",
+            "[D268]",
+            "TASK_TO_MODEL.md#check-levels",
+        ):
+            assert clause in text, (path, clause)
+    intake = " ".join(_text().split())
+    assert "first message" in intake
+    assert "up a level" in intake and "never down" in intake
+    assert "Check level is separate from" in intake
+
