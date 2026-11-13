@@ -13,5 +13,7 @@ def test_2d_intake_route():
         text = (ROOT / name).read_text(encoding='utf-8')
         for tool in ('dwg_to_dxf.py', 'plan_from_dxf.py', 'facade_openings_from_dxf.py'):
             assert tool in text, (name, tool)
+    mirror = (ROOT / '.claude/skills/analyze-architectural-source/SKILL.md').read_text(encoding='utf-8')
+    assert mirror == skill, 'cold Claude agent must receive the same 2D route'
     registry = (ROOT / 'docs/sources/README.md').read_text(encoding='utf-8')
     assert 'АС.03 R1' in registry and 'jobs/KPP1/sources.json' in registry
