@@ -152,6 +152,33 @@ def test_native_kns_inline_rotated_text_gaps_keep_semantic_refusal():
     assert {r['handle'] for r in scored['handles'] if r['class'] != 'correct_semantic_binding'} == {'341E', '341F'}
 
 
+@pytest.mark.parametrize('rotation', [0, 90])
+@pytest.mark.parametrize('length', [10, 16, 20])
+@pytest.mark.parametrize('offset', [1, 15.9, 16, 16.1])
+def test_short_displaced_labels_keep_strict_two_em_bounds(tmp_path, rotation, length, offset):
+    # Synthetic vector witness: only short spans may search beyond their ticks.
+    # Exact two-em span lengths and text-center limits must remain excluded.
+    path = tmp_path / 'synthetic-displaced.pdf'
+    with fitz.open() as source, fitz.open() as doc:
+        page = source.new_page(width=300, height=300)
+        end = 100 + length
+        page.draw_line((98, 150), (end + 2, 150), width=.3)
+        for x in (100, end):
+            page.draw_line((x - 2, 152), (x + 2, 148), width=.3)
+        half_width = fitz.get_text_length('200', fontsize=8) / 2
+        page.insert_text((end + offset - half_width, 143), '200', fontsize=8)
+        target = doc.new_page(width=300, height=300)
+        target.show_pdf_page(target.rect, source, 0, rotate=rotation)
+        doc.save(path)
+    result = bind_album(path)
+    (value,) = [v for v in result['values'] if v['raw'] == '200']
+    assert (value['span'] is not None) == (length < 16 and offset < 16)
+    assert value['binding']['type'] == 'unbound'  # no semantic endpoints invented
+    assert value['measured_mm'] is None
+    assert all(v['scale']['status'] == 'unknown' for v in result['views'])
+    assert result['passed'] is False
+
+
 def test_generated_inline_pages_never_guess_scale_or_drop_labels(tmp_path):
     import random
     rng = random.Random(1302)
