@@ -41,7 +41,8 @@ external members; this verifies the mounted Drive copy, not remote cloud-sync co
 Do not blindly rerun the historical scripts into existing outputs; use fresh directories.
 
 Native image review in attempt 1 covered A06/A08 contact sheets and A08 p12–14.
-No fresh model/image inference is used to finish this reference. Text layer presence
+No additional image-tool calls were used during continuation; shared agent-model
+usage for analysis and report writing is measured below. Text layer presence
 is NOT schedule completeness: **A08 p12–14 have zero text but visible finish legends**.
 Every page was text-scanned; not every image or drawing region was semantically checked.
 
