@@ -340,8 +340,9 @@ def _gate(root, gate, entry, job):
         if parts.synthetic != job.synthetic or parts.status != "confirmed":
             raise ValueError("parts require matching scope and Gate 1 confirmation")
         if (parts.gate1 is None or parts.gate1.ref is None
+                or parts.gate1.scope != ("synthetic_fixture" if job.synthetic else "project")
                 or parts.gate1.parts_sha256 != parts.approval_sha256()):
-            raise ValueError("Gate 1 requires an answer ref and matching PartsList approval_sha256")
+            raise ValueError("Gate 1 requires matching scope, an answer ref and matching PartsList approval_sha256")
         if any(q.answer is None for q in parts.questions):
             raise ValueError("unanswered parts question")
     elif gate == "report":
