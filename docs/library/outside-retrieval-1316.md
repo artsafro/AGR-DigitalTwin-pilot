@@ -90,15 +90,34 @@ No desktop Drive mount, C:/x, auth, cookies, local caches or prior download root
 From that clone run the following stdlib snippet with an unused destination:
 
 ```python
-import hashlib, json, urllib.request
-from pathlib import Path
+import hashlib, json, re, urllib.request
+from pathlib import Path, PureWindowsPath
 manifest = json.loads(Path('library/outside-retrieval-v001.json').read_text(encoding='utf-8'))
+assert manifest['schema'] == 'outside-retrieval-selection-v1'
+assert set(manifest) == {'schema', 'shared_root', 'scope', 'assets'}
+assert isinstance(manifest['assets'], list) and len(manifest['assets']) == 3
+assert [len(a['files']) for a in manifest['assets']] == [1, 4, 1]
+seen = set()
+for asset in manifest['assets']:
+    assert set(asset) == {'asset', 'version_sha256', 'authority', 'boundary', 'files'}
+    assert re.fullmatch('[0-9a-f]{64}', asset['version_sha256'])
+    for record in asset['files']:
+        assert set(record) <= {'name', 'path', 'download_url', 'sha256', 'bytes'}, set(record)
+        assert type(record['bytes']) is int and record['bytes'] > 0
+        assert re.fullmatch('[0-9a-f]{64}', record['sha256'])
+        assert record['download_url'].startswith('https://drive.usercontent.google.com/download?id=')
+        relative = Path(record['path'])
+        assert relative.parts and not relative.is_absolute() and not PureWindowsPath(record['path']).drive
+        assert '..' not in relative.parts
+        key = relative.as_posix().casefold()
+        assert key not in seen, record['path']
+        seen.add(key)
+# Validate the complete fixed selection before creating any output.
 root = Path('cold-download-v001')
 root.mkdir(exist_ok=False)
 for asset in manifest['assets']:
     for record in asset['files']:
         relative = Path(record['path'])
-        assert not relative.is_absolute() and '..' not in relative.parts
         target = root / relative
         target.parent.mkdir(parents=True, exist_ok=True)
         with urllib.request.urlopen(record['download_url'], timeout=120) as response:
@@ -114,6 +133,45 @@ This is a receipt/reproduction snippet for a reviewed fixed manifest, not a gene
 untrusted-manifest downloader or a certified material/geometry pipeline. Hash/size
 checks fail on permission HTML, truncated or changed bytes. Existing destinations
 refuse rather than clobber; do not re-use source/export/report directories as output.
+
+### Measured fresh-clone execution
+
+`git clone --depth 1 --single-branch --branch improve/issue-1316-outside-agent-asset-retrieval-by-manifes
+https://github.com/artsafro/AGR-DigitalTwin-pilot.git tmp/outside-final-clone` returned 0;
+HEAD was `8b322798c1272e242ecf0cf5c50403d20052e887`. The original Python fence at
+that commit was extracted from the clone's receipt and executed by stdlib Python with that clone as
+cwd, an unused `cold-download-v001`, no credentials/mount reads and no reused bytes.
+**Exit 0; 3/3 asset selections, 6/6 payload hashes and sizes matched**:
+
+```text
+ea43c19ac9d77ec240a79eea7f73db442025efa7dd05f06a3adc8ca71bf9c0be 137264 maf/union_v001/fbx/MAF_0002_TBO_konteyner.fbx
+c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b 25011570 flora/a101/FLORIO_221.max
+ca3122dbfd910a70cbbccb9cca42779efecdc4b1a2bdc4f166172dbf1dcb01fe 2343623 flora/v003/maps/tilia-cordata/lipa_t1_h550_low/diffuse-v002.png
+21fff75057b85b94cb847b8508f30ae9a555af1038f9414b5ea220d26f991525 2819435 flora/v003/maps/tilia-cordata/lipa_t1_h550_low/lipa_t1_h550_low.png
+1489d9c48a0c89fe0f30b294ad05501d63992b959277f4d1ca5a2892a33b967b 211735 flora/v003/maps/tilia-cordata/lipa_t1_h550_low/opacity-v002.png
+7838298711c57ade49821a0e371c88d41f2804ae30983c9c25e514c2feb47320 565 materials/placeholders/v001/interior_d_256.png
+```
+
+Initial command extraction failed from shell backtick expansion **before any download**;
+using `chr(96)*3` in the launcher repaired quoting without changing the documented snippet.
+Affected verification before the main merge: **297 passed, 1 deselected** (eight files).
+The RED route regression was committed first in `e99c693b`, after 1 expected assertion
+failure on c5db1251's deleted C:/x path. A second tests-first commit, `dd6b7067`,
+exposed 9/9 malformed-manifest cases creating an output directory before refusal
+(or, for empty input, returning success). The documented snippet now preflights the
+whole fixed selection before writes: empty/partial/unsupported input, NaN/inf/zero
+sizes, duplicated case-insensitive paths, traversal and absolute paths reject.
+An input/output hardlink witness also rejects without modifying either path.
+Post-main-merge verification of the eight affected files: **308 passed, 1 deselected**.
+Source preservation after native previews: **5/5** hashes unchanged (A101 MAX and
+four original RGBA files). Retrieval/native/transport/probe logs are sealed with
+SHA256SUMS and readback at `G:/Мой диск/AGR-evidence/1316-outside-retrieval/verification-v003/`
+(13 retained text receipts, in addition to the versioned preview directories).
+The portability probe used a separate stdlib process and fresh network clone on this
+workstation; it is not a claim that a second hosted agent or another physical PC ran it.
+The old catalogue's tests are not disabled: they still reconstruct the complete
+unchanged release from its exact snapshot, and current-map rebinding still rejects.
+Full-suite evidence belongs to the final PR receipt, not to a fabricated pre-run claim here.
 
 ## Historical first probe — boundary
 
