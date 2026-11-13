@@ -1,0 +1,55 @@
+schema_version: 1.0.0
+job_id: KPP1
+run_id: issue-1279-cold-run-v001
+synthetic: false
+path: standard
+inputs: &inputs
+- path: jobs/KPP1/sources.json
+  sha256: e772b3ff52b170a8fa86eff0013b3280a0aefce3906a0ce7842eeffc7c18ac9a
+  manifest: external-inputs/1
+- path: jobs/KPP1/cold-run-1279/dxf-readback-L01.json
+  sha256: 5b2e4edc93c1b6812ade51ae5dd503b745b8854dfee53e6767d7e63474dd452f
+- path: jobs/KPP1/cold-run-1279/dxf-readback-L02.json
+  sha256: d6f43f8b6db9cb4e2f48fa74a884fbbc60a664ec49f1cd16be5ff2e504567ff3
+- path: jobs/KPP1/cold-run-1279/dxf-readback-L03.json
+  sha256: b26b19b765bb59af448a586d730cef53102b7ba7e3908d58b445a4c5c0e3a898
+- path: jobs/KPP1/cold-run-1279/plan-contours-v001.json
+  sha256: cb904ee1314670800dabb6ab8d7eee1e0c21d684e7348a6c0554094d6543f4a3
+artifacts: []
+deviations: []
+gates:
+  inputs:
+    status: pass
+    note: "Cold run #2 (#1279). Three АС.03 R1 DWGs from the asset store (sources.json), copied to C:/x/cr1279/source and read back headless (dwg_to_dxf.py, 3/3 pass); L03 plan contour extracted with plan_from_dxf.py (hatch coverage pass 0.992). Units mm ($INSUNITS 4); CRS/placement per [D262]; levels 3.900/7.909 per [D254]."
+    evidence: *inputs
+  parts:
+    status: review
+    waits: user
+    note: "parts-v001.json draft, 9 parts, VPM sum 29 200 of 150 000 [D161]; 4 questions; Gate 1 requested on the issue (#1205 channel). Builds nothing until the answer."
+    evidence:
+    - path: jobs/KPP1/cold-run-1279/parts-v001.json
+      sha256: 4d36ed15d2b74f2fb2efa3f6434db08f9b3c9b3f6e013bcac38ad96ba5dafb32
+  operations:
+    status: missing
+    note: "Not started: no build before user Gate 1."
+    evidence: []
+  budgets:
+    status: missing
+    note: "Not started: no build before user Gate 1."
+    evidence: []
+  export_readback:
+    status: missing
+    note: "Not started: no build before user Gate 1."
+    evidence: []
+  report:
+    status: missing
+    note: "Not started: no build before user Gate 1."
+    evidence: []
+  visual:
+    status: missing
+    note: "Not started: no build before user Gate 1."
+    evidence: []
+  checker:
+    status: missing
+    note: "Not started: no build before user Gate 1."
+    evidence: []

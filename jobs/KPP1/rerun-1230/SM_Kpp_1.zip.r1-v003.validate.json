@@ -1,0 +1,739 @@
+{
+  "profile": "vpm",
+  "target": "tmp\\out-r1-v003b\\SM_Kpp_1.zip",
+  "target_sha256": "350518df6d2e6e7b39c4348addc6fd88cc5bed118991440d1365be75406c6fb2",
+  "source_sha256": "933f6b700c074d0db6b82030fc79d1dbe9db4a0067495ca716e0636acd544222",
+  "source_pdf_verified": true,
+  "passed": false,
+  "exit_code": 1,
+  "machine_stage_counts": {
+    "pass": 5,
+    "fail": 1,
+    "review": 2,
+    "not_run": 4
+  },
+  "manual_reviews_pending": [
+    "V015",
+    "V016",
+    "V017"
+  ],
+  "stages": [
+    {
+      "id": "V001",
+      "check": "архив читается; нет битых и посторонних файлов; размер и состав по профилю",
+      "gate": "blocking",
+      "source_pdf_pages": [
+        26
+      ],
+      "findings": [
+        {
+          "name": "archive size",
+          "status": "pass",
+          "observed": "806189 B <= 500 MiB",
+          "expected": "<= 524288000 B",
+          "source_pdf_pages": [
+            26
+          ],
+          "evidence": "",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        },
+        {
+          "name": "GeoJSON",
+          "status": "fail",
+          "observed": "none",
+          "expected": "exactly SM_Kpp_1.geojson",
+          "source_pdf_pages": [
+            26
+          ],
+          "evidence": "",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        }
+      ],
+      "status": "fail"
+    },
+    {
+      "id": "V002",
+      "check": "binary FBX 7.4/2014, 1 unit = 1 m, scale 1:1",
+      "gate": "blocking",
+      "source_pdf_pages": [
+        24
+      ],
+      "findings": [
+        {
+          "name": "FBX header",
+          "status": "pass",
+          "observed": "SM_Kpp_1.fbx: binary FBX version 7400",
+          "expected": "binary FBX 7400 (7.4/2014)",
+          "source_pdf_pages": [
+            24
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        },
+        {
+          "name": "system units",
+          "status": "pass",
+          "observed": "SM_Kpp_1.fbx: 1 unit = 100 cm (UnitScaleFactor 100, OriginalUnitScaleFactor 100.0)",
+          "expected": "1 unit = 1 m (UnitScaleFactor 100)",
+          "source_pdf_pages": [
+            4,
+            24
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        },
+        {
+          "name": "scale 1:1",
+          "status": "pass",
+          "observed": "SM_Kpp_1.fbx: scale 1 on every mesh",
+          "expected": "local and effective (inherited) scale 1 on every mesh (1:1)",
+          "source_pdf_pages": [
+            4,
+            24
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "V003",
+      "check": "триангуляция, количество треугольников, типы объектов, отсутствие пустых объектов и недопустимых модификаторов",
+      "gate": "blocking",
+      "source_pdf_pages": [
+        28,
+        29
+      ],
+      "findings": [
+        {
+          "name": "triangulated",
+          "status": "pass",
+          "observed": "SM_Kpp_1.fbx: all triangles",
+          "expected": "triangulated on export",
+          "source_pdf_pages": [
+            7,
+            28
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        },
+        {
+          "name": "triangle count",
+          "status": "pass",
+          "observed": "SM_Kpp_1.fbx: 30484",
+          "expected": "<= 150000 project target (reuse as NPM; else windows as atlas planes), 1000000 regulation limit",
+          "source_pdf_pages": [
+            7,
+            28,
+            29
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [],
+          "measured": 30484,
+          "threshold": 150000,
+          "margin": 0.7967733333333333
+        },
+        {
+          "name": "master quads",
+          "status": "not_run",
+          "observed": "quad work FBX not given (--master)",
+          "expected": "quad master; VPM faces <= 4 m [D021]",
+          "source_pdf_pages": [
+            8,
+            29
+          ],
+          "evidence": "DER-03",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        }
+      ],
+      "status": "not_run"
+    },
+    {
+      "id": "V004",
+      "check": "дубликаты, изолированные элементы, нулевые рёбра; применённые трансформации",
+      "gate": "blocking",
+      "source_pdf_pages": [
+        29
+      ],
+      "findings": [
+        {
+          "name": "applied transforms",
+          "status": "pass",
+          "observed": "SM_Kpp_1.fbx: rotation 0, scale 1",
+          "expected": "rotation 0, scale 1 after reset",
+          "source_pdf_pages": [
+            8,
+            29,
+            33
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        },
+        {
+          "name": "topology defects",
+          "status": "pass",
+          "observed": "SM_Kpp_1.fbx: max 0 duplicates/self-intersections, no isolated or zero-length elements",
+          "expected": "<= 100 duplicates/self-intersections at 0.002 m per mesh; 0 isolated vertices/edges/polygons; 0 zero-length edges",
+          "source_pdf_pages": [
+            8,
+            29
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        },
+        {
+          "name": "co-directional clearance",
+          "status": "review",
+          "observed": "SM_Kpp_1.fbx: 94172 co-directional overlapping pairs: 0 < 5 mm, 98 in band, 94074 > 20 mm; distance mm min/median/max 14.9993/7140.2/31170.401; histogram {'0-1': 0, '1-5': 0, '5-10': 0, '10-20': 98, '20-50': 11, '50-100': 2339, '100-1000': 6716, '1000+': 85008}; worst: ['SM_Kpp_1_Main#4091/SM_Kpp_1_Main#12042 d=31170.4 mm', 'SM_Kpp_1_Main#4091/SM_Kpp_1_Main#27904 d=31170.4 mm', 'SM_Kpp_1_Main#12042/SM_Kpp_1_Main#28032 d=31170.4 mm', 'SM_Kpp_1_Main#12042/SM_Kpp_1_Main#28033 d=31170.4 mm', 'SM_Kpp_1_Main#4091/SM_Kpp_1_Main#12001 d=30920.4 mm']",
+          "expected": "co-directional overlapping faces 5-20 mm apart (pairs beyond 20 mm: review)",
+          "source_pdf_pages": [
+            8,
+            29
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [
+            30
+          ],
+          "measured": 31.170401,
+          "threshold": 0.02,
+          "margin": -1557.5200499999999
+        }
+      ],
+      "status": "review"
+    },
+    {
+      "id": "V005",
+      "check": "только разрешённые шейдеры; карты, слоты и прозрачность по профилю",
+      "gate": "blocking",
+      "source_pdf_pages": [
+        29,
+        30,
+        32
+      ],
+      "findings": [
+        {
+          "name": "color attributes",
+          "status": "pass",
+          "observed": "SM_Kpp_1.fbx: 0 color attributes on 6 mesh(es)",
+          "expected": "no color attributes (reg 4.1.1: recommended to remove)",
+          "source_pdf_pages": [],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [],
+          "measured": 0,
+          "threshold": 0,
+          "margin": null,
+          "data": {
+            "objects": {}
+          }
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "V007",
+      "check": "внешние PNG; Diffuse + ERM + Normal на используемые UDIM, 8 бит/канал, размеры, DirectX normal, alpha правила, padding",
+      "gate": "blocking",
+      "source_pdf_pages": [
+        23,
+        30,
+        31,
+        34,
+        36
+      ],
+      "findings": [
+        {
+          "name": "VPM maps",
+          "status": "pass",
+          "observed": "21 PNG: names, 8-bit, sizes, alpha rules, sets, ERM order, DirectX green",
+          "expected": "reg p.30-31",
+          "source_pdf_pages": [
+            23,
+            30,
+            31
+          ],
+          "evidence": "ZIP root",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "V008",
+      "check": "один UV-канал, UDIM 1001..1100 подряд, без зеркальных островов, стекло только в 1001",
+      "gate": "blocking",
+      "source_pdf_pages": [
+        31,
+        39
+      ],
+      "findings": [
+        {
+          "name": "UDIM sequence",
+          "status": "pass",
+          "observed": "slot 1: [1001, 1002, 1003, 1004, 1005, 1006, 1007]",
+          "expected": "1001..1100 sequential without gaps",
+          "source_pdf_pages": [
+            31,
+            39
+          ],
+          "evidence": "",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        },
+        {
+          "name": "one UV channel",
+          "status": "pass",
+          "observed": "SM_Kpp_1.fbx: all meshes",
+          "expected": "1 UV channel",
+          "source_pdf_pages": [
+            31
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        },
+        {
+          "name": "mirrored islands",
+          "status": "pass",
+          "observed": "SM_Kpp_1.fbx: none",
+          "expected": "no mirrored UV",
+          "source_pdf_pages": [
+            31
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "V009",
+      "check": "плотность diffuse 512..1706 px/m кроме разрешённых исключений",
+      "gate": "blocking",
+      "source_pdf_pages": [
+        31,
+        32
+      ],
+      "findings": [
+        {
+          "name": "texel density",
+          "status": "pass",
+          "observed": "SM_Kpp_1.fbx: min 706.886 px/m at SM_Kpp_1_Main polygon 5133, tile 1003",
+          "expected": ">= 512 px/m",
+          "source_pdf_pages": [
+            31,
+            32
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [],
+          "measured": 706.8859703767986,
+          "threshold": 512,
+          "margin": 0.38063666089218473
+        },
+        {
+          "name": "texel density upper",
+          "status": "pass",
+          "observed": "SM_Kpp_1.fbx: max 1000.43 px/m at SM_Kpp_1_Main polygon 8814, tile 1003",
+          "expected": "<= 1706 px/m",
+          "source_pdf_pages": [
+            31,
+            32
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [],
+          "measured": 1000.4286792452491,
+          "threshold": 1706,
+          "margin": 0.4135822513216594
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "V010",
+      "check": "UCX для каждого основного FBX; выпуклые замкнутые непересекающиеся оболочки, без слотов, с лимитом треугольников",
+      "gate": "blocking",
+      "source_pdf_pages": [
+        34,
+        36,
+        37
+      ],
+      "findings": [
+        {
+          "name": "UCX present",
+          "status": "pass",
+          "observed": "SM_Kpp_1.fbx: 4 UCX mesh(es)",
+          "expected": "own UCX_ collision in each non-lighting geometry FBX",
+          "source_pdf_pages": [
+            36
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        },
+        {
+          "name": "UCX material slots",
+          "status": "pass",
+          "observed": "SM_Kpp_1.fbx: no slots",
+          "expected": "no material slots on UCX meshes",
+          "source_pdf_pages": [
+            36
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        },
+        {
+          "name": "UCX triangle budget",
+          "status": "pass",
+          "observed": "SM_Kpp_1.fbx: 48 UCX for 30484 model triangles",
+          "expected": "<= 15000",
+          "source_pdf_pages": [
+            36,
+            37
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        },
+        {
+          "name": "UCX intersections",
+          "status": "pass",
+          "observed": "SM_Kpp_1.fbx: no overlapping pairs among 4 pieces",
+          "expected": "no two UCX pieces intersect (reg p.36 §13.4)",
+          "source_pdf_pages": [
+            36
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        },
+        {
+          "name": "UCX intersections coverage",
+          "status": "pass",
+          "observed": "SM_Kpp_1.fbx: every neighbour pair evaluated",
+          "expected": "every neighbour pair evaluated: closed convex non-degenerate hulls (SAT) or bounding boxes apart",
+          "source_pdf_pages": [
+            36
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        },
+        {
+          "name": "UCX piece gap (advisory)",
+          "status": "pass",
+          "observed": "SM_Kpp_1.fbx: touch=0 below_band=0 in_band=5 wide=0 unmeasured=0; []",
+          "expected": "neighbour gap 2 mm - 1 cm inclusive [D098] (advisory, never a failure)",
+          "source_pdf_pages": [
+            36
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [
+            15
+          ],
+          "measured": 0.006000041961669922,
+          "threshold": 0.01,
+          "margin": 0.3999958038330078
+        },
+        {
+          "name": "UCX shape",
+          "status": "pass",
+          "observed": "SM_Kpp_1.fbx: 4 closed convex piece(s)",
+          "expected": "closed, convex, non-degenerate UCX pieces",
+          "source_pdf_pages": [
+            34,
+            36
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        },
+        {
+          "name": "UCX coverage and offsets",
+          "status": "not_run",
+          "observed": "coverage of the model, offsets",
+          "expected": "reg p.34-37",
+          "source_pdf_pages": [
+            34,
+            37
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        }
+      ],
+      "status": "not_run"
+    },
+    {
+      "id": "V011",
+      "check": "UTF-8, точные ключи, типы, обязательные значения, imageBase64, массив Glasses, соответствие имени материала",
+      "gate": "blocking",
+      "source_pdf_pages": [
+        26,
+        27,
+        51,
+        52,
+        53,
+        54,
+        55
+      ],
+      "findings": [],
+      "status": "not_run"
+    },
+    {
+      "id": "V012",
+      "check": "имена архива/FBX/mesh/material/texture и сквозная нумерация по соответствующему профилю",
+      "gate": "blocking",
+      "source_pdf_pages": [
+        33,
+        34,
+        35,
+        36
+      ],
+      "findings": [
+        {
+          "name": "archive name",
+          "status": "review",
+          "observed": "SM_Kpp_1",
+          "expected": "SM_{Address}; _001.. index for free-standing buildings",
+          "source_pdf_pages": [
+            33,
+            34,
+            35,
+            36
+          ],
+          "evidence": "",
+          "conflicts": [
+            20
+          ],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        },
+        {
+          "name": "MainGlass object",
+          "status": "pass",
+          "observed": "SM_Kpp_1.fbx: SM_Kpp_1_MainGlass",
+          "expected": "SM_Kpp_1_MainGlass",
+          "source_pdf_pages": [
+            33
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        },
+        {
+          "name": "MainGlass materials",
+          "status": "pass",
+          "observed": "SM_Kpp_1.fbx: ['M_Kpp_1_MainGlass_1']",
+          "expected": "M_Kpp_1_MainGlass_1..7",
+          "source_pdf_pages": [
+            34
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        },
+        {
+          "name": "mesh names",
+          "status": "pass",
+          "observed": "SM_Kpp_1.fbx: 2 name(s) follow the grammar",
+          "expected": "SM_{Address}_Main|MainGlass; <= 254 characters, A-Z a-z 0-9 _",
+          "source_pdf_pages": [
+            33,
+            34
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        },
+        {
+          "name": "UCX names",
+          "status": "pass",
+          "observed": "SM_Kpp_1.fbx: 4 name(s) follow the grammar",
+          "expected": "UCX_SM_{Address}_Main_001..999; <= 254 characters, A-Z a-z 0-9 _",
+          "source_pdf_pages": [
+            34
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        }
+      ],
+      "status": "review"
+    },
+    {
+      "id": "V013",
+      "check": "локальный origin 0/0/0, общий pivot, rotation 0 после reset; GeoJSON координаты МСК-77 совпадают с точкой вставки",
+      "gate": "blocking",
+      "source_pdf_pages": [
+        32,
+        33,
+        55
+      ],
+      "findings": [
+        {
+          "name": "origin at FBX zero",
+          "status": "pass",
+          "observed": "SM_Kpp_1.fbx: SM_Kpp_1_Main at [0.0, 0.0, 0.0]",
+          "expected": "local origin (0, 0, 0)",
+          "source_pdf_pages": [
+            32,
+            33
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        },
+        {
+          "name": "pivot at geometric centre",
+          "status": "pass",
+          "observed": "SM_Kpp_1.fbx: X/Y offset [2.34, 1.11] %",
+          "expected": "<= 10 % of the size",
+          "source_pdf_pages": [
+            32,
+            33
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        },
+        {
+          "name": "shared pivot",
+          "status": "pass",
+          "observed": "SM_Kpp_1.fbx: all meshes",
+          "expected": "every mesh shares the Main origin within 1 mm (UCX exempt)",
+          "source_pdf_pages": [
+            32,
+            33
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        },
+        {
+          "name": "MSK-77 point",
+          "status": "not_run",
+          "observed": "GeoJSON point vs survey coordinates and project zero",
+          "expected": "reg p.32-33, p.55",
+          "source_pdf_pages": [
+            32,
+            33,
+            55
+          ],
+          "evidence": "SM_Kpp_1.fbx",
+          "conflicts": [],
+          "measured": null,
+          "threshold": null,
+          "margin": null
+        }
+      ],
+      "status": "not_run"
+    },
+    {
+      "id": "V015",
+      "check": "силуэт, этажи, фасады, материалы, оконные типы, первый этаж, крыша, благоустройство совпадают с утверждённым проектом",
+      "gate": "manual_review",
+      "source_pdf_pages": [
+        24,
+        28,
+        29
+      ],
+      "findings": [],
+      "status": "not_run"
+    },
+    {
+      "id": "V016",
+      "check": "проходы/арки/дворы свободны, расстояние коллизий до поверхностей соответствует высотной зоне",
+      "gate": "manual_review",
+      "source_pdf_pages": [
+        36,
+        37
+      ],
+      "findings": [],
+      "status": "not_run"
+    },
+    {
+      "id": "V017",
+      "check": "сверка точки вставки, отметки 0 и геопривязки с утверждённым DWG/СПОЗУ; у ВПМ допуск 0.5 м",
+      "gate": "manual_review",
+      "source_pdf_pages": [
+        32,
+        33,
+        55
+      ],
+      "findings": [],
+      "status": "not_run"
+    }
+  ],
+  "notes": [
+    "scene readback: SM_Kpp_1.fbx in Blender 5.1.2"
+  ],
+  "standards_sha256": "533991c8de3a319f46f7da08d1d23ccf79dd9e910fa4a376513d46a474d44058",
+  "code_commit": "edbb7997ec92b640cf2bcb0a9e7238c1114e2504"
+}

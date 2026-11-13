@@ -108,6 +108,62 @@ bpy.ops.wm.save_as_mainfile(filepath={str(reset)!r})
     assert 'shape key' in combined and 'unmapped material' in combined and 'size/pivot mismatch' in combined
 
 
+@pytest.mark.parametrize('mutation,token', [
+    ("m.color_attributes.new('junk', 'FLOAT_COLOR', 'POINT')", 'junk'),
+    ("m.attributes.new('junk', 'FLOAT', 'POINT')", 'junk'),
+    ("m.attributes.new('.private_junk', 'BOOLEAN', 'FACE')", '.private_junk'),
+    ("m.polygons[0].hide = True", 'hidden polygon: 0'),
+    ("m.edges[0].hide = True", 'hidden edge: 0'),
+    ("m.vertices[0].hide = True", 'hidden vertex: 0'),
+    ("o['leftover'] = 1", 'leftover'),
+    ("m['leftover'] = 1", 'leftover'),
+    ("a['leftover'] = 1", 'leftover'),
+    ("m.attributes.new('position_like', 'FLOAT_VECTOR', 'POINT')", 'position_like'),
+])
+def test_real_blender_rejects_leftovers_with_reset(tmp_path, mutation, token):
+    """Synthetic native assets: do not modify the published W01 etalon."""
+    if not BLENDER.is_file():
+        pytest.skip('Blender 5.1.2 unavailable')
+    clean, dirty, reset = [tmp_path / (name + '.blend') for name in ('clean', 'dirty', 'reset')]
+    code = f'''
+import bpy
+bpy.ops.wm.read_factory_settings(use_empty=True)
+s = bpy.context.scene
+s.unit_settings.system = 'METRIC'
+s.unit_settings.scale_length = 1
+m = bpy.data.meshes.new('WIN-01_npm_frame')
+m.from_pydata([(0,0,0),(1,0,0),(1,0,2),(0,0,2)], [], [(0,1,2,3)])
+o = bpy.data.objects.new(m.name, m)
+s.collection.objects.link(o)
+a = bpy.data.materials.new('matid_1')
+a['agr_material_id'] = 1
+m.materials.append(a)
+m.uv_layers.new(name='UVMap')
+print('ATTRIBUTE_CONTROL', [(x.name, x.data_type, x.domain) for x in m.attributes])
+bpy.ops.wm.save_as_mainfile(filepath={str(clean)!r})
+{mutation}
+bpy.ops.wm.save_as_mainfile(filepath={str(dirty)!r})
+bpy.ops.wm.open_mainfile(filepath={str(clean)!r}, load_ui=False, use_scripts=False)
+bpy.ops.wm.save_as_mainfile(filepath={str(reset)!r})
+'''
+    result = subprocess.run([str(BLENDER), '-b', '--factory-startup', '--disable-autoexec',
+                             '--python-exit-code', '3', '--python-expr', code],
+                            capture_output=True, text=True, timeout=120)
+    assert result.returncode == 0, result.stdout[-2000:] + result.stderr
+    checker = module()
+    scenes = checker.native_inspect([clean, dirty, reset], BLENDER)
+    expected = {'objects': ['WIN-01_npm_frame'], 'triangles': 2, 'size_m': [1, 0, 2],
+                'materials': [{'id': 1, 'name': 'matid_1'}]}
+    for path in (clean, reset):
+        assert checker.scene_errors(scenes[str(path)], expected, 'bottom-left') == [], result.stdout
+    for _ in range(2):
+        errors = checker.scene_errors(scenes[str(dirty)], expected, 'bottom-left')
+        assert errors and token in ' '.join(errors), (errors, result.stdout)
+    scenes[str(dirty)]['objects'][0]['materials'][0]['id'] = True
+    combined = ' '.join(checker.scene_errors(scenes[str(dirty)], expected, 'flora-bbox-plus-0.1'))
+    assert token in combined and 'unmapped material' in combined and 'size/pivot mismatch' in combined
+
+
 def test_real_windows_migration_and_fresh_cli(tmp_path):
     import os
     import sys

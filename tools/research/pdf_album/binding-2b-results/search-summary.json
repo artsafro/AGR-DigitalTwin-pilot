@@ -1,0 +1,17 @@
+{
+  "counts": {
+    "G:/Мой диск": 22,
+    "B:/": 834,
+    "D:/": 1981,
+    "C:/": 32219
+  },
+  "completed_roots": [
+    "G:/Мой диск",
+    "B:/",
+    "D:/"
+  ],
+  "bounded_root": "C:/ stopped after a second plot-ready DIMENSION oracle was verified",
+  "errors": 707,
+  "initial_attempt": "180s foreground timeout; no completed inventory, replaced by streamed search",
+  "command": "uv run python search_cad.py"
+}
