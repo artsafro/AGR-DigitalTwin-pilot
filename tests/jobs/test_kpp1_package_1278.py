@@ -120,6 +120,60 @@ def test_fresh_process_alias_refused_without_writes(tmp_path):
     assert snapshot(src) == before
 
 
+def node(name, props, children=(), start=27):
+    import struct
+    def prop(value):
+        if isinstance(value, bytes):
+            return b'S' + struct.pack('<I', len(value)) + value
+        return b'D' + struct.pack('<d', value)
+    raw = b''.join(prop(p) for p in props)
+    body = bytes([len(name)]) + name + raw
+    pos = start + 12 + len(body)
+    for child in children:
+        blob = node(*child, start=pos)
+        body += blob
+        pos += len(blob)
+    if children:
+        body += bytes(13)
+    return struct.pack('<III', start + 12 + len(body), len(props), len(raw)) + body
+
+
+def synthetic_fbx():
+    import struct
+    return (b'Kaydara FBX Binary  \x00\x1a\x00' + struct.pack('<I', 7400)
+            + node(b'Objects', [], [(b'Material', [b'M_Kpp_1_MainGlass_1\x00\x01Material'], [
+                (b'Properties70', [], [(b'P', [b'Opacity', b'Number', b'', b'A', .3]),
+                                       (b'P', [b'TransparencyFactor', b'Number', b'', b'A', .7])])]),
+                (b'Geometry', [b'untouched vertices UV normals material indices'])]) + bytes(13))
+
+
+def test_fix_npm_glass_changes_only_material_properties():
+    m = load()
+    data = synthetic_fbx()
+    fixed = m.fix_npm_glass(data)
+    assert b'M_Glass_01\x00\x01Material' in fixed
+    assert b'M_Kpp_1_MainGlass_1' not in fixed
+    assert b'untouched vertices UV normals material indices' in fixed
+    import struct
+    assert fixed.count(b'D' + struct.pack('<d', .5)) == 2
+    assert data == synthetic_fbx()
+
+
+@pytest.mark.parametrize('data', [b'', b'partial', b'NaN', b'Infinity', bytes(27)])
+def test_glass_fix_rejects_unsupported_fbx(data):
+    m = load()
+    with pytest.raises(ValueError):
+        m.fix_npm_glass(data)
+
+
+def test_geojson_three_literal_decimals_without_changing_values():
+    m = load()
+    data = (ROOT / 'jobs/KPP1/site-1255/SM_Kpp_1.geojson').read_bytes()
+    fixed = m.fix_geojson(data)
+    assert b'-9581.270' in fixed
+    assert json.loads(fixed) == json.loads(data)
+
+
 def test_production_pins_match_approved_site_manifest():
     m = load()
     manifest = (ROOT / 'jobs/KPP1/site-1255/evidence-SHA256SUMS.txt').read_text(encoding='utf-8')
