@@ -41,7 +41,7 @@ Read on demand, one line each. Read the domain file that matches the task before
 - AGR knowledge base (Russian, read-only): `docs/agr/INDEX.md` only.
 - Code map, checks and plugin configuration: `docs/agents/agents-reference.md`.
 - Production task (NPM / VPM, OKS / Ground / MAF / Flora / UCX): name its cell in `docs/scenarios/scenarios.json` and follow the `scenario` skill.
-- Modelling or reducing a model: read `docs/procedure/TASK_TO_MODEL.md` (fixed gates, free path, evidence checklist).
+- Model work: `docs/procedure/TASK_TO_MODEL.md` (gates); node edits: [R1–R7](docs/procedure/NODE_RECIPES.md).
 - Task skills: load the matching `.agents/skills/*/SKILL.md` and follow it step by step (details: `docs/agents/agents-reference.md#skills`).
 
 A rule question ("is there a rule for ...?") is looked up in this order, and the first hit wins:
