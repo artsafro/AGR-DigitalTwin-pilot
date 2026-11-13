@@ -59,8 +59,8 @@
   ],
   "source_preservation": "all source hashes equal before/after",
   "manifest": {
-    "path": "faces.csv",
-    "sha256": "7dc8d9af7e6568dd61352468606eedfbf3ef75c76dcc6291fac2e3b6b547cd16",
+    "path": "faces.json",
+    "sha256": "f6bad16b50b6dda50dd3aecf69c755bb2c6a516925e71bf81645440492296106",
     "faces": 2015,
     "proposed_brick_faces": 771,
     "proposed_protected_faces": 1244,
