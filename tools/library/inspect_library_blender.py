@@ -25,9 +25,44 @@ def native_min_spacing(mesh):
                if index != vertex.index)
 
 
+def mesh_extras(mesh):
+    """Exact library/1 whitelist; internal-looking names are not automatically safe."""
+    standard = {
+        ('position', 'FLOAT_VECTOR', 'POINT'),
+        ('.edge_verts', 'INT32_2D', 'EDGE'),
+        ('.corner_vert', 'INT', 'CORNER'), ('.corner_edge', 'INT', 'CORNER'),
+        ('material_index', 'INT', 'FACE'),
+        ('sharp_face', 'BOOLEAN', 'FACE'), ('sharp_edge', 'BOOLEAN', 'EDGE'),
+        ('.select_vert', 'BOOLEAN', 'POINT'), ('.select_edge', 'BOOLEAN', 'EDGE'),
+        ('.select_poly', 'BOOLEAN', 'FACE'),
+    }
+    # UV data is already checked separately (exactly one finite layer).
+    standard.update((uv.name, 'FLOAT2', 'CORNER') for uv in mesh.uv_layers)
+    extras = []
+    colors = {a.name for a in mesh.color_attributes}
+    for attribute in mesh.attributes:
+        signature = (attribute.name, attribute.data_type, attribute.domain)
+        if attribute.name in colors or signature not in standard:
+            kind = 'color attribute' if attribute.name in colors else 'attribute'
+            extras.append(f'mesh {mesh.name}: {kind}: {signature!r}')
+    for kind, elements in [('polygon', mesh.polygons), ('edge', mesh.edges), ('vertex', mesh.vertices)]:
+        for element in elements:
+            if element.hide:
+                extras.append(f'mesh {mesh.name}: hidden {kind}: {element.index}')
+    return extras
+
+
 def inventory():
     scene = bpy.context.scene
-    orphans, unsupported, objects = [], [], []
+    orphans, unsupported, objects, extras = [], [], [], []
+    for kind, blocks, whitelist in [('object', bpy.data.objects, set()),
+                                    ('mesh', bpy.data.meshes, set()),
+                                    ('material', bpy.data.materials, {'agr_material_id'})]:
+        for block in blocks:
+            extras.extend(f'{kind} {block.name}: custom property: {key}'
+                          for key in sorted(block.keys()) if key not in whitelist)
+    for mesh in bpy.data.meshes:
+        extras.extend(mesh_extras(mesh))
     allowed = {'meshes', 'materials', 'images', 'collections'}
     blocks = ['meshes', 'materials', 'images', 'collections', 'cameras', 'lights', 'curves', 'armatures',
               'actions', 'node_groups', 'worlds', 'textures', 'texts', 'speakers', 'lattices',
@@ -91,7 +126,7 @@ def inventory():
             row['duplicate_faces'] = len(signatures) - len(set(signatures))
         objects.append(row)
     return {'units': scene.unit_settings.system, 'scale_length': scene.unit_settings.scale_length,
-            'orphans': orphans, 'unsupported': unsupported, 'objects': objects}
+            'orphans': orphans, 'unsupported': unsupported, 'extras': extras, 'objects': objects}
 
 
 def main():

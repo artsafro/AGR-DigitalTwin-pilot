@@ -53,6 +53,11 @@ def scene_errors(scene, expected, pivot):
     import math
     errors = []
     try:
+        extras = scene['extras']
+        if not isinstance(extras, list) or any(not isinstance(item, str) or not item for item in extras):
+            errors.append('scene: invalid extras inventory')
+        elif extras:
+            errors.append('scene extras: ' + str(extras))
         if scene['units'] != 'METRIC' or scene['scale_length'] != 1:
             errors.append('scene: expected metres, scale_length=1')
         if scene['orphans'] or scene['unsupported']:
