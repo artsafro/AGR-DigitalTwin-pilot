@@ -1,0 +1,1765 @@
+{
+  "schema": "album-model-audit-input/1",
+  "trust_rule": "D271",
+  "frame": {
+    "name": "KPP1 Revit-project local metres; south y=-0.330, u=+X, z=+Z",
+    "placement": "D262 unchanged: R1 local + [14.655,5.355,0] = Revit project. Common site transform Rz(-6.053044176714781 deg), origin [8056.143933445407,-9581.26989822931,171.050]; not a new survey fit. Entrance orientation not independently confirmed."
+  },
+  "match_tolerance_m": 0.1,
+  "pdf": [
+    {
+      "id": "L01-p1-l0001",
+      "category": "level",
+      "mark": "p1-l0001",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": 2.1,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          45.90287780761719,
+          258.6946716308594,
+          67.84469604492188,
+          268.2539978027344
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0002",
+      "category": "level",
+      "mark": "p1-l0002",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": 2.7,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          45.14277648925781,
+          241.14120483398438,
+          67.0845947265625,
+          250.70053100585938
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0003",
+      "category": "level",
+      "mark": "p1-l0003",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": 3.3,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          46.18455505371094,
+          223.58773803710938,
+          68.12637329101562,
+          233.14706420898438
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0004",
+      "category": "level",
+      "mark": "p1-l0004",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": 4.85,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          46.03045654296875,
+          178.24130249023438,
+          67.97227478027344,
+          187.80062866210938
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0005",
+      "category": "level",
+      "mark": "p1-l0005",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": 6.65,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          46.386837005615234,
+          154.72409057617188,
+          68.32865905761719,
+          164.28341674804688
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0006",
+      "category": "level",
+      "mark": "blue-main-band-top",
+      "facade": "south-1-4",
+      "position_m": [
+        13.5,
+        7.1
+      ],
+      "value": 7.1,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          47.07022476196289,
+          112.41586303710938,
+          69.01204681396484,
+          121.97518157958984
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0007",
+      "category": "level",
+      "mark": "p1-l0007",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": 8.1,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          47.07022476196289,
+          83.16006469726562,
+          69.01204681396484,
+          92.7193832397461
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0008",
+      "category": "level",
+      "mark": "parapet-cap-top",
+      "facade": "south-1-4",
+      "position_m": [
+        13.5,
+        8.65
+      ],
+      "value": 8.65,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          47.12442398071289,
+          67.06936645507812,
+          69.06624603271484,
+          76.6286849975586
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0009",
+      "category": "level",
+      "mark": "p1-l0009",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": 0.9,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          45.47399139404297,
+          293.8016052246094,
+          67.41580963134766,
+          303.3609313964844
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0010",
+      "category": "level",
+      "mark": "p1-l0010",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": -0.03,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          45.17448043823242,
+          321.0094909667969,
+          65.43409729003906,
+          330.5688171386719
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0011",
+      "category": "level",
+      "mark": "p1-l0011",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": -0.3,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          45.01221466064453,
+          358.0516662597656,
+          65.2718276977539,
+          367.6109924316406
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0012",
+      "category": "level",
+      "mark": "p1-l0012",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": -0.1,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          1120.076416015625,
+          352.2005310058594,
+          1140.336181640625,
+          361.7598571777344
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0013",
+      "category": "level",
+      "mark": "p1-l0013",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": 2.1,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          1119.7803955078125,
+          258.6946716308594,
+          1141.722412109375,
+          268.2539978027344
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0014",
+      "category": "level",
+      "mark": "p1-l0014",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": -0.03,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          1118.9993896484375,
+          321.0094909667969,
+          1139.2591552734375,
+          330.5688171386719
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0015",
+      "category": "level",
+      "mark": "p1-l0015",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": 4.85,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          1118.6683349609375,
+          207.38449096679688,
+          1140.6103515625,
+          216.94381713867188
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0016",
+      "category": "level",
+      "mark": "p1-l0016",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": 5.1,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          1120.530517578125,
+          170.92739868164062,
+          1142.4725341796875,
+          180.48672485351562
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0017",
+      "category": "level",
+      "mark": "p1-l0017",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": 6.4,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          1117.989013671875,
+          132.89486694335938,
+          1139.9310302734375,
+          142.45419311523438
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0018",
+      "category": "level",
+      "mark": "p1-l0018",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": 8.65,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          1118.9993896484375,
+          96.21255493164062,
+          1140.94140625,
+          105.7718734741211
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0019",
+      "category": "level",
+      "mark": "p1-l0019",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": 8.9,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          1119.225830078125,
+          59.75545883178711,
+          1141.1678466796875,
+          69.31478118896484
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0020",
+      "category": "level",
+      "mark": "p1-l0020",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": 6.65,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          1078.007568359375,
+          125.58096313476562,
+          1099.9495849609375,
+          135.14028930664062
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0021",
+      "category": "level",
+      "mark": "p1-l0021",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": 7.1,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          1040.8116455078125,
+          112.41586303710938,
+          1062.753662109375,
+          121.97518157958984
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0022",
+      "category": "level",
+      "mark": "p1-l0022",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": 2.7,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          1119.1934814453125,
+          241.14120483398438,
+          1141.135498046875,
+          250.70053100585938
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0023",
+      "category": "level",
+      "mark": "p1-l0023",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": 0.9,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          1118.412109375,
+          293.8016052246094,
+          1140.3541259765625,
+          303.3609313964844
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0024",
+      "category": "level",
+      "mark": "p1-l0024",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": 3.3,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          1118.9329833984375,
+          223.58773803710938,
+          1140.875,
+          233.14706420898438
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0025",
+      "category": "level",
+      "mark": "p1-l0025",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": 1.2,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          495.2137145996094,
+          285.0248718261719,
+          517.155517578125,
+          294.5841979980469
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0026",
+      "category": "level",
+      "mark": "p1-l0026",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": 3.0,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": false,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          653.3400268554688,
+          211.30484008789062,
+          675.28173828125,
+          220.86416625976562
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0027",
+      "category": "level",
+      "mark": "p1-l0027",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": 3.9,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": false,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          1076.80029296875,
+          206.03427124023438,
+          1098.7423095703125,
+          215.59359741210938
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0028",
+      "category": "level",
+      "mark": "p1-l0028",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": 0.0,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          984.542236328125,
+          320.1318054199219,
+          1002.4613037109375,
+          329.6911315917969
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0029",
+      "category": "level",
+      "mark": "p1-l0029",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": 7.1,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          690.3826293945312,
+          112.41586303710938,
+          712.3243408203125,
+          121.97518157958984
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0030",
+      "category": "level",
+      "mark": "p1-l0030",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": 1.9,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          897.9417724609375,
+          264.5458068847656,
+          919.8834838867188,
+          274.1051330566406
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "L01-p1-l0031",
+      "category": "level",
+      "mark": "p1-l0031",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": 9.5,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          429.7106018066406,
+          42.20199203491211,
+          451.6524658203125,
+          51.761314392089844
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Written level is preserved. Only separately identified band/cap endpoints are compared; no nearest-height matching."
+    },
+    {
+      "id": "axis-1",
+      "category": "axis",
+      "mark": "1",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": null,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": false,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          150.79971313476562,
+          394,
+          166.79971313476562,
+          416
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Axis label read deterministically; no labelled grid geometry in either FBX. Position in metres unresolved."
+    },
+    {
+      "id": "axis-4",
+      "category": "axis",
+      "mark": "4",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": null,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": false,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",
+        "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+        "page": 1,
+        "sheet": "KPP1 L01 derived facade",
+        "bbox": [
+          940.7054748535156,
+          394,
+          956.7054748535156,
+          416
+        ],
+        "method": "existing album.bind_album vector-symbol/text extraction"
+      },
+      "note": "Axis label read deterministically; no labelled grid geometry in either FBX. Position in metres unresolved."
+    },
+    {
+      "id": "south-clear-sash-count",
+      "category": "opening_count",
+      "mark": "audit-group:clear-sash",
+      "facade": "south-1-4",
+      "position_m": [
+        13.5,
+        0
+      ],
+      "value": 12,
+      "unit": "count",
+      "tolerance": 0,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\album.pdf",
+        "sha256": "ca9bfc120179395d4be1d423468d1970f803fd50ea26fdec97ae9c4cef2afd6e",
+        "page": 25,
+        "sheet": "TEC26 Central checkpoint",
+        "bbox": [
+          230,
+          220,
+          853,
+          419
+        ],
+        "method": "RapidOCR PP-OCRv5 + agent visual interpretation (not independent expert reference)"
+      },
+      "note": "Count=len(12 explicit image annotations), not independent expert truth. Sash audit IDs are not source marks. Membership: G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003/pdf-sash-annotations.json. R1 glass components are counted separately; extra components are a diagnostic discrepancy, not an automatic model fix."
+    },
+    {
+      "id": "south-opening-marks",
+      "category": "mark",
+      "mark": "unread-original-marks",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": null,
+      "unit": "text",
+      "tolerance": 0,
+      "verified": false,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\album.pdf",
+        "sha256": "ca9bfc120179395d4be1d423468d1970f803fd50ea26fdec97ae9c4cef2afd6e",
+        "page": 25,
+        "sheet": "TEC26 Central checkpoint",
+        "bbox": [
+          230,
+          220,
+          853,
+          419
+        ],
+        "method": "RapidOCR PP-OCRv5 + agent visual interpretation (not independent expert reference)"
+      },
+      "note": "No legible individual opening marks in raster facade; audit IDs must not be passed off as PDF marks."
+    },
+    {
+      "id": "south-opening-sizes",
+      "category": "opening_size",
+      "mark": "uncalibrated",
+      "facade": "south-1-4",
+      "position_m": null,
+      "value": null,
+      "unit": "m",
+      "tolerance": 0.01,
+      "verified": false,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\album.pdf",
+        "sha256": "ca9bfc120179395d4be1d423468d1970f803fd50ea26fdec97ae9c4cef2afd6e",
+        "page": 25,
+        "sheet": "TEC26 Central checkpoint",
+        "bbox": [
+          230,
+          220,
+          853,
+          419
+        ],
+        "method": "RapidOCR PP-OCRv5 + agent visual interpretation (not independent expert reference)"
+      },
+      "note": "Pending #1302 calibrated album values; unknown scale, no opening sizes measured or inferred."
+    },
+    {
+      "id": "p25-finish-1",
+      "category": "finish",
+      "mark": "1",
+      "facade": "schedule-p25-26",
+      "position_m": null,
+      "value": "RAL 5015",
+      "unit": "text",
+      "tolerance": 0,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\album.pdf",
+        "sha256": "ca9bfc120179395d4be1d423468d1970f803fd50ea26fdec97ae9c4cef2afd6e",
+        "page": 25,
+        "sheet": "TEC26 Central checkpoint",
+        "bbox": [
+          988.12,
+          552.0,
+          1019.56,
+          561.84
+        ],
+        "method": "RapidOCR PP-OCRv5 + agent visual interpretation (not independent expert reference)"
+      },
+      "note": "OCR literal schedule row 1; evidence finish-ocr.json. Only row8 has a physically identified east-stair query region u=29,z=2m; other positions are unknown. No whole-facade finish binding is inferred."
+    },
+    {
+      "id": "p25-finish-2",
+      "category": "finish",
+      "mark": "2",
+      "facade": "schedule-p25-26",
+      "position_m": null,
+      "value": "RAL 7047",
+      "unit": "text",
+      "tolerance": 0,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\album.pdf",
+        "sha256": "ca9bfc120179395d4be1d423468d1970f803fd50ea26fdec97ae9c4cef2afd6e",
+        "page": 25,
+        "sheet": "TEC26 Central checkpoint",
+        "bbox": [
+          987.64,
+          571.92,
+          1019.56,
+          582.48
+        ],
+        "method": "RapidOCR PP-OCRv5 + agent visual interpretation (not independent expert reference)"
+      },
+      "note": "OCR literal schedule row 2; evidence finish-ocr.json. Only row8 has a physically identified east-stair query region u=29,z=2m; other positions are unknown. No whole-facade finish binding is inferred."
+    },
+    {
+      "id": "p25-finish-3",
+      "category": "finish",
+      "mark": "3",
+      "facade": "schedule-p25-26",
+      "position_m": null,
+      "value": "RAL 9016",
+      "unit": "text",
+      "tolerance": 0,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\album.pdf",
+        "sha256": "ca9bfc120179395d4be1d423468d1970f803fd50ea26fdec97ae9c4cef2afd6e",
+        "page": 25,
+        "sheet": "TEC26 Central checkpoint",
+        "bbox": [
+          988.12,
+          597.6,
+          1019.3199999999999,
+          606.96
+        ],
+        "method": "RapidOCR PP-OCRv5 + agent visual interpretation (not independent expert reference)"
+      },
+      "note": "OCR literal schedule row 3; evidence finish-ocr.json. Only row8 has a physically identified east-stair query region u=29,z=2m; other positions are unknown. No whole-facade finish binding is inferred."
+    },
+    {
+      "id": "p25-finish-4",
+      "category": "finish",
+      "mark": "4",
+      "facade": "schedule-p25-26",
+      "position_m": null,
+      "value": "RAL 7004",
+      "unit": "text",
+      "tolerance": 0,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\album.pdf",
+        "sha256": "ca9bfc120179395d4be1d423468d1970f803fd50ea26fdec97ae9c4cef2afd6e",
+        "page": 25,
+        "sheet": "TEC26 Central checkpoint",
+        "bbox": [
+          988.12,
+          621.84,
+          1019.0799999999999,
+          631.2
+        ],
+        "method": "RapidOCR PP-OCRv5 + agent visual interpretation (not independent expert reference)"
+      },
+      "note": "OCR literal schedule row 4; evidence finish-ocr.json. Only row8 has a physically identified east-stair query region u=29,z=2m; other positions are unknown. No whole-facade finish binding is inferred."
+    },
+    {
+      "id": "p25-finish-5",
+      "category": "finish",
+      "mark": "5",
+      "facade": "schedule-p25-26",
+      "position_m": null,
+      "value": "RAL 7004",
+      "unit": "text",
+      "tolerance": 0,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\album.pdf",
+        "sha256": "ca9bfc120179395d4be1d423468d1970f803fd50ea26fdec97ae9c4cef2afd6e",
+        "page": 25,
+        "sheet": "TEC26 Central checkpoint",
+        "bbox": [
+          987.88,
+          642.24,
+          1019.3199999999999,
+          652.3199999999999
+        ],
+        "method": "RapidOCR PP-OCRv5 + agent visual interpretation (not independent expert reference)"
+      },
+      "note": "OCR literal schedule row 5; evidence finish-ocr.json. Only row8 has a physically identified east-stair query region u=29,z=2m; other positions are unknown. No whole-facade finish binding is inferred."
+    },
+    {
+      "id": "p25-finish-6",
+      "category": "finish",
+      "mark": "6",
+      "facade": "schedule-p25-26",
+      "position_m": null,
+      "value": "RAL 9016",
+      "unit": "text",
+      "tolerance": 0,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\album.pdf",
+        "sha256": "ca9bfc120179395d4be1d423468d1970f803fd50ea26fdec97ae9c4cef2afd6e",
+        "page": 25,
+        "sheet": "TEC26 Central checkpoint",
+        "bbox": [
+          988.12,
+          667.44,
+          1019.3199999999999,
+          676.56
+        ],
+        "method": "RapidOCR PP-OCRv5 + agent visual interpretation (not independent expert reference)"
+      },
+      "note": "OCR literal schedule row 6; evidence finish-ocr.json. Only row8 has a physically identified east-stair query region u=29,z=2m; other positions are unknown. No whole-facade finish binding is inferred."
+    },
+    {
+      "id": "p25-finish-7",
+      "category": "finish",
+      "mark": "7",
+      "facade": "schedule-p25-26",
+      "position_m": null,
+      "value": "RAL 7004",
+      "unit": "text",
+      "tolerance": 0,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\album.pdf",
+        "sha256": "ca9bfc120179395d4be1d423468d1970f803fd50ea26fdec97ae9c4cef2afd6e",
+        "page": 25,
+        "sheet": "TEC26 Central checkpoint",
+        "bbox": [
+          987.88,
+          691.6800000000001,
+          1019.3199999999999,
+          701.52
+        ],
+        "method": "RapidOCR PP-OCRv5 + agent visual interpretation (not independent expert reference)"
+      },
+      "note": "OCR literal schedule row 7; evidence finish-ocr.json. Only row8 has a physically identified east-stair query region u=29,z=2m; other positions are unknown. No whole-facade finish binding is inferred."
+    },
+    {
+      "id": "p25-finish-8",
+      "category": "finish",
+      "mark": "8",
+      "facade": "schedule-p25-26",
+      "position_m": [
+        29.0,
+        2.0
+      ],
+      "value": "RAL 5015",
+      "unit": "text",
+      "tolerance": 0,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\album.pdf",
+        "sha256": "ca9bfc120179395d4be1d423468d1970f803fd50ea26fdec97ae9c4cef2afd6e",
+        "page": 25,
+        "sheet": "TEC26 Central checkpoint",
+        "bbox": [
+          988.12,
+          710.64,
+          1019.3199999999999,
+          719.76
+        ],
+        "method": "RapidOCR PP-OCRv5 + agent visual interpretation (not independent expert reference)"
+      },
+      "note": "OCR literal schedule row 8; evidence finish-ocr.json. Only row8 has a physically identified east-stair query region u=29,z=2m; other positions are unknown. No whole-facade finish binding is inferred."
+    },
+    {
+      "id": "p25-finish-9",
+      "category": "finish",
+      "mark": "9",
+      "facade": "schedule-p25-26",
+      "position_m": null,
+      "value": "RAL 1021",
+      "unit": "text",
+      "tolerance": 0,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\album.pdf",
+        "sha256": "ca9bfc120179395d4be1d423468d1970f803fd50ea26fdec97ae9c4cef2afd6e",
+        "page": 25,
+        "sheet": "TEC26 Central checkpoint",
+        "bbox": [
+          988.12,
+          726.96,
+          1018.8399999999999,
+          736.08
+        ],
+        "method": "RapidOCR PP-OCRv5 + agent visual interpretation (not independent expert reference)"
+      },
+      "note": "OCR literal schedule row 9; evidence finish-ocr.json. Only row8 has a physically identified east-stair query region u=29,z=2m; other positions are unknown. No whole-facade finish binding is inferred."
+    },
+    {
+      "id": "p25-finish-10",
+      "category": "finish",
+      "mark": "10",
+      "facade": "schedule-p25-26",
+      "position_m": null,
+      "value": "RAL 7004",
+      "unit": "text",
+      "tolerance": 0,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\album.pdf",
+        "sha256": "ca9bfc120179395d4be1d423468d1970f803fd50ea26fdec97ae9c4cef2afd6e",
+        "page": 25,
+        "sheet": "TEC26 Central checkpoint",
+        "bbox": [
+          988.12,
+          745.44,
+          1019.3199999999999,
+          754.56
+        ],
+        "method": "RapidOCR PP-OCRv5 + agent visual interpretation (not independent expert reference)"
+      },
+      "note": "OCR literal schedule row 10; evidence finish-ocr.json. Only row8 has a physically identified east-stair query region u=29,z=2m; other positions are unknown. No whole-facade finish binding is inferred."
+    },
+    {
+      "id": "p26-finish-1",
+      "category": "finish",
+      "mark": "1",
+      "facade": "schedule-p25-26",
+      "position_m": null,
+      "value": "RAL 5015",
+      "unit": "text",
+      "tolerance": 0,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\album.pdf",
+        "sha256": "ca9bfc120179395d4be1d423468d1970f803fd50ea26fdec97ae9c4cef2afd6e",
+        "page": 26,
+        "sheet": "TEC26 Central checkpoint",
+        "bbox": [
+          989.56,
+          556.32,
+          1020.52,
+          566.4
+        ],
+        "method": "RapidOCR PP-OCRv5 + agent visual interpretation (not independent expert reference)"
+      },
+      "note": "OCR literal schedule row 1; evidence finish-ocr-p26.json. Only row8 has a physically identified east-stair query region u=29,z=2m; other positions are unknown. No whole-facade finish binding is inferred."
+    },
+    {
+      "id": "p26-finish-2",
+      "category": "finish",
+      "mark": "2",
+      "facade": "schedule-p25-26",
+      "position_m": null,
+      "value": "RAL 7047",
+      "unit": "text",
+      "tolerance": 0,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\album.pdf",
+        "sha256": "ca9bfc120179395d4be1d423468d1970f803fd50ea26fdec97ae9c4cef2afd6e",
+        "page": 26,
+        "sheet": "TEC26 Central checkpoint",
+        "bbox": [
+          989.3199999999999,
+          575.76,
+          1020.52,
+          586.56
+        ],
+        "method": "RapidOCR PP-OCRv5 + agent visual interpretation (not independent expert reference)"
+      },
+      "note": "OCR literal schedule row 2; evidence finish-ocr-p26.json. Only row8 has a physically identified east-stair query region u=29,z=2m; other positions are unknown. No whole-facade finish binding is inferred."
+    },
+    {
+      "id": "p26-finish-3",
+      "category": "finish",
+      "mark": "3",
+      "facade": "schedule-p25-26",
+      "position_m": null,
+      "value": "RAL 9016",
+      "unit": "text",
+      "tolerance": 0,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\album.pdf",
+        "sha256": "ca9bfc120179395d4be1d423468d1970f803fd50ea26fdec97ae9c4cef2afd6e",
+        "page": 26,
+        "sheet": "TEC26 Central checkpoint",
+        "bbox": [
+          989.8,
+          601.2,
+          1020.28,
+          610.56
+        ],
+        "method": "RapidOCR PP-OCRv5 + agent visual interpretation (not independent expert reference)"
+      },
+      "note": "OCR literal schedule row 3; evidence finish-ocr-p26.json. Only row8 has a physically identified east-stair query region u=29,z=2m; other positions are unknown. No whole-facade finish binding is inferred."
+    },
+    {
+      "id": "p26-finish-4",
+      "category": "finish",
+      "mark": "4",
+      "facade": "schedule-p25-26",
+      "position_m": null,
+      "value": "RAL 7004",
+      "unit": "text",
+      "tolerance": 0,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\album.pdf",
+        "sha256": "ca9bfc120179395d4be1d423468d1970f803fd50ea26fdec97ae9c4cef2afd6e",
+        "page": 26,
+        "sheet": "TEC26 Central checkpoint",
+        "bbox": [
+          989.8,
+          624.96,
+          1020.28,
+          634.08
+        ],
+        "method": "RapidOCR PP-OCRv5 + agent visual interpretation (not independent expert reference)"
+      },
+      "note": "OCR literal schedule row 4; evidence finish-ocr-p26.json. Only row8 has a physically identified east-stair query region u=29,z=2m; other positions are unknown. No whole-facade finish binding is inferred."
+    },
+    {
+      "id": "p26-finish-5",
+      "category": "finish",
+      "mark": "5",
+      "facade": "schedule-p25-26",
+      "position_m": null,
+      "value": "RAL 7004",
+      "unit": "text",
+      "tolerance": 0,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\album.pdf",
+        "sha256": "ca9bfc120179395d4be1d423468d1970f803fd50ea26fdec97ae9c4cef2afd6e",
+        "page": 26,
+        "sheet": "TEC26 Central checkpoint",
+        "bbox": [
+          989.8,
+          645.36,
+          1020.28,
+          654.48
+        ],
+        "method": "RapidOCR PP-OCRv5 + agent visual interpretation (not independent expert reference)"
+      },
+      "note": "OCR literal schedule row 5; evidence finish-ocr-p26.json. Only row8 has a physically identified east-stair query region u=29,z=2m; other positions are unknown. No whole-facade finish binding is inferred."
+    },
+    {
+      "id": "p26-finish-6",
+      "category": "finish",
+      "mark": "6",
+      "facade": "schedule-p25-26",
+      "position_m": null,
+      "value": "RAL 9016",
+      "unit": "text",
+      "tolerance": 0,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\album.pdf",
+        "sha256": "ca9bfc120179395d4be1d423468d1970f803fd50ea26fdec97ae9c4cef2afd6e",
+        "page": 26,
+        "sheet": "TEC26 Central checkpoint",
+        "bbox": [
+          989.8,
+          669.36,
+          1020.28,
+          678.48
+        ],
+        "method": "RapidOCR PP-OCRv5 + agent visual interpretation (not independent expert reference)"
+      },
+      "note": "OCR literal schedule row 6; evidence finish-ocr-p26.json. Only row8 has a physically identified east-stair query region u=29,z=2m; other positions are unknown. No whole-facade finish binding is inferred."
+    },
+    {
+      "id": "p26-finish-7",
+      "category": "finish",
+      "mark": "7",
+      "facade": "schedule-p25-26",
+      "position_m": null,
+      "value": "RAL 7004",
+      "unit": "text",
+      "tolerance": 0,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\album.pdf",
+        "sha256": "ca9bfc120179395d4be1d423468d1970f803fd50ea26fdec97ae9c4cef2afd6e",
+        "page": 26,
+        "sheet": "TEC26 Central checkpoint",
+        "bbox": [
+          989.8,
+          693.6,
+          1020.28,
+          702.96
+        ],
+        "method": "RapidOCR PP-OCRv5 + agent visual interpretation (not independent expert reference)"
+      },
+      "note": "OCR literal schedule row 7; evidence finish-ocr-p26.json. Only row8 has a physically identified east-stair query region u=29,z=2m; other positions are unknown. No whole-facade finish binding is inferred."
+    },
+    {
+      "id": "p26-finish-8",
+      "category": "finish",
+      "mark": "8",
+      "facade": "schedule-p25-26",
+      "position_m": [
+        29.0,
+        2.0
+      ],
+      "value": "RAL 5015",
+      "unit": "text",
+      "tolerance": 0,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\album.pdf",
+        "sha256": "ca9bfc120179395d4be1d423468d1970f803fd50ea26fdec97ae9c4cef2afd6e",
+        "page": 26,
+        "sheet": "TEC26 Central checkpoint",
+        "bbox": [
+          989.8,
+          711.6,
+          1020.28,
+          720.72
+        ],
+        "method": "RapidOCR PP-OCRv5 + agent visual interpretation (not independent expert reference)"
+      },
+      "note": "OCR literal schedule row 8; evidence finish-ocr-p26.json. Only row8 has a physically identified east-stair query region u=29,z=2m; other positions are unknown. No whole-facade finish binding is inferred."
+    },
+    {
+      "id": "p26-finish-9",
+      "category": "finish",
+      "mark": "9",
+      "facade": "schedule-p25-26",
+      "position_m": null,
+      "value": "RAL 1021",
+      "unit": "text",
+      "tolerance": 0,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\album.pdf",
+        "sha256": "ca9bfc120179395d4be1d423468d1970f803fd50ea26fdec97ae9c4cef2afd6e",
+        "page": 26,
+        "sheet": "TEC26 Central checkpoint",
+        "bbox": [
+          989.8,
+          727.6800000000001,
+          1020.04,
+          736.8
+        ],
+        "method": "RapidOCR PP-OCRv5 + agent visual interpretation (not independent expert reference)"
+      },
+      "note": "OCR literal schedule row 9; evidence finish-ocr-p26.json. Only row8 has a physically identified east-stair query region u=29,z=2m; other positions are unknown. No whole-facade finish binding is inferred."
+    },
+    {
+      "id": "p26-finish-10",
+      "category": "finish",
+      "mark": "10",
+      "facade": "schedule-p25-26",
+      "position_m": null,
+      "value": "RAL 7004",
+      "unit": "text",
+      "tolerance": 0,
+      "verified": true,
+      "calibrated": false,
+      "evidence": {
+        "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\album.pdf",
+        "sha256": "ca9bfc120179395d4be1d423468d1970f803fd50ea26fdec97ae9c4cef2afd6e",
+        "page": 26,
+        "sheet": "TEC26 Central checkpoint",
+        "bbox": [
+          989.8,
+          745.6800000000001,
+          1020.28,
+          754.8
+        ],
+        "method": "RapidOCR PP-OCRv5 + agent visual interpretation (not independent expert reference)"
+      },
+      "note": "OCR literal schedule row 10; evidence finish-ocr-p26.json. Only row8 has a physically identified east-stair query region u=29,z=2m; other positions are unknown. No whole-facade finish binding is inferred."
+    }
+  ],
+  "models": [
+    {
+      "id": "source-revit-derived",
+      "observations": [
+        {
+          "id": "L01-p1-l0006",
+          "category": "level",
+          "mark": "blue-main-band-top",
+          "facade": "south-1-4",
+          "position_m": [
+            13.5,
+            7.1000000000000005
+          ],
+          "value": 7.1000000000000005,
+          "unit": "m",
+          "verified": true,
+          "object_id": "1615876",
+          "object_name": "ADSK_Наружная_Воз.заз.110_вент.фас.1_110 (RAL 5015)",
+          "evidence": {
+            "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\revit-export.json",
+            "sha256": "d1913959b30beaf7366cb3449da2e74d088b4c3ddbd5434bd11b7b1cde70e339",
+            "method": "Blender 5.1.2 fresh-process world geometry / pinned Revit or UV finish evidence",
+            "locator": "types exterior blue wall instances; boundingBox max.z feet*0.3048"
+          },
+          "note": "Revit-export metadata endpoint, cross-check geometry separately; not FBX material certification."
+        },
+        {
+          "id": "L01-p1-l0008",
+          "category": "level",
+          "mark": "parapet-cap-top",
+          "facade": "south-1-4",
+          "position_m": [
+            13.5,
+            8.679433696441208
+          ],
+          "value": 8.679433696441208,
+          "unit": "m",
+          "verified": true,
+          "object_id": "o1101",
+          "object_name": "Парапетный нащельник Парапет_6582fcd",
+          "evidence": {
+            "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\source-readback.json",
+            "sha256": "577ec15ef417a3e4ead38f3cc7e251fc2663728b5353446440fe80698f3a2353",
+            "method": "Blender 5.1.2 fresh-process world geometry / pinned Revit or UV finish evidence",
+            "locator": "objects[o1101].max[2]; flashing cap, not wall base"
+          },
+          "note": "PDF +8.650 vs actual flashing-cap top. Detail/datum interpretation requires architect review, not automatic correction."
+        },
+        {
+          "id": "south-clear-sash-count",
+          "category": "opening_count",
+          "mark": "audit-group:clear-sash",
+          "facade": "south-1-4",
+          "position_m": [
+            13.5,
+            0
+          ],
+          "value": 12,
+          "unit": "count",
+          "verified": true,
+          "object_id": "o0259;o0261;o0266;o0267;o0268;o0270;o0272;o0274;o0276;o0279;o0280;o0281",
+          "object_name": "12 source MEP window instances",
+          "evidence": {
+            "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\source-readback.json",
+            "sha256": "577ec15ef417a3e4ead38f3cc7e251fc2663728b5353446440fe80698f3a2353",
+            "method": "Blender 5.1.2 fresh-process world geometry / pinned Revit or UV finish evidence",
+            "locator": "MEP_Окно_Витражное; abs(world bbox centre y)<0.2m; selected IDs in object_id"
+          },
+          "note": ""
+        },
+        {
+          "id": "p25-finish-8",
+          "category": "finish",
+          "mark": "8",
+          "facade": "schedule-p25-26",
+          "position_m": [
+            29.0,
+            2.0
+          ],
+          "value": "RAL 5015",
+          "unit": "text",
+          "verified": true,
+          "object_id": "1728448",
+          "object_name": "ADSK_Наружная_Открытая_200х250 мм",
+          "evidence": {
+            "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\revit-export.json",
+            "sha256": "d1913959b30beaf7366cb3449da2e74d088b4c3ddbd5434bd11b7b1cde70e339",
+            "method": "Blender 5.1.2 fresh-process world geometry / pinned Revit or UV finish evidence",
+            "locator": "elementId=1728448 materials=ADSK_Металл_Настил рифленый (RAL 5015); external east stair bbox"
+          },
+          "note": "Declared Revit-instance material; source FBX imported without material slots, so actual delivered shader is not certified."
+        }
+      ]
+    },
+    {
+      "id": "our-r1-v002",
+      "observations": [
+        {
+          "id": "L01-p1-l0006",
+          "category": "level",
+          "mark": "blue-main-band-top",
+          "facade": "south-1-4",
+          "position_m": [
+            13.5,
+            7.100000858306885
+          ],
+          "value": 7.100000858306885,
+          "unit": "m",
+          "verified": true,
+          "object_id": "SM_Kpp_1_Main",
+          "object_name": "SM_Kpp_1_Main",
+          "evidence": {
+            "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\r1-face-udims.json",
+            "sha256": "76ca9c16a24445036c726f5716243a2ac6b8f75b9715a68c6351e536c757500b",
+            "method": "Blender 5.1.2 fresh-process world geometry / pinned Revit or UV finish evidence",
+            "locator": "south y=-5.685 +/-0.02, UDIM1003, max z; 925 faces"
+          },
+          "note": ""
+        },
+        {
+          "id": "L01-p1-l0008",
+          "category": "level",
+          "mark": "parapet-cap-top",
+          "facade": "south-1-4",
+          "position_m": [
+            13.5,
+            8.650000544734358
+          ],
+          "value": 8.650000544734358,
+          "unit": "m",
+          "verified": true,
+          "object_id": "o0000",
+          "object_name": "SM_Kpp_1_Main",
+          "evidence": {
+            "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\r1-readback.json",
+            "sha256": "68b700fefa26d7e9a646337c8224fb598fc924933962d18ada30e1db872898cd",
+            "method": "Blender 5.1.2 fresh-process world geometry / pinned Revit or UV finish evidence",
+            "locator": "SM_Kpp_1_Main.max[2]; R1 body/parapet upper endpoint"
+          },
+          "note": ""
+        },
+        {
+          "id": "south-clear-sash-count",
+          "category": "opening_count",
+          "mark": "audit-group:clear-sash",
+          "facade": "south-1-4",
+          "position_m": [
+            13.5,
+            0
+          ],
+          "value": 21,
+          "unit": "count",
+          "verified": true,
+          "object_id": "o0001",
+          "object_name": "SM_Kpp_1_MainGlass",
+          "evidence": {
+            "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\r1-glass-components.json",
+            "sha256": "baf10b54c407f9ea354f8bfbca4fab8cbef703f90a7aeacd278772d5cb1ccbe6",
+            "method": "Blender 5.1.2 fresh-process world geometry / pinned Revit or UV finish evidence",
+            "locator": "connected exact-coordinate welded glass patches; south y+5.355 within0.4m; component IDs [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]"
+          },
+          "note": "21 glass-filled patches vs12 drawn clear sash symbols: additional patches include perforated/opaque/grille-looking regions. Semantic confirmation remains manual."
+        },
+        {
+          "id": "p25-finish-1",
+          "category": "finish",
+          "mark": "1",
+          "facade": "schedule-p25-26",
+          "position_m": null,
+          "value": "RAL 5015",
+          "unit": "text",
+          "verified": false,
+          "object_id": "SM_Kpp_1_Main",
+          "object_name": "SM_Kpp_1_Main",
+          "evidence": {
+            "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\r1-face-udims.json",
+            "sha256": "76ca9c16a24445036c726f5716243a2ac6b8f75b9715a68c6351e536c757500b",
+            "method": "Blender 5.1.2 fresh-process world geometry / pinned Revit or UV finish evidence",
+            "locator": "UDIM=1003 finish=Cassette_RAL5015; 3810 selected faces; table r1-textures.json"
+          },
+          "note": "Stair region is geometrically selected and all faces encode RAL7004 tile1007. Other tile-presence observations do NOT prove full facade mark/region correspondence: manual. RAL means declared finish label, not spectrophotometry."
+        },
+        {
+          "id": "p25-finish-2",
+          "category": "finish",
+          "mark": "2",
+          "facade": "schedule-p25-26",
+          "position_m": null,
+          "value": "RAL 7047",
+          "unit": "text",
+          "verified": false,
+          "object_id": "SM_Kpp_1_Main",
+          "object_name": "SM_Kpp_1_Main",
+          "evidence": {
+            "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\r1-face-udims.json",
+            "sha256": "76ca9c16a24445036c726f5716243a2ac6b8f75b9715a68c6351e536c757500b",
+            "method": "Blender 5.1.2 fresh-process world geometry / pinned Revit or UV finish evidence",
+            "locator": "UDIM=1002 finish=Cassette_RAL7047; 2518 selected faces; table r1-textures.json"
+          },
+          "note": "Stair region is geometrically selected and all faces encode RAL7004 tile1007. Other tile-presence observations do NOT prove full facade mark/region correspondence: manual. RAL means declared finish label, not spectrophotometry."
+        },
+        {
+          "id": "p25-finish-4",
+          "category": "finish",
+          "mark": "4",
+          "facade": "schedule-p25-26",
+          "position_m": null,
+          "value": "RAL 7004",
+          "unit": "text",
+          "verified": false,
+          "object_id": "SM_Kpp_1_Main",
+          "object_name": "SM_Kpp_1_Main",
+          "evidence": {
+            "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\r1-face-udims.json",
+            "sha256": "76ca9c16a24445036c726f5716243a2ac6b8f75b9715a68c6351e536c757500b",
+            "method": "Blender 5.1.2 fresh-process world geometry / pinned Revit or UV finish evidence",
+            "locator": "UDIM=1001 finish=Plinth_RAL7004; 1426 selected faces; table r1-textures.json"
+          },
+          "note": "Stair region is geometrically selected and all faces encode RAL7004 tile1007. Other tile-presence observations do NOT prove full facade mark/region correspondence: manual. RAL means declared finish label, not spectrophotometry."
+        },
+        {
+          "id": "p25-finish-6",
+          "category": "finish",
+          "mark": "6",
+          "facade": "schedule-p25-26",
+          "position_m": null,
+          "value": "RAL 9016",
+          "unit": "text",
+          "verified": false,
+          "object_id": "SM_Kpp_1_Main",
+          "object_name": "SM_Kpp_1_Main",
+          "evidence": {
+            "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\r1-face-udims.json",
+            "sha256": "76ca9c16a24445036c726f5716243a2ac6b8f75b9715a68c6351e536c757500b",
+            "method": "Blender 5.1.2 fresh-process world geometry / pinned Revit or UV finish evidence",
+            "locator": "UDIM=1005 finish=Frame_RAL9016; 4102 selected faces; table r1-textures.json"
+          },
+          "note": "Stair region is geometrically selected and all faces encode RAL7004 tile1007. Other tile-presence observations do NOT prove full facade mark/region correspondence: manual. RAL means declared finish label, not spectrophotometry."
+        },
+        {
+          "id": "p25-finish-7",
+          "category": "finish",
+          "mark": "7",
+          "facade": "schedule-p25-26",
+          "position_m": null,
+          "value": "RAL 7004",
+          "unit": "text",
+          "verified": false,
+          "object_id": "SM_Kpp_1_Main",
+          "object_name": "SM_Kpp_1_Main",
+          "evidence": {
+            "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\r1-face-udims.json",
+            "sha256": "76ca9c16a24445036c726f5716243a2ac6b8f75b9715a68c6351e536c757500b",
+            "method": "Blender 5.1.2 fresh-process world geometry / pinned Revit or UV finish evidence",
+            "locator": "UDIM=1006 finish=Door_RAL7004; 693 selected faces; table r1-textures.json"
+          },
+          "note": "Stair region is geometrically selected and all faces encode RAL7004 tile1007. Other tile-presence observations do NOT prove full facade mark/region correspondence: manual. RAL means declared finish label, not spectrophotometry."
+        },
+        {
+          "id": "p25-finish-8",
+          "category": "finish",
+          "mark": "8",
+          "facade": "schedule-p25-26",
+          "position_m": [
+            29.0,
+            2.0
+          ],
+          "value": "RAL 7004",
+          "unit": "text",
+          "verified": true,
+          "object_id": "SM_Kpp_1_Main",
+          "object_name": "SM_Kpp_1_Main",
+          "evidence": {
+            "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\r1-face-udims.json",
+            "sha256": "76ca9c16a24445036c726f5716243a2ac6b8f75b9715a68c6351e536c757500b",
+            "method": "Blender 5.1.2 fresh-process world geometry / pinned Revit or UV finish evidence",
+            "locator": "UDIM=1007 finish=Grille_RAL7004; 452 selected faces; table r1-textures.json"
+          },
+          "note": "Stair region is geometrically selected and all faces encode RAL7004 tile1007. Other tile-presence observations do NOT prove full facade mark/region correspondence: manual. RAL means declared finish label, not spectrophotometry."
+        }
+      ]
+    }
+  ]
+}
