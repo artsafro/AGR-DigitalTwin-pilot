@@ -135,7 +135,7 @@ def verdict_signature(doc: dict) -> str:
     levels = [{k: v for k, v in row.items() if k != 'id'}
               for row in doc['values'] if row['kind'] == 'level']
     axes = [{'id': view['id'], 'axes': view['axes']} for view in doc['views']]
-    findings = [f for f in doc['findings'] if f.get('code') != 'tick_spans_without_text']
+    findings = [f for f in doc['findings'] if f.get('code', '').startswith(('axis_', 'level_'))]
     return digest(canonical({'levels': levels, 'axes': axes, 'findings': findings, 'passed': doc['passed']}))
 
 

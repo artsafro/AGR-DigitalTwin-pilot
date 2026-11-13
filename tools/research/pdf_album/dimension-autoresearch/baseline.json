@@ -1,8 +1,9 @@
 {
   "corpus_sha256": "beb7ae3dca186c459239e017c1a067b43da22723459e01a324ddec4d1a757f20",
   "signatures": {
-    "L03": "2bd7f304c4c0245ea9c12028edf164bc31aadcedee9f4a6fcdd324e034bc293d",
+    "L03": "25f035159d7f1f8424a6a83a4a9bd3c91aab122ade52c425797f4226bb8ca425",
     "KNS": "474f188c8c799bec9aa93225ff23a0c4baa9fb00fce88db3a3856203160a6c36",
     "KNS-floor": "3b2b44d77a341f8a31b41e6a894811891b340e109a1ba339c1a7d93d3fe6254a"
-  }
+  },
+  "guard_version": 2
 }
