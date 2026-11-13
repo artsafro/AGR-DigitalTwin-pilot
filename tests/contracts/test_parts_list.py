@@ -30,6 +30,21 @@ def make(**changes):
     return PartsList.model_validate(data)
 
 
+def test_drawings_only_source_tier():
+    import json
+    from pathlib import Path
+    import jsonschema
+
+    data = copy.deepcopy(LISTING)
+    data.update(source_tier="D", sources=[{"kind": "drawing", "reference": "synthetic.dwg"}])
+    assert PartsList.model_validate(data).source_tier == "D"
+    root = Path(__file__).resolve().parents[2]
+    jsonschema.validate(data, json.loads((root / "schemas/PartsList.schema.json").read_text()))
+    row = next(line for line in (root / "docs/procedure/TASK_TO_MODEL.md").read_text().splitlines()
+               if line.startswith("| parts |"))
+    assert "D = drawings-only" in row
+
+
 def test_valid_list_roundtrips():
     parts = make()
     assert PartsList.model_validate_json(parts.model_dump_json()) == parts
