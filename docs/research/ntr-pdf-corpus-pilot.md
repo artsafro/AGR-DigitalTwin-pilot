@@ -163,6 +163,18 @@ A10 p8/p11: GOST 6665-91 (curb). A10 p11: GOST 9128-2013 (asphalt),
 TU 5718-003-04000633-2006 also appears. These are **document citations**, not a claim
 that the editions remain current. No independently verified standard-series catalogue yet.
 
+Additional **verbatim standard citations**, not extra Staropetrovskiy modelling work:
+A04 p36 mentions GOST 8736 (sand) and GOST 31424 (crushing screenings); no edition
+is safely bound to either in the extracted columns. A04 p37 cites GOST 17608-2017
+and GOST 8736-2014; the source also has the suspicious joined string
+`8736-93-01м`, retained as an unnormalized citation candidate rather than a valid
+edition. A04 p38 cites GOST 6665-91 (curb) and GOST 26633-91 (concrete), an older
+edition than A10's 26633-2015. These are document references, not current-law advice.
+A whole-text regex audit generated false joins such as `ГОСТ 105 МПа` on A04 p36
+and `ГОСТ 8267-93 - 0` on A10 p11: discarded as pressure/layer-thickness spillover,
+not added as standard IDs. This audit used already-extracted text, not new PDF copies
+or production work; graphic-only standard citations remain unknown.
+
 Repeated Skolkovo finish palette (A01 p1–2 / A07 p15–16), metal/wood outdoor furnishings
 (A04 p73–75 / A05 p5–10) and lawn/asphalt context (A07 p12 / A10 p11) are useful
 retrieval hypotheses, not proof of NTR-wide standardized design. The NTR directory groups
