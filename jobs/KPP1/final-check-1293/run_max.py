@@ -17,12 +17,46 @@ def digest(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
+def validate_config(config):
+    if not isinstance(config, dict) or not {'inputs', 'output'} <= set(config) or set(config) - {'inputs', 'output', 'tools'}:
+        raise ValueError('partial or unsupported config')
+    rows, tools = config['inputs'], config.get('tools', list(TOOLS))
+    if not isinstance(rows, list) or not rows or not isinstance(tools, list) or not tools:
+        raise ValueError('empty inputs or tools')
+    if any(not isinstance(t, str) or t not in TOOLS for t in tools) or len(set(tools)) != len(tools):
+        raise ValueError('unsupported or duplicate check')
+    output = config['output']
+    if not isinstance(output, str) or not output.strip():
+        raise ValueError('invalid output path')
+    paths, profiles = [], []
+    for row in rows:
+        if not isinstance(row, dict) or set(row) != {'profile', 'fbx', 'geojson'}:
+            raise ValueError('partial input row')
+        if row['profile'] not in ('npm', 'vpm'):
+            raise ValueError('unsupported profile')
+        if any(not isinstance(row[k], str) or not row[k].strip() for k in ('fbx', 'geojson')):
+            raise ValueError('invalid input path')
+        if not Path(row['fbx']).is_file():
+            raise ValueError('missing FBX: ' + row['fbx'])
+        paths.append(Path(row['fbx']))
+        profiles.append(row['profile'])
+    outputs = [Path(output)] + [Path(output).with_name(Path(output).stem + '-' + r['profile'] + '-' + t + '.json')
+                               for r in rows for t in tools]
+    keys = [str(p.resolve()).casefold() for p in paths + outputs]
+    if len(set(keys)) != len(keys) or len(set(profiles)) != len(profiles):
+        raise ValueError('aliased input/output or duplicate profile')
+    for out in outputs:
+        if out.exists():
+            raise FileExistsError(out)
+
+
 def main():
+    root = Path(__file__).resolve().parents[3]
+    config = json.loads((root / 'tmp/final1293/config.json').read_text(encoding='utf-8'))
+    validate_config(config)
     from pymxs import runtime as rt
     import __main__
     agr = __main__.agr_tools_runtime
-    root = Path(__file__).resolve().parents[3]
-    config = json.loads((root / 'tmp/final1293/config.json').read_text(encoding='utf-8'))
     output = Path(config['output'])
     if output.exists():
         raise FileExistsError(output)
