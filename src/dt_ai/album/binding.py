@@ -507,7 +507,7 @@ def _bind_page(pymupdf: Any, page: Any, number: int, sheet: str | None) -> dict[
                 if not (abs(r.dir[0]) <= 1e-6 and abs(r.dir[1]) > 0.99 and sp["a"] < cy < sp["b"]):
                     continue
                 gap = sp["coord"] - cx if near_side else cx - sp["coord"]
-            if 0 < gap <= 2.5 * r.size:
+            if 0 < gap <= 4.0 * r.size:
                 hits.append((gap, i))
         return sorted(hits)
 
