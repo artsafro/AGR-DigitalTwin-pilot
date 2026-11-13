@@ -315,6 +315,75 @@ def test_search_schema_copy_and_error_flag():
     anyio.run(run)
 
 
+@pytest.mark.parametrize("outcome", ["timeout", "cancel", "fail", "success"])
+def test_concurrent_write_rechecks_uncertainty(outcome):
+    """A admitted before B's unknown result must not dispatch its pending write."""
+    from agr_mcp.code_mode import CodeMode
+
+    async def run():
+        entered, release = anyio.Event(), anyio.Event()
+
+        class Interleaved(SceneClient):
+            async def call_tool(self, name, arguments):
+                if name == "agr_check_run" and not entered.is_set():
+                    entered.set()
+                    await release.wait()
+                result = await super().call_tool(name, arguments)
+                if name == "agr_op_apply":
+                    if outcome == "timeout":
+                        raise TimeoutError("response lost after commit")
+                    if outcome == "cancel":
+                        raise anyio.get_cancelled_exc_class()()
+                    if outcome == "fail":
+                        result.structuredContent["status"] = "fail"
+                return result
+
+        client = Interleaved()
+        mode = CodeMode(client)
+        a = program()
+        a.update(request_id="A", allow_write=True)
+        a["steps"].append({"id": "write", **program(tool="agr_op_apply")["steps"][0]})
+        a["steps"][1]["id"] = "write"
+        b = program(tool="agr_op_apply")
+        b.update(request_id="B", allow_write=True)
+        results = []
+
+        async def first():
+            results.append(await mode.execute(a))
+
+        with anyio.fail_after(5):
+            async with anyio.create_task_group() as group:
+                group.start_soon(first)
+                await entered.wait()
+                with pytest.raises(ValueError, match="request_id"):
+                    await mode.execute(a)
+                if outcome == "cancel":
+                    with pytest.raises(anyio.get_cancelled_exc_class()):
+                        await mode.execute(b)
+                else:
+                    result = await mode.execute(b)
+                    assert result["status"] == ("committed_unverified" if outcome == "success" else "unknown")
+                release.set()
+        assert sum(name == "agr_op_apply" for name, _ in client.calls) == (2 if outcome == "success" else 1)
+        pending = results[0]["receipts"][1]
+        if outcome == "success":
+            assert pending["status"] == "committed_unverified"
+        else:
+            assert results[0]["status"] == "failed"
+            assert pending["status"] == "skipped" and "reconcile" in pending["reason"]
+            b["request_id"] = "later"
+            with pytest.raises(ValueError, match="reconcile"):
+                await mode.execute(b)
+        read = program()
+        read["request_id"] = "readback"
+        result = await mode.execute(read)
+        assert result["receipts"][0]["result"]["result"]["names"][101] == "RenamedBox"
+        if outcome != "success":
+            with pytest.raises(ValueError, match="reconcile"):
+                await mode.execute(b)
+    anyio.run(run)
+
+
 def test_fresh_process():
     completed = subprocess.run([sys.executable, "-c", "from agr_mcp.code_mode import CodeMode; "
         "print([s['name'] for s in CodeMode(None).search('agr_')])"], capture_output=True, text=True)
