@@ -79,6 +79,37 @@ def test_native_kns_inline_rotated_text_gaps_keep_semantic_refusal():
     for raw in ('600', '4520', '7650', '4700', '680'):
         (value,) = [v for v in result['values'] if v['raw'] == raw]
         assert value['span'] is not None, raw
-        assert value['binding']['type'] == 'unbound'
+        assert value['binding']['type'] in ('unbound', 'level_pair')
+        if value['binding']['type'] == 'level_pair':
+            a, b = (float(t.replace(',', '.')) for t in value['binding']['levels'])
+            assert abs(abs(a - b) * 1000 - value['value']) < .5
         assert value['measured_mm'] is None
     assert result['passed'] is False
+    bound = [v for v in result['values'] if v['kind'] == 'dimension' and v['binding']['type'] != 'unbound']
+    assert len(bound) == 8
+    assert {v['raw'] for v in bound if v['binding']['type'] == 'level_pair'} == {'600', '4520', '7650', '4700'}
+
+
+def test_generated_inline_pages_never_guess_scale_or_drop_labels(tmp_path):
+    import random
+    rng = random.Random(1302)
+    for index in range(40):
+        rotation = rng.choice([0, 90])
+        source = inline_dimension(tmp_path / f'synthetic-source-{index}.pdf', rotation=rotation)
+        original = fitz.open(source)
+        nested = fitz.open()
+        factor = rng.uniform(.65, 1.8)
+        width = 300 * factor
+        page = nested.new_page(width=width + 80, height=width + 80)
+        page.show_pdf_page(fitz.Rect(40, 40, width + 40, width + 40), original, 0)
+        path = tmp_path / f'synthetic-nested-{index}.pdf'
+        nested.save(path)
+        result = bind_album(path)
+        (value,) = [v for v in result['values'] if v['raw'] == '6000']
+        assert value['span'] is not None
+        assert value['binding']['type'] in ('axis_pair', 'unbound')
+        if value['binding']['type'] == 'axis_pair':
+            assert value['binding']['axes'] == ['1', '2']
+        assert value['measured_mm'] is None
+        assert result['passed'] is False
+        assert all(v['scale']['status'] == 'unknown' for v in result['views'])
