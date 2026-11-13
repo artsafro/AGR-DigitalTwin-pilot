@@ -25,6 +25,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import vpm_uv  # noqa: E402  (stage 5: texel cuts, UDIM UVs, materials)
 import vpm_ucx  # noqa: E402  (stage 6: UCX collision hulls)
 import seal  # noqa: E402  (stage 5: weld + T-junction ring splits, quads only)
+import kpp1_windowgen  # noqa: E402  (#1338: the one glass_rects(b) source; windowgen types only in copies)
 
 ADDRESS = "Kpp_1"  # placeholder until the real address/cadastral number is known
 MAIN = f"SM_{ADDRESS}_Main"
@@ -41,6 +42,7 @@ D_INFILL = 0.23      # curtain mullions / window frames / door leaves
 D_GLASS = 0.26       # glass plane: 30 mm behind the frame face (project window library rule)
 D_INTERIOR = 1.26    # dark interior placeholder 1 m behind glass (VPM: interiors -> solid walls)
 WINDOW_FRAME = 0.07  # visible AGS68 frame+sash width around glass (assumed; not in Revit export)
+GLASS_PLAN = None    # #1338: kpp1_windowgen.plan_bays result when KPP1_WINDOWGEN=<report.json> (copies only)
 INF = 99.0
 
 FINISHES = {  # working finishes (internal ids); collapsed to M_<Address>_Main_1 at publish
@@ -299,6 +301,11 @@ def relief(mb, gb, f, rect, extra_cuts, cell):
                   lambda owner_below: z - 1e-3 if owner_below else z + 1e-3)
 
 
+def glass_rects(b):
+    """Glass rects of one bay: accepted rule w +- WINDOW_FRAME, or the windowgen plan in a #1338 copy."""
+    return kpp1_windowgen.glass_rects(b, GLASS_PLAN, WINDOW_FRAME)
+
+
 def surround_cell(s):
     mullions = s["mullions"]
     bays = s["bays"]
@@ -308,8 +315,7 @@ def surround_cell(s):
             return [(D_SURROUND, INF, "Frame_RAL9016", "Frame_RAL9016")]
         for b in bays:
             if inside(uc, zc, b["rect"]):
-                glass = [[w[0] + WINDOW_FRAME, w[1] - WINDOW_FRAME, w[2] + WINDOW_FRAME, w[3] - WINDOW_FRAME]
-                         for w in b["windows"]] + b["glass"]
+                glass = glass_rects(b)
                 if any(inside(uc, zc, g) for g in glass):
                     return [(D_INTERIOR, INF, "Glass_Cell", "Interior")]
                 return [(D_INFILL, D_GLASS, "Frame_RAL9016", "Frame_RAL9016"),
@@ -335,8 +341,7 @@ def openings(mb, gb, spec, decor=False):
             # feature mullions stand on the portal canopy (top +3.30): run 10 mm into it (embed)
             rects = sur["mullions"] + [b["rect"] for b in sur["bays"]]
             for b in sur["bays"]:
-                rects += [[w[0] + WINDOW_FRAME, w[1] - WINDOW_FRAME, w[2] + WINDOW_FRAME, w[3] - WINDOW_FRAME]
-                          for w in b["windows"]] + b["glass"]
+                rects += glass_rects(b)
             relief(mb, gb, f, sur["rect"], rects, surround_cell(sur))
         for d in s["doors"]:
             relief(mb, gb, f, d["rect"], [], lambda uc, zc: [(D_INFILL, INF, "Door_RAL7004", "Door_RAL7004")])
@@ -1100,6 +1105,11 @@ def main():
     sc.unit_settings.system, sc.unit_settings.scale_length = "METRIC", 1.0
     import_reference(src)
     spec = load_spec(census) if stage >= 2 else None
+    global GLASS_PLAN
+    wg_report = os.environ.get("KPP1_WINDOWGEN")
+    if wg_report and spec:
+        GLASS_PLAN = kpp1_windowgen.write_plan(spec, wg_report, [census, src, out], frame=WINDOW_FRAME)
+        print("WINDOWGEN", json.dumps(GLASS_PLAN["counts"]))
     mb, gb = MeshBuilder(), MeshBuilder()
     body(mb, spec, closed=stage < 3, decor=stage >= 4)
     if stage >= 2:
