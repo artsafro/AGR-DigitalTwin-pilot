@@ -1,6 +1,6 @@
 {
   "schema": "album-model-audit/1",
-  "trust_rule": "D271",
+  "trust_rule": "D274",
   "frame": {
     "name": "KPP1 Revit-project local metres; south y=-0.330, u=+X, z=+Z",
     "placement": "D262 unchanged: R1 local + [14.655,5.355,0] = Revit project. Common site transform Rz(-6.053044176714781 deg), origin [8056.143933445407,-9581.26989822931,171.050]; not a new survey fit. Entrance orientation not independently confirmed."
@@ -4310,11 +4310,11 @@
     "needs manual check": 102
   },
   "passed": false,
-  "input_sha256": "6f601f76e6df97b2f33612e4631e9a7d032f89ed39c781cfb408ce8c93a27bab",
+  "input_sha256": "503f27e22705c688fbd1fd2008442149e1e13b50e98b5609a251badea0d8ed90",
   "input_inventory": [
     {
       "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_e71302d3\\jobs\\KPP1\\audit-1304\\input-final.json",
-      "sha256": "6f601f76e6df97b2f33612e4631e9a7d032f89ed39c781cfb408ce8c93a27bab"
+      "sha256": "503f27e22705c688fbd1fd2008442149e1e13b50e98b5609a251badea0d8ed90"
     },
     {
       "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003\\L01.pdf",

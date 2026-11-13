@@ -1,4 +1,4 @@
-"""new-case: evidence-preserving PDF/model mode-A diagnostic comparison [D271].
+"""new-case: evidence-preserving PDF/model mode-A diagnostic comparison [D274].
 
 Reusable normalized-observation seam, not an automatic raster-to-BIM claim.
 Input observations must already share a documented facade frame in metres.

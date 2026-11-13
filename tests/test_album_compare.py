@@ -12,7 +12,7 @@ def synthetic_bundle():
     """Entirely synthetic, not KPP1 evidence."""
     return {
         "schema": "album-model-audit-input/1",
-        "trust_rule": "D271",
+        "trust_rule": "D274",
         "frame": {"name": "synthetic-local-m", "placement": "synthetic identity"},
         "pdf": [{"id": "level-1", "category": "level", "mark": "roof", "facade": "F1",
                  "position_m": [0, 8], "value": 8.0, "unit": "m", "tolerance": 0.01,

@@ -1,6 +1,6 @@
 # PDF/model mode-A audit
 
-Trust hierarchy: [D271]. Diagnostic only; passed=false.
+Trust hierarchy: [D274]. Diagnostic only; passed=false.
 
 Counts: {'match': 6, 'mismatch': 4, 'needs manual check': 102}
 

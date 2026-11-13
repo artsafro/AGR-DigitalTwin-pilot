@@ -1,6 +1,6 @@
 {
   "schema": "album-model-audit-input/1",
-  "trust_rule": "D271",
+  "trust_rule": "D274",
   "frame": {
     "name": "KPP1 Revit-project local metres; south y=-0.330, u=+X, z=+Z",
     "placement": "D262 unchanged: R1 local + [14.655,5.355,0] = Revit project. Common site transform Rz(-6.053044176714781 deg), origin [8056.143933445407,-9581.26989822931,171.050]; not a new survey fit. Entrance orientation not independently confirmed."

@@ -2,7 +2,7 @@
 
 ## Contract and trust hierarchy
 
-[D271]: neither source is absolute truth. Materials/RAL/finishes follow PDF
+[D274]: neither source is absolute truth. Materials/RAL/finishes follow PDF
 schedules checked against facade marks; dimensions compare PDF and model;
 geometry follows the model checked against PDF; levels/storeys follow PDF checked
 in 3D; counts follow PDF schedules counted in the model; names/marks follow PDF
