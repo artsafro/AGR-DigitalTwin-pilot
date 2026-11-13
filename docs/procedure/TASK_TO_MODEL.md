@@ -54,7 +54,7 @@ Fixed dependency order below follows D104/D125: human geometry acceptance preced
 | ID | Completion evidence |
 |---|---|
 | inputs | Full source inventory with paths and SHA-256; requirement/profile/version, source units, coordinate system and source authority recorded in the job report. Mark synthetic sources. `jobs/<ID>/passport.json` (K1) is required only on the AGR Tools route until a second route exists; other OKS routes record the same facts in `job.yaml` inputs / REPORT [D247]. |
-| parts | `parts.json` validates against [PartsList](../../schemas/PartsList.schema.json), via the public `dt_ai.core.models.PartsList` facade; `source_tier`: A = Revit + album, B = structured FBX/SKP + album, C = mesh soup + album, D = drawings-only (DWG/DXF/PDF, no source mesh); source coverage, operation and triangle budget per part, joints and questions; `triangle_budget` is the allocated project budget for NPM/VPM (OKS ≤150 000 per profile [D010/D161]), not the regulatory ceiling; the ceiling stays in budgets/QA [D276]; **user Gate 1 confirmation before build** (D111/D124/D125). A headless agent requests Gate 1 through the existing board channel ([KANBAN](../agents/KANBAN.md), [WORKFLOW](../agents/WORKFLOW.md) step 0): post the questions (with the `parts.json` path and hash) as an issue comment, move the card to Needs you (a Hermes card: block it as `needs_input` naming that comment), and set the gate to `waits: user`; it builds nothing until the answer. The user's answer is recorded in `parts.json` `gate1` (`actor/date/scope/note`) with `ref` = the answering issue-comment URL, the card id or the `D<n>` decision it became [#1205]; a gate1 without the user's answer is not Gate 1. |
+| parts | `parts.json` validates against [PartsList](../../schemas/PartsList.schema.json), via the public `dt_ai.core.models.PartsList` facade; `source_tier`: A = Revit + album, B = structured FBX/SKP + album, C = mesh soup + album, D = drawings-only (DWG/DXF/PDF, no source mesh); source coverage, operation and triangle budget per part, joints and questions; `triangle_budget` is the allocated project budget for NPM/VPM (OKS ≤150 000 per profile [D010/D161]), not the regulatory ceiling; the ceiling stays in budgets/QA [D276]; **user Gate 1 confirmation before build** (D111/D124/D125). A headless agent requests Gate 1 through the existing board channel ([KANBAN](../agents/KANBAN.md), [WORKFLOW](../agents/WORKFLOW.md) step 0): post the questions (with the `parts.json` path, file SHA-256 and `approval_sha256()`) as an issue comment and set the gate to `waits: user`; for build scope move the card to Needs you (`needs_input` naming that comment), but for Gate-1-only scope use the [scoped handoff below](#gate-1-handoff). It builds nothing until the answer. Record the user's answer in `gate1` (`actor/date/scope/note`), `ref` = answering comment URL/card id/`D<n>`, and `parts_sha256` = the proposed content's `approval_sha256()` [#1205, #1309]. Missing/stale binding or missing answer ref fails the walk; an old object-level approval is not transferable. |
 | operations | Follow the cell's standard route ([oks-vpm body/windows/roof](../scenarios/oks-vpm.md#route-by-stage), [D250]); alternatives use `path: deviation` below. When using [kernel operations](../../src/dt_ai/ops/), apply them to [parts](../../src/dt_ai/parts/); log operation names and before/after invariant results (D108/D131). Broken invariants roll back; stop and ask. Include additional applicable invariants, including D129, when supported; never silently omit a mandatory check. |
 | budgets | Measured budgets vs cited profile/area/decision limits: master, NPM/VPM, UCX, materials, textures, density. Each measurement names its rule and comparison (`le` inclusive, `lt` exclusive); no inferred limit. |
 | export_readback | New versioned export, SHA-256; clean-process readback of **exported file**, checking topology, UV, materials, units/transforms. Working-scene checks alone do not complete this gate. |
@@ -76,6 +76,36 @@ only with **contact pairs = 0** (`totals.overlapping_faces` = 0, the xView Overl
 export; vertex pairs, `area` pairs and bow-tie findings are fixed or listed as deviations with the user's decision.
 Exit 1 = overlaps found, exit 2 = no verdict (bad input); neither is a pass. A job-local overlap script does not
 replace it (review #514: a local check said 0 where xView said 185).
+
+## Gate 1 handoff
+
+Use the existing #1205 channel: post an issue comment with the versioned PartsList path,
+file SHA-256, approval content hash, questions and proposed choices. Record the request URL
+in the job report; keep parts `status: review`, `waits: user` in `job.yaml` while unanswered.
+
+- **Build scope:** move to Needs you / Hermes `needs_input`, naming that comment; resume build only
+  after the user's hash-bound answer. Neither a notification nor a code review is approval.
+- **Scope ends at Gate 1** (measurement, dry-run or parts-only): post the same request and retain
+  `waits: user`, then finish the scoped evidence/report and normal code review handoff: **no needs_input block**
+  merely to wait for an answer outside the card's scope. The job remains incomplete (`passed=false`);
+  downstream production still waits for the user's answer. Hand off the request URL and PartsList identity.
+
+**Approval identity (#1309).** Compute before requesting Gate 1:
+
+```bash
+uv run python -c "from pathlib import Path; from dt_ai.core.models import PartsList; p=PartsList.model_validate_json(Path('jobs/ID/parts.json').read_bytes()); print(p.approval_sha256())"
+```
+
+`gate1.parts_sha256` is this content hash, **not the complete file hash** (which would include itself).
+It hashes the validated, default-expanded PartsList JSON excluding only `gate1` and `status`, with
+sorted keys, compact separators, UTF-8/unescaped Unicode and no NaN/inf; list order matters.
+The user's answer must explicitly name/confirm this hash (or the immutable request that names it).
+Record that exact hash and answer `ref`; changing any proposed content, including source references,
+part budgets, joints or question answers, requires a new request and answer. Resolve questions first,
+then request confirmation of the final proposal. Never refresh an approval hash on the user's behalf.
+Historical unbound lists remain readable but cannot pass the walker. `job.yaml` evidence and downstream
+receipt `parts_sha256` still use SHA-256 of the **complete confirmed file bytes**; re-hash them after
+recording approval. Formatting may preserve approval identity but changes file evidence identity.
 
 ## Free PATH and deviation log
 

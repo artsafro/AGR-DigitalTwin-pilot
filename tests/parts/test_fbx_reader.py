@@ -271,7 +271,7 @@ def test_fail_output_is_input(tmp_path):
 def test_schema_validator_rejects_bad_instances():
     good = json.loads(reader.convert(scene_a(), synthetic=True).model_dump_json())
     for mutate in (lambda d: d.update(extra=1), lambda d: d.pop("parts"),
-                   lambda d: d["parts"][0].update(id="1bad"), lambda d: d.update(source_tier="D"),
+                   lambda d: d["parts"][0].update(id="1bad"), lambda d: d.update(source_tier="E"),
                    lambda d: d["triangle_budget"].update(npm=-1), lambda d: d.update(parts=[])):
         bad = json.loads(json.dumps(good))
         mutate(bad)

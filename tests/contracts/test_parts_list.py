@@ -69,12 +69,44 @@ def test_gate1_identity_ignores_envelope_and_json_format():
     expected = hashlib.sha256(json.dumps(payload, sort_keys=True, separators=(",", ":"),
                                          ensure_ascii=False, allow_nan=False).encode("utf-8")).hexdigest()
     assert draft.approval_sha256() == expected
-    confirmed = make(status="confirmed", gate1={"actor": "user", "date": "2026-11-13",
+    confirmed = make(status="confirmed", gate1={"actor": "synthetic fixture", "date": "2026-11-13",
                      "scope": "synthetic_fixture", "note": "test", "ref": "D111",
                      "parts_sha256": expected})
     assert confirmed.approval_sha256() == expected
     reordered = json.loads(json.dumps(confirmed.model_dump(), indent=4), object_pairs_hook=lambda x: dict(reversed(x)))
     assert PartsList.model_validate(reordered).approval_sha256() == expected
+
+
+@pytest.mark.parametrize("bad", ["", "0" * 63, "0" * 65, "A" * 64, "0" * 64 + "\n", float("nan"), float("inf"), 7])
+def test_gate1_hash_validation(bad):
+    import json
+    from pathlib import Path
+    import jsonschema
+    from dt_ai.core.provenance import Approval
+
+    root = Path(__file__).resolve().parents[2]
+    schema = json.loads((root / "schemas/PartsList.schema.json").read_text())
+    data = copy.deepcopy(LISTING)
+    data["gate1"] = {"actor": "synthetic fixture", "date": "2026-11-13", "scope": "synthetic_fixture",
+                     "note": "test", "parts_sha256": bad}
+    assert list(jsonschema.Draft202012Validator(schema).iter_errors(data))
+    with pytest.raises(ValidationError):
+        Approval.model_validate(data["gate1"])
+
+
+@pytest.mark.parametrize("tier", ["", "E", "drawings", None, 1])
+def test_invalid_source_tier(tier):
+    with pytest.raises(ValidationError):
+        make(source_tier=tier)
+
+
+@pytest.mark.parametrize("profile", ["npm", "vpm"])
+def test_part_budget_allocation_boundary(profile):
+    allocation = {"npm": 150, "vpm": 600}
+    assert make(triangle_budget=allocation).triangle_budget.model_dump() == allocation
+    allocation[profile] -= 1
+    with pytest.raises(ValidationError, match="over the total"):
+        make(triangle_budget=allocation)
 
 
 def test_valid_list_roundtrips():

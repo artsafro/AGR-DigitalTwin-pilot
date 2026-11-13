@@ -132,6 +132,39 @@ def test_gate1_binding_required_and_stale_rejected(bundle, tmp_path):
     assert run_cli(bundle, tmp_path).returncode == 0
 
 
+@pytest.mark.parametrize("field", ["object_id", "source_tier", "synthetic", "sources", "triangle_budget",
+                                   "parts", "joints", "questions"])
+def test_gate1_content_mutations_invalidate_approval(bundle, tmp_path, field):
+    from dt_ai.core.models import PartsList
+
+    original = json.loads((tmp_path / "parts.json").read_text())
+    old_hash = original["gate1"]["parts_sha256"]
+    changes = {
+        "object_id": "OTHER", "source_tier": "D", "synthetic": False,
+        "sources": [{"kind": "drawing", "reference": "synthetic.dwg"}],
+        "triangle_budget": {"npm": 11, "vpm": 10},
+        "parts": [{**original["parts"][0], "legend_item": "new finish"}],
+        "joints": [],
+        "questions": [{"audience": "user", "text": "Finish?", "answer": "confirmed"}],
+    }
+    # A legitimate second part allows a genuine joint mutation.
+    if field == "joints":
+        original["parts"].append({**original["parts"][0], "id": "slab"})
+        old_hash = PartsList.model_validate(original).approval_sha256()
+        original["gate1"]["parts_sha256"] = old_hash
+        changes[field] = [{"parts": ["wall", "slab"], "decision": "weld", "reason": "test", "extra_edges": 0}]
+    original[field] = changes[field]
+    if field == "synthetic":
+        original["gate1"]["scope"] = "project"
+        bundle["synthetic"] = False
+    assert PartsList.model_validate(original).approval_sha256() != old_hash
+    bundle["gates"]["parts"]["evidence"] = [store(tmp_path, "parts.json", original)]
+    rebind_receipts(bundle, tmp_path)
+    result = load().inspect_job(bundle, tmp_path)
+    row = next(row for row in result["gates"] if row["gate"] == "parts")
+    assert row["status"] == "fail" and "Gate 1" in " ".join(row["errors"])
+
+
 def test_fresh_process_cli(bundle, tmp_path):
     completed = run_cli(bundle, tmp_path)
     assert completed.returncode == 0, completed.stderr or completed.stdout
