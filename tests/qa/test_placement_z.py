@@ -1,0 +1,31 @@
+"""new-case: Z bounds comparison through scene QA, independent of XY pivot checks."""
+import pytest
+from test_scene import mesh, rb, PROFILES
+from twinqa.scene import scene_findings
+
+
+def check(meta, bounds=((-1, -1, -0.3), (1, 1, 8.35))):
+    m = mesh()
+    m['bounds_m'] = bounds
+    found = scene_findings(rb(m), 'vpm', 'oks', PROFILES.vpm, export_meta=meta)
+    return next(f for f in found['V013'] if f.name == 'Z bounds vs export_meta')
+
+
+@pytest.mark.parametrize('maximum,status', [(8.35, 'pass'), (9.75, 'fail')])
+def test_z_readback(maximum, status):
+    assert check({'bounds_m': [[-1, -1, -0.3], [1, 1, maximum]]}).status == status
+
+
+def test_z_unknown():
+    assert check(None).status == 'not_run'
+
+
+@pytest.mark.parametrize('meta', [{}, {'bounds_m': []}, {'bounds_m': [[0, 0, 0]]},
+    {'bounds_m': [[0, 0, float('nan')], [1, 1, 8.35]]},
+    {'bounds_m': [[0, 0, 10], [1, 1, 8.35]]}])
+def test_z_invalid(meta):
+    assert check(meta).status == 'fail'
+
+
+def test_z_threshold():
+    assert check({'bounds_m': [[0, 0, 0], [1, 1, 1]]}, ((0, 0, 0.001), (1, 1, 1))).status == 'fail'
