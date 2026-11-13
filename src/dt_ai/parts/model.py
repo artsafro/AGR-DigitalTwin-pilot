@@ -6,6 +6,8 @@ embed 10-20 mm - with the reason and the extra edges welding would insert [D124]
 user confirms it (`gate1`); `status="confirmed"` without that approval does not validate.
 Pattern: `primitive-first` (docs/domain/patterns/primitive-first.md), grilling log Q8, Q12, Q19, Q29a, Q30.
 """
+import hashlib
+import json
 from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -102,6 +104,18 @@ class PartsList(Strict):
     questions: list[Question] = Field(default_factory=list)
     status: Literal["draft", "confirmed"] = "draft"
     gate1: Approval | None = None
+
+    def approval_sha256(self) -> str:
+        """Identity of the proposed content, independent of approval/status and JSON formatting.
+
+        Hash the validated, default-expanded JSON payload as UTF-8, sorted keys,
+        compact separators, unescaped Unicode and no NaN/inf. List order matters.
+        Evidence and downstream receipts still hash the complete on-disk file.
+        """
+        payload = self.model_dump(mode="json", exclude={"gate1", "status"})
+        encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"),
+                             ensure_ascii=False, allow_nan=False).encode("utf-8")
+        return hashlib.sha256(encoded).hexdigest()
 
     @model_validator(mode="after")
     def consistent(self):

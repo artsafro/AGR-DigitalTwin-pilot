@@ -44,6 +44,8 @@ class SourceRef(Contract):
 
 
 class Approval(Contract):
+    parts_sha256: Hash | None = Field(
+        default=None, description="Gate 1: PartsList.approval_sha256(), excluding gate1/status; not file bytes")
     actor: str = Field(min_length=1)
     date: str = Field(pattern=r"^\d{4}-\d{2}-\d{2}$")
     scope: Literal["synthetic_fixture", "project"]

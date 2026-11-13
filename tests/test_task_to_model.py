@@ -56,6 +56,10 @@ def bundle(tmp_path):
                    "operation": "keep", "triangle_budget": {"npm": 2, "vpm": 2}}],
         "status": "confirmed", "gate1": {"actor": "synthetic test user", "date": "2026-10-20",
                                            "scope": "synthetic_fixture", "note": "TEST ONLY"}})
+    from dt_ai.core.models import PartsList
+    parts_data = json.loads((tmp_path / "parts.json").read_text())
+    parts_data["gate1"].update(ref="D111", parts_sha256=PartsList.model_validate(parts_data).approval_sha256())
+    parts = store(tmp_path, "parts.json", parts_data)
     gates = {g: {"status": "pass", "note": "SYNTHETIC contract test only", "evidence": []} for g in GATES}
     gates["inputs"]["evidence"] = [source]
     gates["parts"]["evidence"] = [parts]
@@ -101,7 +105,31 @@ def test_gate1_binding_required_and_stale_rejected(bundle, tmp_path):
     result = load().inspect_job(bundle, tmp_path)
     row = next(row for row in result["gates"] if row["gate"] == "parts")
     assert row["status"] == "fail"
-    assert "Gate 1" in " ".join(result["errors"])
+    assert "Gate 1" in " ".join(row["errors"])
+
+    from dt_ai.core.models import PartsList
+    # A hash with no answer reference also cannot approve anything.
+    parts["gate1"]["parts_sha256"] = PartsList.model_validate(parts).approval_sha256()
+    parts["gate1"].pop("ref")
+    bundle["gates"]["parts"]["evidence"] = [store(tmp_path, "parts.json", parts)]
+    assert next(r for r in load().inspect_job(bundle, tmp_path)["gates"] if r["gate"] == "parts")["status"] == "fail"
+    parts["gate1"]["ref"] = "D111"
+    bundle["gates"]["parts"]["evidence"] = [store(tmp_path, "parts.json", parts)]
+    rebind_receipts(bundle, tmp_path)
+    assert run_cli(bundle, tmp_path).returncode == 0
+    parts["parts"][0]["triangle_budget"]["vpm"] = 3
+    bundle["gates"]["parts"]["evidence"] = [store(tmp_path, "parts.json", parts)]
+    rebind_receipts(bundle, tmp_path)  # Updating file/receipt hashes cannot renew user approval.
+    for _ in range(2):
+        completed = run_cli(bundle, tmp_path)
+        assert completed.returncode == 1
+        row = next(r for r in json.loads(completed.stdout)["gates"] if r["gate"] == "parts")
+        assert row["status"] == "fail" and "Gate 1" in " ".join(row["errors"])
+    # SYNTHETIC approval reset only; real agents must obtain a fresh user answer first.
+    parts["gate1"]["parts_sha256"] = PartsList.model_validate(parts).approval_sha256()
+    bundle["gates"]["parts"]["evidence"] = [store(tmp_path, "parts.json", parts)]
+    rebind_receipts(bundle, tmp_path)
+    assert run_cli(bundle, tmp_path).returncode == 0
 
 
 def test_fresh_process_cli(bundle, tmp_path):
