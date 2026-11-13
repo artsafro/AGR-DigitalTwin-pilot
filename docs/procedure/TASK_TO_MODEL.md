@@ -4,6 +4,7 @@ Read this before building or reducing a model. Start with the card, its area she
 [decisions](../decisions.md) and unresolved [conflicts](../domain/conflicts.md).
 A conflict or unknown source fact is a user question, not a modelling assumption.
 Use the matching `.agents/skills/model-*/SKILL.md` and `validate-delivery` skill.
+For colouring, MAF, fences, windows, Ground, OKS or Flora nodes, start with the [default node recipes R1–R7](NODE_RECIPES.md) [D273].
 
 ## Entry (one sequence, from either entry point)
 

@@ -40,7 +40,7 @@ def _check_recipe(text, number, level, clauses):
     assert "NODE_RECIPES.md" in text
 
 
-@pytest.mark.parametrize("number,recipe", enumerate(RECIPES, 1))
+@pytest.mark.parametrize("number,recipe", list(enumerate(RECIPES, 1)))
 def test_recipe_contract(number, recipe):
     name, level, clauses = recipe
     _check_recipe((ROOT / PROCEDURE / name).read_text(encoding="utf-8"), number, level, clauses)
