@@ -146,6 +146,3 @@ def test_route_and_research_links_and_scope():
     benchmark = docs[2].read_text(encoding="utf-8")
     assert "Track A" in benchmark and "Track B" in benchmark and "<= $10" in benchmark
     assert all(term in benchmark for term in ("Claude", "Codex", "Kimi", "new_code_lines", "billed_usd", "not executed"))
-
-
-
