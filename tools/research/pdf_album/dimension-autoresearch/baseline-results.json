@@ -1,0 +1,475 @@
+{
+  "corpus_sha256": "beb7ae3dca186c459239e017c1a067b43da22723459e01a324ddec4d1a757f20",
+  "guard": true,
+  "sheets": [
+    {
+      "classes": {
+        "correct_semantic_binding": 7,
+        "filtered_endpoint_identity": 36,
+        "overrides_or_display_rounding": 3,
+        "text_found_not_bound_to_own_line": 36
+      },
+      "document_guard": true,
+      "handles": [
+        {
+          "class": "correct_semantic_binding",
+          "handle": "19A9"
+        },
+        {
+          "class": "correct_semantic_binding",
+          "handle": "19C5"
+        },
+        {
+          "class": "correct_semantic_binding",
+          "handle": "19DF"
+        },
+        {
+          "class": "correct_semantic_binding",
+          "handle": "19F9"
+        },
+        {
+          "class": "correct_semantic_binding",
+          "handle": "1A13"
+        },
+        {
+          "class": "correct_semantic_binding",
+          "handle": "1A2D"
+        },
+        {
+          "class": "correct_semantic_binding",
+          "handle": "1A4A"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "1B6B"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "1B86"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "1BA2"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "1BBE"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "1BDA"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "1BF6"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "1C12"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "1C2E"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "1C4A"
+        },
+        {
+          "class": "overrides_or_display_rounding",
+          "handle": "1C66"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "1C82"
+        },
+        {
+          "class": "overrides_or_display_rounding",
+          "handle": "1C9E"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "1CBA"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "1CD6"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "1CF2"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "1D0E"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "1D2A"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "1D46"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "1D62"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "1D7F"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "1D9B"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "1DB7"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "1DD5"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "1DF1"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "1E0D"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "1E29"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "1E45"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "1E63"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "1E7E"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "1E9A"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "1EB6"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "1ED2"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "1EEE"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "1F0A"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "1F28"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "1F44"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "1F60"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "1F7C"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "1F9A"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "1FB6"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "1FD2"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "1FEE"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "200A"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "2026"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "2042"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "205E"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "207C"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "2098"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "20B4"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "20D0"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "20EC"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "210A"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "2126"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "2142"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "215E"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "2178"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "2192"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "21AE"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "21CA"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "21E4"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "21FE"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "221A"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "2238"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "2255"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "2272"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "228E"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "22A9"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "2306"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "2320"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "233A"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "2354"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "2388"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "23A4"
+        },
+        {
+          "class": "overrides_or_display_rounding",
+          "handle": "23BE"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "23DA"
+        }
+      ],
+      "metrics": {
+        "correct": 7,
+        "found": 7,
+        "missed": 75,
+        "precision": 1.0,
+        "recall": 0.08536585365853659,
+        "truth": 82,
+        "wrong": 0
+      },
+      "precision_guard": "pass",
+      "sheet": "L03",
+      "split": "TUNE",
+      "wrong_ids": []
+    },
+    {
+      "classes": {
+        "correct_semantic_binding": 8,
+        "filtered_endpoint_identity": 1,
+        "text_found_not_bound_to_own_line": 3
+      },
+      "document_guard": true,
+      "handles": [
+        {
+          "class": "correct_semantic_binding",
+          "handle": "3414"
+        },
+        {
+          "class": "correct_semantic_binding",
+          "handle": "3415"
+        },
+        {
+          "class": "correct_semantic_binding",
+          "handle": "3416"
+        },
+        {
+          "class": "correct_semantic_binding",
+          "handle": "3417"
+        },
+        {
+          "class": "correct_semantic_binding",
+          "handle": "3418"
+        },
+        {
+          "class": "correct_semantic_binding",
+          "handle": "3419"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "341A"
+        },
+        {
+          "class": "correct_semantic_binding",
+          "handle": "341B"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "341C"
+        },
+        {
+          "class": "correct_semantic_binding",
+          "handle": "341D"
+        },
+        {
+          "class": "text_found_not_bound_to_own_line",
+          "handle": "341E"
+        },
+        {
+          "class": "filtered_endpoint_identity",
+          "handle": "341F"
+        }
+      ],
+      "metrics": {
+        "correct": 8,
+        "found": 8,
+        "missed": 4,
+        "precision": 1.0,
+        "recall": 0.6666666666666666,
+        "truth": 12,
+        "wrong": 0
+      },
+      "precision_guard": "pass",
+      "sheet": "KNS",
+      "split": "TUNE",
+      "wrong_ids": []
+    },
+    {
+      "classes": {
+        "non_cardinal_chain_unsupported": 6
+      },
+      "document_guard": true,
+      "handles": [
+        {
+          "class": "non_cardinal_chain_unsupported",
+          "handle": "1EF9"
+        },
+        {
+          "class": "non_cardinal_chain_unsupported",
+          "handle": "1EFA"
+        },
+        {
+          "class": "non_cardinal_chain_unsupported",
+          "handle": "1EFB"
+        },
+        {
+          "class": "non_cardinal_chain_unsupported",
+          "handle": "1EFE"
+        },
+        {
+          "class": "non_cardinal_chain_unsupported",
+          "handle": "1EFF"
+        },
+        {
+          "class": "non_cardinal_chain_unsupported",
+          "handle": "1F00"
+        }
+      ],
+      "metrics": {
+        "correct": 0,
+        "found": 0,
+        "missed": 6,
+        "precision": null,
+        "recall": 0.0,
+        "truth": 6,
+        "wrong": 0
+      },
+      "precision_guard": "zero_prediction_pass",
+      "sheet": "KNS-floor",
+      "split": "HOLD-OUT",
+      "wrong_ids": []
+    }
+  ],
+  "tune_recall": 0.1595744680851064
+}
