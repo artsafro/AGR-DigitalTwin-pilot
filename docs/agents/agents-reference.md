@@ -3,6 +3,8 @@
 Read the matching section when navigating code, running checks, loading skills or using agent plugins.
 Per-card reading order and shared safety rules stay in `AGENTS.md` [D121].
 
+- Four working principles (assumptions first, simplest fit, surgical changes, verified done): `docs/agents/working-principles.md`.
+
 ## Code map
 
 - `src/dt_ai/` — pipeline core: models, build, geometry (exterior, shell, connect, UV),

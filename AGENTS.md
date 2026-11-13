@@ -6,6 +6,7 @@ commands, identifiers and docs in English.
 
 A worker reads three things, then starts: this file, the card's area file `docs/domain/areas/<area>.md`, and the card.
 Long form of the sections below: `docs/agents/agents-reference.md`.
+For NPM/OKS tasks read `routes/npm-oks.md`; call `agr --help` before writing a script.
 
 ## Goal
 
@@ -74,5 +75,5 @@ gets a line in `docs/decisions.md` and its `[D<n>]` where it applies.
   ≤ 80 lines, fixed sections; `docs/agents/WORKFLOW.md`);
   in task branches report state changes in the final summary.
 - A new tool counts as shared only after it is listed in `docs/agents/CAPABILITIES.md` on `main`.
-- Four working principles (assumptions first, simplest fit, surgical changes, verified done): `docs/agents/working-principles.md`.
+
 - AGR Tools (3ds Max panel, `agr-mcp`, OKS conveyor 1.0): start at `docs/agr-tools/OVERVIEW.md`; binding rules (the project passport `jobs/<ID>/passport.json`, `schemas/ProjectPassport.schema.json`, is mandatory, К1): `docs/agents/agr-tools-1.0-rules.md`.
