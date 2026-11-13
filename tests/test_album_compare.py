@@ -265,6 +265,17 @@ def test_generated_numeric_boundary_matrix():
             assert row['difference'] == step / 128
 
 
+def test_committed_kpp1_input_bytes_match_report_receipt():
+    import hashlib
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[1]
+    prefix = 'jobs/KPP1/audit-1304/'
+    def blob(path):
+        return subprocess.check_output(['git', 'show', 'HEAD:' + prefix + path], cwd=root)
+    report = json.loads(blob('report-final/report.json'))
+    assert hashlib.sha256(blob('input-final.json')).hexdigest() == report['input_sha256']
+
+
 def test_real_kpp1_receipt_keeps_manual_gates_and_evidence():
     from pathlib import Path
     from dt_ai.album.compare import compare
