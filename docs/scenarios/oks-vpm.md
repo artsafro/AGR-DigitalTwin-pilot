@@ -36,7 +36,7 @@ external PNG UDIM sets. Ground, MAF and Flora of the same site are the `ground-v
 
 | Stage | Route today | Status |
 |---|---|---|
-| Source intake | skill `analyze-architectural-source` | tool, run by hand |
+| Source intake | skill `analyze-architectural-source`, 2D branch: [`dwg_to_dxf.py`](../../tools/methods/body/dwg_to_dxf.py) → [`plan_from_dxf.py`](../../tools/methods/body/plan_from_dxf.py) census/extract; facade schedule: [`facade_openings_from_dxf.py`](../../tools/methods/body/facade_openings_from_dxf.py) | explicit sheet maps/datums; rectangular facade outlines only, no inferred depth or world placement |
 | Body, windows, capsules, roof | **standard**: AGR Tools stages 1–4 (Max) [D250]; job scripts in the etalons are precedent, not an automatic standard-route fallback | AGR Tools not yet run on a real building; etalons used job scripts |
 | Materials, UDIM, textures | AGR Tools stages 5–6; `tools/materials/` | partial; texel checked by V009 |
 | UCX | AGR Tools `ucx_core`; etalon `jobs/KPP1/scripts/` | job scripts, no Main UCX case accepted |
