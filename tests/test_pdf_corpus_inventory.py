@@ -262,7 +262,7 @@ def test_output_appearing_during_scan_is_not_clobbered(corpus, tmp_path, monkeyp
 @pytest.mark.parametrize('unsupported_at', ['csv', 'summary', 'both'])
 def test_publish_without_hardlinks(corpus, tmp_path, monkeypatch, unsupported_at):
     import errno
-    real_link, real_replace = inv.os.link, inv.os.replace
+    real_link, real_replace = inv.os.link, inv.os.rename
     replaced = []
     out_csv, out_md = tmp_path / 'drive.csv', tmp_path / 'drive.md'
     before = digest_tree(corpus)
@@ -279,7 +279,7 @@ def test_publish_without_hardlinks(corpus, tmp_path, monkeypatch, unsupported_at
         return real_replace(src, dst)
 
     monkeypatch.setattr(inv.os, 'link', link)
-    monkeypatch.setattr(inv.os, 'replace', replace)
+    monkeypatch.setattr(inv.os, 'rename', replace)
     argv = ['--root', str(corpus), '--csv', str(out_csv), '--summary', str(out_md)]
     assert inv.main(argv) == 0
     assert len(read_csv(out_csv)) == 7 and 'PDF files found: **7**' in out_md.read_text(encoding='utf-8')
@@ -293,7 +293,7 @@ def test_publish_without_hardlinks(corpus, tmp_path, monkeypatch, unsupported_at
 @pytest.mark.parametrize('failure', ['link', 'replace', 'late-output', 'render'])
 def test_publish_pair_rolls_back(corpus, tmp_path, monkeypatch, capsys, failure):
     import errno
-    real_link, real_replace = inv.os.link, inv.os.replace
+    real_link, real_replace = inv.os.link, inv.os.rename
     out_csv, out_md = tmp_path / 'pair.csv', tmp_path / 'pair.md'
     before = digest_tree(corpus)
 
@@ -311,7 +311,7 @@ def test_publish_pair_rolls_back(corpus, tmp_path, monkeypatch, capsys, failure)
         return real_replace(src, dst)
 
     monkeypatch.setattr(inv.os, 'link', link)
-    monkeypatch.setattr(inv.os, 'replace', replace)
+    monkeypatch.setattr(inv.os, 'rename', replace)
     if failure == 'render':
         def render(*args):
             raise inv.InventoryError('injected render failure')
