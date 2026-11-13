@@ -179,6 +179,54 @@ def test_short_displaced_labels_keep_strict_two_em_bounds(tmp_path, rotation, le
     assert result['passed'] is False
 
 
+@pytest.mark.parametrize('rotation', [0, 90])
+@pytest.mark.parametrize('length', [8, 10, 12])
+@pytest.mark.parametrize('order', ['11first', '22first'])
+@pytest.mark.parametrize('lift', [0, 1.5])
+def test_adjacent_short_spans_keep_own_labels_under_padding(tmp_path, rotation, length, order, lift):
+    # Review P1 on #1332: R1 padding must never let a label centred inside its
+    # own span be taken by the neighbouring short span of the same chain.
+    path = tmp_path / 'synthetic-adjacent.pdf'
+    ticks = [100, 100 + length, 100 + 2 * length]
+    with fitz.open() as source, fitz.open() as doc:
+        page = source.new_page(width=300, height=300)
+        page.draw_line((98, 150), (ticks[-1] + 2, 150), width=.3)
+        for x in ticks:
+            page.draw_line((x - 2, 152), (x + 2, 148), width=.3)
+        half_width = fitz.get_text_length('11', fontsize=8) / 2
+        labels = [('11', (ticks[0] + ticks[1]) / 2, 143 - lift), ('22', (ticks[1] + ticks[2]) / 2, 143)]
+        if order == '22first':
+            labels.reverse()
+        for text, cx, y in labels:
+            page.insert_text((cx - half_width, y), text, fontsize=8)
+        target = doc.new_page(width=300, height=300)
+        target.show_pdf_page(target.rect, source, 0, rotate=rotation)
+        doc.save(path)
+    result = bind_album(path)
+    found = {v['raw']: v for v in result['values'] if v['raw'] in ('11', '22')}
+    if order == '11first':
+        # The extractor joins the two stream-adjacent runs into one ('1122' /
+        # '11 22'); that run is not a numeric span label and stays unbound.
+        assert not found
+        assert all(v['binding']['type'] == 'unbound' for v in result['values'])
+    else:
+        assert set(found) == {'11', '22'}
+    spans = {}
+    for raw, value in found.items():
+        span = value['span']
+        assert span is not None, raw  # strict in-span hit is always available
+        axis = 0 if span['p0'][1] == span['p1'][1] else 1
+        lo, hi = sorted((span['p0'][axis], span['p1'][axis]))
+        centre = (value['bbox'][axis] + value['bbox'][axis + 2]) / 2
+        assert lo < centre < hi, (raw, span, value['bbox'])  # own span, never the neighbour
+        assert value['binding']['type'] == 'unbound'
+        assert value['measured_mm'] is None
+        spans[raw] = (lo, hi)
+    assert len(set(spans.values())) == len(spans)
+    assert all(v['scale']['status'] == 'unknown' for v in result['views'])
+    assert result['passed'] is False
+
+
 def test_generated_inline_pages_never_guess_scale_or_drop_labels(tmp_path):
     import random
     rng = random.Random(1302)

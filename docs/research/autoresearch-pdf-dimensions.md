@@ -14,6 +14,9 @@ R1 восстановил два размера КНС (200/250mm, `341A`/`341C`
 Артёма этот count заменён более сильной проверкой: каждый из восьми прежних и
 двух новых native pairs найден с правильными value, line/endpoints и axes/levels;
 все positives проверяются oracle, wrong=0, precision guard PASS. R1 теперь сохранён.
+После ревью (P1) R1 уточнён: подпись внутри своего пролёта всегда важнее
+подписи «рядом», и чужую подпись соседний короткий пролёт не забирает —
+перестановка меток соседних коротких размеров исключена, 17/94 сохранено.
 Основной барьер L03 — доказуемые identities внутренних граней, а не просто текст.
 
 ## Frozen protocol
@@ -154,6 +157,26 @@ The native regression asserts exact original axes/level pairs and new
 The combined replay additionally proves every baseline correct handle survives,
 only 341A/341C are newly credited, and exact frozen axis/level signatures match.
 Final affected/full-suite counts and exact tested head are in the updated PR receipts.
+
+### Review fix: padding ownership (P1 on #1332, 2026-11-13)
+
+Reviewer probe: two adjacent short spans in one chain (ticks 100/100+L/100+2L,
+L 8/10/12pt, font 8), each label centred on its own span, `22` first in the
+text stream. R1 as restored sorted strict and padded hits together by gap/run
+order, so the first span took `22` (its padded neighbour) and the labels swapped.
+Fix in `binding.py`: (1) a strict in-span hit always beats a padded hit;
+(2) a label that another span owns by the strict rule (its top strict hit) is
+never a padded candidate. The reviewer's broader wording "never pad onto a label
+centred inside another span" was tested first and rejected: it drops native
+`341A` (label `200` sits inside the long `4520` span, which owns `4520`, not
+`200`), i.e. it would undo R1. The ownership rule keeps both properties.
+Regression `test_adjacent_short_spans_keep_own_labels_under_padding`
+(L 8/10/12 x order x lift 0/1.5 x rotation 0/90 = 24 cases): before the fix
+6 failed (all `22first`, rotation 0; at rotation 90 the geometric own-span check already held), after 24/24 pass. In the `11first` order
+the extractor joins the two runs (`1122` / `11 22`), which stays unbound.
+Replay after the fix: TUNE 17/94, L03 7/82 and KNS 10/12 at precision 1.0,
+HOLD-OUT 0/6 zero-prediction PASS, guard True (axis/level signatures unchanged),
+corpus sha256 `351cbe99…8b70`.
 
 ### Remaining boundaries
 
