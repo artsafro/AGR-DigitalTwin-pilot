@@ -91,6 +91,24 @@ must be strictly below 1/8 em, capped at 1 pt; exact boundaries, nonfinite evide
 non-numeric or ambiguous labels and unexplained gaps refuse. It does not extrapolate
 to displaced labels or change semantic binding/calibration rules.
 
+Review r1 found that joining geometry alone lost the authorizing text identity:
+inline `6000` could license the gap but a nearby `9000` above the line won the later
+text-assignment heuristic and inherited its axis endpoints. Tests-first `505e8bf6`
+reproduces this in horizontal and rotated PDFs (**2 failed / 2 clean controls passed**).
+The join now carries `(gap_start, gap_end, source_run_index)` into each tick span;
+only that exact run may label the restored span, regardless of which side its centre
+lies on. Other spans cannot steal a gap authorizer by proximity. Multiple authorizers
+inside one tick span, or a gap crossing a tick, refuse rather than selecting a label.
+Repeated equal numeric strings retain separate source-run identities.
+
+Rework probes combine the nearby decoy with the previous valid/invalid/duplicate gap
+cases: 18 nested scale/orientation/offset combinations, four invalid-gap/duplicate
+controls, and six multi-gap/tick-layout/repeated-value cases. Synthetic annotations
+stay explicitly unbound; no additional scale or semantic endpoint inference is added.
+Native oracle replay retains all 94 classifications and KNS8/12, L037/82, precision1.0.
+The rule-49 full-suite receipt remains on ancestor `b5984e28`; affected tests are rerun
+on the rework head, not falsely described as a new-head full suite.
+
 Tests-first commit `39a317d9`: synthetic horizontal and rotated inline cases plus
 real hash-bound KNS replay **3 failed / 2 passed**. First implementation recovered four
 spans but missed 7650 because its CAD knockout differs from the font bbox by 0.60 pt;

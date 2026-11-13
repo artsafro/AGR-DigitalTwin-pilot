@@ -46,7 +46,10 @@ def inline_dimension(path, *, rotation=90, gap_extra=0, decoy=False,
         page.insert_text((center[0] - 2, center[1] + 2), label, fontsize=6)
     if decoy:
         # A second numeric run in the same interruption must not license joining.
-        page.insert_text((103, 164), '7000', fontsize=8, rotate=90)
+        if rotation == 90:
+            page.insert_text((103 + text_offset, 164), '7000', fontsize=8, rotate=90)
+        else:
+            page.insert_text((135, 153 + text_offset), '7000', fontsize=8)
     if nearby_decoy:
         # Separate annotation wins the legacy near-side heuristic but did not
         # authorize the inline gap. It must never inherit that span's endpoints.
@@ -142,3 +145,90 @@ def test_generated_inline_pages_never_guess_scale_or_drop_labels(tmp_path):
         assert value['measured_mm'] is None
         assert result['passed'] is False
         assert all(v['scale']['status'] == 'unknown' for v in result['views'])
+
+
+@pytest.mark.parametrize('rotation', [0, 90])
+@pytest.mark.parametrize('text_offset', [0, 1, 2])
+@pytest.mark.parametrize('factor', [.75, 1, 1.25])
+def test_transformed_gap_authorizer_identity_survives_nearby_decoy(
+    tmp_path, rotation, text_offset, factor,
+):
+    source = inline_dimension(tmp_path / 'synthetic-source.pdf', rotation=rotation,
+                              nearby_decoy=True, text_offset=text_offset)
+    with fitz.open(source) as original, fitz.open() as nested:
+        page = nested.new_page(width=300 * factor + 80, height=300 * factor + 80)
+        page.show_pdf_page(fitz.Rect(40, 40, 300 * factor + 40, 300 * factor + 40), original, 0)
+        path = tmp_path / 'synthetic-transformed.pdf'
+        nested.save(path)
+    result = bind_album(path)
+    (value,) = [v for v in result['values'] if v['raw'] == '6000']
+    (decoy,) = [v for v in result['values'] if v['raw'] == '9000']
+    assert value['span'] is not None
+    assert value['binding']['type'] in ('axis_pair', 'unbound')
+    if value['binding']['type'] == 'axis_pair':
+        assert value['binding']['axes'] == ['1', '2']
+    assert decoy['span'] is None
+    assert decoy['binding'] == {'type': 'unbound', 'reason': 'no_dimension_line'}
+    assert all(v['measured_mm'] is None for v in result['values'])
+    assert all(v['scale']['status'] == 'unknown' for v in result['views'])
+    assert result['passed'] is False
+
+
+@pytest.mark.parametrize('rotation', [0, 90])
+@pytest.mark.parametrize('gap_extra,duplicate', [(2, False), (0, True)])
+def test_nearby_decoy_does_not_rescue_invalid_inline_gap(
+    tmp_path, rotation, gap_extra, duplicate,
+):
+    result = bind_album(inline_dimension(
+        tmp_path / 'synthetic-invalid.pdf', rotation=rotation, text_offset=2,
+        nearby_decoy=True, gap_extra=gap_extra, decoy=duplicate,
+    ))
+    assert all(v['binding']['type'] == 'unbound' for v in result['values']
+               if v['kind'] == 'dimension')
+    assert result['passed'] is False
+
+
+@pytest.mark.parametrize('ticks', [(60, 160, 260), (60, 260), (60, 105, 260)])
+@pytest.mark.parametrize('second_raw', ['7000', '6000'])
+def test_multiple_inline_gaps_keep_per_span_run_identity(tmp_path, ticks, second_raw):
+    # Synthetic chain: two independent inline text runs, plus nearby decoys.
+    # Missing middle tick leaves two authorizers for one span; a tick through
+    # text leaves an interruption crossing spans. Both configurations refuse.
+    path = tmp_path / 'synthetic-chain.pdf'
+    with fitz.open() as doc:
+        page = doc.new_page(width=320, height=300)
+        for x, raw in [(95, '6000'), (195, second_raw)]:
+            page.insert_text((x, 155), raw, fontsize=8)
+        boxes = [line['spans'][0]['bbox'] for block in page.get_text('dict')['blocks']
+                 for line in block['lines']]
+        shape = page.new_shape()
+        previous = 56
+        for box in boxes:
+            shape.draw_line((previous, 150), (box[0], 150))
+            previous = box[2]
+        shape.draw_line((previous, 150), (264, 150))
+        for t in ticks:
+            shape.draw_line((t - 2, 152), (t + 2, 148))
+        shape.finish(color=(0, 0, 0), width=.3)
+        for t in ticks:
+            shape.draw_circle((t, 170), 6)
+            shape.finish(color=(0, 0, 0), width=.3)
+            page.insert_text((t - 2, 172), str(ticks.index(t) + 1), fontsize=6)
+        shape.commit()
+        for x in (95, 195):
+            page.insert_text((x, 143), '9000', fontsize=8)
+        doc.save(path)
+    result = bind_album(path)
+    dimensions = [v for v in result['values'] if v['kind'] == 'dimension']
+    decoys = [v for v in dimensions if v['raw'] == '9000']
+    assert len(decoys) == 2
+    assert all(v['span'] is None and v['binding']['type'] == 'unbound' for v in decoys)
+    bound = [v for v in dimensions if v['binding']['type'] != 'unbound']
+    if ticks == (60, 160, 260):
+        assert [(v['raw'], v['binding']) for v in bound] == [
+            ('6000', {'type': 'axis_pair', 'axes': ['1', '2']}),
+            (second_raw, {'type': 'axis_pair', 'axes': ['2', '3']}),
+        ]
+    else:
+        assert bound == []
+    assert result['passed'] is False

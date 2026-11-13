@@ -244,11 +244,12 @@ def _chains(segs: list[R.Segment], runs: Sequence[R.TextRun] = ()) -> list[dict[
     for (orient, c), ranges in groups.items():
         ranges.sort()
         merged: list[list[float]] = []
+        bridges: list[tuple[float, float, int]] = []
         for a, b in ranges:
             inline = []
             if merged and a > merged[-1][1] + 0.5:
                 end = merged[-1][1]
-                for run in runs:
+                for run_index, run in enumerate(runs):
                     if not all(math.isfinite(v) for v in (*run.bbox, *run.dir, run.size)):
                         continue
                     if orient == "horizontal":
@@ -261,9 +262,11 @@ def _chains(segs: list[R.Segment], runs: Sequence[R.TextRun] = ()) -> list[dict[
                     # <1/8 em, capped at 1 pt; exact limits still refuse.
                     margin = min(1.0, run.size / 8)
                     if parallel and across0 < c < across1 and abs(lo - end) < margin and abs(hi - a) < margin:
-                        inline.append(run)
-            bridge = len(inline) == 1 and R.check_dimension_text(inline[0].text) is not None
+                        inline.append(run_index)
+            bridge = len(inline) == 1 and R.check_dimension_text(runs[inline[0]].text) is not None
             if merged and (a <= merged[-1][1] + 0.5 or bridge):
+                if bridge:
+                    bridges.append((merged[-1][1], a, inline[0]))
                 merged[-1][1] = max(merged[-1][1], b)
             else:
                 merged.append([a, b])
@@ -287,7 +290,8 @@ def _chains(segs: list[R.Segment], runs: Sequence[R.TextRun] = ()) -> list[dict[
                             pos.append(y)
             pos = _merge(pos)
             if len(pos) >= 2:
-                chains.append({"orientation": orient, "coord": c, "ticks": pos})
+                chains.append({"orientation": orient, "coord": c, "ticks": pos,
+                               "bridges": [g for g in bridges if a <= g[0] and g[1] <= b]})
     chains.sort(key=lambda ch: (ch["orientation"], ch["coord"], ch["ticks"][0]))
     return chains
 
@@ -470,14 +474,30 @@ def _bind_page(pymupdf: Any, page: Any, number: int, sheet: str | None) -> dict[
     # text along each span
     usable = [(i, r) for i, r in enumerate(runs) if i not in label_runs and i not in level_runs]
     claimed: set[int] = set()
+    # A label that licenses missing geometry cannot be replaced or stolen by
+    # another span's proximity heuristic. Retain source-run identity, not text
+    # equality: repeated numeric labels are distinct evidence.
+    authorizers = {i for ch in chains for _, _, i in ch["bridges"]}
     spans = []
     for ch in chains:
         for a, b in zip(ch["ticks"], ch["ticks"][1:]):
-            spans.append({"orientation": ch["orientation"], "coord": ch["coord"], "a": a, "b": b})
+            spans.append({"orientation": ch["orientation"], "coord": ch["coord"], "a": a, "b": b,
+                          "bridges": [g for g in ch["bridges"] if g[0] < b and a < g[1]]})
 
     def candidates(sp: dict[str, Any], near_side: bool) -> list[tuple[float, int]]:
+        if sp["bridges"]:
+            # Multiple labels or an interruption crossing a tick cannot prove
+            # one span value. Never fall back to unrelated nearby annotation.
+            if len(sp["bridges"]) != 1:
+                return []
+            lo, hi, index = sp["bridges"][0]
+            if sp["a"] <= lo and hi <= sp["b"] and any(i == index for i, _ in usable):
+                return [(0.0, index)]
+            return []
         hits = []
         for i, r in usable:
+            if i in authorizers:
+                continue
             cx, cy = R._center(r.bbox)
             if sp["orientation"] == "horizontal":
                 if not (abs(r.dir[1]) <= 1e-6 and r.dir[0] > 0 and sp["a"] < cx < sp["b"]):
