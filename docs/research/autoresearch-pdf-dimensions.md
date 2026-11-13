@@ -2,16 +2,18 @@
 
 ## Кратко для Артёма
 
-Остановка: **три раунда с приростом <1% (R2–R4)**. Сохранённых изменений
-распознавания нет: TUNE остался **15/94 (15.96%)**, цель 80% не достигнута.
-KPP1 L03 — 7/82, КНС разрез — 8/12 (precision 1.0); HOLD-OUT КНС план — 0/6,
+Остановка поиска: **три раунда с приростом <1% (R2–R4)**. По решению Артёма
+2026-11-13 восстановлен R1: TUNE вырос с 15/94 до **17/94 (18.09%)**;
+цель 80% не достигнута. KPP1 L03 — 7/82, КНС разрез — 10/12 (precision 1.0);
+HOLD-OUT КНС план — 0/6,
 precision=null, отдельный zero-prediction PASS [D277]. Масштаб не угадывался,
-`passed=false`; production binder совпадает с main.
+`passed=false`; оси, отметки и их verdicts совпадают с frozen baseline на всех листах.
 
-R1 восстановил два размера КНС (200/250mm, `341A`/`341C`): 17/94, precision 1.0,
-оси/отметки без изменений. Но существующий regression требует ровно 8 positive
-bindings, а кандидат даёт 10. По условию «не ослаблять существующие тесты» он
-отклонён; тест не изменён. Дополнительные hits не выдаются за retained gain.
+R1 восстановил два размера КНС (200/250mm, `341A`/`341C`). Первоначально он был
+отклонён из-за устаревшего regression «ровно 8 positives». По явному решению
+Артёма этот count заменён более сильной проверкой: каждый из восьми прежних и
+двух новых native pairs найден с правильными value, line/endpoints и axes/levels;
+все positives проверяются oracle, wrong=0, precision guard PASS. R1 теперь сохранён.
 Основной барьер L03 — доказуемые identities внутренних граней, а не просто текст.
 
 ## Frozen protocol
@@ -38,7 +40,7 @@ Keep iff TUNE recall rises AND guard passes; report HOLD-OUT on every trial.
 Stop: recall >=0.8, three consecutive gains <0.01 absolute recall, or 8h
 (card runtime cap 120min is stricter). No existing tests may be loosened.
 
-## Baseline and final accounting
+## Baseline accounting (unchanged)
 
 Here found means positive semantic predictions, not nearby text/raw spans.
 Every native handle has exactly one success/first-blocking-cause class. No wrong
@@ -59,6 +61,25 @@ predictions remain. [Full handle ledger](../../tools/research/pdf_album/dimensio
 | — non-cardinal chain unsupported | 0 | 0 | 0 | 6 |
 | **All sheets** | **15** | **15** | **0** | **85** |
 
+## Final accounting (restored R1)
+
+[Final handle ledger](../../tools/research/pdf_album/dimension-autoresearch/final-results.json)
+is a fresh replay of the same frozen corpus/guard, not a replacement baseline.
+
+| Sheet / first blocking cause | Found | Correct | Wrong | Missed |
+|---|---:|---:|---:|---:|
+| L03 total | 7 | 7 | 0 | 75 |
+| — correct binding | 7 | 7 | 0 | 0 |
+| — displaced/short text not bound to own line | 0 | 0 | 0 | 15 |
+| — own span recovered, endpoint identity absent | 0 | 0 | 0 | 57 |
+| — native display rounding differs from measurement | 0 | 0 | 0 | 3 |
+| KNS section total | 10 | 10 | 0 | 2 |
+| — correct binding | 10 | 10 | 0 | 0 |
+| — own span recovered, endpoint identity absent | 0 | 0 | 0 | 2 |
+| KNS floor HOLD-OUT total | 0 | 0 | 0 | 6 |
+| — non-cardinal chain unsupported | 0 | 0 | 0 | 6 |
+| **All sheets** | **17** | **17** | **0** | **83** |
+
 ## Rounds
 
 | Round | One change | TUNE correct/truth | L03 / KNS precision | HOLD-OUT recall / precision | Replay guard | Existing tests | Decision |
@@ -68,6 +89,7 @@ predictions remain. [Full handle ledger](../../tools/research/pdf_album/dimensio
 | R2 | Parallel stroke groups 0.1pt ->0.5pt | 15/94 | 1.0 / 1.0 | 0/6 / null | PASS | 71 passed | discard: no gain |
 | R3 | Minimum diagonal tick 1.5pt ->0.75pt | 15/94 | 1.0 / 1.0 | 0/6 / null | PASS | 71 passed | discard: no gain |
 | R4 | Perpendicular text search 2.5 ->4 text heights | 15/94 | 1.0 / 1.0 | 0/6 / null | PASS | 71 passed | discard; STOP |
+| R1 restoration | Same two-em rule; explicitly authorized source-bound regression replacement | 17/94 | 1.0 / 1.0 | 0/6 / null | PASS | 72 passed (two affected files, including 24 boundary probes) | keep |
 
 [Round receipts](../../tools/research/pdf_album/dimension-autoresearch/rounds.json)
 record trial/revert commits, source SHA256 and every sheet's metrics/miss classes.
@@ -101,9 +123,32 @@ Original bytes are archived. Mutation-injection fixture then exposed a captured
 default corpus-path argument (KeyError `L03`); explicit active-path calls fixed it.
 Final harness replayed all four own trial commits: exact metrics, per-handle
 classes and replay guards match archived v2 results **4/4**. No outcome retuning.
-Research status is `stopped_plateau`, not target reached. Control records archived
+Research search status is `stopped_plateau`, not target reached. Control records archived
 unchanged; last `active` status is not presented as automated goal completion.
 Kanban drove continuation because this runtime has no native Codex Goal API.
+
+### Authorized delta: merge main and restore R1 (2026-11-13)
+
+Artem explicitly authorized the same-PR rework on card `t_4089d009`: merge main,
+replace the exact-eight assertion with native-pair correctness/precision, restore R1.
+Main `3d48ede1` was merged as `738d02ec`; the only conflict was adjacent D276/D277
+rows, both preserved in increasing order. No source or frozen protocol was edited.
+The production delta is the original R1 rule with a named `padding` local for readability.
+No new search/tolerance round was run. Historical control outcomes in `rounds.json`
+and sealed evidence stay byte-for-byte intact; the adoption supersedes R1's discard,
+not its historical failing-test receipt.
+
+Tests-first `3e916073` requires both new native pairs plus all old identities:
+on merged baseline `738d02ec`, 2 failed / 0 passed. Additional tests-first
+`48d056e1` probes both rotations, span lengths 10/16/20pt and offsets
+1/15.9/16/16.1pt at font size 8: 4 failed / 20 passed before restoration.
+With R1, both complete affected files pass: 72 passed / 0 failed, including
+24/24 strict-boundary probes and fresh-process three-sheet replay.
+The native regression asserts exact original axes/level pairs and new
+`341A` (-8.200/-8.000) and `341C` (-0.350/-0.100); 341E/341F stay refused.
+The combined replay additionally proves every baseline correct handle survives,
+only 341A/341C are newly credited, and exact frozen axis/level signatures match.
+Final affected/full-suite counts and exact tested head are in the updated PR receipts.
 
 ### Remaining boundaries
 
@@ -115,9 +160,9 @@ Kanban drove continuation because this runtime has no native Codex Goal API.
   Current scoring stays exact; no such waiver is needed or applied by this card.
 - Non-cardinal support needs independent registration and rotated semantic-axis
   identity; the HOLD-OUT remains measured zero, not omitted.
-- Future R1 adoption needs stronger source-bound expectations for both new pairs
-  AND every old identity/refusal, not deletion of the exact-eight regression.
-  This card preserves that guard and claims no retained production improvement.
+- R1 adoption now has stronger source-bound expectations for both new pairs and
+  every old identity/refusal, under explicit user authorization. The frozen score,
+  precision/scale/axis-level guards and all other tests remain unchanged.
 
 ## Reproduction
 

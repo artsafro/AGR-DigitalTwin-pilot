@@ -499,12 +499,17 @@ def _bind_page(pymupdf: Any, page: Any, number: int, sheet: str | None) -> dict[
             if i in authorizers:
                 continue
             cx, cy = R._center(r.bbox)
+            # R1: CAD moves labels outside tiny spans to keep them legible.
+            # Preserve the strict two-em cutoff and all perpendicular/identity guards.
+            padding = 2 * r.size if sp["b"] - sp["a"] < 2 * r.size else 0
             if sp["orientation"] == "horizontal":
-                if not (abs(r.dir[1]) <= 1e-6 and r.dir[0] > 0 and sp["a"] < cx < sp["b"]):
+                if not (abs(r.dir[1]) <= 1e-6 and r.dir[0] > 0
+                        and sp["a"] - padding < cx < sp["b"] + padding):
                     continue
                 gap = sp["coord"] - cy if near_side else cy - sp["coord"]
             else:
-                if not (abs(r.dir[0]) <= 1e-6 and abs(r.dir[1]) > 0.99 and sp["a"] < cy < sp["b"]):
+                if not (abs(r.dir[0]) <= 1e-6 and abs(r.dir[1]) > 0.99
+                        and sp["a"] - padding < cy < sp["b"] + padding):
                     continue
                 gap = sp["coord"] - cx if near_side else cx - sp["coord"]
             if 0 < gap <= 2.5 * r.size:
