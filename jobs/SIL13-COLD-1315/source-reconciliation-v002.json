@@ -1,0 +1,873 @@
+{
+  "status": "source_extraction_only_not_constructed_pilot",
+  "passed": false,
+  "boundary": {
+    "handle": "33FBCEF",
+    "layer": "участки зоны",
+    "area_m2": 12958.738864325082,
+    "closed": true,
+    "points_xyseb": [
+      [
+        825.1000000000001,
+        11111.71037389878,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        776.7307581789572,
+        11204.76169149689,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        772.2998339763124,
+        11202.49998542587,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        718.01,
+        11129.66,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        709.1099999999999,
+        11117.7,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        715.7882201130831,
+        11112.73760774095,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        709.1099999999999,
+        11103.85,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        786.31,
+        11046.58,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        788.47,
+        11049.51,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        822.38,
+        11024.38,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        827.21,
+        11020.8,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        858.7,
+        11051.13,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        830.2699999999999,
+        11102.44,
+        0.0,
+        0.0,
+        0.0
+      ]
+    ]
+  },
+  "greening_definition": "Силикатный_350+150_Озеленение",
+  "symbols": [
+    {
+      "handle": "33F02A9",
+      "source_block": "Клен остролистный_22_М5",
+      "schedule_position": "3",
+      "xy_m": [
+        824.9778531540854,
+        11033.70102533642
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02AB",
+      "source_block": "Клен остролистный_22_М5",
+      "schedule_position": "3",
+      "xy_m": [
+        825.983241303949,
+        11026.6963104534
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02AC",
+      "source_block": "Клен остролистный_22_М5",
+      "schedule_position": "3",
+      "xy_m": [
+        831.9718285128132,
+        11034.7048720419
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02AD",
+      "source_block": "Клен остролистный_22_М5",
+      "schedule_position": "3",
+      "xy_m": [
+        838.965803400634,
+        11035.70871811764
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02AE",
+      "source_block": "Клен остролистный_22_М5",
+      "schedule_position": "3",
+      "xy_m": [
+        830.978715997722,
+        11041.70037911399
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02AF",
+      "source_block": "Клен остролистный_22_М5",
+      "schedule_position": "3",
+      "xy_m": [
+        843.1930022907186,
+        11041.11508570549
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02B0",
+      "source_block": "Пихта сибирская_105_М5.1",
+      "schedule_position": "1",
+      "xy_m": [
+        778.1442822772598,
+        11107.7011835187
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02B1",
+      "source_block": "Сирень обыкновенная_110",
+      "schedule_position": "4",
+      "xy_m": [
+        714.359410191499,
+        11118.13403653662
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02B2",
+      "source_block": "Сирень обыкновенная_110",
+      "schedule_position": "4",
+      "xy_m": [
+        714.9426930587964,
+        11120.91138997614
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02B3",
+      "source_block": "Сирень обыкновенная_110",
+      "schedule_position": "4",
+      "xy_m": [
+        713.0393448602553,
+        11119.63779668312
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02B4",
+      "source_block": "Сирень обыкновенная_110",
+      "schedule_position": "4",
+      "xy_m": [
+        712.5328097386549,
+        11117.4895657782
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02B5",
+      "source_block": "Сирень обыкновенная_110",
+      "schedule_position": "4",
+      "xy_m": [
+        782.8450506699068,
+        11188.0423292146
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02B6",
+      "source_block": "Сирень обыкновенная_110",
+      "schedule_position": "4",
+      "xy_m": [
+        783.8134721577075,
+        11186.32125832226
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02B7",
+      "source_block": "Сирень обыкновенная_110",
+      "schedule_position": "4",
+      "xy_m": [
+        781.2463821954842,
+        11190.33196838201
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02B8",
+      "source_block": "Сирень обыкновенная_110",
+      "schedule_position": "4",
+      "xy_m": [
+        785.2123091254551,
+        11184.52335412037
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02B9",
+      "source_block": "Сирень обыкновенная_110",
+      "schedule_position": "4",
+      "xy_m": [
+        810.4905838003878,
+        11110.20895799901
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02BA",
+      "source_block": "Сирень обыкновенная_110",
+      "schedule_position": "4",
+      "xy_m": [
+        810.5464703237147,
+        11111.99670043366
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02BB",
+      "source_block": "Сирень обыкновенная_110",
+      "schedule_position": "4",
+      "xy_m": [
+        808.7894213340923,
+        11111.09966351507
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02BC",
+      "source_block": "Сирень обыкновенная_110",
+      "schedule_position": "4",
+      "xy_m": [
+        804.8163290400068,
+        11109.11709162967
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02BD",
+      "source_block": "Сирень обыкновенная_110",
+      "schedule_position": "4",
+      "xy_m": [
+        806.7949077767416,
+        11110.08197902969
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02BE",
+      "source_block": "Сирень обыкновенная_110",
+      "schedule_position": "4",
+      "xy_m": [
+        806.3828733057194,
+        11108.25361331711
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02BF",
+      "source_block": "Сирень обыкновенная_110",
+      "schedule_position": "4",
+      "xy_m": [
+        808.4507001838856,
+        11109.14748602138
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02C0",
+      "source_block": "Гортензия древовидная Annabelle_127_М5.1",
+      "schedule_position": "5",
+      "xy_m": [
+        761.2729498210925,
+        11104.58256729799
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02C1",
+      "source_block": "Гортензия древовидная Annabelle_127_М5.1",
+      "schedule_position": "5",
+      "xy_m": [
+        762.7807745402034,
+        11103.62418641678
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02C2",
+      "source_block": "Гортензия древовидная Annabelle_127_М5.1",
+      "schedule_position": "5",
+      "xy_m": [
+        762.7807745402034,
+        11105.34254453557
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02C3",
+      "source_block": "Гортензия древовидная Annabelle_127_М5.1",
+      "schedule_position": "5",
+      "xy_m": [
+        762.2672475767573,
+        11104.56205010244
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02C4",
+      "source_block": "Гортензия древовидная Annabelle_127_М5.1",
+      "schedule_position": "5",
+      "xy_m": [
+        766.7300080658962,
+        11100.57955960207
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02C5",
+      "source_block": "Гортензия древовидная Annabelle_127_М5.1",
+      "schedule_position": "5",
+      "xy_m": [
+        768.237832785007,
+        11099.62117872086
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02C6",
+      "source_block": "Гортензия древовидная Annabelle_127_М5.1",
+      "schedule_position": "5",
+      "xy_m": [
+        768.237832785007,
+        11101.33953683964
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02C7",
+      "source_block": "Гортензия древовидная Annabelle_127_М5.1",
+      "schedule_position": "5",
+      "xy_m": [
+        767.7243058215608,
+        11100.55904240651
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02C8",
+      "source_block": "Гортензия древовидная Annabelle_127_М5.1",
+      "schedule_position": "5",
+      "xy_m": [
+        772.4188982815482,
+        11096.53225290555
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02C9",
+      "source_block": "Гортензия древовидная Annabelle_127_М5.1",
+      "schedule_position": "5",
+      "xy_m": [
+        773.926723000659,
+        11095.57387202435
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02CA",
+      "source_block": "Гортензия древовидная Annabelle_127_М5.1",
+      "schedule_position": "5",
+      "xy_m": [
+        773.926723000659,
+        11097.29223014313
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02CB",
+      "source_block": "Гортензия древовидная Annabelle_127_М5.1",
+      "schedule_position": "5",
+      "xy_m": [
+        773.4131960372129,
+        11096.51173571
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02CC",
+      "source_block": "Липа мелколистная_30",
+      "schedule_position": "2",
+      "xy_m": [
+        773.9655518654757,
+        11103.521639103
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02CD",
+      "source_block": "Липа мелколистная_30",
+      "schedule_position": "2",
+      "xy_m": [
+        777.9698275844495,
+        11100.52734854154
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02CE",
+      "source_block": "Липа мелколистная_30",
+      "schedule_position": "2",
+      "xy_m": [
+        769.9612761465024,
+        11106.51592966446
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02CF",
+      "source_block": "Гортензия древовидная Annabelle_127_М5.1",
+      "schedule_position": "5",
+      "xy_m": [
+        783.3862724427429,
+        11103.73233852903
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02D0",
+      "source_block": "Гортензия древовидная Annabelle_127_М5.1",
+      "schedule_position": "5",
+      "xy_m": [
+        784.8940971618538,
+        11102.77395764782
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02D1",
+      "source_block": "Гортензия древовидная Annabelle_127_М5.1",
+      "schedule_position": "5",
+      "xy_m": [
+        784.8940971618538,
+        11104.4923157666
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02D2",
+      "source_block": "Гортензия древовидная Annabelle_127_М5.1",
+      "schedule_position": "5",
+      "xy_m": [
+        784.3805701984076,
+        11103.71182133347
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02D3",
+      "source_block": "Гортензия древовидная Annabelle_127_М5.1",
+      "schedule_position": "5",
+      "xy_m": [
+        781.4822838305485,
+        11106.93940924298
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02D4",
+      "source_block": "Гортензия древовидная Annabelle_127_М5.1",
+      "schedule_position": "5",
+      "xy_m": [
+        782.9901085496595,
+        11105.98102836177
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02D5",
+      "source_block": "Гортензия древовидная Annabelle_127_М5.1",
+      "schedule_position": "5",
+      "xy_m": [
+        782.9901085496595,
+        11107.69938648056
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F02D6",
+      "source_block": "Гортензия древовидная Annabelle_127_М5.1",
+      "schedule_position": "5",
+      "xy_m": [
+        782.4765815862133,
+        11106.91889204743
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F0314",
+      "source_block": "Сирень обыкновенная_110",
+      "schedule_position": "4",
+      "xy_m": [
+        794.1222401508937,
+        11103.48111187512
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F0315",
+      "source_block": "Сирень обыкновенная_110",
+      "schedule_position": "4",
+      "xy_m": [
+        793.7102056798715,
+        11101.65274616255
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F031A",
+      "source_block": "Липа мелколистная_30",
+      "schedule_position": "2",
+      "xy_m": [
+        781.9741033034232,
+        11097.53305798008
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F031B",
+      "source_block": "Гортензия древовидная Annabelle_127_М5.1",
+      "schedule_position": "5",
+      "xy_m": [
+        789.1039688073217,
+        11091.16877708342
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F031C",
+      "source_block": "Гортензия древовидная Annabelle_127_М5.1",
+      "schedule_position": "5",
+      "xy_m": [
+        790.6117935264326,
+        11090.21039620222
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F031D",
+      "source_block": "Гортензия древовидная Annabelle_127_М5.1",
+      "schedule_position": "5",
+      "xy_m": [
+        790.6117935264326,
+        11091.928754321
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    },
+    {
+      "handle": "33F031E",
+      "source_block": "Гортензия древовидная Annabelle_127_М5.1",
+      "schedule_position": "5",
+      "xy_m": [
+        790.0982665629864,
+        11091.14825988787
+      ],
+      "z_m": null,
+      "inside_approved_boundary": true,
+      "status": "source_symbol_only_not_library_placement"
+    }
+  ],
+  "callouts": [
+    {
+      "handle": "33F02D7",
+      "position": "3",
+      "quantity": 6,
+      "arrow_xy_m": [
+        [
+          826.5866624666513,
+          11025.84495696073
+        ],
+        [
+          843.1930022907231,
+          11041.11508570526
+        ]
+      ]
+    },
+    {
+      "handle": "33F02F4",
+      "position": "1",
+      "quantity": 1,
+      "arrow_xy_m": [
+        [
+          778.0725241720138,
+          11107.88292077257
+        ]
+      ]
+    },
+    {
+      "handle": "33F02F8",
+      "position": "2",
+      "quantity": 4,
+      "arrow_xy_m": [
+        [
+          768.267506423113,
+          11107.22668457104
+        ],
+        [
+          781.96059602694,
+          11097.52801824591
+        ]
+      ]
+    },
+    {
+      "handle": "33F02FC",
+      "position": "4",
+      "quantity": 4,
+      "arrow_xy_m": [
+        [
+          781.3639381898162,
+          11190.00235998087
+        ],
+        [
+          785.1493474085217,
+          11184.57907943435
+        ]
+      ]
+    },
+    {
+      "handle": "33F0300",
+      "position": "4",
+      "quantity": 4,
+      "arrow_xy_m": [
+        [
+          714.9666351208288,
+          11120.92145853881
+        ],
+        [
+          712.7228119385398,
+          11117.40040882118
+        ]
+      ]
+    },
+    {
+      "handle": "33F0304",
+      "position": "4",
+      "quantity": 7,
+      "arrow_xy_m": [
+        [
+          805.0125016797609,
+          11109.10018482992
+        ],
+        [
+          810.5200785349952,
+          11111.94518408878
+        ]
+      ]
+    },
+    {
+      "handle": "33F0308",
+      "position": "5",
+      "quantity": 8,
+      "arrow_xy_m": [
+        [
+          782.4745390716198,
+          11106.97518822265
+        ],
+        [
+          784.8289264151899,
+          11102.68043507539
+        ]
+      ]
+    },
+    {
+      "handle": "33F030C",
+      "position": "5",
+      "quantity": 4,
+      "arrow_xy_m": [
+        [
+          790.2207889302808,
+          11090.97335023157
+        ]
+      ]
+    },
+    {
+      "handle": "33F0310",
+      "position": "5",
+      "quantity": 12,
+      "arrow_xy_m": [
+        [
+          773.4090744184213,
+          11096.52938418275
+        ],
+        [
+          762.3161354748954,
+          11104.4816115346
+        ]
+      ]
+    },
+    {
+      "handle": "33F0316",
+      "position": "4",
+      "quantity": 2,
+      "arrow_xy_m": [
+        [
+          794.1190777867088,
+          11103.63647976309
+        ]
+      ]
+    }
+  ],
+  "all_52_symbols_inside": true,
+  "interpretation": "Position 2 callout 33F02F8 says 2/4; linden-named CAD symbol is NOT permission to substitute Tilia for Acer rubrum Red Sunset. Position 5 symbols name Annabelle; generic Hydrangea library candidate is not cultivar-certified.",
+  "heights": "not assigned: project zero/design mark choice pending"
+}

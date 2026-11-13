@@ -1,6 +1,6 @@
 schema_version: 1.0.0
 job_id: SIL13-COLD-1315
-run_id: cold-1315-intake-v001
+run_id: cold-1315-source-reconciliation-v002
 synthetic: false
 path: standard
 inputs: &inputs
@@ -13,16 +13,18 @@ gates:
   inputs:
     status: review
     waits: user
-    note: Fresh PZU pinned and copied; authority of buried planting/VP definitions and boundary candidate needs owner confirmation.
+    note: Boundary and planting/VP-definition authority answered in issue comment 6852165269; project zero and design-mark selection still unanswered.
     evidence: *inputs
   parts:
-    status: missing
+    status: review
     waits: user
-    note: Site/scope Gate 1 answered on issue 1315; exact PartsList cannot be confirmed before the source-content answers. No construction.
-    evidence: []
+    note: Site and content decisions answered; two-part pilot draft validated but unconfirmed, with height/size questions open. No construction approval fabricated.
+    evidence:
+    - path: jobs/SIL13-COLD-1315/parts-pilot-draft.json
+      sha256: 60169190f8cea4fc0bbdb1b25e12ef471a0752896f158c6a3349143f72d0d553
   operations:
     status: missing
-    note: No geometry built. Only read-only source intake and diagnostic source-contour image.
+    note: Source-only boundary and 52 planting POINTs exported/read back; no constructed Ground or library placements.
     evidence: []
   budgets:
     status: missing
@@ -34,13 +36,13 @@ gates:
     evidence: []
   report:
     status: review
-    note: Intake checkpoint only; reproduction and historical comparison are incomplete.
+    note: Source reconciliation checkpoint only; source DXF is not model readback, reproduction and historical comparison remain incomplete.
     evidence:
     - path: jobs/SIL13-COLD-1315/REPORT.md
-      sha256: 3b11f67f82f0584c6e6cc7590854a05531b6f02da2eb152e1ed171449371e777
+      sha256: 43ec65703383a60509ec8246796efc7606d357cf1ec6f17e6140d6f607a762db
   visual:
     status: missing
-    note: No pilot built and no user visual acceptance.
+    note: Source-only image with proposed window exists; no constructed pilot or user visual acceptance.
     evidence: []
   checker:
     status: missing

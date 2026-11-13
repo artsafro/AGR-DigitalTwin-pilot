@@ -1,0 +1,328 @@
+{
+  "status": "candidate_lookup_only",
+  "xlsx": "G:/Мой диск/AGR-assets/maf/maf_spec_vedomost_3.xlsx",
+  "xlsx_nonempty_rows": 206,
+  "catalogue_entries": 931,
+  "rows": [
+    {
+      "position": "1",
+      "source_description": "Теневой навес  S =25.0 кв.м., со скамьей, зашивкой монолитным поликарбонатом, водосточными желобами и снегозадержанием.  Индивидуальный проект (артикула нет).",
+      "quantity_text": "8 шт.",
+      "sku_literal": null,
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "3",
+      "source_description": "Столик с отдельностоящими лавочками, арт.  МДП-1007 | Деткки",
+      "quantity_text": "6 шт.",
+      "sku_literal": "МДП-1007",
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "4",
+      "source_description": "Песочница, арт. ИП-2006 | Деткки",
+      "quantity_text": "6 шт.",
+      "sku_literal": "ИП-2006",
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "5",
+      "source_description": "Балансир «Линия», арт. БЛР-2007 | Деткки",
+      "quantity_text": "3 шт.",
+      "sku_literal": "БЛР-2007",
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "6",
+      "source_description": "Игровая панель «Часы», арт. ИПН-2012 | Деткки",
+      "quantity_text": "6 шт.",
+      "sku_literal": "ИПН-2012",
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "7",
+      "source_description": "Интерактивный элемент «Гипно-2», арт. ИПН-2007 | Деткки",
+      "quantity_text": "2 шт.",
+      "sku_literal": "ИПН-2007",
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "8",
+      "source_description": "Меловая доска (М), арт. ИПН-2015 | Деткки",
+      "quantity_text": "8 шт.",
+      "sku_literal": "ИПН-2015",
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "9",
+      "source_description": "Переговорные трубы «Цветки», арт. ИПН-2005 | Деткки",
+      "quantity_text": "4 шт.",
+      "sku_literal": "ИПН-2005",
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "10",
+      "source_description": "Игровая панель «Счеты», арт. ИПН-2028 | Деткки",
+      "quantity_text": "2 шт.",
+      "sku_literal": "ИПН-2028",
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "13",
+      "source_description": "Скамейки «Форум» со спинкой, арт.  СКМ-0069.1 | Деткки",
+      "quantity_text": "4 шт.",
+      "sku_literal": "СКМ-0069.1",
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "14",
+      "source_description": "Скамейки «Форум» без спинки, арт.  СКМ-0069 | Деткки",
+      "quantity_text": "2 шт.",
+      "sku_literal": "СКМ-0069",
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "15",
+      "source_description": "Скамья парковая на металлическом основании со спинкой тип 1 (для МГН), арт. 1536 | Красивый город",
+      "quantity_text": "3 шт.",
+      "sku_literal": "1536",
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "16",
+      "source_description": "Шахматный стол «Паскаль» (комплект), арт.  СПТ-0001 | Деткки",
+      "quantity_text": "2 шт.",
+      "sku_literal": "СПТ-0001",
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "17",
+      "source_description": "Стол со скамейками «Бриз», арт.  СТЛ.М-0007 | Деткки",
+      "quantity_text": "4 шт.",
+      "sku_literal": "СТЛ.М-0007",
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "18",
+      "source_description": "Велопарковка на 7 мест, арт. ВПЛ-0001 | Деткки",
+      "quantity_text": "8 шт.",
+      "sku_literal": "ВПЛ-0001",
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "19",
+      "source_description": "Навес для колясок и велосипедов «Вуд» (обшивка монолитным поликарбонатом), арт.  ПМ-158 | Рельеф",
+      "quantity_text": "1 шт.",
+      "sku_literal": "ПМ-158",
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "20",
+      "source_description": "Навес для отдыха МГН (зашит монолитным поликарбонатом и рейками), арт.  ВСТ 9624/3 | Высота",
+      "quantity_text": "1 шт.",
+      "sku_literal": "ВСТ 9624/3",
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "21",
+      "source_description": "Контейнерная площадка «Бункер» на 3 контейнера, арт. 5003-1 | Аданат",
+      "quantity_text": "1 шт.",
+      "sku_literal": "5003-1",
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "22",
+      "source_description": "Контейнерная площадка «Бункер» на 4 контейнера, арт. 5003-2 | Аданат",
+      "quantity_text": "1 шт.",
+      "sku_literal": "5003-2",
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "23",
+      "source_description": "Хозблок для контейнерной площадки «Бункер», арт. 5052 | Аданат",
+      "quantity_text": "1 шт.",
+      "sku_literal": "5052",
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "24",
+      "source_description": "Флагшток высотой 9 м (с закрытым подъёмным механизмом), арт.  AL-L-06-11 | Grand-mag",
+      "quantity_text": "3 шт.",
+      "sku_literal": "AL-L-06-11",
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "25",
+      "source_description": "Детские футбольные ворота (с сеткой) «Юниор» с баскетбольным щитом, арт. 44708 | Хоббика",
+      "quantity_text": "2 шт.",
+      "sku_literal": "44708",
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "26",
+      "source_description": "Спортивный комплекс (волейбол) с регулированием крепления сетки по высоте, с сеткой, от 6 лет, арт.  СО053 | Поколение",
+      "quantity_text": "1 шт.",
+      "sku_literal": "СО053",
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "27",
+      "source_description": "Контейнер для отходов  V =1.1 м³ «крышка в крышке» с маркировкой, арт.  МК001 | Поколение",
+      "quantity_text": "7 шт.",
+      "sku_literal": "МК001",
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "28",
+      "source_description": "Урна, арт. 5963.S | Игратекс",
+      "quantity_text": "2 шт.",
+      "sku_literal": "5963.S",
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "29",
+      "source_description": "Сварное ограждение  PRO   H =2,5 м. Индивидуальный проект (артикула нет).",
+      "quantity_text": "663 п.м.",
+      "sku_literal": null,
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "30",
+      "source_description": "Ворота распашные  L =4.2 м. Индивидуальный проект (артикула нет).",
+      "quantity_text": "4 шт.",
+      "sku_literal": null,
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "31",
+      "source_description": "Калитка периметрального ограждения. Индивидуальный проект (артикула нет).",
+      "quantity_text": "2 шт.",
+      "sku_literal": null,
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "32",
+      "source_description": "Калитка в спор. ограждении. Индивидуальный проект (артикула нет).",
+      "quantity_text": "1 шт.",
+      "sku_literal": null,
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "33",
+      "source_description": "Ограждение спортивное. Индивидуальный проект (артикула нет).",
+      "quantity_text": "94 п.м.",
+      "sku_literal": null,
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "34",
+      "source_description": "Лежачий полицейский  L =6 м, ИДН 500С | Стандартпарк",
+      "quantity_text": "4 шт.",
+      "sku_literal": null,
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    },
+    {
+      "position": "35",
+      "source_description": "Концевой элемент композитный, ДО-ИДН-500-К/К-СП | Стандартпарк",
+      "quantity_text": "8 шт.",
+      "sku_literal": null,
+      "xlsx_candidate_rows": [],
+      "catalogue_name_candidates": [],
+      "status": "no_literal_sku_hit_not_exhaustive_absence",
+      "reason": "No model substitution or dimension-only selection. Individual designs remain missing; no new modelling."
+    }
+  ]
+}

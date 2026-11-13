@@ -301,6 +301,8 @@ frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Mar
 
 | D272 | 2026-11-13 | Cold reproduction #1315 uses Silikatny's whole projected site and the fresh Telegram PZU (2026-11-04, SHA-256 f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2): one Ground master for NPM/VPM, pilot picture first, VPM-only Ground UCX, MAF/Flora from unchanged etalon libraries with missing entries listed, no deletion for budget or smoothing of disputed small relief steps; inspect PZU planting tables/legend before asking about unresolved species/counts and never claim passed with open gates. | `jobs/SIL13-COLD-1315/TASK.md` | Artem «принимаю рекомендации», «свежий», relayed on Kanban t_d9ae7dc0 and issue #1315 comments 6850169203, 6851013290 |
 
+| D275 | 2026-11-13 | Silikatny cold reproduction #1315: use closed boundary 33FBCEF on `участки зоны`, actual 12,958.739 m2 without fitting to 12,961; use table 33EFCD8/*T972 together with the `Силикатный_350+150_Озеленение` plan (11 trees, 41 shrubs, 4535 hedge plants); flowerbed 133 m2 remains unresolved without species rates. Use `ACAD-Силикатный ВП_5 (пониженеие отметок)-Model16.10.2026`, excluding legend samples, never infer a flat site. Boundary/greening/pilot preparation may proceed; relief heights wait for the still-open project-zero and design-mark answer. | `jobs/SIL13-COLD-1315/TASK.md`; `docs/domain/areas/ground-surface.md` | Artem «принимаю рекомендации», relayed in issue #1315 comment 6852165269 and Kanban t_d9ae7dc0 |
+
 [passport-scope-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1207#issuecomment-6783203728
 
 [ground-refinement-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/295#issuecomment-6265799957

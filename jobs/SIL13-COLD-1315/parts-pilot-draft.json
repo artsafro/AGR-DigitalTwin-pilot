@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0.0",
+  "synthetic": false,
+  "object_id": "SIL13_COLD_1315_Pilot",
+  "source_tier": "C",
+  "sources": [{"kind": "drawing", "reference": "G:/Мой диск/AGR-assets/silikatny/source/cold-1315-v001/pzu-20261104.dwg", "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2", "sheet": "Model; boundary 33FBCEF; greening definition approved in issue comment 6852165269"}],
+  "triangle_budget": {"npm": 20000, "vpm": 20000},
+  "parts": [
+    {"id": "Pilot_Ground", "part_class": "other", "sources": [{"kind": "region", "reference": "XY [820,11024]-[850,11046] intersect approved boundary 33FBCEF; cover contours/material mapping still to resolve"}], "operation": "contour_rebuild", "triangle_budget": {"npm": 10000, "vpm": 10000}},
+    {"id": "Pilot_Acer_platanoides_6", "part_class": "other", "sources": [{"kind": "object", "reference": "Greening definition INSERT handles 33F02A9,33F02AB,33F02AC,33F02AD,33F02AE,33F02AF; schedule position 3; callout 33F02D7=3/6"}], "legend_item": "Position 3: Acer platanoides, 6 trees, h >5m", "operation": "library_replace", "library_ref": "library/flora/catalogue.json material_id 107: Acer_platanoides_NPM / Acer_platanoides_VPM; candidate only, no identity/size certification", "triangle_budget": {"npm": 10000, "vpm": 10000}}
+  ],
+  "joints": [],
+  "questions": [
+    {"audience": "user", "text": "Project zero 142.10 or 142.70; which paired VP mark is the design mark? No Z assigned pending answer."},
+    {"audience": "user", "text": "Confirm this exact two-part pilot window and planning allocations (not measured triangles or regulation limits). Six maples only; absent MAF/library species stay on gap list, no substitutes. Covering mapping must be source-resolved before surface construction."},
+    {"audience": "user", "text": "Norway maple source height is only >5m. Recommend 5.6m nominal with random +/-10 percent constrained above 5m, subject to library readback and silhouette review; library catalogue nominal 4.538m is not already compliant. Crown/colour remain review."}
+  ],
+  "status": "draft",
+  "gate1": null
+}

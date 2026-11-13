@@ -1,7 +1,10 @@
-# Cold reproduction #1315 — intake checkpoint v001
+# Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Status: **blocked on source authority, not delivered**. No constructed geometry, placements,
-exports, delivery validators, visual approval or SINTEZ run. No readiness increase claimed.
+Current status: **source authority answered; height/PartsList gates open, not delivered**.
+Boundary and 52 source symbols exported/read back as source-only DXF. No constructed Ground/UCX,
+library placements, model exports, delivery validators, visual approval or SINTEZ run.
+No readiness increase claimed. The v001 facts/questions below are historical; v002 closes authority
+questions and is the continuation state at the end of this report.
 
 ## Verified source facts
 
@@ -106,3 +109,95 @@ validator findings remain **not measured** until actual reproduction; this intak
 
 The scope/source-file choice already approved is not being asked again. These are newly observed
 source-content ambiguities, which change the construction and require the model/data owner.
+
+## v002 continuation — approved sources, source-only extraction
+
+[D275] records issue comment 6852165269. Boundary 33FBCEF, the greening table/plan and the named VP
+block are now authoritative. Do not repeat those questions. Project zero and design-mark selection
+remain unanswered; no height is assigned. Flowerbed rates remain explicitly unresolved by approval.
+
+### Actual outputs and source reconciliation
+
+- `source-reconciliation-v002.json`: exact 13-vertex boundary (12,958.738864325082 m²),
+  all 52 planting INSERT handles/XY and ten numbered MULTILEADER callouts.
+- Source symbol totals **1 / 4 / 6 / 17 / 24** match all five point-plant schedule rows; **52/52**
+  lie inside the approved boundary. Hedge schedule quantity 4535 is NOT 4535 extracted points.
+- Callout **33F02F8 = position 2 / quantity 4** resolves the four `Липа мелколистная_30` glyphs
+  to schedule position 2 (Acer rubrum Red Sunset). Do NOT substitute Tilia from the glyph name.
+  Position 5 glyphs say Annabelle; catalogue Hydrangea arborescens is a candidate, not cultivar proof.
+- `boundary-greening-SOURCE-ONLY.dxf`: new metre-unit DXF with one closed boundary polyline,
+  52 POINTs and labels. Fresh-process parser readback: **13/13** boundary vertices and **52/52**
+  point XY exact, **0** constructed surfaces. This is a source extraction, not a Ground model.
+- `boundary-greening-SOURCE-ONLY.png`: visually checked annotated source plan with orange proposed
+  pilot window XY [820,11024]–[850,11046], clipped to the approved boundary when built. Six position-3
+  maples lie there. The picture explicitly says source-only, no relief or accepted pilot.
+- PNG SHA-256 `26c3d06f132532844db3a45fe80c91f79e60738dbe094e272ccf7381dbb66c85`.
+- `parts-pilot-draft.json`: public `dt_ai.core.models.PartsList` validates two draft parts and
+  three unanswered questions; **status=draft, gate1=null**, no invented approval. SHA-256
+  `60169190f8cea4fc0bbdb1b25e12ef471a0752896f158c6a3349143f72d0d553`.
+  Proposed 20k/20k pilot planning budgets are allocations, NOT measured geometry or regulation ceilings.
+  Full-site covering/MAF/hedge parts and UCX decomposition remain to be resolved; this draft does not
+  certify their coverage and is not the eventual full-site PartsList.
+
+### Library checks, not placement certification
+
+`maf-library-search-v002.json` accounts for all **32/32** DOCX MAF rows. Search of the actual
+`maf_spec_vedomost_3.xlsx` and 931 shared catalogue entries found no literal-SKU matches among the
+24 rows with a parsed SKU. Eight rows have no such SKU; they are not silently dropped. A broader
+numeric lookup found only unrelated `C_2007_Shezlong Lion` and `12012` candidates: rejected as identity
+proof. This is **not** an exhaustive absence finding for unnamed objects or all library folders.
+No dimension-only, first-entry or approximate-name substitution was performed; every row remains
+explicitly unresolved in the search report, not presented as placed.
+
+Read-only inspection of a SHA-256 verified `maf-npm.blend` copy in an agent-owned Blender **5.1.2**
+process loaded **368 meshes**, recorded names and triangle counts, and exited without save/export.
+Source/copy SHA-256 remained `52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd`.
+The 368 meshes do not provide certified article mappings; generic object names are not proof of absence.
+Dimension fields are labelled scene units, not asserted as source-file metre verification.
+No prior Silikatny build, placement or report was used. No library file changed.
+
+Flora candidates from the shared catalogue: 107 / 116 / 207 / 211 / 234, not certified placement
+models. `flora/v003/flora-library-v003.max` exists and is hash-pinned in the external evidence.
+Abies sibirica, Red Sunset and the flowerbed species stay unresolved. Catalogue 107 height 4.538 m
+is not already compliant with the schedule's >5 m lower bound. Recommend a 5.6 m nominal target
+with constrained +/-10% variation (minimum >5 m), pending user size/silhouette decision and actual
+library readback. Do not invent crown targets or relabel cultivar identity. Physocarpus catalogue
+bush IDs 211/234 are not proof of a hedge-range material-ID/model contract.
+
+### Commands, environment and evidence
+
+- `uv run --extra cad python tmp/1315/v002/inspect_approved.py` — inventory success, 68 greening
+  entities and 563 VP-definition entities. Heights inspected as text only, not selected.
+- `uv run --extra cad python tmp/1315/v002/reconcile.py` — 52 symbols and 32 MAF rows extracted.
+- SELF-FIX: importing openpyxl in the project environment failed; scoped `uv run --with openpyxl`
+  succeeded. No global installation, dependency-file or shared production-code changes.
+- `uv run --extra cad --with openpyxl python tmp/1315/v002/source_package.py` — source-only DXF,
+  image, handle/XY and per-row candidate reports. A missing text-style diagnostic was emitted;
+  independent geometry readback succeeded, not claimed as native plot or typography certification.
+- `blender.exe --background --factory-startup --python tmp/1315/v002/read_maf_blend.py` — 368-mesh
+  copied-etalon inventory; Blender exited normally. `max_exec.py --ping` found Max 2026 reachable;
+  no Max scene was opened, saved or mutated.
+- `pytest -q tests/test_decisions.py tests/test_ground_surface_requirement_sheet.py` with explicit
+  card/invocation basetemp and cleared inherited PYTEST_ADDOPTS — **35 passed / 0 failed**.
+  No production fix/regression or new tracked Python module; full suite not started (no PR/review yet).
+- Fresh-process DXF readback — exact source XY/vertices, units=6, no constructed surfaces.
+- `uv run python tmp/1315/v002/seal_evidence.py` — **15/15 evidence hashes verified** and **4/4**
+  original/preserved DWG+DOCX hashes equal. Scripts and binaries are preserved externally, not git.
+
+Evidence: `G:/Мой диск/AGR-evidence/1315-cold-silikatny/v002/` + `SHA256SUMS.txt`;
+compact inventory `evidence-v002.json`. Technical QA/user acceptance/publication all incomplete.
+Source-only checks cannot substitute for export topology/UV/materials/transforms checks or xView.
+
+### Per-area remaining work — v002 overrides the v001 blocker table
+
+| Area | Reproduced | Value / required limit | Owner / next action |
+|---|---|---|---|
+| Ground | Approved boundary extracted/read back, pilot window proposed | 13/13 source vertices exact; 0 constructed surfaces / source-derived Ground NPM+VPM required | Artem: project zero/design mark; worker: covering contour/material mapping, confirmed PartsList, flat-first build then relief |
+| UCX | No constructed collision | 0 measured hulls / convex closed VPM-only Ground hulls with 2–10 mm gaps and <=100 mm deviation | Worker after Ground; not a zero-hull pass |
+| MAF | All schedule rows accounted for, actual XLSX + generic libraries inspected | 32/32 unresolved row records; 0 certified placements / exact library article-size matches required or explicit gaps | Worker: remaining manifest/unnamed-object identity audit; missing types never modelled |
+| Flora | Numbered source symbols reconciled | 52/52 point symbols; 0 library placements; hedges 4535 count only; flowerbed 133 m² unresolved | Artem: pilot exact size; worker: cultivar/profile/size checks, source hedge geometry/rates and library placements |
+| Delivery | Source-only DXF readback, not model QA | 0 NPM/VPM model exports or validator runs / both required | Worker after data/parts answers; then image gate before remainder, full readback and validators |
+
+Historical #906/#969/#1178 comparison remains not measured: no constructed pilot or delivery is being
+compared to accepted/historical models as if reproduction were complete. No readiness increase or PR
+closure is warranted by this checkpoint.

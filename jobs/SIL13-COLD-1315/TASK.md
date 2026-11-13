@@ -24,9 +24,12 @@ Scope decision: [D272] in `docs/decisions.md`; cells `ground-npm` and `ground-vp
 - Site/scope approval: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6850169203
 - Fresh PZU / planting-search instruction: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6851013290
 
-These approve the site and proposed scope, not unidentified buried block definitions or a fabricated
-confirmed PartsList. `parts.json` is deferred until the source-authority questions in REPORT are answered.
-Nothing has been constructed.
+Source-content decision [D275]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6852165269
+approves boundary 33FBCEF, the planting plan/table and the named VP definition. Those questions are closed.
+The project zero/design-mark choice is still open. No relief heights have been inferred.
+`parts-pilot-draft.json` is a validated draft, not a fabricated confirmed PartsList; it proposes the
+source window XY [820,11024]–[850,11046] clipped to 33FBCEF and the six position-3 maples.
+The source-only DXF contains one boundary polyline and 52 POINTs, not constructed delivery geometry.
 
 ## Inputs and cold-context boundary
 
@@ -48,6 +51,11 @@ is a source-contour question diagram, NOT that pilot or its acceptance.
 
 ## Current state
 
-Read-only intake only. Gate 1 site/scope answered; inputs authority blocked on the unreferenced planting
-and vertical-planning definitions, and confirmation of the differently named boundary candidate.
-See REPORT.md and job.yaml. Technical QA, user acceptance and publication are all incomplete.
+Gate 1 site/scope and source-content authority answered [D272, D275]. Boundary and all 52 source planting
+symbols extracted, 52/52 inside the approved boundary and preserved by DXF readback. Numbered callouts
+match all five point-plant schedule quantities (1, 4, 6, 17, 24). A linden-named CAD symbol is position 2/4,
+not authority to substitute linden for Red Sunset. Flora candidates remain subject to identity/size checks.
+MAF: all 32 DOCX rows accounted for; no certified SKU-to-model match yet (not proof of disk-wide absence).
+Construction still awaits the exact pilot PartsList approval and height/size answers; zero, paired marks,
+flowerbed rates and unresolved library mappings have not been guessed. Source-only image is NOT pilot
+acceptance. See REPORT.md and job.yaml. Technical QA, user acceptance and publication remain incomplete.

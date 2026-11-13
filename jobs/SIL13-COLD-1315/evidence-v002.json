@@ -1,0 +1,109 @@
+{
+  "status": "source_only_not_constructed_pilot",
+  "evidence_root": "G:/Мой диск/AGR-evidence/1315-cold-silikatny/v002",
+  "files": [
+    {
+      "filename": "boundary-greening-SOURCE-ONLY.dxf",
+      "sha256": "9f1a027a878d76fdaf11a9b1ad40f8c28130c1466ff13e03c4d5b16debe5ca44",
+      "bytes": 37055
+    },
+    {
+      "filename": "boundary-greening-SOURCE-ONLY.png",
+      "sha256": "26c3d06f132532844db3a45fe80c91f79e60738dbe094e272ccf7381dbb66c85",
+      "bytes": 211787
+    },
+    {
+      "filename": "greening-inventory.json",
+      "sha256": "d4375b6b10d2e1e68da9c8b952a337eadccb4c2702856488cfc5cb1285929ac4",
+      "bytes": 21328
+    },
+    {
+      "filename": "input-hashes-v002.json",
+      "sha256": "233d86d2ab3d96889d25739cf42ac47c74409376dcc055c5333c2b98fe2438c9",
+      "bytes": 1636
+    },
+    {
+      "filename": "inspect_approved.py",
+      "sha256": "fb64afcb1e32d60af96121a8196c8a386a4f510471257b6988912a67095ec884",
+      "bytes": 1775
+    },
+    {
+      "filename": "maf-library-search-v002.json",
+      "sha256": "29fda448d38fae37c5f18483bdb8971c8e2bfdbf7aba9a5a6224f6fe868ead68",
+      "bytes": 16674
+    },
+    {
+      "filename": "maf-npm-library-inventory.json",
+      "sha256": "910fd90177108744bbec4946bb8c5cbbeb58957c05062b2c85d83487ad2155b9",
+      "bytes": 86673
+    },
+    {
+      "filename": "maf-schedule.json",
+      "sha256": "ba1d0807dd783b4d9a84638fa509de409d7300a1d5ec94c59b7a5ab557759e63",
+      "bytes": 12684
+    },
+    {
+      "filename": "parts-pilot-draft.json",
+      "sha256": "60169190f8cea4fc0bbdb1b25e12ef471a0752896f158c6a3349143f72d0d553",
+      "bytes": 2116
+    },
+    {
+      "filename": "read_maf_blend.py",
+      "sha256": "59986f0f8303b8b23fc6abe3b91e89e4df6c89b28f96877071269748d3d9b2eb",
+      "bytes": 1400
+    },
+    {
+      "filename": "reconcile.py",
+      "sha256": "d732d86a63a3acf8dbfdf648ece7c81c1432c8519e68091bfaaec89655484983",
+      "bytes": 2066
+    },
+    {
+      "filename": "seal_evidence.py",
+      "sha256": "d66fd268f114c25252bc9b4ce78fd35d8db67c6a6e2ffed444cd6478a6ad4206",
+      "bytes": 2421
+    },
+    {
+      "filename": "source-reconciliation-v002.json",
+      "sha256": "15dc089f0956fe45c88e05e9b24348af43abbdc8561b12fa13b8986f64209d91",
+      "bytes": 23162
+    },
+    {
+      "filename": "source_package.py",
+      "sha256": "ac00e07ddd7627ca8bd140a3024c89362e10611ccd4aa6cb3ee763b459f4946f",
+      "bytes": 7841
+    },
+    {
+      "filename": "vp-inventory.json",
+      "sha256": "3e30aa853570d2743669fb40fd936b8fb8c4d33bce5576c2ad9b3c93bfb07551",
+      "bytes": 317756
+    }
+  ],
+  "source_original_and_copy_checks": [
+    {
+      "role": "preserved-copy",
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\pzu-20261104.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "equal": true
+    },
+    {
+      "role": "original",
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\СИЛ13-УВК-ПД-ПЗУ_.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "equal": true
+    },
+    {
+      "role": "preserved-copy",
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\maf-and-light-spec.docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "equal": true
+    },
+    {
+      "role": "original",
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\МАФ_и_свет_модели_фото (4).docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "equal": true
+    }
+  ],
+  "parts_draft_sha256": "60169190f8cea4fc0bbdb1b25e12ef471a0752896f158c6a3349143f72d0d553",
+  "manual_gates": "open; no passed=true; no library placement or Ground/UCX build"
+}
