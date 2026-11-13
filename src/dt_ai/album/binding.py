@@ -234,9 +234,9 @@ def _chains(segs: list[R.Segment], runs: Sequence[R.TextRun] = ()) -> list[dict[
     groups: dict[tuple[str, float], list[tuple[float, float]]] = {}
     for s in segs:
         if _horiz(s) and abs(s.p1[0] - s.p0[0]) > 0.05:
-            key, rng = ("horizontal", round((s.p0[1] + s.p1[1]) / 2.0, 1)), sorted((s.p0[0], s.p1[0]))
+            key, rng = ("horizontal", round(s.p0[1] + s.p1[1]) / 2.0), sorted((s.p0[0], s.p1[0]))
         elif _vert(s) and abs(s.p1[1] - s.p0[1]) > 0.05:
-            key, rng = ("vertical", round((s.p0[0] + s.p1[0]) / 2.0, 1)), sorted((s.p0[1], s.p1[1]))
+            key, rng = ("vertical", round(s.p0[0] + s.p1[0]) / 2.0), sorted((s.p0[1], s.p1[1]))
         else:
             continue
         groups.setdefault(key, []).append((rng[0], rng[1]))
