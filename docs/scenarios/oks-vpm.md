@@ -22,7 +22,7 @@ external PNG UDIM sets. Ground, MAF and Flora of the same site are the `ground-v
 | Topic | Rule |
 |---|---|
 | Passport | `jobs/<ID>/passport.json` (K1) is required only on the AGR Tools route until a second route exists; other OKS routes record the same facts in `job.yaml` inputs / REPORT [D247]. |
-| Budget | ≤ 150 000 triangles per OKS FBX (project target), regulation ceiling 1 000 000 [D161] |
+| Budget | PartsList `triangle_budget` is the allocated project budget for NPM/VPM: ≤ 150 000 triangles per OKS FBX per profile [D010/D161]; not the regulation ceiling (VPM 1 000 000), which stays in budgets/QA [D276] |
 | Texel | VPM diffuse 512–1706 px/m [D160]; AGR Tools grid 3.6 m per tile at 1000 px/m [D207] |
 | UDIM | body numbered per mesh from 1001 [D209]; all glass UVs in 1001, no maps on glass [D221] |
 | Windows | library first, types by form + size [D140]; families F100 / F73 / F58 [D204] |
