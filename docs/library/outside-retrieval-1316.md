@@ -1,6 +1,122 @@
-# Outside-agent retrieval receipt — #1316 (partial, blocked)
+# Outside-agent retrieval receipt — #1316
 
-## Boundary
+## Current result (2026-11-13, A101-native route)
+
+The earlier blocked probes below are retained as history, **not current completion
+claims**. After the operator clarified A101-native extraction, four exact native
+source variants were published as new v002 candidates (Tilia high/low; Acer Royal
+Red high/low). Original RGBA, geometry and UVs are unchanged. RGB and alpha are
+separated losslessly, not white-keyed or regenerated. Independent unauthenticated
+readback matched **13/13 files**: the A101 MAX and four RGBA/RGB/alpha triplets.
+Exact IDs, sizes and hashes: `library/flora/a101-native-v002.json`.
+
+The portable three-asset selection is now
+[`library/outside-retrieval-v001.json`](../../library/outside-retrieval-v001.json):
+
+| Selection | Version SHA-256 | Boundary |
+|---|---|---|
+| MAF_0002 / TBO_konteyner | `ea43c19ac9d77ec240a79eea7f73db442025efa7dd05f06a3adc8ca71bf9c0be` | One source FBX, 137264 bytes; native Blender 5.1.2 readback: one mesh, 1420 polygons, **no external images** |
+| Tilia cordata / A101 lipa_t1_h550_low v002 | `a95cdd49b7a4e0dd8b495e8947165a2f62cf21301440d17e4e6927dde57c4480` | Exact object in FLORIO_221.max + original RGBA + v002 RGB/alpha; object 866 triangles |
+| Material 40 interior diffuse placeholder v001 | `7838298711c57ade49821a0e371c88d41f2804ae30983c9c25e514c2feb47320` | Published 565-byte diffuse placeholder map, not a complete VPM texture triplet |
+
+The initial MAF_0001 probe exposed an unembedded image reference:
+`1_Diffuse_1.1001_e5pokwfjvgc7.png`; Blender also warned about an unsupported Max
+material link. That FBX alone is **not** a complete textured asset. Rather than
+invent a missing dependency or call it a pass, the final documented selection uses
+MAF_0002, whose source `fbx_materials.json` row lists no textures and whose fresh
+Blender import confirms no external images. The original raw failure is retained.
+MAF hashes are newly measured content pins, not inherited publisher release hashes.
+
+### Real visual loop and answer
+
+3ds Max 2026.3 (28.3.0.30732), headless, shared `dcc_batch.py` session lock,
+centimeters, private copy of `FLORIO_221.max`. Read-only inventory preceded preview.
+The A101 low/high Tilia objects have 866/1786 triangles, not the unrelated frozen
+v003 catalogue's 357/830. Native material filenames select the matching RGBA variant.
+A native scanline preview of the **original low geometry/UV/RGBA** was rendered and
+visually read back: fully framed tree and visible cutout foliage on a neutral background.
+Channel-split equivalence was checked byte-for-byte with Pillow; it is not a new
+render of rebound v003 geometry and not complete profile/delivery QA.
+
+- Version: `a95cdd49b7a4e0dd8b495e8947165a2f62cf21301440d17e4e6927dde57c4480`.
+- Preview: `G:/Мой диск/AGR-evidence/1316-outside-retrieval/v002/tilia-source-low-v002.png`.
+- Preview SHA-256: `8ceed9e2cca249b8565cff32f7ca3d7c89e5d855eb11e86d7d69f9bfbb295b64`.
+- `hermes -p default send --to telegram:<configured-owner> --file tmp/telegram-request-1316.txt --json`
+  returned success, message **4696**, mirrored=true; transport JSON was read back.
+- Exact question: `принимаешь эту версию? Ответ: принять / отклонить + причина.`
+- Artem's reply **4697**, replying to that message: **`Да, липа норм`**.
+  The gateway mirror and explicit operator hash-bound relay corroborate the answer.
+- Stored in `library/flora/visual-verdict-1316.json`, `maps.json`'s exact hash-keyed
+  version and `a101-native-v002.json`: **approved for that version only**.
+  Other Tilia versions are not approved by that reply.
+
+The subsequent operator request to include Acer was also executed. Native text
+`Text_klen_t7_h550` identifies **Acer platanoides Royal Red**. Preserve that cultivar:
+Ginnala/Tataricum-labelled atlases are not substituted. `klen_t7_h550_low` has 826
+triangles; its unchanged source preview has sparse reddish foliage (shown as is).
+Separate request **4701** was sent, success/mirrored result read back:
+`77ff8536585ee0a1ebf06d739d164881b7e9741b81bc309ef30f4585c74dfea3`.
+Preview/logs/hashes: `G:/Мой диск/AGR-evidence/1316-outside-retrieval/acer-v002/`.
+`visual-verdict-acer-1316.json` records **pending**, `answer=null`; no Tilia approval
+is transferred. Accept/reject + reason is the only outstanding owner action for it.
+It is **not** approval to substitute Royal Red into #1315's planting schedule.
+
+### Portable current maps versus immutable previous releases
+
+All 124 legacy C:/x slot paths in current `maps.json` move to the documented
+AGR-assets route. **62 original v001 pairs are still unavailable** there, so their
+current status is `missing`, with the exact historical approval words retained.
+The three newer Drive-backed map entries are unchanged. This is an availability
+correction, not broad texture regeneration, deletion, botanical cleanup or revocation
+of historical approvals. New A101 candidates are nested by hash, never silently used
+on unrelated `Tilia_cordata_*` or `Acer_platanoides_*` geometry.
+
+The first ordinary catalogue rebuild correctly refused with `ValueError: maps changed`
+from the existing immutable npm-light guard (affected run: **5 failed / 81 passed**).
+That failure is retained, not relabelled green. Repair: preserve the exact original
+map-input snapshot as `maps-v003-snapshot.json` (canonical LF SHA-256
+`a20972b8bd7e94240416d7c70035d107be71c4f58789159dbc5b069bdb67afd6`).
+The frozen catalogue/light release and pinned Vatutino route-A sheet reproduce from
+that snapshot, not today's changed route/availability selection. No guard is weakened,
+no light-map path is rewritten inside old native evidence, and no geometry is rebound.
+A new regression still requires current-map input to refuse that frozen rebuild.
+Old snapshot C:/x paths are **historical provenance**, not offered downloads.
+
+### Reproduce a cold three-asset download
+
+Clone this PR branch into an **unused directory** (later use the merged commit),
+then read only `library/README.md` -> `library/outside-retrieval-v001.json`.
+No desktop Drive mount, C:/x, auth, cookies, local caches or prior download root is needed.
+From that clone run the following stdlib snippet with an unused destination:
+
+```python
+import hashlib, json, urllib.request
+from pathlib import Path
+manifest = json.loads(Path('library/outside-retrieval-v001.json').read_text(encoding='utf-8'))
+root = Path('cold-download-v001')
+root.mkdir(exist_ok=False)
+for asset in manifest['assets']:
+    for record in asset['files']:
+        relative = Path(record['path'])
+        assert not relative.is_absolute() and '..' not in relative.parts
+        target = root / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        with urllib.request.urlopen(record['download_url'], timeout=120) as response:
+            data = response.read()
+        assert len(data) == record['bytes'], record['path']
+        assert hashlib.sha256(data).hexdigest() == record['sha256'], record['path']
+        with target.open('xb') as handle:
+            handle.write(data)
+        print(record['sha256'], len(data), record['path'])
+```
+
+This is a receipt/reproduction snippet for a reviewed fixed manifest, not a general
+untrusted-manifest downloader or a certified material/geometry pipeline. Hash/size
+checks fail on permission HTML, truncated or changed bytes. Existing destinations
+refuse rather than clobber; do not re-use source/export/report directories as output.
+
+## Historical first probe — boundary
+
 
 Run from card `t_9199048b`, branch
 `improve/issue-1316-outside-agent-asset-retrieval-by-manifes`.

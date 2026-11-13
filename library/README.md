@@ -6,14 +6,24 @@
 
 ## Outside-agent retrieval
 
-Start at [assets/README.md](../assets/README.md) and its `manifest.json` shared
-Drive URL; `recorded_path` and catalogue `C:/x/...` paths are provenance/local
-bindings, not portable download URLs. Override the local root in a private workspace.
+For an executable, exact-version selection start with
+[`outside-retrieval-v001.json`](outside-retrieval-v001.json): MAF_0002 source FBX,
+Tilia A101 low v002 (container plus RGBA/RGB/alpha dependencies), and the published
+material-40 interior diffuse placeholder. Each file has a direct download URL,
+SHA-256 and size; none needs a local cache or Drive desktop mount. Asset boundaries
+are explicit: a placeholder is not a complete texture triplet or delivery shader.
+The [#1316 receipt](../docs/library/outside-retrieval-1316.md) preserves failed probes,
+native readback, successful A101 cold downloads and the exact Tilia approval.
+`assets/README.md` and its `manifest.json` remain the shared Drive root route;
+`recorded_path` and old catalogue C:/x paths are provenance/local bindings, not URLs.
 The read-only `cold_check.py` checks existing local/mounted copies; it does **not**
-download assets and is not by itself proof of retrieval on an outside machine.
-The [#1316 partial receipt](../docs/library/outside-retrieval-1316.md) records three
-real unauthenticated payload downloads, hashes, exact file pointers, and the missing
-approved Flora-map dependency gate. It is not a complete three-asset or visual-loop pass.
+download assets and is not by itself proof of outside retrieval.
+
+Current Flora routes/availability are in `flora/maps.json`; hash-keyed A101 versions
+and download records are in `flora/a101-native-v002.json`. Frozen v003 geometry/light
+releases reproduce from `flora/maps-v003-snapshot.json`, not from today's selection.
+Do not substitute A101 atlases on the old v003 geometry. Visual requests/answers use
+[the version-bound loop](../docs/library/visual-loop.md), not implicit approvals.
 
 ## Окна
 
@@ -40,7 +50,7 @@ approved Flora-map dependency gate. It is not a complete three-asset or visual-l
 
 - Диск: `G:\Мой диск\AGR-assets\flora\`.
 - Данные в git: `library/flora/catalogue.json`, `maps.json`, `species-curation.json` (см. `library/flora/README.md`).
-- Сейчас бинарники Flora лежат вне git по пути из `library/flora/README.md`. Перенос на Диск — по решению владельца.
+- Версии и download routes: `library/flora/a101-native-v002.json`; текущая доступность — `maps.json`, исторический v003 snapshot не является обещанием доступности карт. См. `library/flora/README.md`.
 
 ## Корпус
 
