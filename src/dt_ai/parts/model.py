@@ -21,7 +21,8 @@ PartClass = Literal["wall", "slab", "parapet", "band", "pilaster", "frame", "gla
 Operation = Literal["keep", "primitive", "contour_rebuild", "from_face", "library_replace", "detail_per_profile",
                     "to_texture"]
 BuildAs = Literal["box", "plane", "frame", "shell", "profile_extrude", "instance"]
-SourceTier = Literal["A", "B", "C"]  # A Revit + album; B structured FBX / SKP + album; C mesh soup + album [Q29a]
+# A Revit + album; B structured FBX / SKP + album; C mesh soup + album [Q29a]; D drawings-only (DWG/DXF/PDF).
+SourceTier = Literal["A", "B", "C", "D"]
 SourceKind = Literal["object", "material_id", "layer", "component", "revit_element", "region"]
 
 

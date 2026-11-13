@@ -45,6 +45,21 @@ def test_drawings_only_source_tier():
     assert "D = drawings-only" in row
 
 
+def test_parts_budget_is_project_allocation():
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[2]
+    description = PartsList.model_fields["triangle_budget"].description
+    assert "allocated project budget" in description
+    assert "not the regulatory ceiling" in description
+    for relative, prefix in [("docs/procedure/TASK_TO_MODEL.md", "| parts |"),
+                             ("docs/scenarios/oks-vpm.md", "| Budget |")]:
+        row = next(line for line in (root / relative).read_text(encoding="utf-8").splitlines()
+                   if line.startswith(prefix))
+        assert "allocated project budget" in row
+        assert "[D276]" in row
+
+
 def test_valid_list_roundtrips():
     parts = make()
     assert PartsList.model_validate_json(parts.model_dump_json()) == parts
