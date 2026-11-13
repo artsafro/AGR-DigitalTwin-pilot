@@ -50,7 +50,7 @@ def main(out):
     (out/'provenance.json').write_text(json.dumps({'source': str(SOURCE), 'source_sha256': EXPECTED,
         'base_commit': subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
         'scope': 'Derivation only. No source rebuilding. Ordinal source_ids are recovered finish ordinals, not customer IDs.',
-        'missing_context': ['jobs/KPP1/TASK.md absent; issue #1318 and D279 define this authorized benchmark scope'],
+        'missing_context': ['jobs/KPP1/TASK.md absent; issue #1318 and D280 define this authorized benchmark scope'],
         'synthetic': False, 'delivery_complete': False},indent=2))
     print('STAGED',out)
 

@@ -4,7 +4,7 @@
 
 **A repeatable diagnostic pilot, not a delivery pass or a positive quality oracle.**
 Cell `oks-npm`; escalated to `full` because atlas tooling needed two explicit layout
-arguments. [D279] authorizes a new geometry-preserving `.blend`/recipe from R1 FBX;
+arguments. [D280] authorizes a new geometry-preserving `.blend`/recipe from R1 FBX;
 [D271] authorizes this route. No paid provider, Kimi comparison, paired-arm speedup,
 Ground completion or $10 full-building claim is made. Native failures are results.
 
@@ -21,7 +21,11 @@ Its root `SHA256SUMS.txt` binds **26 files**; raw-byte SHA-256:
 `d3bbb7716247563c9e382eeda9317e2060944640f7f237ab7e36b5c4f2084cfa`.
 The committed manifest is `jobs/KPP1/benchmark-1318/packet-SHA256SUMS.txt`.
 Packet immutability means versioned, never intentionally rewritten, and full hash
-inventory checks before/after each stage. This is **not** a hostile-writer ACL or
+inventory checks before/after each stage. Historical sealed preparation/context
+receipts retain the original D279 label: after discovering #1330's earlier reservation,
+this card's authorization was renumbered D280. That is a citation-only mapping;
+no frozen packet, manifest, native export or historical receipt was rewritten.
+This is **not** a hostile-writer ACL or
 proof against transient changes restored between checks. Reject any mismatch;
 never regenerate this manifest to accept a changed packet.
 

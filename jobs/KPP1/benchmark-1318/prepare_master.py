@@ -71,7 +71,7 @@ def main(root):
         'unit_scale': bpy.context.scene.unit_settings.scale_length, 'geometry_uv_transform_unchanged': True,
         'before': before, 'reopened': reopened, 'finish_faces': counts,
         'master_type': 'triangulated R1 adapter, not a quad working master',
-        'approval': 't_6a32aa3a USER DECISION 2026-11-13 18:43; D279'}, indent=2))
+        'approval': 't_6a32aa3a USER DECISION 2026-11-13 18:43; D280'}, indent=2))
     print('PREPARED', json.dumps(counts))
 
 
