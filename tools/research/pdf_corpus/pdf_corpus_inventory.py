@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import errno
 import hashlib
 import io
 import logging
@@ -440,14 +441,35 @@ def render_summary(rows, roots, skipped, walk_errors, hash_kind, csv_path, comma
 
 
 def _write_new(path, text):
-    """Write via a unique temp then hard-link: never overwrites an existing file."""
+    """Publish complete text; reserve exclusively before a no-hardlink replacement.
+
+    The reservation prevents clobbering an existing destination (including a dangling
+    symlink). Replacement is atomic per file, not a cross-filesystem transaction.
+    """
     tmp = path.with_name(f'.{path.name}.{os.getpid()}.{uuid.uuid4().hex}.partial')
+    created_tmp = False
+    reservation = None
     try:
         with open(tmp, 'x', encoding='utf-8', newline='') as f:
+            created_tmp = True
             f.write(text)
-        os.link(tmp, path)
+        try:
+            os.link(tmp, path)
+        except OSError as e:
+            if (e.errno not in {errno.EPERM, errno.EINVAL, errno.ENOTSUP, errno.ENOSYS}
+                    and getattr(e, 'winerror', None) != 1):
+                raise
+            with open(path, 'x', encoding='utf-8') as f:
+                reservation = os.fstat(f.fileno())
+            os.replace(tmp, path)
+            reservation = None
+    except OSError as e:
+        raise InventoryError(f'cannot publish output {path}: {e}') from e
     finally:
-        if tmp.exists():
+        if reservation is not None and path.exists():
+            if os.path.samestat(path.stat(), reservation):
+                path.unlink()
+        if created_tmp and tmp.exists():
             tmp.unlink()
 
 

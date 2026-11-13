@@ -290,6 +290,43 @@ def test_publish_without_hardlinks(corpus, tmp_path, monkeypatch, unsupported_at
     assert not list(tmp_path.glob('.*.partial'))
 
 
+@pytest.mark.parametrize('failure', ['link', 'replace', 'late-output', 'render'])
+def test_publish_pair_rolls_back(corpus, tmp_path, monkeypatch, capsys, failure):
+    import errno
+    real_link, real_replace = inv.os.link, inv.os.replace
+    out_csv, out_md = tmp_path / 'pair.csv', tmp_path / 'pair.md'
+    before = digest_tree(corpus)
+
+    def link(src, dst):
+        if dst == out_md:
+            if failure == 'late-output':
+                out_md.write_text('foreign output', encoding='utf-8')
+                raise OSError(errno.EINVAL, 'hard links unsupported')
+            raise OSError(errno.EIO if failure == 'link' else errno.EPERM, 'injected failure')
+        return real_link(src, dst)
+
+    def replace(src, dst):
+        if dst == out_md:
+            raise OSError(errno.EIO, 'injected replace failure')
+        return real_replace(src, dst)
+
+    monkeypatch.setattr(inv.os, 'link', link)
+    monkeypatch.setattr(inv.os, 'replace', replace)
+    if failure == 'render':
+        def render(*args):
+            raise inv.InventoryError('injected render failure')
+        monkeypatch.setattr(inv, 'render_summary', render)
+    assert inv.main(['--root', str(corpus), '--csv', str(out_csv), '--summary', str(out_md)]) == 2
+    assert not out_csv.exists()
+    if failure == 'late-output':
+        assert out_md.read_text(encoding='utf-8') == 'foreign output'
+    else:
+        assert not out_md.exists()
+    assert digest_tree(corpus) == before
+    assert not list(tmp_path.glob('.*.partial'))
+    assert 'error:' in capsys.readouterr().err
+
+
 def test_fresh_process_cli(corpus, tmp_path):
     import subprocess
     script = Path(inv.__file__)
