@@ -31,7 +31,10 @@ def test_each_missing_gate(tmp_path):
         report = p.inspect_job(job, tmp_path)
         assert report["passed"] is False
         assert len(report["gates"]) == 8
-        assert omitted in report["errors"][0]
+        # #1310 (F17): one named error per field; the omitted gate row carries its own.
+        assert any(e.startswith(f"gates.{omitted}:") for e in report["errors"])
+        row = report["gates"][GATES.index(omitted)]
+        assert row["status"] == "fail" and row["errors"] and row["ready"] is False
 
 
 def store(root, name, value):

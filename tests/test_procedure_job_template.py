@@ -103,7 +103,7 @@ def test_cli_error_output_names_failing_gate(tmp_path):
     proc = walk_cli(tmp_path, data, tmp_path)
     assert proc.returncode == 1
     out = json.loads(proc.stdout)
-    assert any(e.startswith("gates.report.note") for e in out["errors"])
+    assert any(e.startswith("gates.report:") and "note" in e for e in out["errors"])
     assert row(out, "report")["status"] == "fail"
 
 

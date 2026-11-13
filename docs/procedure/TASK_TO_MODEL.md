@@ -15,7 +15,8 @@ Use the matching `.agents/skills/model-*/SKILL.md` and `validate-delivery` skill
 2. Hand over to [scenario Step 3](../../.agents/skills/scenario/SKILL.md#step-3--run-the-minimal-contract):
    resolve the contract questions and record the answers in `jobs/<ID>/TASK.md`.
    Reuse existing confirmed answers; an open question that changes the result stops the dependent work.
-3. Create or continue `jobs/<ID>/job.yaml` with the [eight gates below](#gates-same-for-every-path).
+3. Create or continue `jobs/<ID>/job.yaml` with the [eight gates below](#gates-same-for-every-path);
+   a new job starts from a copy of [`jobs/_template/job.yaml`](../../jobs/_template/job.yaml) (walks with exit 1, no errors) [#1310].
    Return to [scenario Step 4](../../.agents/skills/scenario/SKILL.md#step-4--work-the-route) for the cell's
    stage route, recording gate evidence here as work proceeds. No build before user Gate 1 confirmation.
 
@@ -48,6 +49,7 @@ For full delivery certification continue through the gates below; technical QA, 
 Record every gate in `jobs/<JOB>/job.yaml`; schema:
 [`JobChecklist.schema.json`](../../schemas/JobChecklist.schema.json).
 A non-pass gate parked on someone else sets `waits: user | max | visual` (never on `pass`); the walk JSON reports it per gate and counts it under `waits` [#1204].
+A not-started gate is just `status: missing` (`note`/`evidence` optional); any other status needs a `note`, `pass` needs evidence. Each `inputs` path appears once: a repeated path (also via `./` or case aliases) fails the inputs gate naming it [#1310].
 Fixed dependency order below follows D104/D125: human geometry acceptance precedes
 **final SINTEZ**, even though preliminary checker diagnostics may run earlier.
 
@@ -141,7 +143,8 @@ uv run python -m dt_ai.procedure jobs/<JOB>/job.yaml --root . --output tmp/walk-
 ```
 
 Exit 0 means all declared gates complete; exit 1 means malformed, missing, failed,
-unverified or review evidence. Output must be a **new** file, never an input/alias.
+unverified or review evidence. A schema error is reported per field (`gates.<gate>.<field>: <message>`) in
+`errors` and in that gate's row (`status: fail`); other gates keep their declared status, none is ready [#1310]. Output must be a **new** file, never an input/alias.
 Use repository-relative POSIX evidence paths; copy external receipts into a
 versioned job evidence directory when a reproducible walk is needed.
 
