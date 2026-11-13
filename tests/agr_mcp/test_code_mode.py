@@ -315,8 +315,9 @@ def test_search_schema_copy_and_error_flag():
     anyio.run(run)
 
 
+@pytest.mark.parametrize("pending_writes", [1, 2, 31])
 @pytest.mark.parametrize("outcome", ["timeout", "cancel", "fail", "success"])
-def test_concurrent_write_rechecks_uncertainty(outcome):
+def test_concurrent_write_rechecks_uncertainty(outcome, pending_writes):
     """A admitted before B's unknown result must not dispatch its pending write."""
     from agr_mcp.code_mode import CodeMode
 
@@ -342,8 +343,10 @@ def test_concurrent_write_rechecks_uncertainty(outcome):
         mode = CodeMode(client)
         a = program()
         a.update(request_id="A", allow_write=True)
-        a["steps"].append({"id": "write", **program(tool="agr_op_apply")["steps"][0]})
-        a["steps"][1]["id"] = "write"
+        for i in range(pending_writes):
+            step = copy.deepcopy(program(tool="agr_op_apply")["steps"][0])
+            step["id"] = f"write-{i}"
+            a["steps"].append(step)
         b = program(tool="agr_op_apply")
         b.update(request_id="B", allow_write=True)
         results = []
@@ -364,11 +367,12 @@ def test_concurrent_write_rechecks_uncertainty(outcome):
                     result = await mode.execute(b)
                     assert result["status"] == ("committed_unverified" if outcome == "success" else "unknown")
                 release.set()
-        assert sum(name == "agr_op_apply" for name, _ in client.calls) == (2 if outcome == "success" else 1)
+        assert sum(name == "agr_op_apply" for name, _ in client.calls) == (pending_writes + 1 if outcome == "success" else 1)
         pending = results[0]["receipts"][1]
         if outcome == "success":
-            assert pending["status"] == "committed_unverified"
+            assert all(r["status"] == "committed_unverified" for r in results[0]["receipts"][1:])
         else:
+            assert all(r["status"] == "skipped" for r in results[0]["receipts"][1:])
             assert results[0]["status"] == "failed"
             assert pending["status"] == "skipped" and "reconcile" in pending["reason"]
             b["request_id"] = "later"

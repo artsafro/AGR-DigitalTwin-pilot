@@ -8,7 +8,9 @@ crash-safe exactly-once execution. After restart reconcile before enabling write
 from __future__ import annotations
 
 import copy
+from contextlib import nullcontext
 
+import anyio
 import jsonschema
 from mcp import types
 from mcp.server.lowlevel import Server
@@ -35,6 +37,7 @@ class CodeMode:
         self._specs = {name: catalog[name] for name in ALLOWED}
         self._consumed = set()
         self._unresolved_write = False
+        self._write_lock = anyio.Lock()
 
     def search(self, query: str) -> list[dict]:
         if not isinstance(query, str) or not query.strip() or len(query) > 200:
@@ -77,26 +80,33 @@ class CodeMode:
                 receipt["reason"] = "earlier operation did not complete successfully"
                 continue
             write = step["tool"] == "agr_op_apply"
-            if write:
-                self._unresolved_write = True
-            try:
-                response = await self.client.call_tool(step["tool"], step["arguments"])
-                body = response.structuredContent
-                canonical(body)
-                success = not response.isError and isinstance(body, dict) and body.get("status") in ("ok", "pass")
-                receipt["result"] = copy.deepcopy(body)
-                if success:
-                    receipt["status"] = "committed_unverified" if write else "ok"
-                    committed |= write
-                    if write:
-                        self._unresolved_write = False
-                else:
-                    receipt["status"] = "unknown" if write else "failed"
+            # Serialize write admission, dispatch and latch resolution together. Reads
+            # may overlap, but cannot clear another program's uncertain write.
+            async with self._write_lock if write else nullcontext():
+                if write and self._unresolved_write:
+                    receipt["reason"] = "reconcile scene/model before further writes"
                     stopped = True
-            except Exception as exc:
-                receipt.update(status="unknown", error=f"{type(exc).__name__}: {exc}")
-                stopped = True
-        status = (next(r["status"] for r in receipts if r["status"] in ("unknown", "failed")) if stopped
+                    continue
+                if write:
+                    self._unresolved_write = True
+                try:
+                    response = await self.client.call_tool(step["tool"], step["arguments"])
+                    body = response.structuredContent
+                    canonical(body)
+                    success = not response.isError and isinstance(body, dict) and body.get("status") in ("ok", "pass")
+                    receipt["result"] = copy.deepcopy(body)
+                    if success:
+                        receipt["status"] = "committed_unverified" if write else "ok"
+                        committed |= write
+                        if write:
+                            self._unresolved_write = False
+                    else:
+                        receipt["status"] = "unknown" if write else "failed"
+                        stopped = True
+                except Exception as exc:
+                    receipt.update(status="unknown", error=f"{type(exc).__name__}: {exc}")
+                    stopped = True
+        status = (next((r["status"] for r in receipts if r["status"] in ("unknown", "failed")), "failed") if stopped
                   else "committed_unverified" if committed else "ok")
         return {"request_id": rid, "program_sha256": sha256(request), "status": status,
                 "receipts": receipts, "next_actions": [

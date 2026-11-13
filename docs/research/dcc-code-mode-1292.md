@@ -106,8 +106,16 @@ stable handle. These are protocol fixtures, not native geometry QA or native lat
 Receipts bind request ID, step ID, tool, argument SHA-256 and program SHA-256 to the
 returned backend envelope. Repeated request IDs (even changed payloads) are refused
 before a second dispatch. Unknown/cancelled writes latch the session against further
-writes. A backend error is conservatively unknown for writes: error can occur after
-commit. Successful writes are **committed_unverified**, never delivery-pass.
+writes. Write admission is checked again immediately before dispatch under a
+per-facade async write lock, held through response validation and latch resolution.
+Reads may overlap; an already-admitted program whose pending write encounters a
+latched uncertainty returns `failed` with that write explicitly `skipped` and a
+reconciliation reason. It cannot dispatch or clear another program's latch.
+Cancellation during dispatch retains the latch while releasing the write lock;
+readback does not automatically reset it. This is single-event-loop facade safety,
+not cross-thread/process or DCC session ownership. A backend error is conservatively
+unknown for writes: error can occur after commit. Successful writes are
+**committed_unverified**, never delivery-pass.
 
 ### Explicit prototype limits
 
