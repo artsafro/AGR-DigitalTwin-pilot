@@ -92,6 +92,18 @@ def run_cli(bundle, root, *extra):
     )
 
 
+def test_gate1_binding_required_and_stale_rejected(bundle, tmp_path):
+    # Legacy lists remain readable, but cannot complete the production gate.
+    parts = json.loads((tmp_path / "parts.json").read_text())
+    parts["gate1"].pop("parts_sha256", None)
+    parts["gate1"]["ref"] = "D111"
+    bundle["gates"]["parts"]["evidence"] = [store(tmp_path, "parts.json", parts)]
+    result = load().inspect_job(bundle, tmp_path)
+    row = next(row for row in result["gates"] if row["gate"] == "parts")
+    assert row["status"] == "fail"
+    assert "Gate 1" in " ".join(result["errors"])
+
+
 def test_fresh_process_cli(bundle, tmp_path):
     completed = run_cli(bundle, tmp_path)
     assert completed.returncode == 0, completed.stderr or completed.stdout

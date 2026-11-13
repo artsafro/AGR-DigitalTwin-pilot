@@ -49,7 +49,7 @@ def test_parts_budget_is_project_allocation():
     from pathlib import Path
 
     root = Path(__file__).resolve().parents[2]
-    description = PartsList.model_fields["triangle_budget"].description
+    description = PartsList.model_fields["triangle_budget"].description or ""
     assert "allocated project budget" in description
     assert "not the regulatory ceiling" in description
     for relative, prefix in [("docs/procedure/TASK_TO_MODEL.md", "| parts |"),

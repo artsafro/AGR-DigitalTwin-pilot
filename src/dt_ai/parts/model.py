@@ -94,7 +94,9 @@ class PartsList(Strict):
     object_id: Name
     source_tier: SourceTier
     sources: list[SourceRef] = Field(min_length=1)
-    triangle_budget: TriangleBudget = Field(description="whole delivery; the parts' budgets must fit")
+    triangle_budget: TriangleBudget = Field(
+        description="whole-delivery allocated project budget for NPM/VPM, not the regulatory ceiling [D276]; "
+                    "the parts' budgets must fit (OKS <=150000 per profile [D010/D161])")
     parts: list[PartEntry] = Field(min_length=1)
     joints: list[Joint] = Field(default_factory=list)
     questions: list[Question] = Field(default_factory=list)
