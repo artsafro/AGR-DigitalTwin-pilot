@@ -4,6 +4,7 @@ Pattern: n/a | new-case: presence/coverage guard for an agent procedure doc (PR 
 """
 from pathlib import Path
 import re
+import runpy
 
 ROOT = Path(__file__).resolve().parents[1]
 DOC = ROOT / "docs" / "agents" / "task-intake.md"
@@ -156,4 +157,21 @@ def test_check_level_decision_is_recorded_and_linked():
                  "docs/procedure/TASK_TO_MODEL.md", "docs/domain/validation.md"):
         assert "[D271]" in (ROOT / path).read_text(encoding="utf-8"), path
 
+
+def test_check_level_allocation_respects_earlier_reservations():
+    """Combine the #1325 collision with date, anchor and policy regressions (#1280)."""
+    find_collisions = runpy.run_path(str(ROOT / "tools/git-hooks/decision_ids.py"))["find_collisions"]
+    text = (ROOT / "docs/decisions.md").read_text(encoding="utf-8")
+    own = next(line for line in text.splitlines() if line.startswith("| D") and "Adopt #1273 section 4" in line)
+    base = text.replace(own, "")
+    # Synthetic rows represent the two earlier claims, not their production policy.
+    earlier = {"PR #1325": "| D271 | earlier milestone decision |",
+               "card #1315": "| D272 | earlier cold-run decision |"}
+    collision = find_collisions(own.replace(own.split("|")[1].strip(), "D271", 1), base, base, earlier)
+    assert len(collision) == 1 and "D271: also allocated by PR #1325" in collision[0]
+    assert find_collisions(own, base, base, earlier) == [], "check-level ID belongs to an earlier claimant"
+    test_check_level_decision_is_recorded_and_linked()
+    test_check_level_intake_contract()
+    test_check_level_worker_policy()
+    test_check_level_table()
 
