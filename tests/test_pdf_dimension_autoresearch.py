@@ -94,6 +94,9 @@ def test_guard_refuses_drift():
            'views': [{'id': 'v1', 'axes': [], 'scale': {'status': 'unknown'}}], 'findings': []}
     signature = verdict_signature(doc)
     assert guard_document(doc, signature)
+    dimension_only = deepcopy(doc)
+    dimension_only['findings'] = [{'code': 'dimension_text_invalid', 'id': 'd99', 'text': 'note'}]
+    assert guard_document(dimension_only, signature), 'dimension IDs are not axis/level verdicts'
     for kind in ('scale', 'measured', 'passed', 'axes', 'level'):
         v = deepcopy(doc)
         if kind == 'scale': v['views'][0]['scale']['status'] = 'guessed'
