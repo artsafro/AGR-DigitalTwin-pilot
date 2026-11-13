@@ -23,8 +23,19 @@ def load():
 def fixture(module, tmp_path):
     src = tmp_path / 'source'
     src.mkdir()
-    # Synthetic bytes for copy/immutability tests only, not real delivery fixtures.
-    blobs = {name: ('synthetic ' + name).encode() for name in module.EXPECTED}
+    # Synthetic containers for publication tests only, not real delivery fixtures.
+    import io
+    import zipfile
+    geojson = (ROOT / 'jobs/KPP1/site-1255/SM_Kpp_1.geojson').read_bytes()
+    blobs = {'SM_Kpp_1.geojson': geojson}
+    for name, members in [('0000_Kpp_1.zip', {'0000_Kpp_1_01.fbx': synthetic_fbx()}),
+                          ('SM_Kpp_1.zip', {'SM_Kpp_1.fbx': b'synthetic VPM unchanged',
+                                            'SM_Kpp_1.geojson': geojson})]:
+        stream = io.BytesIO()
+        with zipfile.ZipFile(stream, 'w') as package:
+            for member, data in members.items():
+                package.writestr(zipfile.ZipInfo(member), data)
+        blobs[name] = stream.getvalue()
     for name, blob in blobs.items():
         (src / name).write_bytes(blob)
     module.EXPECTED = {name: hashlib.sha256(blob).hexdigest() for name, blob in blobs.items()}
@@ -42,7 +53,21 @@ def test_copy_snapshot_reproducible_and_never_delivery_pass(tmp_path):
     for tag in ('v001', 'v002'):
         out = tmp_path / tag
         m.build(src, out)
-        assert {name: (out / name).read_bytes() for name in blobs} == blobs
+        artifacts = {name: (out / name).read_bytes() for name in blobs}
+        assert set(artifacts) == set(blobs)
+        import io
+        import zipfile
+        assert json.loads(artifacts['SM_Kpp_1.geojson']) == json.loads(blobs['SM_Kpp_1.geojson'])
+        for name in ('0000_Kpp_1.zip', 'SM_Kpp_1.zip'):
+            with zipfile.ZipFile(io.BytesIO(blobs[name])) as old, zipfile.ZipFile(io.BytesIO(artifacts[name])) as new:
+                assert new.namelist() == old.namelist()
+                for member in old.namelist():
+                    if member == '0000_Kpp_1_01.fbx':
+                        assert b'M_Glass_01\x00\x01Material' in new.read(member)
+                    elif member == 'SM_Kpp_1.geojson':
+                        assert b'-9581.270' in new.read(member)
+                    else:
+                        assert old.read(member) == new.read(member)
         receipt = json.loads((out / 'assembly.json').read_text())
         assert receipt['passed'] is False
         assert receipt['source_sha256'] == m.EXPECTED
@@ -172,6 +197,37 @@ def test_geojson_three_literal_decimals_without_changing_values():
     fixed = m.fix_geojson(data)
     assert b'-9581.270' in fixed
     assert json.loads(fixed) == json.loads(data)
+
+
+@pytest.mark.parametrize('tile', range(1004, 1008))
+@pytest.mark.parametrize('role', ['Diffuse', 'ERM', 'Normal'])
+def test_flat_vpm_triplet_is_exact_colour_256_placeholder(tile, role):
+    from PIL import Image
+    import io
+    m = load()
+    image = Image.new('RGB', (2048, 2048), (128, 140, 255))
+    stream = io.BytesIO()
+    image.save(stream, format='PNG')
+    out = Image.open(io.BytesIO(m.fix_placeholder_png(f'T_Kpp_1_{role}_1.{tile}.png', stream.getvalue())))
+    assert out.size == (256, 256)
+    assert out.mode == 'RGB'
+    assert out.getextrema() == ((128, 128), (140, 140), (255, 255))
+
+
+@pytest.mark.parametrize('kind', ['nonflat', 'alpha', 'wrong_tile', 'wrong_size', 'partial'])
+def test_placeholder_repair_does_not_guess_or_destroy_texture_detail(kind):
+    from PIL import Image
+    import io
+    m = load()
+    image = Image.new('RGBA' if kind == 'alpha' else 'RGB', (512, 512) if kind == 'wrong_size' else (2048, 2048))
+    if kind == 'nonflat':
+        image.putpixel((10, 10), (1, 2, 3))
+    stream = io.BytesIO()
+    image.save(stream, format='PNG')
+    data = stream.getvalue() if kind != 'partial' else b'partial PNG'
+    name = 'T_Kpp_1_Diffuse_1.1003.png' if kind == 'wrong_tile' else 'T_Kpp_1_Diffuse_1.1004.png'
+    with pytest.raises(ValueError):
+        m.fix_placeholder_png(name, data)
 
 
 def test_production_pins_match_approved_site_manifest():
