@@ -1,0 +1,24 @@
+{
+  "manifest": "external-inputs/1",
+  "registry": "job-sources/1",
+  "job": "SIL13-COLD-1315",
+  "synthetic": false,
+  "files": [
+    {
+      "path": "G:/Мой диск/AGR-assets/silikatny/source/cold-1315-v001/pzu-20261104.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "location": "asset-store",
+      "folder": "G:/Мой диск/AGR-assets/silikatny/source/cold-1315-v001",
+      "kind": "customer-source",
+      "original_path": "C:/Users/artsafro/Downloads/Telegram Desktop/СИЛ13-УВК-ПД-ПЗУ_.dwg"
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/silikatny/source/cold-1315-v001/maf-and-light-spec.docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "location": "asset-store",
+      "folder": "G:/Мой диск/AGR-assets/silikatny/source/cold-1315-v001",
+      "kind": "customer-source",
+      "original_path": "C:/Users/artsafro/Downloads/Telegram Desktop/МАФ_и_свет_модели_фото (4).docx"
+    }
+  ]
+}

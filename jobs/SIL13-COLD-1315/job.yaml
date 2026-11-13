@@ -1,0 +1,48 @@
+schema_version: 1.0.0
+job_id: SIL13-COLD-1315
+run_id: cold-1315-intake-v001
+synthetic: false
+path: standard
+inputs: &inputs
+- path: jobs/SIL13-COLD-1315/sources.json
+  sha256: de71b50c13fba827015341b846bb1dbd104182e0981e200b8645cd3b14b4acfe
+  manifest: external-inputs/1
+artifacts: []
+deviations: []
+gates:
+  inputs:
+    status: review
+    waits: user
+    note: Fresh PZU pinned and copied; authority of buried planting/VP definitions and boundary candidate needs owner confirmation.
+    evidence: *inputs
+  parts:
+    status: missing
+    waits: user
+    note: Site/scope Gate 1 answered on issue 1315; exact PartsList cannot be confirmed before the source-content answers. No construction.
+    evidence: []
+  operations:
+    status: missing
+    note: No geometry built. Only read-only source intake and diagnostic source-contour image.
+    evidence: []
+  budgets:
+    status: missing
+    note: No model to measure; no zero-triangle pass claim.
+    evidence: []
+  export_readback:
+    status: missing
+    note: No model export exists.
+    evidence: []
+  report:
+    status: review
+    note: Intake checkpoint only; reproduction and historical comparison are incomplete.
+    evidence:
+    - path: jobs/SIL13-COLD-1315/REPORT.md
+      sha256: 3b11f67f82f0584c6e6cc7590854a05531b6f02da2eb152e1ed171449371e777
+  visual:
+    status: missing
+    note: No pilot built and no user visual acceptance.
+    evidence: []
+  checker:
+    status: missing
+    note: No export or visual approval; SINTEZ not run.
+    evidence: []
