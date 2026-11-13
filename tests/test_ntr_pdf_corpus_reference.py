@@ -48,7 +48,7 @@ def test_ntr_reference_keeps_negative_and_conflicting_results():
     text = REPORT.read_text(encoding="utf-8")
     for required in ["[D267]", "A01", "A02", "A03", "A04", "A05", "A06", "A07", "A08", "A09", "A10",
                      "NO-GO", "Conditional GO", "not measured", "Darmera", "Bergenia", "RAL 7004",
-                     "#425", "window-block schedule", "10119", "9850", "shared", "cached"]:
+                     "#425", "window-block schedule", "10119", "9850", "shared", "cached", "17608-2017"]:
         assert required in text
     assert "all pages are semantically verified" not in text
 
