@@ -60,6 +60,23 @@ def test_parts_budget_is_project_allocation():
         assert "[D276]" in row
 
 
+def test_gate1_identity_ignores_envelope_and_json_format():
+    import hashlib
+    import json
+
+    draft = make()
+    payload = draft.model_dump(mode="json", exclude={"gate1", "status"})
+    expected = hashlib.sha256(json.dumps(payload, sort_keys=True, separators=(",", ":"),
+                                         ensure_ascii=False, allow_nan=False).encode("utf-8")).hexdigest()
+    assert draft.approval_sha256() == expected
+    confirmed = make(status="confirmed", gate1={"actor": "user", "date": "2026-11-13",
+                     "scope": "synthetic_fixture", "note": "test", "ref": "D111",
+                     "parts_sha256": expected})
+    assert confirmed.approval_sha256() == expected
+    reordered = json.loads(json.dumps(confirmed.model_dump(), indent=4), object_pairs_hook=lambda x: dict(reversed(x)))
+    assert PartsList.model_validate(reordered).approval_sha256() == expected
+
+
 def test_valid_list_roundtrips():
     parts = make()
     assert PartsList.model_validate_json(parts.model_dump_json()) == parts
