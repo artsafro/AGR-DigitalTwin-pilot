@@ -1,0 +1,5 @@
+# Preserve sealed audit bytes: report.input_sha256 binds raw input, including CRLF.
+input-final.json -text
+evidence-final.json -text
+report-final/report.json -text
+report-final/report.md -text
