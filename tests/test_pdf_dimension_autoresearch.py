@@ -133,6 +133,16 @@ def test_frozen_corpus(tmp_path):
         load_corpus(manifest)
 
 
+def test_committed_corpus_portable():
+    import json
+    from tools.research.pdf_album.dimension_autoresearch import BASELINE, CORPUS, canonical, digest
+    # Git normalizes CRLF to LF. Bind the semantic manifest, not checkout newline policy.
+    corpus = json.loads(CORPUS.read_text(encoding='utf8'))
+    receipt = json.loads(BASELINE.read_text(encoding='utf8'))
+    assert receipt['corpus_sha256'] == digest(canonical(corpus))
+    assert digest(canonical(json.loads(CORPUS.read_bytes().replace(b'\r\n', b'\n')))) == receipt['corpus_sha256']
+
+
 def test_fresh_cli_read_only(tmp_path):
     import os
     import subprocess
