@@ -93,7 +93,7 @@ def checker():
 
 
 def clean_scene():
-    return {'units': 'METRIC', 'scale_length': 1, 'orphans': [], 'unsupported': [],
+    return {'units': 'METRIC', 'scale_length': 1, 'orphans': [], 'unsupported': [], 'extras': [],
             'objects': [{'name': 'WIN-01_npm_frame', 'type': 'MESH',
                          'location': [0, 0, 0], 'rotation': [0, 0, 0], 'scale': [1, 1, 1],
                          'hidden': False, 'parent': None, 'modifiers': [], 'constraints': [],
