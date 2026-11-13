@@ -390,6 +390,28 @@ def test_pair_rollback_preserves_replaced_csv(corpus, tmp_path, monkeypatch):
     assert not out_md.exists() and not list(tmp_path.glob('.*.partial'))
 
 
+@pytest.mark.parametrize('failed_output', ['csv', 'summary'])
+def test_temp_cleanup_failure_rolls_back_pair(corpus, tmp_path, monkeypatch, failed_output):
+    import errno
+    out_csv, out_md = tmp_path / 'cleanup.csv', tmp_path / 'cleanup.md'
+    real_unlink = Path.unlink
+    triggered = []
+    before = digest_tree(corpus)
+
+    def unlink(path, *args, **kwargs):
+        target = out_csv if failed_output == 'csv' else out_md
+        if path.name.startswith(f'.{target.name}.') and not triggered:
+            triggered.append(path)
+            raise PermissionError(errno.EACCES, 'transient temp cleanup failure')
+        return real_unlink(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, 'unlink', unlink)
+    assert inv.main(['--root', str(corpus), '--csv', str(out_csv), '--summary', str(out_md)]) == 2
+    assert triggered and not out_csv.exists() and not out_md.exists()
+    assert not list(tmp_path.glob('.*.partial'))
+    assert digest_tree(corpus) == before
+
+
 def test_fresh_process_cli(corpus, tmp_path):
     import subprocess
     script = Path(inv.__file__)
