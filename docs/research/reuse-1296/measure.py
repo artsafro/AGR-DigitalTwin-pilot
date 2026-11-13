@@ -213,7 +213,7 @@ def serialize(rows, pairs, meta):
     return {"inventory.csv": csv_text(rows, list(rows[0]) if rows else ["path"]),
             "duplicates.csv": csv_text(pairs, ["left", "right", "kind", "same_name", "similarity"]),
             "snapshot.json": (json.dumps(meta, indent=2, ensure_ascii=False) + "\n").encode(),
-            "duplicate-groups.md": ("\n".join(doc) + "\n").encode()}
+            "duplicate-groups.md": ("\n".join(doc).rstrip() + "\n").encode()}
 
 
 def main():
@@ -248,4 +248,3 @@ def main():
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
