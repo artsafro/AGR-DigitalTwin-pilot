@@ -109,7 +109,11 @@ def test_package_geojson_takes_object_values_not_job_constants(tmp_path):
     tex = make_tex(tmp_path / "tex")
     pkg = make_pkg(tmp_path / "p")
     obj = tmp_path / "object.json"
-    obj.write_text(json.dumps({"name": "Test OKS", "h_relief": 170.5}), encoding="utf-8")
+    obj.write_text(json.dumps({"name": "Test OKS", "placement": {
+        "coordinate_system": "SYNTHETIC_LOCAL", "project_zero_m": 170.5,
+        "height_system": "unknown", "height_source": {"file": "synthetic", "locator": "test datum"},
+        "project_zero_fbx_z_m": 0, "project_zero_fbx_source": {"file": "synthetic", "locator": "FBX origin"},
+        "source": {"kind": "synthetic", "reference": "test"}, "status": "proposed"}}), encoding="utf-8")
     r = run([sys.executable, PKG_TOOL, pkg, tex, "--object", obj])
     assert r.returncode == 0, r.stderr
     geo = json.loads((pkg / "SM_Nku_1.geojson").read_text(encoding="utf-8"))

@@ -35,7 +35,9 @@ def clean():
     s.unit_settings.scale_length = 1.0
 
 
-def build(src, out, address, crs="MSK-77 (SPOZU drawing coordinates, $INSUNITS=6 metres)"):
+def build(src, out, address, crs="MSK-77"):
+    if crs not in ("SYNTHETIC_LOCAL", "MSK-77"):
+        raise ValueError(f"unsupported crs {crs!r}; expected SYNTHETIC_LOCAL or MSK-77")
     d = json.load(open(src, encoding="utf-8"))
     clean()
     vs = d["verts"]

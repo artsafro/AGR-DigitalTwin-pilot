@@ -46,7 +46,7 @@ schemas = {{k: v.model_json_schema() for k, v in models.SCHEMAS.items()}}
 # Approval.ref (#1205), SourceRef.kind drawing/sheet (#1206), PartsList D tier,
 # allocated-budget description and Approval.parts_sha256 (#1309).
 assert hashlib.sha256(json.dumps(schemas, sort_keys=True).encode()).hexdigest() == (
-    '7313905ab7df6f575f873e1992d5c74546bfb13faf6c3507cbf42b98627fc1fd'
+    '821ddc60ea1e8d716f1002dc57e297630045d1f648eaa27978e8444fb5858f38'
 )
 """)
 

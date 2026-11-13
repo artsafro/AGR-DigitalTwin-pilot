@@ -305,6 +305,8 @@ frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Mar
 
 | D276 | 2026-11-13 | PartsList.triangle_budget is the allocated project budget for NPM/VPM, not the regulatory ceiling: OKS <=150 000 triangles per profile under D010/D161; the VPM ceiling 1 000 000 stays in budgets/QA. Part allocations must fit the whole-delivery allocation. | `src/dt_ai/parts/model.py`, `docs/procedure/TASK_TO_MODEL.md`, `docs/scenarios/oks-vpm.md` | Artem «принимаю рекомендации», USER DECISION on Kanban t_a4cbfb81, 2026-11-13 12:57; issue #1309 |
 
+| D279 | 2026-11-13 | Placement heights follow primary sources: GeoJSON h_relief stays the project zero (reg pp.53–54 row 11; TEC26 customer XLSX B12); store the insertion ground mark separately as ground_mark_m with source. Keep height_system unknown until established; never infer it from MSK-77, average 171.05 and 169.65 or silently shift by 1.40 m. D262 and accepted placements stay unchanged. | `docs/research/placement-heights-1330.md`; `jobs/KPP1/site-1255/height-datum.json` | Artem YES (voice ~18:50), USER DECISION on Kanban t_0ef657c0, 2026-11-13 |
+
 [passport-scope-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1207#issuecomment-6783203728
 
 [ground-refinement-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/295#issuecomment-6265799957

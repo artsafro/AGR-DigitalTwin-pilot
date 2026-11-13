@@ -37,3 +37,30 @@ def test_legacy_package_names_missing_datum(tmp_path):
     assert result.returncode != 0
     assert 'legacy-object.json' in result.stderr and 'placement' in result.stderr
     assert {p: p.read_bytes() for p in tmp_path.rglob('*') if p.is_file()} == before
+
+
+@pytest.mark.parametrize('collision', ['texture', 'geojson'])
+def test_package_existing_destination_preserved(tmp_path, collision):
+    import os
+    tex = make_tex(tmp_path / 'tex')
+    pkg = make_pkg(tmp_path / 'p')
+    obj = tmp_path / 'object.json'
+    obj.write_text(json.dumps({'name': 'KPP1', 'placement': datum()}))
+    dest = pkg / ('T_Nku_1_Diffuse_1.1001.png' if collision == 'texture' else 'SM_Nku_1.geojson')
+    os.link(obj, dest)
+    before = {p: p.read_bytes() for p in tmp_path.rglob('*') if p.is_file()}
+    result = run([sys.executable, PKG_TOOL, pkg, tex, '--object', obj])
+    assert result.returncode != 0
+    assert {p: p.read_bytes() for p in tmp_path.rglob('*') if p.is_file()} == before
+
+
+def test_package_duplicate_datum_key(tmp_path):
+    tex = make_tex(tmp_path / 'tex')
+    pkg = make_pkg(tmp_path / 'p')
+    obj = tmp_path / 'object.json'
+    raw = json.dumps({'name': 'KPP1', 'placement': datum()})
+    obj.write_text(raw.replace('"project_zero_m": 171.05', '"project_zero_m": 169.65, "project_zero_m": 171.05'))
+    before = {p: p.read_bytes() for p in tmp_path.rglob('*') if p.is_file()}
+    result = run([sys.executable, PKG_TOOL, pkg, tex, '--object', obj])
+    assert result.returncode != 0 and 'project_zero_m' in result.stderr
+    assert {p: p.read_bytes() for p in tmp_path.rglob('*') if p.is_file()} == before
