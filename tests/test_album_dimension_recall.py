@@ -118,8 +118,38 @@ def test_native_kns_inline_rotated_text_gaps_keep_semantic_refusal():
         assert value['measured_mm'] is None
     assert result['passed'] is False
     bound = [v for v in result['values'] if v['kind'] == 'dimension' and v['binding']['type'] != 'unbound']
-    assert len(bound) == 8
-    assert {v['raw'] for v in bound if v['binding']['type'] == 'level_pair'} == {'600', '4520', '7650', '4700'}
+    # Count is not a correctness oracle: additional native pairs are welcome,
+    # but every positive must match value AND physical line/extension ends.
+    import json
+    from tools.research.pdf_album.dimension_autoresearch import (
+        CORPUS, geometry_matches, precision_guard, score,
+    )
+    corpus = json.loads(CORPUS.read_text(encoding='utf8'))
+    truth = next(s['truth'] for s in corpus['sheets'] if s['name'] == 'KNS')
+    scored = score(result['values'], truth)
+    assert precision_guard(scored['metrics']) == 'pass'
+    assert scored['wrong_ids'] == []
+    expected = {
+        '3414': ('axis_pair', ['1/1', '1']),
+        '3415': ('axis_pair', ['1', '2']),
+        '3416': ('axis_pair', ['2', '2/1']),
+        '3417': ('axis_pair', ['1/1', '2/1']),
+        '3418': ('level_pair', ['-13,320', '-12,720']),
+        '3419': ('level_pair', ['-12,720', '-8,200']),
+        '341A': ('level_pair', ['-8,200', '-8,000']),
+        '341B': ('level_pair', ['-8,000', '-0,350']),
+        '341C': ('level_pair', ['-0,350', '-0,100']),
+        '341D': ('level_pair', ['-0,100', '+4,600']),
+    }
+    for handle, (kind, pair) in expected.items():
+        native = next(t for t in truth if t['handle'] == handle)
+        matches = [v for v in bound if geometry_matches(v, native)
+                   and abs(v['value'] - native['measurement']) < .5]
+        assert len(matches) == 1, handle
+        key = 'axes' if kind == 'axis_pair' else 'levels'
+        assert matches[0]['binding'] == {'type': kind, key: pair}, handle
+    # The unresolved bottom pairs still need proven endpoint identity.
+    assert {r['handle'] for r in scored['handles'] if r['class'] != 'correct_semantic_binding'} == {'341E', '341F'}
 
 
 def test_generated_inline_pages_never_guess_scale_or_drop_labels(tmp_path):

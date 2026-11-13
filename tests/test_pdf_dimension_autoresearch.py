@@ -198,7 +198,14 @@ def test_real_native_replay_and_repeat():
     assert first == second
     assert first['guard'] is True
     assert [(s['metrics']['found'], s['metrics']['correct'], s['metrics']['wrong'], s['metrics']['missed'])
-            for s in first['sheets']] == [(7, 7, 0, 75), (8, 8, 0, 4), (0, 0, 0, 6)]
+            for s in first['sheets']] == [(7, 7, 0, 75), (10, 10, 0, 2), (0, 0, 0, 6)]
+    baseline = json.loads(A.CORPUS.with_name('baseline-results.json').read_text(encoding='utf8'))
+    for current, previous in zip(first['sheets'], baseline['sheets']):
+        old = {r['handle'] for r in previous['handles'] if r['class'] == 'correct_semantic_binding'}
+        new = {r['handle'] for r in current['handles'] if r['class'] == 'correct_semantic_binding'}
+        assert old <= new, 'R1 must preserve every earlier native identity'
+        assert new - old == ({'341A', '341C'} if current['sheet'] == 'KNS' else set())
+    assert first['tune_recall'] == 17 / 94
     assert first['sheets'][2]['precision_guard'] == 'zero_prediction_pass'
 
 
