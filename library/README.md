@@ -4,6 +4,17 @@
 
 **Правило.** Читать только с копии в своей scratch-папке. Скопируйте нужную версию, работайте с копией. Оригинал на Диске не открывать в Max и не менять. Новая версия — новый файл, старые не перезаписываются.
 
+## Outside-agent retrieval
+
+Start at [assets/README.md](../assets/README.md) and its `manifest.json` shared
+Drive URL; `recorded_path` and catalogue `C:/x/...` paths are provenance/local
+bindings, not portable download URLs. Override the local root in a private workspace.
+The read-only `cold_check.py` checks existing local/mounted copies; it does **not**
+download assets and is not by itself proof of retrieval on an outside machine.
+The [#1316 partial receipt](../docs/library/outside-retrieval-1316.md) records three
+real unauthenticated payload downloads, hashes, exact file pointers, and the missing
+approved Flora-map dependency gate. It is not a complete three-asset or visual-loop pass.
+
 ## Окна
 
 - Диск: `G:\Мой диск\AGR-assets\windows\` (превью, меши).
