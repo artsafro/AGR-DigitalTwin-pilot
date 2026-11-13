@@ -7,10 +7,13 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import json
+import os
 import random
 import subprocess
 import sys
 from pathlib import Path
+
+import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
 TOOL = ROOT / "tools" / "methods" / "body" / "dwg_to_dxf.py"
@@ -205,7 +208,11 @@ def test_original_never_reaches_autocad_brute_force(tmp_path):
     assert checked == 20
 
 
-def test_cli_dry_run_in_a_fresh_process(tmp_path):
+@pytest.mark.parametrize("inherited_encoding", ["utf-8", "cp1251", "ascii", "utf-16"])
+def test_cli_dry_run_in_a_fresh_process(tmp_path, monkeypatch, inherited_encoding):
+    # Detached Windows workers need not inherit the interactive shell's UTF-8 settings.
+    monkeypatch.setenv("PYTHONUTF8", "0")
+    monkeypatch.setenv("PYTHONIOENCODING", inherited_encoding)
     src = _source(tmp_path)
     work = tmp_path / "w"
     argv, out, rec = _args(src, work)
