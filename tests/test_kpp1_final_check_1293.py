@@ -28,3 +28,26 @@ def test_exclusive_output_and_input_hashes():
     assert "result['inputs_after'] != hashes" in text
     assert 'aliased input/output' in text
     assert "entry['scene_unchanged']" in text
+
+
+def test_invalid_configs_and_aliases_fail_closed(tmp_path):
+    import importlib.util
+    import pytest
+    spec = importlib.util.spec_from_file_location('final1293', RUNNER)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    fbx = tmp_path / 'a.fbx'
+    fbx.write_bytes(b'synthetic path fixture, not real FBX')
+    row = {'profile': 'npm', 'fbx': str(fbx), 'geojson': str(tmp_path / 'a.geojson')}
+    good = {'inputs': [row], 'output': str(tmp_path / 'result.json'), 'tools': ['Names']}
+    for bad in [{}, {'inputs': []}, dict(good, output=float('nan')), dict(good, output=float('inf')),
+                dict(good, inputs=[row, row]), dict(good, output=str(tmp_path / '.' / 'a.fbx')),
+                dict(good, tools=[]), dict(good, tools=['Names', 'Names']),
+                dict(good, tools=['NamesApply']), dict(good, inputs=[dict(row, profile='unknown')])]:
+        with pytest.raises(ValueError):
+            module.validate_config(bad)
+    module.validate_config(good)
+    Path(good['output']).write_text('stale receipt')
+    with pytest.raises(FileExistsError):
+        module.validate_config(good)
+    assert fbx.read_bytes() == b'synthetic path fixture, not real FBX'
