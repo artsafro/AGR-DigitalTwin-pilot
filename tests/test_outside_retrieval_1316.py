@@ -3,6 +3,8 @@
 Pattern: n/a | new-case: version-bound A101 retrieval, approval and immutable v003 inputs.
 """
 import hashlib
+import subprocess
+import sys
 from copy import deepcopy
 
 import pytest
@@ -111,3 +113,71 @@ def test_three_asset_selection_has_complete_explicit_boundaries():
             assert '..' not in Path(record['path']).parts
             paths.append(record['path'])
     assert len(paths) == len(set(paths)) == 6
+
+
+def test_acer_request_is_separate_and_pending_without_an_answer():
+    verdict = load('library/flora/visual-verdict-acer-1316.json')
+    variant = next(v for v in load('library/flora/a101-native-v002.json')['variants']
+                   if v['object'] == 'klen_t7_h550_low')
+    assert verdict['version_sha256'] == variant['version_sha256'] == identity_hash(variant['identity'])
+    assert verdict['status'] == variant['review_status'] == 'pending'
+    assert verdict['answer'] is None and verdict['answer_source'] is None
+    assert verdict['transport']['success'] is True
+    assert verdict['transport']['message_id'] == '4701'
+    assert 'Royal Red' in verdict['asset']
+    assert 'not an approved substitution' in verdict['native_preview']['scope']
+
+
+def _cold_snippet():
+    text = (ROOT / 'docs/library/outside-retrieval-1316.md').read_text(encoding='utf-8')
+    return text.split('```python', 1)[1].split('```', 1)[0]
+
+
+@pytest.mark.parametrize('bad', ['empty', 'partial', 'unsupported', 'nan', 'infinity', 'zero', 'duplicate', 'traversal', 'absolute'])
+def test_documented_download_refuses_invalid_manifest_before_writes(tmp_path, bad):
+    # Synthetic refusal probes: network is forbidden, never pretend these are real assets.
+    manifest = deepcopy(load('library/outside-retrieval-v001.json'))
+    first = manifest['assets'][0]['files'][0]
+    if bad == 'empty':
+        manifest['assets'] = []
+    elif bad == 'partial':
+        first.pop('sha256')
+    elif bad == 'unsupported':
+        manifest['schema'] = 'unsupported'
+    elif bad in {'nan', 'infinity', 'zero'}:
+        first['bytes'] = {'nan': float('nan'), 'infinity': float('inf'), 'zero': 0}[bad]
+    elif bad == 'duplicate':
+        manifest['assets'][2]['files'][0]['path'] = first['path'].upper()
+    elif bad == 'traversal':
+        first['path'] = '../input.png'
+    else:
+        first['path'] = 'C:/input.png'
+    library = tmp_path / 'library'
+    library.mkdir()
+    input_path = library / 'outside-retrieval-v001.json'
+    input_path.write_text(json.dumps(manifest), encoding='utf-8')
+    before = input_path.read_bytes()
+    prefix = "import urllib.request\ndef denied(*a, **kw): raise RuntimeError('NETWORK_MUST_NOT_RUN')\nurllib.request.urlopen = denied\n"
+    result = subprocess.run([sys.executable, '-c', prefix + _cold_snippet()], cwd=tmp_path,
+                            capture_output=True, text=True)
+    assert result.returncode != 0
+    assert not (tmp_path / 'cold-download-v001').exists(), result.stderr
+    assert 'NETWORK_MUST_NOT_RUN' not in result.stderr
+    assert input_path.read_bytes() == before
+
+
+def test_documented_download_refuses_input_output_alias_without_changes(tmp_path):
+    library = tmp_path / 'library'
+    library.mkdir()
+    source = library / 'outside-retrieval-v001.json'
+    source.write_text(json.dumps(load('library/outside-retrieval-v001.json')), encoding='utf-8')
+    before = source.read_bytes()
+    # A directory destination already naming an input file is rejected by mkdir,
+    # before network or file writes. No destructive symlink/real library fixture.
+    (tmp_path / 'cold-download-v001').hardlink_to(source)
+    result = subprocess.run([sys.executable, '-c', _cold_snippet()], cwd=tmp_path,
+                            capture_output=True, text=True)
+    assert result.returncode != 0
+    assert source.read_bytes() == before
+    assert (tmp_path / 'cold-download-v001').read_bytes() == before
+
