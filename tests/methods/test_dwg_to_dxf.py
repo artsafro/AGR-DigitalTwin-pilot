@@ -216,7 +216,13 @@ def test_cli_dry_run_in_a_fresh_process(tmp_path, monkeypatch, inherited_encodin
     src = _source(tmp_path)
     work = tmp_path / "w"
     argv, out, rec = _args(src, work)
+    # encoding= only configures the parent reader, not the child Python writer.
+    # Match both ends without depending on shell/xdist/detached-process defaults.
+    env = {**os.environ, "PYTHONIOENCODING": "utf-8"}
     proc = subprocess.run([sys.executable, str(TOOL), *argv, "--dry-run"], capture_output=True, text=True,
-                          encoding="utf-8", cwd=ROOT)
+                          encoding="utf-8", cwd=ROOT, env=env)
     assert proc.returncode == 0, proc.stderr
-    assert json.loads(proc.stdout)["source"]["sha256"] == _sha(src) and not work.exists()
+    plan = json.loads(proc.stdout)
+    assert plan["source"] == {"path": str(src), "sha256": _sha(src)}
+    assert plan["dry_run"] is True and not work.exists()
+    assert os.environ["PYTHONIOENCODING"] == inherited_encoding
