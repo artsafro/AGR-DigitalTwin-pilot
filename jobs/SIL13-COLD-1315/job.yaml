@@ -25,13 +25,13 @@ gates:
     note: Exact two-part pilot draft accepted as a plan in issue comment 6859055997. Not a complete-site PartsList or visual approval.
     evidence:
     - path: jobs/SIL13-COLD-1315/parts-pilot-confirmed.json
-      sha256: 6084991387c749faec1c168c2d601f4aa8e812720285ce789933694a6fca7881
+      sha256: 40b5287dc4377627ea154d7ee40e515049a6c84434e0cb45acf99dbd8ff59aec
   operations:
     status: fail
     note: Real partial build and xView 0/0, but full invariants/source coverage/UV/materials not passed. No fabricated operation receipt.
     evidence: &summary
     - path: jobs/SIL13-COLD-1315/pilot-summary-v003.json
-      sha256: 1f1f4cd30929377820656303527bfce4c2323ba556e8ee8d1e5e4d0581e5e4d2
+      sha256: 51c67e1d9aa83fa8c00231b11956864839f6ac441a638ad18d5f17c498a2eb62
   budgets:
     status: review
     note: Partial pilot 998 NPM / 7358 VPM total; full-site budgets, UCX, textures and texel checks incomplete, not a whole-site pass.
@@ -47,7 +47,7 @@ gates:
     - path: jobs/SIL13-COLD-1315/PILOT-v003.md
       sha256: 337c80e0925936324e6c98713dcde9375e3a39b47688c49cd14e664b7417921a
     - path: jobs/SIL13-COLD-1315/evidence-v003.json
-      sha256: defa14931baec485914882827a20e7db4aabfea7a39f9b87d66d76e12c40b0af
+      sha256: b4532307bbf0db5a528c3bc79640a51a323fecb76c2f356f487ce41f12a13189
   visual:
     status: review
     waits: user
