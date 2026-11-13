@@ -2,6 +2,7 @@
 
 Keys: `reg p.N` = `Rasporyajenies19012026trebovaniya(2).pdf` page N (see npm-vpm.md header). `local:` relative to the repo root (AGR knowledge base; AGR `docs/` lives in `docs/agr/`). Tags: (project decision) = user/project instruction, not regulation; (lesson) = only source is a lesson/case study.
 
+- PDF binding #1254 uses a documented cross-project DWG search for the second native DIMENSION oracle [D266]; its two-viewport fallback applies only when that search finds none. See [binding evidence](../research/pdf-album-binding-2b.md).
 - PDF fallback evaluation is a three-album, agent-made reference audit only [D265]; OCR/vision text is not calibrated geometry or an approved binding. See [fallback report](../research/pdf-album-fallback.md).
 
 ## Regulation geometry rules (both profiles unless noted)
