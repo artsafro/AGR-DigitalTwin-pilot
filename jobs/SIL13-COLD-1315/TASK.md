@@ -57,11 +57,15 @@ symbols extracted, 52/52 inside the approved boundary and preserved by DXF readb
 match all five point-plant schedule quantities (1, 4, 6, 17, 24). A linden-named CAD symbol is position 2/4,
 not authority to substitute linden for Red Sunset. Flora candidates remain subject to identity/size checks.
 MAF: all 32 DOCX rows accounted for; no certified SKU-to-model match yet (not proof of disk-wide absence).
-Current continuation is [PILOT-v003.md](PILOT-v003.md): the accepted two-part plan is now
-constructed/exported/read back in both profiles. Ground 938 triangles; six library maples
-NPM 60 / VPM 6420 triangles; xView 0/0 in both FBX. Public validators FAIL; not delivery.
-The required next gate is the partial-pilot picture plus identification of 17.008947 m2 of
-unmapped source covering and recovery of the missing original Acer diffuse/opacity maps.
-Zero/plan/nominal-height answers are closed [D279], not asked again. Remainder, Ground UCX,
-MAF placements, complete vegetation/atlases/UV/georeferencing and manual/SINTEZ gates remain.
+Current continuation is [CONTINUATION-v004.md](CONTINUATION-v004.md): first pilot geometry
+accepted [D280]. Transformed source hatch search resolves all 17.008947 m2 as Rubber18;
+no lawn assumption used. A source-wide diagnostic is now exported/read back: Ground 46,614
+triangles; six library maples NPM 60 / VPM 6420. Header UnitScaleFactor=100 verified,
+but xView/public delivery validators FAIL; not a completed or accepted whole-site model.
+New source choices: 7.597235 m2 outside source TIN support, 7.504316 m2 intersecting
+coverings, official OKS footprint and Ground beneath eight canopy/entry regions. See the
+single new question batch in the continuation report; no heights/materials invented.
+Acer maps are owned by #1316, not another question to Artem. Zero/boundary/5.6 m/pilot
+geometry/former pink wedge are closed. Full Ground/UCX/MAF/remaining Flora/atlases and
+manual/SINTEZ gates remain; no partial failure is treated as a pass.
 Technical QA, user acceptance and publication remain incomplete; no readiness increase.

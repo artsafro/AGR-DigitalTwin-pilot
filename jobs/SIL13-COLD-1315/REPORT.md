@@ -1,8 +1,10 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **constructed partial pilot v003/r3; picture/missing-input gate, not delivered**.
-See [PILOT-v003.md](PILOT-v003.md) for the current built/exported/read-back evidence,
-public validator failures and required next answer. The v001/v002 sections below are historical.
+Current status: **source-wide diagnostic v004/r3; new source-data decisions open, not delivered**.
+See [CONTINUATION-v004.md](CONTINUATION-v004.md) for actual source-wide exports/readback,
+source-resolved former pink wedge, corrected header units, failed technical checks and the new
+source-data questions. The v003 pilot geometry is accepted under D280, not its materials/checks.
+PILOT-v003.md and the v001/v002 sections below are historical checkpoints.
 
 Historical v002 status: **source authority answered; height/PartsList gates open, not delivered**.
 Boundary and 52 source symbols exported/read back as source-only DXF. No constructed Ground/UCX,

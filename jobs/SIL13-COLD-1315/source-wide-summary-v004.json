@@ -1,0 +1,725 @@
+{
+  "passed": false,
+  "stage": "source-wide-supported-coverings-diagnostic-not-complete-site",
+  "origin_xy_m": [
+    783.905,
+    11112.780845748444
+  ],
+  "project_zero_m": 142.1,
+  "known_surface_union_m2": 9455.589904527127,
+  "supported_surface_union_m2": 9447.992669486352,
+  "unsupported_known_surface_m2": 7.597235040804685,
+  "unclassified_site_area_m2": 3503.148959711553,
+  "source_material_conflicts": [
+    {
+      "a": "Rubber18",
+      "b": "Pavement",
+      "overlap_m2": 1.8861023853844472e-10
+    },
+    {
+      "a": "Rubber18",
+      "b": "SeededLawn",
+      "overlap_m2": 0.10387233400675296
+    },
+    {
+      "a": "Rubber18",
+      "b": "Rubber253",
+      "overlap_m2": 1.0191752031880552
+    },
+    {
+      "a": "Rubber18",
+      "b": "Rubber30",
+      "overlap_m2": 0.0010054084382680594
+    },
+    {
+      "a": "Rubber18",
+      "b": "Rubber252",
+      "overlap_m2": 0.05941832671058086
+    },
+    {
+      "a": "Rubber18",
+      "b": "RolledLawn",
+      "overlap_m2": 0.008462178088790493
+    },
+    {
+      "a": "Pavement",
+      "b": "SeededLawn",
+      "overlap_m2": 6.127535889828264
+    },
+    {
+      "a": "Pavement",
+      "b": "Flowerbed_UnresolvedSpecies",
+      "overlap_m2": 0.03532507208436655
+    },
+    {
+      "a": "Pavement",
+      "b": "Asphalt",
+      "overlap_m2": 0.0009904441764832187
+    },
+    {
+      "a": "Pavement",
+      "b": "Rubber253",
+      "overlap_m2": 0.003248341600870078
+    },
+    {
+      "a": "SeededLawn",
+      "b": "Flowerbed_UnresolvedSpecies",
+      "overlap_m2": 0.00033138614533994285
+    },
+    {
+      "a": "SeededLawn",
+      "b": "Asphalt",
+      "overlap_m2": 0.002775399743064079
+    },
+    {
+      "a": "SeededLawn",
+      "b": "Rubber253",
+      "overlap_m2": 0.08209052056912768
+    },
+    {
+      "a": "SeededLawn",
+      "b": "RolledLawn",
+      "overlap_m2": 0.0571007014937978
+    },
+    {
+      "a": "Rubber253",
+      "b": "RolledLawn",
+      "overlap_m2": 1.024324730287813e-05
+    },
+    {
+      "a": "Rubber30",
+      "b": "Rubber252",
+      "overlap_m2": 0.0029830921725080084
+    }
+  ],
+  "conflict_area_m2": 7.504315809919541,
+  "region_sources": {
+    "Rubber18": [
+      {
+        "root": "33FBCB0",
+        "child_index": 0
+      },
+      {
+        "root": "33FBCCA",
+        "child_index": 0
+      },
+      {
+        "root": "33FBCCB",
+        "child_index": 13
+      },
+      {
+        "root": "33FBCCB",
+        "child_index": 14
+      },
+      {
+        "root": "33FBCD8",
+        "child_index": 0
+      },
+      {
+        "root": "33FC17A",
+        "child_index": 0
+      }
+    ],
+    "Pavement": [
+      {
+        "root": "33FBCB1",
+        "child_index": 0
+      },
+      {
+        "root": "33FBCC1",
+        "child_index": 0
+      },
+      {
+        "root": "33FBCC2",
+        "child_index": 0
+      },
+      {
+        "root": "33FBCC3",
+        "child_index": 0
+      },
+      {
+        "root": "33FBCC5",
+        "child_index": 0
+      },
+      {
+        "root": "33FBCC6",
+        "child_index": 0
+      }
+    ],
+    "SeededLawn": [
+      {
+        "root": "33FBCB2",
+        "child_index": 0
+      }
+    ],
+    "Flowerbed_UnresolvedSpecies": [
+      {
+        "root": "33FBCB3",
+        "child_index": 0
+      },
+      {
+        "root": "33FBCB4",
+        "child_index": 0
+      }
+    ],
+    "Asphalt": [
+      {
+        "root": "33FBCBF",
+        "child_index": 0
+      }
+    ],
+    "Rubber253": [
+      {
+        "root": "33FBCC0",
+        "child_index": 0
+      },
+      {
+        "root": "33FBCC9",
+        "child_index": 0
+      },
+      {
+        "root": "33FBCCC",
+        "child_index": 0
+      },
+      {
+        "root": "33FBCCD",
+        "child_index": 0
+      },
+      {
+        "root": "33FC17F",
+        "child_index": 0
+      }
+    ],
+    "Rubber30": [
+      {
+        "root": "33FBCCB",
+        "child_index": 11
+      }
+    ],
+    "Rubber252": [
+      {
+        "root": "33FBCCB",
+        "child_index": 12
+      }
+    ],
+    "RolledLawn": [
+      {
+        "root": "33FBCD0",
+        "child_index": 0
+      }
+    ]
+  },
+  "source_control_z_max_error_m": 3.4373215385130607e-10,
+  "evidence_root": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v004",
+  "decision": "D280 / issuecomment-6864798809",
+  "pink_resolution": {
+    "root_insert": "33FBCCB",
+    "block": "A$C8bceaf9b",
+    "covering": "Rubber18",
+    "area_m2": 17.008946980179573,
+    "unclassified_m2": 0.0,
+    "lawn_assumption_used": false
+  },
+  "source_covering_rows": 24,
+  "source_hatches_read": 244,
+  "source_extraction_errors": [],
+  "profiles": {
+    "NPM": {
+      "ground_triangles": 46614,
+      "flora_triangles": 60,
+      "plants": [
+        {
+          "handle": "33F02A9",
+          "xy_m": [
+            824.9778531540854,
+            11033.70102533642
+          ],
+          "ground_z_m": 0.037464149381634115,
+          "visible_height_m": 5.477407343119916,
+          "total_height_m": 5.577407343119916,
+          "source_vertex_count": 20
+        },
+        {
+          "handle": "33F02AB",
+          "xy_m": [
+            825.983241303949,
+            11026.6963104534
+          ],
+          "ground_z_m": -0.3474108765861956,
+          "visible_height_m": 5.7767610734489745,
+          "total_height_m": 5.876761073448974,
+          "source_vertex_count": 20
+        },
+        {
+          "handle": "33F02AC",
+          "xy_m": [
+            831.9718285128132,
+            11034.7048720419
+          ],
+          "ground_z_m": -0.08677848043808467,
+          "visible_height_m": 5.524912834295947,
+          "total_height_m": 5.624912834295946,
+          "source_vertex_count": 20
+        },
+        {
+          "handle": "33F02AD",
+          "xy_m": [
+            838.965803400634,
+            11035.70871811764
+          ],
+          "ground_z_m": -0.1458152069430696,
+          "visible_height_m": 5.989108709562677,
+          "total_height_m": 6.089108709562677,
+          "source_vertex_count": 20
+        },
+        {
+          "handle": "33F02AE",
+          "xy_m": [
+            830.978715997722,
+            11041.70037911399
+          ],
+          "ground_z_m": 0.1129673276051335,
+          "visible_height_m": 6.149929894349805,
+          "total_height_m": 6.249929894349805,
+          "source_vertex_count": 20
+        },
+        {
+          "handle": "33F02AF",
+          "xy_m": [
+            843.1930022907186,
+            11041.11508570549
+          ],
+          "ground_z_m": 0.0010020392648470988,
+          "visible_height_m": 6.096654463117023,
+          "total_height_m": 6.196654463117023,
+          "source_vertex_count": 20
+        }
+      ],
+      "skirt_depth_m": 1.001,
+      "UnitScaleFactor_expected": 100,
+      "readback": {
+        "UnitScaleFactor": 100.0,
+        "sha256": "8035055a1ca5b6ec9a7b62bca496555ce320cadda383ca53dfcb1bed16839b53",
+        "meshes": [
+          {
+            "name": "SM_SIL13_Flora",
+            "vertices": 120,
+            "triangles": 60,
+            "uv_channels": 1,
+            "materials": [
+              "M_SIL13_Flora"
+            ],
+            "bbox_m": [
+              [
+                37.43107604980469,
+                -89.29667663574219,
+                -0.4474108815193176
+              ],
+              [
+                63.350196838378906,
+                -66.87574005126953,
+                6.26289701461792
+              ]
+            ],
+            "rotation": [
+              0.0,
+              -0.0,
+              8.742277657347586e-08
+            ],
+            "scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "location": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "nonfinite": 0,
+            "nontriangles": 0
+          },
+          {
+            "name": "SM_SIL13_Ground",
+            "vertices": 28307,
+            "triangles": 46614,
+            "uv_channels": 1,
+            "materials": [
+              "M_SIL13_BaseLawn",
+              "M_SIL13_Rubber18",
+              "M_SIL13_Pavement",
+              "M_SIL13_Flowerbed_UnresolvedSpecies",
+              "M_SIL13_Asphalt",
+              "M_SIL13_Rubber253",
+              "M_SIL13_Rubber30",
+              "M_SIL13_Rubber252",
+              "M_SIL13_RolledLawn",
+              "M_SIL13_Skirt"
+            ],
+            "bbox_m": [
+              [
+                -74.74729919433594,
+                -90.81131744384766,
+                -2.4010000228881836
+              ],
+              [
+                73.97708892822266,
+                91.43479919433594,
+                0.37316393852233887
+              ]
+            ],
+            "rotation": [
+              0.0,
+              -0.0,
+              8.742277657347586e-08
+            ],
+            "scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "location": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "nonfinite": 0,
+            "nontriangles": 0
+          }
+        ],
+        "plant_controls": [
+          {
+            "handle": "33F02A9",
+            "sinking_error_m": 1.5754665072531537e-09,
+            "height_error_m": 1.0636395586516301e-07
+          },
+          {
+            "handle": "33F02AB",
+            "sinking_error_m": 4.9331220219883676e-09,
+            "height_error_m": 1.8419949388004397e-07
+          },
+          {
+            "handle": "33F02AC",
+            "sinking_error_m": 5.336909220110542e-09,
+            "height_error_m": 1.5510054218736968e-07
+          },
+          {
+            "handle": "33F02AD",
+            "sinking_error_m": 4.349266197190005e-09,
+            "height_error_m": 1.5987072643497413e-07
+          },
+          {
+            "handle": "33F02AE",
+            "sinking_error_m": 4.524741692435441e-12,
+            "height_error_m": 2.0734154304591357e-07
+          },
+          {
+            "handle": "33F02AF",
+            "sinking_error_m": 2.730678266837927e-09,
+            "height_error_m": 2.217246102276249e-07
+          }
+        ]
+      },
+      "xview": {
+        "overlapping_vertices": 4753,
+        "overlapping_faces": 465,
+        "vertex_pairs": 3609,
+        "face_pairs": 413,
+        "face_pairs_by_kind": {
+          "contact": 145,
+          "area": 61,
+          "area+contact": 207
+        },
+        "bowtie_vertices": 858,
+        "bowtie_pairs": 110,
+        "parts_without_faces": 0
+      },
+      "validator_exit_code": 1,
+      "machine_stage_counts": {
+        "pass": 1,
+        "fail": 3,
+        "review": 2,
+        "not_run": 2
+      },
+      "failed_findings": [
+        {
+          "stage": "V003",
+          "name": "ground skirt depth",
+          "observed": "SM_SIL13_Ground.fbx: broken face geometry: SM_SIL13_Ground"
+        },
+        {
+          "stage": "V004",
+          "name": "topology defects",
+          "observed": "SM_SIL13_Ground.fbx: ['SM_SIL13_Flora (duplicates_and_self_intersections=162)', 'SM_SIL13_Ground (duplicates_and_self_intersections=5950, zero_length_edges=40)']"
+        },
+        {
+          "stage": "V004",
+          "name": "co-directional clearance",
+          "observed": "SM_SIL13_Ground.fbx: 42545 co-directional overlapping pairs: 59 < 5 mm, 42458 in band, 28 > 20 mm; distance mm min/median/max 0/5.9993/68920.7209; histogram {'0-1': 43, '1-5': 16, '5-10': 42458, '10-20': 0, '20-50': 0, '50-100': 0, '100-1000': 0, '1000+': 28}; worst: ['SM_SIL13_Ground#15582/SM_SIL13_Ground#15612 d=0.0 mm', 'SM_SIL13_Ground#29774/SM_SIL13_Ground#38820 d=0.0 mm', 'SM_SIL13_Ground#29774/SM_SIL13_Ground#38821 d=0.0 mm', 'SM_SIL13_Ground#33085/SM_SIL13_Ground#37425 d=0.0 mm', 'SM_SIL13_Ground#29550/SM_SIL13_Ground#44298 d=0.0 mm']"
+        },
+        {
+          "stage": "V005",
+          "name": "material assignments",
+          "observed": "SM_SIL13_Ground.fbx: [\"SM_SIL13_Flora: unmapped diffuse for material 'M_SIL13_Flora'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_BaseLawn'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Rubber18'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Pavement'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Flowerbed_UnresolvedSpecies'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Asphalt'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Rubber253'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Rubber30'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Rubber252'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_RolledLawn'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Skirt'\"]"
+        },
+        {
+          "stage": "V005",
+          "name": "Flora maps: M_SIL13_Flora",
+          "observed": "SM_SIL13_Ground.fbx: no diffuse map; no separate opacity map"
+        }
+      ]
+    },
+    "VPM": {
+      "ground_triangles": 46614,
+      "flora_triangles": 6420,
+      "plants": [
+        {
+          "handle": "33F02A9",
+          "xy_m": [
+            824.9778531540854,
+            11033.70102533642
+          ],
+          "ground_z_m": 0.037464149381634115,
+          "visible_height_m": 5.477407343119916,
+          "total_height_m": 5.577407343119916,
+          "source_vertex_count": 1077
+        },
+        {
+          "handle": "33F02AB",
+          "xy_m": [
+            825.983241303949,
+            11026.6963104534
+          ],
+          "ground_z_m": -0.3474108765861956,
+          "visible_height_m": 5.7767610734489745,
+          "total_height_m": 5.876761073448974,
+          "source_vertex_count": 1077
+        },
+        {
+          "handle": "33F02AC",
+          "xy_m": [
+            831.9718285128132,
+            11034.7048720419
+          ],
+          "ground_z_m": -0.08677848043808467,
+          "visible_height_m": 5.524912834295947,
+          "total_height_m": 5.624912834295946,
+          "source_vertex_count": 1077
+        },
+        {
+          "handle": "33F02AD",
+          "xy_m": [
+            838.965803400634,
+            11035.70871811764
+          ],
+          "ground_z_m": -0.1458152069430696,
+          "visible_height_m": 5.989108709562677,
+          "total_height_m": 6.089108709562677,
+          "source_vertex_count": 1077
+        },
+        {
+          "handle": "33F02AE",
+          "xy_m": [
+            830.978715997722,
+            11041.70037911399
+          ],
+          "ground_z_m": 0.1129673276051335,
+          "visible_height_m": 6.149929894349805,
+          "total_height_m": 6.249929894349805,
+          "source_vertex_count": 1077
+        },
+        {
+          "handle": "33F02AF",
+          "xy_m": [
+            843.1930022907186,
+            11041.11508570549
+          ],
+          "ground_z_m": 0.0010020392648470988,
+          "visible_height_m": 6.096654463117023,
+          "total_height_m": 6.196654463117023,
+          "source_vertex_count": 1077
+        }
+      ],
+      "skirt_depth_m": 1.001,
+      "UnitScaleFactor_expected": 100,
+      "readback": {
+        "UnitScaleFactor": 100.0,
+        "sha256": "e0e2f011422060cc9cc56e52e6d6493f48c1577d274aa4c32b9c24291ac5853f",
+        "meshes": [
+          {
+            "name": "SM_SIL13_Ground",
+            "vertices": 28307,
+            "triangles": 46614,
+            "uv_channels": 1,
+            "materials": [
+              "M_SIL13_BaseLawn.001",
+              "M_SIL13_Rubber18.001",
+              "M_SIL13_Pavement.001",
+              "M_SIL13_Flowerbed_UnresolvedSpecies.001",
+              "M_SIL13_Asphalt.001",
+              "M_SIL13_Rubber253.001",
+              "M_SIL13_Rubber30.001",
+              "M_SIL13_Rubber252.001",
+              "M_SIL13_RolledLawn.001",
+              "M_SIL13_Skirt.001"
+            ],
+            "bbox_m": [
+              [
+                -74.74729919433594,
+                -90.81131744384766,
+                -2.4010000228881836
+              ],
+              [
+                73.97708892822266,
+                91.43479919433594,
+                0.37316393852233887
+              ]
+            ],
+            "rotation": [
+              0.0,
+              -0.0,
+              8.742277657347586e-08
+            ],
+            "scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "location": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "nonfinite": 0,
+            "nontriangles": 0
+          },
+          {
+            "name": "SM_SIL13_Ground_Vegetation",
+            "vertices": 6462,
+            "triangles": 6420,
+            "uv_channels": 1,
+            "materials": [
+              "M_SIL13_Flora.001"
+            ],
+            "bbox_m": [
+              [
+                39.238494873046875,
+                -88.52234649658203,
+                -0.4474108815193176
+              ],
+              [
+                61.85603713989258,
+                -68.72520446777344,
+                6.26289701461792
+              ]
+            ],
+            "rotation": [
+              0.0,
+              -0.0,
+              8.742277657347586e-08
+            ],
+            "scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "location": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "nonfinite": 0,
+            "nontriangles": 0
+          }
+        ],
+        "plant_controls": [
+          {
+            "handle": "33F02A9",
+            "sinking_error_m": 1.5754665072531537e-09,
+            "height_error_m": 1.0636395586516301e-07
+          },
+          {
+            "handle": "33F02AB",
+            "sinking_error_m": 4.9331220219883676e-09,
+            "height_error_m": 1.8419949388004397e-07
+          },
+          {
+            "handle": "33F02AC",
+            "sinking_error_m": 5.336909220110542e-09,
+            "height_error_m": 1.5510054218736968e-07
+          },
+          {
+            "handle": "33F02AD",
+            "sinking_error_m": 4.349266197190005e-09,
+            "height_error_m": 1.5987072643497413e-07
+          },
+          {
+            "handle": "33F02AE",
+            "sinking_error_m": 4.524741692435441e-12,
+            "height_error_m": 2.0734154304591357e-07
+          },
+          {
+            "handle": "33F02AF",
+            "sinking_error_m": 2.730678266837927e-09,
+            "height_error_m": 2.217246102276249e-07
+          }
+        ]
+      },
+      "xview": {
+        "overlapping_vertices": 4753,
+        "overlapping_faces": 465,
+        "vertex_pairs": 3609,
+        "face_pairs": 413,
+        "face_pairs_by_kind": {
+          "contact": 145,
+          "area": 61,
+          "area+contact": 207
+        },
+        "bowtie_vertices": 858,
+        "bowtie_pairs": 110,
+        "parts_without_faces": 0
+      },
+      "validator_exit_code": 1,
+      "machine_stage_counts": {
+        "pass": 2,
+        "fail": 5,
+        "review": 0,
+        "not_run": 5
+      },
+      "failed_findings": [
+        {
+          "stage": "V003",
+          "name": "ground skirt depth",
+          "observed": "SM_SIL13_Ground.fbx: broken face geometry: SM_SIL13_Ground"
+        },
+        {
+          "stage": "V004",
+          "name": "topology defects",
+          "observed": "SM_SIL13_Ground.fbx: ['SM_SIL13_Ground (duplicates_and_self_intersections=5950, zero_length_edges=40)', 'SM_SIL13_Ground_Vegetation (duplicates_and_self_intersections=29240)']"
+        },
+        {
+          "stage": "V004",
+          "name": "co-directional clearance",
+          "observed": "SM_SIL13_Ground.fbx: 42545 co-directional overlapping pairs: 59 < 5 mm, 42458 in band, 28 > 20 mm; distance mm min/median/max 0/5.9993/68920.7209; histogram {'0-1': 43, '1-5': 16, '5-10': 42458, '10-20': 0, '20-50': 0, '50-100': 0, '100-1000': 0, '1000+': 28}; worst: ['SM_SIL13_Ground#15582/SM_SIL13_Ground#15612 d=0.0 mm', 'SM_SIL13_Ground#29774/SM_SIL13_Ground#38820 d=0.0 mm', 'SM_SIL13_Ground#29774/SM_SIL13_Ground#38821 d=0.0 mm', 'SM_SIL13_Ground#33085/SM_SIL13_Ground#37425 d=0.0 mm', 'SM_SIL13_Ground#29550/SM_SIL13_Ground#44298 d=0.0 mm']"
+        },
+        {
+          "stage": "V008",
+          "name": "mirrored islands",
+          "observed": "SM_SIL13_Ground.fbx: {'SM_SIL13_Ground': 8}"
+        },
+        {
+          "stage": "V010",
+          "name": "UCX present",
+          "observed": "SM_SIL13_Ground.fbx: 0 UCX mesh(es)"
+        },
+        {
+          "stage": "V012",
+          "name": "mesh names",
+          "observed": "SM_SIL13_Ground.fbx: ['SM_SIL13_Ground_Vegetation: no regulation mask matches']"
+        }
+      ]
+    }
+  },
+  "technical_qa": "FAIL, not an accepted full-site model",
+  "new_shared_modules": []
+}

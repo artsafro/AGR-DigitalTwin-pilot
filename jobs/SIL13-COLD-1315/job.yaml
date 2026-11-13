@@ -1,6 +1,6 @@
 schema_version: 1.0.0
 job_id: SIL13-COLD-1315
-run_id: cold-1315-constructed-partial-pilot-v003-r3
+run_id: cold-1315-source-wide-diagnostic-v004-r3
 synthetic: false
 path: deviation
 inputs: &inputs
@@ -13,47 +13,51 @@ deviations:
   what_failed: Initial Ground xView 262 faces; repeated-index triangles caused FBX face loss; validators still fail. Missing maple maps and 17.008947 m2 covering authority prevent complete pilot.
   what_was_tried: Local-origin TIN; exact seam weld r2 then zero-area/crop seam normalization r3; native Max copy extraction, Blender neutral partial pilot; no invented maps/materials.
   new_tool_written: No shared module. Hashed job-local drivers under external evidence-v003.json.
-  result: Ground 938 tris; Flora 60 NPM / 6420 VPM; xView 0/0 both FBX, size/seating readback verified. Picture and missing-input gate open, validators fail.
+  result: Historical v003 pilot Ground 938 tris; Flora 60 NPM / 6420 VPM; xView 0/0 both FBX. First-fragment geometry subsequently accepted D280, not appearance or delivery checks.
+- gate: operations
+  what_failed: Source-wide inventory exposes unsupported relief, intersecting materials and unresolved footprint/canopy regions. New exports fail xView and delivery checks.
+  what_was_tried: Transformed INSERT extraction resolves former pink area as Rubber18 without lawn assumption. Source-edge parity decomposition, local TIN and flat-first diagnostic. Default header regression fails at 1 then FBX_SCALE_UNITS passes at 100 with exact 2m readback. Long BMesh cleanup replaced by exact-coordinate normalization and explicit zero-area drop list; no input/library edits.
+  new_tool_written: No shared module; job-local drivers and actual failed reports indexed in evidence-v004.json.
+  result: Ground 46614 tris, six maples 60 NPM or 6420 VPM. UnitScaleFactor 100 verified. xView fails 465 faces and 4753 vertices each; 110 zero-area drops each not waived. Source choices and worker-owned repairs remain open; no completed step/delivery claimed.
 gates:
   inputs:
     status: review
     waits: user
-    note: Boundary/VP/zero/size/plan answered. Missing original Acer diffuse/opacity and covering authority for 17.008947 m2; full library/covering inventory incomplete.
+    note: Boundary/VP/zero/pilot geometry decisions closed D280. New choices for 7.597235 m2 outside TIN, 7.504316 m2 material intersections, official footprint and canopy/entry Ground. Acer maps owned by issue 1316, not a user question again. Original/copy source hashes equal.
     evidence: *inputs
   parts:
-    status: pass
-    note: Exact two-part pilot draft accepted as a plan in issue comment 6859055997. Not a complete-site PartsList or visual approval.
+    status: review
+    note: Existing pilot PartsList confirmed and geometry accepted, not a complete-site PartsList. Update full-site parts after source choices, retaining approved scope.
     evidence:
     - path: jobs/SIL13-COLD-1315/parts-pilot-confirmed.json
       sha256: 40b5287dc4377627ea154d7ee40e515049a6c84434e0cb45acf99dbd8ff59aec
   operations:
     status: fail
-    note: Real partial build and xView 0/0, but full invariants/source coverage/UV/materials not passed. No fabricated operation receipt.
+    note: Actual source-wide diagnostic exported/read back, xView/topology fail. Unsupported/contradictory zones excluded, not defaulted. No fabricated invariant receipt.
     evidence: &summary
-    - path: jobs/SIL13-COLD-1315/pilot-summary-v003.json
-      sha256: 51c67e1d9aa83fa8c00231b11956864839f6ac441a638ad18d5f17c498a2eb62
+    - path: jobs/SIL13-COLD-1315/source-wide-summary-v004.json
+      sha256: f85123320cf35c7c8d6322008c9aacd9f3782952053da2afd287d36ac210cab5
   budgets:
     status: review
-    note: Partial pilot 998 NPM / 7358 VPM total; full-site budgets, UCX, textures and texel checks incomplete, not a whole-site pass.
+    note: Incomplete candidate 46674 NPM or 53034 VPM non-UCX triangles. Final area band, complete composition, UCX, textures and density open.
     evidence: *summary
   export_readback:
     status: review
-    note: Both r3 FBX read back in clean Blender; counts/UV-channel/size/seating verified. Header units and public topology/UV/material findings fail; not an all-checks receipt.
+    note: Fresh exported-file readback verifies counts/UV presence/numeric size and UnitScaleFactor 100. Public topology/skirt/UV/material checks fail. Not an all-checks receipt.
     evidence: *summary
   report:
     status: review
-    note: Actual per-area pilot evidence and historical comparison; full reproduction incomplete. Binaries on Drive, indexed in evidence-v003.json.
+    note: Actual per-area continuation distinguishes source decisions and worker-owned failures. Full reproduction incomplete. Drive artifacts indexed with 60 verified copies.
     evidence:
-    - path: jobs/SIL13-COLD-1315/PILOT-v003.md
-      sha256: 337c80e0925936324e6c98713dcde9375e3a39b47688c49cd14e664b7417921a
-    - path: jobs/SIL13-COLD-1315/evidence-v003.json
-      sha256: b4532307bbf0db5a528c3bc79640a51a323fecb76c2f356f487ce41f12a13189
+    - path: jobs/SIL13-COLD-1315/CONTINUATION-v004.md
+      sha256: b8bf7d32bcfe2728cddc4e6214b368f2ced5f5e58ec4302bbfa8dadf78d1ca39
+    - path: jobs/SIL13-COLD-1315/evidence-v004.json
+      sha256: c3128665e0f9dbd18242b6af1f99355e51293041b9c07fbffd990e537373f980
   visual:
     status: review
-    waits: user
-    note: Constructed partial-pilot sheet exists, exact FBX hashes pinned in report; no user acceptance. Missing maps and pink unknown covering shown. Summary is not a visual approval receipt.
+    note: D280 accepts only first v003/r3 fragment geometry. New diagnostic sheet is not a completed full-site picture or final acceptance; no approval requested for technical failures.
     evidence: *summary
   checker:
     status: missing
-    note: Full SINTEZ not run; pilot image not accepted, complete exports absent. Public validators both failed, not a checker pass.
+    note: Complete exports/final visual approval absent; full SINTEZ not run. Public validators both failed, not a checker pass.
     evidence: []

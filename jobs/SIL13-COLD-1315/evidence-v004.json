@@ -1,0 +1,344 @@
+{
+  "schema": "external-evidence/1",
+  "passed": false,
+  "root": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v004",
+  "files": [
+    {
+      "path": "audit_source.py",
+      "sha256": "5f91cbba944ddea8a4a3c8c1febf771b324de0847af750a00b4ff6381504bec5",
+      "bytes": 2666
+    },
+    {
+      "path": "build-site-r2.log",
+      "sha256": "97528554b4932f4457ebba634e9747aa47d8d03b535d16fed1116af101ce8805",
+      "bytes": 735
+    },
+    {
+      "path": "build-site-r3.log",
+      "sha256": "007de67f5b5ef9d1b8f0978d7c3032fec66ca54dbb37355069d234e375c7fbf0",
+      "bytes": 1069
+    },
+    {
+      "path": "build-site.log",
+      "sha256": "ffcf03ab87be39e0620cf30c3d257902da2099e5516410c1430af75de2e43bfa",
+      "bytes": 361
+    },
+    {
+      "path": "build_site.py",
+      "sha256": "1aa3b1fcb4fd75c1b8be253b80b2866ca14278e90506384ee902951b261db9c6",
+      "bytes": 6896
+    },
+    {
+      "path": "coverage-source.png",
+      "sha256": "c0712dad43f485d04311415c069fd20b5f51dab058e8ec7f586ffe273cfa8f3b",
+      "bytes": 691795
+    },
+    {
+      "path": "coverage.json",
+      "sha256": "c5e01df5dfafad40745546bdf7985330b6cec028be65cbb454087b4e42a05e90",
+      "bytes": 1294981
+    },
+    {
+      "path": "coverage.log",
+      "sha256": "bc4d4c90b92ba6679ddaaaa4b5d20190906c3007e30a7d3d79499d87cb3dbf92",
+      "bytes": 10434
+    },
+    {
+      "path": "coverage.py",
+      "sha256": "9828238aeba148807f412ed543c03435d8595199da3a06ac043bed60f3b98ba0",
+      "bytes": 2988
+    },
+    {
+      "path": "decomposition.json",
+      "sha256": "a05d34f12b7808570d02843c58b6b1556a993d715230508099475ea71ad71d9e",
+      "bytes": 46258
+    },
+    {
+      "path": "diagnose_rings.py",
+      "sha256": "dcb514321329ed3c0fe5c4d5b8a237fdd9fac75f856ce6d94af6442bbe488b72",
+      "bytes": 1813
+    },
+    {
+      "path": "gap-investigation.json",
+      "sha256": "55f27f5c66c0a756d21f04101c22cce12795a75999a82a95cf1916706c4f47eb",
+      "bytes": 219122
+    },
+    {
+      "path": "gap-investigation.log",
+      "sha256": "b3377f1dcd3e6ba8d6152f458d74e45a7ca104a41b6739f623885e81dc6cbd24",
+      "bytes": 6878
+    },
+    {
+      "path": "investigate_gaps.py",
+      "sha256": "df0ba846bb0d882eeabb0a09caa3b406ae919d84961f1726760d4cec18d4a27f",
+      "bytes": 3362
+    },
+    {
+      "path": "make_sheet.py",
+      "sha256": "d98042f6e304204bf21b740408ef0371646e0da0e0627f4dac89b3d290178df4",
+      "bytes": 3151
+    },
+    {
+      "path": "nested-coverings-r2.log",
+      "sha256": "cd39d0e2cee2055a21c89456e464039dc77906ce1811285742d4a70bc7d8bf22",
+      "bytes": 45924
+    },
+    {
+      "path": "nested-coverings.json",
+      "sha256": "d59132d2c9c3129cb23cf96ffd27aa6764ade4de14db3c80ea3f0e06059c4fbd",
+      "bytes": 3382626
+    },
+    {
+      "path": "nested-coverings.log",
+      "sha256": "e599cda5c4bdc8f181a2219d0a95a9632f70e8b9b8926fcd039c9401aef5032a",
+      "bytes": 46322
+    },
+    {
+      "path": "nested_coverings.py",
+      "sha256": "145bb7788f198a40b4fe1a688e2e0cf512b9d585032e970e891f2fc654d7cd47",
+      "bytes": 3296
+    },
+    {
+      "path": "prepare-site-r2.log",
+      "sha256": "a205fcee93e411dadf7e553187f52dca5622ccbaadfcc234292458e100dbe4b0",
+      "bytes": 1903
+    },
+    {
+      "path": "prepare-site.log",
+      "sha256": "48043bfee9f84e426c4910e5d967e68789b7e0e5c57535d1680673b8d11c7b9c",
+      "bytes": 1584
+    },
+    {
+      "path": "prepare_site.py",
+      "sha256": "3d91871c8bd0d32a13a40180efba76fc54e02684a583473e6f64f827af68dd6f",
+      "bytes": 4716
+    },
+    {
+      "path": "preview-NOT-ACCEPTED.jpg",
+      "sha256": "01f30e5b89c0e5ec5d3fa25a8f2e12cfeaabf6ce88b82af869fd291e5f49f749",
+      "bytes": 76418
+    },
+    {
+      "path": "probe_units.py",
+      "sha256": "7ed8cba55e95465260141530df0bb8a0dc235c9bd99562cbc47ea7fb7e1757b5",
+      "bytes": 1522
+    },
+    {
+      "path": "r1/flat-NPM.blend",
+      "sha256": "21e7b53db932bf2df9838057b4100d47ce2a01b2f7091cd959f952b8d4e29210",
+      "bytes": 1381610
+    },
+    {
+      "path": "r2/flat-NPM.blend",
+      "sha256": "e64262d95199d145c65f4e6d45efade10ca716f3051b400aba8dd3f5c993d987",
+      "bytes": 1381606
+    },
+    {
+      "path": "r3/flat-NPM.blend",
+      "sha256": "85c21b9fa97fea2d1f926c34f09e9dc8359253bd06869c2deb4c257aa9c384a5",
+      "bytes": 1381604
+    },
+    {
+      "path": "r3/flat-VPM.blend",
+      "sha256": "3431d75ba9a6205d9f98709d83eaf03f3c647167244e49fe356ee5e3c77e1d23",
+      "bytes": 1382594
+    },
+    {
+      "path": "r3/NPM/SM_SIL13_Ground.fbx",
+      "sha256": "8035055a1ca5b6ec9a7b62bca496555ce320cadda383ca53dfcb1bed16839b53",
+      "bytes": 1447724
+    },
+    {
+      "path": "r3/site-NPM.blend",
+      "sha256": "62cca168e723cddcd29f90da7e7abd51e83e8bcd72ec0aa29531b2f0009a7927",
+      "bytes": 1420900
+    },
+    {
+      "path": "r3/site-oblique-NOT-ACCEPTED.png",
+      "sha256": "444280c7bd06daec64af581c01c18f1d071811f6ed60d7590cc512ed52d14d46",
+      "bytes": 1416800
+    },
+    {
+      "path": "r3/site-top-NOT-ACCEPTED.png",
+      "sha256": "105b5dc5e8d63d17a65b5e9f7b98f45fb9dd5f4c8a549392d210361f9f6bb6c8",
+      "bytes": 1490889
+    },
+    {
+      "path": "r3/site-VPM.blend",
+      "sha256": "a69cef40a5de433512fd3ead197808c7a940ab9375dd425f5a8b7e9cedfae03c",
+      "bytes": 1585686
+    },
+    {
+      "path": "r3/VPM/SM_SIL13_Ground.fbx",
+      "sha256": "e0e2f011422060cc9cc56e52e6d6493f48c1577d274aa4c32b9c24291ac5853f",
+      "bytes": 1710956
+    },
+    {
+      "path": "readback-site.log",
+      "sha256": "3a32a062ded66ea00c418587803079bf864f92eb5a774d7ea2242fdca63aeb13",
+      "bytes": 572
+    },
+    {
+      "path": "readback_site.py",
+      "sha256": "b7620e3e2afddb446f30d00f2105f52c09e7af0a42bf0f41d0574b63f0ff2cd1",
+      "bytes": 3449
+    },
+    {
+      "path": "review-sheet-NOT-ACCEPTED.png",
+      "sha256": "0daa4db81d2859ee642affadf6d748a84d94faf087980bd880051f723f2e2d9f",
+      "bytes": 782617
+    },
+    {
+      "path": "seal_evidence.py",
+      "sha256": "625bb38b682bff716d07c49acc1f536c1171f596898f37e1a442aa1b04740fea",
+      "bytes": 3369
+    },
+    {
+      "path": "site-buffers.json",
+      "sha256": "0a6cc1766471fd8586a163cbfbc2ae8e416597fdf2696f06d9280d2f39c478f9",
+      "bytes": 5352767
+    },
+    {
+      "path": "site-build.json",
+      "sha256": "dfb844f05d1204b83ae0efb415ef01f2894678bf9a9942e51b00474dc1988379",
+      "bytes": 27271
+    },
+    {
+      "path": "site-readback.json",
+      "sha256": "8ab011466a5166f9ba04339a6b9ab4cd731a4c6479d6b345d7ef287e6bde4836",
+      "bytes": 6326
+    },
+    {
+      "path": "source-audit.json",
+      "sha256": "70c74452eed71aae54784886a931f2f2715433d32b9976d7f4febc4382564373",
+      "bytes": 2436099
+    },
+    {
+      "path": "source-audit.log",
+      "sha256": "1aaea94dd95253bdabfde1ff9b6a100985dd3dab90d0808b710c2fe4ebb3fe0c",
+      "bytes": 17834
+    },
+    {
+      "path": "source-integrity.json",
+      "sha256": "b6076823c11febc2e48bee762bd341792f5b971f1f5d6b3595c1ba15ea9243d4",
+      "bytes": 1580
+    },
+    {
+      "path": "source-questions.png",
+      "sha256": "380d6c7a84252b390f970941b9aa9c366a3c58d65d04397e046019e6bb63b388",
+      "bytes": 420364
+    },
+    {
+      "path": "unit-fixed.fbx",
+      "sha256": "867b5ec32d1b0c222a4d04f4da44e9f1a1e4df9ef7965baaf6b142f15acc6a08",
+      "bytes": 11740
+    },
+    {
+      "path": "unit-fixed.json",
+      "sha256": "04a886b9334570fb3a3e4c7a2e6de3f93be0e96c5d9463f28d3a4201a6178a1b",
+      "bytes": 77
+    },
+    {
+      "path": "unit-fixed.log",
+      "sha256": "fced3fba9e2de18d05e692e01c23b6912c3eb278c34a36587b7c1b4731969781",
+      "bytes": 321
+    },
+    {
+      "path": "unit-old.fbx",
+      "sha256": "01829b26f216b0194f4717bcd489fed18b15e801a8a4bb9e29f30391ae624e30",
+      "bytes": 11820
+    },
+    {
+      "path": "unit-old.log",
+      "sha256": "efc5ec78fb0816e1d03f1fc4d9a7162a6f890b4090afc497c790a986dbd6c1f7",
+      "bytes": 648
+    },
+    {
+      "path": "validator-NPM.json",
+      "sha256": "b16257c82bd3e6f981ebe240222a3d14ab49c9dd355272f4fd533cbbb6fcb7da",
+      "bytes": 15352
+    },
+    {
+      "path": "validator-NPM.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "validator-VPM.json",
+      "sha256": "c8c3372dc5c4c498b6e6bc4eba1732ea92b4712b65f49d7a955da877d2366695",
+      "bytes": 18294
+    },
+    {
+      "path": "validator-VPM.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "xview-NPM.json",
+      "sha256": "f7d1259ea3a82a6ff69d67d1d5b7735edc145669bc895077bd49efed1b9257e3",
+      "bytes": 1120064
+    },
+    {
+      "path": "xview-NPM.json.blender.log",
+      "sha256": "b42dd5ba9a0aa1c7eb6271cc0324512aea6f4e6c639aa891372a1493407f166d",
+      "bytes": 810
+    },
+    {
+      "path": "xview-NPM.log",
+      "sha256": "80741649f2eb09f947e57ed424ca07493400912f3c584ea99694f5ea97b2921b",
+      "bytes": 1050
+    },
+    {
+      "path": "xview-VPM.json",
+      "sha256": "7e7eb40d72fe843246ef10659c965c94e363916de21b40c7312bd27486a7ff7c",
+      "bytes": 1120091
+    },
+    {
+      "path": "xview-VPM.json.blender.log",
+      "sha256": "50cc0f872f2dafdd1f5684b27b3d5d1b55d385cc14bebd398257ae6a39c8cd3d",
+      "bytes": 810
+    },
+    {
+      "path": "xview-VPM.log",
+      "sha256": "b3d23eb91452627f5127c2048c8ed6992ae05568fec9eb14361595f34890659e",
+      "bytes": 1062
+    }
+  ],
+  "copies_verified": 60,
+  "source_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\pzu-20261104.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "equal": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\СИЛ13-УВК-ПД-ПЗУ_.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\maf-and-light-spec.docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "equal": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\МАФ_и_свет_модели_фото (4).docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "equal": true
+    }
+  ],
+  "inputs": [
+    {
+      "path": "tmp\\1315\\v001\\pzu.dxf",
+      "sha256": "35b537cfe7f05236bf13c2159ef4ae689118162c0f4418a2a93983437c4e3cf4"
+    },
+    {
+      "path": "tmp\\1315\\v003\\Acer_platanoides_NPM.fbx",
+      "sha256": "5afa5710293bc0f84c1214c3c6e85c1121a42f0a8592b16ae26b690741fc4da6"
+    },
+    {
+      "path": "tmp\\1315\\v003\\Acer_platanoides_VPM.fbx",
+      "sha256": "ba08eb2e14ad228f122a3671109d917e459c3adff39ce90cabe6dbabc216e4cd"
+    }
+  ]
+}
