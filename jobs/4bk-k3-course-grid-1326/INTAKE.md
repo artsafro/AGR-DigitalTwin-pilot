@@ -1,6 +1,10 @@
 # 4BK stylobate course-grid pilot #1326 — intake checkpoint
 
-Status: **waiting for finish-cohort confirmation; no UV production performed**.
+Status: **finish cohort confirmed; chart-seam policy question open; no UV production performed**.
+
+The prior pending-cohort status below is superseded by Artem's 2026-11-13 voice answer
+recorded on card `t_d517d7c6` (18:43 UTC board comment). See `finish-approval.json`
+and `CHART_POLICY.md`; source assignments and their original manifest hash are unchanged.
 Cell: `oks-vpm`. This is not the final 4BK delivery.
 
 ## Authority and scope
