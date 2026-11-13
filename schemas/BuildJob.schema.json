@@ -30,6 +30,10 @@
           ],
           "default": null,
           "description": "Gate 1: PartsList.approval_sha256(), excluding gate1/status; not file bytes",
+          "not": {
+            "pattern": "\\s",
+            "type": "string"
+          },
           "title": "Parts Sha256"
         },
         "ref": {

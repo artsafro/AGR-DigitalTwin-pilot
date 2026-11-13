@@ -165,6 +165,18 @@ def test_gate1_content_mutations_invalidate_approval(bundle, tmp_path, field):
     assert row["status"] == "fail" and "Gate 1" in " ".join(row["errors"])
 
 
+def test_project_gate1_rejects_synthetic_approval(bundle, tmp_path):
+    from dt_ai.core.models import PartsList
+
+    parts = json.loads((tmp_path / "parts.json").read_text())
+    parts["synthetic"] = False
+    bundle["synthetic"] = False
+    parts["gate1"]["parts_sha256"] = PartsList.model_validate(parts).approval_sha256()
+    bundle["gates"]["parts"]["evidence"] = [store(tmp_path, "parts.json", parts)]
+    result = load().inspect_job(bundle, tmp_path)
+    assert next(r for r in result["gates"] if r["gate"] == "parts")["status"] == "fail"
+
+
 def test_fresh_process_cli(bundle, tmp_path):
     completed = run_cli(bundle, tmp_path)
     assert completed.returncode == 0, completed.stderr or completed.stdout
