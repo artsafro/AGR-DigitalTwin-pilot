@@ -70,6 +70,9 @@ def test_copy_snapshot_reproducible_and_never_delivery_pass(tmp_path):
                         assert old.read(member) == new.read(member)
         receipt = json.loads((out / 'assembly.json').read_text())
         assert receipt['passed'] is False
+        for line in (out / 'SHA256SUMS.txt').read_text().splitlines():
+            digest, name = line.split('  ', 1)
+            assert hashlib.sha256((out / name).read_bytes()).hexdigest() == digest
         assert receipt['source_sha256'] == m.EXPECTED
         assert receipt['zero_abs_m'] == 171.050
         assert 'entrance orientation not independently confirmed' in receipt['placement']
@@ -228,6 +231,40 @@ def test_placeholder_repair_does_not_guess_or_destroy_texture_detail(kind):
     name = 'T_Kpp_1_Diffuse_1.1003.png' if kind == 'wrong_tile' else 'T_Kpp_1_Diffuse_1.1004.png'
     with pytest.raises(ValueError):
         m.fix_placeholder_png(name, data)
+
+
+def test_generated_opaque_geometry_payloads_are_preserved():
+    import random
+    m = load()
+    rng = random.Random(1278)
+    marker = b'untouched vertices UV normals material indices'
+    for _ in range(64):
+        payload = rng.randbytes(len(marker))
+        source = synthetic_fbx().replace(marker, payload)
+        result = m.fix_npm_glass(source)
+        assert result.count(payload) == 1
+        assert b'M_Glass_01\x00\x01Material' in result
+
+
+@pytest.mark.parametrize('value', [float('nan'), float('inf'), -float('inf'), -0.01, 1.01])
+def test_nonfinite_or_out_of_range_material_never_passes(value):
+    import struct
+    m = load()
+    source = synthetic_fbx().replace(b'D' + struct.pack('<d', .3), b'D' + struct.pack('<d', value))
+    with pytest.raises(ValueError, match='glass property'):
+        m.fix_npm_glass(source)
+
+
+def test_output_hardlink_to_input_preserves_all_bytes(tmp_path):
+    import os
+    m = load()
+    src, _ = fixture(m, tmp_path)
+    alias = tmp_path / 'hardlink-output'
+    os.link(src / 'SM_Kpp_1.zip', alias)
+    before = snapshot(tmp_path)
+    with pytest.raises(ValueError):
+        m.build(src, alias)
+    assert snapshot(tmp_path) == before
 
 
 def test_production_pins_match_approved_site_manifest():
