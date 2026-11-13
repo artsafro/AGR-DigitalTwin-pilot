@@ -51,6 +51,7 @@ def test_ntr_reference_keeps_negative_and_conflicting_results():
                      "#425", "window-block schedule", "10119", "9850", "shared", "cached", "17608-2017"]:
         assert required in text
     assert "all pages are semantically verified" not in text
+    assert "No fresh model/image inference" not in text
 
 
 @pytest.mark.parametrize("case", ["empty", "partial", "duplicate", "changed_hash",
