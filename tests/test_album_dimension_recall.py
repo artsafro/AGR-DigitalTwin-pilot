@@ -14,13 +14,14 @@ fitz = pytest.importorskip('pymupdf')
 from dt_ai.album.binding import bind_album
 
 
-def inline_dimension(path, *, rotation=90, gap_extra=0, decoy=False):
+def inline_dimension(path, *, rotation=90, gap_extra=0, decoy=False,
+                     nearby_decoy=False, text_offset=0):
     doc = fitz.open()
     page = doc.new_page(width=300, height=300)
     if rotation == 90:
-        page.insert_text((103, 164), '6000', fontsize=8, rotate=90)
+        page.insert_text((103 + text_offset, 164), '6000', fontsize=8, rotate=90)
     else:
-        page.insert_text((135, 153), '6000', fontsize=8)
+        page.insert_text((135, 153 + text_offset), '6000', fontsize=8)
     box = page.get_text('dict')['blocks'][0]['lines'][0]['spans'][0]['bbox']
     shape = page.new_shape()
     if rotation == 90:
@@ -46,9 +47,37 @@ def inline_dimension(path, *, rotation=90, gap_extra=0, decoy=False):
     if decoy:
         # A second numeric run in the same interruption must not license joining.
         page.insert_text((103, 164), '7000', fontsize=8, rotate=90)
+    if nearby_decoy:
+        # Separate annotation wins the legacy near-side heuristic but did not
+        # authorize the inline gap. It must never inherit that span's endpoints.
+        if rotation == 90:
+            page.insert_text((91, 164), '9000', fontsize=8, rotate=90)
+        else:
+            page.insert_text((135, 143), '9000', fontsize=8)
     shape.commit()
     doc.save(path)
     return path
+
+
+@pytest.mark.parametrize('rotation', [0, 90])
+@pytest.mark.parametrize('nearby_decoy', [False, True])
+def test_inline_gap_authorizer_cannot_be_replaced_by_nearby_annotation(
+    tmp_path, rotation, nearby_decoy,
+):
+    result = bind_album(inline_dimension(
+        tmp_path / 'synthetic-authorizer.pdf', rotation=rotation,
+        text_offset=2, nearby_decoy=nearby_decoy,
+    ))
+    (value,) = [v for v in result['values'] if v['raw'] == '6000']
+    assert value['binding'] == {'type': 'axis_pair', 'axes': ['1', '2']}
+    assert value['span'] is not None
+    if nearby_decoy:
+        (annotation,) = [v for v in result['values'] if v['raw'] == '9000']
+        assert annotation['binding'] == {'type': 'unbound', 'reason': 'no_dimension_line'}
+        assert annotation['span'] is None
+    assert all(v['measured_mm'] is None for v in result['values'])
+    assert all(v['scale']['status'] == 'unknown' for v in result['views'])
+    assert result['passed'] is False
 
 
 @pytest.mark.parametrize('rotation', [0, 90])
