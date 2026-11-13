@@ -51,7 +51,13 @@ def main():
         record = {'profile': row['profile'], 'file': row['fbx'], 'unit_m': agr._unit_m(),
                   'nodes': [{'name': str(n.name), 'props': str(rt.getUserPropBuffer(n))} for n in nodes], 'checks': {}}
         result['profiles'].append(record)
-        for tool in TOOLS:
+        for tool in config.get('tools', TOOLS):
+            if tool not in TOOLS:
+                raise ValueError('unsupported check: ' + repr(tool))
+            checkpoint = output.with_name(output.stem + '-' + row['profile'] + '-' + tool + '.json')
+            if checkpoint.exists():
+                raise FileExistsError(checkpoint)
+            rt.select(nodes)  # xView selects offenders; each macro needs the complete FBX scope.
             entry = {'status': 'error', 'invocation': 'macro'}
             record['checks'][tool] = entry
             def capture(key):
@@ -80,6 +86,8 @@ def main():
             entry['scene_unchanged'] = agr.snapshot(nodes) == before
             if not entry['scene_unchanged']:
                 raise RuntimeError('scene changed by ' + tool)
+            with checkpoint.open('x', encoding='utf-8') as handle:
+                json.dump({'profile': row['profile'], 'tool': tool, **entry}, handle, indent=2, allow_nan=False)
             print('FINAL1293', row['profile'], tool, entry['status'])
         record['scene_unchanged'] = agr.snapshot(nodes) == before
     result['inputs_after'] = {str(p): digest(p) for p in inputs}
