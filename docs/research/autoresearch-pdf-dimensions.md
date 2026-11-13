@@ -132,7 +132,12 @@ Kanban drove continuation because this runtime has no native Codex Goal API.
 Artem explicitly authorized the same-PR rework on card `t_4089d009`: merge main,
 replace the exact-eight assertion with native-pair correctness/precision, restore R1.
 Main `3d48ede1` was merged as `738d02ec`; the only conflict was adjacent D276/D277
-rows, both preserved in increasing order. No source or frozen protocol was edited.
+rows, both preserved in increasing order. During the full-suite slot wait, main
+advanced again to `fd1c1738` (#1333/#1334). Merge `9612d459` additionally preserves
+both adjacent D277/D278 rows; no production binder/test changes came from this
+second merge. The first waiter was stopped before any pytest launch (native
+process absence verified), and the full suite was requeued on the new frozen head.
+No source or frozen protocol was edited.
 The production delta is the original R1 rule with a named `padding` local for readability.
 No new search/tolerance round was run. Historical control outcomes in `rounds.json`
 and sealed evidence stay byte-for-byte intact; the adoption supersedes R1's discard,
