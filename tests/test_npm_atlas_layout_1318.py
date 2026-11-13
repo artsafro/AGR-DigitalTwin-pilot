@@ -60,6 +60,14 @@ def test_bad_layout_refused_before_output(packet,args):
     assert not packet[2].exists()
 
 
+@pytest.mark.parametrize('pad', range(4))
+def test_regulatory_floor_refused_before_output(packet, pad):
+    result = run(packet, '--cell', '512', '--pad', str(pad))
+    assert result.returncode != 0
+    assert '8 px' in result.stderr
+    assert not packet[2].exists()
+
+
 def test_occupied_output_not_clobbered(packet):
     packet[2].mkdir()
     sentinel=packet[2]/'sentinel'
