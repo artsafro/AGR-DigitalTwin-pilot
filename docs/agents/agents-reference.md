@@ -3,6 +3,13 @@
 Read the matching section when navigating code, running checks, loading skills or using agent plugins.
 Per-card reading order and shared safety rules stay in `AGENTS.md` [D121].
 
+## Rule lookup
+
+A rule question ("is there a rule for ...?") is looked up in this order, and the first hit wins:
+`docs/decisions.md` -> `docs/domain/patterns/INDEX.md` -> `docs/cases.md` -> `docs/domain/conflicts.md` ->
+the matching `docs/domain/` file. `docs/agr/` is opened only through `docs/agr/INDEX.md`. A new user decision
+gets a line in `docs/decisions.md` and its `[D<n>]` where it applies.
+
 ## Code map
 
 - `src/dt_ai/` — pipeline core: models, build, geometry (exterior, shell, connect, UV),

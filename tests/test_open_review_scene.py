@@ -84,6 +84,18 @@ def test_cli():
     assert bad.returncode != 0
 
 
+@pytest.mark.parametrize('magic', [bytes.fromhex('28b52ffd'), bytes.fromhex('1f8b0800')])
+def test_compressed_blend_container(tmp_path, monkeypatch, magic):
+    module = load()
+    source = tmp_path / 'source.blend'
+    source.write_bytes(magic + b'synthetic container payload')
+    output = tmp_path / 'review_v002.blend'
+    exe = tmp_path / 'app.exe'
+    exe.write_bytes(b'fixture')
+    monkeypatch.setattr(module.subprocess, 'Popen', lambda *a, **k: SimpleNamespace(pid=42))
+    assert module.open_scene('blender', source, output, approved=True, executable=exe)['status'] == 'launched'
+
+
 def test_launch_failure(tmp_path, monkeypatch):
     module = load()
     source = tmp_path / 'source.blend'
@@ -97,3 +109,70 @@ def test_launch_failure(tmp_path, monkeypatch):
     with pytest.raises(OSError, match='launch refused'):
         module.open_scene('blender', source, output, approved=True, executable=exe)
     assert source.read_bytes() == output.read_bytes()  # keep the saved copy; do not claim opened
+
+
+@pytest.mark.parametrize('approved', [False, None, 0, 1, 'yes', 'no', '', float('nan'), float('inf')])
+def test_consent_is_explicit(tmp_path, approved):
+    module = load()
+    with pytest.raises(ValueError, match='requires the task-start yes'):
+        module.open_scene('blender', tmp_path/'missing.blend', tmp_path/'review_v002.blend', approved=approved)
+    assert list(tmp_path.iterdir()) == []
+
+
+def test_changed_source_during_copy(tmp_path, monkeypatch):
+    module = load()
+    source = tmp_path/'source.blend'
+    source.write_bytes(b'BLENDER-v501 original payload')
+    exe = tmp_path/'app.exe'
+    exe.write_bytes(b'fixture')
+    output = tmp_path/'review_v002.blend'
+    copy = module.shutil.copyfile
+    def mutate(src, dst):
+        result = copy(src, dst)
+        source.write_bytes(b'BLENDER-v501 changed payload')
+        return result
+    monkeypatch.setattr(module.shutil, 'copyfile', mutate)
+    monkeypatch.setattr(module.subprocess, 'Popen', lambda *a, **k: pytest.fail('changed source launched'))
+    with pytest.raises(ValueError, match='Source changed'):
+        module.open_scene('blender', source, output, approved=True, executable=exe)
+    assert not output.exists()
+
+
+def test_atomic_publication_rejects_racing_output(tmp_path, monkeypatch):
+    module = load()
+    source = tmp_path/'source.blend'
+    source.write_bytes(b'BLENDER-v501 source payload')
+    exe = tmp_path/'app.exe'
+    exe.write_bytes(b'fixture')
+    output = tmp_path/'review_v002.blend'
+    link = module.os.link
+    def race(src, dst):
+        link(source, dst)
+        return link(src, dst)
+    monkeypatch.setattr(module.os, 'link', race)
+    monkeypatch.setattr(module.subprocess, 'Popen', lambda *a, **k: pytest.fail('racing output launched'))
+    with pytest.raises(FileExistsError):
+        module.open_scene('blender', source, output, approved=True, executable=exe)
+    assert source.read_bytes() == output.read_bytes() == b'BLENDER-v501 source payload'
+    assert not list(tmp_path.glob('.agr-review-*'))
+
+
+@pytest.mark.parametrize('version', ['v000', 'v001', 'v999', 'v1000'])
+def test_version_boundaries(tmp_path, monkeypatch, version):
+    module = load()
+    source = tmp_path/'source.blend'
+    source.write_bytes(b'BLENDER-v501 source payload')
+    exe = tmp_path/'app.exe'
+    exe.write_bytes(b'fixture')
+    monkeypatch.setattr(module.subprocess, 'Popen', lambda *a, **k: SimpleNamespace(pid=42))
+    assert module.open_scene('blender', source, tmp_path/f'review_{version}.blend', approved=True, executable=exe)['status'] == 'launched'
+
+
+@pytest.mark.parametrize('name', ['review.blend','review_v01.blend','review_v001.partial','NaN.blend','inf.blend'])
+def test_reject_unversioned_or_partial_output(tmp_path, name):
+    module = load()
+    source = tmp_path/'source.blend'
+    source.write_bytes(b'BLENDER-v501 source payload')
+    with pytest.raises(ValueError):
+        module.open_scene('blender', source, tmp_path/name, approved=True)
+    assert [p.name for p in tmp_path.iterdir()] == ['source.blend']

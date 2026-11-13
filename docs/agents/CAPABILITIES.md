@@ -17,6 +17,14 @@ Status:
 4. Ask for review and merge (`ROLES.md`: Codex integrates `main`; DCC tools are confirmed by Claude on real data).
 5. Other worktrees pick it up with `git merge main` at the start of their next task.
 
+## DCC acceptance defaults
+
+Choose DCC per step from known tools/context and state a one-line reason [D270]: headless Blender for measuring, geometry analysis, construction/algorithms; Max for Corona/viz, AGR Tools, Max-only checks and acceptance. This extends the Max-busy fallback [D255], not a Blender-by-default rule.
+Ask once per task: «по завершении этапов открывать тебе сцену для приёмки?»; retain yes/no for that task (a new task resets consent). On yes, automatically open a new version after each stage in the app holding it (Max 2026 or Blender) AND report the absolute path; on no or missing answer, path only [D270].
+Acceptance view defaults to 3ds Max 2026 with QUAD topology in the review copy; triangulate only delivery exports that require it. This is Artem's preference, not regulation [D270].
+
+Helper (IN BRANCH, #1297): `uv run python tools/open_review_scene.py --app blender --source "C:/job/stage_v001.blend" --output "C:/job/stage_review_v002.blend" --open-approved` (use `--app max` and `.max` for Max 2026). Requires a saved native scene and a new versioned output; refuses aliases/occupied destinations. Always starts a **new process**, including when Max's live lock is held: no bridge call, live injection, reset, close, lock reaping or user-document replacement. Keep existing PID pins on all later bridge calls; a new instance can become the bridge default. If another instance is unsuitable, ask instead. The helper reports `launched`, not `loaded` or accepted: inspect the new process's document/version/units and record its log or screenshot. Do not pass `--open-approved` without the task's yes. Save the stage before invoking; it is not a converter or topology checker. Sources/approved versions stay unchanged; readback/visual acceptance remain separate gates.
+
 ## Machine and repository
 
 - Local: `C:\Users\artsafro\.AGR-DigitalTwin_pilot` (branch `main`); GitHub `artsafro/AGR-DigitalTwin-pilot`
