@@ -101,6 +101,39 @@ and no diffuse under the legacy `flora/v001/maps/tilia-cordata` path.
 Do not substitute the Telegram genus variants or generate replacement maps.
 Do not treat downloading the MAX container as a complete textured-species receipt.
 
+## Publication authorized; original bytes still missing (resume 2026-11-13)
+
+Artem authorized publication of the **exact approved** Tilia pair, with SHA-256
+and a portable catalogue route, without regeneration or substitution [D275].
+This resolves publication permission only; it does not supply or recreate bytes,
+record a visual verdict, or approve the model.
+
+Read-only checks on resume:
+
+```bash
+python -c "from pathlib import Path; paths=['C:/x/flora-library/v001/maps/tilia-cordata','C:/x/t_6c48bc9d/maps','G:/Мой диск/AGR-assets/flora/v003/maps/tilia-cordata']; [(print(p, Path(p).exists())) for p in paths]"
+```
+
+All three paths returned `False`. The original approval-card directory
+`C:/x/t_6c48bc9d` contains only six surviving pytest directories, no production
+maps or review sheet. The mounted `flora/v003/maps` still contains the twelve
+other species directories listed above, not Tilia. Filename searches under
+`G:/Мой диск/AGR-assets` for `*tilia*` and under `G:/Мой диск/AGR-evidence`
+for `*batch1*` returned no matches. These are bounded location checks, **not**
+a claim that no backup exists anywhere. A broad C:/x recursive search timed out;
+another encountered access-denied test directories, so neither is exhaustive.
+Synthetic pytest `tilia-cordata` files are not approved assets and are excluded.
+No hashes or download URLs were invented; no asset files were published.
+
+Next operational prerequisite: restore the two original approved PNGs from their
+retained source/backup, with provenance to the batch-1 approval. Permission is
+already granted [D275]; do not ask Artem to authorize publication a second time.
+Until exact bytes are recovered, keep catalogue/maps unchanged rather than
+replace working metadata with an unverified URL. After recovery: publish under
+`flora/v003/maps/tilia-cordata`, measure hashes, obtain real download pointers,
+verify unauthenticated byte readback and update source `maps.json` plus generated
+catalogue. Then perform the remaining native preview/request gates below.
+
 ## Resume gates
 
 1. Provide the two **existing approved** Tilia map files at a downloadable,

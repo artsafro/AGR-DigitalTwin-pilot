@@ -299,6 +299,8 @@ frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Mar
 
 | D267 | 2026-11-13 | NTR PDF corpus pilot #1275: start with the ten explicit card albums (Artem 2026-11-12 «давай с NTR начнём»), text layer first, read PDFs in place without copying. Staropetrovskiy is MAF/planting lists only; #425 modelling stays parked. Continuation: cached input does not count against the 2,000,000-token pilot cap; count new input plus output, report new and cached separately, and allow at most 300,000 additional new tokens to finish from the ten already-read albums. Stop and ask before exceeding either cap. No production approval or library substitutions granted. | `docs/research/ntr-pdf-corpus-pilot.md`; `docs/domain/areas/windows.md` | Artem «да и остальные блокеры тоже поставь в задачи», accepting orchestrator recommendations; USER DECISION on Kanban t_afe86236, 2026-11-13 02:16 |
 
+| D275 | 2026-11-13 | Publish the exact approved Tilia cordata diffuse-v001.png and opacity-v001.png bytes, without regeneration or substitution, on the documented asset download route with SHA-256 hashes; the catalogue must point to that route rather than C:/x. | `docs/library/outside-retrieval-1316.md` | Artem «принимаю рекомендации», USER DECISION on Kanban t_9199048b (#1316), 2026-11-13 12:57 |
+
 [passport-scope-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1207#issuecomment-6783203728
 
 [ground-refinement-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/295#issuecomment-6265799957
