@@ -1,0 +1,383 @@
+{
+  "status": "needs_input",
+  "pilot_passed": false,
+  "stage": "source intake, before UV edits",
+  "blender": "5.1.2",
+  "units": "METRIC",
+  "metres_per_unit": 1.0,
+  "source_hashes": [
+    {
+      "path": "C:\\Users\\artsafro\\Desktop\\!3D viz\\!А101\\63_4BK_vlad\\build\\3k_v004.max",
+      "sha256": "876491e76f0292d4c1f47a99be54c9c4bd7b004e67d5e8be3e235aa846a5e2c6",
+      "bytes": 9556216
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Desktop\\!3D viz\\!А101\\63_4BK_vlad\\build\\blender\\K3_assembly_v006.blend",
+      "sha256": "e3fdb9193706059fd75bd42819280f140f512c6cc8a206e905b819fc3ce64a18",
+      "bytes": 804654
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Desktop\\!3D viz\\!А101\\63_4BK_vlad\\build\\fbx\\K3_assembly_v006.fbx",
+      "sha256": "c88e03b2888a5a6638ee0f4af06caf7c9531b8e613633a5fd5d0ad256a3f84fc",
+      "bytes": 931084
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Desktop\\!3D viz\\!А101\\63_4BK_vlad\\build\\fbx\\K3_assembly_v006_materials.json",
+      "sha256": "603978b7de2ea209ef47b2f28396cc8ea86608a4a0158076ab7d463f48baaf5f",
+      "bytes": 308974
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Desktop\\!3D viz\\!А101\\63_4BK_vlad\\inbox\\Текстуры\\Bricks1\\Bricks1_Diffuse.png",
+      "sha256": "ffda2011395604a1fcae8831da3ba9d82b6c658fb8890e59698178e05f6b864f",
+      "bytes": 273704
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Desktop\\!3D viz\\!А101\\63_4BK_vlad\\inbox\\Текстуры\\Bricks1\\Bricks1_ERM.png",
+      "sha256": "d6b019a9818ba1145489f8e5b25611a9fc06f6ac2b2421902a3ce6fb01c65d86",
+      "bytes": 266722
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Desktop\\!3D viz\\!А101\\63_4BK_vlad\\inbox\\Текстуры\\Bricks1\\Bricks1_Normal.png",
+      "sha256": "4621620af5568adf4e88934591fba0d7b32a80857b293dc6bfe380e0619fdbf0",
+      "bytes": 279298
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Desktop\\!3D viz\\!А101\\63_4BK_vlad\\build\\textures\\T_K3_StyloBrick_Diffuse.png",
+      "sha256": "ff846d8e4f97eb9df4f9f1b069cacc5c3f67b86c323945e7c4d379f06e0a884d",
+      "bytes": 227192
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Desktop\\!3D viz\\!А101\\63_4BK_vlad\\build\\textures\\T_K3_StyloBrick_ERM.png",
+      "sha256": "b423053fe1f89279513291a3955dbc0c020709d0073daeea029fb804d665b803",
+      "bytes": 145324
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Desktop\\!3D viz\\!А101\\63_4BK_vlad\\build\\textures\\T_K3_StyloBrick_Normal.png",
+      "sha256": "fee4b9729673835c524130eaf562a088d5560322c0e370feb89bb1a8f93b847b",
+      "bytes": 344215
+    }
+  ],
+  "source_preservation": "all source hashes equal before/after",
+  "manifest": {
+    "path": "faces.csv",
+    "sha256": "7dc8d9af7e6568dd61352468606eedfbf3ef75c76dcc6291fac2e3b6b547cd16",
+    "faces": 2015,
+    "proposed_brick_faces": 771,
+    "proposed_protected_faces": 1244,
+    "approval": "pending user finish-cohort confirmation"
+  },
+  "source_stylobate_inventory": [
+    {
+      "object": "K3_StylobateCanopies.001",
+      "verts": 192,
+      "polygons": 144,
+      "face_sizes": {
+        "4": 144
+      },
+      "materials": [
+        {
+          "index": 0,
+          "name": "ID1_Brick_Stylo"
+        },
+        {
+          "index": 1,
+          "name": "Material #38"
+        },
+        {
+          "index": 2,
+          "name": "Material #40"
+        },
+        {
+          "index": 3,
+          "name": "ID4_Reveal_Sill_RAL7024"
+        },
+        {
+          "index": 4,
+          "name": "Material #13 Slot #5"
+        },
+        {
+          "index": 5,
+          "name": "ID6_RoofSurface.001"
+        },
+        {
+          "index": 6,
+          "name": "ID7_Metal_RAL7024.003"
+        },
+        {
+          "index": 7,
+          "name": "Material #13 Slot #8.002"
+        },
+        {
+          "index": 8,
+          "name": "Material #37"
+        },
+        {
+          "index": 9,
+          "name": "ID10_Surround_Stylo"
+        }
+      ],
+      "face_material_counts": {
+        "6": 144
+      },
+      "uv_layers": [
+        "UVMap"
+      ]
+    },
+    {
+      "object": "K3_StylobateCanopiesGlass.001",
+      "verts": 32,
+      "polygons": 24,
+      "face_sizes": {
+        "4": 24
+      },
+      "materials": [
+        {
+          "index": 0,
+          "name": "K3_Glass"
+        }
+      ],
+      "face_material_counts": {
+        "0": 24
+      },
+      "uv_layers": [
+        "UVMap"
+      ]
+    },
+    {
+      "object": "K3_StylobateRoof.001",
+      "verts": 257,
+      "polygons": 229,
+      "face_sizes": {
+        "4": 228,
+        "3": 1
+      },
+      "materials": [
+        {
+          "index": 0,
+          "name": "ID1_Brick_Stylo"
+        },
+        {
+          "index": 1,
+          "name": "Material #38"
+        },
+        {
+          "index": 2,
+          "name": "Material #40"
+        },
+        {
+          "index": 3,
+          "name": "ID4_Reveal_Sill_RAL7024"
+        },
+        {
+          "index": 4,
+          "name": "Material #13 Slot #5"
+        },
+        {
+          "index": 5,
+          "name": "ID6_RoofSurface.001"
+        },
+        {
+          "index": 6,
+          "name": "ID7_Metal_RAL7024.003"
+        },
+        {
+          "index": 7,
+          "name": "Material #13 Slot #8.002"
+        },
+        {
+          "index": 8,
+          "name": "Material #37"
+        },
+        {
+          "index": 9,
+          "name": "ID10_Surround_Stylo"
+        }
+      ],
+      "face_material_counts": {
+        "5": 165,
+        "3": 64
+      },
+      "uv_layers": [
+        "UVMap"
+      ]
+    },
+    {
+      "object": "K3_StylobateRoofGlass.001",
+      "verts": 40,
+      "polygons": 38,
+      "face_sizes": {
+        "4": 38
+      },
+      "materials": [
+        {
+          "index": 0,
+          "name": "K3_Glass"
+        }
+      ],
+      "face_material_counts": {
+        "0": 38
+      },
+      "uv_layers": [
+        "UVMap"
+      ]
+    },
+    {
+      "object": "K3_StylobateStair.001",
+      "verts": 552,
+      "polygons": 502,
+      "face_sizes": {
+        "4": 498,
+        "3": 2,
+        "5": 2
+      },
+      "materials": [
+        {
+          "index": 0,
+          "name": "ID1_Brick_Stylo"
+        },
+        {
+          "index": 1,
+          "name": "Material #38"
+        },
+        {
+          "index": 2,
+          "name": "Material #40"
+        },
+        {
+          "index": 3,
+          "name": "ID4_Reveal_Sill_RAL7024"
+        },
+        {
+          "index": 4,
+          "name": "Material #13 Slot #5"
+        },
+        {
+          "index": 5,
+          "name": "ID6_RoofSurface.001"
+        },
+        {
+          "index": 6,
+          "name": "ID7_Metal_RAL7024.003"
+        },
+        {
+          "index": 7,
+          "name": "Material #13 Slot #8.002"
+        },
+        {
+          "index": 8,
+          "name": "Material #37"
+        },
+        {
+          "index": 9,
+          "name": "ID10_Surround_Stylo"
+        }
+      ],
+      "face_material_counts": {
+        "6": 436,
+        "0": 66
+      },
+      "uv_layers": [
+        "UVMap"
+      ]
+    },
+    {
+      "object": "K3_StylobateWalls.001",
+      "verts": 1598,
+      "polygons": 1513,
+      "face_sizes": {
+        "4": 1513
+      },
+      "materials": [
+        {
+          "index": 0,
+          "name": "ID1_Brick_Stylo"
+        },
+        {
+          "index": 1,
+          "name": "Material #38"
+        },
+        {
+          "index": 2,
+          "name": "Material #40"
+        },
+        {
+          "index": 3,
+          "name": "ID4_Reveal_Sill_RAL7024"
+        },
+        {
+          "index": 4,
+          "name": "Material #13 Slot #5"
+        },
+        {
+          "index": 5,
+          "name": "ID6_RoofSurface.001"
+        },
+        {
+          "index": 6,
+          "name": "ID7_Metal_RAL7024.003"
+        },
+        {
+          "index": 7,
+          "name": "Material #13 Slot #8.002"
+        },
+        {
+          "index": 8,
+          "name": "Material #37"
+        },
+        {
+          "index": 9,
+          "name": "ID10_Surround_Stylo"
+        }
+      ],
+      "face_material_counts": {
+        "0": 705,
+        "9": 317,
+        "3": 491
+      },
+      "uv_layers": [
+        "UVMap"
+      ]
+    }
+  ],
+  "baseline_metrics": {
+    "triangles": 1542,
+    "directional_min_px_m": 511.43388913035614,
+    "directional_max_px_m": 512.5668550045656,
+    "p5_px_m": 511.66880861005694,
+    "p50_px_m": 512.0000272293763,
+    "p95_px_m": 512.3338673992756,
+    "spread": 0.0012989428786118592,
+    "max_anisotropy": 1.0022149923771624,
+    "below_512_triangles": 1524,
+    "mirrored_triangles": 0,
+    "uv_min": [
+      0.0043750000186264515,
+      0.004828124772757292
+    ],
+    "uv_max": [
+      0.9906253218650818,
+      0.9173992276191711
+    ],
+    "density_band_status": "fail",
+    "measurement_scope": "existing source-copy UVs, NOT pilot output"
+  },
+  "evidence": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\intake-v001",
+  "acceptance_max_copy": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\intake-v001\\3k_intake_v001.max",
+  "max_opened": false,
+  "new_uvs": false,
+  "new_maps": false,
+  "unmeasured": [
+    "course/bond phase",
+    "panel-joint masks/width/centre error",
+    "unique/padded union occupancy",
+    "UV island counts",
+    "unique-image padding",
+    "new export readback",
+    "Artem visual verdict"
+  ],
+  "next_steps": [
+    "Confirm exact brick face cohort versus source ID4/ID10 finishes",
+    "Implement reusable fixed-density course-grid adapter with regression RED/GREEN",
+    "Fresh export/readback and numeric report, close-ups, visual gate"
+  ]
+}
