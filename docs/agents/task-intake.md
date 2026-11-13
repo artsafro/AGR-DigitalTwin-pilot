@@ -16,14 +16,14 @@ cards ran in parallel on the wrong assumption.
   orchestrator): run the full intake below BEFORE writing code, issues or cards.
 - **Card worker** (the task came as a card/issue): run the **preflight** below at the start of the card.
 
-## Check level [D271]
+## Check level [D273]
 
 Record `level: fast | standard | full` in the task/card and state the selected level in the first message.
 The orchestrator/agent sets it at intake by the [check-level table](../procedure/TASK_TO_MODEL.md#check-levels);
 Artem overrides with one word (`fast`, `standard` or `full`). An agent may go up a level with a one-line
 reason, never down on its own. Check level is separate from the `level:simple|medium|hard` dispatch label.
 A card worker checks the field during preflight; if absent, select it by the table and state why.
-Read the worker policy there before choosing readback, review and image evidence [D271].
+Read the worker policy there before choosing readback, review and image evidence [D273].
 
 ## Full intake (task from Artem)
 
@@ -36,7 +36,7 @@ Read the worker policy there before choosing readback, review and image evidence
    not fit.
 4. First piece, then the rest: one object / building / facade end to end (target 20–40 min), a picture to Artem, his
    «да» — only then the same script for the rest, in parallel. When Artem is online, use the opened scene
-   and absolute path instead of the picture/render; apply the [check-level image limits](../procedure/TASK_TO_MODEL.md#check-levels) otherwise [D271].
+   and absolute path instead of the picture/render; apply the [check-level image limits](../procedure/TASK_TO_MODEL.md#check-levels) otherwise [D273].
 
 ## Preflight (card worker)
 
