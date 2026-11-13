@@ -37,7 +37,8 @@ def run(packet, *args):
         str(spec), str(out), "--recipe-dir", str(recipe), *args], capture_output=True, text=True)
 
 
-@pytest.mark.parametrize('args,cell,pad,cols', [([],409,6,5),(['--cell','512','--pad','8'],512,8,4)])
+@pytest.mark.parametrize('args,cell,pad,cols', [([],409,16,5),(['--cell','512','--pad','8'],512,8,4),
+    (['--cell','512','--pad','4'],512,4,4)])
 def test_layout(packet, args, cell, pad, cols):
     result = run(packet, *args)
     assert result.returncode == 0, result.stderr
@@ -58,6 +59,28 @@ def test_bad_layout_refused_before_output(packet,args):
     result=run(packet,*args)
     assert result.returncode != 0
     assert not packet[2].exists()
+
+
+@pytest.mark.parametrize('pad', [4, 8])
+def test_custom_layout_readback_matches_declared_padding(packet, pad):
+    result = run(packet, '--cell', '512', '--pad', str(pad))
+    assert result.returncode == 0, result.stderr
+    out = packet[2]
+    paths = [out/'npm_atlas.json', out/'T_Synthetic_001_Main_d_1.png',
+             out/'T_Synthetic_001_Main_o_1.png']
+    command = [sys.executable, str(ROOT/'tools/derive/npm_atlas.py'), '--check', *map(str, paths)]
+    checked = subprocess.run(command, capture_output=True, text=True)
+    assert checked.returncode == 0, checked.stderr
+    measured = json.loads(checked.stdout)
+    assert measured['per_side_padding_px'] == pad
+    assert measured['region_gap_px'] == 2*pad
+    assert measured['usable_area_px'] == 7*(512-2*pad)**2
+    data = json.loads(paths[0].read_text())
+    data['pad'] = 16  # Stale/forged declaration cannot certify unchanged rectangles.
+    paths[0].write_text(json.dumps(data))
+    before = [p.read_bytes() for p in paths]
+    assert subprocess.run(command, capture_output=True).returncode != 0
+    assert [p.read_bytes() for p in paths] == before
 
 
 @pytest.mark.parametrize('pad', range(4))

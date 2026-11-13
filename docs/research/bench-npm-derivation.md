@@ -52,8 +52,14 @@ Input provenance:
   not copied onto incompatible positions. New padded atlas pixels are not asserted
   byte-identical to the historical, unpadded R1 atlas.
 
-This is preparation overhead, **not** a zero-code derivation result. Shared atlas
-legacy defaults409/6 are unchanged; `--cell 512 --pad 8` avoids silently applying them.
+This is preparation overhead, **not** a zero-code derivation result. The canonical
+run used the original defaults409/6 but explicitly selected `--cell 512 --pad 8`.
+After review r1, merge of main fd1c1738 (#1333) preserves [D278]'s shared default
+409/16. R1's pinned512/8 is the recorded benchmark exception [D280], not a shared
+padding policy. Current generation refuses pad0..3 before writes (8 px inter-island
+floor); readback measures the exported cell/pad instead of hard-coding409/16.
+The canonical code SHA, packet, hashes, run receipts and metrics remain immutable;
+a repeat of the historical measurement must use its pinned implementation, not HEAD.
 The converted master keeps the VPM's frames/mullions: unlike historical R1's
 separately simplified NPM, this benchmark derives the same whole source geometry.
 
