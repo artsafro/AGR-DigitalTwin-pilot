@@ -1,7 +1,8 @@
 """new-case: publish immutable KPP1 R1 placed-package copies under decision D267.
 
 Usage: uv run python jobs/KPP1/package-1278/build_package.py SOURCE NEW_OUTPUT
-SOURCE is #1271 site-v004, derived from rerun-1230 R1 v002; no geometry rebuilt.
+SOURCE is #1271's approved transform applied to latest rerun-1230 R1 v003;
+source copies and hashes are recorded in source-r1-v003-SHA256SUMS.txt.
 Successful assembly is NOT validation, SINTEZ certification or delivery acceptance.
 """
 import argparse
@@ -10,9 +11,9 @@ import json
 from pathlib import Path
 
 EXPECTED = {
-    '0000_Kpp_1.zip': 'de8fd557b1c79e8745a42d664fa3ee8f3192be8c4096b73a31f569e197a02f66',
-    'SM_Kpp_1.zip': '1e7dde5aecab253054d720ae4778775117c7db2a5cab95874dff8eac90d385f1',
-    'SM_Kpp_1.geojson': '39aabb689c519cec9c517d2567817f4e2b02b210200ac1da5d732f7da6bc950b',
+    '0000_Kpp_1.zip': 'cd90142217ae4cf38f0330262c7daf5daae9e5ca19960511d6d98d9aeb0480b0',
+    'SM_Kpp_1.zip': '40d0615b2e4390175efa7903d6793ae0514998bacb506c327a3753d1686f597c',
+    'SM_Kpp_1.geojson': '4dffaca25627b281395d5ffb82c3065dd58356ea052db03b4a2c55600bcea96d',
 }
 PLACEMENT = ('approximate, ±0.1 m, fitted to customer NPM 0607_77_05_0009005_117_02; '
              'entrance orientation not independently confirmed')

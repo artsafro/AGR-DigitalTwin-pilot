@@ -1,4 +1,7 @@
-# KPP1 package #1278 — assembled, NOT PASSED
+# Historical KPP1 package-v003 / R1-v002 — superseded
+
+Current latest-R1 package, checks and owners: [latest/REPORT.md](latest/REPORT.md).
+The following is retained verbatim as historical evidence, not current package instructions.
 
 Cells: `oks-npm`, `oks-vpm`. Base: `7c944e21` (current pilot main at start).
 Decision [D267], Artem 2026-11-13, owning card t_b937f6cd: assemble without the unavailable

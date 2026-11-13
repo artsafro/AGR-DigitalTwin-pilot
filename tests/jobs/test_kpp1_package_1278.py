@@ -280,7 +280,7 @@ def test_latest_r1_v003_is_an_explicit_placement_source():
 
 def test_production_pins_match_approved_site_manifest():
     m = load()
-    manifest = (ROOT / 'jobs/KPP1/site-1255/evidence-SHA256SUMS.txt').read_text(encoding='utf-8')
+    manifest = (SCRIPT.parent / 'source-r1-v003-SHA256SUMS.txt').read_text(encoding='utf-8')
     for name, digest in m.EXPECTED.items():
-        assert f'{digest}  G:/Мой диск/AGR-evidence/1255-kpp1-msk77/site-v004/{name}' in manifest
+        assert f'{digest}  {name}' in manifest
     assert len(m.EXPECTED) == 3

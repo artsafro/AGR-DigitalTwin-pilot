@@ -1,5 +1,5 @@
-Current run: #1278 R1 package-v003, copy-only assembly + material/PNG/coordinate repairs; NPM/VPM passed=false [D267].
-Source: rerun-1230 R1 v002 via hash-pinned #1271 site-v004; approximate MSK-77 fit, zero 171.050 [D262].
+Current run: #1278 R1 package-v004, copy-only assembly + material/PNG/coordinate repairs; NPM/VPM passed=false [D267].
+Source: latest rerun-1230 R1 v003 (#1246 merged), via the #1271 approved transform; approximate MSK-77 fit, zero 171.050 [D262].
 Next gate: review #1278 package evidence; missing Ground/areas/FNO, VPM xView and manual/final Max gates remain open.
 
 ## Package #1278 (2026-11-13) — NOT PASSED [D267]
@@ -12,18 +12,18 @@ Point [8056.144, -9581.270], zero 171.050 m; placement is not a survey certifica
 One-command reproduction into a NEW destination (parent exists):
 
 ```bash
-uv run python jobs/KPP1/package-1278/build_package.py "G:/Мой диск/AGR-evidence/1255-kpp1-msk77/site-v004" "G:/Мой диск/AGR-evidence/1278-kpp1-package/package-v004"
+uv run python jobs/KPP1/package-1278/build_package.py "G:/Мой диск/AGR-evidence/1278-kpp1-package/site-r1-v003" "G:/Мой диск/AGR-evidence/1278-kpp1-package/package-v005"
 ```
 
-Measured candidate: `G:/Мой диск/AGR-evidence/1278-kpp1-package/package-v003/`.
+Measured candidate: `G:/Мой диск/AGR-evidence/1278-kpp1-package/package-v004/`.
 ZIP NPM + ZIP VPM + GeoJSON built; independent repeat **5/5 byte-identical** assembly outputs.
 NPM glass name/alpha corrected (M_Glass_01 / 0.5); 409 native FBX elements compared,
 exactly three material-property differences, no geometry/UV/slot/UCX changes.
 Four flat VPM Diffuse maps 2048->256 px, all 12 triplet colours preserved; ERM/Normal already 256px.
 GeoJSON -9581.270 lexical precision fixed without changing values.
 Fresh `validate_package --scene` on both ZIPs: exit 1, **passed=false**.
-All V001–V017 checks, observed values, limits and before/after statuses: [CHECKS](package-1278/CHECKS.md).
-Full commands, evidence hashes, sources and diagnostics: [REPORT](package-1278/REPORT.md).
+All V001–V017 checks, observed values, limits and before/after statuses: [CHECKS](package-1278/latest/CHECKS.md).
+Full commands, evidence hashes, sources and diagnostics: [REPORT](package-1278/latest/REPORT.md).
 
 | Remaining stage | Value / status | Limit / missing input | Owner |
 |---|---|---|---|
@@ -32,7 +32,7 @@ Full commands, evidence hashes, sources and diagnostics: [REPORT](package-1278/R
 | V011 VPM areas | fail: s_obsh/s_naz/s_podz/spp_gns empty | truthful KPP1-specific sheet absent [D267] | Artem / architect |
 | V003 both | not_run: no quad master | non-triangulated work FBX; VPM faces <=4m [D021] | KPP1 master author / Artem |
 | V004 NPM | review: 0 below 5mm, 108 in band, 20266 above 20mm; min/median/max 13.695/6870.2359/31170.3557mm | 5–20mm; classification of rotated pairs absent | KPP1 geometry author / Artem |
-| V004 VPM | review: 0 below 5mm, 166 in band, 107934 above 20mm; min/median/max 9.6005/7450/31170.3993mm | 5–20mm; original [D256] lists do not waive new lists | KPP1 geometry author / Artem |
+| V004 VPM | review: 0 below 5mm, 159 in band, 105614 above 20mm; min/median/max 14.7994/7345.9993/31170.3993mm | 5–20mm; original [D256] lists do not waive new lists | KPP1 geometry author / Artem |
 | V010 VPM | not_run: UCX coverage/offset subset | independent coverage/offset evidence, reg p.34–37 absent | Artem / collision reviewer |
 | V012 VPM | review: SM_Kpp_1 index ambiguity | single OKS allowed by [D019]; automatic index resolution absent | Validator maintainer / Artem |
 | V013 VPM | not_run: survey point subset | survey alignment, <=0.5m placement; no authoritative tie [D262] | Survey author / Artem; validator subset absent |
@@ -40,18 +40,18 @@ Full commands, evidence hashes, sources and diagnostics: [REPORT](package-1278/R
 | V015 both | not_run: architectural sign-off absent | approved-project match | Artem |
 | V016 VPM | not_run: collision sign-off absent | clear passages / height-zone offsets | Artem |
 | V017 both | not_run: placement sign-off absent | point/zero/orientation vs plan; <=0.5m VPM | Artem / survey author |
-| xView VPM | fail: 99 faces / 0 vertices, 154 pairs | 0/0 at 5/2mm; corrected approved geometry/native parity absent | KPP1 geometry author / Artem model review |
+| xView VPM | fail: 85 faces / 0 vertices, 128 pairs | 0/0 at 5/2mm; corrected approved geometry/native parity absent | KPP1 geometry author / Artem model review |
 | SINTEZ HP/LP 2.1.1 | checker fail: .sig absent (0 errors, 1 recommendation) | genuine UKEP, not verified by us [D163] | Artem / applicant |
 | SINTEZ HP 2.2.1 / 2.2.6 | fail: empty FNO pair | classifier code/name | SINTEZ |
 | SINTEZ LP 2.1.2 / 2.1.6 | fail: 1 FBX / Ground absent | 2..21, mandatory Ground | Ground author |
 | SINTEZ LP 2.10.3.1 | fail: 0000; checker suggests 0607 | upload-confirmed code; placeholder preserved [D262]/[D235] | SINTEZ / Artem |
 | Final AGR Tools | not_run: no live Max check | native final AGR Tools evidence | Artem frees Max / AGR Tools operator |
 
-Fresh placed-FBX xView: VPM 99/0 fail, NPM 0/0 pass (also after material repair).
-Historical unplaced R1 112/12 faces are not current measurements; no geometry repair or native Max pass claimed.
+Fresh latest R1-v003 placed-FBX xView: VPM 85/0 fail, NPM 0/0 pass (after material repair).
+Historical R1-v002 unplaced 112/12 and placed 99/0 are not current; geometry improvement belongs to #1246, not #1278.
 SINTEZ diagnostic (private Blender 5.1.2, process exit 0, error=null): **HP 64 verified / 3 failed /
 53 undefined; LP 39 / 4 / 29**. Undefined/manual checks stay open; all IDs in
-`package-1278/sintez-v003-summary.json`. No upload/FNO issuance or final checker gate signed.
+`package-1278/latest/sintez-summary.json`. No upload/FNO issuance or final checker gate signed.
 VPM texture/GeoJSON and NPM glass defects fixed; missing-input checks not weakened.
 No acceptance of new geometry, publication, source modification or live Max use.
 
