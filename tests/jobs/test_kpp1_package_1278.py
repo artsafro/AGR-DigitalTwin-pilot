@@ -267,6 +267,17 @@ def test_output_hardlink_to_input_preserves_all_bytes(tmp_path):
     assert snapshot(tmp_path) == before
 
 
+def test_latest_r1_v003_is_an_explicit_placement_source():
+    spec = importlib.util.spec_from_file_location('latest_placement', ROOT / 'jobs/KPP1/site-1255/place_package.py')
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    assert {
+        'SM_Kpp_1.fbx': '76a7c97e523d6ac6475443a84f51e4b2ec588de3cbeb1b300d08adf07e97dc50',
+        '0000_Kpp_1_01.fbx': 'ee3ac5994e298c476f63e0a40b7c977718c88127103d8078860cc07900d980b9',
+        'SM_Kpp_1.zip': '350518df6d2e6e7b39c4348addc6fd88cc5bed118991440d1365be75406c6fb2',
+    } in module.ADDITIONAL_APPROVED_R1_HASHES
+
+
 def test_production_pins_match_approved_site_manifest():
     m = load()
     manifest = (ROOT / 'jobs/KPP1/site-1255/evidence-SHA256SUMS.txt').read_text(encoding='utf-8')
