@@ -143,6 +143,65 @@ def test_committed_corpus_portable():
     assert digest(canonical(json.loads(CORPUS.read_bytes().replace(b'\r\n', b'\n')))) == receipt['corpus_sha256']
 
 
+def test_replay_rejects_mutation_during_run(tmp_path, monkeypatch):
+    import json
+    import pytest
+    from dt_ai.album import binding
+    from tools.research.pdf_album import dimension_autoresearch as A
+    sheets = []
+    for i, split in enumerate(('TUNE', 'HOLD-OUT')):
+        p = tmp_path / f'{i}.pdf'
+        p.write_bytes(b'synthetic boundary injection, not a PDF')
+        sheets.append(dict(name=str(i), split=split, truth=_truth(),
+                           files={'pdf': {'path': str(p), 'sha256': A.digest(p.read_bytes())}}))
+    corpus = tmp_path / 'corpus.json'
+    raw = json.dumps({'sheets': sheets})
+    corpus.write_text(raw)
+    doc = {'passed': False, 'values': [], 'views': [], 'findings': []}
+    baseline = tmp_path / 'baseline.json'
+    receipt = {'corpus_sha256': A.digest(A.canonical(json.loads(raw))),
+               'signatures': {s['name']: A.verdict_signature(doc) for s in sheets}}
+    baseline.write_text(json.dumps(receipt))
+    monkeypatch.setattr(A, 'CORPUS', corpus)
+    monkeypatch.setattr(A, 'BASELINE', baseline)
+    monkeypatch.setattr(binding, 'bind_album', lambda *a, **k: doc)
+    assert A.evaluate()['guard'] is True
+    for target in (tmp_path / '0.pdf', corpus, baseline):
+        original = target.read_bytes()
+        def rewrite(*args, **kwargs):
+            target.write_bytes(original + b' ')
+            return doc
+        monkeypatch.setattr(binding, 'bind_album', rewrite)
+        with pytest.raises(ValueError, match='hash mismatch|changed during replay'):
+            A.evaluate()
+        target.write_bytes(original)
+    receipt['corpus_sha256'] = '0'*64
+    baseline.write_text(json.dumps(receipt))
+    with pytest.raises(ValueError, match='stale baseline'):
+        A.evaluate()
+
+
+def test_real_native_replay_and_repeat():
+    import json
+    import subprocess
+    import sys
+    import pytest
+    from tools.research.pdf_album import dimension_autoresearch as A
+    sheets = json.loads(A.CORPUS.read_text(encoding='utf8'))['sheets']
+    from pathlib import Path
+    if not all(Path(f['path']).exists() for s in sheets for f in s['files'].values()):
+        pytest.skip('optional frozen native copies absent; never synthesize native evidence')
+    first = A.evaluate()
+    result = subprocess.run([sys.executable, '-m', 'tools.research.pdf_album.dimension_autoresearch'],
+                            cwd=A.ROOT, capture_output=True, text=True, encoding='utf8', check=True)
+    second = json.loads(result.stdout.splitlines()[0])
+    assert first == second
+    assert first['guard'] is True
+    assert [(s['metrics']['found'], s['metrics']['correct'], s['metrics']['wrong'], s['metrics']['missed'])
+            for s in first['sheets']] == [(7, 7, 0, 75), (8, 8, 0, 4), (0, 0, 0, 6)]
+    assert first['sheets'][2]['precision_guard'] == 'zero_prediction_pass'
+
+
 def test_fresh_cli_read_only(tmp_path):
     import os
     import subprocess

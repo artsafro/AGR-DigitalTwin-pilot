@@ -2,11 +2,17 @@
 
 ## Кратко для Артёма
 
-Baseline #1302 воспроизведён: KPP1 L03 — 7/82, КНС разрез — 8/12,
-КНС план — 0/6. TUNE — первые два листа (15/94); HOLD-OUT — план (6).
-Лист без положительных привязок сохраняет precision=null и отдельный
-zero-prediction PASS [D277]. Масштаб не угадывается, `passed=false`.
-Исследование запущено; итоговые раунды и остановка будут записаны ниже.
+Остановка: **три раунда с приростом <1% (R2–R4)**. Сохранённых изменений
+распознавания нет: TUNE остался **15/94 (15.96%)**, цель 80% не достигнута.
+KPP1 L03 — 7/82, КНС разрез — 8/12 (precision 1.0); HOLD-OUT КНС план — 0/6,
+precision=null, отдельный zero-prediction PASS [D277]. Масштаб не угадывался,
+`passed=false`; production binder совпадает с main.
+
+R1 восстановил два размера КНС (200/250mm, `341A`/`341C`): 17/94, precision 1.0,
+оси/отметки без изменений. Но существующий regression требует ровно 8 positive
+bindings, а кандидат даёт 10. По условию «не ослаблять существующие тесты» он
+отклонён; тест не изменён. Дополнительные hits не выдаются за retained gain.
+Основной барьер L03 — доказуемые identities внутренних граней, а не просто текст.
 
 ## Frozen protocol
 
@@ -34,8 +40,84 @@ Stop: recall >=0.8, three consecutive gains <0.01 absolute recall, or 8h
 
 ## Baseline and final accounting
 
-Pending experiment results. Baseline: L03 found/correct/wrong/missed=7/7/0/75;
-KNS=8/8/0/4; HOLD-OUT=0/0/0/6 (precision null, recall 0).
+Here found means positive semantic predictions, not nearby text/raw spans.
+Every native handle has exactly one success/first-blocking-cause class. No wrong
+predictions remain. [Full handle ledger](../../tools/research/pdf_album/dimension-autoresearch/baseline-results.json).
+
+| Sheet / first blocking cause | Found | Correct | Wrong | Missed |
+|---|---:|---:|---:|---:|
+| L03 total | 7 | 7 | 0 | 75 |
+| — correct binding | 7 | 7 | 0 | 0 |
+| — displaced/short text not bound to own line | 0 | 0 | 0 | 36 |
+| — own span recovered, endpoint identity absent | 0 | 0 | 0 | 36 |
+| — native display rounding differs from measurement | 0 | 0 | 0 | 3 |
+| KNS section total | 8 | 8 | 0 | 4 |
+| — correct binding | 8 | 8 | 0 | 0 |
+| — displaced/short text not bound to own line | 0 | 0 | 0 | 3 |
+| — own span recovered, endpoint identity absent | 0 | 0 | 0 | 1 |
+| KNS floor HOLD-OUT total | 0 | 0 | 0 | 6 |
+| — non-cardinal chain unsupported | 0 | 0 | 0 | 6 |
+| **All sheets** | **15** | **15** | **0** | **85** |
+
+## Rounds
+
+| Round | One change | TUNE correct/truth | L03 / KNS precision | HOLD-OUT recall / precision | Replay guard | Existing tests | Decision |
+|---|---|---:|---|---|---|---|---|
+| Baseline | #1302 final | 15/94 | 1.0 / 1.0 | 0/6 / null | PASS | 71 passed | baseline |
+| R1 | Short-span text displaced up to 2em beyond ticks | 17/94 | 1.0 / 1.0 | 0/6 / null | PASS (v2) | 70 passed / 1 failed: exact-eight KNS contract | discard |
+| R2 | Parallel stroke groups 0.1pt ->0.5pt | 15/94 | 1.0 / 1.0 | 0/6 / null | PASS | 71 passed | discard: no gain |
+| R3 | Minimum diagonal tick 1.5pt ->0.75pt | 15/94 | 1.0 / 1.0 | 0/6 / null | PASS | 71 passed | discard: no gain |
+| R4 | Perpendicular text search 2.5 ->4 text heights | 15/94 | 1.0 / 1.0 | 0/6 / null | PASS | 71 passed | discard; STOP |
+
+[Round receipts](../../tools/research/pdf_album/dimension-autoresearch/rounds.json)
+record trial/revert commits, source SHA256 and every sheet's metrics/miss classes.
+R1 additionally recovers 21 own L03 spans, all still missing endpoint identity;
+no credit. All four synthetic trial witnesses fail before and pass with their
+individual candidate: 3 initial failures plus 1 later failure; GREEN 1 passed each.
+Rejected witnesses are evidence, not permanent feature requirements.
+Control skips regression commands for non-improvements (R2–R4: `not_run`);
+their **manual** 71-test logs and full replay guard were run before `finish`.
+These are not relabelled as controller guard executions. R2–R4 have zero raw
+AND retained gain, so the plateau stop does not depend on treating rejected R1 as zero.
+
+### Harness repairs, not hidden retuning
+
+Initial run `03e54b7cd39242d38c6d418e61de7224` falsely rejected R1: signature also
+included dimension-only diagnostics with renumbered IDs. Independent comparison
+proved exact axes/levels equal. Failed trial/revert retained. Tests-first
+`dcd56a9c` failed 1 test; `e57c19b3` scoped the signature to complete axes,
+complete level records minus dimension-dependent IDs, and axis/level findings.
+Guard v2 was re-frozen **before** run `5db0a7cba51e458ba2b586b352b73b9d`.
+No source/split/score tolerance changed. R1 reran and failed the real regression.
+
+Post-loop packaging exposed raw manifest digests dependent on CRLF/Git-LF.
+Tests-first `be05785e` failed 1 test. Final receipt hashes canonical JSON
+(UTF-8, sorted keys, no whitespace); native source hashes remain raw-byte hashes.
+Original raw corpus SHA256:
+`beb7ae3dca186c459239e017c1a067b43da22723459e01a324ddec4d1a757f20`.
+Final canonical corpus SHA256:
+`351cbe99af8fb29b838d969baaa0c18bca49eb341e9ddcfe0b08d70690918b70`.
+Original bytes are archived. Mutation-injection fixture then exposed a captured
+default corpus-path argument (KeyError `L03`); explicit active-path calls fixed it.
+Final harness replayed all four own trial commits: exact metrics, per-handle
+classes and replay guards match archived v2 results **4/4**. No outcome retuning.
+Research status is `stopped_plateau`, not target reached. Control records archived
+unchanged; last `active` status is not presented as automated goal completion.
+Kanban drove continuation because this runtime has no native Codex Goal API.
+
+### Remaining boundaries
+
+- L03 wall-face identities need a separately proven source graph, not nearest-wall
+  guessing. No undecided model rule was needed for these bounded experiments.
+- Display-rounded 2360/4720/1520 remain different from native 2355/4715/1515mm.
+  Future question for Artem **only if pursuing that class**: may documented native
+  DIMRND be scored as annotation agreement separately from exact geometry?
+  Current scoring stays exact; no such waiver is needed or applied by this card.
+- Non-cardinal support needs independent registration and rotated semantic-axis
+  identity; the HOLD-OUT remains measured zero, not omitted.
+- Future R1 adoption needs stronger source-bound expectations for both new pairs
+  AND every old identity/refusal, not deletion of the exact-eight regression.
+  This card preserves that guard and claims no retained production improvement.
 
 ## Reproduction
 
@@ -57,3 +139,17 @@ The evaluator has no output/report/temp-path API: stdout only. It re-hashes inpu
 before and after the complete run and rejects aliased inputs and stale corpus
 receipts. Source mutation restored between hash snapshots is not detected; single
 writer ownership and frozen copies remain prerequisites, not a claimed OS lock.
+
+Evidence root: `G:/Мой диск/AGR-evidence/1321-pdf-dimensions-autoresearch/evidence-v001/`.
+[Evidence receipt](../../tools/research/pdf_album/dimension-autoresearch/evidence.json)
+binds SHA256SUMS.txt and member count: nine native copies, extraction/replay
+drivers, raw control logs/events/config, trial witnesses and RED/GREEN logs.
+Mounted bytes verified; cloud-sync completion not measured. Restore
+`evidence-v001/drivers/freeze_dimensions.py` into ignored `tmp/` before extraction;
+if a native copy is missing, restore it to its manifest path and verify SHA256.
+Final tests cover mutation of sources/corpus/baseline, stale receipts, aliases,
+duplicates, nonfinite/unsupported evidence, exact score boundaries, hardlinked
+output attempts and fresh-process repeat. The evaluator is stdout-only, has no
+output/report/.partial API and deletes nothing. Final affected/full-suite counts
+and tested SHA are in PR Author receipts/generated CI receipt: no post-suite commit
+that would falsify the exact tested head.

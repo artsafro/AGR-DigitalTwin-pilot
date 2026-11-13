@@ -171,9 +171,10 @@ def evaluate() -> dict:
     corpus_bytes = CORPUS.read_bytes()
     baseline_bytes = BASELINE.read_bytes()
     baseline = json.loads(baseline_bytes)
-    if baseline['corpus_sha256'] != digest(corpus_bytes):
+    corpus_sha = digest(canonical(json.loads(corpus_bytes)))
+    if baseline['corpus_sha256'] != corpus_sha:
         raise ValueError('stale baseline/corpus')
-    corpus = load_corpus()
+    corpus = load_corpus(CORPUS)
     rows = []
     total = correct = 0
     guard = True
@@ -191,10 +192,10 @@ def evaluate() -> dict:
         rows.append(row)
     # Re-hash after the complete replay: a successful binder cannot hide changed
     # DXF, registration, corpus or baseline bytes during a later sheet.
-    load_corpus()
+    load_corpus(CORPUS)
     if CORPUS.read_bytes() != corpus_bytes or BASELINE.read_bytes() != baseline_bytes:
         raise ValueError('frozen evaluator inputs changed during replay')
-    return {'corpus_sha256': digest(corpus_bytes), 'sheets': rows,
+    return {'corpus_sha256': corpus_sha, 'sheets': rows,
             'guard': bool(guard), 'tune_recall': correct / total}
 
 
