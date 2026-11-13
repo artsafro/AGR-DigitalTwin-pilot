@@ -143,6 +143,7 @@ def test_check_level_decision_is_recorded_and_linked():
     log = (ROOT / "docs/decisions.md").read_text(encoding="utf-8")
     rows = re.findall(r"^\| D271 \|.*$", log, re.M)
     assert len(rows) == 1
+    assert rows[0].split("|")[-2].strip().startswith("backfill")
     # Renumbering during a main merge must also update the generated heading anchor.
     intake = (ROOT / "docs/agents/task-intake.md").read_text(encoding="utf-8")
     procedure = (ROOT / "docs/procedure/TASK_TO_MODEL.md").read_text(encoding="utf-8")
