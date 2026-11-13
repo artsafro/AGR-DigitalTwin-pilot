@@ -390,6 +390,50 @@ def test_pair_rollback_preserves_replaced_csv(corpus, tmp_path, monkeypatch):
     assert not out_md.exists() and not list(tmp_path.glob('.*.partial'))
 
 
+@pytest.mark.parametrize('target', ['csv', 'summary'])
+@pytest.mark.parametrize('foreign_kind', ['file', 'hardlink', 'directory'])
+def test_fallback_final_operation_preserves_foreign(corpus, tmp_path, monkeypatch, target, foreign_kind):
+    import errno
+    out_csv, out_md = tmp_path / 'foreign.csv', tmp_path / 'foreign.md'
+    destination = out_csv if target == 'csv' else out_md
+    real_replace, real_rename, real_link = inv.os.replace, inv.os.rename, inv.os.link
+    before = digest_tree(corpus)
+    triggered = []
+
+    def link(src, dst):
+        raise OSError(errno.EINVAL, 'no links')
+
+    def inject(operation, src, dst):
+        if dst == destination and not triggered:
+            foreign = tmp_path / 'intruder'
+            if foreign_kind == 'directory':
+                foreign.mkdir()
+                (foreign / 'keep.txt').write_text('FOREIGN MUST SURVIVE', encoding='utf-8')
+                # A directory cannot replace a file reservation on Windows.
+                dst.unlink(missing_ok=True)
+            elif foreign_kind == 'hardlink':
+                real_link(corpus / 'copy' / 'same.pdf', foreign)
+            else:
+                foreign.write_text('FOREIGN MUST SURVIVE', encoding='utf-8')
+            real_replace(foreign, dst)
+            triggered.append(True)
+        return operation(src, dst)
+
+    monkeypatch.setattr(inv.os, 'link', link)
+    monkeypatch.setattr(inv.os, 'replace', lambda src, dst: inject(real_replace, src, dst))
+    monkeypatch.setattr(inv.os, 'rename', lambda src, dst: inject(real_rename, src, dst))
+    assert inv.main(['--root', str(corpus), '--csv', str(out_csv), '--summary', str(out_md)]) == 2
+    assert triggered
+    if foreign_kind == 'hardlink':
+        assert destination.read_bytes() == (corpus / 'copy' / 'same.pdf').read_bytes()
+    else:
+        saved = destination / 'keep.txt' if foreign_kind == 'directory' else destination
+        assert saved.read_text(encoding='utf-8') == 'FOREIGN MUST SURVIVE'
+    assert not (out_md if target == 'csv' else out_csv).exists()
+    assert digest_tree(corpus) == before
+    assert not list(tmp_path.glob('.*.partial'))
+
+
 @pytest.mark.parametrize('failed_output', ['csv', 'summary'])
 def test_temp_cleanup_failure_rolls_back_pair(corpus, tmp_path, monkeypatch, failed_output):
     import errno
