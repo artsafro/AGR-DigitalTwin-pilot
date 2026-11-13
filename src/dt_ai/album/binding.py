@@ -90,6 +90,20 @@ def _vert(s: R.Segment) -> bool:
     return abs(s.p0[0] - s.p1[0]) <= 0.05
 
 
+def _span_gap(sp: dict[str, Any], r: R.TextRun, padding: float, near_side: bool) -> float | None:
+    """Perpendicular gap of a text run along span ``sp`` (``None`` when outside)."""
+    cx, cy = R._center(r.bbox)
+    if sp["orientation"] == "horizontal":
+        if not (abs(r.dir[1]) <= 1e-6 and r.dir[0] > 0 and sp["a"] - padding < cx < sp["b"] + padding):
+            return None
+        gap = sp["coord"] - cy if near_side else cy - sp["coord"]
+    else:
+        if not (abs(r.dir[0]) <= 1e-6 and abs(r.dir[1]) > 0.99 and sp["a"] - padding < cy < sp["b"] + padding):
+            return None
+        gap = sp["coord"] - cx if near_side else cx - sp["coord"]
+    return gap if 0 < gap <= 2.5 * r.size else None
+
+
 def _level_tips(segs: list[R.Segment], max_arm: float = 15.0) -> list[tuple[float, float, int]]:
     """Arrow/triangle apexes of level marks: >= 2 short ~45 deg strokes ending in one point, one going left and
     one going right, both to the same side (``side`` = +1 arms below the apex, -1 above). A dimension tick
@@ -484,6 +498,21 @@ def _bind_page(pymupdf: Any, page: Any, number: int, sheet: str | None) -> dict[
             spans.append({"orientation": ch["orientation"], "coord": ch["coord"], "a": a, "b": b,
                           "bridges": [g for g in ch["bridges"] if g[0] < b and a < g[1]]})
 
+    def strict_hits(sp: dict[str, Any], near_side: bool) -> list[tuple[float, int]]:
+        return sorted((g, i) for i, r in usable if i not in authorizers
+                      for g in [_span_gap(sp, r, 0.0, near_side)] if g is not None)
+
+    def owner_run(sp: dict[str, Any]) -> int | None:
+        # The run a span would take by the strict rule (near side first).
+        hits = strict_hits(sp, True) or strict_hits(sp, False)
+        return hits[0][1] if hits else None
+
+    owners: dict[int, set[int]] = {}
+    for k, o in enumerate(spans):
+        if not o["bridges"] and (run := owner_run(o)) is not None:
+            owners.setdefault(run, set()).add(k)
+    id_of = {id(o): k for k, o in enumerate(spans)}
+
     def candidates(sp: dict[str, Any], near_side: bool) -> list[tuple[float, int]]:
         if sp["bridges"]:
             # Multiple labels or an interruption crossing a tick cannot prove
@@ -494,22 +523,24 @@ def _bind_page(pymupdf: Any, page: Any, number: int, sheet: str | None) -> dict[
             if sp["a"] <= lo and hi <= sp["b"] and any(i == index for i, _ in usable):
                 return [(0.0, index)]
             return []
-        hits = []
+        strict, padded = [], []
         for i, r in usable:
             if i in authorizers:
                 continue
-            cx, cy = R._center(r.bbox)
-            if sp["orientation"] == "horizontal":
-                if not (abs(r.dir[1]) <= 1e-6 and r.dir[0] > 0 and sp["a"] < cx < sp["b"]):
-                    continue
-                gap = sp["coord"] - cy if near_side else cy - sp["coord"]
-            else:
-                if not (abs(r.dir[0]) <= 1e-6 and abs(r.dir[1]) > 0.99 and sp["a"] < cy < sp["b"]):
-                    continue
-                gap = sp["coord"] - cx if near_side else cx - sp["coord"]
-            if 0 < gap <= 2.5 * r.size:
-                hits.append((gap, i))
-        return sorted(hits)
+            # R1: CAD moves labels outside tiny spans to keep them legible.
+            # Preserve the strict two-em cutoff and all perpendicular/identity guards.
+            padding = 2 * r.size if sp["b"] - sp["a"] < 2 * r.size else 0
+            gap = _span_gap(sp, r, 0.0, near_side)
+            if gap is not None:
+                strict.append((gap, i))
+                continue
+            gap = _span_gap(sp, r, padding, near_side) if padding else None
+            # A label that another span owns by the strict rule is never a
+            # padded candidate here (its own span keeps it; review P1 #1332).
+            if gap is not None and not (owners.get(i, set()) - {id_of[id(sp)]}):
+                padded.append((gap, i))
+        # A strict in-span hit always beats a padded one.
+        return sorted(strict) or sorted(padded)
 
     first = [candidates(sp, True) for sp in spans]
     reserved = {h[0][1] for h in first if h}
