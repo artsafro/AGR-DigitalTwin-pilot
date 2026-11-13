@@ -97,12 +97,111 @@ def audit_corners(rows, *, anisotropy_limit):
                             'no seam exceptions have been approved by this tool']}
 
 
+def audit_vertical_cycles(rows, *, repeat_m, texel_px_m, phase_tolerance_px=0.1):
+    """Necessary phase-closure check of fixed-scale horizontal wall charts.
+
+    Each complete shared vertical source edge constrains the two U offsets.
+    Circulation on a closed loop must be an integer *full appearance* repeat.
+    A spanning forest exposes fundamental cycles; it neither chooses seams nor
+    solves variable-scale charts. No welding, geometry edits, UV writes or pass
+    certificates. Vertex-only and partial-edge contacts are not analysed.
+    """
+    for name, value in [('repeat_m', repeat_m), ('texel_px_m', texel_px_m),
+                        ('phase_tolerance_px', phase_tolerance_px)]:
+        if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:
+            raise ValueError(f'{name} must be finite and positive')
+    # Reuse the source-face validator; corner permission is deliberately not inferred.
+    audit_corners(rows, anisotropy_limit=1.02)
+    by_key = {(r['object'], r['face']): r for r in rows}
+    tangents, edges = {}, defaultdict(list)
+    for key, r in sorted(by_key.items()):
+        n, _area = tri_normal(r['xyz'], [0, 1, 2])
+        if abs(n[2]) > 0.01:
+            continue
+        h = math.hypot(n[0], n[1])
+        tangents[key] = (-n[1]/h, n[0]/h, 0.0)
+        for j, p in enumerate(r['xyz']):
+            k = (j+1) % len(r['xyz'])
+            q = r['xyz'][k]
+            if math.hypot(p[0]-q[0], p[1]-q[1]) > 1e-4 or abs(p[2]-q[2]) < 0.02:
+                continue
+            edge = (r['object'], tuple(sorted((r['vertices'][j], r['vertices'][k]))))
+            midpoint = tuple((a+b)/2 for a,b in zip(p,q))
+            edges[edge].append((key, midpoint))
+    adj, constraints = defaultdict(list), []
+    dot = lambda a,b: sum(x*y for x,y in zip(a,b))
+    for edge, users in sorted(edges.items()):
+        if len(users) > 2:
+            raise ValueError(f'nonmanifold vertical source edge {edge}')
+        if len(users) != 2:
+            continue
+        (a, p), (b, q) = users
+        d = dot(p, tangents[a])-dot(q, tangents[b])
+        adj[a].append((b,d,edge,p))
+        adj[b].append((a,-d,edge,q))
+        constraints.append((a,b,d,edge))
+    offset, parent, tree_edges = {}, {}, set()
+    for root in sorted(tangents):
+        if root in offset:
+            continue
+        offset[root], parent[root] = 0.0, None
+        queue = [root]
+        for a in queue:
+            for b,d,edge,_p in adj[a]:
+                if b not in offset:
+                    offset[b], parent[b] = offset[a]+d, a
+                    tree_edges.add(edge)
+                    queue.append(b)
+    cycles = []
+    for a,b,d,edge in constraints:
+        if edge in tree_edges:
+            continue
+        chain_a, chain_b = [a], [b]
+        while parent[chain_a[-1]] is not None:
+            chain_a.append(parent[chain_a[-1]])
+        while chain_b[-1] not in chain_a:
+            chain_b.append(parent[chain_b[-1]])
+        ancestor = chain_b[-1]
+        chain = chain_a[:chain_a.index(ancestor)+1] + list(reversed(chain_b[:-1]))
+        mids, seam_edges = [], []
+        for j, f in enumerate(chain):
+            neighbor = chain[(j+1) % len(chain)]
+            candidates = [item for item in adj[f] if item[0] == neighbor]
+            if len(candidates) != 1:
+                raise ValueError(f'ambiguous source adjacency {f}, {neighbor}')
+            _nb,_delta,e,p = candidates[0]
+            mids.append(p)
+            seam_edges.append({'object': e[0], 'vertices': list(e[1]),
+                               'faces': [f[1], neighbor[1]], 'midpoint_m': list(p)})
+        circulation = offset[a]+d-offset[b]
+        repeats = round(circulation/repeat_m)
+        residual = abs(circulation-repeats*repeat_m)*texel_px_m
+        travel = sum(abs(dot(tuple(x-y for x,y in zip(mids[j], mids[j-1])), tangents[f]))
+                     for j,f in enumerate(chain))
+        cycles.append({'object': a[0], 'faces': [f[1] for f in chain], 'edges': seam_edges,
+                       'circulation_m': circulation, 'travel_m': travel,
+                       'nearest_repeat_count': repeats, 'wrapped_residual_px': residual,
+                       'requires_seam_at_frozen_scale': residual > phase_tolerance_px})
+    return {'status': 'needs_seam_policy' if any(c['requires_seam_at_frozen_scale'] for c in cycles) else 'incomplete',
+            'passed': False, 'repeat_m': repeat_m, 'texel_px_m': texel_px_m,
+            'phase_tolerance_px': phase_tolerance_px, 'cycles': cycles,
+            'input_faces': len(rows), 'vertical_faces': len(tangents),
+            'unanalysed_faces': [list(k) for k in sorted(set(by_key)-set(tangents))],
+            'shared_vertical_edges': len(constraints),
+            'limitations': ['necessary condition only; fixed scale and horizontal outward U',
+                            'source vertex indices only; no welding or partial-edge matching',
+                            'complete vertical edges only; nonvertical faces not analysed',
+                            'no bitmap symmetry inference, seam authorization or tile capacity verdict']}
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('input', type=Path, help='source face readback JSON array, metres')
     parser.add_argument('report', type=Path, help='new report path (never overwritten)')
     parser.add_argument('--material-id', type=int, required=True)
     parser.add_argument('--anisotropy-limit', type=float, default=1.02)
+    parser.add_argument('--repeat-m', type=float, help='also audit vertical rings at this full appearance repeat')
+    parser.add_argument('--texel-px-m', type=float, default=512.0)
     args = parser.parse_args(argv)
     try:
         if args.input.resolve() == args.report.resolve() or args.report.exists():
@@ -115,6 +214,11 @@ def main(argv=None):
             raise ValueError('unmapped material_id in source')
         target = [r for r in rows if r['material_id'] == args.material_id]
         report = audit_corners(target, anisotropy_limit=args.anisotropy_limit)
+        if args.repeat_m is not None:
+            report['vertical_cycles'] = audit_vertical_cycles(
+                target, repeat_m=args.repeat_m, texel_px_m=args.texel_px_m)
+            if report['vertical_cycles']['status'] == 'needs_seam_policy':
+                report['status'] = 'needs_seam_policy'
         report.update({'source_sha256': hashlib.sha256(data).hexdigest(), 'source': str(args.input.resolve()),
                        'material_id': args.material_id, 'input_faces': len(rows),
                        'protected_faces': [[r['object'], r['face']] for r in rows if r['material_id'] != args.material_id]})

@@ -32,6 +32,91 @@ def test_closed_vertical_ring_requires_repeat_closure_even_without_trihedral_fan
     assert len(witness['edges']) == 4
 
 
+def test_ring_with_whole_repeats_and_open_ring_still_cannot_certify_pilot():
+    for rows in [ring(), ring()[:-1]]:
+        result = audit_vertical_cycles(rows, repeat_m=4, texel_px_m=512)
+        assert result['status'] == 'incomplete'
+        assert result['passed'] is False
+        assert all(not c['requires_seam_at_frozen_scale'] for c in result['cycles'])
+
+
+@pytest.mark.parametrize('name', ['repeat_m', 'texel_px_m', 'phase_tolerance_px'])
+@pytest.mark.parametrize('bad', [0, -1, math.nan, math.inf, True, '1'])
+def test_ring_parameters_fail_closed(name, bad):
+    kwargs = dict(repeat_m=3, texel_px_m=512, phase_tolerance_px=0.1)
+    kwargs[name] = bad
+    with pytest.raises(ValueError, match=name):
+        audit_vertical_cycles(ring(), **kwargs)
+
+
+def test_ring_exact_phase_threshold_is_inclusive():
+    result = audit_vertical_cycles(ring(), repeat_m=3, texel_px_m=512, phase_tolerance_px=512)
+    assert result['cycles'][0]['wrapped_residual_px'] == 512
+    assert result['status'] == 'incomplete'
+    assert result['passed'] is False
+
+
+def test_ring_rigid_transforms_and_source_row_order_do_not_change_residual():
+    for seed in range(20):
+        rows = ring()
+        angle = seed*0.37
+        for r in rows:
+            r['xyz'] = [[math.cos(angle)*x-math.sin(angle)*y+seed,
+                         math.sin(angle)*x+math.cos(angle)*y-seed, z+seed]
+                        for x,y,z in r['xyz']]
+        rows.reverse()
+        result = audit_vertical_cycles(rows, repeat_m=3, texel_px_m=512)
+        assert len(result['cycles']) == 1
+        assert result['cycles'][0]['wrapped_residual_px'] == pytest.approx(512, abs=1e-7)
+
+
+def test_disconnected_objects_with_equal_vertex_indices_do_not_cross_connect():
+    a, b = ring(), ring()
+    for r in b: r['object'] = 'second-ring'
+    result = audit_vertical_cycles(a+b, repeat_m=3, texel_px_m=512)
+    assert len(result['cycles']) == 2
+    assert {c['object'] for c in result['cycles']} == {'synthetic-ring', 'second-ring'}
+
+
+def test_ring_nonmanifold_vertical_edge_errors():
+    rows = ring()
+    rows.append(dict(rows[0], face=9))
+    with pytest.raises(ValueError, match='nonmanifold vertical source edge'):
+        audit_vertical_cycles(rows, repeat_m=3, texel_px_m=512)
+
+
+def test_ring_invalid_source_fails_closed():
+    for rows in [[], ring()+ring()[:1], [dict(ring()[0], xyz=[])]]:
+        with pytest.raises(ValueError):
+            audit_vertical_cycles(rows, repeat_m=3, texel_px_m=512)
+
+
+def test_ring_cli_nonpass_and_nan(tmp_path):
+    import json
+    import subprocess
+    import sys
+    rows = ring()
+    for r in rows: r['material_id'] = 1
+    source = tmp_path / 'ring.json'
+    source.write_text(json.dumps(rows))
+    before = source.read_bytes()
+    report = tmp_path / 'ring-report.json'
+    command = [sys.executable, '-m', 'tools.materials.course_grid_audit', str(source),
+               str(report), '--material-id', '1', '--repeat-m', '3']
+    run = subprocess.run(command, capture_output=True, text=True)
+    assert run.returncode == 1, run.stdout + run.stderr
+    result = json.loads(report.read_text())
+    assert result['status'] == 'needs_seam_policy'
+    assert result['vertical_cycles']['cycles'][0]['wrapped_residual_px'] == 512
+    assert result['passed'] is False
+    command[4] = str(tmp_path / 'invalid.json')
+    command[-1] = 'nan'
+    run = subprocess.run(command, capture_output=True, text=True)
+    assert run.returncode == 2
+    assert not (tmp_path / 'invalid.json').exists()
+    assert source.read_bytes() == before
+
+
 def corner():
     # Synthetic three orthogonal quads sharing a trihedral corner.
     return [

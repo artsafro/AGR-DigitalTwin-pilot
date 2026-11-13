@@ -1,6 +1,9 @@
 # Chart-seam policy checkpoint — #1326
 
-Status: **needs Artem's model/acceptance decision**. `pilot_passed=false`.
+Status: **stair seam question answered YES; main-wall ring termination pending**.
+`pilot_passed=false`. Artem's exact 2026-11-13 answer is in `seam-approval.json`;
+`LOOP_POLICY.md` is the current checkpoint. The question and measurements below are
+retained as the historical pre-answer record, not a request to answer it again.
 The 771-face finish cohort is confirmed; see `finish-approval.json`. No additional
 material, geometry cut, density reduction, extra tile or replication is proposed here.
 Check level: full for the eventual reusable tool; this checkpoint is not review-ready.
