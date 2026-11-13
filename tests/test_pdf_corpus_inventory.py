@@ -259,6 +259,37 @@ def test_output_appearing_during_scan_is_not_clobbered(corpus, tmp_path, monkeyp
     assert not list(tmp_path.glob('.*.partial'))
 
 
+@pytest.mark.parametrize('unsupported_at', ['csv', 'summary', 'both'])
+def test_publish_without_hardlinks(corpus, tmp_path, monkeypatch, unsupported_at):
+    import errno
+    real_link, real_replace = inv.os.link, inv.os.replace
+    replaced = []
+    out_csv, out_md = tmp_path / 'drive.csv', tmp_path / 'drive.md'
+    before = digest_tree(corpus)
+
+    def link(src, dst):
+        if unsupported_at == 'both' or (dst == out_csv) == (unsupported_at == 'csv'):
+            raise OSError(errno.EINVAL, 'hard links unsupported')
+        return real_link(src, dst)
+
+    def replace(src, dst):
+        assert Path(src).parent == dst.parent
+        assert Path(src).name.endswith('.partial')
+        replaced.append(dst)
+        return real_replace(src, dst)
+
+    monkeypatch.setattr(inv.os, 'link', link)
+    monkeypatch.setattr(inv.os, 'replace', replace)
+    argv = ['--root', str(corpus), '--csv', str(out_csv), '--summary', str(out_md)]
+    assert inv.main(argv) == 0
+    assert len(read_csv(out_csv)) == 7 and 'PDF files found: **7**' in out_md.read_text(encoding='utf-8')
+    assert len(replaced) == (2 if unsupported_at == 'both' else 1)
+    outputs = digest_tree(tmp_path)
+    assert inv.main(argv) == 2
+    assert digest_tree(tmp_path) == outputs and digest_tree(corpus) == before
+    assert not list(tmp_path.glob('.*.partial'))
+
+
 def test_fresh_process_cli(corpus, tmp_path):
     import subprocess
     script = Path(inv.__file__)
