@@ -1,4 +1,5 @@
 # Codex
+For NPM/OKS tasks read `routes/npm-oks.md`; call `agr --help` before writing a script.
 
 Role and default ownership: `docs/agents/ROLES.md`.
 

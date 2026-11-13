@@ -163,7 +163,9 @@ def test_check_level_allocation_respects_earlier_reservations():
     find_collisions = runpy.run_path(str(ROOT / "tools/git-hooks/decision_ids.py"))["find_collisions"]
     text = (ROOT / "docs/decisions.md").read_text(encoding="utf-8")
     own = next(line for line in text.splitlines() if line.startswith("| D") and "Adopt #1273 section 4" in line)
-    base = text.replace(own, "")
+    # Keep the synthetic collision probe independent of earlier claims landing in main.
+    base = "\n".join(line for line in text.replace(own, "").splitlines()
+                     if not line.startswith(("| D271 |", "| D272 |")))
     # Synthetic rows represent the two earlier claims, not their production policy.
     earlier = {"PR #1325": "| D271 | earlier milestone decision |",
                "card #1315": "| D272 | earlier cold-run decision |"}
