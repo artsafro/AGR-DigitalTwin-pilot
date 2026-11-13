@@ -4,6 +4,7 @@ Pattern: n/a | new-case: presence/coverage guard for an agent procedure doc (PR 
 """
 from pathlib import Path
 import re
+import runpy
 
 ROOT = Path(__file__).resolve().parents[1]
 DOC = ROOT / "docs" / "agents" / "task-intake.md"
@@ -78,3 +79,101 @@ def test_pr_template_asks_for_the_before_after_numbers():
     template = (ROOT / ".github" / "pull_request_template.md").read_text(encoding="utf-8")
     assert "before/after metric" in template.lower()
     assert "not measured" in template
+
+
+def test_check_level_intake_contract():
+    for path in (".github/ISSUE_TEMPLATE/task.md", "docs/agents/task-intake.md"):
+        text = " ".join((ROOT / path).read_text(encoding="utf-8").split())
+        for clause in (
+            "level: fast | standard | full",
+            "orchestrator/agent sets",
+            "at intake",
+            "Artem overrides with one word",
+            "[D273]",
+            "TASK_TO_MODEL.md#check-levels",
+        ):
+            assert clause in text, (path, clause)
+    intake = " ".join(_text().split())
+    assert "first message" in intake
+    assert "up a level" in intake and "never down" in intake
+    assert "Check level is separate from" in intake
+
+
+def _level_policy() -> str:
+    text = (ROOT / "docs/procedure/TASK_TO_MODEL.md").read_text(encoding="utf-8")
+    assert "## Check levels" in text
+    return text.split("## Check levels", 1)[1].split("## GATES", 1)[0]
+
+
+def test_check_level_worker_policy():
+    policy = " ".join(_level_policy().split())
+    for clause in (
+        "[D273]",
+        "When Artem is online, open the scene in his DCC version and give the absolute path instead of renders",
+        "Render only for board cards without him",
+        "`fast`: 1 image",
+        "`standard`: 1 image per item + 1 overview",
+        "Extra angles only for a defect Artem named",
+        "one machine readback (IDs/UV/count, 1-2 calls)",
+        "one dt-reviewer round on committed job scripts",
+        "one PR per job",
+        "Artem accepts the picture or opened scene",
+        "second correction on the same point",
+        "does not waive mandatory gates",
+    ):
+        assert clause in policy, clause
+
+
+def test_check_level_table():
+    policy = _level_policy()
+    rows = [line for line in policy.splitlines() if line.startswith("| `")]
+    assert len(rows) == 3
+    expected = {
+        "fast": ("colouring", "re-export", "no pytest", "no code review"),
+        "standard": ("new node", "jobs/", "exported file", "dt-reviewer"),
+        "full": ("validators", "standards/", "schemas", "shared src/", "passed=true",
+                 "affected tests", "one full suite per PR", "probes", "receipts"),
+    }
+    for level, clauses in expected.items():
+        row = next(line for line in rows if line.startswith(f"| `{level}` |"))
+        for clause in clauses:
+            assert clause in row, (level, clause)
+
+
+def test_check_level_decision_is_recorded_and_linked():
+    log = (ROOT / "docs/decisions.md").read_text(encoding="utf-8")
+    rows = re.findall(r"^\| D273 \|.*$", log, re.M)
+    assert len(rows) == 1
+    assert rows[0].split("|")[-2].strip().startswith("backfill")
+    # Renumbering during a main merge must also update the generated heading anchor.
+    intake = (ROOT / "docs/agents/task-intake.md").read_text(encoding="utf-8")
+    procedure = (ROOT / "docs/procedure/TASK_TO_MODEL.md").read_text(encoding="utf-8")
+    decision = rows[0].split("|")[1].strip()
+    assert f"## Check level [{decision}]" in intake
+    assert f"task-intake.md#check-level-{decision.lower()}" in procedure
+    for clause in ("2026-11-12", "#1273", "#1277", "canopy", "separate cards", "1-2 calls"):
+        assert clause in rows[0], clause
+    for path in ("docs/agents/task-intake.md", ".github/ISSUE_TEMPLATE/task.md",
+                 "docs/procedure/TASK_TO_MODEL.md", "docs/domain/validation.md"):
+        assert "[D273]" in (ROOT / path).read_text(encoding="utf-8"), path
+
+
+def test_check_level_allocation_respects_earlier_reservations():
+    """Combine the #1325 collision with date, anchor and policy regressions (#1280)."""
+    find_collisions = runpy.run_path(str(ROOT / "tools/git-hooks/decision_ids.py"))["find_collisions"]
+    text = (ROOT / "docs/decisions.md").read_text(encoding="utf-8")
+    own = next(line for line in text.splitlines() if line.startswith("| D") and "Adopt #1273 section 4" in line)
+    # Keep the synthetic collision probe independent of earlier claims landing in main.
+    base = "\n".join(line for line in text.replace(own, "").splitlines()
+                     if not line.startswith(("| D271 |", "| D272 |")))
+    # Synthetic rows represent the two earlier claims, not their production policy.
+    earlier = {"PR #1325": "| D271 | earlier milestone decision |",
+               "card #1315": "| D272 | earlier cold-run decision |"}
+    collision = find_collisions(own.replace(own.split("|")[1].strip(), "D271", 1), base, base, earlier)
+    assert len(collision) == 1 and "D271: also allocated by PR #1325" in collision[0]
+    assert find_collisions(own, base, base, earlier) == [], "check-level ID belongs to an earlier claimant"
+    test_check_level_decision_is_recorded_and_linked()
+    test_check_level_intake_contract()
+    test_check_level_worker_policy()
+    test_check_level_table()
+

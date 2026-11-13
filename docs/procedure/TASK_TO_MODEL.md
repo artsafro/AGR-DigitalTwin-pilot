@@ -4,6 +4,7 @@ Read this before building or reducing a model. Start with the card, its area she
 [decisions](../decisions.md) and unresolved [conflicts](../domain/conflicts.md).
 A conflict or unknown source fact is a user question, not a modelling assumption.
 Use the matching `.agents/skills/model-*/SKILL.md` and `validate-delivery` skill.
+For colouring, MAF, fences, windows, Ground, OKS or Flora nodes, start with the [default node recipes R1–R7](NODE_RECIPES.md) [D273].
 
 ## Entry (one sequence, from either entry point)
 
@@ -19,6 +20,30 @@ Use the matching `.agents/skills/model-*/SKILL.md` and `validate-delivery` skill
    Return to [scenario Step 4](../../.agents/skills/scenario/SKILL.md#step-4--work-the-route) for the cell's
    stage route, recording gate evidence here as work proceeds. No build before user Gate 1 confirmation.
 
+## Check levels
+
+Worker policy [D273], adopted from [#1273 section 4](../research/agent-step-waste-1273.md#4-draft-check-levels).
+Record `level: fast | standard | full` at [intake](../agents/task-intake.md#check-level-d273),
+selected by the orchestrator/agent; Artem overrides with one word. The agent may escalate with a one-line
+reason, never downgrade on its own. Use the highest applicable column; shared tooling or a claim of
+`passed=true` means `full`, even inside a job. Checking depth does not waive mandatory gates or
+source/permission rules; a small edit/re-export of an accepted model is not a new delivery certificate [D273].
+
+| Level | Typical work | Machine checks | Review and handoff |
+|---|---|---|---|
+| `fast` | colouring, finish/diffuse swap, small geometry edit described by Artem, re-export of an accepted model | one machine readback (IDs/UV/count, 1-2 calls), plus changed dimensions/map paths as applicable; no pytest | no code review; Artem accepts the picture or opened scene; result path, no commit/PR needed; add a LESSONS.md line for a new preference [D273] |
+| `standard` | new node or object for a job: MAF, fence, windows, Ground patch, OKS body; scripts under jobs/ | readback + cell validators on the exported file | one dt-reviewer round on committed job scripts (not on the picture); one PR per job at the end (scripts + manifest), not per node; Artem accepts the picture or opened scene [D273] |
+| `full` | regulation code/data, validators, standards/, export tooling, schemas, shared src/ modules; a delivery claiming passed=true | readback + validators + affected tests while working, one full suite per PR (rule 49), probes and receipts | dt-reviewer review + Artem acceptance, separate statuses; one PR per issue; full author receipts for code [D273] |
+
+**Visual evidence [D273].** When Artem is online, open the scene in his DCC version and give the absolute path instead of renders.
+Render only for board cards without him. Image limits: `fast`: 1 image (result next to reference);
+`standard`: 1 image per item + 1 overview (contact sheet), each item beside its reference.
+Extra angles only for a defect Artem named. `full` uses the standard image set plus required regulation
+album/sheets. These are limits, not a render quota when the scene is opened [D273].
+
+**Fast stop [D273].** Stop after Artem's «да»; on a second correction on the same point, ask rather than iterate alone.
+For full delivery certification continue through the gates below; technical QA, user acceptance and publication stay separate.
+
 ## GATES (same for every path)
 
 Record every gate in `jobs/<JOB>/job.yaml`; schema:
@@ -30,7 +55,7 @@ Fixed dependency order below follows D104/D125: human geometry acceptance preced
 | ID | Completion evidence |
 |---|---|
 | inputs | Full source inventory with paths and SHA-256; requirement/profile/version, source units, coordinate system and source authority recorded in the job report. Mark synthetic sources. `jobs/<ID>/passport.json` (K1) is required only on the AGR Tools route until a second route exists; other OKS routes record the same facts in `job.yaml` inputs / REPORT [D247]. |
-| parts | `parts.json` validates against [PartsList](../../schemas/PartsList.schema.json), via the public `dt_ai.core.models.PartsList` facade; source coverage, operation and triangle budget per part, joints and questions; **user Gate 1 confirmation before build** (D111/D124/D125). A headless agent requests Gate 1 through the existing board channel ([KANBAN](../agents/KANBAN.md), [WORKFLOW](../agents/WORKFLOW.md) step 0): post the questions (with the `parts.json` path and hash) as an issue comment, move the card to Needs you (a Hermes card: block it as `needs_input` naming that comment), and set the gate to `waits: user`; it builds nothing until the answer. The user's answer is recorded in `parts.json` `gate1` (`actor/date/scope/note`) with `ref` = the answering issue-comment URL, the card id or the `D<n>` decision it became [#1205]; a gate1 without the user's answer is not Gate 1. |
+| parts | `parts.json` validates against [PartsList](../../schemas/PartsList.schema.json), via the public `dt_ai.core.models.PartsList` facade; `source_tier`: A = Revit + album, B = structured FBX/SKP + album, C = mesh soup + album, D = drawings-only (DWG/DXF/PDF, no source mesh); source coverage, operation and triangle budget per part, joints and questions; `triangle_budget` is the allocated project budget for NPM/VPM (OKS ≤150 000 per profile [D010/D161]), not the regulatory ceiling; the ceiling stays in budgets/QA [D276]; **user Gate 1 confirmation before build** (D111/D124/D125). A headless agent requests Gate 1 through the existing board channel ([KANBAN](../agents/KANBAN.md), [WORKFLOW](../agents/WORKFLOW.md) step 0): post the questions (with the `parts.json` path, file SHA-256 and `approval_sha256()`) as an issue comment and set the gate to `waits: user`; for build scope move the card to Needs you (`needs_input` naming that comment), but for Gate-1-only scope use the [scoped handoff below](#gate-1-handoff). It builds nothing until the answer. Record the user's answer in `gate1` (`actor/date/scope/note`), `ref` = answering comment URL/card id/`D<n>`, and `parts_sha256` = the proposed content's `approval_sha256()` [#1205, #1309]. Missing/stale binding or missing answer ref fails the walk; an old object-level approval is not transferable. |
 | operations | Follow the cell's standard route ([oks-vpm body/windows/roof](../scenarios/oks-vpm.md#route-by-stage), [D250]); alternatives use `path: deviation` below. When using [kernel operations](../../src/dt_ai/ops/), apply them to [parts](../../src/dt_ai/parts/); log operation names and before/after invariant results (D108/D131). Broken invariants roll back; stop and ask. Include additional applicable invariants, including D129, when supported; never silently omit a mandatory check. |
 | budgets | Measured budgets vs cited profile/area/decision limits: master, NPM/VPM, UCX, materials, textures, density. Each measurement names its rule and comparison (`le` inclusive, `lt` exclusive); no inferred limit. |
 | export_readback | New versioned export, SHA-256; clean-process readback of **exported file**, checking topology, UV, materials, units/transforms. Working-scene checks alone do not complete this gate. |
@@ -52,6 +77,36 @@ only with **contact pairs = 0** (`totals.overlapping_faces` = 0, the xView Overl
 export; vertex pairs, `area` pairs and bow-tie findings are fixed or listed as deviations with the user's decision.
 Exit 1 = overlaps found, exit 2 = no verdict (bad input); neither is a pass. A job-local overlap script does not
 replace it (review #514: a local check said 0 where xView said 185).
+
+## Gate 1 handoff
+
+Use the existing #1205 channel: post an issue comment with the versioned PartsList path,
+file SHA-256, approval content hash, questions and proposed choices. Record the request URL
+in the job report; keep parts `status: review`, `waits: user` in `job.yaml` while unanswered.
+
+- **Build scope:** move to Needs you / Hermes `needs_input`, naming that comment; resume build only
+  after the user's hash-bound answer. Neither a notification nor a code review is approval.
+- **Scope ends at Gate 1** (measurement, dry-run or parts-only): post the same request and retain
+  `waits: user`, then finish the scoped evidence/report and normal code review handoff: **no needs_input block**
+  merely to wait for an answer outside the card's scope. The job remains incomplete (`passed=false`);
+  downstream production still waits for the user's answer. Hand off the request URL and PartsList identity.
+
+**Approval identity (#1309).** Compute before requesting Gate 1:
+
+```bash
+uv run python -c "from pathlib import Path; from dt_ai.core.models import PartsList; p=PartsList.model_validate_json(Path('jobs/ID/parts.json').read_bytes()); print(p.approval_sha256())"
+```
+
+`gate1.parts_sha256` is this content hash, **not the complete file hash** (which would include itself).
+It hashes the validated, default-expanded PartsList JSON excluding only `gate1` and `status`, with
+sorted keys, compact separators, UTF-8/unescaped Unicode and no NaN/inf; list order matters.
+The user's answer must explicitly name/confirm this hash (or the immutable request that names it).
+Record that exact hash and answer `ref`; changing any proposed content, including source references,
+part budgets, joints or question answers, requires a new request and answer. Resolve questions first,
+then request confirmation of the final proposal. Never refresh an approval hash on the user's behalf.
+Historical unbound lists remain readable but cannot pass the walker. `job.yaml` evidence and downstream
+receipt `parts_sha256` still use SHA-256 of the **complete confirmed file bytes**; re-hash them after
+recording approval. Formatting may preserve approval identity but changes file evidence identity.
 
 ## Free PATH and deviation log
 

@@ -250,12 +250,33 @@ def test_atlas_parity_asset_availability_matrix(tmp_path, local_state, drive_sta
     assert all((tmp_path / name).read_bytes() == value for name, value in before.items())
 
 
-def test_atlas_is_byte_identical_to_the_tec26_job_script_on_ac08(tmp_path):
+def test_atlas_preserves_tec26_ac08_recipe_with_d278_padding(tmp_path):
+    from PIL import Image
+    import numpy as np
+
     spec = atlas_parity_spec(ROOT / "jobs/TEC26-OKS/AC08/vpm_textures.json", tmp_path / "inputs")
     rj = run([sys.executable, ROOT / "jobs/TEC26-OKS/scripts/make_npm_atlas.py", spec, tmp_path / "job"])
     rd = run([sys.executable, ATLAS_TOOL, spec, tmp_path / "dt"])
     assert rj.returncode == 0 and rd.returncode == 0, rj.stderr + rd.stderr
-    assert snapshot(tmp_path / "job") == snapshot(tmp_path / "dt")
+    old = json.loads((tmp_path / 'job/npm_atlas.json').read_text())
+    new = json.loads((tmp_path / 'dt/npm_atlas.json').read_text())
+    assert (old['pad'], new['pad']) == (6, 16)  # old delivery recipe intentionally untouched
+    assert (old['region'], new['region']) == (397, 377)
+    assert old['finishes'].keys() == new['finishes'].keys()
+    source = json.loads(spec.read_text())
+    for name, region in new['finishes'].items():
+        assert region['udim'] == old['finishes'][name]['udim']
+        finish = source['finishes'][name]
+        assert region['px_per_m'] == (round(377/finish['S'], 1) if finish['kind'] == 'full' else None)
+        if finish['kind'] == 'placeholder':
+            with Image.open(tmp_path / 'dt/T_Nku_1_001_Main_d_1.png') as image:
+                x = round(region['u0']*2048)
+                y = round((1-region['v0']-region['size'])*2048)
+                assert np.all(np.asarray(image)[y:y+377, x:x+377] == finish['rgb'])
+    check = run([sys.executable, ATLAS_TOOL, '--check', tmp_path / 'dt/npm_atlas.json',
+                 tmp_path / 'dt/T_Nku_1_001_Main_d_1.png', tmp_path / 'dt/T_Nku_1_001_Main_o_1.png'])
+    assert check.returncode == 0, check.stderr
+    assert json.loads(check.stdout)['per_side_padding_px'] == 16
     assert sorted(snapshot(tmp_path / "dt")) == ["T_Nku_1_001_Main_d_1.png", "T_Nku_1_001_Main_o_1.png", "npm_atlas.json"]
 
 

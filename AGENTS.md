@@ -6,6 +6,7 @@ commands, identifiers and docs in English.
 
 A worker reads three things, then starts: this file, the card's area file `docs/domain/areas/<area>.md`, and the card.
 Long form of the sections below: `docs/agents/agents-reference.md`.
+For NPM/OKS tasks read `routes/npm-oks.md`; call `agr --help` before writing a script.
 
 ## Goal
 
@@ -40,7 +41,7 @@ Read on demand, one line each. Read the domain file that matches the task before
 - AGR knowledge base (Russian, read-only): `docs/agr/INDEX.md` only.
 - Code map, checks and plugin configuration: `docs/agents/agents-reference.md`.
 - Production task (NPM / VPM, OKS / Ground / MAF / Flora / UCX): name its cell in `docs/scenarios/scenarios.json` and follow the `scenario` skill.
-- Modelling or reducing a model: read `docs/procedure/TASK_TO_MODEL.md` (fixed gates, free path, evidence checklist).
+- Model work: `docs/procedure/TASK_TO_MODEL.md` (gates); node edits: [R1–R7](docs/procedure/NODE_RECIPES.md).
 - Task skills: load the matching `.agents/skills/*/SKILL.md` and follow it step by step (details: `docs/agents/agents-reference.md#skills`).
 
 A rule question ("is there a rule for ...?") is looked up in this order, and the first hit wins:
@@ -74,5 +75,5 @@ gets a line in `docs/decisions.md` and its `[D<n>]` where it applies.
   ≤ 80 lines, fixed sections; `docs/agents/WORKFLOW.md`);
   in task branches report state changes in the final summary.
 - A new tool counts as shared only after it is listed in `docs/agents/CAPABILITIES.md` on `main`.
-- Four working principles (assumptions first, simplest fit, surgical changes, verified done): `docs/agents/working-principles.md`.
+
 - AGR Tools (3ds Max panel, `agr-mcp`, OKS conveyor 1.0): start at `docs/agr-tools/OVERVIEW.md`; binding rules (the project passport `jobs/<ID>/passport.json`, `schemas/ProjectPassport.schema.json`, is mandatory, К1): `docs/agents/agr-tools-1.0-rules.md`.
