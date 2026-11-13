@@ -19,6 +19,30 @@ Use the matching `.agents/skills/model-*/SKILL.md` and `validate-delivery` skill
    Return to [scenario Step 4](../../.agents/skills/scenario/SKILL.md#step-4--work-the-route) for the cell's
    stage route, recording gate evidence here as work proceeds. No build before user Gate 1 confirmation.
 
+## Check levels
+
+Worker policy [D273], adopted from [#1273 section 4](../research/agent-step-waste-1273.md#4-draft-check-levels).
+Record `level: fast | standard | full` at [intake](../agents/task-intake.md#check-level-d273),
+selected by the orchestrator/agent; Artem overrides with one word. The agent may escalate with a one-line
+reason, never downgrade on its own. Use the highest applicable column; shared tooling or a claim of
+`passed=true` means `full`, even inside a job. Checking depth does not waive mandatory gates or
+source/permission rules; a small edit/re-export of an accepted model is not a new delivery certificate [D273].
+
+| Level | Typical work | Machine checks | Review and handoff |
+|---|---|---|---|
+| `fast` | colouring, finish/diffuse swap, small geometry edit described by Artem, re-export of an accepted model | one machine readback (IDs/UV/count, 1-2 calls), plus changed dimensions/map paths as applicable; no pytest | no code review; Artem accepts the picture or opened scene; result path, no commit/PR needed; add a LESSONS.md line for a new preference [D273] |
+| `standard` | new node or object for a job: MAF, fence, windows, Ground patch, OKS body; scripts under jobs/ | readback + cell validators on the exported file | one dt-reviewer round on committed job scripts (not on the picture); one PR per job at the end (scripts + manifest), not per node; Artem accepts the picture or opened scene [D273] |
+| `full` | regulation code/data, validators, standards/, export tooling, schemas, shared src/ modules; a delivery claiming passed=true | readback + validators + affected tests while working, one full suite per PR (rule 49), probes and receipts | dt-reviewer review + Artem acceptance, separate statuses; one PR per issue; full author receipts for code [D273] |
+
+**Visual evidence [D273].** When Artem is online, open the scene in his DCC version and give the absolute path instead of renders.
+Render only for board cards without him. Image limits: `fast`: 1 image (result next to reference);
+`standard`: 1 image per item + 1 overview (contact sheet), each item beside its reference.
+Extra angles only for a defect Artem named. `full` uses the standard image set plus required regulation
+album/sheets. These are limits, not a render quota when the scene is opened [D273].
+
+**Fast stop [D273].** Stop after Artem's «да»; on a second correction on the same point, ask rather than iterate alone.
+For full delivery certification continue through the gates below; technical QA, user acceptance and publication stay separate.
+
 ## GATES (same for every path)
 
 Record every gate in `jobs/<JOB>/job.yaml`; schema:
