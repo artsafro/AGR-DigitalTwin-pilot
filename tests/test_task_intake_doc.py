@@ -88,7 +88,7 @@ def test_check_level_intake_contract():
             "orchestrator/agent sets",
             "at intake",
             "Artem overrides with one word",
-            "[D268]",
+            "[D271]",
             "TASK_TO_MODEL.md#check-levels",
         ):
             assert clause in text, (path, clause)
@@ -107,7 +107,7 @@ def _level_policy() -> str:
 def test_check_level_worker_policy():
     policy = " ".join(_level_policy().split())
     for clause in (
-        "[D268]",
+        "[D271]",
         "When Artem is online, open the scene in his DCC version and give the absolute path instead of renders",
         "Render only for board cards without him",
         "`fast`: 1 image",
@@ -141,12 +141,18 @@ def test_check_level_table():
 
 def test_check_level_decision_is_recorded_and_linked():
     log = (ROOT / "docs/decisions.md").read_text(encoding="utf-8")
-    rows = re.findall(r"^\| D268 \|.*$", log, re.M)
+    rows = re.findall(r"^\| D271 \|.*$", log, re.M)
     assert len(rows) == 1
+    # Renumbering during a main merge must also update the generated heading anchor.
+    intake = (ROOT / "docs/agents/task-intake.md").read_text(encoding="utf-8")
+    procedure = (ROOT / "docs/procedure/TASK_TO_MODEL.md").read_text(encoding="utf-8")
+    decision = rows[0].split("|")[1].strip()
+    assert f"## Check level [{decision}]" in intake
+    assert f"task-intake.md#check-level-{decision.lower()}" in procedure
     for clause in ("2026-11-12", "#1273", "#1277", "canopy", "separate cards", "1-2 calls"):
         assert clause in rows[0], clause
     for path in ("docs/agents/task-intake.md", ".github/ISSUE_TEMPLATE/task.md",
                  "docs/procedure/TASK_TO_MODEL.md", "docs/domain/validation.md"):
-        assert "[D268]" in (ROOT / path).read_text(encoding="utf-8"), path
+        assert "[D271]" in (ROOT / path).read_text(encoding="utf-8"), path
 
 

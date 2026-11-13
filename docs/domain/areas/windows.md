@@ -67,6 +67,8 @@ and the C25 infill recess (30 or 35 mm, both under 5 cm). It is recorded in
 [conflicts.md](../conflicts.md#c-between-local-sources-project-decisionslessons), not decided.
 C23 and C25 keep their status; C24 is decided [D037].
 
+NTR corpus research [D267]: [source-referenced draft](../../research/ntr-pdf-corpus-pilot.md) lists facade glazing families only, not dimensioned window blocks or approved library entries; no WIN-17 acceptance is implied.
+
 ## L2 gaps
 
 Rows with `none` (9):

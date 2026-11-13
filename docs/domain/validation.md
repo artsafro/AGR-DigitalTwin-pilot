@@ -2,7 +2,7 @@
 
 Keys: `reg p.N` = `Rasporyajenies19012026trebovaniya(2).pdf` page N. `local:` relative to the repo root (AGR knowledge base; AGR `docs/` lives in `docs/agr/`).
 
-Check depth and visual-evidence limits: [worker check levels](../procedure/TASK_TO_MODEL.md#check-levels) [D268]. A level never certifies an incomplete delivery or waives a mandatory check below.
+Check depth and visual-evidence limits: [worker check levels](../procedure/TASK_TO_MODEL.md#check-levels) [D271]. A level never certifies an incomplete delivery or waives a mandatory check below.
 
 ## Delivery validator specification and implementation status (V001–V017) — local: standards/DELIVERY_VALIDATOR.yaml
 
