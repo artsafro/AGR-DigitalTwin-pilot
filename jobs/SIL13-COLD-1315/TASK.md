@@ -26,8 +26,9 @@ Scope decision: [D272] in `docs/decisions.md`; cells `ground-npm` and `ground-vp
 
 Source-content decision [D275]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6852165269
 approves boundary 33FBCEF, the planting plan/table and the named VP definition. Those questions are closed.
-The project zero/design-mark choice is still open. No relief heights have been inferred.
-`parts-pilot-draft.json` is a validated draft, not a fabricated confirmed PartsList; it proposes the
+The delegated zero and exact pilot plan are answered [D279]: 142.10 m from VP_5 floor-mark
+pair 33F8EC4/33F8EC5; 5.6 m maple nominal. `parts-pilot-confirmed.json` records the issue answer,
+while `parts-pilot-draft.json` preserves the exact accepted draft. The plan proposes the
 source window XY [820,11024]–[850,11046] clipped to 33FBCEF and the six position-3 maples.
 The source-only DXF contains one boundary polyline and 52 POINTs, not constructed delivery geometry.
 
@@ -56,6 +57,11 @@ symbols extracted, 52/52 inside the approved boundary and preserved by DXF readb
 match all five point-plant schedule quantities (1, 4, 6, 17, 24). A linden-named CAD symbol is position 2/4,
 not authority to substitute linden for Red Sunset. Flora candidates remain subject to identity/size checks.
 MAF: all 32 DOCX rows accounted for; no certified SKU-to-model match yet (not proof of disk-wide absence).
-Construction still awaits the exact pilot PartsList approval and height/size answers; zero, paired marks,
-flowerbed rates and unresolved library mappings have not been guessed. Source-only image is NOT pilot
-acceptance. See REPORT.md and job.yaml. Technical QA, user acceptance and publication remain incomplete.
+Current continuation is [PILOT-v003.md](PILOT-v003.md): the accepted two-part plan is now
+constructed/exported/read back in both profiles. Ground 938 triangles; six library maples
+NPM 60 / VPM 6420 triangles; xView 0/0 in both FBX. Public validators FAIL; not delivery.
+The required next gate is the partial-pilot picture plus identification of 17.008947 m2 of
+unmapped source covering and recovery of the missing original Acer diffuse/opacity maps.
+Zero/plan/nominal-height answers are closed [D279], not asked again. Remainder, Ground UCX,
+MAF placements, complete vegetation/atlases/UV/georeferencing and manual/SINTEZ gates remain.
+Technical QA, user acceptance and publication remain incomplete; no readiness increase.

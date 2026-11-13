@@ -1,0 +1,281 @@
+{
+  "passed": false,
+  "status": "constructed_partial_pilot_waits_picture_and_missing_inputs",
+  "evidence_root": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v003",
+  "project_zero_m": 142.1,
+  "pilot_area_m2": 474.38573602447707,
+  "unresolved_covering_area_m2": 17.008946980179573,
+  "profiles": {
+    "NPM": {
+      "sha256": "d1f9c181bc549391882be8ffd35696889c5d963cd3d7c34df8a3f9eac945c579",
+      "mesh_count": 2,
+      "meshes": [
+        {
+          "name": "SM_SIL13_Flora",
+          "vertices": 120,
+          "triangles": 60,
+          "uv_channels": 1,
+          "materials": [
+            "Acer_ID107"
+          ],
+          "location": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            -0.0,
+            8.742277657347586e-08
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "bbox_m": [
+            [
+              -13.663932800292969,
+              -11.515833854675293,
+              -0.4474108815193176
+            ],
+            [
+              12.255188941955566,
+              10.905097007751465,
+              6.26289701461792
+            ]
+          ],
+          "nontriangles": 0,
+          "nonfinite": 0
+        },
+        {
+          "name": "SM_SIL13_Ground",
+          "vertices": 536,
+          "triangles": 938,
+          "uv_channels": 1,
+          "materials": [
+            "BaseLawn",
+            "Rubber253",
+            "Rubber18",
+            "Skirt"
+          ],
+          "location": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            -0.0,
+            8.742277657347586e-08
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "bbox_m": [
+            [
+              -15.000000953674316,
+              -11.000000953674316,
+              -1.4687602519989014
+            ],
+            [
+              14.999999046325684,
+              11.000000953674316,
+              0.26635807752609253
+            ]
+          ],
+          "nontriangles": 0,
+          "nonfinite": 0
+        }
+      ],
+      "plants_checked": 6,
+      "plant_controls": [
+        {
+          "handle": "33F02A9",
+          "sinking_error_m": 1.5754665072531537e-09,
+          "height_error_m": 3.70473202337962e-07,
+          "visible_height_m": 5.477406971071247
+        },
+        {
+          "handle": "33F02AB",
+          "sinking_error_m": 4.9331220219883676e-09,
+          "height_error_m": 2.92637664323081e-07,
+          "visible_height_m": 5.776760775878188
+        },
+        {
+          "handle": "33F02AC",
+          "sinking_error_m": 5.336880798401111e-09,
+          "height_error_m": 1.5510054218736968e-07,
+          "visible_height_m": 5.524912673858523
+        },
+        {
+          "handle": "33F02AD",
+          "sinking_error_m": 4.349266197190005e-09,
+          "height_error_m": 3.1696643176815087e-07,
+          "visible_height_m": 5.989108396945511
+        },
+        {
+          "handle": "33F02AE",
+          "sinking_error_m": 4.524741692435441e-12,
+          "height_error_m": 2.0734154304591357e-07,
+          "visible_height_m": 6.149929687012786
+        },
+        {
+          "handle": "33F02AF",
+          "sinking_error_m": 2.730678266837927e-09,
+          "height_error_m": 2.551125479755001e-07,
+          "visible_height_m": 6.096654210735153
+        }
+      ],
+      "technical_checks": "Counts/UV-channel presence/transforms/numeric size verified; texture content, botanical identity, topology and full delivery not passed"
+    },
+    "VPM": {
+      "sha256": "f29cd3a1ebe54463b72f0ad4f03a2c79af22ef5b4c35bcc511554b352cfce6d9",
+      "mesh_count": 2,
+      "meshes": [
+        {
+          "name": "SM_SIL13_Ground",
+          "vertices": 536,
+          "triangles": 938,
+          "uv_channels": 1,
+          "materials": [
+            "BaseLawn.001",
+            "Rubber253.001",
+            "Rubber18.001",
+            "Skirt.001"
+          ],
+          "location": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            -0.0,
+            8.742277657347586e-08
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "bbox_m": [
+            [
+              -15.000000953674316,
+              -11.000000953674316,
+              -1.4687602519989014
+            ],
+            [
+              14.999999046325684,
+              11.000000953674316,
+              0.26635807752609253
+            ]
+          ],
+          "nontriangles": 0,
+          "nonfinite": 0
+        },
+        {
+          "name": "SM_SIL13_Ground_Vegetation",
+          "vertices": 6462,
+          "triangles": 6420,
+          "uv_channels": 1,
+          "materials": [
+            "Acer_ID107.001"
+          ],
+          "location": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            -0.0,
+            8.742277657347586e-08
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "bbox_m": [
+            [
+              -11.856512069702148,
+              -10.741498947143555,
+              -0.4474108815193176
+            ],
+            [
+              10.761027336120605,
+              9.055635452270508,
+              6.262897491455078
+            ]
+          ],
+          "nontriangles": 0,
+          "nonfinite": 0
+        }
+      ],
+      "plants_checked": 6,
+      "plant_controls": [
+        {
+          "handle": "33F02A9",
+          "sinking_error_m": 1.5754665072531537e-09,
+          "height_error_m": 1.0636395586516301e-07,
+          "visible_height_m": 5.477407447908405
+        },
+        {
+          "handle": "33F02AB",
+          "sinking_error_m": 4.9331220219883676e-09,
+          "height_error_m": 1.8419949388004397e-07,
+          "visible_height_m": 5.776761252715346
+        },
+        {
+          "handle": "33F02AC",
+          "sinking_error_m": 5.336880798401111e-09,
+          "height_error_m": 3.217366160157553e-07,
+          "visible_height_m": 5.5249131506956815
+        },
+        {
+          "handle": "33F02AD",
+          "sinking_error_m": 4.349266197190005e-09,
+          "height_error_m": 1.5987072643497413e-07,
+          "visible_height_m": 5.989108873782669
+        },
+        {
+          "handle": "33F02AE",
+          "sinking_error_m": 4.524741692435441e-12,
+          "height_error_m": 2.6949561515721143e-07,
+          "visible_height_m": 6.149930163849945
+        },
+        {
+          "handle": "33F02AF",
+          "sinking_error_m": 2.730678266837927e-09,
+          "height_error_m": 2.217246102276249e-07,
+          "visible_height_m": 6.096654687572311
+        }
+      ],
+      "technical_checks": "Counts/UV-channel presence/transforms/numeric size verified; texture content, botanical identity, topology and full delivery not passed"
+    }
+  },
+  "source_inputs_after": [
+    {
+      "source": "PZU",
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\pzu-20261104.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2"
+    },
+    {
+      "source": "flora-library",
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\v003\\flora-library-v003.max",
+      "sha256": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74"
+    }
+  ],
+  "open_items": [
+    "pilot picture acceptance",
+    "17.008947m2 covering authority",
+    "original Acer diffuse/opacity recovery",
+    "all public validator failures in PILOT-v003.md",
+    "full-site Ground/UCX/MAF/Flora construction",
+    "visual/full SINTEZ gates"
+  ],
+  "new_shared_code": false
+}

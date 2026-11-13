@@ -1,0 +1,443 @@
+{
+  "passed": false,
+  "status": "constructed_partial_pilot_waits_picture_and_missing_inputs",
+  "evidence_root": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v003",
+  "manifest_sha256": "cdf1e5afbec0abc21049946b96a338baf7e58372146e05e02d84ed9a2945f833",
+  "files": [
+    {
+      "filename": "Acer_platanoides_NPM.fbx",
+      "sha256": "5afa5710293bc0f84c1214c3c6e85c1121a42f0a8592b16ae26b690741fc4da6",
+      "bytes": 29744
+    },
+    {
+      "filename": "Acer_platanoides_VPM.fbx",
+      "sha256": "ba08eb2e14ad228f122a3671109d917e459c3adff39ce90cabe6dbabc216e4cd",
+      "bytes": 89472
+    },
+    {
+      "filename": "blender-build.log",
+      "sha256": "27158b1a28c313b1a30790f50498ab6c2d82ae34c4d5039b5452fc33b8bda99a",
+      "bytes": 1555
+    },
+    {
+      "filename": "build_pilot.py",
+      "sha256": "579d47869b471464c0fd521cba3561e37eaa5402265a11ee214adc2c50ba8bb5",
+      "bytes": 7973
+    },
+    {
+      "filename": "confirm_parts.py",
+      "sha256": "bc12514304ad540e73b217f80521b69a9e549c3bc3d484270dd471817be13e25",
+      "bytes": 1577
+    },
+    {
+      "filename": "diagnose_faces.py",
+      "sha256": "fe5f33b32b07085fad4d5b6988e3d955334f756fb5b2189195f45335caf23072",
+      "bytes": 845
+    },
+    {
+      "filename": "extract_flora.py",
+      "sha256": "0961f6370e4ca12246d4869919f692f9be4dcbe057460c78a1a0d3c76b130c4c",
+      "bytes": 1644
+    },
+    {
+      "filename": "flat-NPM.blend",
+      "sha256": "3536a0b0fe35f1f4d7ad78408a433cc57b9e38e3b92523ac246c7cd0dbe5fb75",
+      "bytes": 117434
+    },
+    {
+      "filename": "flat-VPM.blend",
+      "sha256": "11ba72d90aa80fa1590d1b5ecbe44a9e378f57f06b828ed4d36a62d428b50b5c",
+      "bytes": 121644
+    },
+    {
+      "filename": "flora-extract-result.json",
+      "sha256": "c5c4183f74acd9533d9b3f764471f18280f8b20ac312255f46d8066b18da6889",
+      "bytes": 2740
+    },
+    {
+      "filename": "flora-library-copy.max",
+      "sha256": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74",
+      "bytes": 2561364
+    },
+    {
+      "filename": "flora-native-census.json",
+      "sha256": "604ff7e870a0e35691564bf6348fff9d64cefbdb1b9a20fb21b4be9e761e8d8e",
+      "bytes": 1351
+    },
+    {
+      "filename": "flora-stage.json",
+      "sha256": "3c3a38cd21262f4d6be75d544fd8873c10f5caf81f1c8db12488a2bdb1edf4e6",
+      "bytes": 251
+    },
+    {
+      "filename": "input-hashes-v003.json",
+      "sha256": "a5f7f56cf68c4edc10e85f03b2e96f4fb97992678dfc81feee67aa96cf063564",
+      "bytes": 487
+    },
+    {
+      "filename": "inspect_pilot.py",
+      "sha256": "43aa726c112d88ab960b7215c12f59e9219f9dd0d683577278ce5c0e160259eb",
+      "bytes": 1540
+    },
+    {
+      "filename": "inspection.txt",
+      "sha256": "3714017f589f3a2eb5cb5832444163b6dd99ad9f69c14f569f974542bc314672",
+      "bytes": 17740
+    },
+    {
+      "filename": "max-ping.json",
+      "sha256": "8cb95e1b093a4b769d76e475774f5c31fa740c4e11afe50c467627b2df52aac5",
+      "bytes": 2070
+    },
+    {
+      "filename": "pilot-buffers.json",
+      "sha256": "8adf6d9dfcdd5f6c6aa187fb9735e2399aae0a1d81a9cc5e00ec8ed66847b81b",
+      "bytes": 53709
+    },
+    {
+      "filename": "pilot-build.json",
+      "sha256": "928c069c625b3cf01645c5beadadd2661e2483029b20a01f487c05f2df851761",
+      "bytes": 7462
+    },
+    {
+      "filename": "pilot-NPM-oblique.png",
+      "sha256": "c9e20f77741d9192d792443e124f48ddc523c35d92a639e85498d35e396e067b",
+      "bytes": 1194037
+    },
+    {
+      "filename": "pilot-NPM-top.png",
+      "sha256": "f92b95a89465ca94f80a6b1bf781847308202aac283ef8bff29b2db15b681ee1",
+      "bytes": 1299912
+    },
+    {
+      "filename": "pilot-NPM.blend",
+      "sha256": "77196787817c2f6cd6217cd3a31a941a9318f61d970c176d626b18c6c50d1f0b",
+      "bytes": 130199
+    },
+    {
+      "filename": "pilot-NPM.fbx",
+      "sha256": "32f865f43ab0ce3565abdf41797a9eb080a9c29324e7b12283685e998d6e5021",
+      "bytes": 53804
+    },
+    {
+      "filename": "pilot-source.json",
+      "sha256": "aba1b3c0620c070cd99dd05f63bcbc9e41b1a7248fd717bd78be558356c37657",
+      "bytes": 529722
+    },
+    {
+      "filename": "pilot-VPM-oblique.png",
+      "sha256": "c90245255b3cbb88f57a84230686d17306f6fc8f47a6da06104fc3c6b8dbabe3",
+      "bytes": 1226591
+    },
+    {
+      "filename": "pilot-VPM-top.png",
+      "sha256": "ced15d87f2b8cb266650bfaa67986b9bc17ee2247926d8ad3d20558119c8f126",
+      "bytes": 1354652
+    },
+    {
+      "filename": "pilot-VPM.blend",
+      "sha256": "dc206c7e28dda5f15aa196c6d73fa594ab4fb2f2f2b3f609d3bacf0b8ebb97bc",
+      "bytes": 293375
+    },
+    {
+      "filename": "pilot-VPM.fbx",
+      "sha256": "6ad3b77de01441c291d30723c5555d610da539faa42455cd0a93cecd6fb42185",
+      "bytes": 323068
+    },
+    {
+      "filename": "prepare_buffers.py",
+      "sha256": "1ba04129364a4e4e69adb0f9dc26671d769dbe50331139517fabe16f3d0c00df",
+      "bytes": 3412
+    },
+    {
+      "filename": "prepare_pilot.py",
+      "sha256": "054e73962fec937b404a6f623d1fe3fc194f5d08a096e757aa05b7ff67b0b3b5",
+      "bytes": 4020
+    },
+    {
+      "filename": "r2/degenerate-diagnostic.json",
+      "sha256": "a9216ac05e79052c1ebfc4711150e67eb59d7ba26e8ddaaa8094960a6cdd7dd4",
+      "bytes": 2420
+    },
+    {
+      "filename": "r2/diagnose.log",
+      "sha256": "3628cb04da3cd41db9b6e562eccffaa256eda14a5bfe59a4c4482c5e1dce8ffb",
+      "bytes": 1624
+    },
+    {
+      "filename": "r2/pilot-NPM.blend",
+      "sha256": "7a01047933ed3b8d4793b6a040ad7366ad59e3328433281ad89cf803c3813017",
+      "bytes": 123835
+    },
+    {
+      "filename": "r2/pilot-NPM.fbx",
+      "sha256": "9b7aa053b2a5658a9bb6764da5269fd4758398b899ea312d7c34eefcded77251",
+      "bytes": 52428
+    },
+    {
+      "filename": "r2/pilot-VPM.blend",
+      "sha256": "d4a8192fd59933d78957b8e137cad7819bf67b0551b0ccec865770da53a439b9",
+      "bytes": 285920
+    },
+    {
+      "filename": "r2/pilot-VPM.fbx",
+      "sha256": "4870f2d72c0ac5204d429f11c9bb59d66c776c7ff2892782fe5494bfd38eeb48",
+      "bytes": 321612
+    },
+    {
+      "filename": "r2/readback.log",
+      "sha256": "7875b03da08e3b957ce931a411c02ea9312710944e79dd27ee7de3e45ed390b2",
+      "bytes": 486
+    },
+    {
+      "filename": "r2/repair.json",
+      "sha256": "07e1386537ae3ba722645bf342f9f8ac6b3858c6fdfcbdf1b9848d3f5dda9b09",
+      "bytes": 513
+    },
+    {
+      "filename": "r2/validator-NPM.json",
+      "sha256": "b13402edeff189548973a13b40341dfc098dd3407d244adccf00af08e29c9bdf",
+      "bytes": 10925
+    },
+    {
+      "filename": "r2/xview-NPM.json",
+      "sha256": "4afbbf942704fa045f8e0ed39880a7bcd8310dfd58525f5a9a249ad603f31273",
+      "bytes": 3089
+    },
+    {
+      "filename": "r2/xview-NPM.json.blender.log",
+      "sha256": "1ee9a834dd543b5d4069a499b10d83f2a76bbf8f0ba454d1388a3d2723b73c3f",
+      "bytes": 807
+    },
+    {
+      "filename": "r2/xview-VPM.json",
+      "sha256": "6e0543409658ab27efde3534d38c938c7dd5f678d198613fe0a8322fd2d7f85a",
+      "bytes": 3116
+    },
+    {
+      "filename": "r2/xview-VPM.json.blender.log",
+      "sha256": "efbb507c9d90918cb9d5e93f06a522deca1dc89ca749eaad6b491df2b992dca9",
+      "bytes": 807
+    },
+    {
+      "filename": "r3/board-preview-attachment-12.jpg",
+      "sha256": "67612c6445f342ca1058e0ac489b3cd0cda3fc98691efe872ad11a50dc6357e1",
+      "bytes": 6642
+    },
+    {
+      "filename": "r3/NPM/SM_SIL13_Ground.fbx",
+      "sha256": "d1f9c181bc549391882be8ffd35696889c5d963cd3d7c34df8a3f9eac945c579",
+      "bytes": 52140
+    },
+    {
+      "filename": "r3/pilot-NPM.blend",
+      "sha256": "5cfd1f1e6869668ca5e9c47b55a37051f8839501cf9416e041e9bd431387f879",
+      "bytes": 123312
+    },
+    {
+      "filename": "r3/pilot-NPM.fbx",
+      "sha256": "d1f9c181bc549391882be8ffd35696889c5d963cd3d7c34df8a3f9eac945c579",
+      "bytes": 52140
+    },
+    {
+      "filename": "r3/pilot-readback.json",
+      "sha256": "f4c1bf42bef3f1a72645a651ecde2e29969402196cfc3685c12dae2ef5e82129",
+      "bytes": 7018
+    },
+    {
+      "filename": "r3/pilot-review-preview.jpg",
+      "sha256": "387a7b8fae8a09f0f7421d6c4a5838e0f5ef39bafeb2d02da3b99b047aaeaf8e",
+      "bytes": 38260
+    },
+    {
+      "filename": "r3/pilot-review-sheet.png",
+      "sha256": "58502b6e8d1d330c2ca3b0d1eddf8ad3a91be8d2ce8f497b44dc4189157460d5",
+      "bytes": 672592
+    },
+    {
+      "filename": "r3/pilot-thumb.jpg",
+      "sha256": "0e471d59ed6cf0e31e92a97ef70d0a8a6ce9056535b82009ea94b9573ec2f452",
+      "bytes": 6603
+    },
+    {
+      "filename": "r3/pilot-VPM.blend",
+      "sha256": "abcf23afe24f607a0d8cf4253ae6e85713c417aae73cd0f93c22e78b66a30b98",
+      "bytes": 285543
+    },
+    {
+      "filename": "r3/pilot-VPM.fbx",
+      "sha256": "f29cd3a1ebe54463b72f0ad4f03a2c79af22ef5b4c35bcc511554b352cfce6d9",
+      "bytes": 321324
+    },
+    {
+      "filename": "r3/readback-NPM-oblique.png",
+      "sha256": "e8b3016965b1ece993e295a11c09a609c26a2e8b78330f9c0b0b6d2fd53b487c",
+      "bytes": 1160794
+    },
+    {
+      "filename": "r3/readback-NPM-top.png",
+      "sha256": "f38eb5e33e2b744bcdd1899283ce5657123a7962d1254fa82f4354aaeea66239",
+      "bytes": 1267388
+    },
+    {
+      "filename": "r3/readback-VPM-oblique.png",
+      "sha256": "c42b87adb31bac0617fc9345ef473306c0675f4db7fe1dd9f04641fc2d2c8ee2",
+      "bytes": 1194209
+    },
+    {
+      "filename": "r3/readback-VPM-top.png",
+      "sha256": "bf9e4d56ca902135bd888861ba86f4cd9cecc574cb88ec2aa0542043cc38c52b",
+      "bytes": 1299683
+    },
+    {
+      "filename": "r3/readback.log",
+      "sha256": "35b4fdaa13d9fe68eea7d6626f8da899516144e111a43daa56ed5fe4190b2924",
+      "bytes": 166
+    },
+    {
+      "filename": "r3/render.log",
+      "sha256": "39b758b000fa3ea8658198d8f88c24ca2ba9346e57729b198ce0e3016c1d4cab",
+      "bytes": 1262
+    },
+    {
+      "filename": "r3/repair.json",
+      "sha256": "5f13fc617a0cf8298ac6d6ffcb07f5170c757fa341502aa66f59b8f954233393",
+      "bytes": 549
+    },
+    {
+      "filename": "r3/validator-NPM.json",
+      "sha256": "84cf9af5409203b2340c0105edad40ca74c1c4e0204912e8ea9dd319e8c619e3",
+      "bytes": 14481
+    },
+    {
+      "filename": "r3/validator-VPM.json",
+      "sha256": "94323552a4ff97a59675070c6637510056aaef5a17f47adfe7e27d0b69bae113",
+      "bytes": 18096
+    },
+    {
+      "filename": "r3/VPM/SM_SIL13_Ground.fbx",
+      "sha256": "f29cd3a1ebe54463b72f0ad4f03a2c79af22ef5b4c35bcc511554b352cfce6d9",
+      "bytes": 321324
+    },
+    {
+      "filename": "r3/xview-NPM.json",
+      "sha256": "c41ed775b045875807a0ddc303fb2bad9c72e39f619e709d9c25de44fd18db2d",
+      "bytes": 1813
+    },
+    {
+      "filename": "r3/xview-NPM.json.blender.log",
+      "sha256": "30cbb79db949977046a9eb5c903501bb7c97fce7f9bfbe653c76c62302787f85",
+      "bytes": 807
+    },
+    {
+      "filename": "r3/xview-VPM.json",
+      "sha256": "c1b991a4b406b4d58cb396bfd87819b7eaa12d496f505db283a86f133cc851ea",
+      "bytes": 1840
+    },
+    {
+      "filename": "r3/xview-VPM.json.blender.log",
+      "sha256": "ddf390827f45920bdfda8f353eeda86c348bc901b52d0f462217025d060c0282",
+      "bytes": 807
+    },
+    {
+      "filename": "readback-crash-v001.txt",
+      "sha256": "7e0e53aff7a430a81b9c74125db81a87906b1f460abaef9f1808e5b2d1a6f1c3",
+      "bytes": 12817
+    },
+    {
+      "filename": "readback.log",
+      "sha256": "68152b27f43d28459f89a7bfba88e890fcaa39c7bb651d6bceb9d20ba447743b",
+      "bytes": 231
+    },
+    {
+      "filename": "readback_pilot.py",
+      "sha256": "40ffc08b193d5447c90de9d772b25aa64598811e2604b35d6414c02ba774d4bc",
+      "bytes": 2973
+    },
+    {
+      "filename": "render_exports.py",
+      "sha256": "ae15355d6b061b04e5496d505aca956ebe8bea71a07ddeee663a50706b0e990e",
+      "bytes": 1567
+    },
+    {
+      "filename": "repair-crop.log",
+      "sha256": "b038e02bc0eb815865b8c9c6131a15a5a47b9d0684587ddb93073b26e5efc34e",
+      "bytes": 1234
+    },
+    {
+      "filename": "repair-seams.log",
+      "sha256": "e1982b8eaa6c275d8cdfed2613b8c500241d936d6e09a71c843f3296d3221818",
+      "bytes": 1138
+    },
+    {
+      "filename": "repair_crop.py",
+      "sha256": "0585ed70eb0fbd55c59fa9a5c94200e14c4e33d9c339cfddfcbc1fa26c51dd46",
+      "bytes": 2077
+    },
+    {
+      "filename": "repair_seams.py",
+      "sha256": "75c4e249885e2c04161402e11405d997549a304247c09cd167da5426f77a46f9",
+      "bytes": 1337
+    },
+    {
+      "filename": "resolve_sources.py",
+      "sha256": "6958d3147a4c4574e1daf1088031858a5b642e124913242194664504372e5bcf",
+      "bytes": 1391
+    },
+    {
+      "filename": "resolved.txt",
+      "sha256": "074b2794068bde74bf07e73233aeb03a05b7bdf1abf2dbbc8bc0bbef8820bee0",
+      "bytes": 6034
+    },
+    {
+      "filename": "review_sheet.py",
+      "sha256": "6d47264d923475525385d1ba148b3bf7c7ab383cc8835f53b172e0315b09df47",
+      "bytes": 3856
+    },
+    {
+      "filename": "seal_pilot.py",
+      "sha256": "12d9d03000072b1365e7fd0487880a06307f25ed12642b05a1ee8d177f2bdba6",
+      "bytes": 2935
+    },
+    {
+      "filename": "stage_flora.py",
+      "sha256": "fa6912ebb068241e15b2e91f39ffb98e43a3b9da6845ccc170f6fff3aae68d6f",
+      "bytes": 873
+    },
+    {
+      "filename": "stage_validators.py",
+      "sha256": "92955d3b87b77f2da71ce0ab93ca3e0ef86ccdccc7450fb85c8e88568f7dc18e",
+      "bytes": 504
+    },
+    {
+      "filename": "xview-NPM.json",
+      "sha256": "09ad3a0cbf30bbdfaffe6c63f2789e1622d66641a7a9244d6347ffdadf214aec",
+      "bytes": 242479
+    },
+    {
+      "filename": "xview-NPM.json.blender.log",
+      "sha256": "7acc8568df33c20341fe3e344fb3165780bf14f8b20f15ba2432ce55ee0dcebf",
+      "bytes": 795
+    },
+    {
+      "filename": "xview-NPM.log",
+      "sha256": "aca1937ac9e2dc54de9f7d5704b5ee0349384b8c9885f3fe7a8d53d60f3ba49f",
+      "bytes": 423
+    },
+    {
+      "filename": "xview-VPM.json",
+      "sha256": "5ce9be987b76a1a4ca367f5453480da2d873a675fb469101ecf1b79e5419357e",
+      "bytes": 242506
+    },
+    {
+      "filename": "xview-VPM.json.blender.log",
+      "sha256": "337f81872a4b8ee66f3d5d29004c1cf537e7de8bb316af1c2cc1584fc17b11e0",
+      "bytes": 795
+    },
+    {
+      "filename": "xview-VPM.log",
+      "sha256": "90cc4db57846d3b7aef2e32031dfc70843c3f4adde2b3d0e74011f85c7e4c955",
+      "bytes": 435
+    }
+  ]
+}

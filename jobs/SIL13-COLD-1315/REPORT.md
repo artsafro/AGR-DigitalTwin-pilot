@@ -1,6 +1,10 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **source authority answered; height/PartsList gates open, not delivered**.
+Current status: **constructed partial pilot v003/r3; picture/missing-input gate, not delivered**.
+See [PILOT-v003.md](PILOT-v003.md) for the current built/exported/read-back evidence,
+public validator failures and required next answer. The v001/v002 sections below are historical.
+
+Historical v002 status: **source authority answered; height/PartsList gates open, not delivered**.
 Boundary and 52 source symbols exported/read back as source-only DXF. No constructed Ground/UCX,
 library placements, model exports, delivery validators, visual approval or SINTEZ run.
 No readiness increase claimed. The v001 facts/questions below are historical; v002 closes authority

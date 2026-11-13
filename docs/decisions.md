@@ -303,6 +303,8 @@ frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Mar
 
 | D275 | 2026-11-13 | Silikatny cold reproduction #1315: use closed boundary 33FBCEF on `участки зоны`, actual 12,958.739 m2 without fitting to 12,961; use table 33EFCD8/*T972 together with the `Силикатный_350+150_Озеленение` plan (11 trees, 41 shrubs, 4535 hedge plants); flowerbed 133 m2 remains unresolved without species rates. Use `ACAD-Силикатный ВП_5 (пониженеие отметок)-Model16.10.2026`, excluding legend samples, never infer a flat site. Boundary/greening/pilot preparation may proceed; relief heights wait for the still-open project-zero and design-mark answer. | `jobs/SIL13-COLD-1315/TASK.md`; `docs/domain/areas/ground-surface.md` | Artem «принимаю рекомендации», relayed in issue #1315 comment 6852165269 and Kanban t_d9ae7dc0 |
 
+| D279 | 2026-11-13 | Silikatny cold reproduction #1315: the agent selects project zero from the authorized PZU/VP_5 evidence and uses project, not existing, marks. Choose 142.10 m because VP_5 floor-mark 33F8EC4=142.10 is paired with 33F8EC5=0.000. The proposed 5.6 m maple height and exact two-part pilot draft (SHA-256 60169190f8cea4fc0bbdb1b25e12ef471a0752896f158c6a3349143f72d0d553) are accepted as a plan; build the pilot and show its picture before the remainder. No texture, library identity, covering or delivery-check waiver. | `jobs/SIL13-COLD-1315/REPORT.md`, `docs/domain/areas/ground-surface.md` | Artem «ноль выбери какой удобно», issue comments 6854271480 / 6859055997 and owning card t_d9ae7dc0 |
+
 [passport-scope-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1207#issuecomment-6783203728
 
 [ground-refinement-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/295#issuecomment-6265799957
