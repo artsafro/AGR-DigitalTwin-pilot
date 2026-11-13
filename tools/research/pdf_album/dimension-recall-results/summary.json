@@ -1,0 +1,130 @@
+[
+  {
+    "sheet": "L03",
+    "source_hashes": {
+      "sheet": "L03",
+      "dwg": {
+        "source": "G:\\Мой диск\\AGR-assets\\KPP1\\source\\22Е56-АР2-1002-АС.03-R1_L03_без подписей.dwg",
+        "copy": "C:\\x\\t_85bcc27a\\oracle-v001\\L03.dwg",
+        "sha256": "ad1de2b203bd4394bd3604642cd41bd8f3b2427ec23b900413bd396612624469",
+        "unchanged": true
+      },
+      "dxf": {
+        "path": "C:\\x\\t_85bcc27a\\oracle-v001\\L03.dxf",
+        "sha256": "6d0c646023967e294c586e3c3b51e7a6090dd3831dcc5f58fd7d32128ea30371",
+        "model_dimensions": 82,
+        "all_dimensions": 82
+      },
+      "pdf": {
+        "path": "C:\\x\\t_85bcc27a\\native-v002\\L03.pdf",
+        "sha256": "8797962e097c571fd60f9f9710ff6a5eee08ddaf55d9e11ee31231f9b8fdb024"
+      }
+    },
+    "registration_evaluator_only": {
+      "s": 0.02061333211263021,
+      "ox": -31.426287302497258,
+      "oy": 505.3399963378918
+    },
+    "stages": [
+      {
+        "stage": "before",
+        "metrics": {
+          "found": 7,
+          "correct": 7,
+          "wrong": 0,
+          "truth": 82,
+          "recall": 0.08536585365853659,
+          "precision": 1.0
+        },
+        "classes": {
+          "correct_semantic_binding": 7,
+          "text_found_not_bound_to_own_line": 36,
+          "filtered_endpoint_identity": 36,
+          "overrides_or_display_rounding": 3
+        },
+        "wrong_ids": []
+      },
+      {
+        "stage": "after",
+        "metrics": {
+          "found": 7,
+          "correct": 7,
+          "wrong": 0,
+          "truth": 82,
+          "recall": 0.08536585365853659,
+          "precision": 1.0
+        },
+        "classes": {
+          "correct_semantic_binding": 7,
+          "text_found_not_bound_to_own_line": 36,
+          "filtered_endpoint_identity": 36,
+          "overrides_or_display_rounding": 3
+        },
+        "wrong_ids": []
+      }
+    ]
+  },
+  {
+    "sheet": "KNS",
+    "source_hashes": {
+      "sheet": "KNS",
+      "dwg": {
+        "source": "B:\\Backup\\Desktop\\!3D viz\\!KNKO\\KNS_STOLBOVO\\РР1\\2. КНС СТОЛБОВО_РР1_DWG И EXCEL\\DWG\\ВАРИАНТ 1\\KNS_STOLBOVO_V1_РАЗРЕЗ.dwg",
+        "copy": "C:\\x\\t_85bcc27a\\native-v004\\candidate2.dwg",
+        "sha256": "a9e057e8845c92ca4af9ea7d6e3da2bdde818e9e90b31dfaaa375f3205e2b91f",
+        "unchanged": true
+      },
+      "dxf": {
+        "path": "C:\\x\\t_85bcc27a\\native-v004\\candidate2.dxf",
+        "sha256": "58c60ab10c3942e4001b5b3de191b41e0d26f6e97eac044d1d15ac9abfc9f0f6",
+        "model_dimensions": 12,
+        "all_dimensions": 12
+      },
+      "pdf": {
+        "path": "C:\\x\\t_85bcc27a\\native-v004\\KNS-section.pdf",
+        "sha256": "7ad80d8d79bf3355e451740ab82cf7d79b9975b0f4a95cd39191ef42580b93f1"
+      }
+    },
+    "registration_evaluator_only": {
+      "s": 0.03313622958418159,
+      "ox": -6782.113262909764,
+      "oy": 275.8321850330688
+    },
+    "stages": [
+      {
+        "stage": "before",
+        "metrics": {
+          "found": 4,
+          "correct": 4,
+          "wrong": 0,
+          "truth": 12,
+          "recall": 0.3333333333333333,
+          "precision": 1.0
+        },
+        "classes": {
+          "correct_semantic_binding": 4,
+          "line_split_inline_text": 5,
+          "text_found_not_bound_to_own_line": 3
+        },
+        "wrong_ids": []
+      },
+      {
+        "stage": "after",
+        "metrics": {
+          "found": 8,
+          "correct": 8,
+          "wrong": 0,
+          "truth": 12,
+          "recall": 0.6666666666666666,
+          "precision": 1.0
+        },
+        "classes": {
+          "correct_semantic_binding": 8,
+          "text_found_not_bound_to_own_line": 3,
+          "filtered_endpoint_identity": 1
+        },
+        "wrong_ids": []
+      }
+    ]
+  }
+]
