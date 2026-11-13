@@ -134,6 +134,75 @@ replace working metadata with an unverified URL. After recovery: publish under
 verify unauthenticated byte readback and update source `maps.json` plus generated
 catalogue. Then perform the remaining native preview/request gates below.
 
+## A101 source inspection (second resume 2026-11-13)
+
+The source location is now resolved by Artem's issue comments:
+[#6860499079](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1316#issuecomment-6860499079)
+and the Tilia-only correction
+[#6860510392](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1316#issuecomment-6860510392).
+Both original files exist under
+`G:/Мой диск/AGR-assets/flora/a101/TextureFlora/`:
+
+| Source | Bytes | Dimensions / mode | SHA-256 |
+|---|---:|---|---|
+| `lipa_t1_h550_high.png` | 9351771 | 4096 x 4096 RGBA | `166e210fe8bfea60d54e2577b139b83d46fdedcf8ec4df0eda4fa265a58ab90d` |
+| `lipa_t1_h550_low.png` | 2819435 | 2048 x 2048 RGBA | `21fff75057b85b94cb847b8508f30ae9a555af1038f9414b5ea220d26f991525` |
+
+Measured with `uv run python` using `Path.stat().st_size`,
+`hashlib.sha256(path.read_bytes()).hexdigest()` and Pillow `Image.open`.
+Both images were visually inspected: they contain **branch/foliage sprites and
+an adjacent bark strip**, not a single full-height tree on white. High and low
+are distinct atlas variants, not diffuse and opacity of one pair. The high image
+is 4096 square; the low is 2048 square. These are measured Tilia properties, not
+an extrapolation from the other A101 species' 2048-square descriptions.
+
+A bounded repeat search `Path('G:/Мой диск/AGR-assets/flora').rglob('*tilia*')`
+returned no matches. `AGR-evidence` root contains `1146-flora-star` but no
+`216`, `190` or `1316` directory. A recursive scan across the evidence root
+exceeded 180 seconds and is **not** an exhaustive absence proof. No approved
+v001 pair was recovered.
+
+The documented public root also exposes `flora/a101` (folder ID
+`1HqAepNoDHY9yPJEC4CSn_zMlhShStiOf`), its `FLORIO_221.max`
+(file ID `1Kdpp2GX-Rpcmz54EsQF5GzbUjL7m_0kH`) and `TextureFlora`
+(folder ID `1lZX97pGFBeGXYjwbtc6SJzFqFNuoKPwK`). The initial public HTML
+listing for TextureFlora returns **only 50 entries**, ending at `elka`;
+absence of `lipa` in that first page is NOT a missing-file result. Pagination
+or an exact-file lookup is still required for unauthenticated source downloads.
+Local source inspection/hashes above are not cold retrieval evidence.
+
+### New decision boundary: incompatible recipe, not missing source
+
+The orchestrator's resume comment asks for a new v002 using the documented
+batch-1 recipe. The repository's documented recipe
+(`docs/pipeline-flora-textures.md`, sections 1-2) instead requires an RGB,
+2048-square, full-plant white-background image and derives opacity by white-key
+threshold 245. It explicitly rejects RGBA input. A real read-only probe with
+`dt_ai.materials.flora.cutout(Image.open(source))` rejected **both** A101
+Tilia files with `ValueError: Expected RGB white-background input without alpha`.
+Applying that recipe to the
+A101 atlases would require changing the image/opacity semantics; taking high/low
+as diffuse/opacity would also be incorrect. Neither operation follows Artem's
+"exact library bytes ... no regeneration" instruction.
+
+Recommended resolution for the owning orchestrator: explicitly select the
+A101-native route, retaining both RGBA sources unchanged and their original UV
+layout, with any RGB/alpha channel split recorded as a **new pending version**,
+not recovery or approval of v001. Confirm which native A101 Tilia object and
+high/low variant that version selects before rebinding the existing v003
+`Tilia_cordata_NPM` / `Tilia_cordata_VPM`: their catalogue source is
+`FLORA_Union_v1.max`, not `FLORIO_221.max`; compatibility is not established.
+Do not create a whole-tree image, regenerate an atlas, inherit v001 approval,
+or rewrite every species path to unverified/nonexistent Drive destinations.
+
+Native Max connectivity probe: `python
+C:/Users/artsafro/hermes_kanban/scripts/max_exec.py --ping` returned exit 2,
+`status=unreachable` on `127.0.0.1:8765`. No DCC scene was opened or modified;
+this is not the blocker (agent-owned Blender remains an allowed preview route).
+No publication, preview, Telegram notification or verdict record was fabricated.
+The remaining gate is the contradictory source/recipe selection, not another
+request for publication permission or the same missing-source question.
+
 ## Resume gates
 
 1. Provide the two **existing approved** Tilia map files at a downloadable,
