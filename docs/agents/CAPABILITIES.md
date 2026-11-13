@@ -62,6 +62,7 @@ User decisions of roadmap round 4 (COORDINATION_RULES 27, issue #139):
 - trimesh: not used.
 - CADCraft: not used.
 - ODA File Converter: not installed for now; DWG is read through the AutoCAD 2025 core console (DXFOUT) + ezdxf; the committed readback script is `tools/methods/body/dwg_to_dxf.py` (works on a hashed copy, `--dry-run` without AutoCAD; issue 1203).
+- Facade DXF opening dimensions: `tools/methods/body/facade_openings_from_dxf.py` (explicit handle/frame map, rectangular LINE/LWPOLYLINE outlines, source hashes; no inferred depth/placement; synthetic CLI/probe coverage in `tests/methods/test_facade_openings_from_dxf.py`, #1312).
 - MTree/Sapling: not used until a Flora benchmark on the user's trees.
 - IfcOpenShell: transient `uv --with` only, no project dependency, until the Revit adapter.
 
