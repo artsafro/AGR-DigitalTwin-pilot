@@ -19,6 +19,14 @@ when the task touches a model. Do not paraphrase here. -->
 
 ## Specification
 
+### Check level [D268]
+
+`level: fast | standard | full`
+
+<!-- Select ONE level. The orchestrator/agent sets it at intake by
+ docs/procedure/TASK_TO_MODEL.md#check-levels; Artem overrides with one word.
+ This is checking depth, not the level:simple|medium|hard dispatch label. -->
+
 ### Acceptance
 
 <!-- Checkable items, one per line, each one a reviewer can verify from the PR. -->

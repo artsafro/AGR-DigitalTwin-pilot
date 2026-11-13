@@ -97,3 +97,56 @@ def test_check_level_intake_contract():
     assert "up a level" in intake and "never down" in intake
     assert "Check level is separate from" in intake
 
+
+def _level_policy() -> str:
+    text = (ROOT / "docs/procedure/TASK_TO_MODEL.md").read_text(encoding="utf-8")
+    assert "## Check levels" in text
+    return text.split("## Check levels", 1)[1].split("## GATES", 1)[0]
+
+
+def test_check_level_worker_policy():
+    policy = " ".join(_level_policy().split())
+    for clause in (
+        "[D268]",
+        "When Artem is online, open the scene in his DCC version and give the absolute path instead of renders",
+        "Render only for board cards without him",
+        "`fast`: 1 image",
+        "`standard`: 1 image per item + 1 overview",
+        "Extra angles only for a defect Artem named",
+        "one machine readback (IDs/UV/count, 1-2 calls)",
+        "one dt-reviewer round on committed job scripts",
+        "one PR per job",
+        "Artem accepts the picture or opened scene",
+        "second correction on the same point",
+        "does not waive mandatory gates",
+    ):
+        assert clause in policy, clause
+
+
+def test_check_level_table():
+    policy = _level_policy()
+    rows = [line for line in policy.splitlines() if line.startswith("| `")]
+    assert len(rows) == 3
+    expected = {
+        "fast": ("colouring", "re-export", "no pytest", "no code review"),
+        "standard": ("new node", "jobs/", "exported file", "dt-reviewer"),
+        "full": ("validators", "standards/", "schemas", "shared src/", "passed=true",
+                 "affected tests", "one full suite per PR", "probes", "receipts"),
+    }
+    for level, clauses in expected.items():
+        row = next(line for line in rows if line.startswith(f"| `{level}` |"))
+        for clause in clauses:
+            assert clause in row, (level, clause)
+
+
+def test_check_level_decision_is_recorded_and_linked():
+    log = (ROOT / "docs/decisions.md").read_text(encoding="utf-8")
+    rows = re.findall(r"^\| D268 \|.*$", log, re.M)
+    assert len(rows) == 1
+    for clause in ("2026-11-12", "#1273", "#1277", "canopy", "separate cards", "1-2 calls"):
+        assert clause in rows[0], clause
+    for path in ("docs/agents/task-intake.md", ".github/ISSUE_TEMPLATE/task.md",
+                 "docs/procedure/TASK_TO_MODEL.md", "docs/domain/validation.md"):
+        assert "[D268]" in (ROOT / path).read_text(encoding="utf-8"), path
+
+
