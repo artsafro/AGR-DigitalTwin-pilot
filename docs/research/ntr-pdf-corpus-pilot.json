@@ -583,6 +583,7 @@
       {"label": "after_B01", "new_tokens": 61477, "cached_tokens": 890846},
       {"label": "after_B02", "new_tokens": 65171, "cached_tokens": 964514}
     ],
+    "session_before_pr": {"new_tokens": 108470, "cached_tokens": 2457736, "reserve_used": 8470},
     "session_id": "local-aaba62a6bfb8f8d84789dc1a150176c81635709f7d505248e225b22c4dafba3d",
     "cost_status": "estimated",
     "currency_cost": null,

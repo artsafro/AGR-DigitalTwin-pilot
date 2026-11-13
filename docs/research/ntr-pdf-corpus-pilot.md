@@ -394,17 +394,23 @@ snapshot-to-snapshot and lags by one API call, so B01 includes issuing B02's ext
 | **B01** extraction + reading | **11,993** | 340,071 | 0.463 |
 | **B02** extraction + reading | **3,694** | 73,668 | 0.153 |
 | Albums total | 15,687 | 413,739 | 0.616 |
+| Report, tests, evals, push (after B02 → before PR) | 43,299 | 1,493,222 | – |
+| **Whole session before PR** | **108,470** | 2,457,736 | – |
 
-Report/test/PR work after the B02 snapshot and the final session total are reported in the PR.
-The 100,000 cap was never approached during album reading, so no stop-and-ask was triggered;
-the 30,000 reserve was untouched. Per-album cost is **7,844 new per page** — higher than the
-#1275 1,080/page because a 1-page album pays the full read-and-interpret overhead.
+**Cap crossed outside album reading.** The albums used 15,687 new tokens, but the whole session
+(intake + report + tests) reached **108,470 new before the PR, i.e. 8,470 into the 30,000 reserve**.
+No stop-and-ask happened at 100,000 because counters were read only at phase snapshots, not before
+each call — a process gap, not an authorization. PR creation and review hand-off add a small
+unmeasured remainder (final total in the PR). Per-album reading cost is 7,844 new per page,
+higher than the #1275 1,080/page because a 1-page album pays the full read-and-interpret overhead;
+fixed intake+reporting (~93k) dominates a 2-page batch.
 
 ### Go/no-go for the next batch
 
-**GO**, text-first, one batch: the remaining 6 NTR one-page albums (6 pages). Expected new tokens
-≈ 4,000–12,000 per album from this ledger, i.e. well under 100,000 including intake; the three
-Buhvostova sibling elevations should be read together (same legend → cheap cross-check of B02).
+**GO**, text-first, one batch: the remaining 6 NTR one-page albums (6 pages), **with a
+snapshot before each phase and a stop at 85,000 session new tokens**, since fixed intake+reporting
+cost ~93k here. Expected album reading ≈ 4,000–12,000 new per album; the three
+Buhvostova sibling elevations should be read together (likely same legend → cheap cross-check of B02).
 `покрытия.pdf` and `Благо.pdf` (11_Skladochnaya) need **one ROI render each** — ask before that.
 After that NTR is exhausted; the next step is one batch of a different issuer (recommendation 1).
 **NO-GO** unchanged for whole-page vision and library publication.
