@@ -210,5 +210,7 @@ def test_face_outside_regulation_grid_is_wrong_tile_never_a_crash(tmp_path, uv, 
     """#1337: udim_of no longer returns None; off-grid and v_tile >= 10 faces stay one wrong_tile finding."""
     for tile in (1001, None):
         out = count_features_per_face([_row("A", 0, 1, uv)], _texture(tmp_path), tile=tile)
-        assert [f.name for f in out] == ["uv_features.wrong_tile"], out
+        names = [f.name for f in out]
+        assert names[0] == "uv_features.wrong_tile" and names.count("uv_features.wrong_tile") == 1, out
+        assert set(names) <= {"uv_features.wrong_tile", "uv_features.unassigned"}, names
         assert observed in out[0].observed

@@ -148,6 +148,9 @@ def test_uvlayout_udim_of_cell_routes_to_shared_function(ut):
             lay.udim_of_cell(cu, cv)
     assert lay.udimtile.udim_of_cell is not None
     assert Path(lay.udimtile.__file__).resolve() == CORE.resolve()
+    assert lay.piece_tile_or_zero([[1.2, 0.2], [1.8, 0.2], [1.8, 0.8]]) == 1002
+    assert lay.piece_tile_or_zero([[-0.8, 0.2], [-0.2, 0.2], [-0.2, 0.8]]) == 0     # vpm.build report label kept
+    assert lay.piece_tile_or_zero([[0.2, 10.2], [0.8, 10.2], [0.8, 10.8]]) == 1101  # was 0 before #1337
 
 
 def test_joint_continuity_v008_uses_shared_function():
