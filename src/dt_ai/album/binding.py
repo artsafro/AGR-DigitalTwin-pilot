@@ -500,11 +500,11 @@ def _bind_page(pymupdf: Any, page: Any, number: int, sheet: str | None) -> dict[
                 continue
             cx, cy = R._center(r.bbox)
             if sp["orientation"] == "horizontal":
-                if not (abs(r.dir[1]) <= 1e-6 and r.dir[0] > 0 and sp["a"] - (2 * r.size if sp["b"] - sp["a"] < 2 * r.size else 0) < cx < sp["b"] + (2 * r.size if sp["b"] - sp["a"] < 2 * r.size else 0)):
+                if not (abs(r.dir[1]) <= 1e-6 and r.dir[0] > 0 and sp["a"] < cx < sp["b"]):
                     continue
                 gap = sp["coord"] - cy if near_side else cy - sp["coord"]
             else:
-                if not (abs(r.dir[0]) <= 1e-6 and abs(r.dir[1]) > 0.99 and sp["a"] - (2 * r.size if sp["b"] - sp["a"] < 2 * r.size else 0) < cy < sp["b"] + (2 * r.size if sp["b"] - sp["a"] < 2 * r.size else 0)):
+                if not (abs(r.dir[0]) <= 1e-6 and abs(r.dir[1]) > 0.99 and sp["a"] < cy < sp["b"]):
                     continue
                 gap = sp["coord"] - cx if near_side else cx - sp["coord"]
             if 0 < gap <= 2.5 * r.size:
