@@ -4,7 +4,7 @@ Current latest-R1 package, checks and owners: [latest/REPORT.md](latest/REPORT.m
 The following is retained verbatim as historical evidence, not current package instructions.
 
 Cells: `oks-npm`, `oks-vpm`. Base: `7c944e21` (current pilot main at start).
-Decision [D267], Artem 2026-11-13, owning card t_b937f6cd: assemble without the unavailable
+Decision [D268], Artem 2026-11-13, owning card t_b937f6cd: assemble without the unavailable
 approved Ground FBX or KPP1-specific area sheet; no synthetic Ground/site-wide area substitution.
 This authorizes an incomplete package report, NOT a waiver of delivery checks.
 
@@ -68,9 +68,9 @@ uv run python tools/qa/validate_package.py "G:/Мой диск/AGR-evidence/1278
 
 | Stage / profile | Value / status | Limit / missing input | Owner |
 |---|---|---|---|
-| V001 NPM | fail: 1 FBX, no `0000_Kpp_1_Ground.fbx` | 2..21, including approved Ground; unavailable per [D267] | Ground author; Artem coordinates |
+| V001 NPM | fail: 1 FBX, no `0000_Kpp_1_Ground.fbx` | 2..21, including approved Ground; unavailable per [D268] | Ground author; Artem coordinates |
 | V011 VPM FNO | fail: `FNO_code=""`, `FNO_name=""` | mandatory classifier pair; upload-issued values, no invented code | SINTEZ after placement/upload [D220] |
-| V011 VPM areas | fail: `s_obsh/s_naz/s_podz/spp_gns=""` | mandatory truthful KPP1-specific areas, not whole-site totals; unavailable per [D267] | Artem / architect |
+| V011 VPM areas | fail: `s_obsh/s_naz/s_podz/spp_gns=""` | mandatory truthful KPP1-specific areas, not whole-site totals; unavailable per [D268] | Artem / architect |
 | V003 both | not_run: quad work FBX not supplied | non-triangulated master, VPM faces <=4 m [D021]; R1 delivery FBX is triangulated | KPP1 master author / Artem |
 | V004 NPM | review: 0 pairs <5 mm, 108 in 5–20 mm, 20266 >20 mm | co-directional clearance 5–20 mm; classify >20 mm; rotated lists not waived by [D256] | KPP1 geometry author; Artem review |
 | V004 VPM | review: 0 pairs <5 mm, 166 in 5–20 mm, 107934 >20 mm | same; pair distances min/median/max 9.6005/7450/31170.3993 mm | KPP1 geometry author; Artem review |

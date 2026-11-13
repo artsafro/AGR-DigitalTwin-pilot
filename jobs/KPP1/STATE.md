@@ -1,21 +1,22 @@
-Current run: #1278 R1 package-v004, copy-only assembly + material/PNG/coordinate repairs; NPM/VPM passed=false [D267].
+Current run: #1278 R1 package-v005, copy-only assembly + material/PNG/coordinate repairs; NPM/VPM passed=false [D268].
 Source: latest rerun-1230 R1 v003 (#1246 merged), via the #1271 approved transform; approximate MSK-77 fit, zero 171.050 [D262].
 Next gate: review #1278 package evidence; missing Ground/areas/FNO, VPM xView and manual/final Max gates remain open.
 
-## Package #1278 (2026-11-13) — NOT PASSED [D267]
+## Package #1278 (2026-11-13) — NOT PASSED [D268]
 
 Artem authorized assembly without the unavailable approved Ground FBX or KPP1-specific
-`s_obsh/s_naz/s_podz/spp_gns` sheet; no synthetic Ground or site-wide area substitution [D267].
+`s_obsh/s_naz/s_podz/spp_gns` sheet; no synthetic Ground or site-wide area substitution [D268].
 **Approximate fit without 180-degree rotation; entrance orientation not independently confirmed** [D262].
 Point [8056.144, -9581.270], zero 171.050 m; placement is not a survey certificate.
 
 One-command reproduction into a NEW destination (parent exists):
 
 ```bash
-uv run python jobs/KPP1/package-1278/build_package.py "G:/Мой диск/AGR-evidence/1278-kpp1-package/site-r1-v003" "G:/Мой диск/AGR-evidence/1278-kpp1-package/package-v005"
+uv run python jobs/KPP1/package-1278/build_package.py "G:/Мой диск/AGR-evidence/1278-kpp1-package/site-r1-v003" "G:/Мой диск/AGR-evidence/1278-kpp1-package/package-v006"
 ```
 
-Measured candidate: `G:/Мой диск/AGR-evidence/1278-kpp1-package/package-v004/`.
+Current candidate: `G:/Мой диск/AGR-evidence/1278-kpp1-package/package-v005/`.
+ZIP/GeoJSON payloads are 3/3 byte-identical to the measured package-v004; only the assembly decision ID changed to D268.
 ZIP NPM + ZIP VPM + GeoJSON built; independent repeat **5/5 byte-identical** assembly outputs.
 NPM glass name/alpha corrected (M_Glass_01 / 0.5); 409 native FBX elements compared,
 exactly three material-property differences, no geometry/UV/slot/UCX changes.
@@ -27,9 +28,9 @@ Full commands, evidence hashes, sources and diagnostics: [REPORT](package-1278/l
 
 | Remaining stage | Value / status | Limit / missing input | Owner |
 |---|---|---|---|
-| V001 NPM | fail: 1 FBX, no 0000_Kpp_1_Ground.fbx | 2..21, approved Ground absent [D267] | Ground author / Artem |
+| V001 NPM | fail: 1 FBX, no 0000_Kpp_1_Ground.fbx | 2..21, approved Ground absent [D268] | Ground author / Artem |
 | V011 VPM FNO | fail: FNO_code/name empty | mandatory classifier pair from upload [D220] | SINTEZ |
-| V011 VPM areas | fail: s_obsh/s_naz/s_podz/spp_gns empty | truthful KPP1-specific sheet absent [D267] | Artem / architect |
+| V011 VPM areas | fail: s_obsh/s_naz/s_podz/spp_gns empty | truthful KPP1-specific sheet absent [D268] | Artem / architect |
 | V003 both | not_run: no quad master | non-triangulated work FBX; VPM faces <=4m [D021] | KPP1 master author / Artem |
 | V004 NPM | review: 0 below 5mm, 108 in band, 20266 above 20mm; min/median/max 13.695/6870.2359/31170.3557mm | 5–20mm; classification of rotated pairs absent | KPP1 geometry author / Artem |
 | V004 VPM | review: 0 below 5mm, 159 in band, 105614 above 20mm; min/median/max 14.7994/7345.9993/31170.3993mm | 5–20mm; original [D256] lists do not waive new lists | KPP1 geometry author / Artem |

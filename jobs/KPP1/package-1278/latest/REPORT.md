@@ -3,16 +3,22 @@
 This supersedes the historical package-v003 / R1-v002 report and tables one directory up.
 Current main was refreshed to bef05228, including #1246/#1289's newer R1 v003 corner pairs,
 #1240/#1287 and the new shared scene checks. No sibling branch was read or copied: only merged main.
-D266 and reserved [D267] were both retained in the only merge conflict (decision-log adjacency).
+D266 and our provisional D267 were retained in the only merge conflict (decision-log adjacency).
+Before publication, PR #1299 independently claimed D267. The next-ID tool returned D268;
+this card reserved [D268] and renumbered its own row/docs/code. Raw historical D267 assembly
+receipts remain immutable and are provisional, not current decision references.
 
 ## Reproduce in one command
 
 ```bash
-uv run python jobs/KPP1/package-1278/build_package.py "G:/Мой диск/AGR-evidence/1278-kpp1-package/site-r1-v003" "G:/Мой диск/AGR-evidence/1278-kpp1-package/package-v005"
+uv run python jobs/KPP1/package-1278/build_package.py "G:/Мой диск/AGR-evidence/1278-kpp1-package/site-r1-v003" "G:/Мой диск/AGR-evidence/1278-kpp1-package/package-v006"
 ```
 
-Measured final candidate: **G:/Мой диск/AGR-evidence/1278-kpp1-package/package-v004/**.
-`repro-v004`: 5/5 assembly files byte-identical. Source SHA pins are in
+Current final candidate: **G:/Мой диск/AGR-evidence/1278-kpp1-package/package-v005/**.
+`repro-v005`: 5/5 assembly files byte-identical. All 3 ZIP/GeoJSON payloads are byte-identical
+to the fully measured package-v004; only assembly.json and its hash changed for [D268].
+The raw validator/SINTEZ/xView receipts deliberately retain the measured v004 paths and hashes.
+The current durable manifest is `evidence-v005-SHA256SUMS.txt`. Source SHA pins are in
 `../source-r1-v003-SHA256SUMS.txt`; runtime manifest below binds ZIP/GeoJSON/receipts.
 To regenerate the placed source, on a new directory, run the existing source-hash-checked producer:
 
@@ -26,7 +32,7 @@ Only a 10-line explicit R1-v003 hash allowlist was added to the existing placeme
 old v002 pins remain valid. Regression: 4d49ea86, 1 failed, then green.
 No geometry rebuild or cleanup in #1278. The newly merged #1246 source is authoritative.
 
-[D267]: approved Ground and KPP1-specific s_obsh/s_naz/s_podz/spp_gns sheet are unavailable;
+[D268]: approved Ground and KPP1-specific s_obsh/s_naz/s_podz/spp_gns sheet are unavailable;
 assemble without them, never synthesize Ground or copy whole-site areas. FNO awaits SINTEZ.
 [D262]: approximate, ±0.1 m, fitted to customer NPM 0607_77_05_0009005_117_02;
 **entrance orientation not independently confirmed**. No 180-degree alternative;
