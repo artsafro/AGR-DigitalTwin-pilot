@@ -29,3 +29,16 @@ def test_z_invalid(meta):
 
 def test_z_threshold():
     assert check({'bounds_m': [[0, 0, 0], [1, 1, 1]]}, ((0, 0, 0.001), (1, 1, 1))).status == 'fail'
+
+
+def test_validate_wires_export_meta(tmp_path, monkeypatch):
+    import validate_package as vp
+    target = tmp_path / 'SM_Test_K_1.fbx'
+    target.write_bytes(b'synthetic FBX')
+    m = mesh()
+    m['bounds_m'] = [[-1, -1, -0.3], [1, 1, 8.35]]
+    monkeypatch.setattr(vp, 'readback', lambda p: rb(m))
+    report = vp.validate(target, 'vpm', PROFILES, scene=True,
+        export_meta={'SM_Test_K_1.fbx': {'bounds_m': [[-1, -1, -0.3], [1, 1, 9.75]]}})
+    assert any(f.name == 'Z bounds vs export_meta' and f.status == 'fail'
+               for s in report.stages for f in s.findings)
