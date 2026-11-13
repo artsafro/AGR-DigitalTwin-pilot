@@ -6,6 +6,7 @@ commands, identifiers and docs in English.
 
 A worker reads three things: this file, `docs/domain/areas/<area>.md`, and the card.
 Details: `docs/agents/agents-reference.md`.
+For NPM/OKS tasks read `routes/npm-oks.md`; call `agr --help` before writing a script.
 
 ## Goal
 
@@ -75,5 +76,4 @@ Rule lookup / new decisions: follow `docs/agents/agents-reference.md#rule-lookup
   ≤ 80 lines, fixed sections; `docs/agents/WORKFLOW.md`);
   in task branches report state changes in the final summary.
 - A new tool counts as shared only after it is listed in `docs/agents/CAPABILITIES.md` on `main`.
-- Principles (assumptions first, simplest fit, surgical changes, verified done): `docs/agents/working-principles.md`.
 - AGR Tools (Max panel, `agr-mcp`, OKS conveyor 1.0): `docs/agr-tools/OVERVIEW.md`; rules: `docs/agents/agr-tools-1.0-rules.md`. Mandatory passport (К1): `jobs/<ID>/passport.json`, `schemas/ProjectPassport.schema.json`.

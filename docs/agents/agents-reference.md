@@ -3,6 +3,8 @@
 Read the matching section when navigating code, running checks, loading skills or using agent plugins.
 Per-card reading order and shared safety rules stay in `AGENTS.md` [D121].
 
+- Four working principles (assumptions first, simplest fit, surgical changes, verified done): `docs/agents/working-principles.md`.
+
 ## Rule lookup
 
 A rule question ("is there a rule for ...?") is looked up in this order, and the first hit wins:

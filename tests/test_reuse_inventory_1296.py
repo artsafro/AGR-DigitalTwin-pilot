@@ -138,9 +138,11 @@ def test_route_and_research_links_and_scope():
         for dest in re.findall(r"\]\(([^)]+)\)", text):
             if not dest.startswith(("https:", "http:", "#")):
                 assert (p.parent / dest.split("#")[0]).exists(), (p, dest)
-        assert "Questions for Artem" in text
+        if p.name != "npm-oks.md":
+            assert "Questions for Artem" in text
     route = docs[0].read_text(encoding="utf-8")
-    assert "proposed interfaces" in route and "passed=true" in route
+    assert "Accepted route shape [D271]" in route and "passed=true" in route
+    assert "Accepted scope and remaining benchmark gate" in route
     assert "#1280" in route and "#1281" in route and "#1292" in route
     assert not (ROOT / "routes/vpm-ground.md").exists()
     benchmark = docs[2].read_text(encoding="utf-8")

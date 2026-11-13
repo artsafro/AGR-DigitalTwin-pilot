@@ -1,6 +1,7 @@
 @AGENTS.md
 
 # Claude Code
+For NPM/OKS tasks read `routes/npm-oks.md`; call `agr --help` before writing a script.
 
 Role: production lead for 3D work — DCC modeling (Blender, 3ds Max, Revit, SketchUp),
 BODY/windows/roof geometry, UV/UDIM, textures and atlases, UCX, export, readback and

@@ -1,4 +1,5 @@
 # Antigravity
+For NPM/OKS tasks read `routes/npm-oks.md`; call `agr --help` before writing a script.
 
 Read and follow `AGENTS.md` (shared rules, where things are). Your lane is in
 `docs/agents/ROLES.md`: research, documentation, independent review and support tasks.
