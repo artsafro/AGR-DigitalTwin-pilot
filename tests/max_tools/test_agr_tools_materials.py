@@ -163,6 +163,23 @@ def test_table_midpoly_ids_dense_and_report(lib):
     jsonschema.validate(table, schema['properties']['materials'])
 
 
+def test_table_multiple_glass_ids_share_1001_preserves_body_and_delivery_ids(lib):
+    # Synthetic second glass record; the production library is not changed.
+    library = dict(lib, by_id=dict(lib['by_id']))
+    library['by_id'][40] = dict(lib['by_id'][39], library_id=40, key='glass_test_02')
+    items = _items(('GLASS_x', 'glass', [40, 39]), ('BODY_x', 'body', [31, 3, 12, 7]))
+    entries, table, multisub, skipped = ml.table_plan(ec, items, library)
+    assert all(not e['findings'] for e in entries) and not skipped
+    assert ml.udim_tables(table) == {
+        'GLASS_x': {39: 1001, 40: 1001},
+        'BODY_x': {3: 1001, 7: 1002, 12: 1003, 31: 1004},
+    }
+    assert [(r['library_id'], r['delivery_id']) for r in table if r['mesh'] == 'GLASS_x'] == [(39, 1), (40, 2)]
+    assert [m['id'] for m in multisub] == [3, 7, 12, 31, 39, 40]
+    rep = ml.report(ec, 'preview', entries, table, multisub, skipped, library)
+    assert rep['status'] == 'pass' and rep['plan']['table'] == table
+
+
 @pytest.mark.parametrize('spec,code,ids', [
     (('BODY_Udim_001', 'body', [3, 1005]), 'udim_id_on_geometry', [1005]),
     (('BODY_Unknown_001', 'body', [3, 999]), 'id_not_in_library', [999]),
