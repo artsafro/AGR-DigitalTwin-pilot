@@ -456,6 +456,23 @@ def test_temp_cleanup_failure_rolls_back_pair(corpus, tmp_path, monkeypatch, fai
     assert digest_tree(corpus) == before
 
 
+def test_unsupported_fallback_platform_fails_closed(corpus, tmp_path, monkeypatch):
+    import errno
+    from types import SimpleNamespace
+    out_csv, out_md = tmp_path / 'platform.csv', tmp_path / 'platform.md'
+    before = digest_tree(corpus)
+
+    def unsupported(*args):
+        raise OSError(errno.EINVAL, 'no hard links')
+
+    monkeypatch.setattr(inv.os, 'link', unsupported)
+    monkeypatch.setattr(inv, 'sys', SimpleNamespace(platform='unsupported', stderr=sys.stderr))
+    assert inv.main(['--root', str(corpus), '--csv', str(out_csv), '--summary', str(out_md)]) == 2
+    assert not out_csv.exists() and not out_md.exists()
+    assert not list(tmp_path.glob('.*.partial'))
+    assert digest_tree(corpus) == before
+
+
 def test_fresh_process_cli(corpus, tmp_path):
     import subprocess
     script = Path(inv.__file__)
