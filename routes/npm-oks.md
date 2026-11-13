@@ -61,6 +61,13 @@ never retry a write blindly. CLI is the portable entry; an MCP wrapper can dispa
 same contract later. [#1292](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1292)
 batches guarded DCC operations, not source interpretation or acceptance gates.
 
+**Today's executable discovery (no geometry is produced):** `uv run dt --help` and
+`uv run dt derive atlas --help`. For an authorized packet the existing chain is
+`uv run dt derive atlas SPEC NEW_ATLAS --recipe-dir RECIPE`, then
+`uv run dt derive --blender BLENDER npm MASTER SPEC ATLAS NEW_EXPORT PREFIX`;
+these dispatch the shared tools, not copied job scripts. Units, placement and remaining
+job dependencies must be reviewed before execution; no authorization is implied by this example.
+
 ## Worked continuation: KPP1, not a new fabricated run
 
 [STATE.md](../jobs/KPP1/STATE.md) records a VPM/master + NPM pipeline, historical
