@@ -327,6 +327,69 @@ def test_publish_pair_rolls_back(corpus, tmp_path, monkeypatch, capsys, failure)
     assert 'error:' in capsys.readouterr().err
 
 
+@pytest.mark.parametrize('error_kind', ['eperm', 'einval', 'enotsup', 'enosys', 'winerror1'])
+@pytest.mark.parametrize('blocked_output', ['csv', 'summary', None])
+def test_publish_error_matrix(corpus, tmp_path, monkeypatch, error_kind, blocked_output):
+    """Exhaust unsupported errors x late-output position; synthetic, input hashes fixed."""
+    import errno
+    paths = {'csv': tmp_path / 'matrix.csv', 'summary': tmp_path / 'matrix.md'}
+    before = digest_tree(corpus)
+    calls = []
+
+    def unsupported(src, dst):
+        calls.append(dst)
+        if blocked_output and dst == paths[blocked_output]:
+            dst.write_text('foreign output', encoding='utf-8')
+        code = {'eperm': errno.EPERM, 'einval': errno.EINVAL, 'enotsup': errno.ENOTSUP,
+                'enosys': errno.ENOSYS, 'winerror1': None}[error_kind]
+        error = OSError(code, 'unsupported')
+        if error_kind == 'winerror1':
+            error.winerror = 1
+        raise error
+
+    monkeypatch.setattr(inv.os, 'link', unsupported)
+    result = inv.main(['--root', str(corpus), '--csv', str(paths['csv']),
+                       '--summary', str(paths['summary'])])
+    assert result == (2 if blocked_output else 0)
+    if blocked_output:
+        assert paths[blocked_output].read_text(encoding='utf-8') == 'foreign output'
+        assert not paths['summary' if blocked_output == 'csv' else 'csv'].exists()
+    else:
+        assert len(read_csv(paths['csv'])) == 7 and paths['summary'].is_file()
+    assert calls and digest_tree(corpus) == before
+    assert not list(tmp_path.glob('.*.partial'))
+
+
+def test_publish_temp_collision_is_not_removed(corpus, tmp_path, monkeypatch):
+    from types import SimpleNamespace
+    monkeypatch.setattr(inv.uuid, 'uuid4', lambda: SimpleNamespace(hex='collision'))
+    out_csv, out_md = tmp_path / 'c.csv', tmp_path / 'c.md'
+    temp = tmp_path / f'.c.csv.{inv.os.getpid()}.collision.partial'
+    temp.write_text('foreign temp', encoding='utf-8')
+    before = digest_tree(tmp_path)
+    assert inv.main(['--root', str(corpus), '--csv', str(out_csv), '--summary', str(out_md)]) == 2
+    assert digest_tree(tmp_path) == before
+
+
+def test_pair_rollback_preserves_replaced_csv(corpus, tmp_path, monkeypatch):
+    import errno
+    out_csv, out_md = tmp_path / 'r.csv', tmp_path / 'r.md'
+    real_link = inv.os.link
+    foreign = tmp_path / 'foreign.txt'
+    foreign.write_text('foreign CSV', encoding='utf-8')
+
+    def link(src, dst):
+        if dst == out_md:
+            inv.os.replace(foreign, out_csv)
+            raise OSError(errno.EIO, 'summary failed after foreign replacement')
+        return real_link(src, dst)
+
+    monkeypatch.setattr(inv.os, 'link', link)
+    assert inv.main(['--root', str(corpus), '--csv', str(out_csv), '--summary', str(out_md)]) == 2
+    assert out_csv.read_text(encoding='utf-8') == 'foreign CSV'
+    assert not out_md.exists() and not list(tmp_path.glob('.*.partial'))
+
+
 def test_fresh_process_cli(corpus, tmp_path):
     import subprocess
     script = Path(inv.__file__)

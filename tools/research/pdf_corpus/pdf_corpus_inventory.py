@@ -453,6 +453,7 @@ def _write_new(path, text):
         with open(tmp, 'x', encoding='utf-8', newline='') as f:
             created_tmp = True
             f.write(text)
+        identity = tmp.stat()
         try:
             os.link(tmp, path)
         except OSError as e:
@@ -463,6 +464,7 @@ def _write_new(path, text):
                 reservation = os.fstat(f.fileno())
             os.replace(tmp, path)
             reservation = None
+        return identity
     except OSError as e:
         raise InventoryError(f'cannot publish output {path}: {e}') from e
     finally:
@@ -521,9 +523,20 @@ def run(roots, csv_path, summary_path, hash_kind='sha256', workers=1, timeout=12
     for o in outs:  # re-check after the long scan: state may change during the run
         if o.exists():
             raise InventoryError(f'output appeared during scan, refusing to overwrite: {o}')
-    _write_new(outs[0], _csv_text(rows))
-    _write_new(outs[1], render_summary(rows, norm_roots, skipped, walk_errors, hash_kind,
-                                       csv_path, command, pilot_company, list(excludes)))
+    # Render both before publishing either; failures must not leave a lone CSV.
+    texts = [_csv_text(rows), render_summary(
+        rows, norm_roots, skipped, walk_errors, hash_kind, csv_path, command,
+        pilot_company, list(excludes))]
+    published = []
+    try:
+        for path, text in zip(outs, texts):
+            published.append((path, _write_new(path, text)))
+    except (InventoryError, OSError) as e:
+        # Roll back only files this invocation published, never a foreign replacement.
+        for path, identity in reversed(published):
+            if path.exists() and os.path.samestat(path.stat(), identity):
+                path.unlink()
+        raise InventoryError(f'cannot publish inventory pair: {e}') from e
     return rows
 
 
