@@ -295,6 +295,8 @@ frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Mar
 
 | D265 | 2026-11-12 | PDF fallback #1236: evaluate the three existing ELV/COD20207/TEC26 albums from `C:/x/pdf-album-research/t_5b23c219`, with labels explicitly marked `not independent (agent-made reference)`; no expert labelling required for this audit. Report recall, cost and latency on these three; larger independently labelled corpus is a follow-up, not delivered here. No geometry, binding or approval gate waived. | `docs/research/pdf-album-fallback.md`, `docs/domain/geometry.md` | Artem «принимаю рекомендации», USER DECISION on Kanban t_b6312eb3, 2026-11-12 14:37 |
 
+| D267 | 2026-11-13 | NTR PDF corpus pilot #1275: start with the ten explicit card albums (Artem 2026-11-12 «давай с NTR начнём»), text layer first, read PDFs in place without copying. Staropetrovskiy is MAF/planting lists only; #425 modelling stays parked. Continuation: cached input does not count against the 2,000,000-token pilot cap; count new input plus output, report new and cached separately, and allow at most 300,000 additional new tokens to finish from the ten already-read albums. Stop and ask before exceeding either cap. No production approval or library substitutions granted. | `docs/research/ntr-pdf-corpus-pilot.md`; `docs/domain/areas/windows.md` | Artem «да и остальные блокеры тоже поставь в задачи», accepting orchestrator recommendations; USER DECISION on Kanban t_afe86236, 2026-11-13 02:16 |
+
 [passport-scope-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1207#issuecomment-6783203728
 
 [ground-refinement-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/295#issuecomment-6265799957
