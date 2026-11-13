@@ -440,7 +440,7 @@ def render_summary(rows, roots, skipped, walk_errors, hash_kind, csv_path, comma
     return '\n'.join(lines) + '\n'
 
 
-def _write_new(path, text):
+def _write_new(path, text, published):
     """Publish complete text; reserve exclusively before a no-hardlink replacement.
 
     The reservation prevents clobbering an existing destination (including a dangling
@@ -464,7 +464,8 @@ def _write_new(path, text):
                 reservation = os.fstat(f.fileno())
             os.replace(tmp, path)
             reservation = None
-        return identity
+        # Register before temp cleanup: even unlink can fail after publication.
+        published.append((path, identity))
     except OSError as e:
         raise InventoryError(f'cannot publish output {path}: {e}') from e
     finally:
@@ -472,7 +473,12 @@ def _write_new(path, text):
             if os.path.samestat(path.stat(), reservation):
                 path.unlink()
         if created_tmp and tmp.exists():
-            tmp.unlink()
+            try:
+                tmp.unlink()
+            except OSError:
+                # Retry a transient sharing violation once, but report the failure.
+                tmp.unlink()
+                raise
 
 
 def _csv_text(rows):
@@ -530,7 +536,7 @@ def run(roots, csv_path, summary_path, hash_kind='sha256', workers=1, timeout=12
     published = []
     try:
         for path, text in zip(outs, texts):
-            published.append((path, _write_new(path, text)))
+            _write_new(path, text, published)
     except (InventoryError, OSError) as e:
         # Roll back only files this invocation published, never a foreign replacement.
         for path, identity in reversed(published):
