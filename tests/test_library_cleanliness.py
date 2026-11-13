@@ -127,6 +127,31 @@ def test_flora_catalogue_requires_d100_convention():
         checker().validate_catalogue(doc)
 
 
+@pytest.mark.parametrize('value', [None, {}, '', False, 0, float('nan'), float('inf'), [None], [1]])
+def test_extras_inventory_fail_closed(value):
+    scene = clean_scene()
+    scene['extras'] = value
+    assert checker().scene_errors(scene, variant(), 'bottom-left')
+
+
+def test_missing_extras_inventory_fails_closed():
+    scene = clean_scene()
+    scene.pop('extras', None)
+    assert checker().scene_errors(scene, variant(), 'bottom-left')
+
+
+def test_generated_extras_probe():
+    """Exhaust all presence subsets of the eight required leftover classes."""
+    module = checker()
+    kinds = ['color', 'attribute', 'polygon', 'edge', 'vertex', 'object', 'mesh', 'material']
+    for mask in range(1 << len(kinds)):
+        scene = clean_scene()
+        scene['extras'] = [f'{kind}: junk_{bit}' for bit, kind in enumerate(kinds) if mask & (1 << bit)]
+        errors = module.scene_errors(scene, variant(), 'bottom-left')
+        assert bool(errors) == bool(mask), mask
+        assert all(extra in ' '.join(errors) for extra in scene['extras'])
+
+
 def test_clean_scene_passes():
     assert checker().scene_errors(clean_scene(), variant(), 'bottom-left') == []
 
