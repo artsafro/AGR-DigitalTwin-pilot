@@ -3,7 +3,33 @@ import math
 
 import pytest
 
-from tools.materials.course_grid_audit import audit_corners
+from tools.materials.course_grid_audit import audit_corners, audit_vertical_cycles
+
+
+def ring(side=2):
+    # Synthetic outward-wound vertical walls: perimeter 8 m at side=2.
+    plan = [(0, 0), (side, 0), (side, side), (0, side)]
+    rows = []
+    for i, (x, y) in enumerate(plan):
+        j = (i + 1) % 4
+        a, b = plan[j]
+        rows.append({'object': 'synthetic-ring', 'face': i,
+                     'vertices': [i, j, j+4, i+4],
+                     'xyz': [[x,y,0], [a,b,0], [a,b,1], [x,y,1]]})
+    return rows
+
+
+def test_closed_vertical_ring_requires_repeat_closure_even_without_trihedral_fans():
+    rows = ring()
+    assert audit_corners(rows, anisotropy_limit=1.02)['corners'] == []
+    result = audit_vertical_cycles(rows, repeat_m=3, texel_px_m=512)
+    assert result['passed'] is False
+    assert result['status'] == 'needs_seam_policy'
+    witness = result['cycles'][0]
+    assert set(witness['faces']) == {0, 1, 2, 3}
+    assert abs(witness['circulation_m']) == pytest.approx(8)
+    assert witness['wrapped_residual_px'] == pytest.approx(512)
+    assert len(witness['edges']) == 4
 
 
 def corner():
