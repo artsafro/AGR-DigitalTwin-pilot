@@ -153,12 +153,15 @@ def test_full_suite_requires_suite_slot(tmp_path, repo, evals, capsys):
     rejected(tmp_path, body(parts), shas["head"], evals, capsys, "suite_slot.py")
 
 
-def test_full_suite_must_be_exact_head(tmp_path, repo, evals, capsys):
+def test_full_suite_must_be_head_or_ancestor(tmp_path, repo, evals, capsys):
+    """A real full-suite line names the head or an ancestor (the Affected tests line on head is required
+    anyway [D297]); a side commit is not evidence for this head."""
     _, shas = repo
     parts = lines(shas, evals)
-    for other in ("side", "red"):
-        parts["full"] = lines(shas, evals)["full"].replace(shas["head"][:9], shas[other][:9])
-        rejected(tmp_path, body(parts), shas["head"], evals, capsys, "full suite not on head")
+    parts["full"] = full_run(shas["side"])
+    rejected(tmp_path, body(parts), shas["head"], evals, capsys, "full suite not on head")
+    parts["full"] = full_run(shas["red"])
+    assert run(tmp_path, body(parts), shas["head"], evals, capsys)[0] == 0
     parts["full"] = "- Full suite: suite_slot.py on HEAD: 13290 passed, 0 failed"
     rejected(tmp_path, body(parts), shas["head"], evals, capsys, "full suite names no commit")
 
@@ -680,7 +683,8 @@ def test_malformed_deferral_fails(tmp_path, repo, evals, capsys, value):
     _, shas = repo
     parts = lines(shas, evals)
     parts["full"] = value
-    rejected(tmp_path, body(parts), shas["head"], evals, capsys, "Full suite")
+    out = rejected(tmp_path, body(parts), shas["head"], evals, capsys)
+    assert "full suite" in out.err.lower(), out.err
 
 
 @pytest.mark.parametrize("value", [

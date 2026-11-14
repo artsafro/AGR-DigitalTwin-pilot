@@ -1,11 +1,14 @@
 """Read-only PR handoff evidence check before review_requested. Pattern: new-case (harness tooling, #584).
 
 The author's PR body must carry, exactly once each, the evidence lines that reviewers kept finding
-missing (#124, #247, #311, #583): ``Full suite:`` run through ``suite_slot.py`` on the exact head,
-``Regression evals:`` verified by :func:`twinqa.evals.receipt.check_receipt`, ``Before (RED):`` on
-a commit before the head, ``After (GREEN):`` on the head, and ``Sample output:`` (or ``n/a: <reason>``).
+missing (#124, #247, #311, #583): ``Affected tests:`` on the exact head (the changed modules' tests,
+the tests that import them and the new regressions), ``Regression evals:`` verified by
+:func:`twinqa.evals.receipt.check_receipt`, ``Before (RED):`` on a commit before the head,
+``After (GREEN):`` on the head, and ``Sample output:`` (or ``n/a: <reason>``). The full suite runs once
+in the merge batch before main [D297]: ``Full suite:`` is optional, and when present it is either
+exactly ``deferred to merge batch (D297)`` or a real ``suite_slot.py`` run on the head or an ancestor.
 A missing, duplicated, placeholder or "not run" line is a problem, never a pass; a body that hands
-the full suite to the reviewer is a problem wherever the sentence stands. Nothing is written.
+the tests to the reviewer is a problem wherever the sentence stands. Nothing is written.
 """
 import re
 import subprocess
@@ -15,7 +18,9 @@ from twinqa.evals.receipt import check_receipt
 
 FULL, EVALS, RED, GREEN, SAMPLE, AFFECTED = (
     "Full suite", "Regression evals", "Before (RED)", "After (GREEN)", "Sample output", "Affected tests")
-REQUIRED = (FULL, EVALS, RED, GREEN, SAMPLE)
+REQUIRED = (AFFECTED, EVALS, RED, GREEN, SAMPLE)  # Full suite is optional: merge batch [D297]
+FULL_DEFERRED = "deferred to merge batch (D297)"
+_DEFERRED = re.compile(r"deferred to (?:the )?merge batch \((?:D297|rule 68)\)", re.IGNORECASE)
 _ALIASES = {"full suite": FULL, "regression evals": EVALS, "before (red)": RED, "red": RED,
             "after (green)": GREEN, "green": GREEN, "sample output": SAMPLE, "affected tests": AFFECTED}
 _LABEL = re.compile(r"(?P<label>" + "|".join(re.escape(k) for k in sorted(_ALIASES, key=len, reverse=True))
@@ -160,22 +165,28 @@ def _passing_run(cwd, sha, label, value, problems):
         problems.append(f"{label} has failures")
 
 
-def _full_suite(cwd, sha, value, affected, problems):
-    if _OMISSION.search(value) or any(p.search(value) for p in _DELEGATION):
-        if any(p.search(value) for p in _DELEGATION) or re.search(r"reviewer", value, re.IGNORECASE):
-            problems.append("full suite delegated to the reviewer: the author runs it (rule 49)")
+def _full_suite(cwd, sha, value, problems):
+    """Optional ``Full suite:`` line [D297]: the exact deferral, or a real suite_slot run on head/ancestor."""
+    delegated = any(p.search(value) for p in _DELEGATION) or re.search(r"reviewer", value, re.IGNORECASE)
+    if delegated or _OMISSION.search(value):
+        if delegated:
+            problems.append("full suite delegated to the reviewer: the author runs the affected tests and "
+                            "the full suite runs in the merge batch (D297)")
         else:
             problems.append(f"full suite is not evidence: {value[:80]!r}")
+        return
+    if _DEFERRED.fullmatch(value):
+        return
+    if re.search(r"\bdeferr", value, re.IGNORECASE):
+        problems.append(f"full suite deferral must read exactly '{FULL_DEFERRED}': {value[:80]!r}")
         return
     if "suite_slot" not in value:
         problems.append("full suite not run through suite_slot.py (rule 43)")
     commits = _commits(cwd, value)
     if not commits:
         problems.append("full suite names no commit")
-    elif sha not in commits:
-        older = [c for c in commits if _ancestor(cwd, c, sha)]
-        if not older or not affected:
-            problems.append(f"full suite not on head {sha[:12]} (a rework needs an Affected tests line on head)")
+    elif sha not in commits and not any(_ancestor(cwd, c, sha) for c in commits):
+        problems.append(f"full suite not on head {sha[:12]} or an ancestor of it")
     counts, malformed = _counts(FULL, value, problems)
     if malformed:
         return
@@ -194,7 +205,7 @@ def check_handoff(text, sha, output, cwd="."):
     if _resolve(cwd, sha) != sha:
         return [f"sha is not a commit in {Path(cwd).resolve()}: {sha}"]
     found = _evidence_lines(text)
-    for label in (*REQUIRED, AFFECTED):
+    for label in (*REQUIRED, FULL):
         values = found.get(label, [])
         if label in REQUIRED and not values:
             problems.append(f"missing {label}: line")
@@ -209,7 +220,7 @@ def check_handoff(text, sha, output, cwd="."):
     if affected is not None:
         _passing_run(cwd, sha, AFFECTED, affected, problems)
     if FULL in one:
-        _full_suite(cwd, sha, one[FULL], affected is not None, problems)
+        _full_suite(cwd, sha, one[FULL], problems)
     if EVALS in one:
         try:
             check_receipt(f"{EVALS}: {one[EVALS]}", output)
