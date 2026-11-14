@@ -249,16 +249,22 @@ contexts:
       - name: default_glasses
         contract: "адрес -> предложение прозрачного стекла КПП1"
     duplicates:
+      - at: "jobs/KPP1/delivered-1371/build_v008.py:130"
+        rule: delivery-zip
+        issue: "#1371"
+      - at: "jobs/KPP1/package-1278/build_package.py:141"
+        rule: delivery-zip
+        issue: "#1278"
       - at: "jobs/KPP1/rerun-1230/build_blender.py:401"
         rule: delivery-zip
         issue: "#1359"
       - at: "jobs/KPP1/scripts/package_vpm.py:51"
         rule: delivery-zip
         issue: "#1106"
-      - at: "jobs/KPP1/site-1255/place_package.py:181"
+      - at: "jobs/KPP1/site-1255/place_package.py:189"
         rule: delivery-zip
         issue: "#1359"
-      - at: "jobs/KPP1/site-1255/place_package.py:186"
+      - at: "jobs/KPP1/site-1255/place_package.py:194"
         rule: delivery-zip
         issue: "#1359"
       - at: "jobs/PSU275/scripts/package_vpm.py:53"

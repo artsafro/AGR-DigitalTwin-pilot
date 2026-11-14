@@ -242,7 +242,8 @@ def test_allowlist_rows_carry_an_issue_and_name_only_known_rules():
     assert {r for r, _ in allowed} == set(guard.RULES)
     assert all(issue.startswith("#") for issue in allowed.values())
     jobs = [k for k in allowed if k[1].startswith("jobs/")]
-    assert len([k for k in jobs if k[0] == "delivery-zip"]) == 14
+    # 14 (#1359) + build_v008 (#1371) + build_package (#1278, merged without a row)
+    assert len([k for k in jobs if k[0] == "delivery-zip"]) == 16
     assert len([k for k in jobs if k[0] == "udim-tile"]) == 30
 
 
