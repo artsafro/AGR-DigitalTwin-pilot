@@ -189,8 +189,16 @@ def test_three_groups_one_report_preview_then_apply(three):
     assert set(done) == {'clean.fbx', 'old_v002.fbx'}
     assert done['clean.fbx']['readback']['object_count'] == 2 and done['old_v002.fbx']['readback']['object_count'] == 1
     assert (out / 'old.fbx').read_bytes() == b'previous delivery'  # never overwritten
-    assert sorted(p.name for p in out.iterdir()) == ['clean.fbx', 'clean.report.json', 'old.fbx', 'old_v002.fbx',
-                                                     'old_v002.report.json']
+    assert sorted(p.name for p in out.iterdir()) == [
+        'clean.fbx', 'clean.fbx.export_meta.json', 'clean.report.json', 'old.fbx',
+        'old_v002.fbx', 'old_v002.fbx.export_meta.json', 'old_v002.report.json']
+    from adapters.max.agr_tools.export_meta import load_meta
+    for name in ('clean.fbx', 'old_v002.fbx'):
+        meta = load_meta(out / (name + '.export_meta.json'))
+        assert meta['exported_files'] == [name]
+        assert meta['h_otn_model_max_z_m'] == 'unknown'
+        assert set(meta['provenance']) == set(meta) - {'provenance'}
+    assert not (out / 'dirty.fbx.export_meta.json').exists()
     assert ec.validate_report(rep) is rep
 
 

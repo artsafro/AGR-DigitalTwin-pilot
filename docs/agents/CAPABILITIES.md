@@ -349,6 +349,8 @@ Territory (Ground, MAF, Flora, placement; verified 2026-11-07 against job report
   (NPM `c26b7feb…ca1a`, VPM `59310ac9…2eb4`); site data from `--job-dir` (default `jobs/VATUTINO-SITE`); tests
   `tests/test_ground_v015_producer.py`, `tests/test_shared_tools_1106.py`.
 
+Shared packaging `agr package-npm` / `agr package-vpm` and export metadata: [contract](../research/shared-packaging-1361.md) (#1361); ZIP owner `adapters/max/agr_tools/package_core.py`.
+
 Shared derivation `dt derive` (NPM<->VPM, #1106; one implementation per step instead of the job copies
 `jobs/{KPP1,PSU275,TEC26-OKS}/scripts/{make_npm_atlas,export_npm,package_vpm}.py`, which stay as frozen records):
 - `dt derive atlas <spec> <new out> [--address A --index N]` (`tools/derive/npm_atlas.py`), `dt derive npm --blender B
@@ -398,6 +400,9 @@ Delivery QA:
 - Methods catalog runner `tools/methods/run_variant.py`, `tools/methods/ucx/run_benchmarks.py` (#706) — WORKING.
 - Preview QA `tools/qa/render_qa.py` (numerical, not acceptance; limits in `tools/qa/render_qa.md`) and the advisory
   VLM checklist `tools/qa/vlm_checklist.py` (#768, research) — advisory only.
+- Before/After visual evidence `tools/review/before_after.py` (#1360, [D286]) — WORKING: two FBX/.blend versions,
+  one camera (fitted to both or one identical named camera), headless Blender Workbench, labelled pair + manifest +
+  `SHA256SUMS.txt` to Drive; refuses mismatched cameras. Rule: `docs/agents/WORKFLOW.md#visual-evidence-beforeafter-d286`.
 - Capability session launcher `tools/qa/capability_b01.py` — harness eval support (`tests/test_capability_b01.py`).
 - 3ds Max production scripts (external) — CONFIGURED, inventory only: `docs/tools/max-scripts.md`.
 

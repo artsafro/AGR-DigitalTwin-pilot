@@ -38,7 +38,8 @@ ZIP-пакета. Старые копии перечислены в `contexts.ya
   `npm-oks-route.png` `6925c9e48b8b4b7e44759a5adf949cea35c717c98e008a15a2666b37291db82d`.
 - Guard: `tools/architecture/duplicate_guard.py` (AST, stdlib). Rules `udim-tile` (owner
   `adapters/max/agr_tools/udimtile_core.py`, #1337) and `delivery-zip` (owner `tools/derive/package_vpm.py`,
-  #1106). Rule-tagged `duplicates` rows of `contexts.yaml` are the allowlist (exact `path:line` + issue). A new
+  #1106). Rule-tagged `duplicates` rows of `contexts.yaml` are the allowlist (`path.py::function` + optional
+  `hash` + issue; #1387 replaced the exact `path:line` key, so unrelated line shifts stay green). A new
   copy under `jobs/` fails; a listed row that is no longer found fails (stale); copies outside `jobs/` are
   documented and must still exist, but new ones there are not guarded yet. The `udim-tile` rule also resolves
   `Name = <int>` constants anywhere in the file (`FIRST_UDIM = 1001`, `U = 10`) and flags any job-local `def`
@@ -103,6 +104,8 @@ Non-package ZIP writers seen by the scan and deliberately not listed (not delive
 
 1. **Route the live NPM-route UDIM copies to `udimtile_core`** (`tools/derive/export_npm.py`, `npm_atlas_udim.py`,
    `fbx_readback.py`, `dt_ai/geometry/uv.py`), then widen the guard scope from `jobs/` to `tools/` + `src/`.
+   Done in #1376 (also `twinqa/uv.py::tile_origin`); the 8 copies the widened scope found off the NPM route
+   (Ground, Flora, methods, experiment, source intake) are listed with #1397.
 2. **Decide the package owner** (question for Artem): `tools/derive/package_vpm.py` or Max `package_core.py`;
    then one NPM package step and the KPP1/TEC26/PSU275 packagers marked historical.
 3. **One SINTEZ/checker command** (`agr checker` alias over the existing runner) from
