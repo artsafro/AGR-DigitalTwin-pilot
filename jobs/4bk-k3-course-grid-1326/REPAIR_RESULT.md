@@ -1,5 +1,9 @@
 # Source-bound repair checkpoint (#1326)
 
+**Continuation entry:** `PNG_REPAIR_RESULT.md` and
+`png-repair-checkpoint-v048.json` supersede the current-candidate sections below.
+The v020 measurements below remain historical, not a final v045 receipt.
+
 **NOT passed. No PR, replication or delivery.** Artem accepted v014 visual direction;
 `visual-direction-approval.json` records the answer, not a technical waiver.
 
@@ -110,7 +114,7 @@ Latest affected command (not the full suite):
 **211 passed / 1 deselected / 0 failed**, 17.92 s. No full suite/eval/PR yet:
 acceptance is incomplete. Before the first actual review, run the full card command
 through `suite_slot.py`, eval receipts, all invariant/path hostile probes, merge
-current main without rebase, recheck D288, push, open one PR and request dt-reviewer.
+current main without rebase, recheck D293, push, open one PR and request dt-reviewer.
 
 Next: resolve the protected-source baseline scope; continue the independent interior
 source-mask repair without changing main courses/one-tile budget, certify all-map

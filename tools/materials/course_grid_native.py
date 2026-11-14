@@ -440,6 +440,33 @@ def rectify_axis_joint_footprint(footprint, *, face=None):
     return result
 
 
+def restore_repeat_translation(previous_uv, chart_point, *, repeat_m, texel_px_m, tile_px, border_px):
+    """Recover a known brick-field lattice translation after cut-node movement.
+
+    Only the chart translation is recovered, never individual vertices, scale
+    or rotation. Refuse displacement greater than one pixel rather than guessing
+    an unrecognized phase class. Joint-field placements must not call this API.
+    """
+    for row in (previous_uv, chart_point):
+        if not isinstance(row, list) or len(row) != 2 or any(
+                isinstance(x, bool) or not isinstance(x, (int, float)) or not math.isfinite(x) for x in row):
+            raise ValueError('invalid phase reference')
+    for value in (repeat_m, texel_px_m, border_px):
+        if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:
+            raise ValueError('invalid phase scale')
+    if type(tile_px) is not int or tile_px not in (2048, 4096) or not 512 <= texel_px_m <= 1706 or 2 * border_px >= tile_px:
+        raise ValueError('unsupported phase tile/density')
+    result = []
+    for uv, point in zip(previous_uv, chart_point):
+        shift = uv * tile_px / texel_px_m - point
+        anchor = border_px / texel_px_m
+        exact = anchor + round((shift - anchor) / repeat_m) * repeat_m
+        if abs(shift - exact) * texel_px_m > 1:
+            raise ValueError('unrecognized phase class exceeds one pixel')
+        result.append(exact)
+    return result
+
+
 def vectorize_joint_footprint(footprint, *, face):
     """Retain measured tapered strip ends without tracing raster stair vertices.
 

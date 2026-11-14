@@ -121,4 +121,4 @@ Next: record the permitted existing chart-seam edges -> resolve one common chart
 explicit exceptions -> classify joint masks and equivalent appearances -> fixed-density
 one-tile fit -> new export/fresh readback -> numeric table + stage close-ups -> Artem's
 visual verdict. On real fit failure, preserve density and ask extra tile vs authorized
-loop cut as required by [D288]; do not conflate it with this chart-policy question.
+loop cut as required by [D293]; do not conflate it with this chart-policy question.

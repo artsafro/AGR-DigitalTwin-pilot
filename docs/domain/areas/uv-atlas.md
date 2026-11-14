@@ -98,7 +98,7 @@ waiver. Manual gates and the NPM Ground gap remain; no full L2/L3 or delivery pa
 
 ## Notes
 
-The 4BK stylobate-only one-tile pilot [D288] follows the #1314 course-grid procedure; [its intake checkpoint](../../../jobs/4bk-k3-course-grid-1326/INTAKE.md) records source-face mapping and pending gates, not a delivery pass.
+The 4BK stylobate-only one-tile pilot [D293] follows the #1314 course-grid procedure; [its intake checkpoint](../../../jobs/4bk-k3-course-grid-1326/INTAKE.md) records source-face mapping and pending gates, not a delivery pass. Its four original staircase xView faces at the protected metal/brick junction remain an explicit source baseline, with no extra brick trim or ID7 change [D292]; this is not a global xView pass.
 
 No tests were added. This sheet is an L1 index and is not delivery acceptance.
 

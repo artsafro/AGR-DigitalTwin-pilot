@@ -27,7 +27,7 @@ Cell: `oks-vpm`. This is not the final 4BK delivery.
   `C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/build/3k_v004.max`.
 - Its assembly source from S1:2591: `build/blender/K3_assembly_v006.blend`.
 - Transcript and historical evidence: `docs/research/vpm-course-grid-1314.md`.
-- Pilot decisions: [D288] (mechanical renumber from the historical D275 reservation after PR #1384 collision; D288 reserved on this card after checking active D287/D299 reservations). Originally reserved on card t_d517d7c6 after
+- Pilot decisions: [D293] (mechanical self-renumber after external PR #1389 reused the prior D288 spelling; earlier D275 collided with PR #1384). D293 reserved after `decision_ids.py next` across main + 9 open PR heads and an active-board reservation scan found no D293 hit. Historical immutable seals keep their original spelling. Originally reserved on card t_d517d7c6 after
   `uv run python tools/git-hooks/decision_ids.py next` returned `D275`
   across origin/main, this branch and 8 open PR heads.
 - Tool choice: own background Blender 5.1.2, on a hash-identical copy;

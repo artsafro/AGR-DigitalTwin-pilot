@@ -188,6 +188,6 @@
     "Artem: visual direction of actual candidate only; no waiver of red QA",
     "Repair cut topology: snap only proven float32 source-vertex duplicates and conform split edges, retaining surface/finish/lineage; remeasure all gates",
     "Resolve raster-junction ambiguity and 44 missing carrier samples without hiding failed coverage; complete interior/false joint and Normal QA",
-    "Recreate final FBX/Max version and read back; run full suite once via suite_slot, eval receipts, merge main/recheck D288, one PR and dt-reviewer"
+    "Recreate final FBX/Max version and read back; run full suite once via suite_slot, eval receipts, merge main/recheck D293, one PR and dt-reviewer"
   ]
 }

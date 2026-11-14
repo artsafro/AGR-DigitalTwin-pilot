@@ -5,7 +5,7 @@ The later source-bound repair and remaining gates are in [REPAIR_RESULT.md](REPA
 This is a working scene on a separate copy, not final delivery, a Max acceptance
 scene, a completed FBX export, or a request to waive any red numerical gate.
 Artem's new-cut permission is in `geometry-cut-approval.json`; earlier seam,
-cohort and opening questions remain settled. Initial pilot contract: [D288].
+cohort and opening questions remain settled. Initial pilot contract: [D293].
 
 ## Actual result
 
