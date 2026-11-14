@@ -137,3 +137,30 @@ def test_npm_atlas_udim_tile_is_the_owner_cell():
     for tu in range(10):
         for tv in range(10):
             assert atlas._udimtile.udim_of_cell(tu, tv) == owner.udim_of_cell(tu, tv) == 1001 + tu + 10 * tv
+
+
+def test_max_nudge_slice_tile_origin_is_the_owner_behind_the_regulated_wrapper():
+    """Full-suite regression (#1376 r0): uv.py's tile_origin now delegates to udimtile_core, so the Max bundle's
+    stdlib nudge slice inlines the owner instead of extracting a self-contained `def tile_origin`."""
+    sys.path.insert(0, str(ROOT / "tools" / "max"))
+    import build_agr_tools as builder
+    from dt_ai.geometry.uv import tile_origin
+    ns = {}
+    source = builder.nudge_slice()
+    exec(source, ns)
+    assert b"_udimtile." not in source and b"def tile_origin" not in source
+    for t in list(range(900, 1250)) + [True, 1001.0, "1001", None, float("nan")]:
+        try:
+            want = tile_origin(t)
+        except ValueError as exc:
+            with pytest.raises(ValueError):
+                ns["tile_origin"](t)
+            assert type(exc) is ValueError
+            continue
+        assert ns["tile_origin"](t) == want == ((t - 1001) % 10, (t - 1001) // 10)
+    uv = (ROOT / "src/dt_ai/geometry/uv.py").read_text(encoding="utf-8")
+    owner = (ROOT / "adapters/max/agr_tools/udimtile_core.py").read_text(encoding="utf-8")
+    for broken_tile, broken_owner in ((uv.replace("tile_origin = _regulated_tile_origin", ""), owner),
+                                      (uv, owner.replace("def tile_origin(", "def tile_origin_x("))):
+        with pytest.raises(ValueError):
+            builder.nudge_slice(None, broken_tile, broken_owner)
