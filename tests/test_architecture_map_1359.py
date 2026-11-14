@@ -245,7 +245,7 @@ def test_allowlist_rows_carry_an_issue_and_name_only_known_rules():
     assert all(issue.startswith("#") for issue in allowed.values())
     jobs = [k for k in allowed if k[1].startswith("jobs/")]
     assert len([k for k in jobs if k[0] == "delivery-zip"]) == 15
-    assert len([k for k in jobs if k[0] == "udim-tile"]) == 30
+    assert len([k for k in jobs if k[0] == "udim-tile"]) == 32   # #1387: one row per copy (same line may hold 2)
     # #1387: rows are keyed by file + function (+ hash), never by a bare line number
     assert all(qual and ":" not in path for _, path, qual, _ in allowed)
 
@@ -256,7 +256,7 @@ def test_kpp1_package_copies_owned_by_the_packaging_issue():
     kpp1 = {k: v for k, v in allowed.items()
             if k[1] in ("jobs/KPP1/package-1278/build_package.py", "jobs/KPP1/site-1255/place_package.py")}
     assert {(k[1], k[2]) for k in kpp1} == {("jobs/KPP1/package-1278/build_package.py", "repair_artifacts"),
-                                            ("jobs/KPP1/site-1255/place_package.py", "prepare")}
+                                            ("jobs/KPP1/site-1255/place_package.py", "<module>")}
     assert len(kpp1) == 3 and set(kpp1.values()) == {"#1377"}
 
 
@@ -444,6 +444,10 @@ def test_guard_qualname_of_each_finding(code, qual):
     _row("jobs/J/a.py"),                                                 # no function
     _row("jobs/J/a.py::"),                                               # empty function
     _row("jobs/J/a.py::f", digest="nothex!"),                            # malformed hash
+    _row("jobs/J/a.py::f", digest="abcdef012"),                          # 9 hex: one short
+    _row("jobs/J/a.py::f", digest="abcdef01234"),                        # 11 hex: one long
+    _row("jobs/J/a.py::f", digest="ABCDEF0123"),                         # upper case
+    _row("jobs/J/a.py::f g"),                                            # not a qualname
 ])
 def test_guard_bad_allowlist_is_an_error(tmp_path, row, capsys):
     assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": FN}, row)) == 2
