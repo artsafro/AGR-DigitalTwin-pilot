@@ -14,7 +14,7 @@ replication without edits. This pilot-picture gate is CLOSED, not asked again.
   VPM carries the same **600 UCX /6,876 triangles**, NPM none.
 - v009/r2 binds one placed-scene **2048 Flora atlas**. Hydrangea/Luteus use exactly
   the cropped interim maps of the accepted pilot; Acer uses allowed Royal Red
-  [D287]. Syringa and species-level Physocarpus remain explicitly **GREY** [D289].
+  [D287]. Syringa and species-level Physocarpus remain explicitly **GREY** [D300].
   This is interim restoration, not recovered original maps or final VPM density.
 - Fresh native Blender5.1.2 FBX import completes both profiles; it drops **39/48
   malformed MAF faces**. Do NOT call its157,102/617,792 census byte-exact. Raw FBX
@@ -90,7 +90,7 @@ But individual crowns shrink outside the retained80% baseline band:
 | VPM /2687 |0.759418|0.517049|68.1%|
 
 The80% probe is against the previously accepted individual library-copy bbox, not
-an invented planting-schedule crown value. [D289] retains accepted crown ranges;
+an invented planting-schedule crown value. [D300] retains accepted crown ranges;
 [D291] accepts the displayed isolated construction **without edits**. A worker
 cannot silently spend those limits on overlap clipping, equate retained source IDs
 with unchanged visible crowns, or call a group silhouette unchanged without a

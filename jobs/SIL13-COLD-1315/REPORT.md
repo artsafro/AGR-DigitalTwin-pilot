@@ -1,11 +1,18 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **v010/r1 actual full-site cell-trim candidate [D294], not delivered**.
-See [CONTINUATION-v010.md](CONTINUATION-v010.md):4,535hedges clipped; all4,582plants/
-38MAF/points/heights retained, actual157,137/619,340render triangles. Actual-export
-minimum crown retention32.04%/31.01% is a NEW loss beyond accepted pilot68.1–79.4%:
-model-owner choice remains, not another pilot approval. NPMFlora0face pairs, but
-whole-site xView/validators FAIL; technical repairs stay worker-owned.
+Current status: **v011/r2 continuous hedge-volume candidate [D298], not delivered**.
+See [CONTINUATION-v011.md](CONTINUATION-v011.md):4,535hedge census plants merged
+into physical run volumes; all4,582plant IDs/points/heights and38MAF retained.
+Actual162,743/334,928render triangles; independent actual-export support minimum
+78.225%/78.655%,0below68%. Original individual heights are recorded in the census,
+not independent merged-mesh bboxes; envelope top differences up to0.181/0.222m
+are disclosed. Separate90plant construction pilot/native readback is ready for
+[D300] picture choice; technical xView/validator FAILs are NOT offered for approval.
+Rejected r3/r5 experiments are retained; r2 is the preferred candidate, not final.
+
+Historical v010/r1 **REJECTED by [D298]**: cell-trim yielded31–32% crowns despite
+retaining IDs/points/heights. [CONTINUATION-v010.md](CONTINUATION-v010.md) retains
+the measured failure; [D294] did not approve that new whole-site loss.
 
 Historical status: **v009/r2 actual site replication [D291], not delivered**.
 See [CONTINUATION-v009.md](CONTINUATION-v009.md): 4,576 accepted changed-copy shrubs
@@ -15,7 +22,7 @@ bounded hedge repairs failed. A separate cell-trim eight-plant option is xView-c
 but shrinks individual crowns below the retained band; model-owner decision needed,
 NOT approval of technical FAILs. The old isolated shrub picture gate is CLOSED.
 Historical v008/r2 pilot is documented in [CONTINUATION-v008.md](CONTINUATION-v008.md).
-Historical v007/r1 continuation follows; its then-open C44 route decision is answered by D289.
+Historical v007/r1 continuation follows; its then-open C44 route decision is answered by D300.
 
 Historical v007 status: **v007/r1 technical continuation; v006/r5 composition accepted [D287], not delivered**.
 See [CONTINUATION-v007.md](CONTINUATION-v007.md). All 38 MAF remain accepted-by-picture,

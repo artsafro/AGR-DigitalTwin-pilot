@@ -1,6 +1,6 @@
 schema_version: 1.0.0
 job_id: SIL13-COLD-1315
-run_id: cold-1315-cell-trim-v010-r1
+run_id: cold-1315-continuous-hedges-v011-r2
 synthetic: false
 path: deviation
 inputs: &id001
@@ -67,11 +67,19 @@ deviations:
   new_tool_written: No shared module/checker change. Job-local drivers and actual receipts sealed externally in evidence-v010.json.
   result: Actual157137NPM/619340VPM;NPMFlora0face pairs,VPM43non-hedge/mixedpairs. New crown loss requires model-owner choice; technical repairs
     remain worker-owned.
+- gate: operations
+  what_failed: Exact stepped union exceeds NPM budget; r1 cross-run contacts; r2 near vertices; r3 simplification/nativeVPM crash; r4 partial
+    edge-only repair; r5 all-pair merge regresses170NPMFlora faces and fails independent support audit/nativeVPM import.
+  what_was_tried: D298 derived continuous species/run envelopes; different-species separator retains>=68percent; actual r2 raw/native readback,
+    independent support/census audit and complete90plant component pilot. r3/r4/r5 rejected, never promoted.
+  new_tool_written: No shared module/checker changes. Owned job-local drivers, actual failures and pilot exports sealed in evidence-v011.json.
+  result: Preferred r2 actual162743NPM334928VPM,4582IDs/census and38MAF retained,minimum support78.225/78.655percent; native39/48inheritedMAFface
+    loss and technical FAILs remain. New continuous construction picture perD300 pending, not another D298route decision.
 gates:
   inputs:
     status: review
-    note: D294 closes v009cell-pilot method/loss choice;4source/9library/3original-map hashes reverified unchanged. Interim/grey maps/source gaps
-      retained. New full-site crown losses measured, not covered silently.
+    note: 4source/9library/3original-map hashes reverified. Libraries untouched; interim/grey/source gaps retained; D298volume direction accepted,
+      changed-construction pilot pending.
     evidence: *id001
   parts:
     status: pass
@@ -82,39 +90,39 @@ gates:
       sha256: 67a837376d28670f01f822f46dfd08c3bde3565aad26ff27627a0cb584d353ee
   operations:
     status: fail
-    waits: user
-    note: D294v009pilot question CLOSED. Whole-site cell-trim actually built4535hedges,4582plants/38MAF retained. New actual-export minima32.04/31.01percent
-      and545/666crowns below68.1percent need model-owner choice. NPMFlora0face pairs,VPM43otherpairs; technical FAILs NOT proposed for approval.
+    note: D298route and>=68percent floor CLOSED. Actual r2 continuous envelopes preserve4535hedge census and4582plants/38MAF. D300new-construction90plant
+      pilot awaits shape choice; technical FAILs not offered for approval.
     evidence: &id002
-    - path: jobs/SIL13-COLD-1315/source-wide-summary-v010-r1.json
-      sha256: 99584e0080d5f0eeb1e12c0b287b419b6d753fd78e1eea4fbe2a648a5241485b
+    - path: jobs/SIL13-COLD-1315/source-wide-summary-v011-r2.json
+      sha256: 4f822abb6574add15cc23f16e5ce0ad6cc07b588a6933ff1888916e872723975
+    waits: user
   budgets:
     status: review
-    note: Actual157137NPM<=180000,VPM619340<=2625000,UCX6876. All4582IDs/points/heights retained;47nonhedges each exact. New crown-band exception
-      unapproved;materials/UDIM/density incomplete.
+    note: Actual162743NPM<=180000;334928VPM<=2625000;600UCX6876tri. Actual support minimum78.225/78.655percent>=68. Material/UV/density and envelope
+      seating checks incomplete.
     evidence: *id002
   export_readback:
     status: review
-    note: Four fresh Blender5.1.2 raw/native reads of actual FBXs;raw157137/619340,native157098/619292 drops39/48MAFfaces. Actual4582plant controls
-      each;unchangedGround/MAF/600UCX exact. Whole xViewFAIL3197/45031faces; public validatorsFAIL both. No native exact census/continuous UCX
-      proof.
+    note: Actual r2 fresh raw/native reads; native removes39/48inheritedMAFfaces. Actual47nonhedges/Ground/MAF/600UCX exact. Independent4535crown
+      controls perprofile>=68; individual heights preserved in census, shared top differences<=0.181/0.222m. Whole xViewFAIL. Isolated90plant
+      native imports exactfaces<=6.65um vertices.
     evidence: *id002
   report:
     status: review
-    note: v010four-area continuation, actual full-site cell application, new crown losses and actual exported checks; immutable external seal.
-      Historical906/969/1178comparison remains v009report-only. No delivery/readiness claim.
+    note: v011four-area continuation with exact exports, new representation, rejected numerical repairs, original hash controls and immutable
+      evidence; no delivery/readiness claim.
     evidence:
-    - path: jobs/SIL13-COLD-1315/CONTINUATION-v010.md
-      sha256: 6ab10db35f214688c8c2c889034e86c25f19fe51c9d71f1549c34352d3fc324d
-    - path: jobs/SIL13-COLD-1315/evidence-v010.json
-      sha256: e6d1ecb0d46b8f175e58838ba9dd102f15df77f6d900e2022e06dad81df6a24f
+    - path: jobs/SIL13-COLD-1315/CONTINUATION-v011.md
+      sha256: 933044e02c7e0e662ba3cc034e7f9078447f0bca9a77cbd6679d6a2e6f934b4e
+    - path: jobs/SIL13-COLD-1315/evidence-v011.json
+      sha256: 21f500d7d320aeda1905a59fb3839e1e45e14999db3fa6d611a18b204d6ee368
   visual:
     status: review
-    note: D287composition,D291shrub pilot,D294cell pilot gates CLOSED. v010fullsite/crown comparison sheet shows NEW32.04/31.01percent retention,
-      not assumed accepted. Final textured delivery visual gate separate.
+    note: D287composition/D291star/D294pilot/D298continuous-route gates CLOSED. D300new continuous-volume construction picture pending; not final
+      textured approval. r2 fullsite and separate90plant component sheet, actual hashed exports.
     evidence: *id002
   checker:
     status: missing
-    note: Complete SINTEZ not run. Actualv010 NPM2pass/3fail/1review/2not_run,VPM3pass/3fail/1review/5not_run. Invalid VPMoperand attempt rejected;missing
-      optional hole measurement remains explicit.
+    note: Complete final SINTEZ not run. Actual r2 public validatorsFAIL:NPM2pass3fail1review2not_run;VPM3pass3fail1review5not_run. r5 rejected;
+      its VPMnot_run is not pass.
     evidence: []

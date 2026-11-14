@@ -1,0 +1,291 @@
+{
+  "passed": false,
+  "decision": "D298",
+  "decision_ref": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6885424060",
+  "scope": "real continuous hedge candidate; census preserves original individual heights, not independent merged-mesh bounds",
+  "source_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\pzu-20261104.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "equal": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\СИЛ13-УВК-ПД-ПЗУ_.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\maf-and-light-spec.docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "equal": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\МАФ_и_свет_модели_фото (4).docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "equal": true
+    }
+  ],
+  "library_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+      "sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0435_M_Bench_025.fbx",
+      "sha256": "e6b6a2ba2ce042d957c80649dbf6285ecfa3d35e041f95142fe888691b2e723a",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0472_M_Cannopy_006.fbx",
+      "sha256": "cb10e03cb0298b3a247df165171da8dc7805f843342f8507886c99f16e38a096",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0698_M_Urn_010.fbx",
+      "sha256": "70a6ef60d95db7cb02f54df48b9c93ccbb08a7b72a535e9b15766034767a8586",
+      "equal": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/flora/v003/flora-library-v003.max",
+      "sha256": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74",
+      "equal": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/maf/maf-npm.blend",
+      "sha256": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd",
+      "equal": true
+    }
+  ],
+  "map_original_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\gortenzia_drevovidnaya_t2_h100_low.png",
+      "sha256": "34a61062405237ffb8bd5a1422371cd401355f2573b01b869c92020b8bb15c93"
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\puzyreplodnik_kalinolistnyj_t1_h150_low.png",
+      "sha256": "a671588be5fd368b77420bae521ab93234568e65d0b9aae206182b095a64a8e1"
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\klen_t7_h550_low.png",
+      "sha256": "96f1de1d059b6a8a3d66562479fc62d36126a7f31cbbe8d08f7423f8656a64a2"
+    }
+  ],
+  "temporary_experiment_label": "297 before reservation race; not another card decision",
+  "run_id": "cold-1315-continuous-hedges-v011-r2",
+  "profiles": {
+    "NPM": {
+      "actual_render_triangles": 162743,
+      "native_render_triangles": 162704,
+      "native_removed_faces": 39,
+      "plants_census": 4582,
+      "hedge_census": 4535,
+      "nonhedges_exact": 47,
+      "MAF_retained": 38,
+      "other_meshes_exact": 2,
+      "ground_maf_600ucx_exact": true,
+      "minimum_actual_crown_ratio": 0.7822534189900896,
+      "below68": 0,
+      "max_envelope_top_delta_abs_m": 0.18134714211787323,
+      "physical_components": 153,
+      "xview_totals": {
+        "overlapping_vertices": 1602,
+        "overlapping_faces": 3197,
+        "vertex_pairs": 898,
+        "face_pairs": 5256,
+        "face_pairs_by_kind": {
+          "contact": 322,
+          "area": 1397,
+          "area+contact": 3537
+        },
+        "bowtie_vertices": 669,
+        "bowtie_pairs": 50,
+        "parts_without_faces": 0
+      },
+      "flora_face_pairs": 3,
+      "fbx_sha256": "7e3083022ca36f6200adfb36ecc3bd685ebde32bbb2e0a601c1926cac2da16f1",
+      "runs": [
+        {
+          "run_id": "row6_merged",
+          "components": 96,
+          "area_m2": 678.5839753093087,
+          "triangle_count": 50960,
+          "vertex_count": 25030
+        },
+        {
+          "run_id": "row7_merged",
+          "components": 57,
+          "area_m2": 303.06855454867895,
+          "triangle_count": 18132,
+          "vertex_count": 9112
+        }
+      ],
+      "render_triangles_by_role": {
+        "ground_triangles": 58896,
+        "maf_triangles": 34121,
+        "flora_triangles": 69726
+      },
+      "validator": {
+        "pass": 2,
+        "fail": 3,
+        "review": 1,
+        "not_run": 2
+      },
+      "pilot": {
+        "source_count": 90,
+        "actual_component_vertices": 678,
+        "actual_component_triangles": 1404,
+        "before_triangles": 1260,
+        "component_id": "row6_merged_047",
+        "fbx_sha256": "ee2a30c239ac864c9a5679649ba2d4b6c49d738c5073841b300155c8353523aa",
+        "component_crown_min": 0.9953231650149377,
+        "component_max_envelope_top_delta_abs_m": 0.08865337110497884
+      },
+      "pilot_native": {
+        "passed": false,
+        "scope": "native geometry import only; no materials, no final gates",
+        "sha256": "ee2a30c239ac864c9a5679649ba2d4b6c49d738c5073841b300155c8353523aa",
+        "vertices": 678,
+        "triangles": 1404,
+        "face_arrays_exact": true,
+        "max_vertex_delta_m": 6.641846265864615e-06,
+        "uv_channels": 0
+      },
+      "pilot_xview": {
+        "overlapping_vertices": 14,
+        "overlapping_faces": 0,
+        "vertex_pairs": 8,
+        "face_pairs": 0,
+        "face_pairs_by_kind": {
+          "contact": 0,
+          "area": 0,
+          "area+contact": 0
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      }
+    },
+    "VPM": {
+      "actual_render_triangles": 334928,
+      "native_render_triangles": 334880,
+      "native_removed_faces": 48,
+      "plants_census": 4582,
+      "hedge_census": 4535,
+      "nonhedges_exact": 47,
+      "MAF_retained": 38,
+      "other_meshes_exact": 600,
+      "ground_maf_600ucx_exact": true,
+      "minimum_actual_crown_ratio": 0.7865506592136388,
+      "below68": 0,
+      "max_envelope_top_delta_abs_m": 0.22204264733701334,
+      "physical_components": 113,
+      "xview_totals": {
+        "overlapping_vertices": 548,
+        "overlapping_faces": 45052,
+        "vertex_pairs": 277,
+        "face_pairs": 95218,
+        "face_pairs_by_kind": {
+          "contact": 41072,
+          "area": 6850,
+          "area+contact": 47296
+        },
+        "bowtie_vertices": 298,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "flora_face_pairs": 46,
+      "fbx_sha256": "4fdc920b35b19a7a71529ed8a73188f0d164cd82dc1be0558779ce737860861b",
+      "runs": [
+        {
+          "run_id": "row6_merged",
+          "components": 58,
+          "area_m2": 728.2288530160838,
+          "triangle_count": 69400,
+          "vertex_count": 34244
+        },
+        {
+          "run_id": "row7_merged",
+          "components": 55,
+          "area_m2": 304.7885296379494,
+          "triangle_count": 28628,
+          "vertex_count": 14356
+        }
+      ],
+      "render_triangles_by_role": {
+        "ground_triangles": 58896,
+        "maf_triangles": 168140,
+        "flora_triangles": 107892
+      },
+      "validator": {
+        "pass": 3,
+        "fail": 3,
+        "review": 1,
+        "not_run": 5
+      },
+      "pilot": {
+        "source_count": 90,
+        "actual_component_vertices": 890,
+        "actual_component_triangles": 1824,
+        "before_triangles": 7560,
+        "component_id": "row6_merged_025",
+        "fbx_sha256": "ee8acbbb329c577db207e31f86b8d443954aebcf9fe024d69266d4b45e549bdb",
+        "component_crown_min": 0.9824450565575893,
+        "component_max_envelope_top_delta_abs_m": 0.09239720275167007
+      },
+      "pilot_native": {
+        "passed": false,
+        "scope": "native geometry import only; no materials, no final gates",
+        "sha256": "ee8acbbb329c577db207e31f86b8d443954aebcf9fe024d69266d4b45e549bdb",
+        "vertices": 890,
+        "triangles": 1824,
+        "face_arrays_exact": true,
+        "max_vertex_delta_m": 6.643876893974721e-06,
+        "uv_channels": 0
+      },
+      "pilot_xview": {
+        "overlapping_vertices": 10,
+        "overlapping_faces": 0,
+        "vertex_pairs": 8,
+        "face_pairs": 0,
+        "face_pairs_by_kind": {
+          "contact": 0,
+          "area": 0,
+          "area+contact": 0
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      }
+    }
+  },
+  "tests": {
+    "command": "env PYTEST_ADDOPTS= uv run pytest -q tests/test_decisions.py tests/test_area_requirement_sheet.py tests/test_ground_surface_requirement_sheet.py tmp/cold-v011/test_hedge_contract.py -p no:cacheprovider --basetemp=C:/x/t_d9ae7dc0-v011-final",
+    "passed": 149,
+    "failed": 0,
+    "seconds": 3.55,
+    "log_sha256": "d410993db95fb2fa422843031ac457cc598d4c07cbf52ed6cf991a7f470f1923",
+    "red": "2failed12passed real v010 floor+missing volume;1failed128passed D298 original anchor;1failed148passed renumber ordering, corrected"
+  },
+  "user_gate": {
+    "waits": "user",
+    "scope": "new continuous-run construction picture per D300; not repeated D298 route or approval of technical FAILs",
+    "sheet": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v011\\review-sheet-v011-r2-NOT-ACCEPTED.png",
+    "sheet_sha256": "52c5544df81a566c0d8e6d6ba1cd06df4eabdbe6d5ab5d21a1ce0c610e6b1d09"
+  }
+}

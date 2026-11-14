@@ -1,7 +1,7 @@
 # #1315 — changed-copy Flora pilot v008/r2
 
 **Not delivered; `passed=false`.** Cells: `ground-npm` / `ground-vpm`.
-[D289] records the authorization in issue comment 6878796926: change Flora construction
+[D300] records the authorization in issue comment 6878796926: change Flora construction
 on copies only, first show a small pilot and wait for picture approval. The accepted
 v006/r5 site composition is NOT reopened. Full-site exports remain v007/r1, unchanged.
 
@@ -88,10 +88,11 @@ first gave **1 failed /114 passed** (row order), then sorted rows gave **115 pas
 actual `tol` parameter before generating the retained summary. No fabricated report.
 Full suite deferred to finished PR through suite_slot; no review request yet.
 
-D289 remains this card's reserved changed-copy authorization. Historical own D275
-was reserved at 2026-11-13 12:05:51Z, after #1316's12:02:57Z: renumber ONLY ours to
-D290. `decision_ids.py next` returned D290 over main/branch/six open heads; active
-board reservations scan D288/D289/D299 showed D290 free. Current TASK/REPORT/domain
-references use D290; historical versioned reports and binary seals retain the old
-spelling, which means this SAME source-authority decision in those checkpoints,
-not #1316's Tilia decision. No source authority or approval content changed.
+The changed-copy authorization is now [D300] (historically decision 289; renamed
+in v011 after a later foreign allocation reached main). Historical own decision275
+was reserved at 2026-11-13 12:05:51Z, after #1316's12:02:57Z: only ours was renamed
+[D290]. The original next-ID tool returned290 over main/branch/six open heads and
+the contemporaneous active-reservation scan found it free. Current references use
+[D290, D300]; immutable versioned reports and binary seals retain their historical
+spellings for the SAME source-authority/changed-copy answers, not the other card's
+later decisions. No source authority or approval content changed.

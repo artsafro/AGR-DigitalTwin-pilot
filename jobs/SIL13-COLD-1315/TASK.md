@@ -59,11 +59,19 @@ symbols extracted, 52/52 inside the approved boundary and preserved by DXF readb
 match all five point-plant schedule quantities (1, 4, 6, 17, 24). A linden-named CAD symbol is position 2/4,
 not authority to substitute linden for Red Sunset. Flora candidates remain subject to identity/size checks.
 MAF: all 32 DOCX rows accounted for; no certified SKU-to-model match yet (not proof of disk-wide absence).
-Current continuation is [CONTINUATION-v010.md](CONTINUATION-v010.md). [D294] closes
-approval of the v009 cell-trim method/pilot losses. Actual full-site v010/r1 retains
-all4,582plants/38MAF and points/heights,157,137/619,340render triangles, but new
-minimum crown retention32.04%/31.01% is not silently covered by pilot68.1–79.4%.
-Candidate-only pending the new measured-loss choice; technical FAILs remain worker-owned. [D281] answers
+Current continuation is [CONTINUATION-v011.md](CONTINUATION-v011.md). [D298] rejects
+v010's31–32% crowns and authorizes continuous hedge-run volumes with>=68% retained
+constituent crowns and all original IDs/counts/points/heights in the census.
+Real v011/r2 candidate exports retain4,582plants/38MAF,162,743/334,928render
+triangles; independently measured support minima78.225%/78.655%,0below68%.
+All47nonhedge copies and Ground/MAF/600UCX actual arrays remain unchanged.
+Individual heights are census facts, not independent bboxes of a merged volume;
+envelope top differences up to0.181/0.222m are disclosed. A separate90plant
+changed-construction pilot awaits the required [D300] picture choice; this is not
+a repeat of [D298], composition or earlier shrub-star approval. Technical FAILs
+remain worker-owned. Later r3/r5 topology experiments are rejected, not promoted.
+[D294] remains the historical cell-pilot answer, not approval of the rejected
+whole-site v010 candidate. [D281] answers
 G1–G3; [D284] supplies the standing sliver/TIN/draw-order rule without repeated small
 questions. First pilot geometry remains [D283]; zero/5.6 m plan remain [D282].
 [D287] closes the v006/r5 picture choice: all 38 MAF kept as accepted-by-picture,
@@ -82,7 +90,7 @@ positive at427: all600 convex. Sampled coverage175,688 points <=79.836mm; no con
 maximum claim, wide-neighbour set remains open. NPM native public validator FAIL;
 VPM default600s timeout and unchanged-reader topology crash, not importer failure.
 
-[D289] / issue comment 6878796926 authorizes a changed-copy Flora representation,
+[D300] / issue comment 6878796926 authorizes a changed-copy Flora representation,
 not a C44 waiver: retain species, all 4,582 instances, planting points and accepted
 height/crown ranges; keep NPM <=180,000. Show a separate small construction pilot
 and wait for its picture approval before site-wide application. [D291] / issue comment
