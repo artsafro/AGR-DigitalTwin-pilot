@@ -1,12 +1,14 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **bounded source-wide diagnostic v005/r3; library/source choices open, not delivered**.
-See [CONTINUATION-v005.md](CONTINUATION-v005.md): actual exports/readback, both FBX
-xView 0 faces / 0 vertices with 9 bowties still open, D281 source answers applied,
-two refused UCX builds and expanded MAF identity audit. D282/D283 replace this branch's
-former D279/D280 after unrelated main allocations. No technical failure or manual gate
-is waived. The v003 pilot first-fragment acceptance remains limited.
-PILOT-v003.md, CONTINUATION-v004.md and the v001/v002 sections below are historical checkpoints.
+Current status: **full-site candidate reproduction v006/r5; picture selection pending, not delivered**.
+See [CONTINUATION-v006.md](CONTINUATION-v006.md): both exported profiles contain 38 MAF
+CANDIDATES, 4,582 library plants and VPM-only 600-piece UCX. Native Max independently
+reads 172,437 /806,914 render triangles; raw-FBX controls verify 4,620 placements per
+profile. Ground-only xView is 0/0/0; whole-composition xView FAILs, one UCX is nonconvex,
+and native public-validator/texture/detail/hedge-layout work remains open. D284 closes
+small source/library questions; it does not accept candidate identities or technical QA.
+Final picture and ten-row showcase are on Drive v006/r5. No PR/readiness claim.
+PILOT-v003.md and v001–v005 / v006-r4 material below are historical checkpoints.
 
 Historical v002 status: **source authority answered; height/PartsList gates open, not delivered**.
 Boundary and 52 source symbols exported/read back as source-only DXF. No constructed Ground/UCX,

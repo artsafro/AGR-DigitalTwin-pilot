@@ -11,6 +11,8 @@ Scope decision: [D272] in `docs/decisions.md`; cells `ground-npm` and `ground-vp
 - VPM Ground UCX only: closed convex pieces, gap 2–10 mm, model-to-UCX deviation <=100 mm,
   triangle budget D012. No MAF/Flora/lighting collision and no NPM UCX.
 - Place matching MAF from `G:/Мой диск/AGR-assets/maf`, by article/dimensions and source plan.
+  [D284] permits type/size CANDIDATES where article identity is unconfirmed; never label
+  them matched, list every choice for the full-site picture and preserve the libraries.
 - Place Flora from `G:/Мой диск/AGR-assets/flora`, by source schedule/planting symbols and legend.
   Missing library types/species are listed, never invented, substituted or modelled.
 - NPM Ground+MAF+Flora <=180,000 triangles. If exceeded, bring distribution options;
@@ -57,24 +59,22 @@ symbols extracted, 52/52 inside the approved boundary and preserved by DXF readb
 match all five point-plant schedule quantities (1, 4, 6, 17, 24). A linden-named CAD symbol is position 2/4,
 not authority to substitute linden for Red Sunset. Flora candidates remain subject to identity/size checks.
 MAF: all 32 DOCX rows accounted for; no certified SKU-to-model match yet (not proof of disk-wide absence).
-Current continuation is [CONTINUATION-v005.md](CONTINUATION-v005.md). [D281] answers
-G1–G3: fixed TIN continuation, source material precedence, footprint 33FBD7A and
-adjacent canopy/entry surfaces. First pilot geometry remains accepted [D283]; project
-zero/5.6 m plan are [D282], renumbered from the branch's former D279/D280 after main
-collisions without changing the original answering URLs.
+Current continuation is [CONTINUATION-v006.md](CONTINUATION-v006.md). [D281] answers
+G1–G3; [D284] answers the next small-remainder/library batch and supplies a standing
+rule: adjacent-source slivers/TIN edges/draw order without repeating small questions,
+MAF type/size picks stay CANDIDATE; Flora follows the table without species substitution.
+First pilot geometry remains accepted [D283]; zero/5.6 m plan remain [D282].
 
-Actual v005/r3 exports/readback: Ground 59,885 triangles per profile, six library
-maples NPM 60 / VPM 6420; UnitScaleFactor=100; public xView 0 overlapping faces /
-0 overlapping vertices, but 9 bowties and public delivery validators still FAIL.
-Two actual Ground-only UCX builds refuse the present composition's triangle budget.
-MAF lookup: 3559 files, 116 ZIP directories, 232 nonempty XLSX rows and 931 catalogue
-identities, no certified article match; native object identity needs the library owner.
+Actual v006/r5 exports contain 58,896 Ground triangles each, 38 MAF candidates across
+10 rows and 4,582 library plants each; VPM-only UCX 600 pieces /6,876 triangles.
+Native Max readback independently verifies 172,437 NPM /806,914 VPM non-UCX triangles;
+raw-FBX controls verify all 4,620 placements per profile and UnitScaleFactor=100.
+Ground-only xView 0/0/0 is NOT a whole-composition pass: both profiles fail xView,
+1 UCX piece is nonconvex, texture/skirt/detail/native-validator work remains open.
 
-One new source/library batch: unhatched base-lawn assumption 1.268965 m2, including
-an additional 0.011239226 m2 outside the fixed TIN authorization (excluded, not
-extrapolated); exact MAF library mappings; remaining Flora target sizes/cultivars.
-These do not ask for approval of worker-owned technical FAILs. The former pink
-wedge remains actual Rubber18; no conditional lawn inference there. Acer maps stay
-owned by #1316. The 133 m2 flowerbed remains unresolved without invented scatter.
-Full Ground/UCX/MAF/remaining Flora/atlases and manual/SINTEZ gates remain incomplete.
-Technical QA, user acceptance and publication remain incomplete; no readiness increase.
+Next user gate is the actual full-site picture and ten-row NPM/VPM candidate showcase
+on Drive v006/r5, with assumptions, 22 unresolved MAF rows, missing species and
+provisional hedge positions/heights explicitly listed. No technical waiver requested.
+Abies 1 /Red Sunset 4 have no substitute; 133 m2 flowerbed remains without invented
+scatter. Acer maps remain #1316; other etalon map paths are missing as reported.
+Technical QA, final user acceptance and publication remain incomplete; no readiness increase.

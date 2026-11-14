@@ -1,0 +1,493 @@
+{
+  "passed": false,
+  "run_id": "cold-1315-full-site-candidates-v006-r5",
+  "authority": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6874264219",
+  "profiles": {
+    "NPM": {
+      "ground_triangles": 58896,
+      "flora_triangles": 79420,
+      "maf_triangles": 34121,
+      "total_triangles": 172437,
+      "export_sha256": "d6e61ffc4328d5305a4fd3e5bef2571285f36882109f558b505af970e6efac0e",
+      "control_count": 4620,
+      "max_sinking_error_m": 2.384185793236071e-08,
+      "max_height_error_m": 1.5305365863582665e-07,
+      "xview": {
+        "overlapping_vertices": 1711,
+        "overlapping_faces": 3529,
+        "vertex_pairs": 1287,
+        "face_pairs": 5532,
+        "face_pairs_by_kind": {
+          "contact": 420,
+          "area": 1389,
+          "area+contact": 3723
+        },
+        "bowtie_vertices": 592,
+        "bowtie_pairs": 59,
+        "parts_without_faces": 0
+      },
+      "xview_input_route": "raw FBX arrays/axis conversion, native Max bbox cross-check; not native Blender importer success",
+      "fbx_path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v006\\r5\\NPM\\SM_SIL13_Ground.fbx",
+      "UnitScaleFactor": 100
+    },
+    "VPM": {
+      "ground_triangles": 58896,
+      "flora_triangles": 579878,
+      "maf_triangles": 168140,
+      "total_triangles": 806914,
+      "export_sha256": "33a5c6fe67e9b6e94d65be6c155d88867efa0ff767456b9f6c0a228fe65f4d1d",
+      "control_count": 4620,
+      "max_sinking_error_m": 2.384185793236071e-08,
+      "max_height_error_m": 1.5305365863582665e-07,
+      "xview": {
+        "overlapping_vertices": 50796,
+        "overlapping_faces": 574178,
+        "vertex_pairs": 26614,
+        "face_pairs": 609438,
+        "face_pairs_by_kind": {
+          "contact": 129967,
+          "area": 110201,
+          "area+contact": 369270
+        },
+        "bowtie_vertices": 600,
+        "bowtie_pairs": 42,
+        "parts_without_faces": 0
+      },
+      "xview_input_route": "raw FBX arrays/axis conversion, native Max bbox cross-check; not native Blender importer success",
+      "fbx_path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v006\\r5\\VPM\\SM_SIL13_Ground.fbx",
+      "UnitScaleFactor": 100
+    }
+  },
+  "native_max_bbox_crosscheck": {
+    "NPM": {
+      "meshes": 3,
+      "max_bbox_difference_m": 3.795010158569312e-06,
+      "limit_m": 0.001
+    },
+    "VPM": {
+      "meshes": 601,
+      "max_bbox_difference_m": 3.7894264011129053e-06,
+      "limit_m": 0.001
+    }
+  },
+  "site_area_m2": 12958.738864325082,
+  "footprint_m2": 3389.93922388775,
+  "ground_budget_area_m2": 9568.799640437332,
+  "source_controls": 1670,
+  "source_max_error_m": 0.0,
+  "authorized_extension_area_m2": 7.60847426645244,
+  "extra_extension_excluded_m2": 0.0,
+  "local_pinch_assumptions": [
+    {
+      "source_vertex_1based": 25357,
+      "face_0based": 41024,
+      "old_xyz_m": [
+        -61.848,
+        13.629,
+        -0.09220286921516416
+      ],
+      "new_xyz_m": [
+        -61.849050582955535,
+        13.627181683346185,
+        -0.09222778251831315
+      ],
+      "xy_move_m": 0.0021,
+      "upper_tip_area_to_adjacent_base_m2": 2.303201094727101e-06,
+      "reason": "point-touching upper pavement fan; open 2.1mm pinch, underlying adjacent source base retained; D284 sliver assumption, not source contour certification"
+    }
+  ],
+  "plants_by_row": {
+    "3": 6,
+    "4": 17,
+    "5": 24,
+    "6": 3360,
+    "7": 1175
+  },
+  "hedges": [
+    {
+      "handle": "33FC3FE+33FC417",
+      "row": "6",
+      "count": 3360,
+      "original_valid": false,
+      "original_area_m2": 671.4406227158164,
+      "valid_area_m2": 671.4406227158167,
+      "repair": "make_valid decomposes self-touching ring; no invented exterior; source unchanged",
+      "position_method": "deterministic Halton seed 1321; not row-spacing or source individual points"
+    },
+    {
+      "handle": "33FC401",
+      "row": "7",
+      "count": 1175,
+      "original_valid": false,
+      "original_area_m2": 235.1630543708425,
+      "valid_area_m2": 235.16305437084262,
+      "repair": "make_valid decomposes self-touching ring; no invented exterior; source unchanged",
+      "position_method": "deterministic Halton seed 1322; not row-spacing or source individual points"
+    }
+  ],
+  "maf_candidates": {
+    "count": 38,
+    "report": "jobs/SIL13-COLD-1315/library-placements-v006-r5.json"
+  },
+  "maf_gap_rows": [
+    {
+      "row": "1",
+      "description": "Теневой навес  S =25.0 кв.м., со скамьей, зашивкой монолитным поликарбонатом, водосточными желобами и снегозадержанием.  Индивидуальный проект (артикула нет).",
+      "quantity": "8 шт.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "5",
+      "description": "Балансир «Линия», арт. БЛР-2007 | Деткки",
+      "quantity": "3 шт.",
+      "source_symbols": 3,
+      "reason": "no type-certified catalogue candidate"
+    },
+    {
+      "row": "6",
+      "description": "Игровая панель «Часы», арт. ИПН-2012 | Деткки",
+      "quantity": "6 шт.",
+      "source_symbols": 6,
+      "reason": "no type-certified catalogue candidate"
+    },
+    {
+      "row": "7",
+      "description": "Интерактивный элемент «Гипно-2», арт. ИПН-2007 | Деткки",
+      "quantity": "2 шт.",
+      "source_symbols": 2,
+      "reason": "no type-certified catalogue candidate"
+    },
+    {
+      "row": "8",
+      "description": "Меловая доска (М), арт. ИПН-2015 | Деткки",
+      "quantity": "8 шт.",
+      "source_symbols": 8,
+      "reason": "no type-certified catalogue candidate"
+    },
+    {
+      "row": "9",
+      "description": "Переговорные трубы «Цветки», арт. ИПН-2005 | Деткки",
+      "quantity": "4 шт.",
+      "source_symbols": 4,
+      "reason": "no type-certified catalogue candidate"
+    },
+    {
+      "row": "10",
+      "description": "Игровая панель «Счеты», арт. ИПН-2028 | Деткки",
+      "quantity": "2 шт.",
+      "source_symbols": 2,
+      "reason": "no type-certified catalogue candidate"
+    },
+    {
+      "row": "20",
+      "description": "Навес для отдыха МГН (зашит монолитным поликарбонатом и рейками), арт.  ВСТ 9624/3 | Высота",
+      "quantity": "1 шт.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "21",
+      "description": "Контейнерная площадка «Бункер» на 3 контейнера, арт. 5003-1 | Аданат",
+      "quantity": "1 шт.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "22",
+      "description": "Контейнерная площадка «Бункер» на 4 контейнера, арт. 5003-2 | Аданат",
+      "quantity": "1 шт.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "23",
+      "description": "Хозблок для контейнерной площадки «Бункер», арт. 5052 | Аданат",
+      "quantity": "1 шт.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "24",
+      "description": "Флагшток высотой 9 м (с закрытым подъёмным механизмом), арт.  AL-L-06-11 | Grand-mag",
+      "quantity": "3 шт.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "25",
+      "description": "Детские футбольные ворота (с сеткой) «Юниор» с баскетбольным щитом, арт. 44708 | Хоббика",
+      "quantity": "2 шт.",
+      "source_symbols": 2,
+      "reason": "no type-certified catalogue candidate"
+    },
+    {
+      "row": "26",
+      "description": "Спортивный комплекс (волейбол) с регулированием крепления сетки по высоте, с сеткой, от 6 лет, арт.  СО053 | Поколение",
+      "quantity": "1 шт.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "27",
+      "description": "Контейнер для отходов  V =1.1 м³ «крышка в крышке» с маркировкой, арт.  МК001 | Поколение",
+      "quantity": "7 шт.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "29",
+      "description": "Сварное ограждение  PRO   H =2,5 м. Индивидуальный проект (артикула нет).",
+      "quantity": "663 п.м.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "30",
+      "description": "Ворота распашные  L =4.2 м. Индивидуальный проект (артикула нет).",
+      "quantity": "4 шт.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "31",
+      "description": "Калитка периметрального ограждения. Индивидуальный проект (артикула нет).",
+      "quantity": "2 шт.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "32",
+      "description": "Калитка в спор. ограждении. Индивидуальный проект (артикула нет).",
+      "quantity": "1 шт.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "33",
+      "description": "Ограждение спортивное. Индивидуальный проект (артикула нет).",
+      "quantity": "94 п.м.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "34",
+      "description": "Лежачий полицейский  L =6 м, ИДН 500С | Стандартпарк",
+      "quantity": "4 шт.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "35",
+      "description": "Концевой элемент композитный, ДО-ИДН-500-К/К-СП | Стандартпарк",
+      "quantity": "8 шт.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    }
+  ],
+  "flora_gaps": [
+    {
+      "row": "1",
+      "species": "Abies sibirica",
+      "count": 1,
+      "reason": "absent from audited etalon catalogue"
+    },
+    {
+      "row": "2",
+      "species": "Acer rubrum Red Sunset",
+      "count": 4,
+      "reason": "absent from audited etalon catalogue; no Tilia substitute"
+    },
+    {
+      "row": "8",
+      "species": "Hosta Allegan Fog / Luzula sylvatica / Tiarella cordifolia",
+      "area_m2": 133,
+      "reason": "no per-species planting rates; no invented scatter"
+    }
+  ],
+  "ucx": {
+    "passed": false,
+    "target": "Ground only, no skirts/Flora/MAF",
+    "model_triangles": 806914,
+    "budget": 40346,
+    "options": {
+      "cell": 16.0,
+      "min_cell": 0.5,
+      "tol": 0.08,
+      "gap": 0.004,
+      "depth": 0.5
+    },
+    "within_tol": true,
+    "piece_count": 600,
+    "triangle_count": 6876,
+    "max_vertical_dev_m": 0.07983787993598808,
+    "uncovered_strip_m": 0.01744030364237471,
+    "attempts": [
+      {
+        "min_cell_m": 0.5,
+        "tol_m": 0.08,
+        "grid_m": [
+          14.958988,
+          15.33
+        ],
+        "outline_segments": 835,
+        "internal_layer_edges": 0,
+        "breaklines": 835
+      }
+    ],
+    "adapter": "full layered surface",
+    "elapsed_seconds": 241.91806789999828,
+    "route": "reuse exact Ground-only 600 hulls from measured r4 builder; Ground unchanged; actual r5 per-file budget recomputed; still 1 independent convexity FAIL"
+  },
+  "ucx_readback_failures": [
+    {
+      "name": "UCX_SM_SIL13_Ground_427",
+      "triangles": 20,
+      "closed": true,
+      "convex": false,
+      "material_slots": 0
+    }
+  ],
+  "source_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\pzu-20261104.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "equal": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\СИЛ13-УВК-ПД-ПЗУ_.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\maf-and-light-spec.docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "equal": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\МАФ_и_свет_модели_фото (4).docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "equal": true
+    }
+  ],
+  "library_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+      "sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0435_M_Bench_025.fbx",
+      "sha256": "e6b6a2ba2ce042d957c80649dbf6285ecfa3d35e041f95142fe888691b2e723a",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0472_M_Cannopy_006.fbx",
+      "sha256": "cb10e03cb0298b3a247df165171da8dc7805f843342f8507886c99f16e38a096",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0698_M_Urn_010.fbx",
+      "sha256": "70a6ef60d95db7cb02f54df48b9c93ccbb08a7b72a535e9b15766034767a8586",
+      "equal": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/flora/v003/flora-library-v003.max",
+      "sha256": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74",
+      "equal": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/maf/maf-npm.blend",
+      "sha256": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd",
+      "equal": true
+    }
+  ],
+  "validation": {
+    "native_public_r4": "NPM exit2/8 stages not_run; VPM 300s timeout. Historical attempts only, not r5 receipts.",
+    "r5_public_xview": "both exit1 on raw exported arrays; see exact totals",
+    "SINTEZ": "not_run pending final visual/technical gates"
+  },
+  "technical_open": [
+    "whole-composition overlaps/vertices/bowties",
+    "1 nonconvex UCX piece; independent gaps/coverage not measured",
+    "native Blender FBX importer crash",
+    "Ground skirt validator / small curb, step, ramp details",
+    "Ground and plant atlases/UDIM/maps; neutral diagnostic only",
+    "NPM candidate silhouette after 8-percent decimation",
+    "hedge row-spacing, cultivar/crown/colour and provisional height targets",
+    "complete source row mapping for missing MAF types"
+  ],
+  "next_human_gate": "full-site picture / candidate choices, not approval of technical FAILs",
+  "supersedes": "r4 candidate-type/LOD selection, not original sources",
+  "candidate_type_repair": {
+    "red": "prefix M_Sand_ incorrectly selected play equipment; backless row got backrest",
+    "green": "row4 MAF_0625 sandbox and row14 MAF_0435 backless bench, actual previews inspected; 8 corrections /38 retained candidates",
+    "npm_lod": "20 percent collapse with 200-triangle floor (or all original when under floor); library originals unchanged"
+  },
+  "assumption_totals_by_rule_material": {
+    "authorized adjacent source surface: longest shared boundary / Rubber18": {
+      "parts": 3,
+      "area_m2": 75.02400808934965
+    },
+    "authorized adjacent source surface: longest shared boundary / SeededLawn": {
+      "parts": 5,
+      "area_m2": 125.36932055705302
+    },
+    "D284 adjacent source surface by longest shared boundary; unhatched remainder assumption / SeededLawn": {
+      "parts": 129,
+      "area_m2": 0.8175752240688468
+    },
+    "D284 adjacent source surface by longest shared boundary; unhatched remainder assumption / Pavement": {
+      "parts": 165,
+      "area_m2": 0.24556197122367387
+    },
+    "D284 adjacent source surface by longest shared boundary; unhatched remainder assumption / Rubber18": {
+      "parts": 54,
+      "area_m2": 0.16612082376832196
+    },
+    "D284 adjacent source surface by longest shared boundary; unhatched remainder assumption / RolledLawn": {
+      "parts": 5,
+      "area_m2": 0.015494159599834804
+    },
+    "D284 adjacent source surface by longest shared boundary; unhatched remainder assumption / Rubber253": {
+      "parts": 20,
+      "area_m2": 0.0007326975019369574
+    },
+    "D284 adjacent source surface by longest shared boundary; unhatched remainder assumption / Asphalt": {
+      "parts": 13,
+      "area_m2": 0.0005715293813030307
+    },
+    "D284 adjacent source surface by longest shared boundary; unhatched remainder assumption / Rubber30": {
+      "parts": 30,
+      "area_m2": 0.0038174319714613498
+    },
+    "D284 adjacent source surface by longest shared boundary; unhatched remainder assumption / Rubber252": {
+      "parts": 32,
+      "area_m2": 0.01902903932346613
+    },
+    "D284 adjacent source surface by longest shared boundary; unhatched remainder assumption / Flowerbed_UnresolvedSpecies": {
+      "parts": 32,
+      "area_m2": 6.222054676645665e-05
+    }
+  },
+  "full_assumption_geometry": {
+    "path": "G:/Мой диск/AGR-evidence/1315-cold-silikatny/v006/r5-addendum/source-wide-summary-v006-r5.json",
+    "sha256": "f8779984f106a5797435481c387e54859bbb94a43f96533679d076cf13c4cba9",
+    "scope": "all488 original assumption polygons/contact scores and two hedge geometries, immutable full report"
+  }
+}

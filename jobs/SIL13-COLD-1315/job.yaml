@@ -1,6 +1,6 @@
 schema_version: 1.0.0
 job_id: SIL13-COLD-1315
-run_id: cold-1315-bounded-source-wide-v005-r3
+run_id: cold-1315-full-site-candidates-v006-r5
 synthetic: false
 path: deviation
 inputs: &inputs
@@ -24,45 +24,52 @@ deviations:
   what_was_tried: Common source/TIN/grid partition; 30 singular TIN triangles excluded, all 1670 source controls retained; 3mm noding, re-anchor to authorized domain, D154 Z-only clearance correction. No general proximity weld or source edits.
   new_tool_written: No shared module; real job-local drivers and failed attempts sealed in evidence-v005.json.
   result: Both real exports xView 0 faces and 0 vertices, but 9 bowties and public validators fail. Two actual UCX attempts refuse 6832/6660 triangles against incomplete-file limit 3316. No output collider or completed delivery claimed.
+- gate: operations
+  what_failed: v006 legend/hedge domain, pavement pinch, heavy NPM budget, misleading catalogue type prefix and over-simplification; native Blender readback crash.
+  what_was_tried: Actual-source domain RED/GREEN;2.1mm bounded pinch versus failed3mm; visually verified sandbox/backless bench; same-object NPM20percent copies with200tri floor; native Max plus raw-FBX alternative readback.
+  new_tool_written: Job-local adapters/probes in immutable external v006/r5 evidence, no shared module/checker edits.
+  result: Real r5 NPM172437/VPM806914 rendertris,4620 controls per profile. Ground xView0/0/0; whole-composition FAIL,1of600 UCX nonconvex; native delivery validation open. Full-site picture next, not a technical waiver.
 gates:
   inputs:
     status: review
-    waits: user
-    note: D281 source answers applied; D282/D283 replace former branch D279/D280 after main collisions. New source/library batch in CONTINUATION-v005.md asks about unhatched base-lawn and additional 0.011239226m2 unsupported subset (excluded), exact MAF identities and remaining Flora targets/cultivars. Acer maps stay owned by 1316. Four original/copy source hashes equal.
+    note: D284 closes the small remainder/library batch; adjacent-source slivers/TIN extensions disclosed, MAF picks are CANDIDATE, Flora missing species have no substitute.4source/9used-library hashes equal. Missing maps and unreconciled rows remain explicit gaps.
     evidence: *inputs
   parts:
     status: review
-    note: Existing pilot PartsList confirmed and geometry accepted, not a complete-site PartsList. Update full-site parts after source choices, retaining approved scope.
+    note: Original site/scope Gate1 and pilot accepted. Public facade validates7-part full-site candidate draft; identities/provisional targets are not falsely confirmed. Full-site picture next.
     evidence:
-    - path: jobs/SIL13-COLD-1315/parts-pilot-confirmed.json
-      sha256: 40b5287dc4377627ea154d7ee40e515049a6c84434e0cb45acf99dbd8ff59aec
+    - path: jobs/SIL13-COLD-1315/parts-full-site-candidates-v006-r5.json
+      sha256: 966c67a4cf86435e508d5a9dbaa09330463eef68e79ae5f9f6201ca36d27b97c
   operations:
     status: fail
-    note: Actual v005 exports have zero contact pairs; 9 bowties and skirt/material/library topology FAILs remain worker-owned. No fabricated invariant receipt or requested technical waiver.
+    note: r5 whole-composition xView NPM3529faces/1711vertices/592bowties, VPM574178faces/50796vertices/600bowties. Ground subset0/0/0 is not a whole-file pass; technical repairs worker-owned.
     evidence: &summary
-    - path: jobs/SIL13-COLD-1315/source-wide-summary-v005.json
-      sha256: 380fdb037fcb56c2af2f2df31c0064442d9e48461107ad6bb7d9a1cfb882a7ca
+    - path: jobs/SIL13-COLD-1315/source-wide-summary-v006-r5.json
+      sha256: 9bbe5785367ec3c548d6e37afc1031ecaf0a5b8f16ccafb4be23974e0d17a26d
   budgets:
-    status: fail
-    note: Incomplete actual composition 59945 NPM / 66305 VPM non-UCX triangles. Two UCX builds refuse 3316-triangle limit; complete composition must precede final budget. No triangle padding or substituted limit.
+    status: review
+    note: Actual NPM172437<=180000, VPM806914<=2625000; UCX6876<=40346. Unresolved rows/species, final composition and texture/density budgets not accepted; no padding/deletion.
     evidence: *summary
   export_readback:
     status: review
-    note: Fresh readback verifies exact counts, finite vertices, one UV channel, UnitScaleFactor 100 and 6/6 numerical plant controls per profile. Public validators both exit 1; not an all-checks receipt.
+    note: r5 native Max counts and raw-FBX geometry/UV/material reconstruction agree604/604 bboxes; all4620 numerical controls per profile pass,UnitScaleFactor100. Native Blender importer did not pass;1UCX nonconvex,gaps/coverage pending.
     evidence: *summary
   report:
     status: review
-    note: Actual per-area continuation distinguishes source/library questions and worker-owned failures. Full reproduction incomplete. Drive artifacts indexed with 90 verified copies.
+    note: Four-area reproduction and906/969/1178 comparison; r4 seal136/136 plus r5 addendum57/57 verified copies. Full reproduction/technical acceptance remains incomplete.
     evidence:
-    - path: jobs/SIL13-COLD-1315/CONTINUATION-v005.md
-      sha256: baf8655b98ec091770254d82c2f2e11b7d6964e65abb5222794a8466b7d5a66d
-    - path: jobs/SIL13-COLD-1315/evidence-v005.json
-      sha256: b74d2eff076357cdaa23d647ad352dcb80048f19b256b272b3068df58a185a88
+    - path: jobs/SIL13-COLD-1315/CONTINUATION-v006.md
+      sha256: be8530b0ce57e8e46cc98a3796776e762189bc1c25dbc236cad997960e48f25e
+    - path: jobs/SIL13-COLD-1315/evidence-v006.json
+      sha256: 43a213488b7b570f48037625b5baee8cc47a5c0d01d4311f4d6ad0844d934786
+    - path: jobs/SIL13-COLD-1315/evidence-v006-r5.json
+      sha256: cd623a2fcddac920545d2359096d6539d4360e58aff4d64544f55d5bb9443214
   visual:
     status: review
-    note: D283 accepts only first v003/r3 fragment geometry. Actual v005 native renders and projected witnesses are not final appearance or technical approval; no fabricated user receipt.
+    waits: user
+    note: Next gate is v006/r5 full-site geometry/placement and10-row candidate picture selection; neutral materials,provisional hedges/heights,gaps and technicalFAILs not accepted by this choice.
     evidence: *summary
   checker:
     status: missing
-    note: Complete exports/final visual approval absent; full SINTEZ not run. Public validators both failed, not a checker pass.
+    note: Full SINTEZ not run; final exported technical/visual gates incomplete. r4 native NPM exit2/8not_run,VPM300s timeout are historical attempts,not final r5 delivery passes.
     evidence: []

@@ -1,0 +1,1824 @@
+{
+  "passed": false,
+  "authority": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6874264219",
+  "maf_candidates": [
+    {
+      "handle": "33FB381",
+      "row": "3",
+      "block": "МДП-1007 Деткки",
+      "xy_m": [
+        764.2141695254304,
+        11068.49851279743
+      ],
+      "insertion_xy_m": [
+        764.2141695254304,
+        11068.49851279743
+      ],
+      "rotation_deg": 53.0,
+      "plan_dimensions_m": [
+        4.170271281152962,
+        4.170271281152962
+      ],
+      "plan_bbox_m": [
+        [
+          761.8947099217195,
+          11066.178973604547
+        ],
+        [
+          766.5336291291413,
+          11070.818051990314
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0676",
+      "object": "M_Table_016",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "library_sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "library_dimensions_m": [
+        2.274,
+        2.274,
+        0.749
+      ],
+      "triangles": 6180,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.7355406301901406,
+      "source_description": "Столик с отдельностоящими лавочками, арт.  МДП-1007 | Деткки"
+    },
+    {
+      "handle": "33FB382",
+      "row": "3",
+      "block": "МДП-1007 Деткки",
+      "xy_m": [
+        784.9933399576693,
+        11052.84943812051
+      ],
+      "insertion_xy_m": [
+        784.9933399576693,
+        11052.84943812051
+      ],
+      "rotation_deg": 53.0,
+      "plan_dimensions_m": [
+        4.170271281152962,
+        4.170271281152962
+      ],
+      "plan_bbox_m": [
+        [
+          782.6738803539583,
+          11050.529898927625
+        ],
+        [
+          787.3127995613802,
+          11055.168977313393
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0676",
+      "object": "M_Table_016",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "library_sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "library_dimensions_m": [
+        2.274,
+        2.274,
+        0.749
+      ],
+      "triangles": 6180,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.7355406301901406,
+      "source_description": "Столик с отдельностоящими лавочками, арт.  МДП-1007 | Деткки"
+    },
+    {
+      "handle": "33FB383",
+      "row": "3",
+      "block": "МДП-1007 Деткки",
+      "xy_m": [
+        808.2341357491422,
+        11047.27040491773
+      ],
+      "insertion_xy_m": [
+        808.2341357491422,
+        11047.27040491773
+      ],
+      "rotation_deg": 53.0,
+      "plan_dimensions_m": [
+        4.170271281152962,
+        4.170271281152962
+      ],
+      "plan_bbox_m": [
+        [
+          805.9146761454313,
+          11044.950865724846
+        ],
+        [
+          810.5535953528531,
+          11049.589944110614
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0676",
+      "object": "M_Table_016",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "library_sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "library_dimensions_m": [
+        2.274,
+        2.274,
+        0.749
+      ],
+      "triangles": 6180,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.7355406301901406,
+      "source_description": "Столик с отдельностоящими лавочками, арт.  МДП-1007 | Деткки"
+    },
+    {
+      "handle": "33FB384",
+      "row": "3",
+      "block": "МДП-1007 Деткки",
+      "xy_m": [
+        813.2052254561294,
+        11065.07080589083
+      ],
+      "insertion_xy_m": [
+        813.2052254561294,
+        11065.07080589083
+      ],
+      "rotation_deg": 53.0,
+      "plan_dimensions_m": [
+        4.170271281152962,
+        4.170271281152962
+      ],
+      "plan_bbox_m": [
+        [
+          810.8857658524184,
+          11062.751266697946
+        ],
+        [
+          815.5246850598403,
+          11067.390345083713
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0676",
+      "object": "M_Table_016",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "library_sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "library_dimensions_m": [
+        2.274,
+        2.274,
+        0.749
+      ],
+      "triangles": 6180,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.7355406301901406,
+      "source_description": "Столик с отдельностоящими лавочками, арт.  МДП-1007 | Деткки"
+    },
+    {
+      "handle": "33FB385",
+      "row": "3",
+      "block": "МДП-1007 Деткки",
+      "xy_m": [
+        797.373409372377,
+        11076.95595106008
+      ],
+      "insertion_xy_m": [
+        797.373409372377,
+        11076.95595106008
+      ],
+      "rotation_deg": 53.0,
+      "plan_dimensions_m": [
+        4.170271281152962,
+        4.170271281152962
+      ],
+      "plan_bbox_m": [
+        [
+          795.053949768666,
+          11074.636411867195
+        ],
+        [
+          799.6928689760879,
+          11079.275490252963
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0676",
+      "object": "M_Table_016",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "library_sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "library_dimensions_m": [
+        2.274,
+        2.274,
+        0.749
+      ],
+      "triangles": 6180,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.7355406301901406,
+      "source_description": "Столик с отдельностоящими лавочками, арт.  МДП-1007 | Деткки"
+    },
+    {
+      "handle": "33FB386",
+      "row": "3",
+      "block": "МДП-1007 Деткки",
+      "xy_m": [
+        776.2707409420973,
+        11084.47153035587
+      ],
+      "insertion_xy_m": [
+        776.2707409420973,
+        11084.47153035587
+      ],
+      "rotation_deg": 53.0,
+      "plan_dimensions_m": [
+        4.170271281152962,
+        4.170271281152962
+      ],
+      "plan_bbox_m": [
+        [
+          773.9512813383864,
+          11082.151991162986
+        ],
+        [
+          778.5902005458082,
+          11086.791069548754
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0676",
+      "object": "M_Table_016",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "library_sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "library_dimensions_m": [
+        2.274,
+        2.274,
+        0.749
+      ],
+      "triangles": 6180,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.7355406301901406,
+      "source_description": "Столик с отдельностоящими лавочками, арт.  МДП-1007 | Деткки"
+    },
+    {
+      "handle": "33FB3A5",
+      "row": "4",
+      "block": "ИП-2006 Деткки",
+      "xy_m": [
+        776.7905690064931,
+        11068.523986459146
+      ],
+      "insertion_xy_m": [
+        776.6525992096099,
+        11068.59997334827
+      ],
+      "rotation_deg": 53.21184724007313,
+      "plan_dimensions_m": [
+        4.772999999999228,
+        4.5099999999983975
+      ],
+      "plan_bbox_m": [
+        [
+          774.2349713568477,
+          11065.941731235122
+        ],
+        [
+          779.3461666561385,
+          11071.10624168317
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0625",
+      "object": "M_Sand_002",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+      "library_sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+      "library_dimensions_m": [
+        3.192,
+        1.675,
+        0.484
+      ],
+      "triangles": 7420,
+      "reason": "visual type witness: actual sandbox MAF_0625 or actual backless bench MAF_0435; NOT article match; planar dimension deviations explicit, no scaling",
+      "score": 0.03122472043237312,
+      "source_description": "Песочница, арт. ИП-2006 | Деткки",
+      "visual_type_verified": true
+    },
+    {
+      "handle": "33FB3A6",
+      "row": "4",
+      "block": "ИП-2006 Деткки",
+      "xy_m": [
+        780.3569450234627,
+        11060.911782423387
+      ],
+      "insertion_xy_m": [
+        780.2189752265793,
+        11060.98776931251
+      ],
+      "rotation_deg": 53.21184724007313,
+      "plan_dimensions_m": [
+        4.772999999999228,
+        4.5099999999983975
+      ],
+      "plan_bbox_m": [
+        [
+          777.8013473738172,
+          11058.329527199363
+        ],
+        [
+          782.9125426731081,
+          11063.494037647411
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0625",
+      "object": "M_Sand_002",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+      "library_sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+      "library_dimensions_m": [
+        3.192,
+        1.675,
+        0.484
+      ],
+      "triangles": 7420,
+      "reason": "visual type witness: actual sandbox MAF_0625 or actual backless bench MAF_0435; NOT article match; planar dimension deviations explicit, no scaling",
+      "score": 0.03122472043237312,
+      "source_description": "Песочница, арт. ИП-2006 | Деткки",
+      "visual_type_verified": true
+    },
+    {
+      "handle": "33FB3A7",
+      "row": "4",
+      "block": "ИП-2006 Деткки",
+      "xy_m": [
+        797.3422824542488,
+        11050.708617402137
+      ],
+      "insertion_xy_m": [
+        797.2043126573656,
+        11050.78460429126
+      ],
+      "rotation_deg": 53.21184724007313,
+      "plan_dimensions_m": [
+        4.772999999999228,
+        4.5099999999983975
+      ],
+      "plan_bbox_m": [
+        [
+          794.7866848046034,
+          11048.126362178113
+        ],
+        [
+          799.8978801038942,
+          11053.290872626161
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0625",
+      "object": "M_Sand_002",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+      "library_sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+      "library_dimensions_m": [
+        3.192,
+        1.675,
+        0.484
+      ],
+      "triangles": 7420,
+      "reason": "visual type witness: actual sandbox MAF_0625 or actual backless bench MAF_0435; NOT article match; planar dimension deviations explicit, no scaling",
+      "score": 0.03122472043237312,
+      "source_description": "Песочница, арт. ИП-2006 | Деткки",
+      "visual_type_verified": true
+    },
+    {
+      "handle": "33FB3A8",
+      "row": "4",
+      "block": "ИП-2006 Деткки",
+      "xy_m": [
+        785.6985224997247,
+        11076.972059617256
+      ],
+      "insertion_xy_m": [
+        785.5605527028415,
+        11077.04804650638
+      ],
+      "rotation_deg": 53.21184724007313,
+      "plan_dimensions_m": [
+        4.772999999999228,
+        4.5099999999983975
+      ],
+      "plan_bbox_m": [
+        [
+          783.1429248500793,
+          11074.389804393231
+        ],
+        [
+          788.2541201493701,
+          11079.55431484128
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0625",
+      "object": "M_Sand_002",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+      "library_sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+      "library_dimensions_m": [
+        3.192,
+        1.675,
+        0.484
+      ],
+      "triangles": 7420,
+      "reason": "visual type witness: actual sandbox MAF_0625 or actual backless bench MAF_0435; NOT article match; planar dimension deviations explicit, no scaling",
+      "score": 0.03122472043237312,
+      "source_description": "Песочница, арт. ИП-2006 | Деткки",
+      "visual_type_verified": true
+    },
+    {
+      "handle": "33FB3A9",
+      "row": "4",
+      "block": "ИП-2006 Деткки",
+      "xy_m": [
+        801.9556265743292,
+        11064.815438329646
+      ],
+      "insertion_xy_m": [
+        801.817656777446,
+        11064.89142521877
+      ],
+      "rotation_deg": 53.21184724007313,
+      "plan_dimensions_m": [
+        4.772999999999228,
+        4.5099999999983975
+      ],
+      "plan_bbox_m": [
+        [
+          799.4000289246839,
+          11062.233183105622
+        ],
+        [
+          804.5112242239746,
+          11067.39769355367
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0625",
+      "object": "M_Sand_002",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+      "library_sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+      "library_dimensions_m": [
+        3.192,
+        1.675,
+        0.484
+      ],
+      "triangles": 7420,
+      "reason": "visual type witness: actual sandbox MAF_0625 or actual backless bench MAF_0435; NOT article match; planar dimension deviations explicit, no scaling",
+      "score": 0.03122472043237312,
+      "source_description": "Песочница, арт. ИП-2006 | Деткки",
+      "visual_type_verified": true
+    },
+    {
+      "handle": "33FB3AA",
+      "row": "4",
+      "block": "ИП-2006 Деткки",
+      "xy_m": [
+        818.0733095527601,
+        11052.763072354537
+      ],
+      "insertion_xy_m": [
+        817.9353397558768,
+        11052.83905924366
+      ],
+      "rotation_deg": 53.21184724007313,
+      "plan_dimensions_m": [
+        4.772999999999228,
+        4.5099999999983975
+      ],
+      "plan_bbox_m": [
+        [
+          815.5177119031147,
+          11050.180817130513
+        ],
+        [
+          820.6289072024055,
+          11055.345327578561
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0625",
+      "object": "M_Sand_002",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+      "library_sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+      "library_dimensions_m": [
+        3.192,
+        1.675,
+        0.484
+      ],
+      "triangles": 7420,
+      "reason": "visual type witness: actual sandbox MAF_0625 or actual backless bench MAF_0435; NOT article match; planar dimension deviations explicit, no scaling",
+      "score": 0.03122472043237312,
+      "source_description": "Песочница, арт. ИП-2006 | Деткки",
+      "visual_type_verified": true
+    },
+    {
+      "handle": "33FB3AB",
+      "row": "13",
+      "block": "СКМ-0069.1 Деткки",
+      "xy_m": [
+        835.6656382492747,
+        11088.770876694773
+      ],
+      "insertion_xy_m": [
+        835.6436543177037,
+        11088.75897786522
+      ],
+      "rotation_deg": 298.4245213017004,
+      "plan_dimensions_m": [
+        2.0,
+        0.6411626039771364
+      ],
+      "plan_bbox_m": [
+        [
+          835.0053017353152,
+          11087.807975983349
+        ],
+        [
+          836.3259747632343,
+          11089.733777406196
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0423",
+      "object": "M_Bench_013",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "library_sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "library_dimensions_m": [
+        1.819,
+        0.651,
+        0.768
+      ],
+      "triangles": 3724,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.009230320591811662,
+      "source_description": "Скамейки «Форум» со спинкой, арт.  СКМ-0069.1 | Деткки"
+    },
+    {
+      "handle": "33FB3B0",
+      "row": "13",
+      "block": "СКМ-0069.1 Деткки",
+      "xy_m": [
+        814.660480796412,
+        11095.102916724438
+      ],
+      "insertion_xy_m": [
+        814.6490429943437,
+        11095.12514400668
+      ],
+      "rotation_deg": 207.2296221144229,
+      "plan_dimensions_m": [
+        2.0,
+        0.6411626039771364
+      ],
+      "plan_bbox_m": [
+        [
+          813.6915642224287,
+          11094.457737689936
+        ],
+        [
+          815.6293973703952,
+          11095.74809575894
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0423",
+      "object": "M_Bench_013",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "library_sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "library_dimensions_m": [
+        1.819,
+        0.651,
+        0.768
+      ],
+      "triangles": 3724,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.009230320591811662,
+      "source_description": "Скамейки «Форум» со спинкой, арт.  СКМ-0069.1 | Деткки"
+    },
+    {
+      "handle": "33FB3B1",
+      "row": "13",
+      "block": "СКМ-0069.1 Деткки",
+      "xy_m": [
+        823.2356443586445,
+        11099.468843445777
+      ],
+      "insertion_xy_m": [
+        823.2242065565763,
+        11099.49107072802
+      ],
+      "rotation_deg": 207.2296221144228,
+      "plan_dimensions_m": [
+        2.0,
+        0.6411626039771364
+      ],
+      "plan_bbox_m": [
+        [
+          822.2667277846613,
+          11098.823664411275
+        ],
+        [
+          824.2045609326277,
+          11100.114022480278
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0423",
+      "object": "M_Bench_013",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "library_sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "library_dimensions_m": [
+        1.819,
+        0.651,
+        0.768
+      ],
+      "triangles": 3724,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.009230320591811662,
+      "source_description": "Скамейки «Форум» со спинкой, арт.  СКМ-0069.1 | Деткки"
+    },
+    {
+      "handle": "33FB3B2",
+      "row": "13",
+      "block": "СКМ-0069.1 Деткки",
+      "xy_m": [
+        823.9274827317872,
+        11078.046048185157
+      ],
+      "insertion_xy_m": [
+        823.9160449297191,
+        11078.0682754674
+      ],
+      "rotation_deg": 207.2296221144228,
+      "plan_dimensions_m": [
+        2.0,
+        0.6411626039771364
+      ],
+      "plan_bbox_m": [
+        [
+          822.9585661578041,
+          11077.400869150655
+        ],
+        [
+          824.8963993057705,
+          11078.691227219659
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0423",
+      "object": "M_Bench_013",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "library_sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "library_dimensions_m": [
+        1.819,
+        0.651,
+        0.768
+      ],
+      "triangles": 3724,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.009230320591811662,
+      "source_description": "Скамейки «Форум» со спинкой, арт.  СКМ-0069.1 | Деткки"
+    },
+    {
+      "handle": "33FB3BE",
+      "row": "14",
+      "block": "СКМ-0069 Деткки",
+      "xy_m": [
+        777.1305133892907,
+        11111.39472065835
+      ],
+      "insertion_xy_m": [
+        777.1305133892907,
+        11111.39472065835
+      ],
+      "rotation_deg": 25.48812391001586,
+      "plan_dimensions_m": [
+        2.0,
+        0.6411626039771363
+      ],
+      "plan_bbox_m": [
+        [
+          776.1535576895823,
+          11110.772004590879
+        ],
+        [
+          778.1074690889992,
+          11112.017436725822
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0435",
+      "object": "M_Bench_025",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0435_M_Bench_025.fbx",
+      "library_sha256": "e6b6a2ba2ce042d957c80649dbf6285ecfa3d35e041f95142fe888691b2e723a",
+      "library_dimensions_m": [
+        2.0,
+        0.405,
+        0.45
+      ],
+      "triangles": 190,
+      "reason": "visual type witness: actual sandbox MAF_0625 or actual backless bench MAF_0435; NOT article match; planar dimension deviations explicit, no scaling",
+      "score": 0.00923032059181167,
+      "source_description": "Скамейки «Форум» без спинки, арт.  СКМ-0069 | Деткки",
+      "visual_type_verified": true
+    },
+    {
+      "handle": "33FB3BF",
+      "row": "14",
+      "block": "СКМ-0069 Деткки",
+      "xy_m": [
+        779.6017965525804,
+        11112.61029235652
+      ],
+      "insertion_xy_m": [
+        779.6017965525804,
+        11112.61029235652
+      ],
+      "rotation_deg": 25.48812391001586,
+      "plan_dimensions_m": [
+        2.0,
+        0.6411626039771363
+      ],
+      "plan_bbox_m": [
+        [
+          778.6248408528719,
+          11111.987576289048
+        ],
+        [
+          780.5787522522888,
+          11113.233008423991
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0435",
+      "object": "M_Bench_025",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0435_M_Bench_025.fbx",
+      "library_sha256": "e6b6a2ba2ce042d957c80649dbf6285ecfa3d35e041f95142fe888691b2e723a",
+      "library_dimensions_m": [
+        2.0,
+        0.405,
+        0.45
+      ],
+      "triangles": 190,
+      "reason": "visual type witness: actual sandbox MAF_0625 or actual backless bench MAF_0435; NOT article match; planar dimension deviations explicit, no scaling",
+      "score": 0.00923032059181167,
+      "source_description": "Скамейки «Форум» без спинки, арт.  СКМ-0069 | Деткки",
+      "visual_type_verified": true
+    },
+    {
+      "handle": "33FB3BC",
+      "row": "15",
+      "block": "Крас.город_1536",
+      "xy_m": [
+        786.9111135056282,
+        11098.40023069533
+      ],
+      "insertion_xy_m": [
+        786.9341728864842,
+        11098.39684037182
+      ],
+      "rotation_deg": 297.3,
+      "plan_dimensions_m": [
+        1.7000000000043654,
+        0.6467924808202952
+      ],
+      "plan_bbox_m": [
+        [
+          786.2756230215699,
+          11097.541276522383
+        ],
+        [
+          787.5466039896866,
+          11099.259184868277
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0423",
+      "object": "M_Bench_013",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "library_sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "library_dimensions_m": [
+        1.819,
+        0.651,
+        0.768
+      ],
+      "triangles": 3724,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.004619736781560938,
+      "source_description": "Скамья парковая на металлическом основании со спинкой тип 1 (для МГН), арт. 1536 | Красивый город"
+    },
+    {
+      "handle": "33FB3BD",
+      "row": "15",
+      "block": "Крас.город_1536",
+      "xy_m": [
+        749.401982410797,
+        11102.232414496893
+      ],
+      "insertion_xy_m": [
+        749.3840030004347,
+        11102.2313766416
+      ],
+      "rotation_deg": 53.3,
+      "plan_dimensions_m": [
+        1.7000000000043654,
+        0.6467924808202952
+      ],
+      "plan_bbox_m": [
+        [
+          748.6853482514791,
+          11101.411584396765
+        ],
+        [
+          750.118616570115,
+          11103.053244597022
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0423",
+      "object": "M_Bench_013",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "library_sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "library_dimensions_m": [
+        1.819,
+        0.651,
+        0.768
+      ],
+      "triangles": 3724,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.004619736781560938,
+      "source_description": "Скамья парковая на металлическом основании со спинкой тип 1 (для МГН), арт. 1536 | Красивый город"
+    },
+    {
+      "handle": "33FB590",
+      "row": "15",
+      "block": "Крас.город_1536",
+      "xy_m": [
+        785.4337968343211,
+        11101.181506076358
+      ],
+      "insertion_xy_m": [
+        785.4568562151771,
+        11101.17811575285
+      ],
+      "rotation_deg": 297.3,
+      "plan_dimensions_m": [
+        1.7000000000043654,
+        0.6467924808202952
+      ],
+      "plan_bbox_m": [
+        [
+          784.7983063502628,
+          11100.322551903411
+        ],
+        [
+          786.0692873183795,
+          11102.040460249305
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0423",
+      "object": "M_Bench_013",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "library_sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "library_dimensions_m": [
+        1.819,
+        0.651,
+        0.768
+      ],
+      "triangles": 3724,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.004619736781560938,
+      "source_description": "Скамья парковая на металлическом основании со спинкой тип 1 (для МГН), арт. 1536 | Красивый город"
+    },
+    {
+      "handle": "33FB387",
+      "row": "16",
+      "block": "СПТ-0001 Деткки",
+      "xy_m": [
+        824.9206679017925,
+        11103.5546760197
+      ],
+      "insertion_xy_m": [
+        824.9206679017925,
+        11103.5546760197
+      ],
+      "rotation_deg": 299.2957212915485,
+      "plan_dimensions_m": [
+        5.272619774936174,
+        4.0
+      ],
+      "plan_bbox_m": [
+        [
+          822.4283313612526,
+          11100.819031626268
+        ],
+        [
+          827.4130044423324,
+          11106.29032041313
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0676",
+      "object": "M_Table_016",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "library_sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "library_dimensions_m": [
+        2.274,
+        2.274,
+        0.749
+      ],
+      "triangles": 6180,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 1.0262060998524745,
+      "source_description": "Шахматный стол «Паскаль» (комплект), арт.  СПТ-0001 | Деткки"
+    },
+    {
+      "handle": "33FB388",
+      "row": "16",
+      "block": "СПТ-0001 Деткки",
+      "xy_m": [
+        831.9028763788283,
+        11084.9158479037
+      ],
+      "insertion_xy_m": [
+        831.9028763788283,
+        11084.9158479037
+      ],
+      "rotation_deg": 299.2957212915485,
+      "plan_dimensions_m": [
+        5.272619774936174,
+        4.0
+      ],
+      "plan_bbox_m": [
+        [
+          829.4105398382884,
+          11082.180203510268
+        ],
+        [
+          834.3952129193682,
+          11087.651492297131
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0676",
+      "object": "M_Table_016",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "library_sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "library_dimensions_m": [
+        2.274,
+        2.274,
+        0.749
+      ],
+      "triangles": 6180,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 1.0262060998524745,
+      "source_description": "Шахматный стол «Паскаль» (комплект), арт.  СПТ-0001 | Деткки"
+    },
+    {
+      "handle": "33FB389",
+      "row": "17",
+      "block": "СТЛ.М-0007 Деткки",
+      "xy_m": [
+        795.7113319350558,
+        11093.981943833933
+      ],
+      "insertion_xy_m": [
+        795.8165346886794,
+        11094.02055627643
+      ],
+      "rotation_deg": 27.91,
+      "plan_dimensions_m": [
+        1.8317978974300786,
+        1.9648793756095981
+      ],
+      "plan_bbox_m": [
+        [
+          794.4490853231522,
+          11092.758282193363
+        ],
+        [
+          796.9735785469593,
+          11095.2056054745
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0676",
+      "object": "M_Table_016",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "library_sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "library_dimensions_m": [
+        2.274,
+        2.274,
+        0.749
+      ],
+      "triangles": 6180,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.06810879574475752,
+      "source_description": "Стол со скамейками «Бриз», арт.  СТЛ.М-0007 | Деткки"
+    },
+    {
+      "handle": "33FB38A",
+      "row": "17",
+      "block": "СТЛ.М-0007 Деткки",
+      "xy_m": [
+        819.8296192404923,
+        11088.795455119023
+      ],
+      "insertion_xy_m": [
+        819.8682341158219,
+        11088.69025111173
+      ],
+      "rotation_deg": 297.9119122213207,
+      "plan_dimensions_m": [
+        1.8317978974300786,
+        1.9648793756095981
+      ],
+      "plan_bbox_m": [
+        [
+          818.6059446717014,
+          11087.533193717978
+        ],
+        [
+          821.0532938092831,
+          11090.05771652007
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0676",
+      "object": "M_Table_016",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "library_sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "library_dimensions_m": [
+        2.274,
+        2.274,
+        0.749
+      ],
+      "triangles": 6180,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.06810879574475752,
+      "source_description": "Стол со скамейками «Бриз», арт.  СТЛ.М-0007 | Деткки"
+    },
+    {
+      "handle": "33FB38B",
+      "row": "17",
+      "block": "СТЛ.М-0007 Деткки",
+      "xy_m": [
+        820.3724576674201,
+        11076.884126462166
+      ],
+      "insertion_xy_m": [
+        820.3338452249224,
+        11076.98932921579
+      ],
+      "rotation_deg": 117.91,
+      "plan_dimensions_m": [
+        1.8317978974300786,
+        1.9648793756095981
+      ],
+      "plan_bbox_m": [
+        [
+          819.1487960268514,
+          11075.621879850263
+        ],
+        [
+          821.5961193079889,
+          11078.14637307407
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0676",
+      "object": "M_Table_016",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "library_sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "library_dimensions_m": [
+        2.274,
+        2.274,
+        0.749
+      ],
+      "triangles": 6180,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.06810879574475752,
+      "source_description": "Стол со скамейками «Бриз», арт.  СТЛ.М-0007 | Деткки"
+    },
+    {
+      "handle": "33FB38C",
+      "row": "17",
+      "block": "СТЛ.М-0007 Деткки",
+      "xy_m": [
+        806.8225942923095,
+        11091.753840981637
+      ],
+      "insertion_xy_m": [
+        806.7839818498118,
+        11091.85904373526
+      ],
+      "rotation_deg": 117.91,
+      "plan_dimensions_m": [
+        1.8317978974300786,
+        1.9648793756095981
+      ],
+      "plan_bbox_m": [
+        [
+          805.5989326517408,
+          11090.491594369732
+        ],
+        [
+          808.0462559328784,
+          11093.01608759354
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0676",
+      "object": "M_Table_016",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "library_sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "library_dimensions_m": [
+        2.274,
+        2.274,
+        0.749
+      ],
+      "triangles": 6180,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.06810879574475752,
+      "source_description": "Стол со скамейками «Бриз», арт.  СТЛ.М-0007 | Деткки"
+    },
+    {
+      "handle": "33FB3B3",
+      "row": "18",
+      "block": "ВЛП-0001 Деткки",
+      "xy_m": [
+        814.2955766291617,
+        11112.89185566417
+      ],
+      "insertion_xy_m": [
+        814.2955766291617,
+        11112.89185566417
+      ],
+      "rotation_deg": 27.31,
+      "plan_dimensions_m": [
+        1.2000000000000457,
+        0.9799999999995636
+      ],
+      "plan_bbox_m": [
+        [
+          813.5376400535314,
+          11112.181189666751
+        ],
+        [
+          815.053513204792,
+          11113.602521661587
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0466",
+      "object": "M_Bysicle_007",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "library_sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "library_dimensions_m": [
+        0.915,
+        1.2,
+        0.5
+      ],
+      "triangles": 1496,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.004709871889137095,
+      "source_description": "Велопарковка на 7 мест, арт. ВПЛ-0001 | Деткки"
+    },
+    {
+      "handle": "33FB3B4",
+      "row": "18",
+      "block": "ВЛП-0001 Деткки",
+      "xy_m": [
+        815.3618212327686,
+        11113.44242123273
+      ],
+      "insertion_xy_m": [
+        815.3618212327686,
+        11113.44242123273
+      ],
+      "rotation_deg": 27.31,
+      "plan_dimensions_m": [
+        1.2000000000000457,
+        0.9799999999995636
+      ],
+      "plan_bbox_m": [
+        [
+          814.6038846571383,
+          11112.731755235312
+        ],
+        [
+          816.119757808399,
+          11114.153087230148
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0466",
+      "object": "M_Bysicle_007",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "library_sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "library_dimensions_m": [
+        0.915,
+        1.2,
+        0.5
+      ],
+      "triangles": 1496,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.004709871889137095,
+      "source_description": "Велопарковка на 7 мест, арт. ВПЛ-0001 | Деткки"
+    },
+    {
+      "handle": "33FB3B5",
+      "row": "18",
+      "block": "ВЛП-0001 Деткки",
+      "xy_m": [
+        816.428065836375,
+        11113.99298680128
+      ],
+      "insertion_xy_m": [
+        816.428065836375,
+        11113.99298680128
+      ],
+      "rotation_deg": 27.31,
+      "plan_dimensions_m": [
+        1.2000000000000457,
+        0.9799999999995636
+      ],
+      "plan_bbox_m": [
+        [
+          815.6701292607447,
+          11113.282320803863
+        ],
+        [
+          817.1860024120053,
+          11114.703652798698
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0466",
+      "object": "M_Bysicle_007",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "library_sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "library_dimensions_m": [
+        0.915,
+        1.2,
+        0.5
+      ],
+      "triangles": 1496,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.004709871889137095,
+      "source_description": "Велопарковка на 7 мест, арт. ВПЛ-0001 | Деткки"
+    },
+    {
+      "handle": "33FB3B6",
+      "row": "18",
+      "block": "ВЛП-0001 Деткки",
+      "xy_m": [
+        817.4943104399821,
+        11114.54355236983
+      ],
+      "insertion_xy_m": [
+        817.4943104399821,
+        11114.54355236983
+      ],
+      "rotation_deg": 27.31,
+      "plan_dimensions_m": [
+        1.2000000000000457,
+        0.9799999999995636
+      ],
+      "plan_bbox_m": [
+        [
+          816.7363738643518,
+          11113.832886372413
+        ],
+        [
+          818.2522470156124,
+          11115.254218367249
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0466",
+      "object": "M_Bysicle_007",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "library_sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "library_dimensions_m": [
+        0.915,
+        1.2,
+        0.5
+      ],
+      "triangles": 1496,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.004709871889137095,
+      "source_description": "Велопарковка на 7 мест, арт. ВПЛ-0001 | Деткки"
+    },
+    {
+      "handle": "33FB3B7",
+      "row": "18",
+      "block": "ВЛП-0001 Деткки",
+      "xy_m": [
+        818.5605550435884,
+        11115.09411793839
+      ],
+      "insertion_xy_m": [
+        818.5605550435884,
+        11115.09411793839
+      ],
+      "rotation_deg": 27.31,
+      "plan_dimensions_m": [
+        1.2000000000000457,
+        0.9799999999995636
+      ],
+      "plan_bbox_m": [
+        [
+          817.802618467958,
+          11114.383451940972
+        ],
+        [
+          819.3184916192187,
+          11115.804783935808
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0466",
+      "object": "M_Bysicle_007",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "library_sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "library_dimensions_m": [
+        0.915,
+        1.2,
+        0.5
+      ],
+      "triangles": 1496,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.004709871889137095,
+      "source_description": "Велопарковка на 7 мест, арт. ВПЛ-0001 | Деткки"
+    },
+    {
+      "handle": "33FB3B8",
+      "row": "18",
+      "block": "ВЛП-0001 Деткки",
+      "xy_m": [
+        743.2734749018329,
+        11105.32323282519
+      ],
+      "insertion_xy_m": [
+        743.2734749018329,
+        11105.32323282519
+      ],
+      "rotation_deg": 53.3,
+      "plan_dimensions_m": [
+        1.2000000000000457,
+        0.9799999999995636
+      ],
+      "plan_bbox_m": [
+        [
+          742.5220297479683,
+          11104.549331116626
+        ],
+        [
+          744.0249200556974,
+          11106.097134533755
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0466",
+      "object": "M_Bysicle_007",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "library_sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "library_dimensions_m": [
+        0.915,
+        1.2,
+        0.5
+      ],
+      "triangles": 1496,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.004709871889137095,
+      "source_description": "Велопарковка на 7 мест, арт. ВПЛ-0001 | Деткки"
+    },
+    {
+      "handle": "33FB3B9",
+      "row": "18",
+      "block": "ВЛП-0001 Деткки",
+      "xy_m": [
+        743.9906250782044,
+        11106.28536359828
+      ],
+      "insertion_xy_m": [
+        743.9906250782044,
+        11106.28536359828
+      ],
+      "rotation_deg": 53.3,
+      "plan_dimensions_m": [
+        1.2000000000000457,
+        0.9799999999995636
+      ],
+      "plan_bbox_m": [
+        [
+          743.2391799243399,
+          11105.511461889715
+        ],
+        [
+          744.742070232069,
+          11107.059265306843
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0466",
+      "object": "M_Bysicle_007",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "library_sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "library_dimensions_m": [
+        0.915,
+        1.2,
+        0.5
+      ],
+      "triangles": 1496,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.004709871889137095,
+      "source_description": "Велопарковка на 7 мест, арт. ВПЛ-0001 | Деткки"
+    },
+    {
+      "handle": "33FB3BA",
+      "row": "18",
+      "block": "ВЛП-0001 Деткки",
+      "xy_m": [
+        744.707775254575,
+        11107.24749437138
+      ],
+      "insertion_xy_m": [
+        744.707775254575,
+        11107.24749437138
+      ],
+      "rotation_deg": 53.3,
+      "plan_dimensions_m": [
+        1.2000000000000457,
+        0.9799999999995636
+      ],
+      "plan_bbox_m": [
+        [
+          743.9563301007105,
+          11106.473592662816
+        ],
+        [
+          745.4592204084396,
+          11108.021396079945
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0466",
+      "object": "M_Bysicle_007",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "library_sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "library_dimensions_m": [
+        0.915,
+        1.2,
+        0.5
+      ],
+      "triangles": 1496,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.004709871889137095,
+      "source_description": "Велопарковка на 7 мест, арт. ВПЛ-0001 | Деткки"
+    },
+    {
+      "handle": "33FB581",
+      "row": "19",
+      "block": "Навес для вело. Рельеф ПМ-158",
+      "xy_m": [
+        816.1743424421396,
+        11114.244641440178
+      ],
+      "insertion_xy_m": [
+        816.1743424421388,
+        11114.24464144018
+      ],
+      "rotation_deg": 27.31,
+      "plan_dimensions_m": [
+        7.5,
+        1.7999999999992724
+      ],
+      "plan_bbox_m": [
+        [
+          812.4294038794511,
+          11111.724440585738
+        ],
+        [
+          819.9192810048281,
+          11116.764842294619
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0472",
+      "object": "M_Cannopy_006",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0472_M_Cannopy_006.fbx",
+      "library_sha256": "cb10e03cb0298b3a247df165171da8dc7805f843342f8507886c99f16e38a096",
+      "library_dimensions_m": [
+        3.071,
+        6.127,
+        2.964
+      ],
+      "triangles": 10772,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.3262712956545612,
+      "source_description": "Навес для колясок и велосипедов «Вуд» (обшивка монолитным поликарбонатом), арт.  ПМ-158 | Рельеф"
+    },
+    {
+      "handle": "33FB3AD",
+      "row": "28",
+      "block": "Урна_Игратекс_01 У-Р01",
+      "xy_m": [
+        819.9079782853912,
+        11120.739638914172
+      ],
+      "insertion_xy_m": [
+        819.9301625541495,
+        11120.96910079119
+      ],
+      "rotation_deg": 297.3130383699123,
+      "plan_dimensions_m": [
+        0.34827479553132445,
+        0.2500195670654648
+      ],
+      "plan_bbox_m": [
+        [
+          819.7170109395154,
+          11120.527559125601
+        ],
+        [
+          820.098945631267,
+          11120.951718702745
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0698",
+      "object": "M_Urn_010",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0698_M_Urn_010.fbx",
+      "library_sha256": "70a6ef60d95db7cb02f54df48b9c93ccbb08a7b72a535e9b15766034767a8586",
+      "library_dimensions_m": [
+        0.263,
+        0.346,
+        1.276
+      ],
+      "triangles": 136,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.0026048052246209646,
+      "source_description": "Урна, арт. 5963.S | Игратекс"
+    },
+    {
+      "handle": "33FB3AE",
+      "row": "28",
+      "block": "Урна_Игратекс_01 У-Р01",
+      "xy_m": [
+        754.1698470458218,
+        11070.85585082163
+      ],
+      "insertion_xy_m": [
+        754.090276858451,
+        11071.07221505172
+      ],
+      "rotation_deg": 323.0267271153818,
+      "plan_dimensions_m": [
+        0.34827479553132445,
+        0.2500195670654648
+      ],
+      "plan_bbox_m": [
+        [
+          753.955545570645,
+          11070.651252676344
+        ],
+        [
+          754.3841485209987,
+          11071.060448966915
+        ]
+      ],
+      "status": "candidate",
+      "matched": false,
+      "catalogue_id": "MAF_0698",
+      "object": "M_Urn_010",
+      "library_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0698_M_Urn_010.fbx",
+      "library_sha256": "70a6ef60d95db7cb02f54df48b9c93ccbb08a7b72a535e9b15766034767a8586",
+      "library_dimensions_m": [
+        0.263,
+        0.346,
+        1.276
+      ],
+      "triangles": 136,
+      "reason": "closest same semantic catalogue type by squared planar log-size error; no article or height certification; no scaling",
+      "score": 0.0026048052246209646,
+      "source_description": "Урна, арт. 5963.S | Игратекс"
+    }
+  ],
+  "maf_gaps": [
+    {
+      "row": "1",
+      "description": "Теневой навес  S =25.0 кв.м., со скамьей, зашивкой монолитным поликарбонатом, водосточными желобами и снегозадержанием.  Индивидуальный проект (артикула нет).",
+      "quantity": "8 шт.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "5",
+      "description": "Балансир «Линия», арт. БЛР-2007 | Деткки",
+      "quantity": "3 шт.",
+      "source_symbols": 3,
+      "reason": "no type-certified catalogue candidate"
+    },
+    {
+      "row": "6",
+      "description": "Игровая панель «Часы», арт. ИПН-2012 | Деткки",
+      "quantity": "6 шт.",
+      "source_symbols": 6,
+      "reason": "no type-certified catalogue candidate"
+    },
+    {
+      "row": "7",
+      "description": "Интерактивный элемент «Гипно-2», арт. ИПН-2007 | Деткки",
+      "quantity": "2 шт.",
+      "source_symbols": 2,
+      "reason": "no type-certified catalogue candidate"
+    },
+    {
+      "row": "8",
+      "description": "Меловая доска (М), арт. ИПН-2015 | Деткки",
+      "quantity": "8 шт.",
+      "source_symbols": 8,
+      "reason": "no type-certified catalogue candidate"
+    },
+    {
+      "row": "9",
+      "description": "Переговорные трубы «Цветки», арт. ИПН-2005 | Деткки",
+      "quantity": "4 шт.",
+      "source_symbols": 4,
+      "reason": "no type-certified catalogue candidate"
+    },
+    {
+      "row": "10",
+      "description": "Игровая панель «Счеты», арт. ИПН-2028 | Деткки",
+      "quantity": "2 шт.",
+      "source_symbols": 2,
+      "reason": "no type-certified catalogue candidate"
+    },
+    {
+      "row": "20",
+      "description": "Навес для отдыха МГН (зашит монолитным поликарбонатом и рейками), арт.  ВСТ 9624/3 | Высота",
+      "quantity": "1 шт.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "21",
+      "description": "Контейнерная площадка «Бункер» на 3 контейнера, арт. 5003-1 | Аданат",
+      "quantity": "1 шт.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "22",
+      "description": "Контейнерная площадка «Бункер» на 4 контейнера, арт. 5003-2 | Аданат",
+      "quantity": "1 шт.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "23",
+      "description": "Хозблок для контейнерной площадки «Бункер», арт. 5052 | Аданат",
+      "quantity": "1 шт.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "24",
+      "description": "Флагшток высотой 9 м (с закрытым подъёмным механизмом), арт.  AL-L-06-11 | Grand-mag",
+      "quantity": "3 шт.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "25",
+      "description": "Детские футбольные ворота (с сеткой) «Юниор» с баскетбольным щитом, арт. 44708 | Хоббика",
+      "quantity": "2 шт.",
+      "source_symbols": 2,
+      "reason": "no type-certified catalogue candidate"
+    },
+    {
+      "row": "26",
+      "description": "Спортивный комплекс (волейбол) с регулированием крепления сетки по высоте, с сеткой, от 6 лет, арт.  СО053 | Поколение",
+      "quantity": "1 шт.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "27",
+      "description": "Контейнер для отходов  V =1.1 м³ «крышка в крышке» с маркировкой, арт.  МК001 | Поколение",
+      "quantity": "7 шт.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "29",
+      "description": "Сварное ограждение  PRO   H =2,5 м. Индивидуальный проект (артикула нет).",
+      "quantity": "663 п.м.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "30",
+      "description": "Ворота распашные  L =4.2 м. Индивидуальный проект (артикула нет).",
+      "quantity": "4 шт.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "31",
+      "description": "Калитка периметрального ограждения. Индивидуальный проект (артикула нет).",
+      "quantity": "2 шт.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "32",
+      "description": "Калитка в спор. ограждении. Индивидуальный проект (артикула нет).",
+      "quantity": "1 шт.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "33",
+      "description": "Ограждение спортивное. Индивидуальный проект (артикула нет).",
+      "quantity": "94 п.м.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "34",
+      "description": "Лежачий полицейский  L =6 м, ИДН 500С | Стандартпарк",
+      "quantity": "4 шт.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    },
+    {
+      "row": "35",
+      "description": "Концевой элемент композитный, ДО-ИДН-500-К/К-СП | Стандартпарк",
+      "quantity": "8 шт.",
+      "source_symbols": 0,
+      "reason": "no explicitly mapped INSERT; leader-only/source geometry requires reconciliation"
+    }
+  ],
+  "flora_gaps": [
+    {
+      "row": "1",
+      "species": "Abies sibirica",
+      "count": 1,
+      "reason": "absent from audited etalon catalogue"
+    },
+    {
+      "row": "2",
+      "species": "Acer rubrum Red Sunset",
+      "count": 4,
+      "reason": "absent from audited etalon catalogue; no Tilia substitute"
+    },
+    {
+      "row": "8",
+      "species": "Hosta Allegan Fog / Luzula sylvatica / Tiarella cordifolia",
+      "area_m2": 133,
+      "reason": "no per-species planting rates; no invented scatter"
+    }
+  ]
+}
