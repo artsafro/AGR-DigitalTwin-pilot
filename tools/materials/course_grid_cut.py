@@ -149,6 +149,41 @@ def partition_joint_zones(row, zones):
                 passed=False,status='partition_only')
 
 
+def native_piece_cells(piece):
+    """Keep convex triangles/quads; make larger/concave chart cells explicit.
+
+    Use only existing corners, retaining XYZ and source lineage. This avoids
+    native tessellation selecting a zero-UV-area triangle from collinear points.
+    """
+    xy=_points(piece.get('chart_m'),2,'chart_m');world=_points(piece.get('xyz'),3,'xyz')
+    if len(xy)!=len(world):raise ValueError('partial native piece')
+    poly=Polygon(xy)
+    if not poly.is_valid or poly.area<=1e-12 or not poly.exterior.is_ccw:raise ValueError('invalid native piece')
+    if len(xy)<=4 and poly.convex_hull.area-poly.area<=1e-12:return [dict(piece)]
+    cells=list(constrained_delaunay_triangles(poly).geoms)
+    # Merge adjacent triangles into convex quads only, preserving boundaries.
+    changed=True
+    while changed:
+        changed=False
+        for i in range(len(cells)):
+            for j in range(i+1,len(cells)):
+                if cells[i].boundary.intersection(cells[j].boundary).length<=0:continue
+                merged=cells[i].union(cells[j])
+                if merged.geom_type=='Polygon' and len(merged.exterior.coords)==5 and merged.convex_hull.area-merged.area<=1e-12:
+                    cells[i]=merged;cells.pop(j);changed=True;break
+            if changed:break
+    out=[]
+    for cell in cells:
+        points=np.asarray(orient(cell,sign=1).exterior.coords[:-1]);indices=[]
+        for q in points:
+            matches=np.flatnonzero(np.linalg.norm(xy-q,axis=1)<1e-10)
+            if len(matches)!=1:raise ValueError('unmapped/ambiguous native corner')
+            indices.append(int(matches[0]))
+        out.append(dict(piece,chart_m=points.tolist(),xyz=world[indices].tolist()))
+    if abs(sum(Polygon(c['chart_m']).area for c in out)-poly.area)>max(1e-12,poly.area*1e-10):raise ValueError('incomplete native tessellation')
+    return out
+
+
 def edge_joint_zone(chart_m, indices, *, width_m):
     """Exact-width inward strip through a convex source edge.
 
