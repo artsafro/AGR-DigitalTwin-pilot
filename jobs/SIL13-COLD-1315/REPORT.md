@@ -1,14 +1,17 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **full-site candidate reproduction v006/r5; picture selection pending, not delivered**.
-See [CONTINUATION-v006.md](CONTINUATION-v006.md): both exported profiles contain 38 MAF
-CANDIDATES, 4,582 library plants and VPM-only 600-piece UCX. Native Max independently
-reads 172,437 /806,914 render triangles; raw-FBX controls verify 4,620 placements per
-profile. Ground-only xView is 0/0/0; whole-composition xView FAILs, one UCX is nonconvex,
-and native public-validator/texture/detail/hedge-layout work remains open. D284 closes
-small source/library questions; it does not accept candidate identities or technical QA.
-Final picture and ten-row showcase are on Drive v006/r5. No PR/readiness claim.
-PILOT-v003.md and v001–v005 / v006-r4 material below are historical checkpoints.
+Current status: **v007/r1 technical continuation; v006/r5 composition accepted [D287], not delivered**.
+See [CONTINUATION-v007.md](CONTINUATION-v007.md). All 38 MAF remain accepted-by-picture,
+not article-matched; all 4,582 plants retained. Native Max verifies 172,437 /806,914
+render triangles; raw-export controls 4,620/4,620 per profile. Metric VPM hedge-shell
+spacing repaired on copies; whole-file xView still FAIL. The earlier UCX_427 alarm
+is a float32 normal false positive: independent double planes show all 600 convex;
+175,688 sampled surface distances <=79.836 mm, not a continuous coverage proof.
+NPM native public validator now runs (FAIL); VPM import succeeds but regulatory
+computation times out/crashes. Source-library star crossings expose unresolved C44
+before a topology/silhouette-changing route; no intentional-crossing waiver applied.
+Other technical/material/atlas/skirt/gap/checker work remains worker-owned. No PR or
+readiness claim. Earlier continuation documents are immutable historical checkpoints.
 
 Historical v002 status: **source authority answered; height/PartsList gates open, not delivered**.
 Boundary and 52 source symbols exported/read back as source-only DXF. No constructed Ground/UCX,

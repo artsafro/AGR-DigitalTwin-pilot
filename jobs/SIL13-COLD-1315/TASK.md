@@ -59,22 +59,32 @@ symbols extracted, 52/52 inside the approved boundary and preserved by DXF readb
 match all five point-plant schedule quantities (1, 4, 6, 17, 24). A linden-named CAD symbol is position 2/4,
 not authority to substitute linden for Red Sunset. Flora candidates remain subject to identity/size checks.
 MAF: all 32 DOCX rows accounted for; no certified SKU-to-model match yet (not proof of disk-wide absence).
-Current continuation is [CONTINUATION-v006.md](CONTINUATION-v006.md). [D281] answers
-G1–G3; [D284] answers the next small-remainder/library batch and supplies a standing
-rule: adjacent-source slivers/TIN edges/draw order without repeating small questions,
-MAF type/size picks stay CANDIDATE; Flora follows the table without species substitution.
-First pilot geometry remains accepted [D283]; zero/5.6 m plan remain [D282].
+Current continuation is [CONTINUATION-v007.md](CONTINUATION-v007.md). [D281] answers
+G1–G3; [D284] supplies the standing sliver/TIN/draw-order rule without repeated small
+questions. First pilot geometry remains [D283]; zero/5.6 m plan remain [D282].
+[D287] closes the v006/r5 picture choice: all 38 MAF kept as accepted-by-picture,
+not article-matched; 4,582 plants and composition accepted as visual direction.
+A101 Royal Red maps allowed as 'interim - green A. platanoides missing in the library';
+this is not final texture or technical acceptance. Do not reopen these closed gates.
 
-Actual v006/r5 exports contain 58,896 Ground triangles each, 38 MAF candidates across
-10 rows and 4,582 library plants each; VPM-only UCX 600 pieces /6,876 triangles.
-Native Max readback independently verifies 172,437 NPM /806,914 VPM non-UCX triangles;
-raw-FBX controls verify all 4,620 placements per profile and UnitScaleFactor=100.
-Ground-only xView 0/0/0 is NOT a whole-composition pass: both profiles fail xView,
-1 UCX piece is nonconvex, texture/skirt/detail/native-validator work remains open.
+Actual v007/r1 retains 58,896 Ground triangles each, 38 MAF across 10 rows and 4,582
+plants; 600 VPM-only UCX /6,876 triangles. Native Max verifies 172,437 /806,914 render
+triangles; raw-export controls 4,620/4,620 each, UnitScaleFactor=100. VPM hedge sheet
+spacing repaired on copies; no instances dropped. Ground-only xView is 0/0/0;
+whole-file xView remains FAIL (NPM3,386 /VPM47,072 overlapping faces).
 
-Next user gate is the actual full-site picture and ten-row NPM/VPM candidate showcase
-on Drive v006/r5, with assumptions, 22 unresolved MAF rows, missing species and
-provisional hedge positions/heights explicitly listed. No technical waiver requested.
-Abies 1 /Red Sunset 4 have no substitute; 133 m2 flowerbed remains without invented
-scatter. Acer maps remain #1316; other etalon map paths are missing as reported.
-Technical QA, final user acceptance and publication remain incomplete; no readiness increase.
+Independent double-precision UCX audit corrects the earlier float32 normal false
+positive at427: all600 convex. Sampled coverage175,688 points <=79.836mm; no continuous
+maximum claim, wide-neighbour set remains open. NPM native public validator FAIL;
+VPM default600s timeout and unchanged-reader topology crash, not importer failure.
+
+New decision boundary: C44 intended cross-card Flora intersections versus the
+<=100 per-mesh regulatory count in the required single Flora object. One actual
+NPM library Physocarpus already has111 self-intersections and no duplicates;
+11 explicitly synthetic non-overlapping maple stars have297. No waiver, per-plant
+reinterpretation or silhouette-changing route is silently applied. Other xView,
+skirt/details/material/atlas/UDIM/gap/native-validator repairs remain worker-owned.
+Abies1 /Red Sunset4 /22MAFrows /133m2 flowerbed-rate gaps remain listed, not invented.
+Eight original non-Acer maps are absent; actual A101 candidates and ambiguous Syringa
+labels are pinned, not silently bound. Technical QA, final user acceptance, SINTEZ
+and publication remain incomplete; no readiness increase.

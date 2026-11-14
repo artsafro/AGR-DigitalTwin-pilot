@@ -1,0 +1,483 @@
+{
+  "passed": false,
+  "run_id": "cold-1315-technical-continuation-v007-r1",
+  "picture_decision": "D287",
+  "picture_ref": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6877351308",
+  "scope": "accepted composition, incomplete technical continuation",
+  "profiles": {
+    "NPM": {
+      "ground_triangles": 58896,
+      "flora_triangles": 79420,
+      "maf_triangles": 34121,
+      "total_triangles": 172437,
+      "export_sha256": "f4763ba8f8b73447d0c5d02ec712d4e9dba70bbe8bce3bd38c007fbbb8f8e6a4",
+      "fbx_path": "G:/Мой диск/AGR-evidence/1315-cold-silikatny/v007/r1/NPM/SM_SIL13_Ground.fbx",
+      "UnitScaleFactor": 100,
+      "controls": 4620,
+      "max_sinking_error_m": 2.384185793236071e-08,
+      "max_height_error_m": 1.5305365863582665e-07,
+      "xview_totals": {
+        "overlapping_vertices": 1028,
+        "overlapping_faces": 3386,
+        "vertex_pairs": 601,
+        "face_pairs": 5434,
+        "face_pairs_by_kind": {
+          "contact": 322,
+          "area": 1444,
+          "area+contact": 3668
+        },
+        "bowtie_vertices": 669,
+        "bowtie_pairs": 51,
+        "parts_without_faces": 0
+      },
+      "xview_passed": false,
+      "public_validator_exit": 1,
+      "public_validator_machine_stage_counts": {
+        "pass": 1,
+        "fail": 3,
+        "review": 2,
+        "not_run": 2
+      },
+      "native_max_render_triangles": 172437
+    },
+    "VPM": {
+      "ground_triangles": 58896,
+      "flora_triangles": 579878,
+      "maf_triangles": 168140,
+      "total_triangles": 806914,
+      "export_sha256": "0a01c4370e90741333b4e23d63990077df07ee5a8f8ccbc89f58fefe5758510e",
+      "fbx_path": "G:/Мой диск/AGR-evidence/1315-cold-silikatny/v007/r1/VPM/SM_SIL13_Ground.fbx",
+      "UnitScaleFactor": 100,
+      "controls": 4620,
+      "max_sinking_error_m": 2.384185793236071e-08,
+      "max_height_error_m": 1.5305365863582665e-07,
+      "xview_totals": {
+        "overlapping_vertices": 136,
+        "overlapping_faces": 47072,
+        "vertex_pairs": 68,
+        "face_pairs": 97064,
+        "face_pairs_by_kind": {
+          "contact": 41087,
+          "area": 7110,
+          "area+contact": 48867
+        },
+        "bowtie_vertices": 298,
+        "bowtie_pairs": 36,
+        "parts_without_faces": 0
+      },
+      "xview_passed": false,
+      "public_validator_exit": 2,
+      "public_validator_machine_stage_counts": {
+        "pass": 0,
+        "fail": 0,
+        "review": 0,
+        "not_run": 12
+      },
+      "native_max_render_triangles": 806914
+    }
+  },
+  "source_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\pzu-20261104.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "equal": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\СИЛ13-УВК-ПД-ПЗУ_.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\maf-and-light-spec.docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "equal": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\МАФ_и_свет_модели_фото (4).docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "equal": true
+    }
+  ],
+  "library_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+      "sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0435_M_Bench_025.fbx",
+      "sha256": "e6b6a2ba2ce042d957c80649dbf6285ecfa3d35e041f95142fe888691b2e723a",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0472_M_Cannopy_006.fbx",
+      "sha256": "cb10e03cb0298b3a247df165171da8dc7805f843342f8507886c99f16e38a096",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0698_M_Urn_010.fbx",
+      "sha256": "70a6ef60d95db7cb02f54df48b9c93ccbb08a7b72a535e9b15766034767a8586",
+      "equal": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/flora/v003/flora-library-v003.max",
+      "sha256": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74",
+      "equal": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/maf/maf-npm.blend",
+      "sha256": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd",
+      "equal": true
+    }
+  ],
+  "native_max_bbox_crosscheck": {
+    "NPM": {
+      "meshes": 3,
+      "max_bbox_error_m": 3.795010158569312e-06,
+      "limit_m": 0.0001
+    },
+    "VPM": {
+      "meshes": 601,
+      "max_bbox_error_m": 3.7894264011129053e-06,
+      "limit_m": 0.0001
+    }
+  },
+  "ucx_audit_carryforward": {
+    "basis": "exact actual-export arrays equality, not unchanged working builder",
+    "same_pieces": 600,
+    "same_ground_vertices": 31448,
+    "same_ground_faces": 58896,
+    "r5_fbx_sha256": "33a5c6fe67e9b6e94d65be6c155d88867efa0ff767456b9f6c0a228fe65f4d1d",
+    "r1_fbx_sha256": "0a01c4370e90741333b4e23d63990077df07ee5a8f8ccbc89f58fefe5758510e",
+    "audit": "ucx-export-audit-r5.json",
+    "samples": 175688,
+    "over_100mm": 0,
+    "max_distance_m": 0.07983589172363281,
+    "note": "sampled, not continuous proof"
+  },
+  "ucx_pair_measurements": {
+    "passed": false,
+    "scope": "independent actual-FBX UCX pair relation, no builder result",
+    "elapsed_seconds": 9.890922199992929,
+    "candidate_pairs": 2463,
+    "counts": {
+      "apart": 635,
+      "in_band": 1615,
+      "wide": 213
+    }
+  },
+  "flora_topology_conflict": {
+    "passed": false,
+    "scope": "policy-conflict evidence, not delivery QA",
+    "single_instances": [
+      {
+        "profile": "NPM",
+        "name": "Acer_platanoides_NPM",
+        "source": "actual exported single instance",
+        "facts": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 27,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 27,
+          "tol_m": 0.002
+        }
+      },
+      {
+        "profile": "NPM",
+        "name": "Syringa_vulgaris_NPM",
+        "source": "actual exported single instance",
+        "facts": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 30,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 30,
+          "tol_m": 0.002
+        }
+      },
+      {
+        "profile": "NPM",
+        "name": "Hydrangea_arborescens_NPM",
+        "source": "actual exported single instance",
+        "facts": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 25,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 25,
+          "tol_m": 0.002
+        }
+      },
+      {
+        "profile": "NPM",
+        "name": "Physocarpus_opulifolius_NPM",
+        "source": "actual exported single instance",
+        "facts": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 111,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 111,
+          "tol_m": 0.002
+        }
+      },
+      {
+        "profile": "NPM",
+        "name": "Physocarpus_opulifolius_Luteus_NPM",
+        "source": "actual exported single instance",
+        "facts": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 30,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 30,
+          "tol_m": 0.002
+        }
+      },
+      {
+        "profile": "VPM",
+        "name": "Acer_platanoides_VPM",
+        "source": "actual exported single instance",
+        "facts": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 4869,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 4869,
+          "tol_m": 0.002
+        }
+      },
+      {
+        "profile": "VPM",
+        "name": "Syringa_vulgaris_VPM",
+        "source": "actual exported single instance",
+        "facts": {
+          "duplicate_vertices": 1,
+          "duplicate_edges": 1,
+          "duplicate_polygons": 0,
+          "self_intersections": 2129,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 2,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 2131,
+          "tol_m": 0.002
+        }
+      },
+      {
+        "profile": "VPM",
+        "name": "Hydrangea_arborescens_VPM",
+        "source": "actual exported single instance",
+        "facts": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 246,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 246,
+          "tol_m": 0.002
+        }
+      },
+      {
+        "profile": "VPM",
+        "name": "Physocarpus_opulifolius_VPM",
+        "source": "actual exported single instance",
+        "facts": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 1143,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 1143,
+          "tol_m": 0.002
+        }
+      },
+      {
+        "profile": "VPM",
+        "name": "Physocarpus_opulifolius_Luteus_VPM",
+        "source": "actual exported single instance",
+        "facts": {
+          "duplicate_vertices": 20,
+          "duplicate_edges": 25,
+          "duplicate_polygons": 10,
+          "self_intersections": 120,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 175,
+          "tol_m": 0.002
+        }
+      }
+    ],
+    "synthetic_non_overlapping_11_star_witness": {
+      "synthetic": true,
+      "separation_m": 20,
+      "counts": {
+        "duplicate_vertices": 0,
+        "duplicate_edges": 0,
+        "duplicate_polygons": 0,
+        "self_intersections": 297,
+        "isolated_vertices": 0,
+        "isolated_edges": 0,
+        "isolated_polygons": 0,
+        "zero_length_edges": 0,
+        "duplicates_and_self_intersections": 297,
+        "tol_m": 0.002
+      },
+      "n": 11
+    },
+    "threshold": {
+      "maximum_per_mesh": 100,
+      "source": "V004;reg pp8/29;C44 project-wide unresolved"
+    }
+  },
+  "map_sources": {
+    "passed": false,
+    "source_scene_hash": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74",
+    "missing_original_maps": [
+      {
+        "expected_path": "C:\\x\\flora-library\\v001\\maps\\hydrangea-arborescens\\diffuse-v001.png",
+        "exists": false
+      },
+      {
+        "expected_path": "C:\\x\\flora-library\\v001\\maps\\hydrangea-arborescens\\opacity-v001.png",
+        "exists": false
+      },
+      {
+        "expected_path": "C:\\x\\flora-library\\v001\\maps\\physocarpus-opulifolius-luteus\\diffuse-v001.png",
+        "exists": false
+      },
+      {
+        "expected_path": "C:\\x\\flora-library\\v001\\maps\\physocarpus-opulifolius-luteus\\opacity-v001.png",
+        "exists": false
+      },
+      {
+        "expected_path": "C:\\x\\flora-library\\v001\\maps\\physocarpus-opulifolius\\diffuse-v001.png",
+        "exists": false
+      },
+      {
+        "expected_path": "C:\\x\\flora-library\\v001\\maps\\physocarpus-opulifolius\\opacity-v001.png",
+        "exists": false
+      },
+      {
+        "expected_path": "C:\\x\\flora-library\\v001\\maps\\syringa-vulgaris\\diffuse-v001.png",
+        "exists": false
+      },
+      {
+        "expected_path": "C:\\x\\flora-library\\v001\\maps\\syringa-vulgaris\\opacity-v001.png",
+        "exists": false
+      }
+    ],
+    "a101_candidates": [
+      {
+        "species": "Acer platanoides Royal Red",
+        "source": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\klen_t7_h550_low.png",
+        "sha256": "96f1de1d059b6a8a3d66562479fc62d36126a7f31cbbe8d08f7423f8656a64a2",
+        "size_px": [
+          2048,
+          2048
+        ],
+        "mode": "RGBA",
+        "label_status": "D287 interim only",
+        "applied": false
+      },
+      {
+        "species": "Syringa vulgaris / josikaea",
+        "source": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\siren_t1_h160_low.png",
+        "sha256": "6a93f55aa65b229942fba3d5c76a8fc6c1fcdcffd9d9a47a028075c44e5f9d4d",
+        "size_px": [
+          2048,
+          2048
+        ],
+        "mode": "RGBA",
+        "label_status": "SOURCE LABEL AMBIGUOUS; NOT BOUND",
+        "applied": false
+      },
+      {
+        "species": "Hydrangea arborescens",
+        "source": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\gortenzia_drevovidnaya_t2_h100_low.png",
+        "sha256": "34a61062405237ffb8bd5a1422371cd401355f2573b01b869c92020b8bb15c93",
+        "size_px": [
+          2048,
+          2048
+        ],
+        "mode": "RGBA",
+        "label_status": "SOURCE LABEL ONLY; NOT CERTIFIED",
+        "applied": false
+      },
+      {
+        "species": "Physocarpus species",
+        "source": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\puzyreplodnik_t1_h150_low.png",
+        "sha256": "e046c82ce53fbab307b4fada299d6355215ef86745efd4c36f6c652cc29d407a",
+        "size_px": [
+          2048,
+          2048
+        ],
+        "mode": "RGBA",
+        "label_status": "native label: species-level",
+        "applied": false
+      },
+      {
+        "species": "Physocarpus Luteus",
+        "source": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\puzyreplodnik_kalinolistnyj_t1_h150_low.png",
+        "sha256": "a671588be5fd368b77420bae521ab93234568e65d0b9aae206182b095a64a8e1",
+        "size_px": [
+          2048,
+          2048
+        ],
+        "mode": "RGBA",
+        "label_status": "native label: Luteus",
+        "applied": false
+      }
+    ],
+    "note": "No inferred original-pair match and no A101 map bound to exported geometry; original labels/UV are not interchangeable."
+  },
+  "validation_note": "NPM native public checks execute but FAIL. VPM public default600s timeout; independent unchanged-reader trace imported then access violation in topology computation after825s; NOT_RUN, no fabricated report."
+}

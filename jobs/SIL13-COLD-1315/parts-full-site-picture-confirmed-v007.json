@@ -1,0 +1,147 @@
+{
+  "schema_version": "1.0.0",
+  "synthetic": false,
+  "object_id": "SIL13_COLD_1315_FullSite_Candidates",
+  "source_tier": "C",
+  "sources": [
+    {
+      "kind": "drawing",
+      "reference": "G:/Мой диск/AGR-assets/silikatny/source/cold-1315-v001/pzu-20261104.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "sheet": "Model; boundary 33FBCEF; greening definition approved in issue comment 6852165269"
+    }
+  ],
+  "triangle_budget": {
+    "npm": 180000,
+    "vpm": 2625000
+  },
+  "parts": [
+    {
+      "id": "FullSite_Ground",
+      "part_class": "other",
+      "sources": [
+        {
+          "kind": "region",
+          "reference": "Approved plot 33FBCEF minus footprint 33FBD7A; source hatches/TIN; D284 assumptions listed separately"
+        }
+      ],
+      "operation": "contour_rebuild",
+      "triangle_budget": {
+        "npm": 60000,
+        "vpm": 60000
+      }
+    },
+    {
+      "id": "Flora_3_Acer_platanoides",
+      "part_class": "other",
+      "sources": [
+        {
+          "kind": "object",
+          "reference": "PZU planting table row 3; actual source symbols/hedge hatches in placement-plan.json"
+        }
+      ],
+      "operation": "library_replace",
+      "library_ref": "library/flora/catalogue.json Acer_platanoides",
+      "triangle_budget": {
+        "npm": 60,
+        "vpm": 6420
+      }
+    },
+    {
+      "id": "Flora_4_Syringa_vulgaris",
+      "part_class": "other",
+      "sources": [
+        {
+          "kind": "object",
+          "reference": "PZU planting table row 4; actual source symbols/hedge hatches in placement-plan.json"
+        }
+      ],
+      "operation": "library_replace",
+      "library_ref": "library/flora/catalogue.json Syringa_vulgaris",
+      "triangle_budget": {
+        "npm": 170,
+        "vpm": 10438
+      }
+    },
+    {
+      "id": "Flora_5_Hydrangea_arborescens",
+      "part_class": "other",
+      "sources": [
+        {
+          "kind": "object",
+          "reference": "PZU planting table row 5; actual source symbols/hedge hatches in placement-plan.json"
+        }
+      ],
+      "operation": "library_replace",
+      "library_ref": "library/flora/catalogue.json Hydrangea_arborescens",
+      "triangle_budget": {
+        "npm": 240,
+        "vpm": 1920
+      }
+    },
+    {
+      "id": "Flora_6_Physocarpus_opulifolius",
+      "part_class": "other",
+      "sources": [
+        {
+          "kind": "object",
+          "reference": "PZU planting table row 6; actual source symbols/hedge hatches in placement-plan.json"
+        }
+      ],
+      "operation": "library_replace",
+      "library_ref": "library/flora/catalogue.json Physocarpus_opulifolius",
+      "triangle_budget": {
+        "npm": 67200,
+        "vpm": 537600
+      }
+    },
+    {
+      "id": "Flora_7_Physocarpus_opulifolius_Luteus",
+      "part_class": "other",
+      "sources": [
+        {
+          "kind": "object",
+          "reference": "PZU planting table row 7; actual source symbols/hedge hatches in placement-plan.json"
+        }
+      ],
+      "operation": "library_replace",
+      "library_ref": "library/flora/catalogue.json Physocarpus_opulifolius_Luteus",
+      "triangle_budget": {
+        "npm": 11750,
+        "vpm": 23500
+      }
+    },
+    {
+      "id": "MAF_Candidates_38",
+      "part_class": "other",
+      "sources": [
+        {
+          "kind": "object",
+          "reference": "38 explicit PZU INSERTs across 10 rows, candidate identities in library-placements-v006.json"
+        }
+      ],
+      "operation": "library_replace",
+      "library_ref": "G:/Мой диск/AGR-assets/maf/union_v001/fbx; accepted-by-picture, not article-matched",
+      "triangle_budget": {
+        "npm": 34500,
+        "vpm": 168140
+      }
+    }
+  ],
+  "joints": [],
+  "questions": [
+    {
+      "audience": "user",
+      "text": "Review full-site picture and ten row-to-candidate choices; neutral materials, provisional hedge layout/heights and all technical FAILs are NOT accepted by this draft.",
+      "answer": "D287: all placed candidates and plants kept as visual direction; technical/material/checker gates remain open."
+    }
+  ],
+  "status": "confirmed",
+  "gate1": {
+    "actor": "Artem (relayed on owning card)",
+    "date": "2026-11-14",
+    "scope": "project",
+    "ref": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6877351308",
+    "note": "D287: keep v006/r5 composition,38 MAF accepted-by-picture (not article-matched),4582 plants. No technical/material delivery waiver. Original site/scope Gate1 already approved; this records picture choice only."
+  }
+}
