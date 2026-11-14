@@ -77,14 +77,23 @@ def source_copy(index, rec, cache_dir):
     src = os.path.join(index['root'], rec['source']['path'])
     sha = rec['source'].get('sha256') or core.sha256_file(src)
     dst = os.path.join(cache_dir, 'sources', sha[:12] + '_' + os.path.basename(src))
-    if not os.path.isfile(dst):
+    if core.same_file(src, dst):
+        raise ValueError('cache aliases library input: ' + dst)
+    if os.path.isfile(dst):
+        if core.sha256_file(dst) != sha:
+            raise ValueError('cache content differs from recorded source: ' + dst)
+    else:
+        import tempfile
         os.makedirs(os.path.dirname(dst), exist_ok=True)
-        tmp = dst + '.tmp'
-        shutil.copyfile(src, tmp)
-        if core.sha256_file(tmp) != sha:
-            os.remove(tmp)
-            raise ValueError('library file changed while copying: ' + src)
-        os.replace(tmp, dst)
+        fd, tmp = tempfile.mkstemp(prefix='.agr-source-', dir=os.path.dirname(dst))
+        try:
+            with os.fdopen(fd, 'wb') as target, open(src, 'rb') as source:
+                shutil.copyfileobj(source, target)
+            if core.sha256_file(tmp) != sha:
+                raise ValueError('library file changed while copying: ' + src)
+            os.link(tmp, dst)
+        finally:
+            os.unlink(tmp)
     return dst, sha
 
 
@@ -240,6 +249,9 @@ def run_import(index, ids, settings, cache_dir, scene_label=None, localappdata=N
     k = m_per_unit()
     report = {'plan': plan, 'plan_sha256': core.plan_hash(plan), 'imported': [], 'errors': [],
               'textures': {'repathed': 0, 'copied': 0, 'missing': [], 'conflicts': []}, 'moves': {}}
+    for row in plan:
+        if row['status'] not in ('merge', 'already_in_scene'):
+            report['errors'].append('{}: {}'.format(row['id'], row['status']))
     merge_rows = [r for r in plan if r['status'] == 'merge']
     flag_mtl = rt.Name('useSceneMtlDups' if s['materials'] == 'reuse' else 'renameMtlDups')
     tex_dirs = []
@@ -304,6 +316,8 @@ def run_import(index, ids, settings, cache_dir, scene_label=None, localappdata=N
                     m.filename = new
                     report['textures']['repathed'] += 1
             report['textures'].update(copied=len(tp['copy']), missing=tp['missing'], conflicts=tp['conflicts'])
+            report['errors'].extend('missing texture: ' + p for p in tp['missing'])
+            report['errors'].extend('texture conflict: ' + p for p in tp['conflicts'])
             # layout
             moves = core.layout_rows([{'id': g['id'], 'boxes': g['boxes']} for g in groups], s['gap_m'],
                                      s['row_limit_m'])

@@ -473,13 +473,32 @@ Max не проверялся: Артём 06.11 сказал, что это не
 Вырезка с общих атласов нужна только старым библиотекам (Union, FLORA_Union): у ассетов A101 свой набор
 текстур на каждый ассет.
 
-## Нужно в общих файлах (вносит ветка 0/R волны 1.0, здесь не трогалось)
+## Remaining panel integration (separate from the standalone browser)
 - `runtime.py`: action `assets.browser` → `assets_ui.show(assets_ui.MaxBackend())`; actions `assets.match` и
   `assets.place` — после кнопки.
 - `ui_model.py`: строка плана блока «ассеты» (этап «расстановка»): «Ассеты» (окно), «Сопоставить».
 - `ui_max.py` / `agr_tools.mcr` / `menu.ms`: macro `AGRToolsAssets` (категория AGR Tools), пункт меню.
 - Иконка `agr_assets.svg` в наборе иконок.
-- `tools/max/build_agr_tools.py`: в MZP добавить `assets_core.py`, `assets_max.py`, `assets_ui.py`.
+- Packaging is included in PR #1044: `build_agr_tools.FILES` and `install.ms` require all five assets Python modules and `assets_launch.ms`.
 - `README.md` и `GUIDE.md` панели: раздел «Ассеты».
 - Журнал: когда ветка 0 даст общий писатель К1, `assets_core.append_journal` заменяется на него. Формат строки уже
   тот же. Ключ файла — sha1 нормализованного пути сцены; это нужно подтвердить.
+
+## PR #1044 refresh (2026-11-14)
+
+The standalone browser is not a completion claim for the umbrella conveyor issue #1024.
+The historical native jobs above remain historical Max 2024 evidence, not a fresh Max 2026 run.
+This refresh merges current pilot main without rewriting the original branch history.
+
+- The MZP now ships every dynamic assets sibling and the standalone launcher; no panel action is added.
+- Source-cache copies are hash-checked on reuse; new copies use unique staging and exclusive publication.
+- ZIP extraction preflights flattened duplicate names and input aliases, verifies existing bytes rather than size,
+  refuses conflicts, and preserves predictable `.tmp` sentinels. Use a fresh versioned destination after a conflict.
+- Texture reuse compares content hashes, not file length. Invalid/non-finite scale and layout settings are rejected.
+- Duplicate import IDs/versions are errors. Unknown, unavailable or audit-blocked rows and missing/conflicting
+  textures cannot produce a `done` import report. Already-imported rows remain an intentional no-op.
+- Regression evidence: `tests/max_tools/test_agr_tools_assets_refresh.py` uses synthetic files and a mocked Max
+  boundary only. It proves no native Max/UI or source-library acceptance; current counts and exact revision are in the PR.
+
+The packed VPM pixel route, placement, panel wiring, and PR #1090 atlas changes are not implemented here.
+They are not silently imported from another open branch. No customer binaries or new library approvals are added.
