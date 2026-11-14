@@ -76,6 +76,20 @@ def test_mask_conflict_uses_another_full_repeat_copy_never_overwrites():
     assert failed['status']=='sample_fit_exhausted'
     assert len(failed['faces'])+len(failed['unplaced'])==2
     assert failed['witnesses'][0]['conflict_pixels']>=1
+    assert failed['witnesses'][0]['existing_face'] == ['synthetic',0]
+
+
+@pytest.mark.parametrize('samples', [[[1.1,.5,True]],[[.5,.5,True],[.5,.5,False]]])
+def test_outside_or_self_contradictory_mask_samples_are_never_success(samples):
+    rows=[face([[0,0],[1,0],[1,1],[0,1]])]
+    mask=[{'object':'synthetic','face':0,'samples':samples}]
+    if samples[0][0]>1:
+        with pytest.raises(ValueError,match='outside'):
+            fit_mask_samples(rows,mask,repeat_m=7,texel_px_m=512,tile_px=4096,border_px=32,seed=0)
+    else:
+        r=fit_mask_samples(rows,mask,repeat_m=7,texel_px_m=512,tile_px=4096,border_px=32,seed=0)
+        assert r['unplaced']==[['synthetic',0]]
+        assert r['passed'] is False
 
 
 @pytest.mark.parametrize('bad', [[],[{'object':'unknown','face':0,'samples':[[0,0,True]]}],
