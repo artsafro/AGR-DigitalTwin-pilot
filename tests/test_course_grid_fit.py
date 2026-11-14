@@ -92,6 +92,25 @@ def test_outside_or_self_contradictory_mask_samples_are_never_success(samples):
         assert r['passed'] is False
 
 
+def test_generated_translation_only_preservation_and_accounting():
+    import random
+    rng=random.Random(1326)
+    rows=[]
+    for i in range(100):
+        x,y=rng.uniform(-100,100),rng.uniform(-100,100)
+        w,h=rng.uniform(.05,1),rng.uniform(.05,1)
+        rows.append(face([[x,y],[x+w,y],[x+w,y+h],[x,y+h]],i))
+    before=copy.deepcopy(rows)
+    r=fold_chart(rows,repeat_m=4,texel_px_m=512,tile_px=4096,border_px=32)
+    assert len(r['faces'])==100 and r['unplaced']==[] and r['dropped_faces']==[]
+    for original,out in zip(rows,r['faces']):
+        for k in (0,1):
+            assert out['translation_m'][k]/4 == round(out['translation_m'][k]/4)
+            for p,q in zip(original['chart_m'],out['uv']):
+                assert q[k]*4096-32 == pytest.approx((p[k]+out['translation_m'][k])*512,abs=1e-9)
+    assert rows==before
+
+
 @pytest.mark.parametrize('bad', [[],[{'object':'unknown','face':0,'samples':[[0,0,True]]}],
     [{'object':'synthetic','face':0,'samples':[]}],
     [{'object':'synthetic','face':0,'samples':[[float('nan'),0,True]]}],

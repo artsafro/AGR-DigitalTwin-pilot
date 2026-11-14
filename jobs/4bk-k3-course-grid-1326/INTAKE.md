@@ -1,12 +1,15 @@
 # 4BK stylobate course-grid pilot #1326 — intake checkpoint
 
-Status: **finish cohort, stair-return seams and two main-wall ring terminations confirmed; no UV production performed**.
-Main-wall answer (2026-11-14): `main-wall-seam-approval.json`; the earlier pending
-termination question in `LOOP_POLICY.md` is answered. Check level: `full` (reusable tooling).
+Status: **all existing-edge seam questions answered; bounded one-tile fit rejected**.
+The latest permission and standing minor-part rule are in `cap-base-seam-approval.json`.
+Current evidence and the budget/new-geometry-cut question: `FIT_POLICY.md` and
+`fit-audit-v005.json`. No production UVs, maps or geometry have been saved.
+Check level: `full` (reusable tooling). Main-wall ring permission remains in
+`main-wall-seam-approval.json`; do not reopen settled cohort/stair/ring/cap questions.
 
-Current checkpoint: `CAP_POLICY.md` and source-bound `cap-audit-v004.json`.
-The complete-edge audit asks one combined main-cap/base seam-scope question;
-`LOOP_POLICY.md` and `ring-audit-v003.json` are historical source checkpoints.
+`CAP_POLICY.md`, `LOOP_POLICY.md` and the v003/v004 reports below are historical
+source-chart checkpoints. The v005 chart uses the approved explicit seam list;
+minor existing-edge seam choices no longer need another user answer.
 Artem's exact stair permission is in `seam-approval.json`. Earlier questions below
 are historical; do not reopen the approved cohort or stair-return seam scope.
 

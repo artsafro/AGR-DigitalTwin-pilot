@@ -1,8 +1,12 @@
 # Complete-edge chart checkpoint — #1326, v004
 
-Status: **needs one combined main-cap/base seam-scope answer**. `pilot_passed=false`.
-No production UVs, maps, geometry, source scenes or Max sessions have been changed.
-This is not a tile overflow or a textured pilot acceptance result.
+Status: **scope answered 2026-11-14; superseded by the bounded-fit checkpoint**.
+`cap-base-seam-approval.json` records approval of this exact proposal and the
+standing permission for existing-edge seams on minor parts. Do not ask this
+question again. See `FIT_POLICY.md` / `fit-audit-v005.json` for the current gate.
+`pilot_passed=false`; no production UVs, maps, geometry, source scenes or Max
+sessions have been changed. This v004 document is historical chart evidence,
+not a textured pilot acceptance result.
 
 ## Settled answers — do not reopen
 
