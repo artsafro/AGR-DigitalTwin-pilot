@@ -15,7 +15,8 @@ writes the remapped channel 1 and an atlas material on the copy, reads the copy 
 unchanged. Any failure deletes the copies and the new folder's files of this run.
 
 Options: atlas.flora — max_size 2048, pad 8, out_dir; atlas.groundel — profile 'groundel' (default, <= 512) or
-'npm' (VPM_to_NPM: up to 2048, plugs allowed), size 512 / 2048, out_dir.
+'npm' (VPM_to_NPM: up to 2048, plugs allowed), size 512 / 2048, out_dir;
+texel 'ground' (default) or 'none' (NPM only: preserve source pixels with uniform atlas scaling).
 """
 import os
 
@@ -24,9 +25,14 @@ TOOL_GROUNDEL = 'atlas.groundel'
 LAYER_FLORA = 'AGR_export_flora'
 LAYER_GROUNDEL = 'AGR_export_groundel'
 FLORA_KEYS = {'max_size', 'pad', 'out_dir'}
-GROUNDEL_KEYS = {'profile', 'size', 'out_dir'}
+GROUNDEL_KEYS = {'profile', 'size', 'out_dir', 'texel'}
 BLOCKING = {'map_missing', 'map_unreadable', 'groundel_alpha', 'atlas_overflow', 'atlas_refused', 'no_uv',
             'texture_unsupported', 'uv_tiling', 'opacity_mismatch'}
+
+
+def _same_file(a, b):
+    """Same path after normalisation (case, separators, relative parts)."""
+    return os.path.normcase(os.path.abspath(str(a))) == os.path.normcase(os.path.abspath(str(b)))
 
 
 def _rt():
@@ -253,7 +259,14 @@ def _groundel_options(ctx, mode, preview):
     out_dir = opts.get('out_dir')
     if out_dir is not None and (not isinstance(out_dir, str) or not out_dir):
         raise ValueError('options.out_dir must be a folder path')
-    return {'profile': profile, 'size': size, 'out_dir': out_dir}
+    # #1024 (Artem 06.11): in NPM the texel matters only for Ground; MAF/Flora atlases keep their source pixels
+    # (uniform scale to the atlas size, flat colours as plug cells) -> atlas_core.pack mode 'oks'.
+    texel = opts.get('texel', 'ground')
+    if texel not in ('ground', 'none'):
+        raise ValueError("options.texel must be 'ground' or 'none'")
+    if texel == 'none' and profile != 'npm':
+        raise ValueError("options.texel 'none' needs profile 'npm' (GroundEl keeps the Ground texel)")
+    return {'profile': profile, 'size': size, 'out_dir': out_dir, 'texel': texel}
 
 
 def _groundel_scan(ctx, nodes, options):
@@ -342,7 +355,8 @@ def atlas_groundel(ctx, mode, nodes, preview):
             fmats += o['mats']
             owner += [o['key']] * len(m['faces'])
         try:
-            laid = core.pack(verts, uvs, faces, fuv, fmats, specs, mode='ground', size=options['size'], pad=8,
+            laid = core.pack(verts, uvs, faces, fuv, fmats, specs,
+                             mode='oks' if options.get('texel') == 'none' else 'ground', size=options['size'], pad=8,
                              unit_m=unit, profile=options['profile'], shrink=True)
         except core.AtlasFitError as exc:
             calc = exc.calc
@@ -507,6 +521,8 @@ def atlas_flora(ctx, mode, nodes, preview):
                         if op is None or (op.w, op.h) != (pic.w, pic.h):
                             o['findings'].append(('opacity_mismatch', 'opacity {} must be a PNG of the diffuse size'
                                                   .format(opacity)))
+                        elif alpha is not None and _same_file(oinfo['path'], info['path']):
+                            pass  # #1024: A101 Flora points the opacity slot at the diffuse PNG itself: its own alpha
                         elif alpha is not None:
                             o['findings'].append(('opacity_mismatch', 'both diffuse alpha and an opacity map'))
                         else:
