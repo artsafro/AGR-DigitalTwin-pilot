@@ -314,3 +314,43 @@ def joint_cross_section(face, expected_zones, observed_zones, origin, inward):
                 max_centre_error_mm=max(errors,default=None),max_endpoint_error_mm=max(endpoint_errors,default=None),
                 nominal_centre_outside_face=not domain.covers(Point([origin[k]+.005*normal[k] for k in (0,1)])),
                 missing_intervals=missing,false_intervals=false)
+
+
+def source_joint_footprint(image, source_uv, chart_m):
+    """Read the delivered (40,32,32), L1<=4 mask at original pixel edges.
+
+    Input RGB uint8 image uses PNG's top-down row order. Only the actual face UV
+    bbox is scanned. No legacy 5-mm resampling or implicit endpoint truncation.
+    A measured empty bitmap footprint is an explicit empty geometry, not a pass.
+    """
+    import numpy as np
+    from shapely.geometry import Polygon
+    from shapely.ops import unary_union
+    if not isinstance(image,np.ndarray) or image.dtype!=np.uint8 or image.ndim!=3 or image.shape[2]!=3 or min(image.shape[:2])<1:raise ValueError('unsupported source RGB image')
+    # Reuse finite/dimension and nondegenerate affine-frame validation.
+    for rows in (source_uv,chart_m):
+        if not isinstance(rows,list) or len(rows)<3 or any(not isinstance(p,list) or len(p)!=2 or any(
+            isinstance(x,bool) or not isinstance(x,(int,float)) or not math.isfinite(x) for x in p) for p in rows):raise ValueError('invalid source UV/chart')
+    if len(source_uv)!=len(chart_m):raise ValueError('partial source UV/chart')
+    uv=np.asarray(source_uv,dtype=float);chart=np.asarray(chart_m,dtype=float);domain=Polygon(chart)
+    if not domain.is_valid or domain.area<=1e-12 or uv.min()<0 or uv.max()>1:raise ValueError('unsupported source UV domain')
+    h,w=image.shape[:2];pixels=uv*np.array([w,h]);a=np.c_[pixels-pixels[0],np.ones(len(pixels))]
+    matrix=np.linalg.lstsq(a,chart-chart[0],rcond=None)[0]
+    if np.linalg.matrix_rank(matrix[:2])!=2 or np.max(np.linalg.norm(a@matrix-(chart-chart[0]),axis=1))>2e-5:raise ValueError('unsupported nonaffine source UV frame')
+    lo=np.maximum(0,np.floor(pixels.min(0)).astype(int));hi=np.minimum([w-1,h-1],np.ceil(pixels.max(0)).astype(int))
+    active={};rectangles=[]
+    for y in range(int(lo[1]),int(hi[1])+2):
+        runs=[]
+        if y<=hi[1]:
+            row=image[h-1-y,lo[0]:hi[0]+1].astype(np.int16)
+            xs=np.flatnonzero(np.abs(row-[40,32,32]).sum(1)<=4)+lo[0]
+            if len(xs):
+                for group in np.split(xs,np.flatnonzero(np.diff(xs)>1)+1):runs.append((int(group[0]),int(group[-1])+1))
+        for run,start in list(active.items()):
+            if run not in runs:rectangles.append([run[0],start,run[1],y]);del active[run]
+        for run in runs:active.setdefault(run,y)
+    polygons=[]
+    for x0,y0,x1,y1 in rectangles:
+        p=np.array([[x0,y0],[x1,y0],[x1,y1],[x0,y1]],dtype=float)
+        polygons.append(Polygon(np.c_[p-pixels[0],np.ones(4)]@matrix+chart[0]))
+    return unary_union(polygons).intersection(domain)
