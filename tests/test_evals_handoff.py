@@ -61,11 +61,21 @@ def evals(tmp_path):
     return out
 
 
+def full_run(sha):
+    """A real full-suite line (still accepted as evidence when the author has one) [D297]."""
+    return (f"- Full suite: `python suite_slot.py --card t_x -- uv run pytest -q` on {sha[:9]}: "
+            "13290 passed, 21 skipped, 179 deselected, 0 failed in 1400 s")
+
+
+DEFERRED = "- Full suite: deferred to merge batch (D297)"
+
+
 def lines(shas, evals):
     head, red = shas["head"][:9], shas["red"][:9]
     return {
-        "full": f"- Full suite: `python suite_slot.py --card t_x -- uv run pytest -q` on {head}: "
-                "13290 passed, 21 skipped, 179 deselected, 0 failed in 1400 s",
+        "full": DEFERRED,
+        "affected": f"- Affected tests: {head} `uv run pytest -q tests/test_x.py tests/test_y.py` -> "
+                    "40 passed, 0 failed",
         "evals": f"Regression evals: {evals / 'report.json'}; 0 passed / 0 failed / 10 not measured "
                  "(no Claude transcript)",
         "red": f"- Before (RED): {red} `uv run pytest -q tests/test_x.py` -> 3 failed, 1 passed",
@@ -264,28 +274,28 @@ def test_order_and_markup_independent(tmp_path, repo, evals, capsys):
 def test_lines_inside_code_fence_ignored(tmp_path, repo, evals, capsys):
     _, shas = repo
     parts = lines(shas, evals)
-    fenced = "```\n" + parts.pop("full") + "\n```"
+    fenced = "```\n" + parts.pop("affected") + "\n```"
     parts["fenced"] = fenced
-    rejected(tmp_path, body(parts), shas["head"], evals, capsys, "missing Full suite")
+    rejected(tmp_path, body(parts), shas["head"], evals, capsys, "missing Affected tests")
 
 
 def test_rework_ancestor_needs_affected_tests(tmp_path, repo, evals, capsys):
     _, shas = repo
     parts = lines(shas, evals)
-    parts["full"] = parts["full"].replace(shas["head"][:9], shas["red"][:9])
+    parts["full"] = full_run(shas["red"])
     parts["affected"] = (f"- Affected tests: {shas['head'][:9]} `uv run pytest -q tests/test_x.py` "
                          "-> 40 passed, 0 failed")
     assert run(tmp_path, body(parts), shas["head"], evals, capsys)[0] == 0
     parts["affected"] = parts["affected"].replace("0 failed", "1 failed")
     rejected(tmp_path, body(parts), shas["head"], evals, capsys, "Affected tests has failures")
     del parts["affected"]
-    rejected(tmp_path, body(parts), shas["head"], evals, capsys, "full suite not on head")
-    parts["full"] = lines(shas, evals)["full"].replace(shas["head"][:9], shas["side"][:9])
+    rejected(tmp_path, body(parts), shas["head"], evals, capsys, "missing Affected tests")
+    parts["full"] = full_run(shas["side"])
     parts["affected"] = f"- Affected tests: {shas['head'][:9]} -> 40 passed, 0 failed"
     rejected(tmp_path, body(parts), shas["head"], evals, capsys, "full suite not on head")
 
 
-@pytest.mark.parametrize("key", ["full", "evals", "red", "green", "sample"])
+@pytest.mark.parametrize("key", ["full", "affected", "evals", "red", "green", "sample"])
 def test_duplicate_lines_rejected(tmp_path, repo, evals, capsys, key):
     _, shas = repo
     parts = lines(shas, evals)
@@ -299,8 +309,9 @@ def test_empty_body_lists_every_missing_line(tmp_path, repo, evals, capsys, text
     out = rejected(tmp_path, text, shas["head"], evals, capsys)
     errors = [line for line in out.err.splitlines() if line.startswith("ERROR: ")]
     assert len(errors) == 5, out.err
-    for label in ("Full suite", "Regression evals", "Before (RED)", "After (GREEN)", "Sample output"):
+    for label in ("Affected tests", "Regression evals", "Before (RED)", "After (GREEN)", "Sample output"):
         assert f"missing {label}" in out.err
+    assert "missing Full suite" not in out.err  # D297: the full suite runs in the merge batch
 
 
 def test_template_placeholders_rejected(tmp_path, repo, evals, capsys):
@@ -362,9 +373,11 @@ MUTATIONS = {
 
 def test_generated_mutations_never_pass(tmp_path, repo, evals, capsys):
     """Probe: every single mutation of every required line (5 x 6, 'side commit' only where a sha
-    stands) and every pair of dropped lines (10) exits 1, never 0."""
+    stands) and every pair of dropped lines (10) exits 1, never 0. The optional deferred Full suite
+    line is covered by test_deferred_full_suite_mutations_never_pass [D297]."""
     _, shas = repo
     base = lines(shas, evals)
+    del base["full"]
     cases = []
     for key in base:
         for name, mutate in MUTATIONS.items():
@@ -395,10 +408,12 @@ def test_label_mentions_are_not_evidence(tmp_path, repo, evals, capsys):
     """A prose line that starts with a code-span label (`Before (RED):`, ...) is no second RED line,
     and a body made only of such mentions still misses every line (#584 dogfood on its own PR body)."""
     _, shas = repo
-    mention = "`Before (RED):`, `After (GREEN):`, `Full suite:` and `Sample output:` lines are required.\n"
+    mention = ("`Before (RED):`, `After (GREEN):`, `Full suite:`, `Affected tests:` and `Sample output:` "
+               "lines are required.\n")
     code, out = run(tmp_path, body(lines(shas, evals), mention), shas["head"], evals, capsys)
     assert code == 0, out.err
-    out = rejected(tmp_path, mention, shas["head"], evals, capsys, "missing Before (RED)", "missing Full suite")
+    out = rejected(tmp_path, mention, shas["head"], evals, capsys, "missing Before (RED)",
+                   "missing Affected tests")
     assert "duplicate" not in out.err
 
 
@@ -419,7 +434,7 @@ def test_green_affected_omission_rejected(tmp_path, repo, evals, capsys, key, va
     _, shas = repo
     parts = lines(shas, evals)
     if key == "affected":
-        parts["full"] = parts["full"].replace(shas["head"][:9], shas["red"][:9])
+        parts["full"] = full_run(shas["red"])
     parts[key] = value.format(**{k: v[:9] for k, v in shas.items()})
     rejected(tmp_path, body(parts), shas["head"], evals, capsys, reason)
 
@@ -503,7 +518,7 @@ def test_valid_integer_counts_and_rework_pass(tmp_path, repo, evals, capsys, key
     _, shas = repo
     parts = lines(shas, evals)
     if key == "affected":
-        parts["full"] = parts["full"].replace(shas["head"][:9], shas["red"][:9])
+        parts["full"] = full_run(shas["red"])
     parts[key] = value.format(**{k: v[:9] for k, v in shas.items()})
     code, out = run(tmp_path, body(parts), shas["head"], evals, capsys)
     assert code == 0, out.err
@@ -600,3 +615,114 @@ def test_round2_fixes_combined(tmp_path, repo, evals, capsys):
                    "delegated to the reviewer")
     assert out.err.count("ERROR:") >= 4  # the omitted Affected line is one error that quotes its nan
     assert "OK" not in out.out
+
+
+# D297 (#1400): affected tests per card on the head; the full suite runs once in the merge batch.
+def test_deferred_full_suite_with_affected_on_head_passes(tmp_path, repo, evals, capsys):
+    """Acceptance: a valid Affected tests line on head + `Full suite: deferred to merge batch (D297)`."""
+    _, shas = repo
+    code, out = run(tmp_path, body(lines(shas, evals)), shas["head"], evals, capsys)
+    assert code == 0, out.err
+    assert out.out.strip() == f"OK: handoff evidence complete for {shas['head']}"
+
+
+@pytest.mark.parametrize("value", [
+    None,
+    "- Full suite: deferred to merge batch (D297)",
+    "- Full suite: Deferred to the merge batch (D297)",
+    "- Full suite: deferred to merge batch (rule 68)",
+    "- **Full suite:** `deferred to merge batch (D297)`",
+])
+def test_full_suite_line_optional_or_deferred(tmp_path, repo, evals, capsys, value):
+    _, shas = repo
+    parts = lines(shas, evals)
+    parts["full"] = value
+    code, out = run(tmp_path, body(parts), shas["head"], evals, capsys)
+    assert code == 0, out.err
+
+
+def test_real_full_suite_on_head_still_accepted(tmp_path, repo, evals, capsys):
+    _, shas = repo
+    parts = lines(shas, evals)
+    parts["full"] = full_run(shas["head"])
+    assert run(tmp_path, body(parts), shas["head"], evals, capsys)[0] == 0
+
+
+def test_missing_affected_tests_fails(tmp_path, repo, evals, capsys):
+    _, shas = repo
+    parts = lines(shas, evals)
+    del parts["affected"]
+    rejected(tmp_path, body(parts), shas["head"], evals, capsys, "missing Affected tests")
+    parts["full"] = full_run(shas["head"])  # even a real full suite on head does not replace it
+    rejected(tmp_path, body(parts), shas["head"], evals, capsys, "missing Affected tests")
+
+
+@pytest.mark.parametrize("at", ["red", "side"])
+def test_affected_tests_on_old_sha_fails(tmp_path, repo, evals, capsys, at):
+    _, shas = repo
+    parts = lines(shas, evals)
+    parts["affected"] = parts["affected"].replace(shas["head"][:9], shas[at][:9])
+    rejected(tmp_path, body(parts), shas["head"], evals, capsys, "Affected tests not on head")
+
+
+@pytest.mark.parametrize("value", [
+    "- Full suite: deferred",
+    "- Full suite: deferred to merge batch",
+    "- Full suite: deferred to merge batch (D296)",
+    "- Full suite: deferred to merge batch (D2970)",
+    "- Full suite: deferred to merge batch (rule 49)",
+    "- Full suite: deferred to merge batch (D297); 0 passed",
+    "- Full suite: deferred to CI (D297)",
+    "- Full suite: deferred to merge batch (D297) <reason>",
+    "- Full suite:",
+])
+def test_malformed_deferral_fails(tmp_path, repo, evals, capsys, value):
+    _, shas = repo
+    parts = lines(shas, evals)
+    parts["full"] = value
+    rejected(tmp_path, body(parts), shas["head"], evals, capsys, "Full suite")
+
+
+@pytest.mark.parametrize("value", [
+    "- Full suite: deferred to the reviewer (D297)",
+    "- Full suite: deferred to merge batch (D297), reviewer runs the full suite",
+    "- Full suite: delegated to the reviewer",
+])
+def test_deferral_to_reviewer_still_fails(tmp_path, repo, evals, capsys, value):
+    _, shas = repo
+    parts = lines(shas, evals)
+    parts["full"] = value
+    rejected(tmp_path, body(parts), shas["head"], evals, capsys, "delegated to the reviewer")
+
+
+def test_reviewer_delegation_sentence_with_deferred_line_fails(tmp_path, repo, evals, capsys):
+    _, shas = repo
+    rejected(tmp_path, body(lines(shas, evals), "Reviewer: please run the full suite for me.\n"),
+             shas["head"], evals, capsys, "delegated to the reviewer")
+
+
+def test_deferred_full_suite_mutations_never_pass(tmp_path, repo, evals, capsys):
+    """Probe: each MUTATIONS entry except 'drop' (allowed) and 'side commit' (no sha) on the deferred line
+    exits 1; the deferred line with each required line dropped exits 1 (4 + 5 = 9 cases)."""
+    _, shas = repo
+    base = lines(shas, evals)
+    cases = []
+    for name, mutate in MUTATIONS.items():
+        if name in ("drop", "side commit"):
+            continue
+        parts = dict(base)
+        parts["full"] = mutate(base["full"], shas)
+        cases.append(parts)
+    for key in ("affected", "evals", "red", "green", "sample"):
+        parts = dict(base)
+        parts[key] = None
+        cases.append(parts)
+    codes = [run(tmp_path, body(parts), shas["head"], evals, capsys)[0] for parts in cases]
+    assert len(codes) == 9 and codes == [1] * 9
+
+
+def test_template_evidence_follows_d297():
+    template = (ROOT / ".github" / "pull_request_template.md").read_text(encoding="utf-8")
+    assert "- Full suite: deferred to merge batch (D297)" in template
+    assert "- Affected tests: <" in template
+    assert "rule 49" not in template
