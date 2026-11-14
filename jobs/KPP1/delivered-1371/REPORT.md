@@ -1,7 +1,17 @@
-# #1371 — delivered customer project intake; NOT PASSED
+# #1371 — delivered customer project intake; NOT PASSED (decision D288 applied to VPM v008)
 
 ## Краткий итог
 
+**Решение Артёма 2026-11-14 «Принимаю рекомендации» записано как [D288] и применено:**
+новый VPM `package-v008/SM_Kpp_1.zip` (db4bef46…) несёт суммы проекта
+s_obsh = s_naz = 27124.36, spp_gns = 28480.58 и FNO 013 006 005 / «Объект
+электроснабжения иного типа» из заказного `_002`; s_podz пуст (неизвестен), высоты R1
+171.05 / 8.65 / 179.70 сохранены. Остальные 22 члена ZIP байт-в-байт как v006.
+`validate_package --scene` VPM: V011 6 fail → 1 fail (только s_podz); итог `passed=false`.
+NPM в v008 не пересобирался: Ground заказчика по D288 не готов (граница/привязка/исправления
+согласуются отдельно). Сверка FNO в SINTEZ и quad master/F26 остаются открытыми.
+
+Исходная разведка (до решения):
 КПП найден: **VPM `_002` = первые два объекта NPM `_02`** (Main + MainGlass),
 а не NPM `_01`. Это прежняя заказная версия, **не наш R1**: высота оболочки
 11.08 м против 8.65 м R1. Из копий извлечены КПП и диагностический фрагмент Ground;
@@ -113,7 +123,7 @@ This deliberately demonstrates the composition-only V001 improvement and actual
 new scene failures. It is **not** an approved/customer-ready KPP package or a repair.
 No Ground clipping, reprojection, retopology, naming repair or flora deletion applied.
 
-## 4. Attribute proposal; nothing applied
+## 4. Attribute proposal (applied in v008 after D288; see §7)
 
 Both source GeoJSONs contain one ObjectFeature. Contrary to the opening shorthand,
 Ground attributes are **not all empty**: address, organisations, cadastral number,
@@ -191,8 +201,9 @@ Initial missing old NPZ was recovered from original pinned ZIP; initial nonexist
 slotless UCX, then explicitly represented absent collision material as None and passed.
 No checker was weakened and no source was repaired to make findings pass.
 
-## One question for Artem — blocked, not a PR decision
+## One question for Artem — answered: «Принимаю рекомендации» → [D288]
 
+Вопрос (сохранён без изменений как запись):
 Подтверждаешь такой единый набор решений по найденным источникам: **площади КПП
 заполняем суммами проекта** 27124.36 / 27124.36 / 28480.58 согласно стр.54
 регламента (тем самым отменяем прежнюю трактовку KPP1-specific); `s_podz` пока
@@ -205,8 +216,30 @@ FNO 013 006 005 / «Объект электроснабжения иного т�
 Рекомендую этот вариант; quad master/F26 не снимать по триангулированным экспортам.
 По завершении этапов открывать тебе сцену для приёмки?
 
-Resume after the answer: record concrete authorized decisions under allocation rules;
-resolve project `s_podz` and Ground boundary/frame/repair authority; locate the historical
-PSU275 accepted master if fresh revision parity is required; only then change attributes
-or assemble a production v008. Keep all original evidence and failed statuses immutable.
-No PR/review requested while model/data decisions remain open.
+## 7. After D288: VPM package-v008 (attribute-only)
+
+Command (new destination; refuses existing output, `.partial`, input aliases, hash drift):
+
+```bash
+uv run python jobs/KPP1/delivered-1371/build_v008.py \
+  "G:/Мой диск/AGR-evidence/1278-kpp1-package/package-v006/SM_Kpp_1.zip" \
+  "G:/Мой диск/AGR-assets/KPP1/delivered-customer-2026-11-14/SM_77_05_0009005_117_002.zip" \
+  "G:/Мой диск/AGR-evidence/1371-kpp1-delivered/package-v008"
+```
+
+Inputs pinned: v006 VPM 6c6b03b4…, delivered `_002` caef3a21…. Output `SM_Kpp_1.zip`
+db4bef46…, `SM_Kpp_1.geojson` fbf4665f…, `assembly.json` 4341c755… (index: evidence-SHA256SUMS.txt).
+Exactly five GeoJSON lines change (FNO_code, FNO_name, s_obsh, s_naz, spp_gns); property order,
+CRLF bytes, heights, s_podz, image and the 22 other ZIP members stay identical. The builder
+fails closed on empty/NaN/inf/negative/>2-decimal areas, non-empty delivered s_podz, an FNO pair
+absent from the classifier, or an already-filled base (`tests/jobs/test_kpp1_delivered_1371.py`).
+
+| VPM `--scene` | v006 = v007 (byte-identical) | v008 |
+|---|---|---|
+| exit / passed | 1 / false | 1 / false |
+| V011 fail findings | FNO_code, FNO_name, s_obsh, s_naz, s_podz, spp_gns empty | s_podz empty |
+| other stages | V001/2/5/7/8/9 pass; V004/V012 review; V003/V010/V013/V015-17 not_run | identical |
+
+Still open: s_podz (project underground total), SINTEZ FNO cross-check [D220], Ground
+boundary/placement/fix authority and NPM Ground [D288], quad master F26 / V003 [D198].
+Original evidence and failed statuses in v001 stay immutable.
