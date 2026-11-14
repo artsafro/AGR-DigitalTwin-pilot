@@ -107,6 +107,32 @@ def test_source_copy_rechecks_cached_bytes(tmp_path, monkeypatch):
     assert src.read_bytes() == b'original'
 
 
+@pytest.mark.parametrize('status', ['not_in_index', 'no_version', 'blocked_by_audit'])
+def test_import_does_not_report_refused_rows_as_done(tmp_path, monkeypatch, status):
+    import contextlib
+    fake = types.ModuleType('pymxs')
+    fake.runtime = types.SimpleNamespace(Name=lambda x: x, objects=[],
+        disableSceneRedraw=lambda: None, enableSceneRedraw=lambda: None, freeSceneBitmaps=lambda: None)
+    fake.undo = lambda *args: contextlib.nullcontext()
+    monkeypatch.setitem(sys.modules, 'pymxs', fake)
+    mx = load('assets_max')
+    monkeypatch.setattr(mx, 'm_per_unit', lambda: 1.0)
+    monkeypatch.setattr(mx.core, 'import_plan', lambda *a: [{'id': 'unknown', 'status': status}])
+    result = mx.run_import({'adapter': 'flora_max', 'lib': 'flora', 'assets': [],
+                           'layout': {'textures': None, 'viz_textures': None}}, ['unknown'], {},
+                          str(tmp_path), scene_label='synthetic.max', localappdata=str(tmp_path))
+    assert result['status'] == 'failed'
+    assert result['errors']
+
+
+def test_json_write_preserves_temp_sentinel(tmp_path):
+    target = tmp_path / 'index.json'
+    sentinel = tmp_path / 'index.json.tmp'
+    sentinel.write_bytes(b'keep')
+    core.write_json_atomic(str(target), {'value': 1})
+    assert sentinel.read_bytes() == b'keep'
+
+
 def test_all_assets_dependencies_ship():
     root = PKG.parents[2]
     spec = importlib.util.spec_from_file_location('refresh_builder', root / 'tools/max/build_agr_tools.py')
