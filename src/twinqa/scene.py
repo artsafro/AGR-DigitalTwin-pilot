@@ -29,7 +29,8 @@ from twinqa.geometry.ucx_audit import (
 from twinqa.clearance import BAND_EDGE_TOL_M, co_directional_distribution, co_directional_pairs
 from twinqa.report import Finding, signed_margin
 from twinqa.naming import mesh_name_findings
-from twinqa.uv import DENSITY_MAX_PX_PER_M, DENSITY_MIN_PX_PER_M, _density_finding, edge_densities, udim_of
+from twinqa.uv import (DENSITY_MAX_PX_PER_M, DENSITY_MIN_PX_PER_M, UdimDomainError, _density_finding, edge_densities,
+                       udim_of)
 
 READBACK = Path(__file__).resolve().parents[2] / "tools" / "blender" / "fbx_readback.py"
 ANGLE_TOL_DEG, SCALE_TOL = 1e-3, 1e-4
@@ -149,6 +150,38 @@ def ground_triangle_limit(profile: dict, ground_area_m2) -> tuple[int, dict]:
         if area <= Fraction(str(band["area_max"])) * 10_000:
             return band["triangles_max"], band
     return bands[-1]["triangles_max"], bands[-1]
+
+
+def z_bounds_finding(meshes, export_meta, src):
+    """Compare render-mesh world Z bounds in metres; 1 mm is an exclusive numerical budget.
+
+    None means absent evidence (not_run); supplied but malformed evidence fails closed.
+    export_meta is one FBX record with bounds_m in the same exported world frame.
+    """
+    expected = "render Z min/max differ from export_meta by < 0.001 m"
+    def result(status, observed):
+        return _f(status, "Z bounds vs export_meta", observed, expected, [10, 32, 33], src)
+    if export_meta is None:
+        return result("not_run", "export_meta not supplied; height unverified")
+    def valid_bounds(b):
+        return (isinstance(b, (list, tuple)) and len(b) == 2
+                and all(isinstance(v, (list, tuple)) and len(v) == 3 for v in b)
+                and all(_finite_number(c) for v in b for c in v)
+                and all(b[0][i] <= b[1][i] for i in range(3)))
+    if not isinstance(export_meta, dict) or not valid_bounds(export_meta.get('bounds_m')):
+        return result("fail", str(export_meta.get('error', 'invalid export_meta.bounds_m'))
+                      if isinstance(export_meta, dict) else 'invalid export_meta record')
+    geometry = [m for m in meshes if not m['name'].upper().startswith('UCX_')]
+    if not geometry or any(not valid_bounds(m.get('bounds_m')) for m in geometry):
+        return result("fail", "empty/partial/invalid render bounds_m readback")
+    if len({m['name'] for m in geometry}) != len(geometry):
+        return result("fail", "duplicate render mesh names")
+    observed = [min(m['bounds_m'][0][2] for m in geometry), max(m['bounds_m'][1][2] for m in geometry)]
+    target = [export_meta['bounds_m'][i][2] for i in (0, 1)]
+    # Rational operands avoid a rounded subtraction admitting exactly-at-budget discrepancies.
+    bad = any(abs(Fraction(str(a)) - Fraction(str(b))) >= Fraction(1, 1000)
+              for a, b in zip(observed, target))
+    return result("fail" if bad else "pass", f"{src}: readback Z {observed}, export_meta Z {target}")
 
 
 def _pivot_findings(meshes: list[dict], ucx: list[dict], src: str) -> list[Finding]:
@@ -697,7 +730,10 @@ def _tile_density_findings(geometry: list[dict], src: str, diffuse_px: dict,
                     raise ValueError(f"partial UV geometry on {mesh['name']}: polygon index") from exc
                 if len(poly_xyz) < 2:
                     continue
-                tile = udim_of(poly_uv)
+                try:
+                    tile = udim_of(poly_uv)
+                except UdimDomainError:  # centroid off the UDIM grid or < 3 corners (#1337): unknown tile
+                    tile = None
                 material = materials[index] if index < len(materials) else None
                 side = _tile_side(diffuse_px, tile, material)
                 if side is None:
@@ -1665,7 +1701,7 @@ def color_attribute_finding(meshes: list[dict], src: str) -> Finding:
 def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule: dict | None = None,
                    flora_share: int = FLORA_SHARE, *, maf_sizes=None, smoothing_angle_deg=None,
                    ground_area_m2=None, footprint_holes=None, diffuse_px=None,
-                   ground_materials=None) -> dict[str, list[Finding]]:
+                   ground_materials=None, export_meta=None) -> dict[str, list[Finding]]:
     """role: 'oks' | 'ground' | 'light'. Returns {stage_id: findings}. Ground FBX: Flora checks
     (twinqa.flora; flora_schedule = {mesh name: {"height_m", "crown_m"}}, flora_share default 70 000).
     ground_area_m2: VPM Ground area basis = site minus OKS footprint, m2; selects the reg p.29 band for the
@@ -1686,6 +1722,8 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
         out["V003"].append(_f("fail", "FBX readback", rb.get("error", "no meshes"), "importable FBX with meshes", [4, 24], src))
         return out
     meshes = rb["meshes"]
+    if role != "light":
+        out["V013"].append(z_bounds_finding(meshes, export_meta, src))
     ucx = [m for m in meshes if m["name"].upper().startswith("UCX_")]
     out["V002"].extend(_v002_findings(rb, meshes, src))
     # V005: color attributes (reg 4.1.1, SINTEZ lp_color_attributes); review only, the regulation recommends removal

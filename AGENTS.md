@@ -4,8 +4,8 @@ Shared by every agent (Claude Code, Codex, Antigravity). Agent-specific notes:
 `CLAUDE.md`, `docs/agents/codex.md`, `GEMINI.md`. Talk to the user in Russian [D088]; write code,
 commands, identifiers and docs in English.
 
-A worker reads three things, then starts: this file, the card's area file `docs/domain/areas/<area>.md`, and the card.
-Long form of the sections below: `docs/agents/agents-reference.md`.
+A worker reads three things: this file, `docs/domain/areas/<area>.md`, and the card.
+Details: `docs/agents/agents-reference.md`.
 For NPM/OKS tasks read `routes/npm-oks.md`; call `agr --help` before writing a script.
 
 ## Goal
@@ -18,24 +18,25 @@ collisions, plus the interactive Unreal experience. Priorities, in order:
 
 ## Where things are
 
-Read on demand, one line each. Read the domain file that matches the task before production work. Where sources disagree (`docs/domain/conflicts.md`), ask the user; never pick a side silently.
+Read on demand. Read the domain file that matches the task before production work. Where sources
+disagree (`docs/domain/conflicts.md`), ask the user; never pick a side silently.
 
-- Current state, next actions: `docs/PROJECT_STATE.md` (generated; `python tools/state/project_state.py`).
+- State: `docs/PROJECT_STATE.md` (generated: `python tools/state/project_state.py`).
 - Every dated user decision (`D<n>`): `docs/decisions.md`.
-- Which kind of fact lives in which file: `docs/agents/WORKFLOW.md`, "Memory map".
+- Fact locations: `docs/agents/WORKFLOW.md`, "Memory map".
 - Who owns what (Claude / Codex / Antigravity): `docs/agents/ROLES.md`.
 - Task loop, handoff, experience capture, snags: `docs/agents/WORKFLOW.md`.
-- Review questions, author receipts and how to run a Codex review: `docs/agents/REVIEW_CHECKLIST.md`, `docs/agents/WORKFLOW.md#before-requesting-review-author`.
-- Tools, MCP routes and their verified status: `docs/agents/CAPABILITIES.md`.
+- Review/author receipts: `docs/agents/REVIEW_CHECKLIST.md`, `docs/agents/WORKFLOW.md#before-requesting-review-author`.
+- Tools/MCP status: `docs/agents/CAPABILITIES.md`.
 - Production rules with citations (NPM/VPM, geometry, UV, materials, export, validation): `docs/domain/`.
 - Open conflicts between sources: `docs/domain/conflicts.md`.
 - Pipeline stages and their status: `docs/pipeline.md`.
 - Unsolved work: `docs/backlog.md`.
-- Archived jobs, experiments, orphan docs (tag `archive/2026-11`): `docs/ARCHIVE.md`.
+- Archive (tag `archive/2026-11`): `docs/ARCHIVE.md`.
 - Accepted cases and lessons: `docs/cases.md`.
 - Terms: `GLOSSARY.md`.
 - Naming (scripts, jobs, outputs, branches, tags): `docs/agents/NAMING.md`; object ids: `jobs/REGISTRY.md`.
-- Benchmark etalons: `benchmark/`; patterns: `docs/domain/patterns/INDEX.md`.
+- Etalons: `benchmark/`; patterns: `docs/domain/patterns/INDEX.md`.
 - Customer sources, outside git: `G:/Мой диск/AGR-assets/<object>/source/` + `SHA256SUMS.txt`; `jobs/<ID>/sources.json`.
 - Machine-readable rules: `standards/` (locked; see `standards/README.md`).
 - AGR knowledge base (Russian, read-only): `docs/agr/INDEX.md` only.
@@ -44,10 +45,7 @@ Read on demand, one line each. Read the domain file that matches the task before
 - Model work: `docs/procedure/TASK_TO_MODEL.md` (gates); node edits: [R1–R7](docs/procedure/NODE_RECIPES.md).
 - Task skills: load the matching `.agents/skills/*/SKILL.md` and follow it step by step (details: `docs/agents/agents-reference.md#skills`).
 
-A rule question ("is there a rule for ...?") is looked up in this order, and the first hit wins:
-`docs/decisions.md` -> `docs/domain/patterns/INDEX.md` -> `docs/cases.md` -> `docs/domain/conflicts.md` ->
-the matching `docs/domain/` file. `docs/agr/` is opened only through `docs/agr/INDEX.md`. A new user decision
-gets a line in `docs/decisions.md` and its `[D<n>]` where it applies.
+Rule lookup / new decisions: follow `docs/agents/agents-reference.md#rule-lookup`.
 
 ## Rules for every task
 
@@ -60,6 +58,9 @@ gets a line in `docs/decisions.md` and its `[D<n>]` where it applies.
 - A worktree branch with an auto-generated name (`claude/<words>-<hex6>`, e.g. `claude/laughing-hawking-e62961`)
   is renamed by `NAMING.md` before the first commit: the agent proposes one name in one line, the user
   confirms, then `git branch -m`. The pre-commit gate blocks commits on such a branch.
+- DCC per step: choose Blender/Max with a reason [D270]; `docs/agents/CAPABILITIES.md#dcc-acceptance-defaults`.
+- Ask once per task: «по завершении этапов открывать тебе сцену для приёмки?» Retain answer: yes = auto-open new version at each stage + absolute path; no = path only [D270].
+- Acceptance: 3ds Max 2026 QUAD review copy (user preference); triangulate only required delivery exports [D270].
 - One owner per DCC scene, MCP port and export folder at a time; worktrees do not isolate them.
 - Before any DCC call confirm the application, document, units and version; start read-only.
   Saves and exports go to a new versioned path. Never overwrite sources or approved versions.
@@ -75,5 +76,4 @@ gets a line in `docs/decisions.md` and its `[D<n>]` where it applies.
   ≤ 80 lines, fixed sections; `docs/agents/WORKFLOW.md`);
   in task branches report state changes in the final summary.
 - A new tool counts as shared only after it is listed in `docs/agents/CAPABILITIES.md` on `main`.
-
-- AGR Tools (3ds Max panel, `agr-mcp`, OKS conveyor 1.0): start at `docs/agr-tools/OVERVIEW.md`; binding rules (the project passport `jobs/<ID>/passport.json`, `schemas/ProjectPassport.schema.json`, is mandatory, К1): `docs/agents/agr-tools-1.0-rules.md`.
+- AGR Tools (Max panel, `agr-mcp`, OKS conveyor 1.0): `docs/agr-tools/OVERVIEW.md`; rules: `docs/agents/agr-tools-1.0-rules.md`. Mandatory passport (К1): `jobs/<ID>/passport.json`, `schemas/ProjectPassport.schema.json`.

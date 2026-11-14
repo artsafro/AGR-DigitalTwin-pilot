@@ -124,7 +124,8 @@ def test_kpp1_job_walk_counts_waits_fresh_process(tmp_path):
     assert proc.returncode == 1
     walk = json.loads(out.read_bytes())
     assert walk["passed"] is False
-    assert walk["waits"] == {"user": 1, "max": 2, "visual": 1}
+    assert walk["waits"] == {"user": 1, "max": 1, "visual": 1}
     by_gate = {row["gate"]: row["waits"] for row in walk["gates"]}
-    assert by_gate["operations"] == by_gate["export_readback"] == "max"
+    assert by_gate["operations"] == "max"  # final AGR Tools is Max-only
+    assert by_gate["export_readback"] is None  # placed exports were read back offline
     assert by_gate["visual"] == "user" and by_gate["checker"] == "visual"

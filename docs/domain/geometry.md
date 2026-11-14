@@ -2,6 +2,7 @@
 
 Keys: `reg p.N` = `Rasporyajenies19012026trebovaniya(2).pdf` page N (see npm-vpm.md header). `local:` relative to the repo root (AGR knowledge base; AGR `docs/` lives in `docs/agr/`). Tags: (project decision) = user/project instruction, not regulation; (lesson) = only source is a lesson/case study.
 
+- PDF dimension research #1321 reports zero-prediction sheets with precision=null and a separate no-false-positives guard PASS [D277]; this never waives scale, endpoint identity or delivery gates. See [research log](../research/autoresearch-pdf-dimensions.md).
 - PDF binding #1254 uses a documented cross-project DWG search for the second native DIMENSION oracle [D266]; its two-viewport fallback applies only when that search finds none. See [binding evidence](../research/pdf-album-binding-2b.md).
 - PDF fallback evaluation is a three-album, agent-made reference audit only [D265]; OCR/vision text is not calibrated geometry or an approved binding. See [fallback report](../research/pdf-album-fallback.md).
 
@@ -33,6 +34,7 @@ Keys: `reg p.N` = `Rasporyajenies19012026trebovaniya(2).pdf` page N (see npm-vpm
 - 1 unit = 1 m, scale 1:1. reg p.4, 24.
 - NPM: geometry in MSK Moscow coordinates + project heights; no arbitrary coords; rotation 0 after reset (plan rotation of OKS is baked into geometry vertices during placement, transform rotation is 0; decided 2026-10-16 [D135], [conflict #39](conflicts.md#npm-vpm-plan-rotation-after-reset)). reg p.10 §8.
 - VPM: origin 0,0,0 per FBX; pivot at geometric center X/Y, Z = project zero; same pivot for all meshes in FBX; rotation 0 after reset; insertion point MSK-77 in GeoJSON (3 decimals, <= 0.5 m from SPOZU plan position). reg p.32-33 §9, p.55.
+- Placement heights [D279]: GeoJSON h_relief is project zero; ground_mark_m is separate with provenance. Record the height system (unknown until sourced), zero source and ±0.000 in the FBX frame; never infer vertical datum from MSK-77 or silently adjust the 171.05/169.65 alternatives. Formula, KPP1 recomputation and Z-readback contract: [placement heights](../research/placement-heights-1330.md).
 - KPP1 R1 exception [D262]: approved approximate rigid fit to customer NPM instead of unavailable SPOZU; zero 171.050 m, entrance orientation not independently confirmed. Evidence and remaining checks: `jobs/KPP1/site-1255/REPORT.md`. Not a survey-accuracy pass.
 - Keep work placement near local zero; store transform + source georef; apply profile-specific placement at publish; never mix Moscow coords with local FBX units. local: docs/agr/DIGITAL_TWIN_AI_PROJECT_BRIEF.md#4 (project decision).
 - Local frame for orthogonal facades: `p_local = R^T (p_world - origin)`; contour noise merged within 1 mm, checked by Hausdorff distance (source-specific budget, not construction tolerance). local: docs/agr/case_studies/OBR22_ACCEPTED_WORKFLOW.md#math (lesson).
@@ -70,6 +72,9 @@ Keys: `reg p.N` = `Rasporyajenies19012026trebovaniya(2).pdf` page N (see npm-vpm
 - Andrew `UCX_Tools.ms` default gap 2 mm (tool default, not norm). local: docs/agr/research/max-workbench/REVIEW.md#3.
 
 ## Project modeling rules (user decisions, not regulation)
+- DCC per step: choose from known tools/context and state a one-line reason [D270]; Blender headless fits measuring/analysis/construction/algorithms, Max fits Corona/viz, AGR Tools, Max-only checks and acceptance. Not Blender by default; extends [D255].
+- Ask once per task: «по завершении этапов открывать тебе сцену для приёмки?»; retain the answer; yes: automatically open a new version at each stage + absolute path; no: path only [D270]. Helper and live-lock safety: `docs/agents/CAPABILITIES.md#dcc-acceptance-defaults`.
+- Acceptance view: 3ds Max 2026 QUAD review copy (Artem's preference, not regulation); triangulate only delivery exports that require it [D270].
 - Operation kernel: pure numpy functions on `dt_ai.ops.invariants` meshes; bmesh only through an adapter for booleans, extrusion and solidify (user 2026-10-19 [D131]); see `src/dt_ai/ops/operations.py`.
 - Editable master: 100% quads; no tris/n-gons, no degenerate/twisted/self-intersecting quads; triangulate only in a derived export copy; keep both and check both. local: docs/agr/GEOMETRY_RULES.md (project decision).
 - Separate meshes per logical group (body/walls, windows, roof, doors...) allowed; Attach/Join does not create clean topology; no artificial bridging faces. local: docs/agr/GEOMETRY_RULES.md (project decision).

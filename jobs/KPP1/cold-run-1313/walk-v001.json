@@ -1,0 +1,142 @@
+{
+  "passed": false,
+  "gates": [
+    {
+      "gate": "inputs",
+      "status": "review",
+      "waits": null,
+      "evidence_exists": [
+        {
+          "path": "jobs/KPP1/sources.json",
+          "verified": true
+        },
+        {
+          "path": "jobs/KPP1/object.json",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "4/4 external rows equal on this PC; object.json is the cached Revit levels authority. Placement inputs (D262) not repeated in this run.",
+      "external_inputs": [
+        {
+          "manifest": "jobs/KPP1/sources.json",
+          "path": "G:/\u041c\u043e\u0439 \u0434\u0438\u0441\u043a/AGR-assets/KPP1/source/22\u041556-\u0410\u04202-1002-\u0410\u0421.03-R1_L01_\u0431\u0435\u0437 \u043f\u043e\u0434\u043f\u0438\u0441\u0435\u0439.dwg",
+          "sha256": "cb74ba142142e9181dfc14e235f94aed7eabec597e746760e5a972427f0f3648",
+          "status": "equal"
+        },
+        {
+          "manifest": "jobs/KPP1/sources.json",
+          "path": "G:/\u041c\u043e\u0439 \u0434\u0438\u0441\u043a/AGR-assets/KPP1/source/22\u041556-\u0410\u04202-1002-\u0410\u0421.03-R1_L02_\u0431\u0435\u0437 \u043f\u043e\u0434\u043f\u0438\u0441\u0435\u0439.dwg",
+          "sha256": "428426002f2642d29e97a8db34053546dc1e427bdff8aeef9ad1c81005b73cb2",
+          "status": "equal"
+        },
+        {
+          "manifest": "jobs/KPP1/sources.json",
+          "path": "G:/\u041c\u043e\u0439 \u0434\u0438\u0441\u043a/AGR-assets/KPP1/source/22\u041556-\u0410\u04202-1002-\u0410\u0421.03-R1_L03_\u0431\u0435\u0437 \u043f\u043e\u0434\u043f\u0438\u0441\u0435\u0439.dwg",
+          "sha256": "ad1de2b203bd4394bd3604642cd41bd8f3b2427ec23b900413bd396612624469",
+          "status": "equal"
+        },
+        {
+          "manifest": "jobs/KPP1/sources.json",
+          "path": "G:/\u041c\u043e\u0439 \u0434\u0438\u0441\u043a/AGR-assets/tec26/album/TEC26_na_RR_1.pptx",
+          "sha256": "74e50277df5e2dfde3ba7ab945eb6bab45a8fa8c0207d7aca3a136d9656b78ac",
+          "status": "equal"
+        }
+      ],
+      "unreachable": 0,
+      "ready": false
+    },
+    {
+      "gate": "parts",
+      "status": "review",
+      "waits": "user",
+      "evidence_exists": [
+        {
+          "path": "jobs/KPP1/cold-run-1313/parts-v001.json",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "Cold PartsList parts-v001.json, approval_sha256 aef851f2...; Gate 1 requested https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1313#issuecomment-6875224009, unanswered.",
+      "ready": false
+    },
+    {
+      "gate": "operations",
+      "status": "review",
+      "waits": "max",
+      "evidence_exists": [],
+      "errors": [],
+      "note": "No new build. Approved R1 master is triangulated (validator V003 master quads fail); Max-only final AGR Tools open.",
+      "ready": false
+    },
+    {
+      "gate": "budgets",
+      "status": "review",
+      "waits": null,
+      "evidence_exists": [
+        {
+          "path": "jobs/KPP1/cold-run-1313/stages-v001.json",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "NPM export 30162 + 504 tris vs allocated 50000 (proposal, Gate 1 pending) and OKS 150000 [D010/D161]; not a JobChecklist receipt.",
+      "ready": false
+    },
+    {
+      "gate": "export_readback",
+      "status": "fail",
+      "waits": null,
+      "evidence_exists": [
+        {
+          "path": "jobs/KPP1/cold-run-1313/stages-v001.json",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "Clean-process readback exit 0, triangle multiset equal; xview export 116 overlapping faces (contact pairs must be 0, D256 covers only enumerated band pairs).",
+      "ready": false
+    },
+    {
+      "gate": "report",
+      "status": "review",
+      "waits": null,
+      "evidence_exists": [
+        {
+          "path": "jobs/KPP1/cold-run-1313/evidence-SHA256SUMS.txt",
+          "verified": true
+        }
+      ],
+      "errors": [],
+      "note": "RUN-LOG.md of cold run #3; package not built, missing gates named with owners.",
+      "ready": false
+    },
+    {
+      "gate": "visual",
+      "status": "missing",
+      "waits": "user",
+      "evidence_exists": [],
+      "errors": [],
+      "note": "No review sheet for this export; Artem.",
+      "ready": false
+    },
+    {
+      "gate": "checker",
+      "status": "missing",
+      "waits": "visual",
+      "evidence_exists": [],
+      "errors": [],
+      "note": "SINTEZ after visual acceptance; NPM ZIP and Ground FBX (other author) absent.",
+      "ready": false
+    }
+  ],
+  "waits": {
+    "user": 2,
+    "max": 1,
+    "visual": 1
+  },
+  "errors": [],
+  "job_id": "KPP1",
+  "run_id": "issue-1313-cold-run-v001",
+  "synthetic": false
+}
