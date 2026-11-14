@@ -1,80 +1,138 @@
-# KPP1 quad editable master from R1 — #1372 (F26), run `quad-v001` — NOT PASSED, needs Artem
+# KPP1 quad editable master from R1 — #1372 (F26), master `quad-v002`
 
-**Кратко (RU).** Собран полностью квадовый мастер KPP1 из утверждённого R1 (`r1-v002`), R1 не тронут.
-V003 «master quads» теперь **pass** (61 602 + 252 квада, 0 треугольников), поверхность совпадает с R1
-(p95 < 1 мкм, max 0.29 мм Main / 1.25 мм стекло). Но два критерия не выполнены и требуют решения Артёма:
-1) xView мастера = 0 недостижим без правки утверждённой геометрии R1 — в самом R1 уже 166 пар перекрытий
-   (112 граней); разбиение квадов в этих зонах дало 24 T-junction и 20 пар вершин;
-2) всеквадовый мастер стоит треугольников: NPM 123 701 tris (R1: 30 666), бюджет 150k [D010] соблюдён.
+**Кратко (RU).** Собран полностью квадовый редактируемый мастер KPP1 `v002` из утверждённого R1 (`r1-v002`). R1 не
+изменён, новая версия лежит рядом. По решению Артёма D289 перекрытия R1 до 5 мм объединены: 13 зон на 4 фасадных
+плоскостях. Вершины прижаты к одной плоскости (≤ 5.0 мм), выполнено точное объединение, удалён скрытый двойной слой
+(244 грани, 0.91 м²) и висящий лоскут R1 (19.5 см²). Каждое изменение перечислено в `quad-build-v002.json`.
 
-## Inputs (copies only)
+Результаты:
+- V003 «master quads» — **pass**: 61 839 + 252 квада, 0 треугольников, T-junction 0.
+- xView — **0 / 0** и на мастере, и на производной NPM (было 166 / 169 пар).
+- NPM: 124 182 tris (≤ 150k, D010).
+- `agr vpm-to-npm` и чтение в новом процессе проходят.
+- Поверхность вне зон совпадает с R1: p95 0.5 мкм, max 5.0 мм — это прижатая ступень 5 мм.
+
+Не закрыто:
+- шаг упаковки ждёт #1361 (`agr package-npm` ещё не в main);
+- ручные V004/V015/V017 — как у R1.
+
+Лист «до/после» (одни и те же камеры) лежит в evidence. Вопрос Артёму: открывать мастер в Max 2026 (вид квадов) для
+приёмки? Путь: `G:/Мой диск/AGR-evidence/1372-kpp1-quad-master/v002/SM_Kpp_1.quad-v002.fbx`.
+
+## Inputs (copies only, hashed)
 
 | Input | SHA-256 | Where |
 |---|---|---|
-| R1 master `SM_Kpp_1.fbx` (r1-v002) | `1f46b0dd…b676` | `G:/Мой диск/AGR-evidence/1230-kpp1-r1/r1-v002/`, copy in packet `source/` |
-| #1318 packet `packet-r1-v002` (spec, recipes, R1 adapter) | manifest kept as `packet-r1-v002.SHA256SUMS.txt` | `C:/x/bench-npm-kpp1/packet-r1-v002` (copied, never written) |
-| New packet `packet-quad-v001` | `SHA256SUMS.txt` (29 files) | `C:/x/quad-1372/packet-quad-v001` |
+| R1 master `SM_Kpp_1.fbx` (r1-v002) | `1f46b0dd…b676` (checked by both scripts) | `G:/Мой диск/AGR-evidence/1230-kpp1-r1/r1-v002/`; copy in packet `source/` |
+| #1318 packet `packet-r1-v002` (spec, recipes, R1 adapter) | `packet-r1-v002.SHA256SUMS.txt` | `C:/x/bench-npm-kpp1/packet-r1-v002`, copied, never written |
+| R1 albedo `T_Kpp_1_001_Main_d_1.png` (renders only) | in evidence `SHA256SUMS.txt` | `C:/x/quad-1372/input/` |
+| Zone plan `union-zones.json` (generated from R1) | `47c7fa97…46f6` | packet + evidence + `union-zones-v002.json` here |
+| Packet `packet-quad-v002-r6` | `packet-quad-v002-r6.SHA256SUMS.txt` (30 files) | `C:/x/quad-1372/packet-quad-v002-r6` |
 
-Not used in this run (time-boxed, see open items): delivered reference #1371, v005 look renders, R6 (#1352), window
-generator (#1345) — all listed as options only.
+The v005 look renders, the delivered reference #1371, R6 (#1352) and the window generator (#1345) were not applied.
+The look is checked against R1 with the same cameras; R6 and #1345 stay options and would change the approved look.
 
 ## Route (program per step)
 
 | Step | Program | Why |
 |---|---|---|
-| T-junction weld, pairing, split | Blender 5.1.2 headless (`build_quad_master.py`) | owned, scriptable bmesh, exact same-surface ops; Max not needed for a topology-only step |
-| Readback, xView, derive NPM, validate | Blender + `dt qa xview`, `agr vpm-to-npm`, `agr validate` (`run_checks.py`) | same toolchain as #1318, so numbers compare 1:1 |
+| Zone plan | `uv run` + `tools/blender/xview_dump.py` + `xview_gate.part_gate` (`plan_union_zones.py`) | Same kernel as `dt qa xview`, so the plan addresses the faces the gate counts |
+| Union, T-junctions, pairing, split | Blender 5.1.2 headless (`build_quad_master.py … v002 <plan>`) | Owned exact boolean and bmesh; every operation is scriptable and logged. Max is not needed for a topology-only step |
+| Checks | `run_checks.py … v002` (`dt qa xview`, `agr vpm-to-npm`, `agr validate`, readback) | Same toolchain as #1318 and v001, so numbers compare 1:1 |
+| Before/After | Blender Workbench (`render_before_after.py`), PIL (`make_sheet.py`) | Fixed world cameras shared by Before and After (#1360 rule) |
 
-Algorithm: (1) 7 T-junction vertices (20 µm, [D200]) welded into the long edge and the face re-triangulated;
-(2) maximum-ish matching of coplanar (10 µm), strictly convex, UV-continuous, same-material, consistently wound
-triangle pairs → 12 426 quads; 5 324 triangles stay unpaired, lower bound 5 205 (odd planar patches), so the
-matching is within 2% of optimal; (3) every unpaired triangle → 3 quads via edge midpoints + centroid, marks closed
-over quads (0 / 2 opposite / 4 edges) so each split edge is split on both sides.
+## Algorithm v002 (step 0 is new, steps 1–3 as v001)
 
-## Results (`run-quad-v002`, packet unchanged = true)
+0. **Union of R1 overlaps (D289).**
+   - **Plan.** R1 xView face pairs, taken up to 5.1 mm so that a pair at exactly 5.000 mm is not left to float rounding.
+     They form 13 zones (130 faces), each on one axis plane, with a spread of ≤ 5 mm from the plane.
+   - **Snap.** 159 vertices are moved onto the exact plane value. 156 moves are ≤ 0.78 mm; 3 vertices of the 5.000 mm
+     step at x = 12.415 m move 5.000 mm.
+   - **Union.** Blender EXACT boolean (self-union) of the loose parts that own zone faces: the main shell and the
+     north-facade panel. The other parts are appended back unchanged; this is checked on UV, positions and material.
+   - **Double layer.** The coincident opposite double layer is deleted: 244 faces, 0.913 m² for both sides.
+   - **Weld.** The boolean created 51 new vertices; 7 of them are welded within ≤ 1.18 mm.
+   - **Flap.** One dangling flap inside a zone is deleted: an R1 triangle with 2 open edges at (-6.255, 5.70, 3.32),
+     1 949 mm².
+1. T-junctions: 0 found after the union. R1 had 7 at 20 µm, measured by the validator kernel on R1.
+2. Coplanar same-UV pairing produces 12 410 quads; 5 395 triangles stay unpaired.
+3. Every unpaired triangle becomes 3 quads through its edge midpoints. Marks propagate through quads, so 61 839 quads
+   result. The fan centres are new in v002: each one is kept > 2.1 mm from every vertex inside the midpoint polygon,
+   which keeps the fan quads convex. 11 centres moved; 44 lie in faces with a straight source corner; 0 are below the
+   clearance.
 
-| Check | R1 (#1318 run-r1-v003) | Quad master v001 | Status |
-|---|---|---|---|
-| V003 master quads | fail: 30 162 + 504 tris | **pass**: Main 61 602 quads, Glass 252 quads, 0 tris (UCX tris excluded by rule) | pass |
-| Quad share | 0 % | 100 % (render meshes) | pass |
-| Edge loop continuity (validator, FBX readback) | 8 T-junctions | **24** T-junctions | review — worse |
-| Distance new→R1 Main (1 232 040 samples) | — | max 0.293 mm, p95 0.48 µm | ≤ 2 mm tolerance: pass |
-| Distance R1→new Main (301 620) | — | max 0.042 mm, p95 0.48 µm | pass |
-| Distance Glass both ways (5 040) | — | max 1.25 mm, p95 0.24 µm | pass (needle 10 mm × 5.23 m strip) |
-| xView master (2/5 mm) | 0 v / 112 f, 166 pairs | 38 v (20 pairs) / 231 f, 330 pairs, 2 bow-tie pairs | **fail** |
-| xView derived NPM | 0 v / 116 f, 169 pairs | 38 v / 425 f, 749 pairs | **fail** |
-| NPM triangles [D010 ≤150k] | 30 666 | 123 701 | pass (4.0× R1) |
-| `agr vpm-to-npm` from new master | exit 0 | exit 0 | pass |
-| Fresh-process FBX readback (master + NPM) | — | exit 0 / exit 0 | pass |
-| Package #1361 (`agr package-npm`) | — | not_run: #1361 open, no command on main | not_run |
-| Before/After sheet | — | not made | open |
+## Results (`run-quad-v002-r6b`, code `f3e7a71f`, packet unchanged = true)
 
-Distances are float32 BVH with every sample above 1 µm rechecked in float64 (`float64_rechecked` in `quad-build.json`).
-UV: per-corner interpolation, seams kept; material index and finish (UDIM tile) copied to every child face;
-custom split normals are dropped (flat-shaded faces, `use_smooth` copied).
+| Check | R1 (#1318 run-r1-v003) | v001 (blocked) | **v002** | Status |
+|---|---|---|---|---|
+| V003 master quads (validator) | fail: 30 162 + 504 tris | review | **pass**: all quads, no T-junctions | pass |
+| Quad share (render meshes) | 0 % | 100 % | **100 %** (Main 61 839, Glass 252) | pass |
+| T-junctions (validator, 20 µm) | 8 (FBX) / 7 (m) | 24 | **0** | pass |
+| xView master (2 mm / 5 mm) | 0 v / 166 face pairs | 20 v / 330 | **0 / 0**, bow-tie 0 | pass |
+| xView derived NPM | 0 v / 169 | 20 v / 749 | **0 / 0**, bow-tie 0 | pass |
+| NPM triangles [D010 ≤ 150k] | 30 666 | 123 701 | **124 182** (Main 123 678 + Glass 504) | pass, accepted D289 |
+| `agr vpm-to-npm` from the new master | exit 0 | exit 0 | exit 0 | pass |
+| Fresh-process FBX readback (master / NPM) | — | 0 / 0 | 0 / 0 | pass |
+| `agr validate` other stages | V002, V005, V006, V012 pass; V004 review | same | same (V004 review: 399 co-directional pairs 10–20 mm, manual) | same |
+| Package #1361 (`agr package-npm`) | — | not_run | **pending**: #1361 open, no command on main (D289) | not_run |
+| Open edges (Main) | 19 edges, 9.015 m | — | 26 edges, 8.890 m (only the R1 sheet at x = -6.255; flap removed) | no new hole |
+| Non-manifold edges (Main) | valence 3: 1 (88 mm); valence 4: 1 (6.4 mm at 12.42, 0.82, 3.9) | — | valence 4: 8 edges, 0.608 m on the line x 12.415, z 3.9, y 0.82–1.42 | review (see below) |
 
-## Why not passed — decisions for Artem
+### Distance to R1 (two-way, float64 rechecked)
 
-1. **xView 0 on the master needs a geometry change of approved R1 [D254].** R1 itself has 166 face pairs
-   (contact 67, area 23, area+contact 76). A same-surface quad master inherits them; the midpoint splits inside those
-   overlap zones add vertex pairs and T-junctions (24 vs 8). Clearing them means deleting/merging overlapping member
-   faces of R1. Recommendation: allow it as a separate, distance-bounded step (≤ 5 mm) before quadification.
-2. **Triangle cost of a 100 %-quad master.** NPM goes 30 666 → 123 701 tris (within 150k). Alternatives: accept; or
-   permit a quad-dominant master (V003 rule change, ~19 k quads + 5.3 k tris, NPM ≈ 30.7 k).
+| Mesh / direction | Samples | max | p95 | Note |
+|---|---|---|---|---|
+| Main new → R1, outside zones | 1 226 426 | 4.753 mm | 0.48 µm | max on the snapped 5 mm step |
+| Main R1 → new, outside zones | 299 390 | 5.000 mm | 0.48 µm | the 5.000 mm step |
+| Main new → R1, inside zones | 10 354 | 5.000 mm | 0.648 mm | snap moves |
+| Main R1 → new, inside zones | 2 230 | 65.0 mm | 48.8 mm | R1 points on the deleted hidden double layer: no surface there on purpose |
+| Glass both ways | 5 040 | 1.25 mm | 0.24 µm | needle strip, unchanged from v001 |
+
+UV and material: corner UVs are interpolated per corner and seams are kept. Material index and finish (UDIM tile) are
+copied to every child face. Finish faces: Plinth 8 973, Cassette RAL7047 12 696, Cassette RAL5015 16 751, Membrane
+2 008, Frame 17 674, Door 2 571, Grille 1 166. Untouched loose parts keep UV, position and material (equal to 7 decimals, checked in the build).
+
+### Review item: kissing edge at the merged 5 mm step
+
+R1 has a 5.000 mm step between the faces at x = 12.415 and x = 12.42 above z = 3.9. xView flags faces at ≤ 5 mm. The R1
+master passed only through float32 rounding, and its NPM failed (R1 NPM: 3 of its 169 pairs; v002-r3: 10 contacts).
+Under D289 the step was merged onto x = 12.415. The two solids now meet along one edge line. That line is 0.61 m of
+valence-4 edges and extends the 6.4 mm valence-4 edge R1 already has there. It is not a hole, not a bow-tie and not an
+xView overlap. Splitting it would create zero-distance vertex pairs. Alternative, if Artem prefers: keep the step and
+move one face ≥ 0.1 mm away from the threshold. That needs a new decision, because it is a nudge, not a delete or merge.
 
 ## Evidence
 
-`G:/Мой диск/AGR-evidence/1372-kpp1-quad-master/v001/` + `EVIDENCE-SHA256SUMS.txt`:
-`master-quad-v001.blend` `5368925f…`, `SM_Kpp_1.quad-v001.fbx` `714084a6…`, `quad-build.json` `c518028f…`,
-`run-quad-v002/{run,master-readback,readback,master-xview,export-xview}.json`, `validate.log`, NPM `0000_Kpp_1_01.fbx` `f9664f41…`.
+`G:/Мой диск/AGR-evidence/1372-kpp1-quad-master/v002/` + `SHA256SUMS.txt`, also committed as
+`evidence-v002-SHA256SUMS.txt`:
+- master: `master-quad-v002.blend` `fb566ff5…53bb`, `SM_Kpp_1.quad-v002.fbx` `7a95e9ca…43c6`;
+- build record: `quad-build-v002.json` `fd8ae20d…5041` (union record, snap log, deleted faces, welds, flaps, distances);
+- plan: `union-zones.json`;
+- run: `run-quad-v002-r6b/{run,master-readback,readback,master-xview,export-xview}.json`, `validate.log`;
+- NPM: `0000_Kpp_1_01.fbx` `903f9fb5…b86c`;
+- renders: `before-after/sheet-before-after-{tex,wire}.png` and 20 single renders.
 
-Reproduce (new destinations only; outputs that exist fail the run):
+Earlier scratch attempts (`packet-quad-v002`, `-r2`…`-r5`) stay in `C:/x/quad-1372/`. They were superseded:
+- r1 had 12 vertex pairs from fan centres;
+- r2 hit a straight source corner;
+- r3 had 10 NPM contacts at the 5.000 mm threshold;
+- r5 ran on uncommitted code.
+
+Reproduce (new destinations only; existing outputs fail the run):
 
 ```bash
-cp -r C:/x/bench-npm-kpp1/packet-r1-v002 <new-packet>   # then rehash after the build (pyc reseeded on first derive)
-blender -b --factory-startup --python jobs/KPP1/quad-1372/build_quad_master.py -- <new-packet>
-uv run python jobs/KPP1/quad-1372/run_checks.py <new-packet> <new-run-dir>
+uv run python jobs/KPP1/quad-1372/plan_union_zones.py <R1 SM_Kpp_1.fbx> <new>/union-zones.json
+cp -r C:/x/bench-npm-kpp1/packet-r1-v002 <packet> && cp <new>/union-zones.json <packet>/
+blender -b --factory-startup --python jobs/KPP1/quad-1372/build_quad_master.py -- <packet> v002 <packet>/union-zones.json
+# rehash <packet>/SHA256SUMS.txt; the first derive reseeds a recipe .pyc, so rehash once more after a first check run
+uv run python jobs/KPP1/quad-1372/run_checks.py <packet> <new-run-dir> v002
+blender -b --factory-startup --python jobs/KPP1/quad-1372/render_before_after.py -- <fbx> <albedo.png> <dir> after
+uv run python jobs/KPP1/quad-1372/make_sheet.py <dir> <dir>/sheet.png tex
 ```
 
-Auto-open in Max 2026 (quads view): not asked in this headless run; path for Artem:
-`G:/Мой диск/AGR-evidence/1372-kpp1-quad-master/v001/SM_Kpp_1.quad-v001.fbx`.
+## History: v001 (blocked, kept)
+
+v001 (`99bb5a94`) was the plain quadification of R1. V003 passed, but xView reported 20 vertex pairs and 330 face
+pairs, and the validator found 24 T-junctions. All of these came from R1's own overlap zones. The block asked Artem two
+questions, and he answered them in D289. Evidence: `G:/Мой диск/AGR-evidence/1372-kpp1-quad-master/v001/` +
+`evidence-SHA256SUMS.txt`.
