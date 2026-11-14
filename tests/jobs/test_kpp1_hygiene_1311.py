@@ -8,6 +8,16 @@ import yaml
 
 from dt_ai.procedure import inspect_job
 
+def test_f13_task_contract_links_answers_and_boundaries():
+    task = (JOB / "TASK.md").read_text(encoding="utf-8") if (JOB / "TASK.md").exists() else ""
+    assert task, "cold entry needs TASK.md"
+    for decision in ("D238", "D249", "D254", "D256", "D262"):
+        assert decision in task
+    for fact in ("sources.json", "object.json", "job.yaml", "3.900", "7.909",
+                 "0.35", "171.050", "not passed", "Do not change", "Ground"):
+        assert fact in task
+
+
 ROOT = Path(__file__).resolve().parents[2]
 JOB = ROOT / "jobs/KPP1"
 
