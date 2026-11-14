@@ -18,6 +18,24 @@ def test_f13_task_contract_links_answers_and_boundaries():
         assert fact in task
 
 
+def test_f15_reproduce_uses_registry_source_and_explicit_frame():
+    import shlex
+
+    text = (ROOT / "docs/methods/building-body/kpp1-drawing/REPRODUCE.md").read_text(encoding="utf-8")
+    registry = json.loads((JOB / "sources.json").read_text(encoding="utf-8"))
+    source = next(r["path"] for r in registry["files"] if "L03_" in r["path"])
+    commands = [shlex.split(line) for line in text.splitlines() if line.startswith("uv run python ")]
+    readback = next(cmd for cmd in commands if cmd[3].endswith("dwg_to_dxf.py"))
+    assert readback[4] == source, "readback must use the registered asset-store source"
+    assert "Downloads" not in text
+    assert "sources.json" in text and "mapping-questions.md" in text and "item 6" in text
+    assert any("census" in cmd for cmd in commands), "new sheets need census before a role map"
+    assert "new sheet" in text and "Do not reuse" in text
+    extract = next(cmd for cmd in commands if "extract" in cmd)
+    assert extract[extract.index("--origin-mm") + 1] == "25884.5,0"
+    assert "--frame-shift-m=-14.655,-5.355" in extract
+
+
 ROOT = Path(__file__).resolve().parents[2]
 JOB = ROOT / "jobs/KPP1"
 
