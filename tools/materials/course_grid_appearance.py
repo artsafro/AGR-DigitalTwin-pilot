@@ -53,3 +53,37 @@ def sample_chart_rgb(image, source_uv, chart_m, points_m):
     a=image[iy,ix].astype(float);b=image[iy,np.minimum(ix+1,w-1)].astype(float)
     c=image[np.minimum(iy+1,h-1),ix].astype(float);d=image[np.minimum(iy+1,h-1),np.minimum(ix+1,w-1)].astype(float)
     return ((a*(1-fx)+b*fx)*(1-fy)+(c*(1-fx)+d*fx)*fy).tolist()
+
+
+def audit_sample_reuse(records, *, max_rgb_error):
+    """Falsify equal-texel reuse with explicit D/ERM/Normal sample owners.
+
+    Caller supplies samples at the SAME output pixel centre, in a common
+    declared colour/tangent frame. Conflicts are complete pairwise witnesses,
+    not first-entry wins. Even a compatible finite set never gives passed=True.
+    """
+    if isinstance(max_rgb_error,bool) or not isinstance(max_rgb_error,(int,float)) or not np.isfinite(max_rgb_error) or not 0<=max_rgb_error<=255:
+        raise ValueError('invalid max_rgb_error')
+    if not isinstance(records,list) or not records:raise ValueError('empty samples')
+    roles={'Diffuse','ERM','Normal'};seen=set();pixels={}
+    for r in records:
+        if not isinstance(r,dict) or set(r)!={'owner','pixel','maps'}:raise ValueError('partial sample')
+        owner=r['owner'];pixel=r['pixel'];maps=r['maps']
+        if not isinstance(owner,list) or len(owner)!=3 or not isinstance(owner[0],str) or not owner[0] or any(type(v) is not int or v<0 for v in owner[1:]):raise ValueError(f'invalid owner {owner}')
+        if tuple(owner) in seen:raise ValueError(f'duplicate owner {owner}')
+        seen.add(tuple(owner))
+        if not isinstance(pixel,list) or len(pixel)!=2 or any(type(v) is not int or v<0 for v in pixel):raise ValueError('invalid output pixel')
+        if not isinstance(maps,dict) or set(maps)!=roles:raise ValueError(f'unmapped roles {list(maps) if isinstance(maps,dict) else maps}')
+        for role,colour in maps.items():
+            if not isinstance(colour,list) or len(colour)!=3 or any(isinstance(x,bool) or not isinstance(x,(int,float)) or not np.isfinite(x) or not 0<=x<=255 for x in colour):raise ValueError(f'invalid {role} RGB')
+        pixels.setdefault(tuple(pixel),[]).append(r)
+    conflicts=[]
+    for pixel,owners in pixels.items():
+        for i,a in enumerate(owners):
+            for b in owners[i+1:]:
+                for role in sorted(roles):
+                    delta=float(np.max(np.abs(np.asarray(a['maps'][role])-b['maps'][role])))
+                    if delta>max_rgb_error:
+                        conflicts.append(dict(pixel=list(pixel),role=role,owners=[a['owner'],b['owner']],max_rgb_delta=delta))
+    return dict(passed=False,compatible=not conflicts,samples=len(records),texels=len(pixels),conflicts=conflicts,
+                limitation='finite same-pixel samples only; caller owns frame transport and full coverage')
