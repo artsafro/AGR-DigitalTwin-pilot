@@ -301,7 +301,8 @@ def test_real_blender_named_mismatch_refused_and_fit_matches(tmp_path):
     maker = tmp_path / 'make.py'
     maker.write_text(MAKE_SCENES, encoding='utf-8')
     a, b = tmp_path / 'a.blend', tmp_path / 'b.blend'
-    subprocess.run([blender(), '--background', '--factory-startup', '--python', str(maker), '--',
+    subprocess.run([blender(), '--background', '--factory-startup', '--python-exit-code', '1',
+                    '--python', str(maker), '--',
                     str(a), str(b)], check=True, capture_output=True)
     bad = tmp_path / 'ev' / 'named'
     assert module.main(argv(a, b, bad, '--camera-mode', 'named', '--camera-name', 'Shot',
