@@ -159,7 +159,18 @@ def native_piece_cells(piece):
     if len(xy)!=len(world):raise ValueError('partial native piece')
     poly=Polygon(xy)
     if not poly.is_valid or poly.area<=1e-12 or not poly.exterior.is_ccw:raise ValueError('invalid native piece')
-    if len(xy)<=4 and poly.convex_hull.area-poly.area<=1e-12:return [dict(piece)]
+    original_poly=poly
+    # Near-collinear boundary corners below the real-coordinate float32 storage
+    # envelope can otherwise become native zero-area triangles. Remove only
+    # those existing corners; never move retained XYZ or hide the bound.
+    poly=orient(poly.simplify(2e-5,preserve_topology=True),sign=1)
+    retained=np.asarray(poly.exterior.coords[:-1])
+    removed=[p.tolist() for p in xy if not any(np.linalg.norm(p-q)<1e-10 for q in retained)]
+    metadata=dict(piece,native_corner_error_bound_m=2e-5,native_removed_corners=removed,
+                  native_area_change_m2=abs(original_poly.area-poly.area))
+    if len(retained)<=4 and poly.convex_hull.area-poly.area<=1e-12:
+        ids=[int(np.argmin(np.linalg.norm(xy-q,axis=1))) for q in retained]
+        return [dict(metadata,chart_m=retained.tolist(),xyz=world[ids].tolist())]
     cells=list(constrained_delaunay_triangles(poly).geoms)
     # Merge adjacent triangles into convex quads only, preserving boundaries.
     changed=True
@@ -170,6 +181,13 @@ def native_piece_cells(piece):
                 if cells[i].boundary.intersection(cells[j].boundary).length<=0:continue
                 merged=cells[i].union(cells[j])
                 if merged.geom_type=='Polygon' and len(merged.exterior.coords)==5 and merged.convex_hull.area-merged.area<=1e-12:
+                    corners=list(merged.exterior.coords[:-1])
+                    span=max(math.dist(a,b) for a in corners for b in corners)
+                    # Both possible native diagonals must be nonsingular. Three
+                    # collinear corners can form a convex four-point boundary,
+                    # but Blender may choose its zero-area fan.
+                    if min(Polygon([corners[k],corners[(k+1)%4],corners[(k+2)%4]]).area for k in range(4))<=span*1e-5:
+                        continue
                     cells[i]=merged;cells.pop(j);changed=True;break
             if changed:break
     out=[]
@@ -179,7 +197,7 @@ def native_piece_cells(piece):
             matches=np.flatnonzero(np.linalg.norm(xy-q,axis=1)<1e-10)
             if len(matches)!=1:raise ValueError('unmapped/ambiguous native corner')
             indices.append(int(matches[0]))
-        out.append(dict(piece,chart_m=points.tolist(),xyz=world[indices].tolist()))
+        out.append(dict(metadata,chart_m=points.tolist(),xyz=world[indices].tolist()))
     if abs(sum(Polygon(c['chart_m']).area for c in out)-poly.area)>max(1e-12,poly.area*1e-10):raise ValueError('incomplete native tessellation')
     return out
 

@@ -105,6 +105,34 @@ def test_native_cells_keep_convex_quads_and_remove_concave_tessellation_ambiguit
     assert sum(Polygon(p['chart_m']).area for p in cells)==pytest.approx(Polygon(xy).area)
     assert all(len(p['chart_m'])<=4 and Polygon(p['chart_m']).exterior.is_ccw for p in cells)
     assert all(v in piece['xyz'] for p in cells for v in p['xyz'])
+    for cell in cells:
+        if len(cell['chart_m'])==4:
+            q=cell['chart_m']
+            assert all(Polygon([q[i],q[(i+1)%4],q[(i+2)%4]]).area>1e-10 for i in range(4))
+
+
+def test_native_cells_remove_only_sub_storage_collinear_boundary_corners():
+    xy=[[0,0],[1,1e-8],[2,0],[2,1],[0,1]]
+    p=dict(source=['synthetic',0],joint=False,chart_m=xy,xyz=[[u,0,v] for u,v in xy])
+    cells=native_piece_cells(p)
+    assert len(cells)==1 and len(cells[0]['chart_m'])==4
+    assert cells[0]['native_corner_error_bound_m']==2e-5
+    assert cells[0]['native_removed_corners']
+    assert abs(sum(Polygon(c['chart_m']).area for c in cells)-Polygon(xy).area)<1e-7
+
+
+def test_native_quad_merge_never_reintroduces_collinear_three_corner_fan():
+    xy=[[-103.85266788427,-4.950617016757],[-103.85266788427,-4.505904016177],
+        [-103.842661431064,-4.505904016527],[-102.351364937232,-4.499998801947],
+        [-103.851378360964,-4.499998742342],[-104.032784842948,-4.965607339149],
+        [-102.169958455248,-4.965607398733],[-102.341693450106,-4.524822212336],
+        [-102.341693450106,-4.950617069694],[-102.351699903312,-4.950617069343],
+        [-102.351699903312,-4.50749396134],[-103.842661431064,-4.950617017108]]
+    piece=dict(source=['synthetic',0],joint=False,chart_m=xy,xyz=[[u,0,v] for u,v in xy])
+    for p in native_piece_cells(piece):
+        if len(p['chart_m'])==4:
+            q=p['chart_m']
+            assert all(Polygon([q[i],q[(i+1)%4],q[(i+2)%4]]).area>1e-9 for i in range(4))
 
 
 def test_exact_ten_mm_inset_keeps_area_surface_winding_and_lineage():
