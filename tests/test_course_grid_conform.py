@@ -3,6 +3,20 @@ import pytest
 from tools.materials.course_grid_native import conform_source_mesh
 
 
+def test_conforming_polygon_retains_all_boundary_nodes_without_singular_native_fans():
+    from tools.materials.course_grid_native import triangulate_conforming_polygon
+    points=[[0.,0.],[1.,0.],[1.,.25],[1.,.5],[1.,1.],[0.,1.]]
+    triangles=triangulate_conforming_polygon(points)
+    assert len(triangles)==4
+    assert {i for t in triangles for i in t}==set(range(6))
+    from shapely.geometry import Polygon
+    from shapely.ops import unary_union
+    polys=[Polygon([points[i] for i in t]) for t in triangles]
+    assert min(p.area for p in polys)>=.125
+    assert unary_union(polys).area==pytest.approx(1.)
+    assert sum(p.area for p in polys)==pytest.approx(1.)
+
+
 def test_source_endpoint_identity_and_t_junction_are_repaired_without_blind_weld():
     source=[[0.,0.,0.],[1.,0.,0.],[1.,1.,0.],[0.,1.,0.],[2.,0.,0.],[2.,1.,0.]]
     # Left face was split halfway along the shared edge; right still spans it.

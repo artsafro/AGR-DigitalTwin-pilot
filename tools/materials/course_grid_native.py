@@ -100,3 +100,97 @@ def encode_triangle_uv(xyz, ideal_uv, *, tile_px):
             return dict(uv=candidates[best].tolist(),singular_px_m=singular[best].tolist(),
                         max_encoding_error_px=float(errors[best]),ulp_radius=radius)
     raise ValueError('native float32 encoding exceeds density/anisotropy/subpixel budget')
+
+
+def conform_source_mesh(vertices, faces, lineage, uv, source_vertices, source_faces, *, epsilon_m=2e-5):
+    """Resolve only source-proven duplicate endpoints, then node shared edges.
+
+    Coordinates must be in the same metre frame. Original vertices remain in
+    their original slots; unused duplicates are reported, not silently deleted.
+    This is not a 2-mm weld: disconnected source surfaces never share identity.
+    The caller must certify native tessellation, surface and interpolated UVs.
+    """
+    import numpy as np
+    from collections import defaultdict
+    def points(value, dim, name):
+        if not isinstance(value,list) or not value or any(not isinstance(p,list) or len(p)!=dim or any(
+            isinstance(x,bool) or not isinstance(x,(int,float)) or not math.isfinite(x) for x in p) for p in value):
+            raise ValueError('invalid '+name)
+    points(vertices,3,'vertices');points(source_vertices,3,'source_vertices')
+    if isinstance(epsilon_m,bool) or not isinstance(epsilon_m,(int,float)) or not math.isfinite(epsilon_m) or not 0<epsilon_m<=2e-5:
+        raise ValueError('invalid epsilon_m')
+    if not isinstance(faces,list) or not faces or len(faces)!=len(lineage) or len(faces)!=len(uv):raise ValueError('partial faces/lineage/uv')
+    if not isinstance(source_faces,dict) or not source_faces:raise ValueError('empty source_faces')
+    for key,face in source_faces.items():
+        if type(key) is not int or len(face)<3 or len(set(face))!=len(face) or any(type(i) is not int or not 0<=i<len(source_vertices) for i in face):
+            raise ValueError('invalid source face '+str(key))
+    for face,src,coords in zip(faces,lineage,uv):
+        if type(src) is not int or src not in source_faces:raise ValueError('unmapped source face '+str(src))
+        if len(face)<3 or len(set(face))!=len(face) or any(type(i) is not int or not 0<=i<len(vertices) for i in face):raise ValueError('invalid face')
+        points(coords,2,'uv')
+        if len(coords)!=len(face):raise ValueError('partial uv')
+    nsource=len(source_vertices)
+    if vertices[:nsource]!=source_vertices:raise ValueError('original vertex prefix changed')
+    v=np.array(vertices,dtype=float);owners=defaultdict(set)
+    for face,src in zip(faces,lineage):
+        for i in face:owners[i].add(src)
+    edges={src:{tuple(sorted((a,b))) for a,b in zip(f,f[1:]+f[:1])} for src,f in source_faces.items()}
+    def on_edge(p, edge):
+        a,b=v[list(edge)];d=b-a;length=float(d@d)
+        if length==0:return False
+        t=float((p-a)@d/length)
+        return 0<=t<=1 and np.linalg.norm(p-a-t*d)<=epsilon_m
+    def compatible(i,j):
+        if owners[i]&owners[j]:return True
+        for a in owners[i]:
+            for b in owners[j]:
+                if any(on_edge(v[i],e) and on_edge(v[j],e) for e in edges[a]&edges[b]):return True
+        return False
+    remap=list(range(len(v)));changes=[]
+    # Original source vertex identity wins; only the actual owning source
+    # face may nominate an endpoint, not an arbitrary nearby surface.
+    for i in sorted(owners):
+        if i<nsource:continue
+        candidates={j for src in owners[i] for j in source_faces[src] if np.linalg.norm(v[i]-v[j])<=epsilon_m}
+        if len(candidates)>1:raise ValueError('ambiguous source endpoint '+str(i))
+        if candidates:
+            j=candidates.pop();remap[i]=j;changes.append({'from':i,'to':j,'distance_m':float(np.linalg.norm(v[i]-v[j]))})
+    active=sorted(i for i in owners if remap[i]==i)
+    # Bound each merge directly to its representative (no distance chains).
+    for ii,i in enumerate(active):
+        if remap[i]!=i:continue
+        for j in active[ii+1:]:
+            if j<nsource or remap[j]!=j:continue
+            if np.linalg.norm(v[i]-v[j])<=epsilon_m and compatible(i,j):
+                remap[j]=i;changes.append({'from':j,'to':i,'distance_m':float(np.linalg.norm(v[i]-v[j]))})
+    for i in range(len(remap)):
+        while remap[i]!=remap[remap[i]]:remap[i]=remap[remap[i]]
+    newfaces=[[remap[i] for i in f] for f in faces]
+    if any(len(set(f))!=len(f) for f in newfaces):raise ValueError('conforming would collapse a face')
+    owners=defaultdict(set)
+    for f,src in zip(newfaces,lineage):
+        for i in f:owners[i].add(src)
+    active=np.array(sorted(owners),dtype=int);positions=v[active];out=[];outuv=[];insertions=[]
+    for fi,(face,src,coords) in enumerate(zip(newfaces,lineage,uv)):
+        nf=[];nu=[]
+        for k,a in enumerate(face):
+            b=face[(k+1)%len(face)];d=v[b]-v[a];length=float(d@d)
+            if length==0:raise ValueError('zero length edge')
+            ts=(positions-v[a])@d/length
+            ds=np.linalg.norm(positions-v[a]-ts[:,None]*d,axis=1)
+            candidates=active[(ts>0)&(ts<1)&(ds<=epsilon_m)]
+            cuts=[]
+            for j in candidates:
+                j=int(j)
+                if j in face:continue
+                if src not in owners[j] and not any(on_edge(v[a],e) and on_edge(v[b],e) and on_edge(v[j],e)
+                    for other in owners[j] for e in edges[src]&edges[other]):continue
+                t=float((v[j]-v[a])@d/length);cuts.append((t,j))
+            nf.append(a);nu.append(list(coords[k]))
+            for t,j in sorted(cuts):
+                nf.append(j);nu.append([(1-t)*coords[k][z]+t*coords[(k+1)%len(face)][z] for z in (0,1)])
+                insertions.append({'face':fi,'edge':[a,b],'vertex':j})
+        if len(set(nf))!=len(nf):raise ValueError('repeated conforming vertex')
+        out.append(nf);outuv.append(nu)
+    return dict(vertices=[list(p) for p in vertices],faces=out,uv=outuv,remap=remap,merges=changes,insertions=insertions,
+                unused_vertices=sorted(set(range(len(vertices)))-{i for f in out for i in f}))
