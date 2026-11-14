@@ -37,8 +37,8 @@ ZIP-пакета. Старые копии перечислены в `contexts.ya
   `contexts.png` `7d4497887ef95ab227a5cebb6364aacf9237565664fcad7b1ad2bc3d53681a05`,
   `npm-oks-route.png` `6925c9e48b8b4b7e44759a5adf949cea35c717c98e008a15a2666b37291db82d`.
 - Guard: `tools/architecture/duplicate_guard.py` (AST, stdlib). Rules `udim-tile` (owner
-  `adapters/max/agr_tools/udimtile_core.py`, #1337) and `delivery-zip` (owner `tools/derive/package_vpm.py`,
-  #1106). Rule-tagged `duplicates` rows of `contexts.yaml` are the allowlist (`path.py::function` + optional
+  `adapters/max/agr_tools/udimtile_core.py`, #1337) and `delivery-zip` (owner `adapters/max/agr_tools/package_core.py`,
+  #1361/#1377; was `tools/derive/package_vpm.py`, now its facade). Rule-tagged `duplicates` rows of `contexts.yaml` are the allowlist (`path.py::function` + optional
   `hash` + issue; #1387 replaced the exact `path:line` key, so unrelated line shifts stay green). A new
   copy under `jobs/` fails; a listed row that is no longer found fails (stale); copies outside `jobs/` are
   documented and must still exist, but new ones there are not guarded yet. The `udim-tile` rule also resolves
@@ -108,6 +108,10 @@ Non-package ZIP writers seen by the scan and deliberately not listed (not delive
    (Ground, Flora, methods, experiment, source intake) are listed with #1397.
 2. **Decide the package owner** (question for Artem): `tools/derive/package_vpm.py` or Max `package_core.py`;
    then one NPM package step and the KPP1/TEC26/PSU275 packagers marked historical.
+   Done in #1377: owner `adapters/max/agr_tools/package_core.py` (`_write_zip`, already the one writer behind
+   `agr package-npm` / `agr package-vpm` and AGR Tools after #1361); route step 6 packs with `agr package-npm`;
+   the `delivery-zip` guard covers jobs/ + tools/ + src/ and every listed writer carries its reason (`ru`):
+   15 job writers are historical deliveries (9 VPM packagers among them), 7 tools/src archives are not packages.
 3. **One SINTEZ/checker command** (`agr checker` alias over the existing runner) from
    `jobs/KPP1/scripts/run_agr_checker.py` + TEC26 copy, so stage 9 has a command.
 4. **One Blender runner**: route `dt_ai/core/build.py`, `twinqa/scene.py find_blender`, `tools/qa/run_benchmark.py`

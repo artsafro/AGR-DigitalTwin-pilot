@@ -102,6 +102,8 @@ def check_schema(events, contexts):
             if "rule" not in d:
                 _need(d, "match", dwhere)
                 _ru(_need(d, "ru", dwhere), dwhere + ".ru")
+            elif "ru" in d:   # #1377: the reason a guarded copy stays is Russian text for Artem, like every label
+                _ru(_need(d, "ru", dwhere), dwhere + ".ru")
     rule_ids = {_need(r, "id", "rules") for r in _need(contexts, "rules", "contexts", list)}
     for r in contexts["rules"]:
         _ru(_need(r, "ru", "rules"), f"rules.{r['id']}.ru")
