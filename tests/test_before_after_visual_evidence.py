@@ -202,6 +202,7 @@ def test_cli_refuses_mismatched_cameras_and_writes_nothing(tmp_path, inputs, mon
     assert module.main(argv(*inputs, output)) == 2
     assert not output.exists() and not output.with_name('out.partial').exists()
     assert snapshot(tmp_path / 'in') == before_state
+    assert not (tmp_path / 'ev').exists(), 'created parent directories are removed on refusal'
 
 
 def test_cli_refuses_input_changed_during_run(tmp_path, inputs, monkeypatch):
