@@ -100,7 +100,7 @@ def _build_real(previous=None):
     return fc.build(
         _load("experiments/flora-library-audit/catalogue.json"),
         _load("library/flora/species-curation.json"),
-        _load("library/flora/maps.json"),
+        _load("library/flora/maps-v003-snapshot.json"),
         previous,
     )
 
@@ -136,7 +136,7 @@ def test_assign_ids_keeps_old_ids_and_retires_removed_ones():
     rebuilt = fc.build(
         _load("experiments/flora-library-audit/catalogue.json"),
         curation,
-        _load("library/flora/maps.json"),
+        _load("library/flora/maps-v003-snapshot.json"),
         original,
     )
     old_ids = {item["latin"]: item["material_id"] for item in original["species"]}
@@ -175,7 +175,7 @@ def test_committed_catalogue_has_no_findings_and_matches_rebuild_with_identity()
     rebuilt = fc.build(
         _load("experiments/flora-library-audit/catalogue.json"),
         _load("library/flora/species-curation.json"),
-        _load("library/flora/maps.json"),
+        _load("library/flora/maps-v003-snapshot.json"),
         catalogue,
         identity,
     )
@@ -361,7 +361,7 @@ def test_shared_stand_in_gap_keeps_a_reserved_id():
     rebuilt = fc.build(
         _load("experiments/flora-library-audit/catalogue.json"),
         curation,
-        _load("library/flora/maps.json"),
+        _load("library/flora/maps-v003-snapshot.json"),
         catalogue,
     )
     again = next(
@@ -433,7 +433,7 @@ def test_batch1_maps_are_approved_in_the_library_folder():
         "Artem 2026-10-16 card t_6c48bc9d comment: all five batch-1 pairs approved "
         "(map-only approval, not model acceptance); review-sheet-batch1-v001.png"
     )
-    maps = _load("library/flora/maps.json")
+    maps = _load("library/flora/maps-v003-snapshot.json")
     approved = (
         "Tilia cordata",
         "Acer platanoides",
@@ -928,7 +928,7 @@ def test_removed_real_species_retires_and_recovers_its_id():
     committed = _load("library/flora/catalogue.json")
     bush = next(item for item in committed["species"] if item["type"] == "bush")
     audit = _load("experiments/flora-library-audit/catalogue.json")
-    maps = _load("library/flora/maps.json")
+    maps = _load("library/flora/maps-v003-snapshot.json")
     curation = _load("library/flora/species-curation.json")
     without_curation = deepcopy(curation)
     index = next(i for i, item in enumerate(without_curation["species"]) if item["latin"] == bush["latin"])

@@ -1,0 +1,183 @@
+{
+ "schema": "a101-native-maps-v002",
+ "source_scene": {
+  "path": "flora/a101/FLORIO_221.max",
+  "download_url": "https://drive.usercontent.google.com/download?id=1Kdpp2GX-Rpcmz54EsQF5GzbUjL7m_0kH&export=download",
+  "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+  "bytes": 25011570
+ },
+ "recipe": "Pillow RGBA -> RGB + unchanged A channel, no resizing, threshold, white-key, UV edit or geometry edit",
+ "version_hash_contract": "SHA256 of UTF-8 json.dumps(identity, sort_keys=True, separators=(comma,colon)); all identity values are strings",
+ "variants": [
+  {
+   "latin": "Tilia cordata",
+   "cultivar": null,
+   "object": "lipa_t1_h550_low",
+   "dimensions": [
+    2048,
+    2048
+   ],
+   "review_status": "approved",
+   "verdict": "library/flora/visual-verdict-1316.json",
+   "catalogue_geometry_compatibility": "not_established",
+   "identity": {
+    "scene_sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+    "object": "lipa_t1_h550_low",
+    "diffuse_sha256": "ca3122dbfd910a70cbbccb9cca42779efecdc4b1a2bdc4f166172dbf1dcb01fe",
+    "rgba_sha256": "21fff75057b85b94cb847b8508f30ae9a555af1038f9414b5ea220d26f991525",
+    "opacity_sha256": "1489d9c48a0c89fe0f30b294ad05501d63992b959277f4d1ca5a2892a33b967b"
+   },
+   "version_sha256": "a95cdd49b7a4e0dd8b495e8947165a2f62cf21301440d17e4e6927dde57c4480",
+   "files": [
+    {
+     "name": "diffuse-v002.png",
+     "sha256": "ca3122dbfd910a70cbbccb9cca42779efecdc4b1a2bdc4f166172dbf1dcb01fe",
+     "bytes": 2343623,
+     "path": "flora/v003/maps/tilia-cordata/lipa_t1_h550_low/diffuse-v002.png",
+     "download_url": "https://drive.usercontent.google.com/download?id=1qpCCTEYcvycmLNpH0uXogl2j89OBnZ3i&export=download"
+    },
+    {
+     "name": "lipa_t1_h550_low.png",
+     "sha256": "21fff75057b85b94cb847b8508f30ae9a555af1038f9414b5ea220d26f991525",
+     "bytes": 2819435,
+     "path": "flora/v003/maps/tilia-cordata/lipa_t1_h550_low/lipa_t1_h550_low.png",
+     "download_url": "https://drive.usercontent.google.com/download?id=1NRWTlS6Y5UmYmKhk727AMMlcQcic7hIe&export=download"
+    },
+    {
+     "name": "opacity-v002.png",
+     "sha256": "1489d9c48a0c89fe0f30b294ad05501d63992b959277f4d1ca5a2892a33b967b",
+     "bytes": 211735,
+     "path": "flora/v003/maps/tilia-cordata/lipa_t1_h550_low/opacity-v002.png",
+     "download_url": "https://drive.usercontent.google.com/download?id=1F_EVW-oB6ZrSVy-YLUMUbWWRPOImMPV5&export=download"
+    }
+   ]
+  },
+  {
+   "latin": "Tilia cordata",
+   "cultivar": null,
+   "object": "lipa_t1_h550_high",
+   "dimensions": [
+    4096,
+    4096
+   ],
+   "review_status": "pending",
+   "catalogue_geometry_compatibility": "not_established",
+   "identity": {
+    "scene_sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+    "object": "lipa_t1_h550_high",
+    "diffuse_sha256": "886aded7187c6c10b93ebc8bde4a71e8f9bf073fd064a34e7e49cb08a3fa2050",
+    "rgba_sha256": "166e210fe8bfea60d54e2577b139b83d46fdedcf8ec4df0eda4fa265a58ab90d",
+    "opacity_sha256": "8464117ea503c336e82e5fcc0e33f7aac53c74a7b024e5fb824b57303c13eb08"
+   },
+   "version_sha256": "5aa9a97ce87de21ed0d1e304f55cec5b223f8dcba16869223f354784a850d761",
+   "files": [
+    {
+     "name": "diffuse-v002.png",
+     "sha256": "886aded7187c6c10b93ebc8bde4a71e8f9bf073fd064a34e7e49cb08a3fa2050",
+     "bytes": 7884000,
+     "path": "flora/v003/maps/tilia-cordata/lipa_t1_h550_high/diffuse-v002.png",
+     "download_url": "https://drive.usercontent.google.com/download?id=1x8r5EPPScZGYrzp0BhHXCozel_8m5Co9&export=download"
+    },
+    {
+     "name": "lipa_t1_h550_high.png",
+     "sha256": "166e210fe8bfea60d54e2577b139b83d46fdedcf8ec4df0eda4fa265a58ab90d",
+     "bytes": 9351771,
+     "path": "flora/v003/maps/tilia-cordata/lipa_t1_h550_high/lipa_t1_h550_high.png",
+     "download_url": "https://drive.usercontent.google.com/download?id=1WgTB2j_7IxKcHRAqemtd4zHP4AscG0_S&export=download"
+    },
+    {
+     "name": "opacity-v002.png",
+     "sha256": "8464117ea503c336e82e5fcc0e33f7aac53c74a7b024e5fb824b57303c13eb08",
+     "bytes": 802894,
+     "path": "flora/v003/maps/tilia-cordata/lipa_t1_h550_high/opacity-v002.png",
+     "download_url": "https://drive.usercontent.google.com/download?id=1an9nsndk4sbSf_my5zIg8mIXjOVC-uKC&export=download"
+    }
+   ]
+  },
+  {
+   "latin": "Acer platanoides",
+   "cultivar": "Royal Red",
+   "object": "klen_t7_h550_low",
+   "dimensions": [
+    2048,
+    2048
+   ],
+   "review_status": "pending",
+   "verdict": "library/flora/visual-verdict-acer-1316.json",
+   "catalogue_geometry_compatibility": "not_established",
+   "identity": {
+    "scene_sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+    "object": "klen_t7_h550_low",
+    "diffuse_sha256": "c8ce6b6c1ce9e10d43fb143dc98693e1d642120252bda8d156ab5492218a8e77",
+    "rgba_sha256": "96f1de1d059b6a8a3d66562479fc62d36126a7f31cbbe8d08f7423f8656a64a2",
+    "opacity_sha256": "75d589654ad0cb63d45a1737aa6617ebd21d9b4744012cfe798a5bb1fdb376ce"
+   },
+   "version_sha256": "77ff8536585ee0a1ebf06d739d164881b7e9741b81bc309ef30f4585c74dfea3",
+   "files": [
+    {
+     "name": "diffuse-v002.png",
+     "sha256": "c8ce6b6c1ce9e10d43fb143dc98693e1d642120252bda8d156ab5492218a8e77",
+     "bytes": 1454392,
+     "path": "flora/v003/maps/acer-platanoides/klen_t7_h550_low/diffuse-v002.png",
+     "download_url": "https://drive.usercontent.google.com/download?id=16GKPE08pVgYqJq81oEChLt9QMri5Nom1&export=download"
+    },
+    {
+     "name": "klen_t7_h550_low.png",
+     "sha256": "96f1de1d059b6a8a3d66562479fc62d36126a7f31cbbe8d08f7423f8656a64a2",
+     "bytes": 1736547,
+     "path": "flora/v003/maps/acer-platanoides/klen_t7_h550_low/klen_t7_h550_low.png",
+     "download_url": "https://drive.usercontent.google.com/download?id=1466F9xiAdZ9DFIn5uaHSsyW4i3r6whkz&export=download"
+    },
+    {
+     "name": "opacity-v002.png",
+     "sha256": "75d589654ad0cb63d45a1737aa6617ebd21d9b4744012cfe798a5bb1fdb376ce",
+     "bytes": 137420,
+     "path": "flora/v003/maps/acer-platanoides/klen_t7_h550_low/opacity-v002.png",
+     "download_url": "https://drive.usercontent.google.com/download?id=1qa-Pwm7sYSwuhnq-4uUbYez5HJYhu_rX&export=download"
+    }
+   ]
+  },
+  {
+   "latin": "Acer platanoides",
+   "cultivar": "Royal Red",
+   "object": "klen_t7_h550_high",
+   "dimensions": [
+    4096,
+    4096
+   ],
+   "review_status": "pending",
+   "catalogue_geometry_compatibility": "not_established",
+   "identity": {
+    "scene_sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+    "object": "klen_t7_h550_high",
+    "diffuse_sha256": "758834b9ce51f97584d7463bb15247382a3befcfabd337d945876499a8b87c48",
+    "rgba_sha256": "259a8623afcba58a3c244adc3a59922f1b46074e423178d3ff5fb9a96ce1930c",
+    "opacity_sha256": "8e4980b7a2022a7600fb0f10a8cbcc77b1c8da4101211761a29735ceca32d730"
+   },
+   "version_sha256": "891ce245f6a3f42b66401a8c48cd9e6093dfce0ffe0c107918312de7452b04d1",
+   "files": [
+    {
+     "name": "diffuse-v002.png",
+     "sha256": "758834b9ce51f97584d7463bb15247382a3befcfabd337d945876499a8b87c48",
+     "bytes": 8306660,
+     "path": "flora/v003/maps/acer-platanoides/klen_t7_h550_high/diffuse-v002.png",
+     "download_url": "https://drive.usercontent.google.com/download?id=1gu7LCGPDSnerRFh1_nYn_T-To436U9uw&export=download"
+    },
+    {
+     "name": "klen_t7_h550_high.png",
+     "sha256": "259a8623afcba58a3c244adc3a59922f1b46074e423178d3ff5fb9a96ce1930c",
+     "bytes": 9343960,
+     "path": "flora/v003/maps/acer-platanoides/klen_t7_h550_high/klen_t7_h550_high.png",
+     "download_url": "https://drive.usercontent.google.com/download?id=1L8JXU19cuPfbhpABBt8IQRf_L8XiSQer&export=download"
+    },
+    {
+     "name": "opacity-v002.png",
+     "sha256": "8e4980b7a2022a7600fb0f10a8cbcc77b1c8da4101211761a29735ceca32d730",
+     "bytes": 185426,
+     "path": "flora/v003/maps/acer-platanoides/klen_t7_h550_high/opacity-v002.png",
+     "download_url": "https://drive.usercontent.google.com/download?id=1G2KU9rZpA6aBF8lJkVwc0v_pHW-RY5C7&export=download"
+    }
+   ]
+  }
+ ]
+}
