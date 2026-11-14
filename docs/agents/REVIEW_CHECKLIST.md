@@ -2,7 +2,7 @@
 
 Reviewer: any agent that is not the author (now Codex). The reviewer checks evidence, not
 confidence. Current checklist: this file. Historical source: `archive/2026-11:docs/HARNESS_PLAN.md` §8. Post the answer as a PR comment: verdict
-(clean / changes needed), the three answers with numbers, findings by severity (P1/P2/P3).
+(clean / changes needed), the four answers with numbers, findings by severity (P1/P2/P3).
 
 1. **Pattern / scope.** Does each NEW module refer to a pattern in `docs/domain/patterns/INDEX.md`,
    or is it honestly marked `new-case` in the module docstring and PR body (author receipt verified per
@@ -21,6 +21,9 @@ confidence. Current checklist: this file. Historical source: `archive/2026-11:do
    Does the author's handoff evidence check (`--check-handoff` on the PR body and head) exit 0
    ([WORKFLOW.md#handoff-evidence-check-584](WORKFLOW.md#handoff-evidence-check-584))? A missing full suite,
    RED/GREEN or sample output is a finding, not a pass. The reviewer does not run the full suite for the author.
+4. **Visual Before/After.** A visible change (geometry, UV, materials, textures, renders, Max UI) without Before/After = changes requested.
+   Both images are labelled, from a real baseline and the same camera, per
+   [WORKFLOW.md#visual-evidence-beforeafter-d286](WORKFLOW.md#visual-evidence-beforeafter-d286).
 
 ## Counterexamples
 
