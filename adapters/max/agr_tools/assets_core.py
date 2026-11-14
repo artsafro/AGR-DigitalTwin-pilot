@@ -453,7 +453,8 @@ def extract_members(zip_path, dest, keep):
             target = os.path.join(dest, base)
             if same_file(zip_path, target):
                 raise ValueError('output aliases input: ' + target)
-            if os.path.lexists(target):
+            reuse = os.path.lexists(target)
+            if reuse:
                 with zf.open(info) as src, open(target, 'rb') as dst:
                     while True:
                         a, b = src.read(1 << 20), dst.read(1 << 20)
@@ -461,10 +462,10 @@ def extract_members(zip_path, dest, keep):
                             raise ValueError('existing extraction differs: ' + target)
                         if not a:
                             break
-            selected.append((info, base, target))
+            selected.append((info, base, target, reuse))
         os.makedirs(dest, exist_ok=True)
-        for info, base, target in selected:
-            if not os.path.exists(target):
+        for info, base, target, reuse in selected:
+            if not reuse:
                 fd, tmp = tempfile.mkstemp(prefix='.agr-assets-', dir=dest)
                 try:
                     with os.fdopen(fd, 'wb') as dst, zf.open(info) as src:
