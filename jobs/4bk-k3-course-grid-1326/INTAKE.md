@@ -1,6 +1,8 @@
 # 4BK stylobate course-grid pilot #1326 — intake checkpoint
 
-Status: **finish cohort and stair-return seams confirmed; main-wall ring termination pending; no UV production performed**.
+Status: **finish cohort, stair-return seams and two main-wall ring terminations confirmed; no UV production performed**.
+Main-wall answer (2026-11-14): `main-wall-seam-approval.json`; the earlier pending
+termination question in `LOOP_POLICY.md` is answered. Check level: `full` (reusable tooling).
 
 Current checkpoint: `LOOP_POLICY.md`, fresh source-bound `ring-audit-v003.json` and
 Artem's exact stair-only permission in `seam-approval.json`. Earlier questions below

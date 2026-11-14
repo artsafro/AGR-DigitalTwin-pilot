@@ -1,7 +1,10 @@
 # Main-wall ring closure checkpoint — #1326
 
-Status: **needs a narrowly scoped pattern-termination decision**. `pilot_passed=false`.
-This is not a tile-capacity failure, a new unwrap, or a textured acceptance result.
+Status: **ANSWERED — Artem approved both recommended terminations on 2026-11-14**.
+Exact answer and source-edge scope: `main-wall-seam-approval.json`. Keep horizontal courses
+continuous; no new geometry cuts. The question below is historical, not pending.
+`pilot_passed=false`. This checkpoint is not a tile-capacity failure, a new unwrap,
+or a textured acceptance result.
 
 ## Already settled — do not ask these again
 
