@@ -14,7 +14,7 @@ not a textured pilot acceptance result.
 - Stair thin-return/underside existing-edge breaks: `seam-approval.json`.
 - Main ring horizontal-phase breaks 0/54 and 1344/1398: **approved 2026-11-14**,
   exact answer in `main-wall-seam-approval.json`. Keep vertical courses continuous.
-- Source Bricks1 and the 38-course / 3.15 m contract remain unchanged [D275].
+- Source Bricks1 and the 38-course / 3.15 m contract remain unchanged [D288].
 - Separate versioned Max 2026 copy only, open only after Artem says **«открой»**.
   Existing source-only quads copy remains at
   `G:/Мой диск/AGR-evidence/1326-stylobate-course-grid/intake-v001/3k_intake_v001.max`.
