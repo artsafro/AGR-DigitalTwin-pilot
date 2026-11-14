@@ -65,6 +65,14 @@ def test_source_frame_invalid_inputs_never_produce_samples(mutation):
     with pytest.raises(ValueError):sample_chart_rgb(image,uv,chart,points)
 
 
+def test_reuse_checks_every_pair_not_only_first_owner():
+    from tools.materials.course_grid_appearance import audit_sample_reuse
+    samples=[dict(owner=['wall',i,0],pixel=[0,0],maps={r:[float(10+delta),0.,0.] for r in ('Diffuse','ERM','Normal')}) for i,delta in enumerate((0,2,-2))]
+    report=audit_sample_reuse(samples,max_rgb_error=2.)
+    assert len(report['conflicts'])==3
+    assert all(r['owners']==[['wall',1,0],['wall',2,0]] and r['max_rgb_delta']==4 for r in report['conflicts'])
+
+
 def test_generated_affine_source_sampling_and_threshold_probe():
     from tools.materials.course_grid_appearance import sample_chart_rgb,audit_sample_reuse
     rng=np.random.default_rng(1326)

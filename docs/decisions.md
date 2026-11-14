@@ -307,6 +307,8 @@ frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Mar
 
 
 
+| D295 | 2026-11-14 | #1326 must restore the original panel-joint relief/bevel in the stylobate brick Normal map; a flat neutral joint Normal is not the pilot target. Earlier seam, source-stair baseline and one-tile policies remain; this does not waive independent PNG correspondence or final all-map readback. | `jobs/4bk-k3-course-grid-1326/PNG_REPAIR_RESULT.md`, `docs/domain/areas/uv-atlas.md` | Artem «принимаю рекомендации», USER DECISION on Kanban t_d517d7c6, 2026-11-14 22:13 |
+
 [passport-scope-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1207#issuecomment-6783203728
 
 [ground-refinement-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/295#issuecomment-6265799957

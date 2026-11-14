@@ -108,7 +108,14 @@ of the 16,777,216 source pixels matching this joint marker, so this is not a
 simple brick-mortar false-positive explanation. Do not silently waive, delete,
 or cut these witnesses merely to make the full-PNG oracle pass.
 
-## Material target needing an explicit answer
+## Material target — answered 2026-11-14 [D295]
+
+Artem's 22:13 «принимаю рекомендации» requires restoration of the original
+joint relief/bevel Normal; neutral is NOT an alternative. The question below is
+answered history, not a question to repeat. Continue from `NORMAL_RESTORE_GATE.md`
+and `source-normal-approval.json`. The independent 102 PNG findings remain open.
+
+### Historical evidence and answered question
 
 The accepted v014 sheet was **unlit Diffuse-only**. It cannot establish that the
 original panel-groove Normal may be flattened. Actual grazing-light v045 shows a
