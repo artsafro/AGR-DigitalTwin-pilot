@@ -468,8 +468,15 @@ def vectorize_joint_footprint(footprint, *, face):
         merged = unary_union([part] + [groups[i] for i in nearby])
         groups = [group for i, group in enumerate(groups) if i not in nearby]
         groups.append(merged)
-    result = unary_union([g.convex_hull.simplify(.001, preserve_topology=True)
+    from shapely import snap
+    result = unary_union([g.convex_hull.simplify(.0021, preserve_topology=True)
                           for g in groups]).intersection(face)
+    # Select unchanged source corners BEFORE topology, rather than repairing a
+    # triangulated foldover afterward. Every resulting mask still has to satisfy
+    # the independent 5-mm source-shape bound below.
+    result = snap(result, face, .0021).intersection(face)
+    if not result.is_valid:
+        raise ValueError('invalid corner-anchored joint footprint')
     if (footprint.difference(result.buffer(.005)).area > 1e-12 or
             result.difference(footprint.buffer(.005)).area > 1e-12):
         raise ValueError('vector joint fit exceeds fixed 5 mm correspondence')
