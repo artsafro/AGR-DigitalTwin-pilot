@@ -55,7 +55,7 @@ def test_merged_rows_left_the_allowlist():
     assert [k for k in allowed if k[1] in LIVE] == []
 
 
-def _root(tmp_path, files):
+def _root(tmp_path, files, contexts="contexts:\n  - id: x\n"):
     for top in ("jobs", "tools", "src"):
         (tmp_path / top).mkdir(exist_ok=True)
     for rel, text in files.items():
@@ -63,7 +63,7 @@ def _root(tmp_path, files):
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(text, encoding="utf-8")
     ctx = tmp_path / "contexts.yaml"
-    ctx.write_text("contexts:\n  - id: x\n", encoding="utf-8")
+    ctx.write_text(contexts, encoding="utf-8")
     return ["--root", str(tmp_path), "--contexts", str(ctx)]
 
 
@@ -86,6 +86,44 @@ def test_guard_missing_widened_scope_is_an_error(tmp_path, top):
     args = _root(tmp_path, {})
     (tmp_path / top).rmdir()
     assert guard.main(args) == 2
+
+
+# Acceptance table rows (PR #1398 body) without a test above.
+UDIM = "t = 1001 + u + 10 * v\n"
+
+
+def test_acc_udim_copy_in_adapters_is_not_new(tmp_path, capsys):
+    assert guard.main(_root(tmp_path, {"adapters/max/x.py": UDIM})) == 0
+    assert "NEW COPY" not in capsys.readouterr().out
+
+
+def test_acc_zip_writer_in_jobs_is_new_copy(tmp_path, capsys):
+    assert guard.main(_root(tmp_path, {"jobs/J/zipper.py": "import zipfile\nzipfile.ZipFile(p, 'w')\n"})) == 1
+    assert "NEW COPY [delivery-zip] jobs/J/zipper.py:" in capsys.readouterr().out
+
+
+def test_acc_readded_tile_origin_in_twinqa_uv_is_new_copy(tmp_path, capsys):
+    code = "def tile_origin(t):\n    return (t - 1001) % 10, (t - 1001) // 10\n"
+    assert guard.main(_root(tmp_path, {"src/twinqa/uv.py": code})) == 1
+    assert "NEW COPY [udim-tile] src/twinqa/uv.py:" in capsys.readouterr().out
+
+
+def test_acc_toolsx_prefix_is_not_guarded(tmp_path, capsys):
+    assert guard.main(_root(tmp_path, {"toolsx/a.py": UDIM, "srcx/a.py": UDIM, "jobsx/a.py": UDIM})) == 0
+    assert "NEW COPY" not in capsys.readouterr().out
+
+
+def test_acc_stale_row_whose_copy_is_gone_exits_1(tmp_path, capsys):
+    ctx = ("contexts:\n  - id: x\n    duplicates:\n      - at: \"tools/gone.py::f\"\n"
+           "        rule: udim-tile\n        issue: \"#1376\"\n")
+    assert guard.main(_root(tmp_path, {"tools/gone.py": "def f():\n    return 1\n"}, ctx)) == 1
+    assert "STALE ALLOWLIST [udim-tile] tools/gone.py::f" in capsys.readouterr().out
+
+
+def test_acc_empty_guarded_folders_without_rows_exit_0(tmp_path, capsys):
+    assert guard.main(_root(tmp_path, {})) == 0
+    out = capsys.readouterr().out
+    assert "NEW COPY" not in out and "STALE" not in out
 
 
 @pytest.mark.parametrize("mod", ["dt_ai.geometry.uv", "twinqa.uv"])
