@@ -9,7 +9,7 @@ issue: "#1359"
 rules:
   - id: udim-tile
     owner: adapters/max/agr_tools/udimtile_core.py
-    ru: "своя формула UDIM 1001 + u + 10·v (или обратная) вместо общей функции"
+    ru: "своя формула UDIM 1001 + u + 10·v (или обратная) вместо общей функции; охрана jobs/, tools/, src/ (#1376)"
   - id: delivery-zip
     owner: tools/derive/package_vpm.py
     ru: "свой сборщик ZIP-пакета сдачи вместо общего упаковщика"
@@ -156,26 +156,6 @@ shared_kernel:
       rule: udim-tile
       issue: "#1337"
       hash: "d0179a710c"
-    - at: "tools/blender/fbx_readback.py::udim"
-      rule: udim-tile
-      issue: "#1337"
-      hash: "ded8ff2561"
-    - at: "tools/derive/export_npm.py::main"
-      rule: udim-tile
-      issue: "#1337"
-      hash: "abdf135e7a"
-    - at: "tools/materials/npm_atlas_udim.py::analyze"
-      rule: udim-tile
-      issue: "#1337"
-      hash: "f034325d1a"
-    - at: "src/dt_ai/geometry/uv.py::tile_origin"
-      rule: udim-tile
-      issue: "#1337"
-      hash: "31ff54af03"
-    - at: "src/dt_ai/geometry/uv.py::tile_origin"
-      rule: udim-tile
-      issue: "#1337"
-      hash: "85e04a9a85"
     - at: "adapters/max/agr_tools/atlas_core.py::pack"
       rule: udim-tile
       issue: "#1141"
@@ -224,14 +204,61 @@ shared_kernel:
       rule: udim-tile
       issue: "#1337"
       hash: "af2bc2e385"
-    - at: "src/dt_ai/geometry/uv.py::tile_origin"
+    - at: "src/dt_ai/geometry/ground_cake.py::uv_tile_report"
       rule: udim-tile
-      issue: "#1337"
-      hash: "af2bc2e385"
-    - at: "src/twinqa/uv.py::tile_origin"
+      issue: "#1397"
+      hash: "331763c046"
+      ru: "маршрут Ground, не НПМ: перевод в #1397"
+    - at: "tools/blender/ground_json_to_fbx.py::readback"
       rule: udim-tile
-      issue: "#1337"
-      hash: "af2bc2e385"
+      issue: "#1397"
+      hash: "abdf135e7a"
+      ru: "маршрут Ground, не НПМ: перевод в #1397"
+    - at: "tools/experiments/dreamsim_ac08.py::_tile"
+      rule: udim-tile
+      issue: "#1397"
+      hash: "971a042bbe"
+      ru: "эксперимент, не маршрут НПМ: перевод или пометка «исторический» в #1397"
+    - at: "tools/flora/build_flora_star.py::_bpy_build"
+      rule: udim-tile
+      issue: "#1397"
+      hash: "31ff54af03"
+      ru: "маршрут Flora, не НПМ: перевод в #1397"
+    - at: "tools/flora/build_flora_star.py::_bpy_build"
+      rule: udim-tile
+      issue: "#1397"
+      hash: "85e04a9a85"
+      ru: "маршрут Flora, не НПМ: перевод в #1397"
+    - at: "tools/flora/build_flora_star.py::udim_offset"
+      rule: udim-tile
+      issue: "#1397"
+      hash: "31ff54af03"
+      ru: "маршрут Flora, не НПМ: перевод в #1397"
+    - at: "tools/flora/build_flora_star.py::udim_offset"
+      rule: udim-tile
+      issue: "#1397"
+      hash: "85e04a9a85"
+      ru: "маршрут Flora, не НПМ: перевод в #1397"
+    - at: "tools/methods/methods_metrics.py::_udim"
+      rule: udim-tile
+      issue: "#1397"
+      hash: "ded8ff2561"
+      ru: "каталог методов, не маршрут НПМ: перевод в #1397"
+    - at: "tools/methods/windows/windows_variants.py::tile_offset"
+      rule: udim-tile
+      issue: "#1397"
+      hash: "31ff54af03"
+      ru: "каталог методов, не маршрут НПМ: перевод в #1397"
+    - at: "tools/methods/windows/windows_variants.py::tile_offset"
+      rule: udim-tile
+      issue: "#1397"
+      hash: "85e04a9a85"
+      ru: "каталог методов, не маршрут НПМ: перевод в #1397"
+    - at: "tools/source/measure_spec_blender.py::udim"
+      rule: udim-tile
+      issue: "#1397"
+      hash: "ded8ff2561"
+      ru: "UV исходника произвольны (вне 0..10): нужно решение, сырой тайл или отказ (#1397)"
 contexts:
   - id: body
     ru: "Корпус и геометрия"
@@ -275,7 +302,7 @@ contexts:
       - name: flora_layout
         contract: "вырезки текстур, max размер, отступ -> раскладка атласа флоры"
     duplicates:
-      - at: "tools/materials/npm_atlas_udim.py:779"
+      - at: "tools/materials/npm_atlas_udim.py:785"
         match: "def main("
         issue: "#1141"
         ru: "второй (Python) генератор атласа НПМ, по нему идёт agr vpm-to-npm"

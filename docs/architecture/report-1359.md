@@ -104,6 +104,8 @@ Non-package ZIP writers seen by the scan and deliberately not listed (not delive
 
 1. **Route the live NPM-route UDIM copies to `udimtile_core`** (`tools/derive/export_npm.py`, `npm_atlas_udim.py`,
    `fbx_readback.py`, `dt_ai/geometry/uv.py`), then widen the guard scope from `jobs/` to `tools/` + `src/`.
+   Done in #1376 (also `twinqa/uv.py::tile_origin`); the 8 copies the widened scope found off the NPM route
+   (Ground, Flora, methods, experiment, source intake) are listed with #1397.
 2. **Decide the package owner** (question for Artem): `tools/derive/package_vpm.py` or Max `package_core.py`;
    then one NPM package step and the KPP1/TEC26/PSU275 packagers marked historical.
 3. **One SINTEZ/checker command** (`agr checker` alias over the existing runner) from
