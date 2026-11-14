@@ -194,3 +194,33 @@ def conform_source_mesh(vertices, faces, lineage, uv, source_vertices, source_fa
         out.append(nf);outuv.append(nu)
     return dict(vertices=[list(p) for p in vertices],faces=out,uv=outuv,remap=remap,merges=changes,insertions=insertions,
                 unused_vertices=sorted(set(range(len(vertices)))-{i for f in out for i in f}))
+
+
+def triangulate_conforming_polygon(points):
+    """Maximize the smallest triangle area while retaining EVERY boundary node.
+
+    No simplify, DCC-chosen diagonal, inserted centre or omitted collinear node.
+    Return ordered corner indices; refuse a non-simple or zero-area polygon.
+    """
+    from shapely.geometry import Polygon
+    if not isinstance(points,list) or len(points)<3 or any(not isinstance(p,list) or len(p)!=2 or any(
+        isinstance(x,bool) or not isinstance(x,(int,float)) or not math.isfinite(x) for x in p) for p in points):
+        raise ValueError('invalid conforming polygon')
+    poly=Polygon(points);n=len(points)
+    if not poly.is_valid or poly.area<=1e-12 or not poly.exterior.is_ccw:raise ValueError('invalid conforming winding/surface')
+    score={};result={}
+    for i in range(n-1):score[i,i+1]=math.inf;result[i,i+1]=[]
+    for span in range(2,n):
+        for i in range(n-span):
+            j=i+span;best=-1;chosen=None
+            for k in range(i+1,j):
+                if (i,k) not in result or (k,j) not in result:continue
+                tri=Polygon([points[i],points[k],points[j]])
+                if tri.area<=1e-12 or not tri.exterior.is_ccw or tri.difference(poly).area>max(1e-14,tri.area*1e-12):continue
+                quality=min(score[i,k],score[k,j],tri.area)
+                if quality>best:best=quality;chosen=result[i,k]+result[k,j]+[[i,k,j]]
+            if chosen is not None:score[i,j]=best;result[i,j]=chosen
+    if (0,n-1) not in result:raise ValueError('unrepresentable conforming triangulation')
+    triangles=result[0,n-1]
+    if len(triangles)!=n-2 or {i for t in triangles for i in t}!=set(range(n)):raise ValueError('incomplete conforming triangulation')
+    return triangles

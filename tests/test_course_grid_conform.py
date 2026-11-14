@@ -31,6 +31,17 @@ def test_source_endpoint_identity_and_t_junction_are_repaired_without_blind_weld
     assert out['insertions']==[{'face':2,'edge':[2,1],'vertex':7}]
 
 
+def test_triangulation_avoids_skinny_diagonal_when_same_area_has_a_compact_ear():
+    from tools.materials.course_grid_native import triangulate_conforming_polygon
+    import math
+    points=[[0.,.01],[1.,.01],[1.01,0.],[1.,0.],[0.,0.]]
+    triangles=triangulate_conforming_polygon(points)
+    def quality(t):
+        from shapely.geometry import Polygon
+        return Polygon([points[i] for i in t]).area/max(math.dist(points[a],points[b])**2 for a in t for b in t)
+    assert min(map(quality,triangles))>.004
+
+
 def test_close_disconnected_surface_is_not_welded():
     source=[[0.,0.,0.],[1.,0.,0.],[0.,1.,0.],[0.,0.,.00001],[1.,0.,.00001],[0.,1.,.00001]]
     faces=[[0,1,2],[3,4,5]];uv=[[[0,0],[1,0],[0,1]]]*2
