@@ -15,6 +15,14 @@ Same-surface operations only (no vertex of R1 moves, except T-junction corners w
 Then the finish attribute is recovered from UDIM tiles exactly as `benchmark-1318/prepare_master.py`, the
 master is saved as `master-quad-v001.blend` + a quad work FBX, and both are reopened and fingerprinted.
 Outputs that exist already fail the run (never overwrite a version).
+
+v002 (user decision 2026-11-14, «Принимаю рекомендации»: R1 overlaps deleted/merged within <= 5 mm, 100 % quads):
+    blender -b --factory-startup --python build_quad_master.py -- <packet_root> v002 <union-zones.json>
+Step 0 `union_zones` runs before step 1 on `SM_Kpp_1_Main`: the zones of `plan_union_zones.py` (R1 xView face
+pairs) are snapped onto one exact axis plane (<= 5 mm), the touching solids are unioned (Blender exact boolean,
+self intersection), the coincident opposite double layer is deleted, boolean vertices are welded within 2 mm and
+dangling flaps in a zone are deleted; every move, weld and deletion is listed in `quad-build-v002.json`. Fan
+centres keep > 2.1 mm from every vertex (xView Overlapping Vertices) where the face allows it. R1 is never written.
 """
 import collections
 import hashlib
@@ -210,8 +218,66 @@ def pair_triangles(bm, uv_layer):
             'isolated_triangles': before - len(adj)}
 
 
-def classify_and_split(bm, uv_layer):
-    """Close edge-midpoint marks so every face becomes quads; return new mesh arrays."""
+def _convex(ring, n):
+    signs = [(ring[i] - ring[i - 1]).cross(ring[(i + 1) % 4] - ring[i]).dot(n) for i in range(4)]
+    return all(x > 1e-12 for x in signs) or all(x < -1e-12 for x in signs)
+
+
+def _centre(P, Mp, Mu, kd, placed, clear_m, cell):
+    """Fan centre of a triangle (3 marks) or quad (4 marks): the centroid, or with `clear_m` the point inside the
+    midpoint polygon (so every fan quad stays strictly convex) farthest from every vertex, midpoint and earlier
+    centre when the centroid is closer than `clear_m` (v002: xView Overlapping Vertices 2 mm). Returns
+    (position, uv, clearance or None, moved)."""
+    n = len(P)
+    cen = sum(P, Vector()) / n
+    cu = sum(Mu, Vector((0.0, 0.0))) / n   # = mean of corner UVs (v001 rule)
+    if clear_m is None:
+        return cen, cu, None, False
+    nrm = (P[1] - P[0]).cross(P[2] - P[0]) if n == 3 else (P[2] - P[0]).cross(P[3] - P[1])
+
+    def clearance(x):
+        d = kd.find(x)[2]
+        key = tuple(int(math.floor(c / cell)) for c in x)
+        for dx in (-1, 0, 1):
+            for dy in (-1, 0, 1):
+                for dz in (-1, 0, 1):
+                    for y in placed.get((key[0] + dx, key[1] + dy, key[2] + dz), ()):
+                        d = min(d, (x - y).length)
+        return d
+
+    def ok(x):
+        return all(_convex([P[i], Mp[i], x, Mp[(i - 1) % n]], nrm) for i in range(n))
+
+    def grid(N=16):
+        if n == 3:
+            for i in range(1, N):
+                for j in range(1, N - i):
+                    w = (i / N, j / N, (N - i - j) / N)
+                    yield (Mp[0] * w[0] + Mp[1] * w[1] + Mp[2] * w[2], Mu[0] * w[0] + Mu[1] * w[1] + Mu[2] * w[2])
+        else:
+            for a in range(1, N):
+                for b in range(1, N):
+                    s, t = a / N, b / N
+                    yield ((Mp[0] * (1 - s) + Mp[1] * s) * (1 - t) + (Mp[3] * (1 - s) + Mp[2] * s) * t,
+                           (Mu[0] * (1 - s) + Mu[1] * s) * (1 - t) + (Mu[3] * (1 - s) + Mu[2] * s) * t)
+    best = (clearance(cen), cen, cu) if ok(cen) else (-1.0, cen, cu)
+    if best[0] < clear_m:
+        for x, xu in grid():
+            if ok(x):
+                d = clearance(x)
+                if d > best[0]:
+                    best = (d, x, xu)
+    if best[0] < 0:
+        # the source face itself has a straight corner (pairing allows it): no fan quad can be strictly convex
+        # there; keep the clearance rule only, inside the midpoint polygon as before
+        best = max([(clearance(cen), cen, cu)] + [(clearance(x), x, xu) for x, xu in grid()], key=lambda c: c[0])
+        return best[1], best[2], best[0], 'straight-source'
+    return best[1], best[2], best[0], best[1] is not cen
+
+
+def classify_and_split(bm, uv_layer, clear_m=None):
+    """Close edge-midpoint marks so every face becomes quads; return new mesh arrays.
+    `clear_m` (v002): fan centres keep this distance from every other vertex where the face allows it."""
     bm.verts.ensure_lookup_table(); bm.faces.ensure_lookup_table()
     marked = set()
     for f in bm.faces:
@@ -241,6 +307,15 @@ def classify_and_split(bm, uv_layer):
             mid[e.index] = len(verts) - 1
         return mid[e.index]
 
+    for e in bm.edges:            # every midpoint first, so the centre clearance sees all of them
+        if e.index in marked:
+            midpoint(e)
+    kd = KDTree(len(verts))
+    for i, x in enumerate(verts):
+        kd.insert(x, i)
+    kd.balance()
+    cell = max(clear_m or 0.0, 1e-3) * 2
+    placed, centres = {}, []
     polys, uvs, src_face = [], [], []
     for f in bm.faces:
         loops = list(f.loops)
@@ -260,30 +335,38 @@ def classify_and_split(bm, uv_layer):
             k = lambda x: x % 4
             out = [([c[i], M[i], M[j], c[k(j + 1)]], [u[i], Mu[i], Mu[j], u[k(j + 1)]]),
                    ([M[i], c[k(i + 1)], c[j], M[j]], [Mu[i], u[k(i + 1)], u[j], Mu[j]])]
-        else:  # triangle with 3 marks or quad with 4: fan of quads around the centroid
-            verts.append(sum((verts[x] for x in c), Vector()) / n)
+        else:  # triangle with 3 marks or quad with 4: fan of quads around the centre
+            co, Cu, clr, moved = _centre([verts[x] for x in c], [verts[x] for x in M], Mu, kd, placed, clear_m, cell)
+            verts.append(co)
             C = len(verts) - 1
-            Cu = sum(u, Vector((0.0, 0.0))) / n
+            placed.setdefault(tuple(int(math.floor(x / cell)) for x in co), []).append(co)
+            if clr is not None:
+                centres.append({'face': f.index, 'clearance_m': clr, 'moved': moved})
             for i in range(n):
                 p = (i - 1) % n
                 out.append(([c[i], M[i], C, M[p]], [u[i], Mu[i], Cu, Mu[p]]))
         for pc, pu in out:
             polys.append(pc); uvs.append(pu); src_face.append(f.index)
-    return verts, polys, uvs, src_face, len(marked)
+    return verts, polys, uvs, src_face, len(marked), centres
 
 
-def quadify(obj):
+def quadify(obj, clear_m=None):
     me = obj.data
     bm = bmesh.new(); bm.from_mesh(me)
     before = {'faces': len(bm.faces), 'verts': len(bm.verts)}
     tj, tj_log = fix_tjunctions(bm)
+    # union output (v002) has planar quads/n-gons: triangulate them on their plane, then pair like R1 triangles
+    poly = [f for f in bm.faces if len(f.verts) > 3]
+    if poly:
+        bmesh.ops.triangulate(bm, faces=poly, quad_method='BEAUTY', ngon_method='BEAUTY')
+        bm.faces.index_update()
     uv_layer = bm.loops.layers.uv.active
     join_info = pair_triangles(bm, uv_layer)
     deg = collections.Counter(len(f.verts) for f in bm.faces)
     bm.faces.ensure_lookup_table()
     mats = [f.material_index for f in bm.faces]
     smooth = [f.smooth for f in bm.faces]
-    verts, polys, uvs, src, n_marked = classify_and_split(bm, uv_layer)
+    verts, polys, uvs, src, n_marked, centres = classify_and_split(bm, uv_layer, clear_m)
     bm.free()
     new = bpy.data.meshes.new(me.name + '_quad')
     new.from_pydata([tuple(v) for v in verts], [], polys)
@@ -299,9 +382,204 @@ def quadify(obj):
     for m in me.materials:
         new.materials.append(m)
     obj.data = new
-    return {'r1': before, 'tjunctions_found': len(tj), 'tjunction_fixes': tj_log,
+    return {'r1': before, 'tjunctions_found': len(tj), 'tjunction_fixes': tj_log, 'polygons_triangulated': len(poly),
             'after_join_degrees': dict(deg), 'pairing': join_info, 'marked_edges': n_marked,
-            'quad_faces': len(new.polygons), 'degrees': dict(collections.Counter(p.loop_total for p in new.polygons))}
+            'quad_faces': len(new.polygons), 'degrees': dict(collections.Counter(p.loop_total for p in new.polygons)),
+            'centre_clear_m': clear_m, 'centres': len(centres), 'centres_moved': sum(c['moved'] is True for c in centres),
+            'centres_straight_source': sum(c['moved'] == 'straight-source' for c in centres),
+            'centres_below_clearance': [c for c in centres if clear_m is not None and c['clearance_m'] <= clear_m]}
+
+
+MERGE_MAX_M = 0.005      # user decision 2026-11-14 (#1372): R1 overlaps deleted/merged within <= 5 mm
+CENTRE_CLEAR_M = 0.0021  # v002 fan centres: > xView 2 mm from every vertex (+0.1 mm for float32 storage)
+WELD_M = 0.002           # = xView Overlapping Vertices tolerance: a boolean vertex closer to another is merged
+ZONE_MARGIN_M = 0.01     # in-plane margin around a zone (snap, flap search)
+SLAB_EPS_M = 0.0005      # snap slab = zone spread + 0.5 mm on the zone axis
+
+
+def _loose_parts(bm):
+    part, n = {}, 0
+    for f0 in bm.faces:
+        if f0 in part:
+            continue
+        part[f0] = n
+        stack = [f0]
+        while stack:
+            f = stack.pop()
+            for v in f.verts:
+                for g in v.link_faces:
+                    if g not in part:
+                        part[g] = n
+                        stack.append(g)
+        n += 1
+    return part
+
+
+def _in_zone(co, z, margin=ZONE_MARGIN_M, slab=None):
+    ax = z['axis']
+    if abs(co[ax] - z['value']) > (z['spread_m'] + SLAB_EPS_M if slab is None else slab):
+        return False
+    return all(z['lo'][k] - margin <= co[k] <= z['hi'][k] + margin for k in range(3) if k != ax)
+
+
+def _dedupe(bm, log=None):
+    """Delete every face whose vertex set equals another face's (coincident double layer); return (count, area)."""
+    groups = collections.defaultdict(list)
+    for f in bm.faces:
+        groups[frozenset(f.verts)].append(f)
+    dup = [f for g in groups.values() if len(g) > 1 for f in g]
+    bad = [g for g in groups.values() if len(g) > 1 and (len(g) != 2 or g[0].normal.dot(g[1].normal) > -0.99)]
+    if bad:
+        raise ValueError(f'{len(bad)} coincident face group(s) that are not an opposite pair; cannot union')
+    area = sum(f.calc_area() for f in dup)
+    if log is not None:
+        log.extend({'centre': [round(c, 6) for c in f.calc_center_median()], 'area_m2': f.calc_area(),
+                    'corners': len(f.verts)} for f in dup)
+    bmesh.ops.delete(bm, geom=dup, context='FACES_ONLY')
+    bmesh.ops.delete(bm, geom=[e for e in bm.edges if not e.link_faces], context='EDGES')
+    bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context='VERTS')
+    return len(dup), area
+
+
+def union_zones(obj, plan):
+    """R1 overlap zones (plan_union_zones.py) -> union of the touching solids, same look (#1372, user decision).
+
+    1. the plan faces are the R1 faces (centroid within 10 um, else error);
+    2. snap: zone-part vertices inside a zone (its spread + 0.5 mm on the axis, 10 mm margin in plane) go onto the
+       exact plane value (<= 5 mm, else error);
+    3. exact self-union (Blender boolean EXACT, self intersection) of the loose parts that own zone faces; the other
+       parts stay untouched and are appended back;
+    4. coincident opposite faces (the double layer between the touching solids) are deleted;
+    5. vertices the boolean created are welded to an R1 vertex (else another new vertex) within 2 mm;
+    6. dangling flaps inside a zone (every edge boundary or non-manifold, one at least boundary) are deleted.
+    Every change is listed in the returned record."""
+    me = obj.data
+    bm = bmesh.new(); bm.from_mesh(me)
+    bm.faces.ensure_lookup_table()
+    if len(bm.faces) != plan['faces_count']:
+        raise ValueError(f"mesh has {len(bm.faces)} faces, plan {plan['faces_count']}")
+    mw = obj.matrix_world
+    for z in plan['zones']:
+        for f, c in zip(z['faces'], z['centroids']):
+            got = mw @ bm.faces[f].calc_center_median()
+            if (got - Vector(c)).length > 1e-5:
+                raise ValueError(f'plan face {f} is not the R1 face (centroid off by {(got - Vector(c)).length} m)')
+    if any(abs(x - y) > 1e-6 for r, row in zip(mw, ((1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1)))
+           for x, y in zip(r, row)):
+        raise ValueError(f'{obj.name}: matrix_world is not identity within 1e-6; zone planes are world values')
+    part = _loose_parts(bm)
+    zone_parts = sorted({part[bm.faces[f]] for z in plan['zones'] for f in z['faces']})
+    zp = set(zone_parts)
+    snaps, snap_log = [], []
+    for v in bm.verts:
+        if not any(part[f] in zp for f in v.link_faces):
+            continue
+        hit = [z for z in plan['zones'] if _in_zone(v.co, z)]
+        vals = {(z['axis'], z['value']) for z in hit}
+        if len(vals) > 1:
+            raise ValueError(f'vertex {v.index} at {tuple(v.co)} lies in zones with different planes {sorted(vals)}')
+        if hit:
+            ax, val = hit[0]['axis'], hit[0]['value']
+            d = abs(v.co[ax] - val)
+            if d > MERGE_MAX_M + 1e-5:  # float32 storage tolerance at ~15 m
+                raise ValueError(f'vertex {v.index}: snap {d * 1000:.2f} mm > {MERGE_MAX_M * 1000} mm')
+            snaps.append(d)
+            if d > 0:
+                snap_log.append({'from': [round(c, 6) for c in v.co], 'axis': 'xyz'[ax], 'to': val, 'move_m': d})
+            v.co[ax] = val
+    rest_bm = bm.copy()
+    rest_bm.faces.ensure_lookup_table()
+    other = [f for f in bm.faces if part[f] not in zp]
+    other_idx = {f.index for f in other}
+    bmesh.ops.delete(bm, geom=other, context='FACES')
+    bmesh.ops.delete(rest_bm, geom=[f for f in rest_bm.faces if f.index not in other_idx], context='FACES')
+    bm.to_mesh(me); bm.free()
+    rest = bpy.data.meshes.new(me.name + '_untouched_parts')
+    rest_bm.to_mesh(rest); rest_bm.free()
+    old = KDTree(len(me.vertices))
+    for v in me.vertices:
+        old.insert(v.co, v.index)
+    old.balance()
+    faces_in = len(me.polygons)
+    col = bpy.data.collections.new('union_no_operand')
+    m = obj.modifiers.new('union_zones', 'BOOLEAN')
+    m.solver, m.operation, m.operand_type, m.collection, m.use_self = 'EXACT', 'UNION', 'COLLECTION', col, True
+    bpy.context.view_layer.objects.active = obj
+    with bpy.context.temp_override(object=obj, active_object=obj):
+        bpy.ops.object.modifier_apply(modifier=m.name)
+    me = obj.data
+    faces_bool = len(me.polygons)
+    bm = bmesh.new(); bm.from_mesh(me)
+    deleted = []
+    dup_n, dup_area = _dedupe(bm, deleted)
+    new = [v for v in bm.verts if old.find(v.co)[2] > 1e-7]
+    oldv = [v for v in bm.verts if old.find(v.co)[2] <= 1e-7]
+    kd = KDTree(len(oldv))
+    for i, v in enumerate(oldv):
+        kd.insert(v.co, i)
+    kd.balance()
+    target, welds = {}, []
+    for v in new:
+        co, i, d = kd.find(v.co)
+        if co is not None and d <= WELD_M:
+            target[v] = oldv[i]
+            welds.append({'to': 'r1', 'distance_m': d, 'at': list(oldv[i].co)})
+    free = [v for v in new if v not in target]
+    kdn = KDTree(len(free))
+    for i, v in enumerate(free):
+        kdn.insert(v.co, i)
+    kdn.balance()
+    for v in free:
+        if v in target:
+            continue
+        for _, i, d in kdn.find_range(v.co, WELD_M):
+            w = free[i]
+            if w is not v and w not in target and v not in target:
+                target[w] = v
+                welds.append({'to': 'new', 'distance_m': d, 'at': list(v.co)})
+    bmesh.ops.weld_verts(bm, targetmap=target)
+    rounds = []
+    for _ in range(10):
+        n, a = _dedupe(bm, deleted)
+        flaps = [f for f in bm.faces
+                 if all(len(e.link_faces) != 2 for e in f.edges) and any(len(e.link_faces) == 1 for e in f.edges)
+                 and any(all(_in_zone(v.co, z, slab=MERGE_MAX_M) for v in f.verts) for z in plan['zones'])]
+        flap_rec = [{'centre': list(f.calc_center_median()), 'area_m2': f.calc_area(), 'corners': len(f.verts)}
+                    for f in flaps]
+        bmesh.ops.delete(bm, geom=flaps, context='FACES_ONLY')
+        bmesh.ops.delete(bm, geom=[e for e in bm.edges if not e.link_faces], context='EDGES')
+        bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context='VERTS')
+        rounds.append({'duplicates_deleted': n, 'duplicates_area_m2': a, 'flaps_deleted': flap_rec})
+        if not n and not flaps:
+            break
+    else:
+        raise ValueError('union cleanup did not converge in 10 rounds')
+    degenerate = [f.index for f in bm.faces if f.calc_area() < 1e-12]
+    if degenerate:
+        raise ValueError(f'{len(degenerate)} zero-area face(s) after the union: {degenerate[:5]}')
+    before_faces = set(bm.faces)
+    bm.from_mesh(rest)   # untouched loose parts back, unchanged
+    uvl = bm.loops.layers.uv.active
+    tail = sorted([f.material_index] + [tuple(round(c, 7) for c in l[uvl].uv) + tuple(round(c, 7) for c in l.vert.co)
+                                        for l in f.loops] for f in bm.faces if f not in before_faces)
+    want = sorted([p.material_index] + [tuple(round(c, 7) for c in rest.uv_layers.active.data[i].uv)
+                                        + tuple(round(c, 7) for c in rest.vertices[rest.loops[i].vertex_index].co)
+                                        for i in p.loop_indices] for p in rest.polygons)
+    if tail != want:
+        bad = next(i for i, (a, b) in enumerate(zip(tail, want)) if a != b) if len(tail) == len(want) else -1
+        raise ValueError(f'untouched parts changed while appending them back (UV or position): face {bad} '
+                         f'{tail[bad] if bad >= 0 else len(tail)} != {want[bad] if bad >= 0 else len(want)}; '
+                         f'uv layers bm {[l.name for l in bm.loops.layers.uv.values()]} '
+                         f'rest {[l.name for l in rest.uv_layers]}')
+    bm.to_mesh(me); bm.free()
+    bpy.data.meshes.remove(rest)
+    return {'zones': len(plan['zones']), 'zone_parts': zone_parts, 'snapped_vertices': len(snaps),
+            'snap_max_m': max(snaps, default=0.0), 'faces_into_union': faces_in, 'faces_after_boolean': faces_bool,
+            'double_layer_faces_deleted': dup_n, 'double_layer_area_m2': dup_area, 'snap_log': snap_log,
+            'deleted_faces': deleted,
+            'boolean_vertices_new': len(new), 'welds': welds, 'weld_max_m': max((w['distance_m'] for w in welds),
+                                                                                   default=0.0),
+            'cleanup_rounds': rounds, 'faces_out': len(me.polygons)}
 
 
 def tri_bvh(obj):
@@ -352,29 +630,50 @@ def _pt_tri64(p, a, b, c):
     return math.sqrt(dot(d, d))
 
 
-def distance(bvh_to, tris_to, pts64):
+def distance(bvh_to, tris_to, pts64, zones=()):
     """Two-stage distance: float32 BVH prefilter, float64 exact recheck of every sample above 1 um
-    (mathutils is float32: needle triangles give ~1 mm artefacts that are not geometry)."""
-    out, rechecked = [], 0
+    (mathutils is float32: needle triangles give ~1 mm artefacts that are not geometry).
+    With `zones` (v002 union plan) the samples inside a zone are reported apart: there the hidden double layer
+    between touching solids was removed on purpose, so R1 points have no new surface on them."""
+    out, inside, rechecked = [], [], 0
     for p in pts64:
         d = bvh_to.find_nearest(Vector(p))[3]
         if d > 1e-6:
             rechecked += 1
             cand = {i for _, _, i, _ in bvh_to.find_nearest_range(Vector(p), d + 1e-3)}
             d = min(_pt_tri64(p, *tris_to[i]) for i in cand)
-        out.append(d)
-    out.sort()
-    return {'samples': len(out), 'max_m': out[-1], 'p95_m': out[int(0.95 * (len(out) - 1))],
-            'mean_m': sum(out) / len(out), 'float64_rechecked': rechecked}
+        (inside if any(_in_zone(p, z, slab=MERGE_MAX_M) for z in zones) else out).append(d)
+
+    def stats(xs):
+        xs.sort()
+        return {'samples': len(xs), 'max_m': xs[-1], 'p95_m': xs[int(0.95 * (len(xs) - 1))],
+                'mean_m': sum(xs) / len(xs)} if xs else {'samples': 0}
+    res = {**stats(out), 'float64_rechecked': rechecked}
+    if zones:
+        res['inside_union_zones'] = stats(inside)
+    return res
 
 
-def main(root):
+def main(root, version='v001', zones_path=None):
+    """v001: R1 -> quads. v002: R1 -> union of the R1 overlap zones (plan json, user decision) -> quads."""
     src = root / 'source/SM_Kpp_1.fbx'
     if sha(src) != SOURCE_SHA:
         raise ValueError('source is not the approved r1-v002 SM_Kpp_1.fbx')
-    out_blend, out_fbx, report = root / 'master-quad-v001.blend', root / 'SM_Kpp_1.quad-v001.fbx', root / 'quad-build.json'
+    if (version == 'v001') != (zones_path is None):
+        raise ValueError('v001 is the plain quadification; every later version needs the union zone plan')
+    plan = None
+    if zones_path is not None:
+        zones_path = Path(zones_path).resolve()
+        plan = json.loads(zones_path.read_text())
+        if plan.get('source_sha256') != SOURCE_SHA or plan.get('part') != 'SM_Kpp_1_Main' or not plan.get('zones'):
+            raise ValueError(f'{zones_path}: not a union plan of the approved R1 SM_Kpp_1_Main')
+    suffix = '' if version == 'v001' else f'-{version}'
+    out_blend, out_fbx, report = (root / f'master-quad-{version}.blend', root / f'SM_Kpp_1.quad-{version}.fbx',
+                                  root / f'quad-build{suffix}.json')
     if any(p.exists() for p in (out_blend, out_fbx, report)):
         raise ValueError('quad master outputs occupied; use a new version')
+    if zones_path is not None and zones_path in {p.resolve() for p in (out_blend, out_fbx, report, src)}:
+        raise ValueError('zone plan path aliases an output or the source')
     spec = json.loads((root / 'spec.json').read_text())
     by_tile = {t['udim']: name for name, t in spec['finishes'].items()}
     names = list(spec['finishes'])
@@ -387,14 +686,19 @@ def main(root):
     r1 = {n: tri_bvh(objs[n]) for n in RENDER}
     ucx_before = {n: fingerprint(o) for n, o in objs.items() if n.startswith('UCX_')}
     rep = {'source_sha256': SOURCE_SHA, 'blender': bpy.app.version_string, 'planar_tol_m': PLANAR_TOL_M,
-           'tj_tol_m': TJ_TOL, 'meshes': {}}
+           'tj_tol_m': TJ_TOL, 'version': version, 'meshes': {}}
+    if plan is not None:
+        rep['union_plan'] = {'path': str(zones_path), 'sha256': sha(zones_path), 'xview_r1': plan['xview_r1']}
+        rep['union'] = union_zones(objs['SM_Kpp_1_Main'], plan)
+    zones = plan['zones'] if plan else ()
     for n in RENDER:
         o = objs[n]
-        info = quadify(o)
+        info = quadify(o, CENTRE_CLEAR_M if plan else None)
         bvh, tris = tri_bvh(o)
         r1_bvh, r1_tris = r1[n]
-        info['distance_new_to_r1'] = distance(r1_bvh, r1_tris, samples(tris))
-        info['distance_r1_to_new'] = distance(bvh, tris, samples(r1_tris))
+        zn = zones if n == 'SM_Kpp_1_Main' else ()
+        info['distance_new_to_r1'] = distance(r1_bvh, r1_tris, samples(tris), zn)
+        info['distance_r1_to_new'] = distance(bvh, tris, samples(r1_tris), zn)
         info['triangulated_beauty_tris'] = len(tris)
         rep['meshes'][n] = info
     # finish attribute from UDIM tiles (prepare_master.py rule), on the quad Main
@@ -427,10 +731,15 @@ def main(root):
         raise ValueError('reopened blend differs from the built master')
     rep.update({'fingerprints': before, 'outputs': {out_blend.name: sha(out_blend), out_fbx.name: sha(out_fbx)},
                 'master_type': 'all-quad editable master (#1372); delivery copies stay triangulated (reg p.8 3.11)',
-                'approval': 'Artem 2026-11-14 "Да, давай сделаем квад мастер" (#1372)', 'synthetic': False})
+                'approval': 'Artem 2026-11-14 "Да, давай сделаем квад мастер" (#1372)'
+                + ('; v002 union of R1 overlaps <= 5 mm and 100 % quads: Artem 2026-11-14 "Принимаю рекомендации"'
+                   if plan else ''), 'synthetic': False})
     report.write_text(json.dumps(rep, indent=2))
     print('QUAD', json.dumps({n: {k: v for k, v in i.items() if k != 'tjunction_fixes'} for n, i in rep['meshes'].items()}))
+    if plan:
+        print('UNION', json.dumps({k: v for k, v in rep['union'].items() if k not in ('welds', 'snap_log', 'deleted_faces')}))
 
 
 if __name__ == '__main__':
-    main(Path(sys.argv[sys.argv.index('--') + 1]))
+    args = sys.argv[sys.argv.index('--') + 1:]
+    main(Path(args[0]), *args[1:3])

@@ -15,8 +15,7 @@ import time
 
 ROOT = Path(__file__).resolve().parents[3]
 BLENDER = 'C:/Program Files/Blender Foundation/Blender 5.1/blender.exe'
-MASTER = 'master-quad-v001.blend'
-MASTER_FBX = 'SM_Kpp_1.quad-v001.fbx'
+VERSION = 'v001'   # argv[3] selects another master version (v002: union of the R1 overlaps, #1372)
 
 
 def verify(packet):
@@ -33,7 +32,8 @@ def verify(packet):
     return hashlib.sha256((packet/'SHA256SUMS.txt').read_bytes()).hexdigest()
 
 
-def main(packet, out):
+def main(packet, out, version=VERSION):
+    MASTER, MASTER_FBX = f'master-quad-{version}.blend', f'SM_Kpp_1.quad-{version}.fbx'
     packet, out = packet.resolve(), out.resolve()
     if out.is_relative_to(packet) or packet.is_relative_to(out):
         raise ValueError('run root aliases frozen packet')
@@ -45,7 +45,7 @@ def main(packet, out):
     start = time.perf_counter()
     record = {'start_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
         'manifest_sha256': manifest, 'code_commit': subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
-        'stages': [], 'delivery_complete': False}
+        'master': MASTER, 'stages': [], 'delivery_complete': False}
 
     def stage(name, cmd):
         verify(packet)
@@ -95,4 +95,4 @@ def main(packet, out):
 
 
 if __name__ == '__main__':
-    main(Path(sys.argv[1]),Path(sys.argv[2]))
+    main(Path(sys.argv[1]),Path(sys.argv[2]),*sys.argv[3:4])
