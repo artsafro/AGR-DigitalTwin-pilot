@@ -1,7 +1,7 @@
 """new-case: saved-mesh fixed-frame chart projection regressions."""
 import math
 import pytest
-from tools.materials.course_grid_native import project_saved_points, rigid_triangle_uv
+from tools.materials.course_grid_native import project_saved_points, rigid_triangle_uv, encode_triangle_uv
 
 
 def test_saved_points_use_source_plane_frame_not_old_precast_offsets():
@@ -23,6 +23,19 @@ def test_rigid_triangle_preserves_long_edge_heading_and_frozen_density():
     singular=np.linalg.svd(np.linalg.solve(np.c_[e@a,e@b],q),compute_uv=False)
     assert singular==pytest.approx([512.1,512.1],abs=1e-5)
     assert uv[0]==old[0] and uv[1][1]==uv[0][1]
+
+
+def test_float32_encoding_keeps_legal_band_with_subpixel_quantization_only():
+    import numpy as np
+    xyz=[[0,0,0],[1,0,0],[.99,.00001,.000002]]
+    old=[[.3,.4],[.425,.4],[.42375,.40000125]]
+    ideal=rigid_triangle_uv(xyz,old,texel_px_m=512.1,tile_px=4096)
+    out=encode_triangle_uv(xyz,ideal,tile_px=4096)
+    assert min(out['singular_px_m'])>=512
+    assert max(out['singular_px_m'])<=1706
+    assert max(out['singular_px_m'])/min(out['singular_px_m'])<=1.02
+    assert out['max_encoding_error_px']<.01
+    assert np.asarray(out['uv'],dtype=np.float32).astype(float).tolist()==out['uv']
 
 
 @pytest.mark.parametrize('value',[float('nan'),float('inf')])
