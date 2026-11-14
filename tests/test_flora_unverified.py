@@ -56,7 +56,7 @@ def test_identity_never_drops_an_explicit_hp(legacy):
 def test_current_library_records_survive_without_identity():
     previous = load('catalogue.json')
     audit = json.loads((ROOT / 'experiments/flora-library-audit/catalogue.json').read_text(encoding='utf-8'))
-    rebuilt = fc.build(audit, load('species-curation.json'), load('maps.json'), previous)
+    rebuilt = fc.build(audit, load('species-curation.json'), load('maps-v003-snapshot.json'), previous)
     stable = ('latin', 'npm', 'vpm', 'objects', 'vpm_status', 'material_id', 'maps')
     assert [[row[k] for k in stable] for row in rebuilt['species']] == [
         [row[k] for k in stable] for row in previous['species']]
