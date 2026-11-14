@@ -15,7 +15,8 @@ writes the remapped channel 1 and an atlas material on the copy, reads the copy 
 unchanged. Any failure deletes the copies and the new folder's files of this run.
 
 Options: atlas.flora — max_size 2048, pad 8, out_dir; atlas.groundel — profile 'groundel' (default, <= 512) or
-'npm' (VPM_to_NPM: up to 2048, plugs allowed), size 512 / 2048, out_dir.
+'npm' (VPM_to_NPM: up to 2048, plugs allowed), size 512 / 2048, out_dir;
+texel 'ground' (default) or 'none' (NPM only: preserve source pixels with uniform atlas scaling).
 """
 import os
 
@@ -520,7 +521,7 @@ def atlas_flora(ctx, mode, nodes, preview):
                         if op is None or (op.w, op.h) != (pic.w, pic.h):
                             o['findings'].append(('opacity_mismatch', 'opacity {} must be a PNG of the diffuse size'
                                                   .format(opacity)))
-                        elif alpha is not None and _same_file(oinfo['file'], info['file']):
+                        elif alpha is not None and _same_file(oinfo['path'], info['path']):
                             pass  # #1024: A101 Flora points the opacity slot at the diffuse PNG itself: its own alpha
                         elif alpha is not None:
                             o['findings'].append(('opacity_mismatch', 'both diffuse alpha and an opacity map'))

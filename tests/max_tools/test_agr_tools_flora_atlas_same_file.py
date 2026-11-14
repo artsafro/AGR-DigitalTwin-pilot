@@ -36,7 +36,7 @@ def test_same_file_normalises_case_separators_and_relative_parts(tmp_path):
 
 def test_mismatch_branch_still_present_for_a_different_opacity_file():
     text = (ROOT / 'adapters/max/agr_tools/flora_atlas_max.py').read_text(encoding='utf-8')
-    same = text.index("_same_file(oinfo['file'], info['file'])")
+    same = text.index("_same_file(oinfo['path'], info['path'])")
     both = text.index("'both diffuse alpha and an opacity map'")
     assert same < both  # the same-file case is decided first; any other file keeps the refusal
 
@@ -63,6 +63,12 @@ def test_groundel_texel_option_none_only_for_npm_profile():
         g._groundel_options(_Ctx({'texel': 'none'}), 'preview', None)
     with pytest.raises(ValueError, match="'ground' or 'none'"):
         g._groundel_options(_Ctx({'profile': 'npm', 'texel': 35}), 'preview', None)
+
+
+@pytest.mark.parametrize('texel', [None, '', 'NONE', 0, 35, True, [], {}, float('nan'), float('inf')])
+def test_groundel_invalid_texel_is_refused(texel):
+    with pytest.raises(ValueError, match='options.texel'):
+        _glue()._groundel_options(_Ctx({'profile': 'npm', 'texel': texel}), 'preview', None)
 
 
 def test_texel_none_routes_to_the_oks_mode_of_pack():
