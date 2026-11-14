@@ -21,6 +21,11 @@ import os
 import shutil
 import sys
 import zipfile
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from adapters.max.agr_tools import package_core
+from export_meta import load_package_meta
 
 DEFAULT_NOTE = "GeoJSON deferred by the user (2026-10-07) [D224]"
 
@@ -66,6 +71,7 @@ def main(argv=None):
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("package_dir")
     ap.add_argument("textures_dir")
+    ap.add_argument('--meta', help='explicit export metadata (required when several exporter sidecars exist)')
     ap.add_argument("--object", help="object.json with name, placement, glasses (required unless --no-geojson)")
     ap.add_argument("--no-geojson", action="store_true")
     ap.add_argument("--deferred-note", default=DEFAULT_NOTE, help="package_report blocker text with --no-geojson")
@@ -73,7 +79,7 @@ def main(argv=None):
     pkg, tex = a.package_dir, a.textures_dir
     if not a.no_geojson and not a.object:
         raise ValueError("GeoJSON needs --object (name, placement); pass --no-geojson to defer it")
-    meta = json.load(open(os.path.join(pkg, "..", "export_meta.json")), object_pairs_hook=unique_object)
+    meta = load_package_meta(pkg, a.meta)
     A = meta["address"]
     stem = f"SM_{A}"
     if not os.path.isfile(os.path.join(pkg, f"{stem}.fbx")):
@@ -81,7 +87,7 @@ def main(argv=None):
     zpath = os.path.join(pkg, "..", f"{stem}.zip")
     rpath = os.path.join(pkg, "..", "package_report.json")
     gpath = os.path.join(pkg, f"{stem}.geojson")
-    for p in (zpath, rpath):
+    for p in (zpath, rpath, zpath + '.partial'):
         if os.path.lexists(p):
             raise FileExistsError(f"output {p} already exists; choose a new version")
     if a.no_geojson and os.path.lexists(gpath):
@@ -123,14 +129,17 @@ def main(argv=None):
         with open(gpath, "x", encoding="utf-8") as fh:
             json.dump(geo, fh, ensure_ascii=False, indent=2)
 
-    with zipfile.ZipFile(zpath, "x", zipfile.ZIP_DEFLATED) as z:
-        for f in sorted(os.listdir(pkg)):
-            z.write(os.path.join(pkg, f), f)
+    members = [f for f in sorted(os.listdir(pkg)) if f != 'export_meta.json' and not f.endswith('.fbx.export_meta.json')]
+    archive = {'name': os.path.basename(zpath), 'members': [{'name': f} for f in members],
+               'limit': package_core.LIMITS['vpm_ground' if A.endswith('_Ground') else 'vpm_oks']}
+    written, size = package_core._write_zip(pkg, archive, zpath)
+    if written is None:
+        raise ValueError(f'archive exceeds {archive["limit"]} bytes')
 
     blockers = ([k for k, v in props.items() if v == "" and k != "other"] + ["geometry.coordinates (MSK-77)"]
                 if props is not None else [a.deferred_note])
     report = {"zip": os.path.abspath(zpath), "zip_bytes": os.path.getsize(zpath),
-              "files": sorted(os.listdir(pkg)), "geojson_blockers_unknown_in_source": blockers,
+              "files": members, "geojson_blockers_unknown_in_source": blockers,
               "geojson_proposals": ["Glasses values (colour/transparency/refraction/roughness/metallicity)"],
               "address_placeholder": A}
     if props is not None:

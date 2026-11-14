@@ -288,7 +288,8 @@ def _guard_root(tmp_path, files, rows=""):
         p = tmp_path / rel
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(text, encoding="utf-8")
-    (tmp_path / "jobs").mkdir(exist_ok=True)
+    for top in ("jobs", "tools", "src"):   # #1376: udim-tile guards jobs/ + tools/ + src/; each must exist
+        (tmp_path / top).mkdir(exist_ok=True)
     ctx = tmp_path / "contexts.yaml"
     ctx.write_text("contexts:\n  - id: x\n    duplicates:\n" + rows if rows else "contexts:\n  - id: x\n",
                    encoding="utf-8")

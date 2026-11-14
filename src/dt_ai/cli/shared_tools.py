@@ -17,6 +17,7 @@ from pathlib import Path
 DERIVE_STEPS = {
     "atlas": ("python", "tools/derive/npm_atlas.py", "NPM 2048 atlas (d + o PNG, npm_atlas.json) from a VPM texture spec"),
     "npm": ("blender", "tools/derive/export_npm.py", "NPM OKS FBX from a VPM stage-6 master + atlas (headless Blender)"),
+    "package-npm": ("python", "tools/derive/package_npm.py", "NPM flat ZIP with Ground and embedded-texture OKS FBX"),
     "package": ("python", "tools/derive/package_vpm.py", "VPM package ZIP: FBX + external PNG set (+ GeoJSON)"),
 }
 GROUND_STEPS = {
