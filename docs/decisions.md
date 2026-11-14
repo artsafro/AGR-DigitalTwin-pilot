@@ -317,6 +317,8 @@ frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Mar
 
 | D291 | 2026-11-14 | Silikatny #1315: accept Flora pilot v008/r2 shrub construction for site-wide replication exactly as shown, including shape, centre and Hydrangea, without edits. Apply only to copies while retaining the D289 species/count/point/size/budget constraints; no library edits or technical/final-delivery waiver. | `jobs/SIL13-COLD-1315/TASK.md`; `docs/domain/areas/ground-surface.md` | Artem, relayed on owning card t_d9ae7dc0 and issue #1315 comment 6880380487 |
 
+| D294 | 2026-11-14 | Silikatny #1315: permit cell-based crown trimming for overlapping hedge plants as in the separate v009 cell-pilot, retaining every ID, count, planting point and height; the measured pilot crown retention of 68.1-79.4% is accepted. Apply the method across the site, measure individual losses and show the new whole-site result before delivery. This is not a blanket approval of newly discovered smaller crowns, non-hedge trimming or technical FAILs; etalon libraries remain unchanged. | `jobs/SIL13-COLD-1315/TASK.md`; `docs/domain/areas/ground-surface.md` | Artem «принимаю рекомендации», owning card t_d9ae7dc0 and issue #1315 comment 6884280746 |
+
 [passport-scope-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1207#issuecomment-6783203728
 
 [ground-refinement-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/295#issuecomment-6265799957

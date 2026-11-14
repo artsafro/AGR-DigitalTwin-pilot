@@ -59,7 +59,11 @@ symbols extracted, 52/52 inside the approved boundary and preserved by DXF readb
 match all five point-plant schedule quantities (1, 4, 6, 17, 24). A linden-named CAD symbol is position 2/4,
 not authority to substitute linden for Red Sunset. Flora candidates remain subject to identity/size checks.
 MAF: all 32 DOCX rows accounted for; no certified SKU-to-model match yet (not proof of disk-wide absence).
-Current continuation is [CONTINUATION-v009.md](CONTINUATION-v009.md). [D281] answers
+Current continuation is [CONTINUATION-v010.md](CONTINUATION-v010.md). [D294] closes
+approval of the v009 cell-trim method/pilot losses. Actual full-site v010/r1 retains
+all4,582plants/38MAF and points/heights,157,137/619,340render triangles, but new
+minimum crown retention32.04%/31.01% is not silently covered by pilot68.1–79.4%.
+Candidate-only pending the new measured-loss choice; technical FAILs remain worker-owned. [D281] answers
 G1–G3; [D284] supplies the standing sliver/TIN/draw-order rule without repeated small
 questions. First pilot geometry remains [D283]; zero/5.6 m plan remain [D282].
 [D287] closes the v006/r5 picture choice: all 38 MAF kept as accepted-by-picture,

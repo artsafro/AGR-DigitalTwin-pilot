@@ -1,6 +1,13 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **v009/r2 actual site replication [D291], not delivered**.
+Current status: **v010/r1 actual full-site cell-trim candidate [D294], not delivered**.
+See [CONTINUATION-v010.md](CONTINUATION-v010.md):4,535hedges clipped; all4,582plants/
+38MAF/points/heights retained, actual157,137/619,340render triangles. Actual-export
+minimum crown retention32.04%/31.01% is a NEW loss beyond accepted pilot68.1–79.4%:
+model-owner choice remains, not another pilot approval. NPMFlora0face pairs, but
+whole-site xView/validators FAIL; technical repairs stay worker-owned.
+
+Historical status: **v009/r2 actual site replication [D291], not delivered**.
 See [CONTINUATION-v009.md](CONTINUATION-v009.md): 4,576 accepted changed-copy shrubs
 replicated, all4,582 plants/38MAF retained, actual157,141/617,840 render triangles.
 One interim Flora atlas packed/read back; whole-site validators still FAIL. Three

@@ -1,0 +1,264 @@
+{
+  "passed": false,
+  "run_id": "cold-1315-cell-trim-v010-r1",
+  "decision": "D294",
+  "decision_ref": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6884280746",
+  "scope": "measured whole-site cell-trim candidate; new crown losses outside pilot; not delivered",
+  "profiles": {
+    "NPM": {
+      "total_triangles": 157137,
+      "ground_triangles": 58896,
+      "flora_triangles": 64120,
+      "maf_triangles": 34121,
+      "retained_MAF": 38,
+      "fbx_sha256": "eebd8a3eb797a68ea60b6ae91a6fde0c2f0c9192b19aabb46b1ebfb80a900bb3",
+      "actual_raw_render_triangles": 157137,
+      "native_render_triangles": 157098,
+      "native_removed_faces": 39,
+      "plants_retained": 4582,
+      "nonhedge_plants_exact": 47,
+      "unchanged_meshes": 2,
+      "ground_maf_exact": true,
+      "min_crown_ratio": 0.3204126023853554,
+      "below_681percent": 545,
+      "worst": {
+        "handle": "33FC3FE+33FC417_1014",
+        "before_crown_m": 0.6625156498926899,
+        "after_crown_m": 0.21227836350314178,
+        "ratio": 0.3204126023853554,
+        "sinking_error_m": 5.960464483090178e-09,
+        "height_error_m": 7.760871834072702e-09
+      },
+      "max_sinking_error_m": 2.384185793236071e-08,
+      "max_height_error_m": 1.5305365863582665e-07,
+      "xview_totals": {
+        "overlapping_vertices": 1026,
+        "overlapping_faces": 3197,
+        "vertex_pairs": 600,
+        "face_pairs": 5253,
+        "face_pairs_by_kind": {
+          "contact": 322,
+          "area": 1394,
+          "area+contact": 3537
+        },
+        "bowtie_vertices": 669,
+        "bowtie_pairs": 50,
+        "parts_without_faces": 0
+      },
+      "flora_face_pairs": 0,
+      "flora_cross_instance_pairs": 0,
+      "validator": {
+        "exit_code": 1,
+        "machine_stage_counts": {
+          "pass": 2,
+          "fail": 3,
+          "review": 1,
+          "not_run": 2
+        },
+        "fails": [
+          {
+            "stage": "V003",
+            "name": "ground skirt depth",
+            "observed": "SM_SIL13_Ground.fbx: SM_SIL13_Ground perimeter drop 0.006 m"
+          },
+          {
+            "stage": "V004",
+            "name": "topology defects",
+            "observed": "SM_SIL13_Ground.fbx: ['SM_SIL13_Flora (duplicates_and_self_intersections=360)', 'SM_SIL13_GroundEl (duplicates_and_self_intersections=15286, isolated_vertices=9, isolated_polygons=1)']"
+          },
+          {
+            "stage": "V004",
+            "name": "MAF flipped normals",
+            "observed": "SM_SIL13_Ground.fbx: SM_SIL13_GroundEl: flipped 1444, inconsistent 0, undetermined 305"
+          },
+          {
+            "stage": "V004",
+            "name": "co-directional clearance",
+            "observed": "SM_SIL13_Ground.fbx: 69665 co-directional overlapping pairs: 2863 < 5 mm, 52795 in band, 14007 > 20 mm; distance mm min/median/max 0/5.9996/157888.0627; histogram {'0-1': 2837, '1-5': 26, '5-10': 52770, '10-20': 25, '20-50': 85, '50-100': 529, '100-1000': 7550, '1000+': 5843}; worst: ['SM_SIL13_GroundEl#7398/SM_SIL13_GroundEl#7500 d=0.0 mm', 'SM_SIL13_GroundEl#7398/SM_SIL13_GroundEl#7502 d=0.0 mm', 'SM_SIL13_GroundEl#7398/SM_SIL13_GroundEl#7666 d=0.0 mm', 'SM_SIL13_GroundEl#7398/SM_SIL13_GroundEl#7683 d=0.0 mm', 'SM_SIL13_GroundEl#7398/SM_SIL13_GroundEl#7684 d=0.0 mm']"
+          },
+          {
+            "stage": "V005",
+            "name": "material assignments",
+            "observed": "SM_SIL13_Ground.fbx: [\"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_1'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_2'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_3'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_4'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_5'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_6'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_7'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_8'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_9'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_10'\", \"SM_SIL13_GroundEl: unmapped diffuse for material 'M_SIL13_Ground_12'\"]"
+          }
+        ]
+      },
+      "external_fbx": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v010\\r1\\NPM\\SM_SIL13_Ground.fbx"
+    },
+    "VPM": {
+      "total_triangles": 619340,
+      "ground_triangles": 58896,
+      "flora_triangles": 392304,
+      "maf_triangles": 168140,
+      "retained_MAF": 38,
+      "fbx_sha256": "ad1258a321721cda1f5345e03db1a88d6c5b8c02b4709fee39863b5e32336c68",
+      "actual_raw_render_triangles": 619340,
+      "native_render_triangles": 619292,
+      "native_removed_faces": 48,
+      "plants_retained": 4582,
+      "nonhedge_plants_exact": 47,
+      "unchanged_meshes": 600,
+      "ground_maf_exact": true,
+      "min_crown_ratio": 0.3101052738394506,
+      "below_681percent": 666,
+      "worst": {
+        "handle": "33FC3FE+33FC417_1014",
+        "before_crown_m": 0.7078228093548695,
+        "after_crown_m": 0.21949958612480103,
+        "ratio": 0.3101052738394506,
+        "sinking_error_m": 5.960464483090178e-09,
+        "height_error_m": 7.760871834072702e-09
+      },
+      "max_sinking_error_m": 2.384185793236071e-08,
+      "max_height_error_m": 1.5305365863582665e-07,
+      "xview_totals": {
+        "overlapping_vertices": 964,
+        "overlapping_faces": 45031,
+        "vertex_pairs": 489,
+        "face_pairs": 95194,
+        "face_pairs_by_kind": {
+          "contact": 41072,
+          "area": 6853,
+          "area+contact": 47269
+        },
+        "bowtie_vertices": 298,
+        "bowtie_pairs": 1,
+        "parts_without_faces": 0
+      },
+      "flora_face_pairs": 43,
+      "flora_cross_instance_pairs": 43,
+      "validator": {
+        "exit_code": 1,
+        "machine_stage_counts": {
+          "pass": 3,
+          "fail": 3,
+          "review": 1,
+          "not_run": 5
+        },
+        "fails": [
+          {
+            "stage": "V003",
+            "name": "ground skirt depth",
+            "observed": "SM_SIL13_Ground.fbx: broken face geometry: SM_SIL13_Ground"
+          },
+          {
+            "stage": "V004",
+            "name": "topology defects",
+            "observed": "SM_SIL13_Ground.fbx: ['SM_SIL13_Ground (duplicates_and_self_intersections=390467)']"
+          },
+          {
+            "stage": "V004",
+            "name": "co-directional clearance",
+            "observed": "SM_SIL13_Ground.fbx: 360709 co-directional overlapping pairs: 14936 < 5 mm, 54778 in band, 290995 > 20 mm; distance mm min/median/max 0/397.9231/176684.7157; histogram {'0-1': 11789, '1-5': 3147, '5-10': 54131, '10-20': 647, '20-50': 30955, '50-100': 3439, '100-1000': 142702, '1000+': 113899}; worst: ['SM_SIL13_Ground#67096/SM_SIL13_Ground#67228 d=0.0 mm', 'SM_SIL13_Ground#67096/SM_SIL13_Ground#67229 d=0.0 mm', 'SM_SIL13_Ground#67097/SM_SIL13_Ground#67228 d=0.0 mm', 'SM_SIL13_Ground#67097/SM_SIL13_Ground#67229 d=0.0 mm', 'SM_SIL13_Ground#67108/SM_SIL13_Ground#67216 d=0.0 mm']"
+          },
+          {
+            "stage": "V008",
+            "name": "mirrored islands",
+            "observed": "SM_SIL13_Ground.fbx: {'SM_SIL13_Ground': 139970}"
+          }
+        ]
+      },
+      "external_fbx": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v010\\r1\\VPM\\SM_SIL13_Ground.fbx"
+    }
+  },
+  "source_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\pzu-20261104.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "equal": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\СИЛ13-УВК-ПД-ПЗУ_.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\maf-and-light-spec.docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "equal": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\МАФ_и_свет_модели_фото (4).docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "equal": true
+    }
+  ],
+  "library_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+      "sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0435_M_Bench_025.fbx",
+      "sha256": "e6b6a2ba2ce042d957c80649dbf6285ecfa3d35e041f95142fe888691b2e723a",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0472_M_Cannopy_006.fbx",
+      "sha256": "cb10e03cb0298b3a247df165171da8dc7805f843342f8507886c99f16e38a096",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0698_M_Urn_010.fbx",
+      "sha256": "70a6ef60d95db7cb02f54df48b9c93ccbb08a7b72a535e9b15766034767a8586",
+      "equal": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/flora/v003/flora-library-v003.max",
+      "sha256": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74",
+      "equal": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/maf/maf-npm.blend",
+      "sha256": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd",
+      "equal": true
+    }
+  ],
+  "map_original_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\gortenzia_drevovidnaya_t2_h100_low.png",
+      "sha256": "34a61062405237ffb8bd5a1422371cd401355f2573b01b869c92020b8bb15c93"
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\puzyreplodnik_kalinolistnyj_t1_h150_low.png",
+      "sha256": "a671588be5fd368b77420bae521ab93234568e65d0b9aae206182b095a64a8e1"
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\klen_t7_h550_low.png",
+      "sha256": "96f1de1d059b6a8a3d66562479fc62d36126a7f31cbbe8d08f7423f8656a64a2"
+    }
+  ],
+  "evidence_root": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v010",
+  "review_sheet": {
+    "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v010\\review-sheet-v010-NOT-DELIVERED.png",
+    "sha256": "035d0208208baa7241a2ce8590d95ce9ab009980766d6768daaaad45487070be"
+  },
+  "rejected_calls": [
+    "xview-VPM.log: lowercase vpm unsupported,exit2; corrected uppercase VPM receipt used",
+    "validator-VPM.stderr: optional footprint-holes expects inline JSON,exit2; corrected run omits optional operand, hole coverage not measured"
+  ],
+  "remaining": [
+    "new measured whole-site crown losses32.04/31.01percent need model-owner decision; not another pilot approval",
+    "VPM non-hedge/mixed43Flora pairs and remaining MAF topology/normals/native39/48face losses",
+    "Ground skirt/curbs/materials/atlases/UV/UDIM/density",
+    "UCX gaps/continuous coverage/internal contacts",
+    "interim/grey maps and22MAFrows/Abies1/RedSunset4/flowerbed133m2 gaps",
+    "final textured user gate and complete SINTEZ"
+  ]
+}
