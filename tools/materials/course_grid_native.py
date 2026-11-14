@@ -370,3 +370,47 @@ def source_joint_footprint(image, source_uv, chart_m):
         p=np.array([[x0,y0],[x1,y0],[x1,y1],[x0,y1]],dtype=float)
         polygons.append(Polygon(np.c_[p-pixels[0],np.ones(4)]@matrix+chart[0]))
     return unary_union(polygons).intersection(domain)
+
+
+def rectify_axis_joint_footprint(footprint):
+    """Fit explicit chart-axis 10-mm bands to a measured raster footprint.
+
+    Use only on authorized minor-part joint masks. Unlike tracing 1.95-mm pixel
+    stairs into topology, fit nominal-width lines, merge collinear fragments and
+    prove BOTH false/missing shape containment at the fixed 5-mm contract.
+    Refuse broad/diagonal source shapes rather than silently reinterpreting them.
+    """
+    from shapely.geometry import box
+    from shapely.ops import unary_union
+    if footprint.is_empty:return footprint
+    if not footprint.is_valid:raise ValueError('invalid reference joint footprint')
+    components=[footprint] if footprint.geom_type=='Polygon' else list(getattr(footprint,'geoms',[]))
+    bands=[]
+    for part in components:
+        if part.geom_type!='Polygon' or part.area<=1e-12:continue
+        x0,y0,x1,y1=part.bounds;dx=x1-x0;dy=y1-y0
+        if min(dx,dy)>.025:raise ValueError('unsupported broad/diagonal reference joint')
+        axis=0 if dx<=dy else 1
+        center=(x0+x1)/2 if axis==0 else (y0+y1)/2
+        lo,hi=(y0,y1) if axis==0 else (x0,x1)
+        if hi-lo<.01:lo,hi=(lo+hi)/2-.005,(lo+hi)/2+.005
+        bands.append(dict(axis=axis,center=center,lo=lo,hi=hi,weight=part.area))
+    changed=True
+    while changed:
+        changed=False
+        for i,a in enumerate(bands):
+            for j in range(i+1,len(bands)):
+                b=bands[j]
+                if a['axis']!=b['axis'] or abs(a['center']-b['center'])>.004 or max(a['lo'],b['lo'])-min(a['hi'],b['hi'])>.005:continue
+                weight=a['weight']+b['weight']
+                a.update(center=(a['center']*a['weight']+b['center']*b['weight'])/weight,lo=min(a['lo'],b['lo']),hi=max(a['hi'],b['hi']),weight=weight)
+                bands.pop(j);changed=True;break
+            if changed:break
+    polygons=[]
+    for a in bands:
+        c=a['center'];lo=a['lo'];hi=a['hi']
+        polygons.append(box(c-.005,lo,c+.005,hi) if a['axis']==0 else box(lo,c-.005,hi,c+.005))
+    result=unary_union(polygons)
+    if footprint.difference(result.buffer(.005)).area>1e-12 or result.difference(footprint.buffer(.005)).area>1e-12:
+        raise ValueError('axis joint fit exceeds fixed 5 mm correspondence')
+    return result

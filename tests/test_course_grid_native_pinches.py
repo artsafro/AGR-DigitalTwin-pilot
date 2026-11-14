@@ -17,6 +17,19 @@ def test_native_tessellation_reports_and_omits_sub_overlay_collinear_cell():
     assert any(c.get('native_collapsed_cells') for c in cells)
 
 
+def test_native_fragment_accounting_closes_the_reported_area_balance():
+    xy=[[101.236748525615,-4.446862021089],[99.249740785451,-4.446861946583],
+        [99.249740785451,-4.571047024429],[99.443149966581,-4.571047031681],
+        [99.443149966581,-4.457708205495],[99.453149966581,-4.457708205495],
+        [99.453149966581,-4.571047032015],[99.452052539885,-4.571047032015],
+        [101.042814210303,-4.571047091663],[101.042814210303,-4.45770826544],
+        [101.052814210303,-4.45770826544],[101.052814210303,-4.571047092033],
+        [101.052678420918,-4.571047092033],[101.236748525615,-4.571047098935]]
+    cells=native_piece_cells(dict(source=['synthetic',2],joint=False,chart_m=xy,xyz=[[x,y,0.] for x,y in xy]))
+    dropped=sum(c['area_m2'] for c in cells[0]['native_collapsed_cells'])
+    assert sum(Polygon(c['chart_m']).area for c in cells)+dropped==pytest.approx(Polygon(xy).area,abs=1e-10)
+
+
 def test_native_almost_closed_slit_retains_surface_without_ambiguous_corners():
     # Synthetic affine-plane reduction of the real source-1499 overlay witness.
     xy=[[112.588943724691,-4.872886696458],[114.979522951001,-4.872887083888],
