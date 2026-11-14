@@ -44,6 +44,14 @@ def transform_point(point, fit, profile):
     return [x, y, z]
 
 
+# Latest merged R1 source, #1246 / #1278. Historical v002 pins below remain valid.
+ADDITIONAL_APPROVED_R1_HASHES = [{
+    'SM_Kpp_1.fbx': '76a7c97e523d6ac6475443a84f51e4b2ec588de3cbeb1b300d08adf07e97dc50',
+    '0000_Kpp_1_01.fbx': 'ee3ac5994e298c476f63e0a40b7c977718c88127103d8078860cc07900d980b9',
+    'SM_Kpp_1.zip': '350518df6d2e6e7b39c4348addc6fd88cc5bed118991440d1365be75406c6fb2',
+}]
+
+
 def prepare(src, out, fit):
     import hashlib
     required = ['SM_Kpp_1.fbx', '0000_Kpp_1_01.fbx', 'SM_Kpp_1.zip']
@@ -68,8 +76,8 @@ def prepare(src, out, fit):
         '0000_Kpp_1_01.fbx': '9604a8f14f064495a8ccbbf17d21cdd1445825f6a9fc3ca215531327ada812bd',
         'SM_Kpp_1.zip': '7479908fb68dd7fd95dad84c858605cfbf23c6c4fad306384a8082c15dac8fff',
     }
-    if hashes != expected:
-        raise ValueError('source hashes differ from R1 v002: ' + repr(hashes))
+    if hashes != expected and hashes not in ADDITIONAL_APPROVED_R1_HASHES:
+        raise ValueError('source hashes differ from approved R1 v002/v003: ' + repr(hashes))
     return hashes
 
 

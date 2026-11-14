@@ -115,6 +115,10 @@ Conflicts are referenced only through [the conflict register](../conflicts.md): 
 C13/[D016], C14/[D017], C20/[D019]. No conflict is decided, no new conflict was found, and no rule
 file is changed here.
 
+Job-local incomplete-package authorization: KPP1 [D285] permits copy-only assembly without
+Ground or a KPP1-specific area schedule, with every non-pass stage/value/limit/missing input/owner
+reported in [STATE](../../../jobs/KPP1/STATE.md). It does not waive PKG-03/PKG-21 or delivery gates.
+
 ## L2 gaps
 
 Rows with `none` (**9**); these are follow-up candidates (T-PKG-2/3), not filed tickets:

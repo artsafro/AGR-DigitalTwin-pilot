@@ -1,0 +1,35 @@
+{
+  "changed": [
+    "T_Kpp_1_Diffuse_1.1004.png",
+    "T_Kpp_1_Diffuse_1.1005.png",
+    "T_Kpp_1_Diffuse_1.1006.png",
+    "T_Kpp_1_Diffuse_1.1007.png",
+    "SM_Kpp_1.geojson"
+  ],
+  "unchanged": [
+    "SM_Kpp_1.fbx",
+    "T_Kpp_1_Diffuse_1.1001.png",
+    "T_Kpp_1_Diffuse_1.1002.png",
+    "T_Kpp_1_Diffuse_1.1003.png",
+    "T_Kpp_1_ERM_1.1001.png",
+    "T_Kpp_1_ERM_1.1002.png",
+    "T_Kpp_1_ERM_1.1003.png",
+    "T_Kpp_1_ERM_1.1004.png",
+    "T_Kpp_1_ERM_1.1005.png",
+    "T_Kpp_1_ERM_1.1006.png",
+    "T_Kpp_1_ERM_1.1007.png",
+    "T_Kpp_1_Normal_1.1001.png",
+    "T_Kpp_1_Normal_1.1002.png",
+    "T_Kpp_1_Normal_1.1003.png",
+    "T_Kpp_1_Normal_1.1004.png",
+    "T_Kpp_1_Normal_1.1005.png",
+    "T_Kpp_1_Normal_1.1006.png",
+    "T_Kpp_1_Normal_1.1007.png"
+  ],
+  "source_member_count": 23,
+  "output_member_count": 23,
+  "dropped": [],
+  "png_constant_colour_parity": "12/12",
+  "geojson_semantic_parity": true,
+  "delivery_passed": false
+}
