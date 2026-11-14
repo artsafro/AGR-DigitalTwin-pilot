@@ -8,13 +8,22 @@ from tools.materials.course_grid_native import vectorize_joint_footprint
 def test_cut_node_can_anchor_to_one_unchanged_original_corner():
     from tools.materials.course_grid_native import coalesce_cut_nodes
     vertices=[[0.,0.,0.],[1.,0.,0.],[0.,1.,0.],[.001,0.,0.]]
-    out=coalesce_cut_nodes(vertices,[[3,1,2]],[7],original_vertex_count=3,
+    out=coalesce_cut_nodes(vertices,[[3,1,2]],[7],original_vertex_count=3,allow_original_anchor=True,
                           groups=[dict(vertices=[0,3],position=[0.,0.,0.])])
     assert out['vertices'][:3]==vertices[:3]
     assert out['faces']==[[0,1,2]] and out['lineage']==[7]
     with pytest.raises(ValueError,match='original'):
-        coalesce_cut_nodes(vertices,[[3,1,2]],[7],original_vertex_count=3,
+        coalesce_cut_nodes(vertices,[[3,1,2]],[7],original_vertex_count=3,allow_original_anchor=True,
                            groups=[dict(vertices=[0,3],position=[.001,0.,0.])])
+
+
+def test_raster_joint_tip_near_source_corner_uses_the_corner_not_a_micro_edge():
+    face=Polygon([(0.,0.),(.2,0.),(.2,1.),(0.,1.)])
+    expected=Polygon([(0.,0.),(.01,0.),(.01,.97),(.001,.999),(0.,.999)])
+    fitted=vectorize_joint_footprint(expected,face=face)
+    assert (0.,1.) in fitted.exterior.coords
+    assert expected.difference(fitted.buffer(.005)).area==0
+    assert fitted.difference(expected.buffer(.005)).area==0
 
 
 def test_tapered_source_joint_is_not_extended_to_full_width_at_its_tip():

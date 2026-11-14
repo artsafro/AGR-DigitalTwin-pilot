@@ -245,7 +245,7 @@ def triangulate_conforming_polygon(points):
     return triangles
 
 
-def coalesce_cut_nodes(vertices, faces, lineage, *, original_vertex_count, groups):
+def coalesce_cut_nodes(vertices, faces, lineage, *, original_vertex_count, groups, allow_original_anchor=False):
     """Apply explicit minor-cut node groups bounded to 2 mm, never auto-weld.
 
     Original vertices cannot move or be removed. Report every collapsed cell;
@@ -263,8 +263,11 @@ def coalesce_cut_nodes(vertices, faces, lineage, *, original_vertex_count, group
     for group in groups:
         if not isinstance(group,dict) or set(group)!={'vertices','position'}:raise ValueError('invalid explicit group')
         ids=group['vertices'];p=group['position']
-        if not isinstance(ids,list) or len(ids)<2 or len(set(ids))!=len(ids) or any(type(i) is not int or not original_vertex_count<=i<len(vertices) or i in seen for i in ids):raise ValueError('original/duplicate/invalid cut-node group')
+        if not isinstance(ids,list) or len(ids)<2 or len(set(ids))!=len(ids) or any(type(i) is not int or not 0<=i<len(vertices) or i in seen for i in ids):raise ValueError('original/duplicate/invalid cut-node group')
         if not isinstance(p,list) or len(p)!=3 or any(isinstance(x,bool) or not isinstance(x,(int,float)) or not math.isfinite(x) for x in p):raise ValueError('nonfinite/partial cut-node position')
+        anchors=[i for i in ids if i<original_vertex_count]
+        if type(allow_original_anchor) is not bool or anchors and not allow_original_anchor or len(anchors)>1 or anchors and p!=vertices[anchors[0]]:
+            raise ValueError('original anchor must remain unchanged and unique')
         motion=max(math.dist(vertices[i],p) for i in ids)
         if motion>.002:raise ValueError('cut-node movement exceeds 2 mm')
         maximum=max(maximum,motion);rep=min(ids);out[rep]=list(p)
