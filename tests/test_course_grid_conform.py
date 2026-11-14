@@ -54,6 +54,15 @@ def test_explicit_minor_scope_reports_sub_native_collapsed_cell_without_losing_s
         conform_source_mesh(vertices,faces,[10,10],coords,source,{10:[0,1,2]})
 
 
+def test_nearby_parallel_edges_do_not_insert_the_same_node_twice():
+    source=[[0.,0.,0.],[1.,0.,0.],[1.,.00001,0.],[0.,.00001,0.]]
+    vertices=source+[[.5,0.,0.]];faces=[[0,1,2,3],[0,4,3]]
+    uv=[[[0,0],[1,0],[1,.00001],[0,.00001]],[[0,0],[.5,0],[0,.00001]]]
+    out=conform_source_mesh(vertices,faces,[10,10],uv,source,{10:[0,1,2,3]})
+    assert out['faces'][0]==[0,4,1,2,3]
+    assert out['insertions']==[{'face':0,'edge':[0,1],'vertex':4}]
+
+
 def test_close_disconnected_surface_is_not_welded():
     source=[[0.,0.,0.],[1.,0.,0.],[0.,1.,0.],[0.,0.,.00001],[1.,0.,.00001],[0.,1.,.00001]]
     faces=[[0,1,2],[3,4,5]];uv=[[[0,0],[1,0],[0,1]]]*2

@@ -102,7 +102,7 @@ def encode_triangle_uv(xyz, ideal_uv, *, tile_px):
     raise ValueError('native float32 encoding exceeds density/anisotropy/subpixel budget')
 
 
-def conform_source_mesh(vertices, faces, lineage, uv, source_vertices, source_faces, *, epsilon_m=2e-5):
+def conform_source_mesh(vertices, faces, lineage, uv, source_vertices, source_faces, *, epsilon_m=2e-5, collapsed_sources=()):
     """Resolve only source-proven duplicate endpoints, then node shared edges.
 
     Coordinates must be in the same metre frame. Original vertices remain in
@@ -165,13 +165,23 @@ def conform_source_mesh(vertices, faces, lineage, uv, source_vertices, source_fa
                 remap[j]=i;changes.append({'from':j,'to':i,'distance_m':float(np.linalg.norm(v[i]-v[j]))})
     for i in range(len(remap)):
         while remap[i]!=remap[remap[i]]:remap[i]=remap[remap[i]]
-    newfaces=[[remap[i] for i in f] for f in faces]
-    if any(len(set(f))!=len(f) for f in newfaces):raise ValueError('conforming would collapse a face')
+    if not isinstance(collapsed_sources,(list,tuple)) or any(type(s) is not int or s not in source_faces for s in collapsed_sources):raise ValueError('invalid collapse source scope')
+    newfaces=[];newuv=[];new_lineage=[];input_face=[];dropped=[]
+    for fi,(face,src,coords) in enumerate(zip(faces,lineage,uv)):
+        mapped=[remap[i] for i in face];keep=[i for i in range(len(face)) if mapped[i]!=mapped[i-1]]
+        clean=[mapped[i] for i in keep]
+        if len(set(clean))<3:
+            if src not in collapsed_sources:raise ValueError('conforming would collapse a face')
+            dropped.append(dict(face=fi,source=src,reason='explicit minor scope: proven sub-native identity collapsed connectivity cell'))
+            continue
+        if len(set(clean))!=len(clean):raise ValueError('conforming repeats nonconsecutive vertex')
+        newfaces.append(clean);newuv.append([coords[i] for i in keep]);new_lineage.append(src);input_face.append(fi)
+    if set(new_lineage)!=set(lineage):raise ValueError('conforming loses source identity')
     owners=defaultdict(set)
-    for f,src in zip(newfaces,lineage):
+    for f,src in zip(newfaces,new_lineage):
         for i in f:owners[i].add(src)
     active=np.array(sorted(owners),dtype=int);positions=v[active];out=[];outuv=[];insertions=[]
-    for fi,(face,src,coords) in enumerate(zip(newfaces,lineage,uv)):
+    for fi,(face,src,coords) in enumerate(zip(newfaces,new_lineage,newuv)):
         nf=[];nu=[]
         for k,a in enumerate(face):
             b=face[(k+1)%len(face)];d=v[b]-v[a];length=float(d@d)
@@ -192,7 +202,7 @@ def conform_source_mesh(vertices, faces, lineage, uv, source_vertices, source_fa
                 insertions.append({'face':fi,'edge':[a,b],'vertex':j})
         if len(set(nf))!=len(nf):raise ValueError('repeated conforming vertex')
         out.append(nf);outuv.append(nu)
-    return dict(vertices=[list(p) for p in vertices],faces=out,uv=outuv,remap=remap,merges=changes,insertions=insertions,
+    return dict(vertices=[list(p) for p in vertices],faces=out,uv=outuv,remap=remap,merges=changes,insertions=insertions,input_face=input_face,dropped_faces=dropped,
                 unused_vertices=sorted(set(range(len(vertices)))-{i for f in out for i in f}))
 
 
