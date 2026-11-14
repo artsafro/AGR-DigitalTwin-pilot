@@ -75,7 +75,7 @@ def partition_joint_zones(row, zones):
         if not clipped.is_empty:clips.append(clipped)
     joint=unary_union(clips)
     brick=poly.difference(joint)
-    pieces=[]
+    pieces=[];numerical_fragments=[]
     for label,geometry in [(False,brick),(True,joint)]:
         geoms=[geometry] if geometry.geom_type=='Polygon' else list(geometry.geoms)
         simple=[]
@@ -103,6 +103,12 @@ def partition_joint_zones(row, zones):
                 simple.extend(cells)
             else:simple.append(p)
         for p in simple:
+            if p.area<=max(1e-12,poly.length*1e-12*16):
+                numerical_fragments.append(dict(joint=label,area_m2=p.area,
+                    chart_m=[list(c) for c in p.exterior.coords[:-1]],
+                    reason='sub-overlay-area fragment; bounded below'))
+                continue
+            p=p.simplify(4e-12,preserve_topology=True)
             points=np.asarray(orient(p,sign=1).exterior.coords[:-1])
             # Preserve source corners exactly; interpolate new vertices in source
             # fan triangles, not the best-fit plane (source float32 may warp).
@@ -120,8 +126,15 @@ def partition_joint_zones(row, zones):
                 world.append(found.tolist())
             pieces.append(dict(source=key.copy(),joint=label,chart_m=points.tolist(),xyz=world))
     covered=unary_union([Polygon(p['chart_m']) for p in pieces])
-    if poly.symmetric_difference(covered).area>max(1e-12,poly.area*1e-10):
+    coverage_error=poly.symmetric_difference(covered).area
+    overlay_area_bound=max(1e-12,poly.length*1e-12*16)
+    if coverage_error>overlay_area_bound or sum(f['area_m2'] for f in numerical_fragments)>overlay_area_bound:
         raise ValueError(f'incomplete partition {key}')
+    # Overlay can retain zero-area lines in a GeometryCollection. Derive the
+    # surface boundary from actual polygon pieces, not GEOS collection.boundary
+    # (which is None). Zero-area contacts are not mesh faces.
+    brick=unary_union([Polygon(p['chart_m']) for p in pieces if not p['joint']])
+    joint=unary_union([Polygon(p['chart_m']) for p in pieces if p['joint']])
     boundary=brick.boundary.intersection(joint.boundary) if not brick.is_empty and not joint.is_empty else None
     segments=[]
     for line in ([] if boundary is None else [boundary] if boundary.geom_type=='LineString' else getattr(boundary,'geoms',[])):
@@ -131,7 +144,32 @@ def partition_joint_zones(row, zones):
     return dict(source=key,pieces=pieces,new_segments=segments,dropped_faces=[],
                 source_area_m2=poly.area,joint_area_m2=joint.area,
                 planar_fit_residual_m=residual,overlay_grid_m=1e-12,
+                numerical_fragments=numerical_fragments,coverage_error_m2=coverage_error,
+                overlay_area_bound_m2=overlay_area_bound,
                 passed=False,status='partition_only')
+
+
+def edge_joint_zone(chart_m, indices, *, width_m):
+    """Exact-width inward strip through a convex source edge.
+
+    Extend longitudinal endpoints beyond this face before clipping so a slightly
+    slanted adjacent edge cannot leave a microscopic wedge. Not a geometry move.
+    """
+    xy=_points(chart_m,2,'chart_m');poly=Polygon(xy)
+    if not poly.is_valid or poly.area<=1e-12 or abs(poly.convex_hull.area-poly.area)>1e-10:
+        raise ValueError('edge joint requires a nondegenerate convex face')
+    if not isinstance(indices,list) or len(indices)!=2 or any(type(i) is not int or i<0 or i>=len(xy) for i in indices) or indices[0]==indices[1]:
+        raise ValueError('invalid edge indices')
+    if (indices[0]-indices[1])%len(xy) not in (1,len(xy)-1):raise ValueError('not a source edge')
+    if isinstance(width_m,bool) or not isinstance(width_m,(int,float)) or not math.isfinite(width_m) or width_m<=0:
+        raise ValueError('width_m must be finite and positive')
+    a,b=xy[indices];direction=b-a;length=float(np.linalg.norm(direction))
+    if length<=1e-12:raise ValueError('degenerate source edge')
+    direction/=length;n=np.array([-direction[1],direction[0]])
+    if np.dot(xy.mean(0)-(a+b)/2,n)<0:n=-n
+    extension=float(np.linalg.norm(np.ptp(xy,axis=0)))+width_m
+    a=a-direction*extension;b=b+direction*extension
+    return [a.tolist(),b.tolist(),(b+n*width_m).tolist(),(a+n*width_m).tolist()]
 
 
 def layout_joint_partition(partitions, *, repeat_m, texel_px_m, tile_px, border_px, gap_px):

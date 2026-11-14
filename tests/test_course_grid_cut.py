@@ -2,7 +2,7 @@
 import copy
 import pytest
 from shapely.geometry import Polygon
-from tools.materials.course_grid_cut import partition_joint_zones, layout_joint_partition, edge_joint_zone
+from tools.materials.course_grid_cut import partition_joint_zones, layout_joint_partition, edge_joint_zone, native_piece_cells
 
 
 def face():
@@ -66,6 +66,45 @@ def test_edge_strip_reaches_slanted_end_without_micrometre_corner_spur():
     assert len(out['pieces'])==2
     assert all(len(p['chart_m'])==4 for p in out['pieces'])
     assert sum(Polygon(p['chart_m']).area for p in out['pieces'])==pytest.approx(2.000001)
+
+
+def test_zero_area_tangent_zone_does_not_poison_polygon_boundary():
+    zones=[[[0,0],[.01,0],[.01,1],[0,1]],[[2,0],[3,0],[3,1],[2,1]]]
+    out=partition_joint_zones(face(),zones)
+    assert len(out['pieces'])==2
+    assert out['joint_area_m2']==pytest.approx(.01)
+
+
+def test_overlay_polygon_plus_zero_area_line_has_a_measurable_boundary():
+    xy=[[95.02184447629318,-4.399998330030216],[95.0218482493222,-4.4999963275340145],
+        [95.25767282274347,-4.872886785864831],[95.25767282274347,-4.7487012314546675]]
+    zones=[[[95.02186856485758,-5.038426550218211],[95.0218241607578,-3.8615681073460193],
+            [95.03182416075069,-3.8615677300355618],[95.03186856485047,-5.038426172907753]],
+           [[95.02242719668901,-4.857896561847707],[95.02242719510893,-4.508122291414429],
+            [95.03243365955277,-4.507490720958548],[95.0324336611357,-4.8578965705457895]]]
+    row=dict(object='synthetic',face=0,material_id=1,chart_m=xy,xyz=[[u,0,v] for u,v in xy])
+    out=partition_joint_zones(row,zones)
+    assert sum(Polygon(p['chart_m']).area for p in out['pieces'])==pytest.approx(Polygon(xy).area,abs=1e-10)
+    assert out['new_segments']
+
+
+def test_one_grid_wide_remainder_is_reported_with_bounded_coverage_error():
+    out=partition_joint_zones(face(),[[[2e-12,0],[.01,0],[.01,1],[2e-12,1]]])
+    assert len(out['pieces'])==2
+    assert out['numerical_fragments']
+    assert out['coverage_error_m2']<=out['overlay_area_bound_m2']
+    assert sum(x['area_m2'] for x in out['numerical_fragments'])<=out['overlay_area_bound_m2']
+
+
+def test_native_cells_keep_convex_quads_and_remove_concave_tessellation_ambiguity():
+    row=face();piece=dict(source=['synthetic',0],joint=False,chart_m=row['chart_m'],xyz=row['xyz'])
+    assert len(native_piece_cells(piece))==1
+    xy=[[0,0],[2,0],[2,.01],[.01,.01],[.01,1],[0,1]]
+    piece=dict(piece,chart_m=xy,xyz=[[u,0,v] for u,v in xy])
+    cells=native_piece_cells(piece)
+    assert sum(Polygon(p['chart_m']).area for p in cells)==pytest.approx(Polygon(xy).area)
+    assert all(len(p['chart_m'])<=4 and Polygon(p['chart_m']).exterior.is_ccw for p in cells)
+    assert all(v in piece['xyz'] for p in cells for v in p['xyz'])
 
 
 def test_exact_ten_mm_inset_keeps_area_surface_winding_and_lineage():
