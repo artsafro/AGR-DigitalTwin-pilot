@@ -4,8 +4,10 @@ Status: **finish cohort, stair-return seams and two main-wall ring terminations 
 Main-wall answer (2026-11-14): `main-wall-seam-approval.json`; the earlier pending
 termination question in `LOOP_POLICY.md` is answered. Check level: `full` (reusable tooling).
 
-Current checkpoint: `LOOP_POLICY.md`, fresh source-bound `ring-audit-v003.json` and
-Artem's exact stair-only permission in `seam-approval.json`. Earlier questions below
+Current checkpoint: `CAP_POLICY.md` and source-bound `cap-audit-v004.json`.
+The complete-edge audit asks one combined main-cap/base seam-scope question;
+`LOOP_POLICY.md` and `ring-audit-v003.json` are historical source checkpoints.
+Artem's exact stair permission is in `seam-approval.json`. Earlier questions below
 are historical; do not reopen the approved cohort or stair-return seam scope.
 
 The prior pending-cohort status below is superseded by Artem's 2026-11-13 voice answer

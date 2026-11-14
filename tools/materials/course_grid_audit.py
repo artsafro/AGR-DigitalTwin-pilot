@@ -1,7 +1,7 @@
-"""new-case: source-bound trihedral corner audit before course-grid packing.
+"""new-case: source-bound closed corner-link audit before course-grid packing.
 
 Reuse uvlayout_core geometry; never unwrap, cut, scale, or certify a delivery.
-A closed three-face fan with angle defect needs a chart seam or distortion.
+A closed disk fan of any valence with angle defect needs a seam or distortion.
 For anisotropy k, each angle can change at most 2*asin((k-1)/(k+1)).
 This necessary condition is not a complete feasibility or packing solver.
 """
@@ -10,11 +10,12 @@ from __future__ import annotations
 import argparse
 from collections import defaultdict
 import hashlib
-import itertools
+
 import json
 import math
 from pathlib import Path
 
+from adapters.max.agr_tools.facadeatlas_core import frame
 from adapters.max.agr_tools.uvlayout_core import tri_normal
 
 
@@ -23,7 +24,7 @@ def audit_corners(rows, *, anisotropy_limit):
 
     Keys: object (str), face (0-based int), vertices (unique source indices),
     xyz (metres in corresponding order). Additional intake fields are retained
-    by the caller. Only closed three-face fans are analysed by this first slice.
+    by the caller. Analyse connected closed disk links, including reflex angles.
     """
     k = anisotropy_limit
     if isinstance(k, bool) or not isinstance(k, (float, int)) or not math.isfinite(k) or k < 1:
@@ -62,19 +63,34 @@ def audit_corners(rows, *, anisotropy_limit):
             if math.dist(p, xyz[(j+1) % len(xyz)]) == 0:
                 raise ValueError(f'{key}: zero length edge')
     result = []
-    angle_budget = 3 * math.degrees(2 * math.asin((k - 1) / (k + 1)))
     for (obj, vi), faces in sorted(incident.items()):
-        if len(faces) != 3:
+        if len(faces) < 3:
             continue
         faces = sorted(faces, key=lambda r: r['face'])
         neighbors = []
         for r in faces:
             j = r['vertices'].index(vi)
             neighbors.append({r['vertices'][j-1], r['vertices'][(j+1) % len(r['vertices'])]})
-        if not all(len(a & b) == 1 for a, b in itertools.combinations(neighbors, 2)):
+        # A closed disk link is one connected cycle, regardless of valence.
+        # Trihedral corners subdivided into 4+ polygons retain the same defect.
+        radial_counts = defaultdict(int)
+        for ns in neighbors:
+            for n in ns:
+                radial_counts[n] += 1
+        if any(n != 2 for n in radial_counts.values()):
             continue
-        if len(set.union(*neighbors)) != 3:
+        adjacent = {i: {j for j in range(len(faces)) if j != i and neighbors[i] & neighbors[j]}
+                    for i in range(len(faces))}
+        if any(len(ns) != 2 for ns in adjacent.values()):
             continue
+        visited, queue = {0}, [0]
+        for i in queue:
+            for j in adjacent[i] - visited:
+                visited.add(j)
+                queue.append(j)
+        if len(visited) != len(faces):
+            continue
+        angle_budget = len(faces) * math.degrees(2 * math.asin((k - 1) / (k + 1)))
         angles, lengths = [], []
         for r in faces:
             j = r['vertices'].index(vi)
@@ -82,7 +98,15 @@ def audit_corners(rows, *, anisotropy_limit):
             a = [x-y for x, y in zip(r['xyz'][j-1], p)]
             b = [x-y for x, y in zip(r['xyz'][(j+1) % len(r['xyz'])], p)]
             la, lb = math.hypot(*a), math.hypot(*b)
-            angles.append(math.degrees(math.acos(max(-1, min(1, sum(x*y for x, y in zip(a,b))/(la*lb))))))
+            angle = math.degrees(math.acos(max(-1, min(1, sum(x*y for x, y in zip(a,b))/(la*lb)))))
+            fr = frame(r['xyz'])
+            if fr is None:
+                raise ValueError(f'{obj, r["face"]}: unsupported zero polygon normal')
+            n = fr[2]
+            cross = (a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0])
+            if sum(x*y for x,y in zip(cross,n)) > 0:
+                angle = 360-angle  # reflex polygon corner, not the smaller angle
+            angles.append(angle)
             lengths.extend([la, lb])
         defect = abs(360 - sum(angles))
         if defect > angle_budget:
@@ -93,7 +117,7 @@ def audit_corners(rows, *, anisotropy_limit):
     return {'status': 'needs_seam_policy' if result else 'incomplete', 'passed': False,
             'face_count': len(rows), 'covered_faces': [[r['object'], r['face']] for r in rows],
             'dropped_faces': [], 'corners': result, 'anisotropy_limit': k,
-            'limitations': ['three-face fans only', 'not a course phase/panel mask/packing certificate',
+            'limitations': ['closed disk links only; no open/nonmanifold fan certificate', 'not a course phase/panel mask/packing certificate',
                             'no seam exceptions have been approved by this tool']}
 
 

@@ -1,4 +1,4 @@
-"""Closed source links must not disappear when a face is subdivided (synthetic)."""
+"""new-case: closed links must not disappear on face subdivision (synthetic)."""
 import math
 import pytest
 from tools.materials.course_grid_audit import audit_corners
@@ -39,3 +39,21 @@ def test_subdivided_fan_rigid_transform_and_input_order_probe():
         corners = audit_corners(rows, anisotropy_limit=1.02)['corners']
         assert len(corners)==1
         assert corners[0]['defect_deg'] == pytest.approx(90, abs=1e-8)
+
+
+def test_reflex_polygon_angle_is_not_a_false_curvature_defect():
+    # Flat disk, with a 270-degree polygon corner plus two 45-degree triangles.
+    points = [[0,0,0], [1,0,0], [1,1,0], [-1,1,0], [-1,-1,0], [0,-1,0], [.5,-.5,0]]
+    faces = [[0,1,2,3,4,5], [0,5,6], [0,6,1]]
+    rows = [{'object':'flat-reflex', 'face':i, 'vertices':vs, 'xyz':[points[v] for v in vs]}
+            for i,vs in enumerate(faces)]
+    assert audit_corners(rows, anisotropy_limit=1.02)['corners'] == []
+
+
+def test_disconnected_disk_links_at_one_index_are_not_combined():
+    rows = subdivided_corner()
+    other = subdivided_corner()
+    for r in other:
+        r['face'] += 4
+        r['vertices'] = [v+10 if v else 0 for v in r['vertices']]
+    assert audit_corners(rows+other, anisotropy_limit=1.02)['corners'] == []

@@ -1,4 +1,4 @@
-"""Source-face public adapter tests; all geometry here is synthetic."""
+"""new-case: source-face public adapter tests; all geometry here is synthetic."""
 import pytest
 
 from tools.materials.course_grid_chart import build_chart
