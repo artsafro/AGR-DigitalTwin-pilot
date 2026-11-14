@@ -309,3 +309,108 @@ wall times; parallel local work and the overnight blocked interval are not infer
    supplier substitutions, taxonomy repairs or confidence percentages without labels.
    Success here is a searchable **draft reference**, not proof of complete semantic
    extraction. The reference is useful already; full-corpus execution is not begun.
+
+## Batch 2 (#1303): B01 Avtozavodskaya planting, B02 Buhvostova school facade
+
+Artem 2026-11-13 accepted recommendation 2 for one weekend batch: at most 2 albums / 40 pages, 100,000 new
+tokens + 30,000 reserve, cached input not counted [D267]. After the first 10 albums the #1274
+inventory has only **8 unique NTR albums of 1 page each** (8 pages). Selection (best extension of the
+reference above; two new projects, neither in A01–A10):
+
+- **B01** `18_Avtozavodskaya/LSR_Благо_озеленение.pdf`, 1 page, sha256 `0bac184a…97bf58be`: paving
+  build-ups + planting legend (planting / site finishes).
+- **B02** `5_1Buhvostova_School/002 - 10.04.2026 - Фасады/Схема фасада в осях 1-17.pdf`, 1 page,
+  sha256 `1450b887…7184c7f2f0be`: facade finish legend **and a window/glazing legend**.
+
+Not selected (reasons, not drops): the three other Buhvostova elevations (А-П, П-А, 17-1) share the
+same folder, author and inventory text size (3.2–3.5k chars), so they likely repeat B02's legend
+(unverified) and are the next batch's cheapest cross-check; `3_PPT_4/покрытия.pdf`
+(366 text chars) and `11_Skladochnaya/Благо.pdf` (180 chars, PDF title says facade-texture concept) are
+near text-less and would need image ROIs; `14_Skolkovo/.../Page 11 from 004_ЦОД02…pdf` is by its file
+name an extract of A10's source (A10 p11), different hash, content not compared — likely overlap.
+
+Method as in #1275: read-only PyMuPDF text, hashes before/after (2/2 unchanged), then a unique-line digest
+in native line order (the `sort=True` dump is 142 kB / 117 kB of padding around 2,010 / 3,362 unique text
+characters). Table extraction not run (text legends read directly), no rendering, no image calls. Scripts, text, digests
+and usage snapshots: `G:/Мой диск/AGR-evidence/1303-ntr-pdf-batch2/` + `SHA256SUMS.txt`
+(digest in the JSON `batch2` block). Page refs are one-based physical pages; both albums are p1.
+
+### Batch 2 reference entries
+
+| Item (source wording) | Source | Evidence / status |
+|---|---|---|
+| ТИП 1.1 paths, concrete paving slab 100 mm, on ground | B01 p1 | H type title; layer stack M (columns shared by types) |
+| ТИП 1.2 fire-truck access, concrete slab 100 mm; concrete with road mesh 100 mm, crushed stone 200 mm, sand 300 mm | B01 p1 | H titles/layers; layer-to-type binding M |
+| ТИП 1.3 / 1.4 paths / fire access **over the roof slab** (stylobate): slab 100 mm, dry sand-cement mix ≥30 mm, unloading RC slab B15 ≥100 mm, ГеоСтандарт 500 separation, TMD 10120 6040T drainage membrane, «Сейфити ЭПП 4 мм» 2 layers, CPR M150 screed 50 mm, expanded-clay concrete D800 slope ≥1.5%, XPS per project, «Сейфити ЭПП 3 кг» vapour barrier, RC slab | B01 p1 | H wording; M binding; the first roof-podium build-up in the reference |
+| ТИП 2.1 paths, concrete slab 60 mm | B01 p1 | H |
+| ТИП 2.2 rubber-crumb surfacing for children's and sports grounds, polymer surface ≥20 mm on RC slab B15 ≥120 mm | B01 p1 | H; surface, not MAF |
+| ТИП 2.3 blind area (отмостка) of gravel 60 mm on «Сейфити Керамик ЭКП 4,5 мм» | B01 p1 | H/M |
+| Planting legend: береза декоративная (+ separate line «Жакмана»), боярышник сливолистный, дерен белый, боярышник сливолистный **в кадке**, самшит **в кадке**, шалфей, щучка дернистая | B01 p1 | H names; «Жакмана» binding to the birch line M; Russian only, **no Latin names, quantities or sizes** |
+| Panels «GRAVIS» galvanized steel 1.2 mm (or analogue), flat, matte brown-red RAL 3022; also radial variant | B02 p1 | H; mark Ф-1…Ф-9 binding M |
+| Same panels, light-grey metallic RAL 9006; dark-grey metallic RAL 7021 | B02 p1 | H |
+| Decorative element with 3D geometric pattern RAL 9006; plaster RAL 9006 / RAL 7021; granite plinth slab RAL 7021; concrete mosaic panels 500x700 mm (НГ) | B02 p1 | H |
+| **Window block**: aluminium profile, dark grey RAL 7021; clear double-chamber IGU | B02 p1 «ЗАПОЛНЕНИЕ ОКОН И ВИТРАЖЕЙ» | H; family only — no block marks/sizes/opening scheme |
+| Stick curtain wall Alutech ALT F50 (or analogue), RAL 7021, glass Larta/AGC (or analogue); **structural/semi-structural** variant | B02 p1 | H; first named profile system in the reference |
+| Single-chamber IGU with painted glass in the curtain wall RAL 7021; sandwich panel in curtain/window system RAL 7021 | B02 p1 | H; opaque infill, not transparent window |
+| Vent grilles RAL 7021; roof railing steel RAL 5000; roof mesh fence posts RAL 7021 / mesh RAL 9010 | B02 p1 | H |
+| Noise screen: steel frame RAL 7021 with steel lamellas «Renson» (or analogue) | B02 p1 | H; marked Ц-1/Ц-2 region M |
+| Navigation plates 1300x325 mm (lit) and 600x400 mm, blue background / white text | B02 p1 | H; signage, not MAF modelling |
+| Levels +21,150 (height limit), +9,750, +7,250, ±0.000; abs. 139,740 etc. | B02 p1 | M: text positions only, not bound to axes |
+
+B02 credits ООО «ам Атриум» as designer and carries a Mosgosexpertiza conclusion number and
+«МАТЕРИАЛ ПРОВЕРЕН»: like A02/A05/A08 it is not NTR authorship. Legend marks (Ф-1…Ф-9, С-1…С-3,
+ОГ-1…ОГ-4, Ц-1/Ц-2) are separate text lines from the descriptions; mark→description pairing needs one
+ROI render and is **unknown** here.
+
+### What batch 2 added that A01–A10 did not
+
+1. A **window-block legend** («Оконный блок…», double-chamber IGU) and a **named curtain-wall system**
+   (Alutech ALT F50, Larta/AGC, structural variant) — A01/A07 had only unnamed curtain-wall families.
+   Still no dimensioned window-block schedule.
+2. New RALs: 3022, 9006, 7021, 5000, 9010; «GRAVIS» steel panels; granite plinth; mosaic concrete panels.
+3. A roof-podium (stylobate) paving build-up with named membranes (Сейфити, TMD, ГеоСтандарт) and
+   rubber-crumb play/sport surfacing — A10 p11 had asphalt on ground only.
+4. Tub-grown shrubs (боярышник, самшит; A04 had perennial planter mixes only) and species absent from
+   A04/A10 lists (береза декоративная, боярышник сливолистный, шалфей, щучка дернистая). «дерен белый»
+   may be A04's Cornus alba, but Russian/Latin names are not matched here (no taxonomy repair).
+No new MAF products and no new GOST citations (none in the text layer of either album).
+
+### Batch 2 negative results and unknowns
+
+- B01: no Latin names, counts, sizes or areas; the 1:500 schemes are graphic. B02: no window marks,
+  sizes, counts or opening types. Neither album has a GOST citation in text.
+- Mark→description pairing (B02) and layer→type pairing (B01) are layout-dependent: M, not H.
+- RAL 7021 in B02 vs RAL 7004/7015 in A01/A07 are different projects, not a conflict.
+
+### Batch 2 cost ledger (session counters, `cost_status=estimated`, USD not measured)
+
+New = input + cache-write + output; cached = cache-read, reported but outside the cap [D267].
+Snapshots of this worker session (exact values in the JSON `batch2.usage_snapshots`); a window is
+snapshot-to-snapshot and lags by one API call, so B01 includes issuing B02's extraction call.
+
+| Window | New tokens | Cached tokens | Local extract s |
+|---|---:|---:|---:|
+| Intake: card, AGENTS, this report, inventory, plan (before B01) | 49,484 | 550,775 | – |
+| **B01** extraction + reading | **11,993** | 340,071 | 0.463 |
+| **B02** extraction + reading | **3,694** | 73,668 | 0.153 |
+| Albums total | 15,687 | 413,739 | 0.616 |
+| Report, tests, evals, push (after B02 → before PR) | 43,299 | 1,493,222 | – |
+| **Whole session before PR** | **108,470** | 2,457,736 | – |
+
+**Cap crossed outside album reading.** The albums used 15,687 new tokens, but the whole session
+(intake + report + tests) reached **108,470 new before the PR, i.e. 8,470 into the 30,000 reserve**.
+No stop-and-ask happened at 100,000 because counters were read only at phase snapshots, not before
+each call — a process gap, not an authorization. PR creation and review hand-off add a small
+unmeasured remainder (final total in the PR). Per-album reading cost is 7,844 new per page,
+higher than the #1275 1,080/page because a 1-page album pays the full read-and-interpret overhead;
+fixed intake+reporting (~93k) dominates a 2-page batch.
+
+### Go/no-go for the next batch
+
+**GO**, text-first, one batch: the remaining 6 NTR one-page albums (6 pages), **with a
+snapshot before each phase and a stop at 85,000 session new tokens**, since fixed intake+reporting
+cost ~93k here. Expected album reading ≈ 4,000–12,000 new per album; the three
+Buhvostova sibling elevations should be read together (likely same legend → cheap cross-check of B02).
+`покрытия.pdf` and `Благо.pdf` (11_Skladochnaya) need **one ROI render each** — ask before that.
+After that NTR is exhausted; the next step is one batch of a different issuer (recommendation 1).
+**NO-GO** unchanged for whole-page vision and library publication.
