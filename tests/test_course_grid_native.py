@@ -27,8 +27,11 @@ def test_rigid_triangle_preserves_long_edge_heading_and_frozen_density():
 
 def test_float32_encoding_keeps_legal_band_with_subpixel_quantization_only():
     import numpy as np
-    xyz=[[0,0,0],[1,0,0],[.99,.00001,.000002]]
-    old=[[.3,.4],[.425,.4],[.42375,.40000125]]
+    xyz=[[104.9970932006836,56.44607162475586,.15000119805336],
+         [104.25457763671875,55.141239166259766,.14409610629081726],
+         [104.25953674316406,55.149932861328125,.14409610629081726]]
+    old=[[.6429628133773804,.4401338994503021],[.45526301860809326,.43939563632011414],
+         [.4565143287181854,.43939563632011414]]
     ideal=rigid_triangle_uv(xyz,old,texel_px_m=512.1,tile_px=4096)
     out=encode_triangle_uv(xyz,ideal,tile_px=4096)
     assert min(out['singular_px_m'])>=512
@@ -36,6 +39,14 @@ def test_float32_encoding_keeps_legal_band_with_subpixel_quantization_only():
     assert max(out['singular_px_m'])/min(out['singular_px_m'])<=1.02
     assert out['max_encoding_error_px']<.01
     assert np.asarray(out['uv'],dtype=np.float32).astype(float).tolist()==out['uv']
+
+
+def test_unrepresentable_skinny_triangle_refuses_instead_of_lowering_gate():
+    xyz=[[0,0,0],[1,0,0],[.99,.00001,.000002]]
+    old=[[.3,.4],[.425,.4],[.42375,.40000125]]
+    ideal=rigid_triangle_uv(xyz,old,texel_px_m=512.1,tile_px=4096)
+    with pytest.raises(ValueError,match='encoding exceeds'):
+        encode_triangle_uv(xyz,ideal,tile_px=4096)
 
 
 @pytest.mark.parametrize('value',[float('nan'),float('inf')])

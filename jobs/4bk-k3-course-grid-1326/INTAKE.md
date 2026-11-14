@@ -1,9 +1,10 @@
 # 4BK stylobate course-grid pilot #1326 — intake checkpoint
 
-Status: **all existing-edge seam questions answered; bounded one-tile fit rejected**.
-The latest permission and standing minor-part rule are in `cap-base-seam-approval.json`.
-Current evidence and the budget/new-geometry-cut question: `FIT_POLICY.md` and
-`fit-audit-v005.json`. No production UVs, maps or geometry have been saved.
+Status: **authorized cut experiment saved as a textured candidate; NOT technically passed**.
+Artem authorized new joint-strip cuts on 2026-11-14: `geometry-cut-approval.json`.
+The current result, failures and remaining gates are in `CUT_RESULT.md` and
+`cut-result-v014.json`. Earlier FIT_POLICY.md questions are answered history.
+A separate v014 Blender copy/maps exist; source/delivery files remain unchanged.
 Check level: `full` (reusable tooling). Main-wall ring permission remains in
 `main-wall-seam-approval.json`; do not reopen settled cohort/stair/ring/cap questions.
 
@@ -35,8 +36,9 @@ Cell: `oks-vpm`. This is not the final 4BK delivery.
 ## Do not touch
 
 Source/delivered scenes and bitmaps; tower brick, tower metal, stylobate
-non-brick finishes, geometry/topology, source face indices and material IDs.
-No replication, cuts, density reduction or additional tiles.
+non-brick finishes and accepted/source files. On a separate candidate copy only,
+`geometry-cut-approval.json` authorizes joint-strip topology cuts with source-face
+lineage. No replication, density reduction or additional tiles.
 
 ## Job-local opening preference
 

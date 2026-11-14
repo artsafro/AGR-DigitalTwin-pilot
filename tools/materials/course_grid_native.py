@@ -1,6 +1,6 @@
 """new-case: project saved/native positions into an existing fixed metre chart.
 
-Stdlib-only bridge for Blender/Max Python. No packing, normalization, vertex
+Native bridge for Blender/Max Python (NumPy only in float32 encoding). No packing, normalization, vertex
 motion or guessed phase; the reference first triangle freezes the source frame.
 """
 import math
@@ -57,7 +57,46 @@ def rigid_triangle_uv(xyz, reference_uv, *, texel_px_m, tile_px):
     u=[v/size for v in heading];v=[-u[1],u[0]]
     if dot(sub(reference_uv[k],reference_uv[i]),v)<0:v=[-a for a in v]
     factor=texel_px_m/tile_px
-    out=[None,None,None];out[i]=list(reference_uv[i])
+    out=[list(q) for q in reference_uv];out[i]=list(reference_uv[i])
     out[j]=[out[i][d]+length*u[d]*factor for d in (0,1)]
     out[k]=[out[i][d]+(s*u[d]+height*v[d])*factor for d in (0,1)]
     return out
+
+
+def encode_triangle_uv(xyz, ideal_uv, *, tile_px):
+    """Choose a directed float32 encoding within 0.01 pixel of a rigid chart.
+
+    Fixed-density geometry and packing are already frozen. Search only the two
+    neighbouring float32 representable values per coordinate, not pixels or a
+    density scale. Refuse if format quantization cannot satisfy legal bounds.
+    """
+    import itertools
+    import numpy as np
+    if type(tile_px) is not int or tile_px not in (2048,4096):raise ValueError('unsupported tile_px')
+    if len(xyz)!=3 or len(ideal_uv)!=3:raise ValueError('triangle required')
+    project_saved_points(xyz,xyz,ideal_uv)
+    x=np.asarray(xyz,dtype=float);ideal=np.asarray(ideal_uv,dtype=float)
+    e=x[1:]-x[0];a=e[0]/np.linalg.norm(e[0]);n=np.cross(e[0],e[1]);n/=np.linalg.norm(n);b=np.cross(n,a)
+    physical=np.c_[e@a,e@b];inverse=np.linalg.inv(physical)
+    rounded=ideal.astype(np.float32).ravel()
+    if not np.isfinite(rounded).all():raise ValueError('float32 UV overflow')
+    for radius in (1,2):
+        choices=[]
+        for v in rounded:
+            low=[];high=[];lo=v;hi=v
+            for _ in range(radius):
+                lo=np.nextafter(lo,np.float32(-np.inf));hi=np.nextafter(hi,np.float32(np.inf));low.append(lo);high.append(hi)
+            choices.append(low[::-1]+[v]+high)
+        candidates=np.asarray(list(itertools.product(*choices)),dtype=float).reshape(-1,3,2)
+        delta=(candidates[:,1:]-candidates[:,:1])*tile_px
+        jac=np.einsum('ij,njk->nik',inverse,delta)
+        singular=np.linalg.svd(jac,compute_uv=False)
+        errors=np.max(np.linalg.norm(candidates-ideal,axis=2),axis=1)*tile_px
+        ok=(singular[:,1]>=512)&(singular[:,0]<=1706)&(singular[:,0]/singular[:,1]<=1.02)&(errors<=.01)
+        ok &= (np.linalg.det(delta)>0)&(candidates.min(axis=(1,2))>=0)&(candidates.max(axis=(1,2))<=1)
+        good=np.flatnonzero(ok)
+        if len(good):
+            best=min(good,key=lambda i:(errors[i],float(np.sum((candidates[i]-ideal)**2))))
+            return dict(uv=candidates[best].tolist(),singular_px_m=singular[best].tolist(),
+                        max_encoding_error_px=float(errors[best]),ulp_radius=radius)
+    raise ValueError('native float32 encoding exceeds density/anisotropy/subpixel budget')

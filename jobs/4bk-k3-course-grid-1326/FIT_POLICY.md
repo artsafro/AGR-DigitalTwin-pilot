@@ -1,6 +1,9 @@
 # One-tile fit checkpoint — #1326, v005
 
-Status: **bounded mask-aware one-tile strategies rejected; model-choice gate open**.
+Historical v005 status: **bounded mask-aware one-tile strategies rejected**.
+The cut-versus-budget question below was answered by Artem on 2026-11-14:
+`geometry-cut-approval.json` authorizes a separate-copy cut experiment, not extra
+UDIMs. Current textured candidate and unresolved QA: `CUT_RESULT.md`.
 `pilot_passed=false`. This is not a proof of global one-tile impossibility, an
 accepted UV layout, a textured result, or a final delivery. No scene/UV/map/geometry
 was saved; daytime Max and source/delivery files remain untouched.
