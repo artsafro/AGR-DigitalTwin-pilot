@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 
-ALIASES = {"inspect": ["inspect"], "package-vpm": ["derive", "package"], "ground": ["ground", "v015"]}
+ALIASES = {"inspect": ["inspect"], "package-vpm": ["derive", "package"], "package-npm": ["derive", "package-npm"], "ground": ["ground", "v015"]}
 
 
 STUBS = {

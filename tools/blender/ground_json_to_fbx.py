@@ -62,6 +62,10 @@ def build(src, out, address, crs="MSK-77"):
                              apply_scale_options="FBX_SCALE_UNITS", axis_forward="Y", axis_up="Z",
                              mesh_smooth_type="FACE", use_mesh_modifiers=False, bake_space_transform=False,
                              add_leaf_bones=False, path_mode="AUTO")
+    from pathlib import Path
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+    from adapters.max.agr_tools.export_meta import record_export
+    record_export(out, source=str(src), top=float(max(v[2] for v in vs)), address=address + '_Ground', profile='vpm')
     print(json.dumps({"built": out, "pivot": piv, "verts": len(vs), "faces": len(d["faces"])}))
 
 

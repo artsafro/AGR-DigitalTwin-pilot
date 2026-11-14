@@ -195,6 +195,9 @@ def test_clean_fixture_readback_matches_dry_run_and_python_gates(tmp_path):
     assert source.read_bytes() == before
     written = target.with_suffix('.report.json')
     assert written.is_file() and target.is_file()
+    meta_path = target.with_suffix(target.suffix + '.export_meta.json')
+    assert meta_path.is_file(), 'shared Max exporter metadata missing'
+    assert json.loads(meta_path.read_text(encoding='utf-8'))['exported_files'] == [target.name]
     assert json.loads(written.read_text(encoding='utf-8'))['status'] == 'pass'
     runtime = _load(RUNTIME, 'agr_runtime_export_ok')
     assert runtime.parse_report(json.dumps(report))['status'] == 'pass'

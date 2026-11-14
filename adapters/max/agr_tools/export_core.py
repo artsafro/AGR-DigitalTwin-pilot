@@ -946,6 +946,13 @@ def commit(scene, target, source, preview, readback_fn=None, report_path=None, w
     writer(target_path, current)
     if not target_path.is_file():
         raise ValueError('writer wrote nothing')
+    # Metadata owner is dependency-free and distributed with this module in the MZP.
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('_agr_export_metadata', Path(__file__).with_name('export_meta.py'))
+    assert spec is not None and spec.loader is not None
+    metadata = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(metadata)
+    metadata.record_export(target_path, source=str(source))
     return finish(current, target_path, report_file, readback_fn)
 
 

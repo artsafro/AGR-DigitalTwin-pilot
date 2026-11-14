@@ -77,6 +77,7 @@ def main(argv):
     out = os.path.abspath(a.out)
     meta_path = os.path.join(out, "..", "export_npm_meta.json")
     blend_path = os.path.join(out, "..", "NPM_export_tri.blend")
+    shared_meta_path = os.path.join(out, 'export_meta.json')
     inputs = [os.path.realpath(p) for p in (a.master, a.spec, a.atlas_dir)]
     for p in (out, meta_path, blend_path):
         r = os.path.realpath(p)
@@ -258,6 +259,10 @@ def main(argv):
     def tri(o):
         return sum(len(p.vertices) - 2 for p in o.data.polygons)
 
+    sys.path.insert(0, HERE)
+    from export_meta import record_export
+    exported_top = max((o.matrix_world @ v.co).z for o in vis for v in o.data.vertices)
+    record_export(fbx, source=a.master, top=float(exported_top), metadata_path=shared_meta_path)
     report.update({"fbx": fbx, "main_tris": tri(main), "glass_tris": tri(glass) if glass else 0})
     with open(meta_path, "x") as fh:
         json.dump(report, fh, indent=1)

@@ -2259,6 +2259,7 @@ def export_commit(nodes, preview, target=None):
         if current['status'] != 'pass':
             raise ValueError('gate failed: ' + str(current['plan']['stopped']))
         writer(target, current)
+        _load_core('export_meta.py', 'agr_tools_export_meta').record_export(target, source=str(source))
         report = _subprocess_export({'method': 'finish', 'preview': current, 'target': str(target),
                                     'report': current['plan']['report']})
     parse_report(json.dumps(report, allow_nan=False))

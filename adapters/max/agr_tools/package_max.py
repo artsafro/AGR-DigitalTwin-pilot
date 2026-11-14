@@ -159,6 +159,14 @@ def _export_selected(rt, nodes, target):
     finally:
         if os.path.exists(partial):
             os.unlink(partial)
+    import importlib.util
+    from pathlib import Path
+    spec = importlib.util.spec_from_file_location('_agr_export_metadata', Path(__file__).with_name('export_meta.py'))
+    assert spec is not None and spec.loader is not None
+    metadata = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(metadata)
+    document = str(getattr(rt, 'maxFilePath', '')) + str(getattr(rt, 'maxFileName', ''))
+    metadata.record_export(target, source=document or 'unknown; question: identify source Max document')
 
 
 def export_ground_fbx(ctx, mode, nodes, preview):
