@@ -1,4 +1,7 @@
-"""new-case: #1372 KPP1 quad master v002 - the R1 overlap zone plan (plan_union_zones.py) fails closed."""
+"""new-case: #1372 KPP1 quad master v002 - the R1 overlap zone plan (plan_union_zones.py) fails closed.
+
+The zone merge <= 5 mm is the quad-master-only exception to D254 [D289].
+"""
 import importlib.util
 import json
 from pathlib import Path

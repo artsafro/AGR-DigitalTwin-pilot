@@ -37,6 +37,9 @@ from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 from mathutils.kdtree import KDTree
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / 'adapters' / 'max' / 'agr_tools'))
+from udimtile_core import face_tile  # noqa: E402  shared UDIM kernel (#1359 guard)
+
 SOURCE_SHA = '1f46b0dd5973b6e3ba40acbe04d65fb3595dcacb0d90a7724e921eda9b56b676'  # r1-v002 SM_Kpp_1.fbx
 TJ_TOL = 2e-5            # = twinqa.look.TJUNCTION_TOL_M [D200]
 PLANAR_TOL_M = 1e-5      # 4th corner within 10 um of the partner plane: either diagonal keeps the R1 surface
@@ -739,11 +742,12 @@ def main(root, version='v001', zones_path=None):
     counts = dict.fromkeys(names, 0)
     for p in main_o.data.polygons:
         pts = [uv.data[i].uv for i in p.loop_indices]
-        cx = sum(v.x for v in pts) / len(pts); cy = sum(v.y for v in pts) / len(pts)
-        tx, ty = math.floor(cx), math.floor(cy)
-        tile = 1001 + tx + 10 * ty
-        if tile not in by_tile or any(not (tx <= v.x <= tx + 1 and ty <= v.y <= ty + 1) for v in pts):
-            raise ValueError(f'face {p.index}: unsupported or crossing UDIM {tile}')
+        try:
+            tile = face_tile([(v.x, v.y) for v in pts])  # raises UdimDomainError/UdimCrossTileError (ValueError)
+        except ValueError as exc:
+            raise ValueError(f'face {p.index}: {exc}') from None
+        if tile not in by_tile:
+            raise ValueError(f'face {p.index}: unsupported UDIM {tile}')
         attr.data[p.index].value = names.index(by_tile[tile])
         counts[by_tile[tile]] += 1
     if any(v == 0 for v in counts.values()):
