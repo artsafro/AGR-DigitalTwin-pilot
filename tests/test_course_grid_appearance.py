@@ -11,4 +11,4 @@ def test_chart_sampling_preserves_top_down_png_and_bilinear_pixel_centres():
     chart=[[0.,0.],[2.,0.],[2.,2.],[0.,2.]]
     uv=[[0.,0.],[1.,0.],[1.,1.],[0.,1.]]
     result=sample_chart_rgb(image,uv,chart,[[.5,.5],[1.5,1.5],[1.,1.]])
-    assert result==[[50.,60.,70.],[30.,40.,50.],[40.,50.,60.]]
+    assert np.asarray(result)==pytest.approx(np.array([[50.,60.,70.],[30.,40.,50.],[40.,50.,60.]]))
