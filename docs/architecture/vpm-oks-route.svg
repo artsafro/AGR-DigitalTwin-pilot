@@ -1,0 +1,461 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 3800 901" width="3800" height="901" font-family="Segoe UI, Arial, sans-serif">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
+<rect x="10" y="-30" width="3800" height="901" fill="#ffffff"/>
+<rect x="80" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="40" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<rect x="40" y="300" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
+<rect x="40" y="420" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="40" y="500" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="40" y="590" width="230" height="133.75" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="350" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="310" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="270" y1="225.0" x2="310" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="310" y="300" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
+<rect x="310" y="420" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="310" y="500" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="620" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="580" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="540" y1="225.0" x2="580" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="580" y="300" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="580" y="420" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="580" y="500" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="890" y="100" width="150" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="850" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="810" y1="225.0" x2="850" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="850" y="300" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
+<rect x="850" y="420" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="850" y="500" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="850" y="590" width="230" height="133.75" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1160" y="100" width="150" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="1120" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="1080" y1="225.0" x2="1120" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="1120" y="300" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="1120" y="420" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="1120" y="500" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="1120" y="590" width="230" height="133.75" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1430" y="100" width="150" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="1390" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="1350" y1="225.0" x2="1390" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="1390" y="300" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="1390" y="420" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="1390" y="500" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="1390" y="590" width="230" height="117.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1700" y="100" width="150" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="1660" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="1620" y1="225.0" x2="1660" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="1660" y="300" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="1660" y="420" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="1660" y="500" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="1970" y="100" width="150" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="1930" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="1890" y1="225.0" x2="1930" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="1930" y="300" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="1930" y="420" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="1930" y="500" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="1930" y="590" width="230" height="117.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1930" y="723.5" width="230" height="117.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="2240" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="2200" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="2160" y1="225.0" x2="2200" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="2200" y="300" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="2200" y="420" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="2200" y="500" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="2200" y="590" width="230" height="117.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="2510" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="2470" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="2430" y1="225.0" x2="2470" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="2470" y="300" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
+<rect x="2470" y="420" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="2470" y="500" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="2470" y="590" width="230" height="117.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="2780" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="2740" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="2700" y1="225.0" x2="2740" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="2740" y="300" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
+<rect x="2740" y="420" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="2740" y="500" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="3050" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="3010" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="2970" y1="225.0" x2="3010" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="3010" y="300" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
+<rect x="3010" y="420" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="3010" y="500" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="3010" y="590" width="230" height="133.75" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="3320" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="3280" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="3240" y1="225.0" x2="3280" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="3280" y="300" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="3280" y="420" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="3280" y="500" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="3280" y="590" width="230" height="85.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="3590" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="3550" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="3510" y1="225.0" x2="3550" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="3550" y="300" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="3550" y="420" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="3550" y="500" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="3550" y="590" width="230" height="101.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
+<tspan x="40" dy="28">Маршрут ВПМ / ОКС: событийный штурм (КПП1, ПСУ275, ТЭЦ26, СРЕDА, 4БК) (#1383)</tspan>
+</text>
+<text x="40" y="44" font-size="16" text-anchor="start" fill="#1e1e1e">
+<tspan x="40" dy="16">Легенда: жёлтый — кто действует; оранжевый — событие; голубой — команда agr/dt; сиреневый — правило (строка D решений); серый — контекст; розовый — горячая точка (здесь теряется время)</tspan>
+</text>
+<text x="155.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="155.0" dy="15">Агент</tspan>
+</text>
+<text x="155.0" y="193.12" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="155.0" dy="17">1. Исходники получены:</tspan>
+<tspan x="155.0" dy="21.25">Revit / DWG / PDF</tspan>
+<tspan x="155.0" dy="21.25">описаны</tspan>
+</text>
+<text x="155.0" y="318.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="155.0" dy="14">Команда:</tspan>
+<tspan x="155.0" dy="17.5">agr inspect</tspan>
+<tspan x="155.0" dy="17.5">dt index-pdf</tspan>
+</text>
+<text x="155.0" y="441.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="155.0" dy="14">Правила: D186, D008, D127</tspan>
+</text>
+<text x="155.0" y="512.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="155.0" dy="14">Контекст: Связь с DCC</tspan>
+<tspan x="155.0" dy="17.5">(Blender / 3ds Max)</tspan>
+</text>
+<text x="155.0" y="600.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="155.0" dy="13">⚠ Revit как источник: маршрут</tspan>
+<tspan x="155.0" dy="16.25">revit-intake (#1362, PR</tspan>
+<tspan x="155.0" dy="16.25">#1373) ещё не на main; ПСУ275</tspan>
+<tspan x="155.0" dy="16.25">— только отсоединённая копия</tspan>
+<tspan x="155.0" dy="16.25">Revit 2025, сдвиг FBX↔Revit</tspan>
+<tspan x="155.0" dy="16.25">найден вручную по плоскостям</tspan>
+<tspan x="155.0" dy="16.25">фасадов [D008, D009]</tspan>
+</text>
+<text x="425.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="425.0" dy="15">Агент</tspan>
+</text>
+<text x="425.0" y="193.12" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="425.0" dy="17">2. Состав частей</tspan>
+<tspan x="425.0" dy="21.25">(PartsList) и бюджет</tspan>
+<tspan x="425.0" dy="21.25">треугольников</tspan>
+</text>
+<text x="425.0" y="327.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="425.0" dy="14">Команда:</tspan>
+<tspan x="425.0" dy="17.5">dt inspect</tspan>
+</text>
+<text x="425.0" y="441.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="425.0" dy="14">Правила: D276, D010, D161</tspan>
+</text>
+<text x="425.0" y="512.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="425.0" dy="14">Контекст: Корпус и</tspan>
+<tspan x="425.0" dy="17.5">геометрия</tspan>
+</text>
+<text x="695.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="695.0" dy="15">Артём</tspan>
+</text>
+<text x="695.0" y="203.75" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="695.0" dy="17">3. Gate 1: Артём</tspan>
+<tspan x="695.0" dy="21.25">подтвердил части</tspan>
+</text>
+<text x="695.0" y="336.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="695.0" dy="14">Нет команды agr/dt</tspan>
+</text>
+<text x="695.0" y="441.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="695.0" dy="14">Правила: D125, D238</tspan>
+</text>
+<text x="695.0" y="512.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="695.0" dy="14">Контекст: Корпус и</tspan>
+<tspan x="695.0" dy="17.5">геометрия</tspan>
+</text>
+<text x="965.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="965.0" dy="15">Агент в 3ds Max</tspan>
+<tspan x="965.0" dy="18.75">(AGR Tools)</tspan>
+</text>
+<text x="965.0" y="193.12" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="965.0" dy="17">4. Корпус построен:</tspan>
+<tspan x="965.0" dy="21.25">сразу ВПМ или mid-poly</tspan>
+<tspan x="965.0" dy="21.25">мастер (по задаче)</tspan>
+</text>
+<text x="965.0" y="327.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="965.0" dy="14">Команда:</tspan>
+<tspan x="965.0" dy="17.5">dt spec compare</tspan>
+</text>
+<text x="965.0" y="432.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="965.0" dy="14">Правила: D010, D161, D250,</tspan>
+<tspan x="965.0" dy="17.5">D255</tspan>
+</text>
+<text x="965.0" y="512.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="965.0" dy="14">Контекст: Корпус и</tspan>
+<tspan x="965.0" dy="17.5">геометрия</tspan>
+</text>
+<text x="965.0" y="600.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="965.0" dy="13">⚠ ВПМ сразу или mid-poly</tspan>
+<tspan x="965.0" dy="16.25">мастер — по задаче (Артём</tspan>
+<tspan x="965.0" dy="16.25">2026-11-14), строки D нет;</tspan>
+<tspan x="965.0" dy="16.25">ПСУ275 сменил подход посреди</tspan>
+<tspan x="965.0" dy="16.25">работы: типового этажа нет →</tspan>
+<tspan x="965.0" dy="16.25">массинг → одна оболочка</tspan>
+<tspan x="965.0" dy="16.25">[D010, D161, D250]</tspan>
+</text>
+<text x="1235.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1235.0" dy="15">Агент в 3ds Max</tspan>
+<tspan x="1235.0" dy="18.75">(AGR Tools)</tspan>
+</text>
+<text x="1235.0" y="182.5" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1235.0" dy="17">5. Проёмы и окна: окно</tspan>
+<tspan x="1235.0" dy="21.25">из библиотеки с</tspan>
+<tspan x="1235.0" dy="21.25">утоплением или</tspan>
+<tspan x="1235.0" dy="21.25">генератор</tspan>
+</text>
+<text x="1235.0" y="336.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1235.0" dy="14">Нет команды agr/dt</tspan>
+</text>
+<text x="1235.0" y="432.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1235.0" dy="14">Правила: D116, D204, D258,</tspan>
+<tspan x="1235.0" dy="17.5">D029, D172</tspan>
+</text>
+<text x="1235.0" y="512.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1235.0" dy="14">Контекст: Корпус и</tspan>
+<tspan x="1235.0" dy="17.5">геометрия</tspan>
+</text>
+<text x="1235.0" y="600.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1235.0" dy="13">⚠ Окна: проёмы Revit и меша</tspan>
+<tspan x="1235.0" dy="16.25">КПП1 не совпали (spec-compare</tspan>
+<tspan x="1235.0" dy="16.25">v002); окна только из</tspan>
+<tspan x="1235.0" dy="16.25">библиотеки (D116); генератор</tspan>
+<tspan x="1235.0" dy="16.25">окон #1338 — пока замер,</tspan>
+<tspan x="1235.0" dy="16.25">общей команды нет [D116,</tspan>
+<tspan x="1235.0" dy="16.25">D204, D258]</tspan>
+</text>
+<text x="1505.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1505.0" dy="15">Агент в 3ds Max</tspan>
+<tspan x="1505.0" dy="18.75">(AGR Tools)</tspan>
+</text>
+<text x="1505.0" y="193.12" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1505.0" dy="17">6. Кровля и парапет:</tspan>
+<tspan x="1505.0" dy="21.25">плита вставлена и</tspan>
+<tspan x="1505.0" dy="21.25">поднята (R6)</tspan>
+</text>
+<text x="1505.0" y="336.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1505.0" dy="14">Нет команды agr/dt</tspan>
+</text>
+<text x="1505.0" y="432.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1505.0" dy="14">Правила: D038, D039, D208,</tspan>
+<tspan x="1505.0" dy="17.5">D254</tspan>
+</text>
+<text x="1505.0" y="512.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1505.0" dy="14">Контекст: Корпус и</tspan>
+<tspan x="1505.0" dy="17.5">геометрия</tspan>
+</text>
+<text x="1505.0" y="600.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1505.0" dy="13">⚠ Шов кровля / парапет: КПП1</tspan>
+<tspan x="1505.0" dy="16.25">переделывал вставную кровлю</tspan>
+<tspan x="1505.0" dy="16.25">(#1339); СРЕDА — стыки</tspan>
+<tspan x="1505.0" dy="16.25">текстуры не сходятся под</tspan>
+<tspan x="1505.0" dy="16.25">парапетом (423 пересечения на</tspan>
+<tspan x="1505.0" dy="16.25">95 рёбрах) [D038, D254]</tspan>
+</text>
+<text x="1775.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1775.0" dy="15">Агент в 3ds Max</tspan>
+<tspan x="1775.0" dy="18.75">(AGR Tools)</tspan>
+</text>
+<text x="1775.0" y="193.12" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1775.0" dy="17">7. Декор и навесные</tspan>
+<tspan x="1775.0" dy="21.25">элементы врезаны в</tspan>
+<tspan x="1775.0" dy="21.25">фасад</tspan>
+</text>
+<text x="1775.0" y="336.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1775.0" dy="14">Нет команды agr/dt</tspan>
+</text>
+<text x="1775.0" y="441.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1775.0" dy="14">Правила: D199, D124, D174</tspan>
+</text>
+<text x="1775.0" y="512.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1775.0" dy="14">Контекст: Корпус и</tspan>
+<tspan x="1775.0" dy="17.5">геометрия</tspan>
+</text>
+<text x="2045.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="15">Агент в 3ds Max</tspan>
+<tspan x="2045.0" dy="18.75">(AGR Tools)</tspan>
+</text>
+<text x="2045.0" y="193.12" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="17">8. UV по UDIM и</tspan>
+<tspan x="2045.0" dy="21.25">текстуры (сетка рядов,</tspan>
+<tspan x="2045.0" dy="21.25">где кирпич)</tspan>
+</text>
+<text x="2045.0" y="336.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="14">Нет команды agr/dt</tspan>
+</text>
+<text x="2045.0" y="432.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="14">Правила: D209, D221, D207,</tspan>
+<tspan x="2045.0" dy="17.5">D216, D160</tspan>
+</text>
+<text x="2045.0" y="521.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="14">Контекст: UV и атлас</tspan>
+</text>
+<text x="2045.0" y="600.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="13">⚠ 4БК кирпич: 37 → 38 рядов,</tspan>
+<tspan x="2045.0" dy="16.25">перевязка на стыке этажей,</tspan>
+<tspan x="2045.0" dy="16.25">швы панелей 10 мм по красным</tspan>
+<tspan x="2045.0" dy="16.25">линиям архитектора; пилот в 1</tspan>
+<tspan x="2045.0" dy="16.25">UDIM (#1326) открыт [D216,</tspan>
+<tspan x="2045.0" dy="16.25">D207]</tspan>
+</text>
+<text x="2045.0" y="733.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="13">⚠ UDIM: vpm_uv.py ТЭЦ26 =</tspan>
+<tspan x="2045.0" dy="16.25">КПП1 с разницей в одну</tspan>
+<tspan x="2045.0" dy="16.25">строку; цвета ТЭЦ26 — по</tspan>
+<tspan x="2045.0" dy="16.25">слайдам презентации, v007</tspan>
+<tspan x="2045.0" dy="16.25">(стыки каждые 0,60 м)</tspan>
+<tspan x="2045.0" dy="16.25">отклонён [D209, D221, D171]</tspan>
+</text>
+<text x="2315.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2315.0" dy="15">Агент</tspan>
+</text>
+<text x="2315.0" y="203.75" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2315.0" dy="17">9. UCX построены</tspan>
+<tspan x="2315.0" dy="21.25">(только ВПМ)</tspan>
+</text>
+<text x="2315.0" y="336.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2315.0" dy="14">Нет команды agr/dt</tspan>
+</text>
+<text x="2315.0" y="432.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2315.0" dy="14">Правила: D012, D098, D134,</tspan>
+<tspan x="2315.0" dy="17.5">D162, D225</tspan>
+</text>
+<text x="2315.0" y="521.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2315.0" dy="14">Контекст: Коллизии UCX</tspan>
+</text>
+<text x="2315.0" y="600.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2315.0" dy="13">⚠ UCX: 5 своих скриптов в</tspan>
+<tspan x="2315.0" dy="16.25">jobs/ (КПП1, ПСУ275, ТЭЦ26</tspan>
+<tspan x="2315.0" dy="16.25">×2, СРЕDА), agr ucx —</tspan>
+<tspan x="2315.0" dy="16.25">заглушка; ТЭЦ26 AC08:</tspan>
+<tspan x="2315.0" dy="16.25">триангуляция UCX ждёт Артёма;</tspan>
+<tspan x="2315.0" dy="16.25">СРЕDА — 960 UCX [D225, D162]</tspan>
+</text>
+<text x="2585.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2585.0" dy="15">Агент</tspan>
+</text>
+<text x="2585.0" y="203.75" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2585.0" dy="17">10. export_meta, FBX и</tspan>
+<tspan x="2585.0" dy="21.25">пакет ВПМ собраны</tspan>
+</text>
+<text x="2585.0" y="318.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2585.0" dy="14">Команда:</tspan>
+<tspan x="2585.0" dy="17.5">agr package-vpm</tspan>
+<tspan x="2585.0" dy="17.5">dt derive package</tspan>
+</text>
+<text x="2585.0" y="432.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2585.0" dy="14">Правила: D198, D224, D223,</tspan>
+<tspan x="2585.0" dy="17.5">D017, D018</tspan>
+</text>
+<text x="2585.0" y="512.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2585.0" dy="14">Контекст: Экспорт и пакет</tspan>
+<tspan x="2585.0" dy="17.5">сдачи</tspan>
+</text>
+<text x="2585.0" y="600.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2585.0" dy="13">⚠ Пакет: контракт export_meta</tspan>
+<tspan x="2585.0" dy="16.25">и agr package-npm (#1361)</tspan>
+<tspan x="2585.0" dy="16.25">открыты; КПП1 собран без</tspan>
+<tspan x="2585.0" dy="16.25">утверждённого Ground (D285),</tspan>
+<tspan x="2585.0" dy="16.25">GeoJSON отложен (D224) [D285,</tspan>
+<tspan x="2585.0" dy="16.25">D224]</tspan>
+</text>
+<text x="2855.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2855.0" dy="15">Агент</tspan>
+</text>
+<text x="2855.0" y="193.12" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2855.0" dy="17">11. Экспорт заново</tspan>
+<tspan x="2855.0" dy="21.25">прочитан в новом</tspan>
+<tspan x="2855.0" dy="21.25">процессе</tspan>
+</text>
+<text x="2855.0" y="327.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2855.0" dy="14">Команда:</tspan>
+<tspan x="2855.0" dy="17.5">dt qa xview</tspan>
+</text>
+<text x="2855.0" y="441.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2855.0" dy="14">Правила: D273, D152</tspan>
+</text>
+<text x="2855.0" y="512.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2855.0" dy="14">Контекст: Связь с DCC</tspan>
+<tspan x="2855.0" dy="17.5">(Blender / 3ds Max)</tspan>
+</text>
+<text x="3125.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3125.0" dy="15">Агент</tspan>
+</text>
+<text x="3125.0" y="193.12" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3125.0" dy="17">12. Проверки и xView</tspan>
+<tspan x="3125.0" dy="21.25">выполнены, отказы</tspan>
+<tspan x="3125.0" dy="21.25">записаны</tspan>
+</text>
+<text x="3125.0" y="318.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3125.0" dy="14">Команда:</tspan>
+<tspan x="3125.0" dy="17.5">agr validate</tspan>
+<tspan x="3125.0" dy="17.5">dt qa xview</tspan>
+</text>
+<text x="3125.0" y="441.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3125.0" dy="14">Правила: D152, D173, D256</tspan>
+</text>
+<text x="3125.0" y="512.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3125.0" dy="14">Контекст: Проверка и</tspan>
+<tspan x="3125.0" dy="17.5">приёмка</tspan>
+</text>
+<text x="3125.0" y="600.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3125.0" dy="13">⚠ xView: КПП1 ВПМ — 85</tspan>
+<tspan x="3125.0" dy="16.25">перекрытых граней (128 пар),</tspan>
+<tspan x="3125.0" dy="16.25">цель 0 / 0 открыта; СРЕDА —</tspan>
+<tspan x="3125.0" dy="16.25">~23 мин на прогон в Max (1395</tspan>
+<tspan x="3125.0" dy="16.25">с) ×3, агент ждал в</tspan>
+<tspan x="3125.0" dy="16.25">sleep-циклах ~17 мин [D152,</tspan>
+<tspan x="3125.0" dy="16.25">D173]</tspan>
+</text>
+<text x="3395.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3395.0" dy="15">Чекер СИНТЕЗ</tspan>
+</text>
+<text x="3395.0" y="193.12" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3395.0" dy="17">13. Чекер СИНТЕЗ</tspan>
+<tspan x="3395.0" dy="21.25">отработал на тех же</tspan>
+<tspan x="3395.0" dy="21.25">файлах</tspan>
+</text>
+<text x="3395.0" y="336.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3395.0" dy="14">Нет команды agr/dt</tspan>
+</text>
+<text x="3395.0" y="441.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3395.0" dy="14">Правила: D220, D104</tspan>
+</text>
+<text x="3395.0" y="512.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3395.0" dy="14">Контекст: Проверка и</tspan>
+<tspan x="3395.0" dy="17.5">приёмка</tspan>
+</text>
+<text x="3395.0" y="600.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3395.0" dy="13">⚠ СИНТЕЗ КПП1 v003: HP 64 / 3</tspan>
+<tspan x="3395.0" dy="16.25">провала / 53 не определено,</tspan>
+<tspan x="3395.0" dy="16.25">LP 39 / 4 / 29; общей команды</tspan>
+<tspan x="3395.0" dy="16.25">agr/dt нет [D220]</tspan>
+</text>
+<text x="3665.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3665.0" dy="15">Артём</tspan>
+</text>
+<text x="3665.0" y="193.12" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3665.0" dy="17">14. Сдано: Артём</tspan>
+<tspan x="3665.0" dy="21.25">принял в открытой</tspan>
+<tspan x="3665.0" dy="21.25">сцене, пакет передан</tspan>
+</text>
+<text x="3665.0" y="336.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3665.0" dy="14">Нет команды agr/dt</tspan>
+</text>
+<text x="3665.0" y="441.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3665.0" dy="14">Правила: D104, D270, D198</tspan>
+</text>
+<text x="3665.0" y="512.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3665.0" dy="14">Контекст: Экспорт и пакет</tspan>
+<tspan x="3665.0" dy="17.5">сдачи</tspan>
+</text>
+<text x="3665.0" y="600.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3665.0" dy="13">⚠ СРЕDА после приёмки: разбор</tspan>
+<tspan x="3665.0" dy="16.25">альбома — 25 замечаний, 7</tspan>
+<tspan x="3665.0" dy="16.25">наших (гранёные кривые,</tspan>
+<tspan x="3665.0" dy="16.25">отлив, лишние детали без</tspan>
+<tspan x="3665.0" dy="16.25">источника)</tspan>
+</text>
+</svg>
