@@ -51,6 +51,17 @@ for evidence,t in zip(p['faces'],mesh.loop_triangles):
     assert abs(evidence['uv_area']-abs((b.x-a.x)*(c.y-a.y)-(c.x-a.x)*(b.y-a.y))/2)<1e-12
     assert evidence['slot']=='TileLight'
 assert len(mesh.polygons)==1 and len(mesh.polygons[0].vertices)==len(points)
+image=bpy.data.images.new('SyntheticMap',width=4,height=4)
+image.filepath_raw=str(root/'map.png')
+image.file_format='PNG'
+image.save()
+(root/'bind.json').write_text(json.dumps({'profile':'vpm','texture_root':str(root),
+    'bindings':[{'material':'M_Vatutino_Ground_TileLight','file':'map.png'}]}))
+sys.argv=[str(script),'--','bind',str(root/'source.fbx'),str(root/'bind.json'),str(root/'bound.fbx')]
+runpy.run_path(str(script),run_name='__main__')
+metadata=root/'bound.fbx.export_meta.json'
+assert metadata.is_file(), 'shared texture binding export metadata missing'
+assert abs(json.loads(metadata.read_text())['h_otn_model_max_z_m']-max(p[2] for p in points))<1e-6
 print('POLYGON_FINGERPRINT_PASS')
 '''.replace('SCRIPT', repr(str(ROOT / 'tools/materials/bind_ground_textures_blender.py'))), encoding='utf-8')
     result = subprocess.run([str(BLENDER), '--background', '--factory-startup', '--python-exit-code', '1', '--python', str(script), '--', str(tmp_path), shape], capture_output=True, text=True, timeout=90)
