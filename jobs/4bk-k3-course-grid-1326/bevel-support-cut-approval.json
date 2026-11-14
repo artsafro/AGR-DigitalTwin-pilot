@@ -1,0 +1,11 @@
+{
+  "status": "authorized_not_yet_applied",
+  "decision": "D297",
+  "actor": "Artem",
+  "date": "2026-11-14",
+  "reference": "Kanban t_d517d7c6 USER DECISION at 23:48: принимаю рекомендации",
+  "scope": "Minimal planar cuts on a NEW copy along measured outer support of original Normal bevel; approximately 20 mm in face-6 witness, not a universal width.",
+  "preserve": ["10 mm colour seam", "original relief scale", "courses", "frozen density", "surface", "one tile", "protected finishes"],
+  "not_waived": ["102 expanded independent PNG findings", "final all-map readback", "final export readback", "final visual evidence"],
+  "technical_acceptance": false
+}

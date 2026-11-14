@@ -309,6 +309,8 @@ frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Mar
 
 | D296 | 2026-11-14 | #1326 retains the four original staircase xView faces at the protected ID7 metal/brick junction as an explicitly registered UV-pilot baseline; no extra brick cuts under metal and no ID7 changes; accepted seams remain, without a global QA-pass claim. | `jobs/4bk-k3-course-grid-1326/REPAIR_RESULT.md` | Artem's USER DECISION on Kanban t_d517d7c6, 2026-11-14 17:07; mechanical D292 to D296 after external PR #1395 collision, immutable historical evidence retains D292 |
 
+| D297 | 2026-11-14 | #1326 may make minimal planar cuts on a new copy along the measured outer boundary of the original joint Normal bevel (about 20 mm from the edge in the face-6 witness), keeping the 10 mm colour seam, original relief scale, courses, frozen density, surface and one tile. This does not waive the 102 independent PNG findings or final all-map/export checks. | `jobs/4bk-k3-course-grid-1326/NORMAL_RESTORE_GATE.md`, `jobs/4bk-k3-course-grid-1326/bevel-support-cut-approval.json` | Artem «принимаю рекомендации», USER DECISION on Kanban t_d517d7c6, 2026-11-14 23:48 |
+
 [passport-scope-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1207#issuecomment-6783203728
 
 [ground-refinement-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/295#issuecomment-6265799957

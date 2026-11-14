@@ -29,6 +29,19 @@ def sample_chart_rgb(image, source_uv, chart_m, points_m):
     """
     if not isinstance(image,np.ndarray) or image.dtype!=np.uint8 or image.ndim!=3 or image.shape[2]!=3 or min(image.shape[:2])<1:
         raise ValueError('unsupported source RGB image')
+    return sample_chart_field(image, source_uv, chart_m, points_m)
+
+
+def sample_chart_field(image, source_uv, chart_m, points_m):
+    """Bilinear signed source field, same physical frame as sample_chart_rgb.
+
+    No wrapping, quantization, rescaling or implicit tangent transport. PNG-style
+    row order applies to scalar/vector arrays too; all samples must be finite.
+    """
+    if (not isinstance(image, np.ndarray) or image.ndim != 3
+            or not 1 <= image.shape[2] <= 3 or min(image.shape[:2]) < 1
+            or image.dtype.kind not in 'uif' or not np.isfinite(image).all()):
+        raise ValueError('unsupported source field')
     uv=_xy(source_uv,'source_uv',3)
     chart=_xy(chart_m,'chart_m',3)
     points=_xy(points_m,'points_m',1)
@@ -53,6 +66,42 @@ def sample_chart_rgb(image, source_uv, chart_m, points_m):
     a=image[iy,ix].astype(float);b=image[iy,np.minimum(ix+1,w-1)].astype(float)
     c=image[np.minimum(iy+1,h-1),ix].astype(float);d=image[np.minimum(iy+1,h-1),np.minimum(ix+1,w-1)].astype(float)
     return ((a*(1-fx)+b*fx)*(1-fy)+(c*(1-fx)+d*fx)*fy).tolist()
+
+
+def compose_relief_normal(base_rgb, relief_xy, source_axes, target_axes):
+    """Add original signed groove to unchanged base, transporting tangent axes.
+
+    Replays n=normalize((base/127.5-1)+groove) from the source renderer.
+    Axes are orthonormal +U/+V in one common world frame. Coplanar orientation
+    may change; scale, shear, mirrors and tilted source/target planes are errors.
+    This has no spatial-width parameter: the caller samples physical support.
+    """
+    base = base_rgb
+    for values, dimension, name in ((base, 3, 'base_rgb'), (relief_xy, 2, 'relief_xy'),
+                                    (source_axes, 3, 'source_axes'), (target_axes, 3, 'target_axes')):
+        if not isinstance(values, list) or not values or any(
+                not isinstance(row, list) or len(row) != dimension or any(
+                    isinstance(v, bool) or not isinstance(v, (int, float)) or not np.isfinite(v)
+                    for v in row) for row in values):
+            raise ValueError(f'invalid {name}')
+    base = np.asarray(base, dtype=float)
+    relief = np.asarray(relief_xy, dtype=float)
+    source = np.asarray(source_axes, dtype=float)
+    target = np.asarray(target_axes, dtype=float)
+    if base.shape[0] != relief.shape[0] or base.min() < 0 or base.max() > 255:
+        raise ValueError('partial/out-of-range relief base')
+    if source.shape != (2, 3) or target.shape != (2, 3):
+        raise ValueError('unsupported tangent axes')
+    if (not np.allclose(source @ source.T, np.eye(2), atol=1e-7, rtol=0)
+            or not np.allclose(target @ target.T, np.eye(2), atol=1e-7, rtol=0)
+            or np.dot(np.cross(*source), np.cross(*target)) < 1 - 1e-7):
+        raise ValueError('nonorthonormal/mirrored/noncoplanar tangent axes')
+    vectors = base / 127.5 - 1
+    vectors[:, :2] += relief @ source @ target.T
+    lengths = np.linalg.norm(vectors, axis=1)
+    if np.any(lengths <= 1e-12) or np.any(vectors[:, 2] <= 0):
+        raise ValueError('unsupported non-forward Normal')
+    return ((vectors / lengths[:, None] + 1) * 127.5).tolist()
 
 
 def audit_sample_reuse(records, *, max_rgb_error):
