@@ -201,6 +201,7 @@ def test_coverage_fails_closed_on_missing_context_or_owner_mismatch():
     events, maps = _routes()["ground-route"], _maps()
     cmap = copy.deepcopy(maps["ground-contexts"])
     cmap["contexts"] = [c for c in cmap["contexts"] if c["id"] != "placement"]
+    cmap["relations"] = [r for r in cmap["relations"] if "placement" not in (r["from"], r["to"])]
     assert any("placement" in p for p in route_map.route_coverage(events, _contexts(), cmap))
     cmap = copy.deepcopy(maps["ground-contexts"])
     next(c for c in cmap["contexts"] if c["id"] == "heights")["owner"] = "src/dt_ai/core/build.py"
@@ -228,6 +229,45 @@ def test_context_without_duplicates_draws_no_pink_box():
     for cid in bare:
         assert "e" + route_map._h(f"ctx/{cid}/dups")[:15] not in keys
         assert "e" + route_map._h(f"ctx/{cid}")[:15] in keys
+
+
+def _grid_map():
+    return copy.deepcopy(_maps()["ground-contexts"])
+
+
+@pytest.mark.parametrize("mutate,needle", [
+    (lambda m: m["contexts"][0].pop("grid"), "'grid' must be"),                       # partial: all or none
+    (lambda m: m["contexts"][0].update(grid="0/0"), "'grid' must be"),                 # row 0 = kernel row
+    (lambda m: m["contexts"][0].update(grid="5/1"), "'grid' must be"),                 # off the drawing
+    (lambda m: m["contexts"][0].update(grid="nan/1"), "'grid' must be"),
+    (lambda m: m["contexts"][0].update(grid=""), "'grid' must be"),
+    (lambda m: m["contexts"][0].update(grid=m["contexts"][1]["grid"]), "is taken by"),  # duplicate cell
+    (lambda m: m["contexts"][0].update(grid="1.5/1"), "overlaps"),                     # half a column apart
+])
+def test_grid_layout_fails_closed(mutate, needle):
+    cmap = _grid_map()
+    mutate(cmap)
+    with pytest.raises(route_map.SchemaError, match=re.escape(needle)):
+        route_map.check_contexts(cmap)
+
+
+def test_grid_exactly_one_column_apart_is_allowed_and_drawn_at_its_cell():
+    cmap = _grid_map()
+    route_map.check_contexts(cmap)
+    board = route_map.contexts_board(None, cmap)
+    by_id = {e["id"]: e for e in board.elements}
+    for c in cmap["contexts"]:
+        col = float(c["grid"].split("/")[0])
+        assert by_id["e" + route_map._h(f"ctx/{c['id']}")[:15]]["x"] == round(40 + (470 + 140) * col, 2)
+
+
+def test_npm_route_and_npm_context_map_draw_byte_identical_to_main():
+    """Layout changes of #1392 apply only to new inputs: the #1359 / #1375 pictures keep their bytes."""
+    files = route_map.render_all(ROOT)[2]
+    for stem in ("npm-oks-route", "contexts"):
+        for suffix in (".excalidraw", ".svg"):
+            rel = Path("docs/architecture") / f"{stem}{suffix}"
+            assert files[rel].encode("utf-8") == (ROOT / rel).read_bytes()
 
 
 def test_context_map_function_typo_is_reported(tmp_path, capsys):

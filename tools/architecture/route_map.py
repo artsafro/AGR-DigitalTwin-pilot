@@ -1,11 +1,18 @@
-"""Excalidraw + SVG generator for the route event storms and the context map (#1359; VPM OKS + Ground #1383).
+"""Excalidraw + SVG generator for the route event storms and the context maps (#1359; VPM OKS + Ground #1383;
+VPM OKS / Ground context maps #1392).
 
 Pattern: n/a | new-case: stdlib generator docs/architecture/*.yaml -> .excalidraw + .svg (Russian labels).
 
 Inputs (source of truth): docs/architecture/contexts.yaml and one events YAML per route (ROUTE_EVENTS:
 npm-oks-route, vpm-oks-route, ground-route .events.yaml). A route may declare `local_contexts` (id, ru, owner)
 for stages whose context has no owner in contexts.yaml; they are visible only inside that route.
-Outputs (generated, never hand-edited): <route>.excalidraw/.svg per route, contexts.excalidraw/.svg beside them.
+Context maps (CONTEXT_MAPS): contexts.yaml (NPM/OKS, drawn with the NPM route, guard allowlist) plus one map per
+route (#1392: vpm-oks-contexts.yaml, ground-contexts.yaml, same schema); `--check` also proves that each route's
+map lists every stage context of that route with the same owner (route_coverage). A context without a
+`duplicates` key draws no duplicates box; optional `grid: "col/row"` on every context of a map places it
+explicitly (all or none, columns >= 1 apart). Route boards widen a 2-line actor and push the rows below a tall
+event; one-line titles/actors and <= 110 px events draw exactly as before.
+Outputs (generated, never hand-edited): <route>.excalidraw/.svg per route, <map>.excalidraw/.svg per context map.
 Deterministic: element ids, seeds and nonces are hashes of the YAML keys, `updated` is a constant, so the same
 YAML gives the same bytes. Offline, stdlib only (no network, no PyYAML; tools/architecture/mini_yaml.py).
 
@@ -39,13 +46,22 @@ EVENTS = ARCH / "npm-oks-route.events.yaml"
 VPM_EVENTS = ARCH / "vpm-oks-route.events.yaml"
 GROUND_EVENTS = ARCH / "ground-route.events.yaml"
 CONTEXTS = ARCH / "contexts.yaml"
+VPM_CONTEXTS = ARCH / "vpm-oks-contexts.yaml"
+GROUND_CONTEXTS = ARCH / "ground-contexts.yaml"
 OUTPUTS = {"route": ARCH / "npm-oks-route", "vpm-route": ARCH / "vpm-oks-route",
-           "ground-route": ARCH / "ground-route", "contexts": ARCH / "contexts"}
+           "ground-route": ARCH / "ground-route", "contexts": ARCH / "contexts",
+           "vpm-contexts": ARCH / "vpm-oks-contexts", "ground-contexts": ARCH / "ground-contexts"}
+ROUTE_MAP_OF = {"vpm-route": "vpm-contexts", "ground-route": "ground-contexts"}  # #1392: route -> its context map
 
 
 def route_events():
     """Route name -> events YAML (read at call time so a monkeypatched path is honoured)."""
     return {"route": EVENTS, "vpm-route": VPM_EVENTS, "ground-route": GROUND_EVENTS}
+
+
+def context_maps():
+    """Context map name -> YAML (#1392; read at call time like route_events)."""
+    return {"contexts": CONTEXTS, "vpm-contexts": VPM_CONTEXTS, "ground-contexts": GROUND_CONTEXTS}
 
 COLORS = {  # Event Storming sticky colours
     "actor": "#fff3bf", "event": "#ffc078", "command": "#a5d8ff", "rule": "#d0bfff",
@@ -86,6 +102,12 @@ def check_schema(events, contexts):
         if aid in actors:
             raise SchemaError(f"actors[{i}]: duplicate id {aid!r}")
         actors[aid] = _ru(_need(a, "ru", f"actors[{i}]"), f"actors[{i}].ru")
+    ctx_ids = dict(check_contexts(contexts))  # route-local contexts below stay inside this route
+    return actors, _check_stages(events, ctx_ids)
+
+
+def check_contexts(contexts):
+    """Schema of one context map; returns {context id: ru}. SchemaError names the first bad key."""
     _ru(_need(contexts, "title_ru", "contexts"), "contexts.title_ru")
     kernel = _need(contexts, "shared_kernel", "contexts", dict)
     ctx_ids = {}
@@ -125,7 +147,29 @@ def check_schema(events, contexts):
             if _need(rel, end, f"relations[{i}]") not in ctx_ids:
                 raise SchemaError(f"relations[{i}]: unknown context {rel[end]!r}")
         _ru(_need(rel, "ru", f"relations[{i}]"), f"relations[{i}].ru")
-    ctx_ids = dict(ctx_ids)  # route-local contexts below stay inside this route
+    grids = [c.get("grid") for c in contexts["contexts"]]
+    if any(g is not None for g in grids):   # #1392 layout: all or none, "col/row", col 0..4 in halves, distinct
+        seen = {}
+        for c, g in zip(contexts["contexts"], grids):
+            if not isinstance(g, str) or not re.match(r"^[0-4](\.5)?/[1-9][0-9]?$", g):
+                raise SchemaError(f"context {c['id']}: 'grid' must be \"col/row\" (col 0-4, halves; row >= 1), got {g!r}")
+            if g in seen:
+                raise SchemaError(f"context {c['id']}: grid {g} is taken by {seen[g]}")
+            seen[g] = c["id"]
+        rows = {}
+        for g, cid in seen.items():
+            col, r = g.split("/")
+            rows.setdefault(r, []).append((float(col), cid))
+        for r, cols in rows.items():   # boxes are wider than half a column: one row, columns >= 1 apart
+            cols.sort()
+            for (c0, a), (c1, z) in zip(cols, cols[1:]):
+                if c1 - c0 < 1:
+                    raise SchemaError(f"context {z}: grid row {r} overlaps {a} (columns {c0} and {c1})")
+    return ctx_ids
+
+
+def _check_stages(events, ctx_ids):
+    actors = {a["id"] for a in events["actors"]}
     if "local_contexts" in events:
         for i, c in enumerate(_need(events, "local_contexts", "events", list)):
             where = f"local_contexts[{i}]"
@@ -174,7 +218,26 @@ def check_schema(events, contexts):
             raise SchemaError(f"{where}: unknown stage {h['stage']!r}")
         _ru(_need(h, "ru", where), where + ".ru")
         _need(h, "evidence", where, list)
-    return actors, ctx_ids
+    return ctx_ids
+
+
+def route_coverage(events, contexts, cmap):
+    """#1392: problems if the route's own context map misses a stage context or names another owner for it.
+
+    A stage context comes from contexts.yaml or the route's local_contexts; the map must list it (kernel or
+    contexts) with the same owner. A malformed map raises SchemaError.
+    """
+    check_contexts(cmap)
+    owners = {c["id"]: c["owner"] for c in [contexts["shared_kernel"]] + contexts["contexts"]}
+    owners.update({c["id"]: c["owner"] for c in events.get("local_contexts", [])})
+    in_map = {c["id"]: c["owner"] for c in [cmap["shared_kernel"]] + cmap["contexts"]}
+    problems = []
+    for cid in dict.fromkeys(s["context"] for s in events["stages"]):
+        if cid not in in_map:
+            problems.append(f"context map: stage context {cid!r} is missing")
+        elif cid in owners and in_map[cid] != owners[cid]:
+            problems.append(f"context map: {cid!r} owner {in_map[cid]} differs from the route's {owners[cid]}")
+    return problems
 
 
 # ---------------------------------------------------------------- references (existence)
@@ -431,7 +494,13 @@ def route_board(events, contexts):
     actors, ctx_ru = check_schema(events, contexts)
     b = Board()
     col_w, gap = 230, 40
-    b.label("route/title", 40, 0, 1400, events["title_ru"] + f" ({events['issue']})", size=28)
+    title = events["title_ru"] + f" ({events['issue']})"
+    # #1392: a title, actor or event that would not fit widens / pushes its row; one-line titles, one-line actors
+    # and events of <= 110 px (every #1359 / #1375 box) draw exactly as before
+    b.label("route/title", 40, 0, 1400 if len(wrap(title, 1400, 28)) == 1 else 2300, title, size=28)
+    ev_h = max(max(110, len(wrap(f"{i + 1}. {s['event_ru']}", col_w - 16, 17)) * 17 * 1.25 + 20)
+               for i, s in enumerate(events["stages"]))
+    dy = max(0, 170 + ev_h + 10 - 300)
     legend = ("Легенда: жёлтый — кто действует; оранжевый — событие; голубой — команда agr/dt; "
               "сиреневый — правило (строка D решений); серый — контекст; розовый — горячая точка (здесь теряется время)")
     if any(s.get("branches") for s in events["stages"]):  # #1375; a route without branches draws as before
@@ -444,19 +513,25 @@ def route_board(events, contexts):
     for i, s in enumerate(events["stages"]):
         x = 40 + i * (col_w + gap)
         k = f"route/{s['id']}"
-        b.box(k + "/actor", x + 40, 100, col_w - 80, actors[s["actor"]], COLORS["actor"], size=15)
+        actor = actors[s["actor"]]
+        if len(wrap(actor, col_w - 96, 15)) == 1:
+            b.box(k + "/actor", x + 40, 100, col_w - 80, actor, COLORS["actor"], size=15)
+        else:   # #1392 «Агент: Blender / Max / AGR Tools»: full column width keeps it at 2 lines above the event
+            b.box(k + "/actor", x + 10, 100, col_w - 20, actor, COLORS["actor"], size=15)
         ev = b.box(k + "/event", x, 170, col_w, f"{i + 1}. {s['event_ru']}", COLORS["event"], size=17, min_h=110)
         if prev is not None:
             b.arrow(k + "/flow", prev, ev)
         prev = ev
         cmds = s.get("commands", [])
         if cmds:
-            b.box(k + "/cmd", x, 300, col_w, "Команда:\n" + "\n".join(cmds), COLORS["command"], size=14, min_h=90)
+            b.box(k + "/cmd", x, 300 + dy, col_w, "Команда:\n" + "\n".join(cmds), COLORS["command"], size=14, min_h=90)
         else:
-            b.box(k + "/cmd", x, 300, col_w, "Нет команды agr/dt", COLORS["command"], size=14, min_h=90, dashed=True)
-        b.box(k + "/rules", x, 420, col_w, "Правила: " + ", ".join(s["rules"]), COLORS["rule"], size=14, min_h=60)
-        b.box(k + "/ctx", x, 500, col_w, "Контекст: " + ctx_ru[s["context"]], COLORS["context"], size=14, min_h=60)
-        y = 590
+            b.box(k + "/cmd", x, 300 + dy, col_w, "Нет команды agr/dt", COLORS["command"], size=14, min_h=90,
+                  dashed=True)
+        b.box(k + "/rules", x, 420 + dy, col_w, "Правила: " + ", ".join(s["rules"]), COLORS["rule"], size=14, min_h=60)
+        b.box(k + "/ctx", x, 500 + dy, col_w, "Контекст: " + ctx_ru[s["context"]], COLORS["context"], size=14,
+              min_h=60)
+        y = 590 + dy
         for br in s.get("branches", []):
             text = f"Ветка: {br['when_ru']}\n→ {br['ru']}"
             if br.get("commands"):
@@ -490,7 +565,11 @@ def _dup_lines(dups, rules_ru):
 
 
 def contexts_board(events, contexts):
-    check_schema(events, contexts)
+    """Context map board; `events` None = a route's own map (#1392), checked by check_contexts alone."""
+    if events is None:
+        check_contexts(contexts)
+    else:
+        check_schema(events, contexts)
     rules_ru = {r["id"]: r["ru"] for r in contexts["rules"]}
     b = Board()
     b.label("ctx/title", 40, 0, 1600, contexts["title_ru"] + f" ({contexts['issue']})", size=28)
@@ -504,14 +583,17 @@ def contexts_board(events, contexts):
         lines = [c["ru"], "Владелец: " + c["owner"], c["owner_ru"], ""]
         lines += [f"{f['name']}: {f['contract']}" for f in c["functions"]]
         node = b.box(f"ctx/{c['id']}", x, y, w, "\n".join(lines), bg, size=14, align="left")
-        dups = c.get("duplicates", [])
+        nodes[c["id"]] = node
+        if "duplicates" not in c:   # #1392: no duplicates key -> no pink box (an empty list still draws "0")
+            tails[c["id"]] = node
+            return node["height"]
+        dups = c["duplicates"]
         dl, rules = _dup_lines(dups, rules_ru)
         head = f"Дубли вне владельца: {len(dups)}"
         if rules:
             head += "\nПравило проверки: " + "; ".join(rules_ru[r] for r in rules)
         dup = b.box(f"ctx/{c['id']}/dups", x, y + node["height"] + 14, w, head + "\n" + "\n".join(dl),
                     COLORS["hotspot"], size=12, align="left")
-        nodes[c["id"]] = node
         tails[c["id"]] = dup
         return node["height"] + 14 + dup["height"]
 
@@ -519,11 +601,25 @@ def contexts_board(events, contexts):
     top = 110
     kh = place(k, 40 + (w + gap) * 1.5, top, COLORS["kernel"])
     row = top + kh + 60
+    if any("grid" in c for c in contexts["contexts"]):   # #1392: explicit "col/row" cells (checked by check_contexts)
+        cells = {c["id"]: tuple(float(v) for v in c["grid"].split("/")) for c in contexts["contexts"]}
+        y = row
+        for r in sorted({cell[1] for cell in cells.values()}):
+            hs = [place(c, 40 + (w + gap) * cells[c["id"]][0], y, COLORS["owner"])
+                  for c in contexts["contexts"] if cells[c["id"]][1] == r]
+            y += max(hs) + 60
+        return _relations(b, contexts, nodes, tails)
     heights = [place(c, 40 + i * (w + gap), row, COLORS["owner"]) for i, c in enumerate(contexts["contexts"][:4])]
     rest = contexts["contexts"][4:]
     y = row + max(heights) + 60
-    for i, c in enumerate(rest):
-        place(c, 40 + (w + gap) * (1.5 + i), y, COLORS["owner"])
+    for start in range(0, len(rest), 4):   # rows of 4, a short row centred (one context -> column 1.5 as before)
+        chunk = rest[start:start + 4]
+        hs = [place(c, 40 + (w + gap) * ((4 - len(chunk)) / 2 + i), y, COLORS["owner"]) for i, c in enumerate(chunk)]
+        y += max(hs) + 60
+    return _relations(b, contexts, nodes, tails)
+
+
+def _relations(b, contexts, nodes, tails):
     for i, rel in enumerate(contexts.get("relations", [])):
         a, z = nodes[rel["from"]], nodes[rel["to"]]
         if a["y"] < z["y"]:      # downwards: leave from the bottom of the duplicates box, not through it
@@ -539,14 +635,23 @@ def load_routes(root=ROOT):
     return {name: mini_yaml.load(Path(root) / rel) for name, rel in route_events().items()}
 
 
+def load_context_maps(root=ROOT):
+    """Context map name -> parsed YAML, for every map of context_maps()."""
+    return {name: mini_yaml.load(Path(root) / rel) for name, rel in context_maps().items()}
+
+
 def render_all(root=ROOT):
-    """(routes, contexts, files): every route board plus the context map (drawn from the NPM route)."""
+    """(routes, contexts, files): every route board, the NPM context map (drawn from the NPM route) and each
+    route's own context map (#1392)."""
     root = Path(root)
     routes = load_routes(root)
-    contexts = mini_yaml.load(root / CONTEXTS)
+    maps = load_context_maps(root)
+    contexts = maps["contexts"]
     files = {}
     boards = [(name, route_board(ev, contexts)) for name, ev in routes.items()]
     boards.append(("contexts", contexts_board(routes["route"], contexts)))
+    for name in ROUTE_MAP_OF.values():
+        boards.append((name, contexts_board(None, maps[name])))
     for name, board in boards:
         files[OUTPUTS[name].with_suffix(".excalidraw")] = board.excalidraw()
         files[OUTPUTS[name].with_suffix(".svg")] = board.svg()
@@ -560,7 +665,7 @@ def render(root=ROOT):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description="Generate the route/context Excalidraw + SVG from YAML (#1359, #1383)")
+    ap = argparse.ArgumentParser(description="Generate the route/context Excalidraw + SVG from YAML (#1359, #1383, #1392)")
     ap.add_argument("--root", type=Path, default=ROOT)
     ap.add_argument("--check", action="store_true", help="compare with the committed files, write nothing")
     args = ap.parse_args(argv)
@@ -569,7 +674,7 @@ def main(argv=None):
     except (OSError, mini_yaml.MiniYamlError, SchemaError, KeyError, TypeError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2
-    inputs = {(args.root / rel).resolve() for rel in route_events().values()} | {(args.root / CONTEXTS).resolve()}
+    inputs = {(args.root / rel).resolve() for rel in list(route_events().values()) + list(context_maps().values())}
     for rel in files:
         if (args.root / rel).resolve() in inputs:
             print(f"ERROR: output {rel} is an input", file=sys.stderr)
@@ -580,6 +685,12 @@ def main(argv=None):
             for name, events in routes.items():
                 problems += [f"{route_events()[name].name}: {p}"
                              for p in verify_references(args.root, events, contexts) if p not in problems]
+            maps = load_context_maps(args.root)
+            for route, name in ROUTE_MAP_OF.items():   # #1392: each route's own context map
+                label = context_maps()[name].name
+                problems += [f"{label}: {p}"
+                             for p in verify_references(args.root, {"stages": [], "hotspots": []}, maps[name])]
+                problems += [f"{label}: {p}" for p in route_coverage(routes[route], contexts, maps[name])]
         except (OSError, SyntaxError, ImportError) as exc:
             print(f"ERROR: cannot verify references: {exc}", file=sys.stderr)
             return 2

@@ -1,18 +1,20 @@
-# Event storm of the VPM/OKS route (#1383). Source of truth for docs/architecture/vpm-oks-route.excalidraw.
+# Event storm of the VPM/OKS route (#1383; v2 per Artem 2026-11-14, D293, #1392). Source of truth for docs/architecture/vpm-oks-route.excalidraw.
 # Same method as the NPM map (#1359): Russian labels for Artem; commands, D-rows, paths and ids as in the repo.
 # commands: existing `agr` / `dt` commands only; a stage without one is drawn dashed «Нет команды agr/dt».
 # rules: D-rows of docs/decisions.md. evidence: repo paths that exist (KPP1, PSU275, TEC26, ELV, 4BK research).
-# context: id from contexts.yaml or from local_contexts below (route-local, no owner in the context map yet).
-# Checked by tests/test_route_maps_1383.py. Regenerate: uv run python tools/architecture/route_map.py
-title_ru: "Маршрут ВПМ / ОКС: событийный штурм (КПП1, ПСУ275, ТЭЦ26, СРЕDА, 4БК)"
+# context: id from contexts.yaml or from local_contexts below; every stage context is also listed with the same
+# owner in this route's own context map vpm-oks-contexts.yaml (#1392, route_coverage).
+# v2 (D293): DCC stages are tool-agnostic (actor agent-dcc), an NPM stage sits right before the export.
+# Checked by tests/test_route_maps_1383.py and tests/test_route_maps_1392.py. Regenerate: uv run python tools/architecture/route_map.py
+title_ru: "Маршрут ВПМ / ОКС v2: событийный штурм (КПП1, ПСУ275, ТЭЦ26, СРЕDА, 4БК)"
 route: oks-vpm
 object: "KPP1, PSU275, TEC26-OKS, elv-tc-vpm"
-issue: "#1383"
+issue: "#1392"
 actors:
   - id: agent
     ru: "Агент"
-  - id: agent-max
-    ru: "Агент в 3ds Max (AGR Tools)"
+  - id: agent-dcc
+    ru: "Агент: Blender / Max / AGR Tools"
   - id: artem
     ru: "Артём"
   - id: checker
@@ -33,7 +35,9 @@ stages:
       - D186
       - D008
       - D127
+      - D237
     evidence:
+      - routes/revit-intake.md
       - jobs/PSU275/STATE.md
       - jobs/elv-tc-vpm/sources.json
       - jobs/KPP1/sources.json
@@ -61,7 +65,7 @@ stages:
       - jobs/KPP1/cold-run-1172/parts-v001.json
   - id: body
     event_ru: "Корпус построен: сразу ВПМ или mid-poly мастер (по задаче)"
-    actor: agent-max
+    actor: agent-dcc
     context: body
     commands:
       - "dt spec compare"
@@ -70,12 +74,14 @@ stages:
       - D161
       - D250
       - D255
+      - D292
+      - D293
     evidence:
       - jobs/PSU275/STATE.md
       - jobs/KPP1/spec-compare-v003.md
   - id: openings
     event_ru: "Проёмы и окна: окно из библиотеки с утоплением или генератор"
-    actor: agent-max
+    actor: agent-dcc
     context: body
     rules:
       - D116
@@ -83,35 +89,40 @@ stages:
       - D258
       - D029
       - D172
+      - D292
+      - D293
     evidence:
       - docs/domain/areas/windows.md
       - jobs/KPP1/windowgen-1338/README.md
   - id: roof
-    event_ru: "Кровля и парапет: плита вставлена и поднята (R6)"
-    actor: agent-max
+    event_ru: "Кровля, парапет, плита, ограждение: плита врезана и поднята (R6)"
+    actor: agent-dcc
     context: body
     rules:
       - D038
       - D039
       - D208
       - D254
+      - D292
+      - D293
     evidence:
       - docs/procedure/node-r6-oks-body-facade.md
       - jobs/KPP1/seam-1339/README.md
   - id: decor
-    event_ru: "Декор и навесные элементы врезаны в фасад"
-    actor: agent-max
+    event_ru: "Декор, навесные элементы, разрезанный фасад: врезаны"
+    actor: agent-dcc
     context: body
     rules:
       - D199
       - D124
       - D174
+      - D293
     evidence:
       - docs/domain/areas/decor.md
       - jobs/elv-tc-vpm/LESSONS.md
   - id: uv
     event_ru: "UV по UDIM и текстуры (сетка рядов, где кирпич)"
-    actor: agent-max
+    actor: agent-dcc
     context: uv-atlas
     rules:
       - D209
@@ -119,6 +130,7 @@ stages:
       - D207
       - D216
       - D160
+      - D293
     evidence:
       - docs/research/vpm-course-grid-1314.md
       - jobs/PSU275/vpm_textures.json
@@ -136,12 +148,46 @@ stages:
     evidence:
       - docs/domain/areas/ucx.md
       - jobs/KPP1/scripts/vpm_ucx.py
+  - id: npm
+    event_ru: "НПМ-версия в тех же координатах готова (атлас)"
+    actor: agent-dcc
+    context: uv-atlas
+    commands:
+      - "agr vpm-to-npm"
+    rules:
+      - D293
+      - D292
+      - D010
+    evidence:
+      - tools/derive/npm_atlas.py
+      - tools/derive/export_npm.py
+      - docs/domain/areas/derivation.md
+    branches:
+      - id: convert
+        when_ru: "ВПМ или мастер готов"
+        ru: "конвертация ВПМ → НПМ: атлас НПМ из UDIM (путь A)"
+        commands:
+          - "agr vpm-to-npm"
+        rules:
+          - D293
+          - D292
+        evidence:
+          - tools/derive/npm_atlas.py
+      - id: parallel
+        when_ru: "НПМ ведётся параллельно"
+        ru: "НПМ строится рядом с ВПМ в тех же координатах, атлас по ID (путь B)"
+        rules:
+          - D293
+          - D292
+        evidence:
+          - docs/domain/areas/uv-atlas.md
   - id: package
-    event_ru: "export_meta, FBX и пакет ВПМ собраны"
+    event_ru: "export_meta, FBX и пакеты ВПМ и НПМ собраны"
     actor: agent
     context: package
     commands:
       - "agr package-vpm"
+      - "agr package-npm"
       - "dt derive package"
     rules:
       - D198
@@ -149,8 +195,10 @@ stages:
       - D223
       - D017
       - D018
+      - D292
     evidence:
       - tools/derive/package_vpm.py
+      - tools/derive/package_npm.py
       - jobs/KPP1/package-1278/latest/REPORT.md
   - id: readback
     event_ru: "Экспорт заново прочитан в новом процессе"
@@ -199,31 +247,13 @@ stages:
       - jobs/elv-tc-vpm/REVIEW-album-2026-11-10.md
       - jobs/TEC26-OKS/AC08/PILOT_REPORT.md
 hotspots:
-  - id: revit-intake
-    stage: sources
-    ru: "Revit как источник: маршрут revit-intake (#1362, PR #1373) ещё не на main; ПСУ275 — только отсоединённая копия Revit 2025, сдвиг FBX↔Revit найден вручную по плоскостям фасадов"
-    rules:
-      - D008
-      - D009
-    evidence:
-      - jobs/PSU275/STATE.md
-      - docs/sources/psu275.md
-  - id: body-master-choice
-    stage: body
-    ru: "ВПМ сразу или mid-poly мастер — по задаче (Артём 2026-11-14), строки D нет; ПСУ275 сменил подход посреди работы: типового этажа нет → массинг → одна оболочка"
-    rules:
-      - D010
-      - D161
-      - D250
-    evidence:
-      - jobs/PSU275/STATE.md
   - id: windows
     stage: openings
-    ru: "Окна: проёмы Revit и меша КПП1 не совпали (spec-compare v002); окна только из библиотеки (D116); генератор окон #1338 — пока замер, общей команды нет"
+    ru: "Окна: проёмы Revit и меша КПП1 не совпали (spec-compare v002); окно из библиотеки с утоплением или генератор (D292); windowgen_core есть в AGR Tools (#1345), команды agr / dt нет"
     rules:
       - D116
       - D204
-      - D258
+      - D292
     evidence:
       - jobs/KPP1/spec-compare-v002.md
       - jobs/KPP1/windowgen-1338/README.md
@@ -246,7 +276,7 @@ hotspots:
       - docs/research/vpm-course-grid-1314.md
   - id: udim-copies
     stage: uv
-    ru: "UDIM: vpm_uv.py ТЭЦ26 = КПП1 с разницей в одну строку; цвета ТЭЦ26 — по слайдам презентации, v007 (стыки каждые 0,60 м) отклонён"
+    ru: "UDIM: номер тайла теперь один (udim_tile, #1337 / #1376), но раскладка vpm_uv.py ТЭЦ26 = КПП1 с разницей в строку; цвета ТЭЦ26 — по слайдам, v007 (стыки каждые 0,60 м) отклонён"
     rules:
       - D209
       - D221
@@ -269,9 +299,10 @@ hotspots:
       - jobs/TEC26-OKS/AC08/PILOT_REPORT.md
   - id: export-meta
     stage: package
-    ru: "Пакет: контракт export_meta и agr package-npm (#1361) открыты; КПП1 собран без утверждённого Ground (D285), GeoJSON отложен (D224)"
+    ru: "Пакет: agr package-npm и export_meta на main (#1361); КПП1 собран без утверждённого Ground (D285); сданный Ground не готов (D288)"
     rules:
       - D285
+      - D288
       - D224
     evidence:
       - jobs/KPP1/package-1278/latest/REPORT.md

@@ -1,0 +1,201 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2735 1543" width="2735" height="1543" font-family="Segoe UI, Arial, sans-serif">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
+<rect x="10" y="-30" width="2735" height="1543" fill="#ffffff"/>
+<rect x="955.0" y="110" width="470" height="177.5" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
+<rect x="40.0" y="347.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="650.0" y="347.5" width="470" height="142.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1260.0" y="347.5" width="470" height="265.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1870.0" y="347.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1260.0" y="672.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="650.0" y="672.5" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="650.0" y="899.0" width="470" height="65.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1260.0" y="1024.0" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1870.0" y="1024.0" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1870.0" y="1198.0" width="470" height="65.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1260.0" y="1323.0" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<line x1="510.0" y1="436.25" x2="650.0" y2="418.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1120.0" y1="418.75" x2="1260.0" y2="480.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1730.0" y1="480.0" x2="1870.0" y2="427.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1425.0" y1="198.75" x2="1870.0" y2="427.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1260.0" y1="480.0" x2="1120.0" y2="778.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1495.0" y1="612.5" x2="2105.0" y2="1024.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1120.0" y1="778.75" x2="1260.0" y2="761.25" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1495.0" y1="850.0" x2="1495.0" y2="1024.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="2105.0" y1="507.5" x2="1495.0" y2="1024.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1870.0" y1="1104.0" x2="1730.0" y2="1104.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1495.0" y1="1184.0" x2="1495.0" y2="1323.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
+<tspan x="40" dy="28">Карта контекстов маршрута Ground (НПМ + ВПМ) — D293 (#1392)</tspan>
+</text>
+<text x="40" y="44" font-size="16" text-anchor="start" fill="#1e1e1e">
+<tspan x="40" dy="16">Легенда: зелёный — модуль-владелец и его функции (контракт: вход -&gt; выход); жёлтый — общее ядро; розовый — дубли вне владельца (путь:строка); стрелки — что контекст передаёт дальше</tspan>
+</text>
+<text x="963.0" y="120.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="963.0" dy="14">Общее ядро: номер тайла UDIM (UDIM = ID покрытия)</tspan>
+<tspan x="963.0" dy="17.5">Владелец: adapters/max/agr_tools/udimtile_core.py</tspan>
+<tspan x="963.0" dy="17.5">одна функция UDIM (#1337); её дубли охраняет карта НПМ</tspan>
+<tspan x="963.0" dy="17.5">(contexts.yaml)</tspan>
+<tspan x="963.0" dy="17.5"></tspan>
+<tspan x="963.0" dy="17.5">udim_tile: u, v -&gt; номер тайла 1001 + ⌊u⌋ + 10·⌊v⌋; вне</tspan>
+<tspan x="963.0" dy="17.5">области — UdimDomainError</tspan>
+<tspan x="963.0" dy="17.5">face_tile: углы UV грани -&gt; тайл грани; угол в чужом</tspan>
+<tspan x="963.0" dy="17.5">тайле — UdimCrossTileError</tspan>
+</text>
+<text x="48.0" y="357.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="48.0" dy="14">Связь с DCC (Blender / 3ds Max / AGR Tools)</tspan>
+<tspan x="48.0" dy="17.5">Владелец: src/dt_ai/core/blender_runner.py</tspan>
+<tspan x="48.0" dy="17.5">исходники DWG / ПЗУ / PDF / 3D-рельеф; агент работает</tspan>
+<tspan x="48.0" dy="17.5">там, где удобно (D293)</tspan>
+<tspan x="48.0" dy="17.5"></tspan>
+<tspan x="48.0" dy="17.5">blender_executable: путь или DT_BLENDER -&gt; исполняемый</tspan>
+<tspan x="48.0" dy="17.5">файл Blender; нет — ошибка</tspan>
+<tspan x="48.0" dy="17.5">run_blender: скрипт, аргументы, ожидаемые выходы, таймаут</tspan>
+<tspan x="48.0" dy="17.5">-&gt; свежий JSON; старый ответ — ошибка</tspan>
+</text>
+<text x="658.0" y="357.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="658.0" dy="14">Граница участка и нулевая отметка</tspan>
+<tspan x="658.0" dy="17.5">Владелец: src/dt_ai/core/heights.py</tspan>
+<tspan x="658.0" dy="17.5">высоты App.3 от нуля проекта (D279); граница и ноль — из</tspan>
+<tspan x="658.0" dy="17.5">проекта или агент уточняет (D293)</tspan>
+<tspan x="658.0" dy="17.5"></tspan>
+<tspan x="658.0" dy="17.5">height_values: ноль проекта, м; Z нуля в FBX, м; верх</tspan>
+<tspan x="658.0" dy="17.5">модели, м -&gt; высоты App.3 с округлением только в конце</tspan>
+</text>
+<text x="1268.0" y="357.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="1268.0" dy="14">Поверхность Ground: плоские покрытия → проекция на рельеф</tspan>
+<tspan x="1268.0" dy="17.5">→ юбка</tspan>
+<tspan x="1268.0" dy="17.5">Владелец: tools/ground/build_ground_v015.py</tspan>
+<tspan x="1268.0" dy="17.5">сборка Ground Ватутино v015 (только этот участок, agr</tspan>
+<tspan x="1268.0" dy="17.5">ground / dt ground v015)</tspan>
+<tspan x="1268.0" dy="17.5"></tspan>
+<tspan x="1268.0" dy="17.5">geometry: данные участка, исходник, одобрения, вырезы -&gt;</tspan>
+<tspan x="1268.0" dy="17.5">меш Ground v015</tspan>
+<tspan x="1268.0" dy="17.5">restore_source_coverage: меш, план -&gt; ограниченный ремонт</tspan>
+<tspan x="1268.0" dy="17.5">покрытия; ненулевой остаток не прощается</tspan>
+<tspan x="1268.0" dy="17.5">derive: меш, профиль, сэмплер, защищённые, исключения -&gt;</tspan>
+<tspan x="1268.0" dy="17.5">квады и треугольники Ground</tspan>
+<tspan x="1268.0" dy="17.5">main: --job-dir и параметры -&gt; Ground v015 и отчёт;</tspan>
+<tspan x="1268.0" dy="17.5">изменился HEAD — отказ</tspan>
+</text>
+<text x="1878.0" y="357.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="1878.0" dy="14">Текстуры по ID: UV-острова, тайлы, UDIM / атлас</tspan>
+<tspan x="1878.0" dy="17.5">Владелец: adapters/max/agr_tools/atlas_core.py</tspan>
+<tspan x="1878.0" dy="17.5">ВПМ: UDIM = ID; НПМ: та же геометрия на атласе (D293);</tspan>
+<tspan x="1878.0" dy="17.5">упаковка атласа (D225)</tspan>
+<tspan x="1878.0" dy="17.5"></tspan>
+<tspan x="1878.0" dy="17.5">pack: вершины, UV, грани, материалы, режим, размер,</tspan>
+<tspan x="1878.0" dy="17.5">отступ -&gt; новые UV, тайлы UDIM, ячейки</tspan>
+<tspan x="1878.0" dy="17.5">atlas_png: раскладка -&gt; PNG атласа</tspan>
+</text>
+<text x="1268.0" y="682.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="1268.0" dy="14">НПМ МАФ и Флора на атласе</tspan>
+<tspan x="1268.0" dy="17.5">Владелец: adapters/max/agr_tools/flora_atlas_max.py</tspan>
+<tspan x="1268.0" dy="17.5">атлас МАФ (GroundEl) и Флоры в AGR Tools; конвертация ВПМ</tspan>
+<tspan x="1268.0" dy="17.5">→ НПМ или параллельно (D293)</tspan>
+<tspan x="1268.0" dy="17.5"></tspan>
+<tspan x="1268.0" dy="17.5">atlas_groundel: контекст Max, режим, узлы МАФ, превью -&gt;</tspan>
+<tspan x="1268.0" dy="17.5">атлас МАФ НПМ</tspan>
+<tspan x="1268.0" dy="17.5">atlas_flora: контекст Max, режим, узлы Флоры, превью -&gt;</tspan>
+<tspan x="1268.0" dy="17.5">атлас Флоры НПМ</tspan>
+</text>
+<text x="658.0" y="682.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="658.0" dy="14">Расстановка МАФ и Флоры</tspan>
+<tspan x="658.0" dy="17.5">Владелец: src/dt_ai/placement/engine.py</tspan>
+<tspan x="658.0" dy="17.5">один экземпляр на точку СПОЗУ по высоте Ground; low-poly</tspan>
+<tspan x="658.0" dy="17.5">и high-poly — в одни точки (D293)</tspan>
+<tspan x="658.0" dy="17.5"></tspan>
+<tspan x="658.0" dy="17.5">place: точки, вершины и треугольники Ground, библиотека,</tspan>
+<tspan x="658.0" dy="17.5">seed -&gt; экземпляр или отказ с кодом</tspan>
+<tspan x="658.0" dy="17.5">bottom_face_verdict: нижняя грань в мире -&gt; удалить / на</tspan>
+<tspan x="658.0" dy="17.5">проверку (D095, D096)</tspan>
+<tspan x="658.0" dy="17.5">report_json: отчёт -&gt; строгий JSON: тот же seed и вход -&gt;</tspan>
+<tspan x="658.0" dy="17.5">те же байты</tspan>
+</text>
+<text x="658.0" y="909.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<tspan x="658.0" dy="12">Дубли вне владельца: 1</tspan>
+<tspan x="658.0" dy="15.0">• jobs/VATUTINO-SITE/place_site.py:78 — своя расстановка участка в</tspan>
+<tspan x="658.0" dy="15.0">задании поверх движка (#1383)</tspan>
+</text>
+<text x="1268.0" y="1034.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="1268.0" dy="14">Экспорт и пакеты НПМ / ВПМ</tspan>
+<tspan x="1268.0" dy="17.5">Владелец: tools/derive/package_vpm.py</tspan>
+<tspan x="1268.0" dy="17.5">общий упаковщик ВПМ (agr package-vpm); НПМ — agr</tspan>
+<tspan x="1268.0" dy="17.5">package-npm (#1361)</tspan>
+<tspan x="1268.0" dy="17.5"></tspan>
+<tspan x="1268.0" dy="17.5">main: папка пакета, текстуры, [--object] -&gt;</tspan>
+<tspan x="1268.0" dy="17.5">SM_&lt;Адрес&gt;.zip + package_report.json; занятый путь —</tspan>
+<tspan x="1268.0" dy="17.5">отказ</tspan>
+</text>
+<text x="1878.0" y="1034.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="1878.0" dy="14">Коллизии UCX рельефа (только ВПМ)</tspan>
+<tspan x="1878.0" dy="17.5">Владелец: adapters/max/agr_tools/ucx10_core.py</tspan>
+<tspan x="1878.0" dy="17.5">канон UCX (D225): выпуклые куски и зазоры между ними</tspan>
+<tspan x="1878.0" dy="17.5"></tspan>
+<tspan x="1878.0" dy="17.5">piece: вершины, треугольники -&gt; выпуклый кусок с</tspan>
+<tspan x="1878.0" dy="17.5">нормалями и рёбрами</tspan>
+<tspan x="1878.0" dy="17.5">plan: куски, опции -&gt; зазор каждой соседней пары каждого</tspan>
+<tspan x="1878.0" dy="17.5">семейства UCX</tspan>
+</text>
+<text x="1878.0" y="1208.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<tspan x="1878.0" dy="12">Дубли вне владельца: 1</tspan>
+<tspan x="1878.0" dy="15.0">• jobs/VATUTINO-SITE/assemble_delivery.py:25 — UCX Ground из</tspan>
+<tspan x="1878.0" dy="15.0">готовых FBX по путям C:/x (#1383)</tspan>
+</text>
+<text x="1268.0" y="1333.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="1268.0" dy="14">Проверки Ground, xView, СИНТЕЗ</tspan>
+<tspan x="1268.0" dy="17.5">Владелец: tools/qa/validate_package.py</tspan>
+<tspan x="1268.0" dy="17.5">проверка пакета по регламенту (agr validate)</tspan>
+<tspan x="1268.0" dy="17.5"></tspan>
+<tspan x="1268.0" dy="17.5">validate_vpm_zip: имя, файлы ZIP, профиль, стадии -&gt;</tspan>
+<tspan x="1268.0" dy="17.5">находки ВПМ</tspan>
+<tspan x="1268.0" dy="17.5">validate_npm_zip: имя, файлы ZIP, профиль, стадии -&gt;</tspan>
+<tspan x="1268.0" dy="17.5">находки НПМ</tspan>
+</text>
+<rect x="550.0" y="418.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="580.0" y="418.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="580.0" dy="14">исходники</tspan>
+</text>
+<rect x="1160.0" y="440.38" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1190.0" y="440.38" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1190.0" dy="14">граница и ноль</tspan>
+</text>
+<rect x="1770.0" y="435.75" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1800.0" y="435.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1800.0" dy="14">плоский Ground</tspan>
+<tspan x="1800.0" dy="17.5">с ID</tspan>
+</text>
+<rect x="1617.5" y="304.12" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1647.5" y="304.12" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1647.5" dy="14">тайл UDIM = ID</tspan>
+</text>
+<rect x="1160.0" y="611.38" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1190.0" y="611.38" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1190.0" dy="14">рельеф для</tspan>
+<tspan x="1190.0" dy="17.5">высот</tspan>
+</text>
+<rect x="1770.0" y="809.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1800.0" y="809.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1800.0" dy="14">рельеф</tspan>
+</text>
+<rect x="1160.0" y="752.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1190.0" y="752.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1190.0" dy="14">точки МАФ /</tspan>
+<tspan x="1190.0" dy="17.5">Флоры</tspan>
+</text>
+<rect x="1465.0" y="928.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1495.0" y="928.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1495.0" dy="14">НПМ на атласе</tspan>
+</text>
+<rect x="1770.0" y="756.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1800.0" y="756.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1800.0" dy="14">атлас / UDIM</tspan>
+</text>
+<rect x="1770.0" y="1095.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1800.0" y="1095.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1800.0" dy="14">коллизии UCX_</tspan>
+</text>
+<rect x="1465.0" y="1244.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1495.0" y="1244.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1495.0" dy="14">ZIP / FBX сдачи</tspan>
+</text>
+</svg>
