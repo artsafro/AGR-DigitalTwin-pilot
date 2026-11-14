@@ -1,0 +1,13 @@
+{
+  "main": "9d7753e1",
+  "decision": "D285",
+  "reproduction_identical": 5,
+  "payloads_identical_to_v004": 3,
+  "changed_stages_since_v004": {
+    "npm": [],
+    "vpm": [
+      "V013"
+    ]
+  },
+  "delivery_passed": false
+}
