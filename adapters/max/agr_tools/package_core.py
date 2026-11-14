@@ -452,23 +452,54 @@ def _write_zip(folder, archive, target):
     if os.path.exists(target):
         raise FileExistsError('refusing to overwrite: ' + target)
     partial = target + '.partial'
+    import hashlib
+    def digest(stream):
+        value = hashlib.sha256()
+        for chunk in iter(lambda: stream.read(1024 * 1024), b''):
+            value.update(chunk)
+        return value.hexdigest()
+    if not archive['members']:
+        raise ValueError('empty archive members')
+    fingerprints, identities = {}, set()
+    for member in archive['members']:
+        name = member['name']
+        source = os.path.join(folder, name)
+        if name.casefold() in fingerprints:
+            raise ValueError('duplicated archive member: ' + name)
+        stat = os.stat(source)
+        identity = (stat.st_dev, stat.st_ino) if stat.st_ino else os.path.normcase(os.path.realpath(source))
+        if identity in identities:
+            raise ValueError('duplicated input file: ' + name)
+        identities.add(identity)
+        if not os.path.isfile(source) or not stat.st_size:
+            raise ValueError('empty or unsupported input file: ' + name)
+        with open(source, 'rb') as stream:
+            fingerprints[name.casefold()] = digest(stream)
+    owned_partial = False
     try:
         with open(partial, 'xb') as fh:
+            owned_partial = True
             with zipfile.ZipFile(fh, 'w', zipfile.ZIP_DEFLATED, allowZip64=True) as z:
                 for m in archive['members']:
                     z.write(os.path.join(folder, m['name']), arcname=m['name'])
         size = os.path.getsize(partial)
         if size_status(size, archive['limit']) != 'pass':
             return None, size
+        with zipfile.ZipFile(partial) as packed:
+            for member in archive['members']:
+                name = member['name']
+                with open(os.path.join(folder, name), 'rb') as stream, packed.open(name) as archived:
+                    if digest(stream) != fingerprints[name.casefold()] or digest(archived) != fingerprints[name.casefold()]:
+                        raise ValueError('input changed during packaging: ' + name)
         try:
             os.link(partial, target)  # fails if the target appeared meanwhile: no clobber
         except OSError:
-            if os.path.exists(target):
+            if os.path.lexists(target) or os.name != 'nt':
                 raise
-            os.rename(partial, target)
+            os.rename(partial, target)  # Windows rename is atomic no-replace (POSIX rename is forbidden here)
         return target, size
     finally:
-        if os.path.exists(partial):
+        if owned_partial and os.path.exists(partial):
             os.unlink(partial)
 
 

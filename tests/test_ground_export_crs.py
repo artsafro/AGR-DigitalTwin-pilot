@@ -26,6 +26,10 @@ def test_ground_export_coordinate_label(tmp_path, crs):
         assert not target.exists() and not Path(str(target)+'.placement.json').exists()
         return
     assert run.returncode == 0, run.stdout + run.stderr
+    shared = Path(str(target) + '.export_meta.json')
+    assert shared.is_file(), 'shared Ground exporter metadata missing'
+    exported_meta = json.loads(shared.read_text(encoding='utf-8'))
+    assert exported_meta['h_otn_model_max_z_m'] == pytest.approx(171.05)
     meta = json.loads(Path(str(target)+'.placement.json').read_text())
     assert meta['crs'] == (crs or 'MSK-77')
     assert meta['origin_msk77_xyz'] == [11, 21, 0]
