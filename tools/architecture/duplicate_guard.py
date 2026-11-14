@@ -1,4 +1,4 @@
-"""Duplicate guard (#1359): owned domain functions must not be re-implemented under jobs/.
+"""Duplicate guard (#1359): owned domain functions must not be re-implemented outside their owner.
 
 Pattern: n/a | new-case: AST guard against job-local copies of owned functions (UDIM tile, delivery ZIP).
 
@@ -11,9 +11,12 @@ Rules (stdlib `ast`, no imports of the scanned code):
 - `delivery-zip`  owner tools/derive/package_vpm.py (`dt derive package`, #1106). Flags a job-local
   delivery package writer: `zipfile.ZipFile(..., "w" | "x" | "a")` (mode positional or keyword).
 
-The allowlist is the rule-tagged `duplicates` of docs/architecture/contexts.yaml: every jobs/ finding must be listed
-there with an issue reference, and every listed row (also the documented copies outside jobs/) must still be found
-(no stale rows). A row is keyed by `at: "path.py::qualname"` - the file and the enclosing function/class
+Guarded scope per rule (GUARDED): `udim-tile` jobs/ + tools/ + src/ (#1376: the live NPM-route copies in tools/
+and src/ now call the owner); `delivery-zip` jobs/ only until the package owner is settled (#1377). Each guarded
+folder must exist (a missing one is an error, not an empty pass).
+The allowlist is the rule-tagged `duplicates` of docs/architecture/contexts.yaml: every finding in a guarded scope
+must be listed there with an issue reference, and every listed row (also the documented copies outside the guarded
+scope, e.g. the Max cores under adapters/) must still be found (no stale rows). A row is keyed by `at: "path.py::qualname"` - the file and the enclosing function/class
 (`<module>` at top level), never by a bare line number (#1387): lines inserted above or inside the function do not
 make it NEW or STALE. Optional `hash:` (10 hex, `sha1(ast.unparse(node))`, printed with every NEW COPY) pins one
 copy inside the function; a row without it covers every copy of that rule in that function.
@@ -40,6 +43,8 @@ RULES = {
     "delivery-zip": "tools/derive/package_vpm.py",
 }
 WRITE_MODES = {"w", "x", "a"}
+# top-level folders where a new copy fails, per rule (#1376 widened udim-tile from jobs/ to tools/ + src/)
+GUARDED = {"udim-tile": ("jobs", "tools", "src"), "delivery-zip": ("jobs",)}
 
 
 OWNED_NAMES = {"udim-tile": {"udim_tile", "udim_of_cell", "tile_origin", "face_tile"}}
@@ -252,20 +257,25 @@ def _covers(key, finding):
     return (rule, path, qual) == finding[:3] and digest in (None, finding.digest)
 
 
-def compare(findings, allowed, scope="jobs"):
-    """-> (new, stale): `scope` findings no row covers, allowlist rows that cover no finding.
+def _guarded(finding, scope=None):
+    tops = (scope,) if scope is not None else GUARDED[finding.rule]
+    return any(finding.path.startswith(top.rstrip("/") + "/") for top in tops)
 
-    Rows outside `scope` are documentation of copies elsewhere: they must still be found (else stale), but new
-    copies outside `scope` are not guarded yet."""
-    prefix = scope.rstrip("/") + "/"
-    new = sorted(f for f in set(findings) if f.path.startswith(prefix) and not any(_covers(k, f) for k in allowed))
+
+def compare(findings, allowed, scope=None):
+    """-> (new, stale): guarded findings no row covers, allowlist rows that cover no finding.
+
+    Guarded = under GUARDED[rule] (or under `scope` for every rule when given). Rows outside it are documentation
+    of copies elsewhere: they must still be found (else stale), but new copies there are not guarded yet."""
+    new = sorted(f for f in set(findings) if _guarded(f, scope) and not any(_covers(k, f) for k in allowed))
     stale = sorted(k for k in allowed if not any(_covers(k, f) for f in findings))
     return new, stale
 
 
-def scan_for(root, allowed, scope="jobs"):
-    """Scan `scope` plus every top-level folder an allowlist row points to."""
-    tops = {scope} | {key[1].split("/", 1)[0] for key in allowed}
+def scan_for(root, allowed, scope=None):
+    """Scan every guarded folder (or `scope`) plus every top-level folder an allowlist row points to."""
+    guarded = {scope} if scope is not None else {top for tops in GUARDED.values() for top in tops}
+    tops = guarded | {key[1].split("/", 1)[0] for key in allowed}
     findings = []
     for top in sorted(tops):
         findings += scan(root, top)
@@ -273,7 +283,7 @@ def scan_for(root, allowed, scope="jobs"):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description="Duplicate guard (#1359): owned functions vs jobs/ copies")
+    ap = argparse.ArgumentParser(description="Duplicate guard (#1359): owned functions vs copies")
     ap.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
     ap.add_argument("--contexts", type=Path, default=None)
     ap.add_argument("--json", action="store_true")

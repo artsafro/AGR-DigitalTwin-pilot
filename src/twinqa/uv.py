@@ -32,10 +32,14 @@ FIRST_TILE, LAST_TILE = 1001, 1100
 EPS = 1e-6
 
 
-def tile_origin(tile: int):
+def _regulated_tile_origin(tile: int):
+    """UDIM tile -> (u_tile, v_tile) via udimtile_core.tile_origin (#1376), limited to FIRST_TILE..LAST_TILE."""
     if type(tile) is not int or not FIRST_TILE <= tile <= LAST_TILE:
         raise ValueError("UDIM must be 1001..1100")
-    return (tile - 1001) % 10, (tile - 1001) // 10
+    return _udimtile.tile_origin(tile)
+
+
+tile_origin = _regulated_tile_origin
 
 
 def tile_quad(tile: int, size: int, padding: int):

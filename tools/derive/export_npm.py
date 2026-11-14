@@ -15,6 +15,7 @@ applied, pivot = plan centre Z 0 (or the shared --pivot of a multi-OKS package).
 <out>/../export_npm_meta.json and <out>/../NPM_export_tri.blend (both refused if they already exist).
 """
 import argparse
+import importlib.util
 import json
 import math
 import os
@@ -26,6 +27,18 @@ from mathutils import Matrix, Vector
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 RECIPE = os.path.normpath(os.path.join(HERE, "..", "..", "jobs", "TEC26-OKS", "scripts"))
+_OWNER = os.path.normpath(os.path.join(HERE, "..", "..", "adapters", "max", "agr_tools", "udimtile_core.py"))
+_ownspec = importlib.util.spec_from_file_location("udimtile_core_export_npm", _OWNER)
+_udimtile = importlib.util.module_from_spec(_ownspec)
+_ownspec.loader.exec_module(_udimtile)
+
+
+def face_udim(cu, cv):
+    """(tile, u_tile, v_tile) of a face centroid via udimtile_core (#1337, #1376). A centroid outside u in [0, 10),
+    v >= 0 or not finite raises UdimDomainError (a ValueError); before #1376 u tile 10 silently became 1011."""
+    tile = _udimtile.udim_tile(cu, cv)
+    tu, tv = _udimtile.tile_origin(tile)
+    return tile, tu, tv
 
 
 def parse(argv):
@@ -137,16 +150,19 @@ def main(argv):
     bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context="VERTS")
     # Check every retained face BEFORE remapping or saving the export copy.
     face_tiles = []
-    for f in bm.faces:
-        c = sum((loop[uv].uv for loop in f.loops), Vector((0, 0))) / len(f.loops)
-        face_tiles.append((f, math.floor(c.x), math.floor(c.y)))
     try:
-        require_udim_regions((1001 + tu + 10 * tv for _, tu, tv in face_tiles), by_udim)
+        for f in bm.faces:
+            c = sum((loop[uv].uv for loop in f.loops), Vector((0, 0))) / len(f.loops)
+            try:
+                face_tiles.append((f, *face_udim(c.x, c.y)))
+            except ValueError as exc:
+                raise ValueError(f"face {f.index}: {exc}") from None
+        require_udim_regions((tile for _, tile, _, _ in face_tiles), by_udim)
     except ValueError:
         bm.free()
         raise
-    for f, tu, tv in face_tiles:
-        r = by_udim[1001 + tu + 10 * tv]
+    for f, tile, tu, tv in face_tiles:
+        r = by_udim[tile]
         for loop in f.loops:
             loc = loop[uv].uv - Vector((tu, tv))
             loop[uv].uv = Vector((r["u0"], r["v0"])) + loc * r["size"]
