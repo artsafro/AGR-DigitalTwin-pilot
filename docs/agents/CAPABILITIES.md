@@ -398,6 +398,9 @@ Delivery QA:
 - Methods catalog runner `tools/methods/run_variant.py`, `tools/methods/ucx/run_benchmarks.py` (#706) — WORKING.
 - Preview QA `tools/qa/render_qa.py` (numerical, not acceptance; limits in `tools/qa/render_qa.md`) and the advisory
   VLM checklist `tools/qa/vlm_checklist.py` (#768, research) — advisory only.
+- Before/After visual evidence `tools/review/before_after.py` (#1360, [D286]) — WORKING: two FBX/.blend versions,
+  one camera (fitted to both or one identical named camera), headless Blender Workbench, labelled pair + manifest +
+  `SHA256SUMS.txt` to Drive; refuses mismatched cameras. Rule: `docs/agents/WORKFLOW.md#visual-evidence-beforeafter-d286`.
 - Capability session launcher `tools/qa/capability_b01.py` — harness eval support (`tests/test_capability_b01.py`).
 - 3ds Max production scripts (external) — CONFIGURED, inventory only: `docs/tools/max-scripts.md`.
 

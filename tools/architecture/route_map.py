@@ -93,7 +93,10 @@ def check_schema(events, contexts):
         for j, d in enumerate(c.get("duplicates", [])):
             dwhere = f"{where}.duplicates[{j}]"
             at = _need(d, "at", dwhere)
-            if not re.match(r"^[^:]+\.py:[1-9][0-9]*$", at):
+            if "rule" in d:   # guard allowlist row: keyed by function, never by a bare line (#1387)
+                if not re.match(r"^[^:]+\.py::([A-Za-z_][\w.]*|<module>)$", at):
+                    raise SchemaError(f"{dwhere}: rule row 'at' must be path.py::function, got {at!r}")
+            elif not re.match(r"^[^:]+\.py:[1-9][0-9]*$", at):
                 raise SchemaError(f"{dwhere}: 'at' must be path.py:line, got {at!r}")
             if not re.match(r"^#[0-9]+$", _need(d, "issue", dwhere)):
                 raise SchemaError(f"{dwhere}: 'issue' must be #<number>")
@@ -238,11 +241,16 @@ def verify_references(root, events, contexts):
             if f["name"] not in defined:
                 problems.append(f"context {c['id']}: {c['owner']} has no top-level function {f['name']}")
         for d in c.get("duplicates", []):
-            rel, line = d["at"].rsplit(":", 1)
+            if "rule" in d:   # path.py::function; the function itself is checked by duplicate_guard (stale row)
+                rel, line = d["at"].split("::", 1)[0], None
+            else:
+                rel, line = d["at"].rsplit(":", 1)
             if rel == c["owner"]:
                 problems.append(f"context {c['id']}: duplicate {d['at']} is the owner itself")
             if not (root / rel).is_file():
                 problems.append(f"context {c['id']}: duplicate {d['at']} does not exist")
+                continue
+            if line is None:
                 continue
             lines = (root / rel).read_text(encoding="utf-8", errors="replace").splitlines()
             if int(line) > len(lines):
@@ -442,19 +450,20 @@ def route_board(events, contexts):
 
 
 def _dup_lines(dups, rules_ru):
-    """Group duplicates by file: tagged rows as 'path: l1, l2 [rule]', described rows as 'path:line — ru'."""
+    """Group duplicates by file: tagged rows as 'path: fn1, fn2 [rule]', described rows as 'path:line — ru'."""
     grouped, order, described = {}, [], []
     for d in dups:
-        rel, line = d["at"].rsplit(":", 1)
         if "rule" in d:
+            rel, fn = d["at"].split("::", 1)
             key = (rel, d["rule"])
             if key not in grouped:
                 grouped[key] = []
                 order.append(key)
-            grouped[key].append(int(line))
+            if fn not in grouped[key]:
+                grouped[key].append(fn)
         else:
             described.append(f"• {d['at']} — {d['ru']} ({d['issue']})")
-    tagged = [f"• {rel}: {', '.join(str(n) for n in sorted(grouped[(rel, rule)]))}" for rel, rule in order]
+    tagged = [f"• {rel}: {', '.join(sorted(grouped[(rel, rule)]))}" for rel, rule in order]
     return described + tagged, sorted({d["rule"] for d in dups if "rule" in d})
 
 
