@@ -36,6 +36,24 @@ def test_f15_reproduce_uses_registry_source_and_explicit_frame():
     assert "--frame-shift-m=-14.655,-5.355" in extract
 
 
+def test_f19_current_run_and_checklist_are_consistent():
+    data = yaml.safe_load((JOB / "job.yaml").read_text(encoding="utf-8"))
+    header = (JOB / "STATE.md").read_text(encoding="utf-8").splitlines()[:3]
+    assert header[0] == f"Current run: `{data['run_id']}`; site-1255/REPORT.md (D262), based on rerun-1244 (D256); passed=false."
+    assert data["run_id"] == "issue-1255-site-v004"
+    assert "sources.json" in header[1] and "D254" in header[1]
+    assert "DWGs still outside" not in json.dumps(data)
+    assert "architect question" not in json.dumps(data)
+    assert data["inputs"][0]["path"] == "jobs/KPP1/sources.json"
+    assert data["inputs"][0]["manifest"] == "external-inputs/1"
+    assert all("rerun-1209" not in r["path"] for r in data["inputs"] + data["artifacts"])
+    result = inspect_job(data, ROOT)
+    assert result["run_id"] == data["run_id"] and result["passed"] is False
+    assert not result["errors"]
+    assert not [e for row in result["gates"] for e in row["errors"]]
+    assert all(row["status"] != "pass" for row in result["gates"] if row["gate"] != "inputs")
+
+
 ROOT = Path(__file__).resolve().parents[2]
 JOB = ROOT / "jobs/KPP1"
 
