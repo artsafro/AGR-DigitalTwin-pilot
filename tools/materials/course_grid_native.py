@@ -435,3 +435,39 @@ def rectify_axis_joint_footprint(footprint, *, face=None):
         if footprint.difference(result.buffer(.005)).area>1e-12 or result.difference(footprint.buffer(.005)).area>1e-12:
             raise ValueError('axis joint fit exceeds fixed 5 mm correspondence')
     return result
+
+
+def vectorize_joint_footprint(footprint, *, face):
+    """Retain measured tapered strip ends without tracing raster stair vertices.
+
+    Authorized minor-part masks only. Nearby source pixel components may be
+    joined, but every resulting polygon must remain within 5 mm of the actual
+    source in BOTH directions. This is not permission to fill arbitrary holes
+    or to replace a broad/unsupported reference with a guessed nominal joint.
+    """
+    from shapely.ops import unary_union
+    if face.geom_type != 'Polygon' or not face.is_valid or face.area <= 1e-12:
+        raise ValueError('invalid reference face')
+    if footprint.is_empty:
+        return footprint
+    if not footprint.is_valid or footprint.geom_type not in ('Polygon', 'MultiPolygon'):
+        raise ValueError('unsupported reference joint footprint')
+    if footprint.difference(face.buffer(1e-10)).area > 1e-12:
+        raise ValueError('reference footprint outside face')
+    parts = [footprint] if footprint.geom_type == 'Polygon' else list(footprint.geoms)
+    groups = []
+    for part in parts:
+        # A stripe may be sloped, but a broad patch is not a panel joint.
+        corners = list(part.minimum_rotated_rectangle.exterior.coords)
+        if min(math.dist(a, b) for a, b in zip(corners, corners[1:])) > .025:
+            raise ValueError('unsupported broad reference joint')
+        nearby = [i for i, group in enumerate(groups) if group.distance(part) < .005]
+        merged = unary_union([part] + [groups[i] for i in nearby])
+        groups = [group for i, group in enumerate(groups) if i not in nearby]
+        groups.append(merged)
+    result = unary_union([g.convex_hull.simplify(.001, preserve_topology=True)
+                          for g in groups]).intersection(face)
+    if (footprint.difference(result.buffer(.005)).area > 1e-12 or
+            result.difference(footprint.buffer(.005)).area > 1e-12):
+        raise ValueError('vector joint fit exceeds fixed 5 mm correspondence')
+    return result
