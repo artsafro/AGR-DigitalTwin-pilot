@@ -225,3 +225,39 @@ def triangulate_conforming_polygon(points):
     triangles=result[0,n-1]
     if len(triangles)!=n-2 or {i for t in triangles for i in t}!=set(range(n)):raise ValueError('incomplete conforming triangulation')
     return triangles
+
+
+def coalesce_cut_nodes(vertices, faces, lineage, *, original_vertex_count, groups):
+    """Apply explicit minor-cut node groups bounded to 2 mm, never auto-weld.
+
+    Original vertices cannot move or be removed. Report every collapsed cell;
+    refuse loss of ANY source identity. Surface, finish, joint-width and native
+    readback gates remain the caller's responsibility, not implied by success.
+    """
+    if not isinstance(vertices,list) or not vertices or any(not isinstance(p,list) or len(p)!=3 or any(
+        isinstance(x,bool) or not isinstance(x,(int,float)) or not math.isfinite(x) for x in p) for p in vertices):raise ValueError('invalid vertices')
+    if type(original_vertex_count) is not int or not 0<original_vertex_count<=len(vertices):raise ValueError('invalid original_vertex_count')
+    if not isinstance(faces,list) or not faces or len(faces)!=len(lineage):raise ValueError('partial faces/lineage')
+    if any(len(f)<3 or len(set(f))!=len(f) or any(type(i) is not int or not 0<=i<len(vertices) for i in f) for f in faces):raise ValueError('invalid faces')
+    if any(type(s) is not int or s<0 for s in lineage):raise ValueError('invalid source identity')
+    if not isinstance(groups,list) or not groups:raise ValueError('empty explicit groups')
+    out=[list(v) for v in vertices];remap=list(range(len(vertices)));seen=set();maximum=0
+    for group in groups:
+        if not isinstance(group,dict) or set(group)!={'vertices','position'}:raise ValueError('invalid explicit group')
+        ids=group['vertices'];p=group['position']
+        if not isinstance(ids,list) or len(ids)<2 or len(set(ids))!=len(ids) or any(type(i) is not int or not original_vertex_count<=i<len(vertices) or i in seen for i in ids):raise ValueError('original/duplicate/invalid cut-node group')
+        if not isinstance(p,list) or len(p)!=3 or any(isinstance(x,bool) or not isinstance(x,(int,float)) or not math.isfinite(x) for x in p):raise ValueError('nonfinite/partial cut-node position')
+        motion=max(math.dist(vertices[i],p) for i in ids)
+        if motion>.002:raise ValueError('cut-node movement exceeds 2 mm')
+        maximum=max(maximum,motion);rep=min(ids);out[rep]=list(p)
+        for i in ids:remap[i]=rep
+        seen.update(ids)
+    new=[];sources=[];dropped=[];retained=[]
+    for fi,(f,src) in enumerate(zip(faces,lineage)):
+        mapped=[remap[i] for i in f];clean=[i for k,i in enumerate(mapped) if i!=mapped[k-1]]
+        if len(set(clean))<3:
+            dropped.append(dict(face=fi,source=src,reason='explicit cut-node coalescence; collapsed connectivity cell'));continue
+        if len(set(clean))!=len(clean):raise ValueError('coalescing creates repeated nonconsecutive vertex')
+        new.append(clean);sources.append(src);retained.append(fi)
+    if set(sources)!=set(lineage):raise ValueError('coalescing loses source identity')
+    return dict(vertices=out,faces=new,lineage=sources,input_face=retained,dropped=dropped,remap=remap,max_displacement_m=maximum)
