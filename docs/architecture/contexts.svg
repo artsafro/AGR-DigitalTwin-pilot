@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2360 2034" width="2360" height="2034" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2360 2050" width="2360" height="2050" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="2360" height="2034" fill="#ffffff"/>
+<rect x="10" y="-30" width="2360" height="2050" fill="#ffffff"/>
 <rect x="955.0" y="110" width="470" height="212.5" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
 <rect x="955.0" y="336.5" width="470" height="590.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="40" y="986.5" width="470" height="265.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
@@ -8,16 +8,16 @@
 <rect x="650" y="986.5" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="650" y="1213.0" width="470" height="185.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1260" y="986.5" width="470" height="265.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1260" y="1265.5" width="470" height="290.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1260" y="1265.5" width="470" height="305.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1870" y="986.5" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1870" y="1195.5" width="470" height="185.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="955.0" y="1615.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="955.0" y="1789.5" width="470" height="185.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="955.0" y="1630.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="955.0" y="1804.5" width="470" height="185.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <line x1="510" y1="1119.0" x2="650" y2="1092.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="1120" y1="1092.75" x2="1260" y2="1119.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="1730" y1="1119.0" x2="1870" y2="1084.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1190.0" y1="1615.5" x2="275.0" y2="1375.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1190.0" y1="1615.5" x2="2105.0" y2="1380.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1190.0" y1="1630.5" x2="275.0" y2="1375.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1190.0" y1="1630.5" x2="2105.0" y2="1380.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="1190.0" y1="926.5" x2="885.0" y2="986.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="1425.0" y1="631.5" x2="1870.0" y2="1084.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
@@ -146,12 +146,13 @@
 <tspan x="1268" dy="17.5">КПП1</tspan>
 </text>
 <text x="1268" y="1275.5" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="1268" dy="12">Дубли вне владельца: 16</tspan>
+<tspan x="1268" dy="12">Дубли вне владельца: 17</tspan>
 <tspan x="1268" dy="15.0">Правило проверки: свой сборщик ZIP-пакета сдачи вместо общего</tspan>
 <tspan x="1268" dy="15.0">упаковщика</tspan>
 <tspan x="1268" dy="15.0">• jobs/KPP1/rerun-1230/build_blender.py: 401</tspan>
 <tspan x="1268" dy="15.0">• jobs/KPP1/scripts/package_vpm.py: 51</tspan>
-<tspan x="1268" dy="15.0">• jobs/KPP1/site-1255/place_package.py: 181, 186</tspan>
+<tspan x="1268" dy="15.0">• jobs/KPP1/site-1255/place_package.py: 189, 194</tspan>
+<tspan x="1268" dy="15.0">• jobs/KPP1/package-1278/build_package.py: 141</tspan>
 <tspan x="1268" dy="15.0">• jobs/PSU275/scripts/package_vpm.py: 53</tspan>
 <tspan x="1268" dy="15.0">• jobs/TEC26-OKS/scripts/package_vpm.py: 50</tspan>
 <tspan x="1268" dy="15.0">• jobs/VATUTINO-SITE/npm_code.py: 40</tspan>
@@ -190,7 +191,7 @@
 <tspan x="1878" dy="15.0">• jobs/TEC26-OKS/scripts/run_agr_checker.py:47 — копия запуска</tspan>
 <tspan x="1878" dy="15.0">чекера КПП1 (#1359)</tspan>
 </text>
-<text x="963.0" y="1625.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="963.0" y="1640.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="963.0" dy="14">Связь с DCC (Blender / 3ds Max)</tspan>
 <tspan x="963.0" dy="17.5">Владелец: src/dt_ai/core/blender_runner.py</tspan>
 <tspan x="963.0" dy="17.5">запуск Blender без окна со свежим JSON-ответом</tspan>
@@ -200,7 +201,7 @@
 <tspan x="963.0" dy="17.5">run_blender: скрипт, аргументы, ожидаемые выходы, таймаут</tspan>
 <tspan x="963.0" dy="17.5">-&gt; свежий JSON; старый ответ — ошибка</tspan>
 </text>
-<text x="963.0" y="1799.5" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="963.0" y="1814.5" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="963.0" dy="12">Дубли вне владельца: 6</tspan>
 <tspan x="963.0" dy="15.0">• src/dt_ai/core/build.py:16 — второй run_blender в ядре (#1359)</tspan>
 <tspan x="963.0" dy="15.0">• src/twinqa/scene.py:59 — свой поиск Blender в twinqa (#1359)</tspan>
@@ -227,13 +228,13 @@
 <text x="1800.0" y="1092.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1800.0" dy="14">ZIP / FBX сдачи</tspan>
 </text>
-<rect x="702.5" y="1477.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="732.5" y="1477.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="702.5" y="1485.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="732.5" y="1485.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="732.5" dy="14">Blender/Max</tspan>
 <tspan x="732.5" dy="17.5">строит</tspan>
 </text>
-<rect x="1617.5" y="1480.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1647.5" y="1480.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1617.5" y="1487.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1647.5" y="1487.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1647.5" dy="14">свежее чтение</tspan>
 <tspan x="1647.5" dy="17.5">экспорта</tspan>
 </text>

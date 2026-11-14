@@ -19,7 +19,7 @@ YAMLS = [ROOT / route_map.EVENTS, ROOT / route_map.CONTEXTS]
 # ---------------------------------------------------------------- generator: drift, references, labels
 def test_committed_files_equal_generator_output():
     _, _, files = route_map.render(ROOT)
-    assert len(files) == 4
+    assert len(files) == 8  # NPM, VPM (#1383), Ground (#1383) routes + context map, .excalidraw + .svg each
     for rel, text in files.items():
         assert (ROOT / rel).read_bytes() == text.encode("utf-8"), f"{rel} drifted; rerun route_map.py"
 
@@ -242,7 +242,7 @@ def test_allowlist_rows_carry_an_issue_and_name_only_known_rules():
     assert {r for r, _ in allowed} == set(guard.RULES)
     assert all(issue.startswith("#") for issue in allowed.values())
     jobs = [k for k in allowed if k[1].startswith("jobs/")]
-    assert len([k for k in jobs if k[0] == "delivery-zip"]) == 14
+    assert len([k for k in jobs if k[0] == "delivery-zip"]) == 15  # +1: jobs/KPP1/package-1278 (#1305), #1383
     assert len([k for k in jobs if k[0] == "udim-tile"]) == 30
 
 
