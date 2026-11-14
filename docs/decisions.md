@@ -303,6 +303,8 @@ frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Mar
 
 | D288 | 2026-11-13 | #1326 course-grid pilot: stylobate brick in one UDIM first; tower brick and ID2 metal later, separately. Keep 38 courses per 3.15 m and Bricks1 unchanged. A 10 mm panel joint may be offset (historical 5 mm centre offset accepted, even 10–20 mm acceptable); record the chosen convention explicitly. Pilot gates: course/bond residual <= 0.1 px, panel-joint centre error <= 5 mm everywhere, density spread <= 2%, anisotropy <= 1.02; legal directional 512–1706 px/m bounds win. If one tile does not fit, STOP and ask Artem: extra tile or a painless loop cut; never choose either or lower density alone. Choose Blender plus existing UV cores and/or Max 2026 unwrap per step with a one-line reason; use Blender when Max is busy [D255]. | `jobs/4bk-k3-course-grid-1326/`, `docs/research/vpm-course-grid-1314.md` | Artem's 2026-11-13 voice answers, recorded in issue #1326 / Kanban t_d517d7c6; stage-opening preference stays job-local |
 
+| D292 | 2026-11-14 | #1326 retains the four original staircase xView faces at the protected ID7 metal/brick junction as an explicitly registered UV-pilot baseline; no extra brick cuts under metal and no ID7 changes; accepted seams remain, without a global QA-pass claim. | `jobs/4bk-k3-course-grid-1326/REPAIR_RESULT.md` | Artem's USER DECISION on Kanban t_d517d7c6, 2026-11-14 17:07 |
+
 [passport-scope-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1207#issuecomment-6783203728
 
 [ground-refinement-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/295#issuecomment-6265799957

@@ -96,8 +96,10 @@ Centres in source metres: `[102.9015484,54.0980167,5.1999998]` and
 `[103.0992661,53.9900589,4.4667999]`. Metal is explicitly out of scope and protected;
 new-cut permission covers panel-joint boundaries, not arbitrary trims/removal of
 original brick/metal intersections. Do not silently delete either source finish or
-mark global xView passed. A source-only baseline disposition or explicit additional
-copy-only brick-trim permission is needed before claiming global technical QA.
+mark global xView passed. **Answered by Artem 2026-11-14 [D292]: retain these four
+original faces as the explicit UV-pilot baseline; no additional brick trim under
+metal, ID7 untouched.** This is not a global xView pass and does not waive the
+independent interior-PNG or final export checks.
 
 ## Verification and continuation
 
