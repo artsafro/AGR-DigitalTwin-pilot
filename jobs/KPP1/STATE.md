@@ -1,6 +1,6 @@
-Current run: #1209 rerun after Gate 1 [D238], offline VPM + derived NPM; both passed=false (rerun-1209/RUN-LOG.md).
-Source: АС.03 copied DWGs (cold-run-1172/inputs-manifest.json); provisional roof/parapet [D249]; architect levels question open.
-Next gate: Review PR #1216 with exact validator blockers; visual waits-user, checker waits-visual; Max steps waits-max.
+Current run: `issue-1255-site-v004`; site-1255/REPORT.md (D262), based on rerun-1244 (D256); passed=false.
+Source: sources.json (asset-store DWGs + cached Revit object.json); R1 dimensions final D254; TASK.md indexes contract answers.
+Next gate: job.yaml tracks open gates; visual waits-user, checker waits-visual, final AGR Tools waits-max; missing Ground/attributes and survey/manual checks remain. Open #1305 is not merged evidence.
 
 # KPP1 (Центральная проходная) — VPM + NPM model, 2026-10-07
 

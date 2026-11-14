@@ -3,10 +3,19 @@
 import hashlib
 import json
 from pathlib import Path
+import re
 
+import pytest
 import yaml
 
 from dt_ai.procedure import inspect_job
+
+
+def assert_header_run(header, data):
+    match = re.match(r"Current run: `([^`]+)`;", header)
+    assert match is not None, "current-run header missing explicit run_id"
+    assert match[1] == data["run_id"], "STATE/job.yaml run_id mismatch"
+
 
 def test_f13_task_contract_links_answers_and_boundaries():
     task = (JOB / "TASK.md").read_text(encoding="utf-8") if (JOB / "TASK.md").exists() else ""
@@ -39,7 +48,9 @@ def test_f15_reproduce_uses_registry_source_and_explicit_frame():
 def test_f19_current_run_and_checklist_are_consistent():
     data = yaml.safe_load((JOB / "job.yaml").read_text(encoding="utf-8"))
     header = (JOB / "STATE.md").read_text(encoding="utf-8").splitlines()[:3]
-    assert header[0] == f"Current run: `{data['run_id']}`; site-1255/REPORT.md (D262), based on rerun-1244 (D256); passed=false."
+    assert_header_run(header[0], data)
+    assert "site-1255/REPORT.md" in header[0] and "rerun-1244" in header[0]
+    assert "passed=false" in header[0]
     assert data["run_id"] == "issue-1255-site-v004"
     assert "sources.json" in header[1] and "D254" in header[1]
     assert "DWGs still outside" not in json.dumps(data)
@@ -56,6 +67,30 @@ def test_f19_current_run_and_checklist_are_consistent():
 
 ROOT = Path(__file__).resolve().parents[2]
 JOB = ROOT / "jobs/KPP1"
+
+
+@pytest.mark.parametrize("run_id", ["", "issue-1209-rerun-v001", "issue-1255-site-v004-stale"])
+def test_header_check_rejects_mismatched_runs(run_id):
+    header = (JOB / "STATE.md").read_text(encoding="utf-8").splitlines()[0]
+    with pytest.raises(AssertionError, match="mismatch"):
+        assert_header_run(header, {"run_id": run_id})
+
+
+@pytest.mark.parametrize("header", ["", "Current run:", "Current run: #1209"])
+def test_header_check_rejects_absent_or_legacy_identity(header):
+    with pytest.raises(AssertionError, match="missing"):
+        assert_header_run(header, {"run_id": "issue-1255-site-v004"})
+
+
+@pytest.mark.parametrize("index", range(4))
+def test_current_inputs_reject_stale_hashes(index):
+    data = yaml.safe_load((JOB / "job.yaml").read_text(encoding="utf-8"))
+    # YAML alias updates inventory and inputs-gate evidence together.
+    data["inputs"][index]["sha256"] = "0" * 64
+    result = inspect_job(data, ROOT)
+    inputs = next(r for r in result["gates"] if r["gate"] == "inputs")
+    assert result["passed"] is False and inputs["status"] == "fail"
+    assert any(data["inputs"][index]["path"] in error for error in inputs["errors"])
 
 
 def test_f12_levels_authority_registered_and_verified():
