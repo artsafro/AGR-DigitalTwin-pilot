@@ -42,6 +42,18 @@ def test_triangulation_avoids_skinny_diagonal_when_same_area_has_a_compact_ear()
     assert min(map(quality,triangles))>.004
 
 
+def test_explicit_minor_scope_reports_sub_native_collapsed_cell_without_losing_source():
+    source=[[0.,0.,0.],[1.,0.,0.],[0.,1.,0.]]
+    vertices=source+[[.000004,0.,0.]]
+    faces=[[0,1,2],[0,3,2]];coords=[[[0,0],[1,0],[0,1]],[[0,0],[.000004,0],[0,1]]]
+    out=conform_source_mesh(vertices,faces,[10,10],coords,source,{10:[0,1,2]},collapsed_sources=[10])
+    assert out['faces']==[[0,1,2]] and out['input_face']==[0]
+    assert out['dropped_faces'][0]['face']==1
+    assert out['dropped_faces'][0]['source']==10
+    with pytest.raises(ValueError,match='collapse'):
+        conform_source_mesh(vertices,faces,[10,10],coords,source,{10:[0,1,2]})
+
+
 def test_close_disconnected_surface_is_not_welded():
     source=[[0.,0.,0.],[1.,0.,0.],[0.,1.,0.],[0.,0.,.00001],[1.,0.,.00001],[0.,1.,.00001]]
     faces=[[0,1,2],[3,4,5]];uv=[[[0,0],[1,0],[0,1]]]*2

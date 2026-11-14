@@ -192,6 +192,9 @@ def native_piece_cells(piece):
             if changed:break
     out=[];collapsed_native_cells=[]
     for cell in cells:
+        if cell.area<=max(1e-12,poly.length*1e-12*16):
+            collapsed_native_cells.append(dict(area_m2=cell.area,reason='sub-overlay-area collinear connectivity cell'))
+            continue
         points=np.asarray(orient(cell,sign=1).exterior.coords[:-1]);indices=[]
         for q in points:
             matches=np.flatnonzero(np.linalg.norm(xy-q,axis=1)<1e-10)
