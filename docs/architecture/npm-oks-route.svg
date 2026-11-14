@@ -148,7 +148,7 @@
 <tspan x="965.0" dy="17.5">dt spec compare</tspan>
 </text>
 <text x="965.0" y="432.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="965.0" dy="14">Правила: D290, D254, D038,</tspan>
+<tspan x="965.0" dy="14">Правила: D292, D254, D038,</tspan>
 <tspan x="965.0" dy="17.5">D204, D255</tspan>
 </text>
 <text x="965.0" y="512.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
@@ -159,25 +159,25 @@
 <tspan x="965.0" dy="13">Ветка: задача ВПМ + НПМ</tspan>
 <tspan x="965.0" dy="16.25">→ строим ВПМ или mid-poly</tspan>
 <tspan x="965.0" dy="16.25">мастер, НПМ выводим из него</tspan>
-<tspan x="965.0" dy="16.25">[D290, D010]</tspan>
+<tspan x="965.0" dy="16.25">[D292, D010]</tspan>
 </text>
 <text x="965.0" y="701.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="965.0" dy="13">Ветка: задача только НПМ</tspan>
 <tspan x="965.0" dy="16.25">→ строим НПМ сразу, без</tspan>
-<tspan x="965.0" dy="16.25">mid-poly мастера [D290]</tspan>
+<tspan x="965.0" dy="16.25">mid-poly мастера [D292]</tspan>
 </text>
 <text x="965.0" y="785.75" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="965.0" dy="13">Ветка: окно из библиотеки</tspan>
 <tspan x="965.0" dy="16.25">подходит к проёму</tspan>
 <tspan x="965.0" dy="16.25">→ ставим библиотечное окно с</tspan>
 <tspan x="965.0" dy="16.25">небольшим врезом контура в</tspan>
-<tspan x="965.0" dy="16.25">проём [D290, D258]</tspan>
+<tspan x="965.0" dy="16.25">проём [D292, D258]</tspan>
 </text>
 <text x="965.0" y="903.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="965.0" dy="13">Ветка: подходящего окна в</tspan>
 <tspan x="965.0" dy="16.25">библиотеке нет</tspan>
 <tspan x="965.0" dy="16.25">→ окно строит генератор окон</tspan>
-<tspan x="965.0" dy="16.25">(#1338 / #1345) [D290]</tspan>
+<tspan x="965.0" dy="16.25">(#1338 / #1345) [D292]</tspan>
 </text>
 <text x="965.0" y="1004.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="965.0" dy="13">⚠ Шов парапет / кровля:</tspan>
@@ -186,12 +186,12 @@
 <tspan x="965.0" dy="16.25">архитектору (D249), закрыты</tspan>
 <tspan x="965.0" dy="16.25">только D254; вставная кровля</tspan>
 <tspan x="965.0" dy="16.25">переделана в v007; замер шва</tspan>
-<tspan x="965.0" dy="16.25">— #1339. Решено (D290, R6</tspan>
+<tspan x="965.0" dy="16.25">— #1339. Решено (D292, R6</tspan>
 <tspan x="965.0" dy="16.25">#1352): кровля врезана</tspan>
 <tspan x="965.0" dy="16.25">контуром в стены парапета и</tspan>
 <tspan x="965.0" dy="16.25">поднята на несколько мм над</tspan>
 <tspan x="965.0" dy="16.25">низом парапета, не вровень</tspan>
-<tspan x="965.0" dy="16.25">[D290, D249, D254, D038,</tspan>
+<tspan x="965.0" dy="16.25">[D292, D249, D254, D038,</tspan>
 <tspan x="965.0" dy="16.25">D039]</tspan>
 </text>
 <text x="965.0" y="1251.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
@@ -201,10 +201,10 @@
 <tspan x="965.0" dy="16.25">проёмам); витраж C35 дал пары</tspan>
 <tspan x="965.0" dy="16.25">V004 (D256); генератор окон</tspan>
 <tspan x="965.0" dy="16.25">#1338 — пока только замер.</tspan>
-<tspan x="965.0" dy="16.25">Решено (D290): библиотечное</tspan>
+<tspan x="965.0" dy="16.25">Решено (D292): библиотечное</tspan>
 <tspan x="965.0" dy="16.25">окно с небольшим врезом, если</tspan>
 <tspan x="965.0" dy="16.25">подходит, иначе генератор</tspan>
-<tspan x="965.0" dy="16.25">[D290, D204, D256, D258]</tspan>
+<tspan x="965.0" dy="16.25">[D292, D204, D256, D258]</tspan>
 </text>
 <text x="1235.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1235.0" dy="15">Агент</tspan>
@@ -219,7 +219,7 @@
 <tspan x="1235.0" dy="17.5">dt derive atlas</tspan>
 </text>
 <text x="1235.0" y="432.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1235.0" dy="14">Правила: D290, D278, D280,</tspan>
+<tspan x="1235.0" dy="14">Правила: D292, D278, D280,</tspan>
 <tspan x="1235.0" dy="17.5">D221, D225</tspan>
 </text>
 <text x="1235.0" y="521.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
@@ -230,7 +230,7 @@
 <tspan x="1235.0" dy="16.25">→ мастер развёрнут в UDIM,</tspan>
 <tspan x="1235.0" dy="16.25">атлас НПМ собран из UDIM</tspan>
 <tspan x="1235.0" dy="16.25">(npm_atlas_udim; команды</tspan>
-<tspan x="1235.0" dy="16.25">agr/dt нет) [D290, D209,</tspan>
+<tspan x="1235.0" dy="16.25">agr/dt нет) [D292, D209,</tspan>
 <tspan x="1235.0" dy="16.25">D221]</tspan>
 </text>
 <text x="1235.0" y="733.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
@@ -244,7 +244,7 @@
 <tspan x="1235.0" dy="16.25">(добавляем в библиотеку),</tspan>
 <tspan x="1235.0" dy="16.25">затем на атлас</tspan>
 <tspan x="1235.0" dy="16.25">Команда: dt derive atlas</tspan>
-<tspan x="1235.0" dy="16.25">[D290, D278]</tspan>
+<tspan x="1235.0" dy="16.25">[D292, D278]</tspan>
 </text>
 <text x="1235.0" y="948.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1235.0" dy="13">⚠ UDIM: 30 своих формул в</tspan>
@@ -257,10 +257,10 @@
 <tspan x="1235.0" dy="13">⚠ Два атласа: канон Max</tspan>
 <tspan x="1235.0" dy="16.25">atlas_core (D225) и Python</tspan>
 <tspan x="1235.0" dy="16.25">npm_atlas_udim (путь А,</tspan>
-<tspan x="1235.0" dy="16.25">D290); agr vpm-to-npm идёт</tspan>
+<tspan x="1235.0" dy="16.25">D292); agr vpm-to-npm идёт</tspan>
 <tspan x="1235.0" dy="16.25">через dt derive atlas (путь</tspan>
 <tspan x="1235.0" dy="16.25">Б); перевод в #1141 открыт</tspan>
-<tspan x="1235.0" dy="16.25">[D290, D225, D278]</tspan>
+<tspan x="1235.0" dy="16.25">[D292, D225, D278]</tspan>
 </text>
 <text x="1505.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1505.0" dy="15">Агент</tspan>
@@ -275,7 +275,7 @@
 <tspan x="1505.0" dy="17.5">agr package-vpm</tspan>
 </text>
 <text x="1505.0" y="441.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1505.0" dy="14">Правила: D290, D198, D224</tspan>
+<tspan x="1505.0" dy="14">Правила: D292, D198, D224</tspan>
 </text>
 <text x="1505.0" y="512.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1505.0" dy="14">Контекст: Экспорт и пакет</tspan>
@@ -285,13 +285,13 @@
 <tspan x="1505.0" dy="13">Ветка: сдаём ВПМ</tspan>
 <tspan x="1505.0" dy="16.25">→ упаковщик ВПМ</tspan>
 <tspan x="1505.0" dy="16.25">Команда: agr package-vpm</tspan>
-<tspan x="1505.0" dy="16.25">[D290, D224]</tspan>
+<tspan x="1505.0" dy="16.25">[D292, D224]</tspan>
 </text>
 <text x="1505.0" y="701.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1505.0" dy="13">Ветка: сдаём НПМ</tspan>
 <tspan x="1505.0" dy="16.25">→ упаковщик НПМ (#1361; пока</tspan>
 <tspan x="1505.0" dy="16.25">не в main — команды agr/dt</tspan>
-<tspan x="1505.0" dy="16.25">нет) [D290]</tspan>
+<tspan x="1505.0" dy="16.25">нет) [D292]</tspan>
 </text>
 <text x="1505.0" y="802.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1505.0" dy="13">⚠ Пакет: 9 своих упаковщиков</tspan>

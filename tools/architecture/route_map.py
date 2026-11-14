@@ -129,7 +129,7 @@ def check_schema(events, contexts):
                 raise SchemaError(f"{where}: '{key}' must be a non-empty list of strings")
         _need(s, "rules", where, list)
         _need(s, "evidence", where, list)
-        if "branches" in s:  # #1375: a task-dependent choice inside one stage (D290)
+        if "branches" in s:  # #1375: a task-dependent choice inside one stage (D292)
             branch_ids = set()
             for j, br in enumerate(_need(s, "branches", where, list)):
                 bwhere = f"{where}.branches[{j}]"

@@ -1,7 +1,7 @@
 # Event storm of the NPM/OKS route on KPP1 (#1359). Source of truth for docs/architecture/npm-oks-route.excalidraw.
 # Labels for Artem are Russian (*_ru, ru); commands, D-rows, paths and ids stay as in the repo.
 # commands: existing `agr` / `dt` commands only (checked by tests/test_architecture_map_1359.py).
-# branches (#1375, D290): a task-dependent choice inside one stage: id, when_ru, ru, rules, evidence, [commands].
+# branches (#1375, D292): a task-dependent choice inside one stage: id, when_ru, ru, rules, evidence, [commands].
 # rules: D-rows of docs/decisions.md. evidence: repo paths that exist. context: id from contexts.yaml.
 # Regenerate: uv run python tools/architecture/route_map.py
 title_ru: "Маршрут НПМ / ОКС на КПП1: событийный штурм"
@@ -56,7 +56,7 @@ stages:
     commands:
       - "dt spec compare"
     rules:
-      - D290
+      - D292
       - D254
       - D038
       - D204
@@ -69,7 +69,7 @@ stages:
         when_ru: "задача ВПМ + НПМ"
         ru: "строим ВПМ или mid-poly мастер, НПМ выводим из него"
         rules:
-          - D290
+          - D292
           - D010
         evidence:
           - docs/domain/areas/derivation.md
@@ -78,14 +78,14 @@ stages:
         when_ru: "задача только НПМ"
         ru: "строим НПМ сразу, без mid-poly мастера"
         rules:
-          - D290
+          - D292
         evidence:
           - docs/domain/areas/derivation.md
       - id: window-library
         when_ru: "окно из библиотеки подходит к проёму"
         ru: "ставим библиотечное окно с небольшим врезом контура в проём"
         rules:
-          - D290
+          - D292
           - D258
         evidence:
           - library/windows/window_types.json
@@ -94,7 +94,7 @@ stages:
         when_ru: "подходящего окна в библиотеке нет"
         ru: "окно строит генератор окон (#1338 / #1345)"
         rules:
-          - D290
+          - D292
         evidence:
           - adapters/max/agr_tools/windowgen_core.py
           - jobs/KPP1/windowgen-1338/README.md
@@ -106,7 +106,7 @@ stages:
       - "agr vpm-to-npm"
       - "dt derive atlas"
     rules:
-      - D290
+      - D292
       - D278
       - D280
       - D221
@@ -118,7 +118,7 @@ stages:
         when_ru: "путь А: через UDIM"
         ru: "мастер развёрнут в UDIM, атлас НПМ собран из UDIM (npm_atlas_udim; команды agr/dt нет)"
         rules:
-          - D290
+          - D292
           - D209
           - D221
         evidence:
@@ -129,7 +129,7 @@ stages:
         commands:
           - "dt derive atlas"
         rules:
-          - D290
+          - D292
           - D278
         evidence:
           - tools/derive/npm_atlas.py
@@ -142,7 +142,7 @@ stages:
       - "dt derive npm"
       - "agr package-vpm"
     rules:
-      - D290
+      - D292
       - D198
       - D224
     evidence:
@@ -154,7 +154,7 @@ stages:
         commands:
           - "agr package-vpm"
         rules:
-          - D290
+          - D292
           - D224
         evidence:
           - tools/derive/package_vpm.py
@@ -162,7 +162,7 @@ stages:
         when_ru: "сдаём НПМ"
         ru: "упаковщик НПМ (#1361; пока не в main — команды agr/dt нет)"
         rules:
-          - D290
+          - D292
         evidence:
           - tools/derive/export_npm.py
   - id: readback
@@ -211,9 +211,9 @@ stages:
 hotspots:
   - id: parapet-roof-seam
     stage: model
-    ru: "Шов парапет / кровля: толщина парапета и плита кровли были под вопросом архитектору (D249), закрыты только D254; вставная кровля переделана в v007; замер шва — #1339. Решено (D290, R6 #1352): кровля врезана контуром в стены парапета и поднята на несколько мм над низом парапета, не вровень"
+    ru: "Шов парапет / кровля: толщина парапета и плита кровли были под вопросом архитектору (D249), закрыты только D254; вставная кровля переделана в v007; замер шва — #1339. Решено (D292, R6 #1352): кровля врезана контуром в стены парапета и поднята на несколько мм над низом парапета, не вровень"
     rules:
-      - D290
+      - D292
       - D249
       - D254
       - D038
@@ -223,9 +223,9 @@ hotspots:
       - jobs/KPP1/STATE.md
   - id: windows
     stage: model
-    ru: "Окна: проёмы Revit и меша не совпали (spec-compare v002: «no match» только по проёмам); витраж C35 дал пары V004 (D256); генератор окон #1338 — пока только замер. Решено (D290): библиотечное окно с небольшим врезом, если подходит, иначе генератор"
+    ru: "Окна: проёмы Revit и меша не совпали (spec-compare v002: «no match» только по проёмам); витраж C35 дал пары V004 (D256); генератор окон #1338 — пока только замер. Решено (D292): библиотечное окно с небольшим врезом, если подходит, иначе генератор"
     rules:
-      - D290
+      - D292
       - D204
       - D256
       - D258
@@ -243,9 +243,9 @@ hotspots:
       - jobs/TEC26-OKS/scripts/vpm_uv.py
   - id: two-atlases
     stage: uv
-    ru: "Два атласа: канон Max atlas_core (D225) и Python npm_atlas_udim (путь А, D290); agr vpm-to-npm идёт через dt derive atlas (путь Б); перевод в #1141 открыт"
+    ru: "Два атласа: канон Max atlas_core (D225) и Python npm_atlas_udim (путь А, D292); agr vpm-to-npm идёт через dt derive atlas (путь Б); перевод в #1141 открыт"
     rules:
-      - D290
+      - D292
       - D225
       - D278
     evidence:
