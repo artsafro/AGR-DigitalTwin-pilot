@@ -6,7 +6,7 @@ from pathlib import Path
 
 import yaml
 
-from dt_ai.procedure import walk
+from dt_ai.procedure import inspect_job
 
 ROOT = Path(__file__).resolve().parents[2]
 JOB = ROOT / "jobs/KPP1"
@@ -20,7 +20,7 @@ def test_f12_levels_authority_registered_and_verified():
     assert "D254" in authority["role"]
     data = yaml.safe_load((JOB / "job.yaml").read_text(encoding="utf-8"))
     assert {"path": authority["path"], "sha256": authority["sha256"]} in data["inputs"]
-    result = walk(data, ROOT)
+    result = inspect_job(data, ROOT)
     inputs = next(r for r in result["gates"] if r["gate"] == "inputs")
     assert {"path": authority["path"], "verified": True} in inputs["evidence_exists"]
     assert hashlib.sha256((ROOT / authority["path"]).read_bytes()).hexdigest() == authority["sha256"]
