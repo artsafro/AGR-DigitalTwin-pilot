@@ -1,0 +1,1303 @@
+{
+  "passed": false,
+  "stage": "source-wide-v005-r3-diagnostic-not-delivery",
+  "authority": "D281 / issuecomment-6872153353",
+  "old_decision_renumbering": {
+    "D279": "D282",
+    "D280": "D283"
+  },
+  "evidence_root": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v005",
+  "site_area_m2": 12958.738864325082,
+  "approved_footprint_m2": 3389.9392238867376,
+  "budget_operand_m2": 9568.799640438345,
+  "source_control_count": 1670,
+  "source_control_max_z_error_m": 0.0,
+  "numerical_singular_tin_triangles": [
+    {
+      "triangle": 3,
+      "source_indices": [
+        185,
+        544,
+        835
+      ],
+      "projected_area_m2": 1.5859313862165436e-11,
+      "altitude_m": 5.888349004021048e-13
+    },
+    {
+      "triangle": 12,
+      "source_indices": [
+        544,
+        707,
+        835
+      ],
+      "projected_area_m2": 3.5356606531422585e-11,
+      "altitude_m": 2.625486079212321e-12
+    },
+    {
+      "triangle": 58,
+      "source_indices": [
+        975,
+        185,
+        835
+      ],
+      "projected_area_m2": 4.452971325008548e-11,
+      "altitude_m": 3.3066562014515204e-12
+    },
+    {
+      "triangle": 138,
+      "source_indices": [
+        1459,
+        1583,
+        948
+      ],
+      "projected_area_m2": 1.837285878991679e-11,
+      "altitude_m": 3.235765325296862e-12
+    },
+    {
+      "triangle": 419,
+      "source_indices": [
+        1027,
+        16,
+        996
+      ],
+      "projected_area_m2": 3.6779801426689573e-11,
+      "altitude_m": 1.1925990709853248e-11
+    },
+    {
+      "triangle": 536,
+      "source_indices": [
+        431,
+        369,
+        420
+      ],
+      "projected_area_m2": 3.369571288658335e-10,
+      "altitude_m": 7.804587438302813e-11
+    },
+    {
+      "triangle": 537,
+      "source_indices": [
+        369,
+        431,
+        178
+      ],
+      "projected_area_m2": 5.86119597301149e-10,
+      "altitude_m": 7.101242724515445e-11
+    },
+    {
+      "triangle": 538,
+      "source_indices": [
+        369,
+        395,
+        103
+      ],
+      "projected_area_m2": 7.449898475897498e-10,
+      "altitude_m": 2.7690569858041292e-11
+    },
+    {
+      "triangle": 732,
+      "source_indices": [
+        1108,
+        1067,
+        1128
+      ],
+      "projected_area_m2": 2.2540191935149778e-11,
+      "altitude_m": 3.969701847886234e-12
+    },
+    {
+      "triangle": 733,
+      "source_indices": [
+        1067,
+        311,
+        948
+      ],
+      "projected_area_m2": 2.2094326368460315e-11,
+      "altitude_m": 3.891177522579319e-12
+    },
+    {
+      "triangle": 742,
+      "source_indices": [
+        843,
+        800,
+        990
+      ],
+      "projected_area_m2": 3.549629477118139e-09,
+      "altitude_m": 2.129777678110118e-09
+    },
+    {
+      "triangle": 971,
+      "source_indices": [
+        1600,
+        369,
+        178
+      ],
+      "projected_area_m2": 4.3387871073719e-10,
+      "altitude_m": 3.523028808446696e-11
+    },
+    {
+      "triangle": 972,
+      "source_indices": [
+        648,
+        1600,
+        178
+      ],
+      "projected_area_m2": 7.277156655050021e-10,
+      "altitude_m": 1.7916344571394985e-10
+    },
+    {
+      "triangle": 983,
+      "source_indices": [
+        369,
+        368,
+        395
+      ],
+      "projected_area_m2": 9.090399544220418e-10,
+      "altitude_m": 3.8003142196346475e-11
+    },
+    {
+      "triangle": 984,
+      "source_indices": [
+        1600,
+        368,
+        369
+      ],
+      "projected_area_m2": 1.171244434772234e-09,
+      "altitude_m": 5.944061181546409e-11
+    },
+    {
+      "triangle": 985,
+      "source_indices": [
+        368,
+        493,
+        469
+      ],
+      "projected_area_m2": 3.737561371508491e-10,
+      "altitude_m": 6.553154922871757e-11
+    },
+    {
+      "triangle": 1187,
+      "source_indices": [
+        843,
+        801,
+        800
+      ],
+      "projected_area_m2": 9.352091090370887e-09,
+      "altitude_m": 1.2424663949846366e-08
+    },
+    {
+      "triangle": 1233,
+      "source_indices": [
+        414,
+        368,
+        469
+      ],
+      "projected_area_m2": 4.1603076539331596e-10,
+      "altitude_m": 8.559057699008156e-11
+    },
+    {
+      "triangle": 1234,
+      "source_indices": [
+        368,
+        414,
+        365
+      ],
+      "projected_area_m2": 3.1178082338101376e-10,
+      "altitude_m": 7.759676264210402e-11
+    },
+    {
+      "triangle": 1246,
+      "source_indices": [
+        368,
+        413,
+        395
+      ],
+      "projected_area_m2": 1.8479440200280806e-11,
+      "altitude_m": 4.383503420841084e-12
+    },
+    {
+      "triangle": 1247,
+      "source_indices": [
+        413,
+        368,
+        419
+      ],
+      "projected_area_m2": 5.9112998940597054e-12,
+      "altitude_m": 4.799282680720007e-12
+    },
+    {
+      "triangle": 1270,
+      "source_indices": [
+        364,
+        369,
+        103
+      ],
+      "projected_area_m2": 7.50489448364533e-10,
+      "altitude_m": 2.510999788442092e-11
+    },
+    {
+      "triangle": 1651,
+      "source_indices": [
+        801,
+        30,
+        842
+      ],
+      "projected_area_m2": 1.3909233045961712e-08,
+      "altitude_m": 9.128733294715925e-09
+    },
+    {
+      "triangle": 1655,
+      "source_indices": [
+        30,
+        801,
+        843
+      ],
+      "projected_area_m2": 9.355434175683009e-09,
+      "altitude_m": 1.2429105394074277e-08
+    },
+    {
+      "triangle": 1733,
+      "source_indices": [
+        364,
+        339,
+        369
+      ],
+      "projected_area_m2": 5.700684369003284e-10,
+      "altitude_m": 1.7145454892506235e-11
+    },
+    {
+      "triangle": 1895,
+      "source_indices": [
+        368,
+        147,
+        493
+      ],
+      "projected_area_m2": 4.1464431888016406e-10,
+      "altitude_m": 6.334123121495807e-11
+    },
+    {
+      "triangle": 1896,
+      "source_indices": [
+        147,
+        368,
+        1600
+      ],
+      "projected_area_m2": 3.672688819733594e-10,
+      "altitude_m": 4.970518512589195e-11
+    },
+    {
+      "triangle": 2248,
+      "source_indices": [
+        431,
+        494,
+        178
+      ],
+      "projected_area_m2": 3.802617776216266e-09,
+      "altitude_m": 9.660295393077512e-10
+    },
+    {
+      "triangle": 2316,
+      "source_indices": [
+        104,
+        319,
+        340
+      ],
+      "projected_area_m2": 1.1810108446752565e-10,
+      "altitude_m": 2.5698174287739644e-11
+    },
+    {
+      "triangle": 2462,
+      "source_indices": [
+        464,
+        413,
+        419
+      ],
+      "projected_area_m2": 1.5621104739599323e-09,
+      "altitude_m": 1.5674948060587714e-08
+    }
+  ],
+  "source_domain_reanchors": [
+    {
+      "vertex": 7,
+      "old_xy": [
+        74.796,
+        -61.65
+      ],
+      "source_boundary_xy": [
+        74.79487635358124,
+        -61.65062259340645
+      ],
+      "distance_m": 0.001284602593861997
+    },
+    {
+      "vertex": 14,
+      "old_xy": [
+        70.281,
+        -66.0
+      ],
+      "source_boundary_xy": [
+        70.28028206539177,
+        -65.99925460729267
+      ],
+      "distance_m": 0.001034910812504435
+    },
+    {
+      "vertex": 23,
+      "old_xy": [
+        65.799,
+        -70.317
+      ],
+      "source_boundary_xy": [
+        65.79823018068885,
+        -70.3162007382094
+      ],
+      "distance_m": 0.0011097031953323482
+    },
+    {
+      "vertex": 35,
+      "old_xy": [
+        57.822,
+        -78.0
+      ],
+      "source_boundary_xy": [
+        57.82130538967902,
+        -77.9992788236397
+      ],
+      "distance_m": 0.0010012885901051348
+    },
+    {
+      "vertex": 61,
+      "old_xy": [
+        45.351,
+        -90.012
+      ],
+      "source_boundary_xy": [
+        45.35010784700089,
+        -90.011073725752
+      ],
+      "distance_m": 0.0012860485824132371
+    },
+    {
+      "vertex": 225,
+      "old_xy": [
+        -6.0,
+        -59.967
+      ],
+      "source_boundary_xy": [
+        -5.999371135780166,
+        -59.96615229059243
+      ],
+      "distance_m": 0.0010555005668702068
+    },
+    {
+      "vertex": 241,
+      "old_xy": [
+        -15.075,
+        -53.235
+      ],
+      "source_boundary_xy": [
+        -15.07427909164975,
+        -53.23402821504035
+      ],
+      "distance_m": 0.0012099896103961443
+    },
+    {
+      "vertex": 257,
+      "old_xy": [
+        -24.0,
+        -46.614
+      ],
+      "source_boundary_xy": [
+        -23.99931907041373,
+        -46.613082106442114
+      ],
+      "distance_m": 0.001142888308217978
+    },
+    {
+      "vertex": 273,
+      "old_xy": [
+        -31.53,
+        -41.028
+      ],
+      "source_boundary_xy": [
+        -31.529294897207922,
+        -41.027049520943805
+      ],
+      "distance_m": 0.0011834611880664266
+    },
+    {
+      "vertex": 291,
+      "old_xy": [
+        -36.945,
+        -37.011
+      ],
+      "source_boundary_xy": [
+        -36.94426607530839,
+        -37.01001066900311
+      ],
+      "distance_m": 0.001231836545313325
+    },
+    {
+      "vertex": 307,
+      "old_xy": [
+        -45.378,
+        -30.756
+      ],
+      "source_boundary_xy": [
+        -45.376820358578925,
+        -30.754409842540472
+      ],
+      "distance_m": 0.0019799380365075076
+    },
+    {
+      "vertex": 335,
+      "old_xy": [
+        -59.757,
+        -20.088
+      ],
+      "source_boundary_xy": [
+        -59.75634268577649,
+        -20.087113939967608
+      ],
+      "distance_m": 0.0011032517253248065
+    },
+    {
+      "vertex": 365,
+      "old_xy": [
+        -74.796,
+        -8.931
+      ],
+      "source_boundary_xy": [
+        -74.79500000000007,
+        -8.930845748443971
+      ],
+      "distance_m": 0.0010118268341986344
+    },
+    {
+      "vertex": 436,
+      "old_xy": [
+        -73.851,
+        4.221
+      ],
+      "source_boundary_xy": [
+        -73.84978039389337,
+        4.220916366456937
+      ],
+      "distance_m": 0.0012224702961036711
+    },
+    {
+      "vertex": 437,
+      "old_xy": [
+        -73.851,
+        4.218
+      ],
+      "source_boundary_xy": [
+        -73.84998515369963,
+        4.217930407701878
+      ],
+      "distance_m": 0.0010172296207451885
+    },
+    {
+      "vertex": 440,
+      "old_xy": [
+        -73.992,
+        6.0
+      ],
+      "source_boundary_xy": [
+        -73.99115798110064,
+        5.999373414029741
+      ],
+      "distance_m": 0.0010495741064877934
+    },
+    {
+      "vertex": 441,
+      "old_xy": [
+        -74.793,
+        4.923
+      ],
+      "source_boundary_xy": [
+        -74.791558254091,
+        4.923779339314933
+      ],
+      "distance_m": 0.0016389023869451346
+    },
+    {
+      "vertex": 473,
+      "old_xy": [
+        -58.353,
+        27.0
+      ],
+      "source_boundary_xy": [
+        -58.352118606386156,
+        26.99934307080536
+      ],
+      "distance_m": 0.0010992773395727747
+    },
+    {
+      "vertex": 483,
+      "old_xy": [
+        -52.035,
+        35.478
+      ],
+      "source_boundary_xy": [
+        -52.03353447319912,
+        35.47690769875582
+      ],
+      "distance_m": 0.0018278103873597205
+    },
+    {
+      "vertex": 485,
+      "old_xy": [
+        -51.645,
+        36.0
+      ],
+      "source_boundary_xy": [
+        -51.64413728581993,
+        35.99935699314969
+      ],
+      "distance_m": 0.0010759802814389904
+    },
+    {
+      "vertex": 498,
+      "old_xy": [
+        -44.937,
+        45.0
+      ],
+      "source_boundary_xy": [
+        -44.93615596525701,
+        44.99937091549649
+      ],
+      "distance_m": 0.0010526832191726826
+    },
+    {
+      "vertex": 509,
+      "old_xy": [
+        -38.229,
+        54.0
+      ],
+      "source_boundary_xy": [
+        -38.228174644691016,
+        53.999384837841
+      ],
+      "distance_m": 0.0010293861607447393
+    },
+    {
+      "vertex": 521,
+      "old_xy": [
+        -31.521,
+        63.0
+      ],
+      "source_boundary_xy": [
+        -31.520193324127437,
+        62.999398760187304
+      ],
+      "distance_m": 0.0010060890993083438
+    },
+    {
+      "vertex": 587,
+      "old_xy": [
+        -7.809,
+        91.659
+      ],
+      "source_boundary_xy": [
+        -7.808126119954003,
+        91.65728797548205
+      ],
+      "distance_m": 0.001922158756418921
+    }
+  ],
+  "steep_raise": {
+    "gap_min_mm": 5.5,
+    "gap_max_mm": 20.0,
+    "nominal_step_mm": 6.0,
+    "upper_faces": 23977,
+    "steep_vertices": 17,
+    "raised_vertices": 32,
+    "raised_faces": 174,
+    "codirectional_rounds": 2,
+    "codirectional_raised_faces": 5,
+    "codirectional_left": 0,
+    "pointwise_raised_vertices": 0,
+    "max_raise_mm": 3.503748409417038,
+    "max_offset_mm": 9.503748409417037,
+    "min_upper_face_nz": 0.578719023596014,
+    "over_gap_max_vertices": [],
+    "over_gap_max_bounds_mm": []
+  },
+  "unhatched_base_lawn_assumption_m2": 1.2689650973856141,
+  "base_extra_unsupported_m2": 0.011239225647401286,
+  "base_extra_unsupported_geometry": {
+    "type": "MultiPolygon",
+    "coordinates": [
+      [
+        [
+          [
+            73.72216982009851,
+            -59.71461934919258
+          ],
+          [
+            73.89766491296875,
+            -61.59000848097377
+          ],
+          [
+            73.72216982009839,
+            -59.71461934919236
+          ],
+          [
+            73.72216982009851,
+            -59.71461934919258
+          ]
+        ]
+      ],
+      [
+        [
+          [
+            73.97707792910609,
+            -62.43863794946815
+          ],
+          [
+            73.97707792910607,
+            -62.43863794946806
+          ],
+          [
+            74.79500000000007,
+            -61.650845748445136
+          ],
+          [
+            73.97707792910609,
+            -62.43863794946815
+          ]
+        ]
+      ],
+      [
+        [
+          [
+            45.349805202137226,
+            -90.01136522190266
+          ],
+          [
+            41.72711337720805,
+            -90.81131487689325
+          ],
+          [
+            41.72711337720716,
+            -90.8113148768926
+          ],
+          [
+            45.34980520213821,
+            -90.01136522190173
+          ],
+          [
+            45.349805202137226,
+            -90.01136522190266
+          ]
+        ]
+      ],
+      [
+        [
+          [
+            2.4049999999999727,
+            -66.20084574844441
+          ],
+          [
+            -16.931781841297422,
+            -51.85605953016579
+          ],
+          [
+            -3.8501776347942496,
+            -61.56050866107762
+          ],
+          [
+            2.396526827512048,
+            -66.19456001543404
+          ],
+          [
+            2.4576585607629093,
+            -66.11215439631461
+          ],
+          [
+            2.4663523126141946,
+            -66.11762247253715
+          ],
+          [
+            2.4049999999999727,
+            -66.20084574844441
+          ]
+        ]
+      ],
+      [
+        [
+          [
+            -27.86711858475375,
+            -43.74379611957319
+          ],
+          [
+            -27.867118584677655,
+            -43.74379611947188
+          ],
+          [
+            -27.867118611580395,
+            -43.74379609951393
+          ],
+          [
+            -27.86711858489948,
+            -43.74379611946508
+          ],
+          [
+            -30.276541018533575,
+            -41.95639167938444
+          ],
+          [
+            -30.276541018461785,
+            -41.95639167928857
+          ],
+          [
+            -58.2131919577568,
+            -21.231883916524897
+          ],
+          [
+            -54.96266609617453,
+            -23.643252000594657
+          ],
+          [
+            -50.16959935464729,
+            -27.198937651934102
+          ],
+          [
+            -45.37653261311982,
+            -30.754623303273547
+          ],
+          [
+            -45.24862126861717,
+            -30.60176925342421
+          ],
+          [
+            -45.37653260050604,
+            -30.75462331262497
+          ],
+          [
+            -43.39808211079003,
+            -32.22231579378422
+          ],
+          [
+            -38.36771804054854,
+            -35.954037947623874
+          ],
+          [
+            -36.94415101394975,
+            -37.010096025544044
+          ],
+          [
+            -35.59047373446606,
+            -38.01430713695481
+          ],
+          [
+            -34.23679645498248,
+            -39.01851824835467
+          ],
+          [
+            -32.88311917549868,
+            -40.022729359763616
+          ],
+          [
+            -31.529441896014987,
+            -41.02694047116347
+          ],
+          [
+            -27.545464281551517,
+            -43.982411947354194
+          ],
+          [
+            -25.005188123534026,
+            -45.86688883318493
+          ],
+          [
+            -21.910555334993546,
+            -48.16260929568489
+          ],
+          [
+            -18.682368461010924,
+            -50.55740544029504
+          ],
+          [
+            -15.073725250029725,
+            -53.23443907618457
+          ],
+          [
+            -11.747420188791352,
+            -55.70202315480492
+          ],
+          [
+            -27.867118584677314,
+            -43.74379611947188
+          ],
+          [
+            -27.86711858475346,
+            -43.74379611957341
+          ],
+          [
+            -27.86711858475375,
+            -43.74379611957319
+          ]
+        ]
+      ],
+      [
+        [
+          [
+            -72.97435653365629,
+            -10.281470765510146
+          ],
+          [
+            -74.59547203727311,
+            -9.015920214264042
+          ],
+          [
+            -72.97435653364246,
+            -10.281470765520405
+          ],
+          [
+            -72.97435653365629,
+            -10.281470765510146
+          ]
+        ]
+      ],
+      [
+        [
+          [
+            -74.7472990477592,
+            -8.86736366112011
+          ],
+          [
+            -74.59547203727311,
+            -9.015920214264042
+          ],
+          [
+            -74.74729904775916,
+            -8.86736366112018
+          ],
+          [
+            -74.79500000000007,
+            -8.930845748443971
+          ],
+          [
+            -74.7472990477592,
+            -8.86736366112011
+          ]
+        ]
+      ],
+      [
+        [
+          [
+            -74.79500000000007,
+            4.919154251556392
+          ],
+          [
+            -72.54672381205054,
+            7.940433263677083
+          ],
+          [
+            -72.54672381205407,
+            7.940433263669279
+          ],
+          [
+            -74.791558254091,
+            4.923779339314933
+          ],
+          [
+            -73.84964718643667,
+            4.22285889599336
+          ],
+          [
+            -73.85004970901225,
+            4.216989014444903
+          ],
+          [
+            -74.79500000000007,
+            4.919154251556392
+          ]
+        ]
+      ],
+      [
+        [
+          [
+            -65.89499999999998,
+            16.87915425155552
+          ],
+          [
+            -60.081504295127566,
+            24.679048106471768
+          ],
+          [
+            -63.2144258184527,
+            20.474315650819918
+          ],
+          [
+            -65.89500000000362,
+            16.879154251546424
+          ],
+          [
+            -67.3412624729744,
+            14.935637490115717
+          ],
+          [
+            -67.34126247570858,
+            14.935637486446163
+          ],
+          [
+            -65.89499999999998,
+            16.87915425155552
+          ]
+        ]
+      ],
+      [
+        [
+          [
+            -11.605166023687616,
+            89.71913967742512
+          ],
+          [
+            -7.174241821042756,
+            91.98084574844506
+          ],
+          [
+            -7.807531648022859,
+            91.65759141573835
+          ],
+          [
+            -11.605166023689776,
+            89.71913967741602
+          ],
+          [
+            -12.58768609197773,
+            88.40090489545037
+          ],
+          [
+            -9.555247356073323,
+            90.76549327851535
+          ],
+          [
+            -12.587686091983983,
+            88.40090489544491
+          ],
+          [
+            -12.614175952460576,
+            88.36536378379377
+          ],
+          [
+            -11.605166023687616,
+            89.71913967742512
+          ]
+        ]
+      ],
+      [
+        [
+          [
+            -6.890398320588238,
+            91.43479601281614
+          ],
+          [
+            -6.89039832331332,
+            91.43479601792569
+          ],
+          [
+            -6.890398320592609,
+            91.43479601282453
+          ],
+          [
+            -6.890398320588238,
+            91.43479601281614
+          ]
+        ]
+      ],
+      [
+        [
+          [
+            -45.231071261377,
+            34.33428504450903
+          ],
+          [
+            -45.245653609112196,
+            34.3873870052048
+          ],
+          [
+            -45.23107126125199,
+            34.33428504467677
+          ],
+          [
+            -45.231071261377,
+            34.33428504450903
+          ]
+        ]
+      ],
+      [
+        [
+          [
+            -59.755732837897966,
+            -20.087566349099518
+          ],
+          [
+            -59.75573283789799,
+            -20.087566349099504
+          ],
+          [
+            -62.16242983623033,
+            -18.17437576755401
+          ],
+          [
+            -59.755732837897966,
+            -20.087566349099518
+          ]
+        ]
+      ],
+      [
+        [
+          [
+            -5.0290664589942935,
+            -60.68596250832343
+          ],
+          [
+            -1.0550121172414038,
+            -63.63407251020362
+          ],
+          [
+            -8.436945861971594,
+            -58.157863371045096
+          ],
+          [
+            -5.0290664589942935,
+            -60.68596250832343
+          ]
+        ]
+      ]
+    ]
+  },
+  "canopy_adjacent_surface_assumption_m2": 200.39332864640267,
+  "profiles": {
+    "NPM": {
+      "export_sha256": "9fd297bb1152abf31782f3f5c991617349144d121485e2ef2c4e798abe5114f9",
+      "UnitScaleFactor": 100.0,
+      "ground_triangles": 59885,
+      "flora_triangles": 60,
+      "xview": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 0,
+        "vertex_pairs": 0,
+        "face_pairs": 0,
+        "face_pairs_by_kind": {
+          "contact": 0,
+          "area": 0,
+          "area+contact": 0
+        },
+        "bowtie_vertices": 9,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "xview_passed": false,
+      "validator_exit": 1,
+      "machine_stage_counts": {
+        "pass": 1,
+        "fail": 3,
+        "review": 2,
+        "not_run": 2
+      },
+      "failed_findings": [
+        {
+          "stage": "V003",
+          "name": "ground skirt depth",
+          "observed": "SM_SIL13_Ground.fbx: SM_SIL13_Ground perimeter drop 0.006 m"
+        },
+        {
+          "stage": "V004",
+          "name": "topology defects",
+          "observed": "SM_SIL13_Ground.fbx: ['SM_SIL13_Flora (duplicates_and_self_intersections=162)']"
+        },
+        {
+          "stage": "V005",
+          "name": "material assignments",
+          "observed": "SM_SIL13_Ground.fbx: [\"SM_SIL13_Flora: unmapped diffuse for material 'M_SIL13_Ground_11'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_1'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_2'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_3'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_4'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_5'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_6'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_7'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_8'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_9'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_10'\"]"
+        },
+        {
+          "stage": "V005",
+          "name": "Flora maps: M_SIL13_Ground_11",
+          "observed": "SM_SIL13_Ground.fbx: no diffuse map; no separate opacity map"
+        }
+      ],
+      "plant_controls": [
+        {
+          "handle": "33F02A9",
+          "sinking_error_m": 1.5754674786983003e-09,
+          "height_error_m": 1.0636395586516301e-07
+        },
+        {
+          "handle": "33F02AB",
+          "sinking_error_m": 4.933125241635139e-09,
+          "height_error_m": 1.8419949388004397e-07
+        },
+        {
+          "handle": "33F02AC",
+          "sinking_error_m": 5.336889818963186e-09,
+          "height_error_m": 1.5510054218736968e-07
+        },
+        {
+          "handle": "33F02AD",
+          "sinking_error_m": 4.349267529457634e-09,
+          "height_error_m": 1.5987072643497413e-07
+        },
+        {
+          "handle": "33F02AE",
+          "sinking_error_m": 4.531153230402651e-12,
+          "height_error_m": 2.0734154304591357e-07
+        },
+        {
+          "handle": "33F02AF",
+          "sinking_error_m": 2.730677545192961e-09,
+          "height_error_m": 2.217246102276249e-07
+        }
+      ]
+    },
+    "VPM": {
+      "export_sha256": "f155a92ec623cb208a0b0441f53b930bad3345b8c0879d9df4f1601cc69c1e6b",
+      "UnitScaleFactor": 100.0,
+      "ground_triangles": 59885,
+      "flora_triangles": 6420,
+      "xview": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 0,
+        "vertex_pairs": 0,
+        "face_pairs": 0,
+        "face_pairs_by_kind": {
+          "contact": 0,
+          "area": 0,
+          "area+contact": 0
+        },
+        "bowtie_vertices": 9,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "xview_passed": false,
+      "validator_exit": 1,
+      "machine_stage_counts": {
+        "pass": 4,
+        "fail": 3,
+        "review": 0,
+        "not_run": 5
+      },
+      "failed_findings": [
+        {
+          "stage": "V003",
+          "name": "ground skirt depth",
+          "observed": "SM_SIL13_Ground.fbx: broken face geometry: SM_SIL13_Ground"
+        },
+        {
+          "stage": "V004",
+          "name": "topology defects",
+          "observed": "SM_SIL13_Ground.fbx: ['SM_SIL13_Ground (duplicates_and_self_intersections=29382)']"
+        },
+        {
+          "stage": "V010",
+          "name": "UCX present",
+          "observed": "SM_SIL13_Ground.fbx: 0 UCX mesh(es)"
+        }
+      ],
+      "plant_controls": [
+        {
+          "handle": "33F02A9",
+          "sinking_error_m": 1.5754674786983003e-09,
+          "height_error_m": 1.0636395586516301e-07
+        },
+        {
+          "handle": "33F02AB",
+          "sinking_error_m": 4.933125241635139e-09,
+          "height_error_m": 1.8419949388004397e-07
+        },
+        {
+          "handle": "33F02AC",
+          "sinking_error_m": 5.336889818963186e-09,
+          "height_error_m": 1.5510054218736968e-07
+        },
+        {
+          "handle": "33F02AD",
+          "sinking_error_m": 4.349267529457634e-09,
+          "height_error_m": 1.5987072643497413e-07
+        },
+        {
+          "handle": "33F02AE",
+          "sinking_error_m": 4.531153230402651e-12,
+          "height_error_m": 2.0734154304591357e-07
+        },
+        {
+          "handle": "33F02AF",
+          "sinking_error_m": 2.730677545192961e-09,
+          "height_error_m": 2.217246102276249e-07
+        }
+      ]
+    }
+  },
+  "ucx_attempts": [
+    {
+      "passed": false,
+      "target": "Ground only, no skirts/Flora/MAF",
+      "model_triangles": 66305,
+      "budget": 3316,
+      "options": {
+        "cell": 16.0,
+        "min_cell": 0.5,
+        "tol": 0.08,
+        "gap": 0.004,
+        "depth": 0.5
+      },
+      "error": "UcxBuildError: 597 ground pieces / 6832 tris exceed 999 pieces or budget 3316",
+      "elapsed_seconds": 198.37573850003537
+    },
+    {
+      "passed": false,
+      "target": "Ground only, no skirts/Flora/MAF",
+      "model_triangles": 66305,
+      "budget": 3316,
+      "options": {
+        "cell": 16.0,
+        "min_cell": 0.5,
+        "tol": 0.08,
+        "gap": 0.004,
+        "depth": 0.5
+      },
+      "error": "UcxBuildError: 583 ground pieces / 6660 tris exceed 999 pieces or budget 3316",
+      "adapter": "base relief only, full envelope differs by at most D154 offset; independent full-surface audit still required",
+      "elapsed_seconds": 72.98213039996335
+    }
+  ],
+  "source_integrity": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\pzu-20261104.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "equal": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\СИЛ13-УВК-ПД-ПЗУ_.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\maf-and-light-spec.docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "equal": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\МАФ_и_свет_модели_фото (4).docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "equal": true
+    }
+  ],
+  "maf_search": {
+    "library_file_count": 3559,
+    "xlsx_nonempty_rows": 232,
+    "catalogue_entries": 931,
+    "errors": []
+  },
+  "open_items": [
+    "localized bowties/skirt/topology/UV/material repairs remain worker-owned",
+    "MAF library identity mapping: no identified article in audited indexes, opaque Max labels not certified",
+    "Flora targets/cultivar identity and remaining library maps/placements",
+    "0.011239m2 new unsupported unhatched sliver is outside original G1 authorization; excluded, not extrapolated",
+    "complete profile composition before final UCX budget/build/readback",
+    "whole-site visual acceptance and full SINTEZ"
+  ]
+}

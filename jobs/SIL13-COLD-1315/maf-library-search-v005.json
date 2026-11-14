@@ -1,0 +1,765 @@
+{
+  "passed": false,
+  "scope": "filename/JSON/ZIP-directory/XLSX rows/shared catalogue; opaque native Max object labels not re-audited",
+  "library_file_count": 3559,
+  "archives": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\AdanatGroup_PergolaAndromeda_401462-1.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\AdanatGroup_PergolaAndromeda_401462-2.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\AdanatGroup_PergolaAndromeda_401462-3.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\AdanatGroup_PergolaAndromeda_401462-4.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\AdanatGroup_PergolaAndromeda_401462-5.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\AdanatGroup_PergolaAndromeda_401462-6.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Adanat_KresloKafePalissade3135_20402.zip",
+      "members": 12
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Adanat_NavesLiana_40184.1.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Adanat_Pergola_40146-2-1.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Adanat_PristvolnayaReshetkaAlegraKvadratnayaL1000_6000.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Adanat_StolAelita_130541.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Adanat_StolBremenSDvumyaSkameykami_13012.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Adanat_StolLidiyaComplect_13001-1.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Adanat_StolLion_20608.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Adanat_StulAelitaSPodlokotnikami_107361.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Aira_DetskayaPloshadka_DP090.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Aira_GorkaSmallHome_DP040.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Aira_KacheliGorodskieWood_IP014.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Aira_PergolaRing2211_PR032.zip",
+      "members": 12
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Aira_SportivnoeOborudovanie_UT029.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\AlphaGorod_PergolaKoltsa_PR-0008-5.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\AlphaGorod_PergolaTriangle_PR-0022.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\AST_Raskopki_IO0860T.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\DeloDesign_StolYO_0000.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\DeloDesign_StulYO_0000.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Ecomaf_TBO_0101.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Feniks_ElementPolosyPrepyatstviyNature_207240.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Feniks_ElementPolosyPrepyatstviyNature_207420.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Feniks_Gorka_240900.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Feniks_KacheliSPodvesomMalyutka_136025.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Feniks_KaruselNature_147020.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Feniks_SportivnoeOborudovanieWORKOUT_WRK21.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Feniks_SportivnoeOborudovanieWORKOUT_WRK9.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Fenix_DvuhmestniiBalancir_127060.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\FunGame_KaruselTaiga_DIO-004.008.000.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Hobbika_GamakHardwood_25308.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Hobbika_KacheliCasseopea_20895.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Hobbika_LezhakGorodskoySoStolikom_MG40281.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Hobbika_UkorochenniNavesPodPloshadkySimpl4156_56740.zip",
+      "members": 12
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Hobbika_UrnaGorodWood_58619.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Hobbika_UrnaStalnayaNovayaMoskva_12144.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Hobbika_UrnaStellarWood2341_52966.zip",
+      "members": 12
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Hobbika_VeloparkovkaVozduh_15617.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Hobbyka_SkameikaLiniyaSoSpinkoi_14233.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Hobbyka_SkameyaVerona_18694-1.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Hobbyka_SkameyaVerona_18694-2.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Hobbyka_VeloparkovkaSpiral_15617.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Igrateks_BrevnoListvennica4159_IO0906T-6.zip",
+      "members": 12
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Igrateks_InformatsionnyyStend_IS01011.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Igrateks_SkamyaRadiusnaya_SRRS.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Igratex_BetonnieRaskopki_IO0860T15.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Igratex_IgraPeskom_IO1005T11.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Igratex_IgrovoyKompleks_IK0408T23.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Igratex_Penek_IO0906T7.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Igratex_StolikSPechenkami_1005T-1.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Igratex_Vertushka_IO0208T1.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Individ_Amfiteatr1_Individ.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Mafmarket_KresloPrevaUrbana_LPU252.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Mafmarket_StolTiide_TID80T.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\MafStore_NavesPergola_MH-21.1.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Megapolis_ParkletConstructor_3347.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Mesto_IgrovayaPanel_135100.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Mesto_IgrovayaPanel_135110.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Mesto_IgrovayaPanel_135120.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\MetaforaLab_IgrovoyKompleksDzhakarKhust_SDM-019.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\MetaforaLab_KacheliWHS004_WHS-004.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Millenium_DivanParkovyy_MG6505.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Millenium_DivanParkovyy_MG6526.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Millenium_KacheliGamak_MG0510.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Millenium_PesochnyyStolik_MG1302.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\NoName1234_Amphiteather_0000.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\NoName1234_DvuhYarusniyAmphiteather_0000.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\NoName1234_Pergola_0000.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\NoName1234_Pesochica_0000.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\NoName3153_NoName3415_0000.zip",
+      "members": 12
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\NoName4156_NoName5612_0000.zip",
+      "members": 12
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\NoName5162_NoName7123_0000.zip",
+      "members": 12
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\NoName6121_NoName8542_0000.zip",
+      "members": 12
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\NoName6731_NoName3783_0000.zip",
+      "members": 12
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\NoName_BarnayaStoika_0101.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\NoName_Skameya_0101-2.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\NoName_Skameya_0101-3.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\NoName_Skameya_0101-4.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\NoName_Skameya_0101-5.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\NoName_Turnik_0101.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\ParkAndPlay_OborydovanieWorkout_217070.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\ParkAndPlay_OborydovanieWorkout_217100.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\ParkAndPlay_OborydovanieWorkout_217170.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Shelby_Domik_SHLG-08.03.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Shelby_IgrovoyElement_SHLG-06-10.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Shelby_IgrovoyKompleks_SHLG-03-02.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Shelby_InformStend_SHLG-05-23.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Shelby_KachalkaBalansir_SHLG-03-02.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Shelby_KachalkaNaPruzhinakh_SHLG-03-06.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Shelby_KachalkaPchela_SHLG-03-09.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Shelby_KacheliGnezdo_SHLG-01-01.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Shelby_Kacheli_SHLG-04-01.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Shelby_Karusel_SHKR-06-40.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\Taiga_OstrovokNaPruzhinah_IO0322T-4.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\TDMaf_IgrovoyKompleks_EKO-07006.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101_fixed\\Individ_Amfiteatr1_Individ.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101_fixed\\DeloDesign_StolYO_0000.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101_fixed\\Shelby_IgrovoyElement_SHLG-06-10.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101_fixed\\Shelby_Domik_SHLG-08.03.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101_fixed\\Hobbika_VeloparkovkaVozduh_15617.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101_fixed\\Hobbika_UkorochenniNavesPodPloshadkySimpl4156_56740.zip",
+      "members": 12
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101_fixed\\Mesto_IgrovoyKompleks_118030.zip",
+      "members": 13
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101_fixed\\NoName1234_Pesochica_0000.zip",
+      "members": 9
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\3.1_ЮС\\Adanat_Anapa_10779.1a.zip",
+      "members": 12
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\3.1_ЮС\\Igrateks_BalansirovochnayaKochka_0322T-3.zip",
+      "members": 12
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\3.1_ЮС\\Igrateks_BrevnaBalansirovocnye_0906T-4.zip",
+      "members": 12
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\3.1_ЮС\\Igrateks_Brevno_0906T-5.zip",
+      "members": 12
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\3.1_ЮС\\Igrateks_PiramidaIzBreven_0906T-1.zip",
+      "members": 12
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\3.1_ЮС\\Mesto_IgrovoyKompleks_118030.zip",
+      "members": 12
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\3.1_ЮС\\Mesto_Kachalka_161100.zip",
+      "members": 12
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\a101\\3.1_ЮС\\Mesto_Kachalka_170100.zip",
+      "members": 12
+    }
+  ],
+  "xlsx_nonempty_rows": 232,
+  "catalogue_entries": 931,
+  "errors": [],
+  "rows": [
+    {
+      "position": "1",
+      "source_description": "Теневой навес  S =25.0 кв.м., со скамьей, зашивкой монолитным поликарбонатом, водосточными желобами и снегозадержанием.  Индивидуальный проект (артикула нет).",
+      "quantity_text": "8 шт.",
+      "sku_literal": null,
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "3",
+      "source_description": "Столик с отдельностоящими лавочками, арт.  МДП-1007 | Деткки",
+      "quantity_text": "6 шт.",
+      "sku_literal": "МДП-1007",
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "4",
+      "source_description": "Песочница, арт. ИП-2006 | Деткки",
+      "quantity_text": "6 шт.",
+      "sku_literal": "ИП-2006",
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "5",
+      "source_description": "Балансир «Линия», арт. БЛР-2007 | Деткки",
+      "quantity_text": "3 шт.",
+      "sku_literal": "БЛР-2007",
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "6",
+      "source_description": "Игровая панель «Часы», арт. ИПН-2012 | Деткки",
+      "quantity_text": "6 шт.",
+      "sku_literal": "ИПН-2012",
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "7",
+      "source_description": "Интерактивный элемент «Гипно-2», арт. ИПН-2007 | Деткки",
+      "quantity_text": "2 шт.",
+      "sku_literal": "ИПН-2007",
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "8",
+      "source_description": "Меловая доска (М), арт. ИПН-2015 | Деткки",
+      "quantity_text": "8 шт.",
+      "sku_literal": "ИПН-2015",
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "9",
+      "source_description": "Переговорные трубы «Цветки», арт. ИПН-2005 | Деткки",
+      "quantity_text": "4 шт.",
+      "sku_literal": "ИПН-2005",
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "10",
+      "source_description": "Игровая панель «Счеты», арт. ИПН-2028 | Деткки",
+      "quantity_text": "2 шт.",
+      "sku_literal": "ИПН-2028",
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "13",
+      "source_description": "Скамейки «Форум» со спинкой, арт.  СКМ-0069.1 | Деткки",
+      "quantity_text": "4 шт.",
+      "sku_literal": "СКМ-0069.1",
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "14",
+      "source_description": "Скамейки «Форум» без спинки, арт.  СКМ-0069 | Деткки",
+      "quantity_text": "2 шт.",
+      "sku_literal": "СКМ-0069",
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "15",
+      "source_description": "Скамья парковая на металлическом основании со спинкой тип 1 (для МГН), арт. 1536 | Красивый город",
+      "quantity_text": "3 шт.",
+      "sku_literal": "1536",
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "16",
+      "source_description": "Шахматный стол «Паскаль» (комплект), арт.  СПТ-0001 | Деткки",
+      "quantity_text": "2 шт.",
+      "sku_literal": "СПТ-0001",
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "17",
+      "source_description": "Стол со скамейками «Бриз», арт.  СТЛ.М-0007 | Деткки",
+      "quantity_text": "4 шт.",
+      "sku_literal": "СТЛ.М-0007",
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "18",
+      "source_description": "Велопарковка на 7 мест, арт. ВПЛ-0001 | Деткки",
+      "quantity_text": "8 шт.",
+      "sku_literal": "ВПЛ-0001",
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "19",
+      "source_description": "Навес для колясок и велосипедов «Вуд» (обшивка монолитным поликарбонатом), арт.  ПМ-158 | Рельеф",
+      "quantity_text": "1 шт.",
+      "sku_literal": "ПМ-158",
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "20",
+      "source_description": "Навес для отдыха МГН (зашит монолитным поликарбонатом и рейками), арт.  ВСТ 9624/3 | Высота",
+      "quantity_text": "1 шт.",
+      "sku_literal": "ВСТ 9624/3",
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "21",
+      "source_description": "Контейнерная площадка «Бункер» на 3 контейнера, арт. 5003-1 | Аданат",
+      "quantity_text": "1 шт.",
+      "sku_literal": "5003-1",
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "22",
+      "source_description": "Контейнерная площадка «Бункер» на 4 контейнера, арт. 5003-2 | Аданат",
+      "quantity_text": "1 шт.",
+      "sku_literal": "5003-2",
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "23",
+      "source_description": "Хозблок для контейнерной площадки «Бункер», арт. 5052 | Аданат",
+      "quantity_text": "1 шт.",
+      "sku_literal": "5052",
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "24",
+      "source_description": "Флагшток высотой 9 м (с закрытым подъёмным механизмом), арт.  AL-L-06-11 | Grand-mag",
+      "quantity_text": "3 шт.",
+      "sku_literal": "AL-L-06-11",
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "25",
+      "source_description": "Детские футбольные ворота (с сеткой) «Юниор» с баскетбольным щитом, арт. 44708 | Хоббика",
+      "quantity_text": "2 шт.",
+      "sku_literal": "44708",
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "26",
+      "source_description": "Спортивный комплекс (волейбол) с регулированием крепления сетки по высоте, с сеткой, от 6 лет, арт.  СО053 | Поколение",
+      "quantity_text": "1 шт.",
+      "sku_literal": "СО053",
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "27",
+      "source_description": "Контейнер для отходов  V =1.1 м³ «крышка в крышке» с маркировкой, арт.  МК001 | Поколение",
+      "quantity_text": "7 шт.",
+      "sku_literal": "МК001",
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "28",
+      "source_description": "Урна, арт. 5963.S | Игратекс",
+      "quantity_text": "2 шт.",
+      "sku_literal": "5963.S",
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "29",
+      "source_description": "Сварное ограждение  PRO   H =2,5 м. Индивидуальный проект (артикула нет).",
+      "quantity_text": "663 п.м.",
+      "sku_literal": null,
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "30",
+      "source_description": "Ворота распашные  L =4.2 м. Индивидуальный проект (артикула нет).",
+      "quantity_text": "4 шт.",
+      "sku_literal": null,
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "31",
+      "source_description": "Калитка периметрального ограждения. Индивидуальный проект (артикула нет).",
+      "quantity_text": "2 шт.",
+      "sku_literal": null,
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "32",
+      "source_description": "Калитка в спор. ограждении. Индивидуальный проект (артикула нет).",
+      "quantity_text": "1 шт.",
+      "sku_literal": null,
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "33",
+      "source_description": "Ограждение спортивное. Индивидуальный проект (артикула нет).",
+      "quantity_text": "94 п.м.",
+      "sku_literal": null,
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "34",
+      "source_description": "Лежачий полицейский  L =6 м, ИДН 500С | Стандартпарк",
+      "quantity_text": "4 шт.",
+      "sku_literal": null,
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    },
+    {
+      "position": "35",
+      "source_description": "Концевой элемент композитный, ДО-ИДН-500-К/К-СП | Стандартпарк",
+      "quantity_text": "8 шт.",
+      "sku_literal": null,
+      "hits": [],
+      "status": "not_identified_in_searched_indexes",
+      "no_substitution": true
+    }
+  ],
+  "input_xlsx_sha256": "9b4302c16501636fe4a522f54ff16091244ba0b6f20378763b2706d51f1eb2b3"
+}

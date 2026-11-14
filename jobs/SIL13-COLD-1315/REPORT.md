@@ -1,10 +1,12 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **source-wide diagnostic v004/r3; new source-data decisions open, not delivered**.
-See [CONTINUATION-v004.md](CONTINUATION-v004.md) for actual source-wide exports/readback,
-source-resolved former pink wedge, corrected header units, failed technical checks and the new
-source-data questions. The v003 pilot geometry is accepted under D280, not its materials/checks.
-PILOT-v003.md and the v001/v002 sections below are historical checkpoints.
+Current status: **bounded source-wide diagnostic v005/r3; library/source choices open, not delivered**.
+See [CONTINUATION-v005.md](CONTINUATION-v005.md): actual exports/readback, both FBX
+xView 0 faces / 0 vertices with 9 bowties still open, D281 source answers applied,
+two refused UCX builds and expanded MAF identity audit. D282/D283 replace this branch's
+former D279/D280 after unrelated main allocations. No technical failure or manual gate
+is waived. The v003 pilot first-fragment acceptance remains limited.
+PILOT-v003.md, CONTINUATION-v004.md and the v001/v002 sections below are historical checkpoints.
 
 Historical v002 status: **source authority answered; height/PartsList gates open, not delivered**.
 Boundary and 52 source symbols exported/read back as source-only DXF. No constructed Ground/UCX,

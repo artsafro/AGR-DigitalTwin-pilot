@@ -7,7 +7,7 @@ Cells: `ground-npm`, `ground-vpm`. Whole-site scope is unchanged.
 
 ## Authority and sources
 
-[D279] records the delegated zero choice and accepted exact pilot plan:
+[D282] records the delegated zero choice and accepted exact pilot plan:
 - https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6854271480
 - https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6859055997
 
@@ -82,7 +82,7 @@ plant, cultivar or library edit was made. Authoritative maps remain missing inpu
 5. First Blender readback crashed in custom-normal import (0xC0000005), crash log
    retained. Retry with `use_custom_normals=False` read the geometry successfully;
    this does not certify imported custom normals. Native shading review remains open.
-6. Doc tests initially **1 failed / 34 passed** (new D279 inserted before D275).
+6. Doc tests initially **1 failed / 34 passed** (then-called D279 inserted before D275; now [D282]).
    Corrected row order: **35 passed / 0 failed**. No shared production-code fix.
 
 ## Real public validator results, not delivery passes

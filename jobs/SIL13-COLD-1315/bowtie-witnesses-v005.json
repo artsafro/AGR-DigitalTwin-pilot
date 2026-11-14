@@ -1,0 +1,371 @@
+{
+  "passed": false,
+  "export_sha256": "9fd297bb1152abf31782f3f5c991617349144d121485e2ef2c4e798abe5114f9",
+  "count": 9,
+  "rows": [
+    {
+      "master_vertex_1based": 17801,
+      "export_vertex_1based": 17801,
+      "source_xy_m": [
+        836.3120014953613,
+        11066.277847396394
+      ],
+      "local_xyz_m": [
+        52.40700149536133,
+        -46.50299835205078,
+        -0.03581199422478676
+      ],
+      "fans": 2,
+      "incident_faces_0based": [
+        29781,
+        29811,
+        29873,
+        29879,
+        29885,
+        29895
+      ],
+      "materials": [
+        "Rubber18",
+        "Rubber30"
+      ],
+      "nearby_source_hatches": [
+        {
+          "root": "33FBCCB",
+          "child_index": 14,
+          "token": "Rubber18",
+          "distance_m": 0.00017535855188591283
+        },
+        {
+          "root": "33FBCCB",
+          "child_index": 11,
+          "token": "Rubber30",
+          "distance_m": 0.0006002272602891107
+        }
+      ],
+      "status": "decision_required_for_local_shape_normalization_or_explicit_deviation"
+    },
+    {
+      "master_vertex_1based": 17802,
+      "export_vertex_1based": 17802,
+      "source_xy_m": [
+        836.2339985656738,
+        11066.29884730484
+      ],
+      "local_xyz_m": [
+        52.32899856567383,
+        -46.481998443603516,
+        -0.036671072244644165
+      ],
+      "fans": 2,
+      "incident_faces_0based": [
+        29781,
+        29785,
+        29832
+      ],
+      "materials": [
+        "Rubber18",
+        "Rubber30"
+      ],
+      "nearby_source_hatches": [
+        {
+          "root": "33FBCCB",
+          "child_index": 14,
+          "token": "Rubber18",
+          "distance_m": 0.0006660290460123178
+        },
+        {
+          "root": "33FBCCB",
+          "child_index": 11,
+          "token": "Rubber30",
+          "distance_m": 0.0001265382863224014
+        }
+      ],
+      "status": "decision_required_for_local_shape_normalization_or_explicit_deviation"
+    },
+    {
+      "master_vertex_1based": 17808,
+      "export_vertex_1based": 17808,
+      "source_xy_m": [
+        835.9429981994629,
+        11066.415844069978
+      ],
+      "local_xyz_m": [
+        52.03799819946289,
+        -46.3650016784668,
+        -0.039989493787288666
+      ],
+      "fans": 2,
+      "incident_faces_0based": [
+        29789,
+        29793,
+        29814
+      ],
+      "materials": [
+        "Rubber18",
+        "Rubber30"
+      ],
+      "nearby_source_hatches": [
+        {
+          "root": "33FBCCB",
+          "child_index": 14,
+          "token": "Rubber18",
+          "distance_m": 0.0
+        },
+        {
+          "root": "33FBCCB",
+          "child_index": 11,
+          "token": "Rubber30",
+          "distance_m": 0.0016934807365037508
+        }
+      ],
+      "status": "decision_required_for_local_shape_normalization_or_explicit_deviation"
+    },
+    {
+      "master_vertex_1based": 17958,
+      "export_vertex_1based": 17958,
+      "source_xy_m": [
+        844.0430004882812,
+        11055.537845717927
+      ],
+      "local_xyz_m": [
+        60.13800048828125,
+        -57.24300003051758,
+        0.06304396688938141
+      ],
+      "fans": 2,
+      "incident_faces_0based": [
+        30014,
+        30020,
+        30024,
+        32127,
+        32131
+      ],
+      "materials": [
+        "Rubber18",
+        "Rubber252"
+      ],
+      "nearby_source_hatches": [
+        {
+          "root": "33FBCCB",
+          "child_index": 14,
+          "token": "Rubber18",
+          "distance_m": 0.0014530522642132752
+        },
+        {
+          "root": "33FBCCB",
+          "child_index": 12,
+          "token": "Rubber252",
+          "distance_m": 0.0009516049122811208
+        }
+      ],
+      "status": "decision_required_for_local_shape_normalization_or_explicit_deviation"
+    },
+    {
+      "master_vertex_1based": 18031,
+      "export_vertex_1based": 18031,
+      "source_xy_m": [
+        843.7700016784668,
+        11055.396846877595
+      ],
+      "local_xyz_m": [
+        59.8650016784668,
+        -57.38399887084961,
+        0.06083120033144951
+      ],
+      "fans": 2,
+      "incident_faces_0based": [
+        30101,
+        30103,
+        30115,
+        31003,
+        31011
+      ],
+      "materials": [
+        "Rubber18",
+        "Rubber252"
+      ],
+      "nearby_source_hatches": [
+        {
+          "root": "33FBCCB",
+          "child_index": 14,
+          "token": "Rubber18",
+          "distance_m": 0.0013314127710934115
+        },
+        {
+          "root": "33FBCCB",
+          "child_index": 12,
+          "token": "Rubber252",
+          "distance_m": 0.0
+        }
+      ],
+      "status": "decision_required_for_local_shape_normalization_or_explicit_deviation"
+    },
+    {
+      "master_vertex_1based": 18226,
+      "export_vertex_1based": 18226,
+      "source_xy_m": [
+        848.3150036621093,
+        11055.990844832917
+      ],
+      "local_xyz_m": [
+        64.41000366210938,
+        -56.790000915527344,
+        0.10245749354362488
+      ],
+      "fans": 2,
+      "incident_faces_0based": [
+        30523,
+        30525,
+        30538,
+        30552
+      ],
+      "materials": [
+        "Rubber18",
+        "Rubber252"
+      ],
+      "nearby_source_hatches": [
+        {
+          "root": "33FBCCB",
+          "child_index": 14,
+          "token": "Rubber18",
+          "distance_m": 0.0003255641519798608
+        },
+        {
+          "root": "33FBCCB",
+          "child_index": 12,
+          "token": "Rubber252",
+          "distance_m": 0.0008075148263913017
+        }
+      ],
+      "status": "decision_required_for_local_shape_normalization_or_explicit_deviation"
+    },
+    {
+      "master_vertex_1based": 19488,
+      "export_vertex_1based": 19488,
+      "source_xy_m": [
+        791.551999835968,
+        11099.72784529831
+      ],
+      "local_xyz_m": [
+        7.646999835968018,
+        -13.053000450134277,
+        -0.4869145154953003
+      ],
+      "fans": 2,
+      "incident_faces_0based": [
+        32928,
+        33841,
+        33843,
+        33847
+      ],
+      "materials": [
+        "Pavement"
+      ],
+      "nearby_source_hatches": [
+        {
+          "root": "33FBCC1",
+          "child_index": 0,
+          "token": "Pavement",
+          "distance_m": 0.0017659798737357684
+        },
+        {
+          "root": "33FBCB2",
+          "child_index": 0,
+          "token": "SeededLawn",
+          "distance_m": 0.0055070665976654385
+        },
+        {
+          "root": "33FBCB1",
+          "child_index": 0,
+          "token": "Pavement",
+          "distance_m": 0.0008436254218654929
+        }
+      ],
+      "status": "decision_required_for_local_shape_normalization_or_explicit_deviation"
+    },
+    {
+      "master_vertex_1based": 25490,
+      "export_vertex_1based": 25490,
+      "source_xy_m": [
+        722.0570004272461,
+        11126.409845458527
+      ],
+      "local_xyz_m": [
+        -61.847999572753906,
+        13.628999710083008,
+        -0.09220287203788757
+      ],
+      "fans": 2,
+      "incident_faces_0based": [
+        41272,
+        41279
+      ],
+      "materials": [
+        "Pavement"
+      ],
+      "nearby_source_hatches": [
+        {
+          "root": "33FBCC1",
+          "child_index": 0,
+          "token": "Pavement",
+          "distance_m": 0.0013108038482149012
+        },
+        {
+          "root": "33FBCB2",
+          "child_index": 0,
+          "token": "SeededLawn",
+          "distance_m": 0.0
+        }
+      ],
+      "status": "decision_required_for_local_shape_normalization_or_explicit_deviation"
+    },
+    {
+      "master_vertex_1based": 26409,
+      "export_vertex_1based": 26409,
+      "source_xy_m": [
+        812.3840000915527,
+        11124.543845283051
+      ],
+      "local_xyz_m": [
+        28.479000091552734,
+        11.762999534606934,
+        -0.09399999678134918
+      ],
+      "fans": 2,
+      "incident_faces_0based": [
+        42756,
+        42768,
+        42775,
+        42777,
+        42782,
+        42784,
+        42788,
+        42790,
+        42792,
+        42794,
+        42796,
+        42798
+      ],
+      "materials": [
+        "Flowerbed_UnresolvedSpecies",
+        "Pavement"
+      ],
+      "nearby_source_hatches": [
+        {
+          "root": "33FBCC1",
+          "child_index": 0,
+          "token": "Pavement",
+          "distance_m": 0.0011199203719891694
+        },
+        {
+          "root": "33FBCB4",
+          "child_index": 0,
+          "token": "Flowerbed_UnresolvedSpecies",
+          "distance_m": 0.00030329087246194395
+        }
+      ],
+      "status": "decision_required_for_local_shape_normalization_or_explicit_deviation"
+    }
+  ],
+  "proposal": "Locally separate the two fans by a 3mm gap inside radius <=3mm; preserve material labels and all contours outside the 9 fixed neighbourhoods. Requires owner approval before modifying shape. No general weld and no checker threshold change."
+}

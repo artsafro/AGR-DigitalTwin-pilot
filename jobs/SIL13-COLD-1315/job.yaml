@@ -1,6 +1,6 @@
 schema_version: 1.0.0
 job_id: SIL13-COLD-1315
-run_id: cold-1315-source-wide-diagnostic-v004-r3
+run_id: cold-1315-bounded-source-wide-v005-r3
 synthetic: false
 path: deviation
 inputs: &inputs
@@ -13,17 +13,22 @@ deviations:
   what_failed: Initial Ground xView 262 faces; repeated-index triangles caused FBX face loss; validators still fail. Missing maple maps and 17.008947 m2 covering authority prevent complete pilot.
   what_was_tried: Local-origin TIN; exact seam weld r2 then zero-area/crop seam normalization r3; native Max copy extraction, Blender neutral partial pilot; no invented maps/materials.
   new_tool_written: No shared module. Hashed job-local drivers under external evidence-v003.json.
-  result: Historical v003 pilot Ground 938 tris; Flora 60 NPM / 6420 VPM; xView 0/0 both FBX. First-fragment geometry subsequently accepted D280, not appearance or delivery checks.
+  result: Historical v003 pilot Ground 938 tris; Flora 60 NPM / 6420 VPM; xView 0/0 both FBX. First-fragment geometry subsequently accepted D283, not appearance or delivery checks.
 - gate: operations
   what_failed: Source-wide inventory exposes unsupported relief, intersecting materials and unresolved footprint/canopy regions. New exports fail xView and delivery checks.
   what_was_tried: Transformed INSERT extraction resolves former pink area as Rubber18 without lawn assumption. Source-edge parity decomposition, local TIN and flat-first diagnostic. Default header regression fails at 1 then FBX_SCALE_UNITS passes at 100 with exact 2m readback. Long BMesh cleanup replaced by exact-coordinate normalization and explicit zero-area drop list; no input/library edits.
   new_tool_written: No shared module; job-local drivers and actual failed reports indexed in evidence-v004.json.
   result: Ground 46614 tris, six maples 60 NPM or 6420 VPM. UnitScaleFactor 100 verified. xView fails 465 faces and 4753 vertices each; 110 zero-area drops each not waived. Source choices and worker-owned repairs remain open; no completed step/delivery claimed.
+- gate: operations
+  what_failed: Adaptive shared refinement timeout; numerical TIN singularities; independent seams and steep-layer contacts.
+  what_was_tried: Common source/TIN/grid partition; 30 singular TIN triangles excluded, all 1670 source controls retained; 3mm noding, re-anchor to authorized domain, D154 Z-only clearance correction. No general proximity weld or source edits.
+  new_tool_written: No shared module; real job-local drivers and failed attempts sealed in evidence-v005.json.
+  result: Both real exports xView 0 faces and 0 vertices, but 9 bowties and public validators fail. Two actual UCX attempts refuse 6832/6660 triangles against incomplete-file limit 3316. No output collider or completed delivery claimed.
 gates:
   inputs:
     status: review
     waits: user
-    note: Boundary/VP/zero/pilot geometry decisions closed D280. New choices for 7.597235 m2 outside TIN, 7.504316 m2 material intersections, official footprint and canopy/entry Ground. Acer maps owned by issue 1316, not a user question again. Original/copy source hashes equal.
+    note: D281 source answers applied; D282/D283 replace former branch D279/D280 after main collisions. New source/library batch in CONTINUATION-v005.md asks about unhatched base-lawn and additional 0.011239226m2 unsupported subset (excluded), exact MAF identities and remaining Flora targets/cultivars. Acer maps stay owned by 1316. Four original/copy source hashes equal.
     evidence: *inputs
   parts:
     status: review
@@ -33,29 +38,29 @@ gates:
       sha256: 40b5287dc4377627ea154d7ee40e515049a6c84434e0cb45acf99dbd8ff59aec
   operations:
     status: fail
-    note: Actual source-wide diagnostic exported/read back, xView/topology fail. Unsupported/contradictory zones excluded, not defaulted. No fabricated invariant receipt.
+    note: Actual v005 exports have zero contact pairs; 9 bowties and skirt/material/library topology FAILs remain worker-owned. No fabricated invariant receipt or requested technical waiver.
     evidence: &summary
-    - path: jobs/SIL13-COLD-1315/source-wide-summary-v004.json
-      sha256: f85123320cf35c7c8d6322008c9aacd9f3782952053da2afd287d36ac210cab5
+    - path: jobs/SIL13-COLD-1315/source-wide-summary-v005.json
+      sha256: 380fdb037fcb56c2af2f2df31c0064442d9e48461107ad6bb7d9a1cfb882a7ca
   budgets:
-    status: review
-    note: Incomplete candidate 46674 NPM or 53034 VPM non-UCX triangles. Final area band, complete composition, UCX, textures and density open.
+    status: fail
+    note: Incomplete actual composition 59945 NPM / 66305 VPM non-UCX triangles. Two UCX builds refuse 3316-triangle limit; complete composition must precede final budget. No triangle padding or substituted limit.
     evidence: *summary
   export_readback:
     status: review
-    note: Fresh exported-file readback verifies counts/UV presence/numeric size and UnitScaleFactor 100. Public topology/skirt/UV/material checks fail. Not an all-checks receipt.
+    note: Fresh readback verifies exact counts, finite vertices, one UV channel, UnitScaleFactor 100 and 6/6 numerical plant controls per profile. Public validators both exit 1; not an all-checks receipt.
     evidence: *summary
   report:
     status: review
-    note: Actual per-area continuation distinguishes source decisions and worker-owned failures. Full reproduction incomplete. Drive artifacts indexed with 60 verified copies.
+    note: Actual per-area continuation distinguishes source/library questions and worker-owned failures. Full reproduction incomplete. Drive artifacts indexed with 90 verified copies.
     evidence:
-    - path: jobs/SIL13-COLD-1315/CONTINUATION-v004.md
-      sha256: b8bf7d32bcfe2728cddc4e6214b368f2ced5f5e58ec4302bbfa8dadf78d1ca39
-    - path: jobs/SIL13-COLD-1315/evidence-v004.json
-      sha256: c3128665e0f9dbd18242b6af1f99355e51293041b9c07fbffd990e537373f980
+    - path: jobs/SIL13-COLD-1315/CONTINUATION-v005.md
+      sha256: baf8655b98ec091770254d82c2f2e11b7d6964e65abb5222794a8466b7d5a66d
+    - path: jobs/SIL13-COLD-1315/evidence-v005.json
+      sha256: b74d2eff076357cdaa23d647ad352dcb80048f19b256b272b3068df58a185a88
   visual:
     status: review
-    note: D280 accepts only first v003/r3 fragment geometry. New diagnostic sheet is not a completed full-site picture or final acceptance; no approval requested for technical failures.
+    note: D283 accepts only first v003/r3 fragment geometry. Actual v005 native renders and projected witnesses are not final appearance or technical approval; no fabricated user receipt.
     evidence: *summary
   checker:
     status: missing

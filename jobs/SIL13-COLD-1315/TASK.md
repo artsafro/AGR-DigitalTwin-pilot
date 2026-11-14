@@ -26,7 +26,7 @@ Scope decision: [D272] in `docs/decisions.md`; cells `ground-npm` and `ground-vp
 
 Source-content decision [D275]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6852165269
 approves boundary 33FBCEF, the planting plan/table and the named VP definition. Those questions are closed.
-The delegated zero and exact pilot plan are answered [D279]: 142.10 m from VP_5 floor-mark
+The delegated zero and exact pilot plan are answered [D282]: 142.10 m from VP_5 floor-mark
 pair 33F8EC4/33F8EC5; 5.6 m maple nominal. `parts-pilot-confirmed.json` records the issue answer,
 while `parts-pilot-draft.json` preserves the exact accepted draft. The plan proposes the
 source window XY [820,11024]–[850,11046] clipped to 33FBCEF and the six position-3 maples.
@@ -57,15 +57,24 @@ symbols extracted, 52/52 inside the approved boundary and preserved by DXF readb
 match all five point-plant schedule quantities (1, 4, 6, 17, 24). A linden-named CAD symbol is position 2/4,
 not authority to substitute linden for Red Sunset. Flora candidates remain subject to identity/size checks.
 MAF: all 32 DOCX rows accounted for; no certified SKU-to-model match yet (not proof of disk-wide absence).
-Current continuation is [CONTINUATION-v004.md](CONTINUATION-v004.md): first pilot geometry
-accepted [D280]. Transformed source hatch search resolves all 17.008947 m2 as Rubber18;
-no lawn assumption used. A source-wide diagnostic is now exported/read back: Ground 46,614
-triangles; six library maples NPM 60 / VPM 6420. Header UnitScaleFactor=100 verified,
-but xView/public delivery validators FAIL; not a completed or accepted whole-site model.
-New source choices: 7.597235 m2 outside source TIN support, 7.504316 m2 intersecting
-coverings, official OKS footprint and Ground beneath eight canopy/entry regions. See the
-single new question batch in the continuation report; no heights/materials invented.
-Acer maps are owned by #1316, not another question to Artem. Zero/boundary/5.6 m/pilot
-geometry/former pink wedge are closed. Full Ground/UCX/MAF/remaining Flora/atlases and
-manual/SINTEZ gates remain; no partial failure is treated as a pass.
+Current continuation is [CONTINUATION-v005.md](CONTINUATION-v005.md). [D281] answers
+G1–G3: fixed TIN continuation, source material precedence, footprint 33FBD7A and
+adjacent canopy/entry surfaces. First pilot geometry remains accepted [D283]; project
+zero/5.6 m plan are [D282], renumbered from the branch's former D279/D280 after main
+collisions without changing the original answering URLs.
+
+Actual v005/r3 exports/readback: Ground 59,885 triangles per profile, six library
+maples NPM 60 / VPM 6420; UnitScaleFactor=100; public xView 0 overlapping faces /
+0 overlapping vertices, but 9 bowties and public delivery validators still FAIL.
+Two actual Ground-only UCX builds refuse the present composition's triangle budget.
+MAF lookup: 3559 files, 116 ZIP directories, 232 nonempty XLSX rows and 931 catalogue
+identities, no certified article match; native object identity needs the library owner.
+
+One new source/library batch: unhatched base-lawn assumption 1.268965 m2, including
+an additional 0.011239226 m2 outside the fixed TIN authorization (excluded, not
+extrapolated); exact MAF library mappings; remaining Flora target sizes/cultivars.
+These do not ask for approval of worker-owned technical FAILs. The former pink
+wedge remains actual Rubber18; no conditional lawn inference there. Acer maps stay
+owned by #1316. The 133 m2 flowerbed remains unresolved without invented scatter.
+Full Ground/UCX/MAF/remaining Flora/atlases and manual/SINTEZ gates remain incomplete.
 Technical QA, user acceptance and publication remain incomplete; no readiness increase.

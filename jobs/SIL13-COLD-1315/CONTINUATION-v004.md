@@ -1,7 +1,7 @@
 # #1315 — source-wide continuation v004/r3
 
 Status: **not complete, not delivered, `passed=false`**. Cells `ground-npm` and
-`ground-vpm`. The first v003/r3 geometric fragment is accepted under [D280]; this
+`ground-vpm`. The first v003/r3 geometric fragment is accepted under [D283]; this
 is not acceptance of its materials, maps, technical failures or the new source-wide
 candidate. Gate 1 site/composition/zero/plan/5.6 m decisions remain closed.
 
@@ -9,7 +9,7 @@ candidate. Gate 1 site/composition/zero/plan/5.6 m decisions remain closed.
 
 Artem delegated the remaining pilot decisions to the orchestrator:
 https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6864798809.
-[D280] records that exact limited decision and the conditional lawn fallback.
+[D283] records that exact limited decision and the conditional lawn fallback.
 
 **The fallback was not used.** The disputed 17.008947 m2 has actual source rubber
 hatches inside transformed modelspace INSERT **33FBCCB / A$C8bceaf9b**, layer
