@@ -118,6 +118,6 @@ The card's prose says eight, but repository discovery finds **nine** files:
 
 The #1359 guard is now on main (merged PR #1368); all nine historical paths are
 already in `docs/architecture/contexts.yaml` with their #1106 references, and stay
-untouched. This branch refreshes only its own moved shared-writer/exporter line
-anchors and generated diagrams. The unrelated KPP1 allowlist drift on main belongs
-to #1387; this branch does not duplicate that repair.
+untouched. Main's #1387 function-keyed anchors now cover the moved shared writer
+and exporter without branch-specific offsets; duplicate_guard and route_map --check
+both pass. The #1387 repair was integrated via main (PR #1394), not duplicated.

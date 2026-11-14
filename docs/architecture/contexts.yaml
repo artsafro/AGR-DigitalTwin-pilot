@@ -1,7 +1,8 @@
 # Context map of the NPM/OKS route on KPP1 (#1359). Source of truth for docs/architecture/contexts.excalidraw.
 # Labels for Artem are Russian (ru, contract); ids, paths and function names stay as in the code.
-# duplicates: path:line outside the owner. `match` = text that must be on that line (existence test).
-# `rule` = a duplicate_guard rule; rule-tagged rows under jobs/ are the guard allowlist (exact path:line).
+# duplicates: outside the owner. Described rows: `at` = path:line, `match` = text that must be on that line.
+# `rule` = a duplicate_guard rule; rule-tagged rows are the guard allowlist, keyed by `at: path.py::function`
+# (`<module>` at top level; #1387: never a bare line) + optional `hash` (printed by the guard) pinning one copy.
 # Regenerate: uv run python tools/architecture/route_map.py ; check: tools/architecture/duplicate_guard.py
 title_ru: "Карта контекстов маршрута НПМ/ОКС (КПП1)"
 issue: "#1359"
@@ -27,150 +28,210 @@ shared_kernel:
     - name: udim_of_cell
       contract: "целые (столбец, ряд) -> номер тайла"
   duplicates:
-    - at: "jobs/KPP1/benchmark-1318/account_readback.py:51"
+    - at: "jobs/KPP1/benchmark-1318/account_readback.py::main"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/KPP1/benchmark-1318/prepare_master.py:54"
+      hash: "6b2c6ef699"
+    - at: "jobs/KPP1/benchmark-1318/prepare_master.py::main"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/KPP1/rerun-1230/build_blender.py:269"
+      hash: "6b2c6ef699"
+    - at: "jobs/KPP1/rerun-1230/build_blender.py::uv_finish"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/KPP1/scripts/export_npm.py:88"
+      hash: "90068fbcb4"
+    - at: "jobs/KPP1/scripts/export_npm.py::<module>"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/KPP1/scripts/export_npm.py:93"
+      hash: "abdf135e7a"
+    - at: "jobs/KPP1/scripts/readback_vpm.py::<module>"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/KPP1/scripts/readback_vpm.py:80"
+      hash: "c13b738f14"
+    - at: "jobs/KPP1/scripts/vpm_uv.py::tile_offset"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/KPP1/scripts/vpm_uv.py:151"
+      hash: "ec9495a822"
+    - at: "jobs/PSU275/scripts/export_npm.py::<module>"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/PSU275/scripts/export_npm.py:103"
+      hash: "abdf135e7a"
+    - at: "jobs/TEC26-OKS/scripts/compare_facades.py::main"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/PSU275/scripts/export_npm.py:98"
+      hash: "4d341406e8"
+    - at: "jobs/TEC26-OKS/scripts/export_npm.py::<module>"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/TEC26-OKS/scripts/compare_facades.py:152"
+      hash: "abdf135e7a"
+    - at: "jobs/TEC26-OKS/scripts/qa_packages.py::facade_joint_checks.vpm_tile_of"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/TEC26-OKS/scripts/export_npm.py:92"
+      hash: "8655980b06"
+    - at: "jobs/TEC26-OKS/scripts/qa_packages.py::facade_joint_checks"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/TEC26-OKS/scripts/export_npm.py:97"
+      hash: "32aac84cf1"
+    - at: "jobs/TEC26-OKS/scripts/qa_packages.py::main"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/TEC26-OKS/scripts/qa_packages.py:224"
+      hash: "abdf135e7a"
+    - at: "jobs/TEC26-OKS/scripts/qa_packages.py::main"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/TEC26-OKS/scripts/qa_packages.py:236"
+      hash: "971a042bbe"
+    - at: "jobs/TEC26-OKS/scripts/qa_packages.py::main"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/TEC26-OKS/scripts/qa_packages.py:340"
+      hash: "6688d0464d"
+    - at: "jobs/TEC26-OKS/scripts/vpm_uv.py::tile_offset"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/TEC26-OKS/scripts/qa_packages.py:380"
+      hash: "ec9495a822"
+    - at: "jobs/VATUTINO-SITE/flora_v007_blender.py::cmd_readback"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/TEC26-OKS/scripts/qa_packages.py:406"
+      hash: "31ff54af03"
+    - at: "jobs/VATUTINO-SITE/flora_v007_blender.py::cmd_readback"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/TEC26-OKS/scripts/vpm_uv.py:151"
+      hash: "85e04a9a85"
+    - at: "jobs/elv-tc-vpm/scripts/clarify_render_v001.py::tile_of"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/VATUTINO-SITE/flora_v007_blender.py:53"
+      hash: "ded8ff2561"
+    - at: "jobs/elv-tc-vpm/scripts/customer_fbx_probe_v001.py::<module>"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/elv-tc-vpm/scripts/clarify_render_v001.py:52"
+      hash: "ef506142a8"
+    - at: "jobs/elv-tc-vpm/scripts/customer_fbx_probe_v001.py::<module>"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/elv-tc-vpm/scripts/customer_fbx_probe_v001.py:138"
+      hash: "4b4c6b2b46"
+    - at: "jobs/elv-tc-vpm/scripts/readback_delivery_v001.py::<module>"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/elv-tc-vpm/scripts/customer_fbx_probe_v001.py:87"
+      hash: "8655980b06"
+    - at: "jobs/elv-tc-vpm/scripts/readback_delivery_v003.py::<module>"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/elv-tc-vpm/scripts/readback_delivery_v001.py:102"
+      hash: "8655980b06"
+    - at: "jobs/elv-tc-vpm/scripts/readback_uv_fbx.py::<module>"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/elv-tc-vpm/scripts/readback_delivery_v003.py:103"
+      hash: "8655980b06"
+    - at: "jobs/elv-tc-vpm/scripts/uv_tex_full.py::<module>"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/elv-tc-vpm/scripts/readback_uv_fbx.py:35"
+      hash: "54a2d44744"
+    - at: "jobs/elv-tc-vpm/scripts/uv_tex_full.py::<module>"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/elv-tc-vpm/scripts/uv_tex_full.py:251"
+      hash: "eb17152aa7"
+    - at: "jobs/elv-tc-vpm/scripts/uv_tex_full_v007.py::<module>"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/elv-tc-vpm/scripts/uv_tex_full_v007.py:252"
+      hash: "54a2d44744"
+    - at: "jobs/elv-tc-vpm/scripts/uv_tex_full_v007.py::<module>"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py:472"
+      hash: "eb17152aa7"
+    - at: "jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py::<module>"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/elv-tc-vpm/scripts/uv_tex_pilot.py:200"
+      hash: "54a2d44744"
+    - at: "jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py::<module>"
       rule: udim-tile
       issue: "#1337"
-    - at: "jobs/skug26-k5-ac/scripts/uvverify.py:19"
+      hash: "eb17152aa7"
+    - at: "jobs/elv-tc-vpm/scripts/uv_tex_pilot.py::<module>"
       rule: udim-tile
       issue: "#1337"
-    - at: "tools/blender/fbx_readback.py:63"
+      hash: "54a2d44744"
+    - at: "jobs/elv-tc-vpm/scripts/uv_tex_pilot.py::<module>"
       rule: udim-tile
       issue: "#1337"
-    - at: "tools/derive/export_npm.py:145"
+      hash: "eb17152aa7"
+    - at: "jobs/skug26-k5-ac/scripts/uvverify.py::<module>"
       rule: udim-tile
       issue: "#1337"
-    - at: "tools/materials/npm_atlas_udim.py:375"
+      hash: "d0179a710c"
+    - at: "tools/blender/fbx_readback.py::udim"
       rule: udim-tile
       issue: "#1337"
-    - at: "src/dt_ai/geometry/uv.py:7"
+      hash: "ded8ff2561"
+    - at: "tools/derive/export_npm.py::main"
       rule: udim-tile
       issue: "#1337"
-    - at: "adapters/max/agr_tools/atlas_core.py:552"
+      hash: "abdf135e7a"
+    - at: "tools/materials/npm_atlas_udim.py::analyze"
+      rule: udim-tile
+      issue: "#1337"
+      hash: "f034325d1a"
+    - at: "src/dt_ai/geometry/uv.py::tile_origin"
+      rule: udim-tile
+      issue: "#1337"
+      hash: "31ff54af03"
+    - at: "src/dt_ai/geometry/uv.py::tile_origin"
+      rule: udim-tile
+      issue: "#1337"
+      hash: "85e04a9a85"
+    - at: "adapters/max/agr_tools/atlas_core.py::pack"
       rule: udim-tile
       issue: "#1141"
-    - at: "adapters/max/agr_tools/npm_core.py:109"
+      hash: "402002d484"
+    - at: "adapters/max/agr_tools/npm_core.py::tile_of"
       rule: udim-tile
       issue: "#1337"
-    - at: "adapters/max/agr_tools/udim_core.py:53"
+      hash: "ded8ff2561"
+    - at: "adapters/max/agr_tools/udim_core.py::tile_origin"
       rule: udim-tile
       issue: "#1337"
-    - at: "adapters/max/agr_tools/uvtile_core.py:64"
+      hash: "fa20d4136a"
+    - at: "adapters/max/agr_tools/uvtile_core.py::tile_of_id"
       rule: udim-tile
       issue: "#1337"
-    - at: "adapters/max/agr_tools/uvtile_core.py:67"
+      hash: "2eed51e648"
+    - at: "adapters/max/agr_tools/uvtile_core.py::tile_origin"
       rule: udim-tile
       issue: "#1337"
-    - at: "adapters/max/agr_tools/udim_core.py:50"
+      hash: "af2bc2e385"
+    - at: "adapters/max/agr_tools/udim_core.py::tile_origin"
       rule: udim-tile
       issue: "#1337"
-    - at: "adapters/max/agr_tools/udimplug_core.py:53"
+      hash: "af2bc2e385"
+    - at: "adapters/max/agr_tools/udimplug_core.py::tile_offset"
       rule: udim-tile
       issue: "#1337"
-    - at: "adapters/max/agr_tools/udimview_core.py:38"
+      hash: "d163d10dca"
+    - at: "adapters/max/agr_tools/udimview_core.py::face_tile"
       rule: udim-tile
       issue: "#1337"
-    - at: "adapters/max/agr_tools/uvlayout_core.py:56"
+      hash: "8fa30eddc4"
+    - at: "adapters/max/agr_tools/uvlayout_core.py::tile_origin"
       rule: udim-tile
       issue: "#1337"
-    - at: "adapters/max/agr_tools/uvlayout_core.py:60"
+      hash: "af2bc2e385"
+    - at: "adapters/max/agr_tools/uvlayout_core.py::tile_origin"
       rule: udim-tile
       issue: "#1337"
-    - at: "adapters/max/agr_tools/uvlayout_core.py:64"
+      hash: "8b58df8f2d"
+    - at: "adapters/max/agr_tools/uvlayout_core.py::udim_of_cell"
       rule: udim-tile
       issue: "#1337"
-    - at: "adapters/max/agr_tools/npm2vpm_core.py:175"
+      hash: "af1c03c2ab"
+    - at: "adapters/max/agr_tools/npm2vpm_core.py::tile_origin"
       rule: udim-tile
       issue: "#1337"
-    - at: "src/dt_ai/geometry/uv.py:4"
+      hash: "af2bc2e385"
+    - at: "src/dt_ai/geometry/uv.py::tile_origin"
       rule: udim-tile
       issue: "#1337"
-    - at: "src/twinqa/uv.py:35"
+      hash: "af2bc2e385"
+    - at: "src/twinqa/uv.py::tile_origin"
       rule: udim-tile
       issue: "#1337"
+      hash: "af2bc2e385"
 contexts:
   - id: body
     ru: "Корпус и геометрия"
@@ -249,54 +310,74 @@ contexts:
       - name: default_glasses
         contract: "адрес -> предложение прозрачного стекла КПП1"
     duplicates:
-      - at: "jobs/KPP1/rerun-1230/build_blender.py:401"
+      - at: "jobs/KPP1/rerun-1230/build_blender.py::main"
         rule: delivery-zip
         issue: "#1359"
-      - at: "jobs/KPP1/scripts/package_vpm.py:51"
+        hash: "61d21d75df"
+      - at: "jobs/KPP1/scripts/package_vpm.py::<module>"
         rule: delivery-zip
         issue: "#1106"
-      - at: "jobs/KPP1/site-1255/place_package.py:181"
+        hash: "61d21d75df"
+      - at: "jobs/KPP1/package-1278/build_package.py::repair_artifacts"
+        rule: delivery-zip
+        issue: "#1377"
+        hash: "95db9b43b2"
+      - at: "jobs/KPP1/site-1255/place_package.py::<module>"
+        rule: delivery-zip
+        issue: "#1377"
+        hash: "0b3e81abf3"
+      - at: "jobs/KPP1/site-1255/place_package.py::<module>"
+        rule: delivery-zip
+        issue: "#1377"
+        hash: "cd78aa9bb8"
+      - at: "jobs/PSU275/scripts/package_vpm.py::<module>"
+        rule: delivery-zip
+        issue: "#1106"
+        hash: "61d21d75df"
+      - at: "jobs/TEC26-OKS/scripts/package_vpm.py::<module>"
+        rule: delivery-zip
+        issue: "#1106"
+        hash: "61d21d75df"
+      - at: "jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip"
         rule: delivery-zip
         issue: "#1359"
-      - at: "jobs/KPP1/site-1255/place_package.py:186"
+        hash: "c099bec414"
+      - at: "jobs/VATUTINO-SITE/run_delivery.py::main"
         rule: delivery-zip
         issue: "#1359"
-      - at: "jobs/PSU275/scripts/package_vpm.py:53"
+        hash: "bc783edf3f"
+      - at: "jobs/elv-tc-vpm/scripts/package_vpm_v001.py::<module>"
         rule: delivery-zip
         issue: "#1106"
-      - at: "jobs/TEC26-OKS/scripts/package_vpm.py:50"
+        hash: "99b52810a1"
+      - at: "jobs/elv-tc-vpm/scripts/package_vpm_v002.py::<module>"
         rule: delivery-zip
         issue: "#1106"
-      - at: "jobs/VATUTINO-SITE/npm_code.py:40"
+        hash: "99b52810a1"
+      - at: "jobs/elv-tc-vpm/scripts/package_vpm_v003.py::<module>"
+        rule: delivery-zip
+        issue: "#1106"
+        hash: "99b52810a1"
+      - at: "jobs/elv-tc-vpm/scripts/package_vpm_v004.py::<module>"
+        rule: delivery-zip
+        issue: "#1106"
+        hash: "99b52810a1"
+      - at: "jobs/elv-tc-vpm/scripts/package_vpm_v005.py::<module>"
+        rule: delivery-zip
+        issue: "#1106"
+        hash: "99b52810a1"
+      - at: "jobs/elv-tc-vpm/scripts/package_vpm_v006.py::<module>"
+        rule: delivery-zip
+        issue: "#1106"
+        hash: "99b52810a1"
+      - at: "adapters/max/agr_tools/package_core.py::_write_zip"
         rule: delivery-zip
         issue: "#1359"
-      - at: "jobs/VATUTINO-SITE/run_delivery.py:67"
+        hash: "bd74c2bb7c"
+      - at: "src/dt_ai/publish/bundle.py::package"
         rule: delivery-zip
         issue: "#1359"
-      - at: "jobs/elv-tc-vpm/scripts/package_vpm_v001.py:83"
-        rule: delivery-zip
-        issue: "#1106"
-      - at: "jobs/elv-tc-vpm/scripts/package_vpm_v002.py:85"
-        rule: delivery-zip
-        issue: "#1106"
-      - at: "jobs/elv-tc-vpm/scripts/package_vpm_v003.py:116"
-        rule: delivery-zip
-        issue: "#1106"
-      - at: "jobs/elv-tc-vpm/scripts/package_vpm_v004.py:119"
-        rule: delivery-zip
-        issue: "#1106"
-      - at: "jobs/elv-tc-vpm/scripts/package_vpm_v005.py:122"
-        rule: delivery-zip
-        issue: "#1106"
-      - at: "jobs/elv-tc-vpm/scripts/package_vpm_v006.py:131"
-        rule: delivery-zip
-        issue: "#1106"
-      - at: "adapters/max/agr_tools/package_core.py:482"
-        rule: delivery-zip
-        issue: "#1359"
-      - at: "src/dt_ai/publish/bundle.py:20"
-        rule: delivery-zip
-        issue: "#1359"
+        hash: "99f325f2cd"
   - id: validation
     ru: "Проверка и приёмка"
     area: docs/domain/areas/package.md
