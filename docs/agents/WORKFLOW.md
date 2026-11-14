@@ -127,6 +127,31 @@ uv run dt evals --check-handoff <pr-body.md> --sha <full HEAD sha> --output <wor
 - `Sample output:` gives the output the acceptance asks for (path or inline), or `n/a: <reason>`.
 Exit 1 prints one `ERROR:` line per problem. Fix the evidence or run the missing step. Never edit a line to pass the check.
 
+### Visual evidence (Before/After) [D286]
+
+Canonical rule (#1360); the PR template and `REVIEW_CHECKLIST.md` link here. A PR that changes what the
+user sees - geometry, UV, materials, textures, renders, Max UI - carries BOTH a Before and an After image:
+- clearly labelled `BEFORE` / `AFTER`, each naming its version (commit, PR or file + sha256) so the baseline
+  and the changed version are identified;
+- the same camera / viewpoint, render settings and scene state on both sides;
+- a real baseline: the approved or `origin/main` output, never a mockup or a redrawn picture.
+
+After-only evidence is incomplete. If no real baseline can be produced, say so in the PR and keep it
+not-ready (draft) until one exists; the reviewer requests changes otherwise. A PR without a visible change
+writes `Visual Before/After: n/a: <why nothing visible changes>`.
+
+Helper for two FBX/.blend versions (headless Blender, one camera fitted to the union of both scenes or one
+named camera that must be identical in both; it refuses mismatched cameras, identical inputs and an output
+inside git):
+```bash
+uv run python tools/review/before_after.py --before <baseline.fbx> --after <changed.fbx> \
+  --label-before "<baseline version>" --label-after "<changed version>" \
+  --output "G:/Мой диск/AGR-evidence/<issue>-<topic>/<view>-v001" [--elevation 55] [--camera-mode named --camera-name <cam>]
+```
+It writes `before.png`, `after.png`, the labelled `before-after.png`, `before-after.json` and
+`SHA256SUMS.txt` to Drive, not git; the PR quotes the path and the hashes. Max UI changes use two
+screenshots of the same panel and state. These images are evidence, not the user's visual acceptance.
+
 ## Questions-only
 
 Ask only unresolved questions that change the model, object, data, inputs or result. Decide routine

@@ -1,0 +1,149 @@
+{
+ "Ведомость озеленения/2/1": {
+  "status": "exists",
+  "library": [
+   "elka_t1_h400",
+   "elka_t2_h300"
+  ],
+  "why": "A101 elka = Ель обыкновенная (confirm); the scene puts the generic conifer of row 6 here",
+  "high": [
+   "shkola_flora:shkola_flora_k003"
+  ],
+  "low": [
+   "shkola_flora:shkola_flora_k002"
+  ],
+  "note": "1 of the 4 Sosna_Derevo instances stands at the DWG Ель point (-57.5, -11.9 m)"
+ },
+ "Ведомость озеленения/4/2": {
+  "high": [
+   "shkola_flora:shkola_flora_k004"
+  ],
+  "low": [
+   "shkola_flora:shkola_flora_k005"
+  ]
+ },
+ "Ведомость озеленения/6/3": {
+  "high": [
+   "shkola_flora:shkola_flora_k003"
+  ],
+  "low": [
+   "shkola_flora:shkola_flora_k002"
+  ],
+  "note": "Sosna_Derevo x4 = 3 Сосна кедровая + 1 Ель (same model); count 4 vs spec 3"
+ },
+ "Ведомость озеленения/10/4": {
+  "high": [
+   "shkola_flora:shkola_flora_k008"
+  ],
+  "low": [
+   "shkola_flora:shkola_flora_k007"
+  ]
+ },
+ "Ведомость озеленения/12/5": {
+  "high": [
+   "shkola_flora:shkola_flora_k001"
+  ],
+  "low": [
+   "shkola_flora:shkola_flora_k000"
+  ]
+ },
+ "Ведомость озеленения/15/6": {
+  "high": [
+   "shkola_flora:shkola_flora_k006"
+  ],
+  "low": [
+   "shkola_flora:shkola_flora_k011"
+  ],
+  "note": "objects are named Mozh_* (можжевельник) but stand at the 15 Микробиота points"
+ },
+ "Ведомость озеленения/16/7": {
+  "status": "variant",
+  "library": [
+   "flora_v003:Thuja_occidentalis"
+  ],
+  "why": "Туя западная = Thuja occidentalis (v003); cultivar Smaragd not in the library",
+  "high": [
+   "shkola_flora:shkola_flora_k010"
+  ],
+  "low": [
+   "shkola_flora:shkola_flora_k012",
+   "shkola_flora:shkola_flora_k009"
+  ]
+ },
+ "Спецификация МАФ/И02/1": {
+  "high": [
+   "blago:blago_e09_g001"
+  ],
+  "note": "pole with backboard 1.42x1.35x4.54 m"
+ },
+ "Спецификация МАФ/И03.1/2": {
+  "high": [
+   "blago:blago_e20_g001"
+  ],
+  "note": "2 posts 2.5 m = one pair of stands (spec qty 1 set)"
+ },
+ "Спецификация МАФ/И03.2/3": {
+  "high": [
+   "blago:blago_e20_g000"
+  ],
+  "note": "net 11.3 m x 1.22 m"
+ },
+ "Спецификация МАФ/И09/4": {
+  "high": [
+   "blago:blago_e06_g000"
+  ],
+  "note": "climbing frame 4.2x3.6x2.2 m; И09/И010 assigned by size order, confirm by DWG point"
+ },
+ "Спецификация МАФ/И010/5": {
+  "high": [
+   "blago:blago_e06_g001"
+  ],
+  "note": "climbing frame 3.6x2.8x1.8 m; see И09"
+ },
+ "Спецификация МАФ/М2/6": {
+  "high": [
+   "blago:blago_e05_g000"
+  ]
+ },
+ "Спецификация МАФ/М3/7": {
+  "high": [
+   "blago:blago_e10_g000"
+  ],
+  "note": "4 three-section bins 0.78x0.27x0.98 m"
+ },
+ "Спецификация МАФ/М5/8": {
+  "high": [
+   "blago:blago_e04_g000"
+  ],
+  "note": "flagpole 12.27 m; the schedule says 9-12 m"
+ },
+ "Спецификация МАФ/М6/9": {
+  "high": [
+   "blago:blago_e08_g000"
+  ],
+  "note": "canopy over a table 5.9x2.6x2.8 m"
+ },
+ "Спецификация МАФ/М7/10": {
+  "high": [
+   "blago:blago_e03_g000"
+  ],
+  "note": "plain box (10 tris), no container detail"
+ },
+ "Спецификация МАФ/М8/11": {
+  "high": [
+   "blago:blago_e02_g000"
+  ]
+ },
+ "Спецификация МАФ/М9/12": {
+  "high": [
+   "blago:blago_e18_g000"
+  ],
+  "note": "roofed enclosure 6.1x2.1x2.4 m, 2580 tris"
+ },
+ "Спецификация МАФ/М10/13": {
+  "high": [
+   "blago:blago_e07_g000"
+  ],
+  "note": "bench with back; schedule H 450 is probably the seat height"
+ }
+}

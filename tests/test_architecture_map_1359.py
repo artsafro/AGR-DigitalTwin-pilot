@@ -109,6 +109,8 @@ def test_unknown_reference_is_reported(mutate, needle):
     (lambda e, c: c["contexts"][0]["duplicates"][0].update(issue="1359"), "#<number>"),
     (lambda e, c: c["contexts"][0]["duplicates"][0].pop("ru"), "'ru'"),
     (lambda e, c: c["shared_kernel"]["duplicates"][0].update(rule="nope"), "unknown rule"),
+    (lambda e, c: c["shared_kernel"]["duplicates"][0].update(at="jobs/KPP1/scripts/vpm_uv.py:151"),
+     "path.py::function"),
     (lambda e, c: c["contexts"][1].update(id="body"), "duplicate context"),
 ])
 def test_schema_errors_name_the_key(mutate, needle):
@@ -239,12 +241,23 @@ def test_guard_green_on_repo_with_allowlist(capsys):
 
 def test_allowlist_rows_carry_an_issue_and_name_only_known_rules():
     allowed = guard.allowlist(mini_yaml.load(ROOT / route_map.CONTEXTS))
-    assert {r for r, _ in allowed} == set(guard.RULES)
+    assert {k[0] for k in allowed} == set(guard.RULES)
     assert all(issue.startswith("#") for issue in allowed.values())
     jobs = [k for k in allowed if k[1].startswith("jobs/")]
-    # 14 (#1359) + build_v008 (#1371) + build_package (#1278, merged without a row)
-    assert len([k for k in jobs if k[0] == "delivery-zip"]) == 16
-    assert len([k for k in jobs if k[0] == "udim-tile"]) == 30
+    assert len([k for k in jobs if k[0] == "delivery-zip"]) == 16   # + build_v008::build (#1371)
+    assert len([k for k in jobs if k[0] == "udim-tile"]) == 32   # #1387: one row per copy (same line may hold 2)
+    # #1387: rows are keyed by file + function (+ hash), never by a bare line number
+    assert all(qual and ":" not in path for _, path, qual, _ in allowed)
+
+
+def test_kpp1_package_copies_owned_by_the_packaging_issue():
+    """#1387: the KPP1 package-1278 builder and the place_package writers point at #1377 (packaging owner)."""
+    allowed = guard.allowlist(mini_yaml.load(ROOT / route_map.CONTEXTS))
+    kpp1 = {k: v for k, v in allowed.items()
+            if k[1] in ("jobs/KPP1/package-1278/build_package.py", "jobs/KPP1/site-1255/place_package.py")}
+    assert {(k[1], k[2]) for k in kpp1} == {("jobs/KPP1/package-1278/build_package.py", "repair_artifacts"),
+                                            ("jobs/KPP1/site-1255/place_package.py", "<module>")}
+    assert len(kpp1) == 3 and set(kpp1.values()) == {"#1377"}
 
 
 UDIM_COPIES = [
@@ -357,29 +370,88 @@ def test_guard_red_on_synthetic_copy_inside_the_real_repo_tree(tmp_path, capsys)
     assert "NEW COPY [udim-tile] jobs/KPP1/scripts/new_udim.py:1" in capsys.readouterr().out
 
 
+def _row(at, rule="udim-tile", issue="#1337", digest=None):
+    row = f'      - at: "{at}"\n        rule: {rule}\n' + (f'        issue: "{issue}"\n' if issue else "")
+    return row + (f'        hash: "{digest}"\n' if digest else "")
+
+
+FN = "def f(u, v):\n    return 1001 + u + 10 * v\n"
+
+
 def test_guard_allowlisted_copy_passes_and_stale_row_fails(tmp_path, capsys):
-    row = '      - at: "jobs/J/a.py:1"\n        rule: udim-tile\n        issue: "#1337"\n'
-    assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": UDIM_COPIES[0]}, row)) == 0
-    assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": "x = 1\n"}, row)) == 1
-    assert "STALE ALLOWLIST [udim-tile] jobs/J/a.py:1" in capsys.readouterr().out
+    row = _row("jobs/J/a.py::f")
+    assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": FN}, row)) == 0
+    assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": "def f():\n    return 1\n"}, row)) == 1
+    assert "STALE ALLOWLIST [udim-tile] jobs/J/a.py::f" in capsys.readouterr().out
 
 
-def test_guard_moved_line_is_new_and_stale(tmp_path, capsys):
-    row = '      - at: "jobs/J/a.py:1"\n        rule: udim-tile\n        issue: "#1337"\n'
-    assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": "\n" + UDIM_COPIES[0]}, row)) == 1
+@pytest.mark.parametrize("prefix,body_prefix", [
+    ("\n", ""), ("# c\n" * 40, ""), ("import os\n\n\ndef g():\n    pass\n\n\n", ""),
+    ("", "    x = 1\n    y = 2\n"), ("\n" * 7, "    # moved\n" * 13),
+])
+def test_guard_line_shift_inside_the_same_function_stays_green(tmp_path, prefix, body_prefix, capsys):
+    """#1387: lines inserted above or inside an allowlisted function move the copy; it is neither NEW nor STALE."""
+    code = prefix + "def f(u, v):\n" + body_prefix + "    return 1001 + u + 10 * v\n"
+    for digest in (None, guard.scan_text(FN)[0].digest):
+        args = _guard_root(tmp_path, {"jobs/J/a.py": code}, _row("jobs/J/a.py::f", digest=digest))
+        assert guard.main(args) == 0, capsys.readouterr().out
+
+
+def test_guard_new_copy_in_another_function_is_red(tmp_path, capsys):
+    code = FN + "\n\ndef g(u, v):\n    return 1001 + u + 10 * v\n"
+    assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": code}, _row("jobs/J/a.py::f"))) == 1
     out = capsys.readouterr().out
-    assert "NEW COPY [udim-tile] jobs/J/a.py:2" in out and "STALE ALLOWLIST [udim-tile] jobs/J/a.py:1" in out
+    assert "NEW COPY [udim-tile] jobs/J/a.py:6 in g" in out and "STALE" not in out
+
+
+def test_guard_copy_moved_into_another_function_is_new_and_stale(tmp_path, capsys):
+    code = "def g(u, v):\n    return 1001 + u + 10 * v\n"
+    assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": code}, _row("jobs/J/a.py::f"))) == 1
+    out = capsys.readouterr().out
+    assert "NEW COPY [udim-tile] jobs/J/a.py:2 in g" in out and "STALE ALLOWLIST [udim-tile] jobs/J/a.py::f" in out
+
+
+def test_guard_hash_row_pins_one_copy_inside_the_function(tmp_path, capsys):
+    digest = guard.scan_text(FN)[0].digest
+    second = FN + "    du = (t - 1001) % 10\n"
+    assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": second}, _row("jobs/J/a.py::f", digest=digest))) == 1
+    assert "NEW COPY [udim-tile] jobs/J/a.py:3 in f" in capsys.readouterr().out      # 2nd copy, other hash
+    assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": second}, _row("jobs/J/a.py::f"))) == 0  # no hash
+    assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": FN}, _row("jobs/J/a.py::f", digest="0" * 10))) == 1
+    out = capsys.readouterr().out
+    assert "NEW COPY [udim-tile] jobs/J/a.py:2 in f" in out and "STALE ALLOWLIST [udim-tile] jobs/J/a.py::f" in out
+
+
+@pytest.mark.parametrize("code,qual", [
+    ("tile = 1001 + u + 10 * v\n", "<module>"),
+    ("class X:\n    def tile_origin(self, t):\n        return table[t]\n", "X.tile_origin"),
+    ("def outer():\n    def inner(u, v):\n        return 1001 + u + 10 * v\n", "outer.inner"),
+    ("class X:\n    K = 1001 + u + 10 * v\n", "X"),
+    ("async def f(u, v):\n    return 1001 + u + 10 * v\n", "f"),
+    ("def f(u, v, t=1001 + u + 10 * v):\n    pass\n", "<module>"),   # a default runs in the enclosing scope
+])
+def test_guard_qualname_of_each_finding(code, qual):
+    assert [h.qualname for h in guard.scan_text(code)] == [qual]
 
 
 @pytest.mark.parametrize("row", [
-    '      - at: "jobs/J/a.py:1"\n        rule: udim-tile\n',                       # no issue
-    '      - at: "jobs/J/a.py:1"\n        rule: udim-tile\n        issue: "1337"\n',  # not an issue ref
-    '      - at: "jobs/J/a.py:1"\n        rule: nope\n        issue: "#1"\n',         # unknown rule
-    '      - at: "jobs/J/a.py:1"\n        rule: udim-tile\n        issue: "#1"\n'
-    '      - at: "jobs/J/a.py:1"\n        rule: udim-tile\n        issue: "#1"\n',    # duplicated row
+    _row("jobs/J/a.py::f", issue=""),                                    # no issue
+    _row("jobs/J/a.py::f", issue="1337"),                                # not an issue ref
+    _row("jobs/J/a.py::f", rule="nope", issue="#1"),                     # unknown rule
+    _row("jobs/J/a.py::f") + _row("jobs/J/a.py::f"),                     # duplicated row
+    _row("jobs/J/a.py::f") + _row("jobs/J/a.py::f", digest="abcdef0123"),  # fn row overlaps a hash row
+    _row("jobs/J/a.py:2"),                                               # #1387: a bare line is not a key
+    _row("jobs/J/a.py"),                                                 # no function
+    _row("jobs/J/a.py::"),                                               # empty function
+    _row("jobs/J/a.py::f", digest="nothex!"),                            # malformed hash
+    _row("jobs/J/a.py::f", digest="abcdef012"),                          # 9 hex: one short
+    _row("jobs/J/a.py::f", digest="abcdef01234"),                        # 11 hex: one long
+    _row("jobs/J/a.py::f", digest="ABCDEF0123"),                         # upper case
+    _row("jobs/J/a.py::f g"),                                            # not a qualname
 ])
-def test_guard_bad_allowlist_is_an_error(tmp_path, row):
-    assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": UDIM_COPIES[0]}, row)) == 2
+def test_guard_bad_allowlist_is_an_error(tmp_path, row, capsys):
+    assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": FN}, row)) == 2
+    assert "jobs/J/a.py" in capsys.readouterr().err
 
 
 def test_guard_unparsable_job_file_is_an_error_naming_it(tmp_path, capsys):
