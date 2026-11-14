@@ -193,6 +193,12 @@ def conform_source_mesh(vertices, faces, lineage, uv, source_vertices, source_fa
             for j in candidates:
                 j=int(j)
                 if j in face:continue
+                distances=[]
+                for edge_index,x in enumerate(face):
+                    y=face[(edge_index+1)%len(face)];edge=v[y]-v[x];size=float(edge@edge)
+                    fraction=float(np.clip((v[j]-v[x])@edge/size,0,1)) if size else 0.
+                    distances.append(float(np.linalg.norm(v[j]-v[x]-fraction*edge)))
+                if min(range(len(face)),key=lambda edge_index:distances[edge_index])!=k:continue
                 if src not in owners[j] and not any(on_edge(v[a],e) and on_edge(v[b],e) and on_edge(v[j],e)
                     for other in owners[j] for e in edges[src]&edges[other]):continue
                 t=float((v[j]-v[a])@d/length);cuts.append((t,j))

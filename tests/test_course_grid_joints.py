@@ -15,6 +15,19 @@ def test_source_pixel_footprint_keeps_longitudinal_ends_and_empty_is_explicit():
     assert source_joint_footprint(blank,uv,uv).is_empty
 
 
+def test_axis_vector_fit_removes_pixel_stairs_without_changing_nominal_width():
+    from tools.materials.course_grid_native import rectify_axis_joint_footprint
+    from shapely.geometry import box
+    from shapely.ops import unary_union
+    footprint=unary_union([box(0,0,.01,1),box(.01,.1,.012,.104),box(-.002,.6,0,.604)])
+    fitted=rectify_axis_joint_footprint(footprint)
+    assert fitted.area==pytest.approx(.01)
+    assert fitted.bounds[2]-fitted.bounds[0]==pytest.approx(.01)
+    assert len(fitted.exterior.coords)==5
+    assert footprint.difference(fitted.buffer(.005)).area==0
+    assert fitted.difference(footprint.buffer(.005)).area==0
+
+
 def test_clipped_thin_face_has_a_measurable_joint_not_a_missing_5mm_centre():
     face=[[0.,0.],[.003,0.],[.003,1.],[0.,1.]]
     zone=[[0.,0.],[.01,0.],[.01,1.],[0.,1.]]
