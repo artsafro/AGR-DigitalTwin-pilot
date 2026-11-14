@@ -288,6 +288,55 @@ def test_guard_red_on_synthetic_job_local_copy(tmp_path, code, capsys):
     assert "NEW COPY" in capsys.readouterr().out
 
 
+# r1 review (PR #1368): named integer constants hid the formula from the guard.
+NAMED_CONST_COPIES = [
+    # (b) module-level FIRST=1001 then the forward formula
+    "FIRST = 1001\ndef t(u, v):\n    return FIRST + int(u) + 10 * int(v)\n",
+    # (c) U=10, offset by the literal, modulo by the name
+    "U = 10\ndef o(t):\n    k = t - 1001\n    return k % U\n",
+    # function-level constants, annotated assignment, both names
+    "def t(u, v):\n    F: int = 1001\n    W = 10\n    return F + u + W * v\n",
+    "def o(t):\n    F = 1001\n    W = 10\n    return divmod(t - F, W)\n",
+    "B = 1001\nW = 10\ndef o(t):\n    return (t - B) // W\n",
+    # owner function names re-defined in a job, whatever the body
+    "def udim_tile(u, v):\n    return lookup(u, v)\n",
+    "class X:\n    def tile_origin(self, t):\n        return table[t]\n",
+    "def face_tile(uvs):\n    pass\n",
+    "def udim_of_cell(cu, cv):\n    pass\n",
+]
+NAMED_CONST_NOT_COPIES = [
+    "FIRST = 1000\nx = FIRST + u + 10 * v\n",
+    "U = 9\nk = t - 1001\ny = k % U\n",
+    "FIRST = '1001'\nx = FIRST + u + 10 * v\n",
+    "def udim_tile_report(rows):\n    pass\n",
+    "udim_tile = owner.udim_tile\n",
+]
+
+
+def test_guard_red_on_verbatim_copy_of_the_owner(tmp_path, capsys):
+    """(a) The owner module itself copied into a job must be a NEW COPY."""
+    owner = (ROOT / guard.RULES["udim-tile"]).read_text(encoding="utf-8")
+    args = _guard_root(tmp_path, {"jobs/NEWJOB/scripts/udimtile_core.py": owner})
+    assert guard.main(args) == 1
+    out = capsys.readouterr().out
+    assert "NEW COPY" in out and "udim-tile" in out
+    # every owned function line is found, not only one of them
+    hits = guard.scan(tmp_path)
+    assert len([h for h in hits if h[0] == "udim-tile"]) >= 4
+
+
+@pytest.mark.parametrize("code", NAMED_CONST_COPIES)
+def test_guard_red_on_named_constant_copy(tmp_path, code, capsys):
+    args = _guard_root(tmp_path, {"jobs/NEWJOB/scripts/copy.py": code})
+    assert guard.main(args) == 1
+    assert "NEW COPY" in capsys.readouterr().out
+
+
+@pytest.mark.parametrize("code", NAMED_CONST_NOT_COPIES)
+def test_guard_named_constant_non_copies_pass(tmp_path, code):
+    assert guard.main(_guard_root(tmp_path, {"jobs/NEWJOB/scripts/ok.py": code})) == 0
+
+
 @pytest.mark.parametrize("code", NOT_COPIES)
 def test_guard_ignores_non_copies(tmp_path, code):
     assert guard.main(_guard_root(tmp_path, {"jobs/NEWJOB/scripts/ok.py": code})) == 0

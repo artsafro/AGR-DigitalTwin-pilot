@@ -13,7 +13,7 @@ agr/dt** (Gate 1, СИНТЕЗ, сдача) — это делается рука
 шов парапет/кровля, окна, UDIM, два атласа, пакет, перекрытия xView (#1343: 112/116 граней), запуск СИНТЕЗ.
 
 **Что видно на карте контекстов:** 5 контекстов + общее ядро UDIM. У каждого назван один модуль-владелец и его
-функции (вход → выход). Вне владельцев найдено **73 копии**: 38 формул UDIM (30 в `jobs/`), 16 сборщиков ZIP
+функции (вход → выход). Вне владельцев найдено **83 копии**: 48 формул UDIM (30 в `jobs/`), 16 сборщиков ZIP
 (14 в `jobs/`, из них 9 упаковщиков ВПМ), 5 копий атласа/UV, 5 копий проверок и запуска чекера, 6 своих запусков
 Blender, 3 своих шва/сборки корпуса.
 
@@ -34,13 +34,16 @@ ZIP-пакета. Старые копии перечислены в `contexts.ya
   output) and on any command, D-row, path, owner function or `path:line` that does not exist.
 - Renders: the SVG is produced **directly by the generator**, no Excalidraw renderer is used (none runs offline
   here). PNG = `magick -density 110 <svg> <png>` (ImageMagick 7.1.2-31, offline), stored on Drive (rule 57):
-  `contexts.png` `dff6963d984391f379b8c27d219818297a0845edfad9aa027c77e4cca5dcfce6`,
+  `contexts.png` `7d4497887ef95ab227a5cebb6364aacf9237565664fcad7b1ad2bc3d53681a05`,
   `npm-oks-route.png` `6925c9e48b8b4b7e44759a5adf949cea35c717c98e008a15a2666b37291db82d`.
 - Guard: `tools/architecture/duplicate_guard.py` (AST, stdlib). Rules `udim-tile` (owner
   `adapters/max/agr_tools/udimtile_core.py`, #1337) and `delivery-zip` (owner `tools/derive/package_vpm.py`,
   #1106). Rule-tagged `duplicates` rows of `contexts.yaml` are the allowlist (exact `path:line` + issue). A new
   copy under `jobs/` fails; a listed row that is no longer found fails (stale); copies outside `jobs/` are
-  documented and must still exist, but new ones there are not guarded yet.
+  documented and must still exist, but new ones there are not guarded yet. The `udim-tile` rule also resolves
+  `Name = <int>` constants anywhere in the file (`FIRST_UDIM = 1001`, `U = 10`) and flags any job-local `def`
+  named `udim_tile` / `udim_of_cell` / `tile_origin` / `face_tile` (review r1 of PR #1368: a verbatim copy of
+  the owner was invisible before). That widening found 10 more copies outside `jobs/` (none new in `jobs/`).
 
 ## Evidence used
 
@@ -68,8 +71,9 @@ Full machine list: `docs/architecture/contexts.yaml` (`duplicates`). Line number
 
 1. **Shared kernel UDIM** (owner `udimtile_core.py`): on the NPM route itself `tools/derive/export_npm.py:144,149`,
    `tools/materials/npm_atlas_udim.py:375`, `tools/blender/fbx_readback.py:63` (twinqa readback),
-   `src/dt_ai/geometry/uv.py:7`; Max cores `atlas_core.py:552`, `npm_core.py:109`, `udim_core.py:53`,
-   `uvtile_core.py:64`; jobs (guarded, 30 rows): KPP1 `scripts/export_npm.py:88,93`, `readback_vpm.py:80`,
+   `src/dt_ai/geometry/uv.py:4,7`, `src/twinqa/uv.py:35`; Max cores `atlas_core.py:552`, `npm_core.py:109`,
+   `npm2vpm_core.py:175`, `udim_core.py:50,53`, `udimplug_core.py:53`, `udimview_core.py:38`,
+   `uvlayout_core.py:56,60,64`, `uvtile_core.py:64,67`; jobs (guarded, 30 rows): KPP1 `scripts/export_npm.py:88,93`, `readback_vpm.py:80`,
    `vpm_uv.py:151`, `benchmark-1318/{account_readback.py:51,prepare_master.py:54}`, `rerun-1230/build_blender.py:269`;
    TEC26 `export_npm.py:92,97`, `vpm_uv.py:151`, `qa_packages.py:224,236,340,380,406`, `compare_facades.py:152`;
    PSU275 `export_npm.py:98,103`; elv-tc-vpm 10 rows; VATUTINO `flora_v007_blender.py:53`; skug26 `uvverify.py:19`.

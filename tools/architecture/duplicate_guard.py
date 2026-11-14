@@ -6,6 +6,8 @@ Rules (stdlib `ast`, no imports of the scanned code):
 - `udim-tile`  owner adapters/max/agr_tools/udimtile_core.py (#1337). Flags the UDIM formula itself:
   an addition chain holding the constant 1001 and a `* 10` term (`1001 + u + 10 * v`), and the inverse
   `(tile - 1001) % 10` / `// 10` / `divmod(tile - 1001, 10)` / `i = tile - 1001` then `i % 10` or `i // 10`.
+  1001 and 10 also match a name bound to that int anywhere in the file (`FIRST_UDIM = 1001`, `U = 10`), and any
+  job-local `def` named udim_tile / udim_of_cell / tile_origin / face_tile is a copy (PR #1368 r1).
 - `delivery-zip`  owner tools/derive/package_vpm.py (`dt derive package`, #1106). Flags a job-local
   delivery package writer: `zipfile.ZipFile(..., "w" | "x" | "a")` (mode positional or keyword).
 
@@ -34,27 +36,52 @@ RULES = {
 WRITE_MODES = {"w", "x", "a"}
 
 
-def _const(node, value):
-    return isinstance(node, ast.Constant) and type(node.value) is type(value) and node.value == value
+OWNED_NAMES = {"udim-tile": {"udim_tile", "udim_of_cell", "tile_origin", "face_tile"}}
 
 
-def _add_terms(node):
-    if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
-        return _add_terms(node.left) + _add_terms(node.right)
-    return [node]
-
-
-def _is_times_ten(node):
-    return isinstance(node, ast.BinOp) and isinstance(node.op, ast.Mult) and (
-        _const(node.left, 10) or _const(node.right, 10))
-
-
-def _is_minus_1001(node):
-    return isinstance(node, ast.BinOp) and isinstance(node.op, ast.Sub) and _const(node.right, 1001)
+def _int_names(tree):
+    """{name: {int values}} for every `Name = <int>` / `Name: T = <int>` anywhere in the file (module, class
+    and function level). A name bound to 1001 anywhere counts as 1001 (fail closed)."""
+    names = {}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Assign):
+            targets, value = node.targets, node.value
+        elif isinstance(node, ast.AnnAssign) and node.value is not None:
+            targets, value = [node.target], node.value
+        else:
+            continue
+        if isinstance(value, ast.Constant) and type(value.value) is int:
+            for target in targets:
+                if isinstance(target, ast.Name):
+                    names.setdefault(target.id, set()).add(value.value)
+    return names
 
 
 def _udim_hits(tree):
+    consts = _int_names(tree)
+
+    def _const(node, value):
+        if isinstance(node, ast.Constant):
+            return type(node.value) is type(value) and node.value == value
+        return isinstance(node, ast.Name) and value in consts.get(node.id, ())
+
+    def _add_terms(node):
+        if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
+            return _add_terms(node.left) + _add_terms(node.right)
+        return [node]
+
+    def _is_times_ten(node):
+        return isinstance(node, ast.BinOp) and isinstance(node.op, ast.Mult) and (
+            _const(node.left, 10) or _const(node.right, 10))
+
+    def _is_minus_1001(node):
+        return isinstance(node, ast.BinOp) and isinstance(node.op, ast.Sub) and _const(node.right, 1001)
+
     hits = set()
+    for node in ast.walk(tree):
+        # a job-local definition carrying an owned function name is a copy whatever its body
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name in OWNED_NAMES["udim-tile"]:
+            hits.add(node.lineno)
     for node in ast.walk(tree):
         if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
             terms = _add_terms(node)

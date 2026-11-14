@@ -141,6 +141,36 @@ shared_kernel:
     - at: "adapters/max/agr_tools/uvtile_core.py:64"
       rule: udim-tile
       issue: "#1337"
+    - at: "adapters/max/agr_tools/uvtile_core.py:67"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "adapters/max/agr_tools/udim_core.py:50"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "adapters/max/agr_tools/udimplug_core.py:53"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "adapters/max/agr_tools/udimview_core.py:38"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "adapters/max/agr_tools/uvlayout_core.py:56"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "adapters/max/agr_tools/uvlayout_core.py:60"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "adapters/max/agr_tools/uvlayout_core.py:64"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "adapters/max/agr_tools/npm2vpm_core.py:175"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "src/dt_ai/geometry/uv.py:4"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "src/twinqa/uv.py:35"
+      rule: udim-tile
+      issue: "#1337"
 contexts:
   - id: body
     ru: "Корпус и геометрия"
