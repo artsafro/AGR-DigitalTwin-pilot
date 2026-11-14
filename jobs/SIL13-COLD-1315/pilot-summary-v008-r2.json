@@ -1,0 +1,724 @@
+{
+  "passed": false,
+  "scope": "pilot-only exported-file checks; not Ground package or site QA",
+  "profiles": {
+    "NPM": {
+      "source": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v008-r2\\pilot-r1\\NPM\\FloraCopyPilot.fbx",
+      "sha256": "143b968d41cfd596c1e64106c2eed2e648219a33124aaf7503c11f42ef54fcc0",
+      "meshes": [
+        {
+          "name": "Hydrangea_arborescens_NPM_PROPOSED",
+          "vertices": 28,
+          "triangles": 14,
+          "bbox_m": [
+            [
+              -1.5092030763626099,
+              15.43173599243164,
+              0.0
+            ],
+            [
+              -0.19685380160808563,
+              16.56826400756836,
+              1.2443135976791382
+            ]
+          ],
+          "uv_channels": 1,
+          "materials": 1,
+          "textured": true,
+          "map_status": "INTERIM exact Text card species; not independent botany/appearance approval"
+        },
+        {
+          "name": "Physocarpus_opulifolius_Luteus_NPM_PROPOSED",
+          "vertices": 28,
+          "triangles": 14,
+          "bbox_m": [
+            [
+              -0.8281095027923584,
+              31.688190460205078,
+              0.0
+            ],
+            [
+              -0.10801670700311661,
+              32.31180953979492,
+              0.6436761617660522
+            ]
+          ],
+          "uv_channels": 1,
+          "materials": 1,
+          "textured": true,
+          "map_status": "INTERIM exact Text card species; not independent botany/appearance approval"
+        },
+        {
+          "name": "Physocarpus_opulifolius_NPM_PROPOSED",
+          "vertices": 28,
+          "triangles": 14,
+          "bbox_m": [
+            [
+              -0.8407847285270691,
+              23.68341827392578,
+              0.0
+            ],
+            [
+              -0.10966940224170685,
+              24.31658172607422,
+              0.7232792973518372
+            ]
+          ],
+          "uv_channels": 1,
+          "materials": 1,
+          "textured": false,
+          "map_status": "GREY: Text card ambiguous or not exact species"
+        },
+        {
+          "name": "Syringa_vulgaris_NPM_PROPOSED",
+          "vertices": 28,
+          "triangles": 14,
+          "bbox_m": [
+            [
+              -1.779973030090332,
+              7.329782009124756,
+              0.0
+            ],
+            [
+              -0.23217099905014038,
+              8.670217514038086,
+              1.3847298622131348
+            ]
+          ],
+          "uv_channels": 1,
+          "materials": 1,
+          "textured": false,
+          "map_status": "GREY: Text card ambiguous or not exact species"
+        }
+      ],
+      "triangles": 56,
+      "size_controls_passed": 4,
+      "regulatory_topology": [
+        {
+          "name": "Hydrangea_arborescens_NPM_PROPOSED",
+          "facts": {
+            "duplicate_vertices": 0,
+            "duplicate_edges": 0,
+            "duplicate_polygons": 0,
+            "self_intersections": 0,
+            "isolated_vertices": 0,
+            "isolated_edges": 0,
+            "isolated_polygons": 0,
+            "zero_length_edges": 0,
+            "duplicates_and_self_intersections": 0,
+            "tol_m": 0.002
+          }
+        },
+        {
+          "name": "Physocarpus_opulifolius_Luteus_NPM_PROPOSED",
+          "facts": {
+            "duplicate_vertices": 0,
+            "duplicate_edges": 0,
+            "duplicate_polygons": 0,
+            "self_intersections": 0,
+            "isolated_vertices": 0,
+            "isolated_edges": 0,
+            "isolated_polygons": 0,
+            "zero_length_edges": 0,
+            "duplicates_and_self_intersections": 0,
+            "tol_m": 0.002
+          }
+        },
+        {
+          "name": "Physocarpus_opulifolius_NPM_PROPOSED",
+          "facts": {
+            "duplicate_vertices": 0,
+            "duplicate_edges": 0,
+            "duplicate_polygons": 0,
+            "self_intersections": 0,
+            "isolated_vertices": 0,
+            "isolated_edges": 0,
+            "isolated_polygons": 0,
+            "zero_length_edges": 0,
+            "duplicates_and_self_intersections": 0,
+            "tol_m": 0.002
+          }
+        },
+        {
+          "name": "Syringa_vulgaris_NPM_PROPOSED",
+          "facts": {
+            "duplicate_vertices": 0,
+            "duplicate_edges": 0,
+            "duplicate_polygons": 0,
+            "self_intersections": 0,
+            "isolated_vertices": 0,
+            "isolated_edges": 0,
+            "isolated_polygons": 0,
+            "zero_length_edges": 0,
+            "duplicates_and_self_intersections": 0,
+            "tol_m": 0.002
+          }
+        }
+      ],
+      "xview": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 0,
+        "vertex_pairs": 0,
+        "face_pairs": 0,
+        "face_pairs_by_kind": {
+          "contact": 0,
+          "area": 0,
+          "area+contact": 0
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      }
+    },
+    "VPM": {
+      "source": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v008-r2\\pilot-r1\\VPM\\FloraCopyPilot.fbx",
+      "sha256": "71a24aaa2b59e0a4e12c11c634518a1ba5f1077c8ec24f4534e89ac5d2cd0a31",
+      "meshes": [
+        {
+          "name": "Hydrangea_arborescens_VPM_PROPOSED",
+          "vertices": 56,
+          "triangles": 84,
+          "bbox_m": [
+            [
+              1.902904987335205,
+              15.429986000061035,
+              0.0
+            ],
+            [
+              3.215254306793213,
+              16.57001304626465,
+              1.2443135976791382
+            ]
+          ],
+          "uv_channels": 1,
+          "materials": 1,
+          "textured": true,
+          "map_status": "INTERIM exact Text card species; not independent botany/appearance approval"
+        },
+        {
+          "name": "Physocarpus_opulifolius_Luteus_VPM_PROPOSED",
+          "vertices": 56,
+          "triangles": 84,
+          "bbox_m": [
+            [
+              1.0441317558288574,
+              31.68644142150879,
+              0.0
+            ],
+            [
+              1.7642245292663574,
+              32.313560485839844,
+              0.6436761617660522
+            ]
+          ],
+          "uv_channels": 1,
+          "materials": 1,
+          "textured": true,
+          "map_status": "INTERIM exact Text card species; not independent botany/appearance approval"
+        },
+        {
+          "name": "Physocarpus_opulifolius_VPM_PROPOSED",
+          "vertices": 56,
+          "triangles": 84,
+          "bbox_m": [
+            [
+              1.060115098953247,
+              23.68166732788086,
+              0.0
+            ],
+            [
+              1.7912304401397705,
+              24.31833267211914,
+              0.7232792973518372
+            ]
+          ],
+          "uv_channels": 1,
+          "materials": 1,
+          "textured": false,
+          "map_status": "GREY: Text card ambiguous or not exact species"
+        },
+        {
+          "name": "Syringa_vulgaris_VPM_PROPOSED",
+          "vertices": 56,
+          "triangles": 84,
+          "bbox_m": [
+            [
+              2.244312047958374,
+              7.32803201675415,
+              0.0
+            ],
+            [
+              3.792114019393921,
+              8.671967506408691,
+              1.3847298622131348
+            ]
+          ],
+          "uv_channels": 1,
+          "materials": 1,
+          "textured": false,
+          "map_status": "GREY: Text card ambiguous or not exact species"
+        }
+      ],
+      "triangles": 336,
+      "size_controls_passed": 4,
+      "regulatory_topology": [
+        {
+          "name": "Hydrangea_arborescens_VPM_PROPOSED",
+          "facts": {
+            "duplicate_vertices": 0,
+            "duplicate_edges": 0,
+            "duplicate_polygons": 0,
+            "self_intersections": 0,
+            "isolated_vertices": 0,
+            "isolated_edges": 0,
+            "isolated_polygons": 0,
+            "zero_length_edges": 0,
+            "duplicates_and_self_intersections": 0,
+            "tol_m": 0.005
+          }
+        },
+        {
+          "name": "Physocarpus_opulifolius_Luteus_VPM_PROPOSED",
+          "facts": {
+            "duplicate_vertices": 0,
+            "duplicate_edges": 0,
+            "duplicate_polygons": 0,
+            "self_intersections": 0,
+            "isolated_vertices": 0,
+            "isolated_edges": 0,
+            "isolated_polygons": 0,
+            "zero_length_edges": 0,
+            "duplicates_and_self_intersections": 0,
+            "tol_m": 0.005
+          }
+        },
+        {
+          "name": "Physocarpus_opulifolius_VPM_PROPOSED",
+          "facts": {
+            "duplicate_vertices": 0,
+            "duplicate_edges": 0,
+            "duplicate_polygons": 0,
+            "self_intersections": 0,
+            "isolated_vertices": 0,
+            "isolated_edges": 0,
+            "isolated_polygons": 0,
+            "zero_length_edges": 0,
+            "duplicates_and_self_intersections": 0,
+            "tol_m": 0.005
+          }
+        },
+        {
+          "name": "Syringa_vulgaris_VPM_PROPOSED",
+          "facts": {
+            "duplicate_vertices": 0,
+            "duplicate_edges": 0,
+            "duplicate_polygons": 0,
+            "self_intersections": 0,
+            "isolated_vertices": 0,
+            "isolated_edges": 0,
+            "isolated_polygons": 0,
+            "zero_length_edges": 0,
+            "duplicates_and_self_intersections": 0,
+            "tol_m": 0.005
+          }
+        }
+      ],
+      "xview": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 0,
+        "vertex_pairs": 0,
+        "face_pairs": 0,
+        "face_pairs_by_kind": {
+          "contact": 0,
+          "area": 0,
+          "area+contact": 0
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      }
+    }
+  },
+  "construction_decision": "D289",
+  "authority": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6878796926",
+  "full_site_unchanged": true,
+  "pilot_approval": "pending",
+  "probe": {
+    "passed": false,
+    "scope": "pilot only; site unchanged; review pending",
+    "rows": [
+      {
+        "profile": "NPM",
+        "name": "Syringa_vulgaris",
+        "source_crown_m": 1.5478019779853183,
+        "source_total_height_m": 1.3847298622131348,
+        "old_npm_facts": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 30,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 30,
+          "tol_m": 0.002
+        },
+        "new_facts": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 0,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 0,
+          "tol_m": 0.002
+        },
+        "triangles": 14,
+        "hub_radius_m": 0.012
+      },
+      {
+        "profile": "NPM",
+        "name": "Hydrangea_arborescens",
+        "source_crown_m": 1.3123492918159059,
+        "source_total_height_m": 1.2443136274814606,
+        "old_npm_facts": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 25,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 25,
+          "tol_m": 0.002
+        },
+        "new_facts": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 0,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 0,
+          "tol_m": 0.002
+        },
+        "triangles": 14,
+        "hub_radius_m": 0.012
+      },
+      {
+        "profile": "NPM",
+        "name": "Physocarpus_opulifolius",
+        "source_crown_m": 0.7311153228421574,
+        "source_total_height_m": 0.723279319703579,
+        "old_npm_facts": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 111,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 111,
+          "tol_m": 0.002
+        },
+        "new_facts": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 0,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 0,
+          "tol_m": 0.002
+        },
+        "triangles": 14,
+        "hub_radius_m": 0.012
+      },
+      {
+        "profile": "NPM",
+        "name": "Physocarpus_opulifolius_Luteus",
+        "source_crown_m": 0.7200927718617507,
+        "source_total_height_m": 0.6436761375516653,
+        "old_npm_facts": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 30,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 30,
+          "tol_m": 0.002
+        },
+        "new_facts": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 0,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 0,
+          "tol_m": 0.002
+        },
+        "triangles": 14,
+        "hub_radius_m": 0.012
+      },
+      {
+        "profile": "VPM",
+        "name": "Syringa_vulgaris",
+        "source_crown_m": 1.5478019779853183,
+        "source_total_height_m": 1.3847298622131348,
+        "old_npm_facts": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 30,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 30,
+          "tol_m": 0.002
+        },
+        "new_facts": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 0,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 0,
+          "tol_m": 0.002
+        },
+        "triangles": 84,
+        "hub_radius_m": 0.03
+      },
+      {
+        "profile": "VPM",
+        "name": "Hydrangea_arborescens",
+        "source_crown_m": 1.3123492918159059,
+        "source_total_height_m": 1.2443136274814606,
+        "old_npm_facts": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 25,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 25,
+          "tol_m": 0.002
+        },
+        "new_facts": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 0,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 0,
+          "tol_m": 0.002
+        },
+        "triangles": 84,
+        "hub_radius_m": 0.03
+      },
+      {
+        "profile": "VPM",
+        "name": "Physocarpus_opulifolius",
+        "source_crown_m": 0.7311153228421574,
+        "source_total_height_m": 0.723279319703579,
+        "old_npm_facts": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 111,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 111,
+          "tol_m": 0.002
+        },
+        "new_facts": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 0,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 0,
+          "tol_m": 0.002
+        },
+        "triangles": 84,
+        "hub_radius_m": 0.03
+      },
+      {
+        "profile": "VPM",
+        "name": "Physocarpus_opulifolius_Luteus",
+        "source_crown_m": 0.7200927718617507,
+        "source_total_height_m": 0.6436761375516653,
+        "old_npm_facts": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 30,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 30,
+          "tol_m": 0.002
+        },
+        "new_facts": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 0,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 0,
+          "tol_m": 0.002
+        },
+        "triangles": 84,
+        "hub_radius_m": 0.03
+      }
+    ],
+    "invalid_inputs_rejected": 7,
+    "synthetic_dimension_controls": 30
+  },
+  "map_crops": [
+    {
+      "source": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\gortenzia_drevovidnaya_t2_h100_low.png",
+      "source_sha256": "34a61062405237ffb8bd5a1422371cd401355f2573b01b869c92020b8bb15c93",
+      "output": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v008-r2\\maps\\gortenzia_drevovidnaya_t2_h100_low.png",
+      "output_sha256": "4f8707d101874e02877bb69b9d8bae1d0c561c81fbfad41ed692382cfbaa21ec",
+      "source_size": [
+        2048,
+        2048
+      ],
+      "crop": [
+        463,
+        397,
+        1586,
+        1658
+      ],
+      "status": "INTERIM exact Text card species only; appearance pending"
+    },
+    {
+      "source": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\puzyreplodnik_kalinolistnyj_t1_h150_low.png",
+      "source_sha256": "a671588be5fd368b77420bae521ab93234568e65d0b9aae206182b095a64a8e1",
+      "output": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v008-r2\\maps\\puzyreplodnik_kalinolistnyj_t1_h150_low.png",
+      "output_sha256": "83652de7531cea42127451fb8a7ce70a6a0c2238489e1dcf2da521f95f1b5df7",
+      "source_size": [
+        2048,
+        2048
+      ],
+      "crop": [
+        275,
+        251,
+        1780,
+        1869
+      ],
+      "status": "INTERIM exact Text card species only; appearance pending"
+    }
+  ],
+  "budget_projection": {
+    "status": "projection only, NOT a built full site",
+    "ground": 58896,
+    "maf": 34121,
+    "Acer_unchanged": 60,
+    "bush_count": 4576,
+    "bush_triangles_each": 14,
+    "NPM_total": 157141,
+    "limit": 180000,
+    "note": "Acer topology still open; site contacts and hedge layout not certified by isolated controls."
+  },
+  "unchanged_inputs": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\pzu-20261104.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "equal": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\СИЛ13-УВК-ПД-ПЗУ_.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\maf-and-light-spec.docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "equal": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\МАФ_и_свет_модели_фото (4).docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+      "sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0435_M_Bench_025.fbx",
+      "sha256": "e6b6a2ba2ce042d957c80649dbf6285ecfa3d35e041f95142fe888691b2e723a",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0472_M_Cannopy_006.fbx",
+      "sha256": "cb10e03cb0298b3a247df165171da8dc7805f843342f8507886c99f16e38a096",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0698_M_Urn_010.fbx",
+      "sha256": "70a6ef60d95db7cb02f54df48b9c93ccbb08a7b72a535e9b15766034767a8586",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\v003\\flora-library-v003.max",
+      "sha256": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\maf-npm.blend",
+      "sha256": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd",
+      "equal": true
+    }
+  ]
+}

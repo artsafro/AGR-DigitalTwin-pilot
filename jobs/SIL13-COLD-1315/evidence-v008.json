@@ -1,0 +1,393 @@
+{
+  "passed": false,
+  "root": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008",
+  "scope": "isolated changed-copy bush pilot only, r1 rejected visually/r2 waiting user; full site unchanged",
+  "verified_copies": 77,
+  "files": [
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\build-pilot.log",
+      "sha256": "f11bcbb77a509222c7a7dc505c0140db5d3774bb5d9f5894116e7ff421020558",
+      "bytes": 3850
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\build_pilot.py",
+      "sha256": "3bb5056f885d7ca86c103995036134ba6c06b9a48429b994082a2ef15e78002f",
+      "bytes": 5536
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\exported-NPM.npz",
+      "sha256": "ed566c058dcba4e9a29e696dda2d727bd2f5cbfea17b92c8ba60b67562887ecd",
+      "bytes": 8696
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\exported-VPM.npz",
+      "sha256": "7d26954f6fd19f54c4841f3a4133c9e1d9837eae09c466310d2e0e7929df6c2c",
+      "bytes": 18680
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\fan-probe.json",
+      "sha256": "54e366ea2c99eca599447c2515182ed7e59073191f2433fde4f26a57f36937dd",
+      "bytes": 7679
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\fan_geometry.py",
+      "sha256": "64f28969e4ac01b7e9213e51ab3afc1da9bc07f034c79ca701df21e9e75e0de5",
+      "bytes": 1740
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\pilot-r1\\comparison-pilot.blend",
+      "sha256": "e0b5c7d8fb798256f3283931dd465383d1bcaa471e3525590c7838339a448ea4",
+      "bytes": 133806
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\pilot-r1\\Hydrangea_arborescens-front.png",
+      "sha256": "94fdbc3e79c813f02d70e8c782766c8d91b9936f114e4e4d3713e73835feb4b2",
+      "bytes": 683489
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\pilot-r1\\Hydrangea_arborescens-oblique.png",
+      "sha256": "9f39126e419037e1a936139f255ef29476d063844d7ab8868eb8e26587843dc9",
+      "bytes": 716010
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\pilot-r1\\Hydrangea_arborescens-top.png",
+      "sha256": "0b02d8e17fe95807380d005ebf15695103b723a1410d8acf49f68f00de932460",
+      "bytes": 701487
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\pilot-r1\\NPM\\FloraCopyPilot.fbx",
+      "sha256": "88e49975cfc9fe30eed093d2562dc55a6027127f61e01e0f66c2cf15702bbba8",
+      "bytes": 4468396
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\pilot-r1\\Physocarpus_opulifolius-front.png",
+      "sha256": "3238b60d4183d6c4c63cbadfac2a66ab89e194814785b00ae66a64b25371096b",
+      "bytes": 630238
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\pilot-r1\\Physocarpus_opulifolius-oblique.png",
+      "sha256": "5f838597c40246b0c5ca51469b441cf57210b844e30a21423ef989dd10e461ff",
+      "bytes": 688932
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\pilot-r1\\Physocarpus_opulifolius-top.png",
+      "sha256": "5d35bb73d69740e6189d4f1525ce3a3569ab1c8cec0a3e3e55ef53575551f156",
+      "bytes": 687525
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\pilot-r1\\Physocarpus_opulifolius_Luteus-front.png",
+      "sha256": "d05f2e343e140c2bb3db024b1c8806bd91e58e18cb2b547decee652c9ad3d9dd",
+      "bytes": 738386
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\pilot-r1\\Physocarpus_opulifolius_Luteus-oblique.png",
+      "sha256": "1cf9f102ccdee26315431e47323fefdadcaa06e1cf295eee23cf52b708695d77",
+      "bytes": 762112
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\pilot-r1\\Physocarpus_opulifolius_Luteus-top.png",
+      "sha256": "5eedfb4184ec102e6c70874015ec4f7474d00e4b763a75985fed1350615bbc48",
+      "bytes": 664845
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\pilot-r1\\pilot.json",
+      "sha256": "d7406e0a478d2cc4a5221742e11f02e53002384a6568d6058c7d57511a52b596",
+      "bytes": 2194
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\pilot-r1\\Syringa_vulgaris-front.png",
+      "sha256": "f0b77e6a45dd1d5c02d188e68545bdecb41126f01314a46092c0e9ed230a3372",
+      "bytes": 656573
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\pilot-r1\\Syringa_vulgaris-oblique.png",
+      "sha256": "950944c3ccc521de27f120e9740b4db6a6814eeee834b8a6ecc19ad4a3e3c127",
+      "bytes": 677018
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\pilot-r1\\Syringa_vulgaris-top.png",
+      "sha256": "502fc7c2f14285b76791a62ff99cdc5811d2c26c38f5afa1c4bf003474031d08",
+      "bytes": 669896
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\pilot-r1\\VPM\\FloraCopyPilot.fbx",
+      "sha256": "4fc8e1fc600675a546a70b178edd2622fad73f8d5366696a6f1546cc3196e999",
+      "bytes": 4471948
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\pilot-readback.json",
+      "sha256": "fc215b349624719f179dbe3c3a3eae63ac91f6d345ec06aebd4b08ea721b318a",
+      "bytes": 5410
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\probe_fan.py",
+      "sha256": "bdd8a4162922e132da5641e250e794063710e261a9bf0afe4f770515bb149a50",
+      "bytes": 2542
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\proposed-NPM.npz",
+      "sha256": "5083dcc66521a062610853d412be30a5d12a7e1273137b74f3c726e67bfaf7b0",
+      "bytes": 8552
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\proposed-VPM.npz",
+      "sha256": "1c4d7b4ba94a0d3889319f98c8883765b56b6bce2b9c2760481fa207ecddb420",
+      "bytes": 18536
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\readback-pilot.log",
+      "sha256": "7bd94f5334e7b6b22f96762e62b1cda3b027ace7b8ad98fe70b04d2efe391d6c",
+      "bytes": 253
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\readback_pilot.py",
+      "sha256": "1b72eafdc9b965470d4bcb0252e78c6d4414c678c4955b9f9faf729bf691530c",
+      "bytes": 2292
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\xview-exported-NPM.json",
+      "sha256": "716f33ae384d35374d70383125b6b9118fffd8b27b4d8e1e53606bf238401cbc",
+      "bytes": 2758
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\xview-exported-VPM.json",
+      "sha256": "94485e9cfd21429a5701c57d0f167d23278d3653c83827640e49f2d4193ce7da",
+      "bytes": 2758
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\xview-proposed-NPM.json",
+      "sha256": "0864ae355ec8f5c5f69c7872b1125641f6fb1448db1b564c96d17d6e4561da00",
+      "bytes": 2686
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r1\\xview-proposed-VPM.json",
+      "sha256": "dd45fae03ec6116007adcbc1e90febc0f3125d3a4427b866deb866aa3e030c81",
+      "bytes": 2686
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\affected-tests-sorted.log",
+      "sha256": "ef9d2ce3724d9333176d7cda5ed9afe1a9149ad97e774edc794c6e94ae58f933",
+      "bytes": 183
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\affected-tests.log",
+      "sha256": "4bc688da59ee5980e870a07c76259b2ecf61593694ec9e5fcd47d962a858e8fb",
+      "bytes": 1052
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\build-pilot.log",
+      "sha256": "5b7c2d3216eec3697b2a7c66e84ff705a3518bbc70950ec409d2c15b43bda56e",
+      "bytes": 3462
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\build_pilot.py",
+      "sha256": "f9bf424ae2b5003cf875edca7bd8bdb23c89c898eafeb0475466daa98210127b",
+      "bytes": 5430
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\exported-NPM.npz",
+      "sha256": "fbdc034a9f70887398e34a89fac61d89f6ca90d079a45ed7ec39450efd024014",
+      "bytes": 9336
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\exported-VPM.npz",
+      "sha256": "46891f7081483b570d2c79d5c6ed8a6545165d424609c230df77978d399ef8b3",
+      "bytes": 20984
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\fan-probe.json",
+      "sha256": "ede18dc83391365fc2a88c047e9bf7431e8d99b65a2ef16c399d1c60dc923640",
+      "bytes": 7679
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\fan_geometry.py",
+      "sha256": "5ca0a66943d8e0069caa9db2e3450c419589f76172d22b05354c1f586730133b",
+      "bytes": 2501
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\map-crops.json",
+      "sha256": "04f6ff099b4dd2bc992261af695c329e958a64317bb325702e881bcb7b781a1a",
+      "bytes": 1363
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\maps\\gortenzia_drevovidnaya_t2_h100_low.png",
+      "sha256": "4f8707d101874e02877bb69b9d8bae1d0c561c81fbfad41ed692382cfbaa21ec",
+      "bytes": 1660469
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\maps\\puzyreplodnik_kalinolistnyj_t1_h150_low.png",
+      "sha256": "83652de7531cea42127451fb8a7ce70a6a0c2238489e1dcf2da521f95f1b5df7",
+      "bytes": 2793817
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\native-text-labels-live.json",
+      "sha256": "7af752ccd2f0ae071a2841b50a791575dee01a4ccd0ec5023ecd14879638c457",
+      "bytes": 2060
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\pilot-r1\\comparison-pilot.blend",
+      "sha256": "5fbf6575b4ffb7b9f136aeb23b5583855c855701f95a31ef5ce2e00c2c60674b",
+      "bytes": 134314
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\pilot-r1\\Hydrangea_arborescens-front.png",
+      "sha256": "1cff5e39afccb2eb26ebe863236721d50c5483c180851fcb5da6d96dd07f34c1",
+      "bytes": 771558
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\pilot-r1\\Hydrangea_arborescens-oblique.png",
+      "sha256": "70e6c138d5b96e2e0331b1de6c89874f2885f0b3809d00267607c83494f451e1",
+      "bytes": 806135
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\pilot-r1\\Hydrangea_arborescens-top.png",
+      "sha256": "566a82bd8a0942bb1baf13c38bca352ac94840536a6fd5054247d10442c15cdb",
+      "bytes": 708131
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\pilot-r1\\NPM\\FloraCopyPilot.fbx",
+      "sha256": "143b968d41cfd596c1e64106c2eed2e648219a33124aaf7503c11f42ef54fcc0",
+      "bytes": 4487324
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\pilot-r1\\Physocarpus_opulifolius-front.png",
+      "sha256": "5dc0b17f04048d634f6bdfeb02b87b520895bb2c684789d71f1871d6c0bfe556",
+      "bytes": 628095
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\pilot-r1\\Physocarpus_opulifolius-oblique.png",
+      "sha256": "484efc9d5b36b9e582a7d89f6eab9488ebbe66ae83f1cc97a3436f673a0bad7d",
+      "bytes": 689157
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\pilot-r1\\Physocarpus_opulifolius-top.png",
+      "sha256": "a7045ceb1fa30a799852cdb4d30c6f9731d530265ffb843d1d12871f4ddc842d",
+      "bytes": 687555
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\pilot-r1\\Physocarpus_opulifolius_Luteus-front.png",
+      "sha256": "3a86159fd9d925ff62e4ebbb2d8a8b6b4c2fa3ae88a52790cd19fa2736348c88",
+      "bytes": 797429
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\pilot-r1\\Physocarpus_opulifolius_Luteus-oblique.png",
+      "sha256": "a833e26d17fcc4f416e1d360f2147d7425e08bcce5eef8cd3490bcf4cb3ebfb5",
+      "bytes": 828093
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\pilot-r1\\Physocarpus_opulifolius_Luteus-top.png",
+      "sha256": "1b8e22aea7f06dd8baa11dc1c1bd6ffce7963b1e9b8ca2c52d5954314cf046be",
+      "bytes": 670249
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\pilot-r1\\pilot.json",
+      "sha256": "eedc9e92b76a86c7980cc844293cd7a704bd0524a5300841a790f9274dbc644f",
+      "bytes": 2214
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\pilot-r1\\Syringa_vulgaris-front.png",
+      "sha256": "abbbb87aa03585cd2b452ecbf95573820800b560b100b1018a2a6aaffb565e5f",
+      "bytes": 655824
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\pilot-r1\\Syringa_vulgaris-oblique.png",
+      "sha256": "b0f12c3c8ce975efa88be1c3c37295e1b80d804bbd767ad78b05827aa71abee0",
+      "bytes": 677348
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\pilot-r1\\Syringa_vulgaris-top.png",
+      "sha256": "41a3d8e18e9ea2fd637ebbf2ff87a037a1bd52007d5b239791e5af13d9714b21",
+      "bytes": 669999
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\pilot-r1\\VPM\\FloraCopyPilot.fbx",
+      "sha256": "71a24aaa2b59e0a4e12c11c634518a1ba5f1077c8ec24f4534e89ac5d2cd0a31",
+      "bytes": 4491628
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\pilot-readback.json",
+      "sha256": "11febc782493e15d13411ce7642fbc763c9fa7202442854d3c22bda2b58354e7",
+      "bytes": 5416
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\prepare_maps.py",
+      "sha256": "a15cbd6c5aa9c508766b773ca59e658314a164956fb80aab6774878f8e7146eb",
+      "bytes": 1140
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\preview-v008-r2-NOT-ACCEPTED.png",
+      "sha256": "a97dcfdcea43a12205d90777c592492183f3a88a39edeec33d40966253ba7bb5",
+      "bytes": 86689
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\probe_fan.py",
+      "sha256": "bdd8a4162922e132da5641e250e794063710e261a9bf0afe4f770515bb149a50",
+      "bytes": 2542
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\proposed-NPM.npz",
+      "sha256": "6bd42b01a5e413a5bb149ca2ce443f59631b0684f112a43869db1ab0c94d8425",
+      "bytes": 9192
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\proposed-VPM.npz",
+      "sha256": "198737f77b043f4afc5cdae00ae30d716e06e2d789f89f188aeddd3b974a67d8",
+      "bytes": 20840
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\readback-pilot.log",
+      "sha256": "11f1184a0bb39db85655224494130f029340351c00acb7f551965a5000883df2",
+      "bytes": 253
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\readback_pilot.py",
+      "sha256": "1b72eafdc9b965470d4bcb0252e78c6d4414c678c4955b9f9faf729bf691530c",
+      "bytes": 2292
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\review-sheet-v008-r2-NOT-ACCEPTED.png",
+      "sha256": "097211f572e653c27fd1c221624278b6afbbebcd9fa8138f67ea862e2a75957d",
+      "bytes": 809720
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\seal.py",
+      "sha256": "739c17c1ad8fd6648536638b971dd7ecbd4b434fb807d9ee4c7fda58cecc7a0d",
+      "bytes": 1398
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\summarize.py",
+      "sha256": "b7be075ef479bfd16261a24856b505de2db1f0dec9cc1c92c12574be0a69bac8",
+      "bytes": 3400
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\tiny-preview.png",
+      "sha256": "001ab31d1b308c7882de59aa8b59423c8836172d3326e3f4fd02654706c78add",
+      "bytes": 2051
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\xview-exported-NPM.json",
+      "sha256": "7f625d6ca75073fc47f4d729b543f877639e52e1ddcb4c6c31f68eea0c8644fd",
+      "bytes": 2761
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\xview-exported-VPM-5mm.json",
+      "sha256": "1306ef20af6181362a051149c1d2bfe503b92ba0396ee6d21eb7d79efd49f746",
+      "bytes": 2761
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\r2\\xview-exported-VPM.json",
+      "sha256": "fc86737f87808d2fdaa3273782188c07c0f5de2b6c806e9a22443cf2248c0e81",
+      "bytes": 2761
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\receipts\\CONTINUATION-v008.md",
+      "sha256": "a0cc7800c5387404bcee7b05327637cfb848328fc9130207f024641198a4a6bc",
+      "bytes": 6528
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v008\\receipts\\pilot-summary-v008-r2.json",
+      "sha256": "9a5c4157f4ca189d6f16208042759ca36ea056490755d4fa7c38e5769e91beec",
+      "bytes": 22990
+    }
+  ]
+}

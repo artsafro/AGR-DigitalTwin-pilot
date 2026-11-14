@@ -26,7 +26,7 @@ Scope decision: [D272] in `docs/decisions.md`; cells `ground-npm` and `ground-vp
 - Site/scope approval: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6850169203
 - Fresh PZU / planting-search instruction: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6851013290
 
-Source-content decision [D275]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6852165269
+Source-content decision [D290]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6852165269
 approves boundary 33FBCEF, the planting plan/table and the named VP definition. Those questions are closed.
 The delegated zero and exact pilot plan are answered [D282]: 142.10 m from VP_5 floor-mark
 pair 33F8EC4/33F8EC5; 5.6 m maple nominal. `parts-pilot-confirmed.json` records the issue answer,
@@ -54,12 +54,12 @@ is a source-contour question diagram, NOT that pilot or its acceptance.
 
 ## Current state
 
-Gate 1 site/scope and source-content authority answered [D272, D275]. Boundary and all 52 source planting
+Gate 1 site/scope and source-content authority answered [D272, D290]. Boundary and all 52 source planting
 symbols extracted, 52/52 inside the approved boundary and preserved by DXF readback. Numbered callouts
 match all five point-plant schedule quantities (1, 4, 6, 17, 24). A linden-named CAD symbol is position 2/4,
 not authority to substitute linden for Red Sunset. Flora candidates remain subject to identity/size checks.
 MAF: all 32 DOCX rows accounted for; no certified SKU-to-model match yet (not proof of disk-wide absence).
-Current continuation is [CONTINUATION-v007.md](CONTINUATION-v007.md). [D281] answers
+Current continuation is [CONTINUATION-v008.md](CONTINUATION-v008.md). [D281] answers
 G1–G3; [D284] supplies the standing sliver/TIN/draw-order rule without repeated small
 questions. First pilot geometry remains [D283]; zero/5.6 m plan remain [D282].
 [D287] closes the v006/r5 picture choice: all 38 MAF kept as accepted-by-picture,
@@ -78,12 +78,12 @@ positive at427: all600 convex. Sampled coverage175,688 points <=79.836mm; no con
 maximum claim, wide-neighbour set remains open. NPM native public validator FAIL;
 VPM default600s timeout and unchanged-reader topology crash, not importer failure.
 
-New decision boundary: C44 intended cross-card Flora intersections versus the
-<=100 per-mesh regulatory count in the required single Flora object. One actual
-NPM library Physocarpus already has111 self-intersections and no duplicates;
-11 explicitly synthetic non-overlapping maple stars have297. No waiver, per-plant
-reinterpretation or silhouette-changing route is silently applied. Other xView,
-skirt/details/material/atlas/UDIM/gap/native-validator repairs remain worker-owned.
+[D289] / issue comment 6878796926 authorizes a changed-copy Flora representation,
+not a C44 waiver: retain species, all 4,582 instances, planting points and accepted
+height/crown ranges; keep NPM <=180,000. Show a separate small construction pilot
+and wait for its picture approval before site-wide application. The unchanged
+v007/r1 site remains the full-site baseline; the new pilot is not site placement.
+Other xView/skirt/details/material/atlas/UDIM/gap/native-validator repairs remain worker-owned.
 Abies1 /Red Sunset4 /22MAFrows /133m2 flowerbed-rate gaps remain listed, not invented.
 Eight original non-Acer maps are absent; actual A101 candidates and ambiguous Syringa
 labels are pinned, not silently bound. Technical QA, final user acceptance, SINTEZ
